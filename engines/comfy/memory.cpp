@@ -23,9 +23,9 @@
 namespace Comfy {
 
 uint16 ComfyEngine::sysGetExtMemKB() {
-	// The original reads CMOS extended-memory registers. The compatibility layer exposes
-	// the 4000 KB configuration that selects the engine's normal high-memory paths.
-	return 0x0FA0;
+	// The original reads CMOS extended-memory registers, so we basically
+	// expose whatever makes the engine select the high-memory paths...
+	return 4000;
 }
 
 uint32 ComfyEngine::memCompactAndCheck(uint32 minimumBytes) {
@@ -59,6 +59,7 @@ uint32 ComfyEngine::memGetFreeKB() {
 
 	uint32 extendedKB = sysGetExtMemKB();
 	uint32 allocatedKB = allocatedBytes >> 10;
+
 	if (extendedKB <= 0x0400 + allocatedKB)
 		return 0x0E;
 
@@ -71,7 +72,8 @@ uint32 ComfyEngine::memGetFreeKBThunk() {
 
 uint32 ComfyEngine::memGetXmsLimit() {
 	uint32 limit = 0x7D000;
-	if (sysGetExtMemKB() < 0x0FA0)
+
+	if (sysGetExtMemKB() < 4000)
 		limit -= 0x25800;
 
 	return limit;
@@ -118,6 +120,7 @@ int32 ComfyEngine::memFreeTrack(uint16 handle) {
 	_xmsBlocks[handle].data = nullptr;
 	_xmsBlocks[handle].size = 0;
 	_xmsBlockCount--;
+
 	return 0;
 }
 

@@ -709,23 +709,23 @@ private:
 	uint16 _mouseFlags = 0;
 	bool _waveOutputActive = false;
 	byte _v3SceneWaveBalancePercent = 0;
-	byte _v3SceneHostMediaModeEnabled = 0;
+	byte _v3SceneMediaModeEnabled = 0;
 	byte _v3SceneWaveLeftPercent = 0;
 	byte _v3SceneWaveRightPercent = 0;
 	byte _v3SceneMixerVolumePercent = 0;
-	bool _v3HostMediaValueAvailable = false;
-	uint16 _v3HostMediaValue = 0;
-	uint16 _v3HostMediaProgress = 0;
+	bool _v3MediaValueAvailable = false;
+	uint16 _v3MediaValue = 0;
+	uint16 _v3MediaProgress = 0;
 	uint16 _v3Sensitivity = 0;
 	bool _v3ConfigCommandPending = false;
 	byte _v3ConfigCommandSubop = 0;
 	uint16 _v3ConfigCommandValue = 0;
 	Common::String _v3ConfigCommandText;
-	bool _v3HostMediaRecording = false;
-	uint16 _v3HostMediaRecordingArg0 = 0;
-	uint16 _v3HostMediaRecordingArg1 = 0;
-	uint16 _v3HostMediaRecordingArg2 = 0;
-	uint16 _v3HostMediaRecordingArg3 = 0;
+	bool _v3MediaRecording = false;
+	uint16 _v3MediaRecordingArg0 = 0;
+	uint16 _v3MediaRecordingArg1 = 0;
+	uint16 _v3MediaRecordingArg2 = 0;
+	uint16 _v3MediaRecordingArg3 = 0;
 	uint16 _v3AnimIndexOffset = 0;
 	uint16 _v3AnimActorSceneHandle = 0;
 	uint16 _v3WaveBalancePercent = 0;
@@ -1108,6 +1108,7 @@ private:
 	void soundUnpackState(byte *state);
 	void soundPlayEntry(uint16 index);
 	void soundAdvanceTick();
+
 #ifdef USE_IMGUI
 	bool debugScriptHasRange(uint32 pc, uint32 width);
 	uint16 debugScriptReadWord(uint32 pc);

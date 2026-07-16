@@ -33,14 +33,15 @@ bool ComfyEngine::spriteDecompressTile(SpriteResource &sprite, const byte *sourc
 		return false;
 
 	// The original temporarily writes a zero sentinel at source[dataSize].
-	Common::Array<byte> sourceWithSentinel;
-	sourceWithSentinel.resize(sourceSize + 1);
-	memcpy(&sourceWithSentinel[0], source, sourceSize);
-	sourceWithSentinel[sourceSize] = 0;
-	source = &sourceWithSentinel[0];
+	Common::Array<byte> sourceBuf;
+	sourceBuf.resize(sourceSize + 1);
+	memcpy(&sourceBuf[0], source, sourceSize);
+	sourceBuf[sourceSize] = 0;
+	source = &sourceBuf[0];
 	uint32 sourceEnd = sourceSize + 1;
 
 	sprite.pixels.resize(outputSize);
+
 	uint32 sourcePos = 0;
 	uint32 outputPos = 0;
 	uint16 totalOutput = 0;
@@ -65,11 +66,13 @@ bool ComfyEngine::spriteDecompressTile(SpriteResource &sprite, const byte *sourc
 				byte op = sourcePos < sourceEnd ? source[sourcePos++] : 0;
 				if (op & 0x40) {
 					skipCount = op - 0x40;
+
 					while (sourcePos < sourceEnd && (source[sourcePos] & 0x40))
 						skipCount += source[sourcePos++] - 0x40;
 				} else if (op & 0x80) {
 					fillCount = op - 0x80;
 					fillValue = sourcePos < sourceEnd ? source[sourcePos++] : 0;
+
 					while (sourcePos < sourceEnd && (source[sourcePos] & 0xC0) == 0xC0)
 						fillCount += source[sourcePos++] - 0xC0;
 				} else {
@@ -170,6 +173,7 @@ void ComfyEngine::objHdrReadFromXms(byte *destination, uint32 base, uint16 size,
 	move.sourceHandle = _xmsHeaderHandle;
 	move.sourceOffset = base + (uint32)size * row;
 	move.destinationMemory = source;
+
 	if (xmsTransfer(move) < 0) {
 		free(source);
 		error("Headers move (XMS->memory)");
@@ -191,6 +195,7 @@ void ComfyEngine::frameLoaderLoadFrameHeader(SpriteObjectHeader &destination, ui
 	byte raw[0x11];
 	memset(raw, 0, sizeof(raw));
 	objHdrReadFromXms(raw, _headerXmsObjectTableBase, sizeof(raw), index);
+
 	destination.fileOffset = READ_LE_UINT32(raw);
 	destination.dataSize = READ_LE_UINT16(raw + 0x04);
 	destination.width = READ_LE_UINT16(raw + 0x06);
@@ -199,6 +204,7 @@ void ComfyEngine::frameLoaderLoadFrameHeader(SpriteObjectHeader &destination, ui
 	destination.hotspotY = (int16)READ_LE_UINT16(raw + 0x0C);
 	destination.reserved = raw[0x0E];
 	destination.tiledSize = READ_LE_UINT16(raw + 0x0F);
+
 	if (_engineVersion == 3)
 		destination.dataSize = frameLoaderGetFrameDataSize(destination);
 
@@ -243,10 +249,11 @@ void ComfyEngine::scenePoolReserveSlot(uint32 size) {
 			if (tailFree > size)
 				return;
 
-			if (!_scenePoolEvictCursor)
+			if (!_scenePoolEvictCursor) {
 				scenePoolEvict();
-			else
+			} else {
 				_scenePoolCursor = 0;
+			}
 		} else {
 			uint32 gapFree = _scenePoolEvictCursor - _scenePoolCursor;
 			if (gapFree > size)
@@ -282,14 +289,19 @@ void ComfyEngine::spriteCache(int16 spriteId) {
 		byte *entryData = &_scenePoolData[_scenePoolCursor];
 		WRITE_LE_UINT16(entryData, (uint16)spriteId);
 		WRITE_LE_UINT16(entryData + 2, slotSize);
+
 		memcpy(entryData + 0x0C, source, size);
+
 		_frameSpriteResource.id = frameId;
 		_frameSpriteResource.header = SpriteObjectHeader();
 		_frameSpriteResource.header.dataSize = size;
 		_frameSpriteResource.header.tiledSize = size;
 		_frameSpriteResource.pixels.resize(size);
+
 		memcpy(&_frameSpriteResource.pixels[0], entryData + 0x0C, size);
+
 		_frameSpriteResource.loaded = true;
+
 		if (frameId < _frameCacheEntries.size()) {
 			SpriteCacheEntry &entry = _frameCacheEntries[frameId];
 			entry.poolOffset = _scenePoolCursor;
@@ -321,6 +333,7 @@ void ComfyEngine::spriteCache(int16 spriteId) {
 	byte *source = _engineVersion == 3 ?
 		frameLoaderReadFrameData(header.fileOffset, header.dataSize, _picFile) :
 		objFileReadTiled(header.fileOffset, header.dataSize, _picFile);
+
 	if (!source)
 		return;
 
@@ -338,17 +351,21 @@ void ComfyEngine::spriteCache(int16 spriteId) {
 		return;
 
 	byte *entryData = &_scenePoolData[_scenePoolCursor];
+
 	WRITE_LE_UINT16(entryData, (uint16)spriteId);
 	WRITE_LE_UINT16(entryData + 2, slotSize);
 	WRITE_LE_UINT16(entryData + 4, header.width);
 	WRITE_LE_UINT16(entryData + 6, header.height);
 	WRITE_LE_UINT16(entryData + 8, (uint16)header.hotspotX);
 	WRITE_LE_UINT16(entryData + 0x0A, (uint16)header.hotspotY);
+
 	memcpy(entryData + 0x0C, &sprite.pixels[0], sprite.pixels.size());
+
 	SpriteCacheEntry &entry = _objectCacheEntries[spriteId];
 	entry.poolOffset = _scenePoolCursor;
 	entry.slotSize = slotSize;
 	_scenePoolCursor += slotSize;
+
 	if (_scenePoolCursor < _scenePoolData.size())
 		WRITE_LE_UINT16(&_scenePoolData[_scenePoolCursor], 0x8000);
 
@@ -361,6 +378,7 @@ ComfyEngine::SpriteResource *ComfyEngine::spriteLookup(uint16 spriteId, int16 x,
 
 	SpriteResource &sprite = _spriteResources[spriteId];
 	SpriteCacheEntry *entry = spriteId < _objectCacheEntries.size() ? &_objectCacheEntries[spriteId] : nullptr;
+
 	if (entry && entry->slotSize == 0xFFFF) {
 		SpriteObjectHeader header;
 		frameLoaderLoadFrameHeader(header, spriteId);
@@ -378,10 +396,12 @@ ComfyEngine::SpriteResource *ComfyEngine::spriteLookup(uint16 spriteId, int16 x,
 	if (entry && entry->slotSize == 0xFFFF && !fullscreen && offscreen) {
 		_objFileOffset = _spriteLastHeader.fileOffset;
 		_objFileStride = _spriteLastHeader.tiledSize;
-		if (_engineVersion == 3)
+
+		if (_engineVersion == 3) {
 			frameLoaderReadFrameData(sprite.header.fileOffset, sprite.header.dataSize, _picFile);
-		else
+		} else {
 			objFileReadTiled(sprite.header.fileOffset, sprite.header.dataSize, _picFile);
+		}
 
 		return nullptr;
 	}
@@ -427,8 +447,7 @@ void ComfyEngine::spriteGetConvPtr(int16 spriteId) {
 	byte *payload = nullptr;
 	uint16 width = 0;
 	if (entry.slotSize != 0xFFFF) {
-		if (entry.poolOffset <= _scenePoolData.size() && entry.slotSize >= 0x0C &&
-				0x0C <= _scenePoolData.size() - entry.poolOffset) {
+		if (entry.poolOffset <= _scenePoolData.size() && entry.slotSize >= 0x0C && 0x0C <= _scenePoolData.size() - entry.poolOffset) {
 			byte *entryData = &_scenePoolData[entry.poolOffset];
 			width = READ_LE_UINT16(entryData + 4);
 			payload = entryData + 0x0C;
@@ -445,8 +464,9 @@ void ComfyEngine::spriteGetConvPtr(int16 spriteId) {
 	if (!payload || width != 0xFFFF)
 		return;
 
-	// The original uploads the sound-cache tile named by the first payload
-	// word to XMS. ScummVM already keeps the complete source resident.
+	// A width of 0xFFFF marks a conversion-cache payload. The original uses
+	// its first word as a tile index and copies the remaining payload to XMS;
+	// we keep this protocol but clearly we won't do an entire XMS reimplementation for this...
 }
 
 void ComfyEngine::spriteBlitRle(byte *destination, const byte *source, uint32 sourceSize) {
@@ -457,9 +477,11 @@ void ComfyEngine::spriteBlitRle(byte *destination, const byte *source, uint32 so
 	uint32 outputPos = 0;
 	uint32 outputSize = framebufferBytes();
 	byte previousFill = 0;
+
 	while (outputPos < outputSize && sourcePos < sourceSize) {
 		byte op = source[sourcePos++];
 		uint32 count = MIN<uint32>(op & 0x3F, outputSize - outputPos);
+
 		if ((op & 0xC0) == 0) {
 			if (sourcePos + count > sourceSize)
 				return;
@@ -489,8 +511,7 @@ void ComfyEngine::backgroundTransitionFrames(uint16 frame, uint16 previousFrame)
 		if (!background)
 			return;
 
-		if (background->header.width == _logicalScreenWidth &&
-				background->header.height == _logicalScreenHeight && !background->pixels.empty()) {
+		if (background->header.width == _logicalScreenWidth && background->header.height == _logicalScreenHeight && !background->pixels.empty()) {
 			spriteBlitRle(&_backgroundFramebuf[0], &background->pixels[0], background->pixels.size());
 		} else {
 			uint16 color = background->pixels.size() > 3 ? background->pixels[3] : 0;
@@ -505,8 +526,7 @@ void ComfyEngine::backgroundTransitionFrames(uint16 frame, uint16 previousFrame)
 	if (!background)
 		return;
 
-	if (background->header.width == _logicalScreenWidth &&
-			background->header.height == _logicalScreenHeight && !background->pixels.empty()) {
+	if (background->header.width == _logicalScreenWidth && background->header.height == _logicalScreenHeight && !background->pixels.empty()) {
 		spriteBlitRle(_framebufPtr, &background->pixels[0], background->pixels.size());
 	} else {
 		uint16 color = background->pixels.size() > 3 ? background->pixels[3] : 0;
@@ -524,6 +544,7 @@ void ComfyEngine::backgroundRestoreDirtyRects() {
 		ComfyRect &rect = _dirtyRects[i];
 		int16 width = rect.right - rect.left;
 		int16 height = rect.bottom - rect.top;
+
 		if (width <= 0 || height <= 0)
 			continue;
 
@@ -555,6 +576,7 @@ void ComfyEngine::spriteBlitClipped(int16 spriteId, int16 x, int16 y) {
 		int16 drawY = y + row;
 		uint32 packetPos = rowPos + 2;
 		int16 drawX = x;
+
 		while (packetPos < rowPos + rowSize) {
 			byte op = sprite.pixels[packetPos++];
 			uint16 count = op & 0x3F;
@@ -593,8 +615,7 @@ bool ComfyEngine::spriteCoversPoint(int16 spriteId, int16 x, int16 y, int16 poin
 		return false;
 
 	SpriteResource &sprite = *loadedSprite;
-	if (pointX < x || pointY < y || pointX >= x + (int16)sprite.header.width ||
-			pointY >= y + (int16)sprite.header.height)
+	if (pointX < x || pointY < y || pointX >= x + (int16)sprite.header.width || pointY >= y + (int16)sprite.header.height)
 		return false;
 
 	if (sprite.header.width == _logicalScreenWidth && sprite.header.height == _logicalScreenHeight)
@@ -609,9 +630,11 @@ bool ComfyEngine::spriteCoversPoint(int16 spriteId, int16 x, int16 y, int16 poin
 		int16 drawY = y + row;
 		uint32 packetPos = rowPos + 2;
 		int16 drawX = x;
+
 		while (packetPos < rowPos + rowSize) {
 			byte op = sprite.pixels[packetPos++];
 			uint16 count = op & 0x3F;
+
 			if (op & 0x80) {
 				if (packetPos >= rowPos + rowSize)
 					return false;
@@ -666,6 +689,7 @@ bool ComfyEngine::actorTestMouseHit(Actor &actor, bool useBlitHit) {
 	int16 y = (int16)(yFixed >> 12);
 	int16 right;
 	int16 bottom;
+
 	if (selector == 0x00FFFFFF) {
 		uint16 width = 0;
 		uint16 height = 0;
@@ -759,8 +783,10 @@ void ComfyEngine::actorFreeSlot(uint16 sceneSlot) {
 	Actor *root = actorGetPtr(0);
 	actor->nextLink = root ? root->nextLink : 0;
 	actor->sceneHandle = 0;
+
 	if (root)
 		root->nextLink = actorIndex;
+
 	_sceneHandles[sceneSlot] = 0;
 }
 
@@ -809,17 +835,19 @@ void ComfyEngine::actorUnlink(uint16 actorIndex) {
 
 	uint16 next = actor->nextLink;
 	uint16 previous = actor->prevLink;
-	if (next)
+	if (next) {
 		actorGetPtr(next)->prevLink = previous;
-	else if (parent->childTail == actorIndex)
+	} else if (parent->childTail == actorIndex) {
 		parent->childTail = previous;
+	}
 
-	if (previous)
+	if (previous) {
 		actorGetPtr(previous)->nextLink = next;
-	else if (parent->siblingHead == actorIndex)
+	} else if (parent->siblingHead == actorIndex) {
 		parent->siblingHead = next;
-	else
+	} else {
 		parent->childHead = next;
+	}
 }
 
 uint16 ComfyEngine::actorInit(uint16 sceneSlot, uint16 parentSlot, byte visible, byte active,
@@ -846,6 +874,7 @@ uint16 ComfyEngine::actorInit(uint16 sceneSlot, uint16 parentSlot, byte visible,
 	actor->waitTarget = 0;
 	actor->waitAccum = 0;
 	actor->dirty = 1;
+
 	if (_videoMode == 2 || _videoMode == 4) {
 		ComfyRect empty;
 		actor->cachedRect = empty;
@@ -856,10 +885,12 @@ uint16 ComfyEngine::actorInit(uint16 sceneSlot, uint16 parentSlot, byte visible,
 	if (parentSlot) {
 		uint16 parentIndex = sceneGetHandle(parentSlot);
 		actor->parent = parentIndex;
-		if (insertAsChild)
+
+		if (insertAsChild) {
 			actorInsertChild(actorIndex, parentIndex);
-		else
+		} else {
 			actorInsertSibling(actorIndex, parentIndex);
+		}
 	} else {
 		actor->parent = 0;
 		actor->nextLink = 0;
@@ -872,10 +903,12 @@ uint16 ComfyEngine::actorInit(uint16 sceneSlot, uint16 parentSlot, byte visible,
 void ComfyEngine::actorSetPc(Actor &actor, uint32 pc) {
 	uint32 previous = actor.callPc;
 	uint32 packed = pc;
+
 	if (previous) {
 		byte entry = _actorPcTable[0] >> 24;
 		_actorPcTable[0] = _actorPcTable[entry];
 		_actorPcTable[entry] = previous;
+
 		if (_sceneActorPcOffset + sizeof(_actorPcTable) <= _sceneMemoryBlock.size()) {
 			WRITE_LE_UINT32(&_sceneMemoryBlock[_sceneActorPcOffset], _actorPcTable[0]);
 			WRITE_LE_UINT32(&_sceneMemoryBlock[_sceneActorPcOffset + entry * 4], _actorPcTable[entry]);
@@ -890,10 +923,12 @@ void ComfyEngine::actorSetPc(Actor &actor, uint32 pc) {
 uint32 ComfyEngine::actorPopPc(Actor &actor) {
 	uint32 packed = actor.callPc;
 	byte entry = packed >> 24;
+
 	if (entry) {
 		actor.callPc = _actorPcTable[entry];
 		_actorPcTable[entry] = _actorPcTable[0];
 		_actorPcTable[0] = (uint32)entry << 24;
+
 		if (_sceneActorPcOffset + sizeof(_actorPcTable) <= _sceneMemoryBlock.size()) {
 			WRITE_LE_UINT32(&_sceneMemoryBlock[_sceneActorPcOffset], _actorPcTable[0]);
 			WRITE_LE_UINT32(&_sceneMemoryBlock[_sceneActorPcOffset + entry * 4], _actorPcTable[entry]);
@@ -908,11 +943,13 @@ uint32 ComfyEngine::actorPopPc(Actor &actor) {
 void ComfyEngine::actorFreePcChain(Actor &actor) {
 	byte first = actor.callPc >> 24;
 	byte entry = first;
+
 	while (entry) {
 		byte next = _actorPcTable[entry] >> 24;
 		if (!next) {
 			_actorPcTable[entry] = _actorPcTable[0];
 			_actorPcTable[0] = (uint32)first << 24;
+
 			if (_sceneActorPcOffset + sizeof(_actorPcTable) <= _sceneMemoryBlock.size())
 				memcpy(&_sceneMemoryBlock[_sceneActorPcOffset], _actorPcTable, sizeof(_actorPcTable));
 
@@ -958,7 +995,7 @@ void ComfyEngine::actorFreeTreePc(uint16 actorIndex) {
 			if (selector & 0xFF000000) {
 				renderInvalidateFullFrame();
 			} else if (selector != 0x00FFFFFF) {
-			renderAddDirtyRect(actor->cachedRect);
+				renderAddDirtyRect(actor->cachedRect);
 			}
 		}
 
@@ -1095,6 +1132,7 @@ bool ComfyEngine::actorRunScript(uint16 actorIndex, bool &descendChildren) {
 	}
 
 	uint32 pc = actor->currentPc;
+
 	for (;;) {
 		ScriptDispatchStatus status = scriptStep(*actor, pc);
 		if (status == kScriptContinue)
@@ -1130,6 +1168,7 @@ bool ComfyEngine::actorTickTree(uint16 actorIndex) {
 	bool descendChildren = true;
 	bool stopBranch = actorRunScript(actorIndex, descendChildren);
 	actor = actorGetPtr(actorIndex);
+
 	if (stopBranch || !descendChildren || !actor)
 		return stopBranch;
 
@@ -1137,9 +1176,9 @@ bool ComfyEngine::actorTickTree(uint16 actorIndex) {
 	while (child) {
 		Actor *childActor = actorGetPtr(child);
 		uint16 savedNext = childActor ? childActor->nextLink : 0;
-		if (actorTickTree(child))
+		if (actorTickTree(child)) {
 			child = savedNext;
-		else {
+		} else {
 			childActor = actorGetPtr(child);
 			child = childActor ? childActor->nextLink : 0;
 		}
@@ -1149,9 +1188,9 @@ bool ComfyEngine::actorTickTree(uint16 actorIndex) {
 	while (child) {
 		Actor *childActor = actorGetPtr(child);
 		uint16 savedNext = childActor ? childActor->nextLink : 0;
-		if (actorTickTree(child))
+		if (actorTickTree(child)) {
 			child = savedNext;
-		else {
+		} else {
 			childActor = actorGetPtr(child);
 			child = childActor ? childActor->nextLink : 0;
 		}
@@ -1162,10 +1201,11 @@ bool ComfyEngine::actorTickTree(uint16 actorIndex) {
 
 void ComfyEngine::actorDrawList(uint16 actorIndex, int16 x, int16 y, bool visible) {
 	while (actorIndex) {
-		if (_engineVersion == 3 || _usesAnimFile)
+		if (_engineVersion == 3 || _usesAnimFile) {
 			actorDrawInternal(actorIndex, x, y, visible);
-		else
+		} else {
 			actorDraw(actorIndex, x, y);
+		}
 
 		Actor *actor = actorGetPtr(actorIndex);
 		actorIndex = actor ? actor->nextLink : 0;
@@ -1273,6 +1313,7 @@ uint16 ComfyEngine::scriptEvalKeyMask(uint32 pc, uint16 mode, ComfyRect &maskRec
 	pc += 2;
 	uint16 bitIndex = 0xFFFF;
 	_keymaskCount = wordsLeft;
+
 	while (wordsLeft > 0 && !_scriptFault) {
 		bitIndex++;
 		uint16 spriteId = scriptReadWord(pc);
@@ -1289,9 +1330,11 @@ uint16 ComfyEngine::scriptEvalKeyMask(uint32 pc, uint16 mode, ComfyRect &maskRec
 			wordsLeft -= 2;
 			_keymaskCount = wordsLeft;
 			uint32 mask = (uint32)1 << (bitIndex & 31);
+
 			if (mode == 1) {
 				uint16 key = scriptReadWord(pc);
 				_keymaskResult = keyBitTest(key) ? 1 : 0;
+
 				if (_keymaskResult) {
 					_keymaskBits |= mask;
 					maskRecord.right = (uint16)_keymaskBits;
@@ -1299,17 +1342,21 @@ uint16 ComfyEngine::scriptEvalKeyMask(uint32 pc, uint16 mode, ComfyRect &maskRec
 				}
 
 				pc += 2;
-				if (_keymaskResult)
+
+				if (_keymaskResult) {
 					spriteId &= 0x7FFF;
-				else
+				} else {
 					spriteId = scriptReadWord(pc);
+				}
 			} else {
 				_keymaskResult = (_keymaskBits & mask) ? 1 : 0;
 				pc += 2;
-				if (_keymaskResult)
+
+				if (_keymaskResult) {
 					spriteId &= 0x7FFF;
-				else
+				} else {
 					spriteId = scriptReadWord(pc);
+				}
 			}
 
 			pc += 2;
@@ -1330,6 +1377,7 @@ uint16 ComfyEngine::scriptEvalKeyMask(uint32 pc, uint16 mode, ComfyRect &maskRec
 
 		_keymaskX = baseX + (int16)dx;
 		_keymaskY = baseY + (int16)dy;
+
 		if (_engineVersion <= 2 && (_keymaskX >= 0x0280 || _keymaskX <= (int16)0xFEC0 ||
 				_keymaskY >= 0x0190 || _keymaskY <= (int16)0xFF38))
 			continue;
@@ -1337,6 +1385,7 @@ uint16 ComfyEngine::scriptEvalKeyMask(uint32 pc, uint16 mode, ComfyRect &maskRec
 		SpriteResource *sprite = _engineVersion <= 2 ?
 			spriteGetPtr((int16)spriteId) :
 			spriteLookup(spriteId, _keymaskX, _keymaskY);
+
 		if (!sprite)
 			continue;
 
@@ -1350,6 +1399,7 @@ uint16 ComfyEngine::scriptEvalKeyMask(uint32 pc, uint16 mode, ComfyRect &maskRec
 			rect->top = top;
 			rect->right = left + sprite->header.width;
 			rect->bottom = top + sprite->header.height;
+
 			if (_isPanther || _engineVersion == 3) {
 				rect->area = spriteId;
 			} else {
@@ -1371,19 +1421,21 @@ void ComfyEngine::actorEvalFrameSelection(uint16 actorIndex, int16 x, int16 y) {
 
 	uint32 selector = actor->cachedSprite;
 	ComfyRect rect = actor->cachedRect;
+
 	if (selector == 0x00FFFFFF) {
 		animFrameInvalidateRects(rect.left, rect.top, 0);
 	} else if (selector & 0xFF000000) {
 		uint16 last = scriptEvalKeyMask(selector & 0x00FFFFFF, 0, rect, _keymaskInvalidationRects,
 			rect.left, rect.top);
+
 		if (last != 0xFFFF && last >= COMFY_KEYMASK_RECT_CAPACITY)
 			last = COMFY_KEYMASK_RECT_CAPACITY - 1;
 
 		if (last != 0xFFFF) {
 			for (uint i = 0; i <= last; i++) {
 				ComfyRect dirtyRect = _keymaskInvalidationRects[i];
-				dirtyRect.area = (uint32)(dirtyRect.right - dirtyRect.left) *
-					(dirtyRect.bottom - dirtyRect.top);
+				dirtyRect.area = (uint32)(dirtyRect.right - dirtyRect.left) * (dirtyRect.bottom - dirtyRect.top);
+
 				if (_engineVersion == 1)
 					dirtyRect.area = (uint16)dirtyRect.area;
 
@@ -1423,8 +1475,7 @@ bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
 	}
 
 	if (!_usesAnimFile && !actor->visible) {
-		if ((_videoMode == 2 || _videoMode == 4) &&
-				actor->visible != actor->cachedVisible) {
+		if ((_videoMode == 2 || _videoMode == 4) && actor->visible != actor->cachedVisible) {
 			int16 drawX = (int16)(actor->xFixed >> 12) + x;
 			int16 drawY = (int16)(actor->yFixed >> 12) + y;
 			actorEvalFrameSelection(actorIndex, drawX, drawY);
@@ -1436,10 +1487,12 @@ bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
 
 	animFrameRecordVocCounter(1);
 	bool queuedActorDraw = (_isPanther || _engineVersion == 3) && (_videoMode == 2 || _videoMode == 4);
-	if ((_isPanther || _engineVersion == 3) && !queuedActorDraw)
+
+	if ((_isPanther || _engineVersion == 3) && !queuedActorDraw) {
 		actorDrawLegacyInternal(actorIndex, x, y);
-	else
+	} else {
 		actorDrawInternal(actorIndex, x, y, true);
+	}
 
 	if (queuedActorDraw)
 		renderFlushDrawCommands();
@@ -1459,6 +1512,7 @@ bool ComfyEngine::actorDrawLegacyInternal(uint16 actorIndex, int16 x, int16 y) {
 	int16 drawY = (int16)(actor->yFixed >> 12) + y;
 	bool drawResult = true;
 	uint16 linkedActor = actor->siblingHead;
+
 	while (linkedActor && drawResult) {
 		drawResult = actorDrawLegacyInternal(linkedActor, drawX, drawY);
 		Actor *linked = actorGetPtr(linkedActor);
@@ -1476,20 +1530,23 @@ bool ComfyEngine::actorDrawLegacyInternal(uint16 actorIndex, int16 x, int16 y) {
 		uint32 pc = selector & 0x00FFFFFF;
 		int16 wordsLeft = (int16)(scriptReadWord(pc) - 1);
 		pc += 2;
+
 		while (wordsLeft > 0 && !_scriptFault) {
 			uint16 spriteId = scriptReadWord(pc);
 			int16 dx = scriptReadWord(pc + 2);
 			int16 dy = scriptReadWord(pc + 4);
 			pc += 6;
 			wordsLeft -= 3;
+
 			if (spriteId & 0x8000) {
 				wordsLeft -= 2;
 				uint16 key = scriptReadWord(pc);
 				pc += 2;
-				if (keyBitTest(key))
+				if (keyBitTest(key)) {
 					spriteId &= 0x7FFF;
-				else
+				} else {
 					spriteId = scriptReadWord(pc);
+				}
 
 				pc += 2;
 			}
@@ -1530,13 +1587,17 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 
 	int16 drawX = (int16)(actor->xFixed >> 12) + x;
 	int16 drawY = (int16)(actor->yFixed >> 12) + y;
+
 	visible = visible && actor->visible;
 	byte oldVisible = actor->cachedVisible;
 	uint32 oldSelector = actor->cachedSprite;
 	ComfyRect oldRect = actor->cachedRect;
+
 	actorDrawList(actor->siblingHead, drawX, drawY, visible);
+
 	uint32 selector = actor->spriteSelector;
 	bool useDrawQueue = _usesAnimFile && (_isPanther || _engineVersion == 3) && (_videoMode == 2 || _videoMode == 4);
+
 	if (_isPanther || _engineVersion == 3) {
 		ComfyRect newRect;
 		if (selector == 0x00FFFFFF) {
@@ -1573,8 +1634,9 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 			_keymaskCurrentRecord.right = 0;
 			_keymaskCurrentRecord.bottom = 0;
 			_keymaskCurrentRecord.area = 0;
-			currentLastRect = scriptEvalKeyMask(selector & 0x00FFFFFF, 1,
-				_keymaskCurrentRecord, _keymaskRects, drawX, drawY);
+
+			currentLastRect = scriptEvalKeyMask(selector & 0x00FFFFFF, 1, _keymaskCurrentRecord, _keymaskRects, drawX, drawY);
+
 			if (currentLastRect != 0xFFFF && currentLastRect >= COMFY_KEYMASK_RECT_CAPACITY)
 				currentLastRect = COMFY_KEYMASK_RECT_CAPACITY - 1;
 
@@ -1590,11 +1652,10 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 			}
 		}
 
-		if (scripted && oldSelector == selector && oldRect.left == newRect.left &&
-				oldRect.top == newRect.top && oldVisible == 1 && visible) {
+		if (scripted && oldSelector == selector && oldRect.left == newRect.left && oldRect.top == newRect.top && oldVisible == 1 && visible) {
 			ComfyRect oldMaskRecord = oldRect;
-			uint16 oldLastRect = scriptEvalKeyMask(oldSelector & 0x00FFFFFF, 0,
-				oldMaskRecord, _keymaskOldRects, oldRect.left, oldRect.top);
+			uint16 oldLastRect = scriptEvalKeyMask(oldSelector & 0x00FFFFFF, 0, oldMaskRecord, _keymaskOldRects, oldRect.left, oldRect.top);
+
 			if (oldLastRect != 0xFFFF && oldLastRect >= COMFY_KEYMASK_RECT_CAPACITY)
 				oldLastRect = COMFY_KEYMASK_RECT_CAPACITY - 1;
 
@@ -1602,16 +1663,17 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 				for (uint i = 0; i <= oldLastRect; i++) {
 					ComfyRect &currentRect = _keymaskRects[i];
 					ComfyRect &previousRect = _keymaskOldRects[i];
+
 					bool equal = currentRect.left == previousRect.left &&
 						currentRect.top == previousRect.top &&
 						currentRect.right == previousRect.right &&
 						currentRect.bottom == previousRect.bottom &&
 						currentRect.area == previousRect.area;
+
 					if (!equal)
 						renderAddDirtyRect(previousRect);
 
-					renderQueueDrawCommand(currentRect.left, currentRect.top,
-						currentRect.area, equal ? 1 : 0, actorIndex);
+					renderQueueDrawCommand(currentRect.left, currentRect.top, currentRect.area, equal ? 1 : 0, actorIndex);
 				}
 			}
 
@@ -1625,6 +1687,7 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 			oldRect.top != newRect.top || oldRect.right != newRect.right ||
 			oldRect.bottom != newRect.bottom || oldRect.area != newRect.area ||
 			oldVisible != (visible ? 1 : 0);
+
 		if (changed) {
 			if (visible && selector) {
 				if (scripted && currentLastRect != 0xFFFF) {
@@ -1642,23 +1705,22 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 					renderFlushCachedDirtyRects();
 				} else if (oldSelector & 0xFF000000) {
 					ComfyRect oldMaskRecord = oldRect;
-					uint16 oldLastRect = scriptEvalKeyMask(oldSelector & 0x00FFFFFF, 0,
-						oldMaskRecord, _keymaskOldRects, oldRect.left, oldRect.top);
+					uint16 oldLastRect = scriptEvalKeyMask(oldSelector & 0x00FFFFFF, 0, oldMaskRecord, _keymaskOldRects, oldRect.left, oldRect.top);
+
 					if (oldLastRect != 0xFFFF && oldLastRect >= COMFY_KEYMASK_RECT_CAPACITY)
 						oldLastRect = COMFY_KEYMASK_RECT_CAPACITY - 1;
 
 					if (oldLastRect != 0xFFFF) {
 						for (uint i = 0; i <= oldLastRect; i++)
-								renderAddDirtyRect(_keymaskOldRects[i]);
+							renderAddDirtyRect(_keymaskOldRects[i]);
 					}
 				} else {
-						renderAddDirtyRect(oldRect);
+					renderAddDirtyRect(oldRect);
 				}
 			}
 
 			actor->cachedVisible = visible ? 1 : 0;
 			actor->cachedRect = newRect;
-
 			actor->cachedSprite = selector;
 		} else if (visible) {
 			if (scripted && currentLastRect != 0xFFFF) {
@@ -1677,8 +1739,10 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 
 	bool oldScripted = (oldSelector & 0xFF000000) != 0;
 	bool newScripted = (selector & 0xFF000000) != 0;
+
 	ComfyRect newRect;
 	uint16 scriptedLastRect = 0xFFFF;
+
 	if (newScripted) {
 		uint32 pc = selector & 0x00FFFFFF;
 		if (_videoMode == 2 || _videoMode == 4) {
@@ -1687,6 +1751,7 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 			_keymaskCurrentRecord.right = 0;
 			_keymaskCurrentRecord.bottom = 0;
 			_keymaskCurrentRecord.area = 0;
+
 			scriptedLastRect = scriptEvalKeyMask(pc, 1, _keymaskCurrentRecord, _keymaskRects, drawX, drawY);
 			if (scriptedLastRect != 0xFFFF && scriptedLastRect >= COMFY_KEYMASK_RECT_CAPACITY)
 				scriptedLastRect = COMFY_KEYMASK_RECT_CAPACITY - 1;
@@ -1695,30 +1760,36 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 				for (uint i = 0; i <= scriptedLastRect; i++) {
 					ComfyRect &drawRecord = _keymaskRects[i];
 					if (drawRecord.area) {
-						if (useDrawQueue)
+						if (useDrawQueue) {
 							renderQueueDrawCommand(drawRecord.left, drawRecord.top, drawRecord.area, 1, actorIndex);
-						else
+						} else {
 							spriteBlitClipped((int16)drawRecord.area, drawRecord.left, drawRecord.top);
+						}
 					}
 				}
 			}
 		} else {
 			int16 wordsLeft = (int16)(scriptReadWord(pc) - 1);
 			pc += 2;
+
 			while (wordsLeft > 0 && !_scriptFault) {
 				uint16 spriteId = scriptReadWord(pc);
 				int16 dx = scriptReadWord(pc + 2);
 				int16 dy = scriptReadWord(pc + 4);
+
 				pc += 6;
 				wordsLeft -= 3;
+
 				if (spriteId & 0x8000) {
 					wordsLeft -= 2;
 					uint16 key = scriptReadWord(pc);
 					pc += 2;
-					if (keyBitTest(key))
+
+					if (keyBitTest(key)) {
 						spriteId &= 0x7FFF;
-					else
+					} else {
 						spriteId = scriptReadWord(pc);
+					}
 
 					pc += 2;
 				}
@@ -1728,10 +1799,12 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 					if (sprite) {
 						int16 spriteX = drawX + dx - sprite->header.hotspotX;
 						int16 spriteY = drawY + dy - sprite->header.hotspotY;
-						if (useDrawQueue)
+
+						if (useDrawQueue) {
 							renderQueueDrawCommand(spriteX, spriteY, spriteId, 1, actorIndex);
-						else
+						} else {
 							spriteBlitClipped((int16)spriteId, spriteX, spriteY);
+						}
 					}
 				}
 			}
@@ -1743,12 +1816,15 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 	} else if (selector == 0x00FFFFFF) {
 		uint16 frameWidth = 0;
 		uint16 frameHeight = 0;
+
 		animFrameGetDimensions(frameWidth, frameHeight);
+
 		newRect.left = drawX;
 		newRect.top = drawY;
 		newRect.right = drawX + frameWidth;
 		newRect.bottom = drawY + frameHeight;
 		newRect.area = frameWidth * frameHeight;
+
 		if (_engineVersion == 1)
 			newRect.area = (uint16)newRect.area;
 
@@ -1768,31 +1844,37 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 			newRect.right = newRect.left + sprite->header.width;
 			newRect.bottom = newRect.top + sprite->header.height;
 			newRect.area = sprite->header.width * sprite->header.height;
+
 			if (_engineVersion == 1)
 				newRect.area = (uint16)newRect.area;
 
 			if (visible) {
 				int16 spriteX = drawX - sprite->header.hotspotX;
 				int16 spriteY = drawY - sprite->header.hotspotY;
-				if (useDrawQueue)
+
+				if (useDrawQueue) {
 					renderQueueDrawCommand(spriteX, spriteY, selector, 1, actorIndex);
-				else
+				} else {
 					spriteBlitClipped((int16)selector, spriteX, spriteY);
+				}
 			}
 		}
 	}
+
 	if (_videoMode == 2 || _videoMode == 4) {
 		byte newVisible = visible ? 1 : 0;
 		bool changed = oldSelector != selector || oldVisible != newVisible;
-		if (oldRect.left != newRect.left || oldRect.top != newRect.top ||
-				oldRect.right != newRect.right || oldRect.bottom != newRect.bottom || oldRect.area != newRect.area)
+
+		if (oldRect.left  != newRect.left  || oldRect.top    != newRect.top    ||
+			oldRect.right != newRect.right || oldRect.bottom != newRect.bottom || oldRect.area != newRect.area)
 			changed = true;
 
 		uint16 oldScriptedLastRect = 0xFFFF;
+
 		if (oldScripted) {
 			ComfyRect maskRecord = oldRect;
-			oldScriptedLastRect = scriptEvalKeyMask(oldSelector & 0x00FFFFFF, 0, maskRecord,
-				_keymaskOldRects, oldRect.left, oldRect.top);
+			oldScriptedLastRect = scriptEvalKeyMask(oldSelector & 0x00FFFFFF, 0, maskRecord, _keymaskOldRects, oldRect.left, oldRect.top);
+
 			if (oldScriptedLastRect != 0xFFFF && oldScriptedLastRect >= COMFY_KEYMASK_RECT_CAPACITY)
 				oldScriptedLastRect = COMFY_KEYMASK_RECT_CAPACITY - 1;
 		}
@@ -1802,17 +1884,20 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 			if (newScripted && oldScripted && oldSelector == selector &&
 					oldRect.left == _keymaskCurrentRecord.left && oldRect.top == _keymaskCurrentRecord.top &&
 					scriptedLastRect != 0xFFFF && oldScriptedLastRect != 0xFFFF) {
+
 				uint16 last = MAX(scriptedLastRect, oldScriptedLastRect);
+
 				for (uint i = 0; i <= last; i++) {
 					ComfyRect *oldItem = i <= oldScriptedLastRect ? &_keymaskOldRects[i] : nullptr;
 					ComfyRect *newItem = i <= scriptedLastRect ? &_keymaskRects[i] : nullptr;
 					bool equal = oldItem && newItem && oldItem->left == newItem->left && oldItem->top == newItem->top &&
 						oldItem->right == newItem->right && oldItem->bottom == newItem->bottom && oldItem->area == newItem->area;
+
 					if (!equal) {
 						if (oldItem) {
 							ComfyRect dirtyRect = *oldItem;
-							dirtyRect.area = (uint32)(dirtyRect.right - dirtyRect.left) *
-								(dirtyRect.bottom - dirtyRect.top);
+							dirtyRect.area = (uint32)(dirtyRect.right - dirtyRect.left) * (dirtyRect.bottom - dirtyRect.top);
+
 							if (_engineVersion == 1)
 								dirtyRect.area = (uint16)dirtyRect.area;
 
@@ -1821,8 +1906,8 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 
 						if (newItem) {
 							ComfyRect dirtyRect = *newItem;
-							dirtyRect.area = (uint32)(dirtyRect.right - dirtyRect.left) *
-								(dirtyRect.bottom - dirtyRect.top);
+							dirtyRect.area = (uint32)(dirtyRect.right - dirtyRect.left) * (dirtyRect.bottom - dirtyRect.top);
+
 							if (_engineVersion == 1)
 								dirtyRect.area = (uint16)dirtyRect.area;
 
@@ -1835,8 +1920,8 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 			} else if (newScripted && scriptedLastRect != 0xFFFF) {
 				for (uint i = 0; i <= scriptedLastRect; i++) {
 					ComfyRect dirtyRect = _keymaskRects[i];
-					dirtyRect.area = (uint32)(dirtyRect.right - dirtyRect.left) *
-						(dirtyRect.bottom - dirtyRect.top);
+					dirtyRect.area = (uint32)(dirtyRect.right - dirtyRect.left) * (dirtyRect.bottom - dirtyRect.top);
+
 					if (_engineVersion == 1)
 						dirtyRect.area = (uint16)dirtyRect.area;
 
@@ -1850,8 +1935,8 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 				if (oldScripted && oldScriptedLastRect != 0xFFFF) {
 					for (uint i = 0; i <= oldScriptedLastRect; i++) {
 						ComfyRect dirtyRect = _keymaskOldRects[i];
-						dirtyRect.area = (uint32)(dirtyRect.right - dirtyRect.left) *
-							(dirtyRect.bottom - dirtyRect.top);
+						dirtyRect.area = (uint32)(dirtyRect.right - dirtyRect.left) * (dirtyRect.bottom - dirtyRect.top);
+
 						if (_engineVersion == 1)
 							dirtyRect.area = (uint16)dirtyRect.area;
 
@@ -1868,6 +1953,7 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 		actor->cachedVisible = newVisible;
 		actor->cachedSprite = selector;
 		actor->cachedRect = newRect;
+
 		if (_engineVersion == 1)
 			actor->cachedRect.area &= 0xFFFF;
 	}

@@ -66,8 +66,8 @@ void ComfyEngine::animFrameSetVocCounter(uint32 counter) {
 	if (!_midiPlyrDriver)
 		return;
 
-	// The original uses a wave callback counter when the ANM header requests it.
-	// ScummVM uses the MidiPlyr timer as the common host-side VOC clock.
+	// The original uses a wave callback counter when the ANM header requests it;
+	// we use the MidiPlyr timer as the common host-side VOC clock...
 	_midiPlyrDriver->setIncreaseVocCounter(1);
 	_midiPlyrDriver->setVocCounter(counter);
 }
@@ -86,6 +86,7 @@ bool ComfyEngine::animFileOpen() {
 		return false;
 
 	_animIndexTable.resize(count);
+
 	for (uint i = 0; i < count; i++)
 		_animIndexTable[i] = READ_LE_UINT32(&_animFileData[COMFY_ANMFILE_HEADER_BYTES + i * 4]);
 
@@ -150,6 +151,7 @@ void ComfyEngine::animFileLoadFrame(uint16 animIndex, uint16 frameKey, uint16 ac
 	memcpy(_animFrameHeader, &_animFileData[offset], sizeof(_animFrameHeader));
 	uint16 magic = READ_LE_UINT16(_animFrameHeader);
 	uint16 expectedMagic = _animPantherFormat ? COMFY_ANMFRAME_PANTHER_MAGIC : COMFY_ANMFRAME_MAGIC;
+
 	if (magic != expectedMagic)
 		error("Invalid frame header in ANMFILE.DAT for animation %u", (uint)animIndex);
 
@@ -160,6 +162,7 @@ void ComfyEngine::animFileLoadFrame(uint16 animIndex, uint16 frameKey, uint16 ac
 	memset(_animStorageChunkOffsets, 0, sizeof(_animStorageChunkOffsets));
 	memset(_animStorageChunkSizes, 0, sizeof(_animStorageChunkSizes));
 	memset(_animFrameCommandData, 0, sizeof(_animFrameCommandData));
+
 	_animFrameCommandDataSize = 0;
 	_animFrameCommandArgument = 0;
 	_animFrameCommandFlag = false;
@@ -170,6 +173,7 @@ void ComfyEngine::animFileLoadFrame(uint16 animIndex, uint16 frameKey, uint16 ac
 	_animCurrentActorSceneHandle = actorSceneHandle;
 	_animCurrentFrameKey = frameKey;
 	_animUsesWaveVocCounter = READ_LE_UINT32(_animFrameHeader + 4) != 0;
+
 	if (_animUsesWaveVocCounter) {
 		vocQueuePlayAll();
 		vocQueuePush(0xFFFF, 0, 0);
@@ -194,8 +198,10 @@ void ComfyEngine::animFileLoadFrame(uint16 animIndex, uint16 frameKey, uint16 ac
 uint32 ComfyEngine::animDecompressRle(const byte *source, uint32 sourceSize, byte *destination, uint32 destinationSize) {
 	uint32 sourcePosition = 0;
 	uint32 destinationPosition = 0;
+
 	while (sourcePosition < sourceSize) {
 		byte control = source[sourcePosition++];
+
 		if (control == 0) {
 			if (sourcePosition + 1 >= sourceSize)
 				return destinationPosition;
@@ -266,15 +272,18 @@ uint32 ComfyEngine::animDecodePanther(const byte *source, uint32 sourceSize) {
 	uint32 sourcePosition = 6;
 	uint32 destinationPosition = 0;
 	uint32 written = 0;
+
 	if (kind == 7) {
 		if (sourcePosition + 2 > sourceSize)
 			return 0;
 
 		uint16 rows = READ_LE_UINT16(source + sourcePosition);
 		sourcePosition += 2;
+
 		while (rows && sourcePosition + 2 <= sourceSize && destinationPosition < _animFrameBuffer.size()) {
 			uint16 runCount = READ_LE_UINT16(source + sourcePosition);
 			sourcePosition += 2;
+
 			if (runCount & 0x4000) {
 				destinationPosition += (uint32)(uint16)(0 - runCount) * _logicalScreenWidth;
 				continue;
@@ -294,6 +303,7 @@ uint32 ComfyEngine::animDecodePanther(const byte *source, uint32 sourceSize) {
 
 					byte low = source[sourcePosition++];
 					byte high = source[sourcePosition++];
+
 					while (count-- && destinationPosition + 1 < _animFrameBuffer.size()) {
 						_animFrameBuffer[destinationPosition++] = low;
 						_animFrameBuffer[destinationPosition++] = high;
@@ -324,13 +334,15 @@ uint32 ComfyEngine::animDecodePanther(const byte *source, uint32 sourceSize) {
 
 	uint16 width = READ_LE_UINT16(_animFrameHeader + 10);
 	uint16 height = READ_LE_UINT16(_animFrameHeader + 12);
-	for (uint16 row = 0; row < height && sourcePosition < sourceSize &&
-			destinationPosition < _animFrameBuffer.size(); row++) {
+
+	for (uint16 row = 0; row < height && sourcePosition < sourceSize && destinationPosition < _animFrameBuffer.size(); row++) {
 		sourcePosition++;
 		uint16 remaining = width;
+
 		while (remaining && sourcePosition < sourceSize && destinationPosition < _animFrameBuffer.size()) {
 			byte control = source[sourcePosition++];
 			uint16 count = control;
+
 			if (control & 0x80) {
 				count = 0x100 - control;
 				count = MIN(count, remaining);
@@ -382,8 +394,10 @@ void ComfyEngine::animFileTickCommands() {
 
 	bool ended = false;
 	bool frameReady = false;
+
 	while (!ended && !frameReady) {
 		uint32 headerSize = _animPantherFormat ? 8 : 4;
+
 		if (_animPosition > _animFileData.size() || headerSize > _animFileData.size() - _animPosition)
 			error("ANMFILE.DAT is truncated while reading an animation command");
 
@@ -395,7 +409,7 @@ void ComfyEngine::animFileTickCommands() {
 		uint32 commandSize = rawCommandSize;
 
 		// WPANTHER compares the FR command size as signed. Some Panther data uses
-		// negative sizes here; this marks the frame ready without decoding payload.
+		// negative sizes here; this marks the frame ready without decoding payload...
 		if (_animPantherFormat && command == kAnimCommandFrame && signedCommandSize <= (int32)headerSize) {
 			int64 nextPosition = (int64)commandStart + signedCommandSize;
 			if (nextPosition < 0 || nextPosition > (int64)_animFileData.size())
@@ -406,8 +420,8 @@ void ComfyEngine::animFileTickCommands() {
 			uint32 frameStart = _animIndexTable[_animCurrentIndex] + COMFY_ANMFILE_HEADER_BYTES;
 			_animSavedStreamPosition = (uint32)nextPosition - frameStart;
 
-			// The original file object has already consumed the 8-byte FR header.
-			// Its separately serialized cursor can be signed and point backward.
+			// The original file object has already consumed the 8-byte FR header;
+			// its separately serialized cursor can be signed so that it points backwards...
 			_animPosition = commandStart + headerSize;
 			frameReady = true;
 			continue;
@@ -426,8 +440,8 @@ void ComfyEngine::animFileTickCommands() {
 		uint32 payloadSize = commandSize - headerSize;
 		byte *payload = header + headerSize;
 		_animPosition += commandSize;
-		_animSavedStreamPosition = _animPosition -
-			(_animIndexTable[_animCurrentIndex] + COMFY_ANMFILE_HEADER_BYTES);
+		_animSavedStreamPosition = _animPosition - (_animIndexTable[_animCurrentIndex] + COMFY_ANMFILE_HEADER_BYTES);
+
 		if (command == kAnimCommandEnd) {
 			ended = true;
 		} else if (command == kAnimCommandStoreFrameBytes) {
@@ -435,6 +449,7 @@ void ComfyEngine::animFileTickCommands() {
 			uint32 frameStart = _animIndexTable[_animCurrentIndex] + COMFY_ANMFILE_HEADER_BYTES;
 			animFilePushStorageChunk((uint32)(payload - &_animFileData[frameStart]), oldSize, (uint16)payloadSize);
 			_animFrameStorage.resize(oldSize + payloadSize);
+
 			if (payloadSize)
 				memcpy(&_animFrameStorage[oldSize], payload, payloadSize);
 
@@ -442,6 +457,7 @@ void ComfyEngine::animFileTickCommands() {
 				_animSoundDataPosition += payloadSize;
 		} else if (command == kAnimCommandDirtyRect) {
 			_animFrameCommandDataSize = payloadSize;
+
 			if (_animPantherFormat && _engineVersion == 3) {
 				_animFrameCommandFlag = (READ_LE_UINT16(header + 6) & 0x8000) != 0;
 				_animFrameCommandArgument = READ_LE_UINT16(header + 6) & 0x07FF;
@@ -458,6 +474,7 @@ void ComfyEngine::animFileTickCommands() {
 					animDecodePanther(payload, payloadSize);
 				} else {
 					animDecompressRle(payload, payloadSize, &_animFrameBuffer[0], _animFrameBuffer.size());
+
 					if (_framebufPtr) {
 						memcpy(_framebufPtr, &_animFrameBuffer[0], COMFY_ANMFRAME_BYTES);
 						renderRequestFullFrameInvalidation();
@@ -503,6 +520,7 @@ bool ComfyEngine::animFrameShouldDraw(uint16 phase) {
 	int16 delta = animFrameVocCounterDelta();
 	int16 adjustedDelta = (int16)((phase == 1 ? (int16)(delta + _animVocDeltaA) : delta) + _animVocDeltaB);
 	bool shouldDraw = adjustedDelta <= threshold;
+
 	if (!shouldDraw) {
 		if ((int16)_animVocDeltaA > 0)
 			_animVocDeltaA--;
@@ -519,6 +537,7 @@ void ComfyEngine::animFrameRecordVocCounter(uint16 phase) {
 		return;
 
 	uint32 counter = _midiPlyrDriver->getVocCounter();
+
 	if (phase == 1) {
 		_animVocCounterStartA = counter;
 	} else if (phase == 2) {
@@ -538,6 +557,7 @@ void ComfyEngine::animFrameWaitForVocCounter() {
 
 	while (animFrameVocCounterDelta() < -(int16)(_animVocDeltaB + 3)) {
 		processEvents();
+
 		if (shouldQuit())
 			break;
 	}
@@ -559,6 +579,7 @@ bool ComfyEngine::animFrameBlitAt(int16 x, int16 y) {
 
 	uint16 frameWidth = 0;
 	uint16 frameHeight = 0;
+
 	if (!animFrameGetDimensions(frameWidth, frameHeight))
 		return false;
 
@@ -574,6 +595,7 @@ bool ComfyEngine::animFrameBlitAt(int16 x, int16 y) {
 		int16 clippedTop = MAX<int16>(top, 0);
 		int16 clippedRight = MIN<int16>(right, _logicalScreenWidth);
 		int16 clippedBottom = MIN<int16>(bottom, _logicalScreenHeight);
+
 		if (clippedLeft >= clippedRight || clippedTop >= clippedBottom)
 			continue;
 
@@ -581,11 +603,13 @@ bool ComfyEngine::animFrameBlitAt(int16 x, int16 y) {
 			uint32 sourceOffset = (uint32)(row - y) * _logicalScreenWidth + clippedLeft - x;
 			uint32 destinationOffset = (uint32)row * _logicalScreenWidth + clippedLeft;
 			uint32 width = clippedRight - clippedLeft;
+
 			if (sourceOffset >= _animFrameBuffer.size())
 				break;
 
 			width = MIN<uint32>(width, _animFrameBuffer.size() - sourceOffset);
 			uint32 column = 0;
+
 			while (column < width) {
 				while (column < width && _animFrameBuffer[sourceOffset + column] == 0xFF)
 					column++;
@@ -614,15 +638,14 @@ bool ComfyEngine::animFrameCoversPoint(int16 x, int16 y, int16 pointX, int16 poi
 	if (!animFrameGetDimensions(frameWidth, frameHeight))
 		return false;
 
-	if (pointX < x || pointY < y || pointX >= x + (int16)frameWidth ||
-			pointY >= y + (int16)frameHeight)
+	if (pointX < x || pointY < y || pointX >= x + (int16)frameWidth || pointY >= y + (int16)frameHeight)
 		return false;
 
 	bool dirty = false;
 	for (uint i = 0; i < _dirtyRectCount; i++) {
 		ComfyRect &dirtyRect = _dirtyRects[i];
-		if (pointX >= dirtyRect.left && pointX < dirtyRect.right &&
-				pointY >= dirtyRect.top && pointY < dirtyRect.bottom) {
+
+		if (pointX >= dirtyRect.left && pointX < dirtyRect.right && pointY >= dirtyRect.top && pointY < dirtyRect.bottom) {
 			dirty = true;
 			break;
 		}
@@ -639,10 +662,10 @@ void ComfyEngine::animFrameInvalidateRects(int16 x, int16 y, byte mode) {
 	if (_animFrameBuffer.empty())
 		return;
 
-	uint16 rectCount = MIN<uint16>(_animFrameCommandDataSize / 4,
-		sizeof(_animFrameCommandData) / 4);
+	uint16 rectCount = MIN<uint16>(_animFrameCommandDataSize / 4, sizeof(_animFrameCommandData) / 4);
 	uint16 splitIndex = _animFrameCommandArgument / 4;
-	uint16 columns = _isPanther ? 0x00A0 : 0x0050;
+	uint16 columns = _isPanther ? 160 : 80;
+
 	if (_engineVersion == 3 && _animFrameCommandFlag) {
 		uint16 frameWidth = READ_LE_UINT16(_animFrameHeader + 10);
 		if (frameWidth)
@@ -659,6 +682,7 @@ void ComfyEngine::animFrameInvalidateRects(int16 x, int16 y, byte mode) {
 		rect.right = x + ((end % columns) + 1) * 4;
 		rect.bottom = y + ((end / columns) + 1) * 4;
 		rect.area = (uint32)(rect.right - rect.left) * (rect.bottom - rect.top);
+
 		if (_engineVersion == 1)
 			rect.area = (uint16)rect.area;
 
@@ -679,6 +703,7 @@ void ComfyEngine::animFrameInvalidateRects(int16 x, int16 y, byte mode) {
 			_animFrameDirtyRects[0].right = _logicalScreenWidth;
 			_animFrameDirtyRects[0].bottom = _logicalScreenHeight;
 			_animFrameDirtyRects[0].area = framebufferBytes();
+
 			if (_engineVersion == 1)
 				_animFrameDirtyRects[0].area = (uint16)_animFrameDirtyRects[0].area;
 		}
@@ -711,9 +736,11 @@ void ComfyEngine::animFrameClear() {
 void ComfyEngine::animFilePackState(byte *state) {
 	memset(state, 0, _animPantherFormat ? COMFY_PANTHER_ANM_STATE_BYTES : COMFY_ANM_STATE_BYTES);
 	memcpy(state, _animFrameHeader, sizeof(_animFrameHeader));
+
 	WRITE_LE_UINT16(state + 0x10, _animCurrentIndex);
 	WRITE_LE_UINT16(state + 0x12, _animVocTargetCounter);
 	state[0x14] = _animActive;
+
 	if (_animPantherFormat) {
 		state[0x15] = _animFrameReady;
 		WRITE_LE_UINT16(state + 0x16, _animCurrentFrameKey);
@@ -736,10 +763,10 @@ void ComfyEngine::animFilePackState(byte *state) {
 	}
 
 	uint32 streamPosition = _animSavedStreamPosition;
-
 	uint32 streamPositionOffset = _animPantherFormat ? 0x27 : 0x28;
 	uint32 chunkTableOffset = _animPantherFormat ? 0x2B : 0x2C;
 	WRITE_LE_UINT32(state + streamPositionOffset, streamPosition);
+
 	for (uint i = 0; i < 6; i++) {
 		byte *chunk = state + chunkTableOffset + i * 0x0A;
 		WRITE_LE_UINT32(chunk, _animStorageChunkFileOffsets[i]);
@@ -770,6 +797,7 @@ void ComfyEngine::animFileRebuildStorage(uint32 targetSize) {
 	memset(_animStorageChunkFileOffsets, 0, sizeof(_animStorageChunkFileOffsets));
 	memset(_animStorageChunkOffsets, 0, sizeof(_animStorageChunkOffsets));
 	memset(_animStorageChunkSizes, 0, sizeof(_animStorageChunkSizes));
+
 	if (_animCurrentIndex >= _animIndexTable.size())
 		return;
 
@@ -784,6 +812,7 @@ void ComfyEngine::animFileRebuildStorage(uint32 targetSize) {
 		uint32 rawCommandSize = _animPantherFormat ? READ_LE_UINT32(header + 2) : READ_LE_UINT16(header + 2);
 		int32 signedCommandSize = _animPantherFormat ? (int32)rawCommandSize : (int32)(uint16)rawCommandSize;
 		uint32 commandSize = rawCommandSize;
+
 		if (_animPantherFormat && command == kAnimCommandFrame && signedCommandSize <= (int32)headerSize)
 			break;
 
@@ -796,16 +825,19 @@ void ComfyEngine::animFileRebuildStorage(uint32 targetSize) {
 
 		uint32 payloadSize = commandSize - headerSize;
 		byte *payload = header + headerSize;
+
 		if (command == kAnimCommandStoreFrameBytes && _animFrameStorage.size() < targetSize) {
 			uint32 copySize = MIN<uint32>(payloadSize, targetSize - _animFrameStorage.size());
 			uint32 oldSize = _animFrameStorage.size();
 			uint32 frameStart = _animIndexTable[_animCurrentIndex] + COMFY_ANMFILE_HEADER_BYTES;
 			animFilePushStorageChunk((uint32)(payload - &_animFileData[frameStart]), oldSize, (uint16)copySize);
 			_animFrameStorage.resize(oldSize + copySize);
+
 			if (copySize)
 				memcpy(&_animFrameStorage[oldSize], payload, copySize);
 		} else if (command == kAnimCommandDirtyRect) {
 			_animFrameCommandDataSize = payloadSize;
+
 			if (_animPantherFormat && _engineVersion == 3) {
 				_animFrameCommandFlag = (READ_LE_UINT16(header + 6) & 0x8000) != 0;
 				_animFrameCommandArgument = READ_LE_UINT16(header + 6) & 0x07FF;
@@ -830,6 +862,7 @@ void ComfyEngine::animFileUnpackState(const byte *state) {
 	_animActive = state[0x14] != 0;
 	uint32 chunkTableOffset = 0;
 	uint32 vocCounterOffset = 0;
+
 	if (_animPantherFormat) {
 		_animFrameReady = state[0x15] != 0;
 		_animCurrentFrameKey = READ_LE_UINT16(state + 0x16);
@@ -858,8 +891,7 @@ void ComfyEngine::animFileUnpackState(const byte *state) {
 		_animStorageChunkFileOffsets[i] = READ_LE_UINT32(chunk);
 		_animStorageChunkOffsets[i] = READ_LE_UINT32(chunk + 4);
 		_animStorageChunkSizes[i] = READ_LE_UINT16(chunk + 8);
-		storageSize = MAX<uint32>(storageSize,
-			_animStorageChunkOffsets[i] + _animStorageChunkSizes[i]);
+		storageSize = MAX<uint32>(storageSize, _animStorageChunkOffsets[i] + _animStorageChunkSizes[i]);
 	}
 
 	if (_animCurrentActorSceneHandle == 0)
@@ -889,8 +921,8 @@ void ComfyEngine::animFrameInvalidateActorRect() {
 	if (!actor)
 		return;
 
-	actor->cachedRect.left = 0x270F;
-	actor->cachedRect.right = 0x270F;
+	actor->cachedRect.left = 9999;
+	actor->cachedRect.right = 9999;
 }
 
 } // End of namespace Comfy

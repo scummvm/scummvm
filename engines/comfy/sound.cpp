@@ -36,7 +36,7 @@ namespace Comfy {
 struct SoundDecoderState {
 public:
 	// soundPrepareDecoderState() collects an embedded ANM sound into one temporary buffer.
-	// This constructor copies those bytes, so decoding no longer needs the engine or a file.
+	// This constructor copies those bytes, so decoding no longer needs the engine or a file...
 	SoundDecoderState(const byte *data, uint32 size, bool compressed) {
 		_data.resize(size);
 		if (size)
@@ -45,6 +45,7 @@ public:
 		_compressed = compressed;
 		_end = size;
 		_windowEnd = size;
+
 		if (_compressed) {
 			if (size < 5) {
 				_fault = true;
@@ -62,13 +63,13 @@ public:
 
 	// A regular VOC entry remains in VOCFILE.DAT. This constructor retains the engine and
 	// file object so loadSourceWindow() can read each block through objFileReadTiledCore().
-	SoundDecoderState(ComfyEngine *engine, ComfyEngine::ObjFile *objectFile,
-			uint32 sourceBase, uint32 size, bool compressed) {
+	SoundDecoderState(ComfyEngine *engine, ComfyEngine::ObjFile *objectFile, uint32 sourceBase, uint32 size, bool compressed) {
 		_engine = engine;
 		_objectFile = objectFile;
 		_sourceBase = sourceBase;
 		_compressed = compressed;
 		_end = size;
+
 		if (!loadSourceWindow(6)) {
 			_fault = true;
 			return;
@@ -106,7 +107,9 @@ public:
 		return written;
 	}
 
-	uint32 getRate() { return _sampleRate; }
+	uint32 getRate() {
+		return _sampleRate;
+	}
 
 	void copyCues(Common::Array<ComfyEngine::SoundCue> &cues) {
 		cues = _cues;
@@ -136,6 +139,7 @@ public:
 
 	void packState(byte *packedState, uint16 bufferIndex, uint32 playbackPosition, uint32 vocCounter,
 			bool stopped, bool usesAnimData, Common::Array<ComfyEngine::SoundCue> &cues, uint nextCue) {
+
 		memset(packedState, 0, 0x52);
 		packedState[0x3F] = stopped;
 		if (stopped || bufferIndex >= 2)
@@ -150,8 +154,8 @@ public:
 		WRITE_LE_UINT32(packedState + 0x0D, playbackPosition);
 		WRITE_LE_UINT32(packedState + 0x11, vocCounter);
 		uint16 packedCueCount = 0;
-		while (nextCue < cues.size() && packedCueCount < 4 &&
-				cues[nextCue].streamPosition < playbackPosition) {
+
+		while (nextCue < cues.size() && packedCueCount < 4 && cues[nextCue].streamPosition < playbackPosition) {
 			WRITE_LE_UINT16(packedState + 0x15 + packedCueCount * 2, cues[nextCue].value);
 			WRITE_LE_UINT32(packedState + 0x1D + packedCueCount * 4, cues[nextCue].streamPosition);
 			WRITE_LE_UINT32(packedState + 0x2D + packedCueCount * 4, cues[nextCue].counterThreshold);
@@ -184,6 +188,7 @@ public:
 		_position = READ_LE_UINT32(packedState + 0x41);
 		_loopPosition = READ_LE_UINT32(packedState + 0x45);
 		uint32 packedEnd = READ_LE_UINT32(packedState + 0x49);
+
 		if (_position > _end || _loopPosition > _end || packedEnd > _end)
 			return false;
 
@@ -194,6 +199,7 @@ public:
 		_fault = false;
 		_finished = false;
 		_cues.clear();
+
 		uint16 advanceSize = (uint16)(playbackPosition - _streamPosition);
 		if (advanceSize > COMFY_PANTHER_SOUND_PCM_BLOCK_BYTES)
 			advanceSize = COMFY_PANTHER_SOUND_PCM_BLOCK_BYTES;
@@ -201,6 +207,7 @@ public:
 		if (advanceSize) {
 			Common::Array<byte> discardedPcm;
 			discardedPcm.resize(advanceSize);
+
 			if (decode(&discardedPcm[0], advanceSize) != advanceSize)
 				return false;
 		}
@@ -208,6 +215,7 @@ public:
 		_cues.clear();
 		cues.clear();
 		uint16 cueCount = MIN<uint16>(READ_LE_UINT16(packedState + 0x3D), 4);
+
 		for (uint16 i = 0; i < cueCount; i++) {
 			ComfyEngine::SoundCue cue;
 			cue.value = READ_LE_UINT16(packedState + 0x15 + i * 2);
@@ -240,6 +248,7 @@ private:
 
 		uint32 remaining = _end - _position;
 		uint32 readSize = MIN<uint32>(size, remaining);
+
 		if (!_compressed)
 			readSize += 0xC8;
 
@@ -279,6 +288,7 @@ private:
 			_position = position;
 			bool loaded = loadSourceWindow(_decodeBlockSize ? _decodeBlockSize : 6);
 			_position = savedPosition;
+
 			if (!loaded) {
 				_fault = true;
 				return 0;
@@ -297,7 +307,7 @@ private:
 	static uint32 calcSampleRate(byte sample) {
 		uint32 denominator = 256 - sample;
 		uint32 rate = denominator ? 1000000 / denominator : 11025;
-		if (rate > 0x2710 && rate < 12000)
+		if (rate > 10000 && rate < 12000)
 			return 11025;
 
 		if (rate > 20000 && rate < 24000)
@@ -374,7 +384,7 @@ private:
 			case 7:
 				if (_loopCount > 0) {
 					_loopCount--;
-					// The original reloads the loop position twice.
+					// The original reloads the loop position twice...
 					seekToLoop();
 					seekToLoop();
 				}
@@ -393,6 +403,7 @@ private:
 	void seekToLoop() {
 		_position = _loopPosition;
 		_bitOffset = _loopBitOffset;
+
 		if (_objectFile && !loadSourceWindow(_decodeBlockSize))
 			_fault = true;
 	}
@@ -503,6 +514,7 @@ private:
 
 				if (_bitWidth && readBits(1))
 					_predictorDistance = (byte)readBits(7);
+
 				_blockOffset = 0;
 			}
 
@@ -513,8 +525,7 @@ private:
 				if (!delta) {
 					sample = (byte)readBits(8);
 				} else {
-					byte predictor = _history.size() >= _predictorDistance ?
-						_history[_history.size() - _predictorDistance] : 0x80;
+					byte predictor = _history.size() >= _predictorDistance ? _history[_history.size() - _predictorDistance] : 0x80;
 					sample = predictor + (byte)(delta - (1 << (_bitWidth - 1)));
 				}
 			}
@@ -588,8 +599,8 @@ private:
 
 	void pushCue(uint16 value) {
 		// The original keeps at most 0x13 pending pitch entries, but consumes them
-		// while refilling wave buffers. This host decoder stores the full cue
-		// timeline, so applying that pending-entry limit here would drop later cues.
+		// while refilling wave buffers. Our decoder stores the full cue timeline,
+		// so applying that pending-entry limit here would drop later cues...
 		ComfyEngine::SoundCue cue;
 		cue.value = value;
 		cue.streamPosition = _streamPosition;
@@ -689,15 +700,16 @@ void ComfyEngine::setMediaRangePercent(uint16 value) {
 
 void ComfyEngine::setMediaMode(byte mode) {
 	if (mode == 1 || mode == 3) {
-		_v3SceneHostMediaModeEnabled = 1;
-		if (!_v3HostMediaValueAvailable) {
-			_v3HostMediaValue = 0;
-			_v3HostMediaValueAvailable = true;
+		_v3SceneMediaModeEnabled = 1;
+
+		if (!_v3MediaValueAvailable) {
+			_v3MediaValue = 0;
+			_v3MediaValueAvailable = true;
 		}
 	} else if (mode == 2) {
-		_v3SceneHostMediaModeEnabled = 0;
-		_v3HostMediaValue = 0;
-		_v3HostMediaValueAvailable = false;
+		_v3SceneMediaModeEnabled = 0;
+		_v3MediaValue = 0;
+		_v3MediaValueAvailable = false;
 	}
 }
 
@@ -706,7 +718,8 @@ void ComfyEngine::restoreWaveStateAfterSceneStart() {
 	setWaveLeftPercent(_v3SceneWaveLeftPercent);
 	setWaveRightPercent(_v3SceneWaveRightPercent);
 	setMixerVolumePercent(_v3SceneMixerVolumePercent);
-	if (_v3SceneHostMediaModeEnabled) {
+
+	if (_v3SceneMediaModeEnabled) {
 		setMediaMode(2);
 		setMediaMode(1);
 	} else {
@@ -727,6 +740,7 @@ bool ComfyEngine::soundOpenVocFile() {
 	byte header[4];
 	memset(header, 0, sizeof(header));
 	objFileReadFieldCore(header, 0, sizeof(header), _vocFile);
+
 	if (header[0] != 'C' || (header[1] != 'V' && header[1] != 'W')) {
 		objFileClose(_vocFile);
 		return false;
@@ -757,7 +771,7 @@ bool ComfyEngine::soundInit() {
 	}
 
 	_v3SceneWaveBalancePercent = 0;
-	_v3SceneHostMediaModeEnabled = 0;
+	_v3SceneMediaModeEnabled = 0;
 	_v3SceneWaveLeftPercent = 0;
 	_v3SceneWaveRightPercent = 0;
 	_v3SceneMixerVolumePercent = 0;
@@ -779,6 +793,7 @@ void ComfyEngine::soundShutdown() {
 	_soundVocBlockCount = 0;
 	_soundVocCounterSnapshot = 0;
 	_soundVocTimingDelta = 0;
+
 	if (_midiPlyrDriver)
 		_midiPlyrDriver->setIncreaseVocCounter(0);
 }
@@ -793,7 +808,9 @@ void ComfyEngine::soundUpdateVocTiming() {
 
 	uint32 timeFrac = 0;
 	uint16 blockNo = 0;
+
 	_midiPlyrDriver->vocSrGetCounters(timeFrac, blockNo);
+
 	if (!blockNo)
 		return;
 
@@ -840,6 +857,7 @@ bool ComfyEngine::soundPrepareDecoderState(uint16 index) {
 	uint32 dataSize = 0;
 	uint32 dataOffset = 0;
 	bool compressed = _soundCompressed;
+
 	if (index == 0xFFFF) {
 		uint32 storedSize = READ_LE_UINT32(_animFrameHeader + 4);
 		if (!storedSize)
@@ -850,8 +868,8 @@ bool ComfyEngine::soundPrepareDecoderState(uint16 index) {
 			memcpy(&animationSoundData[0], &_animFrameStorage[0], storedSize);
 		} else {
 			// The original streams embedded ANM sound through the file object while VC
-			// chunks arrive. The host decoder owns its source buffer, so rebuild only
-			// the embedded sound stream without changing the animation command cursor.
+			// chunks arrive; our decoder owns its source buffer, so we rebuild only
+			// the embedded sound stream without changing the animation command cursor...
 			if (_animCurrentIndex >= _animIndexTable.size())
 				return false;
 
@@ -859,6 +877,7 @@ bool ComfyEngine::soundPrepareDecoderState(uint16 index) {
 			uint32 position = _animIndexTable[_animCurrentIndex] + COMFY_ANMFILE_HEADER_BYTES;
 			while (copied < storedSize) {
 				uint32 headerSize = _animPantherFormat ? 8 : 4;
+
 				if (position > _animFileData.size() || headerSize > _animFileData.size() - position)
 					return false;
 
@@ -867,6 +886,7 @@ bool ComfyEngine::soundPrepareDecoderState(uint16 index) {
 				uint32 rawCommandSize = _animPantherFormat ? READ_LE_UINT32(header + 2) : READ_LE_UINT16(header + 2);
 				int32 signedCommandSize = _animPantherFormat ? (int32)rawCommandSize : (int32)(uint16)rawCommandSize;
 				uint32 commandSize = rawCommandSize;
+
 				if (_animPantherFormat && command == COMFY_ANM_COMMAND_FRAME && signedCommandSize <= (int32)headerSize) {
 					position += headerSize;
 					continue;
@@ -904,6 +924,7 @@ bool ComfyEngine::soundPrepareDecoderState(uint16 index) {
 		soundHeaderReadFromXms(header, index, sizeof(header));
 		dataSize = READ_LE_UINT32(header);
 		dataOffset = READ_LE_UINT32(header + 4);
+
 		if (!_vocFile || dataOffset > _vocFile->fileSize || dataSize > _vocFile->fileSize - dataOffset)
 			return false;
 
@@ -916,10 +937,12 @@ bool ComfyEngine::soundPrepareDecoderState(uint16 index) {
 		return false;
 
 	delete _soundDecoderState;
-	if (objectFile)
+
+	if (objectFile) {
 		_soundDecoderState = new SoundDecoderState(this, objectFile, dataOffset, dataSize, compressed);
-	else
+	} else {
 		_soundDecoderState = new SoundDecoderState(data + dataOffset, dataSize, compressed);
+	}
 
 	if (_soundDecoderState->fault()) {
 		delete _soundDecoderState;
@@ -936,6 +959,7 @@ bool ComfyEngine::soundPrepareDecoderState(uint16 index) {
 bool ComfyEngine::soundDecodePcmBlock(uint16 bufferIndex, byte *&buffer, uint32 &decodedSize) {
 	buffer = nullptr;
 	decodedSize = 0;
+
 	if (!_soundDecoderState)
 		return false;
 
@@ -947,6 +971,7 @@ bool ComfyEngine::soundDecodePcmBlock(uint16 bufferIndex, byte *&buffer, uint32 
 
 	decodedSize = _soundDecoderState->decode(buffer, blockSize);
 	_soundDecoderState->copyCues(_soundCues);
+
 	if (!decodedSize) {
 		free(buffer);
 		buffer = nullptr;
@@ -977,12 +1002,10 @@ void ComfyEngine::soundPackState(byte *state) {
 		return;
 	}
 
-	uint32 vocCounter = _midiPlyrDriver ? _midiPlyrDriver->getVocCounter() :
-		(uint32)((_mixer->getSoundElapsedTime(_soundHandle) + 9) / 10);
+	uint32 vocCounter = _midiPlyrDriver ? _midiPlyrDriver->getVocCounter() : (uint32)((_mixer->getSoundElapsedTime(_soundHandle) + 9) / 10);
 	uint32 playbackPosition = (vocCounter * _soundSampleRate) / 100;
 	uint16 bufferIndex = _soundWaveBufferIndex;
-	if ((int32)(_soundDecoderState->getBufferStreamPosition(bufferIndex) -
-			COMFY_PANTHER_SOUND_PCM_BLOCK_BYTES) < (int32)playbackPosition)
+	if ((int32)(_soundDecoderState->getBufferStreamPosition(bufferIndex) - COMFY_PANTHER_SOUND_PCM_BLOCK_BYTES) < (int32)playbackPosition)
 		bufferIndex = 1 - bufferIndex;
 
 	_soundDecoderState->packState(state, bufferIndex, playbackPosition, vocCounter,
@@ -992,6 +1015,7 @@ void ComfyEngine::soundPackState(byte *state) {
 void ComfyEngine::soundUnpackState(byte *state) {
 	_mixer->stopHandle(_soundHandle);
 	_soundQueueStream = nullptr;
+
 	if (state[0x3F] || !_soundDecoderState) {
 		if (_midiPlyrDriver) {
 			_midiPlyrDriver->setIncreaseVocCounter(0);
@@ -1011,6 +1035,7 @@ void ComfyEngine::soundUnpackState(byte *state) {
 	_soundNextCue = 0;
 	byte *buffers[2] = {nullptr, nullptr};
 	uint32 decodedSizes[2] = {0, 0};
+
 	if (!soundDecodePcmBlock(0, buffers[0], decodedSizes[0]) ||
 			!soundDecodePcmBlock(1, buffers[1], decodedSizes[1])) {
 		free(buffers[0]);
@@ -1021,6 +1046,7 @@ void ComfyEngine::soundUnpackState(byte *state) {
 
 	_soundSampleRate = _soundDecoderState->getRate();
 	_soundQueueStream = Audio::makeQueuingAudioStream(_soundSampleRate, false);
+
 	if (!_soundQueueStream) {
 		free(buffers[0]);
 		free(buffers[1]);
@@ -1033,6 +1059,7 @@ void ComfyEngine::soundUnpackState(byte *state) {
 
 	_soundWaveBufferIndex = 0;
 	_soundEventSubIndex = 0xFFFF;
+
 	if (_midiPlyrDriver) {
 		_midiPlyrDriver->setVocCounter(vocCounter);
 		_midiPlyrDriver->setIncreaseVocCounter(1);
@@ -1059,8 +1086,8 @@ void ComfyEngine::soundPlayEntry(uint16 index) {
 
 	byte *buffers[2] = {nullptr, nullptr};
 	uint32 decodedSizes[2] = {0, 0};
-	if (!soundDecodePcmBlock(0, buffers[0], decodedSizes[0]) ||
-			!soundDecodePcmBlock(1, buffers[1], decodedSizes[1])) {
+
+	if (!soundDecodePcmBlock(0, buffers[0], decodedSizes[0]) || !soundDecodePcmBlock(1, buffers[1], decodedSizes[1])) {
 		free(buffers[0]);
 		free(buffers[1]);
 		delete _soundDecoderState;
@@ -1071,6 +1098,7 @@ void ComfyEngine::soundPlayEntry(uint16 index) {
 
 	_soundSampleRate = _soundDecoderState->getRate();
 	_soundQueueStream = Audio::makeQueuingAudioStream(_soundSampleRate, false);
+
 	if (!_soundQueueStream) {
 		free(buffers[0]);
 		free(buffers[1]);
@@ -1089,6 +1117,7 @@ void ComfyEngine::soundPlayEntry(uint16 index) {
 	_soundPaused = false;
 	_soundWaveBufferIndex = 0;
 	_soundEventSubIndex = 0xFFFF;
+
 	if (_midiPlyrDriver) {
 		_midiPlyrDriver->vocSrResetCounters();
 		_midiPlyrDriver->setVocCounter(0);
@@ -1104,6 +1133,7 @@ void ComfyEngine::soundAdvanceTick() {
 
 	if (!_mixer->isSoundHandleActive(_soundHandle)) {
 		_soundQueueStream = nullptr;
+
 		if (_soundDecoderState && _soundEventSubIndex != 0) {
 			_soundEventSubIndex = 0;
 		}
@@ -1111,12 +1141,12 @@ void ComfyEngine::soundAdvanceTick() {
 		return;
 	}
 
-	uint32 counter = _midiPlyrDriver ? _midiPlyrDriver->getVocCounter() :
-		(uint32)((_mixer->getSoundElapsedTime(_soundHandle) + 9) / 10);
+	uint32 counter = _midiPlyrDriver ? _midiPlyrDriver->getVocCounter() : (uint32)((_mixer->getSoundElapsedTime(_soundHandle) + 9) / 10);
 	soundServiceWaveBuffers();
 
 	int32 compareCounter = (int32)(counter - 2);
 	bool phaseCueSeen = false;
+
 	while (_soundNextCue < _soundCues.size() && compareCounter > (int32)_soundCues[_soundNextCue].counterThreshold &&
 			(_soundCues[_soundNextCue].value == 1 || _soundCues[_soundNextCue].value == 2)) {
 		phaseCueSeen = true;
@@ -1124,8 +1154,7 @@ void ComfyEngine::soundAdvanceTick() {
 		_soundNextCue++;
 	}
 
-	if (phaseCueSeen || _soundNextCue == _soundCues.size() ||
-			compareCounter <= (int32)_soundCues[_soundNextCue].counterThreshold)
+	if (phaseCueSeen || _soundNextCue == _soundCues.size() || compareCounter <= (int32)_soundCues[_soundNextCue].counterThreshold)
 		return;
 
 	_soundEventSubIndex = _soundCues[_soundNextCue].value;
@@ -1142,6 +1171,5 @@ void ComfyEngine::soundAdvanceTick() {
 		}
 	}
 }
-
 
 } // End of namespace Comfy

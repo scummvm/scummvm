@@ -34,6 +34,7 @@ byte ComfyEngine::scriptReadByte(uint32 pc) {
 
 	SpriteResource *sprite = spriteGetPtr(spriteId);
 	uint16 frameId = (uint16)-spriteId;
+
 	if (!sprite || frameId >= _frameCacheEntries.size()) {
 		_scriptFault = true;
 		return 0;
@@ -41,6 +42,7 @@ byte ComfyEngine::scriptReadByte(uint32 pc) {
 
 	SpriteCacheEntry &entry = _frameCacheEntries[frameId];
 	uint32 offset = entry.poolOffset + 0x0C + tileOffset;
+
 	if (entry.slotSize == 0xFFFF || offset >= _scenePoolData.size()) {
 		_scriptFault = true;
 		return 0;
@@ -56,6 +58,7 @@ uint16 ComfyEngine::scriptReadWord(uint32 pc) {
 
 	SpriteResource *sprite = spriteGetPtr(spriteId);
 	uint16 frameId = (uint16)-spriteId;
+
 	if (!sprite || frameId >= _frameCacheEntries.size()) {
 		_scriptFault = true;
 		return 0;
@@ -63,6 +66,7 @@ uint16 ComfyEngine::scriptReadWord(uint32 pc) {
 
 	SpriteCacheEntry &entry = _frameCacheEntries[frameId];
 	uint32 offset = entry.poolOffset + 0x0C + tileOffset;
+
 	if (entry.slotSize == 0xFFFF || offset > _scenePoolData.size() || 2 > _scenePoolData.size() - offset) {
 		_scriptFault = true;
 		return 0;
@@ -78,6 +82,7 @@ uint32 ComfyEngine::scriptReadDword(uint32 pc) {
 
 	SpriteResource *sprite = spriteGetPtr(spriteId);
 	uint16 frameId = (uint16)-spriteId;
+
 	if (!sprite || frameId >= _frameCacheEntries.size()) {
 		_scriptFault = true;
 		return 0;
@@ -85,6 +90,7 @@ uint32 ComfyEngine::scriptReadDword(uint32 pc) {
 
 	SpriteCacheEntry &entry = _frameCacheEntries[frameId];
 	uint32 offset = entry.poolOffset + 0x0C + tileOffset;
+
 	if (entry.slotSize == 0xFFFF || offset > _scenePoolData.size() || 4 > _scenePoolData.size() - offset) {
 		_scriptFault = true;
 		return 0;
@@ -95,6 +101,7 @@ uint32 ComfyEngine::scriptReadDword(uint32 pc) {
 
 uint16 ComfyEngine::scriptReadStringIndex(uint32 pc) {
 	uint16 value = scriptReadWord(pc);
+
 	if (value >= 30000) {
 		uint32 index = value - 30000;
 		if (index < _stringTable.size())
@@ -107,6 +114,7 @@ uint16 ComfyEngine::scriptReadStringIndex(uint32 pc) {
 uint32 ComfyEngine::scriptReadArgs(uint32 pc, uint16 fallbackActor, const char *format, ...) {
 	va_list args;
 	va_start(args, format);
+
 	for (char type = *format; type; type = *++format) {
 		if (type == 'C') {
 			byte *value = va_arg(args, byte *);

@@ -944,25 +944,25 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 				break;
 			case SO_HOST_MEDIA_STOP_INPUT:
 				setMediaMode(subop);
-				_v3HostMediaRecording = false;
+				_v3MediaRecording = false;
 				break;
 			case SO_HOST_MEDIA_START_RECORDING_2_ARGS:
 			case SO_HOST_MEDIA_START_RECORDING_3_ARGS:
 			case SO_HOST_MEDIA_START_RECORDING_4_ARGS:
-				_v3HostMediaRecordingArg0 = scriptReadStringIndex(pc);
-				_v3HostMediaRecordingArg1 = scriptReadWord(pc + 2);
+				_v3MediaRecordingArg0 = scriptReadStringIndex(pc);
+				_v3MediaRecordingArg1 = scriptReadWord(pc + 2);
 				pc += 4;
-				_v3HostMediaRecording = true;
-				if (!_v3SceneHostMediaModeEnabled)
+				_v3MediaRecording = true;
+				if (!_v3SceneMediaModeEnabled)
 					setMediaMode(SO_HOST_MEDIA_START_INPUT);
 
 				if (subop != SO_HOST_MEDIA_START_RECORDING_2_ARGS) {
-					_v3HostMediaRecordingArg2 = scriptReadStringIndex(pc);
+					_v3MediaRecordingArg2 = scriptReadStringIndex(pc);
 					pc += 2;
 				}
 
 				if (subop == SO_HOST_MEDIA_START_RECORDING_4_ARGS) {
-					_v3HostMediaRecordingArg3 = scriptReadStringIndex(pc);
+					_v3MediaRecordingArg3 = scriptReadStringIndex(pc);
 					pc += 2;
 				}
 
@@ -1274,7 +1274,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 				if (argument <= 4) {
 					condition = _inputDeviceMode == argument;
 				} else if (argument == 20) {
-					condition = _v3HostMediaRecording;
+					condition = _v3MediaRecording;
 				} else if (argument == 30) {
 					Common::ScopedPtr<Common::SeekableReadStream> stream(pathFOpen(Common::Path("comfy.htm"), true));
 					condition = (bool)stream;

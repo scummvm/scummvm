@@ -141,8 +141,7 @@ bool MidiPlyrDriver::musicStart(byte flags) {
 	midiFreeAllChannels();
 
 	if ((flags & 2) == 0) {
-		_timerInstalled = g_system->getTimerManager()->installTimerProc(
-			&timerProc, MIDIPLYR_TIMER_PERIOD, this, "Comfy::MidiPlyrDriver");
+		_timerInstalled = g_system->getTimerManager()->installTimerProc(&timerProc, MIDIPLYR_TIMER_PERIOD, this, "Comfy::MidiPlyrDriver");
 
 		if (!_timerInstalled) {
 			midiClose();
@@ -410,10 +409,11 @@ void MidiPlyrDriver::musicPlaySong(const byte *data, uint32 size, uint16 trackIn
 	track.midiLoopFlag = 0;
 	track.eventDataSize = READ_LE_UINT16(data + 4);
 
-	if (_midiFileFormat == 1)
+	if (_midiFileFormat == 1) {
 		_ticksPerQuarter = READ_LE_UINT16(data + 2);
-	else
+	} else {
 		musicSetRateInternal(READ_LE_UINT16(data + 2), trackIndex);
+	}
 
 	musicSetPitchInternal(5000, trackIndex);
 	track.startTick = _seqCurrentTick;
@@ -818,7 +818,7 @@ void MidiPlyrDriver::comfyboardPollTimer() {
 		return;
 
 	if (!_comfyboardSleepUseStopped && !_comfyboardSampleIndex) {
-		// The original saves the LPT control byte, writes 0x0C to port + 2, and writes 1 to the data port.
+		// The original saves the LPT control byte, writes 0x0C to port + 2, and writes 1 to the data port
 		_comfyboardSavedControl = 0;
 	}
 
@@ -843,7 +843,7 @@ void MidiPlyrDriver::comfyboardPollTimer() {
 		return;
 	}
 
-	// The original writes ((_comfyboardSampleIndex << 1) | 1) to the LPT data port here.
+	// The original writes ((_comfyboardSampleIndex << 1) | 1) to the LPT data port here
 	_comfyboardSampleIndex++;
 }
 

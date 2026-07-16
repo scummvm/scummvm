@@ -43,6 +43,7 @@ void ComfyEngine::colorDatClose() {
 void ComfyEngine::colorDatReadEntry(uint16 paletteId) {
 	colorDatOpen();
 	uint16 offset = (uint16)(paletteId * COMFY_PALETTE_BYTES);
+
 	if (!_colorDatStream->seek(offset))
 		error("Could not seek to palette %u in COLORS.DAT", (uint)paletteId);
 
@@ -79,6 +80,7 @@ void ComfyEngine::paletteFadeStep(uint16 delta) {
 		return;
 
 	_fadeStep = (uint16)(_fadeStep + delta);
+
 	if ((int16)_fadeStep >= (int16)_fadeMax) {
 		_fadeStep = _fadeMax;
 		memcpy(_paletteFadeSource, _paletteTarget, COMFY_PALETTE_BYTES);
@@ -94,7 +96,7 @@ void ComfyEngine::paletteFadeStep(uint16 delta) {
 void ComfyEngine::paletteLoadWithFade(uint16 paletteId, uint16 fadeTicks) {
 	colorDatReadEntry(paletteId);
 	if (_engineVersion != 3)
-		_palettePage = 'S';
+		_palettePage = 83;
 
 	if (_paletteFading)
 		memcpy(_paletteFadeSource, _paletteDisplay, COMFY_PALETTE_BYTES);

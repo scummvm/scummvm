@@ -25,6 +25,7 @@ namespace Comfy {
 
 uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 	_exprStackTop = 0;
+
 	for (;;) {
 		byte opcode = scriptReadByte(pc++);
 		if (_scriptFault)
@@ -45,6 +46,7 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 			uint16 index = scriptReadWord(pc);
 			pc += 2;
 			uint16 value = index < _stringTable.size() ? _stringTable[index] : 0;
+
 			if (_exprStackTop < COMFY_EXPR_STACK_CAPACITY)
 				_exprStack[_exprStackTop++] = value;
 
@@ -54,19 +56,21 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 		if (opcode >= 0x10 && opcode <= 0x14) {
 			Actor *actor = actorResolve(scriptReadWord(pc), fallbackActor);
 			pc += 2;
+
 			if (!actor) {
 				_scriptFault = true;
 				return 0;
 			}
 
 			uint16 value = 0;
-			if (opcode == 0x10)
+			if (opcode == 0x10) {
 				value = (uint32)actor->xFixed >> 12;
-			else if (opcode == 0x11)
+			} else if (opcode == 0x11) {
 				value = (uint32)actor->yFixed >> 12;
-			else if (opcode == 0x12 || opcode == 0x13) {
+			} else if (opcode == 0x12 || opcode == 0x13) {
 				bool useX = opcode == 0x12;
 				int32 position = useX ? actor->xFixed : actor->yFixed;
+
 				while (actor->parent) {
 					actor = actorGetPtr(actor->parent);
 					if (!actor)
@@ -97,21 +101,22 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 		if (_engineVersion == 3 && opcode >= 0x17 && opcode <= 0x21) {
 			uint16 value = 0;
 			bool pushValue = true;
-			if (opcode == 0x17)
+
+			if (opcode == 0x17) {
 				value = _mouseX;
-			else if (opcode == 0x18)
+			} else if (opcode == 0x18) {
 				value = _mouseY;
-			else if (opcode == 0x19)
+			} else if (opcode == 0x19) {
 				value = _v3SceneWaveBalancePercent;
-			else if (opcode == 0x1A)
-				value = _v3HostMediaValueAvailable ? _v3HostMediaValue : 0;
-			else if (opcode == 0x1B)
+			} else if (opcode == 0x1A) {
+				value = _v3MediaValueAvailable ? _v3MediaValue : 0;
+			} else if (opcode == 0x1B) {
 				pushValue = false;
-			else if (opcode == 0x1C)
+			} else if (opcode == 0x1C) {
 				value = _v3SceneWaveLeftPercent;
-			else if (opcode == 0x1D)
+			} else if (opcode == 0x1D) {
 				value = _v3SceneWaveRightPercent;
-			else if (opcode == 0x1E) {
+			} else if (opcode == 0x1E) {
 				if (_exprStackTop) {
 					uint16 dimension = _exprStack[_exprStackTop - 1];
 					if (dimension == 0x6E)
@@ -124,7 +129,7 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 
 				pushValue = false;
 			} else if (opcode == 0x1F || opcode == 0x20) {
-				value = _v3HostMediaProgress;
+				value = _v3MediaProgress;
 			} else if (opcode == 0x21) {
 				value = _v3SceneMixerVolumePercent;
 			}
@@ -157,19 +162,21 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 
 		int16 rhs = _exprStack[--_exprStackTop];
 		int16 lhs = _exprStack[_exprStackTop - 1];
-		if (opcode == 0x08)
+
+		if (opcode == 0x08) {
 			_exprStack[_exprStackTop - 1] = (uint16)(lhs + rhs);
-		else if (opcode == 0x09)
+		} else if (opcode == 0x09) {
 			_exprStack[_exprStackTop - 1] = (uint16)(lhs - rhs);
-		else if (opcode == 0x0A)
+		} else if (opcode == 0x0A) {
 			_exprStack[_exprStackTop - 1] = (uint16)(lhs * rhs);
-		else if ((opcode == 0x0B || opcode == 0x0E) && !rhs) {
+		} else if ((opcode == 0x0B || opcode == 0x0E) && !rhs) {
 			_scriptFault = true;
 			return 0;
-		} else if (opcode == 0x0B)
+		} else if (opcode == 0x0B) {
 			_exprStack[_exprStackTop - 1] = (uint16)(lhs / rhs);
-		else if (opcode == 0x0E)
+		} else if (opcode == 0x0E) {
 			_exprStack[_exprStackTop - 1] = (uint16)(lhs % rhs);
+		}
 	}
 }
 

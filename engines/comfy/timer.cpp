@@ -61,6 +61,7 @@ uint16 ComfyEngine::timerTick() {
 	_timer1 = _timer0;
 	_timer0 = _timerCurrent;
 	_timerCurrent = (int16)midiTick();
+
 	return (uint16)_timerCurrent;
 }
 

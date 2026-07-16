@@ -41,15 +41,19 @@ void ComfyEngine::videoInit() {
 	_renderHeight = _screenHeight;
 	_viewOffsetX = 0;
 	_viewOffsetY = 0;
+
 	initGraphics(_logicalScreenWidth, _logicalScreenHeight);
+
 	_screen = new Graphics::Screen(_logicalScreenWidth, _logicalScreenHeight);
 	_framebufPtr = new byte[framebufferBytes()]();
 	_presentBuffer = new byte[framebufferBytes()]();
 	_backgroundFrame = 0;
 	_dirtyRectCount = 0;
 	_renderDirtyCount = 0;
+
 	renderAddFullFrameDirtyRect();
 	videoPresentFrame();
+
 	_videoInitialized = true;
 }
 
@@ -58,6 +62,7 @@ void ComfyEngine::videoShutdown(byte restorePalette) {
 		paletteRealize(nullptr);
 
 	colorDatClose();
+
 	delete[] _presentBuffer;
 	_presentBuffer = nullptr;
 	delete[] _framebufPtr;
@@ -78,6 +83,7 @@ void ComfyEngine::renderAddFullFrameDirtyRect() {
 	record.right = _logicalScreenWidth;
 	record.bottom = _logicalScreenHeight;
 	record.area = _engineVersion == 1 ? (uint16)framebufferBytes() : framebufferBytes();
+
 	renderAddDirtyRect(record);
 }
 
@@ -87,6 +93,7 @@ void ComfyEngine::renderRequestFullFrameInvalidation() {
 
 void ComfyEngine::renderFlushDirty() {
 	_dirtyRectCount = 0;
+
 	if (_renderDirtyCount) {
 		_renderDirtyCount--;
 		renderAddFullFrameDirtyRect();
@@ -101,6 +108,7 @@ void ComfyEngine::renderInvalidateFullFrame() {
 void ComfyEngine::renderAddDirtyRectMerged(ComfyRect record) {
 	int16 alignment = _isPanther ? 4 : 2;
 	uint32 mergeThreshold = _game->dirtyRectMergeThreshold;
+
 	record.left = CLIP<int16>(record.left, 0, _logicalScreenWidth);
 	record.left = record.left / alignment * alignment;
 	record.top = CLIP<int16>(record.top, 0, _logicalScreenHeight);
@@ -109,6 +117,7 @@ void ComfyEngine::renderAddDirtyRectMerged(ComfyRect record) {
 	record.right = MIN<int16>(record.right, _logicalScreenWidth);
 	record.bottom = CLIP<int16>(record.bottom, 0, _logicalScreenHeight);
 	record.area = (uint32)((int32)(record.right - record.left) * (record.bottom - record.top));
+
 	if (!record.area)
 		return;
 
@@ -120,8 +129,8 @@ void ComfyEngine::renderAddDirtyRectMerged(ComfyRect record) {
 
 	for (int i = _dirtyRectCount - 1; i >= 0; i--) {
 		ComfyRect &existing = _dirtyRects[i];
-		if (existing.right <= record.left || existing.left >= record.right ||
-				existing.bottom <= record.top || existing.top >= record.bottom)
+
+		if (existing.right <= record.left || existing.left >= record.right || existing.bottom <= record.top || existing.top >= record.bottom)
 			continue;
 
 		ComfyRect merged;
@@ -136,8 +145,7 @@ void ComfyEngine::renderAddDirtyRectMerged(ComfyRect record) {
 		intersection.top = MAX(existing.top, record.top);
 		intersection.right = MIN(existing.right, record.right) / alignment * alignment;
 		intersection.bottom = MIN(existing.bottom, record.bottom);
-		intersection.area = (uint32)((int32)(intersection.right - intersection.left) *
-			(intersection.bottom - intersection.top));
+		intersection.area = (uint32)((int32)(intersection.right - intersection.left) * (intersection.bottom - intersection.top));
 
 		uint32 extraArea = merged.area + intersection.area - record.area - existing.area;
 		if (extraArea < mergeThreshold) {
@@ -152,6 +160,7 @@ void ComfyEngine::renderAddDirtyRectMerged(ComfyRect record) {
 
 		ComfyRect *upperRect;
 		ComfyRect *lowerRect;
+
 		if (existing.top > record.top) {
 			upperRect = &record;
 			lowerRect = &existing;
@@ -166,27 +175,25 @@ void ComfyEngine::renderAddDirtyRectMerged(ComfyRect record) {
 		upperStrip.top = upperRect->top;
 		upperStrip.right = upperRect->right;
 		upperStrip.bottom = lowerRect->top;
-		upperStrip.area = (uint32)((int32)(upperStrip.right - upperStrip.left) *
-			(upperStrip.bottom - upperStrip.top));
+		upperStrip.area = (uint32)((int32)(upperStrip.right - upperStrip.left) * (upperStrip.bottom - upperStrip.top));
 
 		ComfyRect middleStrip;
 		middleStrip.left = MIN(lowerRect->left, upperRect->left);
 		middleStrip.top = lowerRect->top;
 		middleStrip.right = MAX(lowerRect->right, upperRect->right);
 		middleStrip.bottom = MIN(lowerRect->bottom, upperRect->bottom);
-		middleStrip.area = (uint32)((int32)(middleStrip.right - middleStrip.left) *
-			(middleStrip.bottom - middleStrip.top));
+		middleStrip.area = (uint32)((int32)(middleStrip.right - middleStrip.left) * (middleStrip.bottom - middleStrip.top));
 
 		ComfyRect bottomStrip;
 		bottomStrip.left = bottomRect->left;
 		bottomStrip.top = middleStrip.bottom;
 		bottomStrip.right = bottomRect->right;
 		bottomStrip.bottom = bottomRect->bottom;
-		bottomStrip.area = (uint32)((int32)(bottomStrip.right - bottomStrip.left) *
-			(bottomStrip.bottom - bottomStrip.top));
+		bottomStrip.area = (uint32)((int32)(bottomStrip.right - bottomStrip.left) * (bottomStrip.bottom - bottomStrip.top));
 
 		_dirtyRectCount--;
 		_dirtyRects[i] = _dirtyRects[_dirtyRectCount];
+
 		if (upperStrip.area)
 			renderAddDirtyRectMerged(upperStrip);
 
@@ -225,8 +232,7 @@ void ComfyEngine::renderAddDirtyRect(ComfyRect record) {
 
 	for (int i = _dirtyRectCount - 1; i >= 0; i--) {
 		ComfyRect &existing = _dirtyRects[i];
-		if (existing.right < record.left && existing.left <= record.right &&
-				existing.bottom >= record.top && existing.top <= record.bottom)
+		if (existing.right < record.left && existing.left <= record.right && existing.bottom >= record.top && existing.top <= record.bottom)
 			continue;
 
 		ComfyRect merged;
@@ -235,6 +241,7 @@ void ComfyEngine::renderAddDirtyRect(ComfyRect record) {
 		merged.top = MIN(existing.top, record.top) / 2 * 2;
 		merged.bottom = (MAX(existing.bottom, record.bottom) + 1) / 2 * 2;
 		merged.area = (uint32)(merged.right - merged.left) * (merged.bottom - merged.top);
+
 		if (_engineVersion == 1)
 			merged.area = (uint16)merged.area;
 
@@ -261,12 +268,14 @@ void ComfyEngine::videoPresentFrame() {
 	if (!_screen || !_framebufPtr || !_presentBuffer)
 		return;
 
-	if (_renderInterleaved && framebufferBytes() == 0xFA00) {
+	if (_renderInterleaved && framebufferBytes() == 64000) {
 		uint32 byteOffset = 0;
-		for (uint16 i = 0; i < 0x3E80;) {
+
+		for (uint16 i = 0; i < 16000;) {
 			memcpy(_presentBuffer + byteOffset, _framebufPtr + byteOffset, 4);
 			byteOffset += 4;
-			if ((i % 0x4E20) > 0x4268)
+
+			if ((i % 20000) > 17000)
 				i++;
 
 			i++;
@@ -276,6 +285,7 @@ void ComfyEngine::videoPresentFrame() {
 			_logicalScreenWidth, _logicalScreenHeight);
 	} else {
 		uint32 dirtyArea = 0;
+
 		if (_engineVersion == 1) {
 			for (uint i = 0; i < _dirtyRectCount; i++)
 				dirtyArea += _dirtyRects[i].area;
@@ -283,13 +293,13 @@ void ComfyEngine::videoPresentFrame() {
 
 		if (_engineVersion == 1 && dirtyArea > framebufferBytes() - 1000) {
 			framebufCopyAll(_presentBuffer, _framebufPtr);
-			_screen->copyRectToSurface(_presentBuffer, _logicalScreenWidth, 0, 0,
-				_logicalScreenWidth, _logicalScreenHeight);
+			_screen->copyRectToSurface(_presentBuffer, _logicalScreenWidth, 0, 0, _logicalScreenWidth, _logicalScreenHeight);
 		} else {
 			for (uint i = 0; i < _dirtyRectCount; i++) {
 				ComfyRect &record = _dirtyRects[i];
 				int16 width = record.right - record.left;
 				int16 height = record.bottom - record.top;
+
 				if (width <= 0 || height <= 0)
 					continue;
 
