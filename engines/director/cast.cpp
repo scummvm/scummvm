@@ -635,7 +635,7 @@ bool Cast::loadConfig() {
 	return true;
 }
 
-void Cast::saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset) {
+void Cast::saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset, uint32 tag) {
 	if (_version < kFileVer400) {
 		error("Cast::saveConfig called on a pre-D4 Director movie");
 	}
@@ -644,7 +644,7 @@ void Cast::saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset) {
 
 	uint32 configSize = getConfigSize();
 
-	writeStream->writeUint32LE(MKTAG('V', 'W', 'C', 'F'));
+	writeStream->writeUint32LE(tag);
 	writeStream->writeUint32LE(configSize);
 
 	// These offsets are only for Director Version 4 to Director version 6
@@ -655,8 +655,10 @@ void Cast::saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset) {
 	Movie::writeRect(writeStream, _checkRect);      // 4, 6, 8, 10
 
 	writeStream->writeUint16BE(_castArrayStartForChecksum);    // 12
-	// This will change
-	writeStream->writeUint16BE(_castArrayStartForChecksum + _castArchive->getResourceIDList(MKTAG('C', 'A', 'S', 't')).size());      // 14
+
+	// computeChecksum() reads this field; keep it in sync with the disk
+	_castArrayEndForChecksum = _castArrayStartForChecksum + _castArchive->getResourceIDList(MKTAG('C', 'A', 'S', 't')).size();
+	writeStream->writeUint16BE(_castArrayEndForChecksum);      // 14
 
 	writeStream->writeByte(_readRate);              // 16
 	writeStream->writeByte(_lightswitch);           // 17
@@ -691,21 +693,24 @@ void Cast::saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset) {
 	uint32 checksum = computeChecksum();
 	writeStream->writeUint32BE(checksum);           // 64
 
+	// Reverse the builtin-palette offset applied by loadConfig()
+	int16 paletteMember = _defaultPalette.member;
+	if (paletteMember < 0)
+		paletteMember += 1;
 	if (_version >= kFileVer400 && _version < kFileVer500) {
 		writeStream->writeSint16BE(_field30);       // 68
+		writeStream->writeSint16BE(paletteMember);  // 70
 
-		// This loop isn't writing meaningful data currently
-		// But it is possible that this data might be needed
 		for (int i = 0; i < 0x08; i++) {
-			writeStream->writeByte(0);              // 70, 71, 72, 73, 74, 75, 76, 77
+			writeStream->writeByte(0);              // 72, 73, 74, 75, 76, 77, 78, 79
 		}
-	} else if (_version >= kFileVer500 && _version < kFileVer600) {
-		for (int i = 0; i < 0x08; i++) {
-			writeStream->writeByte(0);              // 68, 69, 70, 71, 72, 73, 74, 75
-		}
+	} else if (_version >= kFileVer500 && _version < kFileVer1000) {
+		writeStream->writeSint16BE(_field30);       // 68
+		writeStream->writeSint16BE(_defPaletteNum);      // 70
+		writeStream->writeSint32BE(_chunkBaseNum);       // 72
 
 		writeStream->writeSint16BE(_defaultPalette.castLib);    // 76
-		writeStream->writeSint16BE(_defaultPalette.member);     // 78
+		writeStream->writeSint16BE(paletteMember);              // 78
 	}
 
 	if (_version >= kFileVer600 && _version < kFileVer1000) {
@@ -745,12 +750,12 @@ void Cast::saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset) {
 
 uint32 Cast::getConfigSize() {
 	if (_version >= kFileVer400 && _version < kFileVer500) {
-		return 78; // 78 bytes of data in castConfig
-	} else if (_version >= kFileVer500 && _version < kFileVer600) {
 		return 80;	// 80 bytes of data in castConfig
+	} else if (_version >= kFileVer500 && _version < kFileVer1000) {
+		return _version < kFileVer600 ? 80 : 84;	// D5: 80 bytes; D6-D9: 84 bytes
 	}
 
-	warning("Cast::getConfigSize: Director version 6+ is not handled");
+	warning("Cast::getConfigSize: Director version %d is not handled", humanVersion(_version));
 	return 0;
 }
 
