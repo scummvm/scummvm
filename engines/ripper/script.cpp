@@ -468,8 +468,6 @@ void ScriptManager::setMilestoneFlag(uint32 flag, const char *source) {
 		_milestoneFlags.resize(flag + 1);
 	_milestoneFlags[flag] = true;
 	debugC(2, kDebugScripts, "Ripper: set milestone flag %u source=%s", flag, source);
-	debugC(2, kDebugDialogue,
-		"Ripper: dialogue-visible milestone flag set=%u source=%s", flag, source);
 }
 
 bool ScriptManager::isScenePlayed(const Common::String &scene) const {
