@@ -165,11 +165,13 @@
   `0x648`) backed by `mug0.smk` through `mug8.smk`. It initially advances each
   32-frame asset to orientation state 2, draws the controls over the WAC media
   viewport at x=50, y=50, width=282, height=350, and patches only palette
-  entries 10 through 149 so the WAC interface colors remain available. A left
-  drag promotes the selected piece to the front; a right-button transition
-  during that drag advances eight frames and rotates the piece to the next of
-  four orientation states. The puzzle implementation is isolated under
-  `engines/ripper/puzzles/`.
+  entries 10 through 149 so the WAC interface colors remain available. The WAC
+  display service consumes each control's coordinate pair in transposed screen
+  order, so the second recovered coordinate is screen x and the first is
+  screen y; the solved deltas use the same mapping. A left drag promotes the
+  selected piece to the front; a right-button transition during that drag
+  advances eight frames and rotates the piece to the next of four orientation
+  states. The puzzle implementation is isolated under `engines/ripper/puzzles/`.
 - `RunWacInventorySelectionLoop` keeps the database chooser alive while it
   dispatches `RunWacMugSelectionScene`. The mug scene redraws only the left
   media viewport, so the Object Database panel and its selected Broken Mug row
@@ -280,6 +282,15 @@
   at `0x143af` services that callback during interaction polling. Consequently,
   `VM0_1_P3.AVI` is reached only when every response-frame choice is already
   marked played.
+- `BindSceneRuntimeCurrentFrame` at `0x145d6` saves the outgoing frame label at
+  runtime offset `+0x177` before rebinding the current frame record. Opcode
+  `0x0b`, handled by `HandleSceneEntryPromptPreviousSceneCondition` at
+  `0x14a37`, compares that saved label case-insensitively with the label of its
+  16-bit frame-index argument. Its first argument is the expected boolean and
+  its third argument replaces the callback program counter when the comparison
+  does not match that expectation. The `BA0.RUN` command at `0x8a3` uses this
+  to distinguish the initial dialogue-hub arrival from lead-in frame 16
+  (`KS0_1_X1`) from a return after one of the response frames.
 - Opcode `0x10` maps to `HandleSceneEntryClearInteractionSelectionAndStepPrompt`
   at `0x14d41`. Its 16-bit argument is relative to the current frame's
   interaction list. The handler clears bit 0 in both the runtime UI proxy at

@@ -123,7 +123,10 @@ bool BrokenMugPuzzle::loadPiece(uint pieceIndex) {
 		piece.frames.push_back(Common::move(frame));
 	}
 
-	piece.position = Common::Point(kInitialX[pieceIndex], kInitialY[pieceIndex]);
+	// RunWacMugSelectionScene stores the first coordinate in UiControlState +0
+	// and the second at +2. The original WAC display path consumes that pair in
+	// transposed screen order, as it does for the chooser frame controls.
+	piece.position = Common::Point(kInitialY[pieceIndex], kInitialX[pieceIndex]);
 	piece.orientation = kInitialOrientation;
 	debugC(2, kDebugWac,
 		"Ripper: loaded broken mug piece=%u control=0x%x frames=%u size=%ux%u position=%d,%d orientation=%u",
@@ -305,8 +308,8 @@ bool BrokenMugPuzzle::isSolved() const {
 	for (uint pieceIndex = 1; pieceIndex < kPieceCount; ++pieceIndex) {
 		const int deltaX = _pieces[pieceIndex].position.x - anchor.x;
 		const int deltaY = _pieces[pieceIndex].position.y - anchor.y;
-		if (ABS(deltaX - kSolvedDeltaX[pieceIndex]) > kSolvedTolerance ||
-			ABS(deltaY - kSolvedDeltaY[pieceIndex]) > kSolvedTolerance)
+		if (ABS(deltaX - kSolvedDeltaY[pieceIndex]) > kSolvedTolerance ||
+			ABS(deltaY - kSolvedDeltaX[pieceIndex]) > kSolvedTolerance)
 			return false;
 	}
 	return true;
