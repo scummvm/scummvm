@@ -52,6 +52,13 @@ static const uint32 kFrameRecordSize = 0x22;
 static const uint32 kInteractionRecordSize = 0x25;
 static const byte kCallbackTerminator = 'c';
 
+static Common::String compiledScriptMemberName(const Common::String &target) {
+	// RunSceneScriptLoop at 0x124e9 replaces everything from the first dot with
+	// ".run" before opening the compiled member. Script sources therefore pass
+	// names such as DK1.SCR even though SCRIPT.PL stores the DK1 runtime.
+	return target.substr(0, target.findFirstOf('.')) + ".run";
+}
+
 static const char *scriptOpcodeName(ScriptOpcode opcode) {
 	switch (opcode) {
 	case kMilestoneCondition: return "milestone condition";
@@ -817,9 +824,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			// the concurrent runtime. The third argument only selects this path
 			// when the active scene issues the command.
 			if (&script == &_concurrent || command.arguments[2].value == 0) {
-				_pendingSceneMember = target;
-				if (!_pendingSceneMember.hasSuffixIgnoreCase(".run"))
-					_pendingSceneMember += ".run";
+				_pendingSceneMember = compiledScriptMemberName(target);
 				_pendingSceneEntryLabel = entryLabel;
 				if (&script == &_concurrent)
 					_clearPreservedAudioOnTransition = true;
@@ -830,9 +835,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				result = -3;
 				return true;
 			}
-			Common::String memberName = target;
-			if (!memberName.hasSuffixIgnoreCase(".run"))
-				memberName += ".run";
+			const Common::String memberName = compiledScriptMemberName(target);
 			if (!_concurrent.load(_engine->getResources()->scripts(), memberName))
 				return false;
 			_concurrentEntryLabel = entryLabel;
