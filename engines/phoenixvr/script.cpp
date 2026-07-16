@@ -244,7 +244,7 @@ public:
 			int arg2 = 0;
 			if (maybe(','))
 				arg2 = nextInt();
-			return CommandPtr(new PlayRandomSound(Common::move(sound), arg0, arg1, arg2));
+			return CommandPtr(new PlayRndSound(Common::move(sound), arg0, arg1, arg2));
 		} else if (keyword("stopsound3d")) {
 			return CommandPtr(new StopSound3D(nextWord()));
 		} else if (keyword("stopsound") || keyword("stopmusique")) {

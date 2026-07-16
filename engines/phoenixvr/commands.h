@@ -1861,14 +1861,13 @@ struct PlaySound : public Script::Command {
 	}
 };
 
-struct PlayRandomSound : public PlaySound {
-	int unk;
+struct PlayRndSound : public PlaySound {
+	int probability;
 
-	PlayRandomSound(Common::String s, int v, int u, int l) : PlaySound(Common::move(s), v, l), unk(u) {}
+	PlayRndSound(Common::String s, int v, int p, int l, Audio::Mixer::SoundType t = Audio::Mixer::kSFXSoundType) : PlaySound(Common::move(s), v, l, t), probability(p) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("PlayRandomSound %s %d %d %d", sound.c_str(), volume, unk, loops);
-		PlaySound::exec(ctx);
+		g_engine->playRandomSound(sound, type, volume, probability, loops);
 	}
 };
 

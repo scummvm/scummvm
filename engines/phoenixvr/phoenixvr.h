@@ -130,6 +130,7 @@ public:
 	void hideCursor(const Common::String &warp, int idx);
 
 	void playSound(const Common::String &sound, Audio::Mixer::SoundType type, uint8 volume, int loops, bool spatial = false, float angle = 0);
+	void playRandomSound(const Common::String &sound, Audio::Mixer::SoundType type, uint8 volume, int probability, int loops);
 	void stopSound(const Common::String &sound);
 	void stopAllSounds();
 	void playMovie(const Common::String &movie);
@@ -298,6 +299,15 @@ private:
 		Common::SharedPtr<Video::Subtitles> subtitles;
 	};
 	Common::HashMap<Common::String, Sound, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _sounds;
+	struct RandomSound {
+		Common::String sound;
+		Audio::Mixer::SoundType type;
+		int volume;
+		int probability;
+		int loops;
+	};
+	Common::Array<RandomSound> _randomSounds;
+
 	Common::ScopedPtr<Script> _script;
 
 	Common::ScopedPtr<RegionSet> _regSet;

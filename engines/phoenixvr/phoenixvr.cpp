@@ -841,6 +841,16 @@ void PhoenixVREngine::playSound(const Common::String &sound, Audio::Mixer::Sound
 	_sounds[sound] = Sound{h, spatial, angle, volume, loops, subtitles};
 }
 
+void PhoenixVREngine::playRandomSound(const Common::String &sound, Audio::Mixer::SoundType type, uint8 volume, int probability, int loops) {
+	debug("register random sound %s %d %d, probability: %d", sound.c_str(), volume, loops, probability);
+	_randomSounds.push_back(RandomSound{
+		sound,
+		type,
+		volume,
+		probability,
+		loops});
+}
+
 void PhoenixVREngine::stopSound(const Common::String &sound) {
 	debug("stop sound %s", sound.c_str());
 	if (sound == _currentMusic)
@@ -862,6 +872,7 @@ void PhoenixVREngine::stopAllSounds() {
 			kv._value.subtitles->clearSubtitle();
 	}
 	_sounds.clear();
+	_randomSounds.clear();
 }
 
 Common::Path PhoenixVREngine::getSubtitlePath(const Common::String &path) const {
@@ -1438,6 +1449,17 @@ void PhoenixVREngine::tick(float dt) {
 			_sounds.erase(it);
 		}
 	}
+	if (!_randomSounds.empty()) {
+		for (auto &sound : _randomSounds) {
+			uint32 rnd = getRandomNumber(UINT_MAX);
+			rnd /= (((0x3C0000 * sound.probability) >> 8) + 0x40000);
+			uint32 lastFrameMs = dt * 1000u;
+			if (rnd < lastFrameMs) {
+				debug("random sound %s triggered: rnd: %d -> %d < %u", sound.sound.c_str(), sound.probability, rnd, lastFrameMs);
+				playSound(sound.sound, sound.type, sound.volume, sound.loops);
+			}
+		}
+	}
 
 	if (!_nextScript.empty()) {
 		loadNextScript();
@@ -1451,6 +1473,7 @@ void PhoenixVREngine::tick(float dt) {
 		_warp = _script->getWarp(_nextWarp);
 		debug("warp %d -> %s %s", _nextWarp, _warp->vrFile.c_str(), _warp->testFile.c_str());
 		_nextWarp = -1;
+		_randomSounds.clear();
 
 		{
 			Common::String origName;
