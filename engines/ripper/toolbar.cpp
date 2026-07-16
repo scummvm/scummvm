@@ -323,6 +323,23 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 		_engine->getWac()->run();
 		return;
 	}
+	if (actionIndex == 4 || actionIndex == 5) {
+		const bool saving = actionIndex == 4;
+		debugC(1, kDebugSavegames,
+			"Ripper: toolbar action=%u id=0x%x label='%s' entering RunSaveRestoreSlotMenu mode=%s",
+			actionIndex + 1, actionIndex + 0x514, _actions[actionIndex].label.c_str(),
+			saving ? "save" : "restore");
+		// RunFrontEndActionMenu at 0x18b3a removes its toolbar presentation before
+		// DispatchFrontEndAction at 0x190b7 opens the modal slot menu.
+		leave();
+		_engine->getInput()->discardMouseTransitions();
+		const bool completed = saving ? _engine->saveGameDialog() : _engine->loadGameDialog();
+		_engine->getInput()->discardMouseTransitions();
+		debugC(1, kDebugSavegames,
+			"Ripper: toolbar RunSaveRestoreSlotMenu mode=%s completed=%d",
+			saving ? "save" : "restore", completed);
+		return;
+	}
 	debugC(1, kDebugScene,
 		"Ripper: toolbar action=%u id=0x%x label='%s' handler=%s is stubbed",
 		actionIndex + 1, actionIndex + 0x514, _actions[actionIndex].label.c_str(),
