@@ -887,6 +887,17 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableReadStreamEndian &stream, u
 	start = stream.pos();
 	_afterBurnerVersion = readVarInt(stream);
 	debugC(3, kDebugLoading, "Fver: version: %x", _afterBurnerVersion);
+
+	if (_afterBurnerVersion >= 0x401) {
+		uint32 imapVersion = readVarInt(stream);
+		uint32 directorVersion = readVarInt(stream);
+		debugC(3, kDebugLoading, "Fver: imapVersion: %d directorVersion: %x", imapVersion, directorVersion);
+	}
+	if (_afterBurnerVersion >= 0x501) {
+		byte versionStringLen = stream.readByte();
+		Common::String versionString = stream.readString(0, versionStringLen);
+		debugC(3, kDebugLoading, "Fver: versionString: %s", versionString.c_str());
+	}
 	end = stream.pos();
 
 	if (end - start != _fverLength) {
