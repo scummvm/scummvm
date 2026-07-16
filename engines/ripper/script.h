@@ -165,6 +165,7 @@ public:
 	bool hasPendingSceneTransition() const { return !_pendingSceneMember.empty(); }
 	bool canSaveGame() const;
 	bool syncGame(Common::Serializer &serializer);
+	void logRuntimeFailure(const char *reason) const;
 
 	CompiledScript &startup() { return _startup; }
 	CompiledScript &ba0() { return _ba0; }
@@ -199,6 +200,7 @@ private:
 	int _hoveredBa0Interaction;
 	bool _awaitingBa0Interaction;
 	bool _resumeLoadedPresentation;
+	bool _clearPreservedAudioOnTransition;
 	BriefingManager *_briefing;
 	DialogueManager *_dialogue;
 };
