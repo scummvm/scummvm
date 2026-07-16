@@ -386,8 +386,14 @@
   hotspots. `PollInteractionAndResolveSelection` services both registries;
   when a scene hotspot wins, `CleanupCurrentSceneFrameInteractions` at
   `0x13832` dispatches phase 3 to the active chooser handler before running
-  the hotspot callback. Dialogue choices therefore remain visible while the
-  player can still use the current frame's navigation and action targets.
+  the hotspot callback. Phase 3 destroys the chooser, and
+  `ReleaseChooserControlVisualState` at `0x5489f` restores its dirty-region
+  snapshot before navigation media begins. Dialogue choices therefore remain
+  visible while the player can use the current frame's navigation and action
+  targets, but they are removed before the selected target's transition.
+  ScummVM refreshes the chooser backing after each decoded dialogue-loop frame,
+  then restores that backing and clears the uncovered top and bottom bands at
+  the same teardown boundary.
 - `RIPPER.RUN` sets milestone flag 32, plays `PROINT.AVI` and `PROLOG1.AVI`,
   then transitions to `BA0.RUN`.
 - The transition from startup presentations to the scene runtime changes to a

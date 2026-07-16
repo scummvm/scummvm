@@ -594,7 +594,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				outputWidth, outputHeight, frame->w, frame->h, frame->format);
 			g_system->unlockScreen();
 		}
-		_engine->getScripts()->drawDialogueOverlay();
+		_engine->getScripts()->drawDialogueOverlay(true);
 		g_system->updateScreen();
 	};
 	decoder.start();
