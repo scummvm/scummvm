@@ -759,13 +759,18 @@ void View1::showStringBox(const Common::StringArray &sa) {
 
 void View1::drawPathfindingPoints(Graphics::ManagedSurface &s) {
 	GlyphData xData;
-	g_engine->findGlyph('x', xData);
+	int xOffset = 0;
+	int yOffset = 0;
+	if (g_engine->findGlyph('x', xData)) {
+		xOffset = xData._width / 2;
+		yOffset = xData._height / 2;
+	}
 	for (int i = 0; i < 16; i++) {
 		PathfindingPoint &current = g_engine->pathfindingPoints[i];
-		renderString(current._position.x - xData._width * 0.5, current._position.y - xData._height * 0.5, "x");
+		renderString(current._position.x - xOffset, current._position.y - yOffset, "x");
 
 		Common::String number = Common::String::format("%u", i);
-		renderString(current._position.x - xData._width * 0.5 + 10, current._position.y - xData._height * 0.5 + 10, number.c_str());
+		renderString(current._position.x - xOffset + 10, current._position.y - yOffset + 10, number.c_str());
 
 		for (uint8 adjacentIndex : current._adjacentPoints) {
 			if (adjacentIndex >= g_engine->pathfindingPoints.size()) {
