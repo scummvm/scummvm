@@ -75,6 +75,8 @@ public:
 	bool open(const Common::Path &filename);
 	bool hasMember(const Common::String &memberName) const;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &memberName) const;
+	void listMembersWithPrefix(const Common::String &prefix,
+		Common::Array<Common::String> &members) const;
 
 	uint getEntryCount() const { return _entries.size(); }
 	bool isModernFormat() const { return _modernFormat; }
@@ -102,6 +104,8 @@ public:
 	bool initialize();
 	bool loadInterfaceBitmapSequence(const Common::String &memberName,
 		BitmapAssetSequence &sequence) const;
+	bool loadInterfaceBitmapSet(const Common::String &prefix,
+		Common::Array<BitmapAssetFrame> &frames) const;
 	bool loadInterfacePcx(const Common::String &memberName, BitmapAssetFrame &frame) const;
 	bool loadInterfaceBitmapFont(const Common::String &memberName, BitmapFontAsset &font) const;
 	bool loadGameText(Common::Array<Common::String> &strings) const;
