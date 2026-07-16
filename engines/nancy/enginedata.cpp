@@ -1114,6 +1114,17 @@ UINB::UINB(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	}
 
 	readRect(*chunkStream, textRect);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy13) {
+		// Two RGB text colors, added in Nancy 13
+		for (uint i = 0; i < 3; ++i) {
+			primaryTextColor[i] = chunkStream->readByte();
+		}
+		for (uint i = 0; i < 3; ++i) {
+			secondaryTextColor[i] = chunkStream->readByte();
+		}
+	}
+
 	primaryFontID = chunkStream->readUint16LE();
 	secondaryFontAttr = chunkStream->readUint16LE();
 	useFilenameTextFlag = chunkStream->readUint16LE();

@@ -733,6 +733,8 @@ struct UINB : public EngineData {
 	UIPopupHeader header;
 	UIButtonSlot tabs[kNumTabs];
 	Common::Rect textRect;
+	byte primaryTextColor[3] = {};    // RGB, Nancy 13+
+	byte secondaryTextColor[3] = {};  // RGB, Nancy 13+
 	uint16 primaryFontID = 0;
 	uint16 secondaryFontAttr = 0;
 	uint16 useFilenameTextFlag = 0;
