@@ -478,6 +478,10 @@ Macs2::AnimationReader::AnimationReader(const Common::Array<uint8> &blob) {
 	_readStream = new Common::MemoryReadStreamEndian(blob.data(), blob.size(), false);
 }
 
+Macs2::AnimationReader::~AnimationReader() {
+	delete _readStream;
+}
+
 uint16 Macs2::AnimationReader::readNumAnimations() {
 	// Read the header
 

@@ -31,7 +31,7 @@ namespace Macs2 {
 
 Events *g_events;
 
-Events::Events() : UIElement("Root", nullptr), currentMillis(0) {
+Events::Events() : UIElement("Root", nullptr) {
 	g_events = this;
 }
 
@@ -76,9 +76,9 @@ void Events::runGame() {
 		currentMillis = g_system->getMillis();
 
 		// Accumulate timer ticks based on elapsed wall-clock time
-		uint32 elapsed = currentMillis - lastTickTime;
+		const uint32 elapsed = currentMillis - lastTickTime;
 		if (elapsed >= kTimerTickMs) {
-			uint16 ticks = elapsed / kTimerTickMs;
+			const uint16 ticks = elapsed / kTimerTickMs;
 			timerTickCounter += ticks;
 			lastTickTime += ticks * kTimerTickMs;
 		}
@@ -89,7 +89,7 @@ void Events::runGame() {
 			doTick = true;
 			break;
 		case 2: // slow mode: tick when counter >= 0x12
-			doTick = (timerTickCounter >= 0x12);
+			doTick = (timerTickCounter >= 0x12); // TODO: this is running at different speed compared to running this in dosbox
 			break;
 		default: // normal: tick when counter > 1
 			doTick = (timerTickCounter > 1);

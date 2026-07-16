@@ -72,6 +72,7 @@ public:
 
 	// TODO: Can the init list also go into the cpp file?
 	AnimationReader(const Common::Array<uint8> &blob);
+	~AnimationReader();
 
 	uint16 readNumAnimations();
 

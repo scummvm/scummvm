@@ -283,7 +283,7 @@ public:
 	virtual ~Events();
 
 	// TODO: Consider a better place
-	uint32 currentMillis;
+	uint32 currentMillis = 0;
 
 	/**
 	 * Main game loop
