@@ -18,7 +18,6 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Nancy Drew: The Secret of Shadow Ranch hinzugefügt.
    - Unterstützung für Nancy Drew: Curse of Blackmoor Manor hinzugefügt.
 
-
  Allgemein:
    - Zur Verbesserung der Perforamcen wurden die Audio-Mixer und -Konverter optimiert.
    - ImGui-basierte Oberfläche für den Event-Recorder implementiert.
