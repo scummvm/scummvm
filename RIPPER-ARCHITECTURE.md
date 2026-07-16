@@ -180,6 +180,12 @@
   through startup sound-library handle 2 (`sound.pl`), not only as a loose
   file. The call result is not a puzzle-load guard; a missing voice clip does
   not discard the already-presented controls or leave the scene.
+- `PlayBlockingAudioClip` selects cursor index `0x13`, activates its
+  presentation, and services only keyboard command polling plus managed audio
+  while the clip is active. Mouse transitions therefore cannot select a mug
+  piece during the narration. `RunWacMugSelectionScene` activates its normal
+  puzzle cursor only after the blocking clip returns and the manipulation loop
+  becomes active.
 - The mug is solved only when all nine orientation states are zero and every
   piece is within five pixels of its recovered x/y offset from piece 0. The
   completion path centers `mug9.smk` in the WAC media viewport, plays
