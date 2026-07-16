@@ -499,9 +499,11 @@ bool MediaPlayer::syncGame(Common::Serializer &serializer) {
 }
 
 bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
-		bool &paused, bool toolbarPaused, bool &skipToEnd,
+		bool allowSegmentAdvance, bool &paused, bool toolbarPaused, bool &skipToEnd,
+		bool &advanceSegment,
 		Audio::SoundHandle *externalAudio, bool suppressSceneMouseStop) {
 	skipToEnd = false;
+	advanceSegment = false;
 	if (_input->pollEvents()) {
 		_engine->quitGame();
 		return false;
@@ -524,6 +526,11 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 			_mixer->pauseHandle(*externalAudio, effectivePause);
 		debugC(2, kDebugVideo, "Ripper: Space %s presentation", paused ? "paused" : "resumed");
 	}
+	if (command == 0x4d00 && allowSegmentAdvance) {
+		advanceSegment = true;
+		debugC(2, kDebugVideo, "Ripper: Right Arrow requested next IAVF segment");
+		return false;
+	}
 	return true;
 }
 
@@ -532,9 +539,11 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		const Common::Array<uint32> *frameAudioOffsets, uint32 audioByteRate,
 		uint32 timelineStartMillis, uint displayScale, bool patchInterfacePalette,
 		uint frameLimit, int originY, bool presentFinalFrameOnEsc, bool patchWacMediaPalette,
-		bool serviceSceneUi, bool repeatedLoopPass) {
+		bool serviceSceneUi, bool repeatedLoopPass, bool *advanceSegment) {
 	if (stoppedByUser)
 		*stoppedByUser = false;
+	if (advanceSegment)
+		*advanceSegment = false;
 	Video::SmackerDecoder decoder;
 	if (!decoder.loadStream(stream)) {
 		warning("Ripper: invalid Smacker stream '%s'", name.c_str());
@@ -644,9 +653,16 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			g_system->updateScreen();
 		}
 		bool skipToEnd = false;
-		if (!servicePlaybackInput(decoder, allowEscSpace, paused, toolbarPaused,
-				skipToEnd, externalAudio, toolbarOwnsInput)) {
+		bool advanceToNextSegment = false;
+		if (!servicePlaybackInput(decoder, allowEscSpace, advanceSegment != nullptr,
+				paused, toolbarPaused, skipToEnd, advanceToNextSegment,
+				externalAudio, toolbarOwnsInput)) {
 			completed = false;
+			if (advanceToNextSegment) {
+				if (advanceSegment)
+					*advanceSegment = true;
+				completed = true;
+			}
 			if (skipToEnd && presentFinalFrameOnEsc && decoder.getFrameCount() != 0) {
 				const uint finalFrame = decoder.getFrameCount() - 1;
 				const Graphics::Surface *frame = decoder.forceSeekToFrame(finalFrame);
@@ -658,7 +674,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 						name.c_str(), finalFrame);
 				}
 			}
-			if (stoppedByUser && !_engine->shouldQuit())
+			if (!advanceToNextSegment && stoppedByUser && !_engine->shouldQuit())
 				*stoppedByUser = true;
 			break;
 		}
@@ -731,22 +747,36 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 
 	Audio::SoundHandle audioHandle;
 	bool audioActive = false;
-	const uint32 timelineStartMillis = g_system->getMillis(true);
-	if (!movie.audio.empty()) {
+	uint32 audioTimelineOffset = 0;
+	uint32 timelineStartMillis = g_system->getMillis(true);
+	auto startAudioAtOffset = [&](uint32 offset) {
+		if (audioActive)
+			_mixer->stopHandle(audioHandle);
+		audioActive = false;
+		if (movie.audio.empty())
+			return true;
+		if (offset >= movie.audio.size())
+			return false;
 		Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(
-			movie.audio.data(), movie.audio.size(), movie.sampleRate,
+			movie.audio.data() + offset, movie.audio.size() - offset, movie.sampleRate,
 			Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::NO);
-		if (audioStream) {
-			_mixer->playStream(Audio::Mixer::kSpeechSoundType, &audioHandle, audioStream);
-			audioActive = _mixer->isSoundHandleActive(audioHandle);
-			debugC(2, kDebugVideo, "Ripper: started IAVF audio rate=%u bytes=%u active=%d",
-				movie.sampleRate, movie.audio.size(), audioActive);
-		}
-	}
+		if (!audioStream)
+			return false;
+		_mixer->playStream(Audio::Mixer::kSpeechSoundType, &audioHandle, audioStream);
+		audioActive = _mixer->isSoundHandleActive(audioHandle);
+		audioTimelineOffset = offset;
+		timelineStartMillis = g_system->getMillis(true);
+		debugC(2, kDebugVideo,
+			"Ripper: started IAVF audio rate=%u offset=%u bytes=%u active=%d",
+			movie.sampleRate, offset, movie.audio.size() - offset, audioActive);
+		return true;
+	};
+	if (!startAudioAtOffset(0))
+		return false;
 
 	bool result = true;
 	const uint32 audioByteRate = movie.audioByteRate;
-	uint completedSegments = 0;
+	bool completedFinalSegment = false;
 	for (uint i = 0; i < movie.segments.size() && !_engine->shouldQuit(); ++i) {
 		if (movie.segments[i].clearDisplayBefore) {
 			// RunPacketizedMediaPlaybackCore at 0x5b592 handles IAVF opcode 0x68 by
@@ -759,11 +789,23 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		}
 		Common::SeekableReadStream *smacker = rebuildSmackerStream(movie.segments[i]);
 		bool stoppedByUser = false;
+		bool advanceSegment = false;
+		Common::Array<uint32> relativeAudioOffsets;
+		const Common::Array<uint32> *frameAudioOffsets = &movie.segments[i].frameAudioOffsets;
+		if (audioTimelineOffset != 0) {
+			relativeAudioOffsets.reserve(frameAudioOffsets->size());
+			for (uint frame = 0; frame < frameAudioOffsets->size(); ++frame) {
+				relativeAudioOffsets.push_back((*frameAudioOffsets)[frame] >= audioTimelineOffset ?
+					(*frameAudioOffsets)[frame] - audioTimelineOffset : 0);
+			}
+			frameAudioOffsets = &relativeAudioOffsets;
+		}
 		if (!smacker || !playSmacker(smacker, Common::String::format("%s#%u", name.c_str(), i),
 			allowEscSpace, movie.segments[i].x, movie.segments[i].y,
 			audioActive ? &audioHandle : nullptr, &stoppedByUser,
-			&movie.segments[i].frameAudioOffsets, audioByteRate, timelineStartMillis,
-			kAutoPacketizedDisplayScale, false, 0, 0, false, false, serviceSceneUi)) {
+			frameAudioOffsets, audioByteRate, timelineStartMillis,
+			kAutoPacketizedDisplayScale, false, 0, 0, false, false, serviceSceneUi,
+			false, &advanceSegment)) {
 			result = false;
 			break;
 		}
@@ -771,11 +813,31 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 			break;
 		if (_engine->getScripts()->hasPendingSceneTransition())
 			break;
-		++completedSegments;
+		if (advanceSegment) {
+			if (i + 1 >= movie.segments.size()) {
+				debugC(1, kDebugVideo,
+					"Ripper: Right Arrow completed final IAVF segment '%s#%u'",
+					name.c_str(), i);
+				break;
+			}
+			const IavfSegment &nextSegment = movie.segments[i + 1];
+			if (nextSegment.frameAudioOffsets.empty() ||
+					!startAudioAtOffset(nextSegment.frameAudioOffsets[0])) {
+				warning("Ripper: could not seek IAVF audio for '%s' segment=%u",
+					name.c_str(), i + 1);
+				result = false;
+				break;
+			}
+			debugC(1, kDebugVideo,
+				"Ripper: Right Arrow advanced IAVF '%s' segment=%u->%u audioOffset=%u",
+				name.c_str(), i, i + 1, audioTimelineOffset);
+			continue;
+		}
+		completedFinalSegment = i + 1 == movie.segments.size();
 	}
 	if (audioActive)
 		_mixer->stopHandle(audioHandle);
-	if (movie.clearDisplayAfter && completedSegments == movie.segments.size()) {
+	if (movie.clearDisplayAfter && completedFinalSegment) {
 		g_system->fillScreen(0);
 		g_system->updateScreen();
 		debugC(2, kDebugVideo,
