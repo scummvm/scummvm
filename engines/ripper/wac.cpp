@@ -28,9 +28,9 @@
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
 #include "ripper/input.h"
+#include "ripper/milestones.h"
 #include "ripper/puzzles/broken_mug.h"
 #include "ripper/ripper.h"
-#include "ripper/script.h"
 
 namespace Ripper {
 
@@ -48,7 +48,6 @@ static const uint32 kWacIdleWindowInterval = 3 * kDosTickMillis;
 static const uint32 kWacDatabaseCornerInterval = 5 * kDosTickMillis;
 static const uint16 kDosF10Command = 0x4400;
 static const uint kWacDatabaseEntryCount = 30;
-static const uint kWacDatabaseFlagBase = 0x46;
 static const uint kWacDatabaseTextBase = 0xdc;
 static const uint kWacDatabaseControlId = 0x73a;
 static const int kWacDatabaseLeft = 400;
@@ -322,8 +321,8 @@ void WacManager::drawText(byte *screen, uint pitch, int x, int y,
 void WacManager::buildDatabaseEntries() {
 	_databaseEntries.clear();
 	for (uint index = 0; index < kWacDatabaseEntryCount; ++index) {
-		const uint flag = kWacDatabaseFlagBase + index;
-		if (!_engine->getScripts()->isMilestoneFlagSet(flag))
+		const uint flag = kMilestoneFirstWacDatabaseEntry + index;
+		if (!_engine->getMilestones()->isSet(flag))
 			continue;
 		DatabaseEntry entry;
 		entry.originalIndex = index;
@@ -416,7 +415,7 @@ void WacManager::dispatchDatabaseEntry(const DatabaseEntry &entry) {
 		debugC(2, kDebugWac,
 			"Ripper: WAC database retaining chooser while entering Broken Mug viewport=50,50,282,350");
 		BrokenMugPuzzle::Result result;
-		if (_engine->getScripts()->isMilestoneFlagSet(0x48)) {
+		if (_engine->getMilestones()->isSet(kMilestoneCompletedMug)) {
 			result = BrokenMugPuzzle::playCompletionMedia(_engine) ?
 				BrokenMugPuzzle::kSolved : BrokenMugPuzzle::kLoadFailed;
 		} else {
