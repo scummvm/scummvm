@@ -3454,6 +3454,10 @@ bool Character::calculatePath(Common::Point target) {
 			// due to calculatePath being invoked with swapped source/dest params.
 			// This means the gate check is "can node see CHARACTER" and the flood-fill
 			// checks "any node reachable from DEST" AND "any node visible from CHARACTER".
+			// TODO: validate this with a playthought:
+			//   PVS-Studio V764: Possible incorrect order of arguments passed to
+			//   'canNodeConnectSourceToTarget' function: 'target' and 'charPos'.
+			// I didn't had any issues in previous runs
 			if (canNodeConnectSourceToTarget(i, target, charPos, reachable, nodeCount)) {
 				// Recompute cost (binary does this twice)
 				costToDest = g_engine->euclideanDistance(nodePos, target);
