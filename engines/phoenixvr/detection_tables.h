@@ -410,6 +410,18 @@ const ADGameDescription gameDescriptions[] = {
 	},
 
 	{"dracula2",
+		"Retail version",
+		AD_ENTRY4s("Install/script.pak", "ff52d2000eddc5c438f3c8ef50fea858", 277,
+				   "Install/Compiler.dat", "ff30c7ea065af1e86182b428e1f2cc7b", 42650,
+				   "Install/InsertCD.vr", "7f54847d09c772d41c8726d5c5529a9a", 54005,
+				   "First.exe", "403417a28a11a08deb8443dc08a2213c", 31770),
+		Common::PT_PRT,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"dracula2",
 		"Russobit-M",
 		AD_ENTRY3s("Install/script.pak", "ff52d2000eddc5c438f3c8ef50fea858", 277,
 				   "Install/Compiler.dat", "ff30c7ea065af1e86182b428e1f2cc7b", 42650,
