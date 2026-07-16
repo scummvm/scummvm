@@ -944,7 +944,7 @@ bool ScriptManager::performPendingSceneTransition() {
 		"Ripper: applying world map scene transition target='%s' entry=''",
 		memberName.c_str());
 	_engine->getToolbar()->leave();
-	_dialogue->clearPending();
+	_dialogue->dismissForSceneTransition("scene-runtime-transition");
 	_concurrent = CompiledScript();
 	_concurrentEntryLabel.clear();
 	if (!_ba0.load(_engine->getResources()->scripts(), memberName))
@@ -1126,7 +1126,7 @@ bool ScriptManager::serviceScene() {
 		return true;
 	if (hoveredInteraction) {
 		if (dialoguePending) {
-			_dialogue->clearPending();
+			_dialogue->dismissForSceneTransition("scene-interaction");
 			debugC(1, kDebugDialogue,
 				"Ripper: dialogue chooser closed by scene interaction=%u label='%s'",
 				hoveredInteractionIndex, hoveredInteraction->label.c_str());
@@ -1176,8 +1176,8 @@ bool ScriptManager::serviceScene() {
 	return true;
 }
 
-void ScriptManager::drawDialogueOverlay() const {
-	_dialogue->draw();
+void ScriptManager::drawDialogueOverlay(bool captureBacking) {
+	_dialogue->draw(captureBacking);
 }
 
 bool ScriptManager::updateInteractiveCursor(const Common::Point &point) {

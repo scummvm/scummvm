@@ -44,7 +44,7 @@ bool DialogueManager::initialize(ResourceManager &resources) {
 	return true;
 }
 
-void DialogueManager::draw() const {
+void DialogueManager::draw(bool captureBacking) {
 	if (!_pending || _choices.empty())
 		return;
 	Graphics::Surface *screen = g_system->lockScreen();
@@ -52,6 +52,29 @@ void DialogueManager::draw() const {
 		if (screen)
 			g_system->unlockScreen();
 		return;
+	}
+	if (captureBacking) {
+		Common::Rect currentBounds = visualBounds();
+		currentBounds.clip(Common::Rect(0, 0, screen->w, screen->h));
+		const bool initializeBacking = currentBounds != _backingBounds ||
+			_backingPixels.size() != (uint)(currentBounds.width() * currentBounds.height());
+		if (initializeBacking) {
+			_backingBounds = currentBounds;
+			_backingPixels.resize(_backingBounds.width() * _backingBounds.height());
+		}
+		const int captureTop = initializeBacking ? _backingBounds.top :
+			MAX<int>(_backingBounds.top, kSceneTop);
+		const int captureBottom = initializeBacking ? _backingBounds.bottom :
+			MIN<int>(_backingBounds.bottom, kSceneBottom);
+		for (int y = captureTop; y < captureBottom; ++y) {
+			memcpy(_backingPixels.data() +
+				(y - _backingBounds.top) * _backingBounds.width(),
+				screen->getBasePtr(_backingBounds.left, y), _backingBounds.width());
+		}
+		debugC(11, kDebugDialogue,
+			"Ripper: captured dialogue chooser backing bounds=%d,%d,%d,%d",
+			_backingBounds.left, _backingBounds.top,
+			_backingBounds.width(), _backingBounds.height());
 	}
 	for (uint visibleRow = 0; visibleRow < kVisibleChoiceCount; ++visibleRow) {
 		const uint choiceIndex = _firstVisibleChoice + visibleRow;
@@ -194,8 +217,7 @@ bool DialogueManager::service(const MouseState &mouse, uint &result) {
 	debugC(1, kDebugDialogue,
 		"Ripper: dialogue selected index=%u resultFrame=%u text='%s'",
 		_selectedChoice, result, _choices[_selectedChoice].text.c_str());
-	_pending = false;
-	_choices.clear();
+	clearPending();
 	return true;
 }
 
@@ -229,6 +251,21 @@ void DialogueManager::clearPending() {
 	_choices.clear();
 	_firstVisibleChoice = 0;
 	_hoveredArrow = 0;
+	_backingBounds = Common::Rect();
+	_backingPixels.clear();
+}
+
+void DialogueManager::dismissForSceneTransition(const char *reason) {
+	if (!_pending && _choices.empty())
+		return;
+	const uint choiceCount = _choices.size();
+	const bool restored = _pending && restoreBacking();
+	clearPending();
+	rebuildPresentationBands(reason);
+	g_system->updateScreen();
+	debugC(1, kDebugDialogue,
+		"Ripper: dismissed dialogue chooser before scene transition reason=%s choices=%u backing=%d",
+		reason, choiceCount, restored);
 }
 
 bool DialogueManager::syncGame(Common::Serializer &serializer) {
@@ -240,6 +277,8 @@ bool DialogueManager::syncGame(Common::Serializer &serializer) {
 	if (serializer.isLoading()) {
 		if (choiceCount > 256)
 			return false;
+		_backingBounds = Common::Rect();
+		_backingPixels.clear();
 		_choices.clear();
 		_choices.resize(choiceCount);
 	}
@@ -300,6 +339,35 @@ void DialogueManager::updateLayout() {
 	_downArrowBounds = Common::Rect(arrowLeft,
 		_chooserBounds.bottom - _arrowFrames[2].height,
 		arrowLeft + _arrowFrames[2].width, _chooserBounds.bottom);
+}
+
+Common::Rect DialogueManager::visualBounds() const {
+	Common::Rect bounds = _chooserBounds;
+	if (_choices.size() > kVisibleChoiceCount && _arrowFrames.size() >= 4) {
+		bounds.left = MIN(bounds.left, MIN(_upArrowBounds.left, _downArrowBounds.left));
+		bounds.top = MIN(bounds.top, MIN(_upArrowBounds.top, _downArrowBounds.top));
+		bounds.right = MAX(bounds.right, MAX(_upArrowBounds.right, _downArrowBounds.right));
+		bounds.bottom = MAX(bounds.bottom, MAX(_upArrowBounds.bottom, _downArrowBounds.bottom));
+	}
+	return bounds;
+}
+
+bool DialogueManager::restoreBacking() {
+	if (_backingBounds.isEmpty() || _backingPixels.size() !=
+			(uint)(_backingBounds.width() * _backingBounds.height()))
+		return false;
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen || screen->format.bytesPerPixel != 1) {
+		if (screen)
+			g_system->unlockScreen();
+		return false;
+	}
+	for (int y = 0; y < _backingBounds.height(); ++y) {
+		memcpy(screen->getBasePtr(_backingBounds.left, _backingBounds.top + y),
+			_backingPixels.data() + y * _backingBounds.width(), _backingBounds.width());
+	}
+	g_system->unlockScreen();
+	return true;
 }
 
 void DialogueManager::rebuildPresentationBands(const char *reason) const {

@@ -25,11 +25,12 @@ public:
 	bool service(const MouseState &mouse, uint &result);
 	void updateHover(const Common::Point &point);
 	bool contains(const Common::Point &point) const;
-	void draw() const;
+	void draw(bool captureBacking = false);
 	void rebuildPresentationBands(const char *reason) const;
 	bool isPending() const { return _pending; }
 	bool hasChoices() const { return !_choices.empty(); }
 	void clearPending();
+	void dismissForSceneTransition(const char *reason);
 	bool syncGame(Common::Serializer &serializer);
 
 private:
@@ -40,12 +41,16 @@ private:
 	uint measureText(const Common::String &text) const;
 	void updateLayout();
 	void drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const;
+	Common::Rect visualBounds() const;
+	bool restoreBacking();
 
 	Common::Array<Choice> _choices;
 	Common::Array<BitmapAssetFrame> _arrowFrames;
 	Common::Rect _chooserBounds;
 	Common::Rect _upArrowBounds;
 	Common::Rect _downArrowBounds;
+	Common::Rect _backingBounds;
+	Common::Array<byte> _backingPixels;
 	bool _pending = false;
 	uint _selectedChoice = 0;
 	uint _firstVisibleChoice = 0;
