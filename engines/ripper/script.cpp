@@ -24,6 +24,7 @@
 
 #include "common/debug.h"
 #include "common/ptr.h"
+#include "common/serializer.h"
 #include "common/stream.h"
 #include "common/system.h"
 
@@ -312,8 +313,120 @@ bool CompiledScript::validateCallbacks() const {
 
 ScriptManager::ScriptManager(RipperEngine *engine) : _engine(engine), _activeBa0Frame(0),
 		_hoveredBa0Interaction(-1),
-		_awaitingBa0Interaction(false), _briefingArmed(false), _briefingSelector(0) {
+		_awaitingBa0Interaction(false), _briefingArmed(false), _briefingSelector(0),
+		_resumeLoadedPresentation(false) {
 	_dialogue = new DialogueManager();
+}
+
+bool ScriptManager::canSaveGame() const {
+	return _awaitingBa0Interaction && _pendingSceneMember.empty() &&
+		_activeBa0Frame < _ba0.getFrames().size();
+}
+
+bool ScriptManager::syncGame(Common::Serializer &serializer) {
+	static const uint kSerializedMilestoneCount = 1000;
+	Common::String ba0Member = serializer.isSaving() ? _ba0.getMemberName() : Common::String();
+	Common::String concurrentMember = serializer.isSaving() ? _concurrent.getMemberName() : Common::String();
+	Common::String concurrentEntry = serializer.isSaving() ? _concurrentEntryLabel : Common::String();
+	Common::String previousFrame = serializer.isSaving() ? _previousBa0FrameLabel : Common::String();
+	uint32 activeFrame = _activeBa0Frame;
+	byte awaitingInteraction = _awaitingBa0Interaction ? 1 : 0;
+	byte briefingArmed = _briefingArmed ? 1 : 0;
+	uint32 briefingSelector = _briefingSelector;
+
+	serializer.syncString(ba0Member);
+	serializer.syncAsUint32LE(activeFrame);
+	serializer.syncString(previousFrame);
+	serializer.syncString(concurrentMember);
+	serializer.syncString(concurrentEntry);
+	serializer.syncAsByte(awaitingInteraction);
+	serializer.syncAsByte(briefingArmed);
+	serializer.syncAsUint32LE(briefingSelector);
+	if (serializer.isLoading() && (ba0Member.empty() || ba0Member.size() > 128 ||
+			concurrentMember.size() > 128 || concurrentEntry.size() > 128 ||
+			previousFrame.size() > 128))
+		return false;
+
+	if (serializer.isLoading()) {
+		_milestoneFlags.clear();
+		_milestoneFlags.resize(kSerializedMilestoneCount);
+	}
+	for (uint i = 0; i < kSerializedMilestoneCount; ++i) {
+		byte value = isMilestoneFlagSet(i) ? 1 : 0;
+		serializer.syncAsByte(value);
+		if (serializer.isLoading())
+			_milestoneFlags[i] = value != 0;
+	}
+
+	uint32 playedSceneCount = _playedScenes.size();
+	serializer.syncAsUint32LE(playedSceneCount);
+	if (serializer.isLoading()) {
+		if (playedSceneCount > 4096)
+			return false;
+		_playedScenes.clear();
+		_playedScenes.resize(playedSceneCount);
+	}
+	for (uint i = 0; i < playedSceneCount; ++i) {
+		serializer.syncString(_playedScenes[i]);
+		if (serializer.isLoading() && _playedScenes[i].size() > 128)
+			return false;
+	}
+
+	uint32 interactionCount = _activeBa0InteractionEnabled.size();
+	serializer.syncAsUint32LE(interactionCount);
+	if (serializer.isLoading()) {
+		if (interactionCount > 255)
+			return false;
+		_activeBa0InteractionEnabled.clear();
+		_activeBa0InteractionEnabled.resize(interactionCount);
+	}
+	for (uint i = 0; i < interactionCount; ++i) {
+		byte enabled = _activeBa0InteractionEnabled[i] ? 1 : 0;
+		serializer.syncAsByte(enabled);
+		if (serializer.isLoading())
+			_activeBa0InteractionEnabled[i] = enabled != 0;
+	}
+
+	if (!_dialogue->syncGame(serializer) || serializer.err())
+		return false;
+	if (serializer.isSaving())
+		return true;
+
+	CompiledScript restoredBa0;
+	if (!restoredBa0.load(_engine->getResources()->scripts(), ba0Member))
+		return false;
+	if (activeFrame >= restoredBa0.getFrames().size() ||
+			interactionCount != restoredBa0.getFrames()[activeFrame].interactionCount)
+		return false;
+
+	CompiledScript restoredConcurrent;
+	if (!concurrentMember.empty() &&
+			!restoredConcurrent.load(_engine->getResources()->scripts(), concurrentMember))
+		return false;
+
+	_ba0 = Common::move(restoredBa0);
+	_concurrent = Common::move(restoredConcurrent);
+	_concurrentEntryLabel = concurrentEntry;
+	_previousBa0FrameLabel = previousFrame;
+	_activeBa0Frame = activeFrame;
+	_awaitingBa0Interaction = awaitingInteraction != 0;
+	_briefingArmed = briefingArmed != 0;
+	_briefingSelector = briefingSelector;
+	_pendingSceneMember.clear();
+	_hoveredBa0Interaction = -1;
+	_resumeLoadedPresentation = !_dialogue->isPending() &&
+		_ba0.getFrames()[_activeBa0Frame].presentationType == 1;
+	_engine->getToolbar()->leave();
+	_engine->getCursor()->setVisible(false);
+	debugC(1, kDebugSavegames,
+		"Ripper: restored script state member='%s' frame=%u label='%s' concurrent='%s' "
+		"entry='%s' flags=%u playedScenes=%u interactions=%u dialogue=%d",
+		_ba0.getMemberName().c_str(), _activeBa0Frame,
+		_ba0.getString(_ba0.getFrames()[_activeBa0Frame].labelOffset).c_str(),
+		_concurrent.getMemberName().c_str(), _concurrentEntryLabel.c_str(),
+		kSerializedMilestoneCount, _playedScenes.size(),
+		_activeBa0InteractionEnabled.size(), _dialogue->isPending());
+	return true;
 }
 
 ScriptManager::~ScriptManager() {
@@ -930,6 +1043,17 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 }
 
 bool ScriptManager::serviceScene() {
+	if (_resumeLoadedPresentation) {
+		_resumeLoadedPresentation = false;
+		const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
+		const Common::String label = _ba0.getString(frame.labelOffset);
+		const Common::String mediaPath = _ba0.getString(frame.mediaNameOffset);
+		debugC(1, kDebugSavegames,
+			"Ripper: resuming loaded interactive presentation frame=%u label='%s' media='%s'",
+			_activeBa0Frame, label.c_str(), mediaPath.c_str());
+		if (!_engine->getMedia()->playScene(mediaPath, frame.x, frame.y, false, true, false))
+			return false;
+	}
 	const MouseState mouse = _engine->getInput()->publishMouseState();
 	const bool dialoguePending = _dialogue->isPending();
 	if (dialoguePending) {
