@@ -86,7 +86,7 @@ private:
 	Common::SortedArray<RenderObject *> _objects;
 
 	Graphics::PixelFormat _inputPixelFormat16, _inputPixelFormat24, _inputPixelFormat32;
-	Graphics::PixelFormat _screenPixelFormat;
+	Graphics::PixelFormat _screenPixelFormat16, _screenPixelFormat32;
 	Graphics::PixelFormat _clut8Format;
 	Graphics::PixelFormat _transparentPixelFormat;
 

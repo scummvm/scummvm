@@ -176,13 +176,6 @@ bool ResourceManager::loadImage(const Common::Path &name, Graphics::ManagedSurfa
 
 	GraphicsManager::copyToManaged(buf, surf, info.width, info.height, g_nancy->_graphics->getInputPixelFormat(info.depth));
 
-	if (info.depth != 16) {
-		// Convert 24/32 bpp images to 16 bpp on the fly since that's what the
-		// engine uses internally. These images are used since nancy13.
-		// TODO: add support for 24/32 bpp surfaces in the engine and skip this conversion
-		surf.convertToInPlace(g_nancy->_graphics->getInputPixelFormat());
-	}
-
 	delete[] buf;
 	delete stream;
 	return true;

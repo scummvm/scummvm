@@ -386,7 +386,7 @@ void CursorManager::warpCursor(const Common::Point &pos) {
 }
 
 void CursorManager::applyCursor() {
-	bool isNancy13 = g_nancy->getGameType() >= kGameTypeNancy13;
+	const bool isNancy13 = g_nancy->getGameType() >= kGameTypeNancy13;
 
 	if (_curCursorID != _lastCursorID) {
 		Graphics::ManagedSurface *surf;
@@ -400,7 +400,7 @@ void CursorManager::applyCursor() {
 
 		Graphics::ManagedSurface temp(*surf, bounds);
 
-		CursorMan.replaceCursor(temp, hotspot.x, hotspot.y, !isNancy13 ? g_nancy->_graphics->getTransColor() : 0);
+		CursorMan.replaceCursor(temp, hotspot.x, hotspot.y, g_nancy->_graphics->getTransColor());
 		if (g_nancy->getGameType() == kGameTypeVampire) {
 			byte palette[3 * 256];
 			surf->grabPalette(palette, 0, 256);
