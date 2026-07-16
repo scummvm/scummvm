@@ -170,6 +170,10 @@
   during that drag advances eight frames and rotates the piece to the next of
   four orientation states. The puzzle implementation is isolated under
   `engines/ripper/puzzles/`.
+- `RunWacInventorySelectionLoop` keeps the database chooser alive while it
+  dispatches `RunWacMugSelectionScene`. The mug scene redraws only the left
+  media viewport, so the Object Database panel and its selected Broken Mug row
+  remain visible and continue to frame the puzzle on the right.
 - After loading the nine controls, `RunWacMugSelectionScene` draws them back to
   front, presents the completed WAC page, and only then calls
   `PlayBlockingAudioClip` at `0x1f0ea` for `q_p_1.wav`. The WAV is resolved
