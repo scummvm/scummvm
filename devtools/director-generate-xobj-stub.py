@@ -1,12 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from __future__ import annotations
 
 import argparse
-import os
 import re
 import struct
+from pathlib import Path
 from typing import Any, BinaryIO, Literal
+
 from typing_extensions import TypedDict
 
 XCodeType = Literal["XFCN", "XCMD", "XObject", "Xtra"]
@@ -19,6 +20,7 @@ class XCode(TypedDict):
     filename: str
     method_table: list[str]
 
+
 class PESection(TypedDict):
     name: str
     virt_size: int
@@ -27,13 +29,11 @@ class PESection(TypedDict):
     raw_ptr: int
 
 
-DIRECTOR_SRC_PATH = os.path.abspath(
-    os.path.join(__file__, "..", "..", "engines", "director")
-)
-MAKEFILE_PATH = os.path.join(DIRECTOR_SRC_PATH, "module.mk")
-LINGO_XLIBS_PATH = os.path.join(DIRECTOR_SRC_PATH, "lingo", "xlibs")
-LINGO_XTRAS_PATH = os.path.join(DIRECTOR_SRC_PATH, "lingo", "xtras")
-LINGO_OBJECT_PATH = os.path.join(DIRECTOR_SRC_PATH, "lingo", "lingo-object.cpp")
+DIRECTOR_SRC_PATH = Path(__file__).parent.parent / "engines" / "director"
+MAKEFILE_PATH = DIRECTOR_SRC_PATH / "module.mk"
+LINGO_XLIBS_PATH = DIRECTOR_SRC_PATH / "lingo" / "xlibs"
+LINGO_XTRAS_PATH = DIRECTOR_SRC_PATH / "lingo" / "xtras"
+LINGO_OBJECT_PATH = DIRECTOR_SRC_PATH / "lingo" / "lingo-object.cpp"
 
 LEGAL = """/* ScummVM - Graphic Adventure Engine
  *
@@ -57,9 +57,7 @@ LEGAL = """/* ScummVM - Graphic Adventure Engine
  */
 """
 
-TEMPLATE_H = (
-    LEGAL
-    + """
+TEMPLATE_H = LEGAL + """
 #ifndef DIRECTOR_LINGO_{base_upper}_{slug_upper_alpha}_{slug_upper}_H
 #define DIRECTOR_LINGO_{base_upper}_{slug_upper_alpha}_{slug_upper}_H
 
@@ -86,13 +84,10 @@ void close(ObjectType type);
 
 #endif
 """
-)
 
 TEMPLATE_HEADER_METH = """void m_{methname}(int nargs);"""
 
-TEMPLATE = (
-    LEGAL
-    + """
+TEMPLATE = LEGAL + """
 #include "common/system.h"
 
 #include "director/director.h"
@@ -140,8 +135,8 @@ void {xobj_class}::open(ObjectType type, const Common::Path &path) {{
     {xobject_class} *xobj = new {xobject_class}(type);
     if (type == kXtraObj) {{
         g_lingo->_openXtras.push_back(xlibName);
-		g_lingo->_openXtraObjects.push_back(xobj);
-	}}
+        g_lingo->_openXtraObjects.push_back(xobj);
+    }}
     g_lingo->exposeXObject(xlibName, xobj);
     g_lingo->initBuiltIns(xlibBuiltins);
 }}
@@ -158,7 +153,6 @@ void {xobj_class}::close(ObjectType type) {{
 
 }}
 """
-)
 XLIB_METHOD_TEMPLATE = """	{{ "{methname}",				{xobj_class}::m_{methname},		 {min_args}, {max_args},	{director_version} }},"""
 XLIB_NEW_TEMPLATE = """void {xobj_class}::m_new(int nargs) {{
 	g_lingo->printSTUBWithArglist("{xobj_class}::m_new", nargs);
@@ -188,9 +182,7 @@ XTRA_PROPS_H = """
 	Datum getProp(const Common::String &propName) override;"""
 
 
-XCMD_TEMPLATE_H = (
-    LEGAL
-    + """
+XCMD_TEMPLATE_H = LEGAL + """
 #ifndef DIRECTOR_LINGO_XLIBS_{slug_upper_alpha}_{slug_upper}_H
 #define DIRECTOR_LINGO_XLIBS_{slug_upper_alpha}_{slug_upper}_H
 
@@ -212,11 +204,8 @@ void close(ObjectType type);
 
 #endif
 """
-)
 
-XCMD_TEMPLATE = (
-    LEGAL
-    + """
+XCMD_TEMPLATE = LEGAL + """
 #include "common/system.h"
 
 #include "director/director.h"
@@ -257,7 +246,6 @@ void {xobj_class}::close(ObjectType type) {{
 
 }}
 """
-)
 
 BUILTIN_TEMPLATE = """	{{ "{name}", {xobj_class}::m_{name}, {min_args}, {max_args}, {director_version}, {methtype} }},"""
 
@@ -287,10 +275,11 @@ def read_uint32_be(data: bytes) -> int:
 
 
 def inject_makefile(slug: str, xcode_type: XCodeType) -> None:
-    make_contents = open(MAKEFILE_PATH, "r").readlines()
+    with open(MAKEFILE_PATH, "r") as f:
+        make_contents = f.readlines()
     slug_alpha = slug[:1]
-    storage_path = f"lingo/xtras" if xcode_type == "Xtra" else f"lingo/xlibs"
-    expr = re.compile(f"^\t{storage_path}/([a-zA-Z0-9\\-]+).o( \\\\|)")
+    storage_path = f"lingo/{"xtras" if xcode_type == "Xtra" else "xlibs"}"
+    expr = re.compile(f"^\t{storage_path}/[a-z]/([a-zA-Z0-9\\-]+).o( \\\\|)")
     obj = f"{slug_alpha}/{slug}"
     for i in range(len(make_contents)):
         m = expr.match(make_contents[i])
@@ -299,12 +288,12 @@ def inject_makefile(slug: str, xcode_type: XCodeType) -> None:
                 # file already in makefile
                 print(f"{obj}.o already in {MAKEFILE_PATH}, skipping")
                 return
-            elif slug < m.group(1):
+            if slug < m.group(1):
                 make_contents.insert(i, f"\t{storage_path}/{obj}.o \\\n")
                 with open(MAKEFILE_PATH, "w") as f:
                     f.writelines(make_contents)
                 return
-            elif m.group(2) == "":
+            if m.group(2) == "":
                 # final entry in the list
                 make_contents[i] += " \\"
                 make_contents.insert(i + 1, f"\t{storage_path}/{obj}.o\n")
@@ -313,14 +302,17 @@ def inject_makefile(slug: str, xcode_type: XCodeType) -> None:
                 return
 
 
-def inject_lingo_object(slug: str, xobj_class: str, director_version: int, xcode_type: XCodeType) -> None:
+def inject_lingo_object(
+    slug: str, xobj_class: str, director_version: int, xcode_type: XCodeType
+) -> None:
     # write include statement for the object header
-    lo_contents = open(LINGO_OBJECT_PATH, "r").readlines()
+    with open(LINGO_OBJECT_PATH, "r") as f:
+        lo_contents = f.readlines()
     slug_alpha = slug[:1]
-    storage_path = f"director/lingo/xtras" if xcode_type == "Xtra" else f"director/lingo/xlibs"
+    storage_path = f"director/lingo/{"xtras" if xcode_type == "Xtra" else "xlibs"}"
     obj_type = "kXtraObj" if xcode_type == "Xtra" else "kXObj"
     header = f"{slug_alpha}/{slug}"
-    expr = re.compile(f'^#include "{storage_path}/([a-zA-Z0-9/\\-]+)\\.h"')
+    expr = re.compile(f'^#include "{storage_path}/[a-z]/([a-zA-Z0-9/\\-]+)\\.h"')
     in_xlibs = False
     for i in range(len(lo_contents)):
         m = expr.match(lo_contents[i])
@@ -331,7 +323,7 @@ def inject_lingo_object(slug: str, xobj_class: str, director_version: int, xcode
                     f"{storage_path}/{header}.h import already in {LINGO_OBJECT_PATH}, skipping"
                 )
                 break
-            elif slug < m.group(1):
+            if slug < m.group(1):
                 lo_contents.insert(i, f'#include "{storage_path}/{header}.h"\n')
                 with open(LINGO_OBJECT_PATH, "w") as f:
                     f.writelines(lo_contents)
@@ -344,7 +336,8 @@ def inject_lingo_object(slug: str, xobj_class: str, director_version: int, xcode
                 break
 
     # write entry in the XLibProto table
-    lo_contents = open(LINGO_OBJECT_PATH, "r").readlines()
+    with open(LINGO_OBJECT_PATH, "r") as f:
+        lo_contents = f.readlines()
     expr = re.compile("^\tXLIBDEF\\(([a-zA-Z0-9_]+),")
     in_xlibs = False
     for i in range(len(lo_contents)):
@@ -356,7 +349,7 @@ def inject_lingo_object(slug: str, xobj_class: str, director_version: int, xcode
                     f"{xobj_class} proto import already in {LINGO_OBJECT_PATH}, skipping"
                 )
                 break
-            elif xobj_class < m.group(1):
+            if xobj_class < m.group(1):
                 lo_contents.insert(
                     i,
                     f"	XLIBDEF({xobj_class},			{obj_type},					{director_version}),	// D{director_version // 100}\n",
@@ -381,8 +374,8 @@ def extract_xcode_macbinary(
     file.seek(resource_offset)
     resource_data_offset = read_uint32_be(file.read(4))
     resource_map_offset = read_uint32_be(file.read(4))
-    resource_data_size = read_uint32_be(file.read(4))
-    resource_map_size = read_uint32_be(file.read(4))
+    # resource_data_size = read_uint32_be(file.read(4))
+    # resource_map_size = read_uint32_be(file.read(4))
     file.seek(resource_offset + resource_map_offset + 24)
     type_list_offset = read_uint16_be(file.read(2))
     name_list_offset = read_uint16_be(file.read(2))
@@ -404,16 +397,16 @@ def extract_xcode_macbinary(
             )
             resources: list[tuple[str, int, int]] = []
             for _ in range(types[chunk_type][0]):
-                id = f"{chunk_type.decode('utf8')}_{read_uint16_be(file.read(2))}"
+                chunk_id = f"{chunk_type.decode('utf8')}_{read_uint16_be(file.read(2))}"
                 name_offset = read_uint16_be(file.read(2))
                 file.read(1)
                 data_offset = (read_uint8(file.read(1)) << 16) + read_uint16_be(
                     file.read(2)
                 )
                 file.read(4)
-                resources.append((id, data_offset, name_offset))
-            for id, data_offset, name_offset in resources:
-                xobj[id] = {}
+                resources.append((chunk_id, data_offset, name_offset))
+            for rsrc_id, data_offset, name_offset in resources:
+                xobj[rsrc_id] = {}
                 if name_offset != 0xFFFF:
                     file.seek(
                         resource_offset
@@ -422,44 +415,44 @@ def extract_xcode_macbinary(
                         + name_offset
                     )
                     name_size = read_uint8(file.read(1))
-                    xobj[id]["name"] = file.read(name_size).decode("macroman")
+                    xobj[rsrc_id]["name"] = file.read(name_size).decode("macroman")
                 else:
-                    xobj[id]["name"] = "<unknown>"
+                    xobj[rsrc_id]["name"] = "<unknown>"
                 file.seek(resource_offset + resource_data_offset + data_offset)
-                xobj[id]["dump"] = file.read(read_uint32_be(file.read(4)) - 4)
+                xobj[rsrc_id]["dump"] = file.read(read_uint32_be(file.read(4)) - 4)
                 file.seek(resource_offset + resource_data_offset + data_offset)
                 size = read_uint32_be(file.read(4)) - 12
                 file.read(12)
-                xobj[id]["xmethtable"] = []
+                xobj[rsrc_id]["xmethtable"] = []
                 while size > 0:
                     count = read_uint8(file.read(1))
                     if count == 0:
                         break
-                    xobj[id]["xmethtable"].append(file.read(count).decode("macroman"))
+                    xobj[rsrc_id]["xmethtable"].append(
+                        file.read(count).decode("macroman")
+                    )
                     size -= 1 + count
     if not xobj:
         raise ValueError("No extension resources found!")
 
     if xobj_id is None or xobj_id not in xobj:
         print("Please re-run with one of the following resource IDs:")
-        for id, data in xobj.items():
-            print(f"{id} - {data['name']}")
+        for rsrc_id, data in xobj.items():
+            print(f"{rsrc_id} - {data['name']}")
         raise ValueError("Need to specify resource ID")
-    type: XCodeType = (
+    xcode_type: XCodeType = (
         "XFCN"
         if xobj_id.startswith("XFCN_")
-        else "XCMD"
-        if xobj_id.startswith("XCMD_")
-        else "XObject"
+        else "XCMD" if xobj_id.startswith("XCMD_") else "XObject"
     )
-    if type == "XObject":
+    if xcode_type == "XObject":
         for entry in xobj[xobj_id]["xmethtable"]:
             print(entry)
     slug = xobj[xobj_id]["name"].lower()
-    if type in ["XFCN", "XCMD"]:
-        slug += type.lower()
+    if xcode_type in ["XFCN", "XCMD"]:
+        slug += xcode_type.lower()
     return {
-        "type": type,
+        "type": xcode_type,
         "name": xobj[xobj_id]["name"],
         "slug": slug,
         "filename": xobj[xobj_id]["name"],
@@ -469,36 +462,37 @@ def extract_xcode_macbinary(
 
 def extract_xcode_win16(file: BinaryIO, ne_offset: int) -> XCode:
     # get resource table
-    file.seek(ne_offset + 0x24, os.SEEK_SET)
-    restable_offset = read_uint16_le(file.read(0x2))
-    resident_names_offset = read_uint16_le(file.read(0x2))
+    file.seek(ne_offset + 0x24)
+    restable_offset = read_uint16_le(file.read(2))
+    resident_names_offset = read_uint16_le(file.read(2))
     file.seek(ne_offset + restable_offset)
-    shift_count = read_uint16_le(file.read(0x2))
+    shift_count = read_uint16_le(file.read(2))
     # read each resource
     resources: list[dict[str, Any]] = []
     while file.tell() < ne_offset + resident_names_offset:
-        type_id = read_uint16_le(file.read(0x2))  # should be 0x800a for XMETHTABLE
+        type_id = read_uint16_le(file.read(2))  # should be 0x800a for XMETHTABLE
         if type_id == 0:
             break
-        count = read_uint16_le(file.read(0x2))
-        file.read(0x4)  # reserved
+        count = read_uint16_le(file.read(2))
+        file.read(4)  # reserved
         entries = []
-        for i in range(count):
-            file_offset = read_uint16_le(file.read(0x2))
-            file_length = read_uint16_le(file.read(0x2))
+        for _ in range(count):
+            file_offset = read_uint16_le(file.read(2))
+            file_length = read_uint16_le(file.read(2))
             entries.append(
-                dict(
-                    offset=file_offset << shift_count, length=file_length << shift_count
-                )
+                {
+                    "offset": file_offset << shift_count,
+                    "length": file_length << shift_count,
+                }
             )
-            file.read(0x2)  # flagword
-            file.read(0x2)  # resource_id
-            file.read(0x2)  # handle
-            file.read(0x2)  # usage
-        resources.append(dict(type_id=type_id, entries=entries))
+            file.read(2)  # flagword
+            file.read(2)  # resource_id
+            file.read(2)  # handle
+            file.read(2)  # usage
+        resources.append({"type_id": type_id, "entries": entries})
     resource_names = []
     while file.tell() < ne_offset + resident_names_offset:
-        length = read_uint8(file.read(0x1))
+        length = read_uint8(file.read(1))
         if length == 0:
             break
         resource_names.append(file.read(length).decode("ASCII"))
@@ -508,13 +502,13 @@ def extract_xcode_win16(file: BinaryIO, ne_offset: int) -> XCode:
 
     xmethtable_exists = "XMETHTABLE" in resource_names
     file.seek(ne_offset + resident_names_offset)
-    name_length = read_uint8(file.read(0x1))
+    name_length = read_uint8(file.read(1))
     file_name = file.read(name_length).decode("ASCII")
 
     # Borland C++ can put the XMETHTABLE token into a weird nonstandard resource
     for x in filter(lambda d: d["type_id"] == 0x800F, resources):
         for y in x["entries"]:
-            file.seek(y["offset"], os.SEEK_SET)
+            file.seek(y["offset"])
             data = file.read(y["length"])
             xmethtable_exists |= b"XMETHTABLE" in data
 
@@ -528,7 +522,7 @@ def extract_xcode_win16(file: BinaryIO, ne_offset: int) -> XCode:
     xmethtable_offset = resources[0]["entries"][0]["offset"]
     xmethtable_length = resources[0]["entries"][0]["length"]
     print(f"Found XMETHTABLE for XObject library {file_name}!")
-    file.seek(xmethtable_offset, os.SEEK_SET)
+    file.seek(xmethtable_offset)
     xmethtable_raw = file.read(xmethtable_length)
     xmethtable = [
         entry.decode("iso-8859-1")
@@ -551,42 +545,44 @@ def extract_xcode_win32(file: BinaryIO, pe_offset: int) -> XCode:
     file.seek(pe_offset + 4)
 
     # read the COFF Header, perform basic sanity checks
-    machine_type = read_uint16_le(file.read(0x2))
-    if machine_type != 0x14c:
-        raise ValueError(f"PE file is not 32-bit Intel x86")
-    section_count = read_uint16_le(file.read(0x2))
-    file.seek(12, os.SEEK_CUR)
-    optional_size = read_uint16_le(file.read(0x2))
-    characteristics = read_uint16_le(file.read(0x2))
-    if not (characteristics & 0x2000):
+    machine_type = read_uint16_le(file.read(2))
+    if machine_type != 0x14C:
+        raise ValueError("PE file is not 32-bit Intel x86")
+    section_count = read_uint16_le(file.read(2))
+    file.seek(12, 1)
+    optional_size = read_uint16_le(file.read(2))
+    characteristics = read_uint16_le(file.read(2))
+    if not characteristics & 0x2000:
         raise ValueError("DLL flag not set")
-    if not (characteristics & 0x0100):
+    if not characteristics & 0x0100:
         raise ValueError("32-bit flag not set")
 
     # read the Optional Header to get the image base address
     optional = file.read(optional_size)
     image_base = 0
-    if read_uint16_le(optional[0:2]) == 0x10b:
+    if read_uint16_le(optional[0:2]) == 0x10B:
         image_base = read_uint32_le(optional[28:32])
         print(f"Found PE32, image base {image_base:08x}")
-    elif read_uint16_le(optional[0:2]) == 0x20b:
+    elif read_uint16_le(optional[0:2]) == 0x20B:
         raise ValueError("PE32+ not supported")
     else:
         raise ValueError("Unknown optional header magic number")
 
     # read each Section Header from the Section Table
     sections: dict[str, PESection] = {}
-    for i in range(section_count):
+    for _ in range(section_count):
         segment: PESection = {
-            "name": file.read(0x8).strip(b'\x00').decode('utf8'),
-            "virt_size": read_uint32_le(file.read(0x4)),
-            "virt_addr": read_uint32_le(file.read(0x4)),
-            "raw_size": read_uint32_le(file.read(0x4)),
-            "raw_ptr": read_uint32_le(file.read(0x4)),
+            "name": file.read(8).strip(b"\x00").decode(),
+            "virt_size": read_uint32_le(file.read(4)),
+            "virt_addr": read_uint32_le(file.read(4)),
+            "raw_size": read_uint32_le(file.read(4)),
+            "raw_ptr": read_uint32_le(file.read(4)),
         }
-        file.seek(16, os.SEEK_CUR)
+        file.seek(16, 1)
         sections[segment["name"]] = segment
-        print(f"{segment['name']}: {segment['virt_addr']:08x} {segment['virt_size']:08x}")
+        print(
+            f"{segment['name']}: {segment['virt_addr']:08x} {segment['virt_size']:08x}"
+        )
 
     # grab the .text section; this contains the program instructions
     if ".text" not in sections:
@@ -615,29 +611,35 @@ def extract_xcode_win32(file: BinaryIO, pe_offset: int) -> XCode:
         methtable_offset = read_uint32_le(methtable_raw) - image_base
         msgtable_found = False
         for s in sections.values():
-            if msgtable_offset in range(s["virt_addr"], s["virt_addr"]+s["virt_size"]):
+            if msgtable_offset in range(
+                s["virt_addr"], s["virt_addr"] + s["virt_size"]
+            ):
                 file.seek(s["raw_ptr"])
                 data = file.read(s["raw_size"])
                 start = msgtable_offset - s["virt_addr"]
                 end = data.find(b"\x00", start)
                 if data[start:end] != b"msgTable":
                     continue
-                print(f"Found msgTable!")
+                print("Found msgTable!")
                 msgtable_found = True
         if not msgtable_found:
             continue
         # If we found the text "msgTable" at the first address, we know we've found the right call.
         for s in sections.values():
-            if methtable_offset in range(s["virt_addr"], s["virt_addr"]+s["virt_size"]):
+            if methtable_offset in range(
+                s["virt_addr"], s["virt_addr"] + s["virt_size"]
+            ):
                 file.seek(s["raw_ptr"])
                 data = file.read(s["raw_size"])
                 start = methtable_offset - s["virt_addr"]
                 end = data.find(b"\x00", start)
                 methtable_found = True
-                methtable = data[start:end].decode('iso-8859-1').split('\n')
+                methtable = data[start:end].decode("iso-8859-1").splitlines()
 
     if not methtable_found:
-        raise ValueError("Could not find msgTable! You may have to copy the Xtra into real Director, run \"put mMessageList(xtra(\"xtraName\"))\" in the message window, then copy the output to a text file.")
+        raise ValueError(
+            'Could not find msgTable! You may have to copy the Xtra into real Director, run "put mMessageList(xtra("xtraName"))" in the message window, then copy the output to a text file.'
+        )
 
     for entry in methtable:
         print(entry)
@@ -650,7 +652,7 @@ def extract_xcode_win32(file: BinaryIO, pe_offset: int) -> XCode:
         "name": library_name,
         "slug": library_name.lower(),
         "filename": library_name.lower(),
-        "method_table": methtable
+        "method_table": methtable,
     }
 
 
@@ -665,14 +667,12 @@ def extract_xcode_textfile(file: BinaryIO) -> XCode:
 
     file.seek(0)
 
-    # skip past the useless marker Microsoft Notepad appends to UTF8 files
-    if file.read(3) != b"\xef\xbb\xbf":
-        file.seek(0)
+    data = file.read().decode()
+    # If BOM, skip
+    if data[0] == "\ufeff":
+        data = data[1:]
 
-    data = file.read().decode("utf8")
-    separator = "\r\n" if "\r\n" in data else "\n"
-
-    methtable = data.split(separator)
+    methtable = data.splitlines()
 
     library_name = methtable[0].split()[1].capitalize()
     methtable[0] = "-- " + methtable[0]
@@ -682,22 +682,22 @@ def extract_xcode_textfile(file: BinaryIO) -> XCode:
         "name": library_name,
         "slug": library_name.lower(),
         "filename": library_name.lower(),
-        "method_table": methtable
+        "method_table": methtable,
     }
 
 
-def extract_xcode(path: str, resid: str) -> XCode:
+def extract_xcode(path: Path, resid: str) -> XCode:
     with open(path, "rb") as file:
-        magic = file.read(0x2)
+        magic = file.read(2)
         if magic == b"MZ":
-            file.seek(0x3C, os.SEEK_SET)
-            header_offset = read_uint16_le(file.read(0x2))
-            file.seek(header_offset, os.SEEK_SET)
-            magic = file.read(0x2)
+            file.seek(0x3C)
+            header_offset = read_uint16_le(file.read(2))
+            file.seek(header_offset)
+            magic = file.read(2)
             if magic == b"NE":
                 print("Found Win16 NE DLL!")
                 return extract_xcode_win16(file, header_offset)
-            elif magic == b"PE":
+            if magic == b"PE":
                 print("Found Win32 PE DLL!")
                 return extract_xcode_win32(file, header_offset)
         file.seek(0)
@@ -713,15 +713,11 @@ def extract_xcode(path: str, resid: str) -> XCode:
             print("Found MacBinary!")
 
             data_size = read_uint32_be(header[83:87])
-            resource_size = read_uint32_be(header[87:91])
-            resource_offset = (
-                128
-                + data_size
-                + ((128 - (data_size % 128)) if (data_size % 128) else 0)
-            )
+            # resource_size = read_uint32_be(header[87:91])
+            resource_offset = 128 + data_size + -data_size % 128
             print(f"resource offset: {resource_offset}")
             return extract_xcode_macbinary(file, resource_offset, resid)
-        if path.endswith(".txt"):
+        if path.suffix == ".txt":
             # there's probably a more legit way of checking for text files
             print("Found text file!")
             return extract_xcode_textfile(file)
@@ -755,19 +751,20 @@ def generate_xobject_stubs(
         if methname.startswith("m"):
             methname = methname[1].lower() + methname[2:]
         meths.append(
-            dict(
-                methname=methname,
-                args=args,
-                min_args=len(args),
-                max_args=len(args),
-                returnval=returnval,
-                default='""' if returnval == "S" else "0",
-            )
+            {
+                "methname": methname,
+                "args": args,
+                "min_args": len(args),
+                "max_args": len(args),
+                "returnval": returnval,
+                "default": '""' if returnval == "S" else "0",
+            }
         )
     xobject_class = f"{name}XObject"
     xobj_class = f"{name}XObj"
 
     slug_alpha = slug[:1]
+    alpha_path = LINGO_XLIBS_PATH / slug_alpha
 
     cpp_text = TEMPLATE.format(
         base="xlibs",
@@ -789,26 +786,19 @@ def generate_xobject_stubs(
             ]
         ),
         xtra_props="",
-		xobj_new=XLIB_NEW_TEMPLATE.format(xobj_class=xobj_class),
+        xobj_new=XLIB_NEW_TEMPLATE.format(xobj_class=xobj_class),
         xobj_stubs="\n".join(
             [
-                XOBJ_NR_STUB_TEMPLATE.format(xobj_class=xobj_class, **x)
-                if x["returnval"] == "X"
-                else XOBJ_STUB_TEMPLATE.format(xobj_class=xobj_class, **x)
+                (
+                    XOBJ_NR_STUB_TEMPLATE.format(xobj_class=xobj_class, **x)
+                    if x["returnval"] == "X"
+                    else XOBJ_STUB_TEMPLATE.format(xobj_class=xobj_class, **x)
+                )
                 for x in meths
                 if x["methname"] != "new"
             ]
         ),
     )
-    if dry_run:
-        print("C++ output:")
-        print(cpp_text)
-        print()
-    else:
-        os.makedirs(os.path.join(LINGO_XLIBS_PATH, f"{slug_alpha}"), exist_ok=True)
-        with open(os.path.join(LINGO_XLIBS_PATH, f"{slug_alpha}/{slug}.cpp"), "w") as cpp:
-            cpp.write(cpp_text)
-
     header_text = TEMPLATE_H.format(
         base_upper="XLIBS",
         slug_upper=slug.upper(),
@@ -818,31 +808,42 @@ def generate_xobject_stubs(
         xtra_props_h="",
         methlist="\n".join([TEMPLATE_HEADER_METH.format(**x) for x in meths]),
     )
+
     if dry_run:
+        print("C++ output:")
+        print(cpp_text)
+        print()
+
         print("Header output:")
         print(header_text)
         print()
     else:
-        os.makedirs(os.path.join(LINGO_XLIBS_PATH, f"{slug_alpha}"), exist_ok=True)
-        with open(os.path.join(LINGO_XLIBS_PATH, f"{slug_alpha}/{slug}.h"), "w") as header:
+        alpha_path.mkdir(exist_ok=True)
+
+        with open(alpha_path / f"{slug}.cpp", "w") as cpp:
+            cpp.write(cpp_text)
+
+        with open(alpha_path / f"{slug}.h", "w") as header:
             header.write(header_text)
 
-    if not dry_run:
         inject_makefile(slug, "XObject")
         inject_lingo_object(slug, xobj_class, director_version, "XObject")
 
 
 def generate_xcmd_stubs(
-    type: Literal["XCMD", "XFCN"],
+    xtype: Literal["XCMD", "XFCN"],
     slug: str,
     name: str,
     filename: str,
     director_version: int = 400,
     dry_run: bool = False,
 ) -> None:
-    xobj_class = f"{name}{type}"
-    methtype = "CBLTIN" if type == "XCMD" else "HBLTIN"
+    xobj_class = f"{name}{xtype}"
+    methtype = "CBLTIN" if xtype == "XCMD" else "HBLTIN"
+
     slug_alpha = slug[:1]
+    alpha_path = LINGO_XLIBS_PATH / slug_alpha
+
     cpp_text = XCMD_TEMPLATE.format(
         slug=slug,
         slug_alpha=slug_alpha,
@@ -861,14 +862,6 @@ def generate_xcmd_stubs(
             xobj_class=xobj_class, methname=name, default=0
         ),
     )
-    if dry_run:
-        print("C++ output:")
-        print(cpp_text)
-        print()
-    else:
-        os.makedirs(os.path.join(LINGO_XLIBS_PATH, f"{slug_alpha}"), exist_ok=True)
-        with open(os.path.join(LINGO_XLIBS_PATH, f"{slug_alpha}/{slug}.cpp"), "w") as cpp:
-            cpp.write(cpp_text)
 
     header_text = XCMD_TEMPLATE_H.format(
         slug_upper=slug.upper(),
@@ -876,18 +869,27 @@ def generate_xcmd_stubs(
         xobj_class=xobj_class,
         methlist=TEMPLATE_HEADER_METH.format(methname=name),
     )
+
     if dry_run:
+        print("C++ output:")
+        print(cpp_text)
+        print()
+
         print("Header output:")
         print(header_text)
         print()
     else:
-        os.makedirs(os.path.join(LINGO_XLIBS_PATH, f"{slug_alpha}"), exist_ok=True)
-        with open(os.path.join(LINGO_XLIBS_PATH, f"{slug_alpha}/{slug}.h"), "w") as header:
+        alpha_path.mkdir(exist_ok=True)
+
+        with open(alpha_path / f"{slug}.cpp", "w") as cpp:
+            cpp.write(cpp_text)
+
+        with open(alpha_path / f"{slug}.h", "w") as header:
             header.write(header_text)
 
-    if not dry_run:
-        inject_makefile(slug, type)
+        inject_makefile(slug, xtype)
         inject_lingo_object(slug, xobj_class, director_version, "XObject")
+
 
 def generate_xtra_stubs(
     msgtable: list[str],
@@ -898,7 +900,6 @@ def generate_xtra_stubs(
     dry_run: bool = False,
 ) -> None:
     meths = []
-    slug_alpha=slug[:1]
     for e in msgtable:
         elem = e.split("--", 1)[0].strip()
         if not elem:
@@ -920,22 +921,25 @@ def generate_xtra_stubs(
         if argv and argv[-1].strip() == "*":
             min_args = -1
             max_args = 0
-        elif functype == "method" or functype == "toplevel":
+        elif functype in ["method", "toplevel"]:
             min_args -= 1
             max_args -= 1
 
         meths.append(
-            dict(
-                functype=functype,
-                methname=methname,
-                args=argv,
-                min_args=min_args,
-                max_args=max_args,
-                default="0",
-            )
+            {
+                "functype": functype,
+                "methname": methname,
+                "args": argv,
+                "min_args": min_args,
+                "max_args": max_args,
+                "default": "0",
+            }
         )
     xobject_class = f"{name}XtraObject"
     xobj_class = f"{name}Xtra"
+
+    slug_alpha = slug[:1]
+    alpha_path = LINGO_XTRAS_PATH / slug_alpha
 
     cpp_text = TEMPLATE.format(
         base="xtras",
@@ -951,24 +955,37 @@ def generate_xtra_stubs(
                 XLIB_METHOD_TEMPLATE.format(
                     xobj_class=xobj_class, director_version=director_version, **x
                 )
-                for x in meths if x["functype"] == "method"
+                for x in meths
+                if x["functype"] == "method"
             ]
         ),
-        xlib_builtins="\n".join([BUILTIN_TEMPLATE.format(
-            name=x["methname"],
-            xobj_class=xobj_class,
-            min_args=x["min_args"],
-            max_args=x["max_args"],
-            director_version=director_version,
-            methtype="HBLTIN",
-        ) for x in meths if x["functype"] == "global"]),
-        xlib_toplevels="\n".join([
-            XLIB_METHOD_TEMPLATE.format(
+        xlib_builtins="\n".join(
+            [
+                BUILTIN_TEMPLATE.format(
+                    name=x["methname"],
+                    xobj_class=xobj_class,
+                    min_args=x["min_args"],
+                    max_args=x["max_args"],
+                    director_version=director_version,
+                    methtype="HBLTIN",
+                )
+                for x in meths
+                if x["functype"] == "global"
+            ]
+        ),
+        xlib_toplevels="\n".join(
+            [
+                XLIB_METHOD_TEMPLATE.format(
                     xobj_class=xobj_class, director_version=director_version, **x
-        ) for x in meths if x["functype"] == "toplevel"]),
-        xtra_props=XTRA_PROPS_TEMPLATE.format(xobj_class=xobj_class,
-                                              xobject_class=xobject_class),
-		xobj_new=XLIB_NEW_TEMPLATE.format(xobj_class=xobj_class),
+                )
+                for x in meths
+                if x["functype"] == "toplevel"
+            ]
+        ),
+        xtra_props=XTRA_PROPS_TEMPLATE.format(
+            xobj_class=xobj_class, xobject_class=xobject_class
+        ),
+        xobj_new=XLIB_NEW_TEMPLATE.format(xobj_class=xobj_class),
         xobj_stubs="\n".join(
             [
                 XOBJ_STUB_TEMPLATE.format(xobj_class=xobj_class, **x)
@@ -977,15 +994,6 @@ def generate_xtra_stubs(
             ]
         ),
     )
-    if dry_run:
-        print("C++ output:")
-        print(cpp_text)
-        print()
-    else:
-        os.makedirs(os.path.join(LINGO_XTRAS_PATH, f"{slug_alpha}"), exist_ok=True)
-        with open(os.path.join(LINGO_XTRAS_PATH, f"{slug_alpha}/{slug}.cpp"), "w") as cpp:
-            cpp.write(cpp_text)
-
     header_text = TEMPLATE_H.format(
         base_upper="XTRAS",
         slug_upper=slug.upper(),
@@ -995,26 +1003,33 @@ def generate_xtra_stubs(
         xtra_props_h=XTRA_PROPS_H,
         methlist="\n".join([TEMPLATE_HEADER_METH.format(**x) for x in meths]),
     )
+
     if dry_run:
+        print("C++ output:")
+        print(cpp_text)
+        print()
+
         print("Header output:")
         print(header_text)
         print()
     else:
-        os.makedirs(os.path.join(LINGO_XTRAS_PATH, f"{slug_alpha}"), exist_ok=True)
-        with open(os.path.join(LINGO_XTRAS_PATH, f"{slug_alpha}/{slug}.h"), "w") as header:
+        alpha_path.mkdir(exist_ok=True)
+
+        with open(alpha_path / f"{slug}.cpp", "w") as cpp:
+            cpp.write(cpp_text)
+
+        with open(alpha_path / f"{slug}.h", "w") as header:
             header.write(header_text)
 
-    if not dry_run:
         inject_makefile(slug, "Xtra")
         inject_lingo_object(slug, xobj_class, director_version, "Xtra")
-
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Extract the method table from a Macromedia Director XObject/XLib and generate method stubs."
     )
-    parser.add_argument("XOBJ_FILE", help="XObject/XLib file to test")
+    parser.add_argument("XOBJ_FILE", help="XObject/XLib file to test", type=Path)
     parser.add_argument(
         "--resid", help="Resource ID (for MacBinary)", type=str, default=None
     )
