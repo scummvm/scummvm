@@ -127,6 +127,11 @@
   leaves the modal loop. The reimplementation restores the indexed scene and
   palette when the WAC loop exits; database, text-viewer, and help dispatches
   remain explicit subsystem stubs at this boundary.
+- `RunWacFrontEndLoop` loads the wildcard bitmap sets `wacwn1*.bbm` and
+  `wacwn2*.bbm`. `ServiceWacSceneIdleEffects` at `0x21da2` advances both sets
+  every three extended DOS ticks and redraws them at (64, 21) and (460, 19).
+  The service remains active while WAC subviews own input, so the two upper
+  window animations continue over the object database and puzzle scenes.
 - The `0x2000` action enters `RunWacInventorySelectionLoop` at `0x2252a`.
   `BuildWacInventorySelectionMenu` at `0x22c91` scans 30 entries, using shared
   named/milestone flags `0x46 + entry` as availability bits and game-text IDs

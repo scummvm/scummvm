@@ -433,6 +433,16 @@ Common::SeekableReadStream *AssetLibrary::createReadStreamForMember(const Common
 		DisposeAfterUse::YES);
 }
 
+void AssetLibrary::listMembersWithPrefix(const Common::String &prefix,
+		Common::Array<Common::String> &members) const {
+	members.clear();
+	const Common::String keyPrefix = normalizeMemberName(prefix, false);
+	for (uint i = 0; i < _entries.size(); ++i) {
+		if (_entries[i].key.hasPrefix(keyPrefix))
+			members.push_back(_entries[i].key);
+	}
+}
+
 bool ResourceManager::initialize() {
 	Common::File iniFile;
 	Common::INIFile ini;
@@ -470,6 +480,24 @@ bool ResourceManager::loadInterfaceBitmapSequence(const Common::String &memberNa
 	debugC(2, kDebugResources, "Ripper: decoded interface bitmap sequence '%s' frames=%u",
 		memberName.c_str(), sequence.frames.size());
 	return true;
+}
+
+bool ResourceManager::loadInterfaceBitmapSet(const Common::String &prefix,
+		Common::Array<BitmapAssetFrame> &frames) const {
+	Common::Array<Common::String> members;
+	_interface.listMembersWithPrefix(prefix, members);
+	frames.clear();
+	for (uint i = 0; i < members.size(); ++i) {
+		BitmapAssetSequence sequence;
+		if (!loadInterfaceBitmapSequence(members[i], sequence))
+			return false;
+		for (uint frame = 0; frame < sequence.frames.size(); ++frame)
+			frames.push_back(Common::move(sequence.frames[frame]));
+	}
+	debugC(2, kDebugResources,
+		"Ripper: decoded interface bitmap set prefix='%s' members=%u frames=%u",
+		prefix.c_str(), members.size(), frames.size());
+	return !frames.empty();
 }
 
 bool ResourceManager::loadInterfacePcx(const Common::String &memberName,
