@@ -60,6 +60,7 @@ private:
 	void restoreDisplay();
 	void drawFrontEnd() const;
 	void drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const;
+	void serviceIdleWindowAnimations();
 	int findControl(const Common::Point &point) const;
 	bool dispatchAction(uint16 action);
 	void buildDatabaseEntries();
@@ -74,6 +75,9 @@ private:
 	RipperEngine *_engine;
 	BitmapAssetFrame _background;
 	Common::Array<Control> _controls;
+	Common::Array<BitmapAssetFrame> _idleWindowAnimations[2];
+	uint _idleWindowFrame[2];
+	uint32 _idleWindowLastMillis;
 	Common::Array<BitmapAssetFrame> _databaseSkin;
 	Common::Array<DatabaseEntry> _databaseEntries;
 	Common::Array<Common::String> _gameText;

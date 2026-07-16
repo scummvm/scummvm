@@ -41,6 +41,10 @@ static const int kWacControlX[] = { 172, 252, 326, 390 };
 static const uint16 kWacControlActions[] = { 0x1900, 0x2000, 0x3100, 0x3b00 };
 static const uint kWacDefaultCursor = 14;
 static const uint kWacControlCursor = 16;
+static const int kWacIdleWindowX[] = { 64, 460 };
+static const int kWacIdleWindowY[] = { 21, 19 };
+static const uint32 kDosTickMillis = 55;
+static const uint32 kWacIdleWindowInterval = 3 * kDosTickMillis;
 static const uint16 kDosF10Command = 0x4400;
 static const uint kWacDatabaseEntryCount = 30;
 static const uint kWacDatabaseFlagBase = 0x46;
@@ -79,7 +83,9 @@ static void blitBitmap(Graphics::Surface *screen, const BitmapAssetFrame &bitmap
 
 WacManager::WacManager(RipperEngine *engine) : _engine(engine), _hoveredControl(-1),
 		_pressedControl(-1), _databaseSelection(0), _databaseFirstVisible(0),
-		_initialized(false) {
+		_idleWindowLastMillis(0), _initialized(false) {
+	_idleWindowFrame[0] = 0;
+	_idleWindowFrame[1] = 0;
 }
 
 bool WacManager::initialize(ResourceManager &resources) {
@@ -105,6 +111,15 @@ bool WacManager::initialize(ResourceManager &resources) {
 			"Ripper: WAC front-end control=%u action=0x%x rect=%d,%d,%d,%d",
 			i, control.action, control.bounds.left, control.bounds.top,
 			control.bounds.width(), control.bounds.height());
+	}
+
+	for (uint i = 0; i < ARRAYSIZE(_idleWindowAnimations); ++i) {
+		if (!resources.loadInterfaceBitmapSet(
+			Common::String::format("wacwn%u", i + 1), _idleWindowAnimations[i]))
+			return false;
+		debugC(2, kDebugWac,
+			"Ripper: WAC idle window slot=%u position=%d,%d frames=%u intervalTicks=3",
+			i, kWacIdleWindowX[i], kWacIdleWindowY[i], _idleWindowAnimations[i].size());
 	}
 
 	_databaseSkin.clear();
@@ -178,6 +193,26 @@ void WacManager::drawFrontEnd() const {
 	for (uint i = 0; i < _controls.size(); ++i)
 		drawBitmap(_controls[i].bitmap, _controls[i].bounds.left, _controls[i].bounds.top);
 	g_system->updateScreen();
+}
+
+void WacManager::serviceIdleWindowAnimations() {
+	const uint32 now = g_system->getMillis(true);
+	if (now - _idleWindowLastMillis < kWacIdleWindowInterval)
+		return;
+
+	for (uint slot = 0; slot < ARRAYSIZE(_idleWindowAnimations); ++slot) {
+		if (_idleWindowAnimations[slot].empty())
+			continue;
+		drawBitmap(_idleWindowAnimations[slot][_idleWindowFrame[slot]],
+			kWacIdleWindowX[slot], kWacIdleWindowY[slot]);
+		debugC(11, kDebugWac,
+			"Ripper: WAC idle window slot=%u frame=%u position=%d,%d",
+			slot, _idleWindowFrame[slot], kWacIdleWindowX[slot], kWacIdleWindowY[slot]);
+		_idleWindowFrame[slot] = (_idleWindowFrame[slot] + 1) %
+			_idleWindowAnimations[slot].size();
+	}
+	_engine->getCursor()->refresh();
+	_idleWindowLastMillis = now;
 }
 
 int WacManager::findControl(const Common::Point &point) const {
@@ -426,6 +461,7 @@ void WacManager::runDatabase() {
 		}
 
 		const MouseState mouse = _engine->getInput()->publishMouseState();
+		serviceIdleWindowAnimations();
 		_engine->getCursor()->update(bounds.contains(mouse.position) ?
 			kWacControlCursor : kWacDefaultCursor);
 		if (!_databaseEntries.empty() && bounds.contains(mouse.position)) {
@@ -469,6 +505,9 @@ void WacManager::run() {
 	_hoveredControl = -1;
 	_pressedControl = -1;
 	drawFrontEnd();
+	_idleWindowFrame[0] = 0;
+	_idleWindowFrame[1] = 0;
+	_idleWindowLastMillis = g_system->getMillis(true);
 	_engine->getCursor()->update(kWacDefaultCursor);
 
 	bool active = true;
@@ -487,6 +526,7 @@ void WacManager::run() {
 		}
 
 		const MouseState mouse = _engine->getInput()->publishMouseState();
+		serviceIdleWindowAnimations();
 		const int hoveredControl = findControl(mouse.position);
 		if (hoveredControl != _hoveredControl) {
 			_hoveredControl = hoveredControl;
