@@ -674,7 +674,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				return false;
 			const bool value = command.opcode == kSetMilestoneFlag;
 			if (!_engine->getMilestones()->set(command.arguments[0].value, value,
-				value ? "script-opcode-0x0e" : "script-opcode-0x0f"))
+				value ? "set milestone flag" : "clear milestone flag"))
 				return false;
 			break;
 		}
