@@ -519,7 +519,7 @@ void Toolbox::InsetRect(Common::Rect &r, int16 dh, int16 dv) {
 void Toolbox::InvertOval(const Common::Rect &r) {
 	if (_port) {
 		// set pattern to full black
-		Pattern pat({0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff});
+		Pattern pat = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff } };
 		_drawOval(r, pat, kPatXor, false, _wm->_colorBlack, _wm->_colorWhite);
 		if (_port->picSave) {
 			_port->picSave->pushOpRect(kOpInvertOval, r);
@@ -530,7 +530,7 @@ void Toolbox::InvertOval(const Common::Rect &r) {
 void Toolbox::InvertPoly(const PolyHandle &poly) {
 	if (_port) {
 		// set pattern to full black
-		Pattern pat({0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff});
+		Pattern pat = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff } };
 		_drawPoly(poly, pat, kPatXor, false, _wm->_colorBlack, _wm->_colorWhite);
 		if (_port->picSave) {
 			_port->picSave->pushOpPoly(kOpInvertPoly, poly);
@@ -541,7 +541,7 @@ void Toolbox::InvertPoly(const PolyHandle &poly) {
 void Toolbox::InvertRect(const Common::Rect &r) {
 	if (_port) {
 		// set pattern to full black
-		Pattern pat({0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff});
+		Pattern pat = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff } };
 		_drawRect(r, pat, kPatXor, false, _wm->_colorBlack, _wm->_colorWhite);
 		if (_port->picSave) {
 			_port->picSave->pushOpRect(kOpInvertRect, r);
@@ -552,7 +552,7 @@ void Toolbox::InvertRect(const Common::Rect &r) {
 void Toolbox::InvertRoundRect(const Common::Rect &r, uint16 ovalWidth, uint16 ovalHeight) {
 	if (_port) {
 		// set pattern to full black
-		Pattern pat({0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff});
+		Pattern pat = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff } };
 		_drawRoundRect(r, pat, kPatXor, false, _wm->_colorBlack, _wm->_colorWhite, ovalWidth, ovalHeight);
 		if (_port->picSave) {
 			_port->picSave->pushOpPoint(kOpOvSize, Common::Point(ovalWidth, ovalHeight));
