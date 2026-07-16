@@ -418,7 +418,7 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 		_ba0.getFrames()[_activeBa0Frame].presentationType == 1;
 	_engine->getToolbar()->leave();
 	_engine->getCursor()->setVisible(false);
-	debugC(1, kDebugSavegames,
+	debugC(1, kDebugSaveLoad,
 		"Ripper: restored script state member='%s' frame=%u label='%s' concurrent='%s' "
 		"entry='%s' flags=%u playedScenes=%u interactions=%u dialogue=%d",
 		_ba0.getMemberName().c_str(), _activeBa0Frame,
@@ -1048,7 +1048,7 @@ bool ScriptManager::serviceScene() {
 		const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
 		const Common::String label = _ba0.getString(frame.labelOffset);
 		const Common::String mediaPath = _ba0.getString(frame.mediaNameOffset);
-		debugC(1, kDebugSavegames,
+		debugC(1, kDebugSaveLoad,
 			"Ripper: resuming loaded interactive presentation frame=%u label='%s' media='%s'",
 			_activeBa0Frame, label.c_str(), mediaPath.c_str());
 		if (!_engine->getMedia()->playScene(mediaPath, frame.x, frame.y, false, true, false))
