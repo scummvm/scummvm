@@ -704,6 +704,8 @@ bool ScScript::executeInstruction() {
 					_stack->correctParams(0);
 					if (BaseEngine::instance().getGameId() == "barrowhilldp" && strcmp(methodName, "MakeParticle") == 0) {
 						// Silence unknown opcode in 'Barrow Hill - The Dark Path'
+					} else if (BaseEngine::instance().getGameId() == "forgottensound2" && (strcmp(methodName, "SetImage") == 0 || strcmp(methodName, "GetControl") == 0)) {
+						// Silence unknown opcode in 'Forgotten Sound 2 - Destiny'
 					} else {
 						runtimeError("Call to undefined method '%s'. Ignored.", methodName);
 					}
