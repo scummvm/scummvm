@@ -44,7 +44,8 @@ public:
 	MediaPlayer(RipperEngine *engine, InputManager *input, Audio::Mixer *mixer);
 	~MediaPlayer();
 
-	bool play(const Common::String &path, bool allowEscSpace, int x = -1, int y = -1);
+	bool play(const Common::String &path, bool allowEscSpace, int x = -1, int y = -1,
+		bool sceneViewport = false);
 	bool playWacMedia(const Common::String &path, int x, int y);
 	bool playBlockingAudio(const Common::String &path);
 	bool playSoundEffect(const Common::String &path, Audio::SoundHandle &handle,

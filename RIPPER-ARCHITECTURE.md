@@ -469,6 +469,13 @@
   when a following opcode `0x1b` preview draws only the 300-pixel scene area and
   when the callback returns directly to a type-2 frame such as `BAZ2`, which has
   no media to redraw itself.
+  Direct Smacker media remains in the scene display context initialized by
+  `InitializeSceneDisplayModeAndContext` at `0x1e28a`. `RunMediaSequence` at
+  `0x1e516` interprets its coordinates against that logical 640x300 descriptor,
+  so y=0 maps to physical y=50 between the toolbar and lower presentation
+  bands. ScummVM applies that retained-framebuffer origin to opcode `0x1a`
+  Smackers; otherwise a transition such as `DAW25.SMK` leaves scene pixels in
+  the toolbar band before the following interactive frame is drawn.
   The handler then removes the media extension and sets that basename in the
   shared played-entry catalog.
   Opcode `0x09`, handled by `HandleSceneEntryPromptScenePlayedCondition` at
