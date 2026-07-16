@@ -194,7 +194,7 @@ int room_load_depth(Load *load_handle, Buffer *depth, Buffer *walk, Room *room_i
 
 	bool hasLoad = load_handle != nullptr;
 	if (!hasLoad) {
-		env_get_level_path(filename, ROOM, ".DAT", room_info->room_id, variant);
+		env_get_level_path(filename, ROOM, ".DAT", 0, room_info->room_id);
 		loader_open(&load, filename, "rb", -1);
 		load_handle = &load;
 	}
@@ -308,6 +308,7 @@ RoomPtr room_load_rex(int id, int variant, const char *base_path, Buffer *pictur
 	roomPtr->num_variants = 0;
 	roomPtr->num_hotspots = 0;
 	roomPtr->num_rails = roomfile.num_rails;
+	roomPtr->room_id = id;
 	roomPtr->xs = roomfile.xs;
 	roomPtr->ys = roomfile.ys;
 	roomPtr->front_y = roomfile.front_y;
