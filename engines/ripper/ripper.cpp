@@ -177,15 +177,19 @@ Common::Error RipperEngine::run() {
 	if (shouldQuit())
 		return Common::kNoError;
 	if (!_gameplayStarted) {
-		if (!_scripts->runStartupPath())
+		if (!_scripts->runStartupPath()) {
+			_scripts->logRuntimeFailure("startup scene path failed");
 			return Common::kUnknownError;
+		}
 		_gameplayStarted = true;
 	}
 
 	while (!shouldQuit()) {
 		pumpEvents();
-		if (!_scripts->serviceScene())
+		if (!_scripts->serviceScene()) {
+			_scripts->logRuntimeFailure("scene service failed");
 			return Common::kUnknownError;
+		}
 		_system->updateScreen();
 		_system->delayMillis(10);
 	}

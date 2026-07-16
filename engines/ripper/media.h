@@ -52,12 +52,51 @@ public:
 	bool stopSoundEffect(Audio::SoundHandle &handle);
 	bool playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
 		bool loopUntilInput = false, bool allowEscSpace = false);
-	bool loadAudio(const Common::String &path);
-	bool startLoadedAudio(const Common::String &key, uint volumePercent, bool loop);
+	bool loadAudio(const Common::String &path, bool preserve);
+	bool configureAudio(const Common::String &key, uint volumePercent, uint triggerFrame,
+		byte control);
+	void clearAudio(const Common::String &key);
+	void stopAudio(const Common::String &key);
+	void setAudioVolume(const Common::String &key, uint targetVolumePercent,
+		uint startFrame, uint timing);
+	void serviceSceneAudio(uint frame);
+	void resetSceneAudioTriggers();
+	void clearSceneAudio(bool includePreserved);
 	bool isSceneAudioActive() const;
 	bool syncGame(Common::Serializer &serializer);
 
 private:
+	// InitializeAudioTriggerSlotFromPath at 0x37174 and the scene handlers at
+	// 0x15e48..0x160cc operate on g_audioTriggerSlots[20]. Keep the table intact
+	// across script callbacks so later scenes can address preserved resources.
+	struct AudioSlot {
+		Common::String path;
+		Common::String key;
+		Audio::SoundHandle handle;
+		uint volumePercent;
+		uint targetVolumePercent;
+		uint triggerFrame;
+		uint volumeStartFrame;
+		uint volumeTiming;
+		uint volumeRampStep;
+		uint volumeRampProgress;
+		int volumeRampDirection;
+		byte control;
+		bool occupied;
+		bool preserve;
+		bool volumeRampPending;
+		bool sparseVolumeRamp;
+
+		AudioSlot();
+	};
+
+	static const uint kAudioSlotCount = 20;
+	AudioSlot *findAudioSlot(const Common::String &key);
+	const AudioSlot *findAudioSlot(const Common::String &key) const;
+	bool startAudioSlot(AudioSlot &slot);
+	void clearAudioSlot(AudioSlot &slot);
+	void applyAudioSlotVolume(AudioSlot &slot);
+	Common::String describeAudioSlots() const;
 	bool playSmacker(Common::SeekableReadStream *stream, const Common::String &name,
 		bool allowEscSpace, int x, int y, Audio::SoundHandle *externalAudio = nullptr,
 		bool *stoppedByUser = nullptr, const Common::Array<uint32> *frameAudioOffsets = nullptr,
@@ -76,11 +115,7 @@ private:
 	RipperEngine *_engine;
 	InputManager *_input;
 	Audio::Mixer *_mixer;
-	Common::String _loadedAudioPath;
-	Common::String _loadedAudioKey;
-	Audio::SoundHandle _sceneAudioHandle;
-	uint _sceneAudioVolumePercent;
-	bool _sceneAudioLoop;
+	AudioSlot _audioSlots[kAudioSlotCount];
 	bool _stopSceneOnMouse;
 };
 

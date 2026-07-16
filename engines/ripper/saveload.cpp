@@ -36,7 +36,8 @@ namespace Ripper {
 namespace {
 
 static const char kRipperSaveMagic[] = { 'R', 'S', 'A', 'V' };
-static const uint32 kRipperSaveVersion = 2;
+static const uint32 kRipperSaveVersion = 3;
+static const uint32 kRipperMinimumSaveVersion = 2;
 static const uint16 kScreenWidth = 640;
 static const uint16 kScreenHeight = 400;
 static const uint32 kPaletteSize = 256 * 3;
@@ -121,7 +122,7 @@ Common::Error RipperEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	Common::Serializer serializer(stream, nullptr);
 	if (!serializer.matchBytes(kRipperSaveMagic, sizeof(kRipperSaveMagic)) ||
 			!serializer.syncVersion(kRipperSaveVersion) ||
-			serializer.getVersion() != kRipperSaveVersion) {
+			serializer.getVersion() < kRipperMinimumSaveVersion) {
 		warning("Ripper: unsupported or invalid save-state header");
 		return Common::kReadingFailed;
 	}
