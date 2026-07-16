@@ -204,8 +204,12 @@
   every three DOS ticks and plays `WACICON1.WAV` when the animation wraps. A
   later selection of control `0x4e1` runs `ClearBriefingMediaTrigger` at
   `0x193ab` to remove the control and stop its alert, dispatches selector 1 to
-  `CP0_1_P1.AVI`, and sets travel flag 44. The script therefore records 301 at
-  trigger-arm time, before the later UI event presents the media.
+  `CP0_1_P1.AVI`, and sets travel flag 44. `ExecutePresentationEntry` at
+  `0x1652a` deactivates the shared selection presentation for that AVI, so the
+  cursor, toolbar, briefing animation, and its alert remain inactive until
+  `RunMediaPresentation` at `0x168af` returns and selection presentation is
+  restored. The script therefore records 301 at trigger-arm time, before the
+  later UI event presents the media.
 - `WriteEmergencySaveGame` at `0x1ae3c` writes `0x7d` bytes for this store,
   exactly 125 bytes or 1,000 bits; `RestoreSavedRunState` at `0x1b8dd` caps the
   restored payload to the same size. ScummVM's engine-owned `Milestones`

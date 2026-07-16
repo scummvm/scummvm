@@ -49,7 +49,7 @@ public:
 	bool playBlockingAudio(const Common::String &path);
 	bool playSoundEffect(const Common::String &path, Audio::SoundHandle &handle,
 		uint volumePercent = 100);
-	void stopSoundEffect(Audio::SoundHandle &handle);
+	bool stopSoundEffect(Audio::SoundHandle &handle);
 	bool playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
 		bool loopUntilInput = false, bool allowEscSpace = false);
 	bool loadAudio(const Common::String &path);
@@ -64,8 +64,9 @@ private:
 		uint32 audioByteRate = 0, uint32 timelineStartMillis = 0, uint displayScale = 1,
 		bool patchInterfacePalette = true, uint frameLimit = 0, int originY = 0,
 		bool presentFinalFrameOnEsc = false, bool patchWacMediaPalette = false,
-		bool repeatedLoopPass = false);
-	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name, bool allowEscSpace);
+		bool serviceSceneUi = false, bool repeatedLoopPass = false);
+	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name,
+		bool allowEscSpace, bool serviceSceneUi = false);
 	bool servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
 		bool &paused, bool toolbarPaused, bool &skipToEnd,
 		Audio::SoundHandle *externalAudio, bool suppressSceneMouseStop);
