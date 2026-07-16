@@ -30,9 +30,10 @@ InputManager::InputManager(Common::EventManager *eventManager) : _eventManager(e
 }
 
 uint16 InputManager::translateKey(const Common::KeyState &key) {
-	if (key.ascii != 0)
-		return key.ascii;
-
+	// ScummVM backends may publish navigation keys in both keycode and ascii
+	// (for example, Right Arrow arrives with ascii 0x0113). Resolve mapped
+	// non-printing keys first so they retain the BIOS command values consumed by
+	// the original input paths.
 	switch (key.keycode) {
 	case Common::KEYCODE_F1:
 		return 0x3b00;
@@ -75,7 +76,7 @@ uint16 InputManager::translateKey(const Common::KeyState &key) {
 	case Common::KEYCODE_DELETE:
 		return 0x5300;
 	default:
-		return 0;
+		return key.ascii;
 	}
 }
 
