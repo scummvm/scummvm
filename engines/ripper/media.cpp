@@ -500,14 +500,16 @@ bool MediaPlayer::syncGame(Common::Serializer &serializer) {
 }
 
 bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
-		bool &paused, bool &skipToEnd, Audio::SoundHandle *externalAudio) {
+		bool &paused, bool toolbarPaused, bool &skipToEnd,
+		Audio::SoundHandle *externalAudio, bool suppressSceneMouseStop) {
 	skipToEnd = false;
 	if (_input->pollEvents()) {
 		_engine->quitGame();
 		return false;
 	}
 	if (!allowEscSpace || !_input->hasPendingKey())
-		return !(_stopSceneOnMouse && _input->peekMouseState().pressed != 0);
+		return !(_stopSceneOnMouse && !suppressSceneMouseStop &&
+			_input->peekMouseState().pressed != 0);
 
 	const uint16 command = _input->consumeKey();
 	if (command == 0x1b) {
@@ -517,9 +519,10 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 	}
 	if (command == 0x20) {
 		paused = !paused;
-		decoder.pauseVideo(paused);
+		const bool effectivePause = paused || toolbarPaused;
+		decoder.pauseVideo(effectivePause);
 		if (externalAudio)
-			_mixer->pauseHandle(*externalAudio, paused);
+			_mixer->pauseHandle(*externalAudio, effectivePause);
 		debugC(2, kDebugVideo, "Ripper: Space %s presentation", paused ? "paused" : "resumed");
 	}
 	return true;
@@ -566,6 +569,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	}
 
 	bool paused = false;
+	bool toolbarPaused = false;
 	bool completed = true;
 	uint presentedFrames = 0;
 	auto presentFrame = [&](const Graphics::Surface *frame, bool forcePalette) {
@@ -595,9 +599,26 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	};
 	decoder.start();
 	while (!_engine->shouldQuit() && !decoder.endOfVideo()) {
-		_engine->getScripts()->updateInteractiveCursor(_input->peekMouseState().position);
+		// ExecuteSceneFrameAndInteractions at 0x13277 passes
+		// PollInteractionAndResolveSelection at 0x13c8d as RunMediaSequence's
+		// per-frame callback. RunFrontEndActionMenu blocks that callback while the
+		// pointer remains in the toolbar band, so no Smacker frame advances.
+		const bool toolbarOwnsInput =
+			_engine->getScripts()->updateInteractiveCursor(_input->peekMouseState().position);
+		if (toolbarOwnsInput != toolbarPaused) {
+			toolbarPaused = toolbarOwnsInput;
+			const bool effectivePause = paused || toolbarPaused;
+			decoder.pauseVideo(effectivePause);
+			if (externalAudio)
+				_mixer->pauseHandle(*externalAudio, effectivePause);
+			debugC(2, kDebugVideo,
+				"Ripper: interactive scene media '%s' toolbarPause=%d keyboardPause=%d",
+				name.c_str(), toolbarPaused, paused);
+			g_system->updateScreen();
+		}
 		bool skipToEnd = false;
-		if (!servicePlaybackInput(decoder, allowEscSpace, paused, skipToEnd, externalAudio)) {
+		if (!servicePlaybackInput(decoder, allowEscSpace, paused, toolbarPaused,
+				skipToEnd, externalAudio, toolbarOwnsInput)) {
 			completed = false;
 			if (skipToEnd && presentFinalFrameOnEsc && decoder.getFrameCount() != 0) {
 				const uint finalFrame = decoder.getFrameCount() - 1;
@@ -617,7 +638,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		uint32 audioElapsedMs = 0;
 		uint32 targetAudioMs = 0;
 		bool frameDue = !synchronizeToTimeline && decoder.needsUpdate();
-		if (synchronizeToTimeline && !paused) {
+		if (synchronizeToTimeline && !paused && !toolbarPaused) {
 			const uint32 nextFrame = decoder.getCurFrame() + 1;
 			targetAudioMs = (uint32)((uint64)(*frameAudioOffsets)[nextFrame] * 1000 / audioByteRate);
 			if (externalAudio && _mixer->isSoundHandleActive(*externalAudio))
@@ -626,7 +647,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				audioElapsedMs = g_system->getMillis(true) - timelineStartMillis;
 			frameDue = audioElapsedMs >= targetAudioMs;
 		}
-		if (!paused && frameDue) {
+		if (!paused && !toolbarPaused && frameDue) {
 			const Graphics::Surface *frame = decoder.decodeNextFrame();
 			if (frame) {
 				presentFrame(frame, false);
@@ -649,8 +670,11 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		}
 		if (frameLimit != 0 && presentedFrames >= frameLimit)
 			break;
-		if (synchronizeToTimeline) {
-			if (!paused && !frameDue)
+		if (toolbarPaused) {
+			g_system->updateScreen();
+			g_system->delayMillis(10);
+		} else if (synchronizeToTimeline) {
+			if (!paused && !toolbarPaused && !frameDue)
 				g_system->delayMillis(MIN<uint32>(targetAudioMs - audioElapsedMs, 10));
 			else
 				g_system->delayMillis(1);

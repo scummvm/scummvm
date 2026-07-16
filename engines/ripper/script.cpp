@@ -1180,28 +1180,29 @@ void ScriptManager::drawDialogueOverlay() const {
 	_dialogue->draw();
 }
 
-void ScriptManager::updateInteractiveCursor(const Common::Point &point) {
+bool ScriptManager::updateInteractiveCursor(const Common::Point &point) {
 	if (!_awaitingBa0Interaction || _activeBa0Frame >= _ba0.getFrames().size())
-		return;
+		return false;
+	if (_engine->getToolbar()->service(_engine->getInput()->peekMouseState())) {
+		_engine->getCursor()->setVisible(true);
+		_engine->getCursor()->update(kToolbarCursor);
+		return true;
+	}
 	if (_dialogue->isPending()) {
-		if (_engine->getToolbar()->service(_engine->getInput()->peekMouseState())) {
-			_engine->getCursor()->setVisible(true);
-			_engine->getCursor()->update(kToolbarCursor);
-			return;
-		}
 		_dialogue->updateHover(point);
 		const ScriptInteraction *interaction = findBa0Interaction(point);
 		const uint cursorIndex = _dialogue->contains(point) ? kDialogueCursor :
 			(interaction ? (interaction->conditionOffset != 0 ? 8 : interaction->initialSelection) : 0);
 		_engine->getCursor()->setVisible(true);
 		_engine->getCursor()->update(cursorIndex);
-		return;
+		return false;
 	}
 	const ScriptInteraction *interaction = findBa0Interaction(point);
 	const uint cursorIndex = interaction ?
 		(interaction->conditionOffset != 0 ? 8 : interaction->initialSelection) : 0;
 	_engine->getCursor()->setVisible(true);
 	_engine->getCursor()->update(cursorIndex);
+	return false;
 }
 
 const ScriptInteraction *ScriptManager::findBa0Interaction(const Common::Point &point,
