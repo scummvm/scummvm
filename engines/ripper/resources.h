@@ -102,6 +102,8 @@ private:
 class ResourceManager {
 public:
 	bool initialize();
+	bool loadBitmapSequence(const Common::String &memberName,
+		BitmapAssetSequence &sequence) const;
 	bool loadInterfaceBitmapSequence(const Common::String &memberName,
 		BitmapAssetSequence &sequence) const;
 	bool loadInterfaceBitmapSet(const Common::String &prefix,
