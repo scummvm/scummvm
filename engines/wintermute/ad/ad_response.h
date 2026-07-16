@@ -52,6 +52,7 @@ public:
 	AdResponse(BaseGame *inGame);
 	~AdResponse() override;
 	TResponseType _responseType;
+	TResponseVisitedType _responseVisitedType;
 };
 
 } // End of namespace Wintermute

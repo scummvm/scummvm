@@ -54,6 +54,7 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_viewport.h"
 #include "engines/wintermute/base/base_access_mgr.h"
+#include "engines/wintermute/base/font/base_font_storage.h"
 #include "engines/wintermute/base/particles/part_emitter.h"
 #include "engines/wintermute/base/save_thumb_helper.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
@@ -558,11 +559,45 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// SetVisitedResponseFonts
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "SetVisitedResponseFonts") == 0) {
+		stack->correctParams(2);
+		ScValue *val1 = stack->pop();
+		ScValue *val2 = stack->pop();
+
+		if (_responseBox) {
+			if (_responseBox->_fontVisited) {
+				_game->_fontStorage->removeFont(_responseBox->_fontVisited);
+			}
+			_responseBox->_fontVisited = _game->_fontStorage->addFont(val1->getString());
+			if (!_responseBox->_fontVisited) {
+				script->runtimeError("Game.SetVisitedResponseFonts: Failed to add visited font");
+				stack->pushNULL();
+				return STATUS_FAILED;
+			}
+
+			if (_responseBox->_fontVisitedHover) {
+				_game->_fontStorage->removeFont(_responseBox->_fontVisitedHover);
+			}
+			_responseBox->_fontVisitedHover = _game->_fontStorage->addFont(val2->getString());
+			if (!_responseBox->_fontVisitedHover) {
+				script->runtimeError("Game.SetVisitedResponseFonts: Failed to add visited hover font");
+				stack->pushNULL();
+				return STATUS_FAILED;
+			}
+		}
+
+		stack->pushNULL();
+
+		return STATUS_OK;
+	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// AddResponse/AddResponseOnce/AddResponseOnceGame
+	// AddResponse/AddVisitedResponse/AddResponseOnce/AddResponseOnceGame
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AddResponse") == 0 || strcmp(name, "AddResponseOnce") == 0 || strcmp(name, "AddResponseOnceGame") == 0) {
+	else if (strcmp(name, "AddResponse") == 0 || strcmp(name, "AddVisitedResponse") == 0 || strcmp(name, "AddResponseOnce") == 0 || strcmp(name, "AddResponseOnceGame") == 0) {
 		stack->correctParams(6);
 		int id = stack->pop()->getInt();
 		const char *text = stack->pop()->getString();
@@ -591,7 +626,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 					res->setFont(val4->getString());
 				}
 
-				if (strcmp(name, "AddResponseOnce") == 0) {
+				if (strcmp(name, "AddVisitedResponse") == 0) {
+					res->_responseVisitedType = RESPONSE_VISITED_ONCE;
+				} else if (strcmp(name, "AddResponseOnce") == 0) {
 					res->_responseType = RESPONSE_ONCE;
 				} else if (strcmp(name, "AddResponseOnceGame") == 0) {
 					res->_responseType = RESPONSE_ONCE_GAME;

@@ -54,7 +54,7 @@ IMPLEMENT_PERSISTENT(AdResponseBox, false)
 
 //////////////////////////////////////////////////////////////////////////
 AdResponseBox::AdResponseBox(BaseGame *inGame) : BaseObject(inGame) {
-	_font = _fontHover = nullptr;
+	_font = _fontHover = _fontVisited = _fontVisitedHover =  nullptr;
 
 	_window = nullptr;
 	_shieldWindow = new UIWindow(_game);
@@ -85,6 +85,12 @@ AdResponseBox::~AdResponseBox() {
 	}
 	if (_fontHover) {
 		_game->_fontStorage->removeFont(_fontHover);
+	}
+	if (_fontVisited) {
+		_game->_fontStorage->removeFont(_fontVisited);
+	}
+	if (_fontVisitedHover) {
+		_game->_fontStorage->removeFont(_fontVisitedHover);
 	}
 
 	clearResponses();
@@ -158,6 +164,10 @@ bool AdResponseBox::createButtons() {
 				btn->setText(_responses[i]->_text);
 				btn->_font = (_font == nullptr) ? _game->_systemFont : _font;
 				btn->_fontHover = (_fontHover == nullptr) ? _game->_systemFont : _fontHover;
+				if (_responses[i]->_responseVisitedType == RESPONSE_VISITED_ONCE) {
+					btn->_font = (_fontVisited == nullptr) ? btn->_font : _fontVisited;
+					btn->_fontHover = (_fontVisitedHover == nullptr) ? btn->_fontHover : _fontVisitedHover;
+				}
 				btn->_fontPress = btn->_fontHover;
 				btn->_align = _align;
 
@@ -611,6 +621,16 @@ bool AdResponseBox::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferSint32(TMEMBER_INT(_verticalAlign));
 	persistMgr->transferSint32(TMEMBER_INT(_align));
+
+	if (persistMgr->checkVersion(1, 11, 1)) {
+		persistMgr->transferPtr(TMEMBER_PTR(_fontVisited));
+		persistMgr->transferPtr(TMEMBER_PTR(_fontVisitedHover));
+	} else {
+		if (!persistMgr->getIsSaving()) {
+			_fontVisited = nullptr;
+			_fontVisitedHover = nullptr;
+		}
+	}
 
 	return STATUS_OK;
 }

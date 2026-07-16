@@ -62,6 +62,8 @@ public:
 	int32 _scrollOffset;
 	BaseFont *_fontHover;
 	BaseFont *_font;
+	BaseFont *_fontVisitedHover;
+	BaseFont *_fontVisited;
 	bool createButtons();
 	bool invalidateButtons();
 	void clearButtons();

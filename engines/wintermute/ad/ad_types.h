@@ -87,6 +87,11 @@ typedef enum {
 } TResponseType;
 
 typedef enum {
+	RESPONSE_VISITED_NONE,
+	RESPONSE_VISITED_ONCE
+} TResponseVisitedType;
+
+typedef enum {
 	TALK_SKIP_LEFT = 0,
 	TALK_SKIP_RIGHT = 1,
 	TALK_SKIP_BOTH = 2,

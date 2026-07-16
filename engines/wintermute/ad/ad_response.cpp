@@ -44,6 +44,7 @@ AdResponse::AdResponse(BaseGame *inGame) : BaseObject(inGame) {
 	_font = nullptr;
 	_id = 0;
 	_responseType = RESPONSE_ALWAYS;
+	_responseVisitedType = RESPONSE_VISITED_NONE;
 }
 
 
@@ -131,6 +132,13 @@ bool AdResponse::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferCharPtr(TMEMBER(_textOrig));
 	persistMgr->transferSint32(TMEMBER_INT(_responseType));
 	persistMgr->transferPtr(TMEMBER_PTR(_font));
+	if (persistMgr->checkVersion(1, 11, 1)) {
+		persistMgr->transferSint32(TMEMBER_INT(_responseVisitedType));
+	} else {
+		if (!persistMgr->getIsSaving()) {
+			_responseVisitedType = RESPONSE_VISITED_NONE;
+		}
+	}
 
 	return STATUS_OK;
 }
