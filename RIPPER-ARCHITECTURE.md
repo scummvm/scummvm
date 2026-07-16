@@ -370,6 +370,12 @@
   not RIFF AVI. `RunPacketizedMediaPlaybackCore` at `0x5b592` demultiplexes
   descriptor records containing mono signed 16-bit PCM and segmented Smacker
   setup/frame payloads.
+- The IAVF header is 145 bytes. Across all 475 retail assets, the 32-bit value
+  at offset `0x10` exactly matches the number of opcode `0x67` playback gates,
+  not the number of rendered video frames. The compact PCM fields occupy
+  offsets `0x1c` through `0x27`. Offset `0x2f` stores presentation height and
+  offset `0x31` stores presentation width; the values are `200, 320` for
+  `PROINT.AVI` and `PROLOG1.AVI`.
 - The reimplementation reconstructs each segmented Smacker stream and delegates
   frame decoding to `Video::SmackerDecoder`; PCM is delegated to the ScummVM
   mixer. `PROINT.AVI` contains 16 Smacker segments and `PROLOG1.AVI` contains
@@ -392,6 +398,24 @@
   Embedded Smacker header rates are therefore not the presentation clock; the
   reimplementation uses mixer elapsed time to reproduce this audio-master
   scheduling.
+- Opcode `0x6c` loads the next custom packet through
+  `LoadCustomPacketPaletteStateBlock` at `0x6c430`; it does not itself present
+  the frame. Opcode `0x77` calls `RenderCustomPacketFrameAndOverlays` at
+  `0x6c486`. Every retail `0x6c` packet is followed by one `0x77`, for 155486
+  load/render pairs. The reimplementation commits a reconstructed Smacker frame
+  only when the corresponding render command is encountered.
+- Opcode `0x75` primes the original buffered packet stream and enables its
+  managed-audio control state. ScummVM parses the seekable stream eagerly and
+  owns the audio timeline through the mixer, so this command is an explicit
+  no-op at the engine boundary. The executable also contains FLIC setup, packet,
+  and decode branches at opcodes `0x69`, `0x6b`, and `0x76`, but none of the 475
+  retail IAVF assets exercise them.
+- After opcode `0x70` stops the original dispatch loop, 425 retail files carry
+  a trailing `0x79` record and 50 end immediately. For those trailers, the
+  second descriptor argument equals the remaining payload size and the third
+  equals that size minus the first argument. Because the original player exits
+  on `0x70`, the trailer is not a playback command and the reimplementation
+  leaves it unread as well.
 - `RunMediaPresentation` at `0x168af` installs
   `InitializeMediaPresentationDisplayModeCallback` at `0x163a8`. For
   presentation extents no larger than 320x200, that callback selects a 2:1

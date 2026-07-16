@@ -79,9 +79,11 @@ struct IavfSegment {
 };
 
 struct IavfMovie {
+	uint32 declaredGateCount;
 	uint16 sampleRate;
 	byte channels;
 	byte bitsPerSample;
+	uint32 audioByteRate;
 	Common::Array<byte> audio;
 	uint32 audioPayloadBytes;
 	Common::Array<IavfSegment> segments;
@@ -90,7 +92,8 @@ struct IavfMovie {
 	uint displayScale;
 	bool clearDisplayAfter;
 
-	IavfMovie() : sampleRate(0), channels(0), bitsPerSample(0), audioPayloadBytes(0),
+	IavfMovie() : declaredGateCount(0), sampleRate(0), channels(0), bitsPerSample(0),
+		audioByteRate(0), audioPayloadBytes(0),
 		presentationWidth(0), presentationHeight(0), displayScale(1), clearDisplayAfter(false) {}
 };
 
@@ -170,15 +173,26 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 	Common::Array<byte> header;
 	if (!readBlob(stream, 0x91, header) || memcmp(header.data(), "IAVF2.00", 8) != 0)
 		return false;
+	movie.declaredGateCount = READ_LE_UINT32(header.data() + 0x10);
 	movie.sampleRate = READ_LE_UINT16(header.data() + 0x1c);
 	movie.channels = header[0x1e];
 	movie.bitsPerSample = header[0x1f];
+	const uint32 headerByteRate = READ_LE_UINT32(header.data() + 0x20);
+	const uint32 headerBlockAlign = READ_LE_UINT32(header.data() + 0x24);
+	// The retail assets store height before width, contrary to the field order
+	// previously documented for IAVF.
 	movie.presentationHeight = READ_LE_UINT16(header.data() + 0x2f);
 	movie.presentationWidth = READ_LE_UINT16(header.data() + 0x31);
 	if (movie.channels != 1 || movie.bitsPerSample != 16 || movie.sampleRate == 0) {
 		warning("Ripper: unsupported IAVF audio format rate=%u channels=%u bits=%u in '%s'",
 			movie.sampleRate, movie.channels, movie.bitsPerSample, name.c_str());
 		return false;
+	}
+	const uint32 expectedBlockAlign = movie.channels * movie.bitsPerSample / 8;
+	movie.audioByteRate = movie.sampleRate * expectedBlockAlign;
+	if (headerBlockAlign != expectedBlockAlign || headerByteRate != movie.audioByteRate) {
+		warning("Ripper: inconsistent IAVF audio header rate=%u byteRate=%u blockAlign=%u in '%s'",
+			movie.sampleRate, headerByteRate, headerBlockAlign, name.c_str());
 	}
 	if (movie.presentationWidth == 0 || movie.presentationHeight == 0)
 		return false;
@@ -188,11 +202,15 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 	Common::HashMap<uint32, Common::Array<byte> > setupCache;
 	Common::HashMap<uint32, uint32> audioEndOffsets;
 	IavfSegment *activeSegment = nullptr;
+	Common::Array<byte> pendingFramePayload;
 	bool reachedEnd = false;
 	bool hasPendingAudioOffset = false;
+	bool hasPendingFrame = false;
 	bool pendingDisplayClear = false;
 	uint32 descriptorIndex = 0;
+	uint32 observedGateCount = 0;
 	uint32 pendingAudioOffset = 0;
+	uint32 pendingFrameAudioOffset = 0;
 	while (stream.pos() < stream.size() && !reachedEnd) {
 		IavfDescriptor descriptor;
 		if (!readDescriptor(stream, descriptor))
@@ -231,15 +249,23 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 				return false;
 			pendingAudioOffset = audioOffset->_value;
 			hasPendingAudioOffset = true;
+			++observedGateCount;
 			break;
 		}
 
 		case 0x68:
+			if (descriptor.arg0 != 0 || descriptor.arg1 != 0 || descriptor.arg2 != 0)
+				return false;
 			pendingDisplayClear = true;
 			break;
 
 		case 0x75:
-		case 0x77:
+			if (descriptor.arg0 != 0 || descriptor.arg1 != 0 || descriptor.arg2 != 0)
+				return false;
+			// RunPacketizedMediaPlaybackCore at 0x5b592 uses this command to
+			// prebuffer the packet stream and arm managed-audio control. IAVF is
+			// parsed eagerly here, so neither operation needs a ScummVM analogue.
+			debugC(2, kDebugVideo, "Ripper: IAVF '%s' reached prebuffer command 0x75", name.c_str());
 			break;
 
 		case 0x78: {
@@ -254,7 +280,8 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 		}
 
 		case 0x6a: {
-			if (activeSegment && activeSegment->frameSizes.size() != activeSegment->expectedFrames)
+			if (hasPendingFrame ||
+				(activeSegment && activeSegment->frameSizes.size() != activeSegment->expectedFrames))
 				return false;
 			int32 branch[5];
 			for (uint i = 0; i < ARRAYSIZE(branch); ++i)
@@ -290,19 +317,34 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 		case 0x6c: {
 			if (!activeSegment || descriptor.arg1 != 0 || descriptor.arg2 != 0 ||
 				activeSegment->frameSizes.size() >= activeSegment->expectedFrames ||
-				!hasPendingAudioOffset)
+				!hasPendingAudioOffset || hasPendingFrame)
 				return false;
-			Common::Array<byte> frame;
-			if (!readBlob(stream, descriptor.arg0, frame))
+			if (!readBlob(stream, descriptor.arg0, pendingFramePayload))
 				return false;
-			activeSegment->frameSizes.push_back(descriptor.arg0);
-			activeSegment->framePayloads.push_back(Common::move(frame));
-			activeSegment->frameAudioOffsets.push_back(pendingAudioOffset);
+			pendingFrameAudioOffset = pendingAudioOffset;
 			hasPendingAudioOffset = false;
+			hasPendingFrame = true;
 			break;
 		}
 
+		case 0x77:
+			if (descriptor.arg0 != 0 || descriptor.arg1 != 0 || descriptor.arg2 != 0 ||
+				!activeSegment || !hasPendingFrame ||
+				activeSegment->frameSizes.size() >= activeSegment->expectedFrames)
+				return false;
+			// LoadCustomPacketPaletteStateBlock at 0x6c430 consumes opcode 0x6c,
+			// while opcode 0x77 reaches RenderCustomPacketFrameAndOverlays at
+			// 0x6c486. Commit the reconstructed Smacker frame at the render command
+			// so packet loading and presentation retain their original boundary.
+			activeSegment->frameSizes.push_back(pendingFramePayload.size());
+			activeSegment->framePayloads.push_back(Common::move(pendingFramePayload));
+			activeSegment->frameAudioOffsets.push_back(pendingFrameAudioOffset);
+			hasPendingFrame = false;
+			break;
+
 		case 0x70:
+			if (descriptor.arg0 != 0 || descriptor.arg1 != 0 || descriptor.arg2 != 0 || hasPendingFrame)
+				return false;
 			movie.clearDisplayAfter = pendingDisplayClear;
 			reachedEnd = true;
 			break;
@@ -316,6 +358,10 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 
 	if (!reachedEnd || movie.segments.empty())
 		return false;
+	if (observedGateCount != movie.declaredGateCount) {
+		warning("Ripper: IAVF '%s' declares %u playback gates but contains %u",
+			name.c_str(), movie.declaredGateCount, observedGateCount);
+	}
 	for (uint i = 0; i < movie.segments.size(); ++i) {
 		if (movie.segments[i].frameSizes.size() != movie.segments[i].expectedFrames ||
 			movie.segments[i].frameAudioOffsets.size() != movie.segments[i].expectedFrames)
@@ -325,12 +371,11 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 				return false;
 		}
 	}
-	const uint32 audioByteRate = movie.sampleRate * movie.channels * movie.bitsPerSample / 8;
 	debugC(1, kDebugVideo,
-		"Ripper: parsed IAVF '%s' canvas=%ux%u scale=%u segments=%u audioPayloadBytes=%u audioTimelineBytes=%u audioMs=%u",
+		"Ripper: parsed IAVF '%s' canvas=%ux%u scale=%u segments=%u gates=%u audioPayloadBytes=%u audioTimelineBytes=%u audioMs=%u",
 		name.c_str(), movie.presentationWidth, movie.presentationHeight, movie.displayScale,
-		movie.segments.size(), movie.audioPayloadBytes, movie.audio.size(),
-		audioByteRate != 0 ? (uint32)((uint64)movie.audio.size() * 1000 / audioByteRate) : 0);
+		movie.segments.size(), observedGateCount, movie.audioPayloadBytes, movie.audio.size(),
+		(uint32)((uint64)movie.audio.size() * 1000 / movie.audioByteRate));
 	return true;
 }
 
@@ -613,7 +658,7 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 	}
 
 	bool result = true;
-	const uint32 audioByteRate = movie.sampleRate * movie.channels * movie.bitsPerSample / 8;
+	const uint32 audioByteRate = movie.audioByteRate;
 	uint completedSegments = 0;
 	for (uint i = 0; i < movie.segments.size() && !_engine->shouldQuit(); ++i) {
 		if (movie.segments[i].clearDisplayBefore) {
