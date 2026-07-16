@@ -43,7 +43,7 @@ void menuCommandsCallback(int action, Common::String &text, void *data) {
 ZBasic::ZBasic(Graphics::MacToolbox::Toolbox *toolbox) : _toolbox(toolbox) {
 	_memPool = new Common::MemoryPool(sizeof(int));
 
-	_window = g_engine->_wm.addWindow(false, false, false);
+	_window = g_engine->_wm->addWindow(false, false, false);
 	_window->disableBorder();
 	_window->resize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	_toolbox->_defaultWindow = _window;
@@ -51,10 +51,10 @@ ZBasic::ZBasic(Graphics::MacToolbox::Toolbox *toolbox) : _toolbox(toolbox) {
 	_toolbox->_defaultBits->copyFrom(*_window->getWindowSurface());
 	_window->setSurface(_toolbox->_defaultBits.get(), DisposeAfterUse::NO);
 
-	g_engine->_wm.setBackgroundWindow(_window);
-	if (!g_engine->_wm.getMenu()) {
+	g_engine->_wm->setBackgroundWindow(_window);
+	if (!g_engine->_wm->getMenu()) {
 		// no menu defined, create one for the first time
-		_menu = g_engine->_wm.addMenu();
+		_menu = g_engine->_wm->addMenu();
 		_menu->setCommandsCallback(menuCommandsCallback, nullptr);
 
 		_toolbox->_defaultMenu = _menu;
@@ -63,7 +63,7 @@ ZBasic::ZBasic(Graphics::MacToolbox::Toolbox *toolbox) : _toolbox(toolbox) {
 		_menu->setSurface(_toolbox->_defaultMenuBits.get(), DisposeAfterUse::NO);
 	} else {
 		// menu already exists
-		_menu = g_engine->_wm.getMenu();
+		_menu = g_engine->_wm->getMenu();
 		_toolbox->_defaultMenu = _menu;
 		// we don't get the surface for directly manipulating the menu, but so far we don't need it
 	}
@@ -74,7 +74,7 @@ ZBasic::ZBasic(Graphics::MacToolbox::Toolbox *toolbox) : _toolbox(toolbox) {
 }
 
 ZBasic::~ZBasic() {
-	g_engine->_wm.removeWindow(_window);
+	g_engine->_wm->removeWindow(_window);
 	_window = nullptr;
 	_toolbox->_defaultWindow = nullptr;
 
