@@ -23,6 +23,35 @@
 
 namespace Comfy {
 
+#define EO_PUSH_LITERAL_01 0x01
+#define EO_PUSH_STRING_TABLE_VALUE 0x02
+#define EO_PUSH_LITERAL_03 0x03
+#define EO_ADD 0x08
+#define EO_SUBTRACT 0x09
+#define EO_MULTIPLY 0x0A
+#define EO_DIVIDE 0x0B
+#define EO_INDEXED_STRING_TABLE_VALUE 0x0C
+#define EO_END 0x0D
+#define EO_MODULO 0x0E
+#define EO_ACTOR_LOCAL_X 0x10
+#define EO_ACTOR_LOCAL_Y 0x11
+#define EO_ACTOR_WORLD_X 0x12
+#define EO_ACTOR_WORLD_Y 0x13
+#define EO_ACTOR_SPRITE_SELECTOR 0x14
+#define EO_PUSH_LITERAL_15 0x15
+#define EO_RANDOMIZE 0x16
+#define EO_MOUSE_X 0x17
+#define EO_MOUSE_Y 0x18
+#define EO_WAVE_BALANCE_PERCENT 0x19
+#define EO_HOST_MEDIA_VALUE 0x1A
+#define EO_NOOP_1B 0x1B
+#define EO_WAVE_LEFT_PERCENT 0x1C
+#define EO_WAVE_RIGHT_PERCENT 0x1D
+#define EO_LOGICAL_DIMENSION 0x1E
+#define EO_NOOP_1F 0x1F
+#define EO_HOST_MEDIA_PROGRESS 0x20
+#define EO_MIXER_VOLUME_PERCENT 0x21
+
 uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 	_exprStackTop = 0;
 
@@ -31,18 +60,20 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 		if (_scriptFault)
 			return 0;
 
-		if (opcode == 0x0D)
+		switch (opcode) {
+		case EO_END:
 			return _exprStackTop ? _exprStack[0] : 0;
 
-		if (opcode == 0x01 || opcode == 0x03 || opcode == 0x15) {
+		case EO_PUSH_LITERAL_01:
+		case EO_PUSH_LITERAL_03:
+		case EO_PUSH_LITERAL_15:
 			if (_exprStackTop < COMFY_EXPR_STACK_CAPACITY)
 				_exprStack[_exprStackTop++] = scriptReadWord(pc);
 
 			pc += 2;
 			continue;
-		}
 
-		if (opcode == 0x02) {
+		case EO_PUSH_STRING_TABLE_VALUE: {
 			uint16 index = scriptReadWord(pc);
 			pc += 2;
 			uint16 value = index < _stringTable.size() ? _stringTable[index] : 0;
@@ -53,7 +84,11 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 			continue;
 		}
 
-		if (opcode >= 0x10 && opcode <= 0x14) {
+		case EO_ACTOR_LOCAL_X:
+		case EO_ACTOR_LOCAL_Y:
+		case EO_ACTOR_WORLD_X:
+		case EO_ACTOR_WORLD_Y:
+		case EO_ACTOR_SPRITE_SELECTOR: {
 			Actor *actor = actorResolve(scriptReadWord(pc), fallbackActor);
 			pc += 2;
 
@@ -63,12 +98,18 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 			}
 
 			uint16 value = 0;
-			if (opcode == 0x10) {
+			switch (opcode) {
+			case EO_ACTOR_LOCAL_X:
 				value = (uint32)actor->xFixed >> 12;
-			} else if (opcode == 0x11) {
+				break;
+
+			case EO_ACTOR_LOCAL_Y:
 				value = (uint32)actor->yFixed >> 12;
-			} else if (opcode == 0x12 || opcode == 0x13) {
-				bool useX = opcode == 0x12;
+				break;
+
+			case EO_ACTOR_WORLD_X:
+			case EO_ACTOR_WORLD_Y: {
+				bool useX = opcode == EO_ACTOR_WORLD_X;
 				int32 position = useX ? actor->xFixed : actor->yFixed;
 
 				while (actor->parent) {
@@ -80,8 +121,16 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 				}
 
 				value = (uint16)(position >> 12);
-			} else if (opcode == 0x14)
+				break;
+			}
+
+			case EO_ACTOR_SPRITE_SELECTOR:
 				value = (uint16)actor->spriteSelector;
+				break;
+
+			default:
+				break;
+			}
 
 			if (_exprStackTop < COMFY_EXPR_STACK_CAPACITY)
 				_exprStack[_exprStackTop++] = value;
@@ -89,58 +138,7 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 			continue;
 		}
 
-		if (opcode == 0x16) {
-			if (_exprStackTop) {
-				int16 maximum = _exprStack[_exprStackTop - 1];
-				_exprStack[_exprStackTop - 1] = (uint16)(((int32)getRandomNumber(0x7FFF) * maximum) / 0x8000);
-			}
-
-			continue;
-		}
-
-		if (_engineVersion == 3 && opcode >= 0x17 && opcode <= 0x21) {
-			uint16 value = 0;
-			bool pushValue = true;
-
-			if (opcode == 0x17) {
-				value = _mouseX;
-			} else if (opcode == 0x18) {
-				value = _mouseY;
-			} else if (opcode == 0x19) {
-				value = _v3SceneWaveBalancePercent;
-			} else if (opcode == 0x1A) {
-				value = _v3MediaValueAvailable ? _v3MediaValue : 0;
-			} else if (opcode == 0x1B) {
-				pushValue = false;
-			} else if (opcode == 0x1C) {
-				value = _v3SceneWaveLeftPercent;
-			} else if (opcode == 0x1D) {
-				value = _v3SceneWaveRightPercent;
-			} else if (opcode == 0x1E) {
-				if (_exprStackTop) {
-					uint16 dimension = _exprStack[_exprStackTop - 1];
-					if (dimension == 0x6E)
-						_exprStack[_exprStackTop - 1] = 320;
-					else if (dimension == 0x6F)
-						_exprStack[_exprStackTop - 1] = 200;
-					else
-						_exprStack[_exprStackTop - 1] = 0;
-				}
-
-				pushValue = false;
-			} else if (opcode == 0x1F || opcode == 0x20) {
-				value = _v3MediaProgress;
-			} else if (opcode == 0x21) {
-				value = _v3SceneMixerVolumePercent;
-			}
-
-			if (pushValue && _exprStackTop < COMFY_EXPR_STACK_CAPACITY)
-				_exprStack[_exprStackTop++] = value;
-
-			continue;
-		}
-
-		if (opcode == 0x0C) {
+		case EO_INDEXED_STRING_TABLE_VALUE: {
 			if (_exprStackTop < 2) {
 				_exprStackTop = 0;
 				continue;
@@ -152,8 +150,109 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 			continue;
 		}
 
-		if (opcode != 0x08 && opcode != 0x09 && opcode != 0x0A && opcode != 0x0B && opcode != 0x0E)
+		case EO_RANDOMIZE:
+			if (_exprStackTop) {
+				int16 maximum = _exprStack[_exprStackTop - 1];
+				_exprStack[_exprStackTop - 1] = (uint16)(((int32)getRandomNumber(0x7FFF) * maximum) / 0x8000);
+			}
+
+			continue;
+
+		default:
+			break;
+		}
+
+		if (_engineVersion == 3) {
+			uint16 value = 0;
+			bool pushValue = true;
+			bool handled = true;
+
+			switch (opcode) {
+			case EO_MOUSE_X:
+				value = _mouseX;
+				break;
+
+			case EO_MOUSE_Y:
+				value = _mouseY;
+				break;
+
+			case EO_WAVE_BALANCE_PERCENT:
+				value = _v3SceneWaveBalancePercent;
+				break;
+
+			case EO_HOST_MEDIA_VALUE:
+				value = _v3MediaValueAvailable ? _v3MediaValue : 0;
+				break;
+
+			case EO_NOOP_1B:
+				pushValue = false;
+				break;
+
+			case EO_WAVE_LEFT_PERCENT:
+				value = _v3SceneWaveLeftPercent;
+				break;
+
+			case EO_WAVE_RIGHT_PERCENT:
+				value = _v3SceneWaveRightPercent;
+				break;
+
+			case EO_LOGICAL_DIMENSION:
+				if (_exprStackTop) {
+					uint16 dimension = _exprStack[_exprStackTop - 1];
+					switch (dimension) {
+					case 0x6E:
+						_exprStack[_exprStackTop - 1] = 320;
+						break;
+
+					case 0x6F:
+						_exprStack[_exprStackTop - 1] = 200;
+						break;
+
+					default:
+						_exprStack[_exprStackTop - 1] = 0;
+						break;
+					}
+				}
+
+				pushValue = false;
+				break;
+
+			case EO_NOOP_1F:
+				pushValue = false;
+				break;
+
+			case EO_HOST_MEDIA_PROGRESS:
+				value = _v3MediaProgress;
+				break;
+
+			case EO_MIXER_VOLUME_PERCENT:
+				value = _v3SceneMixerVolumePercent;
+				break;
+
+			default:
+				handled = false;
+				break;
+			}
+
+			if (handled) {
+				if (pushValue && _exprStackTop < COMFY_EXPR_STACK_CAPACITY)
+					_exprStack[_exprStackTop++] = value;
+
+				continue;
+			}
+		}
+
+		switch (opcode) {
+		case EO_ADD:
+		case EO_SUBTRACT:
+		case EO_MULTIPLY:
+		case EO_DIVIDE:
+		case EO_MODULO:
+			break;
+
+		default:
 			error("Unknown expression opcode 0x%02X at script PC 0x%08X", opcode, pc - 1);
+		}
 
 		if (_exprStackTop < 2) {
 			_exprStackTop = 0;
@@ -163,19 +262,39 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 		int16 rhs = _exprStack[--_exprStackTop];
 		int16 lhs = _exprStack[_exprStackTop - 1];
 
-		if (opcode == 0x08) {
+		switch (opcode) {
+		case EO_ADD:
 			_exprStack[_exprStackTop - 1] = (uint16)(lhs + rhs);
-		} else if (opcode == 0x09) {
+			break;
+
+		case EO_SUBTRACT:
 			_exprStack[_exprStackTop - 1] = (uint16)(lhs - rhs);
-		} else if (opcode == 0x0A) {
+			break;
+
+		case EO_MULTIPLY:
 			_exprStack[_exprStackTop - 1] = (uint16)(lhs * rhs);
-		} else if ((opcode == 0x0B || opcode == 0x0E) && !rhs) {
-			_scriptFault = true;
-			return 0;
-		} else if (opcode == 0x0B) {
+			break;
+
+		case EO_DIVIDE:
+			if (!rhs) {
+				_scriptFault = true;
+				return 0;
+			}
+
 			_exprStack[_exprStackTop - 1] = (uint16)(lhs / rhs);
-		} else if (opcode == 0x0E) {
+			break;
+
+		case EO_MODULO:
+			if (!rhs) {
+				_scriptFault = true;
+				return 0;
+			}
+
 			_exprStack[_exprStackTop - 1] = (uint16)(lhs % rhs);
+			break;
+
+		default:
+			break;
 		}
 	}
 }

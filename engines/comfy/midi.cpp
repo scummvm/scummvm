@@ -22,7 +22,6 @@
 #include "comfy/comfy.h"
 #include "comfy/midiplyr/midiplyr.h"
 
-#include "common/ptr.h"
 #include "common/endian.h"
 
 namespace Comfy {
@@ -93,13 +92,15 @@ uint16 ComfyEngine::midiTick() {
 }
 
 bool ComfyEngine::midiPlyrStart() {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(pathFOpen(Common::Path("MIDIFILE.DAT"), true));
+	Common::SeekableReadStream *stream = pathFOpen(Common::Path("MIDIFILE.DAT"), true);
 	if (!stream)
 		return false;
 
 	byte signature[2];
-	if (stream->read(signature, sizeof(signature)) != sizeof(signature))
+	if (stream->read(signature, sizeof(signature)) != sizeof(signature)) {
+		delete stream;
 		return false;
+	}
 
 	byte flags;
 	if (signature[0] == 'C' && signature[1] == 'M') {
@@ -107,9 +108,11 @@ bool ComfyEngine::midiPlyrStart() {
 	} else if (signature[0] == 'C' && signature[1] == 'm') {
 		flags = 1;
 	} else {
+		delete stream;
 		return false;
 	}
 
+	delete stream;
 	midiPlyrStop();
 	MidiPlyrDriver::DriverVersion version = _engineVersion == 3 ? MidiPlyrDriver::kDriverVersion2 : MidiPlyrDriver::kDriverVersion1;
 	_midiPlyrDriver = new MidiPlyrDriver(version);
