@@ -113,7 +113,9 @@
   map, inventory, WAC, save, restore, options, help, and quit. The ScummVM
   toolbar preserves the click/release routing. Action `0x515` and scene-entry
   action 2 both enter the shared `WorldMap` subsystem; action `0x517` enters
-  WAC, while the remaining handlers are explicit stubs.
+  WAC, and actions `0x518`/`0x519` enter the shared save/restore chooser after
+  removing the toolbar presentation. Remote setup, inventory, options, help,
+  and quit remain explicit stubs.
 - `DispatchSceneEntryAction` at `0x36892` routes action 2 to the same
   `HandleSceneSelectionAction` at `0x191e2` used by toolbar action `0x515`.
   `RunSceneSelectionMenu` at `0x20808` groups the 25 travel-entry flags 20
