@@ -353,14 +353,17 @@
   `Step` prompt is visible only when the original script-debug flag pair is set.
 - Opcode `0x1a` maps to `HandleSceneEntryMediaAndSetBasenameFlag` at `0x159e1`.
   `ExecutePresentationEntry` at `0x1652a` routes IAVF media through
-  `RunMediaPresentation` at `0x168af`. That wrapper preserves the current
-  logical display page before packetized playback, then fades out, redraws the
-  saved page through `DispatchDisplayDirtyRegionUpdate` at `0x4e4b0`, and fades
-  its palette back in before returning. The reimplementation snapshots and
-  restores the indexed framebuffer and palette around opcode `0x1a` media for
-  the same separation. This is required both when a following opcode `0x1b`
-  preview draws only the 300-pixel scene area and when the callback returns
-  directly to a type-2 frame such as `BAZ2`, which has no media to redraw itself.
+  `RunMediaPresentation` at `0x168af`. It first deactivates the UI selection
+  presentation, removing the active cursor before playback; the next frame's
+  interaction presentation makes the cursor visible again. The media wrapper
+  preserves the current logical display page before packetized playback, then
+  fades out, redraws the saved page through `DispatchDisplayDirtyRegionUpdate`
+  at `0x4e4b0`, and fades its palette back in before returning. The
+  reimplementation snapshots and restores the indexed framebuffer and palette
+  around opcode `0x1a` media for the same separation. This is required both
+  when a following opcode `0x1b` preview draws only the 300-pixel scene area and
+  when the callback returns directly to a type-2 frame such as `BAZ2`, which has
+  no media to redraw itself.
   The handler then removes the media extension and sets that basename in the
   shared played-entry catalog.
   Opcode `0x09`, handled by `HandleSceneEntryPromptScenePlayedCondition` at

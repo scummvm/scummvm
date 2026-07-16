@@ -722,6 +722,10 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				return false;
 			const Common::String mediaPath = script.getString(command.arguments[0].value);
 			const bool allowEscSpace = command.arguments[2].value == 0;
+			// ExecutePresentationEntry at 0x1652a deactivates the UI selection
+			// presentation before media playback. The following frame activation
+			// restores the cursor after the callback finishes.
+			_engine->getCursor()->setVisible(false);
 			if (!_engine->getMedia()->play(mediaPath, allowEscSpace,
 				(int32)command.arguments[3].value, (int32)command.arguments[4].value))
 				return false;
