@@ -27,6 +27,7 @@ namespace PhoenixVR {
 Console::Console() : GUI::Debugger() {
 	registerCmd("warp", WRAP_METHOD(Console, cmdWarp));
 	registerCmd("script", WRAP_METHOD(Console, cmdScript));
+	registerCmd("var", WRAP_METHOD(Console, cmdVar));
 	registerCmd("stop_all_sounds", WRAP_METHOD(Console, cmdStopAllSounds));
 	registerCmd("next_level", WRAP_METHOD(Console, cmdNextLevel));
 }
@@ -50,6 +51,22 @@ bool Console::cmdScript(int argc, const char **argv) {
 	}
 	g_engine->setNextScript(argv[1]);
 	return false;
+}
+
+bool Console::cmdVar(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("var <name> [value]\n");
+		return true;
+	}
+
+	if (argc >= 3) {
+		const int value = atoi(argv[2]);
+		g_engine->declareVariable(argv[1]);
+		g_engine->setVariable(argv[1], value);
+	}
+
+	debugPrintf("%s = %d\n", argv[1], g_engine->getVariable(argv[1]));
+	return true;
 }
 
 bool Console::cmdStopAllSounds(int argc, const char **argv) {
