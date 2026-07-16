@@ -1547,6 +1547,16 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// IsMusicCrossfading
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "IsMusicCrossfading") == 0) {
+		stack->correctParams(0);
+
+		stack->pushBool(_musicCrossfadeRunning);
+		return STATUS_OK;
+	}
+
 #ifdef ENABLE_FOXTAIL
 	//////////////////////////////////////////////////////////////////////////
 	// [FoxTail] MusicCrossfadeVolume
