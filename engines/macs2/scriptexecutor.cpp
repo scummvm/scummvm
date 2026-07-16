@@ -362,10 +362,10 @@ void ScriptExecutor::scriptPrintString(bool alignRight) {
 		currentView->_uiBackgroundRestorePending = false;
 	}
 
-	uint16 x = scriptReadValue16();
-	uint16 y = scriptReadValue16();
-	uint16 bp2 = readUint16();
-	uint16 bp4 = readUint16();
+	const uint16 x = scriptReadValue16();
+	const uint16 y = scriptReadValue16();
+	const uint16 bp2 = readUint16();
+	const uint16 bp4 = readUint16();
 
 	debugC(kDebugScript, "SCRIPT::printString(x=%u, y=%u, strOffset=%u, numLines=%u, alignRight=%d)", x, y, bp2, bp4, alignRight);
 
@@ -378,13 +378,16 @@ void ScriptExecutor::scriptPrintString(bool alignRight) {
 		delete s;
 	}
 
+	int stringBoxX = x;
+	const int stringBoxY = y;
 	if (alignRight) {
-		x -= g_engine->measureStrings(strings) + 0x12;
+		const int totalWidth = g_engine->measureStrings(strings) + 0x12;
+		stringBoxX -= totalWidth;
 	}
 
 	if (currentView) {
 		// Binary scriptPrintString (1008:a9fa): renders text, then sets g_wIsShowingTextBox=1
-		currentView->_stringBoxPosition = Common::Point(x, y);
+		currentView->_stringBoxPosition = Common::Point(stringBoxX, stringBoxY);
 		currentView->_drawnStringBox = strings;
 		currentView->_isShowingTextBox = true;
 		currentView->currentSpeechActData.speaker = nullptr;
