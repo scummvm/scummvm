@@ -989,7 +989,10 @@ bool ScriptManager::performPendingSceneTransition() {
 bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 	_engine->getCursor()->setVisible(false);
 	_hoveredBa0Interaction = -1;
-	for (uint transitionCount = 0; transitionCount < _ba0.getFrames().size(); ++transitionCount) {
+	// RunSceneScriptLoop at 0x124e9 has no frame-count bound here. A -2 result
+	// re-enters the loop so the concurrent runtime is serviced before the next
+	// active frame, even when opcode 0x14 selected that same frame again.
+	while (!_engine->shouldQuit()) {
 		if (!executeConcurrentFrame())
 			return false;
 		if (!_pendingSceneMember.empty())
@@ -1074,10 +1077,13 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 			return false;
 		}
 		nextFrame = callbackFrame;
+		if (nextFrame == _activeBa0Frame) {
+			debugC(2, kDebugScene,
+				"Ripper: BA0 frame='%s' retained frame=%u; servicing concurrent='%s'",
+				label.c_str(), nextFrame, _concurrent.getMemberName().c_str());
+		}
 	}
-
-	warning("Ripper: BA0 exceeded the automatic transition limit");
-	return false;
+	return true;
 }
 
 bool ScriptManager::serviceScene() {
