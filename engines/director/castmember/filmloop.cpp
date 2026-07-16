@@ -88,7 +88,7 @@ FilmLoopCastMember::~FilmLoopCastMember() {
 }
 
 bool FilmLoopCastMember::isModified() {
-	if (_score->_scoreCache.size())
+	if (_score && _score->_scoreCache.size())
 		return true;
 
 	if (_initialRect.width() && _initialRect.height())
@@ -102,8 +102,8 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, u
 
 	_subchannels.clear();
 
-	if (frame >= _score->_scoreCache.size()) {
-		warning("FilmLoopCastMember::getSubChannels(): Film loop frame %d requested, only %d available", frame, _score->_scoreCache.size());
+	if (!_score || frame >= _score->_scoreCache.size()) {
+		warning("FilmLoopCastMember::getSubChannels(): Film loop frame %d requested, only %d available", frame, _score ? _score->_scoreCache.size() : 0);
 		return &_subchannels;
 	}
 
@@ -180,8 +180,8 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, u
 }
 
 CastMemberID FilmLoopCastMember::getSubChannelSound1(uint frame) {
-	if (frame >= _score->_scoreCache.size()) {
-		warning("FilmLoopCastMember::getSubChannelSound1(): Film loop frame %d requested, only %d available", frame, _score->_scoreCache.size());
+	if (!_score || frame >= _score->_scoreCache.size()) {
+		warning("FilmLoopCastMember::getSubChannelSound1(): Film loop frame %d requested, only %d available", frame, _score ? _score->_scoreCache.size() : 0);
 		return CastMemberID();
 	}
 
@@ -189,8 +189,8 @@ CastMemberID FilmLoopCastMember::getSubChannelSound1(uint frame) {
 }
 
 CastMemberID FilmLoopCastMember::getSubChannelSound2(uint frame) {
-	if (frame >= _score->_scoreCache.size()) {
-		warning("FilmLoopCastMember::getSubChannelSound2(): Film loop frame %d requested, only %d available", frame, _score->_scoreCache.size());
+	if (!_score || frame >= _score->_scoreCache.size()) {
+		warning("FilmLoopCastMember::getSubChannelSound2(): Film loop frame %d requested, only %d available", frame, _score ? _score->_scoreCache.size() : 0);
 		return CastMemberID();
 	}
 
@@ -295,6 +295,10 @@ void FilmLoopCastMember::writeSCVWResource(Common::SeekableWriteStream *writeStr
 	if (!_loaded) {
 		load();
 	}
+	if (!_score) {
+		warning("FilmLoopCastMember::writeSCVWResource: Film loop has no score, skipping");
+		return;
+	}
 
 	uint32 channelSize = 0;
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
@@ -389,6 +393,8 @@ uint32 FilmLoopCastMember::getSCVWResourceSize() {
 	}
 
 	uint32 framesSize = 0;
+	if (!_score)
+		return 0;
 	for (Frame *frame : _score->_scoreCache) {
 		// Frame size
 		framesSize += 2;
