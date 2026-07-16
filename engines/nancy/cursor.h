@@ -92,6 +92,25 @@ public:
 		kNewDragHand			= 38,	// Type 19 — Hand used while dragging puzzle pieces (e.g. SortPuzzle pickup action sets this)
 		kNewPuzzleArrow			= 45,	// Type 22 hotspot — Arrow cursor shown when hovering a clickable puzzle hotspot
 		kNewDropHand			= 64,	// Type 32 — Hand shown when a held piece is dropped (briefly set on the drop action)
+
+		// Cursor types in Nancy13 and newer games. Nancy13 rebuilt the CURS
+		// sheet with 45 system cursor types, each stored as an [idle, hotspot]
+		// pair at slots (type * 2, type * 2 + 1). These constants are Nancy13
+		// system TYPE indices (not slot indices); resolveNancy13CursorID turns a
+		// type into the idle or hotspot slot.
+		kNancy13Normal			= 0,	// Eyeglass (kHotspot is the same type's hotspot slot)
+		kNancy13MoveUp			= 6,	// Scene-change: look/move up
+		kNancy13MoveDown		= 7,	// Scene-change: look/move down
+		kNancy13MoveLeft		= 8,	// Scene-change: move left
+		kNancy13MoveRight		= 9,	// Scene-change: move right
+		kNancy13MoveBackward	= 10,	// Scene-change: move back / exit puzzle
+		kNancy13MoveForward		= 12,	// Scene-change: move forward
+		kNancy13Arrow			= 14,	// Frame / taskbar arrow
+		kNancy13Exit			= 19,	// Exit
+		kNancy13DropHand		= 24,	// Hand shown while carrying a puzzle piece
+		kNancy13RotateCCW		= 25,	// Dial / turn cursor
+		kNancy13RotateCW		= 26,	// Dial / turn cursor
+		kNancy13PuzzleArrow		= 29	// Generic clickable puzzle hotspot
 	};
 
 	CursorManager();
@@ -120,6 +139,11 @@ private:
 
 	// Resolve a CursorType + held-item pair to a Nancy 10+ cursor ID.
 	uint resolveNancy10CursorID(CursorType type, int16 itemID, bool setFromScript);
+
+	// Nancy13 rebuilt the cursor sheet (45 system types, new layout) and split
+	// held-item cursors into _invCursorsSurface. System cursors use a dedicated
+	// Nancy13 slot table.
+	uint resolveNancy13CursorID(CursorType type, int16 itemID, bool setFromScript);
 
 	struct Cursor {
 		Common::Rect bounds;
