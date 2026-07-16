@@ -109,6 +109,12 @@ protected:
 	void readTerseCaptionText(Common::SeekableReadStream &stream);
 	void readTerseResponseText(Common::SeekableReadStream &stream, ResponseStruct &response);
 
+	// Nancy13 compact conversation format. readCelDataNancy13 is the only
+	// per-class difference: the base skips the cel-only frame fields, while
+	// ConversationCel reads them plus the XSheet.
+	void readDataNancy13(Common::SeekableReadStream &stream);
+	virtual void readCelDataNancy13(Common::SeekableReadStream &stream);
+
 	// Functions for handling the built-in dialogue responses found in the executable
 	void addConditionalDialogue();
 	void addGoodbye();
@@ -196,6 +202,7 @@ protected:
 	Cel &loadCel(const Common::Path &name, const Common::String &treeName);
 
 	void readXSheet(Common::SeekableReadStream &stream, const Common::String &xsheetName);
+	void readCelDataNancy13(Common::SeekableReadStream &stream) override;
 
 	Common::Array<Common::Array<Common::Path>> _celNames;
 	Common::Array<Common::String> _treeNames;

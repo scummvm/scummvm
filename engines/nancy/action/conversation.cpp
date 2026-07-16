@@ -60,6 +60,11 @@ void ConversationSound::init() {
 }
 
 void ConversationSound::readData(Common::SeekableReadStream &stream) {
+	if (g_nancy->getGameType() >= kGameTypeNancy13) {
+		readDataNancy13(stream);
+		return;
+	}
+
 	Common::Serializer ser(&stream, nullptr);
 	ser.setVersion(g_nancy->getGameType());
 
@@ -163,6 +168,51 @@ void ConversationSound::readTerseData(Common::SeekableReadStream &stream) {
 		flagsStruct.flagToSet.flag.label = stream.readSint16LE();
 		flagsStruct.flagToSet.flag.flag = stream.readByte();
 	}
+}
+
+void ConversationSound::readDataNancy13(Common::SeekableReadStream &stream) {
+	readFilename(stream, _sound.name);
+	_sound.channelID = 12;	// hardcoded, as in the terse variants
+	_sound.numLoops = 1;
+
+	readCelDataNancy13(stream);
+
+	_conditionalResponseCharacterID = stream.readByte();
+	_goodbyeResponseCharacterID = stream.readByte();
+
+	_sceneChange.sceneID = stream.readUint16LE();
+	_sceneChange.frameID = stream.readUint16LE();
+	_sceneChange.continueSceneSound = kContinueSceneSound;
+
+	// Caption and response texts are external, keyed by sound name in CONVO.
+	const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
+	assert(convo);
+	_text = convo->texts.getValOrDefault(_sound.name, "");
+
+	uint16 numResponses = stream.readUint16LE();
+	_responses.resize(numResponses);
+	for (uint i = 0; i < numResponses; ++i) {
+		ResponseStruct &response = _responses[i];
+		readFilename(stream, response.soundName);
+		response.sceneChange.sceneID = stream.readUint16LE();
+		response.sceneChange.continueSceneSound = kContinueSceneSound;
+		response.conditionFlags.read(stream);
+		response.text = convo->texts.getValOrDefault(response.soundName, "");
+	}
+
+	uint16 numFlagsStructs = stream.readUint16LE();
+	_flagsStructs.resize(numFlagsStructs);
+	for (uint i = 0; i < numFlagsStructs; ++i) {
+		FlagsStruct &flagsStruct = _flagsStructs[i];
+		flagsStruct.flagToSet.type = stream.readByte();
+		flagsStruct.flagToSet.flag.label = stream.readSint16LE();
+		flagsStruct.flagToSet.flag.flag = stream.readByte();
+	}
+}
+
+// The base conversation has no cels; skip the frame fields.
+void ConversationSound::readCelDataNancy13(Common::SeekableReadStream &stream) {
+	stream.skip(8); // firstFrame + lastFrame (int32)
 }
 
 void ConversationSound::readCaptionText(Common::SeekableReadStream &stream) {
@@ -837,6 +887,11 @@ void ConversationCel::updateGraphics() {
 }
 
 void ConversationCel::readData(Common::SeekableReadStream &stream) {
+	if (g_nancy->getGameType() >= kGameTypeNancy13) {
+		readDataNancy13(stream);
+		return;
+	}
+
 	Common::String xsheetName;
 	readFilename(stream, xsheetName);
 
@@ -869,8 +924,26 @@ void ConversationCel::readData(Common::SeekableReadStream &stream) {
 	ConversationSound::readData(stream);
 }
 
+// The sound name (read by the base) is also the XSheet name. first/last frame
+// are int32s with -1 sentinels.
+void ConversationCel::readCelDataNancy13(Common::SeekableReadStream &stream) {
+	readXSheet(stream, _sound.name);	// also fills _treeNames from the XSheet header
+
+	_drawingOrder = { 1, 0, 2, 3 };
+	_overrideTreeRects.resize(4, kCelOverrideTreeRectsOff);
+
+	const int32 firstFrame = stream.readSint32LE();
+	const int32 lastFrame = stream.readSint32LE();
+	const uint numFrames = (!_celNames.empty() && !_celNames[0].empty()) ? _celNames[0].size() : 0;
+	_firstFrame = firstFrame < 0 ? 0 : (uint16)firstFrame;
+	_lastFrame = lastFrame < 0 ? (numFrames ? (uint16)(numFrames - 1) : 0) : (uint16)lastFrame;
+}
+
 void ConversationCel::readXSheet(Common::SeekableReadStream &stream, const Common::String &xsheetName) {
 	Common::SeekableReadStream *xsheet = SearchMan.createReadStreamForMember(Common::Path(xsheetName));
+	const bool isNancy13 = g_nancy->getGameType() >= kGameTypeNancy13;
+	const uint kNameSize = 33;
+	const uint kFrameRecordSize = 140;
 
 	// Read the xsheet and load all images into the arrays
 	// Completely unoptimized, the original engine uses a buffer
@@ -883,19 +956,37 @@ void ConversationCel::readXSheet(Common::SeekableReadStream &stream, const Commo
 	}
 
 	xsheet->seek(0x22);
-	uint numFrames = xsheet->readUint16LE();
-	xsheet->skip(2);
-	_frameTime = xsheet->readUint16LE();
-	xsheet->skip(2);
+	const uint16 numFrames = xsheet->readUint16LE();
+	uint16 numTrees = 4;
 
-	_celNames.resize(4, Common::Array<Common::Path>(numFrames));
-	for (uint i = 0; i < numFrames; ++i) {
-		for (uint j = 0; j < _celNames.size(); ++j) {
-			readFilename(*xsheet, _celNames[j][i]);
+	if (isNancy13) {
+		// Nancy13 moved the cel tree / .cal names into the XSheet header. Each
+		// frame is a fixed-size block of numTrees cel names plus padding.
+
+		const uint kTreeNamesOffset = 38;
+		const uint kFrameDataOffset = 174;
+
+		numTrees = xsheet->readUint16LE();
+
+		_treeNames.resize(numTrees);
+		for (uint j = 0; j < numTrees; ++j) {
+			readFilename(*xsheet, _treeNames[j]);
 		}
 
-		// 4 unknown values
-		xsheet->skip(8);
+		_frameTime = xsheet->readUint16LE();
+		xsheet->skip(kFrameDataOffset - kTreeNamesOffset - numTrees * kNameSize - 2);
+	} else {
+		xsheet->skip(2);
+		_frameTime = xsheet->readUint16LE();
+		xsheet->skip(2);
+	}
+
+	_celNames.resize(numTrees, Common::Array<Common::Path>(numFrames));
+	for (uint i = 0; i < numFrames; ++i) {
+		for (uint j = 0; j < numTrees; ++j) {
+			readFilename(*xsheet, _celNames[j][i]);
+		}
+		xsheet->skip(kFrameRecordSize - numTrees * kNameSize);
 	}
 
 	delete xsheet;
