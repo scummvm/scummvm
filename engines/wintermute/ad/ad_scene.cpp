@@ -2361,6 +2361,18 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	}
 #endif
 
+	//////////////////////////////////////////////////////////////////////////
+	// Close
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "Close") == 0) {
+		if (BaseEngine::instance().getGameId() == "darkfallls") {
+			// Stub function to silence script error report in 'Dark Fall: Lost Souls'
+			return STATUS_OK;
+		} else {
+			return BaseObject::scCallMethod(script, stack, thisStack, name);
+		}
+	}
+
 	else {
 		return BaseObject::scCallMethod(script, stack, thisStack, name);
 	}
