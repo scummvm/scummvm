@@ -193,6 +193,7 @@ MODULE_OBJS = \
 	lingo/xtras/b/border.o \
 	lingo/xtras/b/budapi.o \
 	lingo/xtras/d/datetime.o \
+	lingo/xtras/d/directos.o \
 	lingo/xtras/d/directsound.o \
 	lingo/xtras/d/displayres.o \
 	lingo/xtras/f/filextra.o \

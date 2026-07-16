@@ -160,6 +160,7 @@
 #include "director/lingo/xtras/a/audio.h"
 #include "director/lingo/xtras/b/border.h"
 #include "director/lingo/xtras/b/budapi.h"
+#include "director/lingo/xtras/d/directos.h"
 #include "director/lingo/xtras/d/directsound.h"
 #include "director/lingo/xtras/d/displayres.h"
 #include "director/lingo/xtras/d/datetime.h"
@@ -289,6 +290,7 @@ static const struct XLibProto {
 	XLIBDEF(DeveloperStack,		kXObj,			300),	// D3
 	XLIBDEF(DialogsXObj,		kXObj,			400),	// D4
 	XLIBDEF(DirUtilXObj,		kXObj,			400),	// D4
+	XLIBDEF(DirectOSXtra,			kXtraObj,					800),	// D8
 	XLIBDEF(DirectsoundXtra,	kXtraObj,		500),	// D5
 	XLIBDEF(DisplayResXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(DrawXObj,			kXObj,			400),	// D4
