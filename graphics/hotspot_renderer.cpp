@@ -29,7 +29,7 @@
 namespace Graphics {
 
 HotspotRenderer::HotspotRenderer() :
-		_sizeScale(1.0f), _markerSize(kBaseMarkerSize), _glowSize(kBaseGlowSize),
+		_sizeScale(1.0f), _markerSize(kBaseMarkerSize),
 		_pointRadius(kBasePointRadius), _lineThickness(kBaseLineThickness) {
 }
 
@@ -54,7 +54,6 @@ void HotspotRenderer::render(Surface *surface,
 
 	_sizeScale = scaleX;
 	_markerSize = MAX(2, (int)(kBaseMarkerSize * _sizeScale));
-	_glowSize = MAX(1, (int)(kBaseGlowSize * _sizeScale));
 	_pointRadius = MAX(1, (int)(kBasePointRadius * _sizeScale));
 	_lineThickness = MAX(1, (int)(kBaseLineThickness * _sizeScale));
 
@@ -156,8 +155,8 @@ void HotspotRenderer::drawCrosshairMarker(Surface *surface, int x, int y,
 		int width, int height, const PixelFormat &format) {
 	const int lineLength = (_markerSize / 2) - 1;
 
-	drawLineWithGlow(surface, x - lineLength, y, x + lineLength, y, width, height, format, _lineThickness);
-	drawLineWithGlow(surface, x, y - lineLength, x, y + lineLength, width, height, format, _lineThickness);
+	drawLine(surface, x - lineLength, y, x + lineLength, y, width, height, format, _lineThickness);
+	drawLine(surface, x, y - lineLength, x, y + lineLength, width, height, format, _lineThickness);
 }
 
 void HotspotRenderer::drawSquareMarker(Surface *surface, int x, int y,
@@ -166,12 +165,12 @@ void HotspotRenderer::drawSquareMarker(Surface *surface, int x, int y,
 	int rectX = x - _markerSize / 2;
 	int rectY = y - _markerSize / 2;
 
-	drawRectWithGlow(surface, rectX, rectY, size, size, width, height, format);
+	drawRect(surface, rectX, rectY, size, size, width, height, format);
 }
 
 void HotspotRenderer::drawPointMarker(Surface *surface, int x, int y,
 		int width, int height, const PixelFormat &format) {
-	int maxRadius = _pointRadius + _glowSize;
+	int maxRadius = _pointRadius;
 
 	for (int dy = -maxRadius; dy <= maxRadius; dy++) {
 		for (int dx = -maxRadius; dx <= maxRadius; dx++) {
@@ -184,37 +183,31 @@ void HotspotRenderer::drawPointMarker(Surface *surface, int x, int y,
 			int distSq = dx * dx + dy * dy;
 			int dist = (int)(sqrtf((float)distSq) + 0.5f);
 
-			blendPixelWithGlow(surface, px, py, format, dist, _pointRadius);
+			blendPixel(surface, px, py, format, dist, _pointRadius);
 		}
 	}
 }
 
-void HotspotRenderer::blendPixelWithGlow(Surface *surface, int px, int py,
+void HotspotRenderer::blendPixel(Surface *surface, int px, int py,
 		const PixelFormat &format, int distance, int solidSize) {
-	byte bgR, bgG, bgB, bgA;
-	format.colorToARGB(surface->getPixel(px, py), bgA, bgR, bgG, bgB);
-
 	// Convert solidSize to maximum solid distance (solidSize=1 means center pixel only, distance=0)
 	int maxSolidDistance = solidSize - 1;
 
-	if (distance <= maxSolidDistance) {
-		const int solidBeta = 180;
-		const int solidAlpha = 255 - solidBeta;
-		byte r = ((255 * solidBeta) + (bgR * solidAlpha)) / 255;
-		byte g = ((255 * solidBeta) + (bgG * solidAlpha)) / 255;
-		byte b = ((255 * solidBeta) + (bgB * solidAlpha)) / 255;
-		surface->setPixel(px, py, format.RGBToColor(r, g, b));
-	} else if (distance <= maxSolidDistance + _glowSize) {
-		int glowDist = distance - maxSolidDistance;
-		int alpha = ((_glowSize - glowDist) * 80) / _glowSize;
-		byte r = ((255 * alpha) + (bgR * (255 - alpha))) / 255;
-		byte g = ((255 * alpha) + (bgG * (255 - alpha))) / 255;
-		byte b = ((255 * alpha) + (bgB * (255 - alpha))) / 255;
-		surface->setPixel(px, py, format.RGBToColor(r, g, b));
-	}
+	if (distance > maxSolidDistance)
+		return;
+
+	byte bgR, bgG, bgB, bgA;
+	format.colorToARGB(surface->getPixel(px, py), bgA, bgR, bgG, bgB);
+
+	const int solidBeta = 180;
+	const int solidAlpha = 255 - solidBeta;
+	byte r = ((255 * solidBeta) + (bgR * solidAlpha)) / 255;
+	byte g = ((255 * solidBeta) + (bgG * solidAlpha)) / 255;
+	byte b = ((255 * solidBeta) + (bgB * solidAlpha)) / 255;
+	surface->setPixel(px, py, format.RGBToColor(r, g, b));
 }
 
-void HotspotRenderer::drawLineWithGlow(Surface *surface, int x1, int y1, int x2, int y2,
+void HotspotRenderer::drawLine(Surface *surface, int x1, int y1, int x2, int y2,
 		int width, int height, const PixelFormat &format, int lineThickness) {
 	bool isHorizontal = (y1 == y2);
 	bool isVertical = (x1 == x2);
@@ -235,7 +228,7 @@ void HotspotRenderer::drawLineWithGlow(Surface *surface, int x1, int y1, int x2,
 	}
 
 	for (int along = alongMin; along <= alongMax; along++) {
-		for (int thickness = -lineThickness - _glowSize; thickness <= lineThickness + _glowSize; thickness++) {
+		for (int thickness = -lineThickness; thickness <= lineThickness; thickness++) {
 			int px, py;
 			if (isHorizontal) {
 				px = along;
@@ -249,18 +242,18 @@ void HotspotRenderer::drawLineWithGlow(Surface *surface, int x1, int y1, int x2,
 				continue;
 
 			int distFromCenter = ABS(thickness);
-			blendPixelWithGlow(surface, px, py, format, distFromCenter, lineThickness);
+			blendPixel(surface, px, py, format, distFromCenter, lineThickness);
 		}
 	}
 }
 
-void HotspotRenderer::drawRectWithGlow(Surface *surface, int x, int y, int w, int h,
+void HotspotRenderer::drawRect(Surface *surface, int x, int y, int w, int h,
 		int overlayWidth, int overlayHeight, const PixelFormat &format) {
-	drawLineWithGlow(surface, x, y, x + w - 1, y, overlayWidth, overlayHeight, format, _lineThickness);
-	drawLineWithGlow(surface, x, y + h - 1, x + w - 1, y + h - 1,
+	drawLine(surface, x, y, x + w - 1, y, overlayWidth, overlayHeight, format, _lineThickness);
+	drawLine(surface, x, y + h - 1, x + w - 1, y + h - 1,
 			overlayWidth, overlayHeight, format, _lineThickness);
-	drawLineWithGlow(surface, x, y + 1, x, y + h - 2, overlayWidth, overlayHeight, format, _lineThickness);
-	drawLineWithGlow(surface, x + w - 1, y + 1, x + w - 1, y + h - 2,
+	drawLine(surface, x, y + 1, x, y + h - 2, overlayWidth, overlayHeight, format, _lineThickness);
+	drawLine(surface, x + w - 1, y + 1, x + w - 1, y + h - 2,
 			overlayWidth, overlayHeight, format, _lineThickness);
 }
 
@@ -281,7 +274,7 @@ void HotspotRenderer::drawLabelBox(Surface *surface, int x, int y, int w, int h,
 		}
 	}
 
-	drawRectWithGlow(surface, x, y, w, h, overlayWidth, overlayHeight, format);
+	drawRect(surface, x, y, w, h, overlayWidth, overlayHeight, format);
 }
 
 } // End of namespace Graphics
