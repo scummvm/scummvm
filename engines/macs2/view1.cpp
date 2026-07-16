@@ -2909,7 +2909,7 @@ void View1::drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, ui
 			if (val != 0) {
 				const int px = x + currentX;
 				const int py = y + currentY;
-				if (clippingRect.contains(px, py) && px >= 0 && px < s.w && py >= 0 && py < s.h)
+				if (clippingRect.contains(px, py) && px < s.w && py < s.h)
 					s.setPixel(px, py, val);
 			}
 		}
