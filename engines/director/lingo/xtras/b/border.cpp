@@ -30,6 +30,7 @@
  * USED IN:
  * Physikus (l'Espresso, Italian; Ruske & Pühretmaier)
  * Bioscopia / Biolab
+ * TKKG 6-9, Oscar 4, Kommissar Kugelblitz
  *
  **************************************************/
 
@@ -37,6 +38,10 @@
  * Border() -- registers the Border Xtra instance.
  * new object me
  * Register object me, integer key -- validate the registration key
+ * getAppWin object me                                       -- gets application window (result: int hwnd)
+ * getStageWin object me, integer appwin                     -- gets stage window (result: int hwnd)
+ * getMovieWin object me, integer appwin, string movietitle  -- gets movie in a window (result: int hwnd)
+ * setBorder object me, integer hwnd, integer onoff          -- sets border
  */
 
 namespace Director {
@@ -50,6 +55,10 @@ const XlibFileDesc BorderXtra::fileNames[] = {
 static MethodProto xlibMethods[] = {
 	{ "new",		BorderXtra::m_new,		0, 0,	500 },
 	{ "Register",	BorderXtra::m_register,	1, 1,	500 },
+	{ "getAppWin",		BorderXtra::m_getAppWin,	0, 0,	500 },
+	{ "getStageWin",	BorderXtra::m_getStageWin,	1, 1,	500 },
+	{ "getMovieWin",	BorderXtra::m_getMovieWin,	2, 2,	500 },
+	{ "setBorder",		BorderXtra::m_setBorder,	2, 2,	500 },
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
@@ -94,5 +103,9 @@ void BorderXtra::m_new(int nargs) {
 }
 
 XOBJSTUB(BorderXtra::m_register, 0)
+XOBJSTUB(BorderXtra::m_getAppWin, 0)
+XOBJSTUB(BorderXtra::m_getStageWin, 0)
+XOBJSTUB(BorderXtra::m_getMovieWin, 0)
+XOBJSTUB(BorderXtra::m_setBorder, 0)
 
 } // End of namespace Director

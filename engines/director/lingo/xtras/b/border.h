@@ -42,6 +42,10 @@ void close(ObjectType type);
 
 void m_new(int nargs);
 void m_register(int nargs);
+void m_getAppWin(int nargs);
+void m_getStageWin(int nargs);
+void m_getMovieWin(int nargs);
+void m_setBorder(int nargs);
 
 } // End of namespace BorderXtra
 
