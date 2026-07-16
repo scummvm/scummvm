@@ -133,9 +133,22 @@
   destination script patterns. `ResolveHighestSetSelectionFlag` at `0x20394`
   supplies the highest enabled chapter flag from 1 through 4 to those patterns.
   The menu loads `worldmap.pcx` as its 640x400 background and advances
-  `worldcel.smk` beside the location chooser. A successful selection returns
-  control code `-3` with the resolved scene script; cancellation leaves the
-  current scene active.
+  `worldcel.smk` beside the location chooser.
+- The `CreateListChooserControl` call at `0x20c2d` supplies an internal origin
+  of (305, 45) to the transposed presentation layer. In screen coordinates the
+  location viewport is x=45, y=305, width=190, height=80. The detail control
+  created at `0x212eb` uses screen x=330, y=305 with the same dimensions and
+  displays unlocked entry labels from game-text resources 116 through 140.
+  Scene-selection layout rows 15 and 16 at `0x207ac` place the 23x15 up/down
+  controls at screen (267, 306) and (267, 329).
+- The list viewport holds five `small.fnt` chooser rows. `ProcessChooserControlInput`
+  at `0x57372` keeps an absolute selection plus a first-visible row: Up and Down
+  move one row and scroll at the viewport boundary, Page Up and Page Down move
+  by one visible window while retaining the relative row when possible, and
+  Home and End select the first or last row in the current window. The mouse
+  updates the highlighted visible row and the two auxiliary controls step the
+  same selection window. A successful selection returns control code `-3` with
+  the resolved scene script; cancellation leaves the current scene active.
 
 ## Save and Restore
 
