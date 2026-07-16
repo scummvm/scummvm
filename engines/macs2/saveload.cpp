@@ -54,12 +54,9 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	// name when producing an original-format save.
 	byte slotName[21] = {0};
 	if (s.isSaving()) {
-		const char *defName = "SCUMMVM";
-		uint8 len = (uint8)strlen(defName);
-		if (len > 20)
-			len = 20;
-		slotName[0] = len;
-		memcpy(slotName + 1, defName, len);
+		const char defName[] = {'S', 'C', 'U', 'M', 'M', 'V', 'M'};
+		slotName[0] = 20;
+		memcpy(slotName + 1, defName, sizeof(defName));
 	}
 	s.syncBytes(slotName, 21);
 
