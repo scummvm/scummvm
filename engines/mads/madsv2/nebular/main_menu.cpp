@@ -190,7 +190,7 @@ static void start_series() {
 		menu_item[count].status = 0;
 	}
 
-	menu_item[5].active = config_file.quotes_enabled;
+	menu_item[4].active = config_file.quotes_enabled;
 	error_flag = false;
 
 done:
