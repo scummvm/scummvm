@@ -273,26 +273,30 @@ Common::String RichTextCastMember::formatInfo() {
 }
 
 uint32 RichTextCastMember::getCastDataSize() {
-	if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
-		// 8 bytes (_initialRect)
-		// 8 bytes (_boundingRect)
-		// Ignored 9 bytes
+	if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer1100) {
+		// 8 bytes (_initialRect) + 8 bytes (_boundingRect)
+		// 1 antialiasFlag, 1 cropFlags, 2 scrollPos, 2 antialiasFontSize,
+		// 2 displayHeight, 1 skip byte
 		// 3 bytes r, g, b (foreground, each a byte)
 		// 6 bytes r, g, b (background, each 2 bytes)
-		return 26;
+		return 34;
 	} else {
-		warning("RichTextCastMember()::getCastDataSize():>D5 isn't handled");
+		warning("RichTextCastMember()::getCastDataSize(): version v%d isn't handled", humanVersion(_cast->_version));
 		return 0;
 	}
 }
 
 void RichTextCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
-	if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+	if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer1100) {
 		Movie::writeRect(writeStream, _initialRect);
 		Movie::writeRect(writeStream, _boundingRect);
 
-		writeStream->write(0, 8);
-		writeStream->writeByte(0);
+		writeStream->writeByte(_antialiasFlag);
+		writeStream->writeByte(_cropFlags);
+		writeStream->writeUint16BE(_scrollPos);
+		writeStream->writeUint16BE(_antialiasFontSize);
+		writeStream->writeUint16BE(_displayHeight);
+		writeStream->writeByte(0); // skip byte
 
 		uint8 r, g, b;
 		_pf32.colorToRGB(_foreColor, r, g, b);
@@ -305,7 +309,7 @@ void RichTextCastMember::writeCastData(Common::SeekableWriteStream *writeStream)
 		writeStream->writeUint16BE(g << 8);
 		writeStream->writeUint16BE(b << 8);
 	} else {
-		warning("RichTextCastMember()::writeCastData(): >D5 isn't handled");
+		warning("RichTextCastMember()::writeCastData(): version v%d isn't handled", humanVersion(_cast->_version));
 	}
 }
 
