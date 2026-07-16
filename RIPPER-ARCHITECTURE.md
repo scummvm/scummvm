@@ -478,7 +478,12 @@
   so the change does not persist when the frame is entered again. The handler's
   `Step` prompt is visible only when the original script-debug flag pair is set.
 - Opcode `0x1a` maps to `HandleSceneEntryMediaAndSetBasenameFlag` at `0x159e1`.
-  `ExecutePresentationEntry` at `0x1652a` routes IAVF media through
+  `ExecutePresentationEntry` at `0x1652a` first dispatches `.WAV` entries to
+  `PlayBlockingAudioClip` at `0x1f0ea`. This path selects cursor 19, keeps the
+  cursor presentation active, and waits for audio completion or Escape before
+  the opcode marks the media basename played. It covers scene-script speech
+  entries such as `DB1.RUN` presenting `Q_OD_36.WAV`; WAV data does not enter
+  the video decoder. `ExecutePresentationEntry` routes IAVF media through
   `RunMediaPresentation` at `0x168af`. It first deactivates the UI selection
   presentation, removing the active cursor before playback; the next frame's
   interaction presentation makes the cursor visible again. The media wrapper
