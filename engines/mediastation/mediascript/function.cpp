@@ -145,7 +145,7 @@ ScriptValue FunctionManager::call(uint functionId, Common::Array<ScriptValue> &a
 
 	case kEffectTransitionFunction:
 	case kLegacy_EffectTransitionFunction:
-		g_engine->getDisplayManager()->effectTransition(args);
+		script_EffectTransition(args, returnValue);
 		break;
 
 	case kEffectTransitionOnSyncFunction:
@@ -371,11 +371,27 @@ void FunctionManager::script_Random(Common::Array<ScriptValue> &args, ScriptValu
 }
 
 void FunctionManager::script_TimeOfDay(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
-	TimeDate timeDate;
 	// Calculate seconds since midnight.
-	g_system->getTimeAndDate(timeDate);
-	uint32 secondsSinceMidnight = (timeDate.tm_hour * 60 + timeDate.tm_min) * 60 + timeDate.tm_sec;
+	uint secondsSinceMidnight = g_engine->currentTimeInSeconds();
 	returnValue.setToTime(static_cast<double>(secondsSinceMidnight));
+}
+
+void FunctionManager::script_EffectTransition(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	// Puzzle Castle has this weird code path where it checks for this magic value.
+	// If so, it doesn't actually do the transition. Otherwise, we just do a normal
+	// transition. Scripts rely on this behavior, so we must reimplement it.
+	bool triggerPuzzleCastleIterationUpdate = (args.size() == 2) && (args[0].asFloat() == 9999);
+	if (triggerPuzzleCastleIterationUpdate) {
+		uint iterations = static_cast<uint>(args[1].asFloat());
+		uint start = g_engine->currentTimeInSeconds();
+		for (unsigned i = 0; i < iterations; ++i) {
+			g_engine->getDisplayUpdateManager()->performUpdateAll();
+		}
+
+		returnValue.setToFloat(g_engine->currentTimeInSeconds() - start);
+	} else {
+		g_engine->getDisplayManager()->effectTransition(args);
+	}
 }
 
 void FunctionManager::script_SquareRoot(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {

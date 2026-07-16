@@ -142,6 +142,14 @@ bool MediaStationEngine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsReturnToLauncher);
 }
 
+uint MediaStationEngine::currentTimeInSeconds() {
+	// Calculate seconds since midnight.
+	TimeDate timeDate;
+	g_system->getTimeAndDate(timeDate);
+	uint secondsSinceMidnight = (timeDate.tm_hour * 60 + timeDate.tm_min) * 60 + timeDate.tm_sec;
+	return secondsSinceMidnight;
+}
+
 Common::Error MediaStationEngine::run() {
 	_debugger = new Debugger(this);
 	setDebugger(_debugger);

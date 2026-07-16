@@ -87,6 +87,7 @@ private:
 	void script_GetRegistry(Common::Array<ScriptValue> &args, ScriptValue &returnValue);
 	void script_SetProfile(Common::Array<ScriptValue> &args, ScriptValue &returnValue);
 	void script_DebugPrint(Common::Array<ScriptValue> &args, ScriptValue &returnValue);
+	void script_EffectTransition(Common::Array<ScriptValue> &args, ScriptValue &returnValue);
 
 	// 101 Dalmatians.
 	void script_MazeGenerate(Common::Array<ScriptValue> &args, ScriptValue &returnValue);
