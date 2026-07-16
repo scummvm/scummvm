@@ -842,8 +842,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		bool allowEscSpace, int x, int y, Audio::SoundHandle *externalAudio, bool *stoppedByUser,
 		const Common::Array<uint32> *frameAudioOffsets, uint32 audioByteRate,
 		uint32 timelineStartMillis, uint displayScale, bool patchInterfacePalette,
-		uint frameLimit, int originY, bool presentFinalFrameOnEsc, bool patchWacMediaPalette,
-		bool serviceSceneUi, bool repeatedLoopPass, bool *advanceSegment) {
+		uint frameLimit, int originY, bool patchWacMediaPalette, bool serviceSceneUi,
+		bool repeatedLoopPass, bool *advanceSegment) {
 	if (stoppedByUser)
 		*stoppedByUser = false;
 	if (advanceSegment)
@@ -967,14 +967,16 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 					*advanceSegment = true;
 				completed = true;
 			}
-			if (skipToEnd && presentFinalFrameOnEsc && decoder.getFrameCount() != 0) {
+			if (skipToEnd && decoder.getFrameCount() != 0) {
 				const uint finalFrame = decoder.getFrameCount() - 1;
 				const Graphics::Surface *frame = decoder.forceSeekToFrame(finalFrame);
 				if (frame) {
 					presentFrame(frame, true);
+					if (serviceSceneUi)
+						serviceSceneAudio(finalFrame + 1);
 					completed = true;
 					debugC(2, kDebugVideo,
-						"Ripper: Escape presented final scene-transition frame '%s' frame=%u",
+						"Ripper: Escape presented final Smacker frame '%s' frame=%u; completing presentation",
 						name.c_str(), finalFrame);
 				}
 			}
@@ -1040,7 +1042,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			elapsedMs);
 	}
 	decoder.close();
-	return completed || (allowEscSpace && !_engine->shouldQuit());
+	return completed;
 }
 
 bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::String &name,
@@ -1110,8 +1112,8 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 			allowEscSpace, movie.segments[i].x, movie.segments[i].y,
 			audioActive ? &audioHandle : nullptr, &stoppedByUser,
 			frameAudioOffsets, audioByteRate, timelineStartMillis,
-			kAutoPacketizedDisplayScale, false, 0, 0, false, false, serviceSceneUi,
-			false, &advanceSegment)) {
+			kAutoPacketizedDisplayScale, false, 0, 0, false, serviceSceneUi, false,
+			&advanceSegment)) {
 			result = false;
 			break;
 		}
@@ -1234,7 +1236,7 @@ bool MediaPlayer::playWacMedia(const Common::String &path, int x, int y) {
 		"Ripper: entering WAC media presentation media='%s' position=%d,%d palette=10..149",
 		path.c_str(), x, y);
 	const bool result = playSmacker(file, path, false, x, y, nullptr, nullptr, nullptr,
-		0, 0, 1, false, 0, 0, false, true);
+		0, 0, 1, false, 0, 0, true);
 	_input->drainKeys();
 	return result;
 }
@@ -1378,8 +1380,8 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 		}
 	if (memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0) {
 		result = playSmacker(file, path, allowEscSpace, x, y, nullptr, nullptr, nullptr,
-			0, 0, 1, true, frameLimit, kScenePresentationTop, allowEscSpace, false,
-			true, repeatedLoopPass);
+			0, 0, 1, true, frameLimit, kScenePresentationTop, false, true,
+			repeatedLoopPass);
 		if (!result && _stopSceneOnMouse && _input->peekMouseState().pressed != 0) {
 			result = true;
 			debugC(1, kDebugVideo,
