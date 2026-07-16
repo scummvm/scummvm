@@ -93,9 +93,11 @@ public:
 	Common::String nextArg() {
 		skip();
 		auto begin = _pos;
-		while (_pos < _line.size() && !Common::isSpace(_line[_pos]) && _line[_pos] != ',' && _line[_pos] != ')')
+		while (_pos < _line.size() && _line[_pos] != ',' && _line[_pos] != ')')
 			++_pos;
 		auto end = _pos;
+		while (end > begin && Common::isSpace(_line[end - 1]))
+			--end;
 		skip();
 		return _line.substr(begin, end - begin);
 	}
@@ -146,8 +148,8 @@ public:
 			else {
 				list.push_back(nextArg());
 			}
-			if (peek() == ',')
-				next();
+			if (!atEnd() && peek() != ')')
+				expect(',');
 		}
 		return list;
 	}

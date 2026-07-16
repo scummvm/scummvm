@@ -535,7 +535,7 @@ struct Play_AnimBloc : public Script::Command {
 
 	Play_AnimBloc(const Common::Array<Common::String> &args) : name(args[0]), dstVar(args[1]), dstVarValue(atoi(args[2].c_str())), speed(args.size() >= 4 ? atof(args[3].c_str()) : 25) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("Play_AnimBloc %s %s %d, %g", name.c_str(), dstVar.c_str(), dstVarValue, speed);
+		debug("Play_AnimBloc %s %s %d %g", name.c_str(), dstVar.c_str(), dstVarValue, speed);
 		g_engine->playAnimation(name, dstVar, dstVarValue, speed);
 	}
 };
