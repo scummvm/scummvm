@@ -164,6 +164,7 @@ public:
 private:
 	bool executeCallback(CompiledScript &script, uint32 callbackOffset, int &result,
 		uint *nextFrame = nullptr);
+	void bindBa0Frame(uint frameIndex);
 	void initializeBa0InteractionState(const ScriptFrame &frame);
 	void beginBa0InteractionWait(const Common::String &frameLabel, uint interactionCount);
 	bool advanceBa0ToFrame(uint nextFrame);
@@ -183,6 +184,7 @@ private:
 	Common::Array<bool> _milestoneFlags;
 	Common::Array<Common::String> _playedScenes;
 	Common::Array<bool> _activeBa0InteractionEnabled;
+	Common::String _previousBa0FrameLabel;
 	uint _activeBa0Frame;
 	int _hoveredBa0Interaction;
 	bool _awaitingBa0Interaction;
