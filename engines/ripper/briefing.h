@@ -31,25 +31,37 @@ class ResourceManager;
 class RipperEngine;
 struct MouseState;
 
+enum BriefingServiceResult {
+	kBriefingIdle,
+	kBriefingHovered,
+	kBriefingActivated,
+	kBriefingFailed
+};
+
 class BriefingManager {
 public:
 	explicit BriefingManager(RipperEngine *engine);
+	~BriefingManager();
 
 	bool initialize(ResourceManager &resources);
 	bool arm(uint selector, bool playNotification = true);
 	void restore(bool armed, uint selector);
 	void clear();
-	bool service(const MouseState &mouse);
-	void draw() const;
+	BriefingServiceResult service(const MouseState &mouse);
+	void draw();
 
 	bool isArmed() const { return _armed; }
 	uint getSelector() const { return _selector; }
 
 private:
 	void advanceAnimation(uint32 now);
+	void captureBacking();
+	void restoreBacking();
+	bool activate();
 
 	RipperEngine *_engine;
 	BitmapAssetSequence _frames;
+	Common::Array<byte> _backing;
 	Common::Rect _bounds;
 	Audio::SoundHandle _alertHandle;
 	uint32 _lastFrameMillis;
@@ -57,6 +69,7 @@ private:
 	uint _selector;
 	bool _armed;
 	bool _initialized;
+	bool _hovered;
 	bool _announcedSelectors[9];
 };
 
