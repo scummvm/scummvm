@@ -158,7 +158,7 @@ public:
 	bool runStartupPath();
 	bool serviceScene();
 	void drawDialogueOverlay() const;
-	void updateInteractiveCursor(const Common::Point &point);
+	bool updateInteractiveCursor(const Common::Point &point);
 	bool openWorldMap();
 	bool isMilestoneFlagSet(uint32 flag) const;
 	void setMilestoneFlag(uint32 flag, const char *source);

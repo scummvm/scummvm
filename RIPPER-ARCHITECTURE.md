@@ -109,6 +109,14 @@
   input. That band uses cursor `0xe` (14), matching the white cursor selected
   by `RunStartupFrontEndLoop` at `0x10778`; scene and chooser cursor selection
   resumes below y=50.
+- For interactive type-1 scene media, `ExecuteSceneFrameAndInteractions` at
+  `0x13277` passes `PollInteractionAndResolveSelection` to `RunMediaSequence`
+  at `0x1e516` as its per-frame callback. Entering the top band synchronously
+  runs `RunFrontEndActionMenu`; the callback does not return while the toolbar
+  is displayed, so the Smacker sequence cannot decode another frame. The next
+  media iteration snapshots the current timer tick rather than catching up on
+  elapsed toolbar time. ScummVM pauses the decoder clock across the same input
+  ownership interval and continues presenting toolbar animation and tooltips.
 - Action dispatch at `0x190b7` maps the nine controls to remote setup, world
   map, inventory, WAC, save, restore, options, help, and quit. The ScummVM
   toolbar preserves the click/release routing. Action `0x515` and scene-entry
