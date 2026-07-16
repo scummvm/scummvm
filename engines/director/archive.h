@@ -219,6 +219,7 @@ private:
 	uint32 _fverLength;
 	uint32 _afterBurnerVersion;
 	uint32 _fcdrLength;
+	Common::Array<bool> _fcdrZlibTypes;
 	uint32 _abmpLength;
 	uint32 _abmpEnd;
 	uint32 _abmpCompressionType;
