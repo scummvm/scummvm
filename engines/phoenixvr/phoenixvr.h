@@ -46,7 +46,7 @@
 #include "phoenixvr/vr.h"
 
 namespace Common {
-class Event;
+struct Event;
 }
 
 namespace Graphics {
