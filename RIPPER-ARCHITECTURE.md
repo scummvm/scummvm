@@ -168,10 +168,13 @@
   entries 10 through 149 so the WAC interface colors remain available. The WAC
   display service consumes each control's coordinate pair in transposed screen
   order, so the second recovered coordinate is screen x and the first is
-  screen y; the solved deltas use the same mapping. A left drag promotes the
-  selected piece to the front; a right-button transition during that drag
-  advances eight frames and rotates the piece to the next of four orientation
-  states. The puzzle implementation is isolated under `engines/ripper/puzzles/`.
+  screen y; the solved deltas use the same mapping. The first left click selects
+  a piece and promotes its transient drag overlay to the front; the overlay
+  follows the pointer without requiring the button to remain held. A second
+  left click drops the piece after that button is released. A right click while
+  the piece is selected advances eight frames and rotates it to the next of
+  four orientation states. The puzzle implementation is isolated under
+  `engines/ripper/puzzles/`.
 - `RunWacInventorySelectionLoop` keeps the database chooser alive while it
   dispatches `RunWacMugSelectionScene`. The mug scene redraws only the left
   media viewport, so the Object Database panel and its selected Broken Mug row

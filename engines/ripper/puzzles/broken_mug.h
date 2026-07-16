@@ -83,7 +83,7 @@ private:
 	int _draggedPiece;
 	int _rotationStep;
 	uint32 _nextRotationMillis;
-	bool _releasePending;
+	bool _dropPending;
 };
 
 } // End of namespace Ripper
