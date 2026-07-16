@@ -139,6 +139,13 @@
   100 through 114 for their names and resources 150 through 164 for their
   destination script patterns. `ResolveHighestSetSelectionFlag` at `0x20394`
   supplies the highest enabled chapter flag from 1 through 4 to those patterns.
+- Scene action 32 temporarily deactivates the selection presentation, dispatches
+  display command `0x14`, and then reactivates selection. Entry `0x14` in
+  `g_displayServiceCommandTable` targets `ClearGenericVideoLogicalPage` at
+  `0x45ed8`, so this action clears the active scene display to black while
+  preserving script and chooser state. `FA3.RUN` and `KC.RUN` use it
+  immediately before playing replacement scene media; `DE1.RUN` reaches the
+  same action from its `T1` navigation callback.
   The menu loads `worldmap.pcx` as its 640x400 background and advances
   `worldcel.smk` beside the location chooser.
 - The `CreateListChooserControl` call at `0x20c2d` supplies an internal origin
