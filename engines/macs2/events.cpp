@@ -150,27 +150,6 @@ void Events::processEvent(Common::Event &ev) {
 	}
 }
 
-void Events::replaceView(UIElement *ui, bool replaceAllViews) {
-	assert(ui);
-	UIElement *priorView = focusedView();
-
-	if (replaceAllViews) {
-		clearViews();
-
-	} else if (!_views.empty()) {
-		priorView->msgUnfocus(UnfocusMessage());
-		_views.pop();
-	}
-
-	_views.push(ui);
-	ui->redraw();
-	ui->msgFocus(FocusMessage(priorView));
-}
-
-void Events::replaceView(const Common::String &name, bool replaceAllViews) {
-	replaceView(findView(name));
-}
-
 void Events::addView(UIElement *ui) {
 	assert(ui);
 	UIElement *priorView = focusedView();
@@ -183,91 +162,27 @@ void Events::addView(UIElement *ui) {
 	ui->msgFocus(FocusMessage(priorView));
 }
 
-void Events::addView(const Common::String &name) {
-	addView(findView(name));
-}
-
-void Events::popView() {
-	UIElement *priorView = focusedView();
-	priorView->msgUnfocus(UnfocusMessage());
-	_views.pop();
-
-	for (int i = 0; i < (int)_views.size() - 1; ++i) {
-		_views[i]->redraw();
-		_views[i]->draw();
-	}
-
-	if (!_views.empty()) {
-		UIElement *view = focusedView();
-		view->msgFocus(FocusMessage(priorView));
-		view->redraw();
-		view->draw();
-	}
-}
-
-void Events::redrawViews() {
-	for (uint i = 0; i < _views.size(); ++i) {
-		_views[i]->redraw();
-		_views[i]->draw();
-	}
-}
-
-bool Events::isPresent(const Common::String &name) const {
-	for (uint i = 0; i < _views.size(); ++i) {
-		if (_views[i]->_name == name)
-			return true;
-	}
-
-	return false;
-}
-
-void Events::clearViews() {
-	if (!_views.empty())
-		focusedView()->msgUnfocus(UnfocusMessage());
-
-	_views.clear();
-}
-
-void Events::addKeypress(const Common::KeyCode kc) {
-	Common::KeyState ks;
-	ks.keycode = kc;
-	if (kc >= Common::KEYCODE_SPACE && kc <= Common::KEYCODE_TILDE)
-		ks.ascii = kc;
-
-	focusedView()->msgKeypress(KeypressMessage(ks));
-}
-
 /*------------------------------------------------------------------------*/
 
 Bounds::Bounds(Common::Rect &innerBounds) : _bounds(0, 0, kScreenWidth, kGameHeight),
-											_innerBounds(innerBounds),
-											left(_bounds.left), top(_bounds.top),
-											right(_bounds.right), bottom(_bounds.bottom) {
+											_innerBounds(innerBounds) {
 }
 
 Bounds &Bounds::operator=(const Common::Rect &r) {
 	_bounds = r;
 	_innerBounds = r;
-	_innerBounds.grow(-_borderSize);
 	return *this;
-}
-
-void Bounds::setBorderSize(size_t borderSize) {
-	_borderSize = borderSize;
-	_innerBounds = *this;
-	_innerBounds.grow(-_borderSize);
 }
 
 /*------------------------------------------------------------------------*/
 
-UIElement::UIElement(const Common::String &name) : _name(name), _parent(g_engine), _bounds(_innerBounds) {
+UIElement::UIElement(const Common::String &name) : _name(name), _bounds(_innerBounds) {
 	g_engine->_children.push_back(this);
 }
 
-UIElement::UIElement(const Common::String &name, UIElement *uiParent) : _name(name), _parent(uiParent),
-																		_bounds(_innerBounds) {
-	if (_parent)
-		_parent->_children.push_back(this);
+UIElement::UIElement(const Common::String &name, UIElement *uiParent) : _name(name), _bounds(_innerBounds) {
+	if (uiParent)
+		uiParent->_children.push_back(this);
 }
 
 void UIElement::redraw() {
@@ -287,28 +202,6 @@ void UIElement::drawElements() {
 		_children[i]->drawElements();
 }
 
-UIElement *UIElement::findViewGlobally(const Common::String &name) {
-	return g_events->findView(name);
-}
-
-void UIElement::focus() {
-	g_events->replaceView(this);
-}
-
-void UIElement::close() {
-	assert(g_events->focusedView() == this);
-	g_events->popView();
-}
-
-bool UIElement::isFocused() const {
-	return g_events->focusedView() == this;
-}
-
-void UIElement::clearSurface() {
-	Graphics::ManagedSurface s = getSurface();
-	s.fillRect(Common::Rect(s.w, s.h), 0);
-}
-
 void UIElement::draw() {
 	for (size_t i = 0; i < _children.size(); ++i) {
 		_children[i]->draw();
@@ -316,10 +209,6 @@ void UIElement::draw() {
 }
 
 bool UIElement::tick() {
-	if (_timeoutCtr && --_timeoutCtr == 0) {
-		timeout();
-	}
-
 	for (size_t i = 0; i < _children.size(); ++i) {
 		if (_children[i]->tick())
 			return true;
@@ -341,40 +230,8 @@ UIElement *UIElement::findView(const Common::String &name) {
 	return nullptr;
 }
 
-void UIElement::replaceView(UIElement *ui, bool replaceAllViews) {
-	g_events->replaceView(ui, replaceAllViews);
-}
-
-void UIElement::replaceView(const Common::String &name, bool replaceAllViews) {
-	g_events->replaceView(name, replaceAllViews);
-}
-
-void UIElement::addView(UIElement *ui) {
-	g_events->addView(ui);
-}
-
-void UIElement::addView(const Common::String &name) {
-	g_events->addView(name);
-}
-
-void UIElement::addView() {
-	g_events->addView(this);
-}
-
 Graphics::ManagedSurface UIElement::getSurface() const {
 	return Graphics::ManagedSurface(*g_events->getScreen(), _bounds);
-}
-
-void UIElement::delaySeconds(uint seconds) {
-	_timeoutCtr = seconds * (1000 / FRAME_DELAY);
-}
-
-void UIElement::delayFrames(uint frames) {
-	_timeoutCtr = frames;
-}
-
-void UIElement::timeout() {
-	redraw();
 }
 
 } // namespace Macs2
