@@ -41,6 +41,11 @@
 namespace Director {
 
 bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
+	if (_rifxType == MKTAG('F', 'G', 'D', 'M') || _rifxType == MKTAG('F', 'G', 'D', 'C')) {
+		warning("STUB: RIFXArchive::writeToFile(): saving Afterburner movies is not supported");
+		return false;
+	}
+
 	// If the filename is empty, we save the movie with the name of the current movie
 	if (filename.empty()) {
 		filename = movie->getMacName();
@@ -75,10 +80,6 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 		writeMemoryMap(saveFile, builtResources);
 		break;
 
-	case MKTAG('F', 'G', 'D', 'M'):
-	case MKTAG('F', 'G', 'D', 'C'):
-		writeAfterBurnerMap(saveFile);
-		break;
 	default:
 		break;
 	}
