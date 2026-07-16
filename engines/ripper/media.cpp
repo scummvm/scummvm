@@ -595,6 +595,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			g_system->unlockScreen();
 		}
 		_engine->getScripts()->drawDialogueOverlay(true);
+		_engine->getScripts()->drawBriefingOverlay();
 		g_system->updateScreen();
 	};
 	decoder.start();
@@ -890,6 +891,44 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path) {
 		"Ripper: completed blocking audio '%s' source=%s stoppedByEscape=%d",
 		path.c_str(), source.c_str(), stoppedByEscape);
 	return !_engine->shouldQuit();
+}
+
+bool MediaPlayer::playSoundEffect(const Common::String &path, Audio::SoundHandle &handle,
+		uint volumePercent) {
+	Common::SeekableReadStream *audioStream = nullptr;
+	Common::String source;
+	Common::File *file = new Common::File();
+	if (file->open(Common::Path(path))) {
+		audioStream = file;
+		source = "filesystem";
+	} else {
+		delete file;
+		ResourceManager *resources = _engine->getResources();
+		if (resources && resources->sound().hasMember(path)) {
+			audioStream = resources->sound().createReadStreamForMember(path);
+			source = "sound-library";
+		}
+	}
+	if (!audioStream) {
+		warning("Ripper: could not open sound effect '%s' from the filesystem or sound library",
+			path.c_str());
+		return false;
+	}
+
+	Audio::SeekableAudioStream *stream = Audio::makeWAVStream(audioStream, DisposeAfterUse::YES);
+	if (!stream)
+		return false;
+	stopSoundEffect(handle);
+	const byte volume = (byte)(MIN<uint>(volumePercent, 100) * Audio::Mixer::kMaxChannelVolume / 100);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, stream, -1, volume);
+	debugC(2, kDebugAudio,
+		"Ripper: started sound effect '%s' source=%s volume=%u",
+		path.c_str(), source.c_str(), volumePercent);
+	return true;
+}
+
+void MediaPlayer::stopSoundEffect(Audio::SoundHandle &handle) {
+	_mixer->stopHandle(handle);
 }
 
 bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool firstFrameOnly,

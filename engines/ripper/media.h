@@ -47,6 +47,9 @@ public:
 	bool play(const Common::String &path, bool allowEscSpace, int x = -1, int y = -1);
 	bool playWacMedia(const Common::String &path, int x, int y);
 	bool playBlockingAudio(const Common::String &path);
+	bool playSoundEffect(const Common::String &path, Audio::SoundHandle &handle,
+		uint volumePercent = 100);
+	void stopSoundEffect(Audio::SoundHandle &handle);
 	bool playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
 		bool loopUntilInput = false, bool allowEscSpace = false);
 	bool loadAudio(const Common::String &path);

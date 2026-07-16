@@ -20,6 +20,7 @@
 
 #include "ripper/script.h"
 
+#include "ripper/briefing.h"
 #include "ripper/dialogue.h"
 
 #include "common/debug.h"
@@ -314,8 +315,8 @@ bool CompiledScript::validateCallbacks() const {
 
 ScriptManager::ScriptManager(RipperEngine *engine) : _engine(engine), _activeBa0Frame(0),
 		_hoveredBa0Interaction(-1),
-		_awaitingBa0Interaction(false), _briefingArmed(false), _briefingSelector(0),
-		_resumeLoadedPresentation(false) {
+		_awaitingBa0Interaction(false), _resumeLoadedPresentation(false) {
+	_briefing = new BriefingManager(engine);
 	_dialogue = new DialogueManager();
 }
 
@@ -331,8 +332,8 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 	Common::String previousFrame = serializer.isSaving() ? _previousBa0FrameLabel : Common::String();
 	uint32 activeFrame = _activeBa0Frame;
 	byte awaitingInteraction = _awaitingBa0Interaction ? 1 : 0;
-	byte briefingArmed = _briefingArmed ? 1 : 0;
-	uint32 briefingSelector = _briefingSelector;
+	byte briefingArmed = _briefing->isArmed() ? 1 : 0;
+	uint32 briefingSelector = _briefing->getSelector();
 
 	serializer.syncString(ba0Member);
 	serializer.syncAsUint32LE(activeFrame);
@@ -402,8 +403,7 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 	_previousBa0FrameLabel = previousFrame;
 	_activeBa0Frame = activeFrame;
 	_awaitingBa0Interaction = awaitingInteraction != 0;
-	_briefingArmed = briefingArmed != 0;
-	_briefingSelector = briefingSelector;
+	_briefing->restore(briefingArmed != 0, briefingSelector);
 	_pendingSceneMember.clear();
 	_hoveredBa0Interaction = -1;
 	_resumeLoadedPresentation = !_dialogue->isPending() &&
@@ -423,10 +423,12 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 
 ScriptManager::~ScriptManager() {
 	delete _dialogue;
+	delete _briefing;
 }
 
 bool ScriptManager::initialize(ResourceManager &resources) {
-	return _dialogue->initialize(resources) &&
+	return _briefing->initialize(resources) &&
+		_dialogue->initialize(resources) &&
 		_startup.load(resources.scripts(), "ripper.run") &&
 		_ba0.load(resources.scripts(), "ba0.run");
 }
@@ -839,9 +841,8 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 					script.getMemberName().c_str(), command.offset);
 				return false;
 			}
-			_briefingSelector = command.arguments[1].value;
-			_briefingArmed = true;
-			debugC(2, kDebugScene, "Ripper: armed briefing media selector=%u", _briefingSelector);
+			if (!_briefing->arm(command.arguments[1].value))
+				return false;
 			break;
 		}
 
@@ -1046,6 +1047,8 @@ bool ScriptManager::serviceScene() {
 			return false;
 	}
 	const MouseState mouse = _engine->getInput()->publishMouseState();
+	if (_briefing->service(mouse))
+		return true;
 	const bool dialoguePending = _dialogue->isPending();
 	if (dialoguePending) {
 		if (_engine->getToolbar()->service(mouse)) {
@@ -1167,7 +1170,13 @@ void ScriptManager::drawDialogueOverlay(bool captureBacking) {
 	_dialogue->draw(captureBacking);
 }
 
+void ScriptManager::drawBriefingOverlay() {
+	_briefing->draw();
+}
+
 bool ScriptManager::updateInteractiveCursor(const Common::Point &point) {
+	if (_briefing->service(_engine->getInput()->peekMouseState()))
+		return false;
 	if (!_awaitingBa0Interaction || _activeBa0Frame >= _ba0.getFrames().size())
 		return false;
 	if (_engine->getToolbar()->service(_engine->getInput()->peekMouseState())) {
