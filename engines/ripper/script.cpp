@@ -395,6 +395,19 @@ void ScriptManager::initializeBa0InteractionState(const ScriptFrame &frame) {
 		frame.interactionCount);
 }
 
+void ScriptManager::bindBa0Frame(uint frameIndex) {
+	// BindSceneRuntimeCurrentFrame at 0x145d6 preserves the outgoing frame label
+	// at SceneRuntime+0x177 before changing the current frame record.
+	if (_activeBa0Frame < _ba0.getFrames().size())
+		_previousBa0FrameLabel = _ba0.getString(_ba0.getFrames()[_activeBa0Frame].labelOffset);
+	else
+		_previousBa0FrameLabel.clear();
+	_activeBa0Frame = frameIndex;
+	debugC(2, kDebugScripts,
+		"Ripper: bound BA0 frame=%u previous='%s'",
+		_activeBa0Frame, _previousBa0FrameLabel.c_str());
+}
+
 bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffset, int &result,
 		uint *nextFrame) {
 	Common::Array<ScriptCommand> commands;
@@ -471,6 +484,44 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				if (targetIndex == commands.size()) {
 					warning("Ripper: dialogue branch target 0x%x is not a command boundary in '%s'",
 						command.arguments[1].value, script.getMemberName().c_str());
+					return false;
+				}
+				commandIndex = targetIndex;
+				continue;
+			}
+			break;
+		}
+
+		case kPreviousSceneCondition: {
+			if (command.arguments.size() < 3 ||
+				command.arguments[1].value >= script.getFrames().size())
+				return false;
+			if (&script != &_ba0) {
+				warning("Ripper: previous-scene condition has no tracked runtime in '%s' at 0x%x",
+					script.getMemberName().c_str(), command.offset);
+				return false;
+			}
+
+			const bool expected = command.arguments[0].value != 0;
+			const ScriptFrame &comparedFrame = script.getFrames()[command.arguments[1].value];
+			const Common::String comparedLabel = script.getString(comparedFrame.labelOffset);
+			const bool actual = !_previousBa0FrameLabel.empty() &&
+				_previousBa0FrameLabel.equalsIgnoreCase(comparedLabel);
+			debugC(3, kDebugScripts,
+				"Ripper: previous-scene condition frame=%u label='%s' previous='%s' "
+				"expected=%d actual=%d target=0x%x",
+				command.arguments[1].value, comparedLabel.c_str(),
+				_previousBa0FrameLabel.c_str(), expected, actual,
+				command.arguments[2].value);
+			if (actual != expected) {
+				branchTaken = true;
+				uint targetIndex = 0;
+				while (targetIndex < commands.size() &&
+					commands[targetIndex].offset != command.arguments[2].value)
+					++targetIndex;
+				if (targetIndex == commands.size()) {
+					warning("Ripper: callback branch target 0x%x is not a command boundary in '%s'",
+						command.arguments[2].value, script.getMemberName().c_str());
 					return false;
 				}
 				commandIndex = targetIndex;
@@ -705,7 +756,7 @@ bool ScriptManager::runStartupPath() {
 	debugC(1, kDebugScene, "Ripper: initialized cleared scene display for BA0");
 
 	debugC(1, kDebugScene, "Ripper: entering BA0 frame=%u label='start'", ba0StartFrame);
-	_activeBa0Frame = ba0StartFrame;
+	bindBa0Frame(ba0StartFrame);
 	initializeBa0InteractionState(_ba0.getFrames()[ba0StartFrame]);
 	result = 0;
 	if (!executeCallback(_ba0, _ba0.getFrames()[ba0StartFrame].enterCallbackOffset, result) || result != 0)
@@ -752,7 +803,7 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 			return false;
 		}
 
-		_activeBa0Frame = nextFrame;
+		bindBa0Frame(nextFrame);
 		const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
 		const Common::String label = _ba0.getString(frame.labelOffset);
 		debugC(1, kDebugScene, "Ripper: entering BA0 frame=%u label='%s' type=%u interactions=%u",
