@@ -34,6 +34,7 @@
 #include "ripper/input.h"
 #include "ripper/media.h"
 #include "ripper/milestones.h"
+#include "ripper/puzzles/crystal.h"
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
 #include "ripper/toolbar.h"
@@ -920,7 +921,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			debugC(2, kDebugScene,
 				"Ripper: dispatch scene action=%u argument=%u script='%s' offset=0x%x",
 				action, argument, script.getMemberName().c_str(), command.offset);
-			if (action == 2) {
+			if (action == kSceneActionWorldMap) {
 				if (!openWorldMap())
 					return false;
 				if (!_pendingSceneMember.empty()) {
@@ -929,7 +930,17 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				}
 				break;
 			}
-			if (action == 32) {
+			if (action == kSceneActionCrystalPuzzle) {
+				CrystalPuzzle puzzle(_engine);
+				const CrystalPuzzle::Result puzzleResult = puzzle.run(argument);
+				debugC(1, kDebugPuzzles,
+					"Ripper: crystal puzzle scene action completed result=%d milestone=%u",
+					puzzleResult, argument);
+				if (puzzleResult == CrystalPuzzle::kLoadFailed)
+					return false;
+				break;
+			}
+			if (action == kSceneActionClearDisplay) {
 				// DispatchSceneEntryAction at 0x36892 deactivates the selection
 				// presentation and sends display command 0x14, whose table entry is
 				// ClearGenericVideoLogicalPage at 0x45ed8, before reactivating it.
@@ -939,7 +950,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 					"Ripper: cleared active scene display from scene action 32");
 				break;
 			}
-			if (action != 300) {
+			if (action != kSceneActionBriefing) {
 				warning("Ripper: unsupported scene action %u in '%s' at 0x%x",
 					action, script.getMemberName().c_str(), command.offset);
 				return false;

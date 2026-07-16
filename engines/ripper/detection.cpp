@@ -36,6 +36,7 @@ const DebugChannelDef RipperMetaEngineDetection::debugFlagList[] = {
 	{ Ripper::kDebugWac, "wac", "WAC database, presentation, and puzzle state" },
 	{ Ripper::kDebugSaveLoad, "saveload", "Save and restore state" },
 	{ Ripper::kDebugMilestones, "milestones", "Persistent progress flags and gate state" },
+	{ Ripper::kDebugPuzzles, "puzzles", "Puzzle loading, interaction, and completion state" },
 	DEBUG_CHANNEL_END
 };
 

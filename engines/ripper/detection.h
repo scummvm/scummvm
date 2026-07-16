@@ -37,7 +37,8 @@ enum RipperDebugChannels {
 	kDebugDialogue = 1 << 8,
 	kDebugWac = 1 << 9,
 	kDebugSaveLoad = 1 << 10,
-	kDebugMilestones = 1 << 11
+	kDebugMilestones = 1 << 11,
+	kDebugPuzzles = 1 << 12
 };
 
 extern const PlainGameDescriptor ripperGames[];
