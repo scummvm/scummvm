@@ -437,6 +437,10 @@ void NotebookPopup::refreshContent() {
 	drawForeground();
 }
 
+uint16 NotebookPopup::notebookJournalTabId() const {
+	return g_nancy->getGameType() >= kGameTypeNancy13 ? 0 : 1;
+}
+
 void NotebookPopup::buildTextLines() {
 	if (!_uinbData)
 		return;
@@ -445,8 +449,10 @@ void NotebookPopup::buildTextLines() {
 	if (!tab.enabled)
 		return;
 
-	// tab.id 1 (top/book) → Journal; tab.id 2 (bottom/clipboard) → Tasks.
-	const uint16 surfaceID = (tab.id == 1) ? kNotebookTabJournal : kNotebookTabTasks;
+	// The lower tab id (top/book) is the Journal; the higher (bottom/clipboard)
+	// is the Tasks list. Nancy 13 renumbered the tab ids from {1,2} to {0,1}.
+	const uint16 journalTabId = notebookJournalTabId();
+	const uint16 surfaceID = (tab.id == journalTabId) ? kNotebookTabJournal : kNotebookTabTasks;
 
 	JournalData *journalData = (JournalData *)NancySceneState.getPuzzleData(JournalData::getTag());
 	if (!journalData)
@@ -519,7 +525,7 @@ void NotebookPopup::drawContent() {
 
 	// Only the Tasklist has clickable checkboxes; record their glyph rects.
 	const UIButtonSlot &activeTab = _uinbData->tabs[_activeTab];
-	const bool tasksTab = activeTab.enabled && activeTab.id != 1;
+	const bool tasksTab = activeTab.enabled && activeTab.id != notebookJournalTabId();
 	_recordMarkHotspots = tasksTab;
 
 	buildTextLines();
