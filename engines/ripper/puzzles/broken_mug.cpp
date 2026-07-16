@@ -49,16 +49,16 @@ static const uint16 kDosF10Command = 0x4400;
 static const uint32 kRotationFrameMillis = 55;
 static const int kViewportLeft = 50;
 static const int kViewportTop = 50;
-static const int kViewportRight = 332;
-static const int kViewportBottom = 400;
+static const int kViewportRight = 400;
+static const int kViewportBottom = 332;
 static const byte kViewportFillColor = 4;
 static const uint kPalettePatchFirst = 10;
 static const uint kPalettePatchCount = 140;
 static const int kSolvedTolerance = 5;
 static const uint kBrokenMugAvailableFlag = 0x47;
 static const uint kBrokenMugCompletedFlag = 0x48;
-static const int kCompletionX = 111;
-static const int kCompletionY = 143;
+static const int kCompletionX = 143;
+static const int kCompletionY = 111;
 
 static const int kInitialX[kPieceCount] = {
 	122, 220, 216, 61, 54, 114, 160, 207, 230
