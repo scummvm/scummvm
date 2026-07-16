@@ -34,6 +34,7 @@
 #include "ripper/media.h"
 #include "ripper/ripper.h"
 #include "ripper/script.h"
+#include "ripper/wac.h"
 
 namespace Ripper {
 
@@ -410,6 +411,7 @@ BrokenMugPuzzle::Result BrokenMugPuzzle::run() {
 		}
 		if (changed)
 			render();
+		_engine->getWac()->serviceIdleEffects();
 		g_system->delayMillis(10);
 	}
 

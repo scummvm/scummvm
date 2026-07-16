@@ -37,6 +37,7 @@ public:
 
 	bool initialize(ResourceManager &resources);
 	void run();
+	void serviceIdleEffects();
 
 private:
 	enum FrontEndAction {
