@@ -197,10 +197,14 @@
 - `PROLOGUE.RUN` tests flag 301 (`played first wac message`) together with the
   played-state of `MUGSCAN2` and `BAZ1` and milestone 302 (`spoken to
   Stasiak`). When all gates pass, scene action 300 arms briefing selector 1 and
-  the script immediately sets flag 301. `ServiceBriefingMediaTrigger` at
-  `0x1945b` later dispatches selector 1 to `CP0_1_P1.AVI` and sets travel flag
-  44. The script therefore records 301 at trigger-arm time, before the later UI
-  event presents the media.
+  the script immediately sets flag 301. `ArmBriefingMediaTrigger` at `0x1929a`
+  reuses the ten frames of toolbar action four to create control `0x4e1` at the
+  right edge of the lower presentation band, assigns cursor 16, and plays
+  `WACICON0.WAV`. `ServiceBriefingMediaTrigger` at `0x1945b` advances the icon
+  every three DOS ticks and plays `WACICON1.WAV` when the animation wraps. A
+  later selection of control `0x4e1` dispatches selector 1 to `CP0_1_P1.AVI`
+  and sets travel flag 44. The script therefore records 301 at trigger-arm
+  time, before the later UI event presents the media.
 - `WriteEmergencySaveGame` at `0x1ae3c` writes `0x7d` bytes for this store,
   exactly 125 bytes or 1,000 bits; `RestoreSavedRunState` at `0x1b8dd` caps the
   restored payload to the same size. ScummVM's engine-owned `Milestones`
@@ -468,9 +472,10 @@
   default target only when no preceding condition failed; both `0x0c` and
   opcode `0x0d` then clear the original runtime's branch/prompt state.
 - PROLOGUE opcode `0x18` action 300 arms the deferred briefing-media selector.
-  `ServiceSceneFrameAudioAndBriefingTriggers` at `0x138c9` services that state;
-  the ScummVM implementation records the armed selector, while presentation of
-  the briefing control remains a later vertical slice.
+  `ServiceSceneFrameAudioAndBriefingTriggers` at `0x138c9` services that state
+  both in the scene chooser and as a presentation-frame callback. The armed
+  control remains visible and animated across automatic media and interactive
+  frames until its `0x4e1` selection is dispatched.
 - Scene interaction records contain an 11-byte label followed by an `x/y/width/
   height` rectangle at offsets `+0x0b/+0x0d/+0x0f/+0x11`. The scene UI uses
   transposed selection axes relative to the displayed frame, so ScummVM maps

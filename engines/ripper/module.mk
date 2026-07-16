@@ -1,6 +1,7 @@
 MODULE := engines/ripper
 
 MODULE_OBJS := \
+	briefing.o \
 	cursor.o \
 	dialogue.o \
 	iff.o \

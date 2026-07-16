@@ -32,6 +32,7 @@ class Serializer;
 namespace Ripper {
 
 class AssetLibrary;
+class BriefingManager;
 class ResourceManager;
 class RipperEngine;
 class DialogueManager;
@@ -158,6 +159,7 @@ public:
 	bool runStartupPath();
 	bool serviceScene();
 	void drawDialogueOverlay(bool captureBacking = false);
+	void drawBriefingOverlay();
 	bool updateInteractiveCursor(const Common::Point &point);
 	bool openWorldMap();
 	bool canSaveGame() const;
@@ -194,9 +196,8 @@ private:
 	uint _activeBa0Frame;
 	int _hoveredBa0Interaction;
 	bool _awaitingBa0Interaction;
-	bool _briefingArmed;
-	uint _briefingSelector;
 	bool _resumeLoadedPresentation;
+	BriefingManager *_briefing;
 	DialogueManager *_dialogue;
 };
 
