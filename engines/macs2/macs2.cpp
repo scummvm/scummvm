@@ -1768,11 +1768,6 @@ bool Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotInde
 		go->_blobMirrorFlags[slotIndex - 1] = shouldMirror;
 	}
 
-	if (targetBlob == nullptr) {
-		_scriptExecutor->setScriptError(1);
-		return false;
-	}
-
 	// Binary: memFree old blob if bSlotLoaded, then alloc + read; sets slot+0x33 = 1.
 	*targetBlob = data;
 	if (slotIndex == 0x15)
