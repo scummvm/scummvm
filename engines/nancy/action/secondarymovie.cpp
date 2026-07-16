@@ -209,12 +209,63 @@ int PlaySecondaryMovie::rollNextSequence() {
 	return -1;
 }
 
+// Nancy14 compacted the non-random layout: the videoSceneChange 5/6 flag is
+// gone (a scene change is now requested via the sceneID sentinel), playDirection
+// moved after lastFrame, and a "hide on finish" flag was added. AR 44 matches
+// AR 41 plus a trailing movie-volume byte.
+void PlaySecondaryMovie::readDataNancy14(Common::Serializer &ser, Common::SeekableReadStream &stream) {
+	readFilename(ser, _videoName);
+
+	ser.syncAsUint16LE(_videoFormat);
+	_videoFormat = kLargeVideoFormat;
+
+	ser.skip(2);	// Visibility frame ID; ScummVM drives visibility from the videoDescs instead
+	ser.syncAsUint16LE(_playerCursorAllowed);
+	ser.syncAsUint16LE(_hideOnFinish);
+	ser.syncAsUint16LE(_firstFrame);
+	ser.syncAsUint16LE(_lastFrame);
+	ser.syncAsUint16LE(_playDirection);
+	ser.syncAsSint16LE(_sceneChange.sceneID);
+	ser.syncAsUint16LE(_sceneChange.frameID);
+
+	_videoSceneChange = _sceneChange.sceneID != kNoScene ? kMovieSceneChange : kMovieNoSceneChange;
+
+	if (_type == 44) {
+		// Per-movie volume; consumed but unused (movie sound is off since Nancy6).
+		byte movieVolume = 0;
+		ser.syncAsByte(movieVolume);
+	}
+
+	uint16 numFrameFlags = 0;
+	ser.syncAsUint16LE(numFrameFlags);
+	_frameFlags.resize(numFrameFlags);
+	for (uint i = 0; i < numFrameFlags; ++i) {
+		ser.syncAsSint16LE(_frameFlags[i].frameID);
+		ser.syncAsSint16LE(_frameFlags[i].flagDesc.label);
+		ser.syncAsUint16LE(_frameFlags[i].flagDesc.flag);
+	}
+
+	uint16 numVideoDescs = 0;
+	ser.syncAsUint16LE(numVideoDescs);
+	_videoDescs.resize(numVideoDescs);
+	for (uint i = 0; i < numVideoDescs; ++i) {
+		_videoDescs[i].readData(stream);
+	}
+
+	_sound.name = "NO SOUND";
+}
+
 void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 	Common::Serializer ser(&stream, nullptr);
 	ser.setVersion(g_nancy->getGameType());
 
 	if (_isRandom) {
 		readRandomMovieData(ser, stream);
+		return;
+	}
+
+	if (g_nancy->getGameType() >= kGameTypeNancy14) {
+		readDataNancy14(ser, stream);
 		return;
 	}
 
@@ -417,7 +468,14 @@ void PlaySecondaryMovie::execute() {
 			}
 
 			GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _fullFrame, g_nancy->getGameType() == kGameTypeVampire, _videoFormat == kSmallVideoFormat);
-			_drawSurface.create(_fullFrame, _videoDescs[descID].srcRect);
+
+			// Nancy14 stores an all -1 srcRect to mean "use the whole frame".
+			Common::Rect srcRect = _videoDescs[descID].srcRect;
+			if (srcRect.isEmpty()) {
+				srcRect = Common::Rect(_fullFrame.w, _fullFrame.h);
+			}
+
+			_drawSurface.create(_fullFrame, srcRect);
 			moveTo(_videoDescs[descID].destRect);
 
 			_needsRedraw = true;

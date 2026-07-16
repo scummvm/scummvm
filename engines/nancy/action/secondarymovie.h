@@ -101,6 +101,8 @@ public:
 	byte _playDirection = kPlayMovieForward;
 	uint16 _firstFrame = 0;
 	uint16 _lastFrame = 0;
+	// Nancy14-only: when non-zero, hide the movie once it reaches its last frame.
+	uint16 _hideOnFinish = 0;
 	Common::Array<FlagAtFrame> _frameFlags;
 	MultiEventFlagDescription _triggerFlags;
 	FlagDescription _videoStartFlag;
@@ -151,6 +153,8 @@ protected:
 	// needed for SecondaryVideoDescription::readData.
 	void readRandomMovieData(Common::Serializer &ser, Common::SeekableReadStream &stream);
 	void readRandomSequence(Common::Serializer &ser, RandomSequence &seq);
+
+	void readDataNancy14(Common::Serializer &ser, Common::SeekableReadStream &stream);
 
 	// Apply a RandomSequence's playback config to the PSM flat fields
 	// and reload the decoder. Returns true on success.
