@@ -75,6 +75,7 @@
 #include "director/lingo/xlibs/f/fsutil.h"
 #include "director/lingo/xlibs/f/flushmousexfcn.h"
 #include "director/lingo/xlibs/g/genutils.h"
+#include "director/lingo/xlibs/g/getpath.h"
 #include "director/lingo/xlibs/g/getscreenrectsxfcn.h"
 #include "director/lingo/xlibs/g/getscreensizexfcn.h"
 #include "director/lingo/xlibs/g/getsoundinlevel.h"
@@ -316,6 +317,7 @@ static const struct XLibProto {
 	XLIBDEF(GLU32Xtra,			kXtraObj,					500),	// D5
 	XLIBDEF(GenUtilsXObj,		kXObj,			400),	// D4
 	XLIBDEF(GetDirXtra,			kXtraObj,					500),	// D5
+	XLIBDEF(GetPathXObj,			kXObj,					400),	// D4
 	XLIBDEF(GetScreenRectsXFCN,	kXObj,			300),	// D3
 	XLIBDEF(GetScreenSizeXFCN,	kXObj,			300),	// D3
 	XLIBDEF(GetSoundInLevelXObj,kXObj,			400),	// D4
@@ -323,7 +325,7 @@ static const struct XLibProto {
 	XLIBDEF(GetUInfoXObj,			kXObj,					400),	// D4
 	XLIBDEF(GpidXObj,			kXObj,			400),	// D4
 	XLIBDEF(HenryXObj,			kXObj,			400),	// D4
-	XLIBDEF(HitMap,				kXObj,			400),	// D4
+	XLIBDEF(HitMapXObj,			kXObj,			400),	// D4
 	XLIBDEF(IniXObj,			kXObj,			400),	// D4
 	XLIBDEF(InstObjXObj,		kXObj,			400),	// D4
 	XLIBDEF(IsCD,				kXObj,			300),	// D3

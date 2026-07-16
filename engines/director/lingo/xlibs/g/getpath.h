@@ -19,40 +19,32 @@
  *
  */
 
-#ifndef DIRECTOR_LINGO_XLIBS_HITMAP_H
-#define DIRECTOR_LINGO_XLIBS_HITMAP_H
+#ifndef DIRECTOR_LINGO_XLIBS_GETPATH_H
+#define DIRECTOR_LINGO_XLIBS_GETPATH_H
 
 namespace Director {
 
-class HitMapXObject : public Object<HitMapXObject> {
+class GetPathXObject : public Object<GetPathXObject> {
 public:
-	HitMapXObject(ObjectType objType);
-	~HitMapXObject() override;
-
-	// Hitmap data storage
-	Common::Array<byte> _bitmapData;
-	uint32 _width;
-	uint32 _height;
-	int32 _xOffset;
-	int32 _yOffset;
-	uint32 _scale;
+	GetPathXObject(ObjectType objType);
 };
 
-namespace HitMapXObj {
+namespace GetPathXObj {
 
-extern const char *const xlibName;
+extern const char *xlibName;
 extern const XlibFileDesc fileNames[];
 
 void open(ObjectType type, const Common::Path &path);
 void close(ObjectType type);
 
-void m_new(int nargs);
-void m_where(int nargs);
 void m_name(int nargs);
-void m_getSys(int nargs);
+void m_status(int nargs);
+void m_new(int nargs);
+void m_getPath(int nargs);
+void m_getCDPath(int nargs);
 void m_dispose(int nargs);
 
-} // End of namespace HitMapXObj
+} // End of namespace GetPathXObj
 
 } // End of namespace Director
 
