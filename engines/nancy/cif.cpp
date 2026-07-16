@@ -61,11 +61,13 @@ static void syncCifInfo(Common::Serializer &ser, CifInfo &info, bool tree) {
 		info.dataOffset = ser.bytesSynced();
 	}
 
-	// HACK: Since Nancy14, the compression flag isn't set
-	// in the header. Try to detect compressed files by the
-	// presence of a compressed size
-	if (g_nancy->getGameType() >= kGameTypeNancy14 && info.compressedSize > 0)
-		info.comp = CifInfo::kResCompression;
+	// From Nancy4 on, the original decides compression from the resource type
+	// (image and script resources are always LZSS-compressed) and ignores the
+	// 'comp' byte, which isn't reliably written in the later games. Only Nancy2
+	// and Nancy3 actually key off the 'comp' byte read above.
+	if (g_nancy->getGameType() >= kGameTypeNancy4)
+		info.comp = (info.type == CifInfo::kResTypeImage || info.type == CifInfo::kResTypeScript) ?
+			CifInfo::kResCompression : CifInfo::kResCompressionNone;
 }
 
 // Reads the data for ciftree cif files
