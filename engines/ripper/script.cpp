@@ -47,6 +47,7 @@ namespace Ripper {
 // front-end action service for the top 50-pixel band of every scene frame.
 static const uint kToolbarCursor = 14;
 static const uint kDialogueCursor = 16;
+static const int kSceneInteractionOriginY = 50;
 
 static const uint32 kScriptHeaderSize = 0xe9;
 static const uint32 kFrameRecordSize = 0x22;
@@ -559,6 +560,15 @@ void ScriptManager::initializeBa0InteractionState(const ScriptFrame &frame) {
 		const ScriptInteraction &interaction =
 			_ba0.getInteractions()[frame.firstInteractionIndex + i];
 		_activeBa0InteractionEnabled[i] = (interaction.flags & 2) == 0;
+		const Common::Rect bounds = interactionBounds(interaction);
+		debugC(3, kDebugScene,
+			"Ripper: active scene interaction proxy script='%s' frame=%u interaction=%u "
+			"label='%s' raw=%d,%d,%d,%d screen=%d,%d,%d,%d enabled=%d",
+			_ba0.getMemberName().c_str(), _activeBa0Frame,
+			frame.firstInteractionIndex + i, interaction.label.c_str(),
+			interaction.x, interaction.y, interaction.width, interaction.height,
+			bounds.left, bounds.top, bounds.width(), bounds.height(),
+			_activeBa0InteractionEnabled[i]);
 	}
 	debugC(3, kDebugScene,
 		"Ripper: initialized active scene interaction proxies script='%s' frame=%u count=%u",
@@ -1275,11 +1285,14 @@ bool ScriptManager::serviceScene() {
 	if (hoveredIndex != _hoveredBa0Interaction) {
 		_hoveredBa0Interaction = hoveredIndex;
 		if (hoveredInteraction) {
+			const Common::Rect bounds = interactionBounds(*hoveredInteraction);
 			debugC(2, kDebugScene,
-				"Ripper: active scene hover script='%s' interaction=%u label='%s' cursor=%u point=%d,%d",
+				"Ripper: active scene hover script='%s' interaction=%u label='%s' cursor=%u "
+				"point=%d,%d rect=%d,%d,%d,%d",
 				_ba0.getMemberName().c_str(), hoveredInteractionIndex,
 				hoveredInteraction->label.c_str(), cursorIndex,
-				mouse.position.x, mouse.position.y);
+				mouse.position.x, mouse.position.y, bounds.left, bounds.top,
+				bounds.width(), bounds.height());
 		} else {
 			debugC(2, kDebugScene,
 				"Ripper: active scene hover cleared script='%s' cursor=%u point=%d,%d",
@@ -1291,6 +1304,7 @@ bool ScriptManager::serviceScene() {
 	if ((mouse.pressed & kMouseButtonLeft) == 0)
 		return true;
 	if (hoveredInteraction) {
+		const Common::Rect bounds = interactionBounds(*hoveredInteraction);
 		if (dialoguePending) {
 			_dialogue->dismissForSceneTransition("scene-interaction");
 			debugC(1, kDebugDialogue,
@@ -1302,15 +1316,14 @@ bool ScriptManager::serviceScene() {
 				"point=%d,%d rect=%d,%d,%d,%d cursor=%u condition=0x%x callback=0x%x flags=0x%02x",
 			_activeBa0Frame, _ba0.getString(frame.labelOffset).c_str(), hoveredInteractionIndex,
 			hoveredInteraction->label.c_str(), mouse.position.x, mouse.position.y,
-			hoveredInteraction->y, hoveredInteraction->x, hoveredInteraction->height,
-			hoveredInteraction->width, cursorIndex, hoveredInteraction->conditionOffset,
+			bounds.left, bounds.top, bounds.width(), bounds.height(), cursorIndex,
+			hoveredInteraction->conditionOffset,
 			hoveredInteraction->callbackOffset, hoveredInteraction->flags);
 		debugC(2, kDebugScene,
 			"Ripper: active scene chooser selected script='%s' interaction=%u label='%s' point=%d,%d rect=%d,%d,%d,%d",
 			_ba0.getMemberName().c_str(), hoveredInteractionIndex,
 			hoveredInteraction->label.c_str(), mouse.position.x, mouse.position.y,
-			hoveredInteraction->y, hoveredInteraction->x, hoveredInteraction->height,
-			hoveredInteraction->width);
+			bounds.left, bounds.top, bounds.width(), bounds.height());
 		int result = 0;
 		uint nextFrame = _activeBa0Frame;
 		if (!executeCallback(_ba0, hoveredInteraction->callbackOffset, result, &nextFrame))
@@ -1385,6 +1398,15 @@ bool ScriptManager::updateInteractiveCursor(const Common::Point &point, bool *fa
 	return false;
 }
 
+Common::Rect ScriptManager::interactionBounds(const ScriptInteraction &interaction) const {
+	// ExecuteSceneFrameAndInteractions at 0x13277 transposes the compiled
+	// interaction axes and adds the active 0x32 presentation origin to the
+	// first logical coordinate before registering the physical UI rectangle.
+	return Common::Rect(interaction.y, interaction.x + kSceneInteractionOriginY,
+		interaction.y + interaction.height,
+		interaction.x + kSceneInteractionOriginY + interaction.width);
+}
+
 const ScriptInteraction *ScriptManager::findBa0Interaction(const Common::Point &point,
 		uint *interactionIndex) const {
 	if (_activeBa0Frame >= _ba0.getFrames().size() || point.y >= 400)
@@ -1396,8 +1418,7 @@ const ScriptInteraction *ScriptManager::findBa0Interaction(const Common::Point &
 		if (i >= _activeBa0InteractionEnabled.size() || !_activeBa0InteractionEnabled[i] ||
 			(interaction.flags & 2) != 0 || interaction.width <= 0 || interaction.height <= 0)
 			continue;
-		if (point.x < interaction.y || point.x >= interaction.y + interaction.height ||
-			point.y < interaction.x || point.y >= interaction.x + interaction.width)
+		if (!interactionBounds(interaction).contains(point))
 			continue;
 		if (interactionIndex)
 			*interactionIndex = index;
