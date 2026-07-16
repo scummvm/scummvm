@@ -611,6 +611,14 @@
 - Opcode `0x1a` enables the presentation callback when its third argument is
   zero. In that mode only keyboard Escape stops the whole presentation and
   Space pauses or resumes video and audio; mouse buttons do not skip it.
+- As an explicit ScummVM extension, Right Arrow advances an IAVF presentation
+  to its next embedded Smacker segment. The engine restarts the shared PCM
+  stream at that segment's first absolute audio offset and rebases its frame
+  gates to the new mixer clock. Right Arrow on the final or only segment exits
+  successfully so the surrounding script performs its normal played-state
+  update. This key is not part of the original callback:
+  `PollPresentationEscOrSpaceCommand` at `0x49039` recognizes only Escape and
+  Space, and the packetized-media path has no `0x4d00` comparison.
 - `ExecuteSceneFrameAndInteractions` at `0x13277` marks a type-0 frame label
   played before calling `ExecutePresentationEntry` at `0x1652a` with keyboard
   controls enabled. That path installs `PollPresentationEscOrSpaceCommand` at

@@ -64,11 +64,13 @@ private:
 		uint32 audioByteRate = 0, uint32 timelineStartMillis = 0, uint displayScale = 1,
 		bool patchInterfacePalette = true, uint frameLimit = 0, int originY = 0,
 		bool presentFinalFrameOnEsc = false, bool patchWacMediaPalette = false,
-		bool serviceSceneUi = false, bool repeatedLoopPass = false);
+		bool serviceSceneUi = false, bool repeatedLoopPass = false,
+		bool *advanceSegment = nullptr);
 	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name,
 		bool allowEscSpace, bool serviceSceneUi = false);
 	bool servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
-		bool &paused, bool toolbarPaused, bool &skipToEnd,
+		bool allowSegmentAdvance, bool &paused, bool toolbarPaused, bool &skipToEnd,
+		bool &advanceSegment,
 		Audio::SoundHandle *externalAudio, bool suppressSceneMouseStop);
 
 	RipperEngine *_engine;
