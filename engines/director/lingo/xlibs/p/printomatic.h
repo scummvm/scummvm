@@ -106,6 +106,15 @@ void m_getPageSetup(int nargs);
 void m_hideMessages(int nargs);
 void m_setPageNumSymbol(int nargs);
 void m_register(int nargs);
+void m_getLandscapeMode(int nargs);
+void m_getMargins(int nargs);
+void m_clearProgressLoc(int nargs);
+void m_printStage(int nargs);
+void m_printToPictFiles(int nargs);
+void m_draw1bitStagePicture(int nargs);
+void m_loadPageSetup(int nargs);
+void m_getVersion(int nargs);
+void m_setLowMemLimits(int nargs);
 
 } // End of namespace PrintOMaticXObj
 

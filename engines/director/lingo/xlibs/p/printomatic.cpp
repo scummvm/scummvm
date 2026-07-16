@@ -269,6 +269,15 @@ static MethodProto xlibMethods[] = {
 	{ "hideMessages",				PrintOMaticXObj::m_hideMessages,		 1, 1,	400 },
 	{ "setPageNumSymbol",				PrintOMaticXObj::m_setPageNumSymbol,		 1, 1,	400 },
 	{ "register",				PrintOMaticXObj::m_register,		 1, 1,	400 },
+	{ "getLandscapeMode",				PrintOMaticXObj::m_getLandscapeMode,		 0, 0,	500 },
+	{ "getMargins",				PrintOMaticXObj::m_getMargins,		 0, 0,	500 },
+	{ "clearProgressLoc",				PrintOMaticXObj::m_clearProgressLoc,		 0, 0,	500 },
+	{ "printStage",				PrintOMaticXObj::m_printStage,		 0, 0,	500 },
+	{ "printToPictFiles",				PrintOMaticXObj::m_printToPictFiles,		 0, 0,	500 },
+	{ "draw1bitStagePicture",				PrintOMaticXObj::m_draw1bitStagePicture,		 2, 2,	500 },
+	{ "loadPageSetup",				PrintOMaticXObj::m_loadPageSetup,		 2, 2,	500 },
+	{ "getVersion",				PrintOMaticXObj::m_getVersion,		 0, 0,	500 },
+	{ "setLowMemLimits",				PrintOMaticXObj::m_setLowMemLimits,		 2, 2,	500 },
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
@@ -379,6 +388,15 @@ XOBJSTUB(PrintOMaticXObj::m_savePageSetup, 0)
 XOBJSTUB(PrintOMaticXObj::m_getPageSetup, 0)
 XOBJSTUBNR(PrintOMaticXObj::m_hideMessages)
 XOBJSTUB(PrintOMaticXObj::m_setPageNumSymbol, 0)
+XOBJSTUB(PrintOMaticXObj::m_getLandscapeMode, 0)
+XOBJSTUB(PrintOMaticXObj::m_getMargins, 0)
+XOBJSTUBNR(PrintOMaticXObj::m_clearProgressLoc)
+XOBJSTUBNR(PrintOMaticXObj::m_printStage)
+XOBJSTUB(PrintOMaticXObj::m_printToPictFiles, 0)
+XOBJSTUBNR(PrintOMaticXObj::m_draw1bitStagePicture)
+XOBJSTUB(PrintOMaticXObj::m_loadPageSetup, 0)
+XOBJSTUB(PrintOMaticXObj::m_getVersion, 0)
+XOBJSTUBNR(PrintOMaticXObj::m_setLowMemLimits)
 
 void PrintOMaticXObj::m_register(int nargs) {
 	Common::String serialNumber = g_lingo->pop().asString();
