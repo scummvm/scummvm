@@ -157,7 +157,7 @@ public:
 	bool initialize(ResourceManager &resources);
 	bool runStartupPath();
 	bool serviceScene();
-	void drawDialogueOverlay() const;
+	void drawDialogueOverlay(bool captureBacking = false);
 	bool updateInteractiveCursor(const Common::Point &point);
 	bool openWorldMap();
 	bool isMilestoneFlagSet(uint32 flag) const;
