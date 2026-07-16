@@ -478,18 +478,73 @@ const ADGameDescription gameDescriptions[] = {
 				   "01VR_PHARE/INTERFACE.VR", "7852b9cb6edb918fd2dfcddd859ef09a", 73495,
 				   "01VR_PHARE/AMERZONE.LST", "85da49d770959e6db34a7e2216f8b525", 163076
 		),
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
 	{"amerzone",
-		"USA 4 CDs release",
+		"GOG release",
+		AD_ENTRY3s("insertCD.vr", "230435b97354c12dfdf779b30c09da64", 329776,
+				   "01VR_PHARE/INTERFACE.VR", "7414ac3110b3526ab720d62daaed9916", 76638,
+				   "01VR_PHARE/AMERZONE.PAK", "2f538af7bdb1492c883a7333a6fb4141", 26404
+		),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+	{"amerzone",
+		"GOG release",
+		AD_ENTRY3s("insertCD.vr", "81d22d04f692614123eb4f2ccb9d645d", 332186,
+				   "01VR_PHARE/INTERFACE.VR", "88b43006995ce0838e3744fe798678c3", 76150,
+				   "01VR_PHARE/AMERZONE.LST", "85da49d770959e6db34a7e2216f8b525", 163076
+		),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+	{"amerzone",
+		"GOG release",
+		AD_ENTRY3s("insertCD.vr", "715f238ae8265eebac84993715c93cf4", 75463,
+				   "01VR_PHARE/INTERFACE.VR", "ae1e3319e39303c612d3235fe8275dc2", 75275,
+				   "01VR_PHARE/AMERZONE.LST", "85da49d770959e6db34a7e2216f8b525", 163076
+		),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+	{"amerzone",
+		"GOG release",
+		AD_ENTRY3s("insertCD.vr", "c731e9fbf310817301506f1a12ad1f40", 331806,
+				   "01VR_PHARE/INTERFACE.VR", "e4245d5b752e240c9755ff8ae40734fd", 78074,
+				   "01VR_PHARE/AMERZONE.LST", "889448adc01b70ce9fa0b15dac86c2fc", 162502
+		),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+	{"amerzone",
+		"USA CD release",
 		AD_ENTRY3s("insertCD.vr", "924dcfe4417514d31e11225df2b5220d", 327976,
 				   "01VR_PHARE/INTERFACE.VR", "7852b9cb6edb918fd2dfcddd859ef09a", 73495,
 				   "01VR_PHARE/AMERZONE.PAK", "2f538af7bdb1492c883a7333a6fb4141", 26404
 		),
 		Common::EN_USA,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_UNSTABLE | ADGF_CD,
+		GUIO1(GUIO_NONE)
+	},
+	{"amerzone",
+		"Spanish CD release",
+		AD_ENTRY3s("insertCD.vr", "81d22d04f692614123eb4f2ccb9d645d", 332186,
+				   "01VR_PHARE/INTERFACE.VR", "88b43006995ce0838e3744fe798678c3", 76150,
+				   "01VR_PHARE/AMERZONE.PAK", "2f538af7bdb1492c883a7333a6fb4141", 26404
+		),
+		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM | ADGF_UNSTABLE | ADGF_CD,
 		GUIO1(GUIO_NONE)
