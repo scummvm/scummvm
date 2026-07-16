@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/system.h"
 #include "chamber/chamber.h"
 #include "chamber/common.h"
 #include "chamber/menu.h"
@@ -168,11 +169,11 @@ void actionsMenu(byte **pinfo) {
 
 		/*draw dot explosion animation*/
 		drawSpriteN(24, act_dot_rects[choice].sx, act_dot_rects[choice].sy, SCREENBUFFER);
-		for (i = 0; i < 0xFFF; i++) {} /*TODO: weak delay*/
+		g_system->delayMillis(50);
 		drawSpriteN(2, act_dot_rects[choice].sx, act_dot_rects[choice].sy, SCREENBUFFER);
-		for (i = 0; i < 0xFFF; i++) {} /*TODO: weak delay*/
+		g_system->delayMillis(50);
 		drawSpriteN(25, act_dot_rects[choice].sx, act_dot_rects[choice].sy, SCREENBUFFER);
-		for (i = 0; i < 0xFFF; i++) {} /*TODO: weak delay*/
+		g_system->delayMillis(50);
 	}
 	g_vm->_renderer->restoreBackupImage(SCREENBUFFER);
 

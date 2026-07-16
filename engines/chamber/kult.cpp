@@ -105,31 +105,7 @@ Graphics::Surface *loadSplash(const char *filename) {
 	return surface;
 }
 
-// TEMP headless debug helper, remove: dump current screen+palette as PPM
-void debugDumpScreen(const char *tag) {
-	if (gDebugLevel < 9)
-		return;
-	static int n = 0;
-	Graphics::Surface *s = g_system->lockScreen();
-	byte pal[768];
-	g_system->getPaletteManager()->grabPalette(pal, 0, 256);
-	Common::DumpFile f;
-	if (f.open(Common::Path(Common::String::format("/tmp/chamber_dbg/%03d_%s.ppm", n++, tag)))) {
-		f.writeString(Common::String::format("P6\n%d %d\n255\n", s->w, s->h));
-		for (int y = 0; y < s->h; y++)
-			for (int x = 0; x < s->w; x++) {
-				byte c = *(const byte *)s->getBasePtr(x, y);
-				f.writeByte(pal[c * 3]);
-				f.writeByte(pal[c * 3 + 1]);
-				f.writeByte(pal[c * 3 + 2]);
-			}
-	}
-	g_system->unlockScreen();
-}
-
 uint16 benchmarkCpu(void) {
-	if (gDebugLevel >= 9) // TEMP headless debug stub, remove
-		return 1000;
 	byte t;
 	uint16 cycles = 0;
 	for (t = script_byte_vars.timer_ticks; t == script_byte_vars.timer_ticks;) ;
@@ -430,8 +406,9 @@ Common::Error ChamberEngine::init() {
 		/* Load language selection screen */
 		Graphics::Surface *drap = loadSplash("DRAP.BIN");
 		if (!drap) {
+			warning("File DRAP.BIN not found");
 			_shouldQuit = true;
-			return Common::kNoError;
+			return Common::kReadingFailed;
 		}
 		drap->free();
 		delete drap;
