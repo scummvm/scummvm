@@ -147,6 +147,11 @@
   applies a 20-pixel heading inset, 6-pixel bottom inset, 5-pixel left inset,
   20-pixel right inset, and 14-pixel rows. The heading, normal rows, and active
   row use indexed glyph colors 248, 251, and 254 over chooser background 4.
+  `AnimateWacMenuChooserBlinkCallback` at `0x215e5` alternates the bitmap at
+  the chooser origin between `wacmnu0` and `wacmnu15` every five extended DOS
+  ticks. `SetWacMenuChooserBlinkActiveStateCallback` at `0x21775` selects the
+  alternate bitmap when the chooser becomes active, producing the animated
+  upper-left database icon without rebuilding the surrounding tiled frame.
   `RunWacInventorySelectionLoop` keeps the chooser inside
   `RunWacSceneInputLoopUntilExitAction` at `0x221e3`; each input tick services
   the chooser registry and the software selection presentation through
