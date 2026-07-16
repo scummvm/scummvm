@@ -413,7 +413,7 @@ int Scene::loadAnimation(const char *name, int trigger_code) {
 }
 
 void Scene::freeAnimation() {
-	error("TODO: freeAnimation");
+	kernel_abort_animation(0);
 }
 
 void Scene::changeVariant(int num) {

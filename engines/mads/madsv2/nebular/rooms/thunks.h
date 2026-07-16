@@ -193,16 +193,16 @@ struct Scene {
 		}
 
 		bool operator!() const {
-			return _id == -1;
+			return kernel_anim[_id].anim == nullptr;
 		}
 		bool operator!=(std::nullptr_t) const {
-			return _id != -1;
+			return kernel_anim[_id].anim != nullptr;
 		}
 		bool operator==(std::nullptr_t) const {
-			return _id == -1;
+			return kernel_anim[_id].anim == nullptr;
 		}
 		explicit operator bool() const {
-			return _id != -1;
+			return kernel_anim[_id].anim != nullptr;
 		}
 		Animation &operator=(std::nullptr_t);
 
