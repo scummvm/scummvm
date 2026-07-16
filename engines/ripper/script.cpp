@@ -32,6 +32,7 @@
 #include "ripper/cursor.h"
 #include "ripper/input.h"
 #include "ripper/media.h"
+#include "ripper/milestones.h"
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
 #include "ripper/toolbar.h"
@@ -324,7 +325,6 @@ bool ScriptManager::canSaveGame() const {
 }
 
 bool ScriptManager::syncGame(Common::Serializer &serializer) {
-	static const uint kSerializedMilestoneCount = 1000;
 	Common::String ba0Member = serializer.isSaving() ? _ba0.getMemberName() : Common::String();
 	Common::String concurrentMember = serializer.isSaving() ? _concurrent.getMemberName() : Common::String();
 	Common::String concurrentEntry = serializer.isSaving() ? _concurrentEntryLabel : Common::String();
@@ -347,16 +347,8 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 			previousFrame.size() > 128))
 		return false;
 
-	if (serializer.isLoading()) {
-		_milestoneFlags.clear();
-		_milestoneFlags.resize(kSerializedMilestoneCount);
-	}
-	for (uint i = 0; i < kSerializedMilestoneCount; ++i) {
-		byte value = isMilestoneFlagSet(i) ? 1 : 0;
-		serializer.syncAsByte(value);
-		if (serializer.isLoading())
-			_milestoneFlags[i] = value != 0;
-	}
+	if (!_engine->getMilestones()->syncGame(serializer))
+		return false;
 
 	uint32 playedSceneCount = _playedScenes.size();
 	serializer.syncAsUint32LE(playedSceneCount);
@@ -424,7 +416,7 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 		_ba0.getMemberName().c_str(), _activeBa0Frame,
 		_ba0.getString(_ba0.getFrames()[_activeBa0Frame].labelOffset).c_str(),
 		_concurrent.getMemberName().c_str(), _concurrentEntryLabel.c_str(),
-		kSerializedMilestoneCount, _playedScenes.size(),
+		Milestones::kFlagCount, _playedScenes.size(),
 		_activeBa0InteractionEnabled.size(), _dialogue->isPending());
 	return true;
 }
@@ -457,17 +449,6 @@ Common::String ScriptManager::argumentString(const ScriptArgument &argument) {
 	for (uint i = 0; i < argument.data.size() && argument.data[i] != 0; ++i)
 		value += (char)argument.data[i];
 	return value;
-}
-
-bool ScriptManager::isMilestoneFlagSet(uint32 flag) const {
-	return flag < _milestoneFlags.size() && _milestoneFlags[flag];
-}
-
-void ScriptManager::setMilestoneFlag(uint32 flag, const char *source) {
-	if (_milestoneFlags.size() <= flag)
-		_milestoneFlags.resize(flag + 1);
-	_milestoneFlags[flag] = true;
-	debugC(2, kDebugScripts, "Ripper: set milestone flag %u source=%s", flag, source);
 }
 
 bool ScriptManager::isScenePlayed(const Common::String &scene) const {
@@ -562,10 +543,14 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			const bool expected = command.arguments[0].value != 0;
 			bool actual = false;
 			if (command.opcode == kMilestoneCondition) {
-				actual = isMilestoneFlagSet(command.arguments[1].value);
-				debugC(3, kDebugScripts,
-					"Ripper: milestone condition flag=%u expected=%d actual=%d target=0x%x",
-					command.arguments[1].value, expected, actual, command.arguments[2].value);
+				const uint flag = command.arguments[1].value;
+				actual = _engine->getMilestones()->isSet(flag);
+				debugC(3, kDebugMilestones,
+					"Ripper: milestone gate flag=%u label='%s' domain='%s' expected=%d actual=%d "
+					"target=0x%x script='%s' offset=0x%x",
+					flag, _engine->getMilestones()->label(flag).c_str(), Milestones::domain(flag),
+					expected, actual,
+					command.arguments[2].value, script.getMemberName().c_str(), command.offset);
 			} else {
 				const Common::String scene = argumentString(command.arguments[1]);
 				actual = isScenePlayed(scene);
@@ -683,10 +668,14 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			debugC(3, kDebugScripts, "Ripper: cleared callback branch state");
 			break;
 
-		case kSetMilestoneFlag: {
+		case kSetMilestoneFlag:
+		case kClearMilestoneFlag: {
 			if (command.arguments.size() < 1)
 				return false;
-			setMilestoneFlag(command.arguments[0].value, "script-opcode-0x0e");
+			const bool value = command.opcode == kSetMilestoneFlag;
+			if (!_engine->getMilestones()->set(command.arguments[0].value, value,
+				value ? "script-opcode-0x0e" : "script-opcode-0x0f"))
+				return false;
 			break;
 		}
 

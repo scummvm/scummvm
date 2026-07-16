@@ -34,6 +34,7 @@
 #include "ripper/input.h"
 #include "ripper/media.h"
 #include "ripper/menu.h"
+#include "ripper/milestones.h"
 #include "ripper/resources.h"
 #include "ripper/script.h"
 #include "ripper/toolbar.h"
@@ -45,7 +46,8 @@ namespace Ripper {
 RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescription) :
 		Engine(system), _gameDescription(gameDescription), _cursor(new CursorManager()),
 		_input(new InputManager(_eventMan)),
-		_media(new MediaPlayer(this, _input, _mixer)), _resources(new ResourceManager()),
+		_media(new MediaPlayer(this, _input, _mixer)), _milestones(new Milestones()),
+		_resources(new ResourceManager()),
 		_scripts(new ScriptManager(this)), _toolbar(new ToolbarManager(this)),
 		_wac(new WacManager(this)), _worldMap(new WorldMap(this)), _gameplayStarted(false) {
 }
@@ -56,6 +58,7 @@ RipperEngine::~RipperEngine() {
 	delete _toolbar;
 	delete _scripts;
 	delete _resources;
+	delete _milestones;
 	delete _media;
 	delete _input;
 	delete _cursor;
@@ -95,6 +98,8 @@ Common::Error RipperEngine::run() {
 	registerSearchPaths();
 	initGraphics(640, 400);
 	if (!_resources->initialize())
+		return Common::kReadingFailed;
+	if (!_milestones->initialize(*_resources))
 		return Common::kReadingFailed;
 	if (!_cursor->initialize(*_resources))
 		return Common::kReadingFailed;

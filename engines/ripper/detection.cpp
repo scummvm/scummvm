@@ -35,6 +35,7 @@ const DebugChannelDef RipperMetaEngineDetection::debugFlagList[] = {
 	{ Ripper::kDebugDialogue, "dialogue", "Dialogue choices, presentation, and selection state" },
 	{ Ripper::kDebugWac, "wac", "WAC database, presentation, and puzzle state" },
 	{ Ripper::kDebugSaveLoad, "saveload", "Save and restore state" },
+	{ Ripper::kDebugMilestones, "milestones", "Persistent progress flags and gate state" },
 	DEBUG_CHANNEL_END
 };
 

@@ -160,8 +160,6 @@ public:
 	void drawDialogueOverlay(bool captureBacking = false);
 	bool updateInteractiveCursor(const Common::Point &point);
 	bool openWorldMap();
-	bool isMilestoneFlagSet(uint32 flag) const;
-	void setMilestoneFlag(uint32 flag, const char *source);
 	bool canSaveGame() const;
 	bool syncGame(Common::Serializer &serializer);
 
@@ -190,7 +188,6 @@ private:
 	CompiledScript _concurrent;
 	Common::String _concurrentEntryLabel;
 	Common::String _pendingSceneMember;
-	Common::Array<bool> _milestoneFlags;
 	Common::Array<Common::String> _playedScenes;
 	Common::Array<bool> _activeBa0InteractionEnabled;
 	Common::String _previousBa0FrameLabel;

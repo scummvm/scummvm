@@ -32,8 +32,8 @@
 #include "ripper/detection.h"
 #include "ripper/input.h"
 #include "ripper/media.h"
+#include "ripper/milestones.h"
 #include "ripper/ripper.h"
-#include "ripper/script.h"
 #include "ripper/wac.h"
 
 namespace Ripper {
@@ -55,8 +55,6 @@ static const byte kViewportFillColor = 4;
 static const uint kPalettePatchFirst = 10;
 static const uint kPalettePatchCount = 140;
 static const int kSolvedTolerance = 5;
-static const uint kBrokenMugAvailableFlag = 0x47;
-static const uint kBrokenMugCompletedFlag = 0x48;
 static const int kCompletionX = 143;
 static const int kCompletionY = 111;
 
@@ -343,11 +341,11 @@ bool BrokenMugPuzzle::completePuzzle() {
 		warning("Ripper: broken mug completion media failed; flags unchanged");
 		return false;
 	}
-	_engine->getScripts()->setMilestoneFlag(kBrokenMugAvailableFlag, "wac-broken-mug");
-	_engine->getScripts()->setMilestoneFlag(kBrokenMugCompletedFlag, "wac-broken-mug");
+	_engine->getMilestones()->set(kMilestoneScannedMug, true, "wac-broken-mug");
+	_engine->getMilestones()->set(kMilestoneCompletedMug, true, "wac-broken-mug");
 	debugC(1, kDebugWac,
 		"Ripper: completed broken mug puzzle availabilityFlag=0x%x completionFlag=0x%x",
-		kBrokenMugAvailableFlag, kBrokenMugCompletedFlag);
+		kMilestoneScannedMug, kMilestoneCompletedMug);
 	return true;
 }
 
