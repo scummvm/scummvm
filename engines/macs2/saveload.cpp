@@ -32,6 +32,8 @@ namespace Macs2 {
 Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	const byte SAVE_MAGIC[12] = {'A', 'H', 'F', 'F', 'M', 'S', 'G', 'M', '0', '1', '0', '0'};
 	View1 *view1 = (View1 *)findView("View1");
+	if (view1 == nullptr)
+		return Common::kUnknownError;
 
 	// --- Header: 12-byte magic ---
 	if (s.isSaving()) {
