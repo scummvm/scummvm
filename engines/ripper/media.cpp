@@ -804,8 +804,9 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path) {
 	Audio::SoundHandle handle;
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, stream);
 	_engine->getCursor()->update(kBlockingAudioCursor);
+	g_system->updateScreen();
 	debugC(2, kDebugAudio,
-		"Ripper: started blocking audio '%s' source=%s cursor=%u input=keyboard-only",
+		"Ripper: started blocking audio '%s' source=%s cursor=%u input=keyboard-only presentation=serviced",
 		path.c_str(), source.c_str(), kBlockingAudioCursor);
 	bool stoppedByEscape = false;
 	while (!_engine->shouldQuit() && _mixer->isSoundHandleActive(handle)) {
@@ -823,6 +824,7 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path) {
 		}
 		if (stoppedByEscape)
 			break;
+		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
 	_mixer->stopHandle(handle);

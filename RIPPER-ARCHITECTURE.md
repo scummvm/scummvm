@@ -187,7 +187,10 @@
   while the clip is active. Mouse transitions therefore cannot select a mug
   piece during the narration. `RunWacMugSelectionScene` activates its normal
   puzzle cursor only after the blocking clip returns and the manipulation loop
-  becomes active.
+  becomes active. ScummVM services the software cursor presentation on every
+  blocking-audio and puzzle-input tick; this is the backend equivalent of the
+  original UI selection presentation remaining active while those modal loops
+  run.
 - The mug is solved only when all nine orientation states are zero and every
   piece is within five pixels of its recovered x/y offset from piece 0. The
   completion path centers `mug9.smk` in the WAC media viewport, plays
