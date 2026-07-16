@@ -119,7 +119,7 @@ Common::String getFileNameFromModal(bool save, const Common::String &suggested, 
 }
 
 void FoolGame::run() {
-	_toolbox = new Toolbox(&g_engine->_wm);
+	_toolbox = new Toolbox(g_engine->_wm);
 	_zbasic = new ZBasic(_toolbox);
 
 	_toolbox->_setFileModalCallback(getFileNameFromModal);
@@ -2733,12 +2733,12 @@ void FoolGame::sub_129_068() {
 	// 129:00de: JSR - "PEEKLONG"
 	// 129:00e2: SUBI.L - 0x72,D0
 	// 129:00e8: JSR - "PEEKWORD"
-	_windowWidth = g_engine->_wm._screenDims.width();  // window width?
+	_windowWidth = g_engine->_wm->_screenDims.width();  // window width?
 	// 129:00f0: MOVE.L - 0x904,D0
 	// 129:00f6: JSR - "PEEKLONG"
 	// 129:00fa: SUBI.L - 0x74,D0
 	// 129:0100: JSR - "PEEKWORD"
-	_windowHeight = g_engine->_wm._screenDims.height(); // window height?
+	_windowHeight = g_engine->_wm->_screenDims.height(); // window height?
 	var_i16_56 = (_windowWidth - SCREEN_WIDTH)/2;
 	var_i16_58 = (_windowHeight - SCREEN_HEIGHT)/2;
 	// 129:0138

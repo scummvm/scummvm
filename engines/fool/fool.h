@@ -62,7 +62,7 @@ protected:
 
 public:
 	Graphics::ManagedSurface _screen;
-	Graphics::MacWindowManager _wm;
+	Graphics::MacWindowManager *_wm = nullptr;
 
 	FoolEngine(OSystem *syst, const FOOLGameDescription *gameDesc);
 	~FoolEngine() override;

@@ -41,7 +41,7 @@ namespace Fool {
 // v3.0 - newer ZBasic, changed a few graphics assets, removed custom menu font and sounds for compatibility
 
 void FoolPrologue::run(bool finale, const BitMap &prevWindow) {
-	_toolbox = new Toolbox(&g_engine->_wm);
+	_toolbox = new Toolbox(g_engine->_wm);
 	_zbasic = new ZBasic(_toolbox);
 
 	Common::MacFinderInfo finfo;
@@ -532,8 +532,8 @@ void FoolPrologue::setupWindow() {
 	// 0x000a: JSR - "PEEKLONG"   # current A5
 	// 0x000e: SUBI.L - 0x72,D0
 	// 0x0014: JSR - "PEEKWORD" # quickdraw globals,
-	_windowWidth = g_engine->_wm._screenDims.width();  // window width?
-	_windowHeight = g_engine->_wm._screenDims.height(); // window height?
+	_windowWidth = g_engine->_wm->_screenDims.width();  // window width?
+	_windowHeight = g_engine->_wm->_screenDims.height(); // window height?
 
 	// 129:0034
 	// set left and top offsets based on a drawable area of 512x342
