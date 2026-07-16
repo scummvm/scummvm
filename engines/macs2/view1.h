@@ -118,7 +118,6 @@ public:
 
 	uint16 getVerticalOffset() const;
 
-	// TODO: Handle properly
 	uint8 _animationIndex = 1;
 	uint16 _motionTargetVerticalOffset = 0;
 	uint16 _motionVerticalOffsetDelta = 0;
@@ -135,7 +134,6 @@ public:
 	bool isAnimationMirrored() const;
 	uint8 getMirroredAnimation(uint8 original) const;
 
-	// TODO: Will need time handling
 	// advanceMode matches drawAnimFrame/advanceAnimFrame (1010:16e7): 0=current frame,
 	// 2=advance sequence after returning current frame. Hit testing uses 0; drawing uses 2.
 	bool fillCurrentAnimationFrame(uint16 advanceMode, Macs2::AnimFrame &out);
