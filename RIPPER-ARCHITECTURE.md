@@ -167,6 +167,47 @@
   exits normally; Continue never substitutes a manual slot, while Restore Game
   always opens the manual chooser.
 
+## Milestones and Progress Gates
+
+- `g_namedFlagBitset` at `0x8a446` is the shared indexed progress store.
+  `IsIndexedBitFlagSet` tests `index / 8` and `index % 8`, while
+  `UpdateIndexedBitFlag` sets or clears the same bit. Script opcode `0x08`
+  reaches `HandleSceneEntryPromptMilestoneCondition` at `0x1470a`, opcode
+  `0x0e` reaches `HandleSceneEntrySetMilestoneFlag` at `0x14c4d`, and opcode
+  `0x0f` reaches `HandleSceneEntryClearMilestoneFlag` at `0x14cc2`. Travel,
+  WAC inventory, puzzles, dialogue, briefing media, and the startup milestone
+  selection menu all read or update this same store.
+- `MILESTON.DEF` supplies keyed labels for the indexed flags. The confirmed
+  ranges include chapter completion at 1 through 4, travel availability at 20
+  through 44, inventory at 50 through 58, WAC database scans beginning at 70,
+  story state beginning at 300, and cyberspace state beginning at 400. Opcode
+  `0x1e` named flags are different: `HandleSceneEntrySetOrClearNamedFlag` at
+  `0x15dfe` updates the string-keyed startup asset catalog rather than this
+  indexed bitset.
+- Flag 31 is `Magnotta's Apt Int OPEN`. `RunSceneSelectionMenu` uses it as one
+  of the travel-entry gates, and `FA3.RUN` also tests it while controlling the
+  apartment/keypad path. The `ACT2.RUN` and `ACT3.RUN` transition callbacks
+  explicitly clear it as part of their chapter-wide location reset. It is not
+  a WAC-message flag.
+- `BA0.RUN` sets flag 71 (`scan mug at murder scene`) immediately after
+  `MUGSCAN2.AVI` completes. WAC maps flag 71 to database entry 1, whose handler
+  opens `RunWacMugSelectionScene`. Solving that puzzle sets both 71 and flag 72
+  (`completed mug`); flag 72 redirects later selections to the completed-mug
+  presentation.
+- `PROLOGUE.RUN` tests flag 301 (`played first wac message`) together with the
+  played-state of `MUGSCAN2` and `BAZ1` and milestone 302 (`spoken to
+  Stasiak`). When all gates pass, scene action 300 arms briefing selector 1 and
+  the script immediately sets flag 301. `ServiceBriefingMediaTrigger` at
+  `0x1945b` later dispatches selector 1 to `CP0_1_P1.AVI` and sets travel flag
+  44. The script therefore records 301 at trigger-arm time, before the later UI
+  event presents the media.
+- `WriteEmergencySaveGame` at `0x1ae3c` writes `0x7d` bytes for this store,
+  exactly 125 bytes or 1,000 bits; `RestoreSavedRunState` at `0x1b8dd` caps the
+  restored payload to the same size. ScummVM's engine-owned `Milestones`
+  service mirrors the 1,000-bit store and centralizes script, world-map, WAC,
+  and puzzle access. Its serializer retains the pre-existing ScummVM layout of
+  one byte per flag so current engine saves remain compatible.
+
 ## WAC
 
 - `DispatchFrontEndAction` at `0x190b7` routes toolbar action `0x517` to the

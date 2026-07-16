@@ -28,8 +28,8 @@
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
 #include "ripper/input.h"
+#include "ripper/milestones.h"
 #include "ripper/ripper.h"
-#include "ripper/script.h"
 
 namespace Ripper {
 
@@ -39,7 +39,6 @@ static const uint kTravelLocationCount = 15;
 static const uint kSceneEntryCount = 25;
 static const uint kTravelLocationNameResource = 100;
 static const uint kTravelTargetResource = 150;
-static const uint kTravelUnlockFlag = 20;
 static const uint kWorldMapCursor = 16;
 static const int kLocationListLeft = 45;
 static const int kLocationListTop = 80;
@@ -81,7 +80,7 @@ bool WorldMap::initialize(ResourceManager &resources) {
 	_initialized = true;
 	debugC(1, kDebugScene,
 		"Ripper: initialized world map locations=%u unlockFlags=%u-%u",
-		_locations.size(), kTravelUnlockFlag, kTravelUnlockFlag + kSceneEntryCount - 1);
+		_locations.size(), kMilestoneFirstTravelLocation, kMilestoneLastTravelLocation);
 	return true;
 }
 
@@ -137,8 +136,8 @@ void WorldMap::refreshLocations() {
 		const bool wasAvailable = location.available;
 		location.available = false;
 		for (uint entry = 0; entry < location.entryIndices.size(); ++entry) {
-			if (_engine->getScripts()->isMilestoneFlagSet(
-				kTravelUnlockFlag + location.entryIndices[entry])) {
+			if (_engine->getMilestones()->isSet(
+				kMilestoneFirstTravelLocation + location.entryIndices[entry])) {
 				location.available = true;
 				break;
 			}
@@ -234,8 +233,8 @@ void WorldMap::updateFirstVisible() {
 uint WorldMap::resolveChapter() const {
 	// ResolveHighestSetSelectionFlag at 0x20394 checks named flags 4 through 1
 	// and supplies the highest set value to the destination script pattern.
-	for (uint flag = 4; flag != 0; --flag) {
-		if (_engine->getScripts()->isMilestoneFlagSet(flag))
+	for (uint flag = kMilestoneCompletedAct3; flag != 0; --flag) {
+		if (_engine->getMilestones()->isSet(flag))
 			return flag;
 	}
 	return 0;

@@ -30,6 +30,7 @@ namespace Ripper {
 class CursorManager;
 class InputManager;
 class MediaPlayer;
+class Milestones;
 class ResourceManager;
 class ScriptManager;
 class ToolbarManager;
@@ -54,6 +55,7 @@ public:
 	CursorManager *getCursor() const { return _cursor; }
 	InputManager *getInput() const { return _input; }
 	MediaPlayer *getMedia() const { return _media; }
+	Milestones *getMilestones() const { return _milestones; }
 	ResourceManager *getResources() const { return _resources; }
 	ScriptManager *getScripts() const { return _scripts; }
 	ToolbarManager *getToolbar() const { return _toolbar; }
@@ -68,6 +70,7 @@ private:
 	CursorManager *_cursor;
 	InputManager *_input;
 	MediaPlayer *_media;
+	Milestones *_milestones;
 	ResourceManager *_resources;
 	ScriptManager *_scripts;
 	ToolbarManager *_toolbar;
