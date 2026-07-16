@@ -116,11 +116,21 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 			break;
 
 		case MKTAG('V', 'W', 'C', 'F'):
-			// There is only 'VWCF' resource, that is for the internal cast
+		case MKTAG('D', 'R', 'C', 'F'):
+			// There is only one config resource, that is for the internal cast
 			// The external casts don't have a config
 			// movie->getCast() returns the internal cast
 			cast = movie->getCast();
-			cast->saveConfig(saveFile, it->offset);
+			if (cast->getConfigSize() == 0) {
+				// Unsupported version (D10+): keep the original bytes
+				debugC(7, kDebugSaving, "Saving resource %s as it is, without modification", tag2str(it->tag));
+				saveFile->seek(it->offset, SEEK_SET);
+				saveFile->writeUint32LE(it->tag);
+				saveFile->writeUint32LE(it->size);
+				saveFile->writeStream(getResource(it->tag, it->index));
+			} else {
+				cast->saveConfig(saveFile, it->offset, it->tag);
+			}
 			break;
 
 		case MKTAG('B', 'I', 'T', 'D'):
@@ -516,16 +526,23 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 			break;
 
 		case MKTAG('V', 'W', 'C', 'F'):
+		case MKTAG('D', 'R', 'C', 'F'):
 			{
-				// Only one cast config per movie
+				// Only one config resource per movie
 				// No need to update the key mapping
 				cast = movie->getCast();
 				resSize = cast->getConfigSize();
 
 				it->offset = currentSize;
 
+				if (resSize == 0) {
+					// Unsupported Director version: keep the original size
+					resSize = it->size;
+				} else {
+					it->size = resSize;
+				}
+
 				currentSize += resSize + 8;			// getConfigSize() doesn't include header and size
-				it->size = resSize;
 			}
 			break;
 

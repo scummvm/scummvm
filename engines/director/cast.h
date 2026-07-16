@@ -110,7 +110,7 @@ public:
 	void loadSord(Common::SeekableReadStreamEndian &stream);
 	bool importFileInto(int castId, const Common::Path &path);
 
-	void saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset);
+	void saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset, uint32 tag);
 	void saveCastData(Common::SeekableWriteStream *writeStream, Resource *res);
 	void saveCastData();
 	void writeCastInfo(Common::SeekableWriteStream *writeStream, uint32 castId);
