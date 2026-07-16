@@ -112,7 +112,7 @@ static void main_menu_main() {
 		}
 
 		mcga_getpal(&palette);
-		magic_fade_to_grey(palette, 0, 0x10, 1, 1, 0, 0, 0);
+		magic_fade_to_grey(palette, nullptr, 0, 256, 0, 1, 1, 16);
 	}
 
 	kernel_unload_sound_driver();
@@ -145,7 +145,7 @@ static void main_menu_main() {
 			g_engine->_soundManager->init(sectionNum);
 			sound_queue(soundId);
 
-			magic_map_to_grey_ramp(&master_palette, 0x10, 1, 1, 0, (MagicGreyPtr)&palette);
+			magic_fade_to_grey(master_palette, (byte *)&palette, 0, 256, 0, 1, 1, 16);
 
 			mouse_init_cycle();
 			bool flag1 = true;
@@ -179,7 +179,7 @@ static void main_menu_main() {
 				memset(&master_palette, 0, sizeof(master_palette));
 				mcga_setpal(&master_palette);
 			} else {
-				magic_fade_to_grey(master_palette, 0, 0x10, 1, 1, 0, 0, 0);
+				magic_fade_to_grey(master_palette, nullptr, 0, 256, 0, 1, 1, 16);
 			}
 
 			kernel_unload_sound_driver();
