@@ -834,9 +834,9 @@ int kernel_seq_forward(int series_id, int mirror, word ticks, word interval_tick
 
 	sprite = &series_list[series_id]->index[0];
 
-	depth = attr_depth(&depth_map,
-		sprite->x + (sprite->xs >> 1),
-		sprite->y + (sprite->ys >> 1)) - 1;
+	depth = (g_engine->getGameID() == GType_RexNebular) ?
+		MAX(rex_attr_depth(&scr_depth, sprite->x + (sprite->xs >> 1), sprite->y + (sprite->ys >> 1)) - 1, 0) :
+		attr_depth(&depth_map, sprite->x + (sprite->xs >> 1), sprite->y + (sprite->ys >> 1)) - 1;
 
 	return (kernel_seq_add(series_id, mirror, 1, 0, 0, AA_LINEAR, 1,
 		depth, 100, true, 0, 0, ticks, interval_ticks,
@@ -862,9 +862,9 @@ int kernel_seq_pingpong(int series_id, int mirror,
 
 	sprite = &series_list[series_id]->index[0];
 
-	depth = attr_depth(&depth_map,
-		sprite->x + (sprite->xs >> 1),
-		sprite->y + (sprite->ys >> 1)) - 1;
+	depth = (g_engine->getGameID() == GType_RexNebular) ?
+		MAX(rex_attr_depth(&scr_depth, sprite->x + (sprite->xs >> 1), sprite->y + (sprite->ys >> 1)) - 1, 0) :
+		attr_depth(&depth_map, sprite->x + (sprite->xs >> 1), sprite->y + (sprite->ys >> 1)) - 1;
 
 	return (kernel_seq_add(series_id, mirror, 1, 0, 0, AA_PINGPONG, 1,
 		depth, 100, true, 0, 0, ticks, interval_ticks,
@@ -887,9 +887,9 @@ int kernel_seq_backward(int series_id, int mirror, word ticks, word interval_tic
 
 	sprite = &series_list[series_id]->index[0];
 
-	depth = attr_depth(&depth_map,
-		sprite->x + (sprite->xs >> 1),
-		sprite->y + (sprite->ys >> 1)) - 1;
+	depth = (g_engine->getGameID() == GType_RexNebular) ?
+		MAX(rex_attr_depth(&scr_depth, sprite->x + (sprite->xs >> 1), sprite->y + (sprite->ys >> 1)) - 1, 0) :
+		attr_depth(&depth_map, sprite->x + (sprite->xs >> 1), sprite->y + (sprite->ys >> 1)) - 1;
 
 	return kernel_seq_add(series_id, mirror,
 		series_list[series_id]->num_sprites,

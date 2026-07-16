@@ -50,6 +50,18 @@ done:
 	return (int)walk_code;
 }
 
+int rex_attr_depth(Buffer *depth, int x, int y) {
+	assert(depth);
+	if (x < 0 || y < 0 || (x / 2) >= depth->x || y >= depth->y)
+		return 0;
+
+	byte *scan = buffer_pointer(depth, (x >> 1), y);
+	int shift_count = (byte)((x & 1) ? 0 : 4);
+	int depth_code = (byte)((*scan >> shift_count) & 0x0f);
+
+	return depth_code;
+}
+
 int attr_depth(TileMapHeader *depth_map, int x, int y) {
 	byte depth_code = 0x0f;
 	byte *scan;

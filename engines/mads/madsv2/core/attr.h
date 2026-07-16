@@ -39,6 +39,7 @@ namespace MADSV2 {
 
 extern int attr_walk(Buffer *attr, int x, int y);
 
+extern int rex_attr_depth(Buffer *depth, int x, int y);
 extern int attr_depth(TileMapHeader *depth_map, int x, int y);
 
 extern int attr_special(Buffer *attr, int x, int y);
