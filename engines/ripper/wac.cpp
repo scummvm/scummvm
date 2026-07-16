@@ -413,7 +413,8 @@ void WacManager::drawDatabase() const {
 
 void WacManager::dispatchDatabaseEntry(const DatabaseEntry &entry) {
 	if (entry.originalIndex == 1) {
-		drawFrontEnd();
+		debugC(2, kDebugWac,
+			"Ripper: WAC database retaining chooser while entering Broken Mug viewport=50,50,282,350");
 		BrokenMugPuzzle::Result result;
 		if (_engine->getScripts()->isMilestoneFlagSet(0x48)) {
 			result = BrokenMugPuzzle::playCompletionMedia(_engine) ?
@@ -430,7 +431,8 @@ void WacManager::dispatchDatabaseEntry(const DatabaseEntry &entry) {
 		return;
 	}
 	if (entry.originalIndex == 2) {
-		drawFrontEnd();
+		debugC(2, kDebugWac,
+			"Ripper: WAC database retaining chooser while presenting completed Broken Mug");
 		const bool played = BrokenMugPuzzle::playCompletionMedia(_engine);
 		debugC(1, kDebugWac,
 			"Ripper: WAC database entry=2 label='%s' PlayMugSelectionCompletionMedia success=%d",
