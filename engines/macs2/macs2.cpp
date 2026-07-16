@@ -845,7 +845,6 @@ void Macs2Engine::snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16
 	// Phase 4: If still non-walkable, scan X toward character
 	uint16 w = getWalkabilityAt(*pTargetY, *pTargetX);
 	if (isWalkabilityBlocking(w)) {
-		*pTargetX = savedX;
 		*pTargetY = savedY;
 		if (charX < *pTargetX) {
 			while (true) {
