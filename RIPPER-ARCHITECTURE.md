@@ -149,6 +149,16 @@
   updates the highlighted visible row and the two auxiliary controls step the
   same selection window. A successful selection returns control code `-3` with
   the resolved scene script; cancellation leaves the current scene active.
+- `HandleSceneSelectionAction` at `0x191e2` stores a successful destination on
+  the active runtime and returns `-3`. `RunSceneScriptLoop` at `0x124e9`
+  destroys only that active runtime before loading the destination; its
+  concurrent runtime remains live. This is required for `BA0B.RUN`: after
+  `PROLOG2.AVI` sets milestone 300 and selects its sole frame, the preserved
+  `PROLOGUE.RUN:loop` observes that milestone and opcode `0x1d` queues the next
+  script. When opcode `0x1d` executes from the concurrent runtime itself,
+  `HandleSceneEntryAndStartConcurrentSceneRuntime` at `0x15cd3` returns `-3`
+  with the target and entry label, and the outer loop retires that concurrent
+  runtime before continuing the handoff.
 
 ## Save and Restore
 
