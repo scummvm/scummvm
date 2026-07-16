@@ -130,9 +130,7 @@ void ConversationPopup::drawContent() {
 
 	drawAllText(textBounds, 0, _tboxData->conversationFontID, _tboxData->highlightConversationFontID);
 
-	Common::Rect localTextRect = _uicoData->textRect;
-	localTextRect.translate(-_uicoData->header.normalDestRect.left,
-							-_uicoData->header.normalDestRect.top);
+	Common::Rect localTextRect = getLocalTextRect();
 
 	const uint16 inner = getInnerHeight();
 	const uint16 outer = localTextRect.height();
@@ -151,6 +149,15 @@ void ConversationPopup::drawContent() {
 
 uint16 ConversationPopup::getInnerHeight() const {
 	return _drawnTextHeight + _tboxData->scrollbarDefaultPos.y;
+}
+
+Common::Rect ConversationPopup::getLocalTextRect() const {
+	Common::Rect r = _uicoData->textRect;
+	if (g_nancy->getGameType() < kGameTypeNancy13) {
+		r.translate(-_uicoData->header.normalDestRect.left,
+					-_uicoData->header.normalDestRect.top);
+	}
+	return r;
 }
 
 Common::Rect ConversationPopup::toPopupLocal(const Common::Rect &chunkRect, bool useGameFrame) const {
@@ -264,9 +271,7 @@ void ConversationPopup::handleInput(NancyInput &input) {
 	}
 
 	// Response hotspot handling — mirrors Textbox::handleInput().
-	Common::Rect localTextRect = _uicoData->textRect;
-	localTextRect.translate(-_uicoData->header.normalDestRect.left,
-							-_uicoData->header.normalDestRect.top);
+	Common::Rect localTextRect = getLocalTextRect();
 
 	const uint16 inner = getInnerHeight();
 	const uint16 outer = localTextRect.height();

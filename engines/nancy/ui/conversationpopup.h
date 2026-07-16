@@ -72,6 +72,11 @@ private:
 	// the current scroll position.
 	Common::Rect computeThumbRect() const;
 
+	// The text area in popup-local coordinates. Pre-Nancy13 stores textRect in
+	// chunk/screen space and needs the popup origin subtracted; Nancy13 already
+	// stores it image-local.
+	Common::Rect getLocalTextRect() const;
+
 	// Convert a chunk-space rect into popup-local coordinates.
 	Common::Rect toPopupLocal(const Common::Rect &chunkRect, bool useGameFrame) const;
 	Common::Point popupLocalMouse(const Common::Point &screenMouse) const;
