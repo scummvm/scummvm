@@ -40,6 +40,10 @@ namespace Macs2 {
 namespace {
 constexpr int kNumLoadedCursors = 33;
 
+// Button lookup table at data segment offset 0x26, 1-indexed
+// Binary: local_4 = 1..7, each iteration reads *(local_4 * 2 + 0x26) as index into cursor array
+const uint16 kLookupTable[8] = {9, 15, 14, 27, 29, 16, 17, 9}; // index 0 unused
+
 // drawAllCharacters (1008:90a2) local_14: animation slot for current orientation.
 uint16 resolveAnimSlotIndex(const GameObject *obj) {
 	if ((int16)obj->_overloadAnimTriggerDirection < 0 ||
@@ -4098,10 +4102,6 @@ void View1::openOriginalSaveLoadPanel() {
 		g_engine->getAdlib()->stopMusic();
 	}
 
-	// Button lookup table at data segment offset 0x26, 1-indexed
-	// Binary: local_4 = 1..7, each iteration reads *(local_4 * 2 + 0x26) as index into cursor array
-	static const uint16 kLookupTable[8] = {9, 15, 14, 27, 29, 16, 17, 9}; // index 0 unused
-
 	// First loop: calculate max icon width/height from the 7 button images
 	for (int i = 1; i <= 7; i++) {
 		int imgIdx = kLookupTable[i] - 1; // convert to 0-based
@@ -4195,9 +4195,6 @@ void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
 	drawBorderSide(Common::Point(panelX, panelY), Common::Point(panelW, _saveLoadPanelRect.height()), s);
 	drawNinePatchBorder(Common::Point(panelX, panelY), Common::Point(panelW, _saveLoadPanelRect.height()), kBorderRaised, false, false, s);
 
-	// Button loop: local_4 = 1..7
-	// Lookup table at 0x26 (1-indexed): {_, 15, 14, 27, 29, 16, 17, 9}
-	static const uint16 kLookupTable[8] = {9, 15, 14, 27, 29, 16, 17, 9};
 	// Alternate music icon is at cursor array offset 0x1B0 = entry 27 (0-based)
 	static const int kAltMusicIconIdx = 27; // 0-based into _imageResources
 
@@ -4344,8 +4341,6 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 		}
 	}
 
-	// Button loop: local_4 = 1..7
-	static const uint16 kLookupTable[8] = {9, 15, 14, 27, 29, 16, 17, 9};
 	for (int i = 1; i <= 7; i++) {
 		int imgIdx = kLookupTable[i] - 1; // 0-based
 		Common::Point btnPos(_saveLoadButtonRects[i - 1].left, _saveLoadButtonRects[i - 1].top);
