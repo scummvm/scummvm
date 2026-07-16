@@ -954,7 +954,7 @@ Common::Path findMoviePath(const Common::String &path, bool currentFolder, bool 
 	const char *extsD3[] = { ".MMM", nullptr };
 	const char *extsD4[] = { ".DIR", ".DXR", ".EXE", nullptr };
 	const char *extsD5[] = { ".DIR", ".DXR", ".CST", ".CXT", ".EXE", nullptr };
-	const char *extsD6[] = { ".DIR", ".DXR", ".CST", ".CXT", ".EXE", ".DCR", ".DCT", nullptr };
+	const char *extsD6[] = { ".DIR", ".DXR", ".CST", ".CXT", ".EXE", ".DCR", ".DCT", ".CCT", nullptr };
 
 	const char **exts = nullptr;
 	if (g_director->getVersion() < 400) {
