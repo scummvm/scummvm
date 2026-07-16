@@ -451,22 +451,6 @@ void TextActor::keyboardEvent(const KeyboardEvent &event) {
 	}
 }
 
-bool TextActor::hasScriptResponse(EventType eventType, const ScriptValue &arg) const {
-	const Common::Array<ScriptResponse *> &scriptResponses = _scriptResponses.getValOrDefault(eventType);
-	for (const ScriptResponse *scriptResponse : scriptResponses) {
-		const ScriptValue &argToCheck = scriptResponse->_argumentValue;
-
-		if (arg.getType() != argToCheck.getType()) {
-			continue;
-		}
-
-		if (arg == argToCheck) {
-			return true;
-		}
-	}
-	return false;
-}
-
 void TextActor::setText() {
 	// Remove double-quotes if they're the first or last characters.
 	if (_text.firstChar() == '"') {

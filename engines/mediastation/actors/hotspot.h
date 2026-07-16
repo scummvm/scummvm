@@ -46,6 +46,10 @@ public:
 		uint16 eventMask,
 		MouseActorState &state,
 		bool clipMouseEvents) override;
+	virtual uint16 findActorToAcceptKeyboardEvents(
+		uint16 charCode,
+		uint16 eventMask,
+		MouseActorState &state) override;
 
 	void activate();
 	void deactivate();
@@ -55,6 +59,7 @@ public:
 	virtual void mouseEnteredEvent(const MouseEvent &event) override;
 	virtual void mouseExitedEvent(const MouseEvent &event) override;
 	virtual void mouseMovedEvent(const MouseEvent &event) override;
+	virtual void keyboardEvent(const KeyboardEvent &event) override;
 
 	uint _cursorResourceId = 0;
 

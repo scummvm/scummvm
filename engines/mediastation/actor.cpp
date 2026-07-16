@@ -214,6 +214,22 @@ ScriptResponse *Actor::findNextTimeScriptResponseAfter(uint32 after) const {
 	return nullptr;
 }
 
+bool Actor::hasScriptResponse(EventType eventType, const ScriptValue &arg) const {
+	const Common::Array<ScriptResponse *> &scriptResponses = _scriptResponses.getValOrDefault(eventType);
+	for (const ScriptResponse *scriptResponse : scriptResponses) {
+		const ScriptValue &argToCheck = scriptResponse->_argumentValue;
+
+		if (arg.getType() != argToCheck.getType()) {
+			continue;
+		}
+
+		if (arg == argToCheck) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void Actor::runScriptResponseIfExists(EventType eventType, const ScriptValue &arg) {
 	const Common::Array<ScriptResponse *> &scriptResponses = _scriptResponses.getValOrDefault(eventType);
 	for (ScriptResponse *scriptResponse : scriptResponses) {

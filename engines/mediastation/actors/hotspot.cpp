@@ -153,6 +153,26 @@ uint16 HotspotActor::findActorToAcceptMouseEvents(
 	return result;
 }
 
+uint16 HotspotActor::findActorToAcceptKeyboardEvents(uint16 charCode, uint16 eventMask, MouseActorState &state) {
+	if (!_isActive || !_loadIsComplete) {
+		return 0;
+	}
+
+	if (eventMask & kKeyDownFlag) {
+		ScriptValue charCodeValue;
+		charCodeValue.setToFloat(charCode);
+		ScriptValue wildcardValue;
+		wildcardValue.setToFloat(0.0);
+
+		if (hasScriptResponse(kKeyDownEvent, charCodeValue) || hasScriptResponse(kKeyDownEvent, wildcardValue)) {
+			state.keyDown = this;
+			return kKeyDownFlag;
+		}
+	}
+
+	return 0;
+}
+
 void HotspotActor::activate() {
 	if (!_isActive) {
 		_isActive = true;
@@ -219,6 +239,20 @@ void HotspotActor::mouseMovedEvent(const MouseEvent &event) {
 	}
 
 	runScriptResponseIfExists(kMouseMovedEvent);
+}
+
+void HotspotActor::keyboardEvent(const KeyboardEvent &event) {
+	ScriptValue charCodeValue;
+	charCodeValue.setToFloat(event.getMediaStationCharCode());
+
+	if (hasScriptResponse(event.type, charCodeValue)) {
+		runScriptResponseIfExists(event.type, charCodeValue);
+	} else {
+		// Otherwise, try to do the wildcard match.
+		ScriptValue wildcardValue;
+		wildcardValue.setToFloat(0.0);
+		runScriptResponseIfExists(event.type, wildcardValue);
+	}
 }
 
 void HotspotActor::mouseExitedEvent(const MouseEvent &event) {

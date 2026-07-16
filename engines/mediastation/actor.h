@@ -225,6 +225,7 @@ public:
 
 	virtual void onEvent(const ActorEvent &event);
 	ScriptResponse *findNextTimeScriptResponseAfter(uint32 after) const;
+	bool hasScriptResponse(EventType eventType, const ScriptValue &arg) const;
 	void runScriptResponseIfExists(EventType eventType, const ScriptValue &arg);
 	void runScriptResponseIfExists(EventType eventType);
 
