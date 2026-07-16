@@ -329,7 +329,9 @@ bool BrokenMugPuzzle::playCompletionMedia(RipperEngine *engine) {
 		kCompletionX, kCompletionY);
 	if (!engine->getMedia()->playWacMedia("mug9.smk", kCompletionX, kCompletionY))
 		return false;
-	return engine->getMedia()->playBlockingAudio("q_p_2.wav");
+	if (!engine->getMedia()->playBlockingAudio("q_p_2.wav"))
+		warning("Ripper: broken mug completion audio failed; retaining completed presentation");
+	return true;
 }
 
 bool BrokenMugPuzzle::completePuzzle() {
@@ -356,12 +358,10 @@ BrokenMugPuzzle::Result BrokenMugPuzzle::run() {
 		kPieceCount, kViewportLeft, kViewportTop, kViewportRight - kViewportLeft,
 		kViewportBottom - kViewportTop, kInitialOrientation);
 	_engine->getInput()->discardMouseTransitions();
-	if (!_engine->getMedia()->playBlockingAudio("q_p_1.wav")) {
-		restoreBackground();
-		return kLoadFailed;
-	}
 	_engine->getCursor()->update(kPuzzleCursor);
 	render();
+	if (!_engine->getMedia()->playBlockingAudio("q_p_1.wav"))
+		warning("Ripper: broken mug introduction audio failed; continuing puzzle input");
 
 	Result result = kExited;
 	bool active = true;
