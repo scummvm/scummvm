@@ -70,6 +70,7 @@ const XlibFileDesc QTSupport::fileNames[] = {
 	{ "QuickTime Asset",	nullptr },
 	{ "QTASSET",			nullptr },
 	{ "QT3Asset",			nullptr },	// QuickTime 3 Asset Xtra
+	{ "QT6Asset",			nullptr },	// Löwenzahn 1/2/3/4/6 (QT6Asset.x32)
 	{ nullptr,		nullptr },
 };
 
