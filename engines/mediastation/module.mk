@@ -38,6 +38,7 @@ MODULE_OBJS = \
 	mediastation.o \
 	metaengine.o \
 	minigames/dotgame.o \
+	minigames/sophie.o \
 	profile.o
 
 # This module can be built as a plugin

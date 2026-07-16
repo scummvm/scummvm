@@ -97,6 +97,7 @@ enum BuiltInFunction {
 	kEndTimedIntervalFunction = 0x23,
 	kCheckersFunction = 0x24, // Hercules
 	kDrawingFunction = 0x25, // IBM/Crayola
+	kMoveSophieFunction = 0x44c, // Puzzle Castle
 
 	// Early engine versions (like for Lion King and such), had different opcodes
 	// for some functions, even though the functions were the same. So those are

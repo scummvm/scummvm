@@ -253,6 +253,11 @@ ScriptValue FunctionManager::call(uint functionId, Common::Array<ScriptValue> &a
 		script_Checkers(args, returnValue);
 		break;
 
+	case kMoveSophieFunction:
+		FUNCARGCHECK(14);
+		script_MoveSophie(args, returnValue);
+		break;
+
 	case kLegacy_DebugPrintFunction:
 		// We don't need to check arg counts here. This just prints however many args we have.
 		script_DebugPrint(args, returnValue);

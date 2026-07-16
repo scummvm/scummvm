@@ -100,6 +100,9 @@ private:
 
 	// IBM/Crayola.
 	void script_Drawing(Common::Array<ScriptValue> &args, ScriptValue &returnValue);
+
+	// Puzzle Castle.
+	void script_MoveSophie(Common::Array<ScriptValue> &args, ScriptValue &returnValue);
 };
 
 } // End of namespace MediaStation
