@@ -131,13 +131,28 @@ struct MouseEvent : public Event {
 	Common::String debugString() const override;
 };
 
-struct KeyboardEvent : public Event {
-	uint16 keyCode = 0;
+enum SpecialCharCodes {
+	kBackspaceCharCode = 0x08,
+	kLeftArrowCharCode = 0x100,
+	kRightArrowCharCode = 0x101,
+	kUpArrowCharCode = 0x102,
+	kDownArrowCharCode = 0x103,
+	kCursorCharCode = 0x104,
+};
 
-	KeyboardEvent(EventType eventType_, uint16 keyCode_)
-		: Event(kEventClassKeyboard, eventType_), keyCode(keyCode_) {}
+struct KeyboardEvent : public Event {
+	Common::KeyState state;
+
+	KeyboardEvent(EventType eventType_, Common::KeyState state_)
+		: Event(kEventClassKeyboard, eventType_), state(state_) {}
 	Event *clone() const override { return new KeyboardEvent(*this); }
 	Common::String debugString() const override;
+
+	// Scripts and text actors use a 16-bit field for their char codes,
+	// which also encapsulates non-text keys like backspace and arrow keys.
+	// This converts the platform-independent ScummVM keystate into what scripts
+	// want. See MAC_App::doKeyDownEvent in the 68k disassembly.
+	uint16 getMediaStationCharCode() const;
 };
 
 enum PreDisplaySyncState {

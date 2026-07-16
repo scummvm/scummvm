@@ -292,7 +292,7 @@ public:
 		MouseActorState &state,
 		bool clipMouseEvents) { return kNoFlag; }
 	virtual uint16 findActorToAcceptKeyboardEvents(
-		uint16 asciiCode,
+		uint16 charCode,
 		uint16 eventMask,
 		MouseActorState &state) { return kNoFlag; }
 

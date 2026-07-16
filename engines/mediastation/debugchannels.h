@@ -35,6 +35,7 @@ enum DebugChannels {
 	kDebugCamera,
 	kDebugPath,
 	kDebugScan,
+	kDebugText,
 	kDebugScript,
 	kDebugEvents,
 	kDebugLoading,

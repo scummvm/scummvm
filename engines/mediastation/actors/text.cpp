@@ -19,6 +19,7 @@
  *
  */
 
+#include "mediastation/debugchannels.h"
 #include "mediastation/actors/text.h"
 #include "mediastation/mediastation.h"
 
@@ -60,8 +61,8 @@ void TextActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	case kActorHeaderTextAcceptedCharRangeWithOffset: {
 		uint firstCharCode = chunk.readTypedUint16();
 		uint lastCharCode = chunk.readTypedUint16();
-		uint charCodeOffset = chunk.readTypedUint16();
-		addAcceptedChars(firstCharCode, lastCharCode, charCodeOffset);
+		uint standardizedCharCode = chunk.readTypedUint16();
+		addAcceptedChars(firstCharCode, lastCharCode, standardizedCharCode);
 		break;
 	}
 
@@ -77,7 +78,7 @@ void TextActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 		break;
 
 	case kActorHeaderTextCursorIsVisible:
-		_cursorIsVisible = static_cast<bool>(chunk.readTypedByte());
+		_cursorIsVisible = static_cast<bool>(chunk.readTypedUint16());
 		break;
 
 	case kActorHeaderTextConstrainToWidth:
@@ -168,7 +169,7 @@ ScriptValue TextActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptVa
 
 	case kGetLastPressedCharCodeMethod:
 		ARGCOUNTCHECK(0);
-		returnValue.setToFloat(_pressedCharCode);
+		returnValue.setToFloat(_lastCharCode);
 		break;
 
 	case kTextGetCursorPositionMethod:
@@ -243,10 +244,10 @@ ScriptValue TextActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptVa
 
 	case kTextGetTranslatedCharCode: {
 		ARGCOUNTCHECK(1);
-		uint charId = args[0].asParamToken();
-		uint translatedChar = _acceptedChars.getValOrDefault(charId, 0);
-		if (translatedChar != 0) {
-			returnValue.setToFloat(translatedChar);
+		uint charCode = args[0].asParamToken();
+		uint standardizedCharCode = _standardizedChars.getValOrDefault(charCode, 0);
+		if (standardizedCharCode != 0) {
+			returnValue.setToFloat(standardizedCharCode);
 		} else {
 			// Character not found, so return the input as-is.
 			returnValue = args[0];
@@ -256,35 +257,35 @@ ScriptValue TextActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptVa
 
 	case kTextAddAcceptedCharsMethod: {
 		ARGCOUNTMIN(2);
-		uint startCharId = static_cast<uint>(args[0].asFloat());
-		uint endCharId = static_cast<uint>(args[1].asFloat());
-		uint category = 0;
+		uint startCharCode = static_cast<uint>(args[0].asFloat());
+		uint endCharCode = static_cast<uint>(args[1].asFloat());
+		uint firstStandardizedCharCode = 0;
 		if (args.size() >= 3) {
-			category = static_cast<uint>(args[2].asFloat());
+			firstStandardizedCharCode = static_cast<uint>(args[2].asFloat());
 		}
 
-		addAcceptedChars(startCharId, endCharId, category);
+		addAcceptedChars(startCharCode, endCharCode, firstStandardizedCharCode);
 		break;
 	}
 
 	case kTextIsCharacterAcceptedMethod: {
 		ARGCOUNTCHECK(1);
-		uint charId = static_cast<uint>(args[0].asFloat());
-		bool isAccepted = _acceptedChars.contains(charId);
+		uint charCode = static_cast<uint>(args[0].asFloat());
+		bool isAccepted = _standardizedChars.contains(charCode);
 		returnValue.setToBool(isAccepted);
 		break;
 	}
 
 	case kTextEnableDisableCharacterMethod: {
 		ARGCOUNTCHECK(2);
-		uint charId = static_cast<uint>(args[0].asFloat());
+		uint charCode = static_cast<uint>(args[0].asFloat());
 		bool shouldEnable = static_cast<bool>(args[1].asBool());
 		if (shouldEnable) {
 			// Mark character as accepted.
-			addAcceptedChars(charId, charId, 0);
+			addAcceptedChars(charCode, charCode, 0);
 		} else {
 			// No longer mark character as accepted.
-			_acceptedChars.erase(charId);
+			_standardizedChars.erase(charCode);
 		}
 		break;
 	}
@@ -345,22 +346,109 @@ uint16 TextActor::findActorToAcceptKeyboardEvents(uint16 charCode, uint16 eventM
 	uint16 result = 0;
 	if (_loadIsComplete && (eventMask & kKeyDownFlag) && _isEditable) {
 		// If we have accepted character restrictions, check if character is valid.
-		if (!_acceptedChars.empty()) {
-			if (!_acceptedChars.contains(charCode)) {
+		if (!_standardizedChars.empty()) {
+			if (_standardizedChars.contains(charCode)) {
+				debugC(5, kDebugText, "[%s] %s: Accepted char %d", debugName(), __func__, charCode);
+			} else {
+				debugC(5, kDebugText, "[%s] %s: REJECTED char %d", debugName(), __func__, charCode);
 				return 0;
 			}
+		} else {
+			debugC(5, kDebugText, "[%s] %s: Auto-accepted char %d", debugName(), __func__, charCode);
 		}
 
 		state.keyDown = this;
-		result = kNoFlag;
+		result = kKeyDownFlag;
 	}
 
 	return result;
 }
 
 void TextActor::keyboardEvent(const KeyboardEvent &event) {
-	// TODO: Implement this once we have a title that actually uses it.
-	warning("STUB: %s", __func__);
+	uint_least16_t charCode = event.getMediaStationCharCode();
+	uint standardizedCharCode = _standardizedChars.getValOrDefault(charCode, 0);
+	if (standardizedCharCode == 0) {
+		standardizedCharCode = charCode;
+	}
+	debugC(5, kDebugText, "[%s] %s: charCode: %d (standardized: %d)", debugName(), __func__, _lastCharCode, standardizedCharCode);
+	_lastCharCode = standardizedCharCode;
+
+	ScriptValue charCodeValue;
+	charCodeValue.setToFloat(_lastCharCode);
+	ScriptValue defaultCharCodeValue;
+	defaultCharCodeValue.setToFloat(0.0);
+
+	Common::String updatedText = _text;
+	bool isDirty = false;
+
+	if (standardizedCharCode == kBackspaceCharCode) {
+		if (_cursorPosition != 0) {
+			updatedText.deleteChar(_cursorPosition - 1);
+			_cursorPosition--;
+			isDirty = true;
+			_text = updatedText;
+			debugC(5, kDebugText, "[%s] %s: text: %s", debugName(), __func__, updatedText.c_str());
+
+			if (hasScriptResponse(kTextInputEvent, charCodeValue)) {
+				runScriptResponseIfExists(kTextInputEvent, charCodeValue);
+			} else {
+				runScriptResponseIfExists(kTextInputEvent, defaultCharCodeValue);
+			}
+		}
+
+	} else if (standardizedCharCode == kLeftArrowCharCode) {
+		if (_cursorPosition != 0) {
+			_cursorPosition--;
+			if (_cursorIsVisible) {
+				isDirty = true;
+			}
+		}
+
+	} else if (standardizedCharCode == kRightArrowCharCode) {
+		if (_cursorPosition < _text.size()) {
+			_cursorPosition++;
+			if (_cursorIsVisible) {
+				isDirty = true;
+			}
+		}
+
+	} else {
+		// This is likely a normal ASCII character, so try to insert it in the string.
+		if (_text.size() < _maxLength) {
+			if (_overwriteMode && (_cursorPosition < _text.size())) {
+				updatedText.deleteChar(_cursorPosition);
+			}
+
+			updatedText.insertChar(static_cast<char>(standardizedCharCode), _cursorPosition);
+			debugC(5, kDebugText, "[%s] %s: text: %s", debugName(), __func__, updatedText.c_str());
+			if (_constrainToWidth && (_fontActor != nullptr)) {
+				const int16 maxWidth = getBbox().width();
+				const int16 pixelLength = calcPixelLength(updatedText);
+				if (pixelLength > maxWidth) {
+					warning("%s: Input text exceeds max length", __func__);
+					runScriptResponseIfExists(kTextErrorEvent);
+				}
+			}
+
+			_cursorPosition++;
+			isDirty = true;
+			_text = updatedText;
+
+			if (hasScriptResponse(kTextInputEvent, charCodeValue)) {
+				runScriptResponseIfExists(kTextInputEvent, charCodeValue);
+			} else {
+				runScriptResponseIfExists(kTextInputEvent, defaultCharCodeValue);
+			}
+
+		} else {
+			warning("%s: Input text exceeds max length", __func__);
+			runScriptResponseIfExists(kTextErrorEvent);
+		}
+	}
+
+	if (isDirty) {
+		invalidateLocalBounds();
+	}
 }
 
 bool TextActor::hasScriptResponse(EventType eventType, const ScriptValue &arg) const {
@@ -391,18 +479,18 @@ void TextActor::setText() {
 	// Apply character translation if we have any.
 	for (uint positionInString = 0; positionInString < _text.size(); positionInString++) {
 		char currentChar = _text[positionInString];
-		uint translatedChar = _acceptedChars.getValOrDefault(currentChar);
-		if (translatedChar != 0) {
-			_text.setChar(translatedChar, positionInString);
-		}
+		uint standardizedCharCode = _standardizedChars.getValOrDefault(currentChar, currentChar);
+		_text.setChar(standardizedCharCode, positionInString);
 	}
 }
 
-void TextActor::addAcceptedChars(uint firstCharCode, uint lastCharCode, uint charCodeOffset) {
+void TextActor::addAcceptedChars(uint firstCharCode, uint lastCharCode, uint standardizedCharCode) {
 	for (uint charCode = firstCharCode; charCode <= lastCharCode; charCode++) {
-		_acceptedChars.setVal(charCode, charCodeOffset);
-		if (charCodeOffset != 0) {
-			charCodeOffset++;
+		if (!_standardizedChars.contains(charCode)) {
+			_standardizedChars.setVal(charCode, standardizedCharCode);
+		}
+		if (standardizedCharCode != 0) {
+			standardizedCharCode++;
 		}
 	}
 }
@@ -448,7 +536,7 @@ void TextActor::drawCharacter(FontCharacter *glyph, int16 x, int16 y, DisplayCon
 }
 
 void TextActor::drawCursor(int16 x, int16 y, DisplayContext &displayContext) {
-	FontCharacter *cursorChar = _fontActor->lookupCharacter(CURSOR_CHAR_ID);
+	FontCharacter *cursorChar = _fontActor->lookupCharacter(kCursorCharCode);
 	if (cursorChar != nullptr) {
 		drawCharacter(cursorChar, x, y, displayContext);
 	}
@@ -472,7 +560,7 @@ int16 TextActor::calcPixelLength(const Common::String &text) {
 
 	// Add cursor width if we are needing to show the cursor.
 	if (_cursorPosition == _text.size() && _cursorIsVisible) {
-		FontCharacter *cursorChar = _fontActor->lookupCharacter(CURSOR_CHAR_ID);
+		FontCharacter *cursorChar = _fontActor->lookupCharacter(kCursorCharCode);
 		if (cursorChar != nullptr) {
 			totalXOffset += cursorChar->width();
 		}

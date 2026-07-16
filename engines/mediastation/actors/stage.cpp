@@ -613,13 +613,13 @@ uint16 StageActor::findActorToAcceptMouseEvents(
 }
 
 uint16 StageActor::findActorToAcceptKeyboardEvents(
-	uint16 asciiCode,
+	uint16 charCode,
 	uint16 eventMask,
 	MouseActorState &state) {
 
 	uint16 result = 0;
 	for (SpatialEntity *child : _children) {
-		uint16 handledEvents = child->findActorToAcceptKeyboardEvents(asciiCode, eventMask, state);
+		uint16 handledEvents = child->findActorToAcceptKeyboardEvents(charCode, eventMask, state);
 		if (handledEvents != 0) {
 			eventMask &= ~handledEvents;
 			result |= handledEvents;
@@ -840,7 +840,7 @@ void StageDirector::handleMouseEvent(const MouseEvent &event) {
 
 void StageDirector::handleKeyboardEvent(const KeyboardEvent &event) {
 	MouseActorState state;
-	uint16 flags = _rootStage->findActorToAcceptKeyboardEvents(event.keyCode, kKeyDownFlag, state);
+	uint16 flags = _rootStage->findActorToAcceptKeyboardEvents(event.getMediaStationCharCode(), kKeyDownFlag, state);
 	if (flags & kKeyDownFlag) {
 		debugC(5, kDebugEvents, "%s: Dispatching to %s from root stage", __func__, state.keyDown->debugName());
 		state.keyDown->keyboardEvent(event);

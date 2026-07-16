@@ -91,7 +91,7 @@ public:
 		MouseActorState &state,
 		bool clipMouseEvents) override;
 	virtual uint16 findActorToAcceptKeyboardEvents(
-		uint16 asciiCode,
+		uint16 charCode,
 		uint16 eventMask,
 		MouseActorState &state) override;
 	virtual void currentMousePosition(Common::Point &point) override;

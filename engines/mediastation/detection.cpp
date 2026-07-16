@@ -37,6 +37,7 @@ const DebugChannelDef MediaStationMetaEngineDetection::debugFlagList[] = {
 	{ MediaStation::kDebugCamera, "camera", "Camera panning debug level" },
 	{ MediaStation::kDebugPath, "path", "Pathfinding debug level" },
 	{ MediaStation::kDebugScan, "scan", "Scan for unrecognised games" },
+	{ MediaStation::kDebugText, "text", "Text display" },
 	{ MediaStation::kDebugScript, "script", "Enable debug script dump" },
 	{ MediaStation::kDebugEvents, "events", "Events processing" },
 	{ MediaStation::kDebugLoading, "loading", "File loading" },
