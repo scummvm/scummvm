@@ -139,6 +139,14 @@
   100 through 114 for their names and resources 150 through 164 for their
   destination script patterns. `ResolveHighestSetSelectionFlag` at `0x20394`
   supplies the highest enabled chapter flag from 1 through 4 to those patterns.
+- The location list is chooser control `0x604`. Selecting it returns one of the
+  15 group indices, which alone selects destination resource 150 through 164.
+  The unlocked entry labels from resources 116 through 140 are concatenated
+  into wrapped-text control `0x605`; `RunSceneSelectionMenu` immediately clears
+  that control's activation bit, never handles events from it, and never maps
+  an entry index to a destination. The right-hand panel is therefore
+  informational: it has no mouse focus, selection highlight, or direct-travel
+  behavior in the original executable.
 - Scene action 32 temporarily deactivates the selection presentation, dispatches
   display command `0x14`, and then reactivates selection. Entry `0x14` in
   `g_displayServiceCommandTable` targets `ClearGenericVideoLogicalPage` at
