@@ -127,6 +127,29 @@
   control code `-3` with the resolved scene script; cancellation leaves the
   current scene active.
 
+## Save and Restore
+
+- `RunGameStartupAndMainLoop` at `0x100c2` keeps the emergency Continue path
+  separate from manual saves. Front-end result 2 restores the emergency save,
+  while result 3 enters `RunSaveRestoreSlotMenu` at `0x1a1bd` in restore mode.
+  `DispatchFrontEndAction` at `0x190b7` sends toolbar actions `0x518` and
+  `0x519` to the same routine in save and restore modes respectively.
+- `RunSaveRestoreSlotMenu` manages 20 manual `ripper%d.sav` slots. Save mode
+  captures the current indexed presentation, accepts a description of up to 60
+  characters, and confirms replacement of occupied slots. Restore mode exposes
+  only populated slots and displays their descriptions and preview images.
+  ScummVM maps those 20 slots to its standard save chooser and reserves a
+  separate autosave slot for the original emergency Continue state.
+- `WriteEmergencySaveGame` at `0x1ae3c` writes the current scene identity,
+  scene-resume state, runtime flags, played media state, audio triggers,
+  briefing state, puzzle state, description, and preview. `LoadSavedRunStateBlob`
+  at `0x1b492` reconstructs that data, and `RestoreSavedRunState` at `0x1b8dd`
+  reinstates flags, concurrent scene context, media state, and the active scene.
+  The ScummVM format is versioned and engine-local; it stores the confirmed
+  script state plus the indexed 640x400 framebuffer and palette so static scene
+  presentations resume at the same visible boundary without serializing DOS
+  pointers from the original fixed block.
+
 ## WAC
 
 - `DispatchFrontEndAction` at `0x190b7` routes toolbar action `0x517` to the

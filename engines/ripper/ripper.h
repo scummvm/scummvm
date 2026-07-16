@@ -43,6 +43,14 @@ public:
 
 	Common::Error run() override;
 	bool hasFeature(EngineFeature feature) const override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveAutosaveCurrently() override { return false; }
+	int getAutosaveSlot() const override { return 20; }
 	CursorManager *getCursor() const { return _cursor; }
 	InputManager *getInput() const { return _input; }
 	MediaPlayer *getMedia() const { return _media; }
@@ -65,6 +73,7 @@ private:
 	ToolbarManager *_toolbar;
 	WacManager *_wac;
 	WorldMap *_worldMap;
+	bool _gameplayStarted;
 };
 
 } // End of namespace Ripper
