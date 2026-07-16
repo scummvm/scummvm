@@ -34,6 +34,7 @@
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
 #include "ripper/toolbar.h"
+#include "ripper/world_map.h"
 
 namespace Ripper {
 
@@ -323,6 +324,19 @@ bool ScriptManager::initialize(ResourceManager &resources) {
 	return _dialogue->initialize(resources) &&
 		_startup.load(resources.scripts(), "ripper.run") &&
 		_ba0.load(resources.scripts(), "ba0.run");
+}
+
+bool ScriptManager::openWorldMap() {
+	Common::String targetScript;
+	if (!_engine->getWorldMap()->run(targetScript))
+		return false;
+	if (!targetScript.empty()) {
+		_pendingSceneMember = targetScript;
+		debugC(2, kDebugScene,
+			"Ripper: queued world map scene transition target='%s'",
+			_pendingSceneMember.c_str());
+	}
+	return true;
 }
 
 Common::String ScriptManager::argumentString(const ScriptArgument &argument) {
@@ -704,9 +718,20 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			return true;
 
 		case kDispatchSceneAction: {
-			if (command.arguments.size() < 2 || command.arguments[0].value != 300) {
+			if (command.arguments.size() < 2)
+				return false;
+			if (command.arguments[0].value == 2) {
+				if (!openWorldMap())
+					return false;
+				if (!_pendingSceneMember.empty()) {
+					result = -3;
+					return true;
+				}
+				break;
+			}
+			if (command.arguments[0].value != 300) {
 				warning("Ripper: unsupported scene action %u in '%s' at 0x%x",
-					command.arguments.empty() ? 0 : command.arguments[0].value,
+					command.arguments[0].value,
 					script.getMemberName().c_str(), command.offset);
 				return false;
 			}
@@ -792,6 +817,32 @@ bool ScriptManager::executeConcurrentFrame() {
 	return true;
 }
 
+bool ScriptManager::performPendingSceneTransition() {
+	if (_pendingSceneMember.empty())
+		return true;
+
+	const Common::String memberName = _pendingSceneMember;
+	_pendingSceneMember.clear();
+	debugC(1, kDebugScene,
+		"Ripper: applying world map scene transition target='%s' entry=''",
+		memberName.c_str());
+	_engine->getToolbar()->leave();
+	_dialogue->clearPending();
+	_concurrent = CompiledScript();
+	_concurrentEntryLabel.clear();
+	if (!_ba0.load(_engine->getResources()->scripts(), memberName))
+		return false;
+
+	_previousBa0FrameLabel.clear();
+	_activeBa0Frame = 0;
+	_awaitingBa0Interaction = false;
+	_hoveredBa0Interaction = -1;
+	_engine->getCursor()->setVisible(false);
+	g_system->fillScreen(0);
+	g_system->updateScreen();
+	return advanceBa0ToFrame(0);
+}
+
 bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 	_engine->getCursor()->setVisible(false);
 	_hoveredBa0Interaction = -1;
@@ -814,6 +865,8 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 		uint callbackFrame = _activeBa0Frame;
 		if (!executeCallback(_ba0, frame.enterCallbackOffset, result, &callbackFrame))
 			return false;
+		if (result == -3 && !_pendingSceneMember.empty())
+			return performPendingSceneTransition();
 		if (result == -2) {
 			nextFrame = callbackFrame;
 			continue;
@@ -862,6 +915,8 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 		callbackFrame = _activeBa0Frame;
 		if (!executeCallback(_ba0, frame.exitCallbackOffset, result, &callbackFrame))
 			return false;
+		if (result == -3 && !_pendingSceneMember.empty())
+			return performPendingSceneTransition();
 		if (result != -2) {
 			warning("Ripper: automatic BA0 frame '%s' returned unexpected result %d",
 				label.c_str(), result);
@@ -879,6 +934,8 @@ bool ScriptManager::serviceScene() {
 	const bool dialoguePending = _dialogue->isPending();
 	if (dialoguePending) {
 		if (_engine->getToolbar()->service(mouse)) {
+			if (!_pendingSceneMember.empty())
+				return performPendingSceneTransition();
 			_engine->getCursor()->setVisible(true);
 			_engine->getCursor()->update(kToolbarCursor);
 			return true;
@@ -908,6 +965,8 @@ bool ScriptManager::serviceScene() {
 		return true;
 	}
 	if (!dialoguePending && _engine->getToolbar()->service(mouse)) {
+		if (!_pendingSceneMember.empty())
+			return performPendingSceneTransition();
 		_engine->getCursor()->update(kToolbarCursor);
 		return true;
 	}
@@ -964,6 +1023,12 @@ bool ScriptManager::serviceScene() {
 		debugC(1, kDebugScripts,
 			"Ripper: hotspot action script='%s' callback=0x%x result=%d nextFrame=%u",
 			_ba0.getMemberName().c_str(), hoveredInteraction->callbackOffset, result, nextFrame);
+		if (result == -3 && !_pendingSceneMember.empty()) {
+			_awaitingBa0Interaction = false;
+			_engine->getCursor()->setVisible(false);
+			_hoveredBa0Interaction = -1;
+			return performPendingSceneTransition();
+		}
 		if (result != -2) {
 			warning("Ripper: BA0 interaction %u returned unexpected result %d",
 				hoveredInteractionIndex, result);

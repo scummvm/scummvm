@@ -28,6 +28,7 @@
 #include "ripper/detection.h"
 #include "ripper/input.h"
 #include "ripper/ripper.h"
+#include "ripper/script.h"
 #include "ripper/wac.h"
 
 namespace Ripper {
@@ -307,6 +308,14 @@ void ToolbarManager::drawTooltip(const Common::Point &point) {
 }
 
 void ToolbarManager::dispatchAction(uint actionIndex) {
+	if (actionIndex == 1) {
+		debugC(1, kDebugScene,
+			"Ripper: toolbar action=2 id=0x515 label='%s' entering HandleSceneSelectionAction",
+			_actions[actionIndex].label.c_str());
+		if (!_engine->getScripts()->openWorldMap())
+			warning("Ripper: toolbar world map action failed");
+		return;
+	}
 	if (actionIndex == 3) {
 		debugC(1, kDebugWac,
 			"Ripper: toolbar action=4 id=0x517 label='%s' entering RunWacFrontEndLoop",

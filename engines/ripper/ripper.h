@@ -34,6 +34,7 @@ class ResourceManager;
 class ScriptManager;
 class ToolbarManager;
 class WacManager;
+class WorldMap;
 
 class RipperEngine : public Engine {
 public:
@@ -49,6 +50,7 @@ public:
 	ScriptManager *getScripts() const { return _scripts; }
 	ToolbarManager *getToolbar() const { return _toolbar; }
 	WacManager *getWac() const { return _wac; }
+	WorldMap *getWorldMap() const { return _worldMap; }
 
 private:
 	void registerSearchPaths();
@@ -62,6 +64,7 @@ private:
 	ScriptManager *_scripts;
 	ToolbarManager *_toolbar;
 	WacManager *_wac;
+	WorldMap *_worldMap;
 };
 
 } // End of namespace Ripper

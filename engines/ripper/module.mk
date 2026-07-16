@@ -13,7 +13,8 @@ MODULE_OBJS := \
 	ripper.o \
 	script.o \
 	toolbar.o \
-	wac.o
+	wac.o \
+	world_map.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_RIPPER), DYNAMIC_PLUGIN)
