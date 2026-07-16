@@ -960,11 +960,12 @@ void ConversationCel::readXSheet(Common::SeekableReadStream &stream, const Commo
 	uint16 numTrees = 4;
 
 	if (isNancy13) {
-		// Nancy13 moved the cel tree / .cal names into the XSheet header. Each
-		// frame is a fixed-size block of numTrees cel names plus padding.
-
-		const uint kTreeNamesOffset = 38;
-		const uint kFrameDataOffset = 174;
+		// Nancy13 moved the cel tree / .cal names into the XSheet header, which
+		// reserves a fixed kMaxTrees name slots followed by a 32-bit frame time;
+		// the frame data begins right after. Each frame is likewise a fixed-size
+		// block of kMaxTrees name slots. Earlier games keep the tree names in the
+		// AR data and use a 16-bit frame time.
+		const uint kMaxTrees = 4;
 
 		numTrees = xsheet->readUint16LE();
 
@@ -973,8 +974,10 @@ void ConversationCel::readXSheet(Common::SeekableReadStream &stream, const Commo
 			readFilename(*xsheet, _treeNames[j]);
 		}
 
-		_frameTime = xsheet->readUint16LE();
-		xsheet->skip(kFrameDataOffset - kTreeNamesOffset - numTrees * kNameSize - 2);
+		// Skip any unused tree-name slots so the frame time is read from its fixed
+		// offset regardless of numTrees.
+		xsheet->skip((kMaxTrees - numTrees) * kNameSize);
+		_frameTime = xsheet->readUint32LE();
 	} else {
 		xsheet->skip(2);
 		_frameTime = xsheet->readUint16LE();

@@ -207,7 +207,7 @@ protected:
 	Common::Array<Common::Array<Common::Path>> _celNames;
 	Common::Array<Common::String> _treeNames;
 
-	uint16 _frameTime = 0;
+	uint32 _frameTime = 0;
 	uint _videoFormat = kLargeVideoFormat;
 	uint16 _firstFrame = 0;
 	uint16 _lastFrame = 0;
