@@ -737,7 +737,11 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		_theora = new VideoTheoraPlayer(_game);
 		if (_theora && DID_SUCCEED(_theora->initialize(filename))) {
 			if (!valAlpha->isNULL()) {
-				_theora->setAlphaImage(valAlpha->getString());
+				if (BaseEngine::instance().getGameId() == "barrowhilldp") {
+					// Silence wrong alpha argument in 'Barrow Hill - The Dark Path'
+				} else {
+					_theora->setAlphaImage(valAlpha->getString());
+				}
 			}
 			_theora->play(VID_PLAY_POS, 0, 0, false, false, looping, startTime, _scale >= 0.0f ? _scale : -1.0f, _sFXVolume);
 			//if (_scale>=0) _theora->_playZoom = _scale;
