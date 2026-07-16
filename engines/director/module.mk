@@ -106,6 +106,7 @@ MODULE_OBJS = \
 	lingo/xlibs/f/fplayxobj.o \
 	lingo/xlibs/f/fsutil.o \
 	lingo/xlibs/g/genutils.o \
+	lingo/xlibs/g/getpath.o \
 	lingo/xlibs/g/getscreenrectsxfcn.o \
 	lingo/xlibs/g/getscreensizexfcn.o \
 	lingo/xlibs/g/getsoundinlevel.o \
