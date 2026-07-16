@@ -195,6 +195,22 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new PlaySecondaryMovie(true);
 	case 46:	// Nancy11
 		return new PlayRandomMovieControl();
+	// Nancy14 dispatches the secondary-movie family from 41-47 instead of the
+	// legacy 50-53 slots. Only the Nancy14 layout is verified; earlier games
+	// stay unmapped here.
+	case 41:	// PlaySecondaryMovie
+	case 44:	// PlaySecondaryMovie (adds a trailing volume byte)
+		if (g_nancy->getGameType() >= kGameTypeNancy14)
+			return new PlaySecondaryMovie();
+		return nullptr;
+	case 42:	// PlaySecondaryMovie, random-sequence variant
+	case 43:
+		if (g_nancy->getGameType() >= kGameTypeNancy14)
+			return new PlaySecondaryMovie(true);
+		return nullptr;
+	case 47:	// PlaySecondaryMovie subclass with a per-frame flag list
+		// TODO: not yet implemented
+		return nullptr;
 	case 40:
 		if (g_nancy->getGameType() <= kGameTypeNancy1)
 			return new LightningOn();	// Only used in TVD
@@ -377,6 +393,13 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new AddSearchLink();
 	case 132:	// Nancy12
 		return new ResourceUse();
+	case 133:	// Nancy14: new AR, unidentified
+		// TODO: not yet implemented
+		return nullptr;
+	case 143:	// Nancy14: new paired AR, unidentified
+	case 144:
+		// TODO: not yet implemented
+		return nullptr;
 	case 140:
 		if (g_nancy->getGameType() >= kGameTypeNancy12)
 			return new SetPlayerClock();	// Moved from 170 in Nancy12
@@ -387,19 +410,17 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		// Saves a cropped image of the screen to a bitmap/TGA file.
 		// TODO: debug-only feature, not implemented
 		return nullptr;
-	case 145:
-		// Nancy13 moved PlaySound here (was 150).
+	case 145:	// Nancy13
 		if (g_nancy->getGameType() >= kGameTypeNancy13)
-			return new PlaySound();
+			return new PlaySound(); // Moved from 150 in Nancy13
 		return nullptr;
-	case 146:
-		// Nancy13: FadeSoundToSilence moved here (was 147).
+	case 146:	// Nancy13
 		if (g_nancy->getGameType() >= kGameTypeNancy13)
-			return new FadeSoundToSilence();
+			return new FadeSoundToSilence(); // Moved from 147 in Nancy13
 		return nullptr;
-	case 147:
+	case 147:	// Nancy11
 		if (g_nancy->getGameType() >= kGameTypeNancy13)
-			return new SetVolume();			// Nancy13: SetVolume moved here (was 148)
+			return new SetVolume();			// Moved from 148 in Nancy13
 		return new FadeSoundToSilence();	// Nancy11
 	case 148:
 		if (g_nancy->getGameType() >= kGameTypeNancy13)
@@ -419,6 +440,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		else
 			return nullptr;
 	case 150:
+		if (g_nancy->getGameType() >= kGameTypeNancy14)
+			return nullptr;	// Nancy14: SetMovieVolume, TODO. PlaySound moved to 145 in Nancy13.
 		return new PlaySound();
 	case 151:
 		if (g_nancy->getGameType() <= kGameTypeNancy6)  {
@@ -441,6 +464,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 158:
 		return new PlayRandomSound();
 	case 159:
+		if (g_nancy->getGameType() >= kGameTypeNancy14)
+			return nullptr;	// Nancy14: new AR here, not PlaySoundTerse. TODO.
 		return new PlaySoundTerse();
 	case 160:
 		// In Nancy12 the hint system was removed (the HINT boot chunk is gone) and this
@@ -506,6 +531,25 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return nullptr;
 	case 176:
 		// Unknown Puzzle, new in Nancy13
+		// TODO: not yet implemented
+		return nullptr;
+	// -- Nancy14 new puzzles (types 177-182) --
+	case 177:	// HangmanPuzzle
+		// TODO: not yet implemented
+		return nullptr;
+	case 178:	// logic-grid / crossword-like puzzle, unconfirmed
+		// TODO: not yet implemented
+		return nullptr;
+	case 179:	// small utility AR, unconfirmed
+		// TODO: not yet implemented
+		return nullptr;
+	case 180:	// movie-driven puzzle, unconfirmed
+		// TODO: not yet implemented
+		return nullptr;
+	case 181:	// image/hotspot puzzle, unconfirmed
+		// TODO: not yet implemented
+		return nullptr;
+	case 182:	// word puzzle, unconfirmed
 		// TODO: not yet implemented
 		return nullptr;
 	case 200:
