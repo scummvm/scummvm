@@ -172,6 +172,11 @@
   again. `BA0B.RUN` depends on this ordering: its sole frame selects frame 0
   after setting milestone 300, then `PROLOGUE.RUN:loop` observes the milestone
   and stages the next script instead of replaying `PROLOG2.AVI`.
+- Scene transition targets retain the source-script extension in compiled
+  opcode arguments. `RunSceneScriptLoop` at `0x124e9` replaces the target from
+  its first dot onward with `.run` before opening the runtime, rather than
+  appending another extension. A target such as `DK1.SCR` therefore resolves
+  to `DK1.run`, not `DK1.SCR.run`.
 
 ## Save and Restore
 
