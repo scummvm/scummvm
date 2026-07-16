@@ -4051,19 +4051,6 @@ void Character::update() {
 		_path.clear();
 	}
 
-	// Binary: walkSpeed==0 special case - still run vertical offset once
-	if (walkSpeed == 0 && shouldStepVerticalMotion()) {
-		_motionProgress += _motionVerticalOffsetDelta;
-		while (_motionProgress >= _motionDistanceUnits && _motionDistanceUnits > 0) {
-			_motionProgress -= _motionDistanceUnits;
-			if (_motionTargetVerticalOffset < _gameObject->_verticalOffsetScale) {
-				_gameObject->_verticalOffsetScale--;
-			} else if (_motionTargetVerticalOffset > _gameObject->_verticalOffsetScale) {
-				_gameObject->_verticalOffsetScale++;
-			}
-		}
-	}
-
 	setPosition(pos);
 }
 
