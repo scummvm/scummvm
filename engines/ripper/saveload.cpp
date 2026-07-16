@@ -56,11 +56,11 @@ Common::Error RipperEngine::saveGameState(int slot, const Common::String &desc,
 	if (slot < 0 || slot > getAutosaveSlot() || (!isAutosave && slot == getAutosaveSlot()))
 		return Common::kWritingFailed;
 	const Common::String saveDescription = desc.substr(0, 60);
-	debugC(1, kDebugSavegames,
+	debugC(1, kDebugSaveLoad,
 		"Ripper: writing %s save slot=%d description='%s'",
 		isAutosave ? "emergency" : "manual", slot, saveDescription.c_str());
 	const Common::Error result = Engine::saveGameState(slot, saveDescription, isAutosave);
-	debugC(result.getCode() == Common::kNoError ? 1 : 2, kDebugSavegames,
+	debugC(result.getCode() == Common::kNoError ? 1 : 2, kDebugSaveLoad,
 		"Ripper: %s save slot=%d result=%d",
 		isAutosave ? "emergency" : "manual", slot, result.getCode());
 	return result;
@@ -69,9 +69,9 @@ Common::Error RipperEngine::saveGameState(int slot, const Common::String &desc,
 Common::Error RipperEngine::loadGameState(int slot) {
 	if (slot < 0 || slot > getAutosaveSlot())
 		return Common::kReadingFailed;
-	debugC(1, kDebugSavegames, "Ripper: restoring save slot=%d", slot);
+	debugC(1, kDebugSaveLoad, "Ripper: restoring save slot=%d", slot);
 	const Common::Error result = Engine::loadGameState(slot);
-	debugC(result.getCode() == Common::kNoError ? 1 : 2, kDebugSavegames,
+	debugC(result.getCode() == Common::kNoError ? 1 : 2, kDebugSaveLoad,
 		"Ripper: restore slot=%d result=%d", slot, result.getCode());
 	return result;
 }
@@ -111,7 +111,7 @@ Common::Error RipperEngine::saveGameStream(Common::WriteStream *stream, bool isA
 	if (serializer.err())
 		return Common::kWritingFailed;
 
-	debugC(1, kDebugSavegames,
+	debugC(1, kDebugSaveLoad,
 		"Ripper: captured save state autosave=%d indexedDisplay=%ux%u paletteEntries=256",
 		isAutosave, width, height);
 	return Common::kNoError;
@@ -149,7 +149,7 @@ Common::Error RipperEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	g_system->updateScreen();
 	_gameplayStarted = true;
 	_input->discardMouseTransitions();
-	debugC(1, kDebugSavegames,
+	debugC(1, kDebugSaveLoad,
 		"Ripper: applied loaded save state indexedDisplay=%ux%u paletteEntries=256",
 		width, height);
 	return Common::kNoError;

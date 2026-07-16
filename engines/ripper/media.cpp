@@ -493,7 +493,7 @@ bool MediaPlayer::syncGame(Common::Serializer &serializer) {
 		return false;
 	if (active != 0 && !startLoadedAudio(_loadedAudioKey, volumePercent, loop != 0))
 		return false;
-	debugC(1, kDebugSavegames,
+	debugC(1, kDebugSaveLoad,
 		"Ripper: restored scene audio path='%s' active=%d volume=%u loop=%d",
 		audioPath.c_str(), active != 0, volumePercent, loop != 0);
 	return true;

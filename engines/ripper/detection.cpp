@@ -34,7 +34,7 @@ const DebugChannelDef RipperMetaEngineDetection::debugFlagList[] = {
 	{ Ripper::kDebugAudio, "audio", "Music, speech, and sound-effect playback" },
 	{ Ripper::kDebugDialogue, "dialogue", "Dialogue choices, presentation, and selection state" },
 	{ Ripper::kDebugWac, "wac", "WAC database, presentation, and puzzle state" },
-	{ Ripper::kDebugSavegames, "savegames", "Save and restore state" },
+	{ Ripper::kDebugSaveLoad, "saveload", "Save and restore state" },
 	DEBUG_CHANNEL_END
 };
 

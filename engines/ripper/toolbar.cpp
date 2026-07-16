@@ -325,7 +325,7 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 	}
 	if (actionIndex == 4 || actionIndex == 5) {
 		const bool saving = actionIndex == 4;
-		debugC(1, kDebugSavegames,
+		debugC(1, kDebugSaveLoad,
 			"Ripper: toolbar action=%u id=0x%x label='%s' entering RunSaveRestoreSlotMenu mode=%s",
 			actionIndex + 1, actionIndex + 0x514, _actions[actionIndex].label.c_str(),
 			saving ? "save" : "restore");
@@ -335,7 +335,7 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 		_engine->getInput()->discardMouseTransitions();
 		const bool completed = saving ? _engine->saveGameDialog() : _engine->loadGameDialog();
 		_engine->getInput()->discardMouseTransitions();
-		debugC(1, kDebugSavegames,
+		debugC(1, kDebugSaveLoad,
 			"Ripper: toolbar RunSaveRestoreSlotMenu mode=%s completed=%d",
 			saving ? "save" : "restore", completed);
 		return;
