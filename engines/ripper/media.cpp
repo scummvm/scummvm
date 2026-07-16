@@ -604,8 +604,13 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		// PollInteractionAndResolveSelection at 0x13c8d as RunMediaSequence's
 		// per-frame callback. RunFrontEndActionMenu blocks that callback while the
 		// pointer remains in the toolbar band, so no Smacker frame advances.
-		const bool toolbarOwnsInput =
-			_engine->getScripts()->updateInteractiveCursor(_input->peekMouseState().position);
+		bool playbackUiFailed = false;
+		const bool toolbarOwnsInput = _engine->getScripts()->updateInteractiveCursor(
+			_input->peekMouseState().position, &playbackUiFailed);
+		if (playbackUiFailed) {
+			completed = false;
+			break;
+		}
 		if (toolbarOwnsInput != toolbarPaused) {
 			toolbarPaused = toolbarOwnsInput;
 			const bool effectivePause = paused || toolbarPaused;

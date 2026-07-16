@@ -160,7 +160,7 @@ public:
 	bool serviceScene();
 	void drawDialogueOverlay(bool captureBacking = false);
 	void drawBriefingOverlay();
-	bool updateInteractiveCursor(const Common::Point &point);
+	bool updateInteractiveCursor(const Common::Point &point, bool *failed = nullptr);
 	bool openWorldMap();
 	bool canSaveGame() const;
 	bool syncGame(Common::Serializer &serializer);

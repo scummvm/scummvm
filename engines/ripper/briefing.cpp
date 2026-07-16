@@ -28,6 +28,7 @@
 #include "ripper/detection.h"
 #include "ripper/input.h"
 #include "ripper/media.h"
+#include "ripper/milestones.h"
 #include "ripper/ripper.h"
 
 namespace Ripper {
@@ -38,12 +39,16 @@ static const int kBriefingControlOffsetY = 305;
 static const uint kBriefingCursor = 16;
 static const uint32 kDosTickMillis = 55;
 static const uint32 kBriefingFrameInterval = 3 * kDosTickMillis;
-static const uint kBriefingAlertVolume = 34;
+static const uint kBriefingAlertVolume = 35;
 
 BriefingManager::BriefingManager(RipperEngine *engine) : _engine(engine),
 		_lastFrameMillis(0), _frameIndex(0), _selector(0), _armed(false),
-		_initialized(false) {
+		_initialized(false), _hovered(false) {
 	memset(_announcedSelectors, 0, sizeof(_announcedSelectors));
+}
+
+BriefingManager::~BriefingManager() {
+	_engine->getMedia()->stopSoundEffect(_alertHandle);
 }
 
 bool BriefingManager::initialize(ResourceManager &resources) {
@@ -55,6 +60,9 @@ bool BriefingManager::initialize(ResourceManager &resources) {
 		return false;
 
 	const BitmapAssetFrame &frame = _frames.frames.front();
+	if (frame.width == 0 || frame.height == 0 || frame.width > kBriefingRightEdge ||
+			kBriefingSceneOriginY + kBriefingControlOffsetY + frame.height > 400)
+		return false;
 	for (uint i = 1; i < _frames.frames.size(); ++i) {
 		if (_frames.frames[i].width != frame.width ||
 				_frames.frames[i].height != frame.height)
@@ -82,29 +90,37 @@ bool BriefingManager::arm(uint selector, bool playNotification) {
 			"Ripper: briefing selector=%u already announced; trigger not rearmed", selector);
 		return true;
 	}
+	if (_armed)
+		clear();
 
 	_announcedSelectors[selector] = true;
 	_selector = selector;
 	_frameIndex = 0;
 	_lastFrameMillis = g_system->getMillis(true);
 	_armed = true;
+	_hovered = false;
 	draw();
 	g_system->updateScreen();
 	debugC(1, kDebugScene,
 		"Ripper: armed briefing trigger selector=%u control=0x4e1 frame=%u rect=%d,%d,%d,%d",
 		_selector, _frameIndex, _bounds.left, _bounds.top, _bounds.width(), _bounds.height());
 
-	if (playNotification && !_engine->getMedia()->playBlockingAudio("wacicon0.wav"))
+	if (playNotification && !_engine->getMedia()->playBlockingAudio("wacicon0.wav")) {
+		clear();
 		return false;
+	}
 	return true;
 }
 
 void BriefingManager::restore(bool armed, uint selector) {
+	_engine->getMedia()->stopSoundEffect(_alertHandle);
+	_backing.clear();
 	_armed = armed && _initialized && selector != 0 &&
 		selector < ARRAYSIZE(_announcedSelectors);
 	_selector = _armed ? selector : 0;
 	_frameIndex = 0;
 	_lastFrameMillis = g_system->getMillis(true);
+	_hovered = false;
 	if (_armed) {
 		_announcedSelectors[_selector] = true;
 		debugC(2, kDebugSaveLoad,
@@ -117,11 +133,78 @@ void BriefingManager::clear() {
 	if (!_armed)
 		return;
 	_engine->getMedia()->stopSoundEffect(_alertHandle);
+	restoreBacking();
 	debugC(1, kDebugScene,
 		"Ripper: cleared briefing trigger selector=%u control=0x4e1", _selector);
 	_armed = false;
 	_selector = 0;
 	_frameIndex = 0;
+	_hovered = false;
+}
+
+void BriefingManager::captureBacking() {
+	if (!_backing.empty())
+		return;
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen || screen->format.bytesPerPixel != 1) {
+		if (screen)
+			g_system->unlockScreen();
+		_backing.clear();
+		return;
+	}
+	_backing.resize(_bounds.width() * _bounds.height());
+	for (int row = 0; row < _bounds.height(); ++row) {
+		memcpy(_backing.data() + row * _bounds.width(),
+			screen->getBasePtr(_bounds.left, _bounds.top + row), _bounds.width());
+	}
+	g_system->unlockScreen();
+}
+
+void BriefingManager::restoreBacking() {
+	if (_backing.size() != (uint)(_bounds.width() * _bounds.height()))
+		return;
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen || screen->format.bytesPerPixel != 1) {
+		if (screen)
+			g_system->unlockScreen();
+		_backing.clear();
+		return;
+	}
+	for (int row = 0; row < _bounds.height(); ++row) {
+		memcpy(screen->getBasePtr(_bounds.left, _bounds.top + row),
+			_backing.data() + row * _bounds.width(), _bounds.width());
+	}
+	g_system->unlockScreen();
+	_backing.clear();
+	g_system->updateScreen();
+}
+
+bool BriefingManager::activate() {
+	const uint selector = _selector;
+	clear();
+	_engine->getCursor()->setVisible(false);
+	debugC(1, kDebugScene,
+		"Ripper: activated briefing trigger selector=%u control=0x4e1", selector);
+
+	bool result = true;
+	switch (selector) {
+	case 1:
+		result = _engine->getMedia()->play("cp0_1_p1.avi", true, 0, 0);
+		if (result) {
+			result = _engine->getMilestones()->set(kMilestoneLastTravelLocation, true,
+				"briefing selector 1");
+			debugC(1, kDebugScene,
+				"Ripper: completed briefing selector=1 media='cp0_1_p1.avi' travelFlag=%u",
+				(uint)kMilestoneLastTravelLocation);
+		}
+		break;
+	default:
+		warning("Ripper: unsupported briefing selector %u", selector);
+		result = false;
+		break;
+	}
+	_engine->getInput()->discardMouseTransitions();
+	return result;
 }
 
 void BriefingManager::advanceAnimation(uint32 now) {
@@ -142,22 +225,32 @@ void BriefingManager::advanceAnimation(uint32 now) {
 		_selector, _frameIndex);
 }
 
-bool BriefingManager::service(const MouseState &mouse) {
+BriefingServiceResult BriefingManager::service(const MouseState &mouse) {
 	if (!_armed)
-		return false;
+		return kBriefingIdle;
 	advanceAnimation(g_system->getMillis(true));
 	draw();
-	if (!_bounds.contains(mouse.position))
-		return false;
+	const bool hovered = _bounds.contains(mouse.position);
+	if (hovered != _hovered) {
+		_hovered = hovered;
+		debugC(2, kDebugScene,
+			"Ripper: briefing trigger hover=%d selector=%u point=%d,%d control=0x4e1",
+			_hovered, _selector, mouse.position.x, mouse.position.y);
+	}
+	if (!hovered)
+		return kBriefingIdle;
 
 	_engine->getCursor()->setVisible(true);
 	_engine->getCursor()->update(kBriefingCursor);
-	return true;
+	if ((mouse.pressed & kMouseButtonLeft) == 0)
+		return kBriefingHovered;
+	return activate() ? kBriefingActivated : kBriefingFailed;
 }
 
-void BriefingManager::draw() const {
+void BriefingManager::draw() {
 	if (!_armed || _frames.frames.empty())
 		return;
+	captureBacking();
 
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {

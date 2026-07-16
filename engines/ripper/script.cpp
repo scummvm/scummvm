@@ -1047,7 +1047,10 @@ bool ScriptManager::serviceScene() {
 			return false;
 	}
 	const MouseState mouse = _engine->getInput()->publishMouseState();
-	if (_briefing->service(mouse))
+	const BriefingServiceResult briefingResult = _briefing->service(mouse);
+	if (briefingResult == kBriefingFailed)
+		return false;
+	if (briefingResult != kBriefingIdle)
 		return true;
 	const bool dialoguePending = _dialogue->isPending();
 	if (dialoguePending) {
@@ -1174,8 +1177,12 @@ void ScriptManager::drawBriefingOverlay() {
 	_briefing->draw();
 }
 
-bool ScriptManager::updateInteractiveCursor(const Common::Point &point) {
-	if (_briefing->service(_engine->getInput()->peekMouseState()))
+bool ScriptManager::updateInteractiveCursor(const Common::Point &point, bool *failed) {
+	const BriefingServiceResult briefingResult =
+		_briefing->service(_engine->getInput()->peekMouseState());
+	if (failed)
+		*failed = briefingResult == kBriefingFailed;
+	if (briefingResult != kBriefingIdle)
 		return false;
 	if (!_awaitingBa0Interaction || _activeBa0Frame >= _ba0.getFrames().size())
 		return false;
