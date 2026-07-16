@@ -24,6 +24,7 @@
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/fs.h"
+#include "common/savefile.h"
 #include "common/system.h"
 
 #include "engines/util.h"
@@ -112,21 +113,48 @@ Common::Error RipperEngine::run() {
 	if (!_media->play("logo.avi", true))
 		return shouldQuit() ? Common::kNoError : Common::kUnknownError;
 
-	bool startNewGame = false;
-	while (!shouldQuit() && !startNewGame) {
+	bool startGameplay = false;
+	const int launcherSaveSlot = ConfMan.getInt("save_slot");
+	if (launcherSaveSlot >= 0) {
+		debugC(1, kDebugSavegames,
+			"Ripper: launcher requested restore slot=%d", launcherSaveSlot);
+		const Common::Error loadError = loadGameState(launcherSaveSlot);
+		if (loadError.getCode() != Common::kNoError)
+			return loadError;
+		startGameplay = true;
+	}
+
+	while (!shouldQuit() && !startGameplay) {
 		MainMenu menu(this);
 		switch (menu.run()) {
 		case kMainMenuNewGame:
 			debugC(1, kDebugGeneral, "Ripper: startup menu begins a new game");
-			startNewGame = true;
+			startGameplay = true;
 			break;
 		case kMainMenuContinue:
-			debugC(1, kDebugGeneral,
-				"Ripper: Continue Game is not implemented; returning to startup menu");
+			// RunGameStartupAndMainLoop at 0x100c2 restores its dedicated emergency
+			// save directly instead of entering the manual slot chooser.
+			if (!_saveFileMan->exists(getSaveStateName(getAutosaveSlot()))) {
+				debugC(1, kDebugSavegames,
+					"Ripper: Continue requested without emergency slot=%d",
+					getAutosaveSlot());
+				break;
+			}
+			if (loadGameState(getAutosaveSlot()).getCode() == Common::kNoError) {
+				debugC(1, kDebugSavegames,
+					"Ripper: startup Continue restored emergency slot=%d",
+					getAutosaveSlot());
+				startGameplay = true;
+			}
 			break;
 		case kMainMenuLoadGame:
-			debugC(1, kDebugGeneral,
-				"Ripper: Restore Game is not implemented; returning to startup menu");
+			debugC(1, kDebugSavegames,
+				"Ripper: startup Restore Game entering manual slot chooser");
+			if (loadGameDialog()) {
+				debugC(1, kDebugSavegames,
+					"Ripper: startup Restore Game loaded manual slot");
+				startGameplay = true;
+			}
 			break;
 		case kMainMenuViewIntro:
 			debugC(1, kDebugVideo,
@@ -143,9 +171,11 @@ Common::Error RipperEngine::run() {
 
 	if (shouldQuit())
 		return Common::kNoError;
-	if (!_scripts->runStartupPath())
-		return Common::kUnknownError;
-	_gameplayStarted = true;
+	if (!_gameplayStarted) {
+		if (!_scripts->runStartupPath())
+			return Common::kUnknownError;
+		_gameplayStarted = true;
+	}
 
 	while (!shouldQuit()) {
 		pumpEvents();
@@ -153,6 +183,15 @@ Common::Error RipperEngine::run() {
 			return Common::kUnknownError;
 		_system->updateScreen();
 		_system->delayMillis(10);
+	}
+	if (_scripts->canSaveGame()) {
+		debugC(1, kDebugSavegames,
+			"Ripper: scene loop exit writing emergency Continue slot=%d",
+			getAutosaveSlot());
+		const Common::Error saveError = saveGameState(
+			getAutosaveSlot(), "Continue", true);
+		if (saveError.getCode() != Common::kNoError)
+			warning("Ripper: unable to write emergency Continue save");
 	}
 
 	debugC(1, kDebugGeneral, "Ripper: skeletal engine runtime stopped");
