@@ -28,6 +28,7 @@
 #include "director/castmember/xtra.h"
 #include "director/castmember/digitalvideo.h"
 #include "director/lingo/lingo-the.h"
+#include "director/lingo/xtras-cast/cursorxtra.h"
 #include "director/lingo/xtras-cast/textxtra.h"
 
 namespace Director {
@@ -38,6 +39,7 @@ struct XtraCastMemberProto {
 };
 
 static const XtraCastMemberProto xtraCastMemberProtos[] = {
+	{ "cursor", CursorXtra::createCastMember },
 	{ "quickTimeMedia", DigitalVideoCastMember::createFromXtra },
 	{ "text", TextXtra::createCastMember },
 	{ "font", nullptr },

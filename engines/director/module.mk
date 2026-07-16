@@ -189,6 +189,7 @@ MODULE_OBJS = \
 	lingo/xlibs/x/xsoundxfcn.o \
 	lingo/xlibs/x/xwin.o \
 	lingo/xlibs/y/yasix.o \
+	lingo/xtras-cast/cursorxtra.o \
 	lingo/xtras-cast/textxtra.o \
 	lingo/xtras/a/audio.o \
 	lingo/xtras/b/border.o \
