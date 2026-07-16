@@ -911,7 +911,7 @@ void Score::incrementFilmLoops() {
 	for (auto &it : _channels) {
 		if (it->_sprite->_cast && (it->_sprite->_cast->_type == kCastFilmLoop || it->_sprite->_cast->_type == kCastMovie)) {
 			FilmLoopCastMember *fl = ((FilmLoopCastMember *)it->_sprite->_cast);
-			if (!fl->_score->_scoreCache.empty()) {
+			if (fl->_score && !fl->_score->_scoreCache.empty()) {
 				if (fl->_looping) {
 					it->_filmLoopFrame += 1;
 					it->_filmLoopFrame %= fl->_score->_scoreCache.size();
