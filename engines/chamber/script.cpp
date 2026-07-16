@@ -3002,7 +3002,7 @@ static void AnimSaucer(void) {
 		height_prev = height_new;
 
 		waitVBlank();
-		for (i = delay; i--;) {} /*TODO: weak delay*/
+		g_system->delayMillis(delay / 250);
 		delay += 500;
 	}
 }
@@ -4508,8 +4508,7 @@ uint16 RunScript(byte *code) {
 	while (script_ptr != script_end_ptr) {
 		byte opcode = *script_ptr;
 
-		if (gDebugLevel >= 9) // TEMP headless debug trace, remove
-			debug("scr %04X: %02X", (uint16)((script_ptr - templ_data) & 0xFFFF), opcode);
+		debug(9, "scr %04X: %02X", (uint16)((script_ptr - templ_data) & 0xFFFF), opcode);
 
 #ifdef DEBUG_SCRIPT
 		{

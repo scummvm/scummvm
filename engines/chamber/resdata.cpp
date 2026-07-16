@@ -333,6 +333,7 @@ Load strings data (obj. descriptions)
 */
 int16 loadDesciData(void) {
 	if (g_vm->getPlatform() == Common::kPlatformAmiga) {
+		// US embeds these banks in the exe (loaded by loadAmigaStaticData())
 		if (g_vm->getLanguage() == Common::EN_USA)
 			return 1;
 		return loadFilesList(res_desci_amiga);
@@ -357,6 +358,7 @@ Load strings data (dialogs)
 */
 int16 loadDialiData(void) {
 	if (g_vm->getPlatform() == Common::kPlatformAmiga) {
+		// US embeds these banks in the exe (loaded by loadAmigaStaticData())
 		if (g_vm->getLanguage() == Common::EN_USA)
 			return 1;
 		return loadFilesList(res_diali_amiga);
