@@ -36,6 +36,7 @@
 #include "graphics/surface.h"
 #include "video/smk_decoder.h"
 
+#include "ripper/cursor.h"
 #include "ripper/detection.h"
 #include "ripper/input.h"
 #include "ripper/resources.h"
@@ -48,6 +49,7 @@ namespace Ripper {
 namespace {
 
 static const int kScenePresentationTop = 50;
+static const uint kBlockingAudioCursor = 0x13;
 
 struct SavedDisplayContext {
 	Common::Array<byte> pixels;
@@ -801,10 +803,13 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path) {
 
 	Audio::SoundHandle handle;
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, stream);
-	debugC(2, kDebugAudio, "Ripper: started blocking audio '%s' source=%s",
-		path.c_str(), source.c_str());
+	_engine->getCursor()->update(kBlockingAudioCursor);
+	debugC(2, kDebugAudio,
+		"Ripper: started blocking audio '%s' source=%s cursor=%u input=keyboard-only",
+		path.c_str(), source.c_str(), kBlockingAudioCursor);
 	bool stoppedByEscape = false;
 	while (!_engine->shouldQuit() && _mixer->isSoundHandleActive(handle)) {
+		_engine->getCursor()->update(kBlockingAudioCursor);
 		if (_input->pollEvents()) {
 			_engine->quitGame();
 			break;
@@ -821,6 +826,7 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path) {
 		g_system->delayMillis(10);
 	}
 	_mixer->stopHandle(handle);
+	_input->discardMouseTransitions();
 	debugC(2, kDebugAudio,
 		"Ripper: completed blocking audio '%s' source=%s stoppedByEscape=%d",
 		path.c_str(), source.c_str(), stoppedByEscape);
