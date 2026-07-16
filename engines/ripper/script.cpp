@@ -405,6 +405,7 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 	_awaitingBa0Interaction = awaitingInteraction != 0;
 	_briefing->restore(briefingArmed != 0, briefingSelector);
 	_pendingSceneMember.clear();
+	_pendingSceneEntryLabel.clear();
 	_hoveredBa0Interaction = -1;
 	_resumeLoadedPresentation = !_dialogue->isPending() &&
 		_ba0.getFrames()[_activeBa0Frame].presentationType == 1;
@@ -439,6 +440,7 @@ bool ScriptManager::openWorldMap() {
 		return false;
 	if (!targetScript.empty()) {
 		_pendingSceneMember = targetScript;
+		_pendingSceneEntryLabel.clear();
 		debugC(2, kDebugScene,
 			"Ripper: queued world map scene transition target='%s'",
 			_pendingSceneMember.c_str());
@@ -758,9 +760,19 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				return false;
 			const Common::String target = argumentString(command.arguments[0]);
 			const Common::String entryLabel = argumentString(command.arguments[1]);
-			if (command.arguments[2].value == 0) {
-				debugC(1, kDebugScene, "Ripper: transition script='%s' entry='%s'",
-					target.c_str(), entryLabel.c_str());
+			// HandleSceneEntryAndStartConcurrentSceneRuntime at 0x15cd3 always
+			// turns opcode 0x1d into a scene handoff when the command belongs to
+			// the concurrent runtime. The third argument only selects this path
+			// when the active scene issues the command.
+			if (&script == &_concurrent || command.arguments[2].value == 0) {
+				_pendingSceneMember = target;
+				if (!_pendingSceneMember.hasSuffixIgnoreCase(".run"))
+					_pendingSceneMember += ".run";
+				_pendingSceneEntryLabel = entryLabel;
+				debugC(1, kDebugScene,
+					"Ripper: queued script transition target='%s' entry='%s' source='%s'",
+					_pendingSceneMember.c_str(), _pendingSceneEntryLabel.c_str(),
+					script.getMemberName().c_str());
 				result = -3;
 				return true;
 			}
@@ -911,9 +923,29 @@ bool ScriptManager::executeConcurrentFrame() {
 		_concurrent.getMemberName().c_str(), frameIndex, _concurrentEntryLabel.c_str());
 	int result = 0;
 	uint nextFrame = frameIndex;
-	if (!executeCallback(_concurrent, frame.enterCallbackOffset, result, &nextFrame) || result != 0)
+	if (!executeCallback(_concurrent, frame.enterCallbackOffset, result, &nextFrame))
 		return false;
-	if (!executeCallback(_concurrent, frame.exitCallbackOffset, result, &nextFrame) || result != -2) {
+	if (result == -3 && !_pendingSceneMember.empty()) {
+		debugC(1, kDebugScene,
+			"Ripper: concurrent script requested transition target='%s' entry='%s'",
+			_pendingSceneMember.c_str(), _pendingSceneEntryLabel.c_str());
+		_concurrent = CompiledScript();
+		_concurrentEntryLabel.clear();
+		return true;
+	}
+	if (result != 0)
+		return false;
+	if (!executeCallback(_concurrent, frame.exitCallbackOffset, result, &nextFrame))
+		return false;
+	if (result == -3 && !_pendingSceneMember.empty()) {
+		debugC(1, kDebugScene,
+			"Ripper: concurrent script requested transition target='%s' entry='%s'",
+			_pendingSceneMember.c_str(), _pendingSceneEntryLabel.c_str());
+		_concurrent = CompiledScript();
+		_concurrentEntryLabel.clear();
+		return true;
+	}
+	if (result != -2) {
 		warning("Ripper: concurrent frame '%s' returned unexpected result %d",
 			_concurrentEntryLabel.c_str(), result);
 		return false;
@@ -927,25 +959,31 @@ bool ScriptManager::performPendingSceneTransition() {
 		return true;
 
 	const Common::String memberName = _pendingSceneMember;
+	const Common::String entryLabel = _pendingSceneEntryLabel;
 	_pendingSceneMember.clear();
+	_pendingSceneEntryLabel.clear();
 	debugC(1, kDebugScene,
-		"Ripper: applying world map scene transition target='%s' entry=''",
-		memberName.c_str());
+		"Ripper: applying scene transition target='%s' entry='%s' concurrent='%s'",
+		memberName.c_str(), entryLabel.c_str(), _concurrent.getMemberName().c_str());
 	_engine->getToolbar()->leave();
 	_dialogue->dismissForSceneTransition("scene-runtime-transition");
-	_concurrent = CompiledScript();
-	_concurrentEntryLabel.clear();
 	if (!_ba0.load(_engine->getResources()->scripts(), memberName))
 		return false;
+	uint startFrame = 0;
+	if (!entryLabel.empty() && !findFrameByLabel(_ba0, entryLabel, startFrame)) {
+		warning("Ripper: scene transition target '%s' has no entry '%s'",
+			memberName.c_str(), entryLabel.c_str());
+		return false;
+	}
 
 	_previousBa0FrameLabel.clear();
-	_activeBa0Frame = 0;
+	_activeBa0Frame = startFrame;
 	_awaitingBa0Interaction = false;
 	_hoveredBa0Interaction = -1;
 	_engine->getCursor()->setVisible(false);
 	g_system->fillScreen(0);
 	g_system->updateScreen();
-	return advanceBa0ToFrame(0);
+	return advanceBa0ToFrame(startFrame);
 }
 
 bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
@@ -954,6 +992,8 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 	for (uint transitionCount = 0; transitionCount < _ba0.getFrames().size(); ++transitionCount) {
 		if (!executeConcurrentFrame())
 			return false;
+		if (!_pendingSceneMember.empty())
+			return performPendingSceneTransition();
 		if (nextFrame >= _ba0.getFrames().size()) {
 			warning("Ripper: BA0 requested invalid frame %u", nextFrame);
 			return false;

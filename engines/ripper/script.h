@@ -190,6 +190,7 @@ private:
 	CompiledScript _concurrent;
 	Common::String _concurrentEntryLabel;
 	Common::String _pendingSceneMember;
+	Common::String _pendingSceneEntryLabel;
 	Common::Array<Common::String> _playedScenes;
 	Common::Array<bool> _activeBa0InteractionEnabled;
 	Common::String _previousBa0FrameLabel;
