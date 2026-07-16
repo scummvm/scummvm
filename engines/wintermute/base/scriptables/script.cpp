@@ -702,7 +702,11 @@ bool ScScript::executeInstruction() {
 
 				if (DID_FAIL(res)) {
 					_stack->correctParams(0);
-					runtimeError("Call to undefined method '%s'. Ignored.", methodName);
+					if (BaseEngine::instance().getGameId() == "barrowhilldp" && strcmp(methodName, "MakeParticle") == 0) {
+						// Silence unknown opcode in 'Barrow Hill - The Dark Path'
+					} else {
+						runtimeError("Call to undefined method '%s'. Ignored.", methodName);
+					}
 					_stack->pushNULL();
 				}
 			}
