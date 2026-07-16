@@ -22,7 +22,6 @@
 #include "comfy/comfy.h"
 #include "comfy/midiplyr/midiplyr.h"
 
-#include "common/ptr.h"
 
 namespace Comfy {
 
@@ -118,17 +117,19 @@ bool ComfyEngine::hostKeyboardLoadDatMap() {
 		return true;
 
 	hostKeyboardResetMap();
-	Common::ScopedPtr<Common::SeekableReadStream> stream(pathFOpen(Common::Path("KEYBOARD.DAT"), false));
+	Common::SeekableReadStream *stream = pathFOpen(Common::Path("KEYBOARD.DAT"), false);
 	if (!stream)
-		stream.reset(pathFOpen(Common::Path("KEYBOARD.DAT"), true));
+		stream = pathFOpen(Common::Path("KEYBOARD.DAT"), true);
 
 	if (!stream)
 		return false;
 
 	byte value;
 	do {
-		if (stream->read(&value, 1) != 1)
+		if (stream->read(&value, 1) != 1) {
+			delete stream;
 			return false;
+		}
 	} while (value);
 
 	bool loaded = false;
@@ -138,6 +139,7 @@ bool ComfyEngine::hostKeyboardLoadDatMap() {
 
 		if (stream->read(&key, 1) != 1 || stream->read(&bit, 1) != 1 || bit >= COMFY_KEYBOARD_CONTACT_COUNT) {
 			hostKeyboardResetMap();
+			delete stream;
 			return false;
 		}
 
@@ -146,6 +148,7 @@ bool ComfyEngine::hostKeyboardLoadDatMap() {
 	}
 
 	_keyboardMapLoaded = loaded;
+	delete stream;
 	return loaded;
 }
 

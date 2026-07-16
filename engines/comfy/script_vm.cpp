@@ -23,7 +23,6 @@
 
 #include "common/config-manager.h"
 #include "common/endian.h"
-#include "common/ptr.h"
 
 namespace Comfy {
 
@@ -899,12 +898,13 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 
 				break;
 			case SO_CONFIG_TEST_FILE: {
-				Common::ScopedPtr<Common::SeekableReadStream> stream(pathFOpen(Common::Path(key), true));
+				Common::SeekableReadStream *stream = pathFOpen(Common::Path(key), true);
 				if (stream)
 					keyBitSet(value);
 				else
 					keyBitClear(value);
 
+				delete stream;
 				break;
 			}
 			case SO_CONFIG_SET_LANGUAGE_DATA_SUBDIRECTORY:
@@ -1276,8 +1276,9 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 				} else if (argument == 20) {
 					condition = _v3MediaRecording;
 				} else if (argument == 30) {
-					Common::ScopedPtr<Common::SeekableReadStream> stream(pathFOpen(Common::Path("comfy.htm"), true));
-					condition = (bool)stream;
+					Common::SeekableReadStream *stream = pathFOpen(Common::Path("comfy.htm"), true);
+					condition = stream != nullptr;
+					delete stream;
 				}
 				break;
 			default:

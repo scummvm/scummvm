@@ -23,7 +23,6 @@
 
 #include "common/config-manager.h"
 #include "common/endian.h"
-#include "common/ptr.h"
 
 namespace Comfy {
 
@@ -284,18 +283,22 @@ Common::SeekableReadStream *ComfyEngine::pathFOpen(const Common::Path &filename,
 }
 
 bool ComfyEngine::readAssetFile(const Common::Path &filename, Common::Array<byte> &data) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(pathFOpen(filename, true));
-	if (!stream || stream->size() < 0 || (uint64)stream->size() > UINT32_MAX)
+	Common::SeekableReadStream *stream = pathFOpen(filename, true);
+	if (!stream || stream->size() < 0 || (uint64)stream->size() > UINT32_MAX) {
+		delete stream;
 		return false;
+	}
 
 	uint32 size = stream->size();
 	data.resize(size);
 
 	if (size && stream->read(&data[0], size) != size) {
 		data.clear();
+		delete stream;
 		return false;
 	}
 
+	delete stream;
 	return true;
 }
 
