@@ -20,6 +20,7 @@
 
 #include "ripper/resources.h"
 
+#include "common/archive.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/file.h"
@@ -478,6 +479,20 @@ bool ResourceManager::loadInterfaceBitmapSequence(const Common::String &memberNa
 	}
 
 	debugC(2, kDebugResources, "Ripper: decoded interface bitmap sequence '%s' frames=%u",
+		memberName.c_str(), sequence.frames.size());
+	return true;
+}
+
+bool ResourceManager::loadBitmapSequence(const Common::String &memberName,
+		BitmapAssetSequence &sequence) const {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		SearchMan.createReadStreamForMember(Common::Path(memberName)));
+	if (!stream || !decodeBitmapSequence(*stream, sequence)) {
+		warning("Ripper: could not decode bitmap sequence '%s'", memberName.c_str());
+		return false;
+	}
+
+	debugC(2, kDebugResources, "Ripper: decoded bitmap sequence '%s' frames=%u",
 		memberName.c_str(), sequence.frames.size());
 	return true;
 }
