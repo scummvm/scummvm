@@ -533,7 +533,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		const Common::Array<uint32> *frameAudioOffsets, uint32 audioByteRate,
 		uint32 timelineStartMillis, uint displayScale, bool patchInterfacePalette,
 		uint frameLimit, int originY, bool presentFinalFrameOnEsc, bool patchWacMediaPalette,
-		bool repeatedLoopPass) {
+		bool serviceSceneUi, bool repeatedLoopPass) {
 	if (stoppedByUser)
 		*stoppedByUser = false;
 	Video::SmackerDecoder decoder;
@@ -552,9 +552,9 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	else
 		y = y * displayScale + originY;
 	debugC(repeatedLoopPass ? 3 : 1, kDebugVideo,
-		"Ripper: playing Smacker '%s' frames=%u source=%ux%u output=%ux%u at %d,%d controls=%d frameLimit=%u",
+		"Ripper: playing Smacker '%s' frames=%u source=%ux%u output=%ux%u at %d,%d controls=%d sceneUi=%d frameLimit=%u",
 		name.c_str(), decoder.getFrameCount(), decoder.getWidth(), decoder.getHeight(),
-		outputWidth, outputHeight, x, y, allowEscSpace, frameLimit);
+		outputWidth, outputHeight, x, y, allowEscSpace, serviceSceneUi, frameLimit);
 	debugC(repeatedLoopPass ? 3 : 2, kDebugVideo, "Ripper: Smacker '%s' interfacePalettePatch=%d",
 		name.c_str(), patchInterfacePalette);
 	if (patchWacMediaPalette)
@@ -595,10 +595,17 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				outputWidth, outputHeight, frame->w, frame->h, frame->format);
 			g_system->unlockScreen();
 		}
-		_engine->getScripts()->drawDialogueOverlay(true);
-		_engine->getScripts()->drawBriefingOverlay();
+		if (serviceSceneUi) {
+			_engine->getScripts()->drawDialogueOverlay(true);
+			_engine->getScripts()->drawBriefingOverlay();
+		}
 		g_system->updateScreen();
 	};
+	// ExecutePresentationEntry at 0x1652a deactivates the shared selection
+	// presentation before packetized AVI playback. Only RunMediaSequence's
+	// scene-frame callback path keeps cursor, toolbar, and dialogue controls live.
+	if (!serviceSceneUi)
+		_engine->getCursor()->setVisible(false);
 	decoder.start();
 	while (!_engine->shouldQuit() && !decoder.endOfVideo()) {
 		// ExecuteSceneFrameAndInteractions at 0x13277 passes
@@ -606,8 +613,9 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		// per-frame callback. RunFrontEndActionMenu blocks that callback while the
 		// pointer remains in the toolbar band, so no Smacker frame advances.
 		bool playbackUiFailed = false;
-		const bool toolbarOwnsInput = _engine->getScripts()->updateInteractiveCursor(
-			_input->peekMouseState().position, &playbackUiFailed);
+		const bool toolbarOwnsInput = serviceSceneUi &&
+			_engine->getScripts()->updateInteractiveCursor(
+				_input->peekMouseState().position, &playbackUiFailed);
 		if (playbackUiFailed) {
 			completed = false;
 			break;
@@ -701,7 +709,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	return completed || (allowEscSpace && !_engine->shouldQuit());
 }
 
-bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::String &name, bool allowEscSpace) {
+bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::String &name,
+		bool allowEscSpace, bool serviceSceneUi) {
 	IavfMovie movie;
 	if (!parseIavf(stream, name, movie)) {
 		warning("Ripper: invalid IAVF presentation '%s'", name.c_str());
@@ -742,7 +751,7 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 			allowEscSpace, movie.segments[i].x, movie.segments[i].y,
 			audioActive ? &audioHandle : nullptr, &stoppedByUser,
 			&movie.segments[i].frameAudioOffsets, audioByteRate, timelineStartMillis,
-			movie.displayScale, false)) {
+			movie.displayScale, false, 0, 0, false, false, serviceSceneUi)) {
 			result = false;
 			break;
 		}
@@ -933,8 +942,11 @@ bool MediaPlayer::playSoundEffect(const Common::String &path, Audio::SoundHandle
 	return true;
 }
 
-void MediaPlayer::stopSoundEffect(Audio::SoundHandle &handle) {
-	_mixer->stopHandle(handle);
+bool MediaPlayer::stopSoundEffect(Audio::SoundHandle &handle) {
+	const bool active = _mixer->isSoundHandleActive(handle);
+	if (active)
+		_mixer->stopHandle(handle);
+	return active;
 }
 
 bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
@@ -978,14 +990,14 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 	if (memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0) {
 		result = playSmacker(file, path, allowEscSpace, x, y, nullptr, nullptr, nullptr,
 			0, 0, 1, true, frameLimit, kScenePresentationTop, allowEscSpace, false,
-			repeatedLoopPass);
+			true, repeatedLoopPass);
 		if (!result && _stopSceneOnMouse && _input->peekMouseState().pressed != 0) {
 			result = true;
 			debugC(1, kDebugVideo,
 				"Ripper: interactive scene media stopped by mouse; returning to hotspot polling");
 		}
 	} else if (memcmp(magic, "IAVF2.00", 8) == 0 && !firstFrameOnly) {
-		result = playIavf(*file, path, allowEscSpace);
+		result = playIavf(*file, path, allowEscSpace, true);
 		delete file;
 	} else {
 		warning("Ripper: unsupported scene media mode for '%s'", path.c_str());

@@ -132,7 +132,10 @@ void BriefingManager::restore(bool armed, uint selector) {
 void BriefingManager::clear() {
 	if (!_armed)
 		return;
-	_engine->getMedia()->stopSoundEffect(_alertHandle);
+	const bool alertStopped = _engine->getMedia()->stopSoundEffect(_alertHandle);
+	debugC(2, kDebugAudio,
+		"Ripper: briefing trigger stopped alert='wacicon1.wav' selector=%u active=%d",
+		_selector, alertStopped);
 	restoreBacking();
 	debugC(1, kDebugScene,
 		"Ripper: cleared briefing trigger selector=%u control=0x4e1", _selector);
