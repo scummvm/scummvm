@@ -915,7 +915,12 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 		case kDispatchSceneAction: {
 			if (command.arguments.size() < 2)
 				return false;
-			if (command.arguments[0].value == 2) {
+			const uint action = command.arguments[0].value;
+			const uint argument = command.arguments[1].value;
+			debugC(2, kDebugScene,
+				"Ripper: dispatch scene action=%u argument=%u script='%s' offset=0x%x",
+				action, argument, script.getMemberName().c_str(), command.offset);
+			if (action == 2) {
 				if (!openWorldMap())
 					return false;
 				if (!_pendingSceneMember.empty()) {
@@ -924,13 +929,22 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				}
 				break;
 			}
-			if (command.arguments[0].value != 300) {
+			if (action == 32) {
+				// DispatchSceneEntryAction at 0x36892 deactivates the selection
+				// presentation and sends display command 0x14, whose table entry is
+				// ClearGenericVideoLogicalPage at 0x45ed8, before reactivating it.
+				g_system->fillScreen(0);
+				g_system->updateScreen();
+				debugC(2, kDebugScene,
+					"Ripper: cleared active scene display from scene action 32");
+				break;
+			}
+			if (action != 300) {
 				warning("Ripper: unsupported scene action %u in '%s' at 0x%x",
-					command.arguments[0].value,
-					script.getMemberName().c_str(), command.offset);
+					action, script.getMemberName().c_str(), command.offset);
 				return false;
 			}
-			if (!_briefing->arm(command.arguments[1].value))
+			if (!_briefing->arm(argument))
 				return false;
 			break;
 		}
