@@ -116,7 +116,7 @@ Common::Error RipperEngine::run() {
 	bool startGameplay = false;
 	const int launcherSaveSlot = ConfMan.getInt("save_slot");
 	if (launcherSaveSlot >= 0) {
-		debugC(1, kDebugSavegames,
+		debugC(1, kDebugSaveLoad,
 			"Ripper: launcher requested restore slot=%d", launcherSaveSlot);
 		const Common::Error loadError = loadGameState(launcherSaveSlot);
 		if (loadError.getCode() != Common::kNoError)
@@ -135,23 +135,23 @@ Common::Error RipperEngine::run() {
 			// RunGameStartupAndMainLoop at 0x100c2 restores its dedicated emergency
 			// save directly instead of entering the manual slot chooser.
 			if (!_saveFileMan->exists(getSaveStateName(getAutosaveSlot()))) {
-				debugC(1, kDebugSavegames,
+				debugC(1, kDebugSaveLoad,
 					"Ripper: Continue requested without emergency slot=%d",
 					getAutosaveSlot());
 				break;
 			}
 			if (loadGameState(getAutosaveSlot()).getCode() == Common::kNoError) {
-				debugC(1, kDebugSavegames,
+				debugC(1, kDebugSaveLoad,
 					"Ripper: startup Continue restored emergency slot=%d",
 					getAutosaveSlot());
 				startGameplay = true;
 			}
 			break;
 		case kMainMenuLoadGame:
-			debugC(1, kDebugSavegames,
+			debugC(1, kDebugSaveLoad,
 				"Ripper: startup Restore Game entering manual slot chooser");
 			if (loadGameDialog()) {
-				debugC(1, kDebugSavegames,
+				debugC(1, kDebugSaveLoad,
 					"Ripper: startup Restore Game loaded manual slot");
 				startGameplay = true;
 			}
@@ -185,7 +185,7 @@ Common::Error RipperEngine::run() {
 		_system->delayMillis(10);
 	}
 	if (_scripts->canSaveGame()) {
-		debugC(1, kDebugSavegames,
+		debugC(1, kDebugSaveLoad,
 			"Ripper: scene loop exit writing emergency Continue slot=%d",
 			getAutosaveSlot());
 		const Common::Error saveError = saveGameState(
