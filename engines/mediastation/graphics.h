@@ -243,7 +243,7 @@ private:
 	void blitRectsClip(
 		Graphics::ManagedSurface *dest,
 		const Common::Point &destLocation,
-		const Graphics::ManagedSurface &source,
+		const PixMapImage *source,
 		const Common::Array<Common::Rect> &dirtyRegion,
 		bool useTransBlit = false);
 	void rleBlitRectsClip(
