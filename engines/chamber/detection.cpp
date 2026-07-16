@@ -38,7 +38,7 @@ static const ADGameDescription gameDescriptions[] = {
 		           "PRES.BIN", "b8376a81d9ef6d9c5f783c64f718a782",   8005),
 		Common::UNK_LANG, // EN/FR/DE
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE | GF_SPLASH_PRES | GF_SPLASH2_DRAP,
+		ADGF_TESTING | GF_SPLASH_PRES | GF_SPLASH2_DRAP,
 		GUIO3(GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGA)
 	},
 
@@ -49,7 +49,7 @@ static const ADGameDescription gameDescriptions[] = {
 		           "PRESCGA.BIN", "346be1f34fa5278e78bec85f3d349dc3",   5105),
 		Common::EN_USA,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE | GF_SPLASH_PRESCGA,
+		ADGF_TESTING | GF_SPLASH_PRESCGA,
 		GUIO3(GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGA)
 	},
 
@@ -60,7 +60,7 @@ static const ADGameDescription gameDescriptions[] = {
 		           "PRESEGA.EGA", "c3fb9e55ec789cd6dc67259a48025c4c",  32000),
 		Common::EN_USA,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE | GF_SPLASH_PRESEGA,
+		ADGF_TESTING | GF_SPLASH_PRESEGA,
 		GUIO4(GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGA, GUIO_RENDEREGA)
 	},
 
@@ -72,7 +72,7 @@ static const ADGameDescription gameDescriptions[] = {
 		           "6.BIN",    "t:926c11afce55dc08e1bb15b1253fd677", 10702),
 		Common::UNK_LANG, // EU EN/FR/DE
 		Common::kPlatformAmiga,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_RENDERAMIGA)
 	},
 
@@ -84,7 +84,7 @@ static const ADGameDescription gameDescriptions[] = {
 		           "6.BIN",    "t:3eb1d3f844593949697540de3e74f74a", 16046),
 		Common::EN_USA,
 		Common::kPlatformAmiga,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_RENDERAMIGA)
 	},
 
