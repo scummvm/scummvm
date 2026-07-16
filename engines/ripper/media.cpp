@@ -626,6 +626,12 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			completed = false;
 			break;
 		}
+		if (serviceSceneUi && _engine->getScripts()->hasPendingSceneTransition()) {
+			debugC(1, kDebugScene,
+				"Ripper: interactive media '%s' returning queued scene transition",
+				name.c_str());
+			break;
+		}
 		if (toolbarOwnsInput != toolbarPaused) {
 			toolbarPaused = toolbarOwnsInput;
 			const bool effectivePause = paused || toolbarPaused;
@@ -762,6 +768,8 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 			break;
 		}
 		if (stoppedByUser)
+			break;
+		if (_engine->getScripts()->hasPendingSceneTransition())
 			break;
 		++completedSegments;
 	}
@@ -1009,7 +1017,8 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 		warning("Ripper: unsupported scene media mode for '%s'", path.c_str());
 		delete file;
 	}
-	} while (loop && !_input->peekMouseState().pressed && !_engine->shouldQuit() && result);
+	} while (loop && !_input->peekMouseState().pressed && !_engine->shouldQuit() && result &&
+		!_engine->getScripts()->hasPendingSceneTransition());
 	_input->drainKeys();
 	_stopSceneOnMouse = false;
 	return result;

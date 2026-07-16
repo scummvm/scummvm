@@ -1046,6 +1046,12 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 			if (!_engine->getMedia()->playScene(mediaPath, frame.x, frame.y, false,
 				loopUntilInput, allowEscSpace))
 				return false;
+			if (!_pendingSceneMember.empty()) {
+				debugC(1, kDebugScene,
+					"Ripper: scene presentation returned transition target='%s' entry='%s'",
+					_pendingSceneMember.c_str(), _pendingSceneEntryLabel.c_str());
+				return performPendingSceneTransition();
+			}
 			if (allowEscSpace)
 				_dialogue->rebuildPresentationBands("controlled-media-complete");
 			if (frame.interactionCount != 0)
@@ -1085,6 +1091,8 @@ bool ScriptManager::serviceScene() {
 			_activeBa0Frame, label.c_str(), mediaPath.c_str());
 		if (!_engine->getMedia()->playScene(mediaPath, frame.x, frame.y, false, true, false))
 			return false;
+		if (!_pendingSceneMember.empty())
+			return performPendingSceneTransition();
 	}
 	const MouseState mouse = _engine->getInput()->publishMouseState();
 	const BriefingServiceResult briefingResult = _briefing->service(mouse);
