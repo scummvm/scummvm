@@ -2015,7 +2015,7 @@ bool View1::msgAction(const ActionMessage &msg) {
 	case Macs2::kMacs2ActionMenu:
 		return msgKeypress(KeypressMessage(Common::KeyState(Common::KEYCODE_n, 'n')));
 	case Macs2::kMacs2ActionGameSpeed:
-		g_engine->_gameSpeedMode = (g_engine->_gameSpeedMode + 1) % 3;
+		g_engine->setGameSpeedMode(g_engine->_gameSpeedMode + 1);
 		debug("Game speed mode: %u", g_engine->_gameSpeedMode);
 		return true;
 	case Macs2::kMacs2ActionOpenGMM:

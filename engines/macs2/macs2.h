@@ -454,6 +454,7 @@ public:
 	// Game speed mode from original binary (g_wGameSpeedMode at 1020:0214).
 	// Cycled by Ctrl+T: 0=normal, 1=fast (no frame wait), 2=slow (wait for tick>=0x12).
 	uint16 _gameSpeedMode = 0;
+	void setGameSpeedMode(uint16 mode);
 
 	// Input record/playback system from original binary.
 	// Original usage: MCSEXEC filename /rRecFile or /pPlayFile

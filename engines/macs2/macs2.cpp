@@ -49,6 +49,8 @@
 
 namespace Macs2 {
 
+static constexpr const char *kGameSpeedModeConfigKey = "macs2_game_speed_mode";
+
 void resetCharacterWalkPath(Character *character) {
 	if (character == nullptr || character->_gameObject == nullptr)
 		return;
@@ -1997,8 +1999,14 @@ Common::String Macs2Engine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+void Macs2Engine::setGameSpeedMode(uint16 mode) {
+	_gameSpeedMode = mode % 3;
+	ConfMan.setInt(kGameSpeedModeConfigKey, _gameSpeedMode);
+}
+
 Common::Error Macs2Engine::run() {
 	GameObjects::instance().init();
+	setGameSpeedMode(ConfMan.getInt(kGameSpeedModeConfigKey));
 	readResourceFile();
 	readExecutable();
 

@@ -2074,13 +2074,13 @@ static void showDebugToolbarWindow() {
 		}
 		if (ImGui::BeginMenu("Speed")) {
 			if (ImGui::MenuItem("Normal", NULL, g_engine->_gameSpeedMode == 0)) {
-				g_engine->_gameSpeedMode = 0;
+				g_engine->setGameSpeedMode(0);
 			}
 			if (ImGui::MenuItem("Fast", NULL, g_engine->_gameSpeedMode == 1)) {
-				g_engine->_gameSpeedMode = 1;
+				g_engine->setGameSpeedMode(1);
 			}
 			if (ImGui::MenuItem("Slow", NULL, g_engine->_gameSpeedMode == 2)) {
-				g_engine->_gameSpeedMode = 2;
+				g_engine->setGameSpeedMode(2);
 			}
 			ImGui::EndMenu();
 		}

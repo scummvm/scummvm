@@ -113,6 +113,7 @@ GUI::OptionsContainerWidget *Macs2MetaEngine::buildEngineOptionsWidget(GUI::GuiO
 void Macs2MetaEngine::registerDefaultSettings(const Common::String &target) const {
 	ConfMan.registerDefault("original_menus", false);
 	ConfMan.registerDefault("enhancements", kEnhGameBreakingBugFixes | kEnhGrp1);
+	ConfMan.registerDefault("macs2_game_speed_mode", 0);
 #ifdef USE_TTS
 	ConfMan.registerDefault("tts_enabled", false);
 #endif
