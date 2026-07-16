@@ -203,7 +203,7 @@ Common::Error KyraRpgEngine::init() {
 	for (int i = 0; i < 128; i++)
 		_vcnColTable[i] = i & 0x0F;
 
-	setVcnFormat(1);
+	setVcnFormat(1, Common::kRenderDefault);
 
 	_doorShapes = new uint8*[6]();
 

@@ -166,7 +166,7 @@ private:
 	void updateDirtyRects() override;
 	void ditherRect(const uint8 *src, uint8 *dst, int dstPitch, int srcW, int srcH, int colorKey = -1);
 
-	void drawShapeSetPixel(uint8 *dst, uint8 col);
+	template<typename pixelType	, bool shapeFading>	void drawShapeSetPixel(uint8 *dst, uint8 col);
 	void scaleShapeProcessLine2Bit(uint8 *&shpDst, const uint8 *&shpSrc, uint32 transOffsetDst, uint32 transOffsetSrc);
 	void scaleShapeProcessLine4Bit(uint8 *&dst, const uint8 *&src);
 	bool posWithinRect(int posX, int posY, int x1, int y1, int x2, int y2);
@@ -175,6 +175,9 @@ private:
 
 	void generateEGADitheringTable(const Palette &pal);
 	void generateCGADitheringTables(const uint8 *mappingData);
+
+	typedef void (Screen_EoB::*DrawShapePlotFunc)(uint8*, uint8);
+	DrawShapePlotFunc _drawShapeSetPixel;
 
 	int _dsDiv, _dsRem, _dsScaleTrans;
 	uint8 *_cgaScaleTable;

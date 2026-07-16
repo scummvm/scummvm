@@ -891,7 +891,6 @@ protected:
 
 	// colors/palette specific
 	bool _use16ColorMode;
-	bool _useShapeShading;
 	bool _4bitPixelPacking;
 	bool _useHiResEGADithering;
 	Graphics::PixelFormat _outputPixelFormat;

@@ -80,7 +80,6 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 	_textRenderBufferSize = 0;
 
 	_outputPixelFormat = Graphics::PixelFormat::createFormatCLUT8();
-	_useShapeShading = true;
 	_screenPageSize = SCREEN_PAGE_SIZE;
 	_hiColorNativePalettes = nullptr;
 	_hiColorConversionPalette = nullptr;

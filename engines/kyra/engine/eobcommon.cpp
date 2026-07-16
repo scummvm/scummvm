@@ -524,7 +524,7 @@ Common::Error EoBCoreEngine::init() {
 
 	_wllVcnOffset = (_flags.platform == Common::kPlatformFMTowns) ? 0 : 16;
 	int bpp = _screen->bytesPerPixel();
-	setVcnFormat(bpp);
+	setVcnFormat(bpp, _configRenderMode);
 
 	_greenFadingTable = new uint8[256 * bpp]();
 	_blueFadingTable = new uint8[256 * bpp]();

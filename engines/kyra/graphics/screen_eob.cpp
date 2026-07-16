@@ -107,6 +107,7 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 	_defaultRenderBuffer = 0;
 	_defaultRenderBufferSize = 0;
 	_specialColorReplace = false;
+	_drawShapeSetPixel = nullptr;
 	memset(_segaCurPalette, 0, sizeof(_segaCurPalette));
 }
 
@@ -126,6 +127,11 @@ Screen_EoB::~Screen_EoB() {
 	delete _segaRenderer;
 	delete _segaAnimator;
 }
+
+template void Screen_EoB::drawShapeSetPixel<uint8, false>(uint8 *dst, uint8 col);
+template void Screen_EoB::drawShapeSetPixel<uint16, false>(uint8 *dst, uint8 col);
+template void Screen_EoB::drawShapeSetPixel<uint32, false>(uint8 *dst, uint8 col);
+template void Screen_EoB::drawShapeSetPixel<uint8, true>(uint8 *dst, uint8 col);
 
 bool Screen_EoB::init() {
 	if (Screen::init()) {
@@ -172,7 +178,18 @@ bool Screen_EoB::init() {
 			sega_setTextBuffer(0, 0);
 		}
 
-		_useShapeShading = (_internalBytesPerPixel == 1 && !_isAmiga && !_isSegaCD && !_use16ColorMode && _renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA) || _useHiResEGADithering;
+		static const DrawShapePlotFunc drawShapePlotFuncs[4] = {
+			&Screen_EoB::drawShapeSetPixel<uint8, false>,
+			&Screen_EoB::drawShapeSetPixel<uint16, false>,
+			&Screen_EoB::drawShapeSetPixel<uint32, false>,
+			&Screen_EoB::drawShapeSetPixel<uint8, true>
+		};
+
+		int index = (_internalBytesPerPixel >> 1);
+		if ((_internalBytesPerPixel == 1 && !_isAmiga && !_isSegaCD && !_use16ColorMode && _renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA) || _useHiResEGADithering)
+			index += 3;
+		_drawShapeSetPixel = drawShapePlotFuncs[index];
+		assert(_drawShapeSetPixel);
 
 		static const char *cpsExt[] = { "CPS", "EGA", "SHP", "BIN" };
 		int ci = 0;
@@ -846,7 +863,7 @@ void Screen_EoB::drawT1Shape(uint8 pageNum, const byte *t1data, int x, int y, in
 
 		for (int i = 0; i < rW; i++, src2++, dst += _internalBytesPerPixel)
 			if (*src2)
-				drawShapeSetPixel(dst, *src2);
+				(this->*_drawShapeSetPixel)(dst, *src2);
 
 		dstL += SCREEN_W * _internalBytesPerPixel;
 		src += width;
@@ -1006,7 +1023,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 				src += pixelStep;
 
 				if (m) {
-					drawShapeSetPixel(dst, c);
+					(this->*_drawShapeSetPixel)(dst, c);
 					dst += _internalBytesPerPixel;
 					xpos--;
 				} else if (pixelsPerByte) {
@@ -1161,7 +1178,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 				}
 				uint8 col = (pixelsPerByte == 2) ? pal[(in >> shift) & pixelPackingMask] : (*dst & ((trans >> shift) & (pixelPackingMask))) | pal[(in >> shift) & pixelPackingMask];
 				if (col || pixelsPerByte == 4)
-					drawShapeSetPixel(dst, col);
+					(this->*_drawShapeSetPixel)(dst, col);
 				dst += _internalBytesPerPixel;
 				shift = ((shift - (pixelStep * pixelPacking)) & 7);
 			}
@@ -1199,6 +1216,9 @@ const uint8 *Screen_EoB::scaleShapeStep(const uint8 *shp) {
 	shp += 3;
 	d += 3;
 
+	_dsDiv = w2 / 3;
+	_dsRem = w2 % 3;
+
 	if (pixelsPerByte == 2) {
 		int i = 0;
 		while (i < 16) {
@@ -1217,25 +1237,26 @@ const uint8 *Screen_EoB::scaleShapeStep(const uint8 *shp) {
 		_dsScaleTrans = (i << 4) | (i & 0x0F);
 		for (int ii = 0; ii < 16; ii++)
 			*d++ = *shp++;
-	}
 
-	_dsDiv = w2 / 3;
-	_dsRem = w2 % 3;
-
-	while (--h) {
-		if (pixelsPerByte == 2)
+		while (--h) {
 			scaleShapeProcessLine4Bit(d, shp);
-		else
-			scaleShapeProcessLine2Bit(d, shp, transOffsetDst, transOffsetSrc);
-		if (!--h)
-			break;
-		if (pixelsPerByte == 2)
+			if (!--h)
+				break;
 			scaleShapeProcessLine4Bit(d, shp);
-		else
+			if (!--h)
+				break;
+			shp += w2;
+		}
+	} else {
+		while (--h) {
 			scaleShapeProcessLine2Bit(d, shp, transOffsetDst, transOffsetSrc);
-		if (!--h)
-			break;
-		shp += w2;
+			if (!--h)
+				break;
+			scaleShapeProcessLine2Bit(d, shp, transOffsetDst, transOffsetSrc);
+			if (!--h)
+				break;
+			shp += w2;
+		}
 	}
 
 	return (const uint8 *)dst;
@@ -1860,32 +1881,29 @@ void Screen_EoB::ditherRect(const uint8 *src, uint8 *dst, int dstPitch, int srcW
 	}
 }
 
-void Screen_EoB::drawShapeSetPixel(uint8 *dst, uint8 col) {
-	if (_internalBytesPerPixel == 4) {
-		*reinterpret_cast<uint32*>(dst) = reinterpret_cast<const uint32*>(_hiColorNativePalettes)[(_dsShapeFadingLevel << 8) + col];
-		return;
-	} else if (_internalBytesPerPixel == 2) {
-		*reinterpret_cast<uint16*>(dst) = reinterpret_cast<const uint16*>(_hiColorNativePalettes)[(_dsShapeFadingLevel << 8) + col];
-		return;
-	} else if (_useShapeShading) {
-		if (_dsBackgroundFading) {
+template<typename pixelType, bool shapeFading> void Screen_EoB::drawShapeSetPixel(uint8 *dst, uint8 col) {
+	if (sizeof(pixelType) > 1) {
+		*reinterpret_cast<pixelType*>(dst) = reinterpret_cast<const pixelType*>(_hiColorNativePalettes)[(_dsShapeFadingLevel << 8) + col];
+	} else {
+		if (shapeFading) {
+			if (_dsBackgroundFading) {
+				if (_dsShapeFadingLevel) {
+					col = *dst;
+				} else {
+					_dsBackgroundFadingXOffs &= 7;
+					col = *(dst + _dsBackgroundFadingXOffs++);
+				}
+			}
+
 			if (_dsShapeFadingLevel) {
-				col = *dst;
-			} else {
-				_dsBackgroundFadingXOffs &= 7;
-				col = *(dst + _dsBackgroundFadingXOffs++);
+				assert(_dsShapeFadingTable);
+				uint8 cnt = _dsShapeFadingLevel;
+				while (cnt--)
+					col = _dsShapeFadingTable[col];
 			}
 		}
-
-		if (_dsShapeFadingLevel) {
-			assert(_dsShapeFadingTable);
-			uint8 cnt = _dsShapeFadingLevel;
-			while (cnt--)
-				col = _dsShapeFadingTable[col];
-		}
+		*dst = col;
 	}
-
-	*dst = col;
 }
 
 void Screen_EoB::scaleShapeProcessLine2Bit(uint8 *&shpDst, const uint8 *&shpSrc, uint32 transOffsetDst, uint32 transOffsetSrc) {
