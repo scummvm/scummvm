@@ -448,6 +448,9 @@ void WacManager::runDatabase() {
 					dispatchDatabaseEntry(_databaseEntries[entryIndex]);
 			}
 		}
+		// RunWacSceneInputLoopUntilExitAction at 0x221e3 services the software
+		// selection presentation every tick while the inventory chooser is active.
+		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
 	debugC(1, kDebugWac, "Ripper: left WAC database chooser");
