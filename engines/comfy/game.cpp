@@ -176,12 +176,12 @@ bool ComfyEngine::iniReadGameConfig() {
 		_inputDeviceMode = 0;
 
 	_inputDevicePreference = _inputDeviceMode;
-	_wcomfy99Sensitivity = ConfMan.hasKey("SENSITIVITY") ? ConfMan.getInt("SENSITIVITY") : 0;
+	_v3Sensitivity = ConfMan.hasKey("SENSITIVITY") ? ConfMan.getInt("SENSITIVITY") : 0;
 
 	return !_gameDirectory.empty();
 }
 
-bool ComfyEngine::iniGetGameDataPath(uint16 sceneId) {
+bool ComfyEngine::iniSelectGameDataPath(uint16 sceneId) {
 	if (sceneId == 0) {
 		if (_introDirectory.empty())
 			return false;
@@ -190,7 +190,7 @@ bool ComfyEngine::iniGetGameDataPath(uint16 sceneId) {
 		return true;
 	}
 
-	if (sceneId == 0x63) {
+	if (sceneId == 99) {
 		pathSetGameDataDir(_gameDirectory.join("SETLANG"));
 		return true;
 	}
@@ -199,14 +199,57 @@ bool ComfyEngine::iniGetGameDataPath(uint16 sceneId) {
 	if (languageDirectory.empty())
 		return false;
 
-	pathSetGameDataDir(_gameDirectory.join(languageDirectory));
+	Common::Path gameDataPath = _gameDirectory.join(languageDirectory);
+	if (_engineVersion == 3 && !_v3LanguageDataSubdirectory.empty() && _v3LanguageDataSubdirectory != ".")
+		gameDataPath = gameDataPath.join(Common::Path(_v3LanguageDataSubdirectory, '/'));
+
+	pathSetGameDataDir(gameDataPath);
 	return true;
 }
 
-void ComfyEngine::iniWriteLanguage(uint16 language) {
+void ComfyEngine::iniWriteLanguageSelection(uint16 language) {
 	_language = language;
 	ConfMan.setInt("comfy_language", language);
 	ConfMan.flushToDisk();
+}
+
+uint16 ComfyEngine::languageSetDataSubdirectory(Common::String text) {
+	uint start = 0;
+	uint end = text.size();
+	while (start < end && Common::isSpace((byte)text[start]))
+		start++;
+
+	while (end > start && Common::isSpace((byte)text[end - 1]))
+		end--;
+
+	_v3LanguageDataSubdirectory = text.substr(start, end - start);
+	_languageSessionRestartRequested = true;
+	if (_v3LanguageDataSubdirectory.empty())
+		return 0x20;
+
+	byte character = _v3LanguageDataSubdirectory.lastChar();
+	if (character == ' ')
+		return 0x81;
+
+	if (Common::isSpace(character))
+		return 0x21;
+
+	if (Common::isDigit(character))
+		return 0x12;
+
+	if (Common::isUpper(character))
+		return character <= 'F' ? 0x14 : 0x04;
+
+	if (Common::isLower(character))
+		return character <= 'f' ? 0x18 : 0x08;
+
+	if (character < 0x20 || character == 0x7F)
+		return 0x20;
+
+	if (character < 0x80)
+		return 0x40;
+
+	return 0;
 }
 
 Common::Path ComfyEngine::getLanguageDirectory(uint16 language) {
@@ -257,7 +300,7 @@ uint32 ComfyEngine::assetsAlignEven32(uint32 value) {
 	return value + (value & 1);
 }
 
-void ComfyEngine::midiFileGetTileParams(uint16 *entryCount, uint16 *entrySize) {
+void ComfyEngine::midiFileGetEntryTableParams(uint16 *entryCount, uint16 *entrySize) {
 	if (entryCount)
 		*entryCount = _midiEntryCount;
 
@@ -273,11 +316,11 @@ void ComfyEngine::midiFileReadEntries(byte *destination) {
 	_midiFileStream->read(destination, size);
 }
 
-byte *ComfyEngine::soundReadTiledData() {
+byte *ComfyEngine::soundReadHeaderTable() {
 	return _vocFile ? objFileReadTiled(4, (uint32)_soundEntryCount * 8, _vocFile) : nullptr;
 }
 
-void ComfyEngine::soundGetTileParams(uint16 *entryCount, uint16 *entrySize) {
+void ComfyEngine::soundGetHeaderTableParams(uint16 *entryCount, uint16 *entrySize) {
 	if (entryCount)
 		*entryCount = _soundEntryCount;
 
@@ -315,19 +358,21 @@ void ComfyEngine::selPoolFree() {
 }
 
 bool ComfyEngine::sceneLoadAndInit(uint16 sceneCount, uint16 actorCount, uint16 keyBitCount,
-		uint16 handleCount, uint32 &numSprites) {
-	return sceneFrameInitTables(sceneCount, actorCount, keyBitCount, handleCount, numSprites);
+		uint16 scriptVariableCount, uint32 &numSprites) {
+	return sceneFrameInitTables(sceneCount, actorCount, keyBitCount, scriptVariableCount, numSprites);
 }
 
 bool ComfyEngine::sceneFrameInitTables(uint16 sceneCount, uint16 actorCount, uint16 keyBitCount,
-		uint16 handleCount, uint32 &numSprites) {
+		uint16 scriptVariableCount, uint32 &numSprites) {
+
 	_stringTable.resize(_stringCount);
 	memset(&_stringTable[0], 0, _stringTable.size() * sizeof(uint16));
 	_sceneHandles.resize(sceneCount + 1);
 	memset(&_sceneHandles[0], 0, _sceneHandles.size() * sizeof(uint16));
-	_midiHandles.resize(handleCount + 1);
-	memset(&_midiHandles[0], 0, _midiHandles.size() * sizeof(uint16));
+	_scriptVariables.resize(scriptVariableCount + 1);
+	memset(&_scriptVariables[0], 0, _scriptVariables.size() * sizeof(uint16));
 	_actors.resize(actorCount + 1);
+
 	for (uint i = 0; i < _actors.size(); i++)
 		_actors[i] = Actor();
 
@@ -335,11 +380,11 @@ bool ComfyEngine::sceneFrameInitTables(uint16 sceneCount, uint16 actorCount, uin
 		return false;
 
 	memset(_actorPcTable, 0, sizeof(_actorPcTable));
-	for (uint i = 0; i < 0xC7 && i < ARRAYSIZE(_actorPcTable); i++)
+	for (uint i = 0; i < 199 && i < ARRAYSIZE(_actorPcTable); i++)
 		_actorPcTable[i] = (uint32)(i + 1) << 24;
 
-	if (0xC7 < ARRAYSIZE(_actorPcTable))
-		_actorPcTable[0xC7] = 0;
+	if (ARRAYSIZE(_actorPcTable) > 199)
+		_actorPcTable[199] = 0;
 
 	uint32 stringBytes = stringTableGetSize();
 	uint32 handleBytes = _sceneHandles.size() * sizeof(uint16);
@@ -365,34 +410,38 @@ bool ComfyEngine::sceneFrameInitTables(uint16 sceneCount, uint16 actorCount, uin
 		_sceneStringTableOffset = _sceneActorPcOffset + COMFY_SCENE_ACTOR_PC_BYTES;
 	} else {
 		_sceneEntryListOffset = COMFY_SCENE_MIDI_INSTANCE_BYTES;
-		_sceneActorPcOffset = COMFY_SCENE_MIDI_INSTANCE_BYTES + midiGetVersion();
+		_sceneActorPcOffset = COMFY_SCENE_MIDI_INSTANCE_BYTES + midiGetInstanceStateSize();
 		_sceneStringTableOffset = _sceneActorPcOffset + COMFY_SCENE_ACTOR_PC_BYTES;
 	}
 
 	_sceneHandlesOffset = _sceneStringTableOffset + stringBytes;
 	_sceneActorsOffset = _sceneHandlesOffset + handleBytes;
 	_sceneKeyBitsOffset = _sceneActorsOffset + actorBytes;
-	if (_engineVersion == 3)
+
+	if (_engineVersion == 3) {
 		_sceneAnimStateOffset = COMFY_SCENE_MIDI_INSTANCE_BYTES + COMFY_SCENE_VOC_STATE_BYTES_V3;
-	else if (!_isPanther)
+	} else if (!_isPanther) {
 		_sceneAnimStateOffset = _sceneKeyBitsOffset + keyBytes;
+	}
+
 	uint32 sceneBytes = assetsAlignEven32(_sceneKeyBitsOffset + keyBytes);
 	_sceneMemoryBlock.resize(sceneBytes);
 	memset(&_sceneMemoryBlock[0], 0, sceneBytes);
 	numSprites = sceneBytes;
 	_numSprites = numSprites;
 	_envNumSprites = numSprites;
-	_activeSceneCount = handleCount;
-
-	if (_isPanther || _engineVersion == 3)
-		midiInitInstanceAt();
-	else
-		midiInitInstance();
+	_activeSceneCount = scriptVariableCount;
 
 	if (_isPanther || _engineVersion == 3) {
-		if (!soundInit())
-			return false;
+		midiInitInstanceAt();
+	} else {
+		midiInitInstance();
+	}
 
+	if (!soundInit())
+		return false;
+
+	if (_isPanther || _engineVersion == 3) {
 		if (_usesAnimFile && !animFileOpen())
 			return false;
 	}
@@ -408,6 +457,7 @@ bool ComfyEngine::sceneFrameInitTables(uint16 sceneCount, uint16 actorCount, uin
 	_actors[_actors.size() - 1].nextLink = 0;
 	_actors[_actors.size() - 1].sceneHandle = 0;
 	actorSetFrame(0);
+
 	return true;
 }
 
@@ -418,8 +468,11 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 	if (!memCompactAndCheck(0x200000))
 		return false;
 
+	spriteInvalidateHostCache(_frameSpriteResource);
+	_frameSpriteResource.id = 0;
+
 	uint32 comfyCacheBytes = _engineVersion == 3 ? 0x32000 : 0xA000;
-	_comfyObjFile = objFileLoadSoundData(Common::Path("COMFY.OBJ"), 0x0800, comfyCacheBytes);
+	_comfyObjFile = objFileOpen(Common::Path("COMFY.OBJ"), 0x0800, comfyCacheBytes);
 	if (!_comfyObjFile)
 		return false;
 
@@ -434,31 +487,30 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 	_picDataSize = READ_LE_UINT32(value);
 	objFileReadField(value, 0x12, 2, _comfyObjFile);
 	_resourceHandleCount = READ_LE_UINT16(value);
+
 	_usesAnimFile = (_resourceHandleCount & 0x8000) != 0;
 	_resourceHandleCount &= 0x7FFF;
 	_comfyObjOpen = true;
 	_numFrames = (uint16)(_picDataSize / COMFY_TILE_SIZE + (_picDataSize % COMFY_TILE_SIZE ? 2 : 1));
+
 	if (_engineVersion == 3) {
 		uint16 preloadCount = MIN<uint16>(_numFrames, 0x64);
 		for (uint16 i = 0; i < preloadCount; i++)
 			objFileReadTiled((uint32)i << 11, 8, _comfyObjFile);
 	}
 
-	_picFile = objFileLoadSoundData(Common::Path("PICFILE.DAT"), 0x0800, 0x5000);
+	_picFile = objFileOpen(Common::Path("PICFILE.DAT"), 0x0800, 0x5000);
 	if (!_picFile)
 		return false;
 
 	byte objectCount[2];
 	objFileReadField(objectCount, 0, sizeof(objectCount), _picFile);
 	_numObjects = READ_LE_UINT16(objectCount);
-	soundBufFree(_picFile);
-
-	if (!_isPanther && _engineVersion != 3 && !soundInit())
-		return false;
+	objFileClose(_picFile);
 
 	_picFileMapped = true;
 	uint32 numSprites = 0;
-	if (!sceneLoadAndInit(_sceneCount, 0x78, _keyBitCount, _resourceHandleCount, numSprites))
+	if (!sceneLoadAndInit(_sceneCount, 120, _keyBitCount, _resourceHandleCount, numSprites))
 		return false;
 
 	_soundLoaded = true;
@@ -475,11 +527,11 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 
 	uint16 midiEntryCount = 0;
 	uint16 midiEntrySize = 0;
-	midiFileGetTileParams(&midiEntryCount, &midiEntrySize);
+	midiFileGetEntryTableParams(&midiEntryCount, &midiEntrySize);
 	uint32 midiHeaderBytes = assetsAlignEven32((uint32)midiEntryCount * midiEntrySize);
 	uint16 soundEntryCount = 0;
 	uint16 soundEntrySize = 0;
-	soundGetTileParams(&soundEntryCount, &soundEntrySize);
+	soundGetHeaderTableParams(&soundEntryCount, &soundEntrySize);
 	uint32 soundHeaderBytes = assetsAlignEven32((uint32)soundEntryCount * soundEntrySize);
 	uint32 objectTableBytes = assetsAlignEven32((uint32)_numObjects * 0x11);
 	uint32 headerTotalBytes = midiHeaderBytes + soundHeaderBytes + objectTableBytes;
@@ -494,6 +546,7 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 
 	_spriteHeaders.resize(_numObjects);
 	_spriteResources.resize(_numObjects);
+
 	for (uint i = 0; i < _numObjects; i++) {
 		_spriteHeaders[i] = SpriteObjectHeader();
 		_spriteResources[i].header = SpriteObjectHeader();
@@ -504,6 +557,7 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 
 	_objectCacheEntries.resize(_numObjects);
 	_frameCacheEntries.resize(_numFrames + 1);
+
 	if (!_objectCacheEntries.empty())
 		memset(&_objectCacheEntries[0], 0xFF, _objectCacheEntries.size() * sizeof(SpriteCacheEntry));
 
@@ -515,8 +569,7 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 	for (uint i = 0; i < _spriteResources.size(); i++)
 		spriteInvalidateHostCache(_spriteResources[i]);
 
-	// Panther hardcodes the original background-buffer flag to one; WCOMFY v3 hardcodes it to zero.
-	if (_isPanther) {
+	if (_backgroundBufferEnabled) {
 		_backgroundFramebuf.resize(framebufferBytes());
 		memset(&_backgroundFramebuf[0], 0, _backgroundFramebuf.size());
 		_backgroundFrame = 0;
@@ -543,17 +596,17 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 		WRITE_LE_UINT16(&_scenePoolData[0], 0x8000);
 
 	uint32 freeKB = memGetFreeKBThunk();
-	if (!_isPanther && _engineVersion != 3 && freeKB < 0x12C)
-		freeKB = memGetFreeKBThunk() * 0x5A / 0x64;
+	if (!_isPanther && _engineVersion != 3 && freeKB < 300)
+		freeKB = memGetFreeKBThunk() * 90 / 100;
 
-	if (freeKB <= 0x12C)
+	if (freeKB <= 300)
 		return false;
 
 	uint32 picCacheBytes = freeKB << 10;
 	if (_isPanther || _engineVersion == 3)
 		picCacheBytes = (freeKB - 1) << 10;
 
-	_picFile = objFileLoadSoundData(Common::Path("PICFILE.DAT"), 0x8000, picCacheBytes);
+	_picFile = objFileOpen(Common::Path("PICFILE.DAT"), 0x8000, picCacheBytes);
 	if (!_picFile)
 		return false;
 
@@ -563,6 +616,7 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 	uint32 remaining = objectTableBytes;
 	_headerXmsObjectTableBase = xmsOffset;
 	_headerXmsObjectTableBytes = objectTableBytes;
+
 	while (remaining) {
 		uint32 chunk = MIN<uint32>(remaining, 0x8000);
 		byte *source = objFileReadTiled(fileOffset, chunk, _picFile);
@@ -605,15 +659,15 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 	_headerXmsSoundHeadersBase = xmsOffset;
 	_headerXmsSoundHeadersBytes = soundHeaderBytes;
 	if (soundHeaderBytes) {
-		byte *soundTiledData = soundReadTiledData();
-		if (!soundTiledData)
+		byte *soundHeaderTable = soundReadHeaderTable();
+		if (!soundHeaderTable)
 			return false;
 
 		XmsMove move;
 		move.length = soundHeaderBytes;
 		move.destinationHandle = _xmsHeaderHandle;
 		move.destinationOffset = xmsOffset;
-		move.sourceMemory = soundTiledData;
+		move.sourceMemory = soundHeaderTable;
 		if (xmsTransfer(move) < 0)
 			return false;
 
@@ -623,7 +677,6 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 	_activeSceneCount = _resourceHandleCount;
 	_sceneEntryCount = 0;
 	_sceneEntryFrameSize = 0;
-	_usesWcomfy99ScriptOps = _engineVersion == 3;
 	_scriptFault = false;
 
 	return true;
@@ -650,10 +703,10 @@ void ComfyEngine::assetsUnload(byte freeAudio) {
 		soundShutdown();
 
 	if (_picFileDatOpen)
-		soundBufFree(_picFile);
+		objFileClose(_picFile);
 
 	if (_comfyObjOpen)
-		soundBufFree(_comfyObjFile);
+		objFileClose(_comfyObjFile);
 
 	if (_soundLoaded)
 		sceneShutdown();
@@ -666,20 +719,19 @@ void ComfyEngine::assetsUnload(byte freeAudio) {
 	_spriteResources.clear();
 	_stringTable.clear();
 	_sceneHandles.clear();
-	_midiHandles.clear();
+	_scriptVariables.clear();
 	_actors.clear();
 	_sceneMemoryBlock.clear();
 	keyBitFree();
-	soundBufFree(_vocFile);
-	soundBufFree(_picFile);
-	soundBufFree(_comfyObjFile);
+	objFileClose(_vocFile);
+	objFileClose(_picFile);
+	objFileClose(_comfyObjFile);
 	delete _midiFileStream;
 	_midiFileStream = nullptr;
 	xmsReset();
 	_spriteConversionLoads = ResourceLoadList();
 	memset(_sceneEntryOffsets, 0, sizeof(_sceneEntryOffsets));
 	memset(_actorPcTable, 0, sizeof(_actorPcTable));
-	_usesWcomfy99ScriptOps = false;
 	_currentActor = 0;
 	_scriptFault = false;
 	_stringCount = 0;
@@ -723,8 +775,6 @@ void ComfyEngine::assetsUnload(byte freeAudio) {
 	_headerXmsObjectTableBytes = 0;
 	_headerXmsMidiEntriesBytes = 0;
 	_headerXmsSoundHeadersBytes = 0;
-	// The original consumes one UI character here; ScummVM has no teardown prompt to acknowledge.
-	(void)freeAudio;
 }
 
 } // End of namespace Comfy

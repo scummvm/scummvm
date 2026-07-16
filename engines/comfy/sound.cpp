@@ -295,13 +295,13 @@ private:
 	}
 
 	static uint32 calcSampleRate(byte sample) {
-		uint32 denominator = 0x100 - sample;
-		uint32 rate = denominator ? 0x0F4240 / denominator : 0x2B11;
-		if (rate > 0x2710 && rate < 0x2EE0)
-			return 0x2B11;
+		uint32 denominator = 256 - sample;
+		uint32 rate = denominator ? 1000000 / denominator : 11025;
+		if (rate > 0x2710 && rate < 12000)
+			return 11025;
 
-		if (rate > 0x4E20 && rate < 0x5DC0)
-			return 0x5622;
+		if (rate > 20000 && rate < 24000)
+			return 22050;
 
 		return rate;
 	}
@@ -309,9 +309,9 @@ private:
 	void setSample(byte sample) {
 		_sample = sample;
 		_sampleRate = calcSampleRate(sample);
-		if (_sampleRate == 0x2B11)
+		if (_sampleRate == 11025)
 			_sample = 0xA5;
-		else if (_sampleRate == 0x5622)
+		else if (_sampleRate == 22050)
 			_sample = 0xD3;
 	}
 
@@ -613,7 +613,7 @@ private:
 	uint32 _eventRemaining = 0;
 	uint32 _fillRemaining = 0;
 	uint32 _loopPosition = 0;
-	uint32 _sampleRate = 0x2B11;
+	uint32 _sampleRate = 11025;
 	int16 _loopCount = 0;
 	byte _sample = 0xA5;
 	byte _bitOffset = 0;
@@ -629,17 +629,17 @@ private:
 	BufferState _bufferStates[2];
 };
 
-void ComfyEngine::wcomfy99SetWaveBalancePercent(uint16 value) {
+void ComfyEngine::setWaveBalancePercent(uint16 value) {
 	if ((int16)value < 0)
 		value = 0;
 	else if (value > 100)
 		value = 100;
 
-	_wcomfy99VocState0 = (byte)value;
-	_wcomfy99WaveVolumePercent = value;
+	_v3SceneWaveBalancePercent = (byte)value;
+	_v3WaveBalancePercent = value;
 }
 
-void ComfyEngine::wcomfy99SetWaveLeftPercent(uint16 value) {
+void ComfyEngine::setWaveLeftPercent(uint16 value) {
 	if (value == 0x00FF)
 		return;
 
@@ -648,11 +648,11 @@ void ComfyEngine::wcomfy99SetWaveLeftPercent(uint16 value) {
 	else if (value > 100)
 		value = 100;
 
-	_wcomfy99VocState2 = (byte)value;
-	_wcomfy99WaveLeftPercent = value;
+	_v3SceneWaveLeftPercent = (byte)value;
+	_v3WaveLeftPercent = value;
 }
 
-void ComfyEngine::wcomfy99SetWaveRightPercent(uint16 value) {
+void ComfyEngine::setWaveRightPercent(uint16 value) {
 	if (value == 0x00FF)
 		return;
 
@@ -661,11 +661,11 @@ void ComfyEngine::wcomfy99SetWaveRightPercent(uint16 value) {
 	else if (value > 100)
 		value = 100;
 
-	_wcomfy99VocState3 = (byte)value;
-	_wcomfy99WaveRightPercent = value;
+	_v3SceneWaveRightPercent = (byte)value;
+	_v3WaveRightPercent = value;
 }
 
-void ComfyEngine::wcomfy99SetMixerVolumePercent(uint16 value) {
+void ComfyEngine::setMixerVolumePercent(uint16 value) {
 	if (value == 0x00FF)
 		return;
 
@@ -674,53 +674,53 @@ void ComfyEngine::wcomfy99SetMixerVolumePercent(uint16 value) {
 	else if (value > 100)
 		value = 100;
 
-	_wcomfy99VocState6 = (byte)value;
-	_wcomfy99MixerVolumePercent = value;
+	_v3SceneMixerVolumePercent = (byte)value;
+	_v3MixerVolumePercent = value;
 }
 
-void ComfyEngine::wcomfy99SetHostMediaRangePercent(uint16 value) {
+void ComfyEngine::setMediaRangePercent(uint16 value) {
 	if ((int16)value < 0)
 		value = 0;
 	else if (value > 100)
 		value = 100;
 
-	_wcomfy99MixerAltPercent = value;
+	_v3MixerAltPercent = value;
 }
 
-void ComfyEngine::wcomfy99SetHostMediaMode(byte mode) {
+void ComfyEngine::setMediaMode(byte mode) {
 	if (mode == 1 || mode == 3) {
-		_wcomfy99VocState1 = 1;
-		if (!_wcomfy99HostMediaValueAvailable) {
-			_wcomfy99HostMediaValue = 0;
-			_wcomfy99HostMediaValueAvailable = true;
+		_v3SceneHostMediaModeEnabled = 1;
+		if (!_v3HostMediaValueAvailable) {
+			_v3HostMediaValue = 0;
+			_v3HostMediaValueAvailable = true;
 		}
 	} else if (mode == 2) {
-		_wcomfy99VocState1 = 0;
-		_wcomfy99HostMediaValue = 0;
-		_wcomfy99HostMediaValueAvailable = false;
+		_v3SceneHostMediaModeEnabled = 0;
+		_v3HostMediaValue = 0;
+		_v3HostMediaValueAvailable = false;
 	}
 }
 
-void ComfyEngine::wcomfy99RestoreHostStateAfterSceneStart() {
-	wcomfy99SetWaveBalancePercent(_wcomfy99VocState0);
-	wcomfy99SetWaveLeftPercent(_wcomfy99VocState2);
-	wcomfy99SetWaveRightPercent(_wcomfy99VocState3);
-	wcomfy99SetMixerVolumePercent(_wcomfy99VocState6);
-	if (_wcomfy99VocState1) {
-		wcomfy99SetHostMediaMode(2);
-		wcomfy99SetHostMediaMode(1);
+void ComfyEngine::restoreWaveStateAfterSceneStart() {
+	setWaveBalancePercent(_v3SceneWaveBalancePercent);
+	setWaveLeftPercent(_v3SceneWaveLeftPercent);
+	setWaveRightPercent(_v3SceneWaveRightPercent);
+	setMixerVolumePercent(_v3SceneMixerVolumePercent);
+	if (_v3SceneHostMediaModeEnabled) {
+		setMediaMode(2);
+		setMediaMode(1);
 	} else {
-		wcomfy99SetHostMediaMode(2);
+		setMediaMode(2);
 	}
 }
 
 bool ComfyEngine::soundOpenVocFile() {
-	soundBufFree(_vocFile);
+	objFileClose(_vocFile);
 	uint32 maximumBytes = 0x40000;
-	if (sysGetExtMemKB() < 0x0FA0)
+	if (sysGetExtMemKB() < 4000)
 		maximumBytes /= 2;
 
-	_vocFile = objFileLoadSoundData(Common::Path("VOCFILE.DAT"), 0x8000, maximumBytes);
+	_vocFile = objFileOpen(Common::Path("VOCFILE.DAT"), 0x8000, maximumBytes);
 	if (!_vocFile)
 		return false;
 
@@ -728,7 +728,7 @@ bool ComfyEngine::soundOpenVocFile() {
 	memset(header, 0, sizeof(header));
 	objFileReadFieldCore(header, 0, sizeof(header), _vocFile);
 	if (header[0] != 'C' || (header[1] != 'V' && header[1] != 'W')) {
-		soundBufFree(_vocFile);
+		objFileClose(_vocFile);
 		return false;
 	}
 
@@ -750,16 +750,17 @@ bool ComfyEngine::soundInit() {
 	_soundVocBlockCount = 0;
 	_soundVocCounterSnapshot = 0;
 	_soundVocTimingDelta = 0;
+
 	for (uint i = 0; i < COMFY_VOC_QUEUE_CAPACITY; i++) {
 		_vocQueue[i] = VocQueueEntry();
-		_vocQueue1999[i] = VocQueueEntry1999();
+		_vocQueueV3[i] = VocQueueEntryV3();
 	}
 
-	_wcomfy99VocState0 = 0;
-	_wcomfy99VocState1 = 0;
-	_wcomfy99VocState2 = 0;
-	_wcomfy99VocState3 = 0;
-	_wcomfy99VocState6 = 0;
+	_v3SceneWaveBalancePercent = 0;
+	_v3SceneHostMediaModeEnabled = 0;
+	_v3SceneWaveLeftPercent = 0;
+	_v3SceneWaveRightPercent = 0;
+	_v3SceneMixerVolumePercent = 0;
 	return true;
 }
 
@@ -769,7 +770,7 @@ void ComfyEngine::soundShutdown() {
 	delete _soundDecoderState;
 	_soundDecoderState = nullptr;
 	_soundCues.clear();
-	soundBufFree(_vocFile);
+	objFileClose(_vocFile);
 	_soundEntryCount = 0;
 	_soundNextCue = 0;
 	_soundPaused = false;
@@ -782,7 +783,7 @@ void ComfyEngine::soundShutdown() {
 		_midiPlyrDriver->setIncreaseVocCounter(0);
 }
 
-void ComfyEngine::soundHdrReadFromXms(byte *destination, uint16 index, uint16 size) {
+void ComfyEngine::soundHeaderReadFromXms(byte *destination, uint16 index, uint16 size) {
 	objHdrReadFromXms(destination, _headerXmsSoundHeadersBase, size, index);
 }
 
@@ -799,7 +800,7 @@ void ComfyEngine::soundUpdateVocTiming() {
 	_soundVocBlockCount += blockNo;
 	timeFrac -= _soundVocCounterSnapshot;
 	_midiPlyrDriver->vocSrResetBlockNo();
-	uint32 sampleRate = _soundSampleRate ? _soundSampleRate : 0x2B11;
+	uint32 sampleRate = _soundSampleRate ? _soundSampleRate : 11025;
 	uint32 expected = ((uint32)_soundVocBlockCount * 0x186A00) / sampleRate;
 	_soundVocTimingDelta = (int16)((uint16)expected - (uint16)timeFrac);
 }
@@ -825,7 +826,7 @@ void ComfyEngine::soundServiceWaveBuffers() {
 bool ComfyEngine::soundLoadEntry(uint16 index) {
 	byte header[8];
 	memset(header, 0, sizeof(header));
-	soundHdrReadFromXms(header, index, sizeof(header));
+	soundHeaderReadFromXms(header, index, sizeof(header));
 	uint32 size = READ_LE_UINT32(header);
 	uint32 offset = READ_LE_UINT32(header + 4);
 	return _vocFile && offset <= _vocFile->fileSize && size <= _vocFile->fileSize - offset;
@@ -900,7 +901,7 @@ bool ComfyEngine::soundPrepareDecoderState(uint16 index) {
 	} else {
 		byte header[8];
 		memset(header, 0, sizeof(header));
-		soundHdrReadFromXms(header, index, sizeof(header));
+		soundHeaderReadFromXms(header, index, sizeof(header));
 		dataSize = READ_LE_UINT32(header);
 		dataOffset = READ_LE_UINT32(header + 4);
 		if (!_vocFile || dataOffset > _vocFile->fileSize || dataSize > _vocFile->fileSize - dataOffset)
@@ -1043,11 +1044,10 @@ void ComfyEngine::soundUnpackState(byte *state) {
 }
 
 void ComfyEngine::soundPlayEntry(uint16 index) {
-	debug(5, "COMFY VOC: play id=%u", index);
 	_mixer->stopHandle(_soundHandle);
 	_soundQueueStream = nullptr;
+
 	if (!soundPrepareDecoderState(index)) {
-		debug(5, "COMFY VOC: play id=%u decode failed", index);
 		_soundEventSubIndex = 0;
 		return;
 	}
@@ -1065,7 +1065,6 @@ void ComfyEngine::soundPlayEntry(uint16 index) {
 		free(buffers[1]);
 		delete _soundDecoderState;
 		_soundDecoderState = nullptr;
-		debug(5, "COMFY VOC: play id=%u initial buffer fill failed", index);
 		_soundEventSubIndex = 0;
 		return;
 	}
@@ -1077,7 +1076,6 @@ void ComfyEngine::soundPlayEntry(uint16 index) {
 		free(buffers[1]);
 		delete _soundDecoderState;
 		_soundDecoderState = nullptr;
-		debug(5, "COMFY VOC: play id=%u queue creation failed", index);
 		_soundEventSubIndex = 0;
 		return;
 	}
@@ -1087,9 +1085,7 @@ void ComfyEngine::soundPlayEntry(uint16 index) {
 
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, _soundQueueStream, -1,
 		Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
-	debug(5, "COMFY VOC: play id=%u submitted active=%u rate=%u cues=%u",
-		index, _mixer->isSoundHandleActive(_soundHandle) ? 1 : 0,
-		_soundSampleRate, (uint)_soundCues.size());
+
 	_soundPaused = false;
 	_soundWaveBufferIndex = 0;
 	_soundEventSubIndex = 0xFFFF;
@@ -1109,7 +1105,6 @@ void ComfyEngine::soundAdvanceTick() {
 	if (!_mixer->isSoundHandleActive(_soundHandle)) {
 		_soundQueueStream = nullptr;
 		if (_soundDecoderState && _soundEventSubIndex != 0) {
-			debug(5, "COMFY VOC: mixer became inactive; marking entry complete");
 			_soundEventSubIndex = 0;
 		}
 
@@ -1126,9 +1121,6 @@ void ComfyEngine::soundAdvanceTick() {
 			(_soundCues[_soundNextCue].value == 1 || _soundCues[_soundNextCue].value == 2)) {
 		phaseCueSeen = true;
 		_soundEventSubIndex = _soundCues[_soundNextCue].value;
-		debug(5, "COMFY VOC: cue=%u threshold=%u counter=%u index=%u/%u",
-			_soundEventSubIndex, _soundCues[_soundNextCue].counterThreshold, counter,
-			_soundNextCue, (uint)_soundCues.size());
 		_soundNextCue++;
 	}
 
@@ -1137,10 +1129,8 @@ void ComfyEngine::soundAdvanceTick() {
 		return;
 
 	_soundEventSubIndex = _soundCues[_soundNextCue].value;
-	debug(5, "COMFY VOC: cue=%u threshold=%u counter=%u index=%u/%u",
-		_soundEventSubIndex, _soundCues[_soundNextCue].counterThreshold, counter,
-		_soundNextCue, (uint)_soundCues.size());
 	_soundNextCue++;
+
 	if (!_soundEventSubIndex) {
 		_mixer->stopHandle(_soundHandle);
 		_soundQueueStream = nullptr;

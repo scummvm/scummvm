@@ -460,7 +460,7 @@ void ComfyEngine::animFileTickCommands() {
 					animDecompressRle(payload, payloadSize, &_animFrameBuffer[0], _animFrameBuffer.size());
 					if (_framebufPtr) {
 						memcpy(_framebufPtr, &_animFrameBuffer[0], COMFY_ANMFRAME_BYTES);
-						renderSetDirty();
+						renderRequestFullFrameInvalidation();
 					}
 				}
 			}
@@ -664,7 +664,7 @@ void ComfyEngine::animFrameInvalidateRects(int16 x, int16 y, byte mode) {
 
 		if (i < splitIndex) {
 			if (!mode)
-				videoFindBestMode(rect);
+				renderAddDirtyRect(rect);
 
 			continue;
 		}
@@ -684,7 +684,7 @@ void ComfyEngine::animFrameInvalidateRects(int16 x, int16 y, byte mode) {
 		}
 
 		if (mode)
-			videoFindBestMode(rect);
+			renderAddDirtyRect(rect);
 	}
 }
 

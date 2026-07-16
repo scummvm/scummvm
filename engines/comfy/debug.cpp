@@ -360,7 +360,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 			ImGui::SameLine(520.0F);
 			if (ImGui::Checkbox("Visible", &visibleActor)) {
 				actor.visible = visibleActor ? 1 : 0;
-				renderSetDirty();
+				renderRequestFullFrameInvalidation();
 			}
 			ImGui::SameLine();
 			if (ImGui::Checkbox("Active", &activeActor))
@@ -453,7 +453,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 			ImGui::PushID((int)i * 2);
 			if (ImGui::Checkbox("", &visibleActor)) {
 				actor.visible = visibleActor ? 1 : 0;
-				renderSetDirty();
+				renderRequestFullFrameInvalidation();
 			}
 			ImGui::PopID();
 			ImGui::TableSetColumnIndex(8);

@@ -23,7 +23,40 @@
 
 namespace Comfy {
 
+void ComfyEngine::timerInit() {
+	if (_timerInitialized)
+		return;
+
+	_timerPitPhase = 0;
+	_timerLastMillis = g_system->getMillis();
+	_timerInitialized = true;
+}
+
+void ComfyEngine::timerShutdown() {
+	if (!_timerInitialized)
+		return;
+
+	_timerInitialized = false;
+}
+
 uint16 ComfyEngine::timerTick() {
+	uint32 now = g_system->getMillis();
+	uint32 elapsedMillis = now - _timerLastMillis;
+
+	_timerLastMillis = now;
+	_timerPitPhase += (uint64)elapsedMillis * 1000 * COMFY_PIT_INPUT_FREQUENCY;
+
+	uint64 pitPeriod = (uint64)COMFY_PIT_TIMER_DIVISOR * 1000000;
+	uint32 callbacks = (uint32)(_timerPitPhase / pitPeriod);
+	_timerPitPhase %= pitPeriod;
+
+	while (callbacks--) {
+		if (shouldQuit())
+			return 0;
+
+		soundAdvanceTick();
+	}
+
 	_timer2 = _timer1;
 	_timer1 = _timer0;
 	_timer0 = _timerCurrent;

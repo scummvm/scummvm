@@ -27,26 +27,7 @@
 
 namespace Comfy {
 
-void ComfyEngine::midiHandleAddTo(uint16 handleIndex, int16 delta) {
-	if (handleIndex < _midiHandles.size())
-		_midiHandles[handleIndex] += delta;
-}
-
-void ComfyEngine::midiHandleCopy(uint16 destination, uint16 source) {
-	if (destination < _midiHandles.size() && source < _midiHandles.size())
-		_midiHandles[destination] = _midiHandles[source];
-}
-
-void ComfyEngine::midiHandleSet(uint16 handleIndex, uint16 value) {
-	if (handleIndex < _midiHandles.size())
-		_midiHandles[handleIndex] = value;
-}
-
-uint16 ComfyEngine::midiGetHandle(uint16 handleIndex) {
-	return handleIndex < _midiHandles.size() ? _midiHandles[handleIndex] : 0;
-}
-
-uint16 ComfyEngine::midiGetVersion() {
+uint16 ComfyEngine::midiGetInstanceStateSize() {
 	return COMFY_SCENE_MIDI_VERSION_BYTES_CLASSIC;
 }
 
@@ -303,7 +284,7 @@ void ComfyEngine::midiRemoveTrack(uint16 id) {
 	midiFindNext(_midiEvents);
 }
 
-void ComfyEngine::midiClearChannel(uint16 channel) {
+void ComfyEngine::midiClearLoadedSong(uint16 channel) {
 	if (channel >= COMFY_MIDI_CHANNEL_COUNT)
 		return;
 
@@ -341,14 +322,14 @@ void ComfyEngine::midiResumeAll() {
 	}
 }
 
-void ComfyEngine::midiStopChannel(uint16 channel) {
+void ComfyEngine::midiStartChannel(uint16 channel) {
 	if (!_midiPlyrDriver || channel >= COMFY_MIDI_CHANNEL_COUNT || !_midiChannels[channel].entryCount)
 		return;
 
 	MidiChannelState &state = _midiChannels[channel];
 	byte *song = spriteLoadFromFile(state.entries[0].songId, channel);
 	if (!song) {
-		midiClearChannel(channel);
+		midiClearLoadedSong(channel);
 		return;
 	}
 
@@ -358,9 +339,10 @@ void ComfyEngine::midiStopChannel(uint16 channel) {
 	_midiPlyrDriver->musicPlaySong(song, size, channel);
 }
 
-void ComfyEngine::midiStopAll() {
+
+void ComfyEngine::midiRestartChannels() {
 	for (uint channel = 0; channel < COMFY_MIDI_CHANNEL_COUNT; channel++)
-		midiClearChannel(channel);
+		midiClearLoadedSong(channel);
 
 	if (_midiPlyrDriver)
 		_midiPlyrDriver->musicStopAll(1);
@@ -376,7 +358,7 @@ void ComfyEngine::midiStopAll() {
 
 	for (uint channel = 0; channel < COMFY_MIDI_CHANNEL_COUNT; channel++) {
 		if (_midiChannels[channel].entryCount)
-			midiStopChannel(channel);
+			midiStartChannel(channel);
 	}
 }
 
@@ -384,7 +366,7 @@ void ComfyEngine::midiShutdown() {
 	if (_usesAnimFile && _engineVersion == 2 && !_isPanther)
 		animFileShutdown();
 
-	_midiHandles.clear();
+	_scriptVariables.clear();
 	_sceneMemoryBlock.clear();
 	_sceneMidiInstanceOffset = 0;
 	_sceneEntryListOffset = 0;
@@ -406,7 +388,7 @@ void ComfyEngine::midiFinishChannel(uint16 channel) {
 	if (_midiPlyrDriver)
 		_midiPlyrDriver->musicStopSong(1, channel);
 
-	midiClearChannel(channel);
+	midiClearLoadedSong(channel);
 	if (state.entries[0].completionKey)
 		keyBitSet(state.entries[0].completionKey);
 
@@ -415,7 +397,7 @@ void ComfyEngine::midiFinishChannel(uint16 channel) {
 
 	state.entryCount--;
 	if (state.entryCount)
-		midiStopChannel(channel);
+		midiStartChannel(channel);
 }
 
 void ComfyEngine::midiStopAndFireKeys(uint16 channel) {
@@ -427,7 +409,7 @@ void ComfyEngine::midiStopAndFireKeys(uint16 channel) {
 	if (_midiPlyrDriver)
 		_midiPlyrDriver->musicStopSong(1, channel);
 
-	midiClearChannel(channel);
+	midiClearLoadedSong(channel);
 	for (uint i = 0; i < state.entryCount; i++) {
 		// The original tests every entry but always fires the first entry's key.
 		if (state.entries[i].completionKey)
@@ -437,14 +419,14 @@ void ComfyEngine::midiStopAndFireKeys(uint16 channel) {
 	state.entryCount = 0;
 }
 
-void ComfyEngine::midiStopAndRemove(uint16 channel) {
+void ComfyEngine::midiStopAndAdvanceChannel(uint16 channel) {
 	if (channel >= COMFY_MIDI_CHANNEL_COUNT)
 		return;
 
 	if (_midiPlyrDriver)
 		_midiPlyrDriver->musicStopSong(1, channel);
 
-	midiClearChannel(channel);
+	midiClearLoadedSong(channel);
 	midiFinishChannel(channel);
 }
 
@@ -467,7 +449,7 @@ void ComfyEngine::midiAddTrackEntry(uint16 channel, uint16 songId, uint16 comple
 
 	state.entryCount++;
 	if (state.entryCount == 1)
-		midiStopChannel(channel);
+		midiStartChannel(channel);
 }
 
 void ComfyEngine::midiSetChannelParam(uint16 channel, byte parameter, uint16 value, uint16 ticks) {

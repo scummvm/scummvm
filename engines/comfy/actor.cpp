@@ -481,7 +481,7 @@ void ComfyEngine::spriteBlitRle(byte *destination, const byte *source, uint32 so
 }
 
 void ComfyEngine::backgroundTransitionFrames(uint16 frame, uint16 previousFrame) {
-	if (_isPanther) {
+	if (_backgroundBufferEnabled) {
 		if (frame == previousFrame || !frame || _backgroundFramebuf.empty())
 			return;
 
@@ -513,7 +513,7 @@ void ComfyEngine::backgroundTransitionFrames(uint16 frame, uint16 previousFrame)
 		framebufClear(_framebufPtr, color);
 	}
 
-	videoSetResolution();
+	renderAddFullFrameDirtyRect();
 }
 
 void ComfyEngine::backgroundRestoreDirtyRects() {
@@ -542,7 +542,7 @@ void ComfyEngine::spriteBlitClipped(int16 spriteId, int16 x, int16 y) {
 	SpriteResource &sprite = *loadedSprite;
 	if (sprite.header.width == _logicalScreenWidth && sprite.header.height == _logicalScreenHeight) {
 		spriteBlitRle(_framebufPtr, &sprite.pixels[0], sprite.pixels.size());
-		renderSetDirty();
+		renderRequestFullFrameInvalidation();
 		return;
 	}
 
@@ -584,7 +584,7 @@ void ComfyEngine::spriteBlitClipped(int16 spriteId, int16 x, int16 y) {
 		rowPos += rowSize;
 	}
 
-	renderSetDirty();
+	renderRequestFullFrameInvalidation();
 }
 
 bool ComfyEngine::spriteCoversPoint(int16 spriteId, int16 x, int16 y, int16 pointX, int16 pointY) {
@@ -639,6 +639,53 @@ bool ComfyEngine::spriteCoversPoint(int16 spriteId, int16 x, int16 y, int16 poin
 	}
 
 	return false;
+}
+
+bool ComfyEngine::actorTestMouseHit(Actor &actor, bool useBlitHit) {
+	int32 xFixed = actor.xFixed;
+	int32 yFixed = actor.yFixed;
+	Actor *currentActor = &actor;
+	uint32 selector = actor.spriteSelector;
+
+	if (useBlitHit)
+		return actor.blitHitMouse != 0;
+
+	if ((selector & 0xFF000000) || !selector)
+		return false;
+
+	while (currentActor->parent) {
+		currentActor = actorGetPtr(currentActor->parent);
+		if (!currentActor)
+			return false;
+
+		xFixed = (int32)((uint32)xFixed + (uint32)currentActor->xFixed);
+		yFixed = (int32)((uint32)yFixed + (uint32)currentActor->yFixed);
+	}
+
+	int16 x = (int16)(xFixed >> 12);
+	int16 y = (int16)(yFixed >> 12);
+	int16 right;
+	int16 bottom;
+	if (selector == 0x00FFFFFF) {
+		uint16 width = 0;
+		uint16 height = 0;
+		if (!animFrameGetDimensions(width, height))
+			return false;
+
+		right = (int16)(x + width);
+		bottom = (int16)(y + height);
+	} else {
+		SpriteResource *sprite = spriteLookup((uint16)selector, x, y);
+		if (!sprite)
+			return false;
+
+		x -= sprite->header.hotspotX;
+		right = (int16)(x + sprite->header.width);
+		y -= sprite->header.hotspotY;
+		bottom = (int16)(y + sprite->header.height);
+	}
+
+	return _mouseX >= x && _mouseX < right && _mouseY >= y && _mouseY < bottom;
 }
 
 ComfyEngine::Actor *ComfyEngine::actorGetPtr(uint16 actorIndex) {
@@ -885,7 +932,7 @@ void ComfyEngine::actorFreeTreePc(uint16 actorIndex) {
 		return;
 
 	if (!_usesAnimFile && _videoMode == 2)
-		videoFindBestMode(actor->cachedRect);
+		renderAddDirtyRect(actor->cachedRect);
 
 	actorFreePcChain(*actor);
 
@@ -911,7 +958,7 @@ void ComfyEngine::actorFreeTreePc(uint16 actorIndex) {
 			if (selector & 0xFF000000) {
 				renderInvalidateFullFrame();
 			} else if (selector != 0x00FFFFFF) {
-				videoFindBestMode(actor->cachedRect);
+			renderAddDirtyRect(actor->cachedRect);
 			}
 		}
 
@@ -1115,7 +1162,7 @@ bool ComfyEngine::actorTickTree(uint16 actorIndex) {
 
 void ComfyEngine::actorDrawList(uint16 actorIndex, int16 x, int16 y, bool visible) {
 	while (actorIndex) {
-		if (_usesAnimFile)
+		if (_engineVersion == 3 || _usesAnimFile)
 			actorDrawInternal(actorIndex, x, y, visible);
 		else
 			actorDraw(actorIndex, x, y);
@@ -1144,7 +1191,7 @@ void ComfyEngine::renderQueueDrawCommand(int16 x, int16 y, uint32 selector, byte
 }
 
 void ComfyEngine::renderFlushDrawCommands() {
-	if ((_isPanther || _engineVersion == 3) && actorGetFrame())
+	if (_backgroundBufferEnabled && actorGetFrame())
 		backgroundRestoreDirtyRects();
 
 	for (uint i = 0; i < _drawCommandCount; i++) {
@@ -1166,7 +1213,7 @@ void ComfyEngine::renderFlushDrawCommands() {
 					dirtyRect.right = nextCommand.x + nextSprite->header.width;
 					dirtyRect.bottom = nextCommand.y + nextSprite->header.height;
 					dirtyRect.area = (uint32)nextSprite->header.width * nextSprite->header.height;
-					videoFindBestMode(dirtyRect);
+					renderAddDirtyRect(dirtyRect);
 				}
 			}
 
@@ -1200,7 +1247,7 @@ void ComfyEngine::renderFlushDrawCommands() {
 			dirtyRect.right = command.x + sprite->header.width;
 			dirtyRect.bottom = command.y + sprite->header.height;
 			dirtyRect.area = (uint32)sprite->header.width * sprite->header.height;
-			videoFindBestMode(dirtyRect);
+			renderAddDirtyRect(dirtyRect);
 		}
 	}
 
@@ -1209,7 +1256,7 @@ void ComfyEngine::renderFlushDrawCommands() {
 
 void ComfyEngine::renderFlushCachedDirtyRects() {
 	for (uint i = 0; i < _animFrameDirtyRectCount; i++)
-		videoFindBestMode(_animFrameDirtyRects[i]);
+		renderAddDirtyRect(_animFrameDirtyRects[i]);
 }
 
 uint16 ComfyEngine::scriptEvalKeyMask(uint32 pc, uint16 mode, ComfyRect &maskRecord,
@@ -1340,11 +1387,11 @@ void ComfyEngine::actorEvalFrameSelection(uint16 actorIndex, int16 x, int16 y) {
 				if (_engineVersion == 1)
 					dirtyRect.area = (uint16)dirtyRect.area;
 
-				videoFindBestMode(dirtyRect);
+				renderAddDirtyRect(dirtyRect);
 			}
 		}
 	} else {
-		videoFindBestMode(rect);
+		renderAddDirtyRect(rect);
 	}
 
 	actor->cachedSprite = 0;
@@ -1388,18 +1435,17 @@ bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
 	}
 
 	animFrameRecordVocCounter(1);
-	bool queuedActorDraw = _usesAnimFile && (_isPanther || _engineVersion == 3) && (_videoMode == 2 || _videoMode == 4);
+	bool queuedActorDraw = (_isPanther || _engineVersion == 3) && (_videoMode == 2 || _videoMode == 4);
 	if ((_isPanther || _engineVersion == 3) && !queuedActorDraw)
 		actorDrawLegacyInternal(actorIndex, x, y);
 	else
 		actorDrawInternal(actorIndex, x, y, true);
 
-	if (_usesAnimFile) {
-		if (queuedActorDraw)
-			renderFlushDrawCommands();
+	if (queuedActorDraw)
+		renderFlushDrawCommands();
 
+	if (_usesAnimFile || _isPanther || _engineVersion == 3)
 		animFrameRecordVocCounter(2);
-	}
 
 	return animFrameShouldDraw(2);
 }
@@ -1562,7 +1608,7 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 						currentRect.bottom == previousRect.bottom &&
 						currentRect.area == previousRect.area;
 					if (!equal)
-						videoFindBestMode(previousRect);
+						renderAddDirtyRect(previousRect);
 
 					renderQueueDrawCommand(currentRect.left, currentRect.top,
 						currentRect.area, equal ? 1 : 0, actorIndex);
@@ -1603,10 +1649,10 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 
 					if (oldLastRect != 0xFFFF) {
 						for (uint i = 0; i <= oldLastRect; i++)
-							videoFindBestMode(_keymaskOldRects[i]);
+								renderAddDirtyRect(_keymaskOldRects[i]);
 					}
 				} else {
-					videoFindBestMode(oldRect);
+						renderAddDirtyRect(oldRect);
 				}
 			}
 
@@ -1770,7 +1816,7 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 							if (_engineVersion == 1)
 								dirtyRect.area = (uint16)dirtyRect.area;
 
-							videoFindBestMode(dirtyRect);
+							renderAddDirtyRect(dirtyRect);
 						}
 
 						if (newItem) {
@@ -1780,7 +1826,7 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 							if (_engineVersion == 1)
 								dirtyRect.area = (uint16)dirtyRect.area;
 
-							videoFindBestMode(dirtyRect);
+							renderAddDirtyRect(dirtyRect);
 						}
 					}
 				}
@@ -1794,10 +1840,10 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 					if (_engineVersion == 1)
 						dirtyRect.area = (uint16)dirtyRect.area;
 
-					videoFindBestMode(dirtyRect);
+					renderAddDirtyRect(dirtyRect);
 				}
 			} else if (!newScripted && selector != 0x00FFFFFF) {
-				videoFindBestMode(newRect);
+				renderAddDirtyRect(newRect);
 			}
 
 			if (!comparedScriptRects) {
@@ -1809,12 +1855,12 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 						if (_engineVersion == 1)
 							dirtyRect.area = (uint16)dirtyRect.area;
 
-						videoFindBestMode(dirtyRect);
+						renderAddDirtyRect(dirtyRect);
 					}
 				} else if (oldSelector == 0x00FFFFFF) {
 					animFrameInvalidateRects(oldRect.left, oldRect.top, 0);
 				} else if (!oldScripted) {
-					videoFindBestMode(oldRect);
+					renderAddDirtyRect(oldRect);
 				}
 			}
 		}

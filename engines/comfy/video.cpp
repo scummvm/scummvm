@@ -48,7 +48,7 @@ void ComfyEngine::videoInit() {
 	_backgroundFrame = 0;
 	_dirtyRectCount = 0;
 	_renderDirtyCount = 0;
-	videoSetResolution();
+	renderAddFullFrameDirtyRect();
 	videoPresentFrame();
 	_videoInitialized = true;
 }
@@ -71,17 +71,17 @@ void ComfyEngine::videoShutdown(byte restorePalette) {
 	_videoInitialized = false;
 }
 
-void ComfyEngine::videoSetResolution() {
+void ComfyEngine::renderAddFullFrameDirtyRect() {
 	ComfyRect record;
 	record.left = 0;
 	record.top = 0;
 	record.right = _logicalScreenWidth;
 	record.bottom = _logicalScreenHeight;
 	record.area = _engineVersion == 1 ? (uint16)framebufferBytes() : framebufferBytes();
-	videoFindBestMode(record);
+	renderAddDirtyRect(record);
 }
 
-void ComfyEngine::renderSetDirty() {
+void ComfyEngine::renderRequestFullFrameInvalidation() {
 	_renderDirtyCount = 1;
 }
 
@@ -89,13 +89,13 @@ void ComfyEngine::renderFlushDirty() {
 	_dirtyRectCount = 0;
 	if (_renderDirtyCount) {
 		_renderDirtyCount--;
-		videoSetResolution();
+		renderAddFullFrameDirtyRect();
 	}
 }
 
 void ComfyEngine::renderInvalidateFullFrame() {
 	renderFlushDirty();
-	videoSetResolution();
+	renderAddFullFrameDirtyRect();
 }
 
 void ComfyEngine::renderAddDirtyRectMerged(ComfyRect record) {
@@ -114,7 +114,7 @@ void ComfyEngine::renderAddDirtyRectMerged(ComfyRect record) {
 
 	if (_dirtyRectCount >= COMFY_DIRTY_RECT_CAPACITY) {
 		renderFlushDirty();
-		videoSetResolution();
+		renderAddFullFrameDirtyRect();
 		return;
 	}
 
@@ -203,7 +203,7 @@ void ComfyEngine::renderAddDirtyRectMerged(ComfyRect record) {
 	_dirtyRectCount++;
 }
 
-void ComfyEngine::videoFindBestMode(ComfyRect record) {
+void ComfyEngine::renderAddDirtyRect(ComfyRect record) {
 	if (_engineVersion >= 2) {
 		renderAddDirtyRectMerged(record);
 		return;
@@ -219,7 +219,7 @@ void ComfyEngine::videoFindBestMode(ComfyRect record) {
 
 	if (_dirtyRectCount >= COMFY_DIRTY_RECT_CAPACITY_V1) {
 		renderFlushDirty();
-		videoSetResolution();
+		renderAddFullFrameDirtyRect();
 		return;
 	}
 

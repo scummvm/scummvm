@@ -40,6 +40,17 @@ namespace Comfy {
 
 ComfyEngine *g_engine;
 
+void ComfyEngine::configRunPendingCommand() {
+	if (!_v3ConfigCommandPending)
+		return;
+
+	_v3ConfigCommandPending = false;
+
+	// The original starts the stored command with WinExec or ShellExecute, which has no engine-side equivalent.
+	warning("configRunPendingCommand reached, this is probably a dev path! Values: command=%u value=%u text=%s",
+		_v3ConfigCommandSubop, _v3ConfigCommandValue, _v3ConfigCommandText.c_str());
+}
+
 #ifdef USE_IMGUI
 ImGuiState *_state = nullptr;
 
@@ -83,6 +94,7 @@ ComfyEngine::ComfyEngine(OSystem *syst, const ComfyGameDescription *gameDesc) : 
 	_randomSource("Comfy"),
 	_logicalScreenWidth(!strcmp(gameDesc->desc.gameId, "panther") ? COMFY_PANTHER_SCREEN_WIDTH : COMFY_SCREEN_WIDTH),
 	_logicalScreenHeight(!strcmp(gameDesc->desc.gameId, "panther") ? COMFY_PANTHER_SCREEN_HEIGHT : COMFY_SCREEN_HEIGHT) {
+
 	memset(_paletteFadeSource, 0, sizeof(_paletteFadeSource));
 	memset(_paletteTarget, 0, sizeof(_paletteTarget));
 	memset(_paletteDisplay, 0, sizeof(_paletteDisplay));
@@ -96,8 +108,13 @@ ComfyEngine::ComfyEngine(OSystem *syst, const ComfyGameDescription *gameDesc) : 
 	memset(_animStorageChunkFileOffsets, 0, sizeof(_animStorageChunkFileOffsets));
 	memset(_animStorageChunkOffsets, 0, sizeof(_animStorageChunkOffsets));
 	memset(_animStorageChunkSizes, 0, sizeof(_animStorageChunkSizes));
+	memset(_actorPcTable, 0, sizeof(_actorPcTable));
+	memset(_exprStack, 0, sizeof(_exprStack));
+	memset(_sceneEntryOffsets, 0, sizeof(_sceneEntryOffsets));
+
 	if (!strcmp(gameDesc->desc.gameId, "panther")) {
 		_isPanther = true;
+		_backgroundBufferEnabled = true;
 		_vocQueueCapacity = COMFY_PANTHER_VOC_QUEUE_CAPACITY;
 	}
 
@@ -138,9 +155,11 @@ Common::Error ComfyEngine::gameInit() {
 	_gameInitialized = true;
 	_currentScene = _language;
 	uint16 chooserScene = 2;
+
 	if (_multiLanguage && (ConfMan.getBool("force_language_setup") ||
 			!ConfMan.getBool("comfy_language_chosen"))) {
-		if (!iniGetGameDataPath(99)) {
+		if (!iniSelectGameDataPath(99)) {
+			configRunPendingCommand();
 			gameShutdown();
 			return Common::kNoGameDataFoundError;
 		}
@@ -149,23 +168,25 @@ Common::Error ComfyEngine::gameInit() {
 		if (selectedLanguage) {
 			_currentScene = selectedLanguage;
 			chooserScene = selectedLanguage;
-			iniWriteLanguage(selectedLanguage);
+			iniWriteLanguageSelection(selectedLanguage);
 		}
 
 		ConfMan.setBool("comfy_language_chosen", true);
 		ConfMan.flushToDisk();
 	}
 
-	if (!_introDirectory.empty() && !ConfMan.getBool("skip_intro") && iniGetGameDataPath(0)) {
+	if (!_introDirectory.empty() && !ConfMan.getBool("skip_intro") && iniSelectGameDataPath(0)) {
 		sceneRun(_currentScene, false, true);
 		if (shouldQuit()) {
+			configRunPendingCommand();
 			gameShutdown();
 			return Common::kNoError;
 		}
 	}
 
 	while (_currentScene && !shouldQuit()) {
-		if (!iniGetGameDataPath(_currentScene)) {
+		if (!iniSelectGameDataPath(_currentScene)) {
+			configRunPendingCommand();
 			gameShutdown();
 			return Common::kNoGameDataFoundError;
 		}
@@ -178,9 +199,10 @@ Common::Error ComfyEngine::gameInit() {
 		}
 
 		if (_currentScene && _currentScene != 99)
-			iniWriteLanguage(_currentScene);
+			iniWriteLanguageSelection(_currentScene);
 	}
 
+	configRunPendingCommand();
 	gameShutdown();
 
 	return Common::kNoError;
@@ -188,11 +210,12 @@ Common::Error ComfyEngine::gameInit() {
 
 void ComfyEngine::gameShutdown() {
 #ifdef USE_IMGUI
-	// Submit an empty ImGui frame so the backend releases detached platform windows.
+	// Submit an empty ImGui frame so the backend releases detached platform windows...
 	if (_state) {
 		_state->_closing = true;
 		ImGuiIO &io = ImGui::GetIO();
-		// Ignore the last Comfy window's cursor state while clearing input capture.
+
+		// Ignore the last Comfy Keyboard window's cursor state while clearing input capture...
 		io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
 		ImGui::SetNextFrameWantCaptureMouse(false);
 		ImGui::SetNextFrameWantCaptureKeyboard(false);
@@ -222,17 +245,6 @@ void ComfyEngine::gameShutdown() {
 	_languageSessionRestartRequested = false;
 	_currentScene = 0;
 	_gameInitialized = false;
-}
-
-void ComfyEngine::timerInit() {
-	if (_timerInitialized)
-		return;
-
-	_timerInitialized = true;
-}
-
-void ComfyEngine::timerShutdown() {
-	_timerInitialized = false;
 }
 
 uint16 ComfyEngine::sceneRun(uint16 sceneId, bool checkNext, bool exitFlag) {
@@ -271,10 +283,10 @@ uint16 ComfyEngine::sceneRun(uint16 sceneId, bool checkNext, bool exitFlag) {
 		nextScene = sceneId;
 		_languageSessionRestartRequested = false;
 	} else if (checkNext) {
-		if (sceneGetActiveCount() > 1 && _midiHandles.size() > 1)
-			nextScene = midiGetHandle(1);
+		if (sceneGetActiveCount() > 1 && _scriptVariables.size() > 1)
+			nextScene = scriptVariableGet(1);
 
-		if ((int16)nextScene > 0 && (int16)nextScene < 0x65 && nextScene != sceneId)
+		if ((int16)nextScene > 0 && (int16)nextScene < 101 && nextScene != sceneId)
 			shouldStartNext = 1;
 
 		if (_engineVersion == 3)
@@ -290,6 +302,7 @@ uint16 ComfyEngine::sceneRun(uint16 sceneId, bool checkNext, bool exitFlag) {
 	midiShutdown();
 	assetsUnload(0);
 	inputQueueReset();
+
 	if (_engineVersion != 3) {
 		_sceneRunBuffer.clear();
 		_sceneRunPtr = nullptr;
@@ -314,25 +327,29 @@ void ComfyEngine::processEvents() {
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 			if (event.customType >= kActionKeyboardContact0 && event.customType <= kActionKeyboardContactLast)
 				setKeyboardContact(event.customType - kActionKeyboardContact0, true, true);
+
 			break;
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
 			if (event.customType >= kActionKeyboardContact0 && event.customType <= kActionKeyboardContactLast)
 				setKeyboardContact(event.customType - kActionKeyboardContact0, false, true);
+
 			break;
 		case Common::EVENT_KEYDOWN:
 			if (!event.kbdRepeat) {
 				hostKeyboardSetKeyState(hostKeyboardVirtualKey(event.kbd.keycode), true);
-				if (event.kbd.keycode == Common::KEYCODE_UP)
+				if (event.kbd.keycode == Common::KEYCODE_UP) {
 					inputQueuePushKey(0x48);
-				else if (event.kbd.keycode == Common::KEYCODE_DOWN)
+				} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
 					inputQueuePushKey(0x50);
-				else if (event.kbd.keycode == Common::KEYCODE_LEFT)
+				} else if (event.kbd.keycode == Common::KEYCODE_LEFT) {
 					inputQueuePushKey(0x4B);
-				else if (event.kbd.keycode == Common::KEYCODE_RIGHT)
+				} else if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
 					inputQueuePushKey(0x4D);
-				else if (event.kbd.ascii)
+				} else if (event.kbd.ascii) {
 					inputQueuePushChar(event.kbd.ascii);
+				}
 			}
+
 			break;
 		case Common::EVENT_KEYUP:
 			hostKeyboardSetKeyState(hostKeyboardVirtualKey(event.kbd.keycode), false);
@@ -342,26 +359,31 @@ void ComfyEngine::processEvents() {
 				_mouseX = CLIP<int16>((int32)event.mouse.x * 320 / _logicalScreenWidth, 0, 319);
 				_mouseY = CLIP<int16>((int32)event.mouse.y * 200 / _logicalScreenHeight, 0, 199);
 			}
+
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 			if (_engineVersion == 3) {
 				_mouseLeftButton = true;
 				_mouseLeftButtonEdge = false;
 			}
+
 			break;
 		case Common::EVENT_LBUTTONUP:
 			if (_engineVersion == 3)
 				_mouseLeftButtonEdge = true;
+
 			break;
 		case Common::EVENT_RBUTTONDOWN:
 			if (_engineVersion == 3) {
 				_mouseRightButton = true;
 				_mouseRightButtonEdge = false;
 			}
+
 			break;
 		case Common::EVENT_RBUTTONUP:
 			if (_engineVersion == 3)
 				_mouseRightButtonEdge = true;
+
 			break;
 		default:
 			break;
@@ -430,7 +452,8 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 	if (_engineVersion == 3)
 		midiInitInstance();
 
-	actorInit(1, 0, 1, 1, 0x14, 0, 0, 0, 1);
+	actorInit(1, 0, 1, 1, 20, 0, 0, 0, 1);
+
 	if (_engineVersion == 3)
 		mouseSetActor(nullptr);
 
@@ -440,11 +463,13 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 
 	uint16 rootIndex = sceneGetHandle(1);
 	Actor *mainLoopActor = actorGetPtr(rootIndex);
+
 	paletteLoadWithFade(0, 0);
 	paletteVsyncFlip();
 	paletteVsyncFlip();
-	if (sceneGetActiveCount() && _midiHandles.size() > 1)
-		midiHandleAddTo(1, argument);
+
+	if (sceneGetActiveCount() && _scriptVariables.size() > 1)
+		scriptVariableAddTo(1, argument);
 
 	while (keepRunning && !shouldQuit()) {
 		_pendingScene = 0;
@@ -455,6 +480,7 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 		midiTrackTickAndRemove();
 		animFileTickCommands();
 		sceneTickEvent();
+
 		if (!_musicEnabled)
 			midiPollChannels(ticks);
 
@@ -462,6 +488,7 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 		lptKeyboardScanAndProcess();
 		lptKeyToFlags(lastKey);
 		actorTickTree(rootIndex);
+
 		if (_engineVersion == 3) {
 			mouseClearButtonEdges();
 			mouseUpdateCursor();
@@ -480,7 +507,7 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 			videoPresentFrame();
 			animFrameRecordVocCounter(4);
 		} else {
-			renderSetDirty();
+			renderRequestFullFrameInvalidation();
 		}
 
 		if (_engineVersion == 3)
@@ -491,10 +518,11 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 			lastKey = lptReadKeyOrNext();
 
 		_lastKey = lastKey;
-		if (lastKey == 0x0101)
+		if (lastKey == 0x0101) {
 			keepRunning = 0;
-		else if (mainLoopActor)
+		} else if (mainLoopActor) {
 			keepRunning = mainLoopActor->active;
+		}
 
 		processEvents();
 		if (shouldQuit())
@@ -516,13 +544,13 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 					_animShutdownBeforeSceneStart = false;
 
 				uint16 track = 1;
-				for (;;) {
+				while (true) {
 					_musicEventMask = (uint16)((int16)_musicEventMask >> 1);
 					if (!_musicEventMask)
 						break;
 
 					if (_musicEventMask & 1)
-						envConvToXms(&_sceneMemoryBlock[_sceneMidiInstanceOffset], track);
+						environmentPackToXms(&_sceneMemoryBlock[_sceneMidiInstanceOffset], track);
 
 					track++;
 				}
@@ -530,6 +558,7 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 		}
 
 		keyBitClear(0x42);
+
 		if (_pendingScene) {
 			bool animFrameReady = animFrameIsReady();
 			if (_engineVersion == 3 && _animShutdownBeforeSceneStart)
@@ -545,6 +574,7 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 				vocQueuePlayAll();
 
 			keyBitSet(0x42);
+
 			frame = actorGetFrame();
 			if (frame)
 				backgroundTransitionFrames(frame, _backgroundFrame);
@@ -563,7 +593,8 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 void ComfyEngine::midiTrackTickAndRemove() {
 	_midiTracks.baseTime++;
 	_midiInstanceTrackBase = _midiTracks.baseTime;
-	while (_midiTracks.nextIndex != 0x03E7 && _midiTracks.baseTime >= _midiTracks.nextTime) {
+
+	while (_midiTracks.nextIndex != 999 && _midiTracks.baseTime >= _midiTracks.nextTime) {
 		keyBitSet(_midiTracks.entries[_midiTracks.nextIndex].id);
 		_midiTracks.count--;
 		_midiTracks.entries[_midiTracks.nextIndex] = _midiTracks.entries[_midiTracks.count];
@@ -572,14 +603,14 @@ void ComfyEngine::midiTrackTickAndRemove() {
 }
 
 void ComfyEngine::sceneTickEvent() {
-	soundAdvanceTick();
 	if (_soundEventIndex == _soundEventMaximum)
 		return;
 
 	if (_engineVersion == 3) {
-		VocQueueEntry1999 &entry = _vocQueue1999[_soundEventIndex];
+		VocQueueEntryV3 &entry = _vocQueueV3[_soundEventIndex];
 		bool started = false;
 		uint16 currentSubIndex = _soundEventSubIndex;
+
 		if (entry.state == 0xFFFF && (entry.soundId != 0xFFFF || !animFrameIsReady())) {
 			entry.state = 0;
 			_soundEventSubIndex = 0xFFFF;
@@ -592,8 +623,7 @@ void ComfyEngine::sceneTickEvent() {
 			currentSubIndex = 0xFFFF;
 		}
 
-		if (!started && currentSubIndex != 0xFFFF &&
-				currentSubIndex != _soundEventPreviousSubIndex) {
+		if (!started && currentSubIndex != 0xFFFF && currentSubIndex != _soundEventPreviousSubIndex) {
 			if (!currentSubIndex) {
 				if (entry.argumentCount)
 					keyBitSet(entry.arguments[0]);
@@ -630,14 +660,17 @@ void ComfyEngine::sceneTickEvent() {
 
 	VocQueueEntry &entry = _vocQueue[_soundEventIndex % _vocQueueCapacity];
 	uint16 currentSubIndex = _soundEventSubIndex;
+
 	if (entry.state == 0xFFFF && (entry.soundId != 0xFFFF || !animFrameIsReady())) {
 		entry.state = 0;
 		_soundEventSubIndex = 0xFFFF;
 		soundPlayEntry(entry.soundId);
+
 		keyBitSet(1);
 		keyBitSet(4);
 		keyBitClear(2);
 		keyBitClear(3);
+
 		currentSubIndex = 0xFFFF;
 	} else if (currentSubIndex != 0xFFFF && currentSubIndex != _soundEventPreviousSubIndex) {
 		if (!currentSubIndex) {
@@ -707,28 +740,24 @@ void ComfyEngine::midiPollChannels(uint16 ticks) {
 bool ComfyEngine::vocQueuePush(uint16 soundId, uint16 argumentCount, uint32 pc) {
 	uint16 next = (_soundEventMaximum + 1) % _vocQueueCapacity;
 	if (next == _soundEventIndex) {
-		debug(5, "COMFY VOC: queue full; rejected id=%u args=%u index=%u maximum=%u",
-			soundId, argumentCount, _soundEventIndex, _soundEventMaximum);
 		return false;
 	}
-
-	debug(5, "COMFY VOC: queue id=%u args=%u slot=%u next=%u version=%u",
-		soundId, argumentCount, _soundEventMaximum, next, _engineVersion);
-
 	if (_engineVersion == 3) {
-		VocQueueEntry1999 &entry = _vocQueue1999[_soundEventMaximum];
+		VocQueueEntryV3 &entry = _vocQueueV3[_soundEventMaximum];
 		entry.clearArgumentKeys = (argumentCount & 0x80) != 0;
 		argumentCount &= 0x3F;
 		entry.soundId = soundId;
-		entry.argumentCount = MIN<uint16>(argumentCount, COMFY_VOC_ARG_CAPACITY_1999);
+		entry.argumentCount = MIN<uint16>(argumentCount, COMFY_VOC_ARG_CAPACITY_V3);
 		entry.state = 0xFFFF;
-		for (uint i = 0; i < COMFY_VOC_ARG_CAPACITY_1999; i++)
+
+		for (uint i = 0; i < COMFY_VOC_ARG_CAPACITY_V3; i++)
 			entry.arguments[i] = 0;
 
 		for (uint i = 0; i < entry.argumentCount; i++)
 			entry.arguments[i] = scriptReadWord(pc + i * 2);
 
 		_soundEventMaximum = next;
+
 		keyBitSet(1);
 		keyBitSet(4);
 		keyBitClear(2);
@@ -740,15 +769,18 @@ bool ComfyEngine::vocQueuePush(uint16 soundId, uint16 argumentCount, uint32 pc) 
 	entry.soundId = soundId;
 	entry.argumentCount = MIN<uint16>(argumentCount, COMFY_VOC_ARG_CAPACITY);
 	entry.state = 0xFFFF;
+
 	memset(entry.arguments, 0, sizeof(entry.arguments));
 	for (uint i = 0; i < entry.argumentCount; i++)
 		entry.arguments[i] = scriptReadWord(pc + i * 2);
 
 	_soundEventMaximum = next;
+
 	keyBitSet(1);
 	keyBitSet(4);
 	keyBitClear(2);
 	keyBitClear(3);
+
 	return true;
 }
 
@@ -763,7 +795,8 @@ void ComfyEngine::vocQueuePlayAll() {
 	if (_engineVersion == 3) {
 		uint16 slot = _soundEventIndex;
 		while (slot != _soundEventMaximum) {
-			VocQueueEntry1999 &entry = _vocQueue1999[slot];
+			VocQueueEntryV3 &entry = _vocQueueV3[slot];
+
 			for (uint i = 0; i < entry.argumentCount; i++)
 				keyBitSet(entry.arguments[i]);
 
@@ -777,6 +810,7 @@ void ComfyEngine::vocQueuePlayAll() {
 		keyBitClear(4);
 		keyBitSet(3);
 		keyBitSet(2);
+
 		return;
 	}
 
@@ -790,6 +824,7 @@ void ComfyEngine::vocQueuePlayAll() {
 	}
 
 	_soundEventMaximum = _soundEventIndex;
+
 	keyBitClear(1);
 	keyBitClear(4);
 	keyBitSet(3);

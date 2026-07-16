@@ -102,15 +102,15 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 			else if (opcode == 0x18)
 				value = _mouseY;
 			else if (opcode == 0x19)
-				value = _wcomfy99VocState0;
+				value = _v3SceneWaveBalancePercent;
 			else if (opcode == 0x1A)
-				value = _wcomfy99HostMediaValueAvailable ? _wcomfy99HostMediaValue : 0;
+				value = _v3HostMediaValueAvailable ? _v3HostMediaValue : 0;
 			else if (opcode == 0x1B)
 				pushValue = false;
 			else if (opcode == 0x1C)
-				value = _wcomfy99VocState2;
+				value = _v3SceneWaveLeftPercent;
 			else if (opcode == 0x1D)
-				value = _wcomfy99VocState3;
+				value = _v3SceneWaveRightPercent;
 			else if (opcode == 0x1E) {
 				if (_exprStackTop) {
 					uint16 dimension = _exprStack[_exprStackTop - 1];
@@ -124,9 +124,9 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 
 				pushValue = false;
 			} else if (opcode == 0x1F || opcode == 0x20) {
-				value = _wcomfy99HostMediaProgress;
+				value = _v3HostMediaProgress;
 			} else if (opcode == 0x21) {
-				value = _wcomfy99VocState6;
+				value = _v3SceneMixerVolumePercent;
 			}
 
 			if (pushValue && _exprStackTop < COMFY_EXPR_STACK_CAPACITY)

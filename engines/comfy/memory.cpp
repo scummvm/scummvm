@@ -125,7 +125,7 @@ int32 ComfyEngine::memFreeTrackFar(uint16 handle) {
 	return memFreeTrack(handle);
 }
 
-int32 ComfyEngine::xmsCopyToConv(XmsMove &move) {
+int32 ComfyEngine::xmsTransfer(XmsMove &move) {
 	byte *source = (byte *)move.sourceMemory;
 	byte *destination = move.destinationMemory;
 	uint32 sourceSize = UINT32_MAX;
@@ -153,10 +153,6 @@ int32 ComfyEngine::xmsCopyToConv(XmsMove &move) {
 
 	memcpy(destination + move.destinationOffset, source + move.sourceOffset, move.length);
 	return 0;
-}
-
-int32 ComfyEngine::xmsTransfer(XmsMove &move) {
-	return xmsCopyToConv(move);
 }
 
 void ComfyEngine::xmsReset() {
