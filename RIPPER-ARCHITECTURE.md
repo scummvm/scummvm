@@ -675,11 +675,14 @@
   while Escape advances to the normal post-presentation callback with the
   response still marked played. Type-1 interactive loops retain their separate
   mouse and hotspot path and do not install these keyboard controls.
-- For a controlled Smacker scene transition, advancing with Escape presents
-  the terminal decoded frame before returning to the ordinary frame-exit
-  callback. This preserves the completed transition image while following the
-  same type-0 ordering established by `ExecuteSceneFrameAndInteractions` at
-  `0x13277` and `ExecutePresentationEntry` at `0x1652a`.
+- For every keyboard-controlled Smacker presentation, including direct opcode
+  `0x1a` media and Smacker branches embedded in IAVF, advancing with Escape
+  presents the terminal decoded frame and reports normal completion before
+  returning to the enclosing script callback. This preserves the completed
+  transition image and allows played-state updates, milestone changes, and
+  later callback commands to run in their normal order. It follows the
+  control-flow contract established by `PollPresentationEscOrSpaceCommand` at
+  `0x49039` and `ExecutePresentationEntry` at `0x1652a`.
 - Opcode `0x1b` enters `HandleSceneEntryMediaPreviewOrPrompt` at `0x15b03`.
   That handler passes a target value of one and
   `MediaSequenceCounterEqualsTarget` at `0x15ac8` to `RunMediaSequence` at
