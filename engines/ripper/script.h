@@ -155,6 +155,7 @@ public:
 	bool serviceScene();
 	void drawDialogueOverlay() const;
 	void updateInteractiveCursor(const Common::Point &point);
+	bool openWorldMap();
 	bool isMilestoneFlagSet(uint32 flag) const;
 	void setMilestoneFlag(uint32 flag, const char *source);
 
@@ -169,6 +170,7 @@ private:
 	void beginBa0InteractionWait(const Common::String &frameLabel, uint interactionCount);
 	bool advanceBa0ToFrame(uint nextFrame);
 	bool executeConcurrentFrame();
+	bool performPendingSceneTransition();
 	bool findFrameByLabel(const CompiledScript &script, const Common::String &label, uint &frameIndex) const;
 	const ScriptInteraction *findBa0Interaction(const Common::Point &point,
 		uint *interactionIndex = nullptr) const;
@@ -181,6 +183,7 @@ private:
 	CompiledScript _ba0;
 	CompiledScript _concurrent;
 	Common::String _concurrentEntryLabel;
+	Common::String _pendingSceneMember;
 	Common::Array<bool> _milestoneFlags;
 	Common::Array<Common::String> _playedScenes;
 	Common::Array<bool> _activeBa0InteractionEnabled;

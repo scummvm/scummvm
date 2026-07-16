@@ -37,6 +37,7 @@
 #include "ripper/script.h"
 #include "ripper/toolbar.h"
 #include "ripper/wac.h"
+#include "ripper/world_map.h"
 
 namespace Ripper {
 
@@ -45,10 +46,11 @@ RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescrip
 		_input(new InputManager(_eventMan)),
 		_media(new MediaPlayer(this, _input, _mixer)), _resources(new ResourceManager()),
 		_scripts(new ScriptManager(this)), _toolbar(new ToolbarManager(this)),
-		_wac(new WacManager(this)) {
+		_wac(new WacManager(this)), _worldMap(new WorldMap(this)) {
 }
 
 RipperEngine::~RipperEngine() {
+	delete _worldMap;
 	delete _wac;
 	delete _toolbar;
 	delete _scripts;
@@ -98,6 +100,8 @@ Common::Error RipperEngine::run() {
 	if (!_toolbar->initialize(*_resources))
 		return Common::kReadingFailed;
 	if (!_wac->initialize(*_resources))
+		return Common::kReadingFailed;
+	if (!_worldMap->initialize(*_resources))
 		return Common::kReadingFailed;
 
 	_cursor->setVisible(false);
