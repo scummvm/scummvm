@@ -1240,8 +1240,7 @@ ExecutionResult Script::ScriptExecutor::scriptShowDialogue() {
 		return ExecutionResult::ScriptFinished;
 	}
 	// Binary: bSlotLoaded for portrait slots 0x12 and 0x13 (runtime+0x153, +0x163).
-	if (speaker->_blobs.size() <= 17 || speaker->_blobs[17].empty() ||
-		speaker->_blobs.size() <= 18 || speaker->_blobs[18].empty()) {
+	if (speaker->_blobs.size() < 19 || speaker->_blobs[17].empty() || speaker->_blobs[18].empty()) {
 		setScriptError(6);
 		endBuffering(_lastOpcodeTriggeredSkip);
 		return ExecutionResult::ScriptFinished;
