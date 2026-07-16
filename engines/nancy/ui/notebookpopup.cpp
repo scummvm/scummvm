@@ -74,14 +74,15 @@ void NotebookPopup::init() {
 	moveTo(popupRect);
 	Common::Rect bounds = _screenPosition;
 	bounds.moveTo(0, 0);
-	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphics->getScreenPixelFormat());
 
 	// Transparent-keyed scratch surfaces so text blits over the paper
 	// painted by drawBackground() — paper stays stationary while text
 	// scrolls. Color 0 would clip real font pixels in Nancy fonts.
 	const uint32 trans = g_nancy->_graphics->getTransColor();
+	const uint bpp = g_nancy->getGameType() >= kGameTypeNancy13 ? 32 : 16;
 	initSurfaces(_uinbData->textRect.width(), kHypertextSurfaceHeight,
-		g_nancy->_graphics->getInputPixelFormat(), trans, trans);
+		g_nancy->_graphics->getInputPixelFormat(bpp), trans, trans);
 	_fullSurface.setTransparentColor(trans);
 	_textHighlightSurface.setTransparentColor(trans);
 
