@@ -80,7 +80,7 @@ static const int kSolvedDeltaY[kPieceCount] = {
 
 BrokenMugPuzzle::BrokenMugPuzzle(RipperEngine *engine) : _engine(engine),
 		_draggedPiece(-1), _rotationStep(-1), _nextRotationMillis(0),
-		_releasePending(false) {
+		_dropPending(false) {
 }
 
 bool BrokenMugPuzzle::loadPiece(uint pieceIndex) {
@@ -244,7 +244,7 @@ int BrokenMugPuzzle::findPiece(const Common::Point &point) const {
 void BrokenMugPuzzle::beginDrag(uint pieceIndex, const Common::Point &point) {
 	_draggedPiece = pieceIndex;
 	_dragOffset = point - _pieces[pieceIndex].position;
-	_releasePending = false;
+	_dropPending = false;
 	for (uint order = 0; order < _frontToBack.size(); ++order) {
 		if (_frontToBack[order] == pieceIndex) {
 			_frontToBack.remove_at(order);
@@ -296,7 +296,7 @@ void BrokenMugPuzzle::finishDrag() {
 		"Ripper: broken mug drag completed piece=%d position=%d,%d orientation=%u",
 		_draggedPiece, piece.position.x, piece.position.y, piece.orientation);
 	_draggedPiece = -1;
-	_releasePending = false;
+	_dropPending = false;
 }
 
 bool BrokenMugPuzzle::isSolved() const {
@@ -403,11 +403,16 @@ BrokenMugPuzzle::Result BrokenMugPuzzle::run() {
 			changed = true;
 			if ((mouse.pressed & kMouseButtonRight) != 0 && _rotationStep < 0)
 				beginRotation();
-			if ((mouse.released & kMouseButtonLeft) != 0)
-				_releasePending = true;
+			if ((mouse.pressed & kMouseButtonLeft) != 0) {
+				_dropPending = true;
+				debugC(2, kDebugWac,
+					"Ripper: broken mug drop requested piece=%d point=%d,%d",
+					_draggedPiece, mouse.position.x, mouse.position.y);
+			}
 			if (updateRotation(g_system->getMillis(true)))
 				changed = true;
-			if (_releasePending && _rotationStep < 0) {
+			if (_dropPending && _rotationStep < 0 &&
+				(mouse.buttons & kMouseButtonLeft) == 0) {
 				finishDrag();
 				if (isSolved()) {
 					debugC(1, kDebugWac, "Ripper: broken mug layout solved");
