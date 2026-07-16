@@ -359,10 +359,10 @@ BrokenMugPuzzle::Result BrokenMugPuzzle::run() {
 		kPieceCount, kViewportLeft, kViewportTop, kViewportRight - kViewportLeft,
 		kViewportBottom - kViewportTop, kInitialOrientation);
 	_engine->getInput()->discardMouseTransitions();
-	_engine->getCursor()->update(kPuzzleCursor);
 	render();
 	if (!_engine->getMedia()->playBlockingAudio("q_p_1.wav"))
 		warning("Ripper: broken mug introduction audio failed; continuing puzzle input");
+	_engine->getCursor()->update(kPuzzleCursor);
 
 	Result result = kExited;
 	bool active = true;
