@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	puzzles/broken_mug.o \
 	resources.o \
 	ripper.o \
+	saveload.o \
 	script.o \
 	toolbar.o \
 	wac.o \

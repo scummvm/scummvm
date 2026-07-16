@@ -3,6 +3,7 @@
 #include "ripper/dialogue.h"
 
 #include "common/debug.h"
+#include "common/serializer.h"
 #include "common/system.h"
 #include "graphics/surface.h"
 
@@ -228,6 +229,43 @@ void DialogueManager::clearPending() {
 	_choices.clear();
 	_firstVisibleChoice = 0;
 	_hoveredArrow = 0;
+}
+
+bool DialogueManager::syncGame(Common::Serializer &serializer) {
+	byte pending = _pending ? 1 : 0;
+	serializer.syncAsByte(pending);
+
+	uint32 choiceCount = _choices.size();
+	serializer.syncAsUint32LE(choiceCount);
+	if (serializer.isLoading()) {
+		if (choiceCount > 256)
+			return false;
+		_choices.clear();
+		_choices.resize(choiceCount);
+	}
+	for (uint i = 0; i < choiceCount; ++i) {
+		serializer.syncString(_choices[i].text);
+		serializer.syncAsUint16LE(_choices[i].result);
+		if (serializer.isLoading() && _choices[i].text.size() > 1024)
+			return false;
+	}
+
+	serializer.syncAsUint32LE(_selectedChoice);
+	serializer.syncAsUint32LE(_firstVisibleChoice);
+	if (serializer.isLoading()) {
+		_pending = pending != 0;
+		_hoveredArrow = 0;
+		if (_choices.empty()) {
+			_pending = false;
+			_selectedChoice = 0;
+			_firstVisibleChoice = 0;
+		} else {
+			if (_selectedChoice >= _choices.size() || _firstVisibleChoice >= _choices.size())
+				return false;
+			updateLayout();
+		}
+	}
+	return !serializer.err();
 }
 
 uint DialogueManager::measureText(const Common::String &text) const {

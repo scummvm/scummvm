@@ -32,6 +32,10 @@ Common::Error RipperMetaEngine::createInstance(OSystem *syst, Engine **engine, c
 	return Common::kNoError;
 }
 
+bool RipperMetaEngine::hasFeature(MetaEngineFeature feature) const {
+	return checkExtendedSaves(feature) || feature == kSupportsLoadingDuringStartup;
+}
+
 #if PLUGIN_ENABLED_DYNAMIC(RIPPER)
 REGISTER_PLUGIN_DYNAMIC(RIPPER, PLUGIN_TYPE_ENGINE, RipperMetaEngine);
 #else

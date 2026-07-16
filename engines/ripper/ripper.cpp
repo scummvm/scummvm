@@ -46,7 +46,7 @@ RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescrip
 		_input(new InputManager(_eventMan)),
 		_media(new MediaPlayer(this, _input, _mixer)), _resources(new ResourceManager()),
 		_scripts(new ScriptManager(this)), _toolbar(new ToolbarManager(this)),
-		_wac(new WacManager(this)), _worldMap(new WorldMap(this)) {
+		_wac(new WacManager(this)), _worldMap(new WorldMap(this)), _gameplayStarted(false) {
 }
 
 RipperEngine::~RipperEngine() {
@@ -61,7 +61,9 @@ RipperEngine::~RipperEngine() {
 }
 
 bool RipperEngine::hasFeature(EngineFeature feature) const {
-	return feature == kSupportsReturnToLauncher;
+	return feature == kSupportsReturnToLauncher ||
+		feature == kSupportsLoadingDuringRuntime ||
+		feature == kSupportsSavingDuringRuntime;
 }
 
 void RipperEngine::registerSearchPaths() {
@@ -143,6 +145,7 @@ Common::Error RipperEngine::run() {
 		return Common::kNoError;
 	if (!_scripts->runStartupPath())
 		return Common::kUnknownError;
+	_gameplayStarted = true;
 
 	while (!shouldQuit()) {
 		pumpEvents();

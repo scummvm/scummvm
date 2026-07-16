@@ -25,6 +25,10 @@
 #include "common/rect.h"
 #include "common/str.h"
 
+namespace Common {
+class Serializer;
+}
+
 namespace Ripper {
 
 class AssetLibrary;
@@ -158,6 +162,8 @@ public:
 	bool openWorldMap();
 	bool isMilestoneFlagSet(uint32 flag) const;
 	void setMilestoneFlag(uint32 flag, const char *source);
+	bool canSaveGame() const;
+	bool syncGame(Common::Serializer &serializer);
 
 	CompiledScript &startup() { return _startup; }
 	CompiledScript &ba0() { return _ba0; }
@@ -193,6 +199,7 @@ private:
 	bool _awaitingBa0Interaction;
 	bool _briefingArmed;
 	uint _briefingSelector;
+	bool _resumeLoadedPresentation;
 	DialogueManager *_dialogue;
 };
 

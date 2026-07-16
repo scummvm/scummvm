@@ -8,6 +8,10 @@
 #include "common/str.h"
 #include "ripper/resources.h"
 
+namespace Common {
+class Serializer;
+}
+
 namespace Ripper {
 
 struct ScriptCommand;
@@ -26,6 +30,7 @@ public:
 	bool isPending() const { return _pending; }
 	bool hasChoices() const { return !_choices.empty(); }
 	void clearPending();
+	bool syncGame(Common::Serializer &serializer);
 
 private:
 	struct Choice {
