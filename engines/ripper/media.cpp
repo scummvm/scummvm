@@ -1153,7 +1153,8 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 	return result;
 }
 
-bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, int y) {
+bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, int y,
+		bool sceneViewport) {
 	Common::File *file = new Common::File();
 	if (!file->open(Common::Path(path))) {
 		warning("Ripper: could not open media '%s'", path.c_str());
@@ -1182,7 +1183,13 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 
 	bool result = false;
 	if (isSmacker) {
-		result = playSmacker(file, path, allowEscSpace, x, y);
+		// RunMediaSequence at 0x1e516 draws direct scene-script Smackers against
+		// the active scene display descriptor. Its logical y=0 is the top of the
+		// 640x300 scene page, which begins at physical y=50 in ScummVM's retained
+		// 640x400 framebuffer.
+		const int originY = sceneViewport ? kScenePresentationTop : 0;
+		result = playSmacker(file, path, allowEscSpace, x, y, nullptr, nullptr,
+			nullptr, 0, 0, 1, true, 0, originY);
 	} else if (isIavf) {
 		result = playIavf(*file, path, allowEscSpace);
 		delete file;
