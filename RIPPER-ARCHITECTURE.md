@@ -140,6 +140,12 @@
   applies a 20-pixel heading inset, 6-pixel bottom inset, 5-pixel left inset,
   20-pixel right inset, and 14-pixel rows. The heading, normal rows, and active
   row use indexed glyph colors 248, 251, and 254 over chooser background 4.
+  `RunWacInventorySelectionLoop` keeps the chooser inside
+  `RunWacSceneInputLoopUntilExitAction` at `0x221e3`; each input tick services
+  the chooser registry and the software selection presentation through
+  `ServiceWacSceneInputAction` at `0x21eef`. The ScummVM loop therefore presents
+  every tick as well, so cursor movement remains visible while the list itself
+  is unchanged.
   Entry 1 dispatches `RunWacMugSelectionScene` at `0x236b9`, entry 2 dispatches
   `PlayMugSelectionCompletionMedia` at `0x2361c`, and the remaining database
   entry handlers are explicit stubs.
