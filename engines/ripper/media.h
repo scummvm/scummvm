@@ -63,7 +63,8 @@ private:
 		bool presentFinalFrameOnEsc = false, bool patchWacMediaPalette = false);
 	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name, bool allowEscSpace);
 	bool servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
-		bool &paused, bool &skipToEnd, Audio::SoundHandle *externalAudio);
+		bool &paused, bool toolbarPaused, bool &skipToEnd,
+		Audio::SoundHandle *externalAudio, bool suppressSceneMouseStop);
 
 	RipperEngine *_engine;
 	InputManager *_input;
