@@ -3939,99 +3939,97 @@ void Character::update() {
 	// After loop: if pixelsMoved != walkSpeed -> revert pos to savedPos and cancel path.
 	int pixelsMoved = 0;
 	Common::Point savedPos = pos;
-	if (walkSpeed > 0) {
-		for (int stepCounter = 1; stepCounter <= walkSpeed; stepCounter++) {
-			savedPos = pos; // Binary: savedX/savedY at top of each iteration
-			// Bresenham: if error >= deltaX -> step Y, else step X
-			if (_stepError >= _stepDeltaX) {
-				// Step Y axis
-				if (_targetPosition.y != pos.y)
-					pixelsMoved++;
-				if (_targetPosition.y < pos.y)
-					pos.y--;
-				else if (_targetPosition.y > pos.y)
-					pos.y++;
-				_stepError -= _stepDeltaX;
-			} else {
-				// Step X axis
-				if (_targetPosition.x != pos.x)
-					pixelsMoved++;
-				if (_targetPosition.x < pos.x)
-					pos.x--;
-				else if (_targetPosition.x > pos.x)
-					pos.x++;
-				_stepError += _stepDeltaY;
-			}
-			// Vertical offset interpolation
-			if (shouldStepVerticalMotion()) {
-				_motionProgress += _motionVerticalOffsetDelta;
-				while (_motionProgress >= _motionDistanceUnits && _motionDistanceUnits > 0) {
-					_motionProgress -= _motionDistanceUnits;
-					if (_motionTargetVerticalOffset < _gameObject->_verticalOffsetScale)
-						_gameObject->_verticalOffsetScale--;
-					else if (_motionTargetVerticalOffset > _gameObject->_verticalOffsetScale)
-						_gameObject->_verticalOffsetScale++;
-				}
-			}
-			// Walkability check - binary uses getWalkabilityAt(posY, posX) >= 0xC8
-			if (!isWalkable(pos)) {
-				const uint16 tileArea = g_engine->_scriptExecutor->getAreaAtPoint(pos.x, pos.y);
-				if (tileArea >= 210 && tileArea <= 215) {
-					debugC(kDebugPath,
-						   "walk blocked on plate area %u at (%d,%d) walk=%u int16=%d target=(%d,%d)",
-						   tileArea, pos.x, pos.y, lookupWalkability(pos), (int16)lookupWalkability(pos),
-						   _targetPosition.x, _targetPosition.y);
-				}
-				// Revert position
-				pos = savedPos;
-				// Wall-sliding: build push vector from ±1 and ±2 samples
-				int pushX = 0, pushY = 0;
-				if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x + 1, pos.y))))
-					pushX--;
-				if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x - 1, pos.y))))
-					pushX++;
-				if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x, pos.y + 1))))
-					pushY--;
-				if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x, pos.y - 1))))
-					pushY++;
-				if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x + 2, pos.y))))
-					pushX--;
-				if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x - 2, pos.y))))
-					pushX++;
-				if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x, pos.y + 2))))
-					pushY--;
-				if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x, pos.y - 2))))
-					pushY++;
-				// Apply push vector
-				while (pushX != 0 || pushY != 0) {
-					if (pushX < 0) {
-						if (Macs2Engine::isWalkabilityWalkable(lookupWalkability(Common::Point(pos.x - 1, pos.y))))
-							pos.x--;
-						pushX++;
-					}
-					if (pushX > 0) {
-						if (Macs2Engine::isWalkabilityWalkable(lookupWalkability(Common::Point(pos.x + 1, pos.y))))
-							pos.x++;
-						pushX--;
-					}
-					if (pushY < 0) {
-						if (Macs2Engine::isWalkabilityWalkable(lookupWalkability(Common::Point(pos.x, pos.y - 1))))
-							pos.y--;
-						pushY++;
-					}
-					if (pushY > 0) {
-						if (Macs2Engine::isWalkabilityWalkable(lookupWalkability(Common::Point(pos.x, pos.y + 1))))
-							pos.y++;
-						pushY--;
-					}
-				}
-				// Binary: target = finalDest = pos (cancel path, but loop continues)
-				_targetPosition = pos;
-				_pathFinalDestination = pos;
-				_path.clear();
-			}
-			// Binary: loop continues unconditionally until stepCounter == walkSpeed
+	for (int stepCounter = 1; stepCounter <= walkSpeed; stepCounter++) {
+		savedPos = pos; // Binary: savedX/savedY at top of each iteration
+		// Bresenham: if error >= deltaX -> step Y, else step X
+		if (_stepError >= _stepDeltaX) {
+			// Step Y axis
+			if (_targetPosition.y != pos.y)
+				pixelsMoved++;
+			if (_targetPosition.y < pos.y)
+				pos.y--;
+			else if (_targetPosition.y > pos.y)
+				pos.y++;
+			_stepError -= _stepDeltaX;
+		} else {
+			// Step X axis
+			if (_targetPosition.x != pos.x)
+				pixelsMoved++;
+			if (_targetPosition.x < pos.x)
+				pos.x--;
+			else if (_targetPosition.x > pos.x)
+				pos.x++;
+			_stepError += _stepDeltaY;
 		}
+		// Vertical offset interpolation
+		if (shouldStepVerticalMotion()) {
+			_motionProgress += _motionVerticalOffsetDelta;
+			while (_motionProgress >= _motionDistanceUnits && _motionDistanceUnits > 0) {
+				_motionProgress -= _motionDistanceUnits;
+				if (_motionTargetVerticalOffset < _gameObject->_verticalOffsetScale)
+					_gameObject->_verticalOffsetScale--;
+				else if (_motionTargetVerticalOffset > _gameObject->_verticalOffsetScale)
+					_gameObject->_verticalOffsetScale++;
+			}
+		}
+		// Walkability check - binary uses getWalkabilityAt(posY, posX) >= 0xC8
+		if (!isWalkable(pos)) {
+			const uint16 tileArea = g_engine->_scriptExecutor->getAreaAtPoint(pos.x, pos.y);
+			if (tileArea >= 210 && tileArea <= 215) {
+				debugC(kDebugPath,
+						"walk blocked on plate area %u at (%d,%d) walk=%u int16=%d target=(%d,%d)",
+						tileArea, pos.x, pos.y, lookupWalkability(pos), (int16)lookupWalkability(pos),
+						_targetPosition.x, _targetPosition.y);
+			}
+			// Revert position
+			pos = savedPos;
+			// Wall-sliding: build push vector from ±1 and ±2 samples
+			int pushX = 0, pushY = 0;
+			if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x + 1, pos.y))))
+				pushX--;
+			if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x - 1, pos.y))))
+				pushX++;
+			if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x, pos.y + 1))))
+				pushY--;
+			if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x, pos.y - 1))))
+				pushY++;
+			if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x + 2, pos.y))))
+				pushX--;
+			if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x - 2, pos.y))))
+				pushX++;
+			if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x, pos.y + 2))))
+				pushY--;
+			if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x, pos.y - 2))))
+				pushY++;
+			// Apply push vector
+			while (pushX != 0 || pushY != 0) {
+				if (pushX < 0) {
+					if (Macs2Engine::isWalkabilityWalkable(lookupWalkability(Common::Point(pos.x - 1, pos.y))))
+						pos.x--;
+					pushX++;
+				}
+				if (pushX > 0) {
+					if (Macs2Engine::isWalkabilityWalkable(lookupWalkability(Common::Point(pos.x + 1, pos.y))))
+						pos.x++;
+					pushX--;
+				}
+				if (pushY < 0) {
+					if (Macs2Engine::isWalkabilityWalkable(lookupWalkability(Common::Point(pos.x, pos.y - 1))))
+						pos.y--;
+					pushY++;
+				}
+				if (pushY > 0) {
+					if (Macs2Engine::isWalkabilityWalkable(lookupWalkability(Common::Point(pos.x, pos.y + 1))))
+						pos.y++;
+					pushY--;
+				}
+			}
+			// Binary: target = finalDest = pos (cancel path, but loop continues)
+			_targetPosition = pos;
+			_pathFinalDestination = pos;
+			_path.clear();
+		}
+		// Binary: loop continues unconditionally until stepCounter == walkSpeed
 	}
 
 	// Binary (2280): if pixelsMoved != walkSpeed -> revert and cancel
