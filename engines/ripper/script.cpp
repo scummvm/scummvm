@@ -777,7 +777,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			// restores the cursor after the callback finishes.
 			_engine->getCursor()->setVisible(false);
 			if (!_engine->getMedia()->play(mediaPath, allowEscSpace,
-				(int32)command.arguments[3].value, (int32)command.arguments[4].value))
+				(int32)command.arguments[3].value, (int32)command.arguments[4].value, true))
 				return false;
 			// HandleSceneEntryMediaAndSetBasenameFlag at 0x159e1 marks the
 			// presentation basename only after ExecutePresentationEntry returns.
