@@ -931,6 +931,9 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 		return;
 	}
 
+	Common::String subtitles = Common::String::format("%s.srt", movie.c_str());
+	dec->loadSubtitles(_currentScriptPath.append(subtitles));
+
 	_mixer->pauseAll(true);
 	_system->lockMouse(false);
 	dec->start();
