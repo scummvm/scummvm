@@ -532,7 +532,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		bool allowEscSpace, int x, int y, Audio::SoundHandle *externalAudio, bool *stoppedByUser,
 		const Common::Array<uint32> *frameAudioOffsets, uint32 audioByteRate,
 		uint32 timelineStartMillis, uint displayScale, bool patchInterfacePalette,
-		uint frameLimit, int originY, bool presentFinalFrameOnEsc, bool patchWacMediaPalette) {
+		uint frameLimit, int originY, bool presentFinalFrameOnEsc, bool patchWacMediaPalette,
+		bool repeatedLoopPass) {
 	if (stoppedByUser)
 		*stoppedByUser = false;
 	Video::SmackerDecoder decoder;
@@ -550,11 +551,11 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		y = (g_system->getHeight() - outputHeight) / 2;
 	else
 		y = y * displayScale + originY;
-	debugC(1, kDebugVideo,
+	debugC(repeatedLoopPass ? 3 : 1, kDebugVideo,
 		"Ripper: playing Smacker '%s' frames=%u source=%ux%u output=%ux%u at %d,%d controls=%d frameLimit=%u",
 		name.c_str(), decoder.getFrameCount(), decoder.getWidth(), decoder.getHeight(),
 		outputWidth, outputHeight, x, y, allowEscSpace, frameLimit);
-	debugC(2, kDebugVideo, "Ripper: Smacker '%s' interfacePalettePatch=%d",
+	debugC(repeatedLoopPass ? 3 : 2, kDebugVideo, "Ripper: Smacker '%s' interfacePalettePatch=%d",
 		name.c_str(), patchInterfacePalette);
 	if (patchWacMediaPalette)
 		debugC(2, kDebugVideo, "Ripper: Smacker '%s' WAC palette patch=10..149", name.c_str());
@@ -968,14 +969,16 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 	const bool loop = loopUntilInput && !firstFrameOnly;
 	uint pass = 0;
 	do {
-		if (pass++ != 0) {
+		const bool repeatedLoopPass = pass++ != 0;
+		if (repeatedLoopPass) {
 			file = new Common::File();
 			if (!file->open(Common::Path(path)))
 				return false;
 		}
 	if (memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0) {
 		result = playSmacker(file, path, allowEscSpace, x, y, nullptr, nullptr, nullptr,
-			0, 0, 1, true, frameLimit, kScenePresentationTop, allowEscSpace);
+			0, 0, 1, true, frameLimit, kScenePresentationTop, allowEscSpace, false,
+			repeatedLoopPass);
 		if (!result && _stopSceneOnMouse && _input->peekMouseState().pressed != 0) {
 			result = true;
 			debugC(1, kDebugVideo,
