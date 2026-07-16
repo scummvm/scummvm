@@ -848,8 +848,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		// The cursor slot is only populated when clicking an inventory item in the panel;
 		// after loading a save with mouseMode==UseInventory, the slot is empty.
 		if (_scriptExecutor->_cursorMode == Script::MouseMode::UseInventory && view1->_activeInventoryItem != nullptr) {
-			AnimFrame *icon = view1->getInventoryIcon(view1->_activeInventoryItem);
-			if (icon != nullptr) {
+			if (AnimFrame *icon = view1->getInventoryIcon(view1->_activeInventoryItem)) {
 				int cursorSlot = (int)Script::MouseMode::UseInventory - 1;
 				_imageResources[cursorSlot] = *icon;
 			}
