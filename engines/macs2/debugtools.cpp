@@ -575,7 +575,7 @@ static Common::String decodeParams(Common::MemoryReadStream *script, uint8 opcod
 	case 0x4E:
 		break;
 	default:
-		if (length > 0 && length <= 30) {
+		if (length <= 30) {
 			result = " [";
 			for (uint8 i = 0; i < length && script->pos() < script->size(); i++) {
 				if (i)
@@ -951,7 +951,7 @@ static void showVariablesWindow() {
 				int firstLineY = view->_stringBoxPosition.y + 9;
 				int relY = mousePos.y - firstLineY;
 				int hoveredChoice = -1;
-				if (relY >= 0 && lineHeight > 0) {
+				if (relY >= 0) {
 					int hoveredLine = relY / lineHeight;
 					int cumulativeLines = 0;
 					for (uint i = 0; i < view->_dialogueChoiceLineCounts.size(); i++) {

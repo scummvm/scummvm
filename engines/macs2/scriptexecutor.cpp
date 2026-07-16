@@ -727,7 +727,7 @@ uint16 Script::ScriptExecutor::readUint16() {
 
 void Script::ScriptExecutor::scriptSetVar() {
 	// This writes to a script variable.
-	readByte();
+	(void)readByte();
 	uint16 variableIndex = readUint16();
 	ScriptVariable var;
 	scriptReadValuePair(var.a, var.b);
@@ -737,7 +737,7 @@ void Script::ScriptExecutor::scriptSetVar() {
 
 void Script::ScriptExecutor::scriptSetVarOr() {
 	// Padding/type byte (same as opcode 0x01) - read and discarded
-	readByte();
+	(void)readByte();
 	uint16 variableIndex = readUint16();
 	// We skip the left shift and just read the first value directly
 	uint16 throwaway;
@@ -1885,9 +1885,8 @@ void Script::ScriptExecutor::scriptSetYOffset() {
 	}
 
 	object->_verticalOffsetScale = offset;
-	Character *c = getOrCreateCharacter((uint16)objectID);
-	if (c != nullptr) {
-		c->_motionTargetVerticalOffset = offset;
+	if (Character *character = getOrCreateCharacter((uint16)objectID)) {
+		character->_motionTargetVerticalOffset = offset;
 	}
 	object->_storedWalkRuntime.valid = true;
 	object->_storedWalkRuntime.motionTargetVerticalOffset = offset;

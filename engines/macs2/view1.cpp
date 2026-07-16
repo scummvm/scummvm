@@ -946,8 +946,8 @@ bool View1::handleDialogueChoiceClick(int clickY, int clickX) {
 	int firstLineY = _stringBoxPosition.y + 9;
 	int relY = clickY - firstLineY;
 	debug("handleDialogueChoiceClick: clickY=%d firstLineY=%d relY=%d lineHeight=%d clickedLine=%d",
-		  clickY, firstLineY, relY, (relY >= 0 && lineHeight > 0) ? relY / lineHeight : -1, lineHeight);
-	if (relY >= 0 && lineHeight > 0) {
+		  clickY, firstLineY, relY, lineHeight, relY >= 0 ? relY / lineHeight : -1);
+	if (relY >= 0) {
 		int clickedLine = relY / lineHeight;
 		int cumulativeLines = 0;
 		for (uint i = 0; i < _dialogueChoiceLineCounts.size(); i++) {
@@ -2094,7 +2094,7 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		// Select a visible dialogue option by number key.
 		// Register a dialogue choice and act upon it
 		uint8 numberPressed = msg.ascii - '1' + 1;
-		if (numberPressed >= 1 && numberPressed <= _dialogueChoiceCount && _isDialogueChoiceInputActive) {
+		if (numberPressed <= _dialogueChoiceCount && _isDialogueChoiceInputActive) {
 			handleTextBoxInput();
 			dismissDialoguePanel();
 			_isDialogueChoiceInputActive = false;
@@ -2125,9 +2125,7 @@ void View1::draw() {
 
 	// Handle highlighting
 
-	if (_currentMode != ViewMode::VM_HELP) {
-		drawAllCharacters(&s, true);
-	}
+	drawAllCharacters(&s, true);
 	drawOverlayTextEntries();
 	if (shouldDrawPathfindingOverlay()) {
 		drawPathfindingPoints(s);
@@ -2148,7 +2146,7 @@ void View1::draw() {
 			int lineHeight = g_engine->maxGlyphHeight + 2;
 			int firstLineY = _stringBoxPosition.y + 9;
 			int relY = mousePos.y - firstLineY;
-			if (relY >= 0 && lineHeight > 0) {
+			if (relY >= 0) {
 				int hoveredLine = relY / lineHeight;
 				int cumulativeLines = 0;
 				for (uint i = 0; i < _dialogueChoiceLineCounts.size(); i++) {
@@ -4105,7 +4103,7 @@ void View1::openOriginalSaveLoadPanel() {
 	// First loop: calculate max icon width/height from the 7 button images
 	for (int i = 1; i <= 7; i++) {
 		int imgIdx = kLookupTable[i] - 1; // convert to 0-based
-		if (imgIdx < 0 || imgIdx >= (int)g_engine->_imageResources.size())
+		if (imgIdx >= (int)g_engine->_imageResources.size())
 			continue;
 		AnimFrame &frame = g_engine->_imageResources[imgIdx];
 		if (frame._data.empty() && frame._width == 0) {
@@ -4206,11 +4204,11 @@ void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
 
 		// Binary: if (local_4 < 0 || local_4 != g_wSaveLoadSubMode) -> normal border
 		// else -> pressed border
-		const bool pressed = (i >= 0 && (uint16)i == subMode);
+		const bool pressed = ((uint16)i == subMode);
 		drawNinePatchBorder(btnPos, Common::Point(btnW, btnH), pressed ? kBorderPressed : kBorderRaised, false, false, s);
 
 		// Check if image has valid data (binary: check size fields > 0)
-		if (imgIdx < 0 || imgIdx >= (int)g_engine->_imageResources.size()) {
+		if (imgIdx >= (int)g_engine->_imageResources.size()) {
 			continue;
 		}
 		AnimFrame &frame = g_engine->_imageResources[imgIdx];
@@ -4350,7 +4348,7 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 		// AND has valid image data
 		// AND (mapDisabledFlag == 0 || i > 2)
 		bool hasData = false;
-		if (imgIdx >= 0 && imgIdx < (int)g_engine->_imageResources.size()) {
+		if (imgIdx < (int)g_engine->_imageResources.size()) {
 			AnimFrame &frame = g_engine->_imageResources[imgIdx];
 			hasData = (!frame._data.empty() && frame._width > 0);
 		}
