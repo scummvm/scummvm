@@ -226,10 +226,16 @@
   `0x0f` reaches `HandleSceneEntryClearMilestoneFlag` at `0x14cc2`. Travel,
   WAC inventory, puzzles, dialogue, briefing media, and the startup milestone
   selection menu all read or update this same store.
-- `MILESTON.DEF` supplies keyed labels for the indexed flags. The confirmed
-  ranges include chapter completion at 1 through 4, travel availability at 20
-  through 44, inventory at 50 through 58, WAC database scans beginning at 70,
-  story state beginning at 300, and cyberspace state beginning at 400. Opcode
+- `MILESTON.DEF` supplies 222 distinct keyed labels for the indexed flags.
+  `LoadStartupConfigAndInitializeResources` at `0x10e6d` loads the table and
+  `LoadStartupKeyedTextTable` at `0x1f169` enumerates each numeric key and its
+  text. The ScummVM milestone service preserves that data-driven enumeration;
+  level-three `milestones` debugging reports every defined key with its label
+  and current bit value after definition loading and save synchronization. The
+  confirmed ranges include chapter completion at 1 through 4, travel
+  availability at 20 through 44, inventory at 50 through 58, WAC database
+  scans beginning at 70, story state beginning at 300, and cyberspace state
+  beginning at 400. Opcode
   `0x1e` named flags are different: `HandleSceneEntrySetOrClearNamedFlag` at
   `0x15dfe` updates the string-keyed startup asset catalog rather than this
   indexed bitset.

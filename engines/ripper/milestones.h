@@ -64,6 +64,7 @@ public:
 	static const char *domain(uint flag);
 
 private:
+	void debugState(const char *source) const;
 	void setBit(uint flag, bool value);
 
 	byte _flags[kStorageByteCount];
