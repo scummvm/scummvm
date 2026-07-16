@@ -166,6 +166,12 @@
   `HandleSceneEntryAndStartConcurrentSceneRuntime` at `0x15cd3` returns `-3`
   with the target and entry label, and the outer loop retires that concurrent
   runtime before continuing the handoff.
+  The active-frame loop is not bounded by the number of frame records. Opcode
+  `0x14` selecting the current frame still returns `-2`, which sends control
+  back through the concurrent-runtime service before the active frame runs
+  again. `BA0B.RUN` depends on this ordering: its sole frame selects frame 0
+  after setting milestone 300, then `PROLOGUE.RUN:loop` observes the milestone
+  and stages the next script instead of replaying `PROLOG2.AVI`.
 
 ## Save and Restore
 
