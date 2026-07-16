@@ -97,14 +97,12 @@ public:
 private:
 	enum {
 		kBaseMarkerSize = 10,  ///< Size of square and crosshair markers at 1x scale
-		kBaseGlowSize = 3,     ///< Size of glow effect around markers and text at 1x scale
 		kBasePointRadius = 3,  ///< Radius of point marker at 1x scale
 		kBaseLineThickness = 1 ///< Thickness of lines for markers and text boxes at 1x scale
 	};
 
 	float _sizeScale;   ///< Overlay/game scale factor applied to marker geometry
 	int _markerSize;    ///< Scaled size of square and crosshair markers
-	int _glowSize;      ///< Scaled size of glow effect around markers and text
 	int _pointRadius;   ///< Scaled radius of point marker
 	int _lineThickness; ///< Scaled thickness of lines for markers and text boxes
 
@@ -116,13 +114,13 @@ private:
 		int overlayWidth, int overlayHeight, const PixelFormat &format, const Font *font);
 	void drawLabelBox(Surface *surface, int x, int y, int w, int h,
 		int overlayWidth, int overlayHeight, const PixelFormat &format);
-	void drawRectWithGlow(Surface *surface, int x, int y, int w, int h,
+	void drawRect(Surface *surface, int x, int y, int w, int h,
 		int overlayWidth, int overlayHeight, const PixelFormat &format);
 
-	void drawLineWithGlow(Surface *surface, int x1, int y1, int x2, int y2,
+	void drawLine(Surface *surface, int x1, int y1, int x2, int y2,
 		int width, int height, const PixelFormat &format, int lineThickness);
 
-	void blendPixelWithGlow(Surface *surface, int px, int py, const PixelFormat &format,
+	void blendPixel(Surface *surface, int px, int py, const PixelFormat &format,
 		int distance, int solidSize);
 };
 
