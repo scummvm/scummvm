@@ -366,6 +366,10 @@ BrokenMugPuzzle::Result BrokenMugPuzzle::run() {
 	if (!_engine->getMedia()->playBlockingAudio("q_p_1.wav"))
 		warning("Ripper: broken mug introduction audio failed; continuing puzzle input");
 	_engine->getCursor()->update(kPuzzleCursor);
+	g_system->updateScreen();
+	debugC(2, kDebugWac,
+		"Ripper: activated broken mug input cursor=%u controls=%u",
+		kPuzzleCursor, kPieceCount);
 
 	Result result = kExited;
 	bool active = true;
@@ -415,6 +419,7 @@ BrokenMugPuzzle::Result BrokenMugPuzzle::run() {
 		if (changed)
 			render();
 		_engine->getWac()->serviceIdleEffects();
+		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
 
