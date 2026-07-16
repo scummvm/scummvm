@@ -56,8 +56,8 @@ class Character {
 private:
 	Common::Point _startPosition;
 
-	uint32 _startTime;
-	uint32 _duration;
+	uint32 _startTime = 0;
+	uint32 _duration = 0;
 
 	bool _lerpIgnoresObstacles = false;
 
