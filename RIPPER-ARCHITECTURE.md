@@ -599,8 +599,13 @@
 - Scene interaction records contain an 11-byte label followed by an `x/y/width/
   height` rectangle at offsets `+0x0b/+0x0d/+0x0f/+0x11`. The scene UI uses
   transposed selection axes relative to the displayed frame, so ScummVM maps
-  this to screen `x=y`, `y=x`, `width=height`, `height=width`. This mapping was
-  confirmed live with the central `start` region and T1's left region.
+  this to screen `x=y`, `y=x+50`, `width=height`, `height=width`.
+  `ExecuteSceneFrameAndInteractions` adds the active presentation origin at
+  `0x8a1ec` to record offset `+0x0b` before calling
+  `InitializeUiControlState` at `0x4b90a`;
+  `InitializeStartupDisplayModeAndContext` at `0x1e335` sets that origin to
+  `0x32`. `IsPointInsideUiRect` at `0x533b1` then applies inclusive
+  `origin..origin+extent-1` bounds, equivalent to `Common::Rect::contains`.
 - The interaction cursor selector is the byte at record offset `+0x15`; it is
   separate from the keyboard selector word at `+0x13` and the condition
   callback pointer at `+0x16`.

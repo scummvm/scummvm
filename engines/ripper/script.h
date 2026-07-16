@@ -187,6 +187,7 @@ private:
 	bool executeConcurrentFrame();
 	bool performPendingSceneTransition();
 	bool findFrameByLabel(const CompiledScript &script, const Common::String &label, uint &frameIndex) const;
+	Common::Rect interactionBounds(const ScriptInteraction &interaction) const;
 	const ScriptInteraction *findBa0Interaction(const Common::Point &point,
 		uint *interactionIndex = nullptr) const;
 	bool isScenePlayed(const Common::String &scene) const;
