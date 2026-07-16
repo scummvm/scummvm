@@ -1157,6 +1157,19 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 
 bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, int y,
 		bool sceneViewport) {
+	// ExecutePresentationEntry at 0x1652a routes WAV entries to
+	// PlayBlockingAudioClip at 0x1f0ea before considering either video path.
+	// The original blocking-audio loop always permits Escape, independently of
+	// the presentation control argument used by AVI and Smacker playback.
+	if (path.hasSuffixIgnoreCase(".wav")) {
+		debugC(2, kDebugAudio,
+			"Ripper: dispatching media presentation '%s' as blocking audio",
+			path.c_str());
+		const bool result = playBlockingAudio(path);
+		_input->drainKeys();
+		return result;
+	}
+
 	Common::File *file = new Common::File();
 	if (!file->open(Common::Path(path))) {
 		warning("Ripper: could not open media '%s'", path.c_str());
