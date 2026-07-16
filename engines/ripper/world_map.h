@@ -57,8 +57,14 @@ private:
 	void refreshLocations();
 	void draw() const;
 	void drawText(byte *screen, uint pitch, int x, int y, const Common::String &text,
-		byte color) const;
+		byte color, const Common::Rect &clip) const;
+	void drawLocationDetails(byte *screen, uint pitch) const;
 	int findVisibleLocation(const Common::Point &point) const;
+	int findScrollControl(const Common::Point &point) const;
+	uint visibleRowCount() const;
+	bool moveSelection(int direction);
+	bool pageSelection(int direction);
+	bool selectViewportEdge(bool last);
 	void updateFirstVisible();
 	uint resolveChapter() const;
 	Common::String resolveTargetScript(uint locationIndex) const;
@@ -75,6 +81,7 @@ private:
 	uint _selectedVisible;
 	uint _firstVisible;
 	int _pressedVisible;
+	int _pressedScrollControl;
 	bool _initialized;
 };
 

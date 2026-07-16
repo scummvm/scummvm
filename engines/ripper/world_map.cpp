@@ -38,12 +38,28 @@ static const uint kWorldMapHeight = 400;
 static const uint kTravelLocationCount = 15;
 static const uint kSceneEntryCount = 25;
 static const uint kTravelLocationNameResource = 100;
+static const uint kTravelDetailResource = 116;
 static const uint kTravelTargetResource = 150;
 static const uint kWorldMapCursor = 16;
+// RunSceneSelectionMenu at 0x20808 passes (305, 45) through the original
+// transposed presentation coordinates, producing screen position (45, 305).
+// The companion detail control uses screen position (330, 305); both are
+// 190x80. Layout rows 15 and 16 at 0x207ac place the 23x15 scroll controls.
 static const int kLocationListLeft = 45;
-static const int kLocationListTop = 80;
+static const int kLocationListTop = 305;
 static const int kLocationListRight = 235;
-static const int kLocationListBottom = 270;
+static const int kLocationListBottom = 385;
+static const int kLocationDetailLeft = 330;
+static const int kLocationDetailTop = 305;
+static const int kLocationDetailRight = 520;
+static const int kLocationDetailBottom = 385;
+static const int kScrollUpLeft = 267;
+static const int kScrollUpTop = 306;
+static const int kScrollDownTop = 329;
+static const int kScrollButtonWidth = 23;
+static const int kScrollButtonHeight = 15;
+static const int kScrollControlUp = 0;
+static const int kScrollControlDown = 1;
 static const byte kListBackgroundColor = 0;
 static const byte kListTextColor = 251;
 static const byte kSelectedBackgroundColor = 248;
@@ -57,7 +73,8 @@ static const byte kSceneEntryGroups[kSceneEntryCount] = {
 };
 
 WorldMap::WorldMap(RipperEngine *engine) : _engine(engine), _selectedVisible(0),
-		_firstVisible(0), _pressedVisible(-1), _initialized(false) {
+		_firstVisible(0), _pressedVisible(-1), _pressedScrollControl(-1),
+		_initialized(false) {
 }
 
 bool WorldMap::initialize(ResourceManager &resources) {
@@ -81,6 +98,15 @@ bool WorldMap::initialize(ResourceManager &resources) {
 	debugC(1, kDebugScene,
 		"Ripper: initialized world map locations=%u unlockFlags=%u-%u",
 		_locations.size(), kMilestoneFirstTravelLocation, kMilestoneLastTravelLocation);
+	debugC(2, kDebugScene,
+		"Ripper: world map viewports list=%d,%d,%d,%d detail=%d,%d,%d,%d rows=%u "
+		"scrollUp=%d,%d,%d,%d scrollDown=%d,%d,%d,%d",
+		kLocationListLeft, kLocationListTop, kLocationListRight, kLocationListBottom,
+		kLocationDetailLeft, kLocationDetailTop, kLocationDetailRight, kLocationDetailBottom,
+		visibleRowCount(), kScrollUpLeft, kScrollUpTop,
+		kScrollUpLeft + kScrollButtonWidth, kScrollUpTop + kScrollButtonHeight,
+		kScrollUpLeft, kScrollDownTop, kScrollUpLeft + kScrollButtonWidth,
+		kScrollDownTop + kScrollButtonHeight);
 	return true;
 }
 
@@ -156,7 +182,7 @@ void WorldMap::refreshLocations() {
 }
 
 void WorldMap::drawText(byte *screen, uint pitch, int x, int y,
-		const Common::String &text, byte color) const {
+		const Common::String &text, byte color, const Common::Rect &clip) const {
 	int drawX = x;
 	for (uint i = 0; i < text.size(); ++i) {
 		const byte character = (byte)text[i];
@@ -171,12 +197,54 @@ void WorldMap::drawText(byte *screen, uint pitch, int x, int y,
 		for (uint glyphY = 0; glyphY < glyph.height; ++glyphY) {
 			for (uint glyphX = 0; glyphX < glyph.width; ++glyphX) {
 				const byte pixel = _font.pixels[glyph.pixelOffset + glyphY * glyph.width + glyphX];
-				if (pixel != _font.transparentColor)
-					screen[(y + glyph.yOffset + glyphY) * pitch +
-						drawX + glyph.xOffset + glyphX] = color;
+				const int pixelX = drawX + glyph.xOffset + glyphX;
+				const int pixelY = y + glyph.yOffset + glyphY;
+				if (pixel != _font.transparentColor && pixelX >= clip.left &&
+					pixelX < clip.right && pixelY >= clip.top && pixelY < clip.bottom)
+					screen[pixelY * pitch + pixelX] = color;
 			}
 		}
 		drawX += glyph.xOffset + glyph.width + _font.characterSpacing;
+	}
+}
+
+void WorldMap::drawLocationDetails(byte *screen, uint pitch) const {
+	if (_selectedVisible >= _visibleLocations.size())
+		return;
+
+	const Common::Rect viewport(kLocationDetailLeft, kLocationDetailTop,
+		kLocationDetailRight, kLocationDetailBottom);
+	const uint locationIndex = _visibleLocations[_selectedVisible];
+	const TravelLocation &location = _locations[locationIndex];
+	const uint rowHeight = _font.lineHeight + 2;
+	uint row = 0;
+	for (uint entry = 0; entry < location.entryIndices.size(); ++entry) {
+		const uint entryIndex = location.entryIndices[entry];
+		if (!_engine->getMilestones()->isSet(kMilestoneFirstTravelLocation + entryIndex))
+			continue;
+
+		const Common::String &detail = resourceString(kTravelDetailResource + entryIndex);
+		Common::String line;
+		for (uint i = 0; i <= detail.size() &&
+				kLocationDetailTop + (row + 1) * rowHeight <= kLocationDetailBottom; ++i) {
+			const char character = i < detail.size() ? detail[i] : '\n';
+			if (character != '\r' && character != '\n') {
+				line += character;
+				continue;
+			}
+			if (!line.empty()) {
+				const int top = kLocationDetailTop + row * rowHeight;
+				for (uint y = 0; y < rowHeight; ++y)
+					memset(screen + (top + y) * pitch + kLocationDetailLeft,
+						kListBackgroundColor, kLocationDetailRight - kLocationDetailLeft);
+				drawText(screen, pitch, kLocationDetailLeft + 3, top + 1, line,
+					kListTextColor, viewport);
+				line.clear();
+				++row;
+			}
+			if (character == '\r' && i + 1 < detail.size() && detail[i + 1] == '\n')
+				++i;
+		}
 	}
 }
 
@@ -192,8 +260,10 @@ void WorldMap::draw() const {
 		memcpy(screen->getBasePtr(0, y), _background.pixels.data() + y * kWorldMapWidth,
 			kWorldMapWidth);
 
-	const uint rowHeight = _font.lineHeight + 4;
-	const uint visibleRows = (kLocationListBottom - kLocationListTop) / rowHeight;
+	const Common::Rect viewport(kLocationListLeft, kLocationListTop,
+		kLocationListRight, kLocationListBottom);
+	const uint rowHeight = _font.lineHeight + 2;
+	const uint visibleRows = visibleRowCount();
 	byte *pixels = (byte *)screen->getPixels();
 	for (uint row = 0; row < visibleRows && _firstVisible + row < _visibleLocations.size(); ++row) {
 		const uint visibleIndex = _firstVisible + row;
@@ -205,8 +275,9 @@ void WorldMap::draw() const {
 				kLocationListRight - kLocationListLeft);
 		drawText(pixels, screen->pitch, kLocationListLeft + 3, top + 2,
 			_locations[_visibleLocations[visibleIndex]].name,
-			selected ? kSelectedTextColor : kListTextColor);
+			selected ? kSelectedTextColor : kListTextColor, viewport);
 	}
+	drawLocationDetails(pixels, screen->pitch);
 	g_system->unlockScreen();
 	g_system->updateScreen();
 }
@@ -215,15 +286,92 @@ int WorldMap::findVisibleLocation(const Common::Point &point) const {
 	if (point.x < kLocationListLeft || point.x >= kLocationListRight ||
 		point.y < kLocationListTop || point.y >= kLocationListBottom)
 		return -1;
-	const uint rowHeight = _font.lineHeight + 4;
-	const uint visibleIndex = _firstVisible +
-		(point.y - kLocationListTop) / rowHeight;
+	const uint rowHeight = _font.lineHeight + 2;
+	const uint relativeRow = (point.y - kLocationListTop) / rowHeight;
+	if (relativeRow >= visibleRowCount())
+		return -1;
+	const uint visibleIndex = _firstVisible + relativeRow;
 	return visibleIndex < _visibleLocations.size() ? (int)visibleIndex : -1;
 }
 
+int WorldMap::findScrollControl(const Common::Point &point) const {
+	if (Common::Rect(kScrollUpLeft, kScrollUpTop,
+		kScrollUpLeft + kScrollButtonWidth, kScrollUpTop + kScrollButtonHeight).contains(point))
+		return kScrollControlUp;
+	if (Common::Rect(kScrollUpLeft, kScrollDownTop,
+		kScrollUpLeft + kScrollButtonWidth, kScrollDownTop + kScrollButtonHeight).contains(point))
+		return kScrollControlDown;
+	return -1;
+}
+
+uint WorldMap::visibleRowCount() const {
+	const uint rowHeight = _font.lineHeight + 2;
+	const uint rows = (kLocationListBottom - kLocationListTop) / rowHeight;
+	return rows != 0 ? rows : 1;
+}
+
+bool WorldMap::moveSelection(int direction) {
+	if (_visibleLocations.empty())
+		return false;
+	const uint previous = _selectedVisible;
+	if (direction < 0 && _selectedVisible != 0)
+		--_selectedVisible;
+	else if (direction > 0 && _selectedVisible + 1 < _visibleLocations.size())
+		++_selectedVisible;
+	updateFirstVisible();
+	if (_selectedVisible != previous)
+		debugC(3, kDebugScene,
+			"Ripper: world map scroll step direction=%d selected=%u firstVisible=%u rows=%u",
+			direction, _selectedVisible, _firstVisible, visibleRowCount());
+	return _selectedVisible != previous;
+}
+
+bool WorldMap::pageSelection(int direction) {
+	if (_visibleLocations.empty())
+		return false;
+	const uint previous = _selectedVisible;
+	const uint visibleRows = visibleRowCount();
+	const uint relativeSelection = _selectedVisible - _firstVisible;
+	if (direction < 0) {
+		if (_firstVisible != 0) {
+			_firstVisible = _firstVisible > visibleRows ?
+				_firstVisible - visibleRows : 0;
+			_selectedVisible = MIN<uint>(_firstVisible + relativeSelection,
+				_visibleLocations.size() - 1);
+		} else {
+			_selectedVisible = 0;
+		}
+	} else if (_firstVisible + visibleRows < _visibleLocations.size()) {
+		_firstVisible = MIN<uint>(_firstVisible + visibleRows,
+			_visibleLocations.size() - visibleRows);
+		_selectedVisible = MIN<uint>(_firstVisible + relativeSelection,
+			_visibleLocations.size() - 1);
+	} else {
+		_selectedVisible = MIN<uint>(_firstVisible + visibleRows - 1,
+			_visibleLocations.size() - 1);
+	}
+	if (_selectedVisible != previous)
+		debugC(3, kDebugScene,
+			"Ripper: world map scroll page direction=%d selected=%u firstVisible=%u rows=%u",
+			direction, _selectedVisible, _firstVisible, visibleRows);
+	return _selectedVisible != previous;
+}
+
+bool WorldMap::selectViewportEdge(bool last) {
+	if (_visibleLocations.empty())
+		return false;
+	const uint previous = _selectedVisible;
+	_selectedVisible = last ? MIN<uint>(_firstVisible + visibleRowCount() - 1,
+		_visibleLocations.size() - 1) : _firstVisible;
+	return _selectedVisible != previous;
+}
+
 void WorldMap::updateFirstVisible() {
-	const uint rowHeight = _font.lineHeight + 4;
-	const uint visibleRows = (kLocationListBottom - kLocationListTop) / rowHeight;
+	const uint visibleRows = visibleRowCount();
+	const uint maximumFirst = _visibleLocations.size() > visibleRows ?
+		_visibleLocations.size() - visibleRows : 0;
+	if (_firstVisible > maximumFirst)
+		_firstVisible = maximumFirst;
 	if (_selectedVisible < _firstVisible)
 		_firstVisible = _selectedVisible;
 	else if (_selectedVisible >= _firstVisible + visibleRows)
@@ -262,6 +410,7 @@ bool WorldMap::run(Common::String &targetScript) {
 	_selectedVisible = 0;
 	_firstVisible = 0;
 	_pressedVisible = -1;
+	_pressedScrollControl = -1;
 	g_system->getPaletteManager()->setPalette(_background.palette.data(), 0, 256);
 	draw();
 	_engine->getInput()->drainKeys();
@@ -288,30 +437,45 @@ bool WorldMap::run(Common::String &targetScript) {
 				selected = true;
 				break;
 			}
-			if (key == 0x4800 && _selectedVisible != 0) {
-				--_selectedVisible;
-				updateFirstVisible();
+			bool changed = false;
+			if (key == 0x4700)
+				changed = selectViewportEdge(false);
+			else if (key == 0x4800)
+				changed = moveSelection(-1);
+			else if (key == 0x4900)
+				changed = pageSelection(-1);
+			else if (key == 0x4f00)
+				changed = selectViewportEdge(true);
+			else if (key == 0x5000)
+				changed = moveSelection(1);
+			else if (key == 0x5100)
+				changed = pageSelection(1);
+			if (changed)
 				draw();
-			} else if (key == 0x5000 && _selectedVisible + 1 < _visibleLocations.size()) {
-				++_selectedVisible;
-				updateFirstVisible();
-				draw();
-			}
 		}
 		if (cancelled || selected)
 			break;
 
 		const MouseState mouse = _engine->getInput()->publishMouseState();
 		const int hoveredVisible = findVisibleLocation(mouse.position);
-		_engine->getCursor()->update(hoveredVisible >= 0 ? kWorldMapCursor : 14);
-		if ((mouse.pressed & kMouseButtonLeft) != 0)
+		const int hoveredScrollControl = findScrollControl(mouse.position);
+		_engine->getCursor()->update(
+			hoveredVisible >= 0 || hoveredScrollControl >= 0 ? kWorldMapCursor : 14);
+		if ((mouse.pressed & kMouseButtonLeft) != 0) {
 			_pressedVisible = hoveredVisible;
+			_pressedScrollControl = hoveredScrollControl;
+		}
 		if ((mouse.released & kMouseButtonLeft) != 0) {
-			if (_pressedVisible >= 0 && _pressedVisible == hoveredVisible) {
+			if (_pressedScrollControl >= 0 &&
+					_pressedScrollControl == hoveredScrollControl) {
+				if (moveSelection(_pressedScrollControl == kScrollControlUp ? -1 : 1))
+					draw();
+			} else if (_pressedVisible >= 0 && _pressedVisible == hoveredVisible) {
 				_selectedVisible = hoveredVisible;
 				selected = true;
 			}
 			_pressedVisible = -1;
+			_pressedScrollControl = -1;
 		}
 		if (!selected && hoveredVisible >= 0 && (uint)hoveredVisible != _selectedVisible) {
 			_selectedVisible = hoveredVisible;
