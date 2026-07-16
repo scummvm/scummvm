@@ -68,24 +68,27 @@ XtraCastMember::XtraCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 	CastMemberInfo *ci = getInfo();
 
 	if (ci && ci->isExternal) {
-		warning("STUB: XtraCastMember::XtraCastMember(): External Xtra cast members not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
-	} else {
-		uint32 symbolLen = stream.readUint32BE();
-		_xtraSymbol = stream.readString(0, symbolLen);
-		uint32 xtraDataLen = stream.readUint32BE();
-		xtraDataLen = MIN<int>(xtraDataLen, (int)(stream.size() - stream.pos()));
-		_xtraData = Common::Array<byte>(xtraDataLen);
-		stream.read(_xtraData.data(), xtraDataLen);
+		warning("STUB: XtraCastMember::XtraCastMember(): External Xtra cast member %d ('%s', display name '%s') not yet supported for version v%d (%d)",
+				castId, ci->name.c_str(), ci->xtraDisplayName.c_str(), humanVersion(_cast->_version), _cast->_version);
+		return;
+	}
 
-		debugC(3, kDebugLoading, "  XtraCastMember: xtraSymbol: '%s', xtraDataLen: %d", _xtraSymbol.c_str(), xtraDataLen);
+	uint32 symbolLen = stream.readUint32BE();
+	_xtraSymbol = stream.readString(0, symbolLen);
+	uint32 xtraDataLen = stream.readUint32BE();
+	xtraDataLen = MIN<int>(xtraDataLen, (int)(stream.size() - stream.pos()));
+	_xtraData = Common::Array<byte>(xtraDataLen);
+	stream.read(_xtraData.data(), xtraDataLen);
 
-		if (debugChannelSet(5, kDebugLoading)) {
-			Common::hexdump(_xtraData.data(), xtraDataLen);
-		}
+	debugC(3, kDebugLoading, "  XtraCastMember: xtraSymbol: '%s', xtraDataLen: %d", _xtraSymbol.c_str(), xtraDataLen);
+
+	if (debugChannelSet(5, kDebugLoading)) {
+		Common::hexdump(_xtraData.data(), xtraDataLen);
 	}
 
 	if (!findXtraCastMemberProto(_xtraSymbol))
-		warning("STUB: XtraCastMember::XtraCastMember(): Xtra cast members not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
+		warning("STUB: XtraCastMember::XtraCastMember(): Xtra '%s' cast member %d not yet supported for version v%d (%d)",
+				_xtraSymbol.c_str(), castId, humanVersion(_cast->_version), _cast->_version);
 }
 
 XtraCastMember::XtraCastMember(Cast *cast, uint16 castId, XtraCastMember &source)
