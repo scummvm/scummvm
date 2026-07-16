@@ -41,7 +41,7 @@ public:
 private:
 	// This is not the number of recursive calls, it is as far is the script call stack is
 	// ever allowed to get.
-	static const uint MAX_CALL_DEPTH = 0x0f;
+	static const uint MAX_CALL_DEPTH = 0x20;
 
 	void skipNextBlock();
 

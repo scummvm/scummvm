@@ -38,6 +38,7 @@ MODULE_OBJS = \
 	mediascript/scriptvalue.o \
 	mediastation.o \
 	metaengine.o \
+	minigames/checkers.o \
 	minigames/dotgame.o \
 	minigames/sophie.o \
 	minigames/stalkingzazu.o \

@@ -26,6 +26,7 @@
 #include "mediastation/debugchannels.h"
 #include "mediastation/mediastation.h"
 #include "mediastation/minigames/maze.h"
+#include "mediastation/minigames/checkers.h"
 
 namespace MediaStation {
 
@@ -100,6 +101,7 @@ FunctionManager::~FunctionManager() {
 	_functions.clear();
 
 	delete _maze;
+	delete _checkers;
 }
 
 bool FunctionManager::attemptToReadFromStream(Chunk &chunk, uint sectionType) {
@@ -253,6 +255,7 @@ ScriptValue FunctionManager::call(uint functionId, Common::Array<ScriptValue> &a
 		break;
 
 	case kCheckersFunction:
+		FUNCARGMIN(1);
 		script_Checkers(args, returnValue);
 		break;
 
@@ -633,10 +636,6 @@ void FunctionManager::script_EndTimedInterval(Common::Array<ScriptValue> &args, 
 	const uint32 millisecondsElapsed = now - _timedIntervalStartInMs;
 	const double secondsElapsed = millisecondsElapsed / 1000.0;
 	returnValue.setToFloat(secondsElapsed);
-}
-
-void FunctionManager::script_Checkers(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
-	warning("STUB: %s", __func__);
 }
 
 void FunctionManager::script_Drawing(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {

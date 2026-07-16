@@ -58,6 +58,10 @@ namespace MazeMinigame {
 	class Maze;
 } // End of namespace MazeMinigame
 
+namespace CheckersMinigame {
+	class Checkers;
+} // End of namespace CheckersMinigame
+
 class FunctionManager : public ParameterClient {
 friend class Debugger;
 
@@ -71,6 +75,7 @@ public:
 	void deleteFunctionsForContext(uint contextId);
 
 	MazeMinigame::Maze *_maze = nullptr;
+	CheckersMinigame::Checkers *_checkers = nullptr;
 
 	uint _scriptBlockCallDepth = 0;
 
