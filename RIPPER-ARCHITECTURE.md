@@ -149,6 +149,12 @@
   script state plus the indexed 640x400 framebuffer and palette so static scene
   presentations resume at the same visible boundary without serializing DOS
   pointers from the original fixed block.
+- `WriteConfiguredSaveCheckpointAndCleanupRuntime` at `0x1b274` writes the
+  emergency save when the scene-script loop returns to the front end, then
+  clears active audio triggers and the concurrent scene runtime. The
+  reimplementation writes its reserved Continue slot when an active scene loop
+  exits normally; Continue never substitutes a manual slot, while Restore Game
+  always opens the manual chooser.
 
 ## WAC
 
