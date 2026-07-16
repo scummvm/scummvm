@@ -1893,8 +1893,6 @@ bool View1::handlePanelRelease(const MouseUpMessage &msg) {
 		shouldClose = true;
 		break;
 	case kUiPanelInventory:
-		shouldClose = (_clickedButtonIndex == 6);
-		break;
 	case kUiPanelContainerInventory:
 		shouldClose = (_clickedButtonIndex == 6);
 		break;
