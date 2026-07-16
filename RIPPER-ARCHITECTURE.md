@@ -164,7 +164,7 @@
 - `RunWacMugSelectionScene` owns nine draggable controls (`0x640` through
   `0x648`) backed by `mug0.smk` through `mug8.smk`. It initially advances each
   32-frame asset to orientation state 2, draws the controls over the WAC media
-  viewport at x=50, y=50, width=282, height=350, and patches only palette
+  viewport at x=50, y=50, width=350, height=282, and patches only palette
   entries 10 through 149 so the WAC interface colors remain available. The WAC
   display service consumes each control's coordinate pair in transposed screen
   order, so the second recovered coordinate is screen x and the first is
@@ -193,7 +193,8 @@
   run.
 - The mug is solved only when all nine orientation states are zero and every
   piece is within five pixels of its recovered x/y offset from piece 0. The
-  completion path centers `mug9.smk` in the WAC media viewport, plays
+  completion path centers the 160-by-164 `mug9.smk` at x=143, y=111 in the WAC
+  media viewport, plays
   `q_p_2.wav`, then sets shared flags `0x47` and `0x48`; `q_p_1.wav` is played
   before the manipulation loop. Once flag `0x48` is set, selecting either the
   Broken Mug path or database entry 2 replays the completed-mug presentation
