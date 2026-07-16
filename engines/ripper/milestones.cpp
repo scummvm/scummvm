@@ -77,6 +77,7 @@ bool Milestones::initialize(ResourceManager &resources) {
 	debugC(1, kDebugMilestones,
 		"Ripper: loaded milestone definitions labels=%u capacity=%u storageBytes=%u",
 		labelCount, kFlagCount, kStorageByteCount);
+	debugState("definition-load");
 	return labelCount != 0;
 }
 
@@ -126,7 +127,22 @@ bool Milestones::syncGame(Common::Serializer &serializer) {
 		"Ripper: %s milestone state flags=%u set=%u storageBytes=%u",
 		serializer.isLoading() ? "restored" : "saved", kFlagCount, setCount,
 		kStorageByteCount);
+	debugState(serializer.isLoading() ? "save-restore" : "save-write");
 	return !serializer.err();
+}
+
+void Milestones::debugState(const char *source) const {
+	// LoadStartupKeyedTextTable at 0x1f169 enumerates every numeric key in
+	// MILESTON.DEF. Keep the detailed ScummVM dump limited to those same
+	// definitions rather than printing all 1,000 bits in the backing store.
+	for (uint flag = 0; flag < _labels.size(); ++flag) {
+		if (_labels[flag].empty())
+			continue;
+
+		debugC(3, kDebugMilestones,
+			"Ripper: milestone state flag=%u label='%s' domain='%s' value=%d source=%s",
+			flag, _labels[flag].c_str(), domain(flag), isSet(flag), source);
+	}
 }
 
 const Common::String &Milestones::label(uint flag) const {
