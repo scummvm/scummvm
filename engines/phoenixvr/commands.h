@@ -35,6 +35,10 @@ namespace {
 constexpr int kMessengerInventorySlots = 12;
 constexpr int kMessengerDisplayedInventorySlots = 8;
 constexpr int kLouvreChestSize = 128;
+const Common::Rect kLouvreTextRect(62, 402, 354, 466);
+const uint16 kLouvreTextColor = 1987;
+const uint16 kLouvreWarningTextColor = 63687;
+constexpr uint32 kLouvreTextBlockMillis = 5000;
 
 struct LouvrePluginState {
 	int objectChest[kLouvreChestSize];
@@ -60,6 +64,10 @@ Common::String messengerInventorySlotName(int slot) {
 	return Common::String::format("Pos%d", slot);
 }
 
+int louvreSelectionSlot(int selection) {
+	return selection > 100 ? selection - 100 : selection;
+}
+
 int messengerInventorySlot(int slot) {
 	if (slot < 1 || slot > kMessengerInventorySlots)
 		return 0;
@@ -73,18 +81,13 @@ void setMessengerInventorySlot(int slot, int objectId) {
 }
 
 int messengerSpecialObjectSlot(int objectId) {
-	switch (objectId) {
-	case 100:
-		return 10;
-	case 200:
-		return 11;
-	case 300:
-		return 9;
-	case 400:
-		return 12;
-	default:
-		return 0;
+	static const int kSpecialObjects[] = {300, 100, 200, 400};
+
+	for (uint i = 0; i < ARRAYSIZE(kSpecialObjects); ++i) {
+		if (kSpecialObjects[i] == objectId)
+			return i + 9;
 	}
+	return 0;
 }
 
 Common::String louvreObjectImage(int objectId, int suffix) {
@@ -95,31 +98,37 @@ void drawLouvreImage(const Common::String &image, int x, int y) {
 	g_engine->drawArchiveImage(image, x, y);
 }
 
-void drawLouvreText(int textId, uint16 color = 1987) {
-	static const Common::Rect kTextRect(62, 402, 354, 466);
-	drawLouvreImage("EffaceText.bmp", kTextRect.left, kTextRect.top);
-	g_engine->clearArchiveText(kTextRect);
-	g_engine->drawArchiveText(textId, kTextRect, 14, true, color);
+void drawLouvreText(int textId, uint16 color = kLouvreTextColor) {
+	drawLouvreImage("EffaceText.bmp", kLouvreTextRect.left, kLouvreTextRect.top);
+	g_engine->clearArchiveText(kLouvreTextRect);
+	g_engine->drawArchiveText(textId, kLouvreTextRect, 14, true, color);
 }
 
 void clearLouvreText() {
-	static const Common::Rect kTextRect(62, 402, 354, 466);
-	drawLouvreImage("EffaceText.bmp", kTextRect.left, kTextRect.top);
-	g_engine->clearArchiveText(kTextRect);
+	drawLouvreImage("EffaceText.bmp", kLouvreTextRect.left, kLouvreTextRect.top);
+	g_engine->clearArchiveText(kLouvreTextRect);
 }
 
 bool louvreTextBlocked() {
 	return g_louvrePluginState.rolloverBlockedUntil > g_system->getMillis();
 }
 
-bool louvreObjectCanView(int objectId) {
-	static const int kViewableObjects[] = {
-		3000, 3100, 4200, 4300, 5500, 5900, 7600, 7700, 7800, 8500, 8600, 8800};
+void drawBlockedLouvreText(int textId) {
+	drawLouvreText(textId, kLouvreWarningTextColor);
+	g_louvrePluginState.rolloverBlockedUntil = g_system->getMillis() + kLouvreTextBlockMillis;
+}
 
-	for (int viewableObject : kViewableObjects)
-		if (viewableObject == objectId)
+template<size_t N>
+bool louvreContainsObject(const int (&objects)[N], int objectId) {
+	for (int object : objects)
+		if (object == objectId)
 			return true;
 	return false;
+}
+
+bool louvreObjectCanView(int objectId) {
+	static const int kViewableObjects[] = {3000, 3100, 4200, 4300, 5500, 5900, 7600, 7700, 7800, 8500, 8600, 8800};
+	return louvreContainsObject(kViewableObjects, objectId);
 }
 
 int louvreCombineObjects(int selectedObjectId, int objectId) {
@@ -210,11 +219,7 @@ bool louvreObjectCanCombine(int objectId) {
 		500, 600, 700, 1200, 1300, 1400, 1500, 1700, 1800, 2100, 2200, 2300, 2600, 2900,
 		3000, 3100, 3400, 3500, 3600, 3700, 3800, 4200, 4300, 4400, 6000, 6100, 6200,
 		6300, 6400, 6900, 7000, 7700, 7800, 8200, 9300, 9600, 9800, 9900};
-
-	for (int combinableObject : kCombinableObjects)
-		if (combinableObject == objectId)
-			return true;
-	return false;
+	return louvreContainsObject(kCombinableObjects, objectId);
 }
 
 bool louvreObjectCanSeparate(int objectId) {
@@ -242,10 +247,7 @@ int louvreObjectActionMask(int objectId) {
 }
 
 int louvreSelectedObjectActionMask() {
-	int selection = g_engine->getVariable("Selection");
-	if (selection > 100)
-		selection -= 100;
-	return louvreObjectActionMask(messengerInventorySlot(selection));
+	return louvreObjectActionMask(messengerInventorySlot(louvreSelectionSlot(g_engine->getVariable("Selection"))));
 }
 
 void drawLouvreActionButtons() {
@@ -289,8 +291,7 @@ void drawLouvreSelectedObject(int objectSlot) {
 	static const int kSelectedObjectY = 123;
 
 	initLouvrePluginState();
-	if (objectSlot > 100)
-		objectSlot -= 100;
+	objectSlot = louvreSelectionSlot(objectSlot);
 	if (objectSlot < 1 || objectSlot > kMessengerInventorySlots)
 		return;
 
@@ -306,7 +307,7 @@ void drawLouvreSelectedObject(int objectSlot) {
 
 void clearLouvreSelection(bool clearObjectPreview = true) {
 	int selection = g_engine->getVariable("Selection");
-	int slot = selection > 100 ? selection - 100 : selection;
+	int slot = louvreSelectionSlot(selection);
 
 	g_engine->setVariable("Selection", 0);
 	if (clearObjectPreview) {
@@ -319,8 +320,8 @@ void clearLouvreSelection(bool clearObjectPreview = true) {
 
 void setLouvreSelectedSlot(int slot, int flags) {
 	int previousSelection = g_engine->getVariable("Selection");
-	int previousSlot = previousSelection > 100 ? previousSelection - 100 : previousSelection;
-	int targetSlot = slot > 100 ? slot - 100 : slot;
+	int previousSlot = louvreSelectionSlot(previousSelection);
+	int targetSlot = louvreSelectionSlot(slot);
 
 	if (previousSelection == slot && (flags & 2) == 0) {
 		clearLouvreSelection((flags & 1) == 0);
@@ -445,8 +446,7 @@ void exchangeLouvreChestObject(int chestSlot, int inventorySlot) {
 		chestSlot = g_engine->getVariable("CoffreSelect");
 	if (inventorySlot == 0)
 		inventorySlot = g_engine->getVariable("Selection");
-	if (inventorySlot > 100)
-		inventorySlot -= 100;
+	inventorySlot = louvreSelectionSlot(inventorySlot);
 
 	if (chestSlot < 1 || chestSlot > 4 || inventorySlot < 1 || inventorySlot > kMessengerInventorySlots)
 		return;
@@ -869,9 +869,7 @@ struct DoAction : public Script::Command {
 		initLouvrePluginState();
 		g_engine->setVariable(arg, 0);
 
-		int selection = g_engine->getVariable("Selection");
-		if (selection > 100)
-			selection -= 100;
+		int selection = louvreSelectionSlot(g_engine->getVariable("Selection"));
 		if (selection == 0)
 			return;
 
@@ -1039,9 +1037,7 @@ struct AfficheSelection : public Script::Command {
 	AfficheSelection(const Common::Array<Common::String> &args) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		initLouvrePluginState();
-		int selection = g_engine->getVariable("Selection");
-		if (selection > 100)
-			selection -= 100;
+		int selection = louvreSelectionSlot(g_engine->getVariable("Selection"));
 		if (selection != 0)
 			drawLouvreSelectedObject(selection);
 	}
@@ -1352,7 +1348,7 @@ struct Discocier : public Script::Command {
 		g_engine->setVariable(var, 0);
 
 		int selection = g_engine->getVariable("Selection");
-		int slot = selection > 100 ? selection - 100 : selection;
+		int slot = louvreSelectionSlot(selection);
 		int objectId = messengerInventorySlot(slot);
 
 		int parts[3] = {0, 0, 0};
@@ -1377,8 +1373,7 @@ struct Discocier : public Script::Command {
 
 		if (partCount > emptySlots + 1) {
 			drawLouvreActionButtons();
-			drawLouvreText(28, 63687);
-			g_louvrePluginState.rolloverBlockedUntil = g_system->getMillis() + 5000;
+			drawBlockedLouvreText(28);
 			return;
 		}
 
@@ -1433,16 +1428,13 @@ struct DrawTextSelection : public Script::Command {
 		if (louvreTextBlocked())
 			return;
 
-		static const Common::Rect kTextRect(62, 402, 354, 466);
 		clearLouvreText();
 
-		int selection = g_engine->getVariable("Selection");
-		if (selection > 100)
-			selection -= 100;
+		int selection = louvreSelectionSlot(g_engine->getVariable("Selection"));
 		if (selection != 0) {
 			int objectId = messengerInventorySlot(selection);
 			if (objectId != 0)
-				g_engine->drawArchiveText(objectId, kTextRect, 14, true, 1987);
+				g_engine->drawArchiveText(objectId, kLouvreTextRect, 14, true, kLouvreTextColor);
 		}
 	}
 };
@@ -1508,8 +1500,7 @@ struct PorteFRollover : public Script::Command {
 			return;
 
 		if (arg == 28) {
-			drawLouvreText(arg, 63687);
-			g_louvrePluginState.rolloverBlockedUntil = g_system->getMillis() + 5000;
+			drawBlockedLouvreText(arg);
 		} else {
 			drawLouvreText(arg);
 		}

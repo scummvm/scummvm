@@ -1001,10 +1001,15 @@ void PhoenixVREngine::resetLockKey() {
 	_prevWarp = -1; // original game does only this o_O
 }
 
-void PhoenixVREngine::drawArchiveImage(const Common::String &image, int x, int y) {
+const Graphics::Surface *PhoenixVREngine::findArchiveImage(const Common::String &image) const {
 	const Graphics::Surface *surface = _arn ? _arn->get(image) : nullptr;
 	if (!surface && !image.contains('.'))
 		surface = _arn ? _arn->get(image + ".bmp") : nullptr;
+	return surface;
+}
+
+void PhoenixVREngine::drawArchiveImage(const Common::String &image, int x, int y) {
+	const Graphics::Surface *surface = findArchiveImage(image);
 	if (!surface) {
 		warning("can't find archive image %s", image.c_str());
 		return;
@@ -1049,9 +1054,7 @@ void PhoenixVREngine::showImageOverlay(const Common::String &image, int x, int y
 	debug("AfficheImage %s %d %d", image.c_str(), x, y);
 	_imageOverlay.reset();
 
-	const Graphics::Surface *surface = _arn ? _arn->get(image) : nullptr;
-	if (!surface && !image.contains('.'))
-		surface = _arn ? _arn->get(image + ".bmp") : nullptr;
+	const Graphics::Surface *surface = findArchiveImage(image);
 	if (!surface) {
 		warning("can't find image overlay %s", image.c_str());
 		return;
@@ -1254,9 +1257,7 @@ void PhoenixVREngine::renderVR(float dt) {
 
 void PhoenixVREngine::renderArchiveImages() {
 	for (const ArchiveImage &archiveImage : _archiveImages) {
-		const Graphics::Surface *surface = _arn ? _arn->get(archiveImage.image) : nullptr;
-		if (!surface && !archiveImage.image.contains('.'))
-			surface = _arn ? _arn->get(archiveImage.image + ".bmp") : nullptr;
+		const Graphics::Surface *surface = findArchiveImage(archiveImage.image);
 		if (!surface)
 			continue;
 

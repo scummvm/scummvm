@@ -250,6 +250,7 @@ private:
 	void tick(float dt);
 	void tickTimer(float dt);
 	void loadNextScript();
+	const Graphics::Surface *findArchiveImage(const Common::String &image) const;
 	void renderVR(float dt);
 	void renderArchiveImages();
 	void renderArchiveTexts();
