@@ -192,10 +192,11 @@
   at `0x1b492` reconstructs that data, and `RestoreSavedRunState` at `0x1b8dd`
   reinstates flags, concurrent scene context, media state, and the active scene.
   The ScummVM format is versioned and engine-local; it stores the confirmed
-  script state, the currently supported loaded/playing scene-audio trigger, and
+  script state, all 20 named scene-audio slots and their trigger/ramp state, and
   the indexed 640x400 framebuffer and palette so static scene presentations
   resume at the same visible boundary without serializing DOS pointers from the
-  original fixed block.
+  original fixed block. Format version 3 added the complete audio table while
+  retaining version 2 load compatibility.
 - `WriteConfiguredSaveCheckpointAndCleanupRuntime` at `0x1b274` writes the
   emergency save when the scene-script loop returns to the front end, then
   clears active audio triggers and the concurrent scene runtime. The
@@ -225,6 +226,11 @@
   apartment/keypad path. The `ACT2.RUN` and `ACT3.RUN` transition callbacks
   explicitly clear it as part of their chapter-wide location reset. It is not
   a WAC-message flag.
+- `ACT1_CHK.RUN` tests flag 311 (`Eddie finishes conversation in Act I on
+  earth`) before its Act II handoff. When the flag is clear, opcode `0x08` at
+  script offset `0x2e1` branches to the clear-branch entry at `0x301`; the
+  callback then selects frame 0 at `0x305`. That false branch is normal scene
+  routing, not an error condition.
 - `BA0.RUN` sets flag 71 (`scan mug at murder scene`) immediately after
   `MUGSCAN2.AVI` completes. WAC maps flag 71 to database entry 1, whose handler
   opens `RunWacMugSelectionScene`. Solving that puzzle sets both 71 and flag 72
@@ -491,15 +497,33 @@
   `R_P_L1.WAV`, and presents only the first frame of `BAW1A.SMK`; its sole
   chooser callback hands control to the concurrent prologue runtime, which
   eventually transitions to ACT1.
-- Opcode `0x1f` loads a named WAV into the original's 20-slot trigger table
-  through `HandleSceneEntryLoadResourceIntoFirstFreeSlot` at `0x15e48`.
-  Opcode `0x20` configures that slot through
-  `HandleSceneEntryConfigureOrStartNamedAudioTrigger` at `0x15eea`; a zero
-  trigger starts it immediately, while control bit 0 makes
-  `StartAudioTriggerSlot` at `0x37297` set the descriptor repeat field to -1.
-  ScummVM maps that state to an infinite looping audio stream. Choice-list
-  activation does not stop or replace the named trigger, so `R_P_L1.WAV`
-  continues beneath dialogue selection until a later explicit stop or clear.
+- Opcode `0x1f` loads a named WAV into the first unoccupied entry in the
+  original's 20-slot trigger table through
+  `HandleSceneEntryLoadResourceIntoFirstFreeSlot` at `0x15e48`. Argument bit 0
+  becomes the slot's scene-preserve flag. `DA1.RUN` depends on the table rather
+  than a single current resource: its entry callback loads eight WAVs before
+  configuring `POLICE1` and `ELDOR_O`, and later scenes configure preserved
+  door sounds without loading them again.
+- Opcode `0x20` scans all occupied slots by case-insensitive basename through
+  `HandleSceneEntryConfigureOrStartNamedAudioTrigger` at `0x15eea`. A missing
+  name is a no-op rather than a script error. A zero trigger starts immediately;
+  otherwise `ServiceSceneFrameAudioAndBriefingTriggers` at `0x138c9` starts it
+  when the one-based `RunMediaSequence` frame counter reaches that value.
+  Control bit 0 makes `StartAudioTriggerSlot` at `0x37297` set the descriptor
+  repeat field to -1, which ScummVM maps to an infinite looping stream.
+- Opcodes `0x21` and `0x22` respectively clear a named slot through
+  `ClearAudioTriggerSlot` at `0x37382` or stop its live handle while retaining
+  the resource through `StopAudioTriggerSlot` at `0x37407`. Opcode `0x23`
+  applies an immediate volume when its start frame is zero or schedules the
+  same frame-driven integer ramp serviced at `0x138c9`.
+- `RunSceneScriptLoop` at `0x124e9` clears occupied slots without the preserve
+  bit when an active runtime changes scenes. A concurrent-runtime handoff and
+  the scene-selection menu first clear every preserve bit, so those transitions
+  retire the entire table. Each active-frame `-2` yield resets pending trigger
+  frame and volume-ramp scheduling without discarding the loaded resources.
+  Choice-list activation does not stop or replace named triggers, so
+  `R_P_L1.WAV` continues beneath dialogue selection until a later explicit stop
+  or clear.
 - Opcode `0x14` stores its argument as the next frame index and returns control
   code `-2`. `RunSceneScriptLoop` responds by servicing the concurrent runtime
   once before continuing BA0 at that stored frame.

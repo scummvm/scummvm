@@ -405,24 +405,7 @@ static Common::SeekableReadStream *rebuildSmackerStream(const IavfSegment &segme
 	return new Common::MemoryReadStream(output, cursor, DisposeAfterUse::YES);
 }
 
-} // End of anonymous namespace
-
-MediaPlayer::MediaPlayer(RipperEngine *engine, InputManager *input, Audio::Mixer *mixer) :
-		_engine(engine), _input(input), _mixer(mixer), _sceneAudioVolumePercent(100),
-		_sceneAudioLoop(false), _stopSceneOnMouse(false) {
-}
-
-MediaPlayer::~MediaPlayer() {
-	_mixer->stopHandle(_sceneAudioHandle);
-}
-
-bool MediaPlayer::loadAudio(const Common::String &path) {
-	Common::File file;
-	if (!file.open(Common::Path(path))) {
-		warning("Ripper: could not load audio '%s'", path.c_str());
-		return false;
-	}
-	_loadedAudioPath = path;
+static Common::String audioKeyFromPath(const Common::String &path) {
 	uint start = 0;
 	for (uint i = 0; i < path.size(); ++i) {
 		if (path[i] == '/' || path[i] == '\\' || path[i] == ':')
@@ -435,17 +418,96 @@ bool MediaPlayer::loadAudio(const Common::String &path) {
 			break;
 		}
 	}
-	_loadedAudioKey = path.substr(start, end - start);
-	debugC(2, kDebugAudio, "Ripper: loaded audio slot key='%s' path='%s'",
-		_loadedAudioKey.c_str(), _loadedAudioPath.c_str());
+	return path.substr(start, end - start);
+}
+
+} // End of anonymous namespace
+
+MediaPlayer::AudioSlot::AudioSlot() : volumePercent(100), targetVolumePercent(100),
+		triggerFrame(0), volumeStartFrame(0), volumeTiming(0), volumeRampStep(0),
+		volumeRampProgress(0), volumeRampDirection(0), control(0), occupied(false),
+		preserve(false), volumeRampPending(false), sparseVolumeRamp(false) {
+}
+
+MediaPlayer::MediaPlayer(RipperEngine *engine, InputManager *input, Audio::Mixer *mixer) :
+		_engine(engine), _input(input), _mixer(mixer), _stopSceneOnMouse(false) {
+}
+
+MediaPlayer::~MediaPlayer() {
+	for (uint i = 0; i < kAudioSlotCount; ++i)
+		_mixer->stopHandle(_audioSlots[i].handle);
+}
+
+bool MediaPlayer::loadAudio(const Common::String &path, bool preserve) {
+	Common::File file;
+	if (!file.open(Common::Path(path))) {
+		warning("Ripper: could not load audio '%s'", path.c_str());
+		return false;
+	}
+
+	uint slotIndex = 0;
+	while (slotIndex < kAudioSlotCount && _audioSlots[slotIndex].occupied)
+		++slotIndex;
+	if (slotIndex == kAudioSlotCount) {
+		debugC(2, kDebugAudio,
+			"Ripper: audio slot load ignored path='%s' reason=all-20-slots-occupied slots=[%s]",
+			path.c_str(), describeAudioSlots().c_str());
+		return true;
+	}
+
+	AudioSlot &slot = _audioSlots[slotIndex];
+	slot = AudioSlot();
+	slot.path = path;
+	slot.key = audioKeyFromPath(path);
+	slot.occupied = true;
+	slot.preserve = preserve;
+	uint occupiedCount = 0;
+	for (uint i = 0; i < kAudioSlotCount; ++i) {
+		if (_audioSlots[i].occupied)
+			++occupiedCount;
+	}
+	debugC(2, kDebugAudio,
+		"Ripper: loaded audio slot=%u key='%s' path='%s' preserve=%d occupied=%u/%u",
+		slotIndex, slot.key.c_str(), slot.path.c_str(), preserve,
+		occupiedCount, kAudioSlotCount);
 	return true;
 }
 
-bool MediaPlayer::startLoadedAudio(const Common::String &key, uint volumePercent, bool loop) {
-	if (!_loadedAudioKey.equalsIgnoreCase(key))
-		return false;
+MediaPlayer::AudioSlot *MediaPlayer::findAudioSlot(const Common::String &key) {
+	for (uint i = 0; i < kAudioSlotCount; ++i) {
+		if (_audioSlots[i].occupied && _audioSlots[i].key.equalsIgnoreCase(key))
+			return &_audioSlots[i];
+	}
+	return nullptr;
+}
+
+const MediaPlayer::AudioSlot *MediaPlayer::findAudioSlot(const Common::String &key) const {
+	for (uint i = 0; i < kAudioSlotCount; ++i) {
+		if (_audioSlots[i].occupied && _audioSlots[i].key.equalsIgnoreCase(key))
+			return &_audioSlots[i];
+	}
+	return nullptr;
+}
+
+Common::String MediaPlayer::describeAudioSlots() const {
+	Common::String description;
+	for (uint i = 0; i < kAudioSlotCount; ++i) {
+		if (!_audioSlots[i].occupied)
+			continue;
+		if (!description.empty())
+			description += ",";
+		description += Common::String::format("%u:%s", i, _audioSlots[i].key.c_str());
+	}
+	return description;
+}
+
+bool MediaPlayer::startAudioSlot(AudioSlot &slot) {
+	if (_mixer->isSoundHandleActive(slot.handle))
+		return true;
 	Common::File *file = new Common::File();
-	if (!file->open(Common::Path(_loadedAudioPath))) {
+	if (!file->open(Common::Path(slot.path))) {
+		warning("Ripper: could not start audio slot key='%s' path='%s' slots=[%s]",
+			slot.key.c_str(), slot.path.c_str(), describeAudioSlots().c_str());
 		delete file;
 		return false;
 	}
@@ -453,49 +515,291 @@ bool MediaPlayer::startLoadedAudio(const Common::String &key, uint volumePercent
 	if (!wavStream)
 		return false;
 	Audio::AudioStream *stream = wavStream;
-	if (loop)
+	if ((slot.control & 1) != 0)
 		stream = Audio::makeLoopingAudioStream(wavStream, 0);
-	_mixer->stopHandle(_sceneAudioHandle);
-	const byte volume = (byte)(MIN<uint>(volumePercent, 100) * Audio::Mixer::kMaxChannelVolume / 100);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sceneAudioHandle, stream, -1, volume);
-	_sceneAudioVolumePercent = MIN<uint>(volumePercent, 100);
-	_sceneAudioLoop = loop;
-	debugC(1, kDebugAudio, "Ripper: started audio key='%s' volume=%u loop=%d active=%d",
-		key.c_str(), volumePercent, loop, _mixer->isSoundHandleActive(_sceneAudioHandle));
+	const byte volume = (byte)(slot.volumePercent * Audio::Mixer::kMaxChannelVolume / 100);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &slot.handle, stream, -1, volume);
+	debugC(1, kDebugAudio,
+		"Ripper: started audio slot key='%s' path='%s' volume=%u trigger=%u control=%u loop=%d active=%d",
+		slot.key.c_str(), slot.path.c_str(), slot.volumePercent, slot.triggerFrame,
+		slot.control, (slot.control & 1) != 0, _mixer->isSoundHandleActive(slot.handle));
 	return true;
+}
+
+bool MediaPlayer::configureAudio(const Common::String &key, uint volumePercent,
+		uint triggerFrame, byte control) {
+	AudioSlot *slot = findAudioSlot(key);
+	if (!slot) {
+		debugC(2, kDebugAudio,
+			"Ripper: audio configuration ignored key='%s' volume=%u trigger=%u control=%u reason=slot-not-found slots=[%s]",
+			key.c_str(), volumePercent, triggerFrame, control, describeAudioSlots().c_str());
+		return true;
+	}
+	slot->volumePercent = MIN<uint>(volumePercent == 0 ? 100 : volumePercent, 100);
+	slot->targetVolumePercent = slot->volumePercent;
+	slot->triggerFrame = triggerFrame;
+	slot->control = control;
+	debugC(2, kDebugAudio,
+		"Ripper: configured audio slot key='%s' volume=%u trigger=%u control=%u loop=%d immediate=%d",
+		key.c_str(), slot->volumePercent, triggerFrame, control, (control & 1) != 0,
+		triggerFrame == 0);
+	return triggerFrame != 0 || startAudioSlot(*slot);
+}
+
+void MediaPlayer::clearAudioSlot(AudioSlot &slot) {
+	if (!slot.occupied)
+		return;
+	_mixer->stopHandle(slot.handle);
+	slot = AudioSlot();
+}
+
+void MediaPlayer::clearAudio(const Common::String &key) {
+	AudioSlot *slot = findAudioSlot(key);
+	if (!slot) {
+		debugC(2, kDebugAudio, "Ripper: audio slot clear ignored key='%s' reason=slot-not-found slots=[%s]",
+			key.c_str(), describeAudioSlots().c_str());
+		return;
+	}
+	debugC(2, kDebugAudio, "Ripper: cleared audio slot key='%s'", key.c_str());
+	clearAudioSlot(*slot);
+}
+
+void MediaPlayer::stopAudio(const Common::String &key) {
+	AudioSlot *slot = findAudioSlot(key);
+	if (!slot) {
+		debugC(2, kDebugAudio, "Ripper: audio slot stop ignored key='%s' reason=slot-not-found slots=[%s]",
+			key.c_str(), describeAudioSlots().c_str());
+		return;
+	}
+	const bool active = _mixer->isSoundHandleActive(slot->handle);
+	_mixer->stopHandle(slot->handle);
+	debugC(2, kDebugAudio, "Ripper: stopped audio slot key='%s' active=%d retained=1",
+		key.c_str(), active);
+}
+
+void MediaPlayer::applyAudioSlotVolume(AudioSlot &slot) {
+	if (_mixer->isSoundHandleActive(slot.handle)) {
+		const byte volume = (byte)(slot.volumePercent * Audio::Mixer::kMaxChannelVolume / 100);
+		_mixer->setChannelVolume(slot.handle, volume);
+	}
+}
+
+void MediaPlayer::setAudioVolume(const Common::String &key, uint targetVolumePercent,
+		uint startFrame, uint timing) {
+	AudioSlot *slot = findAudioSlot(key);
+	if (!slot) {
+		debugC(2, kDebugAudio,
+			"Ripper: audio volume change ignored key='%s' target=%u start=%u timing=%u reason=slot-not-found slots=[%s]",
+			key.c_str(), targetVolumePercent, startFrame, timing, describeAudioSlots().c_str());
+		return;
+	}
+	slot->targetVolumePercent = MIN<uint>(targetVolumePercent, 100);
+	slot->volumeStartFrame = startFrame;
+	slot->volumeTiming = timing;
+	if (startFrame == 0) {
+		slot->volumePercent = slot->targetVolumePercent;
+		slot->volumeRampPending = false;
+		applyAudioSlotVolume(*slot);
+		debugC(2, kDebugAudio, "Ripper: applied audio volume key='%s' volume=%u immediately",
+			key.c_str(), slot->volumePercent);
+		return;
+	}
+
+	slot->volumeRampDirection = slot->targetVolumePercent < slot->volumePercent ? -1 : 1;
+	const uint difference = slot->targetVolumePercent < slot->volumePercent ?
+		slot->volumePercent - slot->targetVolumePercent :
+		slot->targetVolumePercent - slot->volumePercent;
+	slot->volumeRampStep = difference;
+	slot->volumeRampProgress = 0;
+	slot->sparseVolumeRamp = difference <= timing;
+	if (!slot->sparseVolumeRamp) {
+		slot->volumeRampStep = timing;
+		slot->volumeTiming = difference;
+	}
+	slot->volumeRampPending = difference != 0;
+	debugC(2, kDebugAudio,
+		"Ripper: scheduled audio volume key='%s' current=%u target=%u start=%u timing=%u step=%u sparse=%d",
+		key.c_str(), slot->volumePercent, slot->targetVolumePercent, startFrame,
+		slot->volumeTiming, slot->volumeRampStep, slot->sparseVolumeRamp);
+}
+
+void MediaPlayer::serviceSceneAudio(uint frame) {
+	// RunMediaSequence at 0x1e516 publishes one-based frame counters to
+	// ServiceSceneFrameAudioAndBriefingTriggers at 0x138c9 after each frame.
+	for (uint i = 0; i < kAudioSlotCount; ++i) {
+		AudioSlot &slot = _audioSlots[i];
+		if (!slot.occupied)
+			continue;
+		if (slot.triggerFrame == frame && !_mixer->isSoundHandleActive(slot.handle)) {
+			debugC(3, kDebugAudio, "Ripper: audio frame trigger slot=%u key='%s' frame=%u",
+				i, slot.key.c_str(), frame);
+			if (!startAudioSlot(slot))
+				warning("Ripper: audio frame trigger failed slot=%u key='%s' frame=%u",
+					i, slot.key.c_str(), frame);
+		}
+		if (!slot.volumeRampPending || frame < slot.volumeStartFrame)
+			continue;
+		if (slot.volumeTiming == 0) {
+			slot.volumePercent = slot.targetVolumePercent;
+		} else if (slot.sparseVolumeRamp) {
+			slot.volumeRampProgress += slot.volumeRampStep;
+			if (slot.volumeRampProgress >= slot.volumeTiming) {
+				slot.volumeRampProgress -= slot.volumeTiming;
+				slot.volumePercent += slot.volumeRampDirection;
+			}
+		} else {
+			do {
+				slot.volumeRampProgress += slot.volumeRampStep;
+				slot.volumePercent += slot.volumeRampDirection;
+				if (slot.volumePercent == slot.targetVolumePercent)
+					break;
+			} while (slot.volumeRampProgress < slot.volumeTiming);
+			if (slot.volumeRampProgress >= slot.volumeTiming)
+				slot.volumeRampProgress -= slot.volumeTiming;
+		}
+		applyAudioSlotVolume(slot);
+		if (slot.volumePercent == slot.targetVolumePercent) {
+			slot.volumeRampPending = false;
+			debugC(3, kDebugAudio,
+				"Ripper: completed audio volume ramp slot=%u key='%s' frame=%u volume=%u",
+				i, slot.key.c_str(), frame, slot.volumePercent);
+		}
+	}
+}
+
+void MediaPlayer::resetSceneAudioTriggers() {
+	for (uint i = 0; i < kAudioSlotCount; ++i) {
+		_audioSlots[i].triggerFrame = 0;
+		_audioSlots[i].volumeStartFrame = 0;
+		_audioSlots[i].volumeRampPending = false;
+	}
+	debugC(3, kDebugAudio, "Ripper: reset per-frame audio triggers slots=[%s]",
+		describeAudioSlots().c_str());
+}
+
+void MediaPlayer::clearSceneAudio(bool includePreserved) {
+	uint cleared = 0;
+	for (uint i = 0; i < kAudioSlotCount; ++i) {
+		if (_audioSlots[i].occupied && (includePreserved || !_audioSlots[i].preserve)) {
+			clearAudioSlot(_audioSlots[i]);
+			++cleared;
+		}
+	}
+	debugC(2, kDebugAudio,
+		"Ripper: scene transition cleared audio slots=%u includePreserved=%d retained=[%s]",
+		cleared, includePreserved, describeAudioSlots().c_str());
 }
 
 bool MediaPlayer::isSceneAudioActive() const {
-	return _mixer->isSoundHandleActive(_sceneAudioHandle);
+	for (uint i = 0; i < kAudioSlotCount; ++i) {
+		if (_audioSlots[i].occupied && _mixer->isSoundHandleActive(_audioSlots[i].handle))
+			return true;
+	}
+	return false;
 }
 
 bool MediaPlayer::syncGame(Common::Serializer &serializer) {
-	Common::String audioPath = serializer.isSaving() ? _loadedAudioPath : Common::String();
-	byte active = isSceneAudioActive() ? 1 : 0;
-	uint32 volumePercent = _sceneAudioVolumePercent;
-	byte loop = _sceneAudioLoop ? 1 : 0;
-	serializer.syncString(audioPath);
-	serializer.syncAsByte(active);
-	serializer.syncAsUint32LE(volumePercent);
-	serializer.syncAsByte(loop);
-	if (serializer.err() || audioPath.size() > 256 || volumePercent > 100)
-		return false;
-	if (serializer.isSaving())
+	if (serializer.getVersion() <= 2) {
+		Common::String audioPath;
+		byte active = 0;
+		uint32 volumePercent = 100;
+		byte loop = 0;
+		serializer.syncString(audioPath);
+		serializer.syncAsByte(active);
+		serializer.syncAsUint32LE(volumePercent);
+		serializer.syncAsByte(loop);
+		if (serializer.err() || audioPath.size() > 256 || volumePercent > 100)
+			return false;
+		clearSceneAudio(true);
+		if (!audioPath.empty() && !loadAudio(audioPath, false))
+			return false;
+		AudioSlot *slot = audioPath.empty() ? nullptr : &_audioSlots[0];
+		if (slot) {
+			slot->volumePercent = volumePercent;
+			slot->targetVolumePercent = volumePercent;
+			slot->control = loop != 0 ? 1 : 0;
+		}
+		if (active != 0 && slot && !startAudioSlot(*slot))
+			return false;
+		debugC(1, kDebugSaveLoad,
+			"Ripper: restored legacy scene audio path='%s' active=%d volume=%u loop=%d",
+			audioPath.c_str(), active != 0, volumePercent, loop != 0);
 		return true;
+	}
 
-	_mixer->stopHandle(_sceneAudioHandle);
-	_loadedAudioPath.clear();
-	_loadedAudioKey.clear();
-	_sceneAudioVolumePercent = volumePercent;
-	_sceneAudioLoop = loop != 0;
-	if (!audioPath.empty() && !loadAudio(audioPath))
-		return false;
-	if (active != 0 && !startLoadedAudio(_loadedAudioKey, volumePercent, loop != 0))
-		return false;
-	debugC(1, kDebugSaveLoad,
-		"Ripper: restored scene audio path='%s' active=%d volume=%u loop=%d",
-		audioPath.c_str(), active != 0, volumePercent, loop != 0);
-	return true;
+	if (serializer.isLoading())
+		clearSceneAudio(true);
+	uint restoredSlots = 0;
+	for (uint i = 0; i < kAudioSlotCount; ++i) {
+		AudioSlot &slot = _audioSlots[i];
+		Common::String path = serializer.isSaving() ? slot.path : Common::String();
+		byte occupied = slot.occupied ? 1 : 0;
+		byte preserve = slot.preserve ? 1 : 0;
+		byte active = slot.occupied && _mixer->isSoundHandleActive(slot.handle) ? 1 : 0;
+		uint32 volumePercent = slot.volumePercent;
+		uint32 targetVolumePercent = slot.targetVolumePercent;
+		uint32 triggerFrame = slot.triggerFrame;
+		uint32 volumeStartFrame = slot.volumeStartFrame;
+		uint32 volumeTiming = slot.volumeTiming;
+		uint32 volumeRampStep = slot.volumeRampStep;
+		uint32 volumeRampProgress = slot.volumeRampProgress;
+		int32 volumeRampDirection = slot.volumeRampDirection;
+		byte control = slot.control;
+		byte volumeRampPending = slot.volumeRampPending ? 1 : 0;
+		byte sparseVolumeRamp = slot.sparseVolumeRamp ? 1 : 0;
+
+		serializer.syncString(path);
+		serializer.syncAsByte(occupied);
+		serializer.syncAsByte(preserve);
+		serializer.syncAsByte(active);
+		serializer.syncAsUint32LE(volumePercent);
+		serializer.syncAsUint32LE(targetVolumePercent);
+		serializer.syncAsUint32LE(triggerFrame);
+		serializer.syncAsUint32LE(volumeStartFrame);
+		serializer.syncAsUint32LE(volumeTiming);
+		serializer.syncAsUint32LE(volumeRampStep);
+		serializer.syncAsUint32LE(volumeRampProgress);
+		serializer.syncAsSint32LE(volumeRampDirection);
+		serializer.syncAsByte(control);
+		serializer.syncAsByte(volumeRampPending);
+		serializer.syncAsByte(sparseVolumeRamp);
+		if (serializer.err() || path.size() > 256 || (occupied != 0 && path.empty()) ||
+				occupied > 1 || preserve > 1 ||
+				active > 1 || volumePercent > 100 || targetVolumePercent > 100 ||
+				volumeRampDirection < -1 || volumeRampDirection > 1 ||
+				volumeRampPending > 1 || sparseVolumeRamp > 1)
+			return false;
+		if (serializer.isSaving() || occupied == 0)
+			continue;
+		Common::File file;
+		if (!file.open(Common::Path(path)))
+			return false;
+		AudioSlot &restored = _audioSlots[i];
+		restored.path = path;
+		restored.key = audioKeyFromPath(path);
+		restored.occupied = true;
+		restored.preserve = preserve != 0;
+		restored.volumePercent = volumePercent;
+		restored.targetVolumePercent = targetVolumePercent;
+		restored.triggerFrame = triggerFrame;
+		restored.volumeStartFrame = volumeStartFrame;
+		restored.volumeTiming = volumeTiming;
+		restored.volumeRampStep = volumeRampStep;
+		restored.volumeRampProgress = volumeRampProgress;
+		restored.volumeRampDirection = volumeRampDirection;
+		restored.control = control;
+		restored.volumeRampPending = volumeRampPending != 0;
+		restored.sparseVolumeRamp = sparseVolumeRamp != 0;
+		if (active != 0 && !startAudioSlot(restored))
+			return false;
+		++restoredSlots;
+	}
+	if (serializer.isLoading()) {
+		debugC(1, kDebugSaveLoad,
+			"Ripper: restored named audio slots=%u active=%d slots=[%s]",
+			restoredSlots, isSceneAudioActive(), describeAudioSlots().c_str());
+	}
+	return !serializer.err();
 }
 
 bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
@@ -695,6 +999,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			if (frame) {
 				presentFrame(frame, false);
 				++presentedFrames;
+				if (serviceSceneUi)
+					serviceSceneAudio(presentedFrames);
 				if (synchronizeToTimeline) {
 					debugC(11, kDebugVideo,
 						"Ripper: Smacker '%s' frame=%d audioTargetMs=%u audioElapsedMs=%u driftMs=%d",
