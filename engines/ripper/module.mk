@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	metaengine.o \
 	milestones.o \
 	puzzles/broken_mug.o \
+	puzzles/crystal.o \
 	resources.o \
 	ripper.o \
 	saveload.o \

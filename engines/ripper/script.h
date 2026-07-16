@@ -77,6 +77,13 @@ enum ScriptOpcode : byte {
 	kWaitForFrameCounter         = 0x24  // HandleSceneEntryWaitForSceneFrameCounter at 0x1633e
 };
 
+enum SceneAction {
+	kSceneActionWorldMap = 2,
+	kSceneActionCrystalPuzzle = 29,
+	kSceneActionClearDisplay = 32,
+	kSceneActionBriefing = 300
+};
+
 struct ScriptArgument {
 	byte type;
 	uint32 value;

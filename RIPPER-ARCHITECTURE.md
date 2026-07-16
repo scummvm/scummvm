@@ -285,6 +285,23 @@
   and puzzle access. Its serializer retains the pre-existing ScummVM layout of
   one byte per flag so current engine saves remain compatible.
 
+## Puzzles
+
+- Opcode `0x18` passes its first argument to `DispatchSceneEntryAction` at
+  `0x36892` and its second argument through the original EBX argument channel.
+  Scene action 29 (`0x1d`) calls `RunCrystalPiecePlacementPuzzleScene` at
+  `0x2710c`; `JA1.RUN` supplies milestone 206 (`solved crystal puzzle`).
+- The crystal puzzle loads sixteen-piece `CRYSP*`, `CRYST*`, and `CRYSB*` BBM
+  sets and four `CRYSTAL%d.WAV` cues. It presents the pieces in the recovered
+  tray coordinates beside an eight-by-nine grid. A selected tray or occupied
+  grid piece follows the pointer until the player selects an empty grid cell or
+  returns it to the tray. Escape exits without setting the completion flag.
+- Completion requires exactly ten occupied cells at indices 2, 9, 21, 25, 32,
+  37, 44, 48, 60, and 62. The original also accepts the case-insensitive hidden
+  keyword `pisces`. Either path sets the caller-supplied milestone, queues the
+  solved audio cues, presents `CRYSHEAD.SMK` at (0, 328), and then plays
+  `CRYSOLVE.AVI` before returning to the scene callback.
+
 ## WAC
 
 - `DispatchFrontEndAction` at `0x190b7` routes toolbar action `0x517` to the
