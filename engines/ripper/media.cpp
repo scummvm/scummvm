@@ -51,6 +51,7 @@ namespace {
 
 static const int kScenePresentationTop = 50;
 static const uint kBlockingAudioCursor = 0x13;
+static const uint kAutoPacketizedDisplayScale = 0;
 
 struct SavedDisplayContext {
 	Common::Array<byte> pixels;
@@ -92,12 +93,11 @@ struct IavfMovie {
 	Common::Array<IavfSegment> segments;
 	uint presentationWidth;
 	uint presentationHeight;
-	uint displayScale;
 	bool clearDisplayAfter;
 
 	IavfMovie() : declaredGateCount(0), sampleRate(0), channels(0), bitsPerSample(0),
 		audioByteRate(0), audioPayloadBytes(0),
-		presentationWidth(0), presentationHeight(0), displayScale(1), clearDisplayAfter(false) {}
+		presentationWidth(0), presentationHeight(0), clearDisplayAfter(false) {}
 };
 
 static bool readExact(Common::SeekableReadStream &stream, void *data, uint32 size) {
@@ -199,7 +199,6 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 	}
 	if (movie.presentationWidth == 0 || movie.presentationHeight == 0)
 		return false;
-	movie.displayScale = movie.presentationHeight < 0xc9 && movie.presentationWidth < 0x141 ? 2 : 1;
 	movie.audio.reserve((uint32)stream.size());
 
 	Common::HashMap<uint32, Common::Array<byte> > setupCache;
@@ -375,8 +374,8 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 		}
 	}
 	debugC(1, kDebugVideo,
-		"Ripper: parsed IAVF '%s' canvas=%ux%u scale=%u segments=%u gates=%u audioPayloadBytes=%u audioTimelineBytes=%u audioMs=%u",
-		name.c_str(), movie.presentationWidth, movie.presentationHeight, movie.displayScale,
+		"Ripper: parsed IAVF '%s' canvas=%ux%u segments=%u gates=%u audioPayloadBytes=%u audioTimelineBytes=%u audioMs=%u",
+		name.c_str(), movie.presentationWidth, movie.presentationHeight,
 		movie.segments.size(), observedGateCount, movie.audioPayloadBytes, movie.audio.size(),
 		(uint32)((uint64)movie.audio.size() * 1000 / movie.audioByteRate));
 	return true;
@@ -541,6 +540,13 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		warning("Ripper: invalid Smacker stream '%s'", name.c_str());
 		return false;
 	}
+	// InitializeMediaPresentationDisplayModeCallback at 0x163a8 is invoked for
+	// each packetized branch, not only for the IAVF container dimensions. In the
+	// original 640x400 mode every branch smaller than 321x201 receives the 2:1
+	// display descriptor, including PROLOG2.AVI's 320x200 branches inside a
+	// 640x400 container.
+	if (displayScale == kAutoPacketizedDisplayScale)
+		displayScale = decoder.getHeight() < 0xc9 && decoder.getWidth() < 0x141 ? 2 : 1;
 	const uint outputWidth = decoder.getWidth() * displayScale;
 	const uint outputHeight = decoder.getHeight() * displayScale;
 	if (x < 0)
@@ -751,7 +757,7 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 			allowEscSpace, movie.segments[i].x, movie.segments[i].y,
 			audioActive ? &audioHandle : nullptr, &stoppedByUser,
 			&movie.segments[i].frameAudioOffsets, audioByteRate, timelineStartMillis,
-			movie.displayScale, false, 0, 0, false, false, serviceSceneUi)) {
+			kAutoPacketizedDisplayScale, false, 0, 0, false, false, serviceSceneUi)) {
 			result = false;
 			break;
 		}

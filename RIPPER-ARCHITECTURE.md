@@ -571,12 +571,14 @@
   on `0x70`, the trailer is not a playback command and the reimplementation
   leaves it unread as well.
 - `RunMediaPresentation` at `0x168af` installs
-  `InitializeMediaPresentationDisplayModeCallback` at `0x163a8`. For
-  presentation extents no larger than 320x200, that callback selects a 2:1
-  display scale. `PreparePacketizedMediaPlaybackBranchSetup` at `0x5b237`
-  then centers the effective scaled extents. The reimplementation applies the
-  same scale to the embedded Smacker frames, so a 320x200 presentation uses
-  the full 640-pixel window width while preserving the original aspect ratio.
+  `InitializeMediaPresentationDisplayModeCallback` at `0x163a8` as the
+  packetized branch callback. `PreparePacketizedMediaPlaybackBranchSetup` at
+  `0x5b237` invokes it again for each embedded branch, so the scale decision is
+  based on that branch's extents rather than only the IAVF header canvas. In
+  the original 640x400 mode, a branch smaller than 321x201 receives the 2:1
+  display descriptor and its effective scaled extents are centered. This also
+  expands `PROLOG2.AVI`'s 320x200 Smacker branches even though its IAVF canvas
+  declares 640x400.
 - IAVF opcode `0x68` is a display boundary. `RunPacketizedMediaPlaybackCore`
   dispatches palette service `0x1d` and then display service `0x14`, whose
   target is `ClearGenericVideoLogicalPage` at `0x45ed8`. `PROINT.AVI` places
