@@ -31,6 +31,7 @@ byte ComfyEngine::scriptReadByte(uint32 pc) {
 	uint16 tileIndex = (uint16)(pc / COMFY_TILE_SIZE);
 	uint16 tileOffset = (uint16)(pc % COMFY_TILE_SIZE);
 	int16 spriteId = (int16)(-(int16)tileIndex - 1);
+
 	SpriteResource *sprite = spriteGetPtr(spriteId);
 	uint16 frameId = (uint16)-spriteId;
 	if (!sprite || frameId >= _frameCacheEntries.size()) {
@@ -52,6 +53,7 @@ uint16 ComfyEngine::scriptReadWord(uint32 pc) {
 	uint16 tileIndex = (uint16)(pc / COMFY_TILE_SIZE);
 	uint16 tileOffset = (uint16)(pc % COMFY_TILE_SIZE);
 	int16 spriteId = (int16)(-(int16)tileIndex - 1);
+
 	SpriteResource *sprite = spriteGetPtr(spriteId);
 	uint16 frameId = (uint16)-spriteId;
 	if (!sprite || frameId >= _frameCacheEntries.size()) {
@@ -73,6 +75,7 @@ uint32 ComfyEngine::scriptReadDword(uint32 pc) {
 	uint16 tileIndex = (uint16)(pc / COMFY_TILE_SIZE);
 	uint16 tileOffset = (uint16)(pc % COMFY_TILE_SIZE);
 	int16 spriteId = (int16)(-(int16)tileIndex - 1);
+
 	SpriteResource *sprite = spriteGetPtr(spriteId);
 	uint16 frameId = (uint16)-spriteId;
 	if (!sprite || frameId >= _frameCacheEntries.size()) {
@@ -92,8 +95,8 @@ uint32 ComfyEngine::scriptReadDword(uint32 pc) {
 
 uint16 ComfyEngine::scriptReadStringIndex(uint32 pc) {
 	uint16 value = scriptReadWord(pc);
-	if (value >= 0x7530) {
-		uint32 index = value - 0x7530;
+	if (value >= 30000) {
+		uint32 index = value - 30000;
 		if (index < _stringTable.size())
 			value = _stringTable[index];
 	}
@@ -136,5 +139,23 @@ uint32 ComfyEngine::scriptReadArgs(uint32 pc, uint16 fallbackActor, const char *
 	return pc;
 }
 
+void ComfyEngine::scriptVariableAddTo(uint16 variableIndex, int16 delta) {
+	if (variableIndex < _scriptVariables.size())
+		_scriptVariables[variableIndex] += delta;
+}
+
+void ComfyEngine::scriptVariableCopy(uint16 destination, uint16 source) {
+	if (destination < _scriptVariables.size() && source < _scriptVariables.size())
+		_scriptVariables[destination] = _scriptVariables[source];
+}
+
+void ComfyEngine::scriptVariableSet(uint16 variableIndex, uint16 value) {
+	if (variableIndex < _scriptVariables.size())
+		_scriptVariables[variableIndex] = value;
+}
+
+uint16 ComfyEngine::scriptVariableGet(uint16 variableIndex) {
+	return variableIndex < _scriptVariables.size() ? _scriptVariables[variableIndex] : 0;
+}
 
 } // End of namespace Comfy

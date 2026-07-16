@@ -74,7 +74,7 @@ ComfyEngine::ObjFileCacheRow *ComfyEngine::tileListAlloc(ObjFile *objectFile) {
 	return row;
 }
 
-void ComfyEngine::tileListRemove(ObjFile *objectFile, uint16 index) {
+void ComfyEngine::tileListTouch(ObjFile *objectFile, uint16 index) {
 	if (!objectFile || !objectFile->cacheRows || index >= objectFile->cacheRowCount)
 		return;
 
@@ -111,7 +111,7 @@ void ComfyEngine::tileListRemove(ObjFile *objectFile, uint16 index) {
 	}
 }
 
-uint16 ComfyEngine::tileListRemoveRange(ObjFile *objectFile, uint16 first, uint16 last) {
+uint16 ComfyEngine::tileListTouchRange(ObjFile *objectFile, uint16 first, uint16 last) {
 	if (!objectFile || !objectFile->tileStatus)
 		return 0;
 
@@ -126,7 +126,7 @@ uint16 ComfyEngine::tileListRemoveRange(ObjFile *objectFile, uint16 first, uint1
 	while (row <= last && row < objectFile->tileStatusCount) {
 		uint16 tile = objectFile->tileStatus[row];
 		if (tile != 0xFFFF) {
-			tileListRemove(objectFile, tile);
+			tileListTouch(objectFile, tile);
 			removed++;
 		}
 
@@ -183,12 +183,12 @@ uint16 ComfyEngine::tileDrawStrip(ObjFile *objectFile, byte *destination, uint16
 
 	uint32 sourceOffset = (uint32)cacheRow * objectFile->blockSize + sourceColumn;
 	tileCopyXmsPair(objectFile, destination, sourceOffset, drawWidth);
-	tileListRemove(objectFile, cacheRow);
+	tileListTouch(objectFile, cacheRow);
 	_stripsDrawn++;
 	return drawWidth;
 }
 
-void ComfyEngine::tileLoadAndDraw(ObjFile *objectFile, const byte *source, uint16 tileId) {
+void ComfyEngine::tileLoadAndCache(ObjFile *objectFile, const byte *source, uint16 tileId) {
 	ObjFileCacheRow *row = tileListAlloc(objectFile);
 	if (!objectFile || !row)
 		return;
@@ -199,11 +199,11 @@ void ComfyEngine::tileLoadAndDraw(ObjFile *objectFile, const byte *source, uint1
 		objectFile->tileStatus[tileId] = frameIndex;
 
 	tileUploadToXms(objectFile, source, objectFile->blockSize, (uint32)frameIndex * objectFile->blockSize);
-	tileListRemove(objectFile, frameIndex);
+	tileListTouch(objectFile, frameIndex);
 }
 
 void ComfyEngine::frameLoaderLoadTileCore(ObjFile *objectFile, const byte *source, uint16 tileId) {
-	tileLoadAndDraw(objectFile, source, tileId);
+	tileLoadAndCache(objectFile, source, tileId);
 }
 
 void ComfyEngine::frameLoaderLoadTile(ObjFile *objectFile, uint16 tileId) {
@@ -243,7 +243,7 @@ void ComfyEngine::objFileReadFieldCore(byte *destination, uint32 sourceOffset, u
 	uint16 column = (uint16)(sourceOffset % objectFile->blockSize);
 	byte *output = destination;
 	uint32 remaining = byteCount;
-	tileListRemoveRange(objectFile, firstRow, lastRow);
+	tileListTouchRange(objectFile, firstRow, lastRow);
 
 	while (row <= lastRow && remaining) {
 		uint16 copied = 0;
@@ -286,7 +286,7 @@ void ComfyEngine::objFileReadFieldCore(byte *destination, uint32 sourceOffset, u
 						memcpy(output, tileSource + column, size);
 				}
 
-				tileLoadAndDraw(objectFile, tileSource, (uint16)(row + i));
+				tileLoadAndCache(objectFile, tileSource, (uint16)(row + i));
 				column = 0;
 				remaining -= size;
 				output += size;
@@ -355,7 +355,7 @@ byte *ComfyEngine::objFileReadTiledCore(uint32 sourceOffset, uint32 byteCount, O
 		return objectFile->readBuffer + (firstCached ? 0 : firstColumn);
 	}
 
-	tileListRemoveRange(objectFile, firstRow, lastRow);
+	tileListTouchRange(objectFile, firstRow, lastRow);
 	uint16 missing = 0;
 	uint16 row = firstRow;
 	while (row <= lastRow && row < objectFile->tileStatusCount && objectFile->tileStatus[row] == 0xFFFF) {
@@ -369,7 +369,7 @@ byte *ComfyEngine::objFileReadTiledCore(uint32 sourceOffset, uint32 byteCount, O
 	if (missing) {
 		objFileReadRow(objectFile->readBuffer, firstRow, missing, blockSize, objectFile);
 		for (uint16 i = 0; i < missing; i++)
-			tileLoadAndDraw(objectFile, objectFile->readBuffer + (uint32)i * blockSize, (uint16)(firstRow + i));
+			tileLoadAndCache(objectFile, objectFile->readBuffer + (uint32)i * blockSize, (uint16)(firstRow + i));
 	}
 
 	missing = 0;
@@ -391,7 +391,7 @@ byte *ComfyEngine::objFileReadTiledCore(uint32 sourceOffset, uint32 byteCount, O
 		for (uint16 i = missing; i != 0; i--) {
 			uint16 tileId = (uint16)(lastRow - i + 1);
 			uint16 bufferRow = (uint16)(missing - i);
-			tileLoadAndDraw(objectFile, objectFile->readBuffer + (uint32)bufferRow * blockSize, tileId);
+			tileLoadAndCache(objectFile, objectFile->readBuffer + (uint32)bufferRow * blockSize, tileId);
 		}
 	}
 
@@ -423,7 +423,7 @@ byte *ComfyEngine::frameLoaderReadFrameData(uint32 sourceOffset, uint32 byteCoun
 	return data;
 }
 
-ComfyEngine::ObjFile *ComfyEngine::objFileLoadSoundData(const Common::Path &path, uint16 blockSize,
+ComfyEngine::ObjFile *ComfyEngine::objFileOpen(const Common::Path &path, uint16 blockSize,
 		uint32 maximumBytes) {
 	Common::SeekableReadStream *stream = pathFOpen(path, true);
 	if (!stream || stream->size() < 0 || (uint64)stream->size() > UINT32_MAX || !blockSize) {
@@ -462,7 +462,7 @@ ComfyEngine::ObjFile *ComfyEngine::objFileLoadSoundData(const Common::Path &path
 		if (cacheHandle >= 0)
 			memFreeTrack((uint16)cacheHandle);
 
-		soundBufFree(objectFile);
+		objFileClose(objectFile);
 		return nullptr;
 	}
 
@@ -482,7 +482,7 @@ ComfyEngine::ObjFile *ComfyEngine::objFileLoadSoundData(const Common::Path &path
 	return objectFile;
 }
 
-void ComfyEngine::soundBufFree(ObjFile *&objectFile) {
+void ComfyEngine::objFileClose(ObjFile *&objectFile) {
 	if (!objectFile)
 		return;
 

@@ -27,43 +27,171 @@
 
 namespace Comfy {
 
+#define O_ACTOR_SET_POSITION 0x01
+#define O_ACTOR_ADD_POSITION 0x02
+#define O_ACTOR_SET_FRAME 0x03
+#define O_WAIT_KEY_SET 0x04
+#define O_JUMP_IF_KEY_STATE 0x05
+#define O_SET_KEY_STATE 0x06
+#define O_ACTOR_DESTROY 0x07
+#define O_ACTOR_CREATE 0x08
+#define O_SET_CURRENT_ACTOR_FRAME 0x09
+#define O_ACTOR_SHOW 0x0A
+#define O_ACTOR_HIDE 0x0B
+#define O_ACTOR_ACTIVATE 0x0C
+#define O_ACTOR_DEACTIVATE 0x0D
+#define O_ACTOR_COMPARE_X_SET_KEY 0x0E
+#define O_ACTOR_COMPARE_Y_SET_KEY 0x0F
+#define O_ACTOR_COMPARE_X_CLEAR_KEY 0x10
+#define O_ACTOR_COMPARE_Y_CLEAR_KEY 0x11
+#define O_MIDI_ADD_TRACK 0x12
+#define O_RANDOM_JUMP 0x13
+#define O_ACTOR_REORDER 0x14
+#define O_LOAD_SPRITE_CONV_LIST 0x15
+#define O_LOAD_SOUND_LIST 0x16
+#define O_QUEUE_VOC 0x17
+#define O_ACTOR_RESET 0x18
+#define O_ACTOR_CALL_IF_KEY_STATE 0x19
+#define O_ACTOR_RETURN 0x1A
+#define O_PLAY_VOC_QUEUE 0x1B
+#define O_MIDI_REMOVE_TRACK 0x1C
+#define O_MIDI_CHANNEL_CONTROL 0x1D
+#define O_ACTOR_SET_TRIGGER 0x1E
+#define O_SET_MUSIC_EVENT 0x1F
+#define O_REQUEST_SCENE 0x20
+#define O_PALETTE_CONTROL 0x21
+#define O_SET_MUSIC_ENABLED 0x22
+#define O_SCRIPT_VARIABLE_ADD 0x23
+#define O_MIDI_SET_TIME_SCALE 0x24
+#define O_CLEAR_KEY_RANGE 0x25
+#define O_SCRIPT_VARIABLE_GE_VALUE_SET_KEY 0x26
+#define O_SKIP_WORD_28 0x28
+#define O_SKIP_WORD_29 0x29
+#define O_ACTOR_SET_SPRITE_SELECTOR 0x2A
+#define O_JUMP_RELATIVE 0x2B
+#define O_COPY_KEY 0x2C
+#define O_SCENE_CONTROL 0x2D
+#define O_SCRIPT_VARIABLE_GE_VARIABLE_SET_KEY 0x2E
+#define O_SCRIPT_VARIABLE_COPY 0x2F
+#define O_ANIMATION_CONTROL 0x30
+#define O_SET_LAST_VOC_ARGUMENTS 0x31
+#define O_UNUSED_32 0x32
+#define O_SKIP_TABLE_BLOCK 0x33
+#define O_CONFIG_STRING_COMMAND 0x34
+#define O_MOUSE_SET_ACTOR 0x35
+#define O_HOST_MEDIA_CONTROL 0x36
+#define O_ANIMATION_AUDIO_CONTROL 0x46
+#define O_PRELOAD_SPRITE_CONV_RANGE 0x47
+#define O_JUMP_IF_KEY_CLEAR_V3 0x48
+#define O_JUMP_IF_KEY_SET_V3 0x49
+#define O_STRING_TABLE_COMPARE_SET_KEY 0x50
+#define O_ACTOR_MOVE_BY 0x51
+#define O_ACTOR_MOVE_TO 0x52
+#define O_ACTOR_SET_FRAME_AND_STOP 0x53
+#define O_COPY_INLINE_BLOCK 0x54
+#define O_COPY_PALETTE_ENTRY 0x55
+#define O_WAIT 0x6E
+#define O_MIDI_ADD_EVENT 0x6F
+#define O_ACTOR_MOVE_BY_V2 0x70
+#define O_ACTOR_MOVE_TO_V2 0x71
+#define O_ACTOR_WAIT_TICKS 0x72
+#define O_WAVE_OUTPUT_RESET 0x73
+#define O_WAIT_KEY_CLEAR 0x74
+#define O_CONDITIONAL_SET_KEY 0x75
+#define O_STRING_TABLE_SET 0x76
+#define O_STRING_TABLE_SET_OFFSET 0x77
+#define O_NOP 0x7F
+
+#define SO_MIDI_LOAD_TRACK 1
+#define SO_MIDI_SET_RATE 2
+#define SO_MIDI_SET_PITCH 3
+#define SO_MIDI_SET_VOLUME 4
+#define SO_MIDI_STOP_AND_ADVANCE 5
+#define SO_MIDI_STOP_AND_FIRE_KEYS 6
+#define SO_MIDI_ENABLE_LOOP 7
+#define SO_MIDI_DISABLE_LOOP 8
+#define SO_SCENE_ENTRY_INIT 1
+#define SO_SCENE_ENTRY_STOP 2
+#define SO_SCENE_ENTRY_LOAD 3
+#define SO_SCENE_MIDI_PLAY_AT_FRAME 4
+#define SO_SCENE_MIDI_STOP 5
+#define SO_SCENE_MIDI_SET_VOLUME 6
+#define SO_ANIM_SHUTDOWN 0
+#define SO_ANIM_LOAD_FRAME 1
+#define SO_ANIM_SET_READY 2
+#define SO_ANIM_CLEAR_READY 3
+#define SO_ANIM_NOOP_4 4
+#define SO_ANIM_NOOP_5 5
+#define SO_ANIM_INVALIDATE_ACTOR_RECT 6
+#define SO_CONFIG_READ_INT 0
+#define SO_CONFIG_WRITE_INT 1
+#define SO_CONFIG_SUSPEND_ACTOR 2
+#define SO_CONFIG_RUN_COMMAND 3
+#define SO_CONFIG_TEST_VALUE 4
+#define SO_CONFIG_TEST_FILE 5
+#define SO_CONFIG_SET_LANGUAGE_DATA_SUBDIRECTORY 6
+#define SO_MOUSE_SET_ACTOR 1
+#define SO_MOUSE_CLEAR_ACTOR 2
+#define SO_HOST_MEDIA_START_INPUT 1
+#define SO_HOST_MEDIA_STOP_INPUT 2
+#define SO_HOST_MEDIA_START_RECORDING_2_ARGS 3
+#define SO_HOST_MEDIA_START_RECORDING_3_ARGS 4
+#define SO_HOST_MEDIA_START_RECORDING_4_ARGS 5
+#define SO_ANIMATION_INDEX_OFFSET 1
+#define SO_WAVE_BALANCE 2
+#define SO_ANIMATION_ACTOR_SCENE 3
+#define SO_WAVE_LEFT 4
+#define SO_WAVE_RIGHT 5
+#define SO_ANIMATION_AUDIO_NOOP 6
+#define SO_HOST_MEDIA_RANGE 7
+#define SO_MIXER_VOLUME 8
+#define SO_CONDITION_SCENE_EXISTS 1
+#define SO_CONDITION_INPUT_MODE 2
+#define SO_CONDITION_MOUSE_LEFT_BUTTON 3
+#define SO_CONDITION_MOUSE_LEFT_BUTTON_ALT 4
+#define SO_CONDITION_MOUSE_RIGHT_BUTTON 5
+#define SO_CONDITION_MOUSE_RIGHT_BUTTON_ALT 6
+#define SO_CONDITION_ACTOR_HIT_TEST 7
+#define SO_CONDITION_ACTOR_BLIT_HIT_TEST 8
+#define SO_CONDITION_FALSE 13
+#define SO_CONDITION_SYSTEM_FEATURE 14
+
 ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte opcode, uint32 &pc) {
 	switch (opcode) {
-	case 0x01:
-	case 0x02: {
-		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
-		pc += 2;
-		int16 x = scriptReadStringIndex(pc);
-		pc += 2;
-		int16 y = scriptReadStringIndex(pc);
-		pc += 2;
+	case O_ACTOR_SET_POSITION:
+	case O_ACTOR_ADD_POSITION: {
+		Actor *target = actorResolve(scriptReadWord(pc), _currentActor); pc += 2;
+		int16 x = scriptReadStringIndex(pc); pc += 2;
+		int16 y = scriptReadStringIndex(pc); pc += 2;
 		byte randomize = scriptReadByte(pc++);
+
 		if (!target)
 			error("Script opcode 0x%02X resolved an invalid actor", opcode);
 
-		if ((opcode == 0x01 && x == (int16)0xF830) || (opcode == 0x02 && x == (int16)0x8AD0)) {
+		if ((opcode == O_ACTOR_SET_POSITION && x == (int16)0xF830) || (opcode == O_ACTOR_ADD_POSITION && x == (int16)0x8AD0)) {
 			Actor *other = actorResolve((uint16)y, _currentActor);
 			if (!other)
 				error("Script opcode 0x%02X resolved an invalid reference actor", opcode);
 
 			x = (int16)(other->xFixed >> 12);
 			y = (int16)(other->yFixed >> 12);
-		} else if (opcode == 0x01 && x == (int16)0xF448) {
+		} else if (opcode == O_ACTOR_SET_POSITION && x == (int16)0xF448) {
 			x = (int16)(-target->xFixed >> 12);
 		}
 
-		if (opcode == 0x01 && y == (int16)0xF448)
+		if (opcode == O_ACTOR_SET_POSITION && y == (int16)0xF448)
 			y = (int16)(-target->yFixed >> 12);
 
 		if (randomize) {
-			if (opcode == 0x02 || x != (int16)0xFC18)
+			if (opcode == O_ACTOR_ADD_POSITION || x != (int16)0xFC18)
 				x = (int16)(((int32)getRandomNumber(0x7FFF) * x) / 0x8000);
 
-			if (opcode == 0x02 || y != (int16)0xFC18)
+			if (opcode == O_ACTOR_ADD_POSITION || y != (int16)0xFC18)
 				y = (int16)(((int32)getRandomNumber(0x7FFF) * y) / 0x8000);
 		}
 
-		if (opcode == 0x01) {
+
+		if (opcode == O_ACTOR_SET_POSITION) {
 			if (x != (int16)0xFC18)
 				target->xFixed = (int32)x * 0x1000;
 
@@ -74,22 +202,24 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			target->yFixed = (int32)((uint32)target->yFixed + (uint32)((int32)y * 0x1000));
 		}
 
+
 		return kScriptContinue;
 	}
 
-	case 0x03: {
+	case O_ACTOR_SET_FRAME: {
 		uint16 actorSlot = scriptReadWord(pc);
 		Actor *target = actorResolve(actorSlot, _currentActor);
 		pc += 2;
 		uint16 frame = scriptReadStringIndex(pc);
 		pc += 2;
-		if (target)
+		if (target) {
 			target->spriteSelector = (uint32)(int32)(int16)frame;
+		}
 
 		return kScriptContinue;
 	}
 
-	case 0x04: {
+	case O_WAIT_KEY_SET: {
 		uint16 key = scriptReadWord(pc);
 		if (key && !keyBitTest(key)) {
 			pc--;
@@ -100,14 +230,14 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x05:
-	case 0x19: {
+	case O_JUMP_IF_KEY_STATE:
+	case O_ACTOR_CALL_IF_KEY_STATE: {
 		uint16 key = scriptReadWord(pc);
 		byte state = scriptReadByte(pc + 2);
 		uint32 targetPc = scriptReadDword(pc + 3);
 		pc += 7;
 		if (!key || (byte)keyBitTest(key) == state) {
-			if (opcode == 0x19)
+			if (opcode == O_ACTOR_CALL_IF_KEY_STATE)
 				actorSetPc(actor, pc);
 
 			pc = targetPc;
@@ -116,7 +246,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x06: {
+	case O_SET_KEY_STATE: {
 		uint16 key = scriptReadWord(pc);
 		byte state = scriptReadByte(pc + 2);
 		pc += 3;
@@ -128,7 +258,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x07: {
+	case O_ACTOR_DESTROY: {
 		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
 		pc += 2;
 		if (!target)
@@ -142,7 +272,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return current ? kScriptYield : kScriptContinue;
 	}
 
-	case 0x08: {
+	case O_ACTOR_CREATE: {
 		uint16 sceneSlot = scriptReadWord(pc);
 		uint16 parentSlot = scriptReadWord(pc + 2);
 		byte flags = scriptReadByte(pc + 4);
@@ -162,36 +292,36 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x09: {
+	case O_SET_CURRENT_ACTOR_FRAME: {
 		int16 frame = scriptReadWord(pc);
 		actorSetFrame(frame);
 		pc += 2;
 		if (!_usesAnimFile && _videoMode == 2)
-			videoSetResolution();
+			renderAddFullFrameDirtyRect();
 
 		return kScriptContinue;
 	}
 
-	case 0x0A:
-	case 0x0B:
-	case 0x0C:
-	case 0x0D: {
+	case O_ACTOR_SHOW:
+	case O_ACTOR_HIDE:
+	case O_ACTOR_ACTIVATE:
+	case O_ACTOR_DEACTIVATE: {
 		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
 		pc += 2;
 		if (!target)
 			error("Script opcode 0x%02X resolved an invalid actor", opcode);
 
 		switch (opcode) {
-		case 0x0A:
+		case O_ACTOR_SHOW:
 			target->visible = 1;
 			break;
-		case 0x0B:
+		case O_ACTOR_HIDE:
 			target->visible = 0;
 			break;
-		case 0x0C:
+		case O_ACTOR_ACTIVATE:
 			target->active = 1;
 			break;
-		case 0x0D:
+		case O_ACTOR_DEACTIVATE:
 			target->moveTicks = 0;
 			target->active = 0;
 			if (target == &actor)
@@ -205,10 +335,10 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x0E:
-	case 0x0F:
-	case 0x10:
-	case 0x11: {
+	case O_ACTOR_COMPARE_X_SET_KEY:
+	case O_ACTOR_COMPARE_Y_SET_KEY:
+	case O_ACTOR_COMPARE_X_CLEAR_KEY:
+	case O_ACTOR_COMPARE_Y_CLEAR_KEY: {
 		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
 		int16 expected = scriptReadWord(pc + 2);
 		uint16 key = scriptReadWord(pc + 4);
@@ -217,16 +347,16 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		if (!target)
 			error("Script opcode 0x%02X resolved an invalid actor", opcode);
 
-		int16 actual = (opcode == 0x0E || opcode == 0x10 ? target->xFixed : target->yFixed) >> 12;
+		int16 actual = (opcode == O_ACTOR_COMPARE_X_SET_KEY || opcode == O_ACTOR_COMPARE_X_CLEAR_KEY ? target->xFixed : target->yFixed) >> 12;
 		bool matched = ((mode & 2) && expected == actual) || ((mode & 4) && expected < actual) || ((mode & 1) && expected > actual);
 		if (matched) {
 			switch (opcode) {
-			case 0x0E:
-			case 0x0F:
+			case O_ACTOR_COMPARE_X_SET_KEY:
+			case O_ACTOR_COMPARE_Y_SET_KEY:
 				keyBitSet(key);
 				break;
-			case 0x10:
-			case 0x11:
+			case O_ACTOR_COMPARE_X_CLEAR_KEY:
+			case O_ACTOR_COMPARE_Y_CLEAR_KEY:
 				keyBitClear(key);
 				break;
 			default:
@@ -237,7 +367,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x12: {
+	case O_MIDI_ADD_TRACK: {
 		uint16 id = scriptReadWord(pc);
 		int16 delta = scriptReadStringIndex(pc + 2);
 		pc += 4;
@@ -245,7 +375,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x13: {
+	case O_RANDOM_JUMP: {
 		byte totalWeight = scriptReadByte(pc++);
 		byte installReturnPc = scriptReadByte(pc++);
 		uint32 returnPc = pc + installReturnPc - 3;
@@ -265,7 +395,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x14: {
+	case O_ACTOR_REORDER: {
 		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
 		byte mode = scriptReadByte(pc + 2);
 		pc += 3;
@@ -284,22 +414,22 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		if (_usesAnimFile && (_videoMode == 2 || _videoMode == 4))
 			renderInvalidateFullFrame();
 		else if (!_usesAnimFile && _videoMode == 2)
-			videoSetResolution();
+			renderAddFullFrameDirtyRect();
 
 		return kScriptContinue;
 	}
 
-	case 0x15:
-	case 0x16: {
+	case O_LOAD_SPRITE_CONV_LIST:
+	case O_LOAD_SOUND_LIST: {
 		byte count = scriptReadByte(pc++);
 		for (uint i = 0; i < count; i++) {
 			uint16 id = scriptReadWord(pc);
 			pc += 2;
 			switch (opcode) {
-			case 0x15:
+			case O_LOAD_SPRITE_CONV_LIST:
 				spriteGetConvPtr((int16)id);
 				break;
-			case 0x16:
+			case O_LOAD_SOUND_LIST:
 				soundLoadEntry(id);
 				break;
 			default:
@@ -310,7 +440,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x17: {
+	case O_QUEUE_VOC: {
 		if (_musicEventMask) {
 			pc--;
 			return kScriptYield;
@@ -324,7 +454,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x18: {
+	case O_ACTOR_RESET: {
 		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
 		pc += 2;
 		if (!target)
@@ -350,28 +480,28 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x1A: {
+	case O_ACTOR_RETURN: {
 		pc = actorPopPc(actor);
 		return kScriptContinue;
 	}
 
-	case 0x1B: {
+	case O_PLAY_VOC_QUEUE: {
 		vocQueuePlayAll();
 		return kScriptContinue;
 	}
 
-	case 0x1C: {
+	case O_MIDI_REMOVE_TRACK: {
 		midiRemoveTrack(scriptReadWord(pc));
 		pc += 2;
 		return kScriptContinue;
 	}
 
-	case 0x1D: {
+	case O_MIDI_CHANNEL_CONTROL: {
 		byte packed = scriptReadByte(pc++);
 		byte channel = (packed >> 4) - 1;
 		byte subop = packed & 0x0F;
 		switch (subop) {
-		case 1: {
+		case SO_MIDI_LOAD_TRACK: {
 			uint16 songId = scriptReadWord(pc);
 			uint16 completionKey = scriptReadWord(pc + 2);
 			uint16 count = scriptReadWord(pc + 4);
@@ -389,27 +519,27 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			midiAddTrackEntry(channel, songId, completionKey, 1, count, frames);
 			break;
 		}
-		case 2:
-		case 3:
-		case 4: {
-			uint16 value = scriptReadWord(pc);
-			uint16 ticks = scriptReadWord(pc + 2);
+		case SO_MIDI_SET_RATE:
+		case SO_MIDI_SET_PITCH:
+		case SO_MIDI_SET_VOLUME: {
+			uint16 value = _engineVersion == 1 ? scriptReadWord(pc) : scriptReadStringIndex(pc);
+			uint16 ticks = _engineVersion == 1 ? scriptReadWord(pc + 2) : scriptReadStringIndex(pc + 2);
 			pc += 4;
 			midiSetChannelParam(channel, subop, value, ticks);
 			break;
 		}
-		case 5:
+		case SO_MIDI_STOP_AND_ADVANCE:
 			if (channel < COMFY_MIDI_CHANNEL_COUNT)
-				midiStopAndRemove(channel);
+				midiStopAndAdvanceChannel(channel);
 			break;
-		case 6:
+		case SO_MIDI_STOP_AND_FIRE_KEYS:
 			if (channel < COMFY_MIDI_CHANNEL_COUNT)
 				midiStopAndFireKeys(channel);
 			break;
-		case 7:
-		case 8:
+		case SO_MIDI_ENABLE_LOOP:
+		case SO_MIDI_DISABLE_LOOP:
 			if (_engineVersion == 3 && channel < COMFY_MIDI_CHANNEL_COUNT && _midiPlyrDriver)
-				_midiPlyrDriver->musicSetLoop(subop == 7 ? 1 : 0, channel);
+				_midiPlyrDriver->musicSetLoop(subop == SO_MIDI_ENABLE_LOOP ? 1 : 0, channel);
 
 			break;
 		default:
@@ -419,7 +549,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x1E: {
+	case O_ACTOR_SET_TRIGGER: {
 		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
 		uint16 key = scriptReadWord(pc + 2);
 		byte flags = scriptReadByte(pc + 4);
@@ -441,7 +571,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x1F: {
+	case O_SET_MUSIC_EVENT: {
 		uint16 bit = scriptReadWord(pc);
 		pc += 2;
 		if ((int16)bit >= 0x32) {
@@ -454,19 +584,19 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptYield;
 	}
 
-	case 0x20: {
+	case O_REQUEST_SCENE: {
 		uint16 scene = scriptReadWord(pc);
 		pc += 2;
 		if (!_pendingScene || (int16)scene < (int16)_pendingScene)
 			_pendingScene = scene;
 
 		if (_videoMode == 2 || (_usesAnimFile && _videoMode == 4))
-			renderSetDirty();
+			renderRequestFullFrameInvalidation();
 
 		return kScriptYield;
 	}
 
-	case 0x21: {
+	case O_PALETTE_CONTROL: {
 		uint16 paletteId = scriptReadStringIndex(pc);
 		uint16 fadeTicks = scriptReadStringIndex(pc + 2);
 		byte brightness = scriptReadByte(pc + 4);
@@ -482,28 +612,28 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x22: {
+	case O_SET_MUSIC_ENABLED: {
 		musicSetEnabled(scriptReadByte(pc));
 		pc++;
 		return kScriptContinue;
 	}
 
-	case 0x23: {
+	case O_SCRIPT_VARIABLE_ADD: {
 		uint16 handle = scriptReadWord(pc);
 		int16 delta = scriptReadStringIndex(pc + 2);
 		pc += 4;
-		midiHandleAddTo(handle, delta);
+		scriptVariableAddTo(handle, delta);
 
 		return kScriptContinue;
 	}
 
-	case 0x24: {
+	case O_MIDI_SET_TIME_SCALE: {
 		midiSetTimeScale((int16)scriptReadStringIndex(pc));
 		pc += 2;
 		return kScriptContinue;
 	}
 
-	case 0x25: {
+	case O_CLEAR_KEY_RANGE: {
 		uint16 first = scriptReadWord(pc);
 		uint16 last = scriptReadWord(pc + 2);
 		pc += 4;
@@ -516,27 +646,27 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x26:
-	case 0x2E: {
+	case O_SCRIPT_VARIABLE_GE_VALUE_SET_KEY:
+	case O_SCRIPT_VARIABLE_GE_VARIABLE_SET_KEY: {
 		uint16 first = scriptReadWord(pc);
 		uint16 second = scriptReadWord(pc + 2);
 		uint16 key = scriptReadWord(pc + 4);
 		pc += 6;
-		int16 lhs = (int16)midiGetHandle(first);
-		int16 rhs = opcode == 0x26 ? (int16)second : (int16)midiGetHandle(second);
+		int16 lhs = (int16)scriptVariableGet(first);
+		int16 rhs = opcode == O_SCRIPT_VARIABLE_GE_VALUE_SET_KEY ? (int16)second : (int16)scriptVariableGet(second);
 		if (lhs >= rhs)
 			keyBitSet(key);
 
 		return kScriptContinue;
 	}
 
-	case 0x28:
-	case 0x29: {
+	case O_SKIP_WORD_28:
+	case O_SKIP_WORD_29: {
 		pc += 2;
 		return kScriptContinue;
 	}
 
-	case 0x2A: {
+	case O_ACTOR_SET_SPRITE_SELECTOR: {
 		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
 		uint32 selector = scriptReadDword(pc + 2);
 		pc += 6;
@@ -546,12 +676,12 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x2B: {
+	case O_JUMP_RELATIVE: {
 		pc = (uint32)((int32)pc + (int16)(scriptReadWord(pc) * 2));
 		return kScriptContinue;
 	}
 
-	case 0x2C: {
+	case O_COPY_KEY: {
 		uint16 destination = scriptReadWord(pc);
 		uint16 source = scriptReadWord(pc + 2);
 		pc += 4;
@@ -564,37 +694,37 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x2D: {
+	case O_SCENE_CONTROL: {
 		byte subop = scriptReadByte(pc++);
 		switch (subop) {
-		case 1:
-			sceneGoto(scriptReadWord(pc));
+		case SO_SCENE_ENTRY_INIT:
+			sceneEntryInit(scriptReadWord(pc));
 			pc += 2;
 			break;
-		case 2:
-			sceneStop();
+		case SO_SCENE_ENTRY_STOP:
+			sceneEntryStop();
 			break;
-		case 3: {
+		case SO_SCENE_ENTRY_LOAD: {
 			uint16 descriptor = scriptReadWord(pc);
-			uint16 index = scriptReadWord(pc + 2);
+			uint16 index = _engineVersion == 1 ? scriptReadWord(pc + 2) : scriptReadStringIndex(pc + 2);
 			pc += 4;
 			sceneEntryLoad(descriptor, index);
 			break;
 		}
-		case 4: {
-			uint16 channel = scriptReadWord(pc);
-			uint16 frame = scriptReadWord(pc + 2);
+		case SO_SCENE_MIDI_PLAY_AT_FRAME: {
+			uint16 channel = _engineVersion == 1 ? scriptReadWord(pc) : scriptReadStringIndex(pc);
+			uint16 frame = _engineVersion == 1 ? scriptReadWord(pc + 2) : scriptReadStringIndex(pc + 2);
 			pc += 4;
 			midiPlaySongAtFrame(channel, frame);
 			break;
 		}
-		case 5: {
-			uint16 channel = scriptReadWord(pc);
+		case SO_SCENE_MIDI_STOP: {
+			uint16 channel = _engineVersion == 1 ? scriptReadWord(pc) : scriptReadStringIndex(pc);
 			pc += 2;
 			midiStopSong(channel);
 			break;
 		}
-		case 6:
+		case SO_SCENE_MIDI_SET_VOLUME:
 			if (_engineVersion >= 2) {
 				uint16 channel = scriptReadStringIndex(pc);
 				uint16 volume = scriptReadStringIndex(pc + 2);
@@ -610,47 +740,62 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x2F: {
+	case O_SCRIPT_VARIABLE_COPY: {
 		byte command = scriptReadByte(pc);
 		uint16 destination = scriptReadWord(pc + 1);
 		uint16 first = scriptReadWord(pc + 3);
 		uint16 second = scriptReadWord(pc + 5);
 		pc += 7;
 		if (command == '=')
-			midiHandleCopy(destination, first);
+			scriptVariableCopy(destination, first);
 		else if (command == 'm')
-			midiHandleCopy(destination,
-				(int16)midiGetHandle(second) <= (int16)midiGetHandle(first) ? first : second);
+			scriptVariableCopy(destination,
+				(int16)scriptVariableGet(second) <= (int16)scriptVariableGet(first) ? first : second);
 
 		return kScriptContinue;
 	}
 
-	case 0x30:
+	case O_ANIMATION_CONTROL:
 		if (!_usesAnimFile)
 			error("Unknown script opcode 0x%02X at script PC 0x%08X", opcode, pc - 1);
 	{
 		byte subop = scriptReadByte(pc++);
 		switch (subop) {
-		case 0:
+		case SO_ANIM_SHUTDOWN:
 			animFrameShutdown(true);
 			break;
-		case 1: {
-			uint16 animIndex = scriptReadWord(pc);
+		case SO_ANIM_LOAD_FRAME: {
+			uint16 animIndex = _engineVersion == 3 ? scriptReadStringIndex(pc) : scriptReadWord(pc);
 			uint16 frameKey = scriptReadWord(pc + 2);
 			pc += 4;
-			animFileLoadFrame(animIndex, frameKey, actor.sceneHandle);
+
+			if (_engineVersion == 3) {
+				animIndex += _v3AnimIndexOffset;
+				_v3AnimIndexOffset = 0;
+
+				if (!animFrameIsActive()) {
+					if (!_v3AnimActorSceneHandle)
+						_v3AnimActorSceneHandle = actor.sceneHandle;
+
+					animFileLoadFrame(animIndex, frameKey, _v3AnimActorSceneHandle);
+					_v3AnimActorSceneHandle = 0;
+				}
+			} else {
+				animFileLoadFrame(animIndex, frameKey, actor.sceneHandle);
+			}
+
 			break;
 		}
-		case 2:
+		case SO_ANIM_SET_READY:
 			animFrameSetReady(true);
 			break;
-		case 3:
+		case SO_ANIM_CLEAR_READY:
 			animFrameSetReady(false);
 			break;
-		case 4:
-		case 5:
+		case SO_ANIM_NOOP_4:
+		case SO_ANIM_NOOP_5:
 			break;
-		case 6:
+		case SO_ANIM_INVALIDATE_ACTOR_RECT:
 			if (_engineVersion == 3)
 				animFrameInvalidateActorRect();
 
@@ -662,27 +807,27 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x31:
-	case 0x32:
-	case 0x33:
-	case 0x34:
-	case 0x35:
-	case 0x36:
-		if (!(_usesWcomfy99ScriptOps ||
-			(opcode == 0x31 && (_game->scriptFeatures & COMFY_SCRIPT_OPCODE_31)) ||
-			(opcode == 0x32 && (_game->scriptFeatures & COMFY_SCRIPT_OPCODE_32)) ||
-			(opcode == 0x33 && (_game->scriptFeatures & COMFY_SCRIPT_OPCODE_33))))
+	case O_SET_LAST_VOC_ARGUMENTS:
+	case O_UNUSED_32:
+	case O_SKIP_TABLE_BLOCK:
+	case O_CONFIG_STRING_COMMAND:
+	case O_MOUSE_SET_ACTOR:
+	case O_HOST_MEDIA_CONTROL:
+		if (!((_engineVersion == 3) ||
+			(opcode == O_SET_LAST_VOC_ARGUMENTS && (_game->scriptFeatures & COMFY_SCRIPT_OPCODE_31)) ||
+			(opcode == O_UNUSED_32 && (_game->scriptFeatures & COMFY_SCRIPT_OPCODE_32)) ||
+			(opcode == O_SKIP_TABLE_BLOCK && (_game->scriptFeatures & COMFY_SCRIPT_OPCODE_33))))
 			error("Unknown script opcode 0x%02X at script PC 0x%08X", opcode, pc - 1);
 	{
 		switch (opcode) {
-		case 0x31: {
+		case O_SET_LAST_VOC_ARGUMENTS: {
 			uint16 count = scriptReadStringIndex(pc);
 			pc += 2;
 			if (_animUsesWaveVocCounter) {
 				uint16 slot = _soundEventMaximum ? _soundEventMaximum - 1 : _vocQueueCapacity - 1;
 				if (_engineVersion == 3) {
-					VocQueueEntry1999 &entry = _vocQueue1999[slot];
-					entry.argumentCount = MIN<uint16>(count, COMFY_VOC_ARG_CAPACITY_1999);
+					VocQueueEntryV3 &entry = _vocQueueV3[slot];
+					entry.argumentCount = MIN<uint16>(count, COMFY_VOC_ARG_CAPACITY_V3);
 					for (uint i = 0; i < entry.argumentCount; i++)
 						entry.arguments[i] = scriptReadWord(pc + i * 2);
 				} else {
@@ -697,19 +842,19 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 
 			break;
 		}
-		case 0x32:
+		case O_UNUSED_32:
 			scriptReadStringIndex(pc);
 			scriptReadStringIndex(pc + 2);
 			pc += 4;
 			break;
-		case 0x33: {
+		case O_SKIP_TABLE_BLOCK: {
 			pc += 4;
 			byte inlineBytes = scriptReadByte(pc++);
 			byte tripleCount = scriptReadByte(pc++);
 			pc += inlineBytes + (uint32)tripleCount * 3;
 			break;
 		}
-		case 0x34: {
+		case O_CONFIG_STRING_COMMAND: {
 			byte subop = scriptReadByte(pc++);
 			uint16 value = scriptReadWord(pc);
 			pc += 2;
@@ -717,29 +862,43 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			for (byte character = scriptReadByte(pc++); character; character = scriptReadByte(pc++))
 				key += (char)character;
 
-			key.trim();
-
 			switch (subop) {
-			case 0:
+			case SO_CONFIG_READ_INT:
 				if (value < _stringTable.size())
 					_stringTable[value] = ConfMan.hasKey(key) ? ConfMan.getInt(key) : 0;
 
 				break;
-			case 1:
+			case SO_CONFIG_WRITE_INT:
 				ConfMan.setInt(key, value);
 				if (key.equalsIgnoreCase("SENSITIVITY"))
-					_wcomfy99Sensitivity = value;
+					_v3Sensitivity = value;
 
 				ConfMan.flushToDisk();
 				break;
-			case 4:
+			case SO_CONFIG_SUSPEND_ACTOR:
+			case SO_CONFIG_RUN_COMMAND:
+				_v3ConfigCommandPending = true;
+				_v3ConfigCommandSubop = subop;
+				_v3ConfigCommandValue = value;
+				_v3ConfigCommandText = key;
+
+				if (subop == SO_CONFIG_SUSPEND_ACTOR) {
+					Actor *configActor = actorGetPtr(sceneGetHandle(1));
+					if (configActor)
+						configActor->active = 0;
+				} else {
+					configRunPendingCommand();
+				}
+
+				break;
+			case SO_CONFIG_TEST_VALUE:
 				if (ConfMan.hasKey(key) && !ConfMan.get(key).equalsIgnoreCase("?????"))
 					keyBitSet(value);
 				else
 					keyBitClear(value);
 
 				break;
-			case 5: {
+			case SO_CONFIG_TEST_FILE: {
 				Common::ScopedPtr<Common::SeekableReadStream> stream(pathFOpen(Common::Path(key), true));
 				if (stream)
 					keyBitSet(value);
@@ -748,57 +907,62 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 
 				break;
 			}
-			case 6: {
-				key.trim();
-				byte last = key.empty() ? 0 : key.lastChar();
+			case SO_CONFIG_SET_LANGUAGE_DATA_SUBDIRECTORY:
 				if (value < _stringTable.size())
-					_stringTable[value] = Common::isSpace(last) ? 0x81 : Common::isDigit(last) ? 0x12 :
-						(Common::isAlpha(last) ? (Common::isUpper(last) ? 0x04 : 0x08) : 0x40);
+					_stringTable[value] = languageSetDataSubdirectory(key);
 
 				break;
-			}
 			default:
 				error("Unknown script opcode 0x34 subopcode 0x%02X near script PC 0x%08X", subop, pc);
 			}
 
 			break;
 		}
-		case 0x35: {
-			byte subop = scriptReadByte(pc++);
+		case O_MOUSE_SET_ACTOR: {
+			uint32 opcodePc = pc - 1;
+			byte subop = 0;
+			Actor *mouseActor = nullptr;
+			pc = scriptReadArgs(pc, _currentActor, "CO", &subop, &mouseActor);
 			switch (subop) {
-			case 2:
-				_wcomfy99SubsystemWord = 0;
+			case SO_MOUSE_SET_ACTOR:
+				mouseSetActor(mouseActor);
+				break;
+			case SO_MOUSE_CLEAR_ACTOR:
+				mouseSetActor(nullptr);
 				break;
 			default:
-				error("Unknown script opcode 0x35 subopcode 0x%02X at script PC 0x%08X", subop, pc - 2);
+				error("Unknown script opcode 0x35 subopcode 0x%02X at script PC 0x%08X", subop, opcodePc);
 			}
 
 			break;
 		}
-		case 0x36: {
+		case O_HOST_MEDIA_CONTROL: {
 			byte subop = scriptReadByte(pc++);
 			switch (subop) {
-			case 1:
-				_wcomfy99RecordHostEnabled = true;
+			case SO_HOST_MEDIA_START_INPUT:
+				setMediaMode(subop);
 				break;
-			case 2:
-				_wcomfy99RecordHostEnabled = false;
+			case SO_HOST_MEDIA_STOP_INPUT:
+				setMediaMode(subop);
+				_v3HostMediaRecording = false;
 				break;
-			case 3:
-			case 4:
-			case 5:
-				_wcomfy99MixedHostFirstWord = scriptReadWord(pc);
-				_wcomfy99MixedHostSecondWord = scriptReadWord(pc + 2);
+			case SO_HOST_MEDIA_START_RECORDING_2_ARGS:
+			case SO_HOST_MEDIA_START_RECORDING_3_ARGS:
+			case SO_HOST_MEDIA_START_RECORDING_4_ARGS:
+				_v3HostMediaRecordingArg0 = scriptReadStringIndex(pc);
+				_v3HostMediaRecordingArg1 = scriptReadWord(pc + 2);
 				pc += 4;
-				_wcomfy99RecordHostEnabled = true;
+				_v3HostMediaRecording = true;
+				if (!_v3SceneHostMediaModeEnabled)
+					setMediaMode(SO_HOST_MEDIA_START_INPUT);
 
-				if (subop != 3) {
-					_wcomfy99MixedHostThirdWord = scriptReadWord(pc);
+				if (subop != SO_HOST_MEDIA_START_RECORDING_2_ARGS) {
+					_v3HostMediaRecordingArg2 = scriptReadStringIndex(pc);
 					pc += 2;
 				}
 
-				if (subop == 5) {
-					_wcomfy99MixedHostFourthWord = scriptReadWord(pc);
+				if (subop == SO_HOST_MEDIA_START_RECORDING_4_ARGS) {
+					_v3HostMediaRecordingArg3 = scriptReadStringIndex(pc);
 					pc += 2;
 				}
 
@@ -816,42 +980,47 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x46:
-	case 0x47:
-		if (!_usesWcomfy99ScriptOps)
+	case O_ANIMATION_AUDIO_CONTROL:
+	case O_PRELOAD_SPRITE_CONV_RANGE:
+		if (_engineVersion != 3)
 			error("Unknown script opcode 0x%02X at script PC 0x%08X", opcode, pc - 1);
 	{
 		switch (opcode) {
-		case 0x46: {
+		case O_ANIMATION_AUDIO_CONTROL: {
 			byte subop = scriptReadByte(pc++);
-			if (subop < 1 || subop > 8)
+			if (subop < SO_ANIMATION_INDEX_OFFSET || subop > SO_MIXER_VOLUME)
 				error("Unknown script opcode 0x46 subopcode 0x%02X at script PC 0x%08X", subop, pc - 2);
 
-			uint16 argument = scriptReadWord(pc);
-			pc += 2;
-
 			switch (subop) {
-			case 1:
-				_wcomfy99HostWordA = argument;
+			case SO_ANIMATION_INDEX_OFFSET:
+				_v3AnimIndexOffset = scriptReadStringIndex(pc);
+				pc += 2;
 				break;
-			case 2:
-				wcomfy99SetWaveBalancePercent(argument);
+			case SO_WAVE_BALANCE:
+				setWaveBalancePercent(scriptReadStringIndex(pc));
+				pc += 2;
 				break;
-			case 3:
-				_wcomfy99HostWordB = argument;
+			case SO_ANIMATION_ACTOR_SCENE:
+				_v3AnimActorSceneHandle = scriptReadWord(pc);
+				pc += 2;
 				break;
-			case 4:
-				wcomfy99SetWaveLeftPercent(argument);
+			case SO_WAVE_LEFT:
+				setWaveLeftPercent(scriptReadStringIndex(pc));
+				pc += 2;
 				break;
-			case 5:
-				wcomfy99SetWaveRightPercent(argument);
+			case SO_WAVE_RIGHT:
+				setWaveRightPercent(scriptReadStringIndex(pc));
+				pc += 2;
 				break;
-			case 6:
-			case 7:
-				wcomfy99SetHostMediaRangePercent(argument);
+			case SO_ANIMATION_AUDIO_NOOP:
 				break;
-			case 8:
-				wcomfy99SetMixerVolumePercent(argument);
+			case SO_HOST_MEDIA_RANGE:
+				setMediaRangePercent(scriptReadStringIndex(pc));
+				pc += 2;
+				break;
+			case SO_MIXER_VOLUME:
+				setMixerVolumePercent(scriptReadStringIndex(pc));
+				pc += 2;
 				break;
 			default:
 				break;
@@ -859,13 +1028,15 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 
 			break;
 		}
-		case 0x47:
-			_wcomfy99RangeHostStart = scriptReadWord(pc);
-			_wcomfy99RangeHostEnd = scriptReadWord(pc + 2);
-			_wcomfy99RangeHostCount = _wcomfy99RangeHostEnd >= _wcomfy99RangeHostStart ?
-				_wcomfy99RangeHostEnd - _wcomfy99RangeHostStart + 1 : 0;
+		case O_PRELOAD_SPRITE_CONV_RANGE: {
+			uint16 first = scriptReadStringIndex(pc);
+			uint16 last = scriptReadStringIndex(pc + 2);
 			pc += 4;
+			for (uint16 spriteId = first; (int16)spriteId <= (int16)last; spriteId++)
+				spriteGetConvPtr((int16)spriteId);
+
 			break;
+		}
 		default:
 			break;
 		}
@@ -873,7 +1044,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x50: {
+	case O_STRING_TABLE_COMPARE_SET_KEY: {
 		uint16 lhsIndex = scriptReadWord(pc);
 		uint16 rhsIndex = scriptReadWord(pc + 2);
 		uint16 key = scriptReadWord(pc + 4);
@@ -890,10 +1061,10 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x51:
-	case 0x52:
-	case 0x70:
-	case 0x71: {
+	case O_ACTOR_MOVE_BY:
+	case O_ACTOR_MOVE_TO:
+	case O_ACTOR_MOVE_BY_V2:
+	case O_ACTOR_MOVE_TO_V2: {
 		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
 		pc += 2;
 		int16 x = scriptReadStringIndex(pc);
@@ -909,10 +1080,10 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		if (!target)
 			error("Script opcode 0x%02X resolved an invalid actor", opcode);
 
-		if (!duration && (opcode == 0x51 || opcode == 0x52))
+		if (!duration && (opcode == O_ACTOR_MOVE_BY || opcode == O_ACTOR_MOVE_TO))
 			error("Script opcode 0x%02X has a zero movement duration", opcode);
 
-		bool moveTo = opcode == 0x52 || opcode == 0x71;
+		bool moveTo = opcode == O_ACTOR_MOVE_TO || opcode == O_ACTOR_MOVE_TO_V2;
 		if ((moveTo && x == (int16)0xF830) || (!moveTo && x == (int16)0x8AD0)) {
 			Actor *other = actorResolve((uint16)y, _currentActor);
 			if (!other)
@@ -942,7 +1113,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			dy = y == (int16)0xFC18 ? 0 : dy - target->yFixed;
 		}
 
-		if (opcode == 0x51 || opcode == 0x52 || (moveTo && duration < 0)) {
+		if (opcode == O_ACTOR_MOVE_BY || opcode == O_ACTOR_MOVE_TO || (moveTo && duration < 0)) {
 			if (duration < 0)
 				duration = -duration;
 
@@ -962,23 +1133,25 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return blocking && target == &actor ? kScriptYield : kScriptContinue;
 	}
 
-	case 0x48:
-	case 0x49:
-		if (!_usesWcomfy99ScriptOps)
+	case O_JUMP_IF_KEY_CLEAR_V3:
+	case O_JUMP_IF_KEY_SET_V3:
+		if (_engineVersion != 3)
 			error("Unknown script opcode 0x%02X at script PC 0x%08X", opcode, pc - 1);
 	{
 		uint16 key = scriptReadWord(pc);
 		uint32 targetPc = scriptReadDword(pc + 2);
-		bool jumpWhenSet = opcode == 0x49;
+		bool jumpWhenSet = opcode == O_JUMP_IF_KEY_SET_V3;
 		pc = keyBitTest(key) == jumpWhenSet ? targetPc : pc + 6;
 		return kScriptContinue;
 	}
 
-	case 0x53: {
+	case O_ACTOR_SET_FRAME_AND_STOP: {
 		uint16 actorSlot = scriptReadWord(pc);
 		Actor *target = actorResolve(actorSlot, _currentActor);
 		uint16 frame = scriptReadStringIndex(pc + 2);
+
 		pc += 4;
+
 		if (!target)
 			error("Script opcode 0x53 resolved an invalid actor");
 
@@ -988,7 +1161,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x54: {
+	case O_COPY_INLINE_BLOCK: {
 		if (_engineVersion < 2)
 			error("Unknown script opcode 0x%02X at script PC 0x%08X", opcode, pc - 1);
 
@@ -1007,7 +1180,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x55: {
+	case O_COPY_PALETTE_ENTRY: {
 		if (_engineVersion < 2)
 			error("Unknown script opcode 0x%02X at script PC 0x%08X", opcode, pc - 1);
 
@@ -1022,10 +1195,10 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x6E:
+	case O_WAIT:
 		return kScriptYield;
 
-	case 0x6F: {
+	case O_MIDI_ADD_EVENT: {
 		uint16 id = scriptReadWord(pc);
 		int16 delta = scriptReadStringIndex(pc + 2);
 		pc += 4;
@@ -1033,7 +1206,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x72: {
+	case O_ACTOR_WAIT_TICKS: {
 		uint16 requested = scriptReadStringIndex(pc);
 		pc += 2;
 		uint16 balance = actor.waitAccum;
@@ -1050,12 +1223,12 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptYield;
 	}
 
-	case 0x73: {
+	case O_WAVE_OUTPUT_RESET: {
 		_waveOutputActive = false;
 		return kScriptContinue;
 	}
 
-	case 0x74: {
+	case O_WAIT_KEY_CLEAR: {
 		uint16 key = scriptReadWord(pc);
 		if (keyBitTest(key)) {
 			pc--;
@@ -1066,26 +1239,42 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x75: {
+	case O_CONDITIONAL_SET_KEY: {
 		byte kind = scriptReadByte(pc++);
 		uint16 key = scriptReadWord(pc);
 		pc += 2;
 		bool condition = false;
-		if (_usesWcomfy99ScriptOps) {
+		if (_engineVersion == 3) {
 			uint16 argument = scriptReadWord(pc);
 			pc += 2;
 			switch (kind) {
-			case 1:
+			case SO_CONDITION_SCENE_EXISTS:
 				condition = sceneGetHandle(argument) != 0;
 				break;
-			case 2:
+			case SO_CONDITION_INPUT_MODE:
 				condition = _inputDeviceMode == 1;
 				break;
-			case 14:
+			case SO_CONDITION_MOUSE_LEFT_BUTTON:
+			case SO_CONDITION_MOUSE_LEFT_BUTTON_ALT:
+				condition = _mouseLeftButton;
+				break;
+			case SO_CONDITION_MOUSE_RIGHT_BUTTON:
+			case SO_CONDITION_MOUSE_RIGHT_BUTTON_ALT:
+				condition = _mouseRightButton;
+				break;
+			case SO_CONDITION_ACTOR_HIT_TEST:
+			case SO_CONDITION_ACTOR_BLIT_HIT_TEST: {
+				Actor *target = actorResolve(argument, _currentActor);
+				condition = target && actorTestMouseHit(*target, kind == SO_CONDITION_ACTOR_BLIT_HIT_TEST);
+				break;
+			}
+			case SO_CONDITION_FALSE:
+				break;
+			case SO_CONDITION_SYSTEM_FEATURE:
 				if (argument <= 4) {
 					condition = _inputDeviceMode == argument;
 				} else if (argument == 20) {
-					condition = _wcomfy99RecordHostEnabled;
+					condition = _v3HostMediaRecording;
 				} else if (argument == 30) {
 					Common::ScopedPtr<Common::SeekableReadStream> stream(pathFOpen(Common::Path("comfy.htm"), true));
 					condition = (bool)stream;
@@ -1096,7 +1285,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			}
 		} else {
 			switch (kind) {
-			case 1: {
+			case SO_CONDITION_SCENE_EXISTS: {
 				uint16 scene = scriptReadWord(pc);
 				condition = sceneGetHandle(scene) != 0;
 				pc += 2;
@@ -1115,11 +1304,11 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x76:
-	case 0x77: {
+	case O_STRING_TABLE_SET:
+	case O_STRING_TABLE_SET_OFFSET: {
 		uint16 index = scriptReadWord(pc);
 		pc += 2;
-		if (opcode == 0x77) {
+		if (opcode == O_STRING_TABLE_SET_OFFSET) {
 			if (_stringTable.size() <= 1)
 				error("Script opcode 0x77 requires string table entry 1");
 
@@ -1134,7 +1323,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case 0x7F:
+	case O_NOP:
 		return kScriptContinue;
 
 	default:

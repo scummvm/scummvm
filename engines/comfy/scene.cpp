@@ -53,18 +53,18 @@ void ComfyEngine::sceneBlockPackRuntimeState() {
 	WRITE_LE_UINT16(&_sceneMemoryBlock[_sceneMidiInstanceOffset + 0x18A], _midiTracks.count);
 	if (_engineVersion == 3) {
 		byte *vocState = &_sceneMemoryBlock[_sceneMidiInstanceOffset + COMFY_SCENE_MIDI_INSTANCE_BYTES];
-		vocState[0] = _wcomfy99VocState0;
-		vocState[1] = _wcomfy99VocState1;
-		vocState[2] = _wcomfy99VocState2;
-		vocState[3] = _wcomfy99VocState3;
-		vocState[6] = _wcomfy99VocState6;
+		vocState[0] = _v3SceneWaveBalancePercent;
+		vocState[1] = _v3SceneHostMediaModeEnabled;
+		vocState[2] = _v3SceneWaveLeftPercent;
+		vocState[3] = _v3SceneWaveRightPercent;
+		vocState[6] = _v3SceneMixerVolumePercent;
 		for (uint i = 0; i < COMFY_VOC_QUEUE_CAPACITY; i++) {
 			byte *packedEntry = vocState + 7 + i * 0x1F;
-			VocQueueEntry1999 &entry = _vocQueue1999[i];
+			VocQueueEntryV3 &entry = _vocQueueV3[i];
 			WRITE_LE_UINT16(packedEntry, entry.soundId);
 			WRITE_LE_UINT16(packedEntry + 2, entry.argumentCount);
 			WRITE_LE_UINT16(packedEntry + 4, entry.state);
-			for (uint argument = 0; argument < COMFY_VOC_ARG_CAPACITY_1999; argument++)
+			for (uint argument = 0; argument < COMFY_VOC_ARG_CAPACITY_V3; argument++)
 				WRITE_LE_UINT16(packedEntry + 6 + argument * 2, entry.arguments[argument]);
 
 			packedEntry[0x1E] = entry.clearArgumentKeys;
@@ -211,7 +211,7 @@ void ComfyEngine::sceneBlockPackRuntimeState() {
 		animFilePackState(&_sceneMemoryBlock[_sceneAnimStateOffset]);
 }
 
-void ComfyEngine::envConvToXms(byte *source, uint16 index) {
+void ComfyEngine::environmentPackToXms(byte *source, uint16 index) {
 	if (!index || _sceneMemoryBlock.empty())
 		error("Invalid environment XMS destination %u", (uint)index);
 
@@ -225,7 +225,7 @@ void ComfyEngine::envConvToXms(byte *source, uint16 index) {
 		error("Environment XMS destination %u is outside the allocated block", (uint)index);
 }
 
-bool ComfyEngine::envXmsToConv(byte *destination, uint16 index) {
+bool ComfyEngine::environmentUnpackFromXms(byte *destination, uint16 index) {
 	if (!index || _sceneMemoryBlock.empty())
 		error("Invalid environment XMS source %u", (uint)index);
 
@@ -264,18 +264,18 @@ void ComfyEngine::sceneBlockUnpackRuntimeState() {
 	midiFindNext(_midiTracks);
 	if (_engineVersion == 3) {
 		byte *vocState = &_sceneMemoryBlock[_sceneMidiInstanceOffset + COMFY_SCENE_MIDI_INSTANCE_BYTES];
-		_wcomfy99VocState0 = vocState[0];
-		_wcomfy99VocState1 = vocState[1];
-		_wcomfy99VocState2 = vocState[2];
-		_wcomfy99VocState3 = vocState[3];
-		_wcomfy99VocState6 = vocState[6];
+		_v3SceneWaveBalancePercent = vocState[0];
+		_v3SceneHostMediaModeEnabled = vocState[1];
+		_v3SceneWaveLeftPercent = vocState[2];
+		_v3SceneWaveRightPercent = vocState[3];
+		_v3SceneMixerVolumePercent = vocState[6];
 		for (uint i = 0; i < COMFY_VOC_QUEUE_CAPACITY; i++) {
 			byte *packedEntry = vocState + 7 + i * 0x1F;
-			VocQueueEntry1999 &entry = _vocQueue1999[i];
+			VocQueueEntryV3 &entry = _vocQueueV3[i];
 			entry.soundId = READ_LE_UINT16(packedEntry);
-			entry.argumentCount = MIN<uint16>(READ_LE_UINT16(packedEntry + 2), COMFY_VOC_ARG_CAPACITY_1999);
+			entry.argumentCount = MIN<uint16>(READ_LE_UINT16(packedEntry + 2), COMFY_VOC_ARG_CAPACITY_V3);
 			entry.state = READ_LE_UINT16(packedEntry + 4);
-			for (uint argument = 0; argument < COMFY_VOC_ARG_CAPACITY_1999; argument++)
+			for (uint argument = 0; argument < COMFY_VOC_ARG_CAPACITY_V3; argument++)
 				entry.arguments[argument] = READ_LE_UINT16(packedEntry + 6 + argument * 2);
 
 			entry.clearArgumentKeys = packedEntry[0x1E] != 0;
@@ -418,7 +418,7 @@ void ComfyEngine::sceneBlockUnpackRuntimeState() {
 
 }
 
-void ComfyEngine::sceneGoto(uint16 count) {
+void ComfyEngine::sceneEntryInit(uint16 count) {
 	if (_midiPlyrDriver)
 		_midiPlyrDriver->musicStopAll(1);
 
@@ -437,7 +437,7 @@ void ComfyEngine::sceneGoto(uint16 count) {
 	}
 }
 
-void ComfyEngine::sceneStop() {
+void ComfyEngine::sceneEntryStop() {
 	if (_midiPlyrDriver)
 		_midiPlyrDriver->musicStopAll(1);
 
@@ -453,14 +453,14 @@ void ComfyEngine::sceneStartWithMusic(uint16 scene) {
 	if (!_musicEnabled && _midiPlyrDriver)
 		_midiPlyrDriver->musicStopAll(1);
 
-	if (!envXmsToConv(&_sceneMemoryBlock[_sceneMidiInstanceOffset], scene))
+	if (!environmentUnpackFromXms(&_sceneMemoryBlock[_sceneMidiInstanceOffset], scene))
 		return;
 
 	_debugSceneGeneration++;
 
 	midiSyncAndScan();
 	if (!_musicEnabled)
-		midiStopAll();
+		midiRestartChannels();
 
 	Actor *root = actorGetPtr(0);
 	if (root) {
@@ -473,7 +473,7 @@ void ComfyEngine::sceneStartWithMusic(uint16 scene) {
 		memcpy(_keyBits, keySnapshot, MIN<uint32>(sizeof(keySnapshot), _keyBitsSize));
 
 	if (_engineVersion == 3)
-		wcomfy99RestoreHostStateAfterSceneStart();
+		restoreWaveStateAfterSceneStart();
 }
 
 bool ComfyEngine::sceneEntryLoad(uint16 descriptor, uint16 index) {
@@ -609,8 +609,8 @@ void ComfyEngine::sceneShutdown() {
 	_midiFileStream = nullptr;
 	_sceneFrameData.clear();
 	if (_engineVersion == 3) {
-		_wcomfy99VocState2 = 0xFF;
-		_wcomfy99VocState3 = 0xFF;
+		_v3SceneWaveLeftPercent = 0xFF;
+		_v3SceneWaveRightPercent = 0xFF;
 	}
 
 	_sceneOpen = false;

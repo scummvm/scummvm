@@ -59,7 +59,6 @@ class QueuingAudioStream;
 #define COMFY_PALETTE_BYTES 0x300
 #define COMFY_INPUT_QUEUE_CAPACITY 20
 #define COMFY_KEYBOARD_CONTACT_COUNT 24
-#define COMFY_ACTOR_SIZE_V1 0x54
 #define COMFY_ACTOR_COUNT 0x79
 #define COMFY_EXPR_STACK_CAPACITY 64
 #define COMFY_ACTOR_PC_TABLE_COUNT 200
@@ -71,6 +70,7 @@ class QueuingAudioStream;
 #define COMFY_SCENE_MIDI_VERSION_BYTES_CLASSIC 0x167
 #define COMFY_SCENE_VOC_STATE_BYTES_V3 0x24D
 #define COMFY_SCENE_STATE_BYTES_V3 0x17F
+#define COMFY_ACTOR_SIZE_V1 0x54
 #define COMFY_ACTOR_SIZE_V2 0x56
 #define COMFY_ACTOR_SIZE_V3 0x57
 #define COMFY_SCENE_ACTOR_PC_BYTES 0x320
@@ -83,7 +83,7 @@ class QueuingAudioStream;
 #define COMFY_PANTHER_SOUND_PCM_BLOCK_BYTES 0x3E80
 #define COMFY_SOUND_PITCH_COUNT_LIMIT 0x13
 #define COMFY_FRAME_LOADER_DATA_BYTES 0x6000
-#define COMFY_VOC_ARG_CAPACITY_1999 12
+#define COMFY_VOC_ARG_CAPACITY_V3 12
 #define COMFY_MIDI_QUEUE_CAPACITY 32
 #define COMFY_MIDI_CHANNEL_COUNT 2
 #define COMFY_SCENE_MUSIC_CHANNEL_COUNT 6
@@ -250,20 +250,20 @@ private:
 		}
 	};
 
-	struct VocQueueEntry1999 {
+	struct VocQueueEntryV3 {
 		uint16 soundId;
 		uint16 argumentCount;
 		uint16 state;
-		uint16 arguments[COMFY_VOC_ARG_CAPACITY_1999];
+		uint16 arguments[COMFY_VOC_ARG_CAPACITY_V3];
 		bool clearArgumentKeys;
 
-		VocQueueEntry1999() {
+		VocQueueEntryV3() {
 			soundId = 0;
 			argumentCount = 0;
 			state = 0;
 			clearArgumentKeys = false;
 
-			for (uint i = 0; i < COMFY_VOC_ARG_CAPACITY_1999; i++)
+			for (uint i = 0; i < COMFY_VOC_ARG_CAPACITY_V3; i++)
 				arguments[i] = 0;
 		}
 	};
@@ -508,12 +508,14 @@ private:
 	const ComfyGameDescription *_game;
 	byte _engineVersion;
 	bool _isPanther = false;
+	bool _backgroundBufferEnabled = false;
 	uint16 _vocQueueCapacity = COMFY_VOC_QUEUE_CAPACITY;
 	Common::Path _gameDirectory;
 	Common::Path _introDirectory;
 	Common::Path _gameDataPath;
 	bool _hasDataPath = false;
 	Common::Path _languageDirectories[16];
+	Common::String _v3LanguageDataSubdirectory;
 	uint16 _language = 2;
 	bool _multiLanguage = true;
 	Common::RandomSource _randomSource;
@@ -551,6 +553,8 @@ private:
 	int16 _timer0 = 1;
 	int16 _timer1 = 1;
 	int16 _timer2 = 1;
+	uint64 _timerPitPhase = 0;
+	uint32 _timerLastMillis = 0;
 	uint32 _midiTimeCounter = 0;
 	uint32 _midiInstanceEventTime = 0;
 	int32 _midiEventBaseTime = 0;
@@ -610,7 +614,7 @@ private:
 	bool _sceneEntryListActive = false;
 	Common::Array<uint16> _stringTable;
 	Common::Array<uint16> _sceneHandles;
-	Common::Array<uint16> _midiHandles;
+	Common::Array<uint16> _scriptVariables;
 	Common::Array<Actor> _actors;
 	Common::Array<byte> _sceneMemoryBlock;
 	Common::Array<byte> _sceneRunBuffer;
@@ -691,7 +695,6 @@ private:
 	uint16 _musicEventMask = 0;
 	byte _musicEventFlag = 0;
 	bool _musicEnabled = false;
-	bool _usesWcomfy99ScriptOps = false;
 	bool _languageSessionRestartRequested = false;
 	int16 _mouseX = 0;
 	int16 _mouseY = 0;
@@ -705,35 +708,35 @@ private:
 	uint16 _mouseCursorSpriteId = 0;
 	uint16 _mouseFlags = 0;
 	bool _waveOutputActive = false;
-	byte _wcomfy99VocState0 = 0;
-	byte _wcomfy99VocState1 = 0;
-	byte _wcomfy99VocState2 = 0;
-	byte _wcomfy99VocState3 = 0;
-	byte _wcomfy99VocState6 = 0;
-	bool _wcomfy99HostMediaValueAvailable = false;
-	uint16 _wcomfy99HostMediaValue = 0;
-	uint16 _wcomfy99HostMediaProgress = 0;
-	uint16 _wcomfy99Sensitivity = 0;
-	bool _wcomfy99RecordHostEnabled = false;
-	uint16 _wcomfy99SubsystemWord = 0;
-	uint16 _wcomfy99MixedHostFirstWord = 0;
-	uint16 _wcomfy99MixedHostSecondWord = 0;
-	uint16 _wcomfy99MixedHostThirdWord = 0;
-	uint16 _wcomfy99MixedHostFourthWord = 0;
-	uint16 _wcomfy99HostWordA = 0;
-	uint16 _wcomfy99HostWordB = 0;
-	uint16 _wcomfy99WaveVolumePercent = 0;
-	uint16 _wcomfy99WaveLeftPercent = 0;
-	uint16 _wcomfy99WaveRightPercent = 0;
-	uint16 _wcomfy99MixerVolumePercent = 0;
-	uint16 _wcomfy99MixerAltPercent = 0;
-	uint16 _wcomfy99RangeHostStart = 0;
-	uint16 _wcomfy99RangeHostEnd = 0;
-	uint16 _wcomfy99RangeHostCount = 0;
+	byte _v3SceneWaveBalancePercent = 0;
+	byte _v3SceneHostMediaModeEnabled = 0;
+	byte _v3SceneWaveLeftPercent = 0;
+	byte _v3SceneWaveRightPercent = 0;
+	byte _v3SceneMixerVolumePercent = 0;
+	bool _v3HostMediaValueAvailable = false;
+	uint16 _v3HostMediaValue = 0;
+	uint16 _v3HostMediaProgress = 0;
+	uint16 _v3Sensitivity = 0;
+	bool _v3ConfigCommandPending = false;
+	byte _v3ConfigCommandSubop = 0;
+	uint16 _v3ConfigCommandValue = 0;
+	Common::String _v3ConfigCommandText;
+	bool _v3HostMediaRecording = false;
+	uint16 _v3HostMediaRecordingArg0 = 0;
+	uint16 _v3HostMediaRecordingArg1 = 0;
+	uint16 _v3HostMediaRecordingArg2 = 0;
+	uint16 _v3HostMediaRecordingArg3 = 0;
+	uint16 _v3AnimIndexOffset = 0;
+	uint16 _v3AnimActorSceneHandle = 0;
+	uint16 _v3WaveBalancePercent = 0;
+	uint16 _v3WaveLeftPercent = 0;
+	uint16 _v3WaveRightPercent = 0;
+	uint16 _v3MixerVolumePercent = 0;
+	uint16 _v3MixerAltPercent = 0;
 	bool _actorDestroyedCurrent = false;
 	uint16 _lastKey = 0xFFFF;
 	VocQueueEntry _vocQueue[COMFY_VOC_QUEUE_CAPACITY];
-	VocQueueEntry1999 _vocQueue1999[COMFY_VOC_QUEUE_CAPACITY];
+	VocQueueEntryV3 _vocQueueV3[COMFY_VOC_QUEUE_CAPACITY];
 	uint16 _soundEventIndex = 0;
 	uint16 _soundEventMaximum = 0;
 	uint16 _soundEventSubIndex = 0xFFFF;
@@ -827,19 +830,21 @@ private:
 	void gameConfigInit();
 	void findLanguageDirectories();
 	bool iniReadGameConfig();
-	bool iniGetGameDataPath(uint16 sceneId);
-	void iniWriteLanguage(uint16 language);
+	bool iniSelectGameDataPath(uint16 sceneId);
+	void iniWriteLanguageSelection(uint16 language);
+	uint16 languageSetDataSubdirectory(Common::String text);
+	void configRunPendingCommand();
 	Common::Path getLanguageDirectory(uint16 language);
 	void pathSetGameDataDir(const Common::Path &path);
 	Common::Path pathBuild(const Common::Path &filename, bool useGamePath);
 	Common::SeekableReadStream *pathFOpen(const Common::Path &filename, bool useGamePath);
 	void videoInit();
 	void videoShutdown(byte restorePalette);
-	void videoSetResolution();
-	void videoFindBestMode(ComfyRect record);
+	void renderAddFullFrameDirtyRect();
+	void renderAddDirtyRect(ComfyRect record);
 	void renderAddDirtyRectMerged(ComfyRect record);
 	void videoPresentFrame();
-	void renderSetDirty();
+	void renderRequestFullFrameInvalidation();
 	void renderFlushDirty();
 	void renderInvalidateFullFrame();
 	void framebufCopyAll(byte *destination, byte *source);
@@ -858,11 +863,11 @@ private:
 	void paletteConvertRgbToLogical(byte *source, byte *destination);
 	void paletteRealize(byte *rawPalette);
 	uint16 midiTick();
-	void midiHandleAddTo(uint16 handleIndex, int16 delta);
-	void midiHandleCopy(uint16 destination, uint16 source);
-	void midiHandleSet(uint16 handleIndex, uint16 value);
-	uint16 midiGetHandle(uint16 handleIndex);
-	uint16 midiGetVersion();
+	void scriptVariableAddTo(uint16 variableIndex, int16 delta);
+	void scriptVariableCopy(uint16 destination, uint16 source);
+	void scriptVariableSet(uint16 variableIndex, uint16 value);
+	uint16 scriptVariableGet(uint16 variableIndex);
+	uint16 midiGetInstanceStateSize();
 	void midiSetTimeScale(int16 delta);
 	int16 midiGetCounterAdjustment();
 	bool midiPlyrStart();
@@ -900,17 +905,16 @@ private:
 	uint32 memGetFreeKBThunk();
 	uint32 memGetXmsLimit();
 	uint32 memGetXmsLimitFar();
-	int32 xmsCopyToConv(XmsMove &move);
 	int32 xmsTransfer(XmsMove &move);
 	void xmsReset();
 	ObjFileCacheRow *tileListEvictTail(ObjFile *objectFile);
 	ObjFileCacheRow *tileListAlloc(ObjFile *objectFile);
-	void tileListRemove(ObjFile *objectFile, uint16 index);
-	uint16 tileListRemoveRange(ObjFile *objectFile, uint16 first, uint16 last);
+	void tileListTouch(ObjFile *objectFile, uint16 index);
+	uint16 tileListTouchRange(ObjFile *objectFile, uint16 first, uint16 last);
 	void tileUploadToXms(ObjFile *objectFile, const byte *source, uint16 size, uint32 destinationOffset);
 	void tileCopyXmsPair(ObjFile *objectFile, byte *destination, uint32 sourceOffset, uint32 size);
 	uint16 tileDrawStrip(ObjFile *objectFile, byte *destination, uint16 cacheRow, uint16 sourceColumn, uint32 width);
-	void tileLoadAndDraw(ObjFile *objectFile, const byte *source, uint16 tileId);
+	void tileLoadAndCache(ObjFile *objectFile, const byte *source, uint16 tileId);
 	void frameLoaderLoadTileCore(ObjFile *objectFile, const byte *source, uint16 tileId);
 	void frameLoaderLoadTile(ObjFile *objectFile, uint16 tileId);
 	byte *frameLoaderReadFrameData(uint32 sourceOffset, uint32 byteCount, ObjFile *objectFile);
@@ -919,8 +923,8 @@ private:
 	byte *objFileReadTiledCore(uint32 sourceOffset, uint32 byteCount, ObjFile *objectFile);
 	void objFileReadField(byte *destination, uint32 sourceOffset, uint32 byteCount, ObjFile *objectFile);
 	byte *objFileReadTiled(uint32 sourceOffset, uint32 byteCount, ObjFile *objectFile);
-	ObjFile *objFileLoadSoundData(const Common::Path &path, uint16 blockSize, uint32 maximumBytes);
-	void soundBufFree(ObjFile *&objectFile);
+	ObjFile *objFileOpen(const Common::Path &path, uint16 blockSize, uint32 maximumBytes);
+	void objFileClose(ObjFile *&objectFile);
 	uint32 assetsAlignEven32(uint32 value);
 	void stringTableSetCount(uint16 count);
 	uint16 stringTableGetSize();
@@ -929,14 +933,14 @@ private:
 	bool assetsLoad(uint32 budget, byte *scenePtr);
 	void assetsUnload(byte freeAudio);
 	bool sceneLoadAndInit(uint16 sceneCount, uint16 actorCount, uint16 keyBitCount,
-		uint16 handleCount, uint32 &numSprites);
+		uint16 scriptVariableCount, uint32 &numSprites);
 	bool sceneFrameInitTables(uint16 sceneCount, uint16 actorCount, uint16 keyBitCount,
-		uint16 handleCount, uint32 &numSprites);
+		uint16 scriptVariableCount, uint32 &numSprites);
 	void midiShutdown();
-	void midiFileGetTileParams(uint16 *entryCount, uint16 *entrySize);
+	void midiFileGetEntryTableParams(uint16 *entryCount, uint16 *entrySize);
 	void midiFileReadEntries(byte *destination);
-	byte *soundReadTiledData();
-	void soundGetTileParams(uint16 *entryCount, uint16 *entrySize);
+	byte *soundReadHeaderTable();
+	void soundGetHeaderTableParams(uint16 *entryCount, uint16 *entrySize);
 	bool soundOpenVocFile();
 	void spriteCache(int16 spriteId);
 	SpriteResource *spriteLookup(uint16 spriteId, int16 x, int16 y);
@@ -961,10 +965,10 @@ private:
 	void sceneBlockUnpackRuntimeState();
 	uint16 sceneGetHandle(uint16 sceneIndex);
 	uint16 sceneGetActiveCount();
-	bool envXmsToConv(byte *destination, uint16 index);
-	void envConvToXms(byte *source, uint16 index);
-	void sceneGoto(uint16 count);
-	void sceneStop();
+	bool environmentUnpackFromXms(byte *destination, uint16 index);
+	void environmentPackToXms(byte *source, uint16 index);
+	void sceneEntryInit(uint16 count);
+	void sceneEntryStop();
 	bool sceneEntryLoad(uint16 descriptor, uint16 index);
 	byte scriptReadByte(uint32 pc);
 	uint16 scriptReadWord(uint32 pc);
@@ -1000,6 +1004,7 @@ private:
 	void actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool visible);
 	bool actorDrawLegacyInternal(uint16 actorIndex, int16 x, int16 y);
 	void actorDrawList(uint16 actorIndex, int16 x, int16 y, bool visible);
+	bool actorTestMouseHit(Actor &actor, bool useBlitHit);
 	void renderQueueDrawCommand(int16 x, int16 y, uint32 selector, byte mode, uint16 actorIndex);
 	void renderFlushDrawCommands();
 	void renderFlushCachedDirtyRects();
@@ -1063,18 +1068,18 @@ private:
 	void midiRemoveTrack(uint16 id);
 	void midiAddTrackEntry(uint16 channel, uint16 songId, uint16 completionKey, byte loadFlag,
 		uint16 frameCount, uint16 *frames);
-	void midiClearChannel(uint16 channel);
+	void midiClearLoadedSong(uint16 channel);
 	void midiFireClearMarker(uint16 channel, int16 marker);
 	void midiPollSceneEntries();
 	void midiResumeAll();
-	void midiStopChannel(uint16 channel);
-	void midiStopAll();
+	void midiStartChannel(uint16 channel);
+	void midiRestartChannels();
 	void midiStopSong(uint16 channel);
 	void midiPlaySongAtFrame(uint16 channel, uint16 frame);
 	void sceneEntrySetVolume(uint16 channel, uint16 volume);
 	void midiFinishChannel(uint16 channel);
 	void midiStopAndFireKeys(uint16 channel);
-	void midiStopAndRemove(uint16 channel);
+	void midiStopAndAdvanceChannel(uint16 channel);
 	void midiSetChannelParam(uint16 channel, byte parameter, uint16 value, uint16 ticks);
 	int16 midiApproachTarget(int16 current, int16 target, int16 &ticksLeft, int16 ticks);
 	void musicSetEnabled(byte value);
@@ -1083,16 +1088,16 @@ private:
 	bool vocQueuePush(uint16 soundId, uint16 argumentCount, uint32 pc);
 	void vocQueuePlayAll();
 	bool vocQueueIsIdle();
-	void wcomfy99SetWaveBalancePercent(uint16 value);
-	void wcomfy99SetWaveLeftPercent(uint16 value);
-	void wcomfy99SetWaveRightPercent(uint16 value);
-	void wcomfy99SetMixerVolumePercent(uint16 value);
-	void wcomfy99SetHostMediaRangePercent(uint16 value);
-	void wcomfy99SetHostMediaMode(byte mode);
-	void wcomfy99RestoreHostStateAfterSceneStart();
+	void setWaveBalancePercent(uint16 value);
+	void setWaveLeftPercent(uint16 value);
+	void setWaveRightPercent(uint16 value);
+	void setMixerVolumePercent(uint16 value);
+	void setMediaRangePercent(uint16 value);
+	void setMediaMode(byte mode);
+	void restoreWaveStateAfterSceneStart();
 	bool soundInit();
 	void soundShutdown();
-	void soundHdrReadFromXms(byte *destination, uint16 index, uint16 size);
+	void soundHeaderReadFromXms(byte *destination, uint16 index, uint16 size);
 	void soundUpdateVocTiming();
 	void soundServiceWaveBuffers();
 	bool soundLoadEntry(uint16 index);
