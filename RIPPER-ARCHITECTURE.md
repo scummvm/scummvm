@@ -117,6 +117,13 @@
   media iteration snapshots the current timer tick rather than catching up on
   elapsed toolbar time. ScummVM pauses the decoder clock across the same input
   ownership interval and continues presenting toolbar animation and tooltips.
+- If an action in that toolbar returns `-3`, `RunFrontEndActionMenu` at
+  `0x18b3a` returns the same control code to `PollInteractionAndResolveSelection`
+  at `0x13c8d`. `RunMediaSequence` stops its frame loop on the nonzero callback
+  result, and `ExecuteSceneFrameAndInteractions` propagates the transition
+  instead of resuming the interactive Smacker. ScummVM uses the queued script
+  target as the equivalent unwind signal, closes the current decoder, and
+  applies the scene handoff before another loop pass can begin.
 - Action dispatch at `0x190b7` maps the nine controls to remote setup, world
   map, inventory, WAC, save, restore, options, help, and quit. The ScummVM
   toolbar preserves the click/release routing. Action `0x515` and scene-entry
