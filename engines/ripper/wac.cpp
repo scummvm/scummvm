@@ -45,6 +45,7 @@ static const int kWacIdleWindowX[] = { 64, 460 };
 static const int kWacIdleWindowY[] = { 21, 19 };
 static const uint32 kDosTickMillis = 55;
 static const uint32 kWacIdleWindowInterval = 3 * kDosTickMillis;
+static const uint32 kWacDatabaseCornerInterval = 5 * kDosTickMillis;
 static const uint16 kDosF10Command = 0x4400;
 static const uint kWacDatabaseEntryCount = 30;
 static const uint kWacDatabaseFlagBase = 0x46;
@@ -83,7 +84,8 @@ static void blitBitmap(Graphics::Surface *screen, const BitmapAssetFrame &bitmap
 
 WacManager::WacManager(RipperEngine *engine) : _engine(engine), _hoveredControl(-1),
 		_pressedControl(-1), _databaseSelection(0), _databaseFirstVisible(0),
-		_idleWindowLastMillis(0), _initialized(false) {
+		_idleWindowLastMillis(0), _databaseCornerLastMillis(0),
+		_databaseCornerAlternate(false), _initialized(false) {
 	_idleWindowFrame[0] = 0;
 	_idleWindowFrame[1] = 0;
 }
@@ -213,6 +215,22 @@ void WacManager::serviceIdleWindowAnimations() {
 	}
 	_engine->getCursor()->refresh();
 	_idleWindowLastMillis = now;
+}
+
+void WacManager::serviceDatabaseCornerAnimation() {
+	const uint32 now = g_system->getMillis(true);
+	if (now - _databaseCornerLastMillis < kWacDatabaseCornerInterval ||
+		_databaseSkin.size() < kWacDatabaseSkinFrameCount)
+		return;
+
+	drawBitmap(_databaseSkin[_databaseCornerAlternate ? 15 : 0],
+		kWacDatabaseLeft, kWacDatabaseTop);
+	debugC(11, kDebugWac,
+		"Ripper: WAC database corner frame=%u position=%d,%d",
+		_databaseCornerAlternate ? 15 : 0, kWacDatabaseLeft, kWacDatabaseTop);
+	_databaseCornerAlternate = !_databaseCornerAlternate;
+	_databaseCornerLastMillis = now;
+	_engine->getCursor()->refresh();
 }
 
 int WacManager::findControl(const Common::Point &point) const {
@@ -356,6 +374,9 @@ void WacManager::drawDatabase() const {
 			}
 		}
 	}
+	if (_databaseSkin.size() >= kWacDatabaseSkinFrameCount)
+		blitBitmap(screen, _databaseSkin[_databaseCornerAlternate ? 15 : 0],
+			bounds.left, bounds.top);
 	const Common::String &title = resourceString(0x4e);
 	const int titleX = client.left + (client.width() - measureText(title)) / 2;
 	drawText((byte *)screen->getPixels(), screen->pitch, titleX,
@@ -425,6 +446,8 @@ void WacManager::runDatabase() {
 	buildDatabaseEntries();
 	_databaseSelection = 0;
 	_databaseFirstVisible = 0;
+	_databaseCornerAlternate = true;
+	_databaseCornerLastMillis = g_system->getMillis(true);
 	_engine->getInput()->discardMouseTransitions();
 	drawDatabase();
 	debugC(1, kDebugWac,
@@ -463,6 +486,7 @@ void WacManager::runDatabase() {
 
 		const MouseState mouse = _engine->getInput()->publishMouseState();
 		serviceIdleWindowAnimations();
+		serviceDatabaseCornerAnimation();
 		_engine->getCursor()->update(bounds.contains(mouse.position) ?
 			kWacControlCursor : kWacDefaultCursor);
 		if (!_databaseEntries.empty() && bounds.contains(mouse.position)) {

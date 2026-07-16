@@ -61,6 +61,7 @@ private:
 	void drawFrontEnd() const;
 	void drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const;
 	void serviceIdleWindowAnimations();
+	void serviceDatabaseCornerAnimation();
 	int findControl(const Common::Point &point) const;
 	bool dispatchAction(uint16 action);
 	void buildDatabaseEntries();
@@ -88,6 +89,8 @@ private:
 	int _pressedControl;
 	uint _databaseSelection;
 	uint _databaseFirstVisible;
+	uint32 _databaseCornerLastMillis;
+	bool _databaseCornerAlternate;
 	bool _initialized;
 };
 
