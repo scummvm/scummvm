@@ -148,9 +148,10 @@
   at `0x1b492` reconstructs that data, and `RestoreSavedRunState` at `0x1b8dd`
   reinstates flags, concurrent scene context, media state, and the active scene.
   The ScummVM format is versioned and engine-local; it stores the confirmed
-  script state plus the indexed 640x400 framebuffer and palette so static scene
-  presentations resume at the same visible boundary without serializing DOS
-  pointers from the original fixed block.
+  script state, the currently supported loaded/playing scene-audio trigger, and
+  the indexed 640x400 framebuffer and palette so static scene presentations
+  resume at the same visible boundary without serializing DOS pointers from the
+  original fixed block.
 - `WriteConfiguredSaveCheckpointAndCleanupRuntime` at `0x1b274` writes the
   emergency save when the scene-script loop returns to the front end, then
   clears active audio triggers and the concurrent scene runtime. The

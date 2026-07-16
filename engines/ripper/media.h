@@ -27,6 +27,7 @@
 
 namespace Common {
 class SeekableReadStream;
+class Serializer;
 }
 
 namespace Video {
@@ -51,6 +52,7 @@ public:
 	bool loadAudio(const Common::String &path);
 	bool startLoadedAudio(const Common::String &key, uint volumePercent, bool loop);
 	bool isSceneAudioActive() const;
+	bool syncGame(Common::Serializer &serializer);
 
 private:
 	bool playSmacker(Common::SeekableReadStream *stream, const Common::String &name,
@@ -69,6 +71,8 @@ private:
 	Common::String _loadedAudioPath;
 	Common::String _loadedAudioKey;
 	Audio::SoundHandle _sceneAudioHandle;
+	uint _sceneAudioVolumePercent;
+	bool _sceneAudioLoop;
 	bool _stopSceneOnMouse;
 };
 
