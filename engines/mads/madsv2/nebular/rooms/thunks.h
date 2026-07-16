@@ -106,6 +106,10 @@ enum ScreenTransition {
 	kNullPaletteCopy
 };
 
+enum StoryMode {
+	STORYMODE_NAUGHTY = NAUGHTY, STORYMODE_NICE = NICE
+};
+
 // These original constants may be useful when cleaning up room logic
 #ifdef old_animation
 #define kernel_animation                kernel_anim[0].anim

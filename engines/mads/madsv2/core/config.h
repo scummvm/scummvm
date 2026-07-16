@@ -45,7 +45,18 @@ enum {
 enum {
 	SCREEN_FADE_SMOOTH			= 0,       /* Smooth fade (thru black)     */
 	SCREEN_FADE_MEDIUM			= 1,       /* Medium fade (Detmar-o-matic) */
-	SCREEN_FADE_FAST			= 2       /* Fast fade (thru black)       */
+	SCREEN_FADE_FAST			= 2        /* Fast fade (thru black)       */
+};
+
+enum {
+	NAUGHTY                     = 1,       /* Naughtiness levels */
+	NICE                        = 2
+};
+
+enum Difficulty {
+	DIFFICULTY_HARD             = 1,
+	DIFFICULTY_MEDIUM           = 2,
+	DIFFICULTY_EASY             = 3
 };
 
 #define MEMORY_ALL              0       /* Use all available memory */

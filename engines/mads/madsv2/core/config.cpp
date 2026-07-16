@@ -49,19 +49,21 @@ void read_config_file() {
 	ConfMan.registerDefault("sfx_mute", false);
 	ConfMan.registerDefault("speech_mute", false);
 
-	ConfMan.registerDefault("interface_hotspots", INTERFACE_BRAINDEAD);
-	ConfMan.registerDefault("inventory_mode", INVENTORY_SQUAT);
+	ConfMan.registerDefault("interface_hotspots", true);
+	ConfMan.registerDefault("inventory_mode", true);
 	ConfMan.registerDefault("animated_interface", true);
 	ConfMan.registerDefault("show_speech_boxes", true);
+	ConfMan.registerDefault("naughtiness", true);
 	ConfMan.registerDefault("difficulty", -1);
 
 	config_file.music_flag = !ConfMan.getBool("music_mute") && !ConfMan.getBool("mute");
 	config_file.sound_flag = !ConfMan.getBool("sfx_mute") && !ConfMan.getBool("mute");
 	config_file.speech_flag = !ConfMan.getBool("speech_mute") && !ConfMan.getBool("mute");
 
-	config_file.interface_hotspots = ConfMan.getInt("interface_hotspots");
-	config_file.inventory_mode = ConfMan.getInt("inventory_spinning");
-	config_file.animated_interface = ConfMan.getBool("animated_interface");
+	config_file.interface_hotspots = ConfMan.getBool("interface_hotspots") ? INTERFACE_BRAINDEAD : INTERFACE_MACINTOSH;
+	config_file.inventory_mode = ConfMan.getBool("inventory_mode") ? INVENTORY_SPINNING : INVENTORY_SQUAT;
+	config_file.animated_interface = ConfMan.getBool("animated_interface") ? INTERFACE_ANIMATED : INTERFACE_STILL;
+	config_file.naughtiness = ConfMan.getBool("naughtiness") ? NAUGHTY : NICE;
 
 	config_file.quotes_enabled = ConfMan.getBool("quotes_enabled");
 	config_file.screen_fade = ConfMan.getBool("screen_fade");
@@ -69,7 +71,6 @@ void read_config_file() {
 
 	config_file.show_speech_boxes = ConfMan.getBool("show_speech_boxes");
 	config_file.original_save_load = ConfMan.getBool("original_menus");
-	config_file.naughtiness = ConfMan.hasKey("naughtiness") ? ConfMan.getInt("naughtiness") : 1;
 
 	if (ConfMan.hasKey("difficulty") && !g_engine->isDemo())
 		game.difficulty = ConfMan.getInt("difficulty");

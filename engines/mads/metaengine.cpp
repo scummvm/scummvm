@@ -66,7 +66,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		{
 			_s("Easy mouse interface"),
 			_s("Shows object names when hovering the mouse over them"),
-			"EasyMouse",
+			"interface_hotspots",
 			true,
 			0,
 			0
@@ -78,7 +78,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		{
 			_s("Animated inventory items"),
 			_s("Animated inventory items"),
-			"InvObjectsAnimated",
+			"inventory_mode",
 			true,
 			0,
 			0
@@ -90,7 +90,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		{
 			_s("Animated game interface"),
 			_s("Animated game interface"),
-			"TextWindowAnimated",
+			"animated_interface",
 			true,
 			0,
 			0
@@ -102,7 +102,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		{
 			_s("Naughty game mode"),
 			_s("Naughty game mode"),
-			"NaughtyMode",
+			"naughtiness",
 			true,
 			0,
 			0
@@ -120,18 +120,6 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
-
-	/*{
-		GAMEOPTION_GRAPHICS_DITHERING,
-		{
-			_s("Graphics dithering"),
-			_s("Graphics dithering"),
-			"GraphicsDithering",
-			true,
-			0,
-			0
-		}
-	},*/
 
 #ifdef USE_TTS
 	{

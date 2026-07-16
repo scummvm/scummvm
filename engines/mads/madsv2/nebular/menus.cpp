@@ -563,7 +563,7 @@ static void game_menu_options_init() {
 	quote = quote_options_item6a + config_file.screen_fade;
 	game_menu_make_message(font_conv, quote_options_item6, quote, GAME_MENU_SPECIAL, 0, menu_base += unit);
 
-	quote = (config_file.naughtiness == STORYMODE_NAUGHTY) ? quote_options_item7a : quote_options_item7b;
+	quote = (config_file.naughtiness == NAUGHTY) ? quote_options_item7a : quote_options_item7b;
 	game_menu_make_message(font_conv, quote_options_item7, quote, GAME_MENU_SPECIAL, 0, menu_base += unit);
 
 	game_menu_make_message(font_conv, quote_menu_done, 0, GAME_MENU_CENTER, -54, menu_base += (unit + title));
@@ -1054,11 +1054,11 @@ static void game_menu_options() {
 			break;
 
 		case 7:
-			if (config_file.naughtiness == STORYMODE_NICE) {
-				config_file.naughtiness = STORYMODE_NAUGHTY;
+			if (config_file.naughtiness == NICE) {
+				config_file.naughtiness = NAUGHTY;
 			} else {
-				if (config_file.naughtiness == STORYMODE_NAUGHTY) {
-					config_file.naughtiness = STORYMODE_NICE;
+				if (config_file.naughtiness == NAUGHTY) {
+					config_file.naughtiness = NICE;
 				}
 			}
 			break;

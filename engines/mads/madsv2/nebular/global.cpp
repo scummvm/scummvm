@@ -21,6 +21,7 @@
 
 #include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/global.h"
 #include "mads/madsv2/core/imath.h"

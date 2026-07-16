@@ -203,16 +203,6 @@ enum GlobalId {
 	kTeleporterCode         = 200
 };
 
-enum StoryMode {
-	STORYMODE_NAUGHTY = 1, STORYMODE_NICE = 2
-};
-
-enum Difficulty {
-	DIFFICULTY_HARD = 1,
-	DIFFICULTY_MEDIUM = 2,
-	DIFFICULTY_EASY = 3
-};
-
 enum {
 	SEX_MALE = 0, SEX_UNKNOWN = 1, SEX_FEMALE = 2
 };

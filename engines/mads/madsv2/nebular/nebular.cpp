@@ -22,6 +22,7 @@
 #include "engines/util.h"
 #include "mads/core/mps_installer.h"
 #include "mads/madsv2/core/attr.h"
+#include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/conv.h"
 #include "mads/madsv2/core/env.h"
 #include "mads/madsv2/core/game.h"
