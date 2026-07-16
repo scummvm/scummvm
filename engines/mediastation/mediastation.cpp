@@ -65,7 +65,7 @@ MediaStationEngine::~MediaStationEngine() {
 	delete _displayManager;
 	delete _displayUpdateManager;
 	delete _functionManager;
-	// delete _printManager;
+	delete _printManager;
 	delete _imtGod;
 	// delete _streamProfiler;
 	delete _streamFeedManager;
@@ -163,7 +163,7 @@ Common::Error MediaStationEngine::run() {
 	_functionManager = new FunctionManager;
 	_displayUpdateManager = new DisplayUpdateManager;
 	_displayManager = new VideoDisplayManager(this);
-	// _printManager = new PrintManager;
+	_printManager = new PrintManager;
 	_document = new Document;
 	DocumentActor *documentActor = new DocumentActor;
 	_imtGod->addConstructedActor(documentActor);

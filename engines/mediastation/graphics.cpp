@@ -1503,4 +1503,25 @@ void VideoDisplayManager::getGammaValues(double &red, double &green, double &blu
 	blue = _blueGamma;
 }
 
+bool PrintManager::printerIsReady() {
+	// For this stub, we will just always report that †he printer is ready.
+	return true;
+}
+
+void PrintManager::printScreen() {
+	warning("STUB: %s", __func__);
+}
+
+void PrintManager::printSpatialObject(SpatialEntity *entity) {
+	warning("STUB: %s", __func__);
+}
+
+void PrintManager::setSourceSize(Common::Point size) {
+	warning("STUB: %s", __func__);
+}
+
+void PrintManager::flushToPrinter() {
+	warning("STUB: %s", __func__);
+}
+
 } // End of namespace MediaStation

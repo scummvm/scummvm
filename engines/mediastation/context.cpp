@@ -33,6 +33,7 @@
 #include "mediastation/actors/palette.h"
 #include "mediastation/actors/image.h"
 #include "mediastation/actors/path.h"
+#include "mediastation/actors/printer.h"
 #include "mediastation/actors/sound.h"
 #include "mediastation/actors/movie.h"
 #include "mediastation/actors/sprite.h"
@@ -164,6 +165,10 @@ void ImtGod::readCreateActorData(Chunk &chunk) {
 
 	case kActorTypeDiskImage:
 		actor = new DiskImageActor();
+		break;
+
+	case kActorTypePrinter:
+		actor = new PrinterActor();
 		break;
 
 	case kActorTypeDotGame:

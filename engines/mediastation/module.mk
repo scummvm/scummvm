@@ -13,6 +13,7 @@ MODULE_OBJS = \
 	actors/movie.o \
 	actors/palette.o \
 	actors/path.o \
+	actors/printer.o \
 	actors/screen.o \
 	actors/sound.o \
 	actors/sprite.o \

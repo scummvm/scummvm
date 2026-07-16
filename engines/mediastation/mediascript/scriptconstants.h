@@ -286,6 +286,19 @@ enum BuiltInMethod {
 	// between two camera methods and two printer methods.
 	kOpenLensMethod = 0x15A,
 	kCloseLensMethod = 0x15B,
+	kIsPrinterReadyMethod = 0x110,
+	kPrintActorsMethod = 0x111,
+	kPrintScreenMethod = 0x112,
+	kSetPortraitPrintMethod = 0x115,
+	kGetPortraitPrintMethod = 0x116,
+	kSetLeftPrintMarginMethod = 0x117,
+	kSetTopPrintMarginMethod = 0x118,
+	kSetRightPrintMarginMethod = 0x119,
+	kSetBottomPrintMarginMethod = 0x11a,
+	kGetLeftPrintMarginMethod = 0x11b,
+	kGetTopPrintMarginMethod = 0x11c,
+	kGetRightPrintMarginMethod = 0x11d,
+	kGetBottomPrintMarginMethod = 0x11e,
 
 	// CURSOR METHODS.
 	kCursorSetMethod = 0xC8,

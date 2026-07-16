@@ -269,6 +269,32 @@ const char *builtInMethodToStr(BuiltInMethod method) {
 		return "StartCaching";
 	case kIsCachingMethod:
 		return "IsCaching";
+	case kIsPrinterReadyMethod:
+		return "IsPrinterReady";
+	case kPrintActorsMethod:
+		return "PrintActors";
+	case kPrintScreenMethod:
+		return "PrintScreen";
+	case kSetPortraitPrintMethod:
+		return "SetPortraitPrint";
+	case kGetPortraitPrintMethod:
+		return "GetPortraitPrint";
+	case kSetLeftPrintMarginMethod:
+		return "SetLeftPrintMargin";
+	case kSetTopPrintMarginMethod:
+		return "SetTopPrintMargin";
+	case kSetRightPrintMarginMethod:
+		return "SetRightPrintMargin";
+	case kSetBottomPrintMarginMethod:
+		return "SetBottomPrintMargin";
+	case kGetLeftPrintMarginMethod:
+		return "GetLeftPrintMargin";
+	case kGetTopPrintMarginMethod:
+		return "GetTopPrintMargin";
+	case kGetRightPrintMarginMethod:
+		return "GetRightPrintMargin";
+	case kGetBottomPrintMarginMethod:
+		return "GetBottomPrintMargin";
 	case kIsPausedMethod:
 		return "SetMultipleSounds/IsPaused";
 	case kSetMousePositionMethod:
