@@ -38,6 +38,7 @@
 
 #include "ripper/detection.h"
 #include "ripper/input.h"
+#include "ripper/resources.h"
 #include "ripper/ripper.h"
 #include "ripper/script.h"
 #include "ripper/toolbar.h"
@@ -730,28 +731,54 @@ bool MediaPlayer::playWacMedia(const Common::String &path, int x, int y) {
 }
 
 bool MediaPlayer::playBlockingAudio(const Common::String &path) {
+	Common::SeekableReadStream *audioStream = nullptr;
+	Common::String source;
 	Common::File *file = new Common::File();
-	if (!file->open(Common::Path(path))) {
-		warning("Ripper: could not open blocking audio '%s'", path.c_str());
+	if (file->open(Common::Path(path))) {
+		audioStream = file;
+		source = "filesystem";
+	} else {
 		delete file;
+		ResourceManager *resources = _engine->getResources();
+		if (resources && resources->sound().hasMember(path)) {
+			audioStream = resources->sound().createReadStreamForMember(path);
+			source = "sound-library";
+		}
+	}
+	if (!audioStream) {
+		warning("Ripper: could not open blocking audio '%s' from the filesystem or sound library",
+			path.c_str());
 		return false;
 	}
-	Audio::SeekableAudioStream *stream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
+	Audio::SeekableAudioStream *stream = Audio::makeWAVStream(audioStream, DisposeAfterUse::YES);
 	if (!stream)
 		return false;
 
 	Audio::SoundHandle handle;
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, stream);
-	debugC(2, kDebugAudio, "Ripper: started blocking audio '%s'", path.c_str());
+	debugC(2, kDebugAudio, "Ripper: started blocking audio '%s' source=%s",
+		path.c_str(), source.c_str());
+	bool stoppedByEscape = false;
 	while (!_engine->shouldQuit() && _mixer->isSoundHandleActive(handle)) {
 		if (_input->pollEvents()) {
 			_engine->quitGame();
 			break;
 		}
+		while (_input->hasPendingKey()) {
+			const uint16 command = _input->consumeKey();
+			if (command == 0x1b) {
+				stoppedByEscape = true;
+				break;
+			}
+		}
+		if (stoppedByEscape)
+			break;
 		g_system->delayMillis(10);
 	}
 	_mixer->stopHandle(handle);
-	debugC(2, kDebugAudio, "Ripper: completed blocking audio '%s'", path.c_str());
+	debugC(2, kDebugAudio,
+		"Ripper: completed blocking audio '%s' source=%s stoppedByEscape=%d",
+		path.c_str(), source.c_str(), stoppedByEscape);
 	return !_engine->shouldQuit();
 }
 

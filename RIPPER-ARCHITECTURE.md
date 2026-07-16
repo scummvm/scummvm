@@ -170,6 +170,12 @@
   during that drag advances eight frames and rotates the piece to the next of
   four orientation states. The puzzle implementation is isolated under
   `engines/ripper/puzzles/`.
+- After loading the nine controls, `RunWacMugSelectionScene` draws them back to
+  front, presents the completed WAC page, and only then calls
+  `PlayBlockingAudioClip` at `0x1f0ea` for `q_p_1.wav`. The WAV is resolved
+  through startup sound-library handle 2 (`sound.pl`), not only as a loose
+  file. The call result is not a puzzle-load guard; a missing voice clip does
+  not discard the already-presented controls or leave the scene.
 - The mug is solved only when all nine orientation states are zero and every
   piece is within five pixels of its recovered x/y offset from piece 0. The
   completion path centers `mug9.smk` in the WAC media viewport, plays
