@@ -140,8 +140,10 @@
   chooser control ID is `0x73a`; the call site supplies x=400, y=50, width=190,
   and height=282. `InitializeSharedPresentationTemplates` at `0x1196f` gives
   this chooser its own `wacmnu0` through `wacmnu15` skin and `small.fnt`.
-  `TileChooserControlFrame` at `0x54fbe` uses the first nine bitmaps as a
-  column-major 3x3 frame, while `ComputeChooserControlLayout` at `0x54a74`
+  `TileChooserControlFrame` at `0x54fbe` uses the first nine bitmaps as a 3x3
+  frame. Its original presentation coordinates are transposed relative to
+  screen x/y; after translation, `wacmnu0` through `wacmnu8` are the row-major
+  top, middle, and bottom tiles. `ComputeChooserControlLayout` at `0x54a74`
   applies a 20-pixel heading inset, 6-pixel bottom inset, 5-pixel left inset,
   20-pixel right inset, and 14-pixel rows. The heading, normal rows, and active
   row use indexed glyph colors 248, 251, and 254 over chooser background 4.

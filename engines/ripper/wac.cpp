@@ -133,7 +133,7 @@ bool WacManager::initialize(ResourceManager &resources) {
 
 	_initialized = true;
 	debugC(1, kDebugWac,
-		"Ripper: initialized WAC front end background=wac.pcx controls=%u databaseSkin=wacmnu frames=%u",
+		"Ripper: initialized WAC front end background=wac.pcx controls=%u databaseSkin=wacmnu frames=%u layout=screen-row-major",
 		_controls.size(), _databaseSkin.size());
 	return true;
 }
@@ -334,8 +334,9 @@ void WacManager::drawDatabase() const {
 	for (int y = bounds.top; y < bounds.bottom; ++y)
 		memset(screen->getBasePtr(bounds.left, y), kWacDatabaseBackground,
 			bounds.width());
-	// TileChooserControlFrame at 0x54fbe selects the first nine WACMNU
-	// descriptors as column-major left/center/right and top/middle/bottom tiles.
+	// TileChooserControlFrame at 0x54fbe walks the original presentation's
+	// transposed coordinate pair. In screen coordinates WACMNU0..8 are the
+	// row-major top, middle, and bottom frame tiles.
 	if (_databaseSkin.size() >= kWacDatabaseFrameTileCount) {
 		const int tileWidth = _databaseSkin[0].width;
 		const int tileHeight = _databaseSkin[0].height;
@@ -346,7 +347,7 @@ void WacManager::drawDatabase() const {
 				const uint columnBand = column == 0 ? 0 :
 					(column == columns - 1 ? 2 : 1);
 				const uint rowBand = row == 0 ? 0 : (row == rows - 1 ? 2 : 1);
-				const BitmapAssetFrame &tile = _databaseSkin[columnBand * 3 + rowBand];
+				const BitmapAssetFrame &tile = _databaseSkin[rowBand * 3 + columnBand];
 				const int x = column == columns - 1 ? bounds.right - tile.width :
 					bounds.left + column * tileWidth;
 				const int y = row == rows - 1 ? bounds.bottom - tile.height :
