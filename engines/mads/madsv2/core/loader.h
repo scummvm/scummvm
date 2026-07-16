@@ -60,7 +60,7 @@ private:
 	Common::MemoryReadStream *_data;
 
 public:
-	LoaderReadStream(LoadHandle load);
+	LoaderReadStream(LoadHandle load, long size = -1);
 	~LoaderReadStream() override;
 
 	int64 pos() const override {
@@ -101,6 +101,7 @@ extern int loader_open(LoadHandle handle, const char *filename, const char *opti
 extern int loader_close(LoadHandle handle);
 extern void loader_set_priority(LoadHandle handle, int priority);
 extern long loader_read(void *target, long record_size, long record_count, LoadHandle handle);
+extern void loader_skip_entries(LoadHandle handle, int count);
 extern long loader_write(void *target, long record_size, long record_count, LoadHandle handle);
 extern long loader_write_2(Common::WriteStream *source_handle, long total_size, LoadHandle handle);
 

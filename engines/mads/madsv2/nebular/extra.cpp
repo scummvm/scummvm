@@ -199,6 +199,11 @@ int room_load_depth(Load *load_handle, Buffer *depth, Buffer *walk, Room *room_i
 		load_handle = &load;
 	}
 
+	// Pack entry 0 is always the room header; the depth/walk data for a given variant
+	// follows at entry (variant + 1). Skip forward to it before reading.
+	int targetEntry = variant + 1;
+	loader_skip_entries(load_handle, targetEntry - load_handle->pack_list_marker);
+
 	int width = room_info->xs;
 	int totalPixels = width * room_info->ys;
 	int pixelIndex = 0;
@@ -210,7 +215,7 @@ int room_load_depth(Load *load_handle, Buffer *depth, Buffer *walk, Room *room_i
 	// In both cases, the byte's high bit(s) flag whether the pixel is walkable, and the
 	// remaining bit(s) give its depth. The results are unpacked into the standard walk
 	// (1 bit/pixel) and depth (4 bits/pixel) surface formats used throughout the engine.
-	LoaderReadStream src(load_handle);
+	LoaderReadStream src(load_handle, load_handle->pack.strategy[load_handle->pack_list_marker].size);
 
 	runLength = src.readByte();
 	while (pixelIndex < totalPixels && runLength != 0) {

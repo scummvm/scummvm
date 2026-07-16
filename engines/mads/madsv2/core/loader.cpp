@@ -55,11 +55,14 @@ int loader_ems_search_disabled = false;
 char loader_last[14] = "";
 
 
-LoaderReadStream::LoaderReadStream(LoadHandle load) {
-	byte *data = (byte *)malloc(load->decompress_size);
-	(void)loader_read(data, 1, load->decompress_size, load);
+LoaderReadStream::LoaderReadStream(LoadHandle load, long size) {
+	if (size < 0)
+		size = load->decompress_size;
 
-	_data = new Common::MemoryReadStream(data, load->decompress_size, DisposeAfterUse::YES);
+	byte *data = (byte *)malloc(size);
+	(void)loader_read(data, 1, size, load);
+
+	_data = new Common::MemoryReadStream(data, size, DisposeAfterUse::YES);
 }
 
 LoaderReadStream::~LoaderReadStream() {
@@ -274,6 +277,17 @@ done:
 	} else {
 		return result / record_size;
 	}
+}
+
+void loader_skip_entries(LoadHandle handle, int count) {
+	long skip = 0;
+	for (int i = 0; i < count; ++i)
+		skip += handle->pack.strategy[handle->pack_list_marker + i].compressed_size;
+
+	if (skip != 0)
+		handle->handle->seek(skip, SEEK_CUR);
+
+	handle->pack_list_marker += count;
 }
 
 long loader_write(void *target, long record_size, long record_count, LoadHandle handle) {
