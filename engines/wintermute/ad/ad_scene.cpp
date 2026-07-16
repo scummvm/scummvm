@@ -1652,6 +1652,21 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		}
 		return STATUS_OK;
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// SetCurrentFOV
+	//////////////////////////////////////////////////////////////////////////
+	if (strcmp(name, "SetCurrentFOV") == 0) {
+		stack->correctParams(1);
+
+		float fov = stack->pop()->getFloat();
+		if (_geom->_activeCamera >= 0 && _geom->_activeCamera < _geom->_cameras.getSize()) {
+			_geom->_cameras[_geom->_activeCamera]->_fov = fov;
+		}
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
