@@ -30,6 +30,7 @@
 #include "common/hashmap.h"
 #include "common/memstream.h"
 #include "common/ptr.h"
+#include "common/serializer.h"
 #include "common/system.h"
 #include "graphics/blit.h"
 #include "graphics/paletteman.h"
@@ -408,7 +409,8 @@ static Common::SeekableReadStream *rebuildSmackerStream(const IavfSegment &segme
 } // End of anonymous namespace
 
 MediaPlayer::MediaPlayer(RipperEngine *engine, InputManager *input, Audio::Mixer *mixer) :
-		_engine(engine), _input(input), _mixer(mixer), _stopSceneOnMouse(false) {
+		_engine(engine), _input(input), _mixer(mixer), _sceneAudioVolumePercent(100),
+		_sceneAudioLoop(false), _stopSceneOnMouse(false) {
 }
 
 MediaPlayer::~MediaPlayer() {
@@ -457,6 +459,8 @@ bool MediaPlayer::startLoadedAudio(const Common::String &key, uint volumePercent
 	_mixer->stopHandle(_sceneAudioHandle);
 	const byte volume = (byte)(MIN<uint>(volumePercent, 100) * Audio::Mixer::kMaxChannelVolume / 100);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sceneAudioHandle, stream, -1, volume);
+	_sceneAudioVolumePercent = MIN<uint>(volumePercent, 100);
+	_sceneAudioLoop = loop;
 	debugC(1, kDebugAudio, "Ripper: started audio key='%s' volume=%u loop=%d active=%d",
 		key.c_str(), volumePercent, loop, _mixer->isSoundHandleActive(_sceneAudioHandle));
 	return true;
@@ -464,6 +468,35 @@ bool MediaPlayer::startLoadedAudio(const Common::String &key, uint volumePercent
 
 bool MediaPlayer::isSceneAudioActive() const {
 	return _mixer->isSoundHandleActive(_sceneAudioHandle);
+}
+
+bool MediaPlayer::syncGame(Common::Serializer &serializer) {
+	Common::String audioPath = serializer.isSaving() ? _loadedAudioPath : Common::String();
+	byte active = isSceneAudioActive() ? 1 : 0;
+	uint32 volumePercent = _sceneAudioVolumePercent;
+	byte loop = _sceneAudioLoop ? 1 : 0;
+	serializer.syncString(audioPath);
+	serializer.syncAsByte(active);
+	serializer.syncAsUint32LE(volumePercent);
+	serializer.syncAsByte(loop);
+	if (serializer.err() || audioPath.size() > 256 || volumePercent > 100)
+		return false;
+	if (serializer.isSaving())
+		return true;
+
+	_mixer->stopHandle(_sceneAudioHandle);
+	_loadedAudioPath.clear();
+	_loadedAudioKey.clear();
+	_sceneAudioVolumePercent = volumePercent;
+	_sceneAudioLoop = loop != 0;
+	if (!audioPath.empty() && !loadAudio(audioPath))
+		return false;
+	if (active != 0 && !startLoadedAudio(_loadedAudioKey, volumePercent, loop != 0))
+		return false;
+	debugC(1, kDebugSavegames,
+		"Ripper: restored scene audio path='%s' active=%d volume=%u loop=%d",
+		audioPath.c_str(), active != 0, volumePercent, loop != 0);
+	return true;
 }
 
 bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
