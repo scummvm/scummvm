@@ -217,6 +217,10 @@ void WacManager::serviceIdleWindowAnimations() {
 	_idleWindowLastMillis = now;
 }
 
+void WacManager::serviceIdleEffects() {
+	serviceIdleWindowAnimations();
+}
+
 void WacManager::serviceDatabaseCornerAnimation() {
 	const uint32 now = g_system->getMillis(true);
 	if (now - _databaseCornerLastMillis < kWacDatabaseCornerInterval ||
