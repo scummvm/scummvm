@@ -51,19 +51,22 @@ void ComfyEngine::sceneBlockPackRuntimeState() {
 	WRITE_LE_UINT32(&_sceneMemoryBlock[_sceneMidiInstanceOffset + 0x184], _midiInstanceTrackBase);
 	WRITE_LE_UINT16(&_sceneMemoryBlock[_sceneMidiInstanceOffset + 0x188], _midiEvents.count);
 	WRITE_LE_UINT16(&_sceneMemoryBlock[_sceneMidiInstanceOffset + 0x18A], _midiTracks.count);
+
 	if (_engineVersion == 3) {
 		byte *vocState = &_sceneMemoryBlock[_sceneMidiInstanceOffset + COMFY_SCENE_MIDI_INSTANCE_BYTES];
 		vocState[0] = _v3SceneWaveBalancePercent;
-		vocState[1] = _v3SceneHostMediaModeEnabled;
+		vocState[1] = _v3SceneMediaModeEnabled;
 		vocState[2] = _v3SceneWaveLeftPercent;
 		vocState[3] = _v3SceneWaveRightPercent;
 		vocState[6] = _v3SceneMixerVolumePercent;
+
 		for (uint i = 0; i < COMFY_VOC_QUEUE_CAPACITY; i++) {
 			byte *packedEntry = vocState + 7 + i * 0x1F;
 			VocQueueEntryV3 &entry = _vocQueueV3[i];
 			WRITE_LE_UINT16(packedEntry, entry.soundId);
 			WRITE_LE_UINT16(packedEntry + 2, entry.argumentCount);
 			WRITE_LE_UINT16(packedEntry + 4, entry.state);
+
 			for (uint argument = 0; argument < COMFY_VOC_ARG_CAPACITY_V3; argument++)
 				WRITE_LE_UINT16(packedEntry + 6 + argument * 2, entry.arguments[argument]);
 
@@ -74,12 +77,14 @@ void ComfyEngine::sceneBlockPackRuntimeState() {
 		WRITE_LE_UINT16(vocState + 0x1F9, _soundEventMaximum);
 	} else if (_isPanther) {
 		byte *soundState = &_sceneMemoryBlock[_sceneSoundStateOffset];
+
 		for (uint i = 0; i < COMFY_PANTHER_VOC_QUEUE_CAPACITY; i++) {
 			byte *packedEntry = soundState + i * 0x1A;
 			VocQueueEntry &entry = _vocQueue[i];
 			WRITE_LE_UINT16(packedEntry, entry.soundId);
 			WRITE_LE_UINT16(packedEntry + 2, entry.argumentCount);
 			WRITE_LE_UINT16(packedEntry + 4, entry.state);
+
 			for (uint argument = 0; argument < COMFY_VOC_ARG_CAPACITY; argument++)
 				WRITE_LE_UINT16(packedEntry + 6 + argument * 2, entry.arguments[argument]);
 		}
@@ -93,6 +98,7 @@ void ComfyEngine::sceneBlockPackRuntimeState() {
 	sceneEntries[0] = _sceneEntryListActive;
 	WRITE_LE_UINT16(sceneEntries + 1, _sceneEntryCount);
 	WRITE_LE_UINT16(sceneEntries + 3, _sceneEntryFrameSize);
+
 	for (uint i = 0; i < COMFY_SCENE_ENTRY_OFFSET_CAPACITY; i++)
 		WRITE_LE_UINT16(sceneEntries + 5 + i * 2, (uint16)_sceneEntryOffsets[i]);
 
@@ -107,6 +113,7 @@ void ComfyEngine::sceneBlockPackRuntimeState() {
 	for (uint channel = 0; channel < COMFY_MIDI_CHANNEL_COUNT; channel++) {
 		MidiChannelState &state = _midiChannels[channel];
 		byte *packed = sceneEntries + channelTableOffset + channel * 0xA1;
+
 		WRITE_LE_UINT16(packed + 0x87, state.entryCount);
 		WRITE_LE_UINT16(packed + 0x89, state.volumeCurrent);
 		WRITE_LE_UINT16(packed + 0x8B, state.volumeTarget);
@@ -120,12 +127,14 @@ void ComfyEngine::sceneBlockPackRuntimeState() {
 		WRITE_LE_UINT16(packed + 0x9B, state.pitchTarget);
 		WRITE_LE_UINT16(packed + 0x9D, state.pitchTicksLeft);
 		WRITE_LE_UINT16(packed + 0x9F, state.pitchDefault);
+
 		for (uint entry = 0; entry < state.entryCount && entry < COMFY_MIDI_TRACK_ENTRY_CAPACITY; entry++) {
 			byte *packedEntry = packed + entry * 0x1B;
 			WRITE_LE_UINT16(packedEntry, state.entries[entry].songId);
 			WRITE_LE_UINT16(packedEntry + 2, state.entries[entry].completionKey);
 			packedEntry[4] = state.entries[entry].loadFlag;
 			WRITE_LE_UINT16(packedEntry + 5, state.entries[entry].frameCount);
+
 			for (uint frame = 0; frame < COMFY_ANIM_FRAME_CAPACITY; frame++)
 				WRITE_LE_UINT16(packedEntry + 7 + frame * 2, state.entries[entry].frames[frame]);
 		}
@@ -139,10 +148,12 @@ void ComfyEngine::sceneBlockPackRuntimeState() {
 		memcpy(&_sceneMemoryBlock[_sceneHandlesOffset], &_sceneHandles[0], _sceneHandles.size() * sizeof(uint16));
 
 	uint32 actorStride = COMFY_ACTOR_SIZE_V3;
-	if (_engineVersion == 1)
+
+	if (_engineVersion == 1) {
 		actorStride = COMFY_ACTOR_SIZE_V1;
-	else if (_engineVersion == 2)
+	} else if (_engineVersion == 2) {
 		actorStride = COMFY_ACTOR_SIZE_V2;
+	}
 
 	byte *actorBuffer = (byte *)malloc(actorStride);
 	if (!actorBuffer)
@@ -152,6 +163,7 @@ void ComfyEngine::sceneBlockPackRuntimeState() {
 		byte *destination = &_sceneMemoryBlock[_sceneActorsOffset + i * actorStride];
 		Actor &actor = _actors[i];
 		Common::MemoryWriteStream actorStream(actorBuffer, actorStride);
+
 		actorStream.writeUint32LE(actor.currentPc);
 		actorStream.writeUint32LE(actor.callPc);
 		actorStream.writeUint32LE(actor.resetPc);
@@ -184,13 +196,16 @@ void ComfyEngine::sceneBlockPackRuntimeState() {
 		actorStream.writeSint16LE(actor.cachedRect.top);
 		actorStream.writeSint16LE(actor.cachedRect.right);
 		actorStream.writeSint16LE(actor.cachedRect.bottom);
-		if (_engineVersion == 1)
+
+		if (_engineVersion == 1) {
 			actorStream.writeUint16LE((uint16)(actor.cachedRect.area & 0xFFFF));
-		else
+		} else {
 			actorStream.writeUint32LE(actor.cachedRect.area);
+		}
 
 		actorStream.writeByte(actor.cachedVisible);
 		actorStream.writeUint32LE(actor.cachedSprite);
+
 		if (_engineVersion == 3)
 			actorStream.writeByte(actor.blitHitMouse);
 
@@ -221,6 +236,7 @@ void ComfyEngine::environmentPackToXms(byte *source, uint16 index) {
 	move.destinationHandle = _xmsEnvHandle;
 	move.destinationOffset = (uint32)(index - 1) * _sceneMemoryBlock.size();
 	move.sourceMemory = source;
+
 	if (xmsTransfer(move) < 0)
 		error("Environment XMS destination %u is outside the allocated block", (uint)index);
 }
@@ -234,6 +250,7 @@ bool ComfyEngine::environmentUnpackFromXms(byte *destination, uint16 index) {
 	move.sourceHandle = _xmsEnvHandle;
 	move.sourceOffset = (uint32)(index - 1) * _sceneMemoryBlock.size();
 	move.destinationMemory = destination;
+
 	if (xmsTransfer(move) < 0)
 		error("Environment XMS source %u is outside the allocated block", (uint)index);
 
@@ -262,19 +279,22 @@ void ComfyEngine::sceneBlockUnpackRuntimeState() {
 	_midiTracks.baseTime = _midiInstanceTrackBase;
 	midiFindNext(_midiEvents);
 	midiFindNext(_midiTracks);
+
 	if (_engineVersion == 3) {
 		byte *vocState = &_sceneMemoryBlock[_sceneMidiInstanceOffset + COMFY_SCENE_MIDI_INSTANCE_BYTES];
 		_v3SceneWaveBalancePercent = vocState[0];
-		_v3SceneHostMediaModeEnabled = vocState[1];
+		_v3SceneMediaModeEnabled = vocState[1];
 		_v3SceneWaveLeftPercent = vocState[2];
 		_v3SceneWaveRightPercent = vocState[3];
 		_v3SceneMixerVolumePercent = vocState[6];
+
 		for (uint i = 0; i < COMFY_VOC_QUEUE_CAPACITY; i++) {
 			byte *packedEntry = vocState + 7 + i * 0x1F;
 			VocQueueEntryV3 &entry = _vocQueueV3[i];
 			entry.soundId = READ_LE_UINT16(packedEntry);
 			entry.argumentCount = MIN<uint16>(READ_LE_UINT16(packedEntry + 2), COMFY_VOC_ARG_CAPACITY_V3);
 			entry.state = READ_LE_UINT16(packedEntry + 4);
+
 			for (uint argument = 0; argument < COMFY_VOC_ARG_CAPACITY_V3; argument++)
 				entry.arguments[argument] = READ_LE_UINT16(packedEntry + 6 + argument * 2);
 
@@ -285,12 +305,14 @@ void ComfyEngine::sceneBlockUnpackRuntimeState() {
 		_soundEventMaximum = READ_LE_UINT16(vocState + 0x1F9) % COMFY_VOC_QUEUE_CAPACITY;
 	} else if (_isPanther) {
 		byte *soundState = &_sceneMemoryBlock[_sceneSoundStateOffset];
+
 		for (uint i = 0; i < COMFY_PANTHER_VOC_QUEUE_CAPACITY; i++) {
 			byte *packedEntry = soundState + i * 0x1A;
 			VocQueueEntry &entry = _vocQueue[i];
 			entry.soundId = READ_LE_UINT16(packedEntry);
 			entry.argumentCount = MIN<uint16>(READ_LE_UINT16(packedEntry + 2), COMFY_VOC_ARG_CAPACITY);
 			entry.state = READ_LE_UINT16(packedEntry + 4);
+
 			for (uint argument = 0; argument < COMFY_VOC_ARG_CAPACITY; argument++)
 				entry.arguments[argument] = READ_LE_UINT16(packedEntry + 6 + argument * 2);
 		}
@@ -304,6 +326,7 @@ void ComfyEngine::sceneBlockUnpackRuntimeState() {
 	_sceneEntryListActive = sceneEntries[0] != 0;
 	_sceneEntryCount = READ_LE_UINT16(sceneEntries + 1);
 	_sceneEntryFrameSize = READ_LE_UINT16(sceneEntries + 3);
+
 	for (uint i = 0; i < COMFY_SCENE_ENTRY_OFFSET_CAPACITY; i++)
 		_sceneEntryOffsets[i] = READ_LE_UINT16(sceneEntries + 5 + i * 2);
 
@@ -315,6 +338,7 @@ void ComfyEngine::sceneBlockUnpackRuntimeState() {
 	}
 
 	uint32 channelTableOffset = _engineVersion == 3 || _isPanther ? 0x3D : 0x25;
+
 	for (uint channel = 0; channel < COMFY_MIDI_CHANNEL_COUNT; channel++) {
 		MidiChannelState &state = _midiChannels[channel];
 		byte *packed = sceneEntries + channelTableOffset + channel * 0xA1;
@@ -331,24 +355,30 @@ void ComfyEngine::sceneBlockUnpackRuntimeState() {
 		state.pitchTarget = READ_LE_UINT16(packed + 0x9B);
 		state.pitchTicksLeft = READ_LE_UINT16(packed + 0x9D);
 		state.pitchDefault = READ_LE_UINT16(packed + 0x9F);
+
 		for (uint entry = 0; entry < state.entryCount; entry++) {
 			byte *packedEntry = packed + entry * 0x1B;
 			state.entries[entry].songId = READ_LE_UINT16(packedEntry);
 			state.entries[entry].completionKey = READ_LE_UINT16(packedEntry + 2);
 			state.entries[entry].loadFlag = packedEntry[4];
 			state.entries[entry].frameCount = READ_LE_UINT16(packedEntry + 5);
+
 			for (uint frame = 0; frame < COMFY_ANIM_FRAME_CAPACITY; frame++)
 				state.entries[entry].frames[frame] = READ_LE_UINT16(packedEntry + 7 + frame * 2);
 		}
 	}
+
 	memcpy(_actorPcTable, &_sceneMemoryBlock[_sceneActorPcOffset], sizeof(_actorPcTable));
 	memcpy(&_stringTable[0], &_sceneMemoryBlock[_sceneStringTableOffset], _stringTable.size() * sizeof(uint16));
 	memcpy(&_sceneHandles[0], &_sceneMemoryBlock[_sceneHandlesOffset], _sceneHandles.size() * sizeof(uint16));
+
 	uint32 actorStride = COMFY_ACTOR_SIZE_V3;
-	if (_engineVersion == 1)
+
+	if (_engineVersion == 1) {
 		actorStride = COMFY_ACTOR_SIZE_V1;
-	else if (_engineVersion == 2)
+	} else if (_engineVersion == 2) {
 		actorStride = COMFY_ACTOR_SIZE_V2;
+	}
 
 	byte *actorBuffer = (byte *)malloc(actorStride);
 	if (!actorBuffer)
@@ -360,6 +390,7 @@ void ComfyEngine::sceneBlockUnpackRuntimeState() {
 		actor = Actor();
 		memcpy(actorBuffer, source, actorStride);
 		Common::MemoryReadStream actorStream(actorBuffer, actorStride);
+
 		actor.currentPc = actorStream.readUint32LE();
 		actor.callPc = actorStream.readUint32LE();
 		actor.resetPc = actorStream.readUint32LE();
@@ -392,13 +423,16 @@ void ComfyEngine::sceneBlockUnpackRuntimeState() {
 		actor.cachedRect.top = actorStream.readSint16LE();
 		actor.cachedRect.right = actorStream.readSint16LE();
 		actor.cachedRect.bottom = actorStream.readSint16LE();
-		if (_engineVersion == 1)
+
+		if (_engineVersion == 1) {
 			actor.cachedRect.area = actorStream.readUint16LE();
-		else
+		} else {
 			actor.cachedRect.area = actorStream.readUint32LE();
+		}
 
 		actor.cachedVisible = actorStream.readByte();
 		actor.cachedSprite = actorStream.readUint32LE();
+
 		if (_engineVersion == 3)
 			actor.blitHitMouse = actorStream.readByte();
 
@@ -426,6 +460,7 @@ void ComfyEngine::sceneEntryInit(uint16 count) {
 	_sceneEntryCount = count;
 	uint32 frameSize = _engineVersion == 3 ? COMFY_SCENE_FRAME_BYTES_V3 : COMFY_SCENE_FRAME_BYTES;
 	_sceneEntryFrameSize = count ? frameSize / (int16)count : 0;
+
 	for (uint i = 0; i < count && i < COMFY_SCENE_ENTRY_OFFSET_CAPACITY; i++)
 		_sceneEntryOffsets[i] = 0xFFFF;
 
@@ -447,6 +482,7 @@ void ComfyEngine::sceneEntryStop() {
 void ComfyEngine::sceneStartWithMusic(uint16 scene) {
 	byte keySnapshot[15];
 	memset(keySnapshot, 0, sizeof(keySnapshot));
+
 	if (_keyBits)
 		memcpy(keySnapshot, _keyBits, MIN<uint32>(sizeof(keySnapshot), _keyBitsSize));
 
@@ -465,6 +501,7 @@ void ComfyEngine::sceneStartWithMusic(uint16 scene) {
 	Actor *root = actorGetPtr(0);
 	if (root) {
 		paletteLoadWithFade((uint16)root->xFixed, 0);
+
 		if (root->yFixed)
 			paletteApplyBrightness((byte)root->yFixed);
 	}
@@ -480,15 +517,17 @@ bool ComfyEngine::sceneEntryLoad(uint16 descriptor, uint16 index) {
 	byte header[6];
 	memset(header, 0, sizeof(header));
 	sceneEntryReadFromXms(header, descriptor, sizeof(header));
+
 	uint16 size = READ_LE_UINT16(header);
 	uint32 fileOffset = READ_LE_UINT32(header + 2);
 	uint32 destinationOffset = (uint32)_sceneEntryFrameSize * index;
-	if (!_midiFileStream || destinationOffset > _sceneFrameData.size() ||
-			size > _sceneFrameData.size() - destinationOffset || !_midiFileStream->seek(fileOffset))
+
+	if (!_midiFileStream || destinationOffset > _sceneFrameData.size() || size > _sceneFrameData.size() - destinationOffset || !_midiFileStream->seek(fileOffset))
 		return false;
 
 	if (_midiFileStream->read(&_sceneFrameData[destinationOffset], size) != size)
 		return false;
+
 	if (index < COMFY_SCENE_ENTRY_OFFSET_CAPACITY)
 		_sceneEntryOffsets[index] = descriptor;
 
@@ -501,10 +540,12 @@ void ComfyEngine::sceneEntryReadFromXms(byte *destination, uint16 row, uint16 si
 
 byte *ComfyEngine::sceneFrameGetPtr(uint16 kind, uint16 size) {
 	byte *result = nullptr;
-	if (kind == 0 && !_sceneFrameData.empty())
+
+	if (kind == 0 && !_sceneFrameData.empty()) {
 		result = &_sceneFrameData[0];
-	else if (kind == 1 && size <= _sceneFrameData.size())
+	} else if (kind == 1 && size <= _sceneFrameData.size()) {
 		result = &_sceneFrameData[_sceneFrameData.size() - size];
+	}
 
 	if (result && kind < COMFY_MIDI_CHANNEL_COUNT)
 		_midiChannels[kind].loadedFrameSize = size;
@@ -518,12 +559,12 @@ byte *ComfyEngine::spriteLoadFromFile(uint16 fileOffset, uint16 index) {
 	sceneEntryReadFromXms(header, fileOffset, sizeof(header));
 	uint16 size = READ_LE_UINT16(header);
 	uint32 position = READ_LE_UINT32(header + 2);
+
 	if (!size)
 		return nullptr;
 
 	byte *destination = sceneFrameGetPtr(index, size);
-	if (!destination || !_midiFileStream || !_midiFileStream->seek(position) ||
-			_midiFileStream->read(destination, size) != size) {
+	if (!destination || !_midiFileStream || !_midiFileStream->seek(position) || _midiFileStream->read(destination, size) != size) {
 		if (index < COMFY_MIDI_CHANNEL_COUNT)
 			_midiChannels[index].loadedFrameSize = 0;
 
@@ -540,17 +581,19 @@ void ComfyEngine::midiStopSong(uint16 channel) {
 
 void ComfyEngine::midiPlaySongAtFrame(uint16 channel, uint16 frame) {
 	midiStopSong(channel);
+
 	uint32 offset = (uint32)_sceneEntryFrameSize * frame;
-	if (!_midiPlyrDriver || channel >= COMFY_SCENE_MUSIC_CHANNEL_COUNT ||
-			offset > _sceneFrameData.size() || 6 > _sceneFrameData.size() - offset)
+	if (!_midiPlyrDriver || channel >= COMFY_SCENE_MUSIC_CHANNEL_COUNT || offset > _sceneFrameData.size() || 6 > _sceneFrameData.size() - offset)
 		return;
 
 	byte *song = &_sceneFrameData[offset];
 	uint16 size = READ_LE_UINT16(song + 4) + 6;
+
 	if (size > _sceneFrameData.size() - offset)
 		return;
 
 	_midiPlyrDriver->musicPlaySong(song, size, channel);
+
 	if (_engineVersion == 3 || _isPanther) {
 		_midiPlyrDriver->musicSetVolume(_sceneEntryVolumes[channel], channel);
 		_sceneEntryCompletionKeys[channel] = 0;
@@ -574,6 +617,7 @@ bool ComfyEngine::sceneOpen(uint32 sceneEntryListOffset) {
 	_sceneEntryCount = 0;
 	uint32 frameSize = _engineVersion == 3 ? COMFY_SCENE_FRAME_BYTES_V3 : COMFY_SCENE_FRAME_BYTES;
 	_sceneEntryFrameSize = frameSize;
+
 	if (_sceneFrameData.empty()) {
 		_sceneFrameData.resize(frameSize);
 		memset(&_sceneFrameData[0], 0, _sceneFrameData.size());
@@ -585,8 +629,7 @@ bool ComfyEngine::sceneOpen(uint32 sceneEntryListOffset) {
 		return false;
 
 	byte header[4];
-	if (_midiFileStream->read(header, sizeof(header)) != sizeof(header) ||
-			header[0] != 'C' || (header[1] != 'M' && header[1] != 'm'))
+	if (_midiFileStream->read(header, sizeof(header)) != sizeof(header) || header[0] != 'C' || (header[1] != 'M' && header[1] != 'm'))
 		return false;
 
 	_midiFileMode = header[1] == 'm' ? 1 : 0;
@@ -608,6 +651,7 @@ void ComfyEngine::sceneShutdown() {
 	delete _midiFileStream;
 	_midiFileStream = nullptr;
 	_sceneFrameData.clear();
+
 	if (_engineVersion == 3) {
 		_v3SceneWaveLeftPercent = 0xFF;
 		_v3SceneWaveRightPercent = 0xFF;

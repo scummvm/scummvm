@@ -216,6 +216,7 @@ void ComfyEngine::iniWriteLanguageSelection(uint16 language) {
 uint16 ComfyEngine::languageSetDataSubdirectory(Common::String text) {
 	uint start = 0;
 	uint end = text.size();
+
 	while (start < end && Common::isSpace((byte)text[start]))
 		start++;
 
@@ -224,6 +225,7 @@ uint16 ComfyEngine::languageSetDataSubdirectory(Common::String text) {
 
 	_v3LanguageDataSubdirectory = text.substr(start, end - start);
 	_languageSessionRestartRequested = true;
+
 	if (_v3LanguageDataSubdirectory.empty())
 		return 0x20;
 
@@ -288,6 +290,7 @@ bool ComfyEngine::readAssetFile(const Common::Path &filename, Common::Array<byte
 
 	uint32 size = stream->size();
 	data.resize(size);
+
 	if (size && stream->read(&data[0], size) != size) {
 		data.clear();
 		return false;
@@ -357,14 +360,11 @@ void ComfyEngine::selPoolFree() {
 	_selectorPoolInitialized = false;
 }
 
-bool ComfyEngine::sceneLoadAndInit(uint16 sceneCount, uint16 actorCount, uint16 keyBitCount,
-		uint16 scriptVariableCount, uint32 &numSprites) {
+bool ComfyEngine::sceneLoadAndInit(uint16 sceneCount, uint16 actorCount, uint16 keyBitCount, uint16 scriptVariableCount, uint32 &numSprites) {
 	return sceneFrameInitTables(sceneCount, actorCount, keyBitCount, scriptVariableCount, numSprites);
 }
 
-bool ComfyEngine::sceneFrameInitTables(uint16 sceneCount, uint16 actorCount, uint16 keyBitCount,
-		uint16 scriptVariableCount, uint32 &numSprites) {
-
+bool ComfyEngine::sceneFrameInitTables(uint16 sceneCount, uint16 actorCount, uint16 keyBitCount, uint16 scriptVariableCount, uint32 &numSprites) {
 	_stringTable.resize(_stringCount);
 	memset(&_stringTable[0], 0, _stringTable.size() * sizeof(uint16));
 	_sceneHandles.resize(sceneCount + 1);
@@ -389,17 +389,19 @@ bool ComfyEngine::sceneFrameInitTables(uint16 sceneCount, uint16 actorCount, uin
 	uint32 stringBytes = stringTableGetSize();
 	uint32 handleBytes = _sceneHandles.size() * sizeof(uint16);
 	uint32 actorRecordSize = COMFY_ACTOR_SIZE_V3;
-	if (_engineVersion == 1)
+
+	if (_engineVersion == 1) {
 		actorRecordSize = COMFY_ACTOR_SIZE_V1;
-	else if (_engineVersion == 2)
+	} else if (_engineVersion == 2) {
 		actorRecordSize = COMFY_ACTOR_SIZE_V2;
+	}
 
 	uint32 actorBytes = _actors.size() * actorRecordSize;
 	uint32 keyBytes = ((uint32)keyBitCount + 1) / 8 + 1;
 	_sceneMidiInstanceOffset = 0;
+
 	if (_engineVersion == 3) {
-		_sceneEntryListOffset = COMFY_SCENE_MIDI_INSTANCE_BYTES + COMFY_SCENE_VOC_STATE_BYTES_V3 +
-				COMFY_ANM_STATE_BYTES;
+		_sceneEntryListOffset = COMFY_SCENE_MIDI_INSTANCE_BYTES + COMFY_SCENE_VOC_STATE_BYTES_V3 + COMFY_ANM_STATE_BYTES;
 		_sceneActorPcOffset = _sceneEntryListOffset + COMFY_SCENE_STATE_BYTES_V3;
 		_sceneStringTableOffset = _sceneActorPcOffset + COMFY_SCENE_ACTOR_PC_BYTES;
 	} else if (_isPanther) {
@@ -628,6 +630,7 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 		move.destinationHandle = _xmsHeaderHandle;
 		move.destinationOffset = xmsOffset;
 		move.sourceMemory = source;
+
 		if (xmsTransfer(move) < 0)
 			return false;
 
@@ -638,6 +641,7 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 
 	_headerXmsMidiEntriesBase = xmsOffset;
 	_headerXmsMidiEntriesBytes = midiHeaderBytes;
+
 	if (midiHeaderBytes) {
 		if (!scenePtr)
 			return false;
@@ -658,6 +662,7 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 
 	_headerXmsSoundHeadersBase = xmsOffset;
 	_headerXmsSoundHeadersBytes = soundHeaderBytes;
+
 	if (soundHeaderBytes) {
 		byte *soundHeaderTable = soundReadHeaderTable();
 		if (!soundHeaderTable)
@@ -688,6 +693,7 @@ void ComfyEngine::assetsUnload(byte freeAudio) {
 	_scenePoolData.clear();
 	spriteInvalidateHostCache(_frameSpriteResource);
 	_frameSpriteResource.id = 0;
+
 	if (!_backgroundFramebuf.empty()) {
 		_backgroundFramebuf.clear();
 		_backgroundFrame = 0;
@@ -715,6 +721,7 @@ void ComfyEngine::assetsUnload(byte freeAudio) {
 		animFileShutdown();
 
 	selPoolFree();
+
 	_spriteHeaders.clear();
 	_spriteResources.clear();
 	_stringTable.clear();
@@ -722,13 +729,17 @@ void ComfyEngine::assetsUnload(byte freeAudio) {
 	_scriptVariables.clear();
 	_actors.clear();
 	_sceneMemoryBlock.clear();
+
 	keyBitFree();
+
 	objFileClose(_vocFile);
 	objFileClose(_picFile);
 	objFileClose(_comfyObjFile);
 	delete _midiFileStream;
 	_midiFileStream = nullptr;
+
 	xmsReset();
+
 	_spriteConversionLoads = ResourceLoadList();
 	memset(_sceneEntryOffsets, 0, sizeof(_sceneEntryOffsets));
 	memset(_actorPcTable, 0, sizeof(_actorPcTable));

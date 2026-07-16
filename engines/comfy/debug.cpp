@@ -38,14 +38,12 @@ static void debugIncludeMapPoint(int16 &mapLeft, int16 &mapTop, int16 &mapRight,
 	mapBottom = MAX(mapBottom, y);
 }
 
-static void debugIncludeMapRect(int16 &mapLeft, int16 &mapTop, int16 &mapRight, int16 &mapBottom,
-		int16 left, int16 top, int16 right, int16 bottom) {
+static void debugIncludeMapRect(int16 &mapLeft, int16 &mapTop, int16 &mapRight, int16 &mapBottom, int16 left, int16 top, int16 right, int16 bottom) {
 	debugIncludeMapPoint(mapLeft, mapTop, mapRight, mapBottom, left, top);
 	debugIncludeMapPoint(mapLeft, mapTop, mapRight, mapBottom, right, bottom);
 }
 
-static ImVec2 debugMapPointToCanvas(const ImVec2 &canvasPos, int16 mapLeft, int16 mapTop,
-		float scale, float margin, int16 x, int16 y) {
+static ImVec2 debugMapPointToCanvas(const ImVec2 &canvasPos, int16 mapLeft, int16 mapTop, float scale, float margin, int16 x, int16 y) {
 	return ImVec2(canvasPos.x + ((float)x - mapLeft) * scale + margin,
 		canvasPos.y + ((float)y - mapTop) * scale + margin);
 }
@@ -75,16 +73,17 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 	}
 
 	ImGui::Text("Game: %s  version: %u  actors: %u", getGameId().c_str(), _engineVersion, (uint)_actors.size());
-	ImGui::TextDisabled("Tip: disable Visible/Active to isolate a problematic actor.");
 	bool centerFramebuffer = ImGui::Button("Center framebuffer");
 	ImGui::SameLine();
 	ImGui::Checkbox("Tree view", &_state->_actorDebugTreeView);
+
 	if (_state->_actorDebugLastScene != _currentScene ||
 			_state->_actorDebugLastSceneGeneration != _debugSceneGeneration) {
 		centerFramebuffer = true;
 		_state->_actorDebugLastScene = _currentScene;
 		_state->_actorDebugLastSceneGeneration = _debugSceneGeneration;
 	}
+
 	ImGui::Separator();
 
 	ImGui::BeginChild("comfy_actor_map", ImVec2(0, 320), true, ImGuiWindowFlags_HorizontalScrollbar);
@@ -104,6 +103,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 		int32 yFixed = actor.yFixed;
 		uint16 parent = actor.parent;
 		uint guard = 0;
+
 		while (parent && parent < _actors.size() && guard++ < COMFY_ACTOR_COUNT) {
 			Actor *parentActor = actorGetPtr(parent);
 			if (!parentActor)
@@ -119,8 +119,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 		debugIncludeMapPoint(mapLeft, mapTop, mapRight, mapBottom, x, y);
 
 		uint32 selector = actor.spriteSelector;
-		if (selector && !(selector & 0xFF000000) && selector != 0x00FFFFFF &&
-				selector < _spriteResources.size() && _spriteResources[selector].loaded) {
+		if (selector && !(selector & 0xFF000000) && selector != 0x00FFFFFF && selector < _spriteResources.size() && _spriteResources[selector].loaded) {
 			SpriteResource &sprite = _spriteResources[selector];
 			debugIncludeMapRect(mapLeft, mapTop, mapRight, mapBottom,
 				x - sprite.header.hotspotX, y - sprite.header.hotspotY,
@@ -130,6 +129,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 			uint32 pc = selector & 0x00FFFFFF;
 			int16 wordsLeft = (int16)(debugScriptReadWord(pc) - 1);
 			pc += 2;
+
 			while (wordsLeft > 0 && debugScriptHasRange(pc, 6)) {
 				uint16 rawSpriteId = debugScriptReadWord(pc);
 				int16 dx = debugScriptReadWord(pc + 2);
@@ -144,10 +144,12 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 					wordsLeft -= 2;
 					uint16 key = debugScriptReadWord(pc);
 					pc += 2;
-					if (keyBitTest(key))
+
+					if (keyBitTest(key)) {
 						spriteId &= 0x7FFF;
-					else
+					} else {
 						spriteId = debugScriptReadWord(pc);
+					}
 
 					pc += 2;
 				}
@@ -155,6 +157,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 				int16 limbX = x + dx;
 				int16 limbY = y + dy;
 				debugIncludeMapPoint(mapLeft, mapTop, mapRight, mapBottom, limbX, limbY);
+
 				if (spriteId && spriteId < _spriteResources.size() && _spriteResources[spriteId].loaded) {
 					SpriteResource &sprite = _spriteResources[spriteId];
 					debugIncludeMapRect(mapLeft, mapTop, mapRight, mapBottom,
@@ -168,18 +171,17 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 
 	float margin = 32.0F;
 	float scale = 1.0F;
-	ImVec2 canvasSize((float)(mapRight - mapLeft) * scale + margin * 2.0F,
-		(float)(mapBottom - mapTop) * scale + margin * 2.0F);
+	ImVec2 canvasSize((float)(mapRight - mapLeft) * scale + margin * 2.0F, (float)(mapBottom - mapTop) * scale + margin * 2.0F);
 
 	ImDrawList *drawList = ImGui::GetWindowDrawList();
 	drawList->PushClipRect(canvasPos, ImVec2(canvasPos.x + canvasSize.x, canvasPos.y + canvasSize.y), true);
 	drawList->AddRectFilled(canvasPos, ImVec2(canvasPos.x + canvasSize.x, canvasPos.y + canvasSize.y), IM_COL32(18, 20, 24, 230));
 	drawList->AddRect(canvasPos, ImVec2(canvasPos.x + canvasSize.x, canvasPos.y + canvasSize.y), IM_COL32(180, 180, 180, 180));
 	ImVec2 screenTopLeft = debugMapPointToCanvas(canvasPos, mapLeft, mapTop, scale, margin, 0, 0);
-	ImVec2 screenBottomRight = debugMapPointToCanvas(canvasPos, mapLeft, mapTop, scale, margin,
-		_logicalScreenWidth, _logicalScreenHeight);
+	ImVec2 screenBottomRight = debugMapPointToCanvas(canvasPos, mapLeft, mapTop, scale, margin, _logicalScreenWidth, _logicalScreenHeight);
 	drawList->AddRectFilled(screenTopLeft, screenBottomRight, IM_COL32(38, 43, 54, 220));
 	drawList->AddRect(screenTopLeft, screenBottomRight, IM_COL32(110, 170, 240, 230));
+
 	for (uint i = 0; i < _actors.size(); i++) {
 		Actor &actor = _actors[i];
 		uint16 sceneHandle = actor.sceneHandle;
@@ -190,6 +192,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 		int32 yFixed = actor.yFixed;
 		uint16 parent = actor.parent;
 		uint guard = 0;
+
 		while (parent && parent < _actors.size() && guard++ < COMFY_ACTOR_COUNT) {
 			Actor *parentActor = actorGetPtr(parent);
 			if (!parentActor)
@@ -204,8 +207,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 		int16 y = (int16)(yFixed >> 12);
 		bool visibleActor = actor.visible != 0;
 		bool activeActor = actor.active != 0;
-		ImU32 color = visibleActor ? (activeActor ? IM_COL32(82, 220, 120, 230) : IM_COL32(238, 185, 74, 230)) :
-			IM_COL32(120, 120, 120, 170);
+		ImU32 color = visibleActor ? (activeActor ? IM_COL32(82, 220, 120, 230) : IM_COL32(238, 185, 74, 230)) : IM_COL32(120, 120, 120, 170);
 
 		ImVec2 point = debugMapPointToCanvas(canvasPos, mapLeft, mapTop, scale, margin, x, y);
 		drawList->AddCircleFilled(point, 3.0F, color);
@@ -215,19 +217,21 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 		drawList->AddText(ImVec2(point.x + 4.0F, point.y - 4.0F), color, actorLabel);
 
 		uint32 selector = actor.spriteSelector;
-		if (visibleActor && selector && !(selector & 0xFF000000) && selector != 0x00FFFFFF &&
-				selector < _spriteResources.size() && _spriteResources[selector].loaded) {
+		if (visibleActor && selector && !(selector & 0xFF000000) && selector != 0x00FFFFFF && selector < _spriteResources.size() && _spriteResources[selector].loaded) {
 			SpriteResource &sprite = _spriteResources[selector];
+
 			ImVec2 topLeft = debugMapPointToCanvas(canvasPos, mapLeft, mapTop, scale, margin,
 				x - sprite.header.hotspotX, y - sprite.header.hotspotY);
 			ImVec2 bottomRight = debugMapPointToCanvas(canvasPos, mapLeft, mapTop, scale, margin,
 				x - sprite.header.hotspotX + sprite.header.width,
 				y - sprite.header.hotspotY + sprite.header.height);
+
 			drawList->AddRect(topLeft, bottomRight, color);
 		} else if (selector & 0xFF000000) {
 			uint32 pc = selector & 0x00FFFFFF;
 			int16 wordsLeft = (int16)(debugScriptReadWord(pc) - 1);
 			pc += 2;
+
 			while (wordsLeft > 0 && debugScriptHasRange(pc, 6)) {
 				uint16 rawSpriteId = debugScriptReadWord(pc);
 				int16 dx = debugScriptReadWord(pc + 2);
@@ -235,6 +239,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 				pc += 6;
 				wordsLeft -= 3;
 				uint16 spriteId = rawSpriteId;
+
 				if (spriteId & 0x8000) {
 					if (!debugScriptHasRange(pc, 4))
 						break;
@@ -242,10 +247,12 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 					wordsLeft -= 2;
 					uint16 key = debugScriptReadWord(pc);
 					pc += 2;
-					if (keyBitTest(key))
+
+					if (keyBitTest(key)) {
 						spriteId &= 0x7FFF;
-					else
+					} else {
 						spriteId = debugScriptReadWord(pc);
+					}
 
 					pc += 2;
 				}
@@ -254,6 +261,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 				int16 limbY = y + dy;
 				ImVec2 limbPoint = debugMapPointToCanvas(canvasPos, mapLeft, mapTop, scale, margin, limbX, limbY);
 				drawList->AddCircleFilled(limbPoint, 2.0F, IM_COL32(120, 205, 255, 220));
+
 				if (spriteId && spriteId < _spriteResources.size() && _spriteResources[spriteId].loaded) {
 					SpriteResource &sprite = _spriteResources[spriteId];
 					ImVec2 topLeft = debugMapPointToCanvas(canvasPos, mapLeft, mapTop, scale, margin,
@@ -261,6 +269,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 					ImVec2 bottomRight = debugMapPointToCanvas(canvasPos, mapLeft, mapTop, scale, margin,
 						limbX - sprite.header.hotspotX + sprite.header.width,
 						limbY - sprite.header.hotspotY + sprite.header.height);
+
 					drawList->AddRect(topLeft, bottomRight, IM_COL32(120, 205, 255, 180));
 				}
 			}
@@ -268,6 +277,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 	}
 
 	ImGui::Dummy(canvasSize);
+
 	if (centerFramebuffer) {
 		ImVec2 childSize = ImGui::GetWindowSize();
 		float targetX = ((float)-mapLeft + (float)_logicalScreenWidth / 2.0F) * scale + margin - childSize.x / 2.0F;
@@ -275,6 +285,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 		ImGui::SetScrollX(MAX(0.0F, targetX));
 		ImGui::SetScrollY(MAX(0.0F, targetY));
 	}
+
 	drawList->PopClipRect();
 	ImGui::EndChild();
 	ImGui::Separator();
@@ -312,8 +323,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 			uint childCount = 0;
 			uint16 child = actor.childHead;
 			uint guard = 0;
-			while (child && child < _actors.size() && child < COMFY_ACTOR_COUNT &&
-					childCount < COMFY_ACTOR_COUNT && guard++ < COMFY_ACTOR_COUNT) {
+			while (child && child < _actors.size() && child < COMFY_ACTOR_COUNT && childCount < COMFY_ACTOR_COUNT && guard++ < COMFY_ACTOR_COUNT) {
 				if (!visited[child]) {
 					children[childCount] = child;
 					childCount++;
@@ -332,6 +342,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 			int32 yFixed = actor.yFixed;
 			uint16 parent = actor.parent;
 			guard = 0;
+
 			while (parent && parent < _actors.size() && guard++ < COMFY_ACTOR_COUNT) {
 				Actor *parentActor = actorGetPtr(parent);
 				if (!parentActor)
@@ -347,6 +358,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 			bool visibleActor = actor.visible != 0;
 			bool activeActor = actor.active != 0;
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+
 			if (!childCount)
 				flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
@@ -354,17 +366,20 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 			bool open = ImGui::TreeNodeEx("actor", flags, "%u", actorIndex);
 
 			ImGui::SameLine(120.0F);
-			ImGui::Text("scene=%u pos=%d,%d selector=0x%08X move=%d",
-				sceneHandle, x, y, selector, (int16)actor.moveTicks);
+			ImGui::Text("scene=%u pos=%d,%d selector=0x%08X move=%d", sceneHandle, x, y, selector, (int16)actor.moveTicks);
 
 			ImGui::SameLine(520.0F);
+
 			if (ImGui::Checkbox("Visible", &visibleActor)) {
 				actor.visible = visibleActor ? 1 : 0;
 				renderRequestFullFrameInvalidation();
 			}
+
 			ImGui::SameLine();
+
 			if (ImGui::Checkbox("Active", &activeActor))
 				actor.active = activeActor ? 1 : 0;
+
 			ImGui::PopID();
 
 			if (open && childCount) {
@@ -381,8 +396,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 			}
 
 			if (!stackCount) {
-				for (uint i = 0; i < _actors.size() && i < COMFY_ACTOR_COUNT &&
-						stackCount < ARRAYSIZE(actorStack); i++) {
+				for (uint i = 0; i < _actors.size() && i < COMFY_ACTOR_COUNT && stackCount < ARRAYSIZE(actorStack); i++) {
 					Actor &orphanActor = _actors[i];
 					if (visited[i] || (!orphanActor.sceneHandle && i != 0))
 						continue;
@@ -419,6 +433,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 			int32 yFixed = actor.yFixed;
 			uint16 parent = actor.parent;
 			uint guard = 0;
+
 			while (parent && parent < _actors.size() && guard++ < COMFY_ACTOR_COUNT) {
 				Actor *parentActor = actorGetPtr(parent);
 				if (!parentActor)
@@ -451,15 +466,19 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 			ImGui::Text("0x%08X", actor.currentPc);
 			ImGui::TableSetColumnIndex(7);
 			ImGui::PushID((int)i * 2);
+
 			if (ImGui::Checkbox("", &visibleActor)) {
 				actor.visible = visibleActor ? 1 : 0;
 				renderRequestFullFrameInvalidation();
 			}
+
 			ImGui::PopID();
 			ImGui::TableSetColumnIndex(8);
 			ImGui::PushID((int)i * 2 + 1);
+
 			if (ImGui::Checkbox("", &activeActor))
 				actor.active = activeActor ? 1 : 0;
+
 			ImGui::PopID();
 			ImGui::TableSetColumnIndex(9);
 			ImGui::Text("%d", (int16)actor.moveTicks);
@@ -475,11 +494,13 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 				ImGui::Text("local fixed x=0x%08X y=0x%08X moveDx=0x%08X moveDy=0x%08X",
 					(uint32)actor.xFixed, (uint32)actor.yFixed,
 					(uint32)actor.moveDx, (uint32)actor.moveDy);
+
 				if (selector & 0xFF000000) {
 					uint32 pc = selector & 0x00FFFFFF;
 					int16 wordsLeft = (int16)(debugScriptReadWord(pc) - 1);
 					pc += 2;
 					uint limb = 0;
+
 					while (wordsLeft > 0 && limb < 16 && debugScriptHasRange(pc, 6)) {
 						uint16 rawSpriteId = debugScriptReadWord(pc);
 						int16 dx = debugScriptReadWord(pc + 2);
@@ -488,6 +509,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 						wordsLeft -= 3;
 						uint16 spriteId = rawSpriteId;
 						uint16 key = 0;
+
 						if (spriteId & 0x8000) {
 							if (!debugScriptHasRange(pc, 4))
 								break;
@@ -495,10 +517,12 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 							wordsLeft -= 2;
 							key = debugScriptReadWord(pc);
 							pc += 2;
-							if (keyBitTest(key))
+
+							if (keyBitTest(key)) {
 								spriteId &= 0x7FFF;
-							else
+							} else {
 								spriteId = debugScriptReadWord(pc);
+							}
 
 							pc += 2;
 						}
@@ -517,8 +541,8 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 
 		ImGui::EndTable();
 	}
-	ImGui::EndChild();
 
+	ImGui::EndChild();
 	ImGui::End();
 }
 

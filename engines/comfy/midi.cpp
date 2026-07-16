@@ -46,9 +46,10 @@ uint16 ComfyEngine::midiTick() {
 
 	do {
 		_midiTimeCounter = _midiPlyrDriver->getTimeCounter();
-		if ((_engineVersion == 3 && _midiTimeCounter <= previousCounter) ||
-				(_engineVersion != 3 && _midiTimeCounter == previousCounter)) {
+
+		if ((_engineVersion == 3 && _midiTimeCounter <= previousCounter) || (_engineVersion != 3 && _midiTimeCounter == previousCounter)) {
 			processEvents();
+
 			if (shouldQuit())
 				return 0;
 
@@ -81,7 +82,7 @@ uint16 ComfyEngine::midiTick() {
 		}
 	}
 
-	while (_midiEvents.nextIndex != 0x03E7 && (int32)_midiInstanceEventTime >= _midiEvents.nextTime) {
+	while (_midiEvents.nextIndex != 999 && (int32)_midiInstanceEventTime >= _midiEvents.nextTime) {
 		keyBitSet(_midiEvents.entries[_midiEvents.nextIndex].id);
 		_midiEvents.count--;
 		_midiEvents.entries[_midiEvents.nextIndex] = _midiEvents.entries[_midiEvents.count];
@@ -101,17 +102,18 @@ bool ComfyEngine::midiPlyrStart() {
 		return false;
 
 	byte flags;
-	if (signature[0] == 'C' && signature[1] == 'M')
+	if (signature[0] == 'C' && signature[1] == 'M') {
 		flags = 0;
-	else if (signature[0] == 'C' && signature[1] == 'm')
+	} else if (signature[0] == 'C' && signature[1] == 'm') {
 		flags = 1;
-	else
+	} else {
 		return false;
+	}
 
 	midiPlyrStop();
-	MidiPlyrDriver::DriverVersion version = _engineVersion == 3 ?
-		MidiPlyrDriver::kDriverVersion2 : MidiPlyrDriver::kDriverVersion1;
+	MidiPlyrDriver::DriverVersion version = _engineVersion == 3 ? MidiPlyrDriver::kDriverVersion2 : MidiPlyrDriver::kDriverVersion1;
 	_midiPlyrDriver = new MidiPlyrDriver(version);
+
 	if (!_midiPlyrDriver->musicStart(flags)) {
 		delete _midiPlyrDriver;
 		_midiPlyrDriver = nullptr;
@@ -162,13 +164,14 @@ void ComfyEngine::midiSetTimeScale(int16 delta) {
 
 void ComfyEngine::midiFindNext(MidiQueue &queue) {
 	if (!queue.count) {
-		queue.nextIndex = 0x03E7;
+		queue.nextIndex = 999;
 		queue.nextTime = 0;
 		return;
 	}
 
 	queue.nextIndex = 0;
 	queue.nextTime = queue.entries[0].time;
+
 	for (uint i = 1; i < queue.count; i++) {
 		if (queue.entries[i].time < queue.nextTime) {
 			queue.nextIndex = i;
@@ -185,6 +188,7 @@ void ComfyEngine::midiInitInstanceAt() {
 	_midiInstanceTrackBase = 1;
 	_midiEvents.baseTime = 0;
 	_midiTracks.baseTime = 1;
+
 	if (_midiPlyrDriver)
 		_midiPlyrDriver->setTimeCounter(_midiTimeCounter);
 
@@ -195,10 +199,11 @@ void ComfyEngine::midiInitInstanceAt() {
 void ComfyEngine::midiInitInstance() {
 	if (_engineVersion == 3) {
 		_midiTracks.nextTime = 0;
-		_midiTracks.nextIndex = 0x03E7;
+		_midiTracks.nextIndex = 999;
 		_midiEvents.nextTime = 0;
-		_midiEvents.nextIndex = 0x03E7;
+		_midiEvents.nextIndex = 999;
 		_midiTimeScale = 0x400;
+
 		if (_midiPlyrDriver) {
 			_midiPlyrDriver->setIncreaseVocCounter(0);
 			_midiPlyrDriver->setVocCounter(0);
@@ -215,6 +220,7 @@ void ComfyEngine::midiInitInstance() {
 	_midiInstanceTrackBase = 1;
 	_midiEvents.baseTime = 0;
 	_midiTracks.baseTime = 1;
+
 	midiFindNext(_midiEvents);
 	midiFindNext(_midiTracks);
 }
@@ -222,10 +228,12 @@ void ComfyEngine::midiInitInstance() {
 void ComfyEngine::midiInitChannels() {
 	for (uint channel = 0; channel < COMFY_MIDI_CHANNEL_COUNT; channel++) {
 		_midiChannels[channel] = MidiChannelState();
+
 		MidiChannelState &state = _midiChannels[channel];
 		state.volumeCurrent = state.volumeDefault = 0x6400;
 		state.rateCurrent = state.rateDefault = 0x07D0;
 		state.pitchCurrent = state.pitchDefault = 0x1388;
+
 		if (_engineVersion != 3) {
 			state.volumeTarget = state.volumeDefault;
 			state.rateTarget = state.rateDefault;
@@ -444,6 +452,7 @@ void ComfyEngine::midiAddTrackEntry(uint16 channel, uint16 songId, uint16 comple
 	entry.completionKey = completionKey;
 	entry.loadFlag = loadFlag;
 	entry.frameCount = frameCount;
+
 	for (uint i = 0; i < frameCount && i < COMFY_ANIM_FRAME_CAPACITY; i++)
 		entry.frames[i] = frames ? frames[i] : 0;
 
@@ -500,6 +509,7 @@ void ComfyEngine::musicSetEnabled(byte value) {
 	if (!_animFrameReady || !_animUsesWaveVocCounter || value) {
 		_soundPaused = value != 0;
 		_mixer->pauseHandle(_soundHandle, _soundPaused);
+
 		if (_midiPlyrDriver)
 			_midiPlyrDriver->setIncreaseVocCounter(_soundPaused ? 0 : 1);
 	}
