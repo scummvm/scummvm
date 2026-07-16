@@ -935,6 +935,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "limit0inici",		"Límit 0 Inici" },
 
 	// Czech titles
+	{ "jablko",				"Jablko" },
 	{ "nemcina",			"Německá gramatika cvičebnice" },           // German grammar workbook
 
 	// Danish titles
@@ -1947,6 +1948,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "hoaddams2",			"Hollywood Online: Addams Family Values" },
 	{ "hoangus",			"Hollywood Online: Angus" },
 	{ "hodolores",			"Hollywood Online: Dolores Claiborne" },
+	{ "hohackers",			"Hollywood Online: Hackers" },
 	{ "horobroy",			"Hollywood Online: Rob Roy: Legend of the Mist" },
 	{ "hostargate",			"Hollywood Online: Stargate" },
 	{ "hothenet",			"Hollywood Online: The Net" },
@@ -2811,6 +2813,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("hodolores", "", "Dolores Claiborne Interactive", "r:7f443f2e63fd497a9ad85b10dc880a91", 1475680, 313),
 	WINGAME1("hodolores", "", "DOLRES.EXE", "65d06b5fef155a2473434571aff5bc29", 1671516, 313),
 
+	// Found at https://web.archive.org/web/19970501051247/http://www.hollywood.com/movies/hackers/director/index.html
+	// Hackers 1.7
+	MACGAME1("hohackers", "v1.7", "Hackers Interactive Kit", "r:7f443f2e63fd497a9ad85b10dc880a91", 1828685, 313),
+	// HackersPC 1.7
+	WINGAME1("hohackers", "v1.7", "HACKERS.EXE", "t:7d5b476cbf998c72474f81d6601bf238", 2189900, 300),
+
 	MACGAME1("horobroy", "", "Rob Roy Interactive Kit",	"rt:3adfc08d711bcfa8701afa7f545ef971", 1801032, 313),
 	WINGAME1("horobroy", "", "ROBROY.EXE",				"t:78cecfc070a663eedb6118a2a19c0034",  2047746, 313),
 
@@ -2952,6 +2960,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("lingoexpo", "", "Navigator", "4dacf23c1bb75093a882c4fd89dededb", 38, 400),
 	WINGAME1("lingoexpo", "", "NAVIGATR.DIR", "c7bfbd3e1224a1e82a8a98e8edb9f959", 1335612, 400),
+	// Found on Towns System Software v2.1 L51
+	FMTGAME1("lingoexpo", "", "NAVIGATR.DIR", "c47ebf627b9d038ca9a5bd9b9a6c9651", 1335612, 400),
 
 	MACGAME1_l("lvi", "Nº1", "xn--LVI8Mo-ka28a", "7f443f2e63fd497a9ad85b10dc880a91", 384206, Common::FR_FRA, 310),
 	WINGAME1_l("lvi", "Nº1", "LVI.EXE", "65d06b5fef155a2473434571aff5bc29", 634203, Common::FR_FRA, 310),
@@ -3847,13 +3857,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Demo is from covermount of PC Guide (UK) Feb 1997
 	MACGAME1("bht", "",   "A Brief History Of Time 16megs", "8719de9c083aca942fc0e5c0a127b6dc", 486726, 404),
-	MACGAME1_l("bht", "", "Eine kurze Geschichte der Zeit", "8719de9c083aca942fc0e5c0a127b6dc", 486726, Common::DE_DEU, 404),
 	WINGAME2("bht", "",		"BHT.EXE",		"d2f280d5ec355b252ffdadbe19332893", 692381,
 							"PLAY_BHT.DIR", "663acc406405b6fcac7e2d89230c4cc2", 8398, 404),
-	WINDEMO2("bht", "Demo", "BHT.EXE",		"d2f280d5ec355b252ffdadbe19332893", 692381,
-							"PLAY_BHT.DIR", "9417d6ebe716c963a4424a1611aaa2ca", 3522, 404),
+	MACGAME1_l("bht", "", "Eine kurze Geschichte der Zeit", "8719de9c083aca942fc0e5c0a127b6dc", 486726, Common::DE_DEU, 404),
 	WINGAME2_l("bht", "",	"BHT.EXE",		"d2f280d5ec355b252ffdadbe19332893", 692381,
 							"PLAY_BHT.DIR", "a11fe20066d9e84423df6c3ef4966636", 69068, Common::DE_DEU, 404),
+	WINDEMO2("bht", "Demo", "BHT.EXE",		"d2f280d5ec355b252ffdadbe19332893", 692381,
+							"PLAY_BHT.DIR", "9417d6ebe716c963a4424a1611aaa2ca", 3522, 404),
 
 	WINDEMO2t("baseballhits", "Demo", "BASEBALL.EXE", "008d1690b0b764f8a75e4f4c6542b739", 3569928,
 									  "WINDEMO.DIR", "e8e44e90e25c0efe74ddb77df545db1e", 2958900, 400),
@@ -5609,25 +5619,25 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("openingnight", "Demo", "MECC Demos/Opening Night", "rt:0051fe5d492ce27807a1c43798118e05",  285282, 404),
 	WINDEMO1("openingnight", "Demo", "MECCDEMO/OPN.EXE",		 "t:2b31be5e4d57745e1c6859cfff485209", 14762491, 404),
 
-	MACGAME2("operafatal", "",	 "OPERA FATAL",		 "f5033f237ad1b1639fc46d01a82ac380", 285310,
+	MACGAME2("operafatal", "",	 "OPERA FATAL",		 "r:f5033f237ad1b1639fc46d01a82ac380", 285310,
 								 "Opera/SPRINT.Dxr", "3e86f01eeac5fa3349c5177378997a7f", 694912, 400),
 	WINGAME2("operafatal", "",	 "OPERA.EXE",		 "t:1708e82d4b297a1e74fe683f86521dc4", 697739,
 								 "OPERA/SPRINT.DXR", "d:9415903c9259c67731d24a70d9d9e1e0", 694758, 400),
 	MACGAME2_l("operafatal", "", "OPERA FATAL",		 "r:f5033f237ad1b1639fc46d01a82ac380", 285310,
 								 "Opera/SPRINT.Dxr", "f:7055a0b9f2385f9b78f55494c8a010d4", 479518, Common::IT_ITA, 404),
 	// From bugreport #13466, Italian hybrid Mac/Win CD
-	MACGAME2_l("operafatal", "Hybrid release", "OPERA FATAL",		 "f5033f237ad1b1639fc46d01a82ac380", 285310,
-											 "Opera/SPRINT.Dxr", "26c83c0cac1d40e91487e3a142d29733", 479390, Common::IT_ITA, 404),
-	WINGAME2_l("operafatal", "",	 "OPERA.EXE",		 "t:1708e82d4b297a1e74fe683f86521dc4", 697739,
-								 "OPERA/SPRINT.DXR", "d:26c83c0cac1d40e91487e3a142d29733", 479390, Common::IT_ITA, 400),
-
-	MACDEMO1("orgotto", "Demo", "ORGOTTO",	   "r:0c7bbb4b24823e5ab871cb4c1d6f3710", 484095, 404),
-	WINDEMO1("orgotto", "Demo", "ORGOTTO.EXE", "t:46a65dad38808f407277b933b707289e", 760137, 404),
+	MACGAME2_l("operafatal", "Hybrid release", "OPERA FATAL",	   "f5033f237ad1b1639fc46d01a82ac380", 285310,
+											   "Opera/SPRINT.Dxr", "26c83c0cac1d40e91487e3a142d29733", 479390, Common::IT_ITA, 404),
+	WINGAME2_l("operafatal", "",			   "OPERA.EXE",		   "t:1708e82d4b297a1e74fe683f86521dc4", 697739,
+											   "OPERA/SPRINT.DXR", "d:26c83c0cac1d40e91487e3a142d29733", 479390, Common::IT_ITA, 400),
 
 	// Full game is not Director
 	// Found on Oregon Trail (Mac/Win)
-	MACDEMO1("oregontrail2", "Demo", "MECC Demos/Oregon Trail II", "rt:3290f9ad726052f93d2ecb0f9f771fd8", 482582, 404),
-	WINDEMO1("oregontrail2", "Demo", "MECCDEMO/OREGONII.EXE",	   "t:7a24eed984ba064d5f354ebb2bf7fc70", 10288091, 404),
+	MACDEMO1("oregontrail2", "Demo", "Oregon Trail II", "rt:3290f9ad726052f93d2ecb0f9f771fd8", 482582, 404),
+	WINDEMO1("oregontrail2", "Demo", "OREGONII.EXE", "t:7a24eed984ba064d5f354ebb2bf7fc70", 10288091, 404),
+
+	MACDEMO1("orgotto", "Demo", "ORGOTTO",	   "r:0c7bbb4b24823e5ab871cb4c1d6f3710", 484095, 404),
+	WINDEMO1("orgotto", "Demo", "ORGOTTO.EXE", "t:46a65dad38808f407277b933b707289e", 760137, 404),
 
 	// Found on PC Gamer (US) demo discs #1,3,4,6
 	// V10 found on Czech Super Hry III (FMI)
@@ -7457,6 +7467,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("megapuzzlepack", "", "PUZPCK.EXE", "t:0519d6692a747a3595e5a40ecbf42783", 932385,
 								   "BOX1A.Dxr",	 "f:21c4e3829aa31a76e4d50b3c2e4d55de", 408342, 501),
 
+
 	MACGAME1f_l("microphonefiend", "8", "MF8/Microphone Fiend8", "tr:b2229850cb4e8ccb977c2f7c25650d6c", 719785, Common::JA_JPN, 501, GF_DESKTOP|GF_640x480),
 	MACGAME1f_l("microphonefiend", "16", "MF16/Microphone Fiend16", "tr:f2cb0ca9bce3a7fad18ba9f7c8c9f400", 117830, Common::JA_JPN, 501, GF_DESKTOP|GF_640x480),
 
@@ -7626,11 +7637,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// All versions require installation to extract executable
 	MACGAME1("nine", "", "The Last Resort",		"r:957d819f99e30d54f68824ebe3d5d4ae",  730504, 500),
 	// European release
-	WINGAME2("nine", "", "nine_95.exe",			"t:9ad7cf866f886d30da20f1f0bceae082", 1555823,
-						 "LR_DATA/LR_MENU.DIR", "f:2bf898b9439c33ea03d5edfbdd3e4b99", 7094072, 501),
+	// SETUP32/_SETUP.1, InstallShield v3
+	WINGAME2f("nine", "", "nine_95.exe",			"t:9ad7cf866f886d30da20f1f0bceae082", 1555823,
+						 "LR_DATA/LR_MENU.DIR", "f:2bf898b9439c33ea03d5edfbdd3e4b99", 7094072, 501, GF_640x480),
 	// USA release
-	WINGAME2("nine", "", "NINE.EXE",			"t:9ad7cf866f886d30da20f1f0bceae082", 1554473,
-						 "LR_DATA/LR_MENU.DIR", "f:511b38690e3a358df4f9b2ffbd9fc727", 7076132, 501),
+	WINGAME2f("nine", "", "NINE.EXE",			"t:9ad7cf866f886d30da20f1f0bceae082", 1554473,
+						 "LR_DATA/LR_MENU.DIR", "f:511b38690e3a358df4f9b2ffbd9fc727", 7076132, 501, GF_640x480),
 
 	WINGAME2_l("norgesjakten", "Windows 95", "DATA/STARTW95.EXE", "t:5f330f89a31a02dd9ce8c1c62828e73d", 1412717,
 											 "LOGOS.DXR",		  "f:03374db319b1eb2d1a6de1c0913b6c33",   43466, Common::NB_NOR, 501),
@@ -9623,6 +9635,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Also includes two emulators (and a selection of ROMs), which are not Director
 	MACGAME1("intvlives", "", "Intellivision Lives!", "rt:81dedcc0cf0bfb62bc83b9da140387e7",  118022, 702),
 	WINGAME1("intvlives", "", "Inty_Lives.exe",		  "t:494733c3a5311ae6f465d5d2a3fed173",  2725946, 702),
+
+	// Found on Chip 1999-12
+	// Run from Jablko.exe (not Director) which checks that the screen is at least 800x600x16
+	// Later uses GLU32 to run Zobraz.dll which checks that Jablko.exe is running
+	WINGAME1("jablko", "", "Jablko_99.exe", "t:648446f880e8334fdd60597c45ea2fdc", 1085982, 700),
 
 	// 1999 Re-Release
 	// Original version is D4
