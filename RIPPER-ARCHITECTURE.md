@@ -111,8 +111,21 @@
   resumes below y=50.
 - Action dispatch at `0x190b7` maps the nine controls to remote setup, world
   map, inventory, WAC, save, restore, options, help, and quit. The ScummVM
-  toolbar preserves the click/release routing. Action `0x517` now enters the
-  WAC subsystem; the remaining handlers are explicit stubs.
+  toolbar preserves the click/release routing. Action `0x515` and scene-entry
+  action 2 both enter the shared `WorldMap` subsystem; action `0x517` enters
+  WAC, while the remaining handlers are explicit stubs.
+- `DispatchSceneEntryAction` at `0x36892` routes action 2 to the same
+  `HandleSceneSelectionAction` at `0x191e2` used by toolbar action `0x515`.
+  `RunSceneSelectionMenu` at `0x20808` groups the 25 travel-entry flags 20
+  through 44 through the table at `0x20702`, exposing a location when any of
+  its entries is unlocked. The resulting 15 locations use game-text resources
+  100 through 114 for their names and resources 150 through 164 for their
+  destination script patterns. `ResolveHighestSetSelectionFlag` at `0x20394`
+  supplies the highest enabled chapter flag from 1 through 4 to those patterns.
+  The menu loads `worldmap.pcx` as its 640x400 background and advances
+  `worldcel.smk` beside the location chooser. A successful selection returns
+  control code `-3` with the resolved scene script; cancellation leaves the
+  current scene active.
 
 ## WAC
 
