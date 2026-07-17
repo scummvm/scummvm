@@ -151,6 +151,14 @@
   an entry index to a destination. The right-hand panel is therefore
   informational: it has no mouse focus, selection highlight, or direct-travel
   behavior in the original executable.
+- Both travel controls use the shared chooser template at `0x8a392`.
+  `RenderChooserControlRows` at `0x582de` and `RenderChooserTextRow` at
+  `0x58651` restore each row from the underlying `worldmap.pcx` presentation
+  before drawing glyphs, so neither control paints an opaque row background.
+  The normal template at `0x84030` renders palette index 4 (black); chooser
+  `0x604` switches its selected row to the alternate template at `0x84032`,
+  whose glyph color is palette index 254 (red). Deactivated detail control
+  `0x605` always uses the normal black glyph template.
 - Scene action 32 temporarily deactivates the selection presentation, dispatches
   display command `0x14`, and then reactivates selection. Entry `0x14` in
   `g_displayServiceCommandTable` targets `ClearGenericVideoLogicalPage` at
