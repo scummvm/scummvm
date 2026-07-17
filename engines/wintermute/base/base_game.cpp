@@ -2370,6 +2370,18 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// PrepareScreenshot
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "PrepareScreenshot") == 0) {
+		stack->correctParams(0);
+
+		// ignore method, it's used in 'J.U.L.I.A - Among the Stars'
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Screenshot
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Screenshot") == 0) {
@@ -2939,6 +2951,15 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScreenHeight") == 0) {
 		_scValue->setInt(_renderer->getHeight());
+		return _scValue;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// ScreenshotPrepared (RO)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "ScreenshotPrepared") == 0) {
+		// always true, it's used in 'J.U.L.I.A - Among the Stars'
+		_scValue->setBool(true);
 		return _scValue;
 	}
 
