@@ -27,6 +27,7 @@
 
 #include "ripper/detection.h"
 #include "ripper/input.h"
+#include "ripper/modal_dialog.h"
 #include "ripper/ripper.h"
 #include "ripper/script.h"
 #include "ripper/wac.h"
@@ -42,6 +43,9 @@ static const uint32 kPreviewDelayMillis = 27 * kDosTickMillis;
 static const byte kToolbarBorderColor = 0;
 static const byte kToolbarTextColor = 4;
 static const byte kToolbarFillColor = 253;
+static const uint kToolbarHelpActionIndex = 7;
+static const uint kGeneralHelpResourceId = 400;
+static const uint kPromptHelpResourceId = 0x19b;
 
 static const char *const kToolbarHandlerNames[kToolbarActionCount] = {
 	"RunTake2IniSliderSetupMenu",
@@ -338,6 +342,20 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 		debugC(1, kDebugSaveLoad,
 			"Ripper: toolbar RunSaveRestoreSlotMenu mode=%s completed=%d",
 			saving ? "save" : "restore", completed);
+		return;
+	}
+	if (actionIndex == kToolbarHelpActionIndex) {
+		// DispatchFrontEndAction at 0x190b7 selects resource 0x19b while
+		// SceneRuntime+0x189 bit 0x20 marks a prompt/chooser as active;
+		// otherwise it presents the general help resource 400.
+		const bool promptActive = _engine->getScripts()->hasActivePrompt();
+		const uint resourceId = promptActive ? kPromptHelpResourceId : kGeneralHelpResourceId;
+		debugC(1, kDebugScene,
+			"Ripper: toolbar action=8 id=0x51b label='%s' entering "
+			"RunModalSelectionTableDialogWithRestore resource=%u promptActive=%d",
+			_actions[actionIndex].label.c_str(), resourceId, promptActive);
+		if (!_engine->getModalDialog()->run(resourceId))
+			warning("Ripper: toolbar help action failed resource=%u", resourceId);
 		return;
 	}
 	debugC(1, kDebugScene,

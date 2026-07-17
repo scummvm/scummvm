@@ -169,6 +169,7 @@ public:
 	void drawBriefingOverlay();
 	bool updateInteractiveCursor(const Common::Point &point, bool *failed = nullptr);
 	bool openWorldMap();
+	bool hasActivePrompt() const;
 	bool hasPendingSceneTransition() const { return !_pendingSceneMember.empty(); }
 	bool canSaveGame() const;
 	bool syncGame(Common::Serializer &serializer);
