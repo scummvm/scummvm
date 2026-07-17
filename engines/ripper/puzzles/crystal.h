@@ -70,7 +70,7 @@ private:
 	RipperEngine *_engine;
 	Common::Array<BitmapAssetFrame> _placedFrames;
 	Common::Array<BitmapAssetFrame> _trayFrames;
-	Common::Array<BitmapAssetFrame> _selectableFrames;
+	Common::Array<BitmapAssetFrame> _blankingFrames;
 	Common::Array<byte> _backgroundPixels;
 	Common::Array<byte> _backgroundPalette;
 	Common::Array<byte> _puzzlePalette;

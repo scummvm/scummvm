@@ -306,8 +306,10 @@
   display's transposed axis order. The tray-piece table at `0x8429c` supplies
   display-relative Y values and the table at `0x842bc` supplies X values; the
   scene origin `g_8a1ec` is added to Y. Each piece control uses its `CRYSB`
-  bitmap as a pixel mask, selects cursor 16 on hover, and dispatches control
-  IDs `0x6d6` through `0x6e5` into the drag overlay. The grid and tray-return
+  blanking bitmap as a pixel mask, selects cursor 16 on hover, and dispatches
+  control IDs `0x6d6` through `0x6e5` into the drag overlay. Starting a drag
+  blits `CRYSB` over the original tray position and presents the moving `CRYSP`
+  piece; returning it to the tray restores `CRYST`. The grid and tray-return
   controls use the same 50-pixel scene origin, so rendering, selection, and
   dropping share one physical coordinate space in ScummVM.
 - `RunModalSelectionTableDialogWithRestore` at `0x1f7f8` snapshots the active

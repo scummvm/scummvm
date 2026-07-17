@@ -139,13 +139,13 @@ bool CrystalPuzzle::loadPieceSet(const char *prefix,
 bool CrystalPuzzle::loadAssets() {
 	if (!loadPieceSet("crysp", _placedFrames) ||
 			!loadPieceSet("cryst", _trayFrames) ||
-			!loadPieceSet("crysb", _selectableFrames))
+			!loadPieceSet("crysb", _blankingFrames))
 		return false;
 
-	_puzzlePalette = _selectableFrames.front().palette;
+	_puzzlePalette = _blankingFrames.front().palette;
 	debugC(1, kDebugPuzzles,
-		"Ripper: loaded crystal puzzle assets placed=%u tray=%u selectable=%u",
-		_placedFrames.size(), _trayFrames.size(), _selectableFrames.size());
+		"Ripper: loaded crystal puzzle assets placed=%u tray=%u blanking=%u",
+		_placedFrames.size(), _trayFrames.size(), _blankingFrames.size());
 	return true;
 }
 
@@ -189,15 +189,18 @@ void CrystalPuzzle::render() {
 		memcpy(screen->getBasePtr(0, y), _backgroundPixels.data() + y * screen->w, screen->w);
 	byte *pixels = (byte *)screen->getPixels();
 	for (uint piece = 0; piece < kPieceCount; ++piece) {
-		if ((int)piece == _draggedPiece)
-			continue;
+		const Common::Point tray = trayPosition(piece);
+		if (_pieceCells[piece] < 0 && (int)piece != _draggedPiece) {
+			const BitmapAssetFrame &frame = _trayFrames[piece];
+			drawFrame(pixels, screen->pitch, frame, tray.x, tray.y);
+		} else {
+			const BitmapAssetFrame &frame = _blankingFrames[piece];
+			drawFrame(pixels, screen->pitch, frame, tray.x, tray.y);
+		}
+
 		if (_pieceCells[piece] >= 0) {
 			const BitmapAssetFrame &frame = _placedFrames[piece];
 			const Common::Point position = gridPosition(_pieceCells[piece], frame);
-			drawFrame(pixels, screen->pitch, frame, position.x, position.y);
-		} else {
-			const BitmapAssetFrame &frame = _selectableFrames[piece];
-			const Common::Point position = trayPosition(piece);
 			drawFrame(pixels, screen->pitch, frame, position.x, position.y);
 		}
 	}
@@ -217,7 +220,7 @@ int CrystalPuzzle::findTrayPiece(const Common::Point &point) const {
 	for (int piece = kPieceCount - 1; piece >= 0; --piece) {
 		if (piece == _draggedPiece || _pieceCells[piece] >= 0)
 			continue;
-		const BitmapAssetFrame &frame = _selectableFrames[piece];
+		const BitmapAssetFrame &frame = _blankingFrames[piece];
 		const Common::Point position = trayPosition(piece);
 		const int x = point.x - position.x;
 		const int y = point.y - position.y;
