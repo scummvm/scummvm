@@ -298,6 +298,13 @@
   returns it to the tray. Escape exits without setting the completion flag;
   F1 invokes modal selection table `0x19e` through
   `RunModalSelectionTableDialogWithRestore`.
+- `RunModalSelectionTableDialogWithRestore` at `0x1f7f8` snapshots the active
+  chooser state, resolves title resource `0x42` (`HELP`) and the caller's body
+  resource, then calls `RunModalTextDialog` at `0x58ef2`. The shared dialog uses
+  the `MENUB0` through `MENUB14` skin and `SMALL.FNT`, centers a 300-pixel text
+  area, wraps at most ten visible 14-pixel rows, drains pending keyboard input,
+  scrolls longer text with the navigation keys, and closes on Escape or Enter
+  before restoring the underlying indexed framebuffer and palette.
 - `RunCrystalPiecePlacementPuzzleScene` reads the persistent puzzle level. Level
   1 starts piece 0 in cell 9 and piece 1 in cell 44, with an 18-DOS-tick pause
   between their placement; level 2 starts piece 0 in cell 21; level 3 starts

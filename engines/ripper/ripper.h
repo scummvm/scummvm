@@ -31,6 +31,7 @@ class CursorManager;
 class InputManager;
 class MediaPlayer;
 class Milestones;
+class ModalDialogManager;
 class ResourceManager;
 class ScriptManager;
 class ToolbarManager;
@@ -56,6 +57,7 @@ public:
 	InputManager *getInput() const { return _input; }
 	MediaPlayer *getMedia() const { return _media; }
 	Milestones *getMilestones() const { return _milestones; }
+	ModalDialogManager *getModalDialog() const { return _modalDialog; }
 	ResourceManager *getResources() const { return _resources; }
 	ScriptManager *getScripts() const { return _scripts; }
 	ToolbarManager *getToolbar() const { return _toolbar; }
@@ -71,6 +73,7 @@ private:
 	InputManager *_input;
 	MediaPlayer *_media;
 	Milestones *_milestones;
+	ModalDialogManager *_modalDialog;
 	ResourceManager *_resources;
 	ScriptManager *_scripts;
 	ToolbarManager *_toolbar;
