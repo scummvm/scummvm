@@ -337,8 +337,25 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 bool ModalDialogManager::run(uint bodyResourceId, bool retainSceneCursorRegions) {
 	const Common::String &title = resourceString(kModalTitleResourceId);
 	const Common::String &body = resourceString(bodyResourceId);
-	if (!_initialized || title.empty() || body.empty() || !captureDisplay()) {
+	if (title.empty() || body.empty()) {
 		warning("Ripper: could not present modal text resource=%u", bodyResourceId);
+		return false;
+	}
+	return runTextInternal(title, body, bodyResourceId, "game text",
+		retainSceneCursorRegions);
+}
+
+bool ModalDialogManager::runText(const Common::String &title,
+		const Common::String &body, const char *source,
+		bool retainSceneCursorRegions) {
+	return runTextInternal(title, body, 0, source, retainSceneCursorRegions);
+}
+
+bool ModalDialogManager::runTextInternal(const Common::String &title,
+		const Common::String &body, uint bodyResourceId, const char *source,
+		bool retainSceneCursorRegions) {
+	if (!_initialized || title.empty() || !captureDisplay()) {
+		warning("Ripper: could not present modal text source='%s'", source);
 		return false;
 	}
 
@@ -360,8 +377,8 @@ bool ModalDialogManager::run(uint bodyResourceId, bool retainSceneCursorRegions)
 	applyModalPalette();
 	drawDialog(title, lines, firstVisible, visibleRows, bounds);
 	debugC(1, kDebugScene,
-		"Ripper: entered modal text dialog resource=%u title='%s' lines=%u bounds=%d,%d,%d,%d",
-		bodyResourceId, title.c_str(), lines.size(), bounds.left, bounds.top,
+		"Ripper: entered modal text dialog source='%s' resource=%u title='%s' lines=%u bounds=%d,%d,%d,%d",
+		source, bodyResourceId, title.c_str(), lines.size(), bounds.left, bounds.top,
 		bounds.width(), bounds.height());
 
 	bool active = true;
@@ -406,8 +423,8 @@ bool ModalDialogManager::run(uint bodyResourceId, bool retainSceneCursorRegions)
 				firstVisible = nextFirst;
 				redraw = true;
 				debugC(2, kDebugScene,
-					"Ripper: scrolled modal text resource=%u firstLine=%u visibleRows=%u",
-					bodyResourceId, firstVisible, visibleRows);
+					"Ripper: scrolled modal text source='%s' resource=%u firstLine=%u visibleRows=%u",
+					source, bodyResourceId, firstVisible, visibleRows);
 			}
 		}
 		const MouseState mouse = _engine->getInput()->publishMouseState();
@@ -421,8 +438,8 @@ bool ModalDialogManager::run(uint bodyResourceId, bool retainSceneCursorRegions)
 		if ((int)nextModalCursorActive != modalCursorRegion) {
 			modalCursorRegion = nextModalCursorActive;
 			debugC(2, kDebugCursor,
-				"Ripper: modal cursor region=%s resource=%u point=%d,%d bounds=%d,%d,%d,%d",
-				modalCursorRegion != 0 ? "dialog" : "scene", bodyResourceId,
+				"Ripper: modal cursor region=%s source='%s' resource=%u point=%d,%d bounds=%d,%d,%d,%d",
+				modalCursorRegion != 0 ? "dialog" : "scene", source, bodyResourceId,
 				mouse.position.x, mouse.position.y, bounds.left, bounds.top,
 				bounds.width(), bounds.height());
 		}
@@ -438,9 +455,9 @@ bool ModalDialogManager::run(uint bodyResourceId, bool retainSceneCursorRegions)
 				firstVisible = nextFirst;
 				redraw = true;
 				debugC(3, kDebugScene,
-					"Ripper: mouse-wheel scrolled modal text resource=%u "
+					"Ripper: mouse-wheel scrolled modal text source='%s' resource=%u "
 					"delta=%d firstLine=%u visibleRows=%u",
-					bodyResourceId, mouse.wheel, firstVisible, visibleRows);
+					source, bodyResourceId, mouse.wheel, firstVisible, visibleRows);
 			}
 		}
 		if (redraw)
@@ -457,7 +474,8 @@ bool ModalDialogManager::run(uint bodyResourceId, bool retainSceneCursorRegions)
 	if (retainSceneCursorRegions)
 		_engine->getScripts()->updateModalSceneCursor(cursorPoint);
 	debugC(1, kDebugScene,
-		"Ripper: exited modal text dialog resource=%u", bodyResourceId);
+		"Ripper: exited modal text dialog source='%s' resource=%u",
+		source, bodyResourceId);
 	return true;
 }
 

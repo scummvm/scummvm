@@ -33,7 +33,8 @@ public:
 	enum Result {
 		kExited,
 		kSolved,
-		kLoadFailed
+		kLoadFailed,
+		kExitWac
 	};
 
 	explicit BrokenMugPuzzle(RipperEngine *engine);
