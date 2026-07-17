@@ -1110,6 +1110,23 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 					"Ripper: cleared active scene display from scene action 32");
 				break;
 			}
+			if (action == kSceneActionKrProgram) {
+				// DispatchKSceneActionBand at 0x36e84 preserves the Cyber menu's
+				// palette, UI controls, chooser registry, and audio table around
+				// RunSceneScriptLoop("kr", 0, 0).
+				debugC(1, kDebugCyber,
+					"Ripper: dispatching Cyber program action=%u name='%s' argument=%u activeScript='%s' frame=%u",
+					action, sceneActionName(action), argument,
+					_ba0.getMemberName().c_str(), _activeBa0Frame);
+				const CyberManager::Result cyberResult =
+					_engine->getCyber()->runProgram(action, "kr", argument);
+				debugC(cyberResult == CyberManager::kExited ? 1 : 2, kDebugCyber,
+					"Ripper: Cyber program action=%u script='kr.run' completed result=%d restoredScript='%s' frame=%u",
+					action, cyberResult, _ba0.getMemberName().c_str(), _activeBa0Frame);
+				if (cyberResult == CyberManager::kLoadFailed)
+					return false;
+				break;
+			}
 			if (action == kSceneActionTerminateRuntime) {
 				if (!_cyberActive)
 					return false;
