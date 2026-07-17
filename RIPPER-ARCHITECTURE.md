@@ -148,6 +148,15 @@
   ScummVM performs the same integer transform whenever a new indexed media
   palette is installed and expands the resulting six-bit components to the
   backend's eight-bit palette representation.
+- The Remote Control loads `REMOTE.SMK` into a 216-by-148 modal region at
+  physical (212,126), then overlays `REMOTE0.BBM` through `REMOTE5.BBM` and
+  the `5pt_font.fnt` label. The six controls return Escape, defaults, previous,
+  next, increase, and decrease. Left/right wrap through the eight sliders;
+  Up/`+` and Down/`-` follow the descriptor's signed step. F1 opens help
+  resource `0x19d`. The selected setting is represented by ten ticks at
+  physical (278,171), using palette index 254 for filled ticks and 252 for
+  empty ticks. Changes take effect immediately and the settings are saved when
+  the modal exits, matching `RunTake2IniSliderSetupMenu` at `0x1989b`.
 - `DispatchSceneEntryAction` at `0x36892` routes action 2 to the same
   `HandleSceneSelectionAction` at `0x191e2` used by toolbar action `0x515`.
   `RunSceneSelectionMenu` at `0x20808` groups the 25 travel-entry flags 20

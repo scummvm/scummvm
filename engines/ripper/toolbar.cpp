@@ -27,6 +27,7 @@
 
 #include "ripper/detection.h"
 #include "ripper/input.h"
+#include "ripper/remote_control.h"
 #include "ripper/ripper.h"
 #include "ripper/script.h"
 #include "ripper/wac.h"
@@ -59,13 +60,18 @@ static const char *const kToolbarHandlerNames[kToolbarActionCount] = {
 
 ToolbarManager::ToolbarManager(RipperEngine *engine) : _sessionStartMillis(0), _lastFrameMillis(0),
 		_hoveredAction(-1), _pressedAction(-1), _active(false), _previewEnabled(false),
-		_engine(engine) {
+		_engine(engine), _remoteControl(new RemoteControlManager(engine)) {
+}
+
+ToolbarManager::~ToolbarManager() {
+	delete _remoteControl;
 }
 
 bool ToolbarManager::initialize(ResourceManager &resources) {
 	Common::Array<Common::String> gameText;
 	if (!resources.loadGameText(gameText) || gameText.size() < kToolbarActionCount ||
-		!resources.loadInterfaceBitmapFont("7pt_font.fnt", _font))
+		!resources.loadInterfaceBitmapFont("7pt_font.fnt", _font) ||
+		!_remoteControl->initialize(resources))
 		return false;
 
 	_actions.clear();
@@ -310,6 +316,14 @@ void ToolbarManager::drawTooltip(const Common::Point &point) {
 }
 
 void ToolbarManager::dispatchAction(uint actionIndex) {
+	if (actionIndex == 0) {
+		debugC(1, kDebugGeneral,
+			"Ripper: toolbar action=1 id=0x514 label='%s' entering RunTake2IniSliderSetupMenu",
+			_actions[actionIndex].label.c_str());
+		if (!_remoteControl->run())
+			warning("Ripper: Remote Control action failed");
+		return;
+	}
 	if (actionIndex == kToolbarExitActionIndex && _engine->getScripts()->isCyberActive()) {
 		// DispatchFrontEndAction at 0x190b7 bypasses the normal binary prompt
 		// for action 0x51c while the Cyber transition flag is set.

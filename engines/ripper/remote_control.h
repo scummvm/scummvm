@@ -18,67 +18,56 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef RIPPER_TOOLBAR_H
-#define RIPPER_TOOLBAR_H
+#ifndef RIPPER_REMOTE_CONTROL_H
+#define RIPPER_REMOTE_CONTROL_H
 
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/str.h"
 
 #include "ripper/resources.h"
+#include "ripper/settings.h"
 
 namespace Ripper {
 
 class ResourceManager;
-class RemoteControlManager;
 class RipperEngine;
-struct MouseState;
 
-class ToolbarManager {
+class RemoteControlManager {
 public:
-	explicit ToolbarManager(RipperEngine *engine);
-	~ToolbarManager();
+	explicit RemoteControlManager(RipperEngine *engine);
 
 	bool initialize(ResourceManager &resources);
-	void applySharedPalettePatch(byte *palette, uint colorCount);
-	bool service(const MouseState &mouse);
-	void leave();
+	bool run();
 
 private:
-	struct Action {
-		BitmapAssetSequence sequence;
-		Common::String label;
+	struct Control {
+		BitmapAssetFrame frame;
 		Common::Rect bounds;
-		uint frameIndex;
-
-		Action() : frameIndex(0) {}
+		uint16 command;
 	};
 
-	void enter(uint32 now);
-	int findAction(const Common::Point &point) const;
-	void drawIcons();
-	void drawTooltip(const Common::Point &point);
-	void removeTooltip();
-	void dispatchAction(uint actionIndex);
-	uint measureText(const Common::String &text) const;
-	void drawText(byte *screen, uint pitch, int x, int y, const Common::String &text) const;
+	bool captureDisplay();
+	void restoreDisplay();
+	void applyPalette();
+	void drawControls() const;
+	void drawBitmap(byte *screen, uint pitch, const BitmapAssetFrame &frame,
+		int x, int y) const;
+	void drawText(byte *screen, uint pitch, int x, int y,
+		const Common::String &text) const;
+	int findControl(const Common::Point &point) const;
+	bool handleCommand(uint16 command, uint &selectedSlider);
 
-	Common::Array<Action> _actions;
-	Common::Array<byte> _sharedPalette;
-	BitmapFontAsset _font;
-	Common::Array<byte> _topBacking;
-	Common::Array<byte> _tooltipBacking;
-	Common::Rect _tooltipBounds;
-	uint32 _sessionStartMillis;
-	uint32 _lastFrameMillis;
-	int _hoveredAction;
-	int _pressedAction;
-	bool _active;
-	bool _previewEnabled;
 	RipperEngine *_engine;
-	RemoteControlManager *_remoteControl;
+	BitmapFontAsset _font;
+	Common::Array<Control> _controls;
+	Common::Array<Common::String> _labels;
+	Common::Array<byte> _savedPixels;
+	Common::Array<byte> _savedPalette;
+	Common::Array<byte> _sourcePalette;
+	bool _initialized;
 };
 
 } // End of namespace Ripper
 
-#endif // RIPPER_TOOLBAR_H
+#endif // RIPPER_REMOTE_CONTROL_H

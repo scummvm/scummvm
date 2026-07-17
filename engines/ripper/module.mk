@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	puzzles/calculator.o \
 	puzzles/crystal.o \
 	puzzles/rolodex.o \
+	remote_control.o \
 	resources.o \
 	ripper.o \
 	saveload.o \
