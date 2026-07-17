@@ -136,9 +136,10 @@ void Credits::run() {
 
 void Credits::drawTextSurface(uint id) {
 	Graphics::ManagedSurface image;
+	const uint bpp = g_nancy->getGameType() >= kGameTypeNancy13 ? 32 : 16;
 	uint surfaceHeight = _textSurface.getBounds().height();
 	g_nancy->_resource->loadImage(_creditsData->textNames[id], image);
-	_fullTextSurface.create(image.w, image.h + (surfaceHeight * 2), g_nancy->_graphics->getInputPixelFormat());
+	_fullTextSurface.create(image.w, image.h + (surfaceHeight * 2), g_nancy->_graphics->getInputPixelFormat(bpp));
 	_fullTextSurface.setTransparentColor(g_nancy->_graphics->getTransColor());
 	_fullTextSurface.clear(_fullTextSurface.getTransparentColor());
 	_fullTextSurface.blitFrom(image, Common::Point(0, surfaceHeight));
