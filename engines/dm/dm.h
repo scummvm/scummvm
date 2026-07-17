@@ -209,6 +209,7 @@ public:
 	void entranceDrawCredits();
 	void fuseSequence(); // @ F0446_STARTEND_FuseSequence
 	Common::Language getGameLanguage();
+	Common::Platform getPlatform() const { return _gameVersion->_desc.platform; }
 
 	Direction turnDirRight(int16 dir); // @ M17_NEXT
 	Direction turnDirLeft(int16 dir); // @ M19_PREVIOUS
