@@ -37,6 +37,7 @@
 #include "engines/nancy/action/puzzle/assemblypuzzle.h"
 #include "engines/nancy/action/puzzle/bballpuzzle.h"
 #include "engines/nancy/action/puzzle/beadpuzzle.h"
+#include "engines/nancy/action/puzzle/blockspuzzle.h"
 #include "engines/nancy/action/puzzle/boardgamepuzzle.h"
 #include "engines/nancy/action/puzzle/bulpuzzle.h"
 #include "engines/nancy/action/puzzle/bombpuzzle.h"
@@ -517,11 +518,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		// TODO: not yet implemented for Nancy13
 		return nullptr;
 	case 172:
-		// BlocksPuzzle, new in Nancy13
-		// TODO: not yet implemented
-		return nullptr;
+		return new BlocksPuzzle();
 	case 173:
-		// PegsPuzzle (peg solitaire), new in Nancy13
 		return new PegsPuzzle();
 	case 174:
 		// ScalePuzzle (balance scale), new in Nancy13

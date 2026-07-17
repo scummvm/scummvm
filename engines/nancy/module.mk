@@ -21,6 +21,7 @@ MODULE_OBJS = \
   action/puzzle/assemblypuzzle.o \
   action/puzzle/bballpuzzle.o \
   action/puzzle/beadpuzzle.o \
+  action/puzzle/blockspuzzle.o \
   action/puzzle/boardgamepuzzle.o \
   action/puzzle/bulpuzzle.o \
   action/puzzle/bombpuzzle.o \
