@@ -38,8 +38,8 @@ void Sound::playMusic(const char *path, int loops) {
 }
 
 void Sound::playSfxMusic(int num) {
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _sfxStream, -1, 255, 0, DisposeAfterUse::YES, true);
 	_sfx->play(_mixer->getOutputRate());
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _sfxStream, -1, 255, 0, DisposeAfterUse::YES, true);
 }
 
 void Sound::playAifcMusic(const char *path, uint32 offset) {
