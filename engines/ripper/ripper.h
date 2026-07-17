@@ -28,6 +28,7 @@ struct ADGameDescription;
 namespace Ripper {
 
 class CursorManager;
+class CyberManager;
 class InputManager;
 class MediaPlayer;
 class Milestones;
@@ -54,6 +55,7 @@ public:
 	bool canSaveAutosaveCurrently() override { return false; }
 	int getAutosaveSlot() const override { return 20; }
 	CursorManager *getCursor() const { return _cursor; }
+	CyberManager *getCyber() const { return _cyber; }
 	InputManager *getInput() const { return _input; }
 	MediaPlayer *getMedia() const { return _media; }
 	Milestones *getMilestones() const { return _milestones; }
@@ -70,6 +72,7 @@ private:
 
 	const ADGameDescription *const _gameDescription;
 	CursorManager *_cursor;
+	CyberManager *_cyber;
 	InputManager *_input;
 	MediaPlayer *_media;
 	Milestones *_milestones;

@@ -31,6 +31,7 @@
 
 #include "ripper/detection.h"
 #include "ripper/cursor.h"
+#include "ripper/cyber.h"
 #include "ripper/input.h"
 #include "ripper/media.h"
 #include "ripper/milestones.h"
@@ -51,8 +52,13 @@ namespace Ripper {
 static const uint kToolbarCursor = 14;
 static const uint kDialogueCursor = 16;
 static const uint16 kHelpCommand = 0x3b00;
+static const uint16 kCyberLeftCommand = 0x4b00;
+static const uint16 kCyberRightCommand = 0x4d00;
+static const uint16 kCyberChooseCommand = 0x0d;
+static const uint16 kCyberEscapeCommand = 0x1b;
 static const uint kGeneralHelpResource = 400;
 static const uint kPromptHelpResource = 0x19b;
+static const uint kCyberHelpResource = 0x1a4;
 static const int kSceneInteractionOriginY = 50;
 
 static const uint32 kScriptHeaderSize = 0xe9;
@@ -439,14 +445,22 @@ bool CompiledScript::validateCallbacks() const {
 ScriptManager::ScriptManager(RipperEngine *engine) : _engine(engine), _activeBa0Frame(0),
 		_hoveredBa0Interaction(-1),
 		_awaitingBa0Interaction(false), _resumeLoadedPresentation(false),
-		_clearPreservedAudioOnTransition(false) {
+		_clearPreservedAudioOnTransition(false), _cyberActive(false),
+		_cyberExitRequested(false), _cyberKeyboardCommand(0) {
 	_briefing = new BriefingManager(engine);
 	_dialogue = new DialogueManager();
 }
 
 bool ScriptManager::canSaveGame() const {
-	return _awaitingBa0Interaction && _pendingSceneMember.empty() &&
+	return !_cyberActive && _awaitingBa0Interaction && _pendingSceneMember.empty() &&
 		_activeBa0Frame < _ba0.getFrames().size();
+}
+
+void ScriptManager::requestCyberExit(const char *source) {
+	if (!_cyberActive)
+		return;
+	_cyberExitRequested = true;
+	debugC(1, kDebugCyber, "Ripper: Cyber nested runtime exit requested source=%s", source);
 }
 
 void ScriptManager::logRuntimeFailure(const char *reason) const {
@@ -575,10 +589,11 @@ bool ScriptManager::showHelp(const char *source) {
 	// PollInteractionAndResolveSelection at 0x13c8d and DispatchFrontEndAction
 	// at 0x190b7 use the same prompt-state branch for F1 and toolbar Help.
 	const bool promptActive = hasActivePrompt();
-	const uint resourceId = promptActive ? kPromptHelpResource : kGeneralHelpResource;
+	const uint resourceId = _cyberActive ? kCyberHelpResource :
+		(promptActive ? kPromptHelpResource : kGeneralHelpResource);
 	debugC(1, kDebugScene,
-		"Ripper: opening scene help source=%s resource=%u promptActive=%d",
-		source, resourceId, promptActive);
+		"Ripper: opening scene help source=%s resource=%u promptActive=%d cyberActive=%d",
+		source, resourceId, promptActive, _cyberActive);
 	_engine->getCursor()->setVisible(true);
 	return _engine->getModalDialog()->run(resourceId, true);
 }
@@ -1059,6 +1074,15 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 					return false;
 				break;
 			}
+			if (action == kSceneActionCyberMenu) {
+				const CyberManager::Result cyberResult = _engine->getCyber()->run();
+				debugC(1, kDebugCyber,
+					"Ripper: Cyber menu scene action completed result=%d",
+					cyberResult);
+				if (cyberResult == CyberManager::kLoadFailed)
+					return false;
+				break;
+			}
 			if (action == kSceneActionCrystalPuzzle) {
 				CrystalPuzzle puzzle(_engine);
 				const CrystalPuzzle::Result puzzleResult = puzzle.run(argument);
@@ -1067,6 +1091,13 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 					puzzleResult, argument);
 				if (puzzleResult == CrystalPuzzle::kLoadFailed)
 					return false;
+				break;
+			}
+			if (action == kSceneActionNoOp) {
+				// DispatchSceneEntryAction at 0x36892 has an explicit action-31
+				// branch which returns without changing the active runtime.
+				debugC(3, kDebugCyber,
+					"Ripper: Cyber scene action 31 completed as original no-op");
 				break;
 			}
 			if (action == kSceneActionClearDisplay) {
@@ -1078,6 +1109,13 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				debugC(2, kDebugScene,
 					"Ripper: cleared active scene display from scene action 32");
 				break;
+			}
+			if (action == kSceneActionTerminateRuntime) {
+				if (!_cyberActive)
+					return false;
+				requestCyberExit("scene-action-9999");
+				result = -4;
+				return true;
 			}
 			if (action != kSceneActionBriefing) {
 				warning("Ripper: unsupported scene action %u ('%s') in '%s' at 0x%x",
@@ -1346,6 +1384,63 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 	return true;
 }
 
+bool ScriptManager::serviceCyberKeyboardCommand() {
+	const uint16 command = _cyberKeyboardCommand;
+	_cyberKeyboardCommand = 0;
+	if (!_cyberActive || command == 0)
+		return true;
+	if (command == kCyberEscapeCommand) {
+		requestCyberExit("keyboard-escape");
+		_awaitingBa0Interaction = false;
+		_engine->getCursor()->setVisible(false);
+		return true;
+	}
+	if (!_awaitingBa0Interaction || _activeBa0Frame >= _ba0.getFrames().size())
+		return false;
+
+	const char *label = command == kCyberLeftCommand ? "left" :
+		(command == kCyberRightCommand ? "right" : "choose");
+	const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
+	const ScriptInteraction *interaction = nullptr;
+	uint interactionIndex = 0;
+	for (uint relativeIndex = 0; relativeIndex < frame.interactionCount; ++relativeIndex) {
+		const uint candidateIndex = frame.firstInteractionIndex + relativeIndex;
+		if (relativeIndex < _activeBa0InteractionEnabled.size() &&
+				_activeBa0InteractionEnabled[relativeIndex] &&
+				candidateIndex < _ba0.getInteractions().size() &&
+				_ba0.getInteractions()[candidateIndex].label.equalsIgnoreCase(label)) {
+			interaction = &_ba0.getInteractions()[candidateIndex];
+			interactionIndex = candidateIndex;
+			break;
+		}
+	}
+	if (!interaction || interaction->callbackOffset == 0) {
+		warning("Ripper: Cyber keyboard command 0x%04x has no '%s' interaction in frame=%u",
+			command, label, _activeBa0Frame);
+		return false;
+	}
+
+	int result = 0;
+	uint nextFrame = _activeBa0Frame;
+	debugC(2, kDebugCyber,
+		"Ripper: Cyber keyboard command=0x%04x interaction=%u label='%s' callback=0x%x",
+		command, interactionIndex, interaction->label.c_str(), interaction->callbackOffset);
+	if (!executeCallback(_ba0, interaction->callbackOffset, result, &nextFrame))
+		return false;
+	_awaitingBa0Interaction = false;
+	_engine->getCursor()->setVisible(false);
+	_hoveredBa0Interaction = -1;
+	if (result == -4 && _cyberExitRequested)
+		return true;
+	if (result != -2) {
+		warning("Ripper: Cyber keyboard interaction=%u returned unexpected result %d",
+			interactionIndex, result);
+		return false;
+	}
+	_engine->getMedia()->resetSceneAudioTriggers();
+	return advanceBa0ToFrame(nextFrame);
+}
+
 bool ScriptManager::serviceScene() {
 	if (_resumeLoadedPresentation) {
 		_resumeLoadedPresentation = false;
@@ -1361,6 +1456,10 @@ bool ScriptManager::serviceScene() {
 			return performPendingSceneTransition();
 	}
 	const MouseState mouse = _engine->getInput()->publishMouseState();
+	if (_cyberExitRequested)
+		return true;
+	if (_cyberKeyboardCommand != 0)
+		return serviceCyberKeyboardCommand();
 	if (_engine->getInput()->peekKey() == kHelpCommand) {
 		_engine->getInput()->consumeKey();
 		if (!showHelp("scene"))
@@ -1478,6 +1577,12 @@ bool ScriptManager::serviceScene() {
 			_hoveredBa0Interaction = -1;
 			return performPendingSceneTransition();
 		}
+		if (result == -4 && _cyberActive && _cyberExitRequested) {
+			_awaitingBa0Interaction = false;
+			_engine->getCursor()->setVisible(false);
+			_hoveredBa0Interaction = -1;
+			return true;
+		}
 		if (result != -2) {
 			warning("Ripper: active scene script='%s' interaction=%u returned unexpected result %d",
 				_ba0.getMemberName().c_str(), hoveredInteractionIndex, result);
@@ -1509,6 +1614,17 @@ void ScriptManager::drawBriefingOverlay() {
 }
 
 bool ScriptManager::updateInteractiveCursor(const Common::Point &point, bool *failed) {
+	if (_cyberActive && _engine->getInput()->hasPendingKey()) {
+		const uint16 command = _engine->getInput()->peekKey();
+		if (command == kCyberLeftCommand || command == kCyberRightCommand ||
+				command == kCyberChooseCommand || command == kCyberEscapeCommand) {
+			_cyberKeyboardCommand = _engine->getInput()->consumeKey();
+			debugC(3, kDebugCyber,
+				"Ripper: captured Cyber keyboard command=0x%04x frame=%u",
+				_cyberKeyboardCommand, _activeBa0Frame);
+			return false;
+		}
+	}
 	const BriefingServiceResult briefingResult =
 		_briefing->service(_engine->getInput()->peekMouseState());
 	if (failed)
