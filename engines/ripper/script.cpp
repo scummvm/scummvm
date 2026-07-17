@@ -558,6 +558,13 @@ ScriptManager::~ScriptManager() {
 	delete _briefing;
 }
 
+bool ScriptManager::hasActivePrompt() const {
+	// DispatchFrontEndAction at 0x190b7 selects contextual help while
+	// SceneRuntime+0x189 bit 0x20 is set. HandleSceneEntryChoiceListLifecycle
+	// sets that bit for the choice list currently modeled by DialogueManager.
+	return _dialogue->isPending();
+}
+
 bool ScriptManager::initialize(ResourceManager &resources) {
 	return _briefing->initialize(resources) &&
 		_dialogue->initialize(resources) &&
