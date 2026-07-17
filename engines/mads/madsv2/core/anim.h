@@ -299,9 +299,10 @@ struct SegmentInter {
 	byte spawn[AA_MAX_SPAWNED];
 	int16 spawn_frame[AA_MAX_SPAWNED];
 	byte sound;
+	//byte padding;
 	int16 sound_frame;
 
-	static constexpr size_t SIZE = 5 * 2 + AA_MAX_SPAWNED + AA_MAX_SPAWNED * 2 + 1 + 2;
+	static constexpr size_t SIZE = 5 * 2 + AA_MAX_SPAWNED + AA_MAX_SPAWNED * 2 + 2 + 2;
 	void load(Common::SeekableReadStream *src);
 };
 typedef SegmentInter *SegmentInterPtr;

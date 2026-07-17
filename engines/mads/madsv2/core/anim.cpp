@@ -92,7 +92,9 @@ void SegmentInter::load(Common::SeekableReadStream *src) {
 	src->readMultipleLE(probability, num_images, first_image, last_image, counter);
 	src->read(spawn, AA_MAX_SPAWNED);
 	src->readMultipleLE(spawn_frame);
-	src->readMultipleLE(sound, sound_frame);
+	sound = src->readByte();
+	src->skip(1);
+	sound_frame = src->readSint16LE();
 }
 
 
