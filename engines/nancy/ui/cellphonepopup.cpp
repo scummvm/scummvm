@@ -53,7 +53,8 @@ public:
 
 	void render(uint width, uint height, uint32 transColor,
 				const Common::String &text, uint fontID) {
-		initSurfaces(width, height, g_nancy->_graphics->getInputPixelFormat(),
+		const uint bpp = g_nancy->getGameType() >= kGameTypeNancy13 ? 32 : 16;
+		initSurfaces(width, height, g_nancy->_graphics->getInputPixelFormat(bpp),
 						transColor, transColor);
 		_fullSurface.setTransparentColor(transColor);
 		addTextLine(text);
@@ -107,7 +108,7 @@ void CellPhonePopup::init() {
 
 	Common::Rect bounds = _screenPosition;
 	bounds.moveTo(0, 0);
-	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphics->getScreenPixelFormat());
 
 	// Persistent state lives in CellPhoneData (saved across the game).
 	// First-time init seeds the runtime contact list from the chunk;
