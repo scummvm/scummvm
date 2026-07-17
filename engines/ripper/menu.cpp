@@ -35,6 +35,7 @@
 #include "ripper/input.h"
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
+#include "ripper/settings.h"
 #include "ripper/toolbar.h"
 
 namespace Ripper {
@@ -183,6 +184,7 @@ MainMenuAction MainMenu::run() {
 					byte palette[256 * 3];
 					memcpy(palette, decoder.getPalette(), sizeof(palette));
 					_engine->getToolbar()->applySharedPalettePatch(palette, 256);
+					_engine->getSettings()->applyVideoPalette(palette, 256);
 					g_system->getPaletteManager()->setPalette(palette, 0, 256);
 				}
 				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, menuY,

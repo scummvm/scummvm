@@ -24,6 +24,8 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/util.h"
+#include "common/system.h"
+#include "graphics/paletteman.h"
 
 #include "ripper/detection.h"
 
@@ -146,9 +148,13 @@ uint RipperSettings::getFilledTickCount(Slider slider) const {
 	return CLIP<int>(distance * 10 / range, 0, 10);
 }
 
-void RipperSettings::applyVideoPalette(byte *palette, uint colorCount) const {
+void RipperSettings::applyVideoPalette(byte *palette, uint colorCount, bool rememberSource) {
 	if (!palette || colorCount == 0)
 		return;
+	if (rememberSource) {
+		_videoPaletteSource.resize(colorCount * 3);
+		memcpy(_videoPaletteSource.data(), palette, colorCount * 3);
+	}
 	if (_values[kBrightness] == 100 && _values[kColor] == 100 &&
 		_values[kContrast] == 100 && _values[kTint] == 100)
 		return;
@@ -193,6 +199,18 @@ void RipperSettings::applyVideoPalette(byte *palette, uint colorCount) const {
 	debugC(3, kDebugVideo,
 		"Ripper: applied video palette settings colors=%u brightness=%d color=%d contrast=%d tint=%d",
 		colorCount, brightness, color, contrast, tint);
+}
+
+bool RipperSettings::restoreVideoPalette() {
+	if (_videoPaletteSource.size() != 256 * 3)
+		return false;
+	byte palette[256 * 3];
+	memcpy(palette, _videoPaletteSource.data(), sizeof(palette));
+	// The saved source already includes the shared interface palette patch made
+	// immediately before applyVideoPalette installed the scene palette.
+	applyVideoPalette(palette, 256, false);
+	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+	return true;
 }
 
 } // End of namespace Ripper

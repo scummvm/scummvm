@@ -22,6 +22,7 @@
 #define RIPPER_SETTINGS_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 
 namespace Audio {
 class Mixer;
@@ -58,7 +59,8 @@ public:
 	void setValue(Slider slider, int value);
 	int getValue(Slider slider) const { return _values[slider]; }
 	uint getFilledTickCount(Slider slider) const;
-	void applyVideoPalette(byte *palette, uint colorCount) const;
+	void applyVideoPalette(byte *palette, uint colorCount, bool rememberSource = true);
+	bool restoreVideoPalette();
 
 	static const Descriptor &getDescriptor(Slider slider);
 
@@ -69,6 +71,7 @@ private:
 
 	Audio::Mixer *_mixer;
 	int _values[kSliderCount];
+	Common::Array<byte> _videoPaletteSource;
 };
 
 } // End of namespace Ripper
