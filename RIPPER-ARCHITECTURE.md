@@ -359,6 +359,13 @@
   program families (action 44 is absent). That dispatcher has a second
   palette/UI/chooser/audio preservation boundary around the selected program;
   it is separate from the Cyber menu transition owned by action 6.
+- Action 56 is the KR branch of `DispatchKSceneActionBand`; it calls
+  `RunSceneScriptLoop("kr", 0, 0)`. ScummVM enters `kr.run` through a nested
+  `CyberManager` snapshot which preserves the carousel script, active frame,
+  interaction enablement, pending transition state, indexed display, palette,
+  cursor state, and named audio. KR's runtime exit restores that snapshot and
+  resumes the original `CYBRMENU.RUN` callback instead of unwinding to the
+  pre-Cyber scene.
 
 ## Puzzles
 
