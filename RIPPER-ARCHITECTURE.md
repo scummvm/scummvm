@@ -449,8 +449,20 @@
   and x=172, 252, 326, and 390. Their action IDs are `0x1900` (exit), `0x2000`
   (object database), `0x3100` (text viewer), and `0x3b00` (help). Escape also
   leaves the modal loop. The reimplementation restores the indexed scene and
-  palette when the WAC loop exits; database, text-viewer, and help dispatches
-  remain explicit subsystem stubs at this boundary.
+  palette when the WAC loop exits.
+- `RunWacFrontEndLoop` leaves all four bottom controls in the shared UI-control
+  list while database and puzzle controls are added. Every WAC input owner calls
+  `ServiceWacSceneInputAction` at `0x21eef`, so the bottom controls retain cursor
+  16 hover and click behavior in subscenes. A `0x1900` power action propagates
+  through the nested loop and closes the WAC, while Escape only returns from the
+  current subscene; a nested `0x2000` database action is ignored while the
+  database is already active. Help uses context resources 404 on the front page,
+  405 in the mug puzzle, and 406 in the database.
+- The `0x3100` control calls `RunRipperTextFileViewer` at `0x223ef`. It loads at
+  most `0x27c0` bytes from `ripper.txt` through
+  `LoadResolvedRipperTextFileBuffer` at `0x22252` and presents the text with
+  resource string `0x49` as the title. The active-viewer guard prevents the
+  notebook control from recursively opening another viewer.
 - `RunWacFrontEndLoop` loads the wildcard bitmap sets `wacwn1*.bbm` and
   `wacwn2*.bbm`. `ServiceWacSceneIdleEffects` at `0x21da2` advances both sets
   every three extended DOS ticks and redraws them at (64, 21) and (460, 19).
@@ -484,9 +496,12 @@
   is unchanged.
   Entry 1 dispatches `RunWacMugSelectionScene` at `0x236b9` and entry 2
   dispatches `PlayMugSelectionCompletionMedia` at `0x2361c`. Completing the
-  puzzle sets both database flags 71 and 72; `BuildWacInventorySelectionMenu`
-  at `0x22c91` independently includes every set flag, so Broken Mug remains in
-  the list alongside Coffee Mug.
+  puzzle sets both database flags 71 and 72, then replaces the active entry-1
+  row's label pointer with resource string `0xde` (Coffee Cup) and redraws that
+  row without changing its dispatch ID. `BuildWacInventorySelectionMenu` at
+  `0x22c91` independently includes every set flag on a later menu rebuild, so
+  the two underlying database records remain distinct even though the row used
+  to solve the puzzle is replaced in place for the current chooser session.
 - Entries 10 and 11 dispatch `wacinv10.pcx` and `wacinv11.pcx` through
   `RunWacStillImageScreenWithOptionalAudio` at `0x22f1f`. These 300-by-393
   documents retain the database chooser, show a 282-row slice in the left WAC
