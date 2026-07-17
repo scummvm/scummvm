@@ -51,6 +51,7 @@ namespace {
 
 static const int kScenePresentationTop = 50;
 static const uint kBlockingAudioCursor = 0x13;
+static const uint16 kHelpCommand = 0x3b00;
 static const uint kAutoPacketizedDisplayScale = 0;
 static const uint kPaletteFadeStepDelayMs = 16;
 
@@ -826,12 +827,24 @@ bool MediaPlayer::syncGame(Common::Serializer &serializer) {
 bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
 		bool allowSegmentAdvance, bool &paused, bool toolbarPaused, bool &skipToEnd,
 		bool &advanceSegment,
-		Audio::SoundHandle *externalAudio, bool suppressSceneMouseStop) {
+		Audio::SoundHandle *externalAudio, bool suppressSceneMouseStop, bool allowSceneHelp) {
 	skipToEnd = false;
 	advanceSegment = false;
 	if (_input->pollEvents()) {
 		_engine->quitGame();
 		return false;
+	}
+	if (allowSceneHelp && _input->peekKey() == kHelpCommand) {
+		_input->consumeKey();
+		decoder.pauseVideo(true);
+		if (externalAudio)
+			_mixer->pauseHandle(*externalAudio, true);
+		const bool helpDisplayed = _engine->getScripts()->showHelp("interactive-media");
+		const bool effectivePause = paused || toolbarPaused;
+		decoder.pauseVideo(effectivePause);
+		if (externalAudio)
+			_mixer->pauseHandle(*externalAudio, effectivePause);
+		return helpDisplayed;
 	}
 	if (!allowEscSpace || !_input->hasPendingKey())
 		return !(_stopSceneOnMouse && !suppressSceneMouseStop &&
@@ -981,7 +994,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		bool advanceToNextSegment = false;
 		if (!servicePlaybackInput(decoder, allowEscSpace, advanceSegment != nullptr,
 				paused, toolbarPaused, skipToEnd, advanceToNextSegment,
-				externalAudio, toolbarOwnsInput)) {
+				externalAudio, toolbarOwnsInput, serviceSceneUi)) {
 			completed = false;
 			if (advanceToNextSegment) {
 				if (advanceSegment)

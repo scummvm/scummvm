@@ -41,6 +41,7 @@ public:
 
 private:
 	bool captureDisplay();
+	void applyModalPalette();
 	void restoreDisplay();
 	void wrapText(const Common::String &text, uint maxWidth,
 		Common::Array<Common::String> &lines) const;
@@ -58,6 +59,7 @@ private:
 	RipperEngine *_engine;
 	BitmapFontAsset _font;
 	Common::Array<BitmapAssetFrame> _skin;
+	Common::Array<byte> _modalPalette;
 	Common::Array<Common::String> _gameText;
 	Common::Array<byte> _savedPixels;
 	Common::Array<byte> _savedPalette;

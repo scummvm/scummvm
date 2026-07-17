@@ -37,8 +37,9 @@ struct MouseState {
 	uint16 buttons;
 	uint16 pressed;
 	uint16 released;
+	int16 wheel;
 
-	MouseState() : position(0, 0), buttons(0), pressed(0), released(0) {}
+	MouseState() : position(0, 0), buttons(0), pressed(0), released(0), wheel(0) {}
 };
 
 class InputManager {
@@ -47,6 +48,7 @@ public:
 
 	bool pollEvents();
 	bool hasPendingKey() const;
+	uint16 peekKey() const;
 	uint16 consumeKey();
 	void drainKeys();
 	void discardMouseTransitions();

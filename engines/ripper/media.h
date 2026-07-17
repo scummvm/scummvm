@@ -111,7 +111,7 @@ private:
 	bool servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
 		bool allowSegmentAdvance, bool &paused, bool toolbarPaused, bool &skipToEnd,
 		bool &advanceSegment,
-		Audio::SoundHandle *externalAudio, bool suppressSceneMouseStop);
+		Audio::SoundHandle *externalAudio, bool suppressSceneMouseStop, bool allowSceneHelp);
 
 	RipperEngine *_engine;
 	InputManager *_input;
