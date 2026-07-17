@@ -31,6 +31,7 @@
 
 #include "ripper/detection.h"
 #include "ripper/cursor.h"
+#include "ripper/cyber.h"
 #include "ripper/input.h"
 #include "ripper/media.h"
 #include "ripper/menu.h"
@@ -46,7 +47,7 @@ namespace Ripper {
 
 RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescription) :
 		Engine(system), _gameDescription(gameDescription), _cursor(new CursorManager()),
-		_input(new InputManager(_eventMan)),
+		_cyber(new CyberManager(this)), _input(new InputManager(_eventMan)),
 		_media(new MediaPlayer(this, _input, _mixer)), _milestones(new Milestones()),
 		_modalDialog(new ModalDialogManager(this)), _resources(new ResourceManager()),
 		_scripts(new ScriptManager(this)), _toolbar(new ToolbarManager(this)),
@@ -63,6 +64,7 @@ RipperEngine::~RipperEngine() {
 	delete _milestones;
 	delete _media;
 	delete _input;
+	delete _cyber;
 	delete _cursor;
 }
 

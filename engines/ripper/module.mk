@@ -3,6 +3,7 @@ MODULE := engines/ripper
 MODULE_OBJS := \
 	briefing.o \
 	cursor.o \
+	cyber.o \
 	dialogue.o \
 	iff.o \
 	input.o \

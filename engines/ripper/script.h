@@ -33,6 +33,7 @@ namespace Ripper {
 
 class AssetLibrary;
 class BriefingManager;
+class CyberManager;
 class ResourceManager;
 class RipperEngine;
 class DialogueManager;
@@ -81,9 +82,12 @@ enum SceneAction {
 	kSceneActionWorldMap = 2,
 	kSceneActionCalculatorPuzzle = 4,
 	kSceneActionRolodexPuzzle = 5,
+	kSceneActionCyberMenu = 6,
 	kSceneActionCrystalPuzzle = 29,
+	kSceneActionNoOp = 31,
 	kSceneActionClearDisplay = 32,
-	kSceneActionBriefing = 300
+	kSceneActionBriefing = 300,
+	kSceneActionTerminateRuntime = 9999
 };
 
 struct ScriptArgument {
@@ -174,7 +178,11 @@ public:
 	bool openWorldMap();
 	bool hasActivePrompt() const;
 	bool showHelp(const char *source);
-	bool hasPendingSceneTransition() const { return !_pendingSceneMember.empty(); }
+	bool hasPendingSceneTransition() const {
+		return !_pendingSceneMember.empty() || _cyberExitRequested || _cyberKeyboardCommand != 0;
+	}
+	bool isCyberActive() const { return _cyberActive; }
+	void requestCyberExit(const char *source);
 	bool canSaveGame() const;
 	bool syncGame(Common::Serializer &serializer);
 	void logRuntimeFailure(const char *reason) const;
@@ -183,8 +191,11 @@ public:
 	CompiledScript &ba0() { return _ba0; }
 
 private:
+	friend class CyberManager;
+
 	bool executeCallback(CompiledScript &script, uint32 callbackOffset, int &result,
 		uint *nextFrame = nullptr);
+	bool serviceCyberKeyboardCommand();
 	void bindBa0Frame(uint frameIndex);
 	void initializeBa0InteractionState(const ScriptFrame &frame);
 	void beginBa0InteractionWait(const Common::String &frameLabel, uint interactionCount);
@@ -214,6 +225,9 @@ private:
 	bool _awaitingBa0Interaction;
 	bool _resumeLoadedPresentation;
 	bool _clearPreservedAudioOnTransition;
+	bool _cyberActive;
+	bool _cyberExitRequested;
+	uint16 _cyberKeyboardCommand;
 	BriefingManager *_briefing;
 	DialogueManager *_dialogue;
 };
