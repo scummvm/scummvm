@@ -42,6 +42,7 @@
 #include "ripper/input.h"
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
+#include "ripper/settings.h"
 #include "ripper/script.h"
 #include "ripper/toolbar.h"
 
@@ -540,7 +541,12 @@ bool MediaPlayer::startAudioSlot(AudioSlot &slot) {
 	if ((slot.control & 1) != 0)
 		stream = Audio::makeLoopingAudioStream(wavStream, 0);
 	const byte volume = (byte)(slot.volumePercent * Audio::Mixer::kMaxChannelVolume / 100);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &slot.handle, stream, -1, volume);
+	// StartAudioTriggerSlot at 0x37297 uses control bit 0 for indefinitely
+	// repeating scene beds. Route those entries through the Ambient profile;
+	// one-shot trigger slots use the SFX profile.
+	const Audio::Mixer::SoundType soundType = (slot.control & 1) ?
+		Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
+	_mixer->playStream(soundType, &slot.handle, stream, -1, volume);
 	debugC(1, kDebugAudio,
 		"Ripper: started audio slot key='%s' path='%s' volume=%u trigger=%u control=%u loop=%d active=%d",
 		slot.key.c_str(), slot.path.c_str(), slot.volumePercent, slot.triggerFrame,
@@ -940,6 +946,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			}
 			if (patchInterfacePalette && !patchWacMediaPalette)
 				_engine->getToolbar()->applySharedPalettePatch(palette, 256);
+			if (!patchWacMediaPalette)
+				_engine->getSettings()->applyVideoPalette(palette, 256);
 			g_system->getPaletteManager()->setPalette(palette, 0, 256);
 		}
 		if (displayScale == 1) {
@@ -1358,7 +1366,9 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path) {
 		return false;
 
 	Audio::SoundHandle handle;
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, stream);
+	// PlayBlockingAudioClip at 0x1f0ea is part of the same presentation path as
+	// packetized dialogue/video audio, which the Remote Control names VIDEO VOL.
+	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &handle, stream);
 	_engine->getCursor()->update(kBlockingAudioCursor);
 	g_system->updateScreen();
 	debugC(2, kDebugAudio,

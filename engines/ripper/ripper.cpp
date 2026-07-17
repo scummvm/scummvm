@@ -39,6 +39,7 @@
 #include "ripper/modal_dialog.h"
 #include "ripper/resources.h"
 #include "ripper/script.h"
+#include "ripper/settings.h"
 #include "ripper/toolbar.h"
 #include "ripper/wac.h"
 #include "ripper/world_map.h"
@@ -50,7 +51,8 @@ RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescrip
 		_cyber(new CyberManager(this)), _input(new InputManager(_eventMan)),
 		_media(new MediaPlayer(this, _input, _mixer)), _milestones(new Milestones()),
 		_modalDialog(new ModalDialogManager(this)), _resources(new ResourceManager()),
-		_scripts(new ScriptManager(this)), _toolbar(new ToolbarManager(this)),
+		_scripts(new ScriptManager(this)), _settings(new RipperSettings(_mixer)),
+		_toolbar(new ToolbarManager(this)),
 		_wac(new WacManager(this)), _worldMap(new WorldMap(this)), _gameplayStarted(false) {
 }
 
@@ -58,6 +60,7 @@ RipperEngine::~RipperEngine() {
 	delete _worldMap;
 	delete _wac;
 	delete _toolbar;
+	delete _settings;
 	delete _scripts;
 	delete _resources;
 	delete _modalDialog;
@@ -101,6 +104,7 @@ Common::Error RipperEngine::run() {
 
 	registerSearchPaths();
 	initGraphics(640, 400);
+	_settings->load();
 	if (!_resources->initialize())
 		return Common::kReadingFailed;
 	if (!_milestones->initialize(*_resources))
