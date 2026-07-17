@@ -867,6 +867,8 @@ int InsaneRebel2::runLevel6() {
 			playLevelRetryVariant(6, 1);
 			if (_vm->shouldQuit())
 				return kLevelQuit;
+			_playerShield = 255;  // full shield on retry (original resets damage before replaying)
+			_playerDamage = 0;
 			continue;
 		}
 
@@ -914,6 +916,8 @@ int InsaneRebel2::runLevel6() {
 			playLevelRetryVariant(6, 2);
 			if (_vm->shouldQuit())
 				return kLevelQuit;
+			_playerShield = 255;  // full shield on retry, as in phase 1
+			_playerDamage = 0;
 		}
 
 		break;  // Should only reach here on shouldQuit

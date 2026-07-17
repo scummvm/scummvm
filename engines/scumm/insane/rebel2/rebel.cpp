@@ -1082,7 +1082,10 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_ESCAPE:
 			if (splayer) {
-				if (_gameState == kStateGameplay && _rebelHandler != 0) {
+				// _gameplaySectionActive also covers a gameplay video's startup, before
+				// its first IACT sets _rebelHandler; otherwise ESC there skips the segment
+				// (e.g. spamming ESC after a Level 6 phase-2 death skipped phase 2).
+				if (_gameState == kStateGameplay && (_rebelHandler != 0 || _gameplaySectionActive)) {
 					debugC(DEBUG_INSANE, "ESC pressed during gameplay - opening global menu");
 					openGameplayMainMenu(splayer);
 				} else {
