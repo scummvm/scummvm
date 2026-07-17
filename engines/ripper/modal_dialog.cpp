@@ -37,17 +37,18 @@ namespace {
 static const uint kModalSkinFrameCount = 15;
 static const uint kModalFrameTileCount = 9;
 static const uint kModalTitleResourceId = 0x42;
-static const uint kModalBodyWidth = 300;
 static const uint kModalMaximumRows = 10;
 static const int kModalHeadingTopPadding = 17;
 static const int kModalBottomPadding = 5;
 static const int kModalLeftPadding = 5;
 static const int kModalRightPadding = 5;
+static const uint kModalWidth = 300;
+static const uint kModalBodyWidth = kModalWidth - kModalLeftPadding - kModalRightPadding;
 static const int kModalRowHeight = 14;
-static const byte kModalBackgroundColor = 4;
-static const byte kModalHeadingColor = 250;
-static const byte kModalTitleColor = 248;
-static const byte kModalTextColor = 251;
+static const byte kModalBackgroundColor = 253;
+static const byte kModalHeadingColor = 255;
+static const byte kModalTitleColor = 254;
+static const byte kModalTextColor = 4;
 
 } // End of anonymous namespace
 
@@ -61,6 +62,7 @@ bool ModalDialogManager::initialize(ResourceManager &resources) {
 		return false;
 
 	_skin.clear();
+	_modalPalette.clear();
 	for (uint frameIndex = 0; frameIndex < kModalSkinFrameCount; ++frameIndex) {
 		BitmapAssetSequence sequence;
 		if (!resources.loadInterfaceBitmapSequence(
@@ -68,12 +70,20 @@ bool ModalDialogManager::initialize(ResourceManager &resources) {
 				sequence.frames.empty())
 			return false;
 		_skin.push_back(Common::move(sequence.frames.front()));
+		if (_modalPalette.empty() && _skin.back().palette.size() >= 256 * 3)
+			_modalPalette = _skin.back().palette;
 	}
 
 	_initialized = true;
 	debugC(1, kDebugScene,
 		"Ripper: initialized modal text dialogs skin=MENUB frames=%u font=small.fnt strings=%u",
 		_skin.size(), _gameText.size());
+	debugC(3, kDebugScene,
+		"Ripper: modal text font first=%u glyphs=%u lineHeight=%u spacing=%u spaceWidth=%u "
+		"transparent=%u paletteBytes=%u",
+		_font.firstCharacter, _font.glyphs.size(), _font.lineHeight,
+		_font.characterSpacing, _font.spaceWidth, _font.transparentColor,
+		_modalPalette.size());
 	return true;
 }
 
@@ -99,6 +109,22 @@ bool ModalDialogManager::captureDisplay() {
 	_savedPalette.resize(256 * 3);
 	g_system->getPaletteManager()->grabPalette(_savedPalette.data(), 0, 256);
 	return true;
+}
+
+void ModalDialogManager::applyModalPalette() {
+	if (_modalPalette.size() < 256 * 3)
+		return;
+
+	byte palette[256 * 3];
+	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+	// InitializeSharedPresentationTemplates at 0x1196f captures these ranges
+	// from the MENUB palette through CaptureSharedDisplayPalettePatch at
+	// 0x205a9. ApplySharedDisplayPalettePatch at 0x205d0 restores them for
+	// chooser text and frame pixels without replacing the active scene palette.
+	memset(palette, 0, 3);
+	memcpy(palette + 4 * 3, _modalPalette.data() + 4 * 3, 6 * 3);
+	memcpy(palette + 246 * 3, _modalPalette.data() + 246 * 3, 10 * 3);
+	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 }
 
 void ModalDialogManager::restoreDisplay() {
@@ -207,17 +233,33 @@ void ModalDialogManager::drawFrame(byte *screen, uint pitch,
 	const int tileHeight = _skin[0].height;
 	const int columns = (bounds.width() + tileWidth - 1) / tileWidth;
 	const int rows = (bounds.height() + tileHeight - 1) / tileHeight;
+	int x = bounds.left;
 	for (int column = 0; column < columns; ++column) {
+		int y = bounds.top;
+		const BitmapAssetFrame *lastTile = nullptr;
 		for (int row = 0; row < rows; ++row) {
 			const uint columnBand = column == 0 ? 0 : (column == columns - 1 ? 2 : 1);
 			const uint rowBand = row == 0 ? 0 : (row == rows - 1 ? 2 : 1);
-			const BitmapAssetFrame &tile = _skin[rowBand * 3 + columnBand];
-			const int x = column == columns - 1 ? bounds.right - tile.width :
-				bounds.left + column * tileWidth;
-			const int y = row == rows - 1 ? bounds.bottom - tile.height :
-				bounds.top + row * tileHeight;
+			// ResolveChooserFrameTileIndex at 0x55250 indexes MENUB0..8
+			// column-major: left top/middle/bottom, then center, then right.
+			const BitmapAssetFrame &tile = _skin[columnBand * 3 + rowBand];
 			drawBitmap(screen, pitch, tile, x, y);
+			lastTile = &tile;
+			// TileChooserControlFrame at 0x54fbe uses the selected tile's
+			// dimensions and snaps the last row to the control's bottom edge.
+			if (row == rows - 2)
+				y = bounds.bottom - tile.height;
+			else
+				y += tile.height;
 		}
+		if (!lastTile)
+			continue;
+		// The original performs the matching right-edge snap after the
+		// penultimate column has been tiled.
+		if (column == columns - 2)
+			x = bounds.right - lastTile->width;
+		else
+			x += lastTile->width;
 	}
 }
 
@@ -231,14 +273,19 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 		return;
 	}
 
-	for (int y = bounds.top; y < bounds.bottom; ++y)
-		memset(screen->getBasePtr(bounds.left, y), kModalBackgroundColor, bounds.width());
+	byte *pixels = (byte *)screen->getPixels();
+	drawFrame(pixels, screen->pitch, bounds);
+	// RebuildChooserControlVisual draws the tiled frame before the row renderer
+	// and DrawPromptChooserTemplateLabelCallback repaint the framed interior.
+	// Keeping that order prevents center and edge tile pixels from covering the
+	// prompt background and heading strip.
+	for (int y = bounds.top + 2; y < bounds.bottom - 2; ++y)
+		memset(screen->getBasePtr(bounds.left + kModalLeftPadding, y),
+			kModalBackgroundColor, bounds.width() - kModalLeftPadding - kModalRightPadding);
 	for (int y = bounds.top + 2; y < bounds.top + kModalHeadingTopPadding; ++y)
 		memset(screen->getBasePtr(bounds.left + kModalLeftPadding, y),
 			kModalHeadingColor, bounds.width() - kModalLeftPadding - kModalRightPadding);
 
-	byte *pixels = (byte *)screen->getPixels();
-	drawFrame(pixels, screen->pitch, bounds);
 	const int titleX = bounds.left + (bounds.width() - measureText(title)) / 2;
 	drawText(pixels, screen->pitch, titleX,
 		bounds.top + (kModalHeadingTopPadding - _font.lineHeight) / 2,
@@ -268,7 +315,7 @@ bool ModalDialogManager::run(uint bodyResourceId) {
 	Common::Array<Common::String> lines;
 	wrapText(body, kModalBodyWidth, lines);
 	const uint visibleRows = MIN<uint>(lines.size(), kModalMaximumRows);
-	const int width = kModalBodyWidth + kModalLeftPadding + kModalRightPadding;
+	const int width = kModalWidth;
 	const int height = kModalHeadingTopPadding + visibleRows * kModalRowHeight +
 		kModalBottomPadding;
 	const int left = (640 - width) / 2;
@@ -278,6 +325,7 @@ bool ModalDialogManager::run(uint bodyResourceId) {
 
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
+	applyModalPalette();
 	drawDialog(title, lines, firstVisible, visibleRows, bounds);
 	debugC(1, kDebugScene,
 		"Ripper: entered modal text dialog resource=%u title='%s' lines=%u bounds=%d,%d,%d,%d",
@@ -330,7 +378,24 @@ bool ModalDialogManager::run(uint bodyResourceId) {
 					bodyResourceId, firstVisible, visibleRows);
 			}
 		}
-		_engine->getInput()->publishMouseState();
+		const MouseState mouse = _engine->getInput()->publishMouseState();
+		if (mouse.wheel != 0) {
+			const uint maximumFirst = lines.size() > visibleRows ?
+				lines.size() - visibleRows : 0;
+			int nextFirst = (int)firstVisible - mouse.wheel;
+			if (nextFirst < 0)
+				nextFirst = 0;
+			else if ((uint)nextFirst > maximumFirst)
+				nextFirst = maximumFirst;
+			if ((uint)nextFirst != firstVisible) {
+				firstVisible = nextFirst;
+				redraw = true;
+				debugC(2, kDebugScene,
+					"Ripper: mouse-wheel scrolled modal text resource=%u "
+					"delta=%d firstLine=%u visibleRows=%u",
+					bodyResourceId, mouse.wheel, firstVisible, visibleRows);
+			}
+		}
 		if (redraw)
 			drawDialog(title, lines, firstVisible, visibleRows, bounds);
 		g_system->delayMillis(10);
