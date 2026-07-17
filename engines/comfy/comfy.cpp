@@ -72,10 +72,12 @@ void onImGuiRender() {
 	io.ConfigFlags &= ~(ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse);
 
 	bool actorDebugEnabled = debugChannelSet(-1, kDebugImGui);
-	if (actorDebugEnabled)
+	if (actorDebugEnabled) {
+		_state->_actorDebugVisible = true;
 		_state->_engine->drawActorDebugUi(&_state->_actorDebugVisible);
-	else
+	} else {
 		_state->_actorDebugVisible = false;
+	}
 
 	if (ConfMan.getBool("use_imgui_keyboard"))
 		drawComfyKeyboardUi(actorDebugEnabled);
