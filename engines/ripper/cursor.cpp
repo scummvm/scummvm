@@ -40,8 +40,8 @@ static const char *const kCursorAssetNames[] = {
 
 static const uint32 kCursorFrameDurationMillis = 100;
 
-CursorManager::CursorManager() : _cursorIndex(0), _frameIndex(0), _nextFrameMillis(0),
-		_initialized(false), _visible(false) {
+CursorManager::CursorManager() : _selectionIndex(0), _cursorIndex(0), _frameIndex(0),
+		_nextFrameMillis(0), _initialized(false), _visible(false) {
 }
 
 CursorManager::~CursorManager() {
@@ -55,11 +55,36 @@ bool CursorManager::initialize(ResourceManager &resources) {
 	}
 
 	_initialized = true;
+	_selectionIndex = 0;
 	_cursorIndex = 0;
 	_frameIndex = 0;
 	_nextFrameMillis = 0;
 	debugC(1, kDebugCursor, "Ripper: loaded %u cursor assets", ARRAYSIZE(kCursorAssetNames));
 	return true;
+}
+
+void CursorManager::setSelectionIndex(int cursorIndex) {
+	// SetUiSelectionIndex at 0x4a3fe clamps and stores the requested row without
+	// applying its cursor presentation. Scene action 36 performs that second step.
+	if (cursorIndex < 0)
+		cursorIndex = 0;
+	else if ((uint)cursorIndex >= ARRAYSIZE(kCursorAssetNames))
+		cursorIndex = ARRAYSIZE(kCursorAssetNames) - 1;
+	_selectionIndex = cursorIndex;
+	debugC(2, kDebugCursor,
+		"Ripper: stored UI selection index=%u", _selectionIndex);
+}
+
+void CursorManager::dispatchSelectionIndexChange(int cursorIndex) {
+	// DispatchUiSelectionIndexChange at 0x4a630 ignores out-of-range rows and
+	// applies a valid row independently of the stored current-selection index.
+	if (cursorIndex < 0 || (uint)cursorIndex >= ARRAYSIZE(kCursorAssetNames)) {
+		debugC(3, kDebugCursor,
+			"Ripper: ignored invalid UI selection dispatch index=%d count=%u",
+			cursorIndex, ARRAYSIZE(kCursorAssetNames));
+		return;
+	}
+	update(cursorIndex);
 }
 
 void CursorManager::getHotspot(const BitmapAssetFrame &frame, int &x, int &y) const {
@@ -100,6 +125,7 @@ void CursorManager::update(uint cursorIndex) {
 		warning("Ripper: invalid cursor index %u; using default", cursorIndex);
 		cursorIndex = 0;
 	}
+	_selectionIndex = cursorIndex;
 
 	const uint32 now = g_system->getMillis(true);
 	if (cursorIndex != _cursorIndex || _nextFrameMillis == 0) {
