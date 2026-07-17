@@ -352,10 +352,12 @@
   control, wraps at most ten visible 14-pixel rows, drains pending keyboard
   input, scrolls longer text with the navigation keys, and closes on Escape or
   Enter before restoring the underlying indexed framebuffer and palette.
+  RIPPER's bitmap descriptors and presentation coordinates use
+  vertical/horizontal order. After translation to screen x/y,
   `ResolveChooserFrameTileIndex` at `0x55250` selects `MENUB0` through `MENUB8`
-  in column-major order, and `TileChooserControlFrame` at `0x54fbe` advances by
-  each selected tile's dimensions before snapping the final row and column to
-  the control edges.
+  as the row-major top, middle, and bottom frame tiles. For overflowing text,
+  `TileChooserControlFrame` at `0x54fbe` draws `MENUB9` and `MENUB10` at the
+  ends of a right-edge strip filled with `MENUB14`.
 - `InitializeSharedPresentationTemplates` at `0x1196f` loads `SMALL.FNT` for
   the modal and captures MENUB palette indices 4 through 9 and 246 through 255
   with `CaptureSharedDisplayPalettePatch` at `0x205a9`.
@@ -371,8 +373,11 @@
   assigns cursor 16 to the modal template. The input handler applies it only
   inside the modal bounds; outside, it services the retained scene selection
   state so the current hotspot cursor remains animated without dispatching the
-  underlying action. ScummVM additionally maps mouse-wheel steps to the same
-  one-row movement while preserving the original cursor during the modal.
+  underlying action. The wrapped-text constructor creates no separate close
+  or scroll controls, so the overflow strip is decorative rather than a mouse
+  hotspot. ScummVM additionally maps mouse-wheel steps to the same one-row
+  movement and services screen updates while the modal owns the game loop so
+  the software cursor remains movable.
 - `RunCrystalPiecePlacementPuzzleScene` reads the persistent puzzle level. Level
   1 starts piece 0 in cell 9 and piece 1 in cell 44, with an 18-DOS-tick pause
   between their placement; level 2 starts piece 0 in cell 21; level 3 starts
@@ -413,10 +418,9 @@
   and height=282. `InitializeSharedPresentationTemplates` at `0x1196f` gives
   this chooser its own `wacmnu0` through `wacmnu15` skin and `small.fnt`.
   `TileChooserControlFrame` at `0x54fbe` uses the first nine bitmaps as a 3x3
-  frame. `ResolveChooserFrameTileIndex` at `0x55250` selects the left-column
-  top, middle, and bottom tiles first, followed by the center and right columns.
-  The original presentation coordinates remain transposed relative to screen
-  x/y. `ComputeChooserControlLayout` at `0x54a74`
+  frame. The original presentation coordinates are transposed relative to
+  screen x/y; after translation, `wacmnu0` through `wacmnu8` are the row-major
+  top, middle, and bottom tiles. `ComputeChooserControlLayout` at `0x54a74`
   applies a 20-pixel heading inset, 6-pixel bottom inset, 5-pixel left inset,
   20-pixel right inset, and 14-pixel rows. The heading, normal rows, and active
   row use indexed glyph colors 248, 251, and 254 over chooser background 4.
