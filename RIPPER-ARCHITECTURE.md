@@ -435,9 +435,11 @@
   `ServiceWacSceneInputAction` at `0x21eef`. The ScummVM loop therefore presents
   every tick as well, so cursor movement remains visible while the list itself
   is unchanged.
-  Entry 1 dispatches `RunWacMugSelectionScene` at `0x236b9`, entry 2 dispatches
-  `PlayMugSelectionCompletionMedia` at `0x2361c`, and the remaining database
-  entry handlers are explicit stubs.
+  Entry 1 dispatches `RunWacMugSelectionScene` at `0x236b9` and entry 2
+  dispatches `PlayMugSelectionCompletionMedia` at `0x2361c`. Completing the
+  puzzle sets both database flags 71 and 72; `BuildWacInventorySelectionMenu`
+  at `0x22c91` independently includes every set flag, so Broken Mug remains in
+  the list alongside Coffee Mug.
 - `RunWacMugSelectionScene` owns nine draggable controls (`0x640` through
   `0x648`) backed by `mug0.smk` through `mug8.smk`. It initially advances each
   32-frame asset to orientation state 2, draws the controls over the WAC media
