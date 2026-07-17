@@ -51,7 +51,7 @@ static const char *const kCyberScript = "cybrmenu.run";
 CyberManager::CyberManager(RipperEngine *engine) : _engine(engine) {
 }
 
-bool CyberManager::captureDisplay() {
+bool CyberManager::captureDisplay(DisplaySnapshot &snapshot) const {
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1 ||
 			screen->w != kScreenWidth || screen->h != kScreenHeight) {
@@ -61,26 +61,26 @@ bool CyberManager::captureDisplay() {
 		return false;
 	}
 
-	_backgroundPixels.resize(kScreenWidth * kScreenHeight);
+	snapshot.pixels.resize(kScreenWidth * kScreenHeight);
 	for (uint y = 0; y < kScreenHeight; ++y)
-		memcpy(_backgroundPixels.data() + y * kScreenWidth,
+		memcpy(snapshot.pixels.data() + y * kScreenWidth,
 			screen->getBasePtr(0, y), kScreenWidth);
 	g_system->unlockScreen();
-	_backgroundPalette.resize(kPaletteSize);
-	g_system->getPaletteManager()->grabPalette(_backgroundPalette.data(), 0, 256);
+	snapshot.palette.resize(kPaletteSize);
+	g_system->getPaletteManager()->grabPalette(snapshot.palette.data(), 0, 256);
 	debugC(2, kDebugCyber,
 		"Ripper: captured suspended scene for Cyber transition size=%ux%u paletteEntries=256",
 		kScreenWidth, kScreenHeight);
 	return true;
 }
 
-void CyberManager::restoreDisplay() const {
-	if (_backgroundPixels.size() != kScreenWidth * kScreenHeight ||
-			_backgroundPalette.size() != kPaletteSize)
+void CyberManager::restoreDisplay(const DisplaySnapshot &snapshot) const {
+	if (snapshot.pixels.size() != kScreenWidth * kScreenHeight ||
+			snapshot.palette.size() != kPaletteSize)
 		return;
-	g_system->copyRectToScreen(_backgroundPixels.data(), kScreenWidth,
+	g_system->copyRectToScreen(snapshot.pixels.data(), kScreenWidth,
 		0, 0, kScreenWidth, kScreenHeight);
-	g_system->getPaletteManager()->setPalette(_backgroundPalette.data(), 0, 256);
+	g_system->getPaletteManager()->setPalette(snapshot.palette.data(), 0, 256);
 	g_system->updateScreen();
 }
 
@@ -125,6 +125,9 @@ void CyberManager::suspendRuntime(RuntimeSnapshot &snapshot) const {
 	snapshot.awaitingInteraction = scripts->_awaitingBa0Interaction;
 	snapshot.resumeLoadedPresentation = scripts->_resumeLoadedPresentation;
 	snapshot.clearPreservedAudioOnTransition = scripts->_clearPreservedAudioOnTransition;
+	snapshot.cyberActive = scripts->_cyberActive;
+	snapshot.cyberExitRequested = scripts->_cyberExitRequested;
+	snapshot.cyberKeyboardCommand = scripts->_cyberKeyboardCommand;
 
 	scripts->_ba0 = CompiledScript();
 	scripts->_concurrent = CompiledScript();
@@ -161,9 +164,9 @@ void CyberManager::restoreRuntime(RuntimeSnapshot &snapshot) const {
 	scripts->_awaitingBa0Interaction = snapshot.awaitingInteraction;
 	scripts->_resumeLoadedPresentation = snapshot.resumeLoadedPresentation;
 	scripts->_clearPreservedAudioOnTransition = snapshot.clearPreservedAudioOnTransition;
-	scripts->_cyberActive = false;
-	scripts->_cyberExitRequested = false;
-	scripts->_cyberKeyboardCommand = 0;
+	scripts->_cyberActive = snapshot.cyberActive;
+	scripts->_cyberExitRequested = snapshot.cyberExitRequested;
+	scripts->_cyberKeyboardCommand = snapshot.cyberKeyboardCommand;
 	debugC(2, kDebugCyber,
 		"Ripper: restored suspended scene runtime script='%s' frame=%u concurrent='%s'",
 		scripts->_ba0.getMemberName().c_str(), scripts->_activeBa0Frame,
@@ -171,9 +174,10 @@ void CyberManager::restoreRuntime(RuntimeSnapshot &snapshot) const {
 }
 
 CyberManager::Result CyberManager::run() {
+	DisplaySnapshot display;
 	Common::Array<byte> audioState;
-	if (!captureDisplay() || !captureAudio(audioState)) {
-		restoreDisplay();
+	if (!captureDisplay(display) || !captureAudio(audioState)) {
+		restoreDisplay(display);
 		return kLoadFailed;
 	}
 
@@ -229,7 +233,86 @@ CyberManager::Result CyberManager::run() {
 	_engine->getMedia()->clearSceneAudio(true);
 	const bool audioRestored = restoreAudio(audioState);
 	restoreRuntime(runtime);
-	restoreDisplay();
+	restoreDisplay(display);
+	input->drainKeys();
+	input->discardMouseTransitions();
+	_engine->getCursor()->setVisible(restoreVisibleCursor);
+	if (restoreVisibleCursor)
+		scripts->updateInteractiveCursor(input->peekMouseState().position);
+	if (!audioRestored)
+		result = kLoadFailed;
+	return result;
+}
+
+CyberManager::Result CyberManager::runProgram(uint action,
+		const char *scriptBaseName, uint argument) {
+	DisplaySnapshot display;
+	Common::Array<byte> audioState;
+	if (!captureDisplay(display) || !captureAudio(audioState)) {
+		restoreDisplay(display);
+		return kLoadFailed;
+	}
+
+	RuntimeSnapshot runtime;
+	suspendRuntime(runtime);
+	const bool restoreVisibleCursor = runtime.awaitingInteraction;
+	ScriptManager *scripts = _engine->getScripts();
+	InputManager *input = _engine->getInput();
+	const Common::String scriptName = Common::String::format("%s.run", scriptBaseName);
+	Result result = kLoadFailed;
+
+	_engine->getToolbar()->leave();
+	_engine->getCursor()->setVisible(false);
+	input->drainKeys();
+	input->discardMouseTransitions();
+	_engine->getMedia()->clearSceneAudio(true);
+	g_system->fillScreen(0);
+	g_system->updateScreen();
+	debugC(1, kDebugCyber,
+		"Ripper: entering Cyber program action=%u script='%s' argument=%u suspendedScript='%s' suspendedFrame=%u",
+		action, scriptName.c_str(), argument,
+		runtime.activeScript.getMemberName().c_str(), runtime.activeFrame);
+
+	bool active = scripts->_ba0.load(_engine->getResources()->scripts(), scriptName);
+	if (active && !_engine->shouldQuit()) {
+		debugC(1, kDebugCyber,
+			"Ripper: activated Cyber program action=%u script='%s' frames=%u interactions=%u",
+			action, scriptName.c_str(), scripts->_ba0.getFrames().size(),
+			scripts->_ba0.getInteractions().size());
+		active = scripts->advanceBa0ToFrame(0);
+	}
+
+	while (active && !scripts->_cyberExitRequested && !_engine->shouldQuit()) {
+		if (input->pollEvents()) {
+			_engine->quitGame();
+			break;
+		}
+		if (!scripts->serviceScene()) {
+			const uint frame = scripts->_activeBa0Frame;
+			const Common::String label = frame < scripts->_ba0.getFrames().size() ?
+				scripts->_ba0.getString(scripts->_ba0.getFrames()[frame].labelOffset) :
+				Common::String();
+			warning("Ripper: Cyber program service failed action=%u script='%s' frame=%u/%u label='%s' awaitingInteraction=%d pendingScript='%s' pendingEntry='%s'",
+				action, scriptName.c_str(), frame, scripts->_ba0.getFrames().size(),
+				label.c_str(), scripts->_awaitingBa0Interaction,
+				scripts->_pendingSceneMember.c_str(), scripts->_pendingSceneEntryLabel.c_str());
+			active = false;
+			break;
+		}
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+	if (active || _engine->shouldQuit())
+		result = kExited;
+
+	debugC(result == kExited ? 1 : 2, kDebugCyber,
+		"Ripper: leaving Cyber program action=%u script='%s' result=%d exitRequested=%d quit=%d",
+		action, scriptName.c_str(), result, scripts->_cyberExitRequested,
+		_engine->shouldQuit());
+	_engine->getMedia()->clearSceneAudio(true);
+	const bool audioRestored = restoreAudio(audioState);
+	restoreRuntime(runtime);
+	restoreDisplay(display);
 	input->drainKeys();
 	input->discardMouseTransitions();
 	_engine->getCursor()->setVisible(restoreVisibleCursor);

@@ -40,8 +40,14 @@ public:
 	explicit CyberManager(RipperEngine *engine);
 
 	Result run();
+	Result runProgram(uint action, const char *scriptBaseName, uint argument);
 
 private:
+	struct DisplaySnapshot {
+		Common::Array<byte> pixels;
+		Common::Array<byte> palette;
+	};
+
 	struct RuntimeSnapshot {
 		CompiledScript activeScript;
 		CompiledScript concurrentScript;
@@ -55,22 +61,24 @@ private:
 		bool awaitingInteraction;
 		bool resumeLoadedPresentation;
 		bool clearPreservedAudioOnTransition;
+		bool cyberActive;
+		bool cyberExitRequested;
+		uint16 cyberKeyboardCommand;
 
 		RuntimeSnapshot() : activeFrame(0), hoveredInteraction(-1),
 			awaitingInteraction(false), resumeLoadedPresentation(false),
-			clearPreservedAudioOnTransition(false) {}
+			clearPreservedAudioOnTransition(false), cyberActive(false),
+			cyberExitRequested(false), cyberKeyboardCommand(0) {}
 	};
 
-	bool captureDisplay();
-	void restoreDisplay() const;
+	bool captureDisplay(DisplaySnapshot &snapshot) const;
+	void restoreDisplay(const DisplaySnapshot &snapshot) const;
 	bool captureAudio(Common::Array<byte> &state) const;
 	bool restoreAudio(const Common::Array<byte> &state) const;
 	void suspendRuntime(RuntimeSnapshot &snapshot) const;
 	void restoreRuntime(RuntimeSnapshot &snapshot) const;
 
 	RipperEngine *_engine;
-	Common::Array<byte> _backgroundPixels;
-	Common::Array<byte> _backgroundPalette;
 };
 
 } // End of namespace Ripper

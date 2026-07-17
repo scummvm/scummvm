@@ -86,6 +86,7 @@ enum SceneAction {
 	kSceneActionCrystalPuzzle = 29,
 	kSceneActionNoOp = 31,
 	kSceneActionClearDisplay = 32,
+	kSceneActionKrProgram = 56,
 	kSceneActionBriefing = 300,
 	kSceneActionTerminateRuntime = 9999
 };
