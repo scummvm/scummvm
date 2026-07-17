@@ -27,6 +27,7 @@
 
 #include "ripper/detection.h"
 #include "ripper/input.h"
+#include "ripper/options_panel.h"
 #include "ripper/remote_control.h"
 #include "ripper/ripper.h"
 #include "ripper/script.h"
@@ -60,18 +61,21 @@ static const char *const kToolbarHandlerNames[kToolbarActionCount] = {
 
 ToolbarManager::ToolbarManager(RipperEngine *engine) : _sessionStartMillis(0), _lastFrameMillis(0),
 		_hoveredAction(-1), _pressedAction(-1), _active(false), _previewEnabled(false),
-		_engine(engine), _remoteControl(new RemoteControlManager(engine)) {
+		_engine(engine), _remoteControl(new RemoteControlManager(engine)),
+		_optionsPanel(new OptionsPanelManager(engine)) {
 }
 
 ToolbarManager::~ToolbarManager() {
 	delete _remoteControl;
+	delete _optionsPanel;
 }
 
 bool ToolbarManager::initialize(ResourceManager &resources) {
 	Common::Array<Common::String> gameText;
 	if (!resources.loadGameText(gameText) || gameText.size() < kToolbarActionCount ||
 		!resources.loadInterfaceBitmapFont("7pt_font.fnt", _font) ||
-		!_remoteControl->initialize(resources))
+		!_remoteControl->initialize(resources) ||
+		!_optionsPanel->initialize(resources))
 		return false;
 
 	_actions.clear();
@@ -363,6 +367,19 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 		debugC(1, kDebugSaveLoad,
 			"Ripper: toolbar RunSaveRestoreSlotMenu mode=%s completed=%d",
 			saving ? "save" : "restore", completed);
+		return;
+	}
+	if (actionIndex == 6) {
+		debugC(1, kDebugGeneral,
+			"Ripper: toolbar action=7 id=0x51a label='%s' entering RunOptionsMenu",
+			_actions[actionIndex].label.c_str());
+		// RunFrontEndActionMenu at 0x18b3a removes the toolbar presentation
+		// before DispatchFrontEndAction at 0x190b7 enters the full-screen panel.
+		leave();
+		_engine->getInput()->discardMouseTransitions();
+		if (!_optionsPanel->run())
+			warning("Ripper: Options Panel action failed");
+		_engine->getInput()->discardMouseTransitions();
 		return;
 	}
 	if (actionIndex == kToolbarHelpActionIndex) {

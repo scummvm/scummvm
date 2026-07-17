@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	metaengine.o \
 	milestones.o \
 	modal_dialog.o \
+	options_panel.o \
 	puzzles/broken_mug.o \
 	puzzles/calculator.o \
 	puzzles/crystal.o \
