@@ -54,6 +54,8 @@ public:
 	bool play(const Common::String &path, bool allowEscSpace, int x = -1, int y = -1,
 		bool sceneViewport = false);
 	bool playWacMedia(const Common::String &path, int x, int y);
+	bool playInterfaceSequence(const Common::String &path, int x, int y,
+		Common::Array<byte> &sourcePalette);
 	bool playBlockingAudio(const Common::String &path);
 	bool playSoundEffect(const Common::String &path, Audio::SoundHandle &handle,
 		uint volumePercent = 100, bool loop = false);
@@ -116,7 +118,9 @@ private:
 		bool patchWacMediaPalette = false, bool serviceSceneUi = false,
 		bool repeatedLoopPass = false, bool *advanceSegment = nullptr,
 		uint loopStartFrame = 0, MediaSequenceCallback *sequenceCallback = nullptr,
-		uint16 *sequenceCommand = nullptr);
+		uint16 *sequenceCommand = nullptr,
+		Common::Array<byte> *sourcePalette = nullptr,
+		bool rememberVideoPalette = true);
 	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name,
 		bool allowEscSpace, bool serviceSceneUi = false);
 	bool servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
