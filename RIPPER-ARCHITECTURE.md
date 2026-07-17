@@ -133,8 +133,21 @@
   `RunModalSelectionTableDialogWithRestore`: it presents general help resource
   400 normally and conversation help resource `0x19b` while scene-runtime bit
   `0x20` marks a prompt/chooser active. The implemented choice-list lifecycle
-  maps that state to the pending `DialogueManager` chooser. Remote setup,
-  inventory, options, and quit remain explicit stubs.
+  maps that state to the pending `DialogueManager` chooser. Inventory,
+  options, and quit remain explicit stubs.
+- `RunTake2IniSliderSetupMenu` at `0x1989b` edits eight live settings in this
+  order: master, ambient, SFX, video, brightness, color, contrast, and tint.
+  The descriptor table at `0x1856a` supplies each range, step, and default;
+  contrast is the sole reversed slider, with range 80..120 and step -2.
+  `SaveTake2IniVideoAndVolumeSettings` at `0x5c5e7` persists the values on
+  exit. ScummVM retains the original percentages while mapping ambient, SFX,
+  and video to its music, SFX, and speech mixer categories; master scales all
+  three categories.
+- `BuildVideoAdjustedVgaPaletteBytes` at `0x569c0` applies tint, brightness,
+  contrast, and color in six-bit VGA space before clamping each component.
+  ScummVM performs the same integer transform whenever a new indexed media
+  palette is installed and expands the resulting six-bit components to the
+  backend's eight-bit palette representation.
 - `DispatchSceneEntryAction` at `0x36892` routes action 2 to the same
   `HandleSceneSelectionAction` at `0x191e2` used by toolbar action `0x515`.
   `RunSceneSelectionMenu` at `0x20808` groups the 25 travel-entry flags 20
