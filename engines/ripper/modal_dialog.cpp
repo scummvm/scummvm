@@ -37,12 +37,18 @@ namespace {
 
 static const uint kModalSkinFrameCount = 15;
 static const uint kModalFrameTileCount = 9;
+static const uint kModalScrollStartFrame = 9;
+static const uint kModalScrollEndFrame = 10;
+static const uint kModalScrollTrackFrame = 14;
 static const uint kModalTitleResourceId = 0x42;
 static const uint kModalMaximumRows = 10;
 static const int kModalHeadingTopPadding = 17;
 static const int kModalBottomPadding = 5;
 static const int kModalLeftPadding = 5;
 static const int kModalRightPadding = 5;
+static const int kModalScrollStartInset = 16;
+static const int kModalScrollEndInset = 4;
+static const int kModalScrollEdgeInset = 4;
 static const uint kModalWidth = 300;
 static const uint kModalBodyWidth = kModalWidth - kModalLeftPadding - kModalRightPadding;
 static const int kModalRowHeight = 14;
@@ -235,34 +241,54 @@ void ModalDialogManager::drawFrame(byte *screen, uint pitch,
 	const int tileHeight = _skin[0].height;
 	const int columns = (bounds.width() + tileWidth - 1) / tileWidth;
 	const int rows = (bounds.height() + tileHeight - 1) / tileHeight;
-	int x = bounds.left;
-	for (int column = 0; column < columns; ++column) {
-		int y = bounds.top;
+	int y = bounds.top;
+	for (int row = 0; row < rows; ++row) {
+		int x = bounds.left;
 		const BitmapAssetFrame *lastTile = nullptr;
-		for (int row = 0; row < rows; ++row) {
+		for (int column = 0; column < columns; ++column) {
 			const uint columnBand = column == 0 ? 0 : (column == columns - 1 ? 2 : 1);
 			const uint rowBand = row == 0 ? 0 : (row == rows - 1 ? 2 : 1);
-			// ResolveChooserFrameTileIndex at 0x55250 indexes MENUB0..8
-			// column-major: left top/middle/bottom, then center, then right.
-			const BitmapAssetFrame &tile = _skin[columnBand * 3 + rowBand];
+			// RIPPER stores bitmap dimensions and presentation coordinates in
+			// vertical/horizontal order. Translating ResolveChooserFrameTileIndex
+			// at 0x55250 to screen x/y makes MENUB0..8 row-major.
+			const BitmapAssetFrame &tile = _skin[rowBand * 3 + columnBand];
 			drawBitmap(screen, pitch, tile, x, y);
 			lastTile = &tile;
 			// TileChooserControlFrame at 0x54fbe uses the selected tile's
-			// dimensions and snaps the last row to the control's bottom edge.
-			if (row == rows - 2)
-				y = bounds.bottom - tile.height;
+			// dimensions and snaps the last column to the control's right edge.
+			if (column == columns - 2)
+				x = bounds.right - tile.width;
 			else
-				y += tile.height;
+				x += tile.width;
 		}
 		if (!lastTile)
 			continue;
-		// The original performs the matching right-edge snap after the
-		// penultimate column has been tiled.
-		if (column == columns - 2)
-			x = bounds.right - lastTile->width;
+		// The original performs the matching bottom-edge snap after the
+		// penultimate row has been tiled.
+		if (row == rows - 2)
+			y = bounds.bottom - lastTile->height;
 		else
-			x += lastTile->width;
+			y += lastTile->height;
 	}
+}
+
+void ModalDialogManager::drawOverflowBar(byte *screen, uint pitch,
+		const Common::Rect &bounds) const {
+	if (_skin.size() <= kModalScrollTrackFrame)
+		return;
+
+	const BitmapAssetFrame &start = _skin[kModalScrollStartFrame];
+	const BitmapAssetFrame &end = _skin[kModalScrollEndFrame];
+	const BitmapAssetFrame &track = _skin[kModalScrollTrackFrame];
+	const int startY = bounds.top + kModalScrollStartInset;
+	const int endY = bounds.bottom - kModalScrollEndInset - end.height;
+	for (int y = startY + start.height; y <= endY; y += track.height)
+		drawBitmap(screen, pitch, track,
+			bounds.right - kModalScrollEdgeInset - track.width, y);
+	drawBitmap(screen, pitch, start,
+		bounds.right - kModalScrollEdgeInset - start.width, startY);
+	drawBitmap(screen, pitch, end,
+		bounds.right - kModalScrollEdgeInset - end.width, endY);
 }
 
 void ModalDialogManager::drawDialog(const Common::String &title,
@@ -301,6 +327,8 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 				(kModalRowHeight - _font.lineHeight) / 2,
 			lines[lineIndex], kModalTextColor);
 	}
+	if (lines.size() > visibleRows)
+		drawOverflowBar(pixels, screen->pitch, bounds);
 	g_system->unlockScreen();
 	_engine->getCursor()->refresh();
 	g_system->updateScreen();
@@ -417,6 +445,10 @@ bool ModalDialogManager::run(uint bodyResourceId, bool retainSceneCursorRegions)
 		}
 		if (redraw)
 			drawDialog(title, lines, firstVisible, visibleRows, bounds);
+		else
+			// The modal owns the main loop, so it must keep presenting frames
+			// for CursorMan's software cursor to follow mouse-motion events.
+			g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
 

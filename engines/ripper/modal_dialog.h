@@ -51,6 +51,7 @@ private:
 	void drawBitmap(byte *screen, uint pitch, const BitmapAssetFrame &bitmap,
 		int x, int y) const;
 	void drawFrame(byte *screen, uint pitch, const Common::Rect &bounds) const;
+	void drawOverflowBar(byte *screen, uint pitch, const Common::Rect &bounds) const;
 	void drawDialog(const Common::String &title,
 		const Common::Array<Common::String> &lines, uint firstVisible,
 		uint visibleRows, const Common::Rect &bounds) const;
