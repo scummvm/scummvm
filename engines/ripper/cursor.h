@@ -33,15 +33,19 @@ public:
 	~CursorManager();
 
 	bool initialize(ResourceManager &resources);
+	void setSelectionIndex(int cursorIndex);
+	void dispatchSelectionIndexChange(int cursorIndex);
 	void update(uint cursorIndex);
 	void refresh();
 	void setVisible(bool visible);
+	uint getSelectionIndex() const { return _selectionIndex; }
 
 private:
 	void applyFrame();
 	void getHotspot(const BitmapAssetFrame &frame, int &x, int &y) const;
 
 	BitmapAssetSequence _assets[24];
+	uint _selectionIndex;
 	uint _cursorIndex;
 	uint _frameIndex;
 	uint32 _nextFrameMillis;

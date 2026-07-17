@@ -366,6 +366,12 @@
   cursor state, and named audio. KR's runtime exit restores that snapshot and
   resumes the original `CYBRMENU.RUN` callback instead of unwinding to the
   pre-Cyber scene.
+- `KR.RUN` uses only scene actions 35, 36, and 9999. `DispatchSceneEntryAction`
+  at `0x36892` maps action 35 to `SetUiSelectionIndex` at `0x4a3fe`, which
+  clamps and stores the requested cursor row without changing its presentation.
+  Action 36 calls `DispatchUiSelectionIndexChange` at `0x4a630`, which applies
+  a valid row to the active selection presentation. KR initializes both with
+  row 14; action 9999 then terminates the nested runtime normally.
 
 ## Puzzles
 

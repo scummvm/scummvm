@@ -1110,6 +1110,20 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 					"Ripper: cleared active scene display from scene action 32");
 				break;
 			}
+			if (action == kSceneActionSetUiSelectionIndex) {
+				_engine->getCursor()->setSelectionIndex(argument);
+				debugC(2, kDebugCursor,
+					"Ripper: scene action 35 stored UI selection index=%u script='%s' offset=0x%x",
+					argument, script.getMemberName().c_str(), command.offset);
+				break;
+			}
+			if (action == kSceneActionDispatchUiSelection) {
+				_engine->getCursor()->dispatchSelectionIndexChange(argument);
+				debugC(2, kDebugCursor,
+					"Ripper: scene action 36 dispatched UI selection index=%u script='%s' offset=0x%x",
+					argument, script.getMemberName().c_str(), command.offset);
+				break;
+			}
 			if (action == kSceneActionKrProgram) {
 				// DispatchKSceneActionBand at 0x36e84 preserves the Cyber menu's
 				// palette, UI controls, chooser registry, and audio table around
