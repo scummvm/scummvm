@@ -46,12 +46,15 @@ static const uint kRequiredCellCount = 10;
 static const uint kDefaultCursor = 14;
 static const uint kSelectionCursor = 16;
 static const uint kEdgeCursor = 7;
+static const int kSceneOriginY = 50;
 static const int kCellWidth = 30;
 static const int kCellHeight = 18;
-static const int kTrayLeft = 0;
-static const int kTrayTop = 183;
-static const int kTrayRight = 100;
-static const int kTrayBottom = 333;
+static const int kTrayLeft = 183;
+static const int kTrayTop = kSceneOriginY;
+static const int kTrayRight = 333;
+static const int kTrayBottom = 150;
+static const int kEdgeTop = kSceneOriginY + 30;
+static const int kEdgeBottom = kEdgeTop + 235;
 static const int kHeadX = 0;
 static const int kHeadY = 328;
 static const uint kDefaultPuzzleLevel = 2;
@@ -61,11 +64,11 @@ static const uint kDosTimerTickMillis = 55;
 static const uint16 kHelpAction = 0x3b00;
 static const uint kHelpSelectionTable = 0x19e;
 
-static const int kTrayX[kPieceCount] = {
+static const int kTrayPieceY[kPieceCount] = {
 	10, 16, 25, 18, 30, 44, 44, 36, 34, 63, 57, 54, 79, 76, 82, 63
 };
 
-static const int kTrayY[kPieceCount] = {
+static const int kTrayPieceX[kPieceCount] = {
 	252, 212, 241, 266, 197, 219, 241, 267, 299, 218, 246, 271, 199, 234, 265, 289
 };
 
@@ -86,7 +89,8 @@ static const char kCompletionKeyword[] = "pisces";
 } // End of anonymous namespace
 
 CrystalPuzzle::CrystalPuzzle(RipperEngine *engine) : _engine(engine),
-		_random("ripper-crystal-puzzle"), _draggedPiece(-1), _keywordIndex(0) {
+		_random("ripper-crystal-puzzle"), _draggedPiece(-1), _hoveredPiece(-1),
+		_keywordIndex(0) {
 	for (uint piece = 0; piece < kPieceCount; ++piece)
 		_pieceCells[piece] = -1;
 	for (uint cell = 0; cell < kGridCellCount; ++cell)
@@ -146,14 +150,14 @@ bool CrystalPuzzle::loadAssets() {
 }
 
 Common::Point CrystalPuzzle::trayPosition(uint piece) const {
-	return Common::Point(kTrayX[piece], kTrayY[piece]);
+	return Common::Point(kTrayPieceX[piece], kTrayPieceY[piece] + kSceneOriginY);
 }
 
 Common::Point CrystalPuzzle::gridPosition(uint cell, const BitmapAssetFrame &frame) const {
 	const uint row = cell / kGridColumns;
 	const uint column = cell % kGridColumns;
 	return Common::Point(kGridColumnX[column] + (kCellWidth - frame.width) / 2,
-		kGridRowY[row] + (kCellHeight - frame.height) / 2);
+		kGridRowY[row] + kSceneOriginY + (kCellHeight - frame.height) / 2);
 }
 
 void CrystalPuzzle::drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
@@ -227,9 +231,9 @@ int CrystalPuzzle::findTrayPiece(const Common::Point &point) const {
 int CrystalPuzzle::findGridCell(const Common::Point &point) const {
 	for (uint row = 0; row < ARRAYSIZE(kGridRowY); ++row) {
 		for (uint column = 0; column < kGridColumns; ++column) {
-			if (Common::Rect(kGridColumnX[column], kGridRowY[row],
+			if (Common::Rect(kGridColumnX[column], kGridRowY[row] + kSceneOriginY,
 					kGridColumnX[column] + kCellWidth,
-					kGridRowY[row] + kCellHeight).contains(point))
+					kGridRowY[row] + kSceneOriginY + kCellHeight).contains(point))
 				return row * kGridColumns + column;
 		}
 	}
@@ -253,6 +257,7 @@ void CrystalPuzzle::beginDrag(uint piece, const Common::Point &point) {
 		_pieceCells[piece] = -1;
 	}
 	_draggedPiece = piece;
+	_hoveredPiece = -1;
 	_dragPoint = point;
 	playMovementCue();
 	debugC(2, kDebugPuzzles,
@@ -350,10 +355,40 @@ bool CrystalPuzzle::complete(uint completionFlag) {
 
 void CrystalPuzzle::updateCursor(const Common::Point &point) {
 	uint cursor = kDefaultCursor;
-	if (_draggedPiece >= 0 || findTrayPiece(point) >= 0 || findPlacedPiece(point) >= 0)
+	int hoveredPiece = -1;
+	const char *hoverSource = "none";
+	if (_draggedPiece >= 0) {
 		cursor = kSelectionCursor;
-	else if (point.y >= 20 && point.y < 255 && (point.x < 130 || point.x >= 500))
+	} else {
+		hoveredPiece = findTrayPiece(point);
+		if (hoveredPiece >= 0) {
+			hoverSource = "tray";
+			cursor = kSelectionCursor;
+		} else {
+			hoveredPiece = findPlacedPiece(point);
+			if (hoveredPiece >= 0) {
+				hoverSource = "grid";
+				cursor = kSelectionCursor;
+			}
+		}
+	}
+	if (cursor == kDefaultCursor && point.y >= kEdgeTop && point.y < kEdgeBottom &&
+			((point.x >= 20 && point.x < 150) ||
+			(point.x >= 500 && point.x < 630)))
 		cursor = kEdgeCursor;
+
+	if (hoveredPiece != _hoveredPiece) {
+		if (hoveredPiece >= 0) {
+			debugC(2, kDebugPuzzles,
+				"Ripper: crystal puzzle hover piece=%d source=%s point=%d,%d cursor=%u",
+				hoveredPiece, hoverSource, point.x, point.y, cursor);
+		} else if (_hoveredPiece >= 0) {
+			debugC(2, kDebugPuzzles,
+				"Ripper: crystal puzzle hover cleared piece=%d point=%d,%d cursor=%u",
+				_hoveredPiece, point.x, point.y, cursor);
+		}
+		_hoveredPiece = hoveredPiece;
+	}
 	_engine->getCursor()->update(cursor);
 }
 

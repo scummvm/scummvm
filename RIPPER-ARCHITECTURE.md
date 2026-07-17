@@ -302,6 +302,14 @@
   returns it to the tray. Escape exits without setting the completion flag;
   F1 invokes modal selection table `0x19e` through
   `RunModalSelectionTableDialogWithRestore`.
+- `RunCrystalPiecePlacementPuzzleScene` stores UI rectangles in the original
+  display's transposed axis order. The tray-piece table at `0x8429c` supplies
+  display-relative Y values and the table at `0x842bc` supplies X values; the
+  scene origin `g_8a1ec` is added to Y. Each piece control uses its `CRYSB`
+  bitmap as a pixel mask, selects cursor 16 on hover, and dispatches control
+  IDs `0x6d6` through `0x6e5` into the drag overlay. The grid and tray-return
+  controls use the same 50-pixel scene origin, so rendering, selection, and
+  dropping share one physical coordinate space in ScummVM.
 - `RunModalSelectionTableDialogWithRestore` at `0x1f7f8` snapshots the active
   chooser state, resolves title resource `0x42` (`HELP`) and the caller's body
   resource, then calls `RunModalTextDialog` at `0x58ef2`. The shared dialog uses
