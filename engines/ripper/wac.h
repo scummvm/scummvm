@@ -68,6 +68,12 @@ private:
 	void buildDatabaseEntries();
 	void runDatabase();
 	void drawDatabase() const;
+	void clearDatabaseMediaViewport();
+	bool loadDatabaseStillImage(const Common::String &path);
+	void drawDatabaseStillImage() const;
+	void drawDatabaseScrollControls() const;
+	int findDatabaseScrollControl(const Common::Point &point) const;
+	void scrollDatabaseStillImage(int delta);
 	void dispatchDatabaseEntry(const DatabaseEntry &entry);
 	const Common::String &resourceString(uint resourceId) const;
 	uint measureText(const Common::String &text) const;
@@ -81,6 +87,8 @@ private:
 	uint _idleWindowFrame[2];
 	uint32 _idleWindowLastMillis;
 	Common::Array<BitmapAssetFrame> _databaseSkin;
+	Common::Array<BitmapAssetFrame> _databaseScrollArrows;
+	BitmapAssetFrame _databaseStillImage;
 	Common::Array<DatabaseEntry> _databaseEntries;
 	Common::Array<Common::String> _gameText;
 	BitmapFontAsset _font;
@@ -90,6 +98,8 @@ private:
 	int _pressedControl;
 	uint _databaseSelection;
 	uint _databaseFirstVisible;
+	uint _databaseStillImageScroll;
+	int _databaseScrollControl;
 	uint32 _databaseCornerLastMillis;
 	bool _databaseCornerAlternate;
 	bool _initialized;
