@@ -49,9 +49,23 @@ static const char *const kVisualConfigKeys[] = {
 	"ripper_tint"
 };
 
-RipperSettings::RipperSettings(Audio::Mixer *mixer) : _mixer(mixer) {
+static const uint16 kDefaultActionKeys[RipperSettings::kActionKeyCount] = {
+	0x2e00, 0x1100, 0x1700, 0x0077, 0x1f00,
+	0x1300, 0x1800, 0x3b00, 0x1000
+};
+
+static const char *const kActionKeyConfigKeys[RipperSettings::kActionKeyCount] = {
+	"ripper_action_key_0", "ripper_action_key_1", "ripper_action_key_2",
+	"ripper_action_key_3", "ripper_action_key_4", "ripper_action_key_5",
+	"ripper_action_key_6", "ripper_action_key_7", "ripper_action_key_8"
+};
+
+RipperSettings::RipperSettings(Audio::Mixer *mixer) : _mixer(mixer), _videoMode(1),
+		_combatLevel(2), _puzzleLevel(2), _bufferedVideo(false) {
 	for (uint i = 0; i < kSliderCount; ++i)
 		_values[i] = kSliderDescriptors[i].defaultValue;
+	for (uint i = 0; i < kActionKeyCount; ++i)
+		_actionKeys[i] = kDefaultActionKeys[i];
 }
 
 const RipperSettings::Descriptor &RipperSettings::getDescriptor(Slider slider) {
@@ -83,12 +97,29 @@ void RipperSettings::load() {
 		_values[i] = CLIP<int>(_values[i], kSliderDescriptors[i].minimum,
 			kSliderDescriptors[i].maximum);
 
+	_bufferedVideo = ConfMan.hasKey("ripper_buffered_video") ?
+		ConfMan.getBool("ripper_buffered_video") : false;
+	_videoMode = CLIP<int>(ConfMan.hasKey("ripper_video_mode") ?
+		ConfMan.getInt("ripper_video_mode") : 1, 0, 3);
+	_combatLevel = CLIP<int>(ConfMan.hasKey("ripper_combat_level") ?
+		ConfMan.getInt("ripper_combat_level") : 2, 1, 3);
+	_puzzleLevel = CLIP<int>(ConfMan.hasKey("ripper_puzzle_level") ?
+		ConfMan.getInt("ripper_puzzle_level") : 2, 1, 3);
+	for (uint i = 0; i < kActionKeyCount; ++i) {
+		const int key = ConfMan.hasKey(kActionKeyConfigKeys[i]) ?
+			ConfMan.getInt(kActionKeyConfigKeys[i]) : kDefaultActionKeys[i];
+		_actionKeys[i] = CLIP<int>(key, 0, 0xffff);
+	}
+
 	applyAudioVolumes();
 	debugC(1, kDebugGeneral,
 		"Ripper: loaded Remote Control settings master=%d ambient=%d sfx=%d video=%d brightness=%d color=%d contrast=%d tint=%d",
 		_values[kMasterVolume], _values[kAmbientVolume], _values[kSfxVolume],
 		_values[kVideoVolume], _values[kBrightness], _values[kColor],
 		_values[kContrast], _values[kTint]);
+	debugC(1, kDebugGeneral,
+		"Ripper: loaded Options Panel settings bufferedVideo=%d videoMode=%u combat=%u puzzle=%u",
+		_bufferedVideo, _videoMode, _combatLevel, _puzzleLevel);
 }
 
 void RipperSettings::save() {
@@ -98,8 +129,16 @@ void RipperSettings::save() {
 	ConfMan.setInt("speech_volume", percentToMixer(_values[kVideoVolume]));
 	for (uint i = kBrightness; i <= kTint; ++i)
 		ConfMan.setInt(kVisualConfigKeys[i - kBrightness], _values[i]);
+	ConfMan.setBool("ripper_buffered_video", _bufferedVideo);
+	ConfMan.setInt("ripper_video_mode", _videoMode);
+	ConfMan.setInt("ripper_combat_level", _combatLevel);
+	ConfMan.setInt("ripper_puzzle_level", _puzzleLevel);
+	for (uint i = 0; i < kActionKeyCount; ++i)
+		ConfMan.setInt(kActionKeyConfigKeys[i], _actionKeys[i]);
 	ConfMan.flushToDisk();
-	debugC(1, kDebugGeneral, "Ripper: saved Remote Control settings");
+	debugC(1, kDebugGeneral,
+		"Ripper: saved settings remoteControl=1 optionsPanel=1 bufferedVideo=%d videoMode=%u combat=%u puzzle=%u",
+		_bufferedVideo, _videoMode, _combatLevel, _puzzleLevel);
 }
 
 void RipperSettings::resetDefaults() {
@@ -211,6 +250,42 @@ bool RipperSettings::restoreVideoPalette() {
 	applyVideoPalette(palette, 256, false);
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 	return true;
+}
+
+uint16 RipperSettings::getActionKey(uint index) const {
+	return index < kActionKeyCount ? _actionKeys[index] : 0;
+}
+
+void RipperSettings::setBufferedVideo(bool enabled) {
+	_bufferedVideo = enabled;
+	debugC(2, kDebugGeneral,
+		"Ripper: Options Panel bufferedVideo=%d", _bufferedVideo);
+}
+
+void RipperSettings::setVideoMode(uint mode) {
+	_videoMode = MIN<uint>(mode, 3);
+	debugC(2, kDebugGeneral,
+		"Ripper: Options Panel videoMode=%u", _videoMode);
+}
+
+void RipperSettings::setCombatLevel(uint level) {
+	_combatLevel = CLIP<uint>(level, 1, 3);
+	debugC(2, kDebugGeneral,
+		"Ripper: Options Panel combatLevel=%u", _combatLevel);
+}
+
+void RipperSettings::setPuzzleLevel(uint level) {
+	_puzzleLevel = CLIP<uint>(level, 1, 3);
+	debugC(2, kDebugGeneral,
+		"Ripper: Options Panel puzzleLevel=%u", _puzzleLevel);
+}
+
+void RipperSettings::setActionKey(uint index, uint16 key) {
+	if (index >= kActionKeyCount || key == 0 || _actionKeys[index] == key)
+		return;
+	_actionKeys[index] = key;
+	debugC(2, kDebugInput,
+		"Ripper: Options Panel actionKeySlot=%u command=0x%04x", index, key);
 }
 
 } // End of namespace Ripper
