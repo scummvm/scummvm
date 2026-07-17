@@ -37,6 +37,7 @@
 #include "ripper/modal_dialog.h"
 #include "ripper/puzzles/calculator.h"
 #include "ripper/puzzles/crystal.h"
+#include "ripper/puzzles/rolodex.h"
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
 #include "ripper/toolbar.h"
@@ -1045,6 +1046,16 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 					"Ripper: calculator puzzle scene action completed result=%d milestone=%u",
 					puzzleResult, argument);
 				if (puzzleResult == CalculatorPuzzle::kLoadFailed)
+					return false;
+				break;
+			}
+			if (action == kSceneActionRolodexPuzzle) {
+				RolodexPuzzle puzzle(_engine);
+				const RolodexPuzzle::Result puzzleResult = puzzle.run(argument);
+				debugC(1, kDebugPuzzles,
+					"Ripper: rolodex puzzle scene action completed result=%d milestone=%u",
+					puzzleResult, argument);
+				if (puzzleResult == RolodexPuzzle::kLoadFailed)
 					return false;
 				break;
 			}

@@ -877,11 +877,14 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		const Common::Array<uint32> *frameAudioOffsets, uint32 audioByteRate,
 		uint32 timelineStartMillis, uint displayScale, bool patchInterfacePalette,
 		uint frameLimit, int originY, bool patchWacMediaPalette, bool serviceSceneUi,
-		bool repeatedLoopPass, bool *advanceSegment) {
+		bool repeatedLoopPass, bool *advanceSegment, uint loopStartFrame,
+		MediaSequenceCallback *sequenceCallback, uint16 *sequenceCommand) {
 	if (stoppedByUser)
 		*stoppedByUser = false;
 	if (advanceSegment)
 		*advanceSegment = false;
+	if (sequenceCommand)
+		*sequenceCommand = 0;
 	Video::SmackerDecoder decoder;
 	if (!decoder.loadStream(stream)) {
 		warning("Ripper: invalid Smacker stream '%s'", name.c_str());
@@ -960,7 +963,47 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	if (!serviceSceneUi)
 		_engine->getCursor()->setVisible(false);
 	decoder.start();
-	while (!_engine->shouldQuit() && !decoder.endOfVideo()) {
+	auto serviceSequenceCallback = [&](uint frame) {
+		if (!sequenceCallback)
+			return false;
+		decoder.pauseVideo(true);
+		const uint16 command = sequenceCallback->service(frame);
+		decoder.pauseVideo(false);
+		if (command == 0)
+			return false;
+		if (sequenceCommand)
+			*sequenceCommand = command;
+		debugC(2, kDebugVideo,
+			"Ripper: interactive Smacker '%s' returned command=0x%04x frame=%u",
+			name.c_str(), command, frame);
+		return true;
+	};
+	while (!_engine->shouldQuit()) {
+		if (decoder.endOfVideo()) {
+			if (!sequenceCallback || loopStartFrame == 0)
+				break;
+			if (loopStartFrame > decoder.getFrameCount()) {
+				warning("Ripper: Smacker '%s' loop start frame=%u exceeds frame count=%u",
+					name.c_str(), loopStartFrame, decoder.getFrameCount());
+				completed = false;
+				break;
+			}
+			const Graphics::Surface *frame = decoder.forceSeekToFrame(loopStartFrame - 1);
+			if (!frame) {
+				warning("Ripper: could not seek Smacker '%s' to loop start frame=%u",
+					name.c_str(), loopStartFrame);
+				completed = false;
+				break;
+			}
+			presentFrame(frame, true);
+			++presentedFrames;
+			debugC(3, kDebugVideo,
+				"Ripper: looped interactive Smacker '%s' to frame=%u",
+				name.c_str(), loopStartFrame);
+			if (serviceSequenceCallback(loopStartFrame))
+				break;
+			continue;
+		}
 		// ExecuteSceneFrameAndInteractions at 0x13277 passes
 		// PollInteractionAndResolveSelection at 0x13c8d as RunMediaSequence's
 		// per-frame callback. RunFrontEndActionMenu blocks that callback while the
@@ -1037,6 +1080,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				++presentedFrames;
 				if (serviceSceneUi)
 					serviceSceneAudio(presentedFrames);
+				if (serviceSequenceCallback(decoder.getCurFrame() + 1))
+					break;
 				if (synchronizeToTimeline) {
 					debugC(11, kDebugVideo,
 						"Ripper: Smacker '%s' frame=%d audioTargetMs=%u audioElapsedMs=%u driftMs=%d",
@@ -1347,7 +1392,7 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path) {
 }
 
 bool MediaPlayer::playSoundEffect(const Common::String &path, Audio::SoundHandle &handle,
-		uint volumePercent) {
+		uint volumePercent, bool loop) {
 	Common::SeekableReadStream *audioStream = nullptr;
 	Common::String source;
 	Common::File *file = new Common::File();
@@ -1373,10 +1418,13 @@ bool MediaPlayer::playSoundEffect(const Common::String &path, Audio::SoundHandle
 		return false;
 	stopSoundEffect(handle);
 	const byte volume = (byte)(MIN<uint>(volumePercent, 100) * Audio::Mixer::kMaxChannelVolume / 100);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, stream, -1, volume);
+	Audio::AudioStream *playbackStream = stream;
+	if (loop)
+		playbackStream = Audio::makeLoopingAudioStream(stream, 0);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, playbackStream, -1, volume);
 	debugC(2, kDebugAudio,
-		"Ripper: started sound effect '%s' source=%s volume=%u",
-		path.c_str(), source.c_str(), volumePercent);
+		"Ripper: started sound effect '%s' source=%s volume=%u loop=%d",
+		path.c_str(), source.c_str(), volumePercent, loop);
 	return true;
 }
 
@@ -1385,6 +1433,35 @@ bool MediaPlayer::stopSoundEffect(Audio::SoundHandle &handle) {
 	if (active)
 		_mixer->stopHandle(handle);
 	return active;
+}
+
+bool MediaPlayer::playPuzzleSequence(const Common::String &path, uint loopStartFrame,
+		MediaSequenceCallback *callback, uint16 *command) {
+	Common::File *file = new Common::File();
+	if (!file->open(Common::Path(path))) {
+		warning("Ripper: could not open puzzle media sequence '%s'", path.c_str());
+		delete file;
+		return false;
+	}
+
+	byte magic[4];
+	if (!readExact(*file, magic, sizeof(magic))) {
+		delete file;
+		return false;
+	}
+	file->seek(0);
+	if (memcmp(magic, "SMK2", 4) != 0 && memcmp(magic, "SMK4", 4) != 0) {
+		warning("Ripper: unsupported puzzle media sequence '%s'", path.c_str());
+		delete file;
+		return false;
+	}
+
+	debugC(1, kDebugVideo,
+		"Ripper: entering puzzle Smacker sequence media='%s' loopStartFrame=%u callback=%d",
+		path.c_str(), loopStartFrame, callback != nullptr);
+	return playSmacker(file, path, false, 0, 0, nullptr, nullptr, nullptr,
+		0, 0, 1, true, 0, kScenePresentationTop, false, false, false, nullptr,
+		loopStartFrame, callback, command);
 }
 
 bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
