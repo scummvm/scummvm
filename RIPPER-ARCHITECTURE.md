@@ -315,10 +315,27 @@
 - `RunModalSelectionTableDialogWithRestore` at `0x1f7f8` snapshots the active
   chooser state, resolves title resource `0x42` (`HELP`) and the caller's body
   resource, then calls `RunModalTextDialog` at `0x58ef2`. The shared dialog uses
-  the `MENUB0` through `MENUB14` skin and `SMALL.FNT`, centers a 300-pixel text
-  area, wraps at most ten visible 14-pixel rows, drains pending keyboard input,
-  scrolls longer text with the navigation keys, and closes on Escape or Enter
-  before restoring the underlying indexed framebuffer and palette.
+  the `MENUB0` through `MENUB14` skin and `SMALL.FNT`, centers a 300-pixel-wide
+  control, wraps at most ten visible 14-pixel rows, drains pending keyboard
+  input, scrolls longer text with the navigation keys, and closes on Escape or
+  Enter before restoring the underlying indexed framebuffer and palette.
+  `ResolveChooserFrameTileIndex` at `0x55250` selects `MENUB0` through `MENUB8`
+  in column-major order, and `TileChooserControlFrame` at `0x54fbe` advances by
+  each selected tile's dimensions before snapping the final row and column to
+  the control edges.
+- `InitializeSharedPresentationTemplates` at `0x1196f` loads `SMALL.FNT` for
+  the modal and captures MENUB palette indices 4 through 9 and 246 through 255
+  with `CaptureSharedDisplayPalettePatch` at `0x205a9`.
+  `ApplySharedDisplayPalettePatch` at `0x205d0` restores those bands before the
+  chooser is drawn. The modal body uses background index 253 and glyph index 4;
+  its heading uses index 255 and the centered `HELP` title uses index 254.
+- `PollInteractionAndResolveSelection` at `0x13c8d` maps extended key `0x3b00`
+  (F1) to general help resource 400, or resource `0x19b` while a prompt is
+  active. Toolbar action `0x51b` follows the same branch through
+  `DispatchFrontEndAction` at `0x190b7`. `ProcessChooserControlInput` at
+  `0x57372` maintains the first visible row and handles Home, Up, Page Up, End,
+  Down, and Page Down. ScummVM additionally maps mouse-wheel steps to the same
+  one-row movement while preserving the original cursor during the modal.
 - `RunCrystalPiecePlacementPuzzleScene` reads the persistent puzzle level. Level
   1 starts piece 0 in cell 9 and piece 1 in cell 44, with an 18-DOS-tick pause
   between their placement; level 2 starts piece 0 in cell 21; level 3 starts
@@ -359,9 +376,10 @@
   and height=282. `InitializeSharedPresentationTemplates` at `0x1196f` gives
   this chooser its own `wacmnu0` through `wacmnu15` skin and `small.fnt`.
   `TileChooserControlFrame` at `0x54fbe` uses the first nine bitmaps as a 3x3
-  frame. Its original presentation coordinates are transposed relative to
-  screen x/y; after translation, `wacmnu0` through `wacmnu8` are the row-major
-  top, middle, and bottom tiles. `ComputeChooserControlLayout` at `0x54a74`
+  frame. `ResolveChooserFrameTileIndex` at `0x55250` selects the left-column
+  top, middle, and bottom tiles first, followed by the center and right columns.
+  The original presentation coordinates remain transposed relative to screen
+  x/y. `ComputeChooserControlLayout` at `0x54a74`
   applies a 20-pixel heading inset, 6-pixel bottom inset, 5-pixel left inset,
   20-pixel right inset, and 14-pixel rows. The heading, normal rows, and active
   row use indexed glyph colors 248, 251, and 254 over chooser background 4.

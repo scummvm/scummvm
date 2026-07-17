@@ -170,6 +170,7 @@ public:
 	bool updateInteractiveCursor(const Common::Point &point, bool *failed = nullptr);
 	bool openWorldMap();
 	bool hasActivePrompt() const;
+	bool showHelp(const char *source);
 	bool hasPendingSceneTransition() const { return !_pendingSceneMember.empty(); }
 	bool canSaveGame() const;
 	bool syncGame(Common::Serializer &serializer);

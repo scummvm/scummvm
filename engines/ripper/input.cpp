@@ -146,6 +146,14 @@ bool InputManager::pollEvents() {
 		case Common::EVENT_MBUTTONUP:
 			updateMouseButton(event, kMouseButtonMiddle, false);
 			break;
+		case Common::EVENT_WHEELUP:
+			++_mouseState.wheel;
+			debugC(3, kDebugInput, "Ripper: mouse wheel delta=%d", _mouseState.wheel);
+			break;
+		case Common::EVENT_WHEELDOWN:
+			--_mouseState.wheel;
+			debugC(3, kDebugInput, "Ripper: mouse wheel delta=%d", _mouseState.wheel);
+			break;
 
 		default:
 			break;
@@ -157,6 +165,10 @@ bool InputManager::pollEvents() {
 
 bool InputManager::hasPendingKey() const {
 	return !_pendingKeys.empty();
+}
+
+uint16 InputManager::peekKey() const {
+	return _pendingKeys.empty() ? 0 : _pendingKeys.front();
 }
 
 uint16 InputManager::consumeKey() {
@@ -176,16 +188,19 @@ void InputManager::drainKeys() {
 
 void InputManager::discardMouseTransitions() {
 	debugC(2, kDebugInput,
-		"Ripper: discarded mouse transitions pressed=0x%02x released=0x%02x buttons=0x%02x",
-		_mouseState.pressed, _mouseState.released, _mouseState.buttons);
+		"Ripper: discarded mouse transitions pressed=0x%02x released=0x%02x "
+		"buttons=0x%02x wheel=%d",
+		_mouseState.pressed, _mouseState.released, _mouseState.buttons, _mouseState.wheel);
 	_mouseState.pressed = 0;
 	_mouseState.released = 0;
+	_mouseState.wheel = 0;
 }
 
 MouseState InputManager::publishMouseState() {
 	const MouseState published = _mouseState;
 	_mouseState.pressed = 0;
 	_mouseState.released = 0;
+	_mouseState.wheel = 0;
 	return published;
 }
 

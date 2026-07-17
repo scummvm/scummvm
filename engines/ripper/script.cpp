@@ -34,6 +34,7 @@
 #include "ripper/input.h"
 #include "ripper/media.h"
 #include "ripper/milestones.h"
+#include "ripper/modal_dialog.h"
 #include "ripper/puzzles/crystal.h"
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
@@ -47,6 +48,9 @@ namespace Ripper {
 // front-end action service for the top 50-pixel band of every scene frame.
 static const uint kToolbarCursor = 14;
 static const uint kDialogueCursor = 16;
+static const uint16 kHelpCommand = 0x3b00;
+static const uint kGeneralHelpResource = 400;
+static const uint kPromptHelpResource = 0x19b;
 static const int kSceneInteractionOriginY = 50;
 
 static const uint32 kScriptHeaderSize = 0xe9;
@@ -563,6 +567,18 @@ bool ScriptManager::hasActivePrompt() const {
 	// SceneRuntime+0x189 bit 0x20 is set. HandleSceneEntryChoiceListLifecycle
 	// sets that bit for the choice list currently modeled by DialogueManager.
 	return _dialogue->isPending();
+}
+
+bool ScriptManager::showHelp(const char *source) {
+	// PollInteractionAndResolveSelection at 0x13c8d and DispatchFrontEndAction
+	// at 0x190b7 use the same prompt-state branch for F1 and toolbar Help.
+	const bool promptActive = hasActivePrompt();
+	const uint resourceId = promptActive ? kPromptHelpResource : kGeneralHelpResource;
+	debugC(1, kDebugScene,
+		"Ripper: opening scene help source=%s resource=%u promptActive=%d",
+		source, resourceId, promptActive);
+	_engine->getCursor()->setVisible(true);
+	return _engine->getModalDialog()->run(resourceId);
 }
 
 bool ScriptManager::initialize(ResourceManager &resources) {
@@ -1323,6 +1339,12 @@ bool ScriptManager::serviceScene() {
 			return performPendingSceneTransition();
 	}
 	const MouseState mouse = _engine->getInput()->publishMouseState();
+	if (_engine->getInput()->peekKey() == kHelpCommand) {
+		_engine->getInput()->consumeKey();
+		if (!showHelp("scene"))
+			return false;
+		return true;
+	}
 	const BriefingServiceResult briefingResult = _briefing->service(mouse);
 	if (briefingResult == kBriefingFailed)
 		return false;
