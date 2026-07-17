@@ -135,9 +135,6 @@ void drawComfyKeyboardUi(bool actorDebugEnabled) {
 	ImGui::SetNextWindowSize(ImVec2(740, 440), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Comfy Keyboard", &_state->_visible, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize)) {
-		if (actorDebugEnabled)
-			ImGui::Checkbox("Actor debug", &_state->_actorDebugVisible);
-
 		ImU32 shell = keyboardColor(232, 228, 208);
 		ImU32 red = keyboardColor(199, 31, 27);
 		ImU32 handset = keyboardColor(211, 48, 38);
