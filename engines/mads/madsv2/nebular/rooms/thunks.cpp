@@ -214,8 +214,8 @@ int Scene::DynamicHotspots::setPosition(int id, const Common::Point &pt, int fac
 	return id;
 }
 
-int Scene::DynamicHotspots::setCursor(int index, int cursorNum) {
-	error("TODO: DynamicHotspots::setCursor");
+int Scene::DynamicHotspots::setCursor(int id, int cursorNum) {
+	return kernel_dynamic_cursor(id, cursorNum);
 }
 
 Scene::DynamicHotspot Scene::DynamicHotspots::operator[](int idx) {

@@ -237,7 +237,7 @@ struct Scene {
 		int add(int vocab_id, int verb_id, int auto_sequence, const Common::Rect &r);
 		void remove(int dyn_id);
 		int setPosition(int id, const Common::Point &pt, int facing);
-		int setCursor(int index, int cursor);
+		int setCursor(int id, int cursor);
 
 		DynamicHotspot operator[](int idx);
 	};
