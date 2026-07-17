@@ -30,6 +30,7 @@
 namespace Ripper {
 
 class ResourceManager;
+class OptionsPanelManager;
 class RemoteControlManager;
 class RipperEngine;
 struct MouseState;
@@ -77,6 +78,7 @@ private:
 	bool _previewEnabled;
 	RipperEngine *_engine;
 	RemoteControlManager *_remoteControl;
+	OptionsPanelManager *_optionsPanel;
 };
 
 } // End of namespace Ripper

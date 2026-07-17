@@ -133,8 +133,8 @@
   `RunModalSelectionTableDialogWithRestore`: it presents general help resource
   400 normally and conversation help resource `0x19b` while scene-runtime bit
   `0x20` marks a prompt/chooser active. The implemented choice-list lifecycle
-  maps that state to the pending `DialogueManager` chooser. Inventory,
-  options, and quit remain explicit stubs.
+  maps that state to the pending `DialogueManager` chooser. Inventory and
+  quit remain explicit stubs.
 - `RunTake2IniSliderSetupMenu` at `0x1989b` edits eight live settings in this
   order: master, ambient, SFX, video, brightness, color, contrast, and tint.
   The descriptor table at `0x1856a` supplies each range, step, and default;
@@ -167,6 +167,20 @@
   decrease rocker. `FindUiControlStateAtPoint` at `0x4aae8` returns the first
   inserted overlapping control, so the clipped increase control owns that
   upper region and the decrease control owns the lower region.
+- `RunOptionsMenu` at `0x1c001` opens the nested `OPTIONS` library embedded in
+  `INTERFAC.PL`, replaces the display with `BG.PCX`, and continuously advances
+  the 60-by-280 `OPT.SMK` animation at physical (544,44). It clones the
+  60-byte persistent settings blob before entering its input loop, so toggle,
+  video-mode, combat-difficulty, puzzle-difficulty, and action-key edits remain
+  staged until Escape or exit control 1018 commits them. F1 presents help
+  resource `0x191` without leaving the panel.
+- The options state strips use `ONOFF0..8`, `SLIDE0..24`, `DIFF0..17`, and
+  `PDIFF0..25`. `RenderOptionsStateStripSelections` at `0x1d935` selects
+  anchor frames 0/8 for the buffered-video toggle, 0/8/16/24 for the video
+  mode, 0/6/12 for combat levels 1/2/3, and 0/8/16 for puzzle levels 1/3/2.
+  Controls 1010 through 1017 invoke `RunOptionsKeyCaptureLoop` at `0x1d753`
+  for action slots 0 through 6 and 8; slot 7 retains F1 help. Escape cancels an
+  active key capture but exits and commits when the panel itself owns input.
 - `DispatchSceneEntryAction` at `0x36892` routes action 2 to the same
   `HandleSceneSelectionAction` at `0x191e2` used by toolbar action `0x515`.
   `RunSceneSelectionMenu` at `0x20808` groups the 25 travel-entry flags 20
