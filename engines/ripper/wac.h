@@ -80,7 +80,7 @@ private:
 	void drawDatabaseScrollControls() const;
 	int findDatabaseScrollControl(const Common::Point &point) const;
 	void scrollDatabaseStillImage(int delta);
-	uint16 dispatchDatabaseEntry(const DatabaseEntry &entry);
+	uint16 dispatchDatabaseEntry(DatabaseEntry &entry);
 	const Common::String &resourceString(uint resourceId) const;
 	uint measureText(const Common::String &text) const;
 	void drawText(byte *screen, uint pitch, int x, int y, const Common::String &text,

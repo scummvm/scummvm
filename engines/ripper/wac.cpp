@@ -632,7 +632,7 @@ void WacManager::scrollDatabaseStillImage(int delta) {
 	drawDatabaseStillImage();
 }
 
-uint16 WacManager::dispatchDatabaseEntry(const DatabaseEntry &entry) {
+uint16 WacManager::dispatchDatabaseEntry(DatabaseEntry &entry) {
 	// RunWacInventorySelectionLoop at 0x2252a clears the left media viewport
 	// before dispatching every selected database row.
 	clearDatabaseMediaViewport();
@@ -650,6 +650,17 @@ uint16 WacManager::dispatchDatabaseEntry(const DatabaseEntry &entry) {
 		debugC(1, kDebugWac,
 			"Ripper: WAC database entry=1 label='%s' RunWacMugSelectionScene result=%d",
 			entry.label.c_str(), result);
+		if (result == BrokenMugPuzzle::kSolved) {
+			// RunWacMugSelectionScene at 0x236b9 replaces the active row's text
+			// pointer with resource 0xde after setting flags 0x47 and 0x48. The
+			// visible row keeps original dispatch entry 1 for this chooser session.
+			const Common::String &completedLabel =
+				resourceString(kWacDatabaseTextBase + 2);
+			debugC(1, kDebugWac,
+				"Ripper: WAC database replaced completed cup row entry=1 oldLabel='%s' textId=0x%x newLabel='%s'",
+				entry.label.c_str(), kWacDatabaseTextBase + 2, completedLabel.c_str());
+			entry.label = completedLabel;
+		}
 		drawFrontEnd();
 		drawDatabase();
 		return result == BrokenMugPuzzle::kExitWac ? kExitAction : kNoAction;
