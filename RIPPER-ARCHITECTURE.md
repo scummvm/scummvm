@@ -342,7 +342,11 @@
   active. Toolbar action `0x51b` follows the same branch through
   `DispatchFrontEndAction` at `0x190b7`. `ProcessChooserControlInput` at
   `0x57372` maintains the first visible row and handles Home, Up, Page Up, End,
-  Down, and Page Down. ScummVM additionally maps mouse-wheel steps to the same
+  Down, and Page Down. `InitializeSharedPresentationTemplates` at `0x119ac`
+  assigns cursor 16 to the modal template. The input handler applies it only
+  inside the modal bounds; outside, it services the retained scene selection
+  state so the current hotspot cursor remains animated without dispatching the
+  underlying action. ScummVM additionally maps mouse-wheel steps to the same
   one-row movement while preserving the original cursor during the modal.
 - `RunCrystalPiecePlacementPuzzleScene` reads the persistent puzzle level. Level
   1 starts piece 0 in cell 9 and piece 1 in cell 44, with an 18-DOS-tick pause

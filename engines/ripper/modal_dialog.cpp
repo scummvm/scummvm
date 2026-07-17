@@ -29,6 +29,7 @@
 #include "ripper/detection.h"
 #include "ripper/input.h"
 #include "ripper/ripper.h"
+#include "ripper/script.h"
 
 namespace Ripper {
 
@@ -49,6 +50,7 @@ static const byte kModalBackgroundColor = 253;
 static const byte kModalHeadingColor = 255;
 static const byte kModalTitleColor = 254;
 static const byte kModalTextColor = 4;
+static const uint kModalCursor = 16;
 
 } // End of anonymous namespace
 
@@ -304,7 +306,7 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 	g_system->updateScreen();
 }
 
-bool ModalDialogManager::run(uint bodyResourceId) {
+bool ModalDialogManager::run(uint bodyResourceId, bool retainSceneCursorRegions) {
 	const Common::String &title = resourceString(kModalTitleResourceId);
 	const Common::String &body = resourceString(bodyResourceId);
 	if (!_initialized || title.empty() || body.empty() || !captureDisplay()) {
@@ -322,6 +324,8 @@ bool ModalDialogManager::run(uint bodyResourceId) {
 	const int top = (400 - height) / 2;
 	const Common::Rect bounds(left, top, left + width, top + height);
 	uint firstVisible = 0;
+	int modalCursorRegion = -1;
+	Common::Point cursorPoint = _engine->getInput()->peekMouseState().position;
 
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
@@ -379,6 +383,21 @@ bool ModalDialogManager::run(uint bodyResourceId) {
 			}
 		}
 		const MouseState mouse = _engine->getInput()->publishMouseState();
+		cursorPoint = mouse.position;
+		const bool nextModalCursorActive = !retainSceneCursorRegions ||
+			bounds.contains(mouse.position);
+		if (nextModalCursorActive)
+			_engine->getCursor()->update(kModalCursor);
+		else
+			_engine->getScripts()->updateModalSceneCursor(mouse.position);
+		if ((int)nextModalCursorActive != modalCursorRegion) {
+			modalCursorRegion = nextModalCursorActive;
+			debugC(2, kDebugCursor,
+				"Ripper: modal cursor region=%s resource=%u point=%d,%d bounds=%d,%d,%d,%d",
+				modalCursorRegion != 0 ? "dialog" : "scene", bodyResourceId,
+				mouse.position.x, mouse.position.y, bounds.left, bounds.top,
+				bounds.width(), bounds.height());
+		}
 		if (mouse.wheel != 0) {
 			const uint maximumFirst = lines.size() > visibleRows ?
 				lines.size() - visibleRows : 0;
@@ -403,6 +422,8 @@ bool ModalDialogManager::run(uint bodyResourceId) {
 
 	_engine->getInput()->discardMouseTransitions();
 	restoreDisplay();
+	if (retainSceneCursorRegions)
+		_engine->getScripts()->updateModalSceneCursor(cursorPoint);
 	debugC(1, kDebugScene,
 		"Ripper: exited modal text dialog resource=%u", bodyResourceId);
 	return true;

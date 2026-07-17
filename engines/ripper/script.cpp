@@ -578,7 +578,7 @@ bool ScriptManager::showHelp(const char *source) {
 		"Ripper: opening scene help source=%s resource=%u promptActive=%d",
 		source, resourceId, promptActive);
 	_engine->getCursor()->setVisible(true);
-	return _engine->getModalDialog()->run(resourceId);
+	return _engine->getModalDialog()->run(resourceId, true);
 }
 
 bool ScriptManager::initialize(ResourceManager &resources) {
@@ -1515,6 +1515,21 @@ bool ScriptManager::updateInteractiveCursor(const Common::Point &point, bool *fa
 	_engine->getCursor()->setVisible(true);
 	_engine->getCursor()->update(cursorIndex);
 	return false;
+}
+
+void ScriptManager::updateModalSceneCursor(const Common::Point &point) {
+	// RunModalSelectionTableDialogWithRestore at 0x1f7f8 retains the scene
+	// selection-state list while the modal chooser is active. Outside the modal
+	// rectangle, ProcessChooserControlInput at 0x57372 services that retained
+	// list so hotspot cursors continue to animate without dispatching actions.
+	const ScriptInteraction *interaction = _awaitingBa0Interaction ?
+		findBa0Interaction(point) : nullptr;
+	uint cursorIndex = interaction ?
+		(interaction->conditionOffset != 0 ? 8 : interaction->initialSelection) : 0;
+	if (_dialogue->isPending() && _dialogue->contains(point))
+		cursorIndex = kDialogueCursor;
+	_engine->getCursor()->setVisible(true);
+	_engine->getCursor()->update(cursorIndex);
 }
 
 Common::Rect ScriptManager::interactionBounds(const ScriptInteraction &interaction) const {

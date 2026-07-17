@@ -168,6 +168,7 @@ public:
 	void drawDialogueOverlay(bool captureBacking = false);
 	void drawBriefingOverlay();
 	bool updateInteractiveCursor(const Common::Point &point, bool *failed = nullptr);
+	void updateModalSceneCursor(const Common::Point &point);
 	bool openWorldMap();
 	bool hasActivePrompt() const;
 	bool showHelp(const char *source);
