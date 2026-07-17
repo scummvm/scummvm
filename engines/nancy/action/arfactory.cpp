@@ -78,6 +78,7 @@
 #include "engines/nancy/action/puzzle/soundequalizerpuzzle.h"
 #include "engines/nancy/action/puzzle/soundmatchpuzzle.h"
 #include "engines/nancy/action/puzzle/spigotpuzzle.h"
+#include "engines/nancy/action/puzzle/stepobjectspuzzle.h"
 #include "engines/nancy/action/puzzle/tangrampuzzle.h"
 #include "engines/nancy/action/puzzle/telephone.h"
 #include "engines/nancy/action/puzzle/towerpuzzle.h"
@@ -468,9 +469,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new Set3DSoundListenerPosition();
 	// -- Nancy 13 new/relocated puzzles (types 169-176) --
 	case 169:
-		// StepObjectsPuzzle, new in Nancy13
-		// TODO: not yet implemented
-		return nullptr;
+		return new StepObjectsPuzzle();
 	case 170:
 		if (g_nancy->getGameType() >= kGameTypeNancy13) {
 			// WordFindPuzzle, new in Nancy13. This reuses the slot that used
