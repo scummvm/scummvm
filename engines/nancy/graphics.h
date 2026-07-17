@@ -52,7 +52,7 @@ public:
 	const Font *getFont(uint id) const { return id < _fonts.size() ? &_fonts[id] : nullptr; }
 	const Graphics::Screen *getScreen() { return &_screen; }
 
-	const Graphics::PixelFormat &getInputPixelFormat(uint bpp = 16);
+	const Graphics::PixelFormat &getInputPixelFormat(uint bpp = 0);
 	const Graphics::PixelFormat &getScreenPixelFormat();
 	const Graphics::PixelFormat &getTransparentPixelFormat();
 	uint32 getTransColor() { return _transColor; }

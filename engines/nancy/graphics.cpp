@@ -401,6 +401,8 @@ const Graphics::PixelFormat &GraphicsManager::getInputPixelFormat(uint bpp) {
 		return _clut8Format;
 
 	switch (bpp) {
+	case 0:
+		return g_nancy->getGameType() >= kGameTypeNancy13 ? _inputPixelFormat32 : _inputPixelFormat16;
 	case 16:
 		return _inputPixelFormat16;	// RGB555
 	case 24:

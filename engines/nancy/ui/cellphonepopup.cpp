@@ -53,8 +53,7 @@ public:
 
 	void render(uint width, uint height, uint32 transColor,
 				const Common::String &text, uint fontID) {
-		const uint bpp = g_nancy->getGameType() >= kGameTypeNancy13 ? 32 : 16;
-		initSurfaces(width, height, g_nancy->_graphics->getInputPixelFormat(bpp),
+		initSurfaces(width, height, g_nancy->_graphics->getInputPixelFormat(),
 						transColor, transColor);
 		_fullSurface.setTransparentColor(transColor);
 		addTextLine(text);
