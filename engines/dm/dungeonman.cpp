@@ -479,11 +479,14 @@ void DungeonMan::decompressDungeonFile() {
 	if (!f.isOpen())
 		error("Unable to open Dungeon.dat file");
 
-	if (f.readUint16BE() == 0x8104) { // if dungeon is compressed
-		_rawDunFileDataSize = f.readUint32BE();
+	bool bigEndian = (_vm->getPlatform() != Common::kPlatformDOS);
+	Common::SeekableReadStreamEndianWrapper safeStream(&f, bigEndian, DisposeAfterUse::NO);
+
+	if (safeStream.readUint16() == 0x8104) { // if dungeon is compressed
+		_rawDunFileDataSize = safeStream.readUint32();
 		delete[] _rawDunFileData;
 		_rawDunFileData = new byte[_rawDunFileDataSize];
-		f.readUint16BE(); // discard
+		safeStream.readUint16(); // discard
 		byte common[4];
 		for (uint16 i = 0; i < 4; ++i)
 			common[i] = f.readByte();
@@ -494,7 +497,7 @@ void DungeonMan::decompressDungeonFile() {
 		// start unpacking
 		uint32 uncompIndex = 0;
 		uint8 bitsUsedInWord = 0;
-		uint16 wordBuff = f.readUint16BE();
+		uint16 wordBuff = safeStream.readUint16();
 		uint8 bitsLeftInByte = 8;
 		byte byteBuff = f.readByte();
 		while (uncompIndex < _rawDunFileDataSize) {
@@ -561,26 +564,31 @@ void DungeonMan::loadDungeonFile(Common::SeekableReadStream *file) {
 	if (_vm->_gameMode != kDMModeLoadSavedGame)
 		decompressDungeonFile();
 
-	Common::ReadStream *dunDataStream = nullptr;
+	Common::SeekableReadStream *rawDunDataStream = nullptr;
 	if (file) {
 		// if loading a save
-		dunDataStream = file;
+		rawDunDataStream = file;
 	} else {
 		// else read dungeon.dat
 		assert(_rawDunFileData && _rawDunFileDataSize);
-		dunDataStream = new Common::MemoryReadStream(_rawDunFileData, _rawDunFileDataSize, DisposeAfterUse::NO);
+		rawDunDataStream = new Common::MemoryReadStream(_rawDunFileData, _rawDunFileDataSize, DisposeAfterUse::NO);
 	}
 
+	bool isSavegame = (file != nullptr);
+	bool bigEndian = isSavegame || (_vm->getPlatform() != Common::kPlatformDOS);
+	Common::SeekableReadStreamEndianWrapper safeStream(rawDunDataStream, bigEndian, isSavegame ? DisposeAfterUse::NO : DisposeAfterUse::YES);
+	Common::SeekableReadStreamEndianWrapper *dunDataStream = &safeStream;
+
 	// initialize _g278_dungeonFileHeader
-	_dungeonFileHeader._ornamentRandomSeed = dunDataStream->readUint16BE();
-	_dungeonFileHeader._rawMapDataSize = dunDataStream->readUint16BE();
+	_dungeonFileHeader._ornamentRandomSeed = dunDataStream->readUint16();
+	_dungeonFileHeader._rawMapDataSize = dunDataStream->readUint16();
 	_dungeonFileHeader._mapCount = dunDataStream->readByte();
 	dunDataStream->readByte(); // discard 1 byte
-	_dungeonFileHeader._textDataWordCount = dunDataStream->readUint16BE();
-	_dungeonFileHeader._partyStartLocation = dunDataStream->readUint16BE();
-	_dungeonFileHeader._squareFirstThingCount = dunDataStream->readUint16BE();
+	_dungeonFileHeader._textDataWordCount = dunDataStream->readUint16();
+	_dungeonFileHeader._partyStartLocation = dunDataStream->readUint16();
+	_dungeonFileHeader._squareFirstThingCount = dunDataStream->readUint16();
 	for (uint16 i = 0; i < kDMThingTypeTotal; ++i)
-		_dungeonFileHeader._thingCounts[i] = dunDataStream->readUint16BE();
+		_dungeonFileHeader._thingCounts[i] = dunDataStream->readUint16();
 
 	// init party position and mapindex
 	if (_vm->_gameMode != kDMModeLoadSavedGame) {
@@ -598,28 +606,28 @@ void DungeonMan::loadDungeonFile(Common::SeekableReadStream *file) {
 	}
 
 	for (uint16 i = 0; i < _dungeonFileHeader._mapCount; ++i) {
-		_dungeonMaps[i]._rawDunDataOffset = dunDataStream->readUint16BE();
-		dunDataStream->readUint32BE(); // discard 4 bytes
+		_dungeonMaps[i]._rawDunDataOffset = dunDataStream->readUint16();
+		dunDataStream->readUint32(); // discard 4 bytes
 		_dungeonMaps[i]._offsetMapX = dunDataStream->readByte();
 		_dungeonMaps[i]._offsetMapY = dunDataStream->readByte();
 
-		uint16 tmp = dunDataStream->readUint16BE();
+		uint16 tmp = dunDataStream->readUint16();
 		_dungeonMaps[i]._height = tmp >> 11;
 		_dungeonMaps[i]._width = (tmp >> 6) & 0x1F;
 		_dungeonMaps[i]._level = tmp & 0x3F; // Only used in DMII
 
-		tmp = dunDataStream->readUint16BE();
+		tmp = dunDataStream->readUint16();
 		_dungeonMaps[i]._randFloorOrnCount = tmp >> 12;
 		_dungeonMaps[i]._floorOrnCount = (tmp >> 8) & 0xF;
 		_dungeonMaps[i]._randWallOrnCount = (tmp >> 4) & 0xF;
 		_dungeonMaps[i]._wallOrnCount = tmp & 0xF;
 
-		tmp = dunDataStream->readUint16BE();
+		tmp = dunDataStream->readUint16();
 		_dungeonMaps[i]._difficulty = tmp >> 12;
 		_dungeonMaps[i]._creatureTypeCount = (tmp >> 4) & 0xF;
 		_dungeonMaps[i]._doorOrnCount = tmp & 0xF;
 
-		tmp = dunDataStream->readUint16BE();
+		tmp = dunDataStream->readUint16();
 		_dungeonMaps[i]._doorSet1 = (tmp >> 12) & 0xF;
 		_dungeonMaps[i]._doorSet0 = (tmp >> 8) & 0xF;
 		_dungeonMaps[i]._wallSet = (WallSet)((tmp >> 4) & 0xF);
@@ -650,7 +658,7 @@ void DungeonMan::loadDungeonFile(Common::SeekableReadStream *file) {
 		_dungeonColumnsCumulativeSquareThingCount = new uint16[columCount];
 	}
 	for (uint16 i = 0; i < columCount; ++i)
-		_dungeonColumnsCumulativeSquareThingCount[i] = dunDataStream->readUint16BE();
+		_dungeonColumnsCumulativeSquareThingCount[i] = dunDataStream->readUint16();
 
 	// load square first things
 	if (!_vm->_restartGameRequest) {
@@ -659,7 +667,7 @@ void DungeonMan::loadDungeonFile(Common::SeekableReadStream *file) {
 	}
 
 	for (uint16 i = 0; i < actualSquareFirstThingCount; ++i)
-		_squareFirstThings[i].set(dunDataStream->readUint16BE());
+		_squareFirstThings[i].set(dunDataStream->readUint16());
 
 	if (_vm->_gameMode != kDMModeLoadSavedGame) {
 		for (uint16 i = 0; i < 300; ++i)
@@ -673,7 +681,7 @@ void DungeonMan::loadDungeonFile(Common::SeekableReadStream *file) {
 	}
 
 	for (uint16 i = 0; i < _dungeonFileHeader._textDataWordCount; ++i)
-		_dungeonTextData[i] = dunDataStream->readUint16BE();
+		_dungeonTextData[i] = dunDataStream->readUint16();
 
 	if (_vm->_gameMode != kDMModeLoadSavedGame)
 		timeline._eventMaxCount = 100;
@@ -748,108 +756,108 @@ void DungeonMan::loadDungeonFile(Common::SeekableReadStream *file) {
 			switch (thingType) {
 			case kDMThingTypeDoor: {
 				Door &door = _doors[i];
-				door._nextThing = Thing(dunDataStream->readUint16BE());
-				door._attributes = dunDataStream->readUint16BE();
+				door._nextThing = Thing(dunDataStream->readUint16());
+				door._attributes = dunDataStream->readUint16();
 				break;
 			}
 			case kDMThingTypeTeleporter: {
 				Teleporter &tele = _teleporters[i];
-				tele._nextThing = Thing(dunDataStream->readUint16BE());
-				tele._attributes = dunDataStream->readUint16BE();
-				tele._destMapIndex = dunDataStream->readUint16BE();
+				tele._nextThing = Thing(dunDataStream->readUint16());
+				tele._attributes = dunDataStream->readUint16();
+				tele._destMapIndex = dunDataStream->readUint16();
 				break;
 			}
 			case kDMstringTypeText: {
 				TextString &text = _textStrings[i];
-				text._nextThing = Thing(dunDataStream->readUint16BE());
-				text._textDataRef = dunDataStream->readUint16BE();
+				text._nextThing = Thing(dunDataStream->readUint16());
+				text._textDataRef = dunDataStream->readUint16();
 				break;
 			}
 			case kDMThingTypeSensor: {
 				Sensor &sens = _sensors[i];
-				sens._nextThing = Thing(dunDataStream->readUint16BE());
-				sens._datAndType = dunDataStream->readUint16BE();
-				sens._attributes = dunDataStream->readUint16BE();
-				sens._action = dunDataStream->readUint16BE();
+				sens._nextThing = Thing(dunDataStream->readUint16());
+				sens._datAndType = dunDataStream->readUint16();
+				sens._attributes = dunDataStream->readUint16();
+				sens._action = dunDataStream->readUint16();
 				break;
 			}
 			case kDMThingTypeGroup: {
 				Group &grp = _groups[i];
-				grp._nextThing = Thing(dunDataStream->readUint16BE());
-				uint16 slotVal = dunDataStream->readUint16BE();
+				grp._nextThing = Thing(dunDataStream->readUint16());
+				uint16 slotVal = dunDataStream->readUint16();
 				grp._slot = (slotVal == 0) ? _vm->_thingNone : Thing(slotVal);
 				if (!file) {
 					grp._type = (CreatureType)dunDataStream->readByte();
 					grp._cells = dunDataStream->readByte();
 				} else {
-					grp._type = (CreatureType)dunDataStream->readUint16BE();
-					grp._cells = dunDataStream->readUint16BE();
+					grp._type = (CreatureType)dunDataStream->readUint16();
+					grp._cells = dunDataStream->readUint16();
 				}
-				grp._health[0] = dunDataStream->readUint16BE();
-				grp._health[1] = dunDataStream->readUint16BE();
-				grp._health[2] = dunDataStream->readUint16BE();
-				grp._health[3] = dunDataStream->readUint16BE();
-				grp._flags = dunDataStream->readUint16BE();
+				grp._health[0] = dunDataStream->readUint16();
+				grp._health[1] = dunDataStream->readUint16();
+				grp._health[2] = dunDataStream->readUint16();
+				grp._health[3] = dunDataStream->readUint16();
+				grp._flags = dunDataStream->readUint16();
 				break;
 			}
 			case kDMThingTypeWeapon: {
 				Weapon &weap = _weapons[i];
-				weap._nextThing = Thing(dunDataStream->readUint16BE());
-				weap._desc = dunDataStream->readUint16BE();
+				weap._nextThing = Thing(dunDataStream->readUint16());
+				weap._desc = dunDataStream->readUint16();
 				break;
 			}
 			case kDMThingTypeArmour: {
 				Armour &arm = _armours[i];
-				arm._nextThing = Thing(dunDataStream->readUint16BE());
-				arm._attributes = dunDataStream->readUint16BE();
+				arm._nextThing = Thing(dunDataStream->readUint16());
+				arm._attributes = dunDataStream->readUint16();
 				break;
 			}
 			case kDMThingTypeScroll: {
 				Scroll &scr = _scrolls[i];
-				scr._nextThing = Thing(dunDataStream->readUint16BE());
-				scr._attributes = dunDataStream->readUint16BE();
+				scr._nextThing = Thing(dunDataStream->readUint16());
+				scr._attributes = dunDataStream->readUint16();
 				break;
 			}
 			case kDMThingTypePotion: {
 				Potion &pot = _potions[i];
-				pot._nextThing = Thing(dunDataStream->readUint16BE());
-				pot._attributes = dunDataStream->readUint16BE();
+				pot._nextThing = Thing(dunDataStream->readUint16());
+				pot._attributes = dunDataStream->readUint16();
 				break;
 			}
 			case kDMThingTypeContainer: {
 				Container &cont = _containers[i];
-				cont._nextThing = Thing(dunDataStream->readUint16BE());
-				uint16 slotVal = dunDataStream->readUint16BE();
+				cont._nextThing = Thing(dunDataStream->readUint16());
+				uint16 slotVal = dunDataStream->readUint16();
 				cont._slot = (slotVal == 0) ? _vm->_thingNone : Thing(slotVal);
-				cont._type = dunDataStream->readUint16BE();
-				dunDataStream->readUint16BE(); // unused 4th word
+				cont._type = dunDataStream->readUint16();
+				dunDataStream->readUint16(); // unused 4th word
 				break;
 			}
 			case kDMThingTypeJunk: {
 				Junk &jnk = _junks[i];
-				jnk._nextThing = Thing(dunDataStream->readUint16BE());
-				jnk._attributes = dunDataStream->readUint16BE();
+				jnk._nextThing = Thing(dunDataStream->readUint16());
+				jnk._attributes = dunDataStream->readUint16();
 				break;
 			}
 			case kDMThingTypeProjectile: {
 				Projectile &proj = _projectiles[i];
-				proj._nextThing = Thing(dunDataStream->readUint16BE());
-				uint16 slotVal = dunDataStream->readUint16BE();
+				proj._nextThing = Thing(dunDataStream->readUint16());
+				uint16 slotVal = dunDataStream->readUint16();
 				proj._slot = (slotVal == 0) ? _vm->_thingNone : Thing(slotVal);
 				if (!file) {
 					proj._kineticEnergy = dunDataStream->readByte();
 					proj._attack = dunDataStream->readByte();
 				} else {
-					proj._kineticEnergy = dunDataStream->readUint16BE();
-					proj._attack = dunDataStream->readUint16BE();
+					proj._kineticEnergy = dunDataStream->readUint16();
+					proj._attack = dunDataStream->readUint16();
 				}
-				proj._eventIndex = dunDataStream->readUint16BE();
+				proj._eventIndex = dunDataStream->readUint16();
 				break;
 			}
 			case kDMThingTypeExplosion: {
 				Explosion &expl = _explosions[i];
-				expl._nextThing = Thing(dunDataStream->readUint16BE());
-				expl._attributes = dunDataStream->readUint16BE();
+				expl._nextThing = Thing(dunDataStream->readUint16());
+				expl._attributes = dunDataStream->readUint16();
 				break;
 			}
 			}
@@ -933,10 +941,6 @@ void DungeonMan::loadDungeonFile(Common::SeekableReadStream *file) {
 			}
 		}
 	}
-
-	if (!file) { // this means that we created a new MemoryReadStream
-		delete dunDataStream;
-	} // the deletion of the function parameter 'file' happens elsewhere
 }
 
 void DungeonMan::setCurrentMap(uint16 mapIndex) {

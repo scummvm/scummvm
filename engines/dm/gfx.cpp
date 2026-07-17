@@ -684,6 +684,10 @@ DisplayMan::~DisplayMan() {
 	delete _doorFrameD1C;
 }
 
+static uint16 readUint16(const byte *data, Common::Platform platform) {
+	return (platform == Common::kPlatformDOS) ? READ_LE_UINT16(data) : READ_BE_UINT16(data);
+}
+
 uint16 DisplayMan::getBitmapByteCount(uint16 pixelWidth, uint16 height) {
 	return pixelWidth / 2 * height;
 }
@@ -843,17 +847,30 @@ void DisplayMan::initializeGraphicData() {
 void DisplayMan::loadGraphics() {
 	Common::File f;
 	f.open("graphics.dat");
-	_grapItemCount = f.readUint16BE();
+
+	bool bigEndian = (_vm->getPlatform() != Common::kPlatformDOS);
+	Common::SeekableReadStreamEndianWrapper safeStream(&f, bigEndian, DisposeAfterUse::NO);
+
+	uint16 header = safeStream.readUint16();
+	uint32 tableStartOffset = 2;
+	uint32 bytesPerGraphic = 4;
+	if (header & 0x8000) { // graphics.dat v3.x
+		_grapItemCount = safeStream.readUint16();
+		tableStartOffset = 4;
+		bytesPerGraphic = 8;
+	} else {
+		_grapItemCount = header;
+	}
 
 	delete[] _bitmapCompressedByteCount;
 	_bitmapCompressedByteCount = new uint32[_grapItemCount];
 	for (uint16 i = 0; i < _grapItemCount; ++i)
-		_bitmapCompressedByteCount[i] = f.readUint16BE();
+		_bitmapCompressedByteCount[i] = safeStream.readUint16();
 
 	delete[] _bitmapDecompressedByteCount;
 	_bitmapDecompressedByteCount = new uint32[_grapItemCount];
 	for (uint16 i = 0; i < _grapItemCount; ++i)
-		_bitmapDecompressedByteCount[i] = f.readUint16BE();
+		_bitmapDecompressedByteCount[i] = safeStream.readUint16();
 
 	delete[] _packedItemPos;
 	_packedItemPos = new uint32[_grapItemCount + 1];
@@ -867,7 +884,7 @@ void DisplayMan::loadGraphics() {
 
 	LZWdecompressor lzw;
 	Common::Array<byte> tmpBuffer;
-	f.seek(2 + _grapItemCount * 4);
+	f.seek(tableStartOffset + _grapItemCount * bytesPerGraphic);
 	for (uint32 i = 0; i < _grapItemCount; ++i) {
 		byte *bitmap = _packedBitmaps + _packedItemPos[i];
 		f.read(bitmap, _bitmapCompressedByteCount[i]);
@@ -1008,8 +1025,8 @@ void DisplayMan::viewportBlitToScreen() {
 void DisplayMan::loadIntoBitmap(uint16 index, byte *destBitmap) {
 	uint8 *data = _packedBitmaps + _packedItemPos[index];
 
-	uint16 width = READ_BE_UINT16(data);
-	uint16 height = READ_BE_UINT16(data + 2);
+	uint16 width = readUint16(data, _vm->getPlatform());
+	uint16 height = readUint16(data + 2, _vm->getPlatform());
 	uint16 nextByteIndex = 4;
 
 	for (int32 k = 0; k < width * height;) {
@@ -1024,7 +1041,7 @@ void DisplayMan::loadIntoBitmap(uint16 index, byte *destBitmap) {
 			for (int j = 0; j < byte1 + 1; ++j)
 				destBitmap[k++] = nibble2;
 		} else if (nibble1 == 0xC) {
-			uint16 word1 = READ_BE_UINT16(data + nextByteIndex);
+			uint16 word1 = (_vm->getPlatform() == Common::kPlatformDOS) ? READ_LE_UINT16(data + nextByteIndex) : READ_BE_UINT16(data + nextByteIndex);
 			nextByteIndex += 2;
 			for (int j = 0; j < word1 + 1; ++j)
 				destBitmap[k++] = nibble2;
@@ -1034,7 +1051,7 @@ for (int j = 0; j < byte1 + 1; ++j, ++k)
 				destBitmap[k] = destBitmap[k - width];
 			destBitmap[k++] = nibble2;
 		} else if (nibble1 == 0xF) {
-			uint16 word1 = READ_BE_UINT16(data + nextByteIndex);
+			uint16 word1 = (_vm->getPlatform() == Common::kPlatformDOS) ? READ_LE_UINT16(data + nextByteIndex) : READ_BE_UINT16(data + nextByteIndex);
 			nextByteIndex += 2;
 			for (int j = 0; j < word1 + 1; ++j, ++k)
 				destBitmap[k] = destBitmap[k - width];
@@ -1225,12 +1242,12 @@ byte *DisplayMan::getCurrentVgaBuffer() {
 
 uint16 DisplayMan::getPixelWidth(uint16 index) {
 	byte *data = _packedBitmaps + _packedItemPos[index];
-	return READ_BE_UINT16(data);
+	return readUint16(data, _vm->getPlatform());
 }
 
 uint16 DisplayMan::getPixelHeight(uint16 index) {
 	uint8 *data = _packedBitmaps + _packedItemPos[index];
-	return READ_BE_UINT16(data + 2);
+	return readUint16(data + 2, _vm->getPlatform());
 }
 
 void DisplayMan::copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height) {
