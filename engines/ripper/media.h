@@ -39,6 +39,13 @@ namespace Ripper {
 class InputManager;
 class RipperEngine;
 
+class MediaSequenceCallback {
+public:
+	virtual ~MediaSequenceCallback() {}
+
+	virtual uint16 service(uint frame) = 0;
+};
+
 class MediaPlayer {
 public:
 	MediaPlayer(RipperEngine *engine, InputManager *input, Audio::Mixer *mixer);
@@ -49,8 +56,10 @@ public:
 	bool playWacMedia(const Common::String &path, int x, int y);
 	bool playBlockingAudio(const Common::String &path);
 	bool playSoundEffect(const Common::String &path, Audio::SoundHandle &handle,
-		uint volumePercent = 100);
+		uint volumePercent = 100, bool loop = false);
 	bool stopSoundEffect(Audio::SoundHandle &handle);
+	bool playPuzzleSequence(const Common::String &path, uint loopStartFrame,
+		MediaSequenceCallback *callback, uint16 *command = nullptr);
 	void fadePalette(bool fadeIn, uint stepCount);
 	bool playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
 		bool loopUntilInput = false, bool allowEscSpace = false);
@@ -105,7 +114,9 @@ private:
 		uint32 audioByteRate = 0, uint32 timelineStartMillis = 0, uint displayScale = 1,
 		bool patchInterfacePalette = true, uint frameLimit = 0, int originY = 0,
 		bool patchWacMediaPalette = false, bool serviceSceneUi = false,
-		bool repeatedLoopPass = false, bool *advanceSegment = nullptr);
+		bool repeatedLoopPass = false, bool *advanceSegment = nullptr,
+		uint loopStartFrame = 0, MediaSequenceCallback *sequenceCallback = nullptr,
+		uint16 *sequenceCommand = nullptr);
 	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name,
 		bool allowEscSpace, bool serviceSceneUi = false);
 	bool servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,

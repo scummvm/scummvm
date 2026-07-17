@@ -80,6 +80,7 @@ enum ScriptOpcode : byte {
 enum SceneAction {
 	kSceneActionWorldMap = 2,
 	kSceneActionCalculatorPuzzle = 4,
+	kSceneActionRolodexPuzzle = 5,
 	kSceneActionCrystalPuzzle = 29,
 	kSceneActionClearDisplay = 32,
 	kSceneActionBriefing = 300
