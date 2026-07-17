@@ -436,15 +436,8 @@ MetaDOS API allows mixing various components:
   unidrive.dos (ExtenDOS)
 - cd.bos from ExtenDOS strictly requires unidrive.dos
 
-There is a bug in ExtenDOS 4.10's cd.bos: under very specific circumstances
-ScummVM seemingly freezes while seeking for a file on CD (black screen). I'm
-working with the author on fixing this problem, in the meantime you can:
-
-- Copy data files from CD to hard disk (makes sense also for speed reasons),
-  and ignore the message box with advice about ripping tracks from CD.
-- Reconfigure ExtenDOS to use its own SCSI routines (disabled by default).
-- Edit extendos.cnf and replace cd.bos with e.g. spin_sd.bos.
-- Not use ExtenDOS.
+To speed things up you can copy data files from CD to hard disk and ignore the
+message box with advice about ripping tracks from CD.
 
 Sample rate
 ~~~~~~~~~~~
@@ -558,6 +551,9 @@ Known issues
 
 - When using EmuTOS, ScummVM requires a recent release (>= 1.3), otherwise
   various screen- and sound-related issues may appear.
+
+- When using ExtenDOS for Audio CD, ScummVM requires a recent release (>= 4.11),
+  otherwise playback could freeze the whole program.
 
 Future plans
 ------------
