@@ -64,7 +64,6 @@ private:
 	Common::Array<Common::String> _labels;
 	Common::Array<byte> _savedPixels;
 	Common::Array<byte> _savedPalette;
-	Common::Array<byte> _sourcePalette;
 	bool _initialized;
 };
 

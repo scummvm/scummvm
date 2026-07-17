@@ -31,7 +31,6 @@
 #include "ripper/media.h"
 #include "ripper/modal_dialog.h"
 #include "ripper/ripper.h"
-#include "ripper/toolbar.h"
 
 namespace Ripper {
 
@@ -103,12 +102,10 @@ bool RemoteControlManager::initialize(ResourceManager &resources) {
 		uint hitWidth = _controls[i].frame.width;
 		uint hitHeight = _controls[i].frame.height;
 		if (i == 4) {
-			// The fifth row at 0x1863a explicitly clips the shared +/- rocker to
-			// 27 by 19 in the original transposed bitmap coordinate space.
-			if (hitWidth < hitHeight)
-				hitHeight = MIN<uint>(27, hitHeight);
-			else
-				hitWidth = MIN<uint>(27, hitWidth);
+			// The fifth row at 0x1863a clips the shared +/- rocker to 27 by 19
+			// in the display service's transposed coordinates: 19 by 27 here.
+			hitWidth = MIN<uint>(19, hitWidth);
+			hitHeight = MIN<uint>(27, hitHeight);
 		}
 		_controls[i].bounds = Common::Rect(kControlLayouts[i].x, kControlLayouts[i].y,
 			kControlLayouts[i].x + hitWidth,
@@ -154,18 +151,17 @@ void RemoteControlManager::restoreDisplay() {
 		g_system->getPaletteManager()->setPalette(_savedPalette.data(), 0, 256);
 	_savedPixels.clear();
 	_savedPalette.clear();
-	_sourcePalette.clear();
 	g_system->updateScreen();
 }
 
 void RemoteControlManager::applyPalette() {
-	if (_sourcePalette.size() != 256 * 3)
+	// REMOTE.SMK draws only with the shared interface bands patched by
+	// ApplySharedDisplayPalettePatch at 0x205d0. Its unused palette entries are
+	// chroma-key green and must not replace the suspended scene palette.
+	if (_engine->getSettings()->restoreVideoPalette())
 		return;
-	byte palette[256 * 3];
-	memcpy(palette, _sourcePalette.data(), sizeof(palette));
-	_engine->getToolbar()->applySharedPalettePatch(palette, 256);
-	_engine->getSettings()->applyVideoPalette(palette, 256, false);
-	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+	if (_savedPalette.size() == 256 * 3)
+		g_system->getPaletteManager()->setPalette(_savedPalette.data(), 0, 256);
 }
 
 void RemoteControlManager::drawBitmap(byte *screen, uint pitch,
@@ -220,7 +216,10 @@ void RemoteControlManager::drawText(byte *screen, uint pitch, int x, int y,
 }
 
 int RemoteControlManager::findControl(const Common::Point &point) const {
-	for (int i = _controls.size() - 1; i >= 0; --i) {
+	// AppendUiControlStateToList and FindUiControlStateAtPoint at 0x4aae8
+	// retain insertion order and return the first hit. This matters for the
+	// clipped increase control placed over the full-height decrease rocker.
+	for (uint i = 0; i < _controls.size(); ++i) {
 		const Control &control = _controls[i];
 		if (!control.bounds.contains(point))
 			continue;
@@ -278,8 +277,9 @@ bool RemoteControlManager::run() {
 		"Ripper: entering RunTake2IniSliderSetupMenu controls=%u", _controls.size());
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->publishMouseState();
+	Common::Array<byte> remotePalette;
 	if (!_engine->getMedia()->playInterfaceSequence(
-		"remote.smk", kRemoteX, kRemoteY, _sourcePalette)) {
+		"remote.smk", kRemoteX, kRemoteY, remotePalette)) {
 		restoreDisplay();
 		return false;
 	}
