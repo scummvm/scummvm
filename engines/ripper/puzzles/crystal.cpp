@@ -55,8 +55,8 @@ static const int kTrayRight = 333;
 static const int kTrayBottom = 150;
 static const int kEdgeTop = kSceneOriginY + 30;
 static const int kEdgeBottom = kEdgeTop + 235;
-static const int kHeadX = 0;
-static const int kHeadY = 328;
+static const int kHeadX = 328;
+static const int kHeadY = kSceneOriginY;
 static const uint kDefaultPuzzleLevel = 2;
 static const uint kCrystalCompletionFadeSteps = 9;
 static const uint kEasySeedDelayTicks = 0x12;
@@ -346,8 +346,9 @@ bool CrystalPuzzle::complete(uint completionFlag) {
 	_engine->getMedia()->playSoundEffect("crystal3.wav", _audioHandles[3]);
 	_engine->getCursor()->setVisible(false);
 	debugC(1, kDebugPuzzles,
-		"Ripper: completed crystal puzzle milestone=%u head='cryshead.smk' solution='crysolve.avi'",
-		completionFlag);
+		"Ripper: completed crystal puzzle milestone=%u head='cryshead.smk' "
+		"position=%d,%d solution='crysolve.avi'",
+		completionFlag, kHeadX, kHeadY);
 	if (!_engine->getMedia()->play("cryshead.smk", false, kHeadX, kHeadY))
 		warning("Ripper: could not play crystal puzzle completion header");
 	_engine->getMedia()->fadePalette(false, kCrystalCompletionFadeSteps);

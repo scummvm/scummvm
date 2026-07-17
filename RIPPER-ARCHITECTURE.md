@@ -345,9 +345,9 @@
   37, 44, 48, 60, and 62. The original also accepts the case-insensitive hidden
   keyword `pisces`, resetting progress to zero after any mismatch. Either path
   sets the caller-supplied milestone, queues the solved audio cues, presents
-  `CRYSHEAD.SMK` at (0, 328), fades the active palette out through display
-  command `0x1e`, and then plays `CRYSOLVE.AVI` before returning to the scene
-  callback.
+  `CRYSHEAD.SMK` at physical position (328, 50), fades the active palette out
+  through display command `0x1e`, and then plays `CRYSOLVE.AVI` before returning
+  to the scene callback.
 
 ## WAC
 
