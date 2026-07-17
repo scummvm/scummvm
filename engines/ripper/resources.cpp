@@ -304,6 +304,7 @@ Common::String AssetLibrary::normalizeMemberName(const Common::String &memberNam
 bool AssetLibrary::open(const Common::Path &filename) {
 	Common::File file;
 	_entries.clear();
+	_archiveData.clear();
 	_filename = filename;
 	_modernFormat = false;
 
@@ -317,7 +318,23 @@ bool AssetLibrary::open(const Common::Path &filename) {
 		warning("Ripper: invalid asset library size %lld for '%s'", fileSize64, filename.toString().c_str());
 		return false;
 	}
-	const uint32 fileSize = (uint32)fileSize64;
+	return loadDirectory(file, (uint32)fileSize64);
+}
+
+bool AssetLibrary::open(Common::SeekableReadStream &stream, const Common::Path &sourceName) {
+	_entries.clear();
+	_archiveData.clear();
+	_filename = sourceName;
+	_modernFormat = false;
+	if (!readStream(stream, _archiveData) || _archiveData.size() < 6)
+		return false;
+
+	Common::MemoryReadStream memory(_archiveData.data(), _archiveData.size(), DisposeAfterUse::NO);
+	return loadDirectory(memory, _archiveData.size());
+}
+
+bool AssetLibrary::loadDirectory(Common::SeekableReadStream &file, uint32 fileSize) {
+	file.seek(0);
 	const uint16 entryCount = file.readUint16LE();
 	const uint32 directoryOffset = file.readUint32LE();
 	uint32 payloadStart = 6;
@@ -334,7 +351,7 @@ bool AssetLibrary::open(const Common::Path &filename) {
 	const uint64 tableSize = (uint64)entryCount * recordSize;
 	if (directoryOffset < payloadStart || (uint64)directoryOffset + tableSize > fileSize) {
 		warning("Ripper: invalid directory range offset=%u count=%u recordSize=%u fileSize=%u in '%s'",
-			directoryOffset, entryCount, recordSize, fileSize, filename.toString().c_str());
+			directoryOffset, entryCount, recordSize, fileSize, _filename.toString().c_str());
 		return false;
 	}
 
@@ -344,7 +361,7 @@ bool AssetLibrary::open(const Common::Path &filename) {
 		entry.offset = file.readUint32LE();
 		char baseName[8];
 		if (file.read(baseName, sizeof(baseName)) != sizeof(baseName)) {
-			warning("Ripper: truncated directory entry %u in '%s'", i, filename.toString().c_str());
+			warning("Ripper: truncated directory entry %u in '%s'", i, _filename.toString().c_str());
 			return false;
 		}
 
@@ -364,16 +381,16 @@ bool AssetLibrary::open(const Common::Path &filename) {
 		entry.size = 0;
 		if (entry.key.empty() || entry.offset < payloadStart || entry.offset > directoryOffset) {
 			warning("Ripper: invalid directory entry %u key='%s' offset=%u in '%s'",
-				i, entry.key.c_str(), entry.offset, filename.toString().c_str());
+				i, entry.key.c_str(), entry.offset, _filename.toString().c_str());
 			return false;
 		}
 		if (!_entries.empty() && entry.offset < _entries.back().offset) {
-			warning("Ripper: non-monotonic directory entry %u in '%s'", i, filename.toString().c_str());
+			warning("Ripper: non-monotonic directory entry %u in '%s'", i, _filename.toString().c_str());
 			return false;
 		}
 		for (uint existing = 0; existing < _entries.size(); ++existing) {
 			if (_entries[existing].key == entry.key) {
-				warning("Ripper: duplicate member '%s' in '%s'", entry.key.c_str(), filename.toString().c_str());
+				warning("Ripper: duplicate member '%s' in '%s'", entry.key.c_str(), _filename.toString().c_str());
 				return false;
 			}
 		}
@@ -385,18 +402,18 @@ bool AssetLibrary::open(const Common::Path &filename) {
 		const uint32 end = i + 1 < _entries.size() ? _entries[i + 1].offset : directoryOffset;
 		if (end < _entries[i].offset) {
 			warning("Ripper: invalid member range for '%s' in '%s'",
-				_entries[i].key.c_str(), filename.toString().c_str());
+				_entries[i].key.c_str(), _filename.toString().c_str());
 			return false;
 		}
 		_entries[i].size = end - _entries[i].offset;
 		debugC(3, kDebugResources,
 			"Ripper: archive '%s' member=%u key='%s' offset=%u size=%u timestamp=0x%08x",
-			filename.toString().c_str(), i, _entries[i].key.c_str(), _entries[i].offset,
+			_filename.toString().c_str(), i, _entries[i].key.c_str(), _entries[i].offset,
 			_entries[i].size, _entries[i].timestamp);
 	}
 
 	debugC(1, kDebugResources, "Ripper: opened %s asset library '%s' with %u entries",
-		_modernFormat ? "2BIL" : "legacy", filename.toString().c_str(), _entries.size());
+		_modernFormat ? "2BIL" : "legacy", _filename.toString().c_str(), _entries.size());
 	return true;
 }
 
@@ -418,6 +435,14 @@ Common::SeekableReadStream *AssetLibrary::createReadStreamForMember(const Common
 	if (!entry) {
 		warning("Ripper: member '%s' was not found in '%s'", memberName.c_str(), _filename.toString().c_str());
 		return nullptr;
+	}
+
+	if (!_archiveData.empty()) {
+		debugC(2, kDebugResources,
+			"Ripper: opening member '%s' from nested '%s' offset=%u size=%u",
+			memberName.c_str(), _filename.toString().c_str(), entry->offset, entry->size);
+		return new Common::MemoryReadStream(_archiveData.data() + entry->offset,
+			entry->size, DisposeAfterUse::NO);
 	}
 
 	Common::File *file = new Common::File();
@@ -464,9 +489,17 @@ bool ResourceManager::initialize() {
 
 	debugC(2, kDebugResources, "Ripper: RIPPER.INI script='%s' interface='%s' sound='%s'",
 		scriptLibrary.c_str(), interfaceLibrary.c_str(), soundLibrary.c_str());
-	return _scripts.open(Common::Path(scriptLibrary)) &&
-		_interface.open(Common::Path(interfaceLibrary)) &&
-		_sound.open(Common::Path(soundLibrary));
+	if (!_scripts.open(Common::Path(scriptLibrary)) ||
+			!_interface.open(Common::Path(interfaceLibrary)) ||
+			!_sound.open(Common::Path(soundLibrary)))
+		return false;
+	Common::ScopedPtr<Common::SeekableReadStream> optionsStream(
+		_interface.createReadStreamForMember("options.pl"));
+	if (!optionsStream || !_options.open(*optionsStream, Common::Path("options.pl"))) {
+		warning("Ripper: could not open nested OPTIONS.PL asset library");
+		return false;
+	}
+	return true;
 }
 
 bool ResourceManager::loadInterfaceBitmapSequence(const Common::String &memberName,
@@ -479,6 +512,20 @@ bool ResourceManager::loadInterfaceBitmapSequence(const Common::String &memberNa
 	}
 
 	debugC(2, kDebugResources, "Ripper: decoded interface bitmap sequence '%s' frames=%u",
+		memberName.c_str(), sequence.frames.size());
+	return true;
+}
+
+bool ResourceManager::loadOptionsBitmapSequence(const Common::String &memberName,
+		BitmapAssetSequence &sequence) const {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		_options.createReadStreamForMember(memberName));
+	if (!stream || !decodeBitmapSequence(*stream, sequence)) {
+		warning("Ripper: could not decode options bitmap sequence '%s'", memberName.c_str());
+		return false;
+	}
+
+	debugC(2, kDebugResources, "Ripper: decoded options bitmap sequence '%s' frames=%u",
 		memberName.c_str(), sequence.frames.size());
 	return true;
 }
@@ -542,6 +589,35 @@ bool ResourceManager::loadInterfacePcx(const Common::String &memberName,
 		memcpy(frame.palette.data(), palette.data(), frame.palette.size());
 	debugC(2, kDebugResources,
 		"Ripper: decoded interface PCX '%s' width=%u height=%u colors=%u",
+		memberName.c_str(), frame.width, frame.height, palette.size());
+	return true;
+}
+
+bool ResourceManager::loadOptionsPcx(const Common::String &memberName,
+		BitmapAssetFrame &frame) const {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		_options.createReadStreamForMember(memberName));
+	Image::PCXDecoder decoder;
+	if (!stream || !decoder.loadStream(*stream)) {
+		warning("Ripper: could not decode options PCX '%s'", memberName.c_str());
+		return false;
+	}
+
+	const Graphics::Surface *surface = decoder.getSurface();
+	if (!surface || surface->format.bytesPerPixel != 1 || surface->w <= 0 || surface->h <= 0)
+		return false;
+	frame.width = surface->w;
+	frame.height = surface->h;
+	frame.transparentColor = 0;
+	frame.pixels.resize((uint32)frame.width * frame.height);
+	for (uint y = 0; y < frame.height; ++y)
+		memcpy(frame.pixels.data() + y * frame.width, surface->getBasePtr(0, y), frame.width);
+	const Graphics::Palette &palette = decoder.getPalette();
+	frame.palette.resize(palette.size() * 3);
+	if (!frame.palette.empty())
+		memcpy(frame.palette.data(), palette.data(), frame.palette.size());
+	debugC(2, kDebugResources,
+		"Ripper: decoded options PCX '%s' width=%u height=%u colors=%u",
 		memberName.c_str(), frame.width, frame.height, palette.size());
 	return true;
 }
