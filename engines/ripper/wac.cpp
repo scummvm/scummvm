@@ -21,6 +21,7 @@
 #include "ripper/wac.h"
 
 #include "common/debug.h"
+#include "common/file.h"
 #include "common/system.h"
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
@@ -29,6 +30,7 @@
 #include "ripper/detection.h"
 #include "ripper/input.h"
 #include "ripper/milestones.h"
+#include "ripper/modal_dialog.h"
 #include "ripper/puzzles/broken_mug.h"
 #include "ripper/ripper.h"
 
@@ -78,6 +80,10 @@ static const int kWacMediaScrollDownY = 90;
 static const int kWacMediaScrollStep = 10;
 static const uint kWacMediaPaletteFirst = 10;
 static const uint kWacMediaPaletteCount = 140;
+static const uint kWacFrontEndHelpResource = 404;
+static const uint kWacDatabaseHelpResource = 406;
+static const uint kWacNotebookTitleResource = 0x49;
+static const uint kWacNotebookMaximumBytes = 0x27c0;
 
 static void blitBitmap(Graphics::Surface *screen, const BitmapAssetFrame &bitmap,
 		int x, int y) {
@@ -265,27 +271,103 @@ int WacManager::findControl(const Common::Point &point) const {
 	return -1;
 }
 
-bool WacManager::dispatchAction(uint16 action) {
+uint16 WacManager::serviceFrontEndControls(const MouseState &mouse,
+		uint fallbackCursor) {
+	// RunWacFrontEndLoop at 0x21865 leaves these four UiControlState records in
+	// the shared list. ServiceWacSceneInputAction at 0x21eef therefore services
+	// them from every WAC subscene, not only from the front page.
+	const int hoveredControl = findControl(mouse.position);
+	if (hoveredControl != _hoveredControl) {
+		_hoveredControl = hoveredControl;
+		debugC(2, kDebugWac,
+			"Ripper: WAC persistent-control hover control=%d action=0x%x point=%d,%d",
+			_hoveredControl, _hoveredControl < 0 ? 0 : _controls[_hoveredControl].action,
+			mouse.position.x, mouse.position.y);
+	}
+	_engine->getCursor()->update(
+		_hoveredControl < 0 ? fallbackCursor : kWacControlCursor);
+
+	if ((mouse.pressed & kMouseButtonLeft) != 0)
+		_pressedControl = _hoveredControl;
+	if ((mouse.released & kMouseButtonLeft) == 0 || _pressedControl < 0)
+		return kNoAction;
+
+	const int pressedControl = _pressedControl;
+	_pressedControl = -1;
+	if (pressedControl != _hoveredControl)
+		return kNoAction;
+
+	debugC(1, kDebugWac,
+		"Ripper: WAC persistent-control selected control=%d action=0x%x",
+		pressedControl, _controls[pressedControl].action);
+	return _controls[pressedControl].action;
+}
+
+bool WacManager::runNotebook() {
+	Common::String body;
+	Common::File file;
+	if (file.open("ripper.txt")) {
+		const uint32 byteCount = MIN<uint32>(file.size(), kWacNotebookMaximumBytes);
+		Common::Array<char> buffer;
+		buffer.resize(byteCount);
+		const uint32 bytesRead = byteCount == 0 ? 0 : file.read(buffer.data(), byteCount);
+		if (bytesRead != 0)
+			body = Common::String(buffer.data(), buffer.data() + bytesRead);
+	}
+
+	const Common::String &title = resourceString(kWacNotebookTitleResource);
+	debugC(1, kDebugWac,
+		"Ripper: opening WAC notebook action=0x3100 source='ripper.txt' bytes=%u",
+		body.size());
+	_engine->getCursor()->setVisible(true);
+	return _engine->getModalDialog()->runText(title, body, "ripper.txt");
+}
+
+uint16 WacManager::dispatchSubsceneAction(uint16 action, uint helpResourceId,
+		bool databaseActive) {
 	switch (action) {
+	case kNoAction:
+		return kNoAction;
 	case kExitAction:
-		debugC(1, kDebugWac, "Ripper: WAC front end selected exit action=0x1900");
-		return false;
-	case kDatabaseAction:
-		runDatabase();
-		drawFrontEnd();
-		_engine->getInput()->discardMouseTransitions();
-		break;
-	case kTextViewerAction:
 		debugC(1, kDebugWac,
-			"Ripper: WAC text viewer action=0x3100 selected; handler is stubbed");
-		break;
+			"Ripper: WAC persistent power action=0x1900 requested front-end exit");
+		return kExitAction;
+	case kDatabaseAction:
+		if (!databaseActive)
+			return kDatabaseAction;
+		debugC(2, kDebugWac,
+			"Ripper: ignored nested WAC database action=0x2000 while chooser is active");
+		return kNoAction;
+	case kTextViewerAction:
+		if (!runNotebook())
+			warning("Ripper: WAC notebook action failed");
+		_engine->getInput()->discardMouseTransitions();
+		_pressedControl = -1;
+		return kNoAction;
 	case kHelpAction:
 		debugC(1, kDebugWac,
-			"Ripper: WAC help action=0x3b00 selected; handler is stubbed");
-		break;
+			"Ripper: opening contextual WAC help resource=%u", helpResourceId);
+		_engine->getCursor()->setVisible(true);
+		if (!_engine->getModalDialog()->run(helpResourceId))
+			warning("Ripper: WAC contextual help resource=%u failed", helpResourceId);
+		_engine->getInput()->discardMouseTransitions();
+		_pressedControl = -1;
+		return kNoAction;
 	default:
 		warning("Ripper: unsupported WAC front-end action 0x%x", action);
-		break;
+		return kNoAction;
+	}
+}
+
+bool WacManager::dispatchAction(uint16 action) {
+	const uint16 result = dispatchSubsceneAction(action, kWacFrontEndHelpResource, false);
+	if (result == kExitAction)
+		return false;
+	if (result == kDatabaseAction) {
+		const uint16 databaseResult = runDatabase();
+		drawFrontEnd();
+		_engine->getInput()->discardMouseTransitions();
+		return databaseResult != kExitAction;
 	}
 	return true;
 }
@@ -550,7 +632,7 @@ void WacManager::scrollDatabaseStillImage(int delta) {
 	drawDatabaseStillImage();
 }
 
-void WacManager::dispatchDatabaseEntry(const DatabaseEntry &entry) {
+uint16 WacManager::dispatchDatabaseEntry(const DatabaseEntry &entry) {
 	// RunWacInventorySelectionLoop at 0x2252a clears the left media viewport
 	// before dispatching every selected database row.
 	clearDatabaseMediaViewport();
@@ -570,7 +652,7 @@ void WacManager::dispatchDatabaseEntry(const DatabaseEntry &entry) {
 			entry.label.c_str(), result);
 		drawFrontEnd();
 		drawDatabase();
-		return;
+		return result == BrokenMugPuzzle::kExitWac ? kExitAction : kNoAction;
 	}
 	if (entry.originalIndex == 2) {
 		debugC(2, kDebugWac,
@@ -581,7 +663,7 @@ void WacManager::dispatchDatabaseEntry(const DatabaseEntry &entry) {
 			entry.label.c_str(), played);
 		drawFrontEnd();
 		drawDatabase();
-		return;
+		return kNoAction;
 	}
 	if (entry.originalIndex == 10 || entry.originalIndex == 11) {
 		const Common::String path = Common::String::format(
@@ -590,14 +672,15 @@ void WacManager::dispatchDatabaseEntry(const DatabaseEntry &entry) {
 		debugC(1, kDebugWac,
 			"Ripper: WAC database entry=%u label='%s' stillImage='%s' loaded=%d",
 			entry.originalIndex, entry.label.c_str(), path.c_str(), loaded);
-		return;
+		return kNoAction;
 	}
 	debugC(1, kDebugWac,
 		"Ripper: WAC database entry=%u label='%s' handler is stubbed",
 		entry.originalIndex, entry.label.c_str());
+	return kNoAction;
 }
 
-void WacManager::runDatabase() {
+uint16 WacManager::runDatabase() {
 	const Common::Rect bounds(kWacDatabaseLeft, kWacDatabaseTop,
 		kWacDatabaseRight, kWacDatabaseBottom);
 	buildDatabaseEntries();
@@ -618,6 +701,7 @@ void WacManager::runDatabase() {
 		bounds.height() - kWacDatabaseHeadingInset - kWacDatabaseBottomInset,
 		kWacDatabaseVisibleRows);
 
+	uint16 returnAction = kNoAction;
 	bool active = true;
 	while (active && !_engine->shouldQuit()) {
 		if (_engine->getInput()->pollEvents()) {
@@ -626,8 +710,16 @@ void WacManager::runDatabase() {
 		}
 		while (_engine->getInput()->hasPendingKey()) {
 			const uint16 command = _engine->getInput()->consumeKey();
-			if (command == 0x1b || command == kExitAction || command == kDosF10Command) {
+			if (command == 0x1b) {
 				active = false;
+			} else if (command == kExitAction || command == kDosF10Command) {
+				returnAction = kExitAction;
+				active = false;
+			} else if (command == kHelpAction || command == kTextViewerAction) {
+				returnAction = dispatchSubsceneAction(command,
+					kWacDatabaseHelpResource, true);
+				if (returnAction == kExitAction)
+					active = false;
 			} else if (!_databaseEntries.empty() && command == 0x4800) {
 				if (_databaseSelection > 0)
 					--_databaseSelection;
@@ -635,7 +727,9 @@ void WacManager::runDatabase() {
 				if (_databaseSelection + 1 < _databaseEntries.size())
 					++_databaseSelection;
 			} else if (!_databaseEntries.empty() && command == 0x0d) {
-				dispatchDatabaseEntry(_databaseEntries[_databaseSelection]);
+				returnAction = dispatchDatabaseEntry(_databaseEntries[_databaseSelection]);
+				if (returnAction == kExitAction)
+					active = false;
 			}
 			if (_databaseSelection < _databaseFirstVisible)
 				_databaseFirstVisible = _databaseSelection;
@@ -643,6 +737,8 @@ void WacManager::runDatabase() {
 				_databaseFirstVisible = _databaseSelection - kWacDatabaseVisibleRows + 1;
 			drawDatabase();
 		}
+		if (!active)
+			break;
 
 		const MouseState mouse = _engine->getInput()->publishMouseState();
 		serviceIdleWindowAnimations();
@@ -655,8 +751,17 @@ void WacManager::runDatabase() {
 				"Ripper: WAC database still-image scroll hover control=%d point=%d,%d",
 				_databaseScrollControl, mouse.position.x, mouse.position.y);
 		}
-		_engine->getCursor()->update((bounds.contains(mouse.position) || scrollControl != 0) ?
-			kWacControlCursor : kWacDefaultCursor);
+		const uint fallbackCursor = (bounds.contains(mouse.position) || scrollControl != 0) ?
+			kWacControlCursor : kWacDefaultCursor;
+		const uint16 controlAction = serviceFrontEndControls(mouse, fallbackCursor);
+		if (controlAction != kNoAction) {
+			returnAction = dispatchSubsceneAction(controlAction,
+				kWacDatabaseHelpResource, true);
+			if (returnAction == kExitAction)
+				active = false;
+		}
+		if (!active)
+			break;
 		if ((mouse.released & kMouseButtonLeft) != 0) {
 			if (scrollControl == 1)
 				scrollDatabaseStillImage(-kWacMediaScrollStep);
@@ -679,8 +784,11 @@ void WacManager::runDatabase() {
 					drawDatabase();
 				}
 				if ((mouse.released & kMouseButtonLeft) != 0 && row < kWacDatabaseVisibleRows &&
-					entryIndex < _databaseEntries.size())
-					dispatchDatabaseEntry(_databaseEntries[entryIndex]);
+					entryIndex < _databaseEntries.size()) {
+					returnAction = dispatchDatabaseEntry(_databaseEntries[entryIndex]);
+					if (returnAction == kExitAction)
+						active = false;
+				}
 			}
 		}
 		// RunWacSceneInputLoopUntilExitAction at 0x221e3 services the software
@@ -688,7 +796,9 @@ void WacManager::runDatabase() {
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
-	debugC(1, kDebugWac, "Ripper: left WAC database chooser");
+	debugC(1, kDebugWac,
+		"Ripper: left WAC database chooser returnAction=0x%x", returnAction);
+	return returnAction;
 }
 
 void WacManager::run() {
@@ -721,34 +831,17 @@ void WacManager::run() {
 				debugC(1, kDebugWac,
 					"Ripper: WAC front end keyboard exit command=0x%x", command);
 				active = false;
+			} else if (command == kHelpAction || command == kTextViewerAction ||
+					command == kDatabaseAction) {
+				active = dispatchAction(command);
 			}
 		}
 
 		const MouseState mouse = _engine->getInput()->publishMouseState();
 		serviceIdleWindowAnimations();
-		const int hoveredControl = findControl(mouse.position);
-		if (hoveredControl != _hoveredControl) {
-			_hoveredControl = hoveredControl;
-			debugC(2, kDebugWac,
-				"Ripper: WAC front-end hover control=%d action=0x%x point=%d,%d",
-				_hoveredControl, _hoveredControl < 0 ? 0 : _controls[_hoveredControl].action,
-				mouse.position.x, mouse.position.y);
-		}
-		_engine->getCursor()->update(
-			_hoveredControl < 0 ? kWacDefaultCursor : kWacControlCursor);
-
-		if ((mouse.pressed & kMouseButtonLeft) != 0)
-			_pressedControl = _hoveredControl;
-		if ((mouse.released & kMouseButtonLeft) != 0 && _pressedControl >= 0) {
-			const int pressedControl = _pressedControl;
-			_pressedControl = -1;
-			if (pressedControl == _hoveredControl) {
-				debugC(1, kDebugWac,
-					"Ripper: WAC front-end selected control=%d action=0x%x",
-					pressedControl, _controls[pressedControl].action);
-				active = dispatchAction(_controls[pressedControl].action);
-			}
-		}
+		const uint16 controlAction = serviceFrontEndControls(mouse, kWacDefaultCursor);
+		if (controlAction != kNoAction)
+			active = dispatchAction(controlAction);
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
