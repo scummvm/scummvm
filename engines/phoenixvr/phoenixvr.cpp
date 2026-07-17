@@ -782,27 +782,19 @@ void PhoenixVREngine::hideCursor(const Common::String &wname, int idx) {
 }
 
 void PhoenixVREngine::declareVariable(const Common::String &name) {
-	if (!_variables.contains(name))
-		_variables.setVal(name, 0);
+	_variables.declare(name);
 }
 
 bool PhoenixVREngine::hasVariable(const Common::String &name) const {
-	return _variables.contains(name);
+	return _variables.declared(name);
 }
 
 void PhoenixVREngine::setVariable(const Common::String &name, int value) {
-	if (!hasVariable(name)) {
-		debug("set %s %d - ignored, variable was not declared", name.c_str(), value);
-		return;
-	}
-	debug("set %s %d", name.c_str(), value);
-	_variables.setVal(name, value);
+	_variables.set(name, value);
 }
 
 int PhoenixVREngine::getVariable(const Common::String &name) const {
-	if (!hasVariable(name))
-		warning("get %s - variable was not declared", name.c_str());
-	return _variables.getValOrDefault(name, 0);
+	return _variables.get(name);
 }
 
 static int8 panToBalance(int pan) {
@@ -1315,10 +1307,11 @@ void PhoenixVREngine::renderImageOverlay() {
 
 void PhoenixVREngine::saveVariables() {
 	debug("SaveVariable() - saving variable state");
-	_variableSnapshot.resize(_variableOrder.size());
-	for (uint i = 0, n = _variableOrder.size(); i != n; ++i) {
-		_variableSnapshot[i] = _variables.getVal(_variableOrder[i]);
-	}
+	auto &values = _variables.values();
+	_variableSnapshot.resize(values.size());
+	uint i = 0;
+	for (auto &var : values)
+		_variableSnapshot[i++] = var;
 }
 
 void PhoenixVREngine::loadVariables() {
@@ -1327,10 +1320,11 @@ void PhoenixVREngine::loadVariables() {
 		debug("skipping, no snapshot");
 		return;
 	}
-	assert(_variableSnapshot.size() == _variableOrder.size());
-	for (uint i = 0, n = _variableOrder.size(); i != n; ++i) {
-		_variables.setVal(_variableOrder[i], _variableSnapshot[i]);
-	}
+	auto &values = _variables.values();
+	assert(_variableSnapshot.size() == values.size());
+	uint i = 0;
+	for (auto &var : values)
+		var = _variableSnapshot[i++];
 	_variableSnapshot.clear();
 }
 
@@ -1632,7 +1626,6 @@ Common::Error PhoenixVREngine::run() {
 				if (var == "*")
 					break;
 				declareVariable(var);
-				_variableOrder.push_back(Common::move(var));
 			}
 		} else
 			debug("no variables.txt");

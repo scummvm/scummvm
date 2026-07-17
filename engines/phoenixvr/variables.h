@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -20,30 +19,32 @@
  *
  */
 
-#ifndef PHOENIXVR_CONSOLE_H
-#define PHOENIXVR_CONSOLE_H
+#ifndef PHOENIXVR_VARIABLES_H
+#define PHOENIXVR_VARIABLES_H
 
-#include "gui/debugger.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
+#include "common/list.h"
 
 namespace PhoenixVR {
 
-class Console : public GUI::Debugger {
-private:
-	bool cmdWarp(int argc, const char **argv);
-	bool cmdScript(int argc, const char **argv);
-	bool cmdStopAllSounds(int argc, const char **argv);
-	bool cmdNextLevel(int argc, const char **argv);
+class Variables {
+	Common::List<int> _variableValues;
+	Common::HashMap<Common::String, int *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variableIndex;
 
 public:
-	Console();
-	~Console() override;
+	Common::List<int> &values() { return _variableValues; }
+	const Common::List<int> &values() const { return _variableValues; }
 
-	void registerVar(const Common::String &name, int *ptr) {
-		GUI::Debugger::registerVar(name, ptr);
+	int get(const Common::String &name) const;
+	void set(const Common::String &name, int value);
+	void declare(const Common::String &name);
+	bool declared(const Common::String &name) const {
+		return _variableIndex.contains(name);
 	}
-	using GUI::Debugger::clearVars;
+	void clear();
 };
 
-} // End of namespace PhoenixVR
+} // namespace PhoenixVR
 
-#endif // PHOENIXVR_CONSOLE_H
+#endif

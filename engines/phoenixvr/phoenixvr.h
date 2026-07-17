@@ -43,6 +43,7 @@
 #include "phoenixvr/detection.h"
 #include "phoenixvr/region_set.h"
 #include "phoenixvr/script.h"
+#include "phoenixvr/variables.h"
 #include "phoenixvr/vr.h"
 
 namespace Common {
@@ -287,9 +288,10 @@ private:
 	};
 
 	Common::Array<Common::String> _lockKey;
-	Common::Array<Common::String> _variableOrder;
+
+	Variables _variables;
 	Common::Array<int> _variableSnapshot;
-	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
+
 	struct Sound {
 		Audio::SoundHandle handle;
 		bool spatial;
@@ -299,6 +301,7 @@ private:
 		Common::SharedPtr<Video::Subtitles> subtitles;
 	};
 	Common::HashMap<Common::String, Sound, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _sounds;
+
 	struct RandomSound {
 		Common::String sound;
 		Audio::Mixer::SoundType type;

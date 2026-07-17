@@ -11,6 +11,7 @@ MODULE_OBJS = \
 	rectf.o \
 	region_set.o \
 	script.o \
+	variables.o \
 	vr.o
 
 # This module can be built as a plugin
