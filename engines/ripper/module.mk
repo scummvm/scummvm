@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	menu.o \
 	metaengine.o \
 	milestones.o \
+	modal_dialog.o \
 	puzzles/broken_mug.o \
 	puzzles/crystal.o \
 	resources.o \

@@ -32,6 +32,7 @@
 #include "ripper/input.h"
 #include "ripper/media.h"
 #include "ripper/milestones.h"
+#include "ripper/modal_dialog.h"
 #include "ripper/ripper.h"
 
 namespace Ripper {
@@ -386,8 +387,11 @@ CrystalPuzzle::Result CrystalPuzzle::run(uint completionFlag) {
 			}
 			if (command == kHelpAction) {
 				debugC(1, kDebugPuzzles,
-					"Ripper: crystal puzzle requested unimplemented modal help table=0x%x",
+					"Ripper: crystal puzzle opening modal help table=0x%x",
 					kHelpSelectionTable);
+				if (!_engine->getModalDialog()->run(kHelpSelectionTable))
+					warning("Ripper: crystal puzzle modal help failed");
+				render();
 				continue;
 			}
 			char character = command & 0xff;
