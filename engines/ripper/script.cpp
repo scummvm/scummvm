@@ -28,7 +28,6 @@
 #include "common/serializer.h"
 #include "common/stream.h"
 #include "common/system.h"
-#include "graphics/paletteman.h"
 
 #include "ripper/detection.h"
 #include "ripper/cursor.h"
@@ -55,24 +54,6 @@ static const uint32 kFrameRecordSize = 0x22;
 static const uint32 kInteractionRecordSize = 0x25;
 static const byte kCallbackTerminator = 'c';
 static const uint kDefaultPaletteFadeSteps = 9;
-static const uint kPaletteFadeStepDelayMs = 16;
-
-static void runPaletteFade(bool fadeIn, uint stepCount) {
-	byte targetPalette[Graphics::PALETTE_SIZE];
-	byte fadePalette[Graphics::PALETTE_SIZE];
-	PaletteManager *paletteManager = g_system->getPaletteManager();
-	paletteManager->grabPalette(targetPalette, 0, Graphics::PALETTE_COUNT);
-
-	for (uint step = 1; step <= stepCount; ++step) {
-		const uint scale = fadeIn ? step : stepCount - step;
-		for (uint component = 0; component < Graphics::PALETTE_SIZE; ++component)
-			fadePalette[component] = (byte)((uint64)targetPalette[component] * scale / stepCount);
-		paletteManager->setPalette(fadePalette, 0, Graphics::PALETTE_COUNT);
-		g_system->updateScreen();
-		if (step != stepCount)
-			g_system->delayMillis(kPaletteFadeStepDelayMs);
-	}
-}
 
 static Common::String compiledScriptMemberName(const Common::String &target) {
 	// RunSceneScriptLoop at 0x124e9 replaces everything from the first dot with
@@ -113,6 +94,78 @@ static const char *scriptOpcodeName(ScriptOpcode opcode) {
 	case kSetAudioVolume: return "set audio slot volume";
 	case kWaitForFrameCounter: return "wait for frame counter";
 	default: return opcode <= kNoOp7 ? "no-op" : "unknown";
+	}
+}
+
+static const char *sceneActionName(uint action) {
+	switch (action) {
+	case 0: return "no action";
+	case 1: return "circuit chip placement puzzle";
+	case 2: return "scene selection menu";
+	case 3: return "unlock-gated selection menu";
+	case 4: return "calculator puzzle";
+	case 5: return "rolodex sequence puzzle";
+	case 6: return "cyber menu transition";
+	case 7: return "clock puzzle";
+	case 8: return "KD shooting gallery";
+	case 9: return "GC/CSH four-choice sequence puzzle";
+	case 10: return "table gate lever puzzle";
+	case 11: return "CD-in-book button sequence puzzle";
+	case 12: return "board arrangement puzzle";
+	case 13: return "blob shooter";
+	case 14: return "EBZ2S unlock-gated action menu";
+	case 15: return "mechini combat encounter";
+	case 16: return "key group puzzle";
+	case 17: return "date selection puzzle";
+	case 18: return "KI skull maze puzzle";
+	case 19: return "web grid shift puzzle";
+	case 20: return "Horus word puzzle";
+	case 21: return "six-digit code puzzle";
+	case 22: return "shock lever puzzle";
+	case 23: return "tarot card puzzle";
+	case 24: return "tube switch scene";
+	case 25: return "KK tile match puzzle";
+	case 26: return "ratini combat encounter";
+	case 27: return "atkini combat encounter";
+	case 28: return "gym selector";
+	case 29: return "crystal piece placement puzzle";
+	case 30: return "set chooser template mode";
+	case 31: return "no-op";
+	case 32: return "clear active display";
+	case 33: return "stained glass puzzle";
+	case 34: return "keypad sequence puzzle";
+	case 35: return "set UI selection index";
+	case 36: return "update UI selection";
+	case 37: return "set scene runtime value";
+	case 38: return "board game";
+	case 39: return "no-op";
+	case 40: return "KA dialogue scene";
+	case 41: return "KB scene script";
+	case 42: return "KC or Wofford media scene";
+	case 43: return "KD scene script";
+	case 44: return "no-op";
+	case 45: return "KF scene script";
+	case 46: return "KG scene script";
+	case 47: return "KH scene script";
+	case 48: return "KI scene script";
+	case 49: return "KJ scene script";
+	case 50: return "KK scene script";
+	case 51: return "KL scene script";
+	case 52: return "KM scene script";
+	case 53: return "KN scene script";
+	case 54: return "KP scene script";
+	case 55: return "KQ scene script";
+	case 56: return "KR scene script";
+	case 57:
+	case 58:
+	case 59: return "no-op";
+	case 60: return "key group puzzle";
+	case 61: return "eight-button sequence puzzle";
+	case 62: return "Cain dialogue scene";
+	case 63: return "append resource string to RIPPER.TXT";
+	case 300: return "arm briefing media trigger";
+	case 9999: return "terminate scene runtime";
+	default: return "unknown";
 	}
 }
 
@@ -949,8 +1002,9 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			const uint action = command.arguments[0].value;
 			const uint argument = command.arguments[1].value;
 			debugC(2, kDebugScene,
-				"Ripper: dispatch scene action=%u argument=%u script='%s' offset=0x%x",
-				action, argument, script.getMemberName().c_str(), command.offset);
+				"Ripper: dispatch scene action=%u name='%s' argument=%u script='%s' offset=0x%x",
+				action, sceneActionName(action), argument,
+				script.getMemberName().c_str(), command.offset);
 			if (action == kSceneActionWorldMap) {
 				if (!openWorldMap())
 					return false;
@@ -981,8 +1035,8 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				break;
 			}
 			if (action != kSceneActionBriefing) {
-				warning("Ripper: unsupported scene action %u in '%s' at 0x%x",
-					action, script.getMemberName().c_str(), command.offset);
+				warning("Ripper: unsupported scene action %u ('%s') in '%s' at 0x%x",
+					action, sceneActionName(action), script.getMemberName().c_str(), command.offset);
 				return false;
 			}
 			if (!_briefing->arm(argument))
@@ -1002,7 +1056,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				"Ripper: palette transition script='%s' offset=0x%x mode=%u configuredSteps=%d effectiveSteps=%u",
 				script.getMemberName().c_str(), command.offset, command.arguments[0].value,
 				configuredSteps, stepCount);
-			runPaletteFade(fadeIn, stepCount);
+			_engine->getMedia()->fadePalette(fadeIn, stepCount);
 			break;
 		}
 

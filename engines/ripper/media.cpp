@@ -52,6 +52,7 @@ namespace {
 static const int kScenePresentationTop = 50;
 static const uint kBlockingAudioCursor = 0x13;
 static const uint kAutoPacketizedDisplayScale = 0;
+static const uint kPaletteFadeStepDelayMs = 16;
 
 struct SavedDisplayContext {
 	Common::Array<byte> pixels;
@@ -436,6 +437,26 @@ MediaPlayer::MediaPlayer(RipperEngine *engine, InputManager *input, Audio::Mixer
 MediaPlayer::~MediaPlayer() {
 	for (uint i = 0; i < kAudioSlotCount; ++i)
 		_mixer->stopHandle(_audioSlots[i].handle);
+}
+
+void MediaPlayer::fadePalette(bool fadeIn, uint stepCount) {
+	if (stepCount == 0)
+		return;
+
+	byte targetPalette[Graphics::PALETTE_SIZE];
+	byte fadePalette[Graphics::PALETTE_SIZE];
+	PaletteManager *paletteManager = g_system->getPaletteManager();
+	paletteManager->grabPalette(targetPalette, 0, Graphics::PALETTE_COUNT);
+
+	for (uint step = 1; step <= stepCount; ++step) {
+		const uint scale = fadeIn ? step : stepCount - step;
+		for (uint component = 0; component < Graphics::PALETTE_SIZE; ++component)
+			fadePalette[component] = (byte)((uint64)targetPalette[component] * scale / stepCount);
+		paletteManager->setPalette(fadePalette, 0, Graphics::PALETTE_COUNT);
+		g_system->updateScreen();
+		if (step != stepCount)
+			g_system->delayMillis(kPaletteFadeStepDelayMs);
+	}
 }
 
 bool MediaPlayer::loadAudio(const Common::String &path, bool preserve) {

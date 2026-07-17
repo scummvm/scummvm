@@ -295,12 +295,21 @@
   sets and four `CRYSTAL%d.WAV` cues. It presents the pieces in the recovered
   tray coordinates beside an eight-by-nine grid. A selected tray or occupied
   grid piece follows the pointer until the player selects an empty grid cell or
-  returns it to the tray. Escape exits without setting the completion flag.
+  returns it to the tray. Escape exits without setting the completion flag;
+  F1 invokes modal selection table `0x19e` through
+  `RunModalSelectionTableDialogWithRestore`.
+- `RunCrystalPiecePlacementPuzzleScene` reads the persistent puzzle level. Level
+  1 starts piece 0 in cell 9 and piece 1 in cell 44, with an 18-DOS-tick pause
+  between their placement; level 2 starts piece 0 in cell 21; level 3 starts
+  with an empty grid. ScummVM reads the same `puzzle level` key from the
+  `RIPPER.INI` `[game]` section and retains the original default of level 2.
 - Completion requires exactly ten occupied cells at indices 2, 9, 21, 25, 32,
   37, 44, 48, 60, and 62. The original also accepts the case-insensitive hidden
-  keyword `pisces`. Either path sets the caller-supplied milestone, queues the
-  solved audio cues, presents `CRYSHEAD.SMK` at (0, 328), and then plays
-  `CRYSOLVE.AVI` before returning to the scene callback.
+  keyword `pisces`, resetting progress to zero after any mismatch. Either path
+  sets the caller-supplied milestone, queues the solved audio cues, presents
+  `CRYSHEAD.SMK` at (0, 328), fades the active palette out through display
+  command `0x1e`, and then plays `CRYSOLVE.AVI` before returning to the scene
+  callback.
 
 ## WAC
 
