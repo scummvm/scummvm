@@ -176,6 +176,9 @@ bool ResourceManager::loadImage(const Common::Path &name, Graphics::ManagedSurfa
 
 	GraphicsManager::copyToManaged(buf, surf, info.width, info.height, g_nancy->_graphics->getInputPixelFormat(info.depth));
 
+	if (info.depth == 24)
+		surf.convertToInPlace(g_nancy->_graphics->getInputPixelFormat(32));
+
 	delete[] buf;
 	delete stream;
 	return true;
