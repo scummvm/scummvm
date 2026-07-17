@@ -28,7 +28,8 @@
 
 namespace Scumm {
 
-SmushDeltaBlocksDecoder::SmushDeltaBlocksDecoder(int width, int height) {
+SmushDeltaBlocksDecoder::SmushDeltaBlocksDecoder(int width, int height, bool rebel2Variant) {
+	_rebel2Variant = rebel2Variant;
 	_width = width;
 	_height = height;
 	_frameSize = _width * _height;
@@ -475,7 +476,12 @@ void SmushDeltaBlocksDecoder::proc4WithFDFE(byte *dst, const byte *src, int32 ne
 			if (code == 0xFD) {
 				LITERAL_4X4(src, dst, pitch);
 			} else if (code == 0xFE) {
-				LITERAL_4X1(src, dst, pitch);
+				// RA2's codec37 variant uses 2x2 blocks here, not 4x1 lines.
+				if (_rebel2Variant) {
+					LITERAL_2X2(src, dst, pitch);
+				} else {
+					LITERAL_4X1(src, dst, pitch);
+				}
 			} else if (code == 0xFF) {
 				LITERAL_1X1(src, dst, pitch);
 			} else if (code == 0x00) {

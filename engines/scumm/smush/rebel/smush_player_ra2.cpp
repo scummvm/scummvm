@@ -1076,7 +1076,7 @@ bool SmushPlayerRebel2::ra2DecodePlacedDeltaCodec(int codec, const uint8 *src, i
 			_ra2DeltaBlocksHeight = 0;
 		}
 		if (_deltaBlocksCodec == nullptr) {
-			_deltaBlocksCodec = new SmushDeltaBlocksDecoder(decodeWidth, decodeHeight);
+			_deltaBlocksCodec = new SmushDeltaBlocksDecoder(decodeWidth, decodeHeight, true);
 			_ra2DeltaBlocksWidth = decodeWidth;
 			_ra2DeltaBlocksHeight = decodeHeight;
 		}

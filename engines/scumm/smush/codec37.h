@@ -39,9 +39,10 @@ private:
 	int _tableLastIndex;
 	int32 _frameSize;
 	int _width, _height;
+	bool _rebel2Variant;
 
 public:
-	SmushDeltaBlocksDecoder(int width, int height);
+	SmushDeltaBlocksDecoder(int width, int height, bool rebel2Variant = false);
 	~SmushDeltaBlocksDecoder();
 protected:
 	void makeTable(int, int);
