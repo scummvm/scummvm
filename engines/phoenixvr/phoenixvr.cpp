@@ -1516,7 +1516,9 @@ void PhoenixVREngine::tick(float dt) {
 		executeTest(nextTest);
 	}
 
-	renderVR(dt);
+	// Render VR only if we're not switching scripts or warping anywhere.
+	if (_nextWarp < 0 && _nextScript.empty())
+		renderVR(dt);
 
 	Graphics::ManagedSurface *cursor = nullptr;
 	auto &cursors = _cursors[_warpIdx];
