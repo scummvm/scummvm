@@ -549,6 +549,17 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_DROPPLATFORM | ADGF_UNSTABLE | ADGF_CD,
 		GUIO1(GUIO_NONE)
 	},
+		{"amerzone",
+		"Swedish CD release",
+		AD_ENTRY3s("insertCD.vr", "07ed318104096cace90dddcf48a5ad6c", 330092,
+				   "01VR_PHARE/INTERFACE.VR", "52e6b786541ec0df95c00c2ae539ca0f", 77011,
+				   "01VR_PHARE/AMERZONE.PAK", "2f538af7bdb1492c883a7333a6fb4141", 26404
+		),
+		Common::SV_SWE,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_UNSTABLE | ADGF_CD,
+		GUIO1(GUIO_NONE)
+	},
 
 	AD_TABLE_END_MARKER
 };
