@@ -29,7 +29,13 @@ namespace Action {
 
 // Handles a specific type of puzzle where clicking an object rotates it,
 // as well as several other objects linked to it. Examples are the sun/moon
-// and staircase spindle puzzles in nancy3
+// and staircase spindle puzzles in nancy3.
+//
+// Nancy13 moved this record from type 209 to 171 and reworked its chunk, but kept the
+// mechanic identical. The differences: every object references a "type" that carries
+// its own face count, turn-frame count and sprite geometry (instead of one global pair);
+// the links are a byte array; each object stores its own destination rect; and the
+// solution is given as up to three alternative face orders.
 class TurningPuzzle : public RenderActionRecord {
 public:
 	enum SolveState { kNotSolved, kWaitForAnimation, kWaitBeforeSound, kWaitForSound };
@@ -47,6 +53,24 @@ public:
 
 protected:
 	Common::String getRecordTypeName() const override { return "TurningPuzzle"; }
+
+	// Nancy13: the per-object sprite/turn description its objects point at.
+	struct PieceType {
+		byte numFaces = 0;
+		int16 framesPerTurn = 0;
+		int16 gap = 0;			// horizontal padding between sprites in the strip
+		int16 cellW = 0;
+		int16 cellH = 0;
+		int16 srcStartX = 0;
+		int16 srcStartY = 0;	// this type's row in the strip
+	};
+
+	void readDataNancy13(Common::SeekableReadStream &stream);
+	bool isSolved() const;
+	uint numFacesOf(uint objectID) const;
+	uint framesPerTurnOf(uint objectID) const;
+	void drawAllObjects();
+	SoundDescription playSoundBlock(const RandomSoundBlock &block);
 
 	void drawObject(uint objectID, uint faceID, uint frameID);
 	void turnLogic(uint objectID);
@@ -81,6 +105,20 @@ protected:
 
 	SceneChangeWithFlag _exitScene;
 	Common::Rect _exitHotspot;
+
+	// -- Nancy13 only --
+	Common::Array<PieceType> _pieceTypes;
+	Common::Array<uint16> _pieceTypeIDs;					// per object
+	Common::Array<Common::Array<uint16>> _correctOrders;	// up to three alternative solutions
+	uint16 _turnDelay = 0;			// header 0x21 - length of a whole turn, in ms
+	uint16 _hoverCursorType = 0;	// header 0x23 - raw Nancy13 cursor id (a turn cursor)
+	uint16 _hitInset = 0;			// header 0x25 - hotspots are the dest rect shrunk by this
+	int16 _turnFlagLabel = -1;		// header 0x27 - set once the player turns anything
+	byte _turnFlagValue = 0;		// header 0x29
+	uint16 _exitCursorType = 0;		// from the exit hotspot record
+	RandomSoundBlock _turnSoundBlock;
+	RandomSoundBlock _solveSoundBlock;
+	bool _turnFlagSet = false;
 
 	Graphics::ManagedSurface _image;
 	Common::Array<uint16> _currentOrder;
