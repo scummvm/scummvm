@@ -21,6 +21,8 @@
 #include "ripper/puzzles/crystal.h"
 
 #include "common/debug.h"
+#include "common/file.h"
+#include "common/formats/ini-file.h"
 #include "common/system.h"
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
@@ -51,6 +53,12 @@ static const int kTrayRight = 100;
 static const int kTrayBottom = 333;
 static const int kHeadX = 0;
 static const int kHeadY = 328;
+static const uint kDefaultPuzzleLevel = 2;
+static const uint kCrystalCompletionFadeSteps = 9;
+static const uint kEasySeedDelayTicks = 0x12;
+static const uint kDosTimerTickMillis = 55;
+static const uint16 kHelpAction = 0x3b00;
+static const uint kHelpSelectionTable = 0x19e;
 
 static const int kTrayX[kPieceCount] = {
 	10, 16, 25, 18, 30, 44, 44, 36, 34, 63, 57, 54, 79, 76, 82, 63
@@ -283,6 +291,45 @@ bool CrystalPuzzle::isSolved() const {
 	return true;
 }
 
+uint CrystalPuzzle::readPuzzleLevel() const {
+	Common::File iniFile;
+	Common::INIFile ini;
+	Common::String value;
+	uint puzzleLevel = kDefaultPuzzleLevel;
+	if (iniFile.open("ripper.ini") && ini.loadFromStream(iniFile) &&
+			ini.getKey("puzzle level", "game", value)) {
+		const uint64 configuredLevel = value.asUint64();
+		if (configuredLevel >= 1 && configuredLevel <= 3)
+			puzzleLevel = (uint)configuredLevel;
+	}
+	debugC(2, kDebugPuzzles, "Ripper: crystal puzzle difficulty level=%u",
+		puzzleLevel);
+	return puzzleLevel;
+}
+
+void CrystalPuzzle::seedInitialPieces(uint puzzleLevel) {
+	if (puzzleLevel == 1) {
+		_pieceCells[0] = 9;
+		_cellPieces[9] = 0;
+		playMovementCue();
+		debugC(2, kDebugPuzzles,
+			"Ripper: crystal puzzle seeded piece=0 cell=9 difficulty=1");
+		render();
+		g_system->delayMillis(kEasySeedDelayTicks * kDosTimerTickMillis);
+		_pieceCells[1] = 44;
+		_cellPieces[44] = 1;
+		playMovementCue();
+		debugC(2, kDebugPuzzles,
+			"Ripper: crystal puzzle seeded piece=1 cell=44 difficulty=1");
+	} else if (puzzleLevel == 2) {
+		_pieceCells[0] = 21;
+		_cellPieces[21] = 0;
+		playMovementCue();
+		debugC(2, kDebugPuzzles,
+			"Ripper: crystal puzzle seeded piece=0 cell=21 difficulty=2");
+	}
+}
+
 bool CrystalPuzzle::complete(uint completionFlag) {
 	if (!_engine->getMilestones()->set(completionFlag, true, "crystal-puzzle"))
 		return false;
@@ -294,6 +341,7 @@ bool CrystalPuzzle::complete(uint completionFlag) {
 		completionFlag);
 	if (!_engine->getMedia()->play("cryshead.smk", false, kHeadX, kHeadY))
 		warning("Ripper: could not play crystal puzzle completion header");
+	_engine->getMedia()->fadePalette(false, kCrystalCompletionFadeSteps);
 	if (!_engine->getMedia()->play("crysolve.avi", false))
 		warning("Ripper: could not play crystal puzzle solution video");
 	return true;
@@ -319,6 +367,7 @@ CrystalPuzzle::Result CrystalPuzzle::run(uint completionFlag) {
 		kPieceCount, kGridColumns, ARRAYSIZE(kGridRowY), completionFlag,
 		kCompletionKeyword);
 	_engine->getInput()->discardMouseTransitions();
+	seedInitialPieces(readPuzzleLevel());
 	render();
 
 	Result result = kExited;
@@ -335,13 +384,19 @@ CrystalPuzzle::Result CrystalPuzzle::run(uint completionFlag) {
 				active = false;
 				break;
 			}
+			if (command == kHelpAction) {
+				debugC(1, kDebugPuzzles,
+					"Ripper: crystal puzzle requested unimplemented modal help table=0x%x",
+					kHelpSelectionTable);
+				continue;
+			}
 			char character = command & 0xff;
 			if (character >= 'A' && character <= 'Z')
 				character += 'a' - 'A';
 			if (character == kCompletionKeyword[_keywordIndex])
 				++_keywordIndex;
 			else
-				_keywordIndex = character == kCompletionKeyword[0] ? 1 : 0;
+				_keywordIndex = 0;
 			if (kCompletionKeyword[_keywordIndex] == '\0') {
 				debugC(1, kDebugPuzzles,
 					"Ripper: crystal puzzle solved by hidden keyword");
