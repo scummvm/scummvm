@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	ripper.o \
 	saveload.o \
 	script.o \
+	settings.o \
 	toolbar.o \
 	wac.o \
 	world_map.o

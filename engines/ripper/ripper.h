@@ -35,6 +35,7 @@ class Milestones;
 class ModalDialogManager;
 class ResourceManager;
 class ScriptManager;
+class RipperSettings;
 class ToolbarManager;
 class WacManager;
 class WorldMap;
@@ -62,6 +63,7 @@ public:
 	ModalDialogManager *getModalDialog() const { return _modalDialog; }
 	ResourceManager *getResources() const { return _resources; }
 	ScriptManager *getScripts() const { return _scripts; }
+	RipperSettings *getSettings() const { return _settings; }
 	ToolbarManager *getToolbar() const { return _toolbar; }
 	WacManager *getWac() const { return _wac; }
 	WorldMap *getWorldMap() const { return _worldMap; }
@@ -79,6 +81,7 @@ private:
 	ModalDialogManager *_modalDialog;
 	ResourceManager *_resources;
 	ScriptManager *_scripts;
+	RipperSettings *_settings;
 	ToolbarManager *_toolbar;
 	WacManager *_wac;
 	WorldMap *_worldMap;
