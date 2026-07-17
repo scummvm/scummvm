@@ -884,7 +884,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		uint32 timelineStartMillis, uint displayScale, bool patchInterfacePalette,
 		uint frameLimit, int originY, bool patchWacMediaPalette, bool serviceSceneUi,
 		bool repeatedLoopPass, bool *advanceSegment, uint loopStartFrame,
-		MediaSequenceCallback *sequenceCallback, uint16 *sequenceCommand) {
+		MediaSequenceCallback *sequenceCallback, uint16 *sequenceCommand,
+		Common::Array<byte> *sourcePalette, bool rememberVideoPalette) {
 	if (stoppedByUser)
 		*stoppedByUser = false;
 	if (advanceSegment)
@@ -938,6 +939,10 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	auto presentFrame = [&](const Graphics::Surface *frame, bool forcePalette) {
 		if (forcePalette || decoder.hasDirtyPalette()) {
 			byte palette[256 * 3];
+			if (sourcePalette) {
+				sourcePalette->resize(sizeof(palette));
+				memcpy(sourcePalette->data(), decoder.getPalette(), sizeof(palette));
+			}
 			if (patchWacMediaPalette) {
 				g_system->getPaletteManager()->grabPalette(palette, 0, 256);
 				memcpy(palette + 10 * 3, decoder.getPalette() + 10 * 3, 140 * 3);
@@ -947,7 +952,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			if (patchInterfacePalette && !patchWacMediaPalette)
 				_engine->getToolbar()->applySharedPalettePatch(palette, 256);
 			if (!patchWacMediaPalette)
-				_engine->getSettings()->applyVideoPalette(palette, 256);
+				_engine->getSettings()->applyVideoPalette(palette, 256,
+					rememberVideoPalette);
 			g_system->getPaletteManager()->setPalette(palette, 0, 256);
 		}
 		if (displayScale == 1) {
@@ -1339,6 +1345,23 @@ bool MediaPlayer::playWacMedia(const Common::String &path, int x, int y) {
 		0, 0, 1, false, 0, 0, true);
 	_input->drainKeys();
 	return result;
+}
+
+bool MediaPlayer::playInterfaceSequence(const Common::String &path, int x, int y,
+		Common::Array<byte> &sourcePalette) {
+	Common::SeekableReadStream *stream =
+		_engine->getResources()->interface().createReadStreamForMember(path);
+	if (!stream) {
+		warning("Ripper: could not open interface media '%s'", path.c_str());
+		return false;
+	}
+
+	debugC(1, kDebugVideo,
+		"Ripper: entering interface media presentation media='%s' position=%d,%d",
+		path.c_str(), x, y);
+	return playSmacker(stream, path, false, x, y, nullptr, nullptr, nullptr,
+		0, 0, 1, true, 0, 0, false, false, false, nullptr, 0, nullptr, nullptr,
+		&sourcePalette, false);
 }
 
 bool MediaPlayer::playBlockingAudio(const Common::String &path) {
