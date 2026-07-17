@@ -525,6 +525,15 @@
   `0x1488f`, can therefore skip a completed lead-in such as `VM0_1_P2` when a
   dialogue response returns to the same frame, while the response-frame flags
   continue to control which opcode `0x16` choices remain available.
+- Opcode `0x1c` maps to `HandleSceneEntryStepPromptTransition` at `0x15c30`.
+  Its first argument selects the palette direction and its signed second
+  argument supplies the transition step count, defaulting to nine when that
+  value is not positive. A nonzero direction dispatches `FadePaletteIn` at
+  `0x47b06` before the optional script-debug `Step` prompt; zero shows that
+  prompt first and then dispatches `FadePaletteOut` at `0x47a16`. Both paths
+  cover palette indices 0 through 255 and synchronize each interpolation step
+  to VGA retrace. ScummVM applies the same full-palette interpolation through
+  `PaletteManager` with one 60 Hz interval between intermediate steps.
 - `ExecuteSceneFrameAndInteractions` at `0x13277` runs frame callbacks,
   presentations, chooser selection, and interaction callbacks.
 - `ExecuteSceneFrameAndInteractions` constructs the frame's hotspot controls
