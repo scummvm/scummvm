@@ -60,10 +60,8 @@ static const int kScrollButtonWidth = 23;
 static const int kScrollButtonHeight = 15;
 static const int kScrollControlUp = 0;
 static const int kScrollControlDown = 1;
-static const byte kListBackgroundColor = 0;
-static const byte kListTextColor = 251;
-static const byte kSelectedBackgroundColor = 248;
-static const byte kSelectedTextColor = 4;
+static const byte kListTextColor = 4;
+static const byte kSelectedTextColor = 254;
 
 // RunSceneSelectionMenu at 0x20808 copies this table from
 // g_sceneSelectionEntryGroupIds at 0x20702 before testing flags 20..44.
@@ -100,13 +98,14 @@ bool WorldMap::initialize(ResourceManager &resources) {
 		_locations.size(), kMilestoneFirstTravelLocation, kMilestoneLastTravelLocation);
 	debugC(2, kDebugScene,
 		"Ripper: world map viewports list=%d,%d,%d,%d detail=%d,%d,%d,%d rows=%u "
-		"scrollUp=%d,%d,%d,%d scrollDown=%d,%d,%d,%d",
+		"scrollUp=%d,%d,%d,%d scrollDown=%d,%d,%d,%d "
+		"rowBackground=transparent text=%u selectedText=%u",
 		kLocationListLeft, kLocationListTop, kLocationListRight, kLocationListBottom,
 		kLocationDetailLeft, kLocationDetailTop, kLocationDetailRight, kLocationDetailBottom,
 		visibleRowCount(), kScrollUpLeft, kScrollUpTop,
 		kScrollUpLeft + kScrollButtonWidth, kScrollUpTop + kScrollButtonHeight,
 		kScrollUpLeft, kScrollDownTop, kScrollUpLeft + kScrollButtonWidth,
-		kScrollDownTop + kScrollButtonHeight);
+		kScrollDownTop + kScrollButtonHeight, kListTextColor, kSelectedTextColor);
 	return true;
 }
 
@@ -234,9 +233,6 @@ void WorldMap::drawLocationDetails(byte *screen, uint pitch) const {
 			}
 			if (!line.empty()) {
 				const int top = kLocationDetailTop + row * rowHeight;
-				for (uint y = 0; y < rowHeight; ++y)
-					memset(screen + (top + y) * pitch + kLocationDetailLeft,
-						kListBackgroundColor, kLocationDetailRight - kLocationDetailLeft);
 				drawText(screen, pitch, kLocationDetailLeft + 3, top + 1, line,
 					kListTextColor, viewport);
 				line.clear();
@@ -269,10 +265,6 @@ void WorldMap::draw() const {
 		const uint visibleIndex = _firstVisible + row;
 		const int top = kLocationListTop + row * rowHeight;
 		const bool selected = visibleIndex == _selectedVisible;
-		for (uint y = 0; y < rowHeight; ++y)
-			memset(screen->getBasePtr(kLocationListLeft, top + y),
-				selected ? kSelectedBackgroundColor : kListBackgroundColor,
-				kLocationListRight - kLocationListLeft);
 		drawText(pixels, screen->pitch, kLocationListLeft + 3, top + 2,
 			_locations[_visibleLocations[visibleIndex]].name,
 			selected ? kSelectedTextColor : kListTextColor, viewport);
