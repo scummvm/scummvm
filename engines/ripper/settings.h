@@ -32,6 +32,8 @@ namespace Ripper {
 
 class RipperSettings {
 public:
+	static const uint kActionKeyCount = 9;
+
 	enum Slider {
 		kMasterVolume = 0,
 		kAmbientVolume,
@@ -62,6 +64,17 @@ public:
 	void applyVideoPalette(byte *palette, uint colorCount, bool rememberSource = true);
 	bool restoreVideoPalette();
 
+	bool getBufferedVideo() const { return _bufferedVideo; }
+	uint getVideoMode() const { return _videoMode; }
+	uint getCombatLevel() const { return _combatLevel; }
+	uint getPuzzleLevel() const { return _puzzleLevel; }
+	uint16 getActionKey(uint index) const;
+	void setBufferedVideo(bool enabled);
+	void setVideoMode(uint mode);
+	void setCombatLevel(uint level);
+	void setPuzzleLevel(uint level);
+	void setActionKey(uint index, uint16 key);
+
 	static const Descriptor &getDescriptor(Slider slider);
 
 private:
@@ -71,6 +84,11 @@ private:
 
 	Audio::Mixer *_mixer;
 	int _values[kSliderCount];
+	uint16 _actionKeys[kActionKeyCount];
+	uint _videoMode;
+	uint _combatLevel;
+	uint _puzzleLevel;
+	bool _bufferedVideo;
 	Common::Array<byte> _videoPaletteSource;
 };
 
