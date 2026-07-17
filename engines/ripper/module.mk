@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	puzzles/broken_mug.o \
 	puzzles/calculator.o \
 	puzzles/crystal.o \
+	puzzles/rolodex.o \
 	resources.o \
 	ripper.o \
 	saveload.o \

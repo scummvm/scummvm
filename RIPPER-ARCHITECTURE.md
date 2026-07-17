@@ -305,6 +305,22 @@
   (`0x1d`) calls `RunCrystalPiecePlacementPuzzleScene` at `0x2710c`.
   `CA1.RUN` supplies flag 0 to the calculator and `JA1.RUN` supplies milestone
   206 (`solved crystal puzzle`) to the crystal puzzle.
+- Scene action 5 calls `RunRolodexSequencePuzzleScene` at `0x280ae` with the
+  caller-supplied named flag. It creates an advance control over physical
+  rectangle (121, 101)-(486, 293) with cursor 16 and an Escape control over
+  (539, 72)-(640, 327) with cursor 7. `rolodex8.smk` initializes the scene;
+  the first numbered sequence then starts automatically. Enter or the advance
+  control steps through `rolodex1.smk` to `rolodex6.smk`, wrapping to sequence
+  1 after 6. Sequences 1 through 5 loop from frame 20 and sequence 6 loops from
+  frame 22. Reaching sequence 6 sets the supplied flag before playback starts.
+  Escape stops the active mechanical audio, starts `rolo2.wav`, and presents
+  `rolodex7.smk`; F1 opens help table `0x19f`.
+- `ServiceRolodexMediaSequenceCallback` at `0x27e38` synchronizes the puzzle's
+  four `rolo%d.wav` descriptors to media frames. The introduction starts
+  `rolo2.wav` at frame 1 and the low-volume repeating `rolo0.wav` at frame 12.
+  Each numbered sequence starts `rolo3.wav` at frame 1 and `rolo1.wav` at frame
+  15, while sequence-specific frame counters 10, 13, 17, 16, 16, and 22 stop
+  `rolo3.wav` for sequences 1 through 6 respectively.
 - The calculator loads `CALC0.BBM` through `CALC24.BBM` for its controls and
   `CALCNM0.BBM` through `CALCNM11.BBM` for the right-aligned numeric display.
   The 25 records at `0x84170` store display-relative Y, X, and command values;
