@@ -214,6 +214,8 @@ int object_examine(int number, long message, int speech) {
 	int object_preserve_handle;
 	byte map[256];
 	RGBcolor top_eight[8];
+	SeriesPtr object_series = nullptr;
+	bool isRex = g_engine->getGameID() == GType_RexNebular;
 
 	// Wait cursor
 	cursor_id = 2;
@@ -244,10 +246,12 @@ int object_examine(int number, long message, int speech) {
 	cycling_save = cycling_active;
 	cycling_active = false;
 
-	// Get sprite series name
-	Common::strcpy_s(sprite_name, "*OB");
-	env_catint(sprite_name, number, 3);
-	Common::strcat_s(sprite_name, ".SS");
+	if (isRex) {
+		// Get sprite series name
+		Common::strcpy_s(sprite_name, "*OB");
+		env_catint(sprite_name, number, 3);
+		Common::strcat_s(sprite_name, ".SS");
+	}
 
 	// Prepare for flicker-free mouse updates
 	mouse_set_work_buffer(scr_main.data, video_x);
@@ -310,9 +314,27 @@ int object_examine(int number, long message, int speech) {
 	mcga_setpal(&master_palette);
 	matte_map_work_screen();
 
-	y_base = OBJECT_VIEW_OFFSET;
 
-	y_base += OBJECT_VIEW_OFFSET;
+	if (isRex) {
+		object_series = sprite_series_load(sprite_name, PAL_MAP_BACKGROUND);
+		mcga_setpal(&master_palette);
+		y_base = OBJECT_VIEW_OFFSET;
+
+		if (object_series) {
+			int x1 = 160 - object_series->index[0].xs / 2, y1 = 6;
+			int x2 = x1 + object_series->index[0].xs, y2 = y1 + object_series->index[0].ys;
+			sprite_draw(object_series, 1, &scr_main, x1, y1);
+			video_update(&scr_main, x1, y1, x1, y1, x2, y2);
+
+			y_base += object_series->index[0].ys;
+
+			if ((byte *)object_series != sprite_force_memory)
+				mem_free(object_series);
+		}
+
+		y_base += OBJECT_VIEW_OFFSET;
+		text_default_y = y_base;
+	}
 
 	if (message) {
 		text_saves_screen = false;
@@ -337,12 +359,8 @@ int object_examine(int number, long message, int speech) {
 		keys_get();
 	}
 
-	// Flush object from memory
-	// if (object_series != (SeriesPtr) sprite_force_memory) mem_free (object_series);
-	// If we saved the work buffer in EMS, we can now fade back to the
-	// original screen.
+	// If we saved the work buffer in EMS, we can now fade back to the original screen.
 	if (object_preserve_handle != BUFFER_NOT_PRESERVED) {
-
 		// Restore a copy of the work screen
 		matte_map_work_screen();
 
