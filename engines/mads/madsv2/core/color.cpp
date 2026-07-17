@@ -81,7 +81,7 @@ byte color_thatch(int color, int thatching) {
 		}
 	}
 
-	return (thatch);
+	return thatch;
 }
 
 void color_list_start_scan(byte *list_flags) {

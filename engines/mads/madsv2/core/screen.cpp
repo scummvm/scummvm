@@ -150,7 +150,7 @@ short screen_show_wide(const char *outstring, short locx, short locy, short widt
 
 int screen_show(const char *outstring, int locx, int locy) {
 	locx = screen_put(outstring, screen_normal_color, screen_hilite_color, locx, locy);
-	return (locx);
+	return locx;
 }
 
 int screen_printf(int x, int y, const char *string, ...) {

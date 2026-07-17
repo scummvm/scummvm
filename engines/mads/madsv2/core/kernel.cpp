@@ -838,9 +838,9 @@ int kernel_seq_forward(int series_id, int mirror, word ticks, word interval_tick
 		MAX(rex_attr_depth(&scr_depth, sprite->x + (sprite->xs >> 1), sprite->y + (sprite->ys >> 1)) - 1, 0) :
 		attr_depth(&depth_map, sprite->x + (sprite->xs >> 1), sprite->y + (sprite->ys >> 1)) - 1;
 
-	return (kernel_seq_add(series_id, mirror, 1, 0, 0, AA_LINEAR, 1,
+	return kernel_seq_add(series_id, mirror, 1, 0, 0, AA_LINEAR, 1,
 		depth, 100, true, 0, 0, ticks, interval_ticks,
-		start_ticks, expire));
+		start_ticks, expire);
 }
 
 
@@ -866,9 +866,9 @@ int kernel_seq_pingpong(int series_id, int mirror,
 		MAX(rex_attr_depth(&scr_depth, sprite->x + (sprite->xs >> 1), sprite->y + (sprite->ys >> 1)) - 1, 0) :
 		attr_depth(&depth_map, sprite->x + (sprite->xs >> 1), sprite->y + (sprite->ys >> 1)) - 1;
 
-	return (kernel_seq_add(series_id, mirror, 1, 0, 0, AA_PINGPONG, 1,
+	return kernel_seq_add(series_id, mirror, 1, 0, 0, AA_PINGPONG, 1,
 		depth, 100, true, 0, 0, ticks, interval_ticks,
-		start_ticks, expire));
+		start_ticks, expire);
 }
 
 int kernel_seq_pingpong_scroll(int series_id, int mirror,
@@ -903,10 +903,10 @@ int kernel_seq_backward_scroll(int series_id, int mirror,
 	int expire) {
 	int depth = 0;
 
-	return (kernel_seq_add(series_id, mirror,
+	return kernel_seq_add(series_id, mirror,
 		series_list[series_id]->num_sprites,
 		0, 0, AA_LINEAR, -1, depth, 100, true, 0, 0,
-		ticks, interval_ticks, start_ticks, expire));
+		ticks, interval_ticks, start_ticks, expire);
 }
 
 void kernel_synch(int slave_type, int slave_id, int master_type, int master_id) {
@@ -1026,7 +1026,7 @@ int kernel_seq_stamp(int series_id, int mirror, int sprite) {
 		kernel_seq_range(id, sprite, sprite);
 		sequence_list[id].loop_direction = AA_STAMP;
 	}
-	return (id);
+	return id;
 }
 
 int kernel_seq_stamp_scroll(int series_id, int mirror, int sprite) {
@@ -1037,7 +1037,7 @@ int kernel_seq_stamp_scroll(int series_id, int mirror, int sprite) {
 		kernel_seq_range(id, sprite, sprite);
 		sequence_list[id].loop_direction = AA_STAMP;
 	}
-	return (id);
+	return id;
 }
 
 int kernel_seq_trigger(int sequence_id,
@@ -1567,14 +1567,14 @@ int kernel_run_animation_disp(char thing, int num, int trigger_code) {
 	Common::strcat_s(test, crap);
 
 	feedback = kernel_run_animation(test, trigger_code);
-	return (feedback);
+	return feedback;
 }
 
 int kernel_run_animation_write(int trigger_code) {
 	int feedback;
 
 	feedback = kernel_run_animation("*write_e", trigger_code);
-	return (feedback);
+	return feedback;
 }
 
 int kernel_run_animation_point(int num, int trigger_code) {
@@ -2341,7 +2341,7 @@ int kernel_add_dynamic(int vocab_id, int verb_id, byte syntax,
 	}
 
 done:
-	return (id);
+	return id;
 }
 
 void kernel_dynamic_anim(int id, int anim_id, int segment) {
@@ -2377,7 +2377,7 @@ int kernel_dynamic_walk(int id, int feet_x, int feet_y, int facing) {
 		kernel_dynamic_hot[id].feet_y = feet_y;
 		kernel_dynamic_hot[id].facing = (byte)facing;
 	}
-	return (id);
+	return id;
 }
 
 int kernel_dynamic_cursor(int id, int cursorNum) {

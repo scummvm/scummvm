@@ -166,7 +166,7 @@ int hspot_begin(int x, int y, int class_, int num, int hotkey) {
 	hspot_add(x, y, x, y, class_, num, screen_video_mode);
 	hspot_special_num = numspots;
 	hotkeys[num] = hotkey;
-	return (x);
+	return x;
 }
 
 int hspot_end() {
@@ -178,7 +178,7 @@ int hspot_end() {
 	spot[hspot_special_num].lr_y = y;
 
 	cursor_set_follow(false);
-	return (x);
+	return x;
 }
 
 int hspot_which(int coord_x, int coord_y, int video_mode) {

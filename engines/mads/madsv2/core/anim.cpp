@@ -511,7 +511,7 @@ done:
 	}
 	if (load_handle.open) loader_close(&load_handle);
 
-	return (anim);
+	return anim;
 }
 
 int anim_get_sound_info(const char *file_name, char *sound_file_buffer, int *sound_load_flag) {

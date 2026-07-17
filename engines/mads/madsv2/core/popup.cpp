@@ -1339,7 +1339,7 @@ static Popup *popup_activate(Popup *newpop) {
 	if (newpop != NULL) {
 		popup = newpop;
 	}
-	return (popup);
+	return popup;
 }
 
 /**
@@ -1461,7 +1461,7 @@ Popup *popup_dialog_destroy() {
 		mem_free(popup);
 	}
 
-	return (NULL);
+	return NULL;
 }
 
 static int extract_keystroke(char *string) {
@@ -1478,7 +1478,7 @@ static int extract_keystroke(char *string) {
 }
 
 static void *popup_heap(long mem_to_get) {
-	return (heap_get(&popup->heap, mem_to_get));
+	return heap_get(&popup->heap, mem_to_get);
 }
 
 static char *string_to_heap(char *string) {
@@ -1488,7 +1488,7 @@ static char *string_to_heap(char *string) {
 
 	Common::strcpy_s(mem_we_got, 65536, string);
 
-	return (mem_we_got);
+	return mem_we_got;
 }
 
 static void set_prompt(PopupItem *item, const char *string) {
@@ -1513,14 +1513,14 @@ static PopupItem *item_allocate(int can_be_default) {
 		popup->active_item = item;
 	}
 
-	return (item);
+	return item;
 }
 
 static PopupList *list_allocate() {
 	PopupList *list;
 
 	list = (PopupList *)popup_heap(sizeof(PopupList));
-	return (list);
+	return list;
 }
 
 static PopupBuffer *buffer_allocate(int size) {
@@ -1532,11 +1532,11 @@ static PopupBuffer *buffer_allocate(int size) {
 
 	*buffer->data = 0;
 
-	return (buffer);
+	return buffer;
 }
 
 static int popup_font_size(const char *string) {
-	return (font_string_width(box_param.font, string, box_param.font_spacing));
+	return font_string_width(box_param.font, string, box_param.font_spacing);
 }
 
 static void popup_y_placement(PopupItem *item, int y) {
@@ -1597,7 +1597,7 @@ static int popup_mouse_refresh() {
 	mouse_set_work_buffer(scr_main.data, video_x);
 	mouse_set_view_port_loc(0, 0, video_x - 1, video_y - 1);
 	mouse_set_view_port(0, 0);
-	return (mouse_refresh_view_port());
+	return mouse_refresh_view_port();
 }
 
 static void popup_mouse_refresh_2(int refresh) {
@@ -1803,7 +1803,7 @@ static int popup_in_item(PopupItem *item) {
 	in_item = ((mouse_x >= x) && (mouse_x <= x2) &&
 		(mouse_y >= y) && (mouse_y <= y2));
 
-	return (in_item);
+	return in_item;
 }
 
 static void popup_find_item() {
@@ -1877,7 +1877,7 @@ static int popup_button_x_size(PopupItem *item) {
 	size = popup_font_size(item->prompt);
 	size += 6 + 2;
 
-	return (size);
+	return size;
 }
 
 static int popup_button_y_size(PopupItem *item) {
@@ -2062,7 +2062,7 @@ static int popup_menu_x_size(PopupItem *item) {
 
 	item->sprite = middles;
 
-	return (size);
+	return size;
 }
 
 static int popup_menu_y_size(PopupItem *item) {
@@ -2283,7 +2283,7 @@ static int popup_savelist_x_size(PopupItem *item) {
 
 	list->list_xs = work_size;
 
-	return (size);
+	return size;
 }
 
 static int popup_savelist_y_size(PopupItem *item) {
@@ -2303,7 +2303,7 @@ static int popup_savelist_y_size(PopupItem *item) {
 
 	list->scroll.arrow_size = (box_param.font->max_y_size) + 2;
 
-	return (size);
+	return size;
 }
 
 static int popup_savelist_adjust(PopupItem *item) {
@@ -2337,7 +2337,7 @@ static char *popup_savelist_string(PopupItem *item, int element) {
 
 	text_locator = list->data + (list->element_offset * element);
 
-	return (text_locator);
+	return text_locator;
 }
 
 static int popup_savelist_vertical(PopupItem *item, int relative) {
@@ -2348,7 +2348,7 @@ static int popup_savelist_vertical(PopupItem *item, int relative) {
 
 	y = list->list_y + (list->list_ys * relative);
 
-	return (y);
+	return y;
 }
 
 static void popup_savelist_number_draw(PopupItem *item, int relative, int number) {
@@ -2977,7 +2977,7 @@ PopupItem *popup_button(const char *prompt, int x) {
 
 	if (first_button) popup->enter_item = item;
 
-	return (item);
+	return item;
 }
 
 PopupItem *popup_cancel_button(const char *prompt) {
@@ -3056,7 +3056,7 @@ PopupItem *popup_menu(const char *prompt,
 
 	popup_x_width_check(item);
 
-	return (item);
+	return item;
 }
 
 PopupItem *popup_message(const char *prompt, int x, int y) {
@@ -3109,7 +3109,7 @@ PopupItem *popup_sprite(SeriesPtr series, int sprite, int x, int y) {
 
 	popup_x_width_check(item);
 
-	return (item);
+	return item;
 }
 
 PopupItem *popup_savelist(char *data, char *empty_string,
@@ -3183,7 +3183,7 @@ PopupItem *popup_savelist(char *data, char *empty_string,
 		popup->string_item = item;
 	}
 
-	return (item);
+	return item;
 }
 
 PopupItem *popup_execute() {

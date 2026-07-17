@@ -258,7 +258,7 @@ static int pal_get_new_flag() {
 	}
 
 done:
-	return (return_code);
+	return return_code;
 }
 
 static int pal_free_colors(int *first_free) {

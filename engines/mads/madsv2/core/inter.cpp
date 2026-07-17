@@ -647,7 +647,7 @@ int inter_add_dialog(char *string, int result) {
 		inter_dialog_results[id] = result;
 	}
 
-	return (id);
+	return id;
 }
 
 /*

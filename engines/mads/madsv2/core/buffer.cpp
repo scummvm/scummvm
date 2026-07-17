@@ -769,7 +769,7 @@ int buffer_preserve(Buffer *source, int flags, int source_ems_handle, int x, int
 	preserve_handle = BUFFER_NOT_PRESERVED;
 
 done:
-	return (preserve_handle);
+	return preserve_handle;
 }
 
 void buffer_restore(Buffer *source, int preserve_handle, int target_ems_handle, int x, int y, int xs, int ys) {

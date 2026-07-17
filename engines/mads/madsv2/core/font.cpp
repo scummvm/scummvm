@@ -249,7 +249,7 @@ int font_string_width(FontPtr font, const char *out_string, int auto_spacing) {
 		width += more_width;
 	}
 
-	return (width);
+	return width;
 }
 
 void init_font() {

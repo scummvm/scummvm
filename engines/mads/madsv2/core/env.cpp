@@ -98,7 +98,7 @@ char *env_catint(char *out, int value, int digits) {
 		power = power / 10;
 	}
 
-	return (out);
+	return out;
 }
 
 static void path_concat(char *target, const char *string) {

@@ -60,7 +60,7 @@ void *mem_get_name(long size, const char *) {
 }
 
 void *mem_get(long size) {
-	return (mem_get_name(size, "$sys$"));
+	return mem_get_name(size, "$sys$");
 }
 
 bool mem_free(void *memory_block) {

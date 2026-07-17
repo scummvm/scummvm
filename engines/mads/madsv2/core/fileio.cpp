@@ -98,9 +98,9 @@ char *fileio_ffgets(char *mystring, int num, Common::SeekableReadStream *stream)
 				}
 			}
 		}
-		return (mystring);
+		return mystring;
 	} else {
-		return (NULL);
+		return NULL;
 	}
 }
 

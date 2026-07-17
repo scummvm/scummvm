@@ -101,7 +101,7 @@ int keys_insert_buffer(KeyPtr key_buf, int newchar, int before) {
 		key_buf->buf[before] = newchar;
 		return (before + 1);
 	} else {
-		return (false);
+		return false;
 	}
 }
 
@@ -145,7 +145,7 @@ int keys_fix_alt(int target) {
 		if ((target >= a_key) && (target <= z_key)) {
 			return (target + A_key - a_key);
 		} else {
-			return (target);
+			return target;
 		}
 	}
 }

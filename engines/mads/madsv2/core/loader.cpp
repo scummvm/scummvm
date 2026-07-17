@@ -298,7 +298,7 @@ long loader_write(void *target, long record_size, long record_count, LoadHandle 
 	int strategy;
 	int going = true;
 
-	if (!record_size) return (0);
+	if (!record_size) return 0;
 
 	total_size = record_size * record_count;
 
