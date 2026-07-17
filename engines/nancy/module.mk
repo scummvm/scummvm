@@ -47,6 +47,7 @@ MODULE_OBJS = \
   action/puzzle/overridelockpuzzle.o \
   action/puzzle/passwordpuzzle.o \
   action/puzzle/peepholepuzzle.o \
+  action/puzzle/pegspuzzle.o \
   action/puzzle/quizpuzzle.o \
   action/puzzle/raycastpuzzle.o \
   action/puzzle/riddlepuzzle.o \

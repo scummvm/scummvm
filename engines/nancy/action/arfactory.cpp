@@ -63,6 +63,7 @@
 #include "engines/nancy/action/puzzle/overridelockpuzzle.h"
 #include "engines/nancy/action/puzzle/passwordpuzzle.h"
 #include "engines/nancy/action/puzzle/peepholepuzzle.h"
+#include "engines/nancy/action/puzzle/pegspuzzle.h"
 #include "engines/nancy/action/puzzle/quizpuzzle.h"
 #include "engines/nancy/action/puzzle/raycastpuzzle.h"
 #include "engines/nancy/action/puzzle/riddlepuzzle.h"
@@ -196,8 +197,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 46:	// Nancy11
 		return new PlayRandomMovieControl();
 	// Nancy14 dispatches the secondary-movie family from 41-47 instead of the
-	// legacy 50-53 slots. Only the Nancy14 layout is verified; earlier games
-	// stay unmapped here.
+	// legacy 50-53 slots.
 	case 41:	// PlaySecondaryMovie
 	case 44:	// PlaySecondaryMovie (adds a trailing volume byte)
 		if (g_nancy->getGameType() >= kGameTypeNancy14)
@@ -509,28 +509,30 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		// SetPlayerClock lived here up to Nancy11; moved to 140 in Nancy12
 		return new SetPlayerClock();
 	case 171:
-		// TurningPuzzle, moved here from 209 in Nancy13.
-		if (g_nancy->getGameType() >= kGameTypeNancy13)
-			return new TurningPuzzle();
+		// TurningPuzzle, moved here from 209 in Nancy13. NOTE: the Nancy13 chunk is a
+		// *different* layout from the 209 version (variable-length per-face string labels
+		// instead of a single image strip), so TurningPuzzle::readData would desync the
+		// stream. Left unimplemented (returns nullptr) until a readDataNancy13 + reworked
+		// draw path exist.
+		// TODO: not yet implemented for Nancy13
 		return nullptr;
 	case 172:
 		// BlocksPuzzle, new in Nancy13
 		// TODO: not yet implemented
 		return nullptr;
 	case 173:
-		// PegsPuzzle, new in Nancy13
-		// TODO: not yet implemented
-		return nullptr;
+		// PegsPuzzle (peg solitaire), new in Nancy13
+		return new PegsPuzzle();
 	case 174:
-		// Unknown Puzzle, new in Nancy13
+		// ScalePuzzle (balance scale), new in Nancy13
 		// TODO: not yet implemented
 		return nullptr;
 	case 175:
-		// Unknown Puzzle, new in Nancy13
+		// PachinkoPuzzle (ball drop), new in Nancy13
 		// TODO: not yet implemented
 		return nullptr;
 	case 176:
-		// Unknown Puzzle, new in Nancy13
+		// DropSortPuzzle (drag-drop sort activity), new in Nancy13
 		// TODO: not yet implemented
 		return nullptr;
 	// -- Nancy14 new puzzles (types 177-182) --
