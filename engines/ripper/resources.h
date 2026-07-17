@@ -73,6 +73,7 @@ public:
 	AssetLibrary();
 
 	bool open(const Common::Path &filename);
+	bool open(Common::SeekableReadStream &stream, const Common::Path &sourceName);
 	bool hasMember(const Common::String &memberName) const;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &memberName) const;
 	void listMembersWithPrefix(const Common::String &prefix,
@@ -92,10 +93,12 @@ private:
 
 	static Common::String readFixedString(const char *data, uint length);
 	static Common::String normalizeMemberName(const Common::String &memberName, bool includeExtension);
+	bool loadDirectory(Common::SeekableReadStream &stream, uint32 fileSize);
 	const Entry *findEntry(const Common::String &memberName) const;
 
 	Common::Path _filename;
 	Common::Array<Entry> _entries;
+	Common::Array<byte> _archiveData;
 	bool _modernFormat;
 };
 
@@ -106,19 +109,24 @@ public:
 		BitmapAssetSequence &sequence) const;
 	bool loadInterfaceBitmapSequence(const Common::String &memberName,
 		BitmapAssetSequence &sequence) const;
+	bool loadOptionsBitmapSequence(const Common::String &memberName,
+		BitmapAssetSequence &sequence) const;
 	bool loadInterfaceBitmapSet(const Common::String &prefix,
 		Common::Array<BitmapAssetFrame> &frames) const;
 	bool loadInterfacePcx(const Common::String &memberName, BitmapAssetFrame &frame) const;
+	bool loadOptionsPcx(const Common::String &memberName, BitmapAssetFrame &frame) const;
 	bool loadInterfaceBitmapFont(const Common::String &memberName, BitmapFontAsset &font) const;
 	bool loadGameText(Common::Array<Common::String> &strings) const;
 
 	AssetLibrary &scripts() { return _scripts; }
 	AssetLibrary &interface() { return _interface; }
+	AssetLibrary &options() { return _options; }
 	AssetLibrary &sound() { return _sound; }
 
 private:
 	AssetLibrary _scripts;
 	AssetLibrary _interface;
+	AssetLibrary _options;
 	AssetLibrary _sound;
 };
 
