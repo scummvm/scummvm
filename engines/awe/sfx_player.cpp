@@ -52,11 +52,13 @@ SfxPlayer::SfxPlayer(Resource *res)
 }
 
 void SfxPlayer::setEventsDelay(uint16 delay) {
+	Common::StackLock lock(_mutex);
 	debugC(kDebugSound, "SfxPlayer::setEventsDelay(%d)", delay);
 	_delay = delay;
 }
 
 void SfxPlayer::loadSfxModule(uint16 resNum, uint16 delay, uint8 pos) {
+	Common::StackLock lock(_mutex);
 	debugC(kDebugSound, "SfxPlayer::loadSfxModule(0x%X, %d, %d)", resNum, delay, pos);
 	MemEntry *me = &_res->_memList[resNum];
 	if (me->status == Resource::STATUS_LOADED && me->type == Resource::RT_MUSIC) {
@@ -100,6 +102,7 @@ void SfxPlayer::prepareInstruments(const uint8 *p) {
 }
 
 void SfxPlayer::play(int rate) {
+	Common::StackLock lock(_mutex);
 	_playing = true;
 	_rate = rate;
 	_samplesLeft = 0;
@@ -174,17 +177,20 @@ void SfxPlayer::mixSamples(int16 *buf, int len) {
 }
 
 void SfxPlayer::readSamples(int16 *buf, int len) {
+	Common::StackLock lock(_mutex);
 	if (_delay != 0) {
 		mixSamples(buf, len / 2);
 	}
 }
 
 void SfxPlayer::start() {
+	Common::StackLock lock(_mutex);
 	debugC(kDebugSound, "SfxPlayer::start()");
 	_sfxMod.curPos = 0;
 }
 
 void SfxPlayer::stop() {
+	Common::StackLock lock(_mutex);
 	debugC(kDebugSound, "SfxPlayer::stop()");
 	_playing = false;
 }
