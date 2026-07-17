@@ -28,6 +28,7 @@
 #include "common/serializer.h"
 #include "common/stream.h"
 #include "common/system.h"
+#include "graphics/paletteman.h"
 
 #include "ripper/detection.h"
 #include "ripper/cursor.h"
@@ -53,6 +54,25 @@ static const uint32 kScriptHeaderSize = 0xe9;
 static const uint32 kFrameRecordSize = 0x22;
 static const uint32 kInteractionRecordSize = 0x25;
 static const byte kCallbackTerminator = 'c';
+static const uint kDefaultPaletteFadeSteps = 9;
+static const uint kPaletteFadeStepDelayMs = 16;
+
+static void runPaletteFade(bool fadeIn, uint stepCount) {
+	byte targetPalette[Graphics::PALETTE_SIZE];
+	byte fadePalette[Graphics::PALETTE_SIZE];
+	PaletteManager *paletteManager = g_system->getPaletteManager();
+	paletteManager->grabPalette(targetPalette, 0, Graphics::PALETTE_COUNT);
+
+	for (uint step = 1; step <= stepCount; ++step) {
+		const uint scale = fadeIn ? step : stepCount - step;
+		for (uint component = 0; component < Graphics::PALETTE_SIZE; ++component)
+			fadePalette[component] = (byte)((uint64)targetPalette[component] * scale / stepCount);
+		paletteManager->setPalette(fadePalette, 0, Graphics::PALETTE_COUNT);
+		g_system->updateScreen();
+		if (step != stepCount)
+			g_system->delayMillis(kPaletteFadeStepDelayMs);
+	}
+}
 
 static Common::String compiledScriptMemberName(const Common::String &target) {
 	// RunSceneScriptLoop at 0x124e9 replaces everything from the first dot with
@@ -967,6 +987,22 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			}
 			if (!_briefing->arm(argument))
 				return false;
+			break;
+		}
+
+		case kFadePalette: {
+			if (command.arguments.size() < 2)
+				return false;
+			const bool fadeIn = command.arguments[0].value != 0;
+			const int32 configuredSteps = (int32)command.arguments[1].value;
+			const uint stepCount = configuredSteps > 0 ? configuredSteps : kDefaultPaletteFadeSteps;
+			debugC(2, kDebugVideo, "Ripper: fading palette %s steps=%u",
+				fadeIn ? "in" : "out", stepCount);
+			debugC(3, kDebugScripts,
+				"Ripper: palette transition script='%s' offset=0x%x mode=%u configuredSteps=%d effectiveSteps=%u",
+				script.getMemberName().c_str(), command.offset, command.arguments[0].value,
+				configuredSteps, stepCount);
+			runPaletteFade(fadeIn, stepCount);
 			break;
 		}
 
