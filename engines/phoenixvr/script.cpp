@@ -339,10 +339,10 @@ Script::Script(Common::SeekableReadStream &s) {
 	while (lineStartOffset < textSize) {
 		auto lineStart = text.begin() + lineStartOffset;
 		auto lineEnd = Common::find(lineStart, text.end(), '\n');
-		parseLine({lineStart, lineEnd}, lineno++);
 		lineStartOffset += Common::distance(lineStart, lineEnd) + 1;
-		if (lineStartOffset < textSize && text[lineStartOffset] == '\r')
-			++lineStartOffset;
+		while (lineEnd > lineStart && Common::isSpace(lineEnd[-1]))
+			--lineEnd;
+		parseLine({lineStart, lineEnd}, lineno++);
 	}
 }
 
