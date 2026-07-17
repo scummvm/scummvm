@@ -46,6 +46,7 @@ static const uint kFramesPerOrientation = 8;
 static const uint kInitialOrientation = 2;
 static const uint kPuzzleCursor = 16;
 static const uint16 kDosF10Command = 0x4400;
+static const uint kWacMugHelpResource = 405;
 static const uint32 kRotationFrameMillis = 55;
 static const int kViewportLeft = 50;
 static const int kViewportTop = 50;
@@ -378,15 +379,42 @@ BrokenMugPuzzle::Result BrokenMugPuzzle::run() {
 		}
 		while (_engine->getInput()->hasPendingKey()) {
 			const uint16 command = _engine->getInput()->consumeKey();
-			if (command == 0x1b || command == kDosF10Command) {
+			if (command == 0x1b) {
 				debugC(1, kDebugWac,
 					"Ripper: broken mug puzzle exited command=0x%x", command);
 				active = false;
+			} else if (command == kDosF10Command) {
+				debugC(1, kDebugWac,
+					"Ripper: broken mug puzzle requested WAC exit command=0x%x", command);
+				result = kExitWac;
+				active = false;
+			} else if (command == WacManager::kHelpAction ||
+					command == WacManager::kTextViewerAction ||
+					command == WacManager::kDatabaseAction) {
+				const uint16 action = _engine->getWac()->dispatchSubsceneAction(
+					command, kWacMugHelpResource, true);
+				if (action == WacManager::kExitAction) {
+					result = kExitWac;
+					active = false;
+				}
 			}
 		}
+		if (!active)
+			break;
 
 		const MouseState mouse = _engine->getInput()->publishMouseState();
-		_engine->getCursor()->update(kPuzzleCursor);
+		const uint16 controlAction = _engine->getWac()->serviceFrontEndControls(
+			mouse, kPuzzleCursor);
+		if (controlAction != WacManager::kNoAction) {
+			const uint16 action = _engine->getWac()->dispatchSubsceneAction(
+				controlAction, kWacMugHelpResource, true);
+			if (action == WacManager::kExitAction) {
+				result = kExitWac;
+				active = false;
+			}
+		}
+		if (!active)
+			break;
 		bool changed = false;
 		if (_draggedPiece < 0) {
 			if ((mouse.pressed & kMouseButtonLeft) != 0) {

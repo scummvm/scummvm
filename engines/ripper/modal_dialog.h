@@ -38,6 +38,8 @@ public:
 
 	bool initialize(ResourceManager &resources);
 	bool run(uint bodyResourceId, bool retainSceneCursorRegions = false);
+	bool runText(const Common::String &title, const Common::String &body,
+		const char *source, bool retainSceneCursorRegions = false);
 
 private:
 	bool captureDisplay();
@@ -55,6 +57,8 @@ private:
 	void drawDialog(const Common::String &title,
 		const Common::Array<Common::String> &lines, uint firstVisible,
 		uint visibleRows, const Common::Rect &bounds) const;
+	bool runTextInternal(const Common::String &title, const Common::String &body,
+		uint bodyResourceId, const char *source, bool retainSceneCursorRegions);
 	const Common::String &resourceString(uint resourceId) const;
 
 	RipperEngine *_engine;

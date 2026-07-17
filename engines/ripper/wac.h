@@ -30,23 +30,28 @@ namespace Ripper {
 
 class ResourceManager;
 class RipperEngine;
+struct MouseState;
 
 class WacManager {
 public:
-	explicit WacManager(RipperEngine *engine);
-
-	bool initialize(ResourceManager &resources);
-	void run();
-	void serviceIdleEffects();
-
-private:
 	enum FrontEndAction {
+		kNoAction = 0,
 		kExitAction = 0x1900,
 		kDatabaseAction = 0x2000,
 		kTextViewerAction = 0x3100,
 		kHelpAction = 0x3b00
 	};
 
+	explicit WacManager(RipperEngine *engine);
+
+	bool initialize(ResourceManager &resources);
+	void run();
+	void serviceIdleEffects();
+	uint16 serviceFrontEndControls(const MouseState &mouse, uint fallbackCursor);
+	uint16 dispatchSubsceneAction(uint16 action, uint helpResourceId,
+		bool databaseActive);
+
+private:
 	struct Control {
 		BitmapAssetFrame bitmap;
 		Common::Rect bounds;
@@ -65,8 +70,9 @@ private:
 	void serviceDatabaseCornerAnimation();
 	int findControl(const Common::Point &point) const;
 	bool dispatchAction(uint16 action);
+	bool runNotebook();
 	void buildDatabaseEntries();
-	void runDatabase();
+	uint16 runDatabase();
 	void drawDatabase() const;
 	void clearDatabaseMediaViewport();
 	bool loadDatabaseStillImage(const Common::String &path);
@@ -74,7 +80,7 @@ private:
 	void drawDatabaseScrollControls() const;
 	int findDatabaseScrollControl(const Common::Point &point) const;
 	void scrollDatabaseStillImage(int delta);
-	void dispatchDatabaseEntry(const DatabaseEntry &entry);
+	uint16 dispatchDatabaseEntry(const DatabaseEntry &entry);
 	const Common::String &resourceString(uint resourceId) const;
 	uint measureText(const Common::String &text) const;
 	void drawText(byte *screen, uint pitch, int x, int y, const Common::String &text,
