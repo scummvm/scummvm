@@ -193,6 +193,7 @@ static const char *const credits[] = {
 "C0""Paul Gilbert",
 "",
 "C1""Chamber",
+"C0""Ion Andrei Cristian",
 "C0""Retro-Junk;",
 "C0""Eugene Sandulenko",
 "",
