@@ -437,7 +437,7 @@ bool ModalDialogManager::run(uint bodyResourceId, bool retainSceneCursorRegions)
 			if ((uint)nextFirst != firstVisible) {
 				firstVisible = nextFirst;
 				redraw = true;
-				debugC(2, kDebugScene,
+				debugC(3, kDebugScene,
 					"Ripper: mouse-wheel scrolled modal text resource=%u "
 					"delta=%d firstLine=%u visibleRows=%u",
 					bodyResourceId, mouse.wheel, firstVisible, visibleRows);
