@@ -49,6 +49,7 @@ static void room_110_init() {
 
 	if (_scene->_priorSceneId == 109) {
 		_game._player._playerPos = Common::Point(59, 71);
+		_game._player._facing = FACING_EAST;
 
 		_globals._sequenceIndexes[0] = _scene->_sequences.startCycle(_globals._spriteIndexes[0], false, 1);
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
@@ -74,10 +75,10 @@ static void room_110_init() {
 	}
 
 	section_1_music();
-	_game.loadQuoteSet(0x59, 0);
+	_game.loadQuoteSet(89, 0);
 
 	if (!_game._visitedScenes._sceneRevisited && (_scene->_priorSceneId == 109))
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(109));
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(89));
 }
 
 static void room_110_daemon() {
