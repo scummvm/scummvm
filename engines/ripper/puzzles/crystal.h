@@ -80,6 +80,7 @@ private:
 	int _pieceCells[16];
 	int _cellPieces[72];
 	int _draggedPiece;
+	int _hoveredPiece;
 	uint _keywordIndex;
 };
 
