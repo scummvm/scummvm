@@ -301,8 +301,33 @@
 
 - Opcode `0x18` passes its first argument to `DispatchSceneEntryAction` at
   `0x36892` and its second argument through the original EBX argument channel.
-  Scene action 29 (`0x1d`) calls `RunCrystalPiecePlacementPuzzleScene` at
-  `0x2710c`; `JA1.RUN` supplies milestone 206 (`solved crystal puzzle`).
+  Scene action 4 calls `RunCalculatorPuzzleScene` at `0x269a5`; scene action 29
+  (`0x1d`) calls `RunCrystalPiecePlacementPuzzleScene` at `0x2710c`.
+  `CA1.RUN` supplies flag 0 to the calculator and `JA1.RUN` supplies milestone
+  206 (`solved crystal puzzle`) to the crystal puzzle.
+- The calculator loads `CALC0.BBM` through `CALC24.BBM` for its controls and
+  `CALCNM0.BBM` through `CALCNM11.BBM` for the right-aligned numeric display.
+  The 25 records at `0x84170` store display-relative Y, X, and command values;
+  `RunCalculatorPuzzleScene` adds the 50-pixel scene origin to Y. The controls
+  expose on/off, digits, decimal point, the four binary operators, Enter,
+  square, reciprocal, square root, inverse, sine, tangent, and cosine. F1 opens
+  modal help table `0x1a0`, Escape exits, and the original lower control at
+  physical rectangle (160, 240)-(490, 350) also dispatches Escape.
+- `InitializeUiControlState` at `0x4b90a` captures the scene beneath each
+  calculator button. `TriggerUiControlStateByControlId` at `0x4ce19` displays
+  the corresponding `CALC*.BBM` feedback bitmap for three DOS ticks, then
+  restores the captured scene through `DeactivateUiControlStateFeedback` at
+  `0x4b43a`; the bitmaps are not the calculator's persistent button faces.
+- `ApplyCalculatorOperator` at `0x265a5` evaluates pending binary operations and
+  the scientific keys. `RedrawCalculatorInputDisplay` at `0x268e3` clears the
+  153-by-15 display at physical position (220, 107), limits the displayed
+  string to ten characters, and places glyphs from right to left with a
+  three-pixel overlap. The power-off path clears that strip and leaves the
+  button controls active.
+- When flag 2 is set and flag 55 is clear, the calculator tracks the command
+  sequence `4`, `6`, square, divide, `7`, inverse, Enter, `5`. A mismatch
+  disables further matching until the calculator is powered on again. A full
+  match sets the caller-supplied flag and exits the puzzle.
 - The crystal puzzle loads sixteen-piece `CRYSP*`, `CRYST*`, and `CRYSB*` BBM
   sets and four `CRYSTAL%d.WAV` cues. It presents the pieces in the recovered
   tray coordinates beside an eight-by-nine grid. A selected tray or occupied
