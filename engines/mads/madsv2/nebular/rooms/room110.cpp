@@ -57,13 +57,13 @@ static void room_110_init() {
 
 		local._crabsFl = true;
 
-		int idx = _scene->_dynamicHotspots.add(91, 348, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_CRAB, VERB_SWIM_TO, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(91, 348, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(NOUN_CRAB, VERB_SWIM_TO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(91, 348, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(NOUN_CRAB, VERB_SWIM_TO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(91, 348, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(NOUN_CRAB, VERB_SWIM_TO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(194, 23);
@@ -104,13 +104,13 @@ static void room_110_pre_parser() {
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 16, 1, 0, 0);
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 16, 1, 0, 0);
 
-		int idx = _scene->_dynamicHotspots.add(91, 348, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_CRAB, VERB_SWIM_TO, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(91, 348, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(NOUN_CRAB, VERB_SWIM_TO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(91, 348, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(NOUN_CRAB, VERB_SWIM_TO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(91, 348, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(NOUN_CRAB, VERB_SWIM_TO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
 	}
 }

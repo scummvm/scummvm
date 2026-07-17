@@ -58,7 +58,7 @@ static void room_203_init() {
 	if ((_globals[kRhotundaStatus] == 0) && (!_scene->_roomChanged)) {
 		local._rhotundaEatFl = true;
 		_game._player.walk(Common::Point(158, 135), FACING_SOUTH);
-		int idx = _scene->_dynamicHotspots.add(131, 396, 0, Common::Rect(0, 0, 320, 156));
+		int idx = _scene->_dynamicHotspots.add(NOUN_FIELD_TO_SOUTH, VERB_WALK_TOWARDS, 0, Common::Rect(0, 0, 320, 156));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(155, 152), FACING_SOUTH);
 		_scene->_dynamicHotspots.setCursor(idx, CURSOR_GO_DOWN);
 	}
@@ -67,7 +67,7 @@ static void room_203_init() {
 		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('b', -1));
 		if (_vm->getRandomNumber(1, 3) == 2) {
 			_globals._spriteIndexes[15] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 9, 1, 0, 0);
-			int idx = _scene->_dynamicHotspots.add(477, 209, _globals._spriteIndexes[15], Common::Rect(0, 0, 0, 0));
+			int idx = _scene->_dynamicHotspots.add(NOUN_YELLOW_BIRD, VERB_LOOK_AT, _globals._spriteIndexes[15], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 			_vm->_sound->command(14);
 		}

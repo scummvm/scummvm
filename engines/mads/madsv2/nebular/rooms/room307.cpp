@@ -345,7 +345,7 @@ static void room_307_init() {
 	if (local._grateOpenedFl) {
 		_scene->_hotspots.activate(17, false);
 
-		int idx = _scene->_dynamicHotspots.add(17, VERB_CLIMB_INTO, -1, Common::Rect(117, 67, 117 + 19, 67 + 13));
+		int idx = _scene->_dynamicHotspots.add(NOUN_AIR_VENT, VERB_CLIMB_INTO, -1, Common::Rect(117, 67, 117 + 19, 67 + 13));
 		int hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(129, 104), FACING_NORTH);
 		_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_UP);
 
@@ -540,7 +540,7 @@ static void room_307_parser() {
 			_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 			local._grateOpenedFl = true;
 			_scene->_hotspots.activate(17, false);
-			int idx = _scene->_dynamicHotspots.add(17, VERB_CLIMB_INTO, -1, Common::Rect(117, 67, 117 + 19, 67 + 13));
+			int idx = _scene->_dynamicHotspots.add(NOUN_AIR_VENT, VERB_CLIMB_INTO, -1, Common::Rect(117, 67, 117 + 19, 67 + 13));
 			int hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(129, 104), FACING_NORTH);
 			_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_UP);
 			_game._objects.removeFromInventory(OBJ_SCALPEL, NOWHERE);

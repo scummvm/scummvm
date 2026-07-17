@@ -632,7 +632,7 @@ static void room_210_init() {
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 5);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 5);
 	} else {
-		int idx = _scene->_dynamicHotspots.add(112, 395, -1, Common::Rect(163, 87, 163 + 19, 87 + 36));
+		int idx = _scene->_dynamicHotspots.add(NOUN_DOORWAY, VERB_WALK_THROUGH, -1, Common::Rect(163, 87, 163 + 19, 87 + 36));
 		local._doorway = _scene->_dynamicHotspots.setPosition(idx, Common::Point(168, 127), FACING_NORTH);
 		_scene->_dynamicHotspots.setCursor(local._doorway, CURSOR_GO_UP);
 	}
@@ -1000,7 +1000,7 @@ static void room_210_parser() {
 		case 1:
 			_game._player._stepEnabled = true;
 			_globals[kCurtainOpen] = true;
-			local._doorway = _scene->_dynamicHotspots.add(112, 395, -1, Common::Rect(163, 87, 163 + 19, 87 + 36));
+			local._doorway = _scene->_dynamicHotspots.add(NOUN_DOORWAY, VERB_WALK_THROUGH, -1, Common::Rect(163, 87, 163 + 19, 87 + 36));
 			_scene->_dynamicHotspots.setPosition(local._doorway, Common::Point(168, 127), FACING_NORTH);
 			_scene->_dynamicHotspots.setCursor(local._doorway, CURSOR_GO_UP);
 			break;

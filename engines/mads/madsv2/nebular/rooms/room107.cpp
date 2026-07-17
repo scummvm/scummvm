@@ -56,7 +56,7 @@ static void room_107_init() {
 		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6, 0, 0, 0);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(68, 151));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 1);
-		int idx = _scene->_dynamicHotspots.add(101, 348, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_DEAD_FISH, VERB_SWIM_TO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(78, 135), FACING_SOUTHWEST);
 	}
 
@@ -73,7 +73,7 @@ static void room_107_init() {
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[0], Common::Point(270, 150));
 		_scene->_sequences.setMotion(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_SPRITE, -200, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 2);
-		_scene->_dynamicHotspots.add(218, 348, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.add(NOUN_MANTA_RAY, VERB_SWIM_TO, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
 	}
 
 	_game.loadQuoteSet(0x4A, 0x4B, 0x4C, 0x35, 0x34, 0);

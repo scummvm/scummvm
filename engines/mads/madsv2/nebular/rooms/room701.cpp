@@ -89,7 +89,7 @@ static void room_701_init() {
 	{
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
-		int idx = _scene->_dynamicHotspots.add(837, 759, _globals._sequenceIndexes[2], Common::Rect());
+		int idx = _scene->_dynamicHotspots.add(NOUN_BOAT, VERB_CLIMB_INTO, _globals._sequenceIndexes[2], Common::Rect());
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(231, 127), FACING_NORTH);
 		break;
 	}

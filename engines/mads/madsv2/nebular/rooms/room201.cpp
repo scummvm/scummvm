@@ -52,7 +52,7 @@ static void room_201_init() {
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 8);
 	_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(185, 46));
 
-	int idx = _scene->_dynamicHotspots.add(NOUN_BIRDS, 209, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(NOUN_BIRDS, VERB_LOOK_AT, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(186, 81), FACING_NORTH);
 
 	if ((_scene->_priorSceneId == 202) || (_scene->_priorSceneId == RETURNING_FROM_LOADING)) {
@@ -122,7 +122,7 @@ static void room_201_init() {
 static void room_201_daemon() {
 	if (local._pterodactylFlag && (_vm->getRandomNumber(5000) == 9)) {
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 5, 1, 6, 0);
-		int idx = _scene->_dynamicHotspots.add(351, 13, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_SWOOPING_CREATURE, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(270, 80), FACING_EAST);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 8);
 		_vm->_sound->command(14);

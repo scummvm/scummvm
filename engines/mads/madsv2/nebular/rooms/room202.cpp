@@ -522,7 +522,7 @@ static void room_202_parser() {
 			_game._player._visible = false;
 			_game._player._stepEnabled = false;
 
-			local._ladderHotspotId = _scene->_dynamicHotspots.add(NOUN_LADDER, 78, -1, Common::Rect(241, 68, 241 + 12, 68 + 54));
+			local._ladderHotspotId = _scene->_dynamicHotspots.add(NOUN_LADDER, VERB_CLIMB_DOWN, -1, Common::Rect(241, 68, 241 + 12, 68 + 54));
 			_scene->_dynamicHotspots.setPosition(local._ladderHotspotId, Common::Point(246, 124), FACING_NORTH);
 			_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 1);

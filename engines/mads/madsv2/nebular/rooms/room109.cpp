@@ -76,11 +76,11 @@ static void room_109_init() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 4);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], -2, -2);
 
-		int idx = _scene->_dynamicHotspots.add(102, 348, -1, Common::Rect(256, 57, 267, 87));
+		int idx = _scene->_dynamicHotspots.add(NOUN_DEAD_PURPLE_MONSTER, VERB_SWIM_TO, -1, Common::Rect(256, 57, 267, 87));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
-		idx = _scene->_dynamicHotspots.add(102, 348, -1, Common::Rect(242, 79, 265, 90));
+		idx = _scene->_dynamicHotspots.add(NOUN_DEAD_PURPLE_MONSTER, VERB_SWIM_TO, -1, Common::Rect(242, 79, 265, 90));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
-		idx = _scene->_dynamicHotspots.add(229, 348, -1, Common::Rect(231, 88, 253, 94));
+		idx = _scene->_dynamicHotspots.add(NOUN_MONSTER_SLUDGE, VERB_SWIM_TO, -1, Common::Rect(231, 88, 253, 94));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
 	}
 
@@ -90,7 +90,7 @@ static void room_109_init() {
 	if (_game._objects.isInRoom(OBJ_BURGER)) {
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], -2, -2);
-		int idx = _scene->_dynamicHotspots.add(53, 348, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_BURGER, VERB_SWIM_TO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
 	} else if (_scene->_roomChanged)
 		_game._objects.addToInventory(OBJ_BURGER);
@@ -311,11 +311,11 @@ static void room_109_parser() {
 							_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 1, 0, 0);
 							_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 4);
 							_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], -2, -2);
-							int idx = _scene->_dynamicHotspots.add(102, 348, -1, Common::Rect(256, 57, 256 + 12, 57 + 31));
+							int idx = _scene->_dynamicHotspots.add(NOUN_DEAD_PURPLE_MONSTER, VERB_SWIM_TO, -1, Common::Rect(256, 57, 256 + 12, 57 + 31));
 							_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
-							idx = _scene->_dynamicHotspots.add(102, 348, -1, Common::Rect(242, 79, 242 + 24, 79 + 12));
+							idx = _scene->_dynamicHotspots.add(NOUN_DEAD_PURPLE_MONSTER, VERB_SWIM_TO, -1, Common::Rect(242, 79, 242 + 24, 79 + 12));
 							_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
-							idx = _scene->_dynamicHotspots.add(229, 348, -1, Common::Rect(231, 88, 231 + 23, 88 + 7));
+							idx = _scene->_dynamicHotspots.add(NOUN_MONSTER_SLUDGE, VERB_SWIM_TO, -1, Common::Rect(231, 88, 231 + 23, 88 + 7));
 							_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
 							_scene->changeVariant(1);
 						} else {
@@ -363,7 +363,7 @@ static void room_109_parser() {
 						_game._objects.setRoom(OBJ_BURGER, _scene->_currentSceneId);
 						_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 0, 0, 0);
 						_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 30, 30);
-						int idx = _scene->_dynamicHotspots.add(53, 348, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+						int idx = _scene->_dynamicHotspots.add(NOUN_BURGER, VERB_SWIM_TO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 						_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
 						_scene->_sequences.addTimer(65, 6);
 					}
@@ -374,7 +374,7 @@ static void room_109_parser() {
 						_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 						_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
 						_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 31, 46);
-						int idx = _scene->_dynamicHotspots.add(53, 348, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+						int idx = _scene->_dynamicHotspots.add(NOUN_BURGER, VERB_SWIM_TO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 						_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
 						_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 7);
 					}
@@ -384,7 +384,7 @@ static void room_109_parser() {
 					{
 						_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 						_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
-						int idx = _scene->_dynamicHotspots.add(53, 348, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+						int idx = _scene->_dynamicHotspots.add(NOUN_BURGER, VERB_SWIM_TO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 						_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
 						_vm->_dialogs->show(10915);
 					}

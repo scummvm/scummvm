@@ -67,7 +67,7 @@ static void room_211_init() {
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(202, 126));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 8);
 		_scene->_sequences.setMotion(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, -200, 0);
-		_scene->_dynamicHotspots.add(324, 13, _globals._sequenceIndexes[2], Common::Rect(1, 1, 1 + 41, 1 + 10));
+		_scene->_dynamicHotspots.add(NOUN_SLITHERING_SNAKE, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(1, 1, 1 + 41, 1 + 10));
 	}
 
 	if (_scene->_roomChanged)

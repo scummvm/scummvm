@@ -793,7 +793,7 @@ static void handleMonkeyFall() {
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[8], oldIdx);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[8], 43, 72);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_EXPIRE, 0, 222);
-		int idx = _scene->_dynamicHotspots.add(39, 13, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_BINOCULARS, VERB_WALKTO, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(200, 133), FACING_NORTH);
 	}
 	break;
@@ -988,7 +988,7 @@ static void room_209_init() {
 
 	if (_game._objects.isInRoom(OBJ_PLANT_STALK)) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-		int idx = _scene->_dynamicHotspots.add(271, 13, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_PLANT_STALK, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(263, 129), FACING_SOUTH);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 13);
 	}
@@ -1005,7 +1005,7 @@ static void room_209_init() {
 		_globals._sequenceIndexes[9] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 1);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[9], Common::Point(201, 131));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 8);
-		int idx = _scene->_dynamicHotspots.add(39, 13, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_BINOCULARS, VERB_WALKTO, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(200, 133), FACING_NORTH);
 	}
 

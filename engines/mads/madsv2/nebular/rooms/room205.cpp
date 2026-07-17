@@ -56,11 +56,11 @@ static void room_205_init() {
 		_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 1));
 
 	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 10, 0, 0, 3);
-	int idx = _scene->_dynamicHotspots.add(73, 13, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(NOUN_CHICKEN, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(162, 120), FACING_NORTHEAST);
 
 	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 15, 0, 0, 0);
-	idx = _scene->_dynamicHotspots.add(73, 13, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+	idx = _scene->_dynamicHotspots.add(NOUN_CHICKEN, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(162, 120), FACING_NORTHEAST);
 
 	_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 0, 0, 0);
@@ -69,7 +69,7 @@ static void room_205_init() {
 
 	if (!_game._visitedScenes._sceneRevisited) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 7, 1, 0, 0);
-		idx = _scene->_dynamicHotspots.add(269, 13, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(NOUN_PIRANHA, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(49, 86), FACING_NORTH);
 	}
 
@@ -135,7 +135,7 @@ static void room_205_daemon() {
 	if (_vm->_game->_scene._frameStartTime - local._lastFishTime > 1300) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(
 			_globals._spriteIndexes[6], false, 5, 1, 0, 0);
-		int idx = _scene->_dynamicHotspots.add(269, 13, _globals._sequenceIndexes[6],
+		int idx = _scene->_dynamicHotspots.add(NOUN_PIRANHA, VERB_WALKTO, _globals._sequenceIndexes[6],
 			Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(49, 86), FACING_NORTH);
 		local._lastFishTime = _vm->_game->_scene._frameStartTime;

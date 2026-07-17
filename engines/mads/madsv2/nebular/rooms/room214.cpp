@@ -77,7 +77,7 @@ static void room_214_daemon() {
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 6, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 4);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 2);
-		_scene->_dynamicHotspots.add(451, 13, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.add(NOUN_CAPTIVE_CREATURE, VERB_WALKTO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 	}
 
@@ -88,7 +88,7 @@ static void room_214_daemon() {
 			int oldIdx = _globals._sequenceIndexes[3];
 			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 5, 0, 0);
 			_scene->_sequences.updateTimeout(oldIdx, _globals._sequenceIndexes[3]);
-			_scene->_dynamicHotspots.add(451, VERB_WALKTO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+			_scene->_dynamicHotspots.add(NOUN_CAPTIVE_CREATURE, VERB_WALKTO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 5, 8);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 2);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
@@ -100,7 +100,7 @@ static void room_214_daemon() {
 			int oldIdx = _globals._sequenceIndexes[3];
 			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
 			_scene->_sequences.updateTimeout(oldIdx, _globals._sequenceIndexes[3]);
-			_scene->_dynamicHotspots.add(451, VERB_WALKTO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+			_scene->_dynamicHotspots.add(NOUN_CAPTIVE_CREATURE, VERB_WALKTO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 9, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 2);
 			local._devilTime = _game._player._priorTimer;
