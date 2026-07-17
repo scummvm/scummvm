@@ -43,6 +43,7 @@ static const byte kToolbarBorderColor = 0;
 static const byte kToolbarTextColor = 4;
 static const byte kToolbarFillColor = 253;
 static const uint kToolbarHelpActionIndex = 7;
+static const uint kToolbarExitActionIndex = 8;
 
 static const char *const kToolbarHandlerNames[kToolbarActionCount] = {
 	"RunTake2IniSliderSetupMenu",
@@ -309,6 +310,15 @@ void ToolbarManager::drawTooltip(const Common::Point &point) {
 }
 
 void ToolbarManager::dispatchAction(uint actionIndex) {
+	if (actionIndex == kToolbarExitActionIndex && _engine->getScripts()->isCyberActive()) {
+		// DispatchFrontEndAction at 0x190b7 bypasses the normal binary prompt
+		// for action 0x51c while the Cyber transition flag is set.
+		debugC(1, kDebugCyber,
+			"Ripper: toolbar action=9 id=0x51c exiting Cyber nested runtime");
+		leave();
+		_engine->getScripts()->requestCyberExit("toolbar-exit");
+		return;
+	}
 	if (actionIndex == 1) {
 		debugC(1, kDebugScene,
 			"Ripper: toolbar action=2 id=0x515 label='%s' entering HandleSceneSelectionAction",

@@ -297,6 +297,37 @@
   and puzzle access. Its serializer retains the pre-existing ScummVM layout of
   one byte per flag so current engine saves remain compatible.
 
+## Cyber
+
+- Scene action 6 reaches `RunCyberMenuSceneTransition` at `0x2a86f`. It raises
+  the Cyber-active flag at `0x843c0`, saves the current palette, chooser and UI
+  registries, scene image, and audio-object table, switches the asset directory
+  to `CYBER`, presents `DECKIN.AVI`, and runs `CYBRMENU.RUN` as a nested scene
+  runtime. On return it restores those objects and the captured scene before
+  clearing the active flag. ScummVM's `CyberManager` keeps the same ownership
+  boundary using in-memory display, palette, named-audio, and script-runtime
+  snapshots around the nested script.
+- `CYBRMENU.RUN` has 94 frames and 70 interactions. Frames 33 through 48 are
+  the sixteen-position carousel: position 0 is Exit and positions 1 through 15
+  are Cyber programs. Each position exposes `left`, `right`, and `choose`
+  interactions with cursor indices 20, 21, and 23. The script's transition
+  frames use `ICTxy.SMK`; its large-icon frames use `ICL_EXIT.SMK` and
+  `ICL_1.SMK` through `ICL_15.SMK`. The initial callback loads the carousel's
+  `KJ1.WAV` and `IC_*.WAV` audio set and selects frame 33.
+- `PollInteractionAndResolveSelection` at `0x13c8d` switches F1 to help table
+  `0x1a4` while the Cyber flag is active. `DispatchFrontEndAction` at `0x190b7`
+  makes toolbar action `0x51c` leave the nested runtime immediately instead of
+  opening its normal confirmation prompt. The carousel also maps Left, Right,
+  Enter, and Escape to the same interaction callbacks; scene action 9999 is
+  its explicit nested-runtime terminator. Scene action 31 is an explicit no-op
+  branch in `DispatchSceneEntryAction` at `0x36892`.
+- Carousel program callbacks ultimately enter the preserved-state dispatcher
+  `DispatchKSceneActionBand` at `0x36e84`. Actions 40 through 56 select the
+  KA, KB, KC/Wofford, KD, KF, KG, KH, KI, KJ, KK, KL, KM, KN, KP, KQ, and KR
+  program families (action 44 is absent). That dispatcher has a second
+  palette/UI/chooser/audio preservation boundary around the selected program;
+  it is separate from the Cyber menu transition owned by action 6.
+
 ## Puzzles
 
 - Opcode `0x18` passes its first argument to `DispatchSceneEntryAction` at
