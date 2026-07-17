@@ -37,7 +37,7 @@ public:
 	explicit ModalDialogManager(RipperEngine *engine);
 
 	bool initialize(ResourceManager &resources);
-	bool run(uint bodyResourceId);
+	bool run(uint bodyResourceId, bool retainSceneCursorRegions = false);
 
 private:
 	bool captureDisplay();
