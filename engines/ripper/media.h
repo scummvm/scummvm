@@ -51,6 +51,7 @@ public:
 	bool playSoundEffect(const Common::String &path, Audio::SoundHandle &handle,
 		uint volumePercent = 100);
 	bool stopSoundEffect(Audio::SoundHandle &handle);
+	void fadePalette(bool fadeIn, uint stepCount);
 	bool playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
 		bool loopUntilInput = false, bool allowEscSpace = false);
 	bool loadAudio(const Common::String &path, bool preserve);
