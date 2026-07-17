@@ -541,6 +541,8 @@ int RateConverter_Impl<inStereo, outStereo, reverseStereo>::convert(AudioStream 
 }
 
 RateConverter *makeRateConverter(st_rate_t inRate, st_rate_t outRate, bool inStereo, bool outStereo, bool reverseStereo) {
+	assert(inRate != 0 && outRate != 0);
+
 	if (inStereo) {
 		if (outStereo) {
 			if (reverseStereo)
