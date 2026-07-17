@@ -35,6 +35,7 @@
 #include "ripper/media.h"
 #include "ripper/milestones.h"
 #include "ripper/modal_dialog.h"
+#include "ripper/puzzles/calculator.h"
 #include "ripper/puzzles/crystal.h"
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
@@ -1035,6 +1036,16 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 					result = -3;
 					return true;
 				}
+				break;
+			}
+			if (action == kSceneActionCalculatorPuzzle) {
+				CalculatorPuzzle puzzle(_engine);
+				const CalculatorPuzzle::Result puzzleResult = puzzle.run(argument);
+				debugC(1, kDebugPuzzles,
+					"Ripper: calculator puzzle scene action completed result=%d milestone=%u",
+					puzzleResult, argument);
+				if (puzzleResult == CalculatorPuzzle::kLoadFailed)
+					return false;
 				break;
 			}
 			if (action == kSceneActionCrystalPuzzle) {
