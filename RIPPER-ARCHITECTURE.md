@@ -440,6 +440,11 @@
   puzzle sets both database flags 71 and 72; `BuildWacInventorySelectionMenu`
   at `0x22c91` independently includes every set flag, so Broken Mug remains in
   the list alongside Coffee Mug.
+- Entries 10 and 11 dispatch `wacinv10.pcx` and `wacinv11.pcx` through
+  `RunWacStillImageScreenWithOptionalAudio` at `0x22f1f`. These 300-by-393
+  documents retain the database chooser, show a 282-row slice in the left WAC
+  media viewport, and use `MNARROW0` through `MNARROW3` controls at screen
+  positions 355,60 and 355,90 to scroll vertically in 10-pixel steps.
 - `RunWacMugSelectionScene` owns nine draggable controls (`0x640` through
   `0x648`) backed by `mug0.smk` through `mug8.smk`. It initially advances each
   32-frame asset to orientation state 2, draws the controls over the WAC media
