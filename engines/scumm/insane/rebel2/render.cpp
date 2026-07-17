@@ -3040,10 +3040,7 @@ void InsaneRebel2::renderStatusBarSprites(byte *renderBitmap, int pitch, int wid
 			_viewX, statusBarY + _viewY, _smush_cockpitNut, 1);
 	}
 
-	int difficulty = _difficulty;
-	if (difficulty > 3)
-		difficulty = 3;
-	int difficultySprite = difficulty + 2;
+	int difficultySprite = MIN((int)_difficulty, 4) + 1;
 	if (numSprites > difficultySprite) {
 		renderNutSprite(renderBitmap, pitch, width, height,
 			_viewX, statusBarY + _viewY, _smush_cockpitNut, difficultySprite);
