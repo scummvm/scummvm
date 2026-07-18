@@ -274,6 +274,11 @@ bool BaseFileManager::registerPackages() {
 				searchSignature = true;
 			}
 
+			// W/A: skip broken package in 'Project Joe"
+			if (fileName == "master.dcp" && BaseEngine::instance().getGameId() == "projectjoe") {
+				continue;
+			}
+
 			// Again, make the parent's name all lowercase to avoid any case
 			// issues.
 			Common::String parentName = it->getName();
