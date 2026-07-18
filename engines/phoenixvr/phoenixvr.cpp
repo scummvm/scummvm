@@ -387,9 +387,20 @@ Common::SeekableReadStream *PhoenixVREngine::tryOpen(const Common::Path &name, C
 
 Common::SeekableReadStream *PhoenixVREngine::open(const Common::String &filename, Common::String *origName) {
 	debug("open %s", filename.c_str());
-	auto *stream = tryOpen(_currentScriptPath.append(filename, '\\').normalize(), origName);
-	if (stream)
-		return stream;
+	Common::SeekableReadStream *stream = nullptr;
+
+	if (!_currentScriptPath.empty()) {
+		stream = tryOpen(_currentScriptPath.append(filename, '\\').normalize(), origName);
+		if (stream)
+			return stream;
+	} else if (!filename.contains('/') && !filename.contains('\\') &&
+			   (filename.hasSuffixIgnoreCase(".lst") || filename.hasSuffixIgnoreCase(".pak"))) {
+		for (const char *dir : {"cd1/Install", "Install"}) {
+			stream = tryOpen(Common::Path(Common::String::format("%s/%s", dir, filename.c_str()), '/'), origName);
+			if (stream)
+				return stream;
+		}
+	}
 
 	stream = tryOpen(Common::Path{filename}, origName);
 	if (stream)
