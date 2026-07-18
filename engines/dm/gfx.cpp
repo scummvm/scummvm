@@ -4023,8 +4023,64 @@ uint16 DisplayMan::getDarkenedColor(uint16 RGBcolor) {
 }
 
 void DisplayMan::startEndFadeToPalette(uint16 *P0849_pui_Palette) {
-	uint16 *paletteRegister = _paletteFadeTemporary;
+	if (_vm->getPlatform() == Common::kPlatformDOS) {
+		int16 targetPaletteIndex = -1;
 
+		if (P0849_pui_Palette == _blankBuffer) {
+			targetPaletteIndex = _blackPaletteIndex;
+		} else if (P0849_pui_Palette == _palCredits) {
+			targetPaletteIndex = _creditsPaletteIndex;
+		} else if (P0849_pui_Palette == _paletteTopAndBottomScreen || P0849_pui_Palette == _paletteMiddleScreen) {
+			targetPaletteIndex = 0; // C00_LIGHT0
+		} else {
+			bool isEntrance = true;
+			static const uint16 palEntrance[16] = {0x000, 0x666, 0x888, 0x840, 0xCA8, 0x0C0, 0x080, 0x0A0, 0x864, 0xF00, 0xA86, 0x642, 0x444, 0xAAA, 0x620, 0xFFF}; // @ G0020_aui_Graphic562_Palette_Entrance
+			for (int i = 0; i < 16; ++i) {
+				if (P0849_pui_Palette[i] != palEntrance[i]) {
+					isEntrance = false;
+					break;
+				}
+			}
+			if (isEntrance) {
+				targetPaletteIndex = _entrancePaletteIndex;
+			} else {
+				bool isDungeonView = false;
+				for (int idx = 0; idx < 6; ++idx) {
+					if (P0849_pui_Palette == _palDungeonView[idx]) {
+						targetPaletteIndex = idx;
+						isDungeonView = true;
+						break;
+					}
+				}
+				if (!isDungeonView) {
+					uint16 col1 = P0849_pui_Palette[1];
+					uint16 col4 = P0849_pui_Palette[4];
+					uint16 col8 = P0849_pui_Palette[8];
+					uint16 col12 = P0849_pui_Palette[12];
+					uint16 col15 = P0849_pui_Palette[15];
+
+					if (col15 == 0x0004)
+						targetPaletteIndex = _bluePaletteIndex;
+					else if (col15 == 0x0FFF && col1 == 0x0004)
+						targetPaletteIndex = _titlePresentsPaletteIndex;
+					else if (col8 == 0x0FF4)
+						targetPaletteIndex = _titleDungeonPaletteIndex;
+					else if (col12 == 0x0F00)
+						targetPaletteIndex = _titleMasterPaletteIndex;
+					else if (col1 == 0x086F && col4 == 0x0FFF)
+						targetPaletteIndex = _interfacePaletteIndex;
+					else
+						targetPaletteIndex = _blackPaletteIndex;
+				}
+			}
+		}
+
+		if (targetPaletteIndex != -1)
+			setMultipleColorsInPalette(targetPaletteIndex);
+		return;
+	}
+
+	uint16 *paletteRegister = _paletteFadeTemporary;
 	for (int16 i = 0; i < 16; i++)
 		paletteRegister[i] = _paletteFadeFrom[i];
 
