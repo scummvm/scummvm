@@ -194,6 +194,21 @@ void KaDialogueScene::serviceLoopAudio(uint frame) {
 	}
 }
 
+void KaDialogueScene::presentDialogueOverlay(uint frame) {
+	DialogueManager *dialogue = _engine->getScripts()->getDialogue();
+	if (!dialogue->isPending())
+		return;
+
+	// RunKaDialogueScene at 0x2aef5 advances the packetized frame, acquires
+	// the UI presentation overlay, submits a complete dirty-region update, and
+	// only then advances KA_LOOP.SMK. Commit the shared chooser after the frame
+	// callback so its rows inside y=50..349 are presented above the movie.
+	_engine->getScripts()->drawDialogueOverlay(true);
+	g_system->updateScreen();
+	debugC(11, kDebugDialogue,
+		"Ripper: composited Ka dialogue chooser above loop frame=%u", frame);
+}
+
 void KaDialogueScene::updateCursor(const Common::Point &point) {
 	int hovered = -1;
 	uint cursor = kDefaultCursor;
@@ -268,7 +283,7 @@ uint16 KaDialogueScene::service(uint frame) {
 		if (!serviceVoiceCompletion())
 			return kFailureCommand;
 		updateCursor(_engine->getInput()->peekMouseState().position);
-		_engine->getScripts()->drawDialogueOverlay(true);
+		presentDialogueOverlay(frame);
 		return MediaSequenceCallback::kContinueRefreshPalette;
 	}
 	if (!_acceptInput)
@@ -292,7 +307,7 @@ uint16 KaDialogueScene::service(uint frame) {
 		if (_conversationStarted)
 			rebuildChoices();
 		updateCursor(_engine->getInput()->peekMouseState().position);
-		_engine->getScripts()->drawDialogueOverlay(true);
+		presentDialogueOverlay(frame);
 		return MediaSequenceCallback::kContinueRefreshPalette;
 	} else if (command >= kChoiceCommandBase &&
 			command < kChoiceCommandBase + _choices.size()) {
@@ -306,7 +321,7 @@ uint16 KaDialogueScene::service(uint frame) {
 			choiceIndex, choice.flag, choice.textResource, choice.audioPath);
 		command = 0;
 	}
-	_engine->getScripts()->drawDialogueOverlay(true);
+	presentDialogueOverlay(frame);
 	if (command != 0) {
 		debugC(2, kDebugDialogue,
 			"Ripper: Ka dialogue input command=0x%04x frame=%u choices=%u voicePending=%d",
