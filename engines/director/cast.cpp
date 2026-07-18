@@ -274,6 +274,10 @@ bool Cast::duplicateCastMember(CastMember *source, CastMemberInfo *info, int tar
 	if (!source)
 		return true;
 	CastMember *target = source->duplicate(this, targetId);
+	// Some duplicate() implementations don't carry the child resource
+	// references; they only make sense within the same archive
+	if (target->_children.empty() && source->getCast() == this)
+		target->_children = source->_children;
 
 	if (info) {
 		CastMemberInfo *newInfo = new CastMemberInfo(*info);
