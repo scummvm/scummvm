@@ -417,9 +417,10 @@
   `AcquireUiSelectionPresentationOverlay`, a complete
   `DispatchDisplayDirtyRegionUpdate`, and `ReleaseBorrowedPresentationOverlay`
   before `AdvanceSmackerPlaybackFrame`. ScummVM mirrors that presentation
-  boundary by submitting the shared chooser after each decoded callback frame;
-  otherwise the next movie update replaces the portion of its first row inside
-  y=50 through y=349 before the screen is presented.
+  boundary by deferring sequence-callback screen submission until the shared
+  chooser has been drawn, then presenting the composited frame once. Submitting
+  the movie before the callback exposes an intermediate undecorated frame and
+  makes the portion of the chooser inside y=50 through y=349 flash.
 - Action 56 is the KR branch of `DispatchKSceneActionBand`; it calls
   `RunSceneScriptLoop("kr", 0, 0)`. ScummVM enters `kr.run` through a nested
   `CyberManager` snapshot which preserves the carousel script, active frame,
