@@ -341,7 +341,6 @@ static void setDialogNode(int node) {
 			_vm->_palette->lock();
 			_scene->_kernelMessages.reset();
 			_scene->freeAnimation();
-			_scene->_animation[0] = nullptr;
 			_scene->resetScene();
 
 			_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', -1));

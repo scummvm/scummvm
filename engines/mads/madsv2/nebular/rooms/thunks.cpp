@@ -172,10 +172,6 @@ char *Resources::formatAAName(int num) {
 Scene::Animation::Animation(int anim_id) : _id(anim_id), _currentFrame(kernel_anim[anim_id].frame) {
 }
 
-Scene::Animation &Scene::Animation::operator=(std::nullptr_t) {
-	error("TODO: Animation operator=");
-}
-
 int Scene::Animation::getCurrentFrame() const {
 	return _currentFrame;
 }

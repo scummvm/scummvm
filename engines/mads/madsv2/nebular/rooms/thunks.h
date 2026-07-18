@@ -204,7 +204,6 @@ struct Scene {
 		explicit operator bool() const {
 			return kernel_anim[_id].anim != nullptr;
 		}
-		Animation &operator=(std::nullptr_t);
 
 
 		int getCurrentFrame() const;
