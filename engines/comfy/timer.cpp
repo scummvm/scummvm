@@ -53,8 +53,6 @@ uint16 ComfyEngine::timerTick() {
 	while (callbacks--) {
 		if (shouldQuit())
 			return 0;
-
-		soundAdvanceTick();
 	}
 
 	_timer2 = _timer1;

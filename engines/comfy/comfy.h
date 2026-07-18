@@ -81,7 +81,9 @@ class QueuingAudioStream;
 #define COMFY_PANTHER_VOC_QUEUE_CAPACITY 4
 #define COMFY_SOUND_PCM_BLOCK_BYTES 0x4E20
 #define COMFY_PANTHER_SOUND_PCM_BLOCK_BYTES 0x3E80
-#define COMFY_SOUND_PITCH_COUNT_LIMIT 0x13
+#define COMFY_V3_SOUND_PCM_BLOCK_BYTES 0x3E80
+#define COMFY_SOUND_MAX_CUES 0x13
+#define COMFY_V3_SOUND_MAX_CUES 0x27
 #define COMFY_FRAME_LOADER_DATA_BYTES 0x6000
 #define COMFY_VOC_ARG_CAPACITY_V3 12
 #define COMFY_MIDI_QUEUE_CAPACITY 32
@@ -105,7 +107,6 @@ namespace Comfy {
 
 class ComfyEngine;
 class MidiPlyrDriver;
-struct SoundDecoderState;
 
 #ifdef USE_IMGUI
 typedef struct ImGuiState {
@@ -149,8 +150,6 @@ struct ComfyRect {
 
 class ComfyEngine : public Engine {
 private:
-	friend struct SoundDecoderState;
-
 	struct DrawCommand {
 		int16 x;
 		int16 y;
@@ -746,27 +745,35 @@ private:
 	MidiChannelState _midiChannels[COMFY_MIDI_CHANNEL_COUNT];
 	uint32 _midiInstanceTrackBase = 1;
 	Common::Array<SoundCue> _soundCues;
-	SoundDecoderState *_soundDecoderState = nullptr;
 	Audio::SoundHandle _soundHandle;
 	Audio::QueuingAudioStream *_soundQueueStream = nullptr;
 	uint16 _soundWaveBufferIndex = 0;
+	uint16 _soundBufferStateIndex = 0;
+	byte *_soundPackedState = nullptr;
+	byte *_soundBufferState = nullptr;
 	Common::Array<byte> _soundDecoderData;
 	uint32 _soundStreamPosition = 0;
 	uint32 _soundEventArgument = 0;
 	int32 _soundEventLength = 0;
 	uint32 _soundDataBase = 0;
 	uint32 _soundDataEnd = 0;
+	uint32 _soundHeaderEnd = 0;
 	uint32 _soundPlayPosition = 0;
+	uint32 _soundSourceBase = 0;
+	uint32 _soundSourceWindowStart = 0;
+	uint32 _soundSourceWindowEnd = 0;
+	uint32 _soundDecodeBlockSize = 0;
 	uint32 _soundLoopPosition = 0;
 	uint32 _soundCursor = 0;
 	uint32 _soundBlockBase = 0;
-	uint32 _soundRate = 0;
 	uint16 _soundFillCount = 0;
+	uint32 _soundEventRemaining = 0;
 	int16 _soundLoopCount = 0;
 	byte _soundSample = 0xA5;
 	byte _soundNextSample = 0;
 	bool _soundStopped = true;
 	bool _soundStarted = false;
+	bool _soundCounterEnabled = true;
 	uint16 _soundBitOffset = 0;
 	uint16 _soundLoopBitOffset = 0;
 	uint16 _soundBlockOffset = 0;
@@ -774,10 +781,23 @@ private:
 	byte _soundBitWidth = 4;
 	byte _soundPredictorDistance = 1;
 	bool _soundNeedInit = false;
+	bool _soundFinished = false;
+	bool _soundFault = false;
+	byte *_soundWritePointer = nullptr;
+	Common::Array<byte> _soundHistory;
+	uint32 _soundRate = 0;
+	Common::Array<byte> _soundInterleaveStorage;
+	byte *_soundInterleavePointer = nullptr;
+	uint32 _soundBufferStreamPosition[2] = {0, 0};
+	uint32 _soundBufferPosition[2] = {0, 0};
+	uint32 _soundBufferLoopPosition[2] = {0, 0};
+	uint32 _soundBufferEventRemaining[2] = {0, 0};
+	uint16 _soundBufferFillRemaining[2] = {0, 0};
+	int16 _soundBufferLoopCount[2] = {0, 0};
+	bool _soundBufferStarted[2] = {false, false};
 	Common::Array<byte> _soundPcmBlocks[2];
-	uint16 _soundEntryCount = 0;
-	uint32 _soundSampleRate = 0x2B11;
-	uint _soundNextCue = 0;
+	uint16 _soundTileStride = 0;
+	uint32 _soundSampleRate = 11025;
 	bool _soundCompressed = false;
 	bool _soundUsesAnimData = false;
 	bool _soundPaused = false;
@@ -939,8 +959,8 @@ private:
 	void midiShutdown();
 	void midiFileGetEntryTableParams(uint16 *entryCount, uint16 *entrySize);
 	void midiFileReadEntries(byte *destination);
-	byte *soundReadHeaderTable();
-	void soundGetHeaderTableParams(uint16 *entryCount, uint16 *entrySize);
+	byte *soundReadTiledData();
+	void soundGetTileParams(uint16 *tileStride, uint16 *fieldCount);
 	bool soundOpenVocFile();
 	void spriteCache(int16 spriteId);
 	SpriteResource *spriteLookup(uint16 spriteId, int16 x, int16 y);
@@ -1045,6 +1065,7 @@ private:
 	void animFrameClear();
 	void animFilePackState(byte *state);
 	void animFileRestoreStreamPosition(const byte *state);
+	void animFileRestoreSoundStorage(uint32 soundPosition);
 	void animFileRebuildStorage(uint32 targetSize);
 	void animFileUnpackState(const byte *state);
 	void animFrameInvalidateActorRect();
@@ -1096,17 +1117,69 @@ private:
 	void setMediaMode(byte mode);
 	void restoreWaveStateAfterSceneStart();
 	bool soundInit();
+	bool vocQueueInit();
 	void soundShutdown();
-	void soundHeaderReadFromXms(byte *destination, uint16 index, uint16 size);
+	void soundInitOutput();
+	void soundAllocBuffers(uint16 size);
+	void soundFreePcmBuf();
+	void soundPauseOutput();
+	void soundResumeOutput();
+	void soundPauseOrResume(byte pause);
+	void soundStopAllAndReset();
+	void soundPrepareQueuePlayback();
+	void soundStopPlayback();
+	void soundCloseVocFile();
+	void soundFreeBuffer();
+	ObjFile *soundLoadSoundData(const Common::Path &path, uint16 blockSize, uint32 maximumBytes);
+	void waveOutReset();
+	void waveOutOpen();
+	void waveOutPause();
+	void waveOutRestart();
+	bool waveOutSubmitBuffer(uint16 bufferIndex);
+	bool waveOutStartPlayback();
+	void soundSetSampleRate(uint32 sampleRate);
+	void soundReadHeader(byte *destination, uint16 index, uint16 size);
 	void soundUpdateVocTiming();
 	void soundServiceWaveBuffers();
 	bool soundLoadEntry(uint16 index);
-	bool soundPrepareDecoderState(uint16 index);
-	bool soundDecodePcmBlock(uint16 bufferIndex, byte *&buffer, uint32 &decodedSize);
-	bool soundQueuePcmBlock(uint16 bufferIndex);
-	void soundPackState(byte *state);
-	void soundUnpackState(byte *state);
+	byte soundOpenEntry(uint16 index);
+	void soundPlayFromPtr(const byte *source);
+	byte soundReadSourceByte(uint32 position);
+	bool soundLoadSourceWindow(uint32 size);
+	uint32 soundCalcSampleRate(byte &sample);
+	uint16 soundBitRead(uint16 bits);
+	uint32 soundBitRead32(uint16 bits);
+	void soundResetBitState();
+	void soundDecodeBits(uint16 size, byte mode);
+	void soundReadParam(uint16 &value);
+	void soundReadFreqWord(uint16 &value);
+	byte soundReadSampleByte();
+	void soundSaveLoopPosition();
+	void soundDecompressBlock(uint16 size);
+	void soundLoadDataBlock(uint16 size);
+	void soundSeekToLoop(uint16 size);
+	void soundReadLoopEntry(uint16 &frequency, byte &sample);
+	void soundBeginEvent(bool loop);
+	uint16 soundParseCommand();
+	void soundCopyPcm(byte *destination, uint16 size);
+	void soundAdvancePlayPosition();
+	void soundLoadChunk();
+	void soundPreloadChunk();
+	void soundInitRuntimeState(byte *state);
+	void soundSetBufferStatePointer(byte *state);
+	void soundSaveStreamPositions(uint16 bufferIndex);
+	void soundRestoreBufferState();
+	void soundSaveActiveBufferState(uint16 bufferIndex);
+	void soundSaveBufferState(uint16 bufferIndex);
+	void soundPushCue(uint16 value, int32 streamPosition);
+	void soundPackCueEntries(byte *state, uint32 playbackPosition);
+	void soundFillPcmBuffer(uint16 bufferIndex, uint16 size);
+	void soundPackState();
+	void soundUnpackState();
+	uint16 soundGetStateSize();
 	void soundPlayEntry(uint16 index);
+	void soundUnprepareHeader();
+	void soundCueTick();
 	void soundAdvanceTick();
 
 #ifdef USE_IMGUI

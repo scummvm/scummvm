@@ -556,6 +556,8 @@ void ComfyEngine::animFrameWaitForVocCounter() {
 		return;
 
 	while (animFrameVocCounterDelta() < -(int16)(_animVocDeltaB + 3)) {
+		// The original spins on the asynchronous VOC counter; yield so the host backend can advance it...
+		_system->delayMillis(1);
 		processEvents();
 
 		if (shouldQuit())
@@ -786,6 +788,112 @@ void ComfyEngine::animFileRestoreStreamPosition(const byte *state) {
 
 	_animPosition = frameStart + streamPosition;
 	_animSavedStreamPosition = streamPosition;
+}
+
+void ComfyEngine::animFileRestoreSoundStorage(uint32 soundPosition) {
+	if (soundPosition > _soundDataEnd) {
+		_soundFault = true;
+		return;
+	}
+
+	if (_soundDataEnd <= _animFrameStorage.size()) {
+		_soundDecoderData.resize(_soundDataEnd);
+		if (_soundDataEnd)
+			memcpy(&_soundDecoderData[0], &_animFrameStorage[0], _soundDataEnd);
+		return;
+	}
+
+	if (_animCurrentIndex >= _animIndexTable.size()) {
+		_soundFault = true;
+		return;
+	}
+
+	uint chunkIndex = 0;
+	while (chunkIndex < 6 && _animStorageChunkOffsets[chunkIndex] > soundPosition)
+		chunkIndex++;
+
+	if (chunkIndex < 6 && _animStorageChunkSizes[chunkIndex]) {
+		uint32 chunkOffset = _animStorageChunkOffsets[chunkIndex];
+		uint16 chunkPosition = (uint16)(soundPosition - chunkOffset);
+		uint32 restoredEnd = 0;
+
+		if (chunkPosition < _animStorageChunkSizes[chunkIndex]) {
+			_soundDecoderData.resize(_soundDataEnd);
+
+			if (_soundDataEnd)
+				memset(&_soundDecoderData[0], 0, _soundDecoderData.size());
+
+			uint32 frameStart = _animIndexTable[_animCurrentIndex] + COMFY_ANMFILE_HEADER_BYTES;
+
+			for (int i = (int)chunkIndex; i >= 0; i--) {
+				uint16 sourcePosition = i == (int)chunkIndex ? chunkPosition : 0;
+				uint16 chunkSize = _animStorageChunkSizes[i];
+				uint32 sourceOffset = _animStorageChunkFileOffsets[i] + sourcePosition;
+				uint32 destinationOffset = _animStorageChunkOffsets[i] + sourcePosition;
+
+				if (sourcePosition >= chunkSize || frameStart > _animFileData.size() ||
+						sourceOffset > _animFileData.size() - frameStart ||
+						destinationOffset >= _soundDecoderData.size())
+					continue;
+
+				uint32 copySize = chunkSize - sourcePosition;
+				copySize = MIN<uint32>(copySize, _animFileData.size() - frameStart - sourceOffset);
+				copySize = MIN<uint32>(copySize, _soundDecoderData.size() - destinationOffset);
+				memcpy(&_soundDecoderData[destinationOffset], &_animFileData[frameStart + sourceOffset], copySize);
+				restoredEnd = MAX<uint32>(restoredEnd, destinationOffset + copySize);
+			}
+
+			if (restoredEnd >= _soundDataEnd)
+				return;
+		}
+	}
+
+	// We store the complete source rather than the original 64 KiB circular XMS window...
+	// Rebuild that source when the six serialized XMS chunks do not cover the decoder range...
+	_soundDecoderData.resize(_soundDataEnd);
+	uint32 copied = 0;
+	uint32 position = _animIndexTable[_animCurrentIndex] + COMFY_ANMFILE_HEADER_BYTES;
+
+	while (copied < _soundDataEnd) {
+		uint32 headerSize = _animPantherFormat ? 8 : 4;
+
+		if (position > _animFileData.size() || headerSize > _animFileData.size() - position) {
+			_soundFault = true;
+			return;
+		}
+
+		byte *header = &_animFileData[position];
+		uint16 command = READ_LE_UINT16(header);
+		uint32 rawCommandSize = _animPantherFormat ? READ_LE_UINT32(header + 2) : READ_LE_UINT16(header + 2);
+		int32 signedCommandSize = _animPantherFormat ? (int32)rawCommandSize : (int32)(uint16)rawCommandSize;
+		uint32 commandSize = rawCommandSize;
+
+		if (_animPantherFormat && command == kAnimCommandFrame && signedCommandSize <= (int32)headerSize) {
+			position += headerSize;
+			continue;
+		}
+
+		if (commandSize < headerSize || commandSize > _animFileData.size() - position) {
+			_soundFault = true;
+			return;
+		}
+
+		uint32 payloadSize = commandSize - headerSize;
+		if (command == kAnimCommandStoreFrameBytes) {
+			uint32 copySize = MIN<uint32>(payloadSize, _soundDataEnd - copied);
+			if (copySize)
+				memcpy(&_soundDecoderData[copied], header + headerSize, copySize);
+
+			copied += copySize;
+		} else if (command == kAnimCommandEnd) {
+			break;
+		}
+
+		position += commandSize;
+	}
+
+	if (copied < _soundDataEnd)
+		_soundFault = true;
 }
 
 void ComfyEngine::animFileRebuildStorage(uint32 targetSize) {

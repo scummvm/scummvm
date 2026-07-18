@@ -322,18 +322,6 @@ void ComfyEngine::midiFileReadEntries(byte *destination) {
 	_midiFileStream->read(destination, size);
 }
 
-byte *ComfyEngine::soundReadHeaderTable() {
-	return _vocFile ? objFileReadTiled(4, (uint32)_soundEntryCount * 8, _vocFile) : nullptr;
-}
-
-void ComfyEngine::soundGetHeaderTableParams(uint16 *entryCount, uint16 *entrySize) {
-	if (entryCount)
-		*entryCount = _soundEntryCount;
-
-	if (entrySize)
-		*entrySize = 8;
-}
-
 void ComfyEngine::stringTableSetCount(uint16 count) {
 	_stringCount = count + 1;
 }
@@ -443,7 +431,7 @@ bool ComfyEngine::sceneFrameInitTables(uint16 sceneCount, uint16 actorCount, uin
 		midiInitInstance();
 	}
 
-	if (!soundInit())
+	if (!((_isPanther || _engineVersion == 3) ? vocQueueInit() : soundInit()))
 		return false;
 
 	if (_isPanther || _engineVersion == 3) {
@@ -534,10 +522,10 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 	uint16 midiEntrySize = 0;
 	midiFileGetEntryTableParams(&midiEntryCount, &midiEntrySize);
 	uint32 midiHeaderBytes = assetsAlignEven32((uint32)midiEntryCount * midiEntrySize);
-	uint16 soundEntryCount = 0;
-	uint16 soundEntrySize = 0;
-	soundGetHeaderTableParams(&soundEntryCount, &soundEntrySize);
-	uint32 soundHeaderBytes = assetsAlignEven32((uint32)soundEntryCount * soundEntrySize);
+	uint16 soundTileStride = 0;
+	uint16 soundFieldCount = 0;
+	soundGetTileParams(&soundTileStride, &soundFieldCount);
+	uint32 soundHeaderBytes = assetsAlignEven32((uint32)soundTileStride * soundFieldCount);
 	uint32 objectTableBytes = assetsAlignEven32((uint32)_numObjects * 0x11);
 	uint32 headerTotalBytes = midiHeaderBytes + soundHeaderBytes + objectTableBytes;
 	uint16 headerPages = (uint16)((headerTotalBytes + 0x400) / 0x400);
@@ -667,7 +655,7 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 	_headerXmsSoundHeadersBytes = soundHeaderBytes;
 
 	if (soundHeaderBytes) {
-		byte *soundHeaderTable = soundReadHeaderTable();
+		byte *soundHeaderTable = soundReadTiledData();
 		if (!soundHeaderTable)
 			return false;
 

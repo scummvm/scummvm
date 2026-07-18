@@ -597,7 +597,8 @@ void ComfyEngine::midiTrackTickAndRemove() {
 	_midiInstanceTrackBase = _midiTracks.baseTime;
 
 	while (_midiTracks.nextIndex != 999 && _midiTracks.baseTime >= _midiTracks.nextTime) {
-		keyBitSet(_midiTracks.entries[_midiTracks.nextIndex].id);
+		uint16 eventId = _midiTracks.entries[_midiTracks.nextIndex].id;
+		keyBitSet(eventId);
 		_midiTracks.count--;
 		_midiTracks.entries[_midiTracks.nextIndex] = _midiTracks.entries[_midiTracks.count];
 		midiFindNext(_midiTracks);
@@ -605,6 +606,8 @@ void ComfyEngine::midiTrackTickAndRemove() {
 }
 
 void ComfyEngine::sceneTickEvent() {
+	soundAdvanceTick();
+
 	if (_soundEventIndex == _soundEventMaximum)
 		return;
 
@@ -787,14 +790,14 @@ bool ComfyEngine::vocQueuePush(uint16 soundId, uint16 argumentCount, uint32 pc) 
 }
 
 void ComfyEngine::vocQueuePlayAll() {
-	_mixer->stopHandle(_soundHandle);
-	_soundQueueStream = nullptr;
-	_soundCues.clear();
-	_soundNextCue = 0;
-	if (_midiPlyrDriver)
-		_midiPlyrDriver->vocSrResetBlockNo();
+	if (_isPanther) {
+		soundStopPlayback();
+	} else {
+		soundStopAllAndReset();
+	}
 
 	if (_engineVersion == 3) {
+		soundPrepareQueuePlayback();
 		uint16 slot = _soundEventIndex;
 		while (slot != _soundEventMaximum) {
 			VocQueueEntryV3 &entry = _vocQueueV3[slot];
