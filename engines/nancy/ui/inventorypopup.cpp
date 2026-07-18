@@ -582,7 +582,6 @@ void InventoryPopup::handleInput(NancyInput &input) {
 			input.eatMouseInput();
 			return;
 		}
-		break;
 	}
 
 	if (_filterHovered || wasHovered)

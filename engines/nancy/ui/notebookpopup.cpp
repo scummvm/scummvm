@@ -416,7 +416,6 @@ void NotebookPopup::handleInput(NancyInput &input) {
 			input.eatMouseInput();
 			return;
 		}
-		break;
 	}
 
 	// Swallow clicks on the popup itself so they don't fall through.
