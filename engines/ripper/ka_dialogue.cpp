@@ -104,7 +104,7 @@ void KaDialogueScene::rebuildChoices() {
 	// RunKaDialogueScene at 0x2aef5 builds this list from GAMETEXT.TF entries
 	// 0xaa..0xad and the original 0x14a..0x14d progress bits, then passes the
 	// resulting item model to the same chooser control 0x4e2 used by opcode 0x17.
-	DialogueManager *dialogue = _engine->getScripts()->getDialogue();
+	DialogueChooser *dialogue = _engine->getScripts()->getDialogue();
 	if (dialogue->isPending())
 		dialogue->dismissForSceneTransition("ka-choice-rebuild");
 	else
@@ -145,7 +145,7 @@ bool KaDialogueScene::startVoice(const char *path, const char *source) {
 		return false;
 	}
 	_voicePending = true;
-	DialogueManager *dialogue = _engine->getScripts()->getDialogue();
+	DialogueChooser *dialogue = _engine->getScripts()->getDialogue();
 	if (dialogue->isPending())
 		dialogue->dismissForSceneTransition("ka-voice-start");
 	_choices.clear();
@@ -195,7 +195,7 @@ void KaDialogueScene::serviceLoopAudio(uint frame) {
 }
 
 void KaDialogueScene::presentDialogueOverlay(uint frame) {
-	DialogueManager *dialogue = _engine->getScripts()->getDialogue();
+	DialogueChooser *dialogue = _engine->getScripts()->getDialogue();
 	if (!dialogue->isPending())
 		return;
 
@@ -211,7 +211,7 @@ void KaDialogueScene::presentDialogueOverlay(uint frame) {
 void KaDialogueScene::updateCursor(const Common::Point &point) {
 	int hovered = -1;
 	uint cursor = kDefaultCursor;
-	DialogueManager *dialogue = _engine->getScripts()->getDialogue();
+	DialogueChooser *dialogue = _engine->getScripts()->getDialogue();
 	dialogue->updateHover(point);
 	const bool startEnabled = !_voicePending &&
 		(!_conversationStarted || _choices.empty());
@@ -240,7 +240,7 @@ void KaDialogueScene::updateCursor(const Common::Point &point) {
 }
 
 uint16 KaDialogueScene::serviceInput() {
-	DialogueManager *dialogue = _engine->getScripts()->getDialogue();
+	DialogueChooser *dialogue = _engine->getScripts()->getDialogue();
 	while (_engine->getInput()->hasPendingKey()) {
 		const uint16 command = _engine->getInput()->consumeKey();
 		if (command == kEscapeCommand) {
@@ -296,7 +296,7 @@ uint16 KaDialogueScene::service(uint frame) {
 			return kFailureCommand;
 		command = 0;
 	} else if (command == kCardCommand) {
-		DialogueManager *dialogue = _engine->getScripts()->getDialogue();
+		DialogueChooser *dialogue = _engine->getScripts()->getDialogue();
 		if (dialogue->isPending())
 			dialogue->dismissForSceneTransition("ka-card-presentation");
 		_choices.clear();
@@ -341,7 +341,7 @@ KaDialogueScene::Result KaDialogueScene::run(uint sceneArgument) {
 	_sceneArgument = sceneArgument;
 	if (!initialize())
 		return kLoadFailed;
-	DialogueManager *dialogue = _engine->getScripts()->getDialogue();
+	DialogueChooser *dialogue = _engine->getScripts()->getDialogue();
 	if (dialogue->isPending())
 		dialogue->dismissForSceneTransition("ka-entry");
 	else
