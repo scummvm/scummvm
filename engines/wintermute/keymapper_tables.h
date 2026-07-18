@@ -66,19 +66,24 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 	Common::KeymapArray result = Keymap::arrayOf(engineKeyMap);
 	if (gameId == "8squares" ||
 		gameId == "actualdest" ||
-		gameId == "artofmurder1" ||
+		gameId == "alone" ||
 		gameId == "agustin" ||
+		gameId == "artofmurder1" ||
+		gameId == "barbapoca1" ||
 		gameId == "barrowhilldp" ||
 		gameId == "bickadoodle" ||
+		gameId == "bookmania" ||
 		gameId == "bthreshold" ||
 		gameId == "carolreed6" ||
 		gameId == "carolreed7" ||
 		gameId == "carolreed8" ||
+		gameId == "chaos" ||
+		gameId == "colapso1" ||
 		gameId == "colorsoncanvas" ||
 		gameId == "conspiracao" ||
 		gameId == "corrosion" ||
-		gameId == "deadcity" ||
 		gameId == "darkfallls" ||
+		gameId == "deadcity" ||
 		gameId == "drbohus" ||
 		gameId == "dreaming" ||
 		gameId == "dreamscape" ||
@@ -87,24 +92,41 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		gameId == "findinghope" ||
 		gameId == "four" ||
 		gameId == "framed" ||
+		gameId == "fred" ||
+		gameId == "guttenburg" ||
 		gameId == "hamlet" ||
 		gameId == "hor" ||
 		gameId == "idiotstale" ||
 		gameId == "imustkill" ||
 		gameId == "juliauntold" ||
+		gameId == "klaymen1" ||
+		gameId == "leyendabiblio" ||
 		gameId == "lifein3minutes" ||
 		gameId == "lonelyrobot" ||
 		gameId == "machumayu" ||
 		gameId == "mirage" ||
 		gameId == "miskatonic1" ||
+		gameId == "mukhtar" ||
+		gameId == "mystictriddle" ||
 		gameId == "nighttrain" ||
+		gameId == "nightinthefog" ||
+		gameId == "nosebound1" ||
+		gameId == "octave" ||
+		gameId == "operacionbomba" ||
+		gameId == "pangea" ||
+		gameId == "preciouspills" ||
 		gameId == "projectdoom" ||
+		gameId == "royalmahjong" ||
 		gameId == "rosemary" ||
 		gameId == "satanandsons" ||
+		gameId == "shadowofnebula" ||
+		gameId == "shelter" ||
 		gameId == "sofiasdebt" ||
 		gameId == "spaceinvaders" ||
 		gameId == "spacemadness" ||
 		gameId == "strangechange" ||
+		gameId == "susanrose1" ||
+		gameId == "susanrose2" ||
 		gameId == "tanya1" ||
 		gameId == "tanya2" ||
 		gameId == "theancientmark1" ||
@@ -1244,7 +1266,8 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("PAGEDOWN"); // original keyboard
 		//TODO: extra joy control, e.g. "JOY_R+JOY_B"
 		gameKeyMap->addAction(act);
-	} else if (gameId == "jamesperis2") {
+	} else if (gameId == "jamesperis2" ||
+			   gameId == "jamesperis2uncut") {
 		act = new Action("HINT", _("Show hints"));
 		act->setKeyEvent(KeyState(KEYCODE_SPACE, ASCII_SPACE));
 		act->addDefaultInputMapping("SPACE"); // original keyboard
@@ -2129,6 +2152,59 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->setKeyEvent(KEYCODE_RIGHT);
 		act->addDefaultInputMapping("RIGHT"); // original keyboard
 		act->addDefaultInputMapping("JOY_RIGHT"); // extra joy
+		gameKeyMap->addAction(act);
+	} else if (gameId == "barbapoca2") {
+		act = new Action("HINT", _("Show hints"));
+		act->setKeyEvent(KeyState(KEYCODE_SPACE, ASCII_SPACE));
+		act->addDefaultInputMapping("SPACE"); // original keyboard
+		act->addDefaultInputMapping("MOUSE_MIDDLE"); // extra mouse
+		act->addDefaultInputMapping("JOY_Y"); // extra joy
+		gameKeyMap->addAction(act);
+	} else if (gameId == "tetriks") {
+		act = new Action("SPACE", _("Space"));
+		act->setKeyEvent(KeyState(KEYCODE_SPACE, ASCII_SPACE));
+		act->addDefaultInputMapping("SPACE"); // original keyboard
+		act->addDefaultInputMapping("JOY_Y"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action(kStandardActionMoveLeft, _("Left"));
+		act->setKeyEvent(KEYCODE_LEFT);
+		act->addDefaultInputMapping("LEFT"); // original keyboard
+		act->addDefaultInputMapping("JOY_LEFT"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action(kStandardActionMoveRight, _("Right"));
+		act->setKeyEvent(KEYCODE_RIGHT);
+		act->addDefaultInputMapping("RIGHT"); // original keyboard
+		act->addDefaultInputMapping("JOY_RIGHT"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action(kStandardActionMoveUp, _("Up"));
+		act->setKeyEvent(KEYCODE_UP);
+		act->addDefaultInputMapping("UP"); // original keyboard
+		act->addDefaultInputMapping("JOY_UP"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action(kStandardActionMoveDown, _("Down"));
+		act->setKeyEvent(KEYCODE_DOWN);
+		act->addDefaultInputMapping("DOWN"); // original keyboard
+		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
+		gameKeyMap->addAction(act);
+	} else if (gameId == "sunny") {
+		act = new Action("SPACE", _("Space"));
+		act->setKeyEvent(KeyState(KEYCODE_SPACE, ASCII_SPACE));
+		act->addDefaultInputMapping("SPACE"); // original keyboard
+		act->addDefaultInputMapping("JOY_Y"); // extra joy
+		gameKeyMap->addAction(act);
+		act = new Action("KP_MINUS", _("???"));
+		act->setKeyEvent(KeyState(KEYCODE_KP_MINUS));
+		act->addDefaultInputMapping("KP_MINUS"); // original keyboard
+		gameKeyMap->addAction(act);
+	} else if (gameId == "todaymama") {
+		act = new Action("SPACE", _("Space"));
+		act->setKeyEvent(KeyState(KEYCODE_SPACE, ASCII_SPACE));
+		act->addDefaultInputMapping("SPACE"); // original keyboard
+		act->addDefaultInputMapping("JOY_Y"); // extra joy
 		gameKeyMap->addAction(act);
 	} else {
 		warning("Autogenerated keymap for unknown WME game, id '%s', target '%s'", gameId.c_str(), target);
