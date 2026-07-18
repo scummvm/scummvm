@@ -81,6 +81,7 @@ static const int kCardBottom = 303;
 } // End of anonymous namespace
 
 LibrarianScene::LibrarianScene(RipperEngine *engine) : _engine(engine),
+		_chooser(*engine->getScripts()->getDialogue()),
 		_random("ripper-ka-dialogue"), _sceneArgument(0),
 		_hoveredControl(-1), _conversationStarted(false), _voicePending(false),
 		_acceptInput(false) {
@@ -104,11 +105,10 @@ void LibrarianScene::rebuildChoices() {
 	// RunKaDialogueScene at 0x2aef5 builds this list from GAMETEXT.TF entries
 	// 0xaa..0xad and the original 0x14a..0x14d progress bits, then passes the
 	// resulting item model to the same chooser control 0x4e2 used by opcode 0x17.
-	DialogueChooser *dialogue = _engine->getScripts()->getDialogue();
-	if (dialogue->isPending())
-		dialogue->dismissForSceneTransition("ka-choice-rebuild");
+	if (_chooser.isPending())
+		_chooser.dismissForSceneTransition("ka-choice-rebuild");
 	else
-		dialogue->clearPending();
+		_chooser.clearPending();
 	_choices.clear();
 	Milestones *milestones = _engine->getMilestones();
 	static const Choice choices[4] = {
@@ -128,12 +128,12 @@ void LibrarianScene::rebuildChoices() {
 		_choices.push_back(choices[3]);
 	if (_conversationStarted && !_choices.empty()) {
 		for (uint i = 0; i < _choices.size(); ++i)
-			dialogue->appendChoice(_gameText[_choices[i].textResource], i);
-		dialogue->activateChoices("ka-dialogue");
+			_chooser.appendChoice(_gameText[_choices[i].textResource], i);
+		_chooser.activateChoices("ka-dialogue");
 	}
 	debugC(2, kDebugDialogue,
 		"Ripper: rebuilt Ka dialogue choices count=%u conversationStarted=%d sharedPending=%d flags=cc:%d e1:%d 54:%d",
-		_choices.size(), _conversationStarted, dialogue->isPending(),
+		_choices.size(), _conversationStarted, _chooser.isPending(),
 		milestones->isSet(kCardSeenFlag), milestones->isSet(kBookSolvedFlag),
 		milestones->isSet(kCdFollowupFlag));
 }
@@ -145,9 +145,8 @@ bool LibrarianScene::startVoice(const char *path, const char *source) {
 		return false;
 	}
 	_voicePending = true;
-	DialogueChooser *dialogue = _engine->getScripts()->getDialogue();
-	if (dialogue->isPending())
-		dialogue->dismissForSceneTransition("ka-voice-start");
+	if (_chooser.isPending())
+		_chooser.dismissForSceneTransition("ka-voice-start");
 	_choices.clear();
 	_hoveredControl = -1;
 	debugC(2, kDebugDialogue,
@@ -195,15 +194,14 @@ void LibrarianScene::serviceLoopAudio(uint frame) {
 }
 
 void LibrarianScene::presentDialogueOverlay(uint frame) {
-	DialogueChooser *dialogue = _engine->getScripts()->getDialogue();
-	if (!dialogue->isPending())
+	if (!_chooser.isPending())
 		return;
 
 	// RunKaDialogueScene at 0x2aef5 advances the packetized frame, acquires
 	// the UI presentation overlay, submits a complete dirty-region update, and
 	// only then advances KA_LOOP.SMK. Draw the shared chooser in the callback;
 	// MediaPlayer submits the fully composited frame after this returns.
-	_engine->getScripts()->drawDialogueOverlay(true);
+	_chooser.draw(true);
 	debugC(11, kDebugDialogue,
 		"Ripper: composited Ka dialogue chooser above loop frame=%u", frame);
 }
@@ -211,13 +209,12 @@ void LibrarianScene::presentDialogueOverlay(uint frame) {
 void LibrarianScene::updateCursor(const Common::Point &point) {
 	int hovered = -1;
 	uint cursor = kDefaultCursor;
-	DialogueChooser *dialogue = _engine->getScripts()->getDialogue();
-	dialogue->updateHover(point);
+	_chooser.updateHover(point);
 	const bool startEnabled = !_voicePending &&
 		(!_conversationStarted || _choices.empty());
 	const bool cardEnabled = !_voicePending &&
 		!_engine->getMilestones()->isSet(kCardSeenFlag);
-	if (dialogue->contains(point)) {
+	if (_chooser.contains(point)) {
 		hovered = 2;
 		cursor = kChoiceCursor;
 	} else if (startEnabled && point.x >= kStartLeft && point.x < kStartRight &&
@@ -240,7 +237,6 @@ void LibrarianScene::updateCursor(const Common::Point &point) {
 }
 
 uint16 LibrarianScene::serviceInput() {
-	DialogueChooser *dialogue = _engine->getScripts()->getDialogue();
 	while (_engine->getInput()->hasPendingKey()) {
 		const uint16 command = _engine->getInput()->consumeKey();
 		if (command == kEscapeCommand) {
@@ -255,14 +251,14 @@ uint16 LibrarianScene::serviceInput() {
 			return kEscapeCommand;
 		}
 		uint choiceIndex = 0;
-		if (dialogue->serviceKeyboard(command, choiceIndex))
+		if (_chooser.serviceKeyboard(command, choiceIndex))
 			return kChoiceCommandBase + choiceIndex;
 	}
 
 	const MouseState mouse = _engine->getInput()->publishMouseState();
 	updateCursor(mouse.position);
 	uint choiceIndex = 0;
-	if (dialogue->service(mouse, choiceIndex))
+	if (_chooser.service(mouse, choiceIndex))
 		return kChoiceCommandBase + choiceIndex;
 	if ((mouse.pressed & kMouseButtonLeft) == 0)
 		return 0;
@@ -296,9 +292,8 @@ uint16 LibrarianScene::service(uint frame) {
 			return kFailureCommand;
 		command = 0;
 	} else if (command == kCardCommand) {
-		DialogueChooser *dialogue = _engine->getScripts()->getDialogue();
-		if (dialogue->isPending())
-			dialogue->dismissForSceneTransition("ka-card-presentation");
+		if (_chooser.isPending())
+			_chooser.dismissForSceneTransition("ka-card-presentation");
 		_choices.clear();
 		if (!_engine->getMedia()->play(kCardMedia, true) ||
 				!_engine->getMilestones()->set(kCardSeenFlag, true, "ka-dialogue-card"))
@@ -341,11 +336,10 @@ LibrarianScene::Result LibrarianScene::run(uint sceneArgument) {
 	_sceneArgument = sceneArgument;
 	if (!initialize())
 		return kLoadFailed;
-	DialogueChooser *dialogue = _engine->getScripts()->getDialogue();
-	if (dialogue->isPending())
-		dialogue->dismissForSceneTransition("ka-entry");
+	if (_chooser.isPending())
+		_chooser.dismissForSceneTransition("ka-entry");
 	else
-		dialogue->clearPending();
+		_chooser.clearPending();
 	debugC(1, kDebugDialogue,
 		"Ripper: entered Ka dialogue scene argument=%u deck='%s' loop='%s' toolbarMask=0x0000",
 		_sceneArgument, kDeckMedia, kLoopMedia);
@@ -376,8 +370,8 @@ LibrarianScene::Result LibrarianScene::run(uint sceneArgument) {
 	const Result result = (!played && !_engine->shouldQuit()) || command == kFailureCommand ?
 		kLoadFailed : kExited;
 
-	if (dialogue->isPending())
-		dialogue->dismissForSceneTransition("ka-exit");
+	if (_chooser.isPending())
+		_chooser.dismissForSceneTransition("ka-exit");
 	stopAllAudio();
 	_engine->getCursor()->setVisible(false);
 	_engine->getInput()->drainKeys();

@@ -28,6 +28,7 @@
 namespace Ripper {
 
 class RipperEngine;
+class DialogueChooser;
 
 class LibrarianScene : public MediaSequenceCallback {
 public:
@@ -59,6 +60,7 @@ private:
 	void stopAllAudio();
 
 	RipperEngine *_engine;
+	DialogueChooser &_chooser;
 	Common::RandomSource _random;
 	Common::Array<Common::String> _gameText;
 	Common::Array<Choice> _choices;
