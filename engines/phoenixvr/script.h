@@ -126,7 +126,6 @@ private:
 	ConditionalPtr _conditional;
 
 private:
-	static Common::String strip(const Common::String &str);
 	void parseLine(const Common::String &line, uint lineno);
 
 public:
