@@ -299,10 +299,6 @@ static void room_511_parser() {
 						local._lineMoving = true;
 						_globals[kLineStatus] = 3;
 						_game._player._stepEnabled = true;
-
-						if (_scene->_animation[0])
-							_scene->_animation[0]->eraseSprites();
-						_game._player.update();
 					}
 				}
 			}

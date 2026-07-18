@@ -212,7 +212,6 @@ struct Scene {
 		long getNextFrameTimer();
 		void setCurrentFrame(int frameNum);
 		void resetSpriteSetsCount();
-		void eraseSprites();
 	};
 	struct Animations {
 		Animation operator[](int anim_id) {

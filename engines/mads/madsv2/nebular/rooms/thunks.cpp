@@ -193,11 +193,7 @@ void Scene::Animation::setCurrentFrame(int frameNum) {
 }
 
 void Scene::Animation::resetSpriteSetsCount() {
-	error("TODO: resetSpriteSetsCount");
-}
-
-void Scene::Animation::eraseSprites() {
-	error("TODO: eraseSprites");
+	kernel_anim[_id].anim->num_series = 0;
 }
 
 int Scene::DynamicHotspots::add(int vocab_id, int verb_id, int auto_sequence, const Common::Rect &r) {
