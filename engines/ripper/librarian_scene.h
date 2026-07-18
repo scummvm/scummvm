@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  */
 
-#ifndef RIPPER_KA_DIALOGUE_H
-#define RIPPER_KA_DIALOGUE_H
+#ifndef RIPPER_LIBRARIAN_SCENE_H
+#define RIPPER_LIBRARIAN_SCENE_H
 
 #include "audio/mixer.h"
 #include "common/array.h"
@@ -29,14 +29,14 @@ namespace Ripper {
 
 class RipperEngine;
 
-class KaDialogueScene : public MediaSequenceCallback {
+class LibrarianScene : public MediaSequenceCallback {
 public:
 	enum Result {
 		kExited,
 		kLoadFailed
 	};
 
-	explicit KaDialogueScene(RipperEngine *engine);
+	explicit LibrarianScene(RipperEngine *engine);
 
 	Result run(uint sceneArgument);
 	uint16 service(uint frame) override;
@@ -75,4 +75,4 @@ private:
 
 } // End of namespace Ripper
 
-#endif // RIPPER_KA_DIALOGUE_H
+#endif // RIPPER_LIBRARIAN_SCENE_H
