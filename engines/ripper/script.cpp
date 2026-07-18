@@ -52,6 +52,9 @@ namespace Ripper {
 static const uint kToolbarCursor = 14;
 static const uint kDialogueCursor = 16;
 static const uint16 kHelpCommand = 0x3b00;
+static const uint16 kDialogueEnterCommand = 0x0d;
+static const uint16 kDialogueUpCommand = 0x4800;
+static const uint16 kDialogueDownCommand = 0x5000;
 static const uint16 kCyberLeftCommand = 0x4b00;
 static const uint16 kCyberRightCommand = 0x4d00;
 static const uint16 kCyberChooseCommand = 0x0d;
@@ -1530,6 +1533,22 @@ bool ScriptManager::serviceScene() {
 		return true;
 	const bool dialoguePending = _dialogue->isPending();
 	if (dialoguePending) {
+		const uint16 dialogueCommand = _engine->getInput()->peekKey();
+		if (dialogueCommand == kDialogueEnterCommand ||
+				dialogueCommand == kDialogueUpCommand ||
+				dialogueCommand == kDialogueDownCommand) {
+			_engine->getInput()->consumeKey();
+			uint dialogueFrame = 0;
+			if (_dialogue->serviceKeyboard(dialogueCommand, dialogueFrame)) {
+				_awaitingBa0Interaction = false;
+				_engine->getCursor()->setVisible(false);
+				debugC(1, kDebugDialogue,
+					"Ripper: dialogue keyboard chooser returned control=-2 nextFrame=%u",
+					dialogueFrame);
+				_engine->getMedia()->resetSceneAudioTriggers();
+				return advanceBa0ToFrame(dialogueFrame);
+			}
+		}
 		if (!_cyberActive && _engine->getToolbar()->service(mouse)) {
 			if (!_pendingSceneMember.empty())
 				return performPendingSceneTransition();

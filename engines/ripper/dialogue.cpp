@@ -24,6 +24,9 @@ static const byte kNormalBackgroundColor = 0;
 static const byte kNormalTextColor = 251;
 static const byte kSelectedBackgroundColor = 248;
 static const byte kSelectedTextColor = 4;
+static const uint16 kEnterCommand = 0x0d;
+static const uint16 kUpCommand = 0x4800;
+static const uint16 kDownCommand = 0x5000;
 
 bool DialogueManager::initialize(ResourceManager &resources) {
 	if (!resources.loadInterfaceBitmapFont("small.fnt", _font))
@@ -133,7 +136,7 @@ bool DialogueManager::execute(const CompiledScript &script, const ScriptCommand 
 			choice.text += (char)command.arguments[0].data[i];
 		choice.result = command.arguments[1].value & 0xffff;
 		if (includeChoice) {
-			_choices.push_back(choice);
+			appendChoice(choice.text, choice.result);
 			debugC(1, kDebugDialogue,
 				"Ripper: dialogue choice appended index=%u result=%u text='%s'",
 				_choices.size() - 1, choice.result, choice.text.c_str());
@@ -146,12 +149,8 @@ bool DialogueManager::execute(const CompiledScript &script, const ScriptCommand 
 	}
 
 	if (command.opcode == kStartDialogue) {
-		_pending = true;
-		_selectedChoice = 0;
-		_firstVisibleChoice = 0;
-		_hoveredArrow = 0;
-		updateLayout();
-		rebuildPresentationBands("chooser-activation");
+		if (!activateChoices("scene-script"))
+			return false;
 		debugC(1, kDebugDialogue,
 			"Ripper: dialogue chooser activated script='%s' offset=0x%x "
 				"selector=%u choices=%u",
@@ -175,6 +174,36 @@ bool DialogueManager::execute(const CompiledScript &script, const ScriptCommand 
 			"Ripper: dialogue argument=%u type=%u value=0x%x bytes=%u text='%s'",
 			i, argument.type, argument.value, argument.data.size(), text.c_str());
 	}
+	return true;
+}
+
+void DialogueManager::appendChoice(const Common::String &text, uint16 result) {
+	Choice choice;
+	choice.text = text;
+	choice.result = result;
+	_choices.push_back(choice);
+}
+
+bool DialogueManager::activateChoices(const char *source) {
+	if (_choices.empty()) {
+		debugC(2, kDebugDialogue,
+			"Ripper: dialogue chooser activation skipped source=%s reason=no-choices",
+			source);
+		clearPending();
+		return true;
+	}
+	_pending = true;
+	_selectedChoice = 0;
+	_firstVisibleChoice = 0;
+	_hoveredArrow = 0;
+	_backingBounds = Common::Rect();
+	_backingPixels.clear();
+	updateLayout();
+	rebuildPresentationBands("chooser-activation");
+	debugC(1, kDebugDialogue,
+		"Ripper: activated shared dialogue chooser source=%s choices=%u bounds=%d,%d,%d,%d",
+		source, _choices.size(), _chooserBounds.left, _chooserBounds.top,
+		_chooserBounds.width(), _chooserBounds.height());
 	return true;
 }
 
@@ -212,13 +241,35 @@ bool DialogueManager::service(const MouseState &mouse, uint &result) {
 	const uint choiceIndex = _firstVisibleChoice + visibleRow;
 	if (visibleRow >= kVisibleChoiceCount || choiceIndex >= _choices.size())
 		return false;
-	_selectedChoice = choiceIndex;
-	result = _choices[_selectedChoice].result;
-	debugC(1, kDebugDialogue,
-		"Ripper: dialogue selected index=%u resultFrame=%u text='%s'",
-		_selectedChoice, result, _choices[_selectedChoice].text.c_str());
-	clearPending();
-	return true;
+	return selectChoice(choiceIndex, result, "mouse");
+}
+
+bool DialogueManager::serviceKeyboard(uint16 command, uint &result) {
+	if (!_pending || _choices.empty())
+		return false;
+	const uint previousChoice = _selectedChoice;
+	if (command == kUpCommand) {
+		if (_selectedChoice > 0)
+			--_selectedChoice;
+		if (_selectedChoice < _firstVisibleChoice)
+			_firstVisibleChoice = _selectedChoice;
+	} else if (command == kDownCommand) {
+		if (_selectedChoice + 1 < _choices.size())
+			++_selectedChoice;
+		if (_selectedChoice >= _firstVisibleChoice + kVisibleChoiceCount)
+			_firstVisibleChoice = _selectedChoice - kVisibleChoiceCount + 1;
+	} else if (command == kEnterCommand) {
+		return selectChoice(_selectedChoice, result, "keyboard");
+	} else {
+		return false;
+	}
+	if (_selectedChoice != previousChoice) {
+		debugC(2, kDebugDialogue,
+			"Ripper: dialogue keyboard selection command=0x%04x index=%u result=%u text='%s'",
+			command, _selectedChoice, _choices[_selectedChoice].result,
+			_choices[_selectedChoice].text.c_str());
+	}
+	return false;
 }
 
 void DialogueManager::updateHover(const Common::Point &point) {
@@ -367,6 +418,22 @@ bool DialogueManager::restoreBacking() {
 			_backingPixels.data() + y * _backingBounds.width(), _backingBounds.width());
 	}
 	g_system->unlockScreen();
+	return true;
+}
+
+bool DialogueManager::selectChoice(uint choiceIndex, uint &result, const char *source) {
+	if (!_pending || choiceIndex >= _choices.size())
+		return false;
+	_selectedChoice = choiceIndex;
+	result = _choices[_selectedChoice].result;
+	const Common::String text = _choices[_selectedChoice].text;
+	const bool restored = restoreBacking();
+	debugC(1, kDebugDialogue,
+		"Ripper: dialogue selected source=%s index=%u result=%u text='%s' backing=%d",
+		source, _selectedChoice, result, text.c_str(), restored);
+	clearPending();
+	rebuildPresentationBands("chooser-selection");
+	g_system->updateScreen();
 	return true;
 }
 

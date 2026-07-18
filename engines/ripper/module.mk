@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	puzzles/broken_mug.o \
 	puzzles/calculator.o \
 	puzzles/crystal.o \
+	puzzles/ka_book_code.o \
 	puzzles/rolodex.o \
 	remote_control.o \
 	resources.o \

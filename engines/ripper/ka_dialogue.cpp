@@ -16,17 +16,14 @@
 #include "ripper/ka_dialogue.h"
 
 #include "common/debug.h"
-#include "common/file.h"
 #include "common/system.h"
-#include "graphics/paletteman.h"
-#include "graphics/surface.h"
-#include "image/pcx.h"
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
+#include "ripper/dialogue.h"
 #include "ripper/input.h"
 #include "ripper/milestones.h"
-#include "ripper/modal_dialog.h"
+#include "ripper/puzzles/ka_book_code.h"
 #include "ripper/ripper.h"
 #include "ripper/script.h"
 
@@ -40,10 +37,6 @@ static const char *const kCardMedia = "ka_card.avi";
 static const char *const kBookMedia = "ka_book.avi";
 static const char *const kCdMedia = "ka_cd.avi";
 static const char *const kCdGateScene = "SB2_1_D";
-static const char *const kCodeBackground = "ka_puz.pcx";
-static const char *const kCodeKeyAudio = "ka_key.wav";
-static const char *const kCodeSuccessAudio = "li1_1_ve.wav";
-static const char *const kCodeFailureAudio = "li1_1_vf.wav";
 static const char *const kFirstGreetingAudio = "li1_1_v1.wav";
 static const char *const kRepeatGreetingAudio[2] = {
 	"li1_1_z1.wav", "li1_1_z3.wav"
@@ -59,21 +52,11 @@ static const uint kStartCursor = 11;
 static const uint kCardCursor = 6;
 static const uint kChoiceCursor = 16;
 static const uint16 kEscapeCommand = 0x1b;
-static const uint16 kEnterCommand = 0x0d;
-static const uint16 kUpCommand = 0x4800;
-static const uint16 kDownCommand = 0x5000;
-static const uint16 kHelpCommand = 0x3b00;
 static const uint16 kStartCommand = 0x672;
 static const uint16 kCardCommand = 0x673;
 static const uint16 kChoiceCommandBase = 0x7000;
 static const uint16 kFailureCommand = 0x7ffd;
-static const uint kHelpSelectionTable = 0x1a6;
 static const uint kLoopStartFrame = 1;
-static const byte kChooserBackgroundColor = 0;
-static const byte kChooserSelectionColor = 248;
-static const byte kChooserBorderColor = 248;
-static const byte kChooserTextColor = 4;
-static const byte kChooserHighlightColor = 254;
 
 static const uint kCardSeenFlag = 0xcc;
 static const uint kFirstChoiceFlag = 0x14a;
@@ -94,29 +77,18 @@ static const int kCardLeft = 413;
 static const int kCardTop = 213;
 static const int kCardRight = 467;
 static const int kCardBottom = 303;
-static const int kChoiceLeft = 300;
-static const int kChoiceTop = 72;
-static const int kChoiceRight = 626;
-static const int kChoiceBottom = 224;
-static const int kChoiceInset = 8;
-static const int kChoiceRowHeight = 34;
-static const int kCodeBackgroundY = 50;
-static const int kCodeTextY = 310;
-static const int kCodeCellX[7] = { 64, 82, 101, 119, 138, 156, 175 };
-static const char kExpectedBookCode[] = "HC2021R";
 
 } // End of anonymous namespace
 
 KaDialogueScene::KaDialogueScene(RipperEngine *engine) : _engine(engine),
-		_random("ripper-ka-dialogue"), _sceneArgument(0), _selectedChoice(0),
+		_random("ripper-ka-dialogue"), _sceneArgument(0),
 		_hoveredControl(-1), _conversationStarted(false), _voicePending(false),
 		_acceptInput(false) {
 }
 
 bool KaDialogueScene::initialize() {
-	if (!_engine->getResources()->loadInterfaceBitmapFont("small.fnt", _font) ||
-			!_engine->getResources()->loadGameText(_gameText)) {
-		warning("Ripper: could not load Ka dialogue font or game text");
+	if (!_engine->getResources()->loadGameText(_gameText)) {
+		warning("Ripper: could not load Ka dialogue game text");
 		return false;
 	}
 	if (_gameText.size() <= kFirstChoiceText + 3) {
@@ -124,150 +96,19 @@ bool KaDialogueScene::initialize() {
 		return false;
 	}
 	debugC(1, kDebugDialogue,
-		"Ripper: initialized Ka dialogue textChoices=4 fontGlyphs=%u",
-		_font.glyphs.size());
+		"Ripper: initialized Ka dialogue textChoices=4 chooser=shared");
 	return true;
-}
-
-bool KaDialogueScene::loadCodeBackground() {
-	if (!_codeBackground.pixels.empty())
-		return true;
-	Common::File file;
-	Image::PCXDecoder decoder;
-	if (!file.open(Common::Path(kCodeBackground)) || !decoder.loadStream(file)) {
-		warning("Ripper: could not decode Ka book-code background '%s'", kCodeBackground);
-		return false;
-	}
-	const Graphics::Surface *surface = decoder.getSurface();
-	if (!surface || surface->format.bytesPerPixel != 1 || surface->w <= 0 || surface->h <= 0)
-		return false;
-	_codeBackground.width = surface->w;
-	_codeBackground.height = surface->h;
-	_codeBackground.pixels.resize((uint32)surface->w * surface->h);
-	for (int y = 0; y < surface->h; ++y)
-		memcpy(_codeBackground.pixels.data() + y * surface->w,
-			surface->getBasePtr(0, y), surface->w);
-	const Graphics::Palette &palette = decoder.getPalette();
-	_codeBackground.palette.resize(palette.size() * 3);
-	if (!_codeBackground.palette.empty())
-		memcpy(_codeBackground.palette.data(), palette.data(), _codeBackground.palette.size());
-	debugC(2, kDebugDialogue,
-		"Ripper: loaded Ka book-code background media='%s' size=%ux%u colors=%u",
-		kCodeBackground, _codeBackground.width, _codeBackground.height, palette.size());
-	return true;
-}
-
-uint KaDialogueScene::measureText(const Common::String &text) const {
-	uint width = 0;
-	for (uint i = 0; i < text.size(); ++i) {
-		const byte character = (byte)text[i];
-		if (character == ' ') {
-			width += _font.spaceWidth;
-			continue;
-		}
-		if (character < _font.firstCharacter ||
-				character >= _font.firstCharacter + _font.glyphs.size())
-			continue;
-		const BitmapFontGlyph &glyph = _font.glyphs[character - _font.firstCharacter];
-		width += glyph.xOffset + glyph.width + _font.characterSpacing;
-	}
-	return width;
-}
-
-void KaDialogueScene::drawText(byte *screen, uint pitch, int x, int y,
-		const Common::String &text, byte color) const {
-	int drawX = x;
-	for (uint i = 0; i < text.size(); ++i) {
-		const byte character = (byte)text[i];
-		if (character == ' ') {
-			drawX += _font.spaceWidth;
-			continue;
-		}
-		if (character < _font.firstCharacter ||
-				character >= _font.firstCharacter + _font.glyphs.size())
-			continue;
-		const BitmapFontGlyph &glyph = _font.glyphs[character - _font.firstCharacter];
-		for (uint glyphY = 0; glyphY < glyph.height; ++glyphY) {
-			for (uint glyphX = 0; glyphX < glyph.width; ++glyphX) {
-				const byte pixel = _font.pixels[glyph.pixelOffset + glyphY * glyph.width + glyphX];
-				const int targetX = drawX + glyph.xOffset + glyphX;
-				const int targetY = y + glyph.yOffset + glyphY;
-				if (pixel != _font.transparentColor && targetX >= 0 && targetX < 640 &&
-						targetY >= 0 && targetY < 400)
-					screen[targetY * pitch + targetX] = color;
-			}
-		}
-		drawX += glyph.xOffset + glyph.width + _font.characterSpacing;
-	}
-}
-
-void KaDialogueScene::drawChoiceOverlay() {
-	if (_choices.empty())
-		return;
-	Graphics::Surface *screen = g_system->lockScreen();
-	if (!screen || screen->format.bytesPerPixel != 1) {
-		if (screen)
-			g_system->unlockScreen();
-		return;
-	}
-	byte *pixels = (byte *)screen->getPixels();
-	const int bottom = MIN<int>(kChoiceTop + kChoiceInset * 2 +
-		_choices.size() * kChoiceRowHeight, kChoiceBottom);
-	for (int y = kChoiceTop; y < bottom; ++y) {
-		for (int x = kChoiceLeft; x < kChoiceRight; ++x) {
-			const bool border = x == kChoiceLeft || x == kChoiceRight - 1 ||
-				y == kChoiceTop || y == bottom - 1;
-			pixels[y * screen->pitch + x] = border ? kChooserBorderColor :
-				kChooserBackgroundColor;
-		}
-	}
-	for (uint i = 0; i < _choices.size(); ++i) {
-		const Choice &choice = _choices[i];
-		const int textY = kChoiceTop + kChoiceInset + i * kChoiceRowHeight;
-		const bool highlighted = (int)i + 2 == _hoveredControl || i == _selectedChoice;
-		if (highlighted) {
-			const int rowTop = textY - 2;
-			const int rowBottom = MIN<int>(rowTop + kChoiceRowHeight, bottom - 1);
-			for (int y = rowTop; y < rowBottom; ++y)
-				memset(pixels + y * screen->pitch + kChoiceLeft + 1,
-					kChooserSelectionColor, kChoiceRight - kChoiceLeft - 2);
-		}
-		drawText(pixels, screen->pitch, kChoiceLeft + kChoiceInset, textY,
-			_gameText[choice.textResource], highlighted ? kChooserHighlightColor :
-			kChooserTextColor);
-	}
-	g_system->unlockScreen();
-	g_system->updateScreen();
-}
-
-void KaDialogueScene::drawCodePrompt(const Common::String &typedCode) {
-	Graphics::Surface *screen = g_system->lockScreen();
-	if (!screen || screen->format.bytesPerPixel != 1) {
-		if (screen)
-			g_system->unlockScreen();
-		return;
-	}
-	byte *pixels = (byte *)screen->getPixels();
-	for (uint y = 0; y < _codeBackground.height && y + kCodeBackgroundY < 400; ++y) {
-		const uint width = MIN<uint>(_codeBackground.width, 640);
-		memcpy(screen->getBasePtr(0, y + kCodeBackgroundY),
-			_codeBackground.pixels.data() + y * _codeBackground.width, width);
-	}
-	for (uint i = 0; i < typedCode.size() && i < ARRAYSIZE(kCodeCellX); ++i) {
-		const Common::String character(typedCode.c_str() + i, 1);
-		const int x = kCodeCellX[i] + (15 - (int)measureText(character)) / 2;
-		drawText(pixels, screen->pitch, x, kCodeTextY, character,
-			kChooserHighlightColor);
-	}
-	g_system->unlockScreen();
-	if (_codeBackground.palette.size() >= 256 * 3)
-		g_system->getPaletteManager()->setPalette(_codeBackground.palette.data(), 0, 256);
-	g_system->updateScreen();
 }
 
 void KaDialogueScene::rebuildChoices() {
 	// RunKaDialogueScene at 0x2aef5 builds this list from GAMETEXT.TF entries
-	// 0xaa..0xad and the original 0x14a..0x14d progress bits.
+	// 0xaa..0xad and the original 0x14a..0x14d progress bits, then passes the
+	// resulting item model to the same chooser control 0x4e2 used by opcode 0x17.
+	DialogueManager *dialogue = _engine->getScripts()->getDialogue();
+	if (dialogue->isPending())
+		dialogue->dismissForSceneTransition("ka-choice-rebuild");
+	else
+		dialogue->clearPending();
 	_choices.clear();
 	Milestones *milestones = _engine->getMilestones();
 	static const Choice choices[4] = {
@@ -285,12 +126,16 @@ void KaDialogueScene::rebuildChoices() {
 	if (milestones->isSet(kActOneCompleteFlag) && !milestones->isSet(kCdChoiceFlag) &&
 			_engine->getScripts()->hasPlayedScene(kCdGateScene))
 		_choices.push_back(choices[3]);
-	if (_selectedChoice >= _choices.size())
-		_selectedChoice = _choices.empty() ? 0 : _choices.size() - 1;
+	if (_conversationStarted && !_choices.empty()) {
+		for (uint i = 0; i < _choices.size(); ++i)
+			dialogue->appendChoice(_gameText[_choices[i].textResource], i);
+		dialogue->activateChoices("ka-dialogue");
+	}
 	debugC(2, kDebugDialogue,
-		"Ripper: rebuilt Ka dialogue choices count=%u conversationStarted=%d flags=cc:%d e1:%d 54:%d",
-		_choices.size(), _conversationStarted, milestones->isSet(kCardSeenFlag),
-		milestones->isSet(kBookSolvedFlag), milestones->isSet(kCdFollowupFlag));
+		"Ripper: rebuilt Ka dialogue choices count=%u conversationStarted=%d sharedPending=%d flags=cc:%d e1:%d 54:%d",
+		_choices.size(), _conversationStarted, dialogue->isPending(),
+		milestones->isSet(kCardSeenFlag), milestones->isSet(kBookSolvedFlag),
+		milestones->isSet(kCdFollowupFlag));
 }
 
 bool KaDialogueScene::startVoice(const char *path, const char *source) {
@@ -300,6 +145,9 @@ bool KaDialogueScene::startVoice(const char *path, const char *source) {
 		return false;
 	}
 	_voicePending = true;
+	DialogueManager *dialogue = _engine->getScripts()->getDialogue();
+	if (dialogue->isPending())
+		dialogue->dismissForSceneTransition("ka-voice-start");
 	_choices.clear();
 	_hoveredControl = -1;
 	debugC(2, kDebugDialogue,
@@ -307,72 +155,14 @@ bool KaDialogueScene::startVoice(const char *path, const char *source) {
 	return true;
 }
 
-bool KaDialogueScene::runBookCodePrompt() {
-	if (!loadCodeBackground())
-		return false;
-	Common::String typedCode;
-	_engine->getCursor()->setVisible(false);
-	_engine->getInput()->drainKeys();
-	_engine->getInput()->discardMouseTransitions();
-	drawCodePrompt(typedCode);
-	debugC(1, kDebugDialogue,
-		"Ripper: entered Ka book-code prompt expectedLength=7 helpTable=0x%x",
-		kHelpSelectionTable);
-	bool matched = false;
-	bool active = true;
-	while (active && !_engine->shouldQuit()) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
-			break;
-		}
-		while (_engine->getInput()->hasPendingKey()) {
-			uint16 command = _engine->getInput()->consumeKey();
-			if (command == kEscapeCommand) {
-				active = false;
-				break;
-			}
-			if (command == kHelpCommand) {
-				_engine->getModalDialog()->run(kHelpSelectionTable);
-				drawCodePrompt(typedCode);
-				continue;
-			}
-			if (command == 8 && !typedCode.empty()) {
-				_engine->getMedia()->playSoundEffect(kCodeKeyAudio, _keyHandle);
-				typedCode.deleteLastChar();
-				drawCodePrompt(typedCode);
-				continue;
-			}
-			if (command >= 'a' && command <= 'z')
-				command -= 'a' - 'A';
-			if (typedCode.size() >= 7 || !((command >= '0' && command <= '9') ||
-					(command >= 'A' && command <= 'Z')))
-				continue;
-			_engine->getMedia()->playSoundEffect(kCodeKeyAudio, _keyHandle);
-			typedCode += (char)command;
-			drawCodePrompt(typedCode);
-			if (typedCode == kExpectedBookCode) {
-				matched = true;
-				active = false;
-				break;
-			}
-		}
-		g_system->delayMillis(10);
-	}
-	_engine->getMedia()->stopSoundEffect(_keyHandle);
-	const char *resultAudio = matched ? kCodeSuccessAudio : kCodeFailureAudio;
-	if (!_engine->shouldQuit() && !_engine->getMedia()->play(resultAudio, true))
-		warning("Ripper: could not play Ka book-code result audio '%s'", resultAudio);
-	debugC(1, kDebugDialogue,
-		"Ripper: left Ka book-code prompt matched=%d typedLength=%u",
-		matched, typedCode.size());
-	return matched;
-}
-
 bool KaDialogueScene::serviceVoiceCompletion() {
 	Milestones *milestones = _engine->getMilestones();
 	if (milestones->isSet(kBookChoiceFlag) && !milestones->isSet(kBookSolvedFlag)) {
-		const bool solved = runBookCodePrompt();
-		if (solved) {
+		KaBookCodePuzzle puzzle(_engine);
+		const KaBookCodePuzzle::Result puzzleResult = puzzle.run();
+		if (puzzleResult == KaBookCodePuzzle::kLoadFailed)
+			return false;
+		if (puzzleResult == KaBookCodePuzzle::kSolved) {
 			if (!_engine->getMedia()->play(kBookMedia, true))
 				return false;
 			milestones->set(kBookSolvedFlag, true, "ka-dialogue-book-code");
@@ -407,18 +197,15 @@ void KaDialogueScene::serviceLoopAudio(uint frame) {
 void KaDialogueScene::updateCursor(const Common::Point &point) {
 	int hovered = -1;
 	uint cursor = kDefaultCursor;
+	DialogueManager *dialogue = _engine->getScripts()->getDialogue();
+	dialogue->updateHover(point);
 	const bool startEnabled = !_voicePending &&
 		(!_conversationStarted || _choices.empty());
 	const bool cardEnabled = !_voicePending &&
 		!_engine->getMilestones()->isSet(kCardSeenFlag);
-	if (!_choices.empty() && point.x >= kChoiceLeft && point.x < kChoiceRight &&
-			point.y >= kChoiceTop && point.y < kChoiceBottom) {
-		const int row = (point.y - kChoiceTop - kChoiceInset) / kChoiceRowHeight;
-		if (row >= 0 && row < (int)_choices.size()) {
-			hovered = row + 2;
-			cursor = kChoiceCursor;
-			_selectedChoice = row;
-		}
+	if (dialogue->contains(point)) {
+		hovered = 2;
+		cursor = kChoiceCursor;
 	} else if (startEnabled && point.x >= kStartLeft && point.x < kStartRight &&
 			point.y >= kStartTop && point.y < kStartBottom) {
 		hovered = 0;
@@ -439,6 +226,7 @@ void KaDialogueScene::updateCursor(const Common::Point &point) {
 }
 
 uint16 KaDialogueScene::serviceInput() {
+	DialogueManager *dialogue = _engine->getScripts()->getDialogue();
 	while (_engine->getInput()->hasPendingKey()) {
 		const uint16 command = _engine->getInput()->consumeKey();
 		if (command == kEscapeCommand) {
@@ -452,27 +240,22 @@ uint16 KaDialogueScene::serviceInput() {
 			}
 			return kEscapeCommand;
 		}
-		if (_choices.empty())
-			continue;
-		if (command == kUpCommand) {
-			_selectedChoice = _selectedChoice == 0 ? _choices.size() - 1 : _selectedChoice - 1;
-		} else if (command == kDownCommand) {
-			_selectedChoice = (_selectedChoice + 1) % _choices.size();
-		} else if (command == kEnterCommand) {
-			return kChoiceCommandBase + _selectedChoice;
-		}
+		uint choiceIndex = 0;
+		if (dialogue->serviceKeyboard(command, choiceIndex))
+			return kChoiceCommandBase + choiceIndex;
 	}
 
 	const MouseState mouse = _engine->getInput()->publishMouseState();
 	updateCursor(mouse.position);
+	uint choiceIndex = 0;
+	if (dialogue->service(mouse, choiceIndex))
+		return kChoiceCommandBase + choiceIndex;
 	if ((mouse.pressed & kMouseButtonLeft) == 0)
 		return 0;
 	if (_hoveredControl == 0)
 		return kStartCommand;
 	if (_hoveredControl == 1)
 		return kCardCommand;
-	if (_hoveredControl >= 2)
-		return kChoiceCommandBase + _hoveredControl - 2;
 	return 0;
 }
 
@@ -485,7 +268,7 @@ uint16 KaDialogueScene::service(uint frame) {
 		if (!serviceVoiceCompletion())
 			return kFailureCommand;
 		updateCursor(_engine->getInput()->peekMouseState().position);
-		drawChoiceOverlay();
+		_engine->getScripts()->drawDialogueOverlay(true);
 		return MediaSequenceCallback::kContinueRefreshPalette;
 	}
 	if (!_acceptInput)
@@ -499,6 +282,9 @@ uint16 KaDialogueScene::service(uint frame) {
 			return kFailureCommand;
 		command = 0;
 	} else if (command == kCardCommand) {
+		DialogueManager *dialogue = _engine->getScripts()->getDialogue();
+		if (dialogue->isPending())
+			dialogue->dismissForSceneTransition("ka-card-presentation");
 		_choices.clear();
 		if (!_engine->getMedia()->play(kCardMedia, true) ||
 				!_engine->getMilestones()->set(kCardSeenFlag, true, "ka-dialogue-card"))
@@ -506,7 +292,7 @@ uint16 KaDialogueScene::service(uint frame) {
 		if (_conversationStarted)
 			rebuildChoices();
 		updateCursor(_engine->getInput()->peekMouseState().position);
-		drawChoiceOverlay();
+		_engine->getScripts()->drawDialogueOverlay(true);
 		return MediaSequenceCallback::kContinueRefreshPalette;
 	} else if (command >= kChoiceCommandBase &&
 			command < kChoiceCommandBase + _choices.size()) {
@@ -520,7 +306,7 @@ uint16 KaDialogueScene::service(uint frame) {
 			choiceIndex, choice.flag, choice.textResource, choice.audioPath);
 		command = 0;
 	}
-	drawChoiceOverlay();
+	_engine->getScripts()->drawDialogueOverlay(true);
 	if (command != 0) {
 		debugC(2, kDebugDialogue,
 			"Ripper: Ka dialogue input command=0x%04x frame=%u choices=%u voicePending=%d",
@@ -535,13 +321,17 @@ void KaDialogueScene::stopAllAudio() {
 	for (uint i = 0; i < ARRAYSIZE(_loopCueHandles); ++i)
 		_engine->getMedia()->stopSoundEffect(_loopCueHandles[i]);
 	_engine->getMedia()->stopSoundEffect(_voiceHandle);
-	_engine->getMedia()->stopSoundEffect(_keyHandle);
 }
 
 KaDialogueScene::Result KaDialogueScene::run(uint sceneArgument) {
 	_sceneArgument = sceneArgument;
 	if (!initialize())
 		return kLoadFailed;
+	DialogueManager *dialogue = _engine->getScripts()->getDialogue();
+	if (dialogue->isPending())
+		dialogue->dismissForSceneTransition("ka-entry");
+	else
+		dialogue->clearPending();
 	debugC(1, kDebugDialogue,
 		"Ripper: entered Ka dialogue scene argument=%u deck='%s' loop='%s' toolbarMask=0x0000",
 		_sceneArgument, kDeckMedia, kLoopMedia);
@@ -572,6 +362,8 @@ KaDialogueScene::Result KaDialogueScene::run(uint sceneArgument) {
 	const Result result = (!played && !_engine->shouldQuit()) || command == kFailureCommand ?
 		kLoadFailed : kExited;
 
+	if (dialogue->isPending())
+		dialogue->dismissForSceneTransition("ka-exit");
 	stopAllAudio();
 	_engine->getCursor()->setVisible(false);
 	_engine->getInput()->drainKeys();

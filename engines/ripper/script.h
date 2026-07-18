@@ -195,6 +195,7 @@ public:
 
 	CompiledScript &startup() { return _startup; }
 	CompiledScript &ba0() { return _ba0; }
+	DialogueManager *getDialogue() const { return _dialogue; }
 
 private:
 	friend class CyberManager;
