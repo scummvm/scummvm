@@ -1375,6 +1375,23 @@ bool MediaPlayer::playWacMedia(const Common::String &path, int x, int y) {
 	return result;
 }
 
+bool MediaPlayer::playWacInterfaceSequence(const Common::String &path, int x, int y,
+		uint loopStartFrame, MediaSequenceCallback *callback, uint16 *command) {
+	Common::SeekableReadStream *stream =
+		_engine->getResources()->interface().createReadStreamForMember(path);
+	if (!stream) {
+		warning("Ripper: could not open WAC interface media '%s'", path.c_str());
+		return false;
+	}
+
+	debugC(1, kDebugVideo,
+		"Ripper: entering WAC interface sequence media='%s' position=%d,%d palette=10..149 loopStartFrame=%u callback=%d",
+		path.c_str(), x, y, loopStartFrame, callback != nullptr);
+	return playSmacker(stream, path, false, x, y, nullptr, nullptr, nullptr,
+		0, 0, 1, false, 0, 0, true, false, false, nullptr, loopStartFrame,
+		callback, command);
+}
+
 bool MediaPlayer::playInterfaceSequence(const Common::String &path, int x, int y,
 		Common::Array<byte> &sourcePalette) {
 	Common::SeekableReadStream *stream =

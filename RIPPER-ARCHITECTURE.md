@@ -625,6 +625,14 @@
   documents retain the database chooser, show a 282-row slice in the left WAC
   media viewport, and use `MNARROW0` through `MNARROW3` controls at screen
   positions 355,60 and 355,90 to scroll vertically in 10-pixel steps.
+- Entry 13 dispatches the silent `wacinv13.smk` member from `INTERFAC.PL`
+  through `RunStaticMediaScreenWithOptionalVoiceover` at `0x2339d`. The
+  320-by-200, 40-frame Ripper Book sequence is centered at screen (65,91) in
+  the 350-by-282 media viewport and loops from frame one until WAC input
+  dismisses or replaces it. Its presentation patches only palette entries 10
+  through 149. Escape returns to the database, power/F10 exits WAC, and
+  selecting a different visible database row stops the book and immediately
+  dispatches that row; the sequence writes no milestone or completion state.
 - `RunWacMugSelectionScene` owns nine draggable controls (`0x640` through
   `0x648`) backed by `mug0.smk` through `mug8.smk`. It initially advances each
   32-frame asset to orientation state 2, draws the controls over the WAC media

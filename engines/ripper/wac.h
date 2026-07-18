@@ -30,6 +30,7 @@ namespace Ripper {
 
 class ResourceManager;
 class RipperEngine;
+class WacDatabaseMediaCallback;
 struct MouseState;
 
 class WacManager {
@@ -52,6 +53,8 @@ public:
 		bool databaseActive);
 
 private:
+	friend class WacDatabaseMediaCallback;
+
 	struct Control {
 		BitmapAssetFrame bitmap;
 		Common::Rect bounds;
@@ -80,6 +83,7 @@ private:
 	void drawDatabaseScrollControls() const;
 	int findDatabaseScrollControl(const Common::Point &point) const;
 	void scrollDatabaseStillImage(int delta);
+	uint16 serviceDatabaseMediaInput(byte activeEntryIndex);
 	uint16 dispatchDatabaseEntry(DatabaseEntry &entry);
 	const Common::String &resourceString(uint resourceId) const;
 	uint measureText(const Common::String &text) const;
