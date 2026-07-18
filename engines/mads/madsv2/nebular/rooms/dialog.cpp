@@ -39,7 +39,7 @@ void Dialog::setup(int globalId, ...) {
 
 	int quoteId = va_arg(va, int);
 	while (quoteId > 0) {
-		_quotes[++_count] = quoteId;
+		_quotes[_count++] = quoteId;
 		quoteId = va_arg(va, int);
 	}
 	va_end(va);

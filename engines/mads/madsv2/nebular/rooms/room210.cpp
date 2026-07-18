@@ -551,7 +551,7 @@ static void handleConversations() {
 		_game._player._stepEnabled = false;
 		const char *curQuote = _game.getQuote(_action._activeAction._verbId);
 		if (_scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing) > 200) {
-			static char line1[34], line2[34];
+			static char line1[40], line2[40];
 			_game.splitQuote(curQuote, line1, line2);
 			Common::strcpy_s(local._subQuote2, line2);
 			_scene->_kernelMessages.add(Common::Point(0, -14), 0x1110, 34, 0, 240, line1);
