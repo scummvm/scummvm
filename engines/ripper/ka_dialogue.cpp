@@ -201,10 +201,9 @@ void KaDialogueScene::presentDialogueOverlay(uint frame) {
 
 	// RunKaDialogueScene at 0x2aef5 advances the packetized frame, acquires
 	// the UI presentation overlay, submits a complete dirty-region update, and
-	// only then advances KA_LOOP.SMK. Commit the shared chooser after the frame
-	// callback so its rows inside y=50..349 are presented above the movie.
+	// only then advances KA_LOOP.SMK. Draw the shared chooser in the callback;
+	// MediaPlayer submits the fully composited frame after this returns.
 	_engine->getScripts()->drawDialogueOverlay(true);
-	g_system->updateScreen();
 	debugC(11, kDebugDialogue,
 		"Ripper: composited Ka dialogue chooser above loop frame=%u", frame);
 }

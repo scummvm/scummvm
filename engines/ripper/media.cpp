@@ -972,7 +972,11 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			_engine->getScripts()->drawDialogueOverlay(true);
 			_engine->getScripts()->drawBriefingOverlay();
 		}
-		g_system->updateScreen();
+		// Sequence callbacks may add puzzle or dialogue overlays. Defer their
+		// screen submission until the callback completes so an undecorated movie
+		// frame is never visible between the frame blit and overlay composition.
+		if (!sequenceCallback)
+			g_system->updateScreen();
 	};
 	// ExecutePresentationEntry at 0x1652a deactivates the shared selection
 	// presentation before packetized AVI playback. Only RunMediaSequence's
@@ -1003,6 +1007,19 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			name.c_str(), command, frame);
 		return true;
 	};
+	auto finishSequenceFramePresentation = [&](uint frame) {
+		const bool stopSequence = serviceSequenceCallback(frame);
+		const bool refreshedPalette = sequencePaletteRefresh;
+		if (sequencePaletteRefresh) {
+			applyDecoderPalette(true);
+			sequencePaletteRefresh = false;
+		}
+		g_system->updateScreen();
+		debugC(11, kDebugVideo,
+			"Ripper: presented interactive Smacker '%s' after callback frame=%u paletteRefresh=%d stop=%d",
+			name.c_str(), frame, refreshedPalette, stopSequence);
+		return stopSequence;
+	};
 	while (!_engine->shouldQuit()) {
 		if (decoder.endOfVideo()) {
 			if (!sequenceCallback || loopStartFrame == 0)
@@ -1025,13 +1042,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			debugC(3, kDebugVideo,
 				"Ripper: looped interactive Smacker '%s' to frame=%u",
 				name.c_str(), loopStartFrame);
-			if (serviceSequenceCallback(loopStartFrame))
+			if (finishSequenceFramePresentation(loopStartFrame))
 				break;
-			if (sequencePaletteRefresh) {
-				applyDecoderPalette(true);
-				sequencePaletteRefresh = false;
-				g_system->updateScreen();
-			}
 			continue;
 		}
 		// ExecuteSceneFrameAndInteractions at 0x13277 passes
@@ -1079,6 +1091,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				const Graphics::Surface *frame = decoder.forceSeekToFrame(finalFrame);
 				if (frame) {
 					presentFrame(frame, true);
+					if (sequenceCallback)
+						g_system->updateScreen();
 					if (serviceSceneUi)
 						serviceSceneAudio(finalFrame + 1);
 					completed = true;
@@ -1110,13 +1124,9 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				++presentedFrames;
 				if (serviceSceneUi)
 					serviceSceneAudio(presentedFrames);
-				if (serviceSequenceCallback(decoder.getCurFrame() + 1))
+				if (sequenceCallback &&
+						finishSequenceFramePresentation(decoder.getCurFrame() + 1))
 					break;
-				if (sequencePaletteRefresh) {
-					applyDecoderPalette(true);
-					sequencePaletteRefresh = false;
-					g_system->updateScreen();
-				}
 				if (synchronizeToTimeline) {
 					debugC(11, kDebugVideo,
 						"Ripper: Smacker '%s' frame=%d audioTargetMs=%u audioElapsedMs=%u driftMs=%d",
