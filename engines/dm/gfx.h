@@ -702,6 +702,7 @@ public:
 	bool _paletteSwitchingEnabled; // @ G0322_B_PaletteSwitchingEnabled
 	bool _refreshDungeonViewPaleteRequested; // @ G0342_B_RefreshDungeonViewPaletteRequested
 	int16 _dungeonViewPaletteIndex; // @ G0304_i_DungeonViewPaletteIndex
+	int16 _lastVgaViewportPaletteIndex = -1; // @ G2123_
 	int16 _creditsPaletteIndex = 6; // @ C06_CREDITS
 	int16 _entrancePaletteIndex = 7; // @ C07_ENTRANCE_DM
 	int16 _inventoryPaletteIndex = 8; // @ C08_INVENTORY

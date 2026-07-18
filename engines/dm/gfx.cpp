@@ -1208,6 +1208,34 @@ void DisplayMan::updateScreen() {
 }
 
 void DisplayMan::drawViewport(int16 palSwitchingRequestedState) {
+	if (_vm->getPlatform() == Common::kPlatformDOS) {
+		if (palSwitchingRequestedState == k2_viewportAsBeforeSleepOrFreezeGame)
+			palSwitchingRequestedState = (_lastVgaViewportPaletteIndex != -1) ? 1 : 0;
+
+		switch (palSwitchingRequestedState) {
+		case 1:
+			if (_dungeonViewPaletteIndex != _lastVgaViewportPaletteIndex) {
+				setMultipleColorsInPalette(_dungeonViewPaletteIndex);
+				_lastVgaViewportPaletteIndex = _dungeonViewPaletteIndex;
+			}
+			break;
+		case 0:
+			if (_vm->_dungeonMan->_partyMapIndex != kDMMapIndexEntrance)
+				setMultipleColorsInPalette(_inventoryPaletteIndex);
+			else
+				setMultipleColorsInPalette(0); // C00_LIGHT0
+
+			_lastVgaViewportPaletteIndex = -1;
+			break;
+		default:
+			break;
+		}
+		_paletteSwitchingEnabled = (palSwitchingRequestedState == 1);
+		viewportBlitToScreen();
+		updateScreen();
+		return;
+	}
+
 	static uint16 *dungeonViewCurrentPalette; // @ K0010_pui_DungeonViewCurrentPalette
 
 	// ignored code F0510_AMIGA_WaitBottomOfViewPort
@@ -2741,6 +2769,9 @@ void DisplayMan::applyCreatureReplColors(int replacedColor, int replacementColor
 
 	_palChangesCreatureD2[replacedColor] = creatureReplColorSets[replacementColor]._d2ReplacementColor;
 	_palChangesCreatureD3[replacedColor] = creatureReplColorSets[replacementColor]._d3ReplacementColor;
+
+	if (_vm->getPlatform() == Common::kPlatformDOS)
+		_lastVgaViewportPaletteIndex = -1;
 }
 
 void DisplayMan::drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &f) {
@@ -4523,15 +4554,30 @@ static const ColorDef *const g_vgaPaletteTable[29] = { // @ G8176_PaletteTable
 
 void DisplayMan::setMultipleColorsInPalette(int16 paletteIndex) {
 	assert(paletteIndex >= 0 && paletteIndex < 29);
-	const ColorDef *colorDef = g_vgaPaletteTable[paletteIndex];
-	int8 colorIndex;
-	while ((colorIndex = (int8)colorDef->index) >= 0) {
-		if (colorIndex < 32) {
-			_vgaPalette[colorIndex * 3] = (colorDef->r << 2) | (colorDef->r >> 4);
-			_vgaPalette[colorIndex * 3 + 1] = (colorDef->g << 2) | (colorDef->g >> 4);
-			_vgaPalette[colorIndex * 3 + 2] = (colorDef->b << 2) | (colorDef->b >> 4);
+	if (paletteIndex < 6) {
+		/* Read light levels directly from _palDungeonView, which already
+		contains runtime-applied creature replacements. Bypasses the need
+		for DOS version's G8175_CREAT_PAL lookup table. */
+		for (int i = 0; i < 16; ++i) {
+			uint16 color = _palDungeonView[paletteIndex][i];
+			uint8 r = (color >> 8) & 0xF;
+			uint8 g = (color >> 4) & 0xF;
+			uint8 b = color & 0xF;
+			_vgaPalette[(16 + i) * 3]     = (r << 4) | r;
+			_vgaPalette[(16 + i) * 3 + 1] = (g << 4) | g;
+			_vgaPalette[(16 + i) * 3 + 2] = (b << 4) | b;
 		}
-		colorDef++;
+	} else {
+		const ColorDef *colorDef = g_vgaPaletteTable[paletteIndex];
+		int8 colorIndex;
+		while ((colorIndex = (int8)colorDef->index) >= 0) {
+			if (colorIndex < 32) {
+				_vgaPalette[colorIndex * 3]     = (colorDef->r << 2) | (colorDef->r >> 4);
+				_vgaPalette[colorIndex * 3 + 1] = (colorDef->g << 2) | (colorDef->g >> 4);
+				_vgaPalette[colorIndex * 3 + 2] = (colorDef->b << 2) | (colorDef->b >> 4);
+			}
+			colorDef++;
+		}
 	}
 	g_system->getPaletteManager()->setPalette(_vgaPalette, 0, 32);
 }
