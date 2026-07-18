@@ -236,7 +236,7 @@ int Scene::KernelMessages::TalkFont::getWidth(const Common::String &message, int
 
 int Scene::KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags, int endTrigger,
 		uint32 timeout, const char *msg) {
-	return kernel_message_add(const_cast<char *>(msg), pt.x, pt.y, fontColor, timeout, endTrigger, 0);
+	return kernel_message_add(const_cast<char *>(msg), pt.x, pt.y, fontColor, timeout, endTrigger, flags);
 }
 
 int Scene::KernelMessages::addQuote(int quoteId, int endTrigger, uint32 timeout) {
