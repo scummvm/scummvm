@@ -290,7 +290,6 @@ private:
 	Common::Array<Common::String> _lockKey;
 
 	Variables _variables;
-	Common::Array<int> _variableSnapshot;
 
 	struct Sound {
 		Audio::SoundHandle handle;

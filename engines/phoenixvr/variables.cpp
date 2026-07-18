@@ -21,10 +21,41 @@
 
 #include "phoenixvr/variables.h"
 #include "common/debug.h"
+#include "common/file.h"
 #include "phoenixvr/console.h"
 #include "phoenixvr/phoenixvr.h"
 
 namespace PhoenixVR {
+
+void Variables::loadVariableTxt() {
+	Common::File vars;
+	if (vars.open(Common::Path("variable.txt"))) {
+		while (!vars.eos()) {
+			auto var = vars.readLine();
+			if (var == "*")
+				break;
+			_variableTxt.push_back(Common::move(var));
+		}
+	} else
+		debug("no variables.txt");
+	_variableSnapshot.resize(_variableTxt.size(), 0);
+}
+
+void Variables::save() {
+	auto num = _variableTxt.size();
+	debug("saving %u variables", num);
+	assert(_variableSnapshot.size() == num);
+	for (uint i = 0; i != num; ++i)
+		_variableSnapshot[i] = get(_variableTxt[i]);
+}
+
+void Variables::load() {
+	auto num = _variableTxt.size();
+	debug("loading %u variables", num);
+	assert(_variableSnapshot.size() == num);
+	for (uint i = 0; i != num; ++i)
+		set(_variableTxt[i], _variableSnapshot[i]);
+}
 
 void Variables::declare(const Common::String &name) {
 	if (!_variableIndex.contains(name)) {

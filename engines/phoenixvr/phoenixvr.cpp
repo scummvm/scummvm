@@ -1318,25 +1318,12 @@ void PhoenixVREngine::renderImageOverlay() {
 
 void PhoenixVREngine::saveVariables() {
 	debug("SaveVariable() - saving variable state");
-	auto &values = _variables.values();
-	_variableSnapshot.resize(values.size());
-	uint i = 0;
-	for (auto &var : values)
-		_variableSnapshot[i++] = var;
+	_variables.save();
 }
 
 void PhoenixVREngine::loadVariables() {
 	debug("LoadVariable() - loading variable state");
-	if (_variableSnapshot.empty()) {
-		debug("skipping, no snapshot");
-		return;
-	}
-	auto &values = _variables.values();
-	assert(_variableSnapshot.size() == values.size());
-	uint i = 0;
-	for (auto &var : values)
-		var = _variableSnapshot[i++];
-	_variableSnapshot.clear();
+	_variables.load();
 }
 
 const Graphics::Font *PhoenixVREngine::getFont(int size, bool bold) const {
@@ -1633,18 +1620,7 @@ Common::Error PhoenixVREngine::run() {
 	// Set the engine's debugger console before declaring script variables.
 	setDebugger(new Console());
 
-	{
-		Common::File vars;
-		if (vars.open(Common::Path("variable.txt"))) {
-			while (!vars.eos()) {
-				auto var = vars.readLine();
-				if (var == "*")
-					break;
-				declareVariable(var);
-			}
-		} else
-			debug("no variables.txt");
-	}
+	_variables.loadVariableTxt();
 	{
 		Common::File textes;
 		if (textes.open(Common::Path("textes.txt"))) {

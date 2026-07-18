@@ -29,10 +29,16 @@
 namespace PhoenixVR {
 
 class Variables {
+	Common::Array<Common::String> _variableTxt;
+	Common::Array<int> _variableSnapshot;
 	Common::List<int> _variableValues;
 	Common::HashMap<Common::String, int *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variableIndex;
 
 public:
+	void loadVariableTxt();
+	void save();
+	void load();
+
 	Common::List<int> &values() { return _variableValues; }
 	const Common::List<int> &values() const { return _variableValues; }
 
