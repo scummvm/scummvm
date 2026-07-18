@@ -30,6 +30,7 @@
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
 #include "ripper/input.h"
+#include "ripper/ka_dialogue.h"
 #include "ripper/media.h"
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
@@ -267,7 +268,9 @@ CyberManager::Result CyberManager::runProgram(uint action,
 	InputManager *input = _engine->getInput();
 	CursorManager *cursor = _engine->getCursor();
 	const uint restoreSelectionIndex = cursor->getSelectionIndex();
-	const Common::String scriptName = Common::String::format("%s.run", scriptBaseName);
+	const bool isKaDialogue = action == kSceneActionKaDialogue;
+	const Common::String programName = isKaDialogue ? Common::String("ka-dialogue") :
+		Common::String::format("%s.run", scriptBaseName);
 	Result result = kLoadFailed;
 
 	_engine->getToolbar()->leave();
@@ -278,21 +281,30 @@ CyberManager::Result CyberManager::runProgram(uint action,
 	g_system->fillScreen(0);
 	g_system->updateScreen();
 	debugC(1, kDebugCyber,
-		"Ripper: entering Cyber program action=%u script='%s' argument=%u suspendedScript='%s' suspendedFrame=%u toolbarMask=0x0000 savedCursor=%u",
-		action, scriptName.c_str(), argument,
+		"Ripper: entering Cyber program action=%u program='%s' argument=%u suspendedScript='%s' suspendedFrame=%u toolbarMask=0x0000 savedCursor=%u",
+		action, programName.c_str(), argument,
 		runtime.activeScript.getMemberName().c_str(), runtime.activeFrame,
 		restoreSelectionIndex);
 
-	bool active = scripts->_ba0.load(_engine->getResources()->scripts(), scriptName);
-	if (active && !_engine->shouldQuit()) {
-		debugC(1, kDebugCyber,
-			"Ripper: activated Cyber program action=%u script='%s' frames=%u interactions=%u",
-			action, scriptName.c_str(), scripts->_ba0.getFrames().size(),
-			scripts->_ba0.getInteractions().size());
-		active = scripts->advanceBa0ToFrame(0);
+	bool active = true;
+	if (isKaDialogue) {
+		KaDialogueScene dialogue(_engine);
+		const KaDialogueScene::Result dialogueResult = dialogue.run(argument);
+		active = dialogueResult != KaDialogueScene::kLoadFailed;
+		if (active)
+			result = kExited;
+	} else {
+		active = scripts->_ba0.load(_engine->getResources()->scripts(), programName);
+		if (active && !_engine->shouldQuit()) {
+			debugC(1, kDebugCyber,
+				"Ripper: activated Cyber program action=%u script='%s' frames=%u interactions=%u",
+				action, programName.c_str(), scripts->_ba0.getFrames().size(),
+				scripts->_ba0.getInteractions().size());
+			active = scripts->advanceBa0ToFrame(0);
+		}
 	}
 
-	while (active && !scripts->_cyberExitRequested && !_engine->shouldQuit()) {
+	while (!isKaDialogue && active && !scripts->_cyberExitRequested && !_engine->shouldQuit()) {
 		if (input->pollEvents()) {
 			_engine->quitGame();
 			break;
@@ -303,7 +315,7 @@ CyberManager::Result CyberManager::runProgram(uint action,
 				scripts->_ba0.getString(scripts->_ba0.getFrames()[frame].labelOffset) :
 				Common::String();
 			warning("Ripper: Cyber program service failed action=%u script='%s' frame=%u/%u label='%s' awaitingInteraction=%d pendingScript='%s' pendingEntry='%s'",
-				action, scriptName.c_str(), frame, scripts->_ba0.getFrames().size(),
+				action, programName.c_str(), frame, scripts->_ba0.getFrames().size(),
 				label.c_str(), scripts->_awaitingBa0Interaction,
 				scripts->_pendingSceneMember.c_str(), scripts->_pendingSceneEntryLabel.c_str());
 			active = false;
@@ -312,12 +324,12 @@ CyberManager::Result CyberManager::runProgram(uint action,
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
-	if (active || _engine->shouldQuit())
+	if (!isKaDialogue && (active || _engine->shouldQuit()))
 		result = kExited;
 
 	debugC(result == kExited ? 1 : 2, kDebugCyber,
-		"Ripper: leaving Cyber program action=%u script='%s' result=%d exitRequested=%d quit=%d",
-		action, scriptName.c_str(), result, scripts->_cyberExitRequested,
+		"Ripper: leaving Cyber program action=%u program='%s' result=%d exitRequested=%d quit=%d",
+		action, programName.c_str(), result, scripts->_cyberExitRequested,
 		_engine->shouldQuit());
 	_engine->getMedia()->clearSceneAudio(true);
 	const bool audioRestored = restoreAudio(audioState);

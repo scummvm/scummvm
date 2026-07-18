@@ -41,6 +41,10 @@ class RipperEngine;
 
 class MediaSequenceCallback {
 public:
+	// A nested presentation may replace the active VGA palette while the outer
+	// Smacker stays paused. Resume it after restoring its decoder palette.
+	static const uint16 kContinueRefreshPalette = 0xffff;
+
 	virtual ~MediaSequenceCallback() {}
 
 	virtual uint16 service(uint frame) = 0;
@@ -59,6 +63,7 @@ public:
 	bool playBlockingAudio(const Common::String &path);
 	bool playSoundEffect(const Common::String &path, Audio::SoundHandle &handle,
 		uint volumePercent = 100, bool loop = false);
+	bool isSoundEffectActive(const Audio::SoundHandle &handle) const;
 	bool stopSoundEffect(Audio::SoundHandle &handle);
 	bool playPuzzleSequence(const Common::String &path, uint loopStartFrame,
 		MediaSequenceCallback *callback, uint16 *command = nullptr);

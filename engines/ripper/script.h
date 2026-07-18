@@ -88,6 +88,7 @@ enum SceneAction {
 	kSceneActionClearDisplay = 32,
 	kSceneActionSetUiSelectionIndex = 35,
 	kSceneActionDispatchUiSelection = 36,
+	kSceneActionKaDialogue = 40,
 	kSceneActionKrProgram = 56,
 	kSceneActionBriefing = 300,
 	kSceneActionTerminateRuntime = 9999
@@ -186,6 +187,7 @@ public:
 		return !_pendingSceneMember.empty() || _cyberExitRequested || _cyberKeyboardCommand != 0;
 	}
 	bool isCyberActive() const { return _cyberActive; }
+	bool hasPlayedScene(const Common::String &scene) const { return isScenePlayed(scene); }
 	void requestCyberExit(const char *source);
 	bool canSaveGame() const;
 	bool syncGame(Common::Serializer &serializer);

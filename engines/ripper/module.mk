@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	dialogue.o \
 	iff.o \
 	input.o \
+	ka_dialogue.o \
 	media.o \
 	menu.o \
 	metaengine.o \

@@ -936,7 +936,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	bool toolbarPaused = false;
 	bool completed = true;
 	uint presentedFrames = 0;
-	auto presentFrame = [&](const Graphics::Surface *frame, bool forcePalette) {
+	auto applyDecoderPalette = [&](bool forcePalette) {
 		if (forcePalette || decoder.hasDirtyPalette()) {
 			byte palette[256 * 3];
 			if (sourcePalette) {
@@ -956,6 +956,9 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 					rememberVideoPalette);
 			g_system->getPaletteManager()->setPalette(palette, 0, 256);
 		}
+	};
+	auto presentFrame = [&](const Graphics::Surface *frame, bool forcePalette) {
+		applyDecoderPalette(forcePalette);
 		if (displayScale == 1) {
 			g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
 		} else {
@@ -977,6 +980,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	if (!serviceSceneUi)
 		_engine->getCursor()->setVisible(false);
 	decoder.start();
+	bool sequencePaletteRefresh = false;
 	auto serviceSequenceCallback = [&](uint frame) {
 		if (!sequenceCallback)
 			return false;
@@ -985,6 +989,13 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		decoder.pauseVideo(false);
 		if (command == 0)
 			return false;
+		if (command == MediaSequenceCallback::kContinueRefreshPalette) {
+			sequencePaletteRefresh = true;
+			debugC(3, kDebugVideo,
+				"Ripper: interactive Smacker '%s' requested palette refresh frame=%u",
+				name.c_str(), frame);
+			return false;
+		}
 		if (sequenceCommand)
 			*sequenceCommand = command;
 		debugC(2, kDebugVideo,
@@ -1016,6 +1027,11 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				name.c_str(), loopStartFrame);
 			if (serviceSequenceCallback(loopStartFrame))
 				break;
+			if (sequencePaletteRefresh) {
+				applyDecoderPalette(true);
+				sequencePaletteRefresh = false;
+				g_system->updateScreen();
+			}
 			continue;
 		}
 		// ExecuteSceneFrameAndInteractions at 0x13277 passes
@@ -1096,6 +1112,11 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 					serviceSceneAudio(presentedFrames);
 				if (serviceSequenceCallback(decoder.getCurFrame() + 1))
 					break;
+				if (sequencePaletteRefresh) {
+					applyDecoderPalette(true);
+					sequencePaletteRefresh = false;
+					g_system->updateScreen();
+				}
 				if (synchronizeToTimeline) {
 					debugC(11, kDebugVideo,
 						"Ripper: Smacker '%s' frame=%d audioTargetMs=%u audioElapsedMs=%u driftMs=%d",
@@ -1473,6 +1494,10 @@ bool MediaPlayer::stopSoundEffect(Audio::SoundHandle &handle) {
 	if (active)
 		_mixer->stopHandle(handle);
 	return active;
+}
+
+bool MediaPlayer::isSoundEffectActive(const Audio::SoundHandle &handle) const {
+	return _mixer->isSoundHandleActive(handle);
 }
 
 bool MediaPlayer::playPuzzleSequence(const Common::String &path, uint loopStartFrame,
