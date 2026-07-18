@@ -26,6 +26,7 @@
  */
 
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/base/sound/base_sound_buffer.h"
 #include "engines/wintermute/base/base_file_manager.h"
@@ -122,6 +123,10 @@ bool BaseSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
 				// We need to wrap the file in a substream to make sure the size is right.
 				file = new Common::SeekableSubReadStream(file, file->pos(), waveSize + file->pos(), DisposeAfterUse::YES);
 				_stream = Audio::makeRawStream(file, waveRate, waveFlags, DisposeAfterUse::YES);
+			} else if (waveType == 2 && BaseEngine::instance().getGameId() == "wayoflove") {
+				// One case in the end of game: 'The Way Of Love: Sub Zero'
+                // MSADPCM WAVE is not well supported in ScummVM
+				_stream = nullptr;
 			} else {
 				error("BSoundBuffer::loadFromFile - WAVE not supported yet for %s with type %d", filename, waveType);
 			}
