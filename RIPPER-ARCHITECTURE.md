@@ -962,6 +962,13 @@
   Embedded Smacker header rates are therefore not the presentation clock; the
   reimplementation uses mixer elapsed time to reproduce this audio-master
   scheduling.
+- Opcode `0x70` ends packet dispatch but does not immediately end the retail
+  presentation. `RunPacketizedMediaPlaybackCore` at `0x5b592` continues polling
+  `GetManagedAudioTriggerActiveDescriptor` until the final managed-audio
+  descriptor completes before it destroys the packet stream. The
+  reimplementation likewise retains the final decoded frame until the IAVF PCM
+  timeline ends; this matters for `KA_BOOK.AVI`, whose audio continues after
+  its last custom-video frame.
 - Opcode `0x6c` loads the next custom packet through
   `LoadCustomPacketPaletteStateBlock` at `0x6c430`; it does not itself present
   the frame. Opcode `0x77` calls `RenderCustomPacketFrameAndOverlays` at
