@@ -189,7 +189,7 @@ long Scene::Animation::getNextFrameTimer() {
 }
 
 void Scene::Animation::setCurrentFrame(int frameNum) {
-	kernel_anim[_id].frame = frameNum;
+	kernel_reset_animation(_id, frameNum);
 }
 
 void Scene::Animation::resetSpriteSetsCount() {
