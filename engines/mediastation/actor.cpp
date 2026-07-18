@@ -167,7 +167,7 @@ void Actor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 		// This is not a hashmap because we don't want to have to hash ScriptValues.
 		for (ScriptResponse *existingScriptResponse : scriptResponsesForType) {
 			if (existingScriptResponse->_argumentValue == scriptResponse->_argumentValue) {
-				error("[%s] %s: Script response for %s (%s) already exists", debugName(), __func__,
+				warning("[%s] %s: Script response for %s (%s) already exists", debugName(), __func__,
 					eventTypeToStr(scriptResponse->_type), scriptResponse->_argumentValue.getDebugString().c_str());
 			}
 		}
