@@ -116,6 +116,54 @@ struct conditional<false, T, F> {
 template<bool b, class T, class F>
 using conditional_t = typename conditional<b, T, F>::type;
 
+// additional helper necessary only for GCC 4.7.4
+template<class...>
+struct void_t_helper { using type = void; };
+
+template<class... Ts>
+using void_t = typename void_t_helper<Ts...>::type;
+
+template<typename T>
+inline T &&declval(); // not implemented as it may not be called anyways
+
+template<class, class T, class... Args>
+struct is_constructible_helper {
+	static constexpr const bool v = false;
+};
+
+template<class T, class... Args>
+struct is_constructible_helper<void_t<decltype(T(declval<Args>()...))>, T, Args...> {
+	static constexpr const bool v = true;
+};
+
+template<class T, class... Args>
+using is_constructible = is_constructible_helper<void_t<>, T, Args...>;
+
+template<class T>
+using is_move_constructible = is_constructible<T, remove_cv_t<T> &&>;
+
+template<class T>
+using is_copy_constructible = is_constructible<T, const remove_cv_t<T> &>;
+
+template<class, class T, class U>
+struct is_assignable_helper {
+	static constexpr const bool v = false;
+};
+
+template<class T, class U>
+struct is_assignable_helper<void_t<decltype(declval<remove_cv_t<T>>() = declval<remove_cv_t<U>>())>, T, U> {
+	static constexpr const bool v = true;
+};
+
+template<class T, class U>
+using is_assignable = is_assignable_helper<void_t<>, T, U>;
+
+template<class T>
+using is_move_assignable = is_assignable<T, remove_cv_t<T> &&>;
+
+template<class T>
+using is_copy_assignable = is_assignable<T, const remove_cv_t<T> &>;
+
 } // End of namespace Common
 
 #endif
