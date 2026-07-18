@@ -258,12 +258,14 @@ void drawLouvreActionButtons() {
 	int mask = louvreSelectedObjectActionMask();
 	int currentAction = g_engine->getVariable("CurrentAction");
 	for (uint i = 0; i < ARRAYSIZE(kActionValues); ++i) {
-		int button = i + 1;
+		drawLouvreImage(Common::String::format("Bout%04d.bmp", i + 1), kActionButtonX[i], kActionButtonY[i]);
 		if ((mask & kActionValues[i]) != 0)
-			button += 10;
+			drawLouvreImage(Common::String::format("Bout%04d.bmp", i + 11), kActionButtonX[i], kActionButtonY[i]);
+	}
+
+	for (uint i = 0; i < ARRAYSIZE(kActionValues); ++i) {
 		if (currentAction == kActionValues[i])
-			button += 20;
-		drawLouvreImage(Common::String::format("Bout%04d.bmp", button), kActionButtonX[i], kActionButtonY[i]);
+			drawLouvreImage(Common::String::format("Bout%04d.bmp", i + 21), kActionButtonX[i], kActionButtonY[i]);
 	}
 }
 
@@ -899,6 +901,7 @@ struct DoAction : public Script::Command {
 		case 4:
 			g_engine->setVariable("CurrentAction", value);
 			setLouvreSelectedSlot(selection + 100, 0);
+			drawLouvreActionButtons();
 			break;
 		case 8:
 			g_engine->setVariable("CurrentAction", value);
