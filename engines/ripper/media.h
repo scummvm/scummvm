@@ -58,6 +58,8 @@ public:
 	bool play(const Common::String &path, bool allowEscSpace, int x = -1, int y = -1,
 		bool sceneViewport = false);
 	bool playWacMedia(const Common::String &path, int x, int y);
+	bool playWacInterfaceSequence(const Common::String &path, int x, int y,
+		uint loopStartFrame, MediaSequenceCallback *callback, uint16 *command);
 	bool playInterfaceSequence(const Common::String &path, int x, int y,
 		Common::Array<byte> &sourcePalette);
 	bool playBlockingAudio(const Common::String &path);

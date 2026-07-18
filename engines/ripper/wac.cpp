@@ -29,6 +29,7 @@
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
 #include "ripper/input.h"
+#include "ripper/media.h"
 #include "ripper/milestones.h"
 #include "ripper/modal_dialog.h"
 #include "ripper/puzzles/broken_mug.h"
@@ -84,6 +85,22 @@ static const uint kWacFrontEndHelpResource = 404;
 static const uint kWacDatabaseHelpResource = 406;
 static const uint kWacNotebookTitleResource = 0x49;
 static const uint kWacNotebookMaximumBytes = 0x27c0;
+static const uint16 kWacDatabaseSelectionChanged = 0xfffe;
+
+class WacDatabaseMediaCallback : public MediaSequenceCallback {
+public:
+	WacDatabaseMediaCallback(WacManager *wac, byte activeEntryIndex) :
+			_wac(wac), _activeEntryIndex(activeEntryIndex) {
+	}
+
+	uint16 service(uint) override {
+		return _wac->serviceDatabaseMediaInput(_activeEntryIndex);
+	}
+
+private:
+	WacManager *_wac;
+	byte _activeEntryIndex;
+};
 
 static void blitBitmap(Graphics::Surface *screen, const BitmapAssetFrame &bitmap,
 		int x, int y) {
@@ -632,6 +649,95 @@ void WacManager::scrollDatabaseStillImage(int delta) {
 	drawDatabaseStillImage();
 }
 
+uint16 WacManager::serviceDatabaseMediaInput(byte activeEntryIndex) {
+	if (_engine->getInput()->pollEvents()) {
+		_engine->quitGame();
+		return kExitAction;
+	}
+
+	bool refreshPalette = false;
+	bool redrawDatabase = false;
+	while (_engine->getInput()->hasPendingKey()) {
+		const uint16 command = _engine->getInput()->consumeKey();
+		if (command == 0x1b)
+			return command;
+		if (command == kExitAction || command == kDosF10Command)
+			return kExitAction;
+		if (command == kHelpAction || command == kTextViewerAction) {
+			const uint16 result = dispatchSubsceneAction(command,
+				kWacDatabaseHelpResource, true);
+			if (result != kNoAction)
+				return result;
+			refreshPalette = true;
+			continue;
+		}
+		if (_databaseEntries.empty())
+			continue;
+		if ((command == 0x4800 || command == 0x0f00) && _databaseSelection > 0) {
+			--_databaseSelection;
+			redrawDatabase = true;
+		} else if ((command == 0x5000 || command == 0x09) &&
+				_databaseSelection + 1 < _databaseEntries.size()) {
+			++_databaseSelection;
+			redrawDatabase = true;
+		} else if (command == 0x0d &&
+				_databaseEntries[_databaseSelection].originalIndex != activeEntryIndex) {
+			return kWacDatabaseSelectionChanged;
+		}
+	}
+
+	if (_databaseSelection < _databaseFirstVisible)
+		_databaseFirstVisible = _databaseSelection;
+	else if (_databaseSelection >= _databaseFirstVisible + kWacDatabaseVisibleRows)
+		_databaseFirstVisible = _databaseSelection - kWacDatabaseVisibleRows + 1;
+	if (redrawDatabase)
+		drawDatabase();
+
+	const MouseState mouse = _engine->getInput()->publishMouseState();
+	serviceIdleWindowAnimations();
+	serviceDatabaseCornerAnimation();
+	const uint16 controlAction = serviceFrontEndControls(mouse,
+		Common::Rect(kWacDatabaseLeft, kWacDatabaseTop,
+			kWacDatabaseRight, kWacDatabaseBottom).contains(mouse.position) ?
+			kWacControlCursor : kWacDefaultCursor);
+	if (controlAction != kNoAction) {
+		const uint16 result = dispatchSubsceneAction(controlAction,
+			kWacDatabaseHelpResource, true);
+		if (result != kNoAction)
+			return result;
+		if (controlAction == kHelpAction || controlAction == kTextViewerAction)
+			refreshPalette = true;
+	}
+
+	if (!_databaseEntries.empty()) {
+		const Common::Rect bounds(kWacDatabaseLeft, kWacDatabaseTop,
+			kWacDatabaseRight, kWacDatabaseBottom);
+		if (bounds.contains(mouse.position)) {
+			const int relativeY = mouse.position.y - bounds.top -
+				kWacDatabaseHeadingInset - kWacDatabaseRowInset;
+			if (relativeY >= 0) {
+				const uint row = relativeY / kWacDatabaseRowHeight;
+				const uint entryIndex = _databaseFirstVisible + row;
+				if (row < kWacDatabaseVisibleRows && entryIndex < _databaseEntries.size()) {
+					if (entryIndex != _databaseSelection) {
+						_databaseSelection = entryIndex;
+						drawDatabase();
+						debugC(2, kDebugWac,
+							"Ripper: WAC database media hover visibleRow=%u entry=%u activeEntry=%u point=%d,%d",
+							entryIndex, _databaseEntries[entryIndex].originalIndex,
+							activeEntryIndex, mouse.position.x, mouse.position.y);
+					}
+					if ((mouse.released & kMouseButtonLeft) != 0 &&
+							_databaseEntries[entryIndex].originalIndex != activeEntryIndex)
+						return kWacDatabaseSelectionChanged;
+				}
+			}
+		}
+	}
+
+	return refreshPalette ? MediaSequenceCallback::kContinueRefreshPalette : kNoAction;
+}
+
 uint16 WacManager::dispatchDatabaseEntry(DatabaseEntry &entry) {
 	// RunWacInventorySelectionLoop at 0x2252a clears the left media viewport
 	// before dispatching every selected database row.
@@ -683,6 +789,34 @@ uint16 WacManager::dispatchDatabaseEntry(DatabaseEntry &entry) {
 		debugC(1, kDebugWac,
 			"Ripper: WAC database entry=%u label='%s' stillImage='%s' loaded=%d",
 			entry.originalIndex, entry.label.c_str(), path.c_str(), loaded);
+		return kNoAction;
+	}
+	if (entry.originalIndex == 13) {
+		// RunWacInventorySelectionLoop at 0x2252a case 0x0d resolves
+		// WACINV13.SMK from INTERFAC.PL and enters
+		// RunStaticMediaScreenWithOptionalVoiceover at 0x2339d without audio.
+		// The 320x200 sequence is centered in the 350x282 WAC viewport and
+		// loops from frame one while the persistent WAC controls stay active.
+		WacDatabaseMediaCallback callback(this, entry.originalIndex);
+		uint16 command = kNoAction;
+		_engine->getInput()->discardMouseTransitions();
+		const bool played = _engine->getMedia()->playWacInterfaceSequence(
+			"wacinv13.smk", 65, 91, 1, &callback, &command);
+		clearDatabaseMediaViewport();
+		drawDatabase();
+		debugC(1, kDebugWac,
+			"Ripper: WAC database entry=13 label='%s' media='wacinv13.smk' position=65,91 loopStartFrame=1 played=%d command=0x%x",
+			entry.label.c_str(), played, command);
+		if (command == kExitAction)
+			return kExitAction;
+		if (command == kWacDatabaseSelectionChanged &&
+				_databaseSelection < _databaseEntries.size()) {
+			debugC(2, kDebugWac,
+				"Ripper: WAC database media switching entry=13 to entry=%u label='%s'",
+				_databaseEntries[_databaseSelection].originalIndex,
+				_databaseEntries[_databaseSelection].label.c_str());
+			return dispatchDatabaseEntry(_databaseEntries[_databaseSelection]);
+		}
 		return kNoAction;
 	}
 	debugC(1, kDebugWac,
