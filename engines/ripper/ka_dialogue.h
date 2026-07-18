@@ -49,34 +49,23 @@ private:
 	};
 
 	bool initialize();
-	bool loadCodeBackground();
 	bool startVoice(const char *path, const char *source);
 	bool serviceVoiceCompletion();
-	bool runBookCodePrompt();
 	void rebuildChoices();
 	void serviceLoopAudio(uint frame);
 	uint16 serviceInput();
 	void updateCursor(const Common::Point &point);
-	void drawChoiceOverlay();
-	void drawCodePrompt(const Common::String &typedCode);
-	void drawText(byte *screen, uint pitch, int x, int y,
-		const Common::String &text, byte color) const;
-	uint measureText(const Common::String &text) const;
 	void stopAllAudio();
 
 	RipperEngine *_engine;
 	Common::RandomSource _random;
-	BitmapFontAsset _font;
-	BitmapAssetFrame _codeBackground;
 	Common::Array<Common::String> _gameText;
 	Common::Array<Choice> _choices;
 	Audio::SoundHandle _ambientHandle;
 	Audio::SoundHandle _deckCueHandle;
 	Audio::SoundHandle _loopCueHandles[3];
 	Audio::SoundHandle _voiceHandle;
-	Audio::SoundHandle _keyHandle;
 	uint _sceneArgument;
-	uint _selectedChoice;
 	int _hoveredControl;
 	bool _conversationStarted;
 	bool _voicePending;

@@ -23,6 +23,9 @@ public:
 	bool initialize(ResourceManager &resources);
 	bool execute(const CompiledScript &script, const ScriptCommand &command, bool includeChoice = true);
 	bool service(const MouseState &mouse, uint &result);
+	bool serviceKeyboard(uint16 command, uint &result);
+	void appendChoice(const Common::String &text, uint16 result);
+	bool activateChoices(const char *source);
 	void updateHover(const Common::Point &point);
 	bool contains(const Common::Point &point) const;
 	void draw(bool captureBacking = false);
@@ -43,6 +46,7 @@ private:
 	void drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const;
 	Common::Rect visualBounds() const;
 	bool restoreBacking();
+	bool selectChoice(uint choiceIndex, uint &result, const char *source);
 
 	Common::Array<Choice> _choices;
 	Common::Array<BitmapAssetFrame> _arrowFrames;

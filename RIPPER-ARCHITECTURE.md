@@ -401,19 +401,18 @@
   choice sets flags `0x14a` through `0x14d` and starts, respectively,
   `LI1_1_VA.WAV`, `LI1_1_VB.WAV`, `LI1_1_VD.WAV`, or `LI1_1_VC.WAV`.
   Choice `0x14c` is exposed after the card presentation sets flag `0xcc`; on
-  voice completion it enters `RunKaBookCodeEntryPrompt` at `0x2bc33`. That
-  prompt accepts the seven-character code `HC2021R`, plays `LI1_1_VE.WAV` on
-  success, presents `KA_BOOK.AVI`, and sets flags `0xe1` and `0x53`; Escape or
-  a failed attempt plays `LI1_1_VF.WAV` and clears `0x14c`. Choice `0x14d` is
+  voice completion it enters the separate book-code puzzle. Choice `0x14d` is
   gated by act-one flag 2 and the startup asset-catalog flag for `SB2_1_D`;
   once consumed, it presents `KA_CD.AVI` and sets flag `0x54`.
-- `ConfigureSceneEntryChooserLayout` at `0x18740` selects primary chooser
-  template `0x8a2de` for the Ka list. `InitializeSharedPresentationTemplates`
-  at `0x11a30` gives that template base fill index 0, selected fill index 248,
-  and normal/selected NF2T templates `0x84034`/`0x84035`; their visible text
-  colors use shared palette indices 4 and 254. The loop palette receives those
-  shared bands through `ApplySharedDisplayPalettePatch` before the chooser is
-  activated.
+- `RunKaDialogueScene` directly calls `ConfigureSceneEntryChooserLayout` at
+  `0x18740` for opcode `0x17`, builds a UI item-list model, and passes it to
+  `CreateListChooserControl` at `0x56ec2` with control ID `0x4e2`. This is the
+  same chooser construction and `ProcessChooserControlInput` path used by
+  `HandleSceneEntryChoiceListLifecycle`; Ka does not draw a separate dialogue
+  window. ScummVM therefore feeds the Ka game-text records into the shared
+  `DialogueManager`, including its three-row viewport, arrow controls,
+  `small.fnt` metrics, normal colors 251/0, selected colors 4/248, mouse hover,
+  and keyboard selection behavior.
 - Action 56 is the KR branch of `DispatchKSceneActionBand`; it calls
   `RunSceneScriptLoop("kr", 0, 0)`. ScummVM enters `kr.run` through a nested
   `CyberManager` snapshot which preserves the carousel script, active frame,
@@ -447,6 +446,14 @@
   (`0x1d`) calls `RunCrystalPiecePlacementPuzzleScene` at `0x2710c`.
   `CA1.RUN` supplies flag 0 to the calculator and `JA1.RUN` supplies milestone
   206 (`solved crystal puzzle`) to the crystal puzzle.
+- `RunKaBookCodeEntryPrompt` at `0x2bc33` is a separate blocking puzzle called
+  by `RunKaDialogueScene` after the book-response voice completes. It owns
+  `KA_PUZ.PCX`, the seven input cells, `KA_KEY.WAV` feedback, F1 help table
+  `0x1a6`, uppercase alphanumeric filtering, backspace, and the embedded answer
+  `HC2021R`. A match plays `LI1_1_VE.WAV`; Escape or failure plays
+  `LI1_1_VF.WAV`. The Ka scene consumes only that result: success presents
+  `KA_BOOK.AVI` and sets flags `0xe1` and `0x53`, while failure clears choice
+  flag `0x14c`.
 - Scene action 5 calls `RunRolodexSequencePuzzleScene` at `0x280ae` with the
   caller-supplied named flag. It creates an advance control over physical
   rectangle (121, 101)-(486, 293) with cursor 16 and an Escape control over
