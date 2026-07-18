@@ -105,7 +105,13 @@ bool GIFDecoder::loadStream(Common::SeekableReadStream &stream) {
 	_outputSurface->create(width, height, format);
 	const uint8 *in = (const uint8 *)gifImage->RasterBits;
 	uint8 *pixelPtr = (uint8 *)_outputSurface->getBasePtr(0, 0);
-	if (gif->Image.Interlace) {
+#if GIFLIB_MAJOR < 5
+	const bool deinterlace = gif->Image.Interlace;
+#else
+	// Starting from giflib 5.0, DGifSlurp deinterlaces pixel data.
+	const bool deinterlace = false;
+#endif
+	if (deinterlace) {
 		const int interlacedOffset[] = {0, 4, 2, 1};
 		const int interlacedJumps[] = {8, 8, 4, 2};
 		for (int i = 0; i < 4; ++i) {
