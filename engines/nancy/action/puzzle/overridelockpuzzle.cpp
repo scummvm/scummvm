@@ -194,7 +194,8 @@ void OverrideLockPuzzle::handleInput(NancyInput &input) {
 		}
 
 		if (NancySceneState.getViewport().convertViewportToScreen(_hotspots[i]).contains(input.mousePos)) {
-			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType(g_nancy->getGameType() >= kGameTypeNancy10 ?
+				CursorManager::kPuzzleArrow : CursorManager::kHotspot);
 
 			if (!g_nancy->_sound->isSoundPlaying(_buttonSound) && input.input & NancyInput::kLeftMouseButtonUp) {
 				drawButton(i, false);
