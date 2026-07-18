@@ -2458,7 +2458,15 @@ void LB::b_ilk(int nargs) {
 		// D4 is inconsistent about what types this variant is allowed to work with; e.g. #integer is fine,
 		// but #proplist is not. For now, give a response for all types.
 		Datum item = g_lingo->pop();
-		res = Datum(Common::String(item.type2str(true)));
+		Common::String typeStr = item.type2str(true);
+		// Director's one-argument ilk() reports the general #list / #propList symbols
+		// for lists, not the internal #linearlist / #proplist category names. Games
+		// rely on this, e.g. Löwenzahn 7's CD detection does `if ilk(dir) = #list`.
+		if (item.type == ARRAY)
+			typeStr = "list";
+		else if (item.type == PARRAY)
+			typeStr = "propList";
+		res = Datum(typeStr);
 		res.type = SYMBOL;
 		g_lingo->push(res);
 		return;
