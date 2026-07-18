@@ -60,8 +60,12 @@ PhoenixVREngine *g_engine;
 
 static Common::CodePage getTextCodePage(Common::Language language) {
 	switch (language) {
+	case Common::JA_JPN:
+		return Common::kWindows932;
 	case Common::RU_RUS:
 		return Common::kWindows1251;
+	case Common::ZH_TWN:
+		return Common::kBig5;
 	default:
 		return Common::kWindows1252;
 	}
@@ -1613,12 +1617,34 @@ Common::Error PhoenixVREngine::run() {
 
 	_arn.reset(ARN::create());
 #ifdef USE_FREETYPE2
-	static const Common::String regular("NotoSans-Regular.ttf");
-	static const Common::String bold("NotoSans-Bold.ttf");
+	const Common::Language language = _gameDescription->language;
+	const bool isJapanese = language == Common::JA_JPN;
+	const bool isTraditionalChinese = language == Common::ZH_TWN;
+	static const Common::String defaultRegular("NotoSans-Regular.ttf");
+	static const Common::String defaultBold("NotoSans-Bold.ttf");
+	static const Common::String japaneseRegular("NotoSansJP-Regular.otf");
+	static const Common::String japaneseBold("NotoSansJP-Regular.otf");
+	static const Common::String traditionalChineseRegular("NotoSansTC-Regular.otf");
+	static const Common::String traditionalChineseBold("NotoSansTC-Bold.otf");
+	const Common::String *regular = &defaultRegular;
+	const Common::String *bold = &defaultBold;
+
+	if (isJapanese) {
+		regular = &japaneseRegular;
+		bold = &japaneseBold;
+	} else if (isTraditionalChinese) {
+		regular = &traditionalChineseRegular;
+		bold = &traditionalChineseBold;
+	}
+
 	const int fontSizes[] = {8, 10, 12, 14, 16, 18};
 	for (uint i = 0; i < ARRAYSIZE(fontSizes); ++i) {
-		_regularFonts[i].reset(Graphics::loadTTFFontFromArchive(regular, fontSizes[i]));
-		_boldFonts[i].reset(Graphics::loadTTFFontFromArchive(bold, fontSizes[i]));
+		_regularFonts[i].reset(Graphics::loadTTFFontFromArchive(*regular, fontSizes[i]));
+		_boldFonts[i].reset(Graphics::loadTTFFontFromArchive(*bold, fontSizes[i]));
+		if (isJapanese && !_regularFonts[i])
+			_regularFonts[i].reset(Graphics::loadTTFFontFromArchive("VL-Gothic-Regular.ttf", fontSizes[i], Graphics::kTTFSizeModeCell));
+		if (isJapanese && !_boldFonts[i])
+			_boldFonts[i].reset(Graphics::loadTTFFontFromArchive("VL-Gothic-Regular.ttf", fontSizes[i], Graphics::kTTFSizeModeCell));
 	}
 #endif
 
@@ -1633,11 +1659,11 @@ Common::Error PhoenixVREngine::run() {
 
 	_variables.loadVariableTxt();
 	{
-		Common::File textes;
-		if (textes.open(Common::Path("textes.txt"))) {
+		Common::ScopedPtr<Common::SeekableReadStream> textes(open("textes.txt"));
+		if (textes) {
 			Common::CodePage textCodePage = getTextCodePage(_gameDescription->language);
-			while (!textes.eos()) {
-				auto text = textes.readLine();
+			while (!textes->eos()) {
+				auto text = textes->readLine();
 				if (text.empty() || text[0] != '*')
 					continue;
 				uint pos = 1;

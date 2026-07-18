@@ -246,6 +246,32 @@ const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	{"messenger",
+		nullptr,
+		AD_ENTRY5s("script.pak", "1e0f9cb47bc203e9e2983b03ffa85174", 185,
+                   "textes.txt", "b3a05836ab3aa9a6e01d86549386f0de", 4746,
+				   "cd1/Data/interface.vr", "23ccee9fa38fedc054d781312253d825", 325513,
+				   "cd1/Data/Script1.pak", "c451dddc568dd9f91e5e381388bd6b58", 54909,
+				   "cd2/Data/Script2.pak", "d7af7fa917912626c9d13503a2a1178c", 82085),
+		Common::JA_JPN,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_CD | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"messenger",
+		nullptr,
+		AD_ENTRY5s("script.pak", "1e0f9cb47bc203e9e2983b03ffa85174", 185,
+                   "textes.txt", "a52f4c494c9a85d99d7ea08051d9f4d8", 3770,
+				   "cd1/Data/interface.vr", "110c55142ec95dcbdc0dd86a68013d2a", 188422,
+				   "cd1/Data/Script1.pak", "f599fc4da33515e414ddb97d8ef9010c", 54920,
+				   "cd2/Data/Script2.pak", "d7af7fa917912626c9d13503a2a1178c", 82085),
+		Common::ZH_TWN,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_CD | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
 	{"dracula1",
 		"GOG release",
 		AD_ENTRY2s("script.lst", "78060b78cf403ddb7e22903ba7b269d6", 548,
