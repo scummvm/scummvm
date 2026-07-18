@@ -43,6 +43,7 @@ extern int rex_attr_depth(Buffer *depth, int x, int y);
 extern int attr_depth(TileMapHeader *depth_map, int x, int y);
 
 extern int attr_special(Buffer *attr, int x, int y);
+extern int rex_attr_special(Buffer *special, int x, int y);
 
 extern int attr_load(char *base_name, int item_type, int variant,
 	Buffer *target, int size_x, int size_y);

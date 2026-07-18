@@ -488,7 +488,9 @@ void MADSV2Engine::player_keep_walking() {
 				if (!player.walk_anywhere && !(player.walk_off_edge || player.walk_off_edge_to_room)) {
 					walk_code |= attr_walk(&scr_walk, at_x, at_y);
 					if (!player.special_code) {
-						player.special_code = attr_special(&scr_special, at_x, at_y);
+						player.special_code = (g_engine->getGameID() == GType_RexNebular) ?
+							rex_attr_special(&scr_special, at_x, at_y) :
+							attr_special(&scr_special, at_x, at_y);
 					}
 				}
 

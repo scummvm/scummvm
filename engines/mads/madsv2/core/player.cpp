@@ -34,6 +34,7 @@
 #include "mads/madsv2/core/himem.h"
 #include "mads/madsv2/core/object.h"
 #include "mads/madsv2/engine.h"
+#include "mads/madsv2/nebular/extra.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -949,9 +950,15 @@ void player_start_walking(int walk_x, int walk_y, int walk_facing) {
 		temp_stack_pointer--;
 		unto_x = room->rail[rail_solution_stack[temp_stack_pointer]].x;
 		unto_y = room->rail[rail_solution_stack[temp_stack_pointer]].y;
-		player.next_special_code = (buffer_legal(scr_special, room->xs,
-			from_x, from_y,
-			unto_x, unto_y) != LEGAL);
+
+		if (g_engine->getGameID() == GType_RexNebular) {
+			player.next_special_code = RexNebular::buffer_legal(scr_special, room->xs,
+				from_x, from_y, unto_x, unto_y);
+		} else {
+			player.next_special_code = buffer_legal(scr_special, room->xs,
+				from_x, from_y, unto_x, unto_y) != LEGAL;
+		}
+
 		from_x = unto_x;
 		from_y = unto_y;
 	}

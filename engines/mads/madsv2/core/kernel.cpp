@@ -2556,7 +2556,7 @@ void kernel_load_variant(int variant) {
 	room_variant = variant;
 
 	if (g_engine->getGameID() == GType_RexNebular) {
-		RexNebular::room_load_depth(nullptr, &scr_depth, &scr_walk, room, variant, room->format == 2);
+		RexNebular::kernel_load_variant(nullptr, &scr_depth, &scr_walk, &scr_special, room, variant, room->format == 2);
 		matte_refresh_work();
 
 	} else {

@@ -1422,7 +1422,9 @@ void game_control() {
 
 			player.walker_been_visible = player.walker_visible;
 
-			player.special_code = attr_special(&scr_special, player.x, player.y);
+			player.special_code = (g_engine->getGameID() == GType_RexNebular) ?
+			rex_attr_special(&scr_special, player.x, player.y) :
+			attr_special(&scr_special, player.x, player.y);
 
 			// Reset player clock to make sure walker appears in first frame
 			player.clock = kernel.clock;

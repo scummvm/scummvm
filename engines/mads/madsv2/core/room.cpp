@@ -174,7 +174,7 @@ RoomPtr room_load(int id, int variant, const char *base_path, Buffer *picture,
 	load_handle.open = false;
 
 	if (g_engine->getGameID() == GType_RexNebular) {
-		roomPtr = RexNebular::room_load_rex(id, variant, base_path, picture, depth, walk, special, picMap, depthMap, picResource,
+		roomPtr = RexNebular::room_load(id, variant, base_path, picture, depth, walk, special, picMap, depthMap, picResource,
 			depthResource, picture_ems_handle, depth_ems_handle, load_flags);
 		picture_map.total_x_size = picture->x;
 		picture_map.total_y_size = picture->y;

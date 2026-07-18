@@ -187,8 +187,22 @@ static void room_set_depth_nibble(Buffer *depth, int x, int y, byte depthVal) {
 		*scan = (byte)((*scan & 0x0f) | ((depthVal & 0x0f) << 4));
 }
 
-int room_load_depth(Load *load_handle, Buffer *depth, Buffer *walk, Room *room_info,
-		int variant, bool packedFormat) {
+// Sets the special zone nibble for pixel (x, y) in a nibble-packed (2 pixels/byte, even x in
+// the high nibble) special surface, matching the layout rex_attr_special() and buffer_legal()
+// (the RexNebular version, below) read. No-op if special is not being loaded.
+static void room_set_special_nibble(Buffer *special, int x, int y, byte specialVal) {
+	if (special == nullptr || special->data == nullptr)
+		return;
+
+	byte *scan = buffer_pointer(special, x >> 1, y);
+	if (x & 1)
+		*scan = (byte)((*scan & 0xf0) | (specialVal & 0x0f));
+	else
+		*scan = (byte)((*scan & 0x0f) | ((specialVal & 0x0f) << 4));
+}
+
+int kernel_load_variant(Load *load_handle, Buffer *depth, Buffer *walk, Buffer *special,
+		Room *room_info, int variant, bool packedFormat) {
 	char filename[80];
 	Load load;
 
@@ -213,8 +227,11 @@ int room_load_depth(Load *load_handle, Buffer *depth, Buffer *walk, Room *room_i
 	// packed (format == 2) rooms, each source byte represents a run of *groups* of 4 pixels
 	// (2 bits each); for unpacked rooms, each source byte represents a run of single pixels.
 	// In both cases, the byte's high bit(s) flag whether the pixel is walkable, and the
-	// remaining bit(s) give its depth. The results are unpacked into the standard walk
-	// (1 bit/pixel) and depth (4 bits/pixel) surface formats used throughout the engine.
+	// remaining bit(s) give its depth. Unpacked rooms additionally reserve bits 4-6
+	// (ATTR_SPECIAL_MASK) for a special trigger zone code; packed rooms have no bits to
+	// spare for this and never populate special. The results are unpacked into the standard
+	// walk (1 bit/pixel), depth (4 bits/pixel), and special (4 bits/pixel) surface formats
+	// used throughout the engine.
 	LoaderReadStream src(load_handle, load_handle->pack.strategy[load_handle->pack_list_marker].size);
 
 	runLength = src.readByte();
@@ -238,11 +255,13 @@ int room_load_depth(Load *load_handle, Buffer *depth, Buffer *walk, Room *room_i
 		} else {
 			bool walkable = (runValue & ATTR_WALK_MASK) != 0;
 			byte depthVal = runValue & ATTR_DEPTH_MASK;
+			byte specialVal = (byte)((runValue & ATTR_SPECIAL_MASK) >> 4);
 
 			for (; runLength > 0 && pixelIndex < totalPixels; --runLength) {
 				int x = pixelIndex % width, y = pixelIndex / width;
 				room_set_walk_bit(walk, x, y, walkable);
 				room_set_depth_nibble(depth, x, y, depthVal);
+				room_set_special_nibble(special, x, y, specialVal);
 				++pixelIndex;
 			}
 		}
@@ -253,10 +272,20 @@ int room_load_depth(Load *load_handle, Buffer *depth, Buffer *walk, Room *room_i
 	if (!hasLoad)
 		loader_close(&load);
 
+	// Mark these surfaces as owned by the currently loaded room/variant, so that
+	// room_dump_attribute() (see core/room.cpp) frees and resets them before the next
+	// room or variant is loaded, instead of leaving stale data behind.
+	if (depth != nullptr)
+		room_loaded_depth = true;
+	if (walk != nullptr)
+		room_loaded_walk = true;
+	if (special != nullptr)
+		room_loaded_special = true;
+
 	return 0;
 }
 
-RoomPtr room_load_rex(int id, int variant, const char *base_path, Buffer *picture,
+RoomPtr room_load(int id, int variant, const char *base_path, Buffer *picture,
 	Buffer *depth, Buffer *walk, Buffer *special, TileMapHeader *picMap,
 	TileMapHeader *depthMap, TileResource *picResource, TileResource *depthResource,
 	int picture_ems_handle, int depth_ems_handle, int load_flags) {
@@ -314,6 +343,7 @@ RoomPtr room_load_rex(int id, int variant, const char *base_path, Buffer *pictur
 	roomPtr->num_hotspots = 0;
 	roomPtr->num_rails = roomfile.num_rails;
 	roomPtr->room_id = id;
+	roomPtr->format = (byte)roomfile.format;
 	roomPtr->xs = roomfile.xs;
 	roomPtr->ys = roomfile.ys;
 	roomPtr->front_y = roomfile.front_y;
@@ -336,7 +366,9 @@ RoomPtr room_load_rex(int id, int variant, const char *base_path, Buffer *pictur
 	assert(picture->data);
 
 	// scr_depth (nibble-packed, 2 pixels/byte) and scr_walk (bit-packed, 8 pixels/byte) always
-	// use the same layout as every other game, regardless of the source room's packed format
+	// use the same layout as every other game, regardless of the source room's packed format.
+	// scr_special is likewise nibble-packed, matching scr_depth's layout, since it holds a
+	// 0-7 special zone code per pixel rather than a single boolean bit.
 	if (!depth->data)
 		buffer_init(depth, ((width - 1) >> 1) + 1, height);
 	assert(depth->data);
@@ -347,7 +379,13 @@ RoomPtr room_load_rex(int id, int variant, const char *base_path, Buffer *pictur
 		assert(walk->data);
 	}
 
-	if (room_load_depth(&load_handle, depth, walk, roomPtr, variant, roomfile.format == 2))
+	if (special != nullptr) {
+		if (!special->data)
+			buffer_init(special, ((width - 1) >> 1) + 1, height);
+		assert(special->data);
+	}
+
+	if (kernel_load_variant(&load_handle, depth, walk, special, roomPtr, variant, roomfile.format == 2))
 		goto error;
 
 	loader_close(&load_handle);
@@ -397,6 +435,67 @@ error:
 
 done:
 	return roomPtr;
+}
+
+int buffer_legal(const Buffer &special, int orig_wrap,
+		int x1, int y1, int x2, int y2) {
+	if (special.data == nullptr)
+		return 0;
+	if (x1 < 0 || x2 < 0 || y1 < 0 || y2 < 0)
+		return 0;
+	if (x1 >= orig_wrap || x2 >= orig_wrap)
+		return 0;
+	if (y1 >= special.y || y2 >= special.y)
+		return 0;
+
+	int delta_y = y2 - y1;
+	int y_sign = special.x;
+	if (delta_y < 0) {
+		delta_y = -delta_y;
+		y_sign = -y_sign;
+	}
+
+	int delta_x = x2 - x1;
+	int x_sign = 1;
+	int dAccum = 0;
+
+	if (delta_x < 0) {
+		delta_x = -delta_x;
+		x_sign = -1;
+		dAccum = MIN(delta_x, delta_y);
+	}
+
+	int x_count = delta_x + 1;
+	int y_count = delta_y + 1;
+
+	const byte *ptr = special.data + y1 * special.x + (x1 >> 1);
+	uint nibble_pos = 2 - (x1 & 1);
+
+	for (int col = x_count; col > 0; col--) {
+		dAccum += y_count;
+
+		byte code = (*ptr >> ((nibble_pos - 1) * 4)) & 0x0f;
+
+		while (true) {
+			if (code != 0)
+				return code;
+
+			if (dAccum < x_count)
+				break;
+
+			dAccum -= x_count;
+			ptr += y_sign;
+			code = (*ptr >> ((nibble_pos - 1) * 4)) & 0x0f;
+		}
+
+		// Advance one pixel in X
+		uint new_np = ((nibble_pos - x_sign - 1) & 1) + 1;
+		if ((nibble_pos - x_sign - 1) & ~1)
+			ptr += x_sign;
+		nibble_pos = new_np;
+	}
+
+	return 0;
 }
 
 } // namespace RexNebular

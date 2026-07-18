@@ -158,7 +158,7 @@ static void load_title_screen() {
 	mouse_show();
 
 	// Load the title screen room
-	room = RexNebular::room_load_rex(ROOM_ID, 0, nullptr, &scr_orig, &scr_depth, nullptr, nullptr, nullptr,
+	room = RexNebular::room_load(ROOM_ID, 0, nullptr, &scr_orig, &scr_depth, nullptr, nullptr, nullptr,
 		nullptr, nullptr, nullptr, 0, 0, 0);
 	if (!room)
 		error("Could not load title screen room %d", ROOM_ID);

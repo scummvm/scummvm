@@ -118,6 +118,18 @@ done:
 	return (int)special_code;
 }
 
+int rex_attr_special(Buffer *special, int x, int y) {
+	assert(special);
+	if (x < 0 || y < 0 || (x / 2) >= special->x || y >= special->y)
+		return 0;
+
+	byte *scan = buffer_pointer(special, (x >> 1), y);
+	int shift_count = (byte)((x & 1) ? 0 : 4);
+	int special_code = (byte)((*scan >> shift_count) & 0x0f);
+
+	return special_code;
+}
+
 int attr_load(char *base_name,
 	int item_type,
 	int variant,
