@@ -697,6 +697,15 @@ public:
 	bool _paletteSwitchingEnabled; // @ G0322_B_PaletteSwitchingEnabled
 	bool _refreshDungeonViewPaleteRequested; // @ G0342_B_RefreshDungeonViewPaletteRequested
 	int16 _dungeonViewPaletteIndex; // @ G0304_i_DungeonViewPaletteIndex
+	int16 _creditsPaletteIndex = 6; // @ C06_CREDITS
+	int16 _entrancePaletteIndex = 7; // @ C07_ENTRANCE_DM
+	int16 _inventoryPaletteIndex = 8; // @ C08_INVENTORY
+	int16 _interfacePaletteIndex = 9; // @ C09_ICON
+	int16 _blackPaletteIndex = 10; // @ C10_ENTRANCE_BLACK
+	int16 _bluePaletteIndex = 11; // @ C11_BLUE
+	int16 _titlePresentsPaletteIndex = 12; // @ C12_PRESENTS
+	int16 _titleDungeonPaletteIndex = 13; // @ C13_DUNGEON
+	int16 _titleMasterPaletteIndex = 14; // @ C14_MASTER
 	uint16 _blankBuffer[32]; // @G0345_aui_BlankBuffer
 	uint16 _paletteTopAndBottomScreen[16]; // @ G0347_aui_Palette_TopAndBottomScreen
 	uint16 _paletteMiddleScreen[16]; // @ G0346_aui_Palette_MiddleScreen
