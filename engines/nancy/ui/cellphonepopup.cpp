@@ -264,7 +264,8 @@ void CellPhonePopup::open() {
 	g_nancy->_cursor->warpCursor(Common::Point(_screenPosition.left + _screenPosition.width() / 2,
 												_screenPosition.top + _screenPosition.height() / 2));
 
-	NancySceneState.getTaskbar()->clearAllNotifications(kTaskButtonCellphone);
+	// Badge sub-categories clear when their list is viewed (enterScreenState),
+	// not on open.
 
 	if (!_uiclData->header.sounds[0].name.empty()) {
 		g_nancy->_sound->loadSound(_uiclData->header.sounds[0]);
@@ -1256,6 +1257,23 @@ void CellPhonePopup::resetDialPad() {
 }
 
 void CellPhonePopup::enterScreenState(ScreenState newState) {
+	// Viewing a list clears its badge: directory = sub 0, email = sub 1, web = sub 2.
+	if (UI::Taskbar *taskbar = NancySceneState.getTaskbar()) {
+		switch (newState) {
+		case kDirectory:
+			taskbar->clearNotification(kTaskButtonCellphone, 0);
+			break;
+		case kEmailList:
+			taskbar->clearNotification(kTaskButtonCellphone, 1);
+			break;
+		case kWebList:
+			taskbar->clearNotification(kTaskButtonCellphone, 2);
+			break;
+		default:
+			break;
+		}
+	}
+
 	// Always redraw, so successive digit entries refresh the readout.
 	_screenState = newState;
 	_hoveredHubButton = -1;

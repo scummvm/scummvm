@@ -483,11 +483,7 @@ void Taskbar::handleInput(NancyInput &input) {
 	} else if (input.input & NancyInput::kLeftMouseButtonUp) {
 		// Mouse released over the button: trigger the click action and
 		// snap the sprite back to hover (the cursor is still over it).
-		// Acknowledging the click also clears any pending notifications
-		// for this button — the popup will read them on entry.
-		for (uint s = 0; s < kNumNotificationSubCategories; ++s) {
-			_notifications[newHovered][s] = false;
-		}
+		// Badges are cleared per-view inside the popup, not on click.
 		drawButton(newHovered, kButtonHover);
 		_clickedButton = newHovered;
 

@@ -98,6 +98,9 @@ private:
 	// ids from {1,2} to {0,1}, so the Journal id dropped from 1 to 0.
 	uint16 notebookJournalTabId() const;
 
+	// Clear the taskbar badge for the active tab (Journal = sub 0, Tasks = sub 1).
+	void clearActiveTabNotification();
+
 	// Populate HypertextParser's text-line list with the active tab's
 	// entries.
 	void buildTextLines();

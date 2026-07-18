@@ -131,7 +131,8 @@ void NotebookPopup::open() {
 	g_nancy->_cursor->warpCursor(Common::Point(_screenPosition.left + _screenPosition.width() / 2,
 												_screenPosition.top + _screenPosition.height() / 2));
 
-	NancySceneState.getTaskbar()->clearAllNotifications(kTaskButtonNotebook);
+	// Only the tab being shown is acknowledged; the other keeps its badge.
+	clearActiveTabNotification();
 
 	// JournalData entries may have changed since the last open (added by
 	// ModifyListEntry, marked complete, etc.) — re-render content.
@@ -410,7 +411,7 @@ void NotebookPopup::handleInput(NancyInput &input) {
 				_scrollbarDragging = false;
 
 				playButtonClickSound(tab.button);
-
+				clearActiveTabNotification();
 				refreshContent();
 			}
 			input.eatMouseInput();
@@ -438,6 +439,19 @@ void NotebookPopup::refreshContent() {
 
 uint16 NotebookPopup::notebookJournalTabId() const {
 	return g_nancy->getGameType() >= kGameTypeNancy13 ? 0 : 1;
+}
+
+void NotebookPopup::clearActiveTabNotification() {
+	if (!_uinbData || (uint)_activeTab >= kNumTabs) {
+		return;
+	}
+	UI::Taskbar *taskbar = NancySceneState.getTaskbar();
+	if (!taskbar) {
+		return;
+	}
+	// Journal = sub 0, Tasks = sub 1 (see ModifyListEntry).
+	const bool journalActive = (_uinbData->tabs[_activeTab].id == notebookJournalTabId());
+	taskbar->clearNotification(kTaskButtonNotebook, journalActive ? 0 : 1);
 }
 
 void NotebookPopup::buildTextLines() {
