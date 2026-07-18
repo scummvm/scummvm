@@ -22,6 +22,7 @@
 #ifndef NANCY_MOVIEPLAYER_H
 #define NANCY_MOVIEPLAYER_H
 
+#include "common/array.h"
 #include "common/ptr.h"
 #include "common/path.h"
 #include "common/rational.h"
@@ -57,7 +58,8 @@ public:
 
 	// Load <name> + ".avf"/".bik", auto-detecting the format from which file
 	// exists (AVF preferred if both do) and creating the matching decoder.
-	// bidirectionalCache selects the AVF frame-cache hint (for scrubbing).
+	// bidirectionalCache enables fast bidirectional scrubbing; pass it only for
+	// scrubbed panorama scenes.
 	bool loadFile(const Common::Path &name, bool bidirectionalCache = false);
 	bool isVideoLoaded() const;
 	void close();
@@ -86,8 +88,8 @@ public:
 	void addFrameTime(uint16 timeToAdd);	// AVF only, no-op otherwise
 
 	// Decode a frame: frameNr < 0 returns the next frame; otherwise that
-	// specific frame via the format-appropriate cached path (AVF decodeFrame +
-	// seek; Bink seekToFrame + decodeNextFrame).
+	// specific frame via the format-appropriate cached path (AVF decodeFrame;
+	// Bink decodes forward when possible and caches frames, see _frameCache).
 	const Graphics::Surface *decodeNextFrame(int frameNr = -1);
 
 	// --- Optional simple frame-range player, built on the above. Handy for
@@ -103,9 +105,16 @@ public:
 
 private:
 	void storeCurrentFrame();
+	void freeFrameCache();
 
 	Common::ScopedPtr<Video::VideoDecoder> _decoder;
 	byte _videoType = kVideoPlaytypeAVF;
+
+	// Decoded-frame cache for the Bink path (AVF caches internally). Bink seeking
+	// re-decodes from the previous keyframe, so caching keeps panorama scrubbing
+	// fast. Enabled only when loadFile() is asked for a bidirectional cache.
+	bool _useFrameCache = false;
+	Common::Array<Graphics::Surface> _frameCache;
 
 	// Simple frame-range player state. _currentSurface points at the decoder's
 	// last-decoded frame (owned by it, valid until the next decode).
