@@ -23,6 +23,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
 #include "audio/mixer.h"
+#include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -363,6 +364,10 @@ Common::String PhoenixVREngine::removeDrive(const Common::String &path) {
 		return path.substr(2);
 }
 
+static bool isSimpleFilename(const Common::String &filename) {
+	return !filename.contains('/') && !filename.contains('\\');
+}
+
 Common::SeekableReadStream *PhoenixVREngine::tryOpen(const Common::Path &name, Common::String *origName) {
 	Common::ScopedPtr<Common::File> s(new Common::File());
 	if (s->open(name)) {
@@ -393,13 +398,16 @@ Common::SeekableReadStream *PhoenixVREngine::open(const Common::String &filename
 		stream = tryOpen(_currentScriptPath.append(filename, '\\').normalize(), origName);
 		if (stream)
 			return stream;
-	} else if (!filename.contains('/') && !filename.contains('\\') &&
-			   (filename.hasSuffixIgnoreCase(".lst") || filename.hasSuffixIgnoreCase(".pak"))) {
-		for (const char *dir : {"cd1/Install", "Install"}) {
-			stream = tryOpen(Common::Path(Common::String::format("%s/%s", dir, filename.c_str()), '/'), origName);
-			if (stream)
-				return stream;
-		}
+	}
+
+	if (isSimpleFilename(filename)) {
+		stream = tryOpen(Common::Path(Common::String::format("cd1/Install/%s", filename.c_str()), '/'), origName);
+		if (stream)
+			return stream;
+
+		stream = tryOpen(Common::Path(Common::String::format("Install/%s", filename.c_str()), '/'), origName);
+		if (stream)
+			return stream;
 	}
 
 	stream = tryOpen(Common::Path{filename}, origName);
@@ -1599,6 +1607,9 @@ Common::Error PhoenixVREngine::run() {
 	_pixelFormat = g_system->getScreenFormat();
 	if (_pixelFormat.isCLUT8())
 		return Common::kUnsupportedColorMode;
+
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
+	SearchMan.addDirectory(gameDataDir, 0, 4);
 
 	_arn.reset(ARN::create());
 #ifdef USE_FREETYPE2
