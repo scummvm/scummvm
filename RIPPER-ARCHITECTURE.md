@@ -392,6 +392,11 @@
   actions select `LI1_1_V1.WAV` and one of `LI1_1_Z1.WAV`/`LI1_1_Z3.WAV`.
   Escape stops an active managed voice first; when no voice is active it exits
   the dialogue and returns through the surrounding Cyber snapshot.
+- The Ka entry brackets `KA_DECK.AVI` with display command `0x14`; the second
+  call at `0x2b05b` reaches `ClearGenericVideoLogicalPage` at `0x45ed8` before
+  the 640x300 loop is installed at physical y=50. This clears the full logical
+  page so the top and bottom bands contain palette index zero rather than stale
+  pixels from the preceding 640x400 deck presentation.
 - The Ka chooser sources game-text entries `0xaa` through `0xad`. Consuming a
   choice sets flags `0x14a` through `0x14d` and starts, respectively,
   `LI1_1_VA.WAV`, `LI1_1_VB.WAV`, `LI1_1_VD.WAV`, or `LI1_1_VC.WAV`.
@@ -402,6 +407,13 @@
   a failed attempt plays `LI1_1_VF.WAV` and clears `0x14c`. Choice `0x14d` is
   gated by act-one flag 2 and the startup asset-catalog flag for `SB2_1_D`;
   once consumed, it presents `KA_CD.AVI` and sets flag `0x54`.
+- `ConfigureSceneEntryChooserLayout` at `0x18740` selects primary chooser
+  template `0x8a2de` for the Ka list. `InitializeSharedPresentationTemplates`
+  at `0x11a30` gives that template base fill index 0, selected fill index 248,
+  and normal/selected NF2T templates `0x84034`/`0x84035`; their visible text
+  colors use shared palette indices 4 and 254. The loop palette receives those
+  shared bands through `ApplySharedDisplayPalettePatch` before the chooser is
+  activated.
 - Action 56 is the KR branch of `DispatchKSceneActionBand`; it calls
   `RunSceneScriptLoop("kr", 0, 0)`. ScummVM enters `kr.run` through a nested
   `CyberManager` snapshot which preserves the carousel script, active frame,
