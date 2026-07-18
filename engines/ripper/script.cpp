@@ -452,7 +452,7 @@ ScriptManager::ScriptManager(RipperEngine *engine) : _engine(engine), _activeBa0
 		_clearPreservedAudioOnTransition(false), _cyberActive(false),
 		_cyberExitRequested(false), _cyberKeyboardCommand(0) {
 	_briefing = new BriefingManager(engine);
-	_dialogue = new DialogueManager();
+	_dialogue = new DialogueChooser();
 }
 
 bool ScriptManager::canSaveGame() const {
@@ -585,7 +585,7 @@ ScriptManager::~ScriptManager() {
 bool ScriptManager::hasActivePrompt() const {
 	// DispatchFrontEndAction at 0x190b7 selects contextual help while
 	// SceneRuntime+0x189 bit 0x20 is set. HandleSceneEntryChoiceListLifecycle
-	// sets that bit for the choice list currently modeled by DialogueManager.
+	// sets that bit for the choice list currently modeled by DialogueChooser.
 	return _dialogue->isPending();
 }
 

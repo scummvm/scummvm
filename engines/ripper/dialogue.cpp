@@ -28,7 +28,7 @@ static const uint16 kEnterCommand = 0x0d;
 static const uint16 kUpCommand = 0x4800;
 static const uint16 kDownCommand = 0x5000;
 
-bool DialogueManager::initialize(ResourceManager &resources) {
+bool DialogueChooser::initialize(ResourceManager &resources) {
 	if (!resources.loadInterfaceBitmapFont("small.fnt", _font))
 		return false;
 	_arrowFrames.resize(4);
@@ -47,7 +47,7 @@ bool DialogueManager::initialize(ResourceManager &resources) {
 	return true;
 }
 
-void DialogueManager::draw(bool captureBacking) {
+void DialogueChooser::draw(bool captureBacking) {
 	if (!_pending || _choices.empty())
 		return;
 	Graphics::Surface *screen = g_system->lockScreen();
@@ -124,7 +124,7 @@ void DialogueManager::draw(bool captureBacking) {
 	}
 }
 
-bool DialogueManager::execute(const CompiledScript &script, const ScriptCommand &command,
+bool DialogueChooser::execute(const CompiledScript &script, const ScriptCommand &command,
 		bool includeChoice) {
 	if (command.opcode == kAddDialogueChoice ||
 		command.opcode == kAddConditionalDialogueChoice) {
@@ -177,14 +177,14 @@ bool DialogueManager::execute(const CompiledScript &script, const ScriptCommand 
 	return true;
 }
 
-void DialogueManager::appendChoice(const Common::String &text, uint16 result) {
+void DialogueChooser::appendChoice(const Common::String &text, uint16 result) {
 	Choice choice;
 	choice.text = text;
 	choice.result = result;
 	_choices.push_back(choice);
 }
 
-bool DialogueManager::activateChoices(const char *source) {
+bool DialogueChooser::activateChoices(const char *source) {
 	if (_choices.empty()) {
 		debugC(2, kDebugDialogue,
 			"Ripper: dialogue chooser activation skipped source=%s reason=no-choices",
@@ -207,7 +207,7 @@ bool DialogueManager::activateChoices(const char *source) {
 	return true;
 }
 
-bool DialogueManager::service(const MouseState &mouse, uint &result) {
+bool DialogueChooser::service(const MouseState &mouse, uint &result) {
 	if (!_pending || _choices.empty())
 		return false;
 	updateHover(mouse.position);
@@ -244,7 +244,7 @@ bool DialogueManager::service(const MouseState &mouse, uint &result) {
 	return selectChoice(choiceIndex, result, "mouse");
 }
 
-bool DialogueManager::serviceKeyboard(uint16 command, uint &result) {
+bool DialogueChooser::serviceKeyboard(uint16 command, uint &result) {
 	if (!_pending || _choices.empty())
 		return false;
 	const uint previousChoice = _selectedChoice;
@@ -272,7 +272,7 @@ bool DialogueManager::serviceKeyboard(uint16 command, uint &result) {
 	return false;
 }
 
-void DialogueManager::updateHover(const Common::Point &point) {
+void DialogueChooser::updateHover(const Common::Point &point) {
 	if (!_pending || _choices.empty())
 		return;
 	_hoveredArrow = _upArrowBounds.contains(point) ? 1 :
@@ -291,13 +291,13 @@ void DialogueManager::updateHover(const Common::Point &point) {
 		_choices[_selectedChoice].text.c_str(), point.x, point.y);
 }
 
-bool DialogueManager::contains(const Common::Point &point) const {
+bool DialogueChooser::contains(const Common::Point &point) const {
 	return _pending && !_choices.empty() && (_chooserBounds.contains(point) ||
 		(_choices.size() > kVisibleChoiceCount &&
 			(_upArrowBounds.contains(point) || _downArrowBounds.contains(point))));
 }
 
-void DialogueManager::clearPending() {
+void DialogueChooser::clearPending() {
 	_pending = false;
 	_choices.clear();
 	_firstVisibleChoice = 0;
@@ -306,7 +306,7 @@ void DialogueManager::clearPending() {
 	_backingPixels.clear();
 }
 
-void DialogueManager::dismissForSceneTransition(const char *reason) {
+void DialogueChooser::dismissForSceneTransition(const char *reason) {
 	if (!_pending && _choices.empty())
 		return;
 	const uint choiceCount = _choices.size();
@@ -319,7 +319,7 @@ void DialogueManager::dismissForSceneTransition(const char *reason) {
 		reason, choiceCount, restored);
 }
 
-bool DialogueManager::syncGame(Common::Serializer &serializer) {
+bool DialogueChooser::syncGame(Common::Serializer &serializer) {
 	byte pending = _pending ? 1 : 0;
 	serializer.syncAsByte(pending);
 
@@ -358,7 +358,7 @@ bool DialogueManager::syncGame(Common::Serializer &serializer) {
 	return !serializer.err();
 }
 
-uint DialogueManager::measureText(const Common::String &text) const {
+uint DialogueChooser::measureText(const Common::String &text) const {
 	uint width = 0;
 	for (uint i = 0; i < text.size(); ++i) {
 		const byte ch = (byte)text[i];
@@ -374,7 +374,7 @@ uint DialogueManager::measureText(const Common::String &text) const {
 	return width;
 }
 
-void DialogueManager::updateLayout() {
+void DialogueChooser::updateLayout() {
 	uint textWidth = 0;
 	for (uint i = 0; i < _choices.size(); ++i)
 		textWidth = MAX(textWidth, measureText(_choices[i].text));
@@ -392,7 +392,7 @@ void DialogueManager::updateLayout() {
 		arrowLeft + _arrowFrames[2].width, _chooserBounds.bottom);
 }
 
-Common::Rect DialogueManager::visualBounds() const {
+Common::Rect DialogueChooser::visualBounds() const {
 	Common::Rect bounds = _chooserBounds;
 	if (_choices.size() > kVisibleChoiceCount && _arrowFrames.size() >= 4) {
 		bounds.left = MIN(bounds.left, MIN(_upArrowBounds.left, _downArrowBounds.left));
@@ -403,7 +403,7 @@ Common::Rect DialogueManager::visualBounds() const {
 	return bounds;
 }
 
-bool DialogueManager::restoreBacking() {
+bool DialogueChooser::restoreBacking() {
 	if (_backingBounds.isEmpty() || _backingPixels.size() !=
 			(uint)(_backingBounds.width() * _backingBounds.height()))
 		return false;
@@ -421,7 +421,7 @@ bool DialogueManager::restoreBacking() {
 	return true;
 }
 
-bool DialogueManager::selectChoice(uint choiceIndex, uint &result, const char *source) {
+bool DialogueChooser::selectChoice(uint choiceIndex, uint &result, const char *source) {
 	if (!_pending || choiceIndex >= _choices.size())
 		return false;
 	_selectedChoice = choiceIndex;
@@ -437,7 +437,7 @@ bool DialogueManager::selectChoice(uint choiceIndex, uint &result, const char *s
 	return true;
 }
 
-void DialogueManager::rebuildPresentationBands(const char *reason) const {
+void DialogueChooser::rebuildPresentationBands(const char *reason) const {
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1 || screen->w < 640 || screen->h < 400) {
 		if (screen)
@@ -460,7 +460,7 @@ void DialogueManager::rebuildPresentationBands(const char *reason) const {
 		reason, kSceneTop - 1, kSceneBottom);
 }
 
-void DialogueManager::drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const {
+void DialogueChooser::drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const {
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
 		if (screen)

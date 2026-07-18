@@ -18,7 +18,7 @@ struct ScriptCommand;
 struct MouseState;
 class CompiledScript;
 
-class DialogueManager {
+class DialogueChooser {
 public:
 	bool initialize(ResourceManager &resources);
 	bool execute(const CompiledScript &script, const ScriptCommand &command, bool includeChoice = true);

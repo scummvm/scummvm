@@ -36,7 +36,7 @@ class BriefingManager;
 class CyberManager;
 class ResourceManager;
 class RipperEngine;
-class DialogueManager;
+class DialogueChooser;
 
 enum ScriptOpcode : byte {
 	kNoOp0                       = 0x00, // HandleSceneEntryNoOp at 0x146e5
@@ -195,7 +195,7 @@ public:
 
 	CompiledScript &startup() { return _startup; }
 	CompiledScript &ba0() { return _ba0; }
-	DialogueManager *getDialogue() const { return _dialogue; }
+	DialogueChooser *getDialogue() const { return _dialogue; }
 
 private:
 	friend class CyberManager;
@@ -237,7 +237,7 @@ private:
 	bool _cyberExitRequested;
 	uint16 _cyberKeyboardCommand;
 	BriefingManager *_briefing;
-	DialogueManager *_dialogue;
+	DialogueChooser *_dialogue;
 };
 
 } // End of namespace Ripper

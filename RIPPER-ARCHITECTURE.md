@@ -133,7 +133,7 @@
   `RunModalSelectionTableDialogWithRestore`: it presents general help resource
   400 normally and conversation help resource `0x19b` while scene-runtime bit
   `0x20` marks a prompt/chooser active. The implemented choice-list lifecycle
-  maps that state to the pending `DialogueManager` chooser. Inventory and
+  maps that state to the pending `DialogueChooser`. Inventory and
   quit remain explicit stubs.
 - `RunTake2IniSliderSetupMenu` at `0x1989b` edits eight live settings in this
   order: master, ambient, SFX, video, brightness, color, contrast, and tint.
@@ -410,7 +410,7 @@
   same chooser construction and `ProcessChooserControlInput` path used by
   `HandleSceneEntryChoiceListLifecycle`; Ka does not draw a separate dialogue
   window. ScummVM therefore feeds the Ka game-text records into the shared
-  `DialogueManager`, including its three-row viewport, arrow controls,
+  `DialogueChooser`, including its three-row viewport, arrow controls,
   `small.fnt` metrics, normal colors 251/0, selected colors 4/248, mouse hover,
   and keyboard selection behavior.
 - In the Ka loop, `AdvanceCustomPacketPlaybackFrame` is followed by
