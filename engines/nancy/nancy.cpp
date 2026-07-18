@@ -26,6 +26,9 @@
 #include "common/memstream.h"
 #include "common/compression/installshield_cab.h"
 #include "common/serializer.h"
+#include "common/translation.h"
+
+#include "gui/message.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
@@ -803,11 +806,18 @@ void NancyEngine::populateStaticData() {
 }
 
 Common::Error NancyEngine::synchronize(Common::Serializer &ser) {
-	auto *bootSummary = GetEngineData(BSUM);
+	auto *bootSummary = GetEngineData(BSUM)
 	assert(bootSummary);
 
 	// Sync boot summary header, which includes full game title
 	ser.syncVersion(kSavegameVersion);
+
+	if (ser.getVersion() > kSavegameVersion) {
+		GUI::MessageDialog dialog(_s("Saved game was created with a newer version of ScummVM. Unable to load."));
+		dialog.runModal();
+		return Common::kUnknownError;
+	}
+
 	ser.matchBytes((const char *)bootSummary->header, 90);
 
 	// Sync scene and action records
