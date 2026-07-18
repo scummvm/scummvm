@@ -383,7 +383,7 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 			if (pic3d) {
 				vr._vr = true;
 
-				if (g_engine->gameIdMatches("dracula2")) {
+				if (g_engine->gameIdMatches("dracula2") || g_engine->gameIdMatches("amerzone")) {
 					// Original engine seems to skip 1 pixel per tile.
 					// dct.dll uses while(x < 255) loop condition when unpacking pixels to color planes.
 					// However, game tiles for all games are matching perfectly with each other.
