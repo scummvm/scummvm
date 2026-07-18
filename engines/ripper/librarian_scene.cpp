@@ -58,6 +58,12 @@ static const uint16 kChoiceCommandBase = 0x7000;
 static const uint16 kFailureCommand = 0x7ffd;
 static const uint kLoopStartFrame = 1;
 
+static const uint16 kFirstChoiceId = 0;
+static const uint16 kSecondChoiceId = 1;
+static const uint16 kBookChoiceId = 2;
+static const uint16 kCdChoiceId = 3;
+static const uint kChoiceCount = 4;
+
 static const uint kCardSeenFlag = 0xcc;
 static const uint kFirstChoiceFlag = 0x14a;
 static const uint kSecondChoiceFlag = 0x14b;
@@ -111,24 +117,24 @@ void LibrarianScene::rebuildChoices() {
 		_chooser.clearPending();
 	_choices.clear();
 	Milestones *milestones = _engine->getMilestones();
-	static const Choice choices[4] = {
-		{ kFirstChoiceFlag, kFirstChoiceText, "li1_1_va.wav" },
-		{ kSecondChoiceFlag, kFirstChoiceText + 1, "li1_1_vb.wav" },
-		{ kBookChoiceFlag, kFirstChoiceText + 2, "li1_1_vd.wav" },
-		{ kCdChoiceFlag, kFirstChoiceText + 3, "li1_1_vc.wav" }
+	static const Choice choices[kChoiceCount] = {
+		{ kFirstChoiceId, kFirstChoiceFlag, kFirstChoiceText, "li1_1_va.wav" },
+		{ kSecondChoiceId, kSecondChoiceFlag, kFirstChoiceText + 1, "li1_1_vb.wav" },
+		{ kBookChoiceId, kBookChoiceFlag, kFirstChoiceText + 2, "li1_1_vd.wav" },
+		{ kCdChoiceId, kCdChoiceFlag, kFirstChoiceText + 3, "li1_1_vc.wav" }
 	};
 	if (!milestones->isSet(choices[0].flag))
-		_choices.push_back(choices[0]);
+		_choices.push_back(&choices[0]);
 	if (!milestones->isSet(choices[1].flag))
-		_choices.push_back(choices[1]);
+		_choices.push_back(&choices[1]);
 	if (milestones->isSet(kCardSeenFlag) && !milestones->isSet(kBookSolvedFlag))
-		_choices.push_back(choices[2]);
+		_choices.push_back(&choices[2]);
 	if (milestones->isSet(kActOneCompleteFlag) && !milestones->isSet(kCdChoiceFlag) &&
 			_engine->getScripts()->hasPlayedScene(kCdGateScene))
-		_choices.push_back(choices[3]);
+		_choices.push_back(&choices[3]);
 	if (_conversationStarted && !_choices.empty()) {
 		for (uint i = 0; i < _choices.size(); ++i)
-			_chooser.appendChoice(_gameText[_choices[i].textResource], i);
+			_chooser.appendChoice(_gameText[_choices[i]->textResource], _choices[i]->id);
 		_chooser.activateChoices("ka-dialogue");
 	}
 	debugC(2, kDebugDialogue,
@@ -136,6 +142,14 @@ void LibrarianScene::rebuildChoices() {
 		_choices.size(), _conversationStarted, _chooser.isPending(),
 		milestones->isSet(kCardSeenFlag), milestones->isSet(kBookSolvedFlag),
 		milestones->isSet(kCdFollowupFlag));
+}
+
+const LibrarianScene::Choice *LibrarianScene::findAvailableChoice(uint16 id) const {
+	for (uint i = 0; i < _choices.size(); ++i) {
+		if (_choices[i]->id == id)
+			return _choices[i];
+	}
+	return nullptr;
 }
 
 bool LibrarianScene::startVoice(const char *path, const char *source) {
@@ -250,16 +264,16 @@ uint16 LibrarianScene::serviceInput() {
 			}
 			return kEscapeCommand;
 		}
-		uint choiceIndex = 0;
-		if (_chooser.serviceKeyboard(command, choiceIndex))
-			return kChoiceCommandBase + choiceIndex;
+		uint choiceId = 0;
+		if (_chooser.serviceKeyboard(command, choiceId))
+			return kChoiceCommandBase + choiceId;
 	}
 
 	const MouseState mouse = _engine->getInput()->publishMouseState();
 	updateCursor(mouse.position);
-	uint choiceIndex = 0;
-	if (_chooser.service(mouse, choiceIndex))
-		return kChoiceCommandBase + choiceIndex;
+	uint choiceId = 0;
+	if (_chooser.service(mouse, choiceId))
+		return kChoiceCommandBase + choiceId;
 	if ((mouse.pressed & kMouseButtonLeft) == 0)
 		return 0;
 	if (_hoveredControl == 0)
@@ -304,15 +318,17 @@ uint16 LibrarianScene::service(uint frame) {
 		presentDialogueOverlay(frame);
 		return MediaSequenceCallback::kContinueRefreshPalette;
 	} else if (command >= kChoiceCommandBase &&
-			command < kChoiceCommandBase + _choices.size()) {
-		const uint choiceIndex = command - kChoiceCommandBase;
-		const Choice choice = _choices[choiceIndex];
-		if (!_engine->getMilestones()->set(choice.flag, true, "ka-dialogue-choice") ||
-				!startVoice(choice.audioPath, "choice"))
+			command < kChoiceCommandBase + kChoiceCount) {
+		const uint16 choiceId = command - kChoiceCommandBase;
+		const Choice *choice = findAvailableChoice(choiceId);
+		if (!choice)
+			return kFailureCommand;
+		if (!_engine->getMilestones()->set(choice->flag, true, "ka-dialogue-choice") ||
+				!startVoice(choice->audioPath, "choice"))
 			return kFailureCommand;
 		debugC(2, kDebugDialogue,
-			"Ripper: selected Ka dialogue choice index=%u flag=0x%x textResource=0x%x audio='%s'",
-			choiceIndex, choice.flag, choice.textResource, choice.audioPath);
+			"Ripper: selected Ka dialogue choice id=%u flag=0x%x textResource=0x%x audio='%s'",
+			choiceId, choice->flag, choice->textResource, choice->audioPath);
 		command = 0;
 	}
 	presentDialogueOverlay(frame);

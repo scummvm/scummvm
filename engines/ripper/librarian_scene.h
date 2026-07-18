@@ -44,6 +44,7 @@ public:
 
 private:
 	struct Choice {
+		uint16 id;
 		uint flag;
 		uint textResource;
 		const char *audioPath;
@@ -53,6 +54,7 @@ private:
 	bool startVoice(const char *path, const char *source);
 	bool serviceVoiceCompletion();
 	void rebuildChoices();
+	const Choice *findAvailableChoice(uint16 id) const;
 	void serviceLoopAudio(uint frame);
 	void presentDialogueOverlay(uint frame);
 	uint16 serviceInput();
@@ -63,7 +65,7 @@ private:
 	DialogueChooser &_chooser;
 	Common::RandomSource _random;
 	Common::Array<Common::String> _gameText;
-	Common::Array<Choice> _choices;
+	Common::Array<const Choice *> _choices;
 	Audio::SoundHandle _ambientHandle;
 	Audio::SoundHandle _deckCueHandle;
 	Audio::SoundHandle _loopCueHandles[3];
