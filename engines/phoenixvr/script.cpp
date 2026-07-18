@@ -2,300 +2,149 @@
 #include "common/stream.h"
 #include "common/textconsole.h"
 #include "phoenixvr/commands.h"
+#include "phoenixvr/parser.h"
 #include "phoenixvr/phoenixvr.h"
 
 namespace PhoenixVR {
 
-namespace {
-class Parser {
-	const Common::String &_line;
-	uint _lineno;
-	uint _pos;
-
-public:
-	Parser(const Common::String &line, uint lineno) : _line(line), _lineno(lineno), _pos(0) {
-		skip();
-	}
-
-	void skip() {
-		// comment found in amerzone ",*****"
-		if (_pos == 0 && _line[_pos] == ',') {
-			_pos = _line.size();
-			return;
-		}
-		while (_pos < _line.size() && Common::isSpace(_line[_pos]))
-			++_pos;
-		if (_pos < _line.size() && _line[_pos] == ';')
-			_pos = _line.size();
-	}
-
-	bool atEnd() const { return _pos >= _line.size(); }
-
-	int peek() const { return _pos < _line.size() ? _line[_pos] : 0; }
-	int next() { return _pos < _line.size() ? _line[_pos++] : 0; }
-
-	void expect(int expected) {
-		skip();
-		auto ch = next();
-		if (ch != expected)
-			error("expected '%c' at line %u, got %c in %s", expected, _lineno, ch, _line.c_str());
-		skip();
-	}
-
-	bool maybe(char ch) {
-		skip();
-		if (peek() == ch) {
-			next();
-			return true;
-		} else
-			return false;
-	}
-
-	bool peek(const Common::String &prefix) {
-		skip();
-		if (_pos + prefix.size() > _line.size())
-			return false;
-
-		auto n = prefix.size();
-		auto *ch0 = _line.c_str() + _pos;
-		auto *ch1 = prefix.c_str();
-		while (n--) {
-			if (tolower(*ch0++) != tolower(*ch1++))
-				return false;
-		}
-		return true;
-	}
-
-	bool maybe(const Common::String &prefix) {
-		if (peek(prefix)) {
-			_pos += prefix.size();
-			skip();
-			return true;
-		}
-		return false;
-	}
-
-	bool keyword(const Common::String &prefix) {
-		skip();
-		bool yes = peek(prefix);
-		// keywords ends either on non-alpha or eof
-		if (yes) {
-			auto end = _pos + prefix.size();
-			if (end >= _line.size() || !Common::isAlpha(_line[end])) {
-				_pos += prefix.size();
-				skip();
-				return true;
-			}
-		}
-		return false;
-	}
-
-	Common::String nextArg() {
-		skip();
-		auto begin = _pos;
-		while (_pos < _line.size() && _line[_pos] != ',' && _line[_pos] != ')')
-			++_pos;
-		auto end = _pos;
-		while (end > begin && Common::isSpace(_line[end - 1]))
-			--end;
-		skip();
-		return _line.substr(begin, end - begin);
-	}
-
-	int nextInt() {
-		bool negative = false;
-		int value = 0;
-		if (maybe('-'))
-			negative = true;
-		do {
-			auto ch = next();
-			if (ch < '0' || ch > '9')
-				error("expected digit at %d, line: %u, %s", _pos, _lineno, _line.c_str());
-			value = value * 10 + (ch - '0');
-		} while (Common::isDigit(peek()));
-		return negative ? -value : value;
-	}
-
-	Common::String nextWord() {
-		skip();
-		auto begin = _pos;
-		while (_pos < _line.size() && !Common::isSpace(_line[_pos]) && _line[_pos] != ',' && _line[_pos] != '(' && _line[_pos] != '=' && _line[_pos] != ')')
-			++_pos;
-		auto end = _pos;
-		skip();
-		return _line.substr(begin, end - begin);
-	}
-
-	Common::String nextString() {
-		skip();
-		expect('"');
-		Common::String str;
-		while (_pos < _line.size()) {
-			auto ch = _line[_pos++];
-			if (ch == '"')
-				break;
-			str += ch;
-		}
-		skip();
-		return str;
-	}
-
-	Common::Array<Common::String> readStringList() {
-		Common::Array<Common::String> list;
-		while (!atEnd() && peek() != ')') {
-			if (peek() == '"')
-				list.push_back(nextString());
-			else {
-				list.push_back(nextArg());
-			}
-			if (!atEnd() && peek() != ')')
-				expect(',');
-		}
-		return list;
-	}
-
-	Script::CommandPtr parseCommand() {
-		using CommandPtr = Script::CommandPtr;
-		if (keyword("setcursordefault")) {
-			auto idx = nextWord();
-			expect(',');
-			bool valid = !idx.empty() && Common::isDigit(idx[0]);
-			// this skips garbage cursor default found in Amerzone
-			// e.g. `setcursordefault cursor1.pcx,cursor1`
-			return CommandPtr(new SetCursorDefault(valid ? atoi(idx.c_str()) : -1, nextWord()));
-		} else if (keyword("lockkey")) {
-			auto idx = nextInt();
-			expect(',');
-			auto fname = nextWord();
-			return CommandPtr(new LockKey(idx, Common::move(fname)));
-		} else if (keyword("resetlockkey")) {
-			return CommandPtr(new ResetLockKey());
-		} else if (maybe("fade=")) {
-			auto arg0 = nextInt();
-			expect(',');
-			auto arg1 = nextInt();
-			expect(',');
-			auto arg2 = nextInt();
-			return CommandPtr(new Fade(arg0, arg1, arg2));
-		} else if (keyword("transfade")) {
-			return CommandPtr(new Transfade(nextInt()));
-		} else if (maybe("setzoom=")) {
-			return CommandPtr(new SetZoom(toRadian(nextInt())));
-		} else if (maybe("setangle=") || keyword("setangle")) {
-			auto a0 = toAngle(nextInt());
-			expect(',');
-			auto a1 = toAngle(nextInt());
-			return CommandPtr(new SetAngle(a0, a1));
-		} else if (maybe("setnord=")) {
-			auto a0 = toAngle(nextInt());
-			return CommandPtr(new SetNord(a0));
-		} else if (keyword("interpolangle") || keyword("interpolanglezoom")) {
-			maybe(',');
-			maybe('=');
-			auto a0 = toAngle(nextInt());
-			expect(',');
-			auto a1 = toAngle(nextInt());
-			expect(',');
-			float a2 = nextInt();
-			float a3 = 0;
-			if (maybe(','))
-				a3 = nextInt();
-			// x, y, speed
-			// or
-			// x, y, zoom, speed
-			return CommandPtr(a3 != 0 ? new InterpolAngle(a0, a1, a3, toRadian(a2)) : new InterpolAngle(a0, a1, a2, 0));
-		} else if (maybe("anglexmax=") || keyword("anglexmax")) {
-			return CommandPtr(new AngleXMax(toAngle(nextInt())));
-		} else if (maybe("angleymax=") || keyword("angleymax")) {
-			auto y0 = toAngle(nextInt());
-			expect(',');
-			auto y1 = toAngle(nextInt());
-			return CommandPtr(new AngleYMax(y0, y1));
-		} else if (keyword("gotowarp")) {
-			return CommandPtr(new GoToWarp(nextWord()));
-		} else if (keyword("playsound3d")) {
-			auto sound = nextWord();
-			expect(',');
-			auto arg0 = nextInt();
-			expect(',');
-			auto arg1 = nextInt();
-			int arg2 = 0;
-			if (maybe(','))
-				arg2 = nextInt();
-			return CommandPtr(new PlaySound3D(Common::move(sound), arg0, toAngle(arg1), arg2));
-		} else if (keyword("playmusique")) {
-			auto sound = nextWord();
-			int vol = 255;
-			if (maybe(','))
-				vol = nextInt();
-			return CommandPtr(new PlayMusique(Common::move(sound), vol));
-		} else if (keyword("playsound")) {
-			auto sound = nextWord();
-			expect(',');
-			auto arg0 = nextInt();
-			int arg1 = 0;
-			if (maybe(','))
-				arg1 = nextInt();
-			return CommandPtr(new PlaySound(Common::move(sound), arg0, arg1));
-		} else if (keyword("playrndsound")) {
-			auto sound = nextWord();
-			expect(',');
-			auto arg0 = nextInt();
-			expect(',');
-			auto arg1 = nextInt();
-			int arg2 = 0;
-			if (maybe(','))
-				arg2 = nextInt();
-			return CommandPtr(new PlayRndSound(Common::move(sound), arg0, arg1, arg2));
-		} else if (keyword("stopsound3d")) {
-			return CommandPtr(new StopSound3D(nextWord()));
-		} else if (keyword("stopsound") || keyword("stopmusique")) {
-			return CommandPtr(new StopSound(nextWord()));
-		} else if (keyword("setcursor")) {
-			auto image = nextWord();
-			maybe(',');
-			auto warp = nextWord();
+Script::CommandPtr Script::parseCommand(Parser &p) {
+	if (p.keyword("setcursordefault")) {
+		auto idx = p.nextWord();
+		p.expect(',');
+		bool valid = !idx.empty() && Common::isDigit(idx[0]);
+		// this skips garbage cursor default found in Amerzone
+		// e.g. `setcursordefault cursor1.pcx,cursor1`
+		return CommandPtr(new SetCursorDefault(valid ? atoi(idx.c_str()) : -1, p.nextWord()));
+	} else if (p.keyword("lockkey")) {
+		auto idx = p.nextInt();
+		p.expect(',');
+		auto fname = p.nextWord();
+		return CommandPtr(new LockKey(idx, Common::move(fname)));
+	} else if (p.keyword("resetlockkey")) {
+		return CommandPtr(new ResetLockKey());
+	} else if (p.maybe("fade=")) {
+		auto arg0 = p.nextInt();
+		p.expect(',');
+		auto arg1 = p.nextInt();
+		p.expect(',');
+		auto arg2 = p.nextInt();
+		return CommandPtr(new Fade(arg0, arg1, arg2));
+	} else if (p.keyword("transfade")) {
+		return CommandPtr(new Transfade(p.nextInt()));
+	} else if (p.maybe("setzoom=")) {
+		return CommandPtr(new SetZoom(toRadian(p.nextInt())));
+	} else if (p.maybe("setangle=") || p.keyword("setangle")) {
+		auto a0 = toAngle(p.nextInt());
+		p.expect(',');
+		auto a1 = toAngle(p.nextInt());
+		return CommandPtr(new SetAngle(a0, a1));
+	} else if (p.maybe("setnord=")) {
+		auto a0 = toAngle(p.nextInt());
+		return CommandPtr(new SetNord(a0));
+	} else if (p.keyword("interpolangle") || p.keyword("interpolanglezoom")) {
+		p.maybe(',');
+		p.maybe('=');
+		auto a0 = toAngle(p.nextInt());
+		p.expect(',');
+		auto a1 = toAngle(p.nextInt());
+		p.expect(',');
+		float a2 = p.nextInt();
+		float a3 = 0;
+		if (p.maybe(','))
+			a3 = p.nextInt();
+		// x, y, speed
+		// or
+		// x, y, zoom, speed
+		return CommandPtr(a3 != 0 ? new InterpolAngle(a0, a1, a3, toRadian(a2)) : new InterpolAngle(a0, a1, a2, 0));
+	} else if (p.maybe("anglexmax=") || p.keyword("anglexmax")) {
+		return CommandPtr(new AngleXMax(toAngle(p.nextInt())));
+	} else if (p.maybe("angleymax=") || p.keyword("angleymax")) {
+		auto y0 = toAngle(p.nextInt());
+		p.expect(',');
+		auto y1 = toAngle(p.nextInt());
+		return CommandPtr(new AngleYMax(y0, y1));
+	} else if (p.keyword("gotowarp")) {
+		return CommandPtr(new GoToWarp(p.nextWord()));
+	} else if (p.keyword("playsound3d")) {
+		auto sound = p.nextWord();
+		p.expect(',');
+		auto arg0 = p.nextInt();
+		p.expect(',');
+		auto arg1 = p.nextInt();
+		int arg2 = 0;
+		if (p.maybe(','))
+			arg2 = p.nextInt();
+		return CommandPtr(new PlaySound3D(Common::move(sound), arg0, toAngle(arg1), arg2));
+	} else if (p.keyword("playmusique")) {
+		auto sound = p.nextWord();
+		int vol = 255;
+		if (p.maybe(','))
+			vol = p.nextInt();
+		return CommandPtr(new PlayMusique(Common::move(sound), vol));
+	} else if (p.keyword("playsound")) {
+		auto sound = p.nextWord();
+		p.expect(',');
+		auto arg0 = p.nextInt();
+		int arg1 = 0;
+		if (p.maybe(','))
+			arg1 = p.nextInt();
+		return CommandPtr(new PlaySound(Common::move(sound), arg0, arg1));
+	} else if (p.keyword("playrndsound")) {
+		auto sound = p.nextWord();
+		p.expect(',');
+		auto arg0 = p.nextInt();
+		p.expect(',');
+		auto arg1 = p.nextInt();
+		int arg2 = 0;
+		if (p.maybe(','))
+			arg2 = p.nextInt();
+		return CommandPtr(new PlayRndSound(Common::move(sound), arg0, arg1, arg2));
+	} else if (p.keyword("stopsound3d")) {
+		return CommandPtr(new StopSound3D(p.nextWord()));
+	} else if (p.keyword("stopsound") || p.keyword("stopmusique")) {
+		return CommandPtr(new StopSound(p.nextWord()));
+	} else if (p.keyword("setcursor")) {
+		auto image = p.nextWord();
+		p.maybe(',');
+		auto warp = p.nextWord();
+		int idx = 0;
+		if (p.maybe(','))
+			idx = p.nextInt();
+		return CommandPtr(new SetCursor(Common::move(image), Common::move(warp), idx));
+	} else if (p.keyword("hidecursor")) {
+		auto warp = p.nextWord();
+		p.expect(',');
+		auto idx = p.nextInt();
+		return CommandPtr(new HideCursor(Common::move(warp), idx));
+	} else if (p.keyword("set")) {
+		auto var = p.nextWord();
+		if (p.maybe(',')) {
+			// this is typo in amerzone, this meant to be setCursor
+			auto warp = p.nextWord();
 			int idx = 0;
-			if (maybe(','))
-				idx = nextInt();
-			return CommandPtr(new SetCursor(Common::move(image), Common::move(warp), idx));
-		} else if (keyword("hidecursor")) {
-			auto warp = nextWord();
-			expect(',');
-			auto idx = nextInt();
-			return CommandPtr(new HideCursor(Common::move(warp), idx));
-		} else if (keyword("set")) {
-			auto var = nextWord();
-			if (maybe(',')) {
-				// this is typo in amerzone, this meant to be setCursor
-				auto warp = nextWord();
-				int idx = 0;
-				if (maybe(','))
-					idx = nextInt();
-				return CommandPtr(new SetCursor(Common::move(var), Common::move(warp), idx));
-			}
-			int value = 0;
-			if (maybe('=')) {
-				skip();
-				if (!atEnd() && peek() != '!')
-					value = nextInt();
-			}
-			return CommandPtr(new SetVar(Common::move(var), value));
-		} else if (keyword("not")) {
-			auto var = nextWord();
-			return CommandPtr(new Not(Common::move(var)));
-		} else if (keyword("gosub")) {
-			return CommandPtr(new GoSub(nextWord()));
-		} else if (keyword("return")) {
-			return CommandPtr{new Return()};
-		} else if (keyword("end")) {
-			return CommandPtr{new EndScript()};
+			if (p.maybe(','))
+				idx = p.nextInt();
+			return CommandPtr(new SetCursor(Common::move(var), Common::move(warp), idx));
 		}
-		return {};
-	};
+		int value = 0;
+		if (p.maybe('=')) {
+			p.skip();
+			if (!p.atEnd() && p.peek() != '!')
+				value = p.nextInt();
+		}
+		return CommandPtr(new SetVar(Common::move(var), value));
+	} else if (p.keyword("not")) {
+		auto var = p.nextWord();
+		return CommandPtr(new Not(Common::move(var)));
+	} else if (p.keyword("gosub")) {
+		return CommandPtr(new GoSub(p.nextWord()));
+	} else if (p.keyword("return")) {
+		return CommandPtr{new Return()};
+	} else if (p.keyword("end")) {
+		return CommandPtr{new EndScript()};
+	}
+	return {};
 };
-
-} // namespace
 
 void Script::Scope::exec(ExecutionContext &ctx) const {
 	exec(ctx, 0);
@@ -428,7 +277,7 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 				else
 					error("unhandled plugin command %s at line %d", line.c_str(), lineno);
 			} else {
-				auto cmd = p.parseCommand();
+				auto cmd = parseCommand(p);
 				if (cmd) {
 					if (_conditional) {
 						_conditional->target = Common::move(cmd);
