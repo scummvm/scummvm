@@ -19,12 +19,12 @@
  *
  */
 
-#include "mediastation/actors/dotgame.h"
+#include "graphics/paletteman.h"
+
+#include "mediastation/minigames/dotgame.h"
 #include "mediastation/datafile.h"
 #include "mediastation/debugchannels.h"
 #include "mediastation/mediastation.h"
-
-#include "graphics/paletteman.h"
 
 namespace MediaStation {
 

@@ -7,7 +7,6 @@ MODULE_OBJS = \
 	actors/cursor.o \
 	actors/diskimage.o \
 	actors/document.o \
-	actors/dotgame.o \
 	actors/font.o \
 	actors/hotspot.o \
 	actors/image.o \
@@ -38,6 +37,7 @@ MODULE_OBJS = \
 	mediascript/scriptvalue.o \
 	mediastation.o \
 	metaengine.o \
+	minigames/dotgame.o \
 	profile.o
 
 # This module can be built as a plugin

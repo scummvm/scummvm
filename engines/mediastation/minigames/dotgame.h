@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MEDIASTATION_DOTGAME_H
-#define MEDIASTATION_DOTGAME_H
+#ifndef MEDIASTATION_MINIGAMES_DOTGAME_H
+#define MEDIASTATION_MINIGAMES_DOTGAME_H
 
 #include "mediastation/actors/stage.h"
 

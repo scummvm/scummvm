@@ -30,7 +30,6 @@
 #include "mediastation/actors/canvas.h"
 #include "mediastation/actors/cursor.h"
 #include "mediastation/actors/diskimage.h"
-#include "mediastation/actors/dotgame.h"
 #include "mediastation/actors/palette.h"
 #include "mediastation/actors/image.h"
 #include "mediastation/actors/path.h"
@@ -43,6 +42,7 @@
 #include "mediastation/actors/screen.h"
 #include "mediastation/actors/font.h"
 #include "mediastation/actors/text.h"
+#include "mediastation/minigames/dotgame.h"
 
 namespace MediaStation {
 
