@@ -53,6 +53,7 @@ private:
 	bool serviceVoiceCompletion();
 	void rebuildChoices();
 	void serviceLoopAudio(uint frame);
+	void presentDialogueOverlay(uint frame);
 	uint16 serviceInput();
 	void updateCursor(const Common::Point &point);
 	void stopAllAudio();
