@@ -969,6 +969,7 @@ static void handleDodge() {
 }
 
 static void room_209_init() {
+	_globals._spriteIndexes[11] = _scene->_sprites.addSprites("*RXMBD_2");
 	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('a', 1));
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('e', -1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 0));
@@ -978,7 +979,6 @@ static void room_209_init() {
 	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('m', 3));
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('m', 6));
 	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('m', 8));
-	_globals._spriteIndexes[11] = _scene->_sprites.addSprites("*RXMBD_2");
 
 	_game.loadQuoteSet(0x82, 0x83, 0x84, 0x9C, 0x97, 0x95, 0x99, 0x9E, 0x98, 0x9B, 0xA0, 0x96, 0x9F,
 		0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x91, 0x92, 0x93, 0x94, 0x89, 0x85, 0x8A, 0x86, 0x87, 0x88, 0);
