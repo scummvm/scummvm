@@ -70,11 +70,9 @@ private:
 	Audio::SoundHandle _deckCueHandle;
 	Audio::SoundHandle _loopCueHandles[3];
 	Audio::SoundHandle _voiceHandle;
-	uint _sceneArgument;
 	int _hoveredControl;
 	bool _conversationStarted;
 	bool _voicePending;
-	bool _acceptInput;
 };
 
 } // End of namespace Ripper

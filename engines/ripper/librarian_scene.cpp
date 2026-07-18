@@ -88,9 +88,8 @@ static const int kCardBottom = 303;
 
 LibrarianScene::LibrarianScene(RipperEngine *engine) : _engine(engine),
 		_chooser(*engine->getScripts()->getDialogue()),
-		_random("ripper-ka-dialogue"), _sceneArgument(0),
-		_hoveredControl(-1), _conversationStarted(false), _voicePending(false),
-		_acceptInput(false) {
+		_random("ripper-ka-dialogue"), _hoveredControl(-1),
+		_conversationStarted(false), _voicePending(false) {
 }
 
 bool LibrarianScene::initialize() {
@@ -295,8 +294,6 @@ uint16 LibrarianScene::service(uint frame) {
 		presentDialogueOverlay(frame);
 		return MediaSequenceCallback::kContinueRefreshPalette;
 	}
-	if (!_acceptInput)
-		return 0;
 	uint16 command = serviceInput();
 	if (command == kStartCommand) {
 		const char *voice = !_conversationStarted ? kFirstGreetingAudio :
@@ -349,7 +346,6 @@ void LibrarianScene::stopAllAudio() {
 }
 
 LibrarianScene::Result LibrarianScene::run(uint sceneArgument) {
-	_sceneArgument = sceneArgument;
 	if (!initialize())
 		return kLoadFailed;
 	if (_chooser.isPending())
@@ -358,7 +354,7 @@ LibrarianScene::Result LibrarianScene::run(uint sceneArgument) {
 		_chooser.clearPending();
 	debugC(1, kDebugDialogue,
 		"Ripper: entered Ka dialogue scene argument=%u deck='%s' loop='%s' toolbarMask=0x0000",
-		_sceneArgument, kDeckMedia, kLoopMedia);
+		sceneArgument, kDeckMedia, kLoopMedia);
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
 	_engine->getCursor()->setSelectionIndex(kDefaultCursor);
@@ -378,7 +374,6 @@ LibrarianScene::Result LibrarianScene::run(uint sceneArgument) {
 		"Ripper: cleared Ka deck display before loop media='%s' source=display-command-0x14",
 		kLoopMedia);
 	_engine->getMedia()->playSoundEffect("library3.wav", _ambientHandle, 100, true);
-	_acceptInput = true;
 
 	uint16 command = 0;
 	const bool played = _engine->getMedia()->playPuzzleSequence(
