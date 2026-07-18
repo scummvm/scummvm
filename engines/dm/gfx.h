@@ -565,6 +565,11 @@ public:
 #define D11_MASK_GREEN_COMPONENT 0x00F0
 #define D12_MASK_BLUE_COMPONENT 0x000F
 
+struct ColorDef { // @ COLOR_DEF
+	uint8 index;
+	uint8 r, g, b;
+};
+
 class DisplayMan {
 	friend class DM::TextMan;
 
@@ -707,6 +712,7 @@ public:
 	int16 _titleDungeonPaletteIndex = 13; // @ C13_DUNGEON
 	int16 _titleMasterPaletteIndex = 14; // @ C14_MASTER
 	uint16 _blankBuffer[32]; // @G0345_aui_BlankBuffer
+	byte _vgaPalette[32 * 3]; // @ G8183_aac_FullPalette
 	uint16 _paletteTopAndBottomScreen[16]; // @ G0347_aui_Palette_TopAndBottomScreen
 	uint16 _paletteMiddleScreen[16]; // @ G0346_aui_Palette_MiddleScreen
 
@@ -834,6 +840,7 @@ public:
 	uint16 getDarkenedColor(uint16 RGBcolor);
 	void startEndFadeToPalette(uint16 *P0849_pui_Palette); // @ F0436_STARTEND_FadeToPalette
 	void buildPaletteChangeCopperList(uint16 *middleScreen, uint16 *topAndBottom); // @ F0508_AMIGA_BuildPaletteChangeCopperList
+	void setMultipleColorsInPalette(int16 paletteIndex); // @ F8157_VIDRV_08_SetMultipleColorsInPalette
 	void shadeScreenBox(Box *box, Color color); // @ F0136_VIDEO_ShadeScreenBox
 
 private:
