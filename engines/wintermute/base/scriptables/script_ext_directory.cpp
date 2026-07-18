@@ -117,10 +117,9 @@ bool SXDirectory::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 			}
 
 		} else if (strcmp(dirName, "X:\\FBI\\data\\scenes\\17-magic\\") == 0 && strcmp(name, "GetDirectories") == 0) {
-			// used in secret scene of "Art of Murder 1: FBI Confidential"
-			// TODO: return list of "scenes\17-magic" subfolders from data.dcp
+			// Used in secret scene of "Art of Murder 1: FBI Confidential", pressumable for game testing
 
-			warning("FBI\\scenes\\17-magic Directory.%s is not implemented! Returning empty array...", name);
+			// return empty list instead
 
 		} else if (strcmp(dirName, ".\\") == 0 && strcmp(name, "GetFiles") == 0) {
 			// Used in "Stroke of Fate: Operation Valkyrie" and "Stroke of Fate: Operation Bunker"
