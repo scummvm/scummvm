@@ -2846,6 +2846,8 @@ Copy backbuffer to screen, with added vertical mirror
 void ShowMirrored(uint16 h, uint16 ofs) {
 	uint16 x, ofs2 = ofs;
 
+	bool egaClearAbove = isEgaLikeRenderer();
+
 	/*move 1 line up*/
 	ofs2 ^= g_vm->_line_offset;
 	if ((ofs2 & g_vm->_line_offset) != 0 || g_vm->_line_offset == 0)
@@ -2854,7 +2856,8 @@ void ShowMirrored(uint16 h, uint16 ofs) {
 	while (h--) {
 
 		for (x = 0; x < g_vm->_screenBPL; x++) {
-			frontbuffer[ofs2 + x] = frontbuffer[ofs + x] = backbuffer[ofs + x];
+			frontbuffer[ofs + x] = backbuffer[ofs + x];
+			frontbuffer[ofs2 + x] = egaClearAbove ? 0 : backbuffer[ofs + x];
 			backbuffer[ofs + x] = 0;
 		}
 
@@ -2942,6 +2945,8 @@ static void AnimSaucer(void) {
 		height_prev -= (yy - 1);
 
 		/*scale the saucer*/
+		if (isEgaLikeRenderer())
+			memset(backbuffer, 0, 320 * 200);
 		g_vm->_renderer->zoomInplaceXY(cur_image_pixels, width, height, ww, hh, xx, yy, backbuffer);
 
 		baseofs = g_vm->_renderer->calcXY(0, yy);
@@ -3002,7 +3007,7 @@ static void AnimSaucer(void) {
 		height_prev = height_new;
 
 		waitVBlank();
-		g_system->delayMillis(delay / 250);
+		g_system->delayMillis(delay / 1000);
 		delay += 500;
 	}
 }
