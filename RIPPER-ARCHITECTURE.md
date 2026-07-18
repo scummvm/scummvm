@@ -355,6 +355,11 @@
   in-memory display, palette, named-audio, and script-runtime snapshots around
   the nested script and leaves the toolbar inactive while that boundary owns
   input.
+- The `DECKIN.AVI` call site at `0x2a991` supplies
+  `PollPresentationEscOrSpaceCommand` at `0x49039` to
+  `RunMediaPresentation`. That callback consumes Escape to stop the entry
+  presentation and Space to pause or resume it; both commands remain active
+  before `CYBRMENU.RUN` begins.
 - `CYBRMENU.RUN` has 94 frames and 70 interactions. Frames 33 through 48 are
   the sixteen-position carousel: position 0 is Exit and positions 1 through 15
   are Cyber programs. Each position exposes `left`, `right`, and `choose`

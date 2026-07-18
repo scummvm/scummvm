@@ -202,10 +202,13 @@ CyberManager::Result CyberManager::run() {
 	g_system->fillScreen(0);
 	g_system->updateScreen();
 	debugC(1, kDebugCyber,
-		"Ripper: entering Cyber transition media='%s' script='%s' helpTable=0x1a4 toolbarMask=0x0000 cursor=%u",
+		"Ripper: entering Cyber transition media='%s' script='%s' helpTable=0x1a4 toolbarMask=0x0000 cursor=%u controls=escape-space",
 		kCyberEntryMedia, kCyberScript, kCyberSelectionIndex);
 
-	bool active = _engine->getMedia()->play(kCyberEntryMedia, false);
+	// RunCyberMenuSceneTransition at 0x2a86f passes
+	// PollPresentationEscOrSpaceCommand at 0x49039 to RunMediaPresentation.
+	// Escape skips DECKIN.AVI and Space retains the original pause behavior.
+	bool active = _engine->getMedia()->play(kCyberEntryMedia, true);
 	if (active && !_engine->shouldQuit()) {
 		g_system->fillScreen(0);
 		g_system->updateScreen();
