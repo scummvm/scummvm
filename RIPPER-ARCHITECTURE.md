@@ -391,6 +391,8 @@
   select rows 11 and 6. `LIBRARY0.WAV` through `LIBRARY3.WAV` and
   `DECK10.WAV` provide the presentation cues, while the first and repeated talk
   actions select `LI1_1_V1.WAV` and one of `LI1_1_Z1.WAV`/`LI1_1_Z3.WAV`.
+  Its scene-action argument is copied to a local but otherwise unused by the
+  retail function.
   Escape stops an active managed voice first; when no voice is active it exits
   the dialogue and returns through the surrounding Cyber snapshot.
 - The Ka entry brackets `KA_DECK.AVI` with display command `0x14`; the second
