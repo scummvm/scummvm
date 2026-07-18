@@ -43,6 +43,8 @@ static const uint kScreenWidth = 640;
 static const uint kScreenHeight = 400;
 static const uint kPaletteSize = 256 * 3;
 static const uint kAudioSnapshotVersion = 3;
+static const uint kSceneSelectionIndex = 0;
+static const uint kCyberSelectionIndex = 22;
 static const char *const kCyberEntryMedia = "deckin.avi";
 static const char *const kCyberScript = "cybrmenu.run";
 
@@ -186,18 +188,21 @@ CyberManager::Result CyberManager::run() {
 	const bool restoreVisibleCursor = runtime.awaitingInteraction;
 	ScriptManager *scripts = _engine->getScripts();
 	InputManager *input = _engine->getInput();
+	CursorManager *cursor = _engine->getCursor();
 	Result result = kLoadFailed;
 
 	_engine->getToolbar()->leave();
-	_engine->getCursor()->setVisible(false);
+	cursor->setSelectionIndex(kCyberSelectionIndex);
+	cursor->dispatchSelectionIndexChange(kCyberSelectionIndex);
+	cursor->setVisible(false);
 	input->drainKeys();
 	input->discardMouseTransitions();
 	_engine->getMedia()->clearSceneAudio(true);
 	g_system->fillScreen(0);
 	g_system->updateScreen();
 	debugC(1, kDebugCyber,
-		"Ripper: entering Cyber transition media='%s' script='%s' helpTable=0x1a4",
-		kCyberEntryMedia, kCyberScript);
+		"Ripper: entering Cyber transition media='%s' script='%s' helpTable=0x1a4 toolbarMask=0x0000 cursor=%u",
+		kCyberEntryMedia, kCyberScript, kCyberSelectionIndex);
 
 	bool active = _engine->getMedia()->play(kCyberEntryMedia, false);
 	if (active && !_engine->shouldQuit()) {
@@ -234,9 +239,11 @@ CyberManager::Result CyberManager::run() {
 	const bool audioRestored = restoreAudio(audioState);
 	restoreRuntime(runtime);
 	restoreDisplay(display);
+	cursor->setSelectionIndex(kSceneSelectionIndex);
+	cursor->dispatchSelectionIndexChange(kSceneSelectionIndex);
 	input->drainKeys();
 	input->discardMouseTransitions();
-	_engine->getCursor()->setVisible(restoreVisibleCursor);
+	cursor->setVisible(restoreVisibleCursor);
 	if (restoreVisibleCursor)
 		scripts->updateInteractiveCursor(input->peekMouseState().position);
 	if (!audioRestored)
@@ -258,20 +265,23 @@ CyberManager::Result CyberManager::runProgram(uint action,
 	const bool restoreVisibleCursor = runtime.awaitingInteraction;
 	ScriptManager *scripts = _engine->getScripts();
 	InputManager *input = _engine->getInput();
+	CursorManager *cursor = _engine->getCursor();
+	const uint restoreSelectionIndex = cursor->getSelectionIndex();
 	const Common::String scriptName = Common::String::format("%s.run", scriptBaseName);
 	Result result = kLoadFailed;
 
 	_engine->getToolbar()->leave();
-	_engine->getCursor()->setVisible(false);
+	cursor->setVisible(false);
 	input->drainKeys();
 	input->discardMouseTransitions();
 	_engine->getMedia()->clearSceneAudio(true);
 	g_system->fillScreen(0);
 	g_system->updateScreen();
 	debugC(1, kDebugCyber,
-		"Ripper: entering Cyber program action=%u script='%s' argument=%u suspendedScript='%s' suspendedFrame=%u",
+		"Ripper: entering Cyber program action=%u script='%s' argument=%u suspendedScript='%s' suspendedFrame=%u toolbarMask=0x0000 savedCursor=%u",
 		action, scriptName.c_str(), argument,
-		runtime.activeScript.getMemberName().c_str(), runtime.activeFrame);
+		runtime.activeScript.getMemberName().c_str(), runtime.activeFrame,
+		restoreSelectionIndex);
 
 	bool active = scripts->_ba0.load(_engine->getResources()->scripts(), scriptName);
 	if (active && !_engine->shouldQuit()) {
@@ -313,9 +323,11 @@ CyberManager::Result CyberManager::runProgram(uint action,
 	const bool audioRestored = restoreAudio(audioState);
 	restoreRuntime(runtime);
 	restoreDisplay(display);
+	cursor->setSelectionIndex(restoreSelectionIndex);
+	cursor->dispatchSelectionIndexChange(restoreSelectionIndex);
 	input->drainKeys();
 	input->discardMouseTransitions();
-	_engine->getCursor()->setVisible(restoreVisibleCursor);
+	cursor->setVisible(restoreVisibleCursor);
 	if (restoreVisibleCursor)
 		scripts->updateInteractiveCursor(input->peekMouseState().position);
 	if (!audioRestored)

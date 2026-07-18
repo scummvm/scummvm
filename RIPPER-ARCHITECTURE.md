@@ -348,11 +348,13 @@
 - Scene action 6 reaches `RunCyberMenuSceneTransition` at `0x2a86f`. It raises
   the Cyber-active flag at `0x843c0`, saves the current palette, chooser and UI
   registries, scene image, and audio-object table, switches the asset directory
-  to `CYBER`, presents `DECKIN.AVI`, and runs `CYBRMENU.RUN` as a nested scene
-  runtime. On return it restores those objects and the captured scene before
-  clearing the active flag. ScummVM's `CyberManager` keeps the same ownership
-  boundary using in-memory display, palette, named-audio, and script-runtime
-  snapshots around the nested script.
+  to `CYBER`, selects cursor row 22, presents `DECKIN.AVI`, and runs
+  `CYBRMENU.RUN` as a nested scene runtime with toolbar action mask zero. On
+  return it restores those objects and the captured scene before clearing the
+  active flag. ScummVM's `CyberManager` keeps the same ownership boundary using
+  in-memory display, palette, named-audio, and script-runtime snapshots around
+  the nested script and leaves the toolbar inactive while that boundary owns
+  input.
 - `CYBRMENU.RUN` has 94 frames and 70 interactions. Frames 33 through 48 are
   the sixteen-position carousel: position 0 is Exit and positions 1 through 15
   are Cyber programs. Each position exposes `left`, `right`, and `choose`
@@ -360,12 +362,14 @@
   frames use `ICTxy.SMK`; its large-icon frames use `ICL_EXIT.SMK` and
   `ICL_1.SMK` through `ICL_15.SMK`. The initial callback loads the carousel's
   `KJ1.WAV` and `IC_*.WAV` audio set and selects frame 33.
-- `PollInteractionAndResolveSelection` at `0x13c8d` switches F1 to help table
-  `0x1a4` while the Cyber flag is active. `DispatchFrontEndAction` at `0x190b7`
-  makes toolbar action `0x51c` leave the nested runtime immediately instead of
-  opening its normal confirmation prompt. The carousel also maps Left, Right,
-  Enter, and Escape to the same interaction callbacks; scene action 9999 is
-  its explicit nested-runtime terminator. Scene action 31 is an explicit no-op
+- `CreateSceneRuntime` at `0x12be7` stores the toolbar action mask supplied by
+  `RunSceneScriptLoop` at runtime offset `+0x183`. Both `CYBRMENU.RUN` and
+  `KR.RUN` are entered with mask zero, so `RunFrontEndActionMenu` at `0x18b3a`
+  creates no toolbar controls for either nested runtime. F1 still selects Cyber
+  help table `0x1a4` through `PollInteractionAndResolveSelection` at `0x13c8d`.
+  The carousel maps Left, Right, Enter, and Escape through the 16-bit keyboard
+  command at interaction-record offset `+0x13`; scene action 9999 is its
+  explicit nested-runtime terminator. Scene action 31 is an explicit no-op
   branch in `DispatchSceneEntryAction` at `0x36892`.
 - Carousel program callbacks ultimately enter the preserved-state dispatcher
   `DispatchKSceneActionBand` at `0x36e84`. Actions 40 through 56 select the
@@ -389,7 +393,14 @@
   disabled. `ExecutePresentationEntry` at `0x1652a` passes that zero control
   flag to `RunMediaPresentation` at `0x168af`, whose zero branch retains the
   movie's final rendered page for the following type-2 `interface` frame.
-  Action 9999 then terminates the nested runtime normally.
+  `ServiceUiControlStateSelection` at `0x4a912` starts each poll from the stored
+  row 14 and temporarily dispatches the hovered control's row; every visible KR
+  interaction uses row 16. KR therefore shows the standard white arrow while
+  idle and the red arrow over an interactive region. Its interface and paper
+  frames bind Escape (`0x001b`) to an invisible `exit` interaction whose
+  callback dispatches action 9999, returning to the suspended Cyber carousel.
+  The zoomed `paper*b` frames instead bind Escape to `unzoom`, returning to the
+  corresponding paper frame before a subsequent Escape exits KR.
 
 ## Puzzles
 
