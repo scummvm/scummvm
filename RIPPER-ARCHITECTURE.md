@@ -377,6 +377,26 @@
   program families (action 44 is absent). That dispatcher has a second
   palette/UI/chooser/audio preservation boundary around the selected program;
   it is separate from the Cyber menu transition owned by action 6.
+- Action 40 is the bespoke branch `RunKaDialogueScene` at `0x2aef5`, not a
+  scene-script loop. It presents `KA_DECK.AVI`, then advances
+  `KA_LOOP.SMK` continuously while servicing a talk control at
+  (294, 103)-(418, 147), a card control at (413, 213)-(467, 303), and a
+  dialogue-choice chooser. The idle cursor is row 14; the two fixed controls
+  select rows 11 and 6. `LIBRARY0.WAV` through `LIBRARY3.WAV` and
+  `DECK10.WAV` provide the presentation cues, while the first and repeated talk
+  actions select `LI1_1_V1.WAV` and one of `LI1_1_Z1.WAV`/`LI1_1_Z3.WAV`.
+  Escape stops an active managed voice first; when no voice is active it exits
+  the dialogue and returns through the surrounding Cyber snapshot.
+- The Ka chooser sources game-text entries `0xaa` through `0xad`. Consuming a
+  choice sets flags `0x14a` through `0x14d` and starts, respectively,
+  `LI1_1_VA.WAV`, `LI1_1_VB.WAV`, `LI1_1_VD.WAV`, or `LI1_1_VC.WAV`.
+  Choice `0x14c` is exposed after the card presentation sets flag `0xcc`; on
+  voice completion it enters `RunKaBookCodeEntryPrompt` at `0x2bc33`. That
+  prompt accepts the seven-character code `HC2021R`, plays `LI1_1_VE.WAV` on
+  success, presents `KA_BOOK.AVI`, and sets flags `0xe1` and `0x53`; Escape or
+  a failed attempt plays `LI1_1_VF.WAV` and clears `0x14c`. Choice `0x14d` is
+  gated by act-one flag 2 and the startup asset-catalog flag for `SB2_1_D`;
+  once consumed, it presents `KA_CD.AVI` and sets flag `0x54`.
 - Action 56 is the KR branch of `DispatchKSceneActionBand`; it calls
   `RunSceneScriptLoop("kr", 0, 0)`. ScummVM enters `kr.run` through a nested
   `CyberManager` snapshot which preserves the carousel script, active frame,
