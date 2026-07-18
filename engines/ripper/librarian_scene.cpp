@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  */
 
-#include "ripper/ka_dialogue.h"
+#include "ripper/librarian_scene.h"
 
 #include "common/debug.h"
 #include "common/system.h"
@@ -80,13 +80,13 @@ static const int kCardBottom = 303;
 
 } // End of anonymous namespace
 
-KaDialogueScene::KaDialogueScene(RipperEngine *engine) : _engine(engine),
+LibrarianScene::LibrarianScene(RipperEngine *engine) : _engine(engine),
 		_random("ripper-ka-dialogue"), _sceneArgument(0),
 		_hoveredControl(-1), _conversationStarted(false), _voicePending(false),
 		_acceptInput(false) {
 }
 
-bool KaDialogueScene::initialize() {
+bool LibrarianScene::initialize() {
 	if (!_engine->getResources()->loadGameText(_gameText)) {
 		warning("Ripper: could not load Ka dialogue game text");
 		return false;
@@ -100,7 +100,7 @@ bool KaDialogueScene::initialize() {
 	return true;
 }
 
-void KaDialogueScene::rebuildChoices() {
+void LibrarianScene::rebuildChoices() {
 	// RunKaDialogueScene at 0x2aef5 builds this list from GAMETEXT.TF entries
 	// 0xaa..0xad and the original 0x14a..0x14d progress bits, then passes the
 	// resulting item model to the same chooser control 0x4e2 used by opcode 0x17.
@@ -138,7 +138,7 @@ void KaDialogueScene::rebuildChoices() {
 		milestones->isSet(kCdFollowupFlag));
 }
 
-bool KaDialogueScene::startVoice(const char *path, const char *source) {
+bool LibrarianScene::startVoice(const char *path, const char *source) {
 	_engine->getMedia()->stopSoundEffect(_voiceHandle);
 	if (!_engine->getMedia()->playSoundEffect(path, _voiceHandle)) {
 		warning("Ripper: could not start Ka dialogue voice '%s'", path);
@@ -155,7 +155,7 @@ bool KaDialogueScene::startVoice(const char *path, const char *source) {
 	return true;
 }
 
-bool KaDialogueScene::serviceVoiceCompletion() {
+bool LibrarianScene::serviceVoiceCompletion() {
 	Milestones *milestones = _engine->getMilestones();
 	if (milestones->isSet(kBookChoiceFlag) && !milestones->isSet(kBookSolvedFlag)) {
 		KaBookCodePuzzle puzzle(_engine);
@@ -180,7 +180,7 @@ bool KaDialogueScene::serviceVoiceCompletion() {
 	return true;
 }
 
-void KaDialogueScene::serviceLoopAudio(uint frame) {
+void LibrarianScene::serviceLoopAudio(uint frame) {
 	// The original Ka loop queues descriptors 2, 1, and 0 at frames 1, 28,
 	// and 45, using the packed 25%, 20%, and 10% volumes initialized at entry.
 	for (uint i = 0; i < ARRAYSIZE(kLoopCueFrames); ++i) {
@@ -194,7 +194,7 @@ void KaDialogueScene::serviceLoopAudio(uint frame) {
 	}
 }
 
-void KaDialogueScene::presentDialogueOverlay(uint frame) {
+void LibrarianScene::presentDialogueOverlay(uint frame) {
 	DialogueChooser *dialogue = _engine->getScripts()->getDialogue();
 	if (!dialogue->isPending())
 		return;
@@ -208,7 +208,7 @@ void KaDialogueScene::presentDialogueOverlay(uint frame) {
 		"Ripper: composited Ka dialogue chooser above loop frame=%u", frame);
 }
 
-void KaDialogueScene::updateCursor(const Common::Point &point) {
+void LibrarianScene::updateCursor(const Common::Point &point) {
 	int hovered = -1;
 	uint cursor = kDefaultCursor;
 	DialogueChooser *dialogue = _engine->getScripts()->getDialogue();
@@ -239,7 +239,7 @@ void KaDialogueScene::updateCursor(const Common::Point &point) {
 	_engine->getCursor()->setVisible(true);
 }
 
-uint16 KaDialogueScene::serviceInput() {
+uint16 LibrarianScene::serviceInput() {
 	DialogueChooser *dialogue = _engine->getScripts()->getDialogue();
 	while (_engine->getInput()->hasPendingKey()) {
 		const uint16 command = _engine->getInput()->consumeKey();
@@ -273,7 +273,7 @@ uint16 KaDialogueScene::serviceInput() {
 	return 0;
 }
 
-uint16 KaDialogueScene::service(uint frame) {
+uint16 LibrarianScene::service(uint frame) {
 	serviceLoopAudio(frame);
 	if (_voicePending && !_engine->getMedia()->isSoundEffectActive(_voiceHandle)) {
 		_voicePending = false;
@@ -329,7 +329,7 @@ uint16 KaDialogueScene::service(uint frame) {
 	return command;
 }
 
-void KaDialogueScene::stopAllAudio() {
+void LibrarianScene::stopAllAudio() {
 	_engine->getMedia()->stopSoundEffect(_ambientHandle);
 	_engine->getMedia()->stopSoundEffect(_deckCueHandle);
 	for (uint i = 0; i < ARRAYSIZE(_loopCueHandles); ++i)
@@ -337,7 +337,7 @@ void KaDialogueScene::stopAllAudio() {
 	_engine->getMedia()->stopSoundEffect(_voiceHandle);
 }
 
-KaDialogueScene::Result KaDialogueScene::run(uint sceneArgument) {
+LibrarianScene::Result LibrarianScene::run(uint sceneArgument) {
 	_sceneArgument = sceneArgument;
 	if (!initialize())
 		return kLoadFailed;

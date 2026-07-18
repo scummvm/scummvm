@@ -30,7 +30,7 @@
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
 #include "ripper/input.h"
-#include "ripper/ka_dialogue.h"
+#include "ripper/librarian_scene.h"
 #include "ripper/media.h"
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
@@ -291,9 +291,9 @@ CyberManager::Result CyberManager::runProgram(uint action,
 
 	bool active = true;
 	if (isKaDialogue) {
-		KaDialogueScene dialogue(_engine);
-		const KaDialogueScene::Result dialogueResult = dialogue.run(argument);
-		active = dialogueResult != KaDialogueScene::kLoadFailed;
+		LibrarianScene librarian(_engine);
+		const LibrarianScene::Result librarianResult = librarian.run(argument);
+		active = librarianResult != LibrarianScene::kLoadFailed;
 		if (active)
 			result = kExited;
 	} else {
