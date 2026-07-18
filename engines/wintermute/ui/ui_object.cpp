@@ -181,7 +181,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
-		/* const char *filename = */ val->getString();
+		const char *filename = val->getString();
 
 		SAFE_DELETE(_image);
 		if (val->isNULL()) {
@@ -190,7 +190,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		}
 
 		_image = new BaseSprite(_game);
-		if (!_image || DID_FAIL(_image->loadFile(val->getString()))) {
+		if (!_image || DID_FAIL(_image->loadFile(filename))) {
 			SAFE_DELETE(_image);
 			stack->pushBool(false);
 		} else {

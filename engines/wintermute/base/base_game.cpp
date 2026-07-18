@@ -2691,7 +2691,13 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(0);
 		SAFE_DELETE(_cachedThumbnail);
 		_cachedThumbnail = new SaveThumbHelper(this);
-		if (DID_FAIL(_cachedThumbnail->storeThumbnail())) {
+		bool doFlip = false;
+
+		if (BaseEngine::instance().getGameId() == "barrowhilldp") {
+			doFlip = true;
+		}
+
+		if (DID_FAIL(_cachedThumbnail->storeThumbnail(doFlip))) {
 			SAFE_DELETE(_cachedThumbnail);
 			stack->pushBool(false);
 		} else {
