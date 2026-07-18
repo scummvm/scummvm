@@ -192,6 +192,7 @@ MODULE_OBJS = \
 	lingo/xtras-cast/cursorxtra.o \
 	lingo/xtras-cast/textxtra.o \
 	lingo/xtras/a/audio.o \
+	lingo/xtras/b/bamac.o \
 	lingo/xtras/b/border.o \
 	lingo/xtras/b/budapi.o \
 	lingo/xtras/d/datetime.o \

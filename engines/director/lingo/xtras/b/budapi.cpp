@@ -195,6 +195,7 @@ namespace Director {
 const char *BudAPIXtra::xlibName = "BudAPI";
 const XlibFileDesc BudAPIXtra::fileNames[] = {
 	{ "budapi",   nullptr },
+	{ "budapi16", nullptr },	// Windows 16-bit build
 	{ "budapi32", nullptr },
 	{ nullptr,        nullptr },
 };
