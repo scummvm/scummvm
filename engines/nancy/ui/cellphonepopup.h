@@ -173,6 +173,17 @@ private:
 
 	void resetDialPad();
 	void enterScreenState(ScreenState newState);
+	// True while a player-placed call is ringing / waiting for pickup, so the
+	// connecting strip shows a Back button (subButtons[0]) that cancels it.
+	// Incoming calls have no Back button.
+	bool isCallBackButtonActive() const {
+		return (_screenState == kPlaceCall || _screenState == kWaitOutgoingRing ||
+				_screenState == kLookupContact || _screenState == kWaitPickup) &&
+				!_hasPendingCallScene && _uiclData &&
+				!_uiclData->subButtons[0].destRect.isEmpty();
+	}
+	// Cancel a ringing / waiting call and return to the welcome screen.
+	void cancelCall();
 	void appendDigit(byte slotIndex);
 	// Play a dial-pad key's DTMF tone. The name is a raw sound filename, so it
 	// is played through the phone's call-sound channel rather than the common

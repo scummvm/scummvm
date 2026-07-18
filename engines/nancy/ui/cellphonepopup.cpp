@@ -511,12 +511,19 @@ void CellPhonePopup::drawScreenContent() {
 			// no digits to display, just the connecting animation.
 			drawConnectingSprite();
 		}
+		// Back button on the connecting strip cancels the ringing call.
+		if (isCallBackButtonActive()) {
+			drawBackButton(0);
+		}
 		break;
 
 	case kWaitPickup:
 	case kConnected:
 		drawConnectedLabel();
 		drawConnectingSprite();
+		if (isCallBackButtonActive()) {
+			drawBackButton(0);
+		}
 		break;
 
 	case kInvalidNumber:
@@ -1157,6 +1164,9 @@ Common::Rect CellPhonePopup::backButtonHitRect(uint subButtonIndex) const {
 int CellPhonePopup::currentBackButtonIndex() const {
 	// Mirrors the drawBackButton() calls in drawScreenContent: which
 	// subButtons slot holds the visible Back / HOME button per screen.
+	if (isCallBackButtonActive()) {
+		return 0;
+	}
 	switch (_screenState) {
 	case kDirectory:
 	case kOnlineHub:
@@ -1256,6 +1266,17 @@ void CellPhonePopup::enterScreenState(ScreenState newState) {
 		_openingEmailRow = -1;
 	}
 	drawScreenContent();
+}
+
+void CellPhonePopup::cancelCall() {
+	if (!_callSound.name.empty()) {
+		g_nancy->_sound->stopSound(_callSound);
+	}
+	_autoDialPending = false;
+	_resolvedContact = -1;
+	_pressedSlot = -1;
+	resetDialPad();
+	enterScreenState(kWelcome);
 }
 
 void CellPhonePopup::appendDigit(byte slotIndex) {
@@ -1734,6 +1755,25 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 	}
 
 	if (transientCallState) {
+		// While ringing, only the Back button is live (cancels the call).
+		if (isCallBackButtonActive()) {
+			const Common::Rect backHit = backButtonHitRect(0);
+			const Common::Point popupMouse(input.mousePos.x - _screenPosition.left,
+											input.mousePos.y - _screenPosition.top);
+			const bool overBack = !backHit.isEmpty() && backHit.contains(popupMouse);
+			if (overBack != _backButtonHovered) {
+				_backButtonHovered = overBack;
+				drawScreenContent();
+			}
+			if (overBack) {
+				g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
+				if (input.input & NancyInput::kLeftMouseButtonUp) {
+					input.eatMouseInput();
+					cancelCall();
+					return;
+				}
+			}
+		}
 		// Block the viewport from seeing the cursor (edge-pan, etc.).
 		input.eatMouseInput();
 		return;
