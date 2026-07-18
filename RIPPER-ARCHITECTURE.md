@@ -382,8 +382,9 @@
   program families (action 44 is absent). That dispatcher has a second
   palette/UI/chooser/audio preservation boundary around the selected program;
   it is separate from the Cyber menu transition owned by action 6.
-- Action 40 is the bespoke branch `RunKaDialogueScene` at `0x2aef5`, not a
-  scene-script loop. It presents `KA_DECK.AVI`, then advances
+- Action 40 is the bespoke branch `RunKaDialogueScene` at `0x2aef5`, represented
+  by ScummVM's `LibrarianScene` rather than a scene-script loop. It presents
+  `KA_DECK.AVI`, then advances
   `KA_LOOP.SMK` continuously while servicing a talk control at
   (294, 103)-(418, 147), a card control at (413, 213)-(467, 303), and a
   dialogue-choice chooser. The idle cursor is row 14; the two fixed controls
