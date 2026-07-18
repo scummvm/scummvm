@@ -252,6 +252,8 @@ void CellPhonePopup::open() {
 	_closeButtonHovered = false;
 	_scrollUpHovered = false;
 	_scrollDownHovered = false;
+	_helpButtonHovered = false;
+	_backButtonHovered = false;
 	_autoDialPending = false;
 	_pressedSlot = -1;
 
@@ -466,7 +468,7 @@ void CellPhonePopup::drawChrome() {
 	// it once a call is being placed (the connecting / "We're sorry" screens)
 	// and on every sub-screen that shows its own heading.
 	if (_screenState == kWelcome || _screenState == kDialing) {
-		drawHelpButton(0);
+		drawHelpButton(_helpButtonHovered ? 1 : 0);
 	}
 	_needsRedraw = true;
 }
@@ -1087,12 +1089,22 @@ void CellPhonePopup::drawBackButton(uint subButtonIndex) {
 	// subButtons[0] is the Back button in the lower ribbon (help / sub-screens);
 	// subButtons[7] is the Back button at the bottom of the zoomed content view.
 	const UICL::ThreeRectWidget &back = _uiclData->subButtons[subButtonIndex];
-	if (back.srcRectIdle.isEmpty() || back.destRect.isEmpty()) {
+	if (back.destRect.isEmpty()) {
+		return;
+	}
+
+	// Highlight (pressed sprite, green arrow) when the cursor is over this
+	// button and it's the one currently accepting input.
+	const bool hovered = _backButtonHovered && (int)subButtonIndex == currentBackButtonIndex();
+	const Common::Rect &src = (hovered && !back.srcRectPressed.isEmpty())
+								? back.srcRectPressed
+								: back.srcRectIdle;
+	if (src.isEmpty()) {
 		return;
 	}
 
 	const Common::Point chunkOrigin(_screenPosition.left, _screenPosition.top);
-	_drawSurface.blitFrom(_spritesImage, back.srcRectIdle,
+	_drawSurface.blitFrom(_spritesImage, src,
 							Common::Point(back.destRect.left - chunkOrigin.x,
 											back.destRect.top - chunkOrigin.y));
 }
@@ -1140,6 +1152,24 @@ Common::Rect CellPhonePopup::backButtonHitRect(uint subButtonIndex) const {
 	}
 	r.translate(-_screenPosition.left, -_screenPosition.top);
 	return r;
+}
+
+int CellPhonePopup::currentBackButtonIndex() const {
+	// Mirrors the drawBackButton() calls in drawScreenContent: which
+	// subButtons slot holds the visible Back / HOME button per screen.
+	switch (_screenState) {
+	case kDirectory:
+	case kOnlineHub:
+		return 0;
+	case kWebList:
+		return 9;
+	case kEmailList:
+		return 7;
+	case kContentView:
+		return isHelpContentView() ? 0 : 7;
+	default:
+		return -1;
+	}
 }
 
 const UICL::ThreeRectWidget &CellPhonePopup::scrollUpButton() const {
@@ -1219,6 +1249,8 @@ void CellPhonePopup::enterScreenState(ScreenState newState) {
 	// Always redraw, so successive digit entries refresh the readout.
 	_screenState = newState;
 	_hoveredHubButton = -1;
+	_helpButtonHovered = false;
+	_backButtonHovered = false;
 	if (newState != kContentView) {
 		// Cancel a pending email-open flash unless we're completing it.
 		_openingEmailRow = -1;
@@ -1721,6 +1753,22 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 	if (overUp != _scrollUpHovered || overDown != _scrollDownHovered) {
 		_scrollUpHovered = overUp;
 		_scrollDownHovered = overDown;
+		drawScreenContent();
+	}
+
+	// Green-arrow highlight for the captioned "> HELP" and "< BACK" / HOME
+	// buttons: swap to the pressed sprite while the cursor is over them.
+	const bool helpVisible = (_screenState == kWelcome || _screenState == kDialing);
+	const bool overHelp = helpVisible &&
+			!_uiclData->helpButton.destRect.isEmpty() &&
+			_uiclData->helpButton.destRect.contains(chunkMouse);
+	const int backIndex = currentBackButtonIndex();
+	const bool overBack = backIndex >= 0 &&
+			!_uiclData->subButtons[backIndex].destRect.isEmpty() &&
+			_uiclData->subButtons[backIndex].destRect.contains(chunkMouse);
+	if (overHelp != _helpButtonHovered || overBack != _backButtonHovered) {
+		_helpButtonHovered = overHelp;
+		_backButtonHovered = overBack;
 		drawScreenContent();
 	}
 

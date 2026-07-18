@@ -219,6 +219,9 @@ private:
 	Common::Rect backLabelHitRect() const;
 	// Popup-local rect of a visible Back sub-button (subButtons[index]).
 	Common::Rect backButtonHitRect(uint subButtonIndex) const;
+	// subButtons index of the Back / HOME button visible in the current state,
+	// or -1 when none is shown. Used to drive its hover highlight.
+	int currentBackButtonIndex() const;
 	// Move the directory selection by delta, scrolling as needed.
 	void moveDirectorySelection(int delta);
 
@@ -237,6 +240,10 @@ private:
 	bool _closeButtonHovered = false;
 	bool _scrollUpHovered = false;
 	bool _scrollDownHovered = false;
+	// Green-arrow highlight state for the captioned "> HELP" (welcome / dialing)
+	// and "< BACK" / HOME sub-buttons: each swaps to its pressed sprite on hover.
+	bool _helpButtonHovered = false;
+	bool _backButtonHovered = false;
 
 	ScreenState _screenState = kWelcome;
 
