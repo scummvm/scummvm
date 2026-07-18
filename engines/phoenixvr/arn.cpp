@@ -20,7 +20,8 @@
  */
 
 #include "phoenixvr/arn.h"
-#include "common/file.h"
+#include "common/stream.h"
+#include "phoenixvr/phoenixvr.h"
 
 namespace PhoenixVR {
 ARN *ARN::create() {
@@ -29,40 +30,40 @@ ARN *ARN::create() {
 	uint idx = 1;
 	while (true) {
 		auto arnName = Common::String::format("BData%u.arn", idx++);
-		Common::File file;
-		if (!file.open(Common::Path{arnName})) {
+		Common::ScopedPtr<Common::SeekableReadStream> file(g_engine->open(arnName));
+		if (!file) {
 			break;
 		}
-		Common::Array<byte> data(file.size());
-		debug("arn: loading %s, %ld bytes", arnName.c_str(), (long)file.size());
-		if (file.read(data.data(), data.size()) != data.size())
+		Common::Array<byte> data(file->size());
+		debug("arn: loading %s, %ld bytes", arnName.c_str(), (long)file->size());
+		if (file->read(data.data(), data.size()) != data.size())
 			error("arn short read");
 		arn->_archives.push_back(Common::move(data));
 	}
 	debug("loaded %u archives", arn->_archives.size());
 
-	Common::File file;
-	if (!file.open("BDataHeader.vit"))
+	Common::ScopedPtr<Common::SeekableReadStream> file(g_engine->open("BDataHeader.vit"));
+	if (!file)
 		return nullptr;
 
 	// TODO: Convert to the screen format ahead of time?
 	Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
-	auto numEntries = file.readUint32LE();
-	auto version = file.readUint32LE();
+	auto numEntries = file->readUint32LE();
+	auto version = file->readUint32LE();
 	debug("arn: found %u entries, version: %u", numEntries, version);
 	uint prevArchive = 0;
 	uint offset = 0;
 	while (numEntries--) {
-		auto name = file.readString(0, 32);
+		auto name = file->readString(0, 32);
 		Entry &entry = arn->_surfaces[name];
 		auto &rect = entry.rect;
-		rect.left = file.readSint32LE();
-		rect.top = file.readSint32LE();
-		rect.right = file.readSint32LE();
-		rect.bottom = file.readSint32LE();
-		auto archive = file.readUint32LE();
-		auto size = file.readUint32LE();
+		rect.left = file->readSint32LE();
+		rect.top = file->readSint32LE();
+		rect.right = file->readSint32LE();
+		rect.bottom = file->readSint32LE();
+		auto archive = file->readUint32LE();
+		auto size = file->readUint32LE();
 		debug("arn: %u: %s, %s, %u bytes", archive, name.c_str(), entry.rect.toString().c_str(), size);
 		if (archive != prevArchive) {
 			offset = 0;
@@ -74,7 +75,7 @@ ARN *ARN::create() {
 		auto &data = arn->_archives[archive - 1];
 		assert(offset + size <= data.size());
 		entry.surface.init(rect.width(), rect.height(), rect.width() * bpp, data.data() + offset, format);
-		file.skip(4); // unk, usually 1
+		file->skip(4); // unk, usually 1
 		offset += size;
 	}
 
