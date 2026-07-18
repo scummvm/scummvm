@@ -125,8 +125,6 @@ void CursorManager::update(uint cursorIndex) {
 		warning("Ripper: invalid cursor index %u; using default", cursorIndex);
 		cursorIndex = 0;
 	}
-	_selectionIndex = cursorIndex;
-
 	const uint32 now = g_system->getMillis(true);
 	if (cursorIndex != _cursorIndex || _nextFrameMillis == 0) {
 		_cursorIndex = cursorIndex;

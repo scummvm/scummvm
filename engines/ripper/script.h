@@ -127,6 +127,7 @@ struct ScriptInteraction {
 	int16 y;
 	int16 width;
 	int16 height;
+	uint16 keyboardCommand;
 	byte initialSelection;
 	uint32 conditionOffset;
 	uint32 callbackOffset;
@@ -198,6 +199,7 @@ private:
 
 	bool executeCallback(CompiledScript &script, uint32 callbackOffset, int &result,
 		uint *nextFrame = nullptr);
+	bool captureCyberKeyboardCommand();
 	bool serviceCyberKeyboardCommand();
 	void bindBa0Frame(uint frameIndex);
 	void initializeBa0InteractionState(const ScriptFrame &frame);
