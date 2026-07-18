@@ -326,13 +326,23 @@ void ScrollTextBox::handleInput(NancyInput &input) {
 
 			const int newThumbTop = localMouse.y - _scrollbarGrabOffset;
 			const int clamped = CLIP<int>(newThumbTop, trackLocal.top, trackLocal.top + travel);
-			_scrollPos = travel > 0 ? (float)(clamped - trackLocal.top) / (float)travel : 0.0f;
+			const float newScrollPos = travel > 0 ? (float)(clamped - trackLocal.top) / (float)travel : 0.0f;
 
+			bool released = false;
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				_scrollbarDragging = false;
+				released = true;
 			}
 
-			drawContent();
+			// Only re-render when the thumb actually moves (or the drag just ended, to
+			// repaint the thumb out of its pressed state). drawContent() re-lays out
+			// the whole text surface, so calling it every frame while the button is
+			// merely held down pins the CPU and makes dragging choppy.
+			if (newScrollPos != _scrollPos || released) {
+				_scrollPos = newScrollPos;
+				drawContent();
+			}
+
 			input.eatMouseInput();
 			return;
 		}
