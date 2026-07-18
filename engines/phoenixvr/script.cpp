@@ -23,6 +23,7 @@
 #include "common/stream.h"
 #include "common/textconsole.h"
 #include "phoenixvr/script_v1.h"
+#include "phoenixvr/script_v2.h"
 
 namespace PhoenixVR {
 
@@ -48,6 +49,9 @@ Script *Script::load(Common::SeekableReadStream &s, int version) {
 	switch (version) {
 	case 1:
 		script.reset(new ScriptV1);
+		break;
+	case 2:
+		script.reset(new ScriptV2);
 		break;
 	default:
 		error("unsupported script version: %d", version);

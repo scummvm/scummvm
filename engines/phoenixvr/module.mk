@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	bigf.o \
 	commands.o \
 	commands_v1.o \
+	commands_v2.o \
 	game_state.o \
 	console.o \
 	metaengine.o \
@@ -14,6 +15,7 @@ MODULE_OBJS = \
 	region_set.o \
 	script.o \
 	script_v1.o \
+	script_v2.o \
 	variables.o \
 	vr.o
 

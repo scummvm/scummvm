@@ -20,6 +20,8 @@
  */
 
 #include "advancedDetector.h"
+#include "phoenixvr/detection.h"
+
 namespace PhoenixVR {
 
 // clang-format off
@@ -31,6 +33,9 @@ const PlainGameDescriptor phoenixvrGames[] = {
 	{"dracula1", "Dracula: Resurrection"},
 	{"dracula2", "Dracula 2: The Last Sanctuary"},
 	{"amerzone", "Amerzone: The Explorer's Legacy"},
+	// V2 games
+	{"mysteryofmummy", "Sherlock Holmes: The Mystery of the Mummy"},
+	{"pharaoncurse", "The Cameron Files: Pharaoh's Curse "},
 	{0, 0}
 };
 
@@ -612,6 +617,29 @@ const ADGameDescription gameDescriptions[] = {
 		Common::SV_SWE,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM | ADGF_UNSTABLE | ADGF_CD,
+		GUIO1(GUIO_NONE)
+	},
+	{"mysteryofmummy",
+		"Steam release - V2 games are not yet supported",
+		AD_ENTRY3s("Main_Menu.vr", "47561a674ad17d3facc4d87e169d6825", 97668,
+				   "data/EN/items.txt", "80f72fc361e24420f45eaa3c31046e0f", 1067,
+				   "Script.lst", "b5c2c9005c90a53c6efee063820f2152", 796
+		),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | PHOENIXVR_V2 | ADGF_UNSUPPORTED,
+		GUIO1(GUIO_NONE)
+	},
+	{"pharaoncurse",
+		"USA CD release - V2 games are not yet supported",
+		AD_ENTRY3s(
+			"Level_1/script.lst", "1bacc45e3ca6eea715ba5abd73986577", 211816,
+			"install/Start/script.lst", "40b17997a4d319605f024303d1513039", 17142,
+			"install/Start/L0P01R01S00.vr", "183dde040975248675338c24830e8ed5", 194569
+		),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_CD | PHOENIXVR_V2 | ADGF_UNSUPPORTED,
 		GUIO1(GUIO_NONE)
 	},
 

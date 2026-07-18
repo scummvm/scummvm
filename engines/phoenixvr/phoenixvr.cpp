@@ -27,6 +27,7 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/formats/ini-file.h"
 #include "common/language.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
@@ -312,6 +313,32 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 		_levels.push_back("04VR_FLEUVE");
 		_levels.push_back("05VR_VILLAGEMARAIS");
 		_levels.push_back("07VRTEMPLE_VOLCAN");
+	} else if (gameIdMatches("mysteryofmummy")) {
+		_levels.push_back("level1");
+		_levels.push_back("level2");
+		_levels.push_back("level3");
+		_levels.push_back("level4");
+		_levels.push_back("level5");
+		setNextLevel();
+	} else if (gameIdMatches("pharaoncurse")) {
+		Common::INIFile file;
+		if (!file.loadFromFile("pharaohs.wbm"))
+			error("can't open install/pharaohs.wbm");
+		Common::String strNumLevels;
+		if (!file.getKey("LEVELS", "GAME", strNumLevels))
+			error("can't find levels number");
+		auto numLevels = atoi(strNumLevels.c_str());
+		for (int i = 0; i < numLevels; ++i) {
+			Common::String media;
+			Common::String path;
+			if (!file.getKey("MEDIA", Common::String::format("LEVEL_%d", i), media))
+				error("no media in level section");
+			if (!file.getKey("PATH", Common::String::format("LEVEL_%d", i), path))
+				error("no path in level section");
+			if (media == "HD")
+				path = "install\\" + path;
+			_levels.push_back(path);
+		}
 	}
 }
 
@@ -425,7 +452,8 @@ bool PhoenixVREngine::setNextLevel() {
 	if (_nextLevel < _levels.size()) {
 		auto &level = _levels[_nextLevel++];
 		debug("next level is %s", level.c_str());
-		setNextScript(Common::String::format("%s\\%s.lst", level.c_str(), _gameDescription->gameId));
+		auto mainScript = gameIdMatches("amerzone") ? "amerzone" : "script";
+		setNextScript(Common::String::format("%s\\%s.lst", level.c_str(), mainScript));
 		_loaded = true;
 
 		// reset flag or interface.vr will skip menu
@@ -461,7 +489,8 @@ void PhoenixVREngine::loadNextScript() {
 	if (!s)
 		error("can't open script file %s", nextScript.c_str());
 
-	_script.reset(Script::load(*s, 1));
+	int version = (_gameDescription->flags & PHOENIXVR_V2) ? 2 : 1;
+	_script.reset(Script::load(*s, version));
 	for (auto &var : _script->getVarNames())
 		declareVariable(var);
 	if (gameIdMatches("dracula1")) {
@@ -1679,10 +1708,12 @@ Common::Error PhoenixVREngine::run() {
 	}
 
 	// try load level-specific script first (amerzone)
-	if (gameIdMatches("amerzone")) {
+	if (gameIdMatches("amerzone"))
 		setNextScript("intro.lst");
-	} else if (gameIdMatches("lochness"))
+	else if (gameIdMatches("lochness"))
 		setNextScript("first.lst");
+	else if (_gameDescription->flags & PHOENIXVR_V2)
+		setNextLevel();
 	else
 		setNextScript("script.lst");
 

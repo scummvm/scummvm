@@ -34,6 +34,10 @@ enum PhoenixVRDebugChannels {
 	kDebugScript,
 };
 
+enum PhoenixVRGameFlag {
+	PHOENIXVR_V2 = (1 << 0),
+};
+
 extern const PlainGameDescriptor phoenixvrGames[];
 
 extern const ADGameDescription gameDescriptions[];
