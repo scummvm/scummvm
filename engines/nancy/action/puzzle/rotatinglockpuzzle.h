@@ -23,6 +23,7 @@
 #define NANCY_ACTION_ROTATINGLOCKPUZZLE_H
 
 #include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/cursor.h"
 
 namespace Nancy {
 namespace Action {
@@ -46,6 +47,11 @@ public:
 	Common::Array<Common::Rect> _downHotspots;
 	Common::Array<byte> _correctSequence;
 	uint16 _iconsPerDial = 10;
+	// Cursor types shown while hovering a dial's up/down hotspot. Nancy 10+
+	// stores these per-puzzle (e.g. a crank uses the rotate-clockwise cursor);
+	// older games and unset fields default to the up/down movement cursors.
+	CursorManager::CursorType _upCursorType = CursorManager::kMoveUp;
+	CursorManager::CursorType _downCursorType = CursorManager::kMoveDown;
 	SoundDescription _clickSound;
 	SceneChangeWithFlag _solveExitScene;
 	uint16 _solveSoundDelay = 0;

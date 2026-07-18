@@ -95,8 +95,20 @@ void RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
 		_correctSequence.push_back(stream.readByte());
 	}
 
-	const uint padding = isNancy10 ? 12 : 8;
-	stream.skip(padding - numDials);
+	// The correct sequence occupies a fixed 8-byte slot regardless of dial count.
+	stream.skip(8 - numDials);
+
+	if (isNancy10) {
+		// Nancy 10 added per-puzzle cursor types for the up/down hotspots,
+		// stored right after the sequence slot. A value of 0 means "use the
+		// default movement cursor".
+		int16 upType = stream.readSint16LE();
+		int16 downType = stream.readSint16LE();
+		if (upType != 0)
+			_upCursorType = (CursorManager::CursorType)upType;
+		if (downType != 0)
+			_downCursorType = (CursorManager::CursorType)downType;
+	}
 
 	_clickSound.readNormal(stream);
 
@@ -212,7 +224,7 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
 
 	for (uint i = 0; i < _upHotspots.size(); ++i) {
 		if (NancySceneState.getViewport().convertViewportToScreen(_upHotspots[i]).contains(input.mousePos)) {
-			g_nancy->_cursor->setCursorType(CursorManager::kMoveUp);
+			g_nancy->_cursor->setCursorType(_upCursorType, true);
 
 			if (!g_nancy->_sound->isSoundPlaying(_clickSound) && input.input & NancyInput::kLeftMouseButtonUp) {
 				g_nancy->_sound->playSound(_clickSound);
@@ -230,7 +242,7 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
 
 	for (uint i = 0; i < _downHotspots.size(); ++i) {
 		if (NancySceneState.getViewport().convertViewportToScreen(_downHotspots[i]).contains(input.mousePos)) {
-			g_nancy->_cursor->setCursorType(CursorManager::kMoveDown);
+			g_nancy->_cursor->setCursorType(_downCursorType, true);
 
 			if (!g_nancy->_sound->isSoundPlaying(_clickSound) && input.input & NancyInput::kLeftMouseButtonUp) {
 				g_nancy->_sound->playSound(_clickSound);
