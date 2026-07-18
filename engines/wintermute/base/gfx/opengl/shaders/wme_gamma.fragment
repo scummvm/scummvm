@@ -1,0 +1,13 @@
+varying vec2 texPos;
+
+uniform sampler2D tex;
+uniform float gammaValue;
+
+OUTPUT
+
+void main() {
+	vec4 color = texture2D(tex, texPos);
+	float t = (gammaValue - 140.0) / 15.0;
+	float gamma = exp2(t * 0.5);
+	outColor = vec4(pow(color.rgb, vec3(1.0 / gamma)), 1.0);
+}

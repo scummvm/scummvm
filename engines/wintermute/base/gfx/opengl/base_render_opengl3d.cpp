@@ -27,6 +27,7 @@
 #include "engines/wintermute/ad/ad_walkplane.h"
 #include "engines/wintermute/ad/ad_waypoint_group3d.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/gfx/3dcamera.h"
 #include "engines/wintermute/base/gfx/3dlight.h"
@@ -1042,6 +1043,77 @@ bool BaseRenderOpenGL3D::setProjectionTransform(const DXMatrix &transform) {
 }
 
 void BaseRenderOpenGL3D::postfilter() {
+	GLfloat vertices[] = {
+		-1.0f, -1.0f,
+		1.0f, -1.0f,
+		1.0f,  1.0f,
+		-1.0f,  1.0f
+	};
+
+	GLfloat texCoords[] = {
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f
+	};
+
+	// This is for game 'Oknytt'
+	if (_gamma != -1) {
+		setup2D();
+		glViewport(0, 0, _width, _height);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+
+		glMatrixMode(GL_TEXTURE);
+		glLoadIdentity();
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		glDisable(GL_BLEND);
+		glDisable(GL_ALPHA_TEST);
+		glDisable(GL_CULL_FACE);
+
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, _postfilterTexture);
+
+		g_system->presentBuffer();
+		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 0, 0, _width, _height, 0);
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glVertexPointer(2, GL_FLOAT, 0, vertices);
+		glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
+
+		if (_gamma <= 140) {
+			float factor = 1.0f - (140.0f - _gamma) / 50.0f;
+			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+			glColor4f(factor, factor, factor, 1.0f);
+			glDrawArrays(GL_QUADS, 0, 4);
+		} else {
+			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+			glDrawArrays(GL_QUADS, 0, 4);
+			float alpha = (_gamma - 140.0f) / 200.0f;
+			glDisable(GL_TEXTURE_2D);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glColor4f(1.0f, 1.0f, 1.0f, alpha);
+			glDrawArrays(GL_QUADS, 0, 4);
+			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			glDisable(GL_BLEND);
+		}
+
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_TEXTURE_2D);
+
+		return;
+	}
+
 	if (_postFilterMode == kPostFilterOff)
 		return;
 
@@ -1056,20 +1128,6 @@ void BaseRenderOpenGL3D::postfilter() {
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
-	GLfloat vertices[] = {
-		-1.0f, -1.0f,
-		 1.0f, -1.0f,
-		 1.0f,  1.0f,
-		-1.0f,  1.0f
-	};
-
-	GLfloat texCoords[] = {
-		0.0f, 0.0f,
-		1.0f, 0.0f,
-		1.0f, 1.0f,
-		0.0f, 1.0f
-	};
 
 	if (_postFilterMode == kPostFilterBlackAndWhite ||
 		_postFilterMode == kPostFilterSepia) {
@@ -1123,7 +1181,7 @@ void BaseRenderOpenGL3D::postfilter() {
 
 		g_system->presentBuffer();
 		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 0, 0, _width, _height, 0);
-		
+
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
 		glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
 		GLfloat luminanceWeights[] = { 0.65f, 0.65f, 0.65f };

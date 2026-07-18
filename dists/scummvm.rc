@@ -104,6 +104,8 @@ shaders/wme_fade.fragment               FILE    "engines/wintermute/base/gfx/ope
 shaders/wme_fade.vertex                 FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_fade.vertex"
 shaders/wme_flat_shadow_modelx.fragment FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_modelx.fragment"
 shaders/wme_flat_shadow_modelx.vertex   FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_modelx.vertex"
+shaders/wme_gamma.fragment              FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_gamma.fragment"
+shaders/wme_gamma.vertex                FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_gamma.vertex"
 shaders/wme_geometry.fragment           FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_geometry.fragment"
 shaders/wme_geometry.vertex             FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_geometry.vertex"
 shaders/wme_line.fragment               FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_line.fragment"

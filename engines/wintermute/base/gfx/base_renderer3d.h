@@ -155,6 +155,13 @@ public:
 
 	void endSaveLoad() override;
 
+	void setGamma(int32 gamma) {
+		_gamma = gamma;
+	}
+	float getGamma() {
+		return _gamma;
+	}
+
 	// ScummVM specific methods <--
 
 protected:
@@ -168,6 +175,7 @@ protected:
 	TRendererState _state;
 	PostFilter _postFilterMode;
 	bool _flipInProgress;
+	int32 _gamma;
 
 	virtual void setAmbientLightRenderState() = 0;
 };

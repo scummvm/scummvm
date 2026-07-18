@@ -63,6 +63,7 @@ BaseRenderOpenGL3DShader::~BaseRenderOpenGL3DShader() {
 	glDeleteBuffers(1, &_rectangleVBO);
 	glDeleteBuffers(1, &_simpleShadowVBO);
 	glDeleteBuffers(1, &_postfilterVBO);
+	glDeleteBuffers(1, &_gammaVBO);
 }
 
 bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed) {
@@ -183,6 +184,16 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	_postfilterShader = OpenGL::Shader::fromFiles("wme_postfilter", postfilterAttributes);
 	_postfilterShader->enableVertexAttribute("position", _postfilterVBO, 2, GL_FLOAT, false, 4 * sizeof(GLfloat), 0);
 	_postfilterShader->enableVertexAttribute("texcoord", _postfilterVBO, 2, GL_FLOAT, false, 4 * sizeof(GLfloat), 8);
+
+	glGenBuffers(1, &_gammaVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _gammaVBO);
+	glBufferData(GL_ARRAY_BUFFER, 16 * sizeof(GLfloat), quadVertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	static const char *gammaAttributes[] = { "position", "texcoord", nullptr };
+	_gammaShader = OpenGL::Shader::fromFiles("wme_gamma", gammaAttributes);
+	_gammaShader->enableVertexAttribute("position", _gammaVBO, 2, GL_FLOAT, false, 4 * sizeof(GLfloat), 0);
+	_gammaShader->enableVertexAttribute("texcoord", _gammaVBO, 2, GL_FLOAT, false, 4 * sizeof(GLfloat), 8);
 
 	glGenTextures(1, &_postfilterTexture);
 	glBindTexture(GL_TEXTURE_2D, _postfilterTexture);
@@ -1151,6 +1162,30 @@ bool BaseRenderOpenGL3DShader::setProjectionTransform(const DXMatrix &transform)
 }
 
 void BaseRenderOpenGL3DShader::postfilter() {
+	// This is for game 'Oknytt'
+	if (_gamma != -1) {
+		setup2D();
+		glViewport(0, 0, _width, _height);
+		glDisable(GL_BLEND);
+		glDisable(GL_CULL_FACE);
+
+		_gammaShader->use();
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, _postfilterTexture);
+		glUniform1i(_gammaShader->getUniformLocation("tex"), 0);
+		_gammaShader->setUniform1f("gammaValue", _gamma);
+
+		g_system->presentBuffer();
+		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 0, 0, _width, _height, 0);
+
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		return;
+	}
+
 	if (_postFilterMode == kPostFilterOff)
 		return;
 

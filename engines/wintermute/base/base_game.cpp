@@ -2850,6 +2850,37 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->pushNULL();
 
 		return STATUS_OK;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	// SetGamma
+	// This is for game 'Oknytt'
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "SetGamma") == 0) {
+		stack->correctParams(1);
+
+		int32 gamma = stack->pop()->getInt(0);
+
+		if (_renderer3D)
+			_renderer3D->setGamma(gamma);
+
+		stack->pushNULL();
+
+		return STATUS_OK;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	// GetGamma
+	// This is for game 'Oknytt'
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetGamma") == 0) {
+		stack->correctParams(0);
+
+		int32 gamma = 0;
+		if (_renderer3D)
+			gamma = _renderer3D->getGamma();
+
+		stack->pushInt(gamma);
+
+		return STATUS_OK;
 	} else {
 		return BaseObject::scCallMethod(script, stack, thisStack, name);
 	}
