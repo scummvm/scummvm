@@ -35,7 +35,7 @@ namespace {
 constexpr int kMessengerInventorySlots = 12;
 constexpr int kMessengerDisplayedInventorySlots = 8;
 constexpr int kLouvreChestSize = 128;
-constexpr Common::Rect kLouvreTextRect({62, 402}, 354, 466);
+constexpr Common::Rect kLouvreTextRect({62, 402}, 292, 64);
 constexpr uint16 kLouvreTextColor = 1987;
 constexpr uint16 kLouvreWarningTextColor = 63687;
 constexpr uint32 kLouvreTextBlockMillis = 5000;
