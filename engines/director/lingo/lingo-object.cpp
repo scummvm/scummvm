@@ -519,7 +519,23 @@ Common::String Lingo::normalizeXLibName(Common::String name) {
 	return name;
 }
 
+Common::String Lingo::xlibFileName(Common::String name) {
+	// Same as normalizeXLibName(), but keeps the file extension, as `the xtraList`
+	// reports the Xtras by their on-disk file name (e.g. "DIRECTME.X32").
+	name = convertPath(name);
+
+	size_t pos = name.findLastOf(g_director->_dirSeparator);
+	if (pos != Common::String::npos)
+		name = name.substr(pos + 1, name.size());
+
+	name.trim();
+
+	return name;
+}
+
 void Lingo::openXLib(Common::String name, ObjectType type, const Common::Path &path) {
+	Common::String fileName = xlibFileName(name);
+
 	name = normalizeXLibName(name);
 
 	if (_openXLibs.contains(name))
@@ -539,6 +555,25 @@ void Lingo::openXLib(Common::String name, ObjectType type, const Common::Path &p
 	}
 
 	_openXLibs[name] = type;
+
+	// Director keeps every Xtra it finds registered with the application, whether or
+	// not the movie uses it, and `the xtraList` reports them by file name. Remember
+	// the name we were opened with, including any extension; the ones we have no
+	// implementation for still have to show up there, as games test the list to
+	// detect Xtras. reloadOpenXLibs() reopens us under the normalized name, so keep
+	// the first name seen for an Xtra.
+	if (type == kXtraObj) {
+		bool known = false;
+		for (auto &it : _openXtraFiles) {
+			if (normalizeXLibName(it).equalsIgnoreCase(name)) {
+				known = true;
+				break;
+			}
+		}
+
+		if (!known)
+			_openXtraFiles.push_back(fileName);
+	}
 
 	if (_xlibOpeners.contains(name)) {
 		(*_xlibOpeners[name])(type, path);

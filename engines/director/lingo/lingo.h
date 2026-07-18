@@ -406,6 +406,7 @@ public:
 	void cleanupXLibs();
 
 	Common::String normalizeXLibName(Common::String name);
+	Common::String xlibFileName(Common::String name);
 	void openXLib(Common::String name, ObjectType type, const Common::Path &path);
 	void closeXLib(Common::String name);
 	void closeOpenXLibs();
@@ -548,6 +549,7 @@ public:
 	OpenXLibsHash _openXLibs;
 	OpenXLibsStateHash _openXLibsState;
 	Common::StringArray _openXtras;
+	Common::StringArray _openXtraFiles;	// File names of the registered Xtras, as reported by `the xtraList`
 	Common::Array<Datum> _openXtraObjects;
 	OpenXLibsStateHash _openXtrasState;
 
