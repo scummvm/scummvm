@@ -250,4 +250,91 @@ class UtilTestSuite : public CxxTest::TestSuite {
 			 }
 		}
 	}
+
+	struct SwapTestBoth {
+		int value = 0;
+		SwapTestBoth(int v) : value(v) {}
+	};
+
+	struct SwapTestCopyable {
+		int value = 0;
+		SwapTestCopyable(int v) : value(v) {}
+		SwapTestCopyable(const SwapTestCopyable &o) : value(o.value) {}
+		SwapTestCopyable &operator =(const SwapTestCopyable &o) {
+			value = o.value;
+			return *this;
+		}
+		SwapTestCopyable(SwapTestCopyable &&o) = delete;
+		SwapTestCopyable &operator =(SwapTestCopyable &&o) = delete;
+	};
+	static_assert(Common::is_copy_constructible<SwapTestCopyable>::v, "SwapTestCopyable should be copy constructible");
+	static_assert(Common::is_copy_assignable<SwapTestCopyable>::v, "SwapTestCopyable should be copy assignable");
+	static_assert(!Common::is_move_constructible<SwapTestCopyable>::v, "SwapTestCopyable should not be move constructible");
+	static_assert(!Common::is_move_assignable<SwapTestCopyable>::v, "SwapTestCopyable should not be move assignable");
+
+	struct SwapTestMovable {
+		int value = 0;
+		SwapTestMovable(int v) : value(v) {}
+		SwapTestMovable(SwapTestMovable &&o) : value(o.value) {
+			o.value = -1;
+		}
+		SwapTestMovable &operator =(SwapTestMovable &&o) {
+			value = o.value;
+			o.value = -1;
+			return *this;
+		}
+		SwapTestMovable(const SwapTestMovable &o) = delete;
+		SwapTestMovable &operator =(const SwapTestMovable &o) = delete;
+	};
+	static_assert(!Common::is_copy_constructible<SwapTestMovable>::v, "SwapTestMovable should not be copy constructible");
+	static_assert(!Common::is_copy_assignable<SwapTestMovable>::v, "SwapTestMovable should not be copy assignable");
+	static_assert(Common::is_move_constructible<SwapTestMovable>::v, "SwapTestMovable should be move constructible");
+	static_assert(Common::is_move_assignable<SwapTestMovable>::v, "SwapTestMovable should be move assignable");
+
+	struct SwapTestMoveConstructible {
+		int value = 0;
+		SwapTestMoveConstructible(int v) : value(v) {}
+		SwapTestMoveConstructible(SwapTestMoveConstructible &&o) : value(o.value) {
+			o.value = -1;
+		}
+		// this is breaking rule-of-five but SWAP should be able to handle it anyways using copy
+		SwapTestMoveConstructible &operator =(SwapTestMoveConstructible &&o) = delete;
+
+		SwapTestMoveConstructible(const SwapTestMoveConstructible &o) : value(o.value) {}
+		SwapTestMoveConstructible &operator =(const SwapTestMoveConstructible &o) {
+			value = o.value;
+			return *this;
+		}
+	};
+	static_assert(Common::is_copy_constructible<SwapTestMoveConstructible>::v, "SwapTestMoveConstructible should be copy constructible");
+	static_assert(Common::is_copy_assignable<SwapTestMoveConstructible>::v, "SwapTestMoveConstructible should be copy assignable");
+	static_assert(Common::is_move_constructible<SwapTestMoveConstructible>::v, "SwapTestMoveConstructible should be move constructible");
+	static_assert(!Common::is_move_assignable<SwapTestMoveConstructible>::v, "SwapTestMoveConstructible should not be move assignable");
+
+	void test_swap() {
+		{
+			SwapTestBoth a(1), b(2);
+			SWAP(a, b);
+			TS_ASSERT_EQUALS(a.value, 2);
+			TS_ASSERT_EQUALS(b.value, 1);
+		}
+		{
+			SwapTestCopyable a(1), b(2);
+			SWAP(a, b);
+			TS_ASSERT_EQUALS(a.value, 2);
+			TS_ASSERT_EQUALS(b.value, 1);
+		}
+		{
+			SwapTestMovable a(1), b(2);
+			SWAP(a, b);
+			TS_ASSERT_EQUALS(a.value, 2);
+			TS_ASSERT_EQUALS(b.value, 1);
+		}
+		{
+			SwapTestMoveConstructible a(1), b(2);
+			SWAP(a, b);
+			TS_ASSERT_EQUALS(a.value, 2);
+			TS_ASSERT_EQUALS(b.value, 1);
+		}
+	}
 };

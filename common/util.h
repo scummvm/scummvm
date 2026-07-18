@@ -83,7 +83,7 @@ template<typename T> inline T CLIP(T v, T amin, T amax)
 /**
  * Template method to swap the values of its two parameters.
  */
-template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
+template<typename T> inline void SWAP(T &a, T &b);
 
 /** Function to rotate the 32-bit integer @p x left by @p r bits */
 static inline uint32 ROTATE_LEFT_32(const uint32 x, const uint32 r) {
@@ -439,8 +439,31 @@ namespace DateTime {
 	int64 getTime();
 }
 
+template<typename T, bool useMove = Common::is_move_constructible<T>::v && Common::is_move_assignable<T>::v>
+struct SWAP_helper {};
+
+template<typename T>
+struct SWAP_helper<T, true> {
+	static void swap(T &a, T &b) {
+		T tmp = Common::move(a);
+		a = Common::move(b);
+		b = Common::move(tmp);
+	}
+};
+
+template<typename T>
+struct SWAP_helper<T, false> {
+	static void swap(T &a, T &b) {
+		T tmp = a;
+		a = b;
+		b = tmp;
+	}
+};
+
 /** @} */
 
 } // End of namespace Common
+
+template<typename T> inline void SWAP(T &a, T &b) { Common::SWAP_helper<T>::swap(a, b); }
 
 #endif
