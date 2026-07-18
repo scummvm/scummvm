@@ -385,7 +385,11 @@
   clamps and stores the requested cursor row without changing its presentation.
   Action 36 calls `DispatchUiSelectionIndexChange` at `0x4a630`, which applies
   a valid row to the active selection presentation. KR initializes both with
-  row 14; action 9999 then terminates the nested runtime normally.
+  row 14. Its startup callback then plays `VH_1.AVI` with keyboard controls
+  disabled. `ExecutePresentationEntry` at `0x1652a` passes that zero control
+  flag to `RunMediaPresentation` at `0x168af`, whose zero branch retains the
+  movie's final rendered page for the following type-2 `interface` frame.
+  Action 9999 then terminates the nested runtime normally.
 
 ## Puzzles
 
@@ -720,12 +724,14 @@
   the video decoder. `ExecutePresentationEntry` routes IAVF media through
   `RunMediaPresentation` at `0x168af`. It first deactivates the UI selection
   presentation, removing the active cursor before playback; the next frame's
-  interaction presentation makes the cursor visible again. The media wrapper
-  preserves the current logical display page before packetized playback, then
-  fades out, redraws the saved page through `DispatchDisplayDirtyRegionUpdate`
-  at `0x4e4b0`, and fades its palette back in before returning. The
-  reimplementation snapshots and restores the indexed framebuffer and palette
-  around opcode `0x1a` media for the same separation. This is required both
+  interaction presentation makes the cursor visible again. When keyboard
+  controls are enabled, the media wrapper preserves the current logical display
+  page before packetized playback, then fades out, redraws the saved page through
+  `DispatchDisplayDirtyRegionUpdate` at `0x4e4b0`, and fades its palette back in
+  before returning. With keyboard controls disabled, the zero branch retains
+  the media's final rendered page. The reimplementation therefore snapshots and
+  restores the indexed framebuffer and palette only for the controlled branch.
+  This is required both
   when a following opcode `0x1b` preview draws only the 300-pixel scene area and
   when the callback returns directly to a type-2 frame such as `BAZ2`, which has
   no media to redraw itself.
