@@ -213,8 +213,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 		if (BaseEngine::instance().getGameId() == "spacemadness") {
 			// 'Space Madness' (to copy bonus wallpapers from data.dcp to /saves/ folder)
-		} else if (BaseEngine::instance().getGameId() == "goldencalf") {
-			// 'The Golden Calf' (to save temporary screenshot as savegame screenshot)
+		} else if (BaseEngine::instance().getGameId() == "goldencalf" ||
+				   BaseEngine::instance().getGameId() == "msos") {
+			// 'The Golden Calf' and 'Monday Starts on Saturday' (to save temporary screenshot as savegame screenshot)
 			_readFile = _game->_fileManager->openFile(_filename);
 			if (_readFile) {
 				Common::WriteStream *stream = openSfmFileForWrite(dest);
