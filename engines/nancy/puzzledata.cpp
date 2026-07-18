@@ -409,8 +409,14 @@ void TaskbarData::synchronize(Common::Serializer &ser) {
 	}
 }
 
+void WordFindPuzzleData::synchronize(Common::Serializer &ser) {
+	ser.syncAsSint16LE(currentWord);
+}
+
 PuzzleData *makePuzzleData(const uint32 tag) {
 	switch(tag) {
+	case WordFindPuzzleData::getTag():
+		return new WordFindPuzzleData();
 	case SliderPuzzleData::getTag():
 		return new SliderPuzzleData();
 	case RippedLetterPuzzleData::getTag():

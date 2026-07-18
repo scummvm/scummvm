@@ -320,6 +320,19 @@ struct TaskbarData : public PuzzleData {
 	bool notifications[kNumButtons][kNumNotificationSubCategories] = {};
 };
 
+// Nancy13+ WordFindPuzzle (AR 170). The puzzle is solved one word at a time across
+// several scene visits; this remembers which word is currently active so progress
+// survives leaving and re-entering the scene (and saving/loading).
+struct WordFindPuzzleData : public PuzzleData {
+	WordFindPuzzleData() {}
+	virtual ~WordFindPuzzleData() {}
+
+	static constexpr uint32 getTag() { return MKTAG('W', 'F', 'N', 'D'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	int16 currentWord = 0;
+};
+
 PuzzleData *makePuzzleData(const uint32 tag);
 
 } // End of namespace Nancy

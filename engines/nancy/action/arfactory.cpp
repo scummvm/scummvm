@@ -86,6 +86,7 @@
 #include "engines/nancy/action/puzzle/twodialpuzzle.h"
 #include "engines/nancy/action/puzzle/typingquizpuzzle.h"
 #include "engines/nancy/action/puzzle/whalesurvivorpuzzle.h"
+#include "engines/nancy/action/puzzle/wordfindpuzzle.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -194,6 +195,11 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new StartPlayerScrolling();
 	case 32:	// Nancy10
 		return new UIPopupPrepScene();
+	case 40:
+		if (g_nancy->getGameType() <= kGameTypeNancy1)
+			return new LightningOn(); // Only used in TVD
+		else
+			return new SpecialEffect();
 	case 41:	// Nancy14
 	case 44:	// Nancy14 (adds a trailing volume byte)
 		return new PlaySecondaryMovie();
@@ -207,11 +213,6 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 47:	// Nancy14 - PlaySecondaryMovie subclass with a per-frame flag list
 		// TODO: not yet implemented
 		return nullptr;
-	case 40:
-		if (g_nancy->getGameType() <= kGameTypeNancy1)
-			return new LightningOn();	// Only used in TVD
-		else
-			return new SpecialEffect();
 	case 50:
 		return new ConversationVideo(); // PlayPrimaryVideoChan0
 	case 51:
@@ -471,12 +472,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 169:
 		return new StepObjectsPuzzle();
 	case 170:
-		if (g_nancy->getGameType() >= kGameTypeNancy13) {
-			// WordFindPuzzle, new in Nancy13. This reuses the slot that used
-			// to hold SetPlayerClock (which itself moved to 140 in Nancy12).
-			// TODO: not yet implemented
-			return nullptr;
-		}
+		if (g_nancy->getGameType() >= kGameTypeNancy13)
+			return new WordFindPuzzle();
 		return new SetPlayerClock();	// moved to 140 in Nancy12
 	case 171:
 		return new TurningPuzzle();	// moved from 209 in Nancy13
