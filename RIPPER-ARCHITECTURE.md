@@ -401,6 +401,9 @@
 - The Ka chooser sources game-text entries `0xaa` through `0xad`. Consuming a
   choice sets flags `0x14a` through `0x14d` and starts, respectively,
   `LI1_1_VA.WAV`, `LI1_1_VB.WAV`, `LI1_1_VD.WAV`, or `LI1_1_VC.WAV`.
+  Each available item retains the retail choice ID 0 through 3 even when
+  earlier choices have been filtered out; the selected ID drives both the
+  progress-bit offset and the voice switch in `RunKaDialogueScene`.
   Choice `0x14c` is exposed after the card presentation sets flag `0xcc`; on
   voice completion it enters the separate book-code puzzle. Choice `0x14d` is
   gated by act-one flag 2 and the startup asset-catalog flag for `SB2_1_D`;
