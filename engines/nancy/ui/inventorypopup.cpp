@@ -113,6 +113,10 @@ void InventoryPopup::close() {
 void InventoryPopup::refreshGrid() {
 	rebuildVisibleList();
 
+	// The whole grid is redrawn below with every slot in its plain state, so
+	// any previous hover highlight is gone.
+	_hoveredSlot = -1;
+
 	drawBackground();
 	drawFilterTabs();
 	drawFilterCaption();
@@ -347,7 +351,7 @@ void InventoryPopup::playButtonClickSound(const UIButtonRecord &button) {
 	g_nancy->_sound->playSound(sound);
 }
 
-void InventoryPopup::drawSlot(uint slotIndex, int16 itemId) {
+void InventoryPopup::drawSlot(uint slotIndex, int16 itemId, bool highlighted) {
 	if (slotIndex >= _uiivData->slotDestRects.size())
 		return;
 
@@ -355,13 +359,20 @@ void InventoryPopup::drawSlot(uint slotIndex, int16 itemId) {
 		return;
 
 	const INV::ItemDescription &desc = _invData->itemDescriptions[itemId];
-	if (desc.sourceRect.isEmpty())
+
+	// Hovering an item shows its highlighted sprite (the icon with a blue glow
+	// baked in) instead of the plain one. Both are opaque and cell-sized, so
+	// one fully overwrites the other. Fall back to the plain sprite if the game
+	// has no highlighted variant.
+	const Common::Rect &src = (highlighted && !desc.highlightedSourceRect.isEmpty())
+									? desc.highlightedSourceRect : desc.sourceRect;
+	if (src.isEmpty())
 		return;
 
 	const Common::Point chunkOrigin(_uiivData->header.normalDestRect.left,
 									_uiivData->header.normalDestRect.top);
 	const Common::Rect &slotDst = _uiivData->slotDestRects[slotIndex];
-	_drawSurface.blitFrom(_itemIcons, desc.sourceRect,
+	_drawSurface.blitFrom(_itemIcons, src,
 							Common::Point(slotDst.left - chunkOrigin.x,
 											slotDst.top - chunkOrigin.y));
 }
@@ -486,6 +497,18 @@ void InventoryPopup::handleInput(NancyInput &input) {
 			continue;
 		hoveredSlot = (int)i;
 		break;
+	}
+
+	// Swap the glow between slots when the hovered slot changes: restore the
+	// slot we left to its plain sprite and draw the newly hovered one with its
+	// highlighted sprite.
+	if (hoveredSlot != _hoveredSlot) {
+		if (_hoveredSlot != -1)
+			drawSlot((uint)_hoveredSlot, _slotItemIDs[_hoveredSlot], false);
+		if (hoveredSlot != -1)
+			drawSlot((uint)hoveredSlot, _slotItemIDs[hoveredSlot], true);
+		_hoveredSlot = hoveredSlot;
+		_needsRedraw = true;
 	}
 
 	if (hoveredSlot != -1) {

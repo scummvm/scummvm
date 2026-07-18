@@ -77,7 +77,7 @@ private:
 	static const uint kNumFilters = 3;
 
 	void drawBackground();
-	void drawSlot(uint slotIndex, int16 itemId);
+	void drawSlot(uint slotIndex, int16 itemId, bool highlighted = false);
 	void drawFilterTabs();
 	void drawFilterTab(uint index, bool drawHover = false);
 	void drawFilterCaption();
@@ -127,6 +127,10 @@ private:
 
 	// Item ID currently shown in each of the 16 slots (-1 if empty).
 	int16 _slotItemIDs[kSlotsPerPage];
+
+	// Slot the cursor is currently hovering over (-1 if none). The hovered
+	// occupied slot is drawn with the item's highlighted (blue-glow) sprite.
+	int _hoveredSlot = -1;
 
 	// Slider state. Driven by header.slider.
 	float _scrollPos = 0.0f;        // [0, 1]: 0 = top page, 1 = bottom page
