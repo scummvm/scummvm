@@ -313,6 +313,7 @@ bool CompiledScript::parseHeader() {
 		interaction.y = readSint16(offset + 0xd);
 		interaction.width = readSint16(offset + 0xf);
 		interaction.height = readSint16(offset + 0x11);
+		interaction.keyboardCommand = readUint16(offset + 0x13);
 		interaction.initialSelection = _data[offset + 0x15];
 		interaction.conditionOffset = readUint32(offset + 0x16);
 		interaction.callbackOffset = readUint32(offset + 0x1b);
@@ -676,11 +677,12 @@ void ScriptManager::initializeBa0InteractionState(const ScriptFrame &frame) {
 		const Common::Rect bounds = interactionBounds(interaction);
 		debugC(3, kDebugScene,
 			"Ripper: active scene interaction proxy script='%s' frame=%u interaction=%u "
-			"label='%s' raw=%d,%d,%d,%d screen=%d,%d,%d,%d enabled=%d",
+			"label='%s' raw=%d,%d,%d,%d screen=%d,%d,%d,%d key=0x%04x cursor=%u enabled=%d",
 			_ba0.getMemberName().c_str(), _activeBa0Frame,
 			frame.firstInteractionIndex + i, interaction.label.c_str(),
 			interaction.x, interaction.y, interaction.width, interaction.height,
 			bounds.left, bounds.top, bounds.width(), bounds.height(),
+			interaction.keyboardCommand, interaction.initialSelection,
 			_activeBa0InteractionEnabled[i]);
 	}
 	debugC(3, kDebugScene,
@@ -1415,22 +1417,28 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 	return true;
 }
 
+bool ScriptManager::captureCyberKeyboardCommand() {
+	if (!_cyberActive || !_engine->getInput()->hasPendingKey())
+		return false;
+	const uint16 command = _engine->getInput()->peekKey();
+	if (command != kCyberLeftCommand && command != kCyberRightCommand &&
+			command != kCyberChooseCommand && command != kCyberEscapeCommand)
+		return false;
+	_cyberKeyboardCommand = _engine->getInput()->consumeKey();
+	debugC(3, kDebugCyber,
+		"Ripper: captured Cyber keyboard command=0x%04x script='%s' frame=%u",
+		_cyberKeyboardCommand, _ba0.getMemberName().c_str(), _activeBa0Frame);
+	return true;
+}
+
 bool ScriptManager::serviceCyberKeyboardCommand() {
 	const uint16 command = _cyberKeyboardCommand;
 	_cyberKeyboardCommand = 0;
 	if (!_cyberActive || command == 0)
 		return true;
-	if (command == kCyberEscapeCommand) {
-		requestCyberExit("keyboard-escape");
-		_awaitingBa0Interaction = false;
-		_engine->getCursor()->setVisible(false);
-		return true;
-	}
 	if (!_awaitingBa0Interaction || _activeBa0Frame >= _ba0.getFrames().size())
 		return false;
 
-	const char *label = command == kCyberLeftCommand ? "left" :
-		(command == kCyberRightCommand ? "right" : "choose");
 	const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
 	const ScriptInteraction *interaction = nullptr;
 	uint interactionIndex = 0;
@@ -1439,15 +1447,15 @@ bool ScriptManager::serviceCyberKeyboardCommand() {
 		if (relativeIndex < _activeBa0InteractionEnabled.size() &&
 				_activeBa0InteractionEnabled[relativeIndex] &&
 				candidateIndex < _ba0.getInteractions().size() &&
-				_ba0.getInteractions()[candidateIndex].label.equalsIgnoreCase(label)) {
+				_ba0.getInteractions()[candidateIndex].keyboardCommand == command) {
 			interaction = &_ba0.getInteractions()[candidateIndex];
 			interactionIndex = candidateIndex;
 			break;
 		}
 	}
 	if (!interaction || interaction->callbackOffset == 0) {
-		warning("Ripper: Cyber keyboard command 0x%04x has no '%s' interaction in frame=%u",
-			command, label, _activeBa0Frame);
+		warning("Ripper: Cyber keyboard command 0x%04x has no bound interaction in script='%s' frame=%u",
+			command, _ba0.getMemberName().c_str(), _activeBa0Frame);
 		return false;
 	}
 
@@ -1489,6 +1497,7 @@ bool ScriptManager::serviceScene() {
 	const MouseState mouse = _engine->getInput()->publishMouseState();
 	if (_cyberExitRequested)
 		return true;
+	captureCyberKeyboardCommand();
 	if (_cyberKeyboardCommand != 0)
 		return serviceCyberKeyboardCommand();
 	if (_engine->getInput()->peekKey() == kHelpCommand) {
@@ -1504,7 +1513,7 @@ bool ScriptManager::serviceScene() {
 		return true;
 	const bool dialoguePending = _dialogue->isPending();
 	if (dialoguePending) {
-		if (_engine->getToolbar()->service(mouse)) {
+		if (!_cyberActive && _engine->getToolbar()->service(mouse)) {
 			if (!_pendingSceneMember.empty())
 				return performPendingSceneTransition();
 			_engine->getCursor()->setVisible(true);
@@ -1536,7 +1545,7 @@ bool ScriptManager::serviceScene() {
 		_hoveredBa0Interaction = -1;
 		return true;
 	}
-	if (!dialoguePending && _engine->getToolbar()->service(mouse)) {
+	if (!_cyberActive && !dialoguePending && _engine->getToolbar()->service(mouse)) {
 		if (!_pendingSceneMember.empty())
 			return performPendingSceneTransition();
 		_engine->getCursor()->update(kToolbarCursor);
@@ -1550,7 +1559,8 @@ bool ScriptManager::serviceScene() {
 
 	const uint cursorIndex = hoveredInteraction ?
 		(hoveredInteraction->conditionOffset != 0 ? 8 : hoveredInteraction->initialSelection) :
-		(dialoguePending && _dialogue->contains(mouse.position) ? kDialogueCursor : 0);
+		(dialoguePending && _dialogue->contains(mouse.position) ? kDialogueCursor :
+			_engine->getCursor()->getSelectionIndex());
 	_engine->getCursor()->update(cursorIndex);
 	const int hoveredIndex = hoveredInteraction ? (int)hoveredInteractionIndex : -1;
 	if (hoveredIndex != _hoveredBa0Interaction) {
@@ -1645,17 +1655,8 @@ void ScriptManager::drawBriefingOverlay() {
 }
 
 bool ScriptManager::updateInteractiveCursor(const Common::Point &point, bool *failed) {
-	if (_cyberActive && _engine->getInput()->hasPendingKey()) {
-		const uint16 command = _engine->getInput()->peekKey();
-		if (command == kCyberLeftCommand || command == kCyberRightCommand ||
-				command == kCyberChooseCommand || command == kCyberEscapeCommand) {
-			_cyberKeyboardCommand = _engine->getInput()->consumeKey();
-			debugC(3, kDebugCyber,
-				"Ripper: captured Cyber keyboard command=0x%04x frame=%u",
-				_cyberKeyboardCommand, _activeBa0Frame);
-			return false;
-		}
-	}
+	if (captureCyberKeyboardCommand())
+		return false;
 	const BriefingServiceResult briefingResult =
 		_briefing->service(_engine->getInput()->peekMouseState());
 	if (failed)
@@ -1664,7 +1665,7 @@ bool ScriptManager::updateInteractiveCursor(const Common::Point &point, bool *fa
 		return false;
 	if (!_awaitingBa0Interaction || _activeBa0Frame >= _ba0.getFrames().size())
 		return false;
-	if (_engine->getToolbar()->service(_engine->getInput()->peekMouseState())) {
+	if (!_cyberActive && _engine->getToolbar()->service(_engine->getInput()->peekMouseState())) {
 		_engine->getCursor()->setVisible(true);
 		_engine->getCursor()->update(kToolbarCursor);
 		return true;
@@ -1673,14 +1674,16 @@ bool ScriptManager::updateInteractiveCursor(const Common::Point &point, bool *fa
 		_dialogue->updateHover(point);
 		const ScriptInteraction *interaction = findBa0Interaction(point);
 		const uint cursorIndex = _dialogue->contains(point) ? kDialogueCursor :
-			(interaction ? (interaction->conditionOffset != 0 ? 8 : interaction->initialSelection) : 0);
+			(interaction ? (interaction->conditionOffset != 0 ? 8 : interaction->initialSelection) :
+				_engine->getCursor()->getSelectionIndex());
 		_engine->getCursor()->setVisible(true);
 		_engine->getCursor()->update(cursorIndex);
 		return false;
 	}
 	const ScriptInteraction *interaction = findBa0Interaction(point);
 	const uint cursorIndex = interaction ?
-		(interaction->conditionOffset != 0 ? 8 : interaction->initialSelection) : 0;
+		(interaction->conditionOffset != 0 ? 8 : interaction->initialSelection) :
+		_engine->getCursor()->getSelectionIndex();
 	_engine->getCursor()->setVisible(true);
 	_engine->getCursor()->update(cursorIndex);
 	return false;
@@ -1694,7 +1697,8 @@ void ScriptManager::updateModalSceneCursor(const Common::Point &point) {
 	const ScriptInteraction *interaction = _awaitingBa0Interaction ?
 		findBa0Interaction(point) : nullptr;
 	uint cursorIndex = interaction ?
-		(interaction->conditionOffset != 0 ? 8 : interaction->initialSelection) : 0;
+		(interaction->conditionOffset != 0 ? 8 : interaction->initialSelection) :
+		_engine->getCursor()->getSelectionIndex();
 	if (_dialogue->isPending() && _dialogue->contains(point))
 		cursorIndex = kDialogueCursor;
 	_engine->getCursor()->setVisible(true);
