@@ -1267,6 +1267,51 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		}
 		completedFinalSegment = i + 1 == movie.segments.size();
 	}
+	// RunPacketizedMediaPlaybackCore at 0x5b592 does not tear down the
+	// presentation when opcode 0x70 ends packet dispatch. It waits until
+	// GetManagedAudioTriggerActiveDescriptor reports that the managed-audio
+	// tail has completed. Some IAVF files, including KA_BOOK.AVI, have several
+	// seconds of audio after their final rendered frame.
+	if (result && completedFinalSegment && audioActive &&
+			!_engine->shouldQuit() && !_engine->getScripts()->hasPendingSceneTransition() &&
+			_mixer->isSoundHandleActive(audioHandle)) {
+		const uint32 targetAudioMs = (uint32)((uint64)(movie.audio.size() - audioTimelineOffset) *
+			1000 / audioByteRate);
+		debugC(2, kDebugVideo,
+			"Ripper: retaining final IAVF display '%s' for managed-audio tail targetMs=%u elapsedMs=%u",
+			name.c_str(), targetAudioMs, _mixer->getSoundElapsedTime(audioHandle));
+		bool paused = false;
+		bool skipped = false;
+		while (!_engine->shouldQuit() && _mixer->isSoundHandleActive(audioHandle)) {
+			if (_input->pollEvents()) {
+				_engine->quitGame();
+				result = false;
+				break;
+			}
+			if (allowEscSpace && _input->hasPendingKey()) {
+				const uint16 command = _input->consumeKey();
+				if (command == 0x1b || command == 0x4d00) {
+					skipped = true;
+					debugC(2, kDebugVideo,
+						"Ripper: %s completed final IAVF managed-audio tail '%s'",
+						command == 0x1b ? "Escape" : "Right Arrow", name.c_str());
+					break;
+				}
+				if (command == 0x20) {
+					paused = !paused;
+					_mixer->pauseHandle(audioHandle, paused);
+					debugC(2, kDebugVideo, "Ripper: Space %s IAVF managed-audio tail '%s'",
+						paused ? "paused" : "resumed", name.c_str());
+				}
+			}
+			g_system->delayMillis(10);
+		}
+		if (paused)
+			_mixer->pauseHandle(audioHandle, false);
+		debugC(2, kDebugVideo,
+			"Ripper: completed final IAVF managed-audio tail '%s' targetMs=%u elapsedMs=%u skipped=%d",
+			name.c_str(), targetAudioMs, _mixer->getSoundElapsedTime(audioHandle), skipped);
+	}
 	if (audioActive)
 		_mixer->stopHandle(audioHandle);
 	if (movie.clearDisplayAfter && completedFinalSegment) {
