@@ -413,6 +413,13 @@
   `DialogueManager`, including its three-row viewport, arrow controls,
   `small.fnt` metrics, normal colors 251/0, selected colors 4/248, mouse hover,
   and keyboard selection behavior.
+- In the Ka loop, `AdvanceCustomPacketPlaybackFrame` is followed by
+  `AcquireUiSelectionPresentationOverlay`, a complete
+  `DispatchDisplayDirtyRegionUpdate`, and `ReleaseBorrowedPresentationOverlay`
+  before `AdvanceSmackerPlaybackFrame`. ScummVM mirrors that presentation
+  boundary by submitting the shared chooser after each decoded callback frame;
+  otherwise the next movie update replaces the portion of its first row inside
+  y=50 through y=349 before the screen is presented.
 - Action 56 is the KR branch of `DispatchKSceneActionBand`; it calls
   `RunSceneScriptLoop("kr", 0, 0)`. ScummVM enters `kr.run` through a nested
   `CyberManager` snapshot which preserves the carousel script, active frame,
