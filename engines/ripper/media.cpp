@@ -1277,16 +1277,19 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 	}
 	file->seek(0);
 
-	// RunMediaPresentation at 0x168af preserves the current logical display
-	// page and palette while packetized IAVF media owns the physical presentation.
+	// ExecutePresentationEntry at 0x1652a passes its keyboard-control flag to
+	// RunMediaPresentation at 0x168af. Controlled IAVF media redraws the saved
+	// logical page afterward; uncontrolled media leaves its final frame visible.
 	const bool isSmacker = memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0;
 	const bool isIavf = memcmp(magic, "IAVF2.00", 8) == 0;
+	const bool restoreIavfDisplay = isIavf && allowEscSpace;
 	SavedDisplayContext displayContext;
-	const bool displayContextCaptured = isIavf && captureDisplayContext(displayContext);
+	const bool displayContextCaptured = restoreIavfDisplay && captureDisplayContext(displayContext);
 	if (isIavf) {
 		debugC(2, kDebugVideo,
-			"Ripper: captured script media display context media='%s' valid=%d size=%ux%u",
-			path.c_str(), displayContextCaptured, displayContext.width, displayContext.height);
+			"Ripper: IAVF display policy media='%s' keyboardControls=%d restore=%d captured=%d size=%ux%u",
+			path.c_str(), allowEscSpace, restoreIavfDisplay, displayContextCaptured,
+			displayContext.width, displayContext.height);
 	}
 
 	bool result = false;
@@ -1312,6 +1315,10 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 			path.c_str(), restored, displayContext.width, displayContext.height);
 		if (!restored)
 			result = false;
+	} else if (isIavf && !restoreIavfDisplay && result && !_engine->shouldQuit()) {
+		debugC(2, kDebugVideo,
+			"Ripper: retained final IAVF display media='%s' keyboardControls=%d",
+			path.c_str(), allowEscSpace);
 	}
 
 	_input->drainKeys();
