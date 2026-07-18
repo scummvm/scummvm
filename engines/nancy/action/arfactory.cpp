@@ -47,6 +47,7 @@
 #include "engines/nancy/action/puzzle/cuttingpuzzle.h"
 #include "engines/nancy/action/puzzle/dotconnectpuzzle.h"
 #include "engines/nancy/action/puzzle/drivingpuzzle.h"
+#include "engines/nancy/action/puzzle/dropsortpuzzle.h"
 #include "engines/nancy/action/puzzle/gridmappuzzle.h"
 #include "engines/nancy/action/puzzle/matchpuzzle.h"
 #include "engines/nancy/action/puzzle/hamradiopuzzle.h"
@@ -205,8 +206,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new PlaySecondaryMovie();
 	case 42:	// Nancy14
 	case 43:	// Nancy14
-		return new PlaySecondaryMovie(true);
-	case 45:	// Nancy11 - random-movie variant of PlaySecondaryMovie
+	case 45:	// Nancy11
 		return new PlaySecondaryMovie(true);
 	case 46:	// Nancy11
 		return new PlayRandomMovieControl();
@@ -490,9 +490,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		// TODO: not yet implemented
 		return nullptr;
 	case 176:
-		// DropSortPuzzle (drag-drop sort activity), new in Nancy13
-		// TODO: not yet implemented
-		return nullptr;
+		return new DropSortPuzzle();	// conveyor-belt candy sorting
 	// -- Nancy14 new puzzles (types 177-182) --
 	case 177:	// HangmanPuzzle
 		// TODO: not yet implemented
