@@ -69,10 +69,11 @@ static const uint16 kChoiceCommandBase = 0x7000;
 static const uint16 kFailureCommand = 0x7ffd;
 static const uint kHelpSelectionTable = 0x1a6;
 static const uint kLoopStartFrame = 1;
-static const byte kChooserBackgroundColor = 253;
-static const byte kChooserBorderColor = 254;
+static const byte kChooserBackgroundColor = 0;
+static const byte kChooserSelectionColor = 248;
+static const byte kChooserBorderColor = 248;
 static const byte kChooserTextColor = 4;
-static const byte kChooserHighlightColor = 255;
+static const byte kChooserHighlightColor = 254;
 
 static const uint kCardSeenFlag = 0xcc;
 static const uint kFirstChoiceFlag = 0x14a;
@@ -224,6 +225,13 @@ void KaDialogueScene::drawChoiceOverlay() {
 		const Choice &choice = _choices[i];
 		const int textY = kChoiceTop + kChoiceInset + i * kChoiceRowHeight;
 		const bool highlighted = (int)i + 2 == _hoveredControl || i == _selectedChoice;
+		if (highlighted) {
+			const int rowTop = textY - 2;
+			const int rowBottom = MIN<int>(rowTop + kChoiceRowHeight, bottom - 1);
+			for (int y = rowTop; y < rowBottom; ++y)
+				memset(pixels + y * screen->pitch + kChoiceLeft + 1,
+					kChooserSelectionColor, kChoiceRight - kChoiceLeft - 2);
+		}
 		drawText(pixels, screen->pitch, kChoiceLeft + kChoiceInset, textY,
 			_gameText[choice.textResource], highlighted ? kChooserHighlightColor :
 			kChooserTextColor);
@@ -547,6 +555,14 @@ KaDialogueScene::Result KaDialogueScene::run(uint sceneArgument) {
 		stopAllAudio();
 		return kLoadFailed;
 	}
+	// RunKaDialogueScene at 0x2aef5 issues display command 0x14 after
+	// KA_DECK.AVI. ClearGenericVideoLogicalPage at 0x45ed8 zeroes the page so
+	// KA_LOOP.SMK's 640x300 palette cannot recolor stale pixels in the bands.
+	g_system->fillScreen(0);
+	g_system->updateScreen();
+	debugC(2, kDebugDialogue,
+		"Ripper: cleared Ka deck display before loop media='%s' source=display-command-0x14",
+		kLoopMedia);
 	_engine->getMedia()->playSoundEffect("library3.wav", _ambientHandle, 100, true);
 	_acceptInput = true;
 
