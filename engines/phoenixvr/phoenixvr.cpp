@@ -1618,6 +1618,10 @@ Common::Error PhoenixVREngine::run() {
 
 	_screen = new Graphics::Screen();
 	_screenCenter = _screen->getBounds().center();
+
+	// Set the engine's debugger console before declaring script variables.
+	setDebugger(new Console());
+
 	{
 		Common::File vars;
 		if (vars.open(Common::Path("variable.txt"))) {
@@ -1659,9 +1663,6 @@ Common::Error PhoenixVREngine::run() {
 		setNextScript("first.lst");
 	else
 		setNextScript("script.lst");
-
-	// Set the engine's debugger console
-	setDebugger(new Console());
 
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");
