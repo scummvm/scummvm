@@ -464,9 +464,7 @@ void ComfyEngine::spriteGetConvPtr(int16 spriteId) {
 	if (!payload || width != 0xFFFF)
 		return;
 
-	// A width of 0xFFFF marks a conversion-cache payload. The original uses
-	// its first word as a tile index and copies the remaining payload to XMS;
-	// we keep this protocol but clearly we won't do an entire XMS reimplementation for this...
+	soundPlayFromPtr(payload);
 }
 
 void ComfyEngine::spriteBlitRle(byte *destination, const byte *source, uint32 sourceSize) {

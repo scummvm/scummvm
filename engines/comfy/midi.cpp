@@ -82,7 +82,8 @@ uint16 ComfyEngine::midiTick() {
 	}
 
 	while (_midiEvents.nextIndex != 999 && (int32)_midiInstanceEventTime >= _midiEvents.nextTime) {
-		keyBitSet(_midiEvents.entries[_midiEvents.nextIndex].id);
+		uint16 eventId = _midiEvents.entries[_midiEvents.nextIndex].id;
+		keyBitSet(eventId);
 		_midiEvents.count--;
 		_midiEvents.entries[_midiEvents.nextIndex] = _midiEvents.entries[_midiEvents.count];
 		midiFindNext(_midiEvents);
@@ -510,11 +511,7 @@ int16 ComfyEngine::midiApproachTarget(int16 current, int16 target, int16 &ticksL
 void ComfyEngine::musicSetEnabled(byte value) {
 	_musicEnabled = value;
 	if (!_animFrameReady || !_animUsesWaveVocCounter || value) {
-		_soundPaused = value != 0;
-		_mixer->pauseHandle(_soundHandle, _soundPaused);
-
-		if (_midiPlyrDriver)
-			_midiPlyrDriver->setIncreaseVocCounter(_soundPaused ? 0 : 1);
+		soundPauseOrResume(value);
 	}
 
 	if (!_midiPlyrDriver)

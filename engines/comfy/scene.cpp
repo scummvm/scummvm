@@ -91,7 +91,7 @@ void ComfyEngine::sceneBlockPackRuntimeState() {
 
 		WRITE_LE_UINT16(soundState + 0x68, _soundEventIndex);
 		WRITE_LE_UINT16(soundState + 0x6A, _soundEventMaximum);
-		soundPackState(soundState + 0x6C);
+		soundPackState();
 	}
 
 	byte *sceneEntries = &_sceneMemoryBlock[_sceneEntryListOffset];
@@ -224,6 +224,9 @@ void ComfyEngine::sceneBlockPackRuntimeState() {
 
 	if ((_engineVersion == 3 || _isPanther) && _usesAnimFile)
 		animFilePackState(&_sceneMemoryBlock[_sceneAnimStateOffset]);
+
+	if (_engineVersion == 3)
+		soundPackState();
 }
 
 void ComfyEngine::environmentPackToXms(byte *source, uint16 index) {
@@ -319,8 +322,13 @@ void ComfyEngine::sceneBlockUnpackRuntimeState() {
 
 		_soundEventIndex = READ_LE_UINT16(soundState + 0x68) % COMFY_PANTHER_VOC_QUEUE_CAPACITY;
 		_soundEventMaximum = READ_LE_UINT16(soundState + 0x6A) % COMFY_PANTHER_VOC_QUEUE_CAPACITY;
-		soundUnpackState(soundState + 0x6C);
 	}
+
+	if ((_engineVersion == 3 || _isPanther) && _usesAnimFile)
+		animFileUnpackState(&_sceneMemoryBlock[_sceneAnimStateOffset]);
+
+	if (_isPanther || _engineVersion == 3)
+		soundUnpackState();
 
 	byte *sceneEntries = &_sceneMemoryBlock[_sceneEntryListOffset];
 	_sceneEntryListActive = sceneEntries[0] != 0;
@@ -446,10 +454,6 @@ void ComfyEngine::sceneBlockUnpackRuntimeState() {
 
 	if (_keyBits && _keyBitsSize)
 		memcpy(_keyBits, &_sceneMemoryBlock[_sceneKeyBitsOffset], _keyBitsSize);
-
-	if ((_engineVersion == 3 || _isPanther) && _usesAnimFile)
-		animFileUnpackState(&_sceneMemoryBlock[_sceneAnimStateOffset]);
-
 }
 
 void ComfyEngine::sceneEntryInit(uint16 count) {
