@@ -530,18 +530,17 @@ void NotebookPopup::drawContent() {
 	buildTextLines();
 
 	// Chunk's textRect already provides top padding from the chrome.
-	// A small left inset gives breathing room; the bottom strip is
-	// reserved so the last line clears the inner bevel.
+	// A small left inset gives breathing room. The original draws text
+	// across the full text-rect height (source blit height == dest rect
+	// height), so no bottom strip is reserved.
 	const uint16 fontID = _uinbData->primaryFontID;
 	const Font *font = g_nancy->_graphics->getFont(fontID);
-	const int oW = font ? font->getCharWidth('o') : 0;
-	const int leftInset   = oW;
-	const int bottomInset = oW;
+	const int leftInset = font ? font->getCharWidth('o') : 0;
 
 	Common::Rect hypertextBounds(leftInset, 0, _fullSurface.w, _fullSurface.h);
 	drawAllText(hypertextBounds, 0, fontID, fontID);
 
-	const int visibleH = MAX<int>(0, localTextRect.height() - bottomInset);
+	const int visibleH = localTextRect.height();
 	const int maxScroll = MAX<int>(0, (int)_drawnTextHeight - visibleH);
 	const int safeMax = MAX<int>(0, (int)_fullSurface.h - visibleH);
 	int scrollY = (int)(_scrollPos * maxScroll);
