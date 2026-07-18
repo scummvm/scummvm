@@ -1126,6 +1126,23 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 					argument, script.getMemberName().c_str(), command.offset);
 				break;
 			}
+			if (action == kSceneActionKaDialogue) {
+				// DispatchKSceneActionBand at 0x36e84 preserves the Cyber menu
+				// runtime around RunKaDialogueScene at 0x2aef5, just as it does
+				// around the sibling K-scene script loops.
+				debugC(1, kDebugCyber,
+					"Ripper: dispatching Cyber dialogue action=%u name='%s' argument=%u activeScript='%s' frame=%u",
+					action, sceneActionName(action), argument,
+					_ba0.getMemberName().c_str(), _activeBa0Frame);
+				const CyberManager::Result cyberResult =
+					_engine->getCyber()->runProgram(action, "ka", argument);
+				debugC(cyberResult == CyberManager::kExited ? 1 : 2, kDebugCyber,
+					"Ripper: Cyber dialogue action=%u completed result=%d restoredScript='%s' frame=%u",
+					action, cyberResult, _ba0.getMemberName().c_str(), _activeBa0Frame);
+				if (cyberResult == CyberManager::kLoadFailed)
+					return false;
+				break;
+			}
 			if (action == kSceneActionKrProgram) {
 				// DispatchKSceneActionBand at 0x36e84 preserves the Cyber menu's
 				// palette, UI controls, chooser registry, and audio table around
