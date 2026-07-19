@@ -475,16 +475,22 @@ void Taskbar::handleInput(NancyInput &input) {
 		return;
 	}
 
+	// A badged (highlighted) button never depresses: it keeps showing its
+	// notification sprite through the press and release. Only non-highlighted
+	// buttons swap to the pressed sprite while held.
+	const bool isBadged = restingState(newHovered) == kButtonNotification;
+
 	if (input.input & NancyInput::kLeftMouseButtonDown) {
 		// Mouse pressed: show the pressed sprite for the duration of the hold.
-		if (_buttonStates[newHovered] != kButtonPressed) {
+		if (!isBadged && _buttonStates[newHovered] != kButtonPressed) {
 			drawButton(newHovered, kButtonPressed);
 		}
 	} else if (input.input & NancyInput::kLeftMouseButtonUp) {
 		// Mouse released over the button: trigger the click action and
-		// snap the sprite back to hover (the cursor is still over it).
-		// Badges are cleared per-view inside the popup, not on click.
-		drawButton(newHovered, kButtonHover);
+		// snap the sprite back to its resting hover state (the cursor is still
+		// over it). Badges are cleared per-view inside the popup, not on click,
+		// so a badged button keeps its badge here.
+		drawButton(newHovered, isBadged ? kButtonNotification : kButtonHover);
 		_clickedButton = newHovered;
 
 		playClickSound(newHovered);
