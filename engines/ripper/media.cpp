@@ -1022,6 +1022,15 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	};
 	while (!_engine->shouldQuit()) {
 		if (decoder.endOfVideo()) {
+			if (sequenceCallback && sequenceCallback->continueAfterEnd()) {
+				// Async scene choosers keep servicing input over the final decoded
+				// frame. HandleSceneEntryAsyncTextRequest at 0x157a1 does not stop
+				// RunMediaSequence while the chooser owns the callback continuation.
+				if (finishSequenceFramePresentation(decoder.getFrameCount()))
+					break;
+				g_system->delayMillis(10);
+				continue;
+			}
 			if (!sequenceCallback || loopStartFrame == 0)
 				break;
 			if (loopStartFrame > decoder.getFrameCount()) {
@@ -1077,7 +1086,9 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		}
 		bool skipToEnd = false;
 		bool advanceToNextSegment = false;
-		if (!servicePlaybackInput(decoder, allowEscSpace, advanceSegment != nullptr,
+		const bool callbackOwnsInput = sequenceCallback && sequenceCallback->ownsInput();
+		if (!servicePlaybackInput(decoder, allowEscSpace && !callbackOwnsInput,
+				advanceSegment != nullptr,
 				paused, toolbarPaused, skipToEnd, advanceToNextSegment,
 				externalAudio, toolbarOwnsInput, serviceSceneUi)) {
 			completed = false;
@@ -1602,10 +1613,11 @@ bool MediaPlayer::playPuzzleSequence(const Common::String &path, uint loopStartF
 }
 
 bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
-		bool loopUntilInput, bool allowEscSpace) {
+		bool loopUntilInput, bool allowEscSpace, MediaSequenceCallback *callback,
+		uint16 *command) {
 	debugC(1, kDebugVideo,
-		"Ripper: entering scene presentation media='%s' firstFrameOnly=%d loopUntilInput=%d controls=%d",
-		path.c_str(), firstFrameOnly, loopUntilInput, allowEscSpace);
+		"Ripper: entering scene presentation media='%s' firstFrameOnly=%d loopUntilInput=%d controls=%d callback=%d",
+		path.c_str(), firstFrameOnly, loopUntilInput, allowEscSpace, callback != nullptr);
 	Common::File *file = new Common::File();
 	if (!file->open(Common::Path(path))) {
 		warning("Ripper: could not open scene media '%s'", path.c_str());
@@ -1642,13 +1654,20 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 	if (memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0) {
 		result = playSmacker(file, path, allowEscSpace, x, y, nullptr, nullptr, nullptr,
 			0, 0, 1, true, frameLimit, kScenePresentationTop, false, true,
-			repeatedLoopPass);
+			repeatedLoopPass, nullptr, 0, callback, command);
 		if (!result && _stopSceneOnMouse && _input->peekMouseState().pressed != 0) {
 			result = true;
 			debugC(1, kDebugVideo,
 				"Ripper: interactive scene media stopped by mouse; returning to hotspot polling");
 		}
 	} else if (memcmp(magic, "IAVF2.00", 8) == 0 && !firstFrameOnly) {
+		if (callback) {
+			warning("Ripper: scene callback is unsupported for packetized media '%s'",
+				path.c_str());
+			delete file;
+			result = false;
+			break;
+		}
 		result = playIavf(*file, path, allowEscSpace, true);
 		delete file;
 	} else {

@@ -38,6 +38,7 @@ public:
 	void update(uint cursorIndex);
 	void refresh();
 	void setVisible(bool visible);
+	bool isVisible() const { return _visible; }
 	uint getSelectionIndex() const { return _selectionIndex; }
 
 private:

@@ -84,11 +84,26 @@ enum SceneAction {
 	kSceneActionRolodexPuzzle = 5,
 	kSceneActionCyberMenu = 6,
 	kSceneActionCrystalPuzzle = 29,
+	kSceneActionSetChooserTemplateMode = 30,
 	kSceneActionNoOp = 31,
 	kSceneActionClearDisplay = 32,
 	kSceneActionSetUiSelectionIndex = 35,
 	kSceneActionDispatchUiSelection = 36,
 	kSceneActionKaDialogue = 40,
+	kSceneActionKbProgram = 41,
+	kSceneActionKcOrWoffordProgram = 42,
+	kSceneActionKdProgram = 43,
+	kSceneActionKfProgram = 45,
+	kSceneActionKgProgram = 46,
+	kSceneActionKhProgram = 47,
+	kSceneActionKiProgram = 48,
+	kSceneActionKjProgram = 49,
+	kSceneActionKkProgram = 50,
+	kSceneActionKlProgram = 51,
+	kSceneActionKmProgram = 52,
+	kSceneActionKnProgram = 53,
+	kSceneActionKpProgram = 54,
+	kSceneActionKqProgram = 55,
 	kSceneActionKrProgram = 56,
 	kSceneActionBriefing = 300,
 	kSceneActionTerminateRuntime = 9999
@@ -199,9 +214,10 @@ public:
 
 private:
 	friend class CyberManager;
+	class IdleMediaCallback;
 
 	bool executeCallback(CompiledScript &script, uint32 callbackOffset, int &result,
-		uint *nextFrame = nullptr);
+		uint *nextFrame = nullptr, uint commandStart = 0);
 	bool captureCyberKeyboardCommand();
 	bool serviceCyberKeyboardCommand();
 	void bindBa0Frame(uint frameIndex);
@@ -217,6 +233,8 @@ private:
 	bool isScenePlayed(const Common::String &scene) const;
 	void markScenePlayed(const Common::String &scene);
 	static Common::String argumentString(const ScriptArgument &argument);
+	static bool textAnswersMatch(const Common::String &entered,
+		const Common::String &expected);
 
 	RipperEngine *_engine;
 	CompiledScript _startup;
@@ -236,6 +254,9 @@ private:
 	bool _cyberActive;
 	bool _cyberExitRequested;
 	uint16 _cyberKeyboardCommand;
+	uint _sceneCallbackFrame;
+	IdleMediaCallback *_activeIdleMediaCallback;
+	byte _chooserTemplateMode;
 	BriefingManager *_briefing;
 	DialogueChooser *_dialogue;
 };

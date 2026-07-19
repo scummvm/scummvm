@@ -34,12 +34,22 @@ class RipperEngine;
 
 class ModalDialogManager {
 public:
+	enum TextEntryResult {
+		kTextEntryPending,
+		kTextEntryAccepted,
+		kTextEntryCancelled,
+		kTextEntryFailed
+	};
+
 	explicit ModalDialogManager(RipperEngine *engine);
 
 	bool initialize(ResourceManager &resources);
 	bool run(uint bodyResourceId, bool retainSceneCursorRegions = false);
 	bool runText(const Common::String &title, const Common::String &body,
 		const char *source, bool retainSceneCursorRegions = false);
+	bool beginTextEntry(const Common::String &prompt, uint maximumLength,
+		uint helpResourceId, const char *source);
+	TextEntryResult serviceTextEntry(Common::String &text);
 
 private:
 	bool captureDisplay();
@@ -57,6 +67,13 @@ private:
 	void drawDialog(const Common::String &title,
 		const Common::Array<Common::String> &lines, uint firstVisible,
 		uint visibleRows, const Common::Rect &bounds) const;
+	void drawTextEntry(const Common::String &prompt, const Common::String &text,
+		uint firstVisible, uint cursorPosition, bool caretVisible,
+		const Common::Rect &bounds) const;
+	uint textEntryCursorFromPoint(const Common::String &text, uint firstVisible,
+		int x, const Common::Rect &bounds) const;
+	void updateTextEntryFirstVisible(const Common::Rect &bounds);
+	void finishTextEntry(Common::String &text);
 	bool runTextInternal(const Common::String &title, const Common::String &body,
 		uint bodyResourceId, const char *source, bool retainSceneCursorRegions);
 	const Common::String &resourceString(uint resourceId) const;
@@ -68,6 +85,18 @@ private:
 	Common::Array<Common::String> _gameText;
 	Common::Array<byte> _savedPixels;
 	Common::Array<byte> _savedPalette;
+	Common::String _textEntryPrompt;
+	Common::String _textEntryText;
+	Common::String _textEntrySource;
+	uint _textEntryMaximumLength;
+	uint _textEntryHelpResourceId;
+	uint _textEntryFirstVisible;
+	uint _textEntryCursorPosition;
+	uint32 _textEntryNextCaretMillis;
+	bool _textEntryOverwrite;
+	bool _textEntryCaretVisible;
+	bool _textEntryActive;
+	bool _textEntryRestoreCursor;
 	bool _initialized;
 };
 
