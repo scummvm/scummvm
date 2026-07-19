@@ -34,6 +34,9 @@ namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
 
+#define REX_ROOM_MAX_SERIES 10
+#define REX_ROOM_MAX_IMAGES 50
+
 /* Loadable Room definition (.DAT files) */
 struct RoomFileRex {
 	uint16 room_id;                  /* Room id                       */
@@ -49,11 +52,11 @@ struct RoomFileRex {
 
 	uint16 num_series;
 	uint16 num_images;
-	char series_name[10][64];
-	Image image_list[50];
+	char series_name[REX_ROOM_MAX_SERIES][64];
+	Image image_list[REX_ROOM_MAX_IMAGES];
 
-	static constexpr int SIZE = (5 * 2) + 24 + (5 * 2) + (16 * 2) + (Rail::SIZE * ROOM_MAX_RAILS) +
-		2 + 2 + (10 * 64) + (50 * Image::SIZE);
+	static constexpr int SIZE = (5 * 2) + 24 + (5 * 2) + (16 * 2) + (ROOM_MAX_RAILS * Rail::SIZE) +
+		2 + 2 + (REX_ROOM_MAX_SERIES * 64) + (REX_ROOM_MAX_IMAGES * Image::SIZE);
 	void load(Common::SeekableReadStream *src) {
 		src->readMultipleLE(room_id, picture_id, format, xs, ys);
 		src->skip(24);
@@ -63,6 +66,7 @@ struct RoomFileRex {
 		for (Rail &r : rail)
 			r.load(src);
 		src->readMultipleLE(num_series, num_images);
+		src->read(series_name, REX_ROOM_MAX_SERIES * 64);
 		for (Image &img : image_list)
 			img.load(src);
 	}
