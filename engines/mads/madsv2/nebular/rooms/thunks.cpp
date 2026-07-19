@@ -157,7 +157,10 @@ char *Resources::formatAAName(int num) {
 	return kernel_interface_name(num);
 }
 
-Scene::Animation::Animation(int anim_id) : _id(anim_id), _currentFrame(kernel_anim[anim_id].frame) {
+Scene::Animation::Animation(int anim_id) : _id(anim_id),
+		_currentFrame(kernel_anim[anim_id].frame),
+		_resetFlag(kernel_anim[anim_id].doomed),
+		_spriteListIndexes(&kernel_anim[anim_id].anim->series_id[0]) {
 }
 
 int Scene::Animation::getCurrentFrame() const {

@@ -167,10 +167,8 @@ struct Scene {
 	struct Animation {
 		int16 _id;
 		int &_currentFrame;
-
-		// TODO: Not sure what to map this to
-		bool _resetFlag = false;
-		int16 _spriteListIndexes[16] = {};
+		int &_resetFlag;
+		int *const _spriteListIndexes;
 
 		Animation(int anim_id);
 
