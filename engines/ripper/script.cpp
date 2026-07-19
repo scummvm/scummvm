@@ -43,6 +43,7 @@
 #include "ripper/puzzles/table_gate.h"
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
+#include "ripper/scenes/tube_scene.h"
 #include "ripper/toolbar.h"
 #include "ripper/world_map.h"
 
@@ -1286,6 +1287,16 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 					"Ripper: table gate puzzle scene action completed result=%d milestone=%u",
 					puzzleResult, argument);
 				if (puzzleResult == TableGatePuzzle::kLoadFailed)
+					return false;
+				break;
+			}
+			if (action == kSceneActionTubeSwitchScene) {
+				TubeScene scene(_engine);
+				const TubeScene::Result sceneResult = scene.run(argument);
+				debugC(1, kDebugScene,
+					"Ripper: tube switch scene action completed result=%d milestone=%u",
+					sceneResult, argument);
+				if (sceneResult == TubeScene::kLoadFailed)
 					return false;
 				break;
 			}

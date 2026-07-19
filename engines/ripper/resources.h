@@ -107,6 +107,8 @@ public:
 	bool initialize();
 	bool loadBitmapSequence(const Common::String &memberName,
 		BitmapAssetSequence &sequence) const;
+	bool loadBitmapLibrary(const Common::String &libraryName,
+		Common::Array<BitmapAssetFrame> &frames) const;
 	bool loadInterfaceBitmapSequence(const Common::String &memberName,
 		BitmapAssetSequence &sequence) const;
 	bool loadOptionsBitmapSequence(const Common::String &memberName,

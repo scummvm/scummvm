@@ -60,7 +60,8 @@ static const char *const kToolbarHandlerNames[kToolbarActionCount] = {
 };
 
 ToolbarManager::ToolbarManager(RipperEngine *engine) : _sessionStartMillis(0), _lastFrameMillis(0),
-		_hoveredAction(-1), _pressedAction(-1), _active(false), _previewEnabled(false),
+		_enabledActionMask(0), _hoveredAction(-1), _pressedAction(-1),
+		_active(false), _previewEnabled(false),
 		_engine(engine), _remoteControl(new RemoteControlManager(engine)),
 		_optionsPanel(new OptionsPanelManager(engine)) {
 }
@@ -103,26 +104,15 @@ bool ToolbarManager::initialize(ResourceManager &resources) {
 		}
 		_actions[i].label = gameText[i];
 	}
-	// RunFrontEndActionMenu at 0x18b3a lays controls out from right to left,
-	// subtracting each bitmap width and a five-pixel gap from x=630, then
-	// centers each bitmap vertically in the 50-pixel toolbar band.
-	int x = kToolbarRightEdge;
-	for (int i = kToolbarActionCount - 1; i >= 0; --i) {
+	for (uint i = 0; i < kToolbarActionCount; ++i) {
 		const BitmapAssetFrame &frame = _actions[i].sequence.frames[0];
-		x -= frame.width + kToolbarActionGap;
-		const int y = (kToolbarActivationHeight - frame.height) / 2;
-		_actions[i].bounds = Common::Rect(x, y, x + frame.width, y + frame.height);
 		for (uint frameIndex = 1; frameIndex < _actions[i].sequence.frames.size(); ++frameIndex) {
 			const BitmapAssetFrame &candidate = _actions[i].sequence.frames[frameIndex];
 			if (candidate.width != frame.width || candidate.height != frame.height)
 				return false;
 		}
-		debugC(2, kDebugResources,
-			"Ripper: toolbar action=%u label='%s' rect=%d,%d,%d,%d frames=%u",
-			i + 1, _actions[i].label.c_str(), _actions[i].bounds.left,
-			_actions[i].bounds.top, _actions[i].bounds.width(), _actions[i].bounds.height(),
-			_actions[i].sequence.frames.size());
 	}
+	layoutActions((1 << kToolbarActionCount) - 1);
 
 	debugC(1, kDebugScene,
 		"Ripper: initialized front-end toolbar actions=%u activationHeight=%d previewTicks=27",
@@ -143,7 +133,29 @@ void ToolbarManager::applySharedPalettePatch(byte *palette, uint colorCount) {
 	memcpy(palette + 246 * 3, _sharedPalette.data() + 246 * 3, 10 * 3);
 }
 
-void ToolbarManager::enter(uint32 now) {
+void ToolbarManager::layoutActions(uint enabledActionMask) {
+	// RunFrontEndActionMenu at 0x18b3a packs only the enabled controls from
+	// right to left, subtracting each bitmap width and a five-pixel gap from
+	// x=630, then centers the bitmap in the 50-pixel toolbar band.
+	int x = kToolbarRightEdge;
+	for (int i = kToolbarActionCount - 1; i >= 0; --i) {
+		if ((enabledActionMask & (1 << i)) == 0) {
+			_actions[i].bounds = Common::Rect();
+			continue;
+		}
+		const BitmapAssetFrame &frame = _actions[i].sequence.frames[0];
+		x -= frame.width + kToolbarActionGap;
+		const int y = (kToolbarActivationHeight - frame.height) / 2;
+		_actions[i].bounds = Common::Rect(x, y, x + frame.width, y + frame.height);
+		debugC(3, kDebugScene,
+			"Ripper: toolbar layout action=%u mask=0x%03x rect=%d,%d,%d,%d",
+			i + 1, enabledActionMask, _actions[i].bounds.left, _actions[i].bounds.top,
+			_actions[i].bounds.width(), _actions[i].bounds.height());
+	}
+}
+
+void ToolbarManager::enter(uint32 now, uint enabledActionMask) {
+	layoutActions(enabledActionMask);
 	byte palette[256 * 3];
 	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
 	applySharedPalettePatch(palette, 256);
@@ -162,13 +174,16 @@ void ToolbarManager::enter(uint32 now) {
 	g_system->unlockScreen();
 
 	_active = true;
+	_enabledActionMask = enabledActionMask;
 	_previewEnabled = false;
 	_hoveredAction = -1;
 	_pressedAction = -1;
 	_sessionStartMillis = now;
 	_lastFrameMillis = now;
 	drawIcons();
-	debugC(2, kDebugScene, "Ripper: entered toolbar input band y<%d", kToolbarActivationHeight);
+	debugC(2, kDebugScene,
+		"Ripper: entered toolbar input band y<%d enabledMask=0x%03x",
+		kToolbarActivationHeight, _enabledActionMask);
 }
 
 void ToolbarManager::leave() {
@@ -179,6 +194,7 @@ void ToolbarManager::leave() {
 		g_system->copyRectToScreen(_topBacking.data(), 640, 0, 0, 640, kToolbarActivationHeight);
 	_topBacking.clear();
 	_active = false;
+	_enabledActionMask = 0;
 	_previewEnabled = false;
 	_hoveredAction = -1;
 	_pressedAction = -1;
@@ -187,7 +203,7 @@ void ToolbarManager::leave() {
 
 int ToolbarManager::findAction(const Common::Point &point) const {
 	for (uint i = 0; i < _actions.size(); ++i) {
-		if (_actions[i].bounds.contains(point))
+		if ((_enabledActionMask & (1 << i)) != 0 && _actions[i].bounds.contains(point))
 			return i;
 	}
 	return -1;
@@ -206,6 +222,8 @@ void ToolbarManager::drawIcons() {
 	}
 
 	for (uint i = 0; i < _actions.size(); ++i) {
+		if ((_enabledActionMask & (1 << i)) == 0)
+			continue;
 		const Action &action = _actions[i];
 		for (int y = action.bounds.top; y < action.bounds.bottom; ++y) {
 			memcpy(screen->getBasePtr(action.bounds.left, y),
@@ -400,15 +418,19 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 		kToolbarHandlerNames[actionIndex]);
 }
 
-bool ToolbarManager::service(const MouseState &mouse) {
+bool ToolbarManager::service(const MouseState &mouse, uint enabledActionMask,
+		int *selectedAction) {
 	if (mouse.position.y >= kToolbarActivationHeight) {
 		leave();
 		return false;
 	}
 
+	enabledActionMask &= (1 << kToolbarActionCount) - 1;
 	const uint32 now = g_system->getMillis();
+	if (_active && enabledActionMask != _enabledActionMask)
+		leave();
 	if (!_active)
-		enter(now);
+		enter(now, enabledActionMask);
 	if (!_active)
 		return true;
 
@@ -451,7 +473,10 @@ bool ToolbarManager::service(const MouseState &mouse) {
 		const int action = _pressedAction;
 		_pressedAction = -1;
 		if (_hoveredAction == action) {
-			dispatchAction(action);
+			if (selectedAction)
+				*selectedAction = action;
+			else
+				dispatchAction(action);
 			leave();
 		} else {
 			debugC(3, kDebugInput,
