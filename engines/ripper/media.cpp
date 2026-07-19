@@ -885,7 +885,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		uint frameLimit, int originY, bool patchWacMediaPalette, bool serviceSceneUi,
 		bool repeatedLoopPass, bool *advanceSegment, uint loopStartFrame,
 		MediaSequenceCallback *sequenceCallback, uint16 *sequenceCommand,
-		Common::Array<byte> *sourcePalette, bool rememberVideoPalette) {
+		Common::Array<byte> *sourcePalette, bool rememberVideoPalette,
+		uint firstFrame, uint lastFrame) {
 	if (stoppedByUser)
 		*stoppedByUser = false;
 	if (advanceSegment)
@@ -895,6 +896,15 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	Video::SmackerDecoder decoder;
 	if (!decoder.loadStream(stream)) {
 		warning("Ripper: invalid Smacker stream '%s'", name.c_str());
+		return false;
+	}
+	const bool boundedSegment = firstFrame != 0 || lastFrame != 0xffffffff;
+	if (lastFrame == 0xffffffff)
+		lastFrame = decoder.getFrameCount() - 1;
+	if (decoder.getFrameCount() == 0 || firstFrame > lastFrame ||
+			lastFrame >= decoder.getFrameCount()) {
+		warning("Ripper: invalid Smacker segment '%s' frames=%u..%u count=%u",
+			name.c_str(), firstFrame, lastFrame, decoder.getFrameCount());
 		return false;
 	}
 	// InitializeMediaPresentationDisplayModeCallback at 0x163a8 is invoked for
@@ -1020,6 +1030,28 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			name.c_str(), frame, refreshedPalette, stopSequence);
 		return stopSequence;
 	};
+	if (firstFrame != 0) {
+		const Graphics::Surface *frame = decoder.forceSeekToFrame(firstFrame);
+		if (!frame) {
+			warning("Ripper: could not seek Smacker '%s' to bounded segment frame=%u",
+				name.c_str(), firstFrame);
+			decoder.close();
+			return false;
+		}
+		presentFrame(frame, true);
+		++presentedFrames;
+		debugC(3, kDebugVideo,
+			"Ripper: entered bounded Smacker segment '%s' frame=%u..%u",
+			name.c_str(), firstFrame, lastFrame);
+		if (sequenceCallback && finishSequenceFramePresentation(firstFrame + 1)) {
+			decoder.close();
+			return true;
+		}
+		if (boundedSegment && firstFrame == lastFrame) {
+			decoder.close();
+			return true;
+		}
+	}
 	while (!_engine->shouldQuit()) {
 		if (decoder.endOfVideo()) {
 			if (sequenceCallback && sequenceCallback->continueAfterEnd()) {
@@ -1138,6 +1170,12 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				if (sequenceCallback &&
 						finishSequenceFramePresentation(decoder.getCurFrame() + 1))
 					break;
+				if (boundedSegment && (uint)decoder.getCurFrame() >= lastFrame) {
+					debugC(2, kDebugVideo,
+						"Ripper: completed bounded Smacker segment '%s' frame=%u..%u",
+						name.c_str(), firstFrame, lastFrame);
+					break;
+				}
 				if (synchronizeToTimeline) {
 					debugC(11, kDebugVideo,
 						"Ripper: Smacker '%s' frame=%d audioTargetMs=%u audioElapsedMs=%u driftMs=%d",
@@ -1610,6 +1648,35 @@ bool MediaPlayer::playPuzzleSequence(const Common::String &path, uint loopStartF
 	return playSmacker(file, path, false, 0, 0, nullptr, nullptr, nullptr,
 		0, 0, 1, true, 0, kScenePresentationTop, false, false, false, nullptr,
 		loopStartFrame, callback, command);
+}
+
+bool MediaPlayer::playPuzzleSequenceSegment(const Common::String &path, uint firstFrame,
+		uint lastFrame, int x, int y, MediaSequenceCallback *callback, uint16 *command) {
+	Common::File *file = new Common::File();
+	if (!file->open(Common::Path(path))) {
+		warning("Ripper: could not open puzzle media segment '%s'", path.c_str());
+		delete file;
+		return false;
+	}
+
+	byte magic[4];
+	if (!readExact(*file, magic, sizeof(magic))) {
+		delete file;
+		return false;
+	}
+	file->seek(0);
+	if (memcmp(magic, "SMK2", 4) != 0 && memcmp(magic, "SMK4", 4) != 0) {
+		warning("Ripper: unsupported puzzle media segment '%s'", path.c_str());
+		delete file;
+		return false;
+	}
+
+	debugC(1, kDebugVideo,
+		"Ripper: entering puzzle Smacker segment media='%s' frames=%u..%u position=%d,%d callback=%d",
+		path.c_str(), firstFrame, lastFrame, x, y, callback != nullptr);
+	return playSmacker(file, path, false, x, y, nullptr, nullptr, nullptr,
+		0, 0, 1, true, 0, kScenePresentationTop, false, false, false, nullptr,
+		0, callback, command, nullptr, true, firstFrame, lastFrame);
 }
 
 bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool firstFrameOnly,

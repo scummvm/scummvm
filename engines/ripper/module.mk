@@ -24,6 +24,7 @@ MODULE_OBJS := \
 	resources.o \
 	ripper.o \
 	saveload.o \
+	scenes/tube_scene.o \
 	script.o \
 	settings.o \
 	toolbar.o \

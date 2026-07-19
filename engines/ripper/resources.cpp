@@ -544,6 +544,33 @@ bool ResourceManager::loadBitmapSequence(const Common::String &memberName,
 	return true;
 }
 
+bool ResourceManager::loadBitmapLibrary(const Common::String &libraryName,
+		Common::Array<BitmapAssetFrame> &frames) const {
+	AssetLibrary library;
+	if (!library.open(Common::Path(libraryName)))
+		return false;
+
+	Common::Array<Common::String> members;
+	library.listMembersWithPrefix("", members);
+	frames.clear();
+	for (uint member = 0; member < members.size(); ++member) {
+		Common::ScopedPtr<Common::SeekableReadStream> stream(
+			library.createReadStreamForMember(members[member]));
+		BitmapAssetFrame frame;
+		if (!stream || !decodeBitmap(*stream, frame)) {
+			warning("Ripper: could not decode bitmap library '%s' member '%s'",
+				libraryName.c_str(), members[member].c_str());
+			frames.clear();
+			return false;
+		}
+		frames.push_back(Common::move(frame));
+	}
+	debugC(2, kDebugResources,
+		"Ripper: decoded bitmap library '%s' members=%u frames=%u",
+		libraryName.c_str(), members.size(), frames.size());
+	return !frames.empty();
+}
+
 bool ResourceManager::loadInterfaceBitmapSet(const Common::String &prefix,
 		Common::Array<BitmapAssetFrame> &frames) const {
 	Common::Array<Common::String> members;

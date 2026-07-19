@@ -84,6 +84,7 @@ enum SceneAction {
 	kSceneActionRolodexPuzzle = 5,
 	kSceneActionCyberMenu = 6,
 	kSceneActionTableGatePuzzle = 10,
+	kSceneActionTubeSwitchScene = 24,
 	kSceneActionCrystalPuzzle = 29,
 	kSceneActionSetChooserTemplateMode = 30,
 	kSceneActionNoOp = 31,
