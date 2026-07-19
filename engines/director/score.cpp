@@ -1889,7 +1889,8 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version,
 		_firstFramePosition = _framesStream->pos();
 	} else if (version >= kFileVer600) {
 		_framesStreamSize = _framesStream->readUint32();
-		int32 ver = (int32)_framesStream->readUint32();
+		_scoreWrapperVer = (int32)_framesStream->readUint32();
+		int32 ver = _scoreWrapperVer;
 		uint32 listStart = _framesStream->readUint32();
 
 		debugC(1, kDebugLoading, "Score::loadFrames(): D6+ len: %d, version: %d, listStart: 0x%x",
@@ -1930,6 +1931,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version,
 				uint32 endOff = _framesStream->readUint32();
 				_spriteDetailOffsets.push_back(_frameDataOffset + endOff);
 				_spriteDetailAccessed.push_back(true);
+				_spriteDetailIndexValid = true;
 			} else {
 				warning("Score::loadFrames(): Unexpected sprite detail list size %d for %d entries; last entry may be truncated",
 					listSize, numEntries);
@@ -2475,6 +2477,143 @@ Common::String Score::formatChannelInfo() {
 
 }
 
+// Serializes the D6+ VWSC wrapper: 12-byte header, sprite-detail offset
+// index, entry 0 (the frames stream, re-serialized as one full frame
+// followed by channel deltas) and the remaining detail entries copied
+// from the retained stream. Returns false when the loaded index isn't
+// usable (the caller then keeps the original bytes).
+bool Score::buildD6Score(Common::MemoryWriteStreamDynamic &out) {
+	// The detail offsets include the trailing end-of-data sentinel
+	if (!_framesStream || !_spriteDetailIndexValid || _spriteDetailOffsets.size() < 2 || _scoreCache.empty())
+		return false;
+
+	// Validate the retained offsets: monotonic and within the stream
+	for (uint i = 1; i < _spriteDetailOffsets.size(); i++)
+		if (_spriteDetailOffsets[i] < _spriteDetailOffsets[i - 1] || _spriteDetailOffsets[i] > (uint32)_framesStream->size())
+			return false;
+
+	uint32 channelSize, mainChannelSize;
+	if (_version >= kFileVer600 && _version < kFileVer700) {
+		channelSize = kSprChannelSizeD6;
+		mainChannelSize = kMainChannelSizeD6;
+	} else if (_version >= kFileVer700 && _version < kFileVer1000) {
+		channelSize = kSprChannelSizeD7;
+		mainChannelSize = kMainChannelSizeD7;
+	} else {
+		return false;
+	}
+
+	uint32 numEntries = _spriteDetailOffsets.size() - 1;
+
+	// Serialize each frame's channels; emit a full first frame, then only
+	// the channels that changed (the chunk format readOneFrame() consumes)
+	Common::MemoryWriteStreamDynamic frames(DisposeAfterUse::YES);
+	Common::Array<byte> prev;
+	for (uint f = 0; f < _scoreCache.size(); f++) {
+		Frame &frame = *_scoreCache[f];
+		uint numSprites = frame._sprites.size();
+
+		// Serialize the frame's whole channel buffer
+		Common::MemoryWriteStreamDynamic cur(DisposeAfterUse::YES);
+		frame.writeMainChannels(&cur, _version);
+		for (uint ch = 1; ch < numSprites; ch++) {
+			if (_version < kFileVer700)
+				writeSpriteDataD6(&cur, *frame._sprites[ch]);
+			else
+				writeSpriteDataD7(&cur, *frame._sprites[ch]);
+		}
+
+		// The chunk offsets below assume exactly this layout; a mismatch
+		// means a channel writer is out of sync with its reader
+		if ((uint32)cur.size() != mainChannelSize + (numSprites - 1) * channelSize) {
+			warning("Score::buildD6Score(): channel buffer is %d bytes, expected %d; falling back",
+				(int)cur.size(), mainChannelSize + (numSprites - 1) * channelSize);
+			return false;
+		}
+
+		// Collect the chunks that differ from the previous frame
+		struct Chunk { uint32 offset, size; };
+		Common::Array<Chunk> chunks;
+		const byte *data = cur.getData();
+		if (prev.empty()) {
+			chunks.push_back({0, (uint32)cur.size()});
+		} else {
+			for (uint ch = 0; ch < numSprites; ch++) {
+				uint32 off = ch ? mainChannelSize + (ch - 1) * channelSize : 0;
+				uint32 size = ch ? channelSize : mainChannelSize;
+				if (off + size > (uint32)cur.size() || off + size > prev.size() ||
+						memcmp(data + off, prev.data() + off, size))
+					chunks.push_back({off, size});
+			}
+		}
+
+		uint32 frameSize = 2;
+		for (auto &c : chunks)
+			frameSize += 4 + c.size;
+		// All the on-disk fields are 16-bit
+		if (frameSize > 0xFFFF || (chunks.size() && chunks[chunks.size() - 1].offset > 0xFFFF))
+			return false;
+		frames.writeUint16BE(frameSize);
+		for (auto &c : chunks) {
+			frames.writeUint16BE(c.size);
+			frames.writeUint16BE(c.offset);
+			frames.write(data + c.offset, c.size);
+		}
+
+		prev.resize(cur.size());
+		memcpy(prev.data(), data, cur.size());
+	}
+
+	// entry 0 = 20-byte frames header + the frame data
+	uint32 entry0Size = 20 + frames.size();
+
+	Common::Array<uint32> offsets(numEntries + 1);
+	offsets[0] = 0;
+	offsets[1] = entry0Size;
+	for (uint i = 1; i < numEntries; i++)
+		offsets[i + 1] = offsets[i] + (_spriteDetailOffsets[i + 1] - _spriteDetailOffsets[i]);
+
+	uint32 dataLen = offsets[numEntries];
+	uint32 total = 12 + 12 + (numEntries + 1) * 4 + dataLen;
+
+	out.writeUint32BE(total);
+	out.writeSint32BE(_scoreWrapperVer);
+	out.writeUint32BE(12);					// the index follows this header
+
+	out.writeSint32BE(numEntries);
+	out.writeSint32BE(numEntries + 1);
+	out.writeUint32BE(dataLen);
+	for (uint i = 0; i <= numEntries; i++)
+		out.writeUint32BE(offsets[i]);
+
+	out.writeUint32BE(entry0Size);
+	out.writeSint32BE(20);					// frame data follows this header
+	out.writeUint32BE(_scoreCache.size());	// the loader recomputes this anyway
+	out.writeUint16BE(_framesVersion);
+	out.writeUint16BE(_spriteRecordSize);
+	out.writeUint16BE(_numChannels);
+	out.writeUint16BE(_numChannelsDisplayed);
+	out.write(frames.getData(), frames.size());
+
+	// The remaining detail entries (sprite info, behaviors, names) can't
+	// change at runtime; copy them from the retained stream
+	for (uint i = 1; i < numEntries; i++) {
+		uint32 size = _spriteDetailOffsets[i + 1] - _spriteDetailOffsets[i];
+		if (!size)
+			continue;
+		byte *buf = (byte *)malloc(size);
+		_framesStream->seek(_spriteDetailOffsets[i], SEEK_SET);
+		if (_framesStream->read(buf, size) != size) {
+			free(buf);
+			return false;
+		}
+		out.write(buf, size);
+		free(buf);
+	}
+
+	return true;
+}
+
 void Score::writeVWSCResource(Common::SeekableWriteStream *writeStream, uint32 offset) {
 	uint32 channelSize = 0;
 	uint32 mainChannelSize = 0;
@@ -2484,12 +2623,17 @@ void Score::writeVWSCResource(Common::SeekableWriteStream *writeStream, uint32 o
 	} else if (_version >= kFileVer500 && _version < kFileVer600) {
 		channelSize = kSprChannelSizeD5;
 		mainChannelSize = kMainChannelSizeD5;
-	} else if (_version >= kFileVer600 && _version < kFileVer700) {
-		channelSize = kSprChannelSizeD6;
-		mainChannelSize = kMainChannelSizeD6;
-	} else if (_version >= kFileVer700 && _version < kFileVer1100) {
-		channelSize = kSprChannelSizeD7;
-		mainChannelSize = kMainChannelSizeD7;
+	} else if (_version >= kFileVer600 && _version < kFileVer1000) {
+		Common::MemoryWriteStreamDynamic buf(DisposeAfterUse::YES);
+		if (!buildD6Score(buf)) {
+			warning("Score::writeVWSCResource: Could not serialize the D6+ score");
+			return;
+		}
+		writeStream->seek(offset);
+		writeStream->writeUint32LE(MKTAG('V', 'W', 'S', 'C'));
+		writeStream->writeUint32LE(buf.size());
+		writeStream->write(buf.getData(), buf.size());
+		return;
 	} else {
 		warning("Score::writeVWSCResource: Writing this Director version is not supported yet");
 		return;
@@ -2553,7 +2697,7 @@ void Score::writeFrame(Common::SeekableWriteStream *writeStream, Frame frame, ui
 			writeSpriteDataD5(writeStream, sprite);
 		} else if (_version >= kFileVer600 && _version < kFileVer700) {
 			writeSpriteDataD6(writeStream, sprite);
-		} else if (_version >= kFileVer700 && _version < kFileVer1100) {
+		} else if (_version >= kFileVer700 && _version < kFileVer1000) {
 			writeSpriteDataD7(writeStream, sprite);
 		}
 	}
@@ -2568,15 +2712,14 @@ uint32 Score::getVWSCResourceSize() {
 	} else if (_version >= kFileVer500 && _version < kFileVer600) {
 		channelSize = kSprChannelSizeD5;
 		mainChannelSize = kMainChannelSizeD5;
-	} else if (_version >= kFileVer600 && _version < kFileVer700) {
-		// Must match writeVWSCResource()/Frame::readChannel() (D6: main channel 144).
-		channelSize = kSprChannelSizeD6;
-		mainChannelSize = kMainChannelSizeD6;
-	} else if (_version >= kFileVer700 && _version < kFileVer1100) {
-		channelSize = kSprChannelSizeD7;
-		mainChannelSize = kMainChannelSizeD7;
+	} else if (_version >= kFileVer600 && _version < kFileVer1000) {
+		Common::MemoryWriteStreamDynamic buf(DisposeAfterUse::YES);
+		if (!buildD6Score(buf))
+			return 0;	// keep the original bytes
+		return buf.size();
 	} else {
 		warning("Score::getVWSCResourceSize: Director version unsupported");
+		return 0;
 	}
 
 	uint32 framesSize = 0;
