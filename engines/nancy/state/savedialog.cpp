@@ -55,7 +55,7 @@ void SaveDialog::process() {
 		break;
 	}
 
-	g_nancy->_cursor->setCursorType(CursorManager::kNormalArrow);
+	g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 }
 
 void SaveDialog::onStateEnter(const NancyState::NancyState prevState) {

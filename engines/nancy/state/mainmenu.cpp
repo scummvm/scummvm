@@ -84,7 +84,7 @@ void MainMenu::init() {
 	_background.init(_menuData->_imageName);
 	_background.registerGraphics();
 
-	g_nancy->_cursor->setCursorType(CursorManager::kNormalArrow);
+	g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 	g_nancy->setMouseEnabled(true);
 
 	if (!g_nancy->_sound->isSoundPlaying("MSND")) {
@@ -161,7 +161,7 @@ void MainMenu::run() {
 		}
 	}
 
-	g_nancy->_cursor->setCursorType(CursorManager::kNormalArrow);
+	g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 }
 
 void MainMenu::stop() {
