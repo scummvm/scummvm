@@ -367,6 +367,25 @@
   frames use `ICTxy.SMK`; its large-icon frames use `ICL_EXIT.SMK` and
   `ICL_1.SMK` through `ICL_15.SMK`. The initial callback loads the carousel's
   `KJ1.WAV` and `IC_*.WAV` audio set and selects frame 33.
+- Thirteen carousel programs enter password frames `IC_P1`, `IC_P2`, `IC_P3`,
+  `IC_P4`, `IC_P5`, `IC_P6`, `IC_P8`, `IC_P9`, `IC_P10`, `IC_P12`, `IC_P13`,
+  `IC_P14`, and `IC_P15`. Each idle callback uses opcode `0x24`
+  (`HandleSceneEntryWaitForSceneFrameCounter` at `0x1633e`) to delay the
+  callback until a specific movie frame before opcode `0x19` invokes
+  `HandleSceneEntryAsyncTextRequest` at `0x157a1`. Layout variant 2 creates a
+  194-by-20 text field at screen (228,312) with a 60-character limit. The
+  request retains the callback continuation while the movie continues; if the
+  movie ends first, its final frame remains visible until input completes. Entered
+  and expected strings are compared by
+  `StringsEqualIgnoringNonAlnumCaseInsensitive` at `0x1eff3`, so ASCII case,
+  spaces, and punctuation do not affect the result. A correct answer continues
+  to the callback's success frame; Escape or a mismatch selects the encoded
+  `IC_P*r` reverse frame without changing the location milestone. Once the
+  success frame sets its milestone, later visits bypass the prompt. The encoded
+  answers in position order are `odysseus`, `horoscope`, `berman4`,
+  `circus maximus`, `exterminator`, `vulcan`, `anachrony station`,
+  `digital eden`, `psy bard`, `warp`, `pegasus`, `orestes`, and
+  `leather apron`; positions 7 and 11 dispatch KA and KR directly.
 - `CreateSceneRuntime` at `0x12be7` stores the toolbar action mask supplied by
   `RunSceneScriptLoop` at runtime offset `+0x183`. Both `CYBRMENU.RUN` and
   `KR.RUN` are entered with mask zero, so `RunFrontEndActionMenu` at `0x18b3a`
