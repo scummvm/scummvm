@@ -680,7 +680,7 @@ ModalDialogManager::TextEntryResult ModalDialogManager::serviceTextEntry(
 }
 
 bool ModalDialogManager::run(uint bodyResourceId, bool retainSceneCursorRegions,
-		PresentationStyle style) {
+		PresentationStyle style, PaletteBehavior paletteBehavior) {
 	const Common::String &title = resourceString(kModalTitleResourceId);
 	const Common::String &body = resourceString(bodyResourceId);
 	if (title.empty() || body.empty()) {
@@ -688,19 +688,21 @@ bool ModalDialogManager::run(uint bodyResourceId, bool retainSceneCursorRegions,
 		return false;
 	}
 	return runTextInternal(title, body, bodyResourceId, "game text",
-		retainSceneCursorRegions, style);
+		retainSceneCursorRegions, style, paletteBehavior);
 }
 
 bool ModalDialogManager::runText(const Common::String &title,
 		const Common::String &body, const char *source,
-		bool retainSceneCursorRegions, PresentationStyle style) {
+		bool retainSceneCursorRegions, PresentationStyle style,
+		PaletteBehavior paletteBehavior) {
 	return runTextInternal(title, body, 0, source, retainSceneCursorRegions,
-		style);
+		style, paletteBehavior);
 }
 
 bool ModalDialogManager::runTextInternal(const Common::String &title,
 		const Common::String &body, uint bodyResourceId, const char *source,
-		bool retainSceneCursorRegions, PresentationStyle style) {
+		bool retainSceneCursorRegions, PresentationStyle style,
+		PaletteBehavior paletteBehavior) {
 	if (!_initialized || title.empty() || !captureDisplay()) {
 		warning("Ripper: could not present modal text source='%s'", source);
 		return false;
@@ -727,12 +729,14 @@ bool ModalDialogManager::runTextInternal(const Common::String &title,
 
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
-	if (!wacStyle)
+	const bool applyPalette = !wacStyle && paletteBehavior == kApplyModalPalette;
+	if (applyPalette)
 		applyModalPalette();
 	drawDialog(title, lines, firstVisible, visibleRows, bounds, style);
 	debugC(1, kDebugScene,
-		"Ripper: entered modal text dialog source='%s' resource=%u style=%s title='%s' lines=%u bounds=%d,%d,%d,%d",
-		source, bodyResourceId, wacStyle ? "wacmnu" : "menub", title.c_str(),
+		"Ripper: entered modal text dialog source='%s' resource=%u style=%s palette=%s title='%s' lines=%u bounds=%d,%d,%d,%d",
+		source, bodyResourceId, wacStyle ? "wacmnu" : "menub",
+		applyPalette ? "menub" : "active", title.c_str(),
 		lines.size(), bounds.left, bounds.top, bounds.width(), bounds.height());
 
 	bool active = true;
