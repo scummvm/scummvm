@@ -793,7 +793,7 @@ static void handleMonkeyFall() {
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[8], oldIdx);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[8], 43, 72);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_EXPIRE, 0, 222);
-		int idx = _scene->_dynamicHotspots.add(NOUN_BINOCULARS, VERB_WALKTO, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_binoculars, words_walkto, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(200, 133), FACING_NORTH);
 	}
 	break;
@@ -988,7 +988,7 @@ static void room_209_init() {
 
 	if (_game._objects.isInRoom(OBJ_PLANT_STALK)) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-		int idx = _scene->_dynamicHotspots.add(NOUN_PLANT_STALK, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_plant_stalk, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(263, 129), FACING_SOUTH);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 13);
 	}
@@ -1005,7 +1005,7 @@ static void room_209_init() {
 		_globals._sequenceIndexes[9] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 1);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[9], Common::Point(201, 131));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 8);
-		int idx = _scene->_dynamicHotspots.add(NOUN_BINOCULARS, VERB_WALKTO, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_binoculars, words_walkto, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(200, 133), FACING_NORTH);
 	}
 
@@ -1328,14 +1328,14 @@ static void room_209_daemon() {
 		case 234:
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			_scene->_kernelMessages.reset();
-			if (_action.isAction(VERB_HOSE_DOWN, NOUN_BLOWGUN, NOUN_MONKEY)) {
+			if (_action.isAction(words_hose_down, words_blowgun, words_monkey)) {
 				_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 7, 16, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 11, 12);
 				_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(116, 131));
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 12, 239);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 235);
-			} else if (_action.isAction(VERB_SHOOT, NOUN_BLOWGUN, NOUN_MONKEY)) {
+			} else if (_action.isAction(words_shoot, words_blowgun, words_monkey)) {
 				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 11, 12);
 				_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(116, 131));
@@ -1411,19 +1411,19 @@ static void room_209_daemon() {
 }
 
 static void room_209_pre_parser() {
-	if (_action.isAction(VERB_WALK_TOWARDS, NOUN_FIELD_TO_WEST))
+	if (_action.isAction(words_walk_towards, words_field_to_west))
 		_game._player._walkOffScreenSceneId = 208;
 
 	if (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS) {
-		if ((_action.isAction(VERB_SHOOT) || _action.isAction(VERB_HOSE_DOWN)) && _action.isTarget(NOUN_MONKEY)
-			&& _action.isObject(NOUN_BLOWGUN) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
+		if ((_action.isAction(words_shoot) || _action.isAction(words_hose_down)) && _action.isTarget(words_monkey)
+			&& _action.isObject(words_blowgun) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
 			_game._player._prepareWalkPos = Common::Point(111, 129);
 			_game._player._prepareWalkFacing = FACING_NORTHEAST;
 			_game._player._needToWalk = true;
 			_game._player._readyToWalk = true;
 		}
 
-		if (_action.isAction(VERB_LOOK, NOUN_MONKEY) || _action.isAction(VERB_TALKTO, NOUN_MONKEY)) {
+		if (_action.isAction(words_look, words_monkey) || _action.isAction(words_talkto, words_monkey)) {
 			_game._player._prepareWalkPos = Common::Point(111, 129);
 			_game._player._prepareWalkFacing = FACING_NORTHEAST;
 			_game._player._needToWalk = true;
@@ -1439,13 +1439,13 @@ static void room_209_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_WALK_TOWARDS, NOUN_ROCKY_AREA_TO_NORTH)) {
+	if (_action.isAction(words_walk_towards, words_rocky_area_to_north)) {
 		_scene->_nextSceneId = 203;
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_TALKTO, NOUN_MONKEY) && !local._pitchFl && !local._playingDialogFl) {
+	if (_action.isAction(words_talkto, words_monkey) && !local._pitchFl && !local._playingDialogFl) {
 		_scene->_sequences.addTimer(1, local._dialogAbortVal);
 		local._playingDialogFl = true;
 		_game._player._stepEnabled = false;
@@ -1555,9 +1555,9 @@ static void room_209_parser() {
 	}
 
 	if (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS) {
-		if ((_action.isAction(VERB_SHOOT) || _action.isAction(VERB_HOSE_DOWN)) && _action.isTarget(NOUN_MONKEY)
-			&& _action.isObject(NOUN_BLOWGUN) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
-			if (_action.isAction(VERB_SHOOT, NOUN_BLOWGUN, NOUN_MONKEY) && !local._startShootingInTimerFl) {
+		if ((_action.isAction(words_shoot) || _action.isAction(words_hose_down)) && _action.isTarget(words_monkey)
+			&& _action.isObject(words_blowgun) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
+			if (_action.isAction(words_shoot, words_blowgun, words_monkey) && !local._startShootingInTimerFl) {
 				_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 				_scene->_sequences.addTimer(1, 231);
 				local._startShootingInTimerFl = true;
@@ -1567,7 +1567,7 @@ static void room_209_parser() {
 				return;
 			}
 
-			if (_action.isAction(VERB_HOSE_DOWN, NOUN_BLOWGUN, NOUN_MONKEY) && !local._startShootingInTimerFl) {
+			if (_action.isAction(words_hose_down, words_blowgun, words_monkey) && !local._startShootingInTimerFl) {
 				_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 				_scene->_sequences.addTimer(1, 228);
 				_game._player._stepEnabled = false;
@@ -1578,7 +1578,7 @@ static void room_209_parser() {
 			}
 		}
 
-		if (_action.isAction(VERB_LOOK, NOUN_MONKEY)) {
+		if (_action.isAction(words_look, words_monkey)) {
 			local._pitchFl = true;
 			_game._player._stepEnabled = false;
 			_vm->_dialogs->show(20914);
@@ -1587,7 +1587,7 @@ static void room_209_parser() {
 		}
 	}
 
-	if (_action.isAction(VERB_TAKE, NOUN_PLANT_STALK) && (_game._trigger || _game._objects.isInRoom(OBJ_PLANT_STALK))) {
+	if (_action.isAction(words_take, words_plant_stalk) && (_game._trigger || _game._objects.isInRoom(OBJ_PLANT_STALK))) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -1620,7 +1620,7 @@ static void room_209_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, NOUN_BINOCULARS) && (_game._trigger || _game._objects.isInRoom(OBJ_BINOCULARS))) {
+	if (_action.isAction(words_take, words_binoculars) && (_game._trigger || _game._objects.isInRoom(OBJ_BINOCULARS))) {
 		switch (_game._trigger) {
 		case 0:
 			_globals._spriteIndexes[10] = _scene->_sprites.addSprites("*RXMBD_8");
@@ -1656,75 +1656,75 @@ static void room_209_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_SKY)) {
+	if (_action.isAction(words_look, words_sky)) {
 		_vm->_dialogs->show(20901);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_BAMBOO_LIKE_PLANT)) {
+	if (_action.isAction(words_look, words_bamboo_like_plant)) {
 		_vm->_dialogs->show(20902);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_MOUNTAINSIDE)) {
+	if (_action.isAction(words_look, words_mountainside)) {
 		_vm->_dialogs->show(20903);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_GRASSY_FIELD)) {
+	if (_action.isAction(words_look, words_grassy_field)) {
 		_vm->_dialogs->show(20904);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_FIELD_TO_WEST)) {
+	if (_action.isAction(words_look, words_field_to_west)) {
 		_vm->_dialogs->show(20905);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_ROCKY_AREA_TO_NORTH)) {
+	if (_action.isAction(words_look, words_rocky_area_to_north)) {
 		_vm->_dialogs->show(20906);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_PLANT_STALK) && (_action._savedFields._mainObjectSource == 4)) {
+	if (_action.isAction(words_look, words_plant_stalk) && (_action._savedFields._mainObjectSource == 4)) {
 		_vm->_dialogs->show(20907);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_GIVE, NOUN_TWINKIFRUIT, NOUN_MONKEY) || _action.isAction(VERB_THROW, NOUN_TWINKIFRUIT, NOUN_MONKEY)) {
+	if (_action.isAction(words_give, words_twinkifruit, words_monkey) || _action.isAction(words_throw, words_twinkifruit, words_monkey)) {
 		_vm->_dialogs->show(20909);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_TREES)) {
+	if (_action.isAction(words_look, words_trees)) {
 		_vm->_dialogs->show(20913);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_THROW, NOUN_MONKEY) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
-		if (!_action.isObject(NOUN_POISON_DARTS)) {
+	if (_action.isAction(words_throw, words_monkey) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
+		if (!_action.isObject(words_poison_darts)) {
 			_vm->_dialogs->show(20915);
 		}
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_THROW, NOUN_POISON_DARTS, NOUN_MONKEY)) {
+	if (_action.isAction(words_throw, words_poison_darts, words_monkey)) {
 		_vm->_dialogs->show(20916);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_PALM_TREE)) {
+	if (_action.isAction(words_look, words_palm_tree)) {
 		if (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS) {
 			if (local._monkeyPosition == 1)
 				_vm->_dialogs->show(20917);
@@ -1740,13 +1740,13 @@ static void room_209_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_MELON_MUSH)) {
+	if (_action.isAction(words_look, words_melon_mush)) {
 		_vm->_dialogs->show(20920);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, NOUN_MELON_MUSH)) {
+	if (_action.isAction(words_take, words_melon_mush)) {
 		_vm->_dialogs->show(20921);
 		_action._inProgress = false;
 		return;
@@ -1789,7 +1789,7 @@ void room_209_preload() {
 
 	section_2_walker();
 	section_2_interface();
-	_scene->addActiveVocab(NOUN_PLANT_STALK);
+	_scene->addActiveVocab(words_plant_stalk);
 }
 
 } // namespace Rooms

@@ -58,7 +58,7 @@ static void room_203_init() {
 	if ((_globals[kRhotundaStatus] == 0) && (!_scene->_roomChanged)) {
 		local._rhotundaEatFl = true;
 		_game._player.walk(Common::Point(158, 135), FACING_SOUTH);
-		int idx = _scene->_dynamicHotspots.add(NOUN_FIELD_TO_SOUTH, VERB_WALK_TOWARDS, 0, Common::Rect(0, 0, 320, 156));
+		int idx = _scene->_dynamicHotspots.add(words_field_to_south, words_walk_towards, 0, Common::Rect(0, 0, 320, 156));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(155, 152), FACING_SOUTH);
 		_scene->_dynamicHotspots.setCursor(idx, CURSOR_GO_DOWN);
 	}
@@ -67,7 +67,7 @@ static void room_203_init() {
 		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('b', -1));
 		if (_vm->getRandomNumber(1, 3) == 2) {
 			_globals._spriteIndexes[15] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 9, 1, 0, 0);
-			int idx = _scene->_dynamicHotspots.add(NOUN_YELLOW_BIRD, VERB_LOOK_AT, _globals._spriteIndexes[15], Common::Rect(0, 0, 0, 0));
+			int idx = _scene->_dynamicHotspots.add(words_yellow_bird, words_look_at, _globals._spriteIndexes[15], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 			_vm->_sound->command(14);
 		}
@@ -109,34 +109,34 @@ static void room_203_daemon() {
 }
 
 static void room_203_pre_parser() {
-	if (local._rhotundaEatFl && !_action.isAction(VERB_WALK_TOWARDS, NOUN_FIELD_TO_SOUTH)) {
+	if (local._rhotundaEatFl && !_action.isAction(words_walk_towards, words_field_to_south)) {
 		_game._player.walk(Common::Point(158, 136), FACING_SOUTH);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_WALKTO, NOUN_OPEN_AREA_TO_EAST))
+	if (_action.isAction(words_walkto, words_open_area_to_east))
 		_game._player._walkOffScreenSceneId = 209;
 }
 
 static void room_203_parser() {
 	if (_action._savedFields._lookFlag) {
 		_vm->_dialogs->show(20307);
-	} else if (_action.isAction(VERB_WALK_TOWARDS, NOUN_FIELD_TO_SOUTH)) {
+	} else if (_action.isAction(words_walk_towards, words_field_to_south)) {
 		_scene->_nextSceneId = 208;
-	} else if (_action.isAction(VERB_WALK_TOWARDS, NOUN_FIELD_TO_NORTH)) {
+	} else if (_action.isAction(words_walk_towards, words_field_to_north)) {
 		_scene->_nextSceneId = 202;
-	} else if (_action.isAction(VERB_LOOK, NOUN_SKY)) {
+	} else if (_action.isAction(words_look, words_sky)) {
 		_vm->_dialogs->show(20301);
-	} else if (_action.isAction(VERB_LOOK, NOUN_CLIFF_FACE)) {
+	} else if (_action.isAction(words_look, words_cliff_face)) {
 		_vm->_dialogs->show(20302);
-	} else if (_action.isAction(VERB_LOOK, NOUN_PALM_TREE)) {
+	} else if (_action.isAction(words_look, words_palm_tree)) {
 		_vm->_dialogs->show(20303);
-	} else if (_action.isAction(VERB_LOOK, NOUN_FIELD_TO_NORTH)) {
+	} else if (_action.isAction(words_look, words_field_to_north)) {
 		_vm->_dialogs->show(20304);
-	} else if (_action.isAction(VERB_LOOK, NOUN_GRASSY_FIELD)) {
+	} else if (_action.isAction(words_look, words_grassy_field)) {
 		_vm->_dialogs->show(20305);
-	} else if (_action.isAction(VERB_LOOK, NOUN_BOULDERS)) {
+	} else if (_action.isAction(words_look, words_boulders)) {
 		_vm->_dialogs->show(20305);
 	} else
 		return;

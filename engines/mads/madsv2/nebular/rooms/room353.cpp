@@ -55,25 +55,25 @@ static void room_353_init() {
 static void room_353_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(35315);
-	else if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY))
+	else if (_action.isAction(words_walk_through, words_doorway))
 		_scene->_nextSceneId = 352;
-	else if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH))
+	else if (_action.isAction(words_walk_down, words_corridor_to_south))
 		_scene->_nextSceneId = 354;
-	else if (_action.isAction(VERB_LOOK, NOUN_ROCK_CHUNK))
+	else if (_action.isAction(words_look, words_rock_chunk))
 		_vm->_dialogs->show(35310);
-	else if (_action.isAction(VERB_LOOK, NOUN_PIPES) || _action.isAction(VERB_LOOK, NOUN_PIPE))
+	else if (_action.isAction(words_look, words_pipes) || _action.isAction(words_look, words_pipe))
 		_vm->_dialogs->show(35311);
-	else if (_action.isAction(VERB_LOOK, NOUN_BROKEN_BEAM))
+	else if (_action.isAction(words_look, words_broken_beam))
 		_vm->_dialogs->show(35312);
-	else if (_action.isAction(VERB_LOOK, NOUN_DOORWAY))
+	else if (_action.isAction(words_look, words_doorway))
 		_vm->_dialogs->show(35313);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_SOUTH))
+	else if (_action.isAction(words_look, words_corridor_to_south))
 		_vm->_dialogs->show(35314);
-	else if (_action.isAction(VERB_LOOK, NOUN_FLOOR))
+	else if (_action.isAction(words_look, words_floor))
 		_vm->_dialogs->show(35316);
-	else if (_action.isAction(VERB_LOOK, NOUN_CEILING))
+	else if (_action.isAction(words_look, words_ceiling))
 		_vm->_dialogs->show(35317);
-	else if (_action.isAction(VERB_LOOK, NOUN_WALL))
+	else if (_action.isAction(words_look, words_wall))
 		_vm->_dialogs->show(35318);
 	else
 		return;

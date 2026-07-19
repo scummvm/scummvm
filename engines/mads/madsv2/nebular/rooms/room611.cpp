@@ -958,7 +958,7 @@ static void room_611_init() {
 		local._stickFingerFl = false;
 	} else {
 		local._hermitMode = 0;
-		_scene->_hotspots.activate(NOUN_HERMIT, false);
+		_scene->_hotspots.activate(words_hermit, false);
 	}
 
 	// WORKAROUND: Fix original adding 'give batteries' option even if you don't have them
@@ -1009,7 +1009,7 @@ static void room_611_daemon() {
 	} else if (_game._trigger == 81) {
 		int syncId = _globals._sequenceIndexes[1];
 		_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 20, 0, 0, 0);
-		int idx = _scene->_dynamicHotspots.add(NOUN_RAT, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_rat, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		local._ratHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(272, 154), FACING_SOUTHEAST);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 9, 10);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[1], syncId);
@@ -1318,7 +1318,7 @@ static void room_611_daemon() {
 			local._startTradingFl = false;
 			local._nextFrame = 52;
 			_globals[kHasTalkedToHermit] = true;
-			_scene->_hotspots.activate(NOUN_HERMIT, false);
+			_scene->_hotspots.activate(words_hermit, false);
 		} else {
 			_game._player._stepEnabled = true;
 			local._hermitMode = 1;
@@ -1331,7 +1331,7 @@ static void room_611_daemon() {
 }
 
 static void room_611_pre_parser() {
-	if (_action.isAction(VERB_WALK_DOWN, NOUN_ALLEY))
+	if (_action.isAction(words_walk_down, words_alley))
 		_game._player._walkOffScreenSceneId = 609;
 
 	if (local._resetBatterieText)
@@ -1341,11 +1341,11 @@ static void room_611_pre_parser() {
 static void room_611_parser() {
 	if (_game._screenObjects._inputMode == kInputConversation)
 		handleDialog();
-	else if ((_action.isAction(VERB_GIVE, NOUN_PHONE_CELLS, NOUN_HERMIT)) || (_action.isAction(VERB_GIVE, NOUN_DURAFAIL_CELLS, NOUN_HERMIT))) {
+	else if ((_action.isAction(words_give, words_phone_cells, words_hermit)) || (_action.isAction(words_give, words_durafail_cells, words_hermit))) {
 		_action._activeAction._verbId = 0x294;
 		local._giveBatteriesFl = true;
 		handleSubDialog1();
-	} else if (_action.isAction(VERB_GIVE, NOUN_HERMIT)) {
+	} else if (_action.isAction(words_give, words_hermit)) {
 		_scene->_kernelMessages.reset();
 
 		const char *curQuote = _game.getQuote(0x323);
@@ -1383,7 +1383,7 @@ static void room_611_parser() {
 			local._dialog2.start();
 			local._duringDialogFl = true;
 		}
-	} else if (_action.isAction(VERB_TALKTO, NOUN_HERMIT)) {
+	} else if (_action.isAction(words_talkto, words_hermit)) {
 		if (!local._dialog1.read(0x287)) {
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x27A));
@@ -1410,7 +1410,7 @@ static void room_611_parser() {
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(nextQuote));
 			_scene->_sequences.addTimer(120, 90);
 		}
-	} else if ((_action.isAction(VERB_WALKTO) || _action.isAction(VERB_LOOK)) && _action.isObject(NOUN_RAT)) {
+	} else if ((_action.isAction(words_walkto) || _action.isAction(words_look)) && _action.isObject(words_rat)) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->_kernelMessages.reset();
@@ -1431,29 +1431,29 @@ static void room_611_parser() {
 			_vm->_dialogs->show(61111);
 		else
 			_vm->_dialogs->show(61110);
-	} else if (_action.isAction(VERB_LOOK, NOUN_HERMIT))
+	} else if (_action.isAction(words_look, words_hermit))
 		_vm->_dialogs->show(61112);
-	else if (_action.isAction(VERB_LOOK, NOUN_TRASH))
+	else if (_action.isAction(words_look, words_trash))
 		_vm->_dialogs->show(61113);
-	else if (_action.isAction(VERB_TAKE, NOUN_TRASH))
+	else if (_action.isAction(words_take, words_trash))
 		_vm->_dialogs->show(61114);
-	else if (_action.isAction(VERB_LOOK, NOUN_CARDBOARD_BOX))
+	else if (_action.isAction(words_look, words_cardboard_box))
 		_vm->_dialogs->show(61115);
-	else if (_action.isAction(VERB_TAKE, NOUN_CARDBOARD_BOX))
+	else if (_action.isAction(words_take, words_cardboard_box))
 		_vm->_dialogs->show(61116);
-	else if (_action.isAction(VERB_OPEN, NOUN_CARDBOARD_BOX))
+	else if (_action.isAction(words_open, words_cardboard_box))
 		_vm->_dialogs->show(61117);
-	else if (_action.isAction(VERB_LOOK, NOUN_REFRIGERATOR))
+	else if (_action.isAction(words_look, words_refrigerator))
 		_vm->_dialogs->show(61118);
-	else if (_action.isAction(VERB_OPEN, NOUN_REFRIGERATOR))
+	else if (_action.isAction(words_open, words_refrigerator))
 		_vm->_dialogs->show(61119);
-	else if (_action.isAction(VERB_TAKE, NOUN_REFRIGERATOR))
+	else if (_action.isAction(words_take, words_refrigerator))
 		_vm->_dialogs->show(61120);
-	else if (_action.isAction(VERB_LOOK, NOUN_BUILDING))
+	else if (_action.isAction(words_look, words_building))
 		_vm->_dialogs->show(61121);
-	else if (_action.isAction(VERB_LOOK, NOUN_GRAFFITI))
+	else if (_action.isAction(words_look, words_graffiti))
 		_vm->_dialogs->show(61122);
-	else if (_action.isAction(VERB_LOOK, NOUN_METAL_PIPE))
+	else if (_action.isAction(words_look, words_metal_pipe))
 		_vm->_dialogs->show(61123);
 	else
 		return;
@@ -1496,8 +1496,8 @@ void room_611_preload() {
 
 	section_6_walker();
 	section_6_interface();
-	_scene->addActiveVocab(NOUN_RAT);
-	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(words_rat);
+	_scene->addActiveVocab(words_walkto);
 }
 
 } // namespace Rooms

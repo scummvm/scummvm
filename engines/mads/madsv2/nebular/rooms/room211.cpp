@@ -67,7 +67,7 @@ static void room_211_init() {
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(202, 126));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 8);
 		_scene->_sequences.setMotion(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, -200, 0);
-		_scene->_dynamicHotspots.add(NOUN_SLITHERING_SNAKE, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(1, 1, 1 + 41, 1 + 10));
+		_scene->_dynamicHotspots.add(words_slithering_snake, words_walkto, _globals._sequenceIndexes[2], Common::Rect(1, 1, 1 + 41, 1 + 10));
 	}
 
 	if (_scene->_roomChanged)
@@ -265,31 +265,31 @@ static void room_211_daemon() {
 }
 
 static void room_211_pre_parser() {
-	if (_action.isAction(VERB_WALK_DOWN, NOUN_JUNGLE_PATH) && _game._objects.isInInventory(OBJ_BINOCULARS) && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY)
+	if (_action.isAction(words_walk_down, words_jungle_path) && _game._objects.isInInventory(OBJ_BINOCULARS) && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY)
 		&& (_scene->_customDest.x <= 52) && (_scene->_customDest.y >= 132))
 		_game._player.walk(Common::Point(52, 132), FACING_WEST);
 
-	if (_action.isAction(VERB_WALK_DOWN, NOUN_PATH_TO_WEST)) {
+	if (_action.isAction(words_walk_down, words_path_to_west)) {
 		if (_game._objects.isInInventory(OBJ_BINOCULARS) && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY))
 			_game._player.walk(Common::Point(52, 132), FACING_WEST);
 		else
 			_game._player._walkOffScreenSceneId = 210;
 	}
 
-	if (_action.isAction(VERB_WALK_DOWN, NOUN_PATH_TO_NORTHEAST))
+	if (_action.isAction(words_walk_down, words_path_to_northeast))
 		_game._player._walkOffScreenSceneId = 207;
 }
 
 static void room_211_parser() {
 	if (_action._lookFlag && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY))
 		_vm->_dialogs->show(21111);
-	else if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_PALM_TREE))
+	else if (_action.isAction(words_look, words_binoculars, words_palm_tree))
 		_vm->_dialogs->show(21116);
-	else if (_action.isAction(VERB_LOOK, NOUN_BUSHY_FERN))
+	else if (_action.isAction(words_look, words_bushy_fern))
 		_vm->_dialogs->show(21101);
-	else if (_action.isAction(VERB_LOOK, NOUN_JUNGLE_PATH))
+	else if (_action.isAction(words_look, words_jungle_path))
 		_vm->_dialogs->show(21102);
-	else if (_action.isAction(VERB_LOOK, NOUN_PALM_TREE)) {
+	else if (_action.isAction(words_look, words_palm_tree)) {
 		if (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY) {
 			if (_game._storyMode == STORYMODE_NAUGHTY)
 				_vm->_dialogs->show(21103);
@@ -298,22 +298,22 @@ static void room_211_parser() {
 		} else {
 			_vm->_dialogs->show(21105);
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_THICK_UNDERGROWTH)) {
+	} else if (_action.isAction(words_look, words_thick_undergrowth)) {
 		if (_game._storyMode == STORYMODE_NAUGHTY)
 			_vm->_dialogs->show(21106);
 		else
 			_vm->_dialogs->show(21107);
-	} else if (_action.isAction(VERB_LOOK, NOUN_JUNGLE))
+	} else if (_action.isAction(words_look, words_jungle))
 		_vm->_dialogs->show(21108);
-	else if (_action.isAction(VERB_LOOK, NOUN_PATH_TO_NORTHEAST))
+	else if (_action.isAction(words_look, words_path_to_northeast))
 		_vm->_dialogs->show(21109);
-	else if (_action.isAction(VERB_LOOK, NOUN_PATH_TO_WEST))
+	else if (_action.isAction(words_look, words_path_to_west))
 		_vm->_dialogs->show(21110);
-	else if (_action.isAction(VERB_LOOK, NOUN_SLITHERING_SNAKE))
+	else if (_action.isAction(words_look, words_slithering_snake))
 		_vm->_dialogs->show(21113);
-	else if (_action.isAction(VERB_TAKE, NOUN_SLITHERING_SNAKE))
+	else if (_action.isAction(words_take, words_slithering_snake))
 		_vm->_dialogs->show(21114);
-	else if (_action.isAction(VERB_LOOK, NOUN_ROCKS))
+	else if (_action.isAction(words_look, words_rocks))
 		_vm->_dialogs->show(21115);
 	else
 		return;
@@ -338,7 +338,7 @@ void room_211_preload() {
 
 	section_2_walker();
 	section_2_interface();
-	_scene->addActiveVocab(NOUN_SLITHERING_SNAKE);
+	_scene->addActiveVocab(words_slithering_snake);
 }
 
 } // namespace Rooms

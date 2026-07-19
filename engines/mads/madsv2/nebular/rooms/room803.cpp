@@ -44,7 +44,7 @@ static void room_803_init() {
 	if (_globals[kHoppyDead]) {
 		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('e', 1));
 		_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, 1);
-		int idx = _scene->_dynamicHotspots.add(NOUN_GUTS, VERB_WALKTO, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_guts, words_walkto, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(66, 123), FACING_SOUTH);
 	}
 
@@ -136,7 +136,7 @@ static void room_803_daemon() {
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 101);
 		} else {
 			_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -2);
-			int idx = _scene->_dynamicHotspots.add(NOUN_GUTS, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+			int idx = _scene->_dynamicHotspots.add(words_guts, words_walkto, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(66, 123), FACING_SOUTH);
 			_vm->_sound->command(16);
 			_globals[kCameFromCut] = true;
@@ -155,7 +155,7 @@ static void room_803_daemon() {
 
 	if (_game._trigger == 101) {
 		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -2);
-		int idx = _scene->_dynamicHotspots.add(NOUN_GUTS, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_guts, words_walkto, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(66, 123), FACING_SOUTH);
 		_vm->_sound->command(16);
 		_globals[kCameFromCut] = true;
@@ -240,15 +240,15 @@ static void room_803_daemon() {
 }
 
 static void room_803_pre_parser() {
-	if (_action.isAction(VERB_WALK_DOWN, NOUN_PATH_TO_WEST))
+	if (_action.isAction(words_walk_down, words_path_to_west))
 		_game._player._walkOffScreenSceneId = 802;
 
-	if (_action.isAction(VERB_TAKE, NOUN_SHIP))
+	if (_action.isAction(words_take, words_ship))
 		_game._player._needToWalk = false;
 }
 
 static void room_803_parser() {
-	if (_action.isAction(VERB_TAKE, NOUN_GUTS)) {
+	if (_action.isAction(words_take, words_guts)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -294,7 +294,7 @@ static void room_803_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_ENTER, NOUN_SHIP)) {
+	} else if (_action.isAction(words_enter, words_ship)) {
 		_vm->_sound->command(17);
 		_game._player._stepEnabled = false;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
@@ -303,28 +303,28 @@ static void room_803_parser() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 4);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 120);
 		_globals[kBeamIsUp] = false;
-	} else if (_action.isAction(VERB_LOOK, NOUN_LAUNCH_PAD))
+	} else if (_action.isAction(words_look, words_launch_pad))
 		_vm->_dialogs->show(80310);
 	else if (_action._lookFlag)
 		_vm->_dialogs->show(80310);
-	else if (_action.isAction(VERB_LOOK, NOUN_PAD_TO_WEST))
+	else if (_action.isAction(words_look, words_pad_to_west))
 		_vm->_dialogs->show(80311);
-	else if (_action.isAction(VERB_LOOK, NOUN_GUTS)) {
+	else if (_action.isAction(words_look, words_guts)) {
 		if (_game._storyMode == STORYMODE_NICE)
 			_vm->_dialogs->show(80312);
 		else
 			_vm->_dialogs->show(80313);
-	} else if (_action.isAction(VERB_LOOK, NOUN_BUSHES))
+	} else if (_action.isAction(words_look, words_bushes))
 		_vm->_dialogs->show(80315);
-	else if (_action.isAction(VERB_LOOK, NOUN_SHIP))
+	else if (_action.isAction(words_look, words_ship))
 		_vm->_dialogs->show(80317);
-	else if (_action.isAction(VERB_LOOK, NOUN_TOWER))
+	else if (_action.isAction(words_look, words_tower))
 		_vm->_dialogs->show(80318);
-	else if (_action.isAction(VERB_LOOK, NOUN_TREE) || _action.isAction(VERB_LOOK, NOUN_TREES))
+	else if (_action.isAction(words_look, words_tree) || _action.isAction(words_look, words_trees))
 		_vm->_dialogs->show(80319);
-	else if (_action.isAction(VERB_LOOK, NOUN_SKY))
+	else if (_action.isAction(words_look, words_sky))
 		_vm->_dialogs->show(80320);
-	else if (_action.isAction(VERB_TAKE, NOUN_SHIP))
+	else if (_action.isAction(words_take, words_ship))
 		_vm->_dialogs->show(80321);
 	else
 		return;
@@ -345,8 +345,8 @@ void room_803_preload() {
 	section_8_walker();
 	section_8_interface();
 
-	_scene->addActiveVocab(NOUN_GUTS);
-	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(words_guts);
+	_scene->addActiveVocab(words_walkto);
 
 	if ((!_globals[kFromCockpit] && _globals[kReturnFromCut] && !_globals[kBeamIsUp])
 		|| (_globals[kFromCockpit] && !_globals[kExitShip])) {

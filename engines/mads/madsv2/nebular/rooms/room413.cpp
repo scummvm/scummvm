@@ -134,41 +134,41 @@ static void room_413_daemon() {
 }
 
 static void room_413_pre_parser() {
-	if (_action.isAction(VERB_TAKE) || _action.isAction(VERB_PUT, NOUN_CONVEYOR_BELT))
+	if (_action.isAction(words_take) || _action.isAction(words_put, words_conveyor_belt))
 		_game._player._needToWalk = false;
 
-	if (_action.isAction(VERB_LOOK, NOUN_WOODEN_STATUE) || _action.isAction(VERB_LOOK, NOUN_DISPLAY)
-		|| _action.isAction(VERB_LOOK, NOUN_PICTURE) || _action.isAction(VERB_LOOK, NOUN_PLANT)) {
+	if (_action.isAction(words_look, words_wooden_statue) || _action.isAction(words_look, words_display)
+		|| _action.isAction(words_look, words_picture) || _action.isAction(words_look, words_plant)) {
 		_game._player._needToWalk = true;
 	}
 }
 
 static void room_413_parser() {
-	if (_action.isAction(VERB_WALK_INSIDE, NOUN_TELEPORTER)) {
+	if (_action.isAction(words_walk_inside, words_teleporter)) {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_scene->_nextSceneId = 409;
-	} else if (_action.isAction(VERB_WALK_INTO, NOUN_CORRIDOR_TO_SOUTH))
+	} else if (_action.isAction(words_walk_into, words_corridor_to_south))
 		_scene->_nextSceneId = 405;
-	else if (_action.isAction(VERB_LOOK, NOUN_WOODEN_STATUE))
+	else if (_action.isAction(words_look, words_wooden_statue))
 		_vm->_dialogs->show(41310);
-	else if (_action.isAction(VERB_TAKE, NOUN_WOODEN_STATUE))
+	else if (_action.isAction(words_take, words_wooden_statue))
 		_vm->_dialogs->show(41311);
-	else if (_action.isAction(VERB_LOOK, NOUN_CONVEYOR_BELT))
+	else if (_action.isAction(words_look, words_conveyor_belt))
 		_vm->_dialogs->show(41312);
-	else if (_action.isAction(VERB_PUT, NOUN_CONVEYOR_BELT))
+	else if (_action.isAction(words_put, words_conveyor_belt))
 		_vm->_dialogs->show(41313);
-	else if (_action.isAction(VERB_LOOK, NOUN_TELEPORTER))
+	else if (_action.isAction(words_look, words_teleporter))
 		_vm->_dialogs->show(41314);
-	else if (_action.isAction(VERB_LOOK, NOUN_DISPLAY))
+	else if (_action.isAction(words_look, words_display))
 		_vm->_dialogs->show(41315);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_SOUTH))
+	else if (_action.isAction(words_look, words_corridor_to_south))
 		_vm->_dialogs->show(41316);
-	else if (_action.isAction(VERB_LOOK, NOUN_PICTURE))
+	else if (_action.isAction(words_look, words_picture))
 		_vm->_dialogs->show(41317);
-	else if (_action.isAction(VERB_LOOK, NOUN_PLANT))
+	else if (_action.isAction(words_look, words_plant))
 		_vm->_dialogs->show(41318);
-	else if (_action.isAction(VERB_TAKE, NOUN_PLANT))
+	else if (_action.isAction(words_take, words_plant))
 		_vm->_dialogs->show(41319);
 	else if (_action._lookFlag)
 		_vm->_dialogs->show(41320);

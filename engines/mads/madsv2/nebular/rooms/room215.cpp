@@ -78,7 +78,7 @@ static void room_215_daemon() {
 static void room_215_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(21509);
-	else if (_action.isAction(VERB_TAKE, NOUN_TWINKIFRUIT)) {
+	else if (_action.isAction(words_take, words_twinkifruit)) {
 		if (!_game._objects.isInInventory(OBJ_TWINKIFRUIT) || _game._trigger) {
 			switch (_game._trigger) {
 			case 0:
@@ -117,31 +117,31 @@ static void room_215_parser() {
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(idx));
 		}
-	} else if (_action.isAction(VERB_WALK_OUTSIDE, NOUN_HUT))
+	} else if (_action.isAction(words_walk_outside, words_hut))
 		_scene->_nextSceneId = 210;
-	else if (_action.isAction(VERB_LOOK, NOUN_BEAR_RUG))
+	else if (_action.isAction(words_look, words_bear_rug))
 		_vm->_dialogs->show(21501);
-	else if (_action.isAction(VERB_LOOK, NOUN_BED))
+	else if (_action.isAction(words_look, words_bed))
 		_vm->_dialogs->show(21502);
-	else if (_action.isAction(VERB_LOOK, NOUN_WELCOME_MAT))
+	else if (_action.isAction(words_look, words_welcome_mat))
 		_vm->_dialogs->show(21503);
-	else if (_action.isAction(VERB_LOOK, NOUN_LOVE_ALTAR))
+	else if (_action.isAction(words_look, words_love_altar))
 		_vm->_dialogs->show(21504);
-	else if (_action.isAction(VERB_LOOK, NOUN_WINDOW))
+	else if (_action.isAction(words_look, words_window))
 		_vm->_dialogs->show(21505);
-	else if (_action.isAction(VERB_LOOK, NOUN_PICTURE))
+	else if (_action.isAction(words_look, words_picture))
 		_vm->_dialogs->show(21506);
-	else if (_action.isAction(VERB_LOOK, NOUN_TWINKIFRUIT) && (_action._savedFields._mainObjectSource == 4))
+	else if (_action.isAction(words_look, words_twinkifruit) && (_action._savedFields._mainObjectSource == 4))
 		_vm->_dialogs->show(21507);
-	else if (_action.isAction(VERB_TAKE, NOUN_BEAR_RUG))
+	else if (_action.isAction(words_take, words_bear_rug))
 		_vm->_dialogs->show(21510);
-	else if (_action.isAction(VERB_TAKE, NOUN_LOVE_ALTAR))
+	else if (_action.isAction(words_take, words_love_altar))
 		_vm->_dialogs->show(21511);
-	else if (_action.isAction(VERB_LOOK, NOUN_BAG_OF_TWINKIFRUITS))
+	else if (_action.isAction(words_look, words_bag_of_twinkifruits))
 		_vm->_dialogs->show(21512);
-	else if (_action.isAction(VERB_TAKE, NOUN_BAG_OF_TWINKIFRUITS))
+	else if (_action.isAction(words_take, words_bag_of_twinkifruits))
 		_vm->_dialogs->show(21513);
-	else if (_action.isAction(VERB_TAKE, NOUN_WELCOME_MAT))
+	else if (_action.isAction(words_take, words_welcome_mat))
 		_vm->_dialogs->show(21514);
 	else
 		return;

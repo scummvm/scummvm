@@ -94,7 +94,7 @@ static void room_609_daemon() {
 		break;
 
 	case 61:
-		_scene->_hotspots.activate(NOUN_VIDEO_STORE_DOOR, false);
+		_scene->_hotspots.activate(words_video_store_door, false);
 		_game._player.walk(Common::Point(101, 100), FACING_EAST);
 		_scene->_sequences.addTimer(180, 62);
 		break;
@@ -102,7 +102,7 @@ static void room_609_daemon() {
 	case 62:
 		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 		_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
-		_scene->_hotspots.activate(NOUN_VIDEO_STORE_DOOR, true);
+		_scene->_hotspots.activate(words_video_store_door, true);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 63);
 		break;
@@ -206,7 +206,7 @@ static void enterStore() {
 		break;
 
 	case 6:
-		_scene->_hotspots.activate(NOUN_VIDEO_STORE_DOOR, false);
+		_scene->_hotspots.activate(words_video_store_door, false);
 		if (local._videoDoorMode == 1) {
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 180, _game.getQuote(0x307));
@@ -223,7 +223,7 @@ static void enterStore() {
 		break;
 
 	case 8:
-		_scene->_hotspots.activate(NOUN_VIDEO_STORE_DOOR, true);
+		_scene->_hotspots.activate(words_video_store_door, true);
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
 		_globals[kBeenInVideoStore] = true;
@@ -237,14 +237,14 @@ static void enterStore() {
 }
 
 static void room_609_pre_parser() {
-	if (_action.isAction(VERB_UNLOCK, NOUN_DOOR_KEY, NOUN_VIDEO_STORE_DOOR))
+	if (_action.isAction(words_unlock, words_door_key, words_video_store_door))
 		_game._player.walk(Common::Point(78, 99), FACING_NORTHWEST);
 }
 
 static void room_609_parser() {
-	if (_action.isAction(VERB_WALK_TOWARDS, NOUN_ALLEY))
+	if (_action.isAction(words_walk_towards, words_alley))
 		_scene->_nextSceneId = 611;
-	else if (_action.isAction(VERB_WALK_THROUGH, NOUN_VIDEO_STORE_DOOR)) {
+	else if (_action.isAction(words_walk_through, words_video_store_door)) {
 		if (!_globals[kBeenInVideoStore]) {
 			switch (_game._trigger) {
 			case 0:
@@ -285,10 +285,10 @@ static void room_609_parser() {
 			local._videoDoorMode = 2;
 			enterStore();
 		}
-	} else if (_action.isAction(VERB_UNLOCK, NOUN_DOOR_KEY, NOUN_VIDEO_STORE_DOOR)) {
+	} else if (_action.isAction(words_unlock, words_door_key, words_video_store_door)) {
 		local._videoDoorMode = 1;
 		enterStore();
-	} else if (_action.isAction(VERB_GET_INSIDE, NOUN_CAR)) {
+	} else if (_action.isAction(words_get_inside, words_car)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -330,26 +330,26 @@ static void room_609_parser() {
 		}
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(60910);
-	else if (_action.isAction(VERB_LOOK, NOUN_STREET))
+	else if (_action.isAction(words_look, words_street))
 		_vm->_dialogs->show(60911);
-	else if (_action.isAction(VERB_LOOK, NOUN_SPOT_A_POT))
+	else if (_action.isAction(words_look, words_spot_a_pot))
 		_vm->_dialogs->show(60912);
-	else if (_action.isAction(VERB_LOOK, NOUN_VIDEO_STORE))
+	else if (_action.isAction(words_look, words_video_store))
 		_vm->_dialogs->show(60913);
-	else if (_action.isAction(VERB_LOOK, NOUN_BILLBOARD))
+	else if (_action.isAction(words_look, words_billboard))
 		_vm->_dialogs->show(60914);
-	else if (_action.isAction(VERB_LOOK, NOUN_STATUE))
+	else if (_action.isAction(words_look, words_statue))
 		_vm->_dialogs->show(60915);
-	else if (_action.isAction(VERB_LOOK, NOUN_CAR))
+	else if (_action.isAction(words_look, words_car))
 		_vm->_dialogs->show(60916);
-	else if (_action.isAction(VERB_LOOK, NOUN_NEWSSTAND))
+	else if (_action.isAction(words_look, words_newsstand))
 		_vm->_dialogs->show(60917);
-	else if (_action.isAction(VERB_LOOK, NOUN_VIDEO_STORE_DOOR)) {
+	else if (_action.isAction(words_look, words_video_store_door)) {
 		if (!_globals[kBeenInVideoStore])
 			_vm->_dialogs->show(60918);
 		else
 			_vm->_dialogs->show(60919);
-	} else if (_action.isAction(VERB_WALK_DOWN, NOUN_STREET))
+	} else if (_action.isAction(words_walk_down, words_street))
 		_vm->_dialogs->show(60730);
 	else
 		return;

@@ -91,7 +91,7 @@ static void handleTakeVase() {
 			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(195, 99));
-			int idx = _scene->_dynamicHotspots.add(NOUN_BOTTLE, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+			int idx = _scene->_dynamicHotspots.add(words_bottle, words_walkto, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
 			_game._objects.setRoom(OBJ_BOTTLE, _scene->_currentSceneId);
 		}
@@ -120,13 +120,13 @@ static void room_706_init() {
 		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('v', -1));
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 4);
-		int idx = _scene->_dynamicHotspots.add(NOUN_VASE, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_vase, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		local._vaseHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
 	} else if (_game._objects.isInRoom(OBJ_BOTTLE)) {
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(195, 99));
-		int idx = _scene->_dynamicHotspots.add(NOUN_BOTTLE, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_bottle, words_walkto, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
 	}
 
@@ -200,7 +200,7 @@ static void room_706_daemon() {
 					_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 					_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
 					_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(195, 99));
-					int idx = _scene->_dynamicHotspots.add(NOUN_BOTTLE, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+					int idx = _scene->_dynamicHotspots.add(words_bottle, words_walkto, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 					_scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
 				}
 			}
@@ -209,12 +209,12 @@ static void room_706_daemon() {
 }
 
 static void room_706_pre_parser() {
-	if (_action.isAction(VERB_LOOK, NOUN_PORTRAIT))
+	if (_action.isAction(words_look, words_portrait))
 		_game._player._needToWalk = true;
 }
 
 static void room_706_parser() {
-	if (_action.isAction(VERB_WALK_INSIDE, NOUN_TELEPORTER)) {
+	if (_action.isAction(words_walk_inside, words_teleporter)) {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_scene->_nextSceneId = 707;
@@ -222,13 +222,13 @@ static void room_706_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_EXIT, NOUN_ROOM)) {
+	if (_action.isAction(words_exit, words_room)) {
 		_scene->_nextSceneId = 705;
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, NOUN_VASE)) {
+	if (_action.isAction(words_take, words_vase)) {
 		if (_game._difficulty != DIFFICULTY_EASY) {
 			local._animationMode = 1;
 			handleRexDeath();
@@ -240,7 +240,7 @@ static void room_706_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_PUT, NOUN_BOTTLE, NOUN_PEDESTAL)) {
+	if (_action.isAction(words_put, words_bottle, words_pedestal)) {
 		if ((_globals[kBottleStatus] == 2 && _game._difficulty == DIFFICULTY_HARD) ||
 			(_globals[kBottleStatus] != 0 && _game._difficulty != DIFFICULTY_HARD)) {
 			if (!_game._objects.isInInventory(OBJ_VASE) || _game._trigger) {
@@ -257,47 +257,47 @@ static void room_706_parser() {
 		}
 	}
 
-	if (_action.isAction(VERB_PUT, NOUN_PEDESTAL) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
+	if (_action.isAction(words_put, words_pedestal) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
 		int objectId = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
 		if (_game._objects[objectId].hasQuality(10))
 			_vm->_dialogs->show(70626);
 		else
 			_vm->_dialogs->show(70627);
-	} else if (_action.isAction(VERB_TAKE, NOUN_BOTTLE) && _game._objects.isInInventory(OBJ_VASE))
+	} else if (_action.isAction(words_take, words_bottle) && _game._objects.isInInventory(OBJ_VASE))
 		_vm->_dialogs->show(70631);
 	else if (_action._lookFlag) {
 		if (_game._objects[OBJ_VASE]._roomNumber == _scene->_currentSceneId)
 			_vm->_dialogs->show(70610);
 		else
 			_vm->_dialogs->show(70611);
-	} else if (_action.isAction(VERB_LOOK, NOUN_FLOOR))
+	} else if (_action.isAction(words_look, words_floor))
 		_vm->_dialogs->show(70612);
-	else if (_action.isAction(VERB_LOOK, NOUN_PILLAR))
+	else if (_action.isAction(words_look, words_pillar))
 		_vm->_dialogs->show(70613);
-	else if (_action.isAction(VERB_LOOK, NOUN_OLD_TEA_CUP))
+	else if (_action.isAction(words_look, words_old_tea_cup))
 		_vm->_dialogs->show(70614);
-	else if (_action.isAction(VERB_TAKE, NOUN_OLD_TEA_CUP))
+	else if (_action.isAction(words_take, words_old_tea_cup))
 		_vm->_dialogs->show(70615);
-	else if (_action.isAction(VERB_LOOK, NOUN_OLD_VASE))
+	else if (_action.isAction(words_look, words_old_vase))
 		_vm->_dialogs->show(70616);
-	else if (_action.isAction(VERB_LOOK, NOUN_PORTRAIT))
+	else if (_action.isAction(words_look, words_portrait))
 		_vm->_dialogs->show(70617);
-	else if (_action.isAction(VERB_LOOK, NOUN_NAME_PLATE))
+	else if (_action.isAction(words_look, words_name_plate))
 		_vm->_dialogs->show(70618);
-	else if (_action.isAction(VERB_LOOK, NOUN_WALL))
+	else if (_action.isAction(words_look, words_wall))
 		_vm->_dialogs->show(70619);
-	else if (_action.isAction(VERB_LOOK, NOUN_PEDESTAL)) {
+	else if (_action.isAction(words_look, words_pedestal)) {
 		if (_game._objects[OBJ_VASE]._roomNumber == _scene->_currentSceneId)
 			_vm->_dialogs->show(70620);
 		else if (_game._objects[OBJ_BOTTLE]._roomNumber == _scene->_currentSceneId)
 			_vm->_dialogs->show(70622);
 		else
 			_vm->_dialogs->show(70621);
-	} else if (_action.isAction(VERB_LOOK, NOUN_TELEPORTER))
+	} else if (_action.isAction(words_look, words_teleporter))
 		_vm->_dialogs->show(70623);
-	else if (_action.isAction(VERB_LOOK, NOUN_VASE) && (_game._objects[OBJ_VASE]._roomNumber == _scene->_currentSceneId))
+	else if (_action.isAction(words_look, words_vase) && (_game._objects[OBJ_VASE]._roomNumber == _scene->_currentSceneId))
 		_vm->_dialogs->show(70624);
-	else if (_action.isAction(VERB_LOOK, NOUN_BOTTLE) && (_action._mainObjectSource == CAT_HOTSPOT))
+	else if (_action.isAction(words_look, words_bottle) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(70632);
 	else
 		return;
@@ -322,9 +322,9 @@ void room_706_preload() {
 
 	section_7_walker();
 	section_7_interface();
-	_scene->addActiveVocab(NOUN_BOTTLE);
-	_scene->addActiveVocab(NOUN_VASE);
-	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(words_bottle);
+	_scene->addActiveVocab(words_vase);
+	_scene->addActiveVocab(words_walkto);
 }
 
 } // namespace Rooms

@@ -330,11 +330,11 @@ static void room_411_init() {
 	local._dialog4.setup(0x5E, 0x255, 0x261, 0x25D, 0x259, 0x262, -1);
 
 	if (_globals[kNextIngredient] >= 4 && !_game._objects[OBJ_CHARGE_CASES].getQuality(3)) {
-		_scene->_hotspots.activate(NOUN_KETTLE, false);
-		_scene->_hotspots.activate(NOUN_EXPLOSIVES, true);
+		_scene->_hotspots.activate(words_kettle, false);
+		_scene->_hotspots.activate(words_explosives, true);
 	} else {
-		_scene->_hotspots.activate(NOUN_EXPLOSIVES, false);
-		_scene->_hotspots.activate(NOUN_KETTLE, true);
+		_scene->_hotspots.activate(words_explosives, false);
+		_scene->_hotspots.activate(words_kettle, true);
 	}
 
 	if (_globals[kNextIngredient] >= 4 && _game._objects[OBJ_CHARGE_CASES].getQuality(3)) {
@@ -380,21 +380,21 @@ static void room_411_init() {
 	if (_game._objects.isInRoom(OBJ_FORMALDEHYDE)) {
 		_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 1);
-		int idx = _scene->_dynamicHotspots.add(NOUN_FORMALDEHYDE, VERB_WALKTO, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_formaldehyde, words_walkto, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(206, 145), FACING_SOUTHEAST);
 	}
 
 	if (_game._objects.isInRoom(OBJ_PETROX)) {
 		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 8);
-		int idx = _scene->_dynamicHotspots.add(NOUN_PETROX, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_petrox, words_walkto, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(186, 112), FACING_NORTHEAST);
 	}
 
 	if (_game._objects.isInRoom(OBJ_LECITHIN)) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 8);
-		int idx = _scene->_dynamicHotspots.add(NOUN_LECITHIN, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_lecithin, words_walkto, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(220, 121), FACING_NORTHEAST);
 	}
 
@@ -472,8 +472,8 @@ static void room_411_daemon() {
 				if (local._makeMushroomCloud) {
 					_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 5, 1, 0, 0);
 					local._makeMushroomCloud = false;
-					_scene->_hotspots.activate(NOUN_KETTLE, false);
-					_scene->_hotspots.activate(NOUN_EXPLOSIVES, true);
+					_scene->_hotspots.activate(words_kettle, false);
+					_scene->_hotspots.activate(words_explosives, true);
 				}
 				break;
 
@@ -502,21 +502,21 @@ static void room_411_daemon() {
 }
 
 static void room_411_pre_parser() {
-	if (_action.isAction(VERB_LOOK, NOUN_PETROX) && (_game._objects.isInRoom(OBJ_PETROX)))
+	if (_action.isAction(words_look, words_petrox) && (_game._objects.isInRoom(OBJ_PETROX)))
 		_game._player._needToWalk = true;
 
-	if (_action.isAction(VERB_LOOK, NOUN_LECITHIN) && (_game._objects.isInRoom(OBJ_LECITHIN)))
+	if (_action.isAction(words_look, words_lecithin) && (_game._objects.isInRoom(OBJ_LECITHIN)))
 		_game._player._needToWalk = true;
 
-	if (_action.isAction(VERB_LOOK, NOUN_FORMALDEHYDE) && (_game._objects.isInRoom(OBJ_FORMALDEHYDE)))
+	if (_action.isAction(words_look, words_formaldehyde) && (_game._objects.isInRoom(OBJ_FORMALDEHYDE)))
 		_game._player._needToWalk = true;
 
-	if (_action.isAction(VERB_LOOK, NOUN_EXPLOSIVES) || _action.isAction(VERB_LOOK, NOUN_KETTLE) || _action.isAction(VERB_LOOK, NOUN_MISHAP) ||
-		_action.isAction(VERB_LOOK, NOUN_ALCOVE) || _action.isAction(VERB_LOOK, NOUN_SINK) || _action.isAction(VERB_PUT, NOUN_SINK) ||
-		_action.isAction(VERB_LOOK, NOUN_EXPERIMENT) || _action.isAction(VERB_LOOK, NOUN_DRAWING_BOARD))
+	if (_action.isAction(words_look, words_explosives) || _action.isAction(words_look, words_kettle) || _action.isAction(words_look, words_mishap) ||
+		_action.isAction(words_look, words_alcove) || _action.isAction(words_look, words_sink) || _action.isAction(words_put, words_sink) ||
+		_action.isAction(words_look, words_experiment) || _action.isAction(words_look, words_drawing_board))
 		_game._player._needToWalk = true;
 
-	if (_action.isAction(VERB_PULL, NOUN_KNIFE_SWITCH) || _action.isAction(VERB_PUSH, NOUN_KNIFE_SWITCH))
+	if (_action.isAction(words_pull, words_knife_switch) || _action.isAction(words_push, words_knife_switch))
 		_game._player._needToWalk = false;
 }
 
@@ -527,14 +527,14 @@ static void room_411_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_WALK_INTO, NOUN_CORRIDOR_TO_SOUTH)) {
+	if (_action.isAction(words_walk_into, words_corridor_to_south)) {
 		_scene->_nextSceneId = 406;
 		_vm->_sound->command(10);
 		_action._inProgress = false;
 		return;
 	}
 
-	if ((_globals[kNextIngredient] >= 4) && (_action.isAction(VERB_TAKE, NOUN_EXPLOSIVES) || _action.isAction(VERB_PUT, NOUN_CHARGE_CASES, NOUN_EXPLOSIVES))
+	if ((_globals[kNextIngredient] >= 4) && (_action.isAction(words_take, words_explosives) || _action.isAction(words_put, words_charge_cases, words_explosives))
 		&& !_game._objects[OBJ_CHARGE_CASES].getQuality(3)
 		&& _game._objects.isInInventory(OBJ_CHARGE_CASES)) {
 		switch (_game._trigger) {
@@ -560,8 +560,8 @@ static void room_411_parser() {
 		break;
 
 		case 111:
-			_scene->_hotspots.activate(NOUN_KETTLE, true);
-			_scene->_hotspots.activate(NOUN_EXPLOSIVES, false);
+			_scene->_hotspots.activate(words_kettle, true);
+			_scene->_hotspots.activate(words_explosives, false);
 			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 			_scene->_sequences.remove(_globals._sequenceIndexes[10]);
 
@@ -586,13 +586,13 @@ static void room_411_parser() {
 		}
 		_action._inProgress = false;
 		return;
-	} else if (!_game._objects.isInInventory(OBJ_CHARGE_CASES) && _action.isAction(VERB_TAKE, NOUN_EXPLOSIVES)) {
+	} else if (!_game._objects.isInInventory(OBJ_CHARGE_CASES) && _action.isAction(words_take, words_explosives)) {
 		_vm->_dialogs->show(41143);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, NOUN_PETROX) && (_game._objects.isInRoom(OBJ_PETROX) || _game._trigger)) {
+	if (_action.isAction(words_take, words_petrox) && (_game._objects.isInRoom(OBJ_PETROX) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
 			_vm->_sound->command(57);
@@ -629,7 +629,7 @@ static void room_411_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, NOUN_LECITHIN) && (_game._objects.isInRoom(OBJ_LECITHIN) || _game._trigger)) {
+	if (_action.isAction(words_take, words_lecithin) && (_game._objects.isInRoom(OBJ_LECITHIN) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
 			_vm->_sound->command(57);
@@ -665,7 +665,7 @@ static void room_411_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, NOUN_FORMALDEHYDE) && _game._objects.isInRoom(OBJ_FORMALDEHYDE) && (_game._trigger == 0)) {
+	if (_action.isAction(words_take, words_formaldehyde) && _game._objects.isInRoom(OBJ_FORMALDEHYDE) && (_game._trigger == 0)) {
 		_vm->_sound->command(57);
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
@@ -689,11 +689,11 @@ static void room_411_parser() {
 	if (_game._trigger == 10)
 		_vm->_dialogs->showItem(OBJ_FORMALDEHYDE, 41124);
 
-	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_KETTLE)) {
-		if (_action.isObject(NOUN_PETROX) ||
-			_action.isObject(NOUN_FORMALDEHYDE) ||
-			_action.isObject(NOUN_LECITHIN) ||
-			_action.isObject(NOUN_ALIEN_LIQUOR)) {
+	if (_action.isAction(words_put) && _action.isTarget(words_kettle)) {
+		if (_action.isObject(words_petrox) ||
+			_action.isObject(words_formaldehyde) ||
+			_action.isObject(words_lecithin) ||
+			_action.isObject(words_alien_liquor)) {
 			local._newIngredient = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
 			switch (local._newIngredient) {
 			case OBJ_ALIEN_LIQUOR:
@@ -719,67 +719,67 @@ static void room_411_parser() {
 	}
 
 
-	if (_action.isAction(VERB_LOOK, NOUN_MONITOR))
+	if (_action.isAction(words_look, words_monitor))
 		_vm->_dialogs->show(41110);
-	else if (_action.isAction(VERB_LOOK, NOUN_AIR_PURIFIER))
+	else if (_action.isAction(words_look, words_air_purifier))
 		_vm->_dialogs->show(41111);
-	else if (_action.isAction(VERB_LOOK, NOUN_LAB_EQUIPMENT))
+	else if (_action.isAction(words_look, words_lab_equipment))
 		_vm->_dialogs->show(41112);
-	else if (_action.isAction(VERB_LOOK, NOUN_KNIFE_SWITCH))
+	else if (_action.isAction(words_look, words_knife_switch))
 		_vm->_dialogs->show(41113);
-	else if (_action.isAction(VERB_PUSH, NOUN_KNIFE_SWITCH) || _action.isAction(VERB_PULL, NOUN_KNIFE_SWITCH))
+	else if (_action.isAction(words_push, words_knife_switch) || _action.isAction(words_pull, words_knife_switch))
 		_vm->_dialogs->show(41114);
-	else if (_action.isAction(VERB_LOOK, NOUN_TOXIC_WASTE))
+	else if (_action.isAction(words_look, words_toxic_waste))
 		_vm->_dialogs->show(41115);
-	else if (_action.isAction(VERB_TAKE, NOUN_TOXIC_WASTE))
+	else if (_action.isAction(words_take, words_toxic_waste))
 		_vm->_dialogs->show(41116);
-	else if (_action.isAction(VERB_LOOK, NOUN_DRAWING_BOARD))
+	else if (_action.isAction(words_look, words_drawing_board))
 		_vm->_dialogs->show(41117);
-	else if (_action.isAction(VERB_LOOK, NOUN_EXPERIMENT))
+	else if (_action.isAction(words_look, words_experiment))
 		_vm->_dialogs->show(41118);
-	else if (_action.isAction(VERB_LOOK, NOUN_PETROX) && _game._objects.isInRoom(OBJ_PETROX))
+	else if (_action.isAction(words_look, words_petrox) && _game._objects.isInRoom(OBJ_PETROX))
 		_vm->_dialogs->show(41119);
-	else if (_action.isAction(VERB_LOOK, NOUN_ALCOVE))
+	else if (_action.isAction(words_look, words_alcove))
 		_vm->_dialogs->show(41121);
-	else if ((_action.isAction(VERB_LOOK, NOUN_FORMALDEHYDE)) && (_game._objects.isInRoom(OBJ_FORMALDEHYDE)))
+	else if ((_action.isAction(words_look, words_formaldehyde)) && (_game._objects.isInRoom(OBJ_FORMALDEHYDE)))
 		_vm->_dialogs->show(41122);
-	else if ((_action.isAction(VERB_LOOK, NOUN_LECITHIN)) && (_game._objects.isInRoom(OBJ_LECITHIN)))
+	else if ((_action.isAction(words_look, words_lecithin)) && (_game._objects.isInRoom(OBJ_LECITHIN)))
 		_vm->_dialogs->show(41123);
-	else if (_action.isAction(VERB_LOOK, NOUN_KETTLE)) {
+	else if (_action.isAction(words_look, words_kettle)) {
 		if (_globals[kNextIngredient] > 0 && !_game._objects[OBJ_CHARGE_CASES].getQuality(3)) {
 			_vm->_dialogs->show(41126);
 		} else if (_globals[kNextIngredient] == 0 || _game._objects[OBJ_CHARGE_CASES].getQuality(3)) {
 			_vm->_dialogs->show(41125);
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_EXPLOSIVES) && _game._objects[OBJ_CHARGE_CASES].getQuality(3) == 0) {
+	} else if (_action.isAction(words_look, words_explosives) && _game._objects[OBJ_CHARGE_CASES].getQuality(3) == 0) {
 		_vm->_dialogs->show(41127);
-	} else if (_action.isAction(VERB_TAKE, NOUN_KETTLE))
+	} else if (_action.isAction(words_take, words_kettle))
 		_vm->_dialogs->show(41128);
-	else if (_action.isAction(VERB_LOOK, NOUN_CONTROL_PANEL))
+	else if (_action.isAction(words_look, words_control_panel))
 		_vm->_dialogs->show(41129);
-	else if (_action.isAction(VERB_LOOK, NOUN_MISHAP))
+	else if (_action.isAction(words_look, words_mishap))
 		_vm->_dialogs->show(41130);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_SOUTH))
+	else if (_action.isAction(words_look, words_corridor_to_south))
 		_vm->_dialogs->show(41131);
 	else if (_action._lookFlag)
 		_vm->_dialogs->show(41132);
-	else if (_action.isAction(VERB_LOOK, NOUN_AIR_HORN))
+	else if (_action.isAction(words_look, words_air_horn))
 		_vm->_dialogs->show(41133);
-	else if (_action.isAction(VERB_LOOK, NOUN_DEBRIS))
+	else if (_action.isAction(words_look, words_debris))
 		_vm->_dialogs->show(41134);
-	else if (_action.isAction(VERB_LOOK, NOUN_HEATER))
+	else if (_action.isAction(words_look, words_heater))
 		_vm->_dialogs->show(41135);
-	else if (_action.isAction(VERB_LOOK, NOUN_PIPE))
+	else if (_action.isAction(words_look, words_pipe))
 		_vm->_dialogs->show(41136);
-	else if (_action.isAction(VERB_LOOK, NOUN_SINK))
+	else if (_action.isAction(words_look, words_sink))
 		_vm->_dialogs->show(41137);
-	else if (_action.isAction(VERB_PUT, NOUN_SINK))
+	else if (_action.isAction(words_put, words_sink))
 		_vm->_dialogs->show(41138);
-	else if (_action.isAction(VERB_TAKE, NOUN_EXPERIMENT))
+	else if (_action.isAction(words_take, words_experiment))
 		_vm->_dialogs->show(41139);
-	else if (_action.isAction(VERB_LOOK, NOUN_ELECTRODES))
+	else if (_action.isAction(words_look, words_electrodes))
 		_vm->_dialogs->show(41140);
-	else if (_action.isAction(VERB_TAKE, NOUN_ELECTRODES))
+	else if (_action.isAction(words_take, words_electrodes))
 		_vm->_dialogs->show(41141);
 	else
 		return;
@@ -806,11 +806,11 @@ void room_411_preload() {
 
 	section_4_walker();
 	section_4_interface();
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_ALIEN_LIQUOR);
-	_scene->addActiveVocab(NOUN_FORMALDEHYDE);
-	_scene->addActiveVocab(NOUN_PETROX);
-	_scene->addActiveVocab(NOUN_LECITHIN);
+	_scene->addActiveVocab(words_walkto);
+	_scene->addActiveVocab(words_alien_liquor);
+	_scene->addActiveVocab(words_formaldehyde);
+	_scene->addActiveVocab(words_petrox);
+	_scene->addActiveVocab(words_lecithin);
 }
 
 } // namespace Rooms

@@ -81,7 +81,7 @@ static void room_808_init() {
 }
 
 static void room_808_parser() {
-	if (_action.isAction(VERB_PRESS, NOUN_START_BUTTON_2)) {
+	if (_action.isAction(words_press, words_start_button_2)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -117,7 +117,7 @@ static void room_808_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_PRESS, NOUN_TIMER_BUTTON_2)) {
+	} else if (_action.isAction(words_press, words_timer_button_2)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -147,7 +147,7 @@ static void room_808_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_PRESS, NOUN_REMOTE_BUTTON_2)) {
+	} else if (_action.isAction(words_press, words_remote_button_2)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -178,7 +178,7 @@ static void room_808_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_PRESS, NOUN_START_BUTTON_1)) {
+	} else if (_action.isAction(words_press, words_start_button_1)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -195,7 +195,7 @@ static void room_808_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_PRESS, NOUN_REMOTE_BUTTON_1)) {
+	} else if (_action.isAction(words_press, words_remote_button_1)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -212,7 +212,7 @@ static void room_808_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_PRESS, NOUN_TIMER_BUTTON_1)) {
+	} else if (_action.isAction(words_press, words_timer_button_1)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -229,7 +229,7 @@ static void room_808_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_EXIT, NOUN_PANEL)) {
+	} else if (_action.isAction(words_exit, words_panel)) {
 		_scene->_nextSceneId = 801;
 		_globals[kBetweenRooms] = true;
 	} else

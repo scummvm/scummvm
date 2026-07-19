@@ -58,13 +58,13 @@ static void room_110_init() {
 
 		local._crabsFl = true;
 
-		int idx = _scene->_dynamicHotspots.add(NOUN_CRAB, VERB_SWIM_TO, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(NOUN_CRAB, VERB_SWIM_TO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(NOUN_CRAB, VERB_SWIM_TO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(NOUN_CRAB, VERB_SWIM_TO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(194, 23);
@@ -89,7 +89,7 @@ static void room_110_daemon() {
 }
 
 static void room_110_pre_parser() {
-	if (_action.isAction(VERB_SWIM_THROUGH, NOUN_CAVE_ENTRANCE))
+	if (_action.isAction(words_swim_through, words_cave_entrance))
 		_game._player._walkOffScreenSceneId = 109;
 
 	if (local._crabsFl) {
@@ -105,19 +105,19 @@ static void room_110_pre_parser() {
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 16, 1, 0, 0);
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 16, 1, 0, 0);
 
-		int idx = _scene->_dynamicHotspots.add(NOUN_CRAB, VERB_SWIM_TO, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(NOUN_CRAB, VERB_SWIM_TO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(NOUN_CRAB, VERB_SWIM_TO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(NOUN_CRAB, VERB_SWIM_TO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
 	}
 }
 
 static void room_110_parser() {
-	if (_action.isAction(VERB_SWIM_THROUGH, NOUN_TUNNEL)) {
+	if (_action.isAction(words_swim_through, words_tunnel)) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->loadAnimation(Resources::formatName(110, 'T', 0, EXT_AA, ""), 1);
@@ -133,21 +133,21 @@ static void room_110_parser() {
 		default:
 			break;
 		}
-	} else if ((_action._lookFlag) || _action.isAction(VERB_LOOK, NOUN_CAVE))
+	} else if ((_action._lookFlag) || _action.isAction(words_look, words_cave))
 		_vm->_dialogs->show(11001);
-	else if (_action.isAction(VERB_LOOK, NOUN_CAVE_CEILING) || _action.isAction(VERB_LOOK_AT, NOUN_CAVE_CEILING))
+	else if (_action.isAction(words_look, words_cave_ceiling) || _action.isAction(words_look_at, words_cave_ceiling))
 		_vm->_dialogs->show(11002);
-	else if (_action.isAction(VERB_LOOK, NOUN_ROCKS))
+	else if (_action.isAction(words_look, words_rocks))
 		_vm->_dialogs->show(11003);
-	else if (_action.isAction(VERB_TAKE, NOUN_ROCKS))
+	else if (_action.isAction(words_take, words_rocks))
 		_vm->_dialogs->show(11004);
-	else if (_action.isAction(VERB_LOOK, NOUN_TUNNEL))
+	else if (_action.isAction(words_look, words_tunnel))
 		_vm->_dialogs->show(11005);
-	else if (_action.isAction(VERB_LOOK, NOUN_CAVE_ENTRANCE))
+	else if (_action.isAction(words_look, words_cave_entrance))
 		_vm->_dialogs->show(11006);
-	else if (_action.isAction(VERB_LOOK, NOUN_FUNGOIDS))
+	else if (_action.isAction(words_look, words_fungoids))
 		_vm->_dialogs->show(11007);
-	else if (_action.isAction(VERB_TAKE, NOUN_FUNGOIDS))
+	else if (_action.isAction(words_take, words_fungoids))
 		_vm->_dialogs->show(11008);
 	else
 		return;
@@ -167,7 +167,7 @@ void room_110_preload() {
 
 	section_1_walker();
 	section_1_interface();
-	_scene->addActiveVocab(NOUN_CRAB);
+	_scene->addActiveVocab(words_crab);
 }
 
 } // namespace Rooms

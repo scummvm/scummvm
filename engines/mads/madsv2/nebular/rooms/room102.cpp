@@ -78,9 +78,9 @@ static void room_102_init() {
 	if (_game._objects.isInRoom(OBJ_BINOCULARS))
 		_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 24, 0, 0, 24);
 	else
-		_scene->_hotspots.activate(NOUN_BINOCULARS, false);
+		_scene->_hotspots.activate(words_binoculars, false);
 
-	_scene->_hotspots.activate(NOUN_BURGER, false);
+	_scene->_hotspots.activate(words_burger, false);
 
 	if (_globals[kMedicineCabinetOpen]) {
 		_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 6, 0, 0);
@@ -179,10 +179,10 @@ static void room_102_daemon() {
 }
 
 static void room_102_pre_parser() {
-	if (_action.isObject(NOUN_REFRIGERATOR) || _action.isObject(NOUN_POSTER))
+	if (_action.isObject(words_refrigerator) || _action.isObject(words_poster))
 		_game._player._needToWalk = _game._player._readyToWalk;
 
-	if (local._fridgeOpenedFl && !_action.isObject(NOUN_REFRIGERATOR)) {
+	if (local._fridgeOpenedFl && !_action.isObject(words_refrigerator)) {
 		switch (_game._trigger) {
 		case 0:
 			if (_game._player._needToWalk) {
@@ -198,7 +198,7 @@ static void room_102_pre_parser() {
 		case 1:
 			if (_game._objects.isInRoom(OBJ_BURGER)) {
 				_scene->_sequences.remove(_globals._sequenceIndexes[10]);
-				_scene->_hotspots.activate(NOUN_BURGER, false);
+				_scene->_hotspots.activate(words_burger, false);
 			}
 			local._fridgeOpenedFl = false;
 			_game._player._stepEnabled = true;
@@ -221,7 +221,7 @@ static void room_102_parser() {
 	}
 
 	bool justOpenedFl = false;
-	if (_action.isObject(NOUN_REFRIGERATOR) && !local._fridgeOpenedFl) {
+	if (_action.isObject(words_refrigerator) && !local._fridgeOpenedFl) {
 		switch (_game._trigger) {
 		case 0:
 			_globals._sequenceIndexes[7] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 6, 1, 0, 0);
@@ -241,7 +241,7 @@ static void room_102_parser() {
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[7], -2, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 15);
 			int delay;
-			if (_action.isAction(VERB_WALKTO) && !local._fridgeFirstOpenFl)
+			if (_action.isAction(words_walkto) && !local._fridgeFirstOpenFl)
 				delay = 0;
 			else
 				delay = 48;
@@ -256,7 +256,7 @@ static void room_102_parser() {
 			_game._player._stepEnabled = true;
 			justOpenedFl = true;
 			if (_game._objects.isInRoom(OBJ_BURGER))
-				_scene->_hotspots.activate(NOUN_BURGER, true);
+				_scene->_hotspots.activate(words_burger, true);
 			break;
 
 		default:
@@ -264,7 +264,7 @@ static void room_102_parser() {
 		}
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_REFRIGERATOR) || _action.isAction(VERB_OPEN, NOUN_REFRIGERATOR)) {
+	if (_action.isAction(words_look, words_refrigerator) || _action.isAction(words_open, words_refrigerator)) {
 		if (_game._objects.isInRoom(OBJ_BURGER))
 			_vm->_dialogs->show(10230);
 		else
@@ -275,7 +275,7 @@ static void room_102_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_WALKTO, NOUN_REFRIGERATOR) && justOpenedFl) {
+	if (_action.isAction(words_walkto, words_refrigerator) && justOpenedFl) {
 		local._fridgeFirstOpenFl = false;
 		int quoteId = _vm->getRandomNumber(59, 63);
 		const char *curQuote = _game.getQuote(quoteId);
@@ -289,19 +289,19 @@ static void room_102_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_CLOSE, NOUN_REFRIGERATOR)) {
+	if (_action.isAction(words_close, words_refrigerator)) {
 		_vm->_dialogs->show(10213);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, NOUN_REFRIGERATOR)) {
+	if (_action.isAction(words_take, words_refrigerator)) {
 		_vm->_dialogs->show(8);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR)) {
+	if (_action.isAction(words_walk_through, words_door)) {
 		switch (_game._trigger) {
 		case 0:
 			_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 1, 0, 0);
@@ -321,99 +321,99 @@ static void room_102_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_WALKTO, NOUN_ENGINEERING_SECTION)) {
+	if (_action.isAction(words_walkto, words_engineering_section)) {
 		_scene->_nextSceneId = 103;
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_WALKTO, NOUN_POSTER) || _action.isAction(VERB_LOOK, NOUN_POSTER) || _action.isAction(VERB_WALKTO, NOUN_BINOCULARS)) {
+	if (_action.isAction(words_walkto, words_poster) || _action.isAction(words_look, words_poster) || _action.isAction(words_walkto, words_binoculars)) {
 		addRandomMessage();
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_WEIGHT_MACHINE)) {
+	if (_action.isAction(words_look, words_weight_machine)) {
 		_vm->_dialogs->show(10212);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_ENGINEERING_SECTION)) {
+	if (_action.isAction(words_look, words_engineering_section)) {
 		_vm->_dialogs->show(10205);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_DOOR)) {
+	if (_action.isAction(words_look, words_door)) {
 		_vm->_dialogs->show(10204);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_STARE_AT, NOUN_CEILING) || _action.isAction(VERB_LOOK, NOUN_CEILING)) {
+	if (_action.isAction(words_stare_at, words_ceiling) || _action.isAction(words_look, words_ceiling)) {
 		_vm->_dialogs->show(10203);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_STARE_AT, NOUN_OVERHEAD_LAMP) || _action.isAction(VERB_LOOK, NOUN_OVERHEAD_LAMP)) {
+	if (_action.isAction(words_stare_at, words_overhead_lamp) || _action.isAction(words_look, words_overhead_lamp)) {
 		_vm->_dialogs->show(10202);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_ROBO_KITCHEN)) {
+	if (_action.isAction(words_look, words_robo_kitchen)) {
 		_vm->_dialogs->show(10215);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_PUT, NOUN_BURGER, NOUN_ROBO_KITCHEN) && _game._objects.isInInventory(OBJ_BURGER)) {
+	if (_action.isAction(words_put, words_burger, words_robo_kitchen) && _game._objects.isInInventory(OBJ_BURGER)) {
 		_vm->_dialogs->show(10216);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_PUT, NOUN_REFRIGERATOR) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
+	if (_action.isAction(words_put, words_refrigerator) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
 		_vm->_dialogs->show(10217);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_PUT, NOUN_DEAD_FISH, NOUN_ROBO_KITCHEN) || _action.isAction(VERB_PUT, NOUN_STUFFED_FISH, NOUN_ROBO_KITCHEN)) {
+	if (_action.isAction(words_put, words_dead_fish, words_robo_kitchen) || _action.isAction(words_put, words_stuffed_fish, words_robo_kitchen)) {
 		_vm->_dialogs->show(10230);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_OPEN, NOUN_ROBO_KITCHEN)) {
+	if (_action.isAction(words_open, words_robo_kitchen)) {
 		_vm->_dialogs->show(10218);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_CLOSET)) {
+	if (_action.isAction(words_look, words_closet)) {
 		_vm->_dialogs->show(10219);
 		_action._inProgress = false;
 		return;
 	}
 
-	if ((_action.isObject(NOUN_LADDER) || _action.isObject(NOUN_HATCHWAY)) && (_action.isAction(VERB_LOOK) || _action.isAction(VERB_CLIMB_UP) || _action.isAction(VERB_CLIMB_THROUGH))) {
+	if ((_action.isObject(words_ladder) || _action.isObject(words_hatchway)) && (_action.isAction(words_look) || _action.isAction(words_climb_up) || _action.isAction(words_climb_through))) {
 		if (_game._objects.isInInventory(OBJ_REBREATHER)) {
-			if (!_action.isAction(VERB_CLIMB_UP) && !_action.isAction(VERB_CLIMB_THROUGH)) {
+			if (!_action.isAction(words_climb_up) && !_action.isAction(words_climb_through)) {
 				_vm->_dialogs->show(10231);
 				_action._inProgress = false;
 				return;
 			}
-		} else if (_action.isAction(VERB_LOOK) || (_game._difficulty != DIFFICULTY_HARD)) {
+		} else if (_action.isAction(words_look) || (_game._difficulty != DIFFICULTY_HARD)) {
 			_vm->_dialogs->show(10222);
 			_action._inProgress = false;
 			return;
 		}
 	}
 
-	if ((_action.isObject(NOUN_LADDER) || _action.isObject(NOUN_HATCHWAY)) && (_action.isAction(VERB_CLIMB_UP) || _action.isAction(VERB_CLIMB_THROUGH))) {
+	if ((_action.isObject(words_ladder) || _action.isObject(words_hatchway)) && (_action.isAction(words_climb_up) || _action.isAction(words_climb_through))) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->loadAnimation(formAnimName('A', -1), 1);
@@ -451,57 +451,57 @@ static void room_102_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_POWER_STATUS_PANEL)) {
+	if (_action.isAction(words_look, words_power_status_panel)) {
 		_vm->_dialogs->show(10226);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_WINDOW) || _action.isAction(VERB_LOOK_THROUGH, NOUN_WINDOW)) {
+	if (_action.isAction(words_look, words_window) || _action.isAction(words_look_through, words_window)) {
 		_vm->_dialogs->show(10227);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_DOORWAY) || _action.isAction(VERB_WALKTO, NOUN_DOORWAY)) {
+	if (_action.isAction(words_look, words_doorway) || _action.isAction(words_walkto, words_doorway)) {
 		_vm->_dialogs->show(10228);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_DRAWER) || ((_action.isAction(VERB_CLOSE, NOUN_DRAWER) || _action.isAction(VERB_PUSH, NOUN_DRAWER)) && !local._drawerDescrFl)) {
+	if (_action.isAction(words_look, words_drawer) || ((_action.isAction(words_close, words_drawer) || _action.isAction(words_push, words_drawer)) && !local._drawerDescrFl)) {
 		_vm->_dialogs->show(10220);
 		local._drawerDescrFl = true;
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_CLOSE, NOUN_DRAWER) || _action.isAction(VERB_PUSH, NOUN_DRAWER)) {
+	if (_action.isAction(words_close, words_drawer) || _action.isAction(words_push, words_drawer)) {
 		_vm->_dialogs->show(10221);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_OPEN, NOUN_DRAWER)) {
+	if (_action.isAction(words_open, words_drawer)) {
 		_vm->_dialogs->show(10236);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_CHAIR) || (_action.isAction(VERB_SIT_IN, NOUN_CHAIR) && !local._chairDescrFl)) {
+	if (_action.isAction(words_look, words_chair) || (_action.isAction(words_sit_in, words_chair) && !local._chairDescrFl)) {
 		local._chairDescrFl = true;
 		_vm->_dialogs->show(10210);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_SIT_IN, NOUN_CHAIR)) {
+	if (_action.isAction(words_sit_in, words_chair)) {
 		_vm->_dialogs->show(10211);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_MEDICINE_CABINET)) {
+	if (_action.isAction(words_look, words_medicine_cabinet)) {
 		if (_globals[kMedicineCabinetOpen])
 			_vm->_dialogs->show(10207);
 		else
@@ -511,7 +511,7 @@ static void room_102_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_CLOSE, NOUN_MEDICINE_CABINET) && _globals[kMedicineCabinetOpen]) {
+	if (_action.isAction(words_close, words_medicine_cabinet) && _globals[kMedicineCabinetOpen]) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->_sequences.remove(_globals._sequenceIndexes[8]);
@@ -538,7 +538,7 @@ static void room_102_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_OPEN, NOUN_MEDICINE_CABINET) && !_globals[kMedicineCabinetOpen]) {
+	if (_action.isAction(words_open, words_medicine_cabinet) && !_globals[kMedicineCabinetOpen]) {
 		switch (_game._trigger) {
 		case 0:
 			_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 6, 1, 0, 0);
@@ -571,7 +571,7 @@ static void room_102_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, NOUN_BINOCULARS) && _game._objects.isInRoom(OBJ_BINOCULARS)) {
+	if (_action.isAction(words_take, words_binoculars) && _game._objects.isInRoom(OBJ_BINOCULARS)) {
 		switch (_game._trigger) {
 		case 0:
 			_globals._sequenceIndexes[11] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[11], false, 3, 1, 0, 0);
@@ -584,7 +584,7 @@ static void room_102_parser() {
 		case 1:
 			_game._objects.addToInventory(OBJ_BINOCULARS);
 			_scene->_sequences.remove(_globals._sequenceIndexes[9]);
-			_scene->_hotspots.activate(NOUN_BINOCULARS, false);
+			_scene->_hotspots.activate(words_binoculars, false);
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
 			_vm->_sound->command(22);
@@ -598,12 +598,12 @@ static void room_102_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, NOUN_BURGER) && _game._objects.isInRoom(OBJ_BURGER)) {
+	if (_action.isAction(words_take, words_burger) && _game._objects.isInRoom(OBJ_BURGER)) {
 		if (_game._trigger == 0) {
 			_vm->_dialogs->showItem(OBJ_BURGER, 10235);
 			_scene->_sequences.remove(_globals._sequenceIndexes[10]);
 			_game._objects.addToInventory(OBJ_BURGER);
-			_scene->_hotspots.activate(NOUN_BURGER, false);
+			_scene->_hotspots.activate(words_burger, false);
 			_vm->_sound->command(22);
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
@@ -612,38 +612,38 @@ static void room_102_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, NOUN_POSTER)) {
+	if (_action.isAction(words_take, words_poster)) {
 		_vm->_dialogs->show(10224);
 		_action._inProgress = false;
 		return;
 	}
 
-	if ((_action.isAction(VERB_PUSH) || _action.isAction(VERB_PULL)) && _action.isObject(NOUN_WEIGHT_MACHINE)) {
+	if ((_action.isAction(words_push) || _action.isAction(words_pull)) && _action.isObject(words_weight_machine)) {
 		_vm->_dialogs->show(10225);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_FLOOR)) {
+	if (_action.isAction(words_look, words_floor)) {
 		_vm->_dialogs->show(10232);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS) && !_game._objects.isInInventory(OBJ_BINOCULARS)) {
+	if (_action.isAction(words_look, words_binoculars) && !_game._objects.isInInventory(OBJ_BINOCULARS)) {
 		_vm->_dialogs->show(10233);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_BURGER) && (_action._mainObjectSource == CAT_HOTSPOT)) {
+	if (_action.isAction(words_look, words_burger) && (_action._mainObjectSource == CAT_HOTSPOT)) {
 		_vm->_dialogs->show(801);
 		_action._inProgress = false;
 	}
 }
 
 static void room_102_error() {
-	if (_action.isAction(VERB_PUT, NOUN_ROBO_KITCHEN) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
+	if (_action.isAction(words_put, words_robo_kitchen) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
 		_vm->_dialogs->show(10217);
 		_action._inProgress = false;
 	}

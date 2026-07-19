@@ -44,7 +44,7 @@ static void room_351_init() {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 4);
 	} else
-		_scene->_hotspots.activate(NOUN_CREDIT_CHIP, false);
+		_scene->_hotspots.activate(words_credit_chip, false);
 
 	if (_scene->_priorSceneId == 352)
 		_game._player._playerPos = Common::Point(148, 152);
@@ -115,11 +115,11 @@ static void room_351_daemon() {
 static void room_351_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(35121);
-	else if (_action.isAction(VERB_STEP_INTO, NOUN_TELEPORTER))
+	else if (_action.isAction(words_step_into, words_teleporter))
 		_scene->_nextSceneId = 322;
-	else if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH))
+	else if (_action.isAction(words_walk_down, words_corridor_to_south))
 		_scene->_nextSceneId = 352;
-	else if (_action.isAction(VERB_TAKE, NOUN_CREDIT_CHIP)) {
+	else if (_action.isAction(words_take, words_credit_chip)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_CREDIT_CHIP)) {
 			switch (_game._trigger) {
 			case 0:
@@ -139,7 +139,7 @@ static void room_351_parser() {
 				break;
 
 			case 1:
-				_scene->_hotspots.activate(NOUN_CREDIT_CHIP, false);
+				_scene->_hotspots.activate(words_credit_chip, false);
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 				_game._objects.addToInventory(OBJ_CREDIT_CHIP);
 				break;
@@ -154,30 +154,30 @@ static void room_351_parser() {
 				break;
 			}
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_VIEW_SCREEN))
+	} else if (_action.isAction(words_look, words_view_screen))
 		_vm->_dialogs->show(35110);
-	else if (_action.isAction(VERB_LOOK, NOUN_RIP_IN_FLOOR))
+	else if (_action.isAction(words_look, words_rip_in_floor))
 		_vm->_dialogs->show(35111);
-	else if (_action.isAction(VERB_LOOK, NOUN_FIRE_HYDRANT))
+	else if (_action.isAction(words_look, words_fire_hydrant))
 		_vm->_dialogs->show(35112);
-	else if (_action.isAction(VERB_LOOK, NOUN_GUARD)) {
+	else if (_action.isAction(words_look, words_guard)) {
 		if (_game._objects[0xF]._roomNumber == 351)
 			_vm->_dialogs->show(35114);
 		else
 			_vm->_dialogs->show(35113);
-	} else if (_action.isAction(VERB_LOOK, NOUN_EQUIPMENT))
+	} else if (_action.isAction(words_look, words_equipment))
 		_vm->_dialogs->show(35115);
-	else if (_action.isAction(VERB_LOOK, NOUN_DESK))
+	else if (_action.isAction(words_look, words_desk))
 		_vm->_dialogs->show(35116);
-	else if (_action.isAction(VERB_LOOK, NOUN_MACHINE))
+	else if (_action.isAction(words_look, words_machine))
 		_vm->_dialogs->show(35117);
-	else if (_action.isAction(VERB_LOOK, NOUN_TELEPORTER))
+	else if (_action.isAction(words_look, words_teleporter))
 		_vm->_dialogs->show(35118);
-	else if (_action.isAction(VERB_LOOK, NOUN_CONTROL_PANEL))
+	else if (_action.isAction(words_look, words_control_panel))
 		_vm->_dialogs->show(35119);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_SOUTH))
+	else if (_action.isAction(words_look, words_corridor_to_south))
 		_vm->_dialogs->show(35120);
-	else if (_action.isAction(VERB_LOOK, NOUN_POLE))
+	else if (_action.isAction(words_look, words_pole))
 		_vm->_dialogs->show(35122);
 	else
 		return;
@@ -199,7 +199,7 @@ void room_351_preload() {
 
 	section_3_walker();
 	section_3_interface();
-	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(words_walkto);
 }
 
 } // namespace Rooms

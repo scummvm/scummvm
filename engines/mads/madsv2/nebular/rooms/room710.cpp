@@ -56,7 +56,7 @@ static void room_710_daemon() {
 }
 
 static void room_710_parser() {
-	if (_action.isAction(VERB_PUT_DOWN, NOUN_BINOCULARS)) {
+	if (_action.isAction(words_put_down, words_binoculars)) {
 		_game._player._stepEnabled = false;
 
 		if (_game._globals[kCityFlooded])

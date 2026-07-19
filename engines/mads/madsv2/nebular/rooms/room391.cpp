@@ -39,9 +39,9 @@ static void room_391_init() {
 }
 
 static void room_391_parser() {
-	if (_action.isAction(VERB_RETURN_TO, NOUN_AIR_SHAFT))
+	if (_action.isAction(words_return_to, words_air_shaft))
 		_scene->_nextSceneId = 313;
-	else if (_action.isAction(VERB_OPEN, NOUN_GRATE)) {
+	else if (_action.isAction(words_open, words_grate)) {
 		if (_globals[kKickedIn391Grate])
 			_vm->_dialogs->show(39113);
 		else {
@@ -53,7 +53,7 @@ static void room_391_parser() {
 			_scene->_nextSceneId = 361;
 		else
 			_scene->_nextSceneId = 311;
-	} else if (_action.isAction(VERB_LOOK_THROUGH, NOUN_GRATE)) {
+	} else if (_action.isAction(words_look_through, words_grate)) {
 		if (_globals[kAfterHavoc])
 			_vm->_dialogs->show(39111);
 		else

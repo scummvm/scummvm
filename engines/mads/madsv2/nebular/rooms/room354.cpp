@@ -56,41 +56,41 @@ static void room_354_init() {
 }
 
 static void room_354_pre_parser() {
-	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH))
+	if (_action.isAction(words_walk_down, words_corridor_to_south))
 		_game._player._walkOffScreenSceneId = 401;
 }
 
 static void room_354_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(35414);
-	else if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_NORTH)) {
+	else if (_action.isAction(words_walk_down, words_corridor_to_north)) {
 		_game._player.startWalking(Common::Point(208, 0), FACING_NORTHEAST);
 		_game._player._walkOffScreenSceneId = 353;
-	} else if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_EAST))
+	} else if (_action.isAction(words_walk_down, words_corridor_to_east))
 		_scene->_nextSceneId = 361;
-	else if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_WEST))
+	else if (_action.isAction(words_walk_down, words_corridor_to_west))
 		_scene->_nextSceneId = 316;
-	else if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH))
+	else if (_action.isAction(words_walk_down, words_corridor_to_south))
 		_scene->_nextSceneId = 401;
-	else if (_action.isAction(VERB_LOOK, NOUN_CONTROLS))
+	else if (_action.isAction(words_look, words_controls))
 		_vm->_dialogs->show(35410);
-	else if (_action.isAction(VERB_LOOK, NOUN_SIGNAL))
+	else if (_action.isAction(words_look, words_signal))
 		_vm->_dialogs->show(35411);
-	else if (_action.isAction(VERB_LOOK, NOUN_CATWALK))
+	else if (_action.isAction(words_look, words_catwalk))
 		_vm->_dialogs->show(35412);
-	else if (_action.isAction(VERB_LOOK, NOUN_AIR_DUCT))
+	else if (_action.isAction(words_look, words_air_duct))
 		_vm->_dialogs->show(35413);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_NORTH))
+	else if (_action.isAction(words_look, words_corridor_to_north))
 		_vm->_dialogs->show(35415);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_SOUTH))
+	else if (_action.isAction(words_look, words_corridor_to_south))
 		_vm->_dialogs->show(35416);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_EAST))
+	else if (_action.isAction(words_look, words_corridor_to_east))
 		_vm->_dialogs->show(35417);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_WEST))
+	else if (_action.isAction(words_look, words_corridor_to_west))
 		_vm->_dialogs->show(35418);
-	else if (_action.isAction(VERB_LOOK, NOUN_DEBRIS))
+	else if (_action.isAction(words_look, words_debris))
 		_vm->_dialogs->show(35419);
-	else if (_action.isAction(VERB_LOOK, NOUN_GUARD))
+	else if (_action.isAction(words_look, words_guard))
 		_vm->_dialogs->show(35420);
 	else
 		return;

@@ -49,32 +49,32 @@ static void room_212_daemon() {
 }
 
 static void room_212_pre_parser() {
-	if (_action.isAction(VERB_WALK_THROUGH, NOUN_CAVE_ENTRANCE))
+	if (_action.isAction(words_walk_through, words_cave_entrance))
 		_game._player._walkOffScreenSceneId = 111;
 }
 
 static void room_212_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(21209);
-	else if (_action.isAction(VERB_WALK_TOWARDS) && (_action.isObject(NOUN_FIELD_TO_NORTH) || _action.isObject(NOUN_MOUNTAINS)))
+	else if (_action.isAction(words_walk_towards) && (_action.isObject(words_field_to_north) || _action.isObject(words_mountains)))
 		_scene->_nextSceneId = 208;
-	else if (_action.isAction(VERB_WALK_TOWARDS, NOUN_CAVE))
+	else if (_action.isAction(words_walk_towards, words_cave))
 		_scene->_nextSceneId = 111;
-	else if (_action.isAction(VERB_LOOK, NOUN_GRASS))
+	else if (_action.isAction(words_look, words_grass))
 		_vm->_dialogs->show(21201);
-	else if (_action.isAction(VERB_LOOK, NOUN_ROCKS))
+	else if (_action.isAction(words_look, words_rocks))
 		_vm->_dialogs->show(21202);
-	else if (_action.isAction(VERB_LOOK, NOUN_CAVE_ENTRANCE))
+	else if (_action.isAction(words_look, words_cave_entrance))
 		_vm->_dialogs->show(21203);
-	else if (_action.isAction(VERB_LOOK, NOUN_SKY))
+	else if (_action.isAction(words_look, words_sky))
 		_vm->_dialogs->show(21204);
-	else if (_action.isAction(VERB_LOOK, NOUN_FIELD_TO_NORTH))
+	else if (_action.isAction(words_look, words_field_to_north))
 		_vm->_dialogs->show(21205);
-	else if (_action.isAction(VERB_LOOK, NOUN_TREES))
+	else if (_action.isAction(words_look, words_trees))
 		_vm->_dialogs->show(21206);
-	else if (_action.isAction(VERB_LOOK, NOUN_PLANTS))
+	else if (_action.isAction(words_look, words_plants))
 		_vm->_dialogs->show(21207);
-	else if (_action.isAction(VERB_LOOK, NOUN_MOUNTAINS))
+	else if (_action.isAction(words_look, words_mountains))
 		_vm->_dialogs->show(21208);
 	else
 		return;
@@ -94,7 +94,7 @@ void room_212_preload() {
 
 	section_2_walker();
 	section_2_interface();
-	_scene->addActiveVocab(NOUN_BOUNCING_REPTILE);
+	_scene->addActiveVocab(words_bouncing_reptile);
 }
 
 } // namespace Rooms

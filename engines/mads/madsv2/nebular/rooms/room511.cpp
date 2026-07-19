@@ -55,10 +55,10 @@ static void room_511_init() {
 		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', 0));
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
-		_scene->_hotspots.activate(NOUN_BOAT, false);
-		int idx = _scene->_dynamicHotspots.add(NOUN_BOAT, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		_scene->_hotspots.activate(words_boat, false);
+		int idx = _scene->_dynamicHotspots.add(words_boat, words_walkto, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(75, 124), FACING_NORTH);
-		_scene->_hotspots.activate(NOUN_ROPE, false);
+		_scene->_hotspots.activate(words_rope, false);
 	} else {
 		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('b', 2));
 		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', 3));
@@ -73,8 +73,8 @@ static void room_511_init() {
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 5);
 
-		_scene->_hotspots.activate(NOUN_ROPE, true);
-		_scene->_hotspots.activate(NOUN_BOAT, true);
+		_scene->_hotspots.activate(words_rope, true);
+		_scene->_hotspots.activate(words_boat, true);
 		_scene->changeVariant(1);
 	}
 
@@ -87,7 +87,7 @@ static void room_511_init() {
 	if (_globals[kLineStatus] == 2 || _globals[kLineStatus] == 3) {
 		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('b', 4));
 		_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, frame);
-		int idx = _scene->_dynamicHotspots.add(NOUN_FISHING_LINE, VERB_WALKTO, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(26, 153), FACING_NORTHEAST);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 3);
 		if (_globals[kBoatRaised])
@@ -177,10 +177,10 @@ static void room_511_pre_parser() {
 	if (!local._handingLine)
 		return;
 
-	if (_action.isAction(VERB_LOOK) || _action.isObject(NOUN_FISHING_LINE) || _action.isAction(VERB_TALKTO))
+	if (_action.isAction(words_look) || _action.isObject(words_fishing_line) || _action.isAction(words_talkto))
 		_game._player._needToWalk = false;
 
-	if ((!_action.isAction(VERB_TIE, NOUN_FISHING_LINE, NOUN_BOAT) || !_action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, NOUN_BOAT)) && _game._player._needToWalk) {
+	if ((!_action.isAction(words_tie, words_fishing_line, words_boat) || !_action.isAction(words_attach, words_fishing_line, words_boat)) && _game._player._needToWalk) {
 		if (_game._trigger == 0) {
 			_game._player._readyToWalk = false;
 			_game._player._stepEnabled = false;
@@ -199,9 +199,9 @@ static void room_511_pre_parser() {
 }
 
 static void room_511_parser() {
-	if (_action.isAction(VERB_WALK_INTO, NOUN_RESTAURANT))
+	if (_action.isAction(words_walk_into, words_restaurant))
 		_scene->_nextSceneId = 512;
-	else if (_action.isAction(VERB_GET_INTO, NOUN_CAR)) {
+	else if (_action.isAction(words_get_into, words_car)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -241,7 +241,7 @@ static void room_511_parser() {
 		default:
 			break;
 		}
-	} else 	if (_action.isAction(VERB_TAKE, NOUN_FISHING_LINE)) {
+	} else 	if (_action.isAction(words_take, words_fishing_line)) {
 		if (!_globals[kBoatRaised]) {
 			if (_globals[kLineStatus] == 2) {
 				if (_globals[kLineStatus] != 3) {
@@ -271,8 +271,8 @@ static void room_511_parser() {
 		} else {
 			_vm->_dialogs->show(51130);
 		}
-	} else if (_action.isAction(VERB_TIE, NOUN_FISHING_LINE, NOUN_BOAT) ||
-		_action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, NOUN_BOAT)) {
+	} else if (_action.isAction(words_tie, words_fishing_line, words_boat) ||
+		_action.isAction(words_attach, words_fishing_line, words_boat)) {
 		if (_globals[kBoatRaised])
 			_vm->_dialogs->show(51131);
 		else if (_globals[kLineStatus] == 1)
@@ -292,7 +292,7 @@ static void room_511_parser() {
 						_game._player._visible = true;
 						_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, -2);
 						_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 4);
-						int idx = _scene->_dynamicHotspots.add(NOUN_FISHING_LINE, VERB_WALKTO, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
+						int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
 						_scene->_dynamicHotspots.setPosition(idx, Common::Point(26, 153), FACING_NORTHEAST);
 						_game._objects.removeFromInventory(OBJ_FISHING_LINE, 1);
 						local._handingLine = false;
@@ -303,7 +303,7 @@ static void room_511_parser() {
 				}
 			}
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_STREET) || _action._lookFlag) {
+	} else if (_action.isAction(words_look, words_street) || _action._lookFlag) {
 		if (_globals[kLineStatus] == 2)
 			_vm->_dialogs->show(51110);
 		else {
@@ -312,45 +312,45 @@ static void room_511_parser() {
 			else
 				_vm->_dialogs->show(51112);
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_CAR))
+	} else if (_action.isAction(words_look, words_car))
 		_vm->_dialogs->show(51113);
-	else if (_action.isAction(VERB_LOOK, NOUN_SIDEWALK))
+	else if (_action.isAction(words_look, words_sidewalk))
 		_vm->_dialogs->show(51114);
-	else if (_action.isAction(VERB_WALK_DOWN, NOUN_SIDEWALK_TO_EAST) || _action.isAction(VERB_WALK_DOWN, NOUN_SIDEWALK_TO_WEST) || _action.isAction(VERB_WALK_DOWN, NOUN_STREET_TO_EAST))
+	else if (_action.isAction(words_walk_down, words_sidewalk_to_east) || _action.isAction(words_walk_down, words_sidewalk_to_west) || _action.isAction(words_walk_down, words_street_to_east))
 		_vm->_dialogs->show(51115);
-	else if (_action.isAction(VERB_LOOK, NOUN_PLEASURE_DOME))
+	else if (_action.isAction(words_look, words_pleasure_dome))
 		_vm->_dialogs->show(51116);
-	else if (_action.isAction(VERB_LOOK, NOUN_TICKET_BOOTH))
+	else if (_action.isAction(words_look, words_ticket_booth))
 		_vm->_dialogs->show(51117);
-	else if (_action.isAction(VERB_LOOK, NOUN_DOME_ENTRANCE))
+	else if (_action.isAction(words_look, words_dome_entrance))
 		_vm->_dialogs->show(51118);
-	else if (_action.isAction(VERB_UNLOCK, NOUN_PADLOCK_KEY, NOUN_DOME_ENTRANCE) || _action.isAction(VERB_UNLOCK, NOUN_DOOR_KEY, NOUN_DOME_ENTRANCE))
+	else if (_action.isAction(words_unlock, words_padlock_key, words_dome_entrance) || _action.isAction(words_unlock, words_door_key, words_dome_entrance))
 		_vm->_dialogs->show(51119);
-	else if ((_action.isAction(VERB_PUT) || _action.isAction(VERB_THROW))
-		&& (_action.isObject(NOUN_TIMEBOMB) || _action.isObject(NOUN_BOMB) || _action.isObject(NOUN_BOMBS))
-		&& _action.isObject(NOUN_DOME_ENTRANCE))
+	else if ((_action.isAction(words_put) || _action.isAction(words_throw))
+		&& (_action.isObject(words_timebomb) || _action.isObject(words_bomb) || _action.isObject(words_bombs))
+		&& _action.isObject(words_dome_entrance))
 		_vm->_dialogs->show(51120);
-	else if (_action.isAction(VERB_LOOK, NOUN_RESTAURANT)) {
+	else if (_action.isAction(words_look, words_restaurant)) {
 		if (_globals[kBoatRaised])
 			_vm->_dialogs->show(51121);
 		else
 			_vm->_dialogs->show(51128);
-	} else if (_action.isAction(VERB_LOOK, NOUN_PORTHOLE))
+	} else if (_action.isAction(words_look, words_porthole))
 		_vm->_dialogs->show(51122);
-	else if (_action.isAction(VERB_LOOK, NOUN_FISHING_LINE) && (_action._mainObjectSource == CAT_HOTSPOT) && (_globals[kLineStatus] == 2))
+	else if (_action.isAction(words_look, words_fishing_line) && (_action._mainObjectSource == CAT_HOTSPOT) && (_globals[kLineStatus] == 2))
 		_vm->_dialogs->show(51126);
-	else if (_action.isAction(VERB_LOOK, NOUN_FISHING_LINE) && (_action._mainObjectSource == CAT_HOTSPOT) && (_globals[kLineStatus] == 3))
+	else if (_action.isAction(words_look, words_fishing_line) && (_action._mainObjectSource == CAT_HOTSPOT) && (_globals[kLineStatus] == 3))
 		_vm->_dialogs->show(51133);
-	else if (_action.isAction(VERB_LOOK, NOUN_STATUE))
+	else if (_action.isAction(words_look, words_statue))
 		_vm->_dialogs->show(51127);
-	else if (_action.isAction(VERB_LOOK, NOUN_BOAT))
+	else if (_action.isAction(words_look, words_boat))
 		if (_globals[kBoatRaised])
 			_vm->_dialogs->show(51123);
 		else if (_globals[kLineStatus] != 3)
 			_vm->_dialogs->show(51124);
 		else
 			_vm->_dialogs->show(51125);
-	else if (_action.isAction(VERB_LOOK, NOUN_FISHING_LINE) && (_globals[kLineStatus] == 3))
+	else if (_action.isAction(words_look, words_fishing_line) && (_globals[kLineStatus] == 3))
 		_vm->_dialogs->show(51125);
 	else
 		return;
@@ -375,9 +375,9 @@ void room_511_preload() {
 
 	section_5_walker();
 	section_5_interface();
-	_scene->addActiveVocab(NOUN_BOAT);
-	_scene->addActiveVocab(NOUN_FISHING_LINE);
-	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(words_boat);
+	_scene->addActiveVocab(words_fishing_line);
+	_scene->addActiveVocab(words_walkto);
 }
 
 } // namespace Rooms

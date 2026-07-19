@@ -89,12 +89,12 @@ static void room_701_init() {
 	{
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
-		int idx = _scene->_dynamicHotspots.add(NOUN_BOAT, VERB_CLIMB_INTO, _globals._sequenceIndexes[2], Common::Rect());
+		int idx = _scene->_dynamicHotspots.add(words_boat, words_climb_into, _globals._sequenceIndexes[2], Common::Rect());
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(231, 127), FACING_NORTH);
 		break;
 	}
 	case BOAT_GONE:
-		_scene->_hotspots.activate(NOUN_BOAT, false);
+		_scene->_hotspots.activate(words_boat, false);
 		break;
 	default:
 		break;
@@ -103,7 +103,7 @@ static void room_701_init() {
 	if (_globals[kLineStatus] == LINE_DROPPED || _globals[kLineStatus] == LINE_TIED) {
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
-		int idx = _scene->_dynamicHotspots.add(NOUN_FISHING_LINE, VERB_WALKTO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 		local._fishingLineId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 129), FACING_NORTHEAST);
 	}
 
@@ -187,7 +187,7 @@ static void room_701_daemon() {
 		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
-		int idx = _scene->_dynamicHotspots.add(NOUN_BOAT, VERB_CLIMB_INTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_boat, words_climb_into, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 129), FACING_NORTH);
 		_globals[kBoatStatus] = BOAT_TIED;
 		_game._player._stepEnabled = true;
@@ -200,19 +200,19 @@ static void room_701_daemon() {
 }
 
 static void room_701_pre_parser() {
-	if (_action.isAction(VERB_WALKTO, NOUN_EAST_END_OF_PLATFORM))
+	if (_action.isAction(words_walkto, words_east_end_of_platform))
 		_game._player._walkOffScreenSceneId = 702;
 
-	if (_action.isAction(VERB_LOOK, NOUN_BUILDING))
+	if (_action.isAction(words_look, words_building))
 		_game._player.walk(Common::Point(154, 129), FACING_NORTHEAST);
 
-	if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_BUILDING))
+	if (_action.isAction(words_look, words_binoculars, words_building))
 		_game._player.walk(Common::Point(154, 129), FACING_NORTH);
 }
 
 static void room_701_parser() {
-	if (_action.isAction(VERB_WALK_ALONG, NOUN_PLATFORM)) {
-	} else if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_BUILDING) && _game._objects[OBJ_VASE]._roomNumber == 706) {
+	if (_action.isAction(words_walk_along, words_platform)) {
+	} else if (_action.isAction(words_look, words_binoculars, words_building) && _game._objects[OBJ_VASE]._roomNumber == 706) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -239,7 +239,7 @@ static void room_701_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_STEP_INTO, NOUN_ELEVATOR)) {
+	} else if (_action.isAction(words_step_into, words_elevator)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -277,8 +277,8 @@ static void room_701_parser() {
 		default:
 			break;
 		}
-	} else if ((_action.isAction(VERB_PULL, NOUN_BOAT) || _action.isAction(VERB_TAKE, NOUN_BOAT) ||
-		_action.isAction(VERB_PULL, NOUN_FISHING_LINE) || _action.isAction(VERB_TAKE, NOUN_FISHING_LINE)) &&
+	} else if ((_action.isAction(words_pull, words_boat) || _action.isAction(words_take, words_boat) ||
+		_action.isAction(words_pull, words_fishing_line) || _action.isAction(words_take, words_fishing_line)) &&
 		!_game._objects.isInInventory(OBJ_FISHING_LINE)) {
 		if (_globals[kBoatStatus] == BOAT_TIED_FLOATING) {
 			switch (_game._trigger) {
@@ -287,7 +287,7 @@ static void room_701_parser() {
 				_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 				_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 				_scene->_dynamicHotspots.remove(local._fishingLineId);
-				_scene->_hotspots.activate(NOUN_BOAT, false);
+				_scene->_hotspots.activate(words_boat, false);
 				_game._player._visible = false;
 				_scene->loadAnimation(formAnimName('E', -1), 1);
 				break;
@@ -298,7 +298,7 @@ static void room_701_parser() {
 				_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 				_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
-				int idx = _scene->_dynamicHotspots.add(NOUN_BOAT, VERB_CLIMB_INTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+				int idx = _scene->_dynamicHotspots.add(words_boat, words_climb_into, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(231, 127), FACING_NORTH);
 				_scene->_sequences.addTimer(15, 2);
 			}
@@ -324,7 +324,7 @@ static void room_701_parser() {
 		} else {
 			_vm->_dialogs->show(70127);
 		}
-	} else if (_action.isAction(VERB_CLIMB_INTO, NOUN_BOAT) && _globals[kBoatStatus] == BOAT_TIED) {
+	} else if (_action.isAction(words_climb_into, words_boat) && _globals[kBoatStatus] == BOAT_TIED) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -348,33 +348,33 @@ static void room_701_parser() {
 				_vm->_dialogs->show(70110);
 		} else
 			_vm->_dialogs->show(70111);
-	} else if (_action.isAction(VERB_LOOK, NOUN_SUBMERGED_CITY))
+	} else if (_action.isAction(words_look, words_submerged_city))
 		_vm->_dialogs->show(70112);
-	else if (_action.isAction(VERB_LOOK, NOUN_ELEVATOR))
+	else if (_action.isAction(words_look, words_elevator))
 		_vm->_dialogs->show(70113);
-	else if (_action.isAction(VERB_LOOK, NOUN_PLATFORM))
+	else if (_action.isAction(words_look, words_platform))
 		_vm->_dialogs->show(70114);
-	else if (_action.isAction(VERB_LOOK, NOUN_CEMENT_PYLON))
+	else if (_action.isAction(words_look, words_cement_pylon))
 		_vm->_dialogs->show(70115);
-	else if (_action.isAction(VERB_LOOK, NOUN_HOOK)) {
+	else if (_action.isAction(words_look, words_hook)) {
 		if (_globals[kLineStatus] == LINE_NOT_DROPPED || _globals[kLineStatus] == LINE_NOW_UNTIED)
 			_vm->_dialogs->show(70116);
 		else
 			_vm->_dialogs->show(70117);
-	} else if (_action.isAction(VERB_LOOK, NOUN_ROCK))
+	} else if (_action.isAction(words_look, words_rock))
 		_vm->_dialogs->show(70118);
-	else if (_action.isAction(VERB_TAKE, NOUN_ROCK))
+	else if (_action.isAction(words_take, words_rock))
 		_vm->_dialogs->show(70119);
-	else if (_action.isAction(VERB_LOOK, NOUN_EAST_END_OF_PLATFORM))
+	else if (_action.isAction(words_look, words_east_end_of_platform))
 		_vm->_dialogs->show(70120);
-	else if (_action.isAction(VERB_LOOK, NOUN_BUILDING))
+	else if (_action.isAction(words_look, words_building))
 		_vm->_dialogs->show(70121);
-	else if (_action.isAction(VERB_LOOK, NOUN_BOAT)) {
+	else if (_action.isAction(words_look, words_boat)) {
 		if (_globals[kBoatStatus] == BOAT_ADRIFT || _globals[kBoatStatus] == BOAT_TIED_FLOATING)
 			_vm->_dialogs->show(70122);
 		else
 			_vm->_dialogs->show(70123);
-	} else if (_action.isAction(VERB_CAST, NOUN_FISHING_ROD, NOUN_BOAT) && _game._objects.isInInventory(OBJ_FISHING_LINE))
+	} else if (_action.isAction(words_cast, words_fishing_rod, words_boat) && _game._objects.isInInventory(OBJ_FISHING_LINE))
 		_vm->_dialogs->show(70124);
 	else
 		return;
@@ -394,10 +394,10 @@ void room_701_preload() {
 
 	section_7_walker();
 	section_7_interface();
-	_scene->addActiveVocab(NOUN_BOAT);
-	_scene->addActiveVocab(VERB_CLIMB_INTO);
-	_scene->addActiveVocab(NOUN_FISHING_LINE);
-	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(words_boat);
+	_scene->addActiveVocab(words_climb_into);
+	_scene->addActiveVocab(words_fishing_line);
+	_scene->addActiveVocab(words_walkto);
 }
 
 } // namespace Rooms

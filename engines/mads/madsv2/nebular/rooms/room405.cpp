@@ -109,27 +109,27 @@ static void room_405_daemon() {
 }
 
 static void room_405_pre_parser() {
-	if (_action.isAction(VERB_TAKE))
+	if (_action.isAction(words_take))
 		_game._player._needToWalk = false;
 
-	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_WEST))
+	if (_action.isAction(words_walk_down, words_corridor_to_west))
 		_game._player._walkOffScreenSceneId = 401;
 
-	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_EAST))
+	if (_action.isAction(words_walk_down, words_corridor_to_east))
 		_game._player._walkOffScreenSceneId = 406;
 
-	if (_action.isAction(VERB_CLOSE, NOUN_WIDE_DOOR) && _globals[kArmoryDoorOpen])
+	if (_action.isAction(words_close, words_wide_door) && _globals[kArmoryDoorOpen])
 		_game._player.walk(Common::Point(212, 113), FACING_NORTH);
 }
 
 static void room_405_parser() {
-	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR))
+	if (_action.isAction(words_walk_through, words_door))
 		_scene->_nextSceneId = 413;
-	else if (_action.isAction(VERB_WALK_THROUGH, NOUN_WIDE_DOOR) && _globals[kArmoryDoorOpen])
+	else if (_action.isAction(words_walk_through, words_wide_door) && _globals[kArmoryDoorOpen])
 		_scene->_nextSceneId = 408;
-	else if (_action.isAction(VERB_WALK_THROUGH, NOUN_WIDE_DOOR) && !_globals[kArmoryDoorOpen])
+	else if (_action.isAction(words_walk_through, words_wide_door) && !_globals[kArmoryDoorOpen])
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, _game.getQuote(0x24F));
-	else if (_action.isAction(VERB_PUT, NOUN_SECURITY_CARD, NOUN_CARD_SLOT) && !_globals[kArmoryDoorOpen]) {
+	else if (_action.isAction(words_put, words_security_card, words_card_slot) && !_globals[kArmoryDoorOpen]) {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
@@ -139,7 +139,7 @@ static void room_405_parser() {
 		Common::Point msgPos = Common::Point(_game._player._playerPos.x, _game._player._playerPos.y + 1);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[3], msgPos);
 		_scene->_sequences.setScale(_globals._sequenceIndexes[3], 87);
-	} else if ((_action.isAction(VERB_PUT, NOUN_SECURITY_CARD, NOUN_CARD_SLOT) || _action.isAction(VERB_CLOSE, NOUN_WIDE_DOOR)) && _globals[kArmoryDoorOpen]) {
+	} else if ((_action.isAction(words_put, words_security_card, words_card_slot) || _action.isAction(words_close, words_wide_door)) && _globals[kArmoryDoorOpen]) {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
@@ -148,7 +148,7 @@ static void room_405_parser() {
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[3], _game._player._playerPos);
 		_scene->_sequences.setScale(_globals._sequenceIndexes[3], 87);
-	} else if (_action.isAction(VERB_PUT, NOUN_CARD_SLOT)) {
+	} else if (_action.isAction(words_put, words_card_slot)) {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
@@ -157,36 +157,36 @@ static void room_405_parser() {
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[3], _game._player._playerPos);
 		_scene->_sequences.setScale(_globals._sequenceIndexes[3], 87);
-	} else if (_action.isAction(VERB_LOOK, NOUN_CANNON_BALLS))
+	} else if (_action.isAction(words_look, words_cannon_balls))
 		_vm->_dialogs->show(40510);
-	else if (_action.isAction(VERB_TAKE, NOUN_CANNON_BALLS))
+	else if (_action.isAction(words_take, words_cannon_balls))
 		_vm->_dialogs->show(40511);
-	else if (_action.isAction(VERB_LOOK, NOUN_WATER_FOUNTAIN))
+	else if (_action.isAction(words_look, words_water_fountain))
 		_vm->_dialogs->show(40512);
-	else if (_action.isAction(VERB_LOOK, NOUN_BACKBOARD) || _action.isAction(VERB_LOOK, NOUN_HOOP))
+	else if (_action.isAction(words_look, words_backboard) || _action.isAction(words_look, words_hoop))
 		_vm->_dialogs->show(40513);
-	else if (_action.isAction(VERB_LOOK, NOUN_LIGHT))
+	else if (_action.isAction(words_look, words_light))
 		_vm->_dialogs->show(40514);
-	else if (_action.isAction(VERB_LOOK, NOUN_CARD_SLOT))
+	else if (_action.isAction(words_look, words_card_slot))
 		_vm->_dialogs->show(40515);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_EAST))
+	else if (_action.isAction(words_look, words_corridor_to_east))
 		_vm->_dialogs->show(40516);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_WEST))
+	else if (_action.isAction(words_look, words_corridor_to_west))
 		_vm->_dialogs->show(40517);
-	else if (_action.isAction(VERB_LOOK, NOUN_MONITOR))
+	else if (_action.isAction(words_look, words_monitor))
 		_vm->_dialogs->show(40518);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR) || _action._lookFlag)
+	else if (_action.isAction(words_look, words_corridor) || _action._lookFlag)
 		_vm->_dialogs->show(40519);
-	else if (_action.isAction(VERB_LOOK, NOUN_WIDE_DOOR)) {
+	else if (_action.isAction(words_look, words_wide_door)) {
 		if (_globals[kArmoryDoorOpen])
 			_vm->_dialogs->show(40521);
 		else
 			_vm->_dialogs->show(40520);
-	} else if (_action.isAction(VERB_LOOK, NOUN_DOOR))
+	} else if (_action.isAction(words_look, words_door))
 		_vm->_dialogs->show(40522);
-	else if (_action.isAction(VERB_LOOK, NOUN_COACH_LAMP))
+	else if (_action.isAction(words_look, words_coach_lamp))
 		_vm->_dialogs->show(40523);
-	else if (_action.isAction(VERB_LOOK, NOUN_SUPPORT))
+	else if (_action.isAction(words_look, words_support))
 		_vm->_dialogs->show(40524);
 	else
 		return;

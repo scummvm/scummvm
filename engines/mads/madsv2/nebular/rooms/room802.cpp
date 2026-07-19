@@ -75,14 +75,14 @@ static void room_802_init() {
 	if ((_globals[kRemoteOnGround]) && (!_game._objects.isInInventory(OBJ_REMOTE))) {
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 8);
-		int idx = _scene->_dynamicHotspots.add(NOUN_REMOTE, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_remote, words_walkto, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(107, 99), FACING_NORTH);
 	}
 
 	if (!_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled]) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
-		int idx = _scene->_dynamicHotspots.add(NOUN_SHIELD_MODULATOR, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_shield_modulator, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(93, 97), FACING_NORTH);
 	}
 	section_8_music();
@@ -100,7 +100,7 @@ static void room_802_daemon() {
 	if (_game._trigger == 71) {
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 8);
-		int idx = _scene->_dynamicHotspots.add(NOUN_REMOTE, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_remote, words_walkto, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(107, 99), FACING_NORTH);
 
 		_globals[kRemoteSequenceRan] = true;
@@ -113,20 +113,20 @@ static void room_802_daemon() {
 }
 
 static void room_802_pre_parser() {
-	if (_action.isAction(VERB_WALK_TOWARDS, NOUN_BUILDING_TO_WEST))
+	if (_action.isAction(words_walk_towards, words_building_to_west))
 		_game._player._walkOffScreenSceneId = 801;
 
-	if (_action.isAction(VERB_WALK_DOWN, NOUN_PATH_TO_EAST)) {
+	if (_action.isAction(words_walk_down, words_path_to_east)) {
 		_game._player._walkOffScreenSceneId = 803;
 		_globals[kForceBeamDown] = false;
 	}
 
-	if (_action.isAction(VERB_TAKE, NOUN_SHIP))
+	if (_action.isAction(words_take, words_ship))
 		_game._player._needToWalk = false;
 }
 
 static void room_802_parser() {
-	if (_action.isAction(VERB_TAKE, NOUN_SHIELD_MODULATOR) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) {
+	if (_action.isAction(words_take, words_shield_modulator) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -158,7 +158,7 @@ static void room_802_parser() {
 		default:
 			break;
 		}
-	} else if ((_action.isAction(VERB_TAKE, NOUN_REMOTE)) && (!_game._objects.isInInventory(OBJ_REMOTE))) {
+	} else if ((_action.isAction(words_take, words_remote)) && (!_game._objects.isInInventory(OBJ_REMOTE))) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -192,37 +192,37 @@ static void room_802_parser() {
 			break;
 		}
 	} else if (!_globals[kRemoteOnGround] && (_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) || _globals[kShieldModInstalled])
-		&& (_action.isAction(VERB_LOOK, NOUN_LAUNCH_PAD) || _action._lookFlag))
+		&& (_action.isAction(words_look, words_launch_pad) || _action._lookFlag))
 		_vm->_dialogs->show(80210);
 	else if (!_globals[kRemoteOnGround] && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled]
-		&& (_action.isAction(VERB_LOOK, NOUN_LAUNCH_PAD) || _action._lookFlag))
+		&& (_action.isAction(words_look, words_launch_pad) || _action._lookFlag))
 		_vm->_dialogs->show(80211);
 	else if (_globals[kRemoteOnGround] && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled]
-		&& (_action.isAction(VERB_LOOK, NOUN_LAUNCH_PAD) || _action._lookFlag))
+		&& (_action.isAction(words_look, words_launch_pad) || _action._lookFlag))
 		_vm->_dialogs->show(80213);
 	else if (_globals[kRemoteOnGround] && (_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) || _globals[kShieldModInstalled])
-		&& (_action.isAction(VERB_LOOK, NOUN_LAUNCH_PAD) || _action._lookFlag))
+		&& (_action.isAction(words_look, words_launch_pad) || _action._lookFlag))
 		_vm->_dialogs->show(80212);
-	else if (!_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled] && _action.isAction(VERB_LOOK, NOUN_SHIELD_MODULATOR))
+	else if (!_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled] && _action.isAction(words_look, words_shield_modulator))
 		_vm->_dialogs->show(80214);
-	else if (_globals[kRemoteOnGround] && _action.isAction(VERB_LOOK, NOUN_REMOTE))
+	else if (_globals[kRemoteOnGround] && _action.isAction(words_look, words_remote))
 		_vm->_dialogs->show(80216);
-	else if (_action.isAction(VERB_LOOK, NOUN_SHIP)) {
+	else if (_action.isAction(words_look, words_ship)) {
 		if ((!_game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) && (!_globals[kShieldModInstalled]))
 			_vm->_dialogs->show(80218);
 		else
 			_vm->_dialogs->show(80217);
-	} else if (_action.isAction(VERB_LOOK, NOUN_BUSHES))
+	} else if (_action.isAction(words_look, words_bushes))
 		_vm->_dialogs->show(80219);
-	else if (_action.isAction(VERB_LOOK, NOUN_PATH_TO_EAST))
+	else if (_action.isAction(words_look, words_path_to_east))
 		_vm->_dialogs->show(80220);
-	else if (_action.isAction(VERB_LOOK, NOUN_SKY))
+	else if (_action.isAction(words_look, words_sky))
 		_vm->_dialogs->show(80221);
-	else if (_action.isAction(VERB_TAKE, NOUN_SHIP))
+	else if (_action.isAction(words_take, words_ship))
 		_vm->_dialogs->show(80222);
-	else if (_action.isAction(VERB_LOOK, NOUN_TREE) || _action.isAction(VERB_LOOK, NOUN_TREES))
+	else if (_action.isAction(words_look, words_tree) || _action.isAction(words_look, words_trees))
 		_vm->_dialogs->show(80224);
-	else if (_action.isAction(VERB_LOOK, NOUN_BUILDING_TO_WEST))
+	else if (_action.isAction(words_look, words_building_to_west))
 		_vm->_dialogs->show(80225);
 	else
 		return;
@@ -242,9 +242,9 @@ void room_802_preload() {
 
 	section_8_walker();
 	section_8_interface();
-	_scene->addActiveVocab(NOUN_SHIELD_MODULATOR);
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_REMOTE);
+	_scene->addActiveVocab(words_shield_modulator);
+	_scene->addActiveVocab(words_walkto);
+	_scene->addActiveVocab(words_remote);
 }
 
 } // namespace Rooms

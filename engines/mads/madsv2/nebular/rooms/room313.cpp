@@ -70,30 +70,30 @@ static void room_313_init() {
 }
 
 static void room_313_parser() {
-	if (_action.isAction(VERB_CRAWL_TO, NOUN_FOURTH_CELL))
+	if (_action.isAction(words_crawl_to, words_fourth_cell))
 		_scene->_nextSceneId = 387;
-	else if (_action.isAction(VERB_CRAWL_TO, NOUN_THIRD_CELL))
+	else if (_action.isAction(words_crawl_to, words_third_cell))
 		_scene->_nextSceneId = 388;
-	else if (_action.isAction(VERB_CRAWL_TO, NOUN_SECOND_CELL)) {
+	else if (_action.isAction(words_crawl_to, words_second_cell)) {
 		if (_globals[kAfterHavoc])
 			_scene->_nextSceneId = 399;
 		else
 			_scene->_nextSceneId = 389;
-	} else if (_action.isAction(VERB_CRAWL_TO, NOUN_FIRST_CELL))
+	} else if (_action.isAction(words_crawl_to, words_first_cell))
 		_scene->_nextSceneId = 390;
-	else if (_action.isAction(VERB_CRAWL_TO, NOUN_SECURITY_STATION)) {
+	else if (_action.isAction(words_crawl_to, words_security_station)) {
 		if (_globals[kSexOfRex] == REX_FEMALE) {
 			_globals[kSexOfRex] = REX_MALE;
 			_vm->_dialogs->show(31301);
 		}
 		_scene->_nextSceneId = 391;
-	} else if (_action.isAction(VERB_CRAWL_TO, NOUN_EQUIPMENT_ROOM)) {
+	} else if (_action.isAction(words_crawl_to, words_equipment_room)) {
 		if (_globals[kSexOfRex] == REX_FEMALE) {
 			_globals[kSexOfRex] = REX_MALE;
 			_vm->_dialogs->show(31301);
 		}
 		_scene->_nextSceneId = 366;
-	} else if (!_action.isAction(VERB_CRAWL_DOWN, NOUN_AIR_SHAFT))
+	} else if (!_action.isAction(words_crawl_down, words_air_shaft))
 		return;
 
 	_action._inProgress = false;

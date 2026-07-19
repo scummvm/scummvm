@@ -130,35 +130,35 @@ static void room_551_daemon() {
 }
 
 static void room_551_pre_parser() {
-	if (_action.isAction(VERB_WALK_DOWN) && (_action.isObject(NOUN_STREET_TO_WEST) || _action.isObject(NOUN_SIDEWALK_TO_WEST)))
+	if (_action.isAction(words_walk_down) && (_action.isObject(words_street_to_west) || _action.isObject(words_sidewalk_to_west)))
 		_game._player._walkOffScreenSceneId = 501;
 }
 
 static void room_551_parser() {
-	if (_action.isAction(VERB_STEP_INTO, NOUN_TELEPORTER))
+	if (_action.isAction(words_step_into, words_teleporter))
 		_scene->_nextSceneId = 502;
 	else if ((_action._lookFlag))
 		_vm->_dialogs->show(55117);
-	else if (_action.isAction(VERB_LOOK, NOUN_SKELETON))
+	else if (_action.isAction(words_look, words_skeleton))
 		_vm->_dialogs->show(55110);
-	else if (_action.isAction(VERB_LOOK, NOUN_ELEVATOR_SHAFT))
+	else if (_action.isAction(words_look, words_elevator_shaft))
 		_vm->_dialogs->show(55111);
-	else if (_action.isAction(VERB_WALKTO, NOUN_ELEVATOR_SHAFT))
+	else if (_action.isAction(words_walkto, words_elevator_shaft))
 		_vm->_dialogs->show(55112);
-	else if (_action.isAction(VERB_LOOK, NOUN_BUILDING))
+	else if (_action.isAction(words_look, words_building))
 		_vm->_dialogs->show(55113);
-	else if (_action.isAction(VERB_LOOK, NOUN_TELEPORTER))
+	else if (_action.isAction(words_look, words_teleporter))
 		_vm->_dialogs->show(55114);
-	else if (_action.isAction(VERB_LOOK, NOUN_SIDEWALK_TO_WEST)) {
+	else if (_action.isAction(words_look, words_sidewalk_to_west)) {
 		if (_game._visitedScenes.exists(505))
 			_vm->_dialogs->show(55116);
 		else
 			_vm->_dialogs->show(55115);
-	} else if (_action.isAction(VERB_LOOK, NOUN_SIDEWALK))
+	} else if (_action.isAction(words_look, words_sidewalk))
 		_vm->_dialogs->show(55118);
-	else if (_action.isAction(VERB_LOOK, NOUN_EQUIPMENT_OVERHEAD))
+	else if (_action.isAction(words_look, words_equipment_overhead))
 		_vm->_dialogs->show(55119);
-	else if (_action.isAction(VERB_LOOK, NOUN_RAILING))
+	else if (_action.isAction(words_look, words_railing))
 		_vm->_dialogs->show(55120);
 	else
 		return;

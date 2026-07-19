@@ -72,14 +72,14 @@ static void room_207_init() {
 
 	if (local._vultureFl) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 30, 0, 0, 400);
-		local._vultureHotspotId = _scene->_dynamicHotspots.add(NOUN_VULTURE, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		local._vultureHotspotId = _scene->_dynamicHotspots.add(words_vulture, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._vultureHotspotId, Common::Point(254, 94), FACING_WEST);
 	}
 
 	if (local._spiderFl) {
 		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], -1, -1);
-		local._spiderHotspotId = _scene->_dynamicHotspots.add(NOUN_SPIDER, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		local._spiderHotspotId = _scene->_dynamicHotspots.add(words_spider, words_walkto, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._spiderHotspotId, Common::Point(59, 132), FACING_SOUTH);
 	}
 
@@ -153,16 +153,16 @@ static void room_207_daemon() {
 }
 
 static void room_207_pre_parser() {
-	if (_action.isAction(VERB_WALK_DOWN, NOUN_PATH_TO_WEST))
+	if (_action.isAction(words_walk_down, words_path_to_west))
 		_game._player._walkOffScreenSceneId = 211;
 
-	if (_action.isAction(VERB_WALK_TOWARDS, NOUN_OPEN_FIELD_TO_EAST))
+	if (_action.isAction(words_walk_towards, words_open_field_to_east))
 		_game._player._walkOffScreenSceneId = 208;
 
-	if (_action.isAction(VERB_WALKTO) || _action.isAction(VERB_LOOK)) {
-		if (_action.isObject(NOUN_VULTURE)) {
+	if (_action.isAction(words_walkto) || _action.isAction(words_look)) {
+		if (_action.isObject(words_vulture)) {
 			local._vultureTime = -9999;
-		} else if (_action.isObject(NOUN_SPIDER)) {
+		} else if (_action.isObject(words_spider)) {
 			local._spiderTime = -9999;
 		}
 	}
@@ -171,7 +171,7 @@ static void room_207_pre_parser() {
 static void room_207_parser() {
 	if (_action._savedFields._lookFlag)
 		_vm->_dialogs->show(20711);
-	else if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY))
+	else if (_action.isAction(words_walk_through, words_doorway))
 		_scene->_nextSceneId = 214;
 	else {
 		if ((_game._player._playerPos.x > 150) && (_game._player._playerPos.x < 189) &&
@@ -189,33 +189,33 @@ static void room_207_parser() {
 			local._eyeFl = false;
 		}
 
-		if (_action.isAction(VERB_LOOK, NOUN_DENSE_FOREST))
+		if (_action.isAction(words_look, words_dense_forest))
 			_vm->_dialogs->show(20701);
-		else if (_action.isAction(VERB_LOOK, NOUN_HEDGE))
+		else if (_action.isAction(words_look, words_hedge))
 			_vm->_dialogs->show(20702);
-		else if (_action.isAction(VERB_LOOK, NOUN_SKULL_AND_CROSSBONES))
+		else if (_action.isAction(words_look, words_skull_and_crossbones))
 			_vm->_dialogs->show(20703);
-		else if (_action.isAction(VERB_LOOK, NOUN_CAULDRON))
+		else if (_action.isAction(words_look, words_cauldron))
 			_vm->_dialogs->show(20704);
-		else if (_action.isAction(VERB_LOOK, NOUN_WITCHDOCTOR_HUT))
+		else if (_action.isAction(words_look, words_witchdoctor_hut))
 			_vm->_dialogs->show(20705);
-		else if (_action.isAction(VERB_LOOK, NOUN_PATH_TO_WEST))
+		else if (_action.isAction(words_look, words_path_to_west))
 			_vm->_dialogs->show(20706);
-		else if (_action.isAction(VERB_LOOK, NOUN_MOUNTAINS))
+		else if (_action.isAction(words_look, words_mountains))
 			_vm->_dialogs->show(20707);
-		else if (_action.isAction(VERB_LOOK, NOUN_ALOE_PLANT))
+		else if (_action.isAction(words_look, words_aloe_plant))
 			_vm->_dialogs->show(20708);
-		else if (_action.isAction(VERB_LOOK, NOUN_LAWN))
+		else if (_action.isAction(words_look, words_lawn))
 			_vm->_dialogs->show(20709);
-		else if (_action.isAction(VERB_LOOK, NOUN_VULTURE))
+		else if (_action.isAction(words_look, words_vulture))
 			_vm->_dialogs->show(20710);
-		else if (_action.isAction(VERB_TAKE, NOUN_SKULL_AND_CROSSBONES))
+		else if (_action.isAction(words_take, words_skull_and_crossbones))
 			_vm->_dialogs->show(20712);
-		else if (_action.isAction(VERB_TAKE, NOUN_ALOE_PLANT))
+		else if (_action.isAction(words_take, words_aloe_plant))
 			_vm->_dialogs->show(20713);
-		else if (_action.isAction(VERB_LOOK, NOUN_SPIDER))
+		else if (_action.isAction(words_look, words_spider))
 			_vm->_dialogs->show(20714);
-		else if (_action.isAction(VERB_TAKE, NOUN_SPIDER))
+		else if (_action.isAction(words_take, words_spider))
 			_vm->_dialogs->show(20715);
 		else
 			return;
@@ -244,10 +244,10 @@ void room_207_preload() {
 
 	section_2_walker();
 	section_2_interface();
-	_scene->addActiveVocab(NOUN_VULTURE);
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_SPIDER);
-	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(words_vulture);
+	_scene->addActiveVocab(words_walkto);
+	_scene->addActiveVocab(words_spider);
+	_scene->addActiveVocab(words_walkto);
 }
 
 } // namespace Rooms

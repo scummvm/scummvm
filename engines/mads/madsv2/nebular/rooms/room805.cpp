@@ -42,14 +42,14 @@ static void room_805_init() {
 	if (_globals[kShieldModInstalled]) {
 		_scene->_hotspots.activate(OBJ_SHIELD_MODULATOR, false);
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 25);
-		int idx = _scene->_dynamicHotspots.add(NOUN_SHIELD_MODULATOR, VERB_REMOVE, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_shield_modulator, words_remove, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), 0);
 	}
 
 	if (_globals[kTargetModInstalled]) {
 		_scene->_hotspots.activate(OBJ_TARGET_MODULE, false);
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 12);
-		int idx = _scene->_dynamicHotspots.add(NOUN_TARGET_MODULE, VERB_REMOVE, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_target_module, words_remove, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), 0);
 	}
 
@@ -62,7 +62,7 @@ static void room_805_daemon() {
 	if (_game._trigger == 70) {
 		_scene->_hotspots.activate(OBJ_SHIELD_MODULATOR, false);
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 25);
-		int idx = _scene->_dynamicHotspots.add(NOUN_SHIELD_MODULATOR, VERB_REMOVE, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_shield_modulator, words_remove, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), 0);
 		_globals[kShieldModInstalled] = true;
 		_game._objects.setRoom(OBJ_SHIELD_MODULATOR, NOWHERE);
@@ -74,7 +74,7 @@ static void room_805_daemon() {
 	if (_game._trigger == 80) {
 		_scene->_hotspots.activate(OBJ_TARGET_MODULE, false);
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 12);
-		int idx = _scene->_dynamicHotspots.add(NOUN_TARGET_MODULE, VERB_REMOVE, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_target_module, words_remove, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), 0);
 		_globals[kTargetModInstalled] = true;
 		_game._objects.setRoom(OBJ_TARGET_MODULE, NOWHERE);
@@ -103,39 +103,39 @@ static void room_805_pre_parser() {
 }
 
 static void room_805_parser() {
-	if (_action.isAction(VERB_EXIT, NOUN_SERVICE_PANEL))
+	if (_action.isAction(words_exit, words_service_panel))
 		_scene->_nextSceneId = 804;
-	else if (_action.isAction(VERB_INSTALL, NOUN_SHIELD_MODULATOR) && _game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) {
+	else if (_action.isAction(words_install, words_shield_modulator) && _game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], -1, -2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 		_game._player._stepEnabled = false;
-	} else if (_action.isAction(VERB_INSTALL, NOUN_TARGET_MODULE) && _game._objects.isInInventory(OBJ_TARGET_MODULE)) {
+	} else if (_action.isAction(words_install, words_target_module) && _game._objects.isInInventory(OBJ_TARGET_MODULE)) {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], -1, -2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
 		_game._player._stepEnabled = false;
-	} else if (_action.isAction(VERB_REMOVE, NOUN_SHIELD_MODULATOR) && _globals[kShieldModInstalled]) {
+	} else if (_action.isAction(words_remove, words_shield_modulator) && _globals[kShieldModInstalled]) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], -1, -2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 		_game._player._stepEnabled = false;
-	} else if (_action.isAction(VERB_REMOVE, NOUN_TARGET_MODULE) && _globals[kTargetModInstalled]) {
+	} else if (_action.isAction(words_remove, words_target_module) && _globals[kTargetModInstalled]) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], -1, -2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
 		_game._player._stepEnabled = false;
-	} else if (_action.isAction(VERB_INSTALL, NOUN_SHIELD_MODULATOR) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR))
+	} else if (_action.isAction(words_install, words_shield_modulator) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR))
 		_vm->_dialogs->show(80511);
-	else if (_action.isAction(VERB_INSTALL, NOUN_TARGET_MODULE) && !_game._objects.isInInventory(OBJ_TARGET_MODULE))
+	else if (_action.isAction(words_install, words_target_module) && !_game._objects.isInInventory(OBJ_TARGET_MODULE))
 		_vm->_dialogs->show(80510);
-	else if (_action.isAction(VERB_REMOVE, NOUN_LIFE_SUPPORT_MODULE))
+	else if (_action.isAction(words_remove, words_life_support_module))
 		_vm->_dialogs->show(80512);
 	else
 		return;
@@ -155,9 +155,9 @@ void room_805_preload() {
 
 	section_8_walker();
 	section_8_interface();
-	_scene->addActiveVocab(VERB_REMOVE);
-	_scene->addActiveVocab(NOUN_TARGET_MODULE);
-	_scene->addActiveVocab(NOUN_SHIELD_MODULATOR);
+	_scene->addActiveVocab(words_remove);
+	_scene->addActiveVocab(words_target_module);
+	_scene->addActiveVocab(words_shield_modulator);
 }
 
 } // namespace Rooms

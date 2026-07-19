@@ -36,7 +36,7 @@ static void room_388_init() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
 
 	if (_globals[kAfterHavoc])
-		_scene->_hotspots.activate(NOUN_SAUROPOD, false);
+		_scene->_hotspots.activate(words_sauropod, false);
 	else {
 		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('b', 0));
 		_globals._sequenceIndexes[0] = _scene->_sequences.startCycle(_globals._spriteIndexes[0], false, 1);
@@ -51,9 +51,9 @@ static void room_388_init() {
 }
 
 static void room_388_parser() {
-	if (_action.isAction(VERB_RETURN_TO, NOUN_AIR_SHAFT))
+	if (_action.isAction(words_return_to, words_air_shaft))
 		_scene->_nextSceneId = 313;
-	else if (_action.isAction(VERB_TALKTO, NOUN_SAUROPOD)) {
+	else if (_action.isAction(words_talkto, words_sauropod)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -75,12 +75,12 @@ static void room_388_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_LOOK_THROUGH, NOUN_GRATE)) {
+	} else if (_action.isAction(words_look_through, words_grate)) {
 		if (_globals[kAfterHavoc])
 			_vm->_dialogs->show(38811);
 		else
 			_vm->_dialogs->show(38810);
-	} else if (_action.isAction(VERB_OPEN, NOUN_GRATE))
+	} else if (_action.isAction(words_open, words_grate))
 		_vm->_dialogs->show(38812);
 	else
 		return;

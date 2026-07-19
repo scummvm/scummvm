@@ -47,29 +47,29 @@ static void room_358_init() {
 }
 
 static void room_358_pre_parser() {
-	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_EAST))
+	if (_action.isAction(words_walk_down, words_corridor_to_east))
 		_game._player._walkOffScreenSceneId = 357;
 
-	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_WEST))
+	if (_action.isAction(words_walk_down, words_corridor_to_west))
 		_game._player._walkOffScreenSceneId = 359;
 }
 
 static void room_358_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(35815);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_WEST))
+	else if (_action.isAction(words_look, words_corridor_to_west))
 		_vm->_dialogs->show(35810);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_EAST))
+	else if (_action.isAction(words_look, words_corridor_to_east))
 		_vm->_dialogs->show(35811);
-	else if (_action.isAction(VERB_LOOK, NOUN_BED))
+	else if (_action.isAction(words_look, words_bed))
 		_vm->_dialogs->show(35812);
-	else if (_action.isAction(VERB_LOOK, NOUN_SINK))
+	else if (_action.isAction(words_look, words_sink))
 		_vm->_dialogs->show(35813);
-	else if (_action.isAction(VERB_LOOK, NOUN_TOILET))
+	else if (_action.isAction(words_look, words_toilet))
 		_vm->_dialogs->show(35814);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR) || _action.isAction(VERB_LOOK, NOUN_WALL))
+	else if (_action.isAction(words_look, words_corridor) || _action.isAction(words_look, words_wall))
 		_vm->_dialogs->show(35816);
-	else if (_action.isAction(VERB_LOOK, NOUN_AIR_VENT))
+	else if (_action.isAction(words_look, words_air_vent))
 		_vm->_dialogs->show(35817);
 	else
 		return;

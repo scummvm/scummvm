@@ -57,14 +57,14 @@ static void room_752_init() {
 		_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('i', -1));
 		_globals._sequenceIndexes[13] = _scene->_sequences.startCycle(_globals._spriteIndexes[13], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[13], 8);
-		int idx = _scene->_dynamicHotspots.add(NOUN_ID_CARD, VERB_WALKTO, _globals._sequenceIndexes[13], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_id_card, words_walkto, _globals._sequenceIndexes[13], Common::Rect(0, 0, 0, 0));
 		local._cardId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 135), FACING_NORTH);
 	}
 
 	if (_game._globals[kLaserHoleIsThere]) {
 		_globals._sequenceIndexes[14] = _scene->_sequences.startCycle(_globals._spriteIndexes[14], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[14], 13);
-		int idx = _scene->_dynamicHotspots.add(NOUN_LASER_BEAM, VERB_LOOK_AT, _globals._sequenceIndexes[14], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_laser_beam, words_look_at, _globals._sequenceIndexes[14], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(215, 130), FACING_NORTHWEST);
 	}
 
@@ -104,19 +104,19 @@ static void room_752_daemon() {
 }
 
 static void room_752_pre_parser() {
-	if (_action.isAction(VERB_WALKTO, NOUN_WEST_END_OF_PLATFORM)) {
+	if (_action.isAction(words_walkto, words_west_end_of_platform)) {
 		_game._player._walkOffScreenSceneId = 751;
 	}
 }
 
 static void room_752_parser() {
-	if (_action.isAction(VERB_WALK_ALONG, NOUN_PLATFORM))
+	if (_action.isAction(words_walk_along, words_platform))
 		;
-	else if (_action.isAction(VERB_STEP_INTO, NOUN_TELEPORTER)) {
+	else if (_action.isAction(words_step_into, words_teleporter)) {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_scene->_nextSceneId = 711;
-	} else if (_action.isAction(VERB_TAKE, NOUN_ID_CARD) && (!_game._objects.isInInventory(OBJ_ID_CARD) || _game._trigger)) {
+	} else if (_action.isAction(words_take, words_id_card) && (!_game._objects.isInInventory(OBJ_ID_CARD) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -140,7 +140,7 @@ static void room_752_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._savedFields._mainObjectSource == CAT_HOTSPOT) &&
+	} else if (_action.isAction(words_take, words_bones) && (_action._savedFields._mainObjectSource == CAT_HOTSPOT) &&
 		(!_game._objects.isInInventory(OBJ_BONES) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
@@ -166,29 +166,29 @@ static void room_752_parser() {
 		default:
 			break;
 		}
-	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, NOUN_CITY)) {
+	} else if (_action._lookFlag || _action.isAction(words_look, words_city)) {
 		if (_globals[kLaserHoleIsThere])
 			_vm->_dialogs->show(75212);
 		else
 			_vm->_dialogs->show(75210);
-	} else if (_action.isAction(VERB_LOOK, NOUN_PLATFORM))
+	} else if (_action.isAction(words_look, words_platform))
 		_vm->_dialogs->show(75213);
-	else if (_action.isAction(VERB_LOOK, NOUN_CEMENT_BLOCK))
+	else if (_action.isAction(words_look, words_cement_block))
 		_vm->_dialogs->show(75214);
-	else if (_action.isAction(VERB_LOOK, NOUN_ROCK))
+	else if (_action.isAction(words_look, words_rock))
 		_vm->_dialogs->show(75215);
-	else if (_action.isAction(VERB_TAKE, NOUN_ROCK))
+	else if (_action.isAction(words_take, words_rock))
 		_vm->_dialogs->show(75216);
-	else if (_action.isAction(VERB_LOOK, NOUN_WEST_END_OF_PLATFORM))
+	else if (_action.isAction(words_look, words_west_end_of_platform))
 		_vm->_dialogs->show(75217);
-	else if (_action.isAction(VERB_LOOK, NOUN_TELEPORTER))
+	else if (_action.isAction(words_look, words_teleporter))
 		_vm->_dialogs->show(75218);
-	else if ((_action.isAction(VERB_LOOK, NOUN_BONES) || _action.isAction(VERB_LOOK, NOUN_ID_CARD)) && (_action._mainObjectSource == CAT_HOTSPOT)) {
+	else if ((_action.isAction(words_look, words_bones) || _action.isAction(words_look, words_id_card)) && (_action._mainObjectSource == CAT_HOTSPOT)) {
 		if (_game._objects[OBJ_ID_CARD]._roomNumber == 752)
 			_vm->_dialogs->show(75219);
 		else
 			_vm->_dialogs->show(75220);
-	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._savedFields._mainObjectSource == CAT_HOTSPOT)) {
+	} else if (_action.isAction(words_take, words_bones) && (_action._savedFields._mainObjectSource == CAT_HOTSPOT)) {
 		if (_game._objects.isInInventory(OBJ_BONES))
 			_vm->_dialogs->show(75222);
 	} else
@@ -209,10 +209,10 @@ void room_752_preload() {
 
 	section_7_walker();
 	section_7_interface();
-	_scene->addActiveVocab(NOUN_ID_CARD);
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(VERB_LOOK_AT);
-	_scene->addActiveVocab(NOUN_LASER_BEAM);
+	_scene->addActiveVocab(words_id_card);
+	_scene->addActiveVocab(words_walkto);
+	_scene->addActiveVocab(words_look_at);
+	_scene->addActiveVocab(words_laser_beam);
 }
 
 } // namespace Rooms

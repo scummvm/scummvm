@@ -211,23 +211,23 @@ static void room_104_daemon() {
 }
 
 static void room_104_pre_parser() {
-	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_EASTERN_CLIFF_FACE))
+	if (_action.isAction(words_swim_towards, words_eastern_cliff_face))
 		_game._player._walkOffScreenSceneId = 105;
 
-	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_OPEN_AREA_TO_SOUTH))
+	if (_action.isAction(words_swim_towards, words_open_area_to_south))
 		_game._player._walkOffScreenSceneId = 106;
 }
 
 static void room_104_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(10405);
-	else if (_action.isAction(VERB_LOOK, NOUN_CURIOUS_WEED_PATCH))
+	else if (_action.isAction(words_look, words_curious_weed_patch))
 		_vm->_dialogs->show(10404);
-	else if (_action.isAction(VERB_LOOK, NOUN_SURFACE))
+	else if (_action.isAction(words_look, words_surface))
 		_vm->_dialogs->show(10403);
-	else if (_action.isAction(VERB_LOOK, NOUN_CLIFF_FACE))
+	else if (_action.isAction(words_look, words_cliff_face))
 		_vm->_dialogs->show(10401);
-	else if (_action.isAction(VERB_LOOK, NOUN_OCEAN_FLOOR))
+	else if (_action.isAction(words_look, words_ocean_floor))
 		_vm->_dialogs->show(10402);
 	else
 		return;

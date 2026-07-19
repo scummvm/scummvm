@@ -57,11 +57,11 @@ static void room_602_init() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 9);
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 9);
-		int idx = _scene->_dynamicHotspots.add(NOUN_LASER_BEAM, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_laser_beam, words_walkto, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(80, 134), FACING_NORTHEAST);
 		_scene->changeVariant(1);
 	} else
-		_scene->_hotspots.activate(NOUN_HOLE, false);
+		_scene->_hotspots.activate(words_hole, false);
 
 	if (_globals[kSafeStatus] == 0) {
 		local._lastSpriteIdx = _globals._spriteIndexes[2];
@@ -79,7 +79,7 @@ static void room_602_init() {
 
 	local._lastSequenceIdx = _scene->_sequences.startCycle(local._lastSpriteIdx, false, local._cycleIndex);
 	_scene->_sequences.setDepth(local._lastSequenceIdx, 14);
-	int idx = _scene->_dynamicHotspots.add(NOUN_SAFE, VERB_WALKTO, local._lastSequenceIdx, Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(words_safe, words_walkto, local._lastSequenceIdx, Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(185, 113), FACING_NORTHWEST);
 
 	if (_game._objects.isInRoom(OBJ_DOOR_KEY)) {
@@ -87,9 +87,9 @@ static void room_602_init() {
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 15);
 		if (_globals[kSafeStatus] == 0 || _globals[kSafeStatus] == 2)
-			_scene->_hotspots.activate(NOUN_DOOR_KEY, false);
+			_scene->_hotspots.activate(words_door_key, false);
 	} else
-		_scene->_hotspots.activate(NOUN_DOOR_KEY, false);
+		_scene->_hotspots.activate(words_door_key, false);
 
 	if (_scene->_priorSceneId == 603) {
 		_game._player._playerPos = Common::Point(228, 126);
@@ -137,7 +137,7 @@ static void handleSafeActions() {
 				local._lastSequenceIdx = _scene->_sequences.addSpriteCycle(local._lastSpriteIdx, false, 12, 1, 0, 0);
 				_scene->_sequences.setDepth(local._lastSequenceIdx, 14);
 				if (_game._objects[OBJ_DOOR_KEY]._roomNumber == _scene->_currentSceneId)
-					_scene->_hotspots.activate(NOUN_DOOR_KEY, true);
+					_scene->_hotspots.activate(words_door_key, true);
 
 				_scene->_sequences.addSubEntry(local._lastSequenceIdx,
 					SEQUENCE_TRIGGER_EXPIRE, 0, 2);
@@ -152,7 +152,7 @@ static void handleSafeActions() {
 			local._lastSequenceIdx = _scene->_sequences.startPingPongCycle(local._lastSpriteIdx, false, 12, 1, 0, 0);
 			_scene->_sequences.setDepth(local._lastSequenceIdx, 14);
 			if (_game._objects[OBJ_DOOR_KEY]._roomNumber == _scene->_currentSceneId)
-				_scene->_hotspots.activate(NOUN_DOOR_KEY, false);
+				_scene->_hotspots.activate(words_door_key, false);
 
 			_scene->_sequences.addSubEntry(local._lastSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 		}
@@ -164,7 +164,7 @@ static void handleSafeActions() {
 		local._lastSequenceIdx = _scene->_sequences.startCycle(local._lastSpriteIdx, false, local._cycleIndex);
 		_scene->_sequences.setDepth(local._lastSequenceIdx, 14);
 		_scene->_sequences.updateTimeout(local._lastSequenceIdx, synxIdx);
-		int idx = _scene->_dynamicHotspots.add(NOUN_SAFE, VERB_WALKTO, local._lastSequenceIdx, Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_safe, words_walkto, local._lastSequenceIdx, Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(185, 113), FACING_NORTHWEST);
 		if (local._safeMode == 3) {
 			_scene->_kernelMessages.reset();
@@ -201,26 +201,26 @@ static void handleSafeActions() {
 }
 
 static void room_602_parser() {
-	if (_action.isAction(VERB_WALK_THROUGH, NOUN_HALLWAY))
+	if (_action.isAction(words_walk_through, words_hallway))
 		_scene->_nextSceneId = 601;
-	else if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY))
+	else if (_action.isAction(words_walk_through, words_doorway))
 		_scene->_nextSceneId = 603;
-	else if (_action.isAction(VERB_OPEN, NOUN_SAFE) && ((_globals[kSafeStatus] == 0) || (_globals[kSafeStatus] == 2))) {
+	else if (_action.isAction(words_open, words_safe) && ((_globals[kSafeStatus] == 0) || (_globals[kSafeStatus] == 2))) {
 		local._safeMode = 1;
 		local._cycleIndex = -2;
 		handleSafeActions();
-	} else if (_action.isAction(VERB_CLOSE, NOUN_SAFE) && ((_globals[kSafeStatus] == 1) || (_globals[kSafeStatus] == 3))) {
+	} else if (_action.isAction(words_close, words_safe) && ((_globals[kSafeStatus] == 1) || (_globals[kSafeStatus] == 3))) {
 		local._safeMode = 2;
 		local._cycleIndex = -1;
 		handleSafeActions();
-	} else if (_action.isAction(VERB_UNLOCK, NOUN_COMBINATION, NOUN_SAFE)) {
+	} else if (_action.isAction(words_unlock, words_combination, words_safe)) {
 		if ((_globals[kSafeStatus] == 0) && (_game._difficulty != DIFFICULTY_HARD)) {
 			local._safeMode = 3;
 			local._cycleIndex = -2;
 			handleSafeActions();
 		}
-	} else if ((_action.isAction(VERB_PUT, NOUN_REARVIEW_MIRROR, NOUN_LASER_BEAM) || _action.isAction(VERB_PUT, NOUN_COMPACT_CASE, NOUN_LASER_BEAM)
-		|| _action.isAction(VERB_REFLECT, NOUN_COMPACT_CASE, NOUN_LASER_BEAM) || _action.isAction(VERB_REFLECT, NOUN_REARVIEW_MIRROR, NOUN_LASER_BEAM)) && (_globals[kSafeStatus] == 0)) {
+	} else if ((_action.isAction(words_put, words_rearview_mirror, words_laser_beam) || _action.isAction(words_put, words_compact_case, words_laser_beam)
+		|| _action.isAction(words_reflect, words_compact_case, words_laser_beam) || _action.isAction(words_reflect, words_rearview_mirror, words_laser_beam)) && (_globals[kSafeStatus] == 0)) {
 		switch (_game._trigger) {
 		case 0:
 			_vm->_dialogs->show(60230);
@@ -238,11 +238,11 @@ static void room_602_parser() {
 			local._lastSpriteIdx = _globals._spriteIndexes[3];
 			local._lastSequenceIdx = _scene->_sequences.startCycle(local._lastSpriteIdx, false, -1);
 			_scene->_sequences.setDepth(local._lastSequenceIdx, 14);
-			int idx = _scene->_dynamicHotspots.add(NOUN_SAFE, VERB_WALKTO, local._lastSequenceIdx, Common::Rect(0, 0, 0, 0));
+			int idx = _scene->_dynamicHotspots.add(words_safe, words_walkto, local._lastSequenceIdx, Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(185, 113), FACING_NORTHWEST);
 			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 9);
-			idx = _scene->_dynamicHotspots.add(NOUN_LASER_BEAM, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+			idx = _scene->_dynamicHotspots.add(words_laser_beam, words_walkto, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(80, 134), FACING_NORTHEAST);
 			_scene->_sequences.addTimer(60, 2);
 		}
@@ -258,7 +258,7 @@ static void room_602_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_TAKE, NOUN_DOOR_KEY) && (_game._trigger || _game._objects.isInRoom(OBJ_DOOR_KEY))) {
+	} else if (_action.isAction(words_take, words_door_key) && (_game._trigger || _game._objects.isInRoom(OBJ_DOOR_KEY))) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -272,7 +272,7 @@ static void room_602_parser() {
 
 		case 1:
 			_scene->_sequences.remove(_globals._sequenceIndexes[6]);
-			_scene->_hotspots.activate(NOUN_DOOR_KEY, false);
+			_scene->_hotspots.activate(words_door_key, false);
 			_vm->_sound->command(9);
 			_game._objects.addToInventory(OBJ_DOOR_KEY);
 			break;
@@ -289,29 +289,29 @@ static void room_602_parser() {
 		}
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(60210);
-	else if (_action.isAction(VERB_LOOK, NOUN_FLOOR))
+	else if (_action.isAction(words_look, words_floor))
 		_vm->_dialogs->show(60211);
-	else if (_action.isAction(VERB_LOOK, NOUN_HALLWAY))
+	else if (_action.isAction(words_look, words_hallway))
 		_vm->_dialogs->show(60212);
-	else if (_action.isAction(VERB_LOOK, NOUN_TABLE))
+	else if (_action.isAction(words_look, words_table))
 		_vm->_dialogs->show(60213);
-	else if (_action.isAction(VERB_LOOK, NOUN_CHAIR) || _action.isAction(VERB_LOOK, NOUN_LOUNGE_CHAIR))
+	else if (_action.isAction(words_look, words_chair) || _action.isAction(words_look, words_lounge_chair))
 		_vm->_dialogs->show(60214);
-	else if (_action.isAction(VERB_LOOK, NOUN_NEON_LIGHTS))
+	else if (_action.isAction(words_look, words_neon_lights))
 		_vm->_dialogs->show(60215);
-	else if (_action.isAction(VERB_LOOK, NOUN_FIREPLACE))
+	else if (_action.isAction(words_look, words_fireplace))
 		_vm->_dialogs->show(60216);
-	else if (_action.isAction(VERB_LOOK, NOUN_PICTURE))
+	else if (_action.isAction(words_look, words_picture))
 		_vm->_dialogs->show(60217);
-	else if (_action.isAction(VERB_LOOK, NOUN_LAMP))
+	else if (_action.isAction(words_look, words_lamp))
 		_vm->_dialogs->show(60218);
-	else if (_action.isAction(VERB_LOOK, NOUN_MASKS))
+	else if (_action.isAction(words_look, words_masks))
 		_vm->_dialogs->show(60219);
-	else if (_action.isAction(VERB_LOOK, NOUN_GLASS_BLOCK_WALL))
+	else if (_action.isAction(words_look, words_glass_block_wall))
 		_vm->_dialogs->show(60220);
-	else if (_action.isAction(VERB_LOOK, NOUN_DOORWAY))
+	else if (_action.isAction(words_look, words_doorway))
 		_vm->_dialogs->show(60221);
-	else if (_action.isAction(VERB_LOOK, NOUN_SAFE)) {
+	else if (_action.isAction(words_look, words_safe)) {
 		if (_globals[kSafeStatus] == 0)
 			_vm->_dialogs->show(60222);
 		else if (_globals[kSafeStatus] == 1) {
@@ -325,21 +325,21 @@ static void room_602_parser() {
 			_vm->_dialogs->show(60235);
 		else
 			_vm->_dialogs->show(60236);
-	} else if (_action.isAction(VERB_UNLOCK, NOUN_DOOR_KEY, NOUN_SAFE) || _action.isAction(VERB_UNLOCK, NOUN_PADLOCK_KEY, NOUN_SAFE))
+	} else if (_action.isAction(words_unlock, words_door_key, words_safe) || _action.isAction(words_unlock, words_padlock_key, words_safe))
 		_vm->_dialogs->show(60225);
-	else if (_action.isAction(VERB_PULL, NOUN_SAFE))
+	else if (_action.isAction(words_pull, words_safe))
 		_vm->_dialogs->show(60226);
-	else if (_action.isAction(VERB_PUT, NOUN_FIREPLACE) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId)))
+	else if (_action.isAction(words_put, words_fireplace) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId)))
 		_vm->_dialogs->show(60227);
-	else if (_action.isAction(VERB_LOOK, NOUN_HOLE))
+	else if (_action.isAction(words_look, words_hole))
 		_vm->_dialogs->show(60228);
-	else if (_action.isAction(VERB_LOOK, NOUN_LASER_BEAM))
+	else if (_action.isAction(words_look, words_laser_beam))
 		_vm->_dialogs->show(60229);
-	else if (_action.isAction(VERB_LOOK, NOUN_FLOWER_BOX))
+	else if (_action.isAction(words_look, words_flower_box))
 		_vm->_dialogs->show(60231);
-	else if (_action.isAction(VERB_THROW, NOUN_BOMB, NOUN_SAFE) || _action.isAction(VERB_THROW, NOUN_BOMBS, NOUN_SAFE))
+	else if (_action.isAction(words_throw, words_bomb, words_safe) || _action.isAction(words_throw, words_bombs, words_safe))
 		_vm->_dialogs->show(60232);
-	else if (_action.isAction(VERB_PUT, NOUN_TIMEBOMB))
+	else if (_action.isAction(words_put, words_timebomb))
 		_vm->_dialogs->show(60233);
 	else
 		return;
@@ -360,9 +360,9 @@ void room_602_preload() {
 
 	section_6_walker();
 	section_6_interface();
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_SAFE);
-	_scene->addActiveVocab(NOUN_LASER_BEAM);
+	_scene->addActiveVocab(words_walkto);
+	_scene->addActiveVocab(words_safe);
+	_scene->addActiveVocab(words_laser_beam);
 }
 
 } // namespace Rooms

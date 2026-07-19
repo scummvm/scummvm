@@ -56,7 +56,7 @@ static void room_107_init() {
 		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6, 0, 0, 0);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(68, 151));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 1);
-		int idx = _scene->_dynamicHotspots.add(NOUN_DEAD_FISH, VERB_SWIM_TO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_dead_fish, words_swim_to, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(78, 135), FACING_SOUTHWEST);
 	}
 
@@ -73,7 +73,7 @@ static void room_107_init() {
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[0], Common::Point(270, 150));
 		_scene->_sequences.setMotion(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_SPRITE, -200, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 2);
-		_scene->_dynamicHotspots.add(NOUN_MANTA_RAY, VERB_SWIM_TO, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.add(words_manta_ray, words_swim_to, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
 	}
 
 	_game.loadQuoteSet(0x4A, 0x4B, 0x4C, 0x35, 0x34, 0);
@@ -95,17 +95,17 @@ static void room_107_daemon() {
 }
 
 static void room_107_pre_parser() {
-	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_OPEN_AREA_TO_WEST))
+	if (_action.isAction(words_swim_towards, words_open_area_to_west))
 		_game._player._walkOffScreenSceneId = 106;
 
-	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_OPEN_AREA_TO_SOUTH))
+	if (_action.isAction(words_swim_towards, words_open_area_to_south))
 		_game._player._walkOffScreenSceneId = 108;
 }
 
 static void room_107_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(10708);
-	else if (_action.isAction(VERB_TAKE, NOUN_DEAD_FISH) && _globals[kFishIn107]) {
+	else if (_action.isAction(words_take, words_dead_fish) && _globals[kFishIn107]) {
 		if (_game._objects.isInInventory(OBJ_DEAD_FISH)) {
 			int randVal = _vm->getRandomNumber(74, 76);
 			_scene->_kernelMessages.reset();
@@ -116,25 +116,25 @@ static void room_107_parser() {
 			_globals[kFishIn107] = false;
 			_vm->_dialogs->showItem(OBJ_DEAD_FISH, 802);
 		}
-	} else if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_NORTHERN_SEA_CLIFF))
+	} else if (_action.isAction(words_swim_towards, words_northern_sea_cliff))
 		_scene->_nextSceneId = 105;
-	else if (_action.isAction(VERB_LOOK, NOUN_NORTHERN_SEA_CLIFF))
+	else if (_action.isAction(words_look, words_northern_sea_cliff))
 		_vm->_dialogs->show(10701);
-	else if (_action.isAction(VERB_LOOK, NOUN_DEAD_FISH) && (_action._mainObjectSource == CAT_HOTSPOT))
+	else if (_action.isAction(words_look, words_dead_fish) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(10702);
-	else if (_action.isAction(VERB_LOOK, NOUN_BUSH_LIKE_FORMATION))
+	else if (_action.isAction(words_look, words_bush_like_formation))
 		_vm->_dialogs->show(10703);
-	else if (_action.isAction(VERB_LOOK, NOUN_ROCK))
+	else if (_action.isAction(words_look, words_rock))
 		_vm->_dialogs->show(10704);
-	else if (_action.isAction(VERB_LOOK, NOUN_SEAWEED))
+	else if (_action.isAction(words_look, words_seaweed))
 		_vm->_dialogs->show(10705);
-	else if (_action.isAction(VERB_LOOK, NOUN_OPEN_AREA_TO_SOUTH))
+	else if (_action.isAction(words_look, words_open_area_to_south))
 		_vm->_dialogs->show(10706);
-	else if (_action.isAction(VERB_LOOK, NOUN_CLIFF_FACE))
+	else if (_action.isAction(words_look, words_cliff_face))
 		_vm->_dialogs->show(10707);
-	else if (_action.isAction(VERB_LOOK, NOUN_MANTA_RAY))
+	else if (_action.isAction(words_look, words_manta_ray))
 		_vm->_dialogs->show(10709);
-	else if (_action.isAction(VERB_TAKE, NOUN_MANTA_RAY))
+	else if (_action.isAction(words_take, words_manta_ray))
 		_vm->_dialogs->show(10710);
 	else
 		return;
@@ -154,7 +154,7 @@ void room_107_preload() {
 
 	section_1_walker();
 	section_1_interface();
-	vocab_make_active(NOUN_MANTA_RAY);
+	vocab_make_active(words_manta_ray);
 }
 
 } // namespace Rooms

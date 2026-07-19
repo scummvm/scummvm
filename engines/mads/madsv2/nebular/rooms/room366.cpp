@@ -39,15 +39,15 @@ static void room_366_init() {
 }
 
 static void room_366_parser() {
-	if (_action.isAction(VERB_RETURN_TO, NOUN_AIR_SHAFT))
+	if (_action.isAction(words_return_to, words_air_shaft))
 		_scene->_nextSceneId = 302;
-	else if (_action.isAction(VERB_OPEN, NOUN_GRATE)) {
+	else if (_action.isAction(words_open, words_grate)) {
 		if (_game._visitedScenes.exists(316))
 			_vm->_dialogs->show(36612);
 		else
 			_vm->_dialogs->show(36613);
 		_scene->_nextSceneId = 316;
-	} else if (_action.isAction(VERB_LOOK_THROUGH, NOUN_GRATE)) {
+	} else if (_action.isAction(words_look_through, words_grate)) {
 		if (_game._visitedScenes.exists(321))
 			_vm->_dialogs->show(36611);
 		else

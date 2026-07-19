@@ -42,25 +42,25 @@ static void room_408_init() {
 	if (_game._objects.isInRoom(OBJ_TARGET_MODULE)) {
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
-		int idx = _scene->_dynamicHotspots.add(NOUN_TARGET_MODULE, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_target_module, words_walkto, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(283, 128), FACING_NORTHEAST);
 	}
 	section_4_music();
 }
 
 static void room_408_pre_parser() {
-	if ((_action.isAction(VERB_TAKE) && !_action.isObject(NOUN_TARGET_MODULE)) || _action.isAction(VERB_PULL, NOUN_PIN) || _action.isAction(VERB_OPEN, NOUN_CARTON))
+	if ((_action.isAction(words_take) && !_action.isObject(words_target_module)) || _action.isAction(words_pull, words_pin) || _action.isAction(words_open, words_carton))
 		_game._player._needToWalk = false;
 
-	if ((_action.isAction(VERB_LOOK, NOUN_TARGET_MODULE) && _game._objects.isInRoom(OBJ_TARGET_MODULE)) || _action.isAction(VERB_LOOK, NOUN_CHEST))
+	if ((_action.isAction(words_look, words_target_module) && _game._objects.isInRoom(OBJ_TARGET_MODULE)) || _action.isAction(words_look, words_chest))
 		_game._player._needToWalk = true;
 }
 
 static void room_408_parser() {
-	if (_action.isAction(VERB_WALK_INTO, NOUN_CORRIDOR_TO_SOUTH)) {
+	if (_action.isAction(words_walk_into, words_corridor_to_south)) {
 		_scene->_nextSceneId = 405;
 		_vm->_sound->command(58);
-	} else if (_action.isAction(VERB_TAKE, NOUN_TARGET_MODULE) && (_game._objects.isInRoom(OBJ_TARGET_MODULE) || _game._trigger)) {
+	} else if (_action.isAction(words_take, words_target_module) && (_game._objects.isInRoom(OBJ_TARGET_MODULE) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
 			_vm->_sound->command(57);
@@ -92,84 +92,84 @@ static void room_408_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_ARMORED_VEHICLE))
+	} else if (_action.isAction(words_look, words_armored_vehicle))
 		_vm->_dialogs->show(40810);
-	else if (_action.isAction(VERB_TAKE, NOUN_ARMORED_VEHICLE) || _action.isAction(VERB_TAKE, NOUN_ANVIL) || _action.isAction(VERB_TAKE, NOUN_TWO_TON_WEIGHT))
+	else if (_action.isAction(words_take, words_armored_vehicle) || _action.isAction(words_take, words_anvil) || _action.isAction(words_take, words_two_ton_weight))
 		_vm->_dialogs->show(40811);
-	else if (_action.isAction(VERB_LOOK, NOUN_MISSILE))
+	else if (_action.isAction(words_look, words_missile))
 		_vm->_dialogs->show(40812);
-	else if (_action.isAction(VERB_TAKE, NOUN_MISSILE))
+	else if (_action.isAction(words_take, words_missile))
 		_vm->_dialogs->show(40813);
-	else if (_action.isAction(VERB_LOOK, NOUN_GRENADE))
+	else if (_action.isAction(words_look, words_grenade))
 		_vm->_dialogs->show(40814);
-	else if (_action.isAction(VERB_TAKE, NOUN_GRENADE))
+	else if (_action.isAction(words_take, words_grenade))
 		_vm->_dialogs->show(40815);
-	else if (_action.isAction(VERB_TAKE, NOUN_PIN) || _action.isAction(VERB_PULL, NOUN_PIN))
+	else if (_action.isAction(words_take, words_pin) || _action.isAction(words_pull, words_pin))
 		_vm->_dialogs->show(40816);
-	else if (_action.isAction(VERB_LOOK, NOUN_BLIMP))
+	else if (_action.isAction(words_look, words_blimp))
 		_vm->_dialogs->show(40817);
-	else if (_action.isAction(VERB_TAKE, NOUN_BLIMP))
+	else if (_action.isAction(words_take, words_blimp))
 		_vm->_dialogs->show(40818);
-	else if (_action.isAction(VERB_LOOK, NOUN_AMMUNITION))
+	else if (_action.isAction(words_look, words_ammunition))
 		_vm->_dialogs->show(40819);
-	else if (_action.isAction(VERB_TAKE, NOUN_AMMUNITION))
+	else if (_action.isAction(words_take, words_ammunition))
 		_vm->_dialogs->show(40820);
-	else if (_action.isAction(VERB_LOOK, NOUN_CATAPULT))
+	else if (_action.isAction(words_look, words_catapult))
 		_vm->_dialogs->show(40821);
-	else if (_action.isAction(VERB_TAKE, NOUN_CATAPULT))
+	else if (_action.isAction(words_take, words_catapult))
 		_vm->_dialogs->show(40822);
-	else if (_action.isAction(VERB_LOOK, NOUN_CHEST)) {
+	else if (_action.isAction(words_look, words_chest)) {
 		if (_game._objects.isInRoom(OBJ_TARGET_MODULE))
 			_vm->_dialogs->show(40823);
 		else
 			_vm->_dialogs->show(40824);
-	} else if (_action.isAction(VERB_TAKE, NOUN_CHEST))
+	} else if (_action.isAction(words_take, words_chest))
 		_vm->_dialogs->show(40825);
-	else if (_action.isAction(VERB_LOOK, NOUN_SUIT_OF_ARMOR))
+	else if (_action.isAction(words_look, words_suit_of_armor))
 		_vm->_dialogs->show(40826);
-	else if (_action.isAction(VERB_TAKE, NOUN_SUIT_OF_ARMOR))
+	else if (_action.isAction(words_take, words_suit_of_armor))
 		_vm->_dialogs->show(40827);
-	else if (_action.isAction(VERB_LOOK, NOUN_ESCAPE_HATCH))
+	else if (_action.isAction(words_look, words_escape_hatch))
 		_vm->_dialogs->show(40828);
-	else if (_action.isAction(VERB_OPEN, NOUN_ESCAPE_HATCH) || _action.isAction(VERB_PULL, NOUN_ESCAPE_HATCH))
+	else if (_action.isAction(words_open, words_escape_hatch) || _action.isAction(words_pull, words_escape_hatch))
 		_vm->_dialogs->show(40829);
-	else if (_action.isAction(VERB_LOOK, NOUN_BARRELS))
+	else if (_action.isAction(words_look, words_barrels))
 		_vm->_dialogs->show(40830);
-	else if (_action.isAction(VERB_TAKE, NOUN_BARRELS))
+	else if (_action.isAction(words_take, words_barrels))
 		_vm->_dialogs->show(40831);
-	else if (_action.isAction(VERB_LOOK, NOUN_INFLATABLE_RAFT))
+	else if (_action.isAction(words_look, words_inflatable_raft))
 		_vm->_dialogs->show(40832);
-	else if (_action.isAction(VERB_TAKE, NOUN_INFLATABLE_RAFT))
+	else if (_action.isAction(words_take, words_inflatable_raft))
 		_vm->_dialogs->show(40833);
-	else if (_action.isAction(VERB_LOOK, NOUN_TOMATO))
+	else if (_action.isAction(words_look, words_tomato))
 		_vm->_dialogs->show(40834);
-	else if (_action.isAction(VERB_TAKE, NOUN_TOMATO))
+	else if (_action.isAction(words_take, words_tomato))
 		_vm->_dialogs->show(40835);
-	else if (_action.isAction(VERB_LOOK, NOUN_ANVIL))
+	else if (_action.isAction(words_look, words_anvil))
 		_vm->_dialogs->show(40836);
-	else if (_action.isAction(VERB_LOOK, NOUN_TWO_TON_WEIGHT))
+	else if (_action.isAction(words_look, words_two_ton_weight))
 		_vm->_dialogs->show(40837);
-	else if (_action.isAction(VERB_LOOK, NOUN_POWDER_CONTAINER))
+	else if (_action.isAction(words_look, words_powder_container))
 		_vm->_dialogs->show(40838);
-	else if (_action.isAction(VERB_LOOK, NOUN_POWDER_PUFF))
+	else if (_action.isAction(words_look, words_powder_puff))
 		_vm->_dialogs->show(40839);
-	else if (_action.isAction(VERB_TAKE, NOUN_POWDER_PUFF))
+	else if (_action.isAction(words_take, words_powder_puff))
 		_vm->_dialogs->show(40840);
-	else if (_action.isAction(VERB_LOOK, NOUN_CARTON))
+	else if (_action.isAction(words_look, words_carton))
 		_vm->_dialogs->show(40841);
-	else if (_action.isAction(VERB_TAKE, NOUN_CARTON))
+	else if (_action.isAction(words_take, words_carton))
 		_vm->_dialogs->show(40842);
-	else if (_action.isAction(VERB_OPEN, NOUN_CARTON))
+	else if (_action.isAction(words_open, words_carton))
 		_vm->_dialogs->show(40843);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_SOUTH))
+	else if (_action.isAction(words_look, words_corridor_to_south))
 		_vm->_dialogs->show(40844);
 	else if (_action._lookFlag)
 		_vm->_dialogs->show(40845);
-	else if (_action.isAction(VERB_LOOK, NOUN_TARGET_MODULE) && _game._objects.isInRoom(OBJ_TARGET_MODULE))
+	else if (_action.isAction(words_look, words_target_module) && _game._objects.isInRoom(OBJ_TARGET_MODULE))
 		_vm->_dialogs->show(40846);
-	else if (_action.isAction(VERB_LOOK, NOUN_LOADING_RAMP))
+	else if (_action.isAction(words_look, words_loading_ramp))
 		_vm->_dialogs->show(40848);
-	else if (_action.isAction(VERB_OPEN, NOUN_CHEST))
+	else if (_action.isAction(words_open, words_chest))
 		_vm->_dialogs->show(40849);
 	else
 		return;
@@ -188,8 +188,8 @@ void room_408_preload() {
 
 	section_4_walker();
 	section_4_interface();
-	_scene->addActiveVocab(NOUN_TARGET_MODULE);
-	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(words_target_module);
+	_scene->addActiveVocab(words_walkto);
 }
 
 } // namespace Rooms

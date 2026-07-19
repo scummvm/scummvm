@@ -64,18 +64,18 @@ static void room_702_init() {
 }
 
 static void room_702_pre_parser() {
-	if (_action.isAction(VERB_WALKTO, NOUN_WEST_END_OF_PLATFORM))
+	if (_action.isAction(words_walkto, words_west_end_of_platform))
 		_game._player._walkOffScreenSceneId = 701;
 }
 
 static void room_702_parser() {
-	if (_action.isAction(VERB_WALK_ALONG, NOUN_PLATFORM))
+	if (_action.isAction(words_walk_along, words_platform))
 		; // Only set the action as finished
-	else if (_action.isAction(VERB_STEP_INTO, NOUN_TELEPORTER)) {
+	else if (_action.isAction(words_step_into, words_teleporter)) {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_scene->_nextSceneId = 711;
-	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._mainObjectSource == CAT_HOTSPOT) && (!_game._objects.isInInventory(OBJ_BONES) || _game._trigger)) {
+	} else if (_action.isAction(words_take, words_bones) && (_action._mainObjectSource == CAT_HOTSPOT) && (!_game._objects.isInInventory(OBJ_BONES) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -102,24 +102,24 @@ static void room_702_parser() {
 		}
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(70210);
-	else if (_action.isAction(VERB_LOOK, NOUN_PLATFORM))
+	else if (_action.isAction(words_look, words_platform))
 		_vm->_dialogs->show(70211);
-	else if (_action.isAction(VERB_LOOK, NOUN_CEMENT_BLOCK))
+	else if (_action.isAction(words_look, words_cement_block))
 		_vm->_dialogs->show(70212);
-	else if (_action.isAction(VERB_LOOK, NOUN_ROCK))
+	else if (_action.isAction(words_look, words_rock))
 		_vm->_dialogs->show(70213);
-	else if (_action.isAction(VERB_TAKE, NOUN_ROCK))
+	else if (_action.isAction(words_take, words_rock))
 		_vm->_dialogs->show(70214);
-	else if (_action.isAction(VERB_LOOK, NOUN_WEST_END_OF_PLATFORM))
+	else if (_action.isAction(words_look, words_west_end_of_platform))
 		_vm->_dialogs->show(70215);
-	else if (_action.isAction(VERB_LOOK, NOUN_TELEPORTER))
+	else if (_action.isAction(words_look, words_teleporter))
 		_vm->_dialogs->show(70216);
-	else if (_action.isAction(VERB_LOOK, NOUN_BONES) && (_action._mainObjectSource == CAT_HOTSPOT))
+	else if (_action.isAction(words_look, words_bones) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(70217);
-	else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._mainObjectSource == CAT_HOTSPOT)) {
+	else if (_action.isAction(words_take, words_bones) && (_action._mainObjectSource == CAT_HOTSPOT)) {
 		if (_game._objects.isInInventory(OBJ_BONES))
 			_vm->_dialogs->show(70219);
-	} else if (_action.isAction(VERB_LOOK, NOUN_SUBMERGED_CITY))
+	} else if (_action.isAction(words_look, words_submerged_city))
 		_vm->_dialogs->show(70220);
 	else
 		return;

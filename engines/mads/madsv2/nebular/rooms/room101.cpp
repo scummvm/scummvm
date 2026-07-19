@@ -103,7 +103,7 @@ static void room_101_init() {
 	_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 6, 0, 10, 4);
 	_globals._sequenceIndexes[10] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[10], false, 6, 0, 32, 47);
 
-	_scene->_hotspots.activate(NOUN_SHIELD_MODULATOR, false);
+	_scene->_hotspots.activate(words_shield_modulator, false);
 	local._panelOpened = false;
 
 	if (_scene->_priorSceneId != RETURNING_FROM_LOADING)
@@ -119,8 +119,8 @@ static void room_101_init() {
 		_game._player._facing = FACING_NORTHEAST;
 		_globals._sequenceIndexes[11] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[11], false, 3, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[11], 17, 17);
-		_scene->_hotspots.activate(NOUN_CHAIR, false);
-		local._chairHotspotId = _scene->_dynamicHotspots.add(NOUN_CHAIR, VERB_SIT_IN, -1, Common::Rect(159, 84, 159 + 33, 84 + 36));
+		_scene->_hotspots.activate(words_chair, false);
+		local._chairHotspotId = _scene->_dynamicHotspots.add(words_chair, words_sit_in, -1, Common::Rect(159, 84, 159 + 33, 84 + 36));
 		if (_scene->_priorSceneId == 112)
 			room_101_say_dang();
 	} else {
@@ -210,11 +210,11 @@ static void room_101_daemon() {
 }
 
 static void room_101_pre_parser() {
-	if (_action.isAction(VERB_LOOK, NOUN_VIEW_SCREEN))
+	if (_action.isAction(words_look, words_view_screen))
 		_game._player._needToWalk = true;
 
 	if (local._sittingFl) {
-		if (_action.isAction(VERB_LOOK) || _action.isAction(NOUN_CHAIR) || _action.isAction(VERB_TALKTO) || _action.isAction(VERB_PEER_THROUGH) || _action.isAction(VERB_EXAMINE))
+		if (_action.isAction(words_look) || _action.isAction(words_chair) || _action.isAction(words_talkto) || _action.isAction(words_peer_through) || _action.isAction(words_examine))
 			_game._player._needToWalk = false;
 
 		if (_game._player._needToWalk) {
@@ -246,7 +246,7 @@ static void room_101_pre_parser() {
 		}
 	}
 
-	if (local._panelOpened && !(_action.isObject(NOUN_SHIELD_ACCESS_PANEL) || _action.isObject(NOUN_SHIELD_MODULATOR))) {
+	if (local._panelOpened && !(_action.isObject(words_shield_access_panel) || _action.isObject(words_shield_modulator))) {
 		switch (_game._trigger) {
 		case 0:
 			if (_game._player._needToWalk) {
@@ -262,7 +262,7 @@ static void room_101_pre_parser() {
 		case 1:
 			_game._player._stepEnabled = true;
 			local._panelOpened = false;
-			_scene->_hotspots.activate(NOUN_SHIELD_MODULATOR, false);
+			_scene->_hotspots.activate(words_shield_modulator, false);
 			break;
 
 		default:
@@ -278,13 +278,13 @@ static void room_101_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_WALKTO, NOUN_LIFE_SUPPORT_SECTION)) {
+	if (_action.isAction(words_walkto, words_life_support_section)) {
 		_scene->_nextSceneId = 102;
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_SIT_IN, NOUN_CHAIR) || (_action.isAction(VERB_LOOK, NOUN_VIEW_SCREEN) && !local._sittingFl)) {
+	if (_action.isAction(words_sit_in, words_chair) || (_action.isAction(words_look, words_view_screen) && !local._sittingFl)) {
 		if (!local._sittingFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -308,8 +308,8 @@ static void room_101_parser() {
 				_game._player._stepEnabled = true;
 				local._sittingFl = true;
 				_scene->_hotspots.activate(71, false);
-				local._chairHotspotId = _scene->_dynamicHotspots.add(NOUN_CHAIR, VERB_SIT_IN, -1, Common::Rect(159, 84, 159 + 33, 84 + 36));
-				if (!_action.isAction(VERB_LOOK, NOUN_VIEW_SCREEN)) {
+				local._chairHotspotId = _scene->_dynamicHotspots.add(words_chair, words_sit_in, -1, Common::Rect(159, 84, 159 + 33, 84 + 36));
+				if (!_action.isAction(words_look, words_view_screen)) {
 					_action._inProgress = false;
 					return;
 				}
@@ -326,7 +326,7 @@ static void room_101_parser() {
 		}
 	}
 
-	if ((_action.isAction(VERB_WALKTO, NOUN_SHIELD_ACCESS_PANEL) || _action.isAction(VERB_OPEN, NOUN_SHIELD_ACCESS_PANEL)) && !local._panelOpened) {
+	if ((_action.isAction(words_walkto, words_shield_access_panel) || _action.isAction(words_open, words_shield_access_panel)) && !local._panelOpened) {
 		switch (_game._trigger) {
 		case 0:
 			local._shieldSpriteIdx = _game._objects.isInRoom(OBJ_SHIELD_MODULATOR) ? 13 : 14;
@@ -343,7 +343,7 @@ static void room_101_parser() {
 			_game._player._stepEnabled = true;
 			local._panelOpened = true;
 			if (_game._objects.isInRoom(OBJ_SHIELD_MODULATOR))
-				_scene->_hotspots.activate(NOUN_SHIELD_MODULATOR, true);
+				_scene->_hotspots.activate(words_shield_modulator, true);
 			break;
 
 		default:
@@ -353,19 +353,19 @@ static void room_101_parser() {
 		return;
 	}
 
-	if ((_action.isAction(VERB_TAKE, NOUN_SHIELD_MODULATOR) || _action.isAction(VERB_PULL, NOUN_SHIELD_MODULATOR)) && _game._objects.isInRoom(OBJ_SHIELD_MODULATOR)) {
+	if ((_action.isAction(words_take, words_shield_modulator) || _action.isAction(words_pull, words_shield_modulator)) && _game._objects.isInRoom(OBJ_SHIELD_MODULATOR)) {
 		_game._objects.addToInventory(OBJ_SHIELD_MODULATOR);
 		_scene->_sequences.remove(_globals._sequenceIndexes[13]);
 		_globals._sequenceIndexes[13] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[14], false, 6, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[13], -2, -2);
-		_scene->_hotspots.activate(NOUN_SHIELD_MODULATOR, false);
+		_scene->_hotspots.activate(words_shield_modulator, false);
 		_vm->_dialogs->showItem(OBJ_SHIELD_MODULATOR, 10120);
 		_vm->_sound->command(22);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_SHIELD_ACCESS_PANEL) || (_action.isAction(VERB_LOOK, NOUN_SHIELD_MODULATOR) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR))) {
+	if (_action.isAction(words_look, words_shield_access_panel) || (_action.isAction(words_look, words_shield_modulator) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR))) {
 		if (local._panelOpened) {
 			if (_game._objects.isInRoom(OBJ_SHIELD_MODULATOR))
 				_vm->_dialogs->show(10128);
@@ -378,13 +378,13 @@ static void room_101_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_OPEN, NOUN_SHIELD_ACCESS_PANEL) && local._panelOpened) {
+	if (_action.isAction(words_open, words_shield_access_panel) && local._panelOpened) {
 		_vm->_dialogs->show(10130);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_VIEW_SCREEN) && local._sittingFl) {
+	if (_action.isAction(words_look, words_view_screen) && local._sittingFl) {
 		if (_globals[kWatchedViewScreen])
 			room_101_say_dang();
 		else {
@@ -426,133 +426,133 @@ static void room_101_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_CHAIR)) {
+	if (_action.isAction(words_look, words_chair)) {
 		_vm->_dialogs->show(10101);
 		_action._inProgress = false;
 		return;
 	}
 
-	if ((_action.isAction(VERB_LOOK) || _action.isAction(VERB_PEER_THROUGH)) && (_action.isObject(NOUN_FRONT_WINDOW) || _action.isObject(NOUN_OUTSIDE))) {
+	if ((_action.isAction(words_look) || _action.isAction(words_peer_through)) && (_action.isObject(words_front_window) || _action.isObject(words_outside))) {
 		_vm->_dialogs->show(10102);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_HULL) || _action.isAction(VERB_LOOK, NOUN_OUTER_HULL) || _action.isAction(VERB_EXAMINE, NOUN_HULL) || _action.isAction(VERB_EXAMINE, NOUN_OUTER_HULL)) {
+	if (_action.isAction(words_look, words_hull) || _action.isAction(words_look, words_outer_hull) || _action.isAction(words_examine, words_hull) || _action.isAction(words_examine, words_outer_hull)) {
 		_vm->_dialogs->show(10103);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_FUZZY_DICE)) {
+	if (_action.isAction(words_look, words_fuzzy_dice)) {
 		_vm->_dialogs->show(10104);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_MIRROR) || _action.isAction(VERB_LOOK_IN, NOUN_MIRROR)) {
+	if (_action.isAction(words_look, words_mirror) || _action.isAction(words_look_in, words_mirror)) {
 		_vm->_dialogs->show(10105);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_CURTAINS)) {
+	if (_action.isAction(words_look, words_curtains)) {
 		_vm->_dialogs->show(10106);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_PLASTIC_JESUS)) {
+	if (_action.isAction(words_look, words_plastic_jesus)) {
 		_vm->_dialogs->show(10107);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_ESCAPE_HATCH) || (_action.isAction(VERB_OPEN, NOUN_ESCAPE_HATCH) && !_game._objects.isInInventory(OBJ_REBREATHER))) {
+	if (_action.isAction(words_look, words_escape_hatch) || (_action.isAction(words_open, words_escape_hatch) && !_game._objects.isInInventory(OBJ_REBREATHER))) {
 		_vm->_dialogs->show(10109);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_OPEN, NOUN_ESCAPE_HATCH)) {
+	if (_action.isAction(words_open, words_escape_hatch)) {
 		_vm->_dialogs->show(10110);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_TARGET_COMPUTER)) {
+	if (_action.isAction(words_look, words_target_computer)) {
 		_vm->_dialogs->show(10111);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_LIBRARY_COMPUTER)) {
+	if (_action.isAction(words_look, words_library_computer)) {
 		_vm->_dialogs->show(10126);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_DAMAGE_CONTROL_PANEL)) {
+	if (_action.isAction(words_look, words_damage_control_panel)) {
 		_vm->_dialogs->show(10112);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_NAVIGATION_CONTROLS)) {
+	if (_action.isAction(words_look, words_navigation_controls)) {
 		_vm->_dialogs->show(10113);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_ENGINEERING_CONTROLS)) {
+	if (_action.isAction(words_look, words_engineering_controls)) {
 		_vm->_dialogs->show(10114);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_WEAPONS_DISPLAY)) {
+	if (_action.isAction(words_look, words_weapons_display)) {
 		_vm->_dialogs->show(10115);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_SHIELD_STATUS_PANEL)) {
+	if (_action.isAction(words_look, words_shield_status_panel)) {
 		_vm->_dialogs->show(10116);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, NOUN_PLASTIC_JESUS)) {
+	if (_action.isAction(words_take, words_plastic_jesus)) {
 		_vm->_dialogs->show(10118);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, NOUN_FUZZY_DICE)) {
+	if (_action.isAction(words_take, words_fuzzy_dice)) {
 		_vm->_dialogs->show(10119);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_OPEN, NOUN_DAMAGE_CONTROL_PANEL)) {
+	if (_action.isAction(words_open, words_damage_control_panel)) {
 		_vm->_dialogs->show(10121);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_OPEN, NOUN_CURTAINS)) {
+	if (_action.isAction(words_open, words_curtains)) {
 		_vm->_dialogs->show(10122);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_CLOSE, NOUN_CURTAINS)) {
+	if (_action.isAction(words_close, words_curtains)) {
 		_vm->_dialogs->show(10123);
 		_action._inProgress = false;
 		return;
 	}
 
-	if ((_action.isAction(VERB_LOOK) || _action.isAction(VERB_PLAY)) && _action.isObject(NOUN_VIDEO_GAME)) {
+	if ((_action.isAction(words_look) || _action.isAction(words_play)) && _action.isObject(words_video_game)) {
 		_vm->_dialogs->show(10124);
 		_action._inProgress = false;
 		return;

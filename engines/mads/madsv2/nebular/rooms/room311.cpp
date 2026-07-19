@@ -196,9 +196,9 @@ static void room_311_parser() {
 		local._checkGuardFl = false;
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.addQuote(250, 0, 240);
-	} else if (_action.isAction(VERB_SIT_AT, NOUN_DESK))
+	} else if (_action.isAction(words_sit_at, words_desk))
 		_scene->_nextSceneId = 320;
-	else if (_action.isAction(VERB_CLIMB_INTO, NOUN_AIR_VENT)) {
+	else if (_action.isAction(words_climb_into, words_air_vent)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -294,25 +294,25 @@ static void room_311_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_DESK))
+	} else if (_action.isAction(words_look, words_desk))
 		_vm->_dialogs->show(31110);
-	else if (_action.isAction(VERB_LOOK, NOUN_WALL))
+	else if (_action.isAction(words_look, words_wall))
 		_vm->_dialogs->show(31111);
-	else if (_action.isAction(VERB_LOOK, NOUN_LIGHTING_FIXTURE) || _action.isAction(VERB_STARE_AT, NOUN_LIGHTING_FIXTURE))
+	else if (_action.isAction(words_look, words_lighting_fixture) || _action.isAction(words_stare_at, words_lighting_fixture))
 		_vm->_dialogs->show(31112);
-	else if (_action.isAction(VERB_LOOK, NOUN_LIGHTS) || _action.isAction(VERB_STARE_AT, NOUN_LIGHTS))
+	else if (_action.isAction(words_look, words_lights) || _action.isAction(words_stare_at, words_lights))
 		_vm->_dialogs->show(31113);
-	else if (_action.isAction(VERB_TAKE, NOUN_LIGHTS))
+	else if (_action.isAction(words_take, words_lights))
 		_vm->_dialogs->show(31114);
-	else if (_action.isAction(VERB_LOOK, NOUN_LIGHT) || _action.isAction(VERB_STARE_AT, NOUN_LIGHT))
+	else if (_action.isAction(words_look, words_light) || _action.isAction(words_stare_at, words_light))
 		_vm->_dialogs->show(31115);
-	else if (_action.isAction(VERB_TAKE, NOUN_LIGHT))
+	else if (_action.isAction(words_take, words_light))
 		_vm->_dialogs->show(31116);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_WEST))
+	else if (_action.isAction(words_look, words_corridor_to_west))
 		_vm->_dialogs->show(31117);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_EAST))
+	else if (_action.isAction(words_look, words_corridor_to_east))
 		_vm->_dialogs->show(31118);
-	else if (_action.isAction(VERB_LOOK, NOUN_AIR_VENT))
+	else if (_action.isAction(words_look, words_air_vent))
 		_vm->_dialogs->show(31120);
 	else
 		return;

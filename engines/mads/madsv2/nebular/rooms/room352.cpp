@@ -73,7 +73,7 @@ static void putArmDown(bool corridorExit, bool doorwayExit) {
 	case 2:
 	{
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
-		int idx = _scene->_dynamicHotspots.add(NOUN_GUARDS_ARM2, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_guards_arm2, words_walkto, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(230, 117), FACING_NORTHWEST);
 		_scene->changeVariant(0);
 	}
@@ -153,7 +153,7 @@ static void room_352_init() {
 	if (_game._objects.isInRoom(OBJ_TAPE_PLAYER)) {
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 12, 0, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 5);
-		int idx = _scene->_dynamicHotspots.add(NOUN_TAPE_PLAYER, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_tape_player, words_walkto, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		local._tapePlayerHotspotIdx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(84, 145), FACING_WEST);
 	}
 
@@ -167,7 +167,7 @@ static void room_352_init() {
 
 	if (_game._objects.isInRoom(OBJ_GUARDS_ARM)) {
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
-		int idx = _scene->_dynamicHotspots.add(NOUN_GUARDS_ARM2, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_guards_arm2, words_walkto, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(230, 117), FACING_NORTHWEST);
 	} else
 		local._mustPutArmDownFl = true;
@@ -185,10 +185,10 @@ static void room_352_init() {
 static void room_352_pre_parser() {
 	local._leaveRoomFl = false;
 
-	if (_action.isAction(VERB_OPEN, NOUN_VAULT))
+	if (_action.isAction(words_open, words_vault))
 		_game._player.walk(Common::Point(266, 111), FACING_NORTHEAST);
 
-	if (local._vaultOpenFl && !_action.isObject(NOUN_VAULT) && !_action.isObject(NOUN_LAMP) && !_action.isObject(NOUN_OTHER_STUFF) && !_action.isObject(NOUN_YOUR_STUFF)) {
+	if (local._vaultOpenFl && !_action.isObject(words_vault) && !_action.isObject(words_lamp) && !_action.isObject(words_other_stuff) && !_action.isObject(words_your_stuff)) {
 		if (_globals[kHaveYourStuff]) {
 			local._commonSpriteIndex = _globals._spriteIndexes[13];
 			local._commonSequenceIdx = _globals._sequenceIndexes[13];
@@ -224,14 +224,14 @@ static void room_352_pre_parser() {
 		}
 	}
 
-	if (_action.isAction(VERB_PUT, NOUN_GUARDS_ARM2, NOUN_SCANNER)) {
+	if (_action.isAction(words_put, words_guards_arm2, words_scanner)) {
 		if (_globals[kSexOfRex] == REX_MALE)
 			_game._player.walk(Common::Point(269, 111), FACING_NORTHEAST);
 		else
 			_game._player.walk(Common::Point(271, 111), FACING_NORTHEAST);
 	}
 
-	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY) || _action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH) || _action.isAction(VERB_PUT, NOUN_GUARDS_ARM2, NOUN_FLOOR)) {
+	if (_action.isAction(words_walk_through, words_doorway) || _action.isAction(words_walk_down, words_corridor_to_south) || _action.isAction(words_put, words_guards_arm2, words_floor)) {
 		if (_game._objects.isInInventory(OBJ_GUARDS_ARM))
 			_game._player.walk(Common::Point(230, 117), FACING_NORTHWEST);
 	}
@@ -244,7 +244,7 @@ static void room_352_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_OPEN, NOUN_VAULT)) {
+	if (_action.isAction(words_open, words_vault)) {
 		if (!local._vaultOpenFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -306,15 +306,15 @@ static void room_352_parser() {
 	bool exit_corridor = false;
 	bool exit_doorway = false;
 
-	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH)) {
+	if (_action.isAction(words_walk_down, words_corridor_to_south)) {
 		exit_corridor = true;
 	}
 
-	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY)) {
+	if (_action.isAction(words_walk_through, words_doorway)) {
 		exit_doorway = true;
 	}
 
-	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH) || _action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY) || _action.isAction(VERB_PUT, NOUN_GUARDS_ARM2, NOUN_FLOOR)) {
+	if (_action.isAction(words_walk_down, words_corridor_to_south) || _action.isAction(words_walk_through, words_doorway) || _action.isAction(words_put, words_guards_arm2, words_floor)) {
 		if (local._mustPutArmDownFl)
 			putArmDown(exit_corridor, exit_doorway);
 		else if (exit_corridor)
@@ -326,7 +326,7 @@ static void room_352_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, NOUN_GUARDS_ARM2)) {
+	if (_action.isAction(words_take, words_guards_arm2)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_GUARDS_ARM)) {
 			switch (_game._trigger) {
 			case 0:
@@ -365,7 +365,7 @@ static void room_352_parser() {
 		}
 	}
 
-	if (_action.isAction(VERB_PUT, NOUN_GUARDS_ARM2, NOUN_SCANNER)) {
+	if (_action.isAction(words_put, words_guards_arm2, words_scanner)) {
 		if (!local._vaultOpenFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -428,7 +428,7 @@ static void room_352_parser() {
 				local._vaultOpenFl = true;
 				int idx;
 				if (!_globals[kHaveYourStuff]) {
-					idx = _scene->_dynamicHotspots.add(NOUN_YOUR_STUFF, VERB_WALKTO, -1, Common::Rect(282, 87, 282 + 13, 87 + 7));
+					idx = _scene->_dynamicHotspots.add(words_your_stuff, words_walkto, -1, Common::Rect(282, 87, 282 + 13, 87 + 7));
 					local._hotspot2Idx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(280, 111), FACING_NORTHEAST);
 					_globals._sequenceIndexes[1] = local._commonSequenceIdx;
 					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x102));
@@ -437,9 +437,9 @@ static void room_352_parser() {
 					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x103));
 				}
 
-				idx = _scene->_dynamicHotspots.add(NOUN_OTHER_STUFF, VERB_WALKTO, -1, Common::Rect(282, 48, 282 + 36, 48 + 27));
+				idx = _scene->_dynamicHotspots.add(words_other_stuff, words_walkto, -1, Common::Rect(282, 48, 282 + 36, 48 + 27));
 				local._hotspot1Idx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(287, 115), FACING_NORTHEAST);
-				idx = _scene->_dynamicHotspots.add(NOUN_LAMP, VERB_WALKTO, -1, Common::Rect(296, 76, 296 + 11, 76 + 17));
+				idx = _scene->_dynamicHotspots.add(words_lamp, words_walkto, -1, Common::Rect(296, 76, 296 + 11, 76 + 17));
 				local._lampHostpotIdx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(287, 115), FACING_NORTHEAST);
 				_game._player._stepEnabled = true;
 			}
@@ -449,7 +449,7 @@ static void room_352_parser() {
 				break;
 			}
 		}
-	} else if (_action.isAction(VERB_TAKE, NOUN_YOUR_STUFF)) {
+	} else if (_action.isAction(words_take, words_your_stuff)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -496,7 +496,7 @@ static void room_352_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_TAKE, NOUN_TAPE_PLAYER) && !_game._objects.isInInventory(OBJ_TAPE_PLAYER)) {
+	} else if (_action.isAction(words_take, words_tape_player) && !_game._objects.isInInventory(OBJ_TAPE_PLAYER)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -534,53 +534,53 @@ static void room_352_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_SCANNER))
+	} else if (_action.isAction(words_look, words_scanner))
 		_vm->_dialogs->show(35210);
-	else if (_action.isAction(VERB_LOOK, NOUN_MONITOR)) {
+	else if (_action.isAction(words_look, words_monitor)) {
 		if (_game._storyMode == STORYMODE_NAUGHTY)
 			_vm->_dialogs->show(35211);
 		else
 			_vm->_dialogs->show(35212);
-	} else if (_action.isAction(VERB_LOOK, NOUN_DISPLAY))
+	} else if (_action.isAction(words_look, words_display))
 		_vm->_dialogs->show(35213);
-	else if (_action.isAction(VERB_LOOK, NOUN_STATUE))
+	else if (_action.isAction(words_look, words_statue))
 		_vm->_dialogs->show(35214);
-	else if (_action.isAction(VERB_LOOK, NOUN_TAPE_PLAYER) && (_action._savedFields._mainObjectSource == 4))
+	else if (_action.isAction(words_look, words_tape_player) && (_action._savedFields._mainObjectSource == 4))
 		_vm->_dialogs->show(35215);
-	else if (_action.isAction(VERB_LOOK, NOUN_AIR_VENT))
+	else if (_action.isAction(words_look, words_air_vent))
 		_vm->_dialogs->show(35216);
-	else if (_action.isAction(VERB_LOOK, NOUN_GUARDS_ARM2) && (_action._savedFields._mainObjectSource == 4))
+	else if (_action.isAction(words_look, words_guards_arm2) && (_action._savedFields._mainObjectSource == 4))
 		_vm->_dialogs->show(35217);
-	else if (_action.isAction(VERB_LOOK, NOUN_IRONING_BOARD))
+	else if (_action.isAction(words_look, words_ironing_board))
 		_vm->_dialogs->show(35218);
-	else if (_action.isAction(VERB_LOOK, NOUN_CLOCK))
+	else if (_action.isAction(words_look, words_clock))
 		_vm->_dialogs->show(35219);
-	else if (_action.isAction(VERB_LOOK, NOUN_GAUGE))
+	else if (_action.isAction(words_look, words_gauge))
 		_vm->_dialogs->show(35220);
-	else if (_action.isAction(VERB_LOOK, NOUN_VAULT)) {
+	else if (_action.isAction(words_look, words_vault)) {
 		if (!local._vaultOpenFl)
 			_vm->_dialogs->show(35221);
-	} else if (_action.isAction(VERB_LOOK, NOUN_YOUR_STUFF))
+	} else if (_action.isAction(words_look, words_your_stuff))
 		_vm->_dialogs->show(35222);
-	else if (_action.isAction(VERB_LOOK, NOUN_OTHER_STUFF))
+	else if (_action.isAction(words_look, words_other_stuff))
 		_vm->_dialogs->show(35223);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_SOUTH))
+	else if (_action.isAction(words_look, words_corridor_to_south))
 		_vm->_dialogs->show(35224);
-	else if (_action.isAction(VERB_TAKE, NOUN_OTHER_STUFF))
+	else if (_action.isAction(words_take, words_other_stuff))
 		_vm->_dialogs->show(35226);
-	else if (_action.isAction(VERB_LOOK, NOUN_DESK))
+	else if (_action.isAction(words_look, words_desk))
 		_vm->_dialogs->show(35229);
-	else if (_action.isAction(VERB_LOOK, NOUN_GUARD))
+	else if (_action.isAction(words_look, words_guard))
 		_vm->_dialogs->show(35230);
-	else if (_action.isAction(VERB_LOOK, NOUN_DOORWAY))
+	else if (_action.isAction(words_look, words_doorway))
 		_vm->_dialogs->show(35231);
-	else if (_action.isAction(VERB_LOOK, NOUN_TABLE))
+	else if (_action.isAction(words_look, words_table))
 		_vm->_dialogs->show(35232);
-	else if (_action.isAction(VERB_LOOK, NOUN_PROJECTOR))
+	else if (_action.isAction(words_look, words_projector))
 		_vm->_dialogs->show(35233);
-	else if (_action.isAction(VERB_LOOK, NOUN_SUPPORT))
+	else if (_action.isAction(words_look, words_support))
 		_vm->_dialogs->show(35234);
-	else if (_action.isAction(VERB_LOOK, NOUN_SECURITY_MONITOR))
+	else if (_action.isAction(words_look, words_security_monitor))
 		_vm->_dialogs->show(35235);
 	else
 		return;
@@ -608,10 +608,10 @@ void room_352_preload() {
 
 	section_3_walker();
 	section_3_interface();
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_YOUR_STUFF);
-	_scene->addActiveVocab(NOUN_OTHER_STUFF);
-	_scene->addActiveVocab(NOUN_LAMP);
+	_scene->addActiveVocab(words_walkto);
+	_scene->addActiveVocab(words_your_stuff);
+	_scene->addActiveVocab(words_other_stuff);
+	_scene->addActiveVocab(words_lamp);
 }
 
 } // namespace Rooms

@@ -59,7 +59,7 @@ static void room_610_init() {
 
 	if (_game._objects[OBJ_PHONE_HANDSET]._roomNumber == _scene->_currentSceneId) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-		local._handsetHotspotId = _scene->_dynamicHotspots.add(NOUN_PHONE_HANDSET, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		local._handsetHotspotId = _scene->_dynamicHotspots.add(words_phone_handset, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._handsetHotspotId, Common::Point(132, 121), FACING_NORTHWEST);
 		if ((_globals[kHandsetCellStatus] == 2) && (_game._difficulty == DIFFICULTY_HARD) && !_globals[kDurafailRecharged])
 			_globals[kHandsetCellStatus] = 1;
@@ -98,9 +98,9 @@ static void room_610_daemon() {
 }
 
 static void room_610_parser() {
-	if (_action.isAction(VERB_EXIT_FROM, NOUN_VIDEO_STORE))
+	if (_action.isAction(words_exit_from, words_video_store))
 		_scene->_nextSceneId = 609;
-	else if (_action.isAction(VERB_TAKE, NOUN_PHONE_HANDSET)) {
+	else if (_action.isAction(words_take, words_phone_handset)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_PHONE_HANDSET)) {
 			switch (_game._trigger) {
 			case 0:
@@ -131,7 +131,7 @@ static void room_610_parser() {
 				break;
 			}
 		}
-	} else if (_action.isAction(VERB_PUT, NOUN_PHONE_HANDSET, NOUN_PHONE_CRADLE)) {
+	} else if (_action.isAction(words_put, words_phone_handset, words_phone_cradle)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -145,7 +145,7 @@ static void room_610_parser() {
 
 		case 1:
 			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-			local._handsetHotspotId = _scene->_dynamicHotspots.add(NOUN_PHONE_HANDSET, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+			local._handsetHotspotId = _scene->_dynamicHotspots.add(words_phone_handset, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(local._handsetHotspotId, Common::Point(132, 121), FACING_NORTHWEST);
 			_game._objects.setRoom(OBJ_PHONE_HANDSET, _scene->_currentSceneId);
 			break;
@@ -163,51 +163,51 @@ static void room_610_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_PIPPY_BILLBOARD))
+	} else if (_action.isAction(words_look, words_pippy_billboard))
 		_vm->_dialogs->show(61010);
-	else if (_action.isAction(VERB_LOOK, NOUN_CIVILIZATION_AD))
+	else if (_action.isAction(words_look, words_civilization_ad))
 		_vm->_dialogs->show(61011);
-	else if (_action.isAction(VERB_LOOK, NOUN_MARX_BROS_POSTER))
+	else if (_action.isAction(words_look, words_marx_bros_poster))
 		_vm->_dialogs->show(61012);
-	else if (_action.isAction(VERB_LOOK, NOUN_VIDEO_MONITOR))
+	else if (_action.isAction(words_look, words_video_monitor))
 		_vm->_dialogs->show(61013);
-	else if (_action.isAction(VERB_LOOK, NOUN_VIDEO_STORE))
+	else if (_action.isAction(words_look, words_video_store))
 		_vm->_dialogs->show(61014);
 	else if (_action._lookFlag)
 		_vm->_dialogs->show(61015);
-	else if (_action.isAction(VERB_LOOK, NOUN_LOGO))
+	else if (_action.isAction(words_look, words_logo))
 		_vm->_dialogs->show(61018);
-	else if (_action.isAction(VERB_LOOK, NOUN_CEMENT)) {
+	else if (_action.isAction(words_look, words_cement)) {
 		if (_game._visitedScenes.exists(601))
 			_vm->_dialogs->show(61020);
 		else
 			_vm->_dialogs->show(61019);
-	} else if (_action.isAction(VERB_LOOK, NOUN_COUNTER))
+	} else if (_action.isAction(words_look, words_counter))
 		_vm->_dialogs->show(61021);
-	else if (_action.isAction(VERB_LOOK, NOUN_PHONE_ANTENNA))
+	else if (_action.isAction(words_look, words_phone_antenna))
 		_vm->_dialogs->show(61022);
-	else if (_action.isAction(VERB_LOOK, NOUN_SMELLY_SNEAKER))
+	else if (_action.isAction(words_look, words_smelly_sneaker))
 		_vm->_dialogs->show(61023);
-	else if (_action.isAction(VERB_TAKE, NOUN_SMELLY_SNEAKER))
+	else if (_action.isAction(words_take, words_smelly_sneaker))
 		_vm->_dialogs->show(61024);
-	else if (_action.isAction(VERB_LOOK, NOUN_SPOTLIGHT))
+	else if (_action.isAction(words_look, words_spotlight))
 		_vm->_dialogs->show(61025);
-	else if (_action.isAction(VERB_LOOK, NOUN_PHONE_HANDSET) && (_action._mainObjectSource == CAT_HOTSPOT))
+	else if (_action.isAction(words_look, words_phone_handset) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(61026);
-	else if (_action.isAction(VERB_LOOK, NOUN_PHONE_CRADLE))
+	else if (_action.isAction(words_look, words_phone_cradle))
 		_vm->_dialogs->show(61027);
-	else if (_action.isAction(VERB_LOOK, NOUN_RETURN_SLOT))
+	else if (_action.isAction(words_look, words_return_slot))
 		_vm->_dialogs->show(61028);
-	else if (_action.isAction(VERB_PUT, NOUN_RETURN_SLOT)
+	else if (_action.isAction(words_put, words_return_slot)
 		&& _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId)))
 		_vm->_dialogs->show(61029);
-	else if (_action.isObject(NOUN_CLASSIC_VIDEOS) || _action.isObject(NOUN_MORE_CLASSIC_VIDEOS) || _action.isObject(NOUN_DRAMA_VIDEOS)
-		|| _action.isObject(NOUN_NEW_RELEASE_VIDEOS) || _action.isObject(NOUN_PORNO_VIDEOS) || _action.isObject(NOUN_EDUCATIONAL_VIDEOS)
-		|| _action.isObject(NOUN_INSTRUCTIONAL_VIDEOS) || _action.isObject(NOUN_WORKOUT_VIDEOS) || _action.isObject(NOUN_FOREIGN_VIDEOS)
-		|| _action.isObject(NOUN_ADVENTURE_VIDEOS) || _action.isObject(NOUN_COMEDY_VIDEOS)) {
-		if (_action.isAction(VERB_LOOK))
+	else if (_action.isObject(words_classic_videos) || _action.isObject(words_more_classic_videos) || _action.isObject(words_drama_videos)
+		|| _action.isObject(words_new_release_videos) || _action.isObject(words_porno_videos) || _action.isObject(words_educational_videos)
+		|| _action.isObject(words_instructional_videos) || _action.isObject(words_workout_videos) || _action.isObject(words_foreign_videos)
+		|| _action.isObject(words_adventure_videos) || _action.isObject(words_comedy_videos)) {
+		if (_action.isAction(words_look))
 			_vm->_dialogs->show(61030);
-		else if (_action.isAction(VERB_TAKE))
+		else if (_action.isAction(words_take))
 			_vm->_dialogs->show(61031);
 		else
 			return;
@@ -234,8 +234,8 @@ void room_610_preload() {
 
 	section_6_walker();
 	section_6_interface();
-	_scene->addActiveVocab(NOUN_PHONE_HANDSET);
-	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(words_phone_handset);
+	_scene->addActiveVocab(words_walkto);
 }
 
 } // namespace Rooms

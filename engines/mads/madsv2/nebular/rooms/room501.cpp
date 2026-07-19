@@ -100,7 +100,7 @@ static void room_501_init() {
 	}
 
 	_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
-	int idx = _scene->_dynamicHotspots.add(NOUN_DOOR, VERB_WALK_THROUGH, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(words_door, words_walk_through, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 	local._doorHotspotid = _scene->_dynamicHotspots.setPosition(idx, Common::Point(282, 110), FACING_NORTH);
 	_scene->_dynamicHotspots.setCursor(local._doorHotspotid, CURSOR_GO_UP);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
@@ -167,7 +167,7 @@ static void room_501_daemon() {
 			_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
 			_vm->_sound->command(12);
-			local._doorHotspotid = _scene->_dynamicHotspots.add(NOUN_DOOR, VERB_WALK_THROUGH, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+			local._doorHotspotid = _scene->_dynamicHotspots.add(words_door, words_walk_through, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(_globals._sequenceIndexes[3], Common::Point(282, 110), FACING_NORTH);
 			_scene->_dynamicHotspots.setCursor(local._doorHotspotid, CURSOR_GO_UP);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 83);
@@ -217,12 +217,12 @@ static void room_501_daemon() {
 }
 
 static void room_501_pre_parser() {
-	if (_action.isAction(VERB_WALK_DOWN) && (_action.isObject(NOUN_STREET_TO_EAST) || _action.isObject(NOUN_SIDEWALK_TO_EAST)))
+	if (_action.isAction(words_walk_down) && (_action.isObject(words_street_to_east) || _action.isObject(words_sidewalk_to_east)))
 		_game._player._walkOffScreenSceneId = 551;
 }
 
 static void room_501_parser() {
-	if (_action.isAction(VERB_GET_INTO, NOUN_CAR)) {
+	if (_action.isAction(words_get_into, words_car)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -271,9 +271,9 @@ static void room_501_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_PUT, NOUN_SECURITY_CARD, NOUN_CARD_SLOT))
+	} else if (_action.isAction(words_put, words_security_card, words_card_slot))
 		_vm->_dialogs->show(50113);
-	else if (_action.isAction(VERB_PUT, NOUN_FAKE_ID, NOUN_CARD_SLOT)) {
+	else if (_action.isAction(words_put, words_fake_id, words_card_slot)) {
 		switch (_game._trigger) {
 		case 0:
 		case 1:
@@ -317,7 +317,7 @@ static void room_501_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_PUT, NOUN_ID_CARD, NOUN_CARD_SLOT)) {
+	} else if (_action.isAction(words_put, words_id_card, words_card_slot)) {
 		switch (_game._trigger) {
 		case 0:
 		case 1:
@@ -365,34 +365,34 @@ static void room_501_parser() {
 		default:
 			break;
 		}
-	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, NOUN_STREET))
+	} else if (_action._lookFlag || _action.isAction(words_look, words_street))
 		_vm->_dialogs->show(50121);
-	else if (_action.isAction(VERB_LOOK, NOUN_DOOR))
+	else if (_action.isAction(words_look, words_door))
 		_vm->_dialogs->show(50110);
-	else if (_action.isAction(VERB_LOOK, NOUN_CARD_SLOT))
+	else if (_action.isAction(words_look, words_card_slot))
 		_vm->_dialogs->show(50112);
-	else if (_action.isAction(VERB_LOOK, NOUN_SIGN))
+	else if (_action.isAction(words_look, words_sign))
 		_vm->_dialogs->show(50114);
-	else if (_action.isAction(VERB_TAKE, NOUN_SIGN))
+	else if (_action.isAction(words_take, words_sign))
 		_vm->_dialogs->show(50115);
-	else if (_action.isAction(VERB_LOOK, NOUN_SIDEWALK_TO_EAST))
+	else if (_action.isAction(words_look, words_sidewalk_to_east))
 		_vm->_dialogs->show(50118);
-	else if (_action.isAction(VERB_LOOK, NOUN_SIDEWALK_TO_WEST) || _action.isAction(VERB_LOOK, NOUN_STREET_TO_WEST)
-		|| _action.isAction(VERB_WALK_DOWN, NOUN_SIDEWALK_TO_WEST) || _action.isAction(VERB_WALK_DOWN, NOUN_STREET_TO_WEST))
+	else if (_action.isAction(words_look, words_sidewalk_to_west) || _action.isAction(words_look, words_street_to_west)
+		|| _action.isAction(words_walk_down, words_sidewalk_to_west) || _action.isAction(words_walk_down, words_street_to_west))
 		_vm->_dialogs->show(50119);
-	else if (_action.isAction(VERB_LOOK, NOUN_BUILDING))
+	else if (_action.isAction(words_look, words_building))
 		_vm->_dialogs->show(50120);
-	else if (_action.isAction(VERB_OPEN, NOUN_DOOR))
+	else if (_action.isAction(words_open, words_door))
 		_vm->_dialogs->show(50122);
-	else if (_action.isAction(VERB_LOOK, NOUN_FIRE_HYDRANT))
+	else if (_action.isAction(words_look, words_fire_hydrant))
 		_vm->_dialogs->show(50123);
-	else if (_action.isAction(VERB_OPEN, NOUN_FIRE_HYDRANT))
+	else if (_action.isAction(words_open, words_fire_hydrant))
 		_vm->_dialogs->show(50124);
-	else if (_action.isAction(VERB_LOOK, NOUN_EQUIPMENT_OVERHEAD))
+	else if (_action.isAction(words_look, words_equipment_overhead))
 		_vm->_dialogs->show(50125);
-	else if (_action.isAction(VERB_LOOK, NOUN_PIPES) || _action.isAction(VERB_LOOK, NOUN_PIPE))
+	else if (_action.isAction(words_look, words_pipes) || _action.isAction(words_look, words_pipe))
 		_vm->_dialogs->show(50126);
-	else if (_action.isAction(VERB_LOOK, NOUN_CAR)) {
+	else if (_action.isAction(words_look, words_car)) {
 		if (!_game._visitedScenes.exists(504))
 			_vm->_dialogs->show(50116);
 		else
@@ -418,8 +418,8 @@ void room_501_preload() {
 
 	section_5_walker();
 	section_5_interface();
-	_scene->addActiveVocab(NOUN_DOOR);
-	_scene->addActiveVocab(VERB_WALK_THROUGH);
+	_scene->addActiveVocab(words_door);
+	_scene->addActiveVocab(words_walk_through);
 }
 
 } // namespace Rooms

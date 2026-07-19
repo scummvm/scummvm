@@ -54,7 +54,7 @@ static void room_359_init() {
 
 	if (_game._objects.isInRoom(OBJ_SECURITY_CARD)) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-		local._cardHotspotId = _scene->_dynamicHotspots.add(NOUN_SECURITY_CARD, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		local._cardHotspotId = _scene->_dynamicHotspots.add(words_security_card, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._cardHotspotId, Common::Point(107, 107), FACING_SOUTH);
 	}
 
@@ -67,10 +67,10 @@ static void room_359_init() {
 }
 
 static void room_359_pre_parser() {
-	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_EAST))
+	if (_action.isAction(words_walk_down, words_corridor_to_east))
 		_game._player._walkOffScreenSceneId = 358;
 
-	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_WEST))
+	if (_action.isAction(words_walk_down, words_corridor_to_west))
 		_game._player._walkOffScreenSceneId = 360;
 }
 
@@ -80,7 +80,7 @@ static void room_359_parser() {
 			_vm->_dialogs->show(35914);
 		else
 			_vm->_dialogs->show(35915);
-	} else if (_action.isAction(VERB_TAKE, NOUN_SECURITY_CARD)) {
+	} else if (_action.isAction(words_take, words_security_card)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_SECURITY_CARD)) {
 			switch (_game._trigger) {
 			case 0:
@@ -124,43 +124,43 @@ static void room_359_parser() {
 				break;
 			}
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_BLOODY_CELL_WALL))
+	} else if (_action.isAction(words_look, words_bloody_cell_wall))
 		_vm->_dialogs->show(35910);
-	else if (_action.isAction(VERB_LOOK, NOUN_BED))
+	else if (_action.isAction(words_look, words_bed))
 		_vm->_dialogs->show(35911);
-	else if (_action.isAction(VERB_LOOK, NOUN_SINK))
+	else if (_action.isAction(words_look, words_sink))
 		_vm->_dialogs->show(35912);
-	else if (_action.isAction(VERB_LOOK, NOUN_TOILET))
+	else if (_action.isAction(words_look, words_toilet))
 		_vm->_dialogs->show(35913);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_EAST))
+	else if (_action.isAction(words_look, words_corridor_to_east))
 		_vm->_dialogs->show(35916);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_WEST))
+	else if (_action.isAction(words_look, words_corridor_to_west))
 		_vm->_dialogs->show(35917);
-	else if (_action.isAction(VERB_LOOK, NOUN_LIMB))
+	else if (_action.isAction(words_look, words_limb))
 		_vm->_dialogs->show(35918);
-	else if (_action.isAction(VERB_TAKE, NOUN_LIMB))
+	else if (_action.isAction(words_take, words_limb))
 		_vm->_dialogs->show(35919);
-	else if (_action.isAction(VERB_LOOK, NOUN_SECURITY_CARD) && (_action._mainObjectSource == CAT_HOTSPOT))
+	else if (_action.isAction(words_look, words_security_card) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(35921);
-	else if (_action.isAction(VERB_LOOK, NOUN_BLOOD_STAIN)) {
+	else if (_action.isAction(words_look, words_blood_stain)) {
 		if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
 			_vm->_dialogs->show(35922);
 		else
 			_vm->_dialogs->show(35923);
-	} else if (_action.isAction(VERB_LOOK, NOUN_WALL_BOARD))
+	} else if (_action.isAction(words_look, words_wall_board))
 		_vm->_dialogs->show(35924);
-	else if (_action.isAction(VERB_TAKE, NOUN_WALL_BOARD))
+	else if (_action.isAction(words_take, words_wall_board))
 		_vm->_dialogs->show(35925);
-	else if (_action.isAction(VERB_LOOK, NOUN_RIP_IN_FLOOR))
+	else if (_action.isAction(words_look, words_rip_in_floor))
 		_vm->_dialogs->show(35926);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR))
+	else if (_action.isAction(words_look, words_corridor))
 		_vm->_dialogs->show(35927);
-	else if (_action.isAction(VERB_LOOK, NOUN_FLOOR)) {
+	else if (_action.isAction(words_look, words_floor)) {
 		if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
 			_vm->_dialogs->show(35928);
 		else
 			_vm->_dialogs->show(35929);
-	} else if (_action.isAction(VERB_OPEN, NOUN_AIR_VENT) || _action.isAction(VERB_LOOK, NOUN_AIR_VENT))
+	} else if (_action.isAction(words_open, words_air_vent) || _action.isAction(words_look, words_air_vent))
 		_vm->_dialogs->show(36016);
 	else
 		return;
@@ -179,7 +179,7 @@ void room_359_preload() {
 
 	section_3_walker();
 	section_3_interface();
-	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(words_walkto);
 }
 
 } // namespace Rooms

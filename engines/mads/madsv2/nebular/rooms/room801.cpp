@@ -199,13 +199,13 @@ static void room_801_daemon() {
 }
 
 static void room_801_pre_parser() {
-	if (_action.isAction(VERB_LOOK, NOUN_CONTROL_PANEL)) {
+	if (_action.isAction(words_look, words_control_panel)) {
 		_game._player.walk(Common::Point(148, 110), FACING_NORTH);
 		_game._player._needToWalk = true;
 		_game._player._readyToWalk = true;
 	}
 
-	if (_action.isAction(VERB_WALK_INSIDE, NOUN_TELEPORTER) && _globals[kBeamIsUp]) {
+	if (_action.isAction(words_walk_inside, words_teleporter) && _globals[kBeamIsUp]) {
 		_globals[kCutX] = _game._player._playerPos.x;
 		_globals[kCutY] = _game._player._playerPos.y;
 		_globals[kCutFacing] = _game._player._facing;
@@ -216,13 +216,13 @@ static void room_801_pre_parser() {
 }
 
 static void room_801_parser() {
-	if (_action.isAction(VERB_LOOK, NOUN_CONTROL_PANEL))
+	if (_action.isAction(words_look, words_control_panel))
 		_scene->_nextSceneId = 808;
-	else if (_action.isAction(VERB_WALK_INSIDE, NOUN_TELEPORTER)) {
+	else if (_action.isAction(words_walk_inside, words_teleporter)) {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_scene->_nextSceneId = 807;
-	} else if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR) && (_game._player._playerPos == Common::Point(270, 118))) {
+	} else if (_action.isAction(words_walk_through, words_door) && (_game._player._playerPos == Common::Point(270, 118))) {
 		_game._player._stepEnabled = false;
 		_game._player._facing = FACING_EAST;
 		_game._player.selectSeries();
@@ -234,21 +234,21 @@ static void room_801_parser() {
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 5);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 13);
 		_vm->_sound->command(11);
-	} else if (_action.isAction(VERB_LOOK, NOUN_CEILING))
+	} else if (_action.isAction(words_look, words_ceiling))
 		_vm->_dialogs->show(80110);
-	else if (_action.isAction(VERB_LOOK, NOUN_MONITOR))
+	else if (_action.isAction(words_look, words_monitor))
 		_vm->_dialogs->show(80111);
-	else if (_action.isAction(VERB_LOOK, NOUN_TELEPORTER))
+	else if (_action.isAction(words_look, words_teleporter))
 		_vm->_dialogs->show(80112);
-	else if (_action.isAction(VERB_LOOK, NOUN_EQUIPMENT) || _action._lookFlag)
+	else if (_action.isAction(words_look, words_equipment) || _action._lookFlag)
 		_vm->_dialogs->show(80113);
-	else if (_action.isAction(VERB_LOOK, NOUN_SPEAKER))
+	else if (_action.isAction(words_look, words_speaker))
 		_vm->_dialogs->show(80114);
-	else if (_action.isAction(VERB_LOOK, NOUN_EYE_CHART))
+	else if (_action.isAction(words_look, words_eye_chart))
 		_vm->_dialogs->show(80115);
-	else if (_action.isAction(VERB_LOOK, NOUN_WALL))
+	else if (_action.isAction(words_look, words_wall))
 		_vm->_dialogs->show(80116);
-	else if (_action.isAction(VERB_LOOK, NOUN_DOOR))
+	else if (_action.isAction(words_look, words_door))
 		_vm->_dialogs->show(80117);
 	else
 		return;

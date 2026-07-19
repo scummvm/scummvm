@@ -137,7 +137,7 @@ static void room_309_daemon() {
 		switch (_game._trigger) {
 		case 70:
 		{
-			int idx = _scene->_dynamicHotspots.add(NOUN_GHASTLY_BEAST, NOUN_GAWK_AT, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+			int idx = _scene->_dynamicHotspots.add(words_ghastly_beast, words_gawk_at, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(142, 146), FACING_NORTHEAST);
 			_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 7, 4, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 2, 3);

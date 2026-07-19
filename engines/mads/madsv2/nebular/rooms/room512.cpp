@@ -52,38 +52,38 @@ static void room_512_init() {
 
 	if (_game._objects[OBJ_FISHING_ROD]._roomNumber == _scene->_currentSceneId) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-		local._fishingRodHotspotId = _scene->_dynamicHotspots.add(NOUN_FISHING_ROD, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		local._fishingRodHotspotId = _scene->_dynamicHotspots.add(words_fishing_rod, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._fishingRodHotspotId, Common::Point(199, 101), FACING_NORTHEAST);
 	}
 
 	if (!_game._visitedScenes._sceneRevisited)
 		_globals[kRegisterOpen] = false;
 
-	_scene->_hotspots.activate(NOUN_PADLOCK_KEY, false);
+	_scene->_hotspots.activate(words_padlock_key, false);
 	if (_game._difficulty == DIFFICULTY_EASY) {
 		if (_game._objects[OBJ_PADLOCK_KEY]._roomNumber == _scene->_currentSceneId) {
 			_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 10, 0, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 3);
-			local._keyHotspotId = _scene->_dynamicHotspots.add(NOUN_PADLOCK_KEY, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
+			local._keyHotspotId = _scene->_dynamicHotspots.add(words_padlock_key, words_walkto, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(local._keyHotspotId, Common::Point(218, 152), FACING_NORTHEAST);
 		}
 		if (_globals[kRegisterOpen]) {
 			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
-			_scene->_hotspots.activate(NOUN_PADLOCK_KEY, false);
+			_scene->_hotspots.activate(words_padlock_key, false);
 		}
 	} else if (_globals[kRegisterOpen]) {
 		if (_game._objects[OBJ_PADLOCK_KEY]._roomNumber == _scene->_currentSceneId) {
-			_scene->_hotspots.activate(NOUN_PADLOCK_KEY, true);
+			_scene->_hotspots.activate(words_padlock_key, true);
 			_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 3);
 		} else {
-			_scene->_hotspots.activate(NOUN_PADLOCK_KEY, false);
+			_scene->_hotspots.activate(words_padlock_key, false);
 			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
 		}
 	} else
-		_scene->_hotspots.activate(NOUN_PADLOCK_KEY, false);
+		_scene->_hotspots.activate(words_padlock_key, false);
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(144, 152);
@@ -94,9 +94,9 @@ static void room_512_init() {
 }
 
 static void room_512_parser() {
-	if (_action.isAction(VERB_WALK, NOUN_OUTSIDE))
+	if (_action.isAction(words_walk, words_outside))
 		_scene->_nextSceneId = 511;
-	else if (_action.isAction(VERB_TAKE, NOUN_FISHING_ROD)) {
+	else if (_action.isAction(words_take, words_fishing_rod)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_FISHING_ROD)) {
 			switch (_game._trigger) {
 			case 0:
@@ -126,7 +126,7 @@ static void room_512_parser() {
 				break;
 			}
 		}
-	} else if (_action.isAction(VERB_OPEN, NOUN_CASH_REGISTER)) {
+	} else if (_action.isAction(words_open, words_cash_register)) {
 		if (!_globals[kRegisterOpen]) {
 			switch (_game._trigger) {
 			case 0:
@@ -173,7 +173,7 @@ static void room_512_parser() {
 			case 5:
 				_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], false, 14, 0, 0, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 3);
-				_scene->_hotspots.activate(NOUN_PADLOCK_KEY, true);
+				_scene->_hotspots.activate(words_padlock_key, true);
 				_scene->_sequences.addTimer(60, 6);
 				break;
 
@@ -187,7 +187,7 @@ static void room_512_parser() {
 			}
 		} else
 			_vm->_dialogs->show(51239);
-	} else if (_action.isAction(VERB_CLOSE, NOUN_CASH_REGISTER) && _globals[kRegisterOpen]) {
+	} else if (_action.isAction(words_close, words_cash_register) && _globals[kRegisterOpen]) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -210,7 +210,7 @@ static void room_512_parser() {
 				_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 				_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 12, 1, 0, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 3);
-				_scene->_hotspots.activate(NOUN_PADLOCK_KEY, false);
+				_scene->_hotspots.activate(words_padlock_key, false);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			}
 			break;
@@ -223,7 +223,7 @@ static void room_512_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_TAKE, NOUN_PADLOCK_KEY)) {
+	} else if (_action.isAction(words_take, words_padlock_key)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_PADLOCK_KEY)) {
 			switch (_game._trigger) {
 			case 0:
@@ -251,7 +251,7 @@ static void room_512_parser() {
 					_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 					_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
 					_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
-					_scene->_hotspots.activate(NOUN_PADLOCK_KEY, false);
+					_scene->_hotspots.activate(words_padlock_key, false);
 				}
 				_vm->_sound->command(9);
 				_game._objects.addToInventory(OBJ_PADLOCK_KEY);
@@ -270,51 +270,51 @@ static void room_512_parser() {
 		}
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(51225);
-	else if (_action.isAction(VERB_LOOK, NOUN_PADLOCK_KEY) && _game._objects.isInRoom(OBJ_PADLOCK_KEY))
+	else if (_action.isAction(words_look, words_padlock_key) && _game._objects.isInRoom(OBJ_PADLOCK_KEY))
 		_vm->_dialogs->show(51215);
-	else if (_action.isAction(VERB_LOOK, NOUN_FISHING_ROD) && (!_scene->_animation[0] ||
+	else if (_action.isAction(words_look, words_fishing_rod) && (!_scene->_animation[0] ||
 		_scene->_animation[0]->getCurrentFrame() == 4))
 		_vm->_dialogs->show(51216);
-	else if (_action.isAction(VERB_LOOK, NOUN_SHIPS_WHEEL))
+	else if (_action.isAction(words_look, words_ships_wheel))
 		_vm->_dialogs->show(51218);
-	else if (_action.isAction(VERB_TAKE, NOUN_SHIPS_WHEEL))
+	else if (_action.isAction(words_take, words_ships_wheel))
 		_vm->_dialogs->show(51219);
-	else if (_action.isAction(VERB_LOOK, NOUN_PORTHOLE) || _action.isAction(VERB_PEER_THROUGH, NOUN_PORTHOLE))
+	else if (_action.isAction(words_look, words_porthole) || _action.isAction(words_peer_through, words_porthole))
 		_vm->_dialogs->show(51220);
-	else if (_action.isAction(VERB_LOOK, NOUN_TABLE))
+	else if (_action.isAction(words_look, words_table))
 		_vm->_dialogs->show(51221);
-	else if (_action.isAction(VERB_LOOK, NOUN_STARFISH))
+	else if (_action.isAction(words_look, words_starfish))
 		_vm->_dialogs->show(51222);
-	else if (_action.isAction(VERB_TAKE, NOUN_STARFISH))
+	else if (_action.isAction(words_take, words_starfish))
 		_vm->_dialogs->show(51223);
-	else if (_action.isAction(VERB_LOOK, NOUN_OUTSIDE))
+	else if (_action.isAction(words_look, words_outside))
 		_vm->_dialogs->show(51224);
-	else if (_action.isAction(VERB_LOOK, NOUN_POSTER))
+	else if (_action.isAction(words_look, words_poster))
 		_vm->_dialogs->show(51227);
-	else if (_action.isAction(VERB_TAKE, NOUN_POSTER))
+	else if (_action.isAction(words_take, words_poster))
 		_vm->_dialogs->show(51228);
-	else if (_action.isAction(VERB_LOOK, NOUN_TROPHY)) {
+	else if (_action.isAction(words_look, words_trophy)) {
 		if (_game._visitedScenes.exists(604))
 			_vm->_dialogs->show(51229);
 		else
 			_vm->_dialogs->show(51230);
-	} else if (_action.isAction(VERB_LOOK, NOUN_CHAIR))
+	} else if (_action.isAction(words_look, words_chair))
 		_vm->_dialogs->show(51231);
-	else if (_action.isAction(VERB_LOOK, NOUN_ROPE))
+	else if (_action.isAction(words_look, words_rope))
 		_vm->_dialogs->show(51232);
-	else if (_action.isAction(VERB_TAKE, NOUN_ROPE))
+	else if (_action.isAction(words_take, words_rope))
 		_vm->_dialogs->show(51233);
-	else if (_action.isAction(VERB_LOOK, NOUN_LAMP))
+	else if (_action.isAction(words_look, words_lamp))
 		_vm->_dialogs->show(51234);
-	else if (_action.isAction(VERB_WALK_BEHIND, NOUN_COUNTER)) {
+	else if (_action.isAction(words_walk_behind, words_counter)) {
 		// WORKAROUND: Empty handling to prevent default "can't do that" dialogs showing
-	} else if (_action.isAction(VERB_LOOK, NOUN_COUNTER))
+	} else if (_action.isAction(words_look, words_counter))
 		_vm->_dialogs->show(51235);
-	else if (_action.isAction(VERB_LOOK, NOUN_ICE_CHESTS))
+	else if (_action.isAction(words_look, words_ice_chests))
 		_vm->_dialogs->show(51237);
-	else if (_action.isAction(VERB_OPEN, NOUN_ICE_CHESTS))
+	else if (_action.isAction(words_open, words_ice_chests))
 		_vm->_dialogs->show(51238);
-	else if (_action.isAction(VERB_LOOK, NOUN_CASH_REGISTER)) {
+	else if (_action.isAction(words_look, words_cash_register)) {
 		if (!_globals[kRegisterOpen])
 			_vm->_dialogs->show(51212);
 		else if (_game._objects.isInRoom(OBJ_PADLOCK_KEY))
@@ -338,10 +338,10 @@ void room_512_preload() {
 
 	section_5_walker();
 	section_5_interface();
-	_scene->addActiveVocab(NOUN_FISHING_ROD);
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_PADLOCK_KEY);
-	_scene->addActiveVocab(NOUN_REGISTER_DRAWER);
+	_scene->addActiveVocab(words_fishing_rod);
+	_scene->addActiveVocab(words_walkto);
+	_scene->addActiveVocab(words_padlock_key);
+	_scene->addActiveVocab(words_register_drawer);
 }
 
 } // namespace Rooms

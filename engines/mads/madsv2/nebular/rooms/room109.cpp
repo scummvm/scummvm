@@ -76,11 +76,11 @@ static void room_109_init() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 4);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], -2, -2);
 
-		int idx = _scene->_dynamicHotspots.add(NOUN_DEAD_PURPLE_MONSTER, VERB_SWIM_TO, -1, Common::Rect(256, 57, 267, 87));
+		int idx = _scene->_dynamicHotspots.add(words_dead_purple_monster, words_swim_to, -1, Common::Rect(256, 57, 267, 87));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
-		idx = _scene->_dynamicHotspots.add(NOUN_DEAD_PURPLE_MONSTER, VERB_SWIM_TO, -1, Common::Rect(242, 79, 265, 90));
+		idx = _scene->_dynamicHotspots.add(words_dead_purple_monster, words_swim_to, -1, Common::Rect(242, 79, 265, 90));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
-		idx = _scene->_dynamicHotspots.add(NOUN_MONSTER_SLUDGE, VERB_SWIM_TO, -1, Common::Rect(231, 88, 253, 94));
+		idx = _scene->_dynamicHotspots.add(words_monster_sludge, words_swim_to, -1, Common::Rect(231, 88, 253, 94));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
 	}
 
@@ -90,7 +90,7 @@ static void room_109_init() {
 	if (_game._objects.isInRoom(OBJ_BURGER)) {
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], -2, -2);
-		int idx = _scene->_dynamicHotspots.add(NOUN_BURGER, VERB_SWIM_TO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_burger, words_swim_to, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
 	} else if (_scene->_roomChanged)
 		_game._objects.addToInventory(OBJ_BURGER);
@@ -196,12 +196,12 @@ static void room_109_daemon() {
 }
 
 static void room_109_pre_parser() {
-	if (_action.isAction(VERB_SWIM_UNDER, NOUN_OVERHANG_TO_WEST))
+	if (_action.isAction(words_swim_under, words_overhang_to_west))
 		_game._player._walkOffScreenSceneId = 108;
 
-	if ((_action.isAction(VERB_THROW) || _action.isAction(VERB_GIVE) || _action.isAction(VERB_PUT))
-		&& (_action.isTarget(NOUN_SMALL_HOLE) || _action.isTarget(NOUN_TUNNEL))
-		&& (_action.isObject(NOUN_DEAD_FISH) || _action.isObject(NOUN_STUFFED_FISH) || _action.isObject(NOUN_BURGER))) {
+	if ((_action.isAction(words_throw) || _action.isAction(words_give) || _action.isAction(words_put))
+		&& (_action.isTarget(words_small_hole) || _action.isTarget(words_tunnel))
+		&& (_action.isObject(words_dead_fish) || _action.isObject(words_stuffed_fish) || _action.isObject(words_burger))) {
 		int idx = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
 		if ((idx >= 0) && _game._objects.isInInventory(idx)) {
 			_game._player._prepareWalkPos = Common::Point(106, 38);
@@ -211,8 +211,8 @@ static void room_109_pre_parser() {
 		}
 	}
 
-	if ((_action.isAction(VERB_SWIM_INTO, NOUN_TUNNEL) || _action.isAction(VERB_SWIM_TO, NOUN_SMALL_HOLE))
-		&& (!_globals[kHoovicAlive] || _globals[kHoovicSated]) && (_action.isObject(NOUN_TUNNEL)))
+	if ((_action.isAction(words_swim_into, words_tunnel) || _action.isAction(words_swim_to, words_small_hole))
+		&& (!_globals[kHoovicAlive] || _globals[kHoovicSated]) && (_action.isObject(words_tunnel)))
 		_game._player._walkOffScreenSceneId = 110;
 
 	local._hungryFl = false;
@@ -225,8 +225,8 @@ static void room_109_parser() {
 		return;
 	}
 
-	if ((_action.isAction(VERB_THROW) || _action.isAction(VERB_GIVE)) && (_action.isTarget(NOUN_SMALL_HOLE) || _action.isTarget(NOUN_TUNNEL))) {
-		if (_action.isObject(NOUN_DEAD_FISH) || _action.isObject(NOUN_STUFFED_FISH) || _action.isObject(NOUN_BURGER)) {
+	if ((_action.isAction(words_throw) || _action.isAction(words_give)) && (_action.isTarget(words_small_hole) || _action.isTarget(words_tunnel))) {
+		if (_action.isObject(words_dead_fish) || _action.isObject(words_stuffed_fish) || _action.isObject(words_burger)) {
 			local._throwingObjectId = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
 			if (local._throwingObjectId >= 0) {
 				if ((_game._objects.isInInventory(local._throwingObjectId) && _globals[kHoovicAlive]) || local._rexThrowingObject) {
@@ -311,11 +311,11 @@ static void room_109_parser() {
 							_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 1, 0, 0);
 							_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 4);
 							_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], -2, -2);
-							int idx = _scene->_dynamicHotspots.add(NOUN_DEAD_PURPLE_MONSTER, VERB_SWIM_TO, -1, Common::Rect(256, 57, 256 + 12, 57 + 31));
+							int idx = _scene->_dynamicHotspots.add(words_dead_purple_monster, words_swim_to, -1, Common::Rect(256, 57, 256 + 12, 57 + 31));
 							_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
-							idx = _scene->_dynamicHotspots.add(NOUN_DEAD_PURPLE_MONSTER, VERB_SWIM_TO, -1, Common::Rect(242, 79, 242 + 24, 79 + 12));
+							idx = _scene->_dynamicHotspots.add(words_dead_purple_monster, words_swim_to, -1, Common::Rect(242, 79, 242 + 24, 79 + 12));
 							_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
-							idx = _scene->_dynamicHotspots.add(NOUN_MONSTER_SLUDGE, VERB_SWIM_TO, -1, Common::Rect(231, 88, 231 + 23, 88 + 7));
+							idx = _scene->_dynamicHotspots.add(words_monster_sludge, words_swim_to, -1, Common::Rect(231, 88, 231 + 23, 88 + 7));
 							_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
 							_scene->changeVariant(1);
 						} else {
@@ -363,7 +363,7 @@ static void room_109_parser() {
 						_game._objects.setRoom(OBJ_BURGER, _scene->_currentSceneId);
 						_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 0, 0, 0);
 						_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 30, 30);
-						int idx = _scene->_dynamicHotspots.add(NOUN_BURGER, VERB_SWIM_TO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+						int idx = _scene->_dynamicHotspots.add(words_burger, words_swim_to, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 						_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
 						_scene->_sequences.addTimer(65, 6);
 					}
@@ -374,7 +374,7 @@ static void room_109_parser() {
 						_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 						_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
 						_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 31, 46);
-						int idx = _scene->_dynamicHotspots.add(NOUN_BURGER, VERB_SWIM_TO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+						int idx = _scene->_dynamicHotspots.add(words_burger, words_swim_to, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 						_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
 						_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 7);
 					}
@@ -384,7 +384,7 @@ static void room_109_parser() {
 					{
 						_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 						_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
-						int idx = _scene->_dynamicHotspots.add(NOUN_BURGER, VERB_SWIM_TO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+						int idx = _scene->_dynamicHotspots.add(words_burger, words_swim_to, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 						_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
 						_vm->_dialogs->show(10915);
 					}
@@ -407,33 +407,33 @@ static void room_109_parser() {
 		}
 	}
 
-	if (_action.isAction(VERB_TAKE, NOUN_BURGER) && _game._objects.isInRoom(OBJ_BURGER)) {
+	if (_action.isAction(words_take, words_burger) && _game._objects.isInRoom(OBJ_BURGER)) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_game._objects.addToInventory(OBJ_BURGER);
-	} else if (_action.isAction(VERB_LOOK, NOUN_OCEAN_FLOOR))
+	} else if (_action.isAction(words_look, words_ocean_floor))
 		_vm->_dialogs->show(10901);
-	else if (_action.isAction(VERB_LOOK, NOUN_CORAL))
+	else if (_action.isAction(words_look, words_coral))
 		_vm->_dialogs->show(10902);
-	else if ((_action.isAction(VERB_TAKE) || _action.isAction(VERB_PULL)) && _action.isObject(NOUN_CORAL))
+	else if ((_action.isAction(words_take) || _action.isAction(words_pull)) && _action.isObject(words_coral))
 		_vm->_dialogs->show(10903);
-	else if (_action.isAction(VERB_LOOK, NOUN_ROCKS))
+	else if (_action.isAction(words_look, words_rocks))
 		_vm->_dialogs->show(10904);
-	else if (_action.isAction(VERB_TAKE, NOUN_ROCKS))
+	else if (_action.isAction(words_take, words_rocks))
 		_vm->_dialogs->show(10905);
-	else if (_action.isAction(VERB_LOOK, NOUN_CAVE_WALL))
+	else if (_action.isAction(words_look, words_cave_wall))
 		_vm->_dialogs->show(10906);
-	else if (_action.isAction(VERB_LOOK, NOUN_TUNNEL)) {
+	else if (_action.isAction(words_look, words_tunnel)) {
 		if (_globals[kHoovicAlive])
 			_vm->_dialogs->show(10907);
 		else
 			_vm->_dialogs->show(10913);
-	} else if (_action.isAction(VERB_LOOK, NOUN_SMALL_HOLE))
+	} else if (_action.isAction(words_look, words_small_hole))
 		_vm->_dialogs->show(10908);
-	else if (_action.isAction(VERB_LOOK, NOUN_OVERHANG_TO_WEST))
+	else if (_action.isAction(words_look, words_overhang_to_west))
 		_vm->_dialogs->show(10911);
-	else if (_action.isAction(VERB_PUT, NOUN_SMALL_HOLE))
+	else if (_action.isAction(words_put, words_small_hole))
 		_vm->_dialogs->show(10910);
-	else if (_action.isAction(VERB_LOOK, NOUN_DEAD_PURPLE_MONSTER))
+	else if (_action.isAction(words_look, words_dead_purple_monster))
 		_vm->_dialogs->show(10914);
 	else
 		return;
@@ -462,8 +462,8 @@ void room_109_preload() {
 		himem_preload_series(kernel_full_name(109, 'H', count, nullptr, 0), 3);
 	}
 
-	_scene->addActiveVocab(NOUN_DEAD_PURPLE_MONSTER);
-	_scene->addActiveVocab(NOUN_MONSTER_SLUDGE);
+	_scene->addActiveVocab(words_dead_purple_monster);
+	_scene->addActiveVocab(words_monster_sludge);
 
 	section_1_walker();
 	section_1_interface();

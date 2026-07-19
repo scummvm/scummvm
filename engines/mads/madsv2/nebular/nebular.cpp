@@ -195,16 +195,16 @@ void RexNebularEngine::showRecipe() {
 	for (count = 0; count < 4; count++) {
 		switch (global[kIngredientQuantity + count]) {
 		case 0:
-			text_index[count] = NOUN_DROP;
+			text_index[count] = words_drop;
 			break;
 		case 1:
-			text_index[count] = NOUN_DOLLOP;
+			text_index[count] = words_dollop;
 			break;
 		case 2:
-			text_index[count] = NOUN_DASH;
+			text_index[count] = words_dash;
 			break;
 		case 3:
-			text_index[count] = NOUN_SPLASH;
+			text_index[count] = words_splash;
 			break;
 		default:
 			break;
@@ -214,16 +214,16 @@ void RexNebularEngine::showRecipe() {
 	for (count = 0; count < 4; count++) {
 		switch (global[kIngredientList + count]) {
 		case 0:
-			text_index[count + 4] = NOUN_ALCOHOL;
+			text_index[count + 4] = words_alcohol;
 			break;
 		case 1:
-			text_index[count + 4] = NOUN_LECITHIN;
+			text_index[count + 4] = words_lecithin;
 			break;
 		case 2:
-			text_index[count + 4] = NOUN_PETROX;
+			text_index[count + 4] = words_petrox;
 			break;
 		case 3:
-			text_index[count + 4] = NOUN_FORMALDEHYDE;
+			text_index[count + 4] = words_formaldehyde;
 			break;
 		default:
 			break;
@@ -236,99 +236,99 @@ void RexNebularEngine::showRecipe() {
 void RexNebularEngine::global_parser_code() {
 	int id;
 
-	if (player_parse(VERB_SMELL, 0) && room_id > 103 && room_id < 111) {
+	if (player_parse(words_smell, 0) && room_id > 103 && room_id < 111) {
 		text_show(440);
-	} else if (player_parse(VERB_EAT, 0) && room_id > 103 && room_id < 111) {
+	} else if (player_parse(words_eat, 0) && room_id > 103 && room_id < 111) {
 		text_show(441);
-	} else if (player_parse(VERB_SMELL, NOUN_BURGER, 0)) {
+	} else if (player_parse(words_smell, words_burger, 0)) {
 		text_show(442);
-	} else if (player_parse(VERB_EAT, NOUN_BURGER, 0)) {
+	} else if (player_parse(words_eat, words_burger, 0)) {
 		text_show(443);
-	} else if (player_parse(VERB_SMELL, NOUN_STUFFED_FISH, 0)) {
+	} else if (player_parse(words_smell, words_stuffed_fish, 0)) {
 		text_show(444);
-	} else if (player_parse(VERB_EAT, NOUN_STUFFED_FISH, 0)) {
+	} else if (player_parse(words_eat, words_stuffed_fish, 0)) {
 		text_show(445);
-	} else if (player_parse(VERB_WEAR, NOUN_REBREATHER, 0)) {
+	} else if (player_parse(words_wear, words_rebreather, 0)) {
 		text_show(room_id > 103 && room_id < 111 ? 446 : 447);
-	} else if (player_parse(VERB_SET, NOUN_TIMER_MODULE, 0)) {
+	} else if (player_parse(words_set, words_timer_module, 0)) {
 		text_show(448);
-	} else if (player_parse(VERB_NIBBLE_ON, NOUN_BIG_LEAVES, 0)) {
+	} else if (player_parse(words_nibble_on, words_big_leaves, 0)) {
 		text_show(449);
-	} else if (player_parse(VERB_LICK, NOUN_POISON_DARTS, 0)) {
+	} else if (player_parse(words_lick, words_poison_darts, 0)) {
 		text_show(450);
-	} else if (player_parse(VERB_EAT, NOUN_TWINKIFRUIT, 0)) {
+	} else if (player_parse(words_eat, words_twinkifruit, 0)) {
 		inter_move_object(OBJ_TWINKIFRUIT, NOWHERE);
 		text_show(451);
-	} else if (player_parse(VERB_GORGE_ON, NOUN_TWINKIFRUIT, 0)) {
+	} else if (player_parse(words_gorge_on, words_twinkifruit, 0)) {
 		inter_move_object(OBJ_TWINKIFRUIT, NOWHERE);
 		text_show(452);
-	} else if (player_parse(VERB_GNAW_ON, 0)) {
+	} else if (player_parse(words_gnaw_on, 0)) {
 		text_show(453);
-	} else if (player_parse(VERB_MASSAGE, NOUN_AUDIO_TAPE, 0)) {
+	} else if (player_parse(words_massage, words_audio_tape, 0)) {
 		text_show(454);
-	} else if (player_parse(VERB_MANGLE, NOUN_CREDIT_CHIP, 0)) {
+	} else if (player_parse(words_mangle, words_credit_chip, 0)) {
 		text_show(455);
-	} else if (player_parse(VERB_FONDLE, NOUN_CHARGE_CASES, 0)) {
+	} else if (player_parse(words_fondle, words_charge_cases, 0)) {
 		text_show(456);
-	} else if (player_parse(VERB_RUB, NOUN_BOMB, 0)) {
+	} else if (player_parse(words_rub, words_bomb, 0)) {
 		text_show(457);
-	} else if (player_parse(VERB_SET, NOUN_TIMEBOMB, 0)) {
+	} else if (player_parse(words_set, words_timebomb, 0)) {
 		text_show(458);
-	} else if (player_parse(VERB_GUZZLE, NOUN_ALIEN_LIQUOR, 0)) {
+	} else if (player_parse(words_guzzle, words_alien_liquor, 0)) {
 		text_show(459);
-	} else if (player_parse(VERB_SMASH, NOUN_TARGET_MODULE, 0)) {
+	} else if (player_parse(words_smash, words_target_module, 0)) {
 		text_show(460);
-	} else if (player_parse(VERB_JUGGLE, 0)) {
+	} else if (player_parse(words_juggle, 0)) {
 		text_show(461);
-	} else if (player_parse(VERB_APPLY, NOUN_POLYCEMENT, 0)) {
+	} else if (player_parse(words_apply, words_polycement, 0)) {
 		text_show(462);
-	} else if (player_parse(VERB_SNIFF, NOUN_POLYCEMENT, 0)) {
+	} else if (player_parse(words_sniff, words_polycement, 0)) {
 		text_show(465);
-	} else if (player_parse(VERB_TIE, NOUN_FISHING_LINE, 0)) {
+	} else if (player_parse(words_tie, words_fishing_line, 0)) {
 		text_show(463);
-	} else if (player_parse(VERB_ATTACH, NOUN_FISHING_LINE, 0)) {
+	} else if (player_parse(words_attach, words_fishing_line, 0)) {
 		text_show(463);
-	} else if (player_parse(VERB_UNLOCK, 0)) {
+	} else if (player_parse(words_unlock, 0)) {
 		text_show(464);
-	} else if (player_parse(VERB_REFLECT, 0)) {
+	} else if (player_parse(words_reflect, 0)) {
 		text_show(466);
-	} else if (player_parse(VERB_GAZE_INTO, NOUN_REARVIEW_MIRROR, 0)) {
+	} else if (player_parse(words_gaze_into, words_rearview_mirror, 0)) {
 		text_show(467);
-	} else if (player_parse(VERB_EAT, NOUN_CHICKEN_BOMB, 0)) {
+	} else if (player_parse(words_eat, words_chicken_bomb, 0)) {
 		text_show(469);
-	} else if (player_parse(VERB_BREAK, NOUN_VASE, 0)) {
+	} else if (player_parse(words_break, words_vase, 0)) {
 		text_show(471);
-	} else if (player_parse(VERB_SHAKE_HANDS, NOUN_GUARDS_ARM2, 0)) {
+	} else if (player_parse(words_shake_hands, words_guards_arm2, 0)) {
 		text_show(472);
-	} else if (player_parse(VERB_READ, NOUN_LOG, 0)) {
+	} else if (player_parse(words_read, words_log, 0)) {
 		text_show(473);
-	} else if (player_parse(VERB_RUB, NOUN_BOMBS, 0)) {
+	} else if (player_parse(words_rub, words_bombs, 0)) {
 		text_show(474);
-	} else if (player_parse(VERB_DRINK, NOUN_FORMALDEHYDE, 0)) {
+	} else if (player_parse(words_drink, words_formaldehyde, 0)) {
 		text_show(475);
-	} else if (player_parse(VERB_DRINK, NOUN_PETROX, 0)) {
+	} else if (player_parse(words_drink, words_petrox, 0)) {
 		text_show(476);
-	} else if (player_parse(VERB_DRINK, NOUN_LECITHIN, 0)) {
+	} else if (player_parse(words_drink, words_lecithin, 0)) {
 		text_show(477);
-	} else if (player_parse(VERB_PUT, NOUN_POISON_DARTS, NOUN_PLANT_STALK, 0) && player_has(OBJ_POISON_DARTS)
+	} else if (player_parse(words_put, words_poison_darts, words_plant_stalk, 0) && player_has(OBJ_POISON_DARTS)
 		&& player_has(OBJ_PLANT_STALK)) {
 		inter_give_to_player(OBJ_BLOWGUN);
 		inter_move_object(OBJ_PLANT_STALK, NOWHERE);
 		global[kBlowgunStatus] = 0;
 		object_examine(OBJ_BLOWGUN, 809);
-	} else if (player_parse(VERB_PUT, NOUN_POISON_DARTS, NOUN_BLOWGUN, 0) && player_has(OBJ_POISON_DARTS)
+	} else if (player_parse(words_put, words_poison_darts, words_blowgun, 0) && player_has(OBJ_POISON_DARTS)
 		&& player_has(OBJ_BLOWGUN)) {
 		text_show(433);
-	} else if (player_parse(VERB_DEFACE, 0) && player_parse(VERB_FOLD, 0) && player_parse(VERB_MUTILATE, 0)) {
+	} else if (player_parse(words_deface, 0) && player_parse(words_fold, 0) && player_parse(words_mutilate, 0)) {
 		text_show(434);
-	} else if (player_parse(VERB_SPINDLE, 0)) {
+	} else if (player_parse(words_spindle, 0)) {
 		text_show(479);
-	} else if ((player_parse(VERB_READ, 0) || player_parse(VERB_LOOK_AT, 0) || player_parse(VERB_LOOK, 0)) &&
-		player_parse(NOUN_NOTE, 0) && player_has(OBJ_NOTE)) {
+	} else if ((player_parse(words_read, 0) || player_parse(words_look_at, 0) || player_parse(words_look, 0)) &&
+		player_parse(words_note, 0) && player_has(OBJ_NOTE)) {
 		inter_move_object(OBJ_NOTE, NOWHERE);
 		inter_give_to_player(OBJ_COMBINATION);
 		object_examine(OBJ_COMBINATION, 851);
-	} else if ((player_parse(VERB_LOOK, 0) || player_parse(VERB_READ, 0)) &&
+	} else if ((player_parse(words_look, 0) || player_parse(words_read, 0)) &&
 		((id = object_named(inter_main_noun)) > 0 ||
 			(inter_second_noun > 0 &&
 				(id = object_named(inter_second_noun)))) &&
@@ -365,33 +365,33 @@ void RexNebularEngine::global_parser_code() {
 
 			object_examine(id, messageId);
 		}
-	} else if (player_parse(VERB_PUT, NOUN_BURGER, NOUN_DEAD_FISH, 0)) {
+	} else if (player_parse(words_put, words_burger, words_dead_fish, 0)) {
 		if (player_has(OBJ_BURGER) || player_has(OBJ_DEAD_FISH)) {
 			inter_take_from_player(OBJ_DEAD_FISH, PLAYER);
 			inter_take_from_player(OBJ_BURGER, PLAYER);
 			inter_give_to_player(OBJ_STUFFED_FISH);
 			object_examine(OBJ_STUFFED_FISH, 803);
 		}
-	} else if (player_parse(VERB_PUT, NOUN_AUDIO_TAPE, NOUN_TAPE_PLAYER, 0) && player_has(OBJ_AUDIO_TAPE) &&
+	} else if (player_parse(words_put, words_audio_tape, words_tape_player, 0) && player_has(OBJ_AUDIO_TAPE) &&
 		player_has(OBJ_TAPE_PLAYER)) {
 		inter_move_object(OBJ_AUDIO_TAPE, OBJ_TAPE_PLAYER);
-	} else if (player_parse(VERB_ACTIVATE, NOUN_TAPE_PLAYER, 0) && player_has(OBJ_TAPE_PLAYER)) {
+	} else if (player_parse(words_activate, words_tape_player, 0) && player_has(OBJ_TAPE_PLAYER)) {
 		if (object[OBJ_AUDIO_TAPE].location == OBJ_TAPE_PLAYER) {
 			showRecipe();
 		} else {
 			text_show(406);
 		}
-	} else if (player_parse(VERB_EJECT, NOUN_TAPE_PLAYER, 0) && player_has(OBJ_TAPE_PLAYER)) {
+	} else if (player_parse(words_eject, words_tape_player, 0) && player_has(OBJ_TAPE_PLAYER)) {
 		if (object[OBJ_AUDIO_TAPE].location == OBJ_TAPE_PLAYER) {
 			inter_give_to_player(OBJ_AUDIO_TAPE);
 		} else {
 			text_show(407);
 		}
-	} else if (player_parse(VERB_DISASSEMBLE, NOUN_TAPE_PLAYER, 0)) {
+	} else if (player_parse(words_disassemble, words_tape_player, 0)) {
 		text_show(408);
-	} else if (player_parse(VERB_ACTIVATE, NOUN_REMOTE, 0)) {
+	} else if (player_parse(words_activate, words_remote, 0)) {
 		text_show(global[kTopButtonPushed] ? 502 : 501);
-	} else if ((player_parse(VERB_ATTACH, NOUN_DETONATORS, NOUN_CHARGE_CASES, 0) || player_parse(VERB_PUT, NOUN_DETONATORS, NOUN_CHARGE_CASES, 0)) &&
+	} else if ((player_parse(words_attach, words_detonators, words_charge_cases, 0) || player_parse(words_put, words_detonators, words_charge_cases, 0)) &&
 		player_has(OBJ_DETONATORS) && player_has(OBJ_CHARGE_CASES)) {
 		if (object_check_quality(OBJ_CHARGE_CASES, 3)) {
 			inter_move_object(OBJ_CHARGE_CASES, NOWHERE);
@@ -401,10 +401,10 @@ void RexNebularEngine::global_parser_code() {
 		} else {
 			text_show(405);
 		}
-	} else if (player_parse(VERB_ATTACH, NOUN_DETONATORS, 0)) {
+	} else if (player_parse(words_attach, words_detonators, 0)) {
 		text_show(470);
-	} else if ((player_parse(VERB_ATTACH, NOUN_TIMER_MODULE, NOUN_BOMBS, 0) || player_parse(VERB_PUT, NOUN_TIMER_MODULE, NOUN_BOMBS, 0) || player_parse(VERB_ATTACH, NOUN_TIMER_MODULE, NOUN_BOMB, 0)
-		|| player_parse(VERB_PUT, NOUN_TIMER_MODULE, NOUN_BOMB, 0)) && player_has(OBJ_TIMER_MODULE) && (
+	} else if ((player_parse(words_attach, words_timer_module, words_bombs, 0) || player_parse(words_put, words_timer_module, words_bombs, 0) || player_parse(words_attach, words_timer_module, words_bomb, 0)
+		|| player_parse(words_put, words_timer_module, words_bomb, 0)) && player_has(OBJ_TIMER_MODULE) && (
 			player_has(OBJ_BOMBS) || player_has(OBJ_BOMB))) {
 		if (player_has(OBJ_BOMBS)) {
 			inter_move_object(OBJ_BOMBS, NOWHERE);
@@ -416,19 +416,19 @@ void RexNebularEngine::global_parser_code() {
 		inter_move_object(OBJ_TIMER_MODULE, NOWHERE);
 		inter_give_to_player(OBJ_TIMEBOMB);
 		object_examine(OBJ_TIMEBOMB, 404);
-	} else if (player_parse(VERB_FONDLE, NOUN_PLANT_STALK, 0)) {
+	} else if (player_parse(words_fondle, words_plant_stalk, 0)) {
 		text_show(410);
-	} else if (player_parse(VERB_EMPTY, NOUN_BOTTLE, 0)) {
+	} else if (player_parse(words_empty, words_bottle, 0)) {
 		global[kBottleStatus] = 0;
 		text_show(432);
-	} else if (player_parse(VERB_DISASSEMBLE, NOUN_FISHING_ROD, 0)) {
+	} else if (player_parse(words_disassemble, words_fishing_rod, 0)) {
 		if (object[OBJ_FISHING_LINE].location == 3) {
 			inter_give_to_player(OBJ_FISHING_LINE);
 			object_examine(OBJ_FISHING_LINE, 409);
 		} else {
 			text_show(428);
 		}
-	} else if (player_parse(VERB_DISASSEMBLE, NOUN_PENLIGHT, 0)) {
+	} else if (player_parse(words_disassemble, words_penlight, 0)) {
 		switch (global[kPenlightCellStatus]) {
 		case 1:
 		case 2:
@@ -451,7 +451,7 @@ void RexNebularEngine::global_parser_code() {
 			text_show(478);
 			break;
 		}
-	} else if (player_parse(VERB_DISASSEMBLE, NOUN_PHONE_HANDSET, 0)) {
+	} else if (player_parse(words_disassemble, words_phone_handset, 0)) {
 		switch (global[kHandsetCellStatus]) {
 		case 1:
 			inter_give_to_player(OBJ_DURAFAIL_CELLS);
@@ -479,7 +479,7 @@ void RexNebularEngine::global_parser_code() {
 			text_show(478);
 			break;
 		}
-	} else if (player_parse(VERB_PUT, NOUN_PHONE_CELLS, NOUN_PENLIGHT, 0)) {
+	} else if (player_parse(words_put, words_phone_cells, words_penlight, 0)) {
 		if (global[kPenlightCellStatus] == 0) {
 			global[kPenlightCellStatus] = 3;
 			inter_move_object(OBJ_PHONE_CELLS, NOWHERE);
@@ -487,7 +487,7 @@ void RexNebularEngine::global_parser_code() {
 		} else {
 			text_show(420);
 		}
-	} else if (player_parse(VERB_PUT, NOUN_PHONE_CELLS, NOUN_PHONE_HANDSET, 0)) {
+	} else if (player_parse(words_put, words_phone_cells, words_phone_handset, 0)) {
 		if (global[kHandsetCellStatus] == 0) {
 			global[kHandsetCellStatus] = 3;
 			inter_move_object(OBJ_PHONE_CELLS, NOWHERE);
@@ -495,7 +495,7 @@ void RexNebularEngine::global_parser_code() {
 		} else {
 			text_show(422);
 		}
-	} else if (player_parse(VERB_PUT, NOUN_DURAFAIL_CELLS, NOUN_PENLIGHT, 0)) {
+	} else if (player_parse(words_put, words_durafail_cells, words_penlight, 0)) {
 		if (global[kPenlightCellStatus]) {
 			text_show(424);
 		} else {
@@ -516,28 +516,28 @@ done:
 void RexNebularEngine::global_error_code() {
 	int randVal = getRandomNumber(1, 1000);
 
-	if (player_parse(VERB_THROW, NOUN_BOMB, 0) || player_parse(VERB_THROW, NOUN_BOMBS, 0)
-		|| player_parse(VERB_THROW, NOUN_TIMEBOMB, 0) || player_parse(VERB_THROW, NOUN_CHICKEN_BOMB, 0))
+	if (player_parse(words_throw, words_bomb, 0) || player_parse(words_throw, words_bombs, 0)
+		|| player_parse(words_throw, words_timebomb, 0) || player_parse(words_throw, words_chicken_bomb, 0))
 		text_show(42);
-	else if (player_parse(VERB_DISASSEMBLE, 0))
+	else if (player_parse(words_disassemble, 0))
 		text_show(435);
-	else if ((player_parse(VERB_EAT, NOUN_DEAD_FISH, 0) || player_parse(VERB_EAT, NOUN_STUFFED_FISH, 0)) && player_has(object_named(inter_main_noun)))
+	else if ((player_parse(words_eat, words_dead_fish, 0) || player_parse(words_eat, words_stuffed_fish, 0)) && player_has(object_named(inter_main_noun)))
 		text_show(12);
-	else if ((player_parse(VERB_SMELL, NOUN_DEAD_FISH, 0) || player_parse(VERB_SMELL, NOUN_STUFFED_FISH, 0)) && player_has(object_named(inter_main_noun)))
+	else if ((player_parse(words_smell, words_dead_fish, 0) || player_parse(words_smell, words_stuffed_fish, 0)) && player_has(object_named(inter_main_noun)))
 		text_show(13);
-	else if (player_parse(VERB_EAT, NOUN_CHICKEN, 0) && player_has(OBJ_CHICKEN))
+	else if (player_parse(words_eat, words_chicken, 0) && player_has(OBJ_CHICKEN))
 		text_show(912);
-	else if ((player_parse(VERB_SHOOT, 0) || player_parse(VERB_HOSE_DOWN, 0)) && player_parse(NOUN_BLOWGUN, 0)) {
+	else if ((player_parse(words_shoot, 0) || player_parse(words_hose_down, 0)) && player_parse(words_blowgun, 0)) {
 		if ((room_id >= 104) && (room_id <= 111))
 			text_show(38);
-		else if (player_parse(NOUN_PIRANHA, 0))
+		else if (player_parse(words_piranha, 0))
 			text_show(41);
-		else if (player_parse(NOUN_CHICKEN, 0) || player_parse(NOUN_VULTURE, 0) || player_parse(NOUN_SPIDER, 0)
-			|| player_parse(NOUN_YELLOW_BIRD, 0) || player_parse(NOUN_SWOOPING_CREATURE, 0) || player_parse(NOUN_CAPTIVE_CREATURE, 0)) {
+		else if (player_parse(words_chicken, 0) || player_parse(words_vulture, 0) || player_parse(words_spider, 0)
+			|| player_parse(words_yellow_bird, 0) || player_parse(words_swooping_creature, 0) || player_parse(words_captive_creature, 0)) {
 			text_show(40);
 		} else
 			text_show(39);
-	} else if (player_parse(VERB_TALKTO, 0)) {
+	} else if (player_parse(words_talkto, 0)) {
 		global[kTalkInanimateCount] = (global[kTalkInanimateCount] + 1) % 16;
 		if (!global[kTalkInanimateCount]) {
 			text_show(2);
@@ -548,9 +548,9 @@ void RexNebularEngine::global_error_code() {
 			kernel_message_purge();
 			kernel_message_add(const_cast<char *>(tmpMsg.c_str()), 0, 0, 0x1110, 120, 34, 0);
 		}
-	} else if (player_parse(VERB_GIVE, NOUN_DOOR, NOUN_CEILING, 0) || player_parse(VERB_CLOSE, NOUN_CHAIR, 0))
+	} else if (player_parse(words_give, words_door, words_ceiling, 0) || player_parse(words_close, words_chair, 0))
 		text_show(3);
-	else if (player_parse(VERB_THROW, 0)) {
+	else if (player_parse(words_throw, 0)) {
 		int objId = object_named(inter_main_noun);
 		if (objId < 0)
 			text_show(4);
@@ -558,14 +558,14 @@ void RexNebularEngine::global_error_code() {
 			text_show(5);
 		else
 			text_show(6);
-	} else if (player_parse(VERB_LOOK, 0)) {
-		if (player_parse(NOUN_BINOCULARS, 0) && (inter_second_noun > 0))
+	} else if (player_parse(words_look, 0)) {
+		if (player_parse(words_binoculars, 0) && (inter_second_noun > 0))
 			text_show(10);
 		else if (randVal < 600)
 			text_show(7);
 		else
 			text_show(21);
-	} else if (player_parse(VERB_TAKE, 0)) {
+	} else if (player_parse(words_take, 0)) {
 		int objId = object_named(inter_main_noun);
 		if (player_has(objId))
 			text_show(16);
@@ -575,32 +575,32 @@ void RexNebularEngine::global_error_code() {
 			text_show(22);
 		else
 			text_show(23);
-	} else if (player_parse(VERB_CLOSE, 0)) {
+	} else if (player_parse(words_close, 0)) {
 		if (randVal <= 333)
 			text_show(9);
 		else
 			text_show(33);
-	} else if (player_parse(VERB_OPEN, 0)) {
+	} else if (player_parse(words_open, 0)) {
 		if (randVal <= 500)
 			text_show(30);
 		else if (randVal <= 750)
 			text_show(31);
 		else
 			text_show(32);
-	} else if (player_parse(VERB_PULL, 0))
+	} else if (player_parse(words_pull, 0))
 		text_show(18);
-	else if (player_parse(VERB_PUSH, 0)) {
+	else if (player_parse(words_push, 0)) {
 		if (randVal < 750)
 			text_show(19);
 		else
 			text_show(20);
-	} else if (player_parse(VERB_PUT, 0)) {
+	} else if (player_parse(words_put, 0)) {
 		int objId = object_named(inter_main_noun);
 		if (player_has(objId))
 			text_show(25);
 		else
 			text_show(24);
-	} else if (player_parse(VERB_GIVE, 0)) {
+	} else if (player_parse(words_give, 0)) {
 		int objId = object_named(inter_main_noun);
 		if (!player_has(objId))
 			text_show(26);
@@ -608,9 +608,9 @@ void RexNebularEngine::global_error_code() {
 			text_show(28);
 		else
 			text_show(29);
-	} else if (!player_parse(VERB_WALKTO, 0) && !player_parse(VERB_WALK_ACROSS, 0) && !player_parse(VERB_WALK_TOWARDS, 0) && !player_parse(VERB_WALK_DOWN, 0)
-		&& !player_parse(VERB_SWIM_TO, 0) && !player_parse(VERB_SWIM_ACROSS, 0) && !player_parse(VERB_SWIM_INTO, 0) && !player_parse(VERB_SWIM_THROUGH, 0)
-		&& !player_parse(VERB_SWIM_UNDER, 0)) {
+	} else if (!player_parse(words_walkto, 0) && !player_parse(words_walk_across, 0) && !player_parse(words_walk_towards, 0) && !player_parse(words_walk_down, 0)
+		&& !player_parse(words_swim_to, 0) && !player_parse(words_swim_across, 0) && !player_parse(words_swim_into, 0) && !player_parse(words_swim_through, 0)
+		&& !player_parse(words_swim_under, 0)) {
 		if (randVal <= 100)
 			text_show(36);
 		else if (randVal <= 200)

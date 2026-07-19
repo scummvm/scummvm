@@ -54,21 +54,21 @@ static void room_707_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_VIEWPORT) || _action.isAction(VERB_PEER_THROUGH, NOUN_VIEWPORT))
+	if (_action.isAction(words_look, words_viewport) || _action.isAction(words_peer_through, words_viewport))
 		_vm->_dialogs->show(70710);
-	else if (_action.isAction(VERB_LOOK, NOUN_KEYPAD))
+	else if (_action.isAction(words_look, words_keypad))
 		_vm->_dialogs->show(70711);
-	else if (_action.isAction(VERB_LOOK, NOUN_DISPLAY))
+	else if (_action.isAction(words_look, words_display))
 		_vm->_dialogs->show(70712);
-	else if (_action.isAction(VERB_LOOK, NOUN_0_KEY) || _action.isAction(VERB_LOOK, NOUN_1_KEY)
-		|| _action.isAction(VERB_LOOK, NOUN_2_KEY) || _action.isAction(VERB_LOOK, NOUN_3_KEY)
-		|| _action.isAction(VERB_LOOK, NOUN_4_KEY) || _action.isAction(VERB_LOOK, NOUN_5_KEY)
-		|| _action.isAction(VERB_LOOK, NOUN_6_KEY) || _action.isAction(VERB_LOOK, NOUN_7_KEY)
-		|| _action.isAction(VERB_LOOK, NOUN_8_KEY) || _action.isAction(VERB_LOOK, NOUN_9_KEY)
-		|| _action.isAction(VERB_LOOK, NOUN_SMILE_KEY) || _action.isAction(VERB_LOOK, NOUN_ENTER_KEY)
-		|| _action.isAction(VERB_LOOK, NOUN_FROWN_KEY))
+	else if (_action.isAction(words_look, words_0_key) || _action.isAction(words_look, words_1_key)
+		|| _action.isAction(words_look, words_2_key) || _action.isAction(words_look, words_3_key)
+		|| _action.isAction(words_look, words_4_key) || _action.isAction(words_look, words_5_key)
+		|| _action.isAction(words_look, words_6_key) || _action.isAction(words_look, words_7_key)
+		|| _action.isAction(words_look, words_8_key) || _action.isAction(words_look, words_9_key)
+		|| _action.isAction(words_look, words_smile_key) || _action.isAction(words_look, words_enter_key)
+		|| _action.isAction(words_look, words_frown_key))
 		_vm->_dialogs->show(70713);
-	else if (_action.isAction(VERB_LOOK, NOUN_DEVICE) || _action._lookFlag)
+	else if (_action.isAction(words_look, words_device) || _action._lookFlag)
 		_vm->_dialogs->show(70714);
 	else
 		return;

@@ -46,7 +46,7 @@ static void room_603_init() {
 		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', -1));
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
-		local._compactCaseHotspotId = _scene->_dynamicHotspots.add(NOUN_COMPACT_CASE, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		local._compactCaseHotspotId = _scene->_dynamicHotspots.add(words_compact_case, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._compactCaseHotspotId, Common::Point(250, 152), FACING_SOUTHEAST);
 	}
 
@@ -55,7 +55,7 @@ static void room_603_init() {
 		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('p', -1));
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
-		local._noteHotspotId = _scene->_dynamicHotspots.add(NOUN_NOTE, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		local._noteHotspotId = _scene->_dynamicHotspots.add(words_note, words_walkto, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._noteHotspotId, Common::Point(242, 118), FACING_NORTHEAST);
 	}
 
@@ -66,9 +66,9 @@ static void room_603_init() {
 }
 
 static void room_603_parser() {
-	if (_action.isAction(VERB_WALK_TOWARDS, NOUN_LIVINGROOM))
+	if (_action.isAction(words_walk_towards, words_livingroom))
 		_scene->_nextSceneId = 602;
-	else if (_action.isAction(VERB_TAKE, NOUN_COMPACT_CASE)) {
+	else if (_action.isAction(words_take, words_compact_case)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_COMPACT_CASE)) {
 			switch (_game._trigger) {
 			case 0:
@@ -99,7 +99,7 @@ static void room_603_parser() {
 				break;
 			}
 		}
-	} else if (_action.isAction(VERB_TAKE, NOUN_NOTE)) {
+	} else if (_action.isAction(words_take, words_note)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_NOTE)) {
 			if (_game._trigger == 0) {
 				_game._player._stepEnabled = false;
@@ -121,49 +121,49 @@ static void room_603_parser() {
 			_vm->_dialogs->show(60323);
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(60310);
-	else if (_action.isAction(VERB_LOOK, NOUN_BED))
+	else if (_action.isAction(words_look, words_bed))
 		_vm->_dialogs->show(60311);
-	else if (_action.isAction(VERB_LOOK, NOUN_WIG_STAND))
+	else if (_action.isAction(words_look, words_wig_stand))
 		_vm->_dialogs->show(60312);
-	else if (_action.isAction(VERB_TAKE, NOUN_WIG_STAND))
+	else if (_action.isAction(words_take, words_wig_stand))
 		_vm->_dialogs->show(60313);
-	else if (_action.isAction(VERB_LOOK, NOUN_REVIEW))
+	else if (_action.isAction(words_look, words_review))
 		_vm->_dialogs->show(60314);
-	else if (_action.isAction(VERB_LOOK, NOUN_SOUVENIR_TICKETS))
+	else if (_action.isAction(words_look, words_souvenir_tickets))
 		_vm->_dialogs->show(60315);
-	else if (_action.isAction(VERB_LOOK, NOUN_PHOTOGRAPH))
+	else if (_action.isAction(words_look, words_photograph))
 		_vm->_dialogs->show(60316);
-	else if (_action.isAction(VERB_LOOK, NOUN_LAMP))
+	else if (_action.isAction(words_look, words_lamp))
 		_vm->_dialogs->show(60317);
-	else if (_action.isAction(VERB_LOOK, NOUN_DIRECTORS_SLATE) || _action.isAction(VERB_LOOK, NOUN_CROP) || _action.isAction(VERB_LOOK, NOUN_MEGAPHONE))
+	else if (_action.isAction(words_look, words_directors_slate) || _action.isAction(words_look, words_crop) || _action.isAction(words_look, words_megaphone))
 		_vm->_dialogs->show(60318);
-	else if (_action.isAction(VERB_LOOK, NOUN_SNAPSHOT))
+	else if (_action.isAction(words_look, words_snapshot))
 		_vm->_dialogs->show(60319);
-	else if (_action.isAction(VERB_TAKE, NOUN_SNAPSHOT))
+	else if (_action.isAction(words_take, words_snapshot))
 		_vm->_dialogs->show(60320);
-	else if (_action.isAction(VERB_LOOK, NOUN_PERFUME))
+	else if (_action.isAction(words_look, words_perfume))
 		_vm->_dialogs->show(60321);
-	else if (_action.isAction(VERB_TAKE, NOUN_PERFUME))
+	else if (_action.isAction(words_take, words_perfume))
 		_vm->_dialogs->show(60322);
-	else if (_action.isAction(VERB_LOOK, NOUN_NOTE)) {
+	else if (_action.isAction(words_look, words_note)) {
 		if (_game._objects[OBJ_NOTE]._roomNumber == _scene->_currentSceneId)
 			_vm->_dialogs->show(60324);
-	} else if (_action.isAction(VERB_LOOK, NOUN_CORNER_TABLE)) {
+	} else if (_action.isAction(words_look, words_corner_table)) {
 		if (_game._objects[OBJ_NOTE]._roomNumber == _scene->_currentSceneId)
 			_vm->_dialogs->show(60326);
 		else
 			_vm->_dialogs->show(60325);
-	} else if (_action.isAction(VERB_LOOK, NOUN_VANITY)) {
+	} else if (_action.isAction(words_look, words_vanity)) {
 		if (_game._objects[OBJ_COMPACT_CASE]._roomNumber == _scene->_currentSceneId)
 			_vm->_dialogs->show(60327);
 		else
 			_vm->_dialogs->show(60328);
-	} else if (_action.isAction(VERB_LOOK, NOUN_COMPACT_CASE) && (_action._mainObjectSource == CAT_HOTSPOT))
+	} else if (_action.isAction(words_look, words_compact_case) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(60329);
 	// For the next two checks, the second part of the check wasn't surrounded par parenthesis, which was obviously wrong
-	else if (_action.isAction(VERB_LOOK) && (_action.isObject(NOUN_BRA) || _action.isObject(NOUN_BOA) || _action.isObject(NOUN_SLIP)))
+	else if (_action.isAction(words_look) && (_action.isObject(words_bra) || _action.isObject(words_boa) || _action.isObject(words_slip)))
 		_vm->_dialogs->show(60331);
-	else if (_action.isAction(VERB_TAKE) && (_action.isObject(NOUN_BRA) || _action.isObject(NOUN_BOA) || _action.isObject(NOUN_SLIP)))
+	else if (_action.isAction(words_take) && (_action.isObject(words_bra) || _action.isObject(words_boa) || _action.isObject(words_slip)))
 		_vm->_dialogs->show(60332);
 	else
 		return;
@@ -182,9 +182,9 @@ void room_603_preload() {
 
 	section_6_walker();
 	section_6_interface();
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_COMPACT_CASE);
-	_scene->addActiveVocab(NOUN_NOTE);
+	_scene->addActiveVocab(words_walkto);
+	_scene->addActiveVocab(words_compact_case);
+	_scene->addActiveVocab(words_note);
 }
 
 } // namespace Rooms

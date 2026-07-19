@@ -53,7 +53,7 @@ static void handleDoorSequences() {
 	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 
 	if (local._firstDoorFl) {
-		if (_action.isAction(VERB_WALK_INTO, NOUN_SOFTWARE_STORE) || ((_scene->_priorSceneId == 507) && !local._actionFl)) {
+		if (_action.isAction(words_walk_into, words_software_store) || ((_scene->_priorSceneId == 507) && !local._actionFl)) {
 			local._doorDepth = 13;
 			local._doorSpriteIdx = _globals._spriteIndexes[2];
 			local._doorSequenceIdx = _globals._sequenceIndexes[2];
@@ -101,7 +101,7 @@ static void handleDoorSequences() {
 	case 83:
 	{
 		local._doorSequenceIdx = _scene->_sequences.startCycle(local._doorSpriteIdx, false, 1);
-		int idx = _scene->_dynamicHotspots.add(local._doorWord, VERB_WALK_INTO, local._doorSequenceIdx, Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(local._doorWord, words_walk_into, local._doorSequenceIdx, Common::Rect(0, 0, 0, 0));
 		int hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(local._doorPos_x, local._doorPos_y), FACING_NORTHWEST);
 		_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_LEFT);
 		_scene->_sequences.setDepth(local._doorSequenceIdx, local._doorDepth);
@@ -140,12 +140,12 @@ static void room_506_init() {
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXCD_3");
 
 	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-	int idx = _scene->_dynamicHotspots.add(NOUN_LABORATORY, VERB_WALK_INTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(words_laboratory, words_walk_into, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 	int hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(65, 125), FACING_NORTHWEST);
 	_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_LEFT);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 	_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
-	idx = _scene->_dynamicHotspots.add(NOUN_SOFTWARE_STORE, VERB_WALK_INTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+	idx = _scene->_dynamicHotspots.add(words_software_store, words_walk_into, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 	hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(112, 102), FACING_NORTHWEST);
 	_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_LEFT);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 13);
@@ -224,7 +224,7 @@ static void room_506_daemon() {
 }
 
 static void room_506_parser() {
-	if (_action.isAction(VERB_WALK_INTO, NOUN_LABORATORY)) {
+	if (_action.isAction(words_walk_into, words_laboratory)) {
 		if (local._firstDoorFl) {
 			local._heroFacing = FACING_NORTHWEST;
 			local._doorPos_x = 16;
@@ -232,7 +232,7 @@ static void room_506_parser() {
 		}
 		local._actionFl = true;
 		handleDoorSequences();
-	} else if (_action.isAction(VERB_WALK_INTO, NOUN_SOFTWARE_STORE)) {
+	} else if (_action.isAction(words_walk_into, words_software_store)) {
 		if (local._firstDoorFl) {
 			local._heroFacing = FACING_NORTHWEST;
 			local._doorPos_x = 80;
@@ -240,7 +240,7 @@ static void room_506_parser() {
 		}
 		local._actionFl = true;
 		handleDoorSequences();
-	} else if (_action.isAction(VERB_GET_INTO, NOUN_CAR)) {
+	} else if (_action.isAction(words_get_into, words_car)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -279,29 +279,29 @@ static void room_506_parser() {
 		default:
 			break;
 		}
-	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, NOUN_STREET))
+	} else if (_action._lookFlag || _action.isAction(words_look, words_street))
 		_vm->_dialogs->show(50618);
-	else if (_action.isAction(VERB_LOOK, NOUN_RESTAURANT))
+	else if (_action.isAction(words_look, words_restaurant))
 		_vm->_dialogs->show(50610);
-	else if (_action.isAction(VERB_LOOK, NOUN_MOTEL))
+	else if (_action.isAction(words_look, words_motel))
 		_vm->_dialogs->show(50611);
-	else if (_action.isAction(VERB_LOOK, NOUN_CYCLE_SHOP))
+	else if (_action.isAction(words_look, words_cycle_shop))
 		_vm->_dialogs->show(50612);
-	else if (_action.isAction(VERB_LOOK, NOUN_AIR_BIKE))
+	else if (_action.isAction(words_look, words_air_bike))
 		_vm->_dialogs->show(50613);
-	else if (_action.isAction(VERB_TAKE, NOUN_AIR_BIKE))
+	else if (_action.isAction(words_take, words_air_bike))
 		_vm->_dialogs->show(50614);
-	else if (_action.isAction(VERB_LOOK, NOUN_SOFTWARE_STORE))
+	else if (_action.isAction(words_look, words_software_store))
 		_vm->_dialogs->show(50615);
-	else if (_action.isAction(VERB_LOOK, NOUN_LABORATORY))
+	else if (_action.isAction(words_look, words_laboratory))
 		_vm->_dialogs->show(50616);
-	else if (_action.isAction(VERB_LOOK, NOUN_STREET_TO_WEST) || _action.isAction(VERB_WALK_DOWN, NOUN_STREET_TO_WEST))
+	else if (_action.isAction(words_look, words_street_to_west) || _action.isAction(words_walk_down, words_street_to_west))
 		_vm->_dialogs->show(50617);
-	else if (_action.isAction(VERB_LOOK, NOUN_SOFTWARE_STORE_SIGN))
+	else if (_action.isAction(words_look, words_software_store_sign))
 		_vm->_dialogs->show(50619);
-	else if (_action.isAction(VERB_LOOK, NOUN_CAR))
+	else if (_action.isAction(words_look, words_car))
 		_vm->_dialogs->show(50620);
-	else if (_action.isAction(VERB_LOOK, NOUN_SKY))
+	else if (_action.isAction(words_look, words_sky))
 		_vm->_dialogs->show(50621);
 	else
 		return;
@@ -332,9 +332,9 @@ void room_506_preload() {
 
 	section_5_walker();
 	section_5_interface();
-	_scene->addActiveVocab(VERB_WALK_INTO);
-	_scene->addActiveVocab(NOUN_SOFTWARE_STORE);
-	_scene->addActiveVocab(NOUN_LABORATORY);
+	_scene->addActiveVocab(words_walk_into);
+	_scene->addActiveVocab(words_software_store);
+	_scene->addActiveVocab(words_laboratory);
 }
 
 } // namespace Rooms

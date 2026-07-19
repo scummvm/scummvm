@@ -48,7 +48,7 @@ static void room_105_init() {
 		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6, 0, 0, 0);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(48, 144));
 
-		int idx = _scene->_dynamicHotspots.add(NOUN_DEAD_FISH, VERB_SWIM_TO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_dead_fish, words_swim_to, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(56, 141), FACING_NORTHWEST);
 	}
 
@@ -131,20 +131,20 @@ static void room_105_daemon() {
 }
 
 static void room_105_pre_parser() {
-	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_WESTERN_CLIFF_FACE))
+	if (_action.isAction(words_swim_towards, words_western_cliff_face))
 		_game._player._walkOffScreenSceneId = 104;
 
-	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_OPEN_AREA_TO_SOUTH))
+	if (_action.isAction(words_swim_towards, words_open_area_to_south))
 		_game._player._walkOffScreenSceneId = 107;
 
-	if (_action.isObject(NOUN_MINE) && (_action.isAction(VERB_TALKTO) || _action.isAction(VERB_LOOK)))
+	if (_action.isObject(words_mine) && (_action.isAction(words_talkto) || _action.isAction(words_look)))
 		_game._player._needToWalk = false;
 }
 
 static void room_105_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(10512);
-	else if (_action.isAction(VERB_TAKE, NOUN_DEAD_FISH) && _globals[kFishIn105]) {
+	else if (_action.isAction(words_take, words_dead_fish) && _globals[kFishIn105]) {
 		if (_game._objects.isInInventory(OBJ_DEAD_FISH)) {
 			int randVal = _vm->getRandomNumber(74, 76);
 			_scene->_kernelMessages.reset();
@@ -155,25 +155,25 @@ static void room_105_parser() {
 			_globals[kFishIn105] = false;
 			_vm->_dialogs->showItem(OBJ_DEAD_FISH, 802, 0);
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_WESTERN_CLIFF_FACE))
+	} else if (_action.isAction(words_look, words_western_cliff_face))
 		_vm->_dialogs->show(10501);
-	else if (_action.isAction(VERB_LOOK, NOUN_CLIFF_FACE))
+	else if (_action.isAction(words_look, words_cliff_face))
 		_vm->_dialogs->show(10502);
-	else if (_action.isAction(VERB_LOOK, NOUN_OCEAN_FLOOR))
+	else if (_action.isAction(words_look, words_ocean_floor))
 		_vm->_dialogs->show(10503);
-	else if (_action.isAction(VERB_LOOK, NOUN_MEDICAL_WASTE))
+	else if (_action.isAction(words_look, words_medical_waste))
 		_vm->_dialogs->show(10504);
-	else if (_action.isAction(VERB_TAKE, NOUN_MEDICAL_WASTE))
+	else if (_action.isAction(words_take, words_medical_waste))
 		_vm->_dialogs->show(10505);
-	else if (_action.isAction(VERB_LOOK, NOUN_MINE))
+	else if (_action.isAction(words_look, words_mine))
 		_vm->_dialogs->show(10506);
-	else if (_action.isAction(VERB_LOOK, NOUN_DEAD_FISH))
+	else if (_action.isAction(words_look, words_dead_fish))
 		_vm->_dialogs->show(10508);
-	else if (_action.isAction(VERB_LOOK, NOUN_SURFACE))
+	else if (_action.isAction(words_look, words_surface))
 		_vm->_dialogs->show(10509);
-	else if (_action.isAction(VERB_LOOK, NOUN_OPEN_AREA_TO_SOUTH))
+	else if (_action.isAction(words_look, words_open_area_to_south))
 		_vm->_dialogs->show(10510);
-	else if (_action.isAction(VERB_LOOK, NOUN_ROCKS))
+	else if (_action.isAction(words_look, words_rocks))
 		_vm->_dialogs->show(10511);
 	else
 		return;

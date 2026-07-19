@@ -71,14 +71,14 @@ static void room_202_init() {
 	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
 	_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(149, 113));
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 10);
-	int idx = _scene->_dynamicHotspots.add(NOUN_SKULL, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(words_skull, words_walkto, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(153, 97), FACING_SOUTH);
 
 	if (!(_globals[kBone202Status] & 1)) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(130, 108));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
-		idx = _scene->_dynamicHotspots.add(NOUN_BONE, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(words_bone, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(132, 97), FACING_SOUTH);
 	}
 
@@ -86,7 +86,7 @@ static void room_202_init() {
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 0, 0, 0);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[6], Common::Point(166, 110));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 10);
-		idx = _scene->_dynamicHotspots.add(NOUN_BONE, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(words_bone, words_walkto, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(165, 99), FACING_SOUTH);
 	}
 
@@ -104,8 +104,8 @@ static void room_202_init() {
 	if (_globals[kLadderBroken]) {
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 0, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 6);
-		_scene->_hotspots.activate(NOUN_LADDER, false);
-		idx = _scene->_dynamicHotspots.add(NOUN_BROKEN_LADDER, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		_scene->_hotspots.activate(words_ladder, false);
+		idx = _scene->_dynamicHotspots.add(words_broken_ladder, words_walkto, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(246, 124), FACING_NORTH);
 	}
 
@@ -253,9 +253,9 @@ static void room_202_daemon() {
 			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
 
 			if (_globals[kMeteorologistWatch] == METEOROLOGIST_GROUND) {
-				_action._activeAction._verbId = VERB_LOOK;
-				_action._activeAction._objectNameId = NOUN_BINOCULARS;
-				_action._activeAction._indirectObjectId = NOUN_STRANGE_DEVICE;
+				_action._activeAction._verbId = words_look;
+				_action._activeAction._objectNameId = words_binoculars;
+				_action._activeAction._indirectObjectId = words_strange_device;
 				_game._triggerSetupMode = SEQUENCE_TRIGGER_PARSER;
 				_scene->_sequences.addTimer(2 * 60, 2);
 				local._meteorologistSpecial = true;
@@ -297,8 +297,8 @@ static void room_202_daemon() {
 	{
 		_globals[kLadderBroken] = false;
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 0, 0, 0);
-		_scene->_hotspots.activate(NOUN_LADDER, false);
-		int idx = _scene->_dynamicHotspots.add(NOUN_BROKEN_LADDER, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		_scene->_hotspots.activate(words_ladder, false);
+		int idx = _scene->_dynamicHotspots.add(words_broken_ladder, words_walkto, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(246, 124), FACING_NORTH);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[11], _globals._sequenceIndexes[5]);
 		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[11]);
@@ -424,7 +424,7 @@ static void room_202_pre_parser() {
 	if (gplayer._needToWalk)
 		_scene->_kernelMessages.reset();
 
-	if (local._ladderTopFl && (_action.isAction(VERB_CLIMB_DOWN, NOUN_LADDER) || gplayer._needToWalk)) {
+	if (local._ladderTopFl && (_action.isAction(words_climb_down, words_ladder) || gplayer._needToWalk)) {
 		if (_game._trigger == 0) {
 			_vm->_sound->command(29);
 			gplayer._readyToWalk = false;
@@ -443,7 +443,7 @@ static void room_202_pre_parser() {
 		}
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS) && (_action._activeAction._indirectObjectId > 0)) {
+	if (_action.isAction(words_look, words_binoculars) && (_action._activeAction._indirectObjectId > 0)) {
 		if (!gplayer._readyToWalk || local._ladderTopFl)
 			gplayer._needToWalk = false;
 		else
@@ -460,12 +460,12 @@ static void room_202_parser() {
 		return;
 	}
 
-	if (_action.isAction(VERB_CLIMB_DOWN, NOUN_LADDER)) {
+	if (_action.isAction(words_climb_down, words_ladder)) {
 		_action._inProgress = false;
 		return;
-	} else if (_action.isAction(VERB_WALK_TOWARDS, NOUN_FIELD_TO_SOUTH)) {
+	} else if (_action.isAction(words_walk_towards, words_field_to_south)) {
 		_scene->_nextSceneId = 203;
-	} else if (_action.isAction(VERB_WALK_TOWARDS, NOUN_FIELD_TO_NORTH)) {
+	} else if (_action.isAction(words_walk_towards, words_field_to_north)) {
 		if (_globals[kMeteorologistStatus] != METEOROLOGIST_GONE) {
 			if (_scene->_animation[0])
 				_globals[kMeteorologistStatus] = METEOROLOGIST_PRESENT;
@@ -473,7 +473,7 @@ static void room_202_parser() {
 				_globals[kMeteorologistStatus] = METEOROLOGIST_ABSENT;
 		}
 		_scene->_nextSceneId = 201;
-	} else if (_action.isAction(VERB_TAKE, NOUN_BONE) && (_action._savedFields._mainObjectSource == 4)) {
+	} else if (_action.isAction(words_take, words_bone) && (_action._savedFields._mainObjectSource == 4)) {
 		switch (_game._trigger) {
 		case 0:
 			if (_game._objects.isInInventory(OBJ_BONES)) {
@@ -514,7 +514,7 @@ static void room_202_parser() {
 		}
 
 		_action._inProgress = false;
-	} else if (_action.isAction(VERB_CLIMB_UP, NOUN_LADDER) && !_globals[kLadderBroken]) {
+	} else if (_action.isAction(words_climb_up, words_ladder) && !_globals[kLadderBroken]) {
 		switch (_game._trigger) {
 		case 0:
 			_vm->_sound->command(29);
@@ -522,7 +522,7 @@ static void room_202_parser() {
 			_game._player._visible = false;
 			_game._player._stepEnabled = false;
 
-			local._ladderHotspotId = _scene->_dynamicHotspots.add(NOUN_LADDER, VERB_CLIMB_DOWN, -1, Common::Rect(241, 68, 241 + 12, 68 + 54));
+			local._ladderHotspotId = _scene->_dynamicHotspots.add(words_ladder, words_climb_down, -1, Common::Rect(241, 68, 241 + 12, 68 + 54));
 			_scene->_dynamicHotspots.setPosition(local._ladderHotspotId, Common::Point(246, 124), FACING_NORTH);
 			_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 1);
@@ -544,7 +544,7 @@ static void room_202_parser() {
 			_action._inProgress = false;
 			return;
 		}
-	} else if ((_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_FIELD_TO_NORTH) || (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_STRANGE_DEVICE))) && (_globals[kSexOfRex] == SEX_MALE)) {
+	} else if ((_action.isAction(words_look, words_binoculars, words_field_to_north) || (_action.isAction(words_look, words_binoculars, words_strange_device))) && (_globals[kSexOfRex] == SEX_MALE)) {
 		if (!local._ladderTopFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -644,43 +644,43 @@ static void room_202_parser() {
 				return;
 			}
 		}
-	} else if (_action.isAction(VERB_WALK_INSIDE, NOUN_HUT)) {
+	} else if (_action.isAction(words_walk_inside, words_hut)) {
 		setRandomKernelMessage();
-	} else if (_action.isAction(VERB_LOOK, NOUN_ROCKS)) {
+	} else if (_action.isAction(words_look, words_rocks)) {
 		_vm->_dialogs->show(20202);
-	} else if (_action.isAction(VERB_LOOK, NOUN_FIRE_PIT)) {
+	} else if (_action.isAction(words_look, words_fire_pit)) {
 		_vm->_dialogs->show(20203);
-	} else if (_action.isAction(VERB_LOOK, NOUN_GRASS)) {
+	} else if (_action.isAction(words_look, words_grass)) {
 		_vm->_dialogs->show(20204);
-	} else if (_action.isAction(VERB_LOOK, NOUN_FIELD_TO_NORTH)) {
+	} else if (_action.isAction(words_look, words_field_to_north)) {
 		if ((_globals[kMeteorologistStatus] == METEOROLOGIST_ABSENT) || (_globals[kMeteorologistStatus] == METEOROLOGIST_GONE))
 			_vm->_dialogs->show(20205);
 		else if (_globals[kMeteorologistStatus] == METEOROLOGIST_PRESENT)
 			_vm->_dialogs->show(20220);
-	} else if (_action.isAction(VERB_LOOK, NOUN_WATCH_TOWER)) {
+	} else if (_action.isAction(words_look, words_watch_tower)) {
 		_vm->_dialogs->show(20206);
-	} else if (_action.isAction(VERB_LOOK, NOUN_TALL_GRASS)) {
+	} else if (_action.isAction(words_look, words_tall_grass)) {
 		_vm->_dialogs->show(20207);
-	} else if (_action.isAction(VERB_LOOK, NOUN_TREES)) {
+	} else if (_action.isAction(words_look, words_trees)) {
 		_vm->_dialogs->show(20208);
-	} else if (_action.isAction(VERB_LOOK, NOUN_TREE)) {
+	} else if (_action.isAction(words_look, words_tree)) {
 		_vm->_dialogs->show(20209);
-	} else if (_action.isAction(VERB_LOOK, NOUN_SKY)) {
+	} else if (_action.isAction(words_look, words_sky)) {
 		_vm->_dialogs->show(20210);
-	} else if (_action.isAction(VERB_LOOK, NOUN_HUT)) {
+	} else if (_action.isAction(words_look, words_hut)) {
 		if ((_game._player._playerPos == Common::Point(77, 105)) && (_game._player._facing == FACING_NORTH))
 			_vm->_dialogs->show(20212);
 		else
 			_vm->_dialogs->show(20211);
-	} else if (_action.isAction(VERB_LOOK, NOUN_STRANGE_DEVICE)) {
+	} else if (_action.isAction(words_look, words_strange_device)) {
 		_vm->_dialogs->show(20213);
-	} else if (_action.isAction(VERB_LOOK, NOUN_OCEAN_IN_DISTANCE)) {
+	} else if (_action.isAction(words_look, words_ocean_in_distance)) {
 		_vm->_dialogs->show(20214);
-	} else if (_action.isAction(VERB_LOOK, NOUN_SKULL)) {
+	} else if (_action.isAction(words_look, words_skull)) {
 		_vm->_dialogs->show(20215);
-	} else if (_action.isAction(VERB_TAKE, NOUN_SKULL)) {
+	} else if (_action.isAction(words_take, words_skull)) {
 		_vm->_dialogs->show(20216);
-	} else if (_action.isAction(VERB_LOOK, NOUN_BONES) && _action._commandSource == 4) {
+	} else if (_action.isAction(words_look, words_bones) && _action._commandSource == 4) {
 		_vm->_dialogs->show(20217);
 	} else {
 		return;
@@ -717,12 +717,12 @@ void room_202_preload() {
 	section_2_walker();
 	section_2_interface();
 
-	_scene->addActiveVocab(NOUN_LADDER);
-	_scene->addActiveVocab(VERB_CLIMB_DOWN);
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_BONE);
-	_scene->addActiveVocab(NOUN_SKULL);
-	_scene->addActiveVocab(NOUN_BROKEN_LADDER);
+	_scene->addActiveVocab(words_ladder);
+	_scene->addActiveVocab(words_climb_down);
+	_scene->addActiveVocab(words_walkto);
+	_scene->addActiveVocab(words_bone);
+	_scene->addActiveVocab(words_skull);
+	_scene->addActiveVocab(words_broken_ladder);
 }
 
 } // namespace Rooms

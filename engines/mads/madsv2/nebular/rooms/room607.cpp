@@ -72,7 +72,7 @@ static void room_607_init() {
 		local._dogEatsRex = false;
 		local._dogTimer = 0;
 	} else
-		_scene->_hotspots.activate(NOUN_OBNOXIOUS_DOG, false);
+		_scene->_hotspots.activate(words_obnoxious_dog, false);
 
 	_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
@@ -131,7 +131,7 @@ static void room_607_daemon() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 6);
 		local._dogBarking = false;
 		_globals[kDogStatus] = DOG_PRESENT;
-		_scene->_hotspots.activate(NOUN_OBNOXIOUS_DOG, true);
+		_scene->_hotspots.activate(words_obnoxious_dog, true);
 	}
 
 	if (!local._dogEatsRex && (_game._difficulty != DIFFICULTY_EASY) && !local._animationActive && (_globals[kDogStatus] == DOG_PRESENT)
@@ -305,7 +305,7 @@ static void handleThrowingBone() {
 		_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 
 		if (local._animationMode != 1)
-			_scene->_hotspots.activate(NOUN_OBNOXIOUS_DOG, false);
+			_scene->_hotspots.activate(words_obnoxious_dog, false);
 		else {
 			_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 6);
@@ -352,25 +352,25 @@ static void handleThrowingBone() {
 }
 
 static void room_607_pre_parser() {
-	if (_action.isAction(VERB_TALKTO, NOUN_OBNOXIOUS_DOG))
+	if (_action.isAction(words_talkto, words_obnoxious_dog))
 		_game._player._needToWalk = false;
 
-	if (_action.isAction(VERB_WALK_THROUGH, NOUN_SIDE_ENTRANCE) && (_globals[kDogStatus] == DOG_LEFT) && (_game._difficulty != DIFFICULTY_EASY)) {
+	if (_action.isAction(words_walk_through, words_side_entrance) && (_globals[kDogStatus] == DOG_LEFT) && (_game._difficulty != DIFFICULTY_EASY)) {
 		local._shopAvailable = true;
 		local._dogTimer = 0;
 	}
 
-	if (_action.isAction(VERB_THROW, NOUN_BONES, NOUN_OBNOXIOUS_DOG) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_OBNOXIOUS_DOG))
+	if (_action.isAction(words_throw, words_bones, words_obnoxious_dog) || _action.isAction(words_throw, words_bone, words_obnoxious_dog))
 		_game._player.walk(Common::Point(193, 100), FACING_NORTHEAST);
 
-	if (_action.isAction(VERB_THROW, NOUN_BONES, NOUN_FENCE) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_FENCE))
+	if (_action.isAction(words_throw, words_bones, words_fence) || _action.isAction(words_throw, words_bone, words_fence))
 		_game._player.walk(Common::Point(201, 107), FACING_SOUTHEAST);
 }
 
 static void room_607_parser() {
-	if (_action.isAction(VERB_WALK_THROUGH, NOUN_SIDE_ENTRANCE))
+	if (_action.isAction(words_walk_through, words_side_entrance))
 		_scene->_nextSceneId = 608;
-	else if (_action.isAction(VERB_GET_INSIDE, NOUN_CAR)) {
+	else if (_action.isAction(words_get_inside, words_car)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -409,7 +409,7 @@ static void room_607_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_THROW, NOUN_BONES, NOUN_OBNOXIOUS_DOG) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_OBNOXIOUS_DOG)) {
+	} else if (_action.isAction(words_throw, words_bones, words_obnoxious_dog) || _action.isAction(words_throw, words_bone, words_obnoxious_dog)) {
 		if (_game._difficulty != DIFFICULTY_EASY) {
 			local._animationMode = 1;
 			_scene->_kernelMessages.reset();
@@ -418,7 +418,7 @@ static void room_607_parser() {
 
 			handleThrowingBone();
 		}
-	} else if ((_action.isAction(VERB_THROW, NOUN_BONES, NOUN_FENCE) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_FENCE)) && (_game._difficulty != DIFFICULTY_EASY)
+	} else if ((_action.isAction(words_throw, words_bones, words_fence) || _action.isAction(words_throw, words_bone, words_fence)) && (_game._difficulty != DIFFICULTY_EASY)
 		&& ((_globals[kDogStatus] == DOG_PRESENT) || _game._trigger)) {
 		local._animationMode = 2;
 		if (_game._trigger == 0) {
@@ -426,50 +426,50 @@ static void room_607_parser() {
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x2F6));
 		}
 		handleThrowingBone();
-	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, NOUN_STREET)) {
+	} else if (_action._lookFlag || _action.isAction(words_look, words_street)) {
 		if ((_globals[kDogStatus] == DOG_PRESENT) || (_game._difficulty == DIFFICULTY_EASY))
 			_vm->_dialogs->show(60710);
 		else
 			_vm->_dialogs->show(60711);
-	} else if (_action.isAction(VERB_LOOK, NOUN_WALL))
+	} else if (_action.isAction(words_look, words_wall))
 		_vm->_dialogs->show(60712);
-	else if (_action.isAction(VERB_LOOK, NOUN_FENCE))
+	else if (_action.isAction(words_look, words_fence))
 		_vm->_dialogs->show(60713);
-	else if (_action.isAction(VERB_LOOK, NOUN_CAR))
+	else if (_action.isAction(words_look, words_car))
 		_vm->_dialogs->show(60714);
-	else if (_action.isAction(VERB_LOOK, NOUN_MANHOLE))
+	else if (_action.isAction(words_look, words_manhole))
 		_vm->_dialogs->show(60715);
-	else if (_action.isAction(VERB_LOOK, NOUN_FIRE_HYDRANT) && (_globals[kDogStatus] == DOG_PRESENT))
+	else if (_action.isAction(words_look, words_fire_hydrant) && (_globals[kDogStatus] == DOG_PRESENT))
 		_vm->_dialogs->show(60716);
-	else if (_action.isAction(VERB_LOOK, NOUN_SIGN))
+	else if (_action.isAction(words_look, words_sign))
 		_vm->_dialogs->show(60717);
-	else if (_action.isAction(VERB_LOOK, NOUN_BROKEN_WINDOW))
+	else if (_action.isAction(words_look, words_broken_window))
 		_vm->_dialogs->show(60718);
-	else if (_action.isAction(VERB_LOOK, NOUN_GARAGE_DOOR))
+	else if (_action.isAction(words_look, words_garage_door))
 		_vm->_dialogs->show(60719);
-	else if (_action.isAction(VERB_LOOK, NOUN_SIDEWALK))
+	else if (_action.isAction(words_look, words_sidewalk))
 		_vm->_dialogs->show(60720);
-	else if (_action.isAction(VERB_LOOK, NOUN_AIR_HOSE))
+	else if (_action.isAction(words_look, words_air_hose))
 		_vm->_dialogs->show(60721);
-	else if (_action.isAction(VERB_LOOK, NOUN_AUTO_SHOP)) {
+	else if (_action.isAction(words_look, words_auto_shop)) {
 		if (_globals[kDogStatus] == DOG_PRESENT)
 			_vm->_dialogs->show(60723);
 		else
 			_vm->_dialogs->show(60722);
-	} else if (_action.isAction(VERB_LOOK, NOUN_SIDE_ENTRANCE)) {
+	} else if (_action.isAction(words_look, words_side_entrance)) {
 		if (_globals[kDogStatus] == DOG_PRESENT)
 			_vm->_dialogs->show(60725);
 		else
 			_vm->_dialogs->show(60724);
-	} else if (_action.isAction(VERB_LOOK, NOUN_OBNOXIOUS_DOG))
+	} else if (_action.isAction(words_look, words_obnoxious_dog))
 		_vm->_dialogs->show(60726);
-	else if (_action.isAction(VERB_TALKTO, NOUN_OBNOXIOUS_DOG))
+	else if (_action.isAction(words_talkto, words_obnoxious_dog))
 		_vm->_dialogs->show(60727);
-	else if (_action.isAction(VERB_LOOK, NOUN_BARRICADE))
+	else if (_action.isAction(words_look, words_barricade))
 		_vm->_dialogs->show(60728);
-	else if (_action.isAction(VERB_WALK_DOWN, NOUN_STREET))
+	else if (_action.isAction(words_walk_down, words_street))
 		_vm->_dialogs->show(60730);
-	else if (_action.isObject(NOUN_GARAGE_DOOR) && (_action.isAction(VERB_OPEN) || _action.isAction(VERB_PUSH) || _action.isAction(VERB_PULL)))
+	else if (_action.isObject(words_garage_door) && (_action.isAction(words_open) || _action.isAction(words_push) || _action.isAction(words_pull)))
 		_vm->_dialogs->show(60731);
 	else
 		return;
@@ -499,8 +499,8 @@ void room_607_preload() {
 
 	section_6_walker();
 	section_6_interface();
-	_scene->addActiveVocab(NOUN_OBNOXIOUS_DOG);
-	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(words_obnoxious_dog);
+	_scene->addActiveVocab(words_walkto);
 }
 
 } // namespace Rooms

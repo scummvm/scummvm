@@ -46,7 +46,7 @@ static void room_507_init() {
 
 	if ((_game._difficulty != DIFFICULTY_EASY) && (_game._objects[OBJ_PENLIGHT]._roomNumber == _scene->_currentSceneId)) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-		local._penlightHotspotId = _scene->_dynamicHotspots.add(NOUN_PENLIGHT, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		local._penlightHotspotId = _scene->_dynamicHotspots.add(words_penlight, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._penlightHotspotId, Common::Point(233, 152), FACING_SOUTHEAST);
 	}
 
@@ -59,9 +59,9 @@ static void room_507_init() {
 }
 
 static void room_507_parser() {
-	if (_action.isAction(VERB_WALK_THROUGH, NOUN_ENTRANCE))
+	if (_action.isAction(words_walk_through, words_entrance))
 		_scene->_nextSceneId = 506;
-	else if (_action.isAction(VERB_TAKE, NOUN_PENLIGHT)) {
+	else if (_action.isAction(words_take, words_penlight)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_PENLIGHT)) {
 			switch (_game._trigger) {
 			case 0:
@@ -94,50 +94,50 @@ static void room_507_parser() {
 		}
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(50722);
-	else if (_action.isAction(VERB_LOOK, NOUN_SWIRLING_LIGHT))
+	else if (_action.isAction(words_look, words_swirling_light))
 		_vm->_dialogs->show(50710);
-	else if (_action.isAction(VERB_TAKE, NOUN_SWIRLING_LIGHT))
+	else if (_action.isAction(words_take, words_swirling_light))
 		_vm->_dialogs->show(50711);
-	else if (_action.isAction(VERB_LOOK, NOUN_OLD_SOFTWARE))
+	else if (_action.isAction(words_look, words_old_software))
 		_vm->_dialogs->show(50712);
-	else if (_action.isAction(VERB_TAKE, NOUN_OLD_SOFTWARE))
+	else if (_action.isAction(words_take, words_old_software))
 		_vm->_dialogs->show(50713);
-	else if (_action.isAction(VERB_LOOK, NOUN_ADVERTISEMENT))
+	else if (_action.isAction(words_look, words_advertisement))
 		_vm->_dialogs->show(50714);
-	else if (_action.isAction(VERB_LOOK, NOUN_ADVERTISING_POSTER))
+	else if (_action.isAction(words_look, words_advertising_poster))
 		_vm->_dialogs->show(50715);
-	else if (_action.isAction(VERB_LOOK, NOUN_SIGN)) {
+	else if (_action.isAction(words_look, words_sign)) {
 		if (_scene->_customDest.x < 100)
 			_vm->_dialogs->show(50726);
 		else
 			_vm->_dialogs->show(50716);
-	} else if (_action.isAction(VERB_LOOK, NOUN_HOTTEST_SOFTWARE))
+	} else if (_action.isAction(words_look, words_hottest_software))
 		_vm->_dialogs->show(50717);
-	else if (_action.isAction(VERB_LOOK, NOUN_SOFTWARE_SHELF))
+	else if (_action.isAction(words_look, words_software_shelf))
 		_vm->_dialogs->show(50718);
-	else if (_action.isAction(VERB_LOOK, NOUN_SENSOR))
+	else if (_action.isAction(words_look, words_sensor))
 		_vm->_dialogs->show(50719);
-	else if (_action.isAction(VERB_LOOK, NOUN_CASH_REGISTER))
+	else if (_action.isAction(words_look, words_cash_register))
 		_vm->_dialogs->show(50720);
-	else if (_action.isAction(VERB_LOOK, NOUN_PAD_OF_PAPER))
+	else if (_action.isAction(words_look, words_pad_of_paper))
 		_vm->_dialogs->show(50721);
-	else if (_action.isAction(VERB_OPEN, NOUN_CASH_REGISTER))
+	else if (_action.isAction(words_open, words_cash_register))
 		_vm->_dialogs->show(50723);
-	else if (_action.isAction(VERB_LOOK, NOUN_BARGAIN_VAT))
+	else if (_action.isAction(words_look, words_bargain_vat))
 		_vm->_dialogs->show(50724);
-	else if (_action.isAction(VERB_LOOK, NOUN_WINDOW))
+	else if (_action.isAction(words_look, words_window))
 		_vm->_dialogs->show(50725);
-	else if (_action.isAction(VERB_WALK_BEHIND, NOUN_COUNTER)) {
+	else if (_action.isAction(words_walk_behind, words_counter)) {
 		// WORKAROUND: Empty handling to prevent default "can't do that" dialogs showing
-	} else if (_action.isAction(VERB_LOOK, NOUN_COUNTER)) {
+	} else if (_action.isAction(words_look, words_counter)) {
 		if (_game._objects.isInRoom(OBJ_PENLIGHT))
 			_vm->_dialogs->show(50728);
 		else
 			_vm->_dialogs->show(50727);
-	} else if (_action.isAction(VERB_LOOK, NOUN_PENLIGHT) && !_game._objects.isInInventory(OBJ_PENLIGHT)) {
+	} else if (_action.isAction(words_look, words_penlight) && !_game._objects.isInInventory(OBJ_PENLIGHT)) {
 		if (_game._objects.isInRoom(OBJ_PENLIGHT))
 			_vm->_dialogs->show(50729);
-	} else if (_action.isAction(VERB_LOOK, NOUN_EMERGENCY_LIGHT))
+	} else if (_action.isAction(words_look, words_emergency_light))
 		_vm->_dialogs->show(50731);
 	else
 		return;
@@ -155,8 +155,8 @@ void room_507_preload() {
 
 	section_5_walker();
 	section_5_interface();
-	_scene->addActiveVocab(NOUN_PENLIGHT);
-	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(words_penlight);
+	_scene->addActiveVocab(words_walkto);
 }
 
 } // namespace Rooms

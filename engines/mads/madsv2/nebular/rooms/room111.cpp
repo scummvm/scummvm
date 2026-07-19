@@ -62,11 +62,11 @@ static void room_111_init() {
 	_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 	_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
 
-	int idx = _scene->_dynamicHotspots.add(NOUN_BATS, VERB_LOOK_AT, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(words_bats, words_look_at, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
-	idx = _scene->_dynamicHotspots.add(NOUN_BATS, VERB_LOOK_AT, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+	idx = _scene->_dynamicHotspots.add(words_bats, words_look_at, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
-	idx = _scene->_dynamicHotspots.add(NOUN_BATS, VERB_LOOK_AT, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+	idx = _scene->_dynamicHotspots.add(words_bats, words_look_at, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 
 	local._launch1Fl = false;
@@ -117,14 +117,14 @@ static void room_111_daemon() {
 		_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 5, 1, 0, 0);
 		local._launch1Fl = true;
-		int idx = _scene->_dynamicHotspots.add(NOUN_BATS, VERB_LOOK_AT, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_bats, words_look_at, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 	}
 
 	if (!local._launched2Fl && (_vm->getRandomNumber(1, 30000) == 1)) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 5, 1, 0, 0);
-		int idx = _scene->_dynamicHotspots.add(NOUN_BATS, VERB_LOOK_AT, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_bats, words_look_at, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 		local._launched2Fl = true;
 	}
@@ -139,12 +139,12 @@ static void room_111_daemon() {
 }
 
 static void room_111_pre_parser() {
-	if (_action.isAction(VERB_WALK_THROUGH, NOUN_CAVE_ENTRANCE))
+	if (_action.isAction(words_walk_through, words_cave_entrance))
 		_game._player._walkOffScreenSceneId = 212;
 }
 
 static void room_111_parser() {
-	if (_action.isAction(VERB_DIVE_INTO, NOUN_POOL) && _game._objects.isInInventory(OBJ_REBREATHER)) {
+	if (_action.isAction(words_dive_into, words_pool) && _game._objects.isInInventory(OBJ_REBREATHER)) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->loadAnimation(Resources::formatName(111, 'A', 1, EXT_AA, ""), 1);
@@ -160,17 +160,17 @@ static void room_111_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_CAVE_FLOOR))
+	} else if (_action.isAction(words_look, words_cave_floor))
 		_vm->_dialogs->show(11101);
-	else if (_action.isAction(VERB_LOOK, NOUN_POOL))
+	else if (_action.isAction(words_look, words_pool))
 		_vm->_dialogs->show(11102);
-	else if (_action.isAction(VERB_LOOK, NOUN_CAVE_ENTRANCE))
+	else if (_action.isAction(words_look, words_cave_entrance))
 		_vm->_dialogs->show(11103);
-	else if (_action.isAction(VERB_LOOK, NOUN_STALAGMITES))
+	else if (_action.isAction(words_look, words_stalagmites))
 		_vm->_dialogs->show(11104);
-	else if (_action.isAction(VERB_LOOK, NOUN_LARGE_STALAGMITE))
+	else if (_action.isAction(words_look, words_large_stalagmite))
 		_vm->_dialogs->show(11105);
-	else if ((_action.isAction(VERB_PULL) || _action.isAction(VERB_TAKE)) && (_action.isObject(NOUN_STALAGMITES) || _action.isObject(NOUN_LARGE_STALAGMITE)))
+	else if ((_action.isAction(words_pull) || _action.isAction(words_take)) && (_action.isObject(words_stalagmites) || _action.isObject(words_large_stalagmite)))
 		_vm->_dialogs->show(11106);
 	else
 		return;
@@ -191,7 +191,7 @@ void room_111_preload() {
 	room_parser_code_pointer = room_111_parser;
 	room_daemon_code_pointer = room_111_daemon;
 
-	_scene->addActiveVocab(NOUN_BATS);
+	_scene->addActiveVocab(words_bats);
 	section_1_walker();
 	section_1_interface();
 }

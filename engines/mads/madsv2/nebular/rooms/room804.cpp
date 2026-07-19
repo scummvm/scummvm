@@ -281,10 +281,10 @@ static void room_804_daemon() {
 }
 
 static void room_804_parser() {
-	if (_action.isAction(VERB_LOOK, NOUN_SERVICE_PANEL) ||
-		_action.isAction(VERB_OPEN, NOUN_SERVICE_PANEL)) {
+	if (_action.isAction(words_look, words_service_panel) ||
+		_action.isAction(words_open, words_service_panel)) {
 		_scene->_nextSceneId = 805;
-	} else if ((_action.isAction(VERB_ACTIVATE, NOUN_REMOTE)) && _globals[kTopButtonPushed]) {
+	} else if ((_action.isAction(words_activate, words_remote)) && _globals[kTopButtonPushed]) {
 		if (!_globals[kInSpace]) {
 			// Top button pressed on panel in hanger control
 			if (!_globals[kBeamIsUp]) {
@@ -299,7 +299,7 @@ static void room_804_parser() {
 				_vm->_sound->command(15);
 			}
 		}
-	} else if (_action.isAction(VERB_PULL, NOUN_THROTTLE)) {
+	} else if (_action.isAction(words_pull, words_throttle)) {
 		_game._player._stepEnabled = false;
 		if (_globals[kBeamIsUp]) {
 			if (!_game._objects.isInInventory(OBJ_VASE) && _globals[kWindowFixed]) {
@@ -316,13 +316,13 @@ static void room_804_parser() {
 		} else {
 			local._messWithThrottle = true;
 		}
-	} else if (_action.isAction(VERB_APPLY, NOUN_POLYCEMENT, NOUN_CRACK) ||
-		_action.isAction(VERB_PUT, NOUN_POLYCEMENT, NOUN_CRACK)) {
+	} else if (_action.isAction(words_apply, words_polycement, words_crack) ||
+		_action.isAction(words_put, words_polycement, words_crack)) {
 		if (!_globals[kWindowFixed]) {
 			local._resetFrame = 2;
 			_game._player._stepEnabled = false;
 		}
-	} else if (_action.isAction(VERB_EXIT, NOUN_SHIP)) {
+	} else if (_action.isAction(words_exit, words_ship)) {
 		_globals[kExitShip] = true;
 		_globals[kFromCockpit] = true;
 		if (_globals[kBeamIsUp]) {
@@ -335,34 +335,34 @@ static void room_804_parser() {
 		_scene->_sequences.addTimer(2, 90);
 	} else  if (_action._lookFlag) {
 		_vm->_dialogs->show(80410);
-	} else if ((_action.isAction(VERB_LOOK, NOUN_WINDOW)) ||
-		(_action.isAction(VERB_LOOK_OUT, NOUN_WINDOW))) {
+	} else if ((_action.isAction(words_look, words_window)) ||
+		(_action.isAction(words_look_out, words_window))) {
 		if (_globals[kBeamIsUp]) {
 			_vm->_dialogs->show(80412);
 		} else {
 			_vm->_dialogs->show(80411);
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_CRACK)) {
+	} else if (_action.isAction(words_look, words_crack)) {
 		if (_globals[kWindowFixed]) {
 			_vm->_dialogs->show(80414);
 		} else {
 			_vm->_dialogs->show(80413);
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_CONTROLS)) {
+	} else if (_action.isAction(words_look, words_controls)) {
 		_vm->_dialogs->show(80415);
-	} else if (_action.isAction(VERB_LOOK, NOUN_STATUS_PANEL)) {
+	} else if (_action.isAction(words_look, words_status_panel)) {
 		if (_globals[kBeamIsUp]) {
 			_vm->_dialogs->show(80417);
 		} else {
 			_vm->_dialogs->show(80416);
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_TP)) {
+	} else if (_action.isAction(words_look, words_tp)) {
 		_vm->_dialogs->show(80418);
-	} else if (_action.isAction(VERB_TAKE, NOUN_TP)) {
+	} else if (_action.isAction(words_take, words_tp)) {
 		_vm->_dialogs->show(80419);
-	} else if (_action.isAction(VERB_LOOK, NOUN_INSTRUMENTATION)) {
+	} else if (_action.isAction(words_look, words_instrumentation)) {
 		_vm->_dialogs->show(80420);
-	} else  if (_action.isAction(VERB_LOOK, NOUN_SEAT)) {
+	} else  if (_action.isAction(words_look, words_seat)) {
 		_vm->_dialogs->show(80421);
 	} else
 		return;

@@ -150,7 +150,7 @@ static void room_703_init() {
 	local._boatFrame = -1;
 
 	if (!_globals[kMonsterAlive])
-		_scene->_hotspots.activate(NOUN_SEA_MONSTER, false);
+		_scene->_hotspots.activate(words_sea_monster, false);
 
 	if (_scene->_priorSceneId == 704) {
 		_game._player._stepEnabled = false;
@@ -464,7 +464,7 @@ static void room_703_daemon() {
 				break;
 
 			case 126:
-				_scene->_hotspots.activate(NOUN_SEA_MONSTER, false);
+				_scene->_hotspots.activate(words_sea_monster, false);
 				_globals[kMonsterAlive] = false;
 				_scene->freeAnimation();
 				local._monsterMode = 0;
@@ -493,7 +493,7 @@ static void room_703_daemon() {
 static void room_703_parser() {
 	if (_game._screenObjects._inputMode == kInputConversation)
 		handleFillBottle(_action._activeAction._verbId);
-	else if (_action.isAction(VERB_STEER_TOWARDS, NOUN_DOCK_TO_SOUTH)) {
+	else if (_action.isAction(words_steer_towards, words_dock_to_south)) {
 		_game._player._stepEnabled = false;
 		if (_globals[kMonsterAlive])
 			local._curSequence = 8;
@@ -501,7 +501,7 @@ static void room_703_parser() {
 			local._curSequence = 5;
 		else
 			local._curSequence = 3;
-	} else if (_action.isAction(VERB_STEER_TOWARDS, NOUN_BUILDING_TO_NORTH)) {
+	} else if (_action.isAction(words_steer_towards, words_building_to_north)) {
 		_game._player._stepEnabled = false;
 		if (_globals[kMonsterAlive]) {
 			local._startMonsterTimer = false;
@@ -514,57 +514,57 @@ static void room_703_parser() {
 			local._curSequence = 4;
 		else
 			local._curSequence = 1;
-	} else if (_action.isAction(VERB_THROW, NOUN_BONE, NOUN_SEA_MONSTER) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_SEA_MONSTER)) {
+	} else if (_action.isAction(words_throw, words_bone, words_sea_monster) || _action.isAction(words_throw, words_bones, words_sea_monster)) {
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
 		local._monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
 		_scene->_animation[0]->setCurrentFrame(19);
-	} else if (_action.isAction(VERB_THROW, NOUN_CHICKEN, NOUN_SEA_MONSTER)) {
+	} else if (_action.isAction(words_throw, words_chicken, words_sea_monster)) {
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
 		local._monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
-	} else if (_action.isAction(VERB_THROW, NOUN_TWINKIFRUIT, NOUN_SEA_MONSTER)) {
+	} else if (_action.isAction(words_throw, words_twinkifruit, words_sea_monster)) {
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
 		local._monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
 		_scene->_animation[0]->setCurrentFrame(39);
-	} else if (_action.isAction(VERB_THROW, NOUN_BOMB, NOUN_SEA_MONSTER)) {
+	} else if (_action.isAction(words_throw, words_bomb, words_sea_monster)) {
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
 		local._monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
 		_scene->_animation[0]->setCurrentFrame(59);
-	} else if (_action.isAction(VERB_THROW, NOUN_CHICKEN_BOMB, NOUN_SEA_MONSTER)) {
+	} else if (_action.isAction(words_throw, words_chicken_bomb, words_sea_monster)) {
 		local._useBomb = true;
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
 		local._monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
-	} else if (_action.isAction(VERB_PUT, NOUN_BOTTLE, NOUN_WATER) || _action.isAction(VERB_FILL, NOUN_BOTTLE, NOUN_WATER)) {
+	} else if (_action.isAction(words_put, words_bottle, words_water) || _action.isAction(words_fill, words_bottle, words_water)) {
 		if (_globals[kBottleStatus] != 4) {
 			handleBottleInterface();
 			local._dialog1.start();
 		} else
 			_vm->_dialogs->show(70323);
-	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, NOUN_SEA_MONSTER)) {
+	} else if (_action._lookFlag || _action.isAction(words_look, words_sea_monster)) {
 		if (_globals[kMonsterAlive])
 			_vm->_dialogs->show(70310);
-	} else if (_action.isAction(VERB_LOOK, NOUN_WATER)) {
+	} else if (_action.isAction(words_look, words_water)) {
 		if (!_globals[kMonsterAlive])
 			_vm->_dialogs->show(70311);
 		else
 			_vm->_dialogs->show(70312);
-	} else if (_action.isAction(VERB_LOOK, NOUN_BUILDING_TO_NORTH)) {
+	} else if (_action.isAction(words_look, words_building_to_north)) {
 		if (_globals[kMonsterAlive])
 			_vm->_dialogs->show(70313);
 		else if (_game._visitedScenes.exists(710))
 			_vm->_dialogs->show(70314);
 		else
 			_vm->_dialogs->show(70315);
-	} else if (_action.isAction(VERB_LOOK, NOUN_VOLCANO_RIM))
+	} else if (_action.isAction(words_look, words_volcano_rim))
 		_vm->_dialogs->show(70316);
 	else
 		return;

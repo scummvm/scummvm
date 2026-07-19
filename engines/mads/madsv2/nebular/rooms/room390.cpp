@@ -40,11 +40,11 @@ static void room_390_init() {
 }
 
 static void room_390_parser() {
-	if (_action.isAction(VERB_RETURN_TO, NOUN_AIR_SHAFT))
+	if (_action.isAction(words_return_to, words_air_shaft))
 		_scene->_nextSceneId = 313;
-	else if (_action.isAction(VERB_LOOK_THROUGH, NOUN_GRATE))
+	else if (_action.isAction(words_look_through, words_grate))
 		_vm->_dialogs->show(39010);
-	else if (_action.isAction(VERB_OPEN, NOUN_GRATE))
+	else if (_action.isAction(words_open, words_grate))
 		_vm->_dialogs->show(39011);
 	else
 		return;

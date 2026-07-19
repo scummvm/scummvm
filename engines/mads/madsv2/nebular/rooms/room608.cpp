@@ -68,7 +68,7 @@ static Scratch local;
 
 static void resetDogVariables() {
 	_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
-	int idx = _scene->_dynamicHotspots.add(NOUN_OBNOXIOUS_DOG, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(words_obnoxious_dog, words_walkto, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(194, 142), FACING_EAST);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 4);
 	local._dogBarkingFl = false;
@@ -181,7 +181,7 @@ static void room_608_init() {
 	if (_game._objects.isInRoom(OBJ_POLYCEMENT)) {
 		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('g', -1));
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-		int idx = _scene->_dynamicHotspots.add(NOUN_POLYCEMENT, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_polycement, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		local._polycementHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(249, 129), FACING_NORTHEAST);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 6);
 	}
@@ -189,7 +189,7 @@ static void room_608_init() {
 	if (_game._objects.isInRoom(OBJ_REARVIEW_MIRROR)) {
 		_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('m', -1));
 		_globals._sequenceIndexes[12] = _scene->_sequences.startCycle(_globals._spriteIndexes[12], false, 1);
-		int idx = _scene->_dynamicHotspots.add(NOUN_REARVIEW_MIRROR, VERB_WALKTO, _globals._sequenceIndexes[12], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_rearview_mirror, words_walkto, _globals._sequenceIndexes[12], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(71, 113), FACING_NORTHEAST);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 15);
 	}
@@ -233,14 +233,14 @@ static void room_608_init() {
 		local._carMode = 0;
 		local._dogDeathMode = 0;
 		local._resetPositionsFl = false;
-		int idx = _scene->_dynamicHotspots.add(NOUN_CAR, VERB_WALKTO, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
+		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
 		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 		_scene->loadAnimation(formAnimName('A', -1));
 	} else if (_globals[kCarStatus] == CAR_DOWN) {
 		local._carMode = 0;
 		local._dogDeathMode = 0;
 		local._resetPositionsFl = false;
-		int idx = _scene->_dynamicHotspots.add(NOUN_CAR, VERB_WALKTO, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
+		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
 		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 		_scene->loadAnimation(formAnimName('A', -1));
 		_scene->_animation[0]->setCurrentFrame(6);
@@ -248,21 +248,21 @@ static void room_608_init() {
 		local._carMode = 2;
 		local._dogDeathMode = 0;
 		local._resetPositionsFl = false;
-		int idx = _scene->_dynamicHotspots.add(NOUN_CAR, VERB_WALKTO, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
+		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
 		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 		_scene->loadAnimation(formAnimName('C', -1));
 	} else if (_globals[kCarStatus] == CAR_SQUASHES_DOG_AGAIN) {
 		local._carMode = 1;
 		local._dogDeathMode = 2;
 		local._resetPositionsFl = true;
-		int idx = _scene->_dynamicHotspots.add(NOUN_CAR, VERB_WALKTO, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
+		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
 		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 		_scene->loadAnimation(formAnimName('B', -1));
 	} else {
 		local._carMode = 3;
 		local._dogDeathMode = 2;
 		local._resetPositionsFl = true;
-		int idx = _scene->_dynamicHotspots.add(NOUN_CAR, VERB_WALKTO, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
+		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
 		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 		_scene->loadAnimation(formAnimName('D', -1));
 	}
@@ -327,7 +327,7 @@ static void room_608_daemon() {
 				_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 				_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], false, 5, 8, 0, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 4);
-				int idx = _scene->_dynamicHotspots.add(NOUN_OBNOXIOUS_DOG, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+				int idx = _scene->_dynamicHotspots.add(words_obnoxious_dog, words_walkto, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(194, 142), FACING_EAST);
 				local._barkCount = 0;
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_SPRITE, 2, 100);
@@ -684,20 +684,20 @@ static void room_608_daemon() {
 static void room_608_pre_parser() {
 	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 
-	if ((_action.isAction(VERB_THROW, NOUN_BONE, NOUN_REAR_OF_GARAGE) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_REAR_OF_GARAGE)
-		|| _action.isAction(VERB_THROW, NOUN_BONE, NOUN_FRONT_OF_GARAGE) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_FRONT_OF_GARAGE)
-		|| _action.isAction(VERB_THROW, NOUN_BONES, NOUN_OBNOXIOUS_DOG) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_OBNOXIOUS_DOG)) && local._dogActiveFl) {
+	if ((_action.isAction(words_throw, words_bone, words_rear_of_garage) || _action.isAction(words_throw, words_bones, words_rear_of_garage)
+		|| _action.isAction(words_throw, words_bone, words_front_of_garage) || _action.isAction(words_throw, words_bones, words_front_of_garage)
+		|| _action.isAction(words_throw, words_bones, words_obnoxious_dog) || _action.isAction(words_throw, words_bone, words_obnoxious_dog)) && local._dogActiveFl) {
 		_game._player._stepEnabled = false;
 		_game._player.walk(Common::Point(56, 146), FACING_EAST);
 	}
 
-	if ((_action.isAction(VERB_THROW, NOUN_BONES, NOUN_AREA_BEHIND_CAR) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_AREA_BEHIND_CAR)
-		|| _action.isAction(VERB_THROW, NOUN_BONES, NOUN_DANGER_ZONE) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_DANGER_ZONE)) && local._dogActiveFl) {
+	if ((_action.isAction(words_throw, words_bones, words_area_behind_car) || _action.isAction(words_throw, words_bone, words_area_behind_car)
+		|| _action.isAction(words_throw, words_bones, words_danger_zone) || _action.isAction(words_throw, words_bone, words_danger_zone)) && local._dogActiveFl) {
 		_game._player._stepEnabled = false;
 		_game._player.walk(Common::Point(75, 136), FACING_EAST);
 	}
 
-	if (_action.isAction(VERB_PUSH, NOUN_DOWN_BUTTON) && local._dogUnderCar) {
+	if (_action.isAction(words_push, words_down_button) && local._dogUnderCar) {
 		local._buttonPressedonTimeFl = true;
 		local._dogDeathMode = 1;
 	} else
@@ -705,9 +705,9 @@ static void room_608_pre_parser() {
 }
 
 static void room_608_parser() {
-	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY))
+	if (_action.isAction(words_walk_through, words_doorway))
 		_scene->_nextSceneId = 607;
-	else if (_action.isAction(VERB_PUSH, NOUN_DOWN_BUTTON)) {
+	else if (_action.isAction(words_push, words_down_button)) {
 		_game._player._stepEnabled = true;
 		switch (_game._trigger) {
 		case 0:
@@ -754,7 +754,7 @@ static void room_608_parser() {
 				_scene->_sequences.addTimer(1, 2);
 			else {
 				_scene->_dynamicHotspots.remove(local._carHotspotId);
-				int idx = _scene->_dynamicHotspots.add(NOUN_CAR, VERB_WALKTO, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
+				int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
 				local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 				if (_globals[kCarStatus] == CAR_SQUASHES_DOG)
 					_scene->_sequences.addTimer(120, 3);
@@ -782,7 +782,7 @@ static void room_608_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_PUSH, NOUN_UP_BUTTON)) {
+	} else if (_action.isAction(words_push, words_up_button)) {
 		switch (_game._trigger) {
 		case 0:
 			if ((_globals[kCarStatus] == CAR_DOWN) || (_globals[kCarStatus] == CAR_DOWN_ON_SQUASHED_DOG)) {
@@ -823,7 +823,7 @@ static void room_608_parser() {
 				local._dogDeathMode = 2;
 			}
 			_scene->_dynamicHotspots.remove(local._carHotspotId);
-			int idx = _scene->_dynamicHotspots.add(NOUN_CAR, VERB_WALKTO, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
+			int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
 			local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 			_game._player._stepEnabled = true;
 		}
@@ -832,8 +832,8 @@ static void room_608_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_THROW, NOUN_BONE, NOUN_REAR_OF_GARAGE) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_REAR_OF_GARAGE)
-		|| _action.isAction(VERB_THROW, NOUN_BONES, NOUN_OBNOXIOUS_DOG) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_OBNOXIOUS_DOG)) {
+	} else if (_action.isAction(words_throw, words_bone, words_rear_of_garage) || _action.isAction(words_throw, words_bones, words_rear_of_garage)
+		|| _action.isAction(words_throw, words_bones, words_obnoxious_dog) || _action.isAction(words_throw, words_bone, words_obnoxious_dog)) {
 		_game._player._stepEnabled = true;
 		if (local._dogActiveFl) {
 			if (_game._trigger == 0) {
@@ -844,7 +844,7 @@ static void room_608_parser() {
 			handleThrowingBone();
 		} else
 			_vm->_dialogs->show(60841);
-	} else if (_action.isAction(VERB_THROW, NOUN_BONE, NOUN_FRONT_OF_GARAGE) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_FRONT_OF_GARAGE)) {
+	} else if (_action.isAction(words_throw, words_bone, words_front_of_garage) || _action.isAction(words_throw, words_bones, words_front_of_garage)) {
 		_game._player._stepEnabled = true;
 		if (local._dogActiveFl) {
 			if (_game._trigger == 0) {
@@ -855,8 +855,8 @@ static void room_608_parser() {
 			handleThrowingBone();
 		} else
 			_vm->_dialogs->show(60841);
-	} else if (_action.isAction(VERB_THROW, NOUN_BONES, NOUN_AREA_BEHIND_CAR) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_AREA_BEHIND_CAR)
-		|| _action.isAction(VERB_THROW, NOUN_BONES, NOUN_DANGER_ZONE) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_DANGER_ZONE)) {
+	} else if (_action.isAction(words_throw, words_bones, words_area_behind_car) || _action.isAction(words_throw, words_bone, words_area_behind_car)
+		|| _action.isAction(words_throw, words_bones, words_danger_zone) || _action.isAction(words_throw, words_bone, words_danger_zone)) {
 		_game._player._stepEnabled = true;
 		if ((_globals[kCarStatus] == CAR_UP) && local._dogActiveFl) {
 			if (local._dogActiveFl) {
@@ -870,7 +870,7 @@ static void room_608_parser() {
 				_vm->_dialogs->show(60841);
 		} else
 			_vm->_dialogs->show(60842);
-	} else if (_action.isAction(VERB_TAKE, NOUN_POLYCEMENT) && (_game._trigger || !_game._objects.isInInventory(OBJ_POLYCEMENT))) {
+	} else if (_action.isAction(words_take, words_polycement) && (_game._trigger || !_game._objects.isInInventory(OBJ_POLYCEMENT))) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -898,7 +898,7 @@ static void room_608_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_TAKE, NOUN_REARVIEW_MIRROR) && (_game._trigger || !_game._objects.isInInventory(OBJ_REARVIEW_MIRROR))) {
+	} else if (_action.isAction(words_take, words_rearview_mirror) && (_game._trigger || !_game._objects.isInInventory(OBJ_REARVIEW_MIRROR))) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -933,57 +933,57 @@ static void room_608_parser() {
 			_vm->_dialogs->show(60812);
 		else
 			_vm->_dialogs->show(60811);
-	} else if (_action.isAction(VERB_LOOK) && (_action.isObject(NOUN_MUFFLER) || _action.isObject(NOUN_CAR_SEAT) || _action.isObject(NOUN_HUBCAP)
-		|| _action.isObject(NOUN_COILS) || _action.isObject(NOUN_QUARTER_PANEL)))
+	} else if (_action.isAction(words_look) && (_action.isObject(words_muffler) || _action.isObject(words_car_seat) || _action.isObject(words_hubcap)
+		|| _action.isObject(words_coils) || _action.isObject(words_quarter_panel)))
 		_vm->_dialogs->show(60813);
-	else if (_action.isAction(VERB_TAKE) && (_action.isObject(NOUN_MUFFLER) || _action.isObject(NOUN_CAR_SEAT) || _action.isObject(NOUN_HUBCAP)
-		|| _action.isObject(NOUN_COILS) || _action.isObject(NOUN_QUARTER_PANEL)))
+	else if (_action.isAction(words_take) && (_action.isObject(words_muffler) || _action.isObject(words_car_seat) || _action.isObject(words_hubcap)
+		|| _action.isObject(words_coils) || _action.isObject(words_quarter_panel)))
 		_vm->_dialogs->show(60814);
-	else if (_action.isAction(VERB_LOOK, NOUN_GARAGE_FLOOR) || _action.isAction(VERB_LOOK, NOUN_FRONT_OF_GARAGE) || _action.isAction(VERB_LOOK, NOUN_REAR_OF_GARAGE)) {
+	else if (_action.isAction(words_look, words_garage_floor) || _action.isAction(words_look, words_front_of_garage) || _action.isAction(words_look, words_rear_of_garage)) {
 		if (local._dogActiveFl)
 			_vm->_dialogs->show(60815);
 		else
 			_vm->_dialogs->show(60816);
-	} else if (_action.isAction(VERB_LOOK, NOUN_SPARE_RIBS))
+	} else if (_action.isAction(words_look, words_spare_ribs))
 		_vm->_dialogs->show(60817);
-	else if (_action.isAction(VERB_TAKE, NOUN_SPARE_RIBS)) {
+	else if (_action.isAction(words_take, words_spare_ribs)) {
 		if (_game._difficulty == DIFFICULTY_HARD)
 			_vm->_dialogs->show(60818);
 		else
 			_vm->_dialogs->show(60819);
-	} else if (_action.isAction(VERB_LOOK, NOUN_UP_BUTTON))
+	} else if (_action.isAction(words_look, words_up_button))
 		_vm->_dialogs->show(60820);
-	else if (_action.isAction(VERB_LOOK, NOUN_DOWN_BUTTON))
+	else if (_action.isAction(words_look, words_down_button))
 		_vm->_dialogs->show(60821);
-	else if (_action.isAction(VERB_LOOK, NOUN_TRASH_CAN))
+	else if (_action.isAction(words_look, words_trash_can))
 		_vm->_dialogs->show(60822);
-	else if (_action.isAction(VERB_LOOK, NOUN_CALENDAR))
+	else if (_action.isAction(words_look, words_calendar))
 		_vm->_dialogs->show(60823);
-	else if (_action.isAction(VERB_LOOK, NOUN_STORAGE_BOX)) {
+	else if (_action.isAction(words_look, words_storage_box)) {
 		if (_game._objects[OBJ_REARVIEW_MIRROR]._roomNumber == _scene->_currentSceneId)
 			_vm->_dialogs->show(60825);
 		else
 			_vm->_dialogs->show(60824);
-	} else if (_action.isAction(VERB_OPEN, NOUN_STORAGE_BOX))
+	} else if (_action.isAction(words_open, words_storage_box))
 		_vm->_dialogs->show(60826);
-	else if (_action.isAction(VERB_LOOK, NOUN_REARVIEW_MIRROR) && (_action._mainObjectSource == CAT_HOTSPOT))
+	else if (_action.isAction(words_look, words_rearview_mirror) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(60828);
-	else if (_action.isAction(VERB_LOOK, NOUN_TOOL_BOX)) {
+	else if (_action.isAction(words_look, words_tool_box)) {
 		if (_game._objects[OBJ_POLYCEMENT]._roomNumber == _scene->_currentSceneId)
 			_vm->_dialogs->show(60829);
 		else
 			_vm->_dialogs->show(60830);
-	} else if (_action.isAction(VERB_OPEN, NOUN_TOOL_BOX))
+	} else if (_action.isAction(words_open, words_tool_box))
 		_vm->_dialogs->show(60831);
-	else if ((_action.isAction(VERB_LOOK, NOUN_POLYCEMENT)) && (_game._objects.isInRoom(OBJ_POLYCEMENT)))
+	else if ((_action.isAction(words_look, words_polycement)) && (_game._objects.isInRoom(OBJ_POLYCEMENT)))
 		_vm->_dialogs->show(60832);
-	else if (_action.isAction(VERB_LOOK, NOUN_GREASE_CAN) || _action.isAction(VERB_LOOK, NOUN_OIL_CAN))
+	else if (_action.isAction(words_look, words_grease_can) || _action.isAction(words_look, words_oil_can))
 		_vm->_dialogs->show(60834);
-	else if (_action.isAction(VERB_LOOK, NOUN_CAR_LIFT))
+	else if (_action.isAction(words_look, words_car_lift))
 		_vm->_dialogs->show(60835);
-	else if (_action.isAction(VERB_LOOK, NOUN_CHAIR) || _action.isAction(VERB_LOOK, NOUN_HAT))
+	else if (_action.isAction(words_look, words_chair) || _action.isAction(words_look, words_hat))
 		_vm->_dialogs->show(60836);
-	else if (_action.isAction(VERB_LOOK, NOUN_DANGER_ZONE))
+	else if (_action.isAction(words_look, words_danger_zone))
 		_vm->_dialogs->show(60838);
 	else
 		return;
@@ -1031,10 +1031,10 @@ void room_608_preload() {
 
 	section_6_walker();
 	section_6_interface();
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_POLYCEMENT);
-	_scene->addActiveVocab(NOUN_CAR);
-	_scene->addActiveVocab(NOUN_OBNOXIOUS_DOG);
+	_scene->addActiveVocab(words_walkto);
+	_scene->addActiveVocab(words_polycement);
+	_scene->addActiveVocab(words_car);
+	_scene->addActiveVocab(words_obnoxious_dog);
 }
 
 } // namespace Rooms

@@ -345,7 +345,7 @@ static void room_307_init() {
 	if (local._grateOpenedFl) {
 		_scene->_hotspots.activate(17, false);
 
-		int idx = _scene->_dynamicHotspots.add(NOUN_AIR_VENT, VERB_CLIMB_INTO, -1, Common::Rect(117, 67, 117 + 19, 67 + 13));
+		int idx = _scene->_dynamicHotspots.add(words_air_vent, words_climb_into, -1, Common::Rect(117, 67, 117 + 19, 67 + 13));
 		int hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(129, 104), FACING_NORTH);
 		_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_UP);
 
@@ -453,7 +453,7 @@ static void room_307_parser() {
 		_vm->_dialogs->show(30715);
 	else if (_game._screenObjects._inputMode == kInputConversation)
 		handleDialog();
-	else if (_action.isAction(VERB_TALKTO, NOUN_CELL_WALL) || _action.isAction(VERB_TALKTO, NOUN_WALL) || _action.isAction(VERB_TALKTO, NOUN_TOILET)) {
+	else if (_action.isAction(words_talkto, words_cell_wall) || _action.isAction(words_talkto, words_wall) || _action.isAction(words_talkto, words_toilet)) {
 		int node, say;
 		if (_globals[kKnowsBuddyBeast]) {
 			say = 0x10E;
@@ -478,7 +478,7 @@ static void room_307_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_PRY, NOUN_SCALPEL, NOUN_AIR_VENT)) {
+	} else if (_action.isAction(words_pry, words_scalpel, words_air_vent)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -540,7 +540,7 @@ static void room_307_parser() {
 			_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 			local._grateOpenedFl = true;
 			_scene->_hotspots.activate(17, false);
-			int idx = _scene->_dynamicHotspots.add(NOUN_AIR_VENT, VERB_CLIMB_INTO, -1, Common::Rect(117, 67, 117 + 19, 67 + 13));
+			int idx = _scene->_dynamicHotspots.add(words_air_vent, words_climb_into, -1, Common::Rect(117, 67, 117 + 19, 67 + 13));
 			int hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(129, 104), FACING_NORTH);
 			_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_UP);
 			_game._objects.removeFromInventory(OBJ_SCALPEL, NOWHERE);
@@ -556,7 +556,7 @@ static void room_307_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_CLIMB_INTO, NOUN_AIR_VENT)) {
+	} else if (_action.isAction(words_climb_into, words_air_vent)) {
 		if (local._grateOpenedFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -640,9 +640,9 @@ static void room_307_parser() {
 				break;
 			}
 		}
-	} else if (_action.isAction(VERB_USE, NOUN_TOILET) && (_game._storyMode != STORYMODE_NAUGHTY))
+	} else if (_action.isAction(words_use, words_toilet) && (_game._storyMode != STORYMODE_NAUGHTY))
 		_vm->_dialogs->show(30723);
-	else if (_action.isAction(VERB_USE, NOUN_TOILET)) {
+	else if (_action.isAction(words_use, words_toilet)) {
 		if (!local._afterPeeingFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -693,24 +693,24 @@ static void room_307_parser() {
 			int idx = _scene->_kernelMessages.add(Common::Point(85, 39), 0x1110, 0, 0, 180, _game.getQuote(238));
 			_scene->_kernelMessages.setQuoted(idx, 4, true);
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_AIR_VENT)) {
+	} else if (_action.isAction(words_look, words_air_vent)) {
 		if (!local._grateOpenedFl)
 			_vm->_dialogs->show(30710);
 		else
 			_vm->_dialogs->show(30711);
-	} else if (_action.isAction(VERB_LOOK, NOUN_BED))
+	} else if (_action.isAction(words_look, words_bed))
 		_vm->_dialogs->show(30712);
-	else if (_action.isAction(VERB_LOOK, NOUN_SINK))
+	else if (_action.isAction(words_look, words_sink))
 		_vm->_dialogs->show(30713);
-	else if (_action.isAction(VERB_LOOK, NOUN_TOILET))
+	else if (_action.isAction(words_look, words_toilet))
 		_vm->_dialogs->show(30714);
-	else if (_action.isAction(VERB_SHARPEN, NOUN_SCALPEL))
+	else if (_action.isAction(words_sharpen, words_scalpel))
 		_vm->_dialogs->show(30716);
-	else if (_action.isAction(VERB_LOOK, NOUN_CELL_WALL))
+	else if (_action.isAction(words_look, words_cell_wall))
 		_vm->_dialogs->show(30717);
-	else if (_action.isAction(VERB_LOOK, NOUN_LIGHT))
+	else if (_action.isAction(words_look, words_light))
 		_vm->_dialogs->show(30718);
-	else if (_action.isAction(VERB_WALK_INTO, NOUN_CORRIDOR)) {
+	else if (_action.isAction(words_walk_into, words_corridor)) {
 		switch (local._fieldCollisionCounter) {
 		case 0:
 			_vm->_dialogs->show(30719);
@@ -771,8 +771,8 @@ void room_307_preload() {
 
 	section_3_walker();
 	section_3_interface();
-	_scene->addActiveVocab(NOUN_AIR_VENT);
-	_scene->addActiveVocab(VERB_CLIMB_INTO);
+	_scene->addActiveVocab(words_air_vent);
+	_scene->addActiveVocab(words_climb_into);
 }
 
 } // namespace Rooms

@@ -50,7 +50,7 @@ static void room_503_init() {
 
 	if (_game._objects[OBJ_DETONATORS]._roomNumber == _scene->_currentSceneId) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-		local._detonatorHotspotId = _scene->_dynamicHotspots.add(NOUN_DETONATORS, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		local._detonatorHotspotId = _scene->_dynamicHotspots.add(words_detonators, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._detonatorHotspotId, Common::Point(254, 135), FACING_SOUTH);
 	}
 
@@ -63,9 +63,9 @@ static void room_503_init() {
 }
 
 static void room_503_parser() {
-	if (_action.isAction(VERB_WALK, NOUN_OUTSIDE))
+	if (_action.isAction(words_walk, words_outside))
 		_scene->_nextSceneId = 501;
-	else if (_action.isAction(VERB_TAKE, NOUN_DETONATORS)) {
+	else if (_action.isAction(words_take, words_detonators)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_DETONATORS)) {
 			switch (_game._trigger) {
 			case 0:
@@ -110,42 +110,42 @@ static void room_503_parser() {
 		}
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(50328);
-	else if (_action.isAction(VERB_LOOK, NOUN_MONITORING_EQUIPMENT))
+	else if (_action.isAction(words_look, words_monitoring_equipment))
 		_vm->_dialogs->show(50310);
-	else if (_action.isAction(VERB_LOOK, NOUN_PHOTON_RIFLES))
+	else if (_action.isAction(words_look, words_photon_rifles))
 		_vm->_dialogs->show(50311);
-	else if (_action.isAction(VERB_TAKE, NOUN_PHOTON_RIFLES) || _action.isAction(VERB_TAKE, NOUN_NUCLEAR_SLINGSHOT))
+	else if (_action.isAction(words_take, words_photon_rifles) || _action.isAction(words_take, words_nuclear_slingshot))
 		_vm->_dialogs->show(50312);
-	else if (_action.isAction(VERB_LOOK, NOUN_DISPLAY_CASE))
+	else if (_action.isAction(words_look, words_display_case))
 		_vm->_dialogs->show(50313);
-	else if (_action.isAction(VERB_LOOK, NOUN_NUCLEAR_SLINGSHOT))
+	else if (_action.isAction(words_look, words_nuclear_slingshot))
 		_vm->_dialogs->show(50314);
-	else if (_action.isAction(VERB_LOOK, NOUN_WATER_COOLER))
+	else if (_action.isAction(words_look, words_water_cooler))
 		_vm->_dialogs->show(50315);
-	else if (_action.isAction(VERB_LOOK, NOUN_STORAGE_BOX))
+	else if (_action.isAction(words_look, words_storage_box))
 		_vm->_dialogs->show(50316);
-	else if (_action.isAction(VERB_OPEN, NOUN_STORAGE_BOX))
+	else if (_action.isAction(words_open, words_storage_box))
 		_vm->_dialogs->show(50317);
-	else if (_action.isAction(VERB_LOOK, NOUN_WARNING_LABEL))
+	else if (_action.isAction(words_look, words_warning_label))
 		_vm->_dialogs->show(50318);
-	else if (_action.isAction(VERB_LOOK, NOUN_DESK))
+	else if (_action.isAction(words_look, words_desk))
 		_vm->_dialogs->show(50319);
-	else if (_action.isAction(VERB_LOOK, NOUN_MONITOR))
+	else if (_action.isAction(words_look, words_monitor))
 		_vm->_dialogs->show(50320);
-	else if (_action.isAction(VERB_LOOK, NOUN_FILE_CABINETS))
+	else if (_action.isAction(words_look, words_file_cabinets))
 		_vm->_dialogs->show(50322);
-	else if (_action.isAction(VERB_LOOK, NOUN_BOX)) {
+	else if (_action.isAction(words_look, words_box)) {
 		if (_game._objects.isInRoom(OBJ_DETONATORS))
 			_vm->_dialogs->show(50323);
 		else
 			_vm->_dialogs->show(50324);
-	} else if (_action.isAction(VERB_LOOK, NOUN_DETONATORS) && (_action._savedFields._mainObjectSource == 4))
+	} else if (_action.isAction(words_look, words_detonators) && (_action._savedFields._mainObjectSource == 4))
 		_vm->_dialogs->show(50325);
-	else if (_action.isAction(VERB_LOOK, NOUN_WINDOWS))
+	else if (_action.isAction(words_look, words_windows))
 		_vm->_dialogs->show(50327);
-	else if (_action.isAction(VERB_OPEN, NOUN_DISPLAY_CASE))
+	else if (_action.isAction(words_open, words_display_case))
 		_vm->_dialogs->show(50329);
-	else if (_action.isAction(VERB_THROW, NOUN_DISPLAY_CASE) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId)))
+	else if (_action.isAction(words_throw, words_display_case) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId)))
 		_vm->_dialogs->show(50330);
 	else
 		return;
@@ -163,8 +163,8 @@ void room_503_preload() {
 
 	section_5_walker();
 	section_5_interface();
-	_scene->addActiveVocab(NOUN_DETONATORS);
-	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(words_detonators);
+	_scene->addActiveVocab(words_walkto);
 }
 
 } // namespace Rooms

@@ -52,7 +52,7 @@ static void room_201_init() {
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 8);
 	_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(185, 46));
 
-	int idx = _scene->_dynamicHotspots.add(NOUN_BIRDS, VERB_LOOK_AT, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(words_birds, words_look_at, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(186, 81), FACING_NORTH);
 
 	if ((_scene->_priorSceneId == 202) || (_scene->_priorSceneId == RETURNING_FROM_LOADING)) {
@@ -114,7 +114,7 @@ static void room_201_init() {
 		local._pterodactylFlag = true;
 
 	if (_globals[kTeleporterUnderstood])
-		_scene->_hotspots.activate(NOUN_STRANGE_DEVICE, false);
+		_scene->_hotspots.activate(words_strange_device, false);
 
 	section_2_music();
 }
@@ -122,7 +122,7 @@ static void room_201_init() {
 static void room_201_daemon() {
 	if (local._pterodactylFlag && (_vm->getRandomNumber(5000) == 9)) {
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 5, 1, 6, 0);
-		int idx = _scene->_dynamicHotspots.add(NOUN_SWOOPING_CREATURE, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_swooping_creature, words_walkto, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(270, 80), FACING_EAST);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 8);
 		_vm->_sound->command(14);
@@ -195,9 +195,9 @@ static void room_201_daemon() {
 
 static void room_201_parser() {
 	if (_action._lookFlag == false) {
-		if (_action.isAction(VERB_WALK_TOWARDS, NOUN_FIELD_TO_SOUTH))
+		if (_action.isAction(words_walk_towards, words_field_to_south))
 			_scene->_nextSceneId = 202;
-		else if (_action.isAction(VERB_CLIMB_UP, NOUN_STEPS) || (_action.isAction(VERB_WALK_INSIDE, NOUN_TELEPORTER)) || (_action.isAction(VERB_WALK_INSIDE, NOUN_STRANGE_DEVICE))) {
+		else if (_action.isAction(words_climb_up, words_steps) || (_action.isAction(words_walk_inside, words_teleporter)) || (_action.isAction(words_walk_inside, words_strange_device))) {
 			if (_game._trigger == 0) {
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
@@ -206,30 +206,30 @@ static void room_201_parser() {
 			} else if (_game._trigger == 1) {
 				_scene->_nextSceneId = 213;
 			}
-		} else if (_action.isAction(VERB_LOOK, NOUN_GRASSY_FIELD)) {
+		} else if (_action.isAction(words_look, words_grassy_field)) {
 			_vm->_dialogs->show(20101);
-		} else if (_action.isAction(VERB_LOOK, NOUN_ROCKS)) {
+		} else if (_action.isAction(words_look, words_rocks)) {
 			_vm->_dialogs->show(20102);
-		} else if (_action.isAction(VERB_LOOK, NOUN_THORNY_BUSH)) {
+		} else if (_action.isAction(words_look, words_thorny_bush)) {
 			_vm->_dialogs->show(20103);
-		} else if (_action.isAction(VERB_LOOK, NOUN_SKY)) {
+		} else if (_action.isAction(words_look, words_sky)) {
 			_vm->_dialogs->show(20104);
-		} else if (_action.isAction(VERB_LOOK, NOUN_WATER)) {
+		} else if (_action.isAction(words_look, words_water)) {
 			_vm->_dialogs->show(20105);
-		} else if (_action.isAction(VERB_LOOK, NOUN_ISLAND_IN_DISTANCE)) {
+		} else if (_action.isAction(words_look, words_island_in_distance)) {
 			_vm->_dialogs->show(20106);
-		} else if (_action.isAction(VERB_LOOK, NOUN_WEATHER_STATION)) {
+		} else if (_action.isAction(words_look, words_weather_station)) {
 			_vm->_dialogs->show(20107);
-		} else if (_action.isAction(VERB_LOOK, NOUN_PATH)) {
+		} else if (_action.isAction(words_look, words_path)) {
 			_vm->_dialogs->show(20108);
-		} else if (_action.isAction(VERB_LOOK, NOUN_FIELD_TO_SOUTH)) {
+		} else if (_action.isAction(words_look, words_field_to_south)) {
 			_vm->_dialogs->show(20110);
-		} else if (_action.isAction(VERB_LOOK, NOUN_STRANGE_DEVICE)) {
+		} else if (_action.isAction(words_look, words_strange_device)) {
 			if (_globals[kMeteorologistEverSeen])
 				_vm->_dialogs->show(20112);
 			else
 				_vm->_dialogs->show(20109);
-		} else if (_action.isAction(VERB_LOOK, NOUN_TELEPORTER)) {
+		} else if (_action.isAction(words_look, words_teleporter)) {
 			_vm->_dialogs->show(20113);
 		} else
 			return;
@@ -251,9 +251,9 @@ void room_201_preload() {
 	section_2_walker();
 	section_2_interface();
 
-	_scene->addActiveVocab(NOUN_SWOOPING_CREATURE);
-	_scene->addActiveVocab(NOUN_BIRDS);
-	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(words_swooping_creature);
+	_scene->addActiveVocab(words_birds);
+	_scene->addActiveVocab(words_walkto);
 }
 
 } // namespace Rooms

@@ -58,25 +58,25 @@ static void room_508_init() {
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
 		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -2);
-		int idx = _scene->_dynamicHotspots.add(NOUN_SPINACH_PATCH_DOLL, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_spinach_patch_doll, words_walkto, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(57, 116), FACING_NORTHEAST);
-		_scene->_hotspots.activate(NOUN_HOLE, false);
-		_scene->_hotspots.activate(NOUN_LASER_BEAM, false);
+		_scene->_hotspots.activate(words_hole, false);
+		_scene->_hotspots.activate(words_laser_beam, false);
 	} else {
 		_scene->changeVariant(1);
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 11);
-		int idx = _scene->_dynamicHotspots.add(NOUN_LASER_BEAM, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_laser_beam, words_walkto, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(57, 116), FACING_NORTHEAST);
 		_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 15, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 6, 8);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 6);
 		if (_globals[kLaserHoleIsThere]) {
 			_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, -2);
-			_scene->_hotspots.activate(NOUN_HOLE, true);
-			_scene->_hotspots.activate(NOUN_LASER_BEAM, true);
+			_scene->_hotspots.activate(words_hole, true);
+			_scene->_hotspots.activate(words_laser_beam, true);
 		}
 		_vm->_sound->command(21);
 	}
@@ -100,7 +100,7 @@ static void room_508_init() {
 }
 
 static void room_508_pre_parser() {
-	if (_action.isAction(VERB_WALK, NOUN_OUTSIDE))
+	if (_action.isAction(words_walk, words_outside))
 		_game._player._walkOffScreenSceneId = 506;
 }
 
@@ -135,8 +135,8 @@ static void handlePedestral() {
 
 		case 2:
 			_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, -2);
-			_scene->_hotspots.activate(NOUN_HOLE, true);
-			_scene->_hotspots.activate(NOUN_LASER_BEAM, true);
+			_scene->_hotspots.activate(words_hole, true);
+			_scene->_hotspots.activate(words_laser_beam, true);
 			break;
 
 		case 3:
@@ -158,7 +158,7 @@ static void handlePedestral() {
 }
 
 static void room_508_parser() {
-	if (_action.isAction(VERB_PULL, NOUN_LEVER)) {
+	if (_action.isAction(words_pull, words_lever)) {
 		if (!_globals[kLaserOn]) {
 			switch (_game._trigger) {
 			case 0:
@@ -204,7 +204,7 @@ static void room_508_parser() {
 				_vm->_sound->command(22);
 				_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, -2);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 11);
-				int idx = _scene->_dynamicHotspots.add(NOUN_LASER_BEAM, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+				int idx = _scene->_dynamicHotspots.add(words_laser_beam, words_walkto, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(57, 116), FACING_NORTHEAST);
 				_scene->_kernelMessages.reset();
 				_scene->changeVariant(1);
@@ -224,60 +224,60 @@ static void room_508_parser() {
 		} else {
 			_vm->_dialogs->show(50837);
 		}
-	} else if (_action.isAction(VERB_REFLECT, NOUN_REARVIEW_MIRROR, NOUN_LASER_BEAM) || _action.isAction(VERB_PUT, NOUN_REARVIEW_MIRROR, NOUN_PEDESTAL) || _action.isAction(VERB_PUT, NOUN_REARVIEW_MIRROR, NOUN_LASER_BEAM)) {
+	} else if (_action.isAction(words_reflect, words_rearview_mirror, words_laser_beam) || _action.isAction(words_put, words_rearview_mirror, words_pedestal) || _action.isAction(words_put, words_rearview_mirror, words_laser_beam)) {
 		local._chosenObject = 1;
 		handlePedestral();
-	} else if (_action.isAction(VERB_PUT, NOUN_COMPACT_CASE, NOUN_PEDESTAL) || _action.isAction(VERB_PUT, NOUN_COMPACT_CASE, NOUN_LASER_BEAM) || _action.isAction(VERB_REFLECT, NOUN_COMPACT_CASE, NOUN_LASER_BEAM)) {
+	} else if (_action.isAction(words_put, words_compact_case, words_pedestal) || _action.isAction(words_put, words_compact_case, words_laser_beam) || _action.isAction(words_reflect, words_compact_case, words_laser_beam)) {
 		local._chosenObject = 2;
 		handlePedestral();
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(50822);
-	else if (_action.isAction(VERB_LOOK, NOUN_TARGET_AREA))
+	else if (_action.isAction(words_look, words_target_area))
 		_vm->_dialogs->show(50810);
-	else if (_action.isAction(VERB_LOOK, NOUN_SPINACH_PATCH_DOLL))
+	else if (_action.isAction(words_look, words_spinach_patch_doll))
 		_vm->_dialogs->show(50811);
-	else if (_action.isAction(VERB_TAKE, NOUN_SPINACH_PATCH_DOLL))
+	else if (_action.isAction(words_take, words_spinach_patch_doll))
 		_vm->_dialogs->show(50812);
-	else if (_action.isAction(VERB_LOOK, NOUN_SAND_BAGS))
+	else if (_action.isAction(words_look, words_sand_bags))
 		_vm->_dialogs->show(50816);
-	else if (_action.isAction(VERB_TAKE, NOUN_SAND_BAGS))
+	else if (_action.isAction(words_take, words_sand_bags))
 		_vm->_dialogs->show(50817);
-	else if (_action.isAction(VERB_LOOK, NOUN_CONTROL_STATION))
+	else if (_action.isAction(words_look, words_control_station))
 		_vm->_dialogs->show(50818);
-	else if (_action.isAction(VERB_LOOK, NOUN_MONITOR)) {
+	else if (_action.isAction(words_look, words_monitor)) {
 		if (_globals[kLaserOn])
 			_vm->_dialogs->show(50820);
 		else
 			_vm->_dialogs->show(50819);
-	} else if (_action.isAction(VERB_LOOK, NOUN_LASER_CANNON)) {
+	} else if (_action.isAction(words_look, words_laser_cannon)) {
 		if (_globals[kLaserOn])
 			_vm->_dialogs->show(50822);
 		else
 			_vm->_dialogs->show(50821);
-	} else if (_action.isAction(VERB_TAKE, NOUN_LASER_CANNON))
+	} else if (_action.isAction(words_take, words_laser_cannon))
 		_vm->_dialogs->show(50823);
-	else if (_action.isAction(VERB_LOOK, NOUN_LEVER)) {
+	else if (_action.isAction(words_look, words_lever)) {
 		if (_globals[kLaserOn])
 			_vm->_dialogs->show(50825);
 		else
 			_vm->_dialogs->show(50824);
-	} else if (_action.isAction(VERB_PUSH, NOUN_LEVER))
+	} else if (_action.isAction(words_push, words_lever))
 		_vm->_dialogs->show(50826);
-	else if (_action.isAction(VERB_LOOK, NOUN_LASER_BEAM)) {
+	else if (_action.isAction(words_look, words_laser_beam)) {
 		if (_globals[kLaserHoleIsThere])
 			_vm->_dialogs->show(50828);
 		else
 			_vm->_dialogs->show(50827);
-	} else if (_action.isAction(VERB_TAKE, NOUN_LASER_BEAM))
+	} else if (_action.isAction(words_take, words_laser_beam))
 		_vm->_dialogs->show(50829);
-	else if (_action.isAction(VERB_LOOK, NOUN_CEILING)) {
+	else if (_action.isAction(words_look, words_ceiling)) {
 		if (_globals[kLaserHoleIsThere])
 			_vm->_dialogs->show(50831);
 		else
 			_vm->_dialogs->show(50830);
-	} else if (_action.isAction(VERB_LOOK, NOUN_WALL))
+	} else if (_action.isAction(words_look, words_wall))
 		_vm->_dialogs->show(50832);
-	else if (_action.isAction(VERB_LOOK, NOUN_PEDESTAL)) {
+	else if (_action.isAction(words_look, words_pedestal)) {
 		if (!_globals[kLaserOn])
 			_vm->_dialogs->show(50813);
 		else if (!_globals[kLaserHoleIsThere])
@@ -301,9 +301,9 @@ void room_508_preload() {
 
 	section_5_walker();
 	section_5_interface();
-	_scene->addActiveVocab(NOUN_SPINACH_PATCH_DOLL);
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_LASER_BEAM);
+	_scene->addActiveVocab(words_spinach_patch_doll);
+	_scene->addActiveVocab(words_walkto);
+	_scene->addActiveVocab(words_laser_beam);
 }
 
 } // namespace Rooms

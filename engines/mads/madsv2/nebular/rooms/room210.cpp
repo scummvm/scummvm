@@ -631,7 +631,7 @@ static void room_210_init() {
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 5);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 5);
 	} else {
-		int idx = _scene->_dynamicHotspots.add(NOUN_DOORWAY, VERB_WALK_THROUGH, -1, Common::Rect(163, 87, 163 + 19, 87 + 36));
+		int idx = _scene->_dynamicHotspots.add(words_doorway, words_walk_through, -1, Common::Rect(163, 87, 163 + 19, 87 + 36));
 		local._doorway = _scene->_dynamicHotspots.setPosition(idx, Common::Point(168, 127), FACING_NORTH);
 		_scene->_dynamicHotspots.setCursor(local._doorway, CURSOR_GO_UP);
 	}
@@ -898,16 +898,16 @@ static void room_210_daemon() {
 static void room_210_pre_parser() {
 	local._stopWalking = false;
 
-	if (_action.isAction(VERB_WALK_DOWN, NOUN_PATH_TO_EAST))
+	if (_action.isAction(words_walk_down, words_path_to_east))
 		_game._player._walkOffScreenSceneId = 211;
 }
 
 static void room_210_parser() {
-	if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_HUT_TO_NORTH)) {
+	if (_action.isAction(words_look, words_binoculars, words_hut_to_north)) {
 		_vm->_dialogs->show(21017);
 	} else if (_game._screenObjects._inputMode == kInputConversation) {
 		handleConversations();
-	} else if (_action.isAction(VERB_TALKTO, NOUN_NATIVE_WOMAN) ||
+	} else if (_action.isAction(words_talkto, words_native_woman) ||
 		((_game._player._playerPos == Common::Point(214, 150)) && (_game._player._facing == FACING_NORTHWEST) && (local._twinkleAnimationType == 1) && local._stopWalking)) {
 		switch (_game._trigger) {
 		case 0:
@@ -962,7 +962,7 @@ static void room_210_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_GIVE, NOUN_NATIVE_WOMAN) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
+	} else if (_action.isAction(words_give, words_native_woman) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
 		switch (_game._trigger) {
 		case 0:
 		{
@@ -982,11 +982,11 @@ static void room_210_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_WALK_DOWN, NOUN_PATH_TO_NORTH) || _action.isAction(VERB_WALK_TOWARDS, NOUN_HUT_TO_NORTH)) {
+	} else if (_action.isAction(words_walk_down, words_path_to_north) || _action.isAction(words_walk_towards, words_hut_to_north)) {
 		_scene->_nextSceneId = 205;
-	} else if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY)) {
+	} else if (_action.isAction(words_walk_through, words_doorway)) {
 		_scene->_nextSceneId = 215;
-	} else if ((_action.isAction(VERB_PULL, NOUN_CURTAIN) || _action.isAction(VERB_OPEN, NOUN_CURTAIN)) && !_globals[kCurtainOpen]) {
+	} else if ((_action.isAction(words_pull, words_curtain) || _action.isAction(words_open, words_curtain)) && !_globals[kCurtainOpen]) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -999,7 +999,7 @@ static void room_210_parser() {
 		case 1:
 			_game._player._stepEnabled = true;
 			_globals[kCurtainOpen] = true;
-			local._doorway = _scene->_dynamicHotspots.add(NOUN_DOORWAY, VERB_WALK_THROUGH, -1, Common::Rect(163, 87, 163 + 19, 87 + 36));
+			local._doorway = _scene->_dynamicHotspots.add(words_doorway, words_walk_through, -1, Common::Rect(163, 87, 163 + 19, 87 + 36));
 			_scene->_dynamicHotspots.setPosition(local._doorway, Common::Point(168, 127), FACING_NORTH);
 			_scene->_dynamicHotspots.setCursor(local._doorway, CURSOR_GO_UP);
 			break;
@@ -1007,7 +1007,7 @@ static void room_210_parser() {
 		default:
 			break;
 		}
-	} else if ((_action.isAction(VERB_PULL, NOUN_CURTAIN) || _action.isAction(VERB_CLOSE, NOUN_CURTAIN)) && _globals[kCurtainOpen]) {
+	} else if ((_action.isAction(words_pull, words_curtain) || _action.isAction(words_close, words_curtain)) && _globals[kCurtainOpen]) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
@@ -1031,7 +1031,7 @@ static void room_210_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_HUT)) {
+	} else if (_action.isAction(words_look, words_hut)) {
 		if (_globals[kTwinklesStatus] == TWINKLES_GONE) {
 			if (_game._storyMode == STORYMODE_NAUGHTY)
 				_vm->_dialogs->show(21003);
@@ -1040,31 +1040,31 @@ static void room_210_parser() {
 		} else {
 			_vm->_dialogs->show(21001);
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_BRA)) {
+	} else if (_action.isAction(words_look, words_bra)) {
 		_vm->_dialogs->show(21004);
-	} else if (_action.isAction(VERB_LOOK, NOUN_HOTPANTS)) {
+	} else if (_action.isAction(words_look, words_hotpants)) {
 		_vm->_dialogs->show(21005);
-	} else if (_action.isAction(VERB_TAKE, NOUN_HOTPANTS) || _action.isAction(VERB_TAKE, NOUN_BRA)) {
+	} else if (_action.isAction(words_take, words_hotpants) || _action.isAction(words_take, words_bra)) {
 		_vm->_dialogs->show(21006);
-	} else if (_action.isAction(VERB_LOOK, NOUN_STREAM)) {
+	} else if (_action.isAction(words_look, words_stream)) {
 		_vm->_dialogs->show(21007);
-	} else if (_action.isAction(VERB_LOOK, NOUN_BUSHY_FERN)) {
+	} else if (_action.isAction(words_look, words_bushy_fern)) {
 		_vm->_dialogs->show(21008);
-	} else if (_action.isAction(VERB_LOOK, NOUN_VILLAGE_PATH)) {
+	} else if (_action.isAction(words_look, words_village_path)) {
 		_vm->_dialogs->show(21009);
-	} else if (_action.isAction(VERB_LOOK, NOUN_NATIVE_WOMAN)) {
+	} else if (_action.isAction(words_look, words_native_woman)) {
 		_vm->_dialogs->show(21010);
-	} else if (_action.isAction(VERB_SHOOT, NOUN_NATIVE_WOMAN) || _action.isAction(VERB_HOSE_DOWN, NOUN_NATIVE_WOMAN)) {
+	} else if (_action.isAction(words_shoot, words_native_woman) || _action.isAction(words_hose_down, words_native_woman)) {
 		_vm->_dialogs->show(21011);
-	} else if (_action.isAction(VERB_LOOK, NOUN_PATH_TO_NORTH)) {
+	} else if (_action.isAction(words_look, words_path_to_north)) {
 		_vm->_dialogs->show(21012);
-	} else if (_action.isAction(VERB_LOOK, NOUN_CURTAIN)) {
+	} else if (_action.isAction(words_look, words_curtain)) {
 		_vm->_dialogs->show(21013);
-	} else if (_action.isAction(VERB_LOOK, NOUN_CLOTHESLINE)) {
+	} else if (_action.isAction(words_look, words_clothesline)) {
 		_vm->_dialogs->show(21014);
-	} else if (_action.isAction(VERB_TAKE, NOUN_CLOTHESLINE)) {
+	} else if (_action.isAction(words_take, words_clothesline)) {
 		_vm->_dialogs->show(21015);
-	} else if (_action.isAction(VERB_LOOK, NOUN_HUT_TO_NORTH)) {
+	} else if (_action.isAction(words_look, words_hut_to_north)) {
 		_vm->_dialogs->show(21016);
 	} else {
 		// Not handled
@@ -1103,8 +1103,8 @@ void room_210_preload() {
 
 	section_2_walker();
 	section_2_interface();
-	_scene->addActiveVocab(NOUN_DOORWAY);
-	_scene->addActiveVocab(VERB_WALK_THROUGH);
+	_scene->addActiveVocab(words_doorway);
+	_scene->addActiveVocab(words_walk_through);
 }
 
 } // namespace Rooms

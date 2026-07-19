@@ -39,7 +39,7 @@ static void room_410_init() {
 	if (_game._objects.isInRoom(OBJ_CHARGE_CASES))
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 	else
-		_scene->_hotspots.activate(NOUN_CHARGE_CASES, false);
+		_scene->_hotspots.activate(words_charge_cases, false);
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(155, 150);
@@ -83,23 +83,23 @@ static void room_410_daemon() {
 }
 
 static void room_410_pre_parser() {
-	if (_action.isAction(VERB_TAKE) && !_action.isObject(NOUN_CHARGE_CASES))
+	if (_action.isAction(words_take) && !_action.isObject(words_charge_cases))
 		_game._player._needToWalk = false;
 
-	if (_action.isAction(VERB_LOOK, NOUN_CHARGE_CASES) && _game._objects.isInRoom(OBJ_CHARGE_CASES))
+	if (_action.isAction(words_look, words_charge_cases) && _game._objects.isInRoom(OBJ_CHARGE_CASES))
 		_game._player._needToWalk = true;
 
-	if (_action.isAction(VERB_OPEN, NOUN_SACKS) || _action.isAction(VERB_OPEN, NOUN_SACK))
+	if (_action.isAction(words_open, words_sacks) || _action.isAction(words_open, words_sack))
 		_game._player._needToWalk = false;
 
-	if (_action.isAction(VERB_LOOK, NOUN_CAN))
+	if (_action.isAction(words_look, words_can))
 		_game._player._needToWalk = true;
 }
 
 static void room_410_parser() {
-	if (_action.isAction(VERB_WALK_INTO, NOUN_CORRIDOR_TO_SOUTH))
+	if (_action.isAction(words_walk_into, words_corridor_to_south))
 		_scene->_nextSceneId = 406;
-	else if (_action.isAction(VERB_TAKE, NOUN_CHARGE_CASES) && (_game._objects.isInRoom(OBJ_CHARGE_CASES) || _game._trigger)) {
+	else if (_action.isAction(words_take, words_charge_cases) && (_game._objects.isInRoom(OBJ_CHARGE_CASES) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
 			_vm->_sound->command(57);
@@ -114,7 +114,7 @@ static void room_410_parser() {
 
 		case 1:
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-			_scene->_hotspots.activate(NOUN_CHARGE_CASES, false);
+			_scene->_hotspots.activate(words_charge_cases, false);
 			_game._objects.addToInventory(OBJ_CHARGE_CASES);
 			_vm->_dialogs->showItem(OBJ_CHARGE_CASES, 41032);
 			break;
@@ -132,52 +132,52 @@ static void room_410_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_BARREL))
+	} else if (_action.isAction(words_look, words_barrel))
 		_vm->_dialogs->show(41010);
-	else if (_action.isAction(VERB_TAKE, NOUN_BARREL))
+	else if (_action.isAction(words_take, words_barrel))
 		_vm->_dialogs->show(41011);
-	else if (_action.isAction(VERB_OPEN, NOUN_BARREL))
+	else if (_action.isAction(words_open, words_barrel))
 		_vm->_dialogs->show(41012);
-	else if (_action.isAction(VERB_LOOK, NOUN_RUG))
+	else if (_action.isAction(words_look, words_rug))
 		_vm->_dialogs->show(41013);
-	else if (_action.isAction(VERB_TAKE, NOUN_RUG))
+	else if (_action.isAction(words_take, words_rug))
 		_vm->_dialogs->show(41014);
-	else if (_action.isAction(VERB_LOOK, NOUN_CARTON) || _action.isAction(VERB_OPEN, NOUN_CARTON)) {
+	else if (_action.isAction(words_look, words_carton) || _action.isAction(words_open, words_carton)) {
 		if (_game._objects.isInRoom(OBJ_CHARGE_CASES))
 			_vm->_dialogs->show(41015);
 		else
 			_vm->_dialogs->show(41016);
-	} else if (_action.isAction(VERB_LOOK, NOUN_FLOUR))
+	} else if (_action.isAction(words_look, words_flour))
 		_vm->_dialogs->show(41017);
-	else if (_action.isAction(VERB_TAKE, NOUN_FLOUR))
+	else if (_action.isAction(words_take, words_flour))
 		_vm->_dialogs->show(41018);
-	else if (_action.isAction(VERB_LOOK, NOUN_SACKS))
+	else if (_action.isAction(words_look, words_sacks))
 		_vm->_dialogs->show(41019);
-	else if (_action.isAction(VERB_LOOK, NOUN_SACK))
+	else if (_action.isAction(words_look, words_sack))
 		_vm->_dialogs->show(41019);
-	else if (_action.isAction(VERB_OPEN, NOUN_SACKS))
+	else if (_action.isAction(words_open, words_sacks))
 		_vm->_dialogs->show(41020);
-	else if (_action.isAction(VERB_OPEN, NOUN_SACK))
+	else if (_action.isAction(words_open, words_sack))
 		_vm->_dialogs->show(41020);
-	else if (_action.isAction(VERB_LOOK, NOUN_BUCKET_OF_TAR))
+	else if (_action.isAction(words_look, words_bucket_of_tar))
 		_vm->_dialogs->show(41021);
-	else if (_action.isAction(VERB_TAKE, NOUN_BUCKET_OF_TAR))
+	else if (_action.isAction(words_take, words_bucket_of_tar))
 		_vm->_dialogs->show(41022);
-	else if (_action.isAction(VERB_LOOK, NOUN_CAN))
+	else if (_action.isAction(words_look, words_can))
 		_vm->_dialogs->show(41023);
-	else if (_action.isAction(VERB_TAKE, NOUN_CAN))
+	else if (_action.isAction(words_take, words_can))
 		_vm->_dialogs->show(41024);
-	else if (_action.isAction(VERB_LOOK, NOUN_CHARGE_CASES) && _game._objects.isInRoom(OBJ_CHARGE_CASES))
+	else if (_action.isAction(words_look, words_charge_cases) && _game._objects.isInRoom(OBJ_CHARGE_CASES))
 		_vm->_dialogs->show(41025);
-	else if (_action.isAction(VERB_LOOK, NOUN_FENCE))
+	else if (_action.isAction(words_look, words_fence))
 		_vm->_dialogs->show(41027);
-	else if (_action.isAction(VERB_LOOK, NOUN_SHELVES))
+	else if (_action.isAction(words_look, words_shelves))
 		_vm->_dialogs->show(41028);
-	else if (_action.isAction(VERB_LOOK, NOUN_RAT))
+	else if (_action.isAction(words_look, words_rat))
 		_vm->_dialogs->show(41029);
-	else if (_action.isAction(VERB_TAKE, NOUN_RAT))
+	else if (_action.isAction(words_take, words_rat))
 		_vm->_dialogs->show(41030);
-	else if (_action.isAction(VERB_THROW, NOUN_RAT))
+	else if (_action.isAction(words_throw, words_rat))
 		_vm->_dialogs->show(41031);
 	else if (_action._lookFlag)
 		_vm->_dialogs->show(41033);

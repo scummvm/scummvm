@@ -163,7 +163,7 @@ static void room_103_pre_parser() {
 static void room_103_parser() {
 	if (_action._savedFields._lookFlag)
 		_vm->_dialogs->show(10322);
-	else if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR)) {
+	else if (_action.isAction(words_walk_through, words_door)) {
 		switch (_vm->_game->_trigger) {
 		case 0:
 			_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 1);
@@ -181,7 +181,7 @@ static void room_103_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_TAKE, NOUN_TIMER_MODULE) && _game._objects.isInRoom(OBJ_TIMER_MODULE)) {
+	} else if (_action.isAction(words_take, words_timer_module) && _game._objects.isInRoom(OBJ_TIMER_MODULE)) {
 		switch (_vm->_game->_trigger) {
 		case 0:
 			_scene->changeVariant(1);
@@ -211,7 +211,7 @@ static void room_103_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_TAKE, NOUN_REBREATHER, 0) && _game._objects.isInRoom(OBJ_REBREATHER)) {
+	} else if (_action.isAction(words_take, words_rebreather, 0) && _game._objects.isInRoom(OBJ_REBREATHER)) {
 		switch (_vm->_game->_trigger) {
 		case 0:
 			_globals._sequenceIndexes[12] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[12], false, 3, 2);
@@ -238,9 +238,9 @@ static void room_103_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_LOOK, 362))
+	} else if (_action.isAction(words_look, 362))
 		_vm->_dialogs->show(10301);
-	else if (_action.isAction(VERB_TAKE, 362)) {
+	else if (_action.isAction(words_take, 362)) {
 		// Take Turkey
 		if (!_vm->_game->_trigger)
 			_vm->_sound->command(31);
@@ -270,9 +270,9 @@ static void room_103_parser() {
 			_vm->_dialogs->show(10302);
 			_scene->_hotspots.activate(362, false);
 		}
-	} else if (_action.isAction(VERB_LOOK, 250))
+	} else if (_action.isAction(words_look, 250))
 		_vm->_dialogs->show(!_globals[kTurkeyExploded] ? 10323 : 10303);
-	else if (_action.isAction(VERB_TALKTO, 27)) {
+	else if (_action.isAction(words_talkto, 27)) {
 		switch (_vm->_game->_trigger) {
 		case 0:
 		{
@@ -302,37 +302,37 @@ static void room_103_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_LOOK, 27))
+	} else if (_action.isAction(words_look, 27))
 		_vm->_dialogs->show(10304);
-	else if (_action.isAction(VERB_LOOK, 36))
+	else if (_action.isAction(words_look, 36))
 		_vm->_dialogs->show(10307);
-	else if (_action.isAction(VERB_LOOK, 55))
+	else if (_action.isAction(words_look, 55))
 		_vm->_dialogs->show(10308);
-	else if (_action.isAction(VERB_TAKE, 315))
+	else if (_action.isAction(words_take, 315))
 		_vm->_dialogs->show(10309);
-	else if (_action.isAction(VERB_TAKE, 85))
+	else if (_action.isAction(words_take, 85))
 		_vm->_dialogs->show(10310);
-	else if (_action.isAction(VERB_LOOK, 144))
+	else if (_action.isAction(words_look, 144))
 		_vm->_dialogs->show(10312);
-	else if (_action.isAction(VERB_OPEN, 144))
+	else if (_action.isAction(words_open, 144))
 		_vm->_dialogs->show(10313);
-	else if (_action.isAction(VERB_CLOSE, 27))
+	else if (_action.isAction(words_close, 27))
 		_vm->_dialogs->show(10314);
-	else if (_action.isAction(VERB_LOOK, 310))
+	else if (_action.isAction(words_look, 310))
 		_vm->_dialogs->show(10315);
-	else if (_action.isAction(VERB_LOOK, 178))
+	else if (_action.isAction(words_look, 178))
 		_vm->_dialogs->show(10316);
-	else if (_action.isAction(VERB_LOOK, 283))
+	else if (_action.isAction(words_look, 283))
 		_vm->_dialogs->show(10317);
-	else if (_action.isAction(VERB_LOOK, 120))
+	else if (_action.isAction(words_look, 120))
 		_vm->_dialogs->show(10318);
-	else if (_action.isAction(VERB_LOOK, 289) && _game._objects.isInInventory(OBJ_REBREATHER))
+	else if (_action.isAction(words_look, 289) && _game._objects.isInInventory(OBJ_REBREATHER))
 		_vm->_dialogs->show(10319);
-	else if (_action.isAction(VERB_LOOK, 371) && _game._objects.isInInventory(OBJ_TIMER_MODULE))
+	else if (_action.isAction(words_look, 371) && _game._objects.isInInventory(OBJ_TIMER_MODULE))
 		_vm->_dialogs->show(10320);
-	else if (_action.isAction(VERB_LOOK, 137))
+	else if (_action.isAction(words_look, 137))
 		_vm->_dialogs->show(10321);
-	else if (_action.isAction(VERB_LOOK, 409))
+	else if (_action.isAction(words_look, 409))
 		_vm->_dialogs->show(_game._objects.isInInventory(OBJ_TIMER_MODULE) ? 10324 : 10325);
 	else
 		return;
@@ -341,10 +341,10 @@ static void room_103_parser() {
 }
 
 void room_103_error() {
-	if (_action.isObject(NOUN_AUXILIARY_POWER) && !_action.isAction(VERB_WALKTO)) {
+	if (_action.isObject(words_auxiliary_power) && !_action.isAction(words_walkto)) {
 		_vm->_dialogs->show(10305);
 		_action._inProgress = false;
-	} else if (_action.isAction(VERB_PUT, NOUN_COAL, NOUN_FURNACE)) {
+	} else if (_action.isAction(words_put, words_coal, words_furnace)) {
 		const char *msg = _game.getQuote(73);
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, msg);
 		_action._inProgress = false;

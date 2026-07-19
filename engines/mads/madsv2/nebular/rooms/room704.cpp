@@ -136,7 +136,7 @@ static void room_704_init() {
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(190, 122));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 2);
 		}
-		int idx = _scene->_dynamicHotspots.add(NOUN_BOTTLE, VERB_LOOK_AT, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_bottle, words_look_at, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		local._bottleHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 	}
 
@@ -323,19 +323,19 @@ static void room_704_daemon() {
 static void room_704_parser() {
 	if (_game._screenObjects._inputMode == kInputConversation)
 		handleFillBottle(_action._activeAction._verbId);
-	else if (_action.isAction(VERB_STEER_TOWARDS, NOUN_OPEN_WATER_TO_SOUTH)) {
+	else if (_action.isAction(words_steer_towards, words_open_water_to_south)) {
 		_game._player._stepEnabled = false;
 		if (local._boatDirection == 1)
 			local._animationMode = 5;
 		else
 			local._animationMode = 3;
-	} else if (_action.isAction(VERB_STEER_TOWARDS, NOUN_BUILDING_TO_NORTH)) {
+	} else if (_action.isAction(words_steer_towards, words_building_to_north)) {
 		_game._player._stepEnabled = false;
 		if (local._boatDirection == 2)
 			local._animationMode = 4;
 		else
 			local._animationMode = 1;
-	} else if (_action.isAction(VERB_TAKE, NOUN_BOTTLE)) {
+	} else if (_action.isAction(words_take, words_bottle)) {
 		if (!_game._objects.isInInventory(OBJ_BOTTLE)) {
 			_game._player._stepEnabled = false;
 			local._takeBottleFl = true;
@@ -345,7 +345,7 @@ static void room_704_parser() {
 				local._animationMode = 7;
 			}
 		}
-	} else if (_action.isAction(VERB_PUT, NOUN_BOTTLE, NOUN_WATER) || _action.isAction(VERB_FILL, NOUN_BOTTLE, NOUN_WATER)) {
+	} else if (_action.isAction(words_put, words_bottle, words_water) || _action.isAction(words_fill, words_bottle, words_water)) {
 		if (_game._objects.isInInventory(OBJ_BOTTLE)) {
 			if (_globals[kBottleStatus] != 4) {
 				local._takeBottleFl = false;
@@ -354,20 +354,20 @@ static void room_704_parser() {
 			} else
 				_vm->_dialogs->show(70323);
 		}
-	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, NOUN_WATER))
+	} else if (_action._lookFlag || _action.isAction(words_look, words_water))
 		_vm->_dialogs->show(70410);
-	else if (_action.isAction(VERB_LOOK, NOUN_BUILDING_TO_NORTH)) {
+	else if (_action.isAction(words_look, words_building_to_north)) {
 		if (_game._visitedScenes.exists(710))
 			_vm->_dialogs->show(70411);
 		else
 			_vm->_dialogs->show(70412);
-	} else if (_action.isAction(VERB_LOOK, NOUN_VOLCANO_RIM))
+	} else if (_action.isAction(words_look, words_volcano_rim))
 		_vm->_dialogs->show(70413);
-	else if (_action.isAction(VERB_LOOK, NOUN_BOTTLE) && (_action._mainObjectSource == CAT_HOTSPOT))
+	else if (_action.isAction(words_look, words_bottle) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(70414);
-	else if (_action.isAction(VERB_LOOK, NOUN_OPEN_WATER_TO_SOUTH))
+	else if (_action.isAction(words_look, words_open_water_to_south))
 		_vm->_dialogs->show(70416);
-	else if (_action.isAction(VERB_LOOK, NOUN_SKY))
+	else if (_action.isAction(words_look, words_sky))
 		_vm->_dialogs->show(70417);
 	else
 		return;
@@ -391,8 +391,8 @@ void room_704_preload() {
 
 	*player.series_name = '\0';
 	section_7_interface();
-	_scene->addActiveVocab(NOUN_BOTTLE);
-	_scene->addActiveVocab(VERB_LOOK_AT);
+	_scene->addActiveVocab(words_bottle);
+	_scene->addActiveVocab(words_look_at);
 }
 
 } // namespace Rooms

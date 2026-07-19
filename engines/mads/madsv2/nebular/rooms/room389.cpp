@@ -47,7 +47,7 @@ static void room_389_init() {
 	local._circularQuoteId = 0x159;
 
 	if (_globals[kAfterHavoc])
-		_scene->_hotspots.activate(NOUN_MONSTER, false);
+		_scene->_hotspots.activate(words_monster, false);
 	else {
 		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('m', -1));
 		_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 6, 0, 0, 0);
@@ -74,9 +74,9 @@ static void room_389_daemon() {
 }
 
 static void room_389_parser() {
-	if (_action.isAction(VERB_RETURN_TO, NOUN_AIR_SHAFT))
+	if (_action.isAction(words_return_to, words_air_shaft))
 		_scene->_nextSceneId = 313;
-	else if (_action.isAction(VERB_TALKTO, NOUN_MONSTER)) {
+	else if (_action.isAction(words_talkto, words_monster)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -94,7 +94,7 @@ static void room_389_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_LOOK_THROUGH, NOUN_GRATE)) {
+	} else if (_action.isAction(words_look_through, words_grate)) {
 		if (_globals[kAfterHavoc]) {
 			if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
 				_vm->_dialogs->show(38911);
@@ -102,7 +102,7 @@ static void room_389_parser() {
 				_vm->_dialogs->show(38912);
 		} else
 			_vm->_dialogs->show(38910);
-	} else if (_action.isAction(VERB_OPEN, NOUN_GRATE)) {
+	} else if (_action.isAction(words_open, words_grate)) {
 		if (_globals[kAfterHavoc])
 			_vm->_dialogs->show(38914);
 		else

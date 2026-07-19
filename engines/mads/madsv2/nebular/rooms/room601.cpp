@@ -39,7 +39,7 @@ static void room_601_init() {
 
 	if (_globals[kLaserHoleIsThere]) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -2);
-		_scene->_dynamicHotspots.add(NOUN_LASER_BEAM, VERB_LOOK_AT, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.add(words_laser_beam, words_look_at, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 	}
 
 	_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
@@ -89,9 +89,9 @@ static void room_601_daemon() {
 }
 
 static void room_601_parser() {
-	if (_action.isAction(VERB_WALK_THROUGH, NOUN_ENTRANCE))
+	if (_action.isAction(words_walk_through, words_entrance))
 		_scene->_nextSceneId = 602;
-	else if (_action.isAction(VERB_GET_INSIDE, NOUN_CAR)) {
+	else if (_action.isAction(words_get_inside, words_car)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -130,28 +130,28 @@ static void room_601_parser() {
 		default:
 			break;
 		}
-	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, NOUN_STREET)) {
+	} else if (_action._lookFlag || _action.isAction(words_look, words_street)) {
 		if (!_globals[kLaserHoleIsThere])
 			_vm->_dialogs->show(60110);
 		else
 			_vm->_dialogs->show(60111);
-	} else if (_action.isAction(VERB_LOOK, NOUN_CAR))
+	} else if (_action.isAction(words_look, words_car))
 		_vm->_dialogs->show(60112);
-	else if (_action.isAction(VERB_LOOK, NOUN_PAPERS))
+	else if (_action.isAction(words_look, words_papers))
 		_vm->_dialogs->show(60113);
-	else if (_action.isAction(VERB_LOOK, NOUN_BUILDING))
+	else if (_action.isAction(words_look, words_building))
 		_vm->_dialogs->show(60114);
-	else if (_action.isAction(VERB_WALK_DOWN, NOUN_STREET))
+	else if (_action.isAction(words_walk_down, words_street))
 		_vm->_dialogs->show(60115);
-	else if (_action.isAction(VERB_LOOK, NOUN_BALCONY))
+	else if (_action.isAction(words_look, words_balcony))
 		_vm->_dialogs->show(60116);
-	else if (_action.isAction(VERB_LOOK, NOUN_ENTRANCE))
+	else if (_action.isAction(words_look, words_entrance))
 		_vm->_dialogs->show(60117);
-	else if (_action.isAction(VERB_LOOK, NOUN_WALL))
+	else if (_action.isAction(words_look, words_wall))
 		_vm->_dialogs->show(60118);
-	else if (_action.isAction(VERB_LOOK, NOUN_CITY))
+	else if (_action.isAction(words_look, words_city))
 		_vm->_dialogs->show(60119);
-	else if (_action.isAction(VERB_LOOK, NOUN_FOUNTAIN))
+	else if (_action.isAction(words_look, words_fountain))
 		_vm->_dialogs->show(60120);
 	else
 		return;
@@ -170,8 +170,8 @@ void room_601_preload() {
 
 	section_6_walker();
 	section_6_interface();
-	_scene->addActiveVocab(NOUN_LASER_BEAM);
-	_scene->addActiveVocab(VERB_LOOK_AT);
+	_scene->addActiveVocab(words_laser_beam);
+	_scene->addActiveVocab(words_look_at);
 }
 
 } // namespace Rooms

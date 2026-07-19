@@ -128,7 +128,7 @@ static void room_513_daemon() {
 }
 
 static void room_513_parser() {
-	if (_action.isAction(VERB_GET_INTO, NOUN_CAR)) {
+	if (_action.isAction(words_get_into, words_car)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -168,7 +168,7 @@ static void room_513_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_PUT, NOUN_ID_CARD, NOUN_CARD_SLOT) || _action.isAction(VERB_PUT, NOUN_FAKE_ID, NOUN_CARD_SLOT)) {
+	} else if (_action.isAction(words_put, words_id_card, words_card_slot) || _action.isAction(words_put, words_fake_id, words_card_slot)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -217,31 +217,31 @@ static void room_513_parser() {
 		default:
 			break;
 		}
-	} else if ((_action._lookFlag) || _action.isAction(VERB_LOOK, NOUN_STREET))
+	} else if ((_action._lookFlag) || _action.isAction(words_look, words_street))
 		_vm->_dialogs->show(51318);
-	else if (_action.isAction(VERB_LOOK, NOUN_ELEVATOR))
+	else if (_action.isAction(words_look, words_elevator))
 		_vm->_dialogs->show(51310);
-	else if (_action.isAction(VERB_LOOK, NOUN_ELEVATOR_DOOR))
+	else if (_action.isAction(words_look, words_elevator_door))
 		_vm->_dialogs->show(51311);
-	else if (_action.isAction(VERB_LOOK, NOUN_CARD_SLOT))
+	else if (_action.isAction(words_look, words_card_slot))
 		_vm->_dialogs->show(51312);
-	else if (_action.isAction(VERB_LOOK, NOUN_HANDICAP_SIGN))
+	else if (_action.isAction(words_look, words_handicap_sign))
 		_vm->_dialogs->show(51313);
-	else if (_action.isAction(VERB_LOOK, NOUN_BIKE_RACK))
+	else if (_action.isAction(words_look, words_bike_rack))
 		_vm->_dialogs->show(51314);
-	else if (_action.isAction(VERB_LOOK, NOUN_BUILDING))
+	else if (_action.isAction(words_look, words_building))
 		_vm->_dialogs->show(51315);
-	else if (_action.isAction(VERB_LOOK, NOUN_SIGN))
+	else if (_action.isAction(words_look, words_sign))
 		_vm->_dialogs->show(51316);
-	else if (_action.isAction(VERB_LOOK, NOUN_STREET_TO_WEST) || _action.isAction(VERB_WALK_DOWN, NOUN_STREET_TO_WEST))
+	else if (_action.isAction(words_look, words_street_to_west) || _action.isAction(words_walk_down, words_street_to_west))
 		_vm->_dialogs->show(51317);
-	else if (_action.isAction(VERB_OPEN, NOUN_ELEVATOR_DOOR) || _action.isAction(VERB_OPEN, NOUN_ELEVATOR))
+	else if (_action.isAction(words_open, words_elevator_door) || _action.isAction(words_open, words_elevator))
 		_vm->_dialogs->show(51319);
-	else if (_action.isAction(VERB_LOOK, NOUN_CAR))
+	else if (_action.isAction(words_look, words_car))
 		_vm->_dialogs->show(51321);
-	else if (_action.isAction(VERB_LOOK, NOUN_BRICK_WALL))
+	else if (_action.isAction(words_look, words_brick_wall))
 		_vm->_dialogs->show(51322);
-	else if (_action.isAction(VERB_PUT, NOUN_SECURITY_CARD, NOUN_CARD_SLOT))
+	else if (_action.isAction(words_put, words_security_card, words_card_slot))
 		_vm->_dialogs->show(51320);
 	else
 		return;
@@ -260,8 +260,8 @@ void room_513_preload() {
 
 	section_5_walker();
 	section_5_interface();
-	_scene->addActiveVocab(NOUN_ELEVATOR_DOOR);
-	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(words_elevator_door);
+	_scene->addActiveVocab(words_walkto);
 }
 
 } // namespace Rooms

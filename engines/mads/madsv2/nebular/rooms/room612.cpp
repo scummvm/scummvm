@@ -104,7 +104,7 @@ static void room_612_init() {
 		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('f', -1));
 		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);
-		int idx = _scene->_dynamicHotspots.add(NOUN_FISHING_LINE, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(34, 117), FACING_SOUTHEAST);
 	}
 
@@ -161,7 +161,7 @@ static void room_612_daemon() {
 }
 
 static void room_612_parser() {
-	if (_action.isAction(VERB_GET_INSIDE, NOUN_CAR)) {
+	if (_action.isAction(words_get_inside, words_car)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -201,41 +201,41 @@ static void room_612_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_UNLOCK, NOUN_PADLOCK_KEY, NOUN_CONTROL_BOX)) {
+	} else if (_action.isAction(words_unlock, words_padlock_key, words_control_box)) {
 		local._cycleIndex = -2;
 		local._actionMode = 1;
 		handleWinchMovement();
-	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, NOUN_EXPRESSWAY))
+	} else if (_action._lookFlag || _action.isAction(words_look, words_expressway))
 		_vm->_dialogs->show(61210);
-	else if (_action.isAction(VERB_LOOK, NOUN_ROPE) || _action.isAction(VERB_LOOK, NOUN_ARMATURE)) {
+	else if (_action.isAction(words_look, words_rope) || _action.isAction(words_look, words_armature)) {
 		if (_globals[kBoatRaised])
 			_vm->_dialogs->show(61211);
 		else
 			_vm->_dialogs->show(61212);
-	} else if (_action.isAction(VERB_TAKE, NOUN_ROPE))
+	} else if (_action.isAction(words_take, words_rope))
 		_vm->_dialogs->show(61213);
-	else if (_action.isAction(VERB_LOOK, NOUN_CONTROL_BOX)) {
+	else if (_action.isAction(words_look, words_control_box)) {
 		if (_globals[kBoatRaised])
 			_vm->_dialogs->show(61214);
 		else
 			_vm->_dialogs->show(61216);
-	} else if (_action.isAction(VERB_OPEN, NOUN_CONTROL_BOX))
+	} else if (_action.isAction(words_open, words_control_box))
 		_vm->_dialogs->show(61215);
-	else if (_action.isAction(VERB_LOOK, NOUN_BUILDINGS))
+	else if (_action.isAction(words_look, words_buildings))
 		_vm->_dialogs->show(61218);
-	else if (_action.isAction(VERB_LOOK, NOUN_DOME))
+	else if (_action.isAction(words_look, words_dome))
 		_vm->_dialogs->show(61219);
-	else if (_action.isAction(VERB_LOOK, NOUN_STATUE))
+	else if (_action.isAction(words_look, words_statue))
 		_vm->_dialogs->show(61220);
-	else if (_action.isAction(VERB_LOOK, NOUN_MAINTENANCE_BUILDING))
+	else if (_action.isAction(words_look, words_maintenance_building))
 		_vm->_dialogs->show(61221);
-	else if (_action.isAction(VERB_OPEN, NOUN_MAINTENANCE_BUILDING))
+	else if (_action.isAction(words_open, words_maintenance_building))
 		_vm->_dialogs->show(61222);
-	else if (_action.isAction(VERB_LOOK, NOUN_WALL))
+	else if (_action.isAction(words_look, words_wall))
 		_vm->_dialogs->show(61223);
-	else if (_action.isAction(VERB_LOOK, NOUN_SUPPORT))
+	else if (_action.isAction(words_look, words_support))
 		_vm->_dialogs->show(61224);
-	else if (_action.isAction(VERB_WALK_DOWN, NOUN_EXPRESSWAY_TO_EAST) || _action.isAction(VERB_WALK_DOWN, NOUN_EXPRESSWAY_TO_WEST))
+	else if (_action.isAction(words_walk_down, words_expressway_to_east) || _action.isAction(words_walk_down, words_expressway_to_west))
 		_vm->_dialogs->show(61225);
 	else
 		return;
@@ -255,8 +255,8 @@ void room_612_preload() {
 
 	section_6_walker();
 	section_6_interface();
-	_scene->addActiveVocab(NOUN_FISHING_LINE);
-	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(words_fishing_line);
+	_scene->addActiveVocab(words_walkto);
 }
 
 } // namespace Rooms

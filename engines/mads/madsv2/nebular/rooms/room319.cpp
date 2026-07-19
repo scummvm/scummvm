@@ -138,7 +138,7 @@ static void room_319_init() {
 		local._slacheInitFl = true;
 
 		if (_globals[kRexHasMetSlache]) {
-			handleSlacheDialogs(VERB_WALK_OUTSIDE, 2, INDEFINITE_TIMEOUT);
+			handleSlacheDialogs(words_walk_outside, 2, INDEFINITE_TIMEOUT);
 			local._slachePosY = 3;
 		} else {
 			handleSlacheDialogs(0x186, 4, INDEFINITE_TIMEOUT);

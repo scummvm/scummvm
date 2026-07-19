@@ -142,10 +142,10 @@ static void room_504_pre_parser() {
 }
 
 static void room_504_parser() {
-	if (_action.isAction(VERB_EXIT_FROM, NOUN_CAR)) {
+	if (_action.isAction(words_exit_from, words_car)) {
 		_vm->_sound->command(15);
 		_scene->_nextSceneId = _globals[kHoverCarLocation];
-	} else if (_action.isAction(VERB_ACTIVATE, NOUN_CAR_CONTROLS)) {
+	} else if (_action.isAction(words_activate, words_car_controls)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -204,27 +204,27 @@ static void room_504_parser() {
 		default:
 			break;
 		}
-	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, NOUN_INTERIOR_OF_CAR))
+	} else if (_action._lookFlag || _action.isAction(words_look, words_interior_of_car))
 		_vm->_dialogs->show(50412);
-	else if (_action.isAction(VERB_LOOK, NOUN_GLOVE_COMPARTMENT))
+	else if (_action.isAction(words_look, words_glove_compartment))
 		_vm->_dialogs->show(50410);
-	else if (_action.isAction(VERB_LOOK, NOUN_CAR_CONTROLS) || _action.isAction(VERB_LOOK, NOUN_DASHBOARD))
+	else if (_action.isAction(words_look, words_car_controls) || _action.isAction(words_look, words_dashboard))
 		_vm->_dialogs->show(50411);
-	else if (_action.isAction(VERB_LOOK, NOUN_SCENT_PACKET))
+	else if (_action.isAction(words_look, words_scent_packet))
 		_vm->_dialogs->show(50413);
-	else if (_action.isAction(VERB_LOOK, NOUN_SODA_CANS))
+	else if (_action.isAction(words_look, words_soda_cans))
 		_vm->_dialogs->show(50414);
-	else if (_action.isAction(VERB_LOOK, NOUN_KITTY))
+	else if (_action.isAction(words_look, words_kitty))
 		_vm->_dialogs->show(50415);
-	else if (_action.isAction(VERB_LOOK, NOUN_WINDSHIELD) || _action.isAction(VERB_LOOK_THROUGH, NOUN_WINDSHIELD))
+	else if (_action.isAction(words_look, words_windshield) || _action.isAction(words_look_through, words_windshield))
 		_vm->_dialogs->show(50416);
-	else if (_action.isAction(VERB_LOOK, NOUN_REARVIEW_MIRROR))
+	else if (_action.isAction(words_look, words_rearview_mirror))
 		_vm->_dialogs->show(50417);
-	else if (_action.isAction(VERB_TAKE, NOUN_REARVIEW_MIRROR))
+	else if (_action.isAction(words_take, words_rearview_mirror))
 		_vm->_dialogs->show(50418);
-	else if (_action.isAction(VERB_LOOK, NOUN_MOLDY_SOCK))
+	else if (_action.isAction(words_look, words_moldy_sock))
 		_vm->_dialogs->show(50419);
-	else if (_action.isAction(VERB_TAKE, NOUN_MOLDY_SOCK))
+	else if (_action.isAction(words_take, words_moldy_sock))
 		_vm->_dialogs->show(50420);
 	else
 		return;

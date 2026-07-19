@@ -56,11 +56,11 @@ static void room_205_init() {
 		_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 1));
 
 	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 10, 0, 0, 3);
-	int idx = _scene->_dynamicHotspots.add(NOUN_CHICKEN, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(words_chicken, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(162, 120), FACING_NORTHEAST);
 
 	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 15, 0, 0, 0);
-	idx = _scene->_dynamicHotspots.add(NOUN_CHICKEN, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+	idx = _scene->_dynamicHotspots.add(words_chicken, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(162, 120), FACING_NORTHEAST);
 
 	_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 0, 0, 0);
@@ -69,7 +69,7 @@ static void room_205_init() {
 
 	if (!_game._visitedScenes._sceneRevisited) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 7, 1, 0, 0);
-		idx = _scene->_dynamicHotspots.add(NOUN_PIRANHA, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(words_piranha, words_walkto, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(49, 86), FACING_NORTH);
 	}
 
@@ -135,7 +135,7 @@ static void room_205_daemon() {
 	if (_vm->_game->_scene._frameStartTime - local._lastFishTime > 1300) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(
 			_globals._spriteIndexes[6], false, 5, 1, 0, 0);
-		int idx = _scene->_dynamicHotspots.add(NOUN_PIRANHA, VERB_WALKTO, _globals._sequenceIndexes[6],
+		int idx = _scene->_dynamicHotspots.add(words_piranha, words_walkto, _globals._sequenceIndexes[6],
 			Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(49, 86), FACING_NORTH);
 		local._lastFishTime = _vm->_game->_scene._frameStartTime;
@@ -223,9 +223,9 @@ static void room_205_parser() {
 		}
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(20502);
-	else if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_OPPOSITE_BANK))
+	else if (_action.isAction(words_look, words_binoculars, words_opposite_bank))
 		_vm->_dialogs->show(20518);
-	else if (_action.isAction(VERB_TALKTO, NOUN_NATIVE_WOMAN)) {
+	else if (_action.isAction(words_talkto, words_native_woman)) {
 		if (_game._trigger == 0) {
 			_game._player._stepEnabled = false;
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 18, 1, 120, _game.getQuote(0x73));
@@ -236,14 +236,14 @@ static void room_205_parser() {
 			local._dialog1.write(0x75, true);
 			local._dialog1.start();
 		}
-	} else if (_action.isAction(VERB_GIVE, NOUN_NATIVE_WOMAN) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
+	} else if (_action.isAction(words_give, words_native_woman) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
 		if (_game._trigger == 0) {
 			_game._player._stepEnabled = false;
 			int rndVal = _vm->getRandomNumber(0xAC, 0xAE);
 			_scene->_kernelMessages.add(Common::Point(186, 27), 0xFBFA, 32, 1, 120, _game.getQuote(rndVal));
 		} else if (_game._trigger == 1)
 			_game._player._stepEnabled = true;
-	} else if (_action.isAction(VERB_WALKTO, NOUN_OPPOSITE_BANK)) {
+	} else if (_action.isAction(words_walkto, words_opposite_bank)) {
 		if (_game._trigger == 0) {
 			_game._player._visible = false;
 			_game._player._stepEnabled = false;
@@ -264,50 +264,50 @@ static void room_205_parser() {
 			_scene->_reloadSceneFlag = true;
 		}
 	} else {
-		if (_action.isAction(VERB_WALK_DOWN, NOUN_PATH_TO_SOUTH))
+		if (_action.isAction(words_walk_down, words_path_to_south))
 			_scene->_nextSceneId = 210;
 
-		if (_action.isAction(VERB_WALKTO, NOUN_FIRE_PIT) || _action.isAction(VERB_WALKTO, NOUN_CHICKEN_ON_SPIT)) {
+		if (_action.isAction(words_walkto, words_fire_pit) || _action.isAction(words_walkto, words_chicken_on_spit)) {
 			if (_game._objects.isInRoom(OBJ_CHICKEN)) {
 				_scene->_kernelMessages.reset();
 				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x6B));
 			}
-		} else if (_action.isAction(VERB_TAKE, NOUN_CHICKEN_ON_SPIT) && _globals[kChickenPermitted] && _game._objects.isInRoom(OBJ_CHICKEN)) {
+		} else if (_action.isAction(words_take, words_chicken_on_spit) && _globals[kChickenPermitted] && _game._objects.isInRoom(OBJ_CHICKEN)) {
 			_game._objects.addToInventory(OBJ_CHICKEN);
 			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
-			_scene->_hotspots.activate(NOUN_CHICKEN_ON_SPIT, false);
+			_scene->_hotspots.activate(words_chicken_on_spit, false);
 			_vm->_dialogs->showItem(OBJ_CHICKEN, 812);
-		} else if (_action.isAction(VERB_TAKE, NOUN_CHICKEN_ON_SPIT) && (!_globals[kChickenPermitted]))
+		} else if (_action.isAction(words_take, words_chicken_on_spit) && (!_globals[kChickenPermitted]))
 			_scene->_kernelMessages.add(Common::Point(186, 27), 0xFBFA, 32, 0, 120, _game.getQuote(0x80));
-		else if (_action.isAction(VERB_LOOK, NOUN_NATIVE_WOMAN))
+		else if (_action.isAction(words_look, words_native_woman))
 			_vm->_dialogs->show(20503);
-		else if (_action.isAction(VERB_LOOK, NOUN_HUT))
+		else if (_action.isAction(words_look, words_hut))
 			_vm->_dialogs->show(20504);
-		else if (_action.isAction(VERB_LOOK, NOUN_CHICKEN) && (_action._mainObjectSource == CAT_HOTSPOT))
+		else if (_action.isAction(words_look, words_chicken) && (_action._mainObjectSource == CAT_HOTSPOT))
 			_vm->_dialogs->show(20505);
-		else if (_action.isAction(VERB_TAKE, NOUN_CHICKEN) && (_action._mainObjectSource == CAT_HOTSPOT))
+		else if (_action.isAction(words_take, words_chicken) && (_action._mainObjectSource == CAT_HOTSPOT))
 			_vm->_dialogs->show(20506);
-		else if (_action.isAction(VERB_LOOK, NOUN_CHICKEN_ON_SPIT))
+		else if (_action.isAction(words_look, words_chicken_on_spit))
 			_vm->_dialogs->show(20507);
-		else if (_action.isAction(VERB_LOOK, NOUN_FIRE_PIT))
+		else if (_action.isAction(words_look, words_fire_pit))
 			_vm->_dialogs->show(20508);
-		else if (_action.isAction(VERB_TAKE, NOUN_FIRE_PIT))
+		else if (_action.isAction(words_take, words_fire_pit))
 			_vm->_dialogs->show(20509);
-		else if (_action.isAction(VERB_LOOK, NOUN_STREAM))
+		else if (_action.isAction(words_look, words_stream))
 			_vm->_dialogs->show(20510);
-		else if (_action.isAction(VERB_LOOK, NOUN_OPPOSITE_BANK))
+		else if (_action.isAction(words_look, words_opposite_bank))
 			_vm->_dialogs->show(20511);
 		else if (_game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))
-			&& (_action.isAction(VERB_GIVE, NOUN_STREAM) || _action.isAction(VERB_THROW, NOUN_STREAM)
-				|| _action.isAction(VERB_GIVE, NOUN_PIRANHA) || _action.isAction(VERB_THROW, NOUN_PIRANHA)))
+			&& (_action.isAction(words_give, words_stream) || _action.isAction(words_throw, words_stream)
+				|| _action.isAction(words_give, words_piranha) || _action.isAction(words_throw, words_piranha)))
 			_vm->_dialogs->show(20512);
-		else if (_action.isAction(VERB_LOOK, NOUN_PIRANHA))
+		else if (_action.isAction(words_look, words_piranha))
 			_vm->_dialogs->show(20513);
-		else if (_action.isAction(VERB_LOOK, NOUN_TWINKIFRUIT_BUSH))
+		else if (_action.isAction(words_look, words_twinkifruit_bush))
 			_vm->_dialogs->show(20514);
-		else if (_action.isAction(VERB_TAKE, NOUN_TWINKIFRUIT_BUSH))
+		else if (_action.isAction(words_take, words_twinkifruit_bush))
 			_vm->_dialogs->show(20515);
-		else if (_action.isAction(VERB_TAKE, NOUN_NATIVE_WOMAN))
+		else if (_action.isAction(words_take, words_native_woman))
 			_vm->_dialogs->show(20517);
 		else
 			return;
@@ -333,9 +333,9 @@ void room_205_preload() {
 
 	section_2_walker();
 	section_2_interface();
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_CHICKEN);
-	_scene->addActiveVocab(NOUN_PIRANHA);
+	_scene->addActiveVocab(words_walkto);
+	_scene->addActiveVocab(words_chicken);
+	_scene->addActiveVocab(words_piranha);
 }
 
 } // namespace Rooms

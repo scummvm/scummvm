@@ -52,7 +52,7 @@ static void room_604_init() {
 
 	if (_globals[kTimebombStatus] == 1) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, -1);
-		local._timebombHotspotId = _scene->_dynamicHotspots.add(NOUN_TIMEBOMB, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
+		local._timebombHotspotId = _scene->_dynamicHotspots.add(words_timebomb, words_walkto, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._timebombHotspotId, Common::Point(166, 118), FACING_NORTHEAST);
 	}
 
@@ -185,7 +185,7 @@ static void handleBombActions() {
 
 	case 1:
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, -1);
-		local._timebombHotspotId = _scene->_dynamicHotspots.add(NOUN_TIMEBOMB, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
+		local._timebombHotspotId = _scene->_dynamicHotspots.add(words_timebomb, words_walkto, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._timebombHotspotId, Common::Point(166, 118), FACING_NORTHEAST);
 		_game._objects.setRoom(OBJ_TIMEBOMB, _scene->_currentSceneId);
 		break;
@@ -217,7 +217,7 @@ static void handleBombActions() {
 }
 
 static void room_604_parser() {
-	if (_action.isAction(VERB_GET_INSIDE, NOUN_CAR)) {
+	if (_action.isAction(words_get_inside, words_car)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -257,10 +257,10 @@ static void room_604_parser() {
 		default:
 			break;
 		}
-	} else if ((_action.isAction(VERB_PUT, NOUN_LEDGE) || _action.isAction(VERB_PUT, NOUN_VIEWPORT) || _action.isAction(VERB_THROW, NOUN_VIEWPORT))
-		&& (_action.isObject(NOUN_BOMB) || _action.isObject(NOUN_BOMBS)))
+	} else if ((_action.isAction(words_put, words_ledge) || _action.isAction(words_put, words_viewport) || _action.isAction(words_throw, words_viewport))
+		&& (_action.isObject(words_bomb) || _action.isObject(words_bombs)))
 		_vm->_dialogs->show(60420);
-	else if (_action.isAction(VERB_PUT, NOUN_TIMEBOMB, NOUN_LEDGE) || _action.isAction(VERB_PUT, NOUN_TIMEBOMB, NOUN_VIEWPORT)) {
+	else if (_action.isAction(words_put, words_timebomb, words_ledge) || _action.isAction(words_put, words_timebomb, words_viewport)) {
 		local._bombMode = 1;
 		if ((_game._difficulty == DIFFICULTY_HARD) || _globals[kWarnedFloodCity])
 			handleBombActions();
@@ -279,30 +279,30 @@ static void room_604_parser() {
 			_vm->_dialogs->show(60425);
 			_globals[kWarnedFloodCity] = true;
 		}
-	} else if (_action.isAction(VERB_TAKE, NOUN_TIMEBOMB)) {
+	} else if (_action.isAction(words_take, words_timebomb)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_TIMEBOMB)) {
 			local._bombMode = 2;
 			handleBombActions();
 		}
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(60411);
-	else if (_action.isAction(VERB_LOOK, NOUN_VIEWPORT)) {
+	else if (_action.isAction(words_look, words_viewport)) {
 		if (local._monsterActive) {
 			_vm->_dialogs->show(60413);
 		} else {
 			_vm->_dialogs->show(60412);
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_WALL))
+	} else if (_action.isAction(words_look, words_wall))
 		_vm->_dialogs->show(60414);
-	else if (_action.isAction(VERB_LOOK, NOUN_VENT))
+	else if (_action.isAction(words_look, words_vent))
 		_vm->_dialogs->show(60415);
-	else if (_action.isAction(VERB_LOOK, NOUN_INDICATOR))
+	else if (_action.isAction(words_look, words_indicator))
 		_vm->_dialogs->show(60416);
-	else if (_action.isAction(VERB_LOOK, NOUN_SCULPTURE))
+	else if (_action.isAction(words_look, words_sculpture))
 		_vm->_dialogs->show(60417);
-	else if (_action.isAction(VERB_LOOK, NOUN_CAR))
+	else if (_action.isAction(words_look, words_car))
 		_vm->_dialogs->show(60418);
-	else if (_action.isAction(VERB_LOOK, NOUN_FOUNTAIN))
+	else if (_action.isAction(words_look, words_fountain))
 		_vm->_dialogs->show(60419);
 	else
 		return;
@@ -327,9 +327,9 @@ void room_604_preload() {
 
 	section_6_walker();
 	section_6_interface();
-	_scene->addActiveVocab(NOUN_SEA_MONSTER);
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_TIMEBOMB);
+	_scene->addActiveVocab(words_sea_monster);
+	_scene->addActiveVocab(words_walkto);
+	_scene->addActiveVocab(words_timebomb);
 }
 
 } // namespace Rooms

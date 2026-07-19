@@ -54,7 +54,7 @@ static void room_214_init() {
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(103, 86));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 11);
 	} else {
-		_scene->_hotspots.activate(NOUN_POISON_DARTS, false);
+		_scene->_hotspots.activate(words_poison_darts, false);
 	}
 
 	if (_game._objects.isInRoom(OBJ_BLOWGUN)) {
@@ -62,7 +62,7 @@ static void room_214_init() {
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(90, 87));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 13);
 	} else {
-		_scene->_hotspots.activate(NOUN_BLOWGUN, false);
+		_scene->_hotspots.activate(words_blowgun, false);
 	}
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
@@ -77,7 +77,7 @@ static void room_214_daemon() {
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 6, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 4);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 2);
-		_scene->_dynamicHotspots.add(NOUN_CAPTIVE_CREATURE, VERB_WALKTO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.add(words_captive_creature, words_walkto, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 	}
 
@@ -88,7 +88,7 @@ static void room_214_daemon() {
 			int oldIdx = _globals._sequenceIndexes[3];
 			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 5, 0, 0);
 			_scene->_sequences.updateTimeout(oldIdx, _globals._sequenceIndexes[3]);
-			_scene->_dynamicHotspots.add(NOUN_CAPTIVE_CREATURE, VERB_WALKTO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+			_scene->_dynamicHotspots.add(words_captive_creature, words_walkto, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 5, 8);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 2);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
@@ -100,7 +100,7 @@ static void room_214_daemon() {
 			int oldIdx = _globals._sequenceIndexes[3];
 			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
 			_scene->_sequences.updateTimeout(oldIdx, _globals._sequenceIndexes[3]);
-			_scene->_dynamicHotspots.add(NOUN_CAPTIVE_CREATURE, VERB_WALKTO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+			_scene->_dynamicHotspots.add(words_captive_creature, words_walkto, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 9, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 2);
 			local._devilTime = _game._player._priorTimer;
@@ -117,9 +117,9 @@ static void room_214_daemon() {
 static void room_214_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(21427);
-	else if (_action.isAction(VERB_WALK_OUTSIDE, NOUN_HUT))
+	else if (_action.isAction(words_walk_outside, words_hut))
 		_scene->_nextSceneId = 207;
-	else if (_action.isAction(VERB_TAKE, NOUN_POISON_DARTS) && (_game._trigger || _game._objects.isInRoom(OBJ_POISON_DARTS))) {
+	else if (_action.isAction(words_take, words_poison_darts) && (_game._trigger || _game._objects.isInRoom(OBJ_POISON_DARTS))) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -135,7 +135,7 @@ static void room_214_parser() {
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 			_game._objects.addToInventory(OBJ_POISON_DARTS);
-			_scene->_hotspots.activate(NOUN_POISON_DARTS, false);
+			_scene->_hotspots.activate(words_poison_darts, false);
 			break;
 
 		case 2:
@@ -151,7 +151,7 @@ static void room_214_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_TAKE, NOUN_BLOWGUN) && (_game._trigger || _game._objects.isInRoom(OBJ_BLOWGUN))) {
+	} else if (_action.isAction(words_take, words_blowgun) && (_game._trigger || _game._objects.isInRoom(OBJ_BLOWGUN))) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -167,7 +167,7 @@ static void room_214_parser() {
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			_game._objects.addToInventory(OBJ_BLOWGUN);
-			_scene->_hotspots.activate(NOUN_BLOWGUN, false);
+			_scene->_hotspots.activate(words_blowgun, false);
 			break;
 
 		case 2:
@@ -183,53 +183,53 @@ static void room_214_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_WINDOW))
+	} else if (_action.isAction(words_look, words_window))
 		_vm->_dialogs->show(21401);
-	else if (_action.isAction(VERB_LOOK, NOUN_EXPERIMENT_CAGE))
+	else if (_action.isAction(words_look, words_experiment_cage))
 		_vm->_dialogs->show(21402);
-	else if (_action.isAction(VERB_LOOK, NOUN_CAPTIVE_CREATURE))
+	else if (_action.isAction(words_look, words_captive_creature))
 		_vm->_dialogs->show(21403);
-	else if (_action.isAction(VERB_LOOK, NOUN_BEAR_RUG))
+	else if (_action.isAction(words_look, words_bear_rug))
 		_vm->_dialogs->show(21404);
-	else if (_action.isAction(VERB_LOOK, NOUN_TROPHY))
+	else if (_action.isAction(words_look, words_trophy))
 		_vm->_dialogs->show(21405);
-	else if (_action.isAction(VERB_LOOK, NOUN_LARGE_BOWL)) {
+	else if (_action.isAction(words_look, words_large_bowl)) {
 		if (_game._storyMode == STORYMODE_NAUGHTY) {
 			_vm->_dialogs->show(21406);
 		} else {
 			_vm->_dialogs->show(21407);
 		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_SPECIMEN_JARS))
+	} else if (_action.isAction(words_look, words_specimen_jars))
 		_vm->_dialogs->show(21408);
-	else if (_action.isAction(VERB_TAKE, NOUN_LARGE_BOWL) || _action.isAction(VERB_TAKE, NOUN_SPECIMEN_JARS))
+	else if (_action.isAction(words_take, words_large_bowl) || _action.isAction(words_take, words_specimen_jars))
 		_vm->_dialogs->show(21409);
-	else if (_action.isAction(VERB_LOOK, NOUN_SHRUNKEN_HEADS))
+	else if (_action.isAction(words_look, words_shrunken_heads))
 		_vm->_dialogs->show(21410);
-	else if (_action.isAction(VERB_TAKE, NOUN_SHRUNKEN_HEADS) || _action.isAction(VERB_TAKE, NOUN_LARGE_HEADS))
+	else if (_action.isAction(words_take, words_shrunken_heads) || _action.isAction(words_take, words_large_heads))
 		_vm->_dialogs->show(21411);
-	else if (_action.isAction(VERB_LOOK, NOUN_LARGE_HEADS))
+	else if (_action.isAction(words_look, words_large_heads))
 		_vm->_dialogs->show(21428);
-	else if (_action.isAction(VERB_LOOK, NOUN_POISON_DARTS) && (_action._savedFields._mainObjectSource == 4))
+	else if (_action.isAction(words_look, words_poison_darts) && (_action._savedFields._mainObjectSource == 4))
 		_vm->_dialogs->show(21412);
-	else if (_action.isAction(VERB_OPEN, NOUN_EXPERIMENT_CAGE))
+	else if (_action.isAction(words_open, words_experiment_cage))
 		_vm->_dialogs->show(21414);
-	else if (_action.isAction(VERB_TALKTO, NOUN_CAPTIVE_CREATURE))
+	else if (_action.isAction(words_talkto, words_captive_creature))
 		_vm->_dialogs->show(21415);
-	else if (_action.isAction(VERB_GIVE, NOUN_TWINKIFRUIT, NOUN_CAPTIVE_CREATURE))
+	else if (_action.isAction(words_give, words_twinkifruit, words_captive_creature))
 		_vm->_dialogs->show(21416);
-	else if (_action.isAction(VERB_SHOOT, NOUN_BLOWGUN, NOUN_CAPTIVE_CREATURE) || _action.isAction(VERB_HOSE_DOWN, NOUN_BLOWGUN, NOUN_CAPTIVE_CREATURE))
+	else if (_action.isAction(words_shoot, words_blowgun, words_captive_creature) || _action.isAction(words_hose_down, words_blowgun, words_captive_creature))
 		_vm->_dialogs->show(21417);
-	else if (_action.isAction(VERB_LOOK, NOUN_BIG_HEADS))
+	else if (_action.isAction(words_look, words_big_heads))
 		_vm->_dialogs->show(21418);
-	else if (_action.isAction(VERB_TAKE, NOUN_BIG_HEADS))
+	else if (_action.isAction(words_take, words_big_heads))
 		_vm->_dialogs->show(21419);
-	else if (_action.isAction(VERB_TAKE, NOUN_BEAR_RUG))
+	else if (_action.isAction(words_take, words_bear_rug))
 		_vm->_dialogs->show(21420);
-	else if (_action.isAction(VERB_LOOK, NOUN_FLOOR_OF_HUT))
+	else if (_action.isAction(words_look, words_floor_of_hut))
 		_vm->_dialogs->show(21421);
-	else if (_action.isAction(VERB_LOOK, NOUN_BLOWGUN))
+	else if (_action.isAction(words_look, words_blowgun))
 		_vm->_dialogs->show(21422);
-	else if (_action.isAction(VERB_LOOK, NOUN_TABLE)) {
+	else if (_action.isAction(words_look, words_table)) {
 		if (_game._objects.isInRoom(OBJ_POISON_DARTS) && _game._objects.isInRoom(OBJ_BLOWGUN)) {
 			_vm->_dialogs->show(21423);
 		} else if (_game._objects.isInRoom(OBJ_POISON_DARTS) && !_game._objects.isInRoom(OBJ_BLOWGUN)) {
@@ -257,8 +257,8 @@ void room_214_preload() {
 
 	section_2_walker();
 	section_2_interface();
-	_scene->addActiveVocab(NOUN_CAPTIVE_CREATURE);
-	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(words_captive_creature);
+	_scene->addActiveVocab(words_walkto);
 }
 
 } // namespace Rooms

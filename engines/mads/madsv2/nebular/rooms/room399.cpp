@@ -39,9 +39,9 @@ static void room_399_init() {
 }
 
 static void room_399_parser() {
-	if (_action.isAction(VERB_RETURN_TO, NOUN_AIR_SHAFT))
+	if (_action.isAction(words_return_to, words_air_shaft))
 		_scene->_nextSceneId = 313;
-	else if (_action.isAction(VERB_LOOK_THROUGH, NOUN_GRATE)) {
+	else if (_action.isAction(words_look_through, words_grate)) {
 		if (_globals[kAfterHavoc]) {
 			if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
 				_vm->_dialogs->show(38911);
@@ -49,7 +49,7 @@ static void room_399_parser() {
 				_vm->_dialogs->show(38912);
 		} else
 			_vm->_dialogs->show(38910);
-	} else if (_action.isAction(VERB_OPEN, NOUN_GRATE)) {
+	} else if (_action.isAction(words_open, words_grate)) {
 		if (_globals[kAfterHavoc])
 			_vm->_dialogs->show(38914);
 		else

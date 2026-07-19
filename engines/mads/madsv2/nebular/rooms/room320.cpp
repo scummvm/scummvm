@@ -238,11 +238,11 @@ static void room_320_daemon() {
 static void room_320_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(32011);
-	else if ((_action.isAction(VERB_PRESS) || _action.isAction(VERB_PUSH)) &&
-		(_action.isObject(NOUN_LEFT_1_KEY) || _action.isObject(NOUN_LEFT_2_KEY) || _action.isObject(NOUN_LEFT_3_KEY) || _action.isObject(NOUN_LEFT_4_KEY) ||
-			_action.isObject(NOUN_GREEN_BUTTON) || _action.isObject(NOUN_RED_BUTTON) || _action.isObject(NOUN_RIGHT_1_KEY) || _action.isObject(NOUN_RIGHT_2_KEY) ||
-			_action.isObject(NOUN_RIGHT_3_KEY) || _action.isObject(NOUN_RIGHT_4_KEY) || _action.isObject(NOUN_RIGHT_5_KEY) || _action.isObject(NOUN_RIGHT_6_KEY) ||
-			_action.isObject(NOUN_RIGHT_7_KEY) || _action.isObject(NOUN_RIGHT_8_KEY)
+	else if ((_action.isAction(words_press) || _action.isAction(words_push)) &&
+		(_action.isObject(words_left_1_key) || _action.isObject(words_left_2_key) || _action.isObject(words_left_3_key) || _action.isObject(words_left_4_key) ||
+			_action.isObject(words_green_button) || _action.isObject(words_red_button) || _action.isObject(words_right_1_key) || _action.isObject(words_right_2_key) ||
+			_action.isObject(words_right_3_key) || _action.isObject(words_right_4_key) || _action.isObject(words_right_5_key) || _action.isObject(words_right_6_key) ||
+			_action.isObject(words_right_7_key) || _action.isObject(words_right_8_key)
 			)) {
 		switch (_game._trigger) {
 		case 0:
@@ -306,39 +306,39 @@ static void room_320_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_LEAVE, NOUN_SECURITY_STATION))
+	} else if (_action.isAction(words_leave, words_security_station))
 		_scene->_nextSceneId = 311;
-	else if (_action.isAction(VERB_LOOK, NOUN_RIGHT_MONITOR))
+	else if (_action.isAction(words_look, words_right_monitor))
 		_vm->_dialogs->show(32001);
-	else if (_action.isAction(VERB_LOOK, NOUN_LEFT_MONITOR))
+	else if (_action.isAction(words_look, words_left_monitor))
 		_vm->_dialogs->show(32002);
-	else if (_action.isAction(VERB_LOOK, NOUN_DESK))
+	else if (_action.isAction(words_look, words_desk))
 		_vm->_dialogs->show(32003);
-	else if (_action.isAction(VERB_LOOK, NOUN_SECURITY_STATION))
+	else if (_action.isAction(words_look, words_security_station))
 		_vm->_dialogs->show(32004);
-	else if (_action.isAction(VERB_LOOK, NOUN_MUG))
+	else if (_action.isAction(words_look, words_mug))
 		_vm->_dialogs->show(32005);
-	else if (_action.isAction(VERB_LOOK, NOUN_DOUGHNUT))
+	else if (_action.isAction(words_look, words_doughnut))
 		_vm->_dialogs->show(32006);
-	else if (_action.isAction(VERB_LOOK, NOUN_MAGAZINE))
+	else if (_action.isAction(words_look, words_magazine))
 		_vm->_dialogs->show(32007);
-	else if (_action.isAction(VERB_LOOK, NOUN_PAPER_FOOTBALL))
+	else if (_action.isAction(words_look, words_paper_football))
 		_vm->_dialogs->show(32008);
-	else if (_action.isAction(VERB_LOOK, NOUN_NEWSPAPER))
+	else if (_action.isAction(words_look, words_newspaper))
 		_vm->_dialogs->show(32009);
-	else if (_action.isAction(VERB_LOOK, NOUN_CLIPBOARD))
+	else if (_action.isAction(words_look, words_clipboard))
 		_vm->_dialogs->show(32010);
-	else if (_action.isAction(VERB_TAKE, NOUN_MUG))
+	else if (_action.isAction(words_take, words_mug))
 		_vm->_dialogs->show(32012);
-	else if (_action.isAction(VERB_TAKE, NOUN_CLIPBOARD))
+	else if (_action.isAction(words_take, words_clipboard))
 		_vm->_dialogs->show(32013);
-	else if (_action.isAction(VERB_TAKE, NOUN_DOUGHNUT) || _action.isAction(VERB_EAT, NOUN_DOUGHNUT))
+	else if (_action.isAction(words_take, words_doughnut) || _action.isAction(words_eat, words_doughnut))
 		_vm->_dialogs->show(32014);
-	else if (_action.isAction(VERB_TAKE, NOUN_PAPER_FOOTBALL))
+	else if (_action.isAction(words_take, words_paper_football))
 		_vm->_dialogs->show(32015);
-	else if (_action.isAction(VERB_TAKE, NOUN_MAGAZINE))
+	else if (_action.isAction(words_take, words_magazine))
 		_vm->_dialogs->show(32016);
-	else if (_action.isAction(VERB_TAKE, NOUN_NEWSPAPER))
+	else if (_action.isAction(words_take, words_newspaper))
 		_vm->_dialogs->show(32017);
 	else
 		return;
