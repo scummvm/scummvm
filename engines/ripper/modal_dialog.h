@@ -39,6 +39,11 @@ public:
 		kWacPresentation
 	};
 
+	enum PaletteBehavior {
+		kApplyModalPalette,
+		kPreserveActivePalette
+	};
+
 	enum TextEntryResult {
 		kTextEntryPending,
 		kTextEntryAccepted,
@@ -50,10 +55,12 @@ public:
 
 	bool initialize(ResourceManager &resources);
 	bool run(uint bodyResourceId, bool retainSceneCursorRegions = false,
-		PresentationStyle style = kMenubPresentation);
+		PresentationStyle style = kMenubPresentation,
+		PaletteBehavior paletteBehavior = kApplyModalPalette);
 	bool runText(const Common::String &title, const Common::String &body,
 		const char *source, bool retainSceneCursorRegions = false,
-		PresentationStyle style = kMenubPresentation);
+		PresentationStyle style = kMenubPresentation,
+		PaletteBehavior paletteBehavior = kApplyModalPalette);
 	bool drawRetainedTextPanel(uint bodyResourceId, const Common::Rect &bounds,
 		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows,
 		PresentationStyle style);
@@ -89,7 +96,7 @@ private:
 	void finishTextEntry(Common::String &text);
 	bool runTextInternal(const Common::String &title, const Common::String &body,
 		uint bodyResourceId, const char *source, bool retainSceneCursorRegions,
-		PresentationStyle style);
+		PresentationStyle style, PaletteBehavior paletteBehavior);
 	const Common::String &resourceString(uint resourceId) const;
 
 	RipperEngine *_engine;

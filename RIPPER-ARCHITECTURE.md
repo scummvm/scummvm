@@ -568,7 +568,10 @@
   `HELP` title uses index 254.
 - `PollInteractionAndResolveSelection` at `0x13c8d` maps extended key `0x3b00`
   (F1) to general help resource 400, or resource `0x19b` while a prompt is
-  active. Toolbar action `0x51b` follows the same branch through
+  active. While the Cyber transition flag is active it instead selects resource
+  `0x1a4`, still using the `MENUB` template. That path makes no palette call
+  around `RunModalTextDialog`, so the modal's indexed pixels retain the active
+  Cyber scene palette. Toolbar action `0x51b` follows the same branch through
   `DispatchFrontEndAction` at `0x190b7`. `ProcessChooserControlInput` at
   `0x57372` maintains the first visible row and handles Home, Up, Page Up, End,
   Down, and Page Down. `InitializeSharedPresentationTemplates` at `0x119ac`
