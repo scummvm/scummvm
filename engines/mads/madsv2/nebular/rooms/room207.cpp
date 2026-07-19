@@ -94,6 +94,8 @@ static void room_207_init() {
 		_game._player._playerPos = Common::Point(305, 131);
 	}
 
+	section_2_music();
+
 	_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 10, 1, 0, 0);
 	_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], 1, 22);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 6);

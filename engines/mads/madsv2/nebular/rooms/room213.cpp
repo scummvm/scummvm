@@ -43,15 +43,7 @@ static void room_213_init() {
 
 	teleporter_init();
 
-	// The original is calling Scene2xx::section_2_music()
-	if (_vm->_musicFlag) {
-		if (_globals[kMeteorologistWatch] == METEOROLOGIST_NORMAL)
-			_vm->_sound->command(1);
-		else
-			_vm->_sound->command(9);
-	} else {
-		_vm->_sound->command(2);
-	}
+	section_2_music();
 }
 
 static void room_213_daemon() {

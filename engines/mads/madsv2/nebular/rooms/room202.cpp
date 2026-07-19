@@ -163,6 +163,8 @@ static void room_202_init() {
 	}
 
 	local._meteorologistSpecial = false;
+
+	section_2_music();
 }
 
 static void setRandomKernelMessage() {

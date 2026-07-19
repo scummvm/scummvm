@@ -112,6 +112,7 @@ static void room_208_init() {
 
 	_vm->_palette->setEntry(16, 0, 0, 63);
 	_vm->_palette->setEntry(17, 0, 0, 45);
+
 	section_2_music();
 }
 
