@@ -3762,7 +3762,11 @@ bool BaseGame::scSetProperty(const char *name, ScValue *value) {
 	// CursorHidden
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CursorHidden") == 0) {
-		_cursorHidden = value->getBool();
+		// 'Night in the Fog' scripts hide cursor and suppose to unhide,
+		// unhide does not happen, so skip hidding
+		if (BaseEngine::instance().getGameId() != "nightinthefog") {
+			_cursorHidden = value->getBool();
+		}
 		return STATUS_OK;
 	} else {
 		return BaseObject::scSetProperty(name, value);
