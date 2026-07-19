@@ -40,7 +40,9 @@ struct IfAnd : public ScriptV2::Conditional {
 	void exec(ExecutionContext &ctx) const override {
 		bool result = true;
 		for (auto &c : conditions) {
-			if (!c->value()) {
+			auto value = c->value();
+			debug("ifand %s %s %s: %d", c->arg1.c_str(), c->op.c_str(), c->arg2.c_str(), value);
+			if (!value) {
 				result = false;
 				break;
 			}
@@ -54,7 +56,9 @@ struct IfOr : public ScriptV2::Conditional {
 	void exec(ExecutionContext &ctx) const override {
 		bool result = false;
 		for (auto &c : conditions) {
-			if (c->value()) {
+			auto value = c->value();
+			debug("ifor %s %s %s: %d", c->arg1.c_str(), c->op.c_str(), c->arg2.c_str(), value);
+			if (value) {
 				result = true;
 				break;
 			}
@@ -195,17 +199,23 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 			_conditionalScope.reset();
 			_currentTest->scope.commands.push_back(Common::move(conditional));
 		} else if (p.maybe("clic]")) {
+			if (!_conditionals.empty())
+				error("[clic] inside conditional at line %d", lineno);
 			if (!_currentTest)
-				error("clic without test at line %d", lineno);
+				error("[clic] without test at line %d", lineno);
 			_testScope.reset();
 		} else if (p.maybe("in]")) {
+			if (!_conditionals.empty())
+				error("[in] inside conditional at line %d", lineno);
 			if (!_currentTest)
-				error("in without test at line %d", lineno);
+				error("[in] without test at line %d", lineno);
 			if (_currentTest->enter)
 				error("duplicate [in] handler");
 			_currentTest->enter.reset(new Scope);
 			_testScope = _currentTest->enter;
 		} else if (p.maybe("out]")) {
+			if (!_conditionals.empty())
+				error("[out] inside conditional at line %d", lineno);
 			if (!_currentTest)
 				error("out without test at line %d", lineno);
 			if (_currentTest->leave)
@@ -230,7 +240,8 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 		} else
 			error("invalid syntax at %d", lineno);
 
-		auto &commands = _testScope ? _testScope->commands : _currentTest->scope.commands;
+		auto &commands = _conditionalScope ? _conditionalScope->commands : _testScope ? _testScope->commands
+																					  : _currentTest->scope.commands;
 		if (command)
 			commands.push_back(command);
 		else {
