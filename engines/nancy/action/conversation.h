@@ -36,9 +36,8 @@ namespace Action {
 // A conversation will auto-advance to a next scene when no responses are available; the next scene
 // can either be described within the Conversation data, or can be whatever's pushed onto the scene "stack".
 // Also supports branching scenes depending on a condition, though that is only used in older games.
-// Player responses can also be conditional; the original engine had special-purpose "infocheck"
-// functions, two per character ID, which were used to evaluate those conditions. We replace that with
-// the data bundled inside nancy.dat (see devtools/create_nancy).
+// Player responses can also be conditional. Up to Nancy11 the condition data comes from nancy.dat
+// (see devtools/create_nancy); from Nancy12 on it lives in per-character data scenes (S<800 + charID> / S<900 + charID>).
 class ConversationSound : public RenderActionRecord {
 public:
 	ConversationSound();
@@ -115,9 +114,11 @@ protected:
 	void readDataNancy13(Common::SeekableReadStream &stream);
 	virtual void readCelDataNancy13(Common::SeekableReadStream &stream);
 
-	// Functions for handling the built-in dialogue responses found in the executable
+	// Add conditional/goodbye responses: from nancy.dat up to Nancy11, from data scenes for Nancy12+
 	void addConditionalDialogue();
 	void addGoodbye();
+	void addConditionalDialogueNancy12();
+	void addGoodbyeNancy12();
 
 	Common::String _text;
 
@@ -261,6 +262,26 @@ public:
 
 protected:
 	Common::String getRecordTypeName() const override { return "ConversationCelTerse"; }
+};
+
+// Nancy12+ conditional dialogue record (type 35), one per response, stored in scene S<800 + charID>
+class ConversationInfoCheck : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	Common::String getRecordTypeName() const override { return "ConversationInfoCheck"; }
+
+	Common::String _soundID; // Doubles as the CONVO text key
+	uint16 _sceneID = 0;
+};
+
+// Nancy12+ goodbye record (type 36), stored in scene S<900 + charID>; one sound and scene are picked at random
+class ConversationGoodbye : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	Common::String getRecordTypeName() const override { return "ConversationGoodbye"; }
+
+	Common::Array<Common::String> _soundIDs;
+	Common::Array<uint16> _sceneIDs;
 };
 
 } // End of namespace Action

@@ -30,8 +30,10 @@
 #include "engines/nancy/util.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/resource.h"
+#include "engines/nancy/iff.h"
 
 #include "engines/nancy/action/conversation.h"
+#include "engines/nancy/action/actionmanager.h"
 #include "engines/nancy/action/secondarymovie.h"
 
 #include "engines/nancy/state/scene.h"
@@ -493,9 +495,7 @@ void ConversationSound::execute() {
 
 void ConversationSound::addConditionalDialogue() {
 	if (g_nancy->getGameType() >= kGameTypeNancy12) {
-		// TODO: Nancy12+ moved the per-character conditional dialogue out
-		// of the executable and into separate data files.
-		warning("Conditional dialogue for character %d is not implemented in Nancy12+", _conditionalResponseCharacterID);
+		addConditionalDialogueNancy12();
 		return;
 	}
 
@@ -570,9 +570,7 @@ void ConversationSound::addConditionalDialogue() {
 
 void ConversationSound::addGoodbye() {
 	if (g_nancy->getGameType() >= kGameTypeNancy12) {
-		// TODO: Nancy12+ moved the per-character goodbye dialogue out
-		// of the executable and into separate data files.
-		warning("Goodbye dialogue for character %d is not implemented in Nancy12+", _goodbyeResponseCharacterID);
+		addGoodbyeNancy12();
 		return;
 	}
 
@@ -652,6 +650,133 @@ void ConversationSound::addGoodbye() {
 	// Set an event flag if applicable
 	// Assumes flagToSet is an event flag
 	NancySceneState.setEventFlag(sceneChange.flagToSet.label, sceneChange.flagToSet.flag);
+}
+
+void ConversationSound::addConditionalDialogueNancy12() {
+	// Every action record in scene S<800 + charID> is one conditional response
+	Common::Path sceneName(Common::String::format("S%u", 800 + _conditionalResponseCharacterID));
+	IFF *iff = g_nancy->_resource->loadIFF(sceneName);
+	if (!iff) {
+		warning("Could not load conditional dialogue scene %s", sceneName.toString().c_str());
+		return;
+	}
+
+	// Response text is in the CONVO file's CVTX chunk, keyed by sound ID
+	const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
+	assert(convo);
+
+	Common::SeekableReadStream *chunk = nullptr;
+	for (uint i = 0; (chunk = iff->getChunkStream("ACT", i)) != nullptr; ++i) {
+		ActionRecord *record = ActionManager::createAndLoadNewRecord(*chunk);
+		delete chunk;
+
+		ConversationInfoCheck *infoCheck = dynamic_cast<ConversationInfoCheck *>(record);
+		if (infoCheck) {
+			NancySceneState.getActionManager().processDependency(infoCheck->_dependencies, *infoCheck, true);
+
+			if (infoCheck->_dependencies.satisfied) {
+				_responses.push_back(ResponseStruct());
+				ResponseStruct &newResponse = _responses.back();
+				newResponse.soundName = infoCheck->_soundID;
+				newResponse.text = convo->texts[infoCheck->_soundID];
+				newResponse.sceneChange.sceneID = infoCheck->_sceneID;
+				newResponse.sceneChange.continueSceneSound = kContinueSceneSound;
+				newResponse.sceneChange.listenerFrontVector.set(0, 0, 1);
+
+				// Drop the response if it's a repeat
+				for (uint j = 0; j < _responses.size() - 1; ++j) {
+					if (	_responses[j].soundName == newResponse.soundName &&
+							_responses[j].text == newResponse.text &&
+							_responses[j].sceneChange.sceneID == newResponse.sceneChange.sceneID) {
+						_responses.pop_back();
+						break;
+					}
+				}
+			}
+		}
+
+		delete record;
+	}
+
+	delete iff;
+}
+
+void ConversationSound::addGoodbyeNancy12() {
+	// Use the first satisfied goodbye record in scene S<900 + charID>
+	Common::Path sceneName(Common::String::format("S%u", 900 + _goodbyeResponseCharacterID));
+	IFF *iff = g_nancy->_resource->loadIFF(sceneName);
+	if (!iff) {
+		warning("Could not load goodbye scene %s", sceneName.toString().c_str());
+		return;
+	}
+
+	// Response text is in the CONVO file's CVTX chunk, keyed by sound ID
+	const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
+	assert(convo);
+
+	bool added = false;
+	Common::SeekableReadStream *chunk = nullptr;
+	for (uint i = 0; !added && (chunk = iff->getChunkStream("ACT", i)) != nullptr; ++i) {
+		ActionRecord *record = ActionManager::createAndLoadNewRecord(*chunk);
+		delete chunk;
+
+		ConversationGoodbye *goodbye = dynamic_cast<ConversationGoodbye *>(record);
+		if (goodbye && !goodbye->_soundIDs.empty() && !goodbye->_sceneIDs.empty()) {
+			NancySceneState.getActionManager().processDependency(goodbye->_dependencies, *goodbye, true);
+
+			if (goodbye->_dependencies.satisfied) {
+				_responses.push_back(ResponseStruct());
+				ResponseStruct &newResponse = _responses.back();
+
+				const Common::String &soundID = goodbye->_soundIDs[g_nancy->_randomSource->getRandomNumber(goodbye->_soundIDs.size() - 1)];
+				newResponse.soundName = soundID;
+				newResponse.text = convo->texts[soundID];
+				newResponse.sceneChange.sceneID = goodbye->_sceneIDs[g_nancy->_randomSource->getRandomNumber(goodbye->_sceneIDs.size() - 1)];
+				newResponse.sceneChange.continueSceneSound = kContinueSceneSound;
+				newResponse.sceneChange.listenerFrontVector.set(0, 0, 1);
+
+				added = true;
+			}
+		}
+
+		delete record;
+	}
+
+	delete iff;
+}
+
+void ConversationInfoCheck::readData(Common::SeekableReadStream &stream) {
+	readFilename(stream, _soundID);
+	_sceneID = stream.readUint16LE();
+}
+
+void ConversationGoodbye::readData(Common::SeekableReadStream &stream) {
+	if (g_nancy->getGameType() == kGameTypeNancy12) {
+		// A single sound, then a count and a fixed set of 5 candidate scenes
+		_soundIDs.resize(1);
+		readFilename(stream, _soundIDs[0]);
+
+		uint16 numScenes = stream.readUint16LE();
+		_sceneIDs.resize(numScenes);
+		for (uint i = 0; i < 5; ++i) {
+			uint16 sceneID = stream.readUint16LE();
+			if (i < numScenes) {
+				_sceneIDs[i] = sceneID;
+			}
+		}
+
+		return;
+	}
+
+	// Nancy13+: a count-prefixed list of sounds, then one of scenes
+	uint16 numSounds = stream.readUint16LE();
+	readFilenameArray(stream, _soundIDs, numSounds);
+
+	uint16 numScenes = stream.readUint16LE();
+	_sceneIDs.resize(numScenes);
+	for (uint i = 0; i < numScenes; ++i) {
+		_sceneIDs[i] = stream.readUint16LE();
+	}
 }
 
 void ConversationSound::ConversationFlag::read(Common::SeekableReadStream &stream) {

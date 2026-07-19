@@ -196,6 +196,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new StartPlayerScrolling();
 	case 32:	// Nancy10
 		return new UIPopupPrepScene();
+	case 35:	// Nancy12
+		return new ConversationInfoCheck();
+	case 36:	// Nancy12
+		return new ConversationGoodbye();
 	case 40:
 		if (g_nancy->getGameType() <= kGameTypeNancy1)
 			return new LightningOn(); // Only used in TVD
