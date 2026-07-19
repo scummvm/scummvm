@@ -379,8 +379,8 @@ void RexNebularEngine::global_parser_code() {
 		}
 	} else if (player_said_3(put, burger, dead_fish)) {
 		if (player_has(OBJ_BURGER) || player_has(OBJ_DEAD_FISH)) {
-			inter_take_from_player(OBJ_DEAD_FISH, PLAYER);
-			inter_take_from_player(OBJ_BURGER, PLAYER);
+			inter_take_from_player(OBJ_DEAD_FISH, NOWHERE);
+			inter_take_from_player(OBJ_BURGER, NOWHERE);
 			inter_give_to_player(OBJ_STUFFED_FISH);
 			object_examine(OBJ_STUFFED_FISH, 803);
 		}
