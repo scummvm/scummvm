@@ -269,7 +269,7 @@ bool BaseSoundBuffer::isPlaying() {
 uint32 BaseSoundBuffer::getPosition() {
 	if (_stream && _handle) {
 		uint32 pos = g_system->getMixer()->getSoundElapsedTime(*_handle);
-		return pos;
+		return pos + _startPos;
 	}
 	return 0;
 }
