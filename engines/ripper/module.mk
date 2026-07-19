@@ -19,6 +19,7 @@ MODULE_OBJS := \
 	puzzles/crystal.o \
 	puzzles/ka_book_code.o \
 	puzzles/rolodex.o \
+	puzzles/table_gate.o \
 	remote_control.o \
 	resources.o \
 	ripper.o \

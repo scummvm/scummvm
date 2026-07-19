@@ -40,6 +40,7 @@
 #include "ripper/puzzles/calculator.h"
 #include "ripper/puzzles/crystal.h"
 #include "ripper/puzzles/rolodex.h"
+#include "ripper/puzzles/table_gate.h"
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
 #include "ripper/toolbar.h"
@@ -1275,6 +1276,16 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 					"Ripper: Cyber menu scene action completed result=%d",
 					cyberResult);
 				if (cyberResult == CyberManager::kLoadFailed)
+					return false;
+				break;
+			}
+			if (action == kSceneActionTableGatePuzzle) {
+				TableGatePuzzle puzzle(_engine);
+				const TableGatePuzzle::Result puzzleResult = puzzle.run(argument);
+				debugC(1, kDebugPuzzles,
+					"Ripper: table gate puzzle scene action completed result=%d milestone=%u",
+					puzzleResult, argument);
+				if (puzzleResult == TableGatePuzzle::kLoadFailed)
 					return false;
 				break;
 			}
