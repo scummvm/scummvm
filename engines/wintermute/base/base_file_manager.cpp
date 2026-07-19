@@ -274,8 +274,10 @@ bool BaseFileManager::registerPackages() {
 				searchSignature = true;
 			}
 
-			// W/A: skip broken package in 'Project Joe"
-			if (fileName == "master.dcp" && BaseEngine::instance().getGameId() == "projectjoe") {
+			// W/A: skip broken package in 'Project Joe' and 'Mystic Triddle'
+			if (fileName == "master.dcp" &&
+			    (BaseEngine::instance().getGameId() == "projectjoe" ||
+			     BaseEngine::instance().getGameId() == "mystictriddle")) {
 				continue;
 			}
 
