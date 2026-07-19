@@ -189,6 +189,18 @@ void RexNebularEngine::global_daemon_code() {
 	}
 }
 
+void RexNebularEngine::global_pre_parser_code() {
+	if (player_said_1(look) || player_said_1(throw))
+		player.need_to_walk = false;
+}
+
+void RexNebularEngine::global_verb_filter() {
+	// Switches the 'look at' used with the binoculars to a standard look verb,
+	// as expected by the room scripts in at least room 202
+	if (player_verb == words_look_at)
+		player_verb = words_look;
+}
+
 void RexNebularEngine::showRecipe() {
 	int count;
 

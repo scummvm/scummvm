@@ -56,7 +56,8 @@ public:
 	void section_music(int section_num) override;
 	void global_section_constructor() override;
 	void global_daemon_code() override;
-	void global_pre_parser_code() override {}
+	void global_verb_filter() override;
+	void global_pre_parser_code();
 	void global_parser_code() override;
 	void global_error_code() override;
 	void global_room_init() override {}
