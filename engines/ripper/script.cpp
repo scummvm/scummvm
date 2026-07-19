@@ -701,7 +701,14 @@ bool ScriptManager::showHelp(const char *source) {
 		"Ripper: opening scene help source=%s resource=%u promptActive=%d cyberActive=%d",
 		source, resourceId, promptActive, _cyberActive);
 	_engine->getCursor()->setVisible(true);
-	return _engine->getModalDialog()->run(resourceId, true);
+	// PollInteractionAndResolveSelection at 0x13c8d sends Cyber help resource
+	// 0x1a4 through RunModalTextDialog without replacing the active palette.
+	// The MENUB pixels therefore retain the colors of the Cyber presentation.
+	const ModalDialogManager::PaletteBehavior paletteBehavior = _cyberActive ?
+		ModalDialogManager::kPreserveActivePalette :
+		ModalDialogManager::kApplyModalPalette;
+	return _engine->getModalDialog()->run(resourceId, true,
+		ModalDialogManager::kMenubPresentation, paletteBehavior);
 }
 
 bool ScriptManager::initialize(ResourceManager &resources) {
