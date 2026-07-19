@@ -219,7 +219,9 @@ bool BaseImage::loadFile(const Common::String &filename) {
 		_decoder = new Image::BitmapDecoder();
 	} else if (_filename.hasSuffix(".png")) {
 		if (BaseEngine::instance().getGameId() == "satanandsons" &&
-		    _filename.hasSuffix("\\plein\\kaars.1.png")) {
+		    (_filename.hasSuffix("\\plein\\kaars.1.png") ||
+			 _filename.hasSuffix("\\bos2\\bos.png") ||
+			 _filename.hasSuffix("\\bos\\background.png"))) {
 			debug(2, "BaseImage::loadFile : Buggy PNG bitmap %s, skipping...", filename.c_str());
 			return false;
 		}
