@@ -47,7 +47,8 @@ namespace MADSV2 {
 
 #define KERNEL_MESSAGE_COLOR_BASE       16    /* 1st color to use for messages          */
 #define KERNEL_MESSAGE_COLOR_BASE_2     252   /* 1st color to use for second message    */
-#define KERNEL_MESSAGE_COLOR_BASE_3     254   /* 1st color to use for third  message    */
+/* 1st color to use for third  message    */
+#define KERNEL_MESSAGE_COLOR_BASE_3     (g_engine->getGameID() == GType_RexNebular ? 250 : 254)
 
 #define KERNEL_OBJECT_COLOR_BASE        246   /* 1st color to use for rotating objects  */
 
