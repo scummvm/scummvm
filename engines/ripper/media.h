@@ -48,6 +48,8 @@ public:
 	virtual ~MediaSequenceCallback() {}
 
 	virtual uint16 service(uint frame) = 0;
+	virtual bool continueAfterEnd() const { return false; }
+	virtual bool ownsInput() const { return false; }
 };
 
 class MediaPlayer {
@@ -71,7 +73,8 @@ public:
 		MediaSequenceCallback *callback, uint16 *command = nullptr);
 	void fadePalette(bool fadeIn, uint stepCount);
 	bool playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
-		bool loopUntilInput = false, bool allowEscSpace = false);
+		bool loopUntilInput = false, bool allowEscSpace = false,
+		MediaSequenceCallback *callback = nullptr, uint16 *command = nullptr);
 	bool loadAudio(const Common::String &path, bool preserve);
 	bool configureAudio(const Common::String &key, uint volumePercent, uint triggerFrame,
 		byte control);

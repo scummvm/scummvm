@@ -57,11 +57,21 @@ static const byte kModalHeadingColor = 255;
 static const byte kModalTitleColor = 254;
 static const byte kModalTextColor = 4;
 static const uint kModalCursor = 16;
+static const int kTextEntryLeft = 228;
+static const int kTextEntryTop = 312;
+static const int kTextEntryWidth = 194;
+static const int kTextEntryHeight = 20;
+static const int kTextEntryPadding = 5;
+static const uint32 kTextEntryCaretBlinkMillis = 500;
 
 } // End of anonymous namespace
 
 ModalDialogManager::ModalDialogManager(RipperEngine *engine) :
-		_engine(engine), _initialized(false) {
+		_engine(engine), _textEntryMaximumLength(0), _textEntryHelpResourceId(0),
+		_textEntryFirstVisible(0), _textEntryCursorPosition(0),
+		_textEntryNextCaretMillis(0), _textEntryOverwrite(false),
+		_textEntryCaretVisible(false), _textEntryActive(false),
+		_textEntryRestoreCursor(false), _initialized(false) {
 }
 
 bool ModalDialogManager::initialize(ResourceManager &resources) {
@@ -332,6 +342,266 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 	g_system->unlockScreen();
 	_engine->getCursor()->refresh();
 	g_system->updateScreen();
+}
+
+void ModalDialogManager::drawTextEntry(const Common::String &prompt,
+		const Common::String &text, uint firstVisible, uint cursorPosition,
+		bool caretVisible, const Common::Rect &bounds) const {
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen || screen->format.bytesPerPixel != 1) {
+		if (screen)
+			g_system->unlockScreen();
+		return;
+	}
+
+	byte *pixels = (byte *)screen->getPixels();
+	drawFrame(pixels, screen->pitch, bounds);
+	for (int y = bounds.top + 2; y < bounds.bottom - 2; ++y)
+		memset(screen->getBasePtr(bounds.left + kTextEntryPadding, y),
+			kModalBackgroundColor, bounds.width() - kTextEntryPadding * 2);
+
+	const int textTop = bounds.top + (bounds.height() - _font.lineHeight) / 2;
+	int textLeft = bounds.left + kTextEntryPadding;
+	if (!prompt.empty()) {
+		drawText(pixels, screen->pitch, textLeft, textTop, prompt, kModalTextColor);
+		textLeft += measureText(prompt) + _font.spaceWidth;
+	}
+	const uint availableWidth = bounds.right - kTextEntryPadding - textLeft;
+	uint endVisible = firstVisible;
+	while (endVisible < text.size()) {
+		const Common::String candidate =
+			text.substr(firstVisible, endVisible - firstVisible + 1);
+		if (measureText(candidate) > availableWidth)
+			break;
+		++endVisible;
+	}
+	const Common::String visible = text.substr(firstVisible,
+		endVisible - firstVisible);
+	drawText(pixels, screen->pitch, textLeft, textTop, visible, kModalTextColor);
+	if (caretVisible && cursorPosition >= firstVisible && cursorPosition <= endVisible) {
+		const int caretLeft = textLeft + measureText(text.substr(firstVisible,
+			cursorPosition - firstVisible));
+		drawText(pixels, screen->pitch, caretLeft, textTop, "_", kModalTextColor);
+	}
+
+	g_system->unlockScreen();
+	_engine->getCursor()->refresh();
+	g_system->updateScreen();
+}
+
+uint ModalDialogManager::textEntryCursorFromPoint(const Common::String &text,
+		uint firstVisible, int x, const Common::Rect &bounds) const {
+	const int relativeX = x - bounds.left - kTextEntryPadding;
+	if (relativeX <= 0)
+		return firstVisible;
+	for (uint position = firstVisible; position < text.size(); ++position) {
+		const uint left = measureText(text.substr(firstVisible,
+			position - firstVisible));
+		const uint right = measureText(text.substr(firstVisible,
+			position - firstVisible + 1));
+		if ((uint)relativeX < left + (right - left) / 2)
+			return position;
+		if (right >= (uint)bounds.width() - kTextEntryPadding * 2)
+			return position + 1;
+	}
+	return text.size();
+}
+
+void ModalDialogManager::updateTextEntryFirstVisible(const Common::Rect &bounds) {
+	int textLeft = bounds.left + kTextEntryPadding;
+	if (!_textEntryPrompt.empty())
+		textLeft += measureText(_textEntryPrompt) + _font.spaceWidth;
+	const uint availableWidth = bounds.right - kTextEntryPadding - textLeft;
+	const uint caretWidth = measureText("_");
+	if (_textEntryCursorPosition < _textEntryFirstVisible)
+		_textEntryFirstVisible = _textEntryCursorPosition;
+	while (_textEntryFirstVisible < _textEntryCursorPosition &&
+			measureText(_textEntryText.substr(_textEntryFirstVisible,
+				_textEntryCursorPosition - _textEntryFirstVisible)) + caretWidth >
+				availableWidth)
+		++_textEntryFirstVisible;
+	while (_textEntryFirstVisible != 0 &&
+			measureText(_textEntryText.substr(_textEntryFirstVisible - 1,
+				_textEntryCursorPosition - _textEntryFirstVisible + 1)) + caretWidth <=
+				availableWidth)
+		--_textEntryFirstVisible;
+}
+
+bool ModalDialogManager::beginTextEntry(const Common::String &prompt,
+		uint maximumLength, uint helpResourceId, const char *source) {
+	if (!_initialized || _textEntryActive) {
+		warning("Ripper: could not begin scene text request source='%s' active=%d",
+			source, _textEntryActive);
+		return false;
+	}
+	_textEntryPrompt = prompt;
+	_textEntryText.clear();
+	_textEntrySource = source;
+	_textEntryMaximumLength = maximumLength;
+	_textEntryHelpResourceId = helpResourceId;
+	_textEntryFirstVisible = 0;
+	_textEntryCursorPosition = 0;
+	_textEntryOverwrite = false;
+	_textEntryCaretVisible = true;
+	_textEntryNextCaretMillis = g_system->getMillis() + kTextEntryCaretBlinkMillis;
+	_textEntryRestoreCursor = _engine->getCursor()->isVisible();
+	_textEntryActive = true;
+	_engine->getInput()->drainKeys();
+	_engine->getInput()->discardMouseTransitions();
+	_engine->getCursor()->update(kModalCursor);
+	_engine->getCursor()->setVisible(true);
+	applyModalPalette();
+	const Common::Rect bounds(kTextEntryLeft, kTextEntryTop,
+		kTextEntryLeft + kTextEntryWidth, kTextEntryTop + kTextEntryHeight);
+	drawTextEntry(_textEntryPrompt, _textEntryText, _textEntryFirstVisible,
+		_textEntryCursorPosition, _textEntryCaretVisible, bounds);
+	debugC(1, kDebugScene,
+		"Ripper: entered scene text request source='%s' control=0x4e2 bounds=%d,%d,%d,%d maximumLength=%u helpResource=%u",
+		source, bounds.left, bounds.top, bounds.width(), bounds.height(),
+		maximumLength, helpResourceId);
+	return true;
+}
+
+void ModalDialogManager::finishTextEntry(Common::String &text) {
+	text = _textEntryText;
+	_textEntryActive = false;
+	_engine->getInput()->discardMouseTransitions();
+	_engine->getCursor()->setVisible(_textEntryRestoreCursor);
+}
+
+ModalDialogManager::TextEntryResult ModalDialogManager::serviceTextEntry(
+		Common::String &text) {
+	if (!_textEntryActive)
+		return kTextEntryFailed;
+	if (_engine->getInput()->pollEvents()) {
+		_engine->quitGame();
+		finishTextEntry(text);
+		return kTextEntryFailed;
+	}
+
+	const Common::Rect bounds(kTextEntryLeft, kTextEntryTop,
+		kTextEntryLeft + kTextEntryWidth, kTextEntryTop + kTextEntryHeight);
+	TextEntryResult result = kTextEntryPending;
+	bool edited = false;
+	while (_engine->getInput()->hasPendingKey()) {
+			const uint16 command = _engine->getInput()->consumeKey();
+			debugC(3, kDebugInput,
+				"Ripper: scene text request command=0x%04x cursor=%u length=%u overwrite=%d",
+				command, _textEntryCursorPosition, _textEntryText.size(),
+				_textEntryOverwrite);
+			if (command == 0x0d) {
+				result = kTextEntryAccepted;
+				break;
+			}
+			if (command == 0x1b) {
+				result = kTextEntryCancelled;
+				break;
+			}
+			if (command == 0x3b00) {
+				if (!_engine->getModalDialog()->run(_textEntryHelpResourceId, true)) {
+					result = kTextEntryFailed;
+					break;
+				}
+				applyModalPalette();
+				continue;
+			}
+
+			const uint previousLength = _textEntryText.size();
+			switch (command) {
+			case 0x08:
+				if (_textEntryCursorPosition != 0) {
+					_textEntryText.deleteChar(--_textEntryCursorPosition);
+					edited = true;
+				}
+				break;
+			case 0x4700:
+				_textEntryCursorPosition = 0;
+				edited = true;
+				break;
+			case 0x4b00:
+				if (_textEntryCursorPosition != 0) {
+					--_textEntryCursorPosition;
+					edited = true;
+				}
+				break;
+			case 0x4d00:
+				if (_textEntryCursorPosition < _textEntryText.size()) {
+					++_textEntryCursorPosition;
+					edited = true;
+				}
+				break;
+			case 0x4f00:
+				_textEntryCursorPosition = _textEntryText.size();
+				edited = true;
+				break;
+			case 0x5200:
+				_textEntryOverwrite = !_textEntryOverwrite;
+				break;
+			case 0x5300:
+				if (_textEntryCursorPosition < _textEntryText.size()) {
+					_textEntryText.deleteChar(_textEntryCursorPosition);
+					edited = true;
+				}
+				break;
+			default:
+				if (command <= 0xff && (command == ' ' ||
+						(command >= _font.firstCharacter &&
+						command < _font.firstCharacter + _font.glyphs.size()))) {
+					if (_textEntryOverwrite &&
+							_textEntryCursorPosition < _textEntryText.size()) {
+						_textEntryText.setChar((char)command,
+							_textEntryCursorPosition++);
+						edited = true;
+					} else if (_textEntryText.size() < _textEntryMaximumLength) {
+						_textEntryText.insertChar((char)command,
+							_textEntryCursorPosition++);
+						edited = true;
+					}
+				}
+				break;
+			}
+			if (_textEntryText.size() != previousLength)
+				debugC(2, kDebugInput,
+					"Ripper: scene text request edited length=%u cursor=%u",
+					_textEntryText.size(), _textEntryCursorPosition);
+	}
+
+	const MouseState mouse = _engine->getInput()->publishMouseState();
+	_engine->getCursor()->update(kModalCursor);
+	if ((mouse.pressed & kMouseButtonLeft) != 0 && bounds.contains(mouse.position)) {
+		_textEntryCursorPosition = textEntryCursorFromPoint(_textEntryText,
+			_textEntryFirstVisible, mouse.position.x, bounds);
+		edited = true;
+		debugC(3, kDebugInput,
+			"Ripper: scene text request caret point=%d,%d cursor=%u firstVisible=%u",
+			mouse.position.x, mouse.position.y, _textEntryCursorPosition,
+			_textEntryFirstVisible);
+	}
+
+	const uint32 now = g_system->getMillis();
+	if (now >= _textEntryNextCaretMillis) {
+		_textEntryCaretVisible = !_textEntryCaretVisible;
+		_textEntryNextCaretMillis = now + kTextEntryCaretBlinkMillis;
+	}
+	if (edited) {
+		_textEntryCaretVisible = true;
+		_textEntryNextCaretMillis = now + kTextEntryCaretBlinkMillis;
+	}
+	updateTextEntryFirstVisible(bounds);
+	if (result == kTextEntryPending) {
+		applyModalPalette();
+		drawTextEntry(_textEntryPrompt, _textEntryText, _textEntryFirstVisible,
+			_textEntryCursorPosition, _textEntryCaretVisible, bounds);
+		return result;
+	}
+
+	const Common::String source = _textEntrySource;
+	const uint length = _textEntryText.size();
+	finishTextEntry(text);
+	debugC(1, kDebugScene,
+		"Ripper: exited scene text request source='%s' result=%d length=%u",
+		source.c_str(), result, length);
+	return result;
 }
 
 bool ModalDialogManager::run(uint bodyResourceId, bool retainSceneCursorRegions) {
