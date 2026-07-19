@@ -685,7 +685,21 @@
   `RunCenteredTextPanelUntilExitAction` at `0x2330c`. The untitled, wrapped
   330-by-222 panel begins at the WAC media origin (50,50) and uses the same
   tertiary WACMNU chooser template and `SMALL.FNT` line-wrapping path as WAC
-  modal help. It retains the database chooser and persistent WAC controls while
+  modal help. `InitializeSharedPresentationTemplates` at `0x1196f` gives that
+  template one/twenty-pixel base/alternate top padding,
+  five/six/twenty-pixel left/bottom/right padding, a two-pixel horizontal
+  glyph inset, and 14-pixel rows. The template's `layout56` bit 0 makes
+  `ComputeChooserControlLayout` at `0x54a74` use the 20-pixel alternate top
+  padding even though circuit-manual resource `0xb6` embeds its heading in the
+  body and `RunWacInventorySelectionLoop` at `0x2252a` supplies no separate
+  title resource.
+  `HandleChooserPresentationFrame` at `0x552b1` binds `WACMNU9..12` as the
+  right-edge up/down controls, `WACMNU13` as the proportional range thumb, and
+  `WACMNU14` as its track. The arrow controls move the first visible line and
+  the range thumb is pointer-draggable. The template callback
+  `AnimateWacMenuChooserBlinkCallback` at `0x215e5` alternates the top-left
+  `WACMNU0`/`WACMNU15` frame every five extended DOS ticks. The panel retains
+  the database chooser and persistent WAC controls while
   `ServiceWacSceneInputAction` services chooser navigation and range scrolling;
   the circuit-manual text does not change milestone state.
 - `RunWacMugSelectionScene` owns nine draggable controls (`0x640` through
