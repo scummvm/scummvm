@@ -108,11 +108,12 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 			if (!p.atEnd())
 				error("garbage at the end of the assignment, line %d", lineno);
 			command.reset(new SetVariable(name, Common::move(value)));
-		} else {
+		} else if (p.maybe('(')) {
 			auto args = p.readStringList();
 			p.expect(')');
 			command = createV2Command(name, args, lineno);
-		}
+		} else
+			error("invalid syntax at %d", lineno);
 
 		auto &commands = _currentTest->scope.commands;
 		if (command)

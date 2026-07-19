@@ -79,13 +79,53 @@ struct Play_Sound : public Command {
 	}
 };
 
+struct Stop_All_Sounds : public Command {
+	Stop_All_Sounds(const Common::Array<Common::String> &args) {}
+
+	void exec(ExecutionContext &ctx) const override {
+		g_engine->stopAllSounds();
+	}
+};
+
+struct Cursor_Load : public Command {
+	Common::String index;
+	Common::String path;
+	Common::String width;
+	Common::String height;
+
+	Cursor_Load(const Common::Array<Common::String> &args) : index(args[0]), path(args[1]), width(args.size() > 2 ? args[2].c_str() : "0"), height(args.size() > 3 ? args[3].c_str() : "0") {}
+
+	void exec(ExecutionContext &ctx) const override {
+		g_engine->loadCursor(valueOf(index), path, valueOf(width), valueOf(height));
+	}
+};
+
+struct Cursor_Set : public Command {
+	Common::String type;
+	Common::String index;
+
+	Cursor_Set(const Common::Array<Common::String> &args) : type(args[0]), index(args[1]) {}
+
+	void exec(ExecutionContext &ctx) const override {
+		if (type == "_ON_IDDLE")
+			g_engine->setCursorDefault(0, valueOf(index));
+		else if (type == "_ON_TEST")
+			g_engine->setCursorDefault(1, valueOf(index));
+		else
+			warning("invalid cursor type %s", type.c_str());
+	}
+};
+
 } // namespace
 
 #define COMMAND_LIST(E) \
 	E(Add)              \
-	E(Sub)              \
+	E(Cursor_Load)      \
+	E(Cursor_Set)       \
 	E(Play_Sound)       \
-	E(Play_AnimBloc)
+	E(Play_AnimBloc)    \
+	E(Stop_All_Sounds)  \
+	E(Sub)
 
 #define ADD_COMMAND(NAME)            \
 	if (cmd.equalsIgnoreCase(#NAME)) \

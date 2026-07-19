@@ -130,7 +130,9 @@ public:
 	void setNextScript(const Common::String &path);
 	bool goToWarp(const Common::String &warp, bool savePrev = false);
 	void returnToWarp();
+	void loadCursor(int idx, const Common::String &path, int w, int h);
 	void setCursorDefault(int idx, const Common::String &path);
+	void setCursorDefault(int idx, int cursorIdx);
 	void setCursor(const Common::String &path, const Common::String &warp, int idx);
 	void hideCursor(const Common::String &warp, int idx);
 
@@ -249,7 +251,7 @@ private:
 	Common::SeekableReadStream *tryOpen(const Common::Path &name, Common::String *origName);
 
 	Graphics::ManagedSurface *loadSurface(const Common::String &path);
-	Graphics::ManagedSurface *loadCursor(const Common::String &path);
+	Graphics::ManagedSurface *loadCursor(const Common::String &path, int w = 0, int h = 0);
 	PointF currentVRPos() const {
 		return RectF::transform(_angleX.angle(), _angleY.angle(), _fov);
 	}
@@ -317,6 +319,11 @@ private:
 	Common::ScopedPtr<Script> _script;
 
 	Common::ScopedPtr<RegionSet> _regSet;
+
+	struct PreloadedCursor {
+		Common::String path;
+	};
+	Common::Array<PreloadedCursor> _loadedCursors;
 
 	Common::HashMap<Common::String, Graphics::ManagedSurface *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _cursorCache;
 

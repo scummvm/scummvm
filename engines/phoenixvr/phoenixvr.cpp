@@ -43,6 +43,7 @@
 #include "graphics/palette.h"
 #include "image/gif.h"
 #include "image/pcx.h"
+#include "image/tga.h"
 #include "phoenixvr/arn.h"
 #include "phoenixvr/console.h"
 #include "phoenixvr/game_state.h"
@@ -300,6 +301,7 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 																					 _rgb565(2, 5, 6, 5, 0, 11, 5, 0, 0),
 																					 _thumbnail(isAmerzoneGame(gameDesc) ? 232 : 139, isAmerzoneGame(gameDesc) ? 174 : 103, _rgb565),
 																					 _lockKey(13),
+																					 _loadedCursors(16),
 																					 _fov(kPi2),
 																					 _angleX(0),
 																					 _angleY(-kPi2),
@@ -806,6 +808,11 @@ void PhoenixVREngine::setCursorDefault(int idx, const Common::String &path) {
 		warning("only 2 default cursors supported, got %d", idx);
 }
 
+void PhoenixVREngine::setCursorDefault(int idx, int cursorIdx) {
+	auto &desc = _loadedCursors[cursorIdx];
+	setCursorDefault(idx, desc.path);
+}
+
 void PhoenixVREngine::setCursor(const Common::String &path, const Common::String &wname, int idx) {
 	debug("setCursor %s %s:%d", path.c_str(), wname.c_str(), idx);
 	auto warp = _script->getWarp(wname);
@@ -1183,6 +1190,8 @@ Graphics::ManagedSurface *PhoenixVREngine::loadSurface(const Common::String &pat
 		dec.reset(new Image::PCXDecoder);
 	} else if (filename.hasSuffixIgnoreCase(".gif")) {
 		dec.reset(new Image::GIFDecoder);
+	} else if (filename.hasSuffixIgnoreCase(".cur")) {
+		dec.reset(new Image::TGADecoder);
 	} else {
 		warning("can't find decoder for %s", filename.c_str());
 		return nullptr;
@@ -1201,19 +1210,30 @@ Graphics::ManagedSurface *PhoenixVREngine::loadSurface(const Common::String &pat
 	return s;
 }
 
-Graphics::ManagedSurface *PhoenixVREngine::loadCursor(const Common::String &path) {
+Graphics::ManagedSurface *PhoenixVREngine::loadCursor(const Common::String &path, int w, int h) {
 	if (path.empty())
 		return nullptr;
 	auto it = _cursorCache.find(path);
 	if (it != _cursorCache.end())
 		return it->_value;
-	auto s = loadSurface(path);
+	Common::ScopedPtr<Graphics::ManagedSurface> s(loadSurface(path));
 	if (!s) {
 		warning("can't load cursor from %s", path.c_str());
 		return nullptr;
 	}
-	_cursorCache[path] = s;
-	return s;
+	if (w > 0 && h > 0) {
+		s.reset(s->scale(w, h, true));
+	}
+	_cursorCache[path] = s.get();
+	return s.release();
+}
+
+void PhoenixVREngine::loadCursor(int idx, const Common::String &path, int w, int h) {
+	debug("load cursor %d %s %d %d", idx, path.c_str(), w, h);
+	auto &desc = _loadedCursors[idx];
+	desc.path = path;
+	_cursorCache.erase(path);
+	loadCursor(desc.path, w, h);
 }
 
 void PhoenixVREngine::scheduleTest(int idx) {
