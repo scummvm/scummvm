@@ -833,7 +833,11 @@ CVTX::CVTX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 		if (buf) {
 			chunkStream->read(buf, stringSize);
 			buf[stringSize] = '\0';
-			texts.setVal(keyName, buf);
+
+			// Text is stored as null-separated bits that must be concatenated
+			Common::String assembled;
+			assembleTextLine(buf, assembled, stringSize);
+			texts.setVal(keyName, assembled);
 		} else {
 			texts.setVal(keyName, Common::String());
 		}
