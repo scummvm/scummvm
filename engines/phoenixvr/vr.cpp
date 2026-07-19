@@ -23,8 +23,6 @@
 #include "common/array.h"
 #include "common/bitstream.h"
 #include "common/debug.h"
-#include "common/file.h"
-#include "common/memstream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "graphics/screen.h"
@@ -45,6 +43,18 @@ namespace PhoenixVR {
 #define CHUNK_ANIMATION (0xa0b1c201)
 #define CHUNK_ANIMATION_BLOCK (0xa0b1c211)
 #define CHUNK_ANIMATION_RESTART (0xa0b1c221)
+
+/* HEAD */
+#define V2_CHUNK_VR (0x44414548)
+/* STPC */
+#define V2_CHUNK_STATIC_2D (0x43505453)
+/* STWP */
+#define V2_CHUNK_STATIC_3D (0x50575453)
+/* ANWP */
+#define V2_CHUNK_ANIMATION (0x50574e41)
+/* FRAM */
+#define V2_CHUNK_ANIMATION_BLOCK (0x4d415246)
+#define V2_CHUNK_ANIMATION_RESTART (0xa0b1c221)
 
 namespace {
 
@@ -358,16 +368,20 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStream &s) {
 	VR vr;
 	auto magic = s.readUint32LE();
-	if (magic != CHUNK_VR) {
+	if (magic == CHUNK_VR) {
+		vr._v2 = false;
+	} else if (magic == V2_CHUNK_VR) {
+		vr._v2 = true;
+	} else
 		error("wrong VR magic");
-	}
+
 	auto fsize = s.readUint32LE();
 	while (s.pos() < fsize) {
 		auto chunkPos = s.pos();
 		auto chunkId = s.readUint32LE();
 		auto chunkSize = s.readUint32LE();
-		bool pic2d = chunkId == CHUNK_STATIC_2D;
-		bool pic3d = chunkId == CHUNK_STATIC_3D;
+		bool pic2d = chunkId == CHUNK_STATIC_2D || chunkId == V2_CHUNK_STATIC_2D;
+		bool pic3d = chunkId == CHUNK_STATIC_3D || chunkId == V2_CHUNK_STATIC_3D;
 		if (pic2d || pic3d) {
 			auto quality = s.readUint32LE();
 			auto dataSize = s.readUint32LE();
@@ -403,7 +417,7 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 			auto *dcPtr = acPtr + 4 + dcOffset;
 			auto *dcEnd = vrData.data() + vrData.size();
 			unpack(*pic->surfacePtr(), huff, huffSize, acPtr, dcPtr - acPtr, dcPtr, dcEnd - dcPtr, quality);
-		} else if (chunkId == CHUNK_ANIMATION) {
+		} else if (chunkId == CHUNK_ANIMATION || chunkId == V2_CHUNK_ANIMATION) {
 			Animation animation;
 			animation.name = s.readString(0, 32);
 			auto numFrames = s.readUint32LE();
@@ -416,10 +430,10 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 				debug("animation frame at %08x: %08x %u", (uint32)animChunkPos, animChunkId, animChunkSize);
 				assert(animChunkSize >= 8);
 				Animation::Frame frame;
-				if (animChunkId == CHUNK_ANIMATION_BLOCK) {
+				if (animChunkId == CHUNK_ANIMATION_BLOCK || animChunkId == V2_CHUNK_ANIMATION_BLOCK) {
 					frame.blockData.resize(animChunkSize - 8);
 					s.read(frame.blockData.data(), frame.blockData.size());
-				} else if (animChunkId == CHUNK_ANIMATION_RESTART) {
+				} else if (animChunkId == CHUNK_ANIMATION_RESTART || animChunkId == V2_CHUNK_ANIMATION_RESTART) {
 					assert(animChunkSize - 8 == 4);
 					byte buf[4] = {};
 					s.read(buf, sizeof(buf));
@@ -428,7 +442,7 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 				} else {
 					Common::Array<byte> buf(animChunkSize - 8);
 					s.read(buf.data(), buf.size());
-					warning("unknown frame type");
+					warning("unknown frame type %08x", animChunkId);
 				}
 				animation.frames.push_back(Common::move(frame));
 				s.seek(animChunkPos + animChunkSize);

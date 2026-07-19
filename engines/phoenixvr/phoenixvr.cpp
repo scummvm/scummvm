@@ -342,6 +342,10 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 	}
 }
 
+int PhoenixVREngine::version() const {
+	return (_gameDescription->flags & PHOENIXVR_V2) ? 2 : 1;
+}
+
 void PhoenixVREngine::resetState() {
 	_angleX.resetRange();
 	_angleX.set(0);
@@ -489,8 +493,7 @@ void PhoenixVREngine::loadNextScript() {
 	if (!s)
 		error("can't open script file %s", nextScript.c_str());
 
-	int version = (_gameDescription->flags & PHOENIXVR_V2) ? 2 : 1;
-	_script.reset(Script::load(*s, version));
+	_script.reset(Script::load(*s, version()));
 	for (auto &var : _script->getVarNames())
 		declareVariable(var);
 	if (gameIdMatches("dracula1")) {
@@ -1712,7 +1715,7 @@ Common::Error PhoenixVREngine::run() {
 		setNextScript("intro.lst");
 	else if (gameIdMatches("lochness"))
 		setNextScript("first.lst");
-	else if (_gameDescription->flags & PHOENIXVR_V2)
+	else if (version() == 2)
 		setNextLevel();
 	else
 		setNextScript("script.lst");

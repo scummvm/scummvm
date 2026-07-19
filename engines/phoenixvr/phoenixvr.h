@@ -96,6 +96,8 @@ public:
 
 	uint32 getFeatures() const;
 
+	int version() const;
+
 	bool gameIdMatches(const char *gameId) const;
 
 	/**
