@@ -162,7 +162,7 @@ void MazeMinigame::Maze::solve(const Common::Array<ScriptValue> &args, ScriptVal
 			// Scripts expect these padded indices.
 			const int32 paddedGridIndex = _grid->paddedIndexForCoord(coord);
 			ScriptValue paddedGridIndexValue;
-			paddedGridIndexValue.setToFloat(paddedGridIndex);
+			paddedGridIndexValue.setToFloat(static_cast<double>(paddedGridIndex));
 			pathCollection->push_back(paddedGridIndexValue);
 		}
 	}
