@@ -71,7 +71,7 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
 																			 _ambientSoundId(-1),
 																			 _curtainTimer(-1),
 																			 _curtainScreen(0),
-																			 _fastMode(true),
+																			 _fastMode(false),
 																			 _hintMode(false) {
 }
 
