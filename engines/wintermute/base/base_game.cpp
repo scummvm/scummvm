@@ -2882,9 +2882,10 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		int32 gamma = stack->pop()->getInt(0);
 
+#ifdef ENABLE_WME3D
 		if (_renderer3D)
 			_renderer3D->setGamma(gamma);
-
+#endif
 		stack->pushNULL();
 
 		return STATUS_OK;
@@ -2897,9 +2898,10 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(0);
 
 		int32 gamma = 0;
+#ifdef ENABLE_WME3D
 		if (_renderer3D)
 			gamma = _renderer3D->getGamma();
-
+#endif
 		stack->pushInt(gamma);
 
 		return STATUS_OK;
