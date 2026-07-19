@@ -55,7 +55,8 @@ public:
 		const char *source, bool retainSceneCursorRegions = false,
 		PresentationStyle style = kMenubPresentation);
 	bool drawRetainedTextPanel(uint bodyResourceId, const Common::Rect &bounds,
-		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows);
+		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows,
+		PresentationStyle style);
 	bool beginTextEntry(const Common::String &prompt, uint maximumLength,
 		uint helpResourceId, const char *source);
 	TextEntryResult serviceTextEntry(Common::String &text);
