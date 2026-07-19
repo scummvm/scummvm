@@ -479,6 +479,28 @@
   (`0x1d`) calls `RunCrystalPiecePlacementPuzzleScene` at `0x2710c`.
   `CA1.RUN` supplies flag 0 to the calculator and `JA1.RUN` supplies milestone
   206 (`solved crystal puzzle`) to the crystal puzzle.
+- Scene action 10 calls `RunTableGateLeverPuzzleScene` at `0x38eb8` with the
+  caller-supplied completion flag. `GB1.RUN` callback `0x74d` supplies milestone
+  223 (`solved wofford table puzzle`), tests it after the puzzle returns, and
+  selects the success frame only when that flag is set. Escape and failed
+  marker traversals return without setting it.
+- The table-gate puzzle loads `TBLINI1.INI` through `TBLINI3.INI` according to
+  the configured puzzle level. Each file supplies thirteen initial gate states,
+  five gate indices for each of five levers, the number of lever activations
+  before a traversal, and whether a lever can be reused within that activation
+  group. The normalized path records at `0x84720` contain 123 marker nodes; the
+  thirteen gate records at `0x84a02` replace one node's next link with either of
+  two routes. Failed traversals preserve the toggled gate states, clear the five
+  activation indicators, and re-enable all levers for another attempt.
+- `RunTableGateLeverPuzzleScene` retains the final `GBZ1.SMK` frame and overlays
+  `GB_TBL0.BBM` for the marker, `GB_TBL1` through `GB_TBL6` for the launch
+  animation, `GB_TBL10` through `GB_TBL22` for gate states, `GB_TBL25` through
+  `GB_TBL29` for activation indicators, and `GB_TBL30` through `GB_TBL34` for
+  lever feedback. Lever controls use cursor 16, the two edge-exit controls use
+  cursor 7, Escape exits, and F1 opens help table `0x1a1` while the marker is
+  inactive. A traversal begins at node zero, accelerates from one to six pixels
+  per DOS tick, and sets the completion flag only after reaching the node whose
+  terminal link is `-2`; the other terminal link is `-1`.
 - `RunKaBookCodeEntryPrompt` at `0x2bc33` is a separate blocking puzzle called
   by `RunKaDialogueScene` after the book-response voice completes. It owns
   `KA_PUZ.PCX`, the seven input cells, `KA_KEY.WAV` feedback, F1 help table
