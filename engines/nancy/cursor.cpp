@@ -134,7 +134,7 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 	delete chunkStream;
 }
 
-uint CursorManager::resolveNancy10CursorID(CursorType type, int16 itemID, bool setFromScript) {
+uint CursorManager::resolveNancy10CursorID(CursorType type, int16 itemID, bool setFromScript, bool hotspotVariant) {
 	// Item-held variants. The Nancy 10+ chunk reserves `numItems × 2`
 	// slots after the two 37-entry system arrays (= _numCursorTypes * 2),
 	// each item getting one [idle, hotspot] pair. Held items only
@@ -151,9 +151,10 @@ uint CursorManager::resolveNancy10CursorID(CursorType type, int16 itemID, bool s
 	if (setFromScript) {
 		// Scripts store a raw cursor type number T, while the chunk lays
 		// each type out as a [idle, hotspot] pair (slots T*2 and T*2+1).
-		// Script cursors are only ever applied while hovering a hotspot,
-		// so we always pick the hotspot variant.
-		return (uint)type * 2 + 1;
+		// Script cursors are usually applied while hovering a hotspot, so
+		// hotspotVariant defaults to the hotspot sprite; puzzle cursors that
+		// want the idle sprite (e.g. RotatingLockPuzzle's crank) pass false.
+		return (uint)type * 2 + (hotspotVariant ? 1 : 0);
 	}
 
 	// System cursors: translate the legacy CursorType to the matching
@@ -188,7 +189,7 @@ uint CursorManager::resolveNancy10CursorID(CursorType type, int16 itemID, bool s
 	}
 }
 
-uint CursorManager::resolveNancy13CursorID(CursorType type, int16 itemID, bool setFromScript) {
+uint CursorManager::resolveNancy13CursorID(CursorType type, int16 itemID, bool setFromScript, bool hotspotVariant) {
 	// Held-item cursors: the item block follows the 45 system-cursor pairs;
 	// each item owns an [idle, hotspot] pair now indexing _invCursorsSurface
 	// (chosen by applyCursor()).
@@ -202,9 +203,10 @@ uint CursorManager::resolveNancy13CursorID(CursorType type, int16 itemID, bool s
 	if (setFromScript) {
 		// Scripts store a raw cursor type number T, while the chunk lays
 		// each type out as a [idle, hotspot] pair (slots T*2 and T*2+1).
-		// Script cursors are only ever applied while hovering a hotspot,
-		// so we always pick the hotspot variant.
-		return (uint)type * 2 + 1;
+		// Script cursors are usually applied while hovering a hotspot, so
+		// hotspotVariant defaults to the hotspot sprite; puzzle cursors that
+		// want the idle sprite pass false.
+		return (uint)type * 2 + (hotspotVariant ? 1 : 0);
 	}
 
 	// Map the engine's logical CursorType to a Nancy13 system type, then pick
@@ -241,7 +243,7 @@ uint CursorManager::resolveNancy13CursorID(CursorType type, int16 itemID, bool s
 	return sysType * 2 + (hotspot ? 1 : 0);
 }
 
-void CursorManager::setCursor(CursorType type, int16 itemID, bool setFromScript) {
+void CursorManager::setCursor(CursorType type, int16 itemID, bool setFromScript, bool hotspotVariant) {
 	if (!_isInitialized)
 		return;
 
@@ -255,12 +257,12 @@ void CursorManager::setCursor(CursorType type, int16 itemID, bool setFromScript)
 	_hasItem = false;
 
 	if (gameType >= kGameTypeNancy13) {
-		_curCursorID = resolveNancy13CursorID(type, itemID, setFromScript);
+		_curCursorID = resolveNancy13CursorID(type, itemID, setFromScript, hotspotVariant);
 		return;
 	}
 
 	if (gameType >= kGameTypeNancy10) {
-		_curCursorID = resolveNancy10CursorID(type, itemID, setFromScript);
+		_curCursorID = resolveNancy10CursorID(type, itemID, setFromScript, hotspotVariant);
 		return;
 	}
 
@@ -373,8 +375,8 @@ void CursorManager::setCursor(CursorType type, int16 itemID, bool setFromScript)
 	_curCursorID = (uint)(itemID * _numCursorTypes) + itemsOffset + (uint)type;
 }
 
-void CursorManager::setCursorType(CursorType type, bool setFromScript) {
-	setCursor(type, _curItemID, setFromScript);
+void CursorManager::setCursorType(CursorType type, bool setFromScript, bool hotspotVariant) {
+	setCursor(type, _curItemID, setFromScript, hotspotVariant);
 }
 
 void CursorManager::setCursorItemID(int16 itemID) {

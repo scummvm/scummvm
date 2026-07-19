@@ -117,9 +117,12 @@ public:
 
 	void init(Common::SeekableReadStream *chunkStream);
 
-	// Change the current cursor ID. Does not change the graphic
-	void setCursor(CursorType type, int16 itemID, bool setFromScript);
-	void setCursorType(CursorType type, bool setFromScript = false);
+	// Change the current cursor ID. Does not change the graphic.
+	// When setFromScript is set, type is a raw Nancy 10+ system cursor type
+	// index resolved to its flat slot; hotspotVariant then picks the hotspot
+	// (type*2 + 1) or idle (type*2) sprite of the pair.
+	void setCursor(CursorType type, int16 itemID, bool setFromScript, bool hotspotVariant = true);
+	void setCursorType(CursorType type, bool setFromScript = false, bool hotspotVariant = true);
 	void setCursorItemID(int16 itemID);
 	void showCursor(bool shouldShow);
 
@@ -138,12 +141,12 @@ private:
 	void adjustCursorHotspot();
 
 	// Resolve a CursorType + held-item pair to a Nancy 10+ cursor ID.
-	uint resolveNancy10CursorID(CursorType type, int16 itemID, bool setFromScript);
+	uint resolveNancy10CursorID(CursorType type, int16 itemID, bool setFromScript, bool hotspotVariant);
 
 	// Nancy13 rebuilt the cursor sheet (45 system types, new layout) and split
 	// held-item cursors into _invCursorsSurface. System cursors use a dedicated
 	// Nancy13 slot table.
-	uint resolveNancy13CursorID(CursorType type, int16 itemID, bool setFromScript);
+	uint resolveNancy13CursorID(CursorType type, int16 itemID, bool setFromScript, bool hotspotVariant);
 
 	struct Cursor {
 		Common::Rect bounds;
