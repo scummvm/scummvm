@@ -147,7 +147,8 @@ bool VideoPlayer::update() {
 	if (_aviDecoder->endOfVideo()) {
 		_playbackStarted = false;
 		if (_freezeGame) {
-			_game->unfreeze();
+			stop();
+			return STATUS_OK;
 		}
 	}
 	if (!_aviDecoder->endOfVideo() && _aviDecoder->getTimeToNextFrame() == 0) {
@@ -246,12 +247,10 @@ bool VideoPlayer::play(TVideoPlayback type, int x, int y, bool freezeMusic) {
 
 //////////////////////////////////////////////////////////////////////////
 bool VideoPlayer::stop() {
-	_aviDecoder->close();
-
-	cleanup();
-
 	if (_freezeGame)
 		_game->unfreeze();
+
+	cleanup();
 
 	return STATUS_OK;
 }
