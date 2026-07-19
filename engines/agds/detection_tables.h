@@ -73,6 +73,15 @@ static const ADGameDescription gameDescriptions[] = {
 	 Common::kPlatformWindows,
 	 ADGF_DROPPLATFORM,
 	 GUIO1(GUIO_NONE)},
+	{"black-mirror",
+	 "Steam",
+	 AD_ENTRY2s(
+		 "gfx1.grp", "2ede03d9a50e0bfedd0d7656c47d2de4", 913209074,
+		 "data.adb", "cffd38b88a245765987f9ff5cce3c5c9", 2184448),
+	 Common::UNK_LANG,
+	 Common::kPlatformWindows,
+	 ADGF_DROPPLATFORM | AGDS_STEAM | ADGF_UNSTABLE,
+	 GUIO1(GUIO_NONE)},
 
 	// NiBiRu
 	{

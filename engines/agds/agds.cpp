@@ -1453,6 +1453,8 @@ int AGDSEngine::version() const {
 		return 0;
 	if (v2())
 		return 2;
+	if (_gameDescription->flags & AGDS_STEAM)
+		return 3;
 	return 1;
 }
 

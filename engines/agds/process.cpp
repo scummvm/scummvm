@@ -413,6 +413,9 @@ uint16 Process::nextOpcode() {
 		}
 		return op - 7995;
 
+	case 3:
+		return op + 1;
+
 	default:
 		return op;
 	}
@@ -513,6 +516,8 @@ Common::String Process::disassemble(const ObjectPtr &object, int version) {
 			}
 		} else if (version == 0) {
 			op += 5;
+		} else if (version == 3) {
+			op += 1;
 		}
 
 		source += Common::String::format("%04x: %02x: ", ip - 1, op);

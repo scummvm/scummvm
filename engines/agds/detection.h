@@ -26,6 +26,7 @@ namespace AGDS {
 
 enum AGDSGameFlag {
 	AGDS_V2 = (1 << 0),
+	AGDS_STEAM = (1 << 1),
 };
 
 } // End of namespace AGDS
