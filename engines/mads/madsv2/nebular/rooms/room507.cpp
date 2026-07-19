@@ -59,9 +59,9 @@ static void room_507_init() {
 }
 
 static void room_507_parser() {
-	if (_action.isAction(words_walk_through, words_entrance))
+	if (player_said_2(walk_through, entrance))
 		_scene->_nextSceneId = 506;
-	else if (_action.isAction(words_take, words_penlight)) {
+	else if (player_said_2(take, penlight)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_PENLIGHT)) {
 			switch (_game._trigger) {
 			case 0:
@@ -94,50 +94,50 @@ static void room_507_parser() {
 		}
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(50722);
-	else if (_action.isAction(words_look, words_swirling_light))
+	else if (player_said_2(look, swirling_light))
 		_vm->_dialogs->show(50710);
-	else if (_action.isAction(words_take, words_swirling_light))
+	else if (player_said_2(take, swirling_light))
 		_vm->_dialogs->show(50711);
-	else if (_action.isAction(words_look, words_old_software))
+	else if (player_said_2(look, old_software))
 		_vm->_dialogs->show(50712);
-	else if (_action.isAction(words_take, words_old_software))
+	else if (player_said_2(take, old_software))
 		_vm->_dialogs->show(50713);
-	else if (_action.isAction(words_look, words_advertisement))
+	else if (player_said_2(look, advertisement))
 		_vm->_dialogs->show(50714);
-	else if (_action.isAction(words_look, words_advertising_poster))
+	else if (player_said_2(look, advertising_poster))
 		_vm->_dialogs->show(50715);
-	else if (_action.isAction(words_look, words_sign)) {
+	else if (player_said_2(look, sign)) {
 		if (_scene->_customDest.x < 100)
 			_vm->_dialogs->show(50726);
 		else
 			_vm->_dialogs->show(50716);
-	} else if (_action.isAction(words_look, words_hottest_software))
+	} else if (player_said_2(look, hottest_software))
 		_vm->_dialogs->show(50717);
-	else if (_action.isAction(words_look, words_software_shelf))
+	else if (player_said_2(look, software_shelf))
 		_vm->_dialogs->show(50718);
-	else if (_action.isAction(words_look, words_sensor))
+	else if (player_said_2(look, sensor))
 		_vm->_dialogs->show(50719);
-	else if (_action.isAction(words_look, words_cash_register))
+	else if (player_said_2(look, cash_register))
 		_vm->_dialogs->show(50720);
-	else if (_action.isAction(words_look, words_pad_of_paper))
+	else if (player_said_2(look, pad_of_paper))
 		_vm->_dialogs->show(50721);
-	else if (_action.isAction(words_open, words_cash_register))
+	else if (player_said_2(open, cash_register))
 		_vm->_dialogs->show(50723);
-	else if (_action.isAction(words_look, words_bargain_vat))
+	else if (player_said_2(look, bargain_vat))
 		_vm->_dialogs->show(50724);
-	else if (_action.isAction(words_look, words_window))
+	else if (player_said_2(look, window))
 		_vm->_dialogs->show(50725);
-	else if (_action.isAction(words_walk_behind, words_counter)) {
+	else if (player_said_2(walk_behind, counter)) {
 		// WORKAROUND: Empty handling to prevent default "can't do that" dialogs showing
-	} else if (_action.isAction(words_look, words_counter)) {
+	} else if (player_said_2(look, counter)) {
 		if (_game._objects.isInRoom(OBJ_PENLIGHT))
 			_vm->_dialogs->show(50728);
 		else
 			_vm->_dialogs->show(50727);
-	} else if (_action.isAction(words_look, words_penlight) && !_game._objects.isInInventory(OBJ_PENLIGHT)) {
+	} else if (player_said_2(look, penlight) && !_game._objects.isInInventory(OBJ_PENLIGHT)) {
 		if (_game._objects.isInRoom(OBJ_PENLIGHT))
 			_vm->_dialogs->show(50729);
-	} else if (_action.isAction(words_look, words_emergency_light))
+	} else if (player_said_2(look, emergency_light))
 		_vm->_dialogs->show(50731);
 	else
 		return;

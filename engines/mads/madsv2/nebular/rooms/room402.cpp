@@ -1804,29 +1804,29 @@ static void room_402_daemon() {
 }
 
 static void room_402_pre_parser() {
-	if (_action.isAction(words_sit_on, words_bar_stool) && (_game._player._prepareWalkPos.x != 248))
+	if (player_said_2(sit_on, bar_stool) && (_game._player._prepareWalkPos.x != 248))
 		_game._player.walk(Common::Point(232, 112), FACING_EAST);
 
-	if (_action.isAction(words_walkto, words_woman_on_balcony))
+	if (player_said_2(walkto, woman_on_balcony))
 		_game._player._needToWalk = _game._player._readyToWalk;
 
-	if (!local._roxOnStool && _action.isAction(words_take, words_credit_chip) && !_game._objects.isInInventory(OBJ_CREDIT_CHIP))
+	if (!local._roxOnStool && player_said_2(take, credit_chip) && !_game._objects.isInInventory(OBJ_CREDIT_CHIP))
 		_game._player.walk(Common::Point(246, 108), FACING_NORTH);
 
-	if (_action.isAction(words_take))
+	if (player_said_1(take))
 		_game._player._needToWalk = false;
 
-	if (_action.isAction(words_take, words_credit_chip) && !local._roxOnStool)
+	if (player_said_2(take, credit_chip) && !local._roxOnStool)
 		_game._player._needToWalk = true;
 
 	if (local._roxOnStool) {
-		if (_action.isAction(words_look) || _action.isObject(words_bar_stool) || _action.isAction(words_talkto))
+		if (player_said_1(look) || player_said_1(bar_stool) || player_said_1(talkto))
 			_game._player._needToWalk = false;
 
-		if (_action.isAction(words_take, words_repair_list) || _action.isAction(words_take, words_credit_chip))
+		if (player_said_2(take, repair_list) || player_said_2(take, credit_chip))
 			_game._player._needToWalk = false;
 
-		if (_action.isAction(words_talkto, words_woman_in_chair) || _action.isAction(words_talkto, words_woman_in_alcove))
+		if (player_said_2(talkto, woman_in_chair) || player_said_2(talkto, woman_in_alcove))
 			_game._player._needToWalk = _game._player._readyToWalk;
 
 		if (_game._player._needToWalk) {
@@ -1838,22 +1838,22 @@ static void room_402_pre_parser() {
 		}
 	}
 
-	if (_action.isAction(words_take, words_repair_list) && !local._roxOnStool && !_game._objects.isInInventory(OBJ_REPAIR_LIST))
+	if (player_said_2(take, repair_list) && !local._roxOnStool && !_game._objects.isInInventory(OBJ_REPAIR_LIST))
 		_game._player.walk(Common::Point(191, 99), FACING_NORTHEAST);
 
-	if (_action.isAction(words_talkto, words_bartender) && !local._roxOnStool)
+	if (player_said_2(talkto, bartender) && !local._roxOnStool)
 		_game._player.walk(Common::Point(228, 83), FACING_SOUTH);
 
-	if (_action.isAction(words_talkto, words_repair_woman) && !local._roxOnStool)
+	if (player_said_2(talkto, repair_woman) && !local._roxOnStool)
 		_game._player.walk(Common::Point(208, 102), FACING_NORTHEAST);
 }
 
 static void room_402_parser() {
-	if (_action.isAction(words_take, words_repair_list) && _game._objects.isInRoom(OBJ_REPAIR_LIST) && local._roxOnStool) {
+	if (player_said_2(take, repair_list) && _game._objects.isInRoom(OBJ_REPAIR_LIST) && local._roxOnStool) {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 77);
 		_game._player._needToWalk = false;
-	} else if (_action.isAction(words_take, words_repair_list) && _game._objects.isInRoom(OBJ_REPAIR_LIST) && !local._roxOnStool) {
+	} else if (player_said_2(take, repair_list) && _game._objects.isInRoom(OBJ_REPAIR_LIST) && !local._roxOnStool) {
 		if (_game._trigger == 0) {
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
@@ -1875,11 +1875,11 @@ static void room_402_parser() {
 		_game._player._stepEnabled = true;
 	} else if (_game._screenObjects._inputMode == kInputConversation)
 		handleDialogs();
-	else if (_action.isAction(words_walk_into, words_corridor_to_south))
+	else if (player_said_2(walk_into, corridor_to_south))
 		_scene->_nextSceneId = 401;
-	else if (_action.isAction(words_walk_onto, words_dance_floor))
+	else if (player_said_2(walk_onto, dance_floor))
 		; // just... nothing
-	else if (_action.isAction(words_talkto, words_repair_woman)) {
+	else if (player_said_2(talkto, repair_woman)) {
 		switch (_game._trigger) {
 		case 0:
 		{
@@ -1959,26 +1959,26 @@ static void room_402_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_talkto, words_woman_in_chair) && !local._firstTalkToGirlInChair) {
+	} else if (player_said_2(talkto, woman_in_chair) && !local._firstTalkToGirlInChair) {
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x1D7));
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(150, 39);
 		_game._player._stepEnabled = false;
 		local._firstTalkToGirlInChair = true;
-	} else if (_action.isAction(words_talkto, words_woman_in_chair) && local._firstTalkToGirlInChair) {
+	} else if (player_said_2(talkto, woman_in_chair) && local._firstTalkToGirlInChair) {
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x1DB));
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(150, 42);
 		_game._player._stepEnabled = false;
-	} else if (_action.isAction(words_talkto, words_woman_in_alcove) || _action.isAction(words_walkto, words_woman_in_alcove)) {
+	} else if (player_said_2(talkto, woman_in_alcove) || player_said_2(walkto, woman_in_alcove)) {
 		_scene->_kernelMessages.add(Common::Point(102, 48), 0xFBFA, 0, 0, 120, _game.getQuote(0x1DE));
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(120, 44);
 		_game._player._stepEnabled = false;
-	} else if (_action.isAction(words_sit_on, words_bar_stool) && (_game._player._targetPos.x == 248)) {
+	} else if (player_said_2(sit_on, bar_stool) && (_game._player._targetPos.x == 248)) {
 		_scene->_kernelMessages.add(Common::Point(0, -14), 0x1110, 34, 0, 120, _game.getQuote(0x20D));
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x20E));
-	} else if (_action.isAction(words_sit_on, words_bar_stool) && !local._roxOnStool && (_game._player._targetPos.x != 248)) {
+	} else if (player_said_2(sit_on, bar_stool) && !local._roxOnStool && (_game._player._targetPos.x != 248)) {
 		_game._player._visible = false;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 7, 1, 0, 0);
@@ -1986,11 +1986,11 @@ static void room_402_parser() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 5);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 76);
 		_game._player._stepEnabled = false;
-	} else if (_action.isAction(words_take, words_credit_chip) && !_game._objects.isInInventory(OBJ_CREDIT_CHIP) && local._roxOnStool) {
+	} else if (player_said_2(take, credit_chip) && !_game._objects.isInInventory(OBJ_CREDIT_CHIP) && local._roxOnStool) {
 		local._roxMode = 20;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 92);
-	} else if (_action.isAction(words_take, words_credit_chip) && !_game._objects.isInInventory(OBJ_CREDIT_CHIP) && !local._roxOnStool) {
+	} else if (player_said_2(take, credit_chip) && !_game._objects.isInInventory(OBJ_CREDIT_CHIP) && !local._roxOnStool) {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
@@ -2001,7 +2001,7 @@ static void room_402_parser() {
 		_scene->_sequences.setScale(_globals._sequenceIndexes[22], 88);
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[22], SEQUENCE_TRIGGER_EXPIRE, 0, 104);
-	} else if (_action.isAction(words_talkto, words_bartender)) {
+	} else if (player_said_2(talkto, bartender)) {
 		switch (_game._trigger) {
 		case 0:
 		{
@@ -2113,66 +2113,66 @@ static void room_402_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_look, words_dance_floor))
+	} else if (player_said_2(look, dance_floor))
 		_vm->_dialogs->show(40210);
-	else if (_action.isAction(words_look, words_teleporter)) {
+	else if (player_said_2(look, teleporter)) {
 		if (_globals[kSomeoneHasExploded])
 			_vm->_dialogs->show(40212);
 		else
 			_vm->_dialogs->show(40211);
-	} else if (_action.isAction(words_look, words_bar))
+	} else if (player_said_2(look, bar))
 		_vm->_dialogs->show(40213);
-	else if (_action.isAction(words_look, words_bartender))
+	else if (player_said_2(look, bartender))
 		_vm->_dialogs->show(40214);
-	else if (_action.isAction(words_look, words_woman_in_alcove))
+	else if (player_said_2(look, woman_in_alcove))
 		_vm->_dialogs->show(40215);
-	else if (_action.isAction(words_look, words_woman_on_balcony))
+	else if (player_said_2(look, woman_on_balcony))
 		_vm->_dialogs->show(40216);
-	else if (_action.isAction(words_look, words_woman_in_chair))
+	else if (player_said_2(look, woman_in_chair))
 		_vm->_dialogs->show(40217);
-	else if (_action.isAction(words_look, words_repair_woman))
+	else if (player_said_2(look, repair_woman))
 		_vm->_dialogs->show(40218);
-	else if (_action.isAction(words_look, words_corridor_to_south))
+	else if (player_said_2(look, corridor_to_south))
 		_vm->_dialogs->show(40219);
 	else if (_action._lookFlag)
 		_vm->_dialogs->show(40220);
-	else if (_action.isAction(words_look, words_women))
+	else if (player_said_2(look, women))
 		_vm->_dialogs->show(40221);
-	else if (_action.isAction(words_push, words_repair_woman) || _action.isAction(words_pull, words_repair_woman))
+	else if (player_said_2(push, repair_woman) || player_said_2(pull, repair_woman))
 		_vm->_dialogs->show(40222);
-	else if (_action.isAction(words_talkto, words_women))
+	else if (player_said_2(talkto, women))
 		_vm->_dialogs->show(40223);
-	else if (_action.isAction(words_talkto, words_woman_on_balcony))
+	else if (player_said_2(talkto, woman_on_balcony))
 		_vm->_dialogs->show(40224);
-	else if (_action.isAction(words_look, words_railing))
+	else if (player_said_2(look, railing))
 		_vm->_dialogs->show(40225);
-	else if (_action.isAction(words_look, words_table))
+	else if (player_said_2(look, table))
 		_vm->_dialogs->show(40226);
-	else if (_action.isAction(words_take, words_table))
+	else if (player_said_2(take, table))
 		_vm->_dialogs->show(40227);
-	else if (_action.isAction(words_look, words_sign))
+	else if (player_said_2(look, sign))
 		_vm->_dialogs->show(40228);
-	else if (_action.isAction(words_take, words_sign))
+	else if (player_said_2(take, sign))
 		_vm->_dialogs->show(40229);
-	else if (_action.isAction(words_look, words_bar_stool))
+	else if (player_said_2(look, bar_stool))
 		_vm->_dialogs->show(40230);
-	else if (_action.isAction(words_take, words_bar_stool))
+	else if (player_said_2(take, bar_stool))
 		_vm->_dialogs->show(40231);
-	else if (_action.isAction(words_look, words_cactus))
+	else if (player_said_2(look, cactus))
 		_vm->_dialogs->show(40232);
-	else if (_action.isAction(words_take, words_cactus))
+	else if (player_said_2(take, cactus))
 		_vm->_dialogs->show(40233);
-	else if (_action.isAction(words_look, words_disco_ball))
+	else if (player_said_2(look, disco_ball))
 		_vm->_dialogs->show(40234);
-	else if (_action.isAction(words_look, words_upper_dance_floor))
+	else if (player_said_2(look, upper_dance_floor))
 		_vm->_dialogs->show(40235);
-	else if (_action.isAction(words_look, words_tree))
+	else if (player_said_2(look, tree))
 		_vm->_dialogs->show(40236);
-	else if (_action.isAction(words_look, words_plant))
+	else if (player_said_2(look, plant))
 		_vm->_dialogs->show(40237);
-	else if (_action.isAction(words_take, words_plant))
+	else if (player_said_2(take, plant))
 		_vm->_dialogs->show(40238);
-	else if (_action.isAction(words_look, words_repair_list) && _game._objects.isInRoom(OBJ_REPAIR_LIST))
+	else if (player_said_2(look, repair_list) && _game._objects.isInRoom(OBJ_REPAIR_LIST))
 		_vm->_dialogs->show(40239);
 	else
 		return;

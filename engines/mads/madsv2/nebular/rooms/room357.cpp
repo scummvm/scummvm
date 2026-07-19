@@ -50,41 +50,41 @@ static void room_357_init() {
 }
 
 static void room_357_pre_parser() {
-	if (_action.isAction(words_walk_down, words_corridor_to_east))
+	if (player_said_2(walk_down, corridor_to_east))
 		_game._player._walkOffScreenSceneId = 318;
 
-	if (_action.isAction(words_walk_down, words_corridor_to_west))
+	if (player_said_2(walk_down, corridor_to_west))
 		_game._player._walkOffScreenSceneId = 358;
 }
 
 static void room_357_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(35715);
-	else if (_action.isAction(words_look, words_air_vent))
+	else if (player_said_2(look, air_vent))
 		_vm->_dialogs->show(35710);
-	else if (_action.isAction(words_climb_into, words_air_vent))
+	else if (player_said_2(climb_into, air_vent))
 		_vm->_dialogs->show(35711);
-	else if (_action.isAction(words_look, words_bed))
+	else if (player_said_2(look, bed))
 		_vm->_dialogs->show(35712);
-	else if (_action.isAction(words_look, words_sink))
+	else if (player_said_2(look, sink))
 		_vm->_dialogs->show(35713);
-	else if (_action.isAction(words_look, words_toilet))
+	else if (player_said_2(look, toilet))
 		_vm->_dialogs->show(35714);
-	else if (_action.isAction(words_look, words_cell_wall))
+	else if (player_said_2(look, cell_wall))
 		_vm->_dialogs->show(35716);
-	else if (_action.isAction(words_look, words_light))
+	else if (player_said_2(look, light))
 		_vm->_dialogs->show(35717);
-	else if (_action.isAction(words_look, words_rip_in_floor))
+	else if (player_said_2(look, rip_in_floor))
 		_vm->_dialogs->show(35718);
-	else if (_action.isAction(words_look, words_debris))
+	else if (player_said_2(look, debris))
 		_vm->_dialogs->show(35719);
-	else if (_action.isAction(words_take, words_debris))
+	else if (player_said_2(take, debris))
 		_vm->_dialogs->show(35720);
-	else if (_action.isAction(words_look, words_wall))
+	else if (player_said_2(look, wall))
 		_vm->_dialogs->show(35721);
-	else if (_action.isAction(words_look, words_corridor_to_east))
+	else if (player_said_2(look, corridor_to_east))
 		_vm->_dialogs->show(35722);
-	else if (_action.isAction(words_look, words_corridor_to_west))
+	else if (player_said_2(look, corridor_to_west))
 		_vm->_dialogs->show(35723);
 	else
 		return;

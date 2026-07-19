@@ -217,7 +217,7 @@ static void handleBombActions() {
 }
 
 static void room_604_parser() {
-	if (_action.isAction(words_get_inside, words_car)) {
+	if (player_said_2(get_inside, car)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -257,10 +257,10 @@ static void room_604_parser() {
 		default:
 			break;
 		}
-	} else if ((_action.isAction(words_put, words_ledge) || _action.isAction(words_put, words_viewport) || _action.isAction(words_throw, words_viewport))
-		&& (_action.isObject(words_bomb) || _action.isObject(words_bombs)))
+	} else if ((player_said_2(put, ledge) || player_said_2(put, viewport) || player_said_2(throw, viewport))
+		&& (player_said_1(bomb) || player_said_1(bombs)))
 		_vm->_dialogs->show(60420);
-	else if (_action.isAction(words_put, words_timebomb, words_ledge) || _action.isAction(words_put, words_timebomb, words_viewport)) {
+	else if (player_said_3(put, timebomb, ledge) || player_said_3(put, timebomb, viewport)) {
 		local._bombMode = 1;
 		if ((_game._difficulty == DIFFICULTY_HARD) || _globals[kWarnedFloodCity])
 			handleBombActions();
@@ -279,30 +279,30 @@ static void room_604_parser() {
 			_vm->_dialogs->show(60425);
 			_globals[kWarnedFloodCity] = true;
 		}
-	} else if (_action.isAction(words_take, words_timebomb)) {
+	} else if (player_said_2(take, timebomb)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_TIMEBOMB)) {
 			local._bombMode = 2;
 			handleBombActions();
 		}
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(60411);
-	else if (_action.isAction(words_look, words_viewport)) {
+	else if (player_said_2(look, viewport)) {
 		if (local._monsterActive) {
 			_vm->_dialogs->show(60413);
 		} else {
 			_vm->_dialogs->show(60412);
 		}
-	} else if (_action.isAction(words_look, words_wall))
+	} else if (player_said_2(look, wall))
 		_vm->_dialogs->show(60414);
-	else if (_action.isAction(words_look, words_vent))
+	else if (player_said_2(look, vent))
 		_vm->_dialogs->show(60415);
-	else if (_action.isAction(words_look, words_indicator))
+	else if (player_said_2(look, indicator))
 		_vm->_dialogs->show(60416);
-	else if (_action.isAction(words_look, words_sculpture))
+	else if (player_said_2(look, sculpture))
 		_vm->_dialogs->show(60417);
-	else if (_action.isAction(words_look, words_car))
+	else if (player_said_2(look, car))
 		_vm->_dialogs->show(60418);
-	else if (_action.isAction(words_look, words_fountain))
+	else if (player_said_2(look, fountain))
 		_vm->_dialogs->show(60419);
 	else
 		return;

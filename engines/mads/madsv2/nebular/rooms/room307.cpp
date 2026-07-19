@@ -453,7 +453,7 @@ static void room_307_parser() {
 		_vm->_dialogs->show(30715);
 	else if (_game._screenObjects._inputMode == kInputConversation)
 		handleDialog();
-	else if (_action.isAction(words_talkto, words_cell_wall) || _action.isAction(words_talkto, words_wall) || _action.isAction(words_talkto, words_toilet)) {
+	else if (player_said_2(talkto, cell_wall) || player_said_2(talkto, wall) || player_said_2(talkto, toilet)) {
 		int node, say;
 		if (_globals[kKnowsBuddyBeast]) {
 			say = 0x10E;
@@ -478,7 +478,7 @@ static void room_307_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_pry, words_scalpel, words_air_vent)) {
+	} else if (player_said_3(pry, scalpel, air_vent)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -556,7 +556,7 @@ static void room_307_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_climb_into, words_air_vent)) {
+	} else if (player_said_2(climb_into, air_vent)) {
 		if (local._grateOpenedFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -640,9 +640,9 @@ static void room_307_parser() {
 				break;
 			}
 		}
-	} else if (_action.isAction(words_use, words_toilet) && (_game._storyMode != STORYMODE_NAUGHTY))
+	} else if (player_said_2(use, toilet) && (_game._storyMode != STORYMODE_NAUGHTY))
 		_vm->_dialogs->show(30723);
-	else if (_action.isAction(words_use, words_toilet)) {
+	else if (player_said_2(use, toilet)) {
 		if (!local._afterPeeingFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -693,24 +693,24 @@ static void room_307_parser() {
 			int idx = _scene->_kernelMessages.add(Common::Point(85, 39), 0x1110, 0, 0, 180, _game.getQuote(238));
 			_scene->_kernelMessages.setQuoted(idx, 4, true);
 		}
-	} else if (_action.isAction(words_look, words_air_vent)) {
+	} else if (player_said_2(look, air_vent)) {
 		if (!local._grateOpenedFl)
 			_vm->_dialogs->show(30710);
 		else
 			_vm->_dialogs->show(30711);
-	} else if (_action.isAction(words_look, words_bed))
+	} else if (player_said_2(look, bed))
 		_vm->_dialogs->show(30712);
-	else if (_action.isAction(words_look, words_sink))
+	else if (player_said_2(look, sink))
 		_vm->_dialogs->show(30713);
-	else if (_action.isAction(words_look, words_toilet))
+	else if (player_said_2(look, toilet))
 		_vm->_dialogs->show(30714);
-	else if (_action.isAction(words_sharpen, words_scalpel))
+	else if (player_said_2(sharpen, scalpel))
 		_vm->_dialogs->show(30716);
-	else if (_action.isAction(words_look, words_cell_wall))
+	else if (player_said_2(look, cell_wall))
 		_vm->_dialogs->show(30717);
-	else if (_action.isAction(words_look, words_light))
+	else if (player_said_2(look, light))
 		_vm->_dialogs->show(30718);
-	else if (_action.isAction(words_walk_into, words_corridor)) {
+	else if (player_said_2(walk_into, corridor)) {
 		switch (local._fieldCollisionCounter) {
 		case 0:
 			_vm->_dialogs->show(30719);

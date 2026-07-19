@@ -117,9 +117,9 @@ static void room_214_daemon() {
 static void room_214_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(21427);
-	else if (_action.isAction(words_walk_outside, words_hut))
+	else if (player_said_2(walk_outside, hut))
 		_scene->_nextSceneId = 207;
-	else if (_action.isAction(words_take, words_poison_darts) && (_game._trigger || _game._objects.isInRoom(OBJ_POISON_DARTS))) {
+	else if (player_said_2(take, poison_darts) && (_game._trigger || _game._objects.isInRoom(OBJ_POISON_DARTS))) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -151,7 +151,7 @@ static void room_214_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_take, words_blowgun) && (_game._trigger || _game._objects.isInRoom(OBJ_BLOWGUN))) {
+	} else if (player_said_2(take, blowgun) && (_game._trigger || _game._objects.isInRoom(OBJ_BLOWGUN))) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -183,53 +183,53 @@ static void room_214_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_look, words_window))
+	} else if (player_said_2(look, window))
 		_vm->_dialogs->show(21401);
-	else if (_action.isAction(words_look, words_experiment_cage))
+	else if (player_said_2(look, experiment_cage))
 		_vm->_dialogs->show(21402);
-	else if (_action.isAction(words_look, words_captive_creature))
+	else if (player_said_2(look, captive_creature))
 		_vm->_dialogs->show(21403);
-	else if (_action.isAction(words_look, words_bear_rug))
+	else if (player_said_2(look, bear_rug))
 		_vm->_dialogs->show(21404);
-	else if (_action.isAction(words_look, words_trophy))
+	else if (player_said_2(look, trophy))
 		_vm->_dialogs->show(21405);
-	else if (_action.isAction(words_look, words_large_bowl)) {
+	else if (player_said_2(look, large_bowl)) {
 		if (_game._storyMode == STORYMODE_NAUGHTY) {
 			_vm->_dialogs->show(21406);
 		} else {
 			_vm->_dialogs->show(21407);
 		}
-	} else if (_action.isAction(words_look, words_specimen_jars))
+	} else if (player_said_2(look, specimen_jars))
 		_vm->_dialogs->show(21408);
-	else if (_action.isAction(words_take, words_large_bowl) || _action.isAction(words_take, words_specimen_jars))
+	else if (player_said_2(take, large_bowl) || player_said_2(take, specimen_jars))
 		_vm->_dialogs->show(21409);
-	else if (_action.isAction(words_look, words_shrunken_heads))
+	else if (player_said_2(look, shrunken_heads))
 		_vm->_dialogs->show(21410);
-	else if (_action.isAction(words_take, words_shrunken_heads) || _action.isAction(words_take, words_large_heads))
+	else if (player_said_2(take, shrunken_heads) || player_said_2(take, large_heads))
 		_vm->_dialogs->show(21411);
-	else if (_action.isAction(words_look, words_large_heads))
+	else if (player_said_2(look, large_heads))
 		_vm->_dialogs->show(21428);
-	else if (_action.isAction(words_look, words_poison_darts) && (_action._savedFields._mainObjectSource == 4))
+	else if (player_said_2(look, poison_darts) && (_action._savedFields._mainObjectSource == 4))
 		_vm->_dialogs->show(21412);
-	else if (_action.isAction(words_open, words_experiment_cage))
+	else if (player_said_2(open, experiment_cage))
 		_vm->_dialogs->show(21414);
-	else if (_action.isAction(words_talkto, words_captive_creature))
+	else if (player_said_2(talkto, captive_creature))
 		_vm->_dialogs->show(21415);
-	else if (_action.isAction(words_give, words_twinkifruit, words_captive_creature))
+	else if (player_said_3(give, twinkifruit, captive_creature))
 		_vm->_dialogs->show(21416);
-	else if (_action.isAction(words_shoot, words_blowgun, words_captive_creature) || _action.isAction(words_hose_down, words_blowgun, words_captive_creature))
+	else if (player_said_3(shoot, blowgun, captive_creature) || player_said_3(hose_down, blowgun, captive_creature))
 		_vm->_dialogs->show(21417);
-	else if (_action.isAction(words_look, words_big_heads))
+	else if (player_said_2(look, big_heads))
 		_vm->_dialogs->show(21418);
-	else if (_action.isAction(words_take, words_big_heads))
+	else if (player_said_2(take, big_heads))
 		_vm->_dialogs->show(21419);
-	else if (_action.isAction(words_take, words_bear_rug))
+	else if (player_said_2(take, bear_rug))
 		_vm->_dialogs->show(21420);
-	else if (_action.isAction(words_look, words_floor_of_hut))
+	else if (player_said_2(look, floor_of_hut))
 		_vm->_dialogs->show(21421);
-	else if (_action.isAction(words_look, words_blowgun))
+	else if (player_said_2(look, blowgun))
 		_vm->_dialogs->show(21422);
-	else if (_action.isAction(words_look, words_table)) {
+	else if (player_said_2(look, table)) {
 		if (_game._objects.isInRoom(OBJ_POISON_DARTS) && _game._objects.isInRoom(OBJ_BLOWGUN)) {
 			_vm->_dialogs->show(21423);
 		} else if (_game._objects.isInRoom(OBJ_POISON_DARTS) && !_game._objects.isInRoom(OBJ_BLOWGUN)) {

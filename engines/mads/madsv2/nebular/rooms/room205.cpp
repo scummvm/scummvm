@@ -223,9 +223,9 @@ static void room_205_parser() {
 		}
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(20502);
-	else if (_action.isAction(words_look, words_binoculars, words_opposite_bank))
+	else if (player_said_3(look, binoculars, opposite_bank))
 		_vm->_dialogs->show(20518);
-	else if (_action.isAction(words_talkto, words_native_woman)) {
+	else if (player_said_2(talkto, native_woman)) {
 		if (_game._trigger == 0) {
 			_game._player._stepEnabled = false;
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 18, 1, 120, _game.getQuote(0x73));
@@ -236,14 +236,14 @@ static void room_205_parser() {
 			local._dialog1.write(0x75, true);
 			local._dialog1.start();
 		}
-	} else if (_action.isAction(words_give, words_native_woman) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
+	} else if (player_said_2(give, native_woman) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
 		if (_game._trigger == 0) {
 			_game._player._stepEnabled = false;
 			int rndVal = _vm->getRandomNumber(0xAC, 0xAE);
 			_scene->_kernelMessages.add(Common::Point(186, 27), 0xFBFA, 32, 1, 120, _game.getQuote(rndVal));
 		} else if (_game._trigger == 1)
 			_game._player._stepEnabled = true;
-	} else if (_action.isAction(words_walkto, words_opposite_bank)) {
+	} else if (player_said_2(walkto, opposite_bank)) {
 		if (_game._trigger == 0) {
 			_game._player._visible = false;
 			_game._player._stepEnabled = false;
@@ -264,50 +264,50 @@ static void room_205_parser() {
 			_scene->_reloadSceneFlag = true;
 		}
 	} else {
-		if (_action.isAction(words_walk_down, words_path_to_south))
+		if (player_said_2(walk_down, path_to_south))
 			_scene->_nextSceneId = 210;
 
-		if (_action.isAction(words_walkto, words_fire_pit) || _action.isAction(words_walkto, words_chicken_on_spit)) {
+		if (player_said_2(walkto, fire_pit) || player_said_2(walkto, chicken_on_spit)) {
 			if (_game._objects.isInRoom(OBJ_CHICKEN)) {
 				_scene->_kernelMessages.reset();
 				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x6B));
 			}
-		} else if (_action.isAction(words_take, words_chicken_on_spit) && _globals[kChickenPermitted] && _game._objects.isInRoom(OBJ_CHICKEN)) {
+		} else if (player_said_2(take, chicken_on_spit) && _globals[kChickenPermitted] && _game._objects.isInRoom(OBJ_CHICKEN)) {
 			_game._objects.addToInventory(OBJ_CHICKEN);
 			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 			_scene->_hotspots.activate(words_chicken_on_spit, false);
 			_vm->_dialogs->showItem(OBJ_CHICKEN, 812);
-		} else if (_action.isAction(words_take, words_chicken_on_spit) && (!_globals[kChickenPermitted]))
+		} else if (player_said_2(take, chicken_on_spit) && (!_globals[kChickenPermitted]))
 			_scene->_kernelMessages.add(Common::Point(186, 27), 0xFBFA, 32, 0, 120, _game.getQuote(0x80));
-		else if (_action.isAction(words_look, words_native_woman))
+		else if (player_said_2(look, native_woman))
 			_vm->_dialogs->show(20503);
-		else if (_action.isAction(words_look, words_hut))
+		else if (player_said_2(look, hut))
 			_vm->_dialogs->show(20504);
-		else if (_action.isAction(words_look, words_chicken) && (_action._mainObjectSource == CAT_HOTSPOT))
+		else if (player_said_2(look, chicken) && (_action._mainObjectSource == CAT_HOTSPOT))
 			_vm->_dialogs->show(20505);
-		else if (_action.isAction(words_take, words_chicken) && (_action._mainObjectSource == CAT_HOTSPOT))
+		else if (player_said_2(take, chicken) && (_action._mainObjectSource == CAT_HOTSPOT))
 			_vm->_dialogs->show(20506);
-		else if (_action.isAction(words_look, words_chicken_on_spit))
+		else if (player_said_2(look, chicken_on_spit))
 			_vm->_dialogs->show(20507);
-		else if (_action.isAction(words_look, words_fire_pit))
+		else if (player_said_2(look, fire_pit))
 			_vm->_dialogs->show(20508);
-		else if (_action.isAction(words_take, words_fire_pit))
+		else if (player_said_2(take, fire_pit))
 			_vm->_dialogs->show(20509);
-		else if (_action.isAction(words_look, words_stream))
+		else if (player_said_2(look, stream))
 			_vm->_dialogs->show(20510);
-		else if (_action.isAction(words_look, words_opposite_bank))
+		else if (player_said_2(look, opposite_bank))
 			_vm->_dialogs->show(20511);
 		else if (_game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))
-			&& (_action.isAction(words_give, words_stream) || _action.isAction(words_throw, words_stream)
-				|| _action.isAction(words_give, words_piranha) || _action.isAction(words_throw, words_piranha)))
+			&& (player_said_2(give, stream) || player_said_2(throw, stream)
+				|| player_said_2(give, piranha) || player_said_2(throw, piranha)))
 			_vm->_dialogs->show(20512);
-		else if (_action.isAction(words_look, words_piranha))
+		else if (player_said_2(look, piranha))
 			_vm->_dialogs->show(20513);
-		else if (_action.isAction(words_look, words_twinkifruit_bush))
+		else if (player_said_2(look, twinkifruit_bush))
 			_vm->_dialogs->show(20514);
-		else if (_action.isAction(words_take, words_twinkifruit_bush))
+		else if (player_said_2(take, twinkifruit_bush))
 			_vm->_dialogs->show(20515);
-		else if (_action.isAction(words_take, words_native_woman))
+		else if (player_said_2(take, native_woman))
 			_vm->_dialogs->show(20517);
 		else
 			return;

@@ -163,7 +163,7 @@ static void room_103_pre_parser() {
 static void room_103_parser() {
 	if (_action._savedFields._lookFlag)
 		_vm->_dialogs->show(10322);
-	else if (_action.isAction(words_walk_through, words_door)) {
+	else if (player_said_2(walk_through, door)) {
 		switch (_vm->_game->_trigger) {
 		case 0:
 			_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 1);
@@ -181,7 +181,7 @@ static void room_103_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_take, words_timer_module) && _game._objects.isInRoom(OBJ_TIMER_MODULE)) {
+	} else if (player_said_2(take, timer_module) && _game._objects.isInRoom(OBJ_TIMER_MODULE)) {
 		switch (_vm->_game->_trigger) {
 		case 0:
 			_scene->changeVariant(1);
@@ -211,7 +211,7 @@ static void room_103_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_take, words_rebreather, 0) && _game._objects.isInRoom(OBJ_REBREATHER)) {
+	} else if (player_said_2(take, rebreather) && _game._objects.isInRoom(OBJ_REBREATHER)) {
 		switch (_vm->_game->_trigger) {
 		case 0:
 			_globals._sequenceIndexes[12] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[12], false, 3, 2);
@@ -238,9 +238,9 @@ static void room_103_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_look, 362))
+	} else if (player_said_2(look, tasty_turkey))
 		_vm->_dialogs->show(10301);
-	else if (_action.isAction(words_take, 362)) {
+	else if (player_said_2(take, tasty_turkey)) {
 		// Take Turkey
 		if (!_vm->_game->_trigger)
 			_vm->_sound->command(31);
@@ -270,9 +270,9 @@ static void room_103_parser() {
 			_vm->_dialogs->show(10302);
 			_scene->_hotspots.activate(362, false);
 		}
-	} else if (_action.isAction(words_look, 250))
+	} else if (player_said_2(look, oven))
 		_vm->_dialogs->show(!_globals[kTurkeyExploded] ? 10323 : 10303);
-	else if (_action.isAction(words_talkto, 27)) {
+	else if (player_said_2(talkto, auxiliary_power)) {
 		switch (_vm->_game->_trigger) {
 		case 0:
 		{
@@ -302,37 +302,37 @@ static void room_103_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_look, 27))
+	} else if (player_said_2(look, auxiliary_power))
 		_vm->_dialogs->show(10304);
-	else if (_action.isAction(words_look, 36))
+	else if (player_said_2(look, big_pipes))
 		_vm->_dialogs->show(10307);
-	else if (_action.isAction(words_look, 55))
+	else if (player_said_2(look, burnt_out_warp_coil))
 		_vm->_dialogs->show(10308);
-	else if (_action.isAction(words_take, 315))
+	else if (player_said_2(take, shovel))
 		_vm->_dialogs->show(10309);
-	else if (_action.isAction(words_take, 85))
+	else if (player_said_2(take, coal))
 		_vm->_dialogs->show(10310);
-	else if (_action.isAction(words_look, 144))
+	else if (player_said_2(look, furnace))
 		_vm->_dialogs->show(10312);
-	else if (_action.isAction(words_open, 144))
+	else if (player_said_2(open, furnace))
 		_vm->_dialogs->show(10313);
-	else if (_action.isAction(words_close, 27))
+	else if (player_said_2(close, auxiliary_power))
 		_vm->_dialogs->show(10314);
-	else if (_action.isAction(words_look, 310))
+	else if (player_said_2(look, shield_generator))
 		_vm->_dialogs->show(10315);
-	else if (_action.isAction(words_look, 178))
+	else if (player_said_2(look, hyperdrive_jump_unit))
 		_vm->_dialogs->show(10316);
-	else if (_action.isAction(words_look, 283))
+	else if (player_said_2(look, pressure_gauge))
 		_vm->_dialogs->show(10317);
-	else if (_action.isAction(words_look, 120))
+	else if (player_said_2(look, engineering_controls))
 		_vm->_dialogs->show(10318);
-	else if (_action.isAction(words_look, 289) && _game._objects.isInInventory(OBJ_REBREATHER))
+	else if (player_said_2(look, rebreather) && _game._objects.isInInventory(OBJ_REBREATHER))
 		_vm->_dialogs->show(10319);
-	else if (_action.isAction(words_look, 371) && _game._objects.isInInventory(OBJ_TIMER_MODULE))
+	else if (player_said_2(look, timer_module) && _game._objects.isInInventory(OBJ_TIMER_MODULE))
 		_vm->_dialogs->show(10320);
-	else if (_action.isAction(words_look, 137))
+	else if (player_said_2(look, floor))
 		_vm->_dialogs->show(10321);
-	else if (_action.isAction(words_look, 409))
+	else if (player_said_2(look, workbench))
 		_vm->_dialogs->show(_game._objects.isInInventory(OBJ_TIMER_MODULE) ? 10324 : 10325);
 	else
 		return;
@@ -341,10 +341,10 @@ static void room_103_parser() {
 }
 
 void room_103_error() {
-	if (_action.isObject(words_auxiliary_power) && !_action.isAction(words_walkto)) {
+	if (player_said_1(auxiliary_power) && !player_said_1(walkto)) {
 		_vm->_dialogs->show(10305);
 		_action._inProgress = false;
-	} else if (_action.isAction(words_put, words_coal, words_furnace)) {
+	} else if (player_said_3(put, coal, furnace)) {
 		const char *msg = _game.getQuote(73);
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, msg);
 		_action._inProgress = false;

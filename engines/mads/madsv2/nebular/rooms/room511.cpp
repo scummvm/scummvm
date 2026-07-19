@@ -177,10 +177,10 @@ static void room_511_pre_parser() {
 	if (!local._handingLine)
 		return;
 
-	if (_action.isAction(words_look) || _action.isObject(words_fishing_line) || _action.isAction(words_talkto))
+	if (player_said_1(look) || player_said_1(fishing_line) || player_said_1(talkto))
 		_game._player._needToWalk = false;
 
-	if ((!_action.isAction(words_tie, words_fishing_line, words_boat) || !_action.isAction(words_attach, words_fishing_line, words_boat)) && _game._player._needToWalk) {
+	if ((!player_said_3(tie, fishing_line, boat) || !player_said_3(attach, fishing_line, boat)) && _game._player._needToWalk) {
 		if (_game._trigger == 0) {
 			_game._player._readyToWalk = false;
 			_game._player._stepEnabled = false;
@@ -199,9 +199,9 @@ static void room_511_pre_parser() {
 }
 
 static void room_511_parser() {
-	if (_action.isAction(words_walk_into, words_restaurant))
+	if (player_said_2(walk_into, restaurant))
 		_scene->_nextSceneId = 512;
-	else if (_action.isAction(words_get_into, words_car)) {
+	else if (player_said_2(get_into, car)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -241,7 +241,7 @@ static void room_511_parser() {
 		default:
 			break;
 		}
-	} else 	if (_action.isAction(words_take, words_fishing_line)) {
+	} else 	if (player_said_2(take, fishing_line)) {
 		if (!_globals[kBoatRaised]) {
 			if (_globals[kLineStatus] == 2) {
 				if (_globals[kLineStatus] != 3) {
@@ -271,8 +271,8 @@ static void room_511_parser() {
 		} else {
 			_vm->_dialogs->show(51130);
 		}
-	} else if (_action.isAction(words_tie, words_fishing_line, words_boat) ||
-		_action.isAction(words_attach, words_fishing_line, words_boat)) {
+	} else if (player_said_3(tie, fishing_line, boat) ||
+		player_said_3(attach, fishing_line, boat)) {
 		if (_globals[kBoatRaised])
 			_vm->_dialogs->show(51131);
 		else if (_globals[kLineStatus] == 1)
@@ -303,7 +303,7 @@ static void room_511_parser() {
 				}
 			}
 		}
-	} else if (_action.isAction(words_look, words_street) || _action._lookFlag) {
+	} else if (player_said_2(look, street) || _action._lookFlag) {
 		if (_globals[kLineStatus] == 2)
 			_vm->_dialogs->show(51110);
 		else {
@@ -312,45 +312,45 @@ static void room_511_parser() {
 			else
 				_vm->_dialogs->show(51112);
 		}
-	} else if (_action.isAction(words_look, words_car))
+	} else if (player_said_2(look, car))
 		_vm->_dialogs->show(51113);
-	else if (_action.isAction(words_look, words_sidewalk))
+	else if (player_said_2(look, sidewalk))
 		_vm->_dialogs->show(51114);
-	else if (_action.isAction(words_walk_down, words_sidewalk_to_east) || _action.isAction(words_walk_down, words_sidewalk_to_west) || _action.isAction(words_walk_down, words_street_to_east))
+	else if (player_said_2(walk_down, sidewalk_to_east) || player_said_2(walk_down, sidewalk_to_west) || player_said_2(walk_down, street_to_east))
 		_vm->_dialogs->show(51115);
-	else if (_action.isAction(words_look, words_pleasure_dome))
+	else if (player_said_2(look, pleasure_dome))
 		_vm->_dialogs->show(51116);
-	else if (_action.isAction(words_look, words_ticket_booth))
+	else if (player_said_2(look, ticket_booth))
 		_vm->_dialogs->show(51117);
-	else if (_action.isAction(words_look, words_dome_entrance))
+	else if (player_said_2(look, dome_entrance))
 		_vm->_dialogs->show(51118);
-	else if (_action.isAction(words_unlock, words_padlock_key, words_dome_entrance) || _action.isAction(words_unlock, words_door_key, words_dome_entrance))
+	else if (player_said_3(unlock, padlock_key, dome_entrance) || player_said_3(unlock, door_key, dome_entrance))
 		_vm->_dialogs->show(51119);
-	else if ((_action.isAction(words_put) || _action.isAction(words_throw))
-		&& (_action.isObject(words_timebomb) || _action.isObject(words_bomb) || _action.isObject(words_bombs))
-		&& _action.isObject(words_dome_entrance))
+	else if ((player_said_1(put) || player_said_1(throw))
+		&& (player_said_1(timebomb) || player_said_1(bomb) || player_said_1(bombs))
+		&& player_said_1(dome_entrance))
 		_vm->_dialogs->show(51120);
-	else if (_action.isAction(words_look, words_restaurant)) {
+	else if (player_said_2(look, restaurant)) {
 		if (_globals[kBoatRaised])
 			_vm->_dialogs->show(51121);
 		else
 			_vm->_dialogs->show(51128);
-	} else if (_action.isAction(words_look, words_porthole))
+	} else if (player_said_2(look, porthole))
 		_vm->_dialogs->show(51122);
-	else if (_action.isAction(words_look, words_fishing_line) && (_action._mainObjectSource == CAT_HOTSPOT) && (_globals[kLineStatus] == 2))
+	else if (player_said_2(look, fishing_line) && (_action._mainObjectSource == CAT_HOTSPOT) && (_globals[kLineStatus] == 2))
 		_vm->_dialogs->show(51126);
-	else if (_action.isAction(words_look, words_fishing_line) && (_action._mainObjectSource == CAT_HOTSPOT) && (_globals[kLineStatus] == 3))
+	else if (player_said_2(look, fishing_line) && (_action._mainObjectSource == CAT_HOTSPOT) && (_globals[kLineStatus] == 3))
 		_vm->_dialogs->show(51133);
-	else if (_action.isAction(words_look, words_statue))
+	else if (player_said_2(look, statue))
 		_vm->_dialogs->show(51127);
-	else if (_action.isAction(words_look, words_boat))
+	else if (player_said_2(look, boat))
 		if (_globals[kBoatRaised])
 			_vm->_dialogs->show(51123);
 		else if (_globals[kLineStatus] != 3)
 			_vm->_dialogs->show(51124);
 		else
 			_vm->_dialogs->show(51125);
-	else if (_action.isAction(words_look, words_fishing_line) && (_globals[kLineStatus] == 3))
+	else if (player_said_2(look, fishing_line) && (_globals[kLineStatus] == 3))
 		_vm->_dialogs->show(51125);
 	else
 		return;

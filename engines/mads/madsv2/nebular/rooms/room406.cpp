@@ -136,36 +136,36 @@ static void room_406_daemon() {
 }
 
 static void room_406_pre_parser() {
-	if (_action.isAction(words_walk_down, words_corridor_to_west))
+	if (player_said_2(walk_down, corridor_to_west))
 		_game._player._walkOffScreenSceneId = 405;
 
-	if (_action.isAction(words_walk_down, words_corridor_to_east))
+	if (player_said_2(walk_down, corridor_to_east))
 		_game._player._walkOffScreenSceneId = 407;
 
-	if (_action.isAction(words_take))
+	if (player_said_1(take))
 		_game._player._needToWalk = false;
 
-	if (_action.isAction(words_look, words_sign) || _action.isAction(words_look, words_trash))
+	if (player_said_2(look, sign) || player_said_2(look, trash))
 		_game._player._needToWalk = true;
 }
 
 static void room_406_parser() {
-	if (_action.isAction(words_walk_through, words_door) && (_game._player._targetPos.x > 100)) {
+	if (player_said_2(walk_through, door) && (_game._player._targetPos.x > 100)) {
 		_game._player._stepEnabled = false;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 3, 1, 0, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
 		_vm->_sound->command(19);
-	} else if (_action.isAction(words_walk_through, words_door) && _globals[kStorageDoorOpen] && (_game._player._targetPos.x < 100))
+	} else if (player_said_2(walk_through, door) && _globals[kStorageDoorOpen] && (_game._player._targetPos.x < 100))
 		_scene->_nextSceneId = 410;
-	else if (_action.isAction(words_walk_through, words_door) && !_globals[kStorageDoorOpen] && (_game._player._targetPos.x < 100)) {
+	else if (player_said_2(walk_through, door) && !_globals[kStorageDoorOpen] && (_game._player._targetPos.x < 100)) {
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, _game.getQuote(0x24F));
 		if (!local._hitStorageDoor) {
 			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 			_scene->_sequences.addTimer(80, 100);
 		}
-	} else if (_action.isAction(words_put, words_security_card, words_card_slot) && !_globals[kStorageDoorOpen]) {
+	} else if (player_said_3(put, security_card, card_slot) && !_globals[kStorageDoorOpen]) {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
@@ -175,7 +175,7 @@ static void room_406_parser() {
 		Common::Point msgPos = Common::Point(_game._player._playerPos.x, _game._player._playerPos.y + 1);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[2], msgPos);
 		_scene->_sequences.setScale(_globals._sequenceIndexes[2], 87);
-	} else if (_action.isAction(words_put, words_security_card, words_card_slot) && _globals[kStorageDoorOpen]) {
+	} else if (player_said_3(put, security_card, card_slot) && _globals[kStorageDoorOpen]) {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
@@ -185,7 +185,7 @@ static void room_406_parser() {
 		Common::Point msgPos = Common::Point(_game._player._playerPos.x, _game._player._playerPos.y + 1);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[2], msgPos);
 		_scene->_sequences.setScale(_globals._sequenceIndexes[2], 87);
-	} else if (_action.isAction(words_put, words_card_slot)) {
+	} else if (player_said_2(put, card_slot)) {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
@@ -194,42 +194,42 @@ static void room_406_parser() {
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 110);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[2], _game._player._playerPos);
 		_scene->_sequences.setScale(_globals._sequenceIndexes[2], 87);
-	} else if (_action.isAction(words_look, words_trash))
+	} else if (player_said_2(look, trash))
 		_vm->_dialogs->show(40610);
-	else if (_action.isAction(words_take, words_trash))
+	else if (player_said_2(take, trash))
 		_vm->_dialogs->show(40611);
-	else if (_action.isAction(words_look, words_card_slot))
+	else if (player_said_2(look, card_slot))
 		_vm->_dialogs->show(40612);
-	else if (_action.isAction(words_look, words_fire_extinguisher))
+	else if (player_said_2(look, fire_extinguisher))
 		_vm->_dialogs->show(40614);
-	else if (_action.isAction(words_take, words_fire_extinguisher))
+	else if (player_said_2(take, fire_extinguisher))
 		_vm->_dialogs->show(40615);
-	else if (_action.isAction(words_look, words_corridor_to_east))
+	else if (player_said_2(look, corridor_to_east))
 		_vm->_dialogs->show(40616);
-	else if (_action.isAction(words_look, words_corridor_to_west))
+	else if (player_said_2(look, corridor_to_west))
 		_vm->_dialogs->show(40617);
-	else if (_action.isAction(words_look, words_corridor) || _action._lookFlag)
+	else if (player_said_2(look, corridor) || _action._lookFlag)
 		_vm->_dialogs->show(40618);
-	else if (_action.isAction(words_look, words_wall))
+	else if (player_said_2(look, wall))
 		_vm->_dialogs->show(40619);
-	else if (_action.isAction(words_look, words_door)) {
+	else if (player_said_2(look, door)) {
 		if (_globals[kStorageDoorOpen])
 			_vm->_dialogs->show(40621);
 		else
 			_vm->_dialogs->show(40620);
-	} else if (_action.isAction(words_look, words_monitor))
+	} else if (player_said_2(look, monitor))
 		_vm->_dialogs->show(40623);
-	else if (_action.isAction(words_look, words_signpost))
+	else if (player_said_2(look, signpost))
 		_vm->_dialogs->show(40624);
-	else if (_action.isAction(words_take, words_signpost))
+	else if (player_said_2(take, signpost))
 		_vm->_dialogs->show(40625);
-	else if (_action.isAction(words_look, words_boulder))
+	else if (player_said_2(look, boulder))
 		_vm->_dialogs->show(40626);
-	else if (_action.isAction(words_take, words_boulder))
+	else if (player_said_2(take, boulder))
 		_vm->_dialogs->show(40627);
-	else if (_action.isAction(words_look, words_sign))
+	else if (player_said_2(look, sign))
 		_vm->_dialogs->show(40628);
-	else if (_action.isAction(words_take, words_sign))
+	else if (player_said_2(take, sign))
 		_vm->_dialogs->show(40629);
 	else
 		return;

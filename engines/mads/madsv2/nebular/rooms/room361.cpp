@@ -372,43 +372,43 @@ static void room_361_daemon() {
 }
 
 static void room_361_pre_parser() {
-	if (_action.isAction(words_walk_down, words_corridor_to_east))
+	if (player_said_2(walk_down, corridor_to_east))
 		_game._player._walkOffScreenSceneId = 360;
 
-	if (_action.isAction(words_walk_down, words_corridor_to_west))
+	if (player_said_2(walk_down, corridor_to_west))
 		_game._player._walkOffScreenSceneId = 354;
 }
 
 static void room_361_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(36119);
-	else if (_action.isAction(words_sit_at, words_desk)) {
+	else if (player_said_2(sit_at, desk)) {
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.addQuote(252, 0, 120);
-	} else if (_action.isAction(words_climb_into, words_air_vent)) {
+	} else if (player_said_2(climb_into, air_vent)) {
 		if (_globals[kSexOfRex] == REX_FEMALE)
 			handleRoxAction();
 		else
 			handleRexAction();
-	} else if (_action.isAction(words_look, words_desk))
+	} else if (player_said_2(look, desk))
 		_vm->_dialogs->show(36110);
-	else if (_action.isAction(words_look, words_wall))
+	else if (player_said_2(look, wall))
 		_vm->_dialogs->show(36111);
-	else if (_action.isAction(words_look, words_lighting_fixture) || _action.isAction(words_stare_at, words_lighting_fixture))
+	else if (player_said_2(look, lighting_fixture) || player_said_2(stare_at, lighting_fixture))
 		_vm->_dialogs->show(36112);
-	else if (_action.isAction(words_look, words_lights) || _action.isAction(words_stare_at, words_lights))
+	else if (player_said_2(look, lights) || player_said_2(stare_at, lights))
 		_vm->_dialogs->show(36113);
-	else if (_action.isAction(words_take, words_lights))
+	else if (player_said_2(take, lights))
 		_vm->_dialogs->show(36114);
-	else if (_action.isAction(words_look, words_light_bulb) || _action.isAction(words_stare_at, words_light_bulb))
+	else if (player_said_2(look, light_bulb) || player_said_2(stare_at, light_bulb))
 		_vm->_dialogs->show(36115);
-	else if (_action.isAction(words_take, words_light_bulb))
+	else if (player_said_2(take, light_bulb))
 		_vm->_dialogs->show(36116);
-	else if (_action.isAction(words_look, words_corridor_to_west))
+	else if (player_said_2(look, corridor_to_west))
 		_vm->_dialogs->show(36117);
-	else if (_action.isAction(words_look, words_corridor_to_east))
+	else if (player_said_2(look, corridor_to_east))
 		_vm->_dialogs->show(36118);
-	else if (_action.isAction(words_look, words_air_vent))
+	else if (player_said_2(look, air_vent))
 		_vm->_dialogs->show(36120);
 	else
 		return;

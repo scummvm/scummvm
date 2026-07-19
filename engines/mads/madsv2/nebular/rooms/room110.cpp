@@ -89,7 +89,7 @@ static void room_110_daemon() {
 }
 
 static void room_110_pre_parser() {
-	if (_action.isAction(words_swim_through, words_cave_entrance))
+	if (player_said_2(swim_through, cave_entrance))
 		_game._player._walkOffScreenSceneId = 109;
 
 	if (local._crabsFl) {
@@ -117,7 +117,7 @@ static void room_110_pre_parser() {
 }
 
 static void room_110_parser() {
-	if (_action.isAction(words_swim_through, words_tunnel)) {
+	if (player_said_2(swim_through, tunnel)) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->loadAnimation(Resources::formatName(110, 'T', 0, EXT_AA, ""), 1);
@@ -133,21 +133,21 @@ static void room_110_parser() {
 		default:
 			break;
 		}
-	} else if ((_action._lookFlag) || _action.isAction(words_look, words_cave))
+	} else if ((_action._lookFlag) || player_said_2(look, cave))
 		_vm->_dialogs->show(11001);
-	else if (_action.isAction(words_look, words_cave_ceiling) || _action.isAction(words_look_at, words_cave_ceiling))
+	else if (player_said_2(look, cave_ceiling) || player_said_2(look_at, cave_ceiling))
 		_vm->_dialogs->show(11002);
-	else if (_action.isAction(words_look, words_rocks))
+	else if (player_said_2(look, rocks))
 		_vm->_dialogs->show(11003);
-	else if (_action.isAction(words_take, words_rocks))
+	else if (player_said_2(take, rocks))
 		_vm->_dialogs->show(11004);
-	else if (_action.isAction(words_look, words_tunnel))
+	else if (player_said_2(look, tunnel))
 		_vm->_dialogs->show(11005);
-	else if (_action.isAction(words_look, words_cave_entrance))
+	else if (player_said_2(look, cave_entrance))
 		_vm->_dialogs->show(11006);
-	else if (_action.isAction(words_look, words_fungoids))
+	else if (player_said_2(look, fungoids))
 		_vm->_dialogs->show(11007);
-	else if (_action.isAction(words_take, words_fungoids))
+	else if (player_said_2(take, fungoids))
 		_vm->_dialogs->show(11008);
 	else
 		return;

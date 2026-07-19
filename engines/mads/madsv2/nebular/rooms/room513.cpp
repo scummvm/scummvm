@@ -128,7 +128,7 @@ static void room_513_daemon() {
 }
 
 static void room_513_parser() {
-	if (_action.isAction(words_get_into, words_car)) {
+	if (player_said_2(get_into, car)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -168,7 +168,7 @@ static void room_513_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_put, words_id_card, words_card_slot) || _action.isAction(words_put, words_fake_id, words_card_slot)) {
+	} else if (player_said_3(put, id_card, card_slot) || player_said_3(put, fake_id, card_slot)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -217,31 +217,31 @@ static void room_513_parser() {
 		default:
 			break;
 		}
-	} else if ((_action._lookFlag) || _action.isAction(words_look, words_street))
+	} else if ((_action._lookFlag) || player_said_2(look, street))
 		_vm->_dialogs->show(51318);
-	else if (_action.isAction(words_look, words_elevator))
+	else if (player_said_2(look, elevator))
 		_vm->_dialogs->show(51310);
-	else if (_action.isAction(words_look, words_elevator_door))
+	else if (player_said_2(look, elevator_door))
 		_vm->_dialogs->show(51311);
-	else if (_action.isAction(words_look, words_card_slot))
+	else if (player_said_2(look, card_slot))
 		_vm->_dialogs->show(51312);
-	else if (_action.isAction(words_look, words_handicap_sign))
+	else if (player_said_2(look, handicap_sign))
 		_vm->_dialogs->show(51313);
-	else if (_action.isAction(words_look, words_bike_rack))
+	else if (player_said_2(look, bike_rack))
 		_vm->_dialogs->show(51314);
-	else if (_action.isAction(words_look, words_building))
+	else if (player_said_2(look, building))
 		_vm->_dialogs->show(51315);
-	else if (_action.isAction(words_look, words_sign))
+	else if (player_said_2(look, sign))
 		_vm->_dialogs->show(51316);
-	else if (_action.isAction(words_look, words_street_to_west) || _action.isAction(words_walk_down, words_street_to_west))
+	else if (player_said_2(look, street_to_west) || player_said_2(walk_down, street_to_west))
 		_vm->_dialogs->show(51317);
-	else if (_action.isAction(words_open, words_elevator_door) || _action.isAction(words_open, words_elevator))
+	else if (player_said_2(open, elevator_door) || player_said_2(open, elevator))
 		_vm->_dialogs->show(51319);
-	else if (_action.isAction(words_look, words_car))
+	else if (player_said_2(look, car))
 		_vm->_dialogs->show(51321);
-	else if (_action.isAction(words_look, words_brick_wall))
+	else if (player_said_2(look, brick_wall))
 		_vm->_dialogs->show(51322);
-	else if (_action.isAction(words_put, words_security_card, words_card_slot))
+	else if (player_said_3(put, security_card, card_slot))
 		_vm->_dialogs->show(51320);
 	else
 		return;

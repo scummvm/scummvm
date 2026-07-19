@@ -130,35 +130,35 @@ static void room_551_daemon() {
 }
 
 static void room_551_pre_parser() {
-	if (_action.isAction(words_walk_down) && (_action.isObject(words_street_to_west) || _action.isObject(words_sidewalk_to_west)))
+	if (player_said_1(walk_down) && (player_said_1(street_to_west) || player_said_1(sidewalk_to_west)))
 		_game._player._walkOffScreenSceneId = 501;
 }
 
 static void room_551_parser() {
-	if (_action.isAction(words_step_into, words_teleporter))
+	if (player_said_2(step_into, teleporter))
 		_scene->_nextSceneId = 502;
 	else if ((_action._lookFlag))
 		_vm->_dialogs->show(55117);
-	else if (_action.isAction(words_look, words_skeleton))
+	else if (player_said_2(look, skeleton))
 		_vm->_dialogs->show(55110);
-	else if (_action.isAction(words_look, words_elevator_shaft))
+	else if (player_said_2(look, elevator_shaft))
 		_vm->_dialogs->show(55111);
-	else if (_action.isAction(words_walkto, words_elevator_shaft))
+	else if (player_said_2(walkto, elevator_shaft))
 		_vm->_dialogs->show(55112);
-	else if (_action.isAction(words_look, words_building))
+	else if (player_said_2(look, building))
 		_vm->_dialogs->show(55113);
-	else if (_action.isAction(words_look, words_teleporter))
+	else if (player_said_2(look, teleporter))
 		_vm->_dialogs->show(55114);
-	else if (_action.isAction(words_look, words_sidewalk_to_west)) {
+	else if (player_said_2(look, sidewalk_to_west)) {
 		if (_game._visitedScenes.exists(505))
 			_vm->_dialogs->show(55116);
 		else
 			_vm->_dialogs->show(55115);
-	} else if (_action.isAction(words_look, words_sidewalk))
+	} else if (player_said_2(look, sidewalk))
 		_vm->_dialogs->show(55118);
-	else if (_action.isAction(words_look, words_equipment_overhead))
+	else if (player_said_2(look, equipment_overhead))
 		_vm->_dialogs->show(55119);
-	else if (_action.isAction(words_look, words_railing))
+	else if (player_said_2(look, railing))
 		_vm->_dialogs->show(55120);
 	else
 		return;

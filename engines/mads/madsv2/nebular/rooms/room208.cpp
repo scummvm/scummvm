@@ -157,13 +157,13 @@ static void room_208_daemon() {
 static void room_208_pre_parser() {
 	auto &gplayer = _vm->_game->_player;
 
-	if (_action.isAction(words_look) && gplayer._readyToWalk)
+	if (player_said_1(look) && gplayer._readyToWalk)
 		gplayer._needToWalk = true;
 
-	if (_action.isAction(words_walk_towards, words_grassland_to_east))
+	if (player_said_2(walk_towards, grassland_to_east))
 		gplayer._walkOffScreenSceneId = 209;
 
-	if (_action.isAction(words_walk_towards, words_open_area_to_west))
+	if (player_said_2(walk_towards, open_area_to_west))
 		gplayer._walkOffScreenSceneId = 207;
 }
 
@@ -253,7 +253,7 @@ static void subAction(int mode) {
 }
 
 static void room_208_parser() {
-	if (_action.isAction(words_walk_towards, words_lowlands_to_north)) {
+	if (player_said_2(walk_towards, lowlands_to_north)) {
 		if (_globals[kRhotundaStatus])
 			_scene->_nextSceneId = 203;
 		else if (_game._trigger == 0) {
@@ -262,59 +262,59 @@ static void room_208_parser() {
 			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
 		} else if (_game._trigger == 1)
 			_scene->_nextSceneId = 203;
-	} else if (_action.isAction(words_walk_towards, words_field_to_south))
+	} else if (player_said_2(walk_towards, field_to_south))
 		_scene->_nextSceneId = 212;
-	else if (_action.isAction(words_take, words_pile_of_leaves) && (!_globals[kLeavesStatus] || _game._trigger)) {
+	else if (player_said_2(take, pile_of_leaves) && (!_globals[kLeavesStatus] || _game._trigger)) {
 		subAction(1);
 		if (_game._player._stepEnabled)
 			_vm->_dialogs->showItem(OBJ_BIG_LEAVES, 0x326, 0);
-	} else if (_action.isAction(words_put, words_big_leaves, words_deep_pit) && (_globals[kLeavesStatus] == 1 || _game._trigger))
+	} else if (player_said_3(put, big_leaves, deep_pit) && (_globals[kLeavesStatus] == 1 || _game._trigger))
 		subAction(2);
-	else if (_action.isAction(words_put, words_twinkifruit, words_leaf_covered_pit)) {
+	else if (player_said_3(put, twinkifruit, leaf_covered_pit)) {
 		subAction(3);
 		if (_game._player._stepEnabled) {
 			_game._player._stepEnabled = false;
 			local._rhotundaTurnFl = true;
 			_game._player.walk(Common::Point(20, 148), FACING_EAST);
 		}
-	} else if (_action.isAction(words_put, words_burger, words_leaf_covered_pit)) {
+	} else if (player_said_3(put, burger, leaf_covered_pit)) {
 		subAction(4);
 		if (_game._player._stepEnabled)
 			_vm->_dialogs->show(20812);
-	} else if (_action.isAction(words_put, words_dead_fish, words_leaf_covered_pit)) {
+	} else if (player_said_3(put, dead_fish, leaf_covered_pit)) {
 		subAction(5);
 		if (_game._player._stepEnabled)
 			_vm->_dialogs->show(20812);
-	} else if (_action.isAction(words_look, words_cumulous_cloud))
+	} else if (player_said_2(look, cumulous_cloud))
 		_vm->_dialogs->show(20801);
-	else if (_action.isAction(words_look, words_open_area_to_west))
+	else if (player_said_2(look, open_area_to_west))
 		_vm->_dialogs->show(20802);
-	else if (_action.isAction(words_look, words_thorny_bush))
+	else if (player_said_2(look, thorny_bush))
 		_vm->_dialogs->show(20803);
-	else if (_action.isAction(words_look, words_rocks))
+	else if (player_said_2(look, rocks))
 		_vm->_dialogs->show(20804);
-	else if (_action.isAction(words_look, words_small_cactus))
+	else if (player_said_2(look, small_cactus))
 		_vm->_dialogs->show(20805);
-	else if (_action.isAction(words_take, words_small_cactus))
+	else if (player_said_2(take, small_cactus))
 		_vm->_dialogs->show(20806);
-	else if (_action.isAction(words_look, words_grassland_to_east))
+	else if (player_said_2(look, grassland_to_east))
 		_vm->_dialogs->show(20807);
-	else if (_action.isAction(words_look, words_deep_pit))
+	else if (player_said_2(look, deep_pit))
 		_vm->_dialogs->show(20808);
-	else if (_action.isAction(words_look, words_pile_of_leaves))
+	else if (player_said_2(look, pile_of_leaves))
 		_vm->_dialogs->show(20809);
-	else if (_action.isAction(words_look, words_leaf_covered_pit)) {
+	else if (player_said_2(look, leaf_covered_pit)) {
 		if (_game._difficulty == DIFFICULTY_EASY)
 			_vm->_dialogs->show(20810);
 		else
 			_vm->_dialogs->show(20811);
-	} else if (_action.isAction(words_look, words_tree) || _action.isAction(words_look, words_trees))
+	} else if (player_said_2(look, tree) || player_said_2(look, trees))
 		_vm->_dialogs->show(20813);
-	else if (_action.isAction(words_take, words_leaf_covered_pit))
+	else if (player_said_2(take, leaf_covered_pit))
 		_vm->_dialogs->show(20814);
-	else if (_action.isAction(words_look, words_huge_legs))
+	else if (player_said_2(look, huge_legs))
 		_vm->_dialogs->show(20815);
-	else if (_action.isAction(words_take, words_huge_legs) || _action.isAction(words_pull, words_huge_legs))
+	else if (player_said_2(take, huge_legs) || player_said_2(pull, huge_legs))
 		_vm->_dialogs->show(20816);
 	else if (_action._savedFields._lookFlag && (_globals[kRhotundaStatus] == 1))
 		_vm->_dialogs->show(20819);

@@ -78,7 +78,7 @@ static void room_215_daemon() {
 static void room_215_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(21509);
-	else if (_action.isAction(words_take, words_twinkifruit)) {
+	else if (player_said_2(take, twinkifruit)) {
 		if (!_game._objects.isInInventory(OBJ_TWINKIFRUIT) || _game._trigger) {
 			switch (_game._trigger) {
 			case 0:
@@ -117,31 +117,31 @@ static void room_215_parser() {
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(idx));
 		}
-	} else if (_action.isAction(words_walk_outside, words_hut))
+	} else if (player_said_2(walk_outside, hut))
 		_scene->_nextSceneId = 210;
-	else if (_action.isAction(words_look, words_bear_rug))
+	else if (player_said_2(look, bear_rug))
 		_vm->_dialogs->show(21501);
-	else if (_action.isAction(words_look, words_bed))
+	else if (player_said_2(look, bed))
 		_vm->_dialogs->show(21502);
-	else if (_action.isAction(words_look, words_welcome_mat))
+	else if (player_said_2(look, welcome_mat))
 		_vm->_dialogs->show(21503);
-	else if (_action.isAction(words_look, words_love_altar))
+	else if (player_said_2(look, love_altar))
 		_vm->_dialogs->show(21504);
-	else if (_action.isAction(words_look, words_window))
+	else if (player_said_2(look, window))
 		_vm->_dialogs->show(21505);
-	else if (_action.isAction(words_look, words_picture))
+	else if (player_said_2(look, picture))
 		_vm->_dialogs->show(21506);
-	else if (_action.isAction(words_look, words_twinkifruit) && (_action._savedFields._mainObjectSource == 4))
+	else if (player_said_2(look, twinkifruit) && (_action._savedFields._mainObjectSource == 4))
 		_vm->_dialogs->show(21507);
-	else if (_action.isAction(words_take, words_bear_rug))
+	else if (player_said_2(take, bear_rug))
 		_vm->_dialogs->show(21510);
-	else if (_action.isAction(words_take, words_love_altar))
+	else if (player_said_2(take, love_altar))
 		_vm->_dialogs->show(21511);
-	else if (_action.isAction(words_look, words_bag_of_twinkifruits))
+	else if (player_said_2(look, bag_of_twinkifruits))
 		_vm->_dialogs->show(21512);
-	else if (_action.isAction(words_take, words_bag_of_twinkifruits))
+	else if (player_said_2(take, bag_of_twinkifruits))
 		_vm->_dialogs->show(21513);
-	else if (_action.isAction(words_take, words_welcome_mat))
+	else if (player_said_2(take, welcome_mat))
 		_vm->_dialogs->show(21514);
 	else
 		return;

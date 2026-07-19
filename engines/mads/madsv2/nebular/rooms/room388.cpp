@@ -51,9 +51,9 @@ static void room_388_init() {
 }
 
 static void room_388_parser() {
-	if (_action.isAction(words_return_to, words_air_shaft))
+	if (player_said_2(return_to, air_shaft))
 		_scene->_nextSceneId = 313;
-	else if (_action.isAction(words_talkto, words_sauropod)) {
+	else if (player_said_2(talkto, sauropod)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -75,12 +75,12 @@ static void room_388_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_look_through, words_grate)) {
+	} else if (player_said_2(look_through, grate)) {
 		if (_globals[kAfterHavoc])
 			_vm->_dialogs->show(38811);
 		else
 			_vm->_dialogs->show(38810);
-	} else if (_action.isAction(words_open, words_grate))
+	} else if (player_said_2(open, grate))
 		_vm->_dialogs->show(38812);
 	else
 		return;

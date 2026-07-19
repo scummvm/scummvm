@@ -74,9 +74,9 @@ static void room_389_daemon() {
 }
 
 static void room_389_parser() {
-	if (_action.isAction(words_return_to, words_air_shaft))
+	if (player_said_2(return_to, air_shaft))
 		_scene->_nextSceneId = 313;
-	else if (_action.isAction(words_talkto, words_monster)) {
+	else if (player_said_2(talkto, monster)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -94,7 +94,7 @@ static void room_389_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_look_through, words_grate)) {
+	} else if (player_said_2(look_through, grate)) {
 		if (_globals[kAfterHavoc]) {
 			if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
 				_vm->_dialogs->show(38911);
@@ -102,7 +102,7 @@ static void room_389_parser() {
 				_vm->_dialogs->show(38912);
 		} else
 			_vm->_dialogs->show(38910);
-	} else if (_action.isAction(words_open, words_grate)) {
+	} else if (player_said_2(open, grate)) {
 		if (_globals[kAfterHavoc])
 			_vm->_dialogs->show(38914);
 		else

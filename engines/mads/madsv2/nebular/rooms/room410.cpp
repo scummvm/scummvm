@@ -83,23 +83,23 @@ static void room_410_daemon() {
 }
 
 static void room_410_pre_parser() {
-	if (_action.isAction(words_take) && !_action.isObject(words_charge_cases))
+	if (player_said_1(take) && !player_said_1(charge_cases))
 		_game._player._needToWalk = false;
 
-	if (_action.isAction(words_look, words_charge_cases) && _game._objects.isInRoom(OBJ_CHARGE_CASES))
+	if (player_said_2(look, charge_cases) && _game._objects.isInRoom(OBJ_CHARGE_CASES))
 		_game._player._needToWalk = true;
 
-	if (_action.isAction(words_open, words_sacks) || _action.isAction(words_open, words_sack))
+	if (player_said_2(open, sacks) || player_said_2(open, sack))
 		_game._player._needToWalk = false;
 
-	if (_action.isAction(words_look, words_can))
+	if (player_said_2(look, can))
 		_game._player._needToWalk = true;
 }
 
 static void room_410_parser() {
-	if (_action.isAction(words_walk_into, words_corridor_to_south))
+	if (player_said_2(walk_into, corridor_to_south))
 		_scene->_nextSceneId = 406;
-	else if (_action.isAction(words_take, words_charge_cases) && (_game._objects.isInRoom(OBJ_CHARGE_CASES) || _game._trigger)) {
+	else if (player_said_2(take, charge_cases) && (_game._objects.isInRoom(OBJ_CHARGE_CASES) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
 			_vm->_sound->command(57);
@@ -132,52 +132,52 @@ static void room_410_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_look, words_barrel))
+	} else if (player_said_2(look, barrel))
 		_vm->_dialogs->show(41010);
-	else if (_action.isAction(words_take, words_barrel))
+	else if (player_said_2(take, barrel))
 		_vm->_dialogs->show(41011);
-	else if (_action.isAction(words_open, words_barrel))
+	else if (player_said_2(open, barrel))
 		_vm->_dialogs->show(41012);
-	else if (_action.isAction(words_look, words_rug))
+	else if (player_said_2(look, rug))
 		_vm->_dialogs->show(41013);
-	else if (_action.isAction(words_take, words_rug))
+	else if (player_said_2(take, rug))
 		_vm->_dialogs->show(41014);
-	else if (_action.isAction(words_look, words_carton) || _action.isAction(words_open, words_carton)) {
+	else if (player_said_2(look, carton) || player_said_2(open, carton)) {
 		if (_game._objects.isInRoom(OBJ_CHARGE_CASES))
 			_vm->_dialogs->show(41015);
 		else
 			_vm->_dialogs->show(41016);
-	} else if (_action.isAction(words_look, words_flour))
+	} else if (player_said_2(look, flour))
 		_vm->_dialogs->show(41017);
-	else if (_action.isAction(words_take, words_flour))
+	else if (player_said_2(take, flour))
 		_vm->_dialogs->show(41018);
-	else if (_action.isAction(words_look, words_sacks))
+	else if (player_said_2(look, sacks))
 		_vm->_dialogs->show(41019);
-	else if (_action.isAction(words_look, words_sack))
+	else if (player_said_2(look, sack))
 		_vm->_dialogs->show(41019);
-	else if (_action.isAction(words_open, words_sacks))
+	else if (player_said_2(open, sacks))
 		_vm->_dialogs->show(41020);
-	else if (_action.isAction(words_open, words_sack))
+	else if (player_said_2(open, sack))
 		_vm->_dialogs->show(41020);
-	else if (_action.isAction(words_look, words_bucket_of_tar))
+	else if (player_said_2(look, bucket_of_tar))
 		_vm->_dialogs->show(41021);
-	else if (_action.isAction(words_take, words_bucket_of_tar))
+	else if (player_said_2(take, bucket_of_tar))
 		_vm->_dialogs->show(41022);
-	else if (_action.isAction(words_look, words_can))
+	else if (player_said_2(look, can))
 		_vm->_dialogs->show(41023);
-	else if (_action.isAction(words_take, words_can))
+	else if (player_said_2(take, can))
 		_vm->_dialogs->show(41024);
-	else if (_action.isAction(words_look, words_charge_cases) && _game._objects.isInRoom(OBJ_CHARGE_CASES))
+	else if (player_said_2(look, charge_cases) && _game._objects.isInRoom(OBJ_CHARGE_CASES))
 		_vm->_dialogs->show(41025);
-	else if (_action.isAction(words_look, words_fence))
+	else if (player_said_2(look, fence))
 		_vm->_dialogs->show(41027);
-	else if (_action.isAction(words_look, words_shelves))
+	else if (player_said_2(look, shelves))
 		_vm->_dialogs->show(41028);
-	else if (_action.isAction(words_look, words_rat))
+	else if (player_said_2(look, rat))
 		_vm->_dialogs->show(41029);
-	else if (_action.isAction(words_take, words_rat))
+	else if (player_said_2(take, rat))
 		_vm->_dialogs->show(41030);
-	else if (_action.isAction(words_throw, words_rat))
+	else if (player_said_2(throw, rat))
 		_vm->_dialogs->show(41031);
 	else if (_action._lookFlag)
 		_vm->_dialogs->show(41033);

@@ -898,16 +898,16 @@ static void room_210_daemon() {
 static void room_210_pre_parser() {
 	local._stopWalking = false;
 
-	if (_action.isAction(words_walk_down, words_path_to_east))
+	if (player_said_2(walk_down, path_to_east))
 		_game._player._walkOffScreenSceneId = 211;
 }
 
 static void room_210_parser() {
-	if (_action.isAction(words_look, words_binoculars, words_hut_to_north)) {
+	if (player_said_3(look, binoculars, hut_to_north)) {
 		_vm->_dialogs->show(21017);
 	} else if (_game._screenObjects._inputMode == kInputConversation) {
 		handleConversations();
-	} else if (_action.isAction(words_talkto, words_native_woman) ||
+	} else if (player_said_2(talkto, native_woman) ||
 		((_game._player._playerPos == Common::Point(214, 150)) && (_game._player._facing == FACING_NORTHWEST) && (local._twinkleAnimationType == 1) && local._stopWalking)) {
 		switch (_game._trigger) {
 		case 0:
@@ -962,7 +962,7 @@ static void room_210_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_give, words_native_woman) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
+	} else if (player_said_2(give, native_woman) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
 		switch (_game._trigger) {
 		case 0:
 		{
@@ -982,11 +982,11 @@ static void room_210_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_walk_down, words_path_to_north) || _action.isAction(words_walk_towards, words_hut_to_north)) {
+	} else if (player_said_2(walk_down, path_to_north) || player_said_2(walk_towards, hut_to_north)) {
 		_scene->_nextSceneId = 205;
-	} else if (_action.isAction(words_walk_through, words_doorway)) {
+	} else if (player_said_2(walk_through, doorway)) {
 		_scene->_nextSceneId = 215;
-	} else if ((_action.isAction(words_pull, words_curtain) || _action.isAction(words_open, words_curtain)) && !_globals[kCurtainOpen]) {
+	} else if ((player_said_2(pull, curtain) || player_said_2(open, curtain)) && !_globals[kCurtainOpen]) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -1007,7 +1007,7 @@ static void room_210_parser() {
 		default:
 			break;
 		}
-	} else if ((_action.isAction(words_pull, words_curtain) || _action.isAction(words_close, words_curtain)) && _globals[kCurtainOpen]) {
+	} else if ((player_said_2(pull, curtain) || player_said_2(close, curtain)) && _globals[kCurtainOpen]) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
@@ -1031,7 +1031,7 @@ static void room_210_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_look, words_hut)) {
+	} else if (player_said_2(look, hut)) {
 		if (_globals[kTwinklesStatus] == TWINKLES_GONE) {
 			if (_game._storyMode == STORYMODE_NAUGHTY)
 				_vm->_dialogs->show(21003);
@@ -1040,31 +1040,31 @@ static void room_210_parser() {
 		} else {
 			_vm->_dialogs->show(21001);
 		}
-	} else if (_action.isAction(words_look, words_bra)) {
+	} else if (player_said_2(look, bra)) {
 		_vm->_dialogs->show(21004);
-	} else if (_action.isAction(words_look, words_hotpants)) {
+	} else if (player_said_2(look, hotpants)) {
 		_vm->_dialogs->show(21005);
-	} else if (_action.isAction(words_take, words_hotpants) || _action.isAction(words_take, words_bra)) {
+	} else if (player_said_2(take, hotpants) || player_said_2(take, bra)) {
 		_vm->_dialogs->show(21006);
-	} else if (_action.isAction(words_look, words_stream)) {
+	} else if (player_said_2(look, stream)) {
 		_vm->_dialogs->show(21007);
-	} else if (_action.isAction(words_look, words_bushy_fern)) {
+	} else if (player_said_2(look, bushy_fern)) {
 		_vm->_dialogs->show(21008);
-	} else if (_action.isAction(words_look, words_village_path)) {
+	} else if (player_said_2(look, village_path)) {
 		_vm->_dialogs->show(21009);
-	} else if (_action.isAction(words_look, words_native_woman)) {
+	} else if (player_said_2(look, native_woman)) {
 		_vm->_dialogs->show(21010);
-	} else if (_action.isAction(words_shoot, words_native_woman) || _action.isAction(words_hose_down, words_native_woman)) {
+	} else if (player_said_2(shoot, native_woman) || player_said_2(hose_down, native_woman)) {
 		_vm->_dialogs->show(21011);
-	} else if (_action.isAction(words_look, words_path_to_north)) {
+	} else if (player_said_2(look, path_to_north)) {
 		_vm->_dialogs->show(21012);
-	} else if (_action.isAction(words_look, words_curtain)) {
+	} else if (player_said_2(look, curtain)) {
 		_vm->_dialogs->show(21013);
-	} else if (_action.isAction(words_look, words_clothesline)) {
+	} else if (player_said_2(look, clothesline)) {
 		_vm->_dialogs->show(21014);
-	} else if (_action.isAction(words_take, words_clothesline)) {
+	} else if (player_said_2(take, clothesline)) {
 		_vm->_dialogs->show(21015);
-	} else if (_action.isAction(words_look, words_hut_to_north)) {
+	} else if (player_said_2(look, hut_to_north)) {
 		_vm->_dialogs->show(21016);
 	} else {
 		// Not handled

@@ -164,22 +164,22 @@ static void room_751_daemon() {
 }
 
 static void room_751_pre_parser() {
-	if (_action.isAction(words_look, words_tall_building))
+	if (player_said_2(look, tall_building))
 		_game._player.walk(Common::Point(154, 129), FACING_NORTHEAST);
 
-	if (_action.isAction(words_look, words_binoculars, words_tall_building))
+	if (player_said_3(look, binoculars, tall_building))
 		_game._player.walk(Common::Point(154, 129), FACING_NORTH);
 
-	if (_action.isAction(words_walkto, words_east_end_of_platform))
+	if (player_said_2(walkto, east_end_of_platform))
 		_game._player._walkOffScreenSceneId = 752;
 
 	if (!local._rexHandingLine)
 		return;
 
-	if (_action.isAction(words_look) || _action.isObject(words_fishing_line) || _action.isAction(words_talkto))
+	if (player_said_1(look) || player_said_1(fishing_line) || player_said_1(talkto))
 		_game._player._needToWalk = false;
 
-	if ((!_action.isAction(words_put, words_fishing_line, words_hook) || !_action.isAction(words_tie, words_fishing_line, words_hook) || !_action.isAction(words_attach, words_fishing_line, words_hook))
+	if ((!player_said_3(put, fishing_line, hook) || !player_said_3(tie, fishing_line, hook) || !player_said_3(attach, fishing_line, hook))
 		&& (_game._player._needToWalk)) {
 		switch (_game._trigger) {
 		case 0:
@@ -206,9 +206,9 @@ static void room_751_pre_parser() {
 }
 
 static void room_751_parser() {
-	if (_action.isAction(words_walk_along, words_platform))
+	if (player_said_2(walk_along, platform))
 		; // Nothing
-	else if (_action.isAction(words_look, words_binoculars, words_tall_building)) {
+	else if (player_said_3(look, binoculars, tall_building)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -235,7 +235,7 @@ static void room_751_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_step_into, words_elevator)) {
+	} else if (player_said_2(step_into, elevator)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -277,7 +277,7 @@ static void room_751_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_put, words_fishing_line, words_hook) || _action.isAction(words_tie, words_fishing_line, words_hook) || _action.isAction(words_attach, words_fishing_line, words_hook)) {
+	} else if (player_said_3(put, fishing_line, hook) || player_said_3(tie, fishing_line, hook) || player_said_3(attach, fishing_line, hook)) {
 		if (_globals[kLineStatus] == 1) {
 			switch (_game._trigger) {
 			case 0:
@@ -327,30 +327,30 @@ static void room_751_parser() {
 				break;
 			}
 		}
-	} else if (_action._lookFlag || _action.isAction(words_look, words_city))
+	} else if (_action._lookFlag || player_said_2(look, city))
 		_vm->_dialogs->show(75110);
-	else if (_action.isAction(words_look, words_elevator))
+	else if (player_said_2(look, elevator))
 		_vm->_dialogs->show(75112);
-	else if (_action.isAction(words_look, words_platform))
+	else if (player_said_2(look, platform))
 		_vm->_dialogs->show(75113);
-	else if (_action.isAction(words_look, words_cement_pylon))
+	else if (player_said_2(look, cement_pylon))
 		_vm->_dialogs->show(75114);
-	else if ((_action.isAction(words_look, words_hook) || _action.isAction(words_look, words_fishing_line))
+	else if ((player_said_2(look, hook) || player_said_2(look, fishing_line))
 		&& (_globals[kLineStatus] == 2 || _globals[kLineStatus] == 3))
 		_vm->_dialogs->show(75116);
-	else if (_action.isAction(words_look, words_hook))
+	else if (player_said_2(look, hook))
 		_vm->_dialogs->show(75115);
-	else if (_action.isAction(words_look, words_rock))
+	else if (player_said_2(look, rock))
 		_vm->_dialogs->show(75117);
-	else if (_action.isAction(words_take, words_rock))
+	else if (player_said_2(take, rock))
 		_vm->_dialogs->show(75118);
-	else if (_action.isAction(words_look, words_east_end_of_platform))
+	else if (player_said_2(look, east_end_of_platform))
 		_vm->_dialogs->show(75119);
-	else if (_action.isAction(words_take, words_fishing_line) && (_globals[kLineStatus] == 3 || _globals[kLineStatus] == 2))
+	else if (player_said_2(take, fishing_line) && (_globals[kLineStatus] == 3 || _globals[kLineStatus] == 2))
 		_vm->_dialogs->show(75121);
-	else if (_action.isAction(words_look, words_tall_building))
+	else if (player_said_2(look, tall_building))
 		_vm->_dialogs->show(75122);
-	else if (_action.isAction(words_tie, words_fishing_line, words_cement_pylon) || _action.isAction(words_attach, words_fishing_line, words_cement_pylon))
+	else if (player_said_3(tie, fishing_line, cement_pylon) || player_said_3(attach, fishing_line, cement_pylon))
 		_vm->_dialogs->show(75123);
 	else
 		return;

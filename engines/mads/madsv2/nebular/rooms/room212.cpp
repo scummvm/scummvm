@@ -49,32 +49,32 @@ static void room_212_daemon() {
 }
 
 static void room_212_pre_parser() {
-	if (_action.isAction(words_walk_through, words_cave_entrance))
+	if (player_said_2(walk_through, cave_entrance))
 		_game._player._walkOffScreenSceneId = 111;
 }
 
 static void room_212_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(21209);
-	else if (_action.isAction(words_walk_towards) && (_action.isObject(words_field_to_north) || _action.isObject(words_mountains)))
+	else if (player_said_1(walk_towards) && (player_said_1(field_to_north) || player_said_1(mountains)))
 		_scene->_nextSceneId = 208;
-	else if (_action.isAction(words_walk_towards, words_cave))
+	else if (player_said_2(walk_towards, cave))
 		_scene->_nextSceneId = 111;
-	else if (_action.isAction(words_look, words_grass))
+	else if (player_said_2(look, grass))
 		_vm->_dialogs->show(21201);
-	else if (_action.isAction(words_look, words_rocks))
+	else if (player_said_2(look, rocks))
 		_vm->_dialogs->show(21202);
-	else if (_action.isAction(words_look, words_cave_entrance))
+	else if (player_said_2(look, cave_entrance))
 		_vm->_dialogs->show(21203);
-	else if (_action.isAction(words_look, words_sky))
+	else if (player_said_2(look, sky))
 		_vm->_dialogs->show(21204);
-	else if (_action.isAction(words_look, words_field_to_north))
+	else if (player_said_2(look, field_to_north))
 		_vm->_dialogs->show(21205);
-	else if (_action.isAction(words_look, words_trees))
+	else if (player_said_2(look, trees))
 		_vm->_dialogs->show(21206);
-	else if (_action.isAction(words_look, words_plants))
+	else if (player_said_2(look, plants))
 		_vm->_dialogs->show(21207);
-	else if (_action.isAction(words_look, words_mountains))
+	else if (player_said_2(look, mountains))
 		_vm->_dialogs->show(21208);
 	else
 		return;

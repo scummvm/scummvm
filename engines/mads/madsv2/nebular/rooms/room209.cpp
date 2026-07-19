@@ -1328,14 +1328,14 @@ static void room_209_daemon() {
 		case 234:
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			_scene->_kernelMessages.reset();
-			if (_action.isAction(words_hose_down, words_blowgun, words_monkey)) {
+			if (player_said_3(hose_down, blowgun, monkey)) {
 				_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 7, 16, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 11, 12);
 				_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(116, 131));
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 12, 239);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 235);
-			} else if (_action.isAction(words_shoot, words_blowgun, words_monkey)) {
+			} else if (player_said_3(shoot, blowgun, monkey)) {
 				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 11, 12);
 				_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(116, 131));
@@ -1411,19 +1411,19 @@ static void room_209_daemon() {
 }
 
 static void room_209_pre_parser() {
-	if (_action.isAction(words_walk_towards, words_field_to_west))
+	if (player_said_2(walk_towards, field_to_west))
 		_game._player._walkOffScreenSceneId = 208;
 
 	if (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS) {
-		if ((_action.isAction(words_shoot) || _action.isAction(words_hose_down)) && _action.isTarget(words_monkey)
-			&& _action.isObject(words_blowgun) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
+		if ((player_said_1(shoot) || player_said_1(hose_down)) && player_said_1(monkey)
+			&& player_said_1(blowgun) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
 			_game._player._prepareWalkPos = Common::Point(111, 129);
 			_game._player._prepareWalkFacing = FACING_NORTHEAST;
 			_game._player._needToWalk = true;
 			_game._player._readyToWalk = true;
 		}
 
-		if (_action.isAction(words_look, words_monkey) || _action.isAction(words_talkto, words_monkey)) {
+		if (player_said_2(look, monkey) || player_said_2(talkto, monkey)) {
 			_game._player._prepareWalkPos = Common::Point(111, 129);
 			_game._player._prepareWalkFacing = FACING_NORTHEAST;
 			_game._player._needToWalk = true;
@@ -1439,13 +1439,13 @@ static void room_209_parser() {
 		return;
 	}
 
-	if (_action.isAction(words_walk_towards, words_rocky_area_to_north)) {
+	if (player_said_2(walk_towards, rocky_area_to_north)) {
 		_scene->_nextSceneId = 203;
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(words_talkto, words_monkey) && !local._pitchFl && !local._playingDialogFl) {
+	if (player_said_2(talkto, monkey) && !local._pitchFl && !local._playingDialogFl) {
 		_scene->_sequences.addTimer(1, local._dialogAbortVal);
 		local._playingDialogFl = true;
 		_game._player._stepEnabled = false;
@@ -1555,9 +1555,9 @@ static void room_209_parser() {
 	}
 
 	if (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS) {
-		if ((_action.isAction(words_shoot) || _action.isAction(words_hose_down)) && _action.isTarget(words_monkey)
-			&& _action.isObject(words_blowgun) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
-			if (_action.isAction(words_shoot, words_blowgun, words_monkey) && !local._startShootingInTimerFl) {
+		if ((player_said_1(shoot) || player_said_1(hose_down)) && player_said_1(monkey)
+			&& player_said_1(blowgun) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
+			if (player_said_3(shoot, blowgun, monkey) && !local._startShootingInTimerFl) {
 				_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 				_scene->_sequences.addTimer(1, 231);
 				local._startShootingInTimerFl = true;
@@ -1567,7 +1567,7 @@ static void room_209_parser() {
 				return;
 			}
 
-			if (_action.isAction(words_hose_down, words_blowgun, words_monkey) && !local._startShootingInTimerFl) {
+			if (player_said_3(hose_down, blowgun, monkey) && !local._startShootingInTimerFl) {
 				_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 				_scene->_sequences.addTimer(1, 228);
 				_game._player._stepEnabled = false;
@@ -1578,7 +1578,7 @@ static void room_209_parser() {
 			}
 		}
 
-		if (_action.isAction(words_look, words_monkey)) {
+		if (player_said_2(look, monkey)) {
 			local._pitchFl = true;
 			_game._player._stepEnabled = false;
 			_vm->_dialogs->show(20914);
@@ -1587,7 +1587,7 @@ static void room_209_parser() {
 		}
 	}
 
-	if (_action.isAction(words_take, words_plant_stalk) && (_game._trigger || _game._objects.isInRoom(OBJ_PLANT_STALK))) {
+	if (player_said_2(take, plant_stalk) && (_game._trigger || _game._objects.isInRoom(OBJ_PLANT_STALK))) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -1620,7 +1620,7 @@ static void room_209_parser() {
 		return;
 	}
 
-	if (_action.isAction(words_take, words_binoculars) && (_game._trigger || _game._objects.isInRoom(OBJ_BINOCULARS))) {
+	if (player_said_2(take, binoculars) && (_game._trigger || _game._objects.isInRoom(OBJ_BINOCULARS))) {
 		switch (_game._trigger) {
 		case 0:
 			_globals._spriteIndexes[10] = _scene->_sprites.addSprites("*RXMBD_8");
@@ -1656,75 +1656,75 @@ static void room_209_parser() {
 		return;
 	}
 
-	if (_action.isAction(words_look, words_sky)) {
+	if (player_said_2(look, sky)) {
 		_vm->_dialogs->show(20901);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(words_look, words_bamboo_like_plant)) {
+	if (player_said_2(look, bamboo_like_plant)) {
 		_vm->_dialogs->show(20902);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(words_look, words_mountainside)) {
+	if (player_said_2(look, mountainside)) {
 		_vm->_dialogs->show(20903);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(words_look, words_grassy_field)) {
+	if (player_said_2(look, grassy_field)) {
 		_vm->_dialogs->show(20904);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(words_look, words_field_to_west)) {
+	if (player_said_2(look, field_to_west)) {
 		_vm->_dialogs->show(20905);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(words_look, words_rocky_area_to_north)) {
+	if (player_said_2(look, rocky_area_to_north)) {
 		_vm->_dialogs->show(20906);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(words_look, words_plant_stalk) && (_action._savedFields._mainObjectSource == 4)) {
+	if (player_said_2(look, plant_stalk) && (_action._savedFields._mainObjectSource == 4)) {
 		_vm->_dialogs->show(20907);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(words_give, words_twinkifruit, words_monkey) || _action.isAction(words_throw, words_twinkifruit, words_monkey)) {
+	if (player_said_3(give, twinkifruit, monkey) || player_said_3(throw, twinkifruit, monkey)) {
 		_vm->_dialogs->show(20909);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(words_look, words_trees)) {
+	if (player_said_2(look, trees)) {
 		_vm->_dialogs->show(20913);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(words_throw, words_monkey) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
-		if (!_action.isObject(words_poison_darts)) {
+	if (player_said_2(throw, monkey) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
+		if (!player_said_1(poison_darts)) {
 			_vm->_dialogs->show(20915);
 		}
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(words_throw, words_poison_darts, words_monkey)) {
+	if (player_said_3(throw, poison_darts, monkey)) {
 		_vm->_dialogs->show(20916);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(words_look, words_palm_tree)) {
+	if (player_said_2(look, palm_tree)) {
 		if (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS) {
 			if (local._monkeyPosition == 1)
 				_vm->_dialogs->show(20917);
@@ -1740,13 +1740,13 @@ static void room_209_parser() {
 		return;
 	}
 
-	if (_action.isAction(words_look, words_melon_mush)) {
+	if (player_said_2(look, melon_mush)) {
 		_vm->_dialogs->show(20920);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(words_take, words_melon_mush)) {
+	if (player_said_2(take, melon_mush)) {
 		_vm->_dialogs->show(20921);
 		_action._inProgress = false;
 		return;

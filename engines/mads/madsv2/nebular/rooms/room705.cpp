@@ -229,7 +229,7 @@ static void room_705_daemon() {
 static void room_705_parser() {
 	if (_game._screenObjects._inputMode == kInputConversation)
 		handleFillBottle(_action._activeAction._verbId);
-	else if (_action.isAction(words_steer_towards, words_open_water_to_south)) {
+	else if (player_said_2(steer_towards, open_water_to_south)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -254,7 +254,7 @@ static void room_705_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_climb_through, words_window)) {
+	} else if (player_said_2(climb_through, window)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -277,23 +277,23 @@ static void room_705_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_fill, words_bottle, words_water) || _action.isAction(words_put, words_bottle, words_water)) {
+	} else if (player_said_3(fill, bottle, water) || player_said_3(put, bottle, water)) {
 		if (_globals[kBottleStatus] != 4) {
 			handleBottleInterface();
 			local._dialog1.start();
 		} else
 			_vm->_dialogs->show(70323);
-	} else if (_action._lookFlag || _action.isAction(words_look, words_water))
+	} else if (_action._lookFlag || player_said_2(look, water))
 		_vm->_dialogs->show(70511);
-	else if (_action.isAction(words_look, words_volcano_rim))
+	else if (player_said_2(look, volcano_rim))
 		_vm->_dialogs->show(70512);
-	else if (_action.isAction(words_look, words_open_water_to_south))
+	else if (player_said_2(look, open_water_to_south))
 		_vm->_dialogs->show(70513);
-	else if (_action.isAction(words_look, words_sky))
+	else if (player_said_2(look, sky))
 		_vm->_dialogs->show(70514);
-	else if (_action.isAction(words_look, words_building))
+	else if (player_said_2(look, building))
 		_vm->_dialogs->show(70515);
-	else if (_action.isAction(words_look, words_window))
+	else if (player_said_2(look, window))
 		_vm->_dialogs->show(70516);
 	else
 		return;

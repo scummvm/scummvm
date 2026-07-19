@@ -184,20 +184,20 @@ static void room_106_daemon() {
 }
 
 static void room_106_pre_parser() {
-	if (_action.isAction(words_swim_towards, words_sea_cliff) || _action.isAction(words_swim_towards, words_seaweed_bank)) {
+	if (player_said_2(swim_towards, sea_cliff) || player_said_2(swim_towards, seaweed_bank)) {
 		_game._player._stepEnabled = false;
 		_scene->_sprites[_game._player._spritesStart + 1]->_charInfo->_velocity = 24;
 		_game._player._walkOffScreenSceneId = 104;
 	}
 
-	if (_action.isAction(words_swim_towards, words_open_area_to_east))
+	if (player_said_2(swim_towards, open_area_to_east))
 		_game._player._walkOffScreenSceneId = 107;
 }
 
 static void room_106_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(10614);
-	else if (_action.isAction(words_swim_to, words_main_airlock)) {
+	else if (player_said_2(swim_to, main_airlock)) {
 		_game._player._stepEnabled = false;
 		_game._player._prepareWalkPos = Common::Point(95, 72);
 		_game._player._prepareWalkFacing = FACING_WEST;
@@ -205,31 +205,31 @@ static void room_106_parser() {
 		_game._player._readyToWalk = true;
 		_game._player._frameNumber = 9;
 		local._backToShipFl = true;
-	} else if (_action.isAction(words_look, words_anemone) || _action.isAction(words_look_at, words_anemone))
+	} else if (player_said_2(look, anemone) || player_said_2(look_at, anemone))
 		_vm->_dialogs->show(10601);
-	else if (_action.isAction(words_take, words_anemone))
+	else if (player_said_2(take, anemone))
 		_vm->_dialogs->show(10602);
-	else if (_action.isAction(words_look, words_seaweed) || _action.isAction(words_look, words_seaweed_bank))
+	else if (player_said_2(look, seaweed) || player_said_2(look, seaweed_bank))
 		_vm->_dialogs->show(10603);
-	else if (_action.isAction(words_take, words_seaweed) || _action.isAction(words_take, words_seaweed_bank))
+	else if (player_said_2(take, seaweed) || player_said_2(take, seaweed_bank))
 		_vm->_dialogs->show(10604);
-	else if (_action.isAction(words_look, words_open_area_to_east))
+	else if (player_said_2(look, open_area_to_east))
 		_vm->_dialogs->show(10605);
-	else if (_action.isAction(words_look, words_pile_of_rocks) || _action.isAction(words_look_at, words_pile_of_rocks))
+	else if (player_said_2(look, pile_of_rocks) || player_said_2(look_at, pile_of_rocks))
 		_vm->_dialogs->show(10606);
-	else if (_action.isObject(words_pile_of_rocks) && (_action.isAction(words_push) || _action.isAction(words_pull) || _action.isAction(words_take)))
+	else if (player_said_1(pile_of_rocks) && (player_said_1(push) || player_said_1(pull) || player_said_1(take)))
 		_vm->_dialogs->show(10607);
-	else if (_action.isAction(words_look, words_ship) || _action.isAction(words_look_at, words_ship))
+	else if (player_said_2(look, ship) || player_said_2(look_at, ship))
 		_vm->_dialogs->show(10608);
-	else if (_action.isAction(words_look, words_main_airlock))
+	else if (player_said_2(look, main_airlock))
 		_vm->_dialogs->show(10609);
-	else if (_action.isAction(words_open, words_main_airlock))
+	else if (player_said_2(open, main_airlock))
 		_vm->_dialogs->show(10610);
-	else if (_action.isAction(words_close, words_main_airlock))
+	else if (player_said_2(close, main_airlock))
 		_vm->_dialogs->show(10611);
-	else if (_action.isAction(words_look, words_sea_cliff))
+	else if (player_said_2(look, sea_cliff))
 		_vm->_dialogs->show(10612);
-	else if (_action.isAction(words_look, words_ocean_floor))
+	else if (player_said_2(look, ocean_floor))
 		_vm->_dialogs->show(10613);
 	else
 		return;

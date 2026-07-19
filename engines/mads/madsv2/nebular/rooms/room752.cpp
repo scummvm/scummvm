@@ -104,19 +104,19 @@ static void room_752_daemon() {
 }
 
 static void room_752_pre_parser() {
-	if (_action.isAction(words_walkto, words_west_end_of_platform)) {
+	if (player_said_2(walkto, west_end_of_platform)) {
 		_game._player._walkOffScreenSceneId = 751;
 	}
 }
 
 static void room_752_parser() {
-	if (_action.isAction(words_walk_along, words_platform))
+	if (player_said_2(walk_along, platform))
 		;
-	else if (_action.isAction(words_step_into, words_teleporter)) {
+	else if (player_said_2(step_into, teleporter)) {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_scene->_nextSceneId = 711;
-	} else if (_action.isAction(words_take, words_id_card) && (!_game._objects.isInInventory(OBJ_ID_CARD) || _game._trigger)) {
+	} else if (player_said_2(take, id_card) && (!_game._objects.isInInventory(OBJ_ID_CARD) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -140,7 +140,7 @@ static void room_752_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_take, words_bones) && (_action._savedFields._mainObjectSource == CAT_HOTSPOT) &&
+	} else if (player_said_2(take, bones) && (_action._savedFields._mainObjectSource == CAT_HOTSPOT) &&
 		(!_game._objects.isInInventory(OBJ_BONES) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
@@ -166,29 +166,29 @@ static void room_752_parser() {
 		default:
 			break;
 		}
-	} else if (_action._lookFlag || _action.isAction(words_look, words_city)) {
+	} else if (_action._lookFlag || player_said_2(look, city)) {
 		if (_globals[kLaserHoleIsThere])
 			_vm->_dialogs->show(75212);
 		else
 			_vm->_dialogs->show(75210);
-	} else if (_action.isAction(words_look, words_platform))
+	} else if (player_said_2(look, platform))
 		_vm->_dialogs->show(75213);
-	else if (_action.isAction(words_look, words_cement_block))
+	else if (player_said_2(look, cement_block))
 		_vm->_dialogs->show(75214);
-	else if (_action.isAction(words_look, words_rock))
+	else if (player_said_2(look, rock))
 		_vm->_dialogs->show(75215);
-	else if (_action.isAction(words_take, words_rock))
+	else if (player_said_2(take, rock))
 		_vm->_dialogs->show(75216);
-	else if (_action.isAction(words_look, words_west_end_of_platform))
+	else if (player_said_2(look, west_end_of_platform))
 		_vm->_dialogs->show(75217);
-	else if (_action.isAction(words_look, words_teleporter))
+	else if (player_said_2(look, teleporter))
 		_vm->_dialogs->show(75218);
-	else if ((_action.isAction(words_look, words_bones) || _action.isAction(words_look, words_id_card)) && (_action._mainObjectSource == CAT_HOTSPOT)) {
+	else if ((player_said_2(look, bones) || player_said_2(look, id_card)) && (_action._mainObjectSource == CAT_HOTSPOT)) {
 		if (_game._objects[OBJ_ID_CARD]._roomNumber == 752)
 			_vm->_dialogs->show(75219);
 		else
 			_vm->_dialogs->show(75220);
-	} else if (_action.isAction(words_take, words_bones) && (_action._savedFields._mainObjectSource == CAT_HOTSPOT)) {
+	} else if (player_said_2(take, bones) && (_action._savedFields._mainObjectSource == CAT_HOTSPOT)) {
 		if (_game._objects.isInInventory(OBJ_BONES))
 			_vm->_dialogs->show(75222);
 	} else

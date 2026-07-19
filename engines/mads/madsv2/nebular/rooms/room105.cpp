@@ -131,20 +131,20 @@ static void room_105_daemon() {
 }
 
 static void room_105_pre_parser() {
-	if (_action.isAction(words_swim_towards, words_western_cliff_face))
+	if (player_said_2(swim_towards, western_cliff_face))
 		_game._player._walkOffScreenSceneId = 104;
 
-	if (_action.isAction(words_swim_towards, words_open_area_to_south))
+	if (player_said_2(swim_towards, open_area_to_south))
 		_game._player._walkOffScreenSceneId = 107;
 
-	if (_action.isObject(words_mine) && (_action.isAction(words_talkto) || _action.isAction(words_look)))
+	if (player_said_1(mine) && (player_said_1(talkto) || player_said_1(look)))
 		_game._player._needToWalk = false;
 }
 
 static void room_105_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(10512);
-	else if (_action.isAction(words_take, words_dead_fish) && _globals[kFishIn105]) {
+	else if (player_said_2(take, dead_fish) && _globals[kFishIn105]) {
 		if (_game._objects.isInInventory(OBJ_DEAD_FISH)) {
 			int randVal = _vm->getRandomNumber(74, 76);
 			_scene->_kernelMessages.reset();
@@ -155,25 +155,25 @@ static void room_105_parser() {
 			_globals[kFishIn105] = false;
 			_vm->_dialogs->showItem(OBJ_DEAD_FISH, 802, 0);
 		}
-	} else if (_action.isAction(words_look, words_western_cliff_face))
+	} else if (player_said_2(look, western_cliff_face))
 		_vm->_dialogs->show(10501);
-	else if (_action.isAction(words_look, words_cliff_face))
+	else if (player_said_2(look, cliff_face))
 		_vm->_dialogs->show(10502);
-	else if (_action.isAction(words_look, words_ocean_floor))
+	else if (player_said_2(look, ocean_floor))
 		_vm->_dialogs->show(10503);
-	else if (_action.isAction(words_look, words_medical_waste))
+	else if (player_said_2(look, medical_waste))
 		_vm->_dialogs->show(10504);
-	else if (_action.isAction(words_take, words_medical_waste))
+	else if (player_said_2(take, medical_waste))
 		_vm->_dialogs->show(10505);
-	else if (_action.isAction(words_look, words_mine))
+	else if (player_said_2(look, mine))
 		_vm->_dialogs->show(10506);
-	else if (_action.isAction(words_look, words_dead_fish))
+	else if (player_said_2(look, dead_fish))
 		_vm->_dialogs->show(10508);
-	else if (_action.isAction(words_look, words_surface))
+	else if (player_said_2(look, surface))
 		_vm->_dialogs->show(10509);
-	else if (_action.isAction(words_look, words_open_area_to_south))
+	else if (player_said_2(look, open_area_to_south))
 		_vm->_dialogs->show(10510);
-	else if (_action.isAction(words_look, words_rocks))
+	else if (player_said_2(look, rocks))
 		_vm->_dialogs->show(10511);
 	else
 		return;

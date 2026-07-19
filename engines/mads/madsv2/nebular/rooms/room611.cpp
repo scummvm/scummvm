@@ -1331,7 +1331,7 @@ static void room_611_daemon() {
 }
 
 static void room_611_pre_parser() {
-	if (_action.isAction(words_walk_down, words_alley))
+	if (player_said_2(walk_down, alley))
 		_game._player._walkOffScreenSceneId = 609;
 
 	if (local._resetBatterieText)
@@ -1341,11 +1341,11 @@ static void room_611_pre_parser() {
 static void room_611_parser() {
 	if (_game._screenObjects._inputMode == kInputConversation)
 		handleDialog();
-	else if ((_action.isAction(words_give, words_phone_cells, words_hermit)) || (_action.isAction(words_give, words_durafail_cells, words_hermit))) {
+	else if ((player_said_3(give, phone_cells, hermit)) || (player_said_3(give, durafail_cells, hermit))) {
 		_action._activeAction._verbId = 0x294;
 		local._giveBatteriesFl = true;
 		handleSubDialog1();
-	} else if (_action.isAction(words_give, words_hermit)) {
+	} else if (player_said_2(give, hermit)) {
 		_scene->_kernelMessages.reset();
 
 		const char *curQuote = _game.getQuote(0x323);
@@ -1383,7 +1383,7 @@ static void room_611_parser() {
 			local._dialog2.start();
 			local._duringDialogFl = true;
 		}
-	} else if (_action.isAction(words_talkto, words_hermit)) {
+	} else if (player_said_2(talkto, hermit)) {
 		if (!local._dialog1.read(0x287)) {
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x27A));
@@ -1410,7 +1410,7 @@ static void room_611_parser() {
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(nextQuote));
 			_scene->_sequences.addTimer(120, 90);
 		}
-	} else if ((_action.isAction(words_walkto) || _action.isAction(words_look)) && _action.isObject(words_rat)) {
+	} else if ((player_said_1(walkto) || player_said_1(look)) && player_said_1(rat)) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->_kernelMessages.reset();
@@ -1431,29 +1431,29 @@ static void room_611_parser() {
 			_vm->_dialogs->show(61111);
 		else
 			_vm->_dialogs->show(61110);
-	} else if (_action.isAction(words_look, words_hermit))
+	} else if (player_said_2(look, hermit))
 		_vm->_dialogs->show(61112);
-	else if (_action.isAction(words_look, words_trash))
+	else if (player_said_2(look, trash))
 		_vm->_dialogs->show(61113);
-	else if (_action.isAction(words_take, words_trash))
+	else if (player_said_2(take, trash))
 		_vm->_dialogs->show(61114);
-	else if (_action.isAction(words_look, words_cardboard_box))
+	else if (player_said_2(look, cardboard_box))
 		_vm->_dialogs->show(61115);
-	else if (_action.isAction(words_take, words_cardboard_box))
+	else if (player_said_2(take, cardboard_box))
 		_vm->_dialogs->show(61116);
-	else if (_action.isAction(words_open, words_cardboard_box))
+	else if (player_said_2(open, cardboard_box))
 		_vm->_dialogs->show(61117);
-	else if (_action.isAction(words_look, words_refrigerator))
+	else if (player_said_2(look, refrigerator))
 		_vm->_dialogs->show(61118);
-	else if (_action.isAction(words_open, words_refrigerator))
+	else if (player_said_2(open, refrigerator))
 		_vm->_dialogs->show(61119);
-	else if (_action.isAction(words_take, words_refrigerator))
+	else if (player_said_2(take, refrigerator))
 		_vm->_dialogs->show(61120);
-	else if (_action.isAction(words_look, words_building))
+	else if (player_said_2(look, building))
 		_vm->_dialogs->show(61121);
-	else if (_action.isAction(words_look, words_graffiti))
+	else if (player_said_2(look, graffiti))
 		_vm->_dialogs->show(61122);
-	else if (_action.isAction(words_look, words_metal_pipe))
+	else if (player_said_2(look, metal_pipe))
 		_vm->_dialogs->show(61123);
 	else
 		return;

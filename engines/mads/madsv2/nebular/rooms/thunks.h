@@ -142,17 +142,6 @@ struct Action {
 	SavedFields _savedFields;
 
 	int &_mainObjectSource = player.main_object_source;
-
-	bool isAction(int word1) const;
-	bool isAction(int word1, int word2) const;
-	bool isAction(int word1, int word2, int word3) const;
-	bool isObject(int word) const {
-		return isAction(word);
-	}
-	bool isTarget(int word) const {
-		return isAction(word);
-	}
-
 	int &_lookFlag = player.look_around;
 	int &_inProgress = player.command_ready;
 	int &_commandSource = player.command_source;

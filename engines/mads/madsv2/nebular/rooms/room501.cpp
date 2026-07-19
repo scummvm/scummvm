@@ -217,12 +217,12 @@ static void room_501_daemon() {
 }
 
 static void room_501_pre_parser() {
-	if (_action.isAction(words_walk_down) && (_action.isObject(words_street_to_east) || _action.isObject(words_sidewalk_to_east)))
+	if (player_said_1(walk_down) && (player_said_1(street_to_east) || player_said_1(sidewalk_to_east)))
 		_game._player._walkOffScreenSceneId = 551;
 }
 
 static void room_501_parser() {
-	if (_action.isAction(words_get_into, words_car)) {
+	if (player_said_2(get_into, car)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -271,9 +271,9 @@ static void room_501_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_put, words_security_card, words_card_slot))
+	} else if (player_said_3(put, security_card, card_slot))
 		_vm->_dialogs->show(50113);
-	else if (_action.isAction(words_put, words_fake_id, words_card_slot)) {
+	else if (player_said_3(put, fake_id, card_slot)) {
 		switch (_game._trigger) {
 		case 0:
 		case 1:
@@ -317,7 +317,7 @@ static void room_501_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_put, words_id_card, words_card_slot)) {
+	} else if (player_said_3(put, id_card, card_slot)) {
 		switch (_game._trigger) {
 		case 0:
 		case 1:
@@ -365,34 +365,34 @@ static void room_501_parser() {
 		default:
 			break;
 		}
-	} else if (_action._lookFlag || _action.isAction(words_look, words_street))
+	} else if (_action._lookFlag || player_said_2(look, street))
 		_vm->_dialogs->show(50121);
-	else if (_action.isAction(words_look, words_door))
+	else if (player_said_2(look, door))
 		_vm->_dialogs->show(50110);
-	else if (_action.isAction(words_look, words_card_slot))
+	else if (player_said_2(look, card_slot))
 		_vm->_dialogs->show(50112);
-	else if (_action.isAction(words_look, words_sign))
+	else if (player_said_2(look, sign))
 		_vm->_dialogs->show(50114);
-	else if (_action.isAction(words_take, words_sign))
+	else if (player_said_2(take, sign))
 		_vm->_dialogs->show(50115);
-	else if (_action.isAction(words_look, words_sidewalk_to_east))
+	else if (player_said_2(look, sidewalk_to_east))
 		_vm->_dialogs->show(50118);
-	else if (_action.isAction(words_look, words_sidewalk_to_west) || _action.isAction(words_look, words_street_to_west)
-		|| _action.isAction(words_walk_down, words_sidewalk_to_west) || _action.isAction(words_walk_down, words_street_to_west))
+	else if (player_said_2(look, sidewalk_to_west) || player_said_2(look, street_to_west)
+		|| player_said_2(walk_down, sidewalk_to_west) || player_said_2(walk_down, street_to_west))
 		_vm->_dialogs->show(50119);
-	else if (_action.isAction(words_look, words_building))
+	else if (player_said_2(look, building))
 		_vm->_dialogs->show(50120);
-	else if (_action.isAction(words_open, words_door))
+	else if (player_said_2(open, door))
 		_vm->_dialogs->show(50122);
-	else if (_action.isAction(words_look, words_fire_hydrant))
+	else if (player_said_2(look, fire_hydrant))
 		_vm->_dialogs->show(50123);
-	else if (_action.isAction(words_open, words_fire_hydrant))
+	else if (player_said_2(open, fire_hydrant))
 		_vm->_dialogs->show(50124);
-	else if (_action.isAction(words_look, words_equipment_overhead))
+	else if (player_said_2(look, equipment_overhead))
 		_vm->_dialogs->show(50125);
-	else if (_action.isAction(words_look, words_pipes) || _action.isAction(words_look, words_pipe))
+	else if (player_said_2(look, pipes) || player_said_2(look, pipe))
 		_vm->_dialogs->show(50126);
-	else if (_action.isAction(words_look, words_car)) {
+	else if (player_said_2(look, car)) {
 		if (!_game._visitedScenes.exists(504))
 			_vm->_dialogs->show(50116);
 		else

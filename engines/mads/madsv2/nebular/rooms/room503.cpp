@@ -63,9 +63,9 @@ static void room_503_init() {
 }
 
 static void room_503_parser() {
-	if (_action.isAction(words_walk, words_outside))
+	if (player_said_2(walk, outside))
 		_scene->_nextSceneId = 501;
-	else if (_action.isAction(words_take, words_detonators)) {
+	else if (player_said_2(take, detonators)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_DETONATORS)) {
 			switch (_game._trigger) {
 			case 0:
@@ -110,42 +110,42 @@ static void room_503_parser() {
 		}
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(50328);
-	else if (_action.isAction(words_look, words_monitoring_equipment))
+	else if (player_said_2(look, monitoring_equipment))
 		_vm->_dialogs->show(50310);
-	else if (_action.isAction(words_look, words_photon_rifles))
+	else if (player_said_2(look, photon_rifles))
 		_vm->_dialogs->show(50311);
-	else if (_action.isAction(words_take, words_photon_rifles) || _action.isAction(words_take, words_nuclear_slingshot))
+	else if (player_said_2(take, photon_rifles) || player_said_2(take, nuclear_slingshot))
 		_vm->_dialogs->show(50312);
-	else if (_action.isAction(words_look, words_display_case))
+	else if (player_said_2(look, display_case))
 		_vm->_dialogs->show(50313);
-	else if (_action.isAction(words_look, words_nuclear_slingshot))
+	else if (player_said_2(look, nuclear_slingshot))
 		_vm->_dialogs->show(50314);
-	else if (_action.isAction(words_look, words_water_cooler))
+	else if (player_said_2(look, water_cooler))
 		_vm->_dialogs->show(50315);
-	else if (_action.isAction(words_look, words_storage_box))
+	else if (player_said_2(look, storage_box))
 		_vm->_dialogs->show(50316);
-	else if (_action.isAction(words_open, words_storage_box))
+	else if (player_said_2(open, storage_box))
 		_vm->_dialogs->show(50317);
-	else if (_action.isAction(words_look, words_warning_label))
+	else if (player_said_2(look, warning_label))
 		_vm->_dialogs->show(50318);
-	else if (_action.isAction(words_look, words_desk))
+	else if (player_said_2(look, desk))
 		_vm->_dialogs->show(50319);
-	else if (_action.isAction(words_look, words_monitor))
+	else if (player_said_2(look, monitor))
 		_vm->_dialogs->show(50320);
-	else if (_action.isAction(words_look, words_file_cabinets))
+	else if (player_said_2(look, file_cabinets))
 		_vm->_dialogs->show(50322);
-	else if (_action.isAction(words_look, words_box)) {
+	else if (player_said_2(look, box)) {
 		if (_game._objects.isInRoom(OBJ_DETONATORS))
 			_vm->_dialogs->show(50323);
 		else
 			_vm->_dialogs->show(50324);
-	} else if (_action.isAction(words_look, words_detonators) && (_action._savedFields._mainObjectSource == 4))
+	} else if (player_said_2(look, detonators) && (_action._savedFields._mainObjectSource == 4))
 		_vm->_dialogs->show(50325);
-	else if (_action.isAction(words_look, words_windows))
+	else if (player_said_2(look, windows))
 		_vm->_dialogs->show(50327);
-	else if (_action.isAction(words_open, words_display_case))
+	else if (player_said_2(open, display_case))
 		_vm->_dialogs->show(50329);
-	else if (_action.isAction(words_throw, words_display_case) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId)))
+	else if (player_said_2(throw, display_case) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId)))
 		_vm->_dialogs->show(50330);
 	else
 		return;

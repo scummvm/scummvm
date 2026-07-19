@@ -195,9 +195,9 @@ static void room_201_daemon() {
 
 static void room_201_parser() {
 	if (_action._lookFlag == false) {
-		if (_action.isAction(words_walk_towards, words_field_to_south))
+		if (player_said_2(walk_towards, field_to_south))
 			_scene->_nextSceneId = 202;
-		else if (_action.isAction(words_climb_up, words_steps) || (_action.isAction(words_walk_inside, words_teleporter)) || (_action.isAction(words_walk_inside, words_strange_device))) {
+		else if (player_said_2(climb_up, steps) || (player_said_2(walk_inside, teleporter)) || (player_said_2(walk_inside, strange_device))) {
 			if (_game._trigger == 0) {
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
@@ -206,30 +206,30 @@ static void room_201_parser() {
 			} else if (_game._trigger == 1) {
 				_scene->_nextSceneId = 213;
 			}
-		} else if (_action.isAction(words_look, words_grassy_field)) {
+		} else if (player_said_2(look, grassy_field)) {
 			_vm->_dialogs->show(20101);
-		} else if (_action.isAction(words_look, words_rocks)) {
+		} else if (player_said_2(look, rocks)) {
 			_vm->_dialogs->show(20102);
-		} else if (_action.isAction(words_look, words_thorny_bush)) {
+		} else if (player_said_2(look, thorny_bush)) {
 			_vm->_dialogs->show(20103);
-		} else if (_action.isAction(words_look, words_sky)) {
+		} else if (player_said_2(look, sky)) {
 			_vm->_dialogs->show(20104);
-		} else if (_action.isAction(words_look, words_water)) {
+		} else if (player_said_2(look, water)) {
 			_vm->_dialogs->show(20105);
-		} else if (_action.isAction(words_look, words_island_in_distance)) {
+		} else if (player_said_2(look, island_in_distance)) {
 			_vm->_dialogs->show(20106);
-		} else if (_action.isAction(words_look, words_weather_station)) {
+		} else if (player_said_2(look, weather_station)) {
 			_vm->_dialogs->show(20107);
-		} else if (_action.isAction(words_look, words_path)) {
+		} else if (player_said_2(look, path)) {
 			_vm->_dialogs->show(20108);
-		} else if (_action.isAction(words_look, words_field_to_south)) {
+		} else if (player_said_2(look, field_to_south)) {
 			_vm->_dialogs->show(20110);
-		} else if (_action.isAction(words_look, words_strange_device)) {
+		} else if (player_said_2(look, strange_device)) {
 			if (_globals[kMeteorologistEverSeen])
 				_vm->_dialogs->show(20112);
 			else
 				_vm->_dialogs->show(20109);
-		} else if (_action.isAction(words_look, words_teleporter)) {
+		} else if (player_said_2(look, teleporter)) {
 			_vm->_dialogs->show(20113);
 		} else
 			return;

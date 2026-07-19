@@ -53,7 +53,7 @@ static void handleDoorSequences() {
 	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 
 	if (local._firstDoorFl) {
-		if (_action.isAction(words_walk_into, words_software_store) || ((_scene->_priorSceneId == 507) && !local._actionFl)) {
+		if (player_said_2(walk_into, software_store) || ((_scene->_priorSceneId == 507) && !local._actionFl)) {
 			local._doorDepth = 13;
 			local._doorSpriteIdx = _globals._spriteIndexes[2];
 			local._doorSequenceIdx = _globals._sequenceIndexes[2];
@@ -224,7 +224,7 @@ static void room_506_daemon() {
 }
 
 static void room_506_parser() {
-	if (_action.isAction(words_walk_into, words_laboratory)) {
+	if (player_said_2(walk_into, laboratory)) {
 		if (local._firstDoorFl) {
 			local._heroFacing = FACING_NORTHWEST;
 			local._doorPos_x = 16;
@@ -232,7 +232,7 @@ static void room_506_parser() {
 		}
 		local._actionFl = true;
 		handleDoorSequences();
-	} else if (_action.isAction(words_walk_into, words_software_store)) {
+	} else if (player_said_2(walk_into, software_store)) {
 		if (local._firstDoorFl) {
 			local._heroFacing = FACING_NORTHWEST;
 			local._doorPos_x = 80;
@@ -240,7 +240,7 @@ static void room_506_parser() {
 		}
 		local._actionFl = true;
 		handleDoorSequences();
-	} else if (_action.isAction(words_get_into, words_car)) {
+	} else if (player_said_2(get_into, car)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -279,29 +279,29 @@ static void room_506_parser() {
 		default:
 			break;
 		}
-	} else if (_action._lookFlag || _action.isAction(words_look, words_street))
+	} else if (_action._lookFlag || player_said_2(look, street))
 		_vm->_dialogs->show(50618);
-	else if (_action.isAction(words_look, words_restaurant))
+	else if (player_said_2(look, restaurant))
 		_vm->_dialogs->show(50610);
-	else if (_action.isAction(words_look, words_motel))
+	else if (player_said_2(look, motel))
 		_vm->_dialogs->show(50611);
-	else if (_action.isAction(words_look, words_cycle_shop))
+	else if (player_said_2(look, cycle_shop))
 		_vm->_dialogs->show(50612);
-	else if (_action.isAction(words_look, words_air_bike))
+	else if (player_said_2(look, air_bike))
 		_vm->_dialogs->show(50613);
-	else if (_action.isAction(words_take, words_air_bike))
+	else if (player_said_2(take, air_bike))
 		_vm->_dialogs->show(50614);
-	else if (_action.isAction(words_look, words_software_store))
+	else if (player_said_2(look, software_store))
 		_vm->_dialogs->show(50615);
-	else if (_action.isAction(words_look, words_laboratory))
+	else if (player_said_2(look, laboratory))
 		_vm->_dialogs->show(50616);
-	else if (_action.isAction(words_look, words_street_to_west) || _action.isAction(words_walk_down, words_street_to_west))
+	else if (player_said_2(look, street_to_west) || player_said_2(walk_down, street_to_west))
 		_vm->_dialogs->show(50617);
-	else if (_action.isAction(words_look, words_software_store_sign))
+	else if (player_said_2(look, software_store_sign))
 		_vm->_dialogs->show(50619);
-	else if (_action.isAction(words_look, words_car))
+	else if (player_said_2(look, car))
 		_vm->_dialogs->show(50620);
-	else if (_action.isAction(words_look, words_sky))
+	else if (player_said_2(look, sky))
 		_vm->_dialogs->show(50621);
 	else
 		return;

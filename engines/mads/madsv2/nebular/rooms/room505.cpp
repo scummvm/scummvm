@@ -280,13 +280,13 @@ static void room_505_daemon() {
 }
 
 static void room_505_parser() {
-	if (_action.isAction(words_press))
+	if (player_said_1(press))
 		local._nextButtonId = _action._activeAction._objectNameId;
-	else if (_action.isAction(words_return_to, words_inside_of_car))
+	else if (player_said_2(return_to, inside_of_car))
 		_scene->_nextSceneId = 504;
-	else if (_action.isAction(words_look, words_view_screen))
+	else if (player_said_2(look, view_screen))
 		_vm->_dialogs->show(50510);
-	else if (_action.isAction(words_look, words_control_panel))
+	else if (player_said_2(look, control_panel))
 		_vm->_dialogs->show(50511);
 	else
 		return;

@@ -237,14 +237,14 @@ static void enterStore() {
 }
 
 static void room_609_pre_parser() {
-	if (_action.isAction(words_unlock, words_door_key, words_video_store_door))
+	if (player_said_3(unlock, door_key, video_store_door))
 		_game._player.walk(Common::Point(78, 99), FACING_NORTHWEST);
 }
 
 static void room_609_parser() {
-	if (_action.isAction(words_walk_towards, words_alley))
+	if (player_said_2(walk_towards, alley))
 		_scene->_nextSceneId = 611;
-	else if (_action.isAction(words_walk_through, words_video_store_door)) {
+	else if (player_said_2(walk_through, video_store_door)) {
 		if (!_globals[kBeenInVideoStore]) {
 			switch (_game._trigger) {
 			case 0:
@@ -285,10 +285,10 @@ static void room_609_parser() {
 			local._videoDoorMode = 2;
 			enterStore();
 		}
-	} else if (_action.isAction(words_unlock, words_door_key, words_video_store_door)) {
+	} else if (player_said_3(unlock, door_key, video_store_door)) {
 		local._videoDoorMode = 1;
 		enterStore();
-	} else if (_action.isAction(words_get_inside, words_car)) {
+	} else if (player_said_2(get_inside, car)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -330,26 +330,26 @@ static void room_609_parser() {
 		}
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(60910);
-	else if (_action.isAction(words_look, words_street))
+	else if (player_said_2(look, street))
 		_vm->_dialogs->show(60911);
-	else if (_action.isAction(words_look, words_spot_a_pot))
+	else if (player_said_2(look, spot_a_pot))
 		_vm->_dialogs->show(60912);
-	else if (_action.isAction(words_look, words_video_store))
+	else if (player_said_2(look, video_store))
 		_vm->_dialogs->show(60913);
-	else if (_action.isAction(words_look, words_billboard))
+	else if (player_said_2(look, billboard))
 		_vm->_dialogs->show(60914);
-	else if (_action.isAction(words_look, words_statue))
+	else if (player_said_2(look, statue))
 		_vm->_dialogs->show(60915);
-	else if (_action.isAction(words_look, words_car))
+	else if (player_said_2(look, car))
 		_vm->_dialogs->show(60916);
-	else if (_action.isAction(words_look, words_newsstand))
+	else if (player_said_2(look, newsstand))
 		_vm->_dialogs->show(60917);
-	else if (_action.isAction(words_look, words_video_store_door)) {
+	else if (player_said_2(look, video_store_door)) {
 		if (!_globals[kBeenInVideoStore])
 			_vm->_dialogs->show(60918);
 		else
 			_vm->_dialogs->show(60919);
-	} else if (_action.isAction(words_walk_down, words_street))
+	} else if (player_said_2(walk_down, street))
 		_vm->_dialogs->show(60730);
 	else
 		return;

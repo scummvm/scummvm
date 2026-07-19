@@ -139,12 +139,12 @@ static void room_111_daemon() {
 }
 
 static void room_111_pre_parser() {
-	if (_action.isAction(words_walk_through, words_cave_entrance))
+	if (player_said_2(walk_through, cave_entrance))
 		_game._player._walkOffScreenSceneId = 212;
 }
 
 static void room_111_parser() {
-	if (_action.isAction(words_dive_into, words_pool) && _game._objects.isInInventory(OBJ_REBREATHER)) {
+	if (player_said_2(dive_into, pool) && _game._objects.isInInventory(OBJ_REBREATHER)) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->loadAnimation(Resources::formatName(111, 'A', 1, EXT_AA, ""), 1);
@@ -160,17 +160,17 @@ static void room_111_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_look, words_cave_floor))
+	} else if (player_said_2(look, cave_floor))
 		_vm->_dialogs->show(11101);
-	else if (_action.isAction(words_look, words_pool))
+	else if (player_said_2(look, pool))
 		_vm->_dialogs->show(11102);
-	else if (_action.isAction(words_look, words_cave_entrance))
+	else if (player_said_2(look, cave_entrance))
 		_vm->_dialogs->show(11103);
-	else if (_action.isAction(words_look, words_stalagmites))
+	else if (player_said_2(look, stalagmites))
 		_vm->_dialogs->show(11104);
-	else if (_action.isAction(words_look, words_large_stalagmite))
+	else if (player_said_2(look, large_stalagmite))
 		_vm->_dialogs->show(11105);
-	else if ((_action.isAction(words_pull) || _action.isAction(words_take)) && (_action.isObject(words_stalagmites) || _action.isObject(words_large_stalagmite)))
+	else if ((player_said_1(pull) || player_said_1(take)) && (player_said_1(stalagmites) || player_said_1(large_stalagmite)))
 		_vm->_dialogs->show(11106);
 	else
 		return;

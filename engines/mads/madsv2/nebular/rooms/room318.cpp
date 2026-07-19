@@ -452,7 +452,7 @@ static void room_318_pre_parser() {
 	if (_game._player._needToWalk)
 		_game._player._needToWalk = _game._player._visible;
 
-	if (_action.isAction(words_walk_down, words_corridor_to_west))
+	if (player_said_2(walk_down, corridor_to_west))
 		_game._player._walkOffScreenSceneId = 357;
 }
 
@@ -463,7 +463,7 @@ static void room_318_parser() {
 		return;
 	}
 
-	if (_action.isAction(words_talkto, words_intern)) {
+	if (player_said_2(talkto, intern)) {
 		switch (_game._trigger) {
 		case 0:
 		{
@@ -504,7 +504,7 @@ static void room_318_parser() {
 		return;
 	}
 
-	if (_action.isAction(words_take, words_scalpel) && (_game._objects.isInRoom(OBJ_SCALPEL) || _game._trigger)) {
+	if (player_said_2(take, scalpel) && (_game._objects.isInRoom(OBJ_SCALPEL) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -550,13 +550,13 @@ static void room_318_parser() {
 	}
 
 	if (_game._player._visible) {
-		if (_action.isAction(words_walk_down, words_corridor_to_south)) {
+		if (player_said_2(walk_down, corridor_to_south)) {
 			_scene->_nextSceneId = 407;
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(words_take, words_tape_player)) {
+		if (player_said_2(take, tape_player)) {
 			if (_game._objects.isInRoom(OBJ_AUDIO_TAPE)) {
 				_vm->_dialogs->showItem(OBJ_AUDIO_TAPE, 0x7C5B);
 				_game._objects.addToInventory(OBJ_AUDIO_TAPE);
@@ -567,7 +567,7 @@ static void room_318_parser() {
 			return;
 		}
 
-		if (_action.isAction(words_look, words_tape_player)) {
+		if (player_said_2(look, tape_player)) {
 			if (_game._objects.isInRoom(OBJ_AUDIO_TAPE))
 				_vm->_dialogs->show(31833);
 			else
@@ -577,68 +577,68 @@ static void room_318_parser() {
 			return;
 		}
 
-		if (_action.isAction(words_walk_into, words_doctors_office)) {
+		if (player_said_2(walk_into, doctors_office)) {
 			_vm->_dialogs->show(31831);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(words_look, words_gurney)) {
+		if (player_said_2(look, gurney)) {
 			_vm->_dialogs->show(31823);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(words_look, words_instrument_table)) {
+		if (player_said_2(look, instrument_table)) {
 			_vm->_dialogs->show(31825);
 			_action._inProgress = false;
 			return;
 		}
 	} else { // Not visible
-		if (_action.isAction(words_look, words_gurney)) {
+		if (player_said_2(look, gurney)) {
 			_vm->_dialogs->show(31822);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(words_look, words_instrument_table)) {
+		if (player_said_2(look, instrument_table)) {
 			_vm->_dialogs->show(31824);
 			_action._inProgress = false;
 			return;
 		}
 	}
 
-	if (_action.isAction(words_look, words_wall))
+	if (player_said_2(look, wall))
 		_vm->_dialogs->show(31810);
-	else if (_action.isAction(words_look, words_floor))
+	else if (player_said_2(look, floor))
 		_vm->_dialogs->show(31811);
-	else if (_action.isAction(words_look, words_corridor_to_west))
+	else if (player_said_2(look, corridor_to_west))
 		_vm->_dialogs->show(31812);
-	else if (_action.isAction(words_look, words_corridor_to_south))
+	else if (player_said_2(look, corridor_to_south))
 		_vm->_dialogs->show(31813);
-	else if (_action.isAction(words_look, words_faucet))
+	else if (player_said_2(look, faucet))
 		_vm->_dialogs->show(31814);
-	else if (_action.isAction(words_look, words_sink))
+	else if (player_said_2(look, sink))
 		_vm->_dialogs->show(31815);
-	else if (_action.isAction(words_look, words_conveyor_belt))
+	else if (player_said_2(look, conveyor_belt))
 		_vm->_dialogs->show(31816);
-	else if (_action.isAction(words_look, words_large_blade))
+	else if (player_said_2(look, large_blade))
 		_vm->_dialogs->show(31817);
-	else if (_action.isAction(words_look, words_monitor))
+	else if (player_said_2(look, monitor))
 		_vm->_dialogs->show(31818);
-	else if (_action.isAction(words_look, words_cabinets))
+	else if (player_said_2(look, cabinets))
 		_vm->_dialogs->show(31819);
-	else if (_action.isAction(words_look, words_equipment))
+	else if (player_said_2(look, equipment))
 		_vm->_dialogs->show(31820);
-	else if (_action.isAction(words_look, words_shelf))
+	else if (player_said_2(look, shelf))
 		_vm->_dialogs->show(31821);
-	else if (_action.isAction(words_open, words_cabinets))
+	else if (player_said_2(open, cabinets))
 		_vm->_dialogs->show(31829);
-	else if (_action.isAction(words_look, words_intern))
+	else if (player_said_2(look, intern))
 		_vm->_dialogs->show(31830);
-	else if (_action.isAction(words_look, words_professor))
+	else if (player_said_2(look, professor))
 		_vm->_dialogs->show(31832);
-	else if (_action.isAction(words_look, words_professors_gurney))
+	else if (player_said_2(look, professors_gurney))
 		_vm->_dialogs->show(31836);
 	else if (_action._lookFlag) {
 		if (_game._player._visible || _game._objects.isInInventory(OBJ_SCALPEL))

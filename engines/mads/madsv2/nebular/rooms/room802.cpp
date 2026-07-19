@@ -113,20 +113,20 @@ static void room_802_daemon() {
 }
 
 static void room_802_pre_parser() {
-	if (_action.isAction(words_walk_towards, words_building_to_west))
+	if (player_said_2(walk_towards, building_to_west))
 		_game._player._walkOffScreenSceneId = 801;
 
-	if (_action.isAction(words_walk_down, words_path_to_east)) {
+	if (player_said_2(walk_down, path_to_east)) {
 		_game._player._walkOffScreenSceneId = 803;
 		_globals[kForceBeamDown] = false;
 	}
 
-	if (_action.isAction(words_take, words_ship))
+	if (player_said_2(take, ship))
 		_game._player._needToWalk = false;
 }
 
 static void room_802_parser() {
-	if (_action.isAction(words_take, words_shield_modulator) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) {
+	if (player_said_2(take, shield_modulator) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -158,7 +158,7 @@ static void room_802_parser() {
 		default:
 			break;
 		}
-	} else if ((_action.isAction(words_take, words_remote)) && (!_game._objects.isInInventory(OBJ_REMOTE))) {
+	} else if ((player_said_2(take, remote)) && (!_game._objects.isInInventory(OBJ_REMOTE))) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -192,37 +192,37 @@ static void room_802_parser() {
 			break;
 		}
 	} else if (!_globals[kRemoteOnGround] && (_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) || _globals[kShieldModInstalled])
-		&& (_action.isAction(words_look, words_launch_pad) || _action._lookFlag))
+		&& (player_said_2(look, launch_pad) || _action._lookFlag))
 		_vm->_dialogs->show(80210);
 	else if (!_globals[kRemoteOnGround] && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled]
-		&& (_action.isAction(words_look, words_launch_pad) || _action._lookFlag))
+		&& (player_said_2(look, launch_pad) || _action._lookFlag))
 		_vm->_dialogs->show(80211);
 	else if (_globals[kRemoteOnGround] && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled]
-		&& (_action.isAction(words_look, words_launch_pad) || _action._lookFlag))
+		&& (player_said_2(look, launch_pad) || _action._lookFlag))
 		_vm->_dialogs->show(80213);
 	else if (_globals[kRemoteOnGround] && (_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) || _globals[kShieldModInstalled])
-		&& (_action.isAction(words_look, words_launch_pad) || _action._lookFlag))
+		&& (player_said_2(look, launch_pad) || _action._lookFlag))
 		_vm->_dialogs->show(80212);
-	else if (!_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled] && _action.isAction(words_look, words_shield_modulator))
+	else if (!_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled] && player_said_2(look, shield_modulator))
 		_vm->_dialogs->show(80214);
-	else if (_globals[kRemoteOnGround] && _action.isAction(words_look, words_remote))
+	else if (_globals[kRemoteOnGround] && player_said_2(look, remote))
 		_vm->_dialogs->show(80216);
-	else if (_action.isAction(words_look, words_ship)) {
+	else if (player_said_2(look, ship)) {
 		if ((!_game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) && (!_globals[kShieldModInstalled]))
 			_vm->_dialogs->show(80218);
 		else
 			_vm->_dialogs->show(80217);
-	} else if (_action.isAction(words_look, words_bushes))
+	} else if (player_said_2(look, bushes))
 		_vm->_dialogs->show(80219);
-	else if (_action.isAction(words_look, words_path_to_east))
+	else if (player_said_2(look, path_to_east))
 		_vm->_dialogs->show(80220);
-	else if (_action.isAction(words_look, words_sky))
+	else if (player_said_2(look, sky))
 		_vm->_dialogs->show(80221);
-	else if (_action.isAction(words_take, words_ship))
+	else if (player_said_2(take, ship))
 		_vm->_dialogs->show(80222);
-	else if (_action.isAction(words_look, words_tree) || _action.isAction(words_look, words_trees))
+	else if (player_said_2(look, tree) || player_said_2(look, trees))
 		_vm->_dialogs->show(80224);
-	else if (_action.isAction(words_look, words_building_to_west))
+	else if (player_said_2(look, building_to_west))
 		_vm->_dialogs->show(80225);
 	else
 		return;

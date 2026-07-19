@@ -40,11 +40,11 @@ static void room_387_init() {
 }
 
 static void room_387_parser() {
-	if (_action.isAction(words_return_to, words_air_shaft))
+	if (player_said_2(return_to, air_shaft))
 		_scene->_nextSceneId = 313;
-	else if (_action.isAction(words_look_through, words_grate))
+	else if (player_said_2(look_through, grate))
 		_vm->_dialogs->show(38710);
-	else if (_action.isAction(words_open, words_grate))
+	else if (player_said_2(open, grate))
 		_vm->_dialogs->show(38711);
 	else
 		return;

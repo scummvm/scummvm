@@ -89,9 +89,9 @@ static void room_601_daemon() {
 }
 
 static void room_601_parser() {
-	if (_action.isAction(words_walk_through, words_entrance))
+	if (player_said_2(walk_through, entrance))
 		_scene->_nextSceneId = 602;
-	else if (_action.isAction(words_get_inside, words_car)) {
+	else if (player_said_2(get_inside, car)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -130,28 +130,28 @@ static void room_601_parser() {
 		default:
 			break;
 		}
-	} else if (_action._lookFlag || _action.isAction(words_look, words_street)) {
+	} else if (_action._lookFlag || player_said_2(look, street)) {
 		if (!_globals[kLaserHoleIsThere])
 			_vm->_dialogs->show(60110);
 		else
 			_vm->_dialogs->show(60111);
-	} else if (_action.isAction(words_look, words_car))
+	} else if (player_said_2(look, car))
 		_vm->_dialogs->show(60112);
-	else if (_action.isAction(words_look, words_papers))
+	else if (player_said_2(look, papers))
 		_vm->_dialogs->show(60113);
-	else if (_action.isAction(words_look, words_building))
+	else if (player_said_2(look, building))
 		_vm->_dialogs->show(60114);
-	else if (_action.isAction(words_walk_down, words_street))
+	else if (player_said_2(walk_down, street))
 		_vm->_dialogs->show(60115);
-	else if (_action.isAction(words_look, words_balcony))
+	else if (player_said_2(look, balcony))
 		_vm->_dialogs->show(60116);
-	else if (_action.isAction(words_look, words_entrance))
+	else if (player_said_2(look, entrance))
 		_vm->_dialogs->show(60117);
-	else if (_action.isAction(words_look, words_wall))
+	else if (player_said_2(look, wall))
 		_vm->_dialogs->show(60118);
-	else if (_action.isAction(words_look, words_city))
+	else if (player_said_2(look, city))
 		_vm->_dialogs->show(60119);
-	else if (_action.isAction(words_look, words_fountain))
+	else if (player_said_2(look, fountain))
 		_vm->_dialogs->show(60120);
 	else
 		return;

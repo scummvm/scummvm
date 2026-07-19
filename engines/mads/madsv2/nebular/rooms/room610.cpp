@@ -98,9 +98,9 @@ static void room_610_daemon() {
 }
 
 static void room_610_parser() {
-	if (_action.isAction(words_exit_from, words_video_store))
+	if (player_said_2(exit_from, video_store))
 		_scene->_nextSceneId = 609;
-	else if (_action.isAction(words_take, words_phone_handset)) {
+	else if (player_said_2(take, phone_handset)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_PHONE_HANDSET)) {
 			switch (_game._trigger) {
 			case 0:
@@ -131,7 +131,7 @@ static void room_610_parser() {
 				break;
 			}
 		}
-	} else if (_action.isAction(words_put, words_phone_handset, words_phone_cradle)) {
+	} else if (player_said_3(put, phone_handset, phone_cradle)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -163,51 +163,51 @@ static void room_610_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_look, words_pippy_billboard))
+	} else if (player_said_2(look, pippy_billboard))
 		_vm->_dialogs->show(61010);
-	else if (_action.isAction(words_look, words_civilization_ad))
+	else if (player_said_2(look, civilization_ad))
 		_vm->_dialogs->show(61011);
-	else if (_action.isAction(words_look, words_marx_bros_poster))
+	else if (player_said_2(look, marx_bros_poster))
 		_vm->_dialogs->show(61012);
-	else if (_action.isAction(words_look, words_video_monitor))
+	else if (player_said_2(look, video_monitor))
 		_vm->_dialogs->show(61013);
-	else if (_action.isAction(words_look, words_video_store))
+	else if (player_said_2(look, video_store))
 		_vm->_dialogs->show(61014);
 	else if (_action._lookFlag)
 		_vm->_dialogs->show(61015);
-	else if (_action.isAction(words_look, words_logo))
+	else if (player_said_2(look, logo))
 		_vm->_dialogs->show(61018);
-	else if (_action.isAction(words_look, words_cement)) {
+	else if (player_said_2(look, cement)) {
 		if (_game._visitedScenes.exists(601))
 			_vm->_dialogs->show(61020);
 		else
 			_vm->_dialogs->show(61019);
-	} else if (_action.isAction(words_look, words_counter))
+	} else if (player_said_2(look, counter))
 		_vm->_dialogs->show(61021);
-	else if (_action.isAction(words_look, words_phone_antenna))
+	else if (player_said_2(look, phone_antenna))
 		_vm->_dialogs->show(61022);
-	else if (_action.isAction(words_look, words_smelly_sneaker))
+	else if (player_said_2(look, smelly_sneaker))
 		_vm->_dialogs->show(61023);
-	else if (_action.isAction(words_take, words_smelly_sneaker))
+	else if (player_said_2(take, smelly_sneaker))
 		_vm->_dialogs->show(61024);
-	else if (_action.isAction(words_look, words_spotlight))
+	else if (player_said_2(look, spotlight))
 		_vm->_dialogs->show(61025);
-	else if (_action.isAction(words_look, words_phone_handset) && (_action._mainObjectSource == CAT_HOTSPOT))
+	else if (player_said_2(look, phone_handset) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(61026);
-	else if (_action.isAction(words_look, words_phone_cradle))
+	else if (player_said_2(look, phone_cradle))
 		_vm->_dialogs->show(61027);
-	else if (_action.isAction(words_look, words_return_slot))
+	else if (player_said_2(look, return_slot))
 		_vm->_dialogs->show(61028);
-	else if (_action.isAction(words_put, words_return_slot)
+	else if (player_said_2(put, return_slot)
 		&& _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId)))
 		_vm->_dialogs->show(61029);
-	else if (_action.isObject(words_classic_videos) || _action.isObject(words_more_classic_videos) || _action.isObject(words_drama_videos)
-		|| _action.isObject(words_new_release_videos) || _action.isObject(words_porno_videos) || _action.isObject(words_educational_videos)
-		|| _action.isObject(words_instructional_videos) || _action.isObject(words_workout_videos) || _action.isObject(words_foreign_videos)
-		|| _action.isObject(words_adventure_videos) || _action.isObject(words_comedy_videos)) {
-		if (_action.isAction(words_look))
+	else if (player_said_1(classic_videos) || player_said_1(more_classic_videos) || player_said_1(drama_videos)
+		|| player_said_1(new_release_videos) || player_said_1(porno_videos) || player_said_1(educational_videos)
+		|| player_said_1(instructional_videos) || player_said_1(workout_videos) || player_said_1(foreign_videos)
+		|| player_said_1(adventure_videos) || player_said_1(comedy_videos)) {
+		if (player_said_1(look))
 			_vm->_dialogs->show(61030);
-		else if (_action.isAction(words_take))
+		else if (player_said_1(take))
 			_vm->_dialogs->show(61031);
 		else
 			return;

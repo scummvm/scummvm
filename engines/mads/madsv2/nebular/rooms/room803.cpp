@@ -240,15 +240,15 @@ static void room_803_daemon() {
 }
 
 static void room_803_pre_parser() {
-	if (_action.isAction(words_walk_down, words_path_to_west))
+	if (player_said_2(walk_down, path_to_west))
 		_game._player._walkOffScreenSceneId = 802;
 
-	if (_action.isAction(words_take, words_ship))
+	if (player_said_2(take, ship))
 		_game._player._needToWalk = false;
 }
 
 static void room_803_parser() {
-	if (_action.isAction(words_take, words_guts)) {
+	if (player_said_2(take, guts)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -294,7 +294,7 @@ static void room_803_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_enter, words_ship)) {
+	} else if (player_said_2(enter, ship)) {
 		_vm->_sound->command(17);
 		_game._player._stepEnabled = false;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
@@ -303,28 +303,28 @@ static void room_803_parser() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 4);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 120);
 		_globals[kBeamIsUp] = false;
-	} else if (_action.isAction(words_look, words_launch_pad))
+	} else if (player_said_2(look, launch_pad))
 		_vm->_dialogs->show(80310);
 	else if (_action._lookFlag)
 		_vm->_dialogs->show(80310);
-	else if (_action.isAction(words_look, words_pad_to_west))
+	else if (player_said_2(look, pad_to_west))
 		_vm->_dialogs->show(80311);
-	else if (_action.isAction(words_look, words_guts)) {
+	else if (player_said_2(look, guts)) {
 		if (_game._storyMode == STORYMODE_NICE)
 			_vm->_dialogs->show(80312);
 		else
 			_vm->_dialogs->show(80313);
-	} else if (_action.isAction(words_look, words_bushes))
+	} else if (player_said_2(look, bushes))
 		_vm->_dialogs->show(80315);
-	else if (_action.isAction(words_look, words_ship))
+	else if (player_said_2(look, ship))
 		_vm->_dialogs->show(80317);
-	else if (_action.isAction(words_look, words_tower))
+	else if (player_said_2(look, tower))
 		_vm->_dialogs->show(80318);
-	else if (_action.isAction(words_look, words_tree) || _action.isAction(words_look, words_trees))
+	else if (player_said_2(look, tree) || player_said_2(look, trees))
 		_vm->_dialogs->show(80319);
-	else if (_action.isAction(words_look, words_sky))
+	else if (player_said_2(look, sky))
 		_vm->_dialogs->show(80320);
-	else if (_action.isAction(words_take, words_ship))
+	else if (player_said_2(take, ship))
 		_vm->_dialogs->show(80321);
 	else
 		return;

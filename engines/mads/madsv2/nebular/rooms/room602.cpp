@@ -201,26 +201,26 @@ static void handleSafeActions() {
 }
 
 static void room_602_parser() {
-	if (_action.isAction(words_walk_through, words_hallway))
+	if (player_said_2(walk_through, hallway))
 		_scene->_nextSceneId = 601;
-	else if (_action.isAction(words_walk_through, words_doorway))
+	else if (player_said_2(walk_through, doorway))
 		_scene->_nextSceneId = 603;
-	else if (_action.isAction(words_open, words_safe) && ((_globals[kSafeStatus] == 0) || (_globals[kSafeStatus] == 2))) {
+	else if (player_said_2(open, safe) && ((_globals[kSafeStatus] == 0) || (_globals[kSafeStatus] == 2))) {
 		local._safeMode = 1;
 		local._cycleIndex = -2;
 		handleSafeActions();
-	} else if (_action.isAction(words_close, words_safe) && ((_globals[kSafeStatus] == 1) || (_globals[kSafeStatus] == 3))) {
+	} else if (player_said_2(close, safe) && ((_globals[kSafeStatus] == 1) || (_globals[kSafeStatus] == 3))) {
 		local._safeMode = 2;
 		local._cycleIndex = -1;
 		handleSafeActions();
-	} else if (_action.isAction(words_unlock, words_combination, words_safe)) {
+	} else if (player_said_3(unlock, combination, safe)) {
 		if ((_globals[kSafeStatus] == 0) && (_game._difficulty != DIFFICULTY_HARD)) {
 			local._safeMode = 3;
 			local._cycleIndex = -2;
 			handleSafeActions();
 		}
-	} else if ((_action.isAction(words_put, words_rearview_mirror, words_laser_beam) || _action.isAction(words_put, words_compact_case, words_laser_beam)
-		|| _action.isAction(words_reflect, words_compact_case, words_laser_beam) || _action.isAction(words_reflect, words_rearview_mirror, words_laser_beam)) && (_globals[kSafeStatus] == 0)) {
+	} else if ((player_said_3(put, rearview_mirror, laser_beam) || player_said_3(put, compact_case, laser_beam)
+		|| player_said_3(reflect, compact_case, laser_beam) || player_said_3(reflect, rearview_mirror, laser_beam)) && (_globals[kSafeStatus] == 0)) {
 		switch (_game._trigger) {
 		case 0:
 			_vm->_dialogs->show(60230);
@@ -258,7 +258,7 @@ static void room_602_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_take, words_door_key) && (_game._trigger || _game._objects.isInRoom(OBJ_DOOR_KEY))) {
+	} else if (player_said_2(take, door_key) && (_game._trigger || _game._objects.isInRoom(OBJ_DOOR_KEY))) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -289,29 +289,29 @@ static void room_602_parser() {
 		}
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(60210);
-	else if (_action.isAction(words_look, words_floor))
+	else if (player_said_2(look, floor))
 		_vm->_dialogs->show(60211);
-	else if (_action.isAction(words_look, words_hallway))
+	else if (player_said_2(look, hallway))
 		_vm->_dialogs->show(60212);
-	else if (_action.isAction(words_look, words_table))
+	else if (player_said_2(look, table))
 		_vm->_dialogs->show(60213);
-	else if (_action.isAction(words_look, words_chair) || _action.isAction(words_look, words_lounge_chair))
+	else if (player_said_2(look, chair) || player_said_2(look, lounge_chair))
 		_vm->_dialogs->show(60214);
-	else if (_action.isAction(words_look, words_neon_lights))
+	else if (player_said_2(look, neon_lights))
 		_vm->_dialogs->show(60215);
-	else if (_action.isAction(words_look, words_fireplace))
+	else if (player_said_2(look, fireplace))
 		_vm->_dialogs->show(60216);
-	else if (_action.isAction(words_look, words_picture))
+	else if (player_said_2(look, picture))
 		_vm->_dialogs->show(60217);
-	else if (_action.isAction(words_look, words_lamp))
+	else if (player_said_2(look, lamp))
 		_vm->_dialogs->show(60218);
-	else if (_action.isAction(words_look, words_masks))
+	else if (player_said_2(look, masks))
 		_vm->_dialogs->show(60219);
-	else if (_action.isAction(words_look, words_glass_block_wall))
+	else if (player_said_2(look, glass_block_wall))
 		_vm->_dialogs->show(60220);
-	else if (_action.isAction(words_look, words_doorway))
+	else if (player_said_2(look, doorway))
 		_vm->_dialogs->show(60221);
-	else if (_action.isAction(words_look, words_safe)) {
+	else if (player_said_2(look, safe)) {
 		if (_globals[kSafeStatus] == 0)
 			_vm->_dialogs->show(60222);
 		else if (_globals[kSafeStatus] == 1) {
@@ -325,21 +325,21 @@ static void room_602_parser() {
 			_vm->_dialogs->show(60235);
 		else
 			_vm->_dialogs->show(60236);
-	} else if (_action.isAction(words_unlock, words_door_key, words_safe) || _action.isAction(words_unlock, words_padlock_key, words_safe))
+	} else if (player_said_3(unlock, door_key, safe) || player_said_3(unlock, padlock_key, safe))
 		_vm->_dialogs->show(60225);
-	else if (_action.isAction(words_pull, words_safe))
+	else if (player_said_2(pull, safe))
 		_vm->_dialogs->show(60226);
-	else if (_action.isAction(words_put, words_fireplace) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId)))
+	else if (player_said_2(put, fireplace) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId)))
 		_vm->_dialogs->show(60227);
-	else if (_action.isAction(words_look, words_hole))
+	else if (player_said_2(look, hole))
 		_vm->_dialogs->show(60228);
-	else if (_action.isAction(words_look, words_laser_beam))
+	else if (player_said_2(look, laser_beam))
 		_vm->_dialogs->show(60229);
-	else if (_action.isAction(words_look, words_flower_box))
+	else if (player_said_2(look, flower_box))
 		_vm->_dialogs->show(60231);
-	else if (_action.isAction(words_throw, words_bomb, words_safe) || _action.isAction(words_throw, words_bombs, words_safe))
+	else if (player_said_3(throw, bomb, safe) || player_said_3(throw, bombs, safe))
 		_vm->_dialogs->show(60232);
-	else if (_action.isAction(words_put, words_timebomb))
+	else if (player_said_2(put, timebomb))
 		_vm->_dialogs->show(60233);
 	else
 		return;

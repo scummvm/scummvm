@@ -196,9 +196,9 @@ static void room_311_parser() {
 		local._checkGuardFl = false;
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.addQuote(250, 0, 240);
-	} else if (_action.isAction(words_sit_at, words_desk))
+	} else if (player_said_2(sit_at, desk))
 		_scene->_nextSceneId = 320;
-	else if (_action.isAction(words_climb_into, words_air_vent)) {
+	else if (player_said_2(climb_into, air_vent)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -294,25 +294,25 @@ static void room_311_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_look, words_desk))
+	} else if (player_said_2(look, desk))
 		_vm->_dialogs->show(31110);
-	else if (_action.isAction(words_look, words_wall))
+	else if (player_said_2(look, wall))
 		_vm->_dialogs->show(31111);
-	else if (_action.isAction(words_look, words_lighting_fixture) || _action.isAction(words_stare_at, words_lighting_fixture))
+	else if (player_said_2(look, lighting_fixture) || player_said_2(stare_at, lighting_fixture))
 		_vm->_dialogs->show(31112);
-	else if (_action.isAction(words_look, words_lights) || _action.isAction(words_stare_at, words_lights))
+	else if (player_said_2(look, lights) || player_said_2(stare_at, lights))
 		_vm->_dialogs->show(31113);
-	else if (_action.isAction(words_take, words_lights))
+	else if (player_said_2(take, lights))
 		_vm->_dialogs->show(31114);
-	else if (_action.isAction(words_look, words_light) || _action.isAction(words_stare_at, words_light))
+	else if (player_said_2(look, light) || player_said_2(stare_at, light))
 		_vm->_dialogs->show(31115);
-	else if (_action.isAction(words_take, words_light))
+	else if (player_said_2(take, light))
 		_vm->_dialogs->show(31116);
-	else if (_action.isAction(words_look, words_corridor_to_west))
+	else if (player_said_2(look, corridor_to_west))
 		_vm->_dialogs->show(31117);
-	else if (_action.isAction(words_look, words_corridor_to_east))
+	else if (player_said_2(look, corridor_to_east))
 		_vm->_dialogs->show(31118);
-	else if (_action.isAction(words_look, words_air_vent))
+	else if (player_said_2(look, air_vent))
 		_vm->_dialogs->show(31120);
 	else
 		return;

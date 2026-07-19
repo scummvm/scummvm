@@ -54,24 +54,24 @@ static void room_409_parser() {
 		return;
 	}
 
-	if (_action.isAction(words_look, words_viewport))
+	if (player_said_2(look, viewport))
 		_vm->_dialogs->show(40910);
-	else if (_action.isAction(words_peer_through, words_viewport))
+	else if (player_said_2(peer_through, viewport))
 		_vm->_dialogs->show(40910);
-	else if (_action.isAction(words_look, words_keypad))
+	else if (player_said_2(look, keypad))
 		_vm->_dialogs->show(40911);
-	else if (_action.isAction(words_inspect, words_keypad))
+	else if (player_said_2(inspect, keypad))
 		_vm->_dialogs->show(40911);
-	else if (_action.isAction(words_look, words_display))
+	else if (player_said_2(look, display))
 		_vm->_dialogs->show(40912);
-	else if (_action.isAction(words_look, words_1_key) || _action.isAction(words_look, words_2_key)
-		|| _action.isAction(words_look, words_3_key) || _action.isAction(words_look, words_4_key)
-		|| _action.isAction(words_look, words_5_key) || _action.isAction(words_look, words_6_key)
-		|| _action.isAction(words_look, words_7_key) || _action.isAction(words_look, words_8_key)
-		|| _action.isAction(words_look, words_9_key) || _action.isAction(words_look, words_0_key)
-		|| _action.isAction(words_look, words_smile_key) || _action.isAction(words_look, words_frown_key))
+	else if (player_said_2(look, 1_key) || player_said_2(look, 2_key)
+		|| player_said_2(look, 3_key) || player_said_2(look, 4_key)
+		|| player_said_2(look, 5_key) || player_said_2(look, 6_key)
+		|| player_said_2(look, 7_key) || player_said_2(look, 8_key)
+		|| player_said_2(look, 9_key) || player_said_2(look, 0_key)
+		|| player_said_2(look, smile_key) || player_said_2(look, frown_key))
 		_vm->_dialogs->show(40913);
-	else if (_action.isAction(words_look, words_device))
+	else if (player_said_2(look, device))
 		_vm->_dialogs->show(40914);
 	else if (_action._lookFlag)
 		_vm->_dialogs->show(40914);

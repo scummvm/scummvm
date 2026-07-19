@@ -200,19 +200,19 @@ static void room_701_daemon() {
 }
 
 static void room_701_pre_parser() {
-	if (_action.isAction(words_walkto, words_east_end_of_platform))
+	if (player_said_2(walkto, east_end_of_platform))
 		_game._player._walkOffScreenSceneId = 702;
 
-	if (_action.isAction(words_look, words_building))
+	if (player_said_2(look, building))
 		_game._player.walk(Common::Point(154, 129), FACING_NORTHEAST);
 
-	if (_action.isAction(words_look, words_binoculars, words_building))
+	if (player_said_3(look, binoculars, building))
 		_game._player.walk(Common::Point(154, 129), FACING_NORTH);
 }
 
 static void room_701_parser() {
-	if (_action.isAction(words_walk_along, words_platform)) {
-	} else if (_action.isAction(words_look, words_binoculars, words_building) && _game._objects[OBJ_VASE]._roomNumber == 706) {
+	if (player_said_2(walk_along, platform)) {
+	} else if (player_said_3(look, binoculars, building) && _game._objects[OBJ_VASE]._roomNumber == 706) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -239,7 +239,7 @@ static void room_701_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_step_into, words_elevator)) {
+	} else if (player_said_2(step_into, elevator)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -277,8 +277,8 @@ static void room_701_parser() {
 		default:
 			break;
 		}
-	} else if ((_action.isAction(words_pull, words_boat) || _action.isAction(words_take, words_boat) ||
-		_action.isAction(words_pull, words_fishing_line) || _action.isAction(words_take, words_fishing_line)) &&
+	} else if ((player_said_2(pull, boat) || player_said_2(take, boat) ||
+		player_said_2(pull, fishing_line) || player_said_2(take, fishing_line)) &&
 		!_game._objects.isInInventory(OBJ_FISHING_LINE)) {
 		if (_globals[kBoatStatus] == BOAT_TIED_FLOATING) {
 			switch (_game._trigger) {
@@ -324,7 +324,7 @@ static void room_701_parser() {
 		} else {
 			_vm->_dialogs->show(70127);
 		}
-	} else if (_action.isAction(words_climb_into, words_boat) && _globals[kBoatStatus] == BOAT_TIED) {
+	} else if (player_said_2(climb_into, boat) && _globals[kBoatStatus] == BOAT_TIED) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -348,33 +348,33 @@ static void room_701_parser() {
 				_vm->_dialogs->show(70110);
 		} else
 			_vm->_dialogs->show(70111);
-	} else if (_action.isAction(words_look, words_submerged_city))
+	} else if (player_said_2(look, submerged_city))
 		_vm->_dialogs->show(70112);
-	else if (_action.isAction(words_look, words_elevator))
+	else if (player_said_2(look, elevator))
 		_vm->_dialogs->show(70113);
-	else if (_action.isAction(words_look, words_platform))
+	else if (player_said_2(look, platform))
 		_vm->_dialogs->show(70114);
-	else if (_action.isAction(words_look, words_cement_pylon))
+	else if (player_said_2(look, cement_pylon))
 		_vm->_dialogs->show(70115);
-	else if (_action.isAction(words_look, words_hook)) {
+	else if (player_said_2(look, hook)) {
 		if (_globals[kLineStatus] == LINE_NOT_DROPPED || _globals[kLineStatus] == LINE_NOW_UNTIED)
 			_vm->_dialogs->show(70116);
 		else
 			_vm->_dialogs->show(70117);
-	} else if (_action.isAction(words_look, words_rock))
+	} else if (player_said_2(look, rock))
 		_vm->_dialogs->show(70118);
-	else if (_action.isAction(words_take, words_rock))
+	else if (player_said_2(take, rock))
 		_vm->_dialogs->show(70119);
-	else if (_action.isAction(words_look, words_east_end_of_platform))
+	else if (player_said_2(look, east_end_of_platform))
 		_vm->_dialogs->show(70120);
-	else if (_action.isAction(words_look, words_building))
+	else if (player_said_2(look, building))
 		_vm->_dialogs->show(70121);
-	else if (_action.isAction(words_look, words_boat)) {
+	else if (player_said_2(look, boat)) {
 		if (_globals[kBoatStatus] == BOAT_ADRIFT || _globals[kBoatStatus] == BOAT_TIED_FLOATING)
 			_vm->_dialogs->show(70122);
 		else
 			_vm->_dialogs->show(70123);
-	} else if (_action.isAction(words_cast, words_fishing_rod, words_boat) && _game._objects.isInInventory(OBJ_FISHING_LINE))
+	} else if (player_said_3(cast, fishing_rod, boat) && _game._objects.isInInventory(OBJ_FISHING_LINE))
 		_vm->_dialogs->show(70124);
 	else
 		return;

@@ -134,41 +134,41 @@ static void room_413_daemon() {
 }
 
 static void room_413_pre_parser() {
-	if (_action.isAction(words_take) || _action.isAction(words_put, words_conveyor_belt))
+	if (player_said_1(take) || player_said_2(put, conveyor_belt))
 		_game._player._needToWalk = false;
 
-	if (_action.isAction(words_look, words_wooden_statue) || _action.isAction(words_look, words_display)
-		|| _action.isAction(words_look, words_picture) || _action.isAction(words_look, words_plant)) {
+	if (player_said_2(look, wooden_statue) || player_said_2(look, display)
+		|| player_said_2(look, picture) || player_said_2(look, plant)) {
 		_game._player._needToWalk = true;
 	}
 }
 
 static void room_413_parser() {
-	if (_action.isAction(words_walk_inside, words_teleporter)) {
+	if (player_said_2(walk_inside, teleporter)) {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_scene->_nextSceneId = 409;
-	} else if (_action.isAction(words_walk_into, words_corridor_to_south))
+	} else if (player_said_2(walk_into, corridor_to_south))
 		_scene->_nextSceneId = 405;
-	else if (_action.isAction(words_look, words_wooden_statue))
+	else if (player_said_2(look, wooden_statue))
 		_vm->_dialogs->show(41310);
-	else if (_action.isAction(words_take, words_wooden_statue))
+	else if (player_said_2(take, wooden_statue))
 		_vm->_dialogs->show(41311);
-	else if (_action.isAction(words_look, words_conveyor_belt))
+	else if (player_said_2(look, conveyor_belt))
 		_vm->_dialogs->show(41312);
-	else if (_action.isAction(words_put, words_conveyor_belt))
+	else if (player_said_2(put, conveyor_belt))
 		_vm->_dialogs->show(41313);
-	else if (_action.isAction(words_look, words_teleporter))
+	else if (player_said_2(look, teleporter))
 		_vm->_dialogs->show(41314);
-	else if (_action.isAction(words_look, words_display))
+	else if (player_said_2(look, display))
 		_vm->_dialogs->show(41315);
-	else if (_action.isAction(words_look, words_corridor_to_south))
+	else if (player_said_2(look, corridor_to_south))
 		_vm->_dialogs->show(41316);
-	else if (_action.isAction(words_look, words_picture))
+	else if (player_said_2(look, picture))
 		_vm->_dialogs->show(41317);
-	else if (_action.isAction(words_look, words_plant))
+	else if (player_said_2(look, plant))
 		_vm->_dialogs->show(41318);
-	else if (_action.isAction(words_take, words_plant))
+	else if (player_said_2(take, plant))
 		_vm->_dialogs->show(41319);
 	else if (_action._lookFlag)
 		_vm->_dialogs->show(41320);

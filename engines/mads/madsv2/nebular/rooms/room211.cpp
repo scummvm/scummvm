@@ -265,31 +265,31 @@ static void room_211_daemon() {
 }
 
 static void room_211_pre_parser() {
-	if (_action.isAction(words_walk_down, words_jungle_path) && _game._objects.isInInventory(OBJ_BINOCULARS) && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY)
+	if (player_said_2(walk_down, jungle_path) && _game._objects.isInInventory(OBJ_BINOCULARS) && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY)
 		&& (_scene->_customDest.x <= 52) && (_scene->_customDest.y >= 132))
 		_game._player.walk(Common::Point(52, 132), FACING_WEST);
 
-	if (_action.isAction(words_walk_down, words_path_to_west)) {
+	if (player_said_2(walk_down, path_to_west)) {
 		if (_game._objects.isInInventory(OBJ_BINOCULARS) && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY))
 			_game._player.walk(Common::Point(52, 132), FACING_WEST);
 		else
 			_game._player._walkOffScreenSceneId = 210;
 	}
 
-	if (_action.isAction(words_walk_down, words_path_to_northeast))
+	if (player_said_2(walk_down, path_to_northeast))
 		_game._player._walkOffScreenSceneId = 207;
 }
 
 static void room_211_parser() {
 	if (_action._lookFlag && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY))
 		_vm->_dialogs->show(21111);
-	else if (_action.isAction(words_look, words_binoculars, words_palm_tree))
+	else if (player_said_3(look, binoculars, palm_tree))
 		_vm->_dialogs->show(21116);
-	else if (_action.isAction(words_look, words_bushy_fern))
+	else if (player_said_2(look, bushy_fern))
 		_vm->_dialogs->show(21101);
-	else if (_action.isAction(words_look, words_jungle_path))
+	else if (player_said_2(look, jungle_path))
 		_vm->_dialogs->show(21102);
-	else if (_action.isAction(words_look, words_palm_tree)) {
+	else if (player_said_2(look, palm_tree)) {
 		if (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY) {
 			if (_game._storyMode == STORYMODE_NAUGHTY)
 				_vm->_dialogs->show(21103);
@@ -298,22 +298,22 @@ static void room_211_parser() {
 		} else {
 			_vm->_dialogs->show(21105);
 		}
-	} else if (_action.isAction(words_look, words_thick_undergrowth)) {
+	} else if (player_said_2(look, thick_undergrowth)) {
 		if (_game._storyMode == STORYMODE_NAUGHTY)
 			_vm->_dialogs->show(21106);
 		else
 			_vm->_dialogs->show(21107);
-	} else if (_action.isAction(words_look, words_jungle))
+	} else if (player_said_2(look, jungle))
 		_vm->_dialogs->show(21108);
-	else if (_action.isAction(words_look, words_path_to_northeast))
+	else if (player_said_2(look, path_to_northeast))
 		_vm->_dialogs->show(21109);
-	else if (_action.isAction(words_look, words_path_to_west))
+	else if (player_said_2(look, path_to_west))
 		_vm->_dialogs->show(21110);
-	else if (_action.isAction(words_look, words_slithering_snake))
+	else if (player_said_2(look, slithering_snake))
 		_vm->_dialogs->show(21113);
-	else if (_action.isAction(words_take, words_slithering_snake))
+	else if (player_said_2(take, slithering_snake))
 		_vm->_dialogs->show(21114);
-	else if (_action.isAction(words_look, words_rocks))
+	else if (player_said_2(look, rocks))
 		_vm->_dialogs->show(21115);
 	else
 		return;

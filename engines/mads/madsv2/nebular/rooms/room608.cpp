@@ -684,20 +684,20 @@ static void room_608_daemon() {
 static void room_608_pre_parser() {
 	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 
-	if ((_action.isAction(words_throw, words_bone, words_rear_of_garage) || _action.isAction(words_throw, words_bones, words_rear_of_garage)
-		|| _action.isAction(words_throw, words_bone, words_front_of_garage) || _action.isAction(words_throw, words_bones, words_front_of_garage)
-		|| _action.isAction(words_throw, words_bones, words_obnoxious_dog) || _action.isAction(words_throw, words_bone, words_obnoxious_dog)) && local._dogActiveFl) {
+	if ((player_said_3(throw, bone, rear_of_garage) || player_said_3(throw, bones, rear_of_garage)
+		|| player_said_3(throw, bone, front_of_garage) || player_said_3(throw, bones, front_of_garage)
+		|| player_said_3(throw, bones, obnoxious_dog) || player_said_3(throw, bone, obnoxious_dog)) && local._dogActiveFl) {
 		_game._player._stepEnabled = false;
 		_game._player.walk(Common::Point(56, 146), FACING_EAST);
 	}
 
-	if ((_action.isAction(words_throw, words_bones, words_area_behind_car) || _action.isAction(words_throw, words_bone, words_area_behind_car)
-		|| _action.isAction(words_throw, words_bones, words_danger_zone) || _action.isAction(words_throw, words_bone, words_danger_zone)) && local._dogActiveFl) {
+	if ((player_said_3(throw, bones, area_behind_car) || player_said_3(throw, bone, area_behind_car)
+		|| player_said_3(throw, bones, danger_zone) || player_said_3(throw, bone, danger_zone)) && local._dogActiveFl) {
 		_game._player._stepEnabled = false;
 		_game._player.walk(Common::Point(75, 136), FACING_EAST);
 	}
 
-	if (_action.isAction(words_push, words_down_button) && local._dogUnderCar) {
+	if (player_said_2(push, down_button) && local._dogUnderCar) {
 		local._buttonPressedonTimeFl = true;
 		local._dogDeathMode = 1;
 	} else
@@ -705,9 +705,9 @@ static void room_608_pre_parser() {
 }
 
 static void room_608_parser() {
-	if (_action.isAction(words_walk_through, words_doorway))
+	if (player_said_2(walk_through, doorway))
 		_scene->_nextSceneId = 607;
-	else if (_action.isAction(words_push, words_down_button)) {
+	else if (player_said_2(push, down_button)) {
 		_game._player._stepEnabled = true;
 		switch (_game._trigger) {
 		case 0:
@@ -782,7 +782,7 @@ static void room_608_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_push, words_up_button)) {
+	} else if (player_said_2(push, up_button)) {
 		switch (_game._trigger) {
 		case 0:
 			if ((_globals[kCarStatus] == CAR_DOWN) || (_globals[kCarStatus] == CAR_DOWN_ON_SQUASHED_DOG)) {
@@ -832,8 +832,8 @@ static void room_608_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_throw, words_bone, words_rear_of_garage) || _action.isAction(words_throw, words_bones, words_rear_of_garage)
-		|| _action.isAction(words_throw, words_bones, words_obnoxious_dog) || _action.isAction(words_throw, words_bone, words_obnoxious_dog)) {
+	} else if (player_said_3(throw, bone, rear_of_garage) || player_said_3(throw, bones, rear_of_garage)
+		|| player_said_3(throw, bones, obnoxious_dog) || player_said_3(throw, bone, obnoxious_dog)) {
 		_game._player._stepEnabled = true;
 		if (local._dogActiveFl) {
 			if (_game._trigger == 0) {
@@ -844,7 +844,7 @@ static void room_608_parser() {
 			handleThrowingBone();
 		} else
 			_vm->_dialogs->show(60841);
-	} else if (_action.isAction(words_throw, words_bone, words_front_of_garage) || _action.isAction(words_throw, words_bones, words_front_of_garage)) {
+	} else if (player_said_3(throw, bone, front_of_garage) || player_said_3(throw, bones, front_of_garage)) {
 		_game._player._stepEnabled = true;
 		if (local._dogActiveFl) {
 			if (_game._trigger == 0) {
@@ -855,8 +855,8 @@ static void room_608_parser() {
 			handleThrowingBone();
 		} else
 			_vm->_dialogs->show(60841);
-	} else if (_action.isAction(words_throw, words_bones, words_area_behind_car) || _action.isAction(words_throw, words_bone, words_area_behind_car)
-		|| _action.isAction(words_throw, words_bones, words_danger_zone) || _action.isAction(words_throw, words_bone, words_danger_zone)) {
+	} else if (player_said_3(throw, bones, area_behind_car) || player_said_3(throw, bone, area_behind_car)
+		|| player_said_3(throw, bones, danger_zone) || player_said_3(throw, bone, danger_zone)) {
 		_game._player._stepEnabled = true;
 		if ((_globals[kCarStatus] == CAR_UP) && local._dogActiveFl) {
 			if (local._dogActiveFl) {
@@ -870,7 +870,7 @@ static void room_608_parser() {
 				_vm->_dialogs->show(60841);
 		} else
 			_vm->_dialogs->show(60842);
-	} else if (_action.isAction(words_take, words_polycement) && (_game._trigger || !_game._objects.isInInventory(OBJ_POLYCEMENT))) {
+	} else if (player_said_2(take, polycement) && (_game._trigger || !_game._objects.isInInventory(OBJ_POLYCEMENT))) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -898,7 +898,7 @@ static void room_608_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_take, words_rearview_mirror) && (_game._trigger || !_game._objects.isInInventory(OBJ_REARVIEW_MIRROR))) {
+	} else if (player_said_2(take, rearview_mirror) && (_game._trigger || !_game._objects.isInInventory(OBJ_REARVIEW_MIRROR))) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -933,57 +933,57 @@ static void room_608_parser() {
 			_vm->_dialogs->show(60812);
 		else
 			_vm->_dialogs->show(60811);
-	} else if (_action.isAction(words_look) && (_action.isObject(words_muffler) || _action.isObject(words_car_seat) || _action.isObject(words_hubcap)
-		|| _action.isObject(words_coils) || _action.isObject(words_quarter_panel)))
+	} else if (player_said_1(look) && (player_said_1(muffler) || player_said_1(car_seat) || player_said_1(hubcap)
+		|| player_said_1(coils) || player_said_1(quarter_panel)))
 		_vm->_dialogs->show(60813);
-	else if (_action.isAction(words_take) && (_action.isObject(words_muffler) || _action.isObject(words_car_seat) || _action.isObject(words_hubcap)
-		|| _action.isObject(words_coils) || _action.isObject(words_quarter_panel)))
+	else if (player_said_1(take) && (player_said_1(muffler) || player_said_1(car_seat) || player_said_1(hubcap)
+		|| player_said_1(coils) || player_said_1(quarter_panel)))
 		_vm->_dialogs->show(60814);
-	else if (_action.isAction(words_look, words_garage_floor) || _action.isAction(words_look, words_front_of_garage) || _action.isAction(words_look, words_rear_of_garage)) {
+	else if (player_said_2(look, garage_floor) || player_said_2(look, front_of_garage) || player_said_2(look, rear_of_garage)) {
 		if (local._dogActiveFl)
 			_vm->_dialogs->show(60815);
 		else
 			_vm->_dialogs->show(60816);
-	} else if (_action.isAction(words_look, words_spare_ribs))
+	} else if (player_said_2(look, spare_ribs))
 		_vm->_dialogs->show(60817);
-	else if (_action.isAction(words_take, words_spare_ribs)) {
+	else if (player_said_2(take, spare_ribs)) {
 		if (_game._difficulty == DIFFICULTY_HARD)
 			_vm->_dialogs->show(60818);
 		else
 			_vm->_dialogs->show(60819);
-	} else if (_action.isAction(words_look, words_up_button))
+	} else if (player_said_2(look, up_button))
 		_vm->_dialogs->show(60820);
-	else if (_action.isAction(words_look, words_down_button))
+	else if (player_said_2(look, down_button))
 		_vm->_dialogs->show(60821);
-	else if (_action.isAction(words_look, words_trash_can))
+	else if (player_said_2(look, trash_can))
 		_vm->_dialogs->show(60822);
-	else if (_action.isAction(words_look, words_calendar))
+	else if (player_said_2(look, calendar))
 		_vm->_dialogs->show(60823);
-	else if (_action.isAction(words_look, words_storage_box)) {
+	else if (player_said_2(look, storage_box)) {
 		if (_game._objects[OBJ_REARVIEW_MIRROR]._roomNumber == _scene->_currentSceneId)
 			_vm->_dialogs->show(60825);
 		else
 			_vm->_dialogs->show(60824);
-	} else if (_action.isAction(words_open, words_storage_box))
+	} else if (player_said_2(open, storage_box))
 		_vm->_dialogs->show(60826);
-	else if (_action.isAction(words_look, words_rearview_mirror) && (_action._mainObjectSource == CAT_HOTSPOT))
+	else if (player_said_2(look, rearview_mirror) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(60828);
-	else if (_action.isAction(words_look, words_tool_box)) {
+	else if (player_said_2(look, tool_box)) {
 		if (_game._objects[OBJ_POLYCEMENT]._roomNumber == _scene->_currentSceneId)
 			_vm->_dialogs->show(60829);
 		else
 			_vm->_dialogs->show(60830);
-	} else if (_action.isAction(words_open, words_tool_box))
+	} else if (player_said_2(open, tool_box))
 		_vm->_dialogs->show(60831);
-	else if ((_action.isAction(words_look, words_polycement)) && (_game._objects.isInRoom(OBJ_POLYCEMENT)))
+	else if ((player_said_2(look, polycement)) && (_game._objects.isInRoom(OBJ_POLYCEMENT)))
 		_vm->_dialogs->show(60832);
-	else if (_action.isAction(words_look, words_grease_can) || _action.isAction(words_look, words_oil_can))
+	else if (player_said_2(look, grease_can) || player_said_2(look, oil_can))
 		_vm->_dialogs->show(60834);
-	else if (_action.isAction(words_look, words_car_lift))
+	else if (player_said_2(look, car_lift))
 		_vm->_dialogs->show(60835);
-	else if (_action.isAction(words_look, words_chair) || _action.isAction(words_look, words_hat))
+	else if (player_said_2(look, chair) || player_said_2(look, hat))
 		_vm->_dialogs->show(60836);
-	else if (_action.isAction(words_look, words_danger_zone))
+	else if (player_said_2(look, danger_zone))
 		_vm->_dialogs->show(60838);
 	else
 		return;

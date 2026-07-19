@@ -424,7 +424,7 @@ static void room_202_pre_parser() {
 	if (gplayer._needToWalk)
 		_scene->_kernelMessages.reset();
 
-	if (local._ladderTopFl && (_action.isAction(words_climb_down, words_ladder) || gplayer._needToWalk)) {
+	if (local._ladderTopFl && (player_said_2(climb_down, ladder) || gplayer._needToWalk)) {
 		if (_game._trigger == 0) {
 			_vm->_sound->command(29);
 			gplayer._readyToWalk = false;
@@ -443,7 +443,7 @@ static void room_202_pre_parser() {
 		}
 	}
 
-	if (_action.isAction(words_look, words_binoculars) && (_action._activeAction._indirectObjectId > 0)) {
+	if (player_said_2(look, binoculars) && (_action._activeAction._indirectObjectId > 0)) {
 		if (!gplayer._readyToWalk || local._ladderTopFl)
 			gplayer._needToWalk = false;
 		else
@@ -460,12 +460,12 @@ static void room_202_parser() {
 		return;
 	}
 
-	if (_action.isAction(words_climb_down, words_ladder)) {
+	if (player_said_2(climb_down, ladder)) {
 		_action._inProgress = false;
 		return;
-	} else if (_action.isAction(words_walk_towards, words_field_to_south)) {
+	} else if (player_said_2(walk_towards, field_to_south)) {
 		_scene->_nextSceneId = 203;
-	} else if (_action.isAction(words_walk_towards, words_field_to_north)) {
+	} else if (player_said_2(walk_towards, field_to_north)) {
 		if (_globals[kMeteorologistStatus] != METEOROLOGIST_GONE) {
 			if (_scene->_animation[0])
 				_globals[kMeteorologistStatus] = METEOROLOGIST_PRESENT;
@@ -473,7 +473,7 @@ static void room_202_parser() {
 				_globals[kMeteorologistStatus] = METEOROLOGIST_ABSENT;
 		}
 		_scene->_nextSceneId = 201;
-	} else if (_action.isAction(words_take, words_bone) && (_action._savedFields._mainObjectSource == 4)) {
+	} else if (player_said_2(take, bone) && (_action._savedFields._mainObjectSource == 4)) {
 		switch (_game._trigger) {
 		case 0:
 			if (_game._objects.isInInventory(OBJ_BONES)) {
@@ -514,7 +514,7 @@ static void room_202_parser() {
 		}
 
 		_action._inProgress = false;
-	} else if (_action.isAction(words_climb_up, words_ladder) && !_globals[kLadderBroken]) {
+	} else if (player_said_2(climb_up, ladder) && !_globals[kLadderBroken]) {
 		switch (_game._trigger) {
 		case 0:
 			_vm->_sound->command(29);
@@ -544,7 +544,7 @@ static void room_202_parser() {
 			_action._inProgress = false;
 			return;
 		}
-	} else if ((_action.isAction(words_look, words_binoculars, words_field_to_north) || (_action.isAction(words_look, words_binoculars, words_strange_device))) && (_globals[kSexOfRex] == SEX_MALE)) {
+	} else if ((player_said_3(look, binoculars, field_to_north) || (player_said_3(look, binoculars, strange_device))) && (_globals[kSexOfRex] == SEX_MALE)) {
 		if (!local._ladderTopFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -644,43 +644,43 @@ static void room_202_parser() {
 				return;
 			}
 		}
-	} else if (_action.isAction(words_walk_inside, words_hut)) {
+	} else if (player_said_2(walk_inside, hut)) {
 		setRandomKernelMessage();
-	} else if (_action.isAction(words_look, words_rocks)) {
+	} else if (player_said_2(look, rocks)) {
 		_vm->_dialogs->show(20202);
-	} else if (_action.isAction(words_look, words_fire_pit)) {
+	} else if (player_said_2(look, fire_pit)) {
 		_vm->_dialogs->show(20203);
-	} else if (_action.isAction(words_look, words_grass)) {
+	} else if (player_said_2(look, grass)) {
 		_vm->_dialogs->show(20204);
-	} else if (_action.isAction(words_look, words_field_to_north)) {
+	} else if (player_said_2(look, field_to_north)) {
 		if ((_globals[kMeteorologistStatus] == METEOROLOGIST_ABSENT) || (_globals[kMeteorologistStatus] == METEOROLOGIST_GONE))
 			_vm->_dialogs->show(20205);
 		else if (_globals[kMeteorologistStatus] == METEOROLOGIST_PRESENT)
 			_vm->_dialogs->show(20220);
-	} else if (_action.isAction(words_look, words_watch_tower)) {
+	} else if (player_said_2(look, watch_tower)) {
 		_vm->_dialogs->show(20206);
-	} else if (_action.isAction(words_look, words_tall_grass)) {
+	} else if (player_said_2(look, tall_grass)) {
 		_vm->_dialogs->show(20207);
-	} else if (_action.isAction(words_look, words_trees)) {
+	} else if (player_said_2(look, trees)) {
 		_vm->_dialogs->show(20208);
-	} else if (_action.isAction(words_look, words_tree)) {
+	} else if (player_said_2(look, tree)) {
 		_vm->_dialogs->show(20209);
-	} else if (_action.isAction(words_look, words_sky)) {
+	} else if (player_said_2(look, sky)) {
 		_vm->_dialogs->show(20210);
-	} else if (_action.isAction(words_look, words_hut)) {
+	} else if (player_said_2(look, hut)) {
 		if ((_game._player._playerPos == Common::Point(77, 105)) && (_game._player._facing == FACING_NORTH))
 			_vm->_dialogs->show(20212);
 		else
 			_vm->_dialogs->show(20211);
-	} else if (_action.isAction(words_look, words_strange_device)) {
+	} else if (player_said_2(look, strange_device)) {
 		_vm->_dialogs->show(20213);
-	} else if (_action.isAction(words_look, words_ocean_in_distance)) {
+	} else if (player_said_2(look, ocean_in_distance)) {
 		_vm->_dialogs->show(20214);
-	} else if (_action.isAction(words_look, words_skull)) {
+	} else if (player_said_2(look, skull)) {
 		_vm->_dialogs->show(20215);
-	} else if (_action.isAction(words_take, words_skull)) {
+	} else if (player_said_2(take, skull)) {
 		_vm->_dialogs->show(20216);
-	} else if (_action.isAction(words_look, words_bones) && _action._commandSource == 4) {
+	} else if (player_said_2(look, bones) && _action._commandSource == 4) {
 		_vm->_dialogs->show(20217);
 	} else {
 		return;

@@ -67,10 +67,10 @@ static void room_359_init() {
 }
 
 static void room_359_pre_parser() {
-	if (_action.isAction(words_walk_down, words_corridor_to_east))
+	if (player_said_2(walk_down, corridor_to_east))
 		_game._player._walkOffScreenSceneId = 358;
 
-	if (_action.isAction(words_walk_down, words_corridor_to_west))
+	if (player_said_2(walk_down, corridor_to_west))
 		_game._player._walkOffScreenSceneId = 360;
 }
 
@@ -80,7 +80,7 @@ static void room_359_parser() {
 			_vm->_dialogs->show(35914);
 		else
 			_vm->_dialogs->show(35915);
-	} else if (_action.isAction(words_take, words_security_card)) {
+	} else if (player_said_2(take, security_card)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_SECURITY_CARD)) {
 			switch (_game._trigger) {
 			case 0:
@@ -124,43 +124,43 @@ static void room_359_parser() {
 				break;
 			}
 		}
-	} else if (_action.isAction(words_look, words_bloody_cell_wall))
+	} else if (player_said_2(look, bloody_cell_wall))
 		_vm->_dialogs->show(35910);
-	else if (_action.isAction(words_look, words_bed))
+	else if (player_said_2(look, bed))
 		_vm->_dialogs->show(35911);
-	else if (_action.isAction(words_look, words_sink))
+	else if (player_said_2(look, sink))
 		_vm->_dialogs->show(35912);
-	else if (_action.isAction(words_look, words_toilet))
+	else if (player_said_2(look, toilet))
 		_vm->_dialogs->show(35913);
-	else if (_action.isAction(words_look, words_corridor_to_east))
+	else if (player_said_2(look, corridor_to_east))
 		_vm->_dialogs->show(35916);
-	else if (_action.isAction(words_look, words_corridor_to_west))
+	else if (player_said_2(look, corridor_to_west))
 		_vm->_dialogs->show(35917);
-	else if (_action.isAction(words_look, words_limb))
+	else if (player_said_2(look, limb))
 		_vm->_dialogs->show(35918);
-	else if (_action.isAction(words_take, words_limb))
+	else if (player_said_2(take, limb))
 		_vm->_dialogs->show(35919);
-	else if (_action.isAction(words_look, words_security_card) && (_action._mainObjectSource == CAT_HOTSPOT))
+	else if (player_said_2(look, security_card) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(35921);
-	else if (_action.isAction(words_look, words_blood_stain)) {
+	else if (player_said_2(look, blood_stain)) {
 		if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
 			_vm->_dialogs->show(35922);
 		else
 			_vm->_dialogs->show(35923);
-	} else if (_action.isAction(words_look, words_wall_board))
+	} else if (player_said_2(look, wall_board))
 		_vm->_dialogs->show(35924);
-	else if (_action.isAction(words_take, words_wall_board))
+	else if (player_said_2(take, wall_board))
 		_vm->_dialogs->show(35925);
-	else if (_action.isAction(words_look, words_rip_in_floor))
+	else if (player_said_2(look, rip_in_floor))
 		_vm->_dialogs->show(35926);
-	else if (_action.isAction(words_look, words_corridor))
+	else if (player_said_2(look, corridor))
 		_vm->_dialogs->show(35927);
-	else if (_action.isAction(words_look, words_floor)) {
+	else if (player_said_2(look, floor)) {
 		if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
 			_vm->_dialogs->show(35928);
 		else
 			_vm->_dialogs->show(35929);
-	} else if (_action.isAction(words_open, words_air_vent) || _action.isAction(words_look, words_air_vent))
+	} else if (player_said_2(open, air_vent) || player_said_2(look, air_vent))
 		_vm->_dialogs->show(36016);
 	else
 		return;

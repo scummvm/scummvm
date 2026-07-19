@@ -271,7 +271,7 @@ void teleporter_handle_key() {
 bool teleporter_parser() {
 	bool retVal = false;
 
-	if (_action.isAction(words_press) || _action.isAction(words_push)) {
+	if (player_said_1(press) || player_said_1(push)) {
 		static int _buttonList[12] = { words_0_key, words_1_key, words_2_key, words_3_key, words_4_key, words_5_key, words_6_key, words_7_key, words_8_key, words_9_key, words_smile_key, words_frown_key };
 		for (int i = 0; i < 12; i++) {
 			if (_action._activeAction._objectNameId == _buttonList[i])
@@ -281,7 +281,7 @@ bool teleporter_parser() {
 		retVal = true;
 	}
 
-	if (_action.isAction(words_exit_from, words_device)) {
+	if (player_said_2(exit_from, device)) {
 		_globals[kTeleporterCommand] = 3;
 		_scene->_nextSceneId = _teleporterSceneId;
 		retVal = true;

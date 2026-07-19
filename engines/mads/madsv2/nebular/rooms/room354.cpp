@@ -56,41 +56,41 @@ static void room_354_init() {
 }
 
 static void room_354_pre_parser() {
-	if (_action.isAction(words_walk_down, words_corridor_to_south))
+	if (player_said_2(walk_down, corridor_to_south))
 		_game._player._walkOffScreenSceneId = 401;
 }
 
 static void room_354_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(35414);
-	else if (_action.isAction(words_walk_down, words_corridor_to_north)) {
+	else if (player_said_2(walk_down, corridor_to_north)) {
 		_game._player.startWalking(Common::Point(208, 0), FACING_NORTHEAST);
 		_game._player._walkOffScreenSceneId = 353;
-	} else if (_action.isAction(words_walk_down, words_corridor_to_east))
+	} else if (player_said_2(walk_down, corridor_to_east))
 		_scene->_nextSceneId = 361;
-	else if (_action.isAction(words_walk_down, words_corridor_to_west))
+	else if (player_said_2(walk_down, corridor_to_west))
 		_scene->_nextSceneId = 316;
-	else if (_action.isAction(words_walk_down, words_corridor_to_south))
+	else if (player_said_2(walk_down, corridor_to_south))
 		_scene->_nextSceneId = 401;
-	else if (_action.isAction(words_look, words_controls))
+	else if (player_said_2(look, controls))
 		_vm->_dialogs->show(35410);
-	else if (_action.isAction(words_look, words_signal))
+	else if (player_said_2(look, signal))
 		_vm->_dialogs->show(35411);
-	else if (_action.isAction(words_look, words_catwalk))
+	else if (player_said_2(look, catwalk))
 		_vm->_dialogs->show(35412);
-	else if (_action.isAction(words_look, words_air_duct))
+	else if (player_said_2(look, air_duct))
 		_vm->_dialogs->show(35413);
-	else if (_action.isAction(words_look, words_corridor_to_north))
+	else if (player_said_2(look, corridor_to_north))
 		_vm->_dialogs->show(35415);
-	else if (_action.isAction(words_look, words_corridor_to_south))
+	else if (player_said_2(look, corridor_to_south))
 		_vm->_dialogs->show(35416);
-	else if (_action.isAction(words_look, words_corridor_to_east))
+	else if (player_said_2(look, corridor_to_east))
 		_vm->_dialogs->show(35417);
-	else if (_action.isAction(words_look, words_corridor_to_west))
+	else if (player_said_2(look, corridor_to_west))
 		_vm->_dialogs->show(35418);
-	else if (_action.isAction(words_look, words_debris))
+	else if (player_said_2(look, debris))
 		_vm->_dialogs->show(35419);
-	else if (_action.isAction(words_look, words_guard))
+	else if (player_said_2(look, guard))
 		_vm->_dialogs->show(35420);
 	else
 		return;

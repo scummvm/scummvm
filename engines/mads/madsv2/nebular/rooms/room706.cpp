@@ -209,12 +209,12 @@ static void room_706_daemon() {
 }
 
 static void room_706_pre_parser() {
-	if (_action.isAction(words_look, words_portrait))
+	if (player_said_2(look, portrait))
 		_game._player._needToWalk = true;
 }
 
 static void room_706_parser() {
-	if (_action.isAction(words_walk_inside, words_teleporter)) {
+	if (player_said_2(walk_inside, teleporter)) {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_scene->_nextSceneId = 707;
@@ -222,13 +222,13 @@ static void room_706_parser() {
 		return;
 	}
 
-	if (_action.isAction(words_exit, words_room)) {
+	if (player_said_2(exit, room)) {
 		_scene->_nextSceneId = 705;
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(words_take, words_vase)) {
+	if (player_said_2(take, vase)) {
 		if (_game._difficulty != DIFFICULTY_EASY) {
 			local._animationMode = 1;
 			handleRexDeath();
@@ -240,7 +240,7 @@ static void room_706_parser() {
 		return;
 	}
 
-	if (_action.isAction(words_put, words_bottle, words_pedestal)) {
+	if (player_said_3(put, bottle, pedestal)) {
 		if ((_globals[kBottleStatus] == 2 && _game._difficulty == DIFFICULTY_HARD) ||
 			(_globals[kBottleStatus] != 0 && _game._difficulty != DIFFICULTY_HARD)) {
 			if (!_game._objects.isInInventory(OBJ_VASE) || _game._trigger) {
@@ -257,47 +257,47 @@ static void room_706_parser() {
 		}
 	}
 
-	if (_action.isAction(words_put, words_pedestal) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
+	if (player_said_2(put, pedestal) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
 		int objectId = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
 		if (_game._objects[objectId].hasQuality(10))
 			_vm->_dialogs->show(70626);
 		else
 			_vm->_dialogs->show(70627);
-	} else if (_action.isAction(words_take, words_bottle) && _game._objects.isInInventory(OBJ_VASE))
+	} else if (player_said_2(take, bottle) && _game._objects.isInInventory(OBJ_VASE))
 		_vm->_dialogs->show(70631);
 	else if (_action._lookFlag) {
 		if (_game._objects[OBJ_VASE]._roomNumber == _scene->_currentSceneId)
 			_vm->_dialogs->show(70610);
 		else
 			_vm->_dialogs->show(70611);
-	} else if (_action.isAction(words_look, words_floor))
+	} else if (player_said_2(look, floor))
 		_vm->_dialogs->show(70612);
-	else if (_action.isAction(words_look, words_pillar))
+	else if (player_said_2(look, pillar))
 		_vm->_dialogs->show(70613);
-	else if (_action.isAction(words_look, words_old_tea_cup))
+	else if (player_said_2(look, old_tea_cup))
 		_vm->_dialogs->show(70614);
-	else if (_action.isAction(words_take, words_old_tea_cup))
+	else if (player_said_2(take, old_tea_cup))
 		_vm->_dialogs->show(70615);
-	else if (_action.isAction(words_look, words_old_vase))
+	else if (player_said_2(look, old_vase))
 		_vm->_dialogs->show(70616);
-	else if (_action.isAction(words_look, words_portrait))
+	else if (player_said_2(look, portrait))
 		_vm->_dialogs->show(70617);
-	else if (_action.isAction(words_look, words_name_plate))
+	else if (player_said_2(look, name_plate))
 		_vm->_dialogs->show(70618);
-	else if (_action.isAction(words_look, words_wall))
+	else if (player_said_2(look, wall))
 		_vm->_dialogs->show(70619);
-	else if (_action.isAction(words_look, words_pedestal)) {
+	else if (player_said_2(look, pedestal)) {
 		if (_game._objects[OBJ_VASE]._roomNumber == _scene->_currentSceneId)
 			_vm->_dialogs->show(70620);
 		else if (_game._objects[OBJ_BOTTLE]._roomNumber == _scene->_currentSceneId)
 			_vm->_dialogs->show(70622);
 		else
 			_vm->_dialogs->show(70621);
-	} else if (_action.isAction(words_look, words_teleporter))
+	} else if (player_said_2(look, teleporter))
 		_vm->_dialogs->show(70623);
-	else if (_action.isAction(words_look, words_vase) && (_game._objects[OBJ_VASE]._roomNumber == _scene->_currentSceneId))
+	else if (player_said_2(look, vase) && (_game._objects[OBJ_VASE]._roomNumber == _scene->_currentSceneId))
 		_vm->_dialogs->show(70624);
-	else if (_action.isAction(words_look, words_bottle) && (_action._mainObjectSource == CAT_HOTSPOT))
+	else if (player_said_2(look, bottle) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(70632);
 	else
 		return;

@@ -196,12 +196,12 @@ static void room_109_daemon() {
 }
 
 static void room_109_pre_parser() {
-	if (_action.isAction(words_swim_under, words_overhang_to_west))
+	if (player_said_2(swim_under, overhang_to_west))
 		_game._player._walkOffScreenSceneId = 108;
 
-	if ((_action.isAction(words_throw) || _action.isAction(words_give) || _action.isAction(words_put))
-		&& (_action.isTarget(words_small_hole) || _action.isTarget(words_tunnel))
-		&& (_action.isObject(words_dead_fish) || _action.isObject(words_stuffed_fish) || _action.isObject(words_burger))) {
+	if ((player_said_1(throw) || player_said_1(give) || player_said_1(put))
+		&& (player_said_1(small_hole) || player_said_1(tunnel))
+		&& (player_said_1(dead_fish) || player_said_1(stuffed_fish) || player_said_1(burger))) {
 		int idx = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
 		if ((idx >= 0) && _game._objects.isInInventory(idx)) {
 			_game._player._prepareWalkPos = Common::Point(106, 38);
@@ -211,8 +211,8 @@ static void room_109_pre_parser() {
 		}
 	}
 
-	if ((_action.isAction(words_swim_into, words_tunnel) || _action.isAction(words_swim_to, words_small_hole))
-		&& (!_globals[kHoovicAlive] || _globals[kHoovicSated]) && (_action.isObject(words_tunnel)))
+	if ((player_said_2(swim_into, tunnel) || player_said_2(swim_to, small_hole))
+		&& (!_globals[kHoovicAlive] || _globals[kHoovicSated]) && (player_said_1(tunnel)))
 		_game._player._walkOffScreenSceneId = 110;
 
 	local._hungryFl = false;
@@ -225,8 +225,8 @@ static void room_109_parser() {
 		return;
 	}
 
-	if ((_action.isAction(words_throw) || _action.isAction(words_give)) && (_action.isTarget(words_small_hole) || _action.isTarget(words_tunnel))) {
-		if (_action.isObject(words_dead_fish) || _action.isObject(words_stuffed_fish) || _action.isObject(words_burger)) {
+	if ((player_said_1(throw) || player_said_1(give)) && (player_said_1(small_hole) || player_said_1(tunnel))) {
+		if (player_said_1(dead_fish) || player_said_1(stuffed_fish) || player_said_1(burger)) {
 			local._throwingObjectId = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
 			if (local._throwingObjectId >= 0) {
 				if ((_game._objects.isInInventory(local._throwingObjectId) && _globals[kHoovicAlive]) || local._rexThrowingObject) {
@@ -407,33 +407,33 @@ static void room_109_parser() {
 		}
 	}
 
-	if (_action.isAction(words_take, words_burger) && _game._objects.isInRoom(OBJ_BURGER)) {
+	if (player_said_2(take, burger) && _game._objects.isInRoom(OBJ_BURGER)) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_game._objects.addToInventory(OBJ_BURGER);
-	} else if (_action.isAction(words_look, words_ocean_floor))
+	} else if (player_said_2(look, ocean_floor))
 		_vm->_dialogs->show(10901);
-	else if (_action.isAction(words_look, words_coral))
+	else if (player_said_2(look, coral))
 		_vm->_dialogs->show(10902);
-	else if ((_action.isAction(words_take) || _action.isAction(words_pull)) && _action.isObject(words_coral))
+	else if ((player_said_1(take) || player_said_1(pull)) && player_said_1(coral))
 		_vm->_dialogs->show(10903);
-	else if (_action.isAction(words_look, words_rocks))
+	else if (player_said_2(look, rocks))
 		_vm->_dialogs->show(10904);
-	else if (_action.isAction(words_take, words_rocks))
+	else if (player_said_2(take, rocks))
 		_vm->_dialogs->show(10905);
-	else if (_action.isAction(words_look, words_cave_wall))
+	else if (player_said_2(look, cave_wall))
 		_vm->_dialogs->show(10906);
-	else if (_action.isAction(words_look, words_tunnel)) {
+	else if (player_said_2(look, tunnel)) {
 		if (_globals[kHoovicAlive])
 			_vm->_dialogs->show(10907);
 		else
 			_vm->_dialogs->show(10913);
-	} else if (_action.isAction(words_look, words_small_hole))
+	} else if (player_said_2(look, small_hole))
 		_vm->_dialogs->show(10908);
-	else if (_action.isAction(words_look, words_overhang_to_west))
+	else if (player_said_2(look, overhang_to_west))
 		_vm->_dialogs->show(10911);
-	else if (_action.isAction(words_put, words_small_hole))
+	else if (player_said_2(put, small_hole))
 		_vm->_dialogs->show(10910);
-	else if (_action.isAction(words_look, words_dead_purple_monster))
+	else if (player_said_2(look, dead_purple_monster))
 		_vm->_dialogs->show(10914);
 	else
 		return;

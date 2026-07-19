@@ -352,25 +352,25 @@ static void handleThrowingBone() {
 }
 
 static void room_607_pre_parser() {
-	if (_action.isAction(words_talkto, words_obnoxious_dog))
+	if (player_said_2(talkto, obnoxious_dog))
 		_game._player._needToWalk = false;
 
-	if (_action.isAction(words_walk_through, words_side_entrance) && (_globals[kDogStatus] == DOG_LEFT) && (_game._difficulty != DIFFICULTY_EASY)) {
+	if (player_said_2(walk_through, side_entrance) && (_globals[kDogStatus] == DOG_LEFT) && (_game._difficulty != DIFFICULTY_EASY)) {
 		local._shopAvailable = true;
 		local._dogTimer = 0;
 	}
 
-	if (_action.isAction(words_throw, words_bones, words_obnoxious_dog) || _action.isAction(words_throw, words_bone, words_obnoxious_dog))
+	if (player_said_3(throw, bones, obnoxious_dog) || player_said_3(throw, bone, obnoxious_dog))
 		_game._player.walk(Common::Point(193, 100), FACING_NORTHEAST);
 
-	if (_action.isAction(words_throw, words_bones, words_fence) || _action.isAction(words_throw, words_bone, words_fence))
+	if (player_said_3(throw, bones, fence) || player_said_3(throw, bone, fence))
 		_game._player.walk(Common::Point(201, 107), FACING_SOUTHEAST);
 }
 
 static void room_607_parser() {
-	if (_action.isAction(words_walk_through, words_side_entrance))
+	if (player_said_2(walk_through, side_entrance))
 		_scene->_nextSceneId = 608;
-	else if (_action.isAction(words_get_inside, words_car)) {
+	else if (player_said_2(get_inside, car)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -409,7 +409,7 @@ static void room_607_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_throw, words_bones, words_obnoxious_dog) || _action.isAction(words_throw, words_bone, words_obnoxious_dog)) {
+	} else if (player_said_3(throw, bones, obnoxious_dog) || player_said_3(throw, bone, obnoxious_dog)) {
 		if (_game._difficulty != DIFFICULTY_EASY) {
 			local._animationMode = 1;
 			_scene->_kernelMessages.reset();
@@ -418,7 +418,7 @@ static void room_607_parser() {
 
 			handleThrowingBone();
 		}
-	} else if ((_action.isAction(words_throw, words_bones, words_fence) || _action.isAction(words_throw, words_bone, words_fence)) && (_game._difficulty != DIFFICULTY_EASY)
+	} else if ((player_said_3(throw, bones, fence) || player_said_3(throw, bone, fence)) && (_game._difficulty != DIFFICULTY_EASY)
 		&& ((_globals[kDogStatus] == DOG_PRESENT) || _game._trigger)) {
 		local._animationMode = 2;
 		if (_game._trigger == 0) {
@@ -426,50 +426,50 @@ static void room_607_parser() {
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x2F6));
 		}
 		handleThrowingBone();
-	} else if (_action._lookFlag || _action.isAction(words_look, words_street)) {
+	} else if (_action._lookFlag || player_said_2(look, street)) {
 		if ((_globals[kDogStatus] == DOG_PRESENT) || (_game._difficulty == DIFFICULTY_EASY))
 			_vm->_dialogs->show(60710);
 		else
 			_vm->_dialogs->show(60711);
-	} else if (_action.isAction(words_look, words_wall))
+	} else if (player_said_2(look, wall))
 		_vm->_dialogs->show(60712);
-	else if (_action.isAction(words_look, words_fence))
+	else if (player_said_2(look, fence))
 		_vm->_dialogs->show(60713);
-	else if (_action.isAction(words_look, words_car))
+	else if (player_said_2(look, car))
 		_vm->_dialogs->show(60714);
-	else if (_action.isAction(words_look, words_manhole))
+	else if (player_said_2(look, manhole))
 		_vm->_dialogs->show(60715);
-	else if (_action.isAction(words_look, words_fire_hydrant) && (_globals[kDogStatus] == DOG_PRESENT))
+	else if (player_said_2(look, fire_hydrant) && (_globals[kDogStatus] == DOG_PRESENT))
 		_vm->_dialogs->show(60716);
-	else if (_action.isAction(words_look, words_sign))
+	else if (player_said_2(look, sign))
 		_vm->_dialogs->show(60717);
-	else if (_action.isAction(words_look, words_broken_window))
+	else if (player_said_2(look, broken_window))
 		_vm->_dialogs->show(60718);
-	else if (_action.isAction(words_look, words_garage_door))
+	else if (player_said_2(look, garage_door))
 		_vm->_dialogs->show(60719);
-	else if (_action.isAction(words_look, words_sidewalk))
+	else if (player_said_2(look, sidewalk))
 		_vm->_dialogs->show(60720);
-	else if (_action.isAction(words_look, words_air_hose))
+	else if (player_said_2(look, air_hose))
 		_vm->_dialogs->show(60721);
-	else if (_action.isAction(words_look, words_auto_shop)) {
+	else if (player_said_2(look, auto_shop)) {
 		if (_globals[kDogStatus] == DOG_PRESENT)
 			_vm->_dialogs->show(60723);
 		else
 			_vm->_dialogs->show(60722);
-	} else if (_action.isAction(words_look, words_side_entrance)) {
+	} else if (player_said_2(look, side_entrance)) {
 		if (_globals[kDogStatus] == DOG_PRESENT)
 			_vm->_dialogs->show(60725);
 		else
 			_vm->_dialogs->show(60724);
-	} else if (_action.isAction(words_look, words_obnoxious_dog))
+	} else if (player_said_2(look, obnoxious_dog))
 		_vm->_dialogs->show(60726);
-	else if (_action.isAction(words_talkto, words_obnoxious_dog))
+	else if (player_said_2(talkto, obnoxious_dog))
 		_vm->_dialogs->show(60727);
-	else if (_action.isAction(words_look, words_barricade))
+	else if (player_said_2(look, barricade))
 		_vm->_dialogs->show(60728);
-	else if (_action.isAction(words_walk_down, words_street))
+	else if (player_said_2(walk_down, street))
 		_vm->_dialogs->show(60730);
-	else if (_action.isObject(words_garage_door) && (_action.isAction(words_open) || _action.isAction(words_push) || _action.isAction(words_pull)))
+	else if (player_said_1(garage_door) && (player_said_1(open) || player_said_1(push) || player_said_1(pull)))
 		_vm->_dialogs->show(60731);
 	else
 		return;

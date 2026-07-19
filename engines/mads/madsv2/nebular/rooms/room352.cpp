@@ -185,10 +185,10 @@ static void room_352_init() {
 static void room_352_pre_parser() {
 	local._leaveRoomFl = false;
 
-	if (_action.isAction(words_open, words_vault))
+	if (player_said_2(open, vault))
 		_game._player.walk(Common::Point(266, 111), FACING_NORTHEAST);
 
-	if (local._vaultOpenFl && !_action.isObject(words_vault) && !_action.isObject(words_lamp) && !_action.isObject(words_other_stuff) && !_action.isObject(words_your_stuff)) {
+	if (local._vaultOpenFl && !player_said_1(vault) && !player_said_1(lamp) && !player_said_1(other_stuff) && !player_said_1(your_stuff)) {
 		if (_globals[kHaveYourStuff]) {
 			local._commonSpriteIndex = _globals._spriteIndexes[13];
 			local._commonSequenceIdx = _globals._sequenceIndexes[13];
@@ -224,14 +224,14 @@ static void room_352_pre_parser() {
 		}
 	}
 
-	if (_action.isAction(words_put, words_guards_arm2, words_scanner)) {
+	if (player_said_3(put, guards_arm2, scanner)) {
 		if (_globals[kSexOfRex] == REX_MALE)
 			_game._player.walk(Common::Point(269, 111), FACING_NORTHEAST);
 		else
 			_game._player.walk(Common::Point(271, 111), FACING_NORTHEAST);
 	}
 
-	if (_action.isAction(words_walk_through, words_doorway) || _action.isAction(words_walk_down, words_corridor_to_south) || _action.isAction(words_put, words_guards_arm2, words_floor)) {
+	if (player_said_2(walk_through, doorway) || player_said_2(walk_down, corridor_to_south) || player_said_3(put, guards_arm2, floor)) {
 		if (_game._objects.isInInventory(OBJ_GUARDS_ARM))
 			_game._player.walk(Common::Point(230, 117), FACING_NORTHWEST);
 	}
@@ -244,7 +244,7 @@ static void room_352_parser() {
 		return;
 	}
 
-	if (_action.isAction(words_open, words_vault)) {
+	if (player_said_2(open, vault)) {
 		if (!local._vaultOpenFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -306,15 +306,15 @@ static void room_352_parser() {
 	bool exit_corridor = false;
 	bool exit_doorway = false;
 
-	if (_action.isAction(words_walk_down, words_corridor_to_south)) {
+	if (player_said_2(walk_down, corridor_to_south)) {
 		exit_corridor = true;
 	}
 
-	if (_action.isAction(words_walk_through, words_doorway)) {
+	if (player_said_2(walk_through, doorway)) {
 		exit_doorway = true;
 	}
 
-	if (_action.isAction(words_walk_down, words_corridor_to_south) || _action.isAction(words_walk_through, words_doorway) || _action.isAction(words_put, words_guards_arm2, words_floor)) {
+	if (player_said_2(walk_down, corridor_to_south) || player_said_2(walk_through, doorway) || player_said_3(put, guards_arm2, floor)) {
 		if (local._mustPutArmDownFl)
 			putArmDown(exit_corridor, exit_doorway);
 		else if (exit_corridor)
@@ -326,7 +326,7 @@ static void room_352_parser() {
 		return;
 	}
 
-	if (_action.isAction(words_take, words_guards_arm2)) {
+	if (player_said_2(take, guards_arm2)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_GUARDS_ARM)) {
 			switch (_game._trigger) {
 			case 0:
@@ -365,7 +365,7 @@ static void room_352_parser() {
 		}
 	}
 
-	if (_action.isAction(words_put, words_guards_arm2, words_scanner)) {
+	if (player_said_3(put, guards_arm2, scanner)) {
 		if (!local._vaultOpenFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -449,7 +449,7 @@ static void room_352_parser() {
 				break;
 			}
 		}
-	} else if (_action.isAction(words_take, words_your_stuff)) {
+	} else if (player_said_2(take, your_stuff)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -496,7 +496,7 @@ static void room_352_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_take, words_tape_player) && !_game._objects.isInInventory(OBJ_TAPE_PLAYER)) {
+	} else if (player_said_2(take, tape_player) && !_game._objects.isInInventory(OBJ_TAPE_PLAYER)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -534,53 +534,53 @@ static void room_352_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_look, words_scanner))
+	} else if (player_said_2(look, scanner))
 		_vm->_dialogs->show(35210);
-	else if (_action.isAction(words_look, words_monitor)) {
+	else if (player_said_2(look, monitor)) {
 		if (_game._storyMode == STORYMODE_NAUGHTY)
 			_vm->_dialogs->show(35211);
 		else
 			_vm->_dialogs->show(35212);
-	} else if (_action.isAction(words_look, words_display))
+	} else if (player_said_2(look, display))
 		_vm->_dialogs->show(35213);
-	else if (_action.isAction(words_look, words_statue))
+	else if (player_said_2(look, statue))
 		_vm->_dialogs->show(35214);
-	else if (_action.isAction(words_look, words_tape_player) && (_action._savedFields._mainObjectSource == 4))
+	else if (player_said_2(look, tape_player) && (_action._savedFields._mainObjectSource == 4))
 		_vm->_dialogs->show(35215);
-	else if (_action.isAction(words_look, words_air_vent))
+	else if (player_said_2(look, air_vent))
 		_vm->_dialogs->show(35216);
-	else if (_action.isAction(words_look, words_guards_arm2) && (_action._savedFields._mainObjectSource == 4))
+	else if (player_said_2(look, guards_arm2) && (_action._savedFields._mainObjectSource == 4))
 		_vm->_dialogs->show(35217);
-	else if (_action.isAction(words_look, words_ironing_board))
+	else if (player_said_2(look, ironing_board))
 		_vm->_dialogs->show(35218);
-	else if (_action.isAction(words_look, words_clock))
+	else if (player_said_2(look, clock))
 		_vm->_dialogs->show(35219);
-	else if (_action.isAction(words_look, words_gauge))
+	else if (player_said_2(look, gauge))
 		_vm->_dialogs->show(35220);
-	else if (_action.isAction(words_look, words_vault)) {
+	else if (player_said_2(look, vault)) {
 		if (!local._vaultOpenFl)
 			_vm->_dialogs->show(35221);
-	} else if (_action.isAction(words_look, words_your_stuff))
+	} else if (player_said_2(look, your_stuff))
 		_vm->_dialogs->show(35222);
-	else if (_action.isAction(words_look, words_other_stuff))
+	else if (player_said_2(look, other_stuff))
 		_vm->_dialogs->show(35223);
-	else if (_action.isAction(words_look, words_corridor_to_south))
+	else if (player_said_2(look, corridor_to_south))
 		_vm->_dialogs->show(35224);
-	else if (_action.isAction(words_take, words_other_stuff))
+	else if (player_said_2(take, other_stuff))
 		_vm->_dialogs->show(35226);
-	else if (_action.isAction(words_look, words_desk))
+	else if (player_said_2(look, desk))
 		_vm->_dialogs->show(35229);
-	else if (_action.isAction(words_look, words_guard))
+	else if (player_said_2(look, guard))
 		_vm->_dialogs->show(35230);
-	else if (_action.isAction(words_look, words_doorway))
+	else if (player_said_2(look, doorway))
 		_vm->_dialogs->show(35231);
-	else if (_action.isAction(words_look, words_table))
+	else if (player_said_2(look, table))
 		_vm->_dialogs->show(35232);
-	else if (_action.isAction(words_look, words_projector))
+	else if (player_said_2(look, projector))
 		_vm->_dialogs->show(35233);
-	else if (_action.isAction(words_look, words_support))
+	else if (player_said_2(look, support))
 		_vm->_dialogs->show(35234);
-	else if (_action.isAction(words_look, words_security_monitor))
+	else if (player_said_2(look, security_monitor))
 		_vm->_dialogs->show(35235);
 	else
 		return;

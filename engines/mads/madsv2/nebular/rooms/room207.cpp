@@ -153,16 +153,16 @@ static void room_207_daemon() {
 }
 
 static void room_207_pre_parser() {
-	if (_action.isAction(words_walk_down, words_path_to_west))
+	if (player_said_2(walk_down, path_to_west))
 		_game._player._walkOffScreenSceneId = 211;
 
-	if (_action.isAction(words_walk_towards, words_open_field_to_east))
+	if (player_said_2(walk_towards, open_field_to_east))
 		_game._player._walkOffScreenSceneId = 208;
 
-	if (_action.isAction(words_walkto) || _action.isAction(words_look)) {
-		if (_action.isObject(words_vulture)) {
+	if (player_said_1(walkto) || player_said_1(look)) {
+		if (player_said_1(vulture)) {
 			local._vultureTime = -9999;
-		} else if (_action.isObject(words_spider)) {
+		} else if (player_said_1(spider)) {
 			local._spiderTime = -9999;
 		}
 	}
@@ -171,7 +171,7 @@ static void room_207_pre_parser() {
 static void room_207_parser() {
 	if (_action._savedFields._lookFlag)
 		_vm->_dialogs->show(20711);
-	else if (_action.isAction(words_walk_through, words_doorway))
+	else if (player_said_2(walk_through, doorway))
 		_scene->_nextSceneId = 214;
 	else {
 		if ((_game._player._playerPos.x > 150) && (_game._player._playerPos.x < 189) &&
@@ -189,33 +189,33 @@ static void room_207_parser() {
 			local._eyeFl = false;
 		}
 
-		if (_action.isAction(words_look, words_dense_forest))
+		if (player_said_2(look, dense_forest))
 			_vm->_dialogs->show(20701);
-		else if (_action.isAction(words_look, words_hedge))
+		else if (player_said_2(look, hedge))
 			_vm->_dialogs->show(20702);
-		else if (_action.isAction(words_look, words_skull_and_crossbones))
+		else if (player_said_2(look, skull_and_crossbones))
 			_vm->_dialogs->show(20703);
-		else if (_action.isAction(words_look, words_cauldron))
+		else if (player_said_2(look, cauldron))
 			_vm->_dialogs->show(20704);
-		else if (_action.isAction(words_look, words_witchdoctor_hut))
+		else if (player_said_2(look, witchdoctor_hut))
 			_vm->_dialogs->show(20705);
-		else if (_action.isAction(words_look, words_path_to_west))
+		else if (player_said_2(look, path_to_west))
 			_vm->_dialogs->show(20706);
-		else if (_action.isAction(words_look, words_mountains))
+		else if (player_said_2(look, mountains))
 			_vm->_dialogs->show(20707);
-		else if (_action.isAction(words_look, words_aloe_plant))
+		else if (player_said_2(look, aloe_plant))
 			_vm->_dialogs->show(20708);
-		else if (_action.isAction(words_look, words_lawn))
+		else if (player_said_2(look, lawn))
 			_vm->_dialogs->show(20709);
-		else if (_action.isAction(words_look, words_vulture))
+		else if (player_said_2(look, vulture))
 			_vm->_dialogs->show(20710);
-		else if (_action.isAction(words_take, words_skull_and_crossbones))
+		else if (player_said_2(take, skull_and_crossbones))
 			_vm->_dialogs->show(20712);
-		else if (_action.isAction(words_take, words_aloe_plant))
+		else if (player_said_2(take, aloe_plant))
 			_vm->_dialogs->show(20713);
-		else if (_action.isAction(words_look, words_spider))
+		else if (player_said_2(look, spider))
 			_vm->_dialogs->show(20714);
-		else if (_action.isAction(words_take, words_spider))
+		else if (player_said_2(take, spider))
 			_vm->_dialogs->show(20715);
 		else
 			return;

@@ -109,34 +109,34 @@ static void room_203_daemon() {
 }
 
 static void room_203_pre_parser() {
-	if (local._rhotundaEatFl && !_action.isAction(words_walk_towards, words_field_to_south)) {
+	if (local._rhotundaEatFl && !player_said_2(walk_towards, field_to_south)) {
 		_game._player.walk(Common::Point(158, 136), FACING_SOUTH);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(words_walkto, words_open_area_to_east))
+	if (player_said_2(walkto, open_area_to_east))
 		_game._player._walkOffScreenSceneId = 209;
 }
 
 static void room_203_parser() {
 	if (_action._savedFields._lookFlag) {
 		_vm->_dialogs->show(20307);
-	} else if (_action.isAction(words_walk_towards, words_field_to_south)) {
+	} else if (player_said_2(walk_towards, field_to_south)) {
 		_scene->_nextSceneId = 208;
-	} else if (_action.isAction(words_walk_towards, words_field_to_north)) {
+	} else if (player_said_2(walk_towards, field_to_north)) {
 		_scene->_nextSceneId = 202;
-	} else if (_action.isAction(words_look, words_sky)) {
+	} else if (player_said_2(look, sky)) {
 		_vm->_dialogs->show(20301);
-	} else if (_action.isAction(words_look, words_cliff_face)) {
+	} else if (player_said_2(look, cliff_face)) {
 		_vm->_dialogs->show(20302);
-	} else if (_action.isAction(words_look, words_palm_tree)) {
+	} else if (player_said_2(look, palm_tree)) {
 		_vm->_dialogs->show(20303);
-	} else if (_action.isAction(words_look, words_field_to_north)) {
+	} else if (player_said_2(look, field_to_north)) {
 		_vm->_dialogs->show(20304);
-	} else if (_action.isAction(words_look, words_grassy_field)) {
+	} else if (player_said_2(look, grassy_field)) {
 		_vm->_dialogs->show(20305);
-	} else if (_action.isAction(words_look, words_boulders)) {
+	} else if (player_said_2(look, boulders)) {
 		_vm->_dialogs->show(20305);
 	} else
 		return;

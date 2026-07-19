@@ -502,21 +502,21 @@ static void room_411_daemon() {
 }
 
 static void room_411_pre_parser() {
-	if (_action.isAction(words_look, words_petrox) && (_game._objects.isInRoom(OBJ_PETROX)))
+	if (player_said_2(look, petrox) && (_game._objects.isInRoom(OBJ_PETROX)))
 		_game._player._needToWalk = true;
 
-	if (_action.isAction(words_look, words_lecithin) && (_game._objects.isInRoom(OBJ_LECITHIN)))
+	if (player_said_2(look, lecithin) && (_game._objects.isInRoom(OBJ_LECITHIN)))
 		_game._player._needToWalk = true;
 
-	if (_action.isAction(words_look, words_formaldehyde) && (_game._objects.isInRoom(OBJ_FORMALDEHYDE)))
+	if (player_said_2(look, formaldehyde) && (_game._objects.isInRoom(OBJ_FORMALDEHYDE)))
 		_game._player._needToWalk = true;
 
-	if (_action.isAction(words_look, words_explosives) || _action.isAction(words_look, words_kettle) || _action.isAction(words_look, words_mishap) ||
-		_action.isAction(words_look, words_alcove) || _action.isAction(words_look, words_sink) || _action.isAction(words_put, words_sink) ||
-		_action.isAction(words_look, words_experiment) || _action.isAction(words_look, words_drawing_board))
+	if (player_said_2(look, explosives) || player_said_2(look, kettle) || player_said_2(look, mishap) ||
+		player_said_2(look, alcove) || player_said_2(look, sink) || player_said_2(put, sink) ||
+		player_said_2(look, experiment) || player_said_2(look, drawing_board))
 		_game._player._needToWalk = true;
 
-	if (_action.isAction(words_pull, words_knife_switch) || _action.isAction(words_push, words_knife_switch))
+	if (player_said_2(pull, knife_switch) || player_said_2(push, knife_switch))
 		_game._player._needToWalk = false;
 }
 
@@ -527,14 +527,14 @@ static void room_411_parser() {
 		return;
 	}
 
-	if (_action.isAction(words_walk_into, words_corridor_to_south)) {
+	if (player_said_2(walk_into, corridor_to_south)) {
 		_scene->_nextSceneId = 406;
 		_vm->_sound->command(10);
 		_action._inProgress = false;
 		return;
 	}
 
-	if ((_globals[kNextIngredient] >= 4) && (_action.isAction(words_take, words_explosives) || _action.isAction(words_put, words_charge_cases, words_explosives))
+	if ((_globals[kNextIngredient] >= 4) && (player_said_2(take, explosives) || player_said_3(put, charge_cases, explosives))
 		&& !_game._objects[OBJ_CHARGE_CASES].getQuality(3)
 		&& _game._objects.isInInventory(OBJ_CHARGE_CASES)) {
 		switch (_game._trigger) {
@@ -586,13 +586,13 @@ static void room_411_parser() {
 		}
 		_action._inProgress = false;
 		return;
-	} else if (!_game._objects.isInInventory(OBJ_CHARGE_CASES) && _action.isAction(words_take, words_explosives)) {
+	} else if (!_game._objects.isInInventory(OBJ_CHARGE_CASES) && player_said_2(take, explosives)) {
 		_vm->_dialogs->show(41143);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(words_take, words_petrox) && (_game._objects.isInRoom(OBJ_PETROX) || _game._trigger)) {
+	if (player_said_2(take, petrox) && (_game._objects.isInRoom(OBJ_PETROX) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
 			_vm->_sound->command(57);
@@ -629,7 +629,7 @@ static void room_411_parser() {
 		return;
 	}
 
-	if (_action.isAction(words_take, words_lecithin) && (_game._objects.isInRoom(OBJ_LECITHIN) || _game._trigger)) {
+	if (player_said_2(take, lecithin) && (_game._objects.isInRoom(OBJ_LECITHIN) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
 			_vm->_sound->command(57);
@@ -665,7 +665,7 @@ static void room_411_parser() {
 		return;
 	}
 
-	if (_action.isAction(words_take, words_formaldehyde) && _game._objects.isInRoom(OBJ_FORMALDEHYDE) && (_game._trigger == 0)) {
+	if (player_said_2(take, formaldehyde) && _game._objects.isInRoom(OBJ_FORMALDEHYDE) && (_game._trigger == 0)) {
 		_vm->_sound->command(57);
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
@@ -689,11 +689,11 @@ static void room_411_parser() {
 	if (_game._trigger == 10)
 		_vm->_dialogs->showItem(OBJ_FORMALDEHYDE, 41124);
 
-	if (_action.isAction(words_put) && _action.isTarget(words_kettle)) {
-		if (_action.isObject(words_petrox) ||
-			_action.isObject(words_formaldehyde) ||
-			_action.isObject(words_lecithin) ||
-			_action.isObject(words_alien_liquor)) {
+	if (player_said_1(put) && player_said_1(kettle)) {
+		if (player_said_1(petrox) ||
+			player_said_1(formaldehyde) ||
+			player_said_1(lecithin) ||
+			player_said_1(alien_liquor)) {
 			local._newIngredient = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
 			switch (local._newIngredient) {
 			case OBJ_ALIEN_LIQUOR:
@@ -719,67 +719,67 @@ static void room_411_parser() {
 	}
 
 
-	if (_action.isAction(words_look, words_monitor))
+	if (player_said_2(look, monitor))
 		_vm->_dialogs->show(41110);
-	else if (_action.isAction(words_look, words_air_purifier))
+	else if (player_said_2(look, air_purifier))
 		_vm->_dialogs->show(41111);
-	else if (_action.isAction(words_look, words_lab_equipment))
+	else if (player_said_2(look, lab_equipment))
 		_vm->_dialogs->show(41112);
-	else if (_action.isAction(words_look, words_knife_switch))
+	else if (player_said_2(look, knife_switch))
 		_vm->_dialogs->show(41113);
-	else if (_action.isAction(words_push, words_knife_switch) || _action.isAction(words_pull, words_knife_switch))
+	else if (player_said_2(push, knife_switch) || player_said_2(pull, knife_switch))
 		_vm->_dialogs->show(41114);
-	else if (_action.isAction(words_look, words_toxic_waste))
+	else if (player_said_2(look, toxic_waste))
 		_vm->_dialogs->show(41115);
-	else if (_action.isAction(words_take, words_toxic_waste))
+	else if (player_said_2(take, toxic_waste))
 		_vm->_dialogs->show(41116);
-	else if (_action.isAction(words_look, words_drawing_board))
+	else if (player_said_2(look, drawing_board))
 		_vm->_dialogs->show(41117);
-	else if (_action.isAction(words_look, words_experiment))
+	else if (player_said_2(look, experiment))
 		_vm->_dialogs->show(41118);
-	else if (_action.isAction(words_look, words_petrox) && _game._objects.isInRoom(OBJ_PETROX))
+	else if (player_said_2(look, petrox) && _game._objects.isInRoom(OBJ_PETROX))
 		_vm->_dialogs->show(41119);
-	else if (_action.isAction(words_look, words_alcove))
+	else if (player_said_2(look, alcove))
 		_vm->_dialogs->show(41121);
-	else if ((_action.isAction(words_look, words_formaldehyde)) && (_game._objects.isInRoom(OBJ_FORMALDEHYDE)))
+	else if ((player_said_2(look, formaldehyde)) && (_game._objects.isInRoom(OBJ_FORMALDEHYDE)))
 		_vm->_dialogs->show(41122);
-	else if ((_action.isAction(words_look, words_lecithin)) && (_game._objects.isInRoom(OBJ_LECITHIN)))
+	else if ((player_said_2(look, lecithin)) && (_game._objects.isInRoom(OBJ_LECITHIN)))
 		_vm->_dialogs->show(41123);
-	else if (_action.isAction(words_look, words_kettle)) {
+	else if (player_said_2(look, kettle)) {
 		if (_globals[kNextIngredient] > 0 && !_game._objects[OBJ_CHARGE_CASES].getQuality(3)) {
 			_vm->_dialogs->show(41126);
 		} else if (_globals[kNextIngredient] == 0 || _game._objects[OBJ_CHARGE_CASES].getQuality(3)) {
 			_vm->_dialogs->show(41125);
 		}
-	} else if (_action.isAction(words_look, words_explosives) && _game._objects[OBJ_CHARGE_CASES].getQuality(3) == 0) {
+	} else if (player_said_2(look, explosives) && _game._objects[OBJ_CHARGE_CASES].getQuality(3) == 0) {
 		_vm->_dialogs->show(41127);
-	} else if (_action.isAction(words_take, words_kettle))
+	} else if (player_said_2(take, kettle))
 		_vm->_dialogs->show(41128);
-	else if (_action.isAction(words_look, words_control_panel))
+	else if (player_said_2(look, control_panel))
 		_vm->_dialogs->show(41129);
-	else if (_action.isAction(words_look, words_mishap))
+	else if (player_said_2(look, mishap))
 		_vm->_dialogs->show(41130);
-	else if (_action.isAction(words_look, words_corridor_to_south))
+	else if (player_said_2(look, corridor_to_south))
 		_vm->_dialogs->show(41131);
 	else if (_action._lookFlag)
 		_vm->_dialogs->show(41132);
-	else if (_action.isAction(words_look, words_air_horn))
+	else if (player_said_2(look, air_horn))
 		_vm->_dialogs->show(41133);
-	else if (_action.isAction(words_look, words_debris))
+	else if (player_said_2(look, debris))
 		_vm->_dialogs->show(41134);
-	else if (_action.isAction(words_look, words_heater))
+	else if (player_said_2(look, heater))
 		_vm->_dialogs->show(41135);
-	else if (_action.isAction(words_look, words_pipe))
+	else if (player_said_2(look, pipe))
 		_vm->_dialogs->show(41136);
-	else if (_action.isAction(words_look, words_sink))
+	else if (player_said_2(look, sink))
 		_vm->_dialogs->show(41137);
-	else if (_action.isAction(words_put, words_sink))
+	else if (player_said_2(put, sink))
 		_vm->_dialogs->show(41138);
-	else if (_action.isAction(words_take, words_experiment))
+	else if (player_said_2(take, experiment))
 		_vm->_dialogs->show(41139);
-	else if (_action.isAction(words_look, words_electrodes))
+	else if (player_said_2(look, electrodes))
 		_vm->_dialogs->show(41140);
-	else if (_action.isAction(words_take, words_electrodes))
+	else if (player_said_2(take, electrodes))
 		_vm->_dialogs->show(41141);
 	else
 		return;

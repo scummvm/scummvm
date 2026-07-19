@@ -49,18 +49,18 @@ static void room_408_init() {
 }
 
 static void room_408_pre_parser() {
-	if ((_action.isAction(words_take) && !_action.isObject(words_target_module)) || _action.isAction(words_pull, words_pin) || _action.isAction(words_open, words_carton))
+	if ((player_said_1(take) && !player_said_1(target_module)) || player_said_2(pull, pin) || player_said_2(open, carton))
 		_game._player._needToWalk = false;
 
-	if ((_action.isAction(words_look, words_target_module) && _game._objects.isInRoom(OBJ_TARGET_MODULE)) || _action.isAction(words_look, words_chest))
+	if ((player_said_2(look, target_module) && _game._objects.isInRoom(OBJ_TARGET_MODULE)) || player_said_2(look, chest))
 		_game._player._needToWalk = true;
 }
 
 static void room_408_parser() {
-	if (_action.isAction(words_walk_into, words_corridor_to_south)) {
+	if (player_said_2(walk_into, corridor_to_south)) {
 		_scene->_nextSceneId = 405;
 		_vm->_sound->command(58);
-	} else if (_action.isAction(words_take, words_target_module) && (_game._objects.isInRoom(OBJ_TARGET_MODULE) || _game._trigger)) {
+	} else if (player_said_2(take, target_module) && (_game._objects.isInRoom(OBJ_TARGET_MODULE) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
 			_vm->_sound->command(57);
@@ -92,84 +92,84 @@ static void room_408_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_look, words_armored_vehicle))
+	} else if (player_said_2(look, armored_vehicle))
 		_vm->_dialogs->show(40810);
-	else if (_action.isAction(words_take, words_armored_vehicle) || _action.isAction(words_take, words_anvil) || _action.isAction(words_take, words_two_ton_weight))
+	else if (player_said_2(take, armored_vehicle) || player_said_2(take, anvil) || player_said_2(take, two_ton_weight))
 		_vm->_dialogs->show(40811);
-	else if (_action.isAction(words_look, words_missile))
+	else if (player_said_2(look, missile))
 		_vm->_dialogs->show(40812);
-	else if (_action.isAction(words_take, words_missile))
+	else if (player_said_2(take, missile))
 		_vm->_dialogs->show(40813);
-	else if (_action.isAction(words_look, words_grenade))
+	else if (player_said_2(look, grenade))
 		_vm->_dialogs->show(40814);
-	else if (_action.isAction(words_take, words_grenade))
+	else if (player_said_2(take, grenade))
 		_vm->_dialogs->show(40815);
-	else if (_action.isAction(words_take, words_pin) || _action.isAction(words_pull, words_pin))
+	else if (player_said_2(take, pin) || player_said_2(pull, pin))
 		_vm->_dialogs->show(40816);
-	else if (_action.isAction(words_look, words_blimp))
+	else if (player_said_2(look, blimp))
 		_vm->_dialogs->show(40817);
-	else if (_action.isAction(words_take, words_blimp))
+	else if (player_said_2(take, blimp))
 		_vm->_dialogs->show(40818);
-	else if (_action.isAction(words_look, words_ammunition))
+	else if (player_said_2(look, ammunition))
 		_vm->_dialogs->show(40819);
-	else if (_action.isAction(words_take, words_ammunition))
+	else if (player_said_2(take, ammunition))
 		_vm->_dialogs->show(40820);
-	else if (_action.isAction(words_look, words_catapult))
+	else if (player_said_2(look, catapult))
 		_vm->_dialogs->show(40821);
-	else if (_action.isAction(words_take, words_catapult))
+	else if (player_said_2(take, catapult))
 		_vm->_dialogs->show(40822);
-	else if (_action.isAction(words_look, words_chest)) {
+	else if (player_said_2(look, chest)) {
 		if (_game._objects.isInRoom(OBJ_TARGET_MODULE))
 			_vm->_dialogs->show(40823);
 		else
 			_vm->_dialogs->show(40824);
-	} else if (_action.isAction(words_take, words_chest))
+	} else if (player_said_2(take, chest))
 		_vm->_dialogs->show(40825);
-	else if (_action.isAction(words_look, words_suit_of_armor))
+	else if (player_said_2(look, suit_of_armor))
 		_vm->_dialogs->show(40826);
-	else if (_action.isAction(words_take, words_suit_of_armor))
+	else if (player_said_2(take, suit_of_armor))
 		_vm->_dialogs->show(40827);
-	else if (_action.isAction(words_look, words_escape_hatch))
+	else if (player_said_2(look, escape_hatch))
 		_vm->_dialogs->show(40828);
-	else if (_action.isAction(words_open, words_escape_hatch) || _action.isAction(words_pull, words_escape_hatch))
+	else if (player_said_2(open, escape_hatch) || player_said_2(pull, escape_hatch))
 		_vm->_dialogs->show(40829);
-	else if (_action.isAction(words_look, words_barrels))
+	else if (player_said_2(look, barrels))
 		_vm->_dialogs->show(40830);
-	else if (_action.isAction(words_take, words_barrels))
+	else if (player_said_2(take, barrels))
 		_vm->_dialogs->show(40831);
-	else if (_action.isAction(words_look, words_inflatable_raft))
+	else if (player_said_2(look, inflatable_raft))
 		_vm->_dialogs->show(40832);
-	else if (_action.isAction(words_take, words_inflatable_raft))
+	else if (player_said_2(take, inflatable_raft))
 		_vm->_dialogs->show(40833);
-	else if (_action.isAction(words_look, words_tomato))
+	else if (player_said_2(look, tomato))
 		_vm->_dialogs->show(40834);
-	else if (_action.isAction(words_take, words_tomato))
+	else if (player_said_2(take, tomato))
 		_vm->_dialogs->show(40835);
-	else if (_action.isAction(words_look, words_anvil))
+	else if (player_said_2(look, anvil))
 		_vm->_dialogs->show(40836);
-	else if (_action.isAction(words_look, words_two_ton_weight))
+	else if (player_said_2(look, two_ton_weight))
 		_vm->_dialogs->show(40837);
-	else if (_action.isAction(words_look, words_powder_container))
+	else if (player_said_2(look, powder_container))
 		_vm->_dialogs->show(40838);
-	else if (_action.isAction(words_look, words_powder_puff))
+	else if (player_said_2(look, powder_puff))
 		_vm->_dialogs->show(40839);
-	else if (_action.isAction(words_take, words_powder_puff))
+	else if (player_said_2(take, powder_puff))
 		_vm->_dialogs->show(40840);
-	else if (_action.isAction(words_look, words_carton))
+	else if (player_said_2(look, carton))
 		_vm->_dialogs->show(40841);
-	else if (_action.isAction(words_take, words_carton))
+	else if (player_said_2(take, carton))
 		_vm->_dialogs->show(40842);
-	else if (_action.isAction(words_open, words_carton))
+	else if (player_said_2(open, carton))
 		_vm->_dialogs->show(40843);
-	else if (_action.isAction(words_look, words_corridor_to_south))
+	else if (player_said_2(look, corridor_to_south))
 		_vm->_dialogs->show(40844);
 	else if (_action._lookFlag)
 		_vm->_dialogs->show(40845);
-	else if (_action.isAction(words_look, words_target_module) && _game._objects.isInRoom(OBJ_TARGET_MODULE))
+	else if (player_said_2(look, target_module) && _game._objects.isInRoom(OBJ_TARGET_MODULE))
 		_vm->_dialogs->show(40846);
-	else if (_action.isAction(words_look, words_loading_ramp))
+	else if (player_said_2(look, loading_ramp))
 		_vm->_dialogs->show(40848);
-	else if (_action.isAction(words_open, words_chest))
+	else if (player_said_2(open, chest))
 		_vm->_dialogs->show(40849);
 	else
 		return;

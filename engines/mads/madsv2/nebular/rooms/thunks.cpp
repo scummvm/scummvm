@@ -45,18 +45,6 @@ Globals _globals;
 Scene _scene;
 VM _vm;
 
-bool Action::isAction(int word1) const {
-	return player_parse(word1, 0);
-}
-
-bool Action::isAction(int word1, int word2) const {
-	return player_parse(word1, word2, 0);
-}
-
-bool Action::isAction(int word1, int word2, int word3) const {
-	return player_parse(word1, word2, word3, 0);
-}
-
 void Game::Objects::addToInventory(int object_id) {
 	inter_give_to_player(object_id);
 }

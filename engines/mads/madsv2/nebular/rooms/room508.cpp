@@ -100,7 +100,7 @@ static void room_508_init() {
 }
 
 static void room_508_pre_parser() {
-	if (_action.isAction(words_walk, words_outside))
+	if (player_said_2(walk, outside))
 		_game._player._walkOffScreenSceneId = 506;
 }
 
@@ -158,7 +158,7 @@ static void handlePedestral() {
 }
 
 static void room_508_parser() {
-	if (_action.isAction(words_pull, words_lever)) {
+	if (player_said_2(pull, lever)) {
 		if (!_globals[kLaserOn]) {
 			switch (_game._trigger) {
 			case 0:
@@ -224,60 +224,60 @@ static void room_508_parser() {
 		} else {
 			_vm->_dialogs->show(50837);
 		}
-	} else if (_action.isAction(words_reflect, words_rearview_mirror, words_laser_beam) || _action.isAction(words_put, words_rearview_mirror, words_pedestal) || _action.isAction(words_put, words_rearview_mirror, words_laser_beam)) {
+	} else if (player_said_3(reflect, rearview_mirror, laser_beam) || player_said_3(put, rearview_mirror, pedestal) || player_said_3(put, rearview_mirror, laser_beam)) {
 		local._chosenObject = 1;
 		handlePedestral();
-	} else if (_action.isAction(words_put, words_compact_case, words_pedestal) || _action.isAction(words_put, words_compact_case, words_laser_beam) || _action.isAction(words_reflect, words_compact_case, words_laser_beam)) {
+	} else if (player_said_3(put, compact_case, pedestal) || player_said_3(put, compact_case, laser_beam) || player_said_3(reflect, compact_case, laser_beam)) {
 		local._chosenObject = 2;
 		handlePedestral();
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(50822);
-	else if (_action.isAction(words_look, words_target_area))
+	else if (player_said_2(look, target_area))
 		_vm->_dialogs->show(50810);
-	else if (_action.isAction(words_look, words_spinach_patch_doll))
+	else if (player_said_2(look, spinach_patch_doll))
 		_vm->_dialogs->show(50811);
-	else if (_action.isAction(words_take, words_spinach_patch_doll))
+	else if (player_said_2(take, spinach_patch_doll))
 		_vm->_dialogs->show(50812);
-	else if (_action.isAction(words_look, words_sand_bags))
+	else if (player_said_2(look, sand_bags))
 		_vm->_dialogs->show(50816);
-	else if (_action.isAction(words_take, words_sand_bags))
+	else if (player_said_2(take, sand_bags))
 		_vm->_dialogs->show(50817);
-	else if (_action.isAction(words_look, words_control_station))
+	else if (player_said_2(look, control_station))
 		_vm->_dialogs->show(50818);
-	else if (_action.isAction(words_look, words_monitor)) {
+	else if (player_said_2(look, monitor)) {
 		if (_globals[kLaserOn])
 			_vm->_dialogs->show(50820);
 		else
 			_vm->_dialogs->show(50819);
-	} else if (_action.isAction(words_look, words_laser_cannon)) {
+	} else if (player_said_2(look, laser_cannon)) {
 		if (_globals[kLaserOn])
 			_vm->_dialogs->show(50822);
 		else
 			_vm->_dialogs->show(50821);
-	} else if (_action.isAction(words_take, words_laser_cannon))
+	} else if (player_said_2(take, laser_cannon))
 		_vm->_dialogs->show(50823);
-	else if (_action.isAction(words_look, words_lever)) {
+	else if (player_said_2(look, lever)) {
 		if (_globals[kLaserOn])
 			_vm->_dialogs->show(50825);
 		else
 			_vm->_dialogs->show(50824);
-	} else if (_action.isAction(words_push, words_lever))
+	} else if (player_said_2(push, lever))
 		_vm->_dialogs->show(50826);
-	else if (_action.isAction(words_look, words_laser_beam)) {
+	else if (player_said_2(look, laser_beam)) {
 		if (_globals[kLaserHoleIsThere])
 			_vm->_dialogs->show(50828);
 		else
 			_vm->_dialogs->show(50827);
-	} else if (_action.isAction(words_take, words_laser_beam))
+	} else if (player_said_2(take, laser_beam))
 		_vm->_dialogs->show(50829);
-	else if (_action.isAction(words_look, words_ceiling)) {
+	else if (player_said_2(look, ceiling)) {
 		if (_globals[kLaserHoleIsThere])
 			_vm->_dialogs->show(50831);
 		else
 			_vm->_dialogs->show(50830);
-	} else if (_action.isAction(words_look, words_wall))
+	} else if (player_said_2(look, wall))
 		_vm->_dialogs->show(50832);
-	else if (_action.isAction(words_look, words_pedestal)) {
+	else if (player_said_2(look, pedestal)) {
 		if (!_globals[kLaserOn])
 			_vm->_dialogs->show(50813);
 		else if (!_globals[kLaserHoleIsThere])

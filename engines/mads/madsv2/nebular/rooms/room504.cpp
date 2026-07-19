@@ -142,10 +142,10 @@ static void room_504_pre_parser() {
 }
 
 static void room_504_parser() {
-	if (_action.isAction(words_exit_from, words_car)) {
+	if (player_said_2(exit_from, car)) {
 		_vm->_sound->command(15);
 		_scene->_nextSceneId = _globals[kHoverCarLocation];
-	} else if (_action.isAction(words_activate, words_car_controls)) {
+	} else if (player_said_2(activate, car_controls)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -204,27 +204,27 @@ static void room_504_parser() {
 		default:
 			break;
 		}
-	} else if (_action._lookFlag || _action.isAction(words_look, words_interior_of_car))
+	} else if (_action._lookFlag || player_said_2(look, interior_of_car))
 		_vm->_dialogs->show(50412);
-	else if (_action.isAction(words_look, words_glove_compartment))
+	else if (player_said_2(look, glove_compartment))
 		_vm->_dialogs->show(50410);
-	else if (_action.isAction(words_look, words_car_controls) || _action.isAction(words_look, words_dashboard))
+	else if (player_said_2(look, car_controls) || player_said_2(look, dashboard))
 		_vm->_dialogs->show(50411);
-	else if (_action.isAction(words_look, words_scent_packet))
+	else if (player_said_2(look, scent_packet))
 		_vm->_dialogs->show(50413);
-	else if (_action.isAction(words_look, words_soda_cans))
+	else if (player_said_2(look, soda_cans))
 		_vm->_dialogs->show(50414);
-	else if (_action.isAction(words_look, words_kitty))
+	else if (player_said_2(look, kitty))
 		_vm->_dialogs->show(50415);
-	else if (_action.isAction(words_look, words_windshield) || _action.isAction(words_look_through, words_windshield))
+	else if (player_said_2(look, windshield) || player_said_2(look_through, windshield))
 		_vm->_dialogs->show(50416);
-	else if (_action.isAction(words_look, words_rearview_mirror))
+	else if (player_said_2(look, rearview_mirror))
 		_vm->_dialogs->show(50417);
-	else if (_action.isAction(words_take, words_rearview_mirror))
+	else if (player_said_2(take, rearview_mirror))
 		_vm->_dialogs->show(50418);
-	else if (_action.isAction(words_look, words_moldy_sock))
+	else if (player_said_2(look, moldy_sock))
 		_vm->_dialogs->show(50419);
-	else if (_action.isAction(words_take, words_moldy_sock))
+	else if (player_said_2(take, moldy_sock))
 		_vm->_dialogs->show(50420);
 	else
 		return;

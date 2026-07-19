@@ -103,39 +103,39 @@ static void room_805_pre_parser() {
 }
 
 static void room_805_parser() {
-	if (_action.isAction(words_exit, words_service_panel))
+	if (player_said_2(exit, service_panel))
 		_scene->_nextSceneId = 804;
-	else if (_action.isAction(words_install, words_shield_modulator) && _game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) {
+	else if (player_said_2(install, shield_modulator) && _game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], -1, -2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 		_game._player._stepEnabled = false;
-	} else if (_action.isAction(words_install, words_target_module) && _game._objects.isInInventory(OBJ_TARGET_MODULE)) {
+	} else if (player_said_2(install, target_module) && _game._objects.isInInventory(OBJ_TARGET_MODULE)) {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], -1, -2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
 		_game._player._stepEnabled = false;
-	} else if (_action.isAction(words_remove, words_shield_modulator) && _globals[kShieldModInstalled]) {
+	} else if (player_said_2(remove, shield_modulator) && _globals[kShieldModInstalled]) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], -1, -2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 		_game._player._stepEnabled = false;
-	} else if (_action.isAction(words_remove, words_target_module) && _globals[kTargetModInstalled]) {
+	} else if (player_said_2(remove, target_module) && _globals[kTargetModInstalled]) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], -1, -2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
 		_game._player._stepEnabled = false;
-	} else if (_action.isAction(words_install, words_shield_modulator) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR))
+	} else if (player_said_2(install, shield_modulator) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR))
 		_vm->_dialogs->show(80511);
-	else if (_action.isAction(words_install, words_target_module) && !_game._objects.isInInventory(OBJ_TARGET_MODULE))
+	else if (player_said_2(install, target_module) && !_game._objects.isInInventory(OBJ_TARGET_MODULE))
 		_vm->_dialogs->show(80510);
-	else if (_action.isAction(words_remove, words_life_support_module))
+	else if (player_said_2(remove, life_support_module))
 		_vm->_dialogs->show(80512);
 	else
 		return;

@@ -161,7 +161,7 @@ static void room_612_daemon() {
 }
 
 static void room_612_parser() {
-	if (_action.isAction(words_get_inside, words_car)) {
+	if (player_said_2(get_inside, car)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -201,41 +201,41 @@ static void room_612_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_unlock, words_padlock_key, words_control_box)) {
+	} else if (player_said_3(unlock, padlock_key, control_box)) {
 		local._cycleIndex = -2;
 		local._actionMode = 1;
 		handleWinchMovement();
-	} else if (_action._lookFlag || _action.isAction(words_look, words_expressway))
+	} else if (_action._lookFlag || player_said_2(look, expressway))
 		_vm->_dialogs->show(61210);
-	else if (_action.isAction(words_look, words_rope) || _action.isAction(words_look, words_armature)) {
+	else if (player_said_2(look, rope) || player_said_2(look, armature)) {
 		if (_globals[kBoatRaised])
 			_vm->_dialogs->show(61211);
 		else
 			_vm->_dialogs->show(61212);
-	} else if (_action.isAction(words_take, words_rope))
+	} else if (player_said_2(take, rope))
 		_vm->_dialogs->show(61213);
-	else if (_action.isAction(words_look, words_control_box)) {
+	else if (player_said_2(look, control_box)) {
 		if (_globals[kBoatRaised])
 			_vm->_dialogs->show(61214);
 		else
 			_vm->_dialogs->show(61216);
-	} else if (_action.isAction(words_open, words_control_box))
+	} else if (player_said_2(open, control_box))
 		_vm->_dialogs->show(61215);
-	else if (_action.isAction(words_look, words_buildings))
+	else if (player_said_2(look, buildings))
 		_vm->_dialogs->show(61218);
-	else if (_action.isAction(words_look, words_dome))
+	else if (player_said_2(look, dome))
 		_vm->_dialogs->show(61219);
-	else if (_action.isAction(words_look, words_statue))
+	else if (player_said_2(look, statue))
 		_vm->_dialogs->show(61220);
-	else if (_action.isAction(words_look, words_maintenance_building))
+	else if (player_said_2(look, maintenance_building))
 		_vm->_dialogs->show(61221);
-	else if (_action.isAction(words_open, words_maintenance_building))
+	else if (player_said_2(open, maintenance_building))
 		_vm->_dialogs->show(61222);
-	else if (_action.isAction(words_look, words_wall))
+	else if (player_said_2(look, wall))
 		_vm->_dialogs->show(61223);
-	else if (_action.isAction(words_look, words_support))
+	else if (player_said_2(look, support))
 		_vm->_dialogs->show(61224);
-	else if (_action.isAction(words_walk_down, words_expressway_to_east) || _action.isAction(words_walk_down, words_expressway_to_west))
+	else if (player_said_2(walk_down, expressway_to_east) || player_said_2(walk_down, expressway_to_west))
 		_vm->_dialogs->show(61225);
 	else
 		return;

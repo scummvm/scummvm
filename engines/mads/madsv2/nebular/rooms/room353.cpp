@@ -55,25 +55,25 @@ static void room_353_init() {
 static void room_353_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(35315);
-	else if (_action.isAction(words_walk_through, words_doorway))
+	else if (player_said_2(walk_through, doorway))
 		_scene->_nextSceneId = 352;
-	else if (_action.isAction(words_walk_down, words_corridor_to_south))
+	else if (player_said_2(walk_down, corridor_to_south))
 		_scene->_nextSceneId = 354;
-	else if (_action.isAction(words_look, words_rock_chunk))
+	else if (player_said_2(look, rock_chunk))
 		_vm->_dialogs->show(35310);
-	else if (_action.isAction(words_look, words_pipes) || _action.isAction(words_look, words_pipe))
+	else if (player_said_2(look, pipes) || player_said_2(look, pipe))
 		_vm->_dialogs->show(35311);
-	else if (_action.isAction(words_look, words_broken_beam))
+	else if (player_said_2(look, broken_beam))
 		_vm->_dialogs->show(35312);
-	else if (_action.isAction(words_look, words_doorway))
+	else if (player_said_2(look, doorway))
 		_vm->_dialogs->show(35313);
-	else if (_action.isAction(words_look, words_corridor_to_south))
+	else if (player_said_2(look, corridor_to_south))
 		_vm->_dialogs->show(35314);
-	else if (_action.isAction(words_look, words_floor))
+	else if (player_said_2(look, floor))
 		_vm->_dialogs->show(35316);
-	else if (_action.isAction(words_look, words_ceiling))
+	else if (player_said_2(look, ceiling))
 		_vm->_dialogs->show(35317);
-	else if (_action.isAction(words_look, words_wall))
+	else if (player_said_2(look, wall))
 		_vm->_dialogs->show(35318);
 	else
 		return;

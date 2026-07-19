@@ -384,7 +384,7 @@ static void room_316_daemon() {
 }
 
 static void room_316_pre_parser() {
-	if (_action.isAction(words_walk_down, words_corridor_to_east)) {
+	if (player_said_2(walk_down, corridor_to_east)) {
 		if (_globals[kAfterHavoc])
 			_game._player._walkOffScreenSceneId = 354;
 		else
@@ -393,12 +393,12 @@ static void room_316_pre_parser() {
 }
 
 static void room_316_parser() {
-	if (_action.isAction(words_climb_into, words_air_vent)) {
+	if (player_said_2(climb_into, air_vent)) {
 		if (_globals[kSexOfRex] == REX_FEMALE)
 			handleRoxInGrate();
 		else
 			handleRexInGrate();
-	} else if (_action.isAction(words_walk_up, words_ramp) || _action.isAction(words_walk_onto, words_platform)) {
+	} else if (player_said_2(walk_up, ramp) || player_said_2(walk_onto, platform)) {
 		switch (_game._trigger) {
 		case 0:
 			if (_globals[kCityFlooded]) {
@@ -452,35 +452,35 @@ static void room_316_parser() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(words_look, words_platform))
+	} else if (player_said_2(look, platform))
 		_vm->_dialogs->show(31610);
-	else if (_action.isAction(words_look, words_strange_device)) {
+	else if (player_said_2(look, strange_device)) {
 		if (_game._visitedScenes.exists(321))
 			_vm->_dialogs->show(31612);
 		else
 			_vm->_dialogs->show(31611);
-	} else if (_action.isAction(words_look, words_controls))
+	} else if (player_said_2(look, controls))
 		_vm->_dialogs->show(31613);
-	else if (_action.isAction(words_look, words_equipment))
+	else if (player_said_2(look, equipment))
 		_vm->_dialogs->show(31614);
-	else if (_action.isAction(words_look, words_panel))
+	else if (player_said_2(look, panel))
 		_vm->_dialogs->show(31615);
-	else if (_action.isAction(words_look, words_monitor))
+	else if (player_said_2(look, monitor))
 		_vm->_dialogs->show(31616);
-	else if (_action.isAction(words_look, words_ramp))
+	else if (player_said_2(look, ramp))
 		_vm->_dialogs->show(31617);
-	else if (_action.isAction(words_look, words_air_vent))
+	else if (player_said_2(look, air_vent))
 		_vm->_dialogs->show(31618);
-	else if (_action.isAction(words_look, words_corridor_to_east)) {
+	else if (player_said_2(look, corridor_to_east)) {
 		if (!_globals[kAfterHavoc]) {
 			if (_game._difficulty != DIFFICULTY_EASY)
 				_vm->_dialogs->show(31620);
 			else
 				_vm->_dialogs->show(31619);
 		}
-	} else if (_action.isAction(words_look, words_floor))
+	} else if (player_said_2(look, floor))
 		_vm->_dialogs->show(31621);
-	else if (_action.isAction(words_look, words_support))
+	else if (player_said_2(look, support))
 		_vm->_dialogs->show(31622);
 	else
 		return;

@@ -47,31 +47,31 @@ static void room_360_init() {
 }
 
 static void room_360_pre_parser() {
-	if (_action.isAction(words_walk_down, words_corridor_to_east))
+	if (player_said_2(walk_down, corridor_to_east))
 		_game._player._walkOffScreenSceneId = 359;
 
-	if (_action.isAction(words_walk_down, words_corridor_to_west))
+	if (player_said_2(walk_down, corridor_to_west))
 		_game._player._walkOffScreenSceneId = 361;
 }
 
 static void room_360_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(36015);
-	else if (_action.isAction(words_look, words_corridor_to_west))
+	else if (player_said_2(look, corridor_to_west))
 		_vm->_dialogs->show(36010);
-	else if (_action.isAction(words_look, words_corridor_to_east))
+	else if (player_said_2(look, corridor_to_east))
 		_vm->_dialogs->show(36011);
-	else if (_action.isAction(words_look, words_bed))
+	else if (player_said_2(look, bed))
 		_vm->_dialogs->show(36012);
-	else if (_action.isAction(words_look, words_sink))
+	else if (player_said_2(look, sink))
 		_vm->_dialogs->show(36013);
-	else if (_action.isAction(words_look, words_toilet))
+	else if (player_said_2(look, toilet))
 		_vm->_dialogs->show(36014);
-	else if (_action.isAction(words_look, words_air_vent))
+	else if (player_said_2(look, air_vent))
 		_vm->_dialogs->show(36016);
-	else if (_action.isAction(words_look, words_corridor))
+	else if (player_said_2(look, corridor))
 		_vm->_dialogs->show(36017);
-	else if (_action.isAction(words_look, words_wall))
+	else if (player_said_2(look, wall))
 		_vm->_dialogs->show(36018);
 	else
 		return;

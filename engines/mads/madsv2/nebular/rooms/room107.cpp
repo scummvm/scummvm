@@ -95,17 +95,17 @@ static void room_107_daemon() {
 }
 
 static void room_107_pre_parser() {
-	if (_action.isAction(words_swim_towards, words_open_area_to_west))
+	if (player_said_2(swim_towards, open_area_to_west))
 		_game._player._walkOffScreenSceneId = 106;
 
-	if (_action.isAction(words_swim_towards, words_open_area_to_south))
+	if (player_said_2(swim_towards, open_area_to_south))
 		_game._player._walkOffScreenSceneId = 108;
 }
 
 static void room_107_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(10708);
-	else if (_action.isAction(words_take, words_dead_fish) && _globals[kFishIn107]) {
+	else if (player_said_2(take, dead_fish) && _globals[kFishIn107]) {
 		if (_game._objects.isInInventory(OBJ_DEAD_FISH)) {
 			int randVal = _vm->getRandomNumber(74, 76);
 			_scene->_kernelMessages.reset();
@@ -116,25 +116,25 @@ static void room_107_parser() {
 			_globals[kFishIn107] = false;
 			_vm->_dialogs->showItem(OBJ_DEAD_FISH, 802);
 		}
-	} else if (_action.isAction(words_swim_towards, words_northern_sea_cliff))
+	} else if (player_said_2(swim_towards, northern_sea_cliff))
 		_scene->_nextSceneId = 105;
-	else if (_action.isAction(words_look, words_northern_sea_cliff))
+	else if (player_said_2(look, northern_sea_cliff))
 		_vm->_dialogs->show(10701);
-	else if (_action.isAction(words_look, words_dead_fish) && (_action._mainObjectSource == CAT_HOTSPOT))
+	else if (player_said_2(look, dead_fish) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(10702);
-	else if (_action.isAction(words_look, words_bush_like_formation))
+	else if (player_said_2(look, bush_like_formation))
 		_vm->_dialogs->show(10703);
-	else if (_action.isAction(words_look, words_rock))
+	else if (player_said_2(look, rock))
 		_vm->_dialogs->show(10704);
-	else if (_action.isAction(words_look, words_seaweed))
+	else if (player_said_2(look, seaweed))
 		_vm->_dialogs->show(10705);
-	else if (_action.isAction(words_look, words_open_area_to_south))
+	else if (player_said_2(look, open_area_to_south))
 		_vm->_dialogs->show(10706);
-	else if (_action.isAction(words_look, words_cliff_face))
+	else if (player_said_2(look, cliff_face))
 		_vm->_dialogs->show(10707);
-	else if (_action.isAction(words_look, words_manta_ray))
+	else if (player_said_2(look, manta_ray))
 		_vm->_dialogs->show(10709);
-	else if (_action.isAction(words_take, words_manta_ray))
+	else if (player_said_2(take, manta_ray))
 		_vm->_dialogs->show(10710);
 	else
 		return;

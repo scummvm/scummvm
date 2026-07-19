@@ -199,13 +199,13 @@ static void room_801_daemon() {
 }
 
 static void room_801_pre_parser() {
-	if (_action.isAction(words_look, words_control_panel)) {
+	if (player_said_2(look, control_panel)) {
 		_game._player.walk(Common::Point(148, 110), FACING_NORTH);
 		_game._player._needToWalk = true;
 		_game._player._readyToWalk = true;
 	}
 
-	if (_action.isAction(words_walk_inside, words_teleporter) && _globals[kBeamIsUp]) {
+	if (player_said_2(walk_inside, teleporter) && _globals[kBeamIsUp]) {
 		_globals[kCutX] = _game._player._playerPos.x;
 		_globals[kCutY] = _game._player._playerPos.y;
 		_globals[kCutFacing] = _game._player._facing;
@@ -216,13 +216,13 @@ static void room_801_pre_parser() {
 }
 
 static void room_801_parser() {
-	if (_action.isAction(words_look, words_control_panel))
+	if (player_said_2(look, control_panel))
 		_scene->_nextSceneId = 808;
-	else if (_action.isAction(words_walk_inside, words_teleporter)) {
+	else if (player_said_2(walk_inside, teleporter)) {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_scene->_nextSceneId = 807;
-	} else if (_action.isAction(words_walk_through, words_door) && (_game._player._playerPos == Common::Point(270, 118))) {
+	} else if (player_said_2(walk_through, door) && (_game._player._playerPos == Common::Point(270, 118))) {
 		_game._player._stepEnabled = false;
 		_game._player._facing = FACING_EAST;
 		_game._player.selectSeries();
@@ -234,21 +234,21 @@ static void room_801_parser() {
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 5);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 13);
 		_vm->_sound->command(11);
-	} else if (_action.isAction(words_look, words_ceiling))
+	} else if (player_said_2(look, ceiling))
 		_vm->_dialogs->show(80110);
-	else if (_action.isAction(words_look, words_monitor))
+	else if (player_said_2(look, monitor))
 		_vm->_dialogs->show(80111);
-	else if (_action.isAction(words_look, words_teleporter))
+	else if (player_said_2(look, teleporter))
 		_vm->_dialogs->show(80112);
-	else if (_action.isAction(words_look, words_equipment) || _action._lookFlag)
+	else if (player_said_2(look, equipment) || _action._lookFlag)
 		_vm->_dialogs->show(80113);
-	else if (_action.isAction(words_look, words_speaker))
+	else if (player_said_2(look, speaker))
 		_vm->_dialogs->show(80114);
-	else if (_action.isAction(words_look, words_eye_chart))
+	else if (player_said_2(look, eye_chart))
 		_vm->_dialogs->show(80115);
-	else if (_action.isAction(words_look, words_wall))
+	else if (player_said_2(look, wall))
 		_vm->_dialogs->show(80116);
-	else if (_action.isAction(words_look, words_door))
+	else if (player_said_2(look, door))
 		_vm->_dialogs->show(80117);
 	else
 		return;

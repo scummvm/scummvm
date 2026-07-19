@@ -74,13 +74,13 @@ static void room_407_daemon() {
 }
 
 static void room_407_pre_parser() {
-	if (_action.isAction(words_take))
+	if (player_said_1(take))
 		_game._player._needToWalk = false;
 
-	if (_action.isAction(words_look, words_door))
+	if (player_said_2(look, door))
 		_game._player._needToWalk = true;
 
-	if (_action.isAction(words_walk_down, words_corridor_to_north)) {
+	if (player_said_2(walk_down, corridor_to_north)) {
 		_game._player.walk(Common::Point(172, 91), FACING_NORTH);
 		local._fromNorth = false;
 	}
@@ -121,20 +121,20 @@ static void room_407_parser() {
 		}
 	}
 
-	if (_action.isAction(words_walk_down, words_corridor_to_south) && !local._fromNorth)
+	if (player_said_2(walk_down, corridor_to_south) && !local._fromNorth)
 		_scene->_nextSceneId = 406;
-	else if (_action.isAction(words_walk_down, words_corridor_to_north))
+	else if (player_said_2(walk_down, corridor_to_north))
 		_scene->_nextSceneId = 318;
-	else if (_action.isAction(words_look, words_scanner)) {
+	else if (player_said_2(look, scanner)) {
 		if (_globals[kHasBeenScanned])
 			_vm->_dialogs->show(40711);
 		else
 			_vm->_dialogs->show(40710);
-	} else if (_action.isAction(words_look, words_door))
+	} else if (player_said_2(look, door))
 		_vm->_dialogs->show(40712);
-	else if (_action.isAction(words_look, words_corridor_to_south))
+	else if (player_said_2(look, corridor_to_south))
 		_vm->_dialogs->show(40713);
-	else if (_action.isAction(words_look, words_corridor_to_north))
+	else if (player_said_2(look, corridor_to_north))
 		_vm->_dialogs->show(40714);
 	else if (_action._lookFlag)
 		_vm->_dialogs->show(40715);
