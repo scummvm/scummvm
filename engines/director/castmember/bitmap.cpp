@@ -827,7 +827,11 @@ void BitmapCastMember::load() {
 
 	// dumpFile("LoadedBitmap", _castId, MKTAG('B', 'I', 'T', 'D'), (byte *)img->getSurface()->getPixels(), img->getSurface()->h * img->getSurface()->w);
 
+	// setPicture() marks us dirty so the renderer refreshes, but loading
+	// itself is not a runtime change: restore the change-tracking state
+	bool wasChanged = _isChanged;
 	setPicture(*img, true);
+	_isChanged = wasChanged;
 
 	if (ConfMan.getBool("dump_scripts")) {
 
