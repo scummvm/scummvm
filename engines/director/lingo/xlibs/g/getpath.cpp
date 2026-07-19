@@ -90,8 +90,6 @@ void GetPathXObj::close(ObjectType type) {
 }
 
 void GetPathXObj::m_new(int nargs) {
-	GetPathXObject *me = static_cast<GetPathXObject *>(g_lingo->_state->me.u.obj);
-
 	debugC(5, kDebugLingoExec, "GetPathXObj::m_new");
 
 	// Return the object instance
