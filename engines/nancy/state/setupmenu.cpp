@@ -129,7 +129,7 @@ void SetupMenu::init() {
 
 	_background.registerGraphics();
 
-	g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
+	g_nancy->_cursor->setCursorType(g_nancy->getGameType() >= kGameTypeNancy10 ? CursorManager::kHotspotArrow : CursorManager::kNormalArrow);
 	g_nancy->setMouseEnabled(true);
 
 	g_nancy->_sound->stopSound("MSND");
@@ -234,7 +234,7 @@ void SetupMenu::run() {
 		}
 	}
 
-	g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
+	g_nancy->_cursor->setCursorType(g_nancy->getGameType() >= kGameTypeNancy10 ? CursorManager::kHotspotArrow : CursorManager::kNormalArrow);
 }
 
 void SetupMenu::stop() {

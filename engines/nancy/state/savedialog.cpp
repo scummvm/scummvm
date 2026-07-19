@@ -55,7 +55,7 @@ void SaveDialog::process() {
 		break;
 	}
 
-	g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
+	g_nancy->_cursor->setCursorType(g_nancy->getGameType() >= kGameTypeNancy10 ? CursorManager::kHotspotArrow : CursorManager::kNormalArrow);
 }
 
 void SaveDialog::onStateEnter(const NancyState::NancyState prevState) {
