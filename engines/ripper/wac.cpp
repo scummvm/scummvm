@@ -121,8 +121,10 @@ static void blitBitmap(Graphics::Surface *screen, const BitmapAssetFrame &bitmap
 WacManager::WacManager(RipperEngine *engine) : _engine(engine), _hoveredControl(-1),
 		_pressedControl(-1), _databaseSelection(0), _databaseFirstVisible(0),
 		_databaseStillImageScroll(0), _databaseScrollControl(0),
+		_databaseTextScrollControl(0), _databaseTextScrollDragOffset(0),
 		_idleWindowLastMillis(0), _databaseCornerLastMillis(0),
-		_databaseCornerAlternate(false), _initialized(false) {
+		_databaseCornerAlternate(false), _databaseTextScrollDragging(false),
+		_initialized(false) {
 	_idleWindowFrame[0] = 0;
 	_idleWindowFrame[1] = 0;
 }
@@ -268,7 +270,7 @@ void WacManager::serviceIdleEffects() {
 	serviceIdleWindowAnimations();
 }
 
-void WacManager::serviceDatabaseCornerAnimation() {
+void WacManager::serviceDatabaseCornerAnimation(bool textPanelActive) {
 	const uint32 now = g_system->getMillis(true);
 	if (now - _databaseCornerLastMillis < kWacDatabaseCornerInterval ||
 		_databaseSkin.size() < kWacDatabaseSkinFrameCount)
@@ -276,9 +278,13 @@ void WacManager::serviceDatabaseCornerAnimation() {
 
 	drawBitmap(_databaseSkin[_databaseCornerAlternate ? 15 : 0],
 		kWacDatabaseLeft, kWacDatabaseTop);
+	if (textPanelActive)
+		drawBitmap(_databaseSkin[_databaseCornerAlternate ? 15 : 0],
+			kWacMediaLeft, kWacMediaTop);
 	debugC(11, kDebugWac,
-		"Ripper: WAC database corner frame=%u position=%d,%d",
-		_databaseCornerAlternate ? 15 : 0, kWacDatabaseLeft, kWacDatabaseTop);
+		"Ripper: WAC chooser corners frame=%u database=%d,%d textPanel=%d",
+		_databaseCornerAlternate ? 15 : 0, kWacDatabaseLeft, kWacDatabaseTop,
+		textPanelActive);
 	_databaseCornerAlternate = !_databaseCornerAlternate;
 	_databaseCornerLastMillis = now;
 	_engine->getCursor()->refresh();
@@ -754,8 +760,89 @@ uint16 WacManager::serviceDatabaseMediaInput(byte activeEntryIndex,
 				mouse.wheel, *textFirstVisible, textMaximumFirstVisible);
 		}
 	}
+	if (textFirstVisible) {
+		const Common::Rect textBounds(kWacMediaLeft, kWacMediaTop,
+			kWacMediaLeft + kWacTextPanelWidth,
+			kWacMediaTop + kWacTextPanelHeight);
+		ModalDialogManager *modal = _engine->getModalDialog();
+		const ModalDialogManager::TextPanelScrollControl scrollControl =
+			modal->findTextPanelScrollControl(textBounds, mouse.position,
+				*textFirstVisible, textMaximumFirstVisible,
+				ModalDialogManager::kWacPresentation);
+		if ((int)scrollControl != _databaseTextScrollControl) {
+			_databaseTextScrollControl = scrollControl;
+			redrawText = true;
+			debugC(3, kDebugWac,
+				"Ripper: WAC database text scroll hover control=%d point=%d,%d",
+				_databaseTextScrollControl, mouse.position.x, mouse.position.y);
+		}
+
+		const Common::Rect thumbBounds = modal->textPanelScrollControlBounds(
+			textBounds, ModalDialogManager::kTextPanelScrollThumb,
+			*textFirstVisible, textMaximumFirstVisible,
+			ModalDialogManager::kWacPresentation);
+		const Common::Rect trackBounds = modal->textPanelScrollControlBounds(
+			textBounds, ModalDialogManager::kTextPanelScrollTrack,
+			*textFirstVisible, textMaximumFirstVisible,
+			ModalDialogManager::kWacPresentation);
+		if ((mouse.pressed & kMouseButtonLeft) != 0 &&
+				(scrollControl == ModalDialogManager::kTextPanelScrollThumb ||
+				scrollControl == ModalDialogManager::kTextPanelScrollTrack)) {
+			_databaseTextScrollDragging = true;
+			_databaseTextScrollDragOffset =
+				scrollControl == ModalDialogManager::kTextPanelScrollThumb ?
+					mouse.position.y - thumbBounds.top : thumbBounds.height() / 2;
+			debugC(2, kDebugWac,
+				"Ripper: began WAC database text scrollbar drag firstLine=%u point=%d,%d",
+				*textFirstVisible, mouse.position.x, mouse.position.y);
+		}
+		if (_databaseTextScrollDragging && !trackBounds.isEmpty() &&
+				!thumbBounds.isEmpty() && ((mouse.buttons & kMouseButtonLeft) != 0 ||
+				(mouse.released & kMouseButtonLeft) != 0)) {
+			const int travel = trackBounds.height() - thumbBounds.height();
+			if (travel > 0) {
+				const int thumbTop = CLIP<int>(
+					mouse.position.y - _databaseTextScrollDragOffset,
+					trackBounds.top, trackBounds.bottom - thumbBounds.height());
+				const uint nextFirstVisible =
+					((thumbTop - trackBounds.top) * textMaximumFirstVisible +
+						travel / 2) / travel;
+				if (nextFirstVisible != *textFirstVisible) {
+					*textFirstVisible = nextFirstVisible;
+					redrawText = true;
+					debugC(3, kDebugWac,
+						"Ripper: dragged WAC database text scrollbar firstLine=%u limit=%u point=%d,%d",
+						*textFirstVisible, textMaximumFirstVisible,
+						mouse.position.x, mouse.position.y);
+				}
+			}
+		}
+		const bool endedDrag = _databaseTextScrollDragging &&
+			(mouse.released & kMouseButtonLeft) != 0;
+		if (endedDrag) {
+			_databaseTextScrollDragging = false;
+			debugC(2, kDebugWac,
+				"Ripper: ended WAC database text scrollbar drag firstLine=%u",
+				*textFirstVisible);
+		} else if ((mouse.released & kMouseButtonLeft) != 0) {
+			uint nextFirstVisible = *textFirstVisible;
+			if (scrollControl == ModalDialogManager::kTextPanelScrollUp &&
+					nextFirstVisible > 0)
+				--nextFirstVisible;
+			else if (scrollControl == ModalDialogManager::kTextPanelScrollDown)
+				nextFirstVisible = MIN(nextFirstVisible + 1,
+					textMaximumFirstVisible);
+			if (nextFirstVisible != *textFirstVisible) {
+				*textFirstVisible = nextFirstVisible;
+				redrawText = true;
+				debugC(2, kDebugWac,
+					"Ripper: clicked WAC database text scroll control=%d firstLine=%u limit=%u",
+					scrollControl, *textFirstVisible, textMaximumFirstVisible);
+			}
+		}
+	}
 	serviceIdleWindowAnimations();
-	serviceDatabaseCornerAnimation();
+	serviceDatabaseCornerAnimation(textFirstVisible != nullptr);
 	const uint16 controlAction = serviceFrontEndControls(mouse,
 		(Common::Rect(kWacDatabaseLeft, kWacDatabaseTop,
 			kWacDatabaseRight, kWacDatabaseBottom).contains(mouse.position) ||
@@ -801,6 +888,23 @@ uint16 WacManager::serviceDatabaseMediaInput(byte activeEntryIndex,
 	return redrawText ? kWacDatabaseTextScrolled : kNoAction;
 }
 
+bool WacManager::drawDatabaseTextPanel(uint bodyResourceId,
+		const Common::Rect &bounds, uint firstVisible,
+		uint &maximumFirstVisible, uint &visibleRows) {
+	if (!_engine->getModalDialog()->drawRetainedTextPanel(bodyResourceId,
+			bounds, firstVisible, maximumFirstVisible, visibleRows,
+			ModalDialogManager::kWacPresentation,
+			static_cast<ModalDialogManager::TextPanelScrollControl>(
+				_databaseTextScrollControl)))
+		return false;
+	if (_databaseSkin.size() >= kWacDatabaseSkinFrameCount)
+		drawBitmap(_databaseSkin[_databaseCornerAlternate ? 15 : 0],
+			bounds.left, bounds.top);
+	_engine->getCursor()->refresh();
+	g_system->updateScreen();
+	return true;
+}
+
 uint16 WacManager::runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceId) {
 	// RunCenteredTextPanelUntilExitAction at 0x2330c creates the untitled
 	// 330-by-222 panel from the same tertiary WACMNU chooser template used by
@@ -811,9 +915,11 @@ uint16 WacManager::runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceI
 	uint firstVisible = 0;
 	uint maximumFirstVisible = 0;
 	uint visibleRows = 0;
-	if (!_engine->getModalDialog()->drawRetainedTextPanel(bodyResourceId,
-			bounds, firstVisible, maximumFirstVisible, visibleRows,
-			ModalDialogManager::kWacPresentation))
+	_databaseTextScrollControl = ModalDialogManager::kTextPanelScrollNone;
+	_databaseTextScrollDragging = false;
+	_databaseTextScrollDragOffset = 0;
+	if (!drawDatabaseTextPanel(bodyResourceId, bounds, firstVisible,
+			maximumFirstVisible, visibleRows))
 		return kNoAction;
 
 	_engine->getInput()->discardMouseTransitions();
@@ -827,9 +933,8 @@ uint16 WacManager::runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceI
 			&firstVisible, maximumFirstVisible, visibleRows);
 		if (command == kWacDatabaseTextScrolled ||
 				command == MediaSequenceCallback::kContinueRefreshPalette) {
-			if (!_engine->getModalDialog()->drawRetainedTextPanel(bodyResourceId,
-					bounds, firstVisible, maximumFirstVisible, visibleRows,
-					ModalDialogManager::kWacPresentation))
+			if (!drawDatabaseTextPanel(bodyResourceId, bounds, firstVisible,
+					maximumFirstVisible, visibleRows))
 				break;
 		} else if (command == kWacDatabaseSelectionChanged ||
 				command == kExitAction || command == 0x1b) {
@@ -841,6 +946,8 @@ uint16 WacManager::runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceI
 	}
 
 	clearDatabaseMediaViewport();
+	_databaseTextScrollControl = ModalDialogManager::kTextPanelScrollNone;
+	_databaseTextScrollDragging = false;
 	drawDatabase();
 	debugC(1, kDebugWac,
 		"Ripper: left WAC database text panel entry=%u resource=0x%x result=0x%x firstLine=%u",

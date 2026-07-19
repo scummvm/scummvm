@@ -70,7 +70,7 @@ private:
 	void drawFrontEnd() const;
 	void drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const;
 	void serviceIdleWindowAnimations();
-	void serviceDatabaseCornerAnimation();
+	void serviceDatabaseCornerAnimation(bool textPanelActive = false);
 	int findControl(const Common::Point &point) const;
 	bool dispatchAction(uint16 action);
 	bool runNotebook();
@@ -86,6 +86,8 @@ private:
 	uint16 serviceDatabaseMediaInput(byte activeEntryIndex,
 		uint *textFirstVisible = nullptr, uint textMaximumFirstVisible = 0,
 		uint textPageRows = 0);
+	bool drawDatabaseTextPanel(uint bodyResourceId, const Common::Rect &bounds,
+		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows);
 	uint16 runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceId);
 	uint16 dispatchDatabaseEntry(DatabaseEntry &entry);
 	const Common::String &resourceString(uint resourceId) const;
@@ -113,8 +115,11 @@ private:
 	uint _databaseFirstVisible;
 	uint _databaseStillImageScroll;
 	int _databaseScrollControl;
+	int _databaseTextScrollControl;
+	int _databaseTextScrollDragOffset;
 	uint32 _databaseCornerLastMillis;
 	bool _databaseCornerAlternate;
+	bool _databaseTextScrollDragging;
 	bool _initialized;
 };
 

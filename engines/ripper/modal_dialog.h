@@ -44,6 +44,14 @@ public:
 		kPreserveActivePalette
 	};
 
+	enum TextPanelScrollControl {
+		kTextPanelScrollNone,
+		kTextPanelScrollUp,
+		kTextPanelScrollDown,
+		kTextPanelScrollThumb,
+		kTextPanelScrollTrack
+	};
+
 	enum TextEntryResult {
 		kTextEntryPending,
 		kTextEntryAccepted,
@@ -63,7 +71,14 @@ public:
 		PaletteBehavior paletteBehavior = kApplyModalPalette);
 	bool drawRetainedTextPanel(uint bodyResourceId, const Common::Rect &bounds,
 		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows,
-		PresentationStyle style);
+		PresentationStyle style,
+		TextPanelScrollControl hoveredScrollControl = kTextPanelScrollNone);
+	TextPanelScrollControl findTextPanelScrollControl(const Common::Rect &bounds,
+		const Common::Point &point, uint firstVisible, uint maximumFirstVisible,
+		PresentationStyle style) const;
+	Common::Rect textPanelScrollControlBounds(const Common::Rect &bounds,
+		TextPanelScrollControl control, uint firstVisible,
+		uint maximumFirstVisible, PresentationStyle style) const;
 	bool beginTextEntry(const Common::String &prompt, uint maximumLength,
 		uint helpResourceId, const char *source);
 	TextEntryResult serviceTextEntry(Common::String &text);
@@ -82,11 +97,14 @@ private:
 	void drawFrame(byte *screen, uint pitch, const Common::Rect &bounds,
 		PresentationStyle style) const;
 	void drawOverflowBar(byte *screen, uint pitch, const Common::Rect &bounds,
+		uint firstVisible, uint maximumFirstVisible,
+		TextPanelScrollControl hoveredScrollControl,
 		PresentationStyle style) const;
 	void drawDialog(const Common::String &title,
 		const Common::Array<Common::String> &lines, uint firstVisible,
 		uint visibleRows, const Common::Rect &bounds,
-		PresentationStyle style) const;
+		PresentationStyle style,
+		TextPanelScrollControl hoveredScrollControl = kTextPanelScrollNone) const;
 	void drawTextEntry(const Common::String &prompt, const Common::String &text,
 		uint firstVisible, uint cursorPosition, bool caretVisible,
 		const Common::Rect &bounds) const;
