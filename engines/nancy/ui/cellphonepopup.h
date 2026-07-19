@@ -48,6 +48,11 @@ public:
 	void close();
 	void toggle() { if (_isVisible) close(); else open(); }
 
+	// True once a call has connected and the popup has scene-changed into the
+	// conversation. The phone is just decoration then and the conversation
+	// textbox is the active UI, so the cursor must not be confined to the phone.
+	bool isInCall() const { return _screenState == kConnected; }
+
 	// Swaps the welcome graphic for the No Signal / No Access / Old Email
 	// Only labels and blocks outgoing calls.
 	void setNoSignal(bool noSignal);
