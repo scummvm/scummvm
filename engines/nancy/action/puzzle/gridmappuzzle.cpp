@@ -347,15 +347,16 @@ void GridMapPuzzle::handleInput(NancyInput &input) {
 	if (!hitMap)
 		hitItems = hitTestItems(mouseVP, iRow, iCol);
 
-	// The whole puzzle uses the grab-hand cursor; only the exit hotspot differs.
-	// Picking something up doesn't change it.
+	// Grid cells (map and items) use the grab-hand cursor; picking something up
+	// doesn't change it. The exit hotspot uses the puzzle-exit cursor, and every
+	// other area (letter headers, gaps) keeps the idle eyeglass.
 	if (!hitMap && !hitItems) {
 		if (!_exitHotspot.isEmpty() && _exitHotspot.contains(mouseVP)) {
 			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 			if (input.input & NancyInput::kLeftMouseButtonUp)
 				_subState = kExitToCancel;
 		} else {
-			g_nancy->_cursor->setCursorType(CursorManager::kDropHand);
+			g_nancy->_cursor->setCursorType(CursorManager::kNormal);
 		}
 		return;
 	}
