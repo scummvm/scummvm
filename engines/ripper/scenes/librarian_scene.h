@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  */
 
-#ifndef RIPPER_LIBRARIAN_SCENE_H
-#define RIPPER_LIBRARIAN_SCENE_H
+#ifndef RIPPER_SCENES_LIBRARIAN_SCENE_H
+#define RIPPER_SCENES_LIBRARIAN_SCENE_H
 
 #include "audio/mixer.h"
 #include "common/array.h"
@@ -77,4 +77,4 @@ private:
 
 } // End of namespace Ripper
 
-#endif // RIPPER_LIBRARIAN_SCENE_H
+#endif // RIPPER_SCENES_LIBRARIAN_SCENE_H
