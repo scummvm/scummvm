@@ -24,6 +24,7 @@ MODULE_OBJS := \
 	ripper.o \
 	saveload.o \
 	scenes/librarian_scene.o \
+	scenes/scene.o \
 	scenes/tube_scene.o \
 	script.o \
 	settings.o \

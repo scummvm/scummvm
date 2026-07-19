@@ -472,6 +472,27 @@
   The zoomed `paper*b` frames instead bind Escape to `unzoom`, returning to the
   corresponding paper frame before a subsequent Escape exits KR.
 
+## Self-contained Scene Handlers
+
+- `DispatchSceneEntryAction` at `0x36892` calls bespoke scene handlers directly
+  for actions whose state cannot be expressed by the compiled scene-script
+  loop. These handlers keep their controls, media callbacks, audio descriptors,
+  and progress transitions local. `RunTubeSwitchScene` at `0x25e18` and
+  `RunKaDialogueScene` at `0x2aef5` are represented by `TubeScene` and
+  `LibrarianScene`; their distinct state machines remain in those derived
+  classes.
+- The direct handlers share a verified ownership boundary. `RunKaDialogueScene`
+  and `RunCainDialogueScene` at `0x2c160` snapshot the chooser registry, UI
+  control list, active palette, and borrowed presentation origin, then restore
+  them after stopping scene audio and releasing local controls. Puzzle handlers
+  such as `RunCrystalPiecePlacementPuzzleScene` at `0x2710c`,
+  `RunRolodexSequencePuzzleScene` at `0x280ae`, and
+  `RunShockLeverPuzzleScene` at `0x3affb` likewise install a local cursor/control
+  set and release it with their audio state on exit. ScummVM's `Scene` base
+  models the common engine, chooser, indexed-palette, cursor/input, toolbar, and
+  sound-handle boundary; media and interaction behavior remains owned by each
+  concrete scene.
+
 ## Puzzles
 
 - Opcode `0x18` passes its first argument to `DispatchSceneEntryAction` at

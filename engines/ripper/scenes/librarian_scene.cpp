@@ -86,8 +86,7 @@ static const int kCardBottom = 303;
 
 } // End of anonymous namespace
 
-LibrarianScene::LibrarianScene(RipperEngine *engine) : _engine(engine),
-		_chooser(*engine->getScripts()->getDialogue()),
+LibrarianScene::LibrarianScene(RipperEngine *engine) : Scene(engine),
 		_random("ripper-ka-dialogue"), _hoveredControl(-1),
 		_conversationStarted(false), _voicePending(false) {
 }
@@ -338,31 +337,24 @@ uint16 LibrarianScene::service(uint frame) {
 }
 
 void LibrarianScene::stopAllAudio() {
-	_engine->getMedia()->stopSoundEffect(_ambientHandle);
-	_engine->getMedia()->stopSoundEffect(_deckCueHandle);
+	stopAudio(_ambientHandle);
+	stopAudio(_deckCueHandle);
 	for (uint i = 0; i < ARRAYSIZE(_loopCueHandles); ++i)
-		_engine->getMedia()->stopSoundEffect(_loopCueHandles[i]);
-	_engine->getMedia()->stopSoundEffect(_voiceHandle);
+		stopAudio(_loopCueHandles[i]);
+	stopAudio(_voiceHandle);
 }
 
 LibrarianScene::Result LibrarianScene::run(uint sceneArgument) {
 	if (!initialize())
 		return kLoadFailed;
-	if (_chooser.isPending())
-		_chooser.dismissForSceneTransition("ka-entry");
-	else
-		_chooser.clearPending();
+	prepare("ka-entry", kDefaultCursor, false);
 	debugC(1, kDebugDialogue,
 		"Ripper: entered Ka dialogue scene argument=%u deck='%s' loop='%s' toolbarMask=0x0000",
 		sceneArgument, kDeckMedia, kLoopMedia);
-	_engine->getInput()->drainKeys();
-	_engine->getInput()->discardMouseTransitions();
-	_engine->getCursor()->setSelectionIndex(kDefaultCursor);
-	_engine->getCursor()->dispatchSelectionIndexChange(kDefaultCursor);
-	_engine->getCursor()->setVisible(false);
 	_engine->getMedia()->playSoundEffect("deck10.wav", _deckCueHandle);
 	if (!_engine->getMedia()->play(kDeckMedia, false)) {
 		stopAllAudio();
+		finish("ka-load-failure", -1, false);
 		return kLoadFailed;
 	}
 	// RunKaDialogueScene at 0x2aef5 issues display command 0x14 after
@@ -381,12 +373,8 @@ LibrarianScene::Result LibrarianScene::run(uint sceneArgument) {
 	const Result result = (!played && !_engine->shouldQuit()) || command == kFailureCommand ?
 		kLoadFailed : kExited;
 
-	if (_chooser.isPending())
-		_chooser.dismissForSceneTransition("ka-exit");
 	stopAllAudio();
-	_engine->getCursor()->setVisible(false);
-	_engine->getInput()->drainKeys();
-	_engine->getInput()->discardMouseTransitions();
+	finish("ka-exit", -1, false);
 	debugC(result == kExited ? 1 : 2, kDebugDialogue,
 		"Ripper: left Ka dialogue scene result=%d conversationStarted=%d choices=%u quit=%d",
 		result, _conversationStarted, _choices.size(), _engine->shouldQuit());
