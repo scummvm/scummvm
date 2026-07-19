@@ -79,6 +79,15 @@ struct Play_Sound : public Command {
 	}
 };
 
+struct Stop_Sound : public Command {
+	Common::String name;
+	Stop_Sound(const Common::Array<Common::String> &args) : name(args[0]) {}
+
+	void exec(ExecutionContext &ctx) const override {
+		g_engine->stopSound(name);
+	}
+};
+
 struct Stop_All_Sounds : public Command {
 	Stop_All_Sounds(const Common::Array<Common::String> &args) {}
 
@@ -125,6 +134,7 @@ struct Cursor_Set : public Command {
 	E(Play_Sound)       \
 	E(Play_AnimBloc)    \
 	E(Stop_All_Sounds)  \
+	E(Stop_Sound)       \
 	E(Sub)
 
 #define ADD_COMMAND(NAME)            \

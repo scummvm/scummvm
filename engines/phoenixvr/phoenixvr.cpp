@@ -917,6 +917,7 @@ void PhoenixVREngine::stopSound(const Common::String &sound) {
 }
 
 void PhoenixVREngine::stopAllSounds() {
+	debug("stop all sounds");
 	_mixer->stopAll();
 	_currentMusic.clear();
 	for (auto &kv : _sounds) {
