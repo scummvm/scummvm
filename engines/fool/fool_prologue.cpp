@@ -434,14 +434,14 @@ void FoolPrologue::drawClickMessage() {
 	// 128:0de2
 	_zbasic->text(kPrologueFontSmall, 0x9, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcXor);
 	// Click Mouse to Continue
-	drawText(_zbasic->str(3), 5, 0x151);
+	drawText(_zbasic->str(_zstrOffset[kOffsetPrologueClick]), 5, 0x151);
 }
 
 void FoolPrologue::drawClickMessageRightAlign() {
 	// 128:0e1c
 	_zbasic->text(kPrologueFontSmall, 0x9, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcXor);
 	// Click Mouse to Continue
-	drawTextRight(_zbasic->str(4), 0x1fb, 0x154);
+	drawTextRight(_zbasic->str(_zstrOffset[kOffsetPrologueClick]+1), 0x1fb, 0x154);
 }
 
 void FoolPrologue::waitForClick() {
@@ -610,11 +610,12 @@ void FoolPrologue::setupWindow() {
 		fillRect(0x50, 0x6e, 0xd2, 0x192, 2);
 		_zbasic->text(0, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcBic);
 		// "not enough memory" message
-		drawTextCenter(_zbasic->str(6), 0x100, 0x64);
-		drawTextCenter(_zbasic->str(7), 0x100, 0x78);
-		drawTextCenter(_zbasic->str(8), 0x100, 0x96);
-		drawTextCenter(_zbasic->str(9), 0x100, 0xaa);
-		drawTextCenter(_zbasic->str(10), 0x100, 0xcb);
+		int memoryOff = _zstrOffset[kOffsetPrologueMemory];
+		drawTextCenter(_zbasic->str(memoryOff + 0), 0x100, 0x64);
+		drawTextCenter(_zbasic->str(memoryOff + 1), 0x100, 0x78);
+		drawTextCenter(_zbasic->str(memoryOff + 2), 0x100, 0x96);
+		drawTextCenter(_zbasic->str(memoryOff + 3), 0x100, 0xaa);
+		drawTextCenter(_zbasic->str(memoryOff + 4), 0x100, 0xcb);
 		waitForClick();
 		if (_quit)
 			return;
@@ -681,14 +682,15 @@ void FoolPrologue::setupWindow() {
 			fillRect(0x6e, 0x8c, 0xd2, 0x174, 2);
 			// 129:0662
 			_zbasic->text(0, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcBic);
-			// "set your monitor to black and white" message"
-			drawTextCenter(_zbasic->str(13), 0x100, 0x82);
-			drawTextCenter(_zbasic->str(14), 0x100, 0x96);
+			// not present in all versions of the game
+			// was: str(13)
+			drawTextCenter(Common::U32String("Set your monitor to"), 0x100, 0x82);
+			drawTextCenter(Common::U32String("2 color black and white"), 0x100, 0x96);
 
 			// if this is the finale
-			drawTextCenter(_mode == 2 ? _zbasic->str(16): _zbasic->str(15), 0x100, 0xaa);
+			drawTextCenter(_mode == 2 ? Common::U32String("and start the Finale again."): Common::U32String("and start the Prologue again."), 0x100, 0xaa);
 
-			drawTextCenter(_zbasic->str(17), 0x100, 0xcb);
+			drawTextCenter(Common::U32String("(click mouse to quit)"), 0x100, 0xcb);
 			// 129:0730
 			waitForClick();
 			if (_quit)

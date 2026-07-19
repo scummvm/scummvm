@@ -88,9 +88,12 @@ enum FoolZStrOffset : uint16 {
 	kOffsetCards,
 	kOffsetThoth,
 	kOffsetHumbug,
+	kOffsetHermit,
 	kOffsetJustice,
 	kOffsetPrologue,
 	kOffsetFinale,
+	kOffsetPrologueMemory,
+	kOffsetPrologueClick,
 };
 
 enum FoolFontID : uint16 {

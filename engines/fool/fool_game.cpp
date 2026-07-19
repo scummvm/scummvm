@@ -46,15 +46,15 @@ namespace Fool {
 // Offset adjustments for the ZBasic string table to align
 // across game versions
 static const int fool11ZStrOffset[] = {
-	128, 59, 81, 170, 186, 188, 192, 194, 202, 239, 258, 280, 315, 324, 13, 21
+	128, 59, 81, 170, 186, 188, 192, 194, 202, 239, 258, 280, 315, 341, 324, 13, 21, 6, 3
 };
 
 static const int fool20ZStrOffset[] = {
-	102, 78, 103, 191, 207, 209, 213, 215, 223, 260, 279, 301, 336, 345, 18, 22
+	102, 78, 103, 191, 207, 209, 213, 215, 223, 260, 279, 301, 336, 362, 345, 18, 22, 6, 3
 };
 
 static const int fool30ZStrOffset[] = {
-	97, 73, 98, 161, 177, 179, 183, 185, 193, 230, 251, 273, 308, 317, 8, 12
+	97, 73, 98, 161, 177, 179, 183, 185, 193, 230, 251, 273, 308, 334, 317, 8, 12, 76, 3
 };
 
 // Fool's Errand v1.1 is missing FOND data, below is taken from 2.0
@@ -385,7 +385,7 @@ void FoolGame::copyScreen(int16 put, BitMap &bmp) {
 
 void FoolGame::openSaveFileDialog(const Common::U32String &title, const Common::U32String &filename) {
 	// 128:011c
-	var_str_384 = _zbasic->str(3);
+	var_str_384.clear(); // was: str(3)
 
 	var_i16_586 = 0;
 
@@ -411,7 +411,7 @@ void FoolGame::openSaveFileDialog(const Common::U32String &title, const Common::
 
 void FoolGame::sub_128_1e4(const Common::String &osType) {
 	// 128:01e4
-	var_str_588 = _zbasic->str(4);
+	var_str_588.clear(); // was: str(4)
 	var_i16_688 = 0;
 
 	copyScreen(0, arr_bmp_138bc);
@@ -427,7 +427,7 @@ void FoolGame::sub_128_1e4(const Common::String &osType) {
 	typeList.types[0] += osType.at(2) << 8;
 	typeList.types[0] += osType.at(3) << 0;
 
-	_toolbox->SFGetFile(_event.where, _zbasic->str(5), 0, 1, typeList, 0, var_sfr_5e);
+	_toolbox->SFGetFile(_event.where, Common::U32String(), 0, 1, typeList, 0, var_sfr_5e); // was: str(5)
 	sub_128_6244();
 	copyScreen(1, arr_bmp_138bc);
 

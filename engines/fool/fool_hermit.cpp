@@ -35,12 +35,12 @@ namespace Fool {
 void FoolGame::hermitRun() {
 	// 142:12ac
 	if (_puzzleCompletionStatus[0x34] < 5) {
-		_zbasic->menu(8, 3, 1, _zbasic->str(362)); // to find a hidden secret
-		_zbasic->menu(8, 4, 1, _zbasic->str(363)); // follow each line, correct and true
+		_zbasic->menu(8, 3, 1, _zbasic->str(OFF(0))); // to find a hidden secret
+		_zbasic->menu(8, 4, 1, _zbasic->str(OFF(1))); // follow each line, correct and true
 	} else {
 		// 142:12fc
-		_zbasic->menu(8, 3, 1, _zbasic->str(364)); // to find the straight path
-		_zbasic->menu(8, 4, 1, _zbasic->str(365)); // follow each line, correct and true
+		_zbasic->menu(8, 3, 1, _zbasic->str(OFF(2))); // to find the straight path
+		_zbasic->menu(8, 4, 1, _zbasic->str(OFF(3))); // follow each line, correct and true
 	}
 	// 142:132c
 	if (_activePuzzleStatus == 0) {
