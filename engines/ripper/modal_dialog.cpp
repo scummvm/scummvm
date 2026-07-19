@@ -50,6 +50,8 @@ static const int kModalRightPadding = 5;
 static const int kModalScrollStartInset = 16;
 static const int kModalScrollEndInset = 4;
 static const int kModalScrollEdgeInset = 4;
+static const int kModalTextHorizontalInset = 2;
+static const int kModalTextVerticalInset = 1;
 static const uint kModalWidth = 300;
 static const int kModalRowHeight = 14;
 static const byte kModalBackgroundColor = 253;
@@ -301,30 +303,119 @@ void ModalDialogManager::drawFrame(byte *screen, uint pitch,
 }
 
 void ModalDialogManager::drawOverflowBar(byte *screen, uint pitch,
-		const Common::Rect &bounds, PresentationStyle style) const {
+		const Common::Rect &bounds, uint firstVisible,
+		uint maximumFirstVisible, TextPanelScrollControl hoveredScrollControl,
+		PresentationStyle style) const {
 	const Common::Array<BitmapAssetFrame> &skin =
 		style == kWacPresentation ? _wacSkin : _skin;
 	if (skin.size() <= kModalScrollTrackFrame)
 		return;
 
-	const BitmapAssetFrame &start = skin[kModalScrollStartFrame];
-	const BitmapAssetFrame &end = skin[kModalScrollEndFrame];
+	const BitmapAssetFrame &up = skin[
+		hoveredScrollControl == kTextPanelScrollUp && firstVisible > 0 ?
+			kModalScrollStartFrame + 2 : kModalScrollStartFrame];
+	const BitmapAssetFrame &down = skin[
+		hoveredScrollControl == kTextPanelScrollDown &&
+			firstVisible < maximumFirstVisible ?
+			kModalScrollEndFrame + 2 : kModalScrollEndFrame];
+	const BitmapAssetFrame &thumb = skin[kModalScrollStartFrame + 4];
 	const BitmapAssetFrame &track = skin[kModalScrollTrackFrame];
-	const int startY = bounds.top + kModalScrollStartInset;
-	const int endY = bounds.bottom - kModalScrollEndInset - end.height;
-	for (int y = startY + start.height; y <= endY; y += track.height)
-		drawBitmap(screen, pitch, track,
-			bounds.right - kModalScrollEdgeInset - track.width, y);
-	drawBitmap(screen, pitch, start,
-		bounds.right - kModalScrollEdgeInset - start.width, startY);
-	drawBitmap(screen, pitch, end,
-		bounds.right - kModalScrollEdgeInset - end.width, endY);
+	const Common::Rect upBounds = textPanelScrollControlBounds(bounds,
+		kTextPanelScrollUp, firstVisible, maximumFirstVisible, style);
+	const Common::Rect downBounds = textPanelScrollControlBounds(bounds,
+		kTextPanelScrollDown, firstVisible, maximumFirstVisible, style);
+	const Common::Rect trackBounds = textPanelScrollControlBounds(bounds,
+		kTextPanelScrollTrack, firstVisible, maximumFirstVisible, style);
+	const Common::Rect thumbBounds = textPanelScrollControlBounds(bounds,
+		kTextPanelScrollThumb, firstVisible, maximumFirstVisible, style);
+
+	for (int y = trackBounds.top; y < trackBounds.bottom; y += track.height) {
+		const uint rows = MIN<uint>(track.height, trackBounds.bottom - y);
+		for (uint row = 0; row < rows; ++row) {
+			for (uint column = 0; column < track.width; ++column) {
+				const byte pixel = track.pixels[row * track.width + column];
+				if (pixel != track.transparentColor)
+					screen[(y + row) * pitch + trackBounds.left + column] = pixel;
+			}
+		}
+	}
+	drawBitmap(screen, pitch, thumb, thumbBounds.left, thumbBounds.top);
+	drawBitmap(screen, pitch, up, upBounds.left, upBounds.top);
+	drawBitmap(screen, pitch, down, downBounds.left, downBounds.top);
+}
+
+Common::Rect ModalDialogManager::textPanelScrollControlBounds(
+		const Common::Rect &bounds, TextPanelScrollControl control,
+		uint firstVisible, uint maximumFirstVisible, PresentationStyle style) const {
+	const Common::Array<BitmapAssetFrame> &skin =
+		style == kWacPresentation ? _wacSkin : _skin;
+	if (skin.size() <= kModalScrollTrackFrame || maximumFirstVisible == 0)
+		return Common::Rect();
+
+	const BitmapAssetFrame &up = skin[kModalScrollStartFrame];
+	const BitmapAssetFrame &down = skin[kModalScrollEndFrame];
+	const BitmapAssetFrame &thumb = skin[kModalScrollStartFrame + 4];
+	const BitmapAssetFrame &track = skin[kModalScrollTrackFrame];
+	const bool wacStyle = style == kWacPresentation;
+	const int arrowTopInset = wacStyle ? 5 : kModalScrollStartInset;
+	const int arrowBottomInset = wacStyle ? 5 : kModalScrollEndInset;
+	const int edgeInset = wacStyle ? 0 : kModalScrollEdgeInset;
+	const Common::Rect upBounds(bounds.right - edgeInset - up.width,
+		bounds.top + arrowTopInset, bounds.right - edgeInset,
+		bounds.top + arrowTopInset + up.height);
+	const Common::Rect downBounds(bounds.right - edgeInset - down.width,
+		bounds.bottom - arrowBottomInset - down.height,
+		bounds.right - edgeInset, bounds.bottom - arrowBottomInset);
+	const Common::Rect trackBounds(bounds.right - edgeInset - track.width,
+		upBounds.bottom, bounds.right - edgeInset, downBounds.top);
+	const int thumbTravel = MAX<int>(0, trackBounds.height() - thumb.height);
+	const int thumbTop = trackBounds.top +
+		(firstVisible * thumbTravel + maximumFirstVisible / 2) /
+		maximumFirstVisible;
+	const Common::Rect thumbBounds(
+		trackBounds.left + (trackBounds.width() - thumb.width) / 2,
+		thumbTop,
+		trackBounds.left + (trackBounds.width() + thumb.width) / 2,
+		thumbTop + thumb.height);
+
+	switch (control) {
+	case kTextPanelScrollUp:
+		return upBounds;
+	case kTextPanelScrollDown:
+		return downBounds;
+	case kTextPanelScrollThumb:
+		return thumbBounds;
+	case kTextPanelScrollTrack:
+		return trackBounds;
+	default:
+		return Common::Rect();
+	}
+}
+
+ModalDialogManager::TextPanelScrollControl
+ModalDialogManager::findTextPanelScrollControl(const Common::Rect &bounds,
+		const Common::Point &point, uint firstVisible, uint maximumFirstVisible,
+		PresentationStyle style) const {
+	if (textPanelScrollControlBounds(bounds, kTextPanelScrollUp,
+			firstVisible, maximumFirstVisible, style).contains(point))
+		return kTextPanelScrollUp;
+	if (textPanelScrollControlBounds(bounds, kTextPanelScrollDown,
+			firstVisible, maximumFirstVisible, style).contains(point))
+		return kTextPanelScrollDown;
+	if (textPanelScrollControlBounds(bounds, kTextPanelScrollThumb,
+			firstVisible, maximumFirstVisible, style).contains(point))
+		return kTextPanelScrollThumb;
+	if (textPanelScrollControlBounds(bounds, kTextPanelScrollTrack,
+			firstVisible, maximumFirstVisible, style).contains(point))
+		return kTextPanelScrollTrack;
+	return kTextPanelScrollNone;
 }
 
 void ModalDialogManager::drawDialog(const Common::String &title,
 		const Common::Array<Common::String> &lines, uint firstVisible,
 		uint visibleRows, const Common::Rect &bounds,
-		PresentationStyle style) const {
+		PresentationStyle style,
+		TextPanelScrollControl hoveredScrollControl) const {
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
 		if (screen)
@@ -334,9 +425,12 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 
 	byte *pixels = (byte *)screen->getPixels();
 	const bool wacStyle = style == kWacPresentation;
-	const int headingHeight = title.empty() ?
-		(wacStyle ? kWacModalBottomPadding : kModalBottomPadding) :
-		(wacStyle ? kWacModalHeadingTopPadding : kModalHeadingTopPadding);
+	// ComputeChooserControlLayout at 0x54a74 selects the tertiary template's
+	// 20-pixel alternate top padding even without an optional title because
+	// layout56 bit 0 is set. Circuit-manual resource 0xb6 embeds its heading in
+	// the body, but it still receives that forced inset.
+	const int headingHeight = wacStyle ? kWacModalHeadingTopPadding :
+		(title.empty() ? kModalBottomPadding : kModalHeadingTopPadding);
 	const int leftPadding = wacStyle ? kWacModalLeftPadding : kModalLeftPadding;
 	const int rightPadding = wacStyle ? kWacModalRightPadding : kModalRightPadding;
 	const byte titleColor = wacStyle ? kWacModalTitleColor : kModalTitleColor;
@@ -374,13 +468,16 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 		const uint lineIndex = firstVisible + row;
 		if (lineIndex >= lines.size())
 			break;
-		drawText(pixels, screen->pitch, bounds.left + leftPadding,
-			bounds.top + headingHeight + row * kModalRowHeight +
+		drawText(pixels, screen->pitch,
+			bounds.left + leftPadding + kModalTextHorizontalInset,
+			bounds.top + headingHeight + kModalTextVerticalInset +
+				row * kModalRowHeight +
 				(kModalRowHeight - _font.lineHeight) / 2,
 			lines[lineIndex], textColor);
 	}
 	if (lines.size() > visibleRows)
-		drawOverflowBar(pixels, screen->pitch, bounds, style);
+		drawOverflowBar(pixels, screen->pitch, bounds, firstVisible,
+			lines.size() - visibleRows, hoveredScrollControl, style);
 	g_system->unlockScreen();
 	_engine->getCursor()->refresh();
 	g_system->updateScreen();
@@ -388,33 +485,44 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 
 bool ModalDialogManager::drawRetainedTextPanel(uint bodyResourceId,
 		const Common::Rect &bounds, uint firstVisible, uint &maximumFirstVisible,
-		uint &visibleRows, PresentationStyle style) {
+		uint &visibleRows, PresentationStyle style,
+		TextPanelScrollControl hoveredScrollControl) {
 	const Common::String &body = resourceString(bodyResourceId);
 	const bool wacStyle = style == kWacPresentation;
 	const int bottomPadding = wacStyle ?
 		kWacModalBottomPadding : kModalBottomPadding;
 	const int leftPadding = wacStyle ? kWacModalLeftPadding : kModalLeftPadding;
 	const int rightPadding = wacStyle ? kWacModalRightPadding : kModalRightPadding;
+	const int topPadding = wacStyle ?
+		kWacModalHeadingTopPadding : kModalBottomPadding;
 	if (!_initialized || body.empty() || bounds.width() <=
-			leftPadding + rightPadding || bounds.height() <= bottomPadding * 2) {
+			leftPadding + rightPadding + kModalTextHorizontalInset * 2 ||
+			bounds.height() <= topPadding + bottomPadding +
+				kModalTextVerticalInset * 2) {
 		warning("Ripper: could not draw retained text panel resource=%u", bodyResourceId);
 		return false;
 	}
 
 	Common::Array<Common::String> lines;
-	wrapText(body, bounds.width() - leftPadding - rightPadding, lines);
+	wrapText(body, bounds.width() - leftPadding - rightPadding -
+		kModalTextHorizontalInset * 2, lines);
 	visibleRows = MAX<uint>(1,
-		(bounds.height() - bottomPadding * 2) / kModalRowHeight);
+		(bounds.height() - topPadding - bottomPadding -
+			kModalTextVerticalInset * 2) / kModalRowHeight);
 	maximumFirstVisible = lines.size() > visibleRows ? lines.size() - visibleRows : 0;
 	firstVisible = MIN(firstVisible, maximumFirstVisible);
 	if (!wacStyle)
 		applyModalPalette();
-	drawDialog(Common::String(), lines, firstVisible, visibleRows, bounds, style);
+	drawDialog(Common::String(), lines, firstVisible, visibleRows, bounds, style,
+		hoveredScrollControl);
 	debugC(2, kDebugScene,
 		"Ripper: drew retained text panel resource=%u style=%s lines=%u "
-		"firstLine=%u visibleRows=%u bounds=%d,%d,%d,%d",
+		"firstLine=%u visibleRows=%u viewport=%d,%d,%d,%d bounds=%d,%d,%d,%d",
 		bodyResourceId, wacStyle ? "wacmnu" : "menub", lines.size(),
-		firstVisible, visibleRows,
+		firstVisible, visibleRows, bounds.left + leftPadding + kModalTextHorizontalInset,
+		bounds.top + topPadding + kModalTextVerticalInset,
+		bounds.width() - leftPadding - rightPadding - kModalTextHorizontalInset * 2,
+		visibleRows * kModalRowHeight,
 		bounds.left, bounds.top, bounds.width(), bounds.height());
 	return true;
 }
