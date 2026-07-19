@@ -137,15 +137,6 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 		debugC(3, kDebugEvents, "Movie::resolveScriptEvent(%s): id: %d sourceType: %s, handlerType: %s, pos: [%d, %d], spriteId: %d",
 			leventType2str(event.event), event.eventId, scriptType2str(event.scriptType),
 			eventHandlerSourceType2str(event.eventHandlerSourceType), event.mousePos.x, event.mousePos.y, spriteId);
-
-		if (event.event == kEventMouseDown || event.event == kEventRightMouseDown) {
-			_lastClickedSpriteId = spriteId; // the clickOn
-		} else 	if (event.event == kEventMouseUp || event.event == kEventRightMouseUp) {
-			// Do not override when clicked on Score
-			if (spriteId)
-				_lastClickedSpriteId = spriteId;
-		}
-
 	}
 	// Very occasionally, we want to specify an event with a channel ID
 	// rather than infer it from the position. Allow it to override.
@@ -511,6 +502,21 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 		break;
 	default:
 		break;
+	}
+
+	// `the clickOn` is latched once per mouse event, not per handler: the first
+	// handler in the chain may move or hide the sprite. Before D4 it resolves
+	// via the active sprite (one with a script attached).
+	if (pos != Common::Point(-1, -1) &&
+			(event == kEventMouseDown || event == kEventRightMouseDown ||
+			 event == kEventMouseUp || event == kEventRightMouseUp)) {
+		uint16 clickedSpriteId = _vm->getVersion() < 400
+				? _score->getActiveSpriteIDFromPos(pos)
+				: _score->getMouseSpriteIDFromPos(pos);
+		if (event == kEventMouseDown || event == kEventRightMouseDown)
+			_lastClickedSpriteId = clickedSpriteId; // the clickOn
+		else if (clickedSpriteId) // do not override when clicked on Score
+			_lastClickedSpriteId = clickedSpriteId;
 	}
 
 	if (_vm->getVersion() < 400) {
