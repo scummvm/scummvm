@@ -7,7 +7,6 @@ MODULE_OBJS := \
 	dialogue.o \
 	iff.o \
 	input.o \
-	librarian_scene.o \
 	media.o \
 	menu.o \
 	metaengine.o \
@@ -24,6 +23,7 @@ MODULE_OBJS := \
 	resources.o \
 	ripper.o \
 	saveload.o \
+	scenes/librarian_scene.o \
 	scenes/tube_scene.o \
 	script.o \
 	settings.o \

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  */
 
-#include "ripper/librarian_scene.h"
+#include "ripper/scenes/librarian_scene.h"
 
 #include "common/debug.h"
 #include "common/system.h"

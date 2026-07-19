@@ -30,7 +30,7 @@
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
 #include "ripper/input.h"
-#include "ripper/librarian_scene.h"
+#include "ripper/scenes/librarian_scene.h"
 #include "ripper/media.h"
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
