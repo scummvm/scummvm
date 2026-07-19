@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "common/system.h"
 
 #include "engines/nancy/cursor.h"
@@ -40,6 +41,12 @@
 
 namespace Nancy {
 namespace UI {
+
+// Contacts are shown alphabetically by name (case-insensitive), matching
+// the original's CCellPhoneSortContacts.
+static bool contactNameLess(const UICL::Contact &a, const UICL::Contact &b) {
+	return a.name.compareToIgnoreCase(b.name) < 0;
+}
 
 // Renders the engine's hypertext markup (colour / formatting tags) into a
 // scratch surface, which the content view then blits into the LCD. Thin
@@ -135,6 +142,10 @@ void CellPhonePopup::init() {
 		_contacts = _uiclData->contacts;
 	}
 
+	// Keep the list sorted, including contacts restored from older saves that
+	// predate the alphabetical ordering.
+	Common::sort(_contacts.begin(), _contacts.end(), contactNameLess);
+
 	_screenState = kWelcome;
 	_dialedNumber.clear();
 	_resolvedContact = -1;
@@ -221,6 +232,8 @@ void CellPhonePopup::upsertContact(const UICL::Contact &c) {
 		_contacts.push_back(c);
 	}
 
+	Common::sort(_contacts.begin(), _contacts.end(), contactNameLess);
+
 	CellPhoneData *cellData = (CellPhoneData *)NancySceneState.getPuzzleData(CellPhoneData::getTag());
 	if (cellData) {
 		cellData->contacts = _contacts;
@@ -242,6 +255,7 @@ void CellPhonePopup::open() {
 		_contacts = cellData->contacts;
 		_noSignal = cellData->noSignal;
 		_batteryLow = cellData->batteryLow;
+		Common::sort(_contacts.begin(), _contacts.end(), contactNameLess);
 	}
 
 	_screenState = kWelcome;
@@ -364,7 +378,9 @@ void CellPhonePopup::updateGraphics() {
 		break;
 
 	case kPlaceCall:
-		if (playSoundIfPresent(_uiclData->outgoingRingSound)) {
+		// Incoming calls skip the dial-out ring entirely (it's a manual-dial
+		// cue); they go straight to the pickup/connect step.
+		if (!_hasPendingCallScene && playSoundIfPresent(_uiclData->outgoingRingSound)) {
 			enterScreenState(kWaitOutgoingRing);
 		} else {
 			enterScreenState(kLookupContact);
@@ -477,11 +493,13 @@ void CellPhonePopup::drawChrome() {
 void CellPhonePopup::drawScreenContent() {
 	drawChrome();
 
-	// Original only draws the signal/battery indicators on the welcome
-	// screen — every other state (dialing, ringing, connected, lists,
-	// browser, etc.) hides them.
+	// Signal + battery indicators show on the welcome screen; the connected
+	// in-call screen keeps the battery but not the signal. Every other state
+	// (dialing, ringing, lists, browser, ...) hides both.
 	if (_screenState == kWelcome) {
-		drawStatusIcons();
+		drawStatusIcons(true);
+	} else if (_screenState == kConnected) {
+		drawStatusIcons(false);
 	}
 
 	switch (_screenState) {
@@ -498,7 +516,7 @@ void CellPhonePopup::drawScreenContent() {
 	case kPlaceCall:
 	case kWaitOutgoingRing:
 	case kLookupContact:
-		drawWebDirLabels();
+		// Web / Dir labels show only on the welcome screen, not while dialing.
 		if (!_dialedNumber.empty()) {
 			// User is manually dialing — show the dial header,
 			// "please dial a number" hint, the typed digits and
@@ -527,6 +545,8 @@ void CellPhonePopup::drawScreenContent() {
 		break;
 
 	case kConnected:
+		// In-call screen: keeps the Web / Dir labels (like the welcome screen).
+		drawWebDirLabels();
 		drawConnectedLabel();
 		drawConnectingSprite();
 		break;
@@ -592,14 +612,15 @@ void CellPhonePopup::drawScreenContent() {
 	_needsRedraw = true;
 }
 
-void CellPhonePopup::drawStatusIcons() {
+void CellPhonePopup::drawStatusIcons(bool includeSignal) {
 	const Common::Point chunkOrigin(_screenPosition.left, _screenPosition.top);
 
-	// Signal indicator uses the alt source when no-signal is set.
+	// Signal indicator uses the alt source when no-signal is set. It is hidden
+	// during a call (the connected screen keeps only the battery).
 	const Common::Rect &signalSrc = _noSignal && !_uiclData->signalSpriteSrcAlt.isEmpty()
 		? _uiclData->signalSpriteSrcAlt
 		: _uiclData->signalSpriteSrc;
-	if (!signalSrc.isEmpty() && !_uiclData->signalSpriteDest.isEmpty()) {
+	if (includeSignal && !signalSrc.isEmpty() && !_uiclData->signalSpriteDest.isEmpty()) {
 		_drawSurface.blitFrom(_spritesImage, signalSrc,
 								Common::Point(_uiclData->signalSpriteDest.left - chunkOrigin.x,
 												_uiclData->signalSpriteDest.top - chunkOrigin.y));
@@ -966,6 +987,23 @@ void CellPhonePopup::renderContentPage(int surfaceWidth) {
 	_contentCacheHotspots = ht.hotspots();
 }
 
+uint CellPhonePopup::contentScrollStep() const {
+	const Font *font = g_nancy->_graphics->getFont(_uiclData->fontId2);
+	if (!font) {
+		return 12;
+	}
+
+	// Original: one click scrolls ~1/10th of the article (capped near a full
+	// page), plus 1.25 line heights.
+	const Common::Rect &ws =
+		(isHelpContentView() || _uiclData->emailListContainer.isEmpty())
+			? _uiclData->welcomeScreen.destRect
+			: _uiclData->emailListContainer;
+	const int viewH = MAX(0, ws.height() - 2);
+	int page = MIN((int)_contentCacheTextHeight / 10, MAX(0, viewH - 30));
+	return (font->getFontHeight() * 5) / 4 + page;
+}
+
 void CellPhonePopup::drawContentView() {
 	if (_contentKey.empty()) {
 		return;
@@ -992,7 +1030,6 @@ void CellPhonePopup::drawContentView() {
 	// LCD, so the body text starts flush with the LCD top — a small inset only.
 	const int textTop = 2;
 	const int viewH   = MAX(0, lcdH - textTop);
-	const int rowH    = MAX(font->getFontHeight() + 1, 12);
 
 	// (Re)render the page only when its key changes; scrolling and hover
 	// redraws reuse the cached surface (just re-blit a different window).
@@ -1002,14 +1039,13 @@ void CellPhonePopup::drawContentView() {
 	}
 	_contentHotspotTargets = _contentCacheTargets;
 
-	// Clamp scroll to the rendered text height.
+	// Clamp scroll (a pixel offset) to the rendered text height.
 	const int maxScrollPx = MAX(0, (int)_contentCacheTextHeight - viewH);
-	const int maxScroll = maxScrollPx / rowH;
-	if ((int)_contentScroll > maxScroll) {
-		_contentScroll = maxScroll;
+	if ((int)_contentScroll > maxScrollPx) {
+		_contentScroll = maxScrollPx;
 	}
 
-	const int srcTop = (int)_contentScroll * rowH;
+	const int srcTop = (int)_contentScroll;
 	Common::Rect srcRect(0, srcTop, lcdW, srcTop + viewH);
 	srcRect.clip(Common::Rect(_contentCacheSurface.w, _contentCacheSurface.h));
 	if (srcRect.isEmpty()) {
@@ -2163,14 +2199,12 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 		const Common::Rect &upDst = scrollUpButton().destRect;
 		const Common::Rect &downDst = scrollDownButton().destRect;
 
-		// One click scrolls several lines, matching the original (a single line
-		// per click makes long web pages tedious to read).
-		const uint kContentScrollStep = 3;
+		const uint step = contentScrollStep();
 		if (upDst.contains(chunkMouse)) {
 			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				if (_contentScroll > 0) {
-					_contentScroll = _contentScroll > kContentScrollStep ? _contentScroll - kContentScrollStep : 0;
+					_contentScroll = _contentScroll > step ? _contentScroll - step : 0;
 					drawScreenContent();
 				}
 				input.eatMouseInput();
@@ -2179,7 +2213,7 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 		} else if (downDst.contains(chunkMouse)) {
 			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
-				_contentScroll += kContentScrollStep;
+				_contentScroll += step;
 				drawScreenContent();
 				input.eatMouseInput();
 				return;
