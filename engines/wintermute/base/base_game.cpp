@@ -1421,6 +1421,13 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		uint32 time = stack->pop()->getInt();
 
+		if (BaseEngine::instance().getGameId() == "sotv2") {
+			// script shifting sound position by -2998
+			// which cause issue with our sound stream.
+			// W/A shift forward by 2998
+			time += 2998;
+		}
+
 		if (DID_FAIL(setMusicStartTime(channel, time))) {
 			stack->pushBool(false);
 		} else {
@@ -1445,7 +1452,16 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		if (channel < 0 || channel >= NUM_MUSIC_CHANNELS || !_music[channel]) {
 			stack->pushInt(0);
 		} else {
-			stack->pushInt(_music[channel]->getPositionTime());
+			uint32 pos = _music[channel]->getPositionTime();
+			if (BaseEngine::instance().getGameId() == "sotv2") {
+				// when sound stream end, it's returning position as 0
+				// this confuse game script due position slider is slower
+				// get length of sound instead
+				if (pos == 0) {
+					pos = _music[channel]->getLength();
+				}
+			}
+			stack->pushInt(pos);
 		}
 		return STATUS_OK;
 	}
