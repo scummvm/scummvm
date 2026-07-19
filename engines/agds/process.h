@@ -26,6 +26,7 @@
 #include "agds/opcode.h"
 #include "agds/processExitCode.h"
 #include "common/debug.h"
+#include "common/language.h"
 #include "common/scummsys.h"
 #include "common/stack.h"
 
@@ -77,6 +78,7 @@ private:
 	int _filmSubtitlesResource;
 	AnimationPtr _processAnimation;
 	int _version;
+	Common::Language _language;
 
 private:
 	void debug(const char *str, ...);
@@ -139,7 +141,7 @@ private:
 	void removeScreenObject(const Common::String &name);
 
 public:
-	Process(AGDSEngine *engine, const ObjectPtr &object, unsigned ip, int version);
+	Process(AGDSEngine *engine, const ObjectPtr &object, unsigned ip, int version, Common::Language language);
 	unsigned entryPoint() const {
 		return _entryPoint;
 	}

@@ -725,7 +725,7 @@ void Process::setAnimationZ() {
 
 void Process::setPanAndVolume() {
 	int pan = 0;
-	if (_version > 0) {
+	if (_version > kAGDSVersionDemo2283) {
 		pan = pop();
 	}
 	int volume = pop();

@@ -25,8 +25,14 @@
 namespace AGDS {
 
 enum AGDSGameFlag {
-	AGDS_V2 = (1 << 0),
+	AGDS_2511 = (1 << 0),
+	AGDS_2299 = (1 << 1),
 };
+
+static constexpr int kAGDSVersionDemo2283 = 2283;
+static constexpr int kAGDSVersionBlackMirror2296 = 2296;
+static constexpr int kAGDSVersionBlackMirror2299 = 2299;
+static constexpr int kAGDSVersionNibiru2511 = 2511;
 
 } // End of namespace AGDS
 

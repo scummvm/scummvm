@@ -23,6 +23,7 @@
 #define AGDS_H
 
 #include "agds/database.h"
+#include "agds/detection.h"
 #include "agds/dialog.h"
 #include "agds/inventory.h"
 #include "agds/mouseMap.h"
@@ -281,8 +282,9 @@ public:
 		return _curtainTimer >= 0;
 	}
 
-	bool v2() const;
 	int version() const;
+	bool versionAtLeast(int target) const;
+	Common::Language language() const;
 
 private:
 	void stopAmbientSound();

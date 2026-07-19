@@ -20,6 +20,7 @@
  */
 
 #include "agds/resourceManager.h"
+#include "agds/detection.h"
 #include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/file.h"
@@ -227,7 +228,7 @@ Common::String ResourceManager::loadText(Common::SeekableReadStream &stream) con
 	while (begin != end && end[-1] == 0)
 		--end;
 
-	if (_version != 0 || (text[0] < ' ' || text[0] >= 0x7f))
+	if (_version >= kAGDSVersionBlackMirror2296 || (text[0] < ' ' || text[0] >= 0x7f))
 		decrypt(reinterpret_cast<uint8 *>(text.data()), end - begin);
 
 	while (begin != end && end[-1] == 0)

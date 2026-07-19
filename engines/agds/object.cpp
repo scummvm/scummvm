@@ -22,6 +22,7 @@
 #include "agds/object.h"
 #include "agds/agds.h"
 #include "agds/animation.h"
+#include "agds/detection.h"
 #include "agds/font.h"
 #include "agds/region.h"
 #include "agds/systemVariable.h"
@@ -92,7 +93,7 @@ void Object::readStringTable(unsigned resOffset, uint16 resCount) {
 	if (_stringTableLoaded)
 		return;
 
-	resOffset += 5 /*instruction*/ + (_version >= 2 ? 0x13 : 0x11) /*another header*/;
+	resOffset += 5 /*instruction*/ + (_version >= kAGDSVersionNibiru2511 ? 0x13 : 0x11) /*another header*/;
 	if (resOffset >= _code.size())
 		error("invalid resource table offset %u/%u", resOffset, _code.size());
 

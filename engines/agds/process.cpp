@@ -27,15 +27,15 @@
 
 namespace AGDS {
 
-Process::Process(AGDSEngine *engine, const ObjectPtr &object, unsigned ip, int version) : _engine(engine), _parentScreen(engine->getCurrentScreenName()), _object(object),
-																						  _entryPoint(ip), _ip(ip), _lastIp(ip),
-																						  _status(kStatusActive), _exited(false), _exitCode(kExitCodeDestroy),
-																						  _tileWidth(16), _tileHeight(16), _tileResource(-1), _tileIndex(0),
-																						  _timer(0),
-																						  _animationCycles(1), _animationLoop(false), _animationZ(0), _animationDelay(-1), _animationRandom(0),
-																						  _phaseVarControlled(false), _animationSpeed(100),
-																						  _samplePeriodic(false), _sampleAmbient(false), _sampleVolume(100),
-																						  _filmSubtitlesResource(-1), _version(version) {
+Process::Process(AGDSEngine *engine, const ObjectPtr &object, unsigned ip, int version, Common::Language language) : _engine(engine), _parentScreen(engine->getCurrentScreenName()), _object(object),
+																													 _entryPoint(ip), _ip(ip), _lastIp(ip),
+																													 _status(kStatusActive), _exited(false), _exitCode(kExitCodeDestroy),
+																													 _tileWidth(16), _tileHeight(16), _tileResource(-1), _tileIndex(0),
+																													 _timer(0),
+																													 _animationCycles(1), _animationLoop(false), _animationZ(0), _animationDelay(-1), _animationRandom(0),
+																													 _phaseVarControlled(false), _animationSpeed(100),
+																													 _samplePeriodic(false), _sampleAmbient(false), _sampleVolume(100),
+																													 _filmSubtitlesResource(-1), _version(version), _language(language) {
 	updateWithCurrentMousePosition();
 }
 
@@ -403,18 +403,40 @@ BINARY_OP(bitXor, ^)
 uint16 Process::nextOpcode() {
 	uint16 op = next();
 	switch (_version) {
-	case 0:
+	case kAGDSVersionDemo2283:
 		return op + 5;
 
-	case 2:
+	case kAGDSVersionBlackMirror2299:
+		switch (_language) {
+		case Common::CS_CZE:
+			return op + 5;
+		case Common::FR_FRA:
+			return op + 1;
+		case Common::DE_DEU:
+			return op - 3;
+		case Common::ES_ESP:
+			return op - 1;
+		// most of the opcodes look good, but it's not working
+		case Common::PL_POL:
+			return 1 + ((op + 41) % 246);
+		case Common::IT_ITA:
+			return 5 + ((op + 54) % 246);
+		default:
+			::error("invalid v2299 language %d", _language);
+		}
+
+	case kAGDSVersionNibiru2511:
 		if (op & 1) {
 			op |= next() << 8;
 			op >>= 1;
 		}
 		return op - 7995;
 
-	default:
+	case kAGDSVersionBlackMirror2296:
 		return op;
+
+	default:
+		::error("unknown version: %d", _version);
 	}
 }
 
@@ -506,13 +528,18 @@ Common::String Process::disassemble(const ObjectPtr &object, int version) {
 	uint ip = 0;
 	while (ip < code.size()) {
 		uint16 op = code[ip++];
-		if (version == 2) {
+		switch (version) {
+		case kAGDSVersionNibiru2511:
 			if (op & 1) {
 				op |= code[ip++] << 8;
 				op >>= 1;
 			}
-		} else if (version == 0) {
+			break;
+		case kAGDSVersionDemo2283:
 			op += 5;
+			break;
+		default:
+			break;
 		}
 
 		source += Common::String::format("%04x: %02x: ", ip - 1, op);

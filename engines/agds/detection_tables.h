@@ -24,19 +24,90 @@
 
 namespace AGDS {
 
+// clang-format off
+
 static const ADGameDescription gameDescriptions[] = {
 
 	// Black Mirror
 	{
 		"black-mirror",
-		0,
+		"Steam release",
 		AD_ENTRY2s(
 			"gfx1.grp", "6665ce103cf12a362fd55f863d1ec9e6", 907820240,
 			"data.adb", "3b2d85f16e24ac81c4ede7a1da55f786", 2169482),
 		Common::EN_USA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
+		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)},
+	{
+		"black-mirror",
+		"Steam release",
+		AD_ENTRY2s(
+			"gfx1.grp", "8b26006aba4fd22a717fab88a04f78dd", 902508242,
+			"data.adb", "e383a1bb8f415d94ae84076fd1c8a8bf", 2130335),
+		Common::CS_CZE,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | AGDS_2299 | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)},
+	{
+		"black-mirror",
+		"Steam release",
+		AD_ENTRY2s(
+			"gfx1.grp", "a5f84365d1e15a8403237fa3ad339f86", 850840170,
+			"data.adb", "3214d9a1c07df367903e74dc12165d3e", 2181787),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | AGDS_2299 | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)},
+	{
+		"black-mirror",
+		"Steam release",
+		AD_ENTRY2s(
+			"gfx1.grp", "be3ab3bce4a7740d2d544050c4f29b13", 913426990,
+			"data.adb", "467e6ea3b22e06d879d77d6b9c609ef6", 2180501),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | AGDS_2299 | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)},
+	{
+		"black-mirror",
+		"Steam release",
+		AD_ENTRY2s(
+			"gfx1.grp", "2ede03d9a50e0bfedd0d7656c47d2de4", 913209074,
+			"data.adb", "cffd38b88a245765987f9ff5cce3c5c9", 2184448),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | AGDS_2299 | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)},
+	{
+		"black-mirror",
+		"Steam release",
+		AD_ENTRY2s(
+			"gfx1.grp", "a5f84365d1e15a8403237fa3ad339f86", 850840170,
+			"data.adb", "fa24ab2fe18621d73a45af53e36c78f0", 2178282),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | AGDS_2299 | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)},
+	{
+		"black-mirror",
+		"Steam release - opcodes don't match the other games",
+		AD_ENTRY2s(
+			"gfx1.grp", "a5f84365d1e15a8403237fa3ad339f86", 850840170,
+			"data.adb", "94de43fb7916206e596a516647e76b2f", 2169250),
+		Common::PL_POL,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | AGDS_2299 | ADGF_UNSUPPORTED,
+		GUIO1(GUIO_NONE)},
+	{"black-mirror",
+	 "Steam release",
+	 AD_ENTRY2s(
+		 "gfx1.grp", "652f931f02c5a79fb9bcbe32abafbdf7", 907732355,
+		 "data.adb", "d8706b17fb89d58d4dba094a73e5490a", 2152794),
+	 Common::RU_RUS,
+	 Common::kPlatformWindows,
+	 ADGF_DROPPLATFORM,
+	 GUIO1(GUIO_NONE)},
 	{"black-mirror",
 	 "CD version protected with StarForce",
 	 AD_ENTRY2s(
@@ -64,15 +135,6 @@ static const ADGameDescription gameDescriptions[] = {
 	 Common::kPlatformWindows,
 	 ADGF_DROPPLATFORM | ADGF_DEMO | ADGF_UNSTABLE,
 	 GUIO1(GUIO_NONE)},
-	{"black-mirror",
-	 0,
-	 AD_ENTRY2s(
-		 "gfx1.grp", "652f931f02c5a79fb9bcbe32abafbdf7", 907732355,
-		 "data.adb", "d8706b17fb89d58d4dba094a73e5490a", 2152794),
-	 Common::RU_RUS,
-	 Common::kPlatformWindows,
-	 ADGF_DROPPLATFORM,
-	 GUIO1(GUIO_NONE)},
 
 	// NiBiRu
 	{
@@ -83,7 +145,7 @@ static const ADGameDescription gameDescriptions[] = {
 			"data.adb", "40a7a88f77c35305b6aba0329ed8a9ac", 1391440),
 		Common::EN_USA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | AGDS_V2 | ADGF_UNSTABLE,
+		ADGF_DROPPLATFORM | AGDS_2511 | ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)},
 	{"nibiru",
 	 0,
@@ -92,9 +154,11 @@ static const ADGameDescription gameDescriptions[] = {
 		 "data.adb", "40a7a88f77c35305b6aba0329ed8a9ac", 1391440),
 	 Common::RU_RUS,
 	 Common::kPlatformWindows,
-	 ADGF_DROPPLATFORM | AGDS_V2 | ADGF_UNSTABLE,
+	 ADGF_DROPPLATFORM | AGDS_2511 | ADGF_UNSTABLE,
 	 GUIO1(GUIO_NONE)},
 
 	AD_TABLE_END_MARKER};
+
+// clang-format on
 
 } // End of namespace AGDS
