@@ -83,7 +83,10 @@ private:
 	void drawDatabaseScrollControls() const;
 	int findDatabaseScrollControl(const Common::Point &point) const;
 	void scrollDatabaseStillImage(int delta);
-	uint16 serviceDatabaseMediaInput(byte activeEntryIndex);
+	uint16 serviceDatabaseMediaInput(byte activeEntryIndex,
+		uint *textFirstVisible = nullptr, uint textMaximumFirstVisible = 0,
+		uint textPageRows = 0);
+	uint16 runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceId);
 	uint16 dispatchDatabaseEntry(DatabaseEntry &entry);
 	const Common::String &resourceString(uint resourceId) const;
 	uint measureText(const Common::String &text) const;

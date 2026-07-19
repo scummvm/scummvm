@@ -317,23 +317,25 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 	// and DrawPromptChooserTemplateLabelCallback repaint the framed interior.
 	// Keeping that order prevents center and edge tile pixels from covering the
 	// prompt background and heading strip.
+	const int headingHeight = title.empty() ? kModalBottomPadding : kModalHeadingTopPadding;
 	for (int y = bounds.top + 2; y < bounds.bottom - 2; ++y)
 		memset(screen->getBasePtr(bounds.left + kModalLeftPadding, y),
 			kModalBackgroundColor, bounds.width() - kModalLeftPadding - kModalRightPadding);
-	for (int y = bounds.top + 2; y < bounds.top + kModalHeadingTopPadding; ++y)
-		memset(screen->getBasePtr(bounds.left + kModalLeftPadding, y),
-			kModalHeadingColor, bounds.width() - kModalLeftPadding - kModalRightPadding);
-
-	const int titleX = bounds.left + (bounds.width() - measureText(title)) / 2;
-	drawText(pixels, screen->pitch, titleX,
-		bounds.top + (kModalHeadingTopPadding - _font.lineHeight) / 2,
-		title, kModalTitleColor);
+	if (!title.empty()) {
+		for (int y = bounds.top + 2; y < bounds.top + headingHeight; ++y)
+			memset(screen->getBasePtr(bounds.left + kModalLeftPadding, y),
+				kModalHeadingColor, bounds.width() - kModalLeftPadding - kModalRightPadding);
+		const int titleX = bounds.left + (bounds.width() - measureText(title)) / 2;
+		drawText(pixels, screen->pitch, titleX,
+			bounds.top + (headingHeight - _font.lineHeight) / 2,
+			title, kModalTitleColor);
+	}
 	for (uint row = 0; row < visibleRows; ++row) {
 		const uint lineIndex = firstVisible + row;
 		if (lineIndex >= lines.size())
 			break;
 		drawText(pixels, screen->pitch, bounds.left + kModalLeftPadding,
-			bounds.top + kModalHeadingTopPadding + row * kModalRowHeight +
+			bounds.top + headingHeight + row * kModalRowHeight +
 				(kModalRowHeight - _font.lineHeight) / 2,
 			lines[lineIndex], kModalTextColor);
 	}
@@ -342,6 +344,32 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 	g_system->unlockScreen();
 	_engine->getCursor()->refresh();
 	g_system->updateScreen();
+}
+
+bool ModalDialogManager::drawRetainedTextPanel(uint bodyResourceId,
+		const Common::Rect &bounds, uint firstVisible, uint &maximumFirstVisible,
+		uint &visibleRows) {
+	const Common::String &body = resourceString(bodyResourceId);
+	if (!_initialized || body.empty() || bounds.width() <=
+			kModalLeftPadding + kModalRightPadding ||
+			bounds.height() <= kModalBottomPadding * 2) {
+		warning("Ripper: could not draw retained text panel resource=%u", bodyResourceId);
+		return false;
+	}
+
+	Common::Array<Common::String> lines;
+	wrapText(body, bounds.width() - kModalLeftPadding - kModalRightPadding, lines);
+	visibleRows = MAX<uint>(1,
+		(bounds.height() - kModalBottomPadding * 2) / kModalRowHeight);
+	maximumFirstVisible = lines.size() > visibleRows ? lines.size() - visibleRows : 0;
+	firstVisible = MIN(firstVisible, maximumFirstVisible);
+	applyModalPalette();
+	drawDialog(Common::String(), lines, firstVisible, visibleRows, bounds);
+	debugC(2, kDebugScene,
+		"Ripper: drew retained text panel resource=%u lines=%u firstLine=%u visibleRows=%u bounds=%d,%d,%d,%d",
+		bodyResourceId, lines.size(), firstVisible, visibleRows,
+		bounds.left, bounds.top, bounds.width(), bounds.height());
+	return true;
 }
 
 void ModalDialogManager::drawTextEntry(const Common::String &prompt,

@@ -47,6 +47,8 @@ public:
 	bool run(uint bodyResourceId, bool retainSceneCursorRegions = false);
 	bool runText(const Common::String &title, const Common::String &body,
 		const char *source, bool retainSceneCursorRegions = false);
+	bool drawRetainedTextPanel(uint bodyResourceId, const Common::Rect &bounds,
+		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows);
 	bool beginTextEntry(const Common::String &prompt, uint maximumLength,
 		uint helpResourceId, const char *source);
 	TextEntryResult serviceTextEntry(Common::String &text);
