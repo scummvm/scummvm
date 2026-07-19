@@ -27,7 +27,7 @@
 namespace Nancy {
 namespace Action {
 
-void ActionZone::readData(Common::SeekableReadStream &stream) {
+void ActionZone::readData(Common::SeekableReadStream &stream, bool isNancy13) {
 	// Base ActionZone (matches the original "Action Zone Boundary OVL" reader).
 	typeField = stream.readSint32LE();
 	type = typeField & 0xFF;
@@ -42,11 +42,21 @@ void ActionZone::readData(Common::SeekableReadStream &stream) {
 	val49 = stream.readSint16LE();
 	val4b = stream.readByte();
 
+	// The Nancy13 base carries an extra int32 here (before the sound block).
+	if (isNancy13) {
+		stream.skip(4);
+	}
+
 	// Random-sound block: count, then that many 33-byte names + 8 bytes of params.
 	_sound.readData(stream);
 
-	// Subtype-specific trailing data. Fields not yet needed are skipped to keep
-	// the stream aligned.
+	readSubtype(stream, isNancy13);
+}
+
+// Subtype-specific trailing data. Fields not yet needed are skipped to keep the stream
+// aligned. The Nancy12 and Nancy13 layouts are identical apart from three subtypes
+// (0x0d / 0x15 / 0x16), which branch on isNancy13.
+void ActionZone::readSubtype(Common::SeekableReadStream &stream, bool isNancy13) {
 	switch (type) {
 	case 1:		// base only
 	case 5:
@@ -72,7 +82,7 @@ void ActionZone::readData(Common::SeekableReadStream &stream) {
 	case 3:
 		stream.skip(8);		// double
 		break;
-	case 0x17:				// Flat Tire (min/max)
+	case 0x17:				// Flat Tire (min/max) - Nancy12 only
 		stream.skip(8);		// int32 + int32
 		break;
 	case 4:
@@ -86,19 +96,30 @@ void ActionZone::readData(Common::SeekableReadStream &stream) {
 		tailId = stream.readSint16LE();
 		tailFlag = stream.readByte();
 		break;
-	case 0x15:				// special effect + a trailing int32 (purpose unconfirmed)
-		readSpecialEffect(stream);
-		stream.skip(4);
+	case 0x15:
+		// Nancy12: special effect + a trailing int32. Nancy13: the flat-tire zone
+		// (min/max int32), with no special effect.
+		if (isNancy13) {
+			stream.skip(8);
+		} else {
+			readSpecialEffect(stream);
+			stream.skip(4);
+		}
 		break;
-	case 0x0d:				// OverlayZone
-		readOverlayZone(stream);
+	case 0x0d:				// OverlayZone (Nancy13 carries one extra int32)
+		readOverlayZone(stream, isNancy13);
 		break;
-	case 0x16:				// OverlayZone + int32
-		readOverlayZone(stream);
-		stream.skip(4);
+	case 0x16:
+		// Nancy12: OverlayZone + int32. Nancy13: a short bumper record (two bytes + int16).
+		if (isNancy13) {
+			stream.skip(4);
+		} else {
+			readOverlayZone(stream, false);
+			stream.skip(4);
+		}
 		break;
 	default:
-		warning("Nancy12 ActionZone: unknown type %d - chunk may desync", type);
+		warning("ActionZone: unknown type %d - chunk may desync", type);
 		break;
 	}
 }
@@ -121,7 +142,7 @@ void ActionZone::readSpecialEffect(Common::SeekableReadStream &stream) {
 	readRect(stream, seRect);
 }
 
-void ActionZone::readOverlayZone(Common::SeekableReadStream &stream) {
+void ActionZone::readOverlayZone(Common::SeekableReadStream &stream, bool isNancy13) {
 	readFilename(stream, overlayName);
 
 	int16 numSrcRects = stream.readSint16LE();
@@ -133,12 +154,15 @@ void ActionZone::readOverlayZone(Common::SeekableReadStream &stream) {
 	}
 
 	readRect(stream, overlayDestRect);
+	if (isNancy13) {
+		stream.skip(4);	// extra int32 vs Nancy12
+	}
 	stream.skip(4);		// int32
 	stream.skip(1);		// byte (loop/play mode)
 	stream.skip(4);		// int32
 }
 
-void readActionZoneArray(Common::SeekableReadStream &stream, Common::Array<ActionZone> &out) {
+void readActionZoneArray(Common::SeekableReadStream &stream, Common::Array<ActionZone> &out, bool isNancy13) {
 	int16 count = stream.readSint16LE();
 	if (count <= 0) {
 		return;
@@ -146,7 +170,7 @@ void readActionZoneArray(Common::SeekableReadStream &stream, Common::Array<Actio
 
 	out.resize(count);
 	for (int i = 0; i < count; ++i) {
-		out[i].readData(stream);
+		out[i].readData(stream, isNancy13);
 	}
 }
 

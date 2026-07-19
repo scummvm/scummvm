@@ -76,15 +76,19 @@ struct ActionZone {
 	Common::Array<Common::Rect> overlaySrcRects;
 	Common::Rect overlayDestRect;
 
-	void readData(Common::SeekableReadStream &stream);
+	// The Nancy13 pinball layout (AR 175) differs from the Nancy12 one: the base carries an
+	// extra int32 before the sound block, and subtypes 0x0d/0x15/0x16 have different trailers.
+	// Pass isNancy13 = true to parse it; the default keeps the Nancy12 behaviour.
+	void readData(Common::SeekableReadStream &stream, bool isNancy13 = false);
 
 private:
 	void readSpecialEffect(Common::SeekableReadStream &stream);
-	void readOverlayZone(Common::SeekableReadStream &stream);
+	void readOverlayZone(Common::SeekableReadStream &stream, bool isNancy13);
+	void readSubtype(Common::SeekableReadStream &stream, bool isNancy13);
 };
 
 // Reads an int16 count, then that many ActionZones.
-void readActionZoneArray(Common::SeekableReadStream &stream, Common::Array<ActionZone> &out);
+void readActionZoneArray(Common::SeekableReadStream &stream, Common::Array<ActionZone> &out, bool isNancy13 = false);
 
 } // End of namespace Action
 } // End of namespace Nancy
