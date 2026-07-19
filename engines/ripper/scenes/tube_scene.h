@@ -19,23 +19,15 @@
 
 #include "ripper/media.h"
 #include "ripper/resources.h"
+#include "ripper/scenes/scene.h"
 
 namespace Ripper {
 
-class DialogueChooser;
-class RipperEngine;
-
-class TubeScene : public MediaSequenceCallback {
+class TubeScene : public Scene, public MediaSequenceCallback {
 public:
-	enum Result {
-		kExited,
-		kSolved,
-		kLoadFailed
-	};
-
 	explicit TubeScene(RipperEngine *engine);
 
-	Result run(uint completionFlag);
+	Result run(uint completionFlag) override;
 	uint16 service(uint frame) override;
 	bool ownsInput() const override { return true; }
 
@@ -51,13 +43,9 @@ private:
 	uint16 serviceInventory();
 	void updateCursor(const Common::Point &point);
 	void stopAudio();
-	void restorePalette();
 
-	RipperEngine *_engine;
-	DialogueChooser &_chooser;
 	Common::Array<BitmapAssetFrame> _switchFrames;
 	Common::Array<Common::String> _gameText;
-	Common::Array<byte> _savedPalette;
 	Common::Array<byte> _switchBacking;
 	Audio::SoundHandle _audioHandles[4];
 	uint _tubeCount;

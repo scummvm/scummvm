@@ -14,7 +14,6 @@
 
 #include "common/debug.h"
 #include "common/system.h"
-#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 #include "ripper/cursor.h"
@@ -24,7 +23,6 @@
 #include "ripper/milestones.h"
 #include "ripper/modal_dialog.h"
 #include "ripper/ripper.h"
-#include "ripper/script.h"
 #include "ripper/toolbar.h"
 
 namespace Ripper {
@@ -75,8 +73,7 @@ static bool isExitPoint(const Common::Point &point) {
 
 } // End of anonymous namespace
 
-TubeScene::TubeScene(RipperEngine *engine) : _engine(engine),
-		_chooser(*engine->getScripts()->getDialogue()), _tubeCount(0),
+TubeScene::TubeScene(RipperEngine *engine) : Scene(engine), _tubeCount(0),
 		_hoveredControl(-1), _switchOn(false), _secondaryCuePending(false) {
 }
 
@@ -100,8 +97,6 @@ bool TubeScene::initialize() {
 		return false;
 	}
 
-	_savedPalette.resize(256 * 3);
-	g_system->getPaletteManager()->grabPalette(_savedPalette.data(), 0, 256);
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
 		if (screen)
@@ -339,26 +334,14 @@ bool TubeScene::playSegment(uint firstFrame, uint lastFrame, uint16 &command) {
 
 void TubeScene::stopAudio() {
 	for (uint cue = 0; cue < ARRAYSIZE(_audioHandles); ++cue)
-		_engine->getMedia()->stopSoundEffect(_audioHandles[cue]);
-}
-
-void TubeScene::restorePalette() {
-	if (_savedPalette.size() == 256 * 3)
-		g_system->getPaletteManager()->setPalette(_savedPalette.data(), 0, 256);
+		Scene::stopAudio(_audioHandles[cue]);
 }
 
 TubeScene::Result TubeScene::run(uint completionFlag) {
 	if (!initialize())
 		return kLoadFailed;
-	if (_chooser.isPending())
-		_chooser.dismissForSceneTransition("tube-entry");
-	else
-		_chooser.clearPending();
+	prepare("tube-entry", kDefaultCursor, true);
 	_tubeCount = countInstalledTubes();
-	_engine->getInput()->drainKeys();
-	_engine->getInput()->discardMouseTransitions();
-	_engine->getCursor()->update(kDefaultCursor);
-	_engine->getCursor()->setVisible(true);
 	debugC(1, kDebugScene,
 		"Ripper: entered tube switch scene completionFlag=%u installed=%u toolbarMask=0x%03x",
 		completionFlag, _tubeCount, kToolbarMask);
@@ -452,15 +435,8 @@ TubeScene::Result TubeScene::run(uint completionFlag) {
 		}
 	}
 
-	if (_chooser.isPending())
-		_chooser.dismissForSceneTransition("tube-exit");
-	_engine->getToolbar()->leave();
 	stopAudio();
-	restorePalette();
-	_engine->getCursor()->update(0);
-	_engine->getCursor()->setVisible(false);
-	_engine->getInput()->drainKeys();
-	_engine->getInput()->discardMouseTransitions();
+	finish("tube-exit", 0, false);
 	debugC(result == kLoadFailed ? 2 : 1, kDebugScene,
 		"Ripper: left tube switch scene result=%d installed=%u milestone=%u quit=%d",
 		result, _tubeCount, completionFlag, _engine->shouldQuit());
