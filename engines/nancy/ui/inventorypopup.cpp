@@ -407,9 +407,16 @@ void InventoryPopup::handleInput(NancyInput &input) {
 
 			const int newThumbTop = chunkMouse.y - _scrollbarGrabOffset;
 			const int clamped = CLIP<int>(newThumbTop, track.top, track.top + travel);
-			_scrollPos = travel > 0 ? (float)(clamped - track.top) / (float)travel : 0.0f;
-			updatePageFromScroll();
-			refreshGrid();
+			const float newScrollPos = travel > 0 ? (float)(clamped - track.top) / (float)travel : 0.0f;
+
+			// Only re-render when the thumb actually moves. refreshGrid() redraws the
+			// whole popup, so calling it every frame while the button is merely held
+			// down pins the CPU and makes dragging choppy.
+			if (newScrollPos != _scrollPos) {
+				_scrollPos = newScrollPos;
+				updatePageFromScroll();
+				refreshGrid();
+			}
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				_scrollbarDragging = false;

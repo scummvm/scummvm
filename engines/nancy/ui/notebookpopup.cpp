@@ -296,8 +296,16 @@ void NotebookPopup::handleInput(NancyInput &input) {
 
 			const int newThumbTop = localMouse.y - _scrollbarGrabOffset;
 			const int clamped = CLIP<int>(newThumbTop, trackLocal.top, trackLocal.top + travel);
-			_scrollPos = travel > 0 ? (float)(clamped - trackLocal.top) / (float)travel : 0.0f;
-			refreshContent();
+			const float newScrollPos = travel > 0 ? (float)(clamped - trackLocal.top) / (float)travel : 0.0f;
+
+			// Only re-render when the thumb actually moves. refreshContent() re-lays
+			// out the whole popup (background, tabs, caption and full text surface),
+			// so calling it every frame while the button is merely held down pins the
+			// CPU and makes dragging choppy.
+			if (newScrollPos != _scrollPos) {
+				_scrollPos = newScrollPos;
+				refreshContent();
+			}
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				_scrollbarDragging = false;

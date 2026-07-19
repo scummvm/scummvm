@@ -236,11 +236,17 @@ void ConversationPopup::handleInput(NancyInput &input) {
 
 			const int newThumbTop = localMouse.y - _scrollbarGrabOffset;
 			const int clamped = CLIP<int>(newThumbTop, trackLocal.top, trackLocal.top + travel);
-			_scrollPos = travel > 0 ? (float)(clamped - trackLocal.top) / (float)travel : 0.0f;
+			const float newScrollPos = travel > 0 ? (float)(clamped - trackLocal.top) / (float)travel : 0.0f;
 
-			drawBackground();
-			drawContent();
-			drawScrollbar(kUIButtonPressed);
+			// Only re-render when the thumb actually moves. drawContent() re-lays out
+			// the whole text surface, so calling it every frame while the button is
+			// merely held down pins the CPU and makes dragging choppy.
+			if (newScrollPos != _scrollPos) {
+				_scrollPos = newScrollPos;
+				drawBackground();
+				drawContent();
+				drawScrollbar(kUIButtonPressed);
+			}
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				_scrollbarDragging = false;
