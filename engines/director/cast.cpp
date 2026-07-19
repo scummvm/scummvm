@@ -947,6 +947,32 @@ void Cast::loadCast() {
 	}
 }
 
+// Members without a version-capable writer, and members whose in-memory
+// type differs from the type stored on disk (e.g. promoted Xtras), keep
+// their original 'CASt' bytes when saving
+bool Cast::keepOriginalCastBytes(CastMember *target) {
+	if (!target || !target->canWriteCastData())
+		return true;
+	return target->_sourceType != kCastTypeNull && target->_sourceType != target->_type;
+}
+
+// True when a member was changed at runtime (Lingo's `the modified of
+// member`) but has no writer for this version: saving would silently
+// lose the change
+bool Cast::hasUnsavableChanges() {
+	if (!_loadedCast)
+		return false;
+	for (auto &it : *_loadedCast) {
+		CastMember *member = it._value;
+		if (member && member->isChanged() && keepOriginalCastBytes(member)) {
+			warning("Cast::hasUnsavableChanges(): %s cast member %d was modified but has no writer for version v%d",
+					castType2str(member->_type), it._key, humanVersion(_version));
+			return true;
+		}
+	}
+	return false;
+}
+
 void Cast::saveCastData(Common::SeekableWriteStream *writeStream, Resource *res) {
 	// This offset is at which we will start writing our 'CASt' resources
 	// In the original file, all the 'CASt' resources don't necessarily appear side by side
@@ -964,8 +990,17 @@ void Cast::saveCastData(Common::SeekableWriteStream *writeStream, Resource *res)
 
 	CastType type = kCastTypeAny;
 
-	if (_loadedCast->contains(id)) {
-		CastMember *target = _loadedCast->getVal(id);
+	CastMember *target = _loadedCast->contains(id) ? _loadedCast->getVal(id) : nullptr;
+
+	// Members whose writer doesn't support this version keep their original
+	// 'CASt' bytes; the preflight in writeToFile() already refused the save
+	// if any of them was modified
+	bool keepOriginal = keepOriginalCastBytes(target);
+	if (target && keepOriginal)
+		warning("STUB: Cast::saveCastData(): keeping original bytes for %s cast member %d",
+				castType2str(target->_type), id);
+
+	if (target && !keepOriginal) {
 		// To make it consistent with how the data is stored originally, getResourceSize returns
 		// the size excluding 'CASt' header and the entry for size itself. Adding 8 to compensate for that
 		castSize = target->getCastResourceSize();
@@ -1677,6 +1712,7 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		target->_castDataSize = castDataSize;
 		target->_flags1 = flags1;
 		target->_index = res->index;
+		target->_sourceType = (CastType)castType;
 		setCastMember(id, target);
 	}
 	if (castStream.eos()) {

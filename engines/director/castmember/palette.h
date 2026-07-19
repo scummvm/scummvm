@@ -45,6 +45,7 @@ public:
 
 	uint32 getCastDataSize() override;			// This is the size of the data in the 'CASt' resource
 	void writeCastData(Common::SeekableWriteStream *writeStream) override;
+	bool canWriteCastData() override;
 
 	void writePaletteData(Common::SeekableWriteStream *writeStream, uint32 offset);
 	uint32 getPaletteDataSize();

@@ -142,6 +142,10 @@ Common::String ScriptCastMember::formatInfo() {
 	);
 }
 
+bool ScriptCastMember::canWriteCastData() {
+	return _cast->_version >= kFileVer400 && _cast->_version < kFileVer1200;
+}
+
 uint32 ScriptCastMember::getCastDataSize() {
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
 		// 2 bytes for type and unk1 + 2 byte for castType and flags ma(see Cast::loadCastData() for Director 4 only

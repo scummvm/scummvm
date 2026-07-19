@@ -47,6 +47,7 @@ public:
 
 	uint32 getCastDataSize() override;
 	void writeCastData(Common::SeekableWriteStream *writeStream) override;
+	bool canWriteCastData() override;
 
 	bool _looping;
 	AudioDecoder *_audio;

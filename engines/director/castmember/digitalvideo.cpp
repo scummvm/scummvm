@@ -835,6 +835,10 @@ void DigitalVideoCastMember::setField(int field, const Datum &d) {
 	CastMember::setField(field, d);
 }
 
+bool DigitalVideoCastMember::canWriteCastData() {
+	return _cast->_version >= kFileVer400 && _cast->_version < kFileVer1100;
+}
+
 uint32 DigitalVideoCastMember::getCastDataSize() {
 	// We're only reading the _initialRect and _vflags from the Cast Data
 	// _initialRect : 8 bytes + _vflags : 4 bytes + castType and flags1 (see Cast::loadCastData() for Director 4 only) 2 byte

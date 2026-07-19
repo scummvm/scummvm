@@ -46,6 +46,7 @@ public:
 
 	uint32 getCastDataSize() override;
 	void writeCastData(Common::SeekableWriteStream *writeStream) override;
+	bool canWriteCastData() override;
 
 private:
 	Common::String _xtraSymbol;

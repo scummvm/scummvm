@@ -35,6 +35,9 @@ class Path;
 
 namespace Director {
 
+class CastMember;
+class Movie;
+
 // Completely ripped off of Mohawk's Archive code
 
 struct Resource {
@@ -196,7 +199,9 @@ private:
 	void readCast(Common::SeekableReadStreamEndian &casStream, uint32 libResourceId);
 	void readKeyTable(Common::SeekableReadStreamEndian &keyStream);
 
-	uint32 findParentIndex(uint32 tag, uint16 index);
+	static const uint32 kNoParent = 0xFFFFFFFF;
+	uint32 findParentIndex(uint32 tag, uint16 index);	// kNoParent when absent
+	CastMember *findResourceOwner(Movie *movie, uint32 tag, uint16 index);	// nullptr when unresolvable
 
 	/* Memory Map data to save the file */
 	uint32 _metaTag;

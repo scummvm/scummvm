@@ -127,6 +127,10 @@ Common::String TransitionCastMember::formatInfo() {
 	return Common::String::format("transType: %d, transTime: %d, durationMillis: %d, flags: %d, chunkSize: %d, area: %d", _transType, _transTime, _durationMillis, _flags, _chunkSize, _area);
 }
 
+bool TransitionCastMember::canWriteCastData() {
+	return _cast->_version >= kFileVer500 && _cast->_version < kFileVer1100;
+}
+
 uint32 TransitionCastMember::getCastDataSize() {
 	if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer1100) {
 		// Ignored 1 byte

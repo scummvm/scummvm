@@ -232,6 +232,10 @@ uint32 ShapeCastMember::getCastDataSize() {
 	}
 }
 
+bool ShapeCastMember::canWriteCastData() {
+	return _cast->_version >= kFileVer400 && _cast->_version < kFileVer1100;
+}
+
 void ShapeCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
 	writeStream->writeUint16BE((uint16)_shapeType);
 

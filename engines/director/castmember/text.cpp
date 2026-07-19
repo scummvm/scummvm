@@ -982,6 +982,10 @@ void TextCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
 	}
 }
 
+bool TextCastMember::canWriteCastData() {
+	return _cast->_version >= kFileVer400 && _cast->_version < kFileVer1100;
+}
+
 uint32 TextCastMember::getCastDataSize() {
 	// In total 30 bytes for text and 28 for button
 	uint32 size = (_type == kCastButton) ? 30 : 28;
