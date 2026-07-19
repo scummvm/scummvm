@@ -964,64 +964,131 @@ UICL::UICL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 		dialPadSlots[i].soundName = nameBuf;
 	}
 
-	// Screen-frame and label rects
-	readRect(*chunkStream, dialHilite.srcRect);
-	readRect(*chunkStream, dialHilite.destRect);
-	readRect(*chunkStream, screenOutSrcRect);
-	statusTextX = chunkStream->readSint32LE();
-	statusTextY = chunkStream->readSint32LE();
-	readRect(*chunkStream, welcomeScreen.srcRect);
-	readRect(*chunkStream, welcomeScreen.destRect);
-
 	char labelBuf[21];
+	const bool isNancy13 = g_nancy->getGameType() >= kGameTypeNancy13;
+
+	// Version-specific preamble: Nancy 13 replaced the dial-highlight /
+	// screen-out / welcome block with a camera sub-UI, and moved the
+	// dial/web/dir labels ahead of the status labels.
+	if (isNancy13) {
+		readRect(*chunkStream, cameraViewSrcRect);
+		cameraTextX = chunkStream->readSint32LE();
+		cameraTextY = chunkStream->readSint32LE();
+		readFilename(*chunkStream, cameraViewImageName);
+		readFilename(*chunkStream, cameraClickSound);
+		readRect(*chunkStream, pictureDisplayRect);
+
+		// Camera picture-slot / thumbnail data (int16 rects). Not yet mapped.
+		chunkStream->skip(114);
+
+		readRect(*chunkStream, noPictureScreenRect);
+
+		// The dialed-number baseline is the camera text position (Nancy 13
+		// dropped the separate statusText field). welcomeScreen is read from the
+		// screen-graphic block further down.
+		statusTextX = cameraTextX;
+		statusTextY = cameraTextY;
+
+		// Eight dial/web/dir/camera label SrcDestRectPairs across three on-screen
+		// columns (dest x = 437 / 492 / 551), each with alternate glyph variants;
+		// take one pair per column for the dial / web / dir labels.
+		readRect(*chunkStream, dialLabel.srcRect);	// column 1 (x=437)
+		readRect(*chunkStream, dialLabel.destRect);
+		chunkStream->skip(32);						// second x=437 variant
+		readRect(*chunkStream, webLabel.srcRect);	// column 2 (x=492)
+		readRect(*chunkStream, webLabel.destRect);
+		readRect(*chunkStream, dirLabel.srcRect);	// column 3 (x=551)
+		readRect(*chunkStream, dirLabel.destRect);
+		chunkStream->skip(4 * 32);					// remaining variants
+	} else {
+		readRect(*chunkStream, dialHilite.srcRect);
+		readRect(*chunkStream, dialHilite.destRect);
+		readRect(*chunkStream, screenOutSrcRect);
+		statusTextX = chunkStream->readSint32LE();
+		statusTextY = chunkStream->readSint32LE();
+		readRect(*chunkStream, welcomeScreen.srcRect);
+		readRect(*chunkStream, welcomeScreen.destRect);
+	}
+
 	for (uint i = 0; i < kNumStatusLabels; ++i) {
 		chunkStream->read(labelBuf, 20);
 		labelBuf[20] = '\0';
 		statusLabels[i] = labelBuf;
 	}
 
-	readRect(*chunkStream, dialLabel.srcRect);
-	readRect(*chunkStream, dialLabel.destRect);
-	readRect(*chunkStream, webLabel.srcRect);
-	readRect(*chunkStream, webLabel.destRect);
-	readRect(*chunkStream, dirLabel.srcRect);
-	readRect(*chunkStream, dirLabel.destRect);
+	if (!isNancy13) {
+		// Nancy 13 reads the dial/web/dir labels in the camera block above.
+		readRect(*chunkStream, dialLabel.srcRect);
+		readRect(*chunkStream, dialLabel.destRect);
+		readRect(*chunkStream, webLabel.srcRect);
+		readRect(*chunkStream, webLabel.destRect);
+		readRect(*chunkStream, dirLabel.srcRect);
+		readRect(*chunkStream, dirLabel.destRect);
+	}
 
-	// Help "?" button widget (3 rects).
-	readRect(*chunkStream, helpButton.srcRectIdle);
-	readRect(*chunkStream, helpButton.srcRectPressed);
-	readRect(*chunkStream, helpButton.destRect);
+	// Help "?" button (3 rects) + its CVTX text key. Nancy 13 orders the key
+	// before the button and adds a second key.
+	if (isNancy13) {
+		readFilename(*chunkStream, helpTextKey);
+		readRect(*chunkStream, helpButton.srcRectIdle);
+		readRect(*chunkStream, helpButton.srcRectPressed);
+		readRect(*chunkStream, helpButton.destRect);
+		readFilename(*chunkStream, helpTextKey2);
+	} else {
+		readRect(*chunkStream, helpButton.srcRectIdle);
+		readRect(*chunkStream, helpButton.srcRectPressed);
+		readRect(*chunkStream, helpButton.destRect);
+		readFilename(*chunkStream, helpTextKey);
+	}
 
-	// Screen-content sprite block
-	readFilename(*chunkStream, helpTextKey);
 	readRect(*chunkStream, signalSpriteSrc);
 	readRect(*chunkStream, signalSpriteSrcAlt);
 	readRect(*chunkStream, signalSpriteDest);
 	readRect(*chunkStream, batterySpriteSrc);
 	readRect(*chunkStream, batterySpriteSrcAlt);
 	readRect(*chunkStream, batterySpriteDest);
-	readRect(*chunkStream, typeMessage.srcRect);
-	readRect(*chunkStream, typeMessage.destRect);
-	readRect(*chunkStream, connectedLabel.srcRect);
-	readRect(*chunkStream, connectedLabel.destRect);
-	readRect(*chunkStream, connectingSpriteSrc);
-	readRect(*chunkStream, connectingSpriteSrcAlt);
-	readRect(*chunkStream, connectingSpriteDest);
 
-	if (g_nancy->getGameType() >= kGameTypeNancy11) {
-		// TODO: Looks to be a new coordinate - values (548, 50)
-		chunkStream->skip(4);
-		chunkStream->skip(4);
+	if (isNancy13) {
+		// Welcome / idle screen graphic: a normal source variant, a no-signal
+		// source variant, then the on-screen dest (all 171x164). This is what
+		// drawWelcomeScreen blits, and it carries the top-row button
+		// backgrounds; its dest rect also bounds the small-LCD directory list.
+		// Nancy 13 dropped the separate typeMessage / connectedLabel /
+		// connectingSprite fields.
+		readRect(*chunkStream, welcomeScreen.srcRect);
+		chunkStream->skip(16);	// no-signal source variant
+		readRect(*chunkStream, welcomeScreen.destRect);
+		chunkStream->skip(8);	// trailing pad
+	} else {
+		readRect(*chunkStream, typeMessage.srcRect);
+		readRect(*chunkStream, typeMessage.destRect);
+		readRect(*chunkStream, connectedLabel.srcRect);
+		readRect(*chunkStream, connectedLabel.destRect);
+		readRect(*chunkStream, connectingSpriteSrc);
+		readRect(*chunkStream, connectingSpriteSrcAlt);
+		readRect(*chunkStream, connectingSpriteDest);
+
+		if (g_nancy->getGameType() >= kGameTypeNancy11) {
+			// TODO: Looks to be a new coordinate - values (548, 50)
+			chunkStream->skip(8);
+		}
+
+		readRect(*chunkStream, onlineHeading.srcRect);
+		readRect(*chunkStream, onlineHeading.destRect);
 	}
 
-	readRect(*chunkStream, onlineHeading.srcRect);
-	readRect(*chunkStream, onlineHeading.destRect);
 	readRect(*chunkStream, fullEmptyScreenSrc);
 	readRect(*chunkStream, emailListContainer);
 	readRect(*chunkStream, dirArrowSrc);
 	readRect(*chunkStream, dirCursorSrc);
-	readRect(*chunkStream, dirHeading.srcRect);
-	readRect(*chunkStream, dirHeading.destRect);
+
+	if (isNancy13) {
+		// Online / directory headings — N13 changed these values, not mapped yet.
+		chunkStream->skip(48);
+	} else {
+		readRect(*chunkStream, dirHeading.srcRect);
+		readRect(*chunkStream, dirHeading.destRect);
+	}
 
 	for (uint i = 0; i < kNumSubButtons; ++i) {
 		readRect(*chunkStream, subButtons[i].srcRectIdle);
@@ -1029,15 +1096,19 @@ UICL::UICL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 		readRect(*chunkStream, subButtons[i].destRect);
 	}
 
-	// Heading/icon rect pairs
 	readRect(*chunkStream, searchHeading.srcRect);
 	readRect(*chunkStream, searchHeading.destRect);
 	readRect(*chunkStream, emailIconUnread);
 	readRect(*chunkStream, emailIconSelected);
 	readRect(*chunkStream, emailHeading.srcRect);
 	readRect(*chunkStream, emailHeading.destRect);
-	readRect(*chunkStream, helpHeading.srcRect);
-	readRect(*chunkStream, helpHeading.destRect);
+
+	if (!isNancy13) {
+		// Nancy 13 has no separate help heading in this block.
+		readRect(*chunkStream, helpHeading.srcRect);
+		readRect(*chunkStream, helpHeading.destRect);
+	}
+
 	readRect(*chunkStream, browserHeading.srcRect);
 	readRect(*chunkStream, browserHeading.destRect);
 
@@ -1052,6 +1123,11 @@ UICL::UICL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	initialSearch.extra = chunkStream->readSint16LE();
 	initialSearch.flag = chunkStream->readSint16LE();
 	initialSearch.eventFlag = chunkStream->readSint16LE();
+
+	if (isNancy13) {
+		// Three RGB colors for the phone screen, added in Nancy 13.
+		chunkStream->read(screenColors, sizeof(screenColors));
+	}
 
 	fontId1 = chunkStream->readUint16LE();
 	fontId2 = chunkStream->readUint16LE();
@@ -1076,6 +1152,18 @@ UICL::UICL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 		c.name = nameBuf;
 
 		chunkStream->read(c.unknownSuffix, sizeof(c.unknownSuffix));
+	}
+
+	if (isNancy13) {
+		// Trailing captured-picture slot table, added in Nancy 13.
+		const uint16 pictureCount = chunkStream->readUint16LE();
+		pictures.resize(pictureCount);
+		for (uint i = 0; i < pictureCount; ++i) {
+			PictureRecord &p = pictures[i];
+			p.id = chunkStream->readUint16LE();
+			readRect(*chunkStream, p.rect);
+			chunkStream->read(p.unknown, sizeof(p.unknown));
+		}
 	}
 }
 

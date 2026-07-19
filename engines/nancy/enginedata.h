@@ -689,6 +689,26 @@ struct UICL : public EngineData {
 
 	uint16 contactCount = 0;
 	Common::Array<Contact> contacts;
+
+	// Nancy 13 added a camera / pictures sub-UI to the cell phone, which
+	// reorganized the chunk body. The fields below are only populated for
+	// Nancy 13 and later.
+	struct PictureRecord {
+		uint16 id = 0;
+		Common::Rect rect;
+		byte unknown[6] = {};
+	};
+
+	Common::Rect cameraViewSrcRect;           // camera viewfinder SRC on the overlay
+	int32 cameraTextX = 0;
+	int32 cameraTextY = 0;
+	Common::Path cameraViewImageName;         // "UI_CellCamView_OVL"
+	Common::Path cameraClickSound;
+	Common::Rect pictureDisplayRect;          // where a captured picture is shown
+	Common::Rect noPictureScreenRect;         // "no pictures" placeholder
+	Common::Path helpTextKey2;                // second CVTX key (phone-use help)
+	byte screenColors[9] = {};                // 3 RGB colors for the phone screen
+	Common::Array<PictureRecord> pictures;    // captured-picture slots (up to 50)
 };
 
 // New conversation popup UI (the text strip that appears above the taskbar
