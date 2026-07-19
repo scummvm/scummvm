@@ -170,14 +170,45 @@ void MainMenu::stop() {
 		// Credits
 		g_nancy->setState(NancyState::kCredits);
 		break;
-	case 1:
+	case 1: {
 		// New Game
+		auto *sdlg = GetEngineData(SDLG);
+
+		if (sdlg && sdlg->dialogs.size() > 2 && Scene::hasInstance() && !g_nancy->_hasJustSaved) {
+			// nancy6+ warns before abandoning an in-progress game. Reuse the
+			// "load a new game without saving the current one" dialog.
+			if (!ConfMan.hasKey("sdlg_return", Common::ConfigManager::kTransientDomain)) {
+				// Request the dialog
+				ConfMan.setInt("sdlg_id", 2, Common::ConfigManager::kTransientDomain);
+				_destroyOnExit = false;
+				g_nancy->setState(NancyState::kSaveDialog);
+				break;
+			} else {
+				// Dialog has returned
+				_destroyOnExit = true;
+				g_nancy->_graphics->suppressNextDraw();
+				uint ret = ConfMan.getInt("sdlg_return", Common::ConfigManager::kTransientDomain);
+				ConfMan.removeKey("sdlg_return", Common::ConfigManager::kTransientDomain);
+
+				if (ret != 0) {
+					// "No" or "Cancel" keeps us in the main menu
+					_selected = -1;
+					clearButtonState();
+					_state = kRun;
+					break;
+				}
+
+				// "Yes" falls through to start a new game
+			}
+		}
+
 		if (Scene::hasInstance()) {
 			NancySceneState.destroy(); // Destroy the existing Scene and create a new one
 		}
 
 		g_nancy->setState(NancyState::kScene);
 		break;
+	}
 	case 2:
 		// Load and Save Game, TODO
 		g_nancy->setState(NancyState::kLoadSave);
