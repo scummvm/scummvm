@@ -19,7 +19,9 @@
  *
  */
 
+#include "engines/nancy/cursor.h"
 #include "engines/nancy/graphics.h"
+#include "engines/nancy/input.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/util.h"
@@ -63,6 +65,32 @@ bool PlaySecondaryMovie::isPersistentAcrossScenes() const {
 	return _isRandom && g_nancy->getGameType() < kGameTypeNancy13 && !_isDone && !_randomStopRequested;
 }
 
+void PlaySecondaryMovie::handleInput(NancyInput &input) {
+	// The character's box (set as the hotspot while it is on screen) is
+	// clickable; clicking opens its conversation scene, and hovering drives the
+	// recognition movie. The talk hover cursor is applied by ActionManager via
+	// getHoverCursor().
+	if (!_hasHotspot || _talkSceneID == kNoScene) {
+		_isHovered = false;
+		return;
+	}
+
+	_isHovered = NancySceneState.getViewport().convertViewportToScreen(_hotspot).contains(input.mousePos);
+
+	if (_isHovered && (input.input & NancyInput::kLeftMouseButtonUp)) {
+		input.eatMouseInput();
+		SceneChangeDescription desc;
+		desc.sceneID = _talkSceneID;
+		NancySceneState.changeScene(desc);
+	}
+}
+
+CursorManager::CursorType PlaySecondaryMovie::getHoverCursor() const {
+	// The character's own cursor type (a raw Nancy13 cursor id) comes from the
+	// secondary record; cursorSetFromScript() routes it through the raw-slot path.
+	return (CursorManager::CursorType)_talkCursorType;
+}
+
 void PlaySecondaryMovie::readRandomSequence(Common::Serializer &ser, RandomSequence &seq) {
 	readFilename(ser, seq.name);
 	ser.syncAsUint16LE(seq.startFrame);
@@ -92,14 +120,17 @@ void PlaySecondaryMovie::readRandomSequence(Common::Serializer &ser, RandomSeque
 
 void PlaySecondaryMovie::readSecondaryRandomMovie(Common::Serializer &ser, RandomSequence &seq) {
 	// Nancy13's random-movie chunk carries one extra "secondary" movie record
-	// (e.g. a character's recognition animation) between the sequence list and
-	// the hotspot list. It is a name + 5 uint16 + a next-list; only the first
-	// two uint16s (start/last frame) have known roles so far, but the whole
-	// record must be consumed here or the hotspot list below misaligns.
+	// (a character's recognition animation) between the sequence list and the
+	// hotspot list: a name + 5 uint16 + a next-list. The 4th uint16 is the scene
+	// to open when the character is clicked (its conversation); 9999 means the
+	// character isn't clickable. The whole record must be consumed here or the
+	// hotspot list below misaligns.
 	readFilename(ser, seq.name);
 	ser.syncAsUint16LE(seq.startFrame);
 	ser.syncAsUint16LE(seq.lastFrame);
-	ser.skip(6);	// three uint16 fields, roles not yet characterized
+	ser.syncAsUint16LE(_talkCursorType);	// hover cursor for the character
+	ser.syncAsUint16LE(_talkSceneID);
+	ser.skip(2);	// conversation frameID (0 in known data)
 
 	uint16 nextCount = 0;
 	ser.syncAsUint16LE(nextCount);
@@ -198,6 +229,23 @@ bool PlaySecondaryMovie::activateRandomSequence(int index) {
 
 	_isFinished = false;
 	_curViewportFrame = -1;	// force visibility re-evaluation next tick
+	return true;
+}
+
+bool PlaySecondaryMovie::activateSecondaryMovie() {
+	_videoName = _secondaryMovie.name;
+	_firstFrame = _secondaryMovie.startFrame;
+	_lastFrame = _secondaryMovie.lastFrame;
+
+	if (!_decoder.loadFile(_videoName)) {
+		warning("PlayRandomMovie: couldn't load recognition movie %s", _videoName.toString().c_str());
+		return false;
+	}
+
+	resolveSentinelFrames();
+
+	_isFinished = false;
+	_curViewportFrame = -1;
 	return true;
 }
 
@@ -526,6 +574,19 @@ void PlaySecondaryMovie::execute() {
 			break;
 		}
 
+		// Talkable character: swap immediately between the idle loop and the
+		// recognition ("turn around") movie as the mouse enters/leaves the
+		// character, without waiting for the current cycle to finish.
+		if (isTalkable()) {
+			if (_isHovered && !_playingSecondary) {
+				_playingSecondary = true;
+				activateSecondaryMovie();
+			} else if (!_isHovered && _playingSecondary) {
+				_playingSecondary = false;
+				activateRandomSequence(_activeSequenceIndex);
+			}
+		}
+
 		int newFrame = NancySceneState.getSceneInfo().frameID;
 
 		if (newFrame != _curViewportFrame) {
@@ -541,13 +602,22 @@ void PlaySecondaryMovie::execute() {
 			if (activeFrame != -1) {
 				_screenPosition = _videoDescs[activeFrame].destRect;
 				setVisible(true);
+
+				// Nancy13 talkable characters: the character's on-screen box
+				// doubles as a clickable hotspot that opens its conversation.
+				if (_talkSceneID != kNoScene) {
+					_hotspot = _screenPosition;
+					_hasHotspot = true;
+				}
 			} else if (_isRandom) {
 				// Random movies aren't gated on hotspot/viewport-frame
 				// matches the way regular PSMs are: play full viewport.
 				_screenPosition = NancySceneState.getViewport().getBounds();
 				setVisible(true);
+				_hasHotspot = false;
 			} else {
 				setVisible(false);
+				_hasHotspot = false;
 			}
 		}
 
@@ -608,6 +678,16 @@ void PlaySecondaryMovie::execute() {
 				// by a PlayRandomMovieControl, wind the AR down normally.
 				if (_randomStopRequested) {
 					_state = kActionTrigger;
+				} else if (isTalkable()) {
+					// Hover swaps are handled at the top of kRun. Here we only
+					// keep the idle loop going; the recognition movie, once
+					// finished, holds on its last frame while the mouse stays.
+					if (!_playingSecondary) {
+						// Replay the idle movie in place without reopening it.
+						_isFinished = false;
+						_decoder.seekToFrame(_playDirection == kPlayMovieReverse ? _lastFrame : _firstFrame);
+						_decoder.pauseVideo(false);
+					}
 				} else {
 					int picked = rollNextSequence();
 					if (picked >= 0) {

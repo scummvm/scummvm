@@ -121,10 +121,16 @@ public:
 	uint16 _randomPlayerCursorAllowed = kPlayerCursorAllowed;
 	Common::Array<RandomSequence> _sequences;
 
-	// Nancy13+ carries one extra "secondary" movie (e.g. a recognition
-	// animation) after the sequence list. Stored for future playback; reading
-	// it is required so the trailing hotspot list stays aligned.
+	// Nancy13+ carries one extra "secondary" movie (a recognition animation)
+	// after the sequence list. Stored for future playback; reading it is
+	// required so the trailing hotspot list stays aligned.
 	RandomSequence _secondaryMovie;
+
+	// Nancy13 talkable characters: the scene to open when the character is
+	// clicked (its conversation). kNoScene means the character isn't clickable.
+	uint16 _talkSceneID = kNoScene;
+	// Hover cursor for the character (a raw Nancy13 cursor id from the chunk).
+	uint16 _talkCursorType = 0;
 
 	// Chain state. After a sequence's movie finishes the engine rolls a
 	// weighted pick: "stay" -> enter pause for a random duration and
@@ -135,6 +141,11 @@ public:
 	uint32 _randomPauseEndTime = 0;
 	bool _randomStopRequested = false;
 
+	// Talkable-character hover state: whether the mouse is over the character,
+	// and whether the recognition (secondary) movie is currently playing.
+	bool _isHovered = false;
+	bool _playingSecondary = false;
+
 	// Called by PlayRandomMovieControl::execute() to wind down the AR.
 	void stopRandom() { _randomStopRequested = true; }
 
@@ -144,6 +155,13 @@ public:
 	bool isViewportRelative() const override { return true; }
 
 	bool isPersistentAcrossScenes() const override;
+
+	// Nancy13 talkable characters expose the character's on-screen box as a
+	// clickable hotspot with a talk cursor; clicking opens _talkSceneID, and
+	// hovering plays the recognition ("turn around") movie.
+	void handleInput(NancyInput &input) override;
+	CursorManager::CursorType getHoverCursor() const override;
+	bool cursorSetFromScript() const override { return _isRandom && _talkSceneID != kNoScene; }
 
 	Common::String getRecordExtraInfo() const override { return Common::String::format("Scene %d", _sceneChange.sceneID); }
 
@@ -163,6 +181,13 @@ protected:
 	// Apply a RandomSequence's playback config to the PSM flat fields
 	// and reload the decoder. Returns true on success.
 	bool activateRandomSequence(int index);
+
+	// Load & start the recognition (secondary) movie in place of the idle loop.
+	bool activateSecondaryMovie();
+
+	// A Nancy13 talkable character: has a conversation scene and a recognition
+	// movie to swap to on hover.
+	bool isTalkable() const { return _isRandom && _talkSceneID != kNoScene && !_secondaryMovie.name.empty(); }
 
 	// Pick the next sequence (or "stay") per the weighted random rules.
 	// Returns -1 if "stay" was picked (and sets up the pause state),
