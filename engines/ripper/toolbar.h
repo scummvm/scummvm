@@ -42,7 +42,8 @@ public:
 
 	bool initialize(ResourceManager &resources);
 	void applySharedPalettePatch(byte *palette, uint colorCount);
-	bool service(const MouseState &mouse);
+	bool service(const MouseState &mouse, uint enabledActionMask = 0x1ff,
+		int *selectedAction = nullptr);
 	void leave();
 
 private:
@@ -55,7 +56,8 @@ private:
 		Action() : frameIndex(0) {}
 	};
 
-	void enter(uint32 now);
+	void enter(uint32 now, uint enabledActionMask);
+	void layoutActions(uint enabledActionMask);
 	int findAction(const Common::Point &point) const;
 	void drawIcons();
 	void drawTooltip(const Common::Point &point);
@@ -72,6 +74,7 @@ private:
 	Common::Rect _tooltipBounds;
 	uint32 _sessionStartMillis;
 	uint32 _lastFrameMillis;
+	uint _enabledActionMask;
 	int _hoveredAction;
 	int _pressedAction;
 	bool _active;

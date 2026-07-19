@@ -501,6 +501,26 @@
   inactive. A traversal begins at node zero, accelerates from one to six pixels
   per DOS tick, and sets the completion flag only after reaching the node whose
   terminal link is `-2`; the other terminal link is `-1`.
+- Scene action 24 calls `RunTubeSwitchScene` at `0x25e18` with the
+  caller-supplied completion flag. `GA1.RUN` callback `0xaf2` supplies flag 215
+  (`solved vacuum tube puzzle`). The scene counts consumed inventory flags 102,
+  103, and 104, selects `GA_TUBE1.SMK` through `GA_TUBE4.SMK` from that count,
+  and retains its presentation at logical (18, 52), physical (18, 102).
+  `TUBESW.PL` supplies the seven 43-by-54 switch frames at physical
+  (554, 223). Cursor 16 owns that switch, cursor 7 owns the exit region
+  (115, 115)-(515, 325), and Escape exits without setting the completion flag.
+- `RunTubeSwitchScene` plays frames 0 through 45 when the switch is turned on,
+  then repeats frames 15 through 45 while power remains on. Turning it off
+  stops `TUBE1.WAV` and plays frames 46 through 59. With all three tubes
+  installed, reaching frame 46 presents `TUBE_WIN.AVI` and sets the supplied
+  completion flag. The scene restricts `RunFrontEndActionMenu` to mask `0x84`,
+  exposing only inventory and help. Inventory is built from unlocked flags 50
+  through 69 whose corresponding consumed flags 100 through 119 are clear;
+  only flags 52 through 54 are accepted here, setting flags 102 through 104.
+  Each accepted tube presents `TUBEHAND.AVI`, then reloads the numbered Smacker
+  for the new installed count. Other inventory items present modal resource
+  `0x4d`; F1 uses resource `0x1bb` in the inventory chooser and resource 400 in
+  the main scene.
 - `RunKaBookCodeEntryPrompt` at `0x2bc33` is a separate blocking puzzle called
   by `RunKaDialogueScene` after the book-response voice completes. It owns
   `KA_PUZ.PCX`, the seven input cells, `KA_KEY.WAV` feedback, F1 help table
