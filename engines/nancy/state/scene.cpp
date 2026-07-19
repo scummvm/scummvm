@@ -286,6 +286,12 @@ void Scene::popScene(bool inventory) {
 		changeScene(_sceneState.pushedInvScene);
 		_sceneState.isInvScenePushed = false;
 		addItemToInventory(_sceneState.pushedInvItemID);
+		// Returning from a close-up view restores an item the player already
+		// owned, so it must not raise the "new item" taskbar badge that
+		// addItemToInventory sets for a genuine pickup.
+		if (_taskbar) {
+			_taskbar->clearNotification(kTaskButtonInventory, 0);
+		}
 		_sceneState.pushedInvItemID = kEvNoEvent;
 		_sceneState.pushedInvScene.sceneID = kNoScene;
 	}
