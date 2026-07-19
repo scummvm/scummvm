@@ -388,27 +388,33 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 
 bool ModalDialogManager::drawRetainedTextPanel(uint bodyResourceId,
 		const Common::Rect &bounds, uint firstVisible, uint &maximumFirstVisible,
-		uint &visibleRows) {
+		uint &visibleRows, PresentationStyle style) {
 	const Common::String &body = resourceString(bodyResourceId);
+	const bool wacStyle = style == kWacPresentation;
+	const int bottomPadding = wacStyle ?
+		kWacModalBottomPadding : kModalBottomPadding;
+	const int leftPadding = wacStyle ? kWacModalLeftPadding : kModalLeftPadding;
+	const int rightPadding = wacStyle ? kWacModalRightPadding : kModalRightPadding;
 	if (!_initialized || body.empty() || bounds.width() <=
-			kModalLeftPadding + kModalRightPadding ||
-			bounds.height() <= kModalBottomPadding * 2) {
+			leftPadding + rightPadding || bounds.height() <= bottomPadding * 2) {
 		warning("Ripper: could not draw retained text panel resource=%u", bodyResourceId);
 		return false;
 	}
 
 	Common::Array<Common::String> lines;
-	wrapText(body, bounds.width() - kModalLeftPadding - kModalRightPadding, lines);
+	wrapText(body, bounds.width() - leftPadding - rightPadding, lines);
 	visibleRows = MAX<uint>(1,
-		(bounds.height() - kModalBottomPadding * 2) / kModalRowHeight);
+		(bounds.height() - bottomPadding * 2) / kModalRowHeight);
 	maximumFirstVisible = lines.size() > visibleRows ? lines.size() - visibleRows : 0;
 	firstVisible = MIN(firstVisible, maximumFirstVisible);
-	applyModalPalette();
-	drawDialog(Common::String(), lines, firstVisible, visibleRows, bounds,
-		kMenubPresentation);
+	if (!wacStyle)
+		applyModalPalette();
+	drawDialog(Common::String(), lines, firstVisible, visibleRows, bounds, style);
 	debugC(2, kDebugScene,
-		"Ripper: drew retained text panel resource=%u lines=%u firstLine=%u visibleRows=%u bounds=%d,%d,%d,%d",
-		bodyResourceId, lines.size(), firstVisible, visibleRows,
+		"Ripper: drew retained text panel resource=%u style=%s lines=%u "
+		"firstLine=%u visibleRows=%u bounds=%d,%d,%d,%d",
+		bodyResourceId, wacStyle ? "wacmnu" : "menub", lines.size(),
+		firstVisible, visibleRows,
 		bounds.left, bounds.top, bounds.width(), bounds.height());
 	return true;
 }

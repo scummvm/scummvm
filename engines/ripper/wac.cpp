@@ -803,15 +803,17 @@ uint16 WacManager::serviceDatabaseMediaInput(byte activeEntryIndex,
 
 uint16 WacManager::runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceId) {
 	// RunCenteredTextPanelUntilExitAction at 0x2330c creates the untitled
-	// 330-by-222 MENUB panel at the WAC media origin and leaves the database
-	// chooser plus persistent WAC controls active around its input loop.
+	// 330-by-222 panel from the same tertiary WACMNU chooser template used by
+	// contextual WAC help, then leaves the database chooser plus persistent WAC
+	// controls active around its input loop.
 	const Common::Rect bounds(kWacMediaLeft, kWacMediaTop,
 		kWacMediaLeft + kWacTextPanelWidth, kWacMediaTop + kWacTextPanelHeight);
 	uint firstVisible = 0;
 	uint maximumFirstVisible = 0;
 	uint visibleRows = 0;
 	if (!_engine->getModalDialog()->drawRetainedTextPanel(bodyResourceId,
-			bounds, firstVisible, maximumFirstVisible, visibleRows))
+			bounds, firstVisible, maximumFirstVisible, visibleRows,
+			ModalDialogManager::kWacPresentation))
 		return kNoAction;
 
 	_engine->getInput()->discardMouseTransitions();
@@ -826,7 +828,8 @@ uint16 WacManager::runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceI
 		if (command == kWacDatabaseTextScrolled ||
 				command == MediaSequenceCallback::kContinueRefreshPalette) {
 			if (!_engine->getModalDialog()->drawRetainedTextPanel(bodyResourceId,
-					bounds, firstVisible, maximumFirstVisible, visibleRows))
+					bounds, firstVisible, maximumFirstVisible, visibleRows,
+					ModalDialogManager::kWacPresentation))
 				break;
 		} else if (command == kWacDatabaseSelectionChanged ||
 				command == kExitAction || command == 0x1b) {
