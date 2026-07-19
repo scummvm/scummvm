@@ -101,7 +101,7 @@ void ScriptV1::parseLine(const Common::String &line, uint lineno) {
 			if (p.maybe(',')) {
 				hover = p.nextInt();
 			}
-			_currentTest.reset(new Test{idx, hover, {}});
+			_currentTest.reset(new Test{idx, hover, {}, {}, {}});
 			_currentWarp->tests.push_back(_currentTest);
 		} else {
 			error("invalid [] directive on line %u: %s", lineno, line.c_str());

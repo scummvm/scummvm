@@ -34,7 +34,89 @@ struct SetVariable : public Command {
 		g_engine->setVariable(name, valueOf(value));
 	}
 };
+
+struct IfAnd : public ScriptV2::Conditional {
+	IfAnd(const Common::Array<Common::String> &args) : ScriptV2::Conditional(args) {}
+	void exec(ExecutionContext &ctx) const override {
+		bool result = true;
+		for (auto &c : conditions) {
+			if (!c->value()) {
+				result = false;
+				break;
+			}
+		}
+		branch(ctx, result);
+	}
+};
+
+struct IfOr : public ScriptV2::Conditional {
+	IfOr(const Common::Array<Common::String> &args) : ScriptV2::Conditional(args) {}
+	void exec(ExecutionContext &ctx) const override {
+		bool result = false;
+		for (auto &c : conditions) {
+			if (c->value()) {
+				result = true;
+				break;
+			}
+		}
+		branch(ctx, result);
+	}
+};
 } // namespace
+
+ScriptV2::Conditional::Conditional(const Common::Array<Common::String> &args) {
+	conditions.reserve(args.size());
+	for (auto &arg : args) {
+		conditions.push_back(ConditionPtr{new Condition(arg)});
+	}
+}
+
+void ScriptV2::Conditional::branch(ExecutionContext &ctx, bool branch) const {
+	if (branch && trueScope)
+		trueScope->exec(ctx);
+	if (!branch && falseScope)
+		falseScope->exec(ctx);
+}
+
+ScriptV2::Condition::Condition(const Common::String &text) {
+	if (
+		!parse(text, "!=") &&
+		!parse(text, "<>") &&
+		!parse(text, "<=") &&
+		!parse(text, ">=") &&
+		!parse(text, "<") &&
+		!parse(text, ">") &&
+		!parse(text, "="))
+		error("unknown condition %s", text.c_str());
+}
+
+bool ScriptV2::Condition::parse(const Common::String &text, const Common::String &maybeOp) {
+	auto opPos = text.find(maybeOp);
+	if (opPos == text.npos)
+		return false;
+	arg1 = text.substr(0, opPos);
+	op = maybeOp;
+	arg2 = text.substr(opPos + maybeOp.size());
+	return true;
+}
+
+int ScriptV2::Condition::value() const {
+	auto val1 = Command::valueOf(arg1);
+	auto val2 = Command::valueOf(arg2);
+	if (op == "=")
+		return val1 == val2;
+	else if (op == "!=" || op == "<>")
+		return val1 != val2;
+	else if (op == "<")
+		return val1 < val2;
+	else if (op == "<=")
+		return val1 <= val2;
+	else if (op == ">")
+		return val1 > val2;
+	else if (op == ">=")
+		return val1 >= val2;
+	error("invalid condition %s %s %s", arg1.c_str(), op.c_str(), arg2.c_str());
+}
 
 void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 	if (line.empty())
@@ -72,31 +154,64 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 			if (!_currentWarp)
 				error("test without warp");
 			auto idx = p.nextInt();
-			auto hover = 0;
 			if (!_currentWarp)
 				error("text must have parent wrap section");
-			if (p.maybe(',')) {
-				hover = p.nextInt();
-			}
-			_currentTest.reset(new Test{idx, hover, {}});
+			_currentTest.reset(new Test{idx, 0, {}, {}, {}});
 			_currentWarp->tests.push_back(_currentTest);
+			if (!_conditionals.empty())
+				error("condition didn't have endif at the last test at line %d", lineno);
+			_testScope.reset();
 		} else if (p.maybe("ifand]:")) {
 			if (!_currentTest)
-				error("ifand without test");
+				error("ifand without test at line %d", lineno);
+			ConditionalPtr conditional(new IfAnd(p.readStringList()));
+			conditional->trueScope.reset(new Scope);
+			_conditionalScope = conditional->trueScope;
+			_conditionals.push_back(Common::move(conditional));
 		} else if (p.maybe("ifor]:")) {
 			if (!_currentTest)
-				error("ifor without test");
+				error("ifor without test at line %d", lineno);
+			ConditionalPtr conditional(new IfOr(p.readStringList()));
+			conditional->trueScope.reset(new Scope);
+			_conditionalScope = conditional->trueScope;
+			_conditionals.push_back(Common::move(conditional));
 		} else if (p.maybe("else]")) {
+			if (!_currentTest)
+				error("else without test at line %d", lineno);
+			if (_conditionals.empty())
+				error("else without conditional at line %d", lineno);
+			auto &conditional = _conditionals.back();
+			if (conditional->falseScope)
+				error("double else in condition at line %d", lineno);
+			conditional->falseScope.reset(new Scope());
+			_conditionalScope = conditional->falseScope;
 		} else if (p.maybe("endif]")) {
+			if (!_currentTest)
+				error("endif without test at line %d", lineno);
+			if (_conditionals.empty())
+				error("endif without conditional at line %d", lineno);
+			auto conditional = _conditionals.back();
+			_conditionals.pop_back();
+			_conditionalScope.reset();
+			_currentTest->scope.commands.push_back(Common::move(conditional));
 		} else if (p.maybe("clic]")) {
 			if (!_currentTest)
-				error("clic without test");
+				error("clic without test at line %d", lineno);
+			_testScope.reset();
 		} else if (p.maybe("in]")) {
 			if (!_currentTest)
-				error("clic without test");
+				error("in without test at line %d", lineno);
+			if (_currentTest->enter)
+				error("duplicate [in] handler");
+			_currentTest->enter.reset(new Scope);
+			_testScope = _currentTest->enter;
 		} else if (p.maybe("out]")) {
 			if (!_currentTest)
-				error("clic without test");
+				error("out without test at line %d", lineno);
+			if (_currentTest->leave)
+				error("duplicate [out] handler");
+			_currentTest->leave.reset(new Scope);
+			_testScope = _currentTest->leave;
 		} else {
 			error("invalid [] directive on line %u: %s", lineno, line.c_str());
 		}
@@ -115,12 +230,14 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 		} else
 			error("invalid syntax at %d", lineno);
 
-		auto &commands = _currentTest->scope.commands;
+		auto &commands = _testScope ? _testScope->commands : _currentTest->scope.commands;
 		if (command)
 			commands.push_back(command);
 		else {
 			warning("unimplemented command %s at line %d", name.c_str(), lineno);
 		}
+	} else {
+		error("command %s is out of the test block at line %d", line.c_str(), lineno);
 	}
 }
 

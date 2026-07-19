@@ -27,18 +27,33 @@
 namespace PhoenixVR {
 class ScriptV2 : public Script {
 public:
+	struct Condition {
+		Common::String op;
+		Common::String arg1;
+		Common::String arg2;
+
+		Condition(const Common::String &text);
+		bool parse(const Common::String &text, const Common::String &maybeOp);
+		int value() const;
+	};
+	using ConditionPtr = Common::SharedPtr<Condition>;
+
 	struct Conditional : public Command {
-		Common::Array<Common::String> conditions;
-		CommandPtr target;
-		Conditional(Common::Array<Common::String> args) : conditions(Common::move(args)) {}
+		Common::Array<ConditionPtr> conditions;
+		ScopePtr trueScope;
+		ScopePtr falseScope;
+
+		Conditional(const Common::Array<Common::String> &args);
+		void branch(ExecutionContext &ctx, bool branch) const;
 	};
 	using ConditionalPtr = Common::SharedPtr<Conditional>;
 
 private:
 	WarpPtr _currentWarp;
 	TestPtr _currentTest;
-	ScopePtr _pluginScope;
-	ConditionalPtr _conditional;
+	Common::Array<ConditionalPtr> _conditionals;
+	ScopePtr _conditionalScope;
+	ScopePtr _testScope;
 
 private:
 	void parseLine(const Common::String &line, uint lineno) override;

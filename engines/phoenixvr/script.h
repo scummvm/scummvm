@@ -40,6 +40,8 @@ public:
 		int idx;
 		int hover;
 		Scope scope;
+		ScopePtr enter;
+		ScopePtr leave;
 	};
 	using TestPtr = Common::SharedPtr<Test>;
 
