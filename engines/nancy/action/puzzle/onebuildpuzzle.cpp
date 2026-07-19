@@ -318,49 +318,35 @@ void OneBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _dropAlt1Filename);
 	readFilename(stream, _dropAlt2Filename);
 
-	_goodPlacementSound.readNormal(stream);
-	readFilename(stream, _goodAlt1Filename);
-	readFilename(stream, _goodAlt2Filename);
-
-	_goodTexts.resize(3);
-
 	const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
 	assert(autotext);
 
-	Common::String unusedKey;
-	char textBuf[200];
-
-	for (uint i = 0; i < 3; ++i) {
-		stream.read(textBuf, 200);
-		assembleTextLine(textBuf, _goodTexts[i], 200);
-		if (!_goodTexts[i].empty() && autotext->texts.contains(_goodTexts[i]))
-			_goodTexts[i] = autotext->texts[_goodTexts[i]];
-	}
-	for (uint i = 0; i < 3; ++i)
-		readFilename(stream, unusedKey);
+	_goodPlacementSound.readNormal(stream);
+	readFilename(stream, _goodAlt1Filename);
+	readFilename(stream, _goodAlt2Filename);
+	readPlacementTexts(stream, _goodTexts);
 
 	_badPlacementSound.readNormal(stream);
 	readFilename(stream, _badAlt1Filename);
 	readFilename(stream, _badAlt2Filename);
+	readPlacementTexts(stream, _badTexts);
 
-	_badTexts.resize(3);
-	for (uint i = 0; i < 3; ++i) {
-		stream.read(textBuf, 200);
-		assembleTextLine(textBuf, _badTexts[i], 200);
-		if (!_badTexts[i].empty() && autotext->texts.contains(_badTexts[i]))
-			_badTexts[i] = autotext->texts[_badTexts[i]];
-	}
-	for (uint i = 0; i < 3; ++i)
-		readFilename(stream, unusedKey);
-
-	stream.skip(4); // TODO: 4 bytes before solveScene, unknown.
+	// Piece hover/drag cursor, then exit cursor (handled via _puzzleExitCursor).
+	_pieceCursorType = stream.readSint16LE();
+	stream.skip(2);
 	_solveScene.readData(stream);
 	_completionSound.readNormal(stream);
-	readFilename(stream, unusedKey);
+
+	// Completion caption: AUTOTEXT key if known, else inline text.
+	Common::String completionKey;
+	char textBuf[200];
+	readFilename(stream, completionKey);
 	stream.read(textBuf, 200);
-	assembleTextLine(textBuf, _completionText, 200);
-	if (!_completionText.empty() && autotext->texts.contains(_completionText))
-		_completionText = autotext->texts[_completionText];
+	_completionText.clear();
+	if (!completionKey.empty() && autotext->texts.contains(completionKey))
+		_completionText = autotext->texts[completionKey];
+	else
+		assembleTextLine(textBuf, _completionText, 200);
 
 	_cancelScene.readData(stream);
 	readRect(stream, _exitHotspot);
@@ -473,7 +459,7 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 	if (_isDragging) {
 		// Always update drag position while carrying a piece
 		updateDragPosition(mouseVP);
-		g_nancy->_cursor->setCursorType(CursorManager::kCustom1);
+		setPieceCursor();
 
 		if (_solveState != kIdle)
 			return;
@@ -494,20 +480,22 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 
 			Common::Rect slot = piece.slotRect;
 
-			// Bounding-box must fit within slot +- tolerance. The original
-			// engine doesn't check rotation separately; a rotated piece's
-			// dimensions are reflected in gameRect, so a non-fitting rotation
-			// is rejected by the rect inequalities below.
+			// Bounding-box must fit within slot +- tolerance.
 			bool nearSlot = (piece.gameRect.left >= slot.left - _slotTolerance &&
 							 piece.gameRect.top  >= slot.top  - _slotTolerance &&
 							 piece.gameRect.right  <= slot.right  + _slotTolerance &&
 							 piece.gameRect.bottom <= slot.bottom + _slotTolerance);
 
+			// A piece only fits at its correct (unrotated) orientation; a
+			// 180-degree flip keeps the same bounding box, so proximity alone
+			// would accept an upside-down piece.
+			bool rotationOk = (piece.curRotation == 0);
+
 			bool orderOk = !_orderedPlacement ||
 				(_piecesPlaced < (uint16)_placementOrder.size() &&
 				 _placementOrder[_piecesPlaced] == (int16)(_pickedUpPiece + 1));
 
-			if (nearSlot && orderOk) {
+			if (nearSlot && rotationOk && orderOk) {
 				piece.gameRect = piece.slotRect;
 				piece.placed = true;
 				_correctlyPlaced = true;
@@ -563,7 +551,7 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 
 	if (topmostAny != -1) {
 		if (topmostUnplaced != -1)
-			g_nancy->_cursor->setCursorType(CursorManager::kCustom1);
+			setPieceCursor();
 
 		// Left click on an unplaced piece: pick it up
 		// Right click: pick it up and rotate it
@@ -600,6 +588,32 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 }
 
 // --- Internal helpers ---
+
+void OneBuildPuzzle::readPlacementTexts(Common::SeekableReadStream &stream, Common::Array<Common::String> &out) {
+	const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
+	assert(autotext);
+
+	Common::String keys[3];
+	for (uint i = 0; i < 3; ++i)
+		readFilename(stream, keys[i]);
+
+	char textBuf[200];
+	out.resize(3);
+	for (uint i = 0; i < 3; ++i) {
+		stream.read(textBuf, 200);
+		if (!keys[i].empty() && autotext->texts.contains(keys[i]))
+			out[i] = autotext->texts[keys[i]];
+		else
+			assembleTextLine(textBuf, out[i], 200);
+	}
+}
+
+void OneBuildPuzzle::setPieceCursor() {
+	if (g_nancy->getGameType() >= kGameTypeNancy10)
+		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_pieceCursorType, true, false);
+	else
+		g_nancy->_cursor->setCursorType(CursorManager::kCustom1);
+}
 
 void OneBuildPuzzle::updatePieceRender(int pieceIdx) {
 	Piece &p = _pieces[pieceIdx];

@@ -98,6 +98,9 @@ protected:
 	// Filename only (no SoundDescription metadata).
 	Common::String _extraSoundName;
 
+	// Cursor type shown while hovering or carrying a piece (Nancy 10+).
+	int16 _pieceCursorType = 0;
+
 	// Post-placement sprite-sheet animation. _animRectA is the on-screen
 	// rect where the animation plays AND the click hotspot the user must
 	// activate after placing all pieces (e.g. the music-box crank in scene
@@ -196,6 +199,11 @@ protected:
 	bool _isInitialized = false;
 
 	// --- Internal methods ---
+
+	// Read a good/bad caption block: three AUTOTEXT keys then three inline
+	// texts; each caption uses its key if known, else the inline text.
+	void readPlacementTexts(Common::SeekableReadStream &stream, Common::Array<Common::String> &out);
+	void setPieceCursor();
 
 	void playPickupSound();
 	void playRotateSoundAndStartTimer();
