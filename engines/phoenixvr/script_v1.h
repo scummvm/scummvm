@@ -19,32 +19,30 @@
  *
  */
 
-#ifndef PHOENIXVR_MATH_H
-#define PHOENIXVR_MATH_H
+#ifndef PHOENIXVR_SCRIPT_V1_H
+#define PHOENIXVR_SCRIPT_V1_H
 
-#include "common/scummsys.h"
+#include "phoenixvr/script.h"
 
 namespace PhoenixVR {
-static constexpr auto kTau = static_cast<float>(M_PI * 2);
-static constexpr auto kPi = static_cast<float>(M_PI);
-static constexpr auto kPi2 = static_cast<float>(M_PI_2);
+class ScriptV1 : public Script {
+public:
+	struct Conditional : public Command {
+		Common::Array<Common::String> vars;
+		CommandPtr target;
+		Conditional(Common::Array<Common::String> args) : vars(Common::move(args)) {}
+	};
+	using ConditionalPtr = Common::SharedPtr<Conditional>;
 
-inline float toRadian(float deg) {
-	return kPi * deg / 180;
-}
+private:
+	WarpPtr _currentWarp;
+	TestPtr _currentTest;
+	ScopePtr _pluginScope;
+	ConditionalPtr _conditional;
 
-inline float toAngle(int a) {
-	static const float angleToFloat = kPi / 4096.0f;
-	return angleToFloat * static_cast<float>(a);
-}
-
-inline int fromAngle(float a) {
-	if (a == INFINITY || a == -INFINITY)
-		return -1;
-	static const float floatToAngle = 4096.0f / kPi;
-	return static_cast<int>(floatToAngle * a);
-}
-
+private:
+	void parseLine(const Common::String &line, uint lineno) override;
+};
 } // namespace PhoenixVR
 
 #endif

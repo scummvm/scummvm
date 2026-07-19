@@ -19,32 +19,32 @@
  *
  */
 
-#ifndef PHOENIXVR_MATH_H
-#define PHOENIXVR_MATH_H
-
-#include "common/scummsys.h"
+#include "phoenixvr/commands.h"
+#include "phoenixvr/phoenixvr.h"
 
 namespace PhoenixVR {
-static constexpr auto kTau = static_cast<float>(M_PI * 2);
-static constexpr auto kPi = static_cast<float>(M_PI);
-static constexpr auto kPi2 = static_cast<float>(M_PI_2);
 
-inline float toRadian(float deg) {
-	return kPi * deg / 180;
+int Command::valueOf(const Common::String &value) {
+	if (!value.empty() && (Common::isDigit(value[0]) || value[0] == '-' || value[0] == '+'))
+		return atoi(value.c_str());
+	return g_engine->getVariable(value);
 }
 
-inline float toAngle(int a) {
-	static const float angleToFloat = kPi / 4096.0f;
-	return angleToFloat * static_cast<float>(a);
+void Scope::exec(ExecutionContext &ctx) const {
+	exec(ctx, 0);
 }
 
-inline int fromAngle(float a) {
-	if (a == INFINITY || a == -INFINITY)
-		return -1;
-	static const float floatToAngle = 4096.0f / kPi;
-	return static_cast<int>(floatToAngle * a);
+void Scope::exec(ExecutionContext &ctx, uint offset) const {
+	auto oldScope = ctx.scope;
+	if (!ctx.rootScope)
+		ctx.rootScope = this;
+	ctx.scope = this;
+	for (uint i = offset, n = commands.size(); i < n; ++i) {
+		if (!ctx.running)
+			break;
+		commands[i]->exec(ctx);
+	}
+	ctx.scope = oldScope;
 }
 
 } // namespace PhoenixVR
-
-#endif

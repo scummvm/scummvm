@@ -461,7 +461,7 @@ void PhoenixVREngine::loadNextScript() {
 	if (!s)
 		error("can't open script file %s", nextScript.c_str());
 
-	_script.reset(new Script(*s));
+	_script.reset(Script::load(*s, 1));
 	for (auto &var : _script->getVarNames())
 		declareVariable(var);
 	if (gameIdMatches("dracula1")) {
@@ -1193,7 +1193,7 @@ void PhoenixVREngine::executeTest(int idx) {
 	debug("execute test %d", idx);
 	auto test = _warp->getTest(idx);
 	if (test) {
-		Script::ExecutionContext ctx;
+		ExecutionContext ctx;
 		test->scope.exec(ctx);
 	} else
 		warning("invalid test id %d", idx);
@@ -1502,7 +1502,7 @@ void PhoenixVREngine::tick(float dt) {
 				debug("no region %s", _warp->testFile.c_str());
 		}
 
-		Script::ExecutionContext ctx;
+		ExecutionContext ctx;
 		debug("execute warp script %s", _warp->vrFile.c_str());
 		auto test = _warp->getDefaultTest();
 		if (test)
@@ -1799,7 +1799,7 @@ Common::Error PhoenixVREngine::run() {
 					if (_vr.isVR() ? region->contains3D(vrPos) : region->contains2D(event.mouse.x, event.mouse.y)) {
 						debug("click region %u", i);
 						if (auto clickTest = _warp->getLastTest(i)) {
-							Script::ExecutionContext ctx;
+							ExecutionContext ctx;
 							clickTest->scope.exec(ctx);
 						} else
 							warning("invalid test id %u", i);
@@ -2055,7 +2055,7 @@ Common::Error PhoenixVREngine::loadGameStream(Common::SeekableReadStream *slot) 
 	_loadedState = state.state;
 	{
 		auto test = _script->getWarp(0)->getDefaultTest();
-		Script::ExecutionContext ctx;
+		ExecutionContext ctx;
 		test->scope.exec(ctx);
 	}
 	_loaded = false;

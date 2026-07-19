@@ -26,73 +26,16 @@
 #include "common/hashmap.h"
 #include "common/ptr.h"
 #include "common/str.h"
-#include "phoenixvr/math.h"
+#include "phoenixvr/commands.h"
 
 namespace Common {
 class SeekableReadStream;
 }
 
 namespace PhoenixVR {
-namespace {
-inline float toRadian(float deg) {
-	return kPi * deg / 180;
-}
-inline float toAngle(int a) {
-	static const float angleToFloat = kPi / 4096.0f;
-	return angleToFloat * static_cast<float>(a);
-}
-
-inline int fromAngle(float a) {
-	if (a == INFINITY || a == -INFINITY)
-		return -1;
-	static const float floatToAngle = 4096.0f / kPi;
-	return static_cast<int>(floatToAngle * a);
-}
-} // namespace
 class Parser;
 class Script {
 public:
-	struct Scope;
-	struct ExecutionContext {
-		bool running = true;
-		bool subroutine = false;
-		const Scope *scope = nullptr;
-		const Scope *rootScope = nullptr;
-	};
-	struct Command {
-		virtual ~Command() {}
-		virtual void exec(ExecutionContext &ctx) const = 0;
-
-		static int valueOf(const Common::String &value);
-	};
-	using CommandPtr = Common::SharedPtr<Command>;
-
-	struct Scope : public Script::Command {
-		Common::Array<CommandPtr> commands;
-
-		struct Label {
-			Common::String name;
-			uint offset;
-		};
-		Common::Array<Label> labels;
-
-		const Label *findLabel(const Common::String &name) const {
-			auto it = Common::find_if(labels.begin(), labels.end(), [&](const Label &label) { return label.name.equalsIgnoreCase(name); });
-			return it != labels.end() ? &*it : nullptr;
-		}
-
-		void exec(ExecutionContext &ctx) const override;
-		void exec(ExecutionContext &ctx, uint offset) const;
-	};
-	using ScopePtr = Common::SharedPtr<Scope>;
-
-	struct Conditional : public Script::Command {
-		Common::Array<Common::String> vars;
-		Script::CommandPtr target;
-		Conditional(Common::Array<Common::String> args) : vars(Common::move(args)) {}
-	};
-	using ConditionalPtr = Common::SharedPtr<Conditional>;
-
 	struct Test {
 		int idx;
 		int hover;
@@ -116,23 +59,19 @@ public:
 	using WarpPtr = Common::SharedPtr<Warp>;
 	using ConstWarpPtr = Common::SharedPtr<const Warp>;
 
-private:
+protected:
 	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _warpsIndex;
 	Common::Array<Common::String> _warpNames;
 	Common::Array<Common::String> _vars;
 	Common::Array<WarpPtr> _warps;
-	WarpPtr _currentWarp;
-	TestPtr _currentTest;
-	ScopePtr _pluginScope;
-	ConditionalPtr _conditional;
 
-private:
-	Script::CommandPtr parseCommand(Parser &parser);
-	void parseLine(const Common::String &line, uint lineno);
+	virtual void parseLine(const Common::String &line, uint lineno) = 0;
 
 public:
-	Script(Common::SeekableReadStream &s);
-	~Script();
+	Script();
+	virtual ~Script();
+
+	static Script *load(Common::SeekableReadStream &s, int version);
 
 	int getWarp(const Common::String &name) const;
 	ConstWarpPtr getWarp(int index) const;
