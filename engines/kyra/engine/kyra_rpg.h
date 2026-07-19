@@ -383,6 +383,7 @@ protected:
 	uint8 *_vcnShift;
 	uint8 _vcnShiftVal;
 	uint8 *_vcnColTable;
+	const void *_vcnHiColorPalette;
 	uint8 _vcnSrcBitsPerPixel;
 	uint8 _vcnBpp;
 	uint16 *_blockDrawingBuffer;

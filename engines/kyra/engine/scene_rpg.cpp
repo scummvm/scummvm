@@ -373,6 +373,11 @@ void KyraRpgEngine::drawVcnBlocks() {
 	uint8 *d = _sceneWindowBuffer;
 	uint16 *bdb = _blockDrawingBuffer;
 
+	if (_vcnBpp > 1) {
+		_vcnHiColorPalette = screen()->getHiColorPalette();
+		assert(_vcnHiColorPalette);
+	}
+
 	for (int y = 0; y < 15; y++) {
 		for (int x = 0; x < 22; x++) {
 			bool horizontalFlip = false;
@@ -520,7 +525,7 @@ template void KyraRpgEngine::vcnDraw_fw_trans_4bit<false>(uint8 *&dst, const uin
 template void KyraRpgEngine::vcnDraw_bw_trans_4bit<false>(uint8 *&dst, const uint8 *&src);
 
 template<typename T> void KyraRpgEngine::vcnDraw_fw_hiCol(uint8 *&dst, const uint8 *&src) {
-	const T *hiColorPal = reinterpret_cast<const T*>(screen()->getHiColorPalette());
+	const T *hiColorPal = reinterpret_cast<const T*>(_vcnHiColorPalette);
 	T *d = reinterpret_cast<T*>(dst);
 	for (int blockX = 0; blockX < _vcnSrcBitsPerPixel; blockX++)
 		*d++ = hiColorPal[*src++];
@@ -529,7 +534,7 @@ template<typename T> void KyraRpgEngine::vcnDraw_fw_hiCol(uint8 *&dst, const uin
 
 template<typename T> void KyraRpgEngine::vcnDraw_bw_hiCol(uint8 *&dst, const uint8 *&src) {
 	src += 7;
-	const T *hiColorPal = reinterpret_cast<const T*>(screen()->getHiColorPalette());
+	const T *hiColorPal = reinterpret_cast<const T*>(_vcnHiColorPalette);
 	T *d = reinterpret_cast<T*>(dst);
 	for (int blockX = 0; blockX < _vcnSrcBitsPerPixel; blockX++)
 		*d++ = hiColorPal[*src--];
@@ -538,7 +543,7 @@ template<typename T> void KyraRpgEngine::vcnDraw_bw_hiCol(uint8 *&dst, const uin
 }
 
 template<typename T> void KyraRpgEngine::vcnDraw_fw_trans_hiCol(uint8 *&dst, const uint8 *&src) {
-	const T *hiColorPal = reinterpret_cast<const T*>(screen()->getHiColorPalette());
+	const T *hiColorPal = reinterpret_cast<const T*>(_vcnHiColorPalette);
 	T *d = reinterpret_cast<T*>(dst);
 	for (int blockX = 0; blockX < _vcnSrcBitsPerPixel; blockX++) {
 		uint8 bl = *src++;
@@ -551,7 +556,7 @@ template<typename T> void KyraRpgEngine::vcnDraw_fw_trans_hiCol(uint8 *&dst, con
 
 template<typename T> void KyraRpgEngine::vcnDraw_bw_trans_hiCol(uint8 *&dst, const uint8 *&src) {
 	src += 7;
-	const T *hiColorPal = reinterpret_cast<const T*>(screen()->getHiColorPalette());
+	const T *hiColorPal = reinterpret_cast<const T*>(_vcnHiColorPalette);
 	T *d = reinterpret_cast<T*>(dst);
 	for (int blockX = 0; blockX < _vcnSrcBitsPerPixel; blockX++) {
 		uint8 bl = *src--;
