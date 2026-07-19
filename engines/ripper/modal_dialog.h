@@ -34,6 +34,11 @@ class RipperEngine;
 
 class ModalDialogManager {
 public:
+	enum PresentationStyle {
+		kMenubPresentation,
+		kWacPresentation
+	};
+
 	enum TextEntryResult {
 		kTextEntryPending,
 		kTextEntryAccepted,
@@ -44,9 +49,11 @@ public:
 	explicit ModalDialogManager(RipperEngine *engine);
 
 	bool initialize(ResourceManager &resources);
-	bool run(uint bodyResourceId, bool retainSceneCursorRegions = false);
+	bool run(uint bodyResourceId, bool retainSceneCursorRegions = false,
+		PresentationStyle style = kMenubPresentation);
 	bool runText(const Common::String &title, const Common::String &body,
-		const char *source, bool retainSceneCursorRegions = false);
+		const char *source, bool retainSceneCursorRegions = false,
+		PresentationStyle style = kMenubPresentation);
 	bool drawRetainedTextPanel(uint bodyResourceId, const Common::Rect &bounds,
 		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows);
 	bool beginTextEntry(const Common::String &prompt, uint maximumLength,
@@ -64,11 +71,14 @@ private:
 		const Common::String &text, byte color) const;
 	void drawBitmap(byte *screen, uint pitch, const BitmapAssetFrame &bitmap,
 		int x, int y) const;
-	void drawFrame(byte *screen, uint pitch, const Common::Rect &bounds) const;
-	void drawOverflowBar(byte *screen, uint pitch, const Common::Rect &bounds) const;
+	void drawFrame(byte *screen, uint pitch, const Common::Rect &bounds,
+		PresentationStyle style) const;
+	void drawOverflowBar(byte *screen, uint pitch, const Common::Rect &bounds,
+		PresentationStyle style) const;
 	void drawDialog(const Common::String &title,
 		const Common::Array<Common::String> &lines, uint firstVisible,
-		uint visibleRows, const Common::Rect &bounds) const;
+		uint visibleRows, const Common::Rect &bounds,
+		PresentationStyle style) const;
 	void drawTextEntry(const Common::String &prompt, const Common::String &text,
 		uint firstVisible, uint cursorPosition, bool caretVisible,
 		const Common::Rect &bounds) const;
@@ -77,12 +87,14 @@ private:
 	void updateTextEntryFirstVisible(const Common::Rect &bounds);
 	void finishTextEntry(Common::String &text);
 	bool runTextInternal(const Common::String &title, const Common::String &body,
-		uint bodyResourceId, const char *source, bool retainSceneCursorRegions);
+		uint bodyResourceId, const char *source, bool retainSceneCursorRegions,
+		PresentationStyle style);
 	const Common::String &resourceString(uint resourceId) const;
 
 	RipperEngine *_engine;
 	BitmapFontAsset _font;
 	Common::Array<BitmapAssetFrame> _skin;
+	Common::Array<BitmapAssetFrame> _wacSkin;
 	Common::Array<byte> _modalPalette;
 	Common::Array<Common::String> _gameText;
 	Common::Array<byte> _savedPixels;
