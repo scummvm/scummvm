@@ -108,28 +108,25 @@ static void room_309_daemon() {
 			if (local._lastFrame == 97)
 				local._messagesIndexes[2] = _scene->_kernelMessages.add(Common::Point(0, 0), 0xFBFA, 32, 62, 180, _game.getQuote(350));
 
-#if 1
-			error("TODO: animation frame updates");
-#else
 			for (int charIdx = 0; charIdx < 3; charIdx++) {
 				if (local._messagesIndexes[charIdx] >= 0) {
 					bool match = false;
 					int j = -1;
-					for (j = _scene->_animation[0]->_oldFrameEntry; j < _scene->_animation[0]->_header._frameEntriesCount; j++) {
-						if (_scene->_animation[0]->_frameEntries[j]._spriteSlot._spritesIndex == local._characterSpriteIndexes[charIdx]) {
+					for (j = _scene->_animation[0]->_oldFrameEntry; j < _scene->_animation[0]->_frameEntriesCount; j++) {
+						if (_scene->_animation[0]->_frameEntries[j].series_id == local._characterSpriteIndexes[charIdx]) {
 							match = true;
 							break;
 						}
 					}
 
 					if (match) {
-						SpriteSlotSubset *curSpriteSlot = &_scene->_animation[0]->_frameEntries[j]._spriteSlot;
-						_scene->_kernelMessages._entries[local._messagesIndexes[charIdx]]._position.x = curSpriteSlot->_position.x;
-						_scene->_kernelMessages._entries[local._messagesIndexes[charIdx]]._position.y = curSpriteSlot->_position.y - (50 + (14 * ((charIdx == 0) ? 2 : 1)));
+						const Image &img = _scene->_animation[0]->_frameEntries[j];
+						KernelMessage &kmsg = kernel_message[local._messagesIndexes[charIdx]];
+						kmsg.x = img.x;
+						kmsg.y = img.y - (50 + (14 * ((charIdx == 0) ? 2 : 1)));
 					}
 				}
 			}
-#endif
 		}
 	}
 
