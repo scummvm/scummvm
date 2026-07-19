@@ -274,6 +274,13 @@ bool Cast::duplicateCastMember(CastMember *source, CastMemberInfo *info, int tar
 	if (!source)
 		return true;
 	CastMember *target = source->duplicate(this, targetId);
+	if (!target) {
+		warning("Cast::duplicateCastMember(): could not duplicate %s cast member %d",
+				castType2str(source->_type), source->getID());
+		return false;
+	}
+	// The duplicate reads from the same on-disk resource as the source
+	target->_sourceType = source->_sourceType;
 	// Some duplicate() implementations don't carry the child resource
 	// references; they only make sense within the same archive
 	if (target->_children.empty() && source->getCast() == this)
@@ -964,9 +971,13 @@ bool Cast::hasUnsavableChanges() {
 		return false;
 	for (auto &it : *_loadedCast) {
 		CastMember *member = it._value;
-		if (member && member->isChanged() && keepOriginalCastBytes(member)) {
-			warning("Cast::hasUnsavableChanges(): %s cast member %d was modified but has no writer for version v%d",
-					castType2str(member->_type), it._key, humanVersion(_version));
+		if (!member || !keepOriginalCastBytes(member))
+			continue;
+		// New (e.g. duplicated) members have no original bytes to copy
+		if (member->isChanged() || member->_index == -1) {
+			warning("Cast::hasUnsavableChanges(): %s cast member %d was %s but has no writer for version v%d",
+					castType2str(member->_type), it._key,
+					member->_index == -1 ? "created at runtime" : "modified", humanVersion(_version));
 			return true;
 		}
 	}
