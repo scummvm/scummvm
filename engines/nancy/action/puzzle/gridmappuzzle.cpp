@@ -347,20 +347,20 @@ void GridMapPuzzle::handleInput(NancyInput &input) {
 	if (!hitMap)
 		hitItems = hitTestItems(mouseVP, iRow, iCol);
 
+	// The whole puzzle uses the grab-hand cursor; only the exit hotspot differs.
+	// Picking something up doesn't change it.
 	if (!hitMap && !hitItems) {
 		if (!_exitHotspot.isEmpty() && _exitHotspot.contains(mouseVP)) {
 			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 			if (input.input & NancyInput::kLeftMouseButtonUp)
 				_subState = kExitToCancel;
 		} else {
-			g_nancy->_cursor->setCursorType(_heldItem != -1 ? CursorManager::kDragHand
-			                                                : CursorManager::kNormal);
+			g_nancy->_cursor->setCursorType(CursorManager::kDropHand);
 		}
 		return;
 	}
 
-	g_nancy->_cursor->setCursorType(_heldItem != -1 ? CursorManager::kDragHand
-	                                                : CursorManager::kNormal);
+	g_nancy->_cursor->setCursorType(CursorManager::kDropHand);
 	if (!(input.input & NancyInput::kLeftMouseButtonUp))
 		return;
 
