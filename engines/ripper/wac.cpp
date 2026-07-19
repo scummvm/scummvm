@@ -369,7 +369,8 @@ uint16 WacManager::dispatchSubsceneAction(uint16 action, uint helpResourceId,
 		debugC(1, kDebugWac,
 			"Ripper: opening contextual WAC help resource=%u", helpResourceId);
 		_engine->getCursor()->setVisible(true);
-		if (!_engine->getModalDialog()->run(helpResourceId))
+		if (!_engine->getModalDialog()->run(helpResourceId, false,
+				ModalDialogManager::kWacPresentation))
 			warning("Ripper: WAC contextual help resource=%u failed", helpResourceId);
 		_engine->getInput()->discardMouseTransitions();
 		_pressedControl = -1;

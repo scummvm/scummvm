@@ -546,10 +546,12 @@
 - `RunModalSelectionTableDialogWithRestore` at `0x1f7f8` snapshots the active
   chooser state, resolves title resource `0x42` (`HELP`) and the caller's body
   resource, then calls `RunModalTextDialog` at `0x58ef2`. The shared dialog uses
-  the `MENUB0` through `MENUB14` skin and `SMALL.FNT`, centers a 300-pixel-wide
+  its caller-supplied chooser template and `SMALL.FNT`, centers the requested
   control, wraps at most ten visible 14-pixel rows, drains pending keyboard
   input, scrolls longer text with the navigation keys, and closes on Escape or
-  Enter before restoring the underlying indexed framebuffer and palette.
+  Enter before restoring the underlying indexed framebuffer. The general help
+  wrapper supplies the `MENUB0` through `MENUB14` template and a 300-pixel
+  width.
   RIPPER's bitmap descriptors and presentation coordinates use
   vertical/horizontal order. After translation to screen x/y,
   `ResolveChooserFrameTileIndex` at `0x55250` selects `MENUB0` through `MENUB8`
@@ -559,9 +561,11 @@
 - `InitializeSharedPresentationTemplates` at `0x1196f` loads `SMALL.FNT` for
   the modal and captures MENUB palette indices 4 through 9 and 246 through 255
   with `CaptureSharedDisplayPalettePatch` at `0x205a9`.
-  `ApplySharedDisplayPalettePatch` at `0x205d0` restores those bands before the
-  chooser is drawn. The modal body uses background index 253 and glyph index 4;
-  its heading uses index 255 and the centered `HELP` title uses index 254.
+  Other presentation paths restore those bands with
+  `ApplySharedDisplayPalettePatch` at `0x205d0`; `RunModalTextDialog` itself
+  does not change the active palette. The MENUB modal body uses background
+  index 253 and glyph index 4; its heading uses index 255 and the centered
+  `HELP` title uses index 254.
 - `PollInteractionAndResolveSelection` at `0x13c8d` maps extended key `0x3b00`
   (F1) to general help resource 400, or resource `0x19b` while a prompt is
   active. Toolbar action `0x51b` follows the same branch through
@@ -609,6 +613,14 @@
   current subscene; a nested `0x2000` database action is ignored while the
   database is already active. Help uses context resources 404 on the front page,
   405 in the mug puzzle, and 406 in the database.
+- `ServiceWacSceneInputAction` at `0x21eef` presents those help resources by
+  passing the tertiary chooser template at `0x8a3ec` to `RunModalTextDialog`.
+  That template uses `WACMNU0` through `WACMNU15`, a 20-pixel heading, 6-pixel
+  bottom inset, 5-pixel left inset, 20-pixel right inset, and 14-pixel rows.
+  Its client background is palette index 4, the centered title is index 248,
+  and normal body text is index 251. It keeps the active WAC palette rather than
+  applying the generic MENUB palette patch; `WAC.PCX` and the WACMNU assets
+  share those indexed colors.
 - The `0x3100` control calls `RunRipperTextFileViewer` at `0x223ef`. It loads at
   most `0x27c0` bytes from `ripper.txt` through
   `LoadResolvedRipperTextFileBuffer` at `0x22252` and presents the text with

@@ -36,6 +36,7 @@ namespace Ripper {
 namespace {
 
 static const uint kModalSkinFrameCount = 15;
+static const uint kWacModalSkinFrameCount = 16;
 static const uint kModalFrameTileCount = 9;
 static const uint kModalScrollStartFrame = 9;
 static const uint kModalScrollEndFrame = 10;
@@ -50,12 +51,18 @@ static const int kModalScrollStartInset = 16;
 static const int kModalScrollEndInset = 4;
 static const int kModalScrollEdgeInset = 4;
 static const uint kModalWidth = 300;
-static const uint kModalBodyWidth = kModalWidth - kModalLeftPadding - kModalRightPadding;
 static const int kModalRowHeight = 14;
 static const byte kModalBackgroundColor = 253;
 static const byte kModalHeadingColor = 255;
 static const byte kModalTitleColor = 254;
 static const byte kModalTextColor = 4;
+static const int kWacModalHeadingTopPadding = 20;
+static const int kWacModalBottomPadding = 6;
+static const int kWacModalLeftPadding = 5;
+static const int kWacModalRightPadding = 20;
+static const byte kWacModalBackgroundColor = 4;
+static const byte kWacModalTitleColor = 248;
+static const byte kWacModalTextColor = 251;
 static const uint kModalCursor = 16;
 static const int kTextEntryLeft = 228;
 static const int kTextEntryTop = 312;
@@ -80,6 +87,7 @@ bool ModalDialogManager::initialize(ResourceManager &resources) {
 		return false;
 
 	_skin.clear();
+	_wacSkin.clear();
 	_modalPalette.clear();
 	for (uint frameIndex = 0; frameIndex < kModalSkinFrameCount; ++frameIndex) {
 		BitmapAssetSequence sequence;
@@ -91,11 +99,19 @@ bool ModalDialogManager::initialize(ResourceManager &resources) {
 		if (_modalPalette.empty() && _skin.back().palette.size() >= 256 * 3)
 			_modalPalette = _skin.back().palette;
 	}
+	for (uint frameIndex = 0; frameIndex < kWacModalSkinFrameCount; ++frameIndex) {
+		BitmapAssetSequence sequence;
+		if (!resources.loadInterfaceBitmapSequence(
+				Common::String::format("wacmnu%u", frameIndex), sequence) ||
+				sequence.frames.empty())
+			return false;
+		_wacSkin.push_back(Common::move(sequence.frames.front()));
+	}
 
 	_initialized = true;
 	debugC(1, kDebugScene,
-		"Ripper: initialized modal text dialogs skin=MENUB frames=%u font=small.fnt strings=%u",
-		_skin.size(), _gameText.size());
+		"Ripper: initialized modal text dialogs menubFrames=%u wacmnuFrames=%u font=small.fnt strings=%u",
+		_skin.size(), _wacSkin.size(), _gameText.size());
 	debugC(3, kDebugScene,
 		"Ripper: modal text font first=%u glyphs=%u lineHeight=%u spacing=%u spaceWidth=%u "
 		"transparent=%u paletteBytes=%u",
@@ -244,11 +260,13 @@ void ModalDialogManager::drawBitmap(byte *screen, uint pitch,
 }
 
 void ModalDialogManager::drawFrame(byte *screen, uint pitch,
-		const Common::Rect &bounds) const {
-	if (_skin.size() < kModalFrameTileCount)
+		const Common::Rect &bounds, PresentationStyle style) const {
+	const Common::Array<BitmapAssetFrame> &skin =
+		style == kWacPresentation ? _wacSkin : _skin;
+	if (skin.size() < kModalFrameTileCount)
 		return;
-	const int tileWidth = _skin[0].width;
-	const int tileHeight = _skin[0].height;
+	const int tileWidth = skin[0].width;
+	const int tileHeight = skin[0].height;
 	const int columns = (bounds.width() + tileWidth - 1) / tileWidth;
 	const int rows = (bounds.height() + tileHeight - 1) / tileHeight;
 	int y = bounds.top;
@@ -261,7 +279,7 @@ void ModalDialogManager::drawFrame(byte *screen, uint pitch,
 			// RIPPER stores bitmap dimensions and presentation coordinates in
 			// vertical/horizontal order. Translating ResolveChooserFrameTileIndex
 			// at 0x55250 to screen x/y makes MENUB0..8 row-major.
-			const BitmapAssetFrame &tile = _skin[rowBand * 3 + columnBand];
+			const BitmapAssetFrame &tile = skin[rowBand * 3 + columnBand];
 			drawBitmap(screen, pitch, tile, x, y);
 			lastTile = &tile;
 			// TileChooserControlFrame at 0x54fbe uses the selected tile's
@@ -283,13 +301,15 @@ void ModalDialogManager::drawFrame(byte *screen, uint pitch,
 }
 
 void ModalDialogManager::drawOverflowBar(byte *screen, uint pitch,
-		const Common::Rect &bounds) const {
-	if (_skin.size() <= kModalScrollTrackFrame)
+		const Common::Rect &bounds, PresentationStyle style) const {
+	const Common::Array<BitmapAssetFrame> &skin =
+		style == kWacPresentation ? _wacSkin : _skin;
+	if (skin.size() <= kModalScrollTrackFrame)
 		return;
 
-	const BitmapAssetFrame &start = _skin[kModalScrollStartFrame];
-	const BitmapAssetFrame &end = _skin[kModalScrollEndFrame];
-	const BitmapAssetFrame &track = _skin[kModalScrollTrackFrame];
+	const BitmapAssetFrame &start = skin[kModalScrollStartFrame];
+	const BitmapAssetFrame &end = skin[kModalScrollEndFrame];
+	const BitmapAssetFrame &track = skin[kModalScrollTrackFrame];
 	const int startY = bounds.top + kModalScrollStartInset;
 	const int endY = bounds.bottom - kModalScrollEndInset - end.height;
 	for (int y = startY + start.height; y <= endY; y += track.height)
@@ -303,7 +323,8 @@ void ModalDialogManager::drawOverflowBar(byte *screen, uint pitch,
 
 void ModalDialogManager::drawDialog(const Common::String &title,
 		const Common::Array<Common::String> &lines, uint firstVisible,
-		uint visibleRows, const Common::Rect &bounds) const {
+		uint visibleRows, const Common::Rect &bounds,
+		PresentationStyle style) const {
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
 		if (screen)
@@ -312,35 +333,54 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 	}
 
 	byte *pixels = (byte *)screen->getPixels();
-	drawFrame(pixels, screen->pitch, bounds);
-	// RebuildChooserControlVisual draws the tiled frame before the row renderer
-	// and DrawPromptChooserTemplateLabelCallback repaint the framed interior.
-	// Keeping that order prevents center and edge tile pixels from covering the
-	// prompt background and heading strip.
-	const int headingHeight = title.empty() ? kModalBottomPadding : kModalHeadingTopPadding;
-	for (int y = bounds.top + 2; y < bounds.bottom - 2; ++y)
-		memset(screen->getBasePtr(bounds.left + kModalLeftPadding, y),
-			kModalBackgroundColor, bounds.width() - kModalLeftPadding - kModalRightPadding);
+	const bool wacStyle = style == kWacPresentation;
+	const int headingHeight = title.empty() ?
+		(wacStyle ? kWacModalBottomPadding : kModalBottomPadding) :
+		(wacStyle ? kWacModalHeadingTopPadding : kModalHeadingTopPadding);
+	const int leftPadding = wacStyle ? kWacModalLeftPadding : kModalLeftPadding;
+	const int rightPadding = wacStyle ? kWacModalRightPadding : kModalRightPadding;
+	const byte titleColor = wacStyle ? kWacModalTitleColor : kModalTitleColor;
+	const byte textColor = wacStyle ? kWacModalTextColor : kModalTextColor;
+	if (wacStyle) {
+		// ServiceWacSceneInputAction at 0x21eef uses the tertiary WACMNU
+		// chooser template. Its bitmap tiles retain the textured heading and
+		// frame over the black client field.
+		for (int y = bounds.top; y < bounds.bottom; ++y)
+			memset(screen->getBasePtr(bounds.left, y), kWacModalBackgroundColor,
+				bounds.width());
+		drawFrame(pixels, screen->pitch, bounds, style);
+	} else {
+		drawFrame(pixels, screen->pitch, bounds, style);
+		// RebuildChooserControlVisual draws the tiled frame before the row renderer
+		// and DrawPromptChooserTemplateLabelCallback repaint the framed interior.
+		for (int y = bounds.top + 2; y < bounds.bottom - 2; ++y)
+			memset(screen->getBasePtr(bounds.left + leftPadding, y),
+				kModalBackgroundColor, bounds.width() - leftPadding - rightPadding);
+		if (!title.empty()) {
+			for (int y = bounds.top + 2; y < bounds.top + headingHeight; ++y)
+				memset(screen->getBasePtr(bounds.left + leftPadding, y),
+					kModalHeadingColor, bounds.width() - leftPadding - rightPadding);
+		}
+	}
 	if (!title.empty()) {
-		for (int y = bounds.top + 2; y < bounds.top + headingHeight; ++y)
-			memset(screen->getBasePtr(bounds.left + kModalLeftPadding, y),
-				kModalHeadingColor, bounds.width() - kModalLeftPadding - kModalRightPadding);
-		const int titleX = bounds.left + (bounds.width() - measureText(title)) / 2;
+		const int contentWidth = bounds.width() - leftPadding - rightPadding;
+		const int titleX = bounds.left + leftPadding +
+			(contentWidth - measureText(title)) / 2;
 		drawText(pixels, screen->pitch, titleX,
 			bounds.top + (headingHeight - _font.lineHeight) / 2,
-			title, kModalTitleColor);
+			title, titleColor);
 	}
 	for (uint row = 0; row < visibleRows; ++row) {
 		const uint lineIndex = firstVisible + row;
 		if (lineIndex >= lines.size())
 			break;
-		drawText(pixels, screen->pitch, bounds.left + kModalLeftPadding,
+		drawText(pixels, screen->pitch, bounds.left + leftPadding,
 			bounds.top + headingHeight + row * kModalRowHeight +
 				(kModalRowHeight - _font.lineHeight) / 2,
-			lines[lineIndex], kModalTextColor);
+			lines[lineIndex], textColor);
 	}
 	if (lines.size() > visibleRows)
-		drawOverflowBar(pixels, screen->pitch, bounds);
+		drawOverflowBar(pixels, screen->pitch, bounds, style);
 	g_system->unlockScreen();
 	_engine->getCursor()->refresh();
 	g_system->updateScreen();
@@ -364,7 +404,8 @@ bool ModalDialogManager::drawRetainedTextPanel(uint bodyResourceId,
 	maximumFirstVisible = lines.size() > visibleRows ? lines.size() - visibleRows : 0;
 	firstVisible = MIN(firstVisible, maximumFirstVisible);
 	applyModalPalette();
-	drawDialog(Common::String(), lines, firstVisible, visibleRows, bounds);
+	drawDialog(Common::String(), lines, firstVisible, visibleRows, bounds,
+		kMenubPresentation);
 	debugC(2, kDebugScene,
 		"Ripper: drew retained text panel resource=%u lines=%u firstLine=%u visibleRows=%u bounds=%d,%d,%d,%d",
 		bodyResourceId, lines.size(), firstVisible, visibleRows,
@@ -383,7 +424,7 @@ void ModalDialogManager::drawTextEntry(const Common::String &prompt,
 	}
 
 	byte *pixels = (byte *)screen->getPixels();
-	drawFrame(pixels, screen->pitch, bounds);
+	drawFrame(pixels, screen->pitch, bounds, kMenubPresentation);
 	for (int y = bounds.top + 2; y < bounds.bottom - 2; ++y)
 		memset(screen->getBasePtr(bounds.left + kTextEntryPadding, y),
 			kModalBackgroundColor, bounds.width() - kTextEntryPadding * 2);
@@ -632,7 +673,8 @@ ModalDialogManager::TextEntryResult ModalDialogManager::serviceTextEntry(
 	return result;
 }
 
-bool ModalDialogManager::run(uint bodyResourceId, bool retainSceneCursorRegions) {
+bool ModalDialogManager::run(uint bodyResourceId, bool retainSceneCursorRegions,
+		PresentationStyle style) {
 	const Common::String &title = resourceString(kModalTitleResourceId);
 	const Common::String &body = resourceString(bodyResourceId);
 	if (title.empty() || body.empty()) {
@@ -640,29 +682,36 @@ bool ModalDialogManager::run(uint bodyResourceId, bool retainSceneCursorRegions)
 		return false;
 	}
 	return runTextInternal(title, body, bodyResourceId, "game text",
-		retainSceneCursorRegions);
+		retainSceneCursorRegions, style);
 }
 
 bool ModalDialogManager::runText(const Common::String &title,
 		const Common::String &body, const char *source,
-		bool retainSceneCursorRegions) {
-	return runTextInternal(title, body, 0, source, retainSceneCursorRegions);
+		bool retainSceneCursorRegions, PresentationStyle style) {
+	return runTextInternal(title, body, 0, source, retainSceneCursorRegions,
+		style);
 }
 
 bool ModalDialogManager::runTextInternal(const Common::String &title,
 		const Common::String &body, uint bodyResourceId, const char *source,
-		bool retainSceneCursorRegions) {
+		bool retainSceneCursorRegions, PresentationStyle style) {
 	if (!_initialized || title.empty() || !captureDisplay()) {
 		warning("Ripper: could not present modal text source='%s'", source);
 		return false;
 	}
 
+	const bool wacStyle = style == kWacPresentation;
+	const int headingTopPadding = wacStyle ?
+		kWacModalHeadingTopPadding : kModalHeadingTopPadding;
+	const int bottomPadding = wacStyle ? kWacModalBottomPadding : kModalBottomPadding;
+	const int leftPadding = wacStyle ? kWacModalLeftPadding : kModalLeftPadding;
+	const int rightPadding = wacStyle ? kWacModalRightPadding : kModalRightPadding;
 	Common::Array<Common::String> lines;
-	wrapText(body, kModalBodyWidth, lines);
+	wrapText(body, kModalWidth - leftPadding - rightPadding, lines);
 	const uint visibleRows = MIN<uint>(lines.size(), kModalMaximumRows);
 	const int width = kModalWidth;
-	const int height = kModalHeadingTopPadding + visibleRows * kModalRowHeight +
-		kModalBottomPadding;
+	const int height = headingTopPadding + visibleRows * kModalRowHeight +
+		bottomPadding;
 	const int left = (640 - width) / 2;
 	const int top = (400 - height) / 2;
 	const Common::Rect bounds(left, top, left + width, top + height);
@@ -672,12 +721,13 @@ bool ModalDialogManager::runTextInternal(const Common::String &title,
 
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
-	applyModalPalette();
-	drawDialog(title, lines, firstVisible, visibleRows, bounds);
+	if (!wacStyle)
+		applyModalPalette();
+	drawDialog(title, lines, firstVisible, visibleRows, bounds, style);
 	debugC(1, kDebugScene,
-		"Ripper: entered modal text dialog source='%s' resource=%u title='%s' lines=%u bounds=%d,%d,%d,%d",
-		source, bodyResourceId, title.c_str(), lines.size(), bounds.left, bounds.top,
-		bounds.width(), bounds.height());
+		"Ripper: entered modal text dialog source='%s' resource=%u style=%s title='%s' lines=%u bounds=%d,%d,%d,%d",
+		source, bodyResourceId, wacStyle ? "wacmnu" : "menub", title.c_str(),
+		lines.size(), bounds.left, bounds.top, bounds.width(), bounds.height());
 
 	bool active = true;
 	while (active && !_engine->shouldQuit()) {
@@ -759,7 +809,7 @@ bool ModalDialogManager::runTextInternal(const Common::String &title,
 			}
 		}
 		if (redraw)
-			drawDialog(title, lines, firstVisible, visibleRows, bounds);
+			drawDialog(title, lines, firstVisible, visibleRows, bounds, style);
 		else
 			// The modal owns the main loop, so it must keep presenting frames
 			// for CursorMan's software cursor to follow mouse-motion events.
