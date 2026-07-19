@@ -251,6 +251,7 @@ bool BaseFileManager::registerPackages() {
 	// Register without using SearchMan, as otherwise the FSNode-based lookup in openPackage will fail
 	// and that has to be like that to support the detection-scheme.
 	Common::FSList files;
+	Common::FSList postponedfiles;
 	for (Common::FSList::const_iterator it = _packagePaths.begin(); it != _packagePaths.end(); ++it) {
 		debugC(kWintermuteDebugFileAccess, "Should register folder: %s %s", it->getPath().toString(Common::Path::kNativeSeparator).c_str(), it->getName().c_str());
 		if (!it->getChildren(files, Common::FSNode::kListFilesOnly)) {
@@ -274,10 +275,19 @@ bool BaseFileManager::registerPackages() {
 				searchSignature = true;
 			}
 
-			// W/A: skip broken package in 'Project Joe' and 'Mystic Triddle'
+			// 'Project Joe' and 'Mystic Triddle'
+			// Put package as last
 			if (fileName == "master.dcp" &&
 			    (BaseEngine::instance().getGameId() == "projectjoe" ||
 			     BaseEngine::instance().getGameId() == "mystictriddle")) {
+				postponedfiles.push_back(*fileIt);
+				continue;
+			}
+			// 'Monday Starts on Saturday'
+			// Put package as last
+			if (fileName == "sdata.dcp" &&
+				BaseEngine::instance().getGameId() == "msos") {
+				postponedfiles.push_back(*fileIt);
 				continue;
 			}
 
@@ -379,6 +389,13 @@ bool BaseFileManager::registerPackages() {
 			}
 			debugC(kWintermuteDebugFileAccess, "Registering %s %s", fileIt->getPath().toString(Common::Path::kNativeSeparator).c_str(), fileIt->getName().c_str());
 			registerPackage((*fileIt), fileName, searchSignature);
+		}
+
+		for (Common::FSList::const_iterator fileIt = postponedfiles.begin(); fileIt != postponedfiles.end(); ++fileIt) {
+			debugC(kWintermuteDebugFileAccess, "Registering %s %s", fileIt->getPath().toString(Common::Path::kNativeSeparator).c_str(), fileIt->getName().c_str());
+			Common::String fileName = fileIt->getName();
+			fileName.toLowercase();
+			registerPackage((*fileIt), fileName, false);
 		}
 	}
 
