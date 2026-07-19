@@ -116,7 +116,9 @@ static int room_picture_load(Room *room, int room_id, Buffer *picture, int load_
 			pal_shadow_sort(master_shadow, &art.color_list);
 		}
 
-		room->color_handle = pal_allocate(&art.color_list, master_shadow, (load_flags & PAL_MAP_MASK) | PAL_MAP_BACKGROUND);
+		int pal_flags = (load_flags & (PAL_MAP_RESERVED | PAL_MAP_ANY_TO_CLOSEST |
+			PAL_MAP_ALL_TO_CLOSEST | PAL_MAP_TOP_COLORS)) | PAL_MAP_BACKGROUND;
+		room->color_handle = pal_allocate(&art.color_list, master_shadow, pal_flags);
 		if (room->color_handle < 0) {
 			room_load_error = 4;
 			goto done;
@@ -304,7 +306,7 @@ RoomPtr room_load(int id, int variant, const char *base_path, Buffer *picture,
 	bool sceneFlag = id >= 0;
 	int width, height, picSize;
 	SeriesPtr sprites[10] = { nullptr };
-	int16 spritesColor[10] = { -1 };
+	int16 spritesHandles[10] = { -1 };
 
 	// Initialize structures
 	mem_last_alloc_loader = MODULE_ROOM_LOADER;
@@ -412,10 +414,10 @@ RoomPtr room_load(int id, int variant, const char *base_path, Buffer *picture,
 			goto error;
 		}
 
-		spritesColor[count] = sprites[count]->color_handle;
+		spritesHandles[count] = sprites[count]->color_handle;
 	}
 
-	pal_compact(roomPtr->color_handle, roomfile.num_series, spritesColor);
+	pal_compact(roomPtr->color_handle, roomfile.num_series, spritesHandles);
 
 	for (count = 0; count < roomfile.num_images; ++count) {
 		const Image &img = roomfile.image_list[count];
@@ -428,6 +430,12 @@ RoomPtr room_load(int id, int variant, const char *base_path, Buffer *picture,
 			sprite_draw_3d_scaled_big(seriesPtr, img.sprite_id, picture, depth,
 				img.x, img.y, img.depth, img.scale, 0, 0);
 		}
+	}
+
+	// Free the sprites
+	for (count = roomfile.num_series - 1; count >= 0; --count) {
+		pal_deallocate(spritesHandles[count]);
+		mem_free(sprites[count]);
 	}
 
 	// Finished successfully

@@ -1259,10 +1259,11 @@ void game_control() {
 			// Load up next room
 			kernel_mode = KERNEL_ROOM_PRELOAD;
 
-			// Return of the Phantom has this hardcoded true, due to text cutscenes like
+			// Rex Nebular & Return of the Phantom has this hardcoded true. Rex needing it to properly
+			// unload player series when entering teleporter, and Phantom due to text cutscenes like
 			// "5 Minutes Later" zeroing out the palette
 			player.walker_must_reload = (byte)(g_engine->getGameID() == GType_Phantom ||
-				!player.walker_is_loaded);
+				g_engine->getGameID() == GType_RexNebular || !player.walker_is_loaded);
 
 			quote_emergency = false;
 			// vocab_emergency = false;
@@ -1304,7 +1305,6 @@ void game_control() {
 			game_exec_function(room_preload_code_pointer);
 
 			if (player.walker_must_reload || !player.walker_loads_first) {
-
 				if (player.walker_is_loaded) {
 					player_dump_walker();
 				}

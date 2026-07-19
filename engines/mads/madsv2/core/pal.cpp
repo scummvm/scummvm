@@ -520,7 +520,7 @@ int pal_get_flags() {
 	for (a = 0; a < PAL_MAXFLAGS; a++)
 		if (!flag_used[a])
 			out++;
-	return(out);
+	return out;
 }
 
 int pal_get_colors() {
@@ -530,7 +530,7 @@ int pal_get_colors() {
 	for (a = 0; a < 256; a++)
 		if (color_status[a] == 0)
 			out++;
-	return(out);
+	return out;
 }
 
 void pal_interface(Palette &fixpal) {
