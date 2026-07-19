@@ -24,22 +24,15 @@
 
 #include "ripper/media.h"
 #include "ripper/resources.h"
+#include "ripper/scenes/scene.h"
 
 namespace Ripper {
 
-class RipperEngine;
-class DialogueChooser;
-
-class LibrarianScene : public MediaSequenceCallback {
+class LibrarianScene : public Scene, public MediaSequenceCallback {
 public:
-	enum Result {
-		kExited,
-		kLoadFailed
-	};
-
 	explicit LibrarianScene(RipperEngine *engine);
 
-	Result run(uint sceneArgument);
+	Result run(uint sceneArgument) override;
 	uint16 service(uint frame) override;
 
 private:
@@ -61,8 +54,6 @@ private:
 	void updateCursor(const Common::Point &point);
 	void stopAllAudio();
 
-	RipperEngine *_engine;
-	DialogueChooser &_chooser;
 	Common::RandomSource _random;
 	Common::Array<Common::String> _gameText;
 	Common::Array<const Choice *> _choices;
