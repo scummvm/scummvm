@@ -519,12 +519,16 @@ void CellPhonePopup::drawScreenContent() {
 		break;
 
 	case kWaitPickup:
-	case kConnected:
-		drawConnectedLabel();
+		// Still ringing — only the connecting sprite, plus the Back button.
 		drawConnectingSprite();
 		if (isCallBackButtonActive()) {
 			drawBackButton(0);
 		}
+		break;
+
+	case kConnected:
+		drawConnectedLabel();
+		drawConnectingSprite();
 		break;
 
 	case kInvalidNumber:
@@ -567,21 +571,16 @@ void CellPhonePopup::drawScreenContent() {
 		break;
 
 	case kContentView:
-		// Browser pages use the interactive top-row "SEARCH" button
-		// (subButtons[8], drawn below) in place of a static heading; help /
-		// email keep their static heading.
-		if (_contentHeading && _contentHeading != &_uiclData->browserHeading) {
+		// Articles show the BROWSER heading; the main browser page shows the
+		// interactive SEARCH button (drawn below) instead.
+		if (_contentHeading &&
+			(_contentHeading != &_uiclData->browserHeading || isBrowserArticle())) {
 			drawHeading(*_contentHeading);
 		}
 		drawContentView();
-		// Help's Back sits in the lower ribbon (subButtons[0]); the zoomed
-		// articles' Back sits at the bottom of the screen (subButtons[7]).
-		// drawDirectoryArrows() blits whichever scroll pair applies.
 		drawDirectoryArrows();
-		drawBackButton(isHelpContentView() ? 0 : 7);
-		// Browser pages carry the top-row "SEARCH" button (subButtons[8]),
-		// which highlights green on hover and opens the search-topics list.
-		if (_contentHeading == &_uiclData->browserHeading) {
+		drawBackButton(contentViewBottomButton());
+		if (_contentHeading == &_uiclData->browserHeading && !isBrowserArticle()) {
 			drawHubButton(8);
 		}
 		break;
@@ -882,6 +881,9 @@ void CellPhonePopup::openBrowserHome() {
 	// further pages / the search list.
 	const UIBW *browserData = GetEngineData(UIBW);
 	if (browserData && !browserData->pages.empty()) {
+		// Remember the main-page key so isBrowserArticle() can tell it apart.
+		_browserHomeKey = browserData->pages[0].imageName.toString();
+		_browserHomeKey.toUppercase();
 		openContentView(browserData->pages[0].imageName.toString(), _uiclData->browserHeading);
 		// The homepage's Back button always returns to the main phone (welcome)
 		// screen, regardless of whether the browser was opened from the online
@@ -949,11 +951,18 @@ void CellPhonePopup::renderContentPage(int surfaceWidth) {
 		}
 	}
 	const uint32 trans = g_nancy->_graphics->getTransColor();
-	ht.render(surfaceWidth, 2000, trans, renderText, _uiclData->fontId2);
 
-	_contentCacheSurface.copyFrom(ht.surface());
+	// Render into a tall scratch surface, then cache only the used height
+	static const uint16 kMaxContentHeight = 6000;
+	ht.render(surfaceWidth, kMaxContentHeight, trans, renderText, _uiclData->fontId2);
+
+	const uint16 textHeight = MIN<uint16>(MAX<uint16>(ht.textHeight(), 1), kMaxContentHeight);
+	_contentCacheSurface.create(surfaceWidth, textHeight, ht.surface().format);
 	_contentCacheSurface.setTransparentColor(trans);
-	_contentCacheTextHeight = ht.textHeight();
+	_contentCacheSurface.clear(trans);
+	_contentCacheSurface.blitFrom(ht.surface(), Common::Rect(0, 0, (int16)surfaceWidth, (int16)textHeight),
+									Common::Point(0, 0));
+	_contentCacheTextHeight = textHeight;
 	_contentCacheHotspots = ht.hotspots();
 }
 
@@ -1177,10 +1186,26 @@ int CellPhonePopup::currentBackButtonIndex() const {
 	case kEmailList:
 		return 7;
 	case kContentView:
-		return isHelpContentView() ? 0 : 7;
+		return (int)contentViewBottomButton();
 	default:
 		return -1;
 	}
+}
+
+uint CellPhonePopup::contentViewBottomButton() const {
+	// Help Back (0); browser-article HOME (9); main page / email article Back (7).
+	if (isHelpContentView()) {
+		return 0;
+	}
+	return isBrowserArticle() ? 9 : 7;
+}
+
+bool CellPhonePopup::isBrowserArticle() const {
+	// A browser content view other than the main page opened by openBrowserHome().
+	if (_contentHeading != &_uiclData->browserHeading) {
+		return false;
+	}
+	return !_browserHomeKey.empty() && !_contentKey.equalsIgnoreCase(_browserHomeKey);
 }
 
 const UICL::ThreeRectWidget &CellPhonePopup::scrollUpButton() const {
@@ -2091,9 +2116,9 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 		const Common::Point popupMouseLink(chunkMouse.x - _screenPosition.left,
 											chunkMouse.y - _screenPosition.top);
 
-		// On browser pages the top-row "SEARCH" button (subButtons[8]) opens the
-		// search-topics list and highlights green while hovered.
-		if (_contentHeading == &_uiclData->browserHeading &&
+		// The main browser page carries the top-row SEARCH button (subButtons[8])
+		// which opens the search list; it highlights green while hovered.
+		if (_contentHeading == &_uiclData->browserHeading && !isBrowserArticle() &&
 				!_uiclData->subButtons[8].destRect.isEmpty()) {
 			Common::Rect searchBtn = _uiclData->subButtons[8].destRect;
 			searchBtn.translate(-_screenPosition.left, -_screenPosition.top);
@@ -2163,11 +2188,9 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 		const bool overUpDown =
 			upDst.contains(chunkMouse) || downDst.contains(chunkMouse);
 
-		// Help draws its Back button in the lower ribbon (subButtons[0]); the
-		// zoomed email / browser view draws it at the bottom of the screen
-		// (subButtons[7]). Hit-test the matching button so it lines up with the
-		// visible sprite.
-		const Common::Rect backHit = backButtonHitRect(isHelpContentView() ? 0 : 7);
+		// Hit-test the bottom button that this view actually draws.
+		const bool onBrowserArticle = isBrowserArticle();
+		const Common::Rect backHit = backButtonHitRect(contentViewBottomButton());
 		const Common::Point popupMouse(chunkMouse.x - _screenPosition.left,
 										chunkMouse.y - _screenPosition.top);
 		if (!overUpDown && !backHit.isEmpty() && backHit.contains(popupMouse)) {
@@ -2175,7 +2198,12 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				_contentKey.clear();
 				_contentHeading = nullptr;
-				enterScreenState(_contentReturnState);
+				if (onBrowserArticle) {
+					// HOME → the browser homepage (River Heights Wireless).
+					openBrowserHome();
+				} else {
+					enterScreenState(_contentReturnState);
+				}
 				input.eatMouseInput();
 				return;
 			}

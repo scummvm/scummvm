@@ -233,6 +233,10 @@ private:
 	// subButtons index of the Back / HOME button visible in the current state,
 	// or -1 when none is shown. Used to drive its hover highlight.
 	int currentBackButtonIndex() const;
+	// subButtons index of the bottom button on a content view.
+	uint contentViewBottomButton() const;
+	// A browser content view other than the main page (i.e. an actual web page).
+	bool isBrowserArticle() const;
 	// Move the directory selection by delta, scrolling as needed.
 	void moveDirectorySelection(int delta);
 
@@ -288,6 +292,8 @@ private:
 	ScreenState _contentReturnState = kOnlineHub;
 	const UICL::SrcDestRectPair *_contentHeading = nullptr;
 	Common::String _contentKey;
+	// Uppercased key of the main browser page (empty until the browser is opened).
+	Common::String _browserHomeKey;
 	uint _contentScroll = 0;
 
 	// Email "opening" transition: the visible row whose closed envelope briefly
