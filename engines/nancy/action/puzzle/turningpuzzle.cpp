@@ -180,15 +180,17 @@ void TurningPuzzle::readDataNancy13(Common::SeekableReadStream &stream) {
 		readRect(stream, r);
 		uint16 cursorType = stream.readUint16LE();
 		uint16 sceneID = stream.readUint16LE();
-		uint16 frameID = stream.readUint16LE();
-		stream.skip(1);
+		int16 exitFlagLabel = stream.readSint16LE();
+		byte exitFlagValue = stream.readByte();
 
 		if (i == 0) {
 			_exitHotspot = r;
 			_exitCursorType = cursorType;
 			_exitScene._sceneChange.sceneID = sceneID;
-			// 0xffff means "no frame" - the target scene may be a video.
-			_exitScene._sceneChange.frameID = (frameID == 0xffff) ? 0 : frameID;
+			// The field after the scene id is a flag label (set on give-up), not a frame.
+			_exitScene._sceneChange.frameID = 0;
+			_exitScene._flag.label = exitFlagLabel;
+			_exitScene._flag.flag = exitFlagValue;
 			_solveScene._sceneChange = _exitScene._sceneChange;
 		}
 	}

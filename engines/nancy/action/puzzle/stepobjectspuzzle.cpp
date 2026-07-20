@@ -83,14 +83,17 @@ void StepObjectsPuzzle::readData(Common::SeekableReadStream &stream) {
 		readRect(stream, zone);
 		uint16 cursorType = stream.readUint16LE();
 		uint16 sceneID = stream.readUint16LE();
-		uint16 frameID = stream.readUint16LE();
-		stream.skip(1);
+		int16 exitFlagLabel = stream.readSint16LE();
+		byte exitFlagValue = stream.readByte();
 
 		if (i == 0) {
 			_exitHotspot = zone;
 			_exitCursorType = cursorType;
 			_exitScene.sceneID = sceneID;
-			_exitScene.frameID = (frameID == 0xffff) ? 0 : frameID;
+			// The field after the scene id is a flag label (set on give-up), not a frame.
+			_exitScene.frameID = 0;
+			_exitFlag.label = exitFlagLabel;
+			_exitFlag.flag = exitFlagValue;
 		}
 	}
 
@@ -396,8 +399,11 @@ void StepObjectsPuzzle::execute() {
 			if (_solveScene.sceneID != kNoScene) {
 				NancySceneState.changeScene(_solveScene);
 			}
-		} else if (_exitScene.sceneID != kNoScene) {
-			NancySceneState.changeScene(_exitScene);
+		} else {
+			NancySceneState.setEventFlag(_exitFlag);
+			if (_exitScene.sceneID != kNoScene) {
+				NancySceneState.changeScene(_exitScene);
+			}
 		}
 
 		finishExecution();

@@ -119,14 +119,17 @@ void DropSortPuzzle::readData(Common::SeekableReadStream &stream) {
 		readRect(stream, r);
 		uint16 cursorType = stream.readUint16LE();
 		uint16 sceneID = stream.readUint16LE();
-		uint16 frameID = stream.readUint16LE();
-		stream.skip(1);							// trailing flag
+		int16 exitFlagLabel = stream.readSint16LE();
+		byte exitFlagValue = stream.readByte();
 
 		if (i == 0) {
 			_exitHotspot = r;
 			_exitCursorType = cursorType;
 			_exitScene.sceneID = sceneID;
-			_exitScene.frameID = (frameID == 0xffff) ? 0 : frameID;
+			// The field after the scene id is a flag label (set on give-up), not a frame.
+			_exitScene.frameID = 0;
+			_exitFlag.label = exitFlagLabel;
+			_exitFlag.flag = exitFlagValue;
 		}
 	}
 }
@@ -414,6 +417,7 @@ void DropSortPuzzle::execute() {
 	}
 	case kActionTrigger:
 		if (_exitRequested) {
+			NancySceneState.setEventFlag(_exitFlag);
 			if (_exitScene.sceneID != kNoScene) {
 				NancySceneState.changeScene(_exitScene);
 			}

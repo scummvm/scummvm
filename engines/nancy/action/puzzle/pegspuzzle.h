@@ -102,6 +102,7 @@ protected:
 	Common::Rect _exitHotspot;
 	uint16 _exitCursorType = 0;			// the record's leading field is its cursor type
 	SceneChangeDescription _exitScene;
+	FlagDescription _exitFlag;			// set on give-up
 
 	Common::Array<RandomSoundBlock> _sounds;	// 5 blocks: select / jump / pulse / win / lose
 

@@ -127,6 +127,7 @@ protected:
 	Common::Rect _exitHotspot;
 	uint16 _exitCursorType = 0;
 	SceneChangeDescription _exitScene;
+	FlagDescription _exitFlag;			// set on give-up
 
 	// -- Runtime state --
 	Common::Array<BeltItem> _items;		// candies currently on the belt, oldest first

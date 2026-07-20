@@ -121,6 +121,7 @@ protected:
 	Common::Rect _exitHotspot;
 	uint16 _exitCursorType = 0;
 	SceneChangeDescription _exitScene;
+	FlagDescription _exitFlag;			// set on give-up
 
 	RandomSoundBlock _sounds[kNumSounds];	// turn / handle / success
 

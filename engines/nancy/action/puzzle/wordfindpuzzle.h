@@ -85,6 +85,7 @@ protected:
 	Common::Rect _exitHotspot;
 	uint16 _exitCursorType = 0;
 	SceneChangeDescription _exitScene;
+	FlagDescription _exitFlag;			// set on give-up
 
 	Common::Array<RandomSoundBlock> _sounds;	// 4 blocks
 
