@@ -26,6 +26,7 @@ public:
 	bool serviceKeyboard(uint16 command, uint &result);
 	void appendChoice(const Common::String &text, uint16 result);
 	bool activateChoices(const char *source);
+	bool selectResult(uint16 result, const char *source);
 	void updateHover(const Common::Point &point);
 	bool contains(const Common::Point &point) const;
 	void draw(bool captureBacking = false);
