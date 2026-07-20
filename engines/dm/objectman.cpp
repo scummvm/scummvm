@@ -118,15 +118,26 @@ void ObjectMan::loadObjectNames() {
 	char *objectNames = new char[dispMan.getCompressedDataSize(kDMObjectNamesGraphicIndice) + kDMObjectNameCount];
 	Common::MemoryReadStream stream = dispMan.getCompressedData(kDMObjectNamesGraphicIndice);
 
-	for (uint16 objNameIndex = 0; objNameIndex < kDMObjectNameCount; ++objNameIndex) {
-		_objectNames[objNameIndex] = objectNames;
+	if (_vm->getPlatform() == Common::kPlatformDOS) {
+		for (uint16 objNameIndex = 0; objNameIndex < kDMObjectNameCount; ++objNameIndex) {
+			_objectNames[objNameIndex] = objectNames;
+			byte tmpByte;
+			while ((tmpByte = stream.readByte()) != '\0') {
+				*objectNames++ = tmpByte;
+			}
+			*objectNames++ = '\0';
+		}
+	} else {
+		for (uint16 objNameIndex = 0; objNameIndex < kDMObjectNameCount; ++objNameIndex) {
+			_objectNames[objNameIndex] = objectNames;
 
-		byte tmpByte;
-		for (tmpByte = stream.readByte(); !(tmpByte & 0x80); tmpByte = stream.readByte()) // last char of object name has 7th bit on
-			*objectNames++ = tmpByte; // write while not last char
+			byte tmpByte;
+			for (tmpByte = stream.readByte(); !(tmpByte & 0x80); tmpByte = stream.readByte()) // last char of object name has 7th bit on
+				*objectNames++ = tmpByte; // write while not last char
 
-		*objectNames++ = tmpByte & 0x7F; // write without the 7th bit
-		*objectNames++ = '\0'; // terminate string
+			*objectNames++ = tmpByte & 0x7F; // write without the 7th bit
+			*objectNames++ = '\0'; // terminate string
+		}
 	}
 }
 
