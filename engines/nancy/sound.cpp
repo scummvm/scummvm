@@ -262,6 +262,27 @@ SoundManager::~SoundManager() {
 	stopAllSounds();
 }
 
+Common::String SoundManager::resolveMusicMix(const Common::String &name) const {
+	auto *mmix = GetEngineData(MMIX);
+	if (!mmix) {
+		// Pre-Nancy13, or no mix table present
+		return name;
+	}
+
+	for (const MMIX::Record &record : mmix->records) {
+		if (record.name.equalsIgnoreCase(name)) {
+			if (record.musicNames.empty()) {
+				return "NO SOUND";
+			}
+
+			uint pick = g_nancy->_randomSource->getRandomNumber(record.musicNames.size() - 1);
+			return record.musicNames[pick];
+		}
+	}
+
+	return name;
+}
+
 void SoundManager::loadSound(const SoundDescription &description, SoundEffectDescription **effectData, bool forceReload) {
 	if (description.name == "NO SOUND") {
 		return;
@@ -307,7 +328,15 @@ void SoundManager::loadSound(const SoundDescription &description, SoundEffectDes
 		*effectData = nullptr;
 	}
 
-	Common::Path path(description.name + (g_nancy->getGameType() == kGameTypeVampire ? ".dwd" : ".his"));
+	// Resolve the sound name through the music mix table (Nancy 13+). Location
+	// codes get swapped for a randomly-picked track; unmapped names pass through.
+	Common::String soundName = resolveMusicMix(description.name);
+	if (soundName.empty() || soundName == "NO SOUND") {
+		// The mix maps this location to silence
+		return;
+	}
+
+	Common::Path path(soundName + (g_nancy->getGameType() == kGameTypeVampire ? ".dwd" : ".his"));
 	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(path);
 	if (file) {
 		uint numLoops = chan.numLoops;
