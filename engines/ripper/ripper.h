@@ -30,6 +30,7 @@ namespace Ripper {
 class CursorManager;
 class CyberManager;
 class InputManager;
+class Inventory;
 class MediaPlayer;
 class Milestones;
 class ModalDialogManager;
@@ -58,6 +59,7 @@ public:
 	CursorManager *getCursor() const { return _cursor; }
 	CyberManager *getCyber() const { return _cyber; }
 	InputManager *getInput() const { return _input; }
+	Inventory *getInventory() const { return _inventory; }
 	MediaPlayer *getMedia() const { return _media; }
 	Milestones *getMilestones() const { return _milestones; }
 	ModalDialogManager *getModalDialog() const { return _modalDialog; }
@@ -76,6 +78,7 @@ private:
 	CursorManager *_cursor;
 	CyberManager *_cyber;
 	InputManager *_input;
+	Inventory *_inventory;
 	MediaPlayer *_media;
 	Milestones *_milestones;
 	ModalDialogManager *_modalDialog;

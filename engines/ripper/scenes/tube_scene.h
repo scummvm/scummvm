@@ -46,7 +46,6 @@ private:
 	void stopAudio();
 
 	Common::Array<BitmapAssetFrame> _switchFrames;
-	Common::Array<Common::String> _gameText;
 	Common::Array<byte> _switchBacking;
 	Audio::SoundHandle _audioHandles[4];
 	uint _tubeCount;

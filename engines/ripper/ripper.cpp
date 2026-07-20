@@ -33,6 +33,7 @@
 #include "ripper/cursor.h"
 #include "ripper/cyber.h"
 #include "ripper/input.h"
+#include "ripper/inventory.h"
 #include "ripper/media.h"
 #include "ripper/menu.h"
 #include "ripper/milestones.h"
@@ -49,6 +50,7 @@ namespace Ripper {
 RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescription) :
 		Engine(system), _gameDescription(gameDescription), _cursor(new CursorManager()),
 		_cyber(new CyberManager(this)), _input(new InputManager(_eventMan)),
+		_inventory(new Inventory(this)),
 		_media(new MediaPlayer(this, _input, _mixer)), _milestones(new Milestones()),
 		_modalDialog(new ModalDialogManager(this)), _resources(new ResourceManager()),
 		_scripts(new ScriptManager(this)), _settings(new RipperSettings(_mixer)),
@@ -66,6 +68,7 @@ RipperEngine::~RipperEngine() {
 	delete _modalDialog;
 	delete _milestones;
 	delete _media;
+	delete _inventory;
 	delete _input;
 	delete _cyber;
 	delete _cursor;
@@ -112,6 +115,8 @@ Common::Error RipperEngine::run() {
 	if (!_modalDialog->initialize(*_resources))
 		return Common::kReadingFailed;
 	if (!_cursor->initialize(*_resources))
+		return Common::kReadingFailed;
+	if (!_inventory->initialize(*_resources))
 		return Common::kReadingFailed;
 	if (!_scripts->initialize(*_resources))
 		return Common::kReadingFailed;

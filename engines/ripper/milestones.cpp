@@ -155,7 +155,7 @@ const char *Milestones::domain(uint flag) {
 		return "chapter";
 	if (flag >= kMilestoneFirstTravelLocation && flag <= kMilestoneLastTravelLocation)
 		return "travel";
-	if (flag >= 50 && flag <= 58)
+	if ((flag >= 50 && flag <= 69) || (flag >= 100 && flag <= 119))
 		return "inventory";
 	if (flag >= kMilestoneFirstWacDatabaseEntry && flag < kMilestoneFirstWacDatabaseEntry + 30)
 		return "wac-database";

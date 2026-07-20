@@ -80,6 +80,7 @@ enum ScriptOpcode : byte {
 
 enum SceneAction {
 	kSceneActionWorldMap = 2,
+	kSceneActionInventory = 3,
 	kSceneActionCalculatorPuzzle = 4,
 	kSceneActionRolodexPuzzle = 5,
 	kSceneActionCyberMenu = 6,
@@ -201,6 +202,7 @@ public:
 	bool updateInteractiveCursor(const Common::Point &point, bool *failed = nullptr);
 	void updateModalSceneCursor(const Common::Point &point);
 	bool openWorldMap();
+	bool openInventory(int initialUnlockFlag = -1, bool grantItem = false);
 	bool hasActivePrompt() const;
 	bool showHelp(const char *source);
 	bool hasPendingSceneTransition() const {

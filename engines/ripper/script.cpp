@@ -35,6 +35,7 @@
 #include "ripper/cursor.h"
 #include "ripper/cyber.h"
 #include "ripper/input.h"
+#include "ripper/inventory.h"
 #include "ripper/media.h"
 #include "ripper/milestones.h"
 #include "ripper/modal_dialog.h"
@@ -720,6 +721,23 @@ bool ScriptManager::showHelp(const char *source) {
 		ModalDialogManager::kMenubPresentation, paletteBehavior);
 }
 
+bool ScriptManager::openInventory(int initialUnlockFlag, bool grantItem) {
+	if (_activeBa0Frame >= _ba0.getFrames().size()) {
+		warning("Ripper: inventory requested without an active scene frame");
+		return false;
+	}
+	const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
+	const Common::String sceneLabel = _ba0.getString(frame.labelOffset);
+	const Inventory::Result inventoryResult = grantItem ?
+		_engine->getInventory()->grantAndRun(initialUnlockFlag, sceneLabel,
+			"scene-action-3") :
+		_engine->getInventory()->run(sceneLabel, initialUnlockFlag);
+	debugC(inventoryResult == Inventory::kLoadFailed ? 1 : 2, kDebugScene,
+		"Ripper: inventory completed result=%d sceneLabel='%s' initialUnlockFlag=%d grant=%d",
+		inventoryResult, sceneLabel.c_str(), initialUnlockFlag, grantItem);
+	return inventoryResult != Inventory::kLoadFailed;
+}
+
 bool ScriptManager::initialize(ResourceManager &resources) {
 	return _briefing->initialize(resources) &&
 		_dialogue->initialize(resources) &&
@@ -1255,6 +1273,11 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 					result = -3;
 					return true;
 				}
+				break;
+			}
+			if (action == kSceneActionInventory) {
+				if (!openInventory(argument, true))
+					return false;
 				break;
 			}
 			if (action == kSceneActionCalculatorPuzzle) {

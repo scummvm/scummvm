@@ -18,8 +18,8 @@
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
-#include "ripper/dialogue.h"
 #include "ripper/input.h"
+#include "ripper/inventory.h"
 #include "ripper/milestones.h"
 #include "ripper/modal_dialog.h"
 #include "ripper/ripper.h"
@@ -40,13 +40,8 @@ static const uint kToolbarMask = 0x84;
 static const uint kInventoryAction = 2;
 static const uint kHelpAction = 7;
 static const uint kSceneHelpResource = 400;
-static const uint kInventoryHelpResource = 0x1bb;
-static const uint kInvalidInventoryResource = 0x4d;
-static const uint kFirstInventoryFlag = 50;
-static const uint kLastInventoryFlag = 69;
 static const uint kFirstTubeFlag = 52;
 static const uint kLastTubeFlag = 54;
-static const uint kInventoryTextBase = 0x96;
 static const uint kConsumedFlagOffset = 50;
 static const uint kSceneMediaX = 18;
 static const uint kSceneMediaY = 52;
@@ -91,12 +86,6 @@ bool TubeScene::initialize() {
 			return false;
 		}
 	}
-	if (!_engine->getResources()->loadGameText(_gameText) ||
-			_gameText.size() <= kInventoryTextBase + kLastInventoryFlag) {
-		warning("Ripper: tube scene inventory text table is incomplete");
-		return false;
-	}
-
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
 		if (screen)
@@ -110,8 +99,8 @@ bool TubeScene::initialize() {
 	}
 	g_system->unlockScreen();
 	debugC(1, kDebugScene,
-		"Ripper: initialized tube switch scene switchFrames=%u inventoryFlags=%u..%u",
-		_switchFrames.size(), kFirstInventoryFlag, kLastInventoryFlag);
+		"Ripper: initialized tube switch scene switchFrames=%u tubeFlags=%u..%u",
+		_switchFrames.size(), kFirstTubeFlag, kLastTubeFlag);
 	return true;
 }
 
@@ -190,85 +179,24 @@ void TubeScene::updateCursor(const Common::Point &point) {
 }
 
 uint16 TubeScene::serviceInventory() {
-	if (_chooser.isPending())
-		_chooser.dismissForSceneTransition("tube-inventory-entry");
-	else
-		_chooser.clearPending();
-
-	for (;;) {
-		uint available = 0;
-		for (uint flag = kFirstInventoryFlag; flag <= kLastInventoryFlag; ++flag) {
-			if (_engine->getMilestones()->isSet(flag) &&
-					!_engine->getMilestones()->isSet(flag + kConsumedFlagOffset)) {
-				_chooser.appendChoice(_gameText[kInventoryTextBase + flag], flag);
-				++available;
-			}
-		}
-		if (available == 0) {
-			_engine->getModalDialog()->run(kInvalidInventoryResource);
-			debugC(2, kDebugScene,
-				"Ripper: tube scene inventory has no available unlocked items");
-			return 0;
-		}
-		_chooser.activateChoices("tube-inventory");
-		_chooser.draw(true);
-		debugC(1, kDebugScene,
-			"Ripper: entered tube scene inventory available=%u acceptedFlags=%u..%u",
-			available, kFirstTubeFlag, kLastTubeFlag);
-
-		uint selectedFlag = 0;
-		bool selected = false;
-		while (_chooser.isPending() && !_engine->shouldQuit()) {
-			if (_engine->getInput()->pollEvents()) {
-				_engine->quitGame();
-				break;
-			}
-			while (_engine->getInput()->hasPendingKey()) {
-				const uint16 command = _engine->getInput()->consumeKey();
-				if (command == kEscapeCommand) {
-					_chooser.dismissForSceneTransition("tube-inventory-escape");
-					return 0;
-				}
-				if (command == kHelpCommand) {
-					_engine->getModalDialog()->run(kInventoryHelpResource);
-					_chooser.draw();
-					continue;
-				}
-				if (_chooser.serviceKeyboard(command, selectedFlag)) {
-					selected = true;
-					break;
-				}
-			}
-			if (selected)
-				break;
-			const MouseState mouse = _engine->getInput()->publishMouseState();
-			_chooser.updateHover(mouse.position);
-			_engine->getCursor()->update(_chooser.contains(mouse.position) ?
-				kSwitchCursor : kDefaultCursor);
-			if (_chooser.service(mouse, selectedFlag))
-				selected = true;
-			_chooser.draw();
-			g_system->updateScreen();
-			g_system->delayMillis(10);
-		}
-		if (!selected)
-			return _engine->shouldQuit() ? kFailureCommand : 0;
-
-		if (selectedFlag >= kFirstTubeFlag && selectedFlag <= kLastTubeFlag) {
-			if (!_engine->getMilestones()->set(selectedFlag + kConsumedFlagOffset,
-					true, "tube-scene-inventory"))
-				return kFailureCommand;
-			debugC(1, kDebugScene,
-				"Ripper: installed tube inventoryFlag=%u consumedFlag=%u",
-				selectedFlag, selectedFlag + kConsumedFlagOffset);
-			return kReloadCommand;
-		}
-
-		debugC(2, kDebugScene,
-			"Ripper: rejected tube scene inventory flag=%u modalResource=0x%x",
-			selectedFlag, kInvalidInventoryResource);
-		_engine->getModalDialog()->run(kInvalidInventoryResource);
+	uint usedUnlockFlag = 0;
+	// ExecuteUnlockSelectionChoice compares items 2..4 with the GAZ2 frame
+	// label. Those are the three tubes consumed by RunTubeSwitchScene.
+	const Inventory::Result inventoryResult =
+		_engine->getInventory()->run("GAZ2", -1, &usedUnlockFlag);
+	if (inventoryResult == Inventory::kLoadFailed)
+		return kFailureCommand;
+	if (inventoryResult == Inventory::kCancelled)
+		return 0;
+	if (usedUnlockFlag < kFirstTubeFlag || usedUnlockFlag > kLastTubeFlag) {
+		warning("Ripper: tube scene inventory returned incompatible flag %u",
+			usedUnlockFlag);
+		return kFailureCommand;
 	}
+	debugC(1, kDebugScene,
+		"Ripper: installed tube inventoryFlag=%u consumedFlag=%u",
+		usedUnlockFlag, usedUnlockFlag + kConsumedFlagOffset);
+	return kReloadCommand;
 }
 
 uint16 TubeScene::serviceInput() {
