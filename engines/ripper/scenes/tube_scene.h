@@ -38,7 +38,8 @@ private:
 	void animateSwitch(bool enabled);
 	uint countInstalledTubes() const;
 	bool playCue(uint cue);
-	bool playSegment(uint firstFrame, uint lastFrame, uint16 &command);
+	bool playSegment(uint firstFrame, uint lastFrame, uint16 &command,
+		uint loopStartFrame = 0xffffffff);
 	uint16 serviceInput();
 	uint16 serviceInventory();
 	void updateCursor(const Common::Point &point);
