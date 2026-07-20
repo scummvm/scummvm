@@ -1251,7 +1251,7 @@ struct LoadSave : public Command {
 			debug("loadsave %s %s", srcVar.c_str(), dstVar.c_str());
 			if (!dstVar.empty() && Common::isDigit(dstVar[0])) {
 				uint level = atoi(dstVar.c_str());
-				uint currentLevel = g_engine->currentAmerzoneLevel();
+				uint currentLevel = g_engine->currentLevel();
 				if (currentLevel != 0) {
 					g_engine->setVariable(srcVar, currentLevel == level);
 					return;

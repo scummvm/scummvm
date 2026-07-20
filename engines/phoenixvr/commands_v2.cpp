@@ -62,7 +62,8 @@ struct Goto_Level : public Command {
 	Common::String name;
 	Goto_Level(const Common::Array<Common::String> &args) : name(args[0]) {}
 	void exec(ExecutionContext &ctx) const override {
-		debug("goto level %s", name.c_str());
+		g_engine->goToLevel(name);
+		ctx.running = false;
 	}
 };
 

@@ -129,6 +129,7 @@ public:
 	// Script API
 	void setNextScript(const Common::String &path);
 	bool goToWarp(const Common::String &warp, bool savePrev = false);
+	void goToLevel(const Common::String &name);
 	void returnToWarp();
 	void loadCursor(int idx, const Common::String &path, int w, int h);
 	void setCursorDefault(int idx, const Common::String &path);
@@ -206,7 +207,7 @@ public:
 
 	bool wasRestarted() const { return _restarted; }
 	bool wasLoaded() const { return _loaded; }
-	uint currentAmerzoneLevel() const;
+	uint currentLevel() const;
 
 	void saveVariables();
 	void loadVariables();
@@ -246,6 +247,11 @@ private:
 		uint16 color;
 	};
 
+	struct Level {
+		Common::String path;
+		Common::String name;
+	};
+
 	static Common::String removeDrive(const Common::String &path);
 	Common::SeekableReadStream *open(const Common::String &name, Common::String *origName = nullptr);
 	Common::SeekableReadStream *tryOpen(const Common::Path &name, Common::String *origName);
@@ -275,6 +281,8 @@ private:
 
 	void processGenericEvents(const Common::Event &event);
 	void pauseEngineIntern(bool pause) override;
+	Common::String getLevelLabel(const Common::String &script) const;
+	Common::String getLevelScript(const Level &level) const;
 
 private:
 	bool _hasFocus = true;
@@ -367,7 +375,7 @@ private:
 	int _ciblePeriodSeconds = 0;
 	Common::Array<int> _cibleBounds;
 
-	Common::Array<Common::String> _levels;
+	Common::Array<Level> _levels;
 	uint _nextLevel = 0;
 
 	bool _restarted = false;
