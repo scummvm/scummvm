@@ -72,7 +72,7 @@ Common::Error FoolEngine::run() {
 	int startSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 	Common::String startSaveFileName;
 	if (startSlot != -1) {
-		startSaveFileName = g_engine->getMetaEngine()->getSavegameFile(startSlot, getGameId().c_str());
+		startSaveFileName = g_engine->getMetaEngine()->getSavegameFile(startSlot, getTarget().c_str());
 	}
 
 	FoolGame fg(version, startSaveFileName);

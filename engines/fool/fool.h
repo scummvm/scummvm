@@ -26,14 +26,11 @@
 #include "common/system.h"
 #include "common/error.h"
 #include "common/fs.h"
-#include "common/hash-str.h"
 #include "common/random.h"
 #include "common/serializer.h"
 #include "common/util.h"
 #include "engines/engine.h"
-#include "engines/savestate.h"
 #include "graphics/macgui/macwindowmanager.h"
-#include "graphics/screen.h"
 
 #include "fool/detection.h"
 
@@ -93,6 +90,10 @@ public:
 	}
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return true;
+	}
+
+	const Common::String getTarget() {
+		return _targetName;
 	}
 
 	/**

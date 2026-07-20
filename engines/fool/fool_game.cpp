@@ -92,7 +92,7 @@ static const byte fondSmall[] = {
 };
 
 Common::String getFileNameFromModal(bool save, const Common::String &suggested, const Common::String &title) {
-	Common::String target = g_engine->getGameId();
+	Common::String target = g_engine->getTarget();
 	Common::String result;
 	GUI::SaveLoadChooser chooser(title, Common::U32String(save ? _("Save") : _("Open")), save);
 	int slot = chooser.runModalWithCurrentTarget();
@@ -1696,7 +1696,7 @@ void FoolGame::autoSaveGame() {
 	// This wrapper changes the autosave behaviour to match the rest of ScummVM.
 	_isAutoSaving = true;
 	Common::U32String previous = _saveFileName;
-	_saveFileName = Common::U32String::format("%s-Autosave.000", g_engine->getGameId().c_str());
+	_saveFileName = Common::U32String::format("%s-Autosave.000", g_engine->getTarget().c_str());
 	saveGame();
 	_saveFileName = previous;
 	_isAutoSaving = false;
