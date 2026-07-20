@@ -178,6 +178,7 @@ void room_401_synchronize(Common::Serializer &s) {
 
 void room_401_preload() {
 	room_init_code_pointer = room_401_init;
+	room_daemon_code_pointer = room_401_daemon;
 	room_pre_parser_code_pointer = room_401_pre_parser;
 	room_parser_code_pointer = room_401_parser;
 
