@@ -208,6 +208,29 @@ void ScrollTextBox::drawContent() {
 	_needsRedraw = true;
 }
 
+void ScrollTextBox::redrawScroll() {
+	// Only reachable while dragging the scrollbar, which only exists in the
+	// expanded state, so the layout (box rect, surface size, text in _fullSurface)
+	// is already settled. Just re-composite the visible slice at the new scroll
+	// offset instead of re-running drawContent()'s full text re-layout.
+	const Common::Rect viewport = textViewportLocal();
+	const int visibleTextHeight = viewport.height();
+	const int contentHeight = getInnerHeight();
+	int scrollY = 0;
+	if (contentHeight > visibleTextHeight) {
+		scrollY = (int)(_scrollPos * (contentHeight - visibleTextHeight));
+	}
+
+	// drawBackground() repaints the chrome, wiping the previous (transparent-keyed)
+	// text so the new slice doesn't smear over the old one.
+	drawBackground();
+	_drawSurface.blitFrom(_fullSurface,
+		Common::Rect(0, scrollY, _fullSurface.w, scrollY + visibleTextHeight),
+		Common::Point(viewport.left, viewport.top));
+	drawScrollbar(_scrollbarDragging ? kUIButtonPressed : (_scrollbarHovered ? kUIButtonHover : kUIButtonIdle));
+	_needsRedraw = true;
+}
+
 uint16 ScrollTextBox::getInnerHeight() const {
 	return _drawnTextHeight + _tboxData->scrollbarDefaultPos.y;
 }
@@ -334,13 +357,14 @@ void ScrollTextBox::handleInput(NancyInput &input) {
 				released = true;
 			}
 
-			// Only re-render when the thumb actually moves (or the drag just ended, to
-			// repaint the thumb out of its pressed state). drawContent() re-lays out
-			// the whole text surface, so calling it every frame while the button is
-			// merely held down pins the CPU and makes dragging choppy.
+			// Re-composite only when the thumb moves (or the drag just ended, to
+			// repaint the thumb out of its pressed state), and via redrawScroll() --
+			// a cheap slice re-blit -- rather than drawContent()'s full text
+			// re-layout. This keeps dragging smooth instead of re-rendering the
+			// whole text surface each frame.
 			if (newScrollPos != _scrollPos || released) {
 				_scrollPos = newScrollPos;
-				drawContent();
+				redrawScroll();
 			}
 
 			input.eatMouseInput();

@@ -409,9 +409,9 @@ void InventoryPopup::handleInput(NancyInput &input) {
 			const int clamped = CLIP<int>(newThumbTop, track.top, track.top + travel);
 			const float newScrollPos = travel > 0 ? (float)(clamped - track.top) / (float)travel : 0.0f;
 
-			// Only re-render when the thumb actually moves. refreshGrid() redraws the
-			// whole popup, so calling it every frame while the button is merely held
-			// down pins the CPU and makes dragging choppy.
+			// Only re-render when the thumb actually moves to a new page.
+			// refreshGrid() redraws the whole item grid, so re-running it on every
+			// drag frame is wasted work.
 			if (newScrollPos != _scrollPos) {
 				_scrollPos = newScrollPos;
 				updatePageFromScroll();

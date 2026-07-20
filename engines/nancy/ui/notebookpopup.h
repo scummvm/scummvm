@@ -75,7 +75,18 @@ private:
 	// Blit the active tab's title image ("CASE JOURNAL" / "TASKS") into the
 	// header strip above the text area.
 	void drawCaption();
+	// Full content rebuild: lay the active tab's text out into the scratch
+	// surface, then paint the visible slice. Expensive; only call when the text
+	// itself changes (open, tab switch, checkbox toggle, ModifyListEntry).
 	void drawContent();
+	// Lay the active tab's text out into _fullSurface (the expensive step).
+	void layoutText();
+	// Blit the currently-visible vertical slice of _fullSurface into the popup
+	// and rebuild the checkbox hit rects. Cheap; safe to call every scroll step.
+	void paintVisibleText();
+	// Re-composite the whole popup at the current scroll position without
+	// re-laying out the text. Used while dragging the scrollbar.
+	void redrawScroll();
 	// Paint foreground widgets (close button, scrollbar) on top of the
 	// already-drawn background + content layers.
 	void drawForeground();

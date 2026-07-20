@@ -298,13 +298,12 @@ void NotebookPopup::handleInput(NancyInput &input) {
 			const int clamped = CLIP<int>(newThumbTop, trackLocal.top, trackLocal.top + travel);
 			const float newScrollPos = travel > 0 ? (float)(clamped - trackLocal.top) / (float)travel : 0.0f;
 
-			// Only re-render when the thumb actually moves. refreshContent() re-lays
-			// out the whole popup (background, tabs, caption and full text surface),
-			// so calling it every frame while the button is merely held down pins the
-			// CPU and makes dragging choppy.
+			// Re-composite only when the thumb actually moves, and via redrawScroll()
+			// (a cheap slice re-blit) rather than a full text re-layout. This keeps
+			// dragging smooth instead of re-rendering the whole journal each frame.
 			if (newScrollPos != _scrollPos) {
 				_scrollPos = newScrollPos;
-				refreshContent();
+				redrawScroll();
 			}
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
@@ -530,14 +529,14 @@ void NotebookPopup::buildTextLines() {
 }
 
 void NotebookPopup::drawContent() {
+	layoutText();
+	paintVisibleText();
+}
+
+void NotebookPopup::layoutText() {
 	if (!_uinbData) {
 		return;
 	}
-
-	// Convert the text rect to popup-local with the same game-frame-aware
-	// conversion the tabs / close button use, so text and caption stay aligned
-	// with them when the popup overlays the game frame.
-	const Common::Rect localTextRect = toPopupLocal(_uinbData->textRect, false);
 
 	HypertextParser::clear();
 	_checkboxRects.clear();
@@ -561,6 +560,17 @@ void NotebookPopup::drawContent() {
 
 	Common::Rect hypertextBounds(leftInset, 0, _fullSurface.w, _fullSurface.h);
 	drawAllText(hypertextBounds, 0, fontID, fontID);
+}
+
+void NotebookPopup::paintVisibleText() {
+	if (!_uinbData) {
+		return;
+	}
+
+	// Convert the text rect to popup-local with the same game-frame-aware
+	// conversion the tabs / close button use, so text and caption stay aligned
+	// with them when the popup overlays the game frame.
+	const Common::Rect localTextRect = toPopupLocal(_uinbData->textRect, false);
 
 	const int visibleH = localTextRect.height();
 	const int maxScroll = MAX<int>(0, (int)_drawnTextHeight - visibleH);
@@ -570,16 +580,32 @@ void NotebookPopup::drawContent() {
 		scrollY = safeMax;
 	}
 
+	// The text is already laid out in _fullSurface; scrolling just re-blits a
+	// different vertical slice of it.
 	Common::Rect srcSlice(0, scrollY,
 							_fullSurface.w, scrollY + visibleH);
 	_drawSurface.blitFrom(_fullSurface, srcSlice,
 							Common::Point(localTextRect.left, localTextRect.top));
 
+	const UIButtonSlot &activeTab = _uinbData->tabs[_activeTab];
+	const bool tasksTab = activeTab.enabled && activeTab.id != notebookJournalTabId();
 	if (tasksTab) {
 		buildCheckboxRects(localTextRect, scrollY, visibleH);
 	}
 
 	_needsRedraw = true;
+}
+
+void NotebookPopup::redrawScroll() {
+	// The text layout in _fullSurface is unchanged; re-composite the popup at the
+	// new scroll offset. drawBackground() wipes the previous (transparent-keyed)
+	// text, so the chrome must be repainted, but the expensive text re-layout in
+	// layoutText() is skipped.
+	drawBackground();
+	drawTabs();
+	drawCaption();
+	paintVisibleText();
+	drawForeground();
 }
 
 void NotebookPopup::buildCheckboxRects(const Common::Rect &localTextRect, int scrollY, int visibleH) {

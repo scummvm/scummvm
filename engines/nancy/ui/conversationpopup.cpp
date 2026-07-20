@@ -118,6 +118,11 @@ void ConversationPopup::drawBackground() {
 }
 
 void ConversationPopup::drawContent() {
+	layoutText();
+	paintVisibleText();
+}
+
+void ConversationPopup::layoutText() {
 	_drawnTextHeight = 0;
 	_numDrawnLines = 0;
 	_hotspots.clear();
@@ -129,7 +134,9 @@ void ConversationPopup::drawContent() {
 	textBounds.left += _tboxData->scrollbarDefaultPos.x;
 
 	drawAllText(textBounds, 0, _tboxData->conversationFontID, _tboxData->highlightConversationFontID);
+}
 
+void ConversationPopup::paintVisibleText() {
 	Common::Rect localTextRect = getLocalTextRect();
 
 	const uint16 inner = getInnerHeight();
@@ -140,11 +147,22 @@ void ConversationPopup::drawContent() {
 						   MAX<int>(0, _fullSurface.h - outer));
 	}
 
+	// The text is already laid out in _fullSurface; scrolling just re-blits a
+	// different vertical slice of it.
 	_drawSurface.blitFrom(_fullSurface,
 		Common::Rect(0, scrollY, _fullSurface.w, scrollY + outer),
 		Common::Point(localTextRect.left, localTextRect.top));
 
 	_needsRedraw = true;
+}
+
+void ConversationPopup::redrawScroll() {
+	// The text layout in _fullSurface is unchanged; re-composite the popup at the
+	// new scroll offset. drawBackground() wipes the previous slice, then the text
+	// slice and scrollbar are repainted, skipping the expensive text re-layout.
+	drawBackground();
+	paintVisibleText();
+	drawScrollbar(_scrollbarDragging ? kUIButtonPressed : (_scrollbarHovered ? kUIButtonHover : kUIButtonIdle));
 }
 
 uint16 ConversationPopup::getInnerHeight() const {
@@ -238,14 +256,12 @@ void ConversationPopup::handleInput(NancyInput &input) {
 			const int clamped = CLIP<int>(newThumbTop, trackLocal.top, trackLocal.top + travel);
 			const float newScrollPos = travel > 0 ? (float)(clamped - trackLocal.top) / (float)travel : 0.0f;
 
-			// Only re-render when the thumb actually moves. drawContent() re-lays out
-			// the whole text surface, so calling it every frame while the button is
-			// merely held down pins the CPU and makes dragging choppy.
+			// Re-composite only when the thumb actually moves, and via redrawScroll()
+			// (a cheap slice re-blit) rather than a full text re-layout. This keeps
+			// dragging smooth instead of re-rendering the whole text surface each frame.
 			if (newScrollPos != _scrollPos) {
 				_scrollPos = newScrollPos;
-				drawBackground();
-				drawContent();
-				drawScrollbar(kUIButtonPressed);
+				redrawScroll();
 			}
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {

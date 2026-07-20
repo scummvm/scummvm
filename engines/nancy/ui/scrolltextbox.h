@@ -60,6 +60,10 @@ public:
 private:
 	void drawBackground();
 	void drawContent();
+	// Re-composite the expanded overlay at the current scroll position without
+	// re-laying out the text (which drawContent() does). Used while dragging the
+	// scrollbar, so a drag is a cheap slice re-blit rather than a full re-render.
+	void redrawScroll();
 	void drawScrollbar(UIButtonState state);
 	uint16 getInnerHeight() const;
 

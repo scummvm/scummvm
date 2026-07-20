@@ -64,7 +64,17 @@ public:
 
 private:
 	void drawBackground();
+	// Full content rebuild: lay the text out into _fullSurface (expensive), then
+	// paint the visible slice. Only needed when the text itself changes.
 	void drawContent();
+	// Lay the response text out into _fullSurface (the expensive step).
+	void layoutText();
+	// Blit the currently-visible vertical slice of _fullSurface into the popup.
+	// Cheap; safe to call every scroll step.
+	void paintVisibleText();
+	// Re-composite the popup at the current scroll position without re-laying out
+	// the text. Used while dragging the scrollbar.
+	void redrawScroll();
 	void drawScrollbar(UIButtonState state);
 	uint16 getInnerHeight() const;
 
