@@ -54,7 +54,7 @@ struct Sub : public Command {
 struct Go_Back : public Command {
 	Go_Back(const Common::Array<Common::String> &args) {}
 	void exec(ExecutionContext &ctx) const override {
-		warning("go back");
+		g_engine->returnToWarp();
 	}
 };
 
@@ -313,11 +313,19 @@ struct Stop_Light : public Command {
 };
 
 struct Set_Jump_Key : public Command {
-	Common::String key;
+	int key;
 	Common::String warp;
-	Set_Jump_Key(const Common::Array<Common::String> &args) : key(args[0]), warp(args.size() > 1 ? args[1] : Common::String{}) {}
+	Set_Jump_Key(const Common::Array<Common::String> &args) : warp(args.size() > 1 ? args[1] : Common::String{}) {
+		auto &keyName = args[0];
+		if (keyName == "_KEY_ESCAPE")
+			key = 0;
+		else if (keyName == "_KEY_RIGHT_CLIC")
+			key = 12;
+		else
+			error("unhandled key name: %s", keyName.c_str());
+	}
 	void exec(ExecutionContext &ctx) const override {
-		warning("set jump key %s %s", key.c_str(), warp.c_str());
+		g_engine->lockKey(key, warp);
 	}
 };
 
@@ -383,6 +391,22 @@ struct Set_View_Angle : public Command {
 	}
 };
 
+struct Exit_Game : public Command {
+	Exit_Game(const Common::Array<Common::String> &args) {}
+	void exec(ExecutionContext &ctx) const override {
+		debug("exit game");
+		g_engine->quitGame();
+	}
+};
+
+struct Quit_URL : public Command {
+	Common::String name;
+	Quit_URL(const Common::Array<Common::String> &args) : name(args[0]) {}
+	void exec(ExecutionContext &ctx) const override {
+		debug("quit url: %s", name.c_str());
+	}
+};
+
 } // namespace
 
 #define COMMAND_LIST(E) \
@@ -391,6 +415,7 @@ struct Set_View_Angle : public Command {
 	E(Cursor_Set)       \
 	E(Delay_Sound)      \
 	E(Enter_Level)      \
+	E(Exit_Game)        \
 	E(Fade)             \
 	E(Go_Back)          \
 	E(Goto_Level)       \
@@ -403,6 +428,7 @@ struct Set_View_Angle : public Command {
 	E(Play_AnimBloc)    \
 	E(Play_Movie)       \
 	E(Play_Sound)       \
+	E(Quit_URL)         \
 	E(Retrieve_State)   \
 	E(Save_Slot)        \
 	E(Set_Jump_Key)     \
