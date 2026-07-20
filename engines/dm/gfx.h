@@ -300,6 +300,7 @@ enum GraphicIndice {
 
 #define k2_FloorSetGraphicCount 2 // @ C002_FLOOR_SET_GRAPHIC_COUNT
 #define k13_WallSetGraphicCount 13 // @ C013_WALL_SET_GRAPHIC_COUNT
+#define k40_WallSetGraphicCountDOS 40 // @ M647_WALL_SET_GRAPHIC_COUNT
 #define k18_StairsGraphicCount 18 // @ C018_STAIRS_GRAPHIC_COUNT
 #define k3_DoorSetGraphicsCount 3 // @ C003_DOOR_SET_GRAPHIC_COUNT
 #define k1_DoorButtonCount 1 // @ C001_DOOR_BUTTON_COUNT
@@ -322,7 +323,9 @@ enum GraphicIndice {
 #define k2_ShiftSet_D2BackD3Front 2 // @ C2_SHIFT_SET_D2_BACK_OR_D3_FRONT
 
 #define k75_FirstFloorSet 75 // @ C075_GRAPHIC_FIRST_FLOOR_SET
+#define k78_FirstFloorSetDOS 78 // @ M644_GRAPHIC_FIRST_FLOOR_SET
 #define k77_FirstWallSet 77 // @ C077_GRAPHIC_FIRST_WALL_SET
+#define k86_FirstWallSetDOS 86 // @ M646_GRAPHIC_FIRST_WALL_SET
 #define k90_FirstStairs 90 // @ C090_GRAPHIC_FIRST_STAIRS
 #define k108_FirstDoorSet 108 // @ C108_GRAPHIC_FIRST_DOOR_SET
 #define k120_InscriptionFont 120 // @ C120_GRAPHIC_INSCRIPTION_FONT
