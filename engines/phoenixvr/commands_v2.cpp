@@ -54,7 +54,7 @@ struct Sub : public Command {
 struct Go_Back : public Command {
 	Go_Back(const Common::Array<Common::String> &args) {}
 	void exec(ExecutionContext &ctx) const override {
-		debug("go back");
+		warning("go back");
 	}
 };
 
@@ -70,14 +70,14 @@ struct Goto_Level : public Command {
 struct Enter_Level : public Command {
 	Enter_Level(const Common::Array<Common::String> &args) {}
 	void exec(ExecutionContext &ctx) const override {
-		debug("enter level");
+		warning("enter level");
 	}
 };
 
 struct Leave_Save : public Command {
 	Leave_Save(const Common::Array<Common::String> &args) {}
 	void exec(ExecutionContext &ctx) const override {
-		debug("leave save");
+		warning("leave save");
 	}
 };
 
@@ -86,7 +86,7 @@ struct Save_Slot : public Command {
 	Common::String name;
 	Save_Slot(const Common::Array<Common::String> &args) : index(atoi(args[0].c_str())), name(args[1]) {}
 	void exec(ExecutionContext &ctx) const override {
-		debug("save slot %d: %s", index, name.c_str());
+		warning("save slot %d: %s", index, name.c_str());
 	}
 };
 
@@ -226,7 +226,7 @@ struct Store_State : public Command {
 	Store_State(const Common::Array<Common::String> &args) : index(args[0]), var(args[1]) {}
 
 	void exec(ExecutionContext &ctx) const override {
-		debug("store state stub %s %s -> %d", index.c_str(), var.c_str(), valueOf(var));
+		warning("store state stub %s %s -> %d", index.c_str(), var.c_str(), valueOf(var));
 	}
 };
 
@@ -258,7 +258,7 @@ struct Sprite_Load : public Command {
 	Common::String unk;
 	Sprite_Load(const Common::Array<Common::String> &args) : name(args[0]), path(args[1]), unk(args[2]) {}
 	void exec(ExecutionContext &ctx) const override {
-		debug("sprite load %s %s %s", name.c_str(), path.c_str(), unk.c_str());
+		warning("sprite load %s %s %s", name.c_str(), path.c_str(), unk.c_str());
 	}
 };
 
@@ -276,7 +276,7 @@ struct Sprite_Screen : public Command {
 			y = args[3];
 	}
 	void exec(ExecutionContext &ctx) const override {
-		debug("sprite screen %d %s %s %s", index, name.c_str(), x.c_str(), y.c_str());
+		warning("sprite screen %d %s %s %s", index, name.c_str(), x.c_str(), y.c_str());
 	}
 };
 
@@ -286,14 +286,14 @@ struct Set_Lens : public Command {
 	Common::String unk;
 	Set_Lens(const Common::Array<Common::String> &args) : index(args[0]), name(args[1]), unk(args[2]) {}
 	void exec(ExecutionContext &ctx) const override {
-		debug("set lens %s %s %s", index.c_str(), name.c_str(), unk.c_str());
+		warning("set lens %s %s %s", index.c_str(), name.c_str(), unk.c_str());
 	}
 };
 
 struct Set_Lensflare : public Command {
 	Set_Lensflare(const Common::Array<Common::String> &args) {}
 	void exec(ExecutionContext &ctx) const override {
-		debug("set lensflare");
+		warning("set lensflare");
 	}
 };
 
@@ -301,14 +301,14 @@ struct Start_Light : public Command {
 	Common::String fx;
 	Start_Light(const Common::Array<Common::String> &args) : fx(args[0]) {}
 	void exec(ExecutionContext &ctx) const override {
-		debug("start light %s", fx.c_str());
+		warning("start light %s", fx.c_str());
 	}
 };
 
 struct Stop_Light : public Command {
 	Stop_Light(const Common::Array<Common::String> &args) {}
 	void exec(ExecutionContext &ctx) const override {
-		debug("stop light");
+		warning("stop light");
 	}
 };
 
@@ -317,7 +317,7 @@ struct Set_Jump_Key : public Command {
 	Common::String warp;
 	Set_Jump_Key(const Common::Array<Common::String> &args) : key(args[0]), warp(args.size() > 1 ? args[1] : Common::String{}) {}
 	void exec(ExecutionContext &ctx) const override {
-		debug("set jump key %s %s", key.c_str(), warp.c_str());
+		warning("set jump key %s %s", key.c_str(), warp.c_str());
 	}
 };
 
@@ -356,7 +356,7 @@ struct Start_Timer : public Command {
 	Common::String warp;
 	Start_Timer(const Common::Array<Common::String> &args) : seconds(atof(args[0].c_str())), warp(args[1].c_str()) {}
 	void exec(ExecutionContext &ctx) const override {
-		debug("start timer %g %s", seconds, warp.c_str());
+		warning("start timer %g %s", seconds, warp.c_str());
 	}
 };
 
@@ -371,7 +371,7 @@ struct Limit_View : public Command {
 	Common::String angle1, angle2;
 	Limit_View(const Common::Array<Common::String> &args) : angle1(args[0]), angle2(args[1]) {}
 	void exec(ExecutionContext &ctx) const override {
-		debug("limit view %d %d", valueOf(angle1), valueOf(angle2));
+		warning("limit view %d %d", valueOf(angle1), valueOf(angle2));
 	}
 };
 
@@ -379,7 +379,7 @@ struct Set_View_Angle : public Command {
 	Common::String angle1, angle2;
 	Set_View_Angle(const Common::Array<Common::String> &args) : angle1(args[0]), angle2(args[1]) {}
 	void exec(ExecutionContext &ctx) const override {
-		debug("set view angle %d %d", valueOf(angle1), valueOf(angle2));
+		warning("set view angle %d %d", valueOf(angle1), valueOf(angle2));
 	}
 };
 
