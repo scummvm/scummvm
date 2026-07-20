@@ -160,7 +160,7 @@ char *Resources::formatAAName(int num) {
 static uint16 dummy_num_images;
 Scene::Animation::Animation(int anim_id) : _id(anim_id),
 		_currentFrame(kernel_anim[anim_id].frame),
-		_resetFlag(kernel_anim[anim_id].doomed),
+		_repeatFlag(kernel_anim[anim_id].repeat),
 		_spriteListIndexes(kernel_anim[anim_id].anim ? &kernel_anim[anim_id].anim->series_id[0] : nullptr),
 		_oldFrameEntry(kernel_anim[anim_id].image),
 		_frameEntriesCount(kernel_anim[anim_id].anim ? kernel_anim[anim_id].anim->num_images : dummy_num_images),

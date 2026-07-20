@@ -49,7 +49,7 @@ static void room_410_init() {
 	section_4_music();
 
 	_scene->loadAnimation(Resources::formatName(410, 'r', -1, EXT_AA, ""));
-	_scene->_animation[0]->_resetFlag = true;
+	_scene->_animation[0]->_repeatFlag = true;
 }
 
 static void room_410_daemon() {

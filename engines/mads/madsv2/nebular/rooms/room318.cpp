@@ -211,7 +211,7 @@ static void room_318_init() {
 
 	if (_globals[kAfterHavoc]) {
 		_scene->loadAnimation(formAnimName('f', -1));
-		_scene->_animation[0]->_resetFlag = true;
+		_scene->_animation[0]->_repeatFlag = true;
 	} else if (!_globals[kHasSeenProfPyro]) {
 		_scene->_hotspots.activate(words_professors_gurney, false);
 		_scene->_hotspots.activate(words_professor, false);

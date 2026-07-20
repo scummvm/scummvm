@@ -105,7 +105,7 @@ static void room_205_init() {
 
 	if (_globals[kSexOfRex] != SEX_MALE) {
 		_scene->loadAnimation(formAnimName('a', -1));
-		_scene->_animation[0]->_resetFlag = true;
+		_scene->_animation[0]->_repeatFlag = true;
 	} else {
 		local._beingKicked = true;
 		_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 8, 1, 0, 0);

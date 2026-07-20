@@ -626,7 +626,7 @@ static void room_402_init() {
 	local._refuseAlienLiquor = false;
 
 	_scene->loadAnimation(Resources::formatName(402, 'd', 1, EXT_AA, ""));
-	_scene->_animation[0]->_resetFlag = true;
+	_scene->_animation[0]->_repeatFlag = true;
 
 	_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);

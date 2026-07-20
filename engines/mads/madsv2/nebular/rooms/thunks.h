@@ -167,7 +167,7 @@ struct Scene {
 	struct Animation {
 		int16 _id;
 		int &_currentFrame;
-		int &_resetFlag;
+		int &_repeatFlag;
 		int *const _spriteListIndexes;
 		int &_oldFrameEntry;
 		uint16 &_frameEntriesCount;
