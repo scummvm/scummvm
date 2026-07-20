@@ -244,9 +244,6 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 																					  : _currentTest->scope.commands;
 		if (command)
 			commands.push_back(command);
-		else {
-			warning("unimplemented command %s at line %d", name.c_str(), lineno);
-		}
 	} else {
 		error("command %s is out of the test block at line %d", line.c_str(), lineno);
 	}

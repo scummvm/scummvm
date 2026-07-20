@@ -25,7 +25,7 @@
 #include "phoenixvr/phoenixvr.h"
 
 namespace PhoenixVR {
-RegionSet::RegionSet(Common::SeekableReadStream &s) {
+RegionSet::RegionSet(Common::SeekableReadStream &s, bool vr) {
 	auto version = g_engine->version();
 	if (version == 1) {
 		auto n = s.readUint32LE();
@@ -43,6 +43,12 @@ RegionSet::RegionSet(Common::SeekableReadStream &s) {
 			auto b = s.readFloatLE();
 			auto c = s.readFloatLE();
 			auto d = s.readFloatLE();
+			if (!vr) {
+				a = (a + 0.89f) * 360;
+				b = (b + 0.89f) * 360;
+				c = (2.25f - c) * 360;
+				d = (2.25f - d) * 360;
+			}
 			_regions.push_back(Region{MIN(a, b), MAX(a, b), MIN(c, d), MAX(c, d)});
 			debug("region %s", _regions.back().toString().c_str());
 		}

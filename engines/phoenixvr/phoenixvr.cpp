@@ -1550,7 +1550,7 @@ void PhoenixVREngine::tick(float dt) {
 		{
 			Common::ScopedPtr<Common::SeekableReadStream> stream(!_warp->testFile.empty() ? open(_warp->testFile) : nullptr);
 			if (stream)
-				_regSet.reset(new RegionSet(*stream));
+				_regSet.reset(new RegionSet(*stream, _vr.isVR()));
 			else
 				debug("no region %s", _warp->testFile.c_str());
 		}
