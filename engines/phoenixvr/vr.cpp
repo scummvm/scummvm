@@ -54,7 +54,8 @@ namespace PhoenixVR {
 #define V2_CHUNK_ANIMATION (0x50574e41)
 /* FRAM */
 #define V2_CHUNK_ANIMATION_BLOCK (0x4d415246)
-#define V2_CHUNK_ANIMATION_RESTART (0xa0b1c221)
+/* JUMP */
+#define V2_CHUNK_ANIMATION_RESTART (0x504d554a)
 
 namespace {
 
