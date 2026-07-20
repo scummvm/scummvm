@@ -70,7 +70,8 @@ CombatEncounter::CombatEncounter(RipperEngine *engine,
 		_weaponRapidFireTicks(0),
 		_activeScene(nullptr), _activeSceneIndex(0), _completionFlag(0),
 		_arcadeKeywordIndex(0), _lastWeaponShotMillis(0), _weaponHeld(false),
-		_singleShotReady(true), _shieldHeld(false), _paletteEffect(kPaletteNormal),
+		_singleShotReady(true), _shieldHeld(false), _overlayLogged(false),
+		_paletteEffect(kPaletteNormal),
 		_encounterResult(kExited) {
 	for (uint i = 0; i < kMeterCount; ++i) {
 		_meterPercent[i] = 100;
@@ -265,6 +266,10 @@ bool CombatEncounter::loadBitmapAssets() {
 		if (!resources->loadBitmapSequence(name, sequence) || sequence.frames.empty())
 			return false;
 		_combatFrames.push_back(sequence.frames[0]);
+		debugC(3, kDebugCombat,
+			"Ripper: loaded combat overlay bitmap index=%u size=%ux%u transparent=%u paletteColors=%u",
+			i, sequence.frames[0].width, sequence.frames[0].height,
+			sequence.frames[0].transparentColor, sequence.frames[0].palette.size() / 3);
 	}
 	for (uint i = 0; i < 4; ++i) {
 		BitmapAssetSequence sequence;
@@ -493,14 +498,14 @@ void CombatEncounter::drawFrameScaled(byte *screen, uint pitch,
 	}
 }
 
-void CombatEncounter::drawMeters(byte *screen, uint pitch) const {
+void CombatEncounter::drawMeters(byte *screen, uint pitch, int panelX) const {
 	if (_combatFrames.size() < 4)
 		return;
 	for (uint meter = 0; meter < kMeterCount; ++meter) {
 		const uint filled = (_meterPercent[meter] * kMeterSegments + 99) / 100;
 		for (uint segment = 0; segment < kMeterSegments; ++segment) {
 			const BitmapAssetFrame &frame = _combatFrames[segment < filled ? 2 : 3];
-			drawFrameScaled(screen, pitch, frame, kMeterX[meter],
+			drawFrameScaled(screen, pitch, frame, panelX + kMeterX[meter],
 				kMeterBottomY[meter] - segment * 2);
 		}
 	}
@@ -545,11 +550,23 @@ void CombatEncounter::drawOverlay(const Common::Point &point, bool targetActive)
 	if (!screen)
 		return;
 	byte *pixels = (byte *)screen->getPixels();
+	// RunCombatEncounterScene at 0x31436 presents COMBAT0.BBM at
+	// 320 - bitmapWidth. The meter anchors are local to that right-hand panel.
+	const int panelX = _combatFrames.empty() ? 0 :
+		(int)kLogicalWidth - (int)_combatFrames[0].width;
 	if (!_combatFrames.empty())
-		drawFrameScaled(pixels, screen->pitch, _combatFrames[0], 0, 0);
-	drawMeters(pixels, screen->pitch);
+		drawFrameScaled(pixels, screen->pitch, _combatFrames[0], panelX, 0);
+	drawMeters(pixels, screen->pitch, panelX);
 	drawEffects(pixels, screen->pitch);
 	drawCrosshair(pixels, screen->pitch, point);
+	if (!_overlayLogged) {
+		debugC(2, kDebugCombat,
+			"Ripper: initialized combat overlay screen=%ux%u pitch=%u panelOrigin=%d,0 panelSize=%ux%u metersLocal=11/26,54/119",
+			screen->w, screen->h, screen->pitch, panelX,
+			_combatFrames.empty() ? 0 : _combatFrames[0].width,
+			_combatFrames.empty() ? 0 : _combatFrames[0].height);
+		_overlayLogged = true;
+	}
 	g_system->unlockScreen();
 	debugC(11, kDebugCombat,
 		"Ripper: drew combat overlay point=%d,%d target=%d meters=%d,%d,%d,%d",
@@ -661,8 +678,9 @@ uint16 CombatEncounter::service(uint frame) {
 	if (_meterPercent[kHealthMeter] == 0) {
 		_encounterResult = kExited;
 		debugC(1, kDebugCombat,
-			"Ripper: combat encounter player defeated type='%s' frame=%u scene=%u",
-			_definition.name, frameIndex, _activeSceneIndex);
+			"Ripper: combat encounter player defeated type='%s' frame=%u scene=%u command=0x%04x meters=%d,%d,%d,%d",
+			_definition.name, frameIndex, _activeSceneIndex, kEncounterExitCommand,
+			_meterPercent[0], _meterPercent[1], _meterPercent[2], _meterPercent[3]);
 		return kEncounterExitCommand;
 	}
 	return keyboardCommand;
@@ -707,6 +725,7 @@ Scene::Result CombatEncounter::run(uint completionFlag) {
 	_weaponHeld = false;
 	_singleShotReady = true;
 	_shieldHeld = false;
+	_overlayLogged = false;
 	_paletteEffect = kPaletteNormal;
 	const uint32 now = g_system->getMillis(true);
 	for (uint meter = 0; meter < kMeterCount; ++meter) {
@@ -732,6 +751,10 @@ Scene::Result CombatEncounter::run(uint completionFlag) {
 				_encounterResult = kLoadFailed;
 				break;
 			}
+			debugC(2, kDebugCombat,
+				"Ripper: combat media returned scene=%u command=0x%04x result=%d meters=%d,%d,%d,%d",
+				_activeSceneIndex, command, _encounterResult,
+				_meterPercent[0], _meterPercent[1], _meterPercent[2], _meterPercent[3]);
 			if (command == kEncounterFailureCommand) {
 				_encounterResult = kLoadFailed;
 				break;
@@ -746,6 +769,9 @@ Scene::Result CombatEncounter::run(uint completionFlag) {
 		}
 	}
 
+	debugC(2, kDebugCombat,
+		"Ripper: cleaning up combat encounter result=%d completionFlag=%u activeScene=%u",
+		_encounterResult, completionFlag, _activeSceneIndex);
 	stopEncounterAudio();
 	if (_encounterResult == kSolved &&
 			!_engine->getMilestones()->set(completionFlag, true, "combat-encounter"))
