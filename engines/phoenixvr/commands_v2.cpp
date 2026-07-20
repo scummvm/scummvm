@@ -208,25 +208,27 @@ struct Cursor_Set : public Command {
 };
 
 struct Retrieve_State : public Command {
-	Common::String index;
+	int index;
 	Common::String var;
 
-	Retrieve_State(const Common::Array<Common::String> &args) : index(args[0]), var(args[1]) {}
+	Retrieve_State(const Common::Array<Common::String> &args) : index(atoi(args[0].c_str())), var(args[1]) {}
 
 	void exec(ExecutionContext &ctx) const override {
-		debug("retrieve state stub %s %s", index.c_str(), var.c_str());
-		g_engine->setVariable(var, 1);
+		debug("retrieve state %d %s", index, var.c_str());
+		g_engine->setVariable(var, g_engine->retrieveState(index));
 	}
 };
 
 struct Store_State : public Command {
-	Common::String index;
+	int index;
 	Common::String var;
 
-	Store_State(const Common::Array<Common::String> &args) : index(args[0]), var(args[1]) {}
+	Store_State(const Common::Array<Common::String> &args) : index(atoi(args[0].c_str())), var(args[1]) {}
 
 	void exec(ExecutionContext &ctx) const override {
-		warning("store state stub %s %s -> %d", index.c_str(), var.c_str(), valueOf(var));
+		int value = valueOf(var);
+		debug("store state %d %d", index, value);
+		g_engine->storeState(index, value);
 	}
 };
 

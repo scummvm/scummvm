@@ -230,6 +230,9 @@ public:
 	void stopCible();
 	void testCible(const Common::String &insideVar, const Common::String &outsideVar);
 
+	int retrieveState(int index) const;
+	void storeState(int index, int value);
+
 private:
 	struct ArchiveImage {
 		Common::String image;
@@ -305,6 +308,7 @@ private:
 	Common::Array<Common::String> _lockKey;
 
 	Variables _variables;
+	Common::Array<int> _state;
 
 	struct Sound {
 		Audio::SoundHandle handle;

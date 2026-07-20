@@ -290,6 +290,7 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 																					 _rgb565(2, 5, 6, 5, 0, 11, 5, 0, 0),
 																					 _thumbnail(isAmerzoneGame(gameDesc) ? 232 : 139, isAmerzoneGame(gameDesc) ? 174 : 103, _rgb565),
 																					 _lockKey(13),
+																					 _state(256),
 																					 _loadedCursors(16),
 																					 _fov(kPi2),
 																					 _angleX(0),
@@ -2324,6 +2325,14 @@ void PhoenixVREngine::syncSoundSettings() {
 	}
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, muted ? 0 : musicVolume);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, muted ? 0 : sfxVolume);
+}
+
+int PhoenixVREngine::retrieveState(int index) const {
+	return _state[index];
+}
+
+void PhoenixVREngine::storeState(int index, int value) {
+	_state[index] = value;
 }
 
 } // End of namespace PhoenixVR
