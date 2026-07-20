@@ -322,6 +322,14 @@
   their original item IDs rather than being renumbered around unavailable
   entries. Labels come from game-text resources 200 through 219, F1 uses help
   resource `0x1bb`, and the chooser restores cursor selection zero on exit.
+  `LoadStartupConfigAndInitializeResources` loads `INVTRY*.BBM`, and the menu
+  attaches `INVTRY[item ID]` to each visible row; the shipped set provides nine
+  50-by-40 item bitmaps. `RunUnlockGatedSelectionMenu` builds the centered
+  secondary chooser from the 16 `MNU` frame assets and the small bitmap font,
+  gives it the game-text resource 3 title (`Inventory`), and appends separate
+  20-pixel Use and Done text-panel controls from resources `0x47` and `0x48`.
+  Choosing a row changes the candidate item; only Use dispatches
+  `ExecuteUnlockSelectionChoice`, while Done and Escape close the modal.
 - `ExecuteUnlockSelectionChoice` at `0x364be` compares the active compiled
   frame label (the dword at frame-record offset `+5`) case-insensitively with
   game-text resource `270 + item ID`. A mismatch uses modal resource `0x4d`

@@ -22,11 +22,13 @@
 #define RIPPER_INVENTORY_H
 
 #include "common/array.h"
+#include "common/rect.h"
 #include "common/str.h"
+
+#include "ripper/resources.h"
 
 namespace Ripper {
 
-class DialogueChooser;
 class ResourceManager;
 class RipperEngine;
 
@@ -39,7 +41,6 @@ public:
 	};
 
 	explicit Inventory(RipperEngine *engine);
-	~Inventory();
 
 	bool initialize(ResourceManager &resources);
 	bool grant(uint unlockFlag, const char *source);
@@ -57,12 +58,49 @@ private:
 	};
 
 	ChoiceResult executeChoice(uint unlockFlag, const Common::String &sceneLabel);
-	bool rebuildChooser(int initialUnlockFlag);
-	void closeChooser(const char *reason);
+	bool loadFrameSet(ResourceManager &resources, const char *prefix, uint count,
+		Common::Array<BitmapAssetFrame> &frames);
+	bool buildEntries(int initialUnlockFlag);
+	bool captureDisplay();
+	void restoreDisplay();
+	void applyPalette();
+	void updateLayout();
+	void draw(bool usePressed = false, bool donePressed = false) const;
+	void drawBitmap(byte *screen, uint pitch, const BitmapAssetFrame &bitmap,
+		int x, int y) const;
+	void drawFrame(byte *screen, uint pitch, const Common::Rect &bounds) const;
+	void drawText(byte *screen, uint pitch, int x, int y,
+		const Common::String &text, byte color) const;
+	void drawButton(byte *screen, uint pitch, const Common::Rect &bounds,
+		const Common::String &label, bool pressed) const;
+	uint measureText(const Common::String &text) const;
+	Common::Rect rowBounds(uint visibleRow) const;
+	int findControl(const Common::Point &point) const;
+	bool moveSelection(int delta);
+	void closePresentation(const char *reason);
+
+	struct Entry {
+		uint unlockFlag;
+		uint bitmapIndex;
+		Common::String label;
+	};
 
 	RipperEngine *_engine;
-	DialogueChooser *_chooser;
 	Common::Array<Common::String> _gameText;
+	Common::Array<BitmapAssetFrame> _skin;
+	Common::Array<BitmapAssetFrame> _itemBitmaps;
+	Common::Array<Entry> _entries;
+	Common::Array<byte> _savedPixels;
+	Common::Array<byte> _savedPalette;
+	BitmapFontAsset _font;
+	Common::Rect _menuBounds;
+	Common::Rect _useBounds;
+	Common::Rect _doneBounds;
+	uint _selectedEntry;
+	uint _firstVisibleEntry;
+	uint _visibleEntries;
+	bool _active;
+	bool _initialized;
 };
 
 } // End of namespace Ripper
