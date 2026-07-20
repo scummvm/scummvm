@@ -493,6 +493,37 @@
   sound-handle boundary; media and interaction behavior remains owned by each
   concrete scene.
 
+## Combat Encounters
+
+- `DispatchSceneEntryAction` routes actions 15, 26, and 27 through the same
+  `RunCombatEncounterScene` at `0x31436`, supplying `MECHINI%d.INI`,
+  `RATINI%d.INI`, or `ATKINI%d.INI`. The `%d` value is the configured combat
+  level byte at `0x8a177`. This is a reusable combat controller rather than
+  three unrelated scene handlers; ScummVM keeps it under `combat/`, with the
+  concrete Mechini encounter binding action 15 to the shared controller.
+- `LoadCombatEncounterResourceSet` at `0x34d6e` reads numbered `sceneN` entries,
+  loads each `<scene>.SMK`, `<scene>DAT.DAT`, and `<scene>PRJ.PRJ`, and loads the
+  configured crosshair, explosion, shading, and audio resources. A DAT file has
+  a 100-byte header, a 32-bit frame count, one six-byte state record per frame,
+  then nine-byte hit regions. A PRJ file has the same 100-byte header, a 32-bit
+  frame rate, a 32-bit sound count, 60-byte sound paths, and two bytes per frame
+  for cue index and volume. `COMBAT8.WAV` and `COMBAT12.WAV` are normalized to
+  `MECHWAV6.WAV` and `MECHWAV5.WAV` by the original loader.
+- The encounter owns four percent meters for health, creature, weapon, and
+  shield. Their damage, recharge, drain, and tick intervals come from the INI;
+  timing uses the DOS 18 Hz clock. Left mouse discharges the weapon and applies
+  a hit region's damage/effect entry, while right mouse holds and drains the
+  shield. `COMBAT0.BBM` supplies the left status panel, `COMBAT2.BBM` and
+  `COMBAT3.BBM` are its filled and empty meter segments, and the four configured
+  crosshair strips meet at the logical 320-by-200 pointer position.
+- Combat palettes are derived from the current Smacker palette. Indices 1-3 and
+  10-239 use luminance `(30R + 59G + 11B) / 100`; shield, target-hit, and
+  player-hit branches then apply the alternate blue, magenta, or red components
+  built in `RunCombatEncounterScene`. Creature depletion sets the supplied
+  completion flag, while player depletion or Escape exits without setting it.
+  F1 opens the encounter-specific help resource, F10 captures a screenshot, and
+  the hidden case-insensitive `arcade` keyword completes the encounter.
+
 ## Puzzles
 
 - Opcode `0x18` passes its first argument to `DispatchSceneEntryAction` at
