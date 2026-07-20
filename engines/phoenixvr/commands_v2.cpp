@@ -67,6 +67,29 @@ struct Goto_Level : public Command {
 	}
 };
 
+struct Enter_Level : public Command {
+	Enter_Level(const Common::Array<Common::String> &args) {}
+	void exec(ExecutionContext &ctx) const override {
+		debug("enter level");
+	}
+};
+
+struct Leave_Save : public Command {
+	Leave_Save(const Common::Array<Common::String> &args) {}
+	void exec(ExecutionContext &ctx) const override {
+		debug("leave save");
+	}
+};
+
+struct Save_Slot : public Command {
+	int index;
+	Common::String name;
+	Save_Slot(const Common::Array<Common::String> &args) : index(atoi(args[0].c_str())), name(args[1]) {}
+	void exec(ExecutionContext &ctx) const override {
+		debug("save slot %d: %s", index, name.c_str());
+	}
+};
+
 struct Goto_Warp : public Command {
 	Common::String name;
 	Goto_Warp(const Common::Array<Common::String> &args) : name(args[0]) {}
@@ -85,6 +108,41 @@ struct Play_AnimBloc : public Command {
 	void exec(ExecutionContext &ctx) const override {
 		debug("Play_AnimBloc %s %s %d %g", name.c_str(), dstVar.c_str(), dstVarValue, speed);
 		g_engine->playAnimation(name, dstVar, dstVarValue, speed);
+	}
+};
+
+struct Play_Amb : public Command {
+	Common::String path;
+	int volume;
+	int loops;
+	Play_Amb(const Common::Array<Common::String> &args) : path(args[0]), volume(atoi(args[1].c_str())), loops(atoi(args[2].c_str())) {}
+	void exec(ExecutionContext &ctx) const override {
+		g_engine->playSound(path, Audio::Mixer::kMusicSoundType, 100, loops);
+	}
+};
+
+struct Delay_Sound : public Command {
+	Common::String path;
+	int delay;
+	int volume;
+	int loops;
+	Delay_Sound(const Common::Array<Common::String> &args) : path(args[0]), delay(atoi(args[1].c_str())), volume(atoi(args[2].c_str())), loops(atoi(args[3].c_str())) {}
+	void exec(ExecutionContext &ctx) const override {
+		g_engine->playSound(path, Audio::Mixer::kMusicSoundType, 100, loops);
+	}
+};
+
+struct Play_3DSound : public Command {
+	Common::String path;
+	int angle1;
+	int angle2;
+	int volume;
+	int loops;
+	Play_3DSound(const Common::Array<Common::String> &args) : path(args[0]),
+															  angle1(atoi(args[1].c_str())), angle2(atoi(args[2].c_str())),
+															  volume(atoi(args[3].c_str())), loops(atoi(args[4].c_str())) {}
+	void exec(ExecutionContext &ctx) const override {
+		g_engine->playSound(path, Audio::Mixer::kMusicSoundType, 100, loops, true, angle1);
 	}
 };
 
@@ -239,6 +297,21 @@ struct Set_Lensflare : public Command {
 	}
 };
 
+struct Start_Light : public Command {
+	Common::String fx;
+	Start_Light(const Common::Array<Common::String> &args) : fx(args[0]) {}
+	void exec(ExecutionContext &ctx) const override {
+		debug("start light %s", fx.c_str());
+	}
+};
+
+struct Stop_Light : public Command {
+	Stop_Light(const Common::Array<Common::String> &args) {}
+	void exec(ExecutionContext &ctx) const override {
+		debug("stop light");
+	}
+};
+
 struct Set_Jump_Key : public Command {
 	Common::String key;
 	Common::String warp;
@@ -278,10 +351,35 @@ struct Load_Slot : public Command {
 	}
 };
 
+struct Start_Timer : public Command {
+	float seconds;
+	Common::String warp;
+	Start_Timer(const Common::Array<Common::String> &args) : seconds(atof(args[0].c_str())), warp(args[1].c_str()) {}
+	void exec(ExecutionContext &ctx) const override {
+		debug("start timer %g %s", seconds, warp.c_str());
+	}
+};
+
 struct Stop_Timer : public Command {
 	Stop_Timer(const Common::Array<Common::String> &args) {}
 	void exec(ExecutionContext &ctx) const override {
 		g_engine->killTimer();
+	}
+};
+
+struct Limit_View : public Command {
+	Common::String angle1, angle2;
+	Limit_View(const Common::Array<Common::String> &args) : angle1(args[0]), angle2(args[1]) {}
+	void exec(ExecutionContext &ctx) const override {
+		debug("limit view %d %d", valueOf(angle1), valueOf(angle2));
+	}
+};
+
+struct Set_View_Angle : public Command {
+	Common::String angle1, angle2;
+	Set_View_Angle(const Common::Array<Common::String> &args) : angle1(args[0]), angle2(args[1]) {}
+	void exec(ExecutionContext &ctx) const override {
+		debug("set view angle %d %d", valueOf(angle1), valueOf(angle2));
 	}
 };
 
@@ -291,21 +389,32 @@ struct Stop_Timer : public Command {
 	E(Add)              \
 	E(Cursor_Load)      \
 	E(Cursor_Set)       \
+	E(Delay_Sound)      \
+	E(Enter_Level)      \
 	E(Fade)             \
 	E(Go_Back)          \
 	E(Goto_Level)       \
 	E(Goto_Warp)        \
+	E(Leave_Save)       \
+	E(Limit_View)       \
 	E(Load_Slot)        \
+	E(Play_3DSound)     \
+	E(Play_Amb)         \
+	E(Play_AnimBloc)    \
 	E(Play_Movie)       \
 	E(Play_Sound)       \
-	E(Play_AnimBloc)    \
 	E(Retrieve_State)   \
+	E(Save_Slot)        \
+	E(Set_Jump_Key)     \
 	E(Set_Lens)         \
 	E(Set_Lensflare)    \
-	E(Set_Jump_Key)     \
+	E(Set_View_Angle)   \
 	E(Sprite_Load)      \
 	E(Sprite_Screen)    \
+	E(Start_Light)      \
+	E(Start_Timer)      \
 	E(Stop_All_Sounds)  \
+	E(Stop_Light)       \
 	E(Stop_Sound)       \
 	E(Stop_Timer)       \
 	E(Store_State)      \
