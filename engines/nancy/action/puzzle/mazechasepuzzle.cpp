@@ -156,7 +156,9 @@ void MazeChasePuzzle::readData(Common::SeekableReadStream &stream) {
 	_exitPos.y = stream.readUint16LE();
 
 	if (isNancy10) {
-		stream.skip(1); // TODO: unknown byte before the grid.
+		// Selects how the player piece leaves the board when it reaches the
+		// exit: zero makes it disappear at the hole, non-zero slides it off.
+		_pieceDisappearsAtExit = stream.readByte() == 0;
 	}
 
 	_grid.resize(height, Common::Array<uint16>(width));
@@ -233,8 +235,14 @@ void MazeChasePuzzle::execute() {
 		}
 
 		if (_pieces[0]._gridPos == _exitPos) {
-			_pieces[0]._gridPos = _exitPos + Common::Point(_exitPos.x == 0 ? -1 : 1, 0);
-			++_currentAnimFrame;
+			if (_pieceDisappearsAtExit) {
+				// The piece vanishes at the hole instead of sliding past the edge
+				_pieces[0].setVisible(false);
+			} else {
+				_pieces[0]._gridPos = _exitPos + Common::Point(_exitPos.x == 0 ? -1 : 1, 0);
+				++_currentAnimFrame;
+			}
+
 			g_nancy->_sound->loadSound(_solveSound);
 			g_nancy->_sound->playSound(_solveSound);
 			_solved = true;
