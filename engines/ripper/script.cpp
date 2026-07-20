@@ -881,12 +881,11 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			if (command.opcode == kMilestoneCondition) {
 				const uint flag = command.arguments[1].value;
 				actual = _engine->getMilestones()->isSet(flag);
+				// The numeric fields uniquely identify this gate and avoid expanding
+				// mutable script or label storage in this high-frequency variadic trace.
 				debugC(3, kDebugMilestones,
-					"Ripper: milestone gate flag=%u label='%s' domain='%s' expected=%d actual=%d "
-					"target=0x%x script='%s' offset=0x%x",
-					flag, _engine->getMilestones()->label(flag).c_str(), Milestones::domain(flag),
-					expected, actual,
-					command.arguments[2].value, script.getMemberName().c_str(), command.offset);
+					"Ripper: milestone gate flag=%u expected=%d actual=%d target=0x%x offset=0x%x",
+					flag, expected, actual, command.arguments[2].value, command.offset);
 			} else {
 				const Common::String scene = argumentString(command.arguments[1]);
 				actual = isScenePlayed(scene);

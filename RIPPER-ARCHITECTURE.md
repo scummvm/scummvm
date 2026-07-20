@@ -516,6 +516,10 @@
   shield. `COMBAT0.BBM` supplies the left status panel, `COMBAT2.BBM` and
   `COMBAT3.BBM` are its filled and empty meter segments, and the four configured
   crosshair strips meet at the logical 320-by-200 pointer position.
+- `RunCombatEncounterScene` anchors `COMBAT0.BBM` at logical X
+  `320 - bitmapWidth`; its meter coordinates are local to that right-hand
+  panel. Player depletion shares the Escape cleanup path and leaves the
+  supplied completion flag clear.
 - Combat palettes are derived from the current Smacker palette. Indices 1-3 and
   10-239 use luminance `(30R + 59G + 11B) / 100`; shield, target-hit, and
   player-hit branches then apply the alternate blue, magenta, or red components
