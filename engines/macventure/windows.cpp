@@ -88,6 +88,7 @@ Graphics::BorderOffsets borderOffsets(MVWindowType type) {
 	offsets.resizeButtonHeight = 0;
 	offsets.upperScrollHeight = 0;
 	offsets.lowerScrollHeight = 0;
+	offsets.titlePadding = 0;
 
 	switch (type) {
 	case MacVenture::kDocument:
