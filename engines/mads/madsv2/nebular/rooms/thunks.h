@@ -149,7 +149,7 @@ struct Action {
 extern Action _action;
 
 struct Globals {
-	int16 _spriteIndexes[15];
+	int16 _spriteIndexes[30];
 	int16 _sequenceIndexes[30];
 
 	int16 &operator[](int idx);
