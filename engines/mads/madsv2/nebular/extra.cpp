@@ -397,7 +397,7 @@ RoomPtr room_load(int id, int variant, const char *base_path, Buffer *picture,
 	loader_close(&load_handle);
 
 	// Load in the foreground picture
-	room_picture_load(roomPtr, id, picture, load_flags);
+	room_picture_load(roomPtr, roomfile.picture_id, picture, load_flags);
 
 	// Handle room sprites
 

@@ -36,12 +36,7 @@ namespace Rooms {
 static void room_409_init() {
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*ROXHAND");
 	teleporter_init();
-
-	// The original is calling Scene4xx::section_4_music()
-	if (!_vm->_musicFlag)
-		_vm->_sound->command(2);
-	else
-		_vm->_sound->command(10);
+	section_4_music();
 }
 
 static void room_409_daemon() {
