@@ -462,7 +462,7 @@ struct Cube {
 	int faceIdx;
 };
 
-Cube toCube(float x, float y, float z) {
+Cube toCube(float x, float y, float z, bool v2) {
 	Cube cube = {};
 
 	float absX = ABS(x);
@@ -479,37 +479,37 @@ Cube toCube(float x, float y, float z) {
 		maxAxis = absX;
 		cx = y;
 		cy = z;
-		cube.faceIdx = 4;
+		cube.faceIdx = v2 ? 0 : 4;
 	}
 	if (!isXPositive && absX >= absY && absX >= absZ) {
 		maxAxis = absX;
 		cx = -y;
 		cy = z;
-		cube.faceIdx = 5;
+		cube.faceIdx = v2 ? 3 : 5;
 	}
 	if (isYPositive && absY >= absX && absY >= absZ) {
 		maxAxis = absY;
 		cx = -x;
 		cy = z;
-		cube.faceIdx = 3;
+		cube.faceIdx = v2 ? 1 : 3;
 	}
 	if (!isYPositive && absY >= absX && absY >= absZ) {
 		maxAxis = absY;
 		cx = x;
 		cy = z;
-		cube.faceIdx = 1;
+		cube.faceIdx = v2 ? 2 : 1;
 	}
 	if (isZPositive && absZ >= absX && absZ >= absY) {
 		maxAxis = absZ;
 		cx = y;
 		cy = -x;
-		cube.faceIdx = 0;
+		cube.faceIdx = v2 ? 5 : 0;
 	}
 	if (!isZPositive && absZ >= absX && absZ >= absY) {
 		maxAxis = absZ;
 		cx = y;
 		cy = x;
-		cube.faceIdx = 2;
+		cube.faceIdx = v2 ? 4 : 2;
 	}
 
 	// Convert range from −1 to 1 to 0 to 1
@@ -665,7 +665,7 @@ void VR::renderVR(Graphics::Screen *screen, float ax, float ay, float fov, float
 		Vector3d ray = line;
 
 		for (int dstX = 0; dstX != w; ++dstX, ray += incrementX, ++dst) {
-			auto cube = toCube(ray.x(), ray.y(), ray.z());
+			auto cube = toCube(ray.x(), ray.y(), ray.z(), _v2);
 			int srcX = static_cast<int>(faceSize * cube.x);
 			int srcY = static_cast<int>(kVRFaceSize * cube.y);
 			int tileId = cube.faceIdx << 2;
