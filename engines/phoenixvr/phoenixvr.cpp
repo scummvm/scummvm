@@ -1042,8 +1042,10 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 				palette.reset(new Graphics::Palette(dec->getPalette(), 256));
 			}
 			if (s) {
-				if (!s->format.isCLUT8() || palette)
-					_screen->simpleBlitFrom(*s, Graphics::FLIP_NONE, false, 0xff, palette.get());
+				if (!s->format.isCLUT8() || palette) {
+					Common::Point dstPos((g_system->getWidth() - s->w) / 2, (g_system->getHeight() - s->h) / 2);
+					_screen->simpleBlitFrom(*s, dstPos, Graphics::FLIP_NONE, false, 0xff, palette.get());
+				}
 			}
 		}
 
