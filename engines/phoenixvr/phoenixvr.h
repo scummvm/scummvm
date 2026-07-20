@@ -283,6 +283,7 @@ private:
 	void pauseEngineIntern(bool pause) override;
 	Common::String getLevelLabel(const Common::String &script) const;
 	Common::String getLevelScript(const Level &level) const;
+	void saveThumbnail();
 
 private:
 	bool _hasFocus = true;

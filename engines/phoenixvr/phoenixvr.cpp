@@ -754,6 +754,12 @@ void PhoenixVREngine::restart() {
 	_loaded = false;
 }
 
+void PhoenixVREngine::saveThumbnail() {
+	// saving thumbnail
+	Common::ScopedPtr<Graphics::ManagedSurface> screenshot(_screen->scale(_thumbnail.w, _thumbnail.h, true, Graphics::FLIP_V));
+	_thumbnail.simpleBlitFrom(*screenshot);
+}
+
 bool PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 	debug("gotowarp %s, save prev: %d", warp.c_str(), savePrev);
 	if (_warp && _warp->vrFile == warp) {
@@ -772,9 +778,7 @@ bool PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 	if (savePrev) {
 		assert(_warpIdx >= 0);
 		_prevWarp = _warpIdx;
-		// saving thumbnail
-		Common::ScopedPtr<Graphics::ManagedSurface> screenshot(_screen->scale(_thumbnail.w, _thumbnail.h, true, Graphics::FLIP_V));
-		_thumbnail.simpleBlitFrom(*screenshot);
+		saveThumbnail();
 	}
 	return true;
 }
