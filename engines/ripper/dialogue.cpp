@@ -207,25 +207,6 @@ bool DialogueChooser::activateChoices(const char *source) {
 	return true;
 }
 
-bool DialogueChooser::selectResult(uint16 result, const char *source) {
-	if (!_pending)
-		return false;
-	for (uint choiceIndex = 0; choiceIndex < _choices.size(); ++choiceIndex) {
-		if (_choices[choiceIndex].result != result)
-			continue;
-		_selectedChoice = choiceIndex;
-		if (_selectedChoice < _firstVisibleChoice)
-			_firstVisibleChoice = _selectedChoice;
-		else if (_selectedChoice >= _firstVisibleChoice + kVisibleChoiceCount)
-			_firstVisibleChoice = _selectedChoice - kVisibleChoiceCount + 1;
-		debugC(2, kDebugDialogue,
-			"Ripper: dialogue initial selection source=%s index=%u result=%u text='%s'",
-			source, _selectedChoice, result, _choices[_selectedChoice].text.c_str());
-		return true;
-	}
-	return false;
-}
-
 bool DialogueChooser::service(const MouseState &mouse, uint &result) {
 	if (!_pending || _choices.empty())
 		return false;
