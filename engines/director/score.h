@@ -249,6 +249,9 @@ private:
 	int _currentLabel;
 	DirectorSound *_soundManager;
 
+	// score frame number at the last film loop advance
+	uint32 _filmLoopsLastFrame = 0;
+
 	int _previousBuildBotBuild = -1;
 	bool _firstRun = true;
 };
