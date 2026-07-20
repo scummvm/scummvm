@@ -56,6 +56,7 @@ MODULE_OBJS = \
   action/puzzle/rippedletterpuzzle.o \
   action/puzzle/rotatinglockpuzzle.o \
   action/puzzle/safedialpuzzle.o \
+  action/puzzle/scalepuzzle.o \
   action/puzzle/setplayerclock.o \
   action/puzzle/sewingmachinepuzzle.o \
   action/puzzle/sliderpuzzle.o \

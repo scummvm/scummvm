@@ -72,6 +72,7 @@
 #include "engines/nancy/action/puzzle/rippedletterpuzzle.h"
 #include "engines/nancy/action/puzzle/rotatinglockpuzzle.h"
 #include "engines/nancy/action/puzzle/safedialpuzzle.h"
+#include "engines/nancy/action/puzzle/scalepuzzle.h"
 #include "engines/nancy/action/puzzle/setplayerclock.h"
 #include "engines/nancy/action/puzzle/sewingmachinepuzzle.h"
 #include "engines/nancy/action/puzzle/sliderpuzzle.h"
@@ -486,11 +487,9 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 173:
 		return new PegsPuzzle();
 	case 174:
-		// ScalePuzzle (balance scale), new in Nancy13
-		// TODO: not yet implemented
-		return nullptr;
+		return new ScalePuzzle();	// balance scale
 	case 175:
-		// PachinkoPuzzle (ball drop), new in Nancy13
+		// PachinkoPuzzle (ball drop)
 		// TODO: not yet implemented
 		return nullptr;
 	case 176:
