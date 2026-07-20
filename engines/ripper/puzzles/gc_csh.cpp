@@ -251,7 +251,7 @@ bool GcCshPuzzle::playChoice(uint choice, uint sequenceSlot) {
 	// uncontrolled RunMediaPresentation path, leaving its final IAVF display.
 	if (!_engine->getMedia()->play(media, false, 0, 64, true)) {
 		warning("Ripper: could not play GC/CSH choice media '%s'", media.c_str());
-		_engine->getCursor()->setVisible(true);
+		_engine->getCursor()->refresh();
 		return false;
 	}
 	playCue(1);
@@ -259,7 +259,8 @@ bool GcCshPuzzle::playChoice(uint choice, uint sequenceSlot) {
 		drawAnimationFrame(choice, sequenceSlot, frameIndex);
 		g_system->delayMillis(kDosTickDurationMillis);
 	}
-	_engine->getCursor()->setVisible(true);
+	updateCursor(_engine->getInput()->peekMouseState().position);
+	_engine->getCursor()->refresh();
 	return true;
 }
 
@@ -276,7 +277,8 @@ bool GcCshPuzzle::resetSequence(const int enteredChoices[4],
 	}
 	restoreSequenceBacking();
 	const bool completed = waitForCue(1);
-	_engine->getCursor()->setVisible(true);
+	updateCursor(_engine->getInput()->peekMouseState().position);
+	_engine->getCursor()->refresh();
 	debugC(2, kDebugPuzzles,
 		"Ripper: reset GC/CSH sequence choices=%u audioComplete=%d",
 		enteredChoiceCount, completed);
@@ -348,8 +350,18 @@ GcCshPuzzle::Result GcCshPuzzle::run(uint completionFlag) {
 	uint enteredChoiceCount = 0;
 	Result result = kExited;
 	_engine->getInput()->discardMouseTransitions();
-	_engine->getCursor()->setVisible(true);
-	_engine->getCursor()->update(kDefaultCursor);
+	// RunGcCshFourChoiceSequencePuzzleScene activates the UI-selection
+	// presentation at 0x38986, then stores and dispatches row 14 at
+	// 0x38993..0x389a2.
+	// GCZ1 has just hidden the cursor and replaced the display palette, so the
+	// current frame and cursor palette must be reinstalled even when row 14 was
+	// already active before the movie.
+	_engine->getCursor()->setSelectionIndex(kDefaultCursor);
+	_engine->getCursor()->dispatchSelectionIndexChange(kDefaultCursor);
+	_engine->getCursor()->refresh();
+	debugC(2, kDebugPuzzles,
+		"Ripper: initialized GC/CSH cursor presentation selection=%u visible=%d",
+		kDefaultCursor, _engine->getCursor()->isVisible());
 
 	while (!_engine->shouldQuit() && result == kExited) {
 		if (_engine->getInput()->pollEvents()) {
@@ -420,8 +432,9 @@ GcCshPuzzle::Result GcCshPuzzle::run(uint completionFlag) {
 	}
 
 	stopAudio();
-	_engine->getCursor()->setVisible(true);
-	_engine->getCursor()->update(0);
+	_engine->getCursor()->setSelectionIndex(0);
+	_engine->getCursor()->dispatchSelectionIndexChange(0);
+	_engine->getCursor()->refresh();
 	debugC(1, kDebugPuzzles,
 		"Ripper: exited GC/CSH puzzle result=%d milestone=%u entered=%u",
 		result, completionFlag, enteredChoiceCount);

@@ -547,8 +547,11 @@
   `GCZ1.SMK`; the next callback selects `GC_CSH_O.SMK` only when that flag is
   set, otherwise it presents `GCU1.SMK` and returns to the zoom interaction.
 - The GC/CSH puzzle creates controls `0x672` through `0x675` from the rectangle
-  table at `0x84700`, uses cursor 16 over the four choices and cursor 7 over its
-  two Escape regions, and opens help resource `0x1a3` on F1. Each choice plays
+  table at `0x84700`, activates and applies default cursor row 14 on entry, uses
+  cursor 16 over the four choices and cursor 7 over its two Escape regions, and
+  restores row 0 on exit. Presentation activation refreshes the cursor frame and
+  palette after GCZ1 and each puzzle media transition. F1 opens help resource
+  `0x1a3`. Each choice plays
   `CSH_SND0.WAV`, presents the matching `GC_CSH0.AVI` through `GC_CSH3.AVI`
   at scene-space `(0, 64)` (physical `(0, 114)`), starts `CSH_SND1.WAV`, and
   animates its six `GC_CSHn0.BBM` through
