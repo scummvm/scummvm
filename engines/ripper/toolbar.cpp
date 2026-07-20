@@ -363,6 +363,14 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 			warning("Ripper: toolbar world map action failed");
 		return;
 	}
+	if (actionIndex == 2) {
+		debugC(1, kDebugScene,
+			"Ripper: toolbar action=3 id=0x516 label='%s' entering RunUnlockGatedSelectionMenu",
+			_actions[actionIndex].label.c_str());
+		if (!_engine->getScripts()->openInventory())
+			warning("Ripper: toolbar inventory action failed");
+		return;
+	}
 	if (actionIndex == 3) {
 		debugC(1, kDebugWac,
 			"Ripper: toolbar action=4 id=0x517 label='%s' entering RunWacFrontEndLoop",

@@ -133,8 +133,9 @@
   `RunModalSelectionTableDialogWithRestore`: it presents general help resource
   400 normally and conversation help resource `0x19b` while scene-runtime bit
   `0x20` marks a prompt/chooser active. The implemented choice-list lifecycle
-  maps that state to the pending `DialogueChooser`. Inventory and
-  quit remain explicit stubs.
+  maps that state to the pending `DialogueChooser`. Action `0x516` and
+  scene-entry action 3 both enter the engine-owned inventory service. Quit
+  remains an explicit stub.
 - `RunTake2IniSliderSetupMenu` at `0x1989b` edits eight live settings in this
   order: master, ambient, SFX, video, brightness, color, contrast, and tint.
   The descriptor table at `0x1856a` supplies each range, step, and default;
@@ -299,9 +300,10 @@
   level-three `milestones` debugging reports every defined key with its label
   and current bit value after definition loading and save synchronization. The
   confirmed ranges include chapter completion at 1 through 4, travel
-  availability at 20 through 44, inventory at 50 through 58, WAC database
-  scans beginning at 70, story state beginning at 300, and cyberspace state
-  beginning at 400. Opcode
+  availability at 20 through 44, inventory unlocks at 50 through 69 with
+  paired consumed bits at 100 through 119, WAC database scans beginning at
+  70, story state beginning at 300, and cyberspace state beginning at 400.
+  Opcode
   `0x1e` named flags are different: `HandleSceneEntrySetOrClearNamedFlag` at
   `0x15dfe` updates the string-keyed startup asset catalog rather than this
   indexed bitset.
@@ -310,6 +312,26 @@
   apartment/keypad path. The `ACT2.RUN` and `ACT3.RUN` transition callbacks
   explicitly clear it as part of their chapter-wide location reset. It is not
   a WAC-message flag.
+- `DispatchSceneEntryAction` at `0x36892` handles action 3 by setting the
+  caller-supplied inventory unlock flag, clearing the paired consumed flag at
+  `unlock + 50`, and calling `RunUnlockGatedSelectionMenu` at `0x360ae` with
+  that unlock flag as the initial selection. The toolbar inventory action
+  `0x516` enters the same chooser without granting or preselecting an item.
+- `RunUnlockGatedSelectionMenu` scans unlock flags 50 through 69 and includes
+  only entries whose flags 100 through 119 remain clear. Visible rows retain
+  their original item IDs rather than being renumbered around unavailable
+  entries. Labels come from game-text resources 200 through 219, F1 uses help
+  resource `0x1bb`, and the chooser restores cursor selection zero on exit.
+- `ExecuteUnlockSelectionChoice` at `0x364be` compares the active compiled
+  frame label (the dword at frame-record offset `+5`) case-insensitively with
+  game-text resource `270 + item ID`. A mismatch uses modal resource `0x4d`
+  and leaves the chooser active. A successful use sets consumed flag
+  `100 + item ID`; item IDs 1 and 7 clear that bit again after their dedicated
+  presentation and therefore remain reusable. Items 5 and 8 have additional
+  mutual-state gates through flags 58, 108, and 105. The ScummVM `Inventory`
+  service owns this milestone-backed enumeration, acquisition, use gating,
+  and the currently implemented generic and direct-media item branches; its
+  state is already covered by milestone save synchronization.
 - `ACT1_CHK.RUN` tests flag 311 (`Eddie finishes conversation in Act I on
   earth`) before its Act II handoff. When the flag is clear, opcode `0x08` at
   script offset `0x2e1` branches to the clear-branch entry at `0x301`; the
@@ -602,7 +624,8 @@
   completion flag. The scene restricts `RunFrontEndActionMenu` to mask `0x84`,
   exposing only inventory and help. Inventory is built from unlocked flags 50
   through 69 whose corresponding consumed flags 100 through 119 are clear;
-  only flags 52 through 54 are accepted here, setting flags 102 through 104.
+  only flags 52 through 54 have the required `GAZ2` use label here, setting
+  flags 102 through 104 through the shared `Inventory` service.
   Each accepted tube presents `TUBEHAND.AVI`, then reloads the numbered Smacker
   for the new installed count. Other inventory items present modal resource
   `0x4d`; F1 uses resource `0x1bb` in the inventory chooser and resource 400 in

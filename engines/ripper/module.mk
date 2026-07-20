@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	dialogue.o \
 	iff.o \
 	input.o \
+	inventory.o \
 	media.o \
 	menu.o \
 	metaengine.o \
