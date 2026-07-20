@@ -40,6 +40,7 @@
 #include "ripper/modal_dialog.h"
 #include "ripper/puzzles/calculator.h"
 #include "ripper/puzzles/crystal.h"
+#include "ripper/puzzles/gc_csh.h"
 #include "ripper/puzzles/rolodex.h"
 #include "ripper/puzzles/table_gate.h"
 #include "ripper/resources.h"
@@ -1278,6 +1279,16 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 					"Ripper: Cyber menu scene action completed result=%d",
 					cyberResult);
 				if (cyberResult == CyberManager::kLoadFailed)
+					return false;
+				break;
+			}
+			if (action == kSceneActionGcCshPuzzle) {
+				GcCshPuzzle puzzle(_engine);
+				const GcCshPuzzle::Result puzzleResult = puzzle.run(argument);
+				debugC(1, kDebugPuzzles,
+					"Ripper: GC/CSH puzzle scene action completed result=%d milestone=%u",
+					puzzleResult, argument);
+				if (puzzleResult == GcCshPuzzle::kLoadFailed)
 					return false;
 				break;
 			}

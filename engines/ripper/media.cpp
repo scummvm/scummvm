@@ -1260,7 +1260,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 }
 
 bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::String &name,
-		bool allowEscSpace, bool serviceSceneUi) {
+		bool allowEscSpace, int overrideX, int overrideY, int overrideOriginY,
+		bool serviceSceneUi) {
 	IavfMovie movie;
 	if (!parseIavf(stream, name, movie)) {
 		warning("Ripper: invalid IAVF presentation '%s'", name.c_str());
@@ -1310,6 +1311,19 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 				name.c_str(), i);
 		}
 		Common::SeekableReadStream *smacker = rebuildSmackerStream(movie.segments[i]);
+		const int segmentX = overrideX != -1 ? overrideX : movie.segments[i].x;
+		const int segmentY = overrideY != -1 ? overrideY : movie.segments[i].y;
+		const int segmentOriginY = overrideY != -1 ? overrideOriginY : 0;
+		if (overrideX != -1 || overrideY != -1) {
+			// PreparePacketizedMediaPlaybackBranchSetup at 0x5b237 replaces each
+			// packetized branch coordinate independently when the caller supplies
+			// an override. Scene-space Y receives the retained viewport origin once.
+			debugC(2, kDebugVideo,
+				"Ripper: IAVF '%s' segment=%u coordinate override raw=%d,%d caller=%d,%d originY=%d effective=%d,%d",
+				name.c_str(), i, movie.segments[i].x, movie.segments[i].y,
+				overrideX, overrideY, segmentOriginY, segmentX,
+				segmentY + segmentOriginY);
+		}
 		bool stoppedByUser = false;
 		bool advanceSegment = false;
 		Common::Array<uint32> relativeAudioOffsets;
@@ -1323,10 +1337,10 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 			frameAudioOffsets = &relativeAudioOffsets;
 		}
 		if (!smacker || !playSmacker(smacker, Common::String::format("%s#%u", name.c_str(), i),
-			allowEscSpace, movie.segments[i].x, movie.segments[i].y,
+			allowEscSpace, segmentX, segmentY,
 			audioActive ? &audioHandle : nullptr, &stoppedByUser,
 			frameAudioOffsets, audioByteRate, timelineStartMillis,
-			kAutoPacketizedDisplayScale, false, 0, 0, false, serviceSceneUi, false,
+			kAutoPacketizedDisplayScale, false, 0, segmentOriginY, false, serviceSceneUi, false,
 			&advanceSegment)) {
 			result = false;
 			break;
@@ -1468,7 +1482,8 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 		result = playSmacker(file, path, allowEscSpace, x, y, nullptr, nullptr,
 			nullptr, 0, 0, 1, true, 0, originY);
 	} else if (isIavf) {
-		result = playIavf(*file, path, allowEscSpace);
+		const int originY = sceneViewport ? kScenePresentationTop : 0;
+		result = playIavf(*file, path, allowEscSpace, x, y, originY);
 		delete file;
 	} else {
 		warning("Ripper: unsupported media magic for '%s'", path.c_str());
@@ -1814,7 +1829,8 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 			result = false;
 			break;
 		}
-		result = playIavf(*file, path, allowEscSpace, true);
+		result = playIavf(*file, path, allowEscSpace, x, y,
+			kScenePresentationTop, true);
 		delete file;
 	} else {
 		warning("Ripper: unsupported scene media mode for '%s'", path.c_str());

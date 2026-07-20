@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	puzzles/broken_mug.o \
 	puzzles/calculator.o \
 	puzzles/crystal.o \
+	puzzles/gc_csh.o \
 	puzzles/ka_book_code.o \
 	puzzles/rolodex.o \
 	puzzles/table_gate.o \
