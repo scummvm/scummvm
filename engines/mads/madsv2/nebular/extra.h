@@ -32,7 +32,7 @@ namespace RexNebular {
  * Rex Nebular's game-specific room loader, called from room_load() (see core/room.h) in
  * place of the generic loader used by every other game. Reads the room's .DAT header,
  * loads its background art into picture, its sprite series, and stamps the room's images
- * onto picture, then defers to kernel_load_variant() to populate depth, walk, and special
+ * onto picture, then defers to room_load_variant() to populate depth, walk, and special
  * for the room's default variant.
  */
 extern RoomPtr room_load(int id, int variant, const char *base_path, Buffer *picture,
@@ -41,16 +41,17 @@ extern RoomPtr room_load(int id, int variant, const char *base_path, Buffer *pic
 	int picture_ems_handle, int depth_ems_handle, int load_flags);
 
 /**
- * Rex Nebular's version of the default kernel_load_variant() (see core/kernel.h), called
- * both from room_load() and directly whenever the active room switches to a different
- * attribute variant. Reads the variant's run-length encoded depth/walk/special data from
- * the room's .DAT file and unpacks it into depth (nibble-packed, 2 pixels/byte), walk
- * (bit-packed, 8 pixels/byte), and special (nibble-packed, 2 pixels/byte) surfaces. Any
- * of depth, walk, or special may be null to skip populating that surface. Packed-format
+ * Rex Nebular's version of the default room_load_variant() (see core/room.h), called
+ * from it whenever the active room is Rex Nebular - both when populating a freshly
+ * loaded room's default variant (from room_load()) and when switching to a different
+ * attribute variant thereafter. Reads the variant's run-length encoded depth/walk/special
+ * data from the room's .DAT file and unpacks it into depth (nibble-packed, 2 pixels/byte),
+ * walk (bit-packed, 8 pixels/byte), and special (nibble-packed, 2 pixels/byte) surfaces.
+ * Any of depth, walk, or special may be null to skip populating that surface. Packed-format
  * rooms (packedFormat == true) have no spare bits to encode a special zone code, so
  * special is left untouched in that case.
  */
-extern int kernel_load_variant(Load *load_handle, Buffer *depth, Buffer *walk, Buffer *special,
+extern int room_load_variant(Load *load_handle, Buffer *depth, Buffer *walk, Buffer *special,
 	Room *room_info, int variant, bool packedFormat);
 
 /**

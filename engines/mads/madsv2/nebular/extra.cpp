@@ -207,7 +207,7 @@ static void room_set_special_nibble(Buffer *special, int x, int y, byte specialV
 		*scan = (byte)((*scan & 0x0f) | ((specialVal & 0x0f) << 4));
 }
 
-int kernel_load_variant(Load *load_handle, Buffer *depth, Buffer *walk, Buffer *special,
+int room_load_variant(Load *load_handle, Buffer *depth, Buffer *walk, Buffer *special,
 		Room *room_info, int variant, bool packedFormat) {
 	char filename[80];
 	Load load;
@@ -391,7 +391,7 @@ RoomPtr room_load(int id, int variant, const char *base_path, Buffer *picture,
 		assert(special->data);
 	}
 
-	if (kernel_load_variant(&load_handle, depth, walk, special, roomPtr, variant, roomfile.format == 2))
+	if (room_load_variant(&load_handle, depth, walk, special, roomPtr, variant, roomfile.format == 2))
 		goto error;
 
 	loader_close(&load_handle);

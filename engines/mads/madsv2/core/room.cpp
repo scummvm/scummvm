@@ -294,6 +294,14 @@ int room_load_variant(int id, int variant, const char *base_path, RoomPtr roomPt
 	int xx, yy;
 	char base[80];
 
+	// Rex Nebular's depth/walk/special data doesn't use the tile system at all (it's
+	// loaded straight into Buffers from the room's .DAT file), so it's handled entirely
+	// separately here rather than falling through into the tile_load()-based logic below.
+	if (g_engine->getGameID() == GType_RexNebular) {
+		return RexNebular::room_load_variant(nullptr, depth, walk, special, roomPtr,
+			variant, roomPtr->format == 2);
+	}
+
 	room_dump_attribute(depth, walk, special, depthMap);
 
 	room_resolve_base(base, NULL, id, base_path);
