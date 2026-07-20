@@ -706,23 +706,43 @@ void DisplayMan::setUpScreens(uint16 width, uint16 height) {
 
 
 void DisplayMan::initializeGraphicData() {
-	_bitmapCeiling = new byte[224 * 29];
-	_bitmapFloor = new byte[224 * 70];
-	_bitmapWallSetD3L2 = new byte[16 * 49];
-	_bitmapWallSetD3R2 = new byte[16 * 49];
-	_bitmapWallSetD3LCR = new byte[128 * 51];
-	_bitmapWallSetD2LCR = new byte[144 * 71];
-	_bitmapWallSetD1LCR = new byte[256 * 111];
-	_bitmapWallSetWallD0L = new byte[32 * 136];
-	_bitmapWallSetWallD0R = new byte[32 * 136];
-	_bitmapWallSetDoorFrameTopD2LCR = new byte[96 * 3];
-	_bitmapWallSetDoorFrameTopD1LCR = new byte[128 * 4];
-	_bitmapWallSetDoorFrameLeftD3L = new byte[32 * 44];
-	_bitmapWallSetDoorFrameLeftD3C = new byte[32 * 44];
-	_bitmapWallSetDoorFrameLeftD2C = new byte[48 * 65];
-	_bitmapWallSetDoorFrameLeftD1C = new byte[32 * 94];
-	_bitmapWallSetDoorFrameRightD1C = new byte[32 * 94]();
-	_bitmapWallSetDoorFrameFront = new byte[32 * 123];
+	int16 firstFloorSet = (_vm->getPlatform() == Common::kPlatformDOS) ? k78_FirstFloorSetDOS : k75_FirstFloorSet;
+	int16 firstWallSet = (_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet;
+
+	// Floor set mapping
+	_bitmapFloor = new byte[getPixelWidth(firstFloorSet) * getPixelHeight(firstFloorSet)];
+	_bitmapCeiling = new byte[getPixelWidth(firstFloorSet + 1) * getPixelHeight(firstFloorSet + 1)];
+
+	// Wall set mapping
+	int16 doorFrameFrontIdx = firstWallSet + 0;
+	int16 doorFrameLeftD1CIdx = firstWallSet + 1;
+	int16 doorFrameLeftD2CIdx = firstWallSet + 2;
+	int16 doorFrameLeftD3CIdx = firstWallSet + 3;
+	int16 doorFrameLeftD3LIdx = firstWallSet + 4;
+	int16 doorFrameTopD1LCRIdx = firstWallSet + 5;
+	int16 doorFrameTopD2LCRIdx = firstWallSet + 6;
+	int16 wallD0RIdx = (_vm->getPlatform() == Common::kPlatformDOS) ? (firstWallSet + 7) : (firstWallSet + 7);
+	int16 wallD0LIdx = (_vm->getPlatform() == Common::kPlatformDOS) ? (firstWallSet + 8) : (firstWallSet + 8);
+	int16 d1LcrIdx = (_vm->getPlatform() == Common::kPlatformDOS) ? (firstWallSet + 11) : (firstWallSet + 9);
+	int16 d2LcrIdx = (_vm->getPlatform() == Common::kPlatformDOS) ? (firstWallSet + 16) : (firstWallSet + 10);
+	int16 d3LcrIdx = (_vm->getPlatform() == Common::kPlatformDOS) ? (firstWallSet + 21) : (firstWallSet + 11);
+	int16 d3L2Idx = (_vm->getPlatform() == Common::kPlatformDOS) ? (firstWallSet + 18) : (firstWallSet + 12);
+
+	_bitmapWallSetD3L2 = new byte[getPixelWidth(d3L2Idx) * getPixelHeight(d3L2Idx)];
+	_bitmapWallSetD3R2 = new byte[getPixelWidth(d3L2Idx) * getPixelHeight(d3L2Idx)]; // Flipped copy of D3L2
+	_bitmapWallSetD3LCR = new byte[getPixelWidth(d3LcrIdx) * getPixelHeight(d3LcrIdx)];
+	_bitmapWallSetD2LCR = new byte[getPixelWidth(d2LcrIdx) * getPixelHeight(d2LcrIdx)];
+	_bitmapWallSetD1LCR = new byte[getPixelWidth(d1LcrIdx) * getPixelHeight(d1LcrIdx)];
+	_bitmapWallSetWallD0L = new byte[getPixelWidth(wallD0LIdx) * getPixelHeight(wallD0LIdx)];
+	_bitmapWallSetWallD0R = new byte[getPixelWidth(wallD0RIdx) * getPixelHeight(wallD0RIdx)];
+	_bitmapWallSetDoorFrameTopD2LCR = new byte[getPixelWidth(doorFrameTopD2LCRIdx) * getPixelHeight(doorFrameTopD2LCRIdx)];
+	_bitmapWallSetDoorFrameTopD1LCR = new byte[getPixelWidth(doorFrameTopD1LCRIdx) * getPixelHeight(doorFrameTopD1LCRIdx)];
+	_bitmapWallSetDoorFrameLeftD3L = new byte[getPixelWidth(doorFrameLeftD3LIdx) * getPixelHeight(doorFrameLeftD3LIdx)];
+	_bitmapWallSetDoorFrameLeftD3C = new byte[getPixelWidth(doorFrameLeftD3CIdx) * getPixelHeight(doorFrameLeftD3CIdx)];
+	_bitmapWallSetDoorFrameLeftD2C = new byte[getPixelWidth(doorFrameLeftD2CIdx) * getPixelHeight(doorFrameLeftD2CIdx)];
+	_bitmapWallSetDoorFrameLeftD1C = new byte[getPixelWidth(doorFrameLeftD1CIdx) * getPixelHeight(doorFrameLeftD1CIdx)];
+	_bitmapWallSetDoorFrameRightD1C = new byte[getPixelWidth(doorFrameLeftD1CIdx) * getPixelHeight(doorFrameLeftD1CIdx)](); // Flipped copy of LeftD1C
+	_bitmapWallSetDoorFrameFront = new byte[getPixelWidth(doorFrameFrontIdx) * getPixelHeight(doorFrameFrontIdx)];
 	_bitmapViewport = new byte[224 * 136]();
 
 	if (!_derivedBitmapByteCount) {
@@ -2474,7 +2494,8 @@ void DisplayMan::loadFloorSet(FloorSet set) {
 		return;
 
 	_currentFloorSet = set;
-	int16 index = (set * k2_FloorSetGraphicCount) + k75_FirstFloorSet;
+	int16 firstFloorSet = (_vm->getPlatform() == Common::kPlatformDOS) ? k78_FirstFloorSetDOS : k75_FirstFloorSet;
+	int16 index = (set * k2_FloorSetGraphicCount) + firstFloorSet;
 	loadIntoBitmap(index, _bitmapFloor);
 	loadIntoBitmap(index + 1, _bitmapCeiling);
 }
@@ -2485,20 +2506,37 @@ void DisplayMan::loadWallSet(WallSet set) {
 
 	_currentWallSet = set;
 
-	int16 graphicIndice = (set * k13_WallSetGraphicCount) + k77_FirstWallSet;
-	loadIntoBitmap(graphicIndice++, _bitmapWallSetDoorFrameFront);
-	loadIntoBitmap(graphicIndice++, _bitmapWallSetDoorFrameLeftD1C);
-	loadIntoBitmap(graphicIndice++, _bitmapWallSetDoorFrameLeftD2C);
-	loadIntoBitmap(graphicIndice++, _bitmapWallSetDoorFrameLeftD3C);
-	loadIntoBitmap(graphicIndice++, _bitmapWallSetDoorFrameLeftD3L);
-	loadIntoBitmap(graphicIndice++, _bitmapWallSetDoorFrameTopD1LCR);
-	loadIntoBitmap(graphicIndice++, _bitmapWallSetDoorFrameTopD2LCR);
-	loadIntoBitmap(graphicIndice++, _bitmapWallSetWallD0R);
-	loadIntoBitmap(graphicIndice++, _bitmapWallSetWallD0L);
-	loadIntoBitmap(graphicIndice++, _bitmapWallSetD1LCR);
-	loadIntoBitmap(graphicIndice++, _bitmapWallSetD2LCR);
-	loadIntoBitmap(graphicIndice++, _bitmapWallSetD3LCR);
-	loadIntoBitmap(graphicIndice++, _bitmapWallSetD3L2);
+	if (_vm->getPlatform() == Common::kPlatformDOS) {
+		int16 graphicIndice = (set * k40_WallSetGraphicCountDOS) + k86_FirstWallSetDOS;
+		loadIntoBitmap(graphicIndice + 0, _bitmapWallSetDoorFrameFront);
+		loadIntoBitmap(graphicIndice + 1, _bitmapWallSetDoorFrameLeftD1C);
+		loadIntoBitmap(graphicIndice + 2, _bitmapWallSetDoorFrameLeftD2C);
+		loadIntoBitmap(graphicIndice + 3, _bitmapWallSetDoorFrameLeftD3C);
+		loadIntoBitmap(graphicIndice + 4, _bitmapWallSetDoorFrameLeftD3L);
+		loadIntoBitmap(graphicIndice + 5, _bitmapWallSetDoorFrameTopD1LCR);
+		loadIntoBitmap(graphicIndice + 6, _bitmapWallSetDoorFrameTopD2LCR);
+		loadIntoBitmap(graphicIndice + 7, _bitmapWallSetWallD0R);   // C00_WALL_D0R (93)
+		loadIntoBitmap(graphicIndice + 8, _bitmapWallSetWallD0L);   // C01_WALL_D0L (94)
+		loadIntoBitmap(graphicIndice + 11, _bitmapWallSetD1LCR);   // C04_WALL_D1C (97)
+		loadIntoBitmap(graphicIndice + 16, _bitmapWallSetD2LCR);   // C09_WALL_D2C (102)
+		loadIntoBitmap(graphicIndice + 21, _bitmapWallSetD3LCR);   // C14_WALL_D3C (107)
+		loadIntoBitmap(graphicIndice + 18, _bitmapWallSetD3L2);    // C11_WALL_D3L2 (104)
+	} else {
+		int16 graphicIndice = (set * k13_WallSetGraphicCount) + k77_FirstWallSet;
+		loadIntoBitmap(graphicIndice++, _bitmapWallSetDoorFrameFront);
+		loadIntoBitmap(graphicIndice++, _bitmapWallSetDoorFrameLeftD1C);
+		loadIntoBitmap(graphicIndice++, _bitmapWallSetDoorFrameLeftD2C);
+		loadIntoBitmap(graphicIndice++, _bitmapWallSetDoorFrameLeftD3C);
+		loadIntoBitmap(graphicIndice++, _bitmapWallSetDoorFrameLeftD3L);
+		loadIntoBitmap(graphicIndice++, _bitmapWallSetDoorFrameTopD1LCR);
+		loadIntoBitmap(graphicIndice++, _bitmapWallSetDoorFrameTopD2LCR);
+		loadIntoBitmap(graphicIndice++, _bitmapWallSetWallD0R);
+		loadIntoBitmap(graphicIndice++, _bitmapWallSetWallD0L);
+		loadIntoBitmap(graphicIndice++, _bitmapWallSetD1LCR);
+		loadIntoBitmap(graphicIndice++, _bitmapWallSetD2LCR);
+		loadIntoBitmap(graphicIndice++, _bitmapWallSetD3LCR);
+		loadIntoBitmap(graphicIndice++, _bitmapWallSetD3L2);
+	}
 
 	copyBitmapAndFlipHorizontal(_bitmapWallSetDoorFrameLeftD1C, _bitmapWallSetDoorFrameRightD1C,
 									_doorFrameRightD1C._srcByteWidth, _doorFrameRightD1C._srcHeight);
