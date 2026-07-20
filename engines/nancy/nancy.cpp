@@ -574,7 +574,7 @@ void NancyEngine::bootGameEngine() {
 	LOAD_BOOT(MMIX)	// Music mix table (location code -> music tracks)
 
 	// Nancy 14
-	// LOAD_BOOT(UICM)
+	LOAD_BOOT(UICM)	// Camera UI
 
 	// Nancy 15+
 	// TASK, UIRC, UIIV, UICO, UICM, UICL,

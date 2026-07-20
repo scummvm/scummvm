@@ -711,6 +711,32 @@ struct UICL : public EngineData {
 	Common::Array<PictureRecord> pictures;    // captured-picture slots (up to 50)
 };
 
+// Camera UI, added in Nancy 14. This is a standalone camera. While it is active,
+// the cursor becomes a large viewfinder rectangle that the player aims at the
+// scene; clicking photographs every subject whose region falls inside the framed
+// area.
+struct UICM : public EngineData {
+	UICM(Common::SeekableReadStream *chunkStream);
+
+	// One photographable region. When a picture is taken, every subject whose
+	// frameID matches the current scene view and whose coords lie within the
+	// viewfinder rectangle is captured: its subjectID is recorded in the picture
+	// and its flag (if any) is set.
+	struct CameraSubject {
+		HotspotDescription hotspot;   // frameID + region that can be photographed
+		int16 subjectID = -1;         // identifies what was photographed
+		FlagDescription flag;         // event flag set on capture (often unset)
+	};
+
+	Common::Path overlayImageName;            // "PHO_CameraView"
+	Common::Rect viewRect;                    // captured-picture bounds
+	uint16 maxPictures = 0;                   // most pictures the camera can hold
+	byte pictureCount = 0;                    // current picture count (0xff = none)
+	RandomSoundBlock shutterSound;            // picture-capture cue
+
+	Common::Array<CameraSubject> subjects;
+};
+
 // New conversation popup UI (the text strip that appears above the taskbar
 // when a character is speaking). Introduced in Nancy 10.
 // Note: response hotspots are NOT in this chunk — they live in a separate

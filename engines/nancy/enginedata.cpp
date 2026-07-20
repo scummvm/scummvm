@@ -1167,6 +1167,28 @@ UICL::UICL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	}
 }
 
+UICM::UICM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readFilename(*chunkStream, overlayImageName);
+
+	readRect(*chunkStream, viewRect);
+	maxPictures = chunkStream->readUint16LE();
+	pictureCount = chunkStream->readByte();
+	chunkStream->skip(2);
+
+	shutterSound.readData(*chunkStream);
+
+	const uint16 count = chunkStream->readUint16LE();
+	subjects.resize(count);
+	for (uint i = 0; i < count; ++i) {
+		CameraSubject &s = subjects[i];
+		s.hotspot.readData(*chunkStream);
+		s.subjectID = chunkStream->readSint16LE();
+		s.flag.label = chunkStream->readSint16LE();
+		s.flag.flag = chunkStream->readByte();
+		chunkStream->skip(1);
+	}
+}
+
 UICO::UICO(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readUIPopupHeader(*chunkStream, header);
 	readRect(*chunkStream, textRect);
