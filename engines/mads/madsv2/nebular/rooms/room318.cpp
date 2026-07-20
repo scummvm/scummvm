@@ -45,7 +45,6 @@ struct Scratch {
 	bool _internVisibleFl;
 	bool _explosionFl;
 	int32 _lastFrameCounter = 0;
-	char _subQuote2[256];
 	Dialog _dialog1;
 };
 
@@ -60,9 +59,8 @@ static void handleRexDialogs(int quote) {
 		static char subQuote1[34], subQuote2[34];
 		_game.splitQuote(curQuote, subQuote1, subQuote2);
 
-
 		_scene->_kernelMessages.add(Common::Point(138, 59), 0x1110, 32, 0, 240, subQuote1);
-		_scene->_kernelMessages.add(Common::Point(138, 73), 0x1110, 32, 1, 180, local._subQuote2);
+		_scene->_kernelMessages.add(Common::Point(138, 73), 0x1110, 32, 1, 180, subQuote2);
 	} else
 		_scene->_kernelMessages.add(Common::Point(138, 73), 0x1110, 32, 1, 120, curQuote);
 }
@@ -666,11 +664,6 @@ void room_318_synchronize(Common::Serializer &s) {
 	s.syncAsByte(local._internVisibleFl);
 	s.syncAsByte(local._explosionFl);
 	s.syncAsUint32LE(local._lastFrameCounter);
-
-	Common::String subQuote2 = local._subQuote2;
-	s.syncString(subQuote2);
-	if (s.isLoading())
-		Common::strcpy_s(local._subQuote2, subQuote2.c_str());
 }
 
 void room_318_preload() {

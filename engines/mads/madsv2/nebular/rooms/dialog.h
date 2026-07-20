@@ -29,7 +29,7 @@ namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
-#define MAX_CONV_MESSAGE 10
+#define MAX_CONV_MESSAGE 15
 
 class Dialog {
 public:

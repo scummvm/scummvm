@@ -43,6 +43,7 @@ void Dialog::setup(int globalId, ...) {
 		quoteId = va_arg(va, int);
 	}
 	va_end(va);
+	assert(_count <= MAX_CONV_MESSAGE);
 
 	if (quoteId < 0) {
 		// For an ending value of -1, also initial the bitflags for the global
