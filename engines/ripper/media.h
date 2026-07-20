@@ -73,7 +73,7 @@ public:
 		MediaSequenceCallback *callback, uint16 *command = nullptr);
 	bool playPuzzleSequenceSegment(const Common::String &path, uint firstFrame,
 		uint lastFrame, int x, int y, MediaSequenceCallback *callback,
-		uint16 *command = nullptr);
+		uint16 *command = nullptr, uint boundedLoopStartFrame = 0xffffffff);
 	void fadePalette(bool fadeIn, uint stepCount);
 	bool playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
 		bool loopUntilInput = false, bool allowEscSpace = false,
@@ -134,7 +134,7 @@ private:
 		uint16 *sequenceCommand = nullptr,
 		Common::Array<byte> *sourcePalette = nullptr,
 		bool rememberVideoPalette = true, uint firstFrame = 0,
-		uint lastFrame = 0xffffffff);
+		uint lastFrame = 0xffffffff, uint boundedLoopStartFrame = 0xffffffff);
 	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name,
 		bool allowEscSpace, bool serviceSceneUi = false);
 	bool servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
