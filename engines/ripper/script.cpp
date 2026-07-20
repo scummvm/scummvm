@@ -21,6 +21,7 @@
 #include "ripper/script.h"
 
 #include "ripper/briefing.h"
+#include "ripper/combat/mechini.h"
 #include "ripper/dialogue.h"
 
 #include "common/debug.h"
@@ -1287,6 +1288,16 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 					"Ripper: table gate puzzle scene action completed result=%d milestone=%u",
 					puzzleResult, argument);
 				if (puzzleResult == TableGatePuzzle::kLoadFailed)
+					return false;
+				break;
+			}
+			if (action == kSceneActionMechiniCombat) {
+				MechiniEncounter encounter(_engine);
+				const MechiniEncounter::Result encounterResult = encounter.run(argument);
+				debugC(1, kDebugCombat,
+					"Ripper: Mechini combat scene action completed result=%d milestone=%u",
+					encounterResult, argument);
+				if (encounterResult == MechiniEncounter::kLoadFailed)
 					return false;
 				break;
 			}
