@@ -369,6 +369,11 @@ GcCshPuzzle::Result GcCshPuzzle::run(uint completionFlag) {
 			break;
 		}
 		const uint16 command = serviceInput();
+		// ServiceUiControlStateSelection at 0x4a912 runs while the original UI
+		// selection presentation is active, so cursor changes are flushed as part
+		// of each poll. ScummVM's software cursor needs an explicit presentation
+		// from this private puzzle loop.
+		g_system->updateScreen();
 		_engine->getInput()->drainKeys();
 		if (command == kHelpCommand) {
 			debugC(1, kDebugPuzzles,

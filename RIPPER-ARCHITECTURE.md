@@ -550,8 +550,10 @@
   table at `0x84700`, activates and applies default cursor row 14 on entry, uses
   cursor 16 over the four choices and cursor 7 over its two Escape regions, and
   restores row 0 on exit. Presentation activation refreshes the cursor frame and
-  palette after GCZ1 and each puzzle media transition. F1 opens help resource
-  `0x1a3`. Each choice plays
+  palette after GCZ1 and each puzzle media transition. Its input loop presents
+  each cursor-service tick, matching the original active UI-selection
+  presentation and keeping ScummVM's software cursor visible and animated. F1
+  opens help resource `0x1a3`. Each choice plays
   `CSH_SND0.WAV`, presents the matching `GC_CSH0.AVI` through `GC_CSH3.AVI`
   at scene-space `(0, 64)` (physical `(0, 114)`), starts `CSH_SND1.WAV`, and
   animates its six `GC_CSHn0.BBM` through
