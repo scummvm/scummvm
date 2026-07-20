@@ -965,11 +965,18 @@ void DisplayMan::loadFNT1intoBitmap(uint16 index, byte *destBitmap) {
 }
 
 void DisplayMan::allocateFlippedWallBitmaps() {
-	_bitmapWallD3LCRFlipped = new byte[128 * 51];
-	_bitmapWallD2LCRFlipped = new byte[144 * 71];
-	_bitmapWallD1LCRFlipped = new byte[256 * 111];
-	_bitmapWallD0LFlipped = new byte[32 * 136];
-	_bitmapWallD0RFlipped = new byte[32 * 136];
+	int16 firstWallSet = (_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet;
+	int16 d3LcrIdx = (_vm->getPlatform() == Common::kPlatformDOS) ? (firstWallSet + 21) : (firstWallSet + 11);
+	int16 d2LcrIdx = (_vm->getPlatform() == Common::kPlatformDOS) ? (firstWallSet + 16) : (firstWallSet + 10);
+	int16 d1LcrIdx = (_vm->getPlatform() == Common::kPlatformDOS) ? (firstWallSet + 11) : (firstWallSet + 9);
+	int16 wallD0LIdx = firstWallSet + 8;
+	int16 wallD0RIdx = firstWallSet + 7;
+
+	_bitmapWallD3LCRFlipped = new byte[getPixelWidth(d3LcrIdx) * getPixelHeight(d3LcrIdx)];
+	_bitmapWallD2LCRFlipped = new byte[getPixelWidth(d2LcrIdx) * getPixelHeight(d2LcrIdx)];
+	_bitmapWallD1LCRFlipped = new byte[getPixelWidth(d1LcrIdx) * getPixelHeight(d1LcrIdx)];
+	_bitmapWallD0LFlipped = new byte[getPixelWidth(wallD0LIdx) * getPixelHeight(wallD0LIdx)];
+	_bitmapWallD0RFlipped = new byte[getPixelWidth(wallD0RIdx) * getPixelHeight(wallD0RIdx)];
 }
 
 void DisplayMan::drawDoorBitmap(Frame *frame) {
@@ -2860,22 +2867,29 @@ void DisplayMan::loadCurrentMapGraphics() {
 
 	_useByteBoxCoordinates = true;
 
+	int16 firstWallSet = (_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet;
+	int16 d3LcrIdx = (_vm->getPlatform() == Common::kPlatformDOS) ? (firstWallSet + 21) : (firstWallSet + 11);
+	int16 d2LcrIdx = (_vm->getPlatform() == Common::kPlatformDOS) ? (firstWallSet + 16) : (firstWallSet + 10);
+	int16 d1LcrIdx = (_vm->getPlatform() == Common::kPlatformDOS) ? (firstWallSet + 11) : (firstWallSet + 9);
+	int16 wallD0LIdx = firstWallSet + 8;
+	int16 wallD0RIdx = firstWallSet + 7;
+
 	copyBitmapAndFlipHorizontal(_bitmapWallD3LCRNative = _bitmapWallSetD3LCR, _tmpBitmap,
-									_frameWalls163[kDMViewSquareD3C]._srcByteWidth, _frameWalls163[kDMViewSquareD3C]._srcHeight);
-	fillBitmap(_bitmapWallD3LCRFlipped, kDMColorFlesh, 64, 51);
-	blitToBitmap(_tmpBitmap, _bitmapWallD3LCRFlipped, boxWallD3LCR, 11, 0, 64, 64, kDMColorNoTransparency, 51, 51);
+									getPixelWidth(d3LcrIdx) / 2, getPixelHeight(d3LcrIdx));
+	fillBitmap(_bitmapWallD3LCRFlipped, kDMColorFlesh, getPixelWidth(d3LcrIdx) / 2, getPixelHeight(d3LcrIdx));
+	blitToBitmap(_tmpBitmap, _bitmapWallD3LCRFlipped, boxWallD3LCR, 11, 0, getPixelWidth(d3LcrIdx) / 2, getPixelWidth(d3LcrIdx) / 2, kDMColorNoTransparency, getPixelHeight(d3LcrIdx), getPixelHeight(d3LcrIdx));
 
 	copyBitmapAndFlipHorizontal(_bitmapWallD2LCRNative = _bitmapWallSetD2LCR, _tmpBitmap,
-									_frameWalls163[kDMViewSquareD2C]._srcByteWidth, _frameWalls163[kDMViewSquareD2C]._srcHeight);
-	fillBitmap(_bitmapWallD2LCRFlipped, kDMColorFlesh, 72, 71);
-	blitToBitmap(_tmpBitmap, _bitmapWallD2LCRFlipped, boxWallD2LCR, 8, 0, 72, 72, kDMColorNoTransparency, 71, 71);
+									getPixelWidth(d2LcrIdx) / 2, getPixelHeight(d2LcrIdx));
+	fillBitmap(_bitmapWallD2LCRFlipped, kDMColorFlesh, getPixelWidth(d2LcrIdx) / 2, getPixelHeight(d2LcrIdx));
+	blitToBitmap(_tmpBitmap, _bitmapWallD2LCRFlipped, boxWallD2LCR, 8, 0, getPixelWidth(d2LcrIdx) / 2, getPixelWidth(d2LcrIdx) / 2, kDMColorNoTransparency, getPixelHeight(d2LcrIdx), getPixelHeight(d2LcrIdx));
 
 	copyBitmapAndFlipHorizontal(_bitmapWallD1LCRNative = _bitmapWallSetD1LCR, _bitmapWallD1LCRFlipped,
-									_frameWalls163[kDMViewSquareD1C]._srcByteWidth, _frameWalls163[kDMViewSquareD1C]._srcHeight);
+									getPixelWidth(d1LcrIdx) / 2, getPixelHeight(d1LcrIdx));
 	copyBitmapAndFlipHorizontal(_bitmapWallD0LNative = _bitmapWallSetWallD0L, _bitmapWallD0RFlipped,
-									_frameWalls163[kDMViewSquareD0L]._srcByteWidth, _frameWalls163[kDMViewSquareD0L]._srcHeight);
+									getPixelWidth(wallD0LIdx) / 2, getPixelHeight(wallD0LIdx));
 	copyBitmapAndFlipHorizontal(_bitmapWallD0RNative = _bitmapWallSetWallD0R, _bitmapWallD0LFlipped,
-									_frameWalls163[kDMViewSquareD0L]._srcByteWidth, _frameWalls163[kDMViewSquareD0L]._srcHeight);
+									getPixelWidth(wallD0RIdx) / 2, getPixelHeight(wallD0RIdx));
 
 	int16 val = dungeon._currMap->_wallSet * k18_StairsGraphicCount + k90_FirstStairs;
 	_stairsNativeBitmapIndexUpFrontD3L = val++;
