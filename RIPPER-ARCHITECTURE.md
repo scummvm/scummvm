@@ -611,10 +611,13 @@
   animation, `GB_TBL10` through `GB_TBL22` for gate states, `GB_TBL25` through
   `GB_TBL29` for activation indicators, and `GB_TBL30` through `GB_TBL34` for
   lever feedback. Lever controls use cursor 16, the two edge-exit controls use
-  cursor 7, Escape exits, and F1 opens help table `0x1a1` while the marker is
-  inactive. A traversal begins at node zero, accelerates from one to six pixels
-  per DOS tick, and sets the completion flag only after reaching the node whose
-  terminal link is `-2`; the other terminal link is `-1`.
+  cursor 7, and entry stores and dispatches default row 14 before activating
+  the UI-selection presentation. The active input loop presents every cursor
+  service tick, preserving the visible software cursor after `GBZ1.SMK` and
+  puzzle overlay redraws. Escape exits, and F1 opens help table `0x1a1` while
+  the marker is inactive. A traversal begins at node zero, accelerates from one
+  to six pixels per DOS tick, and sets the completion flag only after reaching
+  the node whose terminal link is `-2`; the other terminal link is `-1`.
 - Scene action 24 calls `RunTubeSwitchScene` at `0x25e18` with the
   caller-supplied completion flag. `GA1.RUN` callback `0xaf2` supplies flag 215
   (`solved vacuum tube puzzle`). The scene counts consumed inventory flags 102,
