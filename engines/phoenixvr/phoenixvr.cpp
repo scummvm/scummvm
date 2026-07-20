@@ -1828,7 +1828,7 @@ Common::Error PhoenixVREngine::run() {
 			case Common::EVENT_RBUTTONUP: {
 				if (!_hasFocus)
 					break;
-				if (_prevWarp != -1) {
+				if (_prevWarp != -1 && version() == 1) {
 					returnToWarp();
 					break;
 				}

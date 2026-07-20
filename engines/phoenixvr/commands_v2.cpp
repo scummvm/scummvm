@@ -94,7 +94,7 @@ struct Goto_Warp : public Command {
 	Common::String name;
 	Goto_Warp(const Common::Array<Common::String> &args) : name(args[0]) {}
 	void exec(ExecutionContext &ctx) const override {
-		g_engine->goToWarp(name);
+		g_engine->goToWarp(name, true);
 	}
 };
 
