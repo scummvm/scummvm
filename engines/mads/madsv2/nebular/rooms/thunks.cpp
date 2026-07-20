@@ -375,7 +375,8 @@ void Scene::Sequences::setMotion(int sequence_id, int flags,
 	kernel_seq_motion(sequence_id, flags, delta_x_times_100, delta_y_times_100);
 }
 
-void Scene::Sequences::updateTimeout(int old_sequence_id, int new_sequence_id) {
+void Scene::Sequences::updateTimeout(int new_sequence_id, int old_sequence_id) {
+	// ***WARNING***: params reversed
 	kernel_seq_timeout(old_sequence_id, new_sequence_id);
 }
 

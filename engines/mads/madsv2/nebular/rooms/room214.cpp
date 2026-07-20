@@ -87,7 +87,7 @@ static void room_214_daemon() {
 		{
 			int oldIdx = _globals._sequenceIndexes[3];
 			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 5, 0, 0);
-			_scene->_sequences.updateTimeout(oldIdx, _globals._sequenceIndexes[3]);
+			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], oldIdx);
 			_scene->_dynamicHotspots.add(words_captive_creature, words_walkto, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 5, 8);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 2);
@@ -99,7 +99,7 @@ static void room_214_daemon() {
 		{
 			int oldIdx = _globals._sequenceIndexes[3];
 			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
-			_scene->_sequences.updateTimeout(oldIdx, _globals._sequenceIndexes[3]);
+			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], oldIdx);
 			_scene->_dynamicHotspots.add(words_captive_creature, words_walkto, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 9, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 2);

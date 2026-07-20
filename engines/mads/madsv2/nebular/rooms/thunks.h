@@ -321,7 +321,7 @@ struct Scene {
 		void setMsgLayout(int sequence_id);
 		void setPosition(int sequence_id, const Common::Point &pt);
 		void setMotion(int sequence_id, int flags, int delta_x_times_100, int delta_y_times_100);
-		void updateTimeout(int old_sequence_id, int new_sequence_id);
+		void updateTimeout(int new_sequence_id, int old_sequence_id);		// ***WARNING***: params reversed
 		void scan();
 		int startCycle(int srcSpriteIdx, bool flipped, int cycleIndex);
 		void setDone(int sequence_id);
