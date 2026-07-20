@@ -391,6 +391,11 @@
   `KR.RUN` are entered with mask zero, so `RunFrontEndActionMenu` at `0x18b3a`
   creates no toolbar controls for either nested runtime. F1 still selects Cyber
   help table `0x1a4` through `PollInteractionAndResolveSelection` at `0x13c8d`.
+  Scene action 37 updates this 16-bit mask in place. The same polling function
+  passes it to `ResolveFrontEndActionIdFromInput` at `0x14001`, so mouse and
+  keyboard front-end actions share the enabled set. Main scene scripts use zero
+  to suppress the toolbar during automatic outcome presentations, `0xffff` to
+  restore every action, and `EH3.RUN` uses `0x1fd` to exclude scene selection.
   The carousel maps Left, Right, Enter, and Escape through the 16-bit keyboard
   command at interaction-record offset `+0x13`; scene action 9999 is its
   explicit nested-runtime terminator. Scene action 31 is an explicit no-op

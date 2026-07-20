@@ -256,7 +256,7 @@ static const char *sceneActionName(uint action) {
 	case 34: return "keypad sequence puzzle";
 	case 35: return "set UI selection index";
 	case 36: return "update UI selection";
-	case 37: return "set scene runtime value";
+	case kSceneActionSetFrontEndActionMask: return "set front-end action mask";
 	case 38: return "board game";
 	case 39: return "no-op";
 	case 40: return "KA dialogue scene";
@@ -556,7 +556,8 @@ ScriptManager::ScriptManager(RipperEngine *engine) : _engine(engine), _activeBa0
 		_awaitingBa0Interaction(false), _resumeLoadedPresentation(false),
 		_clearPreservedAudioOnTransition(false), _cyberActive(false),
 		_cyberExitRequested(false), _cyberKeyboardCommand(0), _sceneCallbackFrame(0),
-		_activeIdleMediaCallback(nullptr), _chooserTemplateMode(0) {
+		_activeIdleMediaCallback(nullptr), _chooserTemplateMode(0),
+		_frontEndActionMask(0xffff) {
 	_briefing = new BriefingManager(engine);
 	_dialogue = new DialogueChooser();
 }
@@ -591,12 +592,15 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 	Common::String concurrentEntry = serializer.isSaving() ? _concurrentEntryLabel : Common::String();
 	Common::String previousFrame = serializer.isSaving() ? _previousBa0FrameLabel : Common::String();
 	uint32 activeFrame = _activeBa0Frame;
+	uint16 frontEndActionMask = _frontEndActionMask;
 	byte awaitingInteraction = _awaitingBa0Interaction ? 1 : 0;
 	byte briefingArmed = _briefing->isArmed() ? 1 : 0;
 	uint32 briefingSelector = _briefing->getSelector();
 
 	serializer.syncString(ba0Member);
 	serializer.syncAsUint32LE(activeFrame);
+	if (serializer.getVersion() >= 4)
+		serializer.syncAsUint16LE(frontEndActionMask);
 	serializer.syncString(previousFrame);
 	serializer.syncString(concurrentMember);
 	serializer.syncString(concurrentEntry);
@@ -662,6 +666,7 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 	_concurrentEntryLabel = concurrentEntry;
 	_previousBa0FrameLabel = previousFrame;
 	_activeBa0Frame = activeFrame;
+	_frontEndActionMask = serializer.getVersion() >= 4 ? frontEndActionMask : 0xffff;
 	_awaitingBa0Interaction = awaitingInteraction != 0;
 	_briefing->restore(briefingArmed != 0, briefingSelector);
 	_pendingSceneMember.clear();
@@ -1373,6 +1378,16 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 					argument, script.getMemberName().c_str(), command.offset);
 				break;
 			}
+			if (action == kSceneActionSetFrontEndActionMask) {
+				// DispatchSceneEntryAction at 0x36892 stores the low 16 bits at
+				// SceneRuntime+0x183. PollInteractionAndResolveSelection at 0x13c8d
+				// passes that mask to both the front-end toolbar and key resolver.
+				_frontEndActionMask = (uint16)argument;
+				debugC(2, kDebugScene,
+					"Ripper: scene action 37 set front-end action mask=0x%04x script='%s' offset=0x%x",
+					_frontEndActionMask, script.getMemberName().c_str(), command.offset);
+				break;
+			}
 			if (action == kSceneActionKaDialogue) {
 				// DispatchKSceneActionBand at 0x36e84 preserves the Cyber menu
 				// runtime around RunKaDialogueScene at 0x2aef5, just as it does
@@ -1612,6 +1627,7 @@ bool ScriptManager::performPendingSceneTransition() {
 
 	_previousBa0FrameLabel.clear();
 	_activeBa0Frame = startFrame;
+	_frontEndActionMask = 0xffff;
 	_awaitingBa0Interaction = false;
 	_hoveredBa0Interaction = -1;
 	_engine->getCursor()->setVisible(false);
@@ -1885,7 +1901,7 @@ bool ScriptManager::serviceScene() {
 				return advanceBa0ToFrame(dialogueFrame);
 			}
 		}
-		if (!_cyberActive && _engine->getToolbar()->service(mouse)) {
+		if (!_cyberActive && _engine->getToolbar()->service(mouse, _frontEndActionMask)) {
 			if (!_pendingSceneMember.empty())
 				return performPendingSceneTransition();
 			_engine->getCursor()->setVisible(true);
@@ -1917,7 +1933,8 @@ bool ScriptManager::serviceScene() {
 		_hoveredBa0Interaction = -1;
 		return true;
 	}
-	if (!_cyberActive && !dialoguePending && _engine->getToolbar()->service(mouse)) {
+	if (!_cyberActive && !dialoguePending &&
+			_engine->getToolbar()->service(mouse, _frontEndActionMask)) {
 		if (!_pendingSceneMember.empty())
 			return performPendingSceneTransition();
 		_engine->getCursor()->update(kToolbarCursor);
@@ -2037,7 +2054,8 @@ bool ScriptManager::updateInteractiveCursor(const Common::Point &point, bool *fa
 		return false;
 	if (!_awaitingBa0Interaction || _activeBa0Frame >= _ba0.getFrames().size())
 		return false;
-	if (!_cyberActive && _engine->getToolbar()->service(_engine->getInput()->peekMouseState())) {
+	if (!_cyberActive && _engine->getToolbar()->service(
+			_engine->getInput()->peekMouseState(), _frontEndActionMask)) {
 		_engine->getCursor()->setVisible(true);
 		_engine->getCursor()->update(kToolbarCursor);
 		return true;
