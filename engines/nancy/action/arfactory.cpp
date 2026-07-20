@@ -63,6 +63,7 @@
 #include "engines/nancy/action/puzzle/onebuildpuzzle.h"
 #include "engines/nancy/action/puzzle/orderingpuzzle.h"
 #include "engines/nancy/action/puzzle/overridelockpuzzle.h"
+#include "engines/nancy/action/puzzle/pachinkopuzzle.h"
 #include "engines/nancy/action/puzzle/passwordpuzzle.h"
 #include "engines/nancy/action/puzzle/peepholepuzzle.h"
 #include "engines/nancy/action/puzzle/pegspuzzle.h"
@@ -496,9 +497,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 174:
 		return new ScalePuzzle();	// balance scale
 	case 175:
-		// PachinkoPuzzle (ball drop)
-		// TODO: not yet implemented
-		return nullptr;
+		return new PachinkoPuzzle();	// ball drop / pinball
 	case 176:
 		return new DropSortPuzzle();	// conveyor-belt candy sorting
 	// -- Nancy14 new puzzles (types 177-182) --

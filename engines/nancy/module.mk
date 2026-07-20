@@ -47,6 +47,7 @@ MODULE_OBJS = \
   action/puzzle/onebuildpuzzle.o \
   action/puzzle/orderingpuzzle.o \
   action/puzzle/overridelockpuzzle.o \
+  action/puzzle/pachinkopuzzle.o \
   action/puzzle/passwordpuzzle.o \
   action/puzzle/peepholepuzzle.o \
   action/puzzle/pegspuzzle.o \
