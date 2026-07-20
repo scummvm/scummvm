@@ -164,31 +164,28 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 			_currentWarp->tests.push_back(_currentTest);
 			if (!_conditionals.empty())
 				error("condition didn't have endif at the last test at line %d", lineno);
-			_testScope.reset();
 		} else if (p.maybe("ifand]:")) {
 			if (!_currentTest)
 				error("ifand without test at line %d", lineno);
 			ConditionalPtr conditional(new IfAnd(p.readStringList()));
 			conditional->trueScope.reset(new Scope);
-			_conditionalScope = conditional->trueScope;
-			_conditionals.push_back(Common::move(conditional));
+			_conditionals.push_back({conditional, conditional->trueScope});
 		} else if (p.maybe("ifor]:")) {
 			if (!_currentTest)
 				error("ifor without test at line %d", lineno);
 			ConditionalPtr conditional(new IfOr(p.readStringList()));
 			conditional->trueScope.reset(new Scope);
-			_conditionalScope = conditional->trueScope;
-			_conditionals.push_back(Common::move(conditional));
+			_conditionals.push_back({conditional, conditional->trueScope});
 		} else if (p.maybe("else]")) {
 			if (!_currentTest)
 				error("else without test at line %d", lineno);
 			if (_conditionals.empty())
 				error("else without conditional at line %d", lineno);
-			auto &conditional = _conditionals.back();
-			if (conditional->falseScope)
+			auto &top = _conditionals.back();
+			if (top.conditional->falseScope)
 				error("double else in condition at line %d", lineno);
-			conditional->falseScope.reset(new Scope());
-			_conditionalScope = conditional->falseScope;
+			top.conditional->falseScope.reset(new Scope());
+			top.scope = top.conditional->falseScope;
 		} else if (p.maybe("endif]")) {
 			if (!_currentTest)
 				error("endif without test at line %d", lineno);
@@ -196,14 +193,12 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 				error("endif without conditional at line %d", lineno);
 			auto conditional = _conditionals.back();
 			_conditionals.pop_back();
-			_conditionalScope.reset();
-			_currentTest->scope.commands.push_back(Common::move(conditional));
+			topScope().commands.push_back(Common::move(conditional.conditional));
 		} else if (p.maybe("clic]")) {
 			if (!_conditionals.empty())
 				error("[clic] inside conditional at line %d", lineno);
 			if (!_currentTest)
 				error("[clic] without test at line %d", lineno);
-			_testScope.reset();
 		} else if (p.maybe("in]")) {
 			if (!_conditionals.empty())
 				error("[in] inside conditional at line %d", lineno);
@@ -212,7 +207,6 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 			if (_currentTest->enter)
 				error("duplicate [in] handler");
 			_currentTest->enter.reset(new Scope);
-			_testScope = _currentTest->enter;
 		} else if (p.maybe("out]")) {
 			if (!_conditionals.empty())
 				error("[out] inside conditional at line %d", lineno);
@@ -221,7 +215,6 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 			if (_currentTest->leave)
 				error("duplicate [out] handler");
 			_currentTest->leave.reset(new Scope);
-			_testScope = _currentTest->leave;
 		} else {
 			error("invalid [] directive on line %u: %s", lineno, line.c_str());
 		}
@@ -240,8 +233,7 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 		} else
 			error("invalid syntax at %d", lineno);
 
-		auto &commands = _conditionalScope ? _conditionalScope->commands : _testScope ? _testScope->commands
-																					  : _currentTest->scope.commands;
+		auto &commands = topScope().commands;
 		if (command)
 			commands.push_back(command);
 	} else {

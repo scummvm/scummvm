@@ -51,9 +51,15 @@ public:
 private:
 	WarpPtr _currentWarp;
 	TestPtr _currentTest;
-	Common::Array<ConditionalPtr> _conditionals;
-	ScopePtr _conditionalScope;
-	ScopePtr _testScope;
+	struct ConditionalScope {
+		ConditionalPtr conditional;
+		ScopePtr scope;
+	};
+	Common::Array<ConditionalScope> _conditionals;
+
+	Scope &topScope() const {
+		return !_conditionals.empty() ? *_conditionals.back().scope : _currentTest->scope;
+	}
 
 private:
 	void parseLine(const Common::String &line, uint lineno) override;
