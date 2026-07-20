@@ -149,7 +149,7 @@ private:
 	void drawOverlay(const Common::Point &point, bool targetActive);
 	void drawFrameScaled(byte *screen, uint pitch, const BitmapAssetFrame &frame,
 		int x, int y) const;
-	void drawMeters(byte *screen, uint pitch) const;
+	void drawMeters(byte *screen, uint pitch, int panelX) const;
 	void drawCrosshair(byte *screen, uint pitch, const Common::Point &point) const;
 	void drawEffects(byte *screen, uint pitch) const;
 	uint16 serviceKeyboard();
@@ -187,6 +187,7 @@ private:
 	bool _weaponHeld;
 	bool _singleShotReady;
 	bool _shieldHeld;
+	bool _overlayLogged;
 	PaletteEffect _paletteEffect;
 	Result _encounterResult;
 };
