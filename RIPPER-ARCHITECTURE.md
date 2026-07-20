@@ -537,6 +537,23 @@
   223 (`solved wofford table puzzle`), tests it after the puzzle returns, and
   selects the success frame only when that flag is set. Escape and failed
   marker traversals return without setting it.
+- Scene action 9 calls `RunGcCshFourChoiceSequencePuzzleScene` at `0x38871`
+  with the caller-supplied completion flag. `GC1.RUN` callback `0x409`
+  supplies milestone 224 (`solved cash register puzzle`) after presenting
+  `GCZ1.SMK`; the next callback selects `GC_CSH_O.SMK` only when that flag is
+  set, otherwise it presents `GCU1.SMK` and returns to the zoom interaction.
+- The GC/CSH puzzle creates controls `0x672` through `0x675` from the rectangle
+  table at `0x84700`, uses cursor 16 over the four choices and cursor 7 over its
+  two Escape regions, and opens help resource `0x1a3` on F1. Each choice plays
+  `CSH_SND0.WAV`, presents the matching `GC_CSH0.AVI` through `GC_CSH3.AVI`
+  at scene-space `(0, 64)` (physical `(0, 114)`), starts `CSH_SND1.WAV`, and
+  animates its six `GC_CSHn0.BBM` through
+  `GC_CSHn5.BBM` frames into the next slot from the table at `0x846ec`. The
+  zero-based solution is `[1, 2, 3, 1]`. Every four-choice sequence rewinds
+  and restores the captured 98-by-5 backing strip at physical `(421, 101)`;
+  an incorrect sequence continues afterward, while a match sets the supplied
+  completion flag and exits. Escape performs the same rewind for a partial
+  sequence before exiting.
 - The table-gate puzzle loads `TBLINI1.INI` through `TBLINI3.INI` according to
   the configured puzzle level. Each file supplies thirteen initial gate states,
   five gate indices for each of five levers, the number of lever activations
