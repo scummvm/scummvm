@@ -38,6 +38,7 @@ const DebugChannelDef RipperMetaEngineDetection::debugFlagList[] = {
 	{ Ripper::kDebugMilestones, "milestones", "Persistent progress flags and gate state" },
 	{ Ripper::kDebugPuzzles, "puzzles", "Puzzle loading, interaction, and completion state" },
 	{ Ripper::kDebugCyber, "cyber", "Cyber transition, carousel, and nested runtime state" },
+	{ Ripper::kDebugCombat, "combat", "Combat encounter resources, input, meters, and effects" },
 	DEBUG_CHANNEL_END
 };
 

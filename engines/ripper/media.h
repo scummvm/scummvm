@@ -50,6 +50,8 @@ public:
 	virtual uint16 service(uint frame) = 0;
 	virtual bool continueAfterEnd() const { return false; }
 	virtual bool ownsInput() const { return false; }
+	virtual bool managesPalette() const { return false; }
+	virtual void transformPalette(byte *palette, uint colorCount) const {}
 };
 
 class MediaPlayer {
@@ -69,11 +71,14 @@ public:
 		uint volumePercent = 100, bool loop = false);
 	bool isSoundEffectActive(const Audio::SoundHandle &handle) const;
 	bool stopSoundEffect(Audio::SoundHandle &handle);
+	void setSoundEffectVolume(Audio::SoundHandle &handle, uint volumePercent);
 	bool playPuzzleSequence(const Common::String &path, uint loopStartFrame,
 		MediaSequenceCallback *callback, uint16 *command = nullptr);
 	bool playPuzzleSequenceSegment(const Common::String &path, uint firstFrame,
 		uint lastFrame, int x, int y, MediaSequenceCallback *callback,
 		uint16 *command = nullptr, uint boundedLoopStartFrame = 0xffffffff);
+	bool playCombatSequence(const Common::String &path,
+		MediaSequenceCallback *callback, uint16 *command = nullptr);
 	void fadePalette(bool fadeIn, uint stepCount);
 	bool playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
 		bool loopUntilInput = false, bool allowEscSpace = false,

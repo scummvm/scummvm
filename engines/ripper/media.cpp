@@ -1027,6 +1027,16 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			applyDecoderPalette(true);
 			sequencePaletteRefresh = false;
 		}
+		if (sequenceCallback && sequenceCallback->managesPalette()) {
+			byte palette[256 * 3];
+			// RunCombatEncounterScene at 0x31436 derives its temporary hit and
+			// shield palettes from the active Smacker palette on every frame.
+			// Rebuild that base before asking the encounter callback to transform it.
+			applyDecoderPalette(true);
+			g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+			sequenceCallback->transformPalette(palette, 256);
+			g_system->getPaletteManager()->setPalette(palette, 0, 256);
+		}
 		g_system->updateScreen();
 		debugC(11, kDebugVideo,
 			"Ripper: presented interactive Smacker '%s' after callback frame=%u paletteRefresh=%d stop=%d",
@@ -1648,6 +1658,11 @@ bool MediaPlayer::stopSoundEffect(Audio::SoundHandle &handle) {
 	return active;
 }
 
+void MediaPlayer::setSoundEffectVolume(Audio::SoundHandle &handle, uint volumePercent) {
+	_mixer->setChannelVolume(handle,
+		(byte)(MIN<uint>(volumePercent, 100) * Audio::Mixer::kMaxChannelVolume / 100));
+}
+
 bool MediaPlayer::isSoundEffectActive(const Audio::SoundHandle &handle) const {
 	return _mixer->isSoundHandleActive(handle);
 }
@@ -1712,6 +1727,35 @@ bool MediaPlayer::playPuzzleSequenceSegment(const Common::String &path, uint fir
 		0, 0, 1, true, 0, kScenePresentationTop, false, false, false, nullptr,
 		0, callback, command, nullptr, true, firstFrame, lastFrame,
 		boundedLoopStartFrame);
+}
+
+bool MediaPlayer::playCombatSequence(const Common::String &path,
+		MediaSequenceCallback *callback, uint16 *command) {
+	Common::File *file = new Common::File();
+	if (!file->open(Common::Path(path))) {
+		warning("Ripper: could not open combat media sequence '%s'", path.c_str());
+		delete file;
+		return false;
+	}
+
+	byte magic[4];
+	if (!readExact(*file, magic, sizeof(magic))) {
+		delete file;
+		return false;
+	}
+	file->seek(0);
+	if (memcmp(magic, "SMK2", 4) != 0 && memcmp(magic, "SMK4", 4) != 0) {
+		warning("Ripper: unsupported combat media sequence '%s'", path.c_str());
+		delete file;
+		return false;
+	}
+
+	debugC(1, kDebugVideo,
+		"Ripper: entering combat Smacker sequence media='%s' callback=%d",
+		path.c_str(), callback != nullptr);
+	return playSmacker(file, path, false, 0, 0, nullptr, nullptr, nullptr,
+		0, 0, kAutoPacketizedDisplayScale, false, 0, 0, false, false, false,
+		nullptr, 0, callback, command, nullptr, false);
 }
 
 bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool firstFrameOnly,

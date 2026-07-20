@@ -2,6 +2,8 @@ MODULE := engines/ripper
 
 MODULE_OBJS := \
 	briefing.o \
+	combat/combat.o \
+	combat/mechini.o \
 	cursor.o \
 	cyber.o \
 	dialogue.o \
