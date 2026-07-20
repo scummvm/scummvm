@@ -1204,15 +1204,110 @@ void DisplayMan::loadIntoBitmap(uint16 index, byte *destBitmap) {
 	}
 }
 
+bool DisplayMan::getBitmapDimensions(const byte *bitmap, uint16 &width, uint16 &height) {
+	if (bitmap == nullptr)
+		return false;
+
+	int16 firstWallSet = (_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet;
+
+	if (bitmap == _bitmapWallSetD3LCR) {
+		int16 idx = (_vm->getPlatform() == Common::kPlatformDOS) ? (firstWallSet + 21) : (firstWallSet + 11);
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+	if (bitmap == _bitmapWallSetD2LCR) {
+		int16 idx = (_vm->getPlatform() == Common::kPlatformDOS) ? (firstWallSet + 16) : (firstWallSet + 10);
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+	if (bitmap == _bitmapWallSetD1LCR) {
+		int16 idx = (_vm->getPlatform() == Common::kPlatformDOS) ? (firstWallSet + 11) : (firstWallSet + 9);
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+	if (bitmap == _bitmapWallSetWallD0L) {
+		int16 idx = firstWallSet + 8;
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+	if (bitmap == _bitmapWallSetWallD0R) {
+		int16 idx = firstWallSet + 7;
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+	if (bitmap == _bitmapWallSetD3L2 || bitmap == _bitmapWallSetD3R2) {
+		int16 idx = (_vm->getPlatform() == Common::kPlatformDOS) ? (firstWallSet + 18) : (firstWallSet + 12);
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+	if (bitmap == _bitmapWallSetDoorFrameFront) {
+		int16 idx = firstWallSet + 0;
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+	if (bitmap == _bitmapWallSetDoorFrameLeftD1C || bitmap == _bitmapWallSetDoorFrameRightD1C) {
+		int16 idx = firstWallSet + 1;
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+	if (bitmap == _bitmapWallSetDoorFrameLeftD2C) {
+		int16 idx = firstWallSet + 2;
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+	if (bitmap == _bitmapWallSetDoorFrameLeftD3C) {
+		int16 idx = firstWallSet + 3;
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+	if (bitmap == _bitmapWallSetDoorFrameLeftD3L) {
+		int16 idx = firstWallSet + 4;
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+	if (bitmap == _bitmapWallSetDoorFrameTopD1LCR) {
+		int16 idx = firstWallSet + 5;
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+	if (bitmap == _bitmapWallSetDoorFrameTopD2LCR) {
+		int16 idx = firstWallSet + 6;
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+	return false;
+}
+
 void DisplayMan::blitToBitmap(byte *srcBitmap, byte *destBitmap, const Box &box, uint16 srcX, uint16 srcY, uint16 srcByteWidth,
 								   uint16 destByteWidth, Color transparent, int16 srcHeight, int16 destHight) {
 	uint16 srcWidth = srcByteWidth * 2;
+	uint16 actualWidth = srcWidth;
+	uint16 actualHeight = srcHeight;
+	uint16 lookupWidth, lookupHeight;
+	if (getBitmapDimensions(srcBitmap, lookupWidth, lookupHeight)) {
+		actualWidth = lookupWidth;
+		actualHeight = lookupHeight;
+	}
+
 	uint16 destWidth = destByteWidth * 2;
 	for (uint16 y = 0; y < box._rect.bottom + 1 - box._rect.top; ++y) { // + 1 for inclusive boundaries
 		for (uint16 x = 0; x < box._rect.right + 1 - box._rect.left; ++x) { // + 1 for inclusive boundaries
-			if (srcX + x < srcWidth && y + srcY < srcHeight
+			if (srcX + x < actualWidth && y + srcY < actualHeight
 				&& box._rect.left + x < destWidth && y + box._rect.top < destHight) {
-				byte srcPixel = srcBitmap[srcWidth * (y + srcY) + srcX + x];
+				byte srcPixel = srcBitmap[actualWidth * (y + srcY) + srcX + x];
 				if (srcPixel != transparent)
 					destBitmap[destWidth * (y + box._rect.top) + box._rect.left + x] = srcPixel;
 			}

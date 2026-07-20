@@ -740,6 +740,8 @@ public:
 	uint16 getPixelWidth(uint16 index);
 	/// Gives the height of an IMG1 type item
 	uint16 getPixelHeight(uint16 index);
+	/// Looks up actual decompressed dimensions of a display bitmap buffer
+	bool getBitmapDimensions(const byte *bitmap, uint16 &width, uint16 &height);
 
 	void copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height); // @ F0099_DUNGEONVIEW_CopyBitmapAndFlipHorizontal
 	void drawFloorOrnament(uint16 floorOrnOrdinal, ViewFloor viewFloorIndex); // @ F0108_DUNGEONVIEW_DrawFloorOrnament
