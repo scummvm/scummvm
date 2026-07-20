@@ -44,10 +44,16 @@ RegionSet::RegionSet(Common::SeekableReadStream &s, bool vr) {
 			auto c = s.readFloatLE();
 			auto d = s.readFloatLE();
 			if (!vr) {
-				a = (a + 0.89f) * 360;
-				b = (b + 0.89f) * 360;
-				c = (2.25f - c) * 360;
-				d = (2.25f - d) * 360;
+				auto cx = g_system->getWidth() / 2, cy = g_system->getHeight() / 2;
+				static constexpr float kFocal = 350.0f;
+				auto left = cx + static_cast<int>(tan(a) * kFocal);
+				auto right = cx + static_cast<int>(tan(b) * kFocal);
+				auto top = cy + static_cast<int>(kFocal / tan(c) / cos(a));
+				auto bottom = cy + static_cast<int>(kFocal / tan(d) / cos(b));
+				a = left;
+				b = right;
+				c = top;
+				d = bottom;
 			}
 			_regions.push_back(Region{MIN(a, b), MAX(a, b), MIN(c, d), MAX(c, d)});
 			debug("region %s", _regions.back().toString().c_str());
