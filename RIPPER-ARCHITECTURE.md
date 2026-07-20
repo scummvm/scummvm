@@ -532,7 +532,9 @@
   (554, 223). Cursor 16 owns that switch, cursor 7 owns the exit region
   (115, 115)-(515, 325), and Escape exits without setting the completion flag.
 - `RunTubeSwitchScene` plays frames 0 through 45 when the switch is turned on,
-  then repeats frames 15 through 45 while power remains on. Turning it off
+  then seeks the same active Smacker decoder back to frame 15 and repeats
+  frames 15 through 45 while power remains on. Retaining that decoder preserves
+  the delta-coded frame surface and palette across the loop. Turning it off
   stops `TUBE1.WAV` and plays frames 46 through 59. With all three tubes
   installed, reaching frame 46 presents `TUBE_WIN.AVI` and sets the supplied
   completion flag. The scene restricts `RunFrontEndActionMenu` to mask `0x84`,

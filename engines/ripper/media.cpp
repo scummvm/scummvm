@@ -886,7 +886,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		bool repeatedLoopPass, bool *advanceSegment, uint loopStartFrame,
 		MediaSequenceCallback *sequenceCallback, uint16 *sequenceCommand,
 		Common::Array<byte> *sourcePalette, bool rememberVideoPalette,
-		uint firstFrame, uint lastFrame) {
+		uint firstFrame, uint lastFrame, uint boundedLoopStartFrame) {
 	if (stoppedByUser)
 		*stoppedByUser = false;
 	if (advanceSegment)
@@ -899,10 +899,13 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		return false;
 	}
 	const bool boundedSegment = firstFrame != 0 || lastFrame != 0xffffffff;
+	const bool boundedLoop = boundedLoopStartFrame != 0xffffffff;
 	if (lastFrame == 0xffffffff)
 		lastFrame = decoder.getFrameCount() - 1;
 	if (decoder.getFrameCount() == 0 || firstFrame > lastFrame ||
-			lastFrame >= decoder.getFrameCount()) {
+			lastFrame >= decoder.getFrameCount() ||
+			(boundedLoop && (!boundedSegment || boundedLoopStartFrame < firstFrame ||
+				boundedLoopStartFrame > lastFrame))) {
 		warning("Ripper: invalid Smacker segment '%s' frames=%u..%u count=%u",
 			name.c_str(), firstFrame, lastFrame, decoder.getFrameCount());
 		return false;
@@ -1031,9 +1034,15 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		return stopSequence;
 	};
 	if (firstFrame != 0) {
-		const Graphics::Surface *frame = decoder.forceSeekToFrame(firstFrame);
-		if (!frame) {
-			warning("Ripper: could not seek Smacker '%s' to bounded segment frame=%u",
+		// RunTubeSwitchScene at 0x25e18 advances a newly loaded GA_TUBE decoder
+		// through frames 0..14 before presenting frame 15. Decode from the start
+		// here as well so delta-coded pixels and palette entries are based on the
+		// complete initial surface rather than a blank seek surface.
+		const Graphics::Surface *frame = nullptr;
+		while (decoder.getCurFrame() < (int)firstFrame && !decoder.endOfVideo())
+			frame = decoder.decodeNextFrame();
+		if (!frame || decoder.getCurFrame() != (int)firstFrame) {
+			warning("Ripper: could not advance Smacker '%s' to bounded segment frame=%u",
 				name.c_str(), firstFrame);
 			decoder.close();
 			return false;
@@ -1171,6 +1180,28 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 						finishSequenceFramePresentation(decoder.getCurFrame() + 1))
 					break;
 				if (boundedSegment && (uint)decoder.getCurFrame() >= lastFrame) {
+					if (boundedLoop) {
+						// SeekSmackerPlaybackFrame in RunTubeSwitchScene reuses the
+						// active decoder at frame 46 and resumes from frame 15. Keeping
+						// this decoder alive preserves its delta surface and palette.
+						const Graphics::Surface *loopFrame =
+							decoder.forceSeekToFrame(boundedLoopStartFrame);
+						if (!loopFrame) {
+							warning("Ripper: could not loop bounded Smacker '%s' to frame=%u",
+								name.c_str(), boundedLoopStartFrame);
+							completed = false;
+							break;
+						}
+						presentFrame(loopFrame, true);
+						++presentedFrames;
+						debugC(3, kDebugVideo,
+							"Ripper: looped bounded Smacker '%s' frame=%u after endFrame=%u",
+							name.c_str(), boundedLoopStartFrame, lastFrame);
+						if (sequenceCallback &&
+								finishSequenceFramePresentation(boundedLoopStartFrame + 1))
+							break;
+						continue;
+					}
 					debugC(2, kDebugVideo,
 						"Ripper: completed bounded Smacker segment '%s' frame=%u..%u",
 						name.c_str(), firstFrame, lastFrame);
@@ -1651,7 +1682,8 @@ bool MediaPlayer::playPuzzleSequence(const Common::String &path, uint loopStartF
 }
 
 bool MediaPlayer::playPuzzleSequenceSegment(const Common::String &path, uint firstFrame,
-		uint lastFrame, int x, int y, MediaSequenceCallback *callback, uint16 *command) {
+		uint lastFrame, int x, int y, MediaSequenceCallback *callback, uint16 *command,
+		uint boundedLoopStartFrame) {
 	Common::File *file = new Common::File();
 	if (!file->open(Common::Path(path))) {
 		warning("Ripper: could not open puzzle media segment '%s'", path.c_str());
@@ -1672,11 +1704,14 @@ bool MediaPlayer::playPuzzleSequenceSegment(const Common::String &path, uint fir
 	}
 
 	debugC(1, kDebugVideo,
-		"Ripper: entering puzzle Smacker segment media='%s' frames=%u..%u position=%d,%d callback=%d",
-		path.c_str(), firstFrame, lastFrame, x, y, callback != nullptr);
+		"Ripper: entering puzzle Smacker segment media='%s' frames=%u..%u loopStart=%d position=%d,%d callback=%d",
+		path.c_str(), firstFrame, lastFrame,
+		boundedLoopStartFrame == 0xffffffff ? -1 : (int)boundedLoopStartFrame,
+		x, y, callback != nullptr);
 	return playSmacker(file, path, false, x, y, nullptr, nullptr, nullptr,
 		0, 0, 1, true, 0, kScenePresentationTop, false, false, false, nullptr,
-		0, callback, command, nullptr, true, firstFrame, lastFrame);
+		0, callback, command, nullptr, true, firstFrame, lastFrame,
+		boundedLoopStartFrame);
 }
 
 bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool firstFrameOnly,

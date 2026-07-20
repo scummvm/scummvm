@@ -320,15 +320,18 @@ uint16 TubeScene::service(uint frame) {
 	return command;
 }
 
-bool TubeScene::playSegment(uint firstFrame, uint lastFrame, uint16 &command) {
+bool TubeScene::playSegment(uint firstFrame, uint lastFrame, uint16 &command,
+		uint loopStartFrame) {
 	command = 0;
 	_secondaryCuePending = firstFrame <= 15 && lastFrame >= 15;
 	const Common::String media = Common::String::format("ga_tube%u.smk", _tubeCount + 1);
 	const bool result = _engine->getMedia()->playPuzzleSequenceSegment(media,
-		firstFrame, lastFrame, kSceneMediaX, kSceneMediaY, this, &command);
+		firstFrame, lastFrame, kSceneMediaX, kSceneMediaY, this, &command,
+		loopStartFrame);
 	debugC(result ? 2 : 1, kDebugScene,
-		"Ripper: tube scene media segment='%s' frames=%u..%u command=0x%04x result=%d",
-		media.c_str(), firstFrame, lastFrame, command, result);
+		"Ripper: tube scene media segment='%s' frames=%u..%u loopStart=%d command=0x%04x result=%d",
+		media.c_str(), firstFrame, lastFrame,
+		loopStartFrame == 0xffffffff ? -1 : (int)loopStartFrame, command, result);
 	return result;
 }
 
@@ -371,7 +374,8 @@ TubeScene::Result TubeScene::run(uint completionFlag) {
 					previousCount, _tubeCount);
 			}
 			command = 0;
-			if (!playSegment(_switchOn ? 15 : 0, _switchOn ? 45 : 0, command)) {
+			if (!playSegment(_switchOn ? 15 : 0, _switchOn ? 45 : 0, command,
+					_switchOn && _tubeCount <= 2 ? 15 : 0xffffffff)) {
 				result = kLoadFailed;
 				break;
 			}
@@ -391,7 +395,8 @@ TubeScene::Result TubeScene::run(uint completionFlag) {
 				_switchOn = true;
 				playCue(0);
 				animateSwitch(true);
-				if (!playSegment(0, 45, command)) {
+				if (!playSegment(0, 45, command,
+						_tubeCount <= 2 ? 15 : 0xffffffff)) {
 					result = kLoadFailed;
 					break;
 				}
@@ -409,7 +414,8 @@ TubeScene::Result TubeScene::run(uint completionFlag) {
 			continue;
 		}
 		if (_switchOn) {
-			if (!playSegment(15, 45, command)) {
+			if (!playSegment(15, 45, command,
+					_tubeCount <= 2 ? 15 : 0xffffffff)) {
 				result = kLoadFailed;
 				break;
 			}
