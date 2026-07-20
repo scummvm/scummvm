@@ -2010,6 +2010,7 @@ int kernel_message_add(char *text, int x, int y, int color,
 	int id = -1;
 	int count;
 	KernelMessagePtr my_message = NULL;
+	assert(text);
 
 	for (count = 0; (id < 0) && (count < KERNEL_MAX_MESSAGES); count++) {
 		my_message = &kernel_message[count];

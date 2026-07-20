@@ -106,7 +106,7 @@ static void room_407_parser() {
 			_vm->_sound->command(21);
 			_scene->loadAnimation(formAnimName('s', 1), 70);
 			_globals[kHasBeenScanned] = true;
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, _game.getQuote(60));
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, _game.getQuote(592));
 			_vm->_sound->command(22);
 		}
 
