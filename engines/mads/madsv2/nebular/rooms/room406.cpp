@@ -245,7 +245,7 @@ void room_406_preload() {
 	room_init_code_pointer = room_406_init;
 	room_pre_parser_code_pointer = room_406_pre_parser;
 	room_parser_code_pointer = room_406_parser;
-	room_daemon_code_pointer = room_406_parser;
+	room_daemon_code_pointer = room_406_daemon;
 
 	section_4_walker();
 	section_4_interface();
