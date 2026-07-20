@@ -36,7 +36,7 @@ namespace Ripper {
 namespace {
 
 static const char kRipperSaveMagic[] = { 'R', 'S', 'A', 'V' };
-static const uint32 kRipperSaveVersion = 3;
+static const uint32 kRipperSaveVersion = 4;
 static const uint32 kRipperMinimumSaveVersion = 2;
 static const uint16 kScreenWidth = 640;
 static const uint16 kScreenHeight = 400;

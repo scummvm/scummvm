@@ -93,6 +93,7 @@ enum SceneAction {
 	kSceneActionClearDisplay = 32,
 	kSceneActionSetUiSelectionIndex = 35,
 	kSceneActionDispatchUiSelection = 36,
+	kSceneActionSetFrontEndActionMask = 37,
 	kSceneActionKaDialogue = 40,
 	kSceneActionKbProgram = 41,
 	kSceneActionKcOrWoffordProgram = 42,
@@ -261,6 +262,7 @@ private:
 	uint _sceneCallbackFrame;
 	IdleMediaCallback *_activeIdleMediaCallback;
 	byte _chooserTemplateMode;
+	uint16 _frontEndActionMask;
 	BriefingManager *_briefing;
 	DialogueChooser *_dialogue;
 };
