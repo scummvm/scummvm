@@ -5067,6 +5067,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("gobliiins5-1", "Gobliiins5-Part1.ags", "41513db1bd8870e43426b9e94bb26ad1", 171800709),
 	// Gobliiins Collection release 2026-05-27
 	GAME_ENTRY_PLATFORM("gobliiins5", "Gobliiins5.ags", "58c44c065cbdbddf83e9535ef17ed51f", 281472880, "Switch"),
+	// Gobliiins Collection release 2026-0?-?? v1.0.5 update
+	GAME_ENTRY_PLATFORM("gobliiins5", "Gobliiins5.ags", "8796d0826649a3e6920d799cf7f472bb", 281555704, "Switch"),
 
 
 	// Itch.io v? release 2026-02-10

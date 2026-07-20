@@ -43,6 +43,7 @@ private:
 	void SetPixelPerfect(ScriptMethodParams &params);
 	void SetTextureFilteringType(ScriptMethodParams &params);
 	void EnableCheats(ScriptMethodParams &params);
+	void IsAnyJoyconMouseInContact(ScriptMethodParams &params);
 
 public:
 	AGSConsoleSysPlugin() : PluginBase() {}
