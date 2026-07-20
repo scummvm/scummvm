@@ -483,6 +483,17 @@ int buffer_legal(const Buffer &special, int orig_wrap,
 	const byte *ptr = special.data + y1 * special.x + (x1 >> 1);
 	uint nibble_pos = 2 - (x1 & 1);
 
+	// The accumulator's threshold/step (x_count, y_count) are both inflated by one
+	// to make the loop cover x1..x2 and y1..y2 inclusively, which means the total
+	// number of row-steps it performs over the full sweep works out to y_count
+	// (= delta_y + 1) rather than delta_y - one more than actually needed to walk
+	// from y1 to y2. That extra step is harmless while it lands on an in-bounds
+	// row, but when y1/y2 sit right at the edge of the surface it steps one row
+	// past the end. Treat stepping off the surface as "no special zone" instead
+	// of reading out of bounds.
+	const byte *bufStart = special.data;
+	const byte *bufEnd = special.data + (long)special.x * special.y;
+
 	for (int col = x_count; col > 0; col--) {
 		dAccum += y_count;
 
@@ -497,13 +508,18 @@ int buffer_legal(const Buffer &special, int orig_wrap,
 
 			dAccum -= x_count;
 			ptr += y_sign;
+			if (ptr < bufStart || ptr >= bufEnd)
+				return 0;
 			code = (*ptr >> ((nibble_pos - 1) * 4)) & 0x0f;
 		}
 
 		// Advance one pixel in X
 		uint new_np = ((nibble_pos - x_sign - 1) & 1) + 1;
-		if ((nibble_pos - x_sign - 1) & ~1)
+		if ((nibble_pos - x_sign - 1) & ~1) {
 			ptr += x_sign;
+			if (ptr < bufStart || ptr >= bufEnd)
+				return 0;
+		}
 		nibble_pos = new_np;
 	}
 
