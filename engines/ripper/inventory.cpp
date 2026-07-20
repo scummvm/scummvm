@@ -67,7 +67,6 @@ static const int kRightPadding = 28;
 static const int kItemImageInset = 12;
 static const int kItemTextInset = 78;
 static const byte kContentColor = 0;
-static const byte kHeadingColor = 250;
 static const byte kNormalTextColor = 251;
 static const byte kSelectedTextColor = 254;
 static const byte kButtonColor = 253;
@@ -362,10 +361,9 @@ void Inventory::draw(bool usePressed, bool donePressed) const {
 	}
 	byte *pixels = (byte *)screen->getPixels();
 	drawFrame(pixels, screen->pitch, _menuBounds);
-	for (int y = _menuBounds.top + 2;
-			y < _menuBounds.top + kHeadingHeight; ++y)
-		memset(screen->getBasePtr(_menuBounds.left + kLeftPadding, y),
-			kHeadingColor, _menuBounds.width() - kLeftPadding - kRightPadding);
+	// DrawPromptChooserTemplateLabelCallback at 0x16d0f confines its title
+	// pass to the label strip over the tiled MNU frame. Preserve those frame
+	// pixels here instead of replacing the full heading interior.
 	for (int y = _menuBounds.top + kHeadingHeight;
 			y < _menuBounds.bottom - kBottomPadding; ++y)
 		memset(screen->getBasePtr(_menuBounds.left + kLeftPadding, y),
