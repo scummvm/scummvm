@@ -183,7 +183,11 @@ uint16 InputManager::consumeKey() {
 void InputManager::drainKeys() {
 	const int count = _pendingKeys.size();
 	_pendingKeys.clear();
-	debugC(2, kDebugInput, "Ripper: drained %d pending keyboard commands", count);
+	// Blocking original loops, including the action-9 GC/CSH chooser at
+	// 0x38871, drain after every empty poll. Keep that input ordering without
+	// flooding normal diagnostics while the loop waits for a mouse selection.
+	debugC(count == 0 ? 3 : 2, kDebugInput,
+		"Ripper: drained %d pending keyboard commands", count);
 }
 
 void InputManager::discardMouseTransitions() {
