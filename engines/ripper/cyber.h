@@ -57,6 +57,7 @@ private:
 		Common::Array<bool> activeInteractionEnabled;
 		Common::String previousFrameLabel;
 		uint activeFrame;
+		uint16 frontEndActionMask;
 		int hoveredInteraction;
 		bool awaitingInteraction;
 		bool resumeLoadedPresentation;
@@ -65,7 +66,7 @@ private:
 		bool cyberExitRequested;
 		uint16 cyberKeyboardCommand;
 
-		RuntimeSnapshot() : activeFrame(0), hoveredInteraction(-1),
+		RuntimeSnapshot() : activeFrame(0), frontEndActionMask(0xffff), hoveredInteraction(-1),
 			awaitingInteraction(false), resumeLoadedPresentation(false),
 			clearPreservedAudioOnTransition(false), cyberActive(false),
 			cyberExitRequested(false), cyberKeyboardCommand(0) {}

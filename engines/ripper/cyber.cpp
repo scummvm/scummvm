@@ -124,6 +124,7 @@ void CyberManager::suspendRuntime(RuntimeSnapshot &snapshot) const {
 	snapshot.activeInteractionEnabled = Common::move(scripts->_activeBa0InteractionEnabled);
 	snapshot.previousFrameLabel = scripts->_previousBa0FrameLabel;
 	snapshot.activeFrame = scripts->_activeBa0Frame;
+	snapshot.frontEndActionMask = scripts->_frontEndActionMask;
 	snapshot.hoveredInteraction = scripts->_hoveredBa0Interaction;
 	snapshot.awaitingInteraction = scripts->_awaitingBa0Interaction;
 	snapshot.resumeLoadedPresentation = scripts->_resumeLoadedPresentation;
@@ -140,6 +141,7 @@ void CyberManager::suspendRuntime(RuntimeSnapshot &snapshot) const {
 	scripts->_activeBa0InteractionEnabled.clear();
 	scripts->_previousBa0FrameLabel.clear();
 	scripts->_activeBa0Frame = 0;
+	scripts->_frontEndActionMask = 0;
 	scripts->_hoveredBa0Interaction = -1;
 	scripts->_awaitingBa0Interaction = false;
 	scripts->_resumeLoadedPresentation = false;
@@ -163,6 +165,7 @@ void CyberManager::restoreRuntime(RuntimeSnapshot &snapshot) const {
 	scripts->_activeBa0InteractionEnabled = Common::move(snapshot.activeInteractionEnabled);
 	scripts->_previousBa0FrameLabel = snapshot.previousFrameLabel;
 	scripts->_activeBa0Frame = snapshot.activeFrame;
+	scripts->_frontEndActionMask = snapshot.frontEndActionMask;
 	scripts->_hoveredBa0Interaction = snapshot.hoveredInteraction;
 	scripts->_awaitingBa0Interaction = snapshot.awaitingInteraction;
 	scripts->_resumeLoadedPresentation = snapshot.resumeLoadedPresentation;
