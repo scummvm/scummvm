@@ -24,6 +24,8 @@
 #include "common/array.h"
 #include "common/rect.h"
 
+#include "ripper/display.h"
+
 namespace Ripper {
 
 class RipperEngine;
@@ -77,8 +79,7 @@ private:
 	RipperEngine *_engine;
 	Piece _pieces[9];
 	Common::Array<uint> _frontToBack;
-	Common::Array<byte> _backgroundPixels;
-	Common::Array<byte> _backgroundPalette;
+	IndexedDisplaySnapshot _backgroundDisplay;
 	Common::Array<byte> _activePuzzlePalette;
 	Common::Point _dragOffset;
 	int _draggedPiece;
