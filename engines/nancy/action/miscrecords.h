@@ -443,19 +443,53 @@ protected:
 };
 
 // Added in Nancy12 (AR 132). Adjusts a UI overlay resource (from the UIRC boot
-// chunk) at runtime.
-class ResourceUse : public ActionRecord {
+// chunk) at runtime -- e.g. paying coins from the purse (resource 0). Applying
+// the change plays a sound, optionally shows a transient overlay (a sprite and/or
+// the resource's numeric value) and can change scene on success.
+class ResourceUse : public RenderActionRecord {
 public:
+	ResourceUse() : RenderActionRecord(7) {}
+
+	void init() override;
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
+	void handleInput(NancyInput &input) override;
+
+	bool isViewportRelative() const override { return true; }
 
 protected:
 	Common::String getRecordTypeName() const override { return "ResourceUse"; }
+
+	// Applies the resource change (respecting affordability), sets the event
+	// flag and starts the matching outcome sound.
+	void applyChange();
 
 	int16 _resourceIndex = 0;
 	int16 _amount = 0;
 	byte _mode = 0;        // 0 = set the resource, non-zero = add (clamped to >= 0)
 	FlagDescription _flag; // event flag set when the change is applied
+
+	Common::String _failSoundName;    // played when the change can't be applied
+	Common::String _successSoundName; // played when it is applied
+
+	// When this rect is non-degenerate the change is interactive: the player
+	// clicks it (e.g. a coin slot) to pay. A degenerate rect applies at once.
+	Common::Rect _paymentHotspot;
+	byte _useResourceCursor = 0;      // 0 = normal cursor, else the resource's own hover cursor
+
+	uint16 _sceneID = kNoScene;       // scene entered on success (9999 = none)
+	uint16 _continueSceneSound = 0;
+
+	bool _drawResourceOverlay = false; // blit the resource's UIRC sprite
+	Common::Point _overlayDest;
+	bool _drawResourceValue = false;   // draw the resource's numeric value
+	Common::Point _valueDest;
+
+	SoundDescription _sound;
+	bool _hasSound = false;
+	bool _interactive = false;
+	bool _paymentResolved = false;
+	bool _paymentApplied = false;
 };
 
 } // End of namespace Action

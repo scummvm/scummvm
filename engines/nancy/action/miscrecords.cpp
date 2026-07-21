@@ -22,6 +22,10 @@
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/resource.h"
+#include "engines/nancy/graphics.h"
+#include "engines/nancy/font.h"
+#include "engines/nancy/cursor.h"
+#include "engines/nancy/input.h"
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/action/miscrecords.h"
@@ -741,33 +745,165 @@ void HintSystem::selectHint() {
 }
 
 void ResourceUse::readData(Common::SeekableReadStream &stream) {
-	_resourceIndex = stream.readSint16LE();   // which UIRC resource to change
-	_amount = stream.readSint16LE();           // value / delta
-	_mode = stream.readByte();                 // 0 = set, non-zero = add
-	_flag.label = stream.readSint16LE();       // event flag set on success
+	_resourceIndex = stream.readSint16LE();      // which UIRC resource to change
+	_amount = stream.readSint16LE();             // value / delta
+	_mode = stream.readByte();                   // 0 = set, non-zero = add
+	_flag.label = stream.readSint16LE();         // event flag set on success
 	_flag.flag = stream.readByte();
-	// The rest of the 113-byte block (success/fail sounds, an optional scene
-	// change at +0x5b, and a transient "UIResource_Overlay" sprite) isn't
-	// handled yet.
-	stream.skip(0x71 - 8);
+
+	readFilename(stream, _failSoundName);        // played when the change can't be applied
+	readFilename(stream, _successSoundName);     // played when it is applied
+
+	readRect(stream, _paymentHotspot);
+	_useResourceCursor = stream.readByte();
+
+	_sceneID = stream.readUint16LE();
+	_continueSceneSound = stream.readUint16LE();
+
+	_drawResourceOverlay = stream.readByte() != 0;
+	_overlayDest.x = stream.readSint32LE();
+	_overlayDest.y = stream.readSint32LE();
+
+	_drawResourceValue = stream.readByte() != 0;
+	_valueDest.x = stream.readSint32LE();
+	_valueDest.y = stream.readSint32LE();
 }
 
-void ResourceUse::execute() {
+void ResourceUse::init() {
+	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
+	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
+	setTransparent(true);
+	moveTo(screenBounds);
+
+	const UIRC *uirc = GetEngineData(UIRC);
+	const bool haveItem = uirc && _resourceIndex >= 0 && (uint)_resourceIndex < uirc->items.size();
+
+	if (haveItem && _drawResourceOverlay) {
+		const UIRC::ItemRecord &item = uirc->items[_resourceIndex];
+		Graphics::ManagedSurface image;
+		g_nancy->_resource->loadImage(item.overlayName, image);
+		image.setTransparentColor(_drawSurface.getTransparentColor());
+
+		Common::Rect src = item.rect;
+		Common::Rect dest(_overlayDest.x, _overlayDest.y,
+			_overlayDest.x + src.width(), _overlayDest.y + src.height());
+		_drawSurface.blitFrom(image, src, dest);
+	}
+
+	if (haveItem && _drawResourceValue) {
+		// The value is rendered with a '$' prefix and `unknown2` decimal places
+		// (Old Clock tracks cents), using the font selected by `unknown1`.
+		const UIRC::ItemRecord &item = uirc->items[_resourceIndex];
+		const Font *font = g_nancy->_graphics->getFont(item.unknown1);
+		if (font && item.unknown2 > 0) {
+			const int32 value = NancySceneState.getUIResource(_resourceIndex);
+			const Common::String text = Common::String::format("$%d.%02d", value / 100, value % 100);
+			font->drawString(&_drawSurface, text, _valueDest.x, _valueDest.y, screenBounds.width() - _valueDest.x, 0);
+		}
+	}
+
+	setVisible(_drawResourceOverlay || _drawResourceValue);
+	registerGraphics();
+}
+
+void ResourceUse::applyChange() {
 	if (_mode == 0) {
 		// Set the resource outright.
 		NancySceneState.setUIResource(_resourceIndex, _amount);
 		NancySceneState.setEventFlag(_flag);
+		_paymentApplied = true;
 	} else {
 		// Add the (signed) amount, but never let the resource go negative —
 		// the original skips the change (e.g. when Nancy can't afford it).
 		const int32 result = NancySceneState.getUIResource(_resourceIndex) + _amount;
-		if (result >= 0) {
+		_paymentApplied = result >= 0;
+		if (_paymentApplied) {
 			NancySceneState.setUIResource(_resourceIndex, result);
 			NancySceneState.setEventFlag(_flag);
 		}
 	}
 
-	_isDone = true;
+	// Start the sound matching the outcome, if there is one.
+	const Common::String &soundName = _paymentApplied ? _successSoundName : _failSoundName;
+	if (!soundName.empty() && !soundName.equalsIgnoreCase("NO SOUND") && !soundName.equalsIgnoreCase("NO SOUND PLAY")) {
+		_sound.name = soundName;
+		_sound.numLoops = 1;
+
+		const UIRC *uirc = GetEngineData(UIRC);
+		if (uirc && _resourceIndex >= 0 && (uint)_resourceIndex < uirc->items.size()) {
+			_sound.channelID = uirc->items[_resourceIndex].soundChannel;
+			_sound.volume = uirc->items[_resourceIndex].soundVolume;
+		}
+
+		g_nancy->_sound->loadSound(_sound);
+		g_nancy->_sound->playSound(_sound);
+		_hasSound = true;
+	}
+
+	_paymentResolved = true;
+}
+
+void ResourceUse::handleInput(NancyInput &input) {
+	if (!_interactive || _state != kRun || _paymentResolved) {
+		return;
+	}
+
+	if (NancySceneState.getViewport().convertViewportToScreen(_paymentHotspot).contains(input.mousePos)) {
+		g_nancy->_cursor->setCursorType(_useResourceCursor ?
+			(CursorManager::CursorType)(_resourceIndex + 0x1f) : CursorManager::kNormal, true);
+
+		if (input.input & NancyInput::kLeftMouseButtonUp) {
+			applyChange();
+		}
+	}
+}
+
+void ResourceUse::execute() {
+	switch (_state) {
+	case kBegin:
+		init();
+
+		// A non-degenerate hotspot means the player has to click it (e.g. a coin
+		// slot) to trigger the change; otherwise it happens immediately.
+		_interactive = _paymentHotspot.top != _paymentHotspot.bottom;
+		if (!_interactive) {
+			applyChange();
+		}
+
+		_state = kRun;
+		break;
+	case kRun:
+		// Interactive changes wait for the player to click the hotspot.
+		if (_interactive && !_paymentResolved) {
+			return;
+		}
+
+		// Keep the overlay up until the outcome sound has finished.
+		if (_hasSound && g_nancy->_sound->isSoundPlaying(_sound)) {
+			return;
+		}
+
+		_state = kActionTrigger;
+		break;
+	case kActionTrigger:
+		if (_hasSound) {
+			g_nancy->_sound->stopSound(_sound);
+		}
+
+		setVisible(false);
+
+		// Only a successful change advances the scene.
+		if (_paymentApplied && _sceneID != kNoScene) {
+			SceneChangeDescription sceneChange;
+			sceneChange.sceneID = _sceneID;
+			sceneChange.continueSceneSound = _continueSceneSound;
+			NancySceneState.changeScene(sceneChange);
+		}
+
+		finishExecution();
+		break;
+	}
 }
 
 } // End of namespace Action
