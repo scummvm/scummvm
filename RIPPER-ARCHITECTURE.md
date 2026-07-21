@@ -7,6 +7,9 @@
   `RunRuntimeInitAndProgramMain` at `0x6b118`.
 - `RunRuntimeInitAndProgramMain` transfers to the first game-owned coordinator,
   `RunGameStartupAndMainLoop` at `0x100c2`.
+- `RipperEngine` owns the engine-lifetime managers through scoped pointers;
+  nested presentation owners use the same model, while their engine, input,
+  mixer, and resource links remain non-owning dependencies.
 - The game coordinator defaults to `ripper.run`, initializes resources, and
   plays `LOGO.AVI` with `PollPresentationEscOrSpaceCommand` at `0x49039`, so
   Escape skips the presentation and Space pauses it.
