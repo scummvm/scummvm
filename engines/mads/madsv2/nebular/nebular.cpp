@@ -286,6 +286,7 @@ void RexNebularEngine::global_parser_code() {
 		text_show(457);
 	} else if (player_said_2(set, timebomb)) {
 		text_show(458);
+		// Original also had a second unreachable block for: text_show(427);
 	} else if (player_said_2(guzzle, alien_liquor)) {
 		text_show(459);
 	} else if (player_said_2(smash, target_module)) {
@@ -527,6 +528,16 @@ void RexNebularEngine::global_parser_code() {
 			global[kHandsetCellStatus] = game.difficulty != DIFFICULTY_HARD || global[kDurafailRecharged] ? 1 : 2;
 			text_show(425);
 		}
+	} else if (player_said_3(put, bomb, chicken) || player_said_3(put, bombs, chicken)) {
+		inter_move_object(OBJ_CHICKEN, NOWHERE);
+		if (player_has(OBJ_BOMBS)) {
+			inter_move_object(OBJ_BOMBS, NOWHERE);
+			inter_give_to_player(OBJ_BOMB);
+		} else {
+			inter_move_object(OBJ_BOMB, NOWHERE);
+		}
+		inter_give_to_player(OBJ_CHICKEN_BOMB);
+		object_examine(OBJ_CHICKEN_BOMB, 430);
 	} else {
 		goto done;
 	}
