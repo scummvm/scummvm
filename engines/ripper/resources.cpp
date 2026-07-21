@@ -304,6 +304,7 @@ Common::String AssetLibrary::normalizeMemberName(const Common::String &memberNam
 bool AssetLibrary::open(const Common::Path &filename) {
 	Common::File file;
 	_entries.clear();
+	_entryIndices.clear();
 	_archiveData.clear();
 	_filename = filename;
 	_modernFormat = false;
@@ -323,6 +324,7 @@ bool AssetLibrary::open(const Common::Path &filename) {
 
 bool AssetLibrary::open(Common::SeekableReadStream &stream, const Common::Path &sourceName) {
 	_entries.clear();
+	_entryIndices.clear();
 	_archiveData.clear();
 	_filename = sourceName;
 	_modernFormat = false;
@@ -388,14 +390,13 @@ bool AssetLibrary::loadDirectory(Common::SeekableReadStream &file, uint32 fileSi
 			warning("Ripper: non-monotonic directory entry %u in '%s'", i, _filename.toString().c_str());
 			return false;
 		}
-		for (uint existing = 0; existing < _entries.size(); ++existing) {
-			if (_entries[existing].key == entry.key) {
-				warning("Ripper: duplicate member '%s' in '%s'", entry.key.c_str(), _filename.toString().c_str());
-				return false;
-			}
+		if (_entryIndices.contains(entry.key)) {
+			warning("Ripper: duplicate member '%s' in '%s'", entry.key.c_str(), _filename.toString().c_str());
+			return false;
 		}
 
 		_entries.push_back(entry);
+		_entryIndices[entry.key] = _entries.size() - 1;
 	}
 
 	for (uint i = 0; i < _entries.size(); ++i) {
@@ -419,11 +420,8 @@ bool AssetLibrary::loadDirectory(Common::SeekableReadStream &file, uint32 fileSi
 
 const AssetLibrary::Entry *AssetLibrary::findEntry(const Common::String &memberName) const {
 	const Common::String key = normalizeMemberName(memberName, _modernFormat);
-	for (uint i = 0; i < _entries.size(); ++i) {
-		if (_entries[i].key == key)
-			return &_entries[i];
-	}
-	return nullptr;
+	Common::HashMap<Common::String, uint>::const_iterator it = _entryIndices.find(key);
+	return it != _entryIndices.end() ? &_entries[it->_value] : nullptr;
 }
 
 bool AssetLibrary::hasMember(const Common::String &memberName) const {
