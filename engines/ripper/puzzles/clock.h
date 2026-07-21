@@ -17,6 +17,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 
+#include "ripper/display.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
@@ -67,8 +68,7 @@ private:
 	BitmapAssetFrame _armyBackdrop;
 	BitmapAssetFrame _dialHitMask;
 	BitmapAssetFrame _markerButtons[2];
-	Common::Array<byte> _backgroundPixels;
-	Common::Array<byte> _backgroundPalette;
+	IndexedDisplaySnapshot _backgroundDisplay;
 	Audio::SoundHandle _audioHandles[6];
 	int _dialIndices[2];
 	int _firstClockDigits[4];

@@ -26,6 +26,7 @@
 #include "common/random.h"
 #include "common/rect.h"
 
+#include "ripper/display.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
@@ -71,8 +72,7 @@ private:
 	Common::Array<BitmapAssetFrame> _placedFrames;
 	Common::Array<BitmapAssetFrame> _trayFrames;
 	Common::Array<BitmapAssetFrame> _blankingFrames;
-	Common::Array<byte> _backgroundPixels;
-	Common::Array<byte> _backgroundPalette;
+	IndexedDisplaySnapshot _backgroundDisplay;
 	Common::Array<byte> _puzzlePalette;
 	Audio::SoundHandle _audioHandles[4];
 	Common::RandomSource _random;

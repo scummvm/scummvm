@@ -98,28 +98,11 @@ CrystalPuzzle::CrystalPuzzle(RipperEngine *engine) : _engine(engine),
 }
 
 bool CrystalPuzzle::captureBackground() {
-	Graphics::Surface *screen = g_system->lockScreen();
-	if (!screen || screen->format.bytesPerPixel != 1 || screen->w != 640 || screen->h != 400) {
-		if (screen)
-			g_system->unlockScreen();
-		return false;
-	}
-
-	_backgroundPixels.resize(screen->w * screen->h);
-	for (int y = 0; y < screen->h; ++y)
-		memcpy(_backgroundPixels.data() + y * screen->w, screen->getBasePtr(0, y), screen->w);
-	g_system->unlockScreen();
-	_backgroundPalette.resize(256 * 3);
-	g_system->getPaletteManager()->grabPalette(_backgroundPalette.data(), 0, 256);
-	return true;
+	return _backgroundDisplay.capture();
 }
 
 void CrystalPuzzle::restoreBackground() const {
-	if (_backgroundPixels.size() != 640 * 400 || _backgroundPalette.size() != 256 * 3)
-		return;
-	g_system->copyRectToScreen(_backgroundPixels.data(), 640, 0, 0, 640, 400);
-	g_system->getPaletteManager()->setPalette(_backgroundPalette.data(), 0, 256);
-	g_system->updateScreen();
+	_backgroundDisplay.restore();
 }
 
 bool CrystalPuzzle::loadPieceSet(const char *prefix,
@@ -186,7 +169,8 @@ void CrystalPuzzle::render() {
 	}
 
 	for (int y = 0; y < screen->h; ++y)
-		memcpy(screen->getBasePtr(0, y), _backgroundPixels.data() + y * screen->w, screen->w);
+		memcpy(screen->getBasePtr(0, y),
+			_backgroundDisplay.pixels().data() + y * screen->w, screen->w);
 	byte *pixels = (byte *)screen->getPixels();
 	for (uint piece = 0; piece < kPieceCount; ++piece) {
 		const Common::Point tray = trayPosition(piece);
