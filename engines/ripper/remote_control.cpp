@@ -126,31 +126,15 @@ bool RemoteControlManager::initialize(ResourceManager &resources) {
 }
 
 bool RemoteControlManager::captureDisplay() {
-	Graphics::Surface *screen = g_system->lockScreen();
-	if (!screen || screen->format.bytesPerPixel != 1 ||
-		kRemoteX + kRemoteWidth > screen->w || kRemoteY + kRemoteHeight > screen->h) {
-		if (screen)
-			g_system->unlockScreen();
-		return false;
-	}
-	_savedPixels.resize(kRemoteWidth * kRemoteHeight);
-	for (int y = 0; y < kRemoteHeight; ++y)
-		memcpy(_savedPixels.data() + y * kRemoteWidth,
-			screen->getBasePtr(kRemoteX, kRemoteY + y), kRemoteWidth);
-	g_system->unlockScreen();
-	_savedPalette.resize(256 * 3);
-	g_system->getPaletteManager()->grabPalette(_savedPalette.data(), 0, 256);
-	return true;
+	return _savedDisplay.capture(Common::Rect(kRemoteX, kRemoteY,
+		kRemoteX + kRemoteWidth, kRemoteY + kRemoteHeight));
 }
 
 void RemoteControlManager::restoreDisplay() {
-	if (!_savedPixels.empty())
-		g_system->copyRectToScreen(_savedPixels.data(), kRemoteWidth,
-			kRemoteX, kRemoteY, kRemoteWidth, kRemoteHeight);
-	if (!_engine->getSettings()->restoreVideoPalette() && _savedPalette.size() == 256 * 3)
-		g_system->getPaletteManager()->setPalette(_savedPalette.data(), 0, 256);
-	_savedPixels.clear();
-	_savedPalette.clear();
+	_savedDisplay.restorePixels();
+	if (!_engine->getSettings()->restoreVideoPalette())
+		_savedDisplay.restorePalette();
+	_savedDisplay.clear();
 	g_system->updateScreen();
 }
 
@@ -160,8 +144,7 @@ void RemoteControlManager::applyPalette() {
 	// chroma-key green and must not replace the suspended scene palette.
 	if (_engine->getSettings()->restoreVideoPalette())
 		return;
-	if (_savedPalette.size() == 256 * 3)
-		g_system->getPaletteManager()->setPalette(_savedPalette.data(), 0, 256);
+	_savedDisplay.restorePalette();
 }
 
 void RemoteControlManager::drawBitmap(byte *screen, uint pitch,

@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 
+#include "ripper/display.h"
 #include "ripper/resources.h"
 #include "ripper/settings.h"
 
@@ -86,8 +87,7 @@ private:
 	Common::Array<BitmapAssetFrame> _puzzleFrames;
 	Common::Array<BitmapAssetFrame> _accentFrames;
 	Common::Array<Control> _controls;
-	Common::Array<byte> _savedPixels;
-	Common::Array<byte> _savedPalette;
+	IndexedDisplaySnapshot _savedDisplay;
 	Audio::SoundHandle _soundHandle;
 	bool _initialized;
 };

@@ -131,20 +131,7 @@ const Common::String &ModalDialogManager::resourceString(uint resourceId) const 
 }
 
 bool ModalDialogManager::captureDisplay() {
-	Graphics::Surface *screen = g_system->lockScreen();
-	if (!screen || screen->format.bytesPerPixel != 1 || screen->w != 640 || screen->h != 400) {
-		if (screen)
-			g_system->unlockScreen();
-		return false;
-	}
-
-	_savedPixels.resize(640 * 400);
-	for (int y = 0; y < 400; ++y)
-		memcpy(_savedPixels.data() + y * 640, screen->getBasePtr(0, y), 640);
-	g_system->unlockScreen();
-	_savedPalette.resize(256 * 3);
-	g_system->getPaletteManager()->grabPalette(_savedPalette.data(), 0, 256);
-	return true;
+	return _savedDisplay.capture();
 }
 
 void ModalDialogManager::applyModalPalette() {
@@ -164,15 +151,13 @@ void ModalDialogManager::applyModalPalette() {
 }
 
 void ModalDialogManager::restoreDisplay() {
-	if (_savedPixels.size() != 640 * 400 || _savedPalette.size() != 256 * 3)
+	if (!_savedDisplay.isValid())
 		return;
 
-	g_system->copyRectToScreen(_savedPixels.data(), 640, 0, 0, 640, 400);
-	g_system->getPaletteManager()->setPalette(_savedPalette.data(), 0, 256);
+	_savedDisplay.restore(true, false);
 	_engine->getCursor()->refresh();
 	g_system->updateScreen();
-	_savedPixels.clear();
-	_savedPalette.clear();
+	_savedDisplay.clear();
 }
 
 uint ModalDialogManager::measureText(const Common::String &text) const {
