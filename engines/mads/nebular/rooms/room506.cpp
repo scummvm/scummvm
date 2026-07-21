@@ -139,7 +139,7 @@ static void room_506_init() {
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXCD_3");
 
 	// WORKAROUND: Set the animation before creating the door hotspots, since otherwise
-	// with the MADSV2 engine core the hotspot areas were never updated to match the attached sprites
+	// with the newer engine core the hotspot areas were never updated to match the attached sprites
 	if (previous_room != 508 && previous_room != 507 && previous_room != KERNEL_RESTORING_GAME) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
