@@ -972,6 +972,10 @@
   retains those serialized values while engine control flow uses the labels.
 - `CreateSceneRuntime` at `0x12be7` loads a compiled script and binds its frame,
   interaction, and callback tables.
+- `SceneRuntimeState` owns the active and concurrent compiled scripts together
+  with their frame, interaction, pending-transition, and Cyber control state.
+  Entering a nested Cyber program moves this object into a snapshot and starts
+  with a fresh runtime, then restores the same object on exit.
 - `ReadSceneCallbackOpcodeAndArguments` at `0x140e9` decodes callback commands
   and their typed arguments.
 - `RunSceneCallbackCommandStream` at `0x14080` dispatches decoded commands.
