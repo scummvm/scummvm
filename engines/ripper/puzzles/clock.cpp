@@ -169,7 +169,11 @@ bool ClockPuzzle::loadAssets() {
 
 	const Common::String maskName = SearchMan.hasFile(Common::Path("clock_tmp.mcg")) ?
 		"clock_tmp.mcg" : "clock_tm.mcg";
-	if (!loadFrame(maskName, _dialHitMask) || _dialHitMask.width != 640 ||
+	// RunClockPuzzleScene at 0x374c5 loads CLOCK_TMP.MCG through
+	// DecodeCustomBitmapAsset at 0x53fdf. It is one compressed 640x300 bitmap,
+	// not a bitmap-set container like the numbered hand and digit resources.
+	if (!_engine->getResources()->loadBitmap(maskName, _dialHitMask) ||
+			_dialHitMask.width != 640 ||
 			_dialHitMask.height != 300) {
 		warning("Ripper: invalid clock puzzle hit mask '%s' size=%ux%u",
 			maskName.c_str(), _dialHitMask.width, _dialHitMask.height);

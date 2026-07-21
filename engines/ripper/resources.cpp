@@ -530,6 +530,22 @@ bool ResourceManager::loadOptionsBitmapSequence(const Common::String &memberName
 	return true;
 }
 
+bool ResourceManager::loadBitmap(const Common::String &memberName,
+		BitmapAssetFrame &frame) const {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		SearchMan.createReadStreamForMember(Common::Path(memberName)));
+	if (!stream || !decodeBitmap(*stream, frame)) {
+		warning("Ripper: could not decode bitmap '%s'", memberName.c_str());
+		return false;
+	}
+
+	debugC(2, kDebugResources,
+		"Ripper: decoded bitmap '%s' size=%ux%u transparent=%u colors=%u",
+		memberName.c_str(), frame.width, frame.height, frame.transparentColor,
+		frame.palette.size() / 3);
+	return true;
+}
+
 bool ResourceManager::loadBitmapSequence(const Common::String &memberName,
 		BitmapAssetSequence &sequence) const {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
