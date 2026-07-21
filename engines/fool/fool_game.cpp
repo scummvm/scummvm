@@ -24,6 +24,7 @@
 #include "common/translation.h"
 #include "common/ustr.h"
 #include "common/util.h"
+#include "fool.h"
 #include "graphics/mactoolbox/toolbox.h"
 #include "gui/saveload.h"
 
@@ -46,15 +47,19 @@ namespace Fool {
 // Offset adjustments for the ZBasic string table to align
 // across game versions
 static const int fool11ZStrOffset[] = {
-	128, 59, 81, 170, 186, 188, 192, 194, 202, 239, 258, 280, 315, 341, 324, 13, 21, 6, 3
+	128, 59, 81, 170, 186, 188, 192, 194, 202, 239, 258, 280, 315, 341, 324, 13, 21, 6, 3, 0, 0
 };
 
 static const int fool20ZStrOffset[] = {
-	102, 78, 103, 191, 207, 209, 213, 215, 223, 260, 279, 301, 336, 362, 345, 18, 22, 6, 3
+	102, 78, 103, 191, 207, 209, 213, 215, 223, 260, 279, 301, 336, 362, 345, 18, 22, 6, 3, 0, 0
 };
 
 static const int fool30ZStrOffset[] = {
-	97, 73, 98, 161, 177, 179, 183, 185, 193, 230, 251, 273, 308, 334, 317, 8, 12, 76, 3
+	97, 73, 98, 161, 177, 179, 183, 185, 193, 230, 251, 273, 308, 334, 317, 8, 12, 76, 3, 0, 0
+};
+
+static const int foolDemo10ZStrOffset[] = {
+	0, 0, 0, 128, 0, 146, 150, 152, 160, 0, 198, 213, 0, 246, 231, 0, 0, 0, 0, 28, 18
 };
 
 // Fool's Errand v1.1 is missing FOND data, below is taken from 2.0
@@ -130,20 +135,38 @@ void FoolGame::run() {
 	// v1.0 filename ends with "tm"
 	} else if (_toolbox->GetFInfo(Common::U32String("xn--The Fool's Errand-306j"), 0, finfo) == Graphics::MacToolbox::kNoErr) {
 		_zbasic->loadProgram(Common::Path("xn--The Fool's Errand-306j", ':'));
+	} else if (_toolbox->GetFInfo(Common::U32String("Fool's DEMO"), 0, finfo) == Graphics::MacToolbox::kNoErr) {
+		_zbasic->loadProgram(Common::Path("Fool's DEMO", ':'));
 	} else {
 		error("FoolGame::run: Fool's Errand program not found");
 		return;
 	}
 
+	// index of the Chicago FONT data
 	int16 fontChicago = 0;
+	// name of the puzzle data file
+	_puzzlesPath = Common::U32String("Fool's Puzzles");
+	// Number of points required to win card game.
+	// v1.1 and v2.0 have the winning score set to 700.
+	// v3.0 revises this to be 666, which I can't dispute is a much cooler score.
+	_cardsMaxScore = 700;
+	// are we playing the demo version
+	_isDemo = false;
 	switch (_version) {
 	case kFool11:
 		_zstrOffset = fool11ZStrOffset;
+		break;
+	case kFoolDemo10:
+		_zstrOffset = foolDemo10ZStrOffset;
+		_puzzlesPath = Common::U32String("Demo Puzzles");
+		_cardsMaxScore = 333;
+		_isDemo = true;
 		break;
 	case kFool30:
 		_zstrOffset = fool30ZStrOffset;
 		// v3.0 calls the font "Foolish Chicago" and changes the index
 		fontChicago = 255;
+		_cardsMaxScore = 666;
 		break;
 	case kFool20:
 	default:
@@ -151,7 +174,7 @@ void FoolGame::run() {
 		break;
 	}
 
-	if (_version == kFool11) {
+	if (_version & (kFool11 | kFoolDemo10)) {
 		// v1.1 doesn't include any FOND chunks, so we have to provide them here.
 		_zbasic->injectFOND(fondFool, sizeof(fondFool), Common::String("Fool"));
 		_zbasic->injectFOND(fondChicago, sizeof(fondChicago), Common::String("Foolish Chicago"));
@@ -675,7 +698,7 @@ void FoolGame::zoomRect(int16 startTop, int16 startLeft, int16 startBottom, int1
 	_toolbox->PenNormal();
 }
 
-void FoolGame::sub_128_bde(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
+void FoolGame::screenZap(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 	// 128:0bde
 	arr_i16_4758[0] = unk6;
 	arr_i16_4758[1] = unk5;
@@ -754,7 +777,7 @@ void FoolGame::flashRect(int16 top, int16 left, int16 bottom, int16 right, int16
 	}
 }
 
-void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, bool beep) {
+void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, bool beep, bool dark) {
 	// 128:0dfe
 	_toolbox->SetPort(var_i32_4);
 	var_i16_7b2 = 0xa;
@@ -764,8 +787,9 @@ void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, 
 		playTone(0x19, 0x64, false);
 	}
 	// 128:0e46
+	bool hasButtons = buttonCount != 0;
 	copyScreen(0, arr_bmp_138bc);
-	_zbasic->text(font, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcBic);
+	_zbasic->text(font, 0xc, Graphics::kMacFontRegular, dark ? Graphics::MacToolbox::kSrcBic : Graphics::MacToolbox::kSrcCopy);
 	var_i16_7b4 = buttonCount*0x46;
 	var_i16_7b6 = 0;
 	for (int i = 0; i <= lineCount; i++) {
@@ -777,7 +801,7 @@ void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, 
 		var_i16_7b6 += 0x11;
 	}
 	// 128:0ed6
-	if (buttonCount >= 0) {
+	if (buttonCount > 0) {
 		var_i16_7bc = 0xa4 + (var_i16_7b6 / 2);
 		var_i16_7b6 += 0x28;
 	} else {
@@ -801,7 +825,7 @@ void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, 
 	_toolbox->PenPat(_patterns[1]);
 	_toolbox->FrameRect(bounds);
 	_toolbox->InsetRect(bounds, 5, 5);
-	_toolbox->FillRect(bounds, _patterns[2]);
+	_toolbox->FillRect(bounds, _patterns[dark ? 2 : 0]);
 	_toolbox->PenNormal();
 	int16 strY = 0xbe - var_i16_7b6;
 	// 128:1056
@@ -812,7 +836,7 @@ void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, 
 		strY += 0x11;
 	}
 	// 128:10a0
-	if (buttonCount != 0) {
+	if (hasButtons) {
 		_toolbox->PenNormal();
 		_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 
@@ -948,6 +972,12 @@ void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, 
 		sub_128_61ec();
 		copyScreen(1, arr_bmp_138bc);
 		_toolbox->SetPort(var_i32_0);
+	} else {
+		menuClickMessage();
+		waitForClick();
+		_toolbox->DrawMenuBar();
+		copyScreen(1, arr_bmp_138bc);
+		_toolbox->SetPort(var_i32_0);
 	}
 	// 128:1784
 
@@ -1062,7 +1092,7 @@ void FoolGame::sub_128_1f1e() {
 	// 128:1f1e
 	_toolbox->InitCursor();
 	toggleMouseCursor(false);
-	sub_128_bde(1, 1, Graphics::MacToolbox::kSrcCopy, 1, 1, 1);
+	screenZap(1, 1, Graphics::MacToolbox::kSrcCopy, 1, 1, 1);
 }
 
 void FoolGame::sub_128_1f44() {
@@ -1187,8 +1217,8 @@ void FoolGame::storyRenderPage() {
 	// if we've solved a puzzle, fill the scroll with crazy patterns
 	if ((var_i16_7ce & 0x8) != 0) {
 		var_i16_7ce ^= 0x8;
-		sub_128_bde(1, 0, Graphics::MacToolbox::kSrcCopy, 0, 1, 0);
-		sub_128_bde(1, 0, Graphics::MacToolbox::kSrcCopy, 0, 0, 0);
+		screenZap(1, 0, Graphics::MacToolbox::kSrcCopy, 0, 1, 0);
+		screenZap(1, 0, Graphics::MacToolbox::kSrcCopy, 0, 0, 0);
 	}
 	// 128:235e
 	if (_puzzleType[_storyCurrentChapter] > 0) {
@@ -1349,7 +1379,7 @@ void FoolGame::writeSaveFile() {
 	if (var_i16_7e6 != 0) {
 		_modalText[0] = Common::U32String::format("The file '%s' cannot be opened.", var_str_588.encode().c_str()); // was: str(17), str(18)
 		_modalText[1] = Common::U32String("Okay"); // was: str(19)
-		showChoiceModal(kFontChicago, 0, 1, 1);
+		showChoiceModal(kFontChicago, 0, 1, true, true);
 		var_str_588.clear(); // was: str(20)
 		var_i16_7e6 = 0;
 	}
@@ -1454,24 +1484,29 @@ void FoolGame::newGame() {
 
 	var_i16_9ec = 0;
 	// set up the initially visible story chapters
-	arr_i16_4758[0] = 0x103;
-	arr_i16_4758[1] = 0;
-	arr_i16_4758[2] = 0x1e;
-	arr_i16_4758[3] = 0x1fc;
-	arr_i16_4758[4] = (int16)0xa050;
-	arr_i16_4758[5] = 0x3f7;
-	var_i16_484 = 0;
-	for (int j = 0; j <= 0x5; j++) {
-		// 128:2c5e
-		for (int i = 0; i <= 0xf; i++) {
-			var_i16_484++;
-			if (arr_i16_4758[j] & _bitLUT[i]) {
-				_pageVisible[var_i16_484] = 1;
-			} else {
-				// 128:2ca6
-				_pageVisible[var_i16_484] = 0;
+	if (_isDemo) {
+		// the demo has a bunch of cut-down logic
+		// for starting a new game, but it does
+		// the rough equivalent of the below:
+		for (int16 j = 1; j <= _storyPageCount; j++) {
+			int16 chapter = _pageToChapter[j];
+			_pageVisible[j] = _demoChapters[chapter] ? 1 : 0;
+		}
+	} else {
+		arr_i16_4758[0] = 0x103;
+		arr_i16_4758[1] = 0;
+		arr_i16_4758[2] = 0x1e;
+		arr_i16_4758[3] = 0x1fc;
+		arr_i16_4758[4] = (int16)0xa050;
+		arr_i16_4758[5] = 0x3f7;
+		var_i16_484 = 0;
+		for (int j = 0; j <= 0x5; j++) {
+			// 128:2c5e
+			for (int i = 0; i <= 0xf; i++) {
+				var_i16_484++;
+				_pageVisible[var_i16_484] = (arr_i16_4758[j] & _bitLUT[i]) ? 1 : 0;
+				// 128:2cb6
 			}
-			// 128:2cb6
 		}
 	}
 	// 128:2cce
@@ -1580,6 +1615,7 @@ void FoolGame::openGame() {
 }
 
 void FoolGame::menuSetup() {
+	// 128:3032
 	_storyCurrentChapter = 0;
 	_stateFlags = kStateNull;
 	var_i16_484 = 0;
@@ -1653,6 +1689,9 @@ void FoolGame::menuToggleSound() {
 }
 
 void FoolGame::savePrompt() {
+	if (_isDemo)
+		return;
+
 	// 128:32fa
 	if (var_i16_7ce == 666) {
 		return;
@@ -1670,7 +1709,7 @@ void FoolGame::savePrompt() {
 	_modalText[1] = Common::U32String("Yes");
 	_modalText[2] = Common::U32String("No");
 	_modalText[3] = Common::U32String("Cancel");
-	showChoiceModal(kFontChicago, 0, 3, 0);
+	showChoiceModal(kFontChicago, 0, 3, false, true);
 	if (_savePromptChoice > 1) {
 		_saveFileName = previous;
 		return;
@@ -1694,6 +1733,8 @@ void FoolGame::autoSaveGame() {
 	// In general, ScummVM treats user-initated save games as a snapshot,
 	// and writes any automatic progress to a dedicated "Autosave" slot.
 	// This wrapper changes the autosave behaviour to match the rest of ScummVM.
+	if (_isDemo)
+		return;
 	_isAutoSaving = true;
 	Common::U32String previous = _saveFileName;
 	_saveFileName = Common::U32String::format("%s-Autosave.000", g_engine->getTarget().c_str());
@@ -1847,6 +1888,12 @@ void FoolGame::puzzleRun() {
 	puzzleLoadContext();
 	// 128:3a22
 	// 128:3a38: JSR - "ZBASIC_115"
+
+	if (_isDemo) {
+		// disable instructions
+		_zbasic->menu(2, 1, 0, Common::U32String());
+	}
+
 	debugC(5, kDebugLoading, "puzzleRun: chapter 0x%x, puzzle module %d", _storyCurrentChapter, _puzzleType[_storyCurrentChapter]-1);
 	switch (_puzzleType[_storyCurrentChapter]-1) {
 	case 0:
@@ -1910,6 +1957,28 @@ void FoolGame::puzzleRun() {
 		setStateBits(0x100);
 		return;
 	}
+	bool showDemoScreen = false;
+	if (_isDemo) {
+		// enable instructions
+		_zbasic->menu(2, 1, 1, Common::U32String());
+		// if the puzzle is solved, reset it and jump to the next chapter
+		if (_activePuzzleStatus >= 0x63) {
+			_activePuzzleStatus = 0;
+			_activePuzzleBuffer = Common::String();
+			var_i16_7ce |= 8;
+			showDemoScreen = true;
+			for (int16 i = _storyCurrentPage; i <= _storyPageCount; i++) {
+				if (_pageVisible[i] && (_pageToChapter[i] != _storyCurrentChapter)) {
+					_storyNextPage = i;
+					break;
+				}
+			}
+			if (_storyNextPage == _storyCurrentPage) {
+				_storyNextPage = 1;
+			}
+		}
+	}
+
 	// 128:3aa4
 	puzzleSaveContext();
 	if ((_stateFlags & kStateQuit) == 0) {
@@ -1989,6 +2058,8 @@ void FoolGame::puzzleRun() {
 	// 128:3de0
 	sub_128_61ec();
 	// 128:3de4
+	if (showDemoScreen)
+		demoPuzzleComplete();
 }
 
 void FoolGame::storyUnlockChapter() {
@@ -2058,8 +2129,8 @@ void FoolGame::puzzleSetupMenu() {
 			// New: Override instructions for card game.
 			// v3 changed the score from 700 points to 666 points, but didn't change the puzzle data
 			// file (where the menu entries come from). V3 applies a bodge with a program string.
-			if ((_activePuzzle == 7) &&(i == _puzzleMenuInstructions[_puzzleType[_activePuzzle]*2]+7)) {
-				instructMsg = Common::U32String("• The first player to earn over 666 points wins the game.  ");
+			if ((_activePuzzle == 7) && (i == _puzzleMenuInstructions[_puzzleType[_activePuzzle]*2]+7)) {
+				instructMsg = Common::U32String::format("• The first player to earn over %d points wins the game.  ", _cardsMaxScore);
 			}
 
 			_zbasic->menu(8, itemNo, 1, instructMsg);
@@ -2485,7 +2556,11 @@ void FoolGame::onMenuSelect() {
 	_stateFlags = kStateNull;
 	if (_selectedMenuID == 1) { // Eye menu
 		if (_selectedMenuItem == 2) {
-			menuAbout();
+			if (_isDemo) {
+				menuDemoAbout();
+			} else {
+				menuAbout();
+			}
 		} else if (_selectedMenuItem == 3) {
 			menuPrologue();
 		} else if (_selectedMenuItem == 4) {
@@ -2494,13 +2569,21 @@ void FoolGame::onMenuSelect() {
 	}
 	if (_selectedMenuID == 2) { // File menu
 		if (_selectedMenuItem == 1) {
-			menuNewGame();
+			if (_isDemo) {
+				menuDemoInstructions();
+			} else {
+				menuNewGame();
+			}
 		} else if (_selectedMenuItem == 2) {
 		// 128:5c5c
 			menuOpenGame();
 		} else if (_selectedMenuItem == 3) {
 		// 128:5c6c
-			menuSaveGame();
+			if (_isDemo) {
+				menuQuit();
+			} else {
+				menuSaveGame();
+			}
 		} else if (_selectedMenuItem == 4) {
 			menuSaveGameAs();
 		} else if (_selectedMenuItem == 6) {
@@ -2703,9 +2786,9 @@ void FoolGame::sub_129_004() {
 	// 129:000a: LEA - 0x3ea(A5),A0
 	// 129:000e: MOVE.L - A0,-0x8ee(A5)
 	// 129:0012: SF - 0x8,D0
-	_zbasic->openR(1, Common::U32String("Fool's Puzzles"), 0x3e8, var_i16_e20); // was: str(110)
+	_zbasic->openR(1, _puzzlesPath, 0x3e8, var_i16_e20); // was: str(110)
 	if (var_i16_7e6 == 0) {
-		var_str_e22 = Common::U32String("Fool's Puzzles"); // was: str(111)
+		var_str_e22 = _puzzlesPath; // was: str(111)
 		var_i16_f22 = var_i16_e20;
 		_zbasic->close(1);
 		var_i16_7e6 = 0;
@@ -2818,7 +2901,7 @@ void FoolGame::sub_129_068() {
 		_modalText[1] = Common::U32String("2 color black and white");
 		_modalText[2] = Common::U32String("and start the game again.");
 		_modalText[3] = Common::U32String("Okay");
-		showChoiceModal(kFontChicago, 2, 1, 0);
+		showChoiceModal(kFontChicago, 2, 1, false, true);
 		_zbasic->unk_4();
 	}
 	// 129:0390
@@ -2834,7 +2917,7 @@ void FoolGame::sub_129_068() {
 		_modalText[4] = Common::U32String("for possible solutions.");
 		_modalText[5] = Common::U32String();
 		_modalText[6] = Common::U32String("Quit");
-		showChoiceModal(kFontChicago, 5, 1, 1);
+		showChoiceModal(kFontChicago, 5, 1, true, true);
 		_zbasic->unk_4();
 	}
 	// 129:0496
@@ -2850,8 +2933,8 @@ void FoolGame::sub_129_068() {
 	//var_i16_484 = _zbasic->finderInfo(var_i16_7e4, var_str_588, var_i32_f28, var_i16_688);
 	var_str_588 = _startSaveFileName;
 	if (!var_str_588.empty()) { // was: str(126)
-		if (var_str_588 == Common::U32String("Fool's Puzzles")) { // was: str(127)
-			var_str_e22 = Common::U32String("Fool's Puzzles"); // was: str(128)
+		if (var_str_588 == _puzzlesPath) { // was: str(127)
+			var_str_e22 = _puzzlesPath; // was: str(128)
 			var_i16_f22 = var_i16_688;
 		} else {
 			// 129:052e
@@ -2901,7 +2984,7 @@ void FoolGame::sub_129_068() {
 			}
 			var_str_e22 = var_str_588;
 			var_i16_f22 = var_i16_688;
-		} while (var_str_e22 != Common::U32String("Fool's Puzzles")); // was: str(139)
+		} while (var_str_e22 != _puzzlesPath); // was: str(139)
 	}
 	// 129:0718
 	setVolRefNum(var_i16_f22);
@@ -2963,7 +3046,7 @@ void FoolGame::sub_129_068() {
 	var_i32_c = _toolbox->GetIcon(0x101);
 	_toolbox->DetachResource(var_i32_c);
 	// 129:09c2: SF - 0x8,D0
-	_zbasic->openR(1, Common::U32String("Fool's Puzzles"), 1000, var_i16_f22); // was: str(140)
+	_zbasic->openR(1, _puzzlesPath, 1000, var_i16_f22); // was: str(140)
 	var_i32_1036 = _zbasic->readFileDblInt(1);
 
 	_puzzleDataPtr = 0;
@@ -2976,6 +3059,17 @@ void FoolGame::sub_129_068() {
 	for (int i = 1; i <= 0x64; i++) {
 		_puzzleDataOffsets[i] = puzzlesReadLong();
 	}
+
+	// difference to the demo puzzle format??
+	if (_isDemo) {
+		// 129:069a in demo
+		for (int i = 1; i <= 0x50; i++) {
+			// saves to arr_i16_18f04
+			// corresponds to enabled puzzle IDs
+			_demoChapters[i] = puzzlesReadByte();
+		}
+	}
+
 	// 129:0a4e
 	// quickdraw patterns
 	// reworked slightly to fill the pattern buffer directly
@@ -3144,22 +3238,33 @@ void FoolGame::sub_129_068() {
 	_zbasic->menu(1, 0, 1, Common::U32String("~")); // wadjet eye, was: str(143)
 	_zbasic->menu(1, 1, 0, Common::U32String("-"));
 	_zbasic->menu(1, 2, 1, Common::U32String("/FAbout Fool's Errand"));
-	// this is brand new
-	_zbasic->menu(1, 3, 1, Common::U32String("Show Prologue"));
-	_zbasic->menu(1, 4, 0, Common::U32String("Show Finale"));
-	_zbasic->menu(1, 5, 0, Common::U32String("-"));
+	if (_isDemo) {
+		_zbasic->menu(1, 3, 0, Common::U32String("-"));
+	} else {
+		// this is brand new
+		_zbasic->menu(1, 3, 1, Common::U32String("Show Prologue"));
+		_zbasic->menu(1, 4, 0, Common::U32String("Show Finale"));
+		_zbasic->menu(1, 5, 0, Common::U32String("-"));
+	}
 
 	// File menu
-	_zbasic->menu(2, 0, 1, Common::U32String("File"));
-	_zbasic->menu(2, 1, 1, Common::U32String("/NNew"));
-	_zbasic->menu(2, 2, 1, Common::U32String("/OOpen"));
-	_zbasic->menu(2, 3, 1, Common::U32String("/SSave"));
-	_zbasic->menu(2, 4, 1, Common::U32String("/ASave As"));
-	_zbasic->menu(2, 5, 0, Common::U32String("-"));
-	_zbasic->menu(2, 6, 1, Common::U32String("Sound"));
-	_zbasic->menu(2, 7, 1, Common::U32String("Print Story"));
-	_zbasic->menu(2, 8, 0, Common::U32String("-"));
-	_zbasic->menu(2, 9, 1, Common::U32String("/QQuit"));
+	if (_isDemo) {
+		_zbasic->menu(2, 0, 1, Common::U32String("Demonstration"));
+		_zbasic->menu(2, 1, 1, Common::U32String("/IInstructions"));
+		_zbasic->menu(2, 2, 0, Common::U32String("-"));
+		_zbasic->menu(2, 3, 1, Common::U32String("/QQuit"));
+	} else {
+		_zbasic->menu(2, 0, 1, Common::U32String("File"));
+		_zbasic->menu(2, 1, 1, Common::U32String("/NNew"));
+		_zbasic->menu(2, 2, 1, Common::U32String("/OOpen"));
+		_zbasic->menu(2, 3, 1, Common::U32String("/SSave"));
+		_zbasic->menu(2, 4, 1, Common::U32String("/ASave As"));
+		_zbasic->menu(2, 5, 0, Common::U32String("-"));
+		_zbasic->menu(2, 6, 1, Common::U32String("Sound"));
+		_zbasic->menu(2, 7, 1, Common::U32String("Print Story"));
+		_zbasic->menu(2, 8, 0, Common::U32String("-"));
+		_zbasic->menu(2, 9, 1, Common::U32String("/QQuit"));
+	}
 
 	sub_128_6244();
 	// 129:11f6
@@ -3184,7 +3289,7 @@ void FoolGame::menuLoadingMessage(int16 percent) {
 	fillRect(0, 7, 0x13, _windowWidth - 7, 0);
 	_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 	// Loading Game text during initial puzzle load
-	Common::U32String message = Common::U32String::format("Loading Game - %d%%", percent); // was: str(158)
+	Common::U32String message = Common::U32String::format("Loading %s - %d%%", _isDemo ? "Demonstration" : "Game", percent); // was: str(158)
 	int16 width = _toolbox->StringWidth(message);
 	_toolbox->MoveTo((_windowWidth / 2) - (width / 2), 0xe);
 	_toolbox->DrawString(message);
@@ -3272,7 +3377,7 @@ void FoolGame::metapuzzleComplete() {
 	_modalText[4] = Common::U32String("Congratulations!");
 	_modalText[5] = Common::U32String("You may now view the finale.");
 	_modalText[6] = Common::U32String("Okay");
-	showChoiceModal(kFontFool, 5, 1, 0);
+	showChoiceModal(kFontFool, 5, 1, false, true);
 
 	//if (!_screenOversized) {
 	//	_toolbox->ClearMenuBar();
@@ -3303,6 +3408,78 @@ void FoolGame::metapuzzleComplete() {
 	_toolbox->DisposeMenu(menu);
 	_toolbox->DrawMenuBar();
 	copyScreen(1, _scrollPage);
+}
+
+void FoolGame::demoPuzzleComplete() {
+	int instrOff = _zstrOffset[kOffsetDemoPuzzleComplete];
+
+	_modalText[0] = _zbasic->str(instrOff+0);
+	_modalText[1] = _zbasic->str(instrOff+1);
+	_modalText[2] = _zbasic->str(instrOff+2);
+	_modalText[3] = _zbasic->str(instrOff+3);
+	_modalText[4] = _zbasic->str(instrOff+4);
+	showChoiceModal(kFontFool, 4, 0, false, true);
+
+}
+
+void FoolGame::menuDemoAbout() {
+	int instrOff = _zstrOffset[kOffsetDemoInstructions];
+	// 128:2dbc in the demo code
+	// "the fool's errand is something new..."
+	_modalText[0] = _zbasic->str(instrOff+0);
+	_modalText[1] = _zbasic->str(instrOff+1);
+	_modalText[2] = _zbasic->str(instrOff+2);
+	_modalText[3] = _zbasic->str(instrOff+3);
+	_modalText[4] = _zbasic->str(instrOff+4);
+	_modalText[5] = _zbasic->str(instrOff+5);
+	_modalText[6] = _zbasic->str(instrOff+6);
+	_modalText[7] = _zbasic->str(instrOff+7);
+	_modalText[8] = _zbasic->str(instrOff+8);
+	_modalText[9] = _zbasic->str(instrOff+9);
+	showChoiceModal(kFontFool, 9, 0, false, false);
+	_modalText[0] = _zbasic->str(instrOff+10);
+	_modalText[1] = _zbasic->str(instrOff+11);
+	_modalText[2] = _zbasic->str(instrOff+12);
+	_modalText[3] = _zbasic->str(instrOff+13);
+	_modalText[4] = _zbasic->str(instrOff+14);
+	_modalText[5] = _zbasic->str(instrOff+15);
+	_modalText[6] = _zbasic->str(instrOff+16);
+	showChoiceModal(kFontFool, 6, 0, false, false);
+	_modalText[0] = _zbasic->str(instrOff+17);
+	_modalText[1] = _zbasic->str(instrOff+18);
+	_modalText[2] = _zbasic->str(instrOff+19);
+	_modalText[3] = _zbasic->str(instrOff+20);
+	_modalText[4] = _zbasic->str(instrOff+21);
+	showChoiceModal(kFontFool, 4, 0, false, false);
+}
+
+void FoolGame::menuDemoInstructions() {
+	// 128:309a in demo code
+	int instrOff = _zstrOffset[kOffsetDemoInstructions];
+	// "this demonstration contains a few samples..."
+	_modalText[0] = _zbasic->str(instrOff+22);
+	_modalText[1] = _zbasic->str(instrOff+23);
+	_modalText[2] = _zbasic->str(instrOff+24);
+	showChoiceModal(kFontChicago, 2, 0, false, false);
+	_modalText[0] = _zbasic->str(instrOff+25);
+	_modalText[1] = _zbasic->str(instrOff+26);
+	_modalText[2] = _zbasic->str(instrOff+27);
+	_modalText[3] = _zbasic->str(instrOff+28);
+	_modalText[4] = _zbasic->str(instrOff+29);
+	_modalText[5] = _zbasic->str(instrOff+30);
+	_modalText[6] = _zbasic->str(instrOff+31);
+	_modalText[7] = _zbasic->str(instrOff+32);
+	_modalText[8] = _zbasic->str(instrOff+33);
+	showChoiceModal(kFontChicago, 8, 0, false, false);
+	_modalText[0] = _zbasic->str(instrOff+34);
+	_modalText[1] = _zbasic->str(instrOff+35);
+	_modalText[2] = _zbasic->str(instrOff+36);
+	_modalText[3] = _zbasic->str(instrOff+37);
+	_modalText[4] = _zbasic->str(instrOff+38);
+	_modalText[5] = _zbasic->str(instrOff+39);
+	_modalText[6] = _zbasic->str(instrOff+40);
+	_modalText[7] = _zbasic->str(instrOff+41);
+	showChoiceModal(kFontChicago, 7, 0, false, false);
 }
 
 } // End of namespace Fool

@@ -63,7 +63,9 @@ Common::Error FoolEngine::run() {
 
 	Common::String versionStr(_gameDescription->desc.extra);
 	FoolVersion version = kFool20;
-	if (versionStr == "v1.1") {
+	if (versionStr == "Demo v1.0") {
+		version = kFoolDemo10;
+	} else if (versionStr == "v1.1") {
 		version = kFool11;
 	} else if (versionStr == "v2.0") {
 		version = kFool20;

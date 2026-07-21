@@ -41,6 +41,10 @@ void FoolGame::justiceRun() {
 		}
 		// 142:0874
 		justiceResetGrid();
+		if (_isDemo) {
+			_activePuzzleStatus = 0x63;
+			return;
+		}
 		if (_puzzleCompletionStatus[0x34] > 3) {
 			_activePuzzleStatus = 0x64;
 			return;
@@ -83,7 +87,7 @@ void FoolGame::justiceSetup() {
 		_zbasic->indexRawSet(puzzlesReadString(), 1, i);
 	}
 	// 142:09ea
-	if (_puzzleCompletionStatus[0x34] < 4) {
+	if (_isDemo || (_puzzleCompletionStatus[0x34] < 4)) {
 		_zbasic->menu(8, 3, 1, _zbasic->str(OFF(3))); // a secret hides here
 		_zbasic->menu(8, 4, 1, _zbasic->str(OFF(4))); // if twenty-five appear
 	} else {
@@ -110,7 +114,7 @@ void FoolGame::justiceSetup() {
 	justiceZoom();
 	fillRect(0x1a, 0x82, 0x128, 0x190, 2);
 	if (_activePuzzleBuffer.empty()) { // was: str(OFF(7))
-		_activePuzzleBuffer = (_zbasic->space(0xc) + _zbasic->str(OFF(8)) + _zbasic->space(0xc)).encode(Common::kMacRoman); // 1
+		_activePuzzleBuffer = (_zbasic->space(0xc) + Common::U32String("1") + _zbasic->space(0xc)).encode(Common::kMacRoman); // was: str(OFF(8))
 		_justiceFirstMove = 1;
 	} else {
 		// 142:0b4c
@@ -121,10 +125,10 @@ void FoolGame::justiceSetup() {
 	for (int16 i = 1; i <= 0x19; i++) {
 		int16 drawData = _zbasic->castInt(_zbasic->midStr(_activePuzzleBuffer, i, 1));
 		if ((drawData & 2) == 0) {
-			_zbasic->indexRawSet(_zbasic->strRaw(OFF(9)), 1, (i + 0x19)); // bullet
+			_zbasic->indexRawSet(Common::String("\xa5"), 1, (i + 0x19)); // bullet, was OFF(9)
 		} else {
 			// 142:0be0
-			_zbasic->indexRawSet(_zbasic->strRaw(OFF(10)), 1, (i + 0x19)); // wadjet
+			_zbasic->indexRawSet(Common::String("~"), 1, (i + 0x19)); // wadjet, was OFF(10)
 		}
 		// 142:0c06
 		if ((drawData & 1) != 0) {
@@ -167,14 +171,14 @@ void FoolGame::justiceOnClick() {
 	}
 	// 142:0d56
 	_toolbox->InvertRoundRect(_screenGrid[gridIndex], 0x1e, 0x1e);
-	if (_zbasic->index(1, gridIndex + 0x19) == _zbasic->str(OFF(11))) { // bullet
-		_zbasic->indexSet(_zbasic->str(OFF(12)), 1, gridIndex + 0x19); // wadjet
+	if (_zbasic->indexRaw(1, gridIndex + 0x19) == Common::String("\xa5")) { // bullet, was OFF(11)
+		_zbasic->indexRawSet(Common::String("~"), 1, gridIndex + 0x19); // wadjet, was OFF(12)
 	}
 	// 142:0dc6
 	if (gridIndex == 0xd) { // center button
 		if (_justiceFirstMove == 0) {
 			for (int16 i = 1; i <= 0x19; i++) {
-				_zbasic->indexSet(_zbasic->str(OFF(13)), 1, i + 0x19); // bullet
+				_zbasic->indexRawSet(Common::String("\xa5"), 1, i + 0x19); // bullet, was OFF(13)
 				arr_i16_3738[i] = 0;
 				justiceRemoveBlock(i);
 			}
@@ -189,7 +193,7 @@ void FoolGame::justiceOnClick() {
 	// 142:0e44
 	Common::String buffer = _zbasic->indexRaw(1, gridIndex);
 	int16 offset = 2;
-	if (_zbasic->leftStr(buffer, 1) == _zbasic->str(OFF(14)).encode(Common::kMacRoman)) { // M
+	if (_zbasic->leftStr(buffer, 1) == Common::String("M")) { // was OFF(14)
 		gridIndex = _zbasic->decodeInt(_zbasic->midStr(buffer, 2, 2));
 		justiceDrawBlock(gridIndex);
 		offset = 5;
@@ -251,7 +255,7 @@ void FoolGame::justiceStoreState() {
 	_activePuzzleBuffer = Common::String::format("%d", _justiceFirstMove);
 	for (int16 i = 1; i <= 0x19; i++) {
 		int16 data = arr_i16_3738[i];
-		if (_zbasic->index(1, i + 0x19) == _zbasic->str(OFF(15))) { // wadjet
+		if (_zbasic->indexRaw(1, i + 0x19) == Common::String("~")) { // wadjet, was OFF(15)
 			data |= 2;
 		}
 		_activePuzzleBuffer += Common::String::format("%d", data);

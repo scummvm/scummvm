@@ -220,7 +220,7 @@ void FoolGame::polyominoRun() {
 		}
 	}
 	// 133:073c
-	sub_128_bde(1, arr_i16_1eb8[0xf], 0, 1, 1, 1);
+	screenZap(1, arr_i16_1eb8[0xf], 0, 1, 1, 1);
 	var_i16_1ab0 = 0;
 	for (var_i16_7cc = 1; var_i16_7cc <= arr_i16_1eb8[0x10]; var_i16_7cc++) {
 		polyominoMove(

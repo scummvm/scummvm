@@ -51,6 +51,11 @@ void FoolGame::highPriestessRun() {
 		// 140:0056
 		_activePuzzleStatus = 1;
 	}
+	if (_isDemo && _activePuzzleStatus) {
+		// demo, stop after solving the enchantments
+		_activePuzzleStatus = 0x64;
+		return;
+	}
 	// 140:005c
 	if (_activePuzzleStatus == 1) {
 		thothKey1st();
@@ -177,7 +182,8 @@ void FoolGame::thoth99Enchantments() {
 	// 140:0458
 	toggleMouseCursor(false);
 	if (_activePuzzleBuffer.empty()) { // was: str(OFF(6))
-		arr_i16_1eb8[0] = 0x63;
+		// number of enchantments to start with
+		arr_i16_1eb8[0] = _isDemo ? 33 : 99;
 	} else {
 		arr_i16_1eb8[0] = _zbasic->decodeInt(_activePuzzleBuffer);
 	}
@@ -185,7 +191,7 @@ void FoolGame::thoth99Enchantments() {
 	if (arr_i16_1eb8[0] < 1) {
 		arr_i16_1eb8[0] = 1;
 	}
-	if (arr_i16_1eb8[0] == 0x63) {
+	if (!_isDemo && (arr_i16_1eb8[0] == 99)) {
 		_zbasic->text(kFontLarge, 0x18, 0x10, Graphics::MacToolbox::kSrcBic);
 		drawTextCenter(_zbasic->str(OFF(7)), 0xaf); // you dare to challenge
 		drawTextCenter(_zbasic->str(OFF(8)), 0xd2); // the high priestess
@@ -258,7 +264,7 @@ void FoolGame::thoth99Enchantments() {
 		}
 		// 140:07c4
 		// Phase 1: enchantments 99 to 34 are inverting and don't move
-		if (arr_i16_1eb8[0] >= 0x21) {
+		if (arr_i16_1eb8[0] > (_isDemo ? 13 : 33)) {
 			if ((arr_i16_1eb8[1] % 0xa) == 0) {
 				arr_i16_1eb8[2] = arr_i16_1eb8[0];
 			} else {
@@ -1010,6 +1016,10 @@ void FoolGame::hermitNextStage() {
 	}
 	if (_hermitPathStage == 4) {
 		hermitScreenZoom();
+	}
+	if (_isDemo && (_hermitPathStage >= 5)) {
+		_activePuzzleSolved = true;
+		return;
 	}
 	if (_hermitPathStage == 5) {
 		hermitScreenBehold();

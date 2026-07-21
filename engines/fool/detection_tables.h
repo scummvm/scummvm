@@ -64,6 +64,16 @@ const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// The Fool's Errand Demo - Version 1.0 (1987-06-25)
+	{
+		"foolserrand",
+		"Demo v1.0",
+		AD_ENTRY1s("Fool's DEMO", "rt:3890f5ed98166cf213e6d04fa2ce21b7", 142388),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE | ADGF_DEMO,
+		GUIO1(GUIO_NONE)
+	},
 
 	AD_TABLE_END_MARKER
 };

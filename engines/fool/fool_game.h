@@ -94,6 +94,8 @@ enum FoolZStrOffset : uint16 {
 	kOffsetFinale,
 	kOffsetPrologueMemory,
 	kOffsetPrologueClick,
+	kOffsetDemoInstructions,
+	kOffsetDemoPuzzleComplete,
 };
 
 enum FoolFontID : uint16 {
@@ -133,10 +135,10 @@ public:
 	void fillRect(int16 top, int16 left, int16 bottom, int16 right, int16 patternID); // sub_128_8b4
 	void drawTextCenter(const Common::U32String &str, int16 yPos); // sub_128_918
 	void zoomRect(int16 startTop, int16 startLeft, int16 startBottom, int16 startRight, int16 endTop, int16 endLeft, int16 endBottom, int16 endRight, int16 patternID, PatternMode mode, int16 steps); // sub_128_962
-	void sub_128_bde(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
+	void screenZap(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1); // sub_128_bde
 	void getNextEvent(int32 mask); // sub_128_c6a
 	void flashRect(int16 top, int16 left, int16 bottom, int16 right, int16 millis); // sub_128_d34
-	void showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, bool beep); // sub_128_dfe
+	void showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, bool beep, bool dark); // sub_128_dfe
 
 	void showBehold(int16 unk2, int16 unk1, const Common::U32String &message); // sub_128_178a
 	void setStateBits(uint16 bits); // sub_128_1c2c
@@ -210,6 +212,10 @@ public:
 	void sub_129_004();
 	void sub_129_068();
 	void menuLoadingMessage(int16 percent); // sub_129_123a
+
+	void menuDemoAbout();
+	void menuDemoInstructions();
+	void demoPuzzleComplete();
 
 	// fool_jumble.cpp:
 	void jumbleRun();
@@ -469,6 +475,9 @@ public:
 
 private:
 	FoolVersion _version;
+	Common::U32String _puzzlesPath;
+	bool _isDemo;
+	int _cardsMaxScore;
 	const int *_zstrOffset;
 	Toolbox *_toolbox;
 	ZBasic *_zbasic;
@@ -816,6 +825,9 @@ private:
 
 	Common::U32String _modalText[13]; // arr_str_1a8d8, 0x66 each
 	Common::Rect _screenClipRect; // arr_rect_1ae06
+
+	// demo only
+	int16 _demoChapters[101]; // arr_i16_18f04
 };
 
 }

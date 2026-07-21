@@ -79,7 +79,7 @@ void FoolGame::mazeRun() {
 		}
 	}
 	// 136:02ce
-	sub_128_bde(1, arr_i16_1eb8[17], 0, 1, 0, 1);
+	screenZap(1, arr_i16_1eb8[17], 0, 1, 0, 1);
 
 	Common::Rect playArea;
 	playArea.top = _screenGrid[1].top + 3;
@@ -397,9 +397,10 @@ void FoolGame::mazeHotspot() {
 		var_i16_1cde = _zbasic->instr(var_i16_1cde, var_str_1ac8, _zbasic->strRaw(OFF(4))); // \xa5\xa5
 		if (var_i16_1cde > 0) {
 			// get command ID
+			int16 commandId = 0;
 			for (int16 i = 1; i <= (int16)var_str_1bde.size(); i++) {
 				if (_zbasic->midStr(var_str_1ac8, var_i16_1cde + 2, 1) == _zbasic->midStr(var_str_1bde, i, 1)) {
-					var_i16_1a9a = i;
+					commandId = i;
 				}
 				// 136:0c4c
 			}
@@ -414,7 +415,7 @@ void FoolGame::mazeHotspot() {
 				var_i16_1cde = var_i16_1ce0;
 			}
 			// 136:0cec
-			switch (var_i16_1a9a - 1) {
+			switch (commandId - 1) {
 			case 0:	// C
 				mazePrintMessage();
 				break;

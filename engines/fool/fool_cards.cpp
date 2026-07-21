@@ -31,9 +31,6 @@ namespace Fool {
 
 
 
-// v1.1 and v2.0 have the winning score set to 700.
-// v3.0 revises this to be 666, which I can't dispute is a much cooler score.
-#define CARDS_MAX_SCORE 666
 #define CARDS_MIN_SCORE (-999)
 #define CARDS_YIELD_PENALTY 27
 
@@ -67,7 +64,7 @@ void FoolGame::cardsRun() {
 		arr_i32_192c0[i] = _toolbox->GetPicture(var_i16_484);
 	}
 	// 139:0184
-	sub_128_bde(1, 1, 0, 1, 1, 1);
+	screenZap(1, 1, 0, 1, 1, 1);
 	fillRect(0xb4, 0xb5, 0x156, 0x14b, 2);
 	// illustration of the card game
 	_zbasic->picture(0xc3, 0xf3, arr_i32_192c0[0x17]);
@@ -95,7 +92,7 @@ void FoolGame::cardsRun() {
 	arr_i16_1eb8[6] = _zbasic->decodeInt(_zbasic->midStr(_activePuzzleBuffer, 3, 2));
 	// 139:0320
 	var_i16_2010 = _zbasic->decodeInt(_zbasic->midStr(_activePuzzleBuffer, 5, 2));
-	if ((arr_i16_1eb8[5] > CARDS_MAX_SCORE) || (arr_i16_1eb8[6] > CARDS_MAX_SCORE)) {
+	if ((arr_i16_1eb8[5] > _cardsMaxScore) || (arr_i16_1eb8[6] > _cardsMaxScore)) {
 		arr_i16_1eb8[5] = 0;
 		arr_i16_1eb8[6] = 0;
 		var_i16_2010 = 0;
@@ -271,7 +268,7 @@ void FoolGame::cardsOnClick() {
 		}
 		// 139:0938
 		var_i16_2010 = 0;
-		if (arr_i16_1eb8[5] > CARDS_MAX_SCORE) {
+		if (arr_i16_1eb8[5] > _cardsMaxScore) {
 			sub_139_1d3e();
 			return;
 		}
@@ -294,7 +291,7 @@ void FoolGame::cardsOnClick() {
 			}
 		}
 		// 139:09d8
-		if (((_stateFlags & kStateReturn) == 0) && (arr_i16_1eb8[6] > CARDS_MAX_SCORE)) {
+		if (((_stateFlags & kStateReturn) == 0) && (arr_i16_1eb8[6] > _cardsMaxScore)) {
 			_stateFlags = kStateUndo;
 			var_i16_2014 = 0;
 		}
@@ -483,7 +480,7 @@ void FoolGame::cardsRevealHands() {
 		var_str_384 = _zbasic->str(OFF(12)); // The Old Man
 	}
 	// 139:11e2
-	if ((arr_i16_1eb8[5] > CARDS_MAX_SCORE) || (arr_i16_1eb8[6] > CARDS_MAX_SCORE)) {
+	if ((arr_i16_1eb8[5] > _cardsMaxScore) || (arr_i16_1eb8[6] > _cardsMaxScore)) {
 		var_str_9f4 = _zbasic->str(OFF(13)); // the game!
 	} else {
 		// 139:123e
