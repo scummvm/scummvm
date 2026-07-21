@@ -704,11 +704,14 @@ bool NancyConsole::Cmd_actionRecordExport(int argc, const char **argv) {
 		char descBuf[48];
 		chunk->read(descBuf, 48);
 		descBuf[47] = '\0';
+		Common::String desc(descBuf);
+		desc.replace('/', '-');
+		desc.replace('\\', '-');
 		byte ARType = chunk->readByte();
 		chunk->skip(1); // execType
 
 		Common::DumpFile f;
-		Common::String filename = Common::String::format("%s_ar_%d_scene_%d_%d_%s.dat", g_nancy->getGameId(), ARType, sceneId, recordId, descBuf);
+		Common::String filename = Common::String::format("%s_ar_%d_scene_%d_%d_%s.dat", g_nancy->getGameId(), ARType, sceneId, recordId, desc.c_str());
 		f.open(Common::Path(filename));
 		f.writeStream(chunk, chunk->size() - 50);
 		f.close();
