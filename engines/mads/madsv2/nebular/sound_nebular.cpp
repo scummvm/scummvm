@@ -2332,8 +2332,8 @@ int ASound8::command22() {
 }
 
 int ASound8::command23() {
-	playSound(0x2B08, 34);
-	playSound(0x2B2A, 20);
+	playSound(0x16E8, 34);
+	playSound(0x170A, 20);
 
 	return 0;
 }
