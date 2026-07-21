@@ -25,6 +25,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 
+#include "ripper/display.h"
 #include "ripper/resources.h"
 #include "ripper/settings.h"
 
@@ -62,8 +63,7 @@ private:
 	BitmapFontAsset _font;
 	Common::Array<Control> _controls;
 	Common::Array<Common::String> _labels;
-	Common::Array<byte> _savedPixels;
-	Common::Array<byte> _savedPalette;
+	IndexedDisplaySnapshot _savedDisplay;
 	bool _initialized;
 };
 

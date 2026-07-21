@@ -25,6 +25,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 
+#include "ripper/display.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
@@ -123,8 +124,7 @@ private:
 	Common::Array<BitmapAssetFrame> _wacSkin;
 	Common::Array<byte> _modalPalette;
 	Common::Array<Common::String> _gameText;
-	Common::Array<byte> _savedPixels;
-	Common::Array<byte> _savedPalette;
+	IndexedDisplaySnapshot _savedDisplay;
 	Common::String _textEntryPrompt;
 	Common::String _textEntryText;
 	Common::String _textEntrySource;

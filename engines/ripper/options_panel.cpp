@@ -150,28 +150,12 @@ bool OptionsPanelManager::initialize(ResourceManager &resources) {
 }
 
 bool OptionsPanelManager::captureDisplay() {
-	Graphics::Surface *screen = g_system->lockScreen();
-	if (!screen || screen->format.bytesPerPixel != 1 || screen->w != 640 || screen->h != 400) {
-		if (screen)
-			g_system->unlockScreen();
-		return false;
-	}
-	_savedPixels.resize(640 * 400);
-	for (int y = 0; y < 400; ++y)
-		memcpy(_savedPixels.data() + y * 640, screen->getBasePtr(0, y), 640);
-	g_system->unlockScreen();
-	_savedPalette.resize(256 * 3);
-	g_system->getPaletteManager()->grabPalette(_savedPalette.data(), 0, 256);
-	return true;
+	return _savedDisplay.capture();
 }
 
 void OptionsPanelManager::restoreDisplay() {
-	if (_savedPixels.size() == 640 * 400)
-		g_system->copyRectToScreen(_savedPixels.data(), 640, 0, 0, 640, 400);
-	if (_savedPalette.size() == 256 * 3)
-		g_system->getPaletteManager()->setPalette(_savedPalette.data(), 0, 256);
-	_savedPixels.clear();
-	_savedPalette.clear();
+	_savedDisplay.restore(true, false);
+	_savedDisplay.clear();
 	_engine->getCursor()->refresh();
 	g_system->updateScreen();
 }

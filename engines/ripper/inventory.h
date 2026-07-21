@@ -25,6 +25,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 
+#include "ripper/display.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
@@ -90,8 +91,7 @@ private:
 	Common::Array<BitmapAssetFrame> _skin;
 	Common::Array<BitmapAssetFrame> _itemBitmaps;
 	Common::Array<Entry> _entries;
-	Common::Array<byte> _savedPixels;
-	Common::Array<byte> _savedPalette;
+	IndexedDisplaySnapshot _savedDisplay;
 	BitmapFontAsset _font;
 	Common::Rect _menuBounds;
 	Common::Rect _useBounds;
