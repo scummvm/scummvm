@@ -979,6 +979,9 @@
 - `ReadSceneCallbackOpcodeAndArguments` at `0x140e9` decodes callback commands
   and their typed arguments.
 - `RunSceneCallbackCommandStream` at `0x14080` dispatches decoded commands.
+  `ScriptManager` retains that callback interpreter, while
+  `SceneActionDispatcher` owns opcode `0x18`'s action routing to match the
+  separate `DispatchSceneEntryAction` boundary at `0x36892`.
 - The callback handler table at `0x84040` maps opcode `0x15` to
   `HandleSceneEntryPushChoiceRecordAndStepPrompt` at `0x15085`, opcode `0x16`
   to `HandleSceneEntryPushFrameChoiceOnPlayedStateCondition` at `0x150ea`, and
