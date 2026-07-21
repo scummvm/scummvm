@@ -338,7 +338,7 @@ private:
 	};
 	Common::Array<PreloadedCursor> _loadedCursors;
 
-	Common::HashMap<Common::String, Graphics::ManagedSurface *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _cursorCache;
+	Common::HashMap<Common::String, Common::ScopedPtr<Graphics::ManagedSurface>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _cursorCache;
 
 	Common::Array<Common::Array<Common::String>> _cursors;
 	Common::String _defaultCursor[2];

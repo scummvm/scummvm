@@ -354,11 +354,6 @@ void PhoenixVREngine::resetState() {
 
 PhoenixVREngine::~PhoenixVREngine() {
 	_system->lockMouse(false);
-	for (auto it = _cursorCache.begin(); it != _cursorCache.end(); ++it) {
-		auto *s = it->_value;
-		s->free();
-		delete s;
-	}
 	delete _screen;
 }
 
@@ -1238,7 +1233,7 @@ Graphics::ManagedSurface *PhoenixVREngine::loadCursor(const Common::String &path
 		return nullptr;
 	auto it = _cursorCache.find(path);
 	if (it != _cursorCache.end())
-		return it->_value;
+		return it->_value.get();
 	Common::ScopedPtr<Graphics::ManagedSurface> s(loadSurface(path));
 	if (!s) {
 		warning("can't load cursor from %s", path.c_str());
@@ -1247,8 +1242,9 @@ Graphics::ManagedSurface *PhoenixVREngine::loadCursor(const Common::String &path
 	if (w > 0 && h > 0) {
 		s.reset(s->scale(w, h, true));
 	}
-	_cursorCache[path] = s.get();
-	return s.release();
+	auto &cursor = _cursorCache[path];
+	cursor = Common::move(s);
+	return cursor.get();
 }
 
 void PhoenixVREngine::loadCursor(int idx, const Common::String &path, int w, int h) {
