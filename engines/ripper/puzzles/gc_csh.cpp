@@ -100,19 +100,7 @@ GcCshPuzzle::GcCshPuzzle(RipperEngine *engine) :
 }
 
 bool GcCshPuzzle::captureBackground() {
-	Graphics::Surface *screen = g_system->lockScreen();
-	if (!screen || screen->format.bytesPerPixel != 1 || screen->w != 640 || screen->h != 400) {
-		if (screen)
-			g_system->unlockScreen();
-		return false;
-	}
-
-	_backgroundPixels.resize(screen->w * screen->h);
-	for (int y = 0; y < screen->h; ++y)
-		memcpy(_backgroundPixels.data() + y * screen->w,
-			screen->getBasePtr(0, y), screen->w);
-	g_system->unlockScreen();
-	return true;
+	return _backgroundDisplay.capture();
 }
 
 bool GcCshPuzzle::loadAssets() {
@@ -194,7 +182,7 @@ void GcCshPuzzle::drawResetFrame(const int enteredChoices[4],
 }
 
 void GcCshPuzzle::restoreSequenceBacking() {
-	if (_backgroundPixels.size() != 640 * 400)
+	if (_backgroundDisplay.pixels().size() != 640 * 400)
 		return;
 
 	Graphics::Surface *screen = g_system->lockScreen();
@@ -205,7 +193,7 @@ void GcCshPuzzle::restoreSequenceBacking() {
 	}
 	for (int y = 0; y < kSequenceBackingHeight; ++y) {
 		memcpy(screen->getBasePtr(kSequenceBackingX, kSequenceBackingY + y),
-			_backgroundPixels.data() + (kSequenceBackingY + y) * 640 +
+			_backgroundDisplay.pixels().data() + (kSequenceBackingY + y) * 640 +
 				kSequenceBackingX,
 			kSequenceBackingWidth);
 	}

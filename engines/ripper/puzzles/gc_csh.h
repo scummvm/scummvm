@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 
+#include "ripper/display.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
@@ -64,7 +65,7 @@ private:
 
 	RipperEngine *_engine;
 	Common::Array<BitmapAssetFrame> _choiceFrames[4];
-	Common::Array<byte> _backgroundPixels;
+	IndexedDisplaySnapshot _backgroundDisplay;
 	Audio::SoundHandle _audioHandles[2];
 	int _hoveredChoice;
 };

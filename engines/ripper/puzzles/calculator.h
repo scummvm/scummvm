@@ -25,6 +25,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 
+#include "ripper/display.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
@@ -65,8 +66,7 @@ private:
 	RipperEngine *_engine;
 	Common::Array<BitmapAssetFrame> _buttons;
 	Common::Array<BitmapAssetFrame> _glyphs;
-	Common::Array<byte> _backgroundPixels;
-	Common::Array<byte> _backgroundPalette;
+	IndexedDisplaySnapshot _backgroundDisplay;
 	Common::String _displayText;
 	double _accumulator;
 	double _currentOperand;
