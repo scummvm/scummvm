@@ -461,6 +461,17 @@
   program families (action 44 is absent). That dispatcher has a second
   palette/UI/chooser/audio preservation boundary around the selected program;
   it is separate from the Cyber menu transition owned by action 6.
+- Action 42 checks `ResolveHighestSetSelectionFlag` at `0x20394`. Chapter 3
+  and later enter `KC.RUN`; earlier chapters call
+  `RunWoffordInteractiveMediaScene` at `0x2ac04`, which sets the action
+  argument as a milestone and loops `WOFFORD.SMK` from frame 15. It starts
+  `WOFFORD0.WAV` at entry, arms `WOFFORD1.WAV` and two choice controls at
+  frame 20, and maps control commands `0x672` and `0x673` to `WOFFORD2.WAV`
+  and `WOFFORD3.WAV`. The nested controls use cursor row 16, active follow-up
+  audio uses row 19, and Escape returns through the surrounding Cyber
+  snapshot. The control rows at `0x2a824` map to physical rectangles
+  (205,203)-(416,296) and (16,73)-(618,335), with the smaller first control
+  retaining hit-test priority inside the full-presentation second control.
 - Action 40 is the bespoke branch `RunKaDialogueScene` at `0x2aef5`, represented
   by ScummVM's self-contained `scenes/LibrarianScene` rather than a scene-script
   loop. It presents
