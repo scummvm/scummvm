@@ -108,6 +108,11 @@
   before returning a control ID. A toolbar press therefore dispatches only
   when its release remains over the same action; leaving the control cancels
   the pending selection.
+- Engine-local rectangular controls use `UiControlRegistry`, which preserves
+  the insertion-order first-hit behavior of `FindUiControlStateAtPoint` at
+  `0x4aae8`. `ChooserModel` owns the selected and first-visible indices for
+  inventory and dialogue lists; each presentation still owns its resource
+  rows, bounds, input dispatch, and rendering.
 - `PollInteractionAndResolveSelection` at `0x13c8d` checks the published
   vertical coordinate before scene interaction handling, so the toolbar band
   remains available during BA0 first-frame previews, normal scenes, and an

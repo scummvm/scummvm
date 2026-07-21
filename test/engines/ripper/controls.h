@@ -43,4 +43,39 @@ public:
 		TS_ASSERT_EQUALS(controls.findFirst(Common::Point(5, 5)), 1);
 		TS_ASSERT_EQUALS(controls.findFirst(Common::Point(25, 25)), -1);
 	}
+
+	void testChooserSelectionKeepsSelectedRowVisible() {
+		Ripper::ChooserModel chooser;
+		chooser.reset(8, 3, 0);
+
+		TS_ASSERT(chooser.moveSelection(1));
+		TS_ASSERT(chooser.moveSelection(1));
+		TS_ASSERT(chooser.moveSelection(1));
+		TS_ASSERT_EQUALS(chooser.selectedIndex(), 3U);
+		TS_ASSERT_EQUALS(chooser.firstVisibleIndex(), 1U);
+		TS_ASSERT_EQUALS(chooser.visibleCount(), 3U);
+	}
+
+	void testChooserWindowScrollClampsSelectionToWindow() {
+		Ripper::ChooserModel chooser;
+		chooser.reset(8, 3, 0);
+
+		TS_ASSERT(chooser.scrollWindow(1));
+		TS_ASSERT_EQUALS(chooser.firstVisibleIndex(), 1U);
+		TS_ASSERT_EQUALS(chooser.selectedIndex(), 1U);
+		TS_ASSERT(chooser.select(3, false));
+		TS_ASSERT(chooser.scrollWindow(-1));
+		TS_ASSERT_EQUALS(chooser.firstVisibleIndex(), 0U);
+		TS_ASSERT_EQUALS(chooser.selectedIndex(), 2U);
+	}
+
+	void testChooserResolvesOnlyPopulatedVisibleRows() {
+		Ripper::ChooserModel chooser;
+		chooser.reset(2, 5, 0);
+		uint index = 99;
+
+		TS_ASSERT(chooser.resolveVisibleRow(1, index));
+		TS_ASSERT_EQUALS(index, 1U);
+		TS_ASSERT(!chooser.resolveVisibleRow(2, index));
+	}
 };
