@@ -24,6 +24,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 
+#include "ripper/controls.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
@@ -55,11 +56,6 @@ public:
 private:
 	friend class WacDatabaseMediaCallback;
 
-	struct Control {
-		BitmapAssetFrame bitmap;
-		Common::Rect bounds;
-		uint16 action;
-	};
 	struct DatabaseEntry {
 		Common::String label;
 		byte originalIndex;
@@ -97,7 +93,8 @@ private:
 
 	RipperEngine *_engine;
 	BitmapAssetFrame _background;
-	Common::Array<Control> _controls;
+	UiControlRegistry _controls;
+	Common::Array<BitmapAssetFrame> _controlBitmaps;
 	Common::Array<BitmapAssetFrame> _idleWindowAnimations[2];
 	uint _idleWindowFrame[2];
 	uint32 _idleWindowLastMillis;
