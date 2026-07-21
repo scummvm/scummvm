@@ -588,6 +588,9 @@
   left and right mouse select the minute and hour hands respectively from its
   twelve regions. The remaining controls advance or rewind the two digital
   clocks; advancing the Egyptian hour from 12 to 1 toggles its half-day marker.
+  The scene loads this mask as one custom bitmap through
+  `DecodeCustomBitmapAsset` at `0x53fdf`; unlike the numbered clock assets, it
+  has no bitmap-set directory.
   `CLOCK1.SMK` and `CLOCK0.SMK` are entry and exit animations at scene-space
   `(282, 77)`. `PlayClockSmackerOverlayAnimation` at `0x38316` treats the first
   decoded pixel as transparent and restores the saved backing before every
