@@ -29,6 +29,7 @@
 #include "ripper/detection.h"
 #include "ripper/input.h"
 #include "ripper/scenes/librarian_scene.h"
+#include "ripper/scenes/wofford_scene.h"
 #include "ripper/media.h"
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
@@ -197,8 +198,12 @@ CyberManager::Result CyberManager::runProgram(uint action,
 	CursorManager *cursor = _engine->getCursor();
 	const uint restoreSelectionIndex = cursor->getSelectionIndex();
 	const bool isKaDialogue = action == kSceneActionKaDialogue;
+	const bool isWoffordMedia = action == kSceneActionKcOrWoffordProgram &&
+		Common::String(scriptBaseName) == "wofford-media";
+	const bool isSelfContainedScene = isKaDialogue || isWoffordMedia;
 	const Common::String programName = isKaDialogue ? Common::String("ka-dialogue") :
-		Common::String::format("%s.run", scriptBaseName);
+		(isWoffordMedia ? Common::String(scriptBaseName) :
+			Common::String::format("%s.run", scriptBaseName));
 	Result result = kLoadFailed;
 
 	_engine->getToolbar()->leave();
@@ -221,6 +226,12 @@ CyberManager::Result CyberManager::runProgram(uint action,
 		active = librarianResult != LibrarianScene::kLoadFailed;
 		if (active)
 			result = kExited;
+	} else if (isWoffordMedia) {
+		WoffordScene wofford(_engine);
+		const WoffordScene::Result woffordResult = wofford.run(argument);
+		active = woffordResult != WoffordScene::kLoadFailed;
+		if (active)
+			result = kExited;
 	} else {
 		active = scripts->ba0().load(_engine->getResources()->scripts(), programName);
 		if (active && !_engine->shouldQuit()) {
@@ -232,7 +243,8 @@ CyberManager::Result CyberManager::runProgram(uint action,
 		}
 	}
 
-	while (!isKaDialogue && active && !scripts->isCyberExitRequested() && !_engine->shouldQuit()) {
+	while (!isSelfContainedScene && active &&
+			!scripts->isCyberExitRequested() && !_engine->shouldQuit()) {
 		if (input->pollEvents()) {
 			_engine->quitGame();
 			break;
@@ -252,7 +264,7 @@ CyberManager::Result CyberManager::runProgram(uint action,
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
-	if (!isKaDialogue && (active || _engine->shouldQuit()))
+	if (!isSelfContainedScene && (active || _engine->shouldQuit()))
 		result = kExited;
 
 	debugC(result == kExited ? 1 : 2, kDebugCyber,
