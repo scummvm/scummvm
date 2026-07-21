@@ -2245,9 +2245,8 @@ int ASound8::command9() {
 }
 
 int ASound8::command10() {
-	byte *pData = loadData(0x2B3E, 10);
-	pData[6] = (getRandomNumber() & 7) + 85;
-	playSoundData(pData);
+	_channels[7].load(loadData(0x171c, 56));
+	_channels[8].load(loadData(0x1754, 56));
 
 	return 0;
 }
@@ -2271,7 +2270,7 @@ int ASound8::command13() {
 }
 
 int ASound8::command14() {
-	playSound(0x169E, 24);
+	_channels[8].load(loadData(0x169e, 24));
 
 	return 0;
 }
@@ -2324,16 +2323,16 @@ int ASound8::command21() {
 }
 
 int ASound8::command22() {
-	playSound(0x178C, 14);
-	playSound(0x179A, 14);
-	playSound(0x17A8, 14);
+	_channels[6].load(loadData(0x178C, 14));
+	_channels[7].load(loadData(0x179A, 14));
+	_channels[8].load(loadData(0x17A8, 14));
 
 	return 0;
 }
 
 int ASound8::command23() {
-	playSound(0x16E8, 34);
-	playSound(0x170A, 20);
+	_channels[7].load(loadData(0x16E8, 34));
+	_channels[8].load(loadData(0x170A, 20));
 
 	return 0;
 }
@@ -2416,7 +2415,7 @@ int ASound8::command30() {
 }
 
 int ASound8::command31() {
-	playSound(0x156A, 14);
+	_channels[7].load(loadData(0x156A, 14));
 
 	return 0;
 }

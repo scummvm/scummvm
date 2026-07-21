@@ -218,6 +218,7 @@ static void room_803_daemon() {
 			else
 				_game._winStatus = 3;
 
+			game.going = false;
 			return;
 		}
 	}
