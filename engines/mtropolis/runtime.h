@@ -1833,7 +1833,7 @@ private:
 		Common::Rect absRect;
 	};
 
-	static Common::SharedPtr<Structural> findDefaultSharedSceneForScene(Structural *scene);
+	Common::SharedPtr<Structural> findDefaultSharedSceneForScene(Structural *scene);
 	void executeTeardown(const Teardown &teardown);
 	void executeLowLevelSceneStateTransition(const LowLevelSceneStateTransitionAction &transitionAction);
 	void executeHighLevelSceneReturn();
