@@ -163,6 +163,7 @@
 #include "director/lingo/xtras/a/amplitude.h"
 #include "director/lingo/xtras/b/budapi.h"
 #include "director/lingo/xtras/b/bamac.h"
+#include "director/lingo/xtras/d/directos.h"
 #include "director/lingo/xtras/d/directsound.h"
 #include "director/lingo/xtras/d/displayres.h"
 #include "director/lingo/xtras/d/datetime.h"
@@ -314,6 +315,7 @@ static const struct XLibProto {
 	XLIBDEF(DirectEmailXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(DirectMediaXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(DirectXportXtra,			kXtraObj,					500),	// D5
+	XLIBDEF(DirectOSXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(DirectsoundXtra,	kXtraObj,		500),	// D5
 	XLIBDEF(DisplayResXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(DmFadeXtra,			kXtraObj,					500),	// D5
