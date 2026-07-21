@@ -38,6 +38,7 @@ namespace Ripper {
 
 class InputManager;
 class RipperEngine;
+class SceneAudioManager;
 
 class MediaSequenceCallback {
 public:
@@ -136,37 +137,6 @@ public:
 	bool syncGame(Common::Serializer &serializer);
 
 private:
-	// InitializeAudioTriggerSlotFromPath at 0x37174 and the scene handlers at
-	// 0x15e48..0x160cc operate on g_audioTriggerSlots[20]. Keep the table intact
-	// across script callbacks so later scenes can address preserved resources.
-	struct AudioSlot {
-		Common::String path;
-		Common::String key;
-		Audio::SoundHandle handle;
-		uint volumePercent;
-		uint targetVolumePercent;
-		uint triggerFrame;
-		uint volumeStartFrame;
-		uint volumeTiming;
-		uint volumeRampStep;
-		uint volumeRampProgress;
-		int volumeRampDirection;
-		byte control;
-		bool occupied;
-		bool preserve;
-		bool volumeRampPending;
-		bool sparseVolumeRamp;
-
-		AudioSlot();
-	};
-
-	static const uint kAudioSlotCount = 20;
-	AudioSlot *findAudioSlot(const Common::String &key);
-	const AudioSlot *findAudioSlot(const Common::String &key) const;
-	bool startAudioSlot(AudioSlot &slot);
-	void clearAudioSlot(AudioSlot &slot);
-	void applyAudioSlotVolume(AudioSlot &slot);
-	Common::String describeAudioSlots() const;
 	bool playSmacker(Common::SeekableReadStream *stream, const Common::String &name,
 		const SmackerPlaybackRequest &request);
 	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name,
@@ -180,7 +150,7 @@ private:
 	RipperEngine *_engine;
 	InputManager *_input;
 	Audio::Mixer *_mixer;
-	AudioSlot _audioSlots[kAudioSlotCount];
+	SceneAudioManager *_sceneAudio;
 	bool _stopSceneOnMouse;
 };
 

@@ -32,6 +32,7 @@ MODULE_OBJS := \
 	ripper.o \
 	saveload.o \
 	scene_dispatcher.o \
+	scene_audio.o \
 	scenes/librarian_scene.o \
 	scenes/scene.o \
 	scenes/tube_scene.o \
