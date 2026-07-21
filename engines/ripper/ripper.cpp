@@ -51,7 +51,7 @@ RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescrip
 		Engine(system), _gameDescription(gameDescription), _cursor(new CursorManager()),
 		_cyber(new CyberManager(this)), _input(new InputManager(_eventMan)),
 		_inventory(new Inventory(this)),
-		_media(new MediaPlayer(this, _input, _mixer)), _milestones(new Milestones()),
+		_media(new MediaPlayer(this, _input.get(), _mixer)), _milestones(new Milestones()),
 		_modalDialog(new ModalDialogManager(this)), _resources(new ResourceManager()),
 		_scripts(new ScriptManager(this)), _settings(new RipperSettings(_mixer)),
 		_toolbar(new ToolbarManager(this)),
@@ -59,19 +59,6 @@ RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescrip
 }
 
 RipperEngine::~RipperEngine() {
-	delete _worldMap;
-	delete _wac;
-	delete _toolbar;
-	delete _settings;
-	delete _scripts;
-	delete _resources;
-	delete _modalDialog;
-	delete _milestones;
-	delete _media;
-	delete _inventory;
-	delete _input;
-	delete _cyber;
-	delete _cursor;
 }
 
 bool RipperEngine::hasFeature(EngineFeature feature) const {

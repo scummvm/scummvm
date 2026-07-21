@@ -113,7 +113,6 @@ MediaPlayer::MediaPlayer(RipperEngine *engine, InputManager *input, Audio::Mixer
 }
 
 MediaPlayer::~MediaPlayer() {
-	delete _sceneAudio;
 }
 
 void MediaPlayer::fadePalette(bool fadeIn, uint stepCount) {

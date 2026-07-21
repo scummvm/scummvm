@@ -68,8 +68,6 @@ ToolbarManager::ToolbarManager(RipperEngine *engine) : _sessionStartMillis(0), _
 }
 
 ToolbarManager::~ToolbarManager() {
-	delete _remoteControl;
-	delete _optionsPanel;
 }
 
 bool ToolbarManager::initialize(ResourceManager &resources) {
