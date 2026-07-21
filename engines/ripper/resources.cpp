@@ -467,7 +467,14 @@ void AssetLibrary::listMembersWithPrefix(const Common::String &prefix,
 	}
 }
 
+ResourceManager::ResourceManager() : _gameTextLoaded(false) {
+}
+
 bool ResourceManager::initialize() {
+	_fontCache.clear();
+	_gameTextCache.clear();
+	_gameTextLoaded = false;
+
 	Common::File iniFile;
 	Common::INIFile ini;
 	if (!iniFile.open("ripper.ini") || !ini.loadFromStream(iniFile)) {
@@ -665,6 +672,16 @@ bool ResourceManager::loadOptionsPcx(const Common::String &memberName,
 
 bool ResourceManager::loadInterfaceBitmapFont(const Common::String &memberName,
 		BitmapFontAsset &font) const {
+	Common::String cacheKey = memberName;
+	cacheKey.toLowercase();
+	Common::HashMap<Common::String, BitmapFontAsset>::const_iterator cached =
+		_fontCache.find(cacheKey);
+	if (cached != _fontCache.end()) {
+		font = cached->_value;
+		debugC(3, kDebugResources, "Ripper: reused cached NF2T font '%s'", memberName.c_str());
+		return true;
+	}
+
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
 		_interface.createReadStreamForMember(memberName));
 	Common::Array<byte> data;
@@ -713,10 +730,17 @@ bool ResourceManager::loadInterfaceBitmapFont(const Common::String &memberName,
 		"Ripper: decoded NF2T font '%s' first=%u glyphs=%u lineHeight=%u pixels=%u",
 		memberName.c_str(), font.firstCharacter, font.glyphs.size(), font.lineHeight,
 		font.pixels.size());
+	_fontCache[cacheKey] = font;
 	return true;
 }
 
 bool ResourceManager::loadGameText(Common::Array<Common::String> &strings) const {
+	if (_gameTextLoaded) {
+		strings = _gameTextCache;
+		debugC(3, kDebugResources, "Ripper: reused cached GAMETEXT.TF strings=%u", strings.size());
+		return true;
+	}
+
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
 		_scripts.createReadStreamForMember("gametext.tf"));
 	Common::Array<byte> data;
@@ -741,6 +765,8 @@ bool ResourceManager::loadGameText(Common::Array<Common::String> &strings) const
 	}
 
 	debugC(2, kDebugResources, "Ripper: decoded GAMETEXT.TF strings=%u", strings.size());
+	_gameTextCache = strings;
+	_gameTextLoaded = true;
 	return true;
 }
 
