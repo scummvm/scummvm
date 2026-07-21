@@ -410,6 +410,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		_engine->getCursor()->setVisible(false);
 	decoder.start();
 	bool sequencePaletteRefresh = false;
+	bool callbackOwnedInput = false;
 	auto serviceSequenceCallback = [&](uint frame) {
 		if (!sequenceCallback)
 			return false;
@@ -522,15 +523,23 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		// PollInteractionAndResolveSelection at 0x13c8d as RunMediaSequence's
 		// per-frame callback. RunFrontEndActionMenu blocks that callback while the
 		// pointer remains in the toolbar band, so no Smacker frame advances.
+		const bool callbackOwnsInput = sequenceCallback && sequenceCallback->ownsInput();
+		if (callbackOwnsInput != callbackOwnedInput) {
+			debugC(2, kDebugVideo,
+				"Ripper: interactive Smacker '%s' sequence callback input=%d",
+				name.c_str(), callbackOwnsInput);
+			callbackOwnedInput = callbackOwnsInput;
+		}
 		bool playbackUiFailed = false;
-		const bool toolbarOwnsInput = serviceSceneUi &&
+		const bool toolbarOwnsInput = serviceSceneUi && !callbackOwnsInput &&
 			_engine->getScripts()->updateInteractiveCursor(
 				_input->peekMouseState().position, &playbackUiFailed);
 		if (playbackUiFailed) {
 			completed = false;
 			break;
 		}
-		if (serviceSceneUi && _engine->getScripts()->hasPendingSceneTransition()) {
+		if (serviceSceneUi && !callbackOwnsInput &&
+				_engine->getScripts()->hasPendingSceneTransition()) {
 			debugC(1, kDebugScene,
 				"Ripper: interactive media '%s' returning queued scene transition",
 				name.c_str());
@@ -549,7 +558,6 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		}
 		bool skipToEnd = false;
 		bool advanceToNextSegment = false;
-		const bool callbackOwnsInput = sequenceCallback && sequenceCallback->ownsInput();
 		if (!servicePlaybackInput(decoder, allowEscSpace && !callbackOwnsInput,
 				advanceSegment != nullptr,
 				paused, toolbarPaused, skipToEnd, advanceToNextSegment,
