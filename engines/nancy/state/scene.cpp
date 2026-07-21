@@ -1641,12 +1641,16 @@ void Scene::initStaticData() {
 	auto *bootSummary = GetEngineData(BSUM);
 	assert(bootSummary);
 
-	Common::Path imageName = "FRAME";
+	Common::Path imageName;
 
 	if (g_nancy->getGameType() <= kGameTypeNancy9) {
 		const ImageChunk *fr0 = (const ImageChunk *)g_nancy->getEngineData("FR0");
 		assert(fr0);
 		imageName = fr0->imageName;
+	} else {
+		auto *taskData = GetEngineData(TASK);
+		assert(taskData);
+		imageName = taskData->imageName;
 	}
 
 	auto *mapData = GetEngineData(MAP);
