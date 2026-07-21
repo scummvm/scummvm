@@ -21,7 +21,6 @@
 #include "ripper/script.h"
 
 #include "ripper/briefing.h"
-#include "ripper/combat/mechini.h"
 #include "ripper/dialogue.h"
 
 #include "common/debug.h"
@@ -33,21 +32,14 @@
 
 #include "ripper/detection.h"
 #include "ripper/cursor.h"
-#include "ripper/cyber.h"
 #include "ripper/input.h"
 #include "ripper/inventory.h"
 #include "ripper/media.h"
 #include "ripper/milestones.h"
 #include "ripper/modal_dialog.h"
-#include "ripper/puzzles/calculator.h"
-#include "ripper/puzzles/clock.h"
-#include "ripper/puzzles/crystal.h"
-#include "ripper/puzzles/gc_csh.h"
-#include "ripper/puzzles/rolodex.h"
-#include "ripper/puzzles/table_gate.h"
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
-#include "ripper/scenes/tube_scene.h"
+#include "ripper/scene_dispatcher.h"
 #include "ripper/toolbar.h"
 #include "ripper/world_map.h"
 
@@ -216,78 +208,6 @@ static const char *scriptOpcodeName(ScriptOpcode opcode) {
 	case kSetAudioVolume: return "set audio slot volume";
 	case kWaitForFrameCounter: return "wait for frame counter";
 	default: return opcode <= kNoOp7 ? "no-op" : "unknown";
-	}
-}
-
-static const char *sceneActionName(uint action) {
-	switch (action) {
-	case 0: return "no action";
-	case 1: return "circuit chip placement puzzle";
-	case 2: return "scene selection menu";
-	case 3: return "unlock-gated selection menu";
-	case 4: return "calculator puzzle";
-	case 5: return "rolodex sequence puzzle";
-	case 6: return "cyber menu transition";
-	case 7: return "clock puzzle";
-	case 8: return "KD shooting gallery";
-	case 9: return "GC/CSH four-choice sequence puzzle";
-	case 10: return "table gate lever puzzle";
-	case 11: return "CD-in-book button sequence puzzle";
-	case 12: return "board arrangement puzzle";
-	case 13: return "blob shooter";
-	case 14: return "EBZ2S unlock-gated action menu";
-	case 15: return "mechini combat encounter";
-	case 16: return "key group puzzle";
-	case 17: return "date selection puzzle";
-	case 18: return "KI skull maze puzzle";
-	case 19: return "web grid shift puzzle";
-	case 20: return "Horus word puzzle";
-	case 21: return "six-digit code puzzle";
-	case 22: return "shock lever puzzle";
-	case 23: return "tarot card puzzle";
-	case 24: return "tube switch scene";
-	case 25: return "KK tile match puzzle";
-	case 26: return "ratini combat encounter";
-	case 27: return "atkini combat encounter";
-	case 28: return "gym selector";
-	case 29: return "crystal piece placement puzzle";
-	case 30: return "set chooser template mode";
-	case 31: return "no-op";
-	case 32: return "clear active display";
-	case 33: return "stained glass puzzle";
-	case 34: return "keypad sequence puzzle";
-	case 35: return "set UI selection index";
-	case 36: return "update UI selection";
-	case kSceneActionSetFrontEndActionMask: return "set front-end action mask";
-	case 38: return "board game";
-	case 39: return "no-op";
-	case 40: return "KA dialogue scene";
-	case 41: return "KB scene script";
-	case 42: return "KC or Wofford media scene";
-	case 43: return "KD scene script";
-	case 44: return "no-op";
-	case 45: return "KF scene script";
-	case 46: return "KG scene script";
-	case 47: return "KH scene script";
-	case 48: return "KI scene script";
-	case 49: return "KJ scene script";
-	case 50: return "KK scene script";
-	case 51: return "KL scene script";
-	case 52: return "KM scene script";
-	case 53: return "KN scene script";
-	case 54: return "KP scene script";
-	case 55: return "KQ scene script";
-	case 56: return "KR scene script";
-	case 57:
-	case 58:
-	case 59: return "no-op";
-	case 60: return "key group puzzle";
-	case 61: return "eight-button sequence puzzle";
-	case 62: return "Cain dialogue scene";
-	case 63: return "append resource string to RIPPER.TXT";
-	case 300: return "arm briefing media trigger";
-	case 9999: return "terminate scene runtime";
-	default: return "unknown";
 	}
 }
 
@@ -1260,262 +1180,11 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			return true;
 
 		case kDispatchSceneAction: {
-			if (command.arguments.size() < 2)
+			bool stopCallback = false;
+			if (!SceneActionDispatcher::dispatch(*this, script, command, result, stopCallback))
 				return false;
-			const uint action = command.arguments[0].value;
-			const uint argument = command.arguments[1].value;
-			debugC(2, kDebugScene,
-				"Ripper: dispatch scene action=%u name='%s' argument=%u script='%s' offset=0x%x",
-				action, sceneActionName(action), argument,
-				script.getMemberName().c_str(), command.offset);
-			if (action == kSceneActionWorldMap) {
-				if (!openWorldMap())
-					return false;
-				if (!_runtime.pendingSceneMember.empty()) {
-					result = -3;
-					return true;
-				}
-				break;
-			}
-			if (action == kSceneActionInventory) {
-				if (!openInventory(argument, true))
-					return false;
-				break;
-			}
-			if (action == kSceneActionCalculatorPuzzle) {
-				CalculatorPuzzle puzzle(_engine);
-				const CalculatorPuzzle::Result puzzleResult = puzzle.run(argument);
-				debugC(1, kDebugPuzzles,
-					"Ripper: calculator puzzle scene action completed result=%d milestone=%u",
-					puzzleResult, argument);
-				if (puzzleResult == CalculatorPuzzle::kLoadFailed)
-					return false;
-				break;
-			}
-			if (action == kSceneActionRolodexPuzzle) {
-				RolodexPuzzle puzzle(_engine);
-				const RolodexPuzzle::Result puzzleResult = puzzle.run(argument);
-				debugC(1, kDebugPuzzles,
-					"Ripper: rolodex puzzle scene action completed result=%d milestone=%u",
-					puzzleResult, argument);
-				if (puzzleResult == RolodexPuzzle::kLoadFailed)
-					return false;
-				break;
-			}
-			if (action == kSceneActionCyberMenu) {
-				const CyberManager::Result cyberResult = _engine->getCyber()->run();
-				debugC(1, kDebugCyber,
-					"Ripper: Cyber menu scene action completed result=%d",
-					cyberResult);
-				if (cyberResult == CyberManager::kLoadFailed)
-					return false;
-				break;
-			}
-			if (action == kSceneActionClockPuzzle) {
-				ClockPuzzle puzzle(_engine);
-				const ClockPuzzle::Result puzzleResult = puzzle.run(argument);
-				debugC(1, kDebugPuzzles,
-					"Ripper: clock puzzle scene action completed result=%d milestone=%u",
-					puzzleResult, argument);
-				if (puzzleResult == ClockPuzzle::kLoadFailed)
-					return false;
-				break;
-			}
-			if (action == kSceneActionGcCshPuzzle) {
-				GcCshPuzzle puzzle(_engine);
-				const GcCshPuzzle::Result puzzleResult = puzzle.run(argument);
-				debugC(1, kDebugPuzzles,
-					"Ripper: GC/CSH puzzle scene action completed result=%d milestone=%u",
-					puzzleResult, argument);
-				if (puzzleResult == GcCshPuzzle::kLoadFailed)
-					return false;
-				break;
-			}
-			if (action == kSceneActionTableGatePuzzle) {
-				TableGatePuzzle puzzle(_engine);
-				const TableGatePuzzle::Result puzzleResult = puzzle.run(argument);
-				debugC(1, kDebugPuzzles,
-					"Ripper: table gate puzzle scene action completed result=%d milestone=%u",
-					puzzleResult, argument);
-				if (puzzleResult == TableGatePuzzle::kLoadFailed)
-					return false;
-				break;
-			}
-			if (action == kSceneActionMechiniCombat) {
-				MechiniEncounter encounter(_engine);
-				const MechiniEncounter::Result encounterResult = encounter.run(argument);
-				debugC(1, kDebugCombat,
-					"Ripper: Mechini combat scene action completed result=%d milestone=%u",
-					encounterResult, argument);
-				if (encounterResult == MechiniEncounter::kLoadFailed)
-					return false;
-				break;
-			}
-			if (action == kSceneActionTubeSwitchScene) {
-				TubeScene scene(_engine);
-				const TubeScene::Result sceneResult = scene.run(argument);
-				debugC(1, kDebugScene,
-					"Ripper: tube switch scene action completed result=%d milestone=%u",
-					sceneResult, argument);
-				if (sceneResult == TubeScene::kLoadFailed)
-					return false;
-				break;
-			}
-			if (action == kSceneActionCrystalPuzzle) {
-				CrystalPuzzle puzzle(_engine);
-				const CrystalPuzzle::Result puzzleResult = puzzle.run(argument);
-				debugC(1, kDebugPuzzles,
-					"Ripper: crystal puzzle scene action completed result=%d milestone=%u",
-					puzzleResult, argument);
-				if (puzzleResult == CrystalPuzzle::kLoadFailed)
-					return false;
-				break;
-			}
-			if (action == kSceneActionSetChooserTemplateMode) {
-				// DispatchSceneEntryAction at 0x36892 captures the active media
-				// presentation for the following chooser. ScummVM presents that media
-				// on one framebuffer, represented by template mode zero. The script
-				// argument is not consumed by the original handler.
-				_chooserTemplateMode = 0;
-				debugC(2, kDebugScene,
-					"Ripper: scene action 30 captured active presentation templateMode=%u script='%s' offset=0x%x",
-					_chooserTemplateMode, script.getMemberName().c_str(), command.offset);
-				break;
-			}
-			if (action == kSceneActionNoOp) {
-				// DispatchSceneEntryAction at 0x36892 has an explicit action-31
-				// branch which returns without changing the active runtime.
-				debugC(3, kDebugCyber,
-					"Ripper: Cyber scene action 31 completed as original no-op");
-				break;
-			}
-			if (action == kSceneActionClearDisplay) {
-				// DispatchSceneEntryAction at 0x36892 deactivates the selection
-				// presentation and sends display command 0x14, whose table entry is
-				// ClearGenericVideoLogicalPage at 0x45ed8, before reactivating it.
-				g_system->fillScreen(0);
-				g_system->updateScreen();
-				debugC(2, kDebugScene,
-					"Ripper: cleared active scene display from scene action 32");
-				break;
-			}
-			if (action == kSceneActionSetUiSelectionIndex) {
-				_engine->getCursor()->setSelectionIndex(argument);
-				debugC(2, kDebugCursor,
-					"Ripper: scene action 35 stored UI selection index=%u script='%s' offset=0x%x",
-					argument, script.getMemberName().c_str(), command.offset);
-				break;
-			}
-			if (action == kSceneActionDispatchUiSelection) {
-				_engine->getCursor()->dispatchSelectionIndexChange(argument);
-				debugC(2, kDebugCursor,
-					"Ripper: scene action 36 dispatched UI selection index=%u script='%s' offset=0x%x",
-					argument, script.getMemberName().c_str(), command.offset);
-				break;
-			}
-			if (action == kSceneActionSetFrontEndActionMask) {
-				// DispatchSceneEntryAction at 0x36892 stores the low 16 bits at
-				// SceneRuntime+0x183. PollInteractionAndResolveSelection at 0x13c8d
-				// passes that mask to both the front-end toolbar and key resolver.
-				_runtime.frontEndActionMask = (uint16)argument;
-				debugC(2, kDebugScene,
-					"Ripper: scene action 37 set front-end action mask=0x%04x script='%s' offset=0x%x",
-					_runtime.frontEndActionMask, script.getMemberName().c_str(), command.offset);
-				break;
-			}
-			if (action == kSceneActionKaDialogue) {
-				// DispatchKSceneActionBand at 0x36e84 preserves the Cyber menu
-				// runtime around RunKaDialogueScene at 0x2aef5, just as it does
-				// around the sibling K-scene script loops.
-				debugC(1, kDebugCyber,
-					"Ripper: dispatching Cyber dialogue action=%u name='%s' argument=%u activeScript='%s' frame=%u",
-					action, sceneActionName(action), argument,
-					_runtime.activeScript.getMemberName().c_str(), _runtime.activeFrame);
-				const CyberManager::Result cyberResult =
-					_engine->getCyber()->runProgram(action, "ka", argument);
-				debugC(cyberResult == CyberManager::kExited ? 1 : 2, kDebugCyber,
-					"Ripper: Cyber dialogue action=%u completed result=%d restoredScript='%s' frame=%u",
-					action, cyberResult, _runtime.activeScript.getMemberName().c_str(), _runtime.activeFrame);
-				if (cyberResult == CyberManager::kLoadFailed)
-					return false;
-				break;
-			}
-			if (action >= kSceneActionKbProgram && action <= kSceneActionKrProgram &&
-					action != 44) {
-				const char *program = nullptr;
-				uint chapter = 0;
-				for (uint flag = kMilestoneCompletedAct3; flag != 0; --flag) {
-					if (_engine->getMilestones()->isSet(flag)) {
-						chapter = flag;
-						break;
-					}
-				}
-				switch (action) {
-				case kSceneActionKbProgram: program = "kb"; break;
-				case kSceneActionKcOrWoffordProgram:
-					if (chapter < 3) {
-						warning("Ripper: Cyber action 42 requires the Wofford interactive media path before chapter 3");
-						return false;
-					}
-					program = "kc";
-					break;
-				case kSceneActionKdProgram: program = "kd"; break;
-				case kSceneActionKfProgram: program = "kf"; break;
-				case kSceneActionKgProgram:
-					program = chapter >= 3 ? "kg3" : "kg";
-					break;
-				case kSceneActionKhProgram: program = "kh"; break;
-				case kSceneActionKiProgram: program = "ki"; break;
-				case kSceneActionKjProgram:
-					program = chapter >= 3 ? "kj3" : "kj";
-					break;
-				case kSceneActionKkProgram: program = "kk"; break;
-				case kSceneActionKlProgram: program = "kl"; break;
-				case kSceneActionKmProgram: program = "km"; break;
-				case kSceneActionKnProgram: program = "kn"; break;
-				case kSceneActionKpProgram: program = "kp"; break;
-				case kSceneActionKqProgram: program = "kq"; break;
-				case kSceneActionKrProgram: program = "kr"; break;
-				default: break;
-				}
-				if (!program)
-					return false;
-				// DispatchKSceneActionBand at 0x36e84 preserves the Cyber menu's
-				// palette, UI controls, chooser registry, and audio table around
-				// each sibling K scene-script loop.
-				debugC(1, kDebugCyber,
-					"Ripper: dispatching Cyber program action=%u name='%s' script='%s.run' argument=%u activeScript='%s' frame=%u",
-					action, sceneActionName(action), program, argument,
-					_runtime.activeScript.getMemberName().c_str(), _runtime.activeFrame);
-				const CyberManager::Result cyberResult =
-					_engine->getCyber()->runProgram(action, program, argument);
-				debugC(cyberResult == CyberManager::kExited ? 1 : 2, kDebugCyber,
-					"Ripper: Cyber program action=%u script='%s.run' completed result=%d restoredScript='%s' frame=%u",
-					action, program, cyberResult, _runtime.activeScript.getMemberName().c_str(),
-					_runtime.activeFrame);
-				if (cyberResult == CyberManager::kLoadFailed)
-					return false;
-				break;
-			}
-			if (action == 44) {
-				debugC(3, kDebugCyber,
-					"Ripper: Cyber scene action 44 completed as original no-op");
-				break;
-			}
-			if (action == kSceneActionTerminateRuntime) {
-				if (!_runtime.cyberActive)
-					return false;
-				requestCyberExit("scene-action-9999");
-				result = -4;
+			if (stopCallback)
 				return true;
-			}
-			if (action != kSceneActionBriefing) {
-				warning("Ripper: unsupported scene action %u ('%s') in '%s' at 0x%x",
-					action, sceneActionName(action), script.getMemberName().c_str(), command.offset);
-				return false;
-			}
-			if (!_briefing->arm(argument))
-				return false;
 			break;
 		}
 

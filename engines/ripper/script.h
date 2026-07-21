@@ -37,6 +37,7 @@ class CyberManager;
 class ResourceManager;
 class RipperEngine;
 class DialogueChooser;
+class SceneActionDispatcher;
 
 enum ScriptOpcode : byte {
 	kNoOp0                       = 0x00, // HandleSceneEntryNoOp at 0x146e5
@@ -244,6 +245,7 @@ public:
 
 private:
 	friend class CyberManager;
+	friend class SceneActionDispatcher;
 	class IdleMediaCallback;
 
 	bool executeCallback(CompiledScript &script, uint32 callbackOffset, int &result,
