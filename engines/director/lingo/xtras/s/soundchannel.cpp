@@ -23,6 +23,7 @@
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
 #include "director/lingo/xtras/s/soundchannel.h"
@@ -34,11 +35,6 @@
  *
  **************************************************/
 
-// The Xtra's msgTable, verbatim. It really does contain a stray "/*" -- the
-// author evidently commented the private routine out in their own source and it
-// leaked into the table -- so this is quoted with line comments to keep the text
-// exact without nesting a block comment.
-//
 // -- xtra SoundChannel
 // new object me
 // -- Template handlers --
@@ -61,7 +57,7 @@ static MethodProto xlibMethods[] = {
 };
 
 static BuiltinProto xlibBuiltins[] = {
-	{ "sound", SoundChannelXtra::m_sound, 1, 1, 500, HBLTIN },
+	{ "sound", SoundChannelXtra::m_sound, 1, 3, 500, HBLTIN },
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
@@ -103,6 +99,16 @@ void SoundChannelXtra::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
 }
 
-XOBJSTUB(SoundChannelXtra::m_sound, 0)
+void SoundChannelXtra::m_sound(int nargs) {
+	if (nargs >= 2) {
+		LB::b_sound(nargs);
+		g_lingo->push(Datum(0));
+		return;
+	}
+
+	g_lingo->printSTUBWithArglist("SoundChannelXtra::m_sound", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(0));
+}
 
 }
