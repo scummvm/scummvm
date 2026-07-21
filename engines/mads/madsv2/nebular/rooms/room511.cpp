@@ -48,6 +48,23 @@ static void room_511_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 0));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXCD_6");
 
+	// WORKARUND: Doing this earlier to allow to ensure hotspot bounds will get set from it's image
+	int frame = 0;
+	if (_globals[kLineStatus] == 2)
+		frame = -1;
+	else if (_globals[kLineStatus] == 3)
+		frame = -2;
+
+	if (_globals[kLineStatus] == 2 || _globals[kLineStatus] == 3) {
+		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('b', 4));
+		_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, frame);
+		int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(26, 153), FACING_NORTHEAST);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 3);
+		if (_globals[kBoatRaised])
+			_scene->changeVariant(2);
+	}
+
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		local._handingLine = false;
 
@@ -76,22 +93,6 @@ static void room_511_init() {
 		_scene->_hotspots.activate(words_rope, true);
 		_scene->_hotspots.activate(words_boat, true);
 		_scene->changeVariant(1);
-	}
-
-	int frame = 0;
-	if (_globals[kLineStatus] == 2)
-		frame = -1;
-	else if (_globals[kLineStatus] == 3)
-		frame = -2;
-
-	if (_globals[kLineStatus] == 2 || _globals[kLineStatus] == 3) {
-		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('b', 4));
-		_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, frame);
-		int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(26, 153), FACING_NORTHEAST);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 3);
-		if (_globals[kBoatRaised])
-			_scene->changeVariant(2);
 	}
 
 	local._lineFrame = -1;
