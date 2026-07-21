@@ -40,12 +40,7 @@ static void room_807_init() {
 		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*REXHAND");
 
 	teleporter_init();
-
-	// The original uses Scene8xx::section_8_music()
-	if (!_vm->_musicFlag)
-		_vm->_sound->command(2);
-	else
-		_vm->_sound->command(20);
+	section_8_music();
 }
 
 static void room_807_daemon() {
