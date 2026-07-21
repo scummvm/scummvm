@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MADSV2_ENGINE_H
-#define MADSV2_ENGINE_H
+#ifndef MADS_ENGINE_H
+#define MADS_ENGINE_H
 
 #include "audio/mixer.h"
 #include "common/events.h"

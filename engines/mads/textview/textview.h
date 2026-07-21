@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MADSV2_TEXTVIEW_H
-#define MADSV2_TEXTVIEW_H
+#ifndef MADS_TEXTVIEW_H
+#define MADS_TEXTVIEW_H
 
 #include "mads/core/general.h"
 

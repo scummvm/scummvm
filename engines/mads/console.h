@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MADSV2_CONSOLE_H
-#define MADSV2_CONSOLE_H
+#ifndef MADS_CONSOLE_H
+#define MADS_CONSOLE_H
 
 #include "gui/debugger.h"
 

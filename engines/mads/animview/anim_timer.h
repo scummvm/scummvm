@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MADSV2_ANIMVIEW_ANIM_TIMER_H
-#define MADSV2_ANIMVIEW_ANIM_TIMER_H
+#ifndef MADS_ANIMVIEW_ANIM_TIMER_H
+#define MADS_ANIMVIEW_ANIM_TIMER_H
 
 #include "common/scummsys.h"
 

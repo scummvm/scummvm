@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MADSV2_NEBULAR_CONSOLE_H
-#define MADSV2_NEBULAR_CONSOLE_H
+#ifndef MADS_NEBULAR_CONSOLE_H
+#define MADS_NEBULAR_CONSOLE_H
 
 #include "mads/console.h"
 

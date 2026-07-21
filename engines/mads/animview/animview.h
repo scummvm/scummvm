@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MADSV2_ANIMVIEW_H
-#define MADSV2_ANIMVIEW_H
+#ifndef MADS_ANIMVIEW_H
+#define MADS_ANIMVIEW_H
 
 #include "audio/audiostream.h"
 #include "mads/core/anim.h"

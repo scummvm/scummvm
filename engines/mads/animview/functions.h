@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MADSV2_ANIMVIEW_FUNCTIONS_H
-#define MADSV2_ANIMVIEW_FUNCTIONS_H
+#ifndef MADS_ANIMVIEW_FUNCTIONS_H
+#define MADS_ANIMVIEW_FUNCTIONS_H
 
 #include "common/stream.h"
 #include "mads/core/pal.h"
