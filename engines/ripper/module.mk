@@ -30,6 +30,7 @@ MODULE_OBJS := \
 	resources.o \
 	ripper.o \
 	saveload.o \
+	scene_dispatcher.o \
 	scenes/librarian_scene.o \
 	scenes/scene.o \
 	scenes/tube_scene.o \
