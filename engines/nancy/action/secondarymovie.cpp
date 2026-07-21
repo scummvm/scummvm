@@ -174,6 +174,58 @@ void PlaySecondaryMovie::readRandomMovieData(Common::Serializer &ser, Common::Se
 		_videoDescs[i].readData(stream);
 	}
 
+	applyStartingRandomSequence();
+}
+
+// Nancy14+ random-movie layout (verified byte-identical in Nancy14 and Nancy15).
+// The header grew to mirror the non-random AR (videoFormat / visibility / cursor
+// / sceneID / frameID, plus two currently unmapped u16s and a per-movie volume
+// byte). The sequence records are unchanged. The tail is a blt-descriptor list
+// for the main movie, then the recognition ("secondary") movie's name and its
+// own blt-descriptor list, in place of Nancy13's secondaryMovie record + hotspot
+// list.
+void PlaySecondaryMovie::readRandomMovieDataNancy14(Common::Serializer &ser, Common::SeekableReadStream &stream) {
+	readFilename(ser, _startingSequenceName);
+
+	ser.syncAsUint16LE(_videoFormat);
+	_videoFormat = kLargeVideoFormat;
+	ser.skip(2);	// Visibility frame ID; ScummVM drives visibility from the videoDescs
+	ser.syncAsUint16LE(_randomPlayerCursorAllowed);
+	ser.skip(4);	// Two u16s (object offsets 0x8c / 0xe7); purpose not yet mapped
+	ser.syncAsSint16LE(_sceneChange.sceneID);
+	ser.syncAsUint16LE(_sceneChange.frameID);
+	ser.skip(1);	// Per-movie volume byte (movie sound off since Nancy6)
+
+	uint16 sequenceCount = 0;
+	ser.syncAsUint16LE(sequenceCount);
+	_sequences.resize(sequenceCount);
+	for (uint i = 0; i < sequenceCount; ++i) {
+		readRandomSequence(ser, _sequences[i]);
+	}
+
+	// Main movie blt/hotspot descriptors.
+	uint16 numVideoDescs = 0;
+	ser.syncAsUint16LE(numVideoDescs);
+	_videoDescs.resize(numVideoDescs);
+	for (uint i = 0; i < numVideoDescs; ++i) {
+		_videoDescs[i].readData(stream);
+	}
+
+	// Recognition ("secondary") movie: its name followed by its own blt
+	// descriptors. Stored for future playback; the descriptors are consumed to
+	// keep the stream aligned (no home in the struct yet).
+	readFilename(ser, _secondaryMovie.name);
+	uint16 numSecondaryDescs = 0;
+	ser.syncAsUint16LE(numSecondaryDescs);
+	for (uint i = 0; i < numSecondaryDescs; ++i) {
+		SecondaryVideoDescription unused;
+		unused.readData(stream);
+	}
+
+	applyStartingRandomSequence();
+}
+
+void PlaySecondaryMovie::applyStartingRandomSequence() {
 	// "RandomMovie" picks any sequence; otherwise look up by name.
 	// Only the first sequence is played; chained playback is TODO.
 	if (!_sequences.empty()) {
@@ -366,7 +418,14 @@ int PlaySecondaryMovie::rollNextSequence() {
 // gone (a scene change is now requested via the sceneID sentinel), playDirection
 // moved after lastFrame, and a "hide on finish" flag was added. AR 44 matches
 // AR 41 plus a trailing movie-volume byte.
+//
+// Nancy15 adds two things on top: AR 44 gained a "play style" u16 (1/3) after
+// the hide-on-finish flag, and the firstFrame field can be -1 (LOOP_RANDOM),
+// in which case a min/max loop-count pair follows and a random value in that
+// range is chosen.
 void PlaySecondaryMovie::readDataNancy14(Common::Serializer &ser, Common::SeekableReadStream &stream) {
+	const bool isNancy15 = g_nancy->getGameType() >= kGameTypeNancy15;
+
 	readFilename(ser, _videoName);
 
 	ser.syncAsUint16LE(_videoFormat);
@@ -375,7 +434,25 @@ void PlaySecondaryMovie::readDataNancy14(Common::Serializer &ser, Common::Seekab
 	ser.skip(2);	// Visibility frame ID; ScummVM drives visibility from the videoDescs instead
 	ser.syncAsUint16LE(_playerCursorAllowed);
 	ser.syncAsUint16LE(_hideOnFinish);
+
+	// AR 44 and its subclass AR 47 read the play-style field (retail "mode 0");
+	// AR 41 ("mode 1") does not.
+	if (isNancy15 && (_type == 44 || _type == 47)) {
+		ser.syncAsUint16LE(_playStyle);
+	}
+
 	ser.syncAsUint16LE(_firstFrame);
+
+	if (isNancy15 && (int16)_firstFrame == -1) {
+		// LOOP_RANDOM: firstFrame -1 is followed by a min/max loop count; the
+		// game picks a random value in [min, max) (min must be < max).
+		uint16 minLoops = 0, maxLoops = 0;
+		ser.syncAsUint16LE(minLoops);
+		ser.syncAsUint16LE(maxLoops);
+		_firstFrame = maxLoops > minLoops ?
+			(uint16)(minLoops + g_nancy->_randomSource->getRandomNumber(maxLoops - minLoops - 1)) : minLoops;
+	}
+
 	ser.syncAsUint16LE(_lastFrame);
 	ser.syncAsUint16LE(_playDirection);
 	ser.syncAsSint16LE(_sceneChange.sceneID);
@@ -383,8 +460,10 @@ void PlaySecondaryMovie::readDataNancy14(Common::Serializer &ser, Common::Seekab
 
 	_videoSceneChange = _sceneChange.sceneID != kNoScene ? kMovieSceneChange : kMovieNoSceneChange;
 
-	if (_type == 44) {
-		// Per-movie volume; consumed but unused (movie sound is off since Nancy6).
+	// Per-movie volume; consumed but unused (movie sound is off since Nancy6).
+	// AR 44 always carries it. AR 47 does too, but only from Nancy15 - the
+	// retail flipped the "mode" convention, and Nancy14's AR 47 omits the byte.
+	if (_type == 44 || (_type == 47 && isNancy15)) {
 		byte movieVolume = 0;
 		ser.syncAsByte(movieVolume);
 	}
@@ -406,6 +485,24 @@ void PlaySecondaryMovie::readDataNancy14(Common::Serializer &ser, Common::Seekab
 	}
 
 	_sound.name = "NO SOUND";
+
+	// AR 47 ("InteractiveVideo") appends a name, a flag byte, and a list of
+	// named {value, flag} entries on top of the AR-44 movie data.
+	if (_type == 47) {
+		readFilename(ser, _interactiveName);
+		byte flag = 0;
+		ser.syncAsByte(flag);
+		_interactiveFlag = flag != 0;
+
+		uint16 numEntries = 0;
+		ser.syncAsUint16LE(numEntries);
+		_interactiveEntries.resize(numEntries);
+		for (uint i = 0; i < numEntries; ++i) {
+			readFilename(ser, _interactiveEntries[i].name);
+			ser.syncAsUint32LE(_interactiveEntries[i].value);
+			ser.syncAsByte(_interactiveEntries[i].flag);
+		}
+	}
 }
 
 void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
@@ -413,7 +510,13 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 	ser.setVersion(g_nancy->getGameType());
 
 	if (_isRandom) {
-		readRandomMovieData(ser, stream);
+		// Nancy14 reworked the random-movie layout (Nancy13 and earlier use the
+		// older secondaryMovie-record + hotspot-list form).
+		if (g_nancy->getGameType() >= kGameTypeNancy14) {
+			readRandomMovieDataNancy14(ser, stream);
+		} else {
+			readRandomMovieData(ser, stream);
+		}
 		return;
 	}
 

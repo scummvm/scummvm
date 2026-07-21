@@ -103,6 +103,21 @@ public:
 	uint16 _lastFrame = 0;
 	// Nancy14-only: when non-zero, hide the movie once it reaches its last frame.
 	uint16 _hideOnFinish = 0;
+	// Nancy15 AR 44: a "play style" selector (1 or 3). Read but currently
+	// unused by playback.
+	uint16 _playStyle = 1;
+
+	// AR 47 "InteractiveVideo" (a PlaySecondaryMovie subclass): after the
+	// normal AR-44-style movie data it carries a name, a flag byte, and a
+	// list of named {value, flag} entries. Read but not yet acted on.
+	struct InteractiveEntry {
+		Common::Path name;
+		uint32 value = 0;
+		byte flag = 0;
+	};
+	Common::Path _interactiveName;
+	bool _interactiveFlag = false;
+	Common::Array<InteractiveEntry> _interactiveEntries;
 	Common::Array<FlagAtFrame> _frameFlags;
 	MultiEventFlagDescription _triggerFlags;
 	FlagDescription _videoStartFlag;
@@ -173,8 +188,17 @@ protected:
 	// `ser` and `stream` must wrap the same input; `stream` is only
 	// needed for SecondaryVideoDescription::readData.
 	void readRandomMovieData(Common::Serializer &ser, Common::SeekableReadStream &stream);
+	// Nancy14 reworked the random-movie layout (confirmed identical in Nancy15):
+	// a larger header (shared with the non-random AR) and a tail of two
+	// blt-descriptor lists separated by the recognition movie's name, in place
+	// of Nancy13's secondaryMovie record + hotspot list.
+	void readRandomMovieDataNancy14(Common::Serializer &ser, Common::SeekableReadStream &stream);
 	void readRandomSequence(Common::Serializer &ser, RandomSequence &seq);
 	void readSecondaryRandomMovie(Common::Serializer &ser, RandomSequence &seq);
+
+	// Shared tail of the random-movie readers: pick the starting sequence
+	// (random or by name) and seed the flat playback fields from it.
+	void applyStartingRandomSequence();
 
 	void readDataNancy14(Common::Serializer &ser, Common::SeekableReadStream &stream);
 

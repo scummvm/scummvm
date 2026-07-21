@@ -28,7 +28,7 @@ namespace Nancy {
 namespace Action {
 
 void ActionZone::readData(Common::SeekableReadStream &stream, bool isNancy13) {
-	// Base ActionZone (matches the original "Action Zone Boundary OVL" reader).
+	// Base ActionZone fields, shared by every subtype.
 	typeField = stream.readSint32LE();
 	type = typeField & 0xFF;
 

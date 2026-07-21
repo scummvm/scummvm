@@ -216,9 +216,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new PlaySecondaryMovie(true);
 	case 46:	// Nancy11
 		return new PlayRandomMovieControl();
-	case 47:	// Nancy14 - PlaySecondaryMovie subclass with a per-frame flag list
-		// TODO: not yet implemented
-		return nullptr;
+	case 47:	// Nancy14
+		// A PlaySecondaryMovie subclass that appends a named {value, flag} list.
+		// Handled inside PlaySecondaryMovie via _type == 47.
+		return new PlaySecondaryMovie();
 	case 50:
 		return new ConversationVideo(); // PlayPrimaryVideoChan0
 	case 51:
