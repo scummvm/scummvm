@@ -26,6 +26,7 @@
 #include "graphics/surface.h"
 
 #include "ripper/detection.h"
+#include "ripper/resources.h"
 
 namespace Ripper {
 
@@ -105,6 +106,67 @@ void IndexedDisplaySnapshot::clear() {
 	_bounds = Common::Rect();
 	_pixels.clear();
 	_palette.clear();
+}
+
+uint BitmapFontRenderer::measureText(const BitmapFontAsset &font,
+		const Common::String &text) {
+	uint width = 0;
+	for (uint i = 0; i < text.size(); ++i) {
+		const byte character = (byte)text[i];
+		if (character == ' ') {
+			width += font.spaceWidth;
+			continue;
+		}
+		if (character < font.firstCharacter ||
+				character >= font.firstCharacter + font.glyphs.size())
+			continue;
+		const BitmapFontGlyph &glyph = font.glyphs[character - font.firstCharacter];
+		width += glyph.xOffset + glyph.width + font.characterSpacing;
+	}
+	return width;
+}
+
+static void drawBitmapFontText(byte *pixels, uint pitch, const BitmapFontAsset &font,
+		int x, int y, const Common::String &text, byte color, const Common::Rect *clip) {
+	int drawX = x;
+	for (uint i = 0; i < text.size(); ++i) {
+		const byte character = (byte)text[i];
+		if (character == ' ') {
+			drawX += font.spaceWidth;
+			continue;
+		}
+		if (character < font.firstCharacter ||
+				character >= font.firstCharacter + font.glyphs.size())
+			continue;
+		const BitmapFontGlyph &glyph = font.glyphs[character - font.firstCharacter];
+		for (uint glyphY = 0; glyphY < glyph.height; ++glyphY) {
+			for (uint glyphX = 0; glyphX < glyph.width; ++glyphX) {
+				const byte source = font.pixels[
+					glyph.pixelOffset + glyphY * glyph.width + glyphX];
+				const int targetX = drawX + glyph.xOffset + glyphX;
+				const int targetY = y + glyph.yOffset + glyphY;
+				if (source != font.transparentColor &&
+						(!clip || (targetX >= clip->left && targetX < clip->right &&
+						targetY >= clip->top && targetY < clip->bottom)))
+					pixels[targetY * pitch + targetX] = color;
+			}
+		}
+		drawX += glyph.xOffset + glyph.width + font.characterSpacing;
+	}
+	debugC(11, kDebugVideo,
+		"Ripper: rendered NF2T text characters=%u x=%d y=%d color=%u clipped=%d",
+		text.size(), x, y, color, clip != nullptr);
+}
+
+void BitmapFontRenderer::drawText(byte *pixels, uint pitch, const BitmapFontAsset &font,
+		int x, int y, const Common::String &text, byte color) {
+	drawBitmapFontText(pixels, pitch, font, x, y, text, color, nullptr);
+}
+
+void BitmapFontRenderer::drawTextClipped(byte *pixels, uint pitch,
+		const BitmapFontAsset &font, int x, int y, const Common::String &text,
+		byte color, const Common::Rect &clip) {
+	drawBitmapFontText(pixels, pitch, font, x, y, text, color, &clip);
 }
 
 } // End of namespace Ripper

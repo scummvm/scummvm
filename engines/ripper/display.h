@@ -23,8 +23,11 @@
 
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/str.h"
 
 namespace Ripper {
+
+struct BitmapFontAsset;
 
 enum {
 	kRipperScreenWidth = 640,
@@ -53,6 +56,15 @@ private:
 	Common::Rect _bounds;
 	Common::Array<byte> _pixels;
 	Common::Array<byte> _palette;
+};
+
+class BitmapFontRenderer {
+public:
+	static uint measureText(const BitmapFontAsset &font, const Common::String &text);
+	static void drawText(byte *pixels, uint pitch, const BitmapFontAsset &font,
+		int x, int y, const Common::String &text, byte color);
+	static void drawTextClipped(byte *pixels, uint pitch, const BitmapFontAsset &font,
+		int x, int y, const Common::String &text, byte color, const Common::Rect &clip);
 };
 
 } // End of namespace Ripper
