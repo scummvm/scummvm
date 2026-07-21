@@ -84,6 +84,7 @@ enum SceneAction {
 	kSceneActionCalculatorPuzzle = 4,
 	kSceneActionRolodexPuzzle = 5,
 	kSceneActionCyberMenu = 6,
+	kSceneActionClockPuzzle = 7,
 	kSceneActionGcCshPuzzle = 9,
 	kSceneActionTableGatePuzzle = 10,
 	kSceneActionMechiniCombat = 15,

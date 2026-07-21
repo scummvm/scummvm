@@ -576,6 +576,22 @@
   223 (`solved wofford table puzzle`), tests it after the puzzle returns, and
   selects the success frame only when that flag is set. Escape and failed
   marker traversals return without setting it.
+- Scene action 7 calls `RunClockPuzzleScene` at `0x374c5` with the
+  caller-supplied completion flag. `GB1.RUN` callback `0x577` supplies flag 222
+  after presenting `GBZ3.SMK`. The puzzle retains its two analog positions and
+  two digital-clock values across re-entry, and sets the flag only when the
+  analog hands are at 7 and 8, the military clock reads 14:35, and the
+  Egyptian clock reads 09:35 with its half-day marker selected. Escape exits
+  without setting the flag, while F1 opens help table `0x1a2`.
+- `RunClockPuzzleScene` creates controls `0x672` through `0x678` from the
+  records at `0x846a6`. The clock face uses the indexed `CLOCK_TM.MCG` hit mask:
+  left and right mouse select the minute and hour hands respectively from its
+  twelve regions. The remaining controls advance or rewind the two digital
+  clocks; advancing the Egyptian hour from 12 to 1 toggles its half-day marker.
+  `CLOCK1.SMK` and `CLOCK0.SMK` are entry and exit animations at scene-space
+  `(282, 77)`. `PlayClockSmackerOverlayAnimation` at `0x38316` treats the first
+  decoded pixel as transparent and restores the saved backing before every
+  frame, preserving the retained `GBZ3.SMK` presentation around the overlay.
 - Scene action 9 calls `RunGcCshFourChoiceSequencePuzzleScene` at `0x38871`
   with the caller-supplied completion flag. `GC1.RUN` callback `0x409`
   supplies milestone 224 (`solved cash register puzzle`) after presenting
