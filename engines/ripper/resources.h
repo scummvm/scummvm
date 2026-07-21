@@ -110,6 +110,8 @@ private:
 
 class ResourceManager {
 public:
+	ResourceManager();
+
 	bool initialize();
 	bool loadBitmap(const Common::String &memberName, BitmapAssetFrame &frame) const;
 	bool loadBitmapSequence(const Common::String &memberName,
@@ -137,6 +139,9 @@ private:
 	AssetLibrary _interface;
 	AssetLibrary _options;
 	AssetLibrary _sound;
+	mutable Common::HashMap<Common::String, BitmapFontAsset> _fontCache;
+	mutable Common::Array<Common::String> _gameTextCache;
+	mutable bool _gameTextLoaded;
 };
 
 } // End of namespace Ripper

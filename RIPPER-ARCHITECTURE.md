@@ -66,6 +66,8 @@
   through `TOOLBAR9.PL` bitmap sequences. Each sequence has ten frames; the
   first frame dimensions are the hit rectangles. `GAMETEXT.TF` is the startup
   resource-string table, and entries 1 through 9 provide the toolbar labels.
+  The resource manager caches the decoded table and NF2T fonts shared by the
+  front-end presentations; callers still receive independent value objects.
 - The `7PT_FONT.FNT` member is an NF2T glyph descriptor used by
   `RenderFrontEndActionPreviewSprite` at `0x189b3`. The reimplementation
   decodes the descriptor and its custom bitmap instead of substituting a host
