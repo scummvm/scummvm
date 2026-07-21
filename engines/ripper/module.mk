@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	cursor.o \
 	cyber.o \
 	dialogue.o \
+	display.o \
 	iff.o \
 	input.o \
 	inventory.o \

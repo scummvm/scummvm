@@ -24,6 +24,7 @@
 #include "common/array.h"
 #include "common/str.h"
 
+#include "ripper/display.h"
 #include "ripper/script.h"
 
 namespace Ripper {
@@ -43,11 +44,6 @@ public:
 	Result runProgram(uint action, const char *scriptBaseName, uint argument);
 
 private:
-	struct DisplaySnapshot {
-		Common::Array<byte> pixels;
-		Common::Array<byte> palette;
-	};
-
 	struct RuntimeSnapshot {
 		CompiledScript activeScript;
 		CompiledScript concurrentScript;
@@ -72,8 +68,8 @@ private:
 			cyberExitRequested(false), cyberKeyboardCommand(0) {}
 	};
 
-	bool captureDisplay(DisplaySnapshot &snapshot) const;
-	void restoreDisplay(const DisplaySnapshot &snapshot) const;
+	bool captureDisplay(IndexedDisplaySnapshot &snapshot) const;
+	void restoreDisplay(const IndexedDisplaySnapshot &snapshot) const;
 	bool captureAudio(Common::Array<byte> &state) const;
 	bool restoreAudio(const Common::Array<byte> &state) const;
 	void suspendRuntime(RuntimeSnapshot &snapshot) const;
