@@ -40,6 +40,7 @@
 #include "ripper/milestones.h"
 #include "ripper/modal_dialog.h"
 #include "ripper/puzzles/calculator.h"
+#include "ripper/puzzles/clock.h"
 #include "ripper/puzzles/crystal.h"
 #include "ripper/puzzles/gc_csh.h"
 #include "ripper/puzzles/rolodex.h"
@@ -1306,6 +1307,16 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 					"Ripper: Cyber menu scene action completed result=%d",
 					cyberResult);
 				if (cyberResult == CyberManager::kLoadFailed)
+					return false;
+				break;
+			}
+			if (action == kSceneActionClockPuzzle) {
+				ClockPuzzle puzzle(_engine);
+				const ClockPuzzle::Result puzzleResult = puzzle.run(argument);
+				debugC(1, kDebugPuzzles,
+					"Ripper: clock puzzle scene action completed result=%d milestone=%u",
+					puzzleResult, argument);
+				if (puzzleResult == ClockPuzzle::kLoadFailed)
 					return false;
 				break;
 			}
