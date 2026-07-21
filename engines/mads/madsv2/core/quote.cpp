@@ -142,9 +142,11 @@ char *quote_string(char *quote_list, int quote_id) {
 		for (search = marker; *search; search++);
 		search++;
 		id = *((uint16 *)search);
-		if (id == quote_id) result = marker;
+		if (id == quote_id)
+			result = marker;
 	}
 
+	assert(result);
 	return result;
 }
 

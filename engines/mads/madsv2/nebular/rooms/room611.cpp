@@ -452,7 +452,7 @@ static void displayHermitQuestions(int question) {
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
-		curQuote = _game.getQuote(0x2C0);
+		curQuote = _game.getQuote(0x2C9);
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);

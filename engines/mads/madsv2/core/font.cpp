@@ -166,7 +166,7 @@ int font_write(FontPtr font, Buffer *target, const char *out_string,
 			continue;  // char_next with zero width: no spacing applied
 
 		screen_loc += char_width;
-		if (screen_loc >= target_wrap)
+		if (screen_loc > target_wrap)
 			break;  // Terminate
 
 		// Locate the character's pixel data in the font, skipping clipped rows.
