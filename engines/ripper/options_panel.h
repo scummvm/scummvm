@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 
+#include "ripper/controls.h"
 #include "ripper/display.h"
 #include "ripper/resources.h"
 #include "ripper/settings.h"
@@ -46,11 +47,6 @@ public:
 	bool run();
 
 private:
-	struct Control {
-		Common::Rect bounds;
-		uint16 id;
-	};
-
 	struct State {
 		uint16 actionKeys[RipperSettings::kActionKeyCount];
 		uint videoMode;
@@ -86,7 +82,7 @@ private:
 	Common::Array<BitmapAssetFrame> _combatFrames;
 	Common::Array<BitmapAssetFrame> _puzzleFrames;
 	Common::Array<BitmapAssetFrame> _accentFrames;
-	Common::Array<Control> _controls;
+	UiControlRegistry _controls;
 	IndexedDisplaySnapshot _savedDisplay;
 	Audio::SoundHandle _soundHandle;
 	bool _initialized;

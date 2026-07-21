@@ -125,15 +125,14 @@ bool OptionsPanelManager::initialize(ResourceManager &resources) {
 		_accentFrames.push_back(Common::move(sequence.frames.front()));
 	}
 
-	_controls.resize(ARRAYSIZE(kControlLayouts));
-	for (uint i = 0; i < _controls.size(); ++i) {
+	_controls.clear();
+	for (uint i = 0; i < ARRAYSIZE(kControlLayouts); ++i) {
 		const ControlLayout &layout = kControlLayouts[i];
-		_controls[i].bounds = Common::Rect(layout.x, layout.y,
-			layout.x + layout.width, layout.y + layout.height);
-		_controls[i].id = 1000 + i;
+		_controls.add(Common::Rect(layout.x, layout.y,
+			layout.x + layout.width, layout.y + layout.height), 1000 + i);
 		debugC(2, kDebugResources,
 			"Ripper: Options Panel control=%u id=%u rect=%d,%d,%d,%d",
-			i, _controls[i].id, layout.x, layout.y, layout.width, layout.height);
+			i, _controls[i].action, layout.x, layout.y, layout.width, layout.height);
 	}
 
 	_initialized = _background.width == 640 && _background.height == 400 &&
@@ -275,11 +274,7 @@ void OptionsPanelManager::drawKeyLabel(uint16 command) {
 int OptionsPanelManager::findControl(const Common::Point &point) const {
 	// FindUiControlStateAtPoint at 0x4aae8 returns the first rectangular hit in
 	// insertion order; the options controls do not use per-pixel hit masks.
-	for (uint i = 0; i < _controls.size(); ++i) {
-		if (_controls[i].bounds.contains(point))
-			return i;
-	}
-	return -1;
+	return _controls.findFirst(point);
 }
 
 bool OptionsPanelManager::serviceBackground(Video::SmackerDecoder &decoder) {
@@ -419,7 +414,7 @@ bool OptionsPanelManager::run() {
 			}
 			debugC(2, kDebugInput,
 				"Ripper: Options Panel hover control=%d id=%u point=%d,%d captureSlot=%d",
-				hoveredControl, hoveredControl >= 0 ? _controls[hoveredControl].id : 0,
+				hoveredControl, hoveredControl >= 0 ? _controls[hoveredControl].action : 0,
 				mouse.position.x, mouse.position.y, captureSlot);
 		}
 		if (captureSlot < 0 && (mouse.pressed & kMouseButtonLeft) != 0)
@@ -430,7 +425,7 @@ bool OptionsPanelManager::run() {
 				playControlSound(selected);
 				debugC(1, kDebugInput,
 					"Ripper: Options Panel selected control=%u id=%u point=%d,%d",
-					selected, _controls[selected].id, mouse.position.x, mouse.position.y);
+					selected, _controls[selected].action, mouse.position.x, mouse.position.y);
 				if (selected <= 1)
 					state.bufferedVideo = !state.bufferedVideo;
 				else if (selected <= 5)
