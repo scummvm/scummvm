@@ -36,6 +36,7 @@ MODULE_OBJS := \
 	scenes/librarian_scene.o \
 	scenes/scene.o \
 	scenes/tube_scene.o \
+	scenes/wofford_scene.o \
 	script.o \
 	settings.o \
 	toolbar.o \

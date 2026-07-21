@@ -256,6 +256,7 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 	}
 	if (action >= kSceneActionKbProgram && action <= kSceneActionKrProgram && action != 44) {
 		const char *program = nullptr;
+		bool woffordMedia = false;
 		uint chapter = 0;
 		for (uint flag = kMilestoneCompletedAct3; flag != 0; --flag) {
 			if (engine->getMilestones()->isSet(flag)) {
@@ -267,10 +268,11 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		case kSceneActionKbProgram: program = "kb"; break;
 		case kSceneActionKcOrWoffordProgram:
 			if (chapter < 3) {
-				warning("Ripper: Cyber action 42 requires the Wofford interactive media path before chapter 3");
-				return false;
+				program = "wofford-media";
+				woffordMedia = true;
+			} else {
+				program = "kc";
 			}
-			program = "kc";
 			break;
 		case kSceneActionKdProgram: program = "kd"; break;
 		case kSceneActionKfProgram: program = "kf"; break;
@@ -289,14 +291,17 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		}
 		if (!program)
 			return false;
+		const Common::String target = woffordMedia ? Common::String(program) :
+			Common::String::format("%s.run", program);
 		debugC(1, kDebugCyber,
-			"Ripper: dispatching Cyber program action=%u name='%s' script='%s.run' argument=%u activeScript='%s' frame=%u",
-			action, actionName(action), program, argument,
+			"Ripper: dispatching Cyber program action=%u name='%s' target='%s' type=%s argument=%u activeScript='%s' frame=%u",
+			action, actionName(action), target.c_str(),
+			woffordMedia ? "media-scene" : "script", argument,
 			manager._runtime.activeScript.getMemberName().c_str(), manager._runtime.activeFrame);
 		const CyberManager::Result result = engine->getCyber()->runProgram(action, program, argument);
 		debugC(result == CyberManager::kExited ? 1 : 2, kDebugCyber,
-			"Ripper: Cyber program action=%u script='%s.run' completed result=%d restoredScript='%s' frame=%u",
-			action, program, result, manager._runtime.activeScript.getMemberName().c_str(),
+			"Ripper: Cyber program action=%u target='%s' completed result=%d restoredScript='%s' frame=%u",
+			action, target.c_str(), result, manager._runtime.activeScript.getMemberName().c_str(),
 			manager._runtime.activeFrame);
 		return result != CyberManager::kLoadFailed;
 	}
