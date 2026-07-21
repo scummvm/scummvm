@@ -42,6 +42,9 @@
   and the directory uses 12-byte legacy records.
 - `OpenIndexedContainerEntryReadOnly` at `0x55a4c` performs case-insensitive
   member lookup and seeks the shared library handle to the selected member.
+  `AssetLibrary` retains directory order for member ranges and prefix
+  enumeration, while a normalized-name index provides exact lookup and rejects
+  duplicate names during parsing.
 - `SCRIPT.PL` contains compiled `.RUN` scene scripts. The default entry is
   `RIPPER.RUN`, which leads to the initial `BA0.RUN` scene.
 - Cursor `.PL` members are nested legacy asset libraries whose entries contain

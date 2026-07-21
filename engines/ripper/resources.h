@@ -22,6 +22,7 @@
 #define RIPPER_RESOURCES_H
 
 #include "common/array.h"
+#include "common/hash-str.h"
 #include "common/path.h"
 #include "common/str.h"
 
@@ -102,6 +103,7 @@ private:
 
 	Common::Path _filename;
 	Common::Array<Entry> _entries;
+	Common::HashMap<Common::String, uint> _entryIndices;
 	Common::Array<byte> _archiveData;
 	bool _modernFormat;
 };
