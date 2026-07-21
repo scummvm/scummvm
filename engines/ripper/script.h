@@ -190,6 +190,27 @@ private:
 	uint16 _argumentLayoutCount;
 };
 
+struct SceneRuntimeState {
+	CompiledScript activeScript;
+	CompiledScript concurrentScript;
+	Common::String concurrentEntryLabel;
+	Common::String pendingSceneMember;
+	Common::String pendingSceneEntryLabel;
+	Common::Array<bool> activeInteractionEnabled;
+	Common::String previousFrameLabel;
+	uint activeFrame;
+	uint16 frontEndActionMask;
+	int hoveredInteraction;
+	bool awaitingInteraction;
+	bool resumeLoadedPresentation;
+	bool clearPreservedAudioOnTransition;
+	bool cyberActive;
+	bool cyberExitRequested;
+	uint16 cyberKeyboardCommand;
+
+	SceneRuntimeState();
+};
+
 class ScriptManager {
 public:
 	explicit ScriptManager(RipperEngine *engine);
@@ -207,9 +228,10 @@ public:
 	bool hasActivePrompt() const;
 	bool showHelp(const char *source);
 	bool hasPendingSceneTransition() const {
-		return !_pendingSceneMember.empty() || _cyberExitRequested || _cyberKeyboardCommand != 0;
+		return !_runtime.pendingSceneMember.empty() || _runtime.cyberExitRequested ||
+			_runtime.cyberKeyboardCommand != 0;
 	}
-	bool isCyberActive() const { return _cyberActive; }
+	bool isCyberActive() const { return _runtime.cyberActive; }
 	bool hasPlayedScene(const Common::String &scene) const { return isScenePlayed(scene); }
 	void requestCyberExit(const char *source);
 	bool canSaveGame() const;
@@ -217,7 +239,7 @@ public:
 	void logRuntimeFailure(const char *reason) const;
 
 	CompiledScript &startup() { return _startup; }
-	CompiledScript &ba0() { return _ba0; }
+	CompiledScript &ba0() { return _runtime.activeScript; }
 	DialogueChooser *getDialogue() const { return _dialogue; }
 
 private:
@@ -246,26 +268,11 @@ private:
 
 	RipperEngine *_engine;
 	CompiledScript _startup;
-	CompiledScript _ba0;
-	CompiledScript _concurrent;
-	Common::String _concurrentEntryLabel;
-	Common::String _pendingSceneMember;
-	Common::String _pendingSceneEntryLabel;
+	SceneRuntimeState _runtime;
 	Common::Array<Common::String> _playedScenes;
-	Common::Array<bool> _activeBa0InteractionEnabled;
-	Common::String _previousBa0FrameLabel;
-	uint _activeBa0Frame;
-	int _hoveredBa0Interaction;
-	bool _awaitingBa0Interaction;
-	bool _resumeLoadedPresentation;
-	bool _clearPreservedAudioOnTransition;
-	bool _cyberActive;
-	bool _cyberExitRequested;
-	uint16 _cyberKeyboardCommand;
 	uint _sceneCallbackFrame;
 	IdleMediaCallback *_activeIdleMediaCallback;
 	byte _chooserTemplateMode;
-	uint16 _frontEndActionMask;
 	BriefingManager *_briefing;
 	DialogueChooser *_dialogue;
 };

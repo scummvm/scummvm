@@ -553,49 +553,50 @@ bool CompiledScript::validateCallbacks() const {
 	return true;
 }
 
-ScriptManager::ScriptManager(RipperEngine *engine) : _engine(engine), _activeBa0Frame(0),
-		_hoveredBa0Interaction(-1),
-		_awaitingBa0Interaction(false), _resumeLoadedPresentation(false),
-		_clearPreservedAudioOnTransition(false), _cyberActive(false),
-		_cyberExitRequested(false), _cyberKeyboardCommand(0), _sceneCallbackFrame(0),
-		_activeIdleMediaCallback(nullptr), _chooserTemplateMode(0),
-		_frontEndActionMask(0xffff) {
+SceneRuntimeState::SceneRuntimeState() : activeFrame(0), frontEndActionMask(0xffff),
+		hoveredInteraction(-1), awaitingInteraction(false), resumeLoadedPresentation(false),
+		clearPreservedAudioOnTransition(false), cyberActive(false), cyberExitRequested(false),
+		cyberKeyboardCommand(0) {
+}
+
+ScriptManager::ScriptManager(RipperEngine *engine) : _engine(engine), _sceneCallbackFrame(0),
+		_activeIdleMediaCallback(nullptr), _chooserTemplateMode(0) {
 	_briefing = new BriefingManager(engine);
 	_dialogue = new DialogueChooser();
 }
 
 bool ScriptManager::canSaveGame() const {
-	return !_cyberActive && _awaitingBa0Interaction && _pendingSceneMember.empty() &&
-		_activeBa0Frame < _ba0.getFrames().size();
+	return !_runtime.cyberActive && _runtime.awaitingInteraction && _runtime.pendingSceneMember.empty() &&
+		_runtime.activeFrame < _runtime.activeScript.getFrames().size();
 }
 
 void ScriptManager::requestCyberExit(const char *source) {
-	if (!_cyberActive)
+	if (!_runtime.cyberActive)
 		return;
-	_cyberExitRequested = true;
+	_runtime.cyberExitRequested = true;
 	debugC(1, kDebugCyber, "Ripper: Cyber nested runtime exit requested source=%s", source);
 }
 
 void ScriptManager::logRuntimeFailure(const char *reason) const {
 	Common::String frameLabel;
-	if (_activeBa0Frame < _ba0.getFrames().size())
-		frameLabel = _ba0.getString(_ba0.getFrames()[_activeBa0Frame].labelOffset);
+	if (_runtime.activeFrame < _runtime.activeScript.getFrames().size())
+		frameLabel = _runtime.activeScript.getString(_runtime.activeScript.getFrames()[_runtime.activeFrame].labelOffset);
 	warning("Ripper: %s activeScript='%s' frame=%u/%u label='%s' awaitingInteraction=%d "
 		"concurrentScript='%s' concurrentEntry='%s' pendingScript='%s' pendingEntry='%s'",
-		reason, _ba0.getMemberName().c_str(), _activeBa0Frame, _ba0.getFrames().size(),
-		frameLabel.c_str(), _awaitingBa0Interaction,
-		_concurrent.getMemberName().c_str(), _concurrentEntryLabel.c_str(),
-		_pendingSceneMember.c_str(), _pendingSceneEntryLabel.c_str());
+		reason, _runtime.activeScript.getMemberName().c_str(), _runtime.activeFrame, _runtime.activeScript.getFrames().size(),
+		frameLabel.c_str(), _runtime.awaitingInteraction,
+		_runtime.concurrentScript.getMemberName().c_str(), _runtime.concurrentEntryLabel.c_str(),
+		_runtime.pendingSceneMember.c_str(), _runtime.pendingSceneEntryLabel.c_str());
 }
 
 bool ScriptManager::syncGame(Common::Serializer &serializer) {
-	Common::String ba0Member = serializer.isSaving() ? _ba0.getMemberName() : Common::String();
-	Common::String concurrentMember = serializer.isSaving() ? _concurrent.getMemberName() : Common::String();
-	Common::String concurrentEntry = serializer.isSaving() ? _concurrentEntryLabel : Common::String();
-	Common::String previousFrame = serializer.isSaving() ? _previousBa0FrameLabel : Common::String();
-	uint32 activeFrame = _activeBa0Frame;
-	uint16 frontEndActionMask = _frontEndActionMask;
-	byte awaitingInteraction = _awaitingBa0Interaction ? 1 : 0;
+	Common::String ba0Member = serializer.isSaving() ? _runtime.activeScript.getMemberName() : Common::String();
+	Common::String concurrentMember = serializer.isSaving() ? _runtime.concurrentScript.getMemberName() : Common::String();
+	Common::String concurrentEntry = serializer.isSaving() ? _runtime.concurrentEntryLabel : Common::String();
+	Common::String previousFrame = serializer.isSaving() ? _runtime.previousFrameLabel : Common::String();
+	uint32 activeFrame = _runtime.activeFrame;
+	uint16 frontEndActionMask = _runtime.frontEndActionMask;
+	byte awaitingInteraction = _runtime.awaitingInteraction ? 1 : 0;
 	byte briefingArmed = _briefing->isArmed() ? 1 : 0;
 	uint32 briefingSelector = _briefing->getSelector();
 
@@ -631,19 +632,19 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 			return false;
 	}
 
-	uint32 interactionCount = _activeBa0InteractionEnabled.size();
+	uint32 interactionCount = _runtime.activeInteractionEnabled.size();
 	serializer.syncAsUint32LE(interactionCount);
 	if (serializer.isLoading()) {
 		if (interactionCount > 255)
 			return false;
-		_activeBa0InteractionEnabled.clear();
-		_activeBa0InteractionEnabled.resize(interactionCount);
+		_runtime.activeInteractionEnabled.clear();
+		_runtime.activeInteractionEnabled.resize(interactionCount);
 	}
 	for (uint i = 0; i < interactionCount; ++i) {
-		byte enabled = _activeBa0InteractionEnabled[i] ? 1 : 0;
+		byte enabled = _runtime.activeInteractionEnabled[i] ? 1 : 0;
 		serializer.syncAsByte(enabled);
 		if (serializer.isLoading())
-			_activeBa0InteractionEnabled[i] = enabled != 0;
+			_runtime.activeInteractionEnabled[i] = enabled != 0;
 	}
 
 	if (!_dialogue->syncGame(serializer) || serializer.err())
@@ -663,30 +664,30 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 			!restoredConcurrent.load(_engine->getResources()->scripts(), concurrentMember))
 		return false;
 
-	_ba0 = Common::move(restoredBa0);
-	_concurrent = Common::move(restoredConcurrent);
-	_concurrentEntryLabel = concurrentEntry;
-	_previousBa0FrameLabel = previousFrame;
-	_activeBa0Frame = activeFrame;
-	_frontEndActionMask = serializer.getVersion() >= 4 ? frontEndActionMask : 0xffff;
-	_awaitingBa0Interaction = awaitingInteraction != 0;
+	_runtime.activeScript = Common::move(restoredBa0);
+	_runtime.concurrentScript = Common::move(restoredConcurrent);
+	_runtime.concurrentEntryLabel = concurrentEntry;
+	_runtime.previousFrameLabel = previousFrame;
+	_runtime.activeFrame = activeFrame;
+	_runtime.frontEndActionMask = serializer.getVersion() >= 4 ? frontEndActionMask : 0xffff;
+	_runtime.awaitingInteraction = awaitingInteraction != 0;
 	_briefing->restore(briefingArmed != 0, briefingSelector);
-	_pendingSceneMember.clear();
-	_pendingSceneEntryLabel.clear();
-	_clearPreservedAudioOnTransition = false;
-	_hoveredBa0Interaction = -1;
-	_resumeLoadedPresentation = !_dialogue->isPending() &&
-		_ba0.getFrames()[_activeBa0Frame].presentationType == 1;
+	_runtime.pendingSceneMember.clear();
+	_runtime.pendingSceneEntryLabel.clear();
+	_runtime.clearPreservedAudioOnTransition = false;
+	_runtime.hoveredInteraction = -1;
+	_runtime.resumeLoadedPresentation = !_dialogue->isPending() &&
+		_runtime.activeScript.getFrames()[_runtime.activeFrame].presentationType == 1;
 	_engine->getToolbar()->leave();
 	_engine->getCursor()->setVisible(false);
 	debugC(1, kDebugSaveLoad,
 		"Ripper: restored script state member='%s' frame=%u label='%s' concurrent='%s' "
 		"entry='%s' flags=%u playedScenes=%u interactions=%u dialogue=%d",
-		_ba0.getMemberName().c_str(), _activeBa0Frame,
-		_ba0.getString(_ba0.getFrames()[_activeBa0Frame].labelOffset).c_str(),
-		_concurrent.getMemberName().c_str(), _concurrentEntryLabel.c_str(),
+		_runtime.activeScript.getMemberName().c_str(), _runtime.activeFrame,
+		_runtime.activeScript.getString(_runtime.activeScript.getFrames()[_runtime.activeFrame].labelOffset).c_str(),
+		_runtime.concurrentScript.getMemberName().c_str(), _runtime.concurrentEntryLabel.c_str(),
 		Milestones::kFlagCount, _playedScenes.size(),
-		_activeBa0InteractionEnabled.size(), _dialogue->isPending());
+		_runtime.activeInteractionEnabled.size(), _dialogue->isPending());
 	return true;
 }
 
@@ -706,16 +707,16 @@ bool ScriptManager::showHelp(const char *source) {
 	// PollInteractionAndResolveSelection at 0x13c8d and DispatchFrontEndAction
 	// at 0x190b7 use the same prompt-state branch for F1 and toolbar Help.
 	const bool promptActive = hasActivePrompt();
-	const uint resourceId = _cyberActive ? kCyberHelpResource :
+	const uint resourceId = _runtime.cyberActive ? kCyberHelpResource :
 		(promptActive ? kPromptHelpResource : kGeneralHelpResource);
 	debugC(1, kDebugScene,
 		"Ripper: opening scene help source=%s resource=%u promptActive=%d cyberActive=%d",
-		source, resourceId, promptActive, _cyberActive);
+		source, resourceId, promptActive, _runtime.cyberActive);
 	_engine->getCursor()->setVisible(true);
 	// PollInteractionAndResolveSelection at 0x13c8d sends Cyber help resource
 	// 0x1a4 through RunModalTextDialog without replacing the active palette.
 	// The MENUB pixels therefore retain the colors of the Cyber presentation.
-	const ModalDialogManager::PaletteBehavior paletteBehavior = _cyberActive ?
+	const ModalDialogManager::PaletteBehavior paletteBehavior = _runtime.cyberActive ?
 		ModalDialogManager::kPreserveActivePalette :
 		ModalDialogManager::kApplyModalPalette;
 	return _engine->getModalDialog()->run(resourceId, true,
@@ -723,12 +724,12 @@ bool ScriptManager::showHelp(const char *source) {
 }
 
 bool ScriptManager::openInventory(int initialUnlockFlag, bool grantItem) {
-	if (_activeBa0Frame >= _ba0.getFrames().size()) {
+	if (_runtime.activeFrame >= _runtime.activeScript.getFrames().size()) {
 		warning("Ripper: inventory requested without an active scene frame");
 		return false;
 	}
-	const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
-	const Common::String sceneLabel = _ba0.getString(frame.labelOffset);
+	const ScriptFrame &frame = _runtime.activeScript.getFrames()[_runtime.activeFrame];
+	const Common::String sceneLabel = _runtime.activeScript.getString(frame.labelOffset);
 	const Inventory::Result inventoryResult = grantItem ?
 		_engine->getInventory()->grantAndRun(initialUnlockFlag, sceneLabel,
 			"scene-action-3") :
@@ -743,7 +744,7 @@ bool ScriptManager::initialize(ResourceManager &resources) {
 	return _briefing->initialize(resources) &&
 		_dialogue->initialize(resources) &&
 		_startup.load(resources.scripts(), "ripper.run") &&
-		_ba0.load(resources.scripts(), "ba0.run");
+		_runtime.activeScript.load(resources.scripts(), "ba0.run");
 }
 
 bool ScriptManager::openWorldMap() {
@@ -751,12 +752,12 @@ bool ScriptManager::openWorldMap() {
 	if (!_engine->getWorldMap()->run(targetScript))
 		return false;
 	if (!targetScript.empty()) {
-		_pendingSceneMember = targetScript;
-		_pendingSceneEntryLabel.clear();
-		_clearPreservedAudioOnTransition = true;
+		_runtime.pendingSceneMember = targetScript;
+		_runtime.pendingSceneEntryLabel.clear();
+		_runtime.clearPreservedAudioOnTransition = true;
 		debugC(2, kDebugScene,
 			"Ripper: queued world map scene transition target='%s'",
-			_pendingSceneMember.c_str());
+			_runtime.pendingSceneMember.c_str());
 	}
 	return true;
 }
@@ -832,46 +833,46 @@ void ScriptManager::beginBa0InteractionWait(const Common::String &frameLabel,
 	if (_engine->getInput()->pollEvents())
 		_engine->quitGame();
 	_engine->getInput()->discardMouseTransitions();
-	_awaitingBa0Interaction = true;
+	_runtime.awaitingInteraction = true;
 	debugC(1, kDebugScene,
 		"Ripper: active scene script='%s' frame='%s' awaiting %u interactions",
-		_ba0.getMemberName().c_str(), frameLabel.c_str(), interactionCount);
+		_runtime.activeScript.getMemberName().c_str(), frameLabel.c_str(), interactionCount);
 }
 
 void ScriptManager::initializeBa0InteractionState(const ScriptFrame &frame) {
-	_activeBa0InteractionEnabled.clear();
-	_activeBa0InteractionEnabled.resize(frame.interactionCount);
+	_runtime.activeInteractionEnabled.clear();
+	_runtime.activeInteractionEnabled.resize(frame.interactionCount);
 	for (uint i = 0; i < frame.interactionCount; ++i) {
 		const ScriptInteraction &interaction =
-			_ba0.getInteractions()[frame.firstInteractionIndex + i];
-		_activeBa0InteractionEnabled[i] = (interaction.flags & 2) == 0;
+			_runtime.activeScript.getInteractions()[frame.firstInteractionIndex + i];
+		_runtime.activeInteractionEnabled[i] = (interaction.flags & 2) == 0;
 		const Common::Rect bounds = interactionBounds(interaction);
 		debugC(3, kDebugScene,
 			"Ripper: active scene interaction proxy script='%s' frame=%u interaction=%u "
 			"label='%s' raw=%d,%d,%d,%d screen=%d,%d,%d,%d key=0x%04x cursor=%u enabled=%d",
-			_ba0.getMemberName().c_str(), _activeBa0Frame,
+			_runtime.activeScript.getMemberName().c_str(), _runtime.activeFrame,
 			frame.firstInteractionIndex + i, interaction.label.c_str(),
 			interaction.x, interaction.y, interaction.width, interaction.height,
 			bounds.left, bounds.top, bounds.width(), bounds.height(),
 			interaction.keyboardCommand, interaction.initialSelection,
-			_activeBa0InteractionEnabled[i]);
+			_runtime.activeInteractionEnabled[i]);
 	}
 	debugC(3, kDebugScene,
 		"Ripper: initialized active scene interaction proxies script='%s' frame=%u count=%u",
-		_ba0.getMemberName().c_str(), _activeBa0Frame, frame.interactionCount);
+		_runtime.activeScript.getMemberName().c_str(), _runtime.activeFrame, frame.interactionCount);
 }
 
 void ScriptManager::bindBa0Frame(uint frameIndex) {
 	// BindSceneRuntimeCurrentFrame at 0x145d6 preserves the outgoing frame label
 	// at SceneRuntime+0x177 before changing the current frame record.
-	if (_activeBa0Frame < _ba0.getFrames().size())
-		_previousBa0FrameLabel = _ba0.getString(_ba0.getFrames()[_activeBa0Frame].labelOffset);
+	if (_runtime.activeFrame < _runtime.activeScript.getFrames().size())
+		_runtime.previousFrameLabel = _runtime.activeScript.getString(_runtime.activeScript.getFrames()[_runtime.activeFrame].labelOffset);
 	else
-		_previousBa0FrameLabel.clear();
-	_activeBa0Frame = frameIndex;
+		_runtime.previousFrameLabel.clear();
+	_runtime.activeFrame = frameIndex;
 	debugC(2, kDebugScripts,
 		"Ripper: bound active scene script='%s' frame=%u previous='%s'",
-		_ba0.getMemberName().c_str(), _activeBa0Frame, _previousBa0FrameLabel.c_str());
+		_runtime.activeScript.getMemberName().c_str(), _runtime.activeFrame, _runtime.previousFrameLabel.c_str());
 }
 
 bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffset, int &result,
@@ -965,7 +966,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			if (command.arguments.size() < 3 ||
 				command.arguments[1].value >= script.getFrames().size())
 				return false;
-			if (&script != &_ba0) {
+			if (&script != &_runtime.activeScript) {
 				warning("Ripper: previous-scene condition has no tracked runtime in '%s' at 0x%x",
 					script.getMemberName().c_str(), command.offset);
 				return false;
@@ -974,13 +975,13 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			const bool expected = command.arguments[0].value != 0;
 			const ScriptFrame &comparedFrame = script.getFrames()[command.arguments[1].value];
 			const Common::String comparedLabel = script.getString(comparedFrame.labelOffset);
-			const bool actual = !_previousBa0FrameLabel.empty() &&
-				_previousBa0FrameLabel.equalsIgnoreCase(comparedLabel);
+			const bool actual = !_runtime.previousFrameLabel.empty() &&
+				_runtime.previousFrameLabel.equalsIgnoreCase(comparedLabel);
 			debugC(3, kDebugScripts,
 				"Ripper: previous-scene condition frame=%u label='%s' previous='%s' "
 				"expected=%d actual=%d target=0x%x",
 				command.arguments[1].value, comparedLabel.c_str(),
-				_previousBa0FrameLabel.c_str(), expected, actual,
+				_runtime.previousFrameLabel.c_str(), expected, actual,
 				command.arguments[2].value);
 			if (actual != expected) {
 				branchTaken = true;
@@ -1041,17 +1042,17 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 		case kDisableInteraction: {
 			if (command.arguments.size() < 1)
 				return false;
-			if (&script != &_ba0 || _activeBa0Frame >= _ba0.getFrames().size()) {
+			if (&script != &_runtime.activeScript || _runtime.activeFrame >= _runtime.activeScript.getFrames().size()) {
 				warning("Ripper: interaction disable opcode has no active scene frame in '%s' at 0x%x",
 					script.getMemberName().c_str(), command.offset);
 				return false;
 			}
 			const uint relativeIndex = command.arguments[0].value & 0xffff;
-			const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
-			if (relativeIndex < _activeBa0InteractionEnabled.size()) {
+			const ScriptFrame &frame = _runtime.activeScript.getFrames()[_runtime.activeFrame];
+			if (relativeIndex < _runtime.activeInteractionEnabled.size()) {
 				const uint interactionIndex = frame.firstInteractionIndex + relativeIndex;
-				const ScriptInteraction &interaction = _ba0.getInteractions()[interactionIndex];
-				_activeBa0InteractionEnabled[relativeIndex] = false;
+				const ScriptInteraction &interaction = _runtime.activeScript.getInteractions()[interactionIndex];
+				_runtime.activeInteractionEnabled[relativeIndex] = false;
 				debugC(2, kDebugScene,
 					"Ripper: disabled frame interaction relative=%u global=%u label='%s'",
 					relativeIndex, interactionIndex, interaction.label.c_str());
@@ -1092,10 +1093,10 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			bool includeChoice = true;
 			if (command.opcode == kAddConditionalDialogueChoice) {
 				if (command.arguments.size() < 2 ||
-					command.arguments[1].value >= _ba0.getFrames().size())
+					command.arguments[1].value >= _runtime.activeScript.getFrames().size())
 					return false;
-				const ScriptFrame &responseFrame = _ba0.getFrames()[command.arguments[1].value];
-				const Common::String responseLabel = _ba0.getString(responseFrame.labelOffset);
+				const ScriptFrame &responseFrame = _runtime.activeScript.getFrames()[command.arguments[1].value];
+				const Common::String responseLabel = _runtime.activeScript.getString(responseFrame.labelOffset);
 				includeChoice = !isScenePlayed(responseLabel);
 				debugC(2, kDebugDialogue,
 					"Ripper: dialogue response frame=%u label='%s' played=%d",
@@ -1119,22 +1120,22 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			// turns opcode 0x1d into a scene handoff when the command belongs to
 			// the concurrent runtime. The third argument only selects this path
 			// when the active scene issues the command.
-			if (&script == &_concurrent || command.arguments[2].value == 0) {
-				_pendingSceneMember = compiledScriptMemberName(target);
-				_pendingSceneEntryLabel = entryLabel;
-				if (&script == &_concurrent)
-					_clearPreservedAudioOnTransition = true;
+			if (&script == &_runtime.concurrentScript || command.arguments[2].value == 0) {
+				_runtime.pendingSceneMember = compiledScriptMemberName(target);
+				_runtime.pendingSceneEntryLabel = entryLabel;
+				if (&script == &_runtime.concurrentScript)
+					_runtime.clearPreservedAudioOnTransition = true;
 				debugC(1, kDebugScene,
 					"Ripper: queued script transition target='%s' entry='%s' source='%s'",
-					_pendingSceneMember.c_str(), _pendingSceneEntryLabel.c_str(),
+					_runtime.pendingSceneMember.c_str(), _runtime.pendingSceneEntryLabel.c_str(),
 					script.getMemberName().c_str());
 				result = -3;
 				return true;
 			}
 			const Common::String memberName = compiledScriptMemberName(target);
-			if (!_concurrent.load(_engine->getResources()->scripts(), memberName))
+			if (!_runtime.concurrentScript.load(_engine->getResources()->scripts(), memberName))
 				return false;
-			_concurrentEntryLabel = entryLabel;
+			_runtime.concurrentEntryLabel = entryLabel;
 			debugC(1, kDebugScene, "Ripper: created concurrent script='%s' entry='%s'",
 				target.c_str(), entryLabel.c_str());
 			break;
@@ -1270,7 +1271,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			if (action == kSceneActionWorldMap) {
 				if (!openWorldMap())
 					return false;
-				if (!_pendingSceneMember.empty()) {
+				if (!_runtime.pendingSceneMember.empty()) {
 					result = -3;
 					return true;
 				}
@@ -1416,10 +1417,10 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				// DispatchSceneEntryAction at 0x36892 stores the low 16 bits at
 				// SceneRuntime+0x183. PollInteractionAndResolveSelection at 0x13c8d
 				// passes that mask to both the front-end toolbar and key resolver.
-				_frontEndActionMask = (uint16)argument;
+				_runtime.frontEndActionMask = (uint16)argument;
 				debugC(2, kDebugScene,
 					"Ripper: scene action 37 set front-end action mask=0x%04x script='%s' offset=0x%x",
-					_frontEndActionMask, script.getMemberName().c_str(), command.offset);
+					_runtime.frontEndActionMask, script.getMemberName().c_str(), command.offset);
 				break;
 			}
 			if (action == kSceneActionKaDialogue) {
@@ -1429,12 +1430,12 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				debugC(1, kDebugCyber,
 					"Ripper: dispatching Cyber dialogue action=%u name='%s' argument=%u activeScript='%s' frame=%u",
 					action, sceneActionName(action), argument,
-					_ba0.getMemberName().c_str(), _activeBa0Frame);
+					_runtime.activeScript.getMemberName().c_str(), _runtime.activeFrame);
 				const CyberManager::Result cyberResult =
 					_engine->getCyber()->runProgram(action, "ka", argument);
 				debugC(cyberResult == CyberManager::kExited ? 1 : 2, kDebugCyber,
 					"Ripper: Cyber dialogue action=%u completed result=%d restoredScript='%s' frame=%u",
-					action, cyberResult, _ba0.getMemberName().c_str(), _activeBa0Frame);
+					action, cyberResult, _runtime.activeScript.getMemberName().c_str(), _runtime.activeFrame);
 				if (cyberResult == CyberManager::kLoadFailed)
 					return false;
 				break;
@@ -1485,13 +1486,13 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				debugC(1, kDebugCyber,
 					"Ripper: dispatching Cyber program action=%u name='%s' script='%s.run' argument=%u activeScript='%s' frame=%u",
 					action, sceneActionName(action), program, argument,
-					_ba0.getMemberName().c_str(), _activeBa0Frame);
+					_runtime.activeScript.getMemberName().c_str(), _runtime.activeFrame);
 				const CyberManager::Result cyberResult =
 					_engine->getCyber()->runProgram(action, program, argument);
 				debugC(cyberResult == CyberManager::kExited ? 1 : 2, kDebugCyber,
 					"Ripper: Cyber program action=%u script='%s.run' completed result=%d restoredScript='%s' frame=%u",
-					action, program, cyberResult, _ba0.getMemberName().c_str(),
-					_activeBa0Frame);
+					action, program, cyberResult, _runtime.activeScript.getMemberName().c_str(),
+					_runtime.activeFrame);
 				if (cyberResult == CyberManager::kLoadFailed)
 					return false;
 				break;
@@ -1502,7 +1503,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				break;
 			}
 			if (action == kSceneActionTerminateRuntime) {
-				if (!_cyberActive)
+				if (!_runtime.cyberActive)
 					return false;
 				requestCyberExit("scene-action-9999");
 				result = -4;
@@ -1545,7 +1546,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 }
 
 bool ScriptManager::runStartupPath() {
-	if (_startup.getFrames().empty() || _ba0.getFrames().empty())
+	if (_startup.getFrames().empty() || _runtime.activeScript.getFrames().empty())
 		return false;
 
 	int result = 0;
@@ -1556,8 +1557,8 @@ bool ScriptManager::runStartupPath() {
 	}
 
 	uint ba0StartFrame = 0xffffffff;
-	for (uint i = 0; i < _ba0.getFrames().size(); ++i) {
-		if (_ba0.getString(_ba0.getFrames()[i].labelOffset).equalsIgnoreCase("start")) {
+	for (uint i = 0; i < _runtime.activeScript.getFrames().size(); ++i) {
+		if (_runtime.activeScript.getString(_runtime.activeScript.getFrames()[i].labelOffset).equalsIgnoreCase("start")) {
 			ba0StartFrame = i;
 			break;
 		}
@@ -1575,95 +1576,95 @@ bool ScriptManager::runStartupPath() {
 
 	debugC(1, kDebugScene, "Ripper: entering BA0 frame=%u label='start'", ba0StartFrame);
 	bindBa0Frame(ba0StartFrame);
-	initializeBa0InteractionState(_ba0.getFrames()[ba0StartFrame]);
+	initializeBa0InteractionState(_runtime.activeScript.getFrames()[ba0StartFrame]);
 	result = 0;
-	if (!executeCallback(_ba0, _ba0.getFrames()[ba0StartFrame].enterCallbackOffset, result) || result != 0)
+	if (!executeCallback(_runtime.activeScript, _runtime.activeScript.getFrames()[ba0StartFrame].enterCallbackOffset, result) || result != 0)
 		return false;
-	beginBa0InteractionWait("start", _ba0.getFrames()[ba0StartFrame].interactionCount);
+	beginBa0InteractionWait("start", _runtime.activeScript.getFrames()[ba0StartFrame].interactionCount);
 	return true;
 }
 
 bool ScriptManager::executeConcurrentFrame() {
-	if (_concurrent.getFrames().empty())
+	if (_runtime.concurrentScript.getFrames().empty())
 		return true;
 
 	uint frameIndex = 0;
-	if (!findFrameByLabel(_concurrent, _concurrentEntryLabel, frameIndex)) {
+	if (!findFrameByLabel(_runtime.concurrentScript, _runtime.concurrentEntryLabel, frameIndex)) {
 		warning("Ripper: concurrent script '%s' has no frame '%s'",
-			_concurrent.getMemberName().c_str(), _concurrentEntryLabel.c_str());
+			_runtime.concurrentScript.getMemberName().c_str(), _runtime.concurrentEntryLabel.c_str());
 		return false;
 	}
 
-	const ScriptFrame &frame = _concurrent.getFrames()[frameIndex];
+	const ScriptFrame &frame = _runtime.concurrentScript.getFrames()[frameIndex];
 	debugC(2, kDebugScene, "Ripper: servicing concurrent script='%s' frame=%u label='%s'",
-		_concurrent.getMemberName().c_str(), frameIndex, _concurrentEntryLabel.c_str());
+		_runtime.concurrentScript.getMemberName().c_str(), frameIndex, _runtime.concurrentEntryLabel.c_str());
 	int result = 0;
 	uint nextFrame = frameIndex;
-	if (!executeCallback(_concurrent, frame.enterCallbackOffset, result, &nextFrame))
+	if (!executeCallback(_runtime.concurrentScript, frame.enterCallbackOffset, result, &nextFrame))
 		return false;
-	if (result == -3 && !_pendingSceneMember.empty()) {
+	if (result == -3 && !_runtime.pendingSceneMember.empty()) {
 		debugC(1, kDebugScene,
 			"Ripper: concurrent script requested transition target='%s' entry='%s'",
-			_pendingSceneMember.c_str(), _pendingSceneEntryLabel.c_str());
-		_concurrent = CompiledScript();
-		_concurrentEntryLabel.clear();
+			_runtime.pendingSceneMember.c_str(), _runtime.pendingSceneEntryLabel.c_str());
+		_runtime.concurrentScript = CompiledScript();
+		_runtime.concurrentEntryLabel.clear();
 		return true;
 	}
 	if (result != 0)
 		return false;
-	if (!executeCallback(_concurrent, frame.exitCallbackOffset, result, &nextFrame))
+	if (!executeCallback(_runtime.concurrentScript, frame.exitCallbackOffset, result, &nextFrame))
 		return false;
-	if (result == -3 && !_pendingSceneMember.empty()) {
+	if (result == -3 && !_runtime.pendingSceneMember.empty()) {
 		debugC(1, kDebugScene,
 			"Ripper: concurrent script requested transition target='%s' entry='%s'",
-			_pendingSceneMember.c_str(), _pendingSceneEntryLabel.c_str());
-		_concurrent = CompiledScript();
-		_concurrentEntryLabel.clear();
+			_runtime.pendingSceneMember.c_str(), _runtime.pendingSceneEntryLabel.c_str());
+		_runtime.concurrentScript = CompiledScript();
+		_runtime.concurrentEntryLabel.clear();
 		return true;
 	}
 	if (result != -2) {
 		warning("Ripper: concurrent frame '%s' returned unexpected result %d",
-			_concurrentEntryLabel.c_str(), result);
+			_runtime.concurrentEntryLabel.c_str(), result);
 		return false;
 	}
 	debugC(2, kDebugScene,
 		"Ripper: concurrent frame yielded to active scene script='%s' nextFrame=%u",
-		_ba0.getMemberName().c_str(), nextFrame);
+		_runtime.activeScript.getMemberName().c_str(), nextFrame);
 	return true;
 }
 
 bool ScriptManager::performPendingSceneTransition() {
-	if (_pendingSceneMember.empty())
+	if (_runtime.pendingSceneMember.empty())
 		return true;
 
-	const Common::String memberName = _pendingSceneMember;
-	const Common::String entryLabel = _pendingSceneEntryLabel;
-	_pendingSceneMember.clear();
-	_pendingSceneEntryLabel.clear();
+	const Common::String memberName = _runtime.pendingSceneMember;
+	const Common::String entryLabel = _runtime.pendingSceneEntryLabel;
+	_runtime.pendingSceneMember.clear();
+	_runtime.pendingSceneEntryLabel.clear();
 	debugC(1, kDebugScene,
 		"Ripper: applying scene transition target='%s' entry='%s' concurrent='%s' clearPreservedAudio=%d",
-		memberName.c_str(), entryLabel.c_str(), _concurrent.getMemberName().c_str(),
-		_clearPreservedAudioOnTransition);
+		memberName.c_str(), entryLabel.c_str(), _runtime.concurrentScript.getMemberName().c_str(),
+		_runtime.clearPreservedAudioOnTransition);
 	// RunSceneScriptLoop at 0x124e9 retires non-preserved slots at every scene
 	// handoff. Concurrent and world-map handoffs clear preserve bits first.
-	_engine->getMedia()->clearSceneAudio(_clearPreservedAudioOnTransition);
-	_clearPreservedAudioOnTransition = false;
+	_engine->getMedia()->clearSceneAudio(_runtime.clearPreservedAudioOnTransition);
+	_runtime.clearPreservedAudioOnTransition = false;
 	_engine->getToolbar()->leave();
 	_dialogue->dismissForSceneTransition("scene-runtime-transition");
-	if (!_ba0.load(_engine->getResources()->scripts(), memberName))
+	if (!_runtime.activeScript.load(_engine->getResources()->scripts(), memberName))
 		return false;
 	uint startFrame = 0;
-	if (!entryLabel.empty() && !findFrameByLabel(_ba0, entryLabel, startFrame)) {
+	if (!entryLabel.empty() && !findFrameByLabel(_runtime.activeScript, entryLabel, startFrame)) {
 		warning("Ripper: scene transition target '%s' has no entry '%s'",
 			memberName.c_str(), entryLabel.c_str());
 		return false;
 	}
 
-	_previousBa0FrameLabel.clear();
-	_activeBa0Frame = startFrame;
-	_frontEndActionMask = 0xffff;
-	_awaitingBa0Interaction = false;
-	_hoveredBa0Interaction = -1;
+	_runtime.previousFrameLabel.clear();
+	_runtime.activeFrame = startFrame;
+	_runtime.frontEndActionMask = 0xffff;
+	_runtime.awaitingInteraction = false;
+	_runtime.hoveredInteraction = -1;
 	_engine->getCursor()->setVisible(false);
 	g_system->fillScreen(0);
 	g_system->updateScreen();
@@ -1672,35 +1673,35 @@ bool ScriptManager::performPendingSceneTransition() {
 
 bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 	_engine->getCursor()->setVisible(false);
-	_hoveredBa0Interaction = -1;
+	_runtime.hoveredInteraction = -1;
 	// RunSceneScriptLoop at 0x124e9 has no frame-count bound here. A -2 result
 	// re-enters the loop so the concurrent runtime is serviced before the next
 	// active frame, even when opcode 0x14 selected that same frame again.
 	while (!_engine->shouldQuit()) {
 		if (!executeConcurrentFrame())
 			return false;
-		if (!_pendingSceneMember.empty())
+		if (!_runtime.pendingSceneMember.empty())
 			return performPendingSceneTransition();
-		if (nextFrame >= _ba0.getFrames().size()) {
+		if (nextFrame >= _runtime.activeScript.getFrames().size()) {
 			warning("Ripper: active scene script='%s' requested invalid frame %u count=%u",
-				_ba0.getMemberName().c_str(), nextFrame, _ba0.getFrames().size());
+				_runtime.activeScript.getMemberName().c_str(), nextFrame, _runtime.activeScript.getFrames().size());
 			return false;
 		}
 
 		bindBa0Frame(nextFrame);
-		const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
-		const Common::String label = _ba0.getString(frame.labelOffset);
+		const ScriptFrame &frame = _runtime.activeScript.getFrames()[_runtime.activeFrame];
+		const Common::String label = _runtime.activeScript.getString(frame.labelOffset);
 		debugC(1, kDebugScene,
 			"Ripper: entering active scene script='%s' frame=%u label='%s' type=%u interactions=%u",
-			_ba0.getMemberName().c_str(), _activeBa0Frame, label.c_str(),
+			_runtime.activeScript.getMemberName().c_str(), _runtime.activeFrame, label.c_str(),
 			frame.presentationType, frame.interactionCount);
 		initializeBa0InteractionState(frame);
 
 		int result = 0;
-		uint callbackFrame = _activeBa0Frame;
-		if (!executeCallback(_ba0, frame.enterCallbackOffset, result, &callbackFrame))
+		uint callbackFrame = _runtime.activeFrame;
+		if (!executeCallback(_runtime.activeScript, frame.enterCallbackOffset, result, &callbackFrame))
 			return false;
-		if (result == -3 && !_pendingSceneMember.empty())
+		if (result == -3 && !_runtime.pendingSceneMember.empty())
 			return performPendingSceneTransition();
 		if (result == -2) {
 			_engine->getMedia()->resetSceneAudioTriggers();
@@ -1711,7 +1712,7 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 			return false;
 
 		if (frame.presentationType == 0 || frame.presentationType == 1) {
-			const Common::String mediaPath = _ba0.getString(frame.mediaNameOffset);
+			const Common::String mediaPath = _runtime.activeScript.getString(frame.mediaNameOffset);
 			debugC(2, kDebugScene,
 				"Ripper: frame presentation label='%s' media='%s' origin=%d,%d",
 				label.c_str(), mediaPath.c_str(), frame.x, frame.y);
@@ -1720,7 +1721,7 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 				beginBa0InteractionWait(label, frame.interactionCount);
 			if (frame.idleCallbackOffset != 0 && _dialogue->hasChoices()) {
 				int idleResult = 0;
-				if (!executeCallback(_ba0, frame.idleCallbackOffset, idleResult) || idleResult != 0) {
+				if (!executeCallback(_runtime.activeScript, frame.idleCallbackOffset, idleResult) || idleResult != 0) {
 					warning("Ripper: dialogue idle callback for frame '%s' returned %d",
 						label.c_str(), idleResult);
 					return false;
@@ -1734,7 +1735,7 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 			bool idleTextRequest = false;
 			if (frame.idleCallbackOffset != 0 && !_dialogue->hasChoices()) {
 				Common::Array<ScriptCommand> idleCommands;
-				if (!_ba0.decodeCallback(frame.idleCallbackOffset, true, idleCommands))
+				if (!_runtime.activeScript.decodeCallback(frame.idleCallbackOffset, true, idleCommands))
 					return false;
 				for (uint commandIndex = 0; commandIndex < idleCommands.size(); ++commandIndex) {
 					const ScriptCommand &idleCommand = idleCommands[commandIndex];
@@ -1756,8 +1757,8 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 				"Ripper: frame presentation controls label='%s' keyboard=%d mouse=%d idleTextRequest=%d waitFrame=%u",
 				label.c_str(), allowEscSpace, loopUntilInput, idleTextRequest,
 				idleWaitFrame);
-			IdleMediaCallback idleCallback(this, _ba0, frame.idleCallbackOffset,
-				idleWaitFrame, _activeBa0Frame);
+			IdleMediaCallback idleCallback(this, _runtime.activeScript, frame.idleCallbackOffset,
+				idleWaitFrame, _runtime.activeFrame);
 			uint16 idleCommand = 0;
 			if (!_engine->getMedia()->playScene(mediaPath, frame.x, frame.y, false,
 				loopUntilInput, allowEscSpace,
@@ -1784,10 +1785,10 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 				if (result != 0)
 					return false;
 			}
-			if (!_pendingSceneMember.empty()) {
+			if (!_runtime.pendingSceneMember.empty()) {
 				debugC(1, kDebugScene,
 					"Ripper: scene presentation returned transition target='%s' entry='%s'",
-					_pendingSceneMember.c_str(), _pendingSceneEntryLabel.c_str());
+					_runtime.pendingSceneMember.c_str(), _runtime.pendingSceneEntryLabel.c_str());
 				return performPendingSceneTransition();
 			}
 			if (allowEscSpace)
@@ -1796,86 +1797,86 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 				return true;
 		}
 
-		if (frame.interactionCount != 0 && !_awaitingBa0Interaction) {
+		if (frame.interactionCount != 0 && !_runtime.awaitingInteraction) {
 			beginBa0InteractionWait(label, frame.interactionCount);
 			return true;
 		}
 
-		callbackFrame = _activeBa0Frame;
-		if (!executeCallback(_ba0, frame.exitCallbackOffset, result, &callbackFrame))
+		callbackFrame = _runtime.activeFrame;
+		if (!executeCallback(_runtime.activeScript, frame.exitCallbackOffset, result, &callbackFrame))
 			return false;
-		if (result == -3 && !_pendingSceneMember.empty())
+		if (result == -3 && !_runtime.pendingSceneMember.empty())
 			return performPendingSceneTransition();
 		if (result != -2) {
 			warning("Ripper: automatic active scene script='%s' frame='%s' returned unexpected result %d",
-				_ba0.getMemberName().c_str(), label.c_str(), result);
+				_runtime.activeScript.getMemberName().c_str(), label.c_str(), result);
 			return false;
 		}
 		_engine->getMedia()->resetSceneAudioTriggers();
 		nextFrame = callbackFrame;
-		if (nextFrame == _activeBa0Frame) {
+		if (nextFrame == _runtime.activeFrame) {
 			debugC(2, kDebugScene,
 				"Ripper: active scene script='%s' frame='%s' retained frame=%u; servicing concurrent='%s'",
-				_ba0.getMemberName().c_str(), label.c_str(), nextFrame,
-				_concurrent.getMemberName().c_str());
+				_runtime.activeScript.getMemberName().c_str(), label.c_str(), nextFrame,
+				_runtime.concurrentScript.getMemberName().c_str());
 		}
 	}
 	return true;
 }
 
 bool ScriptManager::captureCyberKeyboardCommand() {
-	if (!_cyberActive || !_engine->getInput()->hasPendingKey())
+	if (!_runtime.cyberActive || !_engine->getInput()->hasPendingKey())
 		return false;
 	const uint16 command = _engine->getInput()->peekKey();
 	if (command != kCyberLeftCommand && command != kCyberRightCommand &&
 			command != kCyberChooseCommand && command != kCyberEscapeCommand)
 		return false;
-	_cyberKeyboardCommand = _engine->getInput()->consumeKey();
+	_runtime.cyberKeyboardCommand = _engine->getInput()->consumeKey();
 	debugC(3, kDebugCyber,
 		"Ripper: captured Cyber keyboard command=0x%04x script='%s' frame=%u",
-		_cyberKeyboardCommand, _ba0.getMemberName().c_str(), _activeBa0Frame);
+		_runtime.cyberKeyboardCommand, _runtime.activeScript.getMemberName().c_str(), _runtime.activeFrame);
 	return true;
 }
 
 bool ScriptManager::serviceCyberKeyboardCommand() {
-	const uint16 command = _cyberKeyboardCommand;
-	_cyberKeyboardCommand = 0;
-	if (!_cyberActive || command == 0)
+	const uint16 command = _runtime.cyberKeyboardCommand;
+	_runtime.cyberKeyboardCommand = 0;
+	if (!_runtime.cyberActive || command == 0)
 		return true;
-	if (!_awaitingBa0Interaction || _activeBa0Frame >= _ba0.getFrames().size())
+	if (!_runtime.awaitingInteraction || _runtime.activeFrame >= _runtime.activeScript.getFrames().size())
 		return false;
 
-	const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
+	const ScriptFrame &frame = _runtime.activeScript.getFrames()[_runtime.activeFrame];
 	const ScriptInteraction *interaction = nullptr;
 	uint interactionIndex = 0;
 	for (uint relativeIndex = 0; relativeIndex < frame.interactionCount; ++relativeIndex) {
 		const uint candidateIndex = frame.firstInteractionIndex + relativeIndex;
-		if (relativeIndex < _activeBa0InteractionEnabled.size() &&
-				_activeBa0InteractionEnabled[relativeIndex] &&
-				candidateIndex < _ba0.getInteractions().size() &&
-				_ba0.getInteractions()[candidateIndex].keyboardCommand == command) {
-			interaction = &_ba0.getInteractions()[candidateIndex];
+		if (relativeIndex < _runtime.activeInteractionEnabled.size() &&
+				_runtime.activeInteractionEnabled[relativeIndex] &&
+				candidateIndex < _runtime.activeScript.getInteractions().size() &&
+				_runtime.activeScript.getInteractions()[candidateIndex].keyboardCommand == command) {
+			interaction = &_runtime.activeScript.getInteractions()[candidateIndex];
 			interactionIndex = candidateIndex;
 			break;
 		}
 	}
 	if (!interaction || interaction->callbackOffset == 0) {
 		warning("Ripper: Cyber keyboard command 0x%04x has no bound interaction in script='%s' frame=%u",
-			command, _ba0.getMemberName().c_str(), _activeBa0Frame);
+			command, _runtime.activeScript.getMemberName().c_str(), _runtime.activeFrame);
 		return false;
 	}
 
 	int result = 0;
-	uint nextFrame = _activeBa0Frame;
+	uint nextFrame = _runtime.activeFrame;
 	debugC(2, kDebugCyber,
 		"Ripper: Cyber keyboard command=0x%04x interaction=%u label='%s' callback=0x%x",
 		command, interactionIndex, interaction->label.c_str(), interaction->callbackOffset);
-	if (!executeCallback(_ba0, interaction->callbackOffset, result, &nextFrame))
+	if (!executeCallback(_runtime.activeScript, interaction->callbackOffset, result, &nextFrame))
 		return false;
-	_awaitingBa0Interaction = false;
+	_runtime.awaitingInteraction = false;
 	_engine->getCursor()->setVisible(false);
-	_hoveredBa0Interaction = -1;
-	if (result == -4 && _cyberExitRequested)
+	_runtime.hoveredInteraction = -1;
+	if (result == -4 && _runtime.cyberExitRequested)
 		return true;
 	if (result != -2) {
 		warning("Ripper: Cyber keyboard interaction=%u returned unexpected result %d",
@@ -1887,24 +1888,24 @@ bool ScriptManager::serviceCyberKeyboardCommand() {
 }
 
 bool ScriptManager::serviceScene() {
-	if (_resumeLoadedPresentation) {
-		_resumeLoadedPresentation = false;
-		const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
-		const Common::String label = _ba0.getString(frame.labelOffset);
-		const Common::String mediaPath = _ba0.getString(frame.mediaNameOffset);
+	if (_runtime.resumeLoadedPresentation) {
+		_runtime.resumeLoadedPresentation = false;
+		const ScriptFrame &frame = _runtime.activeScript.getFrames()[_runtime.activeFrame];
+		const Common::String label = _runtime.activeScript.getString(frame.labelOffset);
+		const Common::String mediaPath = _runtime.activeScript.getString(frame.mediaNameOffset);
 		debugC(1, kDebugSaveLoad,
 			"Ripper: resuming loaded interactive presentation frame=%u label='%s' media='%s'",
-			_activeBa0Frame, label.c_str(), mediaPath.c_str());
+			_runtime.activeFrame, label.c_str(), mediaPath.c_str());
 		if (!_engine->getMedia()->playScene(mediaPath, frame.x, frame.y, false, true, false))
 			return false;
-		if (!_pendingSceneMember.empty())
+		if (!_runtime.pendingSceneMember.empty())
 			return performPendingSceneTransition();
 	}
 	const MouseState mouse = _engine->getInput()->publishMouseState();
-	if (_cyberExitRequested)
+	if (_runtime.cyberExitRequested)
 		return true;
 	captureCyberKeyboardCommand();
-	if (_cyberKeyboardCommand != 0)
+	if (_runtime.cyberKeyboardCommand != 0)
 		return serviceCyberKeyboardCommand();
 	if (_engine->getInput()->peekKey() == kHelpCommand) {
 		_engine->getInput()->consumeKey();
@@ -1926,7 +1927,7 @@ bool ScriptManager::serviceScene() {
 			_engine->getInput()->consumeKey();
 			uint dialogueFrame = 0;
 			if (_dialogue->serviceKeyboard(dialogueCommand, dialogueFrame)) {
-				_awaitingBa0Interaction = false;
+				_runtime.awaitingInteraction = false;
 				_engine->getCursor()->setVisible(false);
 				debugC(1, kDebugDialogue,
 					"Ripper: dialogue keyboard chooser returned control=-2 nextFrame=%u",
@@ -1935,8 +1936,8 @@ bool ScriptManager::serviceScene() {
 				return advanceBa0ToFrame(dialogueFrame);
 			}
 		}
-		if (!_cyberActive && _engine->getToolbar()->service(mouse, _frontEndActionMask)) {
-			if (!_pendingSceneMember.empty())
+		if (!_runtime.cyberActive && _engine->getToolbar()->service(mouse, _runtime.frontEndActionMask)) {
+			if (!_runtime.pendingSceneMember.empty())
 				return performPendingSceneTransition();
 			_engine->getCursor()->setVisible(true);
 			_engine->getCursor()->update(kToolbarCursor);
@@ -1944,7 +1945,7 @@ bool ScriptManager::serviceScene() {
 		}
 		uint dialogueFrame = 0;
 		if (_dialogue->service(mouse, dialogueFrame)) {
-			_awaitingBa0Interaction = false;
+			_runtime.awaitingInteraction = false;
 			_engine->getCursor()->setVisible(false);
 			debugC(1, kDebugDialogue,
 				"Ripper: dialogue chooser returned control=-2 nextFrame=%u", dialogueFrame);
@@ -1961,21 +1962,21 @@ bool ScriptManager::serviceScene() {
 			return true;
 		}
 	}
-	if (!_awaitingBa0Interaction) {
+	if (!_runtime.awaitingInteraction) {
 		_engine->getToolbar()->leave();
 		_engine->getCursor()->setVisible(false);
-		_hoveredBa0Interaction = -1;
+		_runtime.hoveredInteraction = -1;
 		return true;
 	}
-	if (!_cyberActive && !dialoguePending &&
-			_engine->getToolbar()->service(mouse, _frontEndActionMask)) {
-		if (!_pendingSceneMember.empty())
+	if (!_runtime.cyberActive && !dialoguePending &&
+			_engine->getToolbar()->service(mouse, _runtime.frontEndActionMask)) {
+		if (!_runtime.pendingSceneMember.empty())
 			return performPendingSceneTransition();
 		_engine->getCursor()->update(kToolbarCursor);
 		return true;
 	}
 
-	const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
+	const ScriptFrame &frame = _runtime.activeScript.getFrames()[_runtime.activeFrame];
 	uint hoveredInteractionIndex = 0;
 	const ScriptInteraction *hoveredInteraction =
 		findBa0Interaction(mouse.position, &hoveredInteractionIndex);
@@ -1986,21 +1987,21 @@ bool ScriptManager::serviceScene() {
 			_engine->getCursor()->getSelectionIndex());
 	_engine->getCursor()->update(cursorIndex);
 	const int hoveredIndex = hoveredInteraction ? (int)hoveredInteractionIndex : -1;
-	if (hoveredIndex != _hoveredBa0Interaction) {
-		_hoveredBa0Interaction = hoveredIndex;
+	if (hoveredIndex != _runtime.hoveredInteraction) {
+		_runtime.hoveredInteraction = hoveredIndex;
 		if (hoveredInteraction) {
 			const Common::Rect bounds = interactionBounds(*hoveredInteraction);
 			debugC(2, kDebugScene,
 				"Ripper: active scene hover script='%s' interaction=%u label='%s' cursor=%u "
 				"point=%d,%d rect=%d,%d,%d,%d",
-				_ba0.getMemberName().c_str(), hoveredInteractionIndex,
+				_runtime.activeScript.getMemberName().c_str(), hoveredInteractionIndex,
 				hoveredInteraction->label.c_str(), cursorIndex,
 				mouse.position.x, mouse.position.y, bounds.left, bounds.top,
 				bounds.width(), bounds.height());
 		} else {
 			debugC(2, kDebugScene,
 				"Ripper: active scene hover cleared script='%s' cursor=%u point=%d,%d",
-				_ba0.getMemberName().c_str(), cursorIndex,
+				_runtime.activeScript.getMemberName().c_str(), cursorIndex,
 				mouse.position.x, mouse.position.y);
 		}
 	}
@@ -2018,54 +2019,54 @@ bool ScriptManager::serviceScene() {
 		debugC(1, kDebugInput,
 			"Ripper: hotspot click frame=%u label='%s' interaction=%u action='%s' "
 				"point=%d,%d rect=%d,%d,%d,%d cursor=%u condition=0x%x callback=0x%x flags=0x%02x",
-			_activeBa0Frame, _ba0.getString(frame.labelOffset).c_str(), hoveredInteractionIndex,
+			_runtime.activeFrame, _runtime.activeScript.getString(frame.labelOffset).c_str(), hoveredInteractionIndex,
 			hoveredInteraction->label.c_str(), mouse.position.x, mouse.position.y,
 			bounds.left, bounds.top, bounds.width(), bounds.height(), cursorIndex,
 			hoveredInteraction->conditionOffset,
 			hoveredInteraction->callbackOffset, hoveredInteraction->flags);
 		debugC(2, kDebugScene,
 			"Ripper: active scene chooser selected script='%s' interaction=%u label='%s' point=%d,%d rect=%d,%d,%d,%d",
-			_ba0.getMemberName().c_str(), hoveredInteractionIndex,
+			_runtime.activeScript.getMemberName().c_str(), hoveredInteractionIndex,
 			hoveredInteraction->label.c_str(), mouse.position.x, mouse.position.y,
 			bounds.left, bounds.top, bounds.width(), bounds.height());
 		int result = 0;
-		uint nextFrame = _activeBa0Frame;
-		if (!executeCallback(_ba0, hoveredInteraction->callbackOffset, result, &nextFrame))
+		uint nextFrame = _runtime.activeFrame;
+		if (!executeCallback(_runtime.activeScript, hoveredInteraction->callbackOffset, result, &nextFrame))
 			return false;
 		debugC(1, kDebugScripts,
 			"Ripper: hotspot action script='%s' callback=0x%x result=%d nextFrame=%u",
-			_ba0.getMemberName().c_str(), hoveredInteraction->callbackOffset, result, nextFrame);
-		if (result == -3 && !_pendingSceneMember.empty()) {
-			_awaitingBa0Interaction = false;
+			_runtime.activeScript.getMemberName().c_str(), hoveredInteraction->callbackOffset, result, nextFrame);
+		if (result == -3 && !_runtime.pendingSceneMember.empty()) {
+			_runtime.awaitingInteraction = false;
 			_engine->getCursor()->setVisible(false);
-			_hoveredBa0Interaction = -1;
+			_runtime.hoveredInteraction = -1;
 			return performPendingSceneTransition();
 		}
-		if (result == -4 && _cyberActive && _cyberExitRequested) {
-			_awaitingBa0Interaction = false;
+		if (result == -4 && _runtime.cyberActive && _runtime.cyberExitRequested) {
+			_runtime.awaitingInteraction = false;
 			_engine->getCursor()->setVisible(false);
-			_hoveredBa0Interaction = -1;
+			_runtime.hoveredInteraction = -1;
 			return true;
 		}
 		if (result != -2) {
 			warning("Ripper: active scene script='%s' interaction=%u returned unexpected result %d",
-				_ba0.getMemberName().c_str(), hoveredInteractionIndex, result);
+				_runtime.activeScript.getMemberName().c_str(), hoveredInteractionIndex, result);
 			return false;
 		}
-		_awaitingBa0Interaction = false;
+		_runtime.awaitingInteraction = false;
 		_engine->getCursor()->setVisible(false);
-		_hoveredBa0Interaction = -1;
+		_runtime.hoveredInteraction = -1;
 		debugC(1, kDebugScene,
 			"Ripper: active scene script='%s' yielded to concurrent script='%s' entry='%s' nextFrame=%u",
-			_ba0.getMemberName().c_str(), _concurrent.getMemberName().c_str(),
-			_concurrentEntryLabel.c_str(), nextFrame);
+			_runtime.activeScript.getMemberName().c_str(), _runtime.concurrentScript.getMemberName().c_str(),
+			_runtime.concurrentEntryLabel.c_str(), nextFrame);
 		_engine->getMedia()->resetSceneAudioTriggers();
 		return advanceBa0ToFrame(nextFrame);
 	}
 
 	debugC(3, kDebugScene,
 		"Ripper: active scene primary press missed chooser script='%s' point=%d,%d",
-		_ba0.getMemberName().c_str(), mouse.position.x, mouse.position.y);
+		_runtime.activeScript.getMemberName().c_str(), mouse.position.x, mouse.position.y);
 	return true;
 }
 
@@ -2086,10 +2087,10 @@ bool ScriptManager::updateInteractiveCursor(const Common::Point &point, bool *fa
 		*failed = briefingResult == kBriefingFailed;
 	if (briefingResult != kBriefingIdle)
 		return false;
-	if (!_awaitingBa0Interaction || _activeBa0Frame >= _ba0.getFrames().size())
+	if (!_runtime.awaitingInteraction || _runtime.activeFrame >= _runtime.activeScript.getFrames().size())
 		return false;
-	if (!_cyberActive && _engine->getToolbar()->service(
-			_engine->getInput()->peekMouseState(), _frontEndActionMask)) {
+	if (!_runtime.cyberActive && _engine->getToolbar()->service(
+			_engine->getInput()->peekMouseState(), _runtime.frontEndActionMask)) {
 		_engine->getCursor()->setVisible(true);
 		_engine->getCursor()->update(kToolbarCursor);
 		return true;
@@ -2118,7 +2119,7 @@ void ScriptManager::updateModalSceneCursor(const Common::Point &point) {
 	// selection-state list while the modal chooser is active. Outside the modal
 	// rectangle, ProcessChooserControlInput at 0x57372 services that retained
 	// list so hotspot cursors continue to animate without dispatching actions.
-	const ScriptInteraction *interaction = _awaitingBa0Interaction ?
+	const ScriptInteraction *interaction = _runtime.awaitingInteraction ?
 		findBa0Interaction(point) : nullptr;
 	uint cursorIndex = interaction ?
 		(interaction->conditionOffset != 0 ? 8 : interaction->initialSelection) :
@@ -2140,13 +2141,13 @@ Common::Rect ScriptManager::interactionBounds(const ScriptInteraction &interacti
 
 const ScriptInteraction *ScriptManager::findBa0Interaction(const Common::Point &point,
 		uint *interactionIndex) const {
-	if (_activeBa0Frame >= _ba0.getFrames().size() || point.y >= 400)
+	if (_runtime.activeFrame >= _runtime.activeScript.getFrames().size() || point.y >= 400)
 		return nullptr;
-	const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
+	const ScriptFrame &frame = _runtime.activeScript.getFrames()[_runtime.activeFrame];
 	for (uint i = 0; i < frame.interactionCount; ++i) {
 		const uint index = frame.firstInteractionIndex + i;
-		const ScriptInteraction &interaction = _ba0.getInteractions()[index];
-		if (i >= _activeBa0InteractionEnabled.size() || !_activeBa0InteractionEnabled[i] ||
+		const ScriptInteraction &interaction = _runtime.activeScript.getInteractions()[index];
+		if (i >= _runtime.activeInteractionEnabled.size() || !_runtime.activeInteractionEnabled[i] ||
 			(interaction.flags & 2) != 0 || interaction.width <= 0 || interaction.height <= 0)
 			continue;
 		if (!interactionBounds(interaction).contains(point))
