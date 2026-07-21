@@ -1018,6 +1018,7 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 		return;
 	}
 
+	g_system->fillScreen(0);
 	_system->lockMouse(false);
 	dec->start();
 
