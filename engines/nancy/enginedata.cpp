@@ -1304,4 +1304,71 @@ MMIX::MMIX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	}
 }
 
+LVLN::LVLN(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	// The count is the total number of strings, which always comes in
+	// (code, name) pairs - hence it must be even.
+	const uint16 count = chunkStream->readUint16LE();
+	const uint16 numPairs = count / 2;
+	levelCodes.resize(numPairs);
+	levelNames.resize(numPairs);
+
+	for (uint16 i = 0; i < numPairs; ++i) {
+		readFilename(*chunkStream, levelCodes[i]);
+		readFilename(*chunkStream, levelNames[i]);
+	}
+}
+
+PCUI::PCUI(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	flag = chunkStream->readByte();
+	const uint16 count = chunkStream->readUint16LE();
+	characters.resize(count);
+
+	for (uint16 i = 0; i < count; ++i) {
+		// Each entry begins with the slot index it populates.
+		const byte slot = chunkStream->readByte();
+		Character &chr = (slot < characters.size()) ? characters[slot] : characters[i];
+		readFilename(*chunkStream, chr.imageName);
+		readFilename(*chunkStream, chr.defaultImageName);
+		chr.id = chunkStream->readUint16LE();
+	}
+}
+
+LDSN::LDSN(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readFilename(*chunkStream, backgroundImageName);
+	readFilename(*chunkStream, overlayImageName);
+
+	// The remainder is a run of button/selection rects (16 bytes each),
+	// followed by a short trailer whose fields aren't fully understood yet.
+	while (chunkStream->pos() + 16 <= chunkStream->size()) {
+		Common::Rect rect;
+		readRect(*chunkStream, rect);
+		rects.push_back(rect);
+	}
+}
+
+PUIH::PUIH(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	flag = chunkStream->readByte();
+	readFilename(*chunkStream, themeName);
+	readFilename(*chunkStream, swatchImageName);
+}
+
+PUIV::PUIV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readFilename(*chunkStream, name);
+	channelID = chunkStream->readUint16LE();
+	unknown   = chunkStream->readUint32LE();
+	volume    = chunkStream->readUint16LE();
+
+	const uint16 count = chunkStream->readUint16LE();
+	soundGroups.resize(count);
+	for (uint16 i = 0; i < count; ++i) {
+		SoundGroup &group = soundGroups[i];
+		group.tag = chunkStream->readByte();
+		const uint16 numVariants = chunkStream->readUint16LE();
+		group.variants.resize(numVariants);
+		for (uint16 j = 0; j < numVariants; ++j) {
+			readFilename(*chunkStream, group.variants[j]);
+		}
+	}
+}
+
 } // End of namespace Nancy

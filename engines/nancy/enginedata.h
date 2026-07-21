@@ -838,6 +838,71 @@ struct MMIX : public EngineData {
 
 	Common::Array<Record> records;
 };
+
+// Level name table. Introduced in Nancy 15. Maps a short scene-prefix
+// code (e.g. "KAP") to its human-readable level name (e.g. "Kapu Cave").
+struct LVLN : public EngineData {
+	LVLN(Common::SeekableReadStream *chunkStream);
+
+	Common::Array<Common::String> levelCodes;	// e.g. "KAP"
+	Common::Array<Common::String> levelNames;	// e.g. "Kapu Cave"
+};
+
+// Player-character selector UI. Introduced in Nancy 15, where the player
+// alternates between Nancy and the Hardy Boys.
+// Each entry supplies the image names for one selectable character.
+struct PCUI : public EngineData {
+	struct Character {
+		Common::String imageName;			// e.g. "PUI_CRE_Nancy"
+		Common::String defaultImageName;	// e.g. "PUI_CRE_Nancy_Default"
+		uint16 id = 0;
+	};
+
+	PCUI(Common::SeekableReadStream *chunkStream);
+
+	byte flag = 0;
+	Common::Array<Character> characters;	// indexed by the on-disk slot byte
+};
+
+// Fixed layout/graphics block for the Nancy 15 player-character ("Design
+// Select") switcher screen. Companion to PCUI. Supplies the background and
+// overlay image names plus the on-screen button/selection rects.
+struct LDSN : public EngineData {
+	LDSN(Common::SeekableReadStream *chunkStream);
+
+	Common::String backgroundImageName;	// "UI_DesignSelectBG"
+	Common::String overlayImageName;	// "UI_DesignSelect_OVL"
+	Common::Array<Common::Rect> rects;	// button + per-character selection rects
+};
+
+// Player-UI header. Introduced in Nancy 15, first chunk of each character's
+// PUI_CRE_<char>_DEFAULT_BOOT file. Names the UI theme and its swatch image.
+struct PUIH : public EngineData {
+	PUIH(Common::SeekableReadStream *chunkStream);
+
+	byte flag = 0;
+	Common::String themeName;	// e.g. "Nancy Classic Look (Default)"
+	Common::String swatchImageName;	// e.g. "UI_Swatch_ND"
+};
+
+// Player-UI random-sound bank. Introduced in Nancy 15 (per-character boot).
+// Holds a base name plus a channel/volume and a list of sound groups, each
+// group being a set of interchangeable (randomly-picked) sound variants -
+// e.g. the character's "can't do that" response cues.
+struct PUIV : public EngineData {
+	struct SoundGroup {
+		byte tag = 0;
+		Common::Array<Common::String> variants;
+	};
+
+	PUIV(Common::SeekableReadStream *chunkStream);
+
+	Common::String name;		// e.g. "DEF_ND_CANT"
+	uint16 channelID = 0;		// shared playback channel (inferred)
+	uint32 unknown = 0;
+	uint16 volume = 0;			// shared volume (inferred)
+	Common::Array<SoundGroup> soundGroups;
+};
 } // End of namespace Nancy
 
 #endif // NANCY_ENGINEDATA_H

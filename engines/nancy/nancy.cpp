@@ -484,6 +484,18 @@ void NancyEngine::bootGameEngine() {
 	_resource->readCifTree("ciftree", "dat", 1);
 	_resource->readCifTree("promotree", "dat", 1);
 
+	if (getGameType() >= kGameTypeNancy15) {
+		_resource->readCifTree("PUI_CRE_Nancy_Default", "dat", 1);
+		// Other player character CIF trees are loaded on demand,
+		// based on the PCUI chunk:
+		// - PUI_CRE_Nancy_Jungle
+		// - PUI_CRE_Nancy_Pink_Hibiscus
+		// - PUI_CRE_Nancy_Teal_Hibiscus
+		// - PUI_CRE_Frank_Default
+		// - PUI_CRE_HB_Default
+		// - PUI_CRE_Joe_Default
+	}
+
 	// Read the static data. Up to Nancy11 it lives in nancy.dat; from Nancy12
 	// onwards the game ships it in its own data files, so the engine only needs
 	// to provide the few remaining hardcoded values itself.
@@ -577,12 +589,13 @@ void NancyEngine::bootGameEngine() {
 	LOAD_BOOT(UICM)	// Camera UI
 
 	// Nancy 15+
-	// TASK, UIRC, UIIV, UICO, UICM, UICL,
-	// UIBW, UINB, SCTB, CURT, TMOD chunks have
-	// been removed
-	// LOAD_BOOT(LVLN)
-	// LOAD_BOOT(PCUI)
-	// LOAD_BOOT(LDSN)
+	// The EVNT, UICO, SCTB, TASK, UIRC, UIIV, UICM, UICL, UIBW, UINB chunks, plus two new ones
+	// (PUIH, PUIV) have been moved from the BOOT chunk to different per-character chunks,
+	// based on names specified in the PCUI chunk.
+	// For now, we load Nancy's chunk at boot below, from PUI_CRE_NANCY_DEFAULT_BOOT
+	LOAD_BOOT(LVLN)	// Level name table (scene-prefix code -> display name)
+	LOAD_BOOT(PCUI)	// Player-character selector (Nancy / Frank / Joe)
+	LOAD_BOOT(LDSN)	// Player-character "Design Select" screen layout
 
 	_cursor->init(iff->getChunkStream("CURS"));
 
@@ -604,6 +617,25 @@ void NancyEngine::bootGameEngine() {
 	_sound->loadCommonSounds(iff);
 
 	delete iff;
+
+	if (getGameType() >= kGameTypeNancy15) {
+		const PCUI *pcui = GetEngineData(PCUI);
+		// Note: the default character is Nancy, so we load her boot chunks here. Her CIF name is
+		// PUI_CRE_NANCY_DEFAULT_BOOT.
+		iff = _resource->loadIFF(Common::Path(pcui->characters[0].defaultImageName + "_boot"));
+		LOAD_BOOT(TASK)
+		LOAD_BOOT(UIIV)
+		LOAD_BOOT(UICO)
+		LOAD_BOOT(UICL)
+		LOAD_BOOT(UIBW)
+		LOAD_BOOT(UINB)
+		LOAD_BOOT(SCTB)
+		LOAD_BOOT(UIRC)
+		LOAD_BOOT(UICM)
+		LOAD_BOOT(PUIH)	// Player-UI header (theme name + swatch image)
+		LOAD_BOOT(PUIV)	// Player-UI random-sound bank ("can't" responses)
+		delete iff;
+	}
 
 	if (getGameType() >= kGameTypeNancy12) {
 		LOAD_CHUNK("FLAGS", EVNT, "EVNT", "EVNT")
