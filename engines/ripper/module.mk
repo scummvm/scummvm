@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	briefing.o \
 	combat/combat.o \
 	combat/mechini.o \
+	controls.o \
 	cursor.o \
 	cyber.o \
 	dialogue.o \

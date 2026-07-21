@@ -138,21 +138,22 @@ bool WacManager::initialize(ResourceManager &resources) {
 		!resources.loadGameText(_gameText))
 		return false;
 
-	_controls.resize(ARRAYSIZE(kWacControlActions));
-	for (uint i = 0; i < _controls.size(); ++i) {
+	_controls.clear();
+	_controlBitmaps.clear();
+	for (uint i = 0; i < ARRAYSIZE(kWacControlActions); ++i) {
 		BitmapAssetSequence sequence;
 		if (!resources.loadInterfaceBitmapSequence(
 			Common::String::format("wac%u.bbm", i), sequence) || sequence.frames.empty())
 			return false;
-		Control &control = _controls[i];
-		control.bitmap = sequence.frames[0];
-		control.bounds = Common::Rect(kWacControlX[i], kWacControlY,
-			kWacControlX[i] + control.bitmap.width, kWacControlY + control.bitmap.height);
-		control.action = kWacControlActions[i];
+		_controlBitmaps.push_back(sequence.frames[0]);
+		const BitmapAssetFrame &bitmap = _controlBitmaps.back();
+		const Common::Rect bounds(kWacControlX[i], kWacControlY,
+			kWacControlX[i] + bitmap.width, kWacControlY + bitmap.height);
+		_controls.add(bounds, kWacControlActions[i]);
 		debugC(2, kDebugWac,
 			"Ripper: WAC front-end control=%u action=0x%x rect=%d,%d,%d,%d",
-			i, control.action, control.bounds.left, control.bounds.top,
-			control.bounds.width(), control.bounds.height());
+			i, _controls[i].action, bounds.left, bounds.top,
+			bounds.width(), bounds.height());
 	}
 
 	for (uint i = 0; i < ARRAYSIZE(_idleWindowAnimations); ++i) {
@@ -243,7 +244,7 @@ void WacManager::drawFrontEnd() const {
 		0, 0, _background.width, _background.height);
 	g_system->getPaletteManager()->setPalette(_background.palette.data(), 0, 256);
 	for (uint i = 0; i < _controls.size(); ++i)
-		drawBitmap(_controls[i].bitmap, _controls[i].bounds.left, _controls[i].bounds.top);
+		drawBitmap(_controlBitmaps[i], _controls[i].bounds.left, _controls[i].bounds.top);
 	g_system->updateScreen();
 }
 
@@ -292,11 +293,7 @@ void WacManager::serviceDatabaseCornerAnimation(bool textPanelActive) {
 }
 
 int WacManager::findControl(const Common::Point &point) const {
-	for (uint i = 0; i < _controls.size(); ++i) {
-		if (_controls[i].bounds.contains(point))
-			return i;
-	}
-	return -1;
+	return _controls.findFirst(point);
 }
 
 uint16 WacManager::serviceFrontEndControls(const MouseState &mouse,
