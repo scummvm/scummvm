@@ -234,8 +234,16 @@ public:
 			_runtime.cyberKeyboardCommand != 0;
 	}
 	bool isCyberActive() const { return _runtime.cyberActive; }
+	bool isCyberExitRequested() const { return _runtime.cyberExitRequested; }
+	bool isAwaitingInteraction() const { return _runtime.awaitingInteraction; }
+	uint getActiveFrame() const { return _runtime.activeFrame; }
+	const Common::String &getPendingSceneMember() const { return _runtime.pendingSceneMember; }
+	const Common::String &getPendingSceneEntryLabel() const { return _runtime.pendingSceneEntryLabel; }
 	bool hasPlayedScene(const Common::String &scene) const { return isScenePlayed(scene); }
 	void requestCyberExit(const char *source);
+	void suspendForCyber(SceneRuntimeState &snapshot);
+	void restoreFromCyber(SceneRuntimeState &snapshot);
+	bool startActiveFrame(uint frameIndex);
 	bool canSaveGame() const;
 	bool syncGame(Common::Serializer &serializer);
 	void logRuntimeFailure(const char *reason) const;
@@ -245,7 +253,6 @@ public:
 	DialogueChooser *getDialogue() const { return _dialogue.get(); }
 
 private:
-	friend class CyberManager;
 	friend class SceneActionDispatcher;
 	class IdleMediaCallback;
 

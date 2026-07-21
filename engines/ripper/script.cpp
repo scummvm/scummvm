@@ -496,6 +496,29 @@ void ScriptManager::requestCyberExit(const char *source) {
 	debugC(1, kDebugCyber, "Ripper: Cyber nested runtime exit requested source=%s", source);
 }
 
+void ScriptManager::suspendForCyber(SceneRuntimeState &snapshot) {
+	snapshot = Common::move(_runtime);
+	_runtime = SceneRuntimeState();
+	_runtime.frontEndActionMask = 0;
+	_runtime.cyberActive = true;
+	debugC(2, kDebugCyber,
+		"Ripper: suspended scene runtime script='%s' frame=%u concurrent='%s'",
+		snapshot.activeScript.getMemberName().c_str(), snapshot.activeFrame,
+		snapshot.concurrentScript.getMemberName().c_str());
+}
+
+void ScriptManager::restoreFromCyber(SceneRuntimeState &snapshot) {
+	_runtime = Common::move(snapshot);
+	debugC(2, kDebugCyber,
+		"Ripper: restored suspended scene runtime script='%s' frame=%u concurrent='%s'",
+		_runtime.activeScript.getMemberName().c_str(), _runtime.activeFrame,
+		_runtime.concurrentScript.getMemberName().c_str());
+}
+
+bool ScriptManager::startActiveFrame(uint frameIndex) {
+	return advanceBa0ToFrame(frameIndex);
+}
+
 void ScriptManager::logRuntimeFailure(const char *reason) const {
 	Common::String frameLabel;
 	if (_runtime.activeFrame < _runtime.activeScript.getFrames().size())

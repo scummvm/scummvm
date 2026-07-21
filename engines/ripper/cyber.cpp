@@ -93,23 +93,12 @@ bool CyberManager::restoreAudio(const Common::Array<byte> &state) const {
 
 void CyberManager::suspendRuntime(SceneRuntimeState &snapshot) const {
 	ScriptManager *scripts = _engine->getScripts();
-	snapshot = Common::move(scripts->_runtime);
-	scripts->_runtime = SceneRuntimeState();
-	scripts->_runtime.frontEndActionMask = 0;
-	scripts->_runtime.cyberActive = true;
-	debugC(2, kDebugCyber,
-		"Ripper: suspended scene runtime script='%s' frame=%u concurrent='%s'",
-		snapshot.activeScript.getMemberName().c_str(), snapshot.activeFrame,
-		snapshot.concurrentScript.getMemberName().c_str());
+	scripts->suspendForCyber(snapshot);
 }
 
 void CyberManager::restoreRuntime(SceneRuntimeState &snapshot) const {
 	ScriptManager *scripts = _engine->getScripts();
-	scripts->_runtime = Common::move(snapshot);
-	debugC(2, kDebugCyber,
-		"Ripper: restored suspended scene runtime script='%s' frame=%u concurrent='%s'",
-		scripts->_runtime.activeScript.getMemberName().c_str(), scripts->_runtime.activeFrame,
-		scripts->_runtime.concurrentScript.getMemberName().c_str());
+	scripts->restoreFromCyber(snapshot);
 }
 
 CyberManager::Result CyberManager::run() {
@@ -148,16 +137,16 @@ CyberManager::Result CyberManager::run() {
 	if (active && !_engine->shouldQuit()) {
 		g_system->fillScreen(0);
 		g_system->updateScreen();
-		active = scripts->_runtime.activeScript.load(_engine->getResources()->scripts(), kCyberScript);
+		active = scripts->ba0().load(_engine->getResources()->scripts(), kCyberScript);
 	}
 	if (active && !_engine->shouldQuit()) {
 		debugC(1, kDebugCyber,
 			"Ripper: activated Cyber nested runtime frames=%u interactions=%u",
-			scripts->_runtime.activeScript.getFrames().size(), scripts->_runtime.activeScript.getInteractions().size());
-		active = scripts->advanceBa0ToFrame(0);
+			scripts->ba0().getFrames().size(), scripts->ba0().getInteractions().size());
+		active = scripts->startActiveFrame(0);
 	}
 
-	while (active && !scripts->_runtime.cyberExitRequested && !_engine->shouldQuit()) {
+	while (active && !scripts->isCyberExitRequested() && !_engine->shouldQuit()) {
 		if (input->pollEvents()) {
 			_engine->quitGame();
 			break;
@@ -174,7 +163,7 @@ CyberManager::Result CyberManager::run() {
 
 	debugC(result == kExited ? 1 : 2, kDebugCyber,
 		"Ripper: leaving Cyber nested runtime result=%d exitRequested=%d quit=%d",
-		result, scripts->_runtime.cyberExitRequested, _engine->shouldQuit());
+		result, scripts->isCyberExitRequested(), _engine->shouldQuit());
 	_engine->getMedia()->clearSceneAudio(true);
 	const bool audioRestored = restoreAudio(audioState);
 	restoreRuntime(runtime);
@@ -233,30 +222,30 @@ CyberManager::Result CyberManager::runProgram(uint action,
 		if (active)
 			result = kExited;
 	} else {
-		active = scripts->_runtime.activeScript.load(_engine->getResources()->scripts(), programName);
+		active = scripts->ba0().load(_engine->getResources()->scripts(), programName);
 		if (active && !_engine->shouldQuit()) {
 			debugC(1, kDebugCyber,
 				"Ripper: activated Cyber program action=%u script='%s' frames=%u interactions=%u",
-				action, programName.c_str(), scripts->_runtime.activeScript.getFrames().size(),
-				scripts->_runtime.activeScript.getInteractions().size());
-			active = scripts->advanceBa0ToFrame(0);
+				action, programName.c_str(), scripts->ba0().getFrames().size(),
+				scripts->ba0().getInteractions().size());
+			active = scripts->startActiveFrame(0);
 		}
 	}
 
-	while (!isKaDialogue && active && !scripts->_runtime.cyberExitRequested && !_engine->shouldQuit()) {
+	while (!isKaDialogue && active && !scripts->isCyberExitRequested() && !_engine->shouldQuit()) {
 		if (input->pollEvents()) {
 			_engine->quitGame();
 			break;
 		}
 		if (!scripts->serviceScene()) {
-			const uint frame = scripts->_runtime.activeFrame;
-			const Common::String label = frame < scripts->_runtime.activeScript.getFrames().size() ?
-				scripts->_runtime.activeScript.getString(scripts->_runtime.activeScript.getFrames()[frame].labelOffset) :
+			const uint frame = scripts->getActiveFrame();
+			const Common::String label = frame < scripts->ba0().getFrames().size() ?
+				scripts->ba0().getString(scripts->ba0().getFrames()[frame].labelOffset) :
 				Common::String();
 			warning("Ripper: Cyber program service failed action=%u script='%s' frame=%u/%u label='%s' awaitingInteraction=%d pendingScript='%s' pendingEntry='%s'",
-				action, programName.c_str(), frame, scripts->_runtime.activeScript.getFrames().size(),
-				label.c_str(), scripts->_runtime.awaitingInteraction,
-				scripts->_runtime.pendingSceneMember.c_str(), scripts->_runtime.pendingSceneEntryLabel.c_str());
+				action, programName.c_str(), frame, scripts->ba0().getFrames().size(),
+				label.c_str(), scripts->isAwaitingInteraction(),
+				scripts->getPendingSceneMember().c_str(), scripts->getPendingSceneEntryLabel().c_str());
 			active = false;
 			break;
 		}
@@ -268,7 +257,7 @@ CyberManager::Result CyberManager::runProgram(uint action,
 
 	debugC(result == kExited ? 1 : 2, kDebugCyber,
 		"Ripper: leaving Cyber program action=%u program='%s' result=%d exitRequested=%d quit=%d",
-		action, programName.c_str(), result, scripts->_runtime.cyberExitRequested,
+		action, programName.c_str(), result, scripts->isCyberExitRequested(),
 		_engine->shouldQuit());
 	_engine->getMedia()->clearSceneAudio(true);
 	const bool audioRestored = restoreAudio(audioState);
