@@ -1048,46 +1048,157 @@ void DisplayMan::loadIntoBitmap(uint16 index, byte *destBitmap) {
 
 	uint16 width = readUint16(data, _vm->getPlatform());
 	uint16 height = readUint16(data + 2, _vm->getPlatform());
-	uint16 nextByteIndex = 4;
 
-	for (int32 k = 0; k < width * height;) {
-		uint8 nextByte = data[nextByteIndex++];
-		uint8 nibble1 = (nextByte & 0xF0) >> 4;
-		uint8 nibble2 = (nextByte & 0x0F);
-		if (nibble1 <= 7) {
-			for (int j = 0; j < nibble1 + 1; ++j)
-				destBitmap[k++] = nibble2;
-		} else if (nibble1 == 0x8) {
-			uint8 byte1 = data[nextByteIndex++];
-			for (int j = 0; j < byte1 + 1; ++j)
-				destBitmap[k++] = nibble2;
-		} else if (nibble1 == 0xC) {
-			uint16 word1 = (_vm->getPlatform() == Common::kPlatformDOS) ? READ_LE_UINT16(data + nextByteIndex) : READ_BE_UINT16(data + nextByteIndex);
-			nextByteIndex += 2;
-			for (int j = 0; j < word1 + 1; ++j)
-				destBitmap[k++] = nibble2;
-		} else if (nibble1 == 0xB) {
-			uint8 byte1 = data[nextByteIndex++];
-for (int j = 0; j < byte1 + 1; ++j, ++k)
-				destBitmap[k] = destBitmap[k - width];
-			destBitmap[k++] = nibble2;
-		} else if (nibble1 == 0xF) {
-			uint16 word1 = (_vm->getPlatform() == Common::kPlatformDOS) ? READ_LE_UINT16(data + nextByteIndex) : READ_BE_UINT16(data + nextByteIndex);
-			nextByteIndex += 2;
-			for (int j = 0; j < word1 + 1; ++j, ++k)
-				destBitmap[k] = destBitmap[k - width];
-			destBitmap[k++] = nibble2;
-		} else if (nibble1 == 9) {
-			uint8 byte1 = data[nextByteIndex++];
-			if (byte1 % 2)
-				byte1++;
-			else
-				destBitmap[k++] = nibble2;
+	if (_vm->getPlatform() == Common::kPlatformDOS) {
+		// IMG3 Decompressor
+		int16 evenWidth = (width + 1) & ~1;
+		int32 totalPixels = evenWidth * height;
 
-			for (int j = 0; j < byte1 / 2; ++j) {
-				uint8 byte2 = data[nextByteIndex++];
-				destBitmap[k++] = (byte2 & 0xF0) >> 4;
-				destBitmap[k++] = byte2 & 0x0F;
+		int32 nibbleIndex = 8;
+		auto getNibble = [&]() -> uint8 {
+			uint32 bytePos = nibbleIndex >> 1;
+			uint8 val = data[bytePos];
+			uint8 nibble = (nibbleIndex & 1) ? (val & 0x0F) : (val >> 4);
+			nibbleIndex++;
+			return nibble;
+		};
+
+		auto getPixelCount = [&]() -> int16 {
+			int16 count = getNibble();
+			if (count == 15) {
+				count = (getNibble() << 4) | getNibble();
+				if (count == 255)
+					count = (getNibble() << 12) | (getNibble() << 8) | (getNibble() << 4) | getNibble();
+				else
+					count += 17;
+			} else {
+				count += 2;
+			}
+			return count;
+		};
+
+		uint8 localPalette[6];
+		for (int i = 0; i < 6; ++i) {
+			localPalette[i] = getNibble();
+		}
+
+		int32 destPos = 0;
+
+		if (width != evenWidth) {
+			int16 padding = evenWidth - width;
+			int16 remainingInLine = width;
+			do {
+				uint8 cmdNibble = getNibble();
+				uint8 cmdType = cmdNibble & 0x07;
+				int16 count = 1;
+				if (cmdType == 6) {
+					if (cmdNibble & 8)
+						count = getPixelCount();
+					while (count >= remainingInLine) {
+						for (int i = 0; i < remainingInLine; ++i)
+							destBitmap[destPos + i] = destBitmap[destPos + i - evenWidth];
+						destPos += remainingInLine + padding;
+						count -= remainingInLine;
+						remainingInLine = width;
+					}
+					if (count > 0) {
+						for (int i = 0; i < count; ++i)
+							destBitmap[destPos + i] = destBitmap[destPos + i - evenWidth];
+						destPos += count;
+						remainingInLine -= count;
+					}
+				} else {
+					uint8 color;
+					if (cmdType < 6)
+						color = localPalette[cmdType];
+					else
+						color = getNibble();
+					if (cmdNibble & 8)
+						count = getPixelCount();
+					while (count >= remainingInLine) {
+						for (int i = 0; i < remainingInLine; ++i)
+							destBitmap[destPos + i] = color;
+						destPos += remainingInLine + padding;
+						count -= remainingInLine;
+						remainingInLine = width;
+					}
+					if (count > 0) {
+						for (int i = 0; i < count; ++i)
+							destBitmap[destPos + i] = color;
+						destPos += count;
+						remainingInLine -= count;
+					}
+				}
+			} while (destPos < totalPixels);
+		} else {
+			do {
+				uint8 cmdNibble = getNibble();
+				uint8 cmdType = cmdNibble & 0x07;
+				if (cmdType == 6) {
+					int16 count = 1;
+					if (cmdNibble & 8)
+						count = getPixelCount();
+					for (int i = 0; i < count; ++i)
+						destBitmap[destPos + i] = destBitmap[destPos + i - evenWidth];
+					destPos += count;
+				} else {
+					uint8 color;
+					if (cmdType < 6)
+						color = localPalette[cmdType];
+					else
+						color = getNibble();
+					int16 count = 1;
+					if (cmdNibble & 8)
+						count = getPixelCount();
+					for (int i = 0; i < count; ++i)
+						destBitmap[destPos + i] = color;
+					destPos += count;
+				}
+			} while (destPos < totalPixels);
+		}
+	} else {
+		// IMG2 Decompressor
+		uint16 nextByteIndex = 4;
+
+		for (int32 k = 0; k < width * height;) {
+			uint8 nextByte = data[nextByteIndex++];
+			uint8 nibble1 = (nextByte & 0xF0) >> 4;
+			uint8 nibble2 = (nextByte & 0x0F);
+			if (nibble1 <= 7) {
+				for (int j = 0; j < nibble1 + 1; ++j)
+					destBitmap[k++] = nibble2;
+			} else if (nibble1 == 0x8) {
+				uint8 byte1 = data[nextByteIndex++];
+				for (int j = 0; j < byte1 + 1; ++j)
+					destBitmap[k++] = nibble2;
+			} else if (nibble1 == 0xC) {
+				uint16 word1 = (_vm->getPlatform() == Common::kPlatformDOS) ? READ_LE_UINT16(data + nextByteIndex) : READ_BE_UINT16(data + nextByteIndex);
+				nextByteIndex += 2;
+				for (int j = 0; j < word1 + 1; ++j)
+					destBitmap[k++] = nibble2;
+			} else if (nibble1 == 0xB) {
+				uint8 byte1 = data[nextByteIndex++];
+				for (int j = 0; j < byte1 + 1; ++j, ++k)
+					destBitmap[k] = destBitmap[k - width];
+				destBitmap[k++] = nibble2;
+			} else if (nibble1 == 0xF) {
+				uint16 word1 = (_vm->getPlatform() == Common::kPlatformDOS) ? READ_LE_UINT16(data + nextByteIndex) : READ_BE_UINT16(data + nextByteIndex);
+				nextByteIndex += 2;
+				for (int j = 0; j < word1 + 1; ++j, ++k)
+					destBitmap[k] = destBitmap[k - width];
+				destBitmap[k++] = nibble2;
+			} else if (nibble1 == 9) {
+				uint8 byte1 = data[nextByteIndex++];
+				if (byte1 % 2)
+					byte1++;
+				else
+					destBitmap[k++] = nibble2;
+
+				for (int j = 0; j < byte1 / 2; ++j) {
+					uint8 byte2 = data[nextByteIndex++];
+					destBitmap[k++] = (byte2 & 0xF0) >> 4;
+					destBitmap[k++] = byte2 & 0x0F;
+				}
 			}
 		}
 	}
