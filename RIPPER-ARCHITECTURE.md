@@ -1201,7 +1201,8 @@
 - Files such as `PROINT.AVI` and `PROLOG1.AVI` are `IAVF2.00` packetized media,
   not RIFF AVI. `RunPacketizedMediaPlaybackCore` at `0x5b592` demultiplexes
   descriptor records containing mono signed 16-bit PCM and segmented Smacker
-  setup/frame payloads.
+  setup/frame payloads. The engine's `iavf` module owns descriptor parsing and
+  Smacker stream reconstruction; `MediaPlayer` owns presentation and timing.
 - The IAVF header is 145 bytes. Across all 475 retail assets, the 32-bit value
   at offset `0x10` exactly matches the number of opcode `0x67` playback gates,
   not the number of rendered video frames. The compact PCM fields occupy

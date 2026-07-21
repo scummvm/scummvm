@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	cyber.o \
 	dialogue.o \
 	display.o \
+	iavf.o \
 	iff.o \
 	input.o \
 	inventory.o \
