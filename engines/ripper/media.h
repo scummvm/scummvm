@@ -54,6 +54,44 @@ public:
 	virtual void transformPalette(byte *palette, uint colorCount) const {}
 };
 
+struct SmackerPlaybackRequest {
+	bool allowEscSpace;
+	int x;
+	int y;
+	Audio::SoundHandle *externalAudio;
+	bool *stoppedByUser;
+	const Common::Array<uint32> *frameAudioOffsets;
+	uint32 audioByteRate;
+	uint32 timelineStartMillis;
+	uint displayScale;
+	bool patchInterfacePalette;
+	uint frameLimit;
+	int originY;
+	bool patchWacMediaPalette;
+	bool serviceSceneUi;
+	bool repeatedLoopPass;
+	bool *advanceSegment;
+	uint loopStartFrame;
+	MediaSequenceCallback *sequenceCallback;
+	uint16 *sequenceCommand;
+	Common::Array<byte> *sourcePalette;
+	bool rememberVideoPalette;
+	uint firstFrame;
+	uint lastFrame;
+	uint boundedLoopStartFrame;
+	bool transparentFirstPixel;
+
+	SmackerPlaybackRequest() : allowEscSpace(false), x(-1), y(-1),
+		externalAudio(nullptr), stoppedByUser(nullptr), frameAudioOffsets(nullptr),
+		audioByteRate(0), timelineStartMillis(0), displayScale(1),
+		patchInterfacePalette(true), frameLimit(0), originY(0),
+		patchWacMediaPalette(false), serviceSceneUi(false), repeatedLoopPass(false),
+		advanceSegment(nullptr), loopStartFrame(0), sequenceCallback(nullptr),
+		sequenceCommand(nullptr), sourcePalette(nullptr), rememberVideoPalette(true),
+		firstFrame(0), lastFrame(0xffffffff), boundedLoopStartFrame(0xffffffff),
+		transparentFirstPixel(false) {}
+};
+
 class MediaPlayer {
 public:
 	MediaPlayer(RipperEngine *engine, InputManager *input, Audio::Mixer *mixer);
@@ -130,18 +168,7 @@ private:
 	void applyAudioSlotVolume(AudioSlot &slot);
 	Common::String describeAudioSlots() const;
 	bool playSmacker(Common::SeekableReadStream *stream, const Common::String &name,
-		bool allowEscSpace, int x, int y, Audio::SoundHandle *externalAudio = nullptr,
-		bool *stoppedByUser = nullptr, const Common::Array<uint32> *frameAudioOffsets = nullptr,
-		uint32 audioByteRate = 0, uint32 timelineStartMillis = 0, uint displayScale = 1,
-		bool patchInterfacePalette = true, uint frameLimit = 0, int originY = 0,
-		bool patchWacMediaPalette = false, bool serviceSceneUi = false,
-		bool repeatedLoopPass = false, bool *advanceSegment = nullptr,
-		uint loopStartFrame = 0, MediaSequenceCallback *sequenceCallback = nullptr,
-		uint16 *sequenceCommand = nullptr,
-		Common::Array<byte> *sourcePalette = nullptr,
-		bool rememberVideoPalette = true, uint firstFrame = 0,
-		uint lastFrame = 0xffffffff, uint boundedLoopStartFrame = 0xffffffff,
-		bool transparentFirstPixel = false);
+		const SmackerPlaybackRequest &request);
 	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name,
 		bool allowEscSpace, int overrideX = -1, int overrideY = -1,
 		int overrideOriginY = 0, bool serviceSceneUi = false);
