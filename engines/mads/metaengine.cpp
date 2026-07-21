@@ -20,8 +20,6 @@
  *
  */
 
-#include "mads/nebular/nebular.h"
-
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
 
@@ -37,12 +35,10 @@
 #include "graphics/surface.h"
 
 #include "mads/detection.h"
-#ifdef ENABLE_MADSV2
-#include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/phantom/phantom.h"
-#include "mads/madsv2/dragonsphere/dragonsphere.h"
-#include "mads/madsv2/forest/forest.h"
-#endif
+#include "mads/nebular/nebular.h"
+#include "mads/phantom/phantom.h"
+#include "mads/dragonsphere/dragonsphere.h"
+#include "mads/forest/forest.h"
 
 #define MAX_SAVES 99
 
@@ -203,7 +199,6 @@ bool MADS::MADSEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error MADSMetaEngine::createInstance(OSystem *syst, Engine **engine, const MADS::MADSGameDescription *desc) const {
-#ifdef ENABLE_MADSV2
 	if (desc->gameID == MADS::GType_RexNebular)
 		*engine = new MADS::MADSV2::RexNebular::RexNebularEngine(syst, desc);
 	else if (desc->gameID == MADS::GType_Phantom)
@@ -213,7 +208,6 @@ Common::Error MADSMetaEngine::createInstance(OSystem *syst, Engine **engine, con
 	else if (desc->gameID == MADS::GType_Dragonsphere)
 		*engine = new MADS::MADSV2::Dragonsphere::DragonsphereEngine(syst, desc);
 	else
-#endif
 		error("Unsupported game specified");
 
 	return Common::kNoError;
