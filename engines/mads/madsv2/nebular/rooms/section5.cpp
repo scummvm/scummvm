@@ -43,6 +43,7 @@ extern void room_506_preload();
 extern void room_507_preload();
 extern void room_508_preload();
 extern void room_511_preload();
+extern void room_512_preload();
 extern void room_513_preload();
 extern void room_515_preload();
 extern void room_551_preload();
@@ -94,6 +95,7 @@ void section_5_constructor() {
 	case 507: room_preload_code_pointer = room_507_preload; break;
 	case 508: room_preload_code_pointer = room_508_preload; break;
 	case 511: room_preload_code_pointer = room_511_preload; break;
+	case 512: room_preload_code_pointer = room_512_preload; break;
 	case 513: room_preload_code_pointer = room_513_preload; break;
 	case 515: room_preload_code_pointer = room_515_preload; break;
 	case 551: room_preload_code_pointer = room_551_preload; break;
