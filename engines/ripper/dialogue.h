@@ -6,6 +6,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "ripper/controls.h"
 #include "ripper/resources.h"
 
 namespace Common {
@@ -56,8 +57,7 @@ private:
 	Common::Rect _backingBounds;
 	Common::Array<byte> _backingPixels;
 	bool _pending = false;
-	uint _selectedChoice = 0;
-	uint _firstVisibleChoice = 0;
+	ChooserModel _chooser;
 	int _hoveredArrow = 0;
 	BitmapFontAsset _font;
 };

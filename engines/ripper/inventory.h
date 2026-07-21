@@ -25,6 +25,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 
+#include "ripper/controls.h"
 #include "ripper/display.h"
 #include "ripper/resources.h"
 
@@ -96,9 +97,7 @@ private:
 	Common::Rect _menuBounds;
 	Common::Rect _useBounds;
 	Common::Rect _doneBounds;
-	uint _selectedEntry;
-	uint _firstVisibleEntry;
-	uint _visibleEntries;
+	ChooserModel _chooser;
 	bool _active;
 	bool _initialized;
 };
