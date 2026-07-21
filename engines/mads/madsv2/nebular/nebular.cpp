@@ -519,6 +519,14 @@ void RexNebularEngine::global_parser_code() {
 			global[kPenlightCellStatus] = game.difficulty != DIFFICULTY_HARD || global[kDurafailRecharged] ? 1 : 2;
 			text_show(423);
 		}
+	} else if (player_said_3(put, durafail_cells, phone_handset)) {
+		if (global[kHandsetCellStatus]) {
+			text_show(426);
+		} else {
+			inter_move_object(OBJ_DURAFAIL_CELLS, NOWHERE);
+			global[kHandsetCellStatus] = game.difficulty != DIFFICULTY_HARD || global[kDurafailRecharged] ? 1 : 2;
+			text_show(425);
+		}
 	} else {
 		goto done;
 	}
