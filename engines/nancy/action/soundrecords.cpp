@@ -48,6 +48,31 @@ static uint selectRandomSound(Common::Array<Common::String> &soundNames) {
 	return g_nancy->_randomSource->getRandomNumber(soundNames.size() - 1);
 }
 
+// Nancy13+ subtitles are no longer stored inside the sound record. Instead, the
+// engine looks the played sound's name up in the CVTX text chunks when the sound
+// starts and, if a matching entry exists, shows it in the game textbox. The
+// autotext chunk (narration/observations) is searched first, then the convo chunk.
+static Common::String resolveSoundSubtitle(const Common::String &soundName) {
+	if (soundName.empty() || soundName.equalsIgnoreCase("NO SOUND")) {
+		return Common::String();
+	}
+
+	const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
+	if (autotext) {
+		Common::String text = autotext->texts.getValOrDefault(soundName, "");
+		if (!text.empty()) {
+			return text;
+		}
+	}
+
+	const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
+	if (convo) {
+		return convo->texts.getValOrDefault(soundName, "");
+	}
+
+	return Common::String();
+}
+
 void SetVolume::readData(Common::SeekableReadStream &stream) {
 	channel = stream.readUint16LE();
 	volume = stream.readByte();
@@ -163,6 +188,9 @@ void PlaySound::readDataNancy13(Common::SeekableReadStream &stream) {
 		_sound.volume = stream.readUint16LE();
 
 		_sound.name = names[selectRandomSound(names)];
+
+		// Subtitles are keyed by the played sound's name in the CVTX chunks.
+		_ccText = resolveSoundSubtitle(_sound.name);
 	}
 
 	// No inline SoundEffectDescription anymore, and the scene change is just a
@@ -185,6 +213,14 @@ void PlaySound::execute() {
 	case kBegin:
 		g_nancy->_sound->loadSound(_sound, &_soundEffect);
 		g_nancy->_sound->playSound(_sound);
+
+		// Nancy13+ shows the sound's subtitle (resolved from its name) in the
+		// game textbox. Earlier games use the explicit PlaySoundCC records instead.
+		if (g_nancy->getGameType() >= kGameTypeNancy13 && !_ccText.empty() &&
+				ConfMan.getBool("subtitles", ConfMan.getActiveDomainName())) {
+			NancySceneState.getTextbox().clear();
+			NancySceneState.getTextbox().addTextLine(_ccText);
+		}
 
 		if (g_nancy->getGameType() >= kGameTypeNancy13) {
 			// Nancy13 sets a list of event flags.
@@ -257,7 +293,9 @@ void PlaySoundCC::readData(Common::SeekableReadStream &stream) {
 }
 
 void PlaySoundCC::execute() {
-	if (_state == kBegin && _ccText.size() && ConfMan.getBool("subtitles", ConfMan.getActiveDomainName())) {
+	// Nancy13+ resolves the subtitle from the sound name in PlaySound::execute.
+	if (g_nancy->getGameType() < kGameTypeNancy13 &&
+			_state == kBegin && _ccText.size() && ConfMan.getBool("subtitles", ConfMan.getActiveDomainName())) {
 		NancySceneState.getTextbox().clear();
 		NancySceneState.getTextbox().addTextLine(_ccText);
 	}

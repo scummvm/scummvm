@@ -114,6 +114,11 @@ public:
 	Common::Array<FlagDescription> _flags;
 	byte _afterSoundAction = 0;	// Nancy13+: 1 dismisses the text box overlay
 
+	// Subtitle shown in the game textbox while the sound plays. In Nancy13+ this
+	// is resolved from the sound name (see readDataNancy13); earlier games store
+	// it explicitly in the closed-caption records below.
+	Common::String _ccText;
+
 	Common::String getRecordExtraInfo() const override { return Common::String::format("Scene %d", _sceneChange.sceneID); }
 
 protected:
@@ -131,8 +136,6 @@ public:
 	void execute() override;
 
 	void readCCText(Common::SeekableReadStream &stream, Common::String &out);
-
-	Common::String _ccText;
 
 protected:
 	Common::String getRecordTypeName() const override;
