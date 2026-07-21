@@ -139,6 +139,15 @@ static void room_506_init() {
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('c', -1));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXCD_3");
 
+	// WORKAROUND: Set the animation before creating the door hotspots, since otherwise
+	// with the MADSV2 engine core the hotspot areas were never updated to match the attached sprites
+	if (previous_room != 508 && previous_room != 507 && previous_room != KERNEL_RESTORING_GAME) {
+		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
+		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 5);
+		_scene->loadAnimation(formAnimName('R', 1), 70);
+	}
+
 	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 	int idx = _scene->_dynamicHotspots.add(words_laboratory, words_walk_into, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 	int hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(65, 125), FACING_NORTHWEST);
@@ -170,11 +179,8 @@ static void room_506_init() {
 		_game._player._facing = FACING_NORTHEAST;
 		_game._player._visible = false;
 		_game._player._stepEnabled = false;
-		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 5);
-		_scene->loadAnimation(formAnimName('R', 1), 70);
 	}
+
 	section_5_music();
 }
 
