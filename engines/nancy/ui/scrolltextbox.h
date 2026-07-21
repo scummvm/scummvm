@@ -95,8 +95,8 @@ private:
 	bool _scrollbarHovered;
 	int _scrollbarGrabOffset;
 
-	// True in the expanded state (> 2 lines): full overlay with scrollbar.
-	// False in the mini state (<= 2 lines): strip above the taskbar, no scrollbar.
+	// True when text overflows the viewport: full overlay with scrollbar.
+	// False when it fits: mini strip above the taskbar, sized to content.
 	bool _expanded;
 
 	int _fontIDOverride;
