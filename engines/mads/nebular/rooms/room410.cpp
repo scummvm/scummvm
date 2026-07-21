@@ -53,28 +53,28 @@ static void room_410_init() {
 
 static void room_410_daemon() {
 	if (_scene->_animation[0]->getCurrentFrame() == 1) {
-		if (_vm->getRandomNumber(1, 30) == 1)
+		if (g_engine->getRandomNumber(1, 30) == 1)
 			_scene->_animation[0]->setCurrentFrame(2);
 		else
 			_scene->_animation[0]->setCurrentFrame(0);
 	}
 
 	if (_scene->_animation[0]->getCurrentFrame() == 9) {
-		if (_vm->getRandomNumber(1, 30) == 1)
+		if (g_engine->getRandomNumber(1, 30) == 1)
 			_scene->_animation[0]->setCurrentFrame(10);
 		else
 			_scene->_animation[0]->setCurrentFrame(8);
 	}
 
 	if (_scene->_animation[0]->getCurrentFrame() == 5) {
-		if (_vm->getRandomNumber(1, 30) == 1)
+		if (g_engine->getRandomNumber(1, 30) == 1)
 			_scene->_animation[0]->setCurrentFrame(6);
 		else
 			_scene->_animation[0]->setCurrentFrame(4);
 	}
 
 	if (_scene->_animation[0]->getCurrentFrame() == 3) {
-		if (_vm->getRandomNumber(1, 2) == 1)
+		if (g_engine->getRandomNumber(1, 2) == 1)
 			_scene->_animation[0]->setCurrentFrame(4);
 		else // == 2
 			_scene->_animation[0]->setCurrentFrame(8);
@@ -101,7 +101,7 @@ static void room_410_parser() {
 	else if (player_said_2(take, charge_cases) && (_game._objects.isInRoom(OBJ_CHARGE_CASES) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
-			_vm->_sound->command(57);
+			g_engine->_soundManager->command(57, 0);
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
 			_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 7, 2, 0, 0);
@@ -115,7 +115,7 @@ static void room_410_parser() {
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 			_scene->_hotspots.activate(words_charge_cases, false);
 			_game._objects.addToInventory(OBJ_CHARGE_CASES);
-			_vm->_dialogs->showItem(OBJ_CHARGE_CASES, 41032);
+			object_examine(OBJ_CHARGE_CASES, 41032, 0);
 			break;
 
 		case 2:
@@ -132,54 +132,54 @@ static void room_410_parser() {
 			break;
 		}
 	} else if (player_said_2(look, barrel))
-		_vm->_dialogs->show(41010);
+		text_show(41010);
 	else if (player_said_2(take, barrel))
-		_vm->_dialogs->show(41011);
+		text_show(41011);
 	else if (player_said_2(open, barrel))
-		_vm->_dialogs->show(41012);
+		text_show(41012);
 	else if (player_said_2(look, rug))
-		_vm->_dialogs->show(41013);
+		text_show(41013);
 	else if (player_said_2(take, rug))
-		_vm->_dialogs->show(41014);
+		text_show(41014);
 	else if (player_said_2(look, carton) || player_said_2(open, carton)) {
 		if (_game._objects.isInRoom(OBJ_CHARGE_CASES))
-			_vm->_dialogs->show(41015);
+			text_show(41015);
 		else
-			_vm->_dialogs->show(41016);
+			text_show(41016);
 	} else if (player_said_2(look, flour))
-		_vm->_dialogs->show(41017);
+		text_show(41017);
 	else if (player_said_2(take, flour))
-		_vm->_dialogs->show(41018);
+		text_show(41018);
 	else if (player_said_2(look, sacks))
-		_vm->_dialogs->show(41019);
+		text_show(41019);
 	else if (player_said_2(look, sack))
-		_vm->_dialogs->show(41019);
+		text_show(41019);
 	else if (player_said_2(open, sacks))
-		_vm->_dialogs->show(41020);
+		text_show(41020);
 	else if (player_said_2(open, sack))
-		_vm->_dialogs->show(41020);
+		text_show(41020);
 	else if (player_said_2(look, bucket_of_tar))
-		_vm->_dialogs->show(41021);
+		text_show(41021);
 	else if (player_said_2(take, bucket_of_tar))
-		_vm->_dialogs->show(41022);
+		text_show(41022);
 	else if (player_said_2(look, can))
-		_vm->_dialogs->show(41023);
+		text_show(41023);
 	else if (player_said_2(take, can))
-		_vm->_dialogs->show(41024);
+		text_show(41024);
 	else if (player_said_2(look, charge_cases) && _game._objects.isInRoom(OBJ_CHARGE_CASES))
-		_vm->_dialogs->show(41025);
+		text_show(41025);
 	else if (player_said_2(look, fence))
-		_vm->_dialogs->show(41027);
+		text_show(41027);
 	else if (player_said_2(look, shelves))
-		_vm->_dialogs->show(41028);
+		text_show(41028);
 	else if (player_said_2(look, rat))
-		_vm->_dialogs->show(41029);
+		text_show(41029);
 	else if (player_said_2(take, rat))
-		_vm->_dialogs->show(41030);
+		text_show(41030);
 	else if (player_said_2(throw, rat))
-		_vm->_dialogs->show(41031);
+		text_show(41031);
 	else if (_action._lookFlag)
-		_vm->_dialogs->show(41033);
+		text_show(41033);
 	else
 		return;
 

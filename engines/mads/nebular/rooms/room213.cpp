@@ -56,15 +56,15 @@ static void room_213_parser() {
 	}
 
 	if (player_said_2(look, control_panel))
-		_vm->_dialogs->show(21301);
+		text_show(21301);
 	else if (player_said_2(look, keypad) || player_said_2(inspect, keypad))
-		_vm->_dialogs->show(21302);
+		text_show(21302);
 	else if (player_said_2(look, display))
-		_vm->_dialogs->show(21303);
+		text_show(21303);
 	else if (player_said_2(look, viewport) || player_said_2(peer_through, viewport))
-		_vm->_dialogs->show(21304);
+		text_show(21304);
 	else if (player_said_2(look, device))
-		_vm->_dialogs->show(21305);
+		text_show(21305);
 	else if (player_said_2(look, 0_key) || player_said_2(look, 1_key)
 		|| player_said_2(look, 2_key) || player_said_2(look, 3_key)
 		|| player_said_2(look, 4_key) || player_said_2(look, 5_key)
@@ -72,7 +72,7 @@ static void room_213_parser() {
 		|| player_said_2(look, 8_key) || player_said_2(look, 9_key)
 		|| player_said_2(look, smile_key) || player_said_2(look, frown_key)
 		|| player_said_2(look, enter_key))
-		_vm->_dialogs->show(21306);
+		text_show(21306);
 	else
 		return;
 

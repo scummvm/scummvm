@@ -22,15 +22,10 @@
 #include "common/textconsole.h"
 #include "mads/core/global.h"
 #include "mads/core/kernel.h"
-#include "mads/core/magic.h"
 #include "mads/core/matte.h"
-#include "mads/core/mouse.h"
-#include "mads/core/pal.h"
 #include "mads/core/object.h"
 #include "mads/core/player.h"
 #include "mads/core/quote.h"
-#include "mads/core/text.h"
-#include "mads/core/timer.h"
 #include "mads/nebular/rooms/thunks.h"
 #include "mads/nebular/nebular.h"
 
@@ -42,7 +37,6 @@ Action _action;
 Game _game;
 Globals _globals;
 Scene _scene;
-VM _vm;
 
 void Game::Objects::addToInventory(int object_id) {
 	inter_give_to_player(object_id);
@@ -421,73 +415,6 @@ void Scene::clearSequenceList() {
 
 void Scene::addActiveVocab(int vocab_id) {
 	vocab_make_active(vocab_id);
-}
-
-void VM::Dialogs::show(int id) {
-	text_show(id);
-}
-
-void VM::Dialogs::show(int object_id, int id) {
-	object_examine(object_id, id, 0);
-}
-
-void VM::Dialogs::showItem(int object_id, int message, int speech) {
-	object_examine(object_id, message, speech);
-}
-
-void VM::Events::setCursor2(int cursorNum) {
-	cursor_id = cursorNum;
-	mouse_cursor_sprite(cursor, cursorNum);
-}
-
-void VM::Events::showCursor() {
-	mouse_show();
-}
-
-void VM::Events::hideCursor() {
-	mouse_hide();
-}
-
-int32 VM::Events::getFrameCounter() {
-	return timer_read();
-}
-
-void VM::PaletteProxy::setEntry(int color, int r, int g, int b) {
-	pal_change_color(color, r, g, b);
-}
-
-void VM::PaletteProxy::refreshSceneColors() {
-	kernel_new_palette();
-}
-
-void VM::PaletteProxy::lock() {
-	pal_lock();
-}
-
-void VM::PaletteProxy::setColorFlags(byte r, byte g, byte b) {
-	magic_set_color_flags(r, g, b);
-}
-
-void VM::PaletteProxy::setColorValues(byte r, byte g, byte b) {
-	magic_set_color_values(r, g, b);
-}
-
-void VM::PaletteProxy::fadeOut(Palette palette, byte *paletteMap,
-		int baseColor, int numColors, int baseGrey, int numGreys,
-		int tickDelay, int steps) {
-	magic_fade_to_grey(palette, paletteMap, baseColor, numColors, baseGrey, numGreys, tickDelay, steps);
-}
-
-void VM::Sound::command(int num, int distance) {
-	g_engine->_soundManager->command(num, distance);
-}
-
-int VM::getRandomNumber(int min, int max) {
-	return g_engine->getRandomNumber(min, max);
-}
-
-int VM::getRandomNumber(int max) {
-	return g_engine->getRandomNumber(max);
 }
 
 char *formAnimName(char type, int num) {

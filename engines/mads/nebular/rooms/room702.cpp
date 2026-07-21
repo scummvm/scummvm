@@ -85,11 +85,11 @@ static void room_702_parser() {
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 		case 1:
-			_vm->_sound->command(0xF);
+			g_engine->_soundManager->command(0xF, 0);
 			if (_game._objects.isInInventory(OBJ_BONE))
 				_game._objects.setRoom(OBJ_BONE, 1);
 			_game._objects.addToInventory(OBJ_BONES);
-			_vm->_dialogs->show(OBJ_BONES, 70218);
+			object_examine(OBJ_BONES, 70218, 0);
 			break;
 		case 2:
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[12]);
@@ -100,26 +100,26 @@ static void room_702_parser() {
 			break;
 		}
 	} else if (_action._lookFlag)
-		_vm->_dialogs->show(70210);
+		text_show(70210);
 	else if (player_said_2(look, platform))
-		_vm->_dialogs->show(70211);
+		text_show(70211);
 	else if (player_said_2(look, cement_block))
-		_vm->_dialogs->show(70212);
+		text_show(70212);
 	else if (player_said_2(look, rock))
-		_vm->_dialogs->show(70213);
+		text_show(70213);
 	else if (player_said_2(take, rock))
-		_vm->_dialogs->show(70214);
+		text_show(70214);
 	else if (player_said_2(look, west_end_of_platform))
-		_vm->_dialogs->show(70215);
+		text_show(70215);
 	else if (player_said_2(look, teleporter))
-		_vm->_dialogs->show(70216);
+		text_show(70216);
 	else if (player_said_2(look, bones) && (_action._mainObjectSource == CAT_HOTSPOT))
-		_vm->_dialogs->show(70217);
+		text_show(70217);
 	else if (player_said_2(take, bones) && (_action._mainObjectSource == CAT_HOTSPOT)) {
 		if (_game._objects.isInInventory(OBJ_BONES))
-			_vm->_dialogs->show(70219);
+			text_show(70219);
 	} else if (player_said_2(look, submerged_city))
-		_vm->_dialogs->show(70220);
+		text_show(70220);
 	else
 		return;
 

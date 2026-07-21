@@ -108,11 +108,11 @@ static void room_512_parser() {
 				break;
 
 			case 1:
-				_vm->_sound->command(9);
+				g_engine->_soundManager->command(9, 0);
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 				_scene->_dynamicHotspots.remove(local._fishingRodHotspotId);
 				_game._objects.addToInventory(OBJ_FISHING_ROD);
-				_vm->_dialogs->showItem(OBJ_FISHING_ROD, 51217);
+				object_examine(OBJ_FISHING_ROD, 51217, 0);
 				break;
 
 			case 2:
@@ -129,7 +129,7 @@ static void room_512_parser() {
 		if (!_globals[kRegisterOpen]) {
 			switch (_game._trigger) {
 			case 0:
-				_vm->_dialogs->show(51236);
+				text_show(51236);
 				_game._player._stepEnabled = false;
 				_game._player._facing = FACING_NORTH;
 				_scene->_sequences.addTimer(15, 1);
@@ -160,7 +160,7 @@ static void room_512_parser() {
 					_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 3);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 5);
 				}
-				_vm->_sound->command(23);
+				g_engine->_soundManager->command(23, 0);
 				break;
 
 			case 4:
@@ -185,7 +185,7 @@ static void room_512_parser() {
 				break;
 			}
 		} else
-			_vm->_dialogs->show(51239);
+			text_show(51239);
 	} else if (player_said_2(close, cash_register) && _globals[kRegisterOpen]) {
 		switch (_game._trigger) {
 		case 0:
@@ -252,9 +252,9 @@ static void room_512_parser() {
 					_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
 					_scene->_hotspots.activate(words_padlock_key, false);
 				}
-				_vm->_sound->command(9);
+				g_engine->_soundManager->command(9, 0);
 				_game._objects.addToInventory(OBJ_PADLOCK_KEY);
-				_vm->_dialogs->showItem(OBJ_PADLOCK_KEY, 51226);
+				object_examine(OBJ_PADLOCK_KEY, 51226, 0);
 				break;
 
 			case 2:
@@ -268,58 +268,58 @@ static void room_512_parser() {
 			}
 		}
 	} else if (_action._lookFlag)
-		_vm->_dialogs->show(51225);
+		text_show(51225);
 	else if (player_said_2(look, padlock_key) && _game._objects.isInRoom(OBJ_PADLOCK_KEY))
-		_vm->_dialogs->show(51215);
+		text_show(51215);
 	else if (player_said_2(look, fishing_rod) && (!_scene->_animation[0] ||
 		_scene->_animation[0]->getCurrentFrame() == 4))
-		_vm->_dialogs->show(51216);
+		text_show(51216);
 	else if (player_said_2(look, ships_wheel))
-		_vm->_dialogs->show(51218);
+		text_show(51218);
 	else if (player_said_2(take, ships_wheel))
-		_vm->_dialogs->show(51219);
+		text_show(51219);
 	else if (player_said_2(look, porthole) || player_said_2(peer_through, porthole))
-		_vm->_dialogs->show(51220);
+		text_show(51220);
 	else if (player_said_2(look, table))
-		_vm->_dialogs->show(51221);
+		text_show(51221);
 	else if (player_said_2(look, starfish))
-		_vm->_dialogs->show(51222);
+		text_show(51222);
 	else if (player_said_2(take, starfish))
-		_vm->_dialogs->show(51223);
+		text_show(51223);
 	else if (player_said_2(look, outside))
-		_vm->_dialogs->show(51224);
+		text_show(51224);
 	else if (player_said_2(look, poster))
-		_vm->_dialogs->show(51227);
+		text_show(51227);
 	else if (player_said_2(take, poster))
-		_vm->_dialogs->show(51228);
+		text_show(51228);
 	else if (player_said_2(look, trophy)) {
 		if (_game._visitedScenes.exists(604))
-			_vm->_dialogs->show(51229);
+			text_show(51229);
 		else
-			_vm->_dialogs->show(51230);
+			text_show(51230);
 	} else if (player_said_2(look, chair))
-		_vm->_dialogs->show(51231);
+		text_show(51231);
 	else if (player_said_2(look, rope))
-		_vm->_dialogs->show(51232);
+		text_show(51232);
 	else if (player_said_2(take, rope))
-		_vm->_dialogs->show(51233);
+		text_show(51233);
 	else if (player_said_2(look, lamp))
-		_vm->_dialogs->show(51234);
+		text_show(51234);
 	else if (player_said_2(walk_behind, counter)) {
 		// WORKAROUND: Empty handling to prevent default "can't do that" dialogs showing
 	} else if (player_said_2(look, counter))
-		_vm->_dialogs->show(51235);
+		text_show(51235);
 	else if (player_said_2(look, ice_chests))
-		_vm->_dialogs->show(51237);
+		text_show(51237);
 	else if (player_said_2(open, ice_chests))
-		_vm->_dialogs->show(51238);
+		text_show(51238);
 	else if (player_said_2(look, cash_register)) {
 		if (!_globals[kRegisterOpen])
-			_vm->_dialogs->show(51212);
+			text_show(51212);
 		else if (_game._objects.isInRoom(OBJ_PADLOCK_KEY))
-			_vm->_dialogs->show(51214);
+			text_show(51214);
 		else
-			_vm->_dialogs->show(51213);
+			text_show(51213);
 	} else
 		return;
 

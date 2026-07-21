@@ -20,6 +20,7 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
@@ -99,8 +100,8 @@ static void room_607_init() {
 	if (_scene->_roomChanged)
 		_game._objects.addToInventory(OBJ_BONES);
 
-	_vm->_palette->setEntry(252, 63, 44, 30);
-	_vm->_palette->setEntry(253, 63, 20, 22);
+	pal_change_color(252, 63, 44, 30);
+	pal_change_color(253, 63, 20, 22);
 	_game.loadQuoteSet(0x2F8, 0x2F7, 0x2F6, 0x2F9, 0x2FA, 0);
 }
 
@@ -116,7 +117,7 @@ static void room_607_daemon() {
 	}
 
 	if ((local._dogTimer >= 480) && !local._dogLoop && !local._shopAvailable && (_globals[kDogStatus] == DOG_LEFT) && !_game._player._special) {
-		_vm->_sound->command(14);
+		g_engine->_soundManager->command(14, 0);
 		local._dogLoop = true;
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 10, 1, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);
@@ -134,7 +135,7 @@ static void room_607_daemon() {
 	}
 
 	if (!local._dogEatsRex && (_game._difficulty != DIFFICULTY_EASY) && !local._animationActive && (_globals[kDogStatus] == DOG_PRESENT)
-		&& !local._dogBarking && (_vm->getRandomNumber(1, 50) == 10)) {
+		&& !local._dogBarking && (g_engine->getRandomNumber(1, 50) == 10)) {
 		local._dogBarking = true;
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 		_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 5, 8, 0, 0);
@@ -156,7 +157,7 @@ static void room_607_daemon() {
 
 	if (_game._trigger == 100) {
 		local._counter++;
-		_vm->_sound->command(12);
+		g_engine->_soundManager->command(12, 0);
 
 		if ((local._counter >= 1) && (local._counter <= 4)) {
 			Common::Point pos(0, 0);
@@ -245,7 +246,7 @@ static void room_607_daemon() {
 		break;
 
 		case 63:
-			_vm->_dialogs->show(60729);
+			text_show(60729);
 			local._animationActive = 0;
 			local._dogEatsRex = false;
 			_scene->_reloadSceneFlag = true;
@@ -254,7 +255,7 @@ static void room_607_daemon() {
 
 		case 64:
 			if (local._dogEatsRex && (local._animationActive == 1)) {
-				_vm->_sound->command(12);
+				g_engine->_soundManager->command(12, 0);
 				_scene->_sequences.addTimer(10, 64);
 			}
 			break;
@@ -427,49 +428,49 @@ static void room_607_parser() {
 		handleThrowingBone();
 	} else if (_action._lookFlag || player_said_2(look, street)) {
 		if ((_globals[kDogStatus] == DOG_PRESENT) || (_game._difficulty == DIFFICULTY_EASY))
-			_vm->_dialogs->show(60710);
+			text_show(60710);
 		else
-			_vm->_dialogs->show(60711);
+			text_show(60711);
 	} else if (player_said_2(look, wall))
-		_vm->_dialogs->show(60712);
+		text_show(60712);
 	else if (player_said_2(look, fence))
-		_vm->_dialogs->show(60713);
+		text_show(60713);
 	else if (player_said_2(look, car))
-		_vm->_dialogs->show(60714);
+		text_show(60714);
 	else if (player_said_2(look, manhole))
-		_vm->_dialogs->show(60715);
+		text_show(60715);
 	else if (player_said_2(look, fire_hydrant) && (_globals[kDogStatus] == DOG_PRESENT))
-		_vm->_dialogs->show(60716);
+		text_show(60716);
 	else if (player_said_2(look, sign))
-		_vm->_dialogs->show(60717);
+		text_show(60717);
 	else if (player_said_2(look, broken_window))
-		_vm->_dialogs->show(60718);
+		text_show(60718);
 	else if (player_said_2(look, garage_door))
-		_vm->_dialogs->show(60719);
+		text_show(60719);
 	else if (player_said_2(look, sidewalk))
-		_vm->_dialogs->show(60720);
+		text_show(60720);
 	else if (player_said_2(look, air_hose))
-		_vm->_dialogs->show(60721);
+		text_show(60721);
 	else if (player_said_2(look, auto_shop)) {
 		if (_globals[kDogStatus] == DOG_PRESENT)
-			_vm->_dialogs->show(60723);
+			text_show(60723);
 		else
-			_vm->_dialogs->show(60722);
+			text_show(60722);
 	} else if (player_said_2(look, side_entrance)) {
 		if (_globals[kDogStatus] == DOG_PRESENT)
-			_vm->_dialogs->show(60725);
+			text_show(60725);
 		else
-			_vm->_dialogs->show(60724);
+			text_show(60724);
 	} else if (player_said_2(look, obnoxious_dog))
-		_vm->_dialogs->show(60726);
+		text_show(60726);
 	else if (player_said_2(talkto, obnoxious_dog))
-		_vm->_dialogs->show(60727);
+		text_show(60727);
 	else if (player_said_2(look, barricade))
-		_vm->_dialogs->show(60728);
+		text_show(60728);
 	else if (player_said_2(walk_down, street))
-		_vm->_dialogs->show(60730);
+		text_show(60730);
 	else if (player_said_1(garage_door) && (player_said_1(open) || player_said_1(push) || player_said_1(pull)))
-		_vm->_dialogs->show(60731);
+		text_show(60731);
 	else
 		return;
 

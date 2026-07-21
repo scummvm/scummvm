@@ -76,7 +76,7 @@ static void room_215_daemon() {
 
 static void room_215_parser() {
 	if (_action._lookFlag)
-		_vm->_dialogs->show(21509);
+		text_show(21509);
 	else if (player_said_2(take, twinkifruit)) {
 		if (!_game._objects.isInInventory(OBJ_TWINKIFRUIT) || _game._trigger) {
 			switch (_game._trigger) {
@@ -91,14 +91,14 @@ static void room_215_parser() {
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				} else {
 					_game._objects.addToInventory(OBJ_TWINKIFRUIT);
-					_vm->_dialogs->showItem(OBJ_TWINKIFRUIT, 0x5404);
+					object_examine(OBJ_TWINKIFRUIT, 0x5404, 0);
 				}
 				break;
 
 			case 1:
 				if (!_game._objects.isInInventory(OBJ_TWINKIFRUIT)) {
 					_game._objects.addToInventory(OBJ_TWINKIFRUIT);
-					_vm->_dialogs->showItem(OBJ_TWINKIFRUIT, 0x5404);
+					object_examine(OBJ_TWINKIFRUIT, 0x5404, 0);
 				}
 				break;
 
@@ -112,36 +112,36 @@ static void room_215_parser() {
 				break;
 			}
 		} else {
-			int idx = _vm->getRandomNumber(169, 170);
+			int idx = g_engine->getRandomNumber(169, 170);
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(idx));
 		}
 	} else if (player_said_2(walk_outside, hut))
 		_scene->_nextSceneId = 210;
 	else if (player_said_2(look, bear_rug))
-		_vm->_dialogs->show(21501);
+		text_show(21501);
 	else if (player_said_2(look, bed))
-		_vm->_dialogs->show(21502);
+		text_show(21502);
 	else if (player_said_2(look, welcome_mat))
-		_vm->_dialogs->show(21503);
+		text_show(21503);
 	else if (player_said_2(look, love_altar))
-		_vm->_dialogs->show(21504);
+		text_show(21504);
 	else if (player_said_2(look, window))
-		_vm->_dialogs->show(21505);
+		text_show(21505);
 	else if (player_said_2(look, picture))
-		_vm->_dialogs->show(21506);
+		text_show(21506);
 	else if (player_said_2(look, twinkifruit) && (_action._savedFields._mainObjectSource == 4))
-		_vm->_dialogs->show(21507);
+		text_show(21507);
 	else if (player_said_2(take, bear_rug))
-		_vm->_dialogs->show(21510);
+		text_show(21510);
 	else if (player_said_2(take, love_altar))
-		_vm->_dialogs->show(21511);
+		text_show(21511);
 	else if (player_said_2(look, bag_of_twinkifruits))
-		_vm->_dialogs->show(21512);
+		text_show(21512);
 	else if (player_said_2(take, bag_of_twinkifruits))
-		_vm->_dialogs->show(21513);
+		text_show(21513);
 	else if (player_said_2(take, welcome_mat))
-		_vm->_dialogs->show(21514);
+		text_show(21514);
 	else
 		return;
 

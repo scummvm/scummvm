@@ -102,20 +102,20 @@ static void room_407_parser() {
 			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
-			_vm->_sound->command(21);
+			g_engine->_soundManager->command(21, 0);
 			_scene->loadAnimation(formAnimName('s', 1), 70);
 			_globals[kHasBeenScanned] = true;
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, _game.getQuote(592));
-			_vm->_sound->command(22);
+			g_engine->_soundManager->command(22, 0);
 		}
 
 		if (_globals[kSexOfRex] == REX_FEMALE) {
 			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
-			_vm->_sound->command(21);
+			g_engine->_soundManager->command(21, 0);
 			_scene->loadAnimation(formAnimName('s', 2), 80);
-			_vm->_sound->command(23);
+			g_engine->_soundManager->command(23, 0);
 			_globals[kHasBeenScanned] = true;
 		}
 	}
@@ -126,17 +126,17 @@ static void room_407_parser() {
 		_scene->_nextSceneId = 318;
 	else if (player_said_2(look, scanner)) {
 		if (_globals[kHasBeenScanned])
-			_vm->_dialogs->show(40711);
+			text_show(40711);
 		else
-			_vm->_dialogs->show(40710);
+			text_show(40710);
 	} else if (player_said_2(look, door))
-		_vm->_dialogs->show(40712);
+		text_show(40712);
 	else if (player_said_2(look, corridor_to_south))
-		_vm->_dialogs->show(40713);
+		text_show(40713);
 	else if (player_said_2(look, corridor_to_north))
-		_vm->_dialogs->show(40714);
+		text_show(40714);
 	else if (_action._lookFlag)
-		_vm->_dialogs->show(40715);
+		text_show(40715);
 	else
 		return;
 

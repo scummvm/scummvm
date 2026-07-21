@@ -76,16 +76,16 @@ static void room_359_pre_parser() {
 static void room_359_parser() {
 	if (_action._lookFlag) {
 		if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
-			_vm->_dialogs->show(35914);
+			text_show(35914);
 		else
-			_vm->_dialogs->show(35915);
+			text_show(35915);
 	} else if (player_said_2(take, security_card)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_SECURITY_CARD)) {
 			switch (_game._trigger) {
 			case 0:
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
-				_vm->_dialogs->show(35920);
+				text_show(35920);
 				if (_globals[kSexOfRex] == REX_MALE) {
 					_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 4, 2, 0, 0);
 					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
@@ -103,9 +103,9 @@ static void room_359_parser() {
 			case 1:
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 				_scene->_dynamicHotspots.remove(local._cardHotspotId);
-				_vm->_sound->command(57);
+				g_engine->_soundManager->command(57, 0);
 				_game._objects.addToInventory(OBJ_SECURITY_CARD);
-				_vm->_dialogs->showItem(OBJ_SECURITY_CARD, 0x330);
+				object_examine(OBJ_SECURITY_CARD, 0x330, 0);
 				_scene->changeVariant(1);
 				break;
 
@@ -124,43 +124,43 @@ static void room_359_parser() {
 			}
 		}
 	} else if (player_said_2(look, bloody_cell_wall))
-		_vm->_dialogs->show(35910);
+		text_show(35910);
 	else if (player_said_2(look, bed))
-		_vm->_dialogs->show(35911);
+		text_show(35911);
 	else if (player_said_2(look, sink))
-		_vm->_dialogs->show(35912);
+		text_show(35912);
 	else if (player_said_2(look, toilet))
-		_vm->_dialogs->show(35913);
+		text_show(35913);
 	else if (player_said_2(look, corridor_to_east))
-		_vm->_dialogs->show(35916);
+		text_show(35916);
 	else if (player_said_2(look, corridor_to_west))
-		_vm->_dialogs->show(35917);
+		text_show(35917);
 	else if (player_said_2(look, limb))
-		_vm->_dialogs->show(35918);
+		text_show(35918);
 	else if (player_said_2(take, limb))
-		_vm->_dialogs->show(35919);
+		text_show(35919);
 	else if (player_said_2(look, security_card) && (_action._mainObjectSource == CAT_HOTSPOT))
-		_vm->_dialogs->show(35921);
+		text_show(35921);
 	else if (player_said_2(look, blood_stain)) {
 		if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
-			_vm->_dialogs->show(35922);
+			text_show(35922);
 		else
-			_vm->_dialogs->show(35923);
+			text_show(35923);
 	} else if (player_said_2(look, wall_board))
-		_vm->_dialogs->show(35924);
+		text_show(35924);
 	else if (player_said_2(take, wall_board))
-		_vm->_dialogs->show(35925);
+		text_show(35925);
 	else if (player_said_2(look, rip_in_floor))
-		_vm->_dialogs->show(35926);
+		text_show(35926);
 	else if (player_said_2(look, corridor))
-		_vm->_dialogs->show(35927);
+		text_show(35927);
 	else if (player_said_2(look, floor)) {
 		if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
-			_vm->_dialogs->show(35928);
+			text_show(35928);
 		else
-			_vm->_dialogs->show(35929);
+			text_show(35929);
 	} else if (player_said_2(open, air_vent) || player_said_2(look, air_vent))
-		_vm->_dialogs->show(36016);
+		text_show(36016);
 	else
 		return;
 

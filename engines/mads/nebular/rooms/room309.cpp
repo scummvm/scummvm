@@ -20,6 +20,7 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
@@ -61,12 +62,12 @@ static void room_309_init() {
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 11);
 	_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 3, 70);
 
-	_vm->_palette->setEntry(252, 63, 37, 26);
-	_vm->_palette->setEntry(253, 45, 24, 17);
-	_vm->_palette->setEntry(16, 63, 63, 63);
-	_vm->_palette->setEntry(17, 45, 45, 45);
-	_vm->_palette->setEntry(250, 63, 20, 20);
-	_vm->_palette->setEntry(251, 45, 10, 10);
+	pal_change_color(252, 63, 37, 26);
+	pal_change_color(253, 45, 24, 17);
+	pal_change_color(16, 63, 63, 63);
+	pal_change_color(17, 45, 45, 45);
+	pal_change_color(250, 63, 20, 20);
+	pal_change_color(251, 45, 10, 10);
 
 	_game._player._visible = false;
 	_game._player._stepEnabled = false;

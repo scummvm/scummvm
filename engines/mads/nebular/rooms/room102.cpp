@@ -47,7 +47,7 @@ static Scratch local;
 static void addRandomMessage() {
 	_scene->_kernelMessages.reset();
 	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
-	int quoteId = _vm->getRandomNumber(65, 69);
+	int quoteId = g_engine->getRandomNumber(65, 69);
 	_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 73, 120, _game.getQuote(quoteId));
 	local._activeMsgFl = true;
 }
@@ -110,8 +110,8 @@ static void room_102_init() {
 		_globals._sequenceIndexes[13] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[13], false, 6, 1, 0, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[13], 5);
-		_vm->_sound->command(24);
-		_vm->_sound->command(28);
+		g_engine->_soundManager->command(24, 0);
+		g_engine->_soundManager->command(28, 0);
 	}
 
 	local._fridgeOpenedFl = false;
@@ -124,7 +124,7 @@ static void room_102_init() {
 	_game.loadQuoteSet(0x3B, 0x3C, 0x3D, 0x3E, 0x3F, 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0);
 
 	if (_scene->_priorSceneId == 101)
-		_vm->_sound->command(20);
+		g_engine->_soundManager->command(20, 0);
 }
 
 static void room_102_daemon() {
@@ -145,9 +145,9 @@ static void room_102_daemon() {
 			_game._player._visible = false;
 
 			_globals[kWaterInAPuddle] = true;
-			_vm->_sound->command(24);
+			g_engine->_soundManager->command(24, 0);
 		} else {
-			_vm->_sound->command(23);
+			g_engine->_soundManager->command(23, 0);
 			_scene->_sequences.addTimer(48, _game._trigger + 1);
 		}
 	}
@@ -162,12 +162,12 @@ static void room_102_daemon() {
 		local._fridgeCommentCount++;
 		if (local._fridgeCommentCount > 16384) {
 			local._fridgeOpenedDescr = true;
-			_vm->_dialogs->show(10213);
+			text_show(10213);
 		}
 	}
 
 	if (!local._activeMsgFl && (_game._player._playerPos == Common::Point(177, 114)) && (_game._player._facing == FACING_NORTH)
-		&& (_vm->getRandomNumber(1, 5000) == 1)) {
+		&& (g_engine->getRandomNumber(1, 5000) == 1)) {
 		_scene->_kernelMessages.reset();
 		local._activeMsgFl = false;
 		addRandomMessage();
@@ -190,7 +190,7 @@ static void room_102_pre_parser() {
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[7], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 15);
 				_game._player._stepEnabled = false;
-				_vm->_sound->command(20);
+				g_engine->_soundManager->command(20, 0);
 			}
 			break;
 
@@ -214,7 +214,7 @@ static void room_102_pre_parser() {
 
 static void room_102_parser() {
 	if (_action._lookFlag) {
-		_vm->_dialogs->show(10234);
+		text_show(10234);
 		_action._inProgress = false;
 		return;
 	}
@@ -231,7 +231,7 @@ static void room_102_parser() {
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 14);
 			}
 			_game._player._stepEnabled = false;
-			_vm->_sound->command(20);
+			g_engine->_soundManager->command(20, 0);
 			_action._inProgress = false;
 			return;
 
@@ -265,9 +265,9 @@ static void room_102_parser() {
 
 	if (player_said_2(look, refrigerator) || player_said_2(open, refrigerator)) {
 		if (_game._objects.isInRoom(OBJ_BURGER))
-			_vm->_dialogs->show(10230);
+			text_show(10230);
 		else
-			_vm->_dialogs->show(10229);
+			text_show(10229);
 
 		local._fridgeFirstOpenFl = false;
 		_action._inProgress = false;
@@ -276,7 +276,7 @@ static void room_102_parser() {
 
 	if (player_said_2(walkto, refrigerator) && justOpenedFl) {
 		local._fridgeFirstOpenFl = false;
-		int quoteId = _vm->getRandomNumber(59, 63);
+		int quoteId = g_engine->getRandomNumber(59, 63);
 		const char *curQuote = _game.getQuote(quoteId);
 		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, -1);
 		_scene->_kernelMessages.reset();
@@ -289,13 +289,13 @@ static void room_102_parser() {
 	}
 
 	if (player_said_2(close, refrigerator)) {
-		_vm->_dialogs->show(10213);
+		text_show(10213);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(take, refrigerator)) {
-		_vm->_dialogs->show(8);
+		text_show(8);
 		_action._inProgress = false;
 		return;
 	}
@@ -306,7 +306,7 @@ static void room_102_parser() {
 			_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 1, 0, 0);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			_game._player._stepEnabled = false;
-			_vm->_sound->command(20);
+			g_engine->_soundManager->command(20, 0);
 			break;
 
 		case 1:
@@ -333,67 +333,67 @@ static void room_102_parser() {
 	}
 
 	if (player_said_2(look, weight_machine)) {
-		_vm->_dialogs->show(10212);
+		text_show(10212);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, engineering_section)) {
-		_vm->_dialogs->show(10205);
+		text_show(10205);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, door)) {
-		_vm->_dialogs->show(10204);
+		text_show(10204);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(stare_at, ceiling) || player_said_2(look, ceiling)) {
-		_vm->_dialogs->show(10203);
+		text_show(10203);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(stare_at, overhead_lamp) || player_said_2(look, overhead_lamp)) {
-		_vm->_dialogs->show(10202);
+		text_show(10202);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, robo_kitchen)) {
-		_vm->_dialogs->show(10215);
+		text_show(10215);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_3(put, burger, robo_kitchen) && _game._objects.isInInventory(OBJ_BURGER)) {
-		_vm->_dialogs->show(10216);
+		text_show(10216);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(put, refrigerator) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
-		_vm->_dialogs->show(10217);
+		text_show(10217);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_3(put, dead_fish, robo_kitchen) || player_said_3(put, stuffed_fish, robo_kitchen)) {
-		_vm->_dialogs->show(10230);
+		text_show(10230);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(open, robo_kitchen)) {
-		_vm->_dialogs->show(10218);
+		text_show(10218);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, closet)) {
-		_vm->_dialogs->show(10219);
+		text_show(10219);
 		_action._inProgress = false;
 		return;
 	}
@@ -401,12 +401,12 @@ static void room_102_parser() {
 	if ((player_said_1(ladder) || player_said_1(hatchway)) && (player_said_1(look) || player_said_1(climb_up) || player_said_1(climb_through))) {
 		if (_game._objects.isInInventory(OBJ_REBREATHER)) {
 			if (!player_said_1(climb_up) && !player_said_1(climb_through)) {
-				_vm->_dialogs->show(10231);
+				text_show(10231);
 				_action._inProgress = false;
 				return;
 			}
 		} else if (player_said_1(look) || (_game._difficulty != DIFFICULTY_HARD)) {
-			_vm->_dialogs->show(10222);
+			text_show(10222);
 			_action._inProgress = false;
 			return;
 		}
@@ -421,25 +421,25 @@ static void room_102_parser() {
 			break;
 
 		case 1:
-			_vm->_sound->command(24);
+			g_engine->_soundManager->command(24, 0);
 			_scene->_sequences.addTimer(48, 2);
 			break;
 
 		case 2:
 		case 3:
 		case 4:
-			_vm->_sound->command(23);
+			g_engine->_soundManager->command(23, 0);
 			_scene->_sequences.addTimer(48, _game._trigger + 1);
 			break;
 
 		case 5:
-			_vm->_sound->command(24);
+			g_engine->_soundManager->command(24, 0);
 			_scene->_sequences.addTimer(48, _game._trigger + 1);
 			break;
 
 		case 6:
 			if (_game._objects.isInInventory(OBJ_REBREATHER) && !_game._visitedScenes.exists(106))
-				_vm->_dialogs->show(10237);
+				text_show(10237);
 			_scene->_nextSceneId = 106;
 			break;
 
@@ -451,60 +451,60 @@ static void room_102_parser() {
 	}
 
 	if (player_said_2(look, power_status_panel)) {
-		_vm->_dialogs->show(10226);
+		text_show(10226);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, window) || player_said_2(look_through, window)) {
-		_vm->_dialogs->show(10227);
+		text_show(10227);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, doorway) || player_said_2(walkto, doorway)) {
-		_vm->_dialogs->show(10228);
+		text_show(10228);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, drawer) || ((player_said_2(close, drawer) || player_said_2(push, drawer)) && !local._drawerDescrFl)) {
-		_vm->_dialogs->show(10220);
+		text_show(10220);
 		local._drawerDescrFl = true;
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(close, drawer) || player_said_2(push, drawer)) {
-		_vm->_dialogs->show(10221);
+		text_show(10221);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(open, drawer)) {
-		_vm->_dialogs->show(10236);
+		text_show(10236);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, chair) || (player_said_2(sit_in, chair) && !local._chairDescrFl)) {
 		local._chairDescrFl = true;
-		_vm->_dialogs->show(10210);
+		text_show(10210);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(sit_in, chair)) {
-		_vm->_dialogs->show(10211);
+		text_show(10211);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, medicine_cabinet)) {
 		if (_globals[kMedicineCabinetOpen])
-			_vm->_dialogs->show(10207);
+			text_show(10207);
 		else
-			_vm->_dialogs->show(10206);
+			text_show(10206);
 
 		_action._inProgress = false;
 		return;
@@ -517,7 +517,7 @@ static void room_102_parser() {
 			_globals._sequenceIndexes[8] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[8], false, 6, 1, 0, 0);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			_game._player._stepEnabled = false;
-			_vm->_sound->command(21);
+			g_engine->_soundManager->command(21, 0);
 			break;
 
 		case 1:
@@ -527,7 +527,7 @@ static void room_102_parser() {
 		case 2:
 			_game._player._stepEnabled = true;
 			_globals[kMedicineCabinetOpen] = false;
-			_vm->_dialogs->show(10209);
+			text_show(10209);
 			break;
 
 		default:
@@ -543,7 +543,7 @@ static void room_102_parser() {
 			_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 6, 1, 0, 0);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			_game._player._stepEnabled = false;
-			_vm->_sound->command(21);
+			g_engine->_soundManager->command(21, 0);
 			break;
 
 		case 1:
@@ -556,9 +556,9 @@ static void room_102_parser() {
 			_game._player._stepEnabled = true;
 			_globals[kMedicineCabinetOpen] = true;
 			if (_globals[kMedicineCabinetVirgin]) {
-				_vm->_dialogs->show(10208);
+				text_show(10208);
 			} else {
-				_vm->_dialogs->show(10207);
+				text_show(10207);
 			}
 			_globals[kMedicineCabinetVirgin] = false;
 			break;
@@ -586,8 +586,8 @@ static void room_102_parser() {
 			_scene->_hotspots.activate(words_binoculars, false);
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
-			_vm->_sound->command(22);
-			_vm->_dialogs->showItem(OBJ_BINOCULARS, 10201);
+			g_engine->_soundManager->command(22, 0);
+			object_examine(OBJ_BINOCULARS, 10201, 0);
 			break;
 
 		default:
@@ -599,11 +599,11 @@ static void room_102_parser() {
 
 	if (player_said_2(take, burger) && _game._objects.isInRoom(OBJ_BURGER)) {
 		if (_game._trigger == 0) {
-			_vm->_dialogs->showItem(OBJ_BURGER, 10235);
+			object_examine(OBJ_BURGER, 10235, 0);
 			_scene->_sequences.remove(_globals._sequenceIndexes[10]);
 			_game._objects.addToInventory(OBJ_BURGER);
 			_scene->_hotspots.activate(words_burger, false);
-			_vm->_sound->command(22);
+			g_engine->_soundManager->command(22, 0);
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
 		}
@@ -612,38 +612,38 @@ static void room_102_parser() {
 	}
 
 	if (player_said_2(take, poster)) {
-		_vm->_dialogs->show(10224);
+		text_show(10224);
 		_action._inProgress = false;
 		return;
 	}
 
 	if ((player_said_1(push) || player_said_1(pull)) && player_said_1(weight_machine)) {
-		_vm->_dialogs->show(10225);
+		text_show(10225);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, floor)) {
-		_vm->_dialogs->show(10232);
+		text_show(10232);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, binoculars) && !_game._objects.isInInventory(OBJ_BINOCULARS)) {
-		_vm->_dialogs->show(10233);
+		text_show(10233);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, burger) && (_action._mainObjectSource == CAT_HOTSPOT)) {
-		_vm->_dialogs->show(801);
+		text_show(801);
 		_action._inProgress = false;
 	}
 }
 
 static void room_102_error() {
 	if (player_said_2(put, robo_kitchen) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
-		_vm->_dialogs->show(10217);
+		text_show(10217);
 		_action._inProgress = false;
 	}
 }

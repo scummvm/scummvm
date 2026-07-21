@@ -195,7 +195,7 @@ static void room_106_pre_parser() {
 
 static void room_106_parser() {
 	if (_action._lookFlag)
-		_vm->_dialogs->show(10614);
+		text_show(10614);
 	else if (player_said_2(swim_to, main_airlock)) {
 		_game._player._stepEnabled = false;
 		_game._player._prepareWalkPos = Common::Point(95, 72);
@@ -205,31 +205,31 @@ static void room_106_parser() {
 		_game._player._frameNumber = 9;
 		local._backToShipFl = true;
 	} else if (player_said_2(look, anemone) || player_said_2(look_at, anemone))
-		_vm->_dialogs->show(10601);
+		text_show(10601);
 	else if (player_said_2(take, anemone))
-		_vm->_dialogs->show(10602);
+		text_show(10602);
 	else if (player_said_2(look, seaweed) || player_said_2(look, seaweed_bank))
-		_vm->_dialogs->show(10603);
+		text_show(10603);
 	else if (player_said_2(take, seaweed) || player_said_2(take, seaweed_bank))
-		_vm->_dialogs->show(10604);
+		text_show(10604);
 	else if (player_said_2(look, open_area_to_east))
-		_vm->_dialogs->show(10605);
+		text_show(10605);
 	else if (player_said_2(look, pile_of_rocks) || player_said_2(look_at, pile_of_rocks))
-		_vm->_dialogs->show(10606);
+		text_show(10606);
 	else if (player_said_1(pile_of_rocks) && (player_said_1(push) || player_said_1(pull) || player_said_1(take)))
-		_vm->_dialogs->show(10607);
+		text_show(10607);
 	else if (player_said_2(look, ship) || player_said_2(look_at, ship))
-		_vm->_dialogs->show(10608);
+		text_show(10608);
 	else if (player_said_2(look, main_airlock))
-		_vm->_dialogs->show(10609);
+		text_show(10609);
 	else if (player_said_2(open, main_airlock))
-		_vm->_dialogs->show(10610);
+		text_show(10610);
 	else if (player_said_2(close, main_airlock))
-		_vm->_dialogs->show(10611);
+		text_show(10611);
 	else if (player_said_2(look, sea_cliff))
-		_vm->_dialogs->show(10612);
+		text_show(10612);
 	else if (player_said_2(look, ocean_floor))
-		_vm->_dialogs->show(10613);
+		text_show(10613);
 	else
 		return;
 
@@ -255,7 +255,7 @@ void room_106_preload() {
 	if ((_scene->_priorSceneId == 102) && !_game._objects.isInInventory(OBJ_REBREATHER) && !_scene->_roomChanged)
 		*player.series_name = '\0';
 
-	_vm->_dialogs->_defaultPosition.y = 100;
+	text_default_y = 100;
 
 }
 

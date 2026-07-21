@@ -50,7 +50,7 @@ static void room_413_init() {
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		if (_globals[kSexOfRex] == REX_MALE) {
 			_scene->loadAnimation(Resources::formatName(413, 'd', 1, EXT_AA, ""), 78);
-			_vm->_sound->command(30);
+			g_engine->_soundManager->command(30, 0);
 			_game._player._visible = false;
 			_game._player._stepEnabled = false;
 			local._rexDeath = true;
@@ -65,7 +65,7 @@ static void room_413_init() {
 	if ((_globals[kTeleporterCommand]) && (!local._rexDeath)) {
 		switch (_globals[kTeleporterCommand]) {
 		case 1:
-			_vm->_sound->command(30);
+			g_engine->_soundManager->command(30, 0);
 			_game._player._visible = false;
 			_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 7, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 19);
@@ -75,7 +75,7 @@ static void room_413_init() {
 
 		case 2:
 			_game._player._visible = false;
-			_vm->_sound->command(30);
+			g_engine->_soundManager->command(30, 0);
 			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 7, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 20);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
@@ -106,7 +106,7 @@ static void room_413_daemon() {
 		_scene->_animation[0]->setCurrentFrame(37);
 
 	if (_scene->_animation[0] && _scene->_animation[0]->getCurrentFrame() == 21 && local._canMove) {
-		_vm->_sound->command(27);
+		g_engine->_soundManager->command(27, 0);
 		local._canMove = false;
 	}
 
@@ -150,27 +150,27 @@ static void room_413_parser() {
 	} else if (player_said_2(walk_into, corridor_to_south))
 		_scene->_nextSceneId = 405;
 	else if (player_said_2(look, wooden_statue))
-		_vm->_dialogs->show(41310);
+		text_show(41310);
 	else if (player_said_2(take, wooden_statue))
-		_vm->_dialogs->show(41311);
+		text_show(41311);
 	else if (player_said_2(look, conveyor_belt))
-		_vm->_dialogs->show(41312);
+		text_show(41312);
 	else if (player_said_2(put, conveyor_belt))
-		_vm->_dialogs->show(41313);
+		text_show(41313);
 	else if (player_said_2(look, teleporter))
-		_vm->_dialogs->show(41314);
+		text_show(41314);
 	else if (player_said_2(look, display))
-		_vm->_dialogs->show(41315);
+		text_show(41315);
 	else if (player_said_2(look, corridor_to_south))
-		_vm->_dialogs->show(41316);
+		text_show(41316);
 	else if (player_said_2(look, picture))
-		_vm->_dialogs->show(41317);
+		text_show(41317);
 	else if (player_said_2(look, plant))
-		_vm->_dialogs->show(41318);
+		text_show(41318);
 	else if (player_said_2(take, plant))
-		_vm->_dialogs->show(41319);
+		text_show(41319);
 	else if (_action._lookFlag)
-		_vm->_dialogs->show(41320);
+		text_show(41320);
 	else
 		return;
 

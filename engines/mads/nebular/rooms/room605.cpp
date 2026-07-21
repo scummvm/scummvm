@@ -51,16 +51,16 @@ static void room_605_init() {
 	_scene->_sequences.addTimer(600, 70);
 	_scene->_userInterface.setup(kInputLimitedSentences);
 	section_6_music();
-	_vm->_sound->command(22);
+	g_engine->_soundManager->command(22, 0);
 }
 
 static void room_605_daemon() {
 	if (_game._trigger == 70) {
-		_vm->_sound->command(23);
+		g_engine->_soundManager->command(23, 0);
 		if (_globals[kResurrectRoom] >= 700)
-			_vm->_dialogs->show(60598);
+			text_show(60598);
 		else
-			_vm->_dialogs->show(60599);
+			text_show(60599);
 
 		_scene->_nextSceneId = _globals[kResurrectRoom];
 	}

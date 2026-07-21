@@ -341,32 +341,32 @@ static void room_411_init() {
 	} else if (!_game._objects[OBJ_CHARGE_CASES].getQuality(3)) {
 		switch (_globals[kNextIngredient]) {
 		case 1:
-			_vm->_sound->command(53);
+			g_engine->_soundManager->command(53, 0);
 			break;
 
 		case 2:
-			_vm->_sound->command(53);
-			_vm->_sound->command(54);
+			g_engine->_soundManager->command(53, 0);
+			g_engine->_soundManager->command(54, 0);
 			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 15, 0, 0, 0);
 			break;
 
 		case 3:
-			_vm->_sound->command(53);
-			_vm->_sound->command(54);
-			_vm->_sound->command(55);
+			g_engine->_soundManager->command(53, 0);
+			g_engine->_soundManager->command(54, 0);
+			g_engine->_soundManager->command(55, 0);
 			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6, 0, 0, 0);
 			break;
 
 		case 4:
-			_vm->_sound->command(53);
-			_vm->_sound->command(54);
-			_vm->_sound->command(55);
-			_vm->_sound->command(56);
+			g_engine->_soundManager->command(53, 0);
+			g_engine->_soundManager->command(54, 0);
+			g_engine->_soundManager->command(55, 0);
+			g_engine->_soundManager->command(56, 0);
 			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6, 0, 0, 0);
 			break;
 
 		default:
-			_vm->_sound->command(10);
+			g_engine->_soundManager->command(10, 0);
 			break;
 		}
 	}
@@ -443,19 +443,19 @@ static void room_411_daemon() {
 					_game._objects.removeFromInventory(local._newIngredient, NOWHERE);
 					switch (_globals[kNextIngredient]) {
 					case 1:
-						_vm->_sound->command(53);
+						g_engine->_soundManager->command(53, 0);
 						break;
 
 					case 2:
-						_vm->_sound->command(54);
+						g_engine->_soundManager->command(54, 0);
 						break;
 
 					case 3:
-						_vm->_sound->command(55);
+						g_engine->_soundManager->command(55, 0);
 						break;
 
 					case 4:
-						_vm->_sound->command(56);
+						g_engine->_soundManager->command(56, 0);
 						break;
 
 					default:
@@ -497,7 +497,7 @@ static void room_411_daemon() {
 	}
 
 	if (_scene->_animation[0]->getCurrentFrame() == 86)
-		_vm->_sound->command(59);
+		g_engine->_soundManager->command(59, 0);
 }
 
 static void room_411_pre_parser() {
@@ -528,7 +528,7 @@ static void room_411_parser() {
 
 	if (player_said_2(walk_into, corridor_to_south)) {
 		_scene->_nextSceneId = 406;
-		_vm->_sound->command(10);
+		g_engine->_soundManager->command(10, 0);
 		_action._inProgress = false;
 		return;
 	}
@@ -538,8 +538,8 @@ static void room_411_parser() {
 		&& _game._objects.isInInventory(OBJ_CHARGE_CASES)) {
 		switch (_game._trigger) {
 		case 0:
-			_vm->_sound->command(10);
-			_vm->_sound->command(57);
+			g_engine->_soundManager->command(10, 0);
+			g_engine->_soundManager->command(57, 0);
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
 			_globals._sequenceIndexes[10] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[10], false, 8, 1, 0, 0);
@@ -577,7 +577,7 @@ static void room_411_parser() {
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
 			_game._objects[OBJ_CHARGE_CASES].setQuality(3, 1);
-			_vm->_dialogs->showItem(OBJ_CHARGE_CASES, 41142);
+			object_examine(OBJ_CHARGE_CASES, 41142, 0);
 			break;
 
 		default:
@@ -586,7 +586,7 @@ static void room_411_parser() {
 		_action._inProgress = false;
 		return;
 	} else if (!_game._objects.isInInventory(OBJ_CHARGE_CASES) && player_said_2(take, explosives)) {
-		_vm->_dialogs->show(41143);
+		text_show(41143);
 		_action._inProgress = false;
 		return;
 	}
@@ -594,7 +594,7 @@ static void room_411_parser() {
 	if (player_said_2(take, petrox) && (_game._objects.isInRoom(OBJ_PETROX) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
-			_vm->_sound->command(57);
+			g_engine->_soundManager->command(57, 0);
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
 			_globals._sequenceIndexes[8] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[8], false, 7, 2, 0, 0);
@@ -607,7 +607,7 @@ static void room_411_parser() {
 		case 1:
 			_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 			_game._objects.addToInventory(OBJ_PETROX);
-			_vm->_dialogs->showItem(OBJ_PETROX, 41120);
+			object_examine(OBJ_PETROX, 41120, 0);
 			break;
 
 		case 2:
@@ -631,7 +631,7 @@ static void room_411_parser() {
 	if (player_said_2(take, lecithin) && (_game._objects.isInRoom(OBJ_LECITHIN) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
-			_vm->_sound->command(57);
+			g_engine->_soundManager->command(57, 0);
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
 			_globals._sequenceIndexes[8] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[8], false, 7, 2, 0, 0);
@@ -644,7 +644,7 @@ static void room_411_parser() {
 		case 1:
 			_scene->_sequences.remove(_globals._sequenceIndexes[6]);
 			_game._objects.addToInventory(OBJ_LECITHIN);
-			_vm->_dialogs->showItem(OBJ_LECITHIN, 41124);
+			object_examine(OBJ_LECITHIN, 41124, 0);
 			break;
 
 		case 2:
@@ -665,7 +665,7 @@ static void room_411_parser() {
 	}
 
 	if (player_said_2(take, formaldehyde) && _game._objects.isInRoom(OBJ_FORMALDEHYDE) && (_game._trigger == 0)) {
-		_vm->_sound->command(57);
+		g_engine->_soundManager->command(57, 0);
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_globals._sequenceIndexes[11] = _scene->_sequences.startCycle(_globals._spriteIndexes[11], false, 2);
@@ -686,7 +686,7 @@ static void room_411_parser() {
 	}
 
 	if (_game._trigger == 10)
-		_vm->_dialogs->showItem(OBJ_FORMALDEHYDE, 41124);
+		object_examine(OBJ_FORMALDEHYDE, 41124, 0);
 
 	if (player_said_1(put) && player_said_1(kettle)) {
 		if (player_said_1(petrox) ||
@@ -719,67 +719,67 @@ static void room_411_parser() {
 
 
 	if (player_said_2(look, monitor))
-		_vm->_dialogs->show(41110);
+		text_show(41110);
 	else if (player_said_2(look, air_purifier))
-		_vm->_dialogs->show(41111);
+		text_show(41111);
 	else if (player_said_2(look, lab_equipment))
-		_vm->_dialogs->show(41112);
+		text_show(41112);
 	else if (player_said_2(look, knife_switch))
-		_vm->_dialogs->show(41113);
+		text_show(41113);
 	else if (player_said_2(push, knife_switch) || player_said_2(pull, knife_switch))
-		_vm->_dialogs->show(41114);
+		text_show(41114);
 	else if (player_said_2(look, toxic_waste))
-		_vm->_dialogs->show(41115);
+		text_show(41115);
 	else if (player_said_2(take, toxic_waste))
-		_vm->_dialogs->show(41116);
+		text_show(41116);
 	else if (player_said_2(look, drawing_board))
-		_vm->_dialogs->show(41117);
+		text_show(41117);
 	else if (player_said_2(look, experiment))
-		_vm->_dialogs->show(41118);
+		text_show(41118);
 	else if (player_said_2(look, petrox) && _game._objects.isInRoom(OBJ_PETROX))
-		_vm->_dialogs->show(41119);
+		text_show(41119);
 	else if (player_said_2(look, alcove))
-		_vm->_dialogs->show(41121);
+		text_show(41121);
 	else if ((player_said_2(look, formaldehyde)) && (_game._objects.isInRoom(OBJ_FORMALDEHYDE)))
-		_vm->_dialogs->show(41122);
+		text_show(41122);
 	else if ((player_said_2(look, lecithin)) && (_game._objects.isInRoom(OBJ_LECITHIN)))
-		_vm->_dialogs->show(41123);
+		text_show(41123);
 	else if (player_said_2(look, kettle)) {
 		if (_globals[kNextIngredient] > 0 && !_game._objects[OBJ_CHARGE_CASES].getQuality(3)) {
-			_vm->_dialogs->show(41126);
+			text_show(41126);
 		} else if (_globals[kNextIngredient] == 0 || _game._objects[OBJ_CHARGE_CASES].getQuality(3)) {
-			_vm->_dialogs->show(41125);
+			text_show(41125);
 		}
 	} else if (player_said_2(look, explosives) && _game._objects[OBJ_CHARGE_CASES].getQuality(3) == 0) {
-		_vm->_dialogs->show(41127);
+		text_show(41127);
 	} else if (player_said_2(take, kettle))
-		_vm->_dialogs->show(41128);
+		text_show(41128);
 	else if (player_said_2(look, control_panel))
-		_vm->_dialogs->show(41129);
+		text_show(41129);
 	else if (player_said_2(look, mishap))
-		_vm->_dialogs->show(41130);
+		text_show(41130);
 	else if (player_said_2(look, corridor_to_south))
-		_vm->_dialogs->show(41131);
+		text_show(41131);
 	else if (_action._lookFlag)
-		_vm->_dialogs->show(41132);
+		text_show(41132);
 	else if (player_said_2(look, air_horn))
-		_vm->_dialogs->show(41133);
+		text_show(41133);
 	else if (player_said_2(look, debris))
-		_vm->_dialogs->show(41134);
+		text_show(41134);
 	else if (player_said_2(look, heater))
-		_vm->_dialogs->show(41135);
+		text_show(41135);
 	else if (player_said_2(look, pipe))
-		_vm->_dialogs->show(41136);
+		text_show(41136);
 	else if (player_said_2(look, sink))
-		_vm->_dialogs->show(41137);
+		text_show(41137);
 	else if (player_said_2(put, sink))
-		_vm->_dialogs->show(41138);
+		text_show(41138);
 	else if (player_said_2(take, experiment))
-		_vm->_dialogs->show(41139);
+		text_show(41139);
 	else if (player_said_2(look, electrodes))
-		_vm->_dialogs->show(41140);
+		text_show(41140);
 	else if (player_said_2(take, electrodes))
-		_vm->_dialogs->show(41141);
+		text_show(41141);
 	else
 		return;
 

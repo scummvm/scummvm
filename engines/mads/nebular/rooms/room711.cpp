@@ -41,10 +41,10 @@ static void room_711_init() {
 	teleporter_init();
 
 	// The original was using Scene7xx_section_7_music()
-	if (!_vm->_musicFlag)
-		_vm->_sound->command(2);
+	if (!config_file.music_flag)
+		g_engine->_soundManager->command(2, 0);
 	else
-		_vm->_sound->command(25);
+		g_engine->_soundManager->command(25, 0);
 }
 
 static void room_711_daemon() {

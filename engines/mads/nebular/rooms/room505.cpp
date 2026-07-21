@@ -88,7 +88,7 @@ static void room_505_init() {
 	_scene->_animation[0]->setCurrentFrame(86);
 
 	section_5_music();
-	_vm->_sound->command(16);
+	g_engine->_soundManager->command(16, 0);
 }
 
 static void room_505_daemon() {
@@ -118,7 +118,7 @@ static void room_505_daemon() {
 		{
 			int this_button;
 			int old_select;
-			_vm->_sound->command(17);
+			g_engine->_soundManager->command(17, 0);
 			old_select = local._selectedId;
 			if (local._frame == 15) {
 				this_button = 0x38A;
@@ -131,7 +131,7 @@ static void room_505_daemon() {
 			} else {
 				this_button = 0x2DE;
 				if ((_globals[kTimebombStatus] == TIMEBOMB_ACTIVATED) && (local._carLocations[local._selectedId] == 501))
-					_vm->_dialogs->show(431);
+					text_show(431);
 				else if (local._selectedId != local._homeSelectedId) {
 					local._nextButtonId = 0;
 					local._activeCars = true;
@@ -141,7 +141,7 @@ static void room_505_daemon() {
 					_scene->_sequences.remove(_globals._sequenceIndexes[13]);
 					_globals._sequenceIndexes[13] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[13], false, 6, 1, 0, 0);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_EXPIRE, 0, 63);
-					_vm->_sound->command(18);
+					g_engine->_soundManager->command(18, 0);
 				}
 			}
 
@@ -284,9 +284,9 @@ static void room_505_parser() {
 	else if (player_said_2(return_to, inside_of_car))
 		_scene->_nextSceneId = 504;
 	else if (player_said_2(look, view_screen))
-		_vm->_dialogs->show(50510);
+		text_show(50510);
 	else if (player_said_2(look, control_panel))
-		_vm->_dialogs->show(50511);
+		text_show(50511);
 	else
 		return;
 

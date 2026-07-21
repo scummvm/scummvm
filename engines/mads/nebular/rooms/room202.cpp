@@ -167,7 +167,7 @@ static void room_202_init() {
 }
 
 static void setRandomKernelMessage() {
-	int vocabId = _vm->getRandomNumber(92, 96);
+	int vocabId = g_engine->getRandomNumber(92, 96);
 	_scene->_kernelMessages.reset();
 	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 	_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 70, 120, _game.getQuote(vocabId));
@@ -224,10 +224,10 @@ static int subStep4(int randVal) {
 }
 
 static void room_202_daemon() {
-	if (!local._activeMsgFl && (_game._player._playerPos == Common::Point(77, 105)) && (_game._player._facing == FACING_NORTH) && (_vm->getRandomNumber(999) == 0)) {
+	if (!local._activeMsgFl && (_game._player._playerPos == Common::Point(77, 105)) && (_game._player._facing == FACING_NORTH) && (g_engine->getRandomNumber(999) == 0)) {
 		_scene->_kernelMessages.reset();
 		local._activeMsgFl = false;
-		if (_vm->getRandomNumber(4) == 0)
+		if (g_engine->getRandomNumber(4) == 0)
 			setRandomKernelMessage();
 	}
 
@@ -235,8 +235,8 @@ static void room_202_daemon() {
 		local._activeMsgFl = false;
 
 	if (_game._trigger == 71) {
-		_vm->_sound->command(3);
-		_vm->_sound->command(9);
+		g_engine->_soundManager->command(3, 0);
+		g_engine->_soundManager->command(9, 0);
 
 		local._meteoClock1 = _scene->_frameStartTime + 15 * 60;
 
@@ -270,7 +270,7 @@ static void room_202_daemon() {
 
 	switch (_game._trigger) {
 	case 90:
-		_vm->_sound->command(41);
+		g_engine->_soundManager->command(41, 0);
 		_scene->_sequences.remove(_globals._sequenceIndexes[10]);
 		_globals._sequenceIndexes[9] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[9], true, 6, 1, 0, 0);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[9], Common::Point(247, 82));
@@ -315,14 +315,14 @@ static void room_202_daemon() {
 	}
 
 	if (!_scene->_animation[0] && (_globals[kMeteorologistStatus] != METEOROLOGIST_GONE) && (local._meteoClock2 <= _scene->_frameStartTime) && (local._meteoClock1 <= _scene->_frameStartTime)) {
-		int randVal = _vm->getRandomNumber(1, 500);
+		int randVal = g_engine->getRandomNumber(1, 500);
 		int threshold = 1;
 		if (local._ladderTopFl)
 			threshold += 25;
 		if (!_globals[kMeteorologistEverSeen])
 			threshold += 25;
 		if (threshold >= randVal) {
-			_vm->_sound->command(17);
+			g_engine->_soundManager->command(17, 0);
 			_scene->loadAnimation(formAnimName('M', -1), 71);
 			local._toStationFl = true;
 			local._toTeleportFl = false;
@@ -341,7 +341,7 @@ static void room_202_daemon() {
 			if ((_globals[kMeteorologistWatch] == METEOROLOGIST_TOWER) || _globals[kLadderBroken]) {
 				_scene->_nextSceneId = 213;
 			} else {
-				_vm->_dialogs->show(20201);
+				text_show(20201);
 				_scene->_reloadSceneFlag = true;
 			}
 		}
@@ -370,7 +370,7 @@ static void room_202_daemon() {
 	}
 
 	local._meteoFrame = _scene->_animation[0]->getCurrentFrame();
-	int randVal = _vm->getRandomNumber(1, 1000);
+	int randVal = g_engine->getRandomNumber(1, 1000);
 	int frameStep = -1;
 
 	switch (_scene->_animation[0]->getCurrentFrame()) {
@@ -420,14 +420,14 @@ static void room_202_daemon() {
 }
 
 static void room_202_pre_parser() {
-	auto &gplayer = _vm->_game->_player;
+	auto &gplayer = _game->_player;
 
 	if (gplayer._needToWalk)
 		_scene->_kernelMessages.reset();
 
 	if (local._ladderTopFl && (player_said_2(climb_down, ladder) || gplayer._needToWalk)) {
 		if (_game._trigger == 0) {
-			_vm->_sound->command(29);
+			g_engine->_soundManager->command(29, 0);
 			gplayer._readyToWalk = false;
 			gplayer._stepEnabled = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[9]);
@@ -457,7 +457,7 @@ static void room_202_pre_parser() {
 
 static void room_202_parser() {
 	if (_action._lookFlag) {
-		_vm->_dialogs->show(20219);
+		text_show(20219);
 		return;
 	}
 
@@ -478,7 +478,7 @@ static void room_202_parser() {
 		switch (_game._trigger) {
 		case 0:
 			if (_game._objects.isInInventory(OBJ_BONES)) {
-				_vm->_dialogs->show(20221);
+				text_show(20221);
 			} else {
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
@@ -501,10 +501,10 @@ static void room_202_parser() {
 			if (_game._objects.isInInventory(OBJ_BONE)) {
 				_game._objects.removeFromInventory(OBJ_BONE, NOWHERE);
 				_game._objects.addToInventory(OBJ_BONES);
-				_vm->_dialogs->showItem(OBJ_BONES, 20218);
+				object_examine(OBJ_BONES, 20218, 0);
 			} else {
 				_game._objects.addToInventory(OBJ_BONE);
-				_vm->_dialogs->showItem(OBJ_BONE, 20218);
+				object_examine(OBJ_BONE, 20218, 0);
 			}
 			_scene->changeVariant(_globals[kBone202Status]);
 			_game._player._stepEnabled = true;
@@ -518,7 +518,7 @@ static void room_202_parser() {
 	} else if (player_said_2(climb_up, ladder) && !_globals[kLadderBroken]) {
 		switch (_game._trigger) {
 		case 0:
-			_vm->_sound->command(29);
+			g_engine->_soundManager->command(29, 0);
 			local._meteoClock1 = _scene->_frameStartTime;
 			_game._player._visible = false;
 			_game._player._stepEnabled = false;
@@ -572,7 +572,7 @@ static void room_202_parser() {
 				break;
 			case 2:
 				if (!_scene->_animation[0] && !local._meteorologistSpecial) {
-					_vm->_dialogs->show(20222);
+					text_show(20222);
 				}
 				_scene->_sequences.remove(_globals._sequenceIndexes[10]);
 				_globals._sequenceIndexes[10] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[9], false, 6, 1, 0, 0);
@@ -626,7 +626,7 @@ static void room_202_parser() {
 				break;
 			case 2:
 				if (!_scene->_animation[0])
-					_vm->_dialogs->show(20222);
+					text_show(20222);
 				local._meteorologistSpecial = false;
 				_scene->_sequences.remove(_globals._sequenceIndexes[10]);
 				_globals._sequenceIndexes[9] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[9], false, 6, 1, 0, 0);
@@ -648,41 +648,41 @@ static void room_202_parser() {
 	} else if (player_said_2(walk_inside, hut)) {
 		setRandomKernelMessage();
 	} else if (player_said_2(look, rocks)) {
-		_vm->_dialogs->show(20202);
+		text_show(20202);
 	} else if (player_said_2(look, fire_pit)) {
-		_vm->_dialogs->show(20203);
+		text_show(20203);
 	} else if (player_said_2(look, grass)) {
-		_vm->_dialogs->show(20204);
+		text_show(20204);
 	} else if (player_said_2(look, field_to_north)) {
 		if ((_globals[kMeteorologistStatus] == METEOROLOGIST_ABSENT) || (_globals[kMeteorologistStatus] == METEOROLOGIST_GONE))
-			_vm->_dialogs->show(20205);
+			text_show(20205);
 		else if (_globals[kMeteorologistStatus] == METEOROLOGIST_PRESENT)
-			_vm->_dialogs->show(20220);
+			text_show(20220);
 	} else if (player_said_2(look, watch_tower)) {
-		_vm->_dialogs->show(20206);
+		text_show(20206);
 	} else if (player_said_2(look, tall_grass)) {
-		_vm->_dialogs->show(20207);
+		text_show(20207);
 	} else if (player_said_2(look, trees)) {
-		_vm->_dialogs->show(20208);
+		text_show(20208);
 	} else if (player_said_2(look, tree)) {
-		_vm->_dialogs->show(20209);
+		text_show(20209);
 	} else if (player_said_2(look, sky)) {
-		_vm->_dialogs->show(20210);
+		text_show(20210);
 	} else if (player_said_2(look, hut)) {
 		if ((_game._player._playerPos == Common::Point(77, 105)) && (_game._player._facing == FACING_NORTH))
-			_vm->_dialogs->show(20212);
+			text_show(20212);
 		else
-			_vm->_dialogs->show(20211);
+			text_show(20211);
 	} else if (player_said_2(look, strange_device)) {
-		_vm->_dialogs->show(20213);
+		text_show(20213);
 	} else if (player_said_2(look, ocean_in_distance)) {
-		_vm->_dialogs->show(20214);
+		text_show(20214);
 	} else if (player_said_2(look, skull)) {
-		_vm->_dialogs->show(20215);
+		text_show(20215);
 	} else if (player_said_2(take, skull)) {
-		_vm->_dialogs->show(20216);
+		text_show(20216);
 	} else if (player_said_2(look, bones) && _action._commandSource == 4) {
-		_vm->_dialogs->show(20217);
+		text_show(20217);
 	} else {
 		return;
 	}

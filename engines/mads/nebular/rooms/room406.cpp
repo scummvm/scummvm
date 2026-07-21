@@ -76,7 +76,7 @@ static void room_406_init() {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 3, 1, 0, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 90);
-		_vm->_sound->command(19);
+		g_engine->_soundManager->command(19, 0);
 	}
 
 	_game.loadQuoteSet(0x24F, 0);
@@ -94,7 +94,7 @@ static void room_406_daemon() {
 		_scene->_nextSceneId = 411;
 
 	if (_game._trigger == 100) {
-		_vm->_dialogs->show(40622);
+		text_show(40622);
 		local._hitStorageDoor = true;
 	}
 
@@ -106,7 +106,7 @@ static void room_406_daemon() {
 
 	if (_game._trigger == 111) {
 		_game._player._stepEnabled = true;
-		_vm->_dialogs->show(40613);
+		text_show(40613);
 	}
 
 	if (_game._trigger == 70) {
@@ -114,7 +114,7 @@ static void room_406_daemon() {
 		_game._player._visible = true;
 		_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 4, 1, 0, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
-		_vm->_sound->command(19);
+		g_engine->_soundManager->command(19, 0);
 	}
 
 	if (_game._trigger == 71) {
@@ -130,7 +130,7 @@ static void room_406_daemon() {
 		_game._player._stepEnabled = true;
 		_game._player._priorTimer = _scene->_frameStartTime + _game._player._ticksAmount;
 		_game._player._visible = true;
-		_vm->_sound->command(19);
+		g_engine->_soundManager->command(19, 0);
 	}
 }
 
@@ -155,7 +155,7 @@ static void room_406_parser() {
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 3, 1, 0, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
-		_vm->_sound->command(19);
+		g_engine->_soundManager->command(19, 0);
 	} else if (player_said_2(walk_through, door) && _globals[kStorageDoorOpen] && (_game._player._targetPos.x < 100))
 		_scene->_nextSceneId = 410;
 	else if (player_said_2(walk_through, door) && !_globals[kStorageDoorOpen] && (_game._player._targetPos.x < 100)) {
@@ -194,42 +194,42 @@ static void room_406_parser() {
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[2], _game._player._playerPos);
 		_scene->_sequences.setScale(_globals._sequenceIndexes[2], 87);
 	} else if (player_said_2(look, trash))
-		_vm->_dialogs->show(40610);
+		text_show(40610);
 	else if (player_said_2(take, trash))
-		_vm->_dialogs->show(40611);
+		text_show(40611);
 	else if (player_said_2(look, card_slot))
-		_vm->_dialogs->show(40612);
+		text_show(40612);
 	else if (player_said_2(look, fire_extinguisher))
-		_vm->_dialogs->show(40614);
+		text_show(40614);
 	else if (player_said_2(take, fire_extinguisher))
-		_vm->_dialogs->show(40615);
+		text_show(40615);
 	else if (player_said_2(look, corridor_to_east))
-		_vm->_dialogs->show(40616);
+		text_show(40616);
 	else if (player_said_2(look, corridor_to_west))
-		_vm->_dialogs->show(40617);
+		text_show(40617);
 	else if (player_said_2(look, corridor) || _action._lookFlag)
-		_vm->_dialogs->show(40618);
+		text_show(40618);
 	else if (player_said_2(look, wall))
-		_vm->_dialogs->show(40619);
+		text_show(40619);
 	else if (player_said_2(look, door)) {
 		if (_globals[kStorageDoorOpen])
-			_vm->_dialogs->show(40621);
+			text_show(40621);
 		else
-			_vm->_dialogs->show(40620);
+			text_show(40620);
 	} else if (player_said_2(look, monitor))
-		_vm->_dialogs->show(40623);
+		text_show(40623);
 	else if (player_said_2(look, signpost))
-		_vm->_dialogs->show(40624);
+		text_show(40624);
 	else if (player_said_2(take, signpost))
-		_vm->_dialogs->show(40625);
+		text_show(40625);
 	else if (player_said_2(look, boulder))
-		_vm->_dialogs->show(40626);
+		text_show(40626);
 	else if (player_said_2(take, boulder))
-		_vm->_dialogs->show(40627);
+		text_show(40627);
 	else if (player_said_2(look, sign))
-		_vm->_dialogs->show(40628);
+		text_show(40628);
 	else if (player_said_2(take, sign))
-		_vm->_dialogs->show(40629);
+		text_show(40629);
 	else
 		return;
 

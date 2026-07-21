@@ -21,6 +21,7 @@
 
 #include "mads/core/game.h"
 #include "mads/core/himem.h"
+#include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
@@ -99,8 +100,8 @@ static void room_109_init() {
 		_game._objects.addToInventory(OBJ_STUFFED_FISH);
 	}
 
-	_vm->_palette->setEntry(252, 50, 50, 63);
-	_vm->_palette->setEntry(253, 30, 30, 50);
+	pal_change_color(252, 50, 50, 63);
+	pal_change_color(253, 30, 30, 50);
 
 	_game.loadQuoteSet(0x53, 0x52, 0x54, 0x55, 0x56, 0x57, 0x58, 0);
 	local._eatingFirstFish = (!_game._visitedScenes._sceneRevisited) && (_scene->_priorSceneId < 110);
@@ -130,7 +131,7 @@ static void room_109_daemon() {
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 
 				local._eatingRex = true;
-				_vm->_sound->command(34);
+				g_engine->_soundManager->command(34, 0);
 			}
 		} else {
 			switch (_game._trigger) {
@@ -155,7 +156,7 @@ static void room_109_daemon() {
 		local._beforeEatingRex = true;
 		_scene->_sprites.remove(_globals._spriteIndexes[6]);
 		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('H', 0));
-		_vm->_palette->refreshSceneColors();
+		kernel_new_palette();
 	}
 
 	if (_game._player._moving && (_scene->_rails.getNext() > 0) && _globals[kHoovicAlive] && !_globals[kHoovicSated] && !local._hungryFl && !local._beforeEatingRex) {
@@ -173,7 +174,7 @@ static void room_109_daemon() {
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[10], _globals._sequenceIndexes[9]);
 		local._eatingFirstFish = false;
 		_game._player._stepEnabled = true;
-		_vm->_sound->command(34);
+		g_engine->_soundManager->command(34, 0);
 	}
 
 	if (_game._trigger == 72)
@@ -187,7 +188,7 @@ static void room_109_daemon() {
 		_scene->_spriteSlots.clear();
 		_scene->_spriteSlots.fullRefresh();
 
-		int randVal = _vm->getRandomNumber(85, 88);
+		int randVal = g_engine->getRandomNumber(85, 88);
 		int idx = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(randVal));
 		_scene->_kernelMessages.setQuoted(idx, 4, true);
 		_scene->_kernelMessages._entries[idx]._frameTimer = _scene->_frameStartTime + 4;
@@ -219,7 +220,7 @@ static void room_109_pre_parser() {
 
 static void room_109_parser() {
 	if (_action._lookFlag) {
-		_vm->_dialogs->show(10912);
+		text_show(10912);
 		_action._inProgress = false;
 		return;
 	}
@@ -255,7 +256,7 @@ static void room_109_parser() {
 							break;
 						}
 
-						_vm->_palette->refreshSceneColors();
+						kernel_new_palette();
 						break;
 
 					case 1:
@@ -296,12 +297,12 @@ static void room_109_parser() {
 
 						_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 4);
 						_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_EXPIRE, 0, local._hoovicTrigger);
-						_vm->_sound->command(34);
+						g_engine->_soundManager->command(34, 0);
 						break;
 
 					case 3:
 						_scene->loadAnimation(Resources::formatName(109, 'H', 2, EXT_AA, ""), 4);
-						_vm->_sound->command(35);
+						g_engine->_soundManager->command(35, 0);
 						_globals[kHoovicAlive] = false;
 						break;
 
@@ -334,7 +335,7 @@ static void room_109_parser() {
 								}
 
 								if (_globals[kHoovicFishEaten] >= threshold) {
-									int randVal = _vm->getRandomNumber(83, 84);
+									int randVal = g_engine->getRandomNumber(83, 84);
 									_scene->_kernelMessages.add(Common::Point(230, 24), 0xFDFC, 0, 0, 120, _game.getQuote(randVal));
 									_globals[kHoovicFishEaten] = 0;
 									_globals[kHoovicSated] = 1;
@@ -385,7 +386,7 @@ static void room_109_parser() {
 						_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
 						int idx = _scene->_dynamicHotspots.add(words_burger, words_swim_to, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 						_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
-						_vm->_dialogs->show(10915);
+						text_show(10915);
 					}
 					break;
 
@@ -410,30 +411,30 @@ static void room_109_parser() {
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_game._objects.addToInventory(OBJ_BURGER);
 	} else if (player_said_2(look, ocean_floor))
-		_vm->_dialogs->show(10901);
+		text_show(10901);
 	else if (player_said_2(look, coral))
-		_vm->_dialogs->show(10902);
+		text_show(10902);
 	else if ((player_said_1(take) || player_said_1(pull)) && player_said_1(coral))
-		_vm->_dialogs->show(10903);
+		text_show(10903);
 	else if (player_said_2(look, rocks))
-		_vm->_dialogs->show(10904);
+		text_show(10904);
 	else if (player_said_2(take, rocks))
-		_vm->_dialogs->show(10905);
+		text_show(10905);
 	else if (player_said_2(look, cave_wall))
-		_vm->_dialogs->show(10906);
+		text_show(10906);
 	else if (player_said_2(look, tunnel)) {
 		if (_globals[kHoovicAlive])
-			_vm->_dialogs->show(10907);
+			text_show(10907);
 		else
-			_vm->_dialogs->show(10913);
+			text_show(10913);
 	} else if (player_said_2(look, small_hole))
-		_vm->_dialogs->show(10908);
+		text_show(10908);
 	else if (player_said_2(look, overhang_to_west))
-		_vm->_dialogs->show(10911);
+		text_show(10911);
 	else if (player_said_2(put, small_hole))
-		_vm->_dialogs->show(10910);
+		text_show(10910);
 	else if (player_said_2(look, dead_purple_monster))
-		_vm->_dialogs->show(10914);
+		text_show(10914);
 	else
 		return;
 

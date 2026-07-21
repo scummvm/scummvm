@@ -293,7 +293,7 @@ static void room_316_init() {
 		_game._player._facing = FACING_SOUTH;
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
-		_vm->_sound->command(44);
+		g_engine->_soundManager->command(44, 0);
 		int spriteIdx = (_globals[kSexOfRex] == REX_MALE) ? 1 : 2;
 		_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[spriteIdx], false, 6, 1, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 2);
@@ -401,9 +401,9 @@ static void room_316_parser() {
 		switch (_game._trigger) {
 		case 0:
 			if (_globals[kCityFlooded]) {
-				_vm->_dialogs->show(31623);
+				text_show(31623);
 			} else {
-				_vm->_sound->command(45);
+				g_engine->_soundManager->command(45, 0);
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
 				if (_globals[kSexOfRex] == REX_MALE) {
@@ -452,35 +452,35 @@ static void room_316_parser() {
 			break;
 		}
 	} else if (player_said_2(look, platform))
-		_vm->_dialogs->show(31610);
+		text_show(31610);
 	else if (player_said_2(look, strange_device)) {
 		if (_game._visitedScenes.exists(321))
-			_vm->_dialogs->show(31612);
+			text_show(31612);
 		else
-			_vm->_dialogs->show(31611);
+			text_show(31611);
 	} else if (player_said_2(look, controls))
-		_vm->_dialogs->show(31613);
+		text_show(31613);
 	else if (player_said_2(look, equipment))
-		_vm->_dialogs->show(31614);
+		text_show(31614);
 	else if (player_said_2(look, panel))
-		_vm->_dialogs->show(31615);
+		text_show(31615);
 	else if (player_said_2(look, monitor))
-		_vm->_dialogs->show(31616);
+		text_show(31616);
 	else if (player_said_2(look, ramp))
-		_vm->_dialogs->show(31617);
+		text_show(31617);
 	else if (player_said_2(look, air_vent))
-		_vm->_dialogs->show(31618);
+		text_show(31618);
 	else if (player_said_2(look, corridor_to_east)) {
 		if (!_globals[kAfterHavoc]) {
 			if (_game._difficulty != DIFFICULTY_EASY)
-				_vm->_dialogs->show(31620);
+				text_show(31620);
 			else
-				_vm->_dialogs->show(31619);
+				text_show(31619);
 		}
 	} else if (player_said_2(look, floor))
-		_vm->_dialogs->show(31621);
+		text_show(31621);
 	else if (player_said_2(look, support))
-		_vm->_dialogs->show(31622);
+		text_show(31622);
 	else
 		return;
 

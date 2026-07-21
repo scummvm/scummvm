@@ -95,8 +95,8 @@ static void room_808_parser() {
 				_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
 				local._goingTo803 = true;
-				_vm->_sound->command(20);
-				_vm->_sound->command(25);
+				g_engine->_soundManager->command(20, 0);
+				g_engine->_soundManager->command(25, 0);
 			}
 			_globals._sequenceIndexes[4] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(248, 211));
@@ -130,7 +130,7 @@ static void room_808_parser() {
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 				_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 8);
-				_vm->_sound->command(20);
+				g_engine->_soundManager->command(20, 0);
 			}
 			_globals[kTopButtonPushed] = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
@@ -161,7 +161,7 @@ static void room_808_parser() {
 				_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 				_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
-				_vm->_sound->command(20);
+				g_engine->_soundManager->command(20, 0);
 			}
 			_globals[kTopButtonPushed] = true;
 			_globals._sequenceIndexes[4] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);

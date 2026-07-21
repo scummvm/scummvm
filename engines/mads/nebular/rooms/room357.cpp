@@ -58,33 +58,33 @@ static void room_357_pre_parser() {
 
 static void room_357_parser() {
 	if (_action._lookFlag)
-		_vm->_dialogs->show(35715);
+		text_show(35715);
 	else if (player_said_2(look, air_vent))
-		_vm->_dialogs->show(35710);
+		text_show(35710);
 	else if (player_said_2(climb_into, air_vent))
-		_vm->_dialogs->show(35711);
+		text_show(35711);
 	else if (player_said_2(look, bed))
-		_vm->_dialogs->show(35712);
+		text_show(35712);
 	else if (player_said_2(look, sink))
-		_vm->_dialogs->show(35713);
+		text_show(35713);
 	else if (player_said_2(look, toilet))
-		_vm->_dialogs->show(35714);
+		text_show(35714);
 	else if (player_said_2(look, cell_wall))
-		_vm->_dialogs->show(35716);
+		text_show(35716);
 	else if (player_said_2(look, light))
-		_vm->_dialogs->show(35717);
+		text_show(35717);
 	else if (player_said_2(look, rip_in_floor))
-		_vm->_dialogs->show(35718);
+		text_show(35718);
 	else if (player_said_2(look, debris))
-		_vm->_dialogs->show(35719);
+		text_show(35719);
 	else if (player_said_2(take, debris))
-		_vm->_dialogs->show(35720);
+		text_show(35720);
 	else if (player_said_2(look, wall))
-		_vm->_dialogs->show(35721);
+		text_show(35721);
 	else if (player_said_2(look, corridor_to_east))
-		_vm->_dialogs->show(35722);
+		text_show(35722);
 	else if (player_said_2(look, corridor_to_west))
-		_vm->_dialogs->show(35723);
+		text_show(35723);
 	else
 		return;
 

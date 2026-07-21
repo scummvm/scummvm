@@ -20,6 +20,7 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
@@ -61,7 +62,7 @@ static void room_211_init() {
 		_game._player._facing = FACING_SOUTHWEST;
 	}
 
-	if (_vm->getRandomNumber(1, 8) == 1) {
+	if (g_engine->getRandomNumber(1, 8) == 1) {
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(202, 126));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 8);
@@ -72,8 +73,8 @@ static void room_211_init() {
 	if (_scene->_roomChanged)
 		_game._objects.addToInventory(OBJ_BINOCULARS);
 
-	_vm->_palette->setEntry(252, 63, 44, 30);
-	_vm->_palette->setEntry(253, 63, 20, 22);
+	pal_change_color(252, 63, 44, 30);
+	pal_change_color(253, 63, 20, 22);
 	_game.loadQuoteSet(0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0x97, 0x98, 0x99, 0x9A, 0x9B, 0x9C, 0x9D, 0x9E, 1, 0);
 
 	if (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY)
@@ -81,7 +82,7 @@ static void room_211_init() {
 			Common::Rect(0, 0, 54, 30), 13, 2, 0xFDFC, 60,
 			151, 152, 153, 154, 0);
 
-	local._monkeyTime = _vm->_game->_scene._frameStartTime;
+	local._monkeyTime = _game->_scene._frameStartTime;
 	local._scrollY = 30;
 
 	local._ambushFl = false;
@@ -94,12 +95,12 @@ static void room_211_daemon() {
 	if (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY) {
 		_scene->_kernelMessages.randomServer();
 
-		if (!local._ambushFl && !local._wakeFl && (_vm->_game->_scene._frameStartTime >= local._monkeyTime)) {
+		if (!local._ambushFl && !local._wakeFl && (_game->_scene._frameStartTime >= local._monkeyTime)) {
 			int chanceMinor = _scene->_kernelMessages.checkRandom() * 4 + 1;
 			if (_scene->_kernelMessages.generateRandom(80, chanceMinor))
-				_vm->_sound->command(18);
+				g_engine->_soundManager->command(18, 0);
 
-			local._monkeyTime = _vm->_game->_scene._frameStartTime + 2;
+			local._monkeyTime = _game->_scene._frameStartTime + 2;
 		}
 
 		if ((_game._player._playerPos == Common::Point(52, 132)) && (_game._player._facing == FACING_WEST) && !_game._player._moving &&
@@ -113,7 +114,7 @@ static void room_211_daemon() {
 					_game._player._visible = false;
 					_scene->_kernelMessages.reset();
 					_scene->loadAnimation(formAnimName('A', -1), 90);
-					_vm->_sound->command(19);
+					g_engine->_soundManager->command(19, 0);
 					int count = (int)_game._objects._inventoryList.size();
 					for (int idx = 0; idx < count; idx++) {
 						if ((_game._objects._inventoryList[idx] == OBJ_BINOCULARS) && (_scene->_userInterface._selectedInvIndex != idx))
@@ -123,7 +124,7 @@ static void room_211_daemon() {
 				break;
 
 			case 90:
-				_vm->_sound->command(10);
+				g_engine->_soundManager->command(10, 0);
 				_game._player._stepEnabled = true;
 				_game._player._visible = true;
 				_game._player._playerPos = Common::Point(49, 133);
@@ -281,39 +282,39 @@ static void room_211_pre_parser() {
 
 static void room_211_parser() {
 	if (_action._lookFlag && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY))
-		_vm->_dialogs->show(21111);
+		text_show(21111);
 	else if (player_said_3(look, binoculars, palm_tree))
-		_vm->_dialogs->show(21116);
+		text_show(21116);
 	else if (player_said_2(look, bushy_fern))
-		_vm->_dialogs->show(21101);
+		text_show(21101);
 	else if (player_said_2(look, jungle_path))
-		_vm->_dialogs->show(21102);
+		text_show(21102);
 	else if (player_said_2(look, palm_tree)) {
 		if (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY) {
 			if (_game._storyMode == STORYMODE_NAUGHTY)
-				_vm->_dialogs->show(21103);
+				text_show(21103);
 			else
-				_vm->_dialogs->show(21104);
+				text_show(21104);
 		} else {
-			_vm->_dialogs->show(21105);
+			text_show(21105);
 		}
 	} else if (player_said_2(look, thick_undergrowth)) {
 		if (_game._storyMode == STORYMODE_NAUGHTY)
-			_vm->_dialogs->show(21106);
+			text_show(21106);
 		else
-			_vm->_dialogs->show(21107);
+			text_show(21107);
 	} else if (player_said_2(look, jungle))
-		_vm->_dialogs->show(21108);
+		text_show(21108);
 	else if (player_said_2(look, path_to_northeast))
-		_vm->_dialogs->show(21109);
+		text_show(21109);
 	else if (player_said_2(look, path_to_west))
-		_vm->_dialogs->show(21110);
+		text_show(21110);
 	else if (player_said_2(look, slithering_snake))
-		_vm->_dialogs->show(21113);
+		text_show(21113);
 	else if (player_said_2(take, slithering_snake))
-		_vm->_dialogs->show(21114);
+		text_show(21114);
 	else if (player_said_2(look, rocks))
-		_vm->_dialogs->show(21115);
+		text_show(21115);
 	else
 		return;
 

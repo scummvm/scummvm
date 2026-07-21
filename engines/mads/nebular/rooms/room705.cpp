@@ -132,7 +132,7 @@ static void room_705_init() {
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._stepEnabled = false;
 		_scene->_sequences.addTimer(1, 80);
-		_vm->_sound->command(28);
+		g_engine->_soundManager->command(28, 0);
 	} else
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 
@@ -174,7 +174,7 @@ static void room_705_daemon() {
 
 	case 81:
 	{
-		_vm->_sound->command(19);
+		g_engine->_soundManager->command(19, 0);
 		int syncIdx = _globals._sequenceIndexes[1];
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
@@ -195,23 +195,23 @@ static void room_705_daemon() {
 	case 91:
 		switch (_globals[kBottleStatus]) {
 		case 0:
-			_vm->_dialogs->show(432);
+			text_show(432);
 			break;
 
 		case 1:
-			_vm->_dialogs->show(70324);
+			text_show(70324);
 			break;
 
 		case 2:
-			_vm->_dialogs->show(70325);
+			text_show(70325);
 			break;
 
 		case 3:
-			_vm->_dialogs->show(70326);
+			text_show(70326);
 			break;
 
 		case 4:
-			_vm->_dialogs->show(70327);
+			text_show(70327);
 			break;
 
 		default:
@@ -236,7 +236,7 @@ static void room_705_parser() {
 			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 2);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
-			_vm->_sound->command(18);
+			g_engine->_soundManager->command(18, 0);
 			break;
 
 		case 1:
@@ -281,19 +281,19 @@ static void room_705_parser() {
 			handleBottleInterface();
 			local._dialog1.start();
 		} else
-			_vm->_dialogs->show(70323);
+			text_show(70323);
 	} else if (_action._lookFlag || player_said_2(look, water))
-		_vm->_dialogs->show(70511);
+		text_show(70511);
 	else if (player_said_2(look, volcano_rim))
-		_vm->_dialogs->show(70512);
+		text_show(70512);
 	else if (player_said_2(look, open_water_to_south))
-		_vm->_dialogs->show(70513);
+		text_show(70513);
 	else if (player_said_2(look, sky))
-		_vm->_dialogs->show(70514);
+		text_show(70514);
 	else if (player_said_2(look, building))
-		_vm->_dialogs->show(70515);
+		text_show(70515);
 	else if (player_said_2(look, window))
-		_vm->_dialogs->show(70516);
+		text_show(70516);
 	else
 		return;
 

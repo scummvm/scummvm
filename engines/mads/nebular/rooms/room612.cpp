@@ -57,13 +57,13 @@ static void handleWinchMovement() {
 		if (local._actionMode == 1) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 17, 7, 0, 0);
-			_vm->_sound->command(19);
+			g_engine->_soundManager->command(19, 0);
 			_game._objects.setRoom(OBJ_PADLOCK_KEY, 1);
 			_globals[kBoatRaised] = false;
 		} else {
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 17, 9, 0, 0);
-			_vm->_sound->command(18);
+			g_engine->_soundManager->command(18, 0);
 		}
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
@@ -84,7 +84,7 @@ static void handleWinchMovement() {
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x2F4));
 		_game._player._stepEnabled = true;
 
-		_vm->_dialogs->show(61217);
+		text_show(61217);
 	}
 	break;
 
@@ -205,37 +205,37 @@ static void room_612_parser() {
 		local._actionMode = 1;
 		handleWinchMovement();
 	} else if (_action._lookFlag || player_said_2(look, expressway))
-		_vm->_dialogs->show(61210);
+		text_show(61210);
 	else if (player_said_2(look, rope) || player_said_2(look, armature)) {
 		if (_globals[kBoatRaised])
-			_vm->_dialogs->show(61211);
+			text_show(61211);
 		else
-			_vm->_dialogs->show(61212);
+			text_show(61212);
 	} else if (player_said_2(take, rope))
-		_vm->_dialogs->show(61213);
+		text_show(61213);
 	else if (player_said_2(look, control_box)) {
 		if (_globals[kBoatRaised])
-			_vm->_dialogs->show(61214);
+			text_show(61214);
 		else
-			_vm->_dialogs->show(61216);
+			text_show(61216);
 	} else if (player_said_2(open, control_box))
-		_vm->_dialogs->show(61215);
+		text_show(61215);
 	else if (player_said_2(look, buildings))
-		_vm->_dialogs->show(61218);
+		text_show(61218);
 	else if (player_said_2(look, dome))
-		_vm->_dialogs->show(61219);
+		text_show(61219);
 	else if (player_said_2(look, statue))
-		_vm->_dialogs->show(61220);
+		text_show(61220);
 	else if (player_said_2(look, maintenance_building))
-		_vm->_dialogs->show(61221);
+		text_show(61221);
 	else if (player_said_2(open, maintenance_building))
-		_vm->_dialogs->show(61222);
+		text_show(61222);
 	else if (player_said_2(look, wall))
-		_vm->_dialogs->show(61223);
+		text_show(61223);
 	else if (player_said_2(look, support))
-		_vm->_dialogs->show(61224);
+		text_show(61224);
 	else if (player_said_2(walk_down, expressway_to_east) || player_said_2(walk_down, expressway_to_west))
-		_vm->_dialogs->show(61225);
+		text_show(61225);
 	else
 		return;
 

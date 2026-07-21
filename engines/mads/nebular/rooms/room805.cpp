@@ -56,7 +56,7 @@ static void room_805_init() {
 }
 
 static void room_805_daemon() {
-	auto &userInterface = _vm->_game->_scene._userInterface;
+	auto &userInterface = _game->_scene._userInterface;
 
 	if (_game._trigger == 70) {
 		_scene->_hotspots.activate(OBJ_SHIELD_MODULATOR, false);
@@ -67,7 +67,7 @@ static void room_805_daemon() {
 		_game._objects.setRoom(OBJ_SHIELD_MODULATOR, NOWHERE);
 		userInterface._selectedInvIndex = -1;
 		_game._player._stepEnabled = true;
-		_vm->_sound->command(24);
+		g_engine->_soundManager->command(24, 0);
 	}
 
 	if (_game._trigger == 80) {
@@ -79,7 +79,7 @@ static void room_805_daemon() {
 		_game._objects.setRoom(OBJ_TARGET_MODULE, NOWHERE);
 		userInterface._selectedInvIndex = -1;
 		_game._player._stepEnabled = true;
-		_vm->_sound->command(24);
+		g_engine->_soundManager->command(24, 0);
 	}
 
 	if (_game._trigger == 71) {
@@ -131,11 +131,11 @@ static void room_805_parser() {
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
 		_game._player._stepEnabled = false;
 	} else if (player_said_2(install, shield_modulator) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR))
-		_vm->_dialogs->show(80511);
+		text_show(80511);
 	else if (player_said_2(install, target_module) && !_game._objects.isInInventory(OBJ_TARGET_MODULE))
-		_vm->_dialogs->show(80510);
+		text_show(80510);
 	else if (player_said_2(remove, life_support_module))
-		_vm->_dialogs->show(80512);
+		text_show(80512);
 	else
 		return;
 

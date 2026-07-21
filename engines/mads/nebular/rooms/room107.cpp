@@ -66,7 +66,7 @@ static void room_107_init() {
 	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_game._player._playerPos = Common::Point(223, 151);
 
-	if (((_scene->_priorSceneId == 105) || (_scene->_priorSceneId == 106)) && (_vm->getRandomNumber(1, 3) == 1)) {
+	if (((_scene->_priorSceneId == 105) || (_scene->_priorSceneId == 106)) && (g_engine->getRandomNumber(1, 3) == 1)) {
 		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(Resources::formatName(105, 'R', 1, EXT_SS, ""));
 		_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], true, 4, 0, 0, 0);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[0], Common::Point(270, 150));
@@ -78,7 +78,7 @@ static void room_107_init() {
 	_game.loadQuoteSet(0x4A, 0x4B, 0x4C, 0x35, 0x34, 0);
 	local._shootingFl = false;
 
-	if (_vm->getRandomNumber(1, 3) == 1) {
+	if (g_engine->getRandomNumber(1, 3) == 1) {
 		_scene->loadAnimation(Resources::formatName(107, 'B', -1, EXT_AA, ""), 0);
 		local._shootingFl = true;
 	}
@@ -103,38 +103,38 @@ static void room_107_pre_parser() {
 
 static void room_107_parser() {
 	if (_action._lookFlag)
-		_vm->_dialogs->show(10708);
+		text_show(10708);
 	else if (player_said_2(take, dead_fish) && _globals[kFishIn107]) {
 		if (_game._objects.isInInventory(OBJ_DEAD_FISH)) {
-			int randVal = _vm->getRandomNumber(74, 76);
+			int randVal = g_engine->getRandomNumber(74, 76);
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(randVal));
 		} else {
 			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 			_game._objects.addToInventory(OBJ_DEAD_FISH);
 			_globals[kFishIn107] = false;
-			_vm->_dialogs->showItem(OBJ_DEAD_FISH, 802);
+			object_examine(OBJ_DEAD_FISH, 802, 0);
 		}
 	} else if (player_said_2(swim_towards, northern_sea_cliff))
 		_scene->_nextSceneId = 105;
 	else if (player_said_2(look, northern_sea_cliff))
-		_vm->_dialogs->show(10701);
+		text_show(10701);
 	else if (player_said_2(look, dead_fish) && (_action._mainObjectSource == CAT_HOTSPOT))
-		_vm->_dialogs->show(10702);
+		text_show(10702);
 	else if (player_said_2(look, bush_like_formation))
-		_vm->_dialogs->show(10703);
+		text_show(10703);
 	else if (player_said_2(look, rock))
-		_vm->_dialogs->show(10704);
+		text_show(10704);
 	else if (player_said_2(look, seaweed))
-		_vm->_dialogs->show(10705);
+		text_show(10705);
 	else if (player_said_2(look, open_area_to_south))
-		_vm->_dialogs->show(10706);
+		text_show(10706);
 	else if (player_said_2(look, cliff_face))
-		_vm->_dialogs->show(10707);
+		text_show(10707);
 	else if (player_said_2(look, manta_ray))
-		_vm->_dialogs->show(10709);
+		text_show(10709);
 	else if (player_said_2(take, manta_ray))
-		_vm->_dialogs->show(10710);
+		text_show(10710);
 	else
 		return;
 

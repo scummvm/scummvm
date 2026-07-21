@@ -42,9 +42,9 @@ static void room_391_parser() {
 		_scene->_nextSceneId = 313;
 	else if (player_said_2(open, grate)) {
 		if (_globals[kKickedIn391Grate])
-			_vm->_dialogs->show(39113);
+			text_show(39113);
 		else {
-			_vm->_dialogs->show(39112);
+			text_show(39112);
 			_globals[kKickedIn391Grate] = true;
 		}
 
@@ -54,9 +54,9 @@ static void room_391_parser() {
 			_scene->_nextSceneId = 311;
 	} else if (player_said_2(look_through, grate)) {
 		if (_globals[kAfterHavoc])
-			_vm->_dialogs->show(39111);
+			text_show(39111);
 		else
-			_vm->_dialogs->show(39110);
+			text_show(39110);
 	} else
 		return;
 

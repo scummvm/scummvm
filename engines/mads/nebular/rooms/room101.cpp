@@ -54,7 +54,7 @@ static void room_101_say_dang() {
 		_globals._sequenceIndexes[11] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[11], false, 3, 6, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[11], 17, 21);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[11], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
-		_vm->_sound->command(17);
+		g_engine->_soundManager->command(17, 0);
 		_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 3, 2, 0, 0);
 		break;
 
@@ -66,7 +66,7 @@ static void room_101_say_dang() {
 		break;
 
 	case 73:
-		_vm->_dialogs->show(10117);
+		text_show(10117);
 		_game._player._stepEnabled = true;
 		break;
 
@@ -149,14 +149,14 @@ static void room_101_daemon() {
 	if (local._oldSpecial != _game._player._special) {
 		local._oldSpecial = _game._player._special;
 		if (local._oldSpecial)
-			_vm->_sound->command(39);
+			g_engine->_soundManager->command(39, 0);
 		else
-			_vm->_sound->command(11);
+			g_engine->_soundManager->command(11, 0);
 	}
 
 	switch (_game._trigger) {
 	case 70:
-		_vm->_sound->command(9);
+		g_engine->_soundManager->command(9, 0);
 		break;
 
 	case 71:
@@ -225,7 +225,7 @@ static void room_101_pre_parser() {
 				_globals._sequenceIndexes[11] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[11], false, 3, 1, 0, 0);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[11], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[11], 1, 17);
-				_vm->_sound->command(16);
+				g_engine->_soundManager->command(16, 0);
 				break;
 
 			case 1:
@@ -254,7 +254,7 @@ static void room_101_pre_parser() {
 				_globals._sequenceIndexes[13] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[local._shieldSpriteIdx], false, 6, 1, 0, 0);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				_game._player._stepEnabled = false;
-				_vm->_sound->command(20);
+				g_engine->_soundManager->command(20, 0);
 			}
 			break;
 
@@ -272,7 +272,7 @@ static void room_101_pre_parser() {
 
 static void room_101_parser() {
 	if (_action._lookFlag) {
-		_vm->_dialogs->show(10125);
+		text_show(10125);
 		_action._inProgress = false;
 		return;
 	}
@@ -298,7 +298,7 @@ static void room_101_parser() {
 				return;
 
 			case 1:
-				_vm->_sound->command(16);
+				g_engine->_soundManager->command(16, 0);
 				break;
 
 			case 2:
@@ -319,7 +319,7 @@ static void room_101_parser() {
 				break;
 			}
 		} else {
-			_vm->_dialogs->show(10131);
+			text_show(10131);
 			_action._inProgress = false;
 			return;
 		}
@@ -332,7 +332,7 @@ static void room_101_parser() {
 			_globals._sequenceIndexes[13] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[local._shieldSpriteIdx], false, 6, 1, 0, 0);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			_game._player._stepEnabled = false;
-			_vm->_sound->command(20);
+			g_engine->_soundManager->command(20, 0);
 			break;
 
 		case 1:
@@ -358,8 +358,8 @@ static void room_101_parser() {
 		_globals._sequenceIndexes[13] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[14], false, 6, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[13], -2, -2);
 		_scene->_hotspots.activate(words_shield_modulator, false);
-		_vm->_dialogs->showItem(OBJ_SHIELD_MODULATOR, 10120);
-		_vm->_sound->command(22);
+		object_examine(OBJ_SHIELD_MODULATOR, 10120, 0);
+		g_engine->_soundManager->command(22, 0);
 		_action._inProgress = false;
 		return;
 	}
@@ -367,18 +367,18 @@ static void room_101_parser() {
 	if (player_said_2(look, shield_access_panel) || (player_said_2(look, shield_modulator) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR))) {
 		if (local._panelOpened) {
 			if (_game._objects.isInRoom(OBJ_SHIELD_MODULATOR))
-				_vm->_dialogs->show(10128);
+				text_show(10128);
 			else
-				_vm->_dialogs->show(10129);
+				text_show(10129);
 		} else
-			_vm->_dialogs->show(10127);
+			text_show(10127);
 
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(open, shield_access_panel) && local._panelOpened) {
-		_vm->_dialogs->show(10130);
+		text_show(10130);
 		_action._inProgress = false;
 		return;
 	}
@@ -394,7 +394,7 @@ static void room_101_parser() {
 				_globals._sequenceIndexes[11] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[11], false, 3, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[11], 17, 21);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[11], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
-				_vm->_sound->command(17);
+				g_engine->_soundManager->command(17, 0);
 				break;
 
 			case 1:
@@ -426,133 +426,133 @@ static void room_101_parser() {
 	}
 
 	if (player_said_2(look, chair)) {
-		_vm->_dialogs->show(10101);
+		text_show(10101);
 		_action._inProgress = false;
 		return;
 	}
 
 	if ((player_said_1(look) || player_said_1(peer_through)) && (player_said_1(front_window) || player_said_1(outside))) {
-		_vm->_dialogs->show(10102);
+		text_show(10102);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, hull) || player_said_2(look, outer_hull) || player_said_2(examine, hull) || player_said_2(examine, outer_hull)) {
-		_vm->_dialogs->show(10103);
+		text_show(10103);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, fuzzy_dice)) {
-		_vm->_dialogs->show(10104);
+		text_show(10104);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, mirror) || player_said_2(look_in, mirror)) {
-		_vm->_dialogs->show(10105);
+		text_show(10105);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, curtains)) {
-		_vm->_dialogs->show(10106);
+		text_show(10106);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, plastic_jesus)) {
-		_vm->_dialogs->show(10107);
+		text_show(10107);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, escape_hatch) || (player_said_2(open, escape_hatch) && !_game._objects.isInInventory(OBJ_REBREATHER))) {
-		_vm->_dialogs->show(10109);
+		text_show(10109);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(open, escape_hatch)) {
-		_vm->_dialogs->show(10110);
+		text_show(10110);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, target_computer)) {
-		_vm->_dialogs->show(10111);
+		text_show(10111);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, library_computer)) {
-		_vm->_dialogs->show(10126);
+		text_show(10126);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, damage_control_panel)) {
-		_vm->_dialogs->show(10112);
+		text_show(10112);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, navigation_controls)) {
-		_vm->_dialogs->show(10113);
+		text_show(10113);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, engineering_controls)) {
-		_vm->_dialogs->show(10114);
+		text_show(10114);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, weapons_display)) {
-		_vm->_dialogs->show(10115);
+		text_show(10115);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, shield_status_panel)) {
-		_vm->_dialogs->show(10116);
+		text_show(10116);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(take, plastic_jesus)) {
-		_vm->_dialogs->show(10118);
+		text_show(10118);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(take, fuzzy_dice)) {
-		_vm->_dialogs->show(10119);
+		text_show(10119);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(open, damage_control_panel)) {
-		_vm->_dialogs->show(10121);
+		text_show(10121);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(open, curtains)) {
-		_vm->_dialogs->show(10122);
+		text_show(10122);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(close, curtains)) {
-		_vm->_dialogs->show(10123);
+		text_show(10123);
 		_action._inProgress = false;
 		return;
 	}
 
 	if ((player_said_1(look) || player_said_1(play)) && player_said_1(video_game)) {
-		_vm->_dialogs->show(10124);
+		text_show(10124);
 		_action._inProgress = false;
 		return;
 	}

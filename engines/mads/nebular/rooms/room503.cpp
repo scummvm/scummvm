@@ -86,11 +86,11 @@ static void room_503_parser() {
 				break;
 
 			case 1:
-				_vm->_sound->command(9);
+				g_engine->_soundManager->command(9, 0);
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 				_scene->_dynamicHotspots.remove(local._detonatorHotspotId);
 				_game._objects.addToInventory(OBJ_DETONATORS);
-				_vm->_dialogs->showItem(OBJ_DETONATORS, 50326);
+				object_examine(OBJ_DETONATORS, 50326, 0);
 				break;
 
 			case 2:
@@ -108,44 +108,44 @@ static void room_503_parser() {
 			}
 		}
 	} else if (_action._lookFlag)
-		_vm->_dialogs->show(50328);
+		text_show(50328);
 	else if (player_said_2(look, monitoring_equipment))
-		_vm->_dialogs->show(50310);
+		text_show(50310);
 	else if (player_said_2(look, photon_rifles))
-		_vm->_dialogs->show(50311);
+		text_show(50311);
 	else if (player_said_2(take, photon_rifles) || player_said_2(take, nuclear_slingshot))
-		_vm->_dialogs->show(50312);
+		text_show(50312);
 	else if (player_said_2(look, display_case))
-		_vm->_dialogs->show(50313);
+		text_show(50313);
 	else if (player_said_2(look, nuclear_slingshot))
-		_vm->_dialogs->show(50314);
+		text_show(50314);
 	else if (player_said_2(look, water_cooler))
-		_vm->_dialogs->show(50315);
+		text_show(50315);
 	else if (player_said_2(look, storage_box))
-		_vm->_dialogs->show(50316);
+		text_show(50316);
 	else if (player_said_2(open, storage_box))
-		_vm->_dialogs->show(50317);
+		text_show(50317);
 	else if (player_said_2(look, warning_label))
-		_vm->_dialogs->show(50318);
+		text_show(50318);
 	else if (player_said_2(look, desk))
-		_vm->_dialogs->show(50319);
+		text_show(50319);
 	else if (player_said_2(look, monitor))
-		_vm->_dialogs->show(50320);
+		text_show(50320);
 	else if (player_said_2(look, file_cabinets))
-		_vm->_dialogs->show(50322);
+		text_show(50322);
 	else if (player_said_2(look, box)) {
 		if (_game._objects.isInRoom(OBJ_DETONATORS))
-			_vm->_dialogs->show(50323);
+			text_show(50323);
 		else
-			_vm->_dialogs->show(50324);
+			text_show(50324);
 	} else if (player_said_2(look, detonators) && (_action._savedFields._mainObjectSource == 4))
-		_vm->_dialogs->show(50325);
+		text_show(50325);
 	else if (player_said_2(look, windows))
-		_vm->_dialogs->show(50327);
+		text_show(50327);
 	else if (player_said_2(open, display_case))
-		_vm->_dialogs->show(50329);
+		text_show(50329);
 	else if (player_said_2(throw, display_case) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId)))
-		_vm->_dialogs->show(50330);
+		text_show(50330);
 	else
 		return;
 

@@ -71,7 +71,7 @@ static void room_803_init() {
 			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 8, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 1);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
-			_vm->_sound->command(14);
+			g_engine->_soundManager->command(14, 0);
 		}
 
 		if (_globals[kBeamIsUp] && !_globals[kReturnFromCut]) {
@@ -81,7 +81,7 @@ static void room_803_init() {
 				_game._player._visible = true;
 
 			_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('b', 1));
-			_vm->_sound->command(15);
+			g_engine->_soundManager->command(15, 0);
 			_game._player._stepEnabled = false;
 			_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 12, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 1, 6);
@@ -96,7 +96,7 @@ static void room_803_init() {
 			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 8, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 1);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 130);
-			_vm->_sound->command(14);
+			g_engine->_soundManager->command(14, 0);
 		} else {
 			_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('c', 1));
 			_game._player._visible = false;
@@ -137,7 +137,7 @@ static void room_803_daemon() {
 			_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -2);
 			int idx = _scene->_dynamicHotspots.add(words_guts, words_walkto, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(66, 123), FACING_SOUTH);
-			_vm->_sound->command(16);
+			g_engine->_soundManager->command(16, 0);
 			_globals[kCameFromCut] = true;
 			_globals[kBeamIsUp] = false;
 			_globals[kReturnFromCut] = false;
@@ -156,7 +156,7 @@ static void room_803_daemon() {
 		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -2);
 		int idx = _scene->_dynamicHotspots.add(words_guts, words_walkto, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(66, 123), FACING_SOUTH);
-		_vm->_sound->command(16);
+		g_engine->_soundManager->command(16, 0);
 		_globals[kCameFromCut] = true;
 		_globals[kBeamIsUp] = false;
 		_globals[kReturnFromCut] = false;
@@ -182,7 +182,7 @@ static void room_803_daemon() {
 	if (_game._trigger == 70) {
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
-		_vm->_sound->command(31);
+		g_engine->_soundManager->command(31, 0);
 	}
 
 	if (_game._trigger == 71)
@@ -224,7 +224,7 @@ static void room_803_daemon() {
 
 	if (_game._trigger == 150) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[6]);
-		_vm->_sound->command(18);
+		g_engine->_soundManager->command(18, 0);
 		_globals._sequenceIndexes[6] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[6], false, 8, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], 1, 19);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 4);
@@ -271,7 +271,7 @@ static void room_803_parser() {
 
 		case 161:
 		{
-			int quoteId = 0x31A + _vm->getRandomNumber(1, 8);
+			int quoteId = 0x31A + g_engine->getRandomNumber(1, 8);
 			_scene->_kernelMessages.add(Common::Point(64, 67), 0x1110, 32, 0, 80, _game.getQuote(quoteId));
 			_scene->_sequences.addTimer(60, 162);
 		}
@@ -295,7 +295,7 @@ static void room_803_parser() {
 			break;
 		}
 	} else if (player_said_2(enter, ship)) {
-		_vm->_sound->command(17);
+		g_engine->_soundManager->command(17, 0);
 		_game._player._stepEnabled = false;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 8, 1, 0, 0);
@@ -304,28 +304,28 @@ static void room_803_parser() {
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 120);
 		_globals[kBeamIsUp] = false;
 	} else if (player_said_2(look, launch_pad))
-		_vm->_dialogs->show(80310);
+		text_show(80310);
 	else if (_action._lookFlag)
-		_vm->_dialogs->show(80310);
+		text_show(80310);
 	else if (player_said_2(look, pad_to_west))
-		_vm->_dialogs->show(80311);
+		text_show(80311);
 	else if (player_said_2(look, guts)) {
 		if (_game._storyMode == STORYMODE_NICE)
-			_vm->_dialogs->show(80312);
+			text_show(80312);
 		else
-			_vm->_dialogs->show(80313);
+			text_show(80313);
 	} else if (player_said_2(look, bushes))
-		_vm->_dialogs->show(80315);
+		text_show(80315);
 	else if (player_said_2(look, ship))
-		_vm->_dialogs->show(80317);
+		text_show(80317);
 	else if (player_said_2(look, tower))
-		_vm->_dialogs->show(80318);
+		text_show(80318);
 	else if (player_said_2(look, tree) || player_said_2(look, trees))
-		_vm->_dialogs->show(80319);
+		text_show(80319);
 	else if (player_said_2(look, sky))
-		_vm->_dialogs->show(80320);
+		text_show(80320);
 	else if (player_said_2(take, ship))
-		_vm->_dialogs->show(80321);
+		text_show(80321);
 	else
 		return;
 

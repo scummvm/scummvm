@@ -42,15 +42,15 @@ static void room_366_parser() {
 		_scene->_nextSceneId = 302;
 	else if (player_said_2(open, grate)) {
 		if (_game._visitedScenes.exists(316))
-			_vm->_dialogs->show(36612);
+			text_show(36612);
 		else
-			_vm->_dialogs->show(36613);
+			text_show(36613);
 		_scene->_nextSceneId = 316;
 	} else if (player_said_2(look_through, grate)) {
 		if (_game._visitedScenes.exists(321))
-			_vm->_dialogs->show(36611);
+			text_show(36611);
 		else
-			_vm->_dialogs->show(36610);
+			text_show(36610);
 	} else {
 		return;
 	}

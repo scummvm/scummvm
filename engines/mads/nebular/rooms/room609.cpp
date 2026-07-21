@@ -328,28 +328,28 @@ static void room_609_parser() {
 			break;
 		}
 	} else if (_action._lookFlag)
-		_vm->_dialogs->show(60910);
+		text_show(60910);
 	else if (player_said_2(look, street))
-		_vm->_dialogs->show(60911);
+		text_show(60911);
 	else if (player_said_2(look, spot_a_pot))
-		_vm->_dialogs->show(60912);
+		text_show(60912);
 	else if (player_said_2(look, video_store))
-		_vm->_dialogs->show(60913);
+		text_show(60913);
 	else if (player_said_2(look, billboard))
-		_vm->_dialogs->show(60914);
+		text_show(60914);
 	else if (player_said_2(look, statue))
-		_vm->_dialogs->show(60915);
+		text_show(60915);
 	else if (player_said_2(look, car))
-		_vm->_dialogs->show(60916);
+		text_show(60916);
 	else if (player_said_2(look, newsstand))
-		_vm->_dialogs->show(60917);
+		text_show(60917);
 	else if (player_said_2(look, video_store_door)) {
 		if (!_globals[kBeenInVideoStore])
-			_vm->_dialogs->show(60918);
+			text_show(60918);
 		else
-			_vm->_dialogs->show(60919);
+			text_show(60919);
 	} else if (player_said_2(walk_down, street))
-		_vm->_dialogs->show(60730);
+		text_show(60730);
 	else
 		return;
 

@@ -20,6 +20,7 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
@@ -53,8 +54,8 @@ static void room_304_init() {
 
 		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 150, 0, 3, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 2);
-		_vm->_palette->setEntry(252, 45, 63, 45);
-		_vm->_palette->setEntry(253, 20, 45, 20);
+		pal_change_color(252, 45, 63, 45);
+		pal_change_color(253, 20, 45, 20);
 
 		if (_globals[kSexOfRex] == REX_MALE)
 			_game._player._playerPos = Common::Point(111, 117);
@@ -104,7 +105,7 @@ static void room_304_daemon() {
 
 		case 72:
 		{
-			_vm->_sound->command(43);
+			g_engine->_soundManager->command(43, 0);
 			int sprIdx = _scene->_sequences.addSpriteCycle(local._explosionSpriteId, false, 8, 1, 0, 0);
 			_scene->_sequences.setAnimRange(sprIdx, 5, -2);
 			_scene->_sequences.setDepth(sprIdx, 1);

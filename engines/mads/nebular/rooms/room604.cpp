@@ -20,6 +20,7 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
@@ -58,8 +59,8 @@ static void room_604_init() {
 	if (_scene->_roomChanged)
 		_game._objects.addToInventory(OBJ_TIMEBOMB);
 
-	_vm->_palette->setEntry(252, 63, 37, 26);
-	_vm->_palette->setEntry(253, 45, 24, 17);
+	pal_change_color(252, 63, 37, 26);
+	pal_change_color(253, 45, 24, 17);
 	local._animationActiveFl = false;
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
@@ -119,7 +120,7 @@ static void room_604_daemon() {
 			case 137:
 			case 174:
 			{
-				int randVal = _vm->getRandomNumber(1, 1000);
+				int randVal = g_engine->getRandomNumber(1, 1000);
 				if ((randVal <= 450) && (_game._player._special)) {
 					if (_game._player._special == 1)
 						nextMonsterFrame = 50;
@@ -158,7 +159,7 @@ static void room_604_daemon() {
 
 	if ((!local._monsterActive && !local._animationActiveFl) && (_scene->_frameStartTime > (local._monsterTimer + 4))) {
 		local._monsterTimer = _scene->_frameStartTime;
-		if ((_vm->getRandomNumber(1, 1000) < 25) || !_game._visitedScenes._sceneRevisited) {
+		if ((g_engine->getRandomNumber(1, 1000) < 25) || !_game._visitedScenes._sceneRevisited) {
 			local._monsterActive = true;
 			_scene->freeAnimation();
 			_scene->loadAnimation(formAnimName('m', -1));
@@ -200,11 +201,11 @@ static void handleBombActions() {
 		_game._player._visible = true;
 		_game._player._stepEnabled = true;
 		if (local._bombMode == 1) {
-			_vm->_dialogs->show(60421);
+			text_show(60421);
 			_globals[kTimebombStatus] = TIMEBOMB_ACTIVATED;
 			_globals[kTimebombTimer] = 0;
 		} else {
-			_vm->_dialogs->show(60423);
+			text_show(60423);
 			_globals[kTimebombStatus] = TIMEBOMB_DEACTIVATED;
 			_globals[kTimebombTimer] = 0;
 		}
@@ -258,7 +259,7 @@ static void room_604_parser() {
 		}
 	} else if ((player_said_2(put, ledge) || player_said_2(put, viewport) || player_said_2(throw, viewport))
 		&& (player_said_1(bomb) || player_said_1(bombs)))
-		_vm->_dialogs->show(60420);
+		text_show(60420);
 	else if (player_said_3(put, timebomb, ledge) || player_said_3(put, timebomb, viewport)) {
 		local._bombMode = 1;
 		if ((_game._difficulty == DIFFICULTY_HARD) || _globals[kWarnedFloodCity])
@@ -273,9 +274,9 @@ static void room_604_parser() {
 			// in the inventory.
 			handleBombActions();
 		else if (_game._difficulty == DIFFICULTY_EASY)
-			_vm->_dialogs->show(60424);
+			text_show(60424);
 		else {
-			_vm->_dialogs->show(60425);
+			text_show(60425);
 			_globals[kWarnedFloodCity] = true;
 		}
 	} else if (player_said_2(take, timebomb)) {
@@ -284,25 +285,25 @@ static void room_604_parser() {
 			handleBombActions();
 		}
 	} else if (_action._lookFlag)
-		_vm->_dialogs->show(60411);
+		text_show(60411);
 	else if (player_said_2(look, viewport)) {
 		if (local._monsterActive) {
-			_vm->_dialogs->show(60413);
+			text_show(60413);
 		} else {
-			_vm->_dialogs->show(60412);
+			text_show(60412);
 		}
 	} else if (player_said_2(look, wall))
-		_vm->_dialogs->show(60414);
+		text_show(60414);
 	else if (player_said_2(look, vent))
-		_vm->_dialogs->show(60415);
+		text_show(60415);
 	else if (player_said_2(look, indicator))
-		_vm->_dialogs->show(60416);
+		text_show(60416);
 	else if (player_said_2(look, sculpture))
-		_vm->_dialogs->show(60417);
+		text_show(60417);
 	else if (player_said_2(look, car))
-		_vm->_dialogs->show(60418);
+		text_show(60418);
 	else if (player_said_2(look, fountain))
-		_vm->_dialogs->show(60419);
+		text_show(60419);
 	else
 		return;
 

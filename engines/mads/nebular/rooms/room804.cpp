@@ -103,7 +103,7 @@ static void room_804_init() {
 
 	if (_globals[kInSpace] && !_globals[kWindowFixed]) {
 		_scene->_userInterface.setup(kInputLimitedSentences);
-		_vm->_sound->command(19);
+		g_engine->_soundManager->command(19, 0);
 	}
 }
 
@@ -187,7 +187,7 @@ static void room_804_daemon() {
 
 		// FIXME: Original doesn't have resetFrame check. Check why this has been needed
 		if (local._resetFrame == -1 && _scene->_animation[0]->getCurrentFrame() == 1) {
-			int randomVal = _vm->getRandomNumber(29) + 1;
+			int randomVal = g_engine->getRandomNumber(29) + 1;
 			switch (randomVal) {
 			case 1:
 				local._resetFrame = 25;
@@ -246,11 +246,11 @@ static void room_804_daemon() {
 	}
 
 	if (_game._trigger == 120) {
-		_vm->_dialogs->show(80422);
+		text_show(80422);
 	}
 
 	if (_game._trigger == 110) {
-		_vm->_dialogs->show(80426);
+		text_show(80426);
 	}
 
 	if (local._pullThrottleReally) {
@@ -270,12 +270,12 @@ static void room_804_daemon() {
 	}
 
 	if ((_scene->_animation[0]->getCurrentFrame() == 72) && !local._alreadyPop) {
-		_vm->_sound->command(21);
+		g_engine->_soundManager->command(21, 0);
 		local._alreadyPop = true;
 	}
 
 	if ((_scene->_animation[0]->getCurrentFrame() == 80) && !local._alreadyOrgan) {
-		_vm->_sound->command(22);
+		g_engine->_soundManager->command(22, 0);
 		local._alreadyOrgan = true;
 	}
 }
@@ -296,19 +296,19 @@ static void room_804_parser() {
 				_globals[kBeamIsUp] = false;
 				_globals[kUpBecauseOfRemote] = false;
 				_scene->_sequences.remove(_globals._sequenceIndexes[8]);
-				_vm->_sound->command(15);
+				g_engine->_soundManager->command(15, 0);
 			}
 		}
 	} else if (player_said_2(pull, throttle)) {
 		_game._player._stepEnabled = false;
 		if (_globals[kBeamIsUp]) {
 			if (!_game._objects.isInInventory(OBJ_VASE) && _globals[kWindowFixed]) {
-				_vm->_dialogs->show(80423);
+				text_show(80423);
 				_game._player._stepEnabled = true;
 			} else {
 				_action._inProgress = false;
 
-				_vm->_dialogs->show(80424);
+				text_show(80424);
 				local._pullThrottleReally = true;
 				_scene->_kernelMessages.add(Common::Point(78, 75), 0x1110, 0, 0,
 					120, _game.getQuote(791));
@@ -326,44 +326,44 @@ static void room_804_parser() {
 		_globals[kExitShip] = true;
 		_globals[kFromCockpit] = true;
 		if (_globals[kBeamIsUp]) {
-			_vm->_dialogs->show(80425);
+			text_show(80425);
 			_scene->_sequences.remove(_globals._sequenceIndexes[8]);
-			_vm->_sound->command(15);
+			g_engine->_soundManager->command(15, 0);
 			_globals[kBeamIsUp] = false;
 		}
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(2, 90);
 	} else  if (_action._lookFlag) {
-		_vm->_dialogs->show(80410);
+		text_show(80410);
 	} else if ((player_said_2(look, window)) ||
 		(player_said_2(look_out, window))) {
 		if (_globals[kBeamIsUp]) {
-			_vm->_dialogs->show(80412);
+			text_show(80412);
 		} else {
-			_vm->_dialogs->show(80411);
+			text_show(80411);
 		}
 	} else if (player_said_2(look, crack)) {
 		if (_globals[kWindowFixed]) {
-			_vm->_dialogs->show(80414);
+			text_show(80414);
 		} else {
-			_vm->_dialogs->show(80413);
+			text_show(80413);
 		}
 	} else if (player_said_2(look, controls)) {
-		_vm->_dialogs->show(80415);
+		text_show(80415);
 	} else if (player_said_2(look, status_panel)) {
 		if (_globals[kBeamIsUp]) {
-			_vm->_dialogs->show(80417);
+			text_show(80417);
 		} else {
-			_vm->_dialogs->show(80416);
+			text_show(80416);
 		}
 	} else if (player_said_2(look, tp)) {
-		_vm->_dialogs->show(80418);
+		text_show(80418);
 	} else if (player_said_2(take, tp)) {
-		_vm->_dialogs->show(80419);
+		text_show(80419);
 	} else if (player_said_2(look, instrumentation)) {
-		_vm->_dialogs->show(80420);
+		text_show(80420);
 	} else  if (player_said_2(look, seat)) {
-		_vm->_dialogs->show(80421);
+		text_show(80421);
 	} else
 		return;
 

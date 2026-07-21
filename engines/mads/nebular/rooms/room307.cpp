@@ -20,6 +20,7 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
@@ -56,7 +57,7 @@ static Scratch local;
 
 static void handleRexDialog(int quote) {
 	const char *curQuote = _game.getQuote(quote);
-	if (_vm->_font->getWidth(curQuote, _scene->_textSpacing) > 200) {
+	if (_scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing) > 200) {
 		static char subQuote1[34], subQuote2[34];
 		_game.splitQuote(curQuote, subQuote1, subQuote2);
 		Common::strcpy_s(local._subQuote2, subQuote2);
@@ -309,9 +310,9 @@ static void room_307_init() {
 
 	if (_scene->_priorSceneId == RETURNING_FROM_DIALOG) {
 		if (local._grateOpenedFl)
-			_vm->_sound->command(10);
+			g_engine->_soundManager->command(10, 0);
 		else
-			_vm->_sound->command(3);
+			g_engine->_soundManager->command(3, 0);
 	} else {
 		local._afterPeeingFl = false;
 		local._duringPeeingFl = false;
@@ -327,17 +328,17 @@ static void room_307_init() {
 			_game._player._playerPos = Common::Point(156, 113);
 			_game._player._facing = FACING_NORTH;
 			local._animationMode = 1;
-			_vm->_sound->command(11);
+			g_engine->_soundManager->command(11, 0);
 			_scene->loadAnimation(formAnimName('a', -1), 60);
 		} else if (_scene->_priorSceneId == 387) {
 			_game._player._playerPos = Common::Point(129, 108);
 			_game._player._facing = FACING_NORTH;
-			_vm->_sound->command(3);
+			g_engine->_soundManager->command(3, 0);
 			local._grateOpenedFl = true;
 		} else {
 			_game._player._playerPos = Common::Point(159, 109);
 			_game._player._facing = FACING_SOUTH;
-			_vm->_sound->command(3);
+			g_engine->_soundManager->command(3, 0);
 		}
 	}
 
@@ -354,8 +355,8 @@ static void room_307_init() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 15);
 	}
 
-	_vm->_palette->setEntry(252, 63, 30, 20);
-	_vm->_palette->setEntry(253, 45, 15, 12);
+	pal_change_color(252, 63, 30, 20);
+	pal_change_color(253, 45, 15, 12);
 
 	section_3_music();
 
@@ -369,12 +370,12 @@ static void room_307_daemon() {
 	if ((local._animationMode == 1) && (_scene->_animation[0] != nullptr)) {
 		if (_scene->_animation[0]->getCurrentFrame() == 126) {
 			local._forcefield._flag = false;
-			_vm->_sound->command(5);
+			g_engine->_soundManager->command(5, 0);
 		}
 
 		if (_scene->_animation[0]->getCurrentFrame() == 194) {
 			local._forcefield._flag = true;
-			_vm->_sound->command(24);
+			g_engine->_soundManager->command(24, 0);
 		}
 	}
 
@@ -393,7 +394,7 @@ static void room_307_daemon() {
 		_game._player._stepEnabled = true;
 		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
 		local._animationMode = 0;
-		_vm->_sound->command(9);
+		g_engine->_soundManager->command(9, 0);
 	}
 
 	if ((local._lastFrameTime != _scene->_frameStartTime) && !local._duringPeeingFl) {
@@ -413,7 +414,7 @@ static void room_307_daemon() {
 				_game._player._stepEnabled = false;
 				_game._player.walk(Common::Point(151, 119), FACING_SOUTHEAST);
 				local._animationMode = 2;
-				_vm->_sound->command(11);
+				g_engine->_soundManager->command(11, 0);
 				_scene->loadAnimation(formAnimName('b', -1), 70);
 			}
 			local._guardTime = 0;
@@ -427,7 +428,7 @@ static void room_307_daemon() {
 				local._prisonerMessageId++;
 				if (local._prisonerMessageId > 0x10A)
 					local._prisonerMessageId = 0x104;
-			} else if (_globals[kKnowsBuddyBeast] && (local._dialog2.read(0) > 1) && (_vm->getRandomNumber(1, 3) == 1)) {
+			} else if (_globals[kKnowsBuddyBeast] && (local._dialog2.read(0) > 1) && (g_engine->getRandomNumber(1, 3) == 1)) {
 				int idx = _scene->_kernelMessages.add(Common::Point(5, 51), 0xFDFC, 0, 81, 120, _game.getQuote(267));
 				_scene->_kernelMessages.setQuoted(idx, 4, true);
 			}
@@ -441,7 +442,7 @@ static void room_307_daemon() {
 	if (_game._trigger == 81) {
 		local._prisonerTimer = 0;
 		if (local._activePrisonerFl && (local._guardTime > 2600))
-			local._guardTime = 3000 - _vm->getRandomNumber(1, 800);
+			local._guardTime = 3000 - g_engine->getRandomNumber(1, 800);
 
 		local._activePrisonerFl = false;
 	}
@@ -449,7 +450,7 @@ static void room_307_daemon() {
 
 static void room_307_parser() {
 	if (_action._lookFlag)
-		_vm->_dialogs->show(30715);
+		text_show(30715);
 	else if (_game._screenObjects._inputMode == kInputConversation)
 		handleDialog();
 	else if (player_said_2(talkto, cell_wall) || player_said_2(talkto, wall) || player_said_2(talkto, toilet)) {
@@ -517,7 +518,7 @@ static void room_307_parser() {
 		break;
 
 		case 4:
-			_vm->_sound->command(26);
+			g_engine->_soundManager->command(26, 0);
 			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 2);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(127, 78));
@@ -526,7 +527,7 @@ static void room_307_parser() {
 			break;
 
 		case 5:
-			_vm->_sound->command(10);
+			g_engine->_soundManager->command(10, 0);
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(241));
 			_scene->_sequences.addTimer(120, 6);
@@ -640,12 +641,12 @@ static void room_307_parser() {
 			}
 		}
 	} else if (player_said_2(use, toilet) && (_game._storyMode != STORYMODE_NAUGHTY))
-		_vm->_dialogs->show(30723);
+		text_show(30723);
 	else if (player_said_2(use, toilet)) {
 		if (!local._afterPeeingFl) {
 			switch (_game._trigger) {
 			case 0:
-				_vm->_sound->command(25);
+				g_engine->_soundManager->command(25, 0);
 				_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 0));
 				local._duringPeeingFl = true;
 				_game._player._stepEnabled = false;
@@ -694,40 +695,40 @@ static void room_307_parser() {
 		}
 	} else if (player_said_2(look, air_vent)) {
 		if (!local._grateOpenedFl)
-			_vm->_dialogs->show(30710);
+			text_show(30710);
 		else
-			_vm->_dialogs->show(30711);
+			text_show(30711);
 	} else if (player_said_2(look, bed))
-		_vm->_dialogs->show(30712);
+		text_show(30712);
 	else if (player_said_2(look, sink))
-		_vm->_dialogs->show(30713);
+		text_show(30713);
 	else if (player_said_2(look, toilet))
-		_vm->_dialogs->show(30714);
+		text_show(30714);
 	else if (player_said_2(sharpen, scalpel))
-		_vm->_dialogs->show(30716);
+		text_show(30716);
 	else if (player_said_2(look, cell_wall))
-		_vm->_dialogs->show(30717);
+		text_show(30717);
 	else if (player_said_2(look, light))
-		_vm->_dialogs->show(30718);
+		text_show(30718);
 	else if (player_said_2(walk_into, corridor)) {
 		switch (local._fieldCollisionCounter) {
 		case 0:
-			_vm->_dialogs->show(30719);
+			text_show(30719);
 			local._fieldCollisionCounter = 1;
 			break;
 
 		case 1:
-			_vm->_dialogs->show(30720);
+			text_show(30720);
 			local._fieldCollisionCounter = 2;
 			break;
 
 		case 2:
-			_vm->_dialogs->show(30721);
+			text_show(30721);
 			local._fieldCollisionCounter = 3;
 			break;
 
 		case 3:
-			_vm->_dialogs->show(30722);
+			text_show(30722);
 			break;
 
 		default:

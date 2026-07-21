@@ -113,7 +113,7 @@ static void room_351_daemon() {
 
 static void room_351_parser() {
 	if (_action._lookFlag)
-		_vm->_dialogs->show(35121);
+		text_show(35121);
 	else if (player_said_2(step_into, teleporter))
 		_scene->_nextSceneId = 322;
 	else if (player_said_2(walk_down, corridor_to_south))
@@ -146,7 +146,7 @@ static void room_351_parser() {
 			case 2:
 				_game._player._visible = true;
 				_game._player._stepEnabled = true;
-				_vm->_dialogs->showItem(OBJ_CREDIT_CHIP, 0x32F);
+				object_examine(OBJ_CREDIT_CHIP, 0x32F, 0);
 				break;
 
 			default:
@@ -154,30 +154,30 @@ static void room_351_parser() {
 			}
 		}
 	} else if (player_said_2(look, view_screen))
-		_vm->_dialogs->show(35110);
+		text_show(35110);
 	else if (player_said_2(look, rip_in_floor))
-		_vm->_dialogs->show(35111);
+		text_show(35111);
 	else if (player_said_2(look, fire_hydrant))
-		_vm->_dialogs->show(35112);
+		text_show(35112);
 	else if (player_said_2(look, guard)) {
 		if (_game._objects[0xF]._roomNumber == 351)
-			_vm->_dialogs->show(35114);
+			text_show(35114);
 		else
-			_vm->_dialogs->show(35113);
+			text_show(35113);
 	} else if (player_said_2(look, equipment))
-		_vm->_dialogs->show(35115);
+		text_show(35115);
 	else if (player_said_2(look, desk))
-		_vm->_dialogs->show(35116);
+		text_show(35116);
 	else if (player_said_2(look, machine))
-		_vm->_dialogs->show(35117);
+		text_show(35117);
 	else if (player_said_2(look, teleporter))
-		_vm->_dialogs->show(35118);
+		text_show(35118);
 	else if (player_said_2(look, control_panel))
-		_vm->_dialogs->show(35119);
+		text_show(35119);
 	else if (player_said_2(look, corridor_to_south))
-		_vm->_dialogs->show(35120);
+		text_show(35120);
 	else if (player_said_2(look, pole))
-		_vm->_dialogs->show(35122);
+		text_show(35122);
 	else
 		return;
 

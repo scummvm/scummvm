@@ -65,10 +65,10 @@ void handle_forcefield(Forcefield *force, int16 *sprites) {
 	if (!force->_flag || (_scene->_frameStartTime < force->_timer) || (force->_vertical + force->_horizontal >= 5))
 		return;
 
-	if (_vm->getRandomNumber(1, 1000) <= (200 + ((40 - (force->_vertical + force->_horizontal)) << 5))) {
+	if (g_engine->getRandomNumber(1, 1000) <= (200 + ((40 - (force->_vertical + force->_horizontal)) << 5))) {
 		int id = -1;
 		for (int i = 0; i < 100; i++) {
-			int randIdx = _vm->getRandomNumber(0, 39);
+			int randIdx = g_engine->getRandomNumber(0, 39);
 			if (force->_seqId[randIdx] < 0) {
 				id = randIdx;
 				break;
@@ -86,7 +86,7 @@ void handle_forcefield(Forcefield *force, int16 *sprites) {
 
 		int speedX, speedY;
 		int posX, posY;
-		int randVal = _vm->getRandomNumber(1, 100);
+		int randVal = g_engine->getRandomNumber(1, 100);
 		int spriteId;
 		bool mirror;
 

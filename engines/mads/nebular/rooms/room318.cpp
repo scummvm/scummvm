@@ -20,6 +20,9 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/mcga.h"
+#include "mads/core/pal.h"
+#include "mads/core/timer.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
@@ -54,7 +57,7 @@ static void handleRexDialogs(int quote) {
 	_scene->_kernelMessages.reset();
 
 	const char *curQuote = _game.getQuote(quote);
-	if (_vm->_font->getWidth(curQuote, _scene->_textSpacing) > 200) {
+	if (_scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing) > 200) {
 		static char subQuote1[34], subQuote2[34];
 		_game.splitQuote(curQuote, subQuote1, subQuote2);
 
@@ -76,7 +79,7 @@ static void handleInternDialog(int quoteId, int quoteNum, uint32 timeout) {
 
 	int maxWidth = 0;
 	for (int i = 0; i < quoteNum; i++) {
-		maxWidth = MAX(maxWidth, _vm->_font->getWidth(_game.getQuote(curQuoteId), -1));
+		maxWidth = MAX(maxWidth, _scene->_kernelMessages._talkFont->getWidth(_game.getQuote(curQuoteId), -1));
 		curQuoteId++;
 	}
 
@@ -111,7 +114,7 @@ static void handleDialog() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(142, 121));
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], synxIdx);
-		_vm->_sound->command(3);
+		g_engine->_soundManager->command(3, 0);
 		_scene->_userInterface.setup(kInputBuildingSentences);
 		_game._player._stepEnabled = true;
 	} else {
@@ -302,14 +305,14 @@ static void room_318_init() {
 	}
 
 	local._internTalkingFl = false;
-	_vm->_palette->setEntry(252, 63, 63, 10);
-	_vm->_palette->setEntry(253, 45, 45, 05);
+	pal_change_color(252, 63, 63, 10);
+	pal_change_color(253, 45, 45, 05);
 
-	local._dropTimer = _vm->_game->_scene._frameStartTime;
+	local._dropTimer = _game->_scene._frameStartTime;
 	section_3_music();
 
 	if (local._dialogFl)
-		_vm->_sound->command(15);
+		g_engine->_soundManager->command(15, 0);
 }
 
 static void room_318_daemon() {
@@ -353,7 +356,7 @@ static void room_318_daemon() {
 					nextFrame = 184;
 				} else if (!local._internTalkingFl) {
 					nextFrame = 0;
-				} else if (_vm->getRandomNumber(1, 100) <= 50) {
+				} else if (g_engine->getRandomNumber(1, 100) <= 50) {
 					nextFrame = 151;
 				} else {
 					nextFrame = 167;
@@ -379,7 +382,7 @@ static void room_318_daemon() {
 
 	switch (_game._trigger) {
 	case 60:
-		_vm->_sound->command(3);
+		g_engine->_soundManager->command(3, 0);
 		local._animMode = 2;
 		_scene->_reloadSceneFlag = true;
 		break;
@@ -397,7 +400,7 @@ static void room_318_daemon() {
 		break;
 
 	case 64:
-		_vm->_sound->command(3);
+		g_engine->_soundManager->command(3, 0);
 		_scene->_nextSceneId = 307;
 		break;
 
@@ -405,7 +408,7 @@ static void room_318_daemon() {
 		break;
 	}
 
-	uint32 tmpFrame = _vm->_events->getFrameCounter();
+	uint32 tmpFrame = timer_read();
 	long diffFrame = tmpFrame - local._lastFrameCounter;
 	local._lastFrameCounter = tmpFrame;
 
@@ -431,17 +434,17 @@ static void room_318_daemon() {
 			local._internCounter++;
 
 		if (local._internCounter >= 3600) {
-			_vm->_sound->command(59);
-			_vm->_screen->_shakeCountdown = 20;
+			g_engine->_soundManager->command(59, 0);
+			mcga_shakes = 20;
 			local._internWalkingFl = true;
 		}
 	}
 
-	if ((_vm->_game->_scene._frameStartTime - local._dropTimer) > 600) {
-		_vm->_sound->command(51);
+	if ((_game->_scene._frameStartTime - local._dropTimer) > 600) {
+		g_engine->_soundManager->command(51, 0);
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 14, 1, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
-		local._dropTimer = _vm->_game->_scene._frameStartTime;
+		local._dropTimer = _game->_scene._frameStartTime;
 	}
 }
 
@@ -465,9 +468,9 @@ static void room_318_parser() {
 		case 0:
 		{
 			local._dialogFl = true;
-			_vm->_sound->command(15);
+			g_engine->_soundManager->command(15, 0);
 			_game._player._stepEnabled = false;
-			handleRexDialogs(_vm->getRandomNumber(0x18C, 0x18E));
+			handleRexDialogs(g_engine->getRandomNumber(0x18C, 0x18E));
 
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 80);
@@ -519,7 +522,7 @@ static void room_318_parser() {
 				handleInternDialog(0x190, 1, 120);
 			else {
 				_game._objects.addToInventory(OBJ_SCALPEL);
-				_vm->_dialogs->showItem(OBJ_SCALPEL, 0x7C5D);
+				object_examine(OBJ_SCALPEL, 0x7C5D, 0);
 				_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 			}
 			break;
@@ -555,10 +558,10 @@ static void room_318_parser() {
 
 		if (player_said_2(take, tape_player)) {
 			if (_game._objects.isInRoom(OBJ_AUDIO_TAPE)) {
-				_vm->_dialogs->showItem(OBJ_AUDIO_TAPE, 0x7C5B);
+				object_examine(OBJ_AUDIO_TAPE, 0x7C5B, 0);
 				_game._objects.addToInventory(OBJ_AUDIO_TAPE);
 			} else
-				_vm->_dialogs->show(31834);
+				text_show(31834);
 
 			_action._inProgress = false;
 			return;
@@ -566,84 +569,84 @@ static void room_318_parser() {
 
 		if (player_said_2(look, tape_player)) {
 			if (_game._objects.isInRoom(OBJ_AUDIO_TAPE))
-				_vm->_dialogs->show(31833);
+				text_show(31833);
 			else
-				_vm->_dialogs->show(31834);
+				text_show(31834);
 
 			_action._inProgress = false;
 			return;
 		}
 
 		if (player_said_2(walk_into, doctors_office)) {
-			_vm->_dialogs->show(31831);
+			text_show(31831);
 			_action._inProgress = false;
 			return;
 		}
 
 		if (player_said_2(look, gurney)) {
-			_vm->_dialogs->show(31823);
+			text_show(31823);
 			_action._inProgress = false;
 			return;
 		}
 
 		if (player_said_2(look, instrument_table)) {
-			_vm->_dialogs->show(31825);
+			text_show(31825);
 			_action._inProgress = false;
 			return;
 		}
 	} else { // Not visible
 		if (player_said_2(look, gurney)) {
-			_vm->_dialogs->show(31822);
+			text_show(31822);
 			_action._inProgress = false;
 			return;
 		}
 
 		if (player_said_2(look, instrument_table)) {
-			_vm->_dialogs->show(31824);
+			text_show(31824);
 			_action._inProgress = false;
 			return;
 		}
 	}
 
 	if (player_said_2(look, wall))
-		_vm->_dialogs->show(31810);
+		text_show(31810);
 	else if (player_said_2(look, floor))
-		_vm->_dialogs->show(31811);
+		text_show(31811);
 	else if (player_said_2(look, corridor_to_west))
-		_vm->_dialogs->show(31812);
+		text_show(31812);
 	else if (player_said_2(look, corridor_to_south))
-		_vm->_dialogs->show(31813);
+		text_show(31813);
 	else if (player_said_2(look, faucet))
-		_vm->_dialogs->show(31814);
+		text_show(31814);
 	else if (player_said_2(look, sink))
-		_vm->_dialogs->show(31815);
+		text_show(31815);
 	else if (player_said_2(look, conveyor_belt))
-		_vm->_dialogs->show(31816);
+		text_show(31816);
 	else if (player_said_2(look, large_blade))
-		_vm->_dialogs->show(31817);
+		text_show(31817);
 	else if (player_said_2(look, monitor))
-		_vm->_dialogs->show(31818);
+		text_show(31818);
 	else if (player_said_2(look, cabinets))
-		_vm->_dialogs->show(31819);
+		text_show(31819);
 	else if (player_said_2(look, equipment))
-		_vm->_dialogs->show(31820);
+		text_show(31820);
 	else if (player_said_2(look, shelf))
-		_vm->_dialogs->show(31821);
+		text_show(31821);
 	else if (player_said_2(open, cabinets))
-		_vm->_dialogs->show(31829);
+		text_show(31829);
 	else if (player_said_2(look, intern))
-		_vm->_dialogs->show(31830);
+		text_show(31830);
 	else if (player_said_2(look, professor))
-		_vm->_dialogs->show(31832);
+		text_show(31832);
 	else if (player_said_2(look, professors_gurney))
-		_vm->_dialogs->show(31836);
+		text_show(31836);
 	else if (_action._lookFlag) {
 		if (_game._player._visible || _game._objects.isInInventory(OBJ_SCALPEL))
-			_vm->_dialogs->show(31828);
+			text_show(31828);
 		else if (local._internVisibleFl)
-			_vm->_dialogs->show(31826);
+			text_show(31826);
 		else
-			_vm->_dialogs->show(31827);
+			text_show(31827);
 	} else
 		return;
 

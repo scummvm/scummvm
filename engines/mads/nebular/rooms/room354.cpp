@@ -61,7 +61,7 @@ static void room_354_pre_parser() {
 
 static void room_354_parser() {
 	if (_action._lookFlag)
-		_vm->_dialogs->show(35414);
+		text_show(35414);
 	else if (player_said_2(walk_down, corridor_to_north)) {
 		_game._player.startWalking(Common::Point(208, 0), FACING_NORTHEAST);
 		_game._player._walkOffScreenSceneId = 353;
@@ -72,25 +72,25 @@ static void room_354_parser() {
 	else if (player_said_2(walk_down, corridor_to_south))
 		_scene->_nextSceneId = 401;
 	else if (player_said_2(look, controls))
-		_vm->_dialogs->show(35410);
+		text_show(35410);
 	else if (player_said_2(look, signal))
-		_vm->_dialogs->show(35411);
+		text_show(35411);
 	else if (player_said_2(look, catwalk))
-		_vm->_dialogs->show(35412);
+		text_show(35412);
 	else if (player_said_2(look, air_duct))
-		_vm->_dialogs->show(35413);
+		text_show(35413);
 	else if (player_said_2(look, corridor_to_north))
-		_vm->_dialogs->show(35415);
+		text_show(35415);
 	else if (player_said_2(look, corridor_to_south))
-		_vm->_dialogs->show(35416);
+		text_show(35416);
 	else if (player_said_2(look, corridor_to_east))
-		_vm->_dialogs->show(35417);
+		text_show(35417);
 	else if (player_said_2(look, corridor_to_west))
-		_vm->_dialogs->show(35418);
+		text_show(35418);
 	else if (player_said_2(look, debris))
-		_vm->_dialogs->show(35419);
+		text_show(35419);
 	else if (player_said_2(look, guard))
-		_vm->_dialogs->show(35420);
+		text_show(35420);
 	else
 		return;
 

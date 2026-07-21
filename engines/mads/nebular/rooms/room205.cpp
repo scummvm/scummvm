@@ -20,6 +20,7 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/rooms/dialog.h"
@@ -87,12 +88,12 @@ static void room_205_init() {
 	if (!_game._visitedScenes._sceneRevisited)
 		local._dialog1.set(0x5A, 0x74, 0x75, 0x77, 0);
 
-	_vm->_palette->setEntry(250, 63, 50, 20);
-	_vm->_palette->setEntry(251, 50, 40, 15);
-	_vm->_palette->setEntry(252, 63, 63, 40);
-	_vm->_palette->setEntry(253, 50, 50, 30);
+	pal_change_color(250, 63, 50, 20);
+	pal_change_color(251, 50, 40, 15);
+	pal_change_color(252, 63, 63, 40);
+	pal_change_color(253, 50, 50, 30);
 
-	local._chickenTime = _vm->_game->_scene._frameStartTime;
+	local._chickenTime = _game->_scene._frameStartTime;
 
 	if (_globals[kSexOfRex] == SEX_FEMALE)
 		_scene->_kernelMessages.initRandomMessages(3,
@@ -123,29 +124,29 @@ static void room_205_daemon() {
 	if (_globals[kSexOfRex] == SEX_FEMALE) {
 		_scene->_kernelMessages.randomServer();
 
-		if (_vm->_game->_scene._frameStartTime >= local._chickenTime) {
+		if (_game->_scene._frameStartTime >= local._chickenTime) {
 			int chanceMinor = _scene->_kernelMessages.checkRandom() + 1;
 			if (_scene->_kernelMessages.generateRandom(100, chanceMinor))
-				_vm->_sound->command(28);
+				g_engine->_soundManager->command(28, 0);
 
-			local._chickenTime = _vm->_game->_scene._frameStartTime + 2;
+			local._chickenTime = _game->_scene._frameStartTime + 2;
 		}
 	}
 
-	if (_vm->_game->_scene._frameStartTime - local._lastFishTime > 1300) {
+	if (_game->_scene._frameStartTime - local._lastFishTime > 1300) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(
 			_globals._spriteIndexes[6], false, 5, 1, 0, 0);
 		int idx = _scene->_dynamicHotspots.add(words_piranha, words_walkto, _globals._sequenceIndexes[6],
 			Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(49, 86), FACING_NORTH);
-		local._lastFishTime = _vm->_game->_scene._frameStartTime;
+		local._lastFishTime = _game->_scene._frameStartTime;
 	}
 
 	if (_game._trigger == 73)
 		_scene->_kernelMessages.add(Common::Point(160, 68), 0xFBFA, 32, 0, 60, _game.getQuote(112));
 
 	if (_game._trigger == 74) {
-		_vm->_sound->command(26);
+		g_engine->_soundManager->command(26, 0);
 		_scene->_kernelMessages.add(Common::Point(106, 90), 0x1110, 32, 0, 60, _game.getQuote(113));
 	}
 
@@ -195,7 +196,7 @@ static void room_205_parser() {
 			case 0x78:
 				handleWomanSpeech(0x7B);
 				local._dialog1.write(_action._activeAction._verbId, false);
-				_vm->_dialogs->show(20501);
+				text_show(20501);
 				break;
 
 			case 0x76:
@@ -222,9 +223,9 @@ static void room_205_parser() {
 				local._dialog1.start();
 		}
 	} else if (_action._lookFlag)
-		_vm->_dialogs->show(20502);
+		text_show(20502);
 	else if (player_said_3(look, binoculars, opposite_bank))
-		_vm->_dialogs->show(20518);
+		text_show(20518);
 	else if (player_said_2(talkto, native_woman)) {
 		if (_game._trigger == 0) {
 			_game._player._stepEnabled = false;
@@ -239,7 +240,7 @@ static void room_205_parser() {
 	} else if (player_said_2(give, native_woman) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
 		if (_game._trigger == 0) {
 			_game._player._stepEnabled = false;
-			int rndVal = _vm->getRandomNumber(0xAC, 0xAE);
+			int rndVal = g_engine->getRandomNumber(0xAC, 0xAE);
 			_scene->_kernelMessages.add(Common::Point(186, 27), 0xFBFA, 32, 1, 120, _game.getQuote(rndVal));
 		} else if (_game._trigger == 1)
 			_game._player._stepEnabled = true;
@@ -247,20 +248,20 @@ static void room_205_parser() {
 		if (_game._trigger == 0) {
 			_game._player._visible = false;
 			_game._player._stepEnabled = false;
-			_vm->_palette->lock();
+			pal_lock();
 			_scene->_kernelMessages.reset();
 			_game._player.removePlayerSprites();
 			_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('a', 0));
-			_vm->_palette->refreshSceneColors();
+			kernel_new_palette();
 			_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 6, 1, 0, 0);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[9], -1);
-			_vm->_sound->command(27);
+			g_engine->_soundManager->command(27, 0);
 		} else if (_game._trigger == 1) {
 			if (_scene->_animation[0] != nullptr)
 				_scene->_animation[0]->resetSpriteSetsCount();
 
-			_vm->_dialogs->show(20516);
+			text_show(20516);
 			_scene->_reloadSceneFlag = true;
 		}
 	} else {
@@ -276,39 +277,39 @@ static void room_205_parser() {
 			_game._objects.addToInventory(OBJ_CHICKEN);
 			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 			_scene->_hotspots.activate(words_chicken_on_spit, false);
-			_vm->_dialogs->showItem(OBJ_CHICKEN, 812);
+			object_examine(OBJ_CHICKEN, 812, 0);
 		} else if (player_said_2(take, chicken_on_spit) && (!_globals[kChickenPermitted]))
 			_scene->_kernelMessages.add(Common::Point(186, 27), 0xFBFA, 32, 0, 120, _game.getQuote(0x80));
 		else if (player_said_2(look, native_woman))
-			_vm->_dialogs->show(20503);
+			text_show(20503);
 		else if (player_said_2(look, hut))
-			_vm->_dialogs->show(20504);
+			text_show(20504);
 		else if (player_said_2(look, chicken) && (_action._mainObjectSource == CAT_HOTSPOT))
-			_vm->_dialogs->show(20505);
+			text_show(20505);
 		else if (player_said_2(take, chicken) && (_action._mainObjectSource == CAT_HOTSPOT))
-			_vm->_dialogs->show(20506);
+			text_show(20506);
 		else if (player_said_2(look, chicken_on_spit))
-			_vm->_dialogs->show(20507);
+			text_show(20507);
 		else if (player_said_2(look, fire_pit))
-			_vm->_dialogs->show(20508);
+			text_show(20508);
 		else if (player_said_2(take, fire_pit))
-			_vm->_dialogs->show(20509);
+			text_show(20509);
 		else if (player_said_2(look, stream))
-			_vm->_dialogs->show(20510);
+			text_show(20510);
 		else if (player_said_2(look, opposite_bank))
-			_vm->_dialogs->show(20511);
+			text_show(20511);
 		else if (_game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))
 			&& (player_said_2(give, stream) || player_said_2(throw, stream)
 				|| player_said_2(give, piranha) || player_said_2(throw, piranha)))
-			_vm->_dialogs->show(20512);
+			text_show(20512);
 		else if (player_said_2(look, piranha))
-			_vm->_dialogs->show(20513);
+			text_show(20513);
 		else if (player_said_2(look, twinkifruit_bush))
-			_vm->_dialogs->show(20514);
+			text_show(20514);
 		else if (player_said_2(take, twinkifruit_bush))
-			_vm->_dialogs->show(20515);
+			text_show(20515);
 		else if (player_said_2(take, native_woman))
-			_vm->_dialogs->show(20517);
+			text_show(20517);
 		else
 			return;
 	}

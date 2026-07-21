@@ -128,7 +128,7 @@ static void room_751_daemon() {
 
 	switch (_game._trigger) {
 	case 60:
-		_vm->_sound->command(16);
+		g_engine->_soundManager->command(16, 0);
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
@@ -142,7 +142,7 @@ static void room_751_daemon() {
 		break;
 
 	case 62:
-		_vm->_sound->command(17);
+		g_engine->_soundManager->command(17, 0);
 		_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
@@ -239,7 +239,7 @@ static void room_751_parser() {
 		case 0:
 			_game._player._stepEnabled = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-			_vm->_sound->command(16);
+			g_engine->_soundManager->command(16, 0);
 			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
@@ -254,7 +254,7 @@ static void room_751_parser() {
 			break;
 
 		case 3:
-			_vm->_sound->command(17);
+			g_engine->_soundManager->command(17, 0);
 			_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
@@ -318,7 +318,7 @@ static void room_751_parser() {
 				local._rexHandingLine = false;
 				_globals[kLineStatus] = 2;
 				_game._player._stepEnabled = true;
-				_vm->_dialogs->show(75120);
+				text_show(75120);
 			}
 			break;
 
@@ -327,30 +327,30 @@ static void room_751_parser() {
 			}
 		}
 	} else if (_action._lookFlag || player_said_2(look, city))
-		_vm->_dialogs->show(75110);
+		text_show(75110);
 	else if (player_said_2(look, elevator))
-		_vm->_dialogs->show(75112);
+		text_show(75112);
 	else if (player_said_2(look, platform))
-		_vm->_dialogs->show(75113);
+		text_show(75113);
 	else if (player_said_2(look, cement_pylon))
-		_vm->_dialogs->show(75114);
+		text_show(75114);
 	else if ((player_said_2(look, hook) || player_said_2(look, fishing_line))
 		&& (_globals[kLineStatus] == 2 || _globals[kLineStatus] == 3))
-		_vm->_dialogs->show(75116);
+		text_show(75116);
 	else if (player_said_2(look, hook))
-		_vm->_dialogs->show(75115);
+		text_show(75115);
 	else if (player_said_2(look, rock))
-		_vm->_dialogs->show(75117);
+		text_show(75117);
 	else if (player_said_2(take, rock))
-		_vm->_dialogs->show(75118);
+		text_show(75118);
 	else if (player_said_2(look, east_end_of_platform))
-		_vm->_dialogs->show(75119);
+		text_show(75119);
 	else if (player_said_2(take, fishing_line) && (_globals[kLineStatus] == 3 || _globals[kLineStatus] == 2))
-		_vm->_dialogs->show(75121);
+		text_show(75121);
 	else if (player_said_2(look, tall_building))
-		_vm->_dialogs->show(75122);
+		text_show(75122);
 	else if (player_said_3(tie, fishing_line, cement_pylon) || player_said_3(attach, fishing_line, cement_pylon))
-		_vm->_dialogs->show(75123);
+		text_show(75123);
 	else
 		return;
 

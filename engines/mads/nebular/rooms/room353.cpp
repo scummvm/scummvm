@@ -53,27 +53,27 @@ static void room_353_init() {
 
 static void room_353_parser() {
 	if (_action._lookFlag)
-		_vm->_dialogs->show(35315);
+		text_show(35315);
 	else if (player_said_2(walk_through, doorway))
 		_scene->_nextSceneId = 352;
 	else if (player_said_2(walk_down, corridor_to_south))
 		_scene->_nextSceneId = 354;
 	else if (player_said_2(look, rock_chunk))
-		_vm->_dialogs->show(35310);
+		text_show(35310);
 	else if (player_said_2(look, pipes) || player_said_2(look, pipe))
-		_vm->_dialogs->show(35311);
+		text_show(35311);
 	else if (player_said_2(look, broken_beam))
-		_vm->_dialogs->show(35312);
+		text_show(35312);
 	else if (player_said_2(look, doorway))
-		_vm->_dialogs->show(35313);
+		text_show(35313);
 	else if (player_said_2(look, corridor_to_south))
-		_vm->_dialogs->show(35314);
+		text_show(35314);
 	else if (player_said_2(look, floor))
-		_vm->_dialogs->show(35316);
+		text_show(35316);
 	else if (player_said_2(look, ceiling))
-		_vm->_dialogs->show(35317);
+		text_show(35317);
 	else if (player_said_2(look, wall))
-		_vm->_dialogs->show(35318);
+		text_show(35318);
 	else
 		return;
 

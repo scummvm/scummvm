@@ -131,27 +131,27 @@ static void room_601_parser() {
 		}
 	} else if (_action._lookFlag || player_said_2(look, street)) {
 		if (!_globals[kLaserHoleIsThere])
-			_vm->_dialogs->show(60110);
+			text_show(60110);
 		else
-			_vm->_dialogs->show(60111);
+			text_show(60111);
 	} else if (player_said_2(look, car))
-		_vm->_dialogs->show(60112);
+		text_show(60112);
 	else if (player_said_2(look, papers))
-		_vm->_dialogs->show(60113);
+		text_show(60113);
 	else if (player_said_2(look, building))
-		_vm->_dialogs->show(60114);
+		text_show(60114);
 	else if (player_said_2(walk_down, street))
-		_vm->_dialogs->show(60115);
+		text_show(60115);
 	else if (player_said_2(look, balcony))
-		_vm->_dialogs->show(60116);
+		text_show(60116);
 	else if (player_said_2(look, entrance))
-		_vm->_dialogs->show(60117);
+		text_show(60117);
 	else if (player_said_2(look, wall))
-		_vm->_dialogs->show(60118);
+		text_show(60118);
 	else if (player_said_2(look, city))
-		_vm->_dialogs->show(60119);
+		text_show(60119);
 	else if (player_said_2(look, fountain))
-		_vm->_dialogs->show(60120);
+		text_show(60120);
 	else
 		return;
 

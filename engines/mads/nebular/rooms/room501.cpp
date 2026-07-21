@@ -60,7 +60,7 @@ static void handleSlotActions() {
 		local._mainSequenceId = _scene->_sequences.startPingPongCycle(local._mainSpriteId, false, numTicks, 1, 0, 0);
 		_scene->_sequences.setAnimRange(local._mainSequenceId, 1, frameIndex);
 		_scene->_sequences.setMsgLayout(local._mainSequenceId);
-		_vm->_sound->command(10);
+		g_engine->_soundManager->command(10, 0);
 		_scene->_sequences.addSubEntry(local._mainSequenceId, SEQUENCE_TRIGGER_SPRITE, frameIndex, 1);
 		_scene->_sequences.addSubEntry(local._mainSequenceId, SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 		break;
@@ -142,7 +142,7 @@ static void room_501_init() {
 
 static void room_501_daemon() {
 	if (_game._trigger == 90)
-		_vm->_dialogs->show(50127);
+		text_show(50127);
 
 	if (_game._trigger >= 80) {
 		switch (_game._trigger) {
@@ -152,7 +152,7 @@ static void room_501_daemon() {
 			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 12, 6, 0, 0);
 			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
-			_vm->_sound->command(11);
+			g_engine->_soundManager->command(11, 0);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
 			break;
 
@@ -165,7 +165,7 @@ static void room_501_daemon() {
 		case 82:
 			_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
-			_vm->_sound->command(12);
+			g_engine->_soundManager->command(12, 0);
 			local._doorHotspotid = _scene->_dynamicHotspots.add(words_door, words_walk_through, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(_globals._sequenceIndexes[3], Common::Point(282, 110), FACING_NORTH);
 			_scene->_dynamicHotspots.setCursor(local._doorHotspotid, CURSOR_GO_UP);
@@ -271,7 +271,7 @@ static void room_501_parser() {
 			break;
 		}
 	} else if (player_said_3(put, security_card, card_slot))
-		_vm->_dialogs->show(50113);
+		text_show(50113);
 	else if (player_said_3(put, fake_id, card_slot)) {
 		switch (_game._trigger) {
 		case 0:
@@ -284,7 +284,7 @@ static void room_501_parser() {
 		case 4:
 			if (_globals[kSexOfRex] == REX_MALE) {
 				_game._player._visible = false;
-				_vm->_sound->command(13);
+				g_engine->_soundManager->command(13, 0);
 				_scene->loadAnimation(formAnimName('G', 1), 5);
 			} else {
 				local._rexPunched = false;
@@ -330,7 +330,7 @@ static void room_501_parser() {
 			_scene->_dynamicHotspots.remove(local._doorHotspotid);
 			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
-			_vm->_sound->command(11);
+			g_engine->_soundManager->command(11, 0);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 6);
 			break;
 
@@ -341,12 +341,12 @@ static void room_501_parser() {
 
 		case 7:
 		{
-			_vm->_sound->command(12);
+			g_engine->_soundManager->command(12, 0);
 			int syncIdx = _globals._sequenceIndexes[3];
 			_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
-			_vm->_sound->command(12);
+			g_engine->_soundManager->command(12, 0);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 8);
 		}
 		break;
@@ -365,37 +365,37 @@ static void room_501_parser() {
 			break;
 		}
 	} else if (_action._lookFlag || player_said_2(look, street))
-		_vm->_dialogs->show(50121);
+		text_show(50121);
 	else if (player_said_2(look, door))
-		_vm->_dialogs->show(50110);
+		text_show(50110);
 	else if (player_said_2(look, card_slot))
-		_vm->_dialogs->show(50112);
+		text_show(50112);
 	else if (player_said_2(look, sign))
-		_vm->_dialogs->show(50114);
+		text_show(50114);
 	else if (player_said_2(take, sign))
-		_vm->_dialogs->show(50115);
+		text_show(50115);
 	else if (player_said_2(look, sidewalk_to_east))
-		_vm->_dialogs->show(50118);
+		text_show(50118);
 	else if (player_said_2(look, sidewalk_to_west) || player_said_2(look, street_to_west)
 		|| player_said_2(walk_down, sidewalk_to_west) || player_said_2(walk_down, street_to_west))
-		_vm->_dialogs->show(50119);
+		text_show(50119);
 	else if (player_said_2(look, building))
-		_vm->_dialogs->show(50120);
+		text_show(50120);
 	else if (player_said_2(open, door))
-		_vm->_dialogs->show(50122);
+		text_show(50122);
 	else if (player_said_2(look, fire_hydrant))
-		_vm->_dialogs->show(50123);
+		text_show(50123);
 	else if (player_said_2(open, fire_hydrant))
-		_vm->_dialogs->show(50124);
+		text_show(50124);
 	else if (player_said_2(look, equipment_overhead))
-		_vm->_dialogs->show(50125);
+		text_show(50125);
 	else if (player_said_2(look, pipes) || player_said_2(look, pipe))
-		_vm->_dialogs->show(50126);
+		text_show(50126);
 	else if (player_said_2(look, car)) {
 		if (!_game._visitedScenes.exists(504))
-			_vm->_dialogs->show(50116);
+			text_show(50116);
 		else
-			_vm->_dialogs->show(50117);
+			text_show(50117);
 	} else
 		return;
 

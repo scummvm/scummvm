@@ -53,22 +53,22 @@ static void room_807_parser() {
 	}
 
 	if (player_said_2(look, viewport))
-		_vm->_dialogs->show(80710);
+		text_show(80710);
 	else if (player_said_2(peer_through, viewport))
-		_vm->_dialogs->show(80710);
+		text_show(80710);
 	else if (player_said_2(look, keypad) && player_said_2(inspect, keypad))
-		_vm->_dialogs->show(80711);
+		text_show(80711);
 	else if (player_said_2(look, display))
-		_vm->_dialogs->show(80712);
+		text_show(80712);
 	else if (player_said_2(look, 1_key) || player_said_2(look, 2_key)
 		|| player_said_2(look, 3_key) || player_said_2(look, 4_key)
 		|| player_said_2(look, 5_key) || player_said_2(look, 6_key)
 		|| player_said_2(look, 7_key) || player_said_2(look, 8_key)
 		|| player_said_2(look, 9_key) || player_said_2(look, 0_key)
 		|| player_said_2(look, smile_key) || player_said_2(look, frown_key))
-		_vm->_dialogs->show(80713);
+		text_show(80713);
 	else if (player_said_2(look, device) && _action._lookFlag)
-		_vm->_dialogs->show(80714);
+		text_show(80714);
 	else
 		return;
 

@@ -82,7 +82,7 @@ static void room_111_init() {
 		local._launch1Fl = true;
 		local._launched2Fl = true;
 
-		_vm->_sound->command(36);
+		g_engine->_soundManager->command(36, 0);
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(300, 130);
 		_game._player._facing = FACING_WEST;
@@ -112,7 +112,7 @@ static void room_111_daemon() {
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 20);
 	}
 
-	if (!local._launch1Fl && (_vm->getRandomNumber(1, 5000) == 1)) {
+	if (!local._launch1Fl && (g_engine->getRandomNumber(1, 5000) == 1)) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 5, 1, 0, 0);
 		local._launch1Fl = true;
@@ -120,7 +120,7 @@ static void room_111_daemon() {
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 	}
 
-	if (!local._launched2Fl && (_vm->getRandomNumber(1, 30000) == 1)) {
+	if (!local._launched2Fl && (g_engine->getRandomNumber(1, 30000) == 1)) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 5, 1, 0, 0);
 		int idx = _scene->_dynamicHotspots.add(words_bats, words_look_at, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
@@ -129,10 +129,10 @@ static void room_111_daemon() {
 	}
 
 	if (_game._trigger == 73)
-		_vm->_sound->command(37);
+		g_engine->_soundManager->command(37, 0);
 
 	if (local._rexDivingFl && (_scene->_animation[0]->getCurrentFrame() >= 9)) {
-		_vm->_sound->command(36);
+		g_engine->_soundManager->command(36, 0);
 		local._rexDivingFl = false;
 	}
 }
@@ -160,17 +160,17 @@ static void room_111_parser() {
 			break;
 		}
 	} else if (player_said_2(look, cave_floor))
-		_vm->_dialogs->show(11101);
+		text_show(11101);
 	else if (player_said_2(look, pool))
-		_vm->_dialogs->show(11102);
+		text_show(11102);
 	else if (player_said_2(look, cave_entrance))
-		_vm->_dialogs->show(11103);
+		text_show(11103);
 	else if (player_said_2(look, stalagmites))
-		_vm->_dialogs->show(11104);
+		text_show(11104);
 	else if (player_said_2(look, large_stalagmite))
-		_vm->_dialogs->show(11105);
+		text_show(11105);
 	else if ((player_said_1(pull) || player_said_1(take)) && (player_said_1(stalagmites) || player_said_1(large_stalagmite)))
-		_vm->_dialogs->show(11106);
+		text_show(11106);
 	else
 		return;
 

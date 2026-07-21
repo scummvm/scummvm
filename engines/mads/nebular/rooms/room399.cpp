@@ -43,16 +43,16 @@ static void room_399_parser() {
 	else if (player_said_2(look_through, grate)) {
 		if (_globals[kAfterHavoc]) {
 			if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
-				_vm->_dialogs->show(38911);
+				text_show(38911);
 			else
-				_vm->_dialogs->show(38912);
+				text_show(38912);
 		} else
-			_vm->_dialogs->show(38910);
+			text_show(38910);
 	} else if (player_said_2(open, grate)) {
 		if (_globals[kAfterHavoc])
-			_vm->_dialogs->show(38914);
+			text_show(38914);
 		else
-			_vm->_dialogs->show(38913);
+			text_show(38913);
 	} else
 		return;
 

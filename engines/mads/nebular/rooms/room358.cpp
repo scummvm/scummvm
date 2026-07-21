@@ -55,21 +55,21 @@ static void room_358_pre_parser() {
 
 static void room_358_parser() {
 	if (_action._lookFlag)
-		_vm->_dialogs->show(35815);
+		text_show(35815);
 	else if (player_said_2(look, corridor_to_west))
-		_vm->_dialogs->show(35810);
+		text_show(35810);
 	else if (player_said_2(look, corridor_to_east))
-		_vm->_dialogs->show(35811);
+		text_show(35811);
 	else if (player_said_2(look, bed))
-		_vm->_dialogs->show(35812);
+		text_show(35812);
 	else if (player_said_2(look, sink))
-		_vm->_dialogs->show(35813);
+		text_show(35813);
 	else if (player_said_2(look, toilet))
-		_vm->_dialogs->show(35814);
+		text_show(35814);
 	else if (player_said_2(look, corridor) || player_said_2(look, wall))
-		_vm->_dialogs->show(35816);
+		text_show(35816);
 	else if (player_said_2(look, air_vent))
-		_vm->_dialogs->show(35817);
+		text_show(35817);
 	else
 		return;
 

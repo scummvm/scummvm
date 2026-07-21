@@ -20,6 +20,7 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/rooms/dialog.h"
@@ -176,9 +177,9 @@ static void setDialogNode(int node) {
 
 			int quote;
 			if (_game._storyMode == STORYMODE_NAUGHTY)
-				quote = _vm->getRandomNumber(199, 201);
+				quote = g_engine->getRandomNumber(199, 201);
 			else
-				quote = _vm->getRandomNumber(197, 198);
+				quote = g_engine->getRandomNumber(197, 198);
 
 			if (local._twinklesTalking) {
 				handleTwinklesSpeech(quote, 0, 360);
@@ -337,7 +338,7 @@ static void setDialogNode(int node) {
 			local._twinkleAnimationType = 2;
 			_globals[kCurtainOpen] = true;
 			_game._player._visible = false;
-			_vm->_palette->lock();
+			pal_lock();
 			_scene->_kernelMessages.reset();
 			_scene->freeAnimation();
 			_scene->resetScene();
@@ -719,8 +720,8 @@ static void room_210_init() {
 			_scene->_animation[0]->setCurrentFrame(131);
 	}
 
-	_vm->_palette->setEntry(252, 63, 63, 10);
-	_vm->_palette->setEntry(253, 45, 45, 5);
+	pal_change_color(252, 63, 63, 10);
+	pal_change_color(253, 45, 45, 5);
 
 	section_2_music();
 }
@@ -730,7 +731,7 @@ static void room_210_daemon() {
 		if (local._twinklesCurrentFrame != _scene->_animation[0]->getCurrentFrame()) {
 			local._twinklesCurrentFrame = _scene->_animation[0]->getCurrentFrame();
 			int reset_frame = -1;
-			int random = _vm->getRandomNumber(1, 1000);
+			int random = g_engine->getRandomNumber(1, 1000);
 
 			switch (local._twinklesCurrentFrame) {
 			case 31:
@@ -903,7 +904,7 @@ static void room_210_pre_parser() {
 
 static void room_210_parser() {
 	if (player_said_3(look, binoculars, hut_to_north)) {
-		_vm->_dialogs->show(21017);
+		text_show(21017);
 	} else if (_game._screenObjects._inputMode == kInputConversation) {
 		handleConversations();
 	} else if (player_said_2(talkto, native_woman) ||
@@ -965,7 +966,7 @@ static void room_210_parser() {
 		switch (_game._trigger) {
 		case 0:
 		{
-			int quote = _vm->getRandomNumber(172, 174);
+			int quote = g_engine->getRandomNumber(172, 174);
 			local._shouldMoveHead = true;
 			_game._player._stepEnabled = false;
 			handleTwinklesSpeech(quote, 0, 120);
@@ -1033,38 +1034,38 @@ static void room_210_parser() {
 	} else if (player_said_2(look, hut)) {
 		if (_globals[kTwinklesStatus] == TWINKLES_GONE) {
 			if (_game._storyMode == STORYMODE_NAUGHTY)
-				_vm->_dialogs->show(21003);
+				text_show(21003);
 			else
-				_vm->_dialogs->show(21002);
+				text_show(21002);
 		} else {
-			_vm->_dialogs->show(21001);
+			text_show(21001);
 		}
 	} else if (player_said_2(look, bra)) {
-		_vm->_dialogs->show(21004);
+		text_show(21004);
 	} else if (player_said_2(look, hotpants)) {
-		_vm->_dialogs->show(21005);
+		text_show(21005);
 	} else if (player_said_2(take, hotpants) || player_said_2(take, bra)) {
-		_vm->_dialogs->show(21006);
+		text_show(21006);
 	} else if (player_said_2(look, stream)) {
-		_vm->_dialogs->show(21007);
+		text_show(21007);
 	} else if (player_said_2(look, bushy_fern)) {
-		_vm->_dialogs->show(21008);
+		text_show(21008);
 	} else if (player_said_2(look, village_path)) {
-		_vm->_dialogs->show(21009);
+		text_show(21009);
 	} else if (player_said_2(look, native_woman)) {
-		_vm->_dialogs->show(21010);
+		text_show(21010);
 	} else if (player_said_2(shoot, native_woman) || player_said_2(hose_down, native_woman)) {
-		_vm->_dialogs->show(21011);
+		text_show(21011);
 	} else if (player_said_2(look, path_to_north)) {
-		_vm->_dialogs->show(21012);
+		text_show(21012);
 	} else if (player_said_2(look, curtain)) {
-		_vm->_dialogs->show(21013);
+		text_show(21013);
 	} else if (player_said_2(look, clothesline)) {
-		_vm->_dialogs->show(21014);
+		text_show(21014);
 	} else if (player_said_2(take, clothesline)) {
-		_vm->_dialogs->show(21015);
+		text_show(21015);
 	} else if (player_said_2(look, hut_to_north)) {
-		_vm->_dialogs->show(21016);
+		text_show(21016);
 	} else {
 		// Not handled
 		return;

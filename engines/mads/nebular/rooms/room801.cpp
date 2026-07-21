@@ -84,7 +84,7 @@ static void room_801_init() {
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 13);
 			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
-			_vm->_sound->command(30);
+			g_engine->_soundManager->command(30, 0);
 			break;
 
 		case 2:
@@ -94,7 +94,7 @@ static void room_801_init() {
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 13);
 			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
-			_vm->_sound->command(30);
+			g_engine->_soundManager->command(30, 0);
 			break;
 
 		case 3:
@@ -143,7 +143,7 @@ static void room_801_daemon() {
 	}
 
 	if (_game._trigger == 140) {
-		_vm->_sound->command(27);
+		g_engine->_soundManager->command(27, 0);
 		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 8);
 		_scene->_sequences.addTimer(100, 141);
 	}
@@ -170,7 +170,7 @@ static void room_801_daemon() {
 	}
 
 	if (_game._trigger == 120) {
-		_vm->_sound->command(12);
+		g_engine->_soundManager->command(12, 0);
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 5);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 10);
 		_game._player._stepEnabled = true;
@@ -182,7 +182,7 @@ static void room_801_daemon() {
 	}
 
 	if (_game._trigger == 130) {
-		_vm->_sound->command(12);
+		g_engine->_soundManager->command(12, 0);
 		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 4, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 5);
@@ -232,23 +232,23 @@ static void room_801_parser() {
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 90);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 5);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 13);
-		_vm->_sound->command(11);
+		g_engine->_soundManager->command(11, 0);
 	} else if (player_said_2(look, ceiling))
-		_vm->_dialogs->show(80110);
+		text_show(80110);
 	else if (player_said_2(look, monitor))
-		_vm->_dialogs->show(80111);
+		text_show(80111);
 	else if (player_said_2(look, teleporter))
-		_vm->_dialogs->show(80112);
+		text_show(80112);
 	else if (player_said_2(look, equipment) || _action._lookFlag)
-		_vm->_dialogs->show(80113);
+		text_show(80113);
 	else if (player_said_2(look, speaker))
-		_vm->_dialogs->show(80114);
+		text_show(80114);
 	else if (player_said_2(look, eye_chart))
-		_vm->_dialogs->show(80115);
+		text_show(80115);
 	else if (player_said_2(look, wall))
-		_vm->_dialogs->show(80116);
+		text_show(80116);
 	else if (player_said_2(look, door))
-		_vm->_dialogs->show(80117);
+		text_show(80117);
 	else
 		return;
 

@@ -75,9 +75,9 @@ static void room_105_daemon() {
 			_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('m', 0));
 			_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('m', 2));
 			_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('m', 3));
-			_vm->_sound->command(33);
+			g_engine->_soundManager->command(33, 0);
 			_scene->clearSequenceList();
-			_vm->_palette->refreshSceneColors();
+			kernel_new_palette();
 
 			_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 8);
@@ -109,7 +109,7 @@ static void room_105_daemon() {
 		break;
 
 		case 3:
-			_vm->_dialogs->show(10507);
+			text_show(10507);
 			_scene->_reloadSceneFlag = true;
 			_scene->_sequences.addTimer(90, 4);
 			break;
@@ -142,38 +142,38 @@ static void room_105_pre_parser() {
 
 static void room_105_parser() {
 	if (_action._lookFlag)
-		_vm->_dialogs->show(10512);
+		text_show(10512);
 	else if (player_said_2(take, dead_fish) && _globals[kFishIn105]) {
 		if (_game._objects.isInInventory(OBJ_DEAD_FISH)) {
-			int randVal = _vm->getRandomNumber(74, 76);
+			int randVal = g_engine->getRandomNumber(74, 76);
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(randVal));
 		} else {
 			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 			_game._objects.addToInventory(OBJ_DEAD_FISH);
 			_globals[kFishIn105] = false;
-			_vm->_dialogs->showItem(OBJ_DEAD_FISH, 802, 0);
+			object_examine(OBJ_DEAD_FISH, 802, 0);
 		}
 	} else if (player_said_2(look, western_cliff_face))
-		_vm->_dialogs->show(10501);
+		text_show(10501);
 	else if (player_said_2(look, cliff_face))
-		_vm->_dialogs->show(10502);
+		text_show(10502);
 	else if (player_said_2(look, ocean_floor))
-		_vm->_dialogs->show(10503);
+		text_show(10503);
 	else if (player_said_2(look, medical_waste))
-		_vm->_dialogs->show(10504);
+		text_show(10504);
 	else if (player_said_2(take, medical_waste))
-		_vm->_dialogs->show(10505);
+		text_show(10505);
 	else if (player_said_2(look, mine))
-		_vm->_dialogs->show(10506);
+		text_show(10506);
 	else if (player_said_2(look, dead_fish))
-		_vm->_dialogs->show(10508);
+		text_show(10508);
 	else if (player_said_2(look, surface))
-		_vm->_dialogs->show(10509);
+		text_show(10509);
 	else if (player_said_2(look, open_area_to_south))
-		_vm->_dialogs->show(10510);
+		text_show(10510);
 	else if (player_said_2(look, rocks))
-		_vm->_dialogs->show(10511);
+		text_show(10511);
 	else
 		return;
 

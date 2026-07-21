@@ -76,9 +76,9 @@ static void room_507_parser() {
 			case 1:
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 				_scene->_dynamicHotspots.remove(local._penlightHotspotId);
-				_vm->_sound->command(27);
+				g_engine->_soundManager->command(27, 0);
 				_game._objects.addToInventory(OBJ_PENLIGHT);
-				_vm->_dialogs->showItem(OBJ_PENLIGHT, 50730);
+				object_examine(OBJ_PENLIGHT, 50730, 0);
 				break;
 
 			case 2:
@@ -92,52 +92,52 @@ static void room_507_parser() {
 			}
 		}
 	} else if (_action._lookFlag)
-		_vm->_dialogs->show(50722);
+		text_show(50722);
 	else if (player_said_2(look, swirling_light))
-		_vm->_dialogs->show(50710);
+		text_show(50710);
 	else if (player_said_2(take, swirling_light))
-		_vm->_dialogs->show(50711);
+		text_show(50711);
 	else if (player_said_2(look, old_software))
-		_vm->_dialogs->show(50712);
+		text_show(50712);
 	else if (player_said_2(take, old_software))
-		_vm->_dialogs->show(50713);
+		text_show(50713);
 	else if (player_said_2(look, advertisement))
-		_vm->_dialogs->show(50714);
+		text_show(50714);
 	else if (player_said_2(look, advertising_poster))
-		_vm->_dialogs->show(50715);
+		text_show(50715);
 	else if (player_said_2(look, sign)) {
 		if (_scene->_customDest.x < 100)
-			_vm->_dialogs->show(50726);
+			text_show(50726);
 		else
-			_vm->_dialogs->show(50716);
+			text_show(50716);
 	} else if (player_said_2(look, hottest_software))
-		_vm->_dialogs->show(50717);
+		text_show(50717);
 	else if (player_said_2(look, software_shelf))
-		_vm->_dialogs->show(50718);
+		text_show(50718);
 	else if (player_said_2(look, sensor))
-		_vm->_dialogs->show(50719);
+		text_show(50719);
 	else if (player_said_2(look, cash_register))
-		_vm->_dialogs->show(50720);
+		text_show(50720);
 	else if (player_said_2(look, pad_of_paper))
-		_vm->_dialogs->show(50721);
+		text_show(50721);
 	else if (player_said_2(open, cash_register))
-		_vm->_dialogs->show(50723);
+		text_show(50723);
 	else if (player_said_2(look, bargain_vat))
-		_vm->_dialogs->show(50724);
+		text_show(50724);
 	else if (player_said_2(look, window))
-		_vm->_dialogs->show(50725);
+		text_show(50725);
 	else if (player_said_2(walk_behind, counter)) {
 		// WORKAROUND: Empty handling to prevent default "can't do that" dialogs showing
 	} else if (player_said_2(look, counter)) {
 		if (_game._objects.isInRoom(OBJ_PENLIGHT))
-			_vm->_dialogs->show(50728);
+			text_show(50728);
 		else
-			_vm->_dialogs->show(50727);
+			text_show(50727);
 	} else if (player_said_2(look, penlight) && !_game._objects.isInInventory(OBJ_PENLIGHT)) {
 		if (_game._objects.isInRoom(OBJ_PENLIGHT))
-			_vm->_dialogs->show(50729);
+			text_show(50729);
 	} else if (player_said_2(look, emergency_light))
-		_vm->_dialogs->show(50731);
+		text_show(50731);
 	else
 		return;
 

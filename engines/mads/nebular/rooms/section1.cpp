@@ -21,6 +21,7 @@
 
 #include "math/utils.h"
 #include "mads/core/config.h"
+#include "mads/core/pal.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/rooms/section1.h"
 #include "mads/nebular/rooms/thunks.h"
@@ -43,7 +44,7 @@ extern void room_111_preload();
 extern void room_112_preload();
 
 void section_1_walker() {
-	_vm->_sound->command(5);
+	g_engine->_soundManager->command(5, 0);
 	Common::String oldName = _game._player._spritesPrefix;
 	if (_scene->_nextSceneId <= 103 || _scene->_nextSceneId == 111) {
 		if (_globals[kSexOfRex] == SEX_FEMALE)
@@ -67,8 +68,8 @@ void section_1_walker() {
 	}
 
 	player.scaling_velocity = 0;
-	_vm->_palette->setEntry(16, 10, 63, 63);
-	_vm->_palette->setEntry(17, 10, 45, 45);
+	pal_change_color(16, 10, 63, 63);
+	pal_change_color(17, 10, 45, 45);
 }
 
 void section_1_interface() {
@@ -135,30 +136,30 @@ void section_1_music() {
 	if (config_file.music_flag) {
 		switch (_scene->_nextSceneId) {
 		case 101:
-			_vm->_sound->command(11);
+			g_engine->_soundManager->command(11, 0);
 			break;
 		case 102:
-			_vm->_sound->command(12);
+			g_engine->_soundManager->command(12, 0);
 			break;
 		case 103:
-			_vm->_sound->command(3);
-			_vm->_sound->command(25);
+			g_engine->_soundManager->command(3, 0);
+			g_engine->_soundManager->command(25, 0);
 			break;
 		case 109:
-			_vm->_sound->command(13);
+			g_engine->_soundManager->command(13, 0);
 			break;
 		case 110:
-			_vm->_sound->command(10);
+			g_engine->_soundManager->command(10, 0);
 			break;
 		case 111:
-			_vm->_sound->command(3);
+			g_engine->_soundManager->command(3, 0);
 			break;
 		case 112:
-			_vm->_sound->command(15);
+			g_engine->_soundManager->command(15, 0);
 			break;
 		default:
 			if (_scene->_priorSceneId < 104 || _scene->_priorSceneId > 108)
-				_vm->_sound->command(10);
+				g_engine->_soundManager->command(10, 0);
 			break;
 		}
 	}

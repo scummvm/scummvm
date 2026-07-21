@@ -20,6 +20,7 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/magic.h"
 #include "mads/core/mcga.h"
 #include "mads/core/pal.h"
 #include "mads/nebular/global.h"
@@ -58,7 +59,7 @@ static void handleRexDialogues(int quote) {
 	_scene->_kernelMessages.reset();
 
 	const char *curQuote = _game.getQuote(quote);
-	if (_vm->_font->getWidth(curQuote, _scene->_textSpacing) > 200) {
+	if (_scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing) > 200) {
 		static char subQuote1[34], subQuote2[34];
 		_game.splitQuote(curQuote, subQuote1, subQuote2);
 		Common::strcpy_s(local._subQuote2, subQuote2);
@@ -117,8 +118,8 @@ static void room_319_init() {
 		0x17E, 0x17F, 0x180, 0x181, 0x182, 0x183, 0x184, 0x185, 0x186, 0x187, 0x188,
 		0x189, 0x18A, 0x18B, 0);
 
-	_vm->_palette->setEntry(252, 63, 30, 2);
-	_vm->_palette->setEntry(253, 45, 15, 1);
+	pal_change_color(252, 63, 30, 2);
+	pal_change_color(253, 45, 15, 1);
 
 	local._slachePosY = 0;
 	local._slacheInitFl = false;
@@ -273,22 +274,22 @@ static void room_319_daemon() {
 
 		if (local._animMode == 2) {
 			if (local._animFrame == 13)
-				_vm->_screen->_shakeCountdown = 40;
+				mcga_shakes = 40;
 
 			if (local._animFrame == 16)
-				_vm->_screen->_shakeCountdown = 1;
+				mcga_shakes = 1;
 		}
 
 		if (local._animMode == 3) {
 			if (local._animFrame == 11)
-				_vm->_screen->_shakeCountdown = 60;
+				mcga_shakes = 60;
 
 			if (local._animFrame == 18)
-				_vm->_screen->_shakeCountdown = 1;
+				mcga_shakes = 1;
 		}
 
 		if ((local._animMode == 4) && (local._animFrame == 16))
-			_vm->_screen->_shakeCountdown = 80;
+			mcga_shakes = 80;
 
 		if ((nextFrame >= 0) && (nextFrame != _scene->_animation[0]->getCurrentFrame())) {
 			_scene->_animation[0]->setCurrentFrame(nextFrame);
@@ -312,7 +313,7 @@ static void room_319_daemon() {
 
 		local._animFrame = _scene->_animation[0]->getCurrentFrame();
 		local._slacheTalkingFl = true;
-		_vm->_screen->_shakeCountdown = 1;
+		mcga_shakes = 1;
 
 		for (int i = 0; i <= 1; i++) {
 			int oldIdx = _globals._sequenceIndexes[i];
@@ -332,11 +333,11 @@ static void room_319_daemon() {
 	}
 
 	case 72:
-		_vm->_palette->setColorFlags(0xFF, 0, 0);
-		_vm->_palette->setColorValues(0, 0, 0);
-		_vm->_palette->fadeOut(master_palette, nullptr, 18, 228,
+		magic_set_color_flags(0xFF, 0, 0);
+		magic_set_color_values(0, 0, 0);
+		magic_fade_to_grey(master_palette, nullptr, 18, 228,
 			248, 0, 1, 16);
-		_vm->_screen->_shakeCountdown = 1;
+		mcga_shakes = 1;
 		_scene->_reloadSceneFlag = true;
 		break;
 

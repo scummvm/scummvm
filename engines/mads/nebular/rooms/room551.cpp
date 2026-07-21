@@ -115,7 +115,7 @@ static void room_551_daemon() {
 			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
 		}
-		_vm->_sound->command(28);
+		g_engine->_soundManager->command(28, 0);
 		_scene->_sequences.addTimer(60, 91);
 		break;
 
@@ -137,28 +137,28 @@ static void room_551_parser() {
 	if (player_said_2(step_into, teleporter))
 		_scene->_nextSceneId = 502;
 	else if ((_action._lookFlag))
-		_vm->_dialogs->show(55117);
+		text_show(55117);
 	else if (player_said_2(look, skeleton))
-		_vm->_dialogs->show(55110);
+		text_show(55110);
 	else if (player_said_2(look, elevator_shaft))
-		_vm->_dialogs->show(55111);
+		text_show(55111);
 	else if (player_said_2(walkto, elevator_shaft))
-		_vm->_dialogs->show(55112);
+		text_show(55112);
 	else if (player_said_2(look, building))
-		_vm->_dialogs->show(55113);
+		text_show(55113);
 	else if (player_said_2(look, teleporter))
-		_vm->_dialogs->show(55114);
+		text_show(55114);
 	else if (player_said_2(look, sidewalk_to_west)) {
 		if (_game._visitedScenes.exists(505))
-			_vm->_dialogs->show(55116);
+			text_show(55116);
 		else
-			_vm->_dialogs->show(55115);
+			text_show(55115);
 	} else if (player_said_2(look, sidewalk))
-		_vm->_dialogs->show(55118);
+		text_show(55118);
 	else if (player_said_2(look, equipment_overhead))
-		_vm->_dialogs->show(55119);
+		text_show(55119);
 	else if (player_said_2(look, railing))
-		_vm->_dialogs->show(55120);
+		text_show(55120);
 	else
 		return;
 

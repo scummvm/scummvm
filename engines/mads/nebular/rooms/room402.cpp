@@ -20,6 +20,7 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
@@ -122,7 +123,7 @@ static void handleConversation1() {
 	{
 		int quoteId = 0;
 		int quotePosX = 0;
-		switch (_vm->getRandomNumber(1, 3)) {
+		switch (g_engine->getRandomNumber(1, 3)) {
 		case 1:
 			quoteId = 0x1E4;
 			local._bartenderCurrentQuestion = 4;
@@ -245,7 +246,7 @@ static void handleConversation2() {
 	}
 
 	if (_action._activeAction._verbId != 0x21C) {
-		switch (_vm->getRandomNumber(1, 3)) {
+		switch (g_engine->getRandomNumber(1, 3)) {
 		case 1:
 			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 			_scene->_sequences.addTimer(1, 100);
@@ -401,7 +402,7 @@ static void handleDialogs() {
 		_scene->_kernelMessages.reset();
 		_game._player._stepEnabled = false;
 		const char *curQuote = _game.getQuote(_action._activeAction._verbId);
-		if (_vm->_font->getWidth(curQuote, _scene->_textSpacing) > 200) {
+		if (_scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing) > 200) {
 			static char subQuote1[34], subQuote2[34];
 			_game.splitQuote(curQuote, subQuote1, subQuote2);
 			_scene->_kernelMessages.add(Common::Point(230, 42), 0x1110, 32, 0, 140, subQuote1);
@@ -485,10 +486,10 @@ static void room_402_init() {
 		0x215, 0x237, 0x216, 0x219, 0x21A, 0x21B, 0x21C, 0x21D, 0x220, 0x223, 0x224, 0x227, 0x22A, 0x22D, 0x230, 0x233,
 		0x234, 0x235, 0x236, 0x238, 0x239, 0x23A, 0x23D, 0x23E, 0x23F, 0);
 
-	_vm->_palette->setEntry(250, 47, 41, 40);
-	_vm->_palette->setEntry(251, 50, 63, 55);
-	_vm->_palette->setEntry(252, 38, 34, 25);
-	_vm->_palette->setEntry(253, 45, 41, 35);
+	pal_change_color(250, 47, 41, 40);
+	pal_change_color(251, 50, 63, 55);
+	pal_change_color(252, 38, 34, 25);
+	pal_change_color(253, 45, 41, 35);
 
 	local._dialog1.setup(0x60, 0x214, 0x215, 0x237, 0);
 	local._dialog2.setup(0x61, 0x216, 0x219, 0x21A, 0x21B, 0x21D, 0x220, 0x223, 0x224, 0x227, 0x22A, 0x22D, 0x230, 0x21C, 0);
@@ -680,12 +681,12 @@ static void room_402_daemon() {
 		_game._player._visible = true;
 		_scene->_sequences.remove(_globals._sequenceIndexes[15]);
 		_game._objects.addToInventory(OBJ_CREDIT_CHIP);
-		_vm->_dialogs->showItem(OBJ_CREDIT_CHIP, 40242);
+		object_examine(OBJ_CREDIT_CHIP, 40242, 0);
 		_game._player._stepEnabled = true;
 	}
 
-	if ((_vm->getRandomNumber(1, 1500) == 1) && (!local._activeTeleporter) && (_game._player._playerPos.x < 150)) {
-		_vm->_sound->command(30);
+	if ((g_engine->getRandomNumber(1, 1500) == 1) && (!local._activeTeleporter) && (_game._player._playerPos.x < 150)) {
+		g_engine->_soundManager->command(30, 0);
 		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 13, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 1, 11);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 14);
@@ -754,18 +755,18 @@ static void room_402_daemon() {
 		int seqIdx = _globals._sequenceIndexes[7];
 		switch (local._roxMode) {
 		case 20:
-			_vm->_sound->command(57);
+			g_engine->_soundManager->command(57, 0);
 			_scene->_sequences.remove(_globals._sequenceIndexes[15]);
 			_game._objects.addToInventory(OBJ_CREDIT_CHIP);
-			_vm->_dialogs->showItem(OBJ_CREDIT_CHIP, 40242);
+			object_examine(OBJ_CREDIT_CHIP, 40242, 0);
 			break;
 
 		case 22:
-			_vm->_sound->command(57);
+			g_engine->_soundManager->command(57, 0);
 			_scene->_sequences.remove(_globals._sequenceIndexes[8]);
 			_game._objects.addToInventory(OBJ_ALIEN_LIQUOR);
 			_globals[kBottleDisplayed] = false;
-			_vm->_dialogs->showItem(OBJ_ALIEN_LIQUOR, 40241);
+			object_examine(OBJ_ALIEN_LIQUOR, 40241, 0);
 			break;
 
 		case 21:
@@ -1056,14 +1057,14 @@ static void room_402_daemon() {
 			local._bigBeatFl = true;
 		} else {
 			_scene->_sequences.remove(_globals._sequenceIndexes[5]);
-			_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, _vm->getRandomNumber(1, 4));
+			_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, g_engine->getRandomNumber(1, 4));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);
 			_scene->_sequences.addTimer(60, 54);
 		}
 	}
 
 	if (local._bartenderReady) {
-		if (_vm->getRandomNumber(1, 250) == 1) {
+		if (g_engine->getRandomNumber(1, 250) == 1) {
 			if (local._bartenderLooksLeft) {
 				_scene->_sequences.remove(_globals._sequenceIndexes[11]);
 				local._bartenderLooksLeft = false;
@@ -1075,7 +1076,7 @@ static void room_402_daemon() {
 				local._bartenderSteady = false;
 			}
 
-			switch (_vm->getRandomNumber(1, 3)) {
+			switch (g_engine->getRandomNumber(1, 3)) {
 			case 1:
 			{
 				_globals._sequenceIndexes[10] = _scene->_sequences.startCycle(_globals._spriteIndexes[10], false, 4);
@@ -1138,7 +1139,7 @@ static void room_402_daemon() {
 
 	case 78:
 	{
-		_vm->_sound->command(57);
+		g_engine->_soundManager->command(57, 0);
 		int seqIdx = _globals._sequenceIndexes[7];
 		_game._objects.addToInventory(OBJ_REPAIR_LIST);
 		_scene->_sequences.remove(_globals._sequenceIndexes[14]);
@@ -1161,7 +1162,7 @@ static void room_402_daemon() {
 	break;
 
 	case 180:
-		_vm->_dialogs->showItem(OBJ_REPAIR_LIST, 40240);
+		object_examine(OBJ_REPAIR_LIST, 40240, 0);
 		_game._player._stepEnabled = true;
 		break;
 
@@ -1176,7 +1177,7 @@ static void room_402_daemon() {
 		local._bartenderReady = false;
 	}
 
-	if (_vm->getRandomNumber(1, 25) == 1) {
+	if (g_engine->getRandomNumber(1, 25) == 1) {
 		if (local._lightOn) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[0]);
 			local._lightOn = false;
@@ -1186,7 +1187,7 @@ static void room_402_daemon() {
 		}
 	}
 
-	if (!local._blowingSmoke && (_vm->getRandomNumber(1, 300) == 1)) {
+	if (!local._blowingSmoke && (g_engine->getRandomNumber(1, 300) == 1)) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 8, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 14);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 14);
@@ -1211,8 +1212,8 @@ static void room_402_daemon() {
 	}
 
 	if (!local._leftWomanMoving) {
-		if (_vm->getRandomNumber(1, 1000) == 1) {
-			switch (_vm->getRandomNumber(1, 2)) {
+		if (g_engine->getRandomNumber(1, 1000) == 1) {
+			switch (g_engine->getRandomNumber(1, 2)) {
 			case 1:
 				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 12, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 8);
@@ -1238,7 +1239,7 @@ static void room_402_daemon() {
 		int seqIdx = _globals._sequenceIndexes[2];
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 9);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], seqIdx);
-		_scene->_sequences.addTimer(_vm->getRandomNumber(60, 250), 34);
+		_scene->_sequences.addTimer(g_engine->getRandomNumber(60, 250), 34);
 	}
 	break;
 
@@ -1252,7 +1253,7 @@ static void room_402_daemon() {
 	case 35:
 		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 2);
-		_scene->_sequences.addTimer(_vm->getRandomNumber(60, 300), 36);
+		_scene->_sequences.addTimer(g_engine->getRandomNumber(60, 300), 36);
 		break;
 
 	case 36:
@@ -1275,8 +1276,8 @@ static void room_402_daemon() {
 	}
 
 	if (!local._rightWomanMoving) {
-		if (_vm->getRandomNumber(1, 300) == 1) {
-			switch (_vm->getRandomNumber(1, 4)) {
+		if (g_engine->getRandomNumber(1, 300) == 1) {
+			switch (g_engine->getRandomNumber(1, 4)) {
 			case 1:
 				_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 12, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 4);
@@ -1315,7 +1316,7 @@ static void room_402_daemon() {
 		local._rightWomanMoving = false;
 
 	if (_scene->_animation[0]->getCurrentFrame() == 1) {
-		switch (_vm->getRandomNumber(1, 50)) {
+		switch (g_engine->getRandomNumber(1, 50)) {
 		case 1:
 			_scene->_animation[0]->setCurrentFrame(2);
 			break;
@@ -1511,7 +1512,7 @@ static void room_402_daemon() {
 		break;
 
 	case 65:
-		_vm->_sound->command(30);
+		g_engine->_soundManager->command(30, 0);
 		_globals._sequenceIndexes[16] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[16], false, 10, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[16], 1, 6);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[16], 9);
@@ -1610,7 +1611,7 @@ static void room_402_daemon() {
 	}
 
 	if (local._helgaReady) {
-		int rndVal = _vm->getRandomNumber(1, 1000);
+		int rndVal = g_engine->getRandomNumber(1, 1000);
 		if (rndVal < 6)
 			switch (rndVal) {
 			case 1:
@@ -1673,7 +1674,7 @@ static void room_402_daemon() {
 		_globals._sequenceIndexes[13] = _scene->_sequences.startCycle(_globals._spriteIndexes[13], false, 19);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[13], seqIdx);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[13], 8);
-		_scene->_sequences.addTimer(_vm->getRandomNumber(60, 120), 81);
+		_scene->_sequences.addTimer(g_engine->getRandomNumber(60, 120), 81);
 	}
 
 	if (_game._trigger == 81) {
@@ -1758,28 +1759,28 @@ static void room_402_daemon() {
 		if (!local._activeArrow1) {
 			_globals._sequenceIndexes[17] = _scene->_sequences.startCycle(_globals._spriteIndexes[17], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[17], 1);
-			_scene->_sequences.addTimer(_vm->getRandomNumber(10, 15), 49);
+			_scene->_sequences.addTimer(g_engine->getRandomNumber(10, 15), 49);
 			local._activeArrow1 = true;
 		}
 
 		if (!local._activeArrow2) {
 			_globals._sequenceIndexes[18] = _scene->_sequences.startCycle(_globals._spriteIndexes[18], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[18], 1);
-			_scene->_sequences.addTimer(_vm->getRandomNumber(10, 15), 50);
+			_scene->_sequences.addTimer(g_engine->getRandomNumber(10, 15), 50);
 			local._activeArrow2 = true;
 		}
 
 		if (!local._activeArrow3) {
 			_globals._sequenceIndexes[19] = _scene->_sequences.startCycle(_globals._spriteIndexes[19], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[19], 1);
-			_scene->_sequences.addTimer(_vm->getRandomNumber(10, 15), 51);
+			_scene->_sequences.addTimer(g_engine->getRandomNumber(10, 15), 51);
 			local._activeArrow3 = true;
 		}
 	}
 
 	if (_game._trigger == 49) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[17]);
-		_scene->_sequences.addTimer(_vm->getRandomNumber(10, 15), 45);
+		_scene->_sequences.addTimer(g_engine->getRandomNumber(10, 15), 45);
 	}
 
 	if (_game._trigger == 45)
@@ -1787,7 +1788,7 @@ static void room_402_daemon() {
 
 	if (_game._trigger == 50) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[18]);
-		_scene->_sequences.addTimer(_vm->getRandomNumber(10, 15), 46);
+		_scene->_sequences.addTimer(g_engine->getRandomNumber(10, 15), 46);
 	}
 
 	if (_game._trigger == 46)
@@ -1795,7 +1796,7 @@ static void room_402_daemon() {
 
 	if (_game._trigger == 51) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[19]);
-		_scene->_sequences.addTimer(_vm->getRandomNumber(10, 15), 47);
+		_scene->_sequences.addTimer(g_engine->getRandomNumber(10, 15), 47);
 	}
 
 	if (_game._trigger == 47)
@@ -1870,7 +1871,7 @@ static void room_402_parser() {
 		_game._player._visible = true;
 		_scene->_sequences.addTimer(20, 167);
 	} else if (_game._trigger == 167) {
-		_vm->_dialogs->showItem(OBJ_REPAIR_LIST, 40240);
+		object_examine(OBJ_REPAIR_LIST, 40240, 0);
 		_game._player._stepEnabled = true;
 	} else if (_game._screenObjects._inputMode == kInputConversation)
 		handleDialogs();
@@ -1883,7 +1884,7 @@ static void room_402_parser() {
 		case 0:
 		{
 			_game._player._stepEnabled = false;
-			int random = _vm->getRandomNumber(1, 3);
+			int random = g_engine->getRandomNumber(1, 3);
 			if (local._helgaTalkMode == 0)
 				random = 1;
 
@@ -2113,66 +2114,66 @@ static void room_402_parser() {
 			break;
 		}
 	} else if (player_said_2(look, dance_floor))
-		_vm->_dialogs->show(40210);
+		text_show(40210);
 	else if (player_said_2(look, teleporter)) {
 		if (_globals[kSomeoneHasExploded])
-			_vm->_dialogs->show(40212);
+			text_show(40212);
 		else
-			_vm->_dialogs->show(40211);
+			text_show(40211);
 	} else if (player_said_2(look, bar))
-		_vm->_dialogs->show(40213);
+		text_show(40213);
 	else if (player_said_2(look, bartender))
-		_vm->_dialogs->show(40214);
+		text_show(40214);
 	else if (player_said_2(look, woman_in_alcove))
-		_vm->_dialogs->show(40215);
+		text_show(40215);
 	else if (player_said_2(look, woman_on_balcony))
-		_vm->_dialogs->show(40216);
+		text_show(40216);
 	else if (player_said_2(look, woman_in_chair))
-		_vm->_dialogs->show(40217);
+		text_show(40217);
 	else if (player_said_2(look, repair_woman))
-		_vm->_dialogs->show(40218);
+		text_show(40218);
 	else if (player_said_2(look, corridor_to_south))
-		_vm->_dialogs->show(40219);
+		text_show(40219);
 	else if (_action._lookFlag)
-		_vm->_dialogs->show(40220);
+		text_show(40220);
 	else if (player_said_2(look, women))
-		_vm->_dialogs->show(40221);
+		text_show(40221);
 	else if (player_said_2(push, repair_woman) || player_said_2(pull, repair_woman))
-		_vm->_dialogs->show(40222);
+		text_show(40222);
 	else if (player_said_2(talkto, women))
-		_vm->_dialogs->show(40223);
+		text_show(40223);
 	else if (player_said_2(talkto, woman_on_balcony))
-		_vm->_dialogs->show(40224);
+		text_show(40224);
 	else if (player_said_2(look, railing))
-		_vm->_dialogs->show(40225);
+		text_show(40225);
 	else if (player_said_2(look, table))
-		_vm->_dialogs->show(40226);
+		text_show(40226);
 	else if (player_said_2(take, table))
-		_vm->_dialogs->show(40227);
+		text_show(40227);
 	else if (player_said_2(look, sign))
-		_vm->_dialogs->show(40228);
+		text_show(40228);
 	else if (player_said_2(take, sign))
-		_vm->_dialogs->show(40229);
+		text_show(40229);
 	else if (player_said_2(look, bar_stool))
-		_vm->_dialogs->show(40230);
+		text_show(40230);
 	else if (player_said_2(take, bar_stool))
-		_vm->_dialogs->show(40231);
+		text_show(40231);
 	else if (player_said_2(look, cactus))
-		_vm->_dialogs->show(40232);
+		text_show(40232);
 	else if (player_said_2(take, cactus))
-		_vm->_dialogs->show(40233);
+		text_show(40233);
 	else if (player_said_2(look, disco_ball))
-		_vm->_dialogs->show(40234);
+		text_show(40234);
 	else if (player_said_2(look, upper_dance_floor))
-		_vm->_dialogs->show(40235);
+		text_show(40235);
 	else if (player_said_2(look, tree))
-		_vm->_dialogs->show(40236);
+		text_show(40236);
 	else if (player_said_2(look, plant))
-		_vm->_dialogs->show(40237);
+		text_show(40237);
 	else if (player_said_2(take, plant))
-		_vm->_dialogs->show(40238);
+		text_show(40238);
 	else if (player_said_2(look, repair_list) && _game._objects.isInRoom(OBJ_REPAIR_LIST))
-		_vm->_dialogs->show(40239);
+		text_show(40239);
 	else
 		return;
 

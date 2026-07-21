@@ -20,6 +20,7 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
@@ -49,8 +50,8 @@ static void room_308_init() {
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('b', 0));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(Resources::formatName(307, 'X', 0, EXT_SS, ""));
 
-	_vm->_palette->setEntry(252, 63, 30, 20);
-	_vm->_palette->setEntry(253, 45, 15, 12);
+	pal_change_color(252, 63, 30, 20);
+	pal_change_color(253, 45, 15, 12);
 
 	_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 	_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(127, 78));

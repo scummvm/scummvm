@@ -20,6 +20,7 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
@@ -266,8 +267,8 @@ static void room_608_init() {
 		_scene->loadAnimation(formAnimName('D', -1));
 	}
 
-	_vm->_palette->setEntry(252, 63, 44, 30);
-	_vm->_palette->setEntry(253, 63, 20, 22);
+	pal_change_color(252, 63, 44, 30);
+	pal_change_color(253, 63, 20, 22);
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(46, 132);
@@ -311,7 +312,7 @@ static void room_608_daemon() {
 		local._dogHitWindow = true;
 		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 11, 1, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 1);
-		_vm->_sound->command(14);
+		g_engine->_soundManager->command(14, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 		local._dogWindowTimer = 0;
 	}
@@ -321,7 +322,7 @@ static void room_608_daemon() {
 
 	if ((_game._difficulty == DIFFICULTY_HARD) && !local._animationMode && local._dogActiveFl && !local._dogFirstEncounter && !local._dogUnderCar) {
 		if (!local._dogBarkingFl) {
-			if (_vm->getRandomNumber(1, 50) == 10) {
+			if (g_engine->getRandomNumber(1, 50) == 10) {
 				local._dogBarkingFl = true;
 				_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 				_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], false, 5, 8, 0, 0);
@@ -343,7 +344,7 @@ static void room_608_daemon() {
 	}
 
 	if ((_game._trigger == 100) && local._dogBarkingFl) {
-		_vm->_sound->command(12);
+		g_engine->_soundManager->command(12, 0);
 		local._barkCount++;
 
 		if ((local._barkCount >= 1) && (local._barkCount <= 4)) {
@@ -460,7 +461,7 @@ static void room_608_daemon() {
 
 	if (local._dogUnderCar) {
 		if (!local._dogYelping) {
-			if (_vm->getRandomNumber(1, 50) == 10) {
+			if (g_engine->getRandomNumber(1, 50) == 10) {
 				local._dogYelping = true;
 				local._barkCount = 0;
 				_scene->_sequences.addTimer(12, 110);
@@ -473,12 +474,12 @@ static void room_608_daemon() {
 		local._dogYelping = false;
 
 	if (_game._trigger == 110) {
-		_vm->_sound->command(12);
+		g_engine->_soundManager->command(12, 0);
 		_scene->_kernelMessages.add(Common::Point(150, 97), 0xFDFC, 0, 0, 60, _game.getQuote(0x303));
 	}
 
 	if (_game._trigger == 111) {
-		_vm->_sound->command(12);
+		g_engine->_soundManager->command(12, 0);
 		_scene->_kernelMessages.add(Common::Point(183, 93), 0xFDFC, 0, 0, 60, _game.getQuote(0x303));
 	}
 
@@ -669,7 +670,7 @@ static void room_608_daemon() {
 
 		case 85:
 			if (local._rexBeingEaten && (local._animationMode == 1)) {
-				_vm->_sound->command(12);
+				g_engine->_soundManager->command(12, 0);
 				_scene->_sequences.addTimer(10, 85);
 			}
 			break;
@@ -718,7 +719,7 @@ static void room_608_parser() {
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			} else
-				_vm->_dialogs->show(60839);
+				text_show(60839);
 			break;
 
 		case 1:
@@ -792,7 +793,7 @@ static void room_608_parser() {
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			} else
-				_vm->_dialogs->show(60840);
+				text_show(60840);
 			break;
 
 		case 1:
@@ -842,7 +843,7 @@ static void room_608_parser() {
 			local._throwMode = 4;
 			handleThrowingBone();
 		} else
-			_vm->_dialogs->show(60841);
+			text_show(60841);
 	} else if (player_said_3(throw, bone, front_of_garage) || player_said_3(throw, bones, front_of_garage)) {
 		_game._player._stepEnabled = true;
 		if (local._dogActiveFl) {
@@ -853,7 +854,7 @@ static void room_608_parser() {
 			local._throwMode = 5;
 			handleThrowingBone();
 		} else
-			_vm->_dialogs->show(60841);
+			text_show(60841);
 	} else if (player_said_3(throw, bones, area_behind_car) || player_said_3(throw, bone, area_behind_car)
 		|| player_said_3(throw, bones, danger_zone) || player_said_3(throw, bone, danger_zone)) {
 		_game._player._stepEnabled = true;
@@ -866,9 +867,9 @@ static void room_608_parser() {
 				local._throwMode = 6;
 				handleThrowingBone();
 			} else
-				_vm->_dialogs->show(60841);
+				text_show(60841);
 		} else
-			_vm->_dialogs->show(60842);
+			text_show(60842);
 	} else if (player_said_2(take, polycement) && (_game._trigger || !_game._objects.isInInventory(OBJ_POLYCEMENT))) {
 		switch (_game._trigger) {
 		case 0:
@@ -881,7 +882,7 @@ static void room_608_parser() {
 			break;
 
 		case 1:
-			_vm->_sound->command(9);
+			g_engine->_soundManager->command(9, 0);
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 			_scene->_dynamicHotspots.remove(local._polycementHotspotId);
 			break;
@@ -891,7 +892,7 @@ static void room_608_parser() {
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
-			_vm->_dialogs->showItem(OBJ_POLYCEMENT, 60833);
+			object_examine(OBJ_POLYCEMENT, 60833, 0);
 			break;
 
 		default:
@@ -910,10 +911,10 @@ static void room_608_parser() {
 			break;
 
 		case 1:
-			_vm->_sound->command(9);
+			g_engine->_soundManager->command(9, 0);
 			_scene->_sequences.remove(_globals._sequenceIndexes[12]);
 			_game._objects.addToInventory(OBJ_REARVIEW_MIRROR);
-			_vm->_dialogs->showItem(OBJ_REARVIEW_MIRROR, 60827);
+			object_examine(OBJ_REARVIEW_MIRROR, 60827, 0);
 			break;
 
 		case 2:
@@ -927,63 +928,63 @@ static void room_608_parser() {
 		}
 	} else if (_action._lookFlag) {
 		if (_game._difficulty != DIFFICULTY_HARD)
-			_vm->_dialogs->show(60810);
+			text_show(60810);
 		else if (_globals[kDogStatus] == DOG_DEAD)
-			_vm->_dialogs->show(60812);
+			text_show(60812);
 		else
-			_vm->_dialogs->show(60811);
+			text_show(60811);
 	} else if (player_said_1(look) && (player_said_1(muffler) || player_said_1(car_seat) || player_said_1(hubcap)
 		|| player_said_1(coils) || player_said_1(quarter_panel)))
-		_vm->_dialogs->show(60813);
+		text_show(60813);
 	else if (player_said_1(take) && (player_said_1(muffler) || player_said_1(car_seat) || player_said_1(hubcap)
 		|| player_said_1(coils) || player_said_1(quarter_panel)))
-		_vm->_dialogs->show(60814);
+		text_show(60814);
 	else if (player_said_2(look, garage_floor) || player_said_2(look, front_of_garage) || player_said_2(look, rear_of_garage)) {
 		if (local._dogActiveFl)
-			_vm->_dialogs->show(60815);
+			text_show(60815);
 		else
-			_vm->_dialogs->show(60816);
+			text_show(60816);
 	} else if (player_said_2(look, spare_ribs))
-		_vm->_dialogs->show(60817);
+		text_show(60817);
 	else if (player_said_2(take, spare_ribs)) {
 		if (_game._difficulty == DIFFICULTY_HARD)
-			_vm->_dialogs->show(60818);
+			text_show(60818);
 		else
-			_vm->_dialogs->show(60819);
+			text_show(60819);
 	} else if (player_said_2(look, up_button))
-		_vm->_dialogs->show(60820);
+		text_show(60820);
 	else if (player_said_2(look, down_button))
-		_vm->_dialogs->show(60821);
+		text_show(60821);
 	else if (player_said_2(look, trash_can))
-		_vm->_dialogs->show(60822);
+		text_show(60822);
 	else if (player_said_2(look, calendar))
-		_vm->_dialogs->show(60823);
+		text_show(60823);
 	else if (player_said_2(look, storage_box)) {
 		if (_game._objects[OBJ_REARVIEW_MIRROR]._roomNumber == _scene->_currentSceneId)
-			_vm->_dialogs->show(60825);
+			text_show(60825);
 		else
-			_vm->_dialogs->show(60824);
+			text_show(60824);
 	} else if (player_said_2(open, storage_box))
-		_vm->_dialogs->show(60826);
+		text_show(60826);
 	else if (player_said_2(look, rearview_mirror) && (_action._mainObjectSource == CAT_HOTSPOT))
-		_vm->_dialogs->show(60828);
+		text_show(60828);
 	else if (player_said_2(look, tool_box)) {
 		if (_game._objects[OBJ_POLYCEMENT]._roomNumber == _scene->_currentSceneId)
-			_vm->_dialogs->show(60829);
+			text_show(60829);
 		else
-			_vm->_dialogs->show(60830);
+			text_show(60830);
 	} else if (player_said_2(open, tool_box))
-		_vm->_dialogs->show(60831);
+		text_show(60831);
 	else if ((player_said_2(look, polycement)) && (_game._objects.isInRoom(OBJ_POLYCEMENT)))
-		_vm->_dialogs->show(60832);
+		text_show(60832);
 	else if (player_said_2(look, grease_can) || player_said_2(look, oil_can))
-		_vm->_dialogs->show(60834);
+		text_show(60834);
 	else if (player_said_2(look, car_lift))
-		_vm->_dialogs->show(60835);
+		text_show(60835);
 	else if (player_said_2(look, chair) || player_said_2(look, hat))
-		_vm->_dialogs->show(60836);
+		text_show(60836);
 	else if (player_said_2(look, danger_zone))
-		_vm->_dialogs->show(60838);
+		text_show(60838);
 	else
 		return;
 

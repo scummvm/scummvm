@@ -20,6 +20,7 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
@@ -74,7 +75,7 @@ static void initPauseCounterThreshold() {
 	switch (_game._trigger) {
 	case 226:
 		_scene->_sequences.addTimer(1, 124);
-		local._pauseCounterThreshold = _vm->getRandomNumber(7, 12);
+		local._pauseCounterThreshold = g_engine->getRandomNumber(7, 12);
 		local._pauseMode = 2;
 		local._pauseCounter = 0;
 		break;
@@ -86,7 +87,7 @@ static void initPauseCounterThreshold() {
 static void handlePeek() {
 	switch (_game._trigger) {
 	case 133:
-		_vm->_sound->command(18);
+		g_engine->_soundManager->command(18, 0);
 		_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 8, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 51, 52);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 134);
@@ -141,7 +142,7 @@ static void handleVerticalMove() {
 
 	case 141:
 	{
-		_vm->_sound->command(18);
+		g_engine->_soundManager->command(18, 0);
 		int oldIdx = _globals._sequenceIndexes[3];
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 5);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], oldIdx);
@@ -170,7 +171,7 @@ static void handleVerticalMove() {
 static void handleLookStay() {
 	switch (_game._trigger) {
 	case 145:
-		_vm->_sound->command(18);
+		g_engine->_soundManager->command(18, 0);
 		local._monkeyPosition = 2;
 		_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 8, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 51, 52);
@@ -276,7 +277,7 @@ static void handleBlink() {
 static void handleGetBinoculars() {
 	switch (_game._trigger) {
 	case 161:
-		_vm->_sound->command(18);
+		g_engine->_soundManager->command(18, 0);
 		local._monkeyPosition = 3;
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 8, 1, 0, 0);
@@ -316,7 +317,7 @@ static void handleGetBinoculars() {
 		break;
 
 	case 165:
-		_vm->_sound->command(18);
+		g_engine->_soundManager->command(18, 0);
 		break;
 
 	default:
@@ -374,7 +375,7 @@ static void handleBinocularScan() {
 	case 172:
 	{
 		int oldIdx = _globals._sequenceIndexes[3];
-		int randAction = _vm->getRandomNumber(1, 2);
+		int randAction = g_engine->getRandomNumber(1, 2);
 		switch (randAction) {
 		case 1:
 			_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 12, 2, 0, 0);
@@ -444,7 +445,7 @@ static void handleJumpInTree() {
 
 	case 179:
 	{
-		_vm->_sound->command(18);
+		g_engine->_soundManager->command(18, 0);
 		int oldIdx = _globals._sequenceIndexes[3];
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 8, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 53, 61);
@@ -500,7 +501,7 @@ static void handleTongue() {
 
 	case 185:
 	{
-		_vm->_sound->command(18);
+		g_engine->_soundManager->command(18, 0);
 		int oldIdx = _globals._sequenceIndexes[3];
 		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 6, 20, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 38, 39);
@@ -549,7 +550,7 @@ static void handleStandFromPeek() {
 
 	case 192:
 	{
-		_vm->_sound->command(18);
+		g_engine->_soundManager->command(18, 0);
 		int oldIdx = _globals._sequenceIndexes[6];
 		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[5], oldIdx);
@@ -605,7 +606,7 @@ static void handleStandBlink() {
 static void handleJumpAndHide() {
 	switch (_game._trigger) {
 	case 196:
-		_vm->_sound->command(18);
+		g_engine->_soundManager->command(18, 0);
 		local._monkeyPosition = 1;
 		_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 8, 1, 0, 0);
@@ -627,7 +628,7 @@ static void handleJumpAndHide() {
 static void handleMonkeyEating() {
 	switch (_game._trigger) {
 	case 199:
-		_vm->_sound->command(18);
+		g_engine->_soundManager->command(18, 0);
 		_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 10, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 1, 14);
@@ -697,7 +698,7 @@ static void handleMonkeyEating() {
 
 	case 207:
 	{
-		_vm->_sound->command(18);
+		g_engine->_soundManager->command(18, 0);
 		int msgIndex = _scene->_kernelMessages.add(Common::Point(180, 25), 0xFDFC, 0, 0, 90, _game.getQuote(130));
 		_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
 
@@ -742,7 +743,7 @@ static void handleMonkeyFall() {
 	switch (_game._trigger) {
 	case 219:
 	{
-		_vm->_sound->command(25);
+		g_engine->_soundManager->command(25, 0);
 		_scene->_sprites.remove(_globals._spriteIndexes[7]);
 		_scene->_sprites.remove(_globals._spriteIndexes[6]);
 		_scene->_sprites.remove(_globals._spriteIndexes[5]);
@@ -765,7 +766,7 @@ static void handleMonkeyFall() {
 
 	case 220:
 	{
-		_vm->_sound->command(18);
+		g_engine->_soundManager->command(18, 0);
 		_scene->_kernelMessages.add(Common::Point(182, 109), 0xFDFC, 0, 0, 90, _game.getQuote(159));
 		_scene->_hotspots.activate(227, false);
 		int oldIdx = _globals._sequenceIndexes[3];
@@ -810,7 +811,7 @@ static void handleMonkeyFall() {
 
 	case 223:
 		_scene->loadAnimation(Resources::formatName(209, 'e', -1, EXT_AA, ""), 224);
-		_vm->_sound->command(38);
+		g_engine->_soundManager->command(38, 0);
 		break;
 
 	case 224:
@@ -818,7 +819,7 @@ static void handleMonkeyFall() {
 		local._fallFl = false;
 		local._counter = 0;
 		local._pauseMode = 0;
-		_vm->_dialogs->show(20910);
+		text_show(20910);
 		_game._player._stepEnabled = true;
 		break;
 
@@ -860,7 +861,7 @@ static void handleMonkey1() {
 
 	case 215:
 	{
-		_vm->_sound->command(18);
+		g_engine->_soundManager->command(18, 0);
 		_scene->loadAnimation(Resources::formatName(209, 'a', -1, EXT_AA, ""), 251);
 		int oldIdx = _globals._sequenceIndexes[7];
 		_globals._sequenceIndexes[7] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 7, 1, 0, 0);
@@ -895,7 +896,7 @@ static void handleMonkey2() {
 	switch (_game._trigger) {
 	case 251:
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, _game.getQuote(137));
-		_vm->_sound->command(22);
+		g_engine->_soundManager->command(22, 0);
 		_globals._sequenceIndexes[12] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[12], false, 11, 1, 0, 0);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[12], Common::Point(111, 133));
 		_scene->_sequences.setScale(_globals._sequenceIndexes[12], 79);
@@ -943,11 +944,11 @@ static void handleDodge() {
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 5);
 		_scene->_sequences.addTimer(25, 243);
-		_vm->_sound->command(24);
+		g_engine->_soundManager->command(24, 0);
 		break;
 
 	case 243:
-		_vm->_sound->command(18);
+		g_engine->_soundManager->command(18, 0);
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 6);
 		local._playingAnimFl = false;
@@ -982,8 +983,8 @@ static void room_209_init() {
 	_game.loadQuoteSet(0x82, 0x83, 0x84, 0x9C, 0x97, 0x95, 0x99, 0x9E, 0x98, 0x9B, 0xA0, 0x96, 0x9F,
 		0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x91, 0x92, 0x93, 0x94, 0x89, 0x85, 0x8A, 0x86, 0x87, 0x88, 0);
 
-	_vm->_palette->setEntry(252, 63, 44, 30);
-	_vm->_palette->setEntry(253, 63, 20, 22);
+	pal_change_color(252, 63, 44, 30);
+	pal_change_color(253, 63, 20, 22);
 
 	if (_game._objects.isInRoom(OBJ_PLANT_STALK)) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
@@ -1040,7 +1041,7 @@ static void room_209_init() {
 
 static void room_209_daemon() {
 	if (!local._playingAnimFl && !local._pitchFl && !local._fallFl && !local._dodgeFl && (local._pauseMode == 0) && (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS)) {
-		int randAction = _vm->getRandomNumber(1, 50);
+		int randAction = g_engine->getRandomNumber(1, 50);
 		switch (randAction) {
 		case 1:
 			if ((local._monkeyPosition == 1) && (local._counter < 2)) {
@@ -1340,7 +1341,7 @@ static void room_209_daemon() {
 				_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(116, 131));
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 235);
-				_vm->_sound->command(23);
+				g_engine->_soundManager->command(23, 0);
 			}
 			break;
 
@@ -1392,7 +1393,7 @@ static void room_209_daemon() {
 			break;
 
 		case 239:
-			_vm->_sound->command(23);
+			g_engine->_soundManager->command(23, 0);
 			break;
 
 		default:
@@ -1433,7 +1434,7 @@ static void room_209_pre_parser() {
 
 static void room_209_parser() {
 	if (_action._lookFlag) {
-		_vm->_dialogs->show(20912);
+		text_show(20912);
 		_action._inProgress = false;
 		return;
 	}
@@ -1580,7 +1581,7 @@ static void room_209_parser() {
 		if (player_said_2(look, monkey)) {
 			local._pitchFl = true;
 			_game._player._stepEnabled = false;
-			_vm->_dialogs->show(20914);
+			text_show(20914);
 			_action._inProgress = false;
 			return;
 		}
@@ -1606,7 +1607,7 @@ static void room_209_parser() {
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
 			_scene->_sequences.addTimer(4, 3);
-			_vm->_dialogs->showItem(OBJ_PLANT_STALK, 0x328);
+			object_examine(OBJ_PLANT_STALK, 0x328, 0);
 			break;
 
 		case 3:
@@ -1644,7 +1645,7 @@ static void room_209_parser() {
 			break;
 
 		case 3:
-			_vm->_dialogs->showItem(OBJ_BINOCULARS, 0x51AF);
+			object_examine(OBJ_BINOCULARS, 0x51AF, 0);
 			_scene->_sprites.remove(_globals._spriteIndexes[10]);
 			break;
 
@@ -1656,69 +1657,69 @@ static void room_209_parser() {
 	}
 
 	if (player_said_2(look, sky)) {
-		_vm->_dialogs->show(20901);
+		text_show(20901);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, bamboo_like_plant)) {
-		_vm->_dialogs->show(20902);
+		text_show(20902);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, mountainside)) {
-		_vm->_dialogs->show(20903);
+		text_show(20903);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, grassy_field)) {
-		_vm->_dialogs->show(20904);
+		text_show(20904);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, field_to_west)) {
-		_vm->_dialogs->show(20905);
+		text_show(20905);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, rocky_area_to_north)) {
-		_vm->_dialogs->show(20906);
+		text_show(20906);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, plant_stalk) && (_action._savedFields._mainObjectSource == 4)) {
-		_vm->_dialogs->show(20907);
+		text_show(20907);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_3(give, twinkifruit, monkey) || player_said_3(throw, twinkifruit, monkey)) {
-		_vm->_dialogs->show(20909);
+		text_show(20909);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, trees)) {
-		_vm->_dialogs->show(20913);
+		text_show(20913);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(throw, monkey) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
 		if (!player_said_1(poison_darts)) {
-			_vm->_dialogs->show(20915);
+			text_show(20915);
 		}
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_3(throw, poison_darts, monkey)) {
-		_vm->_dialogs->show(20916);
+		text_show(20916);
 		_action._inProgress = false;
 		return;
 	}
@@ -1726,27 +1727,27 @@ static void room_209_parser() {
 	if (player_said_2(look, palm_tree)) {
 		if (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS) {
 			if (local._monkeyPosition == 1)
-				_vm->_dialogs->show(20917);
+				text_show(20917);
 			else
-				_vm->_dialogs->show(20918);
+				text_show(20918);
 		} else {
 			if (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY)
-				_vm->_dialogs->show(20917);
+				text_show(20917);
 			else
-				_vm->_dialogs->show(20919);
+				text_show(20919);
 		}
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(look, melon_mush)) {
-		_vm->_dialogs->show(20920);
+		text_show(20920);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(take, melon_mush)) {
-		_vm->_dialogs->show(20921);
+		text_show(20921);
 		_action._inProgress = false;
 		return;
 	}

@@ -52,7 +52,7 @@ static void room_104_init() {
 	_game.loadQuoteSet(0x35, 0x34, 0);
 	local._kargShootingFl = false;
 
-	if (_vm->getRandomNumber(1, 3) == 1) {
+	if (g_engine->getRandomNumber(1, 3) == 1) {
 		_scene->loadAnimation(Resources::formatName(104, 'B', -1, EXT_AA, ""), 0);
 		local._kargShootingFl = true;
 	}
@@ -86,7 +86,7 @@ static void room_104_daemon() {
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
 				_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 0));
-				_vm->_palette->refreshSceneColors();
+				kernel_new_palette();
 				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], mirrorFl, 7, 1, 0, 0);
 				_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(198, 143));
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
@@ -101,7 +101,7 @@ static void room_104_daemon() {
 				break;
 
 			case 2:
-				_vm->_dialogs->show(10406);
+				text_show(10406);
 				_scene->_reloadSceneFlag = true;
 				break;
 
@@ -119,7 +119,7 @@ static void room_104_daemon() {
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
 				_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 1));
-				_vm->_palette->refreshSceneColors();
+				kernel_new_palette();
 				_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
 				_scene->_sequences.setPosition(_globals._sequenceIndexes[3], Common::Point(198, 143));
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 4);
@@ -143,7 +143,7 @@ static void room_104_daemon() {
 				break;
 
 			case 3:
-				_vm->_dialogs->show(10406);
+				text_show(10406);
 				_scene->_reloadSceneFlag = true;
 				break;
 
@@ -161,7 +161,7 @@ static void room_104_daemon() {
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
 				_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('a', 2));
-				_vm->_palette->refreshSceneColors();
+				kernel_new_palette();
 				_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 8, 1, 0, 0);
 				_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(198, 143));
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
@@ -178,7 +178,7 @@ static void room_104_daemon() {
 				break;
 
 			case 2:
-				_vm->_dialogs->show(10406);
+				text_show(10406);
 				_scene->_reloadSceneFlag = true;
 				break;
 
@@ -191,7 +191,7 @@ static void room_104_daemon() {
 		}
 
 		if (!_game._trigger)
-			_vm->_sound->command(34);
+			g_engine->_soundManager->command(34, 0);
 	}
 
 	if (_game._player._moving && (_scene->_rails.getNext() > 0)) {
@@ -219,15 +219,15 @@ static void room_104_pre_parser() {
 
 static void room_104_parser() {
 	if (_action._lookFlag)
-		_vm->_dialogs->show(10405);
+		text_show(10405);
 	else if (player_said_2(look, curious_weed_patch))
-		_vm->_dialogs->show(10404);
+		text_show(10404);
 	else if (player_said_2(look, surface))
-		_vm->_dialogs->show(10403);
+		text_show(10403);
 	else if (player_said_2(look, cliff_face))
-		_vm->_dialogs->show(10401);
+		text_show(10401);
 	else if (player_said_2(look, ocean_floor))
-		_vm->_dialogs->show(10402);
+		text_show(10402);
 	else
 		return;
 

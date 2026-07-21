@@ -20,6 +20,7 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
@@ -106,8 +107,8 @@ static void room_201_init() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 1);
 		local._pterodactylFlag = false;
 		_game._player.walk(Common::Point(157, 143), FACING_NORTH);
-		_vm->_palette->setEntry(252, 45, 63, 45);
-		_vm->_palette->setEntry(253, 20, 45, 20);
+		pal_change_color(252, 45, 63, 45);
+		pal_change_color(253, 20, 45, 20);
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 2, 0, 120, _game.getQuote(90));
 	} else
 		local._pterodactylFlag = true;
@@ -119,12 +120,12 @@ static void room_201_init() {
 }
 
 static void room_201_daemon() {
-	if (local._pterodactylFlag && (_vm->getRandomNumber(5000) == 9)) {
+	if (local._pterodactylFlag && (g_engine->getRandomNumber(5000) == 9)) {
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 5, 1, 6, 0);
 		int idx = _scene->_dynamicHotspots.add(words_swooping_creature, words_walkto, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(270, 80), FACING_EAST);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 8);
-		_vm->_sound->command(14);
+		g_engine->_soundManager->command(14, 0);
 		local._pterodactylFlag = false;
 	}
 
@@ -133,7 +134,7 @@ static void room_201_daemon() {
 		_game._player._visible = false;
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], 12, 16);
 		_globals._sequenceIndexes[7] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 9, 1, 0, 0);
-		_vm->_sound->command(42);
+		g_engine->_soundManager->command(42, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 1);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[7], SEQUENCE_TRIGGER_SPRITE, 3, 81);
@@ -159,7 +160,7 @@ static void room_201_daemon() {
 	}
 
 	if (_game._trigger == 74) {
-		_vm->_sound->command(40);
+		g_engine->_soundManager->command(40, 0);
 
 		_scene->_kernelMessages.add(Common::Point(125, 56), 0xFDFC, 32, 82, 180, _game.getQuote(91));
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 9, 0, 0, 0);
@@ -186,8 +187,8 @@ static void room_201_daemon() {
 	}
 
 	if (_game._trigger == 78) {
-		_vm->_sound->command(40);
-		_vm->_dialogs->show(20114);
+		g_engine->_soundManager->command(40, 0);
+		text_show(20114);
 		_scene->_reloadSceneFlag = true;
 	}
 }
@@ -206,34 +207,34 @@ static void room_201_parser() {
 				_scene->_nextSceneId = 213;
 			}
 		} else if (player_said_2(look, grassy_field)) {
-			_vm->_dialogs->show(20101);
+			text_show(20101);
 		} else if (player_said_2(look, rocks)) {
-			_vm->_dialogs->show(20102);
+			text_show(20102);
 		} else if (player_said_2(look, thorny_bush)) {
-			_vm->_dialogs->show(20103);
+			text_show(20103);
 		} else if (player_said_2(look, sky)) {
-			_vm->_dialogs->show(20104);
+			text_show(20104);
 		} else if (player_said_2(look, water)) {
-			_vm->_dialogs->show(20105);
+			text_show(20105);
 		} else if (player_said_2(look, island_in_distance)) {
-			_vm->_dialogs->show(20106);
+			text_show(20106);
 		} else if (player_said_2(look, weather_station)) {
-			_vm->_dialogs->show(20107);
+			text_show(20107);
 		} else if (player_said_2(look, path)) {
-			_vm->_dialogs->show(20108);
+			text_show(20108);
 		} else if (player_said_2(look, field_to_south)) {
-			_vm->_dialogs->show(20110);
+			text_show(20110);
 		} else if (player_said_2(look, strange_device)) {
 			if (_globals[kMeteorologistEverSeen])
-				_vm->_dialogs->show(20112);
+				text_show(20112);
 			else
-				_vm->_dialogs->show(20109);
+				text_show(20109);
 		} else if (player_said_2(look, teleporter)) {
-			_vm->_dialogs->show(20113);
+			text_show(20113);
 		} else
 			return;
 	} else {
-		_vm->_dialogs->show(20111);
+		text_show(20111);
 	}
 	_action._inProgress = false;
 }

@@ -108,7 +108,7 @@ static void room_802_daemon() {
 	}
 
 	if (_game._trigger == 72)
-		_vm->_sound->command(13);
+		g_engine->_soundManager->command(13, 0);
 }
 
 static void room_802_pre_parser() {
@@ -139,7 +139,7 @@ static void room_802_parser() {
 
 		case 1:
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-			_vm->_sound->command(9);
+			g_engine->_soundManager->command(9, 0);
 			break;
 
 		case 2:
@@ -151,7 +151,7 @@ static void room_802_parser() {
 		case 3:
 			_game._player._stepEnabled = true;
 			_game._objects.addToInventory(OBJ_SHIELD_MODULATOR);
-			_vm->_dialogs->showItem(OBJ_SHIELD_MODULATOR, 80215);
+			object_examine(OBJ_SHIELD_MODULATOR, 80215, 0);
 			break;
 
 		default:
@@ -171,7 +171,7 @@ static void room_802_parser() {
 
 		case 1:
 			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
-			_vm->_sound->command(9);
+			g_engine->_soundManager->command(9, 0);
 			_globals[kRemoteOnGround] = false;
 			break;
 
@@ -184,7 +184,7 @@ static void room_802_parser() {
 		case 3:
 			_game._player._stepEnabled = true;
 			_game._objects.addToInventory(OBJ_REMOTE);
-			_vm->_dialogs->showItem(OBJ_REMOTE, 80223);
+			object_examine(OBJ_REMOTE, 80223, 0);
 			break;
 
 		default:
@@ -192,37 +192,37 @@ static void room_802_parser() {
 		}
 	} else if (!_globals[kRemoteOnGround] && (_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) || _globals[kShieldModInstalled])
 		&& (player_said_2(look, launch_pad) || _action._lookFlag))
-		_vm->_dialogs->show(80210);
+		text_show(80210);
 	else if (!_globals[kRemoteOnGround] && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled]
 		&& (player_said_2(look, launch_pad) || _action._lookFlag))
-		_vm->_dialogs->show(80211);
+		text_show(80211);
 	else if (_globals[kRemoteOnGround] && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled]
 		&& (player_said_2(look, launch_pad) || _action._lookFlag))
-		_vm->_dialogs->show(80213);
+		text_show(80213);
 	else if (_globals[kRemoteOnGround] && (_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) || _globals[kShieldModInstalled])
 		&& (player_said_2(look, launch_pad) || _action._lookFlag))
-		_vm->_dialogs->show(80212);
+		text_show(80212);
 	else if (!_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled] && player_said_2(look, shield_modulator))
-		_vm->_dialogs->show(80214);
+		text_show(80214);
 	else if (_globals[kRemoteOnGround] && player_said_2(look, remote))
-		_vm->_dialogs->show(80216);
+		text_show(80216);
 	else if (player_said_2(look, ship)) {
 		if ((!_game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) && (!_globals[kShieldModInstalled]))
-			_vm->_dialogs->show(80218);
+			text_show(80218);
 		else
-			_vm->_dialogs->show(80217);
+			text_show(80217);
 	} else if (player_said_2(look, bushes))
-		_vm->_dialogs->show(80219);
+		text_show(80219);
 	else if (player_said_2(look, path_to_east))
-		_vm->_dialogs->show(80220);
+		text_show(80220);
 	else if (player_said_2(look, sky))
-		_vm->_dialogs->show(80221);
+		text_show(80221);
 	else if (player_said_2(take, ship))
-		_vm->_dialogs->show(80222);
+		text_show(80222);
 	else if (player_said_2(look, tree) || player_said_2(look, trees))
-		_vm->_dialogs->show(80224);
+		text_show(80224);
 	else if (player_said_2(look, building_to_west))
-		_vm->_dialogs->show(80225);
+		text_show(80225);
 	else
 		return;
 

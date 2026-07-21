@@ -41,10 +41,10 @@ static void room_322_init() {
 	teleporter_init();
 
 	// The original is using scene3xx_section_3_music()
-	if (!_vm->_musicFlag)
-		_vm->_sound->command(2);
+	if (!config_file.music_flag)
+		g_engine->_soundManager->command(2, 0);
 	else
-		_vm->_sound->command(10);
+		g_engine->_soundManager->command(10, 0);
 }
 
 static void room_322_daemon() {
@@ -53,7 +53,7 @@ static void room_322_daemon() {
 
 static void room_322_parser() {
 	if (_action._lookFlag) {
-		_vm->_dialogs->show(32214);
+		text_show(32214);
 		_action._inProgress = false;
 		return;
 	}
@@ -64,11 +64,11 @@ static void room_322_parser() {
 	}
 
 	if (player_said_2(look, viewport) || player_said_2(peer_through, viewport))
-		_vm->_dialogs->show(32210);
+		text_show(32210);
 	else if (player_said_2(look, keypad))
-		_vm->_dialogs->show(32211);
+		text_show(32211);
 	else if (player_said_2(look, display))
-		_vm->_dialogs->show(32212);
+		text_show(32212);
 	else if (player_said_2(look, 0_key) || player_said_2(look, 1_key)
 		|| player_said_2(look, 2_key) || player_said_2(look, 3_key)
 		|| player_said_2(look, 4_key) || player_said_2(look, 5_key)
@@ -76,9 +76,9 @@ static void room_322_parser() {
 		|| player_said_2(look, 8_key) || player_said_2(look, 9_key)
 		|| player_said_2(look, smile_key) || player_said_2(look, enter_key)
 		|| player_said_2(look, frown_key))
-		_vm->_dialogs->show(32213);
+		text_show(32213);
 	else if (player_said_2(look, device))
-		_vm->_dialogs->show(32214);
+		text_show(32214);
 	else
 		return;
 

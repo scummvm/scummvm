@@ -198,7 +198,7 @@ static void room_703_init() {
 	_game.loadQuoteSet(0x311, 0x312, 0x313, 0x314, 0x315, 0);
 	local._dialog1.setup(0x98, 0x311, 0x312, 0x313, 0x314, 0x315, 0);
 	section_7_music();
-	_vm->_sound->command(28);
+	g_engine->_soundManager->command(28, 0);
 }
 
 static void room_703_daemon() {
@@ -333,23 +333,23 @@ static void room_703_daemon() {
 	if (_game._trigger == 80) {
 		switch (_globals[kBottleStatus]) {
 		case 0:
-			_vm->_dialogs->show(432);
+			text_show(432);
 			break;
 
 		case 1:
-			_vm->_dialogs->show(70324);
+			text_show(70324);
 			break;
 
 		case 2:
-			_vm->_dialogs->show(70325);
+			text_show(70325);
 			break;
 
 		case 3:
-			_vm->_dialogs->show(70326);
+			text_show(70326);
 			break;
 
 		case 4:
-			_vm->_dialogs->show(70327);
+			text_show(70327);
 			break;
 
 		default:
@@ -415,7 +415,7 @@ static void room_703_daemon() {
 					if (_game._difficulty == DIFFICULTY_HARD)
 						_game._objects.setRoom(OBJ_CHICKEN, 1);
 					else
-						_vm->_dialogs->show(70319);
+						text_show(70319);
 				}
 				nextBoatFrame = 80;
 				break;
@@ -439,9 +439,9 @@ static void room_703_daemon() {
 			case 80:
 				if (_game._difficulty == DIFFICULTY_HARD) {
 					_game._objects.setRoom(OBJ_BOMB, 1);
-					_vm->_dialogs->show(70318);
+					text_show(70318);
 				} else
-					_vm->_dialogs->show(70317);
+					text_show(70317);
 
 				_scene->freeAnimation();
 				local._monsterMode = 1;
@@ -471,9 +471,9 @@ static void room_703_daemon() {
 				_scene->_animation[0]->setCurrentFrame(9);
 				_game._player._stepEnabled = true;
 				if (_game._storyMode == STORYMODE_NAUGHTY)
-					_vm->_dialogs->show(70321);
+					text_show(70321);
 				else
-					_vm->_dialogs->show(70322);
+					text_show(70322);
 
 				break;
 
@@ -547,24 +547,24 @@ static void room_703_parser() {
 			handleBottleInterface();
 			local._dialog1.start();
 		} else
-			_vm->_dialogs->show(70323);
+			text_show(70323);
 	} else if (_action._lookFlag || player_said_2(look, sea_monster)) {
 		if (_globals[kMonsterAlive])
-			_vm->_dialogs->show(70310);
+			text_show(70310);
 	} else if (player_said_2(look, water)) {
 		if (!_globals[kMonsterAlive])
-			_vm->_dialogs->show(70311);
+			text_show(70311);
 		else
-			_vm->_dialogs->show(70312);
+			text_show(70312);
 	} else if (player_said_2(look, building_to_north)) {
 		if (_globals[kMonsterAlive])
-			_vm->_dialogs->show(70313);
+			text_show(70313);
 		else if (_game._visitedScenes.exists(710))
-			_vm->_dialogs->show(70314);
+			text_show(70314);
 		else
-			_vm->_dialogs->show(70315);
+			text_show(70315);
 	} else if (player_said_2(look, volcano_rim))
-		_vm->_dialogs->show(70316);
+		text_show(70316);
 	else
 		return;
 

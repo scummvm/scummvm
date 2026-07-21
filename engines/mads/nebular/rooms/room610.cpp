@@ -113,11 +113,11 @@ static void room_610_parser() {
 				break;
 
 			case 1:
-				_vm->_sound->command(9);
+				g_engine->_soundManager->command(9, 0);
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 				_scene->_dynamicHotspots.remove(local._handsetHotspotId);
 				_game._objects.addToInventory(OBJ_PHONE_HANDSET);
-				_vm->_dialogs->showItem(OBJ_PHONE_HANDSET, 61017);
+				object_examine(OBJ_PHONE_HANDSET, 61017, 0);
 				break;
 
 			case 2:
@@ -156,58 +156,58 @@ static void room_610_parser() {
 			if ((_globals[kHandsetCellStatus] == 2) && (_game._difficulty == DIFFICULTY_HARD) && !_globals[kDurafailRecharged])
 				local._cellCharging = true;
 
-			_vm->_dialogs->show(61032);
+			text_show(61032);
 			break;
 
 		default:
 			break;
 		}
 	} else if (player_said_2(look, pippy_billboard))
-		_vm->_dialogs->show(61010);
+		text_show(61010);
 	else if (player_said_2(look, civilization_ad))
-		_vm->_dialogs->show(61011);
+		text_show(61011);
 	else if (player_said_2(look, marx_bros_poster))
-		_vm->_dialogs->show(61012);
+		text_show(61012);
 	else if (player_said_2(look, video_monitor))
-		_vm->_dialogs->show(61013);
+		text_show(61013);
 	else if (player_said_2(look, video_store))
-		_vm->_dialogs->show(61014);
+		text_show(61014);
 	else if (_action._lookFlag)
-		_vm->_dialogs->show(61015);
+		text_show(61015);
 	else if (player_said_2(look, logo))
-		_vm->_dialogs->show(61018);
+		text_show(61018);
 	else if (player_said_2(look, cement)) {
 		if (_game._visitedScenes.exists(601))
-			_vm->_dialogs->show(61020);
+			text_show(61020);
 		else
-			_vm->_dialogs->show(61019);
+			text_show(61019);
 	} else if (player_said_2(look, counter))
-		_vm->_dialogs->show(61021);
+		text_show(61021);
 	else if (player_said_2(look, phone_antenna))
-		_vm->_dialogs->show(61022);
+		text_show(61022);
 	else if (player_said_2(look, smelly_sneaker))
-		_vm->_dialogs->show(61023);
+		text_show(61023);
 	else if (player_said_2(take, smelly_sneaker))
-		_vm->_dialogs->show(61024);
+		text_show(61024);
 	else if (player_said_2(look, spotlight))
-		_vm->_dialogs->show(61025);
+		text_show(61025);
 	else if (player_said_2(look, phone_handset) && (_action._mainObjectSource == CAT_HOTSPOT))
-		_vm->_dialogs->show(61026);
+		text_show(61026);
 	else if (player_said_2(look, phone_cradle))
-		_vm->_dialogs->show(61027);
+		text_show(61027);
 	else if (player_said_2(look, return_slot))
-		_vm->_dialogs->show(61028);
+		text_show(61028);
 	else if (player_said_2(put, return_slot)
 		&& _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId)))
-		_vm->_dialogs->show(61029);
+		text_show(61029);
 	else if (player_said_1(classic_videos) || player_said_1(more_classic_videos) || player_said_1(drama_videos)
 		|| player_said_1(new_release_videos) || player_said_1(porno_videos) || player_said_1(educational_videos)
 		|| player_said_1(instructional_videos) || player_said_1(workout_videos) || player_said_1(foreign_videos)
 		|| player_said_1(adventure_videos) || player_said_1(comedy_videos)) {
 		if (player_said_1(look))
-			_vm->_dialogs->show(61030);
+			text_show(61030);
 		else if (player_said_1(take))
-			_vm->_dialogs->show(61031);
+			text_show(61031);
 		else
 			return;
 	} else

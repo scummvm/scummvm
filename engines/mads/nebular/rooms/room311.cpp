@@ -189,7 +189,7 @@ static void room_311_daemon() {
 
 static void room_311_parser() {
 	if (_action._lookFlag)
-		_vm->_dialogs->show(31119);
+		text_show(31119);
 	else if (local._checkGuardFl) {
 		local._checkGuardFl = false;
 		_scene->_kernelMessages.reset();
@@ -293,25 +293,25 @@ static void room_311_parser() {
 			break;
 		}
 	} else if (player_said_2(look, desk))
-		_vm->_dialogs->show(31110);
+		text_show(31110);
 	else if (player_said_2(look, wall))
-		_vm->_dialogs->show(31111);
+		text_show(31111);
 	else if (player_said_2(look, lighting_fixture) || player_said_2(stare_at, lighting_fixture))
-		_vm->_dialogs->show(31112);
+		text_show(31112);
 	else if (player_said_2(look, lights) || player_said_2(stare_at, lights))
-		_vm->_dialogs->show(31113);
+		text_show(31113);
 	else if (player_said_2(take, lights))
-		_vm->_dialogs->show(31114);
+		text_show(31114);
 	else if (player_said_2(look, light) || player_said_2(stare_at, light))
-		_vm->_dialogs->show(31115);
+		text_show(31115);
 	else if (player_said_2(take, light))
-		_vm->_dialogs->show(31116);
+		text_show(31116);
 	else if (player_said_2(look, corridor_to_west))
-		_vm->_dialogs->show(31117);
+		text_show(31117);
 	else if (player_said_2(look, corridor_to_east))
-		_vm->_dialogs->show(31118);
+		text_show(31118);
 	else if (player_said_2(look, air_vent))
-		_vm->_dialogs->show(31120);
+		text_show(31120);
 	else
 		return;
 

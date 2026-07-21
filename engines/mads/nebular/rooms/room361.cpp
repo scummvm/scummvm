@@ -380,7 +380,7 @@ static void room_361_pre_parser() {
 
 static void room_361_parser() {
 	if (_action._lookFlag)
-		_vm->_dialogs->show(36119);
+		text_show(36119);
 	else if (player_said_2(sit_at, desk)) {
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.addQuote(252, 0, 120);
@@ -390,25 +390,25 @@ static void room_361_parser() {
 		else
 			handleRexAction();
 	} else if (player_said_2(look, desk))
-		_vm->_dialogs->show(36110);
+		text_show(36110);
 	else if (player_said_2(look, wall))
-		_vm->_dialogs->show(36111);
+		text_show(36111);
 	else if (player_said_2(look, lighting_fixture) || player_said_2(stare_at, lighting_fixture))
-		_vm->_dialogs->show(36112);
+		text_show(36112);
 	else if (player_said_2(look, lights) || player_said_2(stare_at, lights))
-		_vm->_dialogs->show(36113);
+		text_show(36113);
 	else if (player_said_2(take, lights))
-		_vm->_dialogs->show(36114);
+		text_show(36114);
 	else if (player_said_2(look, light_bulb) || player_said_2(stare_at, light_bulb))
-		_vm->_dialogs->show(36115);
+		text_show(36115);
 	else if (player_said_2(take, light_bulb))
-		_vm->_dialogs->show(36116);
+		text_show(36116);
 	else if (player_said_2(look, corridor_to_west))
-		_vm->_dialogs->show(36117);
+		text_show(36117);
 	else if (player_said_2(look, corridor_to_east))
-		_vm->_dialogs->show(36118);
+		text_show(36118);
 	else if (player_said_2(look, air_vent))
-		_vm->_dialogs->show(36120);
+		text_show(36120);
 	else
 		return;
 

@@ -115,7 +115,7 @@ static void room_214_daemon() {
 
 static void room_214_parser() {
 	if (_action._lookFlag)
-		_vm->_dialogs->show(21427);
+		text_show(21427);
 	else if (player_said_2(walk_outside, hut))
 		_scene->_nextSceneId = 207;
 	else if (player_said_2(take, poison_darts) && (_game._trigger || _game._objects.isInRoom(OBJ_POISON_DARTS))) {
@@ -144,7 +144,7 @@ static void room_214_parser() {
 
 		case 3:
 			_game._player._stepEnabled = true;
-			_vm->_dialogs->showItem(OBJ_POISON_DARTS, 0x53A5);
+			object_examine(OBJ_POISON_DARTS, 0x53A5, 0);
 			break;
 
 		default:
@@ -176,67 +176,67 @@ static void room_214_parser() {
 
 		case 3:
 			_game._player._stepEnabled = true;
-			_vm->_dialogs->showItem(OBJ_BLOWGUN, 0x329);
+			object_examine(OBJ_BLOWGUN, 0x329, 0);
 			break;
 
 		default:
 			break;
 		}
 	} else if (player_said_2(look, window))
-		_vm->_dialogs->show(21401);
+		text_show(21401);
 	else if (player_said_2(look, experiment_cage))
-		_vm->_dialogs->show(21402);
+		text_show(21402);
 	else if (player_said_2(look, captive_creature))
-		_vm->_dialogs->show(21403);
+		text_show(21403);
 	else if (player_said_2(look, bear_rug))
-		_vm->_dialogs->show(21404);
+		text_show(21404);
 	else if (player_said_2(look, trophy))
-		_vm->_dialogs->show(21405);
+		text_show(21405);
 	else if (player_said_2(look, large_bowl)) {
 		if (_game._storyMode == STORYMODE_NAUGHTY) {
-			_vm->_dialogs->show(21406);
+			text_show(21406);
 		} else {
-			_vm->_dialogs->show(21407);
+			text_show(21407);
 		}
 	} else if (player_said_2(look, specimen_jars))
-		_vm->_dialogs->show(21408);
+		text_show(21408);
 	else if (player_said_2(take, large_bowl) || player_said_2(take, specimen_jars))
-		_vm->_dialogs->show(21409);
+		text_show(21409);
 	else if (player_said_2(look, shrunken_heads))
-		_vm->_dialogs->show(21410);
+		text_show(21410);
 	else if (player_said_2(take, shrunken_heads) || player_said_2(take, large_heads))
-		_vm->_dialogs->show(21411);
+		text_show(21411);
 	else if (player_said_2(look, large_heads))
-		_vm->_dialogs->show(21428);
+		text_show(21428);
 	else if (player_said_2(look, poison_darts) && (_action._savedFields._mainObjectSource == 4))
-		_vm->_dialogs->show(21412);
+		text_show(21412);
 	else if (player_said_2(open, experiment_cage))
-		_vm->_dialogs->show(21414);
+		text_show(21414);
 	else if (player_said_2(talkto, captive_creature))
-		_vm->_dialogs->show(21415);
+		text_show(21415);
 	else if (player_said_3(give, twinkifruit, captive_creature))
-		_vm->_dialogs->show(21416);
+		text_show(21416);
 	else if (player_said_3(shoot, blowgun, captive_creature) || player_said_3(hose_down, blowgun, captive_creature))
-		_vm->_dialogs->show(21417);
+		text_show(21417);
 	else if (player_said_2(look, big_heads))
-		_vm->_dialogs->show(21418);
+		text_show(21418);
 	else if (player_said_2(take, big_heads))
-		_vm->_dialogs->show(21419);
+		text_show(21419);
 	else if (player_said_2(take, bear_rug))
-		_vm->_dialogs->show(21420);
+		text_show(21420);
 	else if (player_said_2(look, floor_of_hut))
-		_vm->_dialogs->show(21421);
+		text_show(21421);
 	else if (player_said_2(look, blowgun))
-		_vm->_dialogs->show(21422);
+		text_show(21422);
 	else if (player_said_2(look, table)) {
 		if (_game._objects.isInRoom(OBJ_POISON_DARTS) && _game._objects.isInRoom(OBJ_BLOWGUN)) {
-			_vm->_dialogs->show(21423);
+			text_show(21423);
 		} else if (_game._objects.isInRoom(OBJ_POISON_DARTS) && !_game._objects.isInRoom(OBJ_BLOWGUN)) {
-			_vm->_dialogs->show(21424);
+			text_show(21424);
 		} else if (!_game._objects.isInRoom(OBJ_POISON_DARTS) && _game._objects.isInRoom(OBJ_BLOWGUN)) {
-			_vm->_dialogs->show(21425);
+			text_show(21425);
 		} else {
-			_vm->_dialogs->show(21426);
+			text_show(21426);
 		}
 	} else
 		return;

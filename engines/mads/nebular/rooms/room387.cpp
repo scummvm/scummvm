@@ -42,9 +42,9 @@ static void room_387_parser() {
 	if (player_said_2(return_to, air_shaft))
 		_scene->_nextSceneId = 313;
 	else if (player_said_2(look_through, grate))
-		_vm->_dialogs->show(38710);
+		text_show(38710);
 	else if (player_said_2(open, grate))
-		_vm->_dialogs->show(38711);
+		text_show(38711);
 	else
 		return;
 

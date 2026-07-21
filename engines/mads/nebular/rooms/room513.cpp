@@ -75,7 +75,7 @@ static void room_513_daemon() {
 		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 		_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 2);
-		_vm->_sound->command(24);
+		g_engine->_soundManager->command(24, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
 		break;
 
@@ -87,7 +87,7 @@ static void room_513_daemon() {
 	case 82:
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 2);
-		_vm->_sound->command(25);
+		g_engine->_soundManager->command(25, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 83);
 		break;
 
@@ -184,7 +184,7 @@ static void room_513_parser() {
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 2);
-			_vm->_sound->command(24);
+			g_engine->_soundManager->command(24, 0);
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x278));
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
@@ -198,7 +198,7 @@ static void room_513_parser() {
 		case 3:
 			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 2);
-			_vm->_sound->command(25);
+			g_engine->_soundManager->command(25, 0);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
 			break;
 
@@ -217,31 +217,31 @@ static void room_513_parser() {
 			break;
 		}
 	} else if ((_action._lookFlag) || player_said_2(look, street))
-		_vm->_dialogs->show(51318);
+		text_show(51318);
 	else if (player_said_2(look, elevator))
-		_vm->_dialogs->show(51310);
+		text_show(51310);
 	else if (player_said_2(look, elevator_door))
-		_vm->_dialogs->show(51311);
+		text_show(51311);
 	else if (player_said_2(look, card_slot))
-		_vm->_dialogs->show(51312);
+		text_show(51312);
 	else if (player_said_2(look, handicap_sign))
-		_vm->_dialogs->show(51313);
+		text_show(51313);
 	else if (player_said_2(look, bike_rack))
-		_vm->_dialogs->show(51314);
+		text_show(51314);
 	else if (player_said_2(look, building))
-		_vm->_dialogs->show(51315);
+		text_show(51315);
 	else if (player_said_2(look, sign))
-		_vm->_dialogs->show(51316);
+		text_show(51316);
 	else if (player_said_2(look, street_to_west) || player_said_2(walk_down, street_to_west))
-		_vm->_dialogs->show(51317);
+		text_show(51317);
 	else if (player_said_2(open, elevator_door) || player_said_2(open, elevator))
-		_vm->_dialogs->show(51319);
+		text_show(51319);
 	else if (player_said_2(look, car))
-		_vm->_dialogs->show(51321);
+		text_show(51321);
 	else if (player_said_2(look, brick_wall))
-		_vm->_dialogs->show(51322);
+		text_show(51322);
 	else if (player_said_3(put, security_card, card_slot))
-		_vm->_dialogs->show(51320);
+		text_show(51320);
 	else
 		return;
 

@@ -76,40 +76,40 @@ static void room_108_pre_parser() {
 
 static void room_108_parser() {
 	if (_action._lookFlag)
-		_vm->_dialogs->show(10812);
+		text_show(10812);
 	else if (player_said_2(take, dead_fish) && _globals[kFishIn108]) {
 		if (_game._objects.isInInventory(OBJ_DEAD_FISH)) {
-			int randVal = _vm->getRandomNumber(74, 76);
+			int randVal = g_engine->getRandomNumber(74, 76);
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(randVal));
 		} else {
 			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 			_game._objects.addToInventory(OBJ_DEAD_FISH);
 			_globals[kFishIn108] = false;
-			_vm->_dialogs->showItem(OBJ_DEAD_FISH, 10808);
+			object_examine(OBJ_DEAD_FISH, 10808, 0);
 		}
 	} else if (player_said_2(swim_towards, open_area_to_north))
 		_scene->_nextSceneId = 107;
 	else if (player_said_2(look, cliff_face))
-		_vm->_dialogs->show(10801);
+		text_show(10801);
 	else if (player_said_2(look, ocean_floor))
-		_vm->_dialogs->show(10802);
+		text_show(10802);
 	else if (player_said_2(look, odd_rock_formation))
-		_vm->_dialogs->show(10803);
+		text_show(10803);
 	else if (player_said_2(take, odd_rock_formation))
-		_vm->_dialogs->show(10804);
+		text_show(10804);
 	else if (player_said_2(look, rocks))
-		_vm->_dialogs->show(10805);
+		text_show(10805);
 	else if (player_said_2(take, rocks))
-		_vm->_dialogs->show(10806);
+		text_show(10806);
 	else if (player_said_2(look, dead_fish))
-		_vm->_dialogs->show(10807);
+		text_show(10807);
 	else if (player_said_2(look, overhang_to_east))
-		_vm->_dialogs->show(10809);
+		text_show(10809);
 	else if (player_said_2(look, open_area_to_north))
-		_vm->_dialogs->show(10810);
+		text_show(10810);
 	else if (player_said_2(look, surface))
-		_vm->_dialogs->show(10811);
+		text_show(10811);
 	else
 		return;
 

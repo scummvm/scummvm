@@ -59,7 +59,7 @@ static void room_207_init() {
 	if (!_game._visitedScenes._sceneRevisited) {
 		var2 = 1;
 	} else {
-		var2 = _vm->getRandomNumber(4) + 1;
+		var2 = g_engine->getRandomNumber(4) + 1;
 	}
 
 	if (var2 > 2)
@@ -104,7 +104,7 @@ static void room_207_init() {
 static void moveVulture() {
 	_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
-	_vm->_sound->command(43);
+	g_engine->_soundManager->command(43, 0);
 	local._vultureFl = false;
 	local._vultureTime = _game._player._priorTimer;
 	_scene->_dynamicHotspots.remove(local._vultureHotspotId);
@@ -171,7 +171,7 @@ static void room_207_pre_parser() {
 
 static void room_207_parser() {
 	if (_action._savedFields._lookFlag)
-		_vm->_dialogs->show(20711);
+		text_show(20711);
 	else if (player_said_2(walk_through, doorway))
 		_scene->_nextSceneId = 214;
 	else {
@@ -191,33 +191,33 @@ static void room_207_parser() {
 		}
 
 		if (player_said_2(look, dense_forest))
-			_vm->_dialogs->show(20701);
+			text_show(20701);
 		else if (player_said_2(look, hedge))
-			_vm->_dialogs->show(20702);
+			text_show(20702);
 		else if (player_said_2(look, skull_and_crossbones))
-			_vm->_dialogs->show(20703);
+			text_show(20703);
 		else if (player_said_2(look, cauldron))
-			_vm->_dialogs->show(20704);
+			text_show(20704);
 		else if (player_said_2(look, witchdoctor_hut))
-			_vm->_dialogs->show(20705);
+			text_show(20705);
 		else if (player_said_2(look, path_to_west))
-			_vm->_dialogs->show(20706);
+			text_show(20706);
 		else if (player_said_2(look, mountains))
-			_vm->_dialogs->show(20707);
+			text_show(20707);
 		else if (player_said_2(look, aloe_plant))
-			_vm->_dialogs->show(20708);
+			text_show(20708);
 		else if (player_said_2(look, lawn))
-			_vm->_dialogs->show(20709);
+			text_show(20709);
 		else if (player_said_2(look, vulture))
-			_vm->_dialogs->show(20710);
+			text_show(20710);
 		else if (player_said_2(take, skull_and_crossbones))
-			_vm->_dialogs->show(20712);
+			text_show(20712);
 		else if (player_said_2(take, aloe_plant))
-			_vm->_dialogs->show(20713);
+			text_show(20713);
 		else if (player_said_2(look, spider))
-			_vm->_dialogs->show(20714);
+			text_show(20714);
 		else if (player_said_2(take, spider))
-			_vm->_dialogs->show(20715);
+			text_show(20715);
 		else
 			return;
 	}

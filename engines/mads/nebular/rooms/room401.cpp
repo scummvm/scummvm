@@ -86,7 +86,7 @@ static void room_401_daemon() {
 		else if (dist < 1)
 			dist = 1;
 
-		_vm->_sound->command(12, dist);
+		g_engine->_soundManager->command(12, dist);
 		local._timer = _scene->_frameStartTime + _game._player._ticksAmount;
 	}
 
@@ -123,10 +123,10 @@ static void room_401_parser() {
 			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
-			_vm->_sound->command(21);
+			g_engine->_soundManager->command(21, 0);
 			_scene->loadAnimation(formAnimName('s', 1), 70);
 			_globals[kHasBeenScanned] = true;
-			_vm->_sound->command(22);
+			g_engine->_soundManager->command(22, 0);
 			int idx = _scene->_kernelMessages.add(Common::Point(153, 46), 0x1110, 32, 0, 60, _game.getQuote(0x1D4));
 			_scene->_kernelMessages.setQuoted(idx, 4, true);
 		}
@@ -135,9 +135,9 @@ static void room_401_parser() {
 			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
-			_vm->_sound->command(21);
+			g_engine->_soundManager->command(21, 0);
 			_scene->loadAnimation(formAnimName('s', 2), 80);
-			_vm->_sound->command(23);
+			g_engine->_soundManager->command(23, 0);
 			_globals[kHasBeenScanned] = true;
 		}
 	}
@@ -149,19 +149,19 @@ static void room_401_parser() {
 		_scene->_nextSceneId = 354;
 	else if (player_said_2(look, scanner)) {
 		if (_globals[kHasBeenScanned])
-			_vm->_dialogs->show(40111);
+			text_show(40111);
 		else
-			_vm->_dialogs->show(40110);
+			text_show(40110);
 	} else if (player_said_2(look, bar))
-		_vm->_dialogs->show(40112);
+		text_show(40112);
 	else if (player_said_2(look, sign))
-		_vm->_dialogs->show(40113);
+		text_show(40113);
 	else if (player_said_2(look, corridor_to_south))
-		_vm->_dialogs->show(40114);
+		text_show(40114);
 	else if (player_said_2(look, corridor_to_north))
-		_vm->_dialogs->show(40115);
+		text_show(40115);
 	else if (_action._lookFlag)
-		_vm->_dialogs->show(40116);
+		text_show(40116);
 	else
 		return;
 

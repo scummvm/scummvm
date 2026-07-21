@@ -20,6 +20,7 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
@@ -109,8 +110,8 @@ static void room_208_init() {
 		_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
 	}
 
-	_vm->_palette->setEntry(16, 0, 0, 63);
-	_vm->_palette->setEntry(17, 0, 0, 45);
+	pal_change_color(16, 0, 0, 63);
+	pal_change_color(17, 0, 0, 45);
 
 	section_2_music();
 }
@@ -155,7 +156,7 @@ static void room_208_daemon() {
 }
 
 static void room_208_pre_parser() {
-	auto &gplayer = _vm->_game->_player;
+	auto &gplayer = _game->_player;
 
 	if (player_said_1(look) && gplayer._readyToWalk)
 		gplayer._needToWalk = true;
@@ -193,7 +194,7 @@ static void subAction(int mode) {
 		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[5], oldSeq);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
-		_vm->_sound->command(20);
+		g_engine->_soundManager->command(20, 0);
 	}
 	break;
 
@@ -216,17 +217,17 @@ static void subAction(int mode) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 			_game._objects.removeFromInventory(OBJ_TWINKIFRUIT, 1);
-			_vm->_sound->command(34);
+			g_engine->_soundManager->command(34, 0);
 			break;
 
 		case 4:
 			_game._objects.removeFromInventory(OBJ_BURGER, 1);
-			_vm->_sound->command(33);
+			g_engine->_soundManager->command(33, 0);
 			break;
 
 		case 5:
 			_game._objects.removeFromInventory(OBJ_DEAD_FISH, 1);
-			_vm->_sound->command(33);
+			g_engine->_soundManager->command(33, 0);
 			break;
 
 		default:
@@ -267,7 +268,7 @@ static void room_208_parser() {
 	else if (player_said_2(take, pile_of_leaves) && (!_globals[kLeavesStatus] || _game._trigger)) {
 		subAction(1);
 		if (_game._player._stepEnabled)
-			_vm->_dialogs->showItem(OBJ_BIG_LEAVES, 0x326, 0);
+			object_examine(OBJ_BIG_LEAVES, 0x326, 0);
 	} else if (player_said_3(put, big_leaves, deep_pit) && (_globals[kLeavesStatus] == 1 || _game._trigger))
 		subAction(2);
 	else if (player_said_3(put, twinkifruit, leaf_covered_pit)) {
@@ -280,48 +281,48 @@ static void room_208_parser() {
 	} else if (player_said_3(put, burger, leaf_covered_pit)) {
 		subAction(4);
 		if (_game._player._stepEnabled)
-			_vm->_dialogs->show(20812);
+			text_show(20812);
 	} else if (player_said_3(put, dead_fish, leaf_covered_pit)) {
 		subAction(5);
 		if (_game._player._stepEnabled)
-			_vm->_dialogs->show(20812);
+			text_show(20812);
 	} else if (player_said_2(look, cumulous_cloud))
-		_vm->_dialogs->show(20801);
+		text_show(20801);
 	else if (player_said_2(look, open_area_to_west))
-		_vm->_dialogs->show(20802);
+		text_show(20802);
 	else if (player_said_2(look, thorny_bush))
-		_vm->_dialogs->show(20803);
+		text_show(20803);
 	else if (player_said_2(look, rocks))
-		_vm->_dialogs->show(20804);
+		text_show(20804);
 	else if (player_said_2(look, small_cactus))
-		_vm->_dialogs->show(20805);
+		text_show(20805);
 	else if (player_said_2(take, small_cactus))
-		_vm->_dialogs->show(20806);
+		text_show(20806);
 	else if (player_said_2(look, grassland_to_east))
-		_vm->_dialogs->show(20807);
+		text_show(20807);
 	else if (player_said_2(look, deep_pit))
-		_vm->_dialogs->show(20808);
+		text_show(20808);
 	else if (player_said_2(look, pile_of_leaves))
-		_vm->_dialogs->show(20809);
+		text_show(20809);
 	else if (player_said_2(look, leaf_covered_pit)) {
 		if (_game._difficulty == DIFFICULTY_EASY)
-			_vm->_dialogs->show(20810);
+			text_show(20810);
 		else
-			_vm->_dialogs->show(20811);
+			text_show(20811);
 	} else if (player_said_2(look, tree) || player_said_2(look, trees))
-		_vm->_dialogs->show(20813);
+		text_show(20813);
 	else if (player_said_2(take, leaf_covered_pit))
-		_vm->_dialogs->show(20814);
+		text_show(20814);
 	else if (player_said_2(look, huge_legs))
-		_vm->_dialogs->show(20815);
+		text_show(20815);
 	else if (player_said_2(take, huge_legs) || player_said_2(pull, huge_legs))
-		_vm->_dialogs->show(20816);
+		text_show(20816);
 	else if (_action._savedFields._lookFlag && (_globals[kRhotundaStatus] == 1))
-		_vm->_dialogs->show(20819);
+		text_show(20819);
 	else if (_action._savedFields._lookFlag && (_globals[kLeavesStatus] == 2))
-		_vm->_dialogs->show(20818);
+		text_show(20818);
 	else if (_action._savedFields._lookFlag)
-		_vm->_dialogs->show(20817);
+		text_show(20817);
 	else
 		return;
 

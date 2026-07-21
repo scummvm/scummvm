@@ -126,11 +126,11 @@ static void room_752_parser() {
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 		case 1:
-			_vm->_sound->command(15);
+			g_engine->_soundManager->command(15, 0);
 			_scene->_sequences.remove(_globals._sequenceIndexes[13]);
 			_game._objects.addToInventory(OBJ_ID_CARD);
 			_scene->_dynamicHotspots.remove(local._cardId);
-			_vm->_dialogs->showItem(OBJ_ID_CARD, 830);
+			object_examine(OBJ_ID_CARD, 830, 0);
 			break;
 		case 2:
 			_game._player._visible = true;
@@ -151,11 +151,11 @@ static void room_752_parser() {
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 		case 1:
-			_vm->_sound->command(15);
+			g_engine->_soundManager->command(15, 0);
 			if (_game._objects.isInInventory(OBJ_BONE))
 				_game._objects.setRoom(OBJ_BONE, NOWHERE);
 			_game._objects.addToInventory(OBJ_BONES);
-			_vm->_dialogs->showItem(OBJ_BONES, 75221);
+			object_examine(OBJ_BONES, 75221, 0);
 			break;
 		case 2:
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[12]);
@@ -167,29 +167,29 @@ static void room_752_parser() {
 		}
 	} else if (_action._lookFlag || player_said_2(look, city)) {
 		if (_globals[kLaserHoleIsThere])
-			_vm->_dialogs->show(75212);
+			text_show(75212);
 		else
-			_vm->_dialogs->show(75210);
+			text_show(75210);
 	} else if (player_said_2(look, platform))
-		_vm->_dialogs->show(75213);
+		text_show(75213);
 	else if (player_said_2(look, cement_block))
-		_vm->_dialogs->show(75214);
+		text_show(75214);
 	else if (player_said_2(look, rock))
-		_vm->_dialogs->show(75215);
+		text_show(75215);
 	else if (player_said_2(take, rock))
-		_vm->_dialogs->show(75216);
+		text_show(75216);
 	else if (player_said_2(look, west_end_of_platform))
-		_vm->_dialogs->show(75217);
+		text_show(75217);
 	else if (player_said_2(look, teleporter))
-		_vm->_dialogs->show(75218);
+		text_show(75218);
 	else if ((player_said_2(look, bones) || player_said_2(look, id_card)) && (_action._mainObjectSource == CAT_HOTSPOT)) {
 		if (_game._objects[OBJ_ID_CARD]._roomNumber == 752)
-			_vm->_dialogs->show(75219);
+			text_show(75219);
 		else
-			_vm->_dialogs->show(75220);
+			text_show(75220);
 	} else if (player_said_2(take, bones) && (_action._savedFields._mainObjectSource == CAT_HOTSPOT)) {
 		if (_game._objects.isInInventory(OBJ_BONES))
-			_vm->_dialogs->show(75222);
+			text_show(75222);
 	} else
 		return;
 

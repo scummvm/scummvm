@@ -19,6 +19,9 @@
  *
  */
 
+#include "mads/mads.h"
+#include "mads/core/mouse.h"
+#include "mads/core/pal.h"
 #include "mads/nebular/rooms/teleporter.h"
 #include "mads/nebular/rooms/thunks.h"
 #include "mads/nebular/mads/words.h"
@@ -68,8 +71,8 @@ void teleporter_init() {
 		_scene->_priorSceneId = 201;
 
 	_globals[kTeleporterDestination] = _scene->_priorSceneId;
-	_vm->_palette->setEntry(252, 63, 63, 0);
-	_vm->_palette->setEntry(253, 0, 0, 0);
+	pal_change_color(252, 63, 63, 0);
+	pal_change_color(253, 0, 0, 0);
 	_teleporterSceneId = _scene->_priorSceneId;
 	if (_teleporterSceneId == 202)
 		_teleporterSceneId = 201;
@@ -95,7 +98,7 @@ void teleporter_init() {
 	if (_globals[kMeteorologistWatch] != METEOROLOGIST_NORMAL)
 		_scene->_sequences.addTimer(30, 230);
 
-	_vm->_sound->command(36);
+	g_engine->_soundManager->command(36, 0);
 }
 
 int teleporter_address(int code, bool working) {
@@ -180,7 +183,7 @@ void teleporter_handle_key() {
 		_scene->_sequences.addSubEntry(_handSequenceId, SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 
 		if (_globals[kMeteorologistWatch] == METEOROLOGIST_NORMAL)
-			_vm->_events->hideCursor();
+			mouse_hide();
 		break;
 	}
 
@@ -199,26 +202,26 @@ void teleporter_handle_key() {
 					Common::strcat_s(_msgText2, "_");
 
 				if (_scene->_currentSceneId != 711)
-					_vm->_sound->command(32);
+					g_engine->_soundManager->command(32, 0);
 			}
 		} else if (_buttonTyped == 11) {
 			_digitCount = 0;
 			_curCode = 0;
 			Common::strcpy_s(_msgText2, "_");
 			if (_scene->_currentSceneId != 711)
-				_vm->_sound->command(33);
+				g_engine->_soundManager->command(33, 0);
 		} else if (_digitCount == 4) {
 			if (_scene->_currentSceneId != 711)
 				_finishedCodeCounter = 1;
 
 			if (teleporter_address(_curCode, true) > 0) {
-				_vm->_palette->setEntry(252, 0, 63, 0);
+				pal_change_color(252, 0, 63, 0);
 				if (_scene->_currentSceneId != 711)
-					_vm->_sound->command(34);
+					g_engine->_soundManager->command(34, 0);
 			} else {
-				_vm->_palette->setEntry(252, 63, 0, 0);
+				pal_change_color(252, 63, 0, 0);
 				if (_scene->_currentSceneId != 711)
-					_vm->_sound->command(35);
+					g_engine->_soundManager->command(35, 0);
 			}
 		}
 
@@ -236,7 +239,7 @@ void teleporter_handle_key() {
 			if (_globals[kMeteorologistWatch] != METEOROLOGIST_NORMAL)
 				_scene->_nextSceneId = 202;
 			else {
-				_vm->_events->showCursor();
+				mouse_show();
 				int destination = teleporter_address(_curCode, true);
 
 				if (destination > 0) {
@@ -257,7 +260,7 @@ void teleporter_handle_key() {
 		if (!_finishedCodeCounter) {
 			if (_globals[kMeteorologistWatch] == METEOROLOGIST_NORMAL) {
 				_game._player._stepEnabled = true;
-				_vm->_events->showCursor();
+				mouse_show();
 			}
 		}
 		break;

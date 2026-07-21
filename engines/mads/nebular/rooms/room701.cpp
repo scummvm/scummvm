@@ -123,7 +123,7 @@ static void room_701_init() {
 		_game._player._visible = false;
 		_game._player._stepEnabled = false;
 		_scene->loadAnimation(formAnimName('B', 1), 80);
-		_vm->_sound->command(28);
+		g_engine->_soundManager->command(28, 0);
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG && _scene->_priorSceneId != 620) {
 		_game._player._playerPos = Common::Point(22, 131);
 		_game._player._facing = FACING_EAST;
@@ -151,7 +151,7 @@ static void room_701_daemon() {
 		break;
 
 	case 70:
-		_vm->_sound->command(16);
+		g_engine->_soundManager->command(16, 0);
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
@@ -165,7 +165,7 @@ static void room_701_daemon() {
 		break;
 
 	case 72:
-		_vm->_sound->command(17);
+		g_engine->_soundManager->command(17, 0);
 		_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
@@ -243,7 +243,7 @@ static void room_701_parser() {
 		case 0:
 			_game._player._stepEnabled = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-			_vm->_sound->command(16);
+			g_engine->_soundManager->command(16, 0);
 			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
@@ -258,7 +258,7 @@ static void room_701_parser() {
 			break;
 
 		case 3:
-			_vm->_sound->command(17);
+			g_engine->_soundManager->command(17, 0);
 			_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
@@ -313,15 +313,15 @@ static void room_701_parser() {
 				break;
 			}
 		} else if (_globals[kBoatStatus] == BOAT_TIED) {
-			_vm->_dialogs->show(70125);
+			text_show(70125);
 		} else if (_globals[kLineStatus] == LINE_DROPPED) {
 			_globals[kLineStatus] = LINE_NOW_UNTIED;
 			_game._objects.addToInventory(OBJ_FISHING_LINE);
-			_vm->_sound->command(15);
+			g_engine->_soundManager->command(15, 0);
 			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-			_vm->_dialogs->showItem(OBJ_FISHING_LINE, 70126);
+			object_examine(OBJ_FISHING_LINE, 70126, 0);
 		} else {
-			_vm->_dialogs->show(70127);
+			text_show(70127);
 		}
 	} else if (player_said_2(climb_into, boat) && _globals[kBoatStatus] == BOAT_TIED) {
 		switch (_game._trigger) {
@@ -342,39 +342,39 @@ static void room_701_parser() {
 	} else if (_action._lookFlag) {
 		if (_globals[kBoatStatus] != BOAT_GONE) {
 			if (_globals[kBoatStatus] == BOAT_TIED)
-				_vm->_dialogs->show(70128);
+				text_show(70128);
 			else
-				_vm->_dialogs->show(70110);
+				text_show(70110);
 		} else
-			_vm->_dialogs->show(70111);
+			text_show(70111);
 	} else if (player_said_2(look, submerged_city))
-		_vm->_dialogs->show(70112);
+		text_show(70112);
 	else if (player_said_2(look, elevator))
-		_vm->_dialogs->show(70113);
+		text_show(70113);
 	else if (player_said_2(look, platform))
-		_vm->_dialogs->show(70114);
+		text_show(70114);
 	else if (player_said_2(look, cement_pylon))
-		_vm->_dialogs->show(70115);
+		text_show(70115);
 	else if (player_said_2(look, hook)) {
 		if (_globals[kLineStatus] == LINE_NOT_DROPPED || _globals[kLineStatus] == LINE_NOW_UNTIED)
-			_vm->_dialogs->show(70116);
+			text_show(70116);
 		else
-			_vm->_dialogs->show(70117);
+			text_show(70117);
 	} else if (player_said_2(look, rock))
-		_vm->_dialogs->show(70118);
+		text_show(70118);
 	else if (player_said_2(take, rock))
-		_vm->_dialogs->show(70119);
+		text_show(70119);
 	else if (player_said_2(look, east_end_of_platform))
-		_vm->_dialogs->show(70120);
+		text_show(70120);
 	else if (player_said_2(look, building))
-		_vm->_dialogs->show(70121);
+		text_show(70121);
 	else if (player_said_2(look, boat)) {
 		if (_globals[kBoatStatus] == BOAT_ADRIFT || _globals[kBoatStatus] == BOAT_TIED_FLOATING)
-			_vm->_dialogs->show(70122);
+			text_show(70122);
 		else
-			_vm->_dialogs->show(70123);
+			text_show(70123);
 	} else if (player_said_3(cast, fishing_rod, boat) && _game._objects.isInInventory(OBJ_FISHING_LINE))
-		_vm->_dialogs->show(70124);
+		text_show(70124);
 	else
 		return;
 

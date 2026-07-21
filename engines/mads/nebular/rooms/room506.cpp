@@ -285,29 +285,29 @@ static void room_506_parser() {
 			break;
 		}
 	} else if (_action._lookFlag || player_said_2(look, street))
-		_vm->_dialogs->show(50618);
+		text_show(50618);
 	else if (player_said_2(look, restaurant))
-		_vm->_dialogs->show(50610);
+		text_show(50610);
 	else if (player_said_2(look, motel))
-		_vm->_dialogs->show(50611);
+		text_show(50611);
 	else if (player_said_2(look, cycle_shop))
-		_vm->_dialogs->show(50612);
+		text_show(50612);
 	else if (player_said_2(look, air_bike))
-		_vm->_dialogs->show(50613);
+		text_show(50613);
 	else if (player_said_2(take, air_bike))
-		_vm->_dialogs->show(50614);
+		text_show(50614);
 	else if (player_said_2(look, software_store))
-		_vm->_dialogs->show(50615);
+		text_show(50615);
 	else if (player_said_2(look, laboratory))
-		_vm->_dialogs->show(50616);
+		text_show(50616);
 	else if (player_said_2(look, street_to_west) || player_said_2(walk_down, street_to_west))
-		_vm->_dialogs->show(50617);
+		text_show(50617);
 	else if (player_said_2(look, software_store_sign))
-		_vm->_dialogs->show(50619);
+		text_show(50619);
 	else if (player_said_2(look, car))
-		_vm->_dialogs->show(50620);
+		text_show(50620);
 	else if (player_said_2(look, sky))
-		_vm->_dialogs->show(50621);
+		text_show(50621);
 	else
 		return;
 

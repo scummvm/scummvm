@@ -54,27 +54,27 @@ static void room_212_pre_parser() {
 
 static void room_212_parser() {
 	if (_action._lookFlag)
-		_vm->_dialogs->show(21209);
+		text_show(21209);
 	else if (player_said_1(walk_towards) && (player_said_1(field_to_north) || player_said_1(mountains)))
 		_scene->_nextSceneId = 208;
 	else if (player_said_2(walk_towards, cave))
 		_scene->_nextSceneId = 111;
 	else if (player_said_2(look, grass))
-		_vm->_dialogs->show(21201);
+		text_show(21201);
 	else if (player_said_2(look, rocks))
-		_vm->_dialogs->show(21202);
+		text_show(21202);
 	else if (player_said_2(look, cave_entrance))
-		_vm->_dialogs->show(21203);
+		text_show(21203);
 	else if (player_said_2(look, sky))
-		_vm->_dialogs->show(21204);
+		text_show(21204);
 	else if (player_said_2(look, field_to_north))
-		_vm->_dialogs->show(21205);
+		text_show(21205);
 	else if (player_said_2(look, trees))
-		_vm->_dialogs->show(21206);
+		text_show(21206);
 	else if (player_said_2(look, plants))
-		_vm->_dialogs->show(21207);
+		text_show(21207);
 	else if (player_said_2(look, mountains))
-		_vm->_dialogs->show(21208);
+		text_show(21208);
 	else
 		return;
 

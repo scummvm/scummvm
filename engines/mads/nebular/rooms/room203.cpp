@@ -20,6 +20,8 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/mouse.h"
+#include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
@@ -64,18 +66,18 @@ static void room_203_init() {
 
 	if (!local._rhotundaEatFl) {
 		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('b', -1));
-		if (_vm->getRandomNumber(1, 3) == 2) {
+		if (g_engine->getRandomNumber(1, 3) == 2) {
 			_globals._spriteIndexes[15] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 9, 1, 0, 0);
 			int idx = _scene->_dynamicHotspots.add(words_yellow_bird, words_look_at, _globals._spriteIndexes[15], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
-			_vm->_sound->command(14);
+			g_engine->_soundManager->command(14, 0);
 		}
 	}
 
 	_game.loadQuoteSet(0x67, 0x68, 0x69, 0x6A, 0x5A, 0);
 
 	if (local._rhotundaEatFl) {
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(_vm->getRandomNumber(103, 106)));
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(g_engine->getRandomNumber(103, 106)));
 	}
 
 	section_2_music();
@@ -96,10 +98,11 @@ static void room_203_daemon() {
 	if (_game._trigger == 0) {
 		_game._player._visible = false;
 		_game._player._stepEnabled = false;
-		_vm->_palette->lock();
+		pal_lock();
 		_scene->_kernelMessages.reset();
 		_scene->resetScene();
-		_vm->_events->setCursor2(CURSOR_WAIT);
+		cursor_id = CURSOR_WAIT;
+		mouse_cursor_sprite(cursor, CURSOR_WAIT);
 		_scene->loadAnimation(Resources::formatName(203, 'a', -1, EXT_AA, ""), 81);
 	} else if (_game._trigger == 81) {
 		_scene->_nextSceneId = 208;
@@ -120,23 +123,23 @@ static void room_203_pre_parser() {
 
 static void room_203_parser() {
 	if (_action._savedFields._lookFlag) {
-		_vm->_dialogs->show(20307);
+		text_show(20307);
 	} else if (player_said_2(walk_towards, field_to_south)) {
 		_scene->_nextSceneId = 208;
 	} else if (player_said_2(walk_towards, field_to_north)) {
 		_scene->_nextSceneId = 202;
 	} else if (player_said_2(look, sky)) {
-		_vm->_dialogs->show(20301);
+		text_show(20301);
 	} else if (player_said_2(look, cliff_face)) {
-		_vm->_dialogs->show(20302);
+		text_show(20302);
 	} else if (player_said_2(look, palm_tree)) {
-		_vm->_dialogs->show(20303);
+		text_show(20303);
 	} else if (player_said_2(look, field_to_north)) {
-		_vm->_dialogs->show(20304);
+		text_show(20304);
 	} else if (player_said_2(look, grassy_field)) {
-		_vm->_dialogs->show(20305);
+		text_show(20305);
 	} else if (player_said_2(look, boulders)) {
-		_vm->_dialogs->show(20305);
+		text_show(20305);
 	} else
 		return;
 

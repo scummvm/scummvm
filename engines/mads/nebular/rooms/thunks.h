@@ -27,7 +27,6 @@
 #include "mads/core/game.h"
 #include "mads/core/inter.h"
 #include "mads/core/kernel.h"
-#include "mads/core/mcga.h"
 #include "mads/core/object.h"
 #include "mads/core/player.h"
 #include "mads/core/sprite.h"
@@ -563,114 +562,6 @@ struct Resources {
 	static char *formatName(int my_room, char type, int num, int ext, const char *text);
 	static char *formatAAName(int num);
 };
-
-struct VM {
-	VM *operator->() {
-		return this;
-	}
-	const VM *operator->() const {
-		return this;
-	}
-
-	struct Dialogs {
-		struct DefaultPosition {
-			int &x = text_default_x;
-			int &y = text_default_y;
-
-			DefaultPosition &operator=(const Common::Point &pt) {
-				x = pt.x;
-				y = pt.y;
-				return *this;
-			}
-			operator Common::Point() {
-				return Common::Point(x, y);
-			}
-
-			bool operator==(const Common::Point &rhs) const {
-				return x == rhs.x && y == rhs.y;
-			}
-		};
-		DefaultPosition _defaultPosition;
-
-		Dialogs *operator->() {
-			return this;
-		}
-		const Dialogs *operator->() const {
-			return this;
-		}
-
-		void show(int id);
-		void show(int object_id, int id);
-		void showItem(int object_id, int message, int speech = 0);
-	};
-	Dialogs _dialogs;
-
-	struct Events {
-		Events *operator->() {
-			return this;
-		}
-		const Events *operator->() const {
-			return this;
-		}
-
-		void setCursor2(int cursorNum);
-		void showCursor();
-		void hideCursor();
-		int32 getFrameCounter();
-	};
-	Events _events;
-
-	Scene::KernelMessages::TalkFont &_font = _scene._kernelMessages._talkFont;
-	Game &_game = Rooms::_game;
-
-	struct PaletteProxy {
-		PaletteProxy *operator->() {
-			return this;
-		}
-		const PaletteProxy *operator->() const {
-			return this;
-		}
-
-		void setEntry(int color, int r, int g, int b);
-		void refreshSceneColors();
-		void lock();
-		void setColorFlags(byte r, byte g, byte b);
-		void setColorValues(byte r, byte g, byte b);
-		void fadeOut(Palette palette, byte *paletteMap, int baseColor, int numColors,
-			int baseGrey, int numGreys, int tickDelay, int steps);
-	};
-	PaletteProxy _palette;
-
-	struct Screen {
-		Screen *operator->() {
-			return this;
-		}
-		const Screen *operator->() const {
-			return this;
-		}
-
-		word &_shakeCountdown = mcga_shakes;
-	};
-	Screen _screen;
-
-	struct Sound {
-		Sound *operator->() {
-			return this;
-		}
-		const Sound *operator->() const {
-			return this;
-		}
-
-		void command(int num, int distance = 0);
-	};
-	Sound _sound;
-
-	int &_musicFlag = config_file.music_flag;
-
-	int getRandomNumber(int min, int max);
-	int getRandomNumber(int max);
-};
-extern VM _vm;
 
 extern char *formAnimName(char type, int num);
 

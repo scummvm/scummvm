@@ -20,6 +20,7 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
@@ -42,8 +43,8 @@ static void room_388_init() {
 	}
 
 	_game._player._visible = false;
-	_vm->_palette->setEntry(252, 63, 30, 20);
-	_vm->_palette->setEntry(253, 45, 15, 12);
+	pal_change_color(252, 63, 30, 20);
+	pal_change_color(253, 45, 15, 12);
 	_game.loadQuoteSet(0x154, 0x155, 0x156, 0x157, 0x158, 0);
 
 	section_3_music();
@@ -76,11 +77,11 @@ static void room_388_parser() {
 		}
 	} else if (player_said_2(look_through, grate)) {
 		if (_globals[kAfterHavoc])
-			_vm->_dialogs->show(38811);
+			text_show(38811);
 		else
-			_vm->_dialogs->show(38810);
+			text_show(38810);
 	} else if (player_said_2(open, grate))
-		_vm->_dialogs->show(38812);
+		text_show(38812);
 	else
 		return;
 

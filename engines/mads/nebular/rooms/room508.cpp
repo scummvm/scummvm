@@ -77,9 +77,9 @@ static void room_508_init() {
 			_scene->_hotspots.activate(words_hole, true);
 			_scene->_hotspots.activate(words_laser_beam, true);
 		}
-		_vm->_sound->command(21);
+		g_engine->_soundManager->command(21, 0);
 	}
-	_vm->_sound->command(20);
+	g_engine->_soundManager->command(20, 0);
 
 	if (_scene->_priorSceneId == 515) {
 		_game._player._playerPos = Common::Point(57, 116);
@@ -105,10 +105,10 @@ static void room_508_pre_parser() {
 
 static void handlePedestral() {
 	if (!_globals[kLaserOn])
-		_vm->_dialogs->show(50835);
+		text_show(50835);
 
 	if (_globals[kLaserHoleIsThere])
-		_vm->_dialogs->show(50836);
+		text_show(50836);
 
 	if (_globals[kLaserOn] && !_globals[kLaserHoleIsThere]) {
 		switch (_game._trigger) {
@@ -145,7 +145,7 @@ static void handlePedestral() {
 			break;
 
 		case 4:
-			_vm->_dialogs->show(50834);
+			text_show(50834);
 			_globals[kLaserHoleIsThere] = true;
 			_scene->_nextSceneId = 515;
 			break;
@@ -176,7 +176,7 @@ static void room_508_parser() {
 				break;
 
 			case 3:
-				_vm->_sound->command(19);
+				g_engine->_soundManager->command(19, 0);
 				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 15, 1, 0, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 6);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
@@ -200,7 +200,7 @@ static void room_508_parser() {
 
 			case 6:
 			{
-				_vm->_sound->command(22);
+				g_engine->_soundManager->command(22, 0);
 				_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, -2);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 11);
 				int idx = _scene->_dynamicHotspots.add(words_laser_beam, words_walkto, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
@@ -213,7 +213,7 @@ static void room_508_parser() {
 
 			case 7:
 				_globals[kLaserOn] = true;
-				_vm->_dialogs->show(50833);
+				text_show(50833);
 				_game._player._stepEnabled = true;
 				break;
 
@@ -221,7 +221,7 @@ static void room_508_parser() {
 				break;
 			}
 		} else {
-			_vm->_dialogs->show(50837);
+			text_show(50837);
 		}
 	} else if (player_said_3(reflect, rearview_mirror, laser_beam) || player_said_3(put, rearview_mirror, pedestal) || player_said_3(put, rearview_mirror, laser_beam)) {
 		local._chosenObject = 1;
@@ -230,59 +230,59 @@ static void room_508_parser() {
 		local._chosenObject = 2;
 		handlePedestral();
 	} else if (_action._lookFlag)
-		_vm->_dialogs->show(50822);
+		text_show(50822);
 	else if (player_said_2(look, target_area))
-		_vm->_dialogs->show(50810);
+		text_show(50810);
 	else if (player_said_2(look, spinach_patch_doll))
-		_vm->_dialogs->show(50811);
+		text_show(50811);
 	else if (player_said_2(take, spinach_patch_doll))
-		_vm->_dialogs->show(50812);
+		text_show(50812);
 	else if (player_said_2(look, sand_bags))
-		_vm->_dialogs->show(50816);
+		text_show(50816);
 	else if (player_said_2(take, sand_bags))
-		_vm->_dialogs->show(50817);
+		text_show(50817);
 	else if (player_said_2(look, control_station))
-		_vm->_dialogs->show(50818);
+		text_show(50818);
 	else if (player_said_2(look, monitor)) {
 		if (_globals[kLaserOn])
-			_vm->_dialogs->show(50820);
+			text_show(50820);
 		else
-			_vm->_dialogs->show(50819);
+			text_show(50819);
 	} else if (player_said_2(look, laser_cannon)) {
 		if (_globals[kLaserOn])
-			_vm->_dialogs->show(50822);
+			text_show(50822);
 		else
-			_vm->_dialogs->show(50821);
+			text_show(50821);
 	} else if (player_said_2(take, laser_cannon))
-		_vm->_dialogs->show(50823);
+		text_show(50823);
 	else if (player_said_2(look, lever)) {
 		if (_globals[kLaserOn])
-			_vm->_dialogs->show(50825);
+			text_show(50825);
 		else
-			_vm->_dialogs->show(50824);
+			text_show(50824);
 	} else if (player_said_2(push, lever))
-		_vm->_dialogs->show(50826);
+		text_show(50826);
 	else if (player_said_2(look, laser_beam)) {
 		if (_globals[kLaserHoleIsThere])
-			_vm->_dialogs->show(50828);
+			text_show(50828);
 		else
-			_vm->_dialogs->show(50827);
+			text_show(50827);
 	} else if (player_said_2(take, laser_beam))
-		_vm->_dialogs->show(50829);
+		text_show(50829);
 	else if (player_said_2(look, ceiling)) {
 		if (_globals[kLaserHoleIsThere])
-			_vm->_dialogs->show(50831);
+			text_show(50831);
 		else
-			_vm->_dialogs->show(50830);
+			text_show(50830);
 	} else if (player_said_2(look, wall))
-		_vm->_dialogs->show(50832);
+		text_show(50832);
 	else if (player_said_2(look, pedestal)) {
 		if (!_globals[kLaserOn])
-			_vm->_dialogs->show(50813);
+			text_show(50813);
 		else if (!_globals[kLaserHoleIsThere])
-			_vm->_dialogs->show(50814);
+			text_show(50814);
 		else
-			_vm->_dialogs->show(50815);
+			text_show(50815);
 	} else
 		return;
 

@@ -222,7 +222,7 @@ static void room_602_parser() {
 		|| player_said_3(reflect, compact_case, laser_beam) || player_said_3(reflect, rearview_mirror, laser_beam)) && (_globals[kSafeStatus] == 0)) {
 		switch (_game._trigger) {
 		case 0:
-			_vm->_dialogs->show(60230);
+			text_show(60230);
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
@@ -272,7 +272,7 @@ static void room_602_parser() {
 		case 1:
 			_scene->_sequences.remove(_globals._sequenceIndexes[6]);
 			_scene->_hotspots.activate(words_door_key, false);
-			_vm->_sound->command(9);
+			g_engine->_soundManager->command(9, 0);
 			_game._objects.addToInventory(OBJ_DOOR_KEY);
 			break;
 
@@ -280,66 +280,66 @@ static void room_602_parser() {
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[5]);
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
-			_vm->_dialogs->showItem(OBJ_DOOR_KEY, 835);
+			object_examine(OBJ_DOOR_KEY, 835, 0);
 			break;
 
 		default:
 			break;
 		}
 	} else if (_action._lookFlag)
-		_vm->_dialogs->show(60210);
+		text_show(60210);
 	else if (player_said_2(look, floor))
-		_vm->_dialogs->show(60211);
+		text_show(60211);
 	else if (player_said_2(look, hallway))
-		_vm->_dialogs->show(60212);
+		text_show(60212);
 	else if (player_said_2(look, table))
-		_vm->_dialogs->show(60213);
+		text_show(60213);
 	else if (player_said_2(look, chair) || player_said_2(look, lounge_chair))
-		_vm->_dialogs->show(60214);
+		text_show(60214);
 	else if (player_said_2(look, neon_lights))
-		_vm->_dialogs->show(60215);
+		text_show(60215);
 	else if (player_said_2(look, fireplace))
-		_vm->_dialogs->show(60216);
+		text_show(60216);
 	else if (player_said_2(look, picture))
-		_vm->_dialogs->show(60217);
+		text_show(60217);
 	else if (player_said_2(look, lamp))
-		_vm->_dialogs->show(60218);
+		text_show(60218);
 	else if (player_said_2(look, masks))
-		_vm->_dialogs->show(60219);
+		text_show(60219);
 	else if (player_said_2(look, glass_block_wall))
-		_vm->_dialogs->show(60220);
+		text_show(60220);
 	else if (player_said_2(look, doorway))
-		_vm->_dialogs->show(60221);
+		text_show(60221);
 	else if (player_said_2(look, safe)) {
 		if (_globals[kSafeStatus] == 0)
-			_vm->_dialogs->show(60222);
+			text_show(60222);
 		else if (_globals[kSafeStatus] == 1) {
 			if (!_game._objects.isInRoom(OBJ_DOOR_KEY))
-				_vm->_dialogs->show(60223);
+				text_show(60223);
 			else
-				_vm->_dialogs->show(60224);
+				text_show(60224);
 		} else if (_globals[kSafeStatus] == 2)
-			_vm->_dialogs->show(60234);
+			text_show(60234);
 		else if (_game._objects.isInRoom(OBJ_DOOR_KEY))
-			_vm->_dialogs->show(60235);
+			text_show(60235);
 		else
-			_vm->_dialogs->show(60236);
+			text_show(60236);
 	} else if (player_said_3(unlock, door_key, safe) || player_said_3(unlock, padlock_key, safe))
-		_vm->_dialogs->show(60225);
+		text_show(60225);
 	else if (player_said_2(pull, safe))
-		_vm->_dialogs->show(60226);
+		text_show(60226);
 	else if (player_said_2(put, fireplace) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId)))
-		_vm->_dialogs->show(60227);
+		text_show(60227);
 	else if (player_said_2(look, hole))
-		_vm->_dialogs->show(60228);
+		text_show(60228);
 	else if (player_said_2(look, laser_beam))
-		_vm->_dialogs->show(60229);
+		text_show(60229);
 	else if (player_said_2(look, flower_box))
-		_vm->_dialogs->show(60231);
+		text_show(60231);
 	else if (player_said_3(throw, bomb, safe) || player_said_3(throw, bombs, safe))
-		_vm->_dialogs->show(60232);
+		text_show(60232);
 	else if (player_said_2(put, timebomb))
-		_vm->_dialogs->show(60233);
+		text_show(60233);
 	else
 		return;
 

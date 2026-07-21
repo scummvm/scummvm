@@ -55,23 +55,23 @@ static void room_360_pre_parser() {
 
 static void room_360_parser() {
 	if (_action._lookFlag)
-		_vm->_dialogs->show(36015);
+		text_show(36015);
 	else if (player_said_2(look, corridor_to_west))
-		_vm->_dialogs->show(36010);
+		text_show(36010);
 	else if (player_said_2(look, corridor_to_east))
-		_vm->_dialogs->show(36011);
+		text_show(36011);
 	else if (player_said_2(look, bed))
-		_vm->_dialogs->show(36012);
+		text_show(36012);
 	else if (player_said_2(look, sink))
-		_vm->_dialogs->show(36013);
+		text_show(36013);
 	else if (player_said_2(look, toilet))
-		_vm->_dialogs->show(36014);
+		text_show(36014);
 	else if (player_said_2(look, air_vent))
-		_vm->_dialogs->show(36016);
+		text_show(36016);
 	else if (player_said_2(look, corridor))
-		_vm->_dialogs->show(36017);
+		text_show(36017);
 	else if (player_said_2(look, wall))
-		_vm->_dialogs->show(36018);
+		text_show(36018);
 	else
 		return;
 

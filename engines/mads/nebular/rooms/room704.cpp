@@ -172,7 +172,7 @@ static void room_704_init() {
 	local._dialog1.setup(0x98, 0x311, 0x312, 0x313, 0x314, 0x315, 0);
 
 	section_7_music();
-	_vm->_sound->command(28);
+	g_engine->_soundManager->command(28, 0);
 }
 
 static void room_704_daemon() {
@@ -249,8 +249,8 @@ static void room_704_daemon() {
 					_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 					_scene->_dynamicHotspots.remove(local._bottleHotspotId);
 					_game._objects.addToInventory(OBJ_BOTTLE);
-					_vm->_sound->command(15);
-					_vm->_dialogs->showItem(OBJ_BOTTLE, 70415);
+					g_engine->_soundManager->command(15, 0);
+					object_examine(OBJ_BOTTLE, 70415, 0);
 				}
 				break;
 
@@ -267,8 +267,8 @@ static void room_704_daemon() {
 					_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 					_scene->_dynamicHotspots.remove(local._bottleHotspotId);
 					_game._objects.addToInventory(OBJ_BOTTLE);
-					_vm->_sound->command(15);
-					_vm->_dialogs->showItem(OBJ_BOTTLE, 70415);
+					g_engine->_soundManager->command(15, 0);
+					object_examine(OBJ_BOTTLE, 70415, 0);
 				}
 				break;
 
@@ -294,23 +294,23 @@ static void room_704_daemon() {
 	if (_game._trigger == 70) {
 		switch (_globals[kBottleStatus]) {
 		case 0:
-			_vm->_dialogs->show(432);
+			text_show(432);
 			break;
 
 		case 1:
-			_vm->_dialogs->show(70324);
+			text_show(70324);
 			break;
 
 		case 2:
-			_vm->_dialogs->show(70325);
+			text_show(70325);
 			break;
 
 		case 3:
-			_vm->_dialogs->show(70326);
+			text_show(70326);
 			break;
 
 		case 4:
-			_vm->_dialogs->show(70327);
+			text_show(70327);
 			break;
 
 		default:
@@ -351,23 +351,23 @@ static void room_704_parser() {
 				handleBottleInterface();
 				local._dialog1.start();
 			} else
-				_vm->_dialogs->show(70323);
+				text_show(70323);
 		}
 	} else if (_action._lookFlag || player_said_2(look, water))
-		_vm->_dialogs->show(70410);
+		text_show(70410);
 	else if (player_said_2(look, building_to_north)) {
 		if (_game._visitedScenes.exists(710))
-			_vm->_dialogs->show(70411);
+			text_show(70411);
 		else
-			_vm->_dialogs->show(70412);
+			text_show(70412);
 	} else if (player_said_2(look, volcano_rim))
-		_vm->_dialogs->show(70413);
+		text_show(70413);
 	else if (player_said_2(look, bottle) && (_action._mainObjectSource == CAT_HOTSPOT))
-		_vm->_dialogs->show(70414);
+		text_show(70414);
 	else if (player_said_2(look, open_water_to_south))
-		_vm->_dialogs->show(70416);
+		text_show(70416);
 	else if (player_said_2(look, sky))
-		_vm->_dialogs->show(70417);
+		text_show(70417);
 	else
 		return;
 

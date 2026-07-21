@@ -20,6 +20,8 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/mcga.h"
+#include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
@@ -184,8 +186,8 @@ static void room_320_init() {
 	setRightView(_globals[kRightView320]);
 	setLeftView(0);
 
-	_vm->_palette->setEntry(252, 63, 30, 20);
-	_vm->_palette->setEntry(253, 45, 15, 10);
+	pal_change_color(252, 63, 30, 20);
+	pal_change_color(253, 45, 15, 10);
 
 	section_3_music();
 }
@@ -198,7 +200,7 @@ static void room_320_daemon() {
 			case 95:
 				local._blinkFl = true;
 				setLeftView(9);
-				_vm->_sound->command(41);
+				g_engine->_soundManager->command(41, 0);
 				break;
 
 			case 139:
@@ -212,8 +214,8 @@ static void room_320_daemon() {
 
 			case 417:
 			case 457:
-				_vm->_screen->_shakeCountdown = 40;
-				_vm->_sound->command(59);
+				mcga_shakes = 40;
+				g_engine->_soundManager->command(59, 0);
 				break;
 
 			case 430:
@@ -236,7 +238,7 @@ static void room_320_daemon() {
 
 static void room_320_parser() {
 	if (_action._lookFlag)
-		_vm->_dialogs->show(32011);
+		text_show(32011);
 	else if ((player_said_1(press) || player_said_1(push)) &&
 		(player_said_1(left_1_key) || player_said_1(left_2_key) || player_said_1(left_3_key) || player_said_1(left_4_key) ||
 			player_said_1(green_button) || player_said_1(red_button) || player_said_1(right_1_key) || player_said_1(right_2_key) ||
@@ -257,25 +259,25 @@ static void room_320_parser() {
 
 		case 1:
 			if (local._buttonId >= 6) {
-				_vm->_sound->command(60);
+				g_engine->_soundManager->command(60, 0);
 				setRightView(local._buttonId - 6);
 			}
 			if (local._buttonId == 4) {
-				_vm->_sound->command(38);
+				g_engine->_soundManager->command(38, 0);
 				if (local._leftItemId == 3)
 					setLeftView(0);
 				else
 					setLeftView(3);
 			}
 			if (local._buttonId == 5) {
-				_vm->_sound->command(38);
+				g_engine->_soundManager->command(38, 0);
 				if (local._leftItemId == 1)
 					setLeftView(2);
 				else
 					setLeftView(1);
 			}
 			if (local._buttonId <= 3) {
-				_vm->_sound->command(60);
+				g_engine->_soundManager->command(60, 0);
 				setLeftView(local._buttonId + 5);
 			}
 			break;
@@ -297,7 +299,7 @@ static void room_320_parser() {
 					_game.loadQuoteSet(0xFE, 0);
 					_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 					_scene->loadAnimation(formAnimName('a', -1), 70);
-					_vm->_sound->command(17);
+					g_engine->_soundManager->command(17, 0);
 				}
 			}
 			break;
@@ -308,37 +310,37 @@ static void room_320_parser() {
 	} else if (player_said_2(leave, security_station))
 		_scene->_nextSceneId = 311;
 	else if (player_said_2(look, right_monitor))
-		_vm->_dialogs->show(32001);
+		text_show(32001);
 	else if (player_said_2(look, left_monitor))
-		_vm->_dialogs->show(32002);
+		text_show(32002);
 	else if (player_said_2(look, desk))
-		_vm->_dialogs->show(32003);
+		text_show(32003);
 	else if (player_said_2(look, security_station))
-		_vm->_dialogs->show(32004);
+		text_show(32004);
 	else if (player_said_2(look, mug))
-		_vm->_dialogs->show(32005);
+		text_show(32005);
 	else if (player_said_2(look, doughnut))
-		_vm->_dialogs->show(32006);
+		text_show(32006);
 	else if (player_said_2(look, magazine))
-		_vm->_dialogs->show(32007);
+		text_show(32007);
 	else if (player_said_2(look, paper_football))
-		_vm->_dialogs->show(32008);
+		text_show(32008);
 	else if (player_said_2(look, newspaper))
-		_vm->_dialogs->show(32009);
+		text_show(32009);
 	else if (player_said_2(look, clipboard))
-		_vm->_dialogs->show(32010);
+		text_show(32010);
 	else if (player_said_2(take, mug))
-		_vm->_dialogs->show(32012);
+		text_show(32012);
 	else if (player_said_2(take, clipboard))
-		_vm->_dialogs->show(32013);
+		text_show(32013);
 	else if (player_said_2(take, doughnut) || player_said_2(eat, doughnut))
-		_vm->_dialogs->show(32014);
+		text_show(32014);
 	else if (player_said_2(take, paper_football))
-		_vm->_dialogs->show(32015);
+		text_show(32015);
 	else if (player_said_2(take, magazine))
-		_vm->_dialogs->show(32016);
+		text_show(32016);
 	else if (player_said_2(take, newspaper))
-		_vm->_dialogs->show(32017);
+		text_show(32017);
 	else
 		return;
 

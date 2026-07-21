@@ -83,13 +83,13 @@ static void room_313_parser() {
 	else if (player_said_2(crawl_to, security_station)) {
 		if (_globals[kSexOfRex] == REX_FEMALE) {
 			_globals[kSexOfRex] = REX_MALE;
-			_vm->_dialogs->show(31301);
+			text_show(31301);
 		}
 		_scene->_nextSceneId = 391;
 	} else if (player_said_2(crawl_to, equipment_room)) {
 		if (_globals[kSexOfRex] == REX_FEMALE) {
 			_globals[kSexOfRex] = REX_MALE;
-			_vm->_dialogs->show(31301);
+			text_show(31301);
 		}
 		_scene->_nextSceneId = 366;
 	} else if (!player_said_2(crawl_down, air_shaft))

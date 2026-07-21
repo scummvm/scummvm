@@ -201,7 +201,7 @@ static void room_352_pre_parser() {
 			if (_game._player._needToWalk) {
 				_game._player._stepEnabled = false;
 				_scene->_sequences.remove(local._commonSequenceIdx);
-				_vm->_sound->command(20);
+				g_engine->_soundManager->command(20, 0);
 				local._commonSequenceIdx = _scene->_sequences.addReverseSpriteCycle(local._commonSpriteIndex, false, 6, 1, 0, 0);
 				_scene->_sequences.addSubEntry(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				_scene->_sequences.setDepth(local._commonSequenceIdx, 15);
@@ -238,7 +238,7 @@ static void room_352_pre_parser() {
 
 static void room_352_parser() {
 	if (_action._lookFlag) {
-		_vm->_dialogs->show(35225);
+		text_show(35225);
 		_action._inProgress = false;
 		return;
 	}
@@ -261,7 +261,7 @@ static void room_352_parser() {
 
 			case 1:
 			{
-				_vm->_sound->command(21);
+				g_engine->_soundManager->command(21, 0);
 				_globals._sequenceIndexes[12] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[12], false, 7, 2, 20, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[12], FACING_NORTH);
 				int oldIdx = local._commonSequenceIdx;
@@ -272,7 +272,7 @@ static void room_352_parser() {
 			break;
 
 			case 2:
-				_vm->_sound->command(22);
+				g_engine->_soundManager->command(22, 0);
 				_scene->_sequences.remove(local._commonSequenceIdx);
 				local._commonSequenceIdx = _scene->_sequences.startPingPongCycle(local._commonSpriteIndex, false, 8, 1, 0, 0);
 				_scene->_sequences.setAnimRange(local._commonSequenceIdx, 1, 3);
@@ -353,7 +353,7 @@ static void room_352_parser() {
 			case 2:
 				_game._player._visible = true;
 				_game._player._stepEnabled = true;
-				_vm->_dialogs->showItem(OBJ_GUARDS_ARM, 0x899C);
+				object_examine(OBJ_GUARDS_ARM, 0x899C, 0);
 				break;
 
 			default:
@@ -382,7 +382,7 @@ static void room_352_parser() {
 
 			case 1:
 			{
-				_vm->_sound->command(21);
+				g_engine->_soundManager->command(21, 0);
 				_globals._sequenceIndexes[12] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[12], false, 7, 2, 20, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 8);
 				int oldIdx = local._commonSequenceIdx;
@@ -393,7 +393,7 @@ static void room_352_parser() {
 			break;
 
 			case 2:
-				_vm->_sound->command(23);
+				g_engine->_soundManager->command(23, 0);
 				_scene->_sequences.remove(local._commonSequenceIdx);
 				local._commonSequenceIdx = _scene->_sequences.addReverseSpriteCycle(local._commonSpriteIndex, false, 8, 1, 0, 0);
 				_scene->_sequences.setAnimRange(local._commonSequenceIdx, 1, 4);
@@ -409,7 +409,7 @@ static void room_352_parser() {
 				else
 					local._commonSpriteIndex = _globals._spriteIndexes[1];
 
-				_vm->_sound->command(20);
+				g_engine->_soundManager->command(20, 0);
 				local._commonSequenceIdx = _scene->_sequences.addSpriteCycle(local._commonSpriteIndex, false, 6, 1, 0, 0);
 				_scene->_sequences.setDepth(local._commonSequenceIdx, 15);
 				_scene->_sequences.addSubEntry(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 4);
@@ -527,60 +527,60 @@ static void room_352_parser() {
 
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
-			_vm->_dialogs->showItem(OBJ_TAPE_PLAYER, 35227);
+			object_examine(OBJ_TAPE_PLAYER, 35227, 0);
 			break;
 
 		default:
 			break;
 		}
 	} else if (player_said_2(look, scanner))
-		_vm->_dialogs->show(35210);
+		text_show(35210);
 	else if (player_said_2(look, monitor)) {
 		if (_game._storyMode == STORYMODE_NAUGHTY)
-			_vm->_dialogs->show(35211);
+			text_show(35211);
 		else
-			_vm->_dialogs->show(35212);
+			text_show(35212);
 	} else if (player_said_2(look, display))
-		_vm->_dialogs->show(35213);
+		text_show(35213);
 	else if (player_said_2(look, statue))
-		_vm->_dialogs->show(35214);
+		text_show(35214);
 	else if (player_said_2(look, tape_player) && (_action._savedFields._mainObjectSource == 4))
-		_vm->_dialogs->show(35215);
+		text_show(35215);
 	else if (player_said_2(look, air_vent))
-		_vm->_dialogs->show(35216);
+		text_show(35216);
 	else if (player_said_2(look, guards_arm2) && (_action._savedFields._mainObjectSource == 4))
-		_vm->_dialogs->show(35217);
+		text_show(35217);
 	else if (player_said_2(look, ironing_board))
-		_vm->_dialogs->show(35218);
+		text_show(35218);
 	else if (player_said_2(look, clock))
-		_vm->_dialogs->show(35219);
+		text_show(35219);
 	else if (player_said_2(look, gauge))
-		_vm->_dialogs->show(35220);
+		text_show(35220);
 	else if (player_said_2(look, vault)) {
 		if (!local._vaultOpenFl)
-			_vm->_dialogs->show(35221);
+			text_show(35221);
 	} else if (player_said_2(look, your_stuff))
-		_vm->_dialogs->show(35222);
+		text_show(35222);
 	else if (player_said_2(look, other_stuff))
-		_vm->_dialogs->show(35223);
+		text_show(35223);
 	else if (player_said_2(look, corridor_to_south))
-		_vm->_dialogs->show(35224);
+		text_show(35224);
 	else if (player_said_2(take, other_stuff))
-		_vm->_dialogs->show(35226);
+		text_show(35226);
 	else if (player_said_2(look, desk))
-		_vm->_dialogs->show(35229);
+		text_show(35229);
 	else if (player_said_2(look, guard))
-		_vm->_dialogs->show(35230);
+		text_show(35230);
 	else if (player_said_2(look, doorway))
-		_vm->_dialogs->show(35231);
+		text_show(35231);
 	else if (player_said_2(look, table))
-		_vm->_dialogs->show(35232);
+		text_show(35232);
 	else if (player_said_2(look, projector))
-		_vm->_dialogs->show(35233);
+		text_show(35233);
 	else if (player_said_2(look, support))
-		_vm->_dialogs->show(35234);
+		text_show(35234);
 	else if (player_said_2(look, security_monitor))
-		_vm->_dialogs->show(35235);
+		text_show(35235);
 	else
 		return;
 

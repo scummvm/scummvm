@@ -265,18 +265,18 @@ static void room_511_parser() {
 						}
 					}
 				} else
-					_vm->_dialogs->show(51129);
+					text_show(51129);
 			} else
 				return;
 		} else {
-			_vm->_dialogs->show(51130);
+			text_show(51130);
 		}
 	} else if (player_said_3(tie, fishing_line, boat) ||
 		player_said_3(attach, fishing_line, boat)) {
 		if (_globals[kBoatRaised])
-			_vm->_dialogs->show(51131);
+			text_show(51131);
 		else if (_globals[kLineStatus] == 1)
-			_vm->_dialogs->show(51130);
+			text_show(51130);
 		else if (!_globals[kBoatRaised] && local._handingLine) {
 			if (_globals[kLineStatus] != 3) {
 				if (_game._trigger == 0) {
@@ -305,53 +305,53 @@ static void room_511_parser() {
 		}
 	} else if (player_said_2(look, street) || _action._lookFlag) {
 		if (_globals[kLineStatus] == 2)
-			_vm->_dialogs->show(51110);
+			text_show(51110);
 		else {
 			if (_globals[kLineStatus] == 3)
-				_vm->_dialogs->show(51111);
+				text_show(51111);
 			else
-				_vm->_dialogs->show(51112);
+				text_show(51112);
 		}
 	} else if (player_said_2(look, car))
-		_vm->_dialogs->show(51113);
+		text_show(51113);
 	else if (player_said_2(look, sidewalk))
-		_vm->_dialogs->show(51114);
+		text_show(51114);
 	else if (player_said_2(walk_down, sidewalk_to_east) || player_said_2(walk_down, sidewalk_to_west) || player_said_2(walk_down, street_to_east))
-		_vm->_dialogs->show(51115);
+		text_show(51115);
 	else if (player_said_2(look, pleasure_dome))
-		_vm->_dialogs->show(51116);
+		text_show(51116);
 	else if (player_said_2(look, ticket_booth))
-		_vm->_dialogs->show(51117);
+		text_show(51117);
 	else if (player_said_2(look, dome_entrance))
-		_vm->_dialogs->show(51118);
+		text_show(51118);
 	else if (player_said_3(unlock, padlock_key, dome_entrance) || player_said_3(unlock, door_key, dome_entrance))
-		_vm->_dialogs->show(51119);
+		text_show(51119);
 	else if ((player_said_1(put) || player_said_1(throw))
 		&& (player_said_1(timebomb) || player_said_1(bomb) || player_said_1(bombs))
 		&& player_said_1(dome_entrance))
-		_vm->_dialogs->show(51120);
+		text_show(51120);
 	else if (player_said_2(look, restaurant)) {
 		if (_globals[kBoatRaised])
-			_vm->_dialogs->show(51121);
+			text_show(51121);
 		else
-			_vm->_dialogs->show(51128);
+			text_show(51128);
 	} else if (player_said_2(look, porthole))
-		_vm->_dialogs->show(51122);
+		text_show(51122);
 	else if (player_said_2(look, fishing_line) && (_action._mainObjectSource == CAT_HOTSPOT) && (_globals[kLineStatus] == 2))
-		_vm->_dialogs->show(51126);
+		text_show(51126);
 	else if (player_said_2(look, fishing_line) && (_action._mainObjectSource == CAT_HOTSPOT) && (_globals[kLineStatus] == 3))
-		_vm->_dialogs->show(51133);
+		text_show(51133);
 	else if (player_said_2(look, statue))
-		_vm->_dialogs->show(51127);
+		text_show(51127);
 	else if (player_said_2(look, boat))
 		if (_globals[kBoatRaised])
-			_vm->_dialogs->show(51123);
+			text_show(51123);
 		else if (_globals[kLineStatus] != 3)
-			_vm->_dialogs->show(51124);
+			text_show(51124);
 		else
-			_vm->_dialogs->show(51125);
+			text_show(51125);
 	else if (player_said_2(look, fishing_line) && (_globals[kLineStatus] == 3))
-		_vm->_dialogs->show(51125);
+		text_show(51125);
 	else
 		return;
 
