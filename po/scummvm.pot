@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-18 22:03+0000\n"
+"POT-Creation-Date: 2026-07-21 00:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -7231,7 +7231,7 @@ msgid ""
 msgstr ""
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/nancy/nancy.cpp:816 engines/tot/saveload.cpp:269
+#: engines/nancy/nancy.cpp:848 engines/tot/saveload.cpp:269
 #: engines/vcruise/vcruise.cpp:356
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
