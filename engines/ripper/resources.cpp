@@ -210,7 +210,7 @@ static bool decodeIffBitmap(Common::SeekableReadStream &stream, BitmapAssetFrame
 	return true;
 }
 
-static bool decodeBitmap(Common::SeekableReadStream &stream, BitmapAssetFrame &frame) {
+bool decodeBitmapAsset(Common::SeekableReadStream &stream, BitmapAssetFrame &frame) {
 	byte magic[4];
 	if (stream.read(magic, sizeof(magic)) != sizeof(magic))
 		return false;
@@ -220,7 +220,7 @@ static bool decodeBitmap(Common::SeekableReadStream &stream, BitmapAssetFrame &f
 	return decodeCustomBitmap(stream, frame);
 }
 
-static bool decodeBitmapSequence(Common::SeekableReadStream &stream,
+bool decodeBitmapAssetSequence(Common::SeekableReadStream &stream,
 		BitmapAssetSequence &sequence) {
 	Common::Array<byte> data;
 	if (!readStream(stream, data) || data.size() < 4)
@@ -254,7 +254,7 @@ static bool decodeBitmapSequence(Common::SeekableReadStream &stream,
 		Common::MemoryReadStream bitmapStream(data.data() + entryOffset,
 			endOffset - entryOffset, DisposeAfterUse::NO);
 		BitmapAssetFrame frame;
-		if (!decodeBitmap(bitmapStream, frame))
+		if (!decodeBitmapAsset(bitmapStream, frame))
 			return false;
 		if (frame.palette.empty() && !sequence.frames.empty())
 			frame.palette = sequence.frames.front().palette;
@@ -506,7 +506,7 @@ bool ResourceManager::loadInterfaceBitmapSequence(const Common::String &memberNa
 		BitmapAssetSequence &sequence) const {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
 		_interface.createReadStreamForMember(memberName));
-	if (!stream || !decodeBitmapSequence(*stream, sequence)) {
+	if (!stream || !decodeBitmapAssetSequence(*stream, sequence)) {
 		warning("Ripper: could not decode interface bitmap sequence '%s'", memberName.c_str());
 		return false;
 	}
@@ -520,7 +520,7 @@ bool ResourceManager::loadOptionsBitmapSequence(const Common::String &memberName
 		BitmapAssetSequence &sequence) const {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
 		_options.createReadStreamForMember(memberName));
-	if (!stream || !decodeBitmapSequence(*stream, sequence)) {
+	if (!stream || !decodeBitmapAssetSequence(*stream, sequence)) {
 		warning("Ripper: could not decode options bitmap sequence '%s'", memberName.c_str());
 		return false;
 	}
@@ -534,7 +534,7 @@ bool ResourceManager::loadBitmap(const Common::String &memberName,
 		BitmapAssetFrame &frame) const {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
 		SearchMan.createReadStreamForMember(Common::Path(memberName)));
-	if (!stream || !decodeBitmap(*stream, frame)) {
+	if (!stream || !decodeBitmapAsset(*stream, frame)) {
 		warning("Ripper: could not decode bitmap '%s'", memberName.c_str());
 		return false;
 	}
@@ -550,7 +550,7 @@ bool ResourceManager::loadBitmapSequence(const Common::String &memberName,
 		BitmapAssetSequence &sequence) const {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
 		SearchMan.createReadStreamForMember(Common::Path(memberName)));
-	if (!stream || !decodeBitmapSequence(*stream, sequence)) {
+	if (!stream || !decodeBitmapAssetSequence(*stream, sequence)) {
 		warning("Ripper: could not decode bitmap sequence '%s'", memberName.c_str());
 		return false;
 	}
@@ -573,7 +573,7 @@ bool ResourceManager::loadBitmapLibrary(const Common::String &libraryName,
 		Common::ScopedPtr<Common::SeekableReadStream> stream(
 			library.createReadStreamForMember(members[member]));
 		BitmapAssetFrame frame;
-		if (!stream || !decodeBitmap(*stream, frame)) {
+		if (!stream || !decodeBitmapAsset(*stream, frame)) {
 			warning("Ripper: could not decode bitmap library '%s' member '%s'",
 				libraryName.c_str(), members[member].c_str());
 			frames.clear();
