@@ -1021,6 +1021,7 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 	g_system->fillScreen(0);
 	_system->lockMouse(false);
 	dec->start();
+	_currentDecoder = dec.get();
 
 	Common::SharedPtr<Video::Subtitles> subtitles = loadSubtitles(movie);
 	if (subtitles) {
@@ -1070,6 +1071,7 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 	if (subtitles)
 		g_system->hideOverlay();
 	_system->lockMouse(_vr.isVR());
+	_currentDecoder = nullptr;
 }
 
 void PhoenixVREngine::playAnimation(const Common::String &name, const Common::String &var, int varValue, float speed) {
@@ -1919,12 +1921,15 @@ void PhoenixVREngine::processGenericEvents(const Common::Event &event) {
 
 void PhoenixVREngine::pauseEngineIntern(bool pause) {
 	// this is called when main menu appears on the screen
+	debug("pauseEngineIntern %d", pause);
 	Engine::pauseEngineIntern(pause);
 	if (pause) {
 		_system->lockMouse(false);
 	} else {
 		_system->lockMouse(_vr.isVR());
 	}
+	if (_currentDecoder)
+		_currentDecoder->pauseVideo(pause);
 }
 
 bool PhoenixVREngine::testSaveSlot(int idx) const {

@@ -385,6 +385,8 @@ private:
 
 	bool _restarted = false;
 	bool _loaded = false;
+
+	Video::VideoDecoder *_currentDecoder = nullptr;
 };
 
 extern PhoenixVREngine *g_engine;
