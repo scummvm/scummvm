@@ -44,36 +44,12 @@ public:
 	Result runProgram(uint action, const char *scriptBaseName, uint argument);
 
 private:
-	struct RuntimeSnapshot {
-		CompiledScript activeScript;
-		CompiledScript concurrentScript;
-		Common::String concurrentEntryLabel;
-		Common::String pendingSceneMember;
-		Common::String pendingSceneEntryLabel;
-		Common::Array<bool> activeInteractionEnabled;
-		Common::String previousFrameLabel;
-		uint activeFrame;
-		uint16 frontEndActionMask;
-		int hoveredInteraction;
-		bool awaitingInteraction;
-		bool resumeLoadedPresentation;
-		bool clearPreservedAudioOnTransition;
-		bool cyberActive;
-		bool cyberExitRequested;
-		uint16 cyberKeyboardCommand;
-
-		RuntimeSnapshot() : activeFrame(0), frontEndActionMask(0xffff), hoveredInteraction(-1),
-			awaitingInteraction(false), resumeLoadedPresentation(false),
-			clearPreservedAudioOnTransition(false), cyberActive(false),
-			cyberExitRequested(false), cyberKeyboardCommand(0) {}
-	};
-
 	bool captureDisplay(IndexedDisplaySnapshot &snapshot) const;
 	void restoreDisplay(const IndexedDisplaySnapshot &snapshot) const;
 	bool captureAudio(Common::Array<byte> &state) const;
 	bool restoreAudio(const Common::Array<byte> &state) const;
-	void suspendRuntime(RuntimeSnapshot &snapshot) const;
-	void restoreRuntime(RuntimeSnapshot &snapshot) const;
+	void suspendRuntime(SceneRuntimeState &snapshot) const;
+	void restoreRuntime(SceneRuntimeState &snapshot) const;
 
 	RipperEngine *_engine;
 };
