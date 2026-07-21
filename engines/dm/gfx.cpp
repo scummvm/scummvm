@@ -1402,7 +1402,10 @@ byte *DisplayMan::getCurrentVgaBuffer() {
 
 uint16 DisplayMan::getPixelWidth(uint16 index) {
 	byte *data = _packedBitmaps + _packedItemPos[index];
-	return readUint16(data, _vm->getPlatform());
+	uint16 width = readUint16(data, _vm->getPlatform());
+	if (_vm->getPlatform() == Common::kPlatformDOS)
+		return (width + 1) & ~1; // DOS version IMG3 compression
+	return width;
 }
 
 uint16 DisplayMan::getPixelHeight(uint16 index) {
@@ -2649,10 +2652,14 @@ void DisplayMan::loadWallSet(WallSet set) {
 		loadIntoBitmap(graphicIndice++, _bitmapWallSetD3L2);
 	}
 
+	int16 firstWallSet = (_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet;
+	int16 doorFrameLeftD1CIdx = firstWallSet + 1;
+	int16 d3R2Idx = (_vm->getPlatform() == Common::kPlatformDOS) ? (firstWallSet + 18) : (firstWallSet + 12);
+
 	copyBitmapAndFlipHorizontal(_bitmapWallSetDoorFrameLeftD1C, _bitmapWallSetDoorFrameRightD1C,
-									_doorFrameRightD1C._srcByteWidth, _doorFrameRightD1C._srcHeight);
+									getPixelWidth(doorFrameLeftD1CIdx) / 2, getPixelHeight(doorFrameLeftD1CIdx));
 	copyBitmapAndFlipHorizontal(_bitmapWallSetD3L2, _bitmapWallSetD3R2,
-									_frameWallD3R2._srcByteWidth, _frameWallD3R2._srcHeight);
+									getPixelWidth(d3R2Idx) / 2, getPixelHeight(d3R2Idx));
 }
 
 void DisplayMan::loadCurrentMapGraphics() {
