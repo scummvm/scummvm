@@ -244,6 +244,7 @@ void room_808_synchronize(Common::Serializer &s) {
 
 void room_808_preload() {
 	room_init_code_pointer = room_808_init;
+	room_parser_code_pointer = room_808_parser;
 
 	section_8_walker();
 	section_8_interface();

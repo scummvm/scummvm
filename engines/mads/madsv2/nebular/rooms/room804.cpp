@@ -46,6 +46,7 @@ struct Scratch {
 
 static Scratch local;
 
+
 static void room_804_init() {
 	local._messWithThrottle = false;
 	local._throttleCounter = 0;
