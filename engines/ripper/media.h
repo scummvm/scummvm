@@ -79,6 +79,7 @@ public:
 		uint16 *command = nullptr, uint boundedLoopStartFrame = 0xffffffff);
 	bool playCombatSequence(const Common::String &path,
 		MediaSequenceCallback *callback, uint16 *command = nullptr);
+	bool playTransparentSmackerOverlay(const Common::String &path, int x, int y);
 	void fadePalette(bool fadeIn, uint stepCount);
 	bool playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
 		bool loopUntilInput = false, bool allowEscSpace = false,
@@ -139,7 +140,8 @@ private:
 		uint16 *sequenceCommand = nullptr,
 		Common::Array<byte> *sourcePalette = nullptr,
 		bool rememberVideoPalette = true, uint firstFrame = 0,
-		uint lastFrame = 0xffffffff, uint boundedLoopStartFrame = 0xffffffff);
+		uint lastFrame = 0xffffffff, uint boundedLoopStartFrame = 0xffffffff,
+		bool transparentFirstPixel = false);
 	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name,
 		bool allowEscSpace, int overrideX = -1, int overrideY = -1,
 		int overrideOriginY = 0, bool serviceSceneUi = false);

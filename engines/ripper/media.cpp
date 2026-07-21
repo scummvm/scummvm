@@ -886,7 +886,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		bool repeatedLoopPass, bool *advanceSegment, uint loopStartFrame,
 		MediaSequenceCallback *sequenceCallback, uint16 *sequenceCommand,
 		Common::Array<byte> *sourcePalette, bool rememberVideoPalette,
-		uint firstFrame, uint lastFrame, uint boundedLoopStartFrame) {
+		uint firstFrame, uint lastFrame, uint boundedLoopStartFrame,
+		bool transparentFirstPixel) {
 	if (stoppedByUser)
 		*stoppedByUser = false;
 	if (advanceSegment)
@@ -949,6 +950,27 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	bool toolbarPaused = false;
 	bool completed = true;
 	uint presentedFrames = 0;
+	Common::Array<byte> transparentBacking;
+	if (transparentFirstPixel) {
+		Graphics::Surface *screen = g_system->lockScreen();
+		if (!screen || screen->format.bytesPerPixel != 1 || x < 0 || y < 0 ||
+				x + (int)outputWidth > screen->w || y + (int)outputHeight > screen->h) {
+			if (screen)
+				g_system->unlockScreen();
+			warning("Ripper: transparent Smacker overlay '%s' is outside the indexed display",
+				name.c_str());
+			decoder.close();
+			return false;
+		}
+		transparentBacking.resize(outputWidth * outputHeight);
+		for (uint row = 0; row < outputHeight; ++row)
+			memcpy(transparentBacking.data() + row * outputWidth,
+				screen->getBasePtr(x, y + row), outputWidth);
+		g_system->unlockScreen();
+		debugC(2, kDebugVideo,
+			"Ripper: captured transparent Smacker backing media='%s' rect=%d,%d,%ux%u",
+			name.c_str(), x, y, outputWidth, outputHeight);
+	}
 	auto applyDecoderPalette = [&](bool forcePalette) {
 		if (forcePalette || decoder.hasDirtyPalette()) {
 			byte palette[256 * 3];
@@ -972,7 +994,33 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	};
 	auto presentFrame = [&](const Graphics::Surface *frame, bool forcePalette) {
 		applyDecoderPalette(forcePalette);
-		if (displayScale == 1) {
+		if (transparentFirstPixel) {
+			Graphics::Surface *screen = g_system->lockScreen();
+			if (!screen) {
+				warning("Ripper: could not lock display for transparent Smacker overlay '%s'",
+					name.c_str());
+				completed = false;
+				return;
+			}
+			for (uint row = 0; row < outputHeight; ++row)
+				memcpy(screen->getBasePtr(x, y + row),
+					transparentBacking.data() + row * outputWidth, outputWidth);
+			const byte transparentColor = *(const byte *)frame->getPixels();
+			for (uint sourceY = 0; sourceY < (uint)frame->h; ++sourceY) {
+				const byte *source = (const byte *)frame->getBasePtr(0, sourceY);
+				for (uint sourceX = 0; sourceX < (uint)frame->w; ++sourceX) {
+					if (source[sourceX] == transparentColor)
+						continue;
+					for (uint scaleY = 0; scaleY < displayScale; ++scaleY) {
+						byte *destination = (byte *)screen->getBasePtr(
+							x + sourceX * displayScale,
+							y + sourceY * displayScale + scaleY);
+						memset(destination, source[sourceX], displayScale);
+					}
+				}
+			}
+			g_system->unlockScreen();
+		} else if (displayScale == 1) {
 			g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
 		} else {
 			Graphics::Surface *screen = g_system->lockScreen();
@@ -1254,6 +1302,15 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			name.c_str(),
 			(uint32)((uint64)frameAudioOffsets->back() * 1000 / audioByteRate),
 			elapsedMs);
+	}
+	if (transparentFirstPixel && !transparentBacking.empty()) {
+		for (uint row = 0; row < outputHeight; ++row)
+			g_system->copyRectToScreen(transparentBacking.data() + row * outputWidth,
+				outputWidth, x, y + row, outputWidth, 1);
+		g_system->updateScreen();
+		debugC(2, kDebugVideo,
+			"Ripper: restored transparent Smacker backing media='%s' rect=%d,%d,%ux%u",
+			name.c_str(), x, y, outputWidth, outputHeight);
 	}
 	decoder.close();
 	return completed;
@@ -1771,6 +1828,35 @@ bool MediaPlayer::playCombatSequence(const Common::String &path,
 	return playSmacker(file, path, false, 0, 0, nullptr, nullptr, nullptr,
 		0, 0, kAutoPacketizedDisplayScale, false, 0, 0, false, false, false,
 		nullptr, 0, callback, command, nullptr, false);
+}
+
+bool MediaPlayer::playTransparentSmackerOverlay(const Common::String &path, int x, int y) {
+	Common::File *file = new Common::File();
+	if (!file->open(Common::Path(path))) {
+		warning("Ripper: could not open transparent Smacker overlay '%s'", path.c_str());
+		delete file;
+		return false;
+	}
+
+	byte magic[4];
+	if (!readExact(*file, magic, sizeof(magic))) {
+		delete file;
+		return false;
+	}
+	file->seek(0);
+	if (memcmp(magic, "SMK2", 4) != 0 && memcmp(magic, "SMK4", 4) != 0) {
+		warning("Ripper: unsupported transparent Smacker overlay '%s'", path.c_str());
+		delete file;
+		return false;
+	}
+
+	debugC(1, kDebugVideo,
+		"Ripper: entering transparent Smacker overlay media='%s' position=%d,%d",
+		path.c_str(), x, y);
+	return playSmacker(file, path, false, x, y, nullptr, nullptr, nullptr,
+		0, 0, 1, true, 0, kScenePresentationTop, false, false, false,
+		nullptr, 0, nullptr, nullptr, nullptr, true, 0, 0xffffffff,
+		0xffffffff, true);
 }
 
 bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
