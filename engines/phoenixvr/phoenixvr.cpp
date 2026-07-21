@@ -292,6 +292,7 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 																					 _lockKey(13),
 																					 _state(256),
 																					 _loadedCursors(16),
+																					 _sprites(16),
 																					 _fov(kPi2),
 																					 _angleX(0),
 																					 _angleY(-kPi2),
@@ -1208,7 +1209,7 @@ Graphics::ManagedSurface *PhoenixVREngine::loadSurface(const Common::String &pat
 		dec.reset(new Image::PCXDecoder);
 	} else if (filename.hasSuffixIgnoreCase(".gif")) {
 		dec.reset(new Image::GIFDecoder);
-	} else if (filename.hasSuffixIgnoreCase(".cur")) {
+	} else if (filename.hasSuffixIgnoreCase(".cur") || filename.hasSuffixIgnoreCase(".spr")) {
 		dec.reset(new Image::TGADecoder);
 	} else {
 		warning("can't find decoder for %s", filename.c_str());
@@ -1253,6 +1254,19 @@ void PhoenixVREngine::loadCursor(int idx, const Common::String &path, int w, int
 	desc.path = path;
 	_cursorCache.erase(path);
 	loadCursor(desc.path, w, h);
+}
+
+void PhoenixVREngine::spriteLoad(const Common::String &name, const Common::String &path) {
+	debug("sprite load %s %s", name.c_str(), path.c_str());
+	_loadedSprites[name].reset(loadSurface(path));
+}
+
+void PhoenixVREngine::spriteScreen(int index, const Common::String &name, int x, int y) {
+	debug("sprite screen %d %s %d %d", index, name.c_str(), x, y);
+	auto &sprite = _sprites[index];
+	sprite.name = name;
+	sprite.x = x;
+	sprite.y = y;
 }
 
 void PhoenixVREngine::scheduleTest(int idx) {
@@ -1341,8 +1355,25 @@ void PhoenixVREngine::renderTimer() {
 	_screen->simpleBlitFrom(*timerFg, fgSrcRect, fgRect.origin());
 }
 
+void PhoenixVREngine::renderSprites() {
+	if (version() < 2)
+		return;
+
+	for (auto &sprite : _sprites) {
+		if (sprite.name.empty())
+			continue;
+		auto it = _loadedSprites.find(sprite.name);
+		if (it == _loadedSprites.end() || !it->_value)
+			continue;
+
+		auto &src = *it->_value;
+		_screen->copyRectToSurface(src, sprite.x, sprite.y, src.getBounds());
+	}
+}
+
 void PhoenixVREngine::renderVR(float dt) {
 	_vr.render(_screen, _angleX.angle(), _angleY.angle(), _fov, dt, _showRegions ? _regSet.get() : nullptr);
+	renderSprites();
 	paintText(_rolloverText);
 	renderArchiveImages();
 	renderArchiveTexts();

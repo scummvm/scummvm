@@ -257,28 +257,27 @@ struct Fade : public Command {
 struct Sprite_Load : public Command {
 	Common::String name;
 	Common::String path;
-	Common::String unk;
-	Sprite_Load(const Common::Array<Common::String> &args) : name(args[0]), path(args[1]), unk(args[2]) {}
+	Sprite_Load(const Common::Array<Common::String> &args) : name(args[0]), path(args[1]) {}
 	void exec(ExecutionContext &ctx) const override {
-		warning("sprite load %s %s %s", name.c_str(), path.c_str(), unk.c_str());
+		g_engine->spriteLoad(name, path);
 	}
 };
 
 struct Sprite_Screen : public Command {
 	int index;
 	Common::String name;
-	Common::String x;
-	Common::String y;
+	int x = 0;
+	int y = 0;
 	Sprite_Screen(const Common::Array<Common::String> &args) : index(atoi(args[0].c_str())) {
 		if (args.size() > 1)
 			name = args[1];
 		if (args.size() > 2)
-			x = args[2];
+			x = atoi(args[2].c_str());
 		if (args.size() > 3)
-			y = args[3];
+			y = atoi(args[3].c_str());
 	}
 	void exec(ExecutionContext &ctx) const override {
-		warning("sprite screen %d %s %s %s", index, name.c_str(), x.c_str(), y.c_str());
+		g_engine->spriteScreen(index, name, x, y);
 	}
 };
 
