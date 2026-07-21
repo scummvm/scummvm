@@ -1127,7 +1127,9 @@
   becomes the slot's scene-preserve flag. `DA1.RUN` depends on the table rather
   than a single current resource: its entry callback loads eight WAVs before
   configuring `POLICE1` and `ELDOR_O`, and later scenes configure preserved
-  door sounds without loading them again.
+  door sounds without loading them again. `SceneAudioManager` owns this table,
+  its mixer handles, trigger/ramp service, and serialization; `MediaPlayer`
+  delegates the script-facing audio operations to it.
 - Opcode `0x20` scans all occupied slots by case-insensitive basename through
   `HandleSceneEntryConfigureOrStartNamedAudioTrigger` at `0x15eea`. A missing
   name is a no-op rather than a script error. A zero trigger starts immediately;
