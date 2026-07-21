@@ -68,6 +68,10 @@ struct BitmapFontAsset {
 		spaceWidth(0), transparentColor(0) {}
 };
 
+bool decodeBitmapAsset(Common::SeekableReadStream &stream, BitmapAssetFrame &frame);
+bool decodeBitmapAssetSequence(Common::SeekableReadStream &stream,
+	BitmapAssetSequence &sequence);
+
 class AssetLibrary {
 public:
 	AssetLibrary();
