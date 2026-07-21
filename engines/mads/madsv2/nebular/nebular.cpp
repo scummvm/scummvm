@@ -463,6 +463,9 @@ void RexNebularEngine::global_parser_code() {
 			text_show(478);
 			break;
 		}
+
+		global[kPenlightCellStatus] = 0;
+
 	} else if (player_said_2(disassemble, phone_handset)) {
 		switch (global[kHandsetCellStatus]) {
 		case 1:
@@ -476,7 +479,6 @@ void RexNebularEngine::global_parser_code() {
 			if (game.difficulty == DIFFICULTY_HARD) {
 				object_examine(OBJ_DURAFAIL_CELLS, 416);
 			}
-			global[kHandsetCellStatus] = 0;
 			break;
 		case 3:
 			inter_give_to_player(OBJ_PHONE_CELLS);
@@ -485,12 +487,14 @@ void RexNebularEngine::global_parser_code() {
 		case 4:
 			inter_give_to_player(OBJ_PHONE_CELLS);
 			object_examine(OBJ_PHONE_CELLS, 417);
-			global[kHandsetCellStatus] = 0;
 			break;
 		default:
 			text_show(478);
 			break;
 		}
+
+		global[kHandsetCellStatus] = 0;
+
 	} else if (player_said_3(put, phone_cells, penlight)) {
 		if (global[kPenlightCellStatus] == 0) {
 			global[kPenlightCellStatus] = 3;
