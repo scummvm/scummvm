@@ -21,6 +21,7 @@
 #ifndef RIPPER_RIPPER_H
 #define RIPPER_RIPPER_H
 
+#include "common/ptr.h"
 #include "engines/engine.h"
 
 struct ADGameDescription;
@@ -56,38 +57,38 @@ public:
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	bool canSaveAutosaveCurrently() override { return false; }
 	int getAutosaveSlot() const override { return 20; }
-	CursorManager *getCursor() const { return _cursor; }
-	CyberManager *getCyber() const { return _cyber; }
-	InputManager *getInput() const { return _input; }
-	Inventory *getInventory() const { return _inventory; }
-	MediaPlayer *getMedia() const { return _media; }
-	Milestones *getMilestones() const { return _milestones; }
-	ModalDialogManager *getModalDialog() const { return _modalDialog; }
-	ResourceManager *getResources() const { return _resources; }
-	ScriptManager *getScripts() const { return _scripts; }
-	RipperSettings *getSettings() const { return _settings; }
-	ToolbarManager *getToolbar() const { return _toolbar; }
-	WacManager *getWac() const { return _wac; }
-	WorldMap *getWorldMap() const { return _worldMap; }
+	CursorManager *getCursor() const { return _cursor.get(); }
+	CyberManager *getCyber() const { return _cyber.get(); }
+	InputManager *getInput() const { return _input.get(); }
+	Inventory *getInventory() const { return _inventory.get(); }
+	MediaPlayer *getMedia() const { return _media.get(); }
+	Milestones *getMilestones() const { return _milestones.get(); }
+	ModalDialogManager *getModalDialog() const { return _modalDialog.get(); }
+	ResourceManager *getResources() const { return _resources.get(); }
+	ScriptManager *getScripts() const { return _scripts.get(); }
+	RipperSettings *getSettings() const { return _settings.get(); }
+	ToolbarManager *getToolbar() const { return _toolbar.get(); }
+	WacManager *getWac() const { return _wac.get(); }
+	WorldMap *getWorldMap() const { return _worldMap.get(); }
 
 private:
 	void registerSearchPaths();
 	void pumpEvents();
 
 	const ADGameDescription *const _gameDescription;
-	CursorManager *_cursor;
-	CyberManager *_cyber;
-	InputManager *_input;
-	Inventory *_inventory;
-	MediaPlayer *_media;
-	Milestones *_milestones;
-	ModalDialogManager *_modalDialog;
-	ResourceManager *_resources;
-	ScriptManager *_scripts;
-	RipperSettings *_settings;
-	ToolbarManager *_toolbar;
-	WacManager *_wac;
-	WorldMap *_worldMap;
+	Common::ScopedPtr<CursorManager> _cursor;
+	Common::ScopedPtr<CyberManager> _cyber;
+	Common::ScopedPtr<InputManager> _input;
+	Common::ScopedPtr<Inventory> _inventory;
+	Common::ScopedPtr<MediaPlayer> _media;
+	Common::ScopedPtr<Milestones> _milestones;
+	Common::ScopedPtr<ModalDialogManager> _modalDialog;
+	Common::ScopedPtr<ResourceManager> _resources;
+	Common::ScopedPtr<ScriptManager> _scripts;
+	Common::ScopedPtr<RipperSettings> _settings;
+	Common::ScopedPtr<ToolbarManager> _toolbar;
+	Common::ScopedPtr<WacManager> _wac;
+	Common::ScopedPtr<WorldMap> _worldMap;
 	bool _gameplayStarted;
 };
 

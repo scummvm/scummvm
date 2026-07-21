@@ -22,6 +22,7 @@
 #define RIPPER_TOOLBAR_H
 
 #include "common/array.h"
+#include "common/ptr.h"
 #include "common/rect.h"
 #include "common/str.h"
 
@@ -80,8 +81,8 @@ private:
 	bool _active;
 	bool _previewEnabled;
 	RipperEngine *_engine;
-	RemoteControlManager *_remoteControl;
-	OptionsPanelManager *_optionsPanel;
+	Common::ScopedPtr<RemoteControlManager> _remoteControl;
+	Common::ScopedPtr<OptionsPanelManager> _optionsPanel;
 };
 
 } // End of namespace Ripper

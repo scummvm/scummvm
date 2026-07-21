@@ -480,9 +480,8 @@ SceneRuntimeState::SceneRuntimeState() : activeFrame(0), frontEndActionMask(0xff
 }
 
 ScriptManager::ScriptManager(RipperEngine *engine) : _engine(engine), _sceneCallbackFrame(0),
-		_activeIdleMediaCallback(nullptr), _chooserTemplateMode(0) {
-	_briefing = new BriefingManager(engine);
-	_dialogue = new DialogueChooser();
+		_activeIdleMediaCallback(nullptr), _chooserTemplateMode(0),
+		_briefing(new BriefingManager(engine)), _dialogue(new DialogueChooser()) {
 }
 
 bool ScriptManager::canSaveGame() const {
@@ -612,8 +611,6 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 }
 
 ScriptManager::~ScriptManager() {
-	delete _dialogue;
-	delete _briefing;
 }
 
 bool ScriptManager::hasActivePrompt() const {

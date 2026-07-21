@@ -22,6 +22,7 @@
 #define RIPPER_SCRIPT_H
 
 #include "common/array.h"
+#include "common/ptr.h"
 #include "common/rect.h"
 #include "common/str.h"
 
@@ -241,7 +242,7 @@ public:
 
 	CompiledScript &startup() { return _startup; }
 	CompiledScript &ba0() { return _runtime.activeScript; }
-	DialogueChooser *getDialogue() const { return _dialogue; }
+	DialogueChooser *getDialogue() const { return _dialogue.get(); }
 
 private:
 	friend class CyberManager;
@@ -275,8 +276,8 @@ private:
 	uint _sceneCallbackFrame;
 	IdleMediaCallback *_activeIdleMediaCallback;
 	byte _chooserTemplateMode;
-	BriefingManager *_briefing;
-	DialogueChooser *_dialogue;
+	Common::ScopedPtr<BriefingManager> _briefing;
+	Common::ScopedPtr<DialogueChooser> _dialogue;
 };
 
 } // End of namespace Ripper

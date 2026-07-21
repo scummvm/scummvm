@@ -23,6 +23,7 @@
 
 #include "audio/mixer.h"
 #include "common/array.h"
+#include "common/ptr.h"
 #include "common/str.h"
 
 namespace Common {
@@ -150,7 +151,7 @@ private:
 	RipperEngine *_engine;
 	InputManager *_input;
 	Audio::Mixer *_mixer;
-	SceneAudioManager *_sceneAudio;
+	Common::ScopedPtr<SceneAudioManager> _sceneAudio;
 	bool _stopSceneOnMouse;
 };
 
