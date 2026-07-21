@@ -38,7 +38,7 @@
 #include "mads/core/mem.h"
 #include "mads/core/popup.h"
 #include "mads/core/speech.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 

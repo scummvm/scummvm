@@ -22,7 +22,7 @@
 #ifndef MADS_FOREST_JOURNAL_H
 #define MADS_FOREST_JOURNAL_H
 
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 namespace Forest {

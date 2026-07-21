@@ -20,7 +20,7 @@
  */
 
 #include "common/debug.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 #include "mads/core/pal.h"
 #include "mads/core/mcga.h"
 #include "mads/core/color.h"

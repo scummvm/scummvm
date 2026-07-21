@@ -22,12 +22,12 @@
 #ifndef MADS_PHANTOM_PHANTOM_H
 #define MADS_PHANTOM_PHANTOM_H
 
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 namespace Phantom {
 
-class PhantomEngine : public MADSV2Engine {
+class PhantomEngine : public MADSEngine {
 private:
 	static void global_object_sprite();
 	static void stop_walker_basic();
@@ -36,7 +36,7 @@ private:
 
 public:
 	PhantomEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
-		MADSV2Engine(syst, gameDesc) {}
+		MADSEngine(syst, gameDesc) {}
 	~PhantomEngine() override {}
 
 	Common::Error run() override;

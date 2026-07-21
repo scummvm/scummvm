@@ -19,7 +19,7 @@
  *
  */
 
-#include "mads/engine.h"
+#include "mads/mads.h"
 #include "mads/core/general.h"
 #include "mads/core/config.h"
 #include "mads/core/font.h"

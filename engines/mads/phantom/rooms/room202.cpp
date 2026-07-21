@@ -37,7 +37,7 @@
 #include "mads/phantom/mads/text.h"
 #include "mads/phantom/rooms/section2.h"
 #include "mads/phantom/rooms/room202.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 namespace Phantom {

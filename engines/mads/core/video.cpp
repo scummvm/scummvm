@@ -20,7 +20,7 @@
  */
 
 #include "mads/core/video.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 

@@ -39,7 +39,7 @@
 #include "mads/core/game.h"
 #include "mads/core/pal.h"
 #include "mads/core/mcga.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 #include "mads/nebular/popup.h"
 
 namespace MADS {

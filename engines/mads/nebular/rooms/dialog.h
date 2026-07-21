@@ -22,7 +22,7 @@
 #ifndef MADS_NEBULAR_ROOMS_DIALOG_H
 #define MADS_NEBULAR_ROOMS_DIALOG_H
 
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 namespace RexNebular {

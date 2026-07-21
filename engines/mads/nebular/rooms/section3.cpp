@@ -27,7 +27,7 @@
 #include "mads/core/kernel.h"
 #include "mads/core/pal.h"
 #include "mads/core/player.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 namespace RexNebular {

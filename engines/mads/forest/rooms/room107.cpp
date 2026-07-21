@@ -27,7 +27,7 @@
 #include "mads/core/matte.h"
 #include "mads/core/mouse.h"
 #include "mads/core/player.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 namespace Forest {

@@ -22,14 +22,14 @@
 #ifndef MADS_FOREST_H
 #define MADS_FOREST_H
 
-#include "mads/engine.h"
+#include "mads/mads.h"
 #include "mads/forest/digi.h"
 #include "mads/forest/midi.h"
 
 namespace MADS {
 namespace Forest {
 
-class ForestEngine : public MADSV2Engine {
+class ForestEngine : public MADSEngine {
 public:
 	DigiPlayer _digiPlayer = DigiPlayer(_mixer);
 	MidiPlayer _midiPlayer;

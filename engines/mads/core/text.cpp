@@ -38,7 +38,7 @@
 #include "mads/core/object.h"
 #include "mads/core/text.h"
 #include "mads/core/global.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 

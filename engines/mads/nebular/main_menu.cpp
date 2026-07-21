@@ -37,7 +37,7 @@
 #include "mads/nebular/main_menu.h"
 #include "mads/nebular/extra.h"
 #include "mads/nebular/mads/sounds.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 namespace RexNebular {

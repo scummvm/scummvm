@@ -19,7 +19,7 @@
  *
  */
 
-#include "mads/engine.h"
+#include "mads/mads.h"
 #include "mads/core/attr.h"
 #include "mads/core/buffer.h"
 #include "mads/core/env.h"

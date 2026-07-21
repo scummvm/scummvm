@@ -42,7 +42,7 @@
 #include "mads/core/kernel.h"
 #include "mads/core/inter.h"
 #include "mads/nebular/extra.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 

@@ -2,7 +2,6 @@ MODULE := engines/mads
 
 MODULE_OBJS := \
 	console.o \
-	engine.o \
 	metaengine.o \
 	mads.o \
 	animview/anim_timer.o \

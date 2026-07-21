@@ -40,7 +40,7 @@
 #include "mads/core/speech.h"
 #include "mads/phantom/main_menu.h"
 #include "mads/phantom/menus.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 namespace Phantom {

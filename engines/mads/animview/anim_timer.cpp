@@ -28,7 +28,7 @@
 #include "mads/core/mouse.h"
 #include "mads/core/pal.h"
 #include "mads/core/timer.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 namespace AnimView {

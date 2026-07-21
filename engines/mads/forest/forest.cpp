@@ -59,7 +59,7 @@ namespace Forest {
 ForestEngine *g_engine;
 
 ForestEngine::ForestEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
-		MADSV2Engine(syst, gameDesc) {
+		MADSEngine(syst, gameDesc) {
 	g_engine = this;
 	init_extra();
 	init_inventory();

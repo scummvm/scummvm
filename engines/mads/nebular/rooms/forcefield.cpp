@@ -21,7 +21,7 @@
 
 #include "mads/nebular/rooms/forcefield.h"
 #include "mads/nebular/rooms/thunks.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 namespace RexNebular {

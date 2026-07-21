@@ -46,7 +46,7 @@
 #include "mads/core/video.h"
 #include "mads/nebular/main_menu.h"
 #include "mads/nebular/menus.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 namespace RexNebular {

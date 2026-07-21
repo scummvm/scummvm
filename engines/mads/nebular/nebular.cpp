@@ -58,7 +58,7 @@ namespace MADS {
 namespace RexNebular {
 
 RexNebularEngine::RexNebularEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
-		MADSV2Engine(syst, gameDesc) {
+		MADSEngine(syst, gameDesc) {
 	// Initialize globals
 	RexNebular::popup_init();
 }

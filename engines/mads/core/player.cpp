@@ -33,7 +33,7 @@
 #include "mads/core/pal.h"
 #include "mads/core/himem.h"
 #include "mads/core/object.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 #include "mads/nebular/extra.h"
 
 namespace MADS {

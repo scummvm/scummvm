@@ -36,7 +36,7 @@
 #include "mads/core/player.h"
 #include "mads/core/sound.h"
 #include "mads/core/text.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 namespace Forest {

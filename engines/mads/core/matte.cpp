@@ -35,7 +35,7 @@
 #include "mads/core/keys.h"
 #include "mads/core/timer.h"
 #include "mads/core/sound.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 #include "mads/core/video.h"
 #include "mads/core/anim.h"
 #include "mads/core/matte.h"

@@ -32,7 +32,7 @@
 #include "mads/core/timer.h"
 #include "mads/core/video.h"
 #include "mads/textview/textview.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 namespace TextView {

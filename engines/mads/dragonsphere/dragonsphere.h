@@ -22,18 +22,18 @@
 #ifndef MADS_DRAGONSPHERE_H
 #define MADS_DRAGONSPHERE_H
 
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 namespace Dragonsphere {
 
-class DragonsphereEngine : public MADSV2Engine {
+class DragonsphereEngine : public MADSEngine {
 private:
 	static void global_object_examine();
 
 public:
 	DragonsphereEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
-		MADSV2Engine(syst, gameDesc) {}
+		MADSEngine(syst, gameDesc) {}
 	~DragonsphereEngine() override {}
 
 	Common::Error run() override;

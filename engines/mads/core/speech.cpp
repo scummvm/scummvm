@@ -26,7 +26,7 @@
 #include "mads/core/env.h"
 #include "mads/core/mem.h"
 #include "mads/core/pack.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 

@@ -22,7 +22,7 @@
 #ifndef MADS_NEBULAR_H
 #define MADS_NEBULAR_H
 
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 namespace RexNebular {
@@ -39,7 +39,7 @@ struct MADSSavegameHeader {
 	void writeSavegameHeader(Common::WriteStream *dest);
 };
 
-class RexNebularEngine : public MADSV2Engine {
+class RexNebularEngine : public MADSEngine {
 private:
 	void showRecipe();
 

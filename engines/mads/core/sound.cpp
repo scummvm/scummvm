@@ -21,7 +21,7 @@
 
 #include "common/textconsole.h"
 #include "mads/core/sound.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 

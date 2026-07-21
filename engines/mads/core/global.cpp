@@ -22,7 +22,7 @@
 #include "common/textconsole.h"
 #include "mads/core/config.h"
 #include "mads/core/global.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 

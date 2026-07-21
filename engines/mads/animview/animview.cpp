@@ -35,7 +35,7 @@
 #include "mads/animview/animview.h"
 #include "mads/animview/anim_timer.h"
 #include "mads/animview/functions.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 namespace AnimView {

@@ -34,7 +34,7 @@
 #include "mads/dragonsphere/global.h"
 #include "mads/dragonsphere/rooms/section1.h"
 #include "mads/dragonsphere/rooms/room106.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 namespace Dragonsphere {

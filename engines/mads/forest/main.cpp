@@ -39,7 +39,7 @@
 #include "mads/core/quote.h"
 #include "mads/core/speech.h"
 #include "mads/forest/menus.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 namespace Forest {

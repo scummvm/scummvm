@@ -19,16 +19,21 @@
  *
  */
 
-#ifndef MADS_MADS_H
-#define MADS_MADS_H
+#ifndef MADS_ENGINE_H
+#define MADS_ENGINE_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
-#include "common/error.h"
+#include "audio/mixer.h"
+#include "common/events.h"
+#include "common/serializer.h"
+#include "common/stack.h"
 #include "common/random.h"
 #include "common/util.h"
 #include "engines/engine.h"
 #include "mads/detection.h"
+#include "graphics/screen.h"
+#include "mads/core/sound_manager.h"
+#include "mads/core/game.h"
+#include "mads/core/speech.h"
 
 namespace MADS {
 
@@ -59,16 +64,44 @@ enum MADSActions {
 	kActionRestartAnimation
 };
 
+typedef void (*TimerFunction)();
+
 class MADSEngine : public Engine {
+private:
+	uint16 _shakeRandom = 0x4D2;
+
+	void initGlobals();
+	void syncGame(Common::Serializer &s);
+	bool isSpecialKey(Common::KeyCode key) const;
+	void updateScreen();
+	
 protected:
 	const MADSGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+	Graphics::Screen *_screen = nullptr;
+	Common::Stack<Common::KeyState> _keyEvents;
+	uint32 _nextFrameTime = 0;
+	Common::Point _mousePos;
+	int _mouseButtons = 0;
+	Audio::SoundHandle _speechHandle;
+	TimerFunction _timerFunction = nullptr;
+	uint32 _nextTimerTime = 0;
 
 	bool hasFeature(EngineFeature f) const override;
+
+	void pollEvents();
+	void checkForTimerFunction();
+
+public:
+	MADS::SoundManager *_soundManager = nullptr;
+	bool _musicFlag = true;
+	bool _soundFlag = true;
+	bool &_speechFlag = speech_on;
 
 public:
 	MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc);
 	~MADSEngine() override;
+	void initializePath(const Common::FSNode &gamePath) override;
 
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
@@ -79,9 +112,71 @@ public:
 	bool isDemo() const;
 	bool isCDROM() const;
 
+	void readConfigFile();
 	int getRandomNumber(int maxNumber);
 	int getRandomNumber(int minNumber, int maxNumber);
+
+	Graphics::Screen *getScreen() const {
+		return _screen;
+	}
+
+	bool hasPendingKey();
+	int getKey();
+	void flushKeys();
+
+	int getMouseState(int &x, int &y);
+
+	/**
+	 * Get the elapsed time in milliseconds
+	 */
+	uint32 getMillis();
+
+	/* Callback routines in game-specific MAIN module */
+	int main_cheating_key(int mykey) const {
+		return mykey;
+	}
+	int main_normal_key(int mykey) const {
+		return mykey;
+	}
+	virtual int main_copy_verify() {
+		return COPY_SUCCEED;
+	}
+
+	bool canLoadGameStateCurrently(Common::U32String *msg) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg) override {
+		return canLoadGameStateCurrently(msg);
+	}
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	virtual void syncRoom(Common::Serializer &s) = 0;
+	SaveStateList listSaves() const;
+
+	virtual void global_init_code() = 0;
+	virtual void section_music(int section_num) = 0;
+	virtual void global_section_constructor() = 0;
+	virtual void global_daemon_code() = 0;
+	virtual void global_pre_parser_code() = 0;
+	virtual void global_parser_code() = 0;
+	virtual void global_error_code() = 0;
+	virtual void global_room_init() = 0;
+	virtual void global_sound_driver() = 0;
+	virtual void global_game_main_loop() {}
+	virtual void global_verb_filter() {}
+	virtual void player_keep_walking();
+
+	void playSpeech(Audio::AudioStream *stream);
+	void stopSpeech();
+	bool isSpeechPlaying() const;
+
+	/**
+	 * Sets the timer function to call at 60Hz
+	 */
+	void setTimerFunction(TimerFunction fn) {
+		_timerFunction = fn;
+	}
 };
+
+extern MADSEngine *g_engine;
 
 } // namespace MADS
 

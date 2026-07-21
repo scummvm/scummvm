@@ -48,7 +48,7 @@
 #include "mads/forest/extra.h"
 #include "mads/dragonsphere/mads/inventory.h"
 #include "mads/dragonsphere/global.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 

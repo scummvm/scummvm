@@ -21,7 +21,7 @@
 
 #include "common/util.h"
 #include "mads/core/imath.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 

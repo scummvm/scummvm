@@ -29,7 +29,7 @@
 #include "mads/phantom/mads/sounds.h"
 #include "mads/phantom/rooms/section1.h"
 #include "mads/phantom/rooms/room102.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 namespace Phantom {

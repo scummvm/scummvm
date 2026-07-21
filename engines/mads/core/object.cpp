@@ -44,7 +44,7 @@
 #include "mads/core/text.h"
 #include "mads/core/tile.h"
 #include "mads/core/video.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 

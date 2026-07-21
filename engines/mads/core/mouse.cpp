@@ -27,7 +27,7 @@
 #include "mads/core/mouse.h"
 #include "mads/core/timer.h"
 #include "mads/core/video.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 

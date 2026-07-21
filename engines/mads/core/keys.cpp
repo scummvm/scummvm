@@ -22,7 +22,7 @@
 #include "mads/core/keys.h"
 #include "mads/core/general.h"
 #include "mads/core/mem.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 

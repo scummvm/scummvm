@@ -23,7 +23,7 @@
 #define MADS_CORE_ECHO_H
 
 #include "gui/debugger.h"
-#include "mads/engine.h"
+#include "mads/mads.h"
 
 namespace MADS {
 
