@@ -803,6 +803,17 @@ static const NancyGameDescription gameDescriptions[] = {
 		},
 		kGameTypeNancy12
 	},
+	{ // MD5 by tunnelsociety from bug #17000
+		{
+			"nancy12", nullptr,
+			AD_ENTRY1s("ciftree.dat", "816db22b5c4d5211336b742fee8ea080", 45822011),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+			NANCY8_GUIOPTIONS
+		},
+		kGameTypeNancy12
+	},
 	{ // MD5 by bluegr
 		{
 			"nancy13", nullptr,
