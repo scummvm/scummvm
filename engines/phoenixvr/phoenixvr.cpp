@@ -490,9 +490,13 @@ void PhoenixVREngine::loadNextScript() {
 	if (!s)
 		error("can't open script file %s", nextScript.c_str());
 
-	_script.reset(Script::load(*s, version()));
-	for (auto &var : _script->getVarNames())
-		declareVariable(var);
+	auto ver = version();
+	_script.reset(Script::load(*s, ver));
+	for (auto &var : _script->getVars()) {
+		declareVariable(var.name);
+		if (ver >= 2)
+			setVariable(var.name, var.value);
+	}
 	if (gameIdMatches("dracula1")) {
 		declareVariable("P_Alliance"); // Referenced by 0M1Script.lst, declared by 0M2Script.lst
 		declareVariable("reloaddone"); // Referenced by InsertCD.lst, declared by chapter scripts
@@ -1953,8 +1957,8 @@ void PhoenixVREngine::captureContext() {
 		for (auto &cursor : warpCursors)
 			writeString(cursor);
 
-	for (auto &name : _script->getVarNames()) {
-		auto value = g_engine->getVariable(name);
+	for (auto &var : _script->getVars()) {
+		auto value = g_engine->getVariable(var.name);
 		ms.writeUint32LE(value);
 	}
 
@@ -2048,10 +2052,10 @@ bool PhoenixVREngine::enterScript() {
 		}
 	}
 	debug("vars at %08x", (uint32)ms.pos());
-	for (auto &name : _script->getVarNames()) {
+	for (auto &var : _script->getVars()) {
 		auto value = ms.readSint32LE();
-		debug("var %s: %d", name.c_str(), value);
-		g_engine->setVariable(name, value);
+		debug("var %s: %d", var.name.c_str(), value);
+		g_engine->setVariable(var.name, value);
 	}
 	debug("vars end at %08x", (uint32)ms.pos());
 	auto currentSubroutine = ms.readSint32LE();

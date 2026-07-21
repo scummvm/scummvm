@@ -141,7 +141,7 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 				value = p.nextInt();
 			}
 			debug("declared var %s: %d", name.c_str(), value);
-			_vars.push_back(name);
+			_vars.push_back({name, value});
 		} else if (p.maybe("warp]:")) {
 			auto vr = p.nextWord();
 			Common::String test;

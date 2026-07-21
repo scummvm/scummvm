@@ -78,7 +78,7 @@ void ScriptV1::parseLine(const Common::String &line, uint lineno) {
 
 	if (p.maybe('[')) {
 		if (p.maybe("bool]=") || p.maybe("bool)=") || p.maybe({"b\x00\x00ool]=", 8})) {
-			_vars.push_back(p.nextWord());
+			_vars.push_back(VariableDeclaration{p.nextWord(), 0});
 		} else if (p.maybe("warp]=")) {
 			auto vr = p.nextWord();
 			Common::String test;

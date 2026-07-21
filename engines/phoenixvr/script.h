@@ -64,8 +64,12 @@ public:
 protected:
 	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _warpsIndex;
 	Common::Array<Common::String> _warpNames;
-	Common::Array<Common::String> _vars;
 	Common::Array<WarpPtr> _warps;
+	struct VariableDeclaration {
+		Common::String name;
+		int value;
+	};
+	Common::Array<VariableDeclaration> _vars;
 
 	virtual void parseLine(const Common::String &line, uint lineno) = 0;
 
@@ -86,7 +90,7 @@ public:
 	const Common::Array<Common::String> &getWarpNames() const {
 		return _warpNames;
 	}
-	const Common::Array<Common::String> &getVarNames() const {
+	const Common::Array<VariableDeclaration> &getVars() const {
 		return _vars;
 	}
 };
