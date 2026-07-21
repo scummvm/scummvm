@@ -32,7 +32,6 @@
 #include "mads/core/env.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 // EMS/XMS disabled in ScummVM
 byte                himem_preload_ems_disabled = true;
@@ -670,5 +669,4 @@ void himem_flush(int level) {
 	}
 }
 
-} // namespace MADSV2
 } // namespace MADS

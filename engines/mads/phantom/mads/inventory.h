@@ -25,7 +25,6 @@
 #include "common/scummsys.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 
 enum {
@@ -57,7 +56,6 @@ enum {
 };
 
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

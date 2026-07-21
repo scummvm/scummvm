@@ -27,7 +27,6 @@
 #include "mads/core/cycle.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace AnimView {
 
 // Variables shared with other AnimView namespace files
@@ -60,7 +59,6 @@ extern bool stop_music_at_end;
 extern void animview_main(const char *resName);
 
 } // namespace AnimView
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

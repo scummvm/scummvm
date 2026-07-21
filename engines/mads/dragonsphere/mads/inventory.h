@@ -25,7 +25,6 @@
 #include "common/scummsys.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Dragonsphere {
 
 enum {
@@ -78,7 +77,6 @@ enum {
 };
 
 } // namespace Dragonsphere
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

@@ -23,7 +23,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 void video_init(int mode, int set_mode) {
 	// No implementation in ScummVM
@@ -48,5 +47,4 @@ void video_update(Buffer *from, int from_x, int from_y,
 	}
 }
 
-} // namespace MADSV2
 } // namespace MADS

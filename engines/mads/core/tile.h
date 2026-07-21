@@ -26,7 +26,6 @@
 #include "mads/core/color.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define DEFAULT_TILE_X          20
 #define DEFAULT_TILE_Y          12
@@ -108,7 +107,6 @@ extern void tile_pan(TileMapHeader *tile_map, int x, int y);
 extern int tile_fake_map(int tile_type, TileMapHeader *tile_map,
 	Buffer *buffer, int x, int y);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

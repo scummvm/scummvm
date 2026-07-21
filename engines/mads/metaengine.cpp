@@ -200,13 +200,13 @@ bool MADS::MADSEngine::hasFeature(EngineFeature f) const {
 
 Common::Error MADSMetaEngine::createInstance(OSystem *syst, Engine **engine, const MADS::MADSGameDescription *desc) const {
 	if (desc->gameID == MADS::GType_RexNebular)
-		*engine = new MADS::MADSV2::RexNebular::RexNebularEngine(syst, desc);
+		*engine = new MADS::RexNebular::RexNebularEngine(syst, desc);
 	else if (desc->gameID == MADS::GType_Phantom)
-		*engine = new MADS::MADSV2::Phantom::PhantomEngine(syst, desc);
+		*engine = new MADS::Phantom::PhantomEngine(syst, desc);
 	else if (desc->gameID == MADS::GType_Forest)
-		*engine = new MADS::MADSV2::Forest::ForestEngine(syst, desc);
+		*engine = new MADS::Forest::ForestEngine(syst, desc);
 	else if (desc->gameID == MADS::GType_Dragonsphere)
-		*engine = new MADS::MADSV2::Dragonsphere::DragonsphereEngine(syst, desc);
+		*engine = new MADS::Dragonsphere::DragonsphereEngine(syst, desc);
 	else
 		error("Unsupported game specified");
 

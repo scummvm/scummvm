@@ -32,7 +32,6 @@
 #include "mads/core/error.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
@@ -477,5 +476,4 @@ void sync_room(Common::Serializer &s) {
 }
 
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS

@@ -41,7 +41,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 Conv *conv[CONV_MAX_DATA];
 ConvData *conv_data[CONV_MAX_DATA];
@@ -1843,5 +1842,4 @@ void init_conv() {
 	Common::fill(conv_data, conv_data + CONV_MAX_DATA, (ConvData *)nullptr);
 }
 
-} // namespace MADSV2
 } // namespace MADS

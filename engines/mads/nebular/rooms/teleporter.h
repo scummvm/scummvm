@@ -25,7 +25,6 @@
 #include "common/rect.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
@@ -38,7 +37,6 @@ extern void teleporter_daemon();
 
 } // namespace Rooms
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

@@ -25,7 +25,6 @@
 #include "common/str.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 
 #define COMMAND_LINE_MAX        10
@@ -53,7 +52,6 @@ extern int selected_item;
 extern void menu_control();
 
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

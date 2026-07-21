@@ -25,7 +25,6 @@
 #include "mads/phantom/asound.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 
 class PhantomSoundManager : public SoundManager {
@@ -432,7 +431,6 @@ public:
 };
 
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

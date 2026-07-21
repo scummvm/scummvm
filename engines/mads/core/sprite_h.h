@@ -26,11 +26,9 @@
 #include "mads/core/color.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 extern void sprite_color_translate(SeriesPtr series, ColorListPtr list);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

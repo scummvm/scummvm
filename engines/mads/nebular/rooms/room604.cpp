@@ -28,7 +28,6 @@
 #include "mads/nebular/rooms/thunks.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
@@ -334,5 +333,4 @@ void room_604_preload() {
 
 } // namespace Rooms
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS

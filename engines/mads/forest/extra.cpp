@@ -37,7 +37,6 @@
 #include "mads/forest/midi.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 
 int int_sprite[6];
@@ -307,5 +306,4 @@ void extra_change_animation(int handle, int x, int y, int scale, int depth) {
 }
 
 } // namespace Forest
-} // namespace MADSV2
 } // namespace MADS

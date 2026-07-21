@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 
 // Interface sprites
@@ -85,7 +84,6 @@ extern void close_interface(InterfaceButton button);
 extern void extra_change_animation(int handle, int x, int y, int scale, int depth);
 
 } // namespace Forest
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

@@ -29,7 +29,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 bool speech_system_active = false;
 bool speech_on = false;
@@ -188,5 +187,4 @@ int speech_status() {
 	return g_engine->isSpeechPlaying() ? 1 : 0;
 }
 
-} // namespace MADSV2
 } // namespace MADS

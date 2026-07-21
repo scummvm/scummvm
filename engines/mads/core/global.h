@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 extern char global_release_name[];
 extern char global_release_version[];
@@ -90,7 +89,6 @@ extern void global_unload_config_parameters();
 
 extern void init_global();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

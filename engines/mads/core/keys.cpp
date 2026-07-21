@@ -25,7 +25,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 word keys_special_button;
 
@@ -154,5 +153,4 @@ void init_keys() {
 	keys_special_button = 0;
 }
 
-} // namespace MADSV2
 } // namespace MADS

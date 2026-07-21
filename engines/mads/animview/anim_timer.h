@@ -25,14 +25,12 @@
 #include "common/scummsys.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace AnimView {
 
 extern void anim_timer_init();
 extern void anim_timer();
 
 } // namespace AnimView
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

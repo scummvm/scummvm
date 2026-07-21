@@ -25,7 +25,6 @@
 #include "common/stream.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define CONCAT_ID_STRING                "MADSCONCAT 1.0\032"
 #define CONCAT_ID_LENGTH                16
@@ -54,7 +53,6 @@ struct Concat {
 
 typedef Concat *ConcatPtr;
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

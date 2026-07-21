@@ -33,7 +33,6 @@
 #include "mads/nebular/popup.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 
 enum {
@@ -194,5 +193,4 @@ void popup_update_ask(const char *string, int maxlen) {
 }
 
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS

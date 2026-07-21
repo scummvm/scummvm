@@ -44,7 +44,6 @@
 #endif
 
 namespace MADS {
-namespace MADSV2 {
 
 #define word_align_mattes
 
@@ -1259,5 +1258,4 @@ void init_matte() {
 	image_inter_marker = 0;
 }
 
-} // namespace MADSV2
 } // namespace MADS

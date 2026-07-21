@@ -38,7 +38,6 @@
 #include "mads/core/text.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 namespace Rooms {
 
@@ -823,5 +822,4 @@ void room_322_preload() {
 
 } // namespace Rooms
 } // namespace Forest
-} // namespace MADSV2
 } // namespace MADS

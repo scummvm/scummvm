@@ -59,7 +59,6 @@
 #include "mads/core/sound_manager.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 constexpr int SAVEGAME_VERSION = 1;
 constexpr int GAME_FRAME_RATE = 50;
@@ -515,5 +514,4 @@ void MADSV2Engine::player_keep_walking() {
 	}
 }
 
-} // namespace MADSV2
 } // namespace MADS

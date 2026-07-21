@@ -35,7 +35,6 @@
 #include "mads/phantom/mads/quotes.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 
 #define SAVE_MENU_PIXEL_WIDTH           200
@@ -718,5 +717,4 @@ done:
 }
 
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS

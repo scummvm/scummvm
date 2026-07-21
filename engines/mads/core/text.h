@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 
 #define TEXT_FILENAME           "*MESSAGES"
@@ -122,7 +121,6 @@ extern int text_build(int build_header);
 extern void text_copy_vocab(char **mark, int vocab_id);
 extern int text_show(long id);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

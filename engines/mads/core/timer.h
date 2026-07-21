@@ -25,7 +25,6 @@
 #include "common/scummsys.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 extern long *timer_address;         /* "Default" timer count address */
 extern word timer_rate;                 /* Current timer ticks/sec       */
@@ -83,7 +82,6 @@ extern int timer_get_copy_protect();
 
 extern void init_timer();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

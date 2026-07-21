@@ -25,7 +25,6 @@
 #include "mads/core/window.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 /* some colors */
 
@@ -112,7 +111,6 @@ extern void screen_save();
 extern void screen_restore();
 extern short screen_show_wide(const char *outstring, short locx, short locy, short width);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

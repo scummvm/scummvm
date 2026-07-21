@@ -26,7 +26,6 @@
 #include "audio/midiparser.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 
 extern bool midi_playing;
@@ -66,7 +65,6 @@ extern void midi_stop();
 extern void midi_loop();
 
 } // namespace Forest
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

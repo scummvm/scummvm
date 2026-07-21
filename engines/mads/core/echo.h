@@ -26,7 +26,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 inline void echo(const char *item, bool carriage_return) {
 	auto &dbg = *g_engine->getDebugger();
@@ -36,7 +35,6 @@ inline void echo(const char *item, bool carriage_return) {
 		dbg.debugPrintf("\n");
 }
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

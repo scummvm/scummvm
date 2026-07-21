@@ -27,7 +27,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define mcga_retrace_magic      14      /* Dave McKibbin's magic heuristic # */
 
@@ -159,5 +158,4 @@ void mcga_reset() {
 	mcga_setpal(&temp_palette);
 }
 
-} // namespace MADSV2
 } // namespace MADS

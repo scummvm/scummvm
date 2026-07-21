@@ -27,7 +27,6 @@
 #include "mads/core/screen.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define text_wrap  160
 
@@ -840,5 +839,4 @@ int window_show_color(WindowPtr window, char *text, int xx, int yy, int color) {
 	return xx - (window->ul_x + 1);
 }
 
-} // namespace MADSV2
 } // namespace MADS

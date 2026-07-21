@@ -25,7 +25,6 @@
 #include "mads/core/room.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 
 /**
@@ -66,7 +65,6 @@ extern int room_load_variant(Load *load_handle, Buffer *depth, Buffer *walk, Buf
 extern int buffer_legal(const Buffer &special, int orig_wrap, int x1, int y1, int x2, int y2);
 
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

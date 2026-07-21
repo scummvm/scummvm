@@ -25,14 +25,12 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace TextView {
 
 // Main textview function
 extern void textview_main(const char *resName);
 
 } // namespace TextView
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

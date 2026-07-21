@@ -25,7 +25,6 @@
 #include "common/scummsys.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Dragonsphere {
 
 // Conversation node IDs are added here as each conversation is ported.
@@ -540,7 +539,6 @@ enum {
 };
 
 } // namespace Dragonsphere
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

@@ -25,7 +25,6 @@
 #include "common/scummsys.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 
 extern void global_menu_system_init();
@@ -34,7 +33,6 @@ extern void global_emergency_save();
 extern void global_game_menu();
 
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

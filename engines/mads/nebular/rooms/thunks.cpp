@@ -35,7 +35,6 @@
 #include "mads/nebular/nebular.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
@@ -497,5 +496,4 @@ char *formAnimName(char type, int num) {
 
 } // namespace Rooms
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS

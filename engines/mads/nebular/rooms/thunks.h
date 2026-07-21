@@ -35,7 +35,6 @@
 #include "mads/nebular/global.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
@@ -682,7 +681,6 @@ enum {
 
 } // namespace Rooms
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS
 
 #endif /* MADS_NEBULAR_SCENES8_H */

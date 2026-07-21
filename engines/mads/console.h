@@ -25,7 +25,6 @@
 #include "gui/debugger.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 extern int strToInt(const char *s);
 
@@ -40,7 +39,6 @@ public:
 	~Console() override {}
 };
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

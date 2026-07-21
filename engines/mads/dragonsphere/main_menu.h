@@ -25,7 +25,6 @@
 #include "common/str.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Dragonsphere {
 
 struct MenuItem {
@@ -40,7 +39,6 @@ extern int selected_item;
 extern void menu_control();
 
 } // namespace Dragonsphere
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

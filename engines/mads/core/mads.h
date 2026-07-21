@@ -23,14 +23,12 @@
 #define MADS_CORE_MADS_H
 
 namespace MADS {
-namespace MADSV2 {
 
 #define GLOBAL          1
 #define SECTION         2
 #define ROOM            3
 #define OBJECT          4
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

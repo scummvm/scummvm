@@ -58,7 +58,6 @@
 #include "mads/phantom/main_menu.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 
 #define menu_version    "1.08"
@@ -545,5 +544,4 @@ void menu_control() {
 }
 
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS

@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 extern void sort_insertion(int elements, int *id, long *value);
 
@@ -33,7 +32,6 @@ extern void sort_insertion_16(int elements, byte *id, word *value);
 
 extern void sort_insertion_8(int elements, byte *id, byte *value);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

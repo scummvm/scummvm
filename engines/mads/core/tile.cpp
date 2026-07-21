@@ -40,7 +40,6 @@
 #include "mads/core/error.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 int tile_load_error;
 ShadowList tile_shadow;
@@ -652,5 +651,4 @@ int tile_fake_map(int tile_type, TileMapHeader *tile_map, Buffer *buffer, int x,
 	return error_flag;
 }
 
-} // namespace MADSV2
 } // namespace MADS

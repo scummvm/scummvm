@@ -26,7 +26,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define MADS_ENV        "MADS"
 #define MADS_PRIV_ENV   "MADSPRIV"
@@ -128,7 +127,6 @@ extern void env_delete(char *environment, const char *variable);
  */
 extern int env_insert(char *environment, const char *variable, const char *value);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

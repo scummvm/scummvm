@@ -25,13 +25,11 @@
 #include "common/scummsys.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 
 extern void nebular_main();
 
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

@@ -29,7 +29,6 @@
 #include "mads/nebular/popup.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 
 #define COPY_TRIES_ALLOWED      2
@@ -217,5 +216,4 @@ int global_copy_verify() {
 }
 
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS

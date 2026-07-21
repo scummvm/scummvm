@@ -32,7 +32,6 @@
 #include "mads/phantom/rooms/section1.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 namespace Rooms {
 
@@ -244,5 +243,4 @@ void section_1_preload() {
 
 } // namespace Rooms
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS

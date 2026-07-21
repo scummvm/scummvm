@@ -29,7 +29,6 @@
 #include "mads/core/pal.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace AnimView {
 
 int anim_count;
@@ -228,5 +227,4 @@ bool anim_fade(Palette *pal, int fadeAmount) {
 }
 
 } // namespace AnimView
-} // namespace MADSV2
 } // namespace MADS

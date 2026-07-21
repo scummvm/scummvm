@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 /* Hardcoded vocabulary words */
 enum {
@@ -44,7 +43,6 @@ enum {
 	words_walk_to                     = 13
 };
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

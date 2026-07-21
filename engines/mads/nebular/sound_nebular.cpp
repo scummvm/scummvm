@@ -30,7 +30,6 @@ class Mixer;
 }
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 
 void RexSoundManager::validate() {
@@ -2767,5 +2766,4 @@ int ASound9::command51() {
 
 
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS

@@ -25,7 +25,6 @@
 #include "common/scummsys.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 
 enum {
@@ -87,7 +86,6 @@ enum {
 };
 
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

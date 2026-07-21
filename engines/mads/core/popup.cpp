@@ -43,7 +43,6 @@
 #include "mads/nebular/popup.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define popup_padding_width     3       /* Extra space on each side */
 
@@ -3361,5 +3360,4 @@ done:
 	return result_item;
 }
 
-} // namespace MADSV2
 } // namespace MADS

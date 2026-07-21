@@ -25,7 +25,6 @@
 #include "mads/core/color.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 extern Palette cycling_palette;         /* Palette being used for cycling */
 
@@ -42,7 +41,6 @@ void cycle_colors();
 
 extern void init_cycle();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

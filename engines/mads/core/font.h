@@ -25,7 +25,6 @@
 #include "mads/core/buffer.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define FONT_SIZE       128
 #define FONT_MAX_WIDTH  255
@@ -59,7 +58,6 @@ extern int font_string_width(FontPtr font, const char *out_string, int auto_spac
 
 extern void init_font();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

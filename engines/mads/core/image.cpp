@@ -22,11 +22,9 @@
 #include "mads/core/image.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 void Image::load(Common::SeekableReadStream *src) {
 	src->readMultipleLE(flags, segment_id, series_id, sprite_id, x, y, depth, scale);
 }
 
-} // namespace MADSV2
 } // namespace MADS

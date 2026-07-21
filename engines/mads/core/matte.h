@@ -27,7 +27,6 @@
 #include "mads/core/tile.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define SERIES_LIST_SIZE        50
 
@@ -146,7 +145,6 @@ extern void matte_refresh_inter();
 
 extern void init_matte();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

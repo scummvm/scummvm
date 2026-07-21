@@ -26,7 +26,6 @@
 #include "mads/dragonsphere/sound_dragonsphere.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Dragonsphere {
 
 void DragonSoundManager::validate() {
@@ -3940,5 +3939,4 @@ int ASoundDemo9::command49() { findFreeChannel(loadData(0x5E8E)); return 0; }
 int ASoundDemo9::command50() { findFreeChannel(loadData(0x5E98)); return 0; }
 
 } // namespace Dragonsphere
-} // namespace MADSV2
 } // namespace MADS

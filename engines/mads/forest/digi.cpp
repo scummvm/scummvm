@@ -27,7 +27,6 @@
 #include "mads/core/kernel.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 
 int digi_val2;
@@ -144,5 +143,4 @@ void digi_set_volume(int vol, int slot) {
 }
 
 } // namespace Forest
-} // namespace MADSV2
 } // namespace MADS

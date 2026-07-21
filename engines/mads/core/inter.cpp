@@ -51,7 +51,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define disable_error_check
 
@@ -2244,5 +2243,4 @@ done:
 	return error_flag;
 }
 
-} // namespace MADSV2
 } // namespace MADS

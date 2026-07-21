@@ -25,13 +25,11 @@
 #include "common/scummsys.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Dragonsphere {
 
 extern void dragonsphere_main();
 
 } // namespace Dragonsphere
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

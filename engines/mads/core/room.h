@@ -31,7 +31,6 @@
 #include "mads/core/tile.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define room_file_version "4.01"
 #define pict_file_version "4.01"
@@ -278,7 +277,6 @@ extern int room_invert();
 
 extern void init_room();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

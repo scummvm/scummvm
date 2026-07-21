@@ -24,7 +24,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
@@ -132,5 +131,4 @@ void handle_forcefield(Forcefield *force, int16 *sprites) {
 
 } // namespace Rooms
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS

@@ -53,7 +53,6 @@
 #include "mads/core/mps_installer.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Dragonsphere {
 
 Common::Error DragonsphereEngine::run() {
@@ -1484,5 +1483,4 @@ over:
 }
 
 } // namespace Dragonsphere
-} // namespace MADSV2
 } // namespace MADS

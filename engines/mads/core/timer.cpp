@@ -25,7 +25,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 long _timer_clock = 0;          /* Backing store for *timer_address writes */
 
@@ -110,5 +109,4 @@ void init_timer() {
 	timer_low_deferred = 0;
 }
 
-} // namespace MADSV2
 } // namespace MADS

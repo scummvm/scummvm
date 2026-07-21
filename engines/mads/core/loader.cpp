@@ -34,7 +34,6 @@
 #include "mads/core/pack.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 
 /* debug stuff */
@@ -380,5 +379,4 @@ long loader_write_2(Common::WriteStream *source_handle, long total_size, LoadHan
 	return result == total_size;
 }
 
-} // namespace MADSV2
 } // namespace MADS

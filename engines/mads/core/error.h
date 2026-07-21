@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define NONE            0
 #define WARNING         1
@@ -146,7 +145,6 @@ extern void error_entry(char *name, char *message);
 extern void error_exit(char *name, char *message);
 extern void error_put(char *name, int item);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

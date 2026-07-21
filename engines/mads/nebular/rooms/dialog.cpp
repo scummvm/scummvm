@@ -26,7 +26,6 @@
 #include "mads/nebular/rooms/dialog.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
@@ -125,5 +124,4 @@ void Dialog::start() {
 
 } // namespace Rooms
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS

@@ -55,7 +55,6 @@
 #include "mads/nebular/rooms/section8.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 
 RexNebularEngine::RexNebularEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
@@ -665,5 +664,4 @@ void RexNebularEngine::global_sound_driver() {
 }
 
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS

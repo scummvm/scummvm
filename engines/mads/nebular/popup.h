@@ -26,7 +26,6 @@
 #include "mads/core/popup.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 
 extern void popup_init();
@@ -35,7 +34,6 @@ extern void popup_setup_cycle();
 extern void popup_update_ask(const char *string, int maxlen);
 
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 
 #define CAMERA_PLAYER           0               /* Camera follows player  */
@@ -71,7 +70,6 @@ extern void camera_update();
 
 extern void init_camera();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

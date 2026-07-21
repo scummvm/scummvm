@@ -31,7 +31,6 @@
 #include "mads/nebular/extra.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 
 #define REX_ROOM_MAX_SERIES 10
@@ -527,5 +526,4 @@ int buffer_legal(const Buffer &special, int orig_wrap,
 }
 
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS

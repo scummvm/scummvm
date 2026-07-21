@@ -24,7 +24,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 int sound_play(int soundNum) {
 	return sound_queue(soundNum);
@@ -44,5 +43,4 @@ void sound_queue_flush() {
 		g_engine->_soundManager->startQueuedCommands();
 }
 
-} // namespace MADSV2
 } // namespace MADS

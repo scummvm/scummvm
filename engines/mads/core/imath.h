@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 /**
  * Distance: fast approximate hypotenuse with exact fallback.
@@ -50,7 +49,6 @@ extern void imath_circular_arc(word *buffer, int radius);
 
 extern int imath_random(int from, int unto);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

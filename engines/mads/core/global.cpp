@@ -25,7 +25,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 int16 global[GLOBAL_LIST_SIZE];
 int global_list_size = GLOBAL_LIST_SIZE;
@@ -80,5 +79,4 @@ void init_global() {
 	memset(global, 0, sizeof(global));
 }
 
-} // namespace MADSV2
 } // namespace MADS

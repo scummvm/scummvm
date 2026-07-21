@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define CMP_BINARY             0
 #define CMP_ASCII              1
@@ -82,7 +81,6 @@ extern word pFABexp2(
 	byte *write_buf,
 	char *work_buff);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

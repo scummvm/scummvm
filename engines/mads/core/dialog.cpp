@@ -31,7 +31,6 @@
 #include "mads/core/timer.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 
 /* public global variables */
@@ -3340,5 +3339,4 @@ void init_dialog() {
 	alert_hilite_color = DD_DEFAULT_HILITE_COLOR;
 }
 
-} // namespace MADSV2
 } // namespace MADS

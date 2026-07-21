@@ -25,7 +25,6 @@
 #include "common/scummsys.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 constexpr int sound_board_roland = 1;
 constexpr bool global_prefer_roland = false;
@@ -35,7 +34,6 @@ extern int sound_queue(int soundNum, int distance = 0);
 extern void sound_queue_hold();
 extern void sound_queue_flush();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

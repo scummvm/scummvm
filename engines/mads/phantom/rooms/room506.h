@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 namespace Rooms {
 
@@ -98,7 +97,6 @@ struct Scratch {        /* Room local variables */
 
 } // namespace Rooms
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

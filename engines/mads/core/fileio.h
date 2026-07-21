@@ -25,7 +25,6 @@
 #include "common/stream.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define fread_bufsize  1024
 
@@ -78,7 +77,6 @@ extern char *fileio_prepend(char *target, const char *source, const char *prepen
 extern char *fileio_chop_ext(char *target, const char *source);
 extern void fileio_purge_all_spaces(char *text);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

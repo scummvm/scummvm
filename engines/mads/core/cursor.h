@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define CURSOR_OFF                   0       /* Cursor off                     */
 #define CURSOR_ON                    1       /* Cursor on                      */
@@ -52,7 +51,6 @@ extern void cursor_set_follow(int follow);
 
 extern void init_cursor();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

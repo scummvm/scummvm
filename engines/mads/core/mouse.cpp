@@ -30,7 +30,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 int mouse_button = -1;
 int mouse_status = 0;
@@ -251,7 +250,6 @@ void mouse_hard_cursor_mode(int mode, Palette *mypal) {
 void mouse_hard_cursor_mode(int mode, Palette mypal) {
 }
 
-} // namespace MADSV2
 } // namespace MADS
 
 

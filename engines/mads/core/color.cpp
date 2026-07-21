@@ -26,7 +26,6 @@
 #include "mads/core/mem.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 void Color::load(Common::SeekableReadStream *src) {
 	src->readMultipleLE(r, g, b, x16, cycle, group);
@@ -620,5 +619,4 @@ void color_buffer_list_to_x16(ColorListPtr color_list, Buffer *scan_buf) {
 	}
 }
 
-} // namespace MADSV2
 } // namespace MADS

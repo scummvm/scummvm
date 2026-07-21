@@ -25,7 +25,6 @@
 #include "mads/phantom/phantom.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 namespace Rooms {
 
@@ -72,7 +71,6 @@ void room_207_parser();
 
 } // namespace Rooms
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

@@ -32,7 +32,6 @@
 #include "mads/forest/forest.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 namespace Rooms {
 
@@ -101,5 +100,4 @@ void section_9_preload() {
 
 } // namespace Rooms
 } // namespace Forest
-} // namespace MADSV2
 } // namespace MADS

@@ -27,7 +27,6 @@
 #include "mads/core/keys.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define DIALOG_ENGLISH          0       /* English language                */
 #define DIALOG_GERMAN           1       /* German  language                */
@@ -416,7 +415,6 @@ extern void dialog_watch_point(const char *string, long x, long y);
 
 extern void init_dialog();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

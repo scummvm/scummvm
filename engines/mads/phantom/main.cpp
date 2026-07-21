@@ -43,7 +43,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 
 constexpr bool SHOW_LINES = true;
@@ -326,5 +325,4 @@ void phantom_main() {
 }
 
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS

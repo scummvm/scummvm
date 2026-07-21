@@ -28,7 +28,6 @@
 #include "mads/core/pack.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define LOADER_DISK     0       /* File being read from disk */
 #define LOADER_EMS      1       /* File being read from ems  */
@@ -105,7 +104,6 @@ extern void loader_skip_entries(LoadHandle handle, int count);
 extern long loader_write(void *target, long record_size, long record_count, LoadHandle handle);
 extern long loader_write_2(Common::WriteStream *source_handle, long total_size, LoadHandle handle);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

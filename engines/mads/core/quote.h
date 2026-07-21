@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define QUOTE_MAX_LIST_LENGTH           200
 
@@ -38,7 +37,6 @@ extern void quote_split_string(const char *source, char *target1, char *target2)
 
 extern void init_quote();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

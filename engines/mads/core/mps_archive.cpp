@@ -24,7 +24,6 @@
 #include "mads/core/mps_archive.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 static constexpr int HEADER_SIZE = 30;
 static constexpr int ENTRY_SIZE = 98;
@@ -124,5 +123,4 @@ Common::SeekableReadStream *MpsArchive::createReadStreamForMember(const Common::
 	return nullptr;
 }
 
-} // namespace MADSV2
 } // namespace MADS

@@ -26,7 +26,6 @@
 #include "mads/phantom/global.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 namespace Rooms {
 
@@ -130,7 +129,6 @@ extern void room_111_preload();
 
 } // namespace Rooms
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

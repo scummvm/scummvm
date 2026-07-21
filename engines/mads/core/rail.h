@@ -23,7 +23,6 @@
 #include "mads/core/room.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define RAIL_MAX_NODES          ROOM_MAX_RAILS + 2
 
@@ -64,5 +63,4 @@ extern void rail_check_path(int allow_one_illegal);
 
 extern void init_rail();
 
-} // namespace MADSV2
 } // namespace MADS

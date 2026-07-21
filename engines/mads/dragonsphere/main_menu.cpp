@@ -56,7 +56,6 @@
 #include "mads/dragonsphere/main_menu.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Dragonsphere {
 
 #define CONFIG_FILE_NAME "CONFIG.PHA"
@@ -441,5 +440,4 @@ void menu_control() {
 }
 
 } // namespace Dragonsphere
-} // namespace MADSV2
 } // namespace MADS

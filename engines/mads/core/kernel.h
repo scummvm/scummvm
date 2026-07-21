@@ -30,7 +30,6 @@
 #include "mads/core/room.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 /* Some handy location macros */
 
@@ -619,7 +618,6 @@ extern void init_kernel();
 extern void kernel_random_frame(int handle, int16 *frame, int mode);
 extern void kernel_translate_anim(int handle, int delta_x, int delta_y, int delta_scale);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

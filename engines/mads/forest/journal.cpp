@@ -28,7 +28,6 @@
 #include "mads/core/player.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 
 static int prior_room;
@@ -56,5 +55,4 @@ void leave_journal() {
 }
 
 } // namespace Forest
-} // namespace MADSV2
 } // namespace MADS

@@ -25,7 +25,6 @@
 #include "mads/core/vocabh.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 
 constexpr int NORTH = 0;
@@ -53,7 +52,6 @@ extern int global_catacombs_exit(int exit);
 extern void global_catacombs_move(int exit);
 
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

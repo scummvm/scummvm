@@ -28,7 +28,6 @@
 #include "mads/core/heap.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define POPUP_UPPER_LEFT      1       /* Pieces of border box */
 #define POPUP_UPPER_RIGHT     2
@@ -484,7 +483,6 @@ extern PopupItem *popup_menu(const char *prompt,
 
 extern PopupItem *popup_sprite(SeriesPtr series, int sprite, int x, int y);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

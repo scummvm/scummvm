@@ -26,7 +26,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Dragonsphere {
 namespace Rooms {
 
@@ -35,7 +34,6 @@ extern void room_101_synchronize(Common::Serializer &s);
 
 } // namespace Rooms
 } // namespace Dragonsphere
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

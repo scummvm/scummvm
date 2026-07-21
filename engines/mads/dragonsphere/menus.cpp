@@ -35,7 +35,6 @@
 #include "mads/dragonsphere/mads/quotes.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Dragonsphere {
 
 #define SAVE_MENU_PIXEL_WIDTH           200
@@ -760,5 +759,4 @@ done:
 }
 
 } // namespace Dragonsphere
-} // namespace MADSV2
 } // namespace MADS

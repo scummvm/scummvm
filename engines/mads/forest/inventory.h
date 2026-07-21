@@ -25,14 +25,12 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 
 extern void init_inventory();
 extern void display_inventory();
 
 } // namespace Forest
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

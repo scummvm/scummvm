@@ -25,7 +25,6 @@
 #include "common/stream.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 /* Code optimization parameters */
 
@@ -164,7 +163,6 @@ inline char *mads_getcwd(char *buffer, int count) {
 	return buffer;
 }
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

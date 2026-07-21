@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define WINDOW_DETECT_VALID              0
 #define WINDOW_DETECT_START             -1
@@ -205,7 +204,6 @@ extern int window_show_color(WindowPtr window, const char *text, int xx, int yy,
 extern void window_10_install();
 extern void window_10_remove();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

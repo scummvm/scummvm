@@ -54,7 +54,6 @@
 #include "mads/core/mps_installer.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 
 ForestEngine *g_engine;
@@ -202,5 +201,4 @@ void ForestEngine::global_game_main_loop() {
 }
 
 } // namespace Forest
-} // namespace MADSV2
 } // namespace MADS

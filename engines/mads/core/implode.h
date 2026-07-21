@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 extern word implode(
 	word (*read_buff)(char *buffer, word *size),
@@ -61,7 +60,6 @@ extern long crc32(unsigned char *buffer, word *size, long *old_crc);
 #define CMP_BAD_DATA           3
 #define CMP_ABORT              4
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

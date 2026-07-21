@@ -25,7 +25,6 @@
 #include "mads/core/sound_manager.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 
 class ASound;
@@ -381,7 +380,6 @@ public:
 };
 
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

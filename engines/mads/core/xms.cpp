@@ -22,7 +22,6 @@
 #include "mads/core/xms.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 bool xms_exists = false;
 bool xms_disabled = false;
@@ -32,5 +31,4 @@ word xms_chain_seg = 0;
 word xms_umb_list[XMS_MAX_UMB] = {};
 word xms_umb_mark = 0;
 
-} // namespace MADSV2
 } // namespace MADS

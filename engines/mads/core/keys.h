@@ -26,7 +26,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 /* keystroke defines */
 
@@ -260,7 +259,6 @@ extern void keys_disable();
 
 extern void init_keys();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

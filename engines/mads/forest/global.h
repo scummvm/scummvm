@@ -27,7 +27,6 @@
 #include "mads/forest/extra.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 
 enum {	
@@ -278,7 +277,6 @@ extern void global_daemon_code();
 extern void global_game_main_loop();
 
 } // namespace Forest
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

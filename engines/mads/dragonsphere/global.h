@@ -26,7 +26,6 @@
 #include "mads/core/vocabh.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Dragonsphere {
 
 enum {
@@ -263,7 +262,6 @@ extern void global_section_constructor();
 extern void sync_room(Common::Serializer &s);
 
 } // namespace Dragonsphere
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

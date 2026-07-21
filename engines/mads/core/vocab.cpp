@@ -33,7 +33,6 @@
 #include "mads/core/mouse.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define background      colorbyte(white, blue)
 
@@ -543,5 +542,4 @@ void init_vocab() {
 	vocab_active = false;
 }
 
-} // namespace MADSV2
 } // namespace MADS

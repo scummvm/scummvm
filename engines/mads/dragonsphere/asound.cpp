@@ -23,7 +23,6 @@
 #include "mads/dragonsphere/asound.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Dragonsphere {
 
 
@@ -1801,5 +1800,4 @@ void ASound::playSound(int offset) {
 }
 
 } // namespace Dragonsphere
-} // namespace MADSV2
 } // namespace MADS

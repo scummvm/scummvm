@@ -31,7 +31,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace AnimView {
 
 static const byte FX_TIMES[16] = {
@@ -295,5 +294,4 @@ done:
 }
 
 } // namespace AnimView
-} // namespace MADSV2
 } // namespace MADS

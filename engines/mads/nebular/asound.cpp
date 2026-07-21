@@ -24,7 +24,6 @@
 #include "mads/nebular/asound.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 
 bool AdlibChannel::_channelsEnabled;
@@ -736,5 +735,4 @@ int ASound::command8() {
 }
 
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS

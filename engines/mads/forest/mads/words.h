@@ -25,7 +25,6 @@
 #include "common/scummsys.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 
 enum {
@@ -220,7 +219,6 @@ enum {
 };
 
 } // namespace Forest
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

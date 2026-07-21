@@ -25,7 +25,6 @@
 #include "mads/core/error.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 byte  mem_initialized = false;
 
@@ -96,5 +95,4 @@ void mem_set_video_mode(int mode) {
 	// No implementation
 }
 
-} // namespace MADSV2
 } // namespace MADS

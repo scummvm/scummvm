@@ -36,7 +36,6 @@
 #include "mads/core/mem.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define disable_popup_errors DISABLED
 
@@ -229,5 +228,4 @@ void error_check_memory() {
 	}
 }
 
-} // namespace MADSV2
 } // namespace MADS

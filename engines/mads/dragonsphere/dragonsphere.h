@@ -25,7 +25,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Dragonsphere {
 
 class DragonsphereEngine : public MADSV2Engine {
@@ -53,7 +52,6 @@ public:
 };
 
 } // namespace Dragonsphere
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

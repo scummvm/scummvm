@@ -30,7 +30,6 @@
 #include "mads/nebular/rooms/dialog.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
@@ -777,5 +776,4 @@ void room_307_preload() {
 
 } // namespace Rooms
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS

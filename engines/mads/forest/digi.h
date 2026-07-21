@@ -26,7 +26,6 @@
 #include "audio/mixer.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 
 #define MAX_DIGI_CHANNELS 3
@@ -90,7 +89,6 @@ extern void digi_set_volume(int vol, int slot);
 extern void digi_read_another_chunk();
 
 } // namespace Forest
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

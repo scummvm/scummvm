@@ -27,7 +27,6 @@
 #include "mads/core/keys.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 int kidney = false;
 
@@ -74,5 +73,4 @@ done:
 	;
 }
 
-} // namespace MADSV2
 } // namespace MADS

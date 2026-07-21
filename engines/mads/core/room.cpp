@@ -45,7 +45,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 RoomDef roomdef;
 int room_load_error = 0;
@@ -755,5 +754,4 @@ void init_room() {
 	memset(&roompict, 0, sizeof(RoomPict));
 }
 
-} // namespace MADSV2
 } // namespace MADS

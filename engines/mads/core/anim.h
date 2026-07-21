@@ -32,7 +32,6 @@
 #include "mads/core/tile.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 /* Flags to be passed to anim_load().  Note that all PAL_MAP... flags */
 /* can be passed through as well.                                     */
@@ -460,7 +459,6 @@ int anim_himem_preload(char *name, int level);
 
 extern void init_anim();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

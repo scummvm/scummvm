@@ -36,7 +36,6 @@
 #include "mads/forest/midi.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 
 #define SAVE_SUCCESSFUL                 1
@@ -376,5 +375,4 @@ done:
 }
 
 } // namespace Forest
-} // namespace MADSV2
 } // namespace MADS

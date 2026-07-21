@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 struct Heap {
 	byte module;		/* Identifier for heap module   */
@@ -42,7 +41,6 @@ extern void heap_declare(Heap *heap, int module_id, char *buffer, long heap_size
 
 extern void *heap_get(Heap *heap, long size);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

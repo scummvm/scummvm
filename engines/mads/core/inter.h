@@ -27,7 +27,6 @@
 #include "mads/core/anim.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define inter_columns           5
 #define inter_delta_y           8
@@ -339,7 +338,6 @@ extern int inter_load_background(const char *name, Buffer *target);
 
 extern void init_inter();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

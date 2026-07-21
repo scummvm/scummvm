@@ -27,7 +27,6 @@
 #include "mads/core/loader.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 
 #define COLOR_MAX_USER_COLORS           256
@@ -219,7 +218,6 @@ extern void color_buffer_list_to_x16(ColorListPtr color_list, Buffer *scan_buf);
  */
 extern void color_split_thatch(int thatch, int *color, int *thatching);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

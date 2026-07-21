@@ -25,7 +25,6 @@
 #include "mads/core/mouse.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 int screen_normal_color;
 int screen_hilite_color;
@@ -173,5 +172,4 @@ int screen_print(const char *string, ...) {
 	return 0;
 }
 
-} // namespace MADSV2
 } // namespace MADS

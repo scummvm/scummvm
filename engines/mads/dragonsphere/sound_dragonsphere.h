@@ -25,7 +25,6 @@
 #include "mads/dragonsphere/asound.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Dragonsphere {
 
 class DragonSoundManager : public SoundManager {
@@ -624,7 +623,6 @@ public:
 };
 
 } // namespace Dragonsphere
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

@@ -40,7 +40,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 
 #define CONFIG_FILE_NAME "CONFIG.REX"
@@ -444,5 +443,4 @@ void menu_control() {
 }
 
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS

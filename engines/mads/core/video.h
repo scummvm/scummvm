@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 extern byte video_mode;
 
@@ -53,7 +52,6 @@ extern void video_update_tandy(Buffer *from, int from_x, int from_y,
 	int unto_x, int unto_y,
 	int size_x, int size_y);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

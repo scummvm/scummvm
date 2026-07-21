@@ -28,7 +28,6 @@
 #include "mads/core/dialog.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 int attr_load_error = 0;
 
@@ -203,5 +202,4 @@ void init_attr() {
 	attr_load_error = 0;
 }
 
-} // namespace MADSV2
 } // namespace MADS

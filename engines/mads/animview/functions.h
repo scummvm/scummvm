@@ -26,7 +26,6 @@
 #include "mads/core/pal.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace AnimView {
 
 struct AnimEntry {
@@ -76,7 +75,6 @@ extern void anim_setup_cycle(int fx);
 extern bool anim_fade(Palette *pal, int fadeAmount);
 
 } // namespace AnimView
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

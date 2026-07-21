@@ -25,7 +25,6 @@
 #include "mads/core/pack.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define EMS_PAGING_CLASSES      4       /* # of paging classes            */
 
@@ -126,7 +125,6 @@ inline int ems_map_buffer(int buffer_page_handle) { return 0; }
 inline int ems_search_page(int ems_handle_, int page_number) { return 0; }
 inline void ems_buffer_to_buffer(int source_handle, int target_handle) {}
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

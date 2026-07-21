@@ -22,7 +22,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 void sort_insertion(int elements, int *id, long *value) {
 	int going, count, count2, my_id;
@@ -177,5 +176,4 @@ void sort_insertion_8(int elements, byte *id, byte *value) {
 	}
 }
 
-} // namespace MADSV2
 } // namespace MADS

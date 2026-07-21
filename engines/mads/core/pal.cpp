@@ -31,7 +31,6 @@
 #include "mads/core/magic.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 extern int kidney;
 
@@ -754,5 +753,4 @@ int pal_alloc_color(int slot, int allow_shared, int *out_index, const RGBcolor *
 	return slot_num;
 }
 
-} // namespace MADSV2
 } // namespace MADS

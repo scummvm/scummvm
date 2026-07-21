@@ -36,7 +36,6 @@
 #include "mads/forest/global.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 
 #define MOVE_YOUR_BUTT_TIMEOUT 3600
@@ -1352,5 +1351,4 @@ void global_game_main_loop() {
 }
 
 } // namespace Forest
-} // namespace MADSV2
 } // namespace MADS

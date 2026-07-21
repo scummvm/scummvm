@@ -37,7 +37,6 @@
 #include "mads/nebular/extra.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 Player player;
 Player2 player2;
@@ -1076,5 +1075,4 @@ void restore_player() {
 	player.enable_at_target   = saved_player.enable_at_target;
 }
 
-} // namespace MADSV2
 } // namespace MADS

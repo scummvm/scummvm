@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define MAGIC_LOWER_LEFT      1
 #define MAGIC_LOWER_RIGHT     2
@@ -164,7 +163,6 @@ extern int  magic_closest_color(RGBcolor *match_color, byte *list, int list_wrap
  */
 extern int magic_hash_color(RGBcolor *hash_color);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

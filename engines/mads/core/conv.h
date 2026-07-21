@@ -26,7 +26,6 @@
 #include "common/stream.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 // Return of the Phantom needs 40, Dragonsphere needs 70
 constexpr int CONV_MAX_SLOTS = 70;
@@ -234,7 +233,6 @@ extern int conv_expand(Common::SeekableReadStream *handle);
 
 extern void init_conv();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

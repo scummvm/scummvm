@@ -26,7 +26,6 @@
 #include "mads/forest/global.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 namespace Rooms {
 
@@ -34,7 +33,6 @@ extern void section_1_music();
 
 } // namespace Rooms
 } // namespace Forest
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

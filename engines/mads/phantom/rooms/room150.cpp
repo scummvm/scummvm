@@ -29,7 +29,6 @@
 #include "mads/phantom/rooms/room150.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 namespace Rooms {
 
@@ -107,5 +106,4 @@ void room_150_synchronize(Common::Serializer &s) {
 
 } // namespace Rooms
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS

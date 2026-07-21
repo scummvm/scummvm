@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define XMS_MAX_UMB     16              /* Max UMB blocks to allocate */
 
@@ -74,7 +73,6 @@ inline void xms_free(int xms_handle) {}
  */
 inline int xms_copy(long copy_size, word source_handle, void *source, word dest_handle, void *dest) { return 0; }
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

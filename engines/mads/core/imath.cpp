@@ -24,7 +24,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 int imath_isqrt(long square) {
 	if (square <= 0)
@@ -91,5 +90,4 @@ int imath_random(int from, int unto) {
 	return g_engine->getRandomNumber(from, unto);
 }
 
-} // namespace MADSV2
 } // namespace MADS

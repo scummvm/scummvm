@@ -26,7 +26,6 @@
 #include "mads/core/color.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 /* Palette mapping options to be passed to pal_allocate */
 
@@ -180,7 +179,6 @@ extern void init_pal();
  */
 extern int pal_alloc_color(int slot, int allow_shared, int *out_index, const RGBcolor *color);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

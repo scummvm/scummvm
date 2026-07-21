@@ -25,7 +25,6 @@
 #include "common/scummsys.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 extern byte upcaseb(byte inp);
 
@@ -37,7 +36,6 @@ extern int btoi(char *string);
 
 extern int stoi(char *string);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

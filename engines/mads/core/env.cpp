@@ -29,7 +29,6 @@
 #include "mads/core/error.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 extern int art_hags_are_on_hd;
 
@@ -740,5 +739,4 @@ done:
 	return error_flag;
 }
 
-} // namespace MADSV2
 } // namespace MADS

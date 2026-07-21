@@ -30,7 +30,6 @@
 #include "mads/core/inter.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define OBJECT_MAX_VERBS        5
 #define OBJECT_MAX_QUALITIES    4
@@ -115,7 +114,6 @@ extern int object_examine(int number, long message, int speech = 0);
 
 extern void init_object();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

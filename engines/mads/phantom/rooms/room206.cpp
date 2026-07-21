@@ -43,7 +43,6 @@
 #include "mads/phantom/rooms/room206.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 namespace Rooms {
 
@@ -569,5 +568,4 @@ void room_206_synchronize(Common::Serializer &s) {
 
 } // namespace Rooms
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS

@@ -38,7 +38,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace AnimView {
 
 #define MADS_FORMAT(BUF, SRC) Common::strcpy_s(BUF, in_mads_mode ? "*" : ""); \
@@ -646,5 +645,4 @@ void animview_main(const char *resName) {
 }
 
 } // namespace AnimView
-} // namespace MADSV2
 } // namespace MADS

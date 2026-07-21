@@ -23,7 +23,6 @@
 #include "mads/core/screen.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 int cursor_mode;             /* global cursor mode (insert/overwrite) */
 int cursor_follow = false;
@@ -64,5 +63,4 @@ void init_cursor() {
 	text_y = 0;
 }
 
-} // namespace MADSV2
 } // namespace MADS

@@ -32,7 +32,6 @@
 #include "mads/core/fileio.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 int sprite_error = 0;
 byte *sprite_force_memory = NULL;
@@ -1212,5 +1211,4 @@ void init_sprite() {
 	kidney = false;
 }
 
-} // namespace MADSV2
 } // namespace MADS

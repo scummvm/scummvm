@@ -23,7 +23,6 @@
 #include "mads/phantom/asound.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 
 bool AdlibChannel::_isDisabled;
@@ -1892,5 +1891,4 @@ uint16 ASound::readWord_impl() {
 }
 
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS

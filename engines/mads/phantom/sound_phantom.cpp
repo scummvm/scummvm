@@ -26,7 +26,6 @@
 #include "mads/phantom/sound_phantom.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 
 void PhantomSoundManager::validate() {
@@ -1849,5 +1848,4 @@ int ASoundDemo::command29() {
 }
 
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS

@@ -27,7 +27,6 @@
 #include "mads/core/tile.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define ATTR_WALK_MASK         0x80
 #define ATTR_SPECIAL_MASK      0x70
@@ -52,7 +51,6 @@ extern int attr_load_error;
 
 extern void init_attr();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

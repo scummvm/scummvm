@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define max_hot_spots   120     /* Size of hotspot list */
 #define max_hot_lists   2       /* Maximum # of lists   */
@@ -95,7 +94,6 @@ extern int hspot_which_reverse(int x, int y, int video_mode);
 
 extern void init_hspot();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

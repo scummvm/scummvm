@@ -25,7 +25,6 @@
 #include "mads/core/matte.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("depth", WRAP_METHOD(Console, cmdDepth));
@@ -101,5 +100,4 @@ bool Console::cmdWalkable(int argc, const char **argv) {
 	return false;
 }
 
-} // namespace MADSV2
 } // namespace MADS

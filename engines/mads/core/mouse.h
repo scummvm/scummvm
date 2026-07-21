@@ -27,7 +27,6 @@
 #include "mads/core/sprite.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define MOUSE_TIMING_ONE        7       /* Mouse 1st repeat delay (ticks) */
 #define MOUSE_TIMING_TWO        2       /* Mouse 2nd repeat delay (ticks) */
@@ -114,7 +113,6 @@ extern void mouse_video_update(int from_x, int from_y,
 	int unto_x, int unto_y, int size_x, int size_y);
 extern void mouse_hard_cursor_mode(int mode, Palette mypal);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

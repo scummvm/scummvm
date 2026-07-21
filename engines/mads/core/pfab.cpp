@@ -23,7 +23,6 @@
 #include "mads/core/pfab.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 /*
  * pfab.cpp  --  LZ77 sliding-dictionary compressor/expander
@@ -811,5 +810,4 @@ word pFABexp2(byte *read_buf, byte *write_buf, char *work_buff) {
 	return 0;
 }
 
-} // namespace MADSV2
 } // namespace MADS

@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define MEM_NONE        0xff    /* Undefined (himem)   */
 
@@ -89,7 +88,6 @@ extern long mem_get_avail();
 extern long mem_conv_get_avail();
 extern void mem_set_video_mode(int mode);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

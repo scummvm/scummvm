@@ -29,7 +29,6 @@
 #include "mads/core/color.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 constexpr int OFFSETS_OFFSET = 2 + FONT_SIZE;
 constexpr int HEADER_SIZE = 2 + FONT_SIZE + (FONT_SIZE * 2);
@@ -260,5 +259,4 @@ void init_font() {
 	font_misc = NULL;
 }
 
-} // namespace MADSV2
 } // namespace MADS

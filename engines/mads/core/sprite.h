@@ -27,7 +27,6 @@
 #include "mads/core/loader.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define misc_largest_block            misc[0]
 /* LONG ... uses misc[1] also */
@@ -381,7 +380,6 @@ extern void sprite_free(SeriesPtr *series, int free_memory);
 
 extern void init_sprite();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

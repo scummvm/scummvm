@@ -25,13 +25,11 @@
 #include "common/scummsys.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 
 extern void phantom_main();
 
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

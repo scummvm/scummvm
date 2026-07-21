@@ -28,7 +28,6 @@
 #include "mads/core/inter.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 
 Camera camera_x;        /* Horizontal panning camera */
@@ -217,5 +216,4 @@ void init_camera() {
 	camera_old_y_target = 0;
 }
 
-} // namespace MADSV2
 } // namespace MADS

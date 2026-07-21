@@ -31,7 +31,6 @@
 #include "mads/core/pfab.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 byte *pack_special_buffer = NULL;
 void (*pack_special_function)() = NULL;
@@ -633,5 +632,4 @@ done:
 	return write_this_time;
 }
 
-} // namespace MADSV2
 } // namespace MADS

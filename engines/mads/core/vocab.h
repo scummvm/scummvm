@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define vocab_version           "1.01"
 #define vocab_date              "13-Jun-91"
@@ -81,7 +80,6 @@ extern char *vocab_string(int vocab_id);
 
 extern void init_vocab();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

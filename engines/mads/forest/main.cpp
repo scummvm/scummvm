@@ -42,7 +42,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 
 constexpr bool SHOW_LINES = true;
@@ -157,5 +156,4 @@ void forest_main() {
 }
 
 } // namespace Foreste
-} // namespace MADSV2
 } // namespace MADS

@@ -26,7 +26,6 @@
 #include "mads/core/error.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 
 /* Fun stuff for the catacombs */
@@ -276,5 +275,4 @@ void global_catacombs_move(int exit) {
 }
 
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS

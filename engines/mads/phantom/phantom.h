@@ -25,7 +25,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 
 class PhantomEngine : public MADSV2Engine {
@@ -55,7 +54,6 @@ public:
 };
 
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

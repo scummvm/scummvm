@@ -25,7 +25,6 @@
 #include "common/stream.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 struct Image {
 	int16  flags;         /* refers to the index of the corresponding frame in the anim struct */
@@ -51,7 +50,6 @@ struct Image {
 
 typedef Image *ImagePtr;
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

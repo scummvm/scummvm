@@ -31,7 +31,6 @@
 #include "mads/core/room.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 word pattern_control_value = 0x181d;
 word pattern_initial_value = 0xb78e;
@@ -960,5 +959,4 @@ done:
 		delete handle;
 }
 
-} // namespace MADSV2
 } // namespace MADS

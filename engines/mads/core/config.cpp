@@ -27,7 +27,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 ConfigFile config_file = {
 	0, 0x220,
@@ -117,5 +116,4 @@ void global_unload_config_parameters() {
 	config_file.screen_fade = kernel_screen_fade;
 }
 
-} // namespace MADSV2
 } // namespace MADS

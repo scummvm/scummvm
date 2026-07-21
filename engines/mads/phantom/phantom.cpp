@@ -45,7 +45,6 @@
 #include "mads/phantom/rooms/section5.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 
 Common::Error PhantomEngine::run() {
@@ -863,5 +862,4 @@ void PhantomEngine::global_sound_driver() {
 }
 
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS

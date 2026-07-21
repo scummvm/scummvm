@@ -26,7 +26,6 @@
 #include "mads/core/font.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define MAX_PEEL_VALUE                  80
 
@@ -264,7 +263,6 @@ extern bool buffer_scan(Buffer *buffer, int magic,
 extern bool buffer_compare(Buffer *buffer0, Buffer *buffer1,
 	int base_x, int base_y, int base_x2, int base_y2, int size_x, int size_y);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

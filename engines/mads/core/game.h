@@ -31,7 +31,6 @@
 #include "mads/core/popup.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define game_version    "1.22"          /* Version of game control code */
 #define game_date       "27-Jul-92"
@@ -278,7 +277,6 @@ extern void show_version();
 
 extern void init_game();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

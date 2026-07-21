@@ -25,10 +25,9 @@
 #include "mads/console.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 
-class Console : public MADS::MADSV2::Console {
+class Console : public MADS::Console {
 private:
 	bool cmdLoad(int argc, const char **argv);
 
@@ -39,7 +38,6 @@ public:
 };
 
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

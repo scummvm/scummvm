@@ -27,7 +27,6 @@
 #include "mads/forest/midi.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 
 class ForestEngine : public MADSV2Engine {
@@ -60,7 +59,6 @@ public:
 extern ForestEngine *g_engine;
 
 } // namespace Forest
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

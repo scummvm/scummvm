@@ -30,7 +30,6 @@
 #include "mads/core/kernel.h"
 
 namespace MADS {
-namespace MADSV2 {
 
  /* -------------------------------------------------------------------------
   * Constants
@@ -258,5 +257,4 @@ void init_rail() {
 	memset(rail_active, 0, sizeof(rail_active));
 }
 
-} // namespace MADSV2
 } // namespace MADS

@@ -34,7 +34,6 @@
 #include "mads/core/speech.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 typedef void (*TimerFunction)();
 
@@ -135,7 +134,6 @@ public:
 
 extern MADSV2Engine *g_engine;
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

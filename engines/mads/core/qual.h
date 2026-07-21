@@ -25,7 +25,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 struct QualBuf {
 	word id;
@@ -88,7 +87,6 @@ int        qual_load_active();
 extern char *qual_text;
 extern word qual_active;
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

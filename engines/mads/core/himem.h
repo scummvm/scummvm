@@ -27,7 +27,6 @@
 #include "mads/core/mem.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define         HIMEM_MAX_RESIDENT        150
 
@@ -72,7 +71,6 @@ extern int himem_preload(char *filename, int level);
 extern int himem_preload_series(const char *filename, int level);
 extern void himem_flush(int level);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

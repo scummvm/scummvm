@@ -26,7 +26,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define PACK_ID_STRING                "MADSPACK 2.0\032"
 #define PACK_ID_LENGTH                14
@@ -251,7 +250,6 @@ extern void pack_enable_zip_explode();
 extern long pack_rle(byte *target, byte *source, word source_size);
 extern word pack_write_ems(char *buffer, word *mysize);
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

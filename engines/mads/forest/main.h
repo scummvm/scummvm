@@ -25,13 +25,11 @@
 #include "common/scummsys.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 
 extern void forest_main();
 
 } // namespace Forest
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

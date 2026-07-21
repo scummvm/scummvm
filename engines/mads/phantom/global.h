@@ -26,7 +26,6 @@
 #include "mads/core/vocabh.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 
 enum {
@@ -281,7 +280,6 @@ extern void global_section_constructor();
 extern void sync_room(Common::Serializer &s);
 
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

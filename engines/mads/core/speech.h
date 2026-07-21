@@ -27,7 +27,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 extern bool speech_system_active;
 extern bool speech_on;
@@ -51,7 +50,6 @@ inline void speech_ems_play(const char *resName, int id, bool /*memFlag?*/) {
 	speech_play(resName, id);
 }
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

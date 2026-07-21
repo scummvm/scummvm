@@ -27,7 +27,6 @@
 #include "mads/core/pal.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 Palette cycling_palette;
 
@@ -134,5 +133,4 @@ void init_cycle() {
 	memset(cycle_timing, 0, sizeof(cycle_timing));
 }
 
-} // namespace MADSV2
 } // namespace MADS

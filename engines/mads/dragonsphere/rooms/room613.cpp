@@ -37,7 +37,6 @@
 #include "mads/dragonsphere/rooms/room613.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Dragonsphere {
 namespace Rooms {
 
@@ -438,5 +437,4 @@ void room_613_preload() {
 
 } // namespace Rooms
 } // namespace Dragonsphere
-} // namespace MADSV2
 } // namespace MADS

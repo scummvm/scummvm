@@ -49,7 +49,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 
 constexpr bool SHOW_LINES = true;
@@ -394,5 +393,4 @@ void nebular_main() {
 }
 
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS

@@ -25,14 +25,12 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 
 extern void display_journal();
 extern void leave_journal();
 
 } // namespace Forest
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

@@ -25,7 +25,6 @@
 #include "mads/core/error.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Dragonsphere {
 
 namespace Rooms {
@@ -221,5 +220,4 @@ void sync_room(Common::Serializer &s) {
 }
 
 } // namespace Dragonsphere
-} // namespace MADSV2
 } // namespace MADS

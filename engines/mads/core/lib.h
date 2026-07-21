@@ -25,7 +25,6 @@
 #include "common/scummsys.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define lib_version          "4.35"
 #define lib_date             "10-Aug-93"
@@ -35,7 +34,6 @@ extern char mads_dev_lib_date[11];
 
 void lib_show_version();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

@@ -29,7 +29,6 @@
 #include "mads/core/vocabh.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 namespace Rooms {
 
@@ -39,7 +38,6 @@ extern void section_3_interface();
 
 } // namespace Rooms
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

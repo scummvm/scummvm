@@ -42,7 +42,6 @@
 #include "mads/forest/midi.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 
 char interface_name[40];
@@ -415,5 +414,4 @@ restore_interface:
 }
 
 } // namespace Forest
-} // namespace MADSV2
 } // namespace MADS

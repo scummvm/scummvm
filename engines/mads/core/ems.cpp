@@ -22,7 +22,6 @@
 #include "mads/core/ems.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 word ems_page_frame = 0;
 word ems_handle = 0;
@@ -76,5 +75,4 @@ void ems_shutdown() {
 	ems_exists = false;
 }
 
-} // namespace MADSV2
 } // namespace MADS

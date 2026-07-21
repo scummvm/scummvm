@@ -61,7 +61,6 @@
 #include "mads/nebular/extra.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define MESSAGE_COLOR_3 (((KERNEL_MESSAGE_COLOR_BASE_3 + 1) << 8) + KERNEL_MESSAGE_COLOR_BASE_3)
 #define MESSAGE_COLOR           (((KERNEL_MESSAGE_COLOR_BASE   + 1) << 8) + KERNEL_MESSAGE_COLOR_BASE)
@@ -3015,5 +3014,4 @@ void init_kernel() {
 	memset(kernel_interface_loaded, 0, sizeof(kernel_interface_loaded));
 }
 
-} // namespace MADSV2
 } // namespace MADS

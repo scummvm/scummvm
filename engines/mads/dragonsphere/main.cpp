@@ -43,7 +43,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Dragonsphere {
 
 constexpr bool SHOW_LINES = true;
@@ -287,5 +286,4 @@ void dragonsphere_main() {
 }
 
 } // namespace Dragonspheree
-} // namespace MADSV2
 } // namespace MADS

@@ -47,7 +47,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define object_extra_colors     10
 
@@ -449,5 +448,4 @@ void init_object() {
 	object_ems_handle = BUFFER_PRESERVE;
 }
 
-} // namespace MADSV2
 } // namespace MADS

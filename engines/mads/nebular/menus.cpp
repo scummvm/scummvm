@@ -44,7 +44,6 @@
 #include "mads/nebular/nebular.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 
 #define MENU_MESSAGE_COLOR_BASE       10    /* 1st color to use for messages          */
@@ -143,7 +142,7 @@ static void choose_menu_background() {
 static void game_menu_setup() {
 	Palette specialPal;
 
-	MADS::MADSV2::game_menu_setup();
+	MADS::game_menu_setup();
 
 	menu = (MenuMessage *)malloc(MAX_MENU_MESSAGE * sizeof(MenuMessage));
 
@@ -233,7 +232,7 @@ static void game_menu_setup() {
 }
 
 static void game_menu_shutdown() {
-	MADS::MADSV2::game_menu_shutdown();
+	MADS::game_menu_shutdown();
 
 	viewing_at_y = 0;
 
@@ -1796,5 +1795,4 @@ void global_game_menu() {
 }
 
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS

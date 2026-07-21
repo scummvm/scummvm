@@ -41,7 +41,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 char text_filename[80] = TEXT_FILENAME;  /* Filename to load from  */
 long text_last_id = 0;              /* Last ID used           */
@@ -596,5 +595,4 @@ done:
 	return error_flag;
 }
 
-} // namespace MADSV2
 } // namespace MADS

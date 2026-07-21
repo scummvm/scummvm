@@ -37,7 +37,6 @@
 #include "mads/core/error.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 ShadowList anim_shadow = { 0, { 0, 0, 0 } };
 int anim_error;
@@ -623,5 +622,4 @@ void init_anim() {
 	anim_error = 0;
 }
 
-} // namespace MADSV2
 } // namespace MADS

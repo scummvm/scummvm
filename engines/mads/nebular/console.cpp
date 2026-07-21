@@ -30,10 +30,9 @@
 #include "mads/core/player.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 
-Console::Console() : MADS::MADSV2::Console() {
+Console::Console() : MADS::Console() {
 	registerCmd("load", WRAP_METHOD(Console, cmdLoad));
 }
 
@@ -186,5 +185,4 @@ bool Console::cmdLoad(int argc, const char **argv) {
 }
 
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS

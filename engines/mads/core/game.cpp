@@ -67,7 +67,6 @@
 #include "mads/forest/global.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 extern long mem_used;
 extern long mem_avail_at_start;
@@ -2689,5 +2688,4 @@ void init_game() {
 	memset(debugger_watch_index, 0, sizeof(debugger_watch_index));
 }
 
-} // namespace MADSV2
 } // namespace MADS

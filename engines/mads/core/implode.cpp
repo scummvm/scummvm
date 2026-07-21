@@ -24,7 +24,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 /*
  * implode_explode.c
@@ -953,5 +952,4 @@ long crc32(unsigned char *buffer, word *size, long *old_crc) {
 	return *old_crc;
 }
 
-} // namespace MADSV2
 } // namespace MADS

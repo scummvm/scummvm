@@ -26,7 +26,6 @@
 #include "mads/core/vocabh.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 
 enum GlobalId {
@@ -329,7 +328,6 @@ extern void global_section_constructor();
 extern void sync_room(Common::Serializer &s);
 
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

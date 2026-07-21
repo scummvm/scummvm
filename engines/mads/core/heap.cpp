@@ -24,7 +24,6 @@
 #include "mads/core/error.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 int heap_create(Heap *heap, int module_id, long heap_size, const char *heap_name) {
 	int error_flag = true;
@@ -82,5 +81,4 @@ done:
 	return (void *)result;
 }
 
-} // namespace MADSV2
 } // namespace MADS

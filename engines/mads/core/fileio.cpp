@@ -26,7 +26,6 @@
 #include "mads/core/fileio.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define SLOW_BUFFER_SIZE        256
 
@@ -464,5 +463,4 @@ void fileio_purge_all_spaces(char *text) {
 	Common::strcpy_s(text, 65536, work);
 }
 
-} // namespace MADSV2
 } // namespace MADS

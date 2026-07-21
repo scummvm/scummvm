@@ -34,7 +34,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define magic_red       30
 #define magic_green     59
@@ -1095,5 +1094,4 @@ int magic_hash_color(RGBcolor *hash_color) {
 	return (hash_color->r * 38) + (hash_color->g * 76) + (hash_color->b * 14);
 }
 
-} // namespace MADSV2
 } // namespace MADS

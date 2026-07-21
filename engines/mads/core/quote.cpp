@@ -28,7 +28,6 @@
 #include "mads/core/error.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 int quote_emergency = false;
 
@@ -181,5 +180,4 @@ void init_quote() {
 	quote_emergency = false;
 }
 
-} // namespace MADSV2
 } // namespace MADS

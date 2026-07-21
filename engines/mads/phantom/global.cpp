@@ -25,7 +25,6 @@
 #include "mads/core/error.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 
 namespace Rooms {
@@ -285,5 +284,4 @@ void sync_room(Common::Serializer &s) {
 }
 
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS

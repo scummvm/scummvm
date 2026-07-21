@@ -25,7 +25,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace RexNebular {
 
 struct MADSSavegameHeader {
@@ -65,7 +64,6 @@ public:
 };
 
 } // namespace RexNebular
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

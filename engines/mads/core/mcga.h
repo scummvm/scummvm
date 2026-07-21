@@ -26,7 +26,6 @@
 #include "mads/core/font.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 extern int  mcga_retrace_computed;
 extern word mcga_retrace_ticks;
@@ -75,7 +74,6 @@ extern void mcga_compute_retrace_parameters();
 
 extern void mcga_reset();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

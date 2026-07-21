@@ -26,7 +26,6 @@
 #include "mads/dragonsphere/global.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Dragonsphere {
 namespace Rooms {
 
@@ -36,7 +35,6 @@ extern void section_1_music();
 
 } // namespace Rooms
 } // namespace Dragonsphere
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

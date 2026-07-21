@@ -35,7 +35,6 @@
 #include "mads/engine.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace TextView {
 
 constexpr int LINES_COUNT = 20;
@@ -531,5 +530,4 @@ void textview_main(const char *resName) {
 }
 
 } // namespace TextView
-} // namespace MADSV2
 } // namespace MADS

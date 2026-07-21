@@ -28,7 +28,6 @@
 #include "mads/core/sound_manager.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Phantom {
 
 #define ADLIB_CHANNEL_COUNT 9
@@ -471,7 +470,6 @@ public:
 };
 
 } // namespace Phantom
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

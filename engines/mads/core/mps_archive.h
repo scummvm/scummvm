@@ -26,7 +26,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 
 class MpsArchive : public Common::Archive {
@@ -44,7 +43,6 @@ public:
 	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 };
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

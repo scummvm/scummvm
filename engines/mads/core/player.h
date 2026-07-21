@@ -26,7 +26,6 @@
 #include "mads/core/general.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 #define player_verb             player2.words[0]/* Player's recent verb   */
 #define player_main_noun        player2.words[1]/* Player's recent noun 1 */
@@ -358,7 +357,6 @@ extern void save_player();
  */
 extern void restore_player();
 
-} // namespace MADSV2
 } // namespace MADS
 
 #endif

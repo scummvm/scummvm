@@ -25,7 +25,6 @@
 #include "mads/core/screen.h"
 
 namespace MADS {
-namespace MADSV2 {
 
 Spot spot[max_hot_spots + 1];                    /* The list    */
 int  numspots = 0;
@@ -223,5 +222,4 @@ void init_hspot() {
 	memset(hotkeys, 0, sizeof(hotkeys));
 }
 
-} // namespace MADSV2
 } // namespace MADS

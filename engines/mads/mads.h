@@ -43,12 +43,6 @@ enum MADSDebugChannels {
 	kDebugConversations
 };
 
-enum ScreenFade {
-	SCREEN_FADE_SMOOTH = 0,
-	SCREEN_FADE_MEDIUM = 1,
-	SCREEN_FADE_FAST = 2
-};
-
 enum MADSActions {
 	kActionNone,
 	kActionEscape,

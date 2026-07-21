@@ -30,7 +30,6 @@
 #include "mads/core/player.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 namespace Rooms {
 
@@ -136,5 +135,4 @@ void room_211_preload() {
 
 } // namespace Rooms
 } // namespace Forest
-} // namespace MADSV2
 } // namespace MADS

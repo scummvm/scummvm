@@ -29,7 +29,6 @@
 #include "mads/forest/forest.h"
 
 namespace MADS {
-namespace MADSV2 {
 namespace Forest {
 
 bool midi_playing;
@@ -229,5 +228,4 @@ void midi_loop() {
 }
 
 } // namespace Forest
-} // namespace MADSV2
 } // namespace MADS
