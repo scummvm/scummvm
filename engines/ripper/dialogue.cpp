@@ -81,14 +81,15 @@ void DialogueChooser::draw(bool captureBacking) {
 			_backingBounds.width(), _backingBounds.height());
 	}
 	for (uint visibleRow = 0; visibleRow < kVisibleChoiceCount; ++visibleRow) {
-		const uint choiceIndex = _firstVisibleChoice + visibleRow;
+		uint choiceIndex = 0;
+		const bool hasChoice = _chooser.resolveVisibleRow(visibleRow, choiceIndex);
 		const int row = _chooserBounds.top + visibleRow * kChoiceRowHeight;
-		const bool selected = choiceIndex == _selectedChoice;
+		const bool selected = hasChoice && choiceIndex == _chooser.selectedIndex();
 		for (int y = row; y < row + kChoiceRowHeight; ++y)
 			memset(screen->getBasePtr(_chooserBounds.left, y),
 				selected ? kSelectedBackgroundColor : kNormalBackgroundColor,
 				_chooserBounds.width());
-		if (choiceIndex >= _choices.size())
+		if (!hasChoice)
 			continue;
 		int x = _chooserBounds.left + kChoiceHorizontalPadding;
 		const int textY = row + (kChoiceRowHeight - _font.lineHeight) / 2;
@@ -117,10 +118,12 @@ void DialogueChooser::draw(bool captureBacking) {
 	g_system->unlockScreen();
 
 	if (_choices.size() > kVisibleChoiceCount) {
-		drawBitmap(_arrowFrames[_hoveredArrow == 1 && _firstVisibleChoice > 0 ? 1 : 0],
+		drawBitmap(_arrowFrames[_hoveredArrow == 1 &&
+			_chooser.firstVisibleIndex() > 0 ? 1 : 0],
 			_upArrowBounds.left, _upArrowBounds.top);
 		drawBitmap(_arrowFrames[_hoveredArrow == 2 &&
-				_firstVisibleChoice + kVisibleChoiceCount < _choices.size() ? 3 : 2],
+				_chooser.firstVisibleIndex() + _chooser.visibleCount() <
+					_choices.size() ? 3 : 2],
 			_downArrowBounds.left, _downArrowBounds.top);
 	}
 }
@@ -194,8 +197,7 @@ bool DialogueChooser::activateChoices(const char *source) {
 		return true;
 	}
 	_pending = true;
-	_selectedChoice = 0;
-	_firstVisibleChoice = 0;
+	_chooser.reset(_choices.size(), kVisibleChoiceCount);
 	_hoveredArrow = 0;
 	_backingBounds = Common::Rect();
 	_backingPixels.clear();
@@ -215,32 +217,26 @@ bool DialogueChooser::service(const MouseState &mouse, uint &result) {
 	if ((mouse.pressed & kMouseButtonLeft) == 0)
 		return false;
 	if (_choices.size() > kVisibleChoiceCount && _upArrowBounds.contains(mouse.position)) {
-		if (_firstVisibleChoice > 0) {
-			--_firstVisibleChoice;
-			if (_selectedChoice >= _firstVisibleChoice + kVisibleChoiceCount)
-				_selectedChoice = _firstVisibleChoice + kVisibleChoiceCount - 1;
+		if (_chooser.scrollWindow(-1)) {
 			debugC(1, kDebugDialogue,
 				"Ripper: dialogue scrolled up firstVisible=%u selected=%u",
-				_firstVisibleChoice, _selectedChoice);
+				_chooser.firstVisibleIndex(), _chooser.selectedIndex());
 		}
 		return false;
 	}
 	if (_choices.size() > kVisibleChoiceCount && _downArrowBounds.contains(mouse.position)) {
-		if (_firstVisibleChoice + kVisibleChoiceCount < _choices.size()) {
-			++_firstVisibleChoice;
-			if (_selectedChoice < _firstVisibleChoice)
-				_selectedChoice = _firstVisibleChoice;
+		if (_chooser.scrollWindow(1)) {
 			debugC(1, kDebugDialogue,
 				"Ripper: dialogue scrolled down firstVisible=%u selected=%u",
-				_firstVisibleChoice, _selectedChoice);
+				_chooser.firstVisibleIndex(), _chooser.selectedIndex());
 		}
 		return false;
 	}
 	if (!_chooserBounds.contains(mouse.position))
 		return false;
 	const uint visibleRow = (mouse.position.y - _chooserBounds.top) / kChoiceRowHeight;
-	const uint choiceIndex = _firstVisibleChoice + visibleRow;
-	if (visibleRow >= kVisibleChoiceCount || choiceIndex >= _choices.size())
+	uint choiceIndex = 0;
+	if (!_chooser.resolveVisibleRow(visibleRow, choiceIndex))
 		return false;
 	return selectChoice(choiceIndex, result, "mouse");
 }
@@ -248,28 +244,22 @@ bool DialogueChooser::service(const MouseState &mouse, uint &result) {
 bool DialogueChooser::serviceKeyboard(uint16 command, uint &result) {
 	if (!_pending || _choices.empty())
 		return false;
-	const uint previousChoice = _selectedChoice;
 	if (command == kUpCommand) {
-		if (_selectedChoice > 0)
-			--_selectedChoice;
-		if (_selectedChoice < _firstVisibleChoice)
-			_firstVisibleChoice = _selectedChoice;
+		if (!_chooser.moveSelection(-1))
+			return false;
 	} else if (command == kDownCommand) {
-		if (_selectedChoice + 1 < _choices.size())
-			++_selectedChoice;
-		if (_selectedChoice >= _firstVisibleChoice + kVisibleChoiceCount)
-			_firstVisibleChoice = _selectedChoice - kVisibleChoiceCount + 1;
+		if (!_chooser.moveSelection(1))
+			return false;
 	} else if (command == kEnterCommand) {
-		return selectChoice(_selectedChoice, result, "keyboard");
+		return selectChoice(_chooser.selectedIndex(), result, "keyboard");
 	} else {
 		return false;
 	}
-	if (_selectedChoice != previousChoice) {
-		debugC(2, kDebugDialogue,
-			"Ripper: dialogue keyboard selection command=0x%04x index=%u result=%u text='%s'",
-			command, _selectedChoice, _choices[_selectedChoice].result,
-			_choices[_selectedChoice].text.c_str());
-	}
+	debugC(2, kDebugDialogue,
+		"Ripper: dialogue keyboard selection command=0x%04x index=%u result=%u text='%s'",
+		command, _chooser.selectedIndex(),
+		_choices[_chooser.selectedIndex()].result,
+		_choices[_chooser.selectedIndex()].text.c_str());
 	return false;
 }
 
@@ -281,15 +271,14 @@ void DialogueChooser::updateHover(const Common::Point &point) {
 	if (!_chooserBounds.contains(point))
 		return;
 	const uint visibleRow = (point.y - _chooserBounds.top) / kChoiceRowHeight;
-	const uint choiceIndex = _firstVisibleChoice + visibleRow;
-	if (visibleRow >= kVisibleChoiceCount || choiceIndex >= _choices.size() ||
-		choiceIndex == _selectedChoice)
+	uint choiceIndex = 0;
+	if (!_chooser.resolveVisibleRow(visibleRow, choiceIndex) ||
+			!_chooser.select(choiceIndex, false))
 		return;
-	_selectedChoice = choiceIndex;
 	debugC(2, kDebugDialogue,
 		"Ripper: dialogue hover index=%u result=%u text='%s' point=%d,%d",
-		_selectedChoice, _choices[_selectedChoice].result,
-		_choices[_selectedChoice].text.c_str(), point.x, point.y);
+		_chooser.selectedIndex(), _choices[_chooser.selectedIndex()].result,
+		_choices[_chooser.selectedIndex()].text.c_str(), point.x, point.y);
 }
 
 bool DialogueChooser::contains(const Common::Point &point) const {
@@ -301,7 +290,7 @@ bool DialogueChooser::contains(const Common::Point &point) const {
 void DialogueChooser::clearPending() {
 	_pending = false;
 	_choices.clear();
-	_firstVisibleChoice = 0;
+	_chooser.clear();
 	_hoveredArrow = 0;
 	_backingBounds = Common::Rect();
 	_backingPixels.clear();
@@ -341,17 +330,19 @@ bool DialogueChooser::syncGame(Common::Serializer &serializer) {
 			return false;
 	}
 
-	serializer.syncAsUint32LE(_selectedChoice);
-	serializer.syncAsUint32LE(_firstVisibleChoice);
+	uint32 selectedChoice = _chooser.selectedIndex();
+	uint32 firstVisibleChoice = _chooser.firstVisibleIndex();
+	serializer.syncAsUint32LE(selectedChoice);
+	serializer.syncAsUint32LE(firstVisibleChoice);
 	if (serializer.isLoading()) {
 		_pending = pending != 0;
 		_hoveredArrow = 0;
 		if (_choices.empty()) {
 			_pending = false;
-			_selectedChoice = 0;
-			_firstVisibleChoice = 0;
+			_chooser.clear();
 		} else {
-			if (_selectedChoice >= _choices.size() || _firstVisibleChoice >= _choices.size())
+			if (!_chooser.restore(_choices.size(), kVisibleChoiceCount,
+					selectedChoice, firstVisibleChoice))
 				return false;
 			updateLayout();
 		}
@@ -413,13 +404,13 @@ bool DialogueChooser::restoreBacking() {
 bool DialogueChooser::selectChoice(uint choiceIndex, uint &result, const char *source) {
 	if (!_pending || choiceIndex >= _choices.size())
 		return false;
-	_selectedChoice = choiceIndex;
-	result = _choices[_selectedChoice].result;
-	const Common::String text = _choices[_selectedChoice].text;
+	_chooser.select(choiceIndex, false);
+	result = _choices[_chooser.selectedIndex()].result;
+	const Common::String text = _choices[_chooser.selectedIndex()].text;
 	const bool restored = restoreBacking();
 	debugC(1, kDebugDialogue,
 		"Ripper: dialogue selected source=%s index=%u result=%u text='%s' backing=%d",
-		source, _selectedChoice, result, text.c_str(), restored);
+		source, _chooser.selectedIndex(), result, text.c_str(), restored);
 	clearPending();
 	rebuildPresentationBands("chooser-selection");
 	g_system->updateScreen();

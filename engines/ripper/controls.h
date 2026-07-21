@@ -51,6 +51,33 @@ private:
 	Common::Array<UiControl> _controls;
 };
 
+class ChooserModel {
+public:
+	ChooserModel();
+
+	void reset(uint itemCount, uint maximumVisibleCount, uint selectedIndex = 0);
+	bool restore(uint itemCount, uint maximumVisibleCount,
+		uint selectedIndex, uint firstVisibleIndex);
+	void clear();
+	bool moveSelection(int delta);
+	bool select(uint index, bool ensureVisible = true);
+	bool scrollWindow(int delta);
+	bool resolveVisibleRow(uint row, uint &index) const;
+
+	uint itemCount() const { return _itemCount; }
+	uint selectedIndex() const { return _selectedIndex; }
+	uint firstVisibleIndex() const { return _firstVisibleIndex; }
+	uint visibleCount() const { return _visibleCount; }
+
+private:
+	void ensureSelectionVisible();
+
+	uint _itemCount;
+	uint _selectedIndex;
+	uint _firstVisibleIndex;
+	uint _visibleCount;
+};
+
 } // End of namespace Ripper
 
 #endif // RIPPER_CONTROLS_H

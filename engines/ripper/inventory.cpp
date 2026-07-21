@@ -79,7 +79,6 @@ static const int kDoneControl = -3;
 } // End of anonymous namespace
 
 Inventory::Inventory(RipperEngine *engine) : _engine(engine),
-		_selectedEntry(0), _firstVisibleEntry(0), _visibleEntries(0),
 		_active(false), _initialized(false) {
 }
 
@@ -162,22 +161,21 @@ bool Inventory::buildEntries(int initialUnlockFlag) {
 		debugC(2, kDebugScene, "Ripper: inventory has no available items");
 		return false;
 	}
-	_selectedEntry = 0;
+	uint selectedEntry = 0;
 	if (initialUnlockFlag >= 0) {
 		for (uint entryIndex = 0; entryIndex < _entries.size(); ++entryIndex) {
 			if (_entries[entryIndex].unlockFlag == (uint)initialUnlockFlag) {
-				_selectedEntry = entryIndex;
+				selectedEntry = entryIndex;
 				break;
 			}
 		}
 	}
-	_visibleEntries = MIN<uint>(_entries.size(), kMaximumVisibleEntries);
-	_firstVisibleEntry = _selectedEntry >= _visibleEntries ?
-		_selectedEntry - _visibleEntries + 1 : 0;
+	_chooser.reset(_entries.size(), kMaximumVisibleEntries, selectedEntry);
 	updateLayout();
 	debugC(1, kDebugScene,
 		"Ripper: built inventory chooser available=%u initialUnlockFlag=%d selected=%u visible=%u bounds=%d,%d,%d,%d",
-		_entries.size(), initialUnlockFlag, _selectedEntry, _visibleEntries,
+		_entries.size(), initialUnlockFlag, _chooser.selectedIndex(),
+		_chooser.visibleCount(),
 		_menuBounds.left, _menuBounds.top, _menuBounds.width(), _menuBounds.height());
 	return true;
 }
@@ -207,7 +205,7 @@ void Inventory::applyPalette() {
 }
 
 void Inventory::updateLayout() {
-	const int menuHeight = kHeadingHeight + _visibleEntries * kRowHeight +
+	const int menuHeight = kHeadingHeight + _chooser.visibleCount() * kRowHeight +
 		kBottomPadding;
 	const int totalHeight = menuHeight + kButtonHeight;
 	const int left = (640 - kMenuWidth) / 2;
@@ -322,8 +320,10 @@ void Inventory::draw(bool usePressed, bool donePressed) const {
 		_menuBounds.left + (_menuBounds.width() - measureText(title)) / 2,
 		_menuBounds.top + (kHeadingHeight - _font.lineHeight) / 2,
 		title, kNormalTextColor);
-	for (uint visibleRow = 0; visibleRow < _visibleEntries; ++visibleRow) {
-		const uint entryIndex = _firstVisibleEntry + visibleRow;
+	for (uint visibleRow = 0; visibleRow < _chooser.visibleCount(); ++visibleRow) {
+		uint entryIndex = 0;
+		if (!_chooser.resolveVisibleRow(visibleRow, entryIndex))
+			continue;
 		if (entryIndex >= _entries.size())
 			break;
 		const Entry &entry = _entries[entryIndex];
@@ -336,7 +336,7 @@ void Inventory::draw(bool usePressed, bool donePressed) const {
 		}
 		drawText(pixels, screen->pitch, bounds.left + kItemTextInset,
 			bounds.top + (bounds.height() - _font.lineHeight) / 2,
-			entry.label, entryIndex == _selectedEntry ?
+			entry.label, entryIndex == _chooser.selectedIndex() ?
 				kSelectedTextColor : kNormalTextColor);
 	}
 	drawButton(pixels, screen->pitch, _useBounds, _gameText[70], usePressed);
@@ -351,30 +351,22 @@ int Inventory::findControl(const Common::Point &point) const {
 		return kUseControl;
 	if (_doneBounds.contains(point))
 		return kDoneControl;
-	for (uint visibleRow = 0; visibleRow < _visibleEntries; ++visibleRow) {
+	for (uint visibleRow = 0; visibleRow < _chooser.visibleCount(); ++visibleRow) {
+		uint entryIndex = 0;
 		if (rowBounds(visibleRow).contains(point) &&
-				_firstVisibleEntry + visibleRow < _entries.size())
+				_chooser.resolveVisibleRow(visibleRow, entryIndex))
 			return visibleRow;
 	}
 	return kNoControl;
 }
 
 bool Inventory::moveSelection(int delta) {
-	const uint previous = _selectedEntry;
-	if (delta < 0 && _selectedEntry > 0)
-		--_selectedEntry;
-	else if (delta > 0 && _selectedEntry + 1 < _entries.size())
-		++_selectedEntry;
-	if (_selectedEntry < _firstVisibleEntry)
-		_firstVisibleEntry = _selectedEntry;
-	else if (_selectedEntry >= _firstVisibleEntry + _visibleEntries)
-		_firstVisibleEntry = _selectedEntry - _visibleEntries + 1;
-	if (previous == _selectedEntry)
+	if (!_chooser.moveSelection(delta))
 		return false;
 	debugC(2, kDebugScene,
 		"Ripper: inventory selection index=%u unlockFlag=%u item=%u",
-		_selectedEntry, _entries[_selectedEntry].unlockFlag,
-		_entries[_selectedEntry].bitmapIndex);
+		_chooser.selectedIndex(), _entries[_chooser.selectedIndex()].unlockFlag,
+		_entries[_chooser.selectedIndex()].bitmapIndex);
 	return true;
 }
 
@@ -467,7 +459,8 @@ Inventory::Result Inventory::run(const Common::String &sceneLabel,
 	draw();
 	debugC(1, kDebugScene,
 		"Ripper: entered inventory available=%u selected=%u unlockFlag=%u",
-		_entries.size(), _selectedEntry, _entries[_selectedEntry].unlockFlag);
+		_entries.size(), _chooser.selectedIndex(),
+		_entries[_chooser.selectedIndex()].unlockFlag);
 
 	int pressedControl = kNoControl;
 	int hoveredControl = kNoControl;
@@ -508,15 +501,16 @@ Inventory::Result Inventory::run(const Common::String &sceneLabel,
 				_engine->getCursor()->update(hoveredControl != kNoControl ?
 					kChoiceCursor : kDefaultCursor);
 				if (hoveredControl >= 0) {
-					const uint entryIndex = _firstVisibleEntry + hoveredControl;
-					if (entryIndex < _entries.size() && entryIndex != _selectedEntry) {
-						_selectedEntry = entryIndex;
+					uint entryIndex = 0;
+					if (_chooser.resolveVisibleRow(hoveredControl, entryIndex) &&
+							_chooser.select(entryIndex, false)) {
 						draw();
 					}
 				}
 				debugC(3, kDebugScene,
 					"Ripper: inventory hover control=%d point=%d,%d selected=%u",
-					hoveredControl, mouse.position.x, mouse.position.y, _selectedEntry);
+					hoveredControl, mouse.position.x, mouse.position.y,
+					_chooser.selectedIndex());
 			}
 			if ((mouse.pressed & kMouseButtonLeft) != 0) {
 				pressedControl = hoveredControl;
@@ -540,7 +534,8 @@ Inventory::Result Inventory::run(const Common::String &sceneLabel,
 			}
 		}
 		if (useSelection) {
-			const uint selectedUnlockFlag = _entries[_selectedEntry].unlockFlag;
+			const uint selectedUnlockFlag =
+				_entries[_chooser.selectedIndex()].unlockFlag;
 			const ChoiceResult choiceResult = executeChoice(selectedUnlockFlag, sceneLabel);
 			if (choiceResult == kChoiceUsed) {
 				if (usedUnlockFlag)

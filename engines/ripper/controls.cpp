@@ -43,4 +43,99 @@ int UiControlRegistry::findFirst(const Common::Point &point) const {
 	return -1;
 }
 
+ChooserModel::ChooserModel() : _itemCount(0), _selectedIndex(0),
+		_firstVisibleIndex(0), _visibleCount(0) {
+}
+
+void ChooserModel::reset(uint itemCount, uint maximumVisibleCount,
+		uint selectedIndex) {
+	_itemCount = itemCount;
+	_visibleCount = MIN(itemCount, maximumVisibleCount);
+	_selectedIndex = itemCount == 0 ? 0 : MIN(selectedIndex, itemCount - 1);
+	_firstVisibleIndex = 0;
+	ensureSelectionVisible();
+}
+
+bool ChooserModel::restore(uint itemCount, uint maximumVisibleCount,
+		uint selectedIndex, uint firstVisibleIndex) {
+	if (itemCount == 0) {
+		if (selectedIndex != 0 || firstVisibleIndex != 0)
+			return false;
+		clear();
+		return true;
+	}
+	if (maximumVisibleCount == 0 || selectedIndex >= itemCount ||
+			firstVisibleIndex >= itemCount)
+		return false;
+	_itemCount = itemCount;
+	_visibleCount = MIN(itemCount, maximumVisibleCount);
+	_selectedIndex = selectedIndex;
+	_firstVisibleIndex = firstVisibleIndex;
+	return true;
+}
+
+void ChooserModel::clear() {
+	_itemCount = 0;
+	_selectedIndex = 0;
+	_firstVisibleIndex = 0;
+	_visibleCount = 0;
+}
+
+bool ChooserModel::moveSelection(int delta) {
+	if (_itemCount == 0 || delta == 0)
+		return false;
+	const uint previous = _selectedIndex;
+	if (delta < 0 && _selectedIndex > 0)
+		--_selectedIndex;
+	else if (delta > 0 && _selectedIndex + 1 < _itemCount)
+		++_selectedIndex;
+	ensureSelectionVisible();
+	return _selectedIndex != previous;
+}
+
+bool ChooserModel::select(uint index, bool ensureVisible) {
+	if (index >= _itemCount)
+		return false;
+	const bool changed = index != _selectedIndex;
+	_selectedIndex = index;
+	if (ensureVisible)
+		ensureSelectionVisible();
+	return changed;
+}
+
+bool ChooserModel::scrollWindow(int delta) {
+	if (_itemCount == 0 || _visibleCount == 0 || delta == 0)
+		return false;
+	const uint maximumFirst = _itemCount > _visibleCount ?
+		_itemCount - _visibleCount : 0;
+	const uint previous = _firstVisibleIndex;
+	if (delta < 0 && _firstVisibleIndex > 0)
+		--_firstVisibleIndex;
+	else if (delta > 0 && _firstVisibleIndex < maximumFirst)
+		++_firstVisibleIndex;
+	if (_selectedIndex < _firstVisibleIndex)
+		_selectedIndex = _firstVisibleIndex;
+	else if (_selectedIndex >= _firstVisibleIndex + _visibleCount)
+		_selectedIndex = _firstVisibleIndex + _visibleCount - 1;
+	return _firstVisibleIndex != previous;
+}
+
+bool ChooserModel::resolveVisibleRow(uint row, uint &index) const {
+	if (row >= _visibleCount || _firstVisibleIndex + row >= _itemCount)
+		return false;
+	index = _firstVisibleIndex + row;
+	return true;
+}
+
+void ChooserModel::ensureSelectionVisible() {
+	if (_itemCount == 0 || _visibleCount == 0) {
+		_firstVisibleIndex = 0;
+		return;
+	}
+	if (_selectedIndex < _firstVisibleIndex)
+		_firstVisibleIndex = _selectedIndex;
+	else if (_selectedIndex >= _firstVisibleIndex + _visibleCount)
+		_firstVisibleIndex = _selectedIndex - _visibleCount + 1;
+}
+
 } // End of namespace Ripper
