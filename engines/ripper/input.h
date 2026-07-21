@@ -42,6 +42,8 @@ struct MouseState {
 	MouseState() : position(0, 0), buttons(0), pressed(0), released(0), wheel(0) {}
 };
 
+uint16 translateKeyToCommand(const Common::KeyState &key);
+
 class InputManager {
 public:
 	explicit InputManager(Common::EventManager *eventManager);
@@ -56,7 +58,6 @@ public:
 	const MouseState &peekMouseState() const { return _mouseState; }
 
 private:
-	static uint16 translateKey(const Common::KeyState &key);
 	void updateMousePosition(const Common::Event &event);
 	void updateMouseButton(const Common::Event &event, uint16 button, bool pressed);
 
