@@ -91,15 +91,21 @@ void CollisionPuzzle::init() {
 					continue;
 				}
 
+				// Start the solve piece in the slot two cells left of the grid
+				int pieceX = (int)x;
+				if (id == 6 && _tileMoveSolveStartsInSlot) {
+					pieceX -= 2;
+				}
+
 				newPiece._drawSurface.create(_image, _pieceSrcs[id - 1]);
-				Common::Rect pos = getScreenPosition(Common::Point(x, y));
+				Common::Rect pos = getScreenPosition(Common::Point(pieceX, y));
 				if (_lineWidth == 6) {
 					pos.translate(-1, 0); // Improvement
 				}
 				pos.setWidth(newPiece._drawSurface.w);
 				pos.setHeight(newPiece._drawSurface.h);
 				newPiece.moveTo(pos);
-				newPiece._gridPos = Common::Point(x, y);
+				newPiece._gridPos = Common::Point(pieceX, y);
 				newPiece.setVisible(true);
 				newPiece.setTransparent(true);
 
@@ -210,6 +216,11 @@ void CollisionPuzzle::readData(Common::SeekableReadStream &stream) {
 		_tileMoveExitPos.x = stream.readUint16LE();
 		_tileMoveExitIndex = stream.readUint16LE();
 		numPieces = 6;
+
+		// Nancy 12: when set, the solve piece starts in the slot left of the grid
+		if (g_nancy->getGameType() >= kGameTypeNancy12) {
+			_tileMoveSolveStartsInSlot = stream.readByte() == 1;
+		}
 	}
 
 	// Nancy 12 enlarged the Collision grid from 8x8 to 12x12; TileMove went 8 to 11 in Nancy 10
@@ -364,6 +375,12 @@ void CollisionPuzzle::execute() {
 			int16 w = g_nancy->getGameType() <= kGameTypeNancy9 ? _grid.size() : _grid[0].size();
 			int16 h = g_nancy->getGameType() <= kGameTypeNancy9 ? _grid[0].size() : _grid.size();
 			Common::Rect gridRect(w, h);
+
+			// The left start slot is outside the grid too, but isn't the exit
+			if (_tileMoveSolveStartsInSlot && pos.x < 0) {
+				return;
+			}
+
 			if (!posRect.contains(_tileMoveExitPos) && gridRect.contains(pos)) {
 				return;
 			}

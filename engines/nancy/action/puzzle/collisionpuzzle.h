@@ -90,6 +90,7 @@ protected:
 
 	Common::Point _tileMoveExitPos = Common::Point(-1, -1);
 	uint _tileMoveExitIndex = 0;
+	bool _tileMoveSolveStartsInSlot = false;
 
 	bool _usesExitButton = false;
 	Common::Rect _exitButtonSrc;
