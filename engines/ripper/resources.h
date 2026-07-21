@@ -105,6 +105,7 @@ private:
 class ResourceManager {
 public:
 	bool initialize();
+	bool loadBitmap(const Common::String &memberName, BitmapAssetFrame &frame) const;
 	bool loadBitmapSequence(const Common::String &memberName,
 		BitmapAssetSequence &sequence) const;
 	bool loadBitmapLibrary(const Common::String &libraryName,
