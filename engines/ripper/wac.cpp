@@ -28,6 +28,7 @@
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
+#include "ripper/display.h"
 #include "ripper/input.h"
 #include "ripper/media.h"
 #include "ripper/milestones.h"
@@ -408,45 +409,12 @@ const Common::String &WacManager::resourceString(uint resourceId) const {
 }
 
 uint WacManager::measureText(const Common::String &text) const {
-	uint width = 0;
-	for (uint i = 0; i < text.size(); ++i) {
-		const byte character = (byte)text[i];
-		if (character == ' ') {
-			width += _font.spaceWidth;
-			continue;
-		}
-		if (character < _font.firstCharacter ||
-			character >= _font.firstCharacter + _font.glyphs.size())
-			continue;
-		const BitmapFontGlyph &glyph = _font.glyphs[character - _font.firstCharacter];
-		width += glyph.xOffset + glyph.width + _font.characterSpacing;
-	}
-	return width;
+	return BitmapFontRenderer::measureText(_font, text);
 }
 
 void WacManager::drawText(byte *screen, uint pitch, int x, int y,
 		const Common::String &text, byte color) const {
-	int drawX = x;
-	for (uint i = 0; i < text.size(); ++i) {
-		const byte character = (byte)text[i];
-		if (character == ' ') {
-			drawX += _font.spaceWidth;
-			continue;
-		}
-		if (character < _font.firstCharacter ||
-			character >= _font.firstCharacter + _font.glyphs.size())
-			continue;
-		const BitmapFontGlyph &glyph = _font.glyphs[character - _font.firstCharacter];
-		for (uint glyphY = 0; glyphY < glyph.height; ++glyphY) {
-			for (uint glyphX = 0; glyphX < glyph.width; ++glyphX) {
-				const byte pixel = _font.pixels[glyph.pixelOffset + glyphY * glyph.width + glyphX];
-				if (pixel != _font.transparentColor)
-					screen[(y + glyph.yOffset + glyphY) * pitch + drawX +
-						glyph.xOffset + glyphX] = color;
-			}
-		}
-		drawX += glyph.xOffset + glyph.width + _font.characterSpacing;
-	}
+	BitmapFontRenderer::drawText(screen, pitch, _font, x, y, text, color);
 }
 
 void WacManager::buildDatabaseEntries() {
