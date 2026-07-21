@@ -154,11 +154,17 @@ XOBJSTUB(FileXtra::m_DriveFreeSpace, 0)
 XOBJSTUB(FileXtra::m_DriveIsCDROM, 0)
 XOBJSTUB(FileXtra::m_FileOpenDialog, 0)
 XOBJSTUB(FileXtra::m_FileSaveAsDialog, 0)
-XOBJSTUB(FileXtra::m_FileExists, 0)
 XOBJSTUB(FileXtra::m_RenameFile, 0)
 XOBJSTUB(FileXtra::m_DeleteFile, 0)
 XOBJSTUB(FileXtra::m_CopyFile, 0)
 XOBJSTUB(FileXtra::m_GetFileModDate, 0)
+
+void FileXtra::m_FileExists(int nargs) {
+	ARGNUMCHECK(1)
+	Common::String fileName = g_lingo->pop().asString();
+	Common::Path path = findPath(fileName, true, true, false);
+	g_lingo->push(Datum(path.empty() ? -1 : 0));
+}
 
 void FileXtra::m_DirectoryExists(int nargs) {
 	ARGNUMCHECK(1)
