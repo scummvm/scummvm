@@ -72,6 +72,19 @@ public:
 		TS_ASSERT_EQUALS(member->readByte(), 0x10);
 	}
 
+	void testLibraryRejectsDuplicateNormalizedMemberNames() {
+		const byte data[] = {
+			0x02, 0x00, 0x08, 0x00, 0x00, 0x00,
+			0xaa, 0xbb,
+			0x06, 0x00, 0x00, 0x00, 'D', 'U', 'P', 0x00, 0x00, 0x00, 0x00, 0x00,
+			0x07, 0x00, 0x00, 0x00, 'd', 'u', 'p', 0x00, 0x00, 0x00, 0x00, 0x00
+		};
+		Common::MemoryReadStream stream(data, sizeof(data), DisposeAfterUse::NO);
+		Ripper::AssetLibrary library;
+
+		TS_ASSERT(!library.open(stream, Common::Path("duplicate.pl")));
+	}
+
 	void testCustomBitmapDescriptorAndRawTail() {
 		const byte data[] = {
 			0x00, 0x01, 0x00, 0x00, 0x01,
