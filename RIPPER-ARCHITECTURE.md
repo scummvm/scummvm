@@ -66,7 +66,10 @@
 - The `7PT_FONT.FNT` member is an NF2T glyph descriptor used by
   `RenderFrontEndActionPreviewSprite` at `0x189b3`. The reimplementation
   decodes the descriptor and its custom bitmap instead of substituting a host
-  font. Toolbar bitmap color maps target palette index 0, indices 4 through 9,
+  font. NF2T measurement, mask painting, and optional clipping are shared by
+  the engine's `BitmapFontRenderer`; presentation owners retain the choice of
+  font, solid output color, and layout. Toolbar bitmap color maps target
+  palette index 0, indices 4 through 9,
   and indices 246 through 255. `ApplySharedDisplayPalettePatch` at `0x205d0`
   restores those bands on every media palette update so interface pixels remain
   stable while the underlying Smacker palette changes. The original captures
