@@ -29,7 +29,7 @@ namespace Ripper {
 InputManager::InputManager(Common::EventManager *eventManager) : _eventManager(eventManager) {
 }
 
-uint16 InputManager::translateKey(const Common::KeyState &key) {
+uint16 translateKeyToCommand(const Common::KeyState &key) {
 	// ScummVM backends may publish navigation keys in both keycode and ascii
 	// (for example, Right Arrow arrives with ascii 0x0113). Resolve mapped
 	// non-printing keys first so they retain the BIOS command values consumed by
@@ -116,7 +116,7 @@ bool InputManager::pollEvents() {
 			break;
 
 		case Common::EVENT_KEYDOWN: {
-			const uint16 command = translateKey(event.kbd);
+			const uint16 command = translateKeyToCommand(event.kbd);
 			if (command != 0) {
 				_pendingKeys.push(command);
 				debugC(3, kDebugInput, "Ripper: queued keyboard command 0x%04x", command);
