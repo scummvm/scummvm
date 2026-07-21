@@ -978,7 +978,9 @@
 - `SceneRuntimeState` owns the active and concurrent compiled scripts together
   with their frame, interaction, pending-transition, and Cyber control state.
   Entering a nested Cyber program moves this object into a snapshot and starts
-  with a fresh runtime, then restores the same object on exit.
+  with a fresh runtime, then restores the same object on exit. Cyber performs
+  that lifecycle through `ScriptManager` operations rather than accessing the
+  interpreter's private state.
 - `ReadSceneCallbackOpcodeAndArguments` at `0x140e9` decodes callback commands
   and their typed arguments.
 - `RunSceneCallbackCommandStream` at `0x14080` dispatches decoded commands.
