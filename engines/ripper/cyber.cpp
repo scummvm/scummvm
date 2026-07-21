@@ -24,8 +24,6 @@
 #include "common/memstream.h"
 #include "common/serializer.h"
 #include "common/system.h"
-#include "graphics/paletteman.h"
-#include "graphics/surface.h"
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
@@ -40,9 +38,6 @@ namespace Ripper {
 
 namespace {
 
-static const uint kScreenWidth = 640;
-static const uint kScreenHeight = 400;
-static const uint kPaletteSize = 256 * 3;
 static const uint kAudioSnapshotVersion = 3;
 static const uint kSceneSelectionIndex = 0;
 static const uint kCyberSelectionIndex = 22;
@@ -54,37 +49,19 @@ static const char *const kCyberScript = "cybrmenu.run";
 CyberManager::CyberManager(RipperEngine *engine) : _engine(engine) {
 }
 
-bool CyberManager::captureDisplay(DisplaySnapshot &snapshot) const {
-	Graphics::Surface *screen = g_system->lockScreen();
-	if (!screen || screen->format.bytesPerPixel != 1 ||
-			screen->w != kScreenWidth || screen->h != kScreenHeight) {
-		if (screen)
-			g_system->unlockScreen();
+bool CyberManager::captureDisplay(IndexedDisplaySnapshot &snapshot) const {
+	if (!snapshot.capture()) {
 		warning("Ripper: could not capture Cyber transition display");
 		return false;
 	}
-
-	snapshot.pixels.resize(kScreenWidth * kScreenHeight);
-	for (uint y = 0; y < kScreenHeight; ++y)
-		memcpy(snapshot.pixels.data() + y * kScreenWidth,
-			screen->getBasePtr(0, y), kScreenWidth);
-	g_system->unlockScreen();
-	snapshot.palette.resize(kPaletteSize);
-	g_system->getPaletteManager()->grabPalette(snapshot.palette.data(), 0, 256);
 	debugC(2, kDebugCyber,
 		"Ripper: captured suspended scene for Cyber transition size=%ux%u paletteEntries=256",
-		kScreenWidth, kScreenHeight);
+		kRipperScreenWidth, kRipperScreenHeight);
 	return true;
 }
 
-void CyberManager::restoreDisplay(const DisplaySnapshot &snapshot) const {
-	if (snapshot.pixels.size() != kScreenWidth * kScreenHeight ||
-			snapshot.palette.size() != kPaletteSize)
-		return;
-	g_system->copyRectToScreen(snapshot.pixels.data(), kScreenWidth,
-		0, 0, kScreenWidth, kScreenHeight);
-	g_system->getPaletteManager()->setPalette(snapshot.palette.data(), 0, 256);
-	g_system->updateScreen();
+void CyberManager::restoreDisplay(const IndexedDisplaySnapshot &snapshot) const {
+	snapshot.restore();
 }
 
 bool CyberManager::captureAudio(Common::Array<byte> &state) const {
@@ -180,7 +157,7 @@ void CyberManager::restoreRuntime(RuntimeSnapshot &snapshot) const {
 }
 
 CyberManager::Result CyberManager::run() {
-	DisplaySnapshot display;
+	IndexedDisplaySnapshot display;
 	Common::Array<byte> audioState;
 	if (!captureDisplay(display) || !captureAudio(audioState)) {
 		restoreDisplay(display);
@@ -260,7 +237,7 @@ CyberManager::Result CyberManager::run() {
 
 CyberManager::Result CyberManager::runProgram(uint action,
 		const char *scriptBaseName, uint argument) {
-	DisplaySnapshot display;
+	IndexedDisplaySnapshot display;
 	Common::Array<byte> audioState;
 	if (!captureDisplay(display) || !captureAudio(audioState)) {
 		restoreDisplay(display);

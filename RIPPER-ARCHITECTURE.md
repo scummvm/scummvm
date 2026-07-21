@@ -74,6 +74,10 @@
   `InitializeSharedPresentationTemplates` prepare startup indexed assets; the
   reimplementation uses the first `MNU0` bitmap palette as that startup
   palette and applies only the reserved bands to later Smacker presentations.
+- Indexed presentation suspension is represented by `IndexedDisplaySnapshot`,
+  which captures an indexed screen rectangle together with all 256 palette
+  entries. Cyber scene suspension uses a full 640x400 snapshot and restores
+  its pixels and palette before resuming the scene runtime.
 
 ## Scene Toolbar
 
