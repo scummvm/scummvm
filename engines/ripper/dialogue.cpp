@@ -8,6 +8,7 @@
 #include "graphics/surface.h"
 
 #include "ripper/detection.h"
+#include "ripper/display.h"
 #include "ripper/input.h"
 #include "ripper/script.h"
 
@@ -359,19 +360,7 @@ bool DialogueChooser::syncGame(Common::Serializer &serializer) {
 }
 
 uint DialogueChooser::measureText(const Common::String &text) const {
-	uint width = 0;
-	for (uint i = 0; i < text.size(); ++i) {
-		const byte ch = (byte)text[i];
-		if (ch == ' ') {
-			width += _font.spaceWidth;
-			continue;
-		}
-		if (ch < _font.firstCharacter || ch >= _font.firstCharacter + _font.glyphs.size())
-			continue;
-		const BitmapFontGlyph &glyph = _font.glyphs[ch - _font.firstCharacter];
-		width += glyph.xOffset + glyph.width + _font.characterSpacing;
-	}
-	return width;
+	return BitmapFontRenderer::measureText(_font, text);
 }
 
 void DialogueChooser::updateLayout() {

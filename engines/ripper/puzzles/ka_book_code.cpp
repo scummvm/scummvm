@@ -24,6 +24,7 @@
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
+#include "ripper/display.h"
 #include "ripper/input.h"
 #include "ripper/media.h"
 #include "ripper/modal_dialog.h"
@@ -84,47 +85,13 @@ bool KaBookCodePuzzle::loadAssets() {
 }
 
 uint KaBookCodePuzzle::measureText(const Common::String &text) const {
-	uint width = 0;
-	for (uint i = 0; i < text.size(); ++i) {
-		const byte character = (byte)text[i];
-		if (character == ' ') {
-			width += _font.spaceWidth;
-			continue;
-		}
-		if (character < _font.firstCharacter ||
-				character >= _font.firstCharacter + _font.glyphs.size())
-			continue;
-		const BitmapFontGlyph &glyph = _font.glyphs[character - _font.firstCharacter];
-		width += glyph.xOffset + glyph.width + _font.characterSpacing;
-	}
-	return width;
+	return BitmapFontRenderer::measureText(_font, text);
 }
 
 void KaBookCodePuzzle::drawText(byte *screen, uint pitch, int x, int y,
 		const Common::String &text, byte color) const {
-	int drawX = x;
-	for (uint i = 0; i < text.size(); ++i) {
-		const byte character = (byte)text[i];
-		if (character == ' ') {
-			drawX += _font.spaceWidth;
-			continue;
-		}
-		if (character < _font.firstCharacter ||
-				character >= _font.firstCharacter + _font.glyphs.size())
-			continue;
-		const BitmapFontGlyph &glyph = _font.glyphs[character - _font.firstCharacter];
-		for (uint glyphY = 0; glyphY < glyph.height; ++glyphY) {
-			for (uint glyphX = 0; glyphX < glyph.width; ++glyphX) {
-				const byte pixel = _font.pixels[glyph.pixelOffset + glyphY * glyph.width + glyphX];
-				const int targetX = drawX + glyph.xOffset + glyphX;
-				const int targetY = y + glyph.yOffset + glyphY;
-				if (pixel != _font.transparentColor && targetX >= 0 && targetX < 640 &&
-						targetY >= 0 && targetY < 400)
-					screen[targetY * pitch + targetX] = color;
-			}
-		}
-		drawX += glyph.xOffset + glyph.width + _font.characterSpacing;
-	}
+	BitmapFontRenderer::drawTextClipped(screen, pitch, _font, x, y, text, color,
+		Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight));
 }
 
 void KaBookCodePuzzle::drawPrompt(const Common::String &typedCode) {

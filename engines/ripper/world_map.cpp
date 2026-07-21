@@ -27,6 +27,7 @@
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
+#include "ripper/display.h"
 #include "ripper/input.h"
 #include "ripper/milestones.h"
 #include "ripper/ripper.h"
@@ -182,29 +183,8 @@ void WorldMap::refreshLocations() {
 
 void WorldMap::drawText(byte *screen, uint pitch, int x, int y,
 		const Common::String &text, byte color, const Common::Rect &clip) const {
-	int drawX = x;
-	for (uint i = 0; i < text.size(); ++i) {
-		const byte character = (byte)text[i];
-		if (character == ' ') {
-			drawX += _font.spaceWidth;
-			continue;
-		}
-		if (character < _font.firstCharacter ||
-			character >= _font.firstCharacter + _font.glyphs.size())
-			continue;
-		const BitmapFontGlyph &glyph = _font.glyphs[character - _font.firstCharacter];
-		for (uint glyphY = 0; glyphY < glyph.height; ++glyphY) {
-			for (uint glyphX = 0; glyphX < glyph.width; ++glyphX) {
-				const byte pixel = _font.pixels[glyph.pixelOffset + glyphY * glyph.width + glyphX];
-				const int pixelX = drawX + glyph.xOffset + glyphX;
-				const int pixelY = y + glyph.yOffset + glyphY;
-				if (pixel != _font.transparentColor && pixelX >= clip.left &&
-					pixelX < clip.right && pixelY >= clip.top && pixelY < clip.bottom)
-					screen[pixelY * pitch + pixelX] = color;
-			}
-		}
-		drawX += glyph.xOffset + glyph.width + _font.characterSpacing;
-	}
+	BitmapFontRenderer::drawTextClipped(screen, pitch, _font, x, y, text,
+		color, clip);
 }
 
 void WorldMap::drawLocationDetails(byte *screen, uint pitch) const {
