@@ -551,7 +551,8 @@ Common::Rect CollisionPuzzle::getScreenPosition(Common::Point gridPos) {
 	dest.bottom -= 1;
 
 	if (_puzzleType == kTileMove) {
-		dest.setWidth(dest.width() / 2);
+		// The cell width is that of a 1-wide piece; halving the 2-wide sprite rounds up
+		dest.setWidth(_pieceSrcs[1].width() - 1);
 	}
 
 	dest.moveTo(_gridPos);
