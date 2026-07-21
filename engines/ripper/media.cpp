@@ -879,15 +879,32 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 }
 
 bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::String &name,
-		bool allowEscSpace, int x, int y, Audio::SoundHandle *externalAudio, bool *stoppedByUser,
-		const Common::Array<uint32> *frameAudioOffsets, uint32 audioByteRate,
-		uint32 timelineStartMillis, uint displayScale, bool patchInterfacePalette,
-		uint frameLimit, int originY, bool patchWacMediaPalette, bool serviceSceneUi,
-		bool repeatedLoopPass, bool *advanceSegment, uint loopStartFrame,
-		MediaSequenceCallback *sequenceCallback, uint16 *sequenceCommand,
-		Common::Array<byte> *sourcePalette, bool rememberVideoPalette,
-		uint firstFrame, uint lastFrame, uint boundedLoopStartFrame,
-		bool transparentFirstPixel) {
+		const SmackerPlaybackRequest &request) {
+	const bool allowEscSpace = request.allowEscSpace;
+	int x = request.x;
+	int y = request.y;
+	Audio::SoundHandle *externalAudio = request.externalAudio;
+	bool *stoppedByUser = request.stoppedByUser;
+	const Common::Array<uint32> *frameAudioOffsets = request.frameAudioOffsets;
+	const uint32 audioByteRate = request.audioByteRate;
+	const uint32 timelineStartMillis = request.timelineStartMillis;
+	uint displayScale = request.displayScale;
+	const bool patchInterfacePalette = request.patchInterfacePalette;
+	const uint frameLimit = request.frameLimit;
+	const int originY = request.originY;
+	const bool patchWacMediaPalette = request.patchWacMediaPalette;
+	const bool serviceSceneUi = request.serviceSceneUi;
+	const bool repeatedLoopPass = request.repeatedLoopPass;
+	bool *advanceSegment = request.advanceSegment;
+	const uint loopStartFrame = request.loopStartFrame;
+	MediaSequenceCallback *sequenceCallback = request.sequenceCallback;
+	uint16 *sequenceCommand = request.sequenceCommand;
+	Common::Array<byte> *sourcePalette = request.sourcePalette;
+	const bool rememberVideoPalette = request.rememberVideoPalette;
+	const uint firstFrame = request.firstFrame;
+	uint lastFrame = request.lastFrame;
+	const uint boundedLoopStartFrame = request.boundedLoopStartFrame;
+	const bool transparentFirstPixel = request.transparentFirstPixel;
 	if (stoppedByUser)
 		*stoppedByUser = false;
 	if (advanceSegment)
@@ -1393,12 +1410,22 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 			}
 			frameAudioOffsets = &relativeAudioOffsets;
 		}
-		if (!smacker || !playSmacker(smacker, Common::String::format("%s#%u", name.c_str(), i),
-			allowEscSpace, segmentX, segmentY,
-			audioActive ? &audioHandle : nullptr, &stoppedByUser,
-			frameAudioOffsets, audioByteRate, timelineStartMillis,
-			kAutoPacketizedDisplayScale, false, 0, segmentOriginY, false, serviceSceneUi, false,
-			&advanceSegment)) {
+		SmackerPlaybackRequest request;
+		request.allowEscSpace = allowEscSpace;
+		request.x = segmentX;
+		request.y = segmentY;
+		request.externalAudio = audioActive ? &audioHandle : nullptr;
+		request.stoppedByUser = &stoppedByUser;
+		request.frameAudioOffsets = frameAudioOffsets;
+		request.audioByteRate = audioByteRate;
+		request.timelineStartMillis = timelineStartMillis;
+		request.displayScale = kAutoPacketizedDisplayScale;
+		request.patchInterfacePalette = false;
+		request.originY = segmentOriginY;
+		request.serviceSceneUi = serviceSceneUi;
+		request.advanceSegment = &advanceSegment;
+		if (!smacker || !playSmacker(smacker,
+				Common::String::format("%s#%u", name.c_str(), i), request)) {
 			result = false;
 			break;
 		}
@@ -1536,8 +1563,12 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 		// 640x300 scene page, which begins at physical y=50 in ScummVM's retained
 		// 640x400 framebuffer.
 		const int originY = sceneViewport ? kScenePresentationTop : 0;
-		result = playSmacker(file, path, allowEscSpace, x, y, nullptr, nullptr,
-			nullptr, 0, 0, 1, true, 0, originY);
+		SmackerPlaybackRequest request;
+		request.allowEscSpace = allowEscSpace;
+		request.x = x;
+		request.y = y;
+		request.originY = originY;
+		result = playSmacker(file, path, request);
 	} else if (isIavf) {
 		const int originY = sceneViewport ? kScenePresentationTop : 0;
 		result = playIavf(*file, path, allowEscSpace, x, y, originY);
@@ -1586,8 +1617,12 @@ bool MediaPlayer::playWacMedia(const Common::String &path, int x, int y) {
 	debugC(1, kDebugVideo,
 		"Ripper: entering WAC media presentation media='%s' position=%d,%d palette=10..149",
 		path.c_str(), x, y);
-	const bool result = playSmacker(file, path, false, x, y, nullptr, nullptr, nullptr,
-		0, 0, 1, false, 0, 0, true);
+	SmackerPlaybackRequest request;
+	request.x = x;
+	request.y = y;
+	request.patchInterfacePalette = false;
+	request.patchWacMediaPalette = true;
+	const bool result = playSmacker(file, path, request);
 	_input->drainKeys();
 	return result;
 }
@@ -1604,9 +1639,15 @@ bool MediaPlayer::playWacInterfaceSequence(const Common::String &path, int x, in
 	debugC(1, kDebugVideo,
 		"Ripper: entering WAC interface sequence media='%s' position=%d,%d palette=10..149 loopStartFrame=%u callback=%d",
 		path.c_str(), x, y, loopStartFrame, callback != nullptr);
-	return playSmacker(stream, path, false, x, y, nullptr, nullptr, nullptr,
-		0, 0, 1, false, 0, 0, true, false, false, nullptr, loopStartFrame,
-		callback, command);
+	SmackerPlaybackRequest request;
+	request.x = x;
+	request.y = y;
+	request.patchInterfacePalette = false;
+	request.patchWacMediaPalette = true;
+	request.loopStartFrame = loopStartFrame;
+	request.sequenceCallback = callback;
+	request.sequenceCommand = command;
+	return playSmacker(stream, path, request);
 }
 
 bool MediaPlayer::playInterfaceSequence(const Common::String &path, int x, int y,
@@ -1621,9 +1662,12 @@ bool MediaPlayer::playInterfaceSequence(const Common::String &path, int x, int y
 	debugC(1, kDebugVideo,
 		"Ripper: entering interface media presentation media='%s' position=%d,%d",
 		path.c_str(), x, y);
-	return playSmacker(stream, path, false, x, y, nullptr, nullptr, nullptr,
-		0, 0, 1, true, 0, 0, false, false, false, nullptr, 0, nullptr, nullptr,
-		&sourcePalette, false);
+	SmackerPlaybackRequest request;
+	request.x = x;
+	request.y = y;
+	request.sourcePalette = &sourcePalette;
+	request.rememberVideoPalette = false;
+	return playSmacker(stream, path, request);
 }
 
 bool MediaPlayer::playBlockingAudio(const Common::String &path) {
@@ -1763,9 +1807,14 @@ bool MediaPlayer::playPuzzleSequence(const Common::String &path, uint loopStartF
 	debugC(1, kDebugVideo,
 		"Ripper: entering puzzle Smacker sequence media='%s' loopStartFrame=%u callback=%d",
 		path.c_str(), loopStartFrame, callback != nullptr);
-	return playSmacker(file, path, false, 0, 0, nullptr, nullptr, nullptr,
-		0, 0, 1, true, 0, kScenePresentationTop, false, false, false, nullptr,
-		loopStartFrame, callback, command);
+	SmackerPlaybackRequest request;
+	request.x = 0;
+	request.y = 0;
+	request.originY = kScenePresentationTop;
+	request.loopStartFrame = loopStartFrame;
+	request.sequenceCallback = callback;
+	request.sequenceCommand = command;
+	return playSmacker(file, path, request);
 }
 
 bool MediaPlayer::playPuzzleSequenceSegment(const Common::String &path, uint firstFrame,
@@ -1795,10 +1844,16 @@ bool MediaPlayer::playPuzzleSequenceSegment(const Common::String &path, uint fir
 		path.c_str(), firstFrame, lastFrame,
 		boundedLoopStartFrame == 0xffffffff ? -1 : (int)boundedLoopStartFrame,
 		x, y, callback != nullptr);
-	return playSmacker(file, path, false, x, y, nullptr, nullptr, nullptr,
-		0, 0, 1, true, 0, kScenePresentationTop, false, false, false, nullptr,
-		0, callback, command, nullptr, true, firstFrame, lastFrame,
-		boundedLoopStartFrame);
+	SmackerPlaybackRequest request;
+	request.x = x;
+	request.y = y;
+	request.originY = kScenePresentationTop;
+	request.sequenceCallback = callback;
+	request.sequenceCommand = command;
+	request.firstFrame = firstFrame;
+	request.lastFrame = lastFrame;
+	request.boundedLoopStartFrame = boundedLoopStartFrame;
+	return playSmacker(file, path, request);
 }
 
 bool MediaPlayer::playCombatSequence(const Common::String &path,
@@ -1825,9 +1880,15 @@ bool MediaPlayer::playCombatSequence(const Common::String &path,
 	debugC(1, kDebugVideo,
 		"Ripper: entering combat Smacker sequence media='%s' callback=%d",
 		path.c_str(), callback != nullptr);
-	return playSmacker(file, path, false, 0, 0, nullptr, nullptr, nullptr,
-		0, 0, kAutoPacketizedDisplayScale, false, 0, 0, false, false, false,
-		nullptr, 0, callback, command, nullptr, false);
+	SmackerPlaybackRequest request;
+	request.x = 0;
+	request.y = 0;
+	request.displayScale = kAutoPacketizedDisplayScale;
+	request.patchInterfacePalette = false;
+	request.sequenceCallback = callback;
+	request.sequenceCommand = command;
+	request.rememberVideoPalette = false;
+	return playSmacker(file, path, request);
 }
 
 bool MediaPlayer::playTransparentSmackerOverlay(const Common::String &path, int x, int y) {
@@ -1853,10 +1914,12 @@ bool MediaPlayer::playTransparentSmackerOverlay(const Common::String &path, int 
 	debugC(1, kDebugVideo,
 		"Ripper: entering transparent Smacker overlay media='%s' position=%d,%d",
 		path.c_str(), x, y);
-	return playSmacker(file, path, false, x, y, nullptr, nullptr, nullptr,
-		0, 0, 1, true, 0, kScenePresentationTop, false, false, false,
-		nullptr, 0, nullptr, nullptr, nullptr, true, 0, 0xffffffff,
-		0xffffffff, true);
+	SmackerPlaybackRequest request;
+	request.x = x;
+	request.y = y;
+	request.originY = kScenePresentationTop;
+	request.transparentFirstPixel = true;
+	return playSmacker(file, path, request);
 }
 
 bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
@@ -1899,9 +1962,17 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 				return false;
 		}
 	if (memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0) {
-		result = playSmacker(file, path, allowEscSpace, x, y, nullptr, nullptr, nullptr,
-			0, 0, 1, true, frameLimit, kScenePresentationTop, false, true,
-			repeatedLoopPass, nullptr, 0, callback, command);
+		SmackerPlaybackRequest request;
+		request.allowEscSpace = allowEscSpace;
+		request.x = x;
+		request.y = y;
+		request.frameLimit = frameLimit;
+		request.originY = kScenePresentationTop;
+		request.serviceSceneUi = true;
+		request.repeatedLoopPass = repeatedLoopPass;
+		request.sequenceCallback = callback;
+		request.sequenceCommand = command;
+		result = playSmacker(file, path, request);
 		if (!result && _stopSceneOnMouse && _input->peekMouseState().pressed != 0) {
 			result = true;
 			debugC(1, kDebugVideo,
