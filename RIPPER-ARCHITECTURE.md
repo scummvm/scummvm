@@ -467,9 +467,13 @@
   argument as a milestone and loops `WOFFORD.SMK` from frame 15. It starts
   `WOFFORD0.WAV` at entry, arms `WOFFORD1.WAV` and two choice controls at
   frame 20, and maps control commands `0x672` and `0x673` to `WOFFORD2.WAV`
-  and `WOFFORD3.WAV`. The nested controls use cursor row 16, active follow-up
-  audio uses row 19, and Escape returns through the surrounding Cyber
-  snapshot. The control rows at `0x2a824` map to physical rectangles
+  and `WOFFORD3.WAV`. The queue call at `0x2ad60` assigns all four descriptors
+  audio mix profile 3, corresponding to the Video/Speech volume. The nested
+  controls use cursor row 16, active follow-up audio uses row 19, and Escape
+  returns through the surrounding Cyber snapshot. `SeekSmackerPlaybackFrame`
+  at `0x50a88` resumes the loop at one-based frame 15 without clearing the
+  current decoded surface, so that frame's delta is applied over the loop-end
+  image. The control rows at `0x2a824` map to physical rectangles
   (205,203)-(416,296) and (16,73)-(618,335), with the smaller first control
   retaining hit-test priority inside the full-presentation second control.
 - Action 40 is the bespoke branch `RunKaDialogueScene` at `0x2aef5`, represented
