@@ -310,6 +310,7 @@ private:
 	Common::String _nextScript;
 	Common::Path _currentScriptPath;
 	int _warpIdx = -1;
+	int _vrWarpIdx = -1; // temporary v2 hack
 	Script::ConstWarpPtr _warp;
 	int _nextWarp = -1;
 	int _prevWarp = -1;

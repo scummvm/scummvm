@@ -1790,6 +1790,9 @@ void PhoenixVREngine::tick(float dt) {
 					_mouseRel = {};
 				}
 				_system->lockMouse(_vr.isVR());
+				if (version() >= 2 && _vr.isVR()) {
+					_vrWarpIdx = _warpIdx;
+				}
 			} else
 				debug("can't find vr file %s", _warp->vrFile.c_str());
 		}
@@ -2191,8 +2194,9 @@ void PhoenixVREngine::captureContext() {
 	ms.writeSint32LE(fromAngle(_angleY.rangeMax() + kPi2));
 	ms.writeSint32LE(fromAngle(_angleX.rangeMin()));
 	ms.writeSint32LE(fromAngle(_angleX.rangeMax()));
-	ms.writeSint32LE(_warpIdx);
-	debug("captureContext: warpIdx: %d, prev: %d", _warpIdx, _prevWarp);
+	auto warpIdx = version() >= 2 ? _vrWarpIdx : _warpIdx;
+	ms.writeSint32LE(warpIdx);
+	debug("captureContext: warpIdx: %d, prev: %d", warpIdx, _prevWarp);
 	ms.writeUint32LE(_warp->tests.size());
 	writeString({});
 	writeString({});
