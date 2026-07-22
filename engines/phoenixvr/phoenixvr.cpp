@@ -293,11 +293,15 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 																					 _state(256),
 																					 _loadedCursors(16),
 																					 _sprites(16),
+																					 _lenses(16),
 																					 _fov(kPi2),
 																					 _angleX(0),
 																					 _angleY(-kPi2),
 																					 _mixer(syst->getMixer()) {
 	g_engine = this;
+
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
+	SearchMan.addDirectory(gameDataDir, 0, 4);
 
 	if (gameIdMatches("amerzone")) {
 		_levels.push_back({"01VR_PHARE", "Le Phare"});
@@ -315,7 +319,8 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 		setNextLevel();
 	} else if (gameIdMatches("pharaoncurse")) {
 		Common::INIFile file;
-		if (!file.loadFromFile("pharaohs.wbm"))
+		Common::ScopedPtr<Common::SeekableReadStream> stream(open("pharaohs.wbm"));
+		if (!stream || !file.loadFromStream(*stream))
 			error("can't open install/pharaohs.wbm");
 		Common::String strNumLevels;
 		if (!file.getKey("LEVELS", "GAME", strNumLevels))
@@ -349,6 +354,8 @@ void PhoenixVREngine::resetState() {
 	_angleY.resetRange();
 	_angleY.set(-kPi2);
 	_imageOverlay.reset();
+	_lensflareActive = false;
+	_lightEffect.clear();
 	_cibleActive = false;
 	_cibleBounds.clear();
 }
@@ -443,7 +450,24 @@ Common::SeekableReadStream *PhoenixVREngine::open(const Common::String &filename
 
 Common::String PhoenixVREngine::getLevelScript(const Level &level) const {
 	auto mainScript = gameIdMatches("amerzone") ? "amerzone" : "script";
-	return Common::String::format("%s\\%s.lst", level.path.c_str(), mainScript);
+	Common::String script = Common::String::format("%s\\%s.lst", level.path.c_str(), mainScript);
+	if (!gameIdMatches("pharaoncurse") || SearchMan.hasFile(Common::Path(script, '\\')))
+		return script;
+
+	if (level.name.equalsIgnoreCase("Menu"))
+		return "script.lst5";
+	if (level.name.equalsIgnoreCase("Level_One"))
+		return "script.lst4";
+	if (level.name.equalsIgnoreCase("Level_Two"))
+		return "script.lst2";
+	if (level.name.equalsIgnoreCase("cd_1"))
+		return "script.lst";
+	if (level.name.equalsIgnoreCase("cd_2"))
+		return "script.lst1";
+	if (level.name.equalsIgnoreCase("Credits"))
+		return "script.lst3";
+
+	return script;
 }
 
 bool PhoenixVREngine::setNextLevel() {
@@ -1269,6 +1293,58 @@ void PhoenixVREngine::spriteScreen(int index, const Common::String &name, int x,
 	sprite.y = y;
 }
 
+void PhoenixVREngine::enterLevel() {
+	enterScript();
+}
+
+void PhoenixVREngine::setLens(int index, const Common::String &name, float size) {
+	debug("set lens %d %s %g", index, name.c_str(), size);
+	if (index < 0 || index >= 16)
+		return;
+
+	_lenses[index].name = name;
+	_lenses[index].scale = size;
+}
+
+void PhoenixVREngine::resetLensflare() {
+	debug("reset lensflare");
+	_lensflareActive = false;
+}
+
+void PhoenixVREngine::setLensflare(float x, float y) {
+	debug("set lensflare %g %g", x, y);
+	_lensflareActive = true;
+	_lensflareX = x;
+	_lensflareY = y;
+}
+
+void PhoenixVREngine::startLight(const Common::String &path) {
+	static const uint kHeaderSize = 0x12;
+	static const uint kPixelCount = 640 * 480;
+
+	Common::ScopedPtr<Common::SeekableReadStream> stream(open(path));
+	if (!stream) {
+		warning("can't open light effect %s", path.c_str());
+		return;
+	}
+	if (stream->size() < kHeaderSize + kPixelCount * 4) {
+		warning("invalid light effect %s", path.c_str());
+		return;
+	}
+
+	_lightEffect.resize(kPixelCount);
+	stream->seek(kHeaderSize);
+	for (uint i = 0; i != kPixelCount; ++i) {
+		uint32 color = stream->readUint32LE();
+		_lightEffect[i] = ((color & 0xf8000000) >> 11) | ((color & 0x00f80000) >> 8) |
+						  ((color & 0x0000fc00) >> 5) | ((color & 0x000000f8) >> 3);
+	}
+}
+
+void PhoenixVREngine::stopLight() {
+	_lightEffect.clear();
+}
+
 void PhoenixVREngine::scheduleTest(int idx) {
 	debug("schedule test %d for execution", idx);
 	_nextTest = idx;
@@ -1285,10 +1361,15 @@ void PhoenixVREngine::executeTest(int idx) {
 }
 
 void PhoenixVREngine::startTimer(float seconds, bool showTimer) {
+	startTimer(seconds, showTimer, Common::String());
+}
+
+void PhoenixVREngine::startTimer(float seconds, bool showTimer, const Common::String &warp) {
 	_timer = seconds;
 	_initialTimer = seconds;
 	_timerFlags = 5;
 	_showTimer = showTimer;
+	_timerWarp = warp;
 }
 
 void PhoenixVREngine::pauseTimer(bool pause, bool deactivate) {
@@ -1307,6 +1388,7 @@ void PhoenixVREngine::pauseTimer(bool pause, bool deactivate) {
 void PhoenixVREngine::killTimer() {
 	_timerFlags = 0;
 	_showTimer = false;
+	_timerWarp.clear();
 }
 
 void PhoenixVREngine::tickTimer(float dt) {
@@ -1322,8 +1404,12 @@ void PhoenixVREngine::tickTimer(float dt) {
 		if (_timerFlags & 4) {
 			if (_timer <= 0) {
 				debug("timer trigger");
+				Common::String timerWarp = _timerWarp;
 				killTimer();
-				scheduleTest(99);
+				if (!timerWarp.empty())
+					goToWarp(timerWarp);
+				else
+					scheduleTest(99);
 			}
 		}
 	}
@@ -1355,6 +1441,101 @@ void PhoenixVREngine::renderTimer() {
 	_screen->simpleBlitFrom(*timerFg, fgSrcRect, fgRect.origin());
 }
 
+void PhoenixVREngine::renderLightEffect() {
+	if (_lightEffect.empty() || _screen->w != 640 || _screen->h != 480)
+		return;
+
+	for (int y = 0; y != 480; ++y) {
+		for (int x = 0; x != 640; ++x) {
+			const uint32 effect = _lightEffect[y * 640 + x];
+			const uint alpha = (effect >> 16) & 0x1f;
+			if (alpha == 0)
+				continue;
+
+			const uint8 srcR = (((effect >> 11) & 0x1f) * 255) / 31;
+			const uint8 srcG = (((effect >> 5) & 0x3f) * 255) / 63;
+			const uint8 srcB = ((effect & 0x1f) * 255) / 31;
+			if (alpha == 31) {
+				_screen->setPixel(x, y, _screen->format.RGBToColor(srcR, srcG, srcB));
+				continue;
+			}
+
+			uint8 dstR, dstG, dstB;
+			_screen->format.colorToRGB(_screen->getPixel(x, y), dstR, dstG, dstB);
+			const uint8 outR = (dstR * (31 - alpha) + srcR * alpha) / 31;
+			const uint8 outG = (dstG * (31 - alpha) + srcG * alpha) / 31;
+			const uint8 outB = (dstB * (31 - alpha) + srcB * alpha) / 31;
+			_screen->setPixel(x, y, _screen->format.RGBToColor(outR, outG, outB));
+		}
+	}
+}
+
+void PhoenixVREngine::renderLensflare() {
+	if (!_lensflareActive)
+		return;
+
+	const float viewX = kPi2 - _angleY.angle();
+	const float viewY = _angleX.angle();
+	const float lensX = _lensflareX;
+	const float lensY = _lensflareY;
+	const float deltaX = lensX - viewX;
+	const float sinLensY = sinf(lensY);
+	const float cosLensY = cosf(lensY);
+	const float sinViewY = sinf(viewY);
+	const float cosViewY = cosf(viewY);
+
+	const float cameraX = sinLensY * sinf(deltaX);
+	const float cameraY = cosViewY * sinLensY * cosf(deltaX) - sinViewY * cosLensY;
+	const float cameraZ = sinViewY * sinLensY * cosf(deltaX) + cosViewY * cosLensY;
+	if (cameraZ <= 0.0f)
+		return;
+
+	const float scaleX = tanf(_fov / 2.0f);
+	const float scaleY = scaleX * _screen->h / _screen->w;
+	if (scaleX == 0.0f || scaleY == 0.0f)
+		return;
+
+	const float sourceX = _screenCenter.x + cameraX / cameraZ * _screenCenter.x / scaleX;
+	const float sourceY = _screenCenter.y - cameraY / cameraZ * _screenCenter.y / scaleY;
+	if (sourceX < 0.0f || sourceX >= _screen->w || sourceY < 0.0f || sourceY >= _screen->h)
+		return;
+
+	for (const Lens &lens : _lenses) {
+		if (lens.name.empty())
+			continue;
+		auto it = _loadedSprites.find(lens.name);
+		if (it == _loadedSprites.end() || !it->_value) {
+			debug("lensflare sprite %s not loaded", lens.name.c_str());
+			continue;
+		}
+
+		const Graphics::ManagedSurface &src = *it->_value;
+		const int dstX = static_cast<int>(sourceX + (_screenCenter.x - sourceX) * lens.scale);
+		const int dstY = static_cast<int>(sourceY + (_screenCenter.y - sourceY) * lens.scale);
+		const uint32 transparentColor = src.hasTransparentColor() ? src.getTransparentColor() : src.format.RGBToColor(0, 0, 0);
+
+		for (int y = 0; y != src.h; ++y) {
+			const int screenY = dstY + y;
+			if (screenY < 0 || screenY >= _screen->h)
+				continue;
+			for (int x = 0; x != src.w; ++x) {
+				const int screenX = dstX + x;
+				if (screenX < 0 || screenX >= _screen->w)
+					continue;
+
+				const uint32 srcColor = src.getPixel(x, y);
+				if (srcColor == transparentColor)
+					continue;
+
+				uint8 srcR, srcG, srcB, dstR, dstG, dstB;
+				src.format.colorToRGB(srcColor, srcR, srcG, srcB);
+				_screen->format.colorToRGB(_screen->getPixel(screenX, screenY), dstR, dstG, dstB);
+				_screen->setPixel(screenX, screenY, _screen->format.RGBToColor(CLIP<int>(dstR + srcR, 0, 255), CLIP<int>(dstG + srcG, 0, 255), CLIP<int>(dstB + srcB, 0, 255)));
+			}
+		}
+	}
+}
+
 void PhoenixVREngine::renderSprites() {
 	if (version() < 2)
 		return;
@@ -1373,6 +1554,8 @@ void PhoenixVREngine::renderSprites() {
 
 void PhoenixVREngine::renderVR(float dt) {
 	_vr.render(_screen, _angleX.angle(), _angleY.angle(), _fov, dt, _showRegions ? _regSet.get() : nullptr);
+	renderLightEffect();
+	renderLensflare();
 	renderSprites();
 	paintText(_rolloverText);
 	renderArchiveImages();
@@ -1711,9 +1894,6 @@ Common::Error PhoenixVREngine::run() {
 	_pixelFormat = g_system->getScreenFormat();
 	if (_pixelFormat.isCLUT8())
 		return Common::kUnsupportedColorMode;
-
-	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
-	SearchMan.addDirectory(gameDataDir, 0, 4);
 
 	_arn.reset(ARN::create());
 #ifdef USE_FREETYPE2

@@ -70,7 +70,7 @@ struct Goto_Level : public Command {
 struct Enter_Level : public Command {
 	Enter_Level(const Common::Array<Common::String> &args) {}
 	void exec(ExecutionContext &ctx) const override {
-		warning("enter level");
+		g_engine->enterLevel();
 	}
 };
 
@@ -282,19 +282,25 @@ struct Sprite_Screen : public Command {
 };
 
 struct Set_Lens : public Command {
-	Common::String index;
+	int index;
 	Common::String name;
-	Common::String unk;
-	Set_Lens(const Common::Array<Common::String> &args) : index(args[0]), name(args[1]), unk(args[2]) {}
+	float size;
+	Set_Lens(const Common::Array<Common::String> &args) : index(valueOf(args[0])), name(args[1]), size(atof(args[2].c_str())) {}
 	void exec(ExecutionContext &ctx) const override {
-		warning("set lens %s %s %s", index.c_str(), name.c_str(), unk.c_str());
+		g_engine->setLens(index, name, size);
 	}
 };
 
 struct Set_Lensflare : public Command {
-	Set_Lensflare(const Common::Array<Common::String> &args) {}
+	bool active;
+	float x;
+	float y;
+	Set_Lensflare(const Common::Array<Common::String> &args) : active(args.size() >= 2), x(active ? valueOf(args[0]) * kPi / 180.0f : 0.0f), y(active ? valueOf(args[1]) * kPi / 180.0f : 0.0f) {}
 	void exec(ExecutionContext &ctx) const override {
-		warning("set lensflare");
+		if (active)
+			g_engine->setLensflare(x, y);
+		else
+			g_engine->resetLensflare();
 	}
 };
 
@@ -302,14 +308,14 @@ struct Start_Light : public Command {
 	Common::String fx;
 	Start_Light(const Common::Array<Common::String> &args) : fx(args[0]) {}
 	void exec(ExecutionContext &ctx) const override {
-		warning("start light %s", fx.c_str());
+		g_engine->startLight(fx);
 	}
 };
 
 struct Stop_Light : public Command {
 	Stop_Light(const Common::Array<Common::String> &args) {}
 	void exec(ExecutionContext &ctx) const override {
-		warning("stop light");
+		g_engine->stopLight();
 	}
 };
 
@@ -363,9 +369,10 @@ struct Load_Slot : public Command {
 struct Start_Timer : public Command {
 	float seconds;
 	Common::String warp;
-	Start_Timer(const Common::Array<Common::String> &args) : seconds(atof(args[0].c_str())), warp(args[1].c_str()) {}
+	bool showTimer;
+	Start_Timer(const Common::Array<Common::String> &args) : seconds(atof(args[0].c_str())), warp(args[1].c_str()), showTimer(args.size() < 3 || args[2] == "_SHOW") {}
 	void exec(ExecutionContext &ctx) const override {
-		warning("start timer %g %s", seconds, warp.c_str());
+		g_engine->startTimer(seconds, showTimer, warp);
 	}
 };
 
@@ -380,7 +387,7 @@ struct Limit_View : public Command {
 	Common::String angle1, angle2;
 	Limit_View(const Common::Array<Common::String> &args) : angle1(args[0]), angle2(args[1]) {}
 	void exec(ExecutionContext &ctx) const override {
-		warning("limit view %d %d", valueOf(angle1), valueOf(angle2));
+		g_engine->limitView(valueOf(angle1) * kPi / 180.0f, valueOf(angle2) * kPi / 180.0f);
 	}
 };
 
@@ -388,7 +395,7 @@ struct Set_View_Angle : public Command {
 	Common::String angle1, angle2;
 	Set_View_Angle(const Common::Array<Common::String> &args) : angle1(args[0]), angle2(args[1]) {}
 	void exec(ExecutionContext &ctx) const override {
-		warning("set view angle %d %d", valueOf(angle1), valueOf(angle2));
+		g_engine->setAngle(valueOf(angle1) * kPi / 180.0f, valueOf(angle2) * kPi / 180.0f);
 	}
 };
 
@@ -407,6 +414,54 @@ struct Quit_URL : public Command {
 		debug("quit url: %s", name.c_str());
 	}
 };
+
+struct UnhandledV2Command : public Command {
+	Common::String name;
+
+	UnhandledV2Command(const Common::String &cmd) : name(cmd) {}
+	void exec(ExecutionContext &ctx) const override {
+		warning("unimplemented v2 command %s", name.c_str());
+	}
+};
+
+static const char *const kUnhandledV2Commands[] = {
+	"AND",
+	"BREAK",
+	"CONTINUE_GAME",
+	"CURSOR_CLOSE",
+	"CURSOR_MODE",
+	"CURSOR_SET",
+	"CURSOR_SET_SPEED",
+	"DELAY_3DSOUND",
+	"DIV",
+	"END",
+	"END_SCRIPT",
+	"EVENT",
+	"GET_MOUSE_BUTTON",
+	"GOTO_REF",
+	"INTERPOLATE_VIEW",
+	"MUL",
+	"NOT",
+	"OR",
+	"PLAY_MUSIC",
+	"QUIT_SCRIPT",
+	"SET_EFFECTS_MODE",
+	"SET_FILTER_KEY",
+	"SET_FILTER_MODE",
+	"SET_MOUSE_BUTTON_MASK",
+	"SET_MUSIC_VOLUME",
+	"SET_VIEW_CLIP",
+	"SPRITES_CLICK_MODE",
+	"SPRITE_CURSOR",
+	"SPRITE_CURSOR_MODE",
+	"SPRITE_SCREEN_MODE",
+	"SPRITE_WARP",
+	"SPRITE_WARP_MODE",
+	"STOP_ANIMBLOC",
+	"STOP_DELAY",
+	"STOP_MUSIC",
+	"UNDERWATER_EFFECT",
+	"ZONES_CLICK_MODE"};
 
 } // namespace
 
@@ -454,6 +509,10 @@ struct Quit_URL : public Command {
 
 CommandPtr createV2Command(const Common::String &cmd, const Common::Array<Common::String> &args, int lineno) {
 	COMMAND_LIST(ADD_COMMAND)
+	for (uint i = 0; i < ARRAYSIZE(kUnhandledV2Commands); ++i) {
+		if (cmd.equalsIgnoreCase(kUnhandledV2Commands[i]))
+			return CommandPtr(new UnhandledV2Command(cmd));
+	}
 	error("unhandled command %s at line %d", cmd.c_str(), lineno);
 }
 
