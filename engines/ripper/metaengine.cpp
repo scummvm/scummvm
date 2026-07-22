@@ -20,11 +20,34 @@
 
 #include "base/plugins.h"
 
+#include "common/translation.h"
+
+#include "ripper/detection.h"
 #include "ripper/metaengine.h"
 #include "ripper/ripper.h"
 
+static const ADExtraGuiOptionsMap gameGuiOptions[] = {
+	{
+		GAMEOPTION_SKIP_INTRO,
+		{
+			_s("Skip intro video"),
+			_s("Skip the startup logo video before loading a saved game or showing the main menu."),
+			"skip_intro",
+			false,
+			0,
+			0
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 const char *RipperMetaEngine::getName() const {
 	return "ripper";
+}
+
+const ADExtraGuiOptionsMap *RipperMetaEngine::getAdvancedExtraGuiOptions() const {
+	return gameGuiOptions;
 }
 
 Common::Error RipperMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

@@ -12,7 +12,9 @@
   mixer, and resource links remain non-owning dependencies.
 - The game coordinator defaults to `ripper.run`, initializes resources, and
   plays `LOGO.AVI` with `PollPresentationEscOrSpaceCommand` at `0x49039`, so
-  Escape skips the presentation and Space pauses it.
+  Escape skips the presentation and Space pauses it. The ScummVM game option
+  `skip_intro` bypasses only this startup presentation; saved-game restoration
+  and the front-end loop retain their normal ordering.
 - `RunStartupFrontEndLoop` at `0x10778` loops `RIP_OPEN.SMK` as the animated
   menu background. It creates five UI controls from the rectangle table at
   `0x1001b`, uses cursor 14 normally and cursor 16 over a control, and maps

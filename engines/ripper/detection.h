@@ -23,6 +23,8 @@
 
 #include "engines/advancedDetector.h"
 
+#define GAMEOPTION_SKIP_INTRO GUIO_GAMEOPTIONS1
+
 namespace Ripper {
 
 enum RipperDebugChannels {
