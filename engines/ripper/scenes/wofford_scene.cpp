@@ -45,7 +45,7 @@ static const char *const kAudioCues[4] = {
 static const uint kDefaultCursor = 14;
 static const uint kChoiceCursor = 16;
 static const uint kBusyCursor = 19;
-static const uint kLoopStartFrame = 15;
+static const uint kLoopStartFrame = 1;
 static const uint kChoiceArmFrame = 20;
 // SetAudioTriggerHandlePackedVolume receives stereo value 0x70a270a2 at
 // 0x2ad75; each 0x70a2 channel rounds to 88% of the signed 16-bit range.
