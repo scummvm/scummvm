@@ -56,6 +56,7 @@ private:
 	Common::Queue<Common::Event> _pendingEvents;
 	Common::Queue<Common::Event> _pendingKeyEvents;
 	int16 _hotkey = Common::KEYCODE_INVALID;
+	bool _ignoreKeyUp = false;
 
 	/**
 	 * Checks for timers' expiration
@@ -150,6 +151,12 @@ public:
 
 	void setHotKey(Common::KeyCode key) { _hotkey = key; }
 	int16 getSwitchCode();
+
+	/**
+	 * Activate a filter that drops key-up events until the next
+	 * key-down.
+	 */
+	void ignoreNextKeyUp() { _ignoreKeyUp = true; }
 };
 
 extern EventsManager *g_events;
