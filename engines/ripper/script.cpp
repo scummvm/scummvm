@@ -1234,6 +1234,20 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 	return true;
 }
 
+bool ScriptManager::acceptCyberRuntimeExit(int result, const CompiledScript &script,
+		const char *callbackPhase) const {
+	if (result != -4 || !_runtime.cyberActive || !_runtime.cyberExitRequested)
+		return false;
+
+	// DispatchSceneEntryAction at 0x36892 returns -4 for action 9999, and
+	// RunSceneScriptLoop at 0x124e9 treats it as a normal nested-runtime exit
+	// regardless of which active-frame callback produced it.
+	debugC(1, kDebugCyber,
+		"Ripper: accepted Cyber runtime exit script='%s' frame=%u callback='%s' result=%d",
+		script.getMemberName().c_str(), _runtime.activeFrame, callbackPhase, result);
+	return true;
+}
+
 bool ScriptManager::runStartupPath() {
 	if (_startup.getFrames().empty() || _runtime.activeScript.getFrames().empty())
 		return false;
@@ -1390,6 +1404,8 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 		uint callbackFrame = _runtime.activeFrame;
 		if (!executeCallback(_runtime.activeScript, frame.enterCallbackOffset, result, &callbackFrame))
 			return false;
+		if (acceptCyberRuntimeExit(result, _runtime.activeScript, "enter"))
+			return true;
 		if (result == -3 && !_runtime.pendingSceneMember.empty())
 			return performPendingSceneTransition();
 		if (result == -2) {
@@ -1410,7 +1426,11 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 				beginBa0InteractionWait(label, frame.interactionCount);
 			if (frame.idleCallbackOffset != 0 && _dialogue->hasChoices()) {
 				int idleResult = 0;
-				if (!executeCallback(_runtime.activeScript, frame.idleCallbackOffset, idleResult) || idleResult != 0) {
+				if (!executeCallback(_runtime.activeScript, frame.idleCallbackOffset, idleResult))
+					return false;
+				if (acceptCyberRuntimeExit(idleResult, _runtime.activeScript, "idle"))
+					return true;
+				if (idleResult != 0) {
 					warning("Ripper: dialogue idle callback for frame '%s' returned %d",
 						label.c_str(), idleResult);
 					return false;
@@ -1466,6 +1486,8 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 				debugC(2, kDebugScene,
 					"Ripper: scene text idle callback completed frame='%s' result=%d nextFrame=%u mediaCommand=0x%04x",
 					label.c_str(), result, callbackFrame, idleCommand);
+				if (acceptCyberRuntimeExit(result, _runtime.activeScript, "media idle"))
+					return true;
 				if (result == -2) {
 					_engine->getMedia()->resetSceneAudioTriggers();
 					nextFrame = callbackFrame;
@@ -1494,6 +1516,8 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 		callbackFrame = _runtime.activeFrame;
 		if (!executeCallback(_runtime.activeScript, frame.exitCallbackOffset, result, &callbackFrame))
 			return false;
+		if (acceptCyberRuntimeExit(result, _runtime.activeScript, "exit"))
+			return true;
 		if (result == -3 && !_runtime.pendingSceneMember.empty())
 			return performPendingSceneTransition();
 		if (result != -2) {
@@ -1565,7 +1589,7 @@ bool ScriptManager::serviceCyberKeyboardCommand() {
 	_runtime.awaitingInteraction = false;
 	_engine->getCursor()->setVisible(false);
 	_runtime.hoveredInteraction = -1;
-	if (result == -4 && _runtime.cyberExitRequested)
+	if (acceptCyberRuntimeExit(result, _runtime.activeScript, "keyboard interaction"))
 		return true;
 	if (result != -2) {
 		warning("Ripper: Cyber keyboard interaction=%u returned unexpected result %d",
@@ -1731,7 +1755,7 @@ bool ScriptManager::serviceScene() {
 			_runtime.hoveredInteraction = -1;
 			return performPendingSceneTransition();
 		}
-		if (result == -4 && _runtime.cyberActive && _runtime.cyberExitRequested) {
+		if (acceptCyberRuntimeExit(result, _runtime.activeScript, "pointer interaction")) {
 			_runtime.awaitingInteraction = false;
 			_engine->getCursor()->setVisible(false);
 			_runtime.hoveredInteraction = -1;

@@ -1027,6 +1027,11 @@
   `ScriptManager` retains that callback interpreter, while
   `SceneActionDispatcher` owns opcode `0x18`'s action routing to match the
   separate `DispatchSceneEntryAction` boundary at `0x36892`.
+- Scene action 9999 makes `DispatchSceneEntryAction` return control code `-4`.
+  `RunSceneScriptLoop` at `0x124e9` treats that code as a normal runtime exit
+  whether it comes from an interaction or an automatic frame callback. Cyber
+  programs use both forms: their nested snapshot is restored instead of
+  reporting the terminating callback as a script failure.
 - The callback handler table at `0x84040` maps opcode `0x15` to
   `HandleSceneEntryPushChoiceRecordAndStepPrompt` at `0x15085`, opcode `0x16`
   to `HandleSceneEntryPushFrameChoiceOnPlayedStateCondition` at `0x150ea`, and
