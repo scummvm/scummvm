@@ -95,6 +95,9 @@ static const ADGameDescription gameDescriptions[] = {
 class ChamberMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
 	ChamberMetaEngineDetection() : AdvancedMetaEngineDetection(Chamber::gameDescriptions, Chamber::ChamberGames) {
+		// Use kADFlagUseExtraAsHint to distinguish between the CGA and EGA versions
+		// when both are present in the same directory (e.g. the Steam release)
+		_flags = kADFlagUseExtraAsHint;
 	}
 
 	const char *getName() const override {
