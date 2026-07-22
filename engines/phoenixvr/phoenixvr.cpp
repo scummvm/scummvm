@@ -1295,10 +1295,6 @@ void PhoenixVREngine::spriteScreen(int index, const Common::String &name, int x,
 	sprite.y = y;
 }
 
-void PhoenixVREngine::enterLevel() {
-	enterScript();
-}
-
 void PhoenixVREngine::setLens(int index, const Common::String &name, float size) {
 	debug("set lens %d %s %g", index, name.c_str(), size);
 	if (index < 0 || index >= 16)
@@ -2143,6 +2139,21 @@ void PhoenixVREngine::pauseEngineIntern(bool pause) {
 
 bool PhoenixVREngine::testSaveSlot(int idx) const {
 	return _saveFileMan->exists(getSaveStateName(idx));
+}
+
+void PhoenixVREngine::loadSaveCardSprite(int idx, const Common::String &name) {
+	auto &sprite = _loadedSprites[name];
+	sprite.reset();
+	Common::ScopedPtr<Common::InSaveFile> slot(_saveFileMan->openForLoading(getSaveStateName(idx)));
+	if (!slot)
+		return;
+
+	auto state = GameState::load(*slot);
+	auto *src = state.getThumbnail(_pixelFormat);
+	sprite.reset(new Graphics::ManagedSurface(src->w, src->h, src->format));
+	sprite->copyFrom(*src);
+	src->free();
+	delete src;
 }
 
 void PhoenixVREngine::captureContext() {

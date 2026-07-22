@@ -201,6 +201,7 @@ public:
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	void drawSlot(int idx, int face, int x, int y);
 	void drawSaveCard(int idx);
+	void loadSaveCardSprite(int idx, const Common::String &name);
 	void captureContext();
 
 	void setContextLabel(const Common::String &contextLabel) {
@@ -239,7 +240,6 @@ public:
 
 	void spriteLoad(const Common::String &name, const Common::String &path);
 	void spriteScreen(int index, const Common::String &name, int x, int y);
-	void enterLevel();
 	void setLens(int index, const Common::String &name, float size);
 	void resetLensflare();
 	void setLensflare(float x, float y);

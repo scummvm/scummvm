@@ -70,7 +70,10 @@ struct Goto_Level : public Command {
 struct Enter_Level : public Command {
 	Enter_Level(const Common::Array<Common::String> &args) {}
 	void exec(ExecutionContext &ctx) const override {
-		g_engine->enterLevel();
+		bool loaded = g_engine->enterScript();
+		debug("enter level, loaded: %d", loaded);
+		if (loaded)
+			ctx.running = false;
 	}
 };
 
@@ -86,7 +89,11 @@ struct Save_Slot : public Command {
 	Common::String name;
 	Save_Slot(const Common::Array<Common::String> &args) : index(atoi(args[0].c_str())), name(args[1]) {}
 	void exec(ExecutionContext &ctx) const override {
-		warning("save slot %d: %s", index, name.c_str());
+		debug("save slot %d: %s", index, name.c_str());
+		g_engine->captureContext();
+		auto err = g_engine->saveGameState(index, name);
+		if (err.getCode() != Common::kNoError)
+			warning("saving to slot %d failed: %s / %d", index, err.getDesc().c_str(), (int)err.getCode());
 	}
 };
 
@@ -351,19 +358,23 @@ struct Test_Slot : public Command {
 	Common::String var;
 	Test_Slot(const Common::Array<Common::String> &args) : index(atoi(args[0].c_str())), sprite(args[1]), var(args[2]) {}
 	void exec(ExecutionContext &ctx) const override {
-		debug("test slot %d %s %s", index, sprite.c_str(), var.c_str());
-		g_engine->testSaveSlot(index);
+		auto value = g_engine->testSaveSlot(index);
+		debug("test slot %d %s %s, slot exists: %d", index, sprite.c_str(), var.c_str(), value);
+		g_engine->setVariable(var, value);
+		if (!value)
+			return;
+		g_engine->loadSaveCardSprite(index, sprite);
 	}
 };
 
 struct Load_Slot : public Command {
-	Common::String slot;
-	Load_Slot(const Common::Array<Common::String> &args) : slot(args[0]) {}
+	int slot;
+	Load_Slot(const Common::Array<Common::String> &args) : slot(atoi(args[0].c_str())) {}
 	void exec(ExecutionContext &ctx) const override {
-		auto index = valueOf(slot);
-		auto err = g_engine->loadGameState(index);
+		debug("load slot %d", slot);
+		auto err = g_engine->loadGameState(slot);
 		if (err.getCode() != Common::ErrorCode::kNoError)
-			error("loading state failed %d", index);
+			error("loading state failed %d", slot);
 	}
 };
 
