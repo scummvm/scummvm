@@ -190,6 +190,11 @@ bool ScummEngine::openFile(BaseScummFile &file, const Common::Path &filename, bo
 		result = file.open(filename);
 	}
 
+	if (!result && _game.id == GID_REBEL1 && _game.platform == Common::kPlatformMacintosh) {
+		file.close();
+		result = file.open(filename.append(";1"));
+	}
+
 	return result;
 }
 

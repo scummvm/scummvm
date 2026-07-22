@@ -50,6 +50,7 @@ static const char *const directoryGlobs[] = {
 	"MacOS",    // Mac Steam versions
 	"Resources", // Mac SE/Remastered versions
 	"OPEN",     // 3DO version of rebel1
+	"Rebel Assault PowerPC", // Mac version of rebel1
 	0
 };
 
@@ -503,6 +504,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "ft", "Vollgas Demo Data", kGenUnchanged, Common::DE_DEU, Common::kPlatformMacintosh, "Demo" },
 
 	{ "rebel1", "ASSAULT.EXE", kGenUnchanged, UNK_LANG, Common::kPlatformDOS, "" },
+	{ "rebel1", "Rebel Assault", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, "" },
 	{ "rebel1", "O1LOGO.AAA", kGenUnchanged, UNK_LANG, Common::kPlatform3DO, "" },
 	{ "rebel1", "SUB_AP.BIN", kGenUnchanged, UNK_LANG, Common::kPlatformSegaCD, "" },
 

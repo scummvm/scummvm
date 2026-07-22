@@ -1054,6 +1054,9 @@ Common::Error ScummEngine::init() {
 		SearchMan.addSubDirectoryMatching(gameDataDir, "video");
 		SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 	}
+
+	if (_game.id == GID_REBEL1 && _game.platform == Common::kPlatformMacintosh)
+		SearchMan.addSubDirectoryMatching(gameDataDir, "REBEL", 0, 2);
 #endif
 
 	// Extra directories needed for the Steam versions
@@ -1262,7 +1265,7 @@ Common::Error ScummEngine::init() {
 		Common::MacResManager resource;
 
 		// Indy3 and LOOM *must* use the _macScreen
-		if (isUsingOriginalGUI() || _game.version == 3) {
+		if (_game.id != GID_REBEL1 && (isUsingOriginalGUI() || _game.version == 3)) {
 			_macScreen = new Graphics::Surface();
 			_macScreen->create(640, _useMacScreenCorrectHeight ? 480 : 400, Graphics::PixelFormat::createFormatCLUT8());
 		}

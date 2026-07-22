@@ -485,6 +485,20 @@ static void composeFileHashMap(DescMap &fileMD5Map, const Common::FSList &fslist
 	}
 }
 
+static bool computeRebel1MacResourceForkMD5(const DetectorDesc &desc, const Common::String &baseFile,
+		Common::String &md5, int64 &size) {
+	Common::SearchSet directory;
+	directory.addDirectory(desc.node.getParent());
+	Common::MacResManager macResMan;
+
+	if (!macResMan.open(Common::Path(baseFile), directory) || !macResMan.hasResFork())
+		return false;
+
+	md5 = macResMan.computeResForkMD5AsString(kMD5FileSizeLimit);
+	size = macResMan.getResForkDataSize();
+	return !md5.empty();
+}
+
 static void detectGames(const Common::FSList &fslist, Common::List<DetectorResult> &results, const char *gameid) {
 	DescMap fileMD5Map;
 	DetectorResult dr;
@@ -504,10 +518,15 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 		// exist in the directory we are looking at, we can skip to the next
 		// one immediately.
 		Common::String file(generateFilenameForDetection(gfp->pattern, gfp->genMethod, gfp->platform));
+		const Common::String baseFile = file;
 		Common::Platform platform = gfp->platform;
+		const bool isRebel1Mac = !scumm_stricmp(gfp->gameid, "rebel1") && platform == Common::kPlatformMacintosh;
 		if (!fileMD5Map.contains(file)) {
 			if (fileMD5Map.contains(file + ".bin") && (platform == Common::Platform::kPlatformMacintosh || platform == Common::Platform::kPlatformUnknown)) {
 				file += ".bin";
+				platform = Common::Platform::kPlatformMacintosh;
+			} else if (isRebel1Mac && fileMD5Map.contains(file + ".rsrc")) {
+				file += ".rsrc";
 				platform = Common::Platform::kPlatformMacintosh;
 			} else
 				continue;
@@ -572,6 +591,20 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 						}
 						delete dataStream;
 					}
+
+					if (!d.md5Entry && isRebel1Mac) {
+						Common::String resourceMD5;
+						int64 resourceSize;
+						if (computeRebel1MacResourceForkMD5(d, baseFile, resourceMD5, resourceSize)) {
+							const MD5Table *resourceMD5Entry = findInMD5Table(resourceMD5.c_str());
+							if (resourceMD5Entry) {
+								d.md5 = resourceMD5;
+								d.md5Entry = resourceMD5Entry;
+								filesize = resourceSize;
+								platform = Common::Platform::kPlatformMacintosh;
+							}
+						}
+					}
 				}
 
 				dr.md5 = d.md5;
@@ -582,7 +615,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 
 					// Print some debug info.
 					debugC(1, kDebugGlobalDetection, "SCUMM detector found matching file '%s' with MD5 %s, size %" PRId64 "\n",
-						file.c_str(), md5str.c_str(), filesize);
+						file.c_str(), d.md5.c_str(), filesize);
 
 					// Sanity check: We *should* have found a matching gameid/variant at this point.
 					// If not, we may have #ifdef'ed the entry out in our detection_tables.h, because we

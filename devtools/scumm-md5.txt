@@ -457,6 +457,8 @@ rebel1	Star Wars: Rebel Assault
 	b978b92affdfe5744711ca0cb3548720	213115	de	DOS	-	v1.7	-	-
 	bb1d02798011e5906c4c726be4d63544	1908	en	3DO	-	-	-	-
 	d77be4d8a3e609092703508e09f1ed5d	132904	ja	SEGA	-	-	-	-
+	62543831f454b46ef8d0f50b9e1c063c	560453	en	Mac	-	-	68k application	-
+	8e1272e5c12ac35e29e3e4c50ec4a525	526296	en	Mac	-	-	PowerPC application	-
 
 rebel2	Star Wars: Rebel Assault II: The Hidden Empire
 	6b73a08c535c0544785d73ff812908a0	9430	All	DOS	-	-	-	-
