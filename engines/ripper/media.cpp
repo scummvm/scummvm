@@ -55,6 +55,54 @@ static const uint16 kHelpCommand = 0x3b00;
 static const uint kAutoPacketizedDisplayScale = 0;
 static const uint kPaletteFadeStepDelayMs = 16;
 
+class RipperSmackerDecoder : public Video::SmackerDecoder {
+public:
+	RipperSmackerDecoder() : _ripperFirstFrameStart(0) {}
+
+	bool loadStream(Common::SeekableReadStream *stream) override {
+		if (!Video::SmackerDecoder::loadStream(stream))
+			return false;
+		_ripperFirstFrameStart = _fileStream->pos();
+		return true;
+	}
+
+	// The retail decoder's frame seek reparses only the requested packet over
+	// the current surface. SmackerDecoder::forceSeekToFrame() reconstructs a
+	// wider ten-frame window, which changes the intended loop delta chain.
+	const Graphics::Surface *seekToFramePreservingSurface(uint frame) {
+		if (!isVideoLoaded() || frame >= getFrameCount())
+			return nullptr;
+
+		SmackerVideoTrack *videoTrack = static_cast<SmackerVideoTrack *>(getTrack(0));
+		if (!videoTrack || !videoTrack->rewind())
+			return nullptr;
+
+		uint32 offset = 0;
+		for (uint i = 0; i < frame; ++i) {
+			videoTrack->increaseCurFrame();
+			offset += _frameSizes[i] & ~3;
+		}
+		if (!_fileStream->seek(_ripperFirstFrameStart + offset, SEEK_SET))
+			return nullptr;
+
+		stopAudio();
+		findNextVideoTrack();
+		const Graphics::Surface *surface = decodeNextFrame();
+		if (!surface || getCurFrame() != (int)frame)
+			return nullptr;
+
+		_lastTimeChange = videoTrack->getFrameTime(frame);
+		if (isPlaying())
+			_startTime = g_system->getMillis() -
+				(_lastTimeChange.msecs() / getRate()).toInt();
+		resetPauseStartTime();
+		return surface;
+	}
+
+private:
+	uint32 _ripperFirstFrameStart;
+};
+
 struct SavedDisplayContext {
 	Common::Array<byte> pixels;
 	Common::Array<byte> palette;
@@ -258,7 +306,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		*advanceSegment = false;
 	if (sequenceCommand)
 		*sequenceCommand = 0;
-	Video::SmackerDecoder decoder;
+	RipperSmackerDecoder decoder;
 	if (!decoder.loadStream(stream)) {
 		warning("Ripper: invalid Smacker stream '%s'", name.c_str());
 		return false;
@@ -503,7 +551,11 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				completed = false;
 				break;
 			}
-			const Graphics::Surface *frame = decoder.forceSeekToFrame(loopStartFrame - 1);
+			// SeekSmackerPlaybackFrame at 0x50a88 only repositions the packet
+			// stream and frame index. It deliberately retains the final decoded
+			// surface so the loop-start delta frame is applied over the loop end.
+			const Graphics::Surface *frame =
+				decoder.seekToFramePreservingSurface(loopStartFrame - 1);
 			if (!frame) {
 				warning("Ripper: could not seek Smacker '%s' to loop start frame=%u",
 					name.c_str(), loopStartFrame);
@@ -513,7 +565,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			presentFrame(frame, true);
 			++presentedFrames;
 			debugC(3, kDebugVideo,
-				"Ripper: looped interactive Smacker '%s' to frame=%u",
+				"Ripper: looped interactive Smacker '%s' to frame=%u preserving decoded surface",
 				name.c_str(), loopStartFrame);
 			if (finishSequenceFramePresentation(loopStartFrame))
 				break;
@@ -615,7 +667,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 						// active decoder at frame 46 and resumes from frame 15. Keeping
 						// this decoder alive preserves its delta surface and palette.
 						const Graphics::Surface *loopFrame =
-							decoder.forceSeekToFrame(boundedLoopStartFrame);
+							decoder.seekToFramePreservingSurface(boundedLoopStartFrame);
 						if (!loopFrame) {
 							warning("Ripper: could not loop bounded Smacker '%s' to frame=%u",
 								name.c_str(), boundedLoopStartFrame);
@@ -1087,6 +1139,19 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path) {
 
 bool MediaPlayer::playSoundEffect(const Common::String &path, Audio::SoundHandle &handle,
 		uint volumePercent, bool loop) {
+	return playAudioClip(path, handle, Audio::Mixer::kSFXSoundType,
+		volumePercent, loop, "sound effect");
+}
+
+bool MediaPlayer::playVoiceClip(const Common::String &path, Audio::SoundHandle &handle,
+		uint volumePercent) {
+	return playAudioClip(path, handle, Audio::Mixer::kSpeechSoundType,
+		volumePercent, false, "voice clip");
+}
+
+bool MediaPlayer::playAudioClip(const Common::String &path, Audio::SoundHandle &handle,
+		Audio::Mixer::SoundType soundType, uint volumePercent, bool loop,
+		const char *description) {
 	Common::SeekableReadStream *audioStream = nullptr;
 	Common::String source;
 	Common::File *file = new Common::File();
@@ -1102,8 +1167,8 @@ bool MediaPlayer::playSoundEffect(const Common::String &path, Audio::SoundHandle
 		}
 	}
 	if (!audioStream) {
-		warning("Ripper: could not open sound effect '%s' from the filesystem or sound library",
-			path.c_str());
+		warning("Ripper: could not open %s '%s' from the filesystem or sound library",
+			description, path.c_str());
 		return false;
 	}
 
@@ -1115,10 +1180,10 @@ bool MediaPlayer::playSoundEffect(const Common::String &path, Audio::SoundHandle
 	Audio::AudioStream *playbackStream = stream;
 	if (loop)
 		playbackStream = Audio::makeLoopingAudioStream(stream, 0);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, playbackStream, -1, volume);
+	_mixer->playStream(soundType, &handle, playbackStream, -1, volume);
 	debugC(2, kDebugAudio,
-		"Ripper: started sound effect '%s' source=%s volume=%u loop=%d",
-		path.c_str(), source.c_str(), volumePercent, loop);
+		"Ripper: started %s '%s' source=%s volume=%u loop=%d mixerType=%d",
+		description, path.c_str(), source.c_str(), volumePercent, loop, soundType);
 	return true;
 }
 
