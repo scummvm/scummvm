@@ -55,6 +55,7 @@ struct Go_Back : public Command {
 	Go_Back(const Common::Array<Common::String> &args) {}
 	void exec(ExecutionContext &ctx) const override {
 		g_engine->returnToWarp();
+		ctx.running = false;
 	}
 };
 
