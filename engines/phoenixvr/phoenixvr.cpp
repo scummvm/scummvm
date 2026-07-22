@@ -830,6 +830,10 @@ void PhoenixVREngine::goToLevel(const Common::String &name) {
 
 void PhoenixVREngine::returnToWarp() {
 	if (version() == 2) {
+		if (_prevWarpHistory.empty()) {
+			warning("return: empty history stack");
+			return;
+		}
 		_nextWarp = _prevWarpHistory.back();
 		_prevWarpHistory.pop_back();
 	} else {
