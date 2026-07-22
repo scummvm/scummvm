@@ -1009,8 +1009,9 @@ void InsaneRebel1::drawMenuTitleText(byte *dst, int pitch, int width, int height
 
 void InsaneRebel1::renderHighScoresOverlay(byte *dst, int pitch, int width, int height) {
 	// entries fade in one per frame. We show all immediately.
-	const int titleW = getMenuTalkTextWidth("TOP PILOTS");
-	drawMenuTalkText(dst, pitch, width, height, getRebel1MenuCenteredX(titleW), 10, "TOP PILOTS");
+	const char *title = uiStr(kR1StrTopPilots);
+	const int titleW = getMenuTalkTextWidth(title);
+	drawMenuTalkText(dst, pitch, width, height, getRebel1MenuCenteredX(titleW), 10, title);
 
 	for (int i = 0; i < kHighScoreCount; i++) {
 		const int y = 25 + i * 14;
@@ -1029,26 +1030,24 @@ void InsaneRebel1::renderOptionsOverlay(byte *dst, int pitch, int width, int hei
 	_optTextEnabled = ConfMan.getBool("subtitles");
 	_optVolume = CLIP<int>(ConfMan.getInt("music_volume") / 2, 0, 127);
 
-	const char *kDiffNames[3] = { "EASY", "NORMAL", "HARD" };
-
-	const int titleW = getFontBankStringWidth("GAME OPTIONS");
-	drawMenuTitleText(dst, pitch, width, height, getRebel1MenuCenteredX(titleW), 15, "GAME OPTIONS");
+	const char *title = uiStr(kR1StrOptionsTitle);
+	const int titleW = getFontBankStringWidth(title);
+	drawMenuTitleText(dst, pitch, width, height, getRebel1MenuCenteredX(titleW), 15, title);
 
 	// Build dynamic option strings for each row
-	char diffLine[64], volLine[64];
-	Common::sprintf_s(diffLine, "DIFFICULTY IS %s", kDiffNames[CLIP(_difficulty, 0, 2)]);
-	Common::sprintf_s(volLine, "VOLUME AT %d PERCENT", (_optVolume * 100) / 127);
+	char volLine[64];
+	Common::sprintf_s(volLine, uiStr(kR1StrOptVolumeFmt), (_optVolume * 100) / 127);
 
 	const char *optItems[kOptionsItemCount] = {
-		"EXIT MENU",
-		_optRookieOneFemale ? "ROOKIE1 IS FEMALE" : "ROOKIE1 IS MALE",
-		_optMusicEnabled  ? "MUSIC IS ON"             : "MUSIC IS OFF",
-		_optSfxEnabled    ? "SFX AND VOICE ARE ON"    : "SFX AND VOICE ARE OFF",
-		_optTextEnabled   ? "DIALOGUE TEXT IS ON"     : "DIALOGUE TEXT IS OFF",
-		_optControlsYFlip ? "Y AXIS IS INVERTED"      : "Y AXIS IS NORMAL",
+		uiStr(kR1StrOptExitMenu),
+		uiStr(_optRookieOneFemale ? kR1StrOptRookieFemale : kR1StrOptRookieMale),
+		uiStr(_optMusicEnabled  ? kR1StrOptMusicOn : kR1StrOptMusicOff),
+		uiStr(_optSfxEnabled    ? kR1StrOptSfxOn   : kR1StrOptSfxOff),
+		uiStr(_optTextEnabled   ? kR1StrOptTextOn  : kR1StrOptTextOff),
+		uiStr(_optControlsYFlip ? kR1StrOptYFlipped : kR1StrOptYNormal),
 		_optRapidFire     ? "RAPID FIRE IS ON"        : "RAPID FIRE IS OFF",
 		volLine,
-		diffLine
+		uiStr(kR1StrOptDiffEasy + CLIP(_difficulty, 0, 2))
 	};
 
 	for (int i = 0; i < kOptionsItemCount; i++) {
@@ -1114,27 +1113,28 @@ void InsaneRebel1::renderLevelSelectOverlay(byte *dst, int pitch, int width, int
 }
 
 void InsaneRebel1::renderMainMenuItems(byte *dst, int pitch, int width, int height) {
-	const char *const kMenuItems[kRA1MainMenuItemCount] = {
-		"START NEW GAME",
-		"GAME OPTIONS",
-		"ENTER PASSCODE",
+	const char *kMenuItems[kRA1MainMenuItemCount] = {
+		uiStr(kR1StrMenuNewGame),
+		uiStr(kR1StrMenuGameOptions),
+		uiStr(kR1StrMenuEnterPasscode),
 		"LEVEL SELECT",
-		"CONTINUE DEMO",
-		"EXIT TO DOS"
+		uiStr(kR1StrMenuContinueDemo),
+		uiStr(kR1StrMenuExitToDos)
 	};
-	const char *const kMenuItemsLocked[kRA1MainMenuItemCount - 1] = {
-		"START NEW GAME",
-		"GAME OPTIONS",
-		"ENTER PASSCODE",
-		"CONTINUE DEMO",
-		"EXIT TO DOS"
+	const char *kMenuItemsLocked[kRA1MainMenuItemCount - 1] = {
+		uiStr(kR1StrMenuNewGame),
+		uiStr(kR1StrMenuGameOptions),
+		uiStr(kR1StrMenuEnterPasscode),
+		uiStr(kR1StrMenuContinueDemo),
+		uiStr(kR1StrMenuExitToDos)
 	};
 	const char *const *menuItems = _unlockAllLevels ? kMenuItems : kMenuItemsLocked;
 	const int mainMenuItemCount = getMainMenuItemCount();
 
-	const int titleW = getFontBankStringWidth("MAIN MENU");
+	const char *menuTitle = uiStr(kR1StrMainMenuTitle);
+	const int titleW = getFontBankStringWidth(menuTitle);
 	const int titleX = getRebel1MenuCenteredX(titleW);
-	drawMenuTitleText(dst, pitch, width, height, titleX, 30, "MAIN MENU");
+	drawMenuTitleText(dst, pitch, width, height, titleX, 30, menuTitle);
 
 	for (int i = 0; i < mainMenuItemCount; i++) {
 		const int textW = getMenuTalkTextWidth(menuItems[i]);
@@ -1194,13 +1194,13 @@ void InsaneRebel1::renderTextEntryOverlay(byte *dst, int pitch, int width, int h
 	};
 
 	if (_textEntryPasscodeMode) {
-		drawCenteredTalkText(0x4b, "ENTER PASSCODE");
+		drawCenteredTalkText(0x4b, uiStr(kR1StrEnterPasscodeTitle));
 		drawCenteredTalkText(0x5f, _textEntryBuffer);
 	} else {
 		char scoreText[40];
 		Common::sprintf_s(scoreText, "SCORE: %ld", (long)_score);
 		drawCenteredTalkText(0x37, scoreText);
-		drawCenteredTalkText(0x4b, "NEW HIGH SCORE");
+		drawCenteredTalkText(0x4b, uiStr(kR1StrNewHighScore));
 		drawCenteredTalkText(0x5f, _textEntryBuffer);
 	}
 

@@ -125,11 +125,11 @@ int32 findAnimFrameChunkOffsetByGameCounter(ScummEngine_v7 *vm, const char *file
 	return result;
 }
 
-static void formatTargetAccuracy(char *dst, size_t dstSize, int kills, int targetCount, bool perfectText) {
+void InsaneRebel1::formatTargetAccuracy(char *dst, size_t dstSize, int kills, int targetCount, bool perfectText) const {
 	if (perfectText && kills >= targetCount)
-		Common::sprintf_s(dst, dstSize, "Target Accuracy: Perfect");
+		Common::sprintf_s(dst, dstSize, "%s", uiStr(kR1StrAccuracyPerfect));
 	else
-		Common::sprintf_s(dst, dstSize, "Target Accuracy: %d percent", (kills * 100) / targetCount);
+		Common::sprintf_s(dst, dstSize, uiStr(kR1StrAccuracyFmt), (kills * 100) / targetCount);
 }
 
 static int calculateThresholdBonus(int kills, int perfectThreshold, int perKillThreshold, int perKillBonus) {
@@ -376,14 +376,14 @@ bool InsaneRebel1::runLevel1() {
 					break;
 
 				if (_killCount > 4 || _interactiveVideoCheatSkipped) {
-					const char *pathText = _rightPathSelected ? "Path Taken: Hard" : "Path Taken: Easy";
+					const char *pathText = uiStr(_rightPathSelected ? kR1StrPathHard : kR1StrPathEasy);
 					const int pathBonus = _rightPathSelected ? _tuning.bonus * 3 : 0;
 					char accuracyText[80];
 					formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 0x0E, true);
 					const int targetBonus = calculateThresholdBonus(_killCount, 0x0D, 5, _tuning.bonus);
 					playChapterCompleteCinematic("LVL1/L1END.ANM", 1, 0x78, 5,
-						"Part I", pathText, pathBonus,
-						"Part II", accuracyText, targetBonus);
+						uiStr(kR1StrPartI), pathText, pathBonus,
+						uiStr(kR1StrPartII), accuracyText, targetBonus);
 					return !shouldAbortGameFlow();
 				}
 
@@ -552,7 +552,7 @@ bool InsaneRebel1::runLevel4() {
 		if (_health >= 0 && shieldGeneratorsDestroyed) {
 			const bool torpedoHit = (_killCount != 0);
 			playChapterCompleteCinematic(torpedoHit ? "LVL4/L4END1.ANM" : "LVL4/L4END2.ANM",
-				4, 0x69, 5, " ", torpedoHit ? "Torpedo Hit" : "Torpedo Missed",
+				4, 0x69, 5, " ", uiStr(torpedoHit ? kR1StrTorpedoHit : kR1StrTorpedoMissed),
 				torpedoHit ? _tuning.bonus : 0);
 			return !shouldAbortGameFlow();
 		}
@@ -1379,7 +1379,7 @@ bool InsaneRebel1::runLevel15() {
 			formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 0x58, false);
 			playChapterCompleteCinematic("LVL15/L15END1.ANM", 15, 0x122, 0xA5,
 				"Part I", accuracyText, targetBonus,
-				"Part II", "Torpedo on mark", 10000, _difficulty + 13);
+				uiStr(kR1StrPartII), uiStr(kR1StrTorpedoOnMark), 10000, _difficulty + 13);
 			return !shouldAbortGameFlow();
 		}
 

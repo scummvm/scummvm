@@ -997,10 +997,11 @@ void InsaneRebel1::renderLevel5Part2Overlay(byte *dst, int pitch, int width, int
 	overlayY = (int16)(0x8C - ((overlayY - 0x8C) >> 2));
 
 	if (curFrame < 0x32) {
-		const char instructionText[] = "<<SHOOT TARGETS FOR BONUS";
-		const int revealChars = CLIP<int>((int)curFrame, 0, (int)sizeof(instructionText) - 1);
-		char revealedText[sizeof(instructionText)];
-		Common::strlcpy(revealedText, instructionText, revealChars + 1);
+		const char *instructionText = uiStr(kR1StrShootTargets);
+		const int instructionLen = (int)strlen(instructionText);
+		const int revealChars = CLIP<int>((int)curFrame, 0, instructionLen);
+		char revealedText[64];
+		Common::strlcpy(revealedText, instructionText, MIN<int>(revealChars + 1, sizeof(revealedText)));
 		drawFontBankString(dst, pitch, width, height,
 			viewportX + overlayX - 0x27, viewportY + overlayY, revealedText);
 	} else {
@@ -1365,8 +1366,10 @@ void InsaneRebel1::drawLevelTitleOverlay(byte *dst, int pitch, int width, int he
 		return;
 	}
 
-	const char *title = kLevelTitles[_introTextLevel].titleText;
-	const char *subtitle = kLevelTitles[_introTextLevel].subtitleText;
+	const char *title = _chapterLabels[_introTextLevel].empty() ?
+		kLevelTitles[_introTextLevel].titleText : _chapterLabels[_introTextLevel].c_str();
+	const char *subtitle = _chapterTitles[_introTextLevel].empty() ?
+		kLevelTitles[_introTextLevel].subtitleText : _chapterTitles[_introTextLevel].c_str();
 
 	int titleW = getFontBankStringWidth(title);
 	int subtitleW = getFontBankStringWidth(subtitle);
@@ -1427,18 +1430,18 @@ void InsaneRebel1::drawChapterSummaryOverlay(byte *dst, int pitch, int width, in
 	const int centerX = width / 2;
 	const int titleChars = MAX<int>(0, (int)(curFrame - revealBaseFrame));
 	drawCenteredRebel1String(this, dst, pitch, width, height,
-		centerX, 5, "Chapter Complete", titleChars);
+		centerX, 5, uiStr(kR1StrChapterComplete), titleChars);
 
 	if (revealBaseFrame + 0x0F < curFrame) {
-		char completionText[40];
-		Common::sprintf_s(completionText, "Completion bonus: %d", (int)_tuning.levelPts);
+		char completionText[64];
+		Common::sprintf_s(completionText, uiStr(kR1StrCompletionBonusFmt), (int)_tuning.levelPts);
 		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x19, completionText);
 	}
 
 	if (_chapterSummary.hasBonus1 &&
 			revealBaseFrame + 0x28 < curFrame && curFrame < revealBaseFrame + 0x46) {
-		char bonusText[32];
-		Common::sprintf_s(bonusText, "Bonus: %d", _chapterSummary.bonusValue1);
+		char bonusText[64];
+		Common::sprintf_s(bonusText, uiStr(kR1StrBonusFmt), _chapterSummary.bonusValue1);
 		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x32, _chapterSummary.bonusLabel1);
 		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x46, _chapterSummary.detailText1);
 		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x5A, bonusText);
@@ -1446,8 +1449,8 @@ void InsaneRebel1::drawChapterSummaryOverlay(byte *dst, int pitch, int width, in
 
 	if (_chapterSummary.hasBonus2 &&
 			revealBaseFrame + 0x55 < curFrame && curFrame < revealBaseFrame + 0x73) {
-		char bonusText[32];
-		Common::sprintf_s(bonusText, "Bonus: %d", _chapterSummary.bonusValue2);
+		char bonusText[64];
+		Common::sprintf_s(bonusText, uiStr(kR1StrBonusFmt), _chapterSummary.bonusValue2);
 		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x32, _chapterSummary.bonusLabel2);
 		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x46, _chapterSummary.detailText2);
 		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x5A, bonusText);
@@ -1457,8 +1460,8 @@ void InsaneRebel1::drawChapterSummaryOverlay(byte *dst, int pitch, int width, in
 			revealBaseFrame + 10 < curFrame) {
 		const char *password = getChapterCompletePassword(_chapterSummary.passwordIndex);
 		if (password) {
-			char passwordText[40];
-			Common::sprintf_s(passwordText, "Password: %s", password);
+			char passwordText[64];
+			Common::sprintf_s(passwordText, uiStr(kR1StrPasswordFmt), password);
 			drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x73, passwordText);
 		}
 	}
@@ -1871,8 +1874,8 @@ void InsaneRebel1::renderLevel8Overlay(byte *dst, int pitch, int width, int heig
 		projX = (int16)(0x61 - ((projX - 0x61) >> 2));
 		projY = (int16)(0x8D - ((projY - 0x8D) >> 2));
 
-		char walkerStr[24];
-		Common::sprintf_s(walkerStr, "<<WALKER %d%%", (int)_walkerHealth);
+		char walkerStr[64];
+		Common::sprintf_s(walkerStr, uiStr(kR1StrWalkerFmt), (int)_walkerHealth);
 		drawFontBankString(dst, pitch, width, height,
 			viewportX + projX, viewportY + projY, walkerStr);
 	}
@@ -1907,8 +1910,8 @@ void InsaneRebel1::renderLevel8Overlay(byte *dst, int pitch, int width, int heig
 		projX = (int16)(0x62 - ((projX - 0x62) >> 2));
 		projY = (int16)(0x9C - ((projY - 0x9C) >> 2));
 
-		char timerStr[16];
-		Common::sprintf_s(timerStr, "<<TIME %d", (int)_walkerTimer);
+		char timerStr[64];
+		Common::sprintf_s(timerStr, uiStr(kR1StrTimeFmt), (int)_walkerTimer);
 		drawFontBankString(dst, pitch, width, height,
 			viewportX + projX, viewportY + projY, timerStr);
 	}

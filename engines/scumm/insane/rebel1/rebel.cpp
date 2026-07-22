@@ -20,6 +20,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "common/system.h"
 #include "common/events.h"
 #include "common/endian.h"
@@ -206,6 +207,257 @@ void InsaneRebel1::resetGameplayFlagsFromTuning() {
 	const uint16 tuningFlags = (uint16)_tuning.flags;
 	_gameplayFlags75fe = tuningFlags & 0x00FF;
 	_gameplayFlags75ff = tuningFlags >> 8;
+}
+
+// English fallbacks for the UI strings normally extracted from ASSAULT.EXE.
+// Order must match Rebel1UiStringId in rebel.h.
+static const char *const kRebel1UiFallback[kR1StrUiCount] = {
+	"MAIN MENU",
+	"START NEW GAME",
+	"GAME OPTIONS",
+	"ENTER PASSCODE",
+	"CONTINUE DEMO",
+	"EXIT TO DOS",
+	"TOP PILOTS",
+	"ENTER PASSCODE",
+	"NEW HIGH SCORE",
+	"GAME OPTIONS",
+	"EXIT MENU",
+	"ROOKIE1 IS FEMALE",
+	"ROOKIE1 IS MALE",
+	"MUSIC IS ON",
+	"MUSIC IS OFF",
+	"SFX AND VOICE ARE ON",
+	"SFX AND VOICE ARE OFF",
+	"DIALOGUE TEXT IS ON",
+	"DIALOGUE TEXT IS OFF",
+	"Y AXIS IS INVERTED",
+	"Y AXIS IS NORMAL",
+	"VOLUME AT %hd PERCENT",
+	"DIFFICULTY IS EASY",
+	"DIFFICULTY IS NORMAL",
+	"DIFFICULTY IS HARD",
+	"Chapter Complete",
+	"Completion bonus: %d",
+	"Bonus: %d",
+	"Password: %s",
+	"Path Taken: Hard",
+	"Path Taken: Easy",
+	"Target Accuracy: Perfect",
+	"Target Accuracy: %d percent",
+	"Part II",
+	"Part I",
+	"Torpedo Hit",
+	"Torpedo Missed",
+	"Torpedo on mark",
+	"<<SHOOT TARGETS FOR BONUS",
+	"<<WALKER %d%%",
+	"<<TIME %d"
+};
+
+// The printf conversions used by a format string ("%%" doesn't count), e.g.
+// "hd" for "<VOLUME AT %hd PERCENT". Used to reject extracted strings whose
+// conversions don't match the fallback's before they reach sprintf.
+static Common::String rebel1FormatSpecs(const char *s) {
+	Common::String out;
+	for (const char *p = s; *p; p++) {
+		if (*p != '%')
+			continue;
+		p++;
+		if (*p == '%' || *p == '\0')
+			continue;
+		while (*p == 'h' || *p == 'l')
+			out += *p++;
+		if (*p)
+			out += *p;
+	}
+	return out;
+}
+
+const char *InsaneRebel1::uiStr(int id) const {
+	if (id < 0 || id >= kR1StrUiCount)
+		return "";
+	if (!_uiStrings[id].empty())
+		return _uiStrings[id].c_str();
+	return kRebel1UiFallback[id];
+}
+
+// All localized DOS releases keep their UI text in ASSAULT.EXE as NUL-terminated
+// strings interleaved with the (language-neutral) data file names, in the same
+// local order across builds. Extract them anchored on those neighbors; anything
+// that fails validation keeps its English fallback.
+void InsaneRebel1::loadLocalizedUiStrings() {
+	Common::File f;
+	if (!f.open("ASSAULT.EXE"))
+		return;
+
+	int32 size = (int32)f.size();
+	if (size <= 0 || size > 2 * 1024 * 1024)
+		return;
+
+	byte *data = new byte[size];
+	if (f.read(data, size) != (uint32)size) {
+		delete[] data;
+		return;
+	}
+
+	// Collect NUL-terminated printable strings (DOS codepage bytes allowed).
+	Common::Array<Common::String> strs;
+	int32 runStart = -1;
+	for (int32 i = 0; i < size; i++) {
+		const byte b = data[i];
+		const bool printable = (b >= 0x20 && b <= 0x7E) || (b >= 0x80 && b <= 0xFE);
+		if (printable) {
+			if (runStart < 0)
+				runStart = i;
+		} else {
+			if (b == 0 && runStart >= 0 && i - runStart >= 2)
+				strs.push_back(Common::String((const char *)data + runStart, i - runStart));
+			runStart = -1;
+		}
+	}
+	delete[] data;
+
+	auto find = [&strs](const Common::String &needle, int from = 0) -> int {
+		for (uint i = (uint)MAX(from, 0); i < strs.size(); i++)
+			if (strs[i] == needle)
+				return (int)i;
+		return -1;
+	};
+
+	auto assign = [&](int id, int idx) -> bool {
+		if (id < 0 || id >= kR1StrUiCount || idx < 0 || idx >= (int)strs.size())
+			return false;
+		Common::String s = strs[idx];
+		const char *fb = kRebel1UiFallback[id];
+		if (fb[0] == '<') {
+			// HUD strings keep their '<' layer markup.
+			if (s[0] != '<')
+				return false;
+		} else {
+			while (!s.empty() && s[0] == '<')
+				s.deleteChar(0);
+		}
+		if (s.size() < 2 || s.size() > 60)
+			return false;
+		if (s.contains('\\'))
+			return false;
+		if (rebel1FormatSpecs(s.c_str()) != rebel1FormatSpecs(fb))
+			return false;
+		_uiStrings[id] = s;
+		return true;
+	};
+
+	// Main menu: title and the five original items follow OPEN\O1OPTION.ANM.
+	int idx = find("OPEN\\O1OPTION.ANM");
+	if (idx >= 0) {
+		assign(kR1StrMainMenuTitle, idx + 1);
+		for (int i = 0; i < 5; i++)
+			assign(kR1StrMenuNewGame + i, idx + 2 + i);
+	}
+
+	// High score table title follows OPEN\O1SCORE.ANM.
+	idx = find("OPEN\\O1SCORE.ANM");
+	if (idx >= 0)
+		assign(kR1StrTopPilots, idx + 1);
+
+	// The joystick calibration coordinate format "(%d,%d)" sits between the
+	// passcode/calibration strings and the options menu block.
+	const int calib = find("OPEN\\O1CALIB.ANM");
+	int paren = (calib >= 0) ? find("(%d,%d)", calib) : -1;
+	if (paren >= 0 && paren > calib + 40)
+		paren = -1;
+	if (paren >= 0) {
+		// 4 calibration instructions and the screen title precede it.
+		assign(kR1StrEnterPasscodeTitle, paren - 6);
+
+		int j = paren + 1;
+		while (j < (int)strs.size() && strs[j].hasPrefix("<<"))
+			j++;
+		if (assign(kR1StrOptionsTitle, j)) {
+			for (int i = 0; i < 15 && j + 1 + i < (int)strs.size(); i++) {
+				if (!strs[j + 1 + i].hasPrefix("<"))
+					break;
+				assign(kR1StrOptExitMenu + i, j + 1 + i);
+			}
+		}
+	}
+
+	// Chapter summary block: the only "...: %s" string is the password line,
+	// preceded by the title and the two bonus formats.
+	int pw = -1;
+	for (uint i = 0; i < strs.size(); i++) {
+		const Common::String &s = strs[i];
+		if (s.size() >= 7 && s.hasSuffix(": %s") && !s.contains('\\') && !s.hasPrefix("<") &&
+				rebel1FormatSpecs(s.c_str()) == "s") {
+			if (pw >= 0) {
+				pw = -1;  // ambiguous
+				break;
+			}
+			pw = (int)i;
+		}
+	}
+	if (pw >= 0) {
+		assign(kR1StrPasswordFmt, pw);
+		assign(kR1StrChapterComplete, pw - 1);
+		assign(kR1StrBonusFmt, pw - 2);
+		assign(kR1StrCompletionBonusFmt, pw - 3);
+		// v1.7 keeps NEW HIGH SCORE with this block; v1.0 keeps it with the
+		// calibration block.
+		if (!assign(kR1StrNewHighScore, pw - 4) && paren >= 0)
+			assign(kR1StrNewHighScore, paren - 7);
+	}
+
+	// Level result strings, each anchored on the video played before them.
+	idx = find("LVL1\\L1END.ANM");
+	if (idx >= 0) {
+		assign(kR1StrPathHard, idx + 1);
+		assign(kR1StrPathEasy, idx + 2);
+		assign(kR1StrAccuracyPerfect, idx + 3);
+		assign(kR1StrAccuracyFmt, idx + 4);
+		assign(kR1StrPartII, idx + 5);
+		assign(kR1StrPartI, idx + 6);
+	}
+	idx = find("LVL4\\L4END2.ANM");
+	if (idx >= 0) {
+		assign(kR1StrTorpedoHit, idx + 1);
+		assign(kR1StrTorpedoMissed, idx + 2);
+	}
+	idx = find("LVL5\\L5PLAY2.ANM");
+	if (idx >= 0)
+		assign(kR1StrShootTargets, idx + 1);
+	idx = find("LVL8\\L8PLAY.ANM");
+	if (idx >= 0) {
+		assign(kR1StrWalkerFmt, idx + 1);
+		assign(kR1StrTimeFmt, idx + 2);
+	}
+	idx = find("LVL15\\L15END1.ANM");
+	if (idx >= 0)
+		assign(kR1StrTorpedoOnMark, idx + 1);
+
+	// Chapter title cards: title and "Chapter N" label follow the chapter's
+	// intro video name.
+	for (int n = 1; n <= 15; n++) {
+		Common::String anchor = (n == 1) ? Common::String("LVL1\\L1HANGAR.ANM")
+			: Common::String::format("LVL%d\\L%dINTRO.ANM", n, n);
+		idx = find(anchor);
+		if (idx < 0 || idx + 2 >= (int)strs.size())
+			continue;
+		const Common::String &title = strs[idx + 1];
+		const Common::String &label = strs[idx + 2];
+		if (title.size() >= 2 && title.size() <= 40 && !title.contains('\\') &&
+				!title.contains('%') && title[0] != '<')
+			_chapterTitles[n - 1] = title;
+		if (label.size() >= 2 && label.size() <= 40 && !label.contains('\\') &&
+				!label.contains('%') && label[0] != '<')
+			_chapterLabels[n - 1] = label;
+	}
+
+	int loaded = 0;
+	for (int i = 0; i < kR1StrUiCount; i++)
+		if (!_uiStrings[i].empty())
+			loaded++;
+	debugC(DEBUG_INSANE, "InsaneRebel1: %d/%d UI strings loaded from ASSAULT.EXE", loaded, kR1StrUiCount);
 }
 
 InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
@@ -434,6 +686,8 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	} else {
 		warning("InsaneRebel1::InsaneRebel1(): failed to load targeting font bank (TECHFONT/TALKFONT)");
 	}
+
+	loadLocalizedUiStrings();
 
 	initAudio(11025);
 	memset(_sfxData, 0, sizeof(_sfxData));
