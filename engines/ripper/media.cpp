@@ -55,54 +55,6 @@ static const uint16 kHelpCommand = 0x3b00;
 static const uint kAutoPacketizedDisplayScale = 0;
 static const uint kPaletteFadeStepDelayMs = 16;
 
-class RipperSmackerDecoder : public Video::SmackerDecoder {
-public:
-	RipperSmackerDecoder() : _ripperFirstFrameStart(0) {}
-
-	bool loadStream(Common::SeekableReadStream *stream) override {
-		if (!Video::SmackerDecoder::loadStream(stream))
-			return false;
-		_ripperFirstFrameStart = _fileStream->pos();
-		return true;
-	}
-
-	// The retail decoder's frame seek reparses only the requested packet over
-	// the current surface. SmackerDecoder::forceSeekToFrame() reconstructs a
-	// wider ten-frame window, which changes the intended loop delta chain.
-	const Graphics::Surface *seekToFramePreservingSurface(uint frame) {
-		if (!isVideoLoaded() || frame >= getFrameCount())
-			return nullptr;
-
-		SmackerVideoTrack *videoTrack = static_cast<SmackerVideoTrack *>(getTrack(0));
-		if (!videoTrack || !videoTrack->rewind())
-			return nullptr;
-
-		uint32 offset = 0;
-		for (uint i = 0; i < frame; ++i) {
-			videoTrack->increaseCurFrame();
-			offset += _frameSizes[i] & ~3;
-		}
-		if (!_fileStream->seek(_ripperFirstFrameStart + offset, SEEK_SET))
-			return nullptr;
-
-		stopAudio();
-		findNextVideoTrack();
-		const Graphics::Surface *surface = decodeNextFrame();
-		if (!surface || getCurFrame() != (int)frame)
-			return nullptr;
-
-		_lastTimeChange = videoTrack->getFrameTime(frame);
-		if (isPlaying())
-			_startTime = g_system->getMillis() -
-				(_lastTimeChange.msecs() / getRate()).toInt();
-		resetPauseStartTime();
-		return surface;
-	}
-
-private:
-	uint32 _ripperFirstFrameStart;
-};
-
 struct SavedDisplayContext {
 	Common::Array<byte> pixels;
 	Common::Array<byte> palette;
@@ -306,7 +258,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		*advanceSegment = false;
 	if (sequenceCommand)
 		*sequenceCommand = 0;
-	RipperSmackerDecoder decoder;
+	Video::SmackerDecoder decoder;
 	if (!decoder.loadStream(stream)) {
 		warning("Ripper: invalid Smacker stream '%s'", name.c_str());
 		return false;
@@ -551,11 +503,12 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				completed = false;
 				break;
 			}
-			// SeekSmackerPlaybackFrame at 0x50a88 only repositions the packet
-			// stream and frame index. It deliberately retains the final decoded
-			// surface so the loop-start delta frame is applied over the loop end.
+			// SeekSmackerPlaybackFrame at 0x50a88 resumes at the requested packet.
+			// ScummVM's Smacker decoder must reconstruct the packet's dependency
+			// window; decoding it directly over the loop-end surface leaves stale
+			// pixels wherever the loop-start frame uses skipped blocks.
 			const Graphics::Surface *frame =
-				decoder.seekToFramePreservingSurface(loopStartFrame - 1);
+				decoder.forceSeekToFrame(loopStartFrame - 1);
 			if (!frame) {
 				warning("Ripper: could not seek Smacker '%s' to loop start frame=%u",
 					name.c_str(), loopStartFrame);
@@ -565,7 +518,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			presentFrame(frame, true);
 			++presentedFrames;
 			debugC(3, kDebugVideo,
-				"Ripper: looped interactive Smacker '%s' to frame=%u preserving decoded surface",
+				"Ripper: looped interactive Smacker '%s' to frame=%u after reconstructing dependencies",
 				name.c_str(), loopStartFrame);
 			if (finishSequenceFramePresentation(loopStartFrame))
 				break;
@@ -663,11 +616,12 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 					break;
 				if (boundedSegment && (uint)decoder.getCurFrame() >= lastFrame) {
 					if (boundedLoop) {
-						// SeekSmackerPlaybackFrame in RunTubeSwitchScene reuses the
-						// active decoder at frame 46 and resumes from frame 15. Keeping
-						// this decoder alive preserves its delta surface and palette.
+						// SeekSmackerPlaybackFrame in RunTubeSwitchScene resumes at
+						// frame 15. Reconstruct the Smacker dependency window before
+						// presenting that frame so skipped blocks cannot retain stale
+						// pixels from frame 46.
 						const Graphics::Surface *loopFrame =
-							decoder.seekToFramePreservingSurface(boundedLoopStartFrame);
+							decoder.forceSeekToFrame(boundedLoopStartFrame);
 						if (!loopFrame) {
 							warning("Ripper: could not loop bounded Smacker '%s' to frame=%u",
 								name.c_str(), boundedLoopStartFrame);

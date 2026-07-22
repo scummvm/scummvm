@@ -471,9 +471,11 @@
   audio mix profile 3, corresponding to the Video/Speech volume. The nested
   controls use cursor row 16, active follow-up audio uses row 19, and Escape
   returns through the surrounding Cyber snapshot. `SeekSmackerPlaybackFrame`
-  at `0x50a88` resumes the loop at one-based frame 15 without clearing the
-  current decoded surface, so that frame's delta is applied over the loop-end
-  image. The control rows at `0x2a824` map to physical rectangles
+  at `0x50a88` resumes the loop at one-based frame 15 and reparses that frame's
+  packet. ScummVM reconstructs the decoder's bounded dependency window before
+  presenting frame 15 because decoding that packet directly over the loop-end
+  surface leaves stale pixels in skipped blocks. The control rows at `0x2a824`
+  map to physical rectangles
   (205,203)-(416,296) and (16,73)-(618,335), with the smaller first control
   retaining hit-test priority inside the full-presentation second control.
 - Action 40 is the bespoke branch `RunKaDialogueScene` at `0x2aef5`, represented
