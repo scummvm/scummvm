@@ -2310,8 +2310,10 @@ bool PhoenixVREngine::enterScript() {
 	debug("currentSubroutine %d, prev warp %d", currentSubroutine, _prevWarp);
 	for (uint i = 0; i != 12; ++i) {
 		auto lockKey = ms.readString(0, 257);
-		debug("lockKey %d %s", i, lockKey.c_str());
-		_lockKey[i] = lockKey;
+		if (version() < 2) {
+			debug("lockKey %d %s", i, lockKey.c_str());
+			_lockKey[i] = lockKey;
+		}
 	}
 
 	stopAllSounds();
