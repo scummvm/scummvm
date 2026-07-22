@@ -109,6 +109,8 @@ public:
 	bool playBlockingAudio(const Common::String &path);
 	bool playSoundEffect(const Common::String &path, Audio::SoundHandle &handle,
 		uint volumePercent = 100, bool loop = false);
+	bool playVoiceClip(const Common::String &path, Audio::SoundHandle &handle,
+		uint volumePercent = 100);
 	bool isSoundEffectActive(const Audio::SoundHandle &handle) const;
 	bool stopSoundEffect(Audio::SoundHandle &handle);
 	void setSoundEffectVolume(Audio::SoundHandle &handle, uint volumePercent);
@@ -138,6 +140,9 @@ public:
 	bool syncGame(Common::Serializer &serializer);
 
 private:
+	bool playAudioClip(const Common::String &path, Audio::SoundHandle &handle,
+		Audio::Mixer::SoundType soundType, uint volumePercent, bool loop,
+		const char *description);
 	bool playSmacker(Common::SeekableReadStream *stream, const Common::String &name,
 		const SmackerPlaybackRequest &request);
 	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name,

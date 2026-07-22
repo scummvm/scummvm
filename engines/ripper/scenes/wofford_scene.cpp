@@ -33,9 +33,13 @@ namespace Ripper {
 
 namespace {
 
-static const char *const kSceneMedia = "wofford.smk";
+// RunWoffordInteractiveMediaScene loads these entries from the Cyber asset
+// container. Keep the directory qualified because loose installations also
+// contain the unrelated SCENE/WOFFORD1.WAV.
+static const char *const kSceneMedia = "cyber/wofford.smk";
 static const char *const kAudioCues[4] = {
-	"wofford0.wav", "wofford1.wav", "wofford2.wav", "wofford3.wav"
+	"cyber/wofford0.wav", "cyber/wofford1.wav",
+	"cyber/wofford2.wav", "cyber/wofford3.wav"
 };
 
 static const uint kDefaultCursor = 14;
@@ -72,7 +76,7 @@ WoffordScene::WoffordScene(RipperEngine *engine) : Scene(engine),
 bool WoffordScene::startFollowupCue(uint cue, const char *source) {
 	if (cue >= ARRAYSIZE(kAudioCues) || cue == 0)
 		return false;
-	if (!_engine->getMedia()->playSoundEffect(kAudioCues[cue], _followupCueHandle)) {
+	if (!_engine->getMedia()->playVoiceClip(kAudioCues[cue], _followupCueHandle)) {
 		warning("Ripper: could not start Wofford cue '%s'", kAudioCues[cue]);
 		return false;
 	}
@@ -168,7 +172,7 @@ WoffordScene::Result WoffordScene::run(uint completionFlag) {
 	debugC(1, kDebugCyber,
 		"Ripper: entered Wofford media scene flag=%u media='%s' loopStart=%u armFrame=%u controls=[205,203,211,93;16,73,602,262]",
 		completionFlag, kSceneMedia, kLoopStartFrame, kChoiceArmFrame);
-	if (!_engine->getMedia()->playSoundEffect(kAudioCues[0],
+	if (!_engine->getMedia()->playVoiceClip(kAudioCues[0],
 			_openingCueHandle, kOpeningCueVolume)) {
 		stopAllAudio();
 		finish("wofford-media-load-failure", -1, false);
