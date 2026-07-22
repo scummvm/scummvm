@@ -239,6 +239,30 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id, co
 			return Common::KO_KOR;
 		}
 
+		if (id == GID_REBEL2) {
+			Common::FSNode systmDir;
+			Common::FSList systmList;
+			Common::File trs;
+			if (searchFSNode(fslist, "SYSTM", systmDir)
+				&& systmDir.isDirectory()
+				&& systmDir.getChildren(systmList, Common::FSNode::kListFilesOnly)
+				&& searchFSNode(systmList, "GAME.TRS", langFile)
+				&& trs.open(langFile)) {
+				switch (trs.size()) {
+				case 46746:	// d9aced0c3fcb8f6a0045dcd4cbf12590
+					return Common::EN_ANY;
+				case 48097:	// 66353d7250f680b28992459c355caa17
+					return Common::IT_ITA;
+				case 50094:	// 004fb2fd15f84a1f81cc362d73811c9c
+					return Common::DE_DEU;
+				case 60976:	// c53823d48beca122c45a83d35027a0e7
+					return Common::FR_FRA;
+				default:
+					break;
+				}
+			}
+		}
+
 		return originalLanguage;
 	}
 

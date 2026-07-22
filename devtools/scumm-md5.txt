@@ -455,7 +455,7 @@ rebel1	Star Wars: Rebel Assault
 	6bb0fe2d7816c5528c773f2898e4e0ff	212915	en	DOS	-	v1.7	-	-	
 
 rebel2	Star Wars: Rebel Assault II: The Hidden Empire
-	6b73a08c535c0544785d73ff812908a0	9430	en	DOS	-	-	-	-
+	6b73a08c535c0544785d73ff812908a0	9430	All	DOS	-	-	-	-
 
 	e977ed046b88e75b645491caeff37b0c	313689	en	DOS	Demo	Demo	-	-
 
