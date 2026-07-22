@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-21 11:50+0000\n"
+"POT-Creation-Date: 2026-07-22 14:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -13490,25 +13490,32 @@ msgstr ""
 msgid "You are missing recommended data files:"
 msgstr ""
 
-#: engines/stark/stark.cpp:306
+#: engines/stark/stark.cpp:307
 msgid ""
 "The 'fonts' folder is required to experience the text style as it was "
-"designed. The Steam release is known to be missing it. You can get the fonts "
-"from the demo version of the game."
+"designed. The Steam release is known to be missing it."
 msgstr ""
 
-#: engines/stark/stark.cpp:313
+#: engines/stark/stark.cpp:315
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
 msgstr ""
 
-#: engines/stark/stark.cpp:319
+#: engines/stark/stark.cpp:321
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
 
-#: engines/stark/stark.cpp:325
+#: engines/stark/stark.cpp:327
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
+msgstr ""
+
+#: engines/stark/stark.cpp:332
+msgid ""
+"\n"
+"\n"
+"You can download the missing files from the demo version from the ScummVM "
+"website."
 msgstr ""
 
 #: engines/supernova/supernova.cpp:193
