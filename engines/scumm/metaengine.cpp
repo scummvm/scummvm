@@ -882,7 +882,7 @@ static const ExtraGuiOption enableRebel2HiRes = {
 	_s("High resolution mode"),
 	_s("Run the game in 640x400 high resolution mode instead of 320x200"),
 	"rebel2_hires",
-	false,
+	true,
 	0,
 	0
 };
