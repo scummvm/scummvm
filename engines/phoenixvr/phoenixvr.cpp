@@ -1236,6 +1236,7 @@ void PhoenixVREngine::testCible(const Common::String &insideVar, const Common::S
 }
 
 void PhoenixVREngine::lockKey(int idx, const Common::String &warp) {
+	debug("lock key %d %s", idx, warp.c_str());
 	_lockKey[idx] = warp;
 }
 
