@@ -18,6 +18,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import logging
 import os
 import re
@@ -34,7 +35,7 @@ from enum import Enum
 from io import BytesIO, IOBase, StringIO
 from pathlib import Path
 from struct import pack, unpack
-from typing import Any
+from typing import Any, Optional
 from pathlib import Path
 
 import machfs  # type: ignore
@@ -400,6 +401,27 @@ def check_extension(args: argparse.Namespace) -> Extension:
     return Extension.none
 
 
+MACVENTURE_STEAM_EXES = {
+    #  md5                               name          offset   size
+    "2b5e47b77d28d7201d3e7f8681ca9a9f": ("Deja Vu",    1413600, 819200),
+    "c606908f6906adcd1cfb8c575d6b8cf7": ("Deja Vu II", 1418112, 819200),
+    "129ad491400722b76eb3259440e9ad95": ("Shadowgate", 1474800, 839680),
+    "cae6c5101ffd7fa20e249fa7a972f958": ("Uninvited",  1449384, 819200),
+}
+
+
+def read_macventure_steam_exe(path: Path) -> Optional[bytes]:
+    if path.suffix.lower() != ".exe":
+        return None
+    data = path.read_bytes()
+    entry = MACVENTURE_STEAM_EXES.get(hashlib.md5(data).hexdigest())
+    if entry is None:
+        return None
+    name, offset, size = entry
+    print(f"{path.name} from {name} is detected, extracting embedded HFS image")
+    return data[offset : offset + size]
+
+
 def check_fs(iso: str) -> FileSystem:
     disk_formats = []
     f = open(iso, "rb")
@@ -506,6 +528,13 @@ def extract_iso(args: argparse.Namespace) -> None:
         if not isinstance(numeric_level, int):
             raise ValueError("Invalid log level: %s" % loglevel)
         logging.basicConfig(format="%(levelname)s: %(message)s", level=numeric_level)
+
+        exe_image = read_macventure_steam_exe(args.src)
+        if exe_image is not None:
+            vol = machfs.Volume()
+            vol.read(exe_image)
+            extract_partition(args, vol)
+            return
 
         if not args.fs:
             args.fs = check_fs(args.src)
