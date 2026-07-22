@@ -74,6 +74,14 @@ public:
 		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows,
 		PresentationStyle style,
 		TextPanelScrollControl hoveredScrollControl = kTextPanelScrollNone);
+	bool drawRetainedTextPanelText(const Common::String &body,
+		const Common::Rect &bounds, uint firstVisible,
+		uint &maximumFirstVisible, uint &visibleRows, PresentationStyle style,
+		TextPanelScrollControl hoveredScrollControl = kTextPanelScrollNone);
+	bool drawRetainedTextPanelLines(const Common::Array<Common::String> &lines,
+		const Common::Rect &bounds, uint firstVisible,
+		uint &maximumFirstVisible, uint &visibleRows, PresentationStyle style,
+		TextPanelScrollControl hoveredScrollControl = kTextPanelScrollNone);
 	TextPanelScrollControl findTextPanelScrollControl(const Common::Rect &bounds,
 		const Common::Point &point, uint firstVisible, uint maximumFirstVisible,
 		PresentationStyle style) const;
@@ -81,7 +89,9 @@ public:
 		TextPanelScrollControl control, uint firstVisible,
 		uint maximumFirstVisible, PresentationStyle style) const;
 	bool beginTextEntry(const Common::String &prompt, uint maximumLength,
-		uint helpResourceId, const char *source);
+		uint helpResourceId, const char *source,
+		PresentationStyle style = kMenubPresentation,
+		const Common::Rect &bounds = Common::Rect());
 	TextEntryResult serviceTextEntry(Common::String &text);
 
 private:
@@ -108,7 +118,7 @@ private:
 		TextPanelScrollControl hoveredScrollControl = kTextPanelScrollNone) const;
 	void drawTextEntry(const Common::String &prompt, const Common::String &text,
 		uint firstVisible, uint cursorPosition, bool caretVisible,
-		const Common::Rect &bounds) const;
+		const Common::Rect &bounds, PresentationStyle style) const;
 	uint textEntryCursorFromPoint(const Common::String &text, uint firstVisible,
 		int x, const Common::Rect &bounds) const;
 	void updateTextEntryFirstVisible(const Common::Rect &bounds);
@@ -128,6 +138,8 @@ private:
 	Common::String _textEntryPrompt;
 	Common::String _textEntryText;
 	Common::String _textEntrySource;
+	Common::Rect _textEntryBounds;
+	PresentationStyle _textEntryStyle;
 	uint _textEntryMaximumLength;
 	uint _textEntryHelpResourceId;
 	uint _textEntryFirstVisible;
