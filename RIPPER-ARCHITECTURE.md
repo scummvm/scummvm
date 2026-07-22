@@ -595,13 +595,26 @@
   shield. Their damage, recharge, drain, and tick intervals come from the INI;
   timing uses the DOS 18 Hz clock. Left mouse discharges the weapon and applies
   a hit region's damage/effect entry, while right mouse holds and drains the
-  shield. `COMBAT0.BBM` supplies the left status panel, `COMBAT2.BBM` and
+  shield. `COMBAT0.BBM` supplies the right status panel, `COMBAT2.BBM` and
   `COMBAT3.BBM` are its filled and empty meter segments, and the four configured
   crosshair strips meet at the logical 320-by-200 pointer position.
+- Each frame updates the health and creature timers before routing an incoming
+  attack. A shielded hit applies shield damage before the timed shield drain;
+  an unshielded hit recharges the inactive shield before applying health damage.
+  Weapon recharge or firing follows the attack branch. ScummVM saturates direct
+  weapon and shield damage at zero rather than preserving the original's
+  unbounded subtraction.
 - `RunCombatEncounterScene` anchors `COMBAT0.BBM` at logical X
   `320 - bitmapWidth`; its meter coordinates are local to that right-hand
-  panel. Player depletion shares the Escape cleanup path and leaves the
-  supplied completion flag clear.
+  panel. Visible status artwork uses the shared interface palette bands at
+  indices 4 through 9 and 246 through 255, which remain patched while combat
+  Smacker palettes change. `COMBAT1.BBM` and `COMBAT4.BBM` provide the active
+  and inactive indicators for the current enemy attack, last fired shot's hit
+  result, weapon-button state, and effective shield state. Effects and the
+  crosshair are rendered before the complete panel, matching the original
+  composite order. Player depletion shares the Escape cleanup path and leaves
+  the supplied completion flag clear. The original keeps ten active hit effects
+  and replaces the farthest-advanced effect when that table is full.
 - Combat palettes are derived from the current Smacker palette. Indices 1-3 and
   10-239 use luminance `(30R + 59G + 11B) / 100`; shield, target-hit, and
   player-hit branches then apply the alternate blue, magenta, or red components
