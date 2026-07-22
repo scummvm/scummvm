@@ -115,10 +115,16 @@ Common::Error RipperEngine::run() {
 		return Common::kReadingFailed;
 
 	_cursor->setVisible(false);
-	debugC(1, kDebugVideo,
-		"Ripper: startup presentation logo.avi from RunGameStartupAndMainLoop at 0x100c2");
-	if (!_media->play("logo.avi", true))
-		return shouldQuit() ? Common::kNoError : Common::kUnknownError;
+	const bool skipIntro = ConfMan.hasKey("skip_intro") && ConfMan.getBool("skip_intro");
+	if (skipIntro) {
+		debugC(1, kDebugVideo,
+			"Ripper: skipping startup presentation logo.avi by game option");
+	} else {
+		debugC(1, kDebugVideo,
+			"Ripper: startup presentation logo.avi from RunGameStartupAndMainLoop at 0x100c2");
+		if (!_media->play("logo.avi", true))
+			return shouldQuit() ? Common::kNoError : Common::kUnknownError;
+	}
 
 	bool startGameplay = false;
 	const int launcherSaveSlot = ConfMan.getInt("save_slot");

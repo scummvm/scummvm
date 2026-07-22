@@ -26,6 +26,7 @@
 class RipperMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override;
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature feature) const override;
 	int getMaximumSaveSlot() const override { return 20; }
