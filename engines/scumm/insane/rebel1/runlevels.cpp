@@ -1436,6 +1436,10 @@ void InsaneRebel1::runGame() {
 				if (shouldAbortGameFlow())
 					break;
 
+				// The Sega CD release omits level 7 but retains its chapter transition.
+				if (_vm->_game.platform == Common::kPlatformSegaCD && level == 7)
+					continue;
+
 				completed = (this->*kLevelRunners[level - 1])();
 				if (completed) {
 					lastCompletedLevel = level;
