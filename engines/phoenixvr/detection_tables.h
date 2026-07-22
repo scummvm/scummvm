@@ -642,6 +642,17 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_DROPPLATFORM | ADGF_CD | PHOENIXVR_V2 | ADGF_UNSUPPORTED,
 		GUIO1(GUIO_NONE)
 	},
+	{"pharaoncurse",
+		"Retail CD release - V2 games are not yet supported",
+		AD_ENTRY2s(
+			"script.lst", "559f73dabf49f60afa5983b75ed7a317", 850,
+			"L0P01R01S00.vr", "92ca961d87b8bcdfefefb5e37773a19e", 207721
+		),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_CD | PHOENIXVR_V2 | ADGF_UNSUPPORTED,
+		GUIO1(GUIO_NONE)
+	},
 
 	AD_TABLE_END_MARKER
 };
