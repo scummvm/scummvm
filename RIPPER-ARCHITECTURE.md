@@ -464,18 +464,21 @@
 - Action 42 checks `ResolveHighestSetSelectionFlag` at `0x20394`. Chapter 3
   and later enter `KC.RUN`; earlier chapters call
   `RunWoffordInteractiveMediaScene` at `0x2ac04`, which sets the action
-  argument as a milestone and loops `WOFFORD.SMK` from frame 15. It starts
+  argument as a milestone and loops `WOFFORD.SMK` from frame 1. The literal
+  `0x0f` pushed at `0x2adbe` is the unused fourth `RunMediaSequence` argument;
+  the loop-start argument is the zero pushed at `0x2adaa`, which selects the
+  frame-1 reset path in `RunMediaSequence` at `0x1e516`. It starts
   `WOFFORD0.WAV` at entry, arms `WOFFORD1.WAV` and two choice controls at
   frame 20, and maps control commands `0x672` and `0x673` to `WOFFORD2.WAV`
   and `WOFFORD3.WAV`. The queue call at `0x2ad60` assigns all four descriptors
   audio mix profile 3, corresponding to the Video/Speech volume. The nested
   controls use cursor row 16, active follow-up audio uses row 19, and Escape
-  returns through the surrounding Cyber snapshot. `SeekSmackerPlaybackFrame`
-  at `0x50a88` resumes the loop at one-based frame 15 and reparses that frame's
-  packet. ScummVM reconstructs the decoder's bounded dependency window before
-  presenting frame 15 because decoding that packet directly over the loop-end
-  surface leaves stale pixels in skipped blocks. The control rows at `0x2a824`
-  map to physical rectangles
+  returns through the surrounding Cyber snapshot. Nonzero loop starts used by
+  other media sequences enter `SeekSmackerPlaybackFrame` at `0x50a88` and
+  reparse the requested packet over the retail decoder's existing wrapped
+  framebuffer. ScummVM instead clears its offscreen Smacker surface and
+  deterministically replays through the requested frame. The control rows at
+  `0x2a824` map to physical rectangles
   (205,203)-(416,296) and (16,73)-(618,335), with the smaller first control
   retaining hit-test priority inside the full-presentation second control.
 - Action 40 is the bespoke branch `RunKaDialogueScene` at `0x2aef5`, represented
