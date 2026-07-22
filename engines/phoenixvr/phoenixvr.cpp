@@ -802,14 +802,15 @@ bool PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 	_messengerInventoryHover = -1;
 	if (savePrev) {
 		assert(_warpIdx >= 0);
-		_prevWarp = _warpIdx;
-		saveThumbnail();
-	}
-	if (version() == 2) {
-		if (_warpIdx >= 0)
-			_prevWarpHistory.push_back(_warpIdx);
-		if (_prevWarpHistory.size() > 10)
-			_prevWarpHistory.pop_front();
+		if (version() >= 2) {
+			if (_warpIdx >= 0)
+				_prevWarpHistory.push_back(_warpIdx);
+			if (_prevWarpHistory.size() > 10)
+				_prevWarpHistory.pop_front();
+		} else {
+			_prevWarp = _warpIdx;
+			saveThumbnail();
+		}
 	}
 	return true;
 }
