@@ -805,6 +805,12 @@ bool PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 		_prevWarp = _warpIdx;
 		saveThumbnail();
 	}
+	if (version() == 2) {
+		if (_warpIdx >= 0)
+			_prevWarpHistory.push_back(_warpIdx);
+		if (_prevWarpHistory.size() > 10)
+			_prevWarpHistory.pop_front();
+	}
 	return true;
 }
 
@@ -823,14 +829,19 @@ void PhoenixVREngine::goToLevel(const Common::String &name) {
 }
 
 void PhoenixVREngine::returnToWarp() {
-	if (_prevWarp < 0) {
-		warning("return: no previous warp");
-		_nextWarp = -1;
-		return;
+	if (version() == 2) {
+		_nextWarp = _prevWarpHistory.back();
+		_prevWarpHistory.pop_back();
+	} else {
+		if (_prevWarp < 0) {
+			warning("return: no previous warp");
+			_nextWarp = -1;
+			return;
+		}
+		debug("returning to previous warp: %d", _prevWarp);
+		_nextWarp = _prevWarp;
+		_prevWarp = -1;
 	}
-	debug("returning to previous warp: %d", _prevWarp);
-	_nextWarp = _prevWarp;
-	_prevWarp = -1;
 }
 
 const Region *PhoenixVREngine::getRegion(int idx) const {

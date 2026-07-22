@@ -313,6 +313,7 @@ private:
 	Script::ConstWarpPtr _warp;
 	int _nextWarp = -1;
 	int _prevWarp = -1;
+	Common::List<int> _prevWarpHistory; // V2 stack of warps
 	int _hoverIndex = -1;
 	int _messengerInventoryHover = -1;
 	int _nextTest = -1;
