@@ -253,6 +253,8 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id, co
 					return Common::EN_ANY;
 				case 48097:	// 66353d7250f680b28992459c355caa17
 					return Common::IT_ITA;
+				case 49750:	// a4d2d985548cdd29523db5b117ca1b3d
+					return Common::ES_ESP;
 				case 50094:	// 004fb2fd15f84a1f81cc362d73811c9c
 					return Common::DE_DEU;
 				case 60976:	// c53823d48beca122c45a83d35027a0e7
