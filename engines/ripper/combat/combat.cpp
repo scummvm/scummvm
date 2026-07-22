@@ -801,6 +801,14 @@ uint CombatEncounter::chooseNextScene() {
 Scene::Result CombatEncounter::run(uint completionFlag) {
 	prepare("combat-entry", 14, false);
 	_completionFlag = completionFlag;
+	// RunCombatEncounterScene at 0x31563 reads g_combatLevelSetting once and
+	// formats the encounter's numbered INI before loading any combat resources.
+	const uint difficulty = _engine->getSettings()->getCombatLevel();
+	const Common::String configName = Common::String::format(
+		_definition.iniPattern, difficulty);
+	debugC(1, kDebugCombat,
+		"Ripper: initiating combat encounter type='%s' difficulty=%u config='%s' completionFlag=%u",
+		_definition.name, difficulty, configName.c_str(), completionFlag);
 	_encounterResult = kExited;
 	_arcadeKeywordIndex = 0;
 	_activeSceneIndex = 0;
@@ -821,13 +829,14 @@ Scene::Result CombatEncounter::run(uint completionFlag) {
 	for (uint i = 0; i < kEffectCapacity; ++i)
 		_effects[i] = Effect();
 
-	if (!loadResources(_engine->getSettings()->getCombatLevel())) {
+	if (!loadResources(difficulty)) {
 		_encounterResult = kLoadFailed;
 	} else {
 		startEncounterAudio();
 		debugC(1, kDebugCombat,
-			"Ripper: entered combat encounter type='%s' completionFlag=%u scenes=%u",
-			_definition.name, completionFlag, _scenes.size());
+			"Ripper: entered combat encounter type='%s' difficulty=%u config='%s' completionFlag=%u scenes=%u",
+			_definition.name, difficulty, configName.c_str(), completionFlag,
+			_scenes.size());
 		while (!_engine->shouldQuit()) {
 			_activeScene = &_scenes[_activeSceneIndex];
 			uint16 command = 0;
@@ -856,16 +865,16 @@ Scene::Result CombatEncounter::run(uint completionFlag) {
 	}
 
 	debugC(2, kDebugCombat,
-		"Ripper: cleaning up combat encounter result=%d completionFlag=%u activeScene=%u",
-		_encounterResult, completionFlag, _activeSceneIndex);
+		"Ripper: cleaning up combat encounter result=%d difficulty=%u completionFlag=%u activeScene=%u",
+		_encounterResult, difficulty, completionFlag, _activeSceneIndex);
 	stopEncounterAudio();
 	if (_encounterResult == kSolved &&
 			!_engine->getMilestones()->set(completionFlag, true, "combat-encounter"))
 		_encounterResult = kLoadFailed;
 	finish("combat-exit", 0, true);
 	debugC(_encounterResult == kLoadFailed ? 1 : 2, kDebugCombat,
-		"Ripper: left combat encounter type='%s' result=%d completionFlag=%u",
-		_definition.name, _encounterResult, completionFlag);
+		"Ripper: left combat encounter type='%s' result=%d difficulty=%u completionFlag=%u",
+		_definition.name, _encounterResult, difficulty, completionFlag);
 	return _encounterResult;
 }
 
