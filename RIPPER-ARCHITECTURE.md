@@ -917,6 +917,20 @@
   `0x22c91` independently includes every set flag on a later menu rebuild, so
   the two underlying database records remain distinct even though the row used
   to solve the puzzle is replaced in place for the current chooser session.
+- Entry 3 dispatches `RunWacJournalRevealScene` at `0x24261`. It wraps game-text
+  resource `0xaf` once into control `0x7b2`, marks reveal-source flag `0xfa`,
+  and uses named flag `0xd8` as the decryption gate. While locked, text-entry
+  control `0x7b3` prompts with resource `0xb5`; its expected answer is resource
+  `0xb6 + puzzle level`, compared case-insensitively while ignoring
+  non-alphanumeric bytes. The unlocked scene queues `wacjrnl.wav`, performs
+  twenty random byte swaps in each unrevealed wrapped row, and restores rows
+  at the eight 36-DOS-tick delays stored at `0x215b1`. Blank wrapped rows
+  advance the current section. Source flags `0xfa + section` allow that
+  section to advance and completion flags `0x104 + section` record revealed
+  progress. Resource `0xae` supplies the label for the continuously redrawn
+  percentage beneath the 330-by-222 journal panel. The database chooser,
+  scrollbar, persistent WAC controls, and help context 407 remain active while
+  this scene owns the left media viewport.
 - Entries 10 and 11 dispatch `wacinv10.pcx` and `wacinv11.pcx` through
   `RunWacStillImageScreenWithOptionalAudio` at `0x22f1f`. These 300-by-393
   documents retain the database chooser, show a 282-row slice in the left WAC
