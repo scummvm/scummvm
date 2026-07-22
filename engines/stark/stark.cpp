@@ -301,10 +301,12 @@ void StarkEngine::checkRecommendedDatafiles() {
 	}
 
 	bool missingFiles = false;
+	const char *url = "https://www.scummvm.org/demos/#other";
 	if (!fontsDir.isDirectory()) {
 		message += "\n\n";
 		message += _("The 'fonts' folder is required to experience the text style as it was designed. "
-				"The Steam release is known to be missing it. You can get the fonts from the demo version of the game.");
+					 "The Steam release is known to be missing it.");
+
 		missingFiles = true;
 	}
 
@@ -327,9 +329,10 @@ void StarkEngine::checkRecommendedDatafiles() {
 	}
 
 	if (missingFiles) {
+		message += _("\n\nYou can download the missing files from the demo version from the ScummVM website.");
 		warning("%s", message.c_str());
 
-		GUI::MessageDialog dialog(message);
+		GUI::MessageDialogWithURL dialog(message, url);
 		dialog.runModal();
 	}
 }
