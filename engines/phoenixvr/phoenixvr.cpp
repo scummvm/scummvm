@@ -825,6 +825,8 @@ void PhoenixVREngine::goToLevel(const Common::String &name) {
 void PhoenixVREngine::returnToWarp() {
 	if (_prevWarp < 0) {
 		warning("return: no previous warp");
+		_nextWarp = -1;
+		return;
 	}
 	debug("returning to previous warp: %d", _prevWarp);
 	_nextWarp = _prevWarp;
