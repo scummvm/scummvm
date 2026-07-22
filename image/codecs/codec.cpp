@@ -31,7 +31,9 @@
 #include "image/codecs/jyv1.h"
 #include "image/codecs/mjpeg.h"
 #include "image/codecs/mpeg.h"
+#ifdef USE_MSMPEG4
 #include "image/codecs/msmpeg4.h"
+#endif
 #include "image/codecs/msvideo1.h"
 #include "image/codecs/msrle.h"
 #include "image/codecs/msrle4.h"
@@ -90,7 +92,12 @@ Codec *createBitmapCodec(uint32 tag, uint32 streamTag, int width, int height, in
 	case MKTAG('m','p','4','3'):
 	case MKTAG('D','I','V','3'):
 	case MKTAG('d','i','v','3'):
+#ifdef USE_MSMPEG4
 		return new MSMPEG4Decoder(width, height, bitsPerPixel);
+#else
+		missingCodec = "Microsoft MPEG-4 v3";
+		break;
+#endif
 
 	case MKTAG('I','V','3','2'):
 #ifdef USE_INDEO3

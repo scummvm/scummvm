@@ -22,7 +22,6 @@ MODULE_OBJS := \
 	codecs/hlz.o \
 	codecs/msrle.o \
 	codecs/msrle4.o \
-	codecs/msmpeg4.o \
 	codecs/msvideo1.o \
 	codecs/qtrle.o \
 	codecs/rpza.o \
@@ -41,6 +40,11 @@ endif
 ifdef USE_MPEG2
 MODULE_OBJS += \
 	codecs/mpeg.o
+endif
+
+ifdef USE_MSMPEG4
+MODULE_OBJS += \
+	codecs/msmpeg4.o
 endif
 
 ifdef USE_CDTOONS
