@@ -23,7 +23,6 @@
 #define CHEWY_EVENTS_H
 
 #include "common/events.h"
-#include "common/queue.h"
 #include "graphics/screen.h"
 
 namespace Chewy {
@@ -53,8 +52,6 @@ private:
 	void handleKbdEvent(const Common::Event &event);
 
 	TimerList _timers;
-	Common::Queue<Common::Event> _pendingEvents;
-	Common::Queue<Common::Event> _pendingKeyEvents;
 	int16 _hotkey = Common::KEYCODE_INVALID;
 	bool _ignoreKeyUp = false;
 
@@ -105,39 +102,6 @@ public:
 	 * and polling events
 	 */
 	void update();
-
-	/**
-	 * Returns true if any unprocessed keyboard events are pending
-	 */
-	bool keyEventPending() {
-		processEvents();
-		return !_pendingKeyEvents.empty();
-	}
-
-	/**
-	 * Returns true if any unprocessed event other than key events
-	 * are pending
-	 */
-	bool eventPending() {
-		processEvents();
-		return !_pendingEvents.empty();
-	}
-
-	/**
-	 * Returns the next pending unprocessed keyboard event
-	 */
-	Common::Event getPendingKeyEvent() {
-		processEvents();
-		return _pendingKeyEvents.empty() ? Common::Event() : _pendingKeyEvents.pop();
-	}
-
-	/**
-	 * Returns the next event, if any
-	 */
-	Common::Event getPendingEvent() {
-		processEvents();
-		return _pendingEvents.empty() ? Common::Event() : _pendingEvents.pop();
-	}
 
 	/**
 	 * Sets the mouse position

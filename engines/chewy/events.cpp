@@ -85,8 +85,6 @@ static void returnInventoryCursorToSlot() {
 }
 
 void EventsManager::handleMouseEvent(const Common::Event &event) {
-	_pendingEvents.push(event);
-
 	_mousePos = event.mouse;
 	bool isWheelEnabled = !_G(menu_display) && !_G(flags).InventMenu &&
 		g_engine->canSaveAutosaveCurrently() &&
@@ -144,8 +142,6 @@ void EventsManager::handleMouseEvent(const Common::Event &event) {
 }
 
 void EventsManager::handleKbdEvent(const Common::Event &event) {
-	_pendingKeyEvents.push(event);
-
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
 		// Fresh keyboard input (not leaked from overlay)
@@ -181,8 +177,6 @@ void EventsManager::delay(size_t time) {
 
 void EventsManager::clearEvents() {
 	processEvents();
-	_pendingEvents.clear();
-	_pendingKeyEvents.clear();
 
 	_kbInfo._scanCode = Common::KEYCODE_INVALID;
 	_kbInfo._keyCode = '\0';
