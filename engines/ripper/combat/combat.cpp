@@ -44,6 +44,11 @@ static const uint16 kScreenshotCommand = 0x1900;
 
 static const int kMeterX[4] = { 11, 26, 11, 26 };
 static const int kMeterBottomY[4] = { 54, 54, 119, 119 };
+static const int kIndicatorX[4] = { 10, 25, 10, 25 };
+static const int kIndicatorY[4] = { 59, 59, 124, 124 };
+static const char *const kMeterNames[4] = {
+	"health", "creature", "weapon", "shield"
+};
 
 static Common::String stripIniComment(Common::String value) {
 	for (uint i = 0; i < value.size(); ++i) {
@@ -70,7 +75,8 @@ CombatEncounter::CombatEncounter(RipperEngine *engine,
 		_weaponRapidFireTicks(0),
 		_activeScene(nullptr), _activeSceneIndex(0), _completionFlag(0),
 		_arcadeKeywordIndex(0), _lastWeaponShotMillis(0), _weaponHeld(false),
-		_singleShotReady(true), _shieldHeld(false), _overlayLogged(false),
+		_singleShotReady(true), _shieldHeld(false), _lastShotHit(false),
+		_overlayLogged(false),
 		_paletteEffect(kPaletteNormal),
 		_encounterResult(kExited) {
 	for (uint i = 0; i < kMeterCount; ++i) {
@@ -327,6 +333,14 @@ bool CombatEncounter::loadResources(uint difficulty) {
 		_shieldHitSounds[i] = configString(ini, "SHIELD", key.c_str());
 		_healthHitSounds[i] = configString(ini, "HEALTH", key.c_str());
 	}
+	for (uint meter = 0; meter < kMeterCount; ++meter) {
+		const MeterConfig &config = _meterConfig[meter];
+		debugC(2, kDebugCombat,
+			"Ripper: combat meter config name='%s' damage=%d,%d,%d,%d,%d recharge=%d/%u drain=%d/%u",
+			kMeterNames[meter], config.damage[0], config.damage[1], config.damage[2],
+			config.damage[3], config.damage[4], config.charge, config.chargeTicks,
+			config.discharge, config.dischargeTicks);
+	}
 
 	if (!loadBitmapAssets())
 		return false;
@@ -372,47 +386,69 @@ void CombatEncounter::updateMeter(uint meter, uint32 now, bool recharge, bool dr
 	if (recharge && config.charge > 0 && _meterPercent[meter] < 100) {
 		const uint32 interval = config.chargeTicks * 1000 / kDosTicksPerSecond;
 		if (interval == 0 || now - _lastChargeMillis[meter] >= interval) {
+			const int before = _meterPercent[meter];
 			_meterPercent[meter] = MIN<int>(100, _meterPercent[meter] + config.charge);
 			_lastChargeMillis[meter] = now;
+			debugC(3, kDebugCombat,
+				"Ripper: combat meter tick name='%s' cause=recharge amount=%d value=%d->%d intervalTicks=%u",
+				kMeterNames[meter], _meterPercent[meter] - before, before,
+				_meterPercent[meter], config.chargeTicks);
 		}
 	}
 	if (drain && config.discharge > 0 && _meterPercent[meter] > 0) {
 		const uint32 interval = config.dischargeTicks * 1000 / kDosTicksPerSecond;
 		if (interval == 0 || now - _lastDischargeMillis[meter] >= interval) {
+			const int before = _meterPercent[meter];
 			_meterPercent[meter] = MAX<int>(0, _meterPercent[meter] - config.discharge);
 			_lastDischargeMillis[meter] = now;
+			debugC(3, kDebugCombat,
+				"Ripper: combat meter tick name='%s' cause=drain amount=%d value=%d->%d intervalTicks=%u",
+				kMeterNames[meter], before - _meterPercent[meter], before,
+				_meterPercent[meter], config.dischargeTicks);
 		}
 	}
 }
 
-void CombatEncounter::updateMeters(uint32 now, bool weaponHeld, bool shieldHeld) {
-	updateMeter(kHealthMeter, now, true, true);
-	updateMeter(kCreatureMeter, now, true, true);
-	updateMeter(kWeaponMeter, now, !weaponHeld, false);
-	updateMeter(kShieldMeter, now, !shieldHeld, shieldHeld);
-}
-
-void CombatEncounter::applyIncomingAttack(byte attack, bool shieldHeld) {
-	if (attack == 0 || attack > kDamageCount)
+void CombatEncounter::applyIncomingAttack(byte attack, bool shieldHeld,
+		uint32 now, uint frameIndex) {
+	if (attack == 0 || attack > kDamageCount) {
+		updateMeter(kShieldMeter, now, !shieldHeld, shieldHeld);
 		return;
+	}
 	const uint damageIndex = attack - 1;
+	const int healthBefore = _meterPercent[kHealthMeter];
+	const int weaponBefore = _meterPercent[kWeaponMeter];
+	const int shieldBefore = _meterPercent[kShieldMeter];
 	_meterPercent[kWeaponMeter] = MAX<int>(0,
 		_meterPercent[kWeaponMeter] - _meterConfig[kWeaponMeter].damage[damageIndex]);
+	const int weaponDamage = weaponBefore - _meterPercent[kWeaponMeter];
+	int healthDamage = 0;
+	int shieldDamage = 0;
 	if (shieldHeld && _meterPercent[kShieldMeter] > 0) {
 		_meterPercent[kShieldMeter] = MAX<int>(0,
 			_meterPercent[kShieldMeter] - _meterConfig[kShieldMeter].damage[damageIndex]);
+		shieldDamage = shieldBefore - _meterPercent[kShieldMeter];
 		queueCue(_shieldHitSounds[damageIndex]);
 		_paletteEffect = kPaletteShield;
+		// RunCombatEncounterScene applies the shield hit before its timed drain.
+		updateMeter(kShieldMeter, now, false, true);
 	} else {
+		// The unshielded branch recharges the inactive shield before damaging
+		// player health.
+		updateMeter(kShieldMeter, now, true, false);
 		_meterPercent[kHealthMeter] = MAX<int>(0,
 			_meterPercent[kHealthMeter] - _meterConfig[kHealthMeter].damage[damageIndex]);
+		healthDamage = healthBefore - _meterPercent[kHealthMeter];
 		queueCue(_healthHitSounds[damageIndex]);
 		_paletteEffect = kPalettePlayerHit;
 	}
-	debugC(3, kDebugCombat,
-		"Ripper: combat incoming attack type=%u shield=%d meters=%d,%d,%d,%d",
-		attack, shieldHeld, _meterPercent[0], _meterPercent[1],
-		_meterPercent[2], _meterPercent[3]);
+	debugC(2, kDebugCombat,
+		"Ripper: combat enemy attack scene=%u frame=%u type=%u route='%s' weaponDamage=%d weapon=%d->%d healthDamage=%d health=%d->%d shieldDamage=%d shield=%d->%d shieldAfterTick=%d creature=%d",
+		_activeSceneIndex, frameIndex, attack, shieldHeld ? "shield" : "health",
+		weaponDamage, weaponBefore, _meterPercent[kWeaponMeter], healthDamage,
+		healthBefore, _meterPercent[kHealthMeter], shieldDamage, shieldBefore,
+		shieldBefore - shieldDamage, _meterPercent[kShieldMeter],
+		_meterPercent[kCreatureMeter]);
 }
 
 const CombatEncounter::HitRegion *CombatEncounter::findHitRegion(
@@ -430,8 +466,18 @@ void CombatEncounter::spawnEffect(byte group, const Common::Point &point) {
 	uint slot = 0;
 	for (; slot < kEffectCapacity && _effects[slot].active; ++slot) {
 	}
-	if (slot == kEffectCapacity)
+	if (slot == kEffectCapacity) {
 		slot = 0;
+		for (uint candidate = 1; candidate < kEffectCapacity; ++candidate) {
+			if (_effects[candidate].frame > _effects[slot].frame)
+				slot = candidate;
+		}
+	}
+	if (_effects[slot].active) {
+		debugC(3, kDebugCombat,
+			"Ripper: combat effect capacity reached replacing slot=%u group=%u frame=%u",
+			slot, _effects[slot].group, _effects[slot].frame);
+	}
 	_effects[slot].active = true;
 	_effects[slot].group = group;
 	_effects[slot].frame = 0;
@@ -440,7 +486,7 @@ void CombatEncounter::spawnEffect(byte group, const Common::Point &point) {
 }
 
 void CombatEncounter::serviceWeapon(const FrameState &frame, const Common::Point &point,
-		bool weaponHeld, uint32 now) {
+		bool weaponHeld, uint32 now, uint frameIndex) {
 	if (!weaponHeld) {
 		_weaponHeld = false;
 		_singleShotReady = true;
@@ -457,24 +503,36 @@ void CombatEncounter::serviceWeapon(const FrameState &frame, const Common::Point
 		return;
 
 	queueCue(_weaponSound);
+	const int weaponBefore = _meterPercent[kWeaponMeter];
 	_meterPercent[kWeaponMeter] = MAX<int>(0,
 		_meterPercent[kWeaponMeter] - _meterConfig[kWeaponMeter].discharge);
 	const HitRegion *region = findHitRegion(frame, point);
+	const int creatureBefore = _meterPercent[kCreatureMeter];
+	int hitType = -1;
+	int hitRegion = -1;
 	if (region) {
 		const uint type = MIN<uint>(region->type, kEffectGroupCount - 1);
+		hitType = type;
+		hitRegion = (int)(region - frame.hitRegions.data());
 		queueCue(_creatureHitSounds[type]);
 		spawnEffect(type, point);
 		_meterPercent[kCreatureMeter] = MAX<int>(0,
 			_meterPercent[kCreatureMeter] - _meterConfig[kCreatureMeter].damage[type]);
 		_paletteEffect = kPaletteTargetHit;
 	}
+	_lastShotHit = region != nullptr;
 	_lastWeaponShotMillis = now;
 	if (rapidFireTicks == 0)
 		_singleShotReady = false;
-	debugC(3, kDebugCombat,
-		"Ripper: combat weapon fired target=%d point=%d,%d creature=%d weapon=%d",
-		region != nullptr, point.x, point.y,
-		_meterPercent[kCreatureMeter], _meterPercent[kWeaponMeter]);
+	debugC(2, kDebugCombat,
+		"Ripper: combat player shot scene=%u frame=%u hit=%d region=%d hitType=%d point=%d,%d bounds=%d,%d,%d,%d creatureDamage=%d creature=%d->%d weaponCost=%d weapon=%d->%d",
+		_activeSceneIndex, frameIndex, region != nullptr, hitRegion, hitType,
+		point.x, point.y, region ? region->bounds.left : 0,
+		region ? region->bounds.top : 0, region ? region->bounds.right : 0,
+		region ? region->bounds.bottom : 0,
+		creatureBefore - _meterPercent[kCreatureMeter], creatureBefore,
+		_meterPercent[kCreatureMeter], weaponBefore - _meterPercent[kWeaponMeter],
+		weaponBefore, _meterPercent[kWeaponMeter]);
 }
 
 void CombatEncounter::drawFrameScaled(byte *screen, uint pitch,
@@ -508,6 +566,20 @@ void CombatEncounter::drawMeters(byte *screen, uint pitch, int panelX) const {
 			drawFrameScaled(screen, pitch, frame, panelX + kMeterX[meter],
 				kMeterBottomY[meter] - segment * 2);
 		}
+	}
+}
+
+void CombatEncounter::drawIndicators(byte *screen, uint pitch, int panelX,
+		bool enemyAttackActive) const {
+	if (_combatFrames.size() < 5)
+		return;
+	const bool active[4] = {
+		enemyAttackActive, _lastShotHit, _weaponHeld, _shieldHeld
+	};
+	for (uint indicator = 0; indicator < ARRAYSIZE(active); ++indicator) {
+		const BitmapAssetFrame &frame = _combatFrames[active[indicator] ? 1 : 4];
+		drawFrameScaled(screen, pitch, frame,
+			panelX + kIndicatorX[indicator], kIndicatorY[indicator]);
 	}
 }
 
@@ -545,7 +617,8 @@ void CombatEncounter::advanceEffects() {
 	}
 }
 
-void CombatEncounter::drawOverlay(const Common::Point &point, bool targetActive) {
+void CombatEncounter::drawOverlay(const Common::Point &point, bool targetActive,
+		bool enemyAttackActive) {
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen)
 		return;
@@ -554,11 +627,14 @@ void CombatEncounter::drawOverlay(const Common::Point &point, bool targetActive)
 	// 320 - bitmapWidth. The meter anchors are local to that right-hand panel.
 	const int panelX = _combatFrames.empty() ? 0 :
 		(int)kLogicalWidth - (int)_combatFrames[0].width;
+	// The retail loop composites effects and crosshairs first, then presents
+	// the already-composed COMBAT0 status surface over them at 0x32790.
+	drawEffects(pixels, screen->pitch);
+	drawCrosshair(pixels, screen->pitch, point);
 	if (!_combatFrames.empty())
 		drawFrameScaled(pixels, screen->pitch, _combatFrames[0], panelX, 0);
 	drawMeters(pixels, screen->pitch, panelX);
-	drawEffects(pixels, screen->pitch);
-	drawCrosshair(pixels, screen->pitch, point);
+	drawIndicators(pixels, screen->pitch, panelX, enemyAttackActive);
 	if (!_overlayLogged) {
 		debugC(2, kDebugCombat,
 			"Ripper: initialized combat overlay screen=%ux%u pitch=%u panelOrigin=%d,0 panelSize=%ux%u metersLocal=11/26,54/119",
@@ -569,9 +645,11 @@ void CombatEncounter::drawOverlay(const Common::Point &point, bool targetActive)
 	}
 	g_system->unlockScreen();
 	debugC(11, kDebugCombat,
-		"Ripper: drew combat overlay point=%d,%d target=%d meters=%d,%d,%d,%d",
-		point.x, point.y, targetActive, _meterPercent[0], _meterPercent[1],
-		_meterPercent[2], _meterPercent[3]);
+		"Ripper: drew combat overlay point=%d,%d target=%d attack=%d lastHit=%d weaponHeld=%d shieldHeld=%d health=%d creature=%d weapon=%d shield=%d",
+		point.x, point.y, targetActive, enemyAttackActive, _lastShotHit,
+		_weaponHeld, _shieldHeld, _meterPercent[kHealthMeter],
+		_meterPercent[kCreatureMeter], _meterPercent[kWeaponMeter],
+		_meterPercent[kShieldMeter]);
 }
 
 uint16 CombatEncounter::serviceKeyboard() {
@@ -653,7 +731,11 @@ uint16 CombatEncounter::service(uint frame) {
 
 	_paletteEffect = shieldHeld ? kPaletteShield : kPaletteNormal;
 	const uint32 now = g_system->getMillis(true);
-	updateMeters(now, weaponHeld, shieldHeld);
+	// RunCombatEncounterScene at 0x31436 services timed health/creature
+	// changes, the incoming attack and shield branch, then the player weapon.
+	updateMeter(kHealthMeter, now, true, true);
+	updateMeter(kCreatureMeter, now, true, true);
+	applyIncomingAttack(state.attack, shieldHeld, now, frameIndex);
 	if (_meterPercent[kShieldMeter] == 0 && shieldHeld) {
 		shieldHeld = false;
 		_shieldHeld = false;
@@ -661,11 +743,12 @@ uint16 CombatEncounter::service(uint frame) {
 		_paletteEffect = kPaletteNormal;
 		debugC(2, kDebugCombat, "Ripper: combat shield depleted");
 	}
-	applyIncomingAttack(state.attack, shieldHeld);
-	serviceWeapon(state, point, weaponHeld, now);
+	if (!weaponHeld)
+		updateMeter(kWeaponMeter, now, true, false);
+	serviceWeapon(state, point, weaponHeld, now, frameIndex);
 	updateContinuousAudio(state);
 	const bool targetActive = findHitRegion(state, point) != nullptr;
-	drawOverlay(point, targetActive);
+	drawOverlay(point, targetActive, state.attack != 0);
 	advanceEffects();
 
 	if (_meterPercent[kCreatureMeter] == 0) {
@@ -678,9 +761,10 @@ uint16 CombatEncounter::service(uint frame) {
 	if (_meterPercent[kHealthMeter] == 0) {
 		_encounterResult = kExited;
 		debugC(1, kDebugCombat,
-			"Ripper: combat encounter player defeated type='%s' frame=%u scene=%u command=0x%04x meters=%d,%d,%d,%d",
+			"Ripper: combat encounter player defeated type='%s' frame=%u scene=%u command=0x%04x health=%d creature=%d weapon=%d shield=%d",
 			_definition.name, frameIndex, _activeSceneIndex, kEncounterExitCommand,
-			_meterPercent[0], _meterPercent[1], _meterPercent[2], _meterPercent[3]);
+			_meterPercent[kHealthMeter], _meterPercent[kCreatureMeter],
+			_meterPercent[kWeaponMeter], _meterPercent[kShieldMeter]);
 		return kEncounterExitCommand;
 	}
 	return keyboardCommand;
@@ -725,6 +809,7 @@ Scene::Result CombatEncounter::run(uint completionFlag) {
 	_weaponHeld = false;
 	_singleShotReady = true;
 	_shieldHeld = false;
+	_lastShotHit = false;
 	_overlayLogged = false;
 	_paletteEffect = kPaletteNormal;
 	const uint32 now = g_system->getMillis(true);
@@ -752,9 +837,10 @@ Scene::Result CombatEncounter::run(uint completionFlag) {
 				break;
 			}
 			debugC(2, kDebugCombat,
-				"Ripper: combat media returned scene=%u command=0x%04x result=%d meters=%d,%d,%d,%d",
+				"Ripper: combat media returned scene=%u command=0x%04x result=%d health=%d creature=%d weapon=%d shield=%d",
 				_activeSceneIndex, command, _encounterResult,
-				_meterPercent[0], _meterPercent[1], _meterPercent[2], _meterPercent[3]);
+				_meterPercent[kHealthMeter], _meterPercent[kCreatureMeter],
+				_meterPercent[kWeaponMeter], _meterPercent[kShieldMeter]);
 			if (command == kEncounterFailureCommand) {
 				_encounterResult = kLoadFailed;
 				break;

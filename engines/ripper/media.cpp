@@ -1304,7 +1304,11 @@ bool MediaPlayer::playCombatSequence(const Common::String &path,
 	request.x = 0;
 	request.y = 0;
 	request.displayScale = kAutoPacketizedDisplayScale;
-	request.patchInterfacePalette = false;
+	// RunCombatEncounterScene at 0x31436 preserves the shared interface
+	// palette bands used by COMBAT0.BBM through COMBAT4.BBM while the active
+	// Smacker palette changes. Without the patch, the status panel and meters
+	// are interpreted through unrelated movie colors.
+	request.patchInterfacePalette = true;
 	request.sequenceCallback = callback;
 	request.sequenceCommand = command;
 	request.rememberVideoPalette = false;

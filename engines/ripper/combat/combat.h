@@ -56,7 +56,7 @@ private:
 	static const uint kMeterCount = 4;
 	static const uint kDamageCount = 5;
 	static const uint kEffectGroupCount = 2;
-	static const uint kEffectCapacity = 8;
+	static const uint kEffectCapacity = 10;
 	static const uint kCueHandleCount = 8;
 
 	enum MeterIndex {
@@ -137,19 +137,22 @@ private:
 	void stopEncounterAudio();
 	void queueCue(const Common::String &path, uint volumePercent = 100);
 	void updateContinuousAudio(const FrameState &frame);
-	void updateMeters(uint32 now, bool weaponHeld, bool shieldHeld);
 	void updateMeter(uint meter, uint32 now, bool recharge, bool drain);
-	void applyIncomingAttack(byte attack, bool shieldHeld);
+	void applyIncomingAttack(byte attack, bool shieldHeld, uint32 now,
+		uint frameIndex);
 	void serviceWeapon(const FrameState &frame, const Common::Point &point,
-		bool weaponHeld, uint32 now);
+		bool weaponHeld, uint32 now, uint frameIndex);
 	const HitRegion *findHitRegion(const FrameState &frame,
 		const Common::Point &point) const;
 	void spawnEffect(byte group, const Common::Point &point);
 	void advanceEffects();
-	void drawOverlay(const Common::Point &point, bool targetActive);
+	void drawOverlay(const Common::Point &point, bool targetActive,
+		bool enemyAttackActive);
 	void drawFrameScaled(byte *screen, uint pitch, const BitmapAssetFrame &frame,
 		int x, int y) const;
 	void drawMeters(byte *screen, uint pitch, int panelX) const;
+	void drawIndicators(byte *screen, uint pitch, int panelX,
+		bool enemyAttackActive) const;
 	void drawCrosshair(byte *screen, uint pitch, const Common::Point &point) const;
 	void drawEffects(byte *screen, uint pitch) const;
 	uint16 serviceKeyboard();
@@ -187,6 +190,7 @@ private:
 	bool _weaponHeld;
 	bool _singleShotReady;
 	bool _shieldHeld;
+	bool _lastShotHit;
 	bool _overlayLogged;
 	PaletteEffect _paletteEffect;
 	Result _encounterResult;
