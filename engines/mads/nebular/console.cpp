@@ -23,11 +23,13 @@
 #include "common/savefile.h"
 #include "graphics/surface.h"
 #include "graphics/thumbnail.h"
-#include "mads/nebular/console.h"
+#include "mads/core/config.h"
 #include "mads/core/inter.h"
 #include "mads/core/kernel.h"
 #include "mads/core/object.h"
 #include "mads/core/player.h"
+#include "mads/nebular/console.h"
+#include "mads/nebular/nebular.h"
 
 namespace MADS {
 namespace RexNebular {
@@ -100,11 +102,8 @@ bool Console::cmdLoad(int argc, const char **argv) {
 	new_room = sf->readSint16LE();
 	previous_room = sf->readSint16LE();
 	room_variant = sf->readSint16LE();
-
-	// Inventory
-	inven_num_objects = sf->readSint16LE();
-	for (int i = 0; i < inven_num_objects; ++i)
-		inven[i] = sf->readSint32LE();
+	// Dynamic objects - only the count was ever saved
+	sf->skip(2);
 
 	// Objects
 	num_objects = sf->readUint16LE();
@@ -126,13 +125,19 @@ bool Console::cmdLoad(int argc, const char **argv) {
 		for (auto &q : obj.quality_id)
 			q = sf->readByte();
 		for (auto &q : obj.quality_value)
-			q = sf->readByte();
+			q = sf->readSint32LE();
 	}
+
+	// Inventory
+	inven_num_objects = sf->readSint16LE();
+	for (int i = 0; i < inven_num_objects; ++i)
+		inven[i] = sf->readSint32LE();
 
 	// Visited scenes
 	player.num_rooms_been_in = sf->readUint16LE();
 	for (int i = 0; i < player.num_rooms_been_in; ++i)
 		player.rooms_been_in[i] = sf->readSint32LE();
+	sf->skip(1); // scene revisited
 
 	// Player fields
 	player.walking = sf->readByte();
@@ -180,6 +185,14 @@ bool Console::cmdLoad(int argc, const char **argv) {
 
 	// Screen objects
 	sf->skip(4);
+
+	// Naughtiness and difficulty
+	config_file.naughtiness = sf->readByte();
+	game.difficulty = sf->readByte();
+
+	// Load room scratch data
+	Common::Serializer s(sf, nullptr);
+	g_engine->syncRoom(s);
 
 	return false;
 }
