@@ -367,6 +367,18 @@ SmushFont *SmushPlayerRebel1::getGameFont(int font) {
 }
 
 void SmushPlayerRebel1::adjustGamePalette() {
+	if (_vm->_game.platform == Common::kPlatformSegaCD) {
+		// Magenta entries inherit the previous Sega palette.
+		for (int i = 0; i < 256; ++i) {
+			byte *color = _pal + i * 3;
+			if (color[0] == 0xff && color[1] == 0 && color[2] == 0xff) {
+				color[0] = _shiftedDeltaPal[i * 3] >> 7;
+				color[1] = _shiftedDeltaPal[i * 3 + 1] >> 7;
+				color[2] = _shiftedDeltaPal[i * 3 + 2] >> 7;
+			}
+		}
+	}
+
 	for (int i = 0; i < ARRAYSIZE(_pal); ++i)
 		_shiftedDeltaPal[i] = _pal[i] << 7;
 	memset(_deltaPal, 0, sizeof(_deltaPal));
