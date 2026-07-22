@@ -76,7 +76,8 @@ static const uint32 kTextEntryCaretBlinkMillis = 500;
 } // End of anonymous namespace
 
 ModalDialogManager::ModalDialogManager(RipperEngine *engine) :
-		_engine(engine), _textEntryMaximumLength(0), _textEntryHelpResourceId(0),
+		_engine(engine), _textEntryStyle(kMenubPresentation),
+		_textEntryMaximumLength(0), _textEntryHelpResourceId(0),
 		_textEntryFirstVisible(0), _textEntryCursorPosition(0),
 		_textEntryNextCaretMillis(0), _textEntryOverwrite(false),
 		_textEntryCaretVisible(false), _textEntryActive(false),
@@ -440,6 +441,45 @@ bool ModalDialogManager::drawRetainedTextPanel(uint bodyResourceId,
 		uint &visibleRows, PresentationStyle style,
 		TextPanelScrollControl hoveredScrollControl) {
 	const Common::String &body = resourceString(bodyResourceId);
+	if (!drawRetainedTextPanelText(body, bounds, firstVisible,
+			maximumFirstVisible, visibleRows, style, hoveredScrollControl)) {
+		warning("Ripper: could not draw retained text panel resource=%u", bodyResourceId);
+		return false;
+	}
+	debugC(2, kDebugScene,
+		"Ripper: drew retained text panel resource=%u style=%s firstLine=%u visibleRows=%u bounds=%d,%d,%d,%d",
+		bodyResourceId, style == kWacPresentation ? "wacmnu" : "menub",
+		firstVisible, visibleRows, bounds.left, bounds.top,
+		bounds.width(), bounds.height());
+	return true;
+}
+
+bool ModalDialogManager::drawRetainedTextPanelText(const Common::String &body,
+		const Common::Rect &bounds, uint firstVisible,
+		uint &maximumFirstVisible, uint &visibleRows, PresentationStyle style,
+		TextPanelScrollControl hoveredScrollControl) {
+	if (!_initialized || body.empty())
+		return false;
+
+	const bool wacStyle = style == kWacPresentation;
+	const int leftPadding = wacStyle ? kWacModalLeftPadding : kModalLeftPadding;
+	const int rightPadding = wacStyle ? kWacModalRightPadding : kModalRightPadding;
+	if (bounds.width() <= leftPadding + rightPadding +
+			kModalTextHorizontalInset * 2)
+		return false;
+
+	Common::Array<Common::String> lines;
+	wrapText(body, bounds.width() - leftPadding - rightPadding -
+		kModalTextHorizontalInset * 2, lines);
+	return drawRetainedTextPanelLines(lines, bounds, firstVisible,
+		maximumFirstVisible, visibleRows, style, hoveredScrollControl);
+}
+
+bool ModalDialogManager::drawRetainedTextPanelLines(
+		const Common::Array<Common::String> &lines,
+		const Common::Rect &bounds, uint firstVisible,
+		uint &maximumFirstVisible, uint &visibleRows, PresentationStyle style,
+		TextPanelScrollControl hoveredScrollControl) {
 	const bool wacStyle = style == kWacPresentation;
 	const int bottomPadding = wacStyle ?
 		kWacModalBottomPadding : kModalBottomPadding;
@@ -447,17 +487,12 @@ bool ModalDialogManager::drawRetainedTextPanel(uint bodyResourceId,
 	const int rightPadding = wacStyle ? kWacModalRightPadding : kModalRightPadding;
 	const int topPadding = wacStyle ?
 		kWacModalHeadingTopPadding : kModalBottomPadding;
-	if (!_initialized || body.empty() || bounds.width() <=
+	if (!_initialized || lines.empty() || bounds.width() <=
 			leftPadding + rightPadding + kModalTextHorizontalInset * 2 ||
 			bounds.height() <= topPadding + bottomPadding +
-				kModalTextVerticalInset * 2) {
-		warning("Ripper: could not draw retained text panel resource=%u", bodyResourceId);
+				kModalTextVerticalInset * 2)
 		return false;
-	}
 
-	Common::Array<Common::String> lines;
-	wrapText(body, bounds.width() - leftPadding - rightPadding -
-		kModalTextHorizontalInset * 2, lines);
 	visibleRows = MAX<uint>(1,
 		(bounds.height() - topPadding - bottomPadding -
 			kModalTextVerticalInset * 2) / kModalRowHeight);
@@ -467,10 +502,10 @@ bool ModalDialogManager::drawRetainedTextPanel(uint bodyResourceId,
 		applyModalPalette();
 	drawDialog(Common::String(), lines, firstVisible, visibleRows, bounds, style,
 		hoveredScrollControl);
-	debugC(2, kDebugScene,
-		"Ripper: drew retained text panel resource=%u style=%s lines=%u "
+	debugC(3, kDebugScene,
+		"Ripper: drew retained text panel lines style=%s lines=%u "
 		"firstLine=%u visibleRows=%u viewport=%d,%d,%d,%d bounds=%d,%d,%d,%d",
-		bodyResourceId, wacStyle ? "wacmnu" : "menub", lines.size(),
+		wacStyle ? "wacmnu" : "menub", lines.size(),
 		firstVisible, visibleRows, bounds.left + leftPadding + kModalTextHorizontalInset,
 		bounds.top + topPadding + kModalTextVerticalInset,
 		bounds.width() - leftPadding - rightPadding - kModalTextHorizontalInset * 2,
@@ -481,7 +516,7 @@ bool ModalDialogManager::drawRetainedTextPanel(uint bodyResourceId,
 
 void ModalDialogManager::drawTextEntry(const Common::String &prompt,
 		const Common::String &text, uint firstVisible, uint cursorPosition,
-		bool caretVisible, const Common::Rect &bounds) const {
+		bool caretVisible, const Common::Rect &bounds, PresentationStyle style) const {
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
 		if (screen)
@@ -490,15 +525,19 @@ void ModalDialogManager::drawTextEntry(const Common::String &prompt,
 	}
 
 	byte *pixels = (byte *)screen->getPixels();
-	drawFrame(pixels, screen->pitch, bounds, kMenubPresentation);
+	drawFrame(pixels, screen->pitch, bounds, style);
+	const bool wacStyle = style == kWacPresentation;
+	const byte backgroundColor = wacStyle ? kWacModalBackgroundColor :
+		kModalBackgroundColor;
+	const byte textColor = wacStyle ? kWacModalTextColor : kModalTextColor;
 	for (int y = bounds.top + 2; y < bounds.bottom - 2; ++y)
 		memset(screen->getBasePtr(bounds.left + kTextEntryPadding, y),
-			kModalBackgroundColor, bounds.width() - kTextEntryPadding * 2);
+			backgroundColor, bounds.width() - kTextEntryPadding * 2);
 
 	const int textTop = bounds.top + (bounds.height() - _font.lineHeight) / 2;
 	int textLeft = bounds.left + kTextEntryPadding;
 	if (!prompt.empty()) {
-		drawText(pixels, screen->pitch, textLeft, textTop, prompt, kModalTextColor);
+		drawText(pixels, screen->pitch, textLeft, textTop, prompt, textColor);
 		textLeft += measureText(prompt) + _font.spaceWidth;
 	}
 	const uint availableWidth = bounds.right - kTextEntryPadding - textLeft;
@@ -512,11 +551,11 @@ void ModalDialogManager::drawTextEntry(const Common::String &prompt,
 	}
 	const Common::String visible = text.substr(firstVisible,
 		endVisible - firstVisible);
-	drawText(pixels, screen->pitch, textLeft, textTop, visible, kModalTextColor);
+	drawText(pixels, screen->pitch, textLeft, textTop, visible, textColor);
 	if (caretVisible && cursorPosition >= firstVisible && cursorPosition <= endVisible) {
 		const int caretLeft = textLeft + measureText(text.substr(firstVisible,
 			cursorPosition - firstVisible));
-		drawText(pixels, screen->pitch, caretLeft, textTop, "_", kModalTextColor);
+		drawText(pixels, screen->pitch, caretLeft, textTop, "_", textColor);
 	}
 
 	g_system->unlockScreen();
@@ -563,7 +602,8 @@ void ModalDialogManager::updateTextEntryFirstVisible(const Common::Rect &bounds)
 }
 
 bool ModalDialogManager::beginTextEntry(const Common::String &prompt,
-		uint maximumLength, uint helpResourceId, const char *source) {
+		uint maximumLength, uint helpResourceId, const char *source,
+		PresentationStyle style, const Common::Rect &bounds) {
 	if (!_initialized || _textEntryActive) {
 		warning("Ripper: could not begin scene text request source='%s' active=%d",
 			source, _textEntryActive);
@@ -572,6 +612,10 @@ bool ModalDialogManager::beginTextEntry(const Common::String &prompt,
 	_textEntryPrompt = prompt;
 	_textEntryText.clear();
 	_textEntrySource = source;
+	_textEntryStyle = style;
+	_textEntryBounds = bounds.isEmpty() ? Common::Rect(kTextEntryLeft,
+		kTextEntryTop, kTextEntryLeft + kTextEntryWidth,
+		kTextEntryTop + kTextEntryHeight) : bounds;
 	_textEntryMaximumLength = maximumLength;
 	_textEntryHelpResourceId = helpResourceId;
 	_textEntryFirstVisible = 0;
@@ -585,15 +629,16 @@ bool ModalDialogManager::beginTextEntry(const Common::String &prompt,
 	_engine->getInput()->discardMouseTransitions();
 	_engine->getCursor()->update(kModalCursor);
 	_engine->getCursor()->setVisible(true);
-	applyModalPalette();
-	const Common::Rect bounds(kTextEntryLeft, kTextEntryTop,
-		kTextEntryLeft + kTextEntryWidth, kTextEntryTop + kTextEntryHeight);
+	if (_textEntryStyle == kMenubPresentation)
+		applyModalPalette();
 	drawTextEntry(_textEntryPrompt, _textEntryText, _textEntryFirstVisible,
-		_textEntryCursorPosition, _textEntryCaretVisible, bounds);
+		_textEntryCursorPosition, _textEntryCaretVisible, _textEntryBounds,
+		_textEntryStyle);
 	debugC(1, kDebugScene,
-		"Ripper: entered scene text request source='%s' control=0x4e2 bounds=%d,%d,%d,%d maximumLength=%u helpResource=%u",
-		source, bounds.left, bounds.top, bounds.width(), bounds.height(),
-		maximumLength, helpResourceId);
+		"Ripper: entered scene text request source='%s' control=0x4e2 style=%s bounds=%d,%d,%d,%d maximumLength=%u helpResource=%u",
+		source, _textEntryStyle == kWacPresentation ? "wacmnu" : "menub",
+		_textEntryBounds.left, _textEntryBounds.top, _textEntryBounds.width(),
+		_textEntryBounds.height(), maximumLength, helpResourceId);
 	return true;
 }
 
@@ -614,8 +659,7 @@ ModalDialogManager::TextEntryResult ModalDialogManager::serviceTextEntry(
 		return kTextEntryFailed;
 	}
 
-	const Common::Rect bounds(kTextEntryLeft, kTextEntryTop,
-		kTextEntryLeft + kTextEntryWidth, kTextEntryTop + kTextEntryHeight);
+	const Common::Rect &bounds = _textEntryBounds;
 	TextEntryResult result = kTextEntryPending;
 	bool edited = false;
 	while (_engine->getInput()->hasPendingKey()) {
@@ -633,11 +677,14 @@ ModalDialogManager::TextEntryResult ModalDialogManager::serviceTextEntry(
 				break;
 			}
 			if (command == 0x3b00) {
-				if (!_engine->getModalDialog()->run(_textEntryHelpResourceId, true)) {
+				if (!_engine->getModalDialog()->run(_textEntryHelpResourceId, true,
+						_textEntryStyle, _textEntryStyle == kWacPresentation ?
+						kPreserveActivePalette : kApplyModalPalette)) {
 					result = kTextEntryFailed;
 					break;
 				}
-				applyModalPalette();
+				if (_textEntryStyle == kMenubPresentation)
+					applyModalPalette();
 				continue;
 			}
 
@@ -724,9 +771,11 @@ ModalDialogManager::TextEntryResult ModalDialogManager::serviceTextEntry(
 	}
 	updateTextEntryFirstVisible(bounds);
 	if (result == kTextEntryPending) {
-		applyModalPalette();
+		if (_textEntryStyle == kMenubPresentation)
+			applyModalPalette();
 		drawTextEntry(_textEntryPrompt, _textEntryText, _textEntryFirstVisible,
-			_textEntryCursorPosition, _textEntryCaretVisible, bounds);
+			_textEntryCursorPosition, _textEntryCaretVisible, bounds,
+			_textEntryStyle);
 		return result;
 	}
 

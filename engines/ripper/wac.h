@@ -84,6 +84,11 @@ private:
 		uint textPageRows = 0);
 	bool drawDatabaseTextPanel(uint bodyResourceId, const Common::Rect &bounds,
 		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows);
+	void wrapJournalText(const Common::String &text, uint maximumWidth,
+		Common::Array<Common::String> &lines) const;
+	bool drawJournalTextPanel(const Common::Array<Common::String> &lines, uint progress,
+		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows);
+	uint16 runJournalRevealScene(DatabaseEntry &entry);
 	uint16 runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceId);
 	uint16 dispatchDatabaseEntry(DatabaseEntry &entry);
 	const Common::String &resourceString(uint resourceId) const;
