@@ -66,6 +66,7 @@ protected:
 	void initialize();
 	void shutdown() {}
 
+	void pauseEngineIntern(bool pause) override;
 public:
 	const ChewyGameDescription *_gameDescription;
 	Common::RandomSource _rnd;

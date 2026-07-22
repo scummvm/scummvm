@@ -79,6 +79,18 @@ void ChewyEngine::initialize() {
 	syncSoundSettings();
 }
 
+void ChewyEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+
+	if (!pause) {
+		// When a key was pressed to dismiss the ScummVM overlay,
+		// the key-down event may have been consumed outside the engine.
+		// In this case we should not respond to the next (leaked)
+		// key-up event unless it is preceded by another key-down.
+		g_events->ignoreNextKeyUp();
+	}
+}
+
 Common::Error ChewyEngine::run() {
 	// Initialize backend
 	//initGraphics(640, 480);
