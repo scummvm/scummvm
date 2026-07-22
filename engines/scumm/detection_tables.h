@@ -504,6 +504,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "rebel1", "ASSAULT.EXE", kGenUnchanged, UNK_LANG, Common::kPlatformDOS, "" },
 	{ "rebel1", "O1LOGO.AAA", kGenUnchanged, UNK_LANG, Common::kPlatform3DO, "" },
+	{ "rebel1", "SUB_AP.BIN", kGenUnchanged, UNK_LANG, Common::kPlatformSegaCD, "" },
 
 	{ "rebel2", "REBEL2.EXE", kGenUnchanged, UNK_LANG, Common::kPlatformDOS, "" },
 	{ "rebel2", "REBEL2.EXE", kGenUnchanged, UNK_LANG, Common::kPlatformDOS, "Demo" },

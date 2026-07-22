@@ -27,6 +27,61 @@
 
 namespace Scumm {
 
+// Codecs 31/32 use the codec 1/3 line RLE over low-nibble-first packed 4bpp
+// pixels. Codec 31 leaves color zero transparent.
+void smushDecodeRA1SegaCDRLE(byte *dst, const byte *src, int left, int top, int width, int height,
+		int pitch, int bufHeight, int dataSize, bool transparent, byte paletteBase) {
+	if (dst == nullptr || src == nullptr || width <= 0 || height <= 0 || pitch <= 0 || dataSize <= 0)
+		return;
+
+	const byte *srcEnd = src + dataSize;
+	for (int row = 0; row < height && srcEnd - src >= 2; row++) {
+		const int lineSize = READ_LE_UINT16(src);
+		const byte *lineData = src + 2;
+		const byte *lineEnd = lineData + MIN<int>(lineSize, srcEnd - lineData);
+		const int dstY = top + row;
+		byte *rowDst = (dstY >= 0 && dstY < bufHeight) ? dst + dstY * pitch : nullptr;
+		int x = 0;
+
+		while (x < width && lineData < lineEnd) {
+			const byte code = *lineData++;
+			const int num = (code >> 1) + 1;
+			const bool isRun = (code & 1) != 0;
+			byte runByte = 0;
+			if (isRun) {
+				if (lineData >= lineEnd)
+					break;
+				runByte = *lineData++;
+			}
+
+			for (int k = 0; k < num && x < width; k++) {
+				byte packed;
+				if (isRun) {
+					packed = runByte;
+				} else {
+					if (lineData >= lineEnd)
+						break;
+					packed = *lineData++;
+				}
+				const byte nibbles[2] = { (byte)(packed & 0x0F), (byte)(packed >> 4) };
+				for (int d = 0; d < 2 && x < width; d++, x++) {
+					const byte nibble = nibbles[d];
+					if (rowDst && !(transparent && nibble == 0)) {
+						const int dstX = left + x;
+						if (dstX >= 0 && dstX < pitch)
+							rowDst[dstX] = paletteBase + nibble;
+					}
+				}
+			}
+		}
+
+		const int rowSize = 2 + lineSize;
+		if (rowSize > srcEnd - src)
+			break;
+		src += rowSize;
+	}
+}
+
 // RLE with transparency on pixel 0.
 void smushDecodeRA1Transparent(byte *dst, const byte *src, int left, int top, int width, int height,
 		int pitch, int dataSize, int sourceSkipX) {
@@ -212,7 +267,7 @@ void smushDecodeRA1Scatter(byte *dst, const byte *src, int left, int top, int bu
 	}
 }
 
-// Codecs 4/5 use 4x4 tile lookup tables.
+// Codecs 4/5/33/34 use 4x4 glyph tables.
 static uint8 s_ra1C4Tbl[2][256][16];
 static uint16 s_ra1C4Param = 0xFFFF;
 
@@ -254,6 +309,49 @@ static void ra1Codec4GenTiles(uint16 param1) {
 	}
 }
 
+// Sega codecs use four 64-glyph families over an 8x8 color-pair grid.
+static void ra1CodecSegaGenTiles(uint16 param1) {
+	uint8 *dst = &s_ra1C4Tbl[0][0][0];
+	for (int family = 0; family < 4; family++) {
+		for (int i = 0; i < 8; i++) {
+			for (int k = 0; k < 8; k++) {
+				const int cy = i + param1;
+				const int cx = k + param1;
+				const int c0 = param1 + ((i + k) >> 1);
+				const int c1 = (c0 + cy) >> 1;
+				const int c2 = (c0 + cx) >> 1;
+
+				switch (family) {
+				case 0:
+					*dst++ = c0; *dst++ = c0; *dst++ = c1; *dst++ = cy;
+					*dst++ = c0; *dst++ = c0; *dst++ = c1; *dst++ = cy;
+					*dst++ = c2; *dst++ = c2; *dst++ = c0; *dst++ = c1;
+					*dst++ = cx; *dst++ = cx; *dst++ = c2; *dst++ = c0;
+					break;
+				case 1:
+					*dst++ = cy; *dst++ = cy; *dst++ = cy; *dst++ = cy;
+					*dst++ = c0; *dst++ = c0; *dst++ = c0; *dst++ = c0;
+					*dst++ = c2; *dst++ = c2; *dst++ = c2; *dst++ = c2;
+					*dst++ = cx; *dst++ = cx; *dst++ = cx; *dst++ = cx;
+					break;
+				case 2:
+					*dst++ = cy; *dst++ = cy; *dst++ = c1; *dst++ = c0;
+					*dst++ = cy; *dst++ = cy; *dst++ = c1; *dst++ = c0;
+					*dst++ = c1; *dst++ = c1; *dst++ = c0; *dst++ = c2;
+					*dst++ = c0; *dst++ = c0; *dst++ = c2; *dst++ = cx;
+					break;
+				case 3:
+					*dst++ = cy; *dst++ = c0; *dst++ = c2; *dst++ = cx;
+					*dst++ = cy; *dst++ = c0; *dst++ = c2; *dst++ = cx;
+					*dst++ = cy; *dst++ = c0; *dst++ = c2; *dst++ = cx;
+					*dst++ = cy; *dst++ = c0; *dst++ = c2; *dst++ = cx;
+					break;
+				}
+			}
+		}
+	}
+}
+
 static bool ra1Codec4LoadTiles(const byte *&src, int &remaining, uint16 param2, uint8 clr) {
 	uint8 *dst = &s_ra1C4Tbl[1][0][0];
 	int loop = param2 * 8;
@@ -275,9 +373,15 @@ void smushDecodeRA1Block(byte *dst, const byte *src, int left, int top, int widt
 
 	const int mx = pitch;
 	const int my = bufHeight;
-	if (s_ra1C4Param != param) {
-		ra1Codec4GenTiles(param);
-		s_ra1C4Param = param;
+	const bool segaGlyphs = codec == 33 || codec == 34;
+	const bool hasSkipGlyph = codec == 4 || codec == 33;
+	const uint16 tableParam = param | (segaGlyphs ? 0x100 : 0);
+	if (s_ra1C4Param != tableParam) {
+		if (segaGlyphs)
+			ra1CodecSegaGenTiles(param);
+		else
+			ra1Codec4GenTiles(param);
+		s_ra1C4Param = tableParam;
 	}
 	int remaining = dataSize;
 	const byte *data = src;
@@ -309,7 +413,7 @@ void smushDecodeRA1Block(byte *dst, const byte *src, int left, int top, int widt
 				return;
 			byte idx = *data++;
 			remaining--;
-			if (bit == 0 && idx == 0x80 && codec != 5)
+			if (bit == 0 && idx == 0x80 && hasSkipGlyph)
 				continue;
 			if (y >= my || (y + 4) < 0 || (x + 4) < 0 || x >= mx)
 				continue;

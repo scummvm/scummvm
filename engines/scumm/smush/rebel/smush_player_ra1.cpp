@@ -155,9 +155,14 @@ void SmushPlayerRebel1::initGamePlayerFields() {
 	_ra1FadeFrameHeight = 0;
 	_ra1FadeFrameValid = false;
 	_ra1UseFadeFrame = false;
+	_segaCDFont = nullptr;
+	_segaCDFontSize = 0;
 }
 
 void SmushPlayerRebel1::destroyGamePlayerFields() {
+	free(_segaCDFont);
+	_segaCDFont = nullptr;
+	_segaCDFontSize = 0;
 	free(_ra1ObjOverlayData);
 	_ra1ObjOverlayData = nullptr;
 	_ra1ObjOverlayDataSize = 0;
@@ -545,7 +550,15 @@ bool SmushPlayerRebel1::handleGameAdjustCoords(int codec, int &left, int &top, i
 		return false;
 
 	// Block codecs consume column-major tiles while clipping destination pixels.
-	if (codec == SMUSH_CODEC_RA1_DELTA || codec == SMUSH_CODEC_RA1_BLOCK) {
+	if (codec == SMUSH_CODEC_RA1_DELTA || codec == SMUSH_CODEC_RA1_BLOCK ||
+			codec == SMUSH_CODEC_SEGACD_BLOCK33 || codec == SMUSH_CODEC_SEGACD_BLOCK34) {
+		left += _fobjOffsetX;
+		top += _fobjOffsetY;
+		return false;
+	}
+
+	// Packed Sega RLE clips internally.
+	if (codec == SMUSH_CODEC_SEGACD_RLE || codec == SMUSH_CODEC_SEGACD_OPAQUE) {
 		left += _fobjOffsetX;
 		top += _fobjOffsetY;
 		return false;
@@ -587,6 +600,8 @@ bool SmushPlayerRebel1::handleGameCodecDecode(int codec, const uint8 *src, int l
 		return true;
 	case SMUSH_CODEC_RA1_DELTA:
 	case SMUSH_CODEC_RA1_BLOCK:
+	case SMUSH_CODEC_SEGACD_BLOCK33:
+	case SMUSH_CODEC_SEGACD_BLOCK34:
 		smushDecodeRA1Block(_dst, src, left, top, width, height, pitch,
 			(_dst == _specialBuffer) ? _height : _vm->_screenHeight,
 			dataSize, param, parm2, codec);
@@ -594,6 +609,12 @@ bool SmushPlayerRebel1::handleGameCodecDecode(int codec, const uint8 *src, int l
 	case SMUSH_CODEC_LINE_UPDATE:
 		smushDecodeRA1SkipCopy(_dst, src, left, top, width, height, pitch,
 			pitch, (_dst == _specialBuffer) ? _height : _vm->_screenHeight, dataSize);
+		return true;
+	case SMUSH_CODEC_SEGACD_RLE:
+	case SMUSH_CODEC_SEGACD_OPAQUE:
+		smushDecodeRA1SegaCDRLE(_dst, src, left, top, width, height, pitch,
+			(_dst == _specialBuffer) ? _height : _vm->_screenHeight,
+			dataSize, codec == SMUSH_CODEC_SEGACD_RLE, param);
 		return true;
 	case SMUSH_CODEC_SKIP_RLE: {
 		const int bufWidth = pitch;
@@ -1164,9 +1185,125 @@ SmushFont *SmushPlayerRebel1::ra1GetFont(int font) {
 	return _sf[font];
 }
 
+// MAI_AP.BIN stores 16x16 1bpp glyphs at 0x5f04, indexed as
+// (highByte - 0x80) * 128 + lowByte - 0x80.
+static const int32 kSegaCDFontOffset = 0x5f04;
+static const int kSegaCDGlyphBytes = 32;   // 16x16, 2 bytes per row
+static const int kSegaCDGlyphSize = 16;
+
+void SmushPlayerRebel1::ra1LoadSegaCDFont() {
+	if (_segaCDFont)
+		return;
+	ScummFile *f = _vm->instantiateScummFile();
+	_vm->openFile(*f, "MAI_AP.BIN");
+	if (f->isOpen()) {
+		_segaCDFontSize = (int32)f->size();
+		if (_segaCDFontSize > 0 && _segaCDFontSize <= 1024 * 1024) {
+			_segaCDFont = (byte *)malloc(_segaCDFontSize);
+			if (_segaCDFont && f->read(_segaCDFont, _segaCDFontSize) != (uint32)_segaCDFontSize) {
+				free(_segaCDFont);
+				_segaCDFont = nullptr;
+				_segaCDFontSize = 0;
+			}
+		}
+	}
+	delete f;
+}
+
+void SmushPlayerRebel1::ra1HandleTextSegaCD(int32 subSize, Common::SeekableReadStream &b) {
+	if (subSize < 8 || !_dst || _width <= 0 || _height <= 0)
+		return;
+
+	ra1LoadSegaCDFont();
+	if (!_segaCDFont)
+		return;
+
+	const int anchorX = b.readSint32BE();
+	const int startY = b.readSint32BE();
+	const int32 bodyLen = subSize - 8;
+	if (bodyLen <= 0)
+		return;
+	byte *body = (byte *)malloc(bodyLen);
+	if (!body)
+		return;
+	if (b.read(body, bodyLen) != (uint32)bodyLen) {
+		free(body);
+		return;
+	}
+
+	// Choose contrasting colors from the current palette.
+	int fg = 0, sh = 0, bestLum = -1, worstLum = 0x10000;
+	for (int i = 1; i < 256; i++) {
+		const int lum = _pal[i * 3] + _pal[i * 3 + 1] + _pal[i * 3 + 2];
+		if (lum > bestLum) {
+			bestLum = lum;
+			fg = i;
+		}
+		if (lum < worstLum) {
+			worstLum = lum;
+			sh = i;
+		}
+	}
+
+	// Lines are marked by 20 00 3C and contain two-byte glyph codes.
+	int cursorY = startY;
+	int32 p = 0;
+	while (p < bodyLen) {
+		Common::Array<uint16> glyphs;
+		while (p < bodyLen) {
+			byte c = body[p];
+			if (c >= 0x80 && p + 1 < bodyLen) {
+				glyphs.push_back((uint16)((c << 8) | body[p + 1]));
+				p += 2;
+			} else if (c == 0x3c && !glyphs.empty()) {
+				break;  // start of the next line
+			} else {
+				p++;    // skip control bytes (0x20, 0x00, '<')
+			}
+		}
+		if (glyphs.empty())
+			continue;
+
+		const int lineWidth = (int)glyphs.size() * kSegaCDGlyphSize;
+		int drawX = anchorX - lineWidth / 2;
+		for (uint g = 0; g < glyphs.size(); g++) {
+			const int hi = (glyphs[g] >> 8) - 0x80;
+			const int lo = (glyphs[g] & 0xFF) - 0x80;
+			const int32 idx = hi * 128 + lo;
+			const int32 off = kSegaCDFontOffset + idx * kSegaCDGlyphBytes;
+			if (idx < 0 || off < 0 || off + kSegaCDGlyphBytes > _segaCDFontSize) {
+				drawX += kSegaCDGlyphSize;
+				continue;
+			}
+			for (int row = 0; row < kSegaCDGlyphSize; row++) {
+				const uint16 bits = (_segaCDFont[off + row * 2] << 8) | _segaCDFont[off + row * 2 + 1];
+				for (int col = 0; col < kSegaCDGlyphSize; col++) {
+					if (!((bits >> (15 - col)) & 1))
+						continue;
+					const int px = drawX + col;
+					const int py = cursorY + row;
+					if (px + 1 >= 0 && px + 1 < _width && py + 1 >= 0 && py + 1 < _height)
+						_dst[(py + 1) * _width + (px + 1)] = (byte)sh;
+					if (px >= 0 && px < _width && py >= 0 && py < _height)
+						_dst[py * _width + px] = (byte)fg;
+				}
+			}
+			drawX += kSegaCDGlyphSize;
+		}
+		cursorY += kSegaCDGlyphSize + 2;
+	}
+
+	free(body);
+}
+
 void SmushPlayerRebel1::ra1HandleText(int32 subSize, Common::SeekableReadStream &b) {
 	if (subSize < 8 || !_dst || _width <= 0 || _height <= 0)
 		return;
+
+	if (_vm->_game.platform == Common::kPlatformSegaCD) {
+		ra1HandleTextSegaCD(subSize, b);
+		return;
+	}
 
 	InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
 	if (!rebel1)

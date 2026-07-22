@@ -59,6 +59,10 @@ void ScummEngine::loadCJKFont() {
 
 	_useMultiFont = false;	// Korean Multi-Font
 
+	// Sega CD Rebel Assault uses its SMUSH subtitle font.
+	if (_game.id == GID_REBEL1 && _game.platform == Common::kPlatformSegaCD)
+		return;
+
 	// Special case for Korean
 	if (isScummvmKorTarget()) {
 		loadKorFont();

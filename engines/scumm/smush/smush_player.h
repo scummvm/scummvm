@@ -86,6 +86,11 @@ namespace Scumm {
 #define SMUSH_CODEC_SKIP_RLE     23   // RA1: additive line-update overlay; RA2: skip/copy with embedded RLE
 #define SMUSH_CODEC_DELTA_BLOCKS 37
 #define SMUSH_CODEC_LINE_UPDATE2 44   // RA2: Variant of codec 21
+
+#define SMUSH_CODEC_SEGACD_RLE     31   // RA1 Sega CD: transparent 4bpp line RLE
+#define SMUSH_CODEC_SEGACD_OPAQUE  32   // RA1 Sega CD: opaque 4bpp line RLE
+#define SMUSH_CODEC_SEGACD_BLOCK33 33   // RA1 Sega CD: codec 4 with Sega glyph table
+#define SMUSH_CODEC_SEGACD_BLOCK34 34   // RA1 Sega CD: codec 5 with Sega glyph table and no skip glyph
 #define SMUSH_CODEC_RA2_BOMP     45   // RA2: BOMP RLE with variable header
 #define SMUSH_CODEC_DELTA_GLYPHS 47
 

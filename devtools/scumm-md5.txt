@@ -456,6 +456,7 @@ rebel1	Star Wars: Rebel Assault
 	02236dcfb0cac59457153fc296233825	213171	fr	DOS	-	v1.7	-	-
 	b978b92affdfe5744711ca0cb3548720	213115	de	DOS	-	v1.7	-	-
 	bb1d02798011e5906c4c726be4d63544	1908	en	3DO	-	-	-	-
+	d77be4d8a3e609092703508e09f1ed5d	132904	ja	SEGA	-	-	-	-
 
 rebel2	Star Wars: Rebel Assault II: The Hidden Empire
 	6b73a08c535c0544785d73ff812908a0	9430	All	DOS	-	-	-	-

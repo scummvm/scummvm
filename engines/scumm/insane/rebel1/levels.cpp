@@ -117,7 +117,8 @@ bool InsaneRebel1::loadRA1Nut(const char *filename, RA1SpriteBank &bank, bool wa
 			continue;
 		}
 
-		int codec = READ_LE_UINT16(data + fobjOffset + 8);
+		// FOBJ stores the codec and its parameter in separate bytes.
+		const int codec = data[fobjOffset + 8];
 		bank.sprites[i].xoffs = READ_LE_INT16(data + fobjOffset + 10);
 		bank.sprites[i].yoffs = READ_LE_INT16(data + fobjOffset + 12);
 		bank.sprites[i].width = READ_LE_UINT16(data + fobjOffset + 14);
@@ -140,6 +141,13 @@ bool InsaneRebel1::loadRA1Nut(const char *filename, RA1SpriteBank &bank, bool wa
 			smushDecodeRA1Transparent(decPtr, fobjData, 0, 0,
 				bank.sprites[i].width, bank.sprites[i].height, bank.sprites[i].width,
 				fobjDataSize);
+		} else if (codec == SMUSH_CODEC_SEGACD_RLE || codec == SMUSH_CODEC_SEGACD_OPAQUE) {
+			// Codecs 31/32 use palette-banked 4bpp pixels.
+			const byte paletteBase = data[fobjOffset + 9];
+			bank.sprites[i].data = decPtr;
+			smushDecodeRA1SegaCDRLE(decPtr, fobjData, 0, 0,
+				bank.sprites[i].width, bank.sprites[i].height, bank.sprites[i].width,
+				bank.sprites[i].height, fobjDataSize, codec == SMUSH_CODEC_SEGACD_RLE, paletteBase);
 		} else {
 			bank.sprites[i].width = 0;
 			bank.sprites[i].height = 0;

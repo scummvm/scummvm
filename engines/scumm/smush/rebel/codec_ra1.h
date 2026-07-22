@@ -35,6 +35,8 @@ void smushDecodeRA1AdditiveLineUpdate(byte *dst, const byte *src, int left, int 
 void smushDecodeRA1Scatter(byte *dst, const byte *src, int left, int top, int bufWidth, int bufHeight, int pitch, int dataSize);
 void smushDecodeRA1Block(byte *dst, const byte *src, int left, int top, int width, int height,
 		int pitch, int bufHeight, int dataSize, uint8 param, uint16 parm2, int codec);
+void smushDecodeRA1SegaCDRLE(byte *dst, const byte *src, int left, int top, int width, int height,
+		int pitch, int bufHeight, int dataSize, bool transparent, byte paletteBase);
 
 } // End of namespace Scumm
 
