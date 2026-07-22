@@ -583,6 +583,14 @@
   level byte at `0x8a177`. This is a reusable combat controller rather than
   three unrelated scene handlers; ScummVM keeps it under `combat/`, with the
   concrete Mechini encounter binding action 15 to the shared controller.
+- `RunCombatEncounterScene` reads the combat level once at `0x31563` and uses
+  its value `1`, `2`, or `3` only to format the numbered encounter INI. There
+  is no separate difficulty multiplier. `LoadCombatEncounterResourceSet` at
+  `0x34d6e` then takes the selected INI as the source of scene resources and
+  every health, creature, weapon, and shield damage, recharge, drain, and DOS
+  tick interval. ScummVM snapshots the current Options Panel combat level on
+  encounter entry, selects the same numbered INI, and reports both values in
+  the combat lifecycle log.
 - `LoadCombatEncounterResourceSet` at `0x34d6e` reads numbered `sceneN` entries,
   loads each `<scene>.SMK`, `<scene>DAT.DAT`, and `<scene>PRJ.PRJ`, and loads the
   configured crosshair, explosion, shading, and audio resources. A DAT file has
