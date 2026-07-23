@@ -659,10 +659,18 @@ class DisplayMan {
 
 	byte *_bitmapFloor; // @ G0084_puc_Bitmap_Floor
 	byte *_bitmapCeiling; // @ G0085_puc_Bitmap_Ceiling
+	byte *_bitmapWallSetD2L2;
+	byte *_bitmapWallSetD2R2;
 	byte *_bitmapWallSetD3L2; // @ G0697_puc_Bitmap_WallSet_Wall_D3L2
 	byte *_bitmapWallSetD3R2; // @ G0696_puc_Bitmap_WallSet_Wall_D3R2
 	byte *_bitmapWallSetD3LCR; // @ G0698_puc_Bitmap_WallSet_Wall_D3LCR
 	byte *_bitmapWallSetD2LCR; // @ G0699_puc_Bitmap_WallSet_Wall_D2LCR
+	byte *_bitmapWallSetD1L;
+	byte *_bitmapWallSetD1R;
+	byte *_bitmapWallSetD2L;
+	byte *_bitmapWallSetD2R;
+	byte *_bitmapWallSetD3L;
+	byte *_bitmapWallSetD3R;
 public:
 	byte *_bitmapWallSetD1LCR; // @ G0700_puc_Bitmap_WallSet_Wall_D1LCR
 private:
