@@ -24,6 +24,7 @@
 #include "common/translation.h"
 #include "common/util.h"
 
+#include "graphics/cursorman.h"
 #include "graphics/surface.h"
 
 #include "scumm/scumm_v7.h"
@@ -77,6 +78,8 @@ bool Rebel2PSX::playVideo(const Common::Path &path, int discNumber, bool version
 		return false;
 	}
 	decoder.start();
+	const bool cursorWasVisible = CursorMan.isVisible();
+	CursorMan.showMouse(false);
 	g_system->fillScreen(0);
 
 	bool skipped = false;
@@ -111,24 +114,41 @@ bool Rebel2PSX::playVideo(const Common::Path &path, int discNumber, bool version
 		g_system->delayMillis(5);
 	}
 	decoder.close();
+	CursorMan.showMouse(cursorWasVisible);
 	return !_vm->shouldQuit();
+}
+
+bool Rebel2PSX::playIntroSequence() {
+	static const char *const videos[] = {
+		"LEC_LOGO.STR",
+		"F5_LOGO.STR",
+		"OPENING.STR"
+	};
+	for (uint i = 0; i < ARRAYSIZE(videos); ++i) {
+		if (!playVideo(videos[i], 1, false))
+			return false;
+	}
+	return true;
+}
+
+bool Rebel2PSX::loadGlobalAssets(RA2PSXMainMenuUI &menu) {
+	Common::SeekableReadStream *stream = openResource(0);
+	if (!stream)
+		return false;
+
+	RA2PSXArchive archive;
+	const bool loaded = archive.load(*stream);
+	delete stream;
+	Common::Array<byte> soundData;
+	Common::Array<byte> soundProjectData;
+	return loaded && menu.load(archive) &&
+			archive.getMember("SNDsmp", soundData) &&
+			archive.getMember("sNDdata", soundProjectData) &&
+			_soundBank.load(soundData, soundProjectData);
 }
 
 bool Rebel2PSX::loadLevel1Assets(RA2PSXModel &enemy, RA2PSXModel &ship,
 		RA2PSXModel &crosshair, RA2PSXModel &laser, RA2PSXLevel1UI &ui) {
-	Common::SeekableReadStream *soundStream = openResource(0);
-	if (!soundStream)
-		return false;
-	RA2PSXArchive soundArchive;
-	const bool soundArchiveLoaded = soundArchive.load(*soundStream);
-	delete soundStream;
-	Common::Array<byte> soundData;
-	Common::Array<byte> soundProjectData;
-	if (!soundArchiveLoaded || !soundArchive.getMember("SNDsmp", soundData) ||
-			!soundArchive.getMember("sNDdata", soundProjectData) ||
-			!_soundBank.load(soundData, soundProjectData))
-		return false;
-
 	Common::SeekableReadStream *stream = openResource(1);
 	if (!stream)
 		return false;
@@ -155,6 +175,21 @@ bool Rebel2PSX::loadLevel1Assets(RA2PSXModel &enemy, RA2PSXModel &ship,
 
 Common::Error Rebel2PSX::runGame() {
 #ifdef USE_TINYGL
+	RA2PSXMainMenuUI menu;
+	if (!loadGlobalAssets(menu))
+		return Common::Error(Common::kReadingFailed,
+				_("Could not load the PlayStation menu resources"));
+	if (!playIntroSequence()) {
+		if (_vm->shouldQuit())
+			return Common::kNoError;
+		return Common::Error(Common::kReadingFailed,
+				_("Could not play the PlayStation introduction"));
+	}
+
+	const MenuResult menuResult = runMainMenu(menu);
+	if (menuResult == kMenuQuit)
+		return Common::kNoError;
+
 	RA2PSXModel enemy;
 	RA2PSXModel ship;
 	RA2PSXModel crosshair;

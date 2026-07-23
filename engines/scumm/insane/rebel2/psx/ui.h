@@ -21,6 +21,37 @@
 
 namespace Scumm {
 
+class RA2PSXTextureSet {
+public:
+	enum BlendMode {
+		kBlendOpaque,
+		kBlendAdditive
+	};
+
+	void clear() { _textures.clear(); }
+	bool append(const Common::Array<byte> &data);
+	bool has(const char *name) const { return find(name) != nullptr; }
+	void draw(Graphics::Surface &surface, const char *name, int x, int y,
+			const Common::Rect &source, int brightness = 0x80,
+			BlendMode blend = kBlendOpaque) const;
+	void drawText(Graphics::Surface &surface, const char *font, const char *text,
+			int x, int y) const;
+
+private:
+	const RA2PSXTexture *find(const char *name) const;
+	Common::Array<RA2PSXTexture> _textures;
+};
+
+class RA2PSXMainMenuUI {
+public:
+	bool load(const RA2PSXArchive &archive);
+	void draw(Graphics::Surface &surface, int selection) const;
+	Common::Rect itemRect(int item) const;
+
+private:
+	RA2PSXTextureSet _textures;
+};
+
 class RA2PSXLevel1UI {
 public:
 	bool load(const RA2PSXArchive &archive);
@@ -30,19 +61,9 @@ public:
 	void drawHUD(Graphics::Surface &surface, int score, int lives, int shield, int frame) const;
 
 private:
-	enum BlendMode {
-		kBlendOpaque,
-		kBlendAdditive
-	};
-
-	bool loadTextures(const Common::Array<byte> &data);
-	const RA2PSXTexture *findTexture(const char *name) const;
-	void drawTexture(Graphics::Surface &surface, const char *name,
-			int x, int y, const Common::Rect &source, int brightness = 0x80,
-			BlendMode blend = kBlendOpaque) const;
 	void drawShield(Graphics::Surface &surface, int shield, int xOffset, int yOffset) const;
 
-	Common::Array<RA2PSXTexture> _textures;
+	RA2PSXTextureSet _textures;
 };
 
 } // End of namespace Scumm

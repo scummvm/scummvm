@@ -37,6 +37,7 @@ namespace Scumm {
 
 class ScummEngine_v7;
 class RA2PSXLevel1UI;
+class RA2PSXMainMenuUI;
 
 class RA2PSXArchive {
 public:
@@ -220,6 +221,11 @@ public:
 	Common::Error runGame();
 
 private:
+	enum MenuResult {
+		kMenuStart,
+		kMenuQuit
+	};
+
 	enum Level1Result {
 		kLevel1Quit,
 		kLevel1Complete,
@@ -230,6 +236,9 @@ private:
 	Common::SeekableReadStream *openResource(int number);
 	Common::SeekableReadStream *openRawFile(const Common::Path &path, int discNumber);
 	bool playVideo(const Common::Path &path, int discNumber, bool version2);
+	bool playIntroSequence();
+	MenuResult runMainMenu(const RA2PSXMainMenuUI &ui);
+	bool loadGlobalAssets(RA2PSXMainMenuUI &menu);
 	bool loadLevel1Assets(RA2PSXModel &enemy, RA2PSXModel &ship,
 			RA2PSXModel &crosshair, RA2PSXModel &laser, RA2PSXLevel1UI &ui);
 	Level1Result playLevel1(const RA2PSXModel &enemy, const RA2PSXModel &ship,

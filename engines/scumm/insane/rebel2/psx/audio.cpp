@@ -32,8 +32,6 @@
 
 namespace Scumm {
 
-namespace {
-
 class RA2PSXADSRStream : public Audio::RewindableAudioStream {
 public:
 	RA2PSXADSRStream(Audio::RewindableAudioStream *stream, uint16 attack,
@@ -96,8 +94,6 @@ static bool timeReached(uint32 now, uint32 target) {
 static int soundBalance(int pan) {
 	return CLIP((pan - 64) * 2, -127, 127);
 }
-
-} // End of anonymous namespace
 
 bool RA2PSXSoundBank::load(const Common::Array<byte> &sampleData,
 		const Common::Array<byte> &projectData) {

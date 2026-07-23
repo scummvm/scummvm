@@ -238,6 +238,11 @@ bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 bool ScummEngine::hasFeature(EngineFeature f) const {
+#ifdef ENABLE_REBEL2_PSX
+	if (_game.id == GID_REBEL2 && _game.platform == Common::kPlatformPSX &&
+			(f == kSupportsLoadingDuringRuntime || f == kSupportsSavingDuringRuntime))
+		return false;
+#endif
 	return
 		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||

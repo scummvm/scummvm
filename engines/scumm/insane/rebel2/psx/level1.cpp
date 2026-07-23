@@ -28,6 +28,7 @@
 #include "graphics/surface.h"
 
 #include "scumm/scumm_v7.h"
+#include "scumm/insane/rebel2/shared.h"
 #include "scumm/insane/rebel2/psx/psx.h"
 #include "scumm/insane/rebel2/psx/ui.h"
 #include "scumm/insane/rebel2/psx/video.h"
@@ -400,7 +401,7 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 	int nextSpawnAdjustment = 0;
 	int logicFrame = -1;
 	int videoFrame = -1;
-	int lastShotFrame = -4;
+	int16 rapidFireCounter = 0;
 	bool moveLeft = false;
 	bool moveRight = false;
 	bool moveUp = false;
@@ -415,10 +416,13 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 	bool keyFire = false;
 	bool actionFire = false;
 	bool fireRequested = false;
+	bool fireWasPressed = false;
 	bool thirdPersonView = true;
 	Level1Result result = kLevel1Complete;
 	const int joystickDeadzone = MIN<int>(Common::JOYAXIS_MAX,
 			MAX(0, ConfMan.getInt("joystick_deadzone")) * 1000);
+	const bool rapidFire = ConfMan.hasKey("rebel2_rapid_fire") ?
+			ConfMan.getBool("rebel2_rapid_fire") : true;
 
 	const bool cursorWasVisible = CursorMan.isVisible();
 	CursorMan.showMouse(false);
@@ -475,8 +479,9 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 					moveDown = true;
 				} else if (event.kbd.keycode == Common::KEYCODE_SPACE ||
 						event.kbd.keycode == Common::KEYCODE_RETURN) {
+					if (!keyFire && !event.kbdRepeat)
+						fireRequested = true;
 					keyFire = true;
-					fireRequested = true;
 				}
 				break;
 			case Common::EVENT_KEYUP:
@@ -664,17 +669,18 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 			}
 
 			const bool heldFire = mouseFire || keyFire || actionFire;
-			const bool shootRequested = fireRequested ||
-					(heldFire && logicFrame - lastShotFrame >= 12);
+			const bool triggerShot = updateRebel2Fire(heldFire, fireWasPressed,
+					rapidFire, false, rapidFireCounter);
+			fireWasPressed = heldFire;
+			const bool shootRequested = fireRequested || triggerShot;
 			fireRequested = false;
-			if (shootRequested && logicFrame - lastShotFrame >= 4) {
+			if (shootRequested) {
 				int shotTargetX;
 				int shotTargetY;
 				if (!spawnLevel1Shot(shots, aimX, aimY,
 						thirdPersonView ? &ship : nullptr, shotTargetX, shotTargetY))
 					continue;
 				soundPlayer.play(0x18, 0x3f, 0x40);
-				lastShotFrame = logicFrame;
 				int hitEnemy = -1;
 				float hitDistance = 1000000.0f;
 				for (int i = 0; i < 3; ++i) {

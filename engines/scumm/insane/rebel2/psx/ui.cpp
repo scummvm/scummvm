@@ -47,11 +47,11 @@ static RA2PSXUIColor shieldColor(const RA2PSXUIGradientStop *stops, uint count, 
 	return stops[count - 1].color;
 }
 
-bool RA2PSXLevel1UI::loadTextures(const Common::Array<byte> &data) {
+bool RA2PSXTextureSet::append(const Common::Array<byte> &data) {
 	return loadRA2PSXTextures(data, _textures);
 }
 
-const RA2PSXTexture *RA2PSXLevel1UI::findTexture(const char *name) const {
+const RA2PSXTexture *RA2PSXTextureSet::find(const char *name) const {
 	for (uint i = 0; i < _textures.size(); ++i) {
 		if (_textures[i].name.equalsIgnoreCase(name))
 			return &_textures[i];
@@ -59,28 +59,9 @@ const RA2PSXTexture *RA2PSXLevel1UI::findTexture(const char *name) const {
 	return nullptr;
 }
 
-bool RA2PSXLevel1UI::load(const RA2PSXArchive &archive) {
-	Common::Array<byte> data;
-	_textures.clear();
-	if (!archive.getMember("tex/Common", data) || !loadTextures(data))
-		return false;
-	if (!archive.getMember("tex/BWingCockp", data) || !loadTextures(data))
-		return false;
-
-	static const char *const required[] = {
-		"COCKPITL", "COCKPITR", "PANEL1", "PANEL2", "PANEL3", "STATTEXT",
-		"FONT8X9", "REBLSIGN", "ENRGYMSK", "SMALLEX"
-	};
-	for (uint i = 0; i < ARRAYSIZE(required); ++i) {
-		if (!findTexture(required[i]))
-			return false;
-	}
-	return true;
-}
-
-void RA2PSXLevel1UI::drawTexture(Graphics::Surface &surface, const char *name,
+void RA2PSXTextureSet::draw(Graphics::Surface &surface, const char *name,
 		int x, int y, const Common::Rect &source, int brightness, BlendMode blend) const {
-	const RA2PSXTexture *texture = findTexture(name);
+	const RA2PSXTexture *texture = find(name);
 	if (!texture)
 		return;
 
@@ -130,17 +111,99 @@ void RA2PSXLevel1UI::drawTexture(Graphics::Surface &surface, const char *name,
 	}
 }
 
+void RA2PSXTextureSet::drawText(Graphics::Surface &surface, const char *font,
+		const char *text, int x, int y) const {
+	static const char glyphs[] = "abcdefghijklmnopqrstuvwxyz0123456789%-:.,+/C ";
+	static const byte widths[] = {
+		6, 6, 6, 6, 6, 6, 6, 6, 2, 6, 6, 6, 8, 6, 6, 6,
+		6, 6, 6, 6, 6, 6, 8, 6, 7, 6, 6, 4, 6, 6, 6, 6,
+		6, 6, 6, 6, 6, 6, 2, 2, 2, 6, 6, 8, 2
+	};
+	static_assert(ARRAYSIZE(glyphs) == ARRAYSIZE(widths) + 1,
+			"RA2 PSX glyph widths do not match the font map");
+
+	for (; *text; ++text) {
+		int glyph = -1;
+		for (uint i = 0; i < ARRAYSIZE(widths); ++i) {
+			if (*text == glyphs[i]) {
+				glyph = i;
+				break;
+			}
+		}
+		if (glyph < 0)
+			continue;
+
+		const int sourceX = (glyph % 12) * 8;
+		const int sourceY = (glyph / 12) * 8;
+		draw(surface, font, x, y, Common::Rect(sourceX, sourceY,
+				sourceX + widths[glyph], sourceY + 8));
+		x += widths[glyph] + 2;
+	}
+}
+
+bool RA2PSXMainMenuUI::load(const RA2PSXArchive &archive) {
+	Common::Array<byte> data;
+	_textures.clear();
+	return archive.getMember("menuTex", data) && _textures.append(data) &&
+			_textures.has("BACK_L") && _textures.has("BACK_R") &&
+			_textures.has("TITLE") && _textures.has("STD_FT2") &&
+			_textures.has("STD_FT4") && _textures.has("STD_FT6");
+}
+
+void RA2PSXMainMenuUI::draw(Graphics::Surface &surface, int selection) const {
+	const int xOffset = (surface.w - 320) / 2;
+	const int yOffset = (surface.h - 240) / 2;
+	_textures.draw(surface, "BACK_L", xOffset, yOffset, Common::Rect(0, 0, 224, 240));
+	_textures.draw(surface, "BACK_R", xOffset + 224, yOffset, Common::Rect(0, 0, 96, 240));
+	_textures.draw(surface, "TITLE", xOffset + 72, yOffset + 22, Common::Rect(0, 0, 176, 124));
+
+	static const char *const items[] = { "start", "options" };
+	static const int itemX[] = { 141, 134 };
+	for (uint i = 0; i < ARRAYSIZE(items); ++i) {
+		_textures.drawText(surface, i == (uint)selection ? "STD_FT4" : "STD_FT6",
+				items[i], xOffset + itemX[i], yOffset + 166 + i * 10);
+	}
+	_textures.drawText(surface, "STD_FT2", "developed by factor 5",
+			xOffset + 80, yOffset + 202);
+	_textures.drawText(surface, "STD_FT2", "C 1996 lucasarts entertainment company",
+			xOffset + 16, yOffset + 212);
+}
+
+Common::Rect RA2PSXMainMenuUI::itemRect(int item) const {
+	return Common::Rect(120, 164 + item * 10, 200, 174 + item * 10);
+}
+
+bool RA2PSXLevel1UI::load(const RA2PSXArchive &archive) {
+	Common::Array<byte> data;
+	_textures.clear();
+	if (!archive.getMember("tex/Common", data) || !_textures.append(data))
+		return false;
+	if (!archive.getMember("tex/BWingCockp", data) || !_textures.append(data))
+		return false;
+
+	static const char *const required[] = {
+		"COCKPITL", "COCKPITR", "PANEL1", "PANEL2", "PANEL3", "STATTEXT",
+		"FONT8X9", "REBLSIGN", "ENRGYMSK", "SMALLEX"
+	};
+	for (uint i = 0; i < ARRAYSIZE(required); ++i) {
+		if (!_textures.has(required[i]))
+			return false;
+	}
+	return true;
+}
+
 void RA2PSXLevel1UI::drawCockpit(Graphics::Surface &surface) const {
 	const int xOffset = (surface.w - 320) / 2;
 	const int yOffset = (surface.h - 240) / 2 + 120;
-	drawTexture(surface, "COCKPITL", xOffset, yOffset, Common::Rect(0, 0, 224, 120));
-	drawTexture(surface, "COCKPITR", xOffset + 224, yOffset, Common::Rect(0, 0, 120, 120));
+	_textures.draw(surface, "COCKPITL", xOffset, yOffset, Common::Rect(0, 0, 224, 120));
+	_textures.draw(surface, "COCKPITR", xOffset + 224, yOffset, Common::Rect(0, 0, 120, 120));
 }
 
 void RA2PSXLevel1UI::drawExplosion(Graphics::Surface &surface, int x, int y, int frame) const {
 	const int stage = CLIP<int>(frame / 2, 0, 4);
-	drawTexture(surface, "SMALLEX", x - 8, y - 8,
-			Common::Rect(stage * 16, 0, stage * 16 + 16, 16), 0x80, kBlendAdditive);
+	_textures.draw(surface, "SMALLEX", x - 8, y - 8,
+			Common::Rect(stage * 16, 0, stage * 16 + 16, 16), 0x80,
+			RA2PSXTextureSet::kBlendAdditive);
 }
 
 void RA2PSXLevel1UI::drawShield(Graphics::Surface &surface, int shield,
@@ -185,8 +248,9 @@ void RA2PSXLevel1UI::drawShield(Graphics::Surface &surface, int shield,
 
 		const int sourceLeft = 77 - width - row;
 		if (sourceLeft < 68)
-			drawTexture(surface, "ENRGYMSK", left, y,
-					Common::Rect(MAX(0, sourceLeft), row, 68, row + 1), 0x50, kBlendAdditive);
+			_textures.draw(surface, "ENRGYMSK", left, y,
+					Common::Rect(MAX(0, sourceLeft), row, 68, row + 1), 0x50,
+					RA2PSXTextureSet::kBlendAdditive);
 	}
 }
 
@@ -195,37 +259,37 @@ void RA2PSXLevel1UI::drawHUD(Graphics::Surface &surface, int score, int lives,
 	const int xOffset = (surface.w - 320) / 2;
 	const int yOffset = (surface.h - 240) / 2;
 
-	drawTexture(surface, "PANEL3", xOffset + 2, yOffset + 17, Common::Rect(0, 0, 126, 21));
-	drawTexture(surface, "PANEL2", xOffset + 262, yOffset + 17, Common::Rect(0, 0, 56, 29));
-	drawTexture(surface, "PANEL1", xOffset + 210, yOffset + 207, Common::Rect(0, 0, 108, 21));
+	_textures.draw(surface, "PANEL3", xOffset + 2, yOffset + 17, Common::Rect(0, 0, 126, 21));
+	_textures.draw(surface, "PANEL2", xOffset + 262, yOffset + 17, Common::Rect(0, 0, 56, 29));
+	_textures.draw(surface, "PANEL1", xOffset + 210, yOffset + 207, Common::Rect(0, 0, 108, 21));
 	drawShield(surface, shield, xOffset, yOffset);
 
-	drawTexture(surface, "STATTEXT", xOffset + 14, yOffset + 21,
+	_textures.draw(surface, "STATTEXT", xOffset + 14, yOffset + 21,
 			Common::Rect(42, 0, 62, 13), 0x5a);
 	score = CLIP<int>(score, 0, 9999999);
 	int divisor = 1000000;
 	for (int digit = 0; digit < 7; ++digit) {
 		const int value = score / divisor % 10;
-		drawTexture(surface, "FONT8X9", xOffset + 39 + digit * 10, yOffset + 23,
+		_textures.draw(surface, "FONT8X9", xOffset + 39 + digit * 10, yOffset + 23,
 				Common::Rect(value * 8, 0, value * 8 + 8, 9));
 		divisor /= 10;
 	}
 
 	const int rebelFrame = (MAX(frame, 0) / 2) % 12;
-	drawTexture(surface, "REBLSIGN", xOffset + 292, yOffset + 22,
+	_textures.draw(surface, "REBLSIGN", xOffset + 292, yOffset + 22,
 			Common::Rect((rebelFrame % 6) * 20, (rebelFrame / 6) * 19,
 					(rebelFrame % 6 + 1) * 20, (rebelFrame / 6 + 1) * 19));
 	const int reserveLives = CLIP<int>(lives - 1, 0, 9);
-	drawTexture(surface, "FONT8X9", xOffset + 274, yOffset + 28,
+	_textures.draw(surface, "FONT8X9", xOffset + 274, yOffset + 28,
 			Common::Rect(reserveLives * 8, 0, reserveLives * 8 + 8, 9));
-	drawTexture(surface, "FONT8X9", xOffset + 283, yOffset + 29, Common::Rect(80, 0, 88, 9));
+	_textures.draw(surface, "FONT8X9", xOffset + 283, yOffset + 29, Common::Rect(80, 0, 88, 9));
 
 	int shieldLabelBrightness = 0x5a;
 	if (shield <= 31) {
 		const int phase = (MAX(frame, 0) / 2) % 14;
 		shieldLabelBrightness += phase < 7 ? -50 + phase * 10 : 20 - (phase - 7) * 10;
 	}
-	drawTexture(surface, "STATTEXT", xOffset + 291, yOffset + 211,
+	_textures.draw(surface, "STATTEXT", xOffset + 291, yOffset + 211,
 			Common::Rect(0, 0, 20, 13), shieldLabelBrightness);
 }
 

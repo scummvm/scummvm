@@ -181,6 +181,7 @@ ifdef ENABLE_REBEL2_PSX
 MODULE_OBJS += \
 	insane/rebel2/psx/audio.o \
 	insane/rebel2/psx/level1.o \
+	insane/rebel2/psx/menu.o \
 	insane/rebel2/psx/model.o \
 	insane/rebel2/psx/psx.o \
 	insane/rebel2/psx/resource.o \

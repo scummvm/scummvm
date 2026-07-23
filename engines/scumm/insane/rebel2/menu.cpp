@@ -37,6 +37,7 @@
 #include "scumm/smush/rebel/smush_multi_font.h"
 
 #include "scumm/insane/rebel2/rebel.h"
+#include "scumm/insane/rebel2/shared.h"
 
 namespace Scumm {
 
@@ -120,41 +121,14 @@ int InsaneRebel2::processMenuInput() {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			_menuInactivityTimer = 0;
-
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_UP:
-				_menuSelection--;
-				if (_menuSelection < 0) {
-					_menuSelection = _menuItemCount - 1;
-				}
-				_menuRepeatDelay = 3;
-				debugC(DEBUG_INSANE, "Menu: Selection changed to %d (UP)", _menuSelection);
-				break;
-
-			case Common::KEYCODE_DOWN:
-				_menuSelection++;
-				if (_menuSelection >= _menuItemCount) {
-					_menuSelection = 0;
-				}
-				_menuRepeatDelay = 3;
-				debugC(DEBUG_INSANE, "Menu: Selection changed to %d (DOWN)", _menuSelection);
-				break;
-
-			case Common::KEYCODE_RETURN:
-			case Common::KEYCODE_KP_ENTER:
-				if (_menuSelection >= 0 && _menuSelection < _menuItemCount) {
-					result = _menuSelection;
-					debugC(DEBUG_INSANE, "Menu: Item %d selected (ENTER)", _menuSelection);
-				}
-				break;
-
-			case Common::KEYCODE_ESCAPE:
-				result = _menuItemCount - 1;
-				debugC(DEBUG_INSANE, "Menu: Back action - selecting quit (item %d)", result);
-				break;
-
-			default:
-				break;
+			{
+				const Rebel2MenuCommand command = getRebel2MenuCommand(event.kbd);
+				const int oldSelection = _menuSelection;
+				result = applyRebel2MenuCommand(command, _menuItemCount, _menuSelection);
+				if (result == kRebel2MenuResultCancel)
+					result = _menuItemCount - 1;
+				if (_menuSelection != oldSelection)
+					_menuRepeatDelay = 3;
 			}
 			break;
 

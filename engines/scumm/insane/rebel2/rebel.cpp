@@ -44,6 +44,7 @@
 #include "scumm/smush/rebel/font_rebel2.h"
 
 #include "scumm/insane/rebel2/rebel.h"
+#include "scumm/insane/rebel2/shared.h"
 
 #include "common/config-manager.h"
 #include "audio/audiostream.h"
@@ -1516,7 +1517,7 @@ int32 InsaneRebel2::processMouse() {
 
 	bool leftPressed = (currentButtons & 1) != 0;
 	bool leftWasPressed = (_prevMouseButtons & 1) != 0;
-	bool leftEdge = leftPressed && !leftWasPressed;
+	const bool leftEdge = leftPressed && !leftWasPressed;
 	bool rightPressed = (currentButtons & 2) != 0;
 	bool rightWasPressed = (_prevMouseButtons & 2) != 0;
 
@@ -1548,16 +1549,8 @@ int32 InsaneRebel2::processMouse() {
 	if (autoFire)
 		_rebelControlMode |= 1;
 
-	// Rapid fire injects a held-button shot every 5th frame from the press.
-	if (leftEdge)
-		_rapidFireCounter = 0;
-	bool rapidFireShot = false;
-	if (!_rebelAutoPlay && _optRapidFire) {
-		rapidFireShot = (_rapidFireCounter % 5 == 0) && leftPressed;
-		_rapidFireCounter++;
-	}
-
-	bool triggerShot = leftEdge || rapidFireShot || autoFire;
+	const bool triggerShot = updateRebel2Fire(leftPressed, leftWasPressed,
+			!_rebelAutoPlay && _optRapidFire, autoFire, _rapidFireCounter);
 	if (_rebelHandler == 8) {
 		_shipFiring = triggerShot && canShoot;
 	}
