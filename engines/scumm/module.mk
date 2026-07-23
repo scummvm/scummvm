@@ -177,6 +177,15 @@ MODULE_OBJS += \
 	smush/rebel/smush_player_ra1.o \
 	smush/rebel/smush_player_ra2.o
 
+ifdef ENABLE_REBEL2_PSX
+MODULE_OBJS += \
+	insane/rebel2/psx/level1.o \
+	insane/rebel2/psx/model.o \
+	insane/rebel2/psx/psx.o \
+	insane/rebel2/psx/resource.o \
+	insane/rebel2/psx/video.o
+endif
+
 ifdef USE_ARM_SMUSH_ASM
 MODULE_OBJS += \
 	smush/codec47ARM.o

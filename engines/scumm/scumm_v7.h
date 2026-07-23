@@ -31,6 +31,9 @@
 namespace Scumm {
 
 class Insane;
+#ifdef ENABLE_REBEL2_PSX
+class Rebel2PSX;
+#endif
 class SmushMixer;
 class SmushPlayer;
 class TextRenderer_v7;
@@ -40,6 +43,9 @@ class ScummEngine_v7 : public ScummEngine_v6 {
 	friend class Insane;
 	friend class InsaneRebel1;
 	friend class InsaneRebel2;
+#ifdef ENABLE_REBEL2_PSX
+	friend class Rebel2PSX;
+#endif
 public:
 	ScummEngine_v7(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v7() override;
@@ -57,6 +63,9 @@ protected:
 	bool _smushActive = false;
 
 	Insane *_insane = nullptr;
+#ifdef ENABLE_REBEL2_PSX
+	Rebel2PSX *_rebel2PSX = nullptr;
+#endif
 
 public:
 	void syncSoundSettings() override;
@@ -107,6 +116,9 @@ public:
 	bool isSmushActive() override { return _smushActive; }
 	bool isInsaneActive() override { return _insane ? _insane->isInsaneActive() : false; }
 	Insane *getInsane() { return _insane; }
+#ifdef ENABLE_REBEL2_PSX
+	Rebel2PSX *getRebel2PSX() { return _rebel2PSX; }
+#endif
 	void removeBlastTexts() override;
 	void restoreBlastTextsRects();
 

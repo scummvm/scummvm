@@ -462,6 +462,8 @@ rebel1	Star Wars: Rebel Assault
 
 rebel2	Star Wars: Rebel Assault II: The Hidden Empire
 	6b73a08c535c0544785d73ff812908a0	9430	All	DOS	-	-	-	-
+	569b6160d1d56573ff54f2c908483897	720896	us	PSX	PlayStation	-	Disc 1 executable	-
+	ae607f6ed270311d7dbc033d3e943d3e	750723120	us	PSX	PlayStation	-	Disc 1 raw image	-
 
 	e977ed046b88e75b645491caeff37b0c	313689	en	DOS	Demo	Demo	-	-
 

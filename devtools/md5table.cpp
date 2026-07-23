@@ -84,6 +84,7 @@ static const StringMap platformMap[] = {
 	{ "Mac",		"kPlatformMacintosh" },
 	{ "NES",		"kPlatformNES" },
 	{ "PC-Engine",		"kPlatformPCEngine" },
+	{ "PSX",		"kPlatformPSX" },
 	{ "SEGA",		"kPlatformSegaCD" },
 	{ "Windows",		"kPlatformWindows" },
 	{ "Wii",		"kPlatformWii" },

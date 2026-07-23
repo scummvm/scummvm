@@ -48,6 +48,10 @@
 #include "scumm/file.h"
 #include "scumm/file_nes.h"
 
+#if defined(ENABLE_REBEL2_PSX) && !defined(ENABLE_SCUMM_7_8)
+#error "SCUMM v7 & v8 games must be enabled for Rebel Assault II PlayStation. Specify --enable-engine=scumm-7-8,rebel2-psx"
+#endif
+
 namespace Scumm {
 
 Common::Path ScummEngine::generateFilename(const int room) const {
@@ -449,6 +453,12 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine,
 		if (!(res.extra && strcmp(res.extra, "Steam") == 0))
 			res.game.midi = MDT_MACINTOSH;
 	}
+
+#ifndef ENABLE_REBEL2_PSX
+	if (res.game.id == GID_REBEL2 && res.game.platform == Common::kPlatformPSX)
+		return Common::Error(Common::kUnsupportedGameidError,
+				_s("Rebel Assault II PlayStation support is not compiled in"));
+#endif
 
 	// Finally, we have massaged the GameDescriptor to our satisfaction, and can
 	// instantiate the appropriate game engine. Hooray!
