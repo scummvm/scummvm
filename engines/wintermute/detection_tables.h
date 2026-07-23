@@ -166,7 +166,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"sotv2",           "Shadows on the Vatican - Act II: Wrath"},
 	{"strangechange",   "Strange Change"},
 	{"sunny",           "Sunny"},
-	{"sunrise",         "Sunrise: The game"},
+	{"sunrise",         "Sunrise: The Game"},
 	{"susanrose1",      "Susan Rose: Mysterious Child"},  // Даша Васильева: Личное дело Женщины-кошки
 	{"susanrose2",      "Susan Rose: Delicate Murder"},  // Евлампия Романова: Нежный Cупруг Oлигарха
 	{"tanya1",          "Tanya Grotter and the Magical Double Bass"},  // Таня Гроттер и магический контрабас
@@ -5586,9 +5586,14 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("sunrise", "",
 		WME_ENTRY1s("data.dcp", "d0c9ac5a61b37ae9fcedb58fa1c98cd5", 135504102), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_7_93),
 
-	// Sunrise: The game (Spanish fanmade)
+	// Sunrise: The game (German + Spanish fantranslation)
 	WME_WINENTRY("sunrise", "Fanmade",
 		WME_ENTRY2s("data.dcp", "d06744fc60982a30e82d96075698c8bc", 134409552,
+					"string.tab", "596b3be0d09d41be8d0999ca536d810a", 334279), Common::ES_ESP, ADGF_UNSTABLE | GF_3D, WME_1_7_93),
+
+	// Sunrise: The game (Russian + Spanish fantranslation)
+	WME_WINENTRY("sunrise", "Fanmade",
+		WME_ENTRY2s("data.dcp", "d0c9ac5a61b37ae9fcedb58fa1c98cd5", 135504102,
 					"string.tab", "596b3be0d09d41be8d0999ca536d810a", 334279), Common::ES_ESP, ADGF_UNSTABLE | GF_3D, WME_1_7_93),
 
 	// Sunrise: The game (Demo) (German)
