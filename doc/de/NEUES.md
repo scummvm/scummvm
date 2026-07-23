@@ -17,6 +17,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Dracula 2: The Last Sanctuary hinzugefügt.
    - Unterstützung für Nancy Drew: The Secret of Shadow Ranch hinzugefügt.
    - Unterstützung für Nancy Drew: Curse of Blackmoor Manor hinzugefügt.
+   - Unterstützung für Chamber of the Sci-Mutant Priestess hinzugefügt.
 
  Allgemein:
    - Zur Verbesserung der Perforamcen wurden die Audio-Mixer und -Konverter optimiert.
@@ -47,6 +48,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Verbesserung des erweiterten Maus-Modus, der Charakter-Erzeugung und der Spiel-Oberfläche
      in M&M1.
    - Darstellung der Untertitel in Zwischensequenzen korrigiert.
+   - Unterstützung für die französische Übersetzung von Xeen hinzugefügt.
 
  NANCY:
    - Allgemeine Flags werden nicht mehr gelöscht, wenn das Spiel (automatisch) gespeichert
