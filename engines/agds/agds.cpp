@@ -362,7 +362,9 @@ void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadin
 
 	if (doPatch) {
 		_currentScreen->load(patch);
-		if (_currentCharacter) {
+		// script-created patches never captured the screen and carry no
+		// character state; applying their defaults would hide the character
+		if (_currentCharacter && patch->screenSaved) {
 			_currentCharacter->visible(patch->characterPresent);
 			_currentCharacter->position(patch->characterPosition);
 			_currentCharacter->direction(patch->characterDirection);
