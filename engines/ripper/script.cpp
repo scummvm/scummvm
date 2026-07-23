@@ -1494,12 +1494,24 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 					return false;
 				}
 			}
-			const bool loopUntilInput = frame.presentationType == 1 && frame.interactionCount != 0;
+			const bool dialoguePending = _dialogue->isPending();
+			const bool waitsForSceneInput =
+				frame.interactionCount != 0 || dialoguePending || idleTextRequest;
+			if (waitsForSceneInput && !_runtime.awaitingInteraction)
+				beginBa0InteractionWait(label, frame.interactionCount);
+			// ExecuteSceneFrameAndInteractions at 0x13277 enters
+			// PollInteractionAndResolveSelection at 0x13c8d when either scene
+			// controls or the frame's idle callback are active. A dialogue
+			// chooser created by that callback therefore holds the type-1
+			// presentation instead of falling through to the exit callback.
+			const bool loopUntilInput = frame.presentationType == 1 &&
+				(frame.interactionCount != 0 || dialoguePending);
 			const bool allowEscSpace = frame.presentationType == 0;
 			debugC(2, kDebugVideo,
-				"Ripper: frame presentation controls label='%s' keyboard=%d mouse=%d idleTextRequest=%d waitFrame=%u",
-				label.c_str(), allowEscSpace, loopUntilInput, idleTextRequest,
-				idleWaitFrame);
+				"Ripper: frame presentation controls label='%s' keyboard=%d mouse=%d dialogue=%d "
+				"idleTextRequest=%d waitFrame=%u",
+				label.c_str(), allowEscSpace, loopUntilInput, dialoguePending,
+				idleTextRequest, idleWaitFrame);
 			IdleMediaCallback idleCallback(this, _runtime.activeScript, frame.idleCallbackOffset,
 				idleWaitFrame, _runtime.activeFrame);
 			uint16 idleCommand = 0;
@@ -1507,6 +1519,11 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 				loopUntilInput, allowEscSpace,
 				idleTextRequest ? &idleCallback : nullptr, &idleCommand))
 				return false;
+			if (_runtime.cyberKeyboardCommand == kCyberEscapeCommand) {
+				if (!serviceCyberKeyboardCommand())
+					return false;
+				return true;
+			}
 			if (idleTextRequest) {
 				if (!idleCallback.serviced()) {
 					warning("Ripper: scene text request frame='%s' media='%s' ended before target=%u",
@@ -1523,6 +1540,7 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 				if (acceptCyberRuntimeExit(result, _runtime.activeScript, "media idle"))
 					return true;
 				if (result == -2) {
+					_runtime.awaitingInteraction = false;
 					_engine->getMedia()->resetSceneAudioTriggers();
 					nextFrame = callbackFrame;
 					continue;
@@ -1538,7 +1556,7 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 			}
 			if (allowEscSpace)
 				_dialogue->rebuildPresentationBands("controlled-media-complete");
-			if (frame.interactionCount != 0)
+			if (waitsForSceneInput)
 				return true;
 		}
 
@@ -1572,7 +1590,8 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 }
 
 bool ScriptManager::captureCyberKeyboardCommand() {
-	if (!_runtime.cyberActive || !_engine->getInput()->hasPendingKey())
+	if (!_runtime.cyberActive || !_runtime.awaitingInteraction ||
+			!_engine->getInput()->hasPendingKey())
 		return false;
 	const uint16 command = _engine->getInput()->peekKey();
 	if (command != kCyberLeftCommand && command != kCyberRightCommand &&
@@ -1590,6 +1609,12 @@ bool ScriptManager::serviceCyberKeyboardCommand() {
 	_runtime.cyberKeyboardCommand = 0;
 	if (!_runtime.cyberActive || command == 0)
 		return true;
+	if (command == kCyberEscapeCommand) {
+		// HandleSceneChooserSpecialCommand at 0x17c5a turns Escape into the
+		// normal -4 nested-runtime exit before resolving frame hotspots.
+		requestCyberExit("keyboard-escape");
+		return true;
+	}
 	if (!_runtime.awaitingInteraction || _runtime.activeFrame >= _runtime.activeScript.getFrames().size())
 		return false;
 
