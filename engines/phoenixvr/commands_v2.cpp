@@ -120,11 +120,22 @@ struct Play_AnimBloc : public Command {
 	}
 };
 
+struct Stop_AnimBloc : public Command {
+	Common::String name;
+
+	Stop_AnimBloc(const Common::Array<Common::String> &args) : name(args[0]) {}
+	void exec(ExecutionContext &ctx) const override {
+		debug("Stop_AnimBloc %s", name.c_str());
+		g_engine->stopAnimation(name);
+	}
+};
+
 struct Play_Amb : public Command {
 	Common::String path;
 	int volume;
 	int loops;
-	Play_Amb(const Common::Array<Common::String> &args) : path(args[0]), volume(atoi(args[1].c_str())), loops(atoi(args[2].c_str())) {}
+	Play_Amb(const Common::Array<Common::String> &args) : path(args[0]),
+														  volume(args.size() > 1 ? atoi(args[1].c_str()) : 100), loops(args.size() > 2 ? atoi(args[2].c_str()) : 0) {}
 	void exec(ExecutionContext &ctx) const override {
 		g_engine->playSound(path, Audio::Mixer::kMusicSoundType, volume, loops);
 	}
@@ -471,7 +482,6 @@ static const char *const kUnhandledV2Commands[] = {
 	"SPRITE_SCREEN_MODE",
 	"SPRITE_WARP",
 	"SPRITE_WARP_MODE",
-	"STOP_ANIMBLOC",
 	"STOP_DELAY",
 	"STOP_MUSIC",
 	"UNDERWATER_EFFECT",
@@ -510,6 +520,7 @@ static const char *const kUnhandledV2Commands[] = {
 	E(Start_Light)      \
 	E(Start_Timer)      \
 	E(Stop_All_Sounds)  \
+	E(Stop_AnimBloc)    \
 	E(Stop_Light)       \
 	E(Stop_Sound)       \
 	E(Stop_Timer)       \
