@@ -139,6 +139,12 @@
   media iteration snapshots the current timer tick rather than catching up on
   elapsed toolbar time. ScummVM pauses the decoder clock across the same input
   ownership interval and continues presenting toolbar animation and tooltips.
+- `ExecuteSceneFrameAndInteractions` enters that input loop when the frame has
+  either registered interactions or an idle callback. Opcode `0x17` dialogue
+  choosers created by an idle callback therefore hold their type-1 presentation
+  until a response is selected. `HandleSceneChooserSpecialCommand` at `0x17c5a`
+  resolves Escape before hotspot lookup and returns `-4` for the normal nested
+  Cyber-runtime exit.
 - If an action in that toolbar returns `-3`, `RunFrontEndActionMenu` at
   `0x18b3a` returns the same control code to `PollInteractionAndResolveSelection`
   at `0x13c8d`. `RunMediaSequence` stops its frame loop on the nonzero callback
