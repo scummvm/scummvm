@@ -55,9 +55,7 @@ ChamberEngine::ChamberEngine(OSystem *syst, const ADGameDescription *desc)
 	g_vm = this;
 	_gameDescription = desc;
 
-	// Late init of global array entry to avoid having a global constructor
-	assert(script_vars[4] == nullptr);
-	script_vars[4] = zones_data;
+	initScriptVars();
 
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 

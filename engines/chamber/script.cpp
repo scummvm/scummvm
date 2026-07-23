@@ -60,19 +60,24 @@ byte *script_ptr, *script_end_ptr;
 byte *script_stack[5 * 2];
 byte **script_stack_ptr = script_stack;
 
-void *script_vars[kScrPools_MAX] = {
-	&script_word_vars,
-	&script_word_vars,
-	&script_byte_vars,
-	inventory_items,
-	nullptr, /* To be set to zones_data at runtime in ChamberEngine ctor */
-	pers_list,
-	inventory_items,
-	inventory_items + kItemZapstik1 - 1,
-	pers_list
-};
+void *script_vars[kScrPools_MAX] = {};
 
 extern void askDisk2(void);
+
+
+void initScriptVars() {
+	// Late init of global array entries to avoid having a global constructor
+
+	script_vars[0] = &script_word_vars;
+	script_vars[1] = &script_word_vars;
+	script_vars[2] = &script_byte_vars;
+	script_vars[3] = inventory_items;
+	script_vars[4] = zones_data;
+	script_vars[5] = pers_list;
+	script_vars[6] = inventory_items;
+	script_vars[7] = inventory_items + kItemZapstik1 - 1;
+	script_vars[8] = pers_list;
+}
 
 /*
 Get next random byte value
