@@ -1267,8 +1267,12 @@ Graphics::ManagedSurface *PhoenixVREngine::loadSurface(const Common::String &pat
 	if (dec->hasPalette())
 		s->setPalette(dec->getPalette().data(), 0, dec->getPalette().size());
 	// TODO: Skip conversion for surfaces with palettes?
-	s->convertToInPlace(_pixelFormat);
-	s->setTransparentColor(s->format.RGBToColor(0, 0, 0));
+	if (version() == 1) {
+		s->convertToInPlace(_pixelFormat);
+		s->setTransparentColor(s->format.RGBToColor(0, 0, 0));
+	} else {
+		s->convertToInPlace(Graphics::BlendBlit::getSupportedPixelFormat());
+	}
 	return s;
 }
 
@@ -1889,7 +1893,10 @@ void PhoenixVREngine::tick(float dt) {
 	if (!cursor)
 		cursor = loadCursor(anyMatched ? _defaultCursor[1] : _defaultCursor[0]);
 	if (cursor) {
-		_screen->simpleBlitFrom(*cursor, _mousePos - Common::Point(cursor->w / 2, cursor->h / 2));
+		if (cursor->format.aBits() != 0)
+			_screen->blendBlitFrom(*cursor, _mousePos - Common::Point(cursor->w / 2, cursor->h / 2));
+		else
+			_screen->simpleBlitFrom(*cursor, _mousePos - Common::Point(cursor->w / 2, cursor->h / 2));
 	}
 }
 
@@ -1905,9 +1912,14 @@ void PhoenixVREngine::drawAudioSubtitles() {
 }
 
 Common::Error PhoenixVREngine::run() {
-	Common::List<Graphics::PixelFormat> formats;
-	formats.push_back(_rgb565);
-	initGraphics(640, 480, formats);
+	if (version() == 1) {
+		Common::List<Graphics::PixelFormat> formats;
+		formats.push_back(_rgb565);
+		initGraphics(640, 480, formats);
+	} else {
+		_pixelFormat = Graphics::BlendBlit::getSupportedPixelFormat();
+		initGraphics(640, 480, &_pixelFormat);
+	}
 
 	_pixelFormat = g_system->getScreenFormat();
 	if (_pixelFormat.isCLUT8())
