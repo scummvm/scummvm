@@ -101,7 +101,9 @@ bool RA2PSXArchive::decompress(const byte *source, uint32 sourceSize, uint32 exp
 
 bool RA2PSXArchive::unpack(const Entry &entry, Common::Array<byte> &data) const {
 	if (!entry.unpackedSize) {
-		data.clear();
+		data.resize(entry.endOffset - entry.offset);
+		if (!data.empty())
+			memcpy(data.data(), _data.data() + entry.offset, data.size());
 		return true;
 	}
 	return decompress(_data.data() + entry.offset, entry.endOffset - entry.offset,

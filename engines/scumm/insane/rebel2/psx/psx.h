@@ -29,6 +29,10 @@ namespace Common {
 class SeekableReadStream;
 }
 
+namespace Audio {
+class RewindableAudioStream;
+}
+
 namespace Scumm {
 
 class ScummEngine_v7;
@@ -55,6 +59,69 @@ private:
 			Common::Array<byte> &data);
 
 	Common::Array<byte> _data;
+};
+
+class RA2PSXSoundBank {
+public:
+	bool load(const Common::Array<byte> &sampleData, const Common::Array<byte> &projectData);
+	Audio::RewindableAudioStream *makeStream(uint16 id, uint32 rate,
+			uint16 adsrId = 0xffff) const;
+	bool getSFX(uint16 id, uint16 &macro, byte &priority, byte &maxVoices) const;
+	bool getMacroCommand(uint16 macro, uint16 step, byte *command) const;
+
+private:
+	struct Sample {
+		uint32 offset;
+		uint16 id;
+		uint16 blocks;
+		uint16 rate;
+	};
+	struct SFX {
+		uint16 id;
+		uint16 macro;
+		byte priority;
+		byte maxVoices;
+	};
+	struct Macro {
+		uint32 id;
+		uint32 offset;
+	};
+	struct ADSR {
+		uint16 id;
+		uint16 attack;
+		uint16 decay;
+		uint16 sustain;
+		uint16 release;
+	};
+
+	const Sample *findSample(uint16 id) const;
+	const ADSR *findADSR(uint16 id) const;
+
+	Common::Array<byte> _data;
+	Common::Array<byte> _projectData;
+	Common::Array<Sample> _samples;
+	Common::Array<SFX> _sfx;
+	Common::Array<Macro> _macros;
+	Common::Array<ADSR> _adsrs;
+};
+
+class RA2PSXSoundPlayer {
+public:
+	typedef uint32 SoundId;
+	enum { kInvalidSoundId = 0 };
+
+	RA2PSXSoundPlayer(ScummEngine_v7 *vm, const RA2PSXSoundBank &bank);
+	~RA2PSXSoundPlayer();
+
+	SoundId play(uint16 sfx, int volume, int pan, int rate = -1);
+	void update();
+	void setPan(SoundId sound, int pan);
+	void stop(SoundId sound);
+	void stopAll();
+
+private:
+	struct Impl;
+	Impl *_impl;
 };
 
 struct RA2PSXVertex {
@@ -170,6 +237,7 @@ private:
 			const RA2PSXLevel1UI &ui, int lives, int &score);
 
 	ScummEngine_v7 *_vm;
+	RA2PSXSoundBank _soundBank;
 };
 
 } // End of namespace Scumm

@@ -116,6 +116,19 @@ bool Rebel2PSX::playVideo(const Common::Path &path, int discNumber, bool version
 
 bool Rebel2PSX::loadLevel1Assets(RA2PSXModel &enemy, RA2PSXModel &ship,
 		RA2PSXModel &crosshair, RA2PSXModel &laser, RA2PSXLevel1UI &ui) {
+	Common::SeekableReadStream *soundStream = openResource(0);
+	if (!soundStream)
+		return false;
+	RA2PSXArchive soundArchive;
+	const bool soundArchiveLoaded = soundArchive.load(*soundStream);
+	delete soundStream;
+	Common::Array<byte> soundData;
+	Common::Array<byte> soundProjectData;
+	if (!soundArchiveLoaded || !soundArchive.getMember("SNDsmp", soundData) ||
+			!soundArchive.getMember("sNDdata", soundProjectData) ||
+			!_soundBank.load(soundData, soundProjectData))
+		return false;
+
 	Common::SeekableReadStream *stream = openResource(1);
 	if (!stream)
 		return false;

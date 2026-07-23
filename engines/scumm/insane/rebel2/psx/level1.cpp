@@ -39,6 +39,10 @@ namespace Scumm {
 #ifdef USE_TINYGL
 static const int kLevel1FrameRate = 30;
 
+static int getLevel1SoundPan(float screenX) {
+	return CLIP<int>((int)(screenX * 127.0f / 320.0f), 0, 127);
+}
+
 struct RA2PSXLevel1Enemy {
 	RA2PSXLevel1Enemy() : active(false), pattern(0), age(0), lifetime(0), fireFrame(0),
 			laserFrames(0), startX(0), startY(0), controlX(0), controlY(0), endX(0), endY(0),
@@ -381,6 +385,8 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 	RA2PSXLevel1Explosion explosions[3];
 	RA2PSXLevel1Shot shots[8];
 	RA2PSXLevel1Ship ship;
+	RA2PSXSoundPlayer soundPlayer(_vm, _soundBank);
+	RA2PSXSoundPlayer::SoundId approachSounds[3] = {};
 	int aimX = 160;
 	int aimY = 113;
 	int aimVelocityX = 0;
@@ -577,6 +583,7 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 		}
 		if (result == kLevel1Error)
 			break;
+		soundPlayer.update();
 
 		const uint32 elapsed = g_system->getMillis() - gameplayStartTime;
 		const int targetLogicFrame = (int)((uint64)elapsed * kLevel1FrameRate / 1000);
@@ -606,11 +613,18 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 				activeEnemies += enemies[i].active ? 1 : 0;
 			--spawnDelay;
 			if (videoFrame < 1599 && activeEnemies < 3 && spawnDelay <= 0) {
+				int spawnedEnemy = -1;
 				for (int i = 0; i < 3; ++i) {
 					if (!enemies[i].active) {
 						spawnLevel1Enemy(enemies[i], _vm->_rnd);
+						spawnedEnemy = i;
 						break;
 					}
+				}
+				if (spawnedEnemy >= 0) {
+					const uint16 sfx = _vm->_rnd.getRandomNumber(999) < 800 ? 0x19 : 0x1a;
+					const int rate = 0x1c18 + _vm->_rnd.getRandomNumber(1999);
+					approachSounds[spawnedEnemy] = soundPlayer.play(sfx, 0x5e, 0x40, rate);
 				}
 				spawnDelay = spawnBase + _vm->_rnd.getRandomNumber(spawnRange - 1);
 			}
@@ -626,15 +640,26 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 					--enemies[i].laserFrames;
 				++enemies[i].age;
 				updateLevel1Enemy(enemies[i]);
+				const int soundPan = getLevel1SoundPan(enemies[i].x);
+				soundPlayer.setPan(approachSounds[i], soundPan);
 				if (enemies[i].age == enemies[i].fireFrame) {
 					enemies[i].laserFrames = 4;
-					if (_vm->_rnd.getRandomNumber(99) < 38)
+					soundPlayer.play(0x17, 0x4e, soundPan);
+					if (_vm->_rnd.getRandomNumber(99) < 38) {
 						shield = MAX(0, shield - (int)_vm->_rnd.getRandomNumberRng(6, 10));
+						soundPlayer.play(0x36, 0x7f, 0x40);
+					}
 				}
 				if (enemies[i].age >= enemies[i].lifetime) {
+					const int rate = _vm->_rnd.getRandomNumber(0x3fff);
+					soundPlayer.play(0x1b, 0x5a, soundPan, rate);
+					soundPlayer.stop(approachSounds[i]);
+					approachSounds[i] = RA2PSXSoundPlayer::kInvalidSoundId;
 					enemies[i].active = false;
-					if (_vm->_rnd.getRandomNumber(99) < 18)
+					if (_vm->_rnd.getRandomNumber(99) < 18) {
 						shield = MAX(0, shield - 12);
+						soundPlayer.play(0x36, 0x7f, 0x40);
+					}
 				}
 			}
 
@@ -648,6 +673,7 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 				if (!spawnLevel1Shot(shots, aimX, aimY,
 						thirdPersonView ? &ship : nullptr, shotTargetX, shotTargetY))
 					continue;
+				soundPlayer.play(0x18, 0x3f, 0x40);
 				lastShotFrame = logicFrame;
 				int hitEnemy = -1;
 				float hitDistance = 1000000.0f;
@@ -664,6 +690,11 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 					}
 				}
 				if (hitEnemy >= 0) {
+					const int soundPan = getLevel1SoundPan(enemies[hitEnemy].x);
+					const int rate = _vm->_rnd.getRandomNumber(0x3fff);
+					soundPlayer.play(0x1b, 0x5a, soundPan, rate);
+					soundPlayer.stop(approachSounds[hitEnemy]);
+					approachSounds[hitEnemy] = RA2PSXSoundPlayer::kInvalidSoundId;
 					enemies[hitEnemy].active = false;
 					score = MIN(9999999, score + 100);
 					for (int i = 0; i < 3; ++i) {
@@ -700,11 +731,8 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 				renderer.renderPerspectiveModel(shipModel, ship.x, ship.y, ship.z,
 						forwardX, forwardY, forwardZ, shipRoll, false);
 			} else {
-				const float crosshairX = (aimX - 160) * 620.0f / 640.0f;
-				const float crosshairY = (aimY - 120) * 620.0f / 640.0f;
 				renderer.renderModel(crosshair, aimX, aimY, 31.0f,
-						crosshairY * 720.0f / 4096.0f,
-						-crosshairX * 720.0f / 4096.0f, 0.0f, false);
+						0.0f, 0.0f, 0.0f, false);
 			}
 			Graphics::Surface output;
 			renderer.finishFrame(output);
@@ -720,6 +748,7 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 		g_system->delayMillis(5);
 	}
 
+	soundPlayer.stopAll();
 	decoder.close();
 	CursorMan.showMouse(cursorWasVisible);
 	return _vm->shouldQuit() ? kLevel1Quit : result;
