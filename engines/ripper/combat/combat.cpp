@@ -146,65 +146,39 @@ void CombatEncounter::loadMeterConfig(const Common::INIFile &ini, const char *se
 }
 
 bool CombatEncounter::loadFrameRegions(const Common::String &name, SceneData &scene) {
-	// LoadPresentationFrameRegionTable at 0x35615 skips the 0x64-byte tool
-	// header, then separates frameCount * 6 state bytes from 9-byte regions.
 	Common::File file;
-	if (!file.open(Common::Path(name)) || file.size() < 0x68) {
+	if (!file.open(Common::Path(name))) {
 		warning("Ripper: could not open combat frame-region table '%s'", name.c_str());
 		return false;
 	}
 
-	file.seek(0x64);
-	const uint32 frameCount = file.readUint32LE();
-	if (frameCount == 0 || frameCount > 10000 ||
-			(uint64)0x68 + (uint64)frameCount * 6 > (uint64)file.size()) {
-		warning("Ripper: invalid combat frame-region count=%u file='%s'",
-			frameCount, name.c_str());
+	PresentationFrameRegionTable table;
+	if (!decodePresentationFrameRegionTable(file, table)) {
+		warning("Ripper: invalid combat frame-region table '%s'", name.c_str());
 		return false;
 	}
-
-	Common::Array<byte> frameRecords;
-	frameRecords.resize(frameCount * 6);
-	if (file.read(frameRecords.data(), frameRecords.size()) != frameRecords.size())
-		return false;
 
 	uint regionCount = 0;
-	scene.frames.resize(frameCount);
-	for (uint frame = 0; frame < frameCount; ++frame) {
-		const byte *record = frameRecords.data() + frame * 6;
+	scene.frames.resize(table.frames.size());
+	for (uint frame = 0; frame < table.frames.size(); ++frame) {
+		const PresentationFrameRegion &sourceFrame = table.frames[frame];
 		FrameState &state = scene.frames[frame];
-		state.attack = record[0];
-		state.creatureVolume = record[2];
-		const uint firstRegion = READ_LE_UINT16(record + 4);
-		regionCount = MAX<uint>(regionCount, firstRegion + record[1]);
-	}
-
-	if ((uint64)file.pos() + (uint64)regionCount * 9 > (uint64)file.size()) {
-		warning("Ripper: invalid combat hit-region payload count=%u file='%s'",
-			regionCount, name.c_str());
-		return false;
-	}
-	Common::Array<byte> regions;
-	regions.resize(regionCount * 9);
-	if (!regions.empty() && file.read(regions.data(), regions.size()) != regions.size())
-		return false;
-
-	for (uint frame = 0; frame < frameCount; ++frame) {
-		const byte *record = frameRecords.data() + frame * 6;
-		const uint firstRegion = READ_LE_UINT16(record + 4);
-		for (uint i = 0; i < record[1]; ++i) {
-			const byte *source = regions.data() + (firstRegion + i) * 9;
+		state.attack = sourceFrame.state;
+		state.creatureVolume = sourceFrame.auxiliary;
+		regionCount += sourceFrame.regions.size();
+		for (uint i = 0; i < sourceFrame.regions.size(); ++i) {
+			const PresentationRegion &source = sourceFrame.regions[i];
 			// The hit-test loop at 0x320d0 compares the first coordinate pair
 			// with the logical pointer Y and the second pair with pointer X.
 			// DAT regions therefore store type, y, x, height, width.
-			const int y = (int16)READ_LE_UINT16(source + 1);
-			const int x = (int16)READ_LE_UINT16(source + 3);
-			const int height = (int16)READ_LE_UINT16(source + 5);
-			const int width = (int16)READ_LE_UINT16(source + 7);
+			const int y = source.coordinate1;
+			const int x = source.coordinate2;
+			const int height = source.extent1;
+			const int width = source.extent2;
 			if (width <= 0 || height <= 0)
 				continue;
 			HitRegion region;
-			region.type = source[0];
+			region.type = source.type;
 			region.bounds = Common::Rect(x, y, x + width, y + height);
 			scene.frames[frame].hitRegions.push_back(region);
 		}
@@ -212,7 +186,7 @@ bool CombatEncounter::loadFrameRegions(const Common::String &name, SceneData &sc
 
 	debugC(2, kDebugCombat,
 		"Ripper: loaded combat frame-region table file='%s' frames=%u regions=%u",
-		name.c_str(), frameCount, regionCount);
+		name.c_str(), table.frames.size(), regionCount);
 	debugC(3, kDebugCombat,
 		"Ripper: decoded combat hit-region records file='%s' layout=type,y,x,height,width",
 		name.c_str());
@@ -220,47 +194,30 @@ bool CombatEncounter::loadFrameRegions(const Common::String &name, SceneData &sc
 }
 
 bool CombatEncounter::loadFrameCues(const Common::String &name, SceneData &scene) {
-	// LoadPresentationFrameAudioCueMap at 0x3574a reads 60-byte source paths
-	// followed by one cue-index/volume pair for every Smacker frame.
 	Common::File file;
-	if (!file.open(Common::Path(name)) || file.size() < 0x6c) {
+	if (!file.open(Common::Path(name))) {
 		warning("Ripper: could not open combat frame-audio map '%s'", name.c_str());
 		return false;
 	}
 
-	file.seek(0x64);
-	const uint32 frameRate = file.readUint32LE();
-	const uint32 soundCount = file.readUint32LE();
-	if (soundCount > 256 ||
-			(uint64)file.pos() + (uint64)soundCount * 60 + (uint64)scene.frames.size() * 2 >
-			(uint64)file.size()) {
-		warning("Ripper: invalid combat frame-audio map sounds=%u file='%s'",
-			soundCount, name.c_str());
+	PresentationFrameAudioMap map;
+	if (!decodePresentationFrameAudioMap(file, scene.frames.size(), map)) {
+		warning("Ripper: invalid combat frame-audio map '%s'", name.c_str());
 		return false;
 	}
 
-	for (uint i = 0; i < soundCount; ++i) {
-		char path[60];
-		if (file.read(path, sizeof(path)) != sizeof(path))
-			return false;
-		uint length = 0;
-		while (length < sizeof(path) && path[length] != '\0')
-			++length;
-		scene.cueSounds.push_back(normalizeCueName(Common::String(path, path + length)));
-	}
-
-	scene.frameCues.resize(scene.frames.size());
+	for (uint i = 0; i < map.sounds.size(); ++i)
+		scene.cueSounds.push_back(normalizeCueName(map.sounds[i]));
+	scene.frameCues.resize(map.cues.size());
 	for (uint frame = 0; frame < scene.frameCues.size(); ++frame) {
-		const byte soundIndex = file.readByte();
-		scene.frameCues[frame].volume = file.readByte();
-		if (soundIndex != 0xff && soundIndex < soundCount)
-			scene.frameCues[frame].soundIndex = soundIndex;
+		scene.frameCues[frame].soundIndex = map.cues[frame].soundIndex;
+		scene.frameCues[frame].volume = map.cues[frame].volume;
 	}
 
 	debugC(2, kDebugCombat,
 		"Ripper: loaded combat frame-audio map file='%s' frameRate=%u frames=%u sounds=%u",
-		name.c_str(), frameRate, scene.frameCues.size(), soundCount);
-	return !file.err();
+		name.c_str(), map.frameRate, scene.frameCues.size(), map.sounds.size());
+	return true;
 }
 
 bool CombatEncounter::loadSceneData(SceneData &scene) {

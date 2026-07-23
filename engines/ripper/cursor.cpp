@@ -21,6 +21,7 @@
 #include "ripper/cursor.h"
 
 #include "common/debug.h"
+#include "common/frac.h"
 #include "common/system.h"
 #include "graphics/cursorman.h"
 
@@ -85,6 +86,24 @@ void CursorManager::dispatchSelectionIndexChange(int cursorIndex) {
 		return;
 	}
 	update(cursorIndex);
+}
+
+void CursorManager::applyCustomCursor(const BitmapAssetFrame &frame,
+		int hotspotX, int hotspotY, uint scale) {
+	if (frame.pixels.empty() || frame.width == 0 || frame.height == 0)
+		return;
+	if (scale == 0)
+		scale = 1;
+	if (!frame.palette.empty())
+		CursorMan.replaceCursorPalette(frame.palette.data(), 0, frame.palette.size() / 3);
+	const frac_t cursorScale = intToFrac((int16)scale);
+	CursorMan.replaceCursor(frame.pixels.data(), frame.width, frame.height,
+		hotspotX, hotspotY, frame.transparentColor, nullptr, nullptr,
+		cursorScale, cursorScale);
+	debugC(2, kDebugCursor,
+		"Ripper: applied custom cursor size=%ux%u hotspot=%d,%d scale=%u transparent=%u",
+		frame.width, frame.height, hotspotX, hotspotY, scale,
+		frame.transparentColor);
 }
 
 void CursorManager::getHotspot(const BitmapAssetFrame &frame, int &x, int &y) const {

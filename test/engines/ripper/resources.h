@@ -18,6 +18,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "common/endian.h"
 #include "common/memstream.h"
 #include "common/ptr.h"
 #include "ripper/resources.h"
@@ -104,5 +105,74 @@ public:
 		TS_ASSERT_EQUALS(frame.pixels[0], 0);
 		TS_ASSERT_EQUALS(frame.pixels[1], 1);
 		TS_ASSERT(frame.palette.empty());
+	}
+
+	void testPresentationFrameRegionTable() {
+		byte data[0x68 + 12 + 18];
+		memset(data, 0, sizeof(data));
+		WRITE_LE_UINT32(data + 0x64, 2);
+		data[0x68] = 7;
+		data[0x69] = 1;
+		data[0x6a] = 42;
+		WRITE_LE_UINT16(data + 0x6c, 0);
+		data[0x6e] = 8;
+		data[0x6f] = 1;
+		data[0x70] = 43;
+		WRITE_LE_UINT16(data + 0x72, 1);
+		data[0x74] = 0;
+		WRITE_LE_UINT16(data + 0x75, 10);
+		WRITE_LE_UINT16(data + 0x77, 20);
+		WRITE_LE_UINT16(data + 0x79, 30);
+		WRITE_LE_UINT16(data + 0x7b, 40);
+		data[0x7d] = 1;
+		WRITE_LE_UINT16(data + 0x7e, (uint16)-5);
+		WRITE_LE_UINT16(data + 0x80, 25);
+		WRITE_LE_UINT16(data + 0x82, 35);
+		WRITE_LE_UINT16(data + 0x84, 45);
+		Common::MemoryReadStream stream(data, sizeof(data), DisposeAfterUse::NO);
+		Ripper::PresentationFrameRegionTable table;
+
+		TS_ASSERT(Ripper::decodePresentationFrameRegionTable(stream, table));
+		TS_ASSERT_EQUALS(table.frames.size(), 2U);
+		TS_ASSERT_EQUALS(table.frames[0].state, 7);
+		TS_ASSERT_EQUALS(table.frames[0].auxiliary, 42);
+		TS_ASSERT_EQUALS(table.frames[0].regions.size(), 1U);
+		TS_ASSERT_EQUALS(table.frames[0].regions[0].coordinate1, 10);
+		TS_ASSERT_EQUALS(table.frames[0].regions[0].coordinate2, 20);
+		TS_ASSERT_EQUALS(table.frames[0].regions[0].extent1, 30);
+		TS_ASSERT_EQUALS(table.frames[0].regions[0].extent2, 40);
+		TS_ASSERT_EQUALS(table.frames[1].regions[0].type, 1);
+		TS_ASSERT_EQUALS(table.frames[1].regions[0].coordinate1, -5);
+	}
+
+	void testPresentationFrameAudioMap() {
+		byte data[0x6c + 60 + 4];
+		memset(data, 0, sizeof(data));
+		WRITE_LE_UINT16(data + 0x64, 15);
+		WRITE_LE_UINT16(data + 0x66, 2);
+		WRITE_LE_UINT32(data + 0x68, 1);
+		const char path[] = "r\\combat\\KD0.WAV";
+		memcpy(data + 0x6c, path, sizeof(path));
+		data[0x6c + 60] = 0;
+		data[0x6c + 61] = 75;
+		data[0x6c + 62] = 0xff;
+		data[0x6c + 63] = 0;
+		Common::MemoryReadStream stream(data, sizeof(data), DisposeAfterUse::NO);
+		Ripper::PresentationFrameAudioMap map;
+
+		TS_ASSERT(Ripper::decodePresentationFrameAudioMap(stream, 2, map));
+		TS_ASSERT_EQUALS(map.frameRate, 15U);
+		TS_ASSERT_EQUALS(map.sounds.size(), 1U);
+		TS_ASSERT_EQUALS(map.sounds[0], "r\\combat\\KD0.WAV");
+		TS_ASSERT_EQUALS(map.cues.size(), 2U);
+		TS_ASSERT_EQUALS(map.cues[0].soundIndex, 0);
+		TS_ASSERT_EQUALS(map.cues[0].volume, 75);
+		TS_ASSERT_EQUALS(map.cues[1].soundIndex, -1);
+
+		WRITE_LE_UINT16(data + 0x66, 3);
+		Common::MemoryReadStream mismatchedStream(
+			data, sizeof(data), DisposeAfterUse::NO);
+		TS_ASSERT(!Ripper::decodePresentationFrameAudioMap(
+			mismatchedStream, 2, map));
 	}
 };

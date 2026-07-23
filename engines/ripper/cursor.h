@@ -35,6 +35,8 @@ public:
 	bool initialize(ResourceManager &resources);
 	void setSelectionIndex(int cursorIndex);
 	void dispatchSelectionIndexChange(int cursorIndex);
+	void applyCustomCursor(const BitmapAssetFrame &frame,
+		int hotspotX, int hotspotY, uint scale = 1);
 	void update(uint cursorIndex);
 	void refresh();
 	void setVisible(bool visible);

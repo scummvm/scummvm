@@ -745,6 +745,33 @@
   `LI1_1_VF.WAV`. The Ka scene consumes only that result: success presents
   `KA_BOOK.AVI` and sets flags `0xe1` and `0x53`, while failure clears choice
   flag `0x14c`.
+- Scene action 8 passes its argument in EAX to
+  `RunKdShootingGalleryScene` at `0x3288e`. The routine selects `KD1.INI`
+  through `KD3.INI` from the combat-level setting, then owns the full-screen
+  `KD.SMK` presentation, custom `KD_MOUSE.BBM` cursor, `KD.DAT` frame regions,
+  `KD.PRJ` frame audio, `KD_FLAME.PL` result animation,
+  `KD_CHECK.BBM` result marks, and `KD0.WAV` through `KD12.WAV`.
+  The original reads the configured scene frame rate, while ScummVM delegates
+  presentation timing to the Smacker decoder. It also reads the `penalty`
+  score key but does not use that value in the final score.
+  The shared DAT loader preserves each region as
+  `type, coordinate1, coordinate2, extent1, extent2`. Both KD and combat
+  consume those original vertical/horizontal fields as
+  `type, y, x, height, width`.
+- KD target-group changes reset the current hit count and assign a new serial
+  to each nonzero group. A shot spends the configured weapon percentage,
+  applies the configured rapid-fire delay, and increments raw, distinct-target,
+  and completed-target counts for the hit region's class. A zero `shots1` or
+  `shots2` value scores every raw hit; a nonzero value scores only groups that
+  reach the required hit count. Class-1 points are subtracted from class-0
+  points. The result screen draws the configured goal, final score, and target
+  marks, then sets the caller's milestone only when the score reaches the goal.
+  Escape exits without setting it; F1 opens help table `0x1a7`, and the hidden
+  keyword `paradise` sets the milestone and exits immediately.
+- `KD.PRJ` supplies the per-frame cue/volume pairs. The gallery separately
+  fires `KD10.WAV` and `KD11.WAV` at frame 118, `KD7.WAV` at frame 995,
+  `KD12.WAV` at frame 1005, stops cues 10, 7, and the looping `KD9.WAV`
+  ambience at frame 1952, and starts `KD8.WAV` at frame 1965.
 - Scene action 5 calls `RunRolodexSequencePuzzleScene` at `0x280ae` with the
   caller-supplied named flag. It creates an advance control over physical
   rectangle (121, 101)-(486, 293) with cursor 16 and an Escape control over
