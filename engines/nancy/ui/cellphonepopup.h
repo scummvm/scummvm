@@ -32,8 +32,9 @@ struct NancyInput;
 
 namespace UI {
 
-// Nancy 10+ cell phone popup, driven by the UICL chunk.
-// TODO: email, search, help, browser modes; in-call menu; redial.
+// Nancy 10+ cell phone popup, driven by the UICL chunk. Handles dialling and
+// calls, the contacts directory, the online hub (e-mail / web search / browser,
+// or the Nancy 13 camera), the help page, and the Nancy 13 photo camera.
 class CellPhonePopup : public RenderObject {
 public:
 	CellPhonePopup();
@@ -101,7 +102,14 @@ private:
 		kOnlineHub        = 10,  // Online heading + Email / Web sub-buttons
 		kWebList          = 11,  // web search-results list (AR-131 mode 1)
 		kEmailList        = 12,  // email message list (AR-131 mode 0)
-		kContentView      = 13   // full-text view of a single email / page
+		kContentView      = 13,  // full-text view of a single email / page
+
+		// Nancy 13 camera feature (the web browser was removed; Menu offers
+		// "view pictures" instead).
+		kCamera           = 14,  // framing the live viewport before a snapshot
+		kPictureView      = 15,  // reviewing a captured photo (Cam/Del/Send)
+		kDeleteConfirm    = 16,  // "DELETE? YES OR NO" over a photo
+		kMessageScreen    = 17   // a transient message tile (SENT / DELETED / FULL)
 	};
 
 	void drawChrome();
@@ -109,6 +117,10 @@ private:
 	void drawStatusIcons(bool includeSignal = true);
 	void drawWebDirLabels();
 	void drawDialLabel();
+	// Blit one ribbon label sprite (Cam / Menu / Dir / Del / Send / Yes / No)
+	// from the sprite atlas at its chunk dest.
+	void drawRibbonLabel(const UICL::SrcDestRectPair &label);
+	void drawRibbonLabelAt(const Common::Rect &src, const Common::Rect &dest);
 	void drawTypeMessage();
 	void drawConnectedLabel();
 	void drawConnectingSprite();
@@ -118,7 +130,35 @@ private:
 	void drawStatusLabels();
 	void drawDirectoryList();
 	void drawDirectoryArrows();
+	// Blit one scroll/paging arrow (idle, or its pressed sprite when hovered).
+	void drawScrollArrow(const UICL::ThreeRectWidget &arrow, bool hovered);
 	void drawWelcomeScreen();
+	// Nancy 13: blit one UI_Cell_Xtra atlas tile into the LCD area (the plain
+	// keyboard background or one of the message tiles). These are fixed atlas
+	// positions the original bakes into a pre-rendered per-state LCD surface.
+	void drawLcdTile(const Common::Rect &src);
+	// Show a transient message tile (Picture Sent / Deleted / Camera Full),
+	// dismissed by any click back to returnState.
+	void showMessageScreen(const Common::Rect &tileSrc, ScreenState returnState);
+	// Nancy 13: draw the current captured photo (scaled into the LCD) for the
+	// "view pictures" screen, or the "no pictures" tile when there are none.
+	void drawPictureView();
+	// The captured pictures store, lazily created (Nancy 13 only). May be null.
+	struct CellPhonePictureData *pictureData() const;
+	// Nancy 13 camera: grab the given screen-space region of the live viewport
+	// into a new persisted CapturedPicture and select it. Empty rect = the whole
+	// viewport.
+	void captureViewport(const Common::Rect &screenRegion = Common::Rect());
+
+	// Nancy 13 camera framing: while kCamera is active the popup covers the
+	// viewport and draws a movable rectangle marking the shot. Entering saves the
+	// phone's rect and grows the draw surface; exiting restores it.
+	void enterCameraFraming();
+	void exitCameraFraming();
+	void drawCameraFraming();
+	// Screen-space rect of the framing box, centred on the mouse and clamped to
+	// the viewport.
+	Common::Rect framingScreenRect() const;
 	// Blit a sub-button's idle sprite at its chunk dest (used for the visible
 	// Back buttons: subButtons[0] on the help / directory / online screens,
 	// subButtons[7] in the zoomed email / browser content view).
@@ -294,6 +334,27 @@ private:
 	// First visible deduplicated contact, and the active row within the page.
 	uint _directoryScroll = 0;
 	uint _directorySelection = 0;
+
+	// Nancy 13 "view pictures": index of the currently displayed captured photo.
+	int _pictureIndex = 0;
+
+	// Nancy 13 camera framing state.
+	bool _inCameraFraming = false;
+	Common::Rect _savedPhoneRect;      // phone rect to restore when framing ends
+	Common::Point _framingMouse;       // last mouse pos (screen coords)
+	static const int kFramingWidth  = 220;
+	static const int kFramingHeight = 176;
+
+	// The original caps the persisted camera roll at 50 pictures.
+	static const uint kMaxPictures = 50;
+
+	// True while the directory is open to pick a recipient for the current photo
+	// (reached from the picture-review "Send" button).
+	bool _sendingPicture = false;
+
+	// Active tile + return target for the transient kMessageScreen state.
+	const Common::Rect *_messageTileSrc = nullptr;
+	ScreenState _messageReturnState = kWelcome;
 
 	// Content-view (single email / page) state.
 	ScreenState _contentReturnState = kOnlineHub;

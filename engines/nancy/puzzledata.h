@@ -245,6 +245,27 @@ private:
 	void syncLinkArray(Common::Serializer &ser, Common::Array<SearchLink> &arr);
 };
 
+// A cell-phone camera snapshot (Nancy 13). Stored as raw BGRA32 pixels so it
+// survives save/load independently of the scene it was taken from.
+struct CapturedPicture {
+	uint16 width = 0;
+	uint16 height = 0;
+	Common::Array<byte> pixels;   // width * height * 4, BGRA32
+	bool sent = false;            // true once the player has "sent" it
+};
+
+// Nancy 13 camera snapshots. Kept in its own lazily-created PuzzleData chunk so
+// existing saves and the CELL chunk are untouched (no save-version bump).
+struct CellPhonePictureData : public PuzzleData {
+	CellPhonePictureData() {}
+	virtual ~CellPhonePictureData() {}
+
+	static constexpr uint32 getTag() { return MKTAG('C', 'P', 'I', 'C'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::Array<CapturedPicture> pictures;
+};
+
 // Nancy 11+ AR 69 (TimerControl). 10 software timers, each counting up from
 // zero. A "configured" timer (state 5/6) fires a set of event flags, plays an
 // optional sound and shows an optional caption once its target duration

@@ -614,7 +614,10 @@ struct UICL : public EngineData {
 	};
 
 	static const uint kNumDialPadSlots = 15;
+	// Nancy 10-12 have 10 online sub-buttons; Nancy 13 added an 11th (the Back
+	// button, Ghidra widget 0x10) at the front of the array.
 	static const uint kNumSubButtons = 10;
+	static const uint kNumSubButtonsNancy13 = 11;
 	static const uint kNumStatusLabels = 3;        // No Signal / No Access / Old Email Only
 
 	UICL(Common::SeekableReadStream *chunkStream);
@@ -636,9 +639,17 @@ struct UICL : public EngineData {
 	int32 statusTextY = 0;                    // text Y-baseline
 	SrcDestRectPair welcomeScreen;
 	Common::String statusLabels[kNumStatusLabels]; // "No Signal", "No Access", "Old Email Only"
-	SrcDestRectPair dialLabel;
-	SrcDestRectPair webLabel;
-	SrcDestRectPair dirLabel;
+	// Ribbon labels above the top-row buttons. In Nancy 13 the top row is
+	// Cam/Menu/Dir, and the review / delete screens reuse the same three columns
+	// with the Del/Send and Yes/No variants (all read from the 8-label block).
+	SrcDestRectPair dialLabel;  // Nancy 13: "CAM"
+	SrcDestRectPair webLabel;   // Nancy 13: "MENU"
+	SrcDestRectPair dirLabel;   // Nancy 13: "DIR"
+	SrcDestRectPair dialingLabel; // Nancy 13: "DIAL"
+	SrcDestRectPair delLabel;     // Nancy 13: "DEL"
+	SrcDestRectPair sendLabel;    // Nancy 13: "SEND"
+	SrcDestRectPair yesLabel;     // Nancy 13: "YES"
+	SrcDestRectPair noLabel;      // Nancy 13: "NO"
 
 	// Help "?" button (original button index 15). The visible Talk/Call key
 	// is dial-pad slot 12, not a separate widget.
@@ -664,7 +675,7 @@ struct UICL : public EngineData {
 	Common::Rect dirCursorSrc;
 	SrcDestRectPair dirHeading;
 
-	ThreeRectWidget subButtons[kNumSubButtons];
+	ThreeRectWidget subButtons[kNumSubButtonsNancy13];
 
 	// Heading/icon SRC+DEST pairs
 	SrcDestRectPair searchHeading;

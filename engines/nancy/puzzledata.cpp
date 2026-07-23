@@ -352,6 +352,29 @@ void CellPhoneData::syncLinkArray(Common::Serializer &ser, Common::Array<SearchL
 	}
 }
 
+void CellPhonePictureData::synchronize(Common::Serializer &ser) {
+	uint16 numPictures = (uint16)pictures.size();
+	ser.syncAsUint16LE(numPictures);
+	if (ser.isLoading()) {
+		pictures.resize(numPictures);
+	}
+
+	for (uint16 i = 0; i < numPictures; ++i) {
+		CapturedPicture &p = pictures[i];
+		ser.syncAsUint16LE(p.width);
+		ser.syncAsUint16LE(p.height);
+		ser.syncAsByte(p.sent);
+
+		uint32 numBytes = (uint32)p.width * p.height * 4;
+		if (ser.isLoading()) {
+			p.pixels.resize(numBytes);
+		}
+		if (numBytes) {
+			ser.syncBytes(p.pixels.data(), numBytes);
+		}
+	}
+}
+
 void TimerData::synchronize(Common::Serializer &ser) {
 	for (uint i = 0; i < kNumTimers; ++i) {
 		Timer &t = timers[i];
@@ -445,6 +468,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new TableData();
 	case CellPhoneData::getTag():
 		return new CellPhoneData();
+	case CellPhonePictureData::getTag():
+		return new CellPhonePictureData();
 	case TimerData::getTag():
 		return new TimerData();
 	case UIResourceData::getTag():

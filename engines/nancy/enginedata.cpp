@@ -978,7 +978,9 @@ UICL::UICL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 		readFilename(*chunkStream, cameraClickSound);
 		readRect(*chunkStream, pictureDisplayRect);
 
-		// Camera picture-slot / thumbnail data (int16 rects). Not yet mapped.
+		// TODO: Camera picture-slot / thumbnail data (int16 rects, ~9 records) —
+		// skipped for now. Map these if the picture-view thumbnail grid is ever
+		// implemented (the original stores per-slot source rects here).
 		chunkStream->skip(114);
 
 		readRect(*chunkStream, noPictureScreenRect);
@@ -989,17 +991,25 @@ UICL::UICL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 		statusTextX = cameraTextX;
 		statusTextY = cameraTextY;
 
-		// Eight dial/web/dir/camera label SrcDestRectPairs across three on-screen
-		// columns (dest x = 437 / 492 / 551), each with alternate glyph variants;
-		// take one pair per column for the dial / web / dir labels.
-		readRect(*chunkStream, dialLabel.srcRect);	// column 1 (x=437)
+		// Eight ribbon-label SrcDestRectPairs across three on-screen columns
+		// (dest x = 437 / 492 / 551). Atlas order is CAM, DIAL, MENU, DIR, DEL,
+		// SEND, YES, NO; each screen shows one label per column.
+		readRect(*chunkStream, dialLabel.srcRect);		// CAM (col 437)
 		readRect(*chunkStream, dialLabel.destRect);
-		chunkStream->skip(32);						// second x=437 variant
-		readRect(*chunkStream, webLabel.srcRect);	// column 2 (x=492)
+		readRect(*chunkStream, dialingLabel.srcRect);	// DIAL (col 437)
+		readRect(*chunkStream, dialingLabel.destRect);
+		readRect(*chunkStream, webLabel.srcRect);		// MENU (col 492)
 		readRect(*chunkStream, webLabel.destRect);
-		readRect(*chunkStream, dirLabel.srcRect);	// column 3 (x=551)
+		readRect(*chunkStream, dirLabel.srcRect);		// DIR (col 551)
 		readRect(*chunkStream, dirLabel.destRect);
-		chunkStream->skip(4 * 32);					// remaining variants
+		readRect(*chunkStream, delLabel.srcRect);		// DEL (col 492)
+		readRect(*chunkStream, delLabel.destRect);
+		readRect(*chunkStream, sendLabel.srcRect);		// SEND (col 551)
+		readRect(*chunkStream, sendLabel.destRect);
+		readRect(*chunkStream, yesLabel.srcRect);		// YES (col 492)
+		readRect(*chunkStream, yesLabel.destRect);
+		readRect(*chunkStream, noLabel.srcRect);		// NO (col 551)
+		readRect(*chunkStream, noLabel.destRect);
 	} else {
 		readRect(*chunkStream, dialHilite.srcRect);
 		readRect(*chunkStream, dialHilite.destRect);
@@ -1083,17 +1093,23 @@ UICL::UICL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readRect(*chunkStream, dirCursorSrc);
 
 	if (isNancy13) {
-		// Online / directory headings — N13 changed these values, not mapped yet.
-		chunkStream->skip(48);
+		// Nancy 13 has 11 online sub-buttons (Ghidra widgets 0x10..0x1a). The
+		// first (0x10, at what older games use for the directory heading) is the
+		// Back button, so the whole array is read contiguously here.
+		for (uint i = 0; i < kNumSubButtonsNancy13; ++i) {
+			readRect(*chunkStream, subButtons[i].srcRectIdle);
+			readRect(*chunkStream, subButtons[i].srcRectPressed);
+			readRect(*chunkStream, subButtons[i].destRect);
+		}
 	} else {
 		readRect(*chunkStream, dirHeading.srcRect);
 		readRect(*chunkStream, dirHeading.destRect);
-	}
 
-	for (uint i = 0; i < kNumSubButtons; ++i) {
-		readRect(*chunkStream, subButtons[i].srcRectIdle);
-		readRect(*chunkStream, subButtons[i].srcRectPressed);
-		readRect(*chunkStream, subButtons[i].destRect);
+		for (uint i = 0; i < kNumSubButtons; ++i) {
+			readRect(*chunkStream, subButtons[i].srcRectIdle);
+			readRect(*chunkStream, subButtons[i].srcRectPressed);
+			readRect(*chunkStream, subButtons[i].destRect);
+		}
 	}
 
 	readRect(*chunkStream, searchHeading.srcRect);
@@ -1155,7 +1171,10 @@ UICL::UICL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	}
 
 	if (isNancy13) {
-		// Trailing captured-picture slot table, added in Nancy 13.
+		// Trailing captured-picture slot table, added in Nancy 13. These are the
+		// game's built-in photo slots; runtime captures are persisted separately
+		// (CellPhonePictureData), so this table is parsed but currently unused.
+		// TODO: identify PictureRecord::unknown (6 bytes, identical across slots).
 		const uint16 pictureCount = chunkStream->readUint16LE();
 		pictures.resize(pictureCount);
 		for (uint i = 0; i < pictureCount; ++i) {

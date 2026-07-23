@@ -36,11 +36,63 @@
 #include "engines/nancy/state/scene.h"
 
 #include "engines/nancy/ui/taskbar.h"
+#include "engines/nancy/ui/viewport.h"
+
+#include "graphics/surface.h"
 
 #include "engines/nancy/ui/cellphonepopup.h"
 
 namespace Nancy {
 namespace UI {
+
+// Nancy 13 LCD tiles in the UI_Cell_Xtra atlas. The original composes the LCD
+// background into a pre-rendered per-state surface; these are the fixed source
+// rects for the plain keyboard background, the camera framing box, and the five
+// message screens. The grid is anchored to the two rects stored in the chunk
+// (the "[<?>]" help and "[<->]" framing tiles): 171x164 tiles, 173px column
+// pitch, 166px row pitch.
+static const Common::Rect kN13PlainBg(174, 187, 345, 351);
+static const Common::Rect kN13MsgWelcome(1, 353, 172, 517);
+static const Common::Rect kN13MsgPictureSent(174, 353, 345, 517);
+static const Common::Rect kN13MsgNoPictures(347, 353, 518, 517);
+static const Common::Rect kN13MsgCameraFull(1, 519, 172, 683);
+static const Common::Rect kN13MsgDeleteConfirm(174, 519, 345, 683);
+static const Common::Rect kN13MsgPictureDeleted(347, 519, 518, 683);
+// The two-phones "connecting" LCD graphic, drawn over the plain background while
+// a call is being placed. (This is the rect the chunk stores as the idle sprite
+// source; the "Welcome / River Heights" tile is kN13MsgWelcome.)
+static const Common::Rect kN13CallGraphic(347, 187, 518, 351);
+
+// Nancy 13 online sub-button roles (index = Ghidra widget id − 0x10). Nancy
+// 10-12 use a different 10-button layout, so these apply only when the game is
+// Nancy 13 or newer. Widget 0x10 (the Back button) is the extra one Nancy 13
+// prepended to the array.
+enum {
+	kN13SubBack     = 0,   // small-LCD Back (directory / menu / picture view)
+	kN13SubDirUp    = 1,
+	kN13SubDirDown  = 2,
+	kN13SubViewPics = 3,   // Menu "View Pictures" option (widget 0x13 -> state 0xb)
+	kN13SubEmail    = 4,   // Menu "E-mail / Messaging" option (widget 0x14)
+	kN13SubBrowser  = 5,   // Menu "Internet Browser" option (widget 0x15, removed)
+	kN13SubListUp   = 6,   // zoomed list / picture-view paging
+	kN13SubListDown = 7,
+	kN13SubBackFull = 8    // Back at the bottom of a zoomed (full-screen) list
+};
+
+// Nancy 10-12 online sub-button roles (the 10-button layout, before Nancy 13
+// prepended a dedicated Back button and reshuffled the rest).
+enum {
+	kSubBack      = 0,   // small-LCD Back (directory / online hub)
+	kSubDirUp     = 1,   // directory / help scroll up
+	kSubDirDown   = 2,   // directory / help scroll down
+	kSubEmail     = 3,   // hub "E-mail / Messaging" option
+	kSubWeb       = 4,   // hub "Internet Browser" option
+	kSubListUp    = 5,   // zoomed list scroll up
+	kSubListDown  = 6,   // zoomed list scroll down
+	kSubEmailBack = 7,   // email list / zoomed content Back (to the hub)
+	kSubSearch    = 8,   // browser-page SEARCH button
+	kSubWebHome   = 9    // web search-list HOME (to the browser homepage)
+};
 
 // Contacts are shown alphabetically by name (case-insensitive), matching
 // the original's CCellPhoneSortContacts.
@@ -366,7 +418,10 @@ void CellPhonePopup::updateGraphics() {
 		return;
 	}
 
-	// TODO: web/email/search/help/browser modes not implemented.
+	// Per-frame state advancement. Only the call-progress states below drive
+	// themselves (via ring/pickup sounds and timers); the interactive screens
+	// (welcome, directory, online hub, lists, content, camera, ...) stay put
+	// until the user acts, so they do nothing here.
 	switch (_screenState) {
 	case kWelcome:
 	case kDialing:
@@ -375,6 +430,10 @@ void CellPhonePopup::updateGraphics() {
 	case kWebList:
 	case kEmailList:
 	case kContentView:
+	case kCamera:
+	case kPictureView:
+	case kDeleteConfirm:
+	case kMessageScreen:
 		break;
 
 	case kPlaceCall:
@@ -491,7 +550,38 @@ void CellPhonePopup::drawChrome() {
 }
 
 void CellPhonePopup::drawScreenContent() {
+	if (_inCameraFraming) {
+		// Camera framing: the popup covers the viewport and shows only the
+		// movable framing box; the scene shows through the transparent surface.
+		drawCameraFraming();
+		return;
+	}
+
 	drawChrome();
+
+	// Nancy 13 fills the LCD with a background graphic on every keyboard
+	// screen (earlier games left it blank). The expanded/zoomed screens keep
+	// their white background, so only draw it on the non-zoomed states.
+	const bool n13Keyboard = g_nancy->getGameType() >= kGameTypeNancy13 && !isZoomedChromeState();
+	if (n13Keyboard) {
+		drawLcdTile(kN13PlainBg);
+		// While a call is being placed, the LCD shows the two-phones "connecting"
+		// picture over the plain background. (The idle Welcome picture is drawn in
+		// the kWelcome case below.)
+		switch (_screenState) {
+		case kPlaceCall:
+		case kWaitOutgoingRing:
+		case kLookupContact:
+		case kWaitPickup:
+		case kConnected:
+		case kInvalidNumber:
+		case kWaitInvalid:
+			drawLcdTile(kN13CallGraphic);
+			break;
+		default:
+			break;
+		}
+	}
 
 	// Signal + battery indicators show on the welcome screen; the connected
 	// in-call screen keeps the battery but not the signal. Every other state
@@ -505,9 +595,20 @@ void CellPhonePopup::drawScreenContent() {
 	switch (_screenState) {
 	case kWelcome:
 		drawWebDirLabels();
+		if (n13Keyboard) {
+			// Nancy 13's top row is Cam / Menu / Dir; drawWebDirLabels() paints
+			// Menu + Dir, so add the Cam label. The "Welcome / River Heights
+			// Wireless" picture sits over the plain keyboard background.
+			drawRibbonLabel(_uiclData->dialLabel);
+			if (!_noSignal) {
+				drawLcdTile(kN13MsgWelcome);
+			}
+		}
 		if (_noSignal) {
 			drawStatusLabels();
-		} else {
+		} else if (!n13Keyboard) {
+			// Earlier games draw the welcome graphic here; Nancy 13 already
+			// painted the keyboard background above.
 			drawWelcomeScreen();
 		}
 		break;
@@ -532,7 +633,7 @@ void CellPhonePopup::drawScreenContent() {
 		}
 		// Back button on the connecting strip cancels the ringing call.
 		if (isCallBackButtonActive()) {
-			drawBackButton(0);
+			drawBackButton(kSubBack);
 		}
 		break;
 
@@ -540,7 +641,7 @@ void CellPhonePopup::drawScreenContent() {
 		// Still ringing — only the connecting sprite, plus the Back button.
 		drawConnectingSprite();
 		if (isCallBackButtonActive()) {
-			drawBackButton(0);
+			drawBackButton(kSubBack);
 		}
 		break;
 
@@ -561,16 +662,29 @@ void CellPhonePopup::drawScreenContent() {
 		drawDirectoryList();
 		drawDirectoryArrows();
 		drawHeading(_uiclData->dialHilite);
-		drawBackButton(0);
+		drawBackButton(kSubBack);
+		if (n13Keyboard) {
+			// Relabel the first bottom button (Cam): "Send" while choosing a photo
+			// recipient, "Dial" while browsing contacts to place a call.
+			drawRibbonLabelAt(_sendingPicture ? _uiclData->sendLabel.srcRect
+											  : _uiclData->dialingLabel.srcRect,
+							  _uiclData->dialLabel.destRect);
+		}
 		break;
 
 	case kOnlineHub: {
 		drawHeading(_uiclData->onlineHeading);
-		drawBackButton(0);
-		// Email / Web option buttons (subButtons 3 and 4) sit inside the LCD.
-		// Each highlights (its pressed sprite) when the cursor is over it.
-		drawHubButton(3);
-		drawHubButton(4);
+		drawBackButton(kSubBack);
+		// The two LCD option buttons highlight (pressed sprite) on hover. Nancy
+		// 13's Menu is View Pictures (subButtons[3]) + E-mail (subButtons[4]);
+		// the removed web browser was subButtons[5].
+		if (g_nancy->getGameType() >= kGameTypeNancy13) {
+			drawHubButton(kN13SubEmail);
+			drawHubButton(kN13SubViewPics);
+		} else {
+			drawHubButton(kSubEmail);
+			drawHubButton(kSubWeb);
+		}
 		break;
 	}
 
@@ -580,14 +694,15 @@ void CellPhonePopup::drawScreenContent() {
 		drawHeading(_uiclData->searchHeading);
 		drawLinkList();
 		drawDirectoryArrows();
-		drawBackButton(9);
+		drawBackButton(kSubWebHome);
 		break;
 
 	case kEmailList:
 		drawHeading(_uiclData->emailHeading);
 		drawLinkList();
 		drawDirectoryArrows();
-		drawBackButton(7);
+		// Zoomed-list Back: subButtons[7] before Nancy 13, [8] in Nancy 13.
+		drawBackButton(g_nancy->getGameType() >= kGameTypeNancy13 ? kN13SubBackFull : kSubEmailBack);
 		break;
 
 	case kContentView:
@@ -601,9 +716,48 @@ void CellPhonePopup::drawScreenContent() {
 		drawDirectoryArrows();
 		drawBackButton(contentViewBottomButton());
 		if (_contentHeading == &_uiclData->browserHeading && !isBrowserArticle()) {
-			drawHubButton(8);
+			drawHubButton(kSubSearch);
 		}
 		break;
+
+	case kCamera:
+		// The framing overlay is drawn by the _inCameraFraming short-circuit at
+		// the top of this function.
+		break;
+
+	case kDeleteConfirm:
+		// The "DELETE? YES OR NO" prompt tile plus the Yes / No ribbon labels.
+		drawLcdTile(kN13MsgDeleteConfirm);
+		drawRibbonLabel(_uiclData->yesLabel);
+		drawRibbonLabel(_uiclData->noLabel);
+		break;
+
+	case kMessageScreen:
+		// A transient message tile (Picture Sent / Deleted / Camera Full).
+		if (_messageTileSrc) {
+			drawLcdTile(*_messageTileSrc);
+		}
+		drawBackButton(kSubBack);
+		break;
+
+	case kPictureView: {
+		// Nancy 13 "view pictures": the captured photo (or the "no pictures"
+		// background) fills the LCD, with the Cam / Del / Send ribbon labels and
+		// a Back button.
+		drawPictureView();
+		drawRibbonLabel(_uiclData->dialLabel);	// CAM (retake)
+		drawRibbonLabel(_uiclData->delLabel);
+		drawRibbonLabel(_uiclData->sendLabel);
+		drawBackButton(kSubBack);
+		// Paging arrows appear only when there is more than one photo to leaf
+		// through (they page _pictureIndex; see handleInput).
+		const CellPhonePictureData *pd = pictureData();
+		if (pd && pd->pictures.size() > 1) {
+			drawScrollArrow(scrollUpButton(), _scrollUpHovered);
+			drawScrollArrow(scrollDownButton(), _scrollDownHovered);
+		}
+		break;
+	}
 	}
 
 	// Keypad depress feedback sits on top of everything else.
@@ -653,15 +807,30 @@ void CellPhonePopup::drawWebDirLabels() {
 }
 
 void CellPhonePopup::drawDialLabel() {
-	const UICL::SrcDestRectPair &dl = _uiclData->dialLabel;
-	if (dl.srcRect.isEmpty() || dl.destRect.isEmpty()) {
+	drawRibbonLabel(_uiclData->dialLabel);
+}
+
+void CellPhonePopup::drawRibbonLabel(const UICL::SrcDestRectPair &label) {
+	if (label.srcRect.isEmpty() || label.destRect.isEmpty()) {
 		return;
 	}
-
 	const Common::Point chunkOrigin(_screenPosition.left, _screenPosition.top);
-	_drawSurface.blitFrom(_spritesImage, dl.srcRect,
-							Common::Point(dl.destRect.left - chunkOrigin.x,
-											dl.destRect.top - chunkOrigin.y));
+	_drawSurface.blitFrom(_spritesImage, label.srcRect,
+							Common::Point(label.destRect.left - chunkOrigin.x,
+											label.destRect.top - chunkOrigin.y));
+}
+
+void CellPhonePopup::drawRibbonLabelAt(const Common::Rect &src, const Common::Rect &dest) {
+	// Draw one ribbon-label sprite at another label's slot — used to relabel the
+	// first bottom button (Cam) as Dial in the directory and Send in the
+	// picture-recipient chooser.
+	if (src.isEmpty() || dest.isEmpty()) {
+		return;
+	}
+	const Common::Point chunkOrigin(_screenPosition.left, _screenPosition.top);
+	_drawSurface.blitFrom(_spritesImage, src,
+							Common::Point(dest.left - chunkOrigin.x,
+											dest.top - chunkOrigin.y));
 }
 
 void CellPhonePopup::drawTypeMessage() {
@@ -897,6 +1066,13 @@ void CellPhonePopup::openContentView(const Common::String &key, const UICL::SrcD
 }
 
 void CellPhonePopup::openBrowserHome() {
+	// The web browser was removed in Nancy 13 (its atlas CUR_URLimages_OVL no
+	// longer ships); the Menu's second option there is "view pictures", wired
+	// separately. Never open the (missing) browser for Nancy 13.
+	if (g_nancy->getGameType() >= kGameTypeNancy13) {
+		return;
+	}
+
 	// The Web button opens the browser home page (UIBW page 0 — the "River
 	// Heights Wireless" homepage). Its in-page hyperlinks then navigate to
 	// further pages / the search list.
@@ -1138,9 +1314,171 @@ void CellPhonePopup::drawWelcomeScreen() {
 											ws.destRect.top - chunkOrigin.y));
 }
 
+void CellPhonePopup::drawLcdTile(const Common::Rect &src) {
+	const Common::Rect &lcd = _uiclData->welcomeScreen.destRect;
+	if (src.isEmpty() || lcd.isEmpty()) {
+		return;
+	}
+	const Common::Point chunkOrigin(_screenPosition.left, _screenPosition.top);
+	_drawSurface.blitFrom(_spritesImage, src,
+							Common::Point(lcd.left - chunkOrigin.x,
+											lcd.top - chunkOrigin.y));
+}
+
+void CellPhonePopup::showMessageScreen(const Common::Rect &tileSrc, ScreenState returnState) {
+	_messageTileSrc = &tileSrc;
+	_messageReturnState = returnState;
+	enterScreenState(kMessageScreen);
+}
+
+CellPhonePictureData *CellPhonePopup::pictureData() const {
+	// Lazily created (Nancy 13 only) — persists in the 'CPIC' save chunk.
+	return (CellPhonePictureData *)NancySceneState.getPuzzleData(CellPhonePictureData::getTag());
+}
+
+void CellPhonePopup::drawPictureView() {
+	CellPhonePictureData *pd = pictureData();
+	if (!pd || pd->pictures.empty()) {
+		drawLcdTile(kN13MsgNoPictures);
+		return;
+	}
+
+	_pictureIndex = CLIP<int>(_pictureIndex, 0, (int)pd->pictures.size() - 1);
+	const CapturedPicture &pic = pd->pictures[_pictureIndex];
+	if (pic.width == 0 || pic.height == 0 ||
+			pic.pixels.size() < (uint)pic.width * (uint)pic.height * 4) {
+		return;
+	}
+
+	const Common::Rect &lcd = _uiclData->welcomeScreen.destRect;
+	if (lcd.isEmpty()) {
+		return;
+	}
+	const Common::Point chunkOrigin(_screenPosition.left, _screenPosition.top);
+
+	// Wrap the stored BGRA32 pixels and scale them into the LCD area.
+	Graphics::Surface src;
+	src.init(pic.width, pic.height, pic.width * 4,
+				const_cast<byte *>(pic.pixels.data()),
+				g_nancy->_graphics->getScreenPixelFormat());
+	Graphics::Surface *scaled = src.scale((int16)lcd.width(), (int16)lcd.height(), false);
+	if (scaled) {
+		_drawSurface.blitFrom(*scaled,
+				Common::Point(lcd.left - chunkOrigin.x, lcd.top - chunkOrigin.y));
+		scaled->free();
+		delete scaled;
+	}
+}
+
+void CellPhonePopup::captureViewport(const Common::Rect &screenRegion) {
+	CellPhonePictureData *pd = pictureData();
+	if (!pd) {
+		return;
+	}
+
+	const Viewport &viewport = NancySceneState.getViewport();
+	const Graphics::ManagedSurface &vp = viewport.getBackground();
+	if (vp.w == 0 || vp.h == 0) {
+		return;
+	}
+
+	// Translate the framed screen region into the (scrolled) viewport background.
+	const Common::Rect vpScreen = viewport.getScreenPosition();
+	const int scrollY = (int)viewport.getCurVerticalScroll();
+	Common::Rect grab;
+	if (screenRegion.isEmpty()) {
+		grab = Common::Rect(0, scrollY, vpScreen.width(), scrollY + vpScreen.height());
+	} else {
+		grab = screenRegion;
+		grab.translate(-vpScreen.left, -vpScreen.top + scrollY);
+	}
+	grab.clip(Common::Rect(vp.w, vp.h));
+	if (grab.isEmpty()) {
+		return;
+	}
+
+	// Copy the sub-area, converted to BGRA32 so it can be re-displayed and saved.
+	Graphics::Surface sub = vp.rawSurface().getSubArea(grab);
+	Graphics::Surface *conv = sub.convertTo(g_nancy->_graphics->getScreenPixelFormat());
+	if (!conv) {
+		return;
+	}
+
+	CapturedPicture pic;
+	pic.width = (uint16)conv->w;
+	pic.height = (uint16)conv->h;
+	pic.pixels.resize((uint)pic.width * (uint)pic.height * 4);
+	for (int y = 0; y < conv->h; ++y) {
+		memcpy(pic.pixels.data() + (uint)y * (uint)pic.width * 4,
+				conv->getBasePtr(0, y), (uint)pic.width * 4);
+	}
+	conv->free();
+	delete conv;
+
+	pd->pictures.push_back(pic);
+	_pictureIndex = (int)pd->pictures.size() - 1;
+}
+
+Common::Rect CellPhonePopup::framingScreenRect() const {
+	const Common::Rect vp = NancySceneState.getViewport().getScreenPosition();
+	const int w = MIN<int>(kFramingWidth, vp.width());
+	const int h = MIN<int>(kFramingHeight, vp.height());
+	const int cx = CLIP<int>(_framingMouse.x, vp.left + w / 2, vp.right - w / 2);
+	const int cy = CLIP<int>(_framingMouse.y, vp.top + h / 2, vp.bottom - h / 2);
+	return Common::Rect(cx - w / 2, cy - h / 2, cx - w / 2 + w, cy - h / 2 + h);
+}
+
+void CellPhonePopup::enterCameraFraming() {
+	if (_inCameraFraming) {
+		return;
+	}
+	_inCameraFraming = true;
+	_savedPhoneRect = _screenPosition;
+
+	// Grow the popup to cover the viewport so the framing box can be drawn
+	// anywhere over the live scene.
+	const Common::Rect vp = NancySceneState.getViewport().getScreenPosition();
+	moveTo(vp);
+	_drawSurface.create(vp.width(), vp.height(), g_nancy->_graphics->getScreenPixelFormat());
+	setTransparent(true);
+	_framingMouse = Common::Point(vp.left + vp.width() / 2, vp.top + vp.height() / 2);
+}
+
+void CellPhonePopup::exitCameraFraming() {
+	if (!_inCameraFraming) {
+		return;
+	}
+	_inCameraFraming = false;
+	moveTo(_savedPhoneRect);
+	Common::Rect bounds = _screenPosition;
+	bounds.moveTo(0, 0);
+	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphics->getScreenPixelFormat());
+	setTransparent(false);
+}
+
+void CellPhonePopup::drawCameraFraming() {
+	const uint32 trans = g_nancy->_graphics->getTransColor();
+	_drawSurface.clear(trans);
+
+	Common::Rect box = framingScreenRect();
+	box.translate(-_screenPosition.left, -_screenPosition.top);
+
+	// TODO: The original swaps the mouse cursor for a framing-rectangle sprite
+	// loaded from the game resources (via the scene-prep capture path, not the
+	// UICL chunk); locate that cursor and blit it here instead of the drawn
+	// outline. The 220x176 framing size is likewise a placeholder to confirm.
+	const uint32 col = _drawSurface.format.RGBToColor(255, 255, 255);
+	_drawSurface.frameRect(box, col);
+	if (box.width() > 4 && box.height() > 4) {
+		box.grow(-1);
+		_drawSurface.frameRect(box, col);
+	}
+	_needsRedraw = true;
+}
+
 void CellPhonePopup::drawBackButton(uint subButtonIndex) {
-	// subButtons[0] is the Back button in the lower ribbon (help / sub-screens);
-	// subButtons[7] is the Back button at the bottom of the zoomed content view.
+	// kSubBack is the Back button in the lower ribbon (help / sub-screens);
+	// kSubEmailBack is the Back button at the bottom of the zoomed content view.
 	const UICL::ThreeRectWidget &back = _uiclData->subButtons[subButtonIndex];
 	if (back.destRect.isEmpty()) {
 		return;
@@ -1216,11 +1554,13 @@ int CellPhonePopup::currentBackButtonIndex() const {
 	switch (_screenState) {
 	case kDirectory:
 	case kOnlineHub:
-		return 0;
+	case kPictureView:
+	case kMessageScreen:
+		return kSubBack;
 	case kWebList:
-		return 9;
+		return kSubWebHome;
 	case kEmailList:
-		return 7;
+		return kSubEmailBack;
 	case kContentView:
 		return (int)contentViewBottomButton();
 	default:
@@ -1231,9 +1571,9 @@ int CellPhonePopup::currentBackButtonIndex() const {
 uint CellPhonePopup::contentViewBottomButton() const {
 	// Help Back (0); browser-article HOME (9); main page / email article Back (7).
 	if (isHelpContentView()) {
-		return 0;
+		return kSubBack;
 	}
-	return isBrowserArticle() ? 9 : 7;
+	return isBrowserArticle() ? kSubWebHome : kSubEmailBack;
 }
 
 bool CellPhonePopup::isBrowserArticle() const {
@@ -1245,47 +1585,47 @@ bool CellPhonePopup::isBrowserArticle() const {
 }
 
 const UICL::ThreeRectWidget &CellPhonePopup::scrollUpButton() const {
-	// Directory and help both scroll with the small-LCD arrow pair
-	// (subButtons[1]/[2]); the zoomed email / browser articles use [5]/[6].
-	return (_screenState == kDirectory || isHelpContentView())
-		? _uiclData->subButtons[1]
-		: _uiclData->subButtons[5];
+	// Directory and help scroll with the small-LCD arrow pair (subButtons[1]/[2]);
+	// the zoomed email / browser lists use a different pair. Nancy 13 keeps the
+	// directory on [1]/[2] and uses the list arrows [6]/[7] elsewhere; earlier
+	// games use [5]/[6] for the zoomed lists.
+	const bool smallLcd = _screenState == kDirectory || isHelpContentView();
+	if (g_nancy->getGameType() >= kGameTypeNancy13) {
+		return smallLcd ? _uiclData->subButtons[kN13SubDirUp]
+						: _uiclData->subButtons[kN13SubListUp];
+	}
+	return smallLcd ? _uiclData->subButtons[kSubDirUp] : _uiclData->subButtons[kSubListUp];
 }
 
 const UICL::ThreeRectWidget &CellPhonePopup::scrollDownButton() const {
-	return (_screenState == kDirectory || isHelpContentView())
-		? _uiclData->subButtons[2]
-		: _uiclData->subButtons[6];
+	const bool smallLcd = _screenState == kDirectory || isHelpContentView();
+	if (g_nancy->getGameType() >= kGameTypeNancy13) {
+		return smallLcd ? _uiclData->subButtons[kN13SubDirDown]
+						: _uiclData->subButtons[kN13SubListDown];
+	}
+	return smallLcd ? _uiclData->subButtons[kSubDirDown] : _uiclData->subButtons[kSubListDown];
+}
+
+void CellPhonePopup::drawScrollArrow(const UICL::ThreeRectWidget &arrow, bool hovered) {
+	// Scroll/paging arrows are not in the chrome image; blit on every redraw.
+	// The pressed (lit) sprite is used while the cursor is over the arrow.
+	if (arrow.destRect.isEmpty()) {
+		return;
+	}
+	const Common::Rect &src = (hovered && !arrow.srcRectPressed.isEmpty())
+		? arrow.srcRectPressed
+		: arrow.srcRectIdle;
+	if (src.isEmpty()) {
+		return;
+	}
+	_drawSurface.blitFrom(_spritesImage, src,
+							Common::Point(arrow.destRect.left - _screenPosition.left,
+											arrow.destRect.top - _screenPosition.top));
 }
 
 void CellPhonePopup::drawDirectoryArrows() {
-	// Up/down scroll arrows are not in the chrome image; blit on every redraw.
-	// The pressed (lit) sprite is used while the cursor is over the arrow.
-	const UICL::ThreeRectWidget &up = scrollUpButton();
-	const UICL::ThreeRectWidget &down = scrollDownButton();
-
-	const Common::Point chunkOrigin(_screenPosition.left, _screenPosition.top);
-
-	if (!up.destRect.isEmpty()) {
-		const Common::Rect &upSrc = (_scrollUpHovered && !up.srcRectPressed.isEmpty())
-			? up.srcRectPressed
-			: up.srcRectIdle;
-		if (!upSrc.isEmpty()) {
-			_drawSurface.blitFrom(_spritesImage, upSrc,
-									Common::Point(up.destRect.left - chunkOrigin.x,
-													up.destRect.top - chunkOrigin.y));
-		}
-	}
-	if (!down.destRect.isEmpty()) {
-		const Common::Rect &downSrc = (_scrollDownHovered && !down.srcRectPressed.isEmpty())
-			? down.srcRectPressed
-			: down.srcRectIdle;
-		if (!downSrc.isEmpty()) {
-			_drawSurface.blitFrom(_spritesImage, downSrc,
-									Common::Point(down.destRect.left - chunkOrigin.x,
-													down.destRect.top - chunkOrigin.y));
-		}
-	}
+	drawScrollArrow(scrollUpButton(), _scrollUpHovered);
+	drawScrollArrow(scrollDownButton(), _scrollDownHovered);
 
 	// Selection indicator (dirArrowSrc sprite) — only the contacts directory
 	// shows it. The search-topic and email lists are plain lists in the
@@ -1607,15 +1947,18 @@ bool CellPhonePopup::isContactVisible(const UICL::Contact &c) const {
 }
 
 Common::Rect CellPhonePopup::hubEmailRect() const {
-	// subButtons[3] is the upper LCD option button (Email).
-	Common::Rect r = _uiclData->subButtons[3].destRect;
+	// The Email option button: subButtons[3] before Nancy 13, [4] in Nancy 13.
+	const uint slot = g_nancy->getGameType() >= kGameTypeNancy13 ? kN13SubEmail : kSubEmail;
+	Common::Rect r = _uiclData->subButtons[slot].destRect;
 	r.translate(-_screenPosition.left, -_screenPosition.top);
 	return r;
 }
 
 Common::Rect CellPhonePopup::hubWebRect() const {
-	// subButtons[4] is the lower LCD option button (Web).
-	Common::Rect r = _uiclData->subButtons[4].destRect;
+	// The lower LCD option button: Web (subButtons[4]) before Nancy 13, View
+	// Pictures (subButtons[3]) in Nancy 13.
+	const uint slot = g_nancy->getGameType() >= kGameTypeNancy13 ? kN13SubViewPics : kSubWeb;
+	Common::Rect r = _uiclData->subButtons[slot].destRect;
 	r.translate(-_screenPosition.left, -_screenPosition.top);
 	return r;
 }
@@ -1796,6 +2139,33 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 		return;
 	}
 
+	// Nancy 13 camera framing: the movable box tracks the mouse; a left click
+	// takes the shot, a right click cancels back to the welcome screen.
+	if (_inCameraFraming) {
+		if (input.mousePos != _framingMouse) {
+			_framingMouse = input.mousePos;
+			drawScreenContent();
+		}
+		if (input.input & NancyInput::kLeftMouseButtonUp) {
+			const Common::Rect shot = framingScreenRect();
+			exitCameraFraming();
+			CellPhonePictureData *pd = pictureData();
+			if (pd && pd->pictures.size() >= kMaxPictures) {
+				// The camera roll is full — the original refuses the shot and
+				// asks the player to delete one or more pictures.
+				showMessageScreen(kN13MsgCameraFull, kWelcome);
+			} else {
+				captureViewport(shot);
+				enterScreenState(kPictureView);
+			}
+		} else if (input.input & NancyInput::kRightMouseButtonUp) {
+			exitCameraFraming();
+			enterScreenState(kWelcome);
+		}
+		input.eatMouseInput();
+		return;
+	}
+
 	// Mid-call states accept only the close X.
 	const bool transientCallState =
 		_screenState == kPlaceCall || _screenState == kWaitOutgoingRing ||
@@ -1836,7 +2206,7 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 	if (transientCallState) {
 		// While ringing, only the Back button is live (cancels the call).
 		if (isCallBackButtonActive()) {
-			const Common::Rect backHit = backButtonHitRect(0);
+			const Common::Rect backHit = backButtonHitRect(kSubBack);
 			const Common::Point popupMouse(input.mousePos.x - _screenPosition.left,
 											input.mousePos.y - _screenPosition.top);
 			const bool overBack = !backHit.isEmpty() && backHit.contains(popupMouse);
@@ -1861,10 +2231,11 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 	const Common::Point chunkMouse = mouseToChunkCoords(input.mousePos);
 
 	// Light the up/down arrows on hover in any state that uses them (directory,
-	// link lists, and the content view — help included, which scrolls via the
-	// small-LCD arrow pair).
+	// link lists, the content view — help included, which scrolls via the
+	// small-LCD arrow pair — and the Nancy 13 picture-view paging arrows).
 	const bool arrowsActive = _screenState == kDirectory || isLinkListMode() ||
-								_screenState == kContentView;
+								_screenState == kContentView ||
+								_screenState == kPictureView;
 	const bool overUp = arrowsActive &&
 			scrollUpButton().destRect.contains(chunkMouse);
 	const bool overDown = arrowsActive && !overUp &&
@@ -1928,7 +2299,19 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 			_uiclData->helpButton.destRect.contains(chunkMouse)) {
 		g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
-			openContentView(_uiclData->helpTextKey, _uiclData->helpHeading);
+			// Nancy 13 stores two help keys: the phone-help text lives under
+			// helpTextKey2 ("PHNUSE") in AUTOTEXT, not helpTextKey ("NTR025"), so
+			// use whichever actually resolves.
+			Common::String helpKey = _uiclData->helpTextKey;
+			if (g_nancy->getGameType() >= kGameTypeNancy13 && !_uiclData->helpTextKey2.empty()) {
+				const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
+				const Common::String help2 = _uiclData->helpTextKey2.toString();
+				if (autotext && !autotext->texts.contains(helpKey) &&
+						autotext->texts.contains(help2)) {
+					helpKey = help2;
+				}
+			}
+			openContentView(helpKey, _uiclData->helpHeading);
 			input.eatMouseInput();
 			return;
 		}
@@ -1957,7 +2340,7 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 
 		// Visible Back button at the bottom of the display. Gated so it can't
 		// intercept up/down clicks.
-		const Common::Rect backHit = backButtonHitRect(0);
+		const Common::Rect backHit = backButtonHitRect(kSubBack);
 		const Common::Point popupMouse(chunkMouse.x - _screenPosition.left,
 										chunkMouse.y - _screenPosition.top);
 		const bool overUpDown =
@@ -1974,7 +2357,8 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 			}
 		}
 
-		// Row click selects (the call button does the actual call).
+		// Row click only selects; the first bottom button places the call (or,
+		// while choosing a photo recipient, sends the picture).
 		const uint row = directoryRowAt(chunkMouse);
 		if (row != (uint)-1) {
 			const int contactIdx = contactIndexForVisibleRow(row);
@@ -1998,11 +2382,14 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 										chunkMouse.y - _screenPosition.top);
 		const Common::Rect emailR = hubEmailRect();
 		const Common::Rect webR   = hubWebRect();
-		const Common::Rect backHit = backButtonHitRect(0);
+		const Common::Rect backHit = backButtonHitRect(kSubBack);
 
 		// Highlight whichever option button the cursor is over.
-		const int newHubHover = emailR.contains(popupMouse) ? 3
-								: webR.contains(popupMouse) ? 4 : -1;
+		const bool n13Hub = g_nancy->getGameType() >= kGameTypeNancy13;
+		const int emailSlot = n13Hub ? kN13SubEmail : kSubEmail;
+		const int webSlot = n13Hub ? kN13SubViewPics : kSubWeb;
+		const int newHubHover = emailR.contains(popupMouse) ? emailSlot
+								: webR.contains(popupMouse) ? webSlot : -1;
 		if (newHubHover != _hoveredHubButton) {
 			_hoveredHubButton = newHubHover;
 			drawScreenContent();
@@ -2022,7 +2409,14 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				_directoryScroll = 0;
 				_directorySelection = 0;
-				openBrowserHome();
+				if (g_nancy->getGameType() >= kGameTypeNancy13) {
+					// Nancy 13's Menu second option is "view pictures" (the web
+					// browser was removed).
+					_pictureIndex = 0;
+					enterScreenState(kPictureView);
+				} else {
+					openBrowserHome();
+				}
 				input.eatMouseInput();
 				return;
 			}
@@ -2034,6 +2428,122 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 				return;
 			}
 		}
+	}
+
+	// Nancy 13 "view pictures" review screen. The top-row buttons are relabelled
+	// Cam (retake) / Del / Send; the directory scroll arrows page between photos.
+	if (_screenState == kPictureView) {
+		const Common::Point popupMouse(chunkMouse.x - _screenPosition.left,
+										chunkMouse.y - _screenPosition.top);
+		CellPhonePictureData *pd = pictureData();
+		const int numPics = pd ? (int)pd->pictures.size() : 0;
+
+		Common::Rect camR = _uiclData->dialPadSlots[12].destRect;
+		Common::Rect delR = _uiclData->dialPadSlots[13].destRect;
+		Common::Rect sendR = _uiclData->dialPadSlots[14].destRect;
+		Common::Rect upR = _uiclData->subButtons[kN13SubListUp].destRect;
+		Common::Rect downR = _uiclData->subButtons[kN13SubListDown].destRect;
+		const Common::Point origin(_screenPosition.left, _screenPosition.top);
+		camR.translate(-origin.x, -origin.y);
+		delR.translate(-origin.x, -origin.y);
+		sendR.translate(-origin.x, -origin.y);
+		upR.translate(-origin.x, -origin.y);
+		downR.translate(-origin.x, -origin.y);
+		const Common::Rect backHit = backButtonHitRect(kSubBack);
+
+		const bool overButton = camR.contains(popupMouse) ||
+			(numPics > 0 && (delR.contains(popupMouse) || sendR.contains(popupMouse))) ||
+			(numPics > 1 && (upR.contains(popupMouse) || downR.contains(popupMouse))) ||
+			(!backHit.isEmpty() && backHit.contains(popupMouse));
+		if (overButton) {
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
+		}
+		if (overButton != _backButtonHovered) {
+			_backButtonHovered = overButton;
+			drawScreenContent();
+		}
+
+		if (input.input & NancyInput::kLeftMouseButtonUp) {
+			if (camR.contains(popupMouse)) {
+				// Retake — back into the framing overlay.
+				_screenState = kCamera;
+				enterCameraFraming();
+				drawScreenContent();
+			} else if (numPics > 0 && delR.contains(popupMouse)) {
+				enterScreenState(kDeleteConfirm);
+			} else if (numPics > 0 && sendR.contains(popupMouse)) {
+				// Pick a recipient in the directory, then confirm "sent".
+				_sendingPicture = true;
+				_directoryScroll = 0;
+				_directorySelection = 0;
+				enterScreenState(kDirectory);
+			} else if (numPics > 1 && upR.contains(popupMouse)) {
+				_pictureIndex = (_pictureIndex + numPics - 1) % numPics;
+				drawScreenContent();
+			} else if (numPics > 1 && downR.contains(popupMouse)) {
+				_pictureIndex = (_pictureIndex + 1) % numPics;
+				drawScreenContent();
+			} else if (!backHit.isEmpty() && backHit.contains(popupMouse)) {
+				enterScreenState(kOnlineHub);
+			}
+			input.eatMouseInput();
+			return;
+		}
+		input.eatMouseInput();
+		return;
+	}
+
+	// Nancy 13 delete-confirm ("DELETE? YES OR NO"): Yes and No are the Menu
+	// (slot 13) and Dir (slot 14) dial-pad keys relabelled (like slot 12's
+	// Cam/Dial/Send), so those slots are the hitboxes. Yes deletes the current
+	// photo; No returns to the picture view.
+	if (_screenState == kDeleteConfirm) {
+		const Common::Point popupMouse(chunkMouse.x - _screenPosition.left,
+										chunkMouse.y - _screenPosition.top);
+		Common::Rect yesR = _uiclData->dialPadSlots[13].destRect;
+		Common::Rect noR = _uiclData->dialPadSlots[14].destRect;
+		yesR.translate(-_screenPosition.left, -_screenPosition.top);
+		noR.translate(-_screenPosition.left, -_screenPosition.top);
+		if (yesR.contains(popupMouse) || noR.contains(popupMouse)) {
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
+		}
+		if (input.input & NancyInput::kLeftMouseButtonUp) {
+			CellPhonePictureData *pd = pictureData();
+			if (yesR.contains(popupMouse) && pd && _pictureIndex >= 0 &&
+					_pictureIndex < (int)pd->pictures.size()) {
+				pd->pictures.remove_at(_pictureIndex);
+				if (_pictureIndex >= (int)pd->pictures.size()) {
+					_pictureIndex = MAX(0, (int)pd->pictures.size() - 1);
+				}
+				showMessageScreen(kN13MsgPictureDeleted, kPictureView);
+				input.eatMouseInput();
+				return;
+			}
+			if (noR.contains(popupMouse)) {
+				enterScreenState(kPictureView);
+				input.eatMouseInput();
+				return;
+			}
+		}
+		input.eatMouseInput();
+		return;
+	}
+
+	// Nancy 13 transient message tile (Sent / Deleted / Camera Full): any click
+	// (or the Back button) dismisses it back to the state it was raised from.
+	if (_screenState == kMessageScreen) {
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
+		if (input.input & NancyInput::kLeftMouseButtonUp) {
+			ScreenState ret = _messageReturnState;
+			// If the roll is now empty (last photo deleted), fall back to Menu.
+			CellPhonePictureData *pd = pictureData();
+			if (ret == kPictureView && (!pd || pd->pictures.empty())) {
+				ret = kOnlineHub;
+			}
+			enterScreenState(ret);
+		}
+		input.eatMouseInput();
+		return;
 	}
 
 	// Link-list modes (web search results / email messages). Up/down +
@@ -2061,8 +2571,12 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 
 		// The list views show a bottom button at the same spot: the email list
 		// a BACK (subButtons[7]) to the hub, the search list a HOME
-		// (subButtons[9]) to the browser homepage. Same dest rect either way.
-		const Common::Rect backHit = backButtonHitRect(_screenState == kWebList ? 9 : 7);
+		// (subButtons[9]) to the browser homepage. Nancy 13 moved the zoomed-list
+		// Back to subButtons[8] (and dropped the web list). Same dest rect either.
+		const uint listBackIdx = g_nancy->getGameType() >= kGameTypeNancy13
+			? (uint)kN13SubBackFull
+			: (uint)(_screenState == kWebList ? kSubWebHome : kSubEmailBack);
+		const Common::Rect backHit = backButtonHitRect(listBackIdx);
 		const Common::Point popupMouse(chunkMouse.x - _screenPosition.left,
 										chunkMouse.y - _screenPosition.top);
 		const bool overUpDown =
@@ -2155,10 +2669,10 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 		// The main browser page carries the top-row SEARCH button (subButtons[8])
 		// which opens the search list; it highlights green while hovered.
 		if (_contentHeading == &_uiclData->browserHeading && !isBrowserArticle() &&
-				!_uiclData->subButtons[8].destRect.isEmpty()) {
-			Common::Rect searchBtn = _uiclData->subButtons[8].destRect;
+				!_uiclData->subButtons[kSubSearch].destRect.isEmpty()) {
+			Common::Rect searchBtn = _uiclData->subButtons[kSubSearch].destRect;
 			searchBtn.translate(-_screenPosition.left, -_screenPosition.top);
-			const int newHover = searchBtn.contains(popupMouseLink) ? 8 : -1;
+			const int newHover = searchBtn.contains(popupMouseLink) ? kSubSearch : -1;
 			if (newHover != _hoveredHubButton) {
 				_hoveredHubButton = newHover;
 				drawScreenContent();
@@ -2252,6 +2766,31 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			playDialPadSound(_uiclData->dialPadSlots[12].soundName);
+			if (g_nancy->getGameType() >= kGameTypeNancy13 &&
+					(_screenState == kWelcome || _screenState == kDialing)) {
+				// Nancy 13's slot 12 is dual-purpose (Ghidra widget 0xc): on the
+				// welcome / dialing screen it is the camera button — enter the
+				// framing overlay (the phone yields to the viewport and a movable
+				// box marks the shot). In the directory it dials instead, so fall
+				// through to the call logic below.
+				_screenState = kCamera;
+				enterCameraFraming();
+				drawScreenContent();
+				input.eatMouseInput();
+				return;
+			}
+			if (_sendingPicture && _screenState == kDirectory) {
+				// Choosing a photo recipient: the first button is "Send" — mark
+				// the picture sent and show the confirmation.
+				_sendingPicture = false;
+				CellPhonePictureData *pd = pictureData();
+				if (pd && _pictureIndex >= 0 && _pictureIndex < (int)pd->pictures.size()) {
+					pd->pictures[_pictureIndex].sent = true;
+				}
+				showMessageScreen(kN13MsgPictureSent, kPictureView);
+				input.eatMouseInput();
+				return;
+			}
 			if (!_noSignal) {
 				if (_screenState == kDirectory) {
 					const int contactIdx =
@@ -2276,8 +2815,8 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 	// Dial-pad slot behaviour:
 	//   0..9   - digit input
 	//   10, 11 - *, # (no-op)
-	//   12     - call/talk key (handled above)
-	//   13     - web mode (TODO)
+	//   12     - call/talk key, or Nancy 13 camera/dial/send (handled above)
+	//   13     - Menu: opens the online hub (e-mail + web / view pictures)
 	//   14     - directory toggle
 	int newHovered = -1;
 	if (keypadVisible) {
@@ -2322,9 +2861,8 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 		}
 	}
 
-	// TODO: sub-buttons (email/search/help/browser/in-call menu) not hooked up.
-
-	// Block the viewport from acting on the cursor while the phone is up.
+	// Nothing else claimed the click: block the viewport from acting on the
+	// cursor while the phone is up.
 	input.eatMouseInput();
 }
 
