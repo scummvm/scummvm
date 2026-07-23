@@ -65,7 +65,7 @@ void *script_vars[kScrPools_MAX] = {
 	&script_word_vars,
 	&script_byte_vars,
 	inventory_items,
-	zones_data,
+	nullptr, /* To be set to zones_data at runtime in ChamberEngine ctor */
 	pers_list,
 	inventory_items,
 	inventory_items + kItemZapstik1 - 1,
