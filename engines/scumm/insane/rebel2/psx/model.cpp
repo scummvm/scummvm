@@ -12,6 +12,7 @@
 
 #include "common/endian.h"
 #include "common/system.h"
+#include "common/util.h"
 
 #include "scumm/insane/rebel2/psx/psx.h"
 
@@ -33,13 +34,91 @@ static bool readU32(const Common::Array<byte> &data, uint32 offset, uint32 &valu
 	return true;
 }
 
+bool loadRA2PSXTextures(const Common::Array<byte> &data,
+		Common::Array<RA2PSXTexture> &textures) {
+	const uint initialCount = textures.size();
+	uint32 offset = 0;
+	while (offset + 20 <= data.size()) {
+		Common::String name;
+		for (uint i = 0; i < 8 && data[offset + i]; ++i) {
+			if (data[offset + i] < 0x20 || data[offset + i] >= 0x7f)
+				return textures.size() > initialCount;
+			name += (char)data[offset + i];
+		}
+		if (name.empty())
+			break;
+
+		const uint16 recordSize = READ_LE_UINT16(data.data() + offset + 12);
+		const uint16 widthField = READ_LE_UINT16(data.data() + offset + 16);
+		const uint16 heightField = READ_LE_UINT16(data.data() + offset + 18);
+		const uint16 width = (widthField & 0xff) ? widthField & 0xff : 256;
+		const uint16 height = (heightField & 0xff) ? heightField & 0xff : 256;
+		const bool eightBit = (widthField & 0x100) != 0;
+		const uint32 paletteColors = eightBit ? 256 : 16;
+		const uint32 pixelCount = (uint32)width * height;
+		const uint32 pixelBytes = eightBit ? pixelCount : (pixelCount + 1) / 2;
+		const uint32 paletteOffset = offset + 20;
+		const uint32 pixelsOffset = paletteOffset + paletteColors * 2;
+		if (recordSize < 20 || offset + recordSize > data.size() ||
+				pixelsOffset + pixelBytes > offset + recordSize)
+			break;
+
+		RA2PSXTexture texture;
+		texture.name = name;
+		texture.width = width;
+		texture.height = height;
+		texture.pixels.resize(pixelCount);
+		for (uint32 i = 0; i < pixelCount; ++i) {
+			const byte packed = data[pixelsOffset + (eightBit ? i : i / 2)];
+			const byte paletteIndex = eightBit ? packed : ((i & 1) ? packed >> 4 : packed & 0xf);
+			const uint16 value = READ_LE_UINT16(data.data() + paletteOffset + paletteIndex * 2);
+			if (!value) {
+				texture.pixels[i] = 0;
+				continue;
+			}
+
+			const uint32 r = ((value & 0x1f) << 3) | ((value & 0x1f) >> 2);
+			const uint32 g = (((value >> 5) & 0x1f) << 3) | (((value >> 5) & 0x1f) >> 2);
+			const uint32 b = (((value >> 10) & 0x1f) << 3) | (((value >> 10) & 0x1f) >> 2);
+			texture.pixels[i] = 0x01000000 | ((value & 0x8000) ? 0x02000000 : 0) |
+					(r << 16) | (g << 8) | b;
+		}
+		textures.push_back(texture);
+		offset += recordSize;
+	}
+	return textures.size() > initialCount;
+}
+
 RA2PSXModel::RA2PSXModel() : _radius(1.0f) {
 }
 
 bool RA2PSXModel::load(const Common::Array<byte> &data) {
 	_vertices.clear();
 	_faces.clear();
+	_textures.clear();
 	_radius = 1.0f;
+
+	uint32 textureOffset;
+	if (!readU32(data, 16, textureOffset) || textureOffset + 4 > data.size())
+		return false;
+	const uint32 textureCount = READ_LE_UINT32(data.data() + textureOffset);
+	if (textureCount > 256 || textureCount > (data.size() - textureOffset - 4) / 8)
+		return false;
+	for (uint32 i = 0; i < textureCount; ++i) {
+		const uint32 nameOffset = textureOffset + 4 + i * 8;
+		RA2PSXTexture texture;
+		for (uint j = 0; j < 8 && data[nameOffset + j]; ++j) {
+			if (data[nameOffset + j] < 0x20 || data[nameOffset + j] >= 0x7f)
+				return false;
+			texture.name += (char)data[nameOffset + j];
+		}
+		if (texture.name.empty())
+			return false;
+		texture.width = 0;
+		texture.height = 0;
+		_textures.push_back(texture);
+	}
+
 	if (!parseModel(data, 0, 0) || _vertices.empty() || _faces.empty())
 		return false;
 
@@ -53,6 +132,31 @@ bool RA2PSXModel::load(const Common::Array<byte> &data) {
 	}
 	_radius = (float)sqrt(radiusSquared);
 	return true;
+}
+
+bool RA2PSXModel::loadTextures(const Common::Array<byte> &data) {
+	Common::Array<RA2PSXTexture> decoded;
+	if (!loadRA2PSXTextures(data, decoded))
+		return false;
+
+	for (uint i = 0; i < _textures.size(); ++i) {
+		for (uint j = 0; j < decoded.size(); ++j) {
+			if (_textures[i].name.equalsIgnoreCase(decoded[j].name)) {
+				_textures[i] = decoded[j];
+				break;
+			}
+		}
+		if (_textures[i].pixels.empty())
+			return false;
+	}
+	return true;
+}
+
+const RA2PSXTexture *RA2PSXModel::texture(int index) const {
+	if (index < 0 || (uint)index >= _textures.size() || !_textures[index].width ||
+			!_textures[index].height || _textures[index].pixels.empty())
+		return nullptr;
+	return &_textures[index];
 }
 
 bool RA2PSXModel::parseModel(const Common::Array<byte> &data, uint32 modelOffset, int depth) {
@@ -102,6 +206,9 @@ bool RA2PSXModel::parseObject(const Common::Array<byte> &data, uint32 objectOffs
 		vertex.z = (int16)READ_LE_UINT16(source + 4);
 		_vertices.push_back(vertex);
 	}
+	const uint32 normalOffset = vertexOffset + (uint32)vertexCount * 8;
+	if (normalOffset > primitiveOffset)
+		return false;
 
 	Common::HashMap<uint16, bool> seen;
 	for (uint32 listIndex = 0; listIndex < 8; ++listIndex) {
@@ -126,8 +233,10 @@ bool RA2PSXModel::parseObject(const Common::Array<byte> &data, uint32 objectOffs
 			const uint32 record = primitiveOffset + (uint32)rawIndex * 32;
 			if (record + 32 > data.size())
 				return false;
-			const uint16 mode = READ_LE_UINT16(data.data() + record + 12) & 0x1f;
+			const byte mode = data[record + 12];
 			RA2PSXFace face = {};
+			face.mode = mode;
+			face.texture = -1;
 			face.vertexCount = (mode & 0x10) ? 4 : 3;
 			const uint16 offsets[4] = {
 				READ_LE_UINT16(data.data() + record),
@@ -140,11 +249,51 @@ bool RA2PSXModel::parseObject(const Common::Array<byte> &data, uint32 objectOffs
 					return false;
 				face.vertex[vertexIndex] = firstVertex + offsets[vertexIndex] / 8;
 			}
-			face.r = data[record + 16];
-			face.g = data[record + 17];
-			face.b = data[record + 18];
-			if (!(face.r | face.g | face.b))
-				face.r = face.g = face.b = 0x7f;
+			if (!(mode & 0x44)) {
+				const uint16 normalOffsets[4] = {
+					READ_LE_UINT16(data.data() + record + 6),
+					READ_LE_UINT16(data.data() + record + 8),
+					READ_LE_UINT16(data.data() + record + 10),
+					READ_LE_UINT16(data.data() + record + 26)
+				};
+				for (uint vertexIndex = 0; vertexIndex < face.vertexCount; ++vertexIndex) {
+					const uint normalIndex = (mode & 1) ? vertexIndex : 0;
+					const uint16 sourceOffset = normalOffsets[normalIndex];
+					if ((sourceOffset & 7) || normalOffset + sourceOffset + 8 > primitiveOffset)
+						return false;
+					const byte *source = data.data() + normalOffset + sourceOffset;
+					face.normalX[vertexIndex] = (int16)READ_LE_UINT16(source);
+					face.normalY[vertexIndex] = (int16)READ_LE_UINT16(source + 2);
+					face.normalZ[vertexIndex] = (int16)READ_LE_UINT16(source + 4);
+				}
+			}
+			static const byte uvOffsets[4] = { 14, 20, 22, 28 };
+			for (uint vertexIndex = 0; vertexIndex < face.vertexCount; ++vertexIndex) {
+				face.u[vertexIndex] = data[record + uvOffsets[vertexIndex]];
+				face.v[vertexIndex] = data[record + uvOffsets[vertexIndex] + 1];
+				face.r[vertexIndex] = data[record + 16];
+				face.g[vertexIndex] = data[record + 17];
+				face.b[vertexIndex] = data[record + 18];
+			}
+			if (mode & 0x40) {
+				face.r[1] = data[record + 6];
+				face.g[1] = data[record + 7];
+				face.b[1] = data[record + 8];
+				face.r[2] = data[record + 9];
+				face.g[2] = data[record + 10];
+				face.b[2] = data[record + 11];
+				if (face.vertexCount == 4) {
+					face.r[3] = data[record + 26];
+					face.g[3] = data[record + 27];
+					face.b[3] = data[record + 28];
+				}
+			}
+			if ((mode & 2) && data[record + 19] >= 0x80) {
+				const uint texture = data[record + 19] - 0x80;
+				if (texture >= _textures.size())
+					return false;
+				face.texture = texture;
+			}
 			_faces.push_back(face);
 		}
 		if (!terminated)
@@ -155,7 +304,8 @@ bool RA2PSXModel::parseObject(const Common::Array<byte> &data, uint32 objectOffs
 
 #ifdef USE_TINYGL
 
-RA2PSXTinyGLRenderer::RA2PSXTinyGLRenderer() : _context(nullptr), _width(0), _height(0) {
+RA2PSXTinyGLRenderer::RA2PSXTinyGLRenderer() : _context(nullptr), _activeTexture(nullptr),
+		_textureEnabled(false), _blendEnabled(false), _width(0), _height(0) {
 }
 
 RA2PSXTinyGLRenderer::~RA2PSXTinyGLRenderer() {
@@ -178,8 +328,126 @@ bool RA2PSXTinyGLRenderer::init(int width, int height) {
 	tglDepthFunc(TGL_LESS);
 	tglDisable(TGL_LIGHTING);
 	tglDisable(TGL_TEXTURE_2D);
+	tglDisable(TGL_ALPHA_TEST);
+	tglDisable(TGL_BLEND);
 	tglDisable(TGL_CULL_FACE);
+	tglAlphaFunc(TGL_GREATER, 0.0f);
+	tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
+	tglTexEnvi(TGL_TEXTURE_ENV, TGL_TEXTURE_ENV_MODE, TGL_MODULATE);
 	return true;
+}
+
+TGLuint RA2PSXTinyGLRenderer::getTextureId(const RA2PSXTexture &texture) {
+	for (uint i = 0; i < _textureBindings.size(); ++i) {
+		if (_textureBindings[i].texture == &texture)
+			return _textureBindings[i].id;
+	}
+
+	Common::Array<byte> rgba;
+	rgba.resize(texture.pixels.size() * 4);
+	for (uint i = 0; i < texture.pixels.size(); ++i) {
+		const uint32 pixel = texture.pixels[i];
+		rgba[i * 4] = (pixel >> 16) & 0xff;
+		rgba[i * 4 + 1] = (pixel >> 8) & 0xff;
+		rgba[i * 4 + 2] = pixel & 0xff;
+		rgba[i * 4 + 3] = !(pixel & 0x01000000) ? 0 :
+				(pixel & 0x02000000) ? 0x80 : 0xff;
+	}
+
+	TextureBinding binding;
+	binding.texture = &texture;
+	tglGenTextures(1, &binding.id);
+	tglBindTexture(TGL_TEXTURE_2D, binding.id);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_CLAMP_TO_EDGE);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_CLAMP_TO_EDGE);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture.width, texture.height, 0,
+			TGL_RGBA, TGL_UNSIGNED_BYTE, rgba.data());
+	_textureBindings.push_back(binding);
+	return binding.id;
+}
+
+void RA2PSXTinyGLRenderer::setFaceState(const RA2PSXModel &model, const RA2PSXFace &face) {
+	const RA2PSXTexture *texture = model.texture(face.texture);
+	if (texture) {
+		if (!_textureEnabled) {
+			tglEnable(TGL_TEXTURE_2D);
+			tglEnable(TGL_ALPHA_TEST);
+			_textureEnabled = true;
+		}
+		if (_activeTexture != texture) {
+			tglBindTexture(TGL_TEXTURE_2D, getTextureId(*texture));
+			_activeTexture = texture;
+		}
+	} else if (_textureEnabled) {
+		tglDisable(TGL_TEXTURE_2D);
+		tglDisable(TGL_ALPHA_TEST);
+		_textureEnabled = false;
+	}
+
+	const bool blend = (face.mode & 8) != 0;
+	if (blend != _blendEnabled) {
+		if (blend)
+			tglEnable(TGL_BLEND);
+		else
+			tglDisable(TGL_BLEND);
+		_blendEnabled = blend;
+	}
+}
+
+static int getRA2PSXDepthCue(float depth, float focalLength) {
+	if (depth <= 0.0f)
+		return 4096;
+	const int quotient = MIN(0x1ffff, (int)(focalLength * 65536.0f / depth));
+	return CLIP<int>((0x04440000LL - 28416LL * quotient) >> 12, 0, 4096);
+}
+
+void RA2PSXTinyGLRenderer::setFaceColor(const RA2PSXFace &face, uint vertexIndex,
+		float normalX, float normalY, float normalZ, float depth) {
+	int r = face.r[vertexIndex];
+	int g = face.g[vertexIndex];
+	int b = face.b[vertexIndex];
+	if (face.texture >= 0 && (face.mode & 4)) {
+		r = g = b = 0xff;
+	} else if (!(face.mode & 0x40)) {
+		static const int lightMatrix[3][3] = {
+			{ -3640, 1820, 455 },
+			{ 0, -4096, 0 },
+			{ -2816, 0, 1024 }
+		};
+		static const int colorMatrix[3][3] = {
+			{ 1648, 128, 2000 },
+			{ 1648, 128, 2000 },
+			{ 1648, 1024, 2000 }
+		};
+		const float normal[3] = { normalX, normalY, normalZ };
+		int light[3];
+		for (uint i = 0; i < 3; ++i) {
+			float value = 0.0f;
+			for (uint j = 0; j < 3; ++j)
+				value += lightMatrix[i][j] * normal[j];
+			light[i] = CLIP<int>((int)(value / 4096.0f), 0, 0x7fff);
+		}
+
+		int effect[3];
+		for (uint i = 0; i < 3; ++i) {
+			int value = 0;
+			for (uint j = 0; j < 3; ++j)
+				value += colorMatrix[i][j] * light[j];
+			effect[i] = 110 + MAX(0, value / 4096) / 16;
+		}
+		const int depthScale = 4096 - getRA2PSXDepthCue(depth, _width * 2.0f);
+		r = MIN(255, r * effect[0] / 256) * depthScale / 4096;
+		g = MIN(255, g * effect[1] / 256) * depthScale / 4096;
+		b = MIN(255, b * effect[2] / 256) * depthScale / 4096;
+	}
+	if (face.texture >= 0 && !(face.mode & 4)) {
+		r = MIN(r * 2, 0xff);
+		g = MIN(g * 2, 0xff);
+		b = MIN(b * 2, 0xff);
+	}
+	tglColor4ub(r, g, b, (face.texture < 0 && (face.mode & 8)) ? 0x80 : 0xff);
 }
 
 void RA2PSXTinyGLRenderer::beginFrame(const Graphics::Surface &background) {
@@ -222,14 +490,63 @@ void RA2PSXTinyGLRenderer::renderModel(const RA2PSXModel &model, float x, float 
 	tglRotatef(yaw, 0.0f, 1.0f, 0.0f);
 	const float scale = size / model.radius();
 	tglScalef(scale, -scale, scale);
+	const float pitchAngle = pitch * 0.017453292519943295f;
+	const float yawAngle = yaw * 0.017453292519943295f;
+	const float rollAngle = roll * 0.017453292519943295f;
+	const float pitchCosine = cosf(pitchAngle);
+	const float pitchSine = sinf(pitchAngle);
+	const float yawCosine = cosf(yawAngle);
+	const float yawSine = sinf(yawAngle);
+	const float rollCosine = cosf(rollAngle);
+	const float rollSine = sinf(rollAngle);
+	const float depth = model.radius() * (_width * 2.0f) / size;
 
 	const Common::Array<RA2PSXVertex> &vertices = model.vertices();
+	struct FacingVertex {
+		float x;
+		float y;
+	};
+	Common::Array<FacingVertex> facingVertices;
+	facingVertices.resize(vertices.size());
+	for (uint i = 0; i < vertices.size(); ++i) {
+		const float modelX = vertices[i].x;
+		const float modelY = -vertices[i].y;
+		const float modelZ = vertices[i].z;
+		const float yawX = yawCosine * modelX + yawSine * modelZ;
+		const float yawZ = -yawSine * modelX + yawCosine * modelZ;
+		const float pitchY = pitchCosine * modelY - pitchSine * yawZ;
+		facingVertices[i].x = rollCosine * yawX - rollSine * pitchY;
+		facingVertices[i].y = rollSine * yawX + rollCosine * pitchY;
+	}
+
 	const Common::Array<RA2PSXFace> &faces = model.faces();
 	for (uint faceIndex = 0; faceIndex < faces.size(); ++faceIndex) {
 		const RA2PSXFace &face = faces[faceIndex];
-		tglColor3ub(face.r, face.g, face.b);
+		if (!(face.mode & 0x60)) {
+			const FacingVertex &v0 = facingVertices[face.vertex[0]];
+			const FacingVertex &v1 = facingVertices[face.vertex[1]];
+			const FacingVertex &v2 = facingVertices[face.vertex[2]];
+			if (v0.x * (v1.y - v2.y) + v1.x * (v2.y - v0.y) +
+					v2.x * (v0.y - v1.y) <= 0.0f)
+				continue;
+		}
+		const RA2PSXTexture *texture = model.texture(face.texture);
+		setFaceState(model, face);
 		tglBegin(face.vertexCount == 4 ? TGL_QUADS : TGL_TRIANGLES);
 		for (uint vertexIndex = 0; vertexIndex < face.vertexCount; ++vertexIndex) {
+			const float normalX = face.normalX[vertexIndex];
+			const float normalY = -face.normalY[vertexIndex];
+			const float normalZ = face.normalZ[vertexIndex];
+			const float yawX = yawCosine * normalX + yawSine * normalZ;
+			const float yawZ = -yawSine * normalX + yawCosine * normalZ;
+			const float pitchY = pitchCosine * normalY - pitchSine * yawZ;
+			const float pitchZ = pitchSine * normalY + pitchCosine * yawZ;
+			setFaceColor(face, vertexIndex,
+					rollCosine * yawX - rollSine * pitchY,
+					rollSine * yawX + rollCosine * pitchY, pitchZ, depth);
+			if (texture)
+				tglTexCoord2f((face.u[vertexIndex] + 0.5f) / texture->width,
+						(face.v[vertexIndex] + 0.5f) / texture->height);
 			const RA2PSXVertex &vertex = vertices[face.vertex[vertexIndex]];
 			tglVertex3f((float)vertex.x, (float)vertex.y, (float)vertex.z);
 		}
@@ -281,6 +598,7 @@ void RA2PSXTinyGLRenderer::renderPerspectiveModel(const RA2PSXModel &model,
 	struct ProjectedVertex {
 		float x;
 		float y;
+		float z;
 		bool visible;
 	};
 	Common::Array<ProjectedVertex> projected;
@@ -293,6 +611,7 @@ void RA2PSXTinyGLRenderer::renderPerspectiveModel(const RA2PSXModel &model,
 		const float worldX = x + modelXx * vertex.x + modelYx * vertex.y + forwardX * vertex.z;
 		const float worldY = y + modelXy * vertex.x + modelYy * vertex.y + forwardY * vertex.z;
 		const float worldZ = z + modelXz * vertex.x + modelYz * vertex.y + forwardZ * vertex.z;
+		projected[i].z = worldZ;
 		projected[i].visible = worldZ > 1.0f;
 		if (projected[i].visible) {
 			projected[i].x = centerX + worldX * focalLength / worldZ;
@@ -311,10 +630,33 @@ void RA2PSXTinyGLRenderer::renderPerspectiveModel(const RA2PSXModel &model,
 			visible &= projected[face.vertex[vertexIndex]].visible;
 		if (!visible)
 			continue;
+		if (!(face.mode & 0x60)) {
+			const ProjectedVertex &v0 = projected[face.vertex[0]];
+			const ProjectedVertex &v1 = projected[face.vertex[1]];
+			const ProjectedVertex &v2 = projected[face.vertex[2]];
+			if (v0.x * (v1.y - v2.y) + v1.x * (v2.y - v0.y) +
+					v2.x * (v0.y - v1.y) <= 0.0f)
+				continue;
+		}
 
-		tglColor3ub(face.r, face.g, face.b);
+		const RA2PSXTexture *texture = model.texture(face.texture);
+		setFaceState(model, face);
+		const float faceDepth = projected[face.vertex[2]].z;
 		tglBegin(face.vertexCount == 4 ? TGL_QUADS : TGL_TRIANGLES);
 		for (uint vertexIndex = 0; vertexIndex < face.vertexCount; ++vertexIndex) {
+			setFaceColor(face, vertexIndex,
+					modelXx * face.normalX[vertexIndex] +
+							modelYx * face.normalY[vertexIndex] +
+							forwardX * face.normalZ[vertexIndex],
+					modelXy * face.normalX[vertexIndex] +
+							modelYy * face.normalY[vertexIndex] +
+							forwardY * face.normalZ[vertexIndex],
+					modelXz * face.normalX[vertexIndex] +
+							modelYz * face.normalY[vertexIndex] +
+							forwardZ * face.normalZ[vertexIndex], faceDepth);
+			if (texture)
+				tglTexCoord2f((face.u[vertexIndex] + 0.5f) / texture->width,
+						(face.v[vertexIndex] + 0.5f) / texture->height);
 			const ProjectedVertex &vertex = projected[face.vertex[vertexIndex]];
 			tglVertex3f(vertex.x, vertex.y, 0.0f);
 		}

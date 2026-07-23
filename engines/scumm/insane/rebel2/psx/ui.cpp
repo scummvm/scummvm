@@ -10,10 +10,8 @@
  * (at your option) any later version.
  */
 
-#include "common/endian.h"
 #include "common/util.h"
 
-#include "scumm/insane/rebel2/psx/psx.h"
 #include "scumm/insane/rebel2/psx/ui.h"
 
 namespace Scumm {
@@ -50,59 +48,10 @@ static RA2PSXUIColor shieldColor(const RA2PSXUIGradientStop *stops, uint count, 
 }
 
 bool RA2PSXLevel1UI::loadTextures(const Common::Array<byte> &data) {
-	const uint initialCount = _textures.size();
-	uint32 offset = 0;
-	while (offset + 20 <= data.size()) {
-		Common::String name;
-		for (uint i = 0; i < 8 && data[offset + i]; ++i) {
-			if (data[offset + i] < 0x20 || data[offset + i] >= 0x7f)
-				return _textures.size() > initialCount;
-			name += (char)data[offset + i];
-		}
-		if (name.empty())
-			break;
-
-		const uint16 recordSize = READ_LE_UINT16(data.data() + offset + 12);
-		const uint16 widthField = READ_LE_UINT16(data.data() + offset + 16);
-		const uint16 heightField = READ_LE_UINT16(data.data() + offset + 18);
-		const uint16 width = (widthField & 0xff) ? widthField & 0xff : 256;
-		const uint16 height = (heightField & 0xff) ? heightField & 0xff : 256;
-		const bool eightBit = (widthField & 0x100) != 0;
-		const uint32 paletteColors = eightBit ? 256 : 16;
-		const uint32 pixelCount = (uint32)width * height;
-		const uint32 pixelBytes = eightBit ? pixelCount : (pixelCount + 1) / 2;
-		const uint32 paletteOffset = offset + 20;
-		const uint32 pixelsOffset = paletteOffset + paletteColors * 2;
-		if (recordSize < 20 || offset + recordSize > data.size() ||
-				pixelsOffset + pixelBytes > offset + recordSize)
-			break;
-
-		Texture texture;
-		texture.name = name;
-		texture.width = width;
-		texture.height = height;
-		texture.pixels.resize(pixelCount);
-		for (uint32 i = 0; i < pixelCount; ++i) {
-			const byte packed = data[pixelsOffset + (eightBit ? i : i / 2)];
-			const byte paletteIndex = eightBit ? packed : ((i & 1) ? packed >> 4 : packed & 0xf);
-			const uint16 value = READ_LE_UINT16(data.data() + paletteOffset + paletteIndex * 2);
-			if (!value) {
-				texture.pixels[i] = 0;
-				continue;
-			}
-
-			const uint32 r = ((value & 0x1f) << 3) | ((value & 0x1f) >> 2);
-			const uint32 g = (((value >> 5) & 0x1f) << 3) | (((value >> 5) & 0x1f) >> 2);
-			const uint32 b = (((value >> 10) & 0x1f) << 3) | (((value >> 10) & 0x1f) >> 2);
-			texture.pixels[i] = 0x01000000 | (r << 16) | (g << 8) | b;
-		}
-		_textures.push_back(texture);
-		offset += recordSize;
-	}
-	return _textures.size() > initialCount;
+	return loadRA2PSXTextures(data, _textures);
 }
 
-const RA2PSXLevel1UI::Texture *RA2PSXLevel1UI::findTexture(const char *name) const {
+const RA2PSXTexture *RA2PSXLevel1UI::findTexture(const char *name) const {
 	for (uint i = 0; i < _textures.size(); ++i) {
 		if (_textures[i].name.equalsIgnoreCase(name))
 			return &_textures[i];
@@ -131,7 +80,7 @@ bool RA2PSXLevel1UI::load(const RA2PSXArchive &archive) {
 
 void RA2PSXLevel1UI::drawTexture(Graphics::Surface &surface, const char *name,
 		int x, int y, const Common::Rect &source, int brightness, BlendMode blend) const {
-	const Texture *texture = findTexture(name);
+	const RA2PSXTexture *texture = findTexture(name);
 	if (!texture)
 		return;
 

@@ -129,8 +129,12 @@ bool Rebel2PSX::loadLevel1Assets(RA2PSXModel &enemy, RA2PSXModel &ship,
 	Common::Array<byte> shipData;
 	Common::Array<byte> crosshairData;
 	Common::Array<byte> laserData;
+	Common::Array<byte> enemyTextureData;
+	Common::Array<byte> shipTextureData;
 	return archive.getMember("fOFS/TieFighter/main", enemyData) && enemy.load(enemyData) &&
+			archive.getMember("tex/Ties", enemyTextureData) && enemy.loadTextures(enemyTextureData) &&
 			archive.getMember("fOFS/Ship", shipData) && ship.load(shipData) &&
+			archive.getMember("tex/BWingCockp", shipTextureData) && ship.loadTextures(shipTextureData) &&
 			archive.getMember("fOFS/CrosshairW", crosshairData) && crosshair.load(crosshairData) &&
 			archive.getMember("fOFS/WingLaser", laserData) && laser.load(laserData) &&
 			ui.load(archive);

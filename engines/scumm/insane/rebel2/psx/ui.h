@@ -13,16 +13,13 @@
 #ifndef SCUMM_INSANE_REBEL2_PSX_UI_H
 #define SCUMM_INSANE_REBEL2_PSX_UI_H
 
-#include "common/array.h"
 #include "common/rect.h"
-#include "common/str.h"
-#include "common/types.h"
 
 #include "graphics/surface.h"
 
-namespace Scumm {
+#include "scumm/insane/rebel2/psx/psx.h"
 
-class RA2PSXArchive;
+namespace Scumm {
 
 class RA2PSXLevel1UI {
 public:
@@ -38,21 +35,14 @@ private:
 		kBlendAdditive
 	};
 
-	struct Texture {
-		Common::String name;
-		uint16 width;
-		uint16 height;
-		Common::Array<uint32> pixels;
-	};
-
 	bool loadTextures(const Common::Array<byte> &data);
-	const Texture *findTexture(const char *name) const;
+	const RA2PSXTexture *findTexture(const char *name) const;
 	void drawTexture(Graphics::Surface &surface, const char *name,
 			int x, int y, const Common::Rect &source, int brightness = 0x80,
 			BlendMode blend = kBlendOpaque) const;
 	void drawShield(Graphics::Surface &surface, int shield, int xOffset, int yOffset) const;
 
-	Common::Array<Texture> _textures;
+	Common::Array<RA2PSXTexture> _textures;
 };
 
 } // End of namespace Scumm

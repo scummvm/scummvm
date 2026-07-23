@@ -63,12 +63,29 @@ struct RA2PSXVertex {
 	int16 z;
 };
 
+struct RA2PSXTexture {
+	Common::String name;
+	uint16 width;
+	uint16 height;
+	Common::Array<uint32> pixels;
+};
+
+bool loadRA2PSXTextures(const Common::Array<byte> &data,
+		Common::Array<RA2PSXTexture> &textures);
+
 struct RA2PSXFace {
 	uint16 vertex[4];
+	int16 normalX[4];
+	int16 normalY[4];
+	int16 normalZ[4];
+	byte u[4];
+	byte v[4];
 	byte vertexCount;
-	byte r;
-	byte g;
-	byte b;
+	byte mode;
+	byte r[4];
+	byte g[4];
+	byte b[4];
+	int16 texture;
 };
 
 class RA2PSXModel {
@@ -76,8 +93,10 @@ public:
 	RA2PSXModel();
 
 	bool load(const Common::Array<byte> &data);
+	bool loadTextures(const Common::Array<byte> &data);
 	const Common::Array<RA2PSXVertex> &vertices() const { return _vertices; }
 	const Common::Array<RA2PSXFace> &faces() const { return _faces; }
+	const RA2PSXTexture *texture(int index) const;
 	float radius() const { return _radius; }
 
 private:
@@ -86,6 +105,7 @@ private:
 
 	Common::Array<RA2PSXVertex> _vertices;
 	Common::Array<RA2PSXFace> _faces;
+	Common::Array<RA2PSXTexture> _textures;
 	float _radius;
 };
 
@@ -105,7 +125,21 @@ public:
 	void finishFrame(Graphics::Surface &surface);
 
 private:
+	struct TextureBinding {
+		const RA2PSXTexture *texture;
+		TGLuint id;
+	};
+
+	void setFaceState(const RA2PSXModel &model, const RA2PSXFace &face);
+	void setFaceColor(const RA2PSXFace &face, uint vertexIndex,
+			float normalX, float normalY, float normalZ, float depth);
+	TGLuint getTextureId(const RA2PSXTexture &texture);
+
 	TinyGL::ContextHandle *_context;
+	Common::Array<TextureBinding> _textureBindings;
+	const RA2PSXTexture *_activeTexture;
+	bool _textureEnabled;
+	bool _blendEnabled;
 	int _width;
 	int _height;
 };

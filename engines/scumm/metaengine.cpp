@@ -1075,8 +1075,6 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 
 	Common::KeymapArray keymaps = MetaEngine::initKeymaps(target);
 	Common::String gameId = ConfMan.get("gameid", target);
-	const bool isRebel2PSX = gameId == "rebel2" &&
-			parsePlatform(ConfMan.get("platform", target)) == kPlatformPSX;
 	Action *act;
 
 	if (gameId == "rebel1" || gameId == "rebel2") {
@@ -1252,6 +1250,7 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 	}
 
 	if (gameId == "rebel2") {
+		const bool isRebel2PSX = parsePlatform(ConfMan.get("platform", target)) == kPlatformPSX;
 		Keymap *rebel2Keymap = new Keymap(Keymap::kKeymapTypeGame, "scumm-rebel2", _("Rebel Assault II controls"));
 
 		act = new Action("RA2UP", _("Aim up / menu up"));

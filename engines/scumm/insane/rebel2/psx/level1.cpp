@@ -240,27 +240,14 @@ static void transformLevel1ShipPoint(const RA2PSXLevel1Ship &ship,
 	float roll;
 	getLevel1ShipOrientation(ship, forwardX, forwardY, forwardZ, roll);
 
-	float rightX = forwardZ;
-	float rightZ = -forwardX;
-	const float rightLength = sqrtf(rightX * rightX + rightZ * rightZ);
-	rightX /= rightLength;
-	rightZ /= rightLength;
-	const float downX = forwardY * rightZ;
-	const float downY = forwardZ * rightX - forwardX * rightZ;
-	const float downZ = -forwardY * rightX;
 	const float angle = roll * 0.017453292519943295f;
 	const float cosine = cosf(angle);
 	const float sine = sinf(angle);
-	const float modelXx = rightX * cosine + downX * sine;
-	const float modelXy = downY * sine;
-	const float modelXz = rightZ * cosine + downZ * sine;
-	const float modelYx = downX * cosine - rightX * sine;
-	const float modelYy = downY * cosine;
-	const float modelYz = downZ * cosine - rightZ * sine;
-
-	worldX = ship.x + modelXx * localX + modelYx * localY + forwardX * localZ;
-	worldY = ship.y + modelXy * localX + modelYy * localY + forwardY * localZ;
-	worldZ = ship.z + modelXz * localX + modelYz * localY + forwardZ * localZ;
+	worldX = ship.x + forwardZ * cosine * localX - forwardZ * sine * localY +
+			forwardX * localZ;
+	worldY = ship.y + sine * localX + cosine * localY + forwardY * localZ;
+	worldZ = ship.z - forwardX * cosine * localX + forwardX * sine * localY +
+			forwardZ * localZ;
 }
 
 static bool spawnLevel1Shot(RA2PSXLevel1Shot *shots, int aimX, int aimY,
