@@ -30,6 +30,7 @@
 #include "engines/util.h"
 
 #include "ripper/detection.h"
+#include "ripper/console.h"
 #include "ripper/cursor.h"
 #include "ripper/cyber.h"
 #include "ripper/input.h"
@@ -56,6 +57,7 @@ RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescrip
 		_scripts(new ScriptManager(this)), _settings(new RipperSettings(_mixer)),
 		_toolbar(new ToolbarManager(this)),
 		_wac(new WacManager(this)), _worldMap(new WorldMap(this)), _gameplayStarted(false) {
+	setDebugger(new Console(this));
 }
 
 RipperEngine::~RipperEngine() {
