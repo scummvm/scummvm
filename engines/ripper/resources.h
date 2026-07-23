@@ -155,6 +155,8 @@ public:
 	ResourceManager();
 
 	bool initialize();
+	Common::SeekableReadStream *createReadStreamForPath(
+		const Common::String &memberName) const;
 	bool loadBitmap(const Common::String &memberName, BitmapAssetFrame &frame) const;
 	bool loadBitmapSequence(const Common::String &memberName,
 		BitmapAssetSequence &sequence) const;
@@ -181,6 +183,7 @@ private:
 	AssetLibrary _interface;
 	AssetLibrary _options;
 	AssetLibrary _sound;
+	Common::Array<Common::String> _searchDirectories;
 	mutable Common::HashMap<Common::String, BitmapFontAsset> _fontCache;
 	mutable Common::Array<Common::String> _gameTextCache;
 	mutable bool _gameTextLoaded;

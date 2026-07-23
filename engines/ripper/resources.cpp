@@ -41,6 +41,14 @@ static const uint32 kModernLibraryMagic = 0x4c494232;
 static const uint32 kCustomBitmapHeaderSize = 0x1c;
 static const uint32 kCustomBitmapExtendedHeaderSize = 0xc;
 
+static bool hasDirectorySeparator(const Common::String &path) {
+	for (uint i = 0; i < path.size(); ++i) {
+		if (path[i] == '/' || path[i] == '\\' || path[i] == ':')
+			return true;
+	}
+	return false;
+}
+
 static bool readStream(Common::SeekableReadStream &stream, Common::Array<byte> &data) {
 	if (stream.size() < 0 || (uint64)stream.size() > 0xffffffffULL)
 		return false;
@@ -569,6 +577,7 @@ bool ResourceManager::initialize() {
 	_fontCache.clear();
 	_gameTextCache.clear();
 	_gameTextLoaded = false;
+	_searchDirectories.clear();
 
 	Common::File iniFile;
 	Common::INIFile ini;
@@ -589,6 +598,23 @@ bool ResourceManager::initialize() {
 
 	debugC(2, kDebugResources, "Ripper: RIPPER.INI script='%s' interface='%s' sound='%s'",
 		scriptLibrary.c_str(), interfaceLibrary.c_str(), soundLibrary.c_str());
+	static const char *const searchDirectoryKeys[] = {
+		"scene",
+		"puzzle",
+		"combat",
+		"cyber"
+	};
+	for (uint i = 0; i < ARRAYSIZE(searchDirectoryKeys); ++i) {
+		Common::String directory;
+		if (ini.getKey(searchDirectoryKeys[i], "paths", directory)) {
+			directory.trim();
+			if (!directory.empty())
+				_searchDirectories.push_back(directory);
+		}
+	}
+	debugC(2, kDebugResources,
+		"Ripper: configured explicit resource fallback directories=%u",
+		_searchDirectories.size());
 	if (!_scripts.open(Common::Path(scriptLibrary)) ||
 			!_interface.open(Common::Path(interfaceLibrary)) ||
 			!_sound.open(Common::Path(soundLibrary)))
@@ -600,6 +626,31 @@ bool ResourceManager::initialize() {
 		return false;
 	}
 	return true;
+}
+
+Common::SeekableReadStream *ResourceManager::createReadStreamForPath(
+		const Common::String &memberName) const {
+	const Common::Path directPath(memberName);
+	if (SearchMan.hasFile(directPath))
+		return SearchMan.createReadStreamForMember(directPath);
+	if (hasDirectorySeparator(memberName))
+		return nullptr;
+
+	for (uint i = 0; i < _searchDirectories.size(); ++i) {
+		const Common::Path qualifiedPath =
+			Common::Path(_searchDirectories[i]).appendComponent(memberName);
+		if (!SearchMan.hasFile(qualifiedPath))
+			continue;
+		Common::SeekableReadStream *stream =
+			SearchMan.createReadStreamForMember(qualifiedPath);
+		if (stream) {
+			debugC(2, kDebugResources,
+				"Ripper: resolved resource '%s' through configured path '%s'",
+				memberName.c_str(), qualifiedPath.toString().c_str());
+			return stream;
+		}
+	}
+	return nullptr;
 }
 
 bool ResourceManager::loadInterfaceBitmapSequence(const Common::String &memberName,

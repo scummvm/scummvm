@@ -73,6 +73,12 @@
   resource-string table, and entries 1 through 9 provide the toolbar labels.
   The resource manager caches the decoded table and NF2T fonts shared by the
   front-end presentations; callers still receive independent value objects.
+- `RIPPER.INI` supplies the `scene`, `puzzle`, `combat`, and `cyber` resource
+  directories. Scene media and named scene-audio slots first preserve
+  ScummVM's basename lookup, then use those configured directories as explicit
+  fallback paths. This keeps nested Cyber media and suspended audio restoration
+  tied to the original resource-path configuration when a flattened search
+  entry is unavailable.
 - The `7PT_FONT.FNT` member is an NF2T glyph descriptor used by
   `RenderFrontEndActionPreviewSprite` at `0x189b3`. The reimplementation
   decodes the descriptor and its custom bitmap instead of substituting a host

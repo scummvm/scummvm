@@ -23,11 +23,13 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
 #include "common/debug.h"
-#include "common/file.h"
+#include "common/ptr.h"
 #include "common/serializer.h"
 #include "common/util.h"
 
 #include "ripper/detection.h"
+#include "ripper/resources.h"
+#include "ripper/ripper.h"
 
 namespace Ripper {
 
@@ -37,7 +39,8 @@ SceneAudioManager::Slot::Slot() : volumePercent(100), targetVolumePercent(100),
 		preserve(false), volumeRampPending(false), sparseVolumeRamp(false) {
 }
 
-SceneAudioManager::SceneAudioManager(Audio::Mixer *mixer) : _mixer(mixer) {
+SceneAudioManager::SceneAudioManager(RipperEngine *engine, Audio::Mixer *mixer) :
+		_engine(engine), _mixer(mixer) {
 }
 
 SceneAudioManager::~SceneAudioManager() {
@@ -62,8 +65,9 @@ Common::String SceneAudioManager::keyFromPath(const Common::String &path) {
 }
 
 bool SceneAudioManager::load(const Common::String &path, bool preserve) {
-	Common::File file;
-	if (!file.open(Common::Path(path))) {
+	Common::ScopedPtr<Common::SeekableReadStream> file(
+		_engine->getResources()->createReadStreamForPath(path));
+	if (!file) {
 		warning("Ripper: could not load audio '%s'", path.c_str());
 		return false;
 	}
@@ -126,11 +130,11 @@ Common::String SceneAudioManager::describeSlots() const {
 bool SceneAudioManager::start(Slot &slot) {
 	if (_mixer->isSoundHandleActive(slot.handle))
 		return true;
-	Common::File *file = new Common::File();
-	if (!file->open(Common::Path(slot.path))) {
+	Common::SeekableReadStream *file =
+		_engine->getResources()->createReadStreamForPath(slot.path);
+	if (!file) {
 		warning("Ripper: could not start audio slot key='%s' path='%s' slots=[%s]",
 			slot.key.c_str(), slot.path.c_str(), describeSlots().c_str());
-		delete file;
 		return false;
 	}
 	Audio::SeekableAudioStream *wavStream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
@@ -398,8 +402,9 @@ bool SceneAudioManager::syncGame(Common::Serializer &serializer) {
 			return false;
 		if (serializer.isSaving() || occupied == 0)
 			continue;
-		Common::File file;
-		if (!file.open(Common::Path(path)))
+		Common::ScopedPtr<Common::SeekableReadStream> file(
+			_engine->getResources()->createReadStreamForPath(path));
+		if (!file)
 			return false;
 		Slot &restored = _slots[i];
 		restored.path = path;

@@ -154,7 +154,8 @@ static bool restoreDisplayContext(const SavedDisplayContext &context) {
 } // End of anonymous namespace
 
 MediaPlayer::MediaPlayer(RipperEngine *engine, InputManager *input, Audio::Mixer *mixer) :
-		_engine(engine), _input(input), _mixer(mixer), _sceneAudio(new SceneAudioManager(mixer)),
+		_engine(engine), _input(input), _mixer(mixer),
+		_sceneAudio(new SceneAudioManager(engine, mixer)),
 		_stopSceneOnMouse(false) {
 }
 
@@ -1362,10 +1363,10 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 	debugC(1, kDebugVideo,
 		"Ripper: entering scene presentation media='%s' firstFrameOnly=%d loopUntilInput=%d controls=%d callback=%d",
 		path.c_str(), firstFrameOnly, loopUntilInput, allowEscSpace, callback != nullptr);
-	Common::File *file = new Common::File();
-	if (!file->open(Common::Path(path))) {
+	Common::SeekableReadStream *file =
+		_engine->getResources()->createReadStreamForPath(path);
+	if (!file) {
 		warning("Ripper: could not open scene media '%s'", path.c_str());
-		delete file;
 		return false;
 	}
 
@@ -1391,8 +1392,8 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 	do {
 		const bool repeatedLoopPass = pass++ != 0;
 		if (repeatedLoopPass) {
-			file = new Common::File();
-			if (!file->open(Common::Path(path)))
+			file = _engine->getResources()->createReadStreamForPath(path);
+			if (!file)
 				return false;
 		}
 	if (memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0) {
