@@ -1278,9 +1278,19 @@ bool MediaPlayer::playPuzzleSequenceSegment(const Common::String &path, uint fir
 
 bool MediaPlayer::playCombatSequence(const Common::String &path,
 		MediaSequenceCallback *callback, uint16 *command) {
+	return playScaledInteractiveSequence(path, "combat", callback, command);
+}
+
+bool MediaPlayer::playShootingGallerySequence(const Common::String &path,
+		MediaSequenceCallback *callback, uint16 *command) {
+	return playScaledInteractiveSequence(path, "shooting-gallery", callback, command);
+}
+
+bool MediaPlayer::playScaledInteractiveSequence(const Common::String &path,
+		const char *description, MediaSequenceCallback *callback, uint16 *command) {
 	Common::File *file = new Common::File();
 	if (!file->open(Common::Path(path))) {
-		warning("Ripper: could not open combat media sequence '%s'", path.c_str());
+		warning("Ripper: could not open %s media sequence '%s'", description, path.c_str());
 		delete file;
 		return false;
 	}
@@ -1292,22 +1302,22 @@ bool MediaPlayer::playCombatSequence(const Common::String &path,
 	}
 	file->seek(0);
 	if (memcmp(magic, "SMK2", 4) != 0 && memcmp(magic, "SMK4", 4) != 0) {
-		warning("Ripper: unsupported combat media sequence '%s'", path.c_str());
+		warning("Ripper: unsupported %s media sequence '%s'",
+			description, path.c_str());
 		delete file;
 		return false;
 	}
 
 	debugC(1, kDebugVideo,
-		"Ripper: entering combat Smacker sequence media='%s' callback=%d",
-		path.c_str(), callback != nullptr);
+		"Ripper: entering %s Smacker sequence media='%s' callback=%d",
+		description, path.c_str(), callback != nullptr);
 	SmackerPlaybackRequest request;
 	request.x = 0;
 	request.y = 0;
 	request.displayScale = kAutoPacketizedDisplayScale;
-	// RunCombatEncounterScene at 0x31436 preserves the shared interface
-	// palette bands used by COMBAT0.BBM through COMBAT4.BBM while the active
-	// Smacker palette changes. Without the patch, the status panel and meters
-	// are interpreted through unrelated movie colors.
+	// RunCombatEncounterScene at 0x31436 and RunKdShootingGalleryScene at
+	// 0x3288e retain interface bitmap colors while their active Smacker
+	// palettes change.
 	request.patchInterfacePalette = true;
 	request.sequenceCallback = callback;
 	request.sequenceCommand = command;

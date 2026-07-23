@@ -26,6 +26,7 @@ MODULE_OBJS := \
 	puzzles/crystal.o \
 	puzzles/gc_csh.o \
 	puzzles/ka_book_code.o \
+	puzzles/kd_shooting_gallery.o \
 	puzzles/rolodex.o \
 	puzzles/table_gate.o \
 	remote_control.o \
