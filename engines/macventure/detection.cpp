@@ -46,11 +46,11 @@ static const ADGameDescription gameDescriptions[] = {
 	MACGAME("uninvited", "1993 rerelease", "Uninvited", "0f4eb65cf369c6c75e4b991b986c34a2", 68974),
 
 	// IIGS releases
-	IIGSGAME("shadowgate", "", "SHADOWGATE", "45924ea00ea4ef088e00db0ee774b8df", 101376),
-	IIGSGAME("deja_vu", "", "DEJAVU", "45924ea00ea4ef088e00db0ee774b8df", 101376),
-	IIGSGAME("deja_vu", "Zojoi rerelease", "DEJAVU", "81f1ee050d2afae2fa90a3306010dc56", 101376), // 6 bytes different, BB BE F0 -> BB BE 80
-	IIGSGAME("deja_vu2", "", "DEJAVUII", "f6ef6ead871d4d1cc0f6cf840f48b63f", 69047),
-	IIGSGAME("uninvited", "", "UNINVITED", "45924ea00ea4ef088e00db0ee774b8df", 101376),
+	IIGSGAME("shadowgate", "", "SHADOWGATE", "d:45924ea00ea4ef088e00db0ee774b8df", 101376),
+	IIGSGAME("deja_vu", "", "DEJAVU", "d:45924ea00ea4ef088e00db0ee774b8df", 101376),
+	IIGSGAME("deja_vu", "Zojoi rerelease", "DEJAVU", "d:81f1ee050d2afae2fa90a3306010dc56", 101376), // 6 bytes different, BB BE F0 -> BB BE 80
+	IIGSGAME("deja_vu2", "", "DEJAVUII", "d:f6ef6ead871d4d1cc0f6cf840f48b63f", 69047),
+	IIGSGAME("uninvited", "", "UNINVITED", "d:45924ea00ea4ef088e00db0ee774b8df", 101376),
 
 	// Misc
 	MACDEMO("uninvited", "Demo", "Uninvited Demo", "e53adca77d773dca926f61faac68df86", 53119),
