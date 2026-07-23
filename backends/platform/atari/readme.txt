@@ -178,6 +178,12 @@ If you want to play with "audio_buffer_size", the rule of thumb is: (lag in ms)
 = (audio_buffer_size / output_rate) * 1000. But it's totally OK just to double
 the samples value to get rid of stuttering in a heavier game.
 
+Please note that unlike previous versions, these values will never be written
+back to scummvm.ini. This is beneficial if you want to switch between Falcon
+and TT or between Falcon with and without external DSP clock (as mentioned,
+DOS/Windows friendly values are automatically converted to a frequency which
+TT/Falcon supports).
+
 "gaudio" debug channel: used for optimising sample playback (where
 available). It prints input and output sample format as well as the name of the
 converter used. See below for details.
@@ -401,15 +407,20 @@ Mute vs. "No music"
 
 Currently ScummVM requires each backend to mix samples, even though they may
 contain muted output (i.e. zeroes). This is because the progression of sample
-playback tells ScummVM how much time has passed in e.g. an animation.
+playback tells ScummVM how much time has passed in e.g. an animation. However,
+one part of the pending audio mixing changes is an optimisation: the input
+stream is still loaded and decoded but it is not mixed which alone leads to an
+enormous performance boost!
 
 "No music" means using the null audio plugin which prevents generating any MIDI
 music (and therefore avoiding the expensive synthesis emulation) but beware, it
-doesn't affect CD (*.wav) playback at all! Same applies for speech and sfx.
+doesn't affect CD (*.wav) playback at all! Same applies for speech and sfx. So
+mute one or all of those if frame rate drops noticeably.
 
 The least amount of cycles is spent when:
 - "No music" as "Preferred device": This prevents MIDI/OPL synthesis of any
   kind.
+- "Mute all" in "Volume" setting.
 - "output_rate" set to a DOS/Windows compatible value (default). Even if game
   uses 22050 Hz and your Falcon supports 22050 Hz, it is always faster to use
   11025 Hz!
@@ -476,8 +487,9 @@ whether the given game's demands match your setting.
 Btw, you can use the same command line parameter for showing what MIDI mode is
 being used (Roland GS, MT-32, General MIDI), sometimes it is not very obvious.
 
-Unfortunately, currently per-game "output_rate" / "output_channels" is not
-possible but this may change in the future.
+Good news is that "output_rate", "output_channels", "audio_buffer_size" and
+even "print_rate" are now possible to set per-game so one can fine-tune every
+game separately.
 
 Slow GUI
 ~~~~~~~~
