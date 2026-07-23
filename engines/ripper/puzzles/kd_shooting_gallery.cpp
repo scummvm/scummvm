@@ -44,6 +44,7 @@ static const uint kLogicalWidth = 320;
 static const uint kLogicalHeight = 200;
 static const uint kDisplayScale = 2;
 static const uint kDosTickMillis = 55;
+static const uint kProgressIntervalFrames = 150;
 static const uint16 kExitCommand = 1;
 static const uint16 kFailureCommand = 2;
 static const uint16 kHelpCommand = 0x3b00;
@@ -77,6 +78,32 @@ static const int kClass1CheckmarkX = 0x7a;
 static const int kFlameX = 0x84;
 static const int kFlameY = 0x6e;
 
+static const char *targetClassName(uint targetClass) {
+	switch (targetClass) {
+	case 0:
+		return "reward";
+	case 1:
+		return "penalty";
+	default:
+		return "unknown";
+	}
+}
+
+static const char *targetMaskName(byte mask) {
+	switch (mask) {
+	case 0:
+		return "none";
+	case 1:
+		return "reward";
+	case 2:
+		return "penalty";
+	case 3:
+		return "mixed";
+	default:
+		return "unknown";
+	}
+}
+
 static Common::String stripIniComment(Common::String value) {
 	for (uint i = 0; i < value.size(); ++i) {
 		if (value[i] == ';') {
@@ -102,7 +129,8 @@ KdShootingGallery::Config::Config() : frameRate(0), goal(0),
 KdShootingGallery::KdShootingGallery(RipperEngine *engine) : Scene(engine),
 		_activeTargetGroup(0), _targetGroupSerial(0),
 		_lastHitTargetGroupSerial(-1), _hitsInCurrentTargetGroup(0),
-		_weaponEnergyPercent(100), _keywordIndex(0), _completionFlag(0),
+		_weaponEnergyPercent(100), _visibleTargetMask(0),
+		_targetGroupTypeMask(0), _keywordIndex(0), _completionFlag(0),
 		_lastShotMillis(0), _lastRechargeMillis(0), _shotArmed(true),
 		_result(kExited) {
 	for (uint i = 0; i < kTargetClassCount; ++i) {
@@ -168,6 +196,14 @@ bool KdShootingGallery::loadConfig(uint difficulty) {
 		_config.unusedPenalty,
 		_config.rapidFireTicks, _config.weaponDischarge,
 		_config.weaponCharge, _config.weaponChargeTicks);
+	debugC(2, kDebugPuzzles,
+		"Ripper: KD shooting-gallery scoring goal=%d reward=+%d per %s "
+		"(hitsPerTarget=%d) penalty=-%d per %s (hitsPerTarget=%d)",
+		_config.goal, _config.points[0],
+		_config.requiredHits[0] == 0 ? "hit" : "completed-target",
+		_config.requiredHits[0], _config.points[1],
+		_config.requiredHits[1] == 0 ? "hit" : "completed-target",
+		_config.requiredHits[1]);
 	return true;
 }
 
@@ -278,13 +314,88 @@ void KdShootingGallery::updateTargetGroup(
 		const PresentationFrameRegion &frame, uint frameIndex) {
 	if (frame.state == _activeTargetGroup)
 		return;
+	if (_activeTargetGroup != 0) {
+		debugC(2, kDebugPuzzles,
+			"Ripper: KD shooting-gallery target ended frame=%u group=%u serial=%d "
+			"type=%s hits=%d",
+			frameIndex, _activeTargetGroup, _targetGroupSerial,
+			targetMaskName(_targetGroupTypeMask), _hitsInCurrentTargetGroup);
+		logProgress(frameIndex, "target-ended");
+	}
 	if (frame.state != 0)
 		++_targetGroupSerial;
-	debugC(3, kDebugPuzzles,
-		"Ripper: KD shooting-gallery target group frame=%u previous=%u current=%u serial=%d",
-		frameIndex, _activeTargetGroup, frame.state, _targetGroupSerial);
+	if (frame.state != 0) {
+		debugC(2, kDebugPuzzles,
+			"Ripper: KD shooting-gallery target starting frame=%u group=%u serial=%d",
+			frameIndex, frame.state, _targetGroupSerial);
+	}
 	_activeTargetGroup = frame.state;
 	_hitsInCurrentTargetGroup = 0;
+	_visibleTargetMask = 0;
+	_targetGroupTypeMask = 0;
+}
+
+void KdShootingGallery::updateTargetVisibility(
+		const PresentationFrameRegion &frame, uint frameIndex) {
+	uint regionCounts[kTargetClassCount] = { 0, 0 };
+	uint unknownRegions = 0;
+	byte targetMask = 0;
+	for (uint i = 0; i < frame.regions.size(); ++i) {
+		const PresentationRegion &region = frame.regions[i];
+		if (region.extent1 <= 0 || region.extent2 <= 0)
+			continue;
+		if (region.type < kTargetClassCount) {
+			++regionCounts[region.type];
+			targetMask |= 1 << region.type;
+		} else {
+			++unknownRegions;
+			targetMask |= 4;
+		}
+	}
+	if (targetMask == _visibleTargetMask)
+		return;
+
+	if (targetMask == 0) {
+		debugC(2, kDebugPuzzles,
+			"Ripper: KD shooting-gallery target hidden frame=%u group=%u "
+			"serial=%d previousType=%s",
+			frameIndex, _activeTargetGroup, _targetGroupSerial,
+			targetMaskName(_visibleTargetMask));
+	} else {
+		debugC(2, kDebugPuzzles,
+			"Ripper: KD shooting-gallery target visible frame=%u group=%u "
+			"serial=%d type=%s regions[reward=%u penalty=%u unknown=%u] "
+			"value[reward=+%d penalty=-%d]",
+			frameIndex, _activeTargetGroup, _targetGroupSerial,
+			targetMaskName(targetMask), regionCounts[0], regionCounts[1],
+			unknownRegions, _config.points[0], _config.points[1]);
+	}
+	_visibleTargetMask = targetMask;
+	_targetGroupTypeMask |= targetMask;
+}
+
+void KdShootingGallery::logProgress(uint frameIndex, const char *reason) const {
+	const int score = currentScore();
+	const int margin = score - _config.goal;
+	const uint totalFrames = _regionTable.frames.size();
+	const uint percent = totalFrames == 0 ? 0 :
+		MIN<uint>(100, (frameIndex + 1) * 100 / totalFrames);
+	const int needed = rewardUnitsNeeded();
+	const char *rewardUnit =
+		_config.requiredHits[0] == 0 ? "rewardHits" : "rewardTargets";
+
+	debugC(2, kDebugPuzzles,
+		"Ripper: KD shooting-gallery progress reason=%s frame=%u/%u (%u%%) "
+		"standing=%s score=%d goal=%d margin=%+d need[%s=%d] "
+		"reward[raw=%d distinct=%d completed=%d scoring=%d value=%d] "
+		"penalty[raw=%d distinct=%d completed=%d scoring=%d value=-%d]",
+		reason, frameIndex + 1, totalFrames, percent,
+		margin >= 0 ? "WINNING" : "LOSING", score, _config.goal, margin,
+		rewardUnit, needed,
+		_rawHits[0], _distinctTargetsHit[0], _completedTargets[0],
+		scoringTargetCount(0), scoreForClass(0),
+		_rawHits[1], _distinctTargetsHit[1], _completedTargets[1],
+		scoringTargetCount(1), scoreForClass(1));
 }
 
 void KdShootingGallery::playCue(uint index, const Common::String &path,
@@ -351,6 +462,7 @@ uint16 KdShootingGallery::serviceKeyboard(uint frameIndex) {
 			debugC(1, kDebugPuzzles,
 				"Ripper: KD shooting-gallery exited by Escape frame=%u score=%d",
 				frameIndex, currentScore());
+			logProgress(frameIndex, "escape");
 			return kExitCommand;
 		}
 		if (command == kHelpCommand) {
@@ -386,6 +498,7 @@ uint16 KdShootingGallery::serviceKeyboard(uint frameIndex) {
 			debugC(1, kDebugPuzzles,
 				"Ripper: KD shooting-gallery completed by paradise keyword frame=%u",
 				frameIndex);
+			logProgress(frameIndex, "keyword");
 			return kExitCommand;
 		}
 	}
@@ -414,6 +527,7 @@ void KdShootingGallery::serviceWeapon(const PresentationFrameRegion &frame,
 
 	playNumberedCue(kWeaponCue);
 	const int energyBefore = _weaponEnergyPercent;
+	const int scoreBefore = currentScore();
 	_weaponEnergyPercent = MAX<int>(0,
 		_weaponEnergyPercent - _config.weaponDischarge);
 	const PresentationRegion *region = findHitRegion(frame, point);
@@ -434,25 +548,53 @@ void KdShootingGallery::serviceWeapon(const PresentationFrameRegion &frame,
 	_lastShotMillis = now;
 	if (_config.rapidFireTicks == 0)
 		_shotArmed = false;
-	debugC(2, kDebugPuzzles,
-		"Ripper: KD shooting-gallery shot frame=%u point=%d,%d hit=%d class=%d "
-		"group=%u serial=%d groupHits=%d raw=%d,%d completed=%d,%d score=%d energy=%d->%d",
-		frameIndex, point.x, point.y, region != nullptr, targetClass,
-		_activeTargetGroup, _targetGroupSerial, _hitsInCurrentTargetGroup,
-		_rawHits[0], _rawHits[1], _completedTargets[0], _completedTargets[1],
-		currentScore(), energyBefore, _weaponEnergyPercent);
+	if (targetClass >= 0) {
+		const int requiredHits = _config.requiredHits[targetClass];
+		debugC(2, kDebugPuzzles,
+			"Ripper: KD shooting-gallery target hit frame=%u type=%s class=%d "
+			"scoreDelta=%+d scoring=%s completion=%d/%d group=%u serial=%d "
+			"energy=%d->%d",
+			frameIndex, targetClassName(targetClass), targetClass,
+			currentScore() - scoreBefore,
+			requiredHits == 0 ? "per-hit" : "on-completion",
+			requiredHits == 0 ? 1 : MIN(_hitsInCurrentTargetGroup, requiredHits),
+			requiredHits == 0 ? 1 : requiredHits,
+			_activeTargetGroup, _targetGroupSerial,
+			energyBefore, _weaponEnergyPercent);
+		logProgress(frameIndex, targetClass == 0 ? "reward-hit" : "penalty-hit");
+	} else {
+		debugC(3, kDebugPuzzles,
+			"Ripper: KD shooting-gallery shot missed frame=%u point=%d,%d "
+			"group=%u serial=%d energy=%d->%d",
+			frameIndex, point.x, point.y, _activeTargetGroup,
+			_targetGroupSerial, energyBefore, _weaponEnergyPercent);
+	}
+}
+
+int KdShootingGallery::scoringTargetCount(uint targetClass) const {
+	if (targetClass >= kTargetClassCount)
+		return 0;
+	return _config.requiredHits[targetClass] == 0 ?
+		_rawHits[targetClass] : _completedTargets[targetClass];
 }
 
 int KdShootingGallery::scoreForClass(uint targetClass) const {
 	if (targetClass >= kTargetClassCount)
 		return 0;
-	const int count = _config.requiredHits[targetClass] == 0 ?
-		_rawHits[targetClass] : _completedTargets[targetClass];
-	return count * _config.points[targetClass];
+	return scoringTargetCount(targetClass) * _config.points[targetClass];
 }
 
 int KdShootingGallery::currentScore() const {
 	return scoreForClass(0) - scoreForClass(1);
+}
+
+int KdShootingGallery::rewardUnitsNeeded() const {
+	const int scoreGap = MAX<int>(0, _config.goal - currentScore());
+	if (scoreGap == 0)
+		return 0;
+	if (_config.points[0] <= 0)
+		return -1;
+	return (scoreGap + _config.points[0] - 1) / _config.points[0];
 }
 
 uint KdShootingGallery::displayedTargetCount(uint targetClass) const {
@@ -477,6 +619,7 @@ uint16 KdShootingGallery::service(uint frame) {
 
 	serviceFrameCue(frameIndex);
 	updateTargetGroup(frameState, frameIndex);
+	updateTargetVisibility(frameState, frameIndex);
 	const uint16 keyboardCommand = serviceKeyboard(frameIndex);
 	if (keyboardCommand != 0)
 		return keyboardCommand;
@@ -490,6 +633,9 @@ uint16 KdShootingGallery::service(uint frame) {
 	serviceWeapon(frameState, point,
 		(mouse.buttons & kMouseButtonLeft) != 0,
 		g_system->getMillis(true), frameIndex);
+	if (frameIndex == 0 ||
+			(frameIndex + 1) % kProgressIntervalFrames == 0)
+		logProgress(frameIndex, "checkpoint");
 	serviceFixedCue(frameIndex);
 	_engine->getCursor()->setVisible(true);
 	return 0;
@@ -664,6 +810,7 @@ bool KdShootingGallery::animateResultsUntilInput() {
 }
 
 bool KdShootingGallery::presentResults() {
+	logProgress(_regionTable.frames.size() - 1, "final-score");
 	if (!drawResults() || !animateResultsUntilInput())
 		return false;
 	if (!_engine->shouldQuit() && currentScore() >= _config.goal)
@@ -687,6 +834,8 @@ Scene::Result KdShootingGallery::run(uint completionFlag) {
 	_lastHitTargetGroupSerial = -1;
 	_hitsInCurrentTargetGroup = 0;
 	_weaponEnergyPercent = 100;
+	_visibleTargetMask = 0;
+	_targetGroupTypeMask = 0;
 	_keywordIndex = 0;
 	_shotArmed = true;
 	for (uint i = 0; i < kTargetClassCount; ++i) {

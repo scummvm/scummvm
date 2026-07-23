@@ -74,6 +74,9 @@ private:
 	const PresentationRegion *findHitRegion(
 		const PresentationFrameRegion &frame, const Common::Point &point) const;
 	void updateTargetGroup(const PresentationFrameRegion &frame, uint frameIndex);
+	void updateTargetVisibility(
+		const PresentationFrameRegion &frame, uint frameIndex);
+	void logProgress(uint frameIndex, const char *reason) const;
 	void serviceFrameCue(uint frameIndex);
 	void serviceFixedCue(uint frameIndex);
 	uint16 serviceKeyboard(uint frameIndex);
@@ -84,8 +87,10 @@ private:
 	void playNumberedCue(uint index, uint volumePercent = 100, bool loop = false);
 	void stopCue(uint index);
 	void stopAllAudio();
+	int scoringTargetCount(uint targetClass) const;
 	int scoreForClass(uint targetClass) const;
 	int currentScore() const;
+	int rewardUnitsNeeded() const;
 	uint displayedTargetCount(uint targetClass) const;
 
 	bool presentResults();
@@ -113,6 +118,8 @@ private:
 	int _lastHitTargetGroupSerial;
 	int _hitsInCurrentTargetGroup;
 	int _weaponEnergyPercent;
+	byte _visibleTargetMask;
+	byte _targetGroupTypeMask;
 	uint _keywordIndex;
 	uint _completionFlag;
 	uint32 _lastShotMillis;
