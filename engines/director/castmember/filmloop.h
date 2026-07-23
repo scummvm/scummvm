@@ -68,6 +68,8 @@ public:
 	void writeSCVWResource(Common::SeekableWriteStream *writeStream, uint32 offset);
 	uint32 getSCVWResourceSize();
 
+	// raw CASt flag word; MovieCastMember reads its enableScripts bit (0x10)
+	uint32 _flags;
 	bool _enableSound;
 	bool _looping;
 	bool _crop;

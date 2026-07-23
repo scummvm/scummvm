@@ -42,7 +42,6 @@ public:
 
 	Common::String formatInfo() override;
 
-	uint32 _flags;
 	bool _enableScripts;
 };
 
