@@ -72,11 +72,11 @@ static const int kScoreTextX = 0xc3;
 static const int kScoreTextY = 0x28;
 static const byte kScoreShadowColor = 0x14;
 static const byte kScoreForegroundColor = 0x5e;
-static const int kCheckmarkStartY = 0x6c;
-static const int kClass0CheckmarkX = 0x8f;
-static const int kClass1CheckmarkX = 0x7a;
-static const int kFlameX = 0x84;
-static const int kFlameY = 0x6e;
+static const int kCheckmarkStartX = 0x6c;
+static const int kClass0CheckmarkY = 0x8f;
+static const int kClass1CheckmarkY = 0x7a;
+static const int kFlameX = 0x6e;
+static const int kFlameY = 0x84;
 
 static const char *targetClassName(uint targetClass) {
 	switch (targetClass) {
@@ -727,14 +727,14 @@ bool KdShootingGallery::drawResults() {
 		kScoreTextX, kScoreTextY, score, kScoreForegroundColor);
 
 	for (uint targetClass = 0; targetClass < kTargetClassCount; ++targetClass) {
-		const int x = targetClass == 0 ?
-			kClass0CheckmarkX : kClass1CheckmarkX;
-		int y = kCheckmarkStartY;
+		const int y = targetClass == 0 ?
+			kClass0CheckmarkY : kClass1CheckmarkY;
+		int x = kCheckmarkStartX;
 		const uint count = displayedTargetCount(targetClass);
 		for (uint checkmark = 0; checkmark < count; ++checkmark) {
 			drawBitmapScaled((byte *)screen->getPixels(), screen->pitch,
 				_checkmarkFrame, x, y);
-			y += _checkmarkFrame.height + 1;
+			x += _checkmarkFrame.width + 1;
 		}
 	}
 	g_system->unlockScreen();
@@ -745,6 +745,10 @@ bool KdShootingGallery::drawResults() {
 		_distinctTargetsHit[0], _distinctTargetsHit[1],
 		_completedTargets[0], _completedTargets[1],
 		displayedTargetCount(0), displayedTargetCount(1));
+	debugC(3, kDebugPuzzles,
+		"Ripper: KD shooting-gallery result layout checks[startX=%d rewardY=%d penaltyY=%d advance=%u] flame=%d,%d",
+		kCheckmarkStartX, kClass0CheckmarkY, kClass1CheckmarkY,
+		_checkmarkFrame.width + 1, kFlameX, kFlameY);
 	return true;
 }
 
