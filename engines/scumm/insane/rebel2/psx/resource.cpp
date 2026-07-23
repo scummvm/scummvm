@@ -132,8 +132,8 @@ bool RA2PSXArchive::findNestedMember(const Common::Array<byte> &container,
 			while (!entryName.empty() && entryName.lastChar() == 0)
 				entryName.deleteLastChar();
 			const uint32 relativeOffset = READ_LE_UINT32(container.data() + record + 12);
-			const uint32 absoluteOffset = directory + relativeOffset;
-			if (absoluteOffset < directory || absoluteOffset > boundary)
+			const uint32 absoluteOffset = record + relativeOffset;
+			if (absoluteOffset < record || absoluteOffset > boundary)
 				return false;
 			if (entryName.equalsIgnoreCase(component)) {
 				found = true;
@@ -146,7 +146,7 @@ bool RA2PSXArchive::findNestedMember(const Common::Array<byte> &container,
 		for (uint32 record = directory; record + 16 <= boundary; record += 16) {
 			if (container[record] == 0)
 				break;
-			const uint32 absoluteOffset = directory + READ_LE_UINT32(container.data() + record + 12);
+			const uint32 absoluteOffset = record + READ_LE_UINT32(container.data() + record + 12);
 			if (absoluteOffset > selectedOffset && absoluteOffset < selectedEnd)
 				selectedEnd = absoluteOffset;
 		}

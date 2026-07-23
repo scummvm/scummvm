@@ -208,10 +208,12 @@ void RA2PSXTinyGLRenderer::beginFrame(const Graphics::Surface &background) {
 }
 
 void RA2PSXTinyGLRenderer::renderModel(const RA2PSXModel &model, float x, float y, float size,
-		float pitch, float yaw, float roll) {
+		float pitch, float yaw, float roll, bool depthTest) {
 	if (!_context || model.vertices().empty())
 		return;
 	TinyGL::setContext(_context);
+	if (!depthTest)
+		tglDisable(TGL_DEPTH_TEST);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPushMatrix();
 	tglTranslatef(x, y, 0.0f);
@@ -234,6 +236,8 @@ void RA2PSXTinyGLRenderer::renderModel(const RA2PSXModel &model, float x, float 
 		tglEnd();
 	}
 	tglPopMatrix();
+	if (!depthTest)
+		tglEnable(TGL_DEPTH_TEST);
 }
 
 void RA2PSXTinyGLRenderer::finishFrame(Graphics::Surface &surface) {

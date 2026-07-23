@@ -28,6 +28,7 @@
 
 #include "scumm/scumm_v7.h"
 #include "scumm/insane/rebel2/psx/psx.h"
+#include "scumm/insane/rebel2/psx/ui.h"
 #include "scumm/insane/rebel2/psx/video.h"
 
 namespace Scumm {
@@ -113,7 +114,8 @@ bool Rebel2PSX::playVideo(const Common::Path &path, int discNumber, bool version
 	return !_vm->shouldQuit();
 }
 
-bool Rebel2PSX::loadLevel1Model(RA2PSXModel &model) {
+bool Rebel2PSX::loadLevel1Assets(RA2PSXModel &model, RA2PSXModel &crosshair,
+		RA2PSXLevel1UI &ui) {
 	Common::SeekableReadStream *stream = openResource(1);
 	if (!stream)
 		return false;
@@ -124,13 +126,18 @@ bool Rebel2PSX::loadLevel1Model(RA2PSXModel &model) {
 		return false;
 
 	Common::Array<byte> modelData;
-	return archive.getMember("fOFS/TieFighter/main", modelData) && model.load(modelData);
+	Common::Array<byte> crosshairData;
+	return archive.getMember("fOFS/TieFighter/main", modelData) && model.load(modelData) &&
+			archive.getMember("fOFS/CrosshairW", crosshairData) && crosshair.load(crosshairData) &&
+			ui.load(archive);
 }
 
 Common::Error Rebel2PSX::runGame() {
 #ifdef USE_TINYGL
 	RA2PSXModel model;
-	if (!loadLevel1Model(model))
+	RA2PSXModel crosshair;
+	RA2PSXLevel1UI ui;
+	if (!loadLevel1Assets(model, crosshair, ui))
 		return Common::Error(Common::kReadingFailed,
 				_("Could not load the PlayStation Level 1 resources"));
 
@@ -142,8 +149,9 @@ Common::Error Rebel2PSX::runGame() {
 	}
 
 	int lives = 3;
+	int score = 0;
 	while (!_vm->shouldQuit()) {
-		const Level1Result result = playLevel1(model);
+		const Level1Result result = playLevel1(model, crosshair, ui, lives, score);
 		if (result == kLevel1Quit)
 			return Common::kNoError;
 		if (result == kLevel1Error)

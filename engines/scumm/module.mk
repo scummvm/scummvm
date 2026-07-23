@@ -183,6 +183,7 @@ MODULE_OBJS += \
 	insane/rebel2/psx/model.o \
 	insane/rebel2/psx/psx.o \
 	insane/rebel2/psx/resource.o \
+	insane/rebel2/psx/ui.o \
 	insane/rebel2/psx/video.o
 endif
 

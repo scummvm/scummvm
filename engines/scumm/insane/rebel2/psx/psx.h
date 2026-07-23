@@ -32,6 +32,7 @@ class SeekableReadStream;
 namespace Scumm {
 
 class ScummEngine_v7;
+class RA2PSXLevel1UI;
 
 class RA2PSXArchive {
 public:
@@ -97,7 +98,7 @@ public:
 	bool init(int width, int height);
 	void beginFrame(const Graphics::Surface &background);
 	void renderModel(const RA2PSXModel &model, float x, float y, float size,
-			float pitch, float yaw, float roll);
+			float pitch, float yaw, float roll, bool depthTest = true);
 	void finishFrame(Graphics::Surface &surface);
 
 private:
@@ -125,8 +126,9 @@ private:
 	Common::SeekableReadStream *openResource(int number);
 	Common::SeekableReadStream *openRawFile(const Common::Path &path, int discNumber);
 	bool playVideo(const Common::Path &path, int discNumber, bool version2);
-	bool loadLevel1Model(RA2PSXModel &model);
-	Level1Result playLevel1(const RA2PSXModel &model);
+	bool loadLevel1Assets(RA2PSXModel &model, RA2PSXModel &crosshair, RA2PSXLevel1UI &ui);
+	Level1Result playLevel1(const RA2PSXModel &model, const RA2PSXModel &crosshair,
+			const RA2PSXLevel1UI &ui, int lives, int &score);
 
 	ScummEngine_v7 *_vm;
 };

@@ -28,6 +28,7 @@
 
 #include "scumm/scumm_v7.h"
 #include "scumm/insane/rebel2/psx/psx.h"
+#include "scumm/insane/rebel2/psx/ui.h"
 #include "scumm/insane/rebel2/psx/video.h"
 
 #include <math.h>
@@ -109,14 +110,11 @@ static void spawnLevel1Enemy(RA2PSXLevel1Enemy &enemy, Common::RandomSource &ran
 	updateLevel1Enemy(enemy);
 }
 
-static void drawLevel1Overlay(Graphics::Surface &surface, const RA2PSXLevel1Enemy *enemies,
-		const RA2PSXLevel1Explosion *explosions, int aimX, int aimY, int shield, int kills,
-		int misses, int frame, int fireFrames, int hitFrames, int damageFrames) {
-	const uint32 white = surface.format.RGBToColor(255, 255, 255);
+static void drawLevel1Effects(Graphics::Surface &surface, const RA2PSXLevel1UI &ui,
+		const RA2PSXLevel1Enemy *enemies, const RA2PSXLevel1Explosion *explosions,
+		int aimX, int aimY, int fireFrames) {
 	const uint32 red = surface.format.RGBToColor(255, 48, 32);
 	const uint32 green = surface.format.RGBToColor(64, 255, 96);
-	const uint32 orange = surface.format.RGBToColor(255, 176, 32);
-	const uint32 dark = surface.format.RGBToColor(20, 32, 28);
 
 	for (int i = 0; i < 3; ++i) {
 		if (enemies[i].active && enemies[i].laserFrames > 0) {
@@ -125,57 +123,26 @@ static void drawLevel1Overlay(Graphics::Surface &surface, const RA2PSXLevel1Enem
 			surface.drawLine((int)enemies[i].x + 2, (int)enemies[i].y,
 					175, surface.h - 1, green);
 		}
-		if (explosions[i].frames > 0) {
-			const int radius = 2 + (8 - explosions[i].frames) * 2;
-			surface.drawLine(explosions[i].x - radius, explosions[i].y,
-					explosions[i].x + radius, explosions[i].y, orange);
-			surface.drawLine(explosions[i].x, explosions[i].y - radius,
-					explosions[i].x, explosions[i].y + radius, orange);
-			surface.drawLine(explosions[i].x - radius / 2, explosions[i].y - radius / 2,
-					explosions[i].x + radius / 2, explosions[i].y + radius / 2, red);
-			surface.drawLine(explosions[i].x + radius / 2, explosions[i].y - radius / 2,
-					explosions[i].x - radius / 2, explosions[i].y + radius / 2, red);
-		}
+		if (explosions[i].frames > 0)
+			ui.drawExplosion(surface, explosions[i].x, explosions[i].y,
+					10 - explosions[i].frames);
 	}
 
 	if (fireFrames > 0) {
 		surface.drawLine(38, surface.h - 1, aimX - 2, aimY, red);
 		surface.drawLine(surface.w - 39, surface.h - 1, aimX + 2, aimY, red);
 	}
-
-	const uint32 crosshair = hitFrames > 0 ? red : white;
-	surface.drawLine(aimX - 12, aimY, aimX - 4, aimY, crosshair);
-	surface.drawLine(aimX + 4, aimY, aimX + 12, aimY, crosshair);
-	surface.drawLine(aimX, aimY - 12, aimX, aimY - 4, crosshair);
-	surface.drawLine(aimX, aimY + 4, aimX, aimY + 12, crosshair);
-	surface.frameRect(Common::Rect(aimX - 8, aimY - 8, aimX + 9, aimY + 9), crosshair);
-
-	surface.fillRect(Common::Rect(8, surface.h - 14, 112, surface.h - 4), dark);
-	surface.frameRect(Common::Rect(8, surface.h - 14, 112, surface.h - 4), white);
-	const uint32 shieldColor = shield > 50 ? green : (shield > 20 ? orange : red);
-	if (shield > 0)
-		surface.fillRect(Common::Rect(10, surface.h - 12, 10 + shield, surface.h - 6), shieldColor);
-
-	for (int i = 0; i < MIN(kills, 20); ++i)
-		surface.fillRect(Common::Rect(8 + (i % 10) * 4, 6 + (i / 10) * 5,
-				10 + (i % 10) * 4, 9 + (i / 10) * 5), green);
-	for (int i = 0; i < MIN(misses, 20); ++i)
-		surface.fillRect(Common::Rect(surface.w - 10 - (i % 10) * 4, 6 + (i / 10) * 5,
-				surface.w - 8 - (i % 10) * 4, 9 + (i / 10) * 5), red);
-
-	const int progress = frame * (surface.w - 2) / 1699;
-	if (progress > 0)
-		surface.drawLine(1, surface.h - 2, progress, surface.h - 2, white);
-	if (damageFrames > 0) {
-		surface.frameRect(Common::Rect(1, 1, surface.w - 1, surface.h - 1), red);
-		surface.frameRect(Common::Rect(2, 2, surface.w - 2, surface.h - 2), red);
-	}
 }
 #endif
 
-Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &model) {
+Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &model,
+		const RA2PSXModel &crosshair, const RA2PSXLevel1UI &ui, int lives, int &score) {
 #ifndef USE_TINYGL
 	(void)model;
+	(void)crosshair;
+	(void)ui;
+	(void)lives;
+	(void)score;
 	return kLevel1Error;
 #else
 	Common::SeekableReadStream *stream = openRawFile("S1/L01_PLAY.STR", 1);
@@ -196,11 +163,9 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &model) {
 
 	RA2PSXLevel1Enemy enemies[3];
 	RA2PSXLevel1Explosion explosions[3];
-	int aimX = _vm->_screenWidth / 2;
-	int aimY = _vm->_screenHeight / 2;
+	int aimX = 160;
+	int aimY = 113;
 	int shield = 100;
-	int kills = 0;
-	int misses = 0;
 	int spawnDelay = 0;
 	int spawnRange = 80;
 	int spawnBase = 60;
@@ -208,8 +173,6 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &model) {
 	int lastFrame = -1;
 	int lastShotFrame = -10;
 	int fireFrames = 0;
-	int hitFrames = 0;
-	int damageFrames = 0;
 	bool moveLeft = false;
 	bool moveRight = false;
 	bool moveUp = false;
@@ -229,12 +192,12 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &model) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
-				aimX = CLIP<int>(event.mouse.x, 14, _vm->_screenWidth - 15);
-				aimY = CLIP<int>(event.mouse.y, 14, _vm->_screenHeight - 18);
+				aimX = CLIP<int>(event.mouse.x, 30, 290);
+				aimY = CLIP<int>(event.mouse.y, 48, 178);
 				break;
 			case Common::EVENT_LBUTTONDOWN:
-				aimX = CLIP<int>(event.mouse.x, 14, _vm->_screenWidth - 15);
-				aimY = CLIP<int>(event.mouse.y, 14, _vm->_screenHeight - 18);
+				aimX = CLIP<int>(event.mouse.x, 30, 290);
+				aimY = CLIP<int>(event.mouse.y, 48, 178);
 				mouseFire = true;
 				fireRequested = true;
 				break;
@@ -298,9 +261,9 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &model) {
 			while (lastFrame < currentFrame && shield > 0) {
 				++lastFrame;
 				aimX = CLIP<int>(aimX + ((int)moveRight - (int)moveLeft) * 6,
-						14, _vm->_screenWidth - 15);
+						30, 290);
 				aimY = CLIP<int>(aimY + ((int)moveDown - (int)moveUp) * 6,
-						14, _vm->_screenHeight - 18);
+						48, 178);
 
 				if (lastFrame >= nextSpawnAdjustment) {
 					nextSpawnAdjustment = lastFrame + 20;
@@ -324,10 +287,6 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &model) {
 
 				if (fireFrames > 0)
 					--fireFrames;
-				if (hitFrames > 0)
-					--hitFrames;
-				if (damageFrames > 0)
-					--damageFrames;
 				for (int i = 0; i < 3; ++i) {
 					if (explosions[i].frames > 0)
 						--explosions[i].frames;
@@ -340,18 +299,13 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &model) {
 					updateLevel1Enemy(enemies[i]);
 					if (enemies[i].age == enemies[i].fireFrame) {
 						enemies[i].laserFrames = 4;
-						if (_vm->_rnd.getRandomNumber(99) < 38) {
+						if (_vm->_rnd.getRandomNumber(99) < 38)
 							shield = MAX(0, shield - (int)_vm->_rnd.getRandomNumberRng(6, 10));
-							damageFrames = 4;
-						}
 					}
 					if (enemies[i].age >= enemies[i].lifetime) {
 						enemies[i].active = false;
-						++misses;
-						if (_vm->_rnd.getRandomNumber(99) < 18) {
+						if (_vm->_rnd.getRandomNumber(99) < 18)
 							shield = MAX(0, shield - 12);
-							damageFrames = 4;
-						}
 					}
 				}
 			}
@@ -383,11 +337,10 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &model) {
 				}
 				if (hitEnemy >= 0) {
 					enemies[hitEnemy].active = false;
-					++kills;
-					hitFrames = 3;
+					score = MIN(9999999, score + 100);
 					for (int i = 0; i < 3; ++i) {
 						if (explosions[i].frames == 0) {
-							explosions[i].frames = 8;
+							explosions[i].frames = 10;
 							explosions[i].x = (int)enemies[hitEnemy].x;
 							explosions[i].y = (int)enemies[hitEnemy].y;
 							break;
@@ -402,10 +355,13 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &model) {
 					renderer.renderModel(model, enemies[i].x, enemies[i].y, enemies[i].size,
 							enemies[i].pitch, enemies[i].yaw, enemies[i].roll);
 			}
+			renderer.renderModel(crosshair, aimX, aimY, 31.0f,
+					(aimY - 113) * 0.12f, -(aimX - 160) * 0.10f, 0.0f, false);
 			Graphics::Surface output;
 			renderer.finishFrame(output);
-			drawLevel1Overlay(output, enemies, explosions, aimX, aimY, shield, kills, misses,
-					currentFrame, fireFrames, hitFrames, damageFrames);
+			drawLevel1Effects(output, ui, enemies, explosions, aimX, aimY, fireFrames);
+			ui.drawCockpit(output);
+			ui.drawHUD(output, score, lives, shield, currentFrame);
 			g_system->copyRectToScreen(output.getPixels(), output.pitch, 0, 0, output.w, output.h);
 			g_system->updateScreen();
 		}
