@@ -922,18 +922,22 @@ void DisplayMan::loadGraphics() {
 }
 
 void DisplayMan::unpackGraphics() {
+	uint16 lastGraphicIdx = (_vm->getPlatform() == Common::kPlatformDOS) ? 670 : 532;
+	uint16 fontIdx = getFontIndex();
+	uint16 maxBitmapsCount = fontIdx + 1;
+
 	uint32 unpackedBitmapsSize = 0;
 	for (uint16 i = 0; i <= 20; ++i)
 		unpackedBitmapsSize += getPixelWidth(i) * getPixelHeight(i);
-	for (uint16 i = 22; i <= 532; ++i)
+	for (uint16 i = 22; i <= lastGraphicIdx; ++i)
 		unpackedBitmapsSize += getPixelWidth(i) * getPixelHeight(i);
 	unpackedBitmapsSize += (5 + 1) * 6 * 128; // 5 x 6 characters, 128 of them, +1 for convenience padding
-	// graphics items go from 0-20 and 22-532 inclusive, _unpackedItemPos 21 and 22 are there for indexing convenience
+	// graphics items go from 0-20 and 22-lastGraphicIdx inclusive, _unpackedItemPos 21 and 22 are there for indexing convenience
 	if (_bitmaps) {
 		delete[] _bitmaps[0];
 		delete[] _bitmaps;
 	}
-	_bitmaps = new byte *[575]; // largest graphic indice (i think)
+	_bitmaps = new byte *[maxBitmapsCount];
 	_bitmaps[0] = new byte[unpackedBitmapsSize];
 	loadIntoBitmap(0, _bitmaps[0]);
 	for (uint16 i = 1; i <= 20; ++i) {
@@ -941,12 +945,12 @@ void DisplayMan::unpackGraphics() {
 		loadIntoBitmap(i, _bitmaps[i]);
 	}
 	_bitmaps[22] = _bitmaps[20] + getPixelWidth(20) * getPixelHeight(20);
-	for (uint16 i = 23; i <= 532; ++i) {
+	for (uint16 i = 23; i <= lastGraphicIdx; ++i) {
 		_bitmaps[i] = _bitmaps[i - 1] + getPixelWidth(i - 1) * getPixelHeight(i - 1);
 		loadIntoBitmap(i, _bitmaps[i]);
 	}
-	_bitmaps[kDMGraphicIdxFont] = _bitmaps[532] + getPixelWidth(532) * getPixelHeight(532);
-	loadFNT1intoBitmap(kDMGraphicIdxFont, _bitmaps[kDMGraphicIdxFont]);
+	_bitmaps[fontIdx] = _bitmaps[lastGraphicIdx] + getPixelWidth(lastGraphicIdx) * getPixelHeight(lastGraphicIdx);
+	loadFNT1intoBitmap(fontIdx, _bitmaps[fontIdx]);
 }
 
 void DisplayMan::loadFNT1intoBitmap(uint16 index, byte *destBitmap) {
@@ -1513,6 +1517,10 @@ uint16 DisplayMan::getPixelWidth(uint16 index) {
 uint16 DisplayMan::getPixelHeight(uint16 index) {
 	uint8 *data = _packedBitmaps + _packedItemPos[index];
 	return readUint16(data + 2, _vm->getPlatform());
+}
+
+uint16 DisplayMan::getFontIndex() const {
+	return (_vm->getPlatform() == Common::kPlatformDOS) ? k695_FontDOS : kDMGraphicIdxFont;
 }
 
 void DisplayMan::copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height) {
