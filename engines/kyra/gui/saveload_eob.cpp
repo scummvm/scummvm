@@ -34,6 +34,53 @@
 
 namespace Kyra {
 
+// Bounds for the automap records read from a save. Real data stays far below both
+// (20 levels x 1024 blocks; notes are capped at 40 chars when typed), so hitting a
+// bound means a corrupt/foreign file - stop reading rather than hang or OOM.
+enum {
+	kAutomapMaxEntries = 20 * 1024,
+	kAutomapMaxStrLen = 256
+};
+
+// Automap key->string maps: a count, then key + null-terminated string per entry.
+static void automapReadStringMap(Common::ReadStream &in, Common::HashMap<uint32, Common::String> &map) {
+	uint32 n = in.readUint32BE();
+	if (in.eos() || n > kAutomapMaxEntries)
+		return;
+	for (uint32 i = 0; i < n && !in.eos(); ++i) {
+		uint32 k = in.readUint32BE();
+		map[k] = in.readString(0, kAutomapMaxStrLen);
+	}
+}
+
+// Automap key->byte maps (glyph codes, teleporter pair ids): count, then key + byte.
+static void automapReadByteMap(Common::ReadStream &in, Common::HashMap<uint32, uint8> &map) {
+	uint32 n = in.readUint32BE();
+	if (in.eos() || n > kAutomapMaxEntries)
+		return;
+	for (uint32 i = 0; i < n && !in.eos(); ++i) {
+		uint32 k = in.readUint32BE();
+		map[k] = in.readByte();
+	}
+}
+
+static void automapWriteByteMap(Common::WriteStream *out, const Common::HashMap<uint32, uint8> &map) {
+	out->writeUint32BE(map.size());
+	for (Common::HashMap<uint32, uint8>::const_iterator it = map.begin(); it != map.end(); ++it) {
+		out->writeUint32BE(it->_key);
+		out->writeByte(it->_value);
+	}
+}
+
+static void automapWriteStringMap(Common::WriteStream *out, const Common::HashMap<uint32, Common::String> &map) {
+	out->writeUint32BE(map.size());
+	for (Common::HashMap<uint32, Common::String>::const_iterator it = map.begin(); it != map.end(); ++it) {
+		out->writeUint32BE(it->_key);
+		out->writeString(it->_value);
+		out->writeByte(0);
+	}
+}
+
 Common::Error EoBCoreEngine::loadGameState(int slot) {
 	// Special slot id -1 for EOB1 party transfer
 	const char *fileName = (slot == -1) ? _savegameFilename.c_str() : getSavegameFilename(slot);
@@ -278,6 +325,18 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 			w->block = in.readUint16BE();
 			w->duration = in.readUint32BE();
 		}
+	}
+
+	// Automap data (save version >= 25). Clear first (incl. the transient door-bit
+	// cache, which must not carry over) and only read when the save is new enough.
+	automapReset();
+	if (header.version >= 25) {
+		in.read(_automapVisited, sizeof(_automapVisited));
+		in.read(_automapSeen, sizeof(_automapSeen));
+		automapReadStringMap(in, _automapNotes);
+		automapReadByteMap(in, _automapIcons);
+		automapReadStringMap(in, _automapAutoInfo);
+		automapReadByteMap(in, _automapTeleLinks);
 	}
 
 	loadLevel(_currentLevel, _currentSub);
@@ -537,6 +596,15 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 			out->writeUint32BE(w->duration);
 		}
 	}
+
+	// Automap data (save version >= 25): visited/seen bitfields, notes, glyphs,
+	// info, teleporter pair ids.
+	out->write(_automapVisited, sizeof(_automapVisited));
+	out->write(_automapSeen, sizeof(_automapSeen));
+	automapWriteStringMap(out, _automapNotes);
+	automapWriteByteMap(out, _automapIcons);
+	automapWriteStringMap(out, _automapAutoInfo);
+	automapWriteByteMap(out, _automapTeleLinks);
 
 	out->finalize();
 

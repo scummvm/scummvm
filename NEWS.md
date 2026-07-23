@@ -412,6 +412,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      to enable smarter replacing of thrown weapons from inventory.
    - In Eye of the Beholder 1, Ileria and Beohram NPC data fix is now behind
      a separate feature flag and launcher checkbox.
+   - Added an optional automap overlay for Eye of the Beholder 1 and 2.
 
  Lab:
    - Added keymapper support.
