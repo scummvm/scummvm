@@ -166,6 +166,8 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, 
 
 	_vsync = ConfMan.getBool("vsync");
 
+	ConfMan.registerDefault("opengl_discrete_window_resolutions", false);
+
 	// Retrieve a list of working fullscreen modes
 	Common::Rect desktopRes = _window->getDesktopResolution();
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -430,6 +432,48 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 		createOrUpdateWindow(currentWidth, currentHeight, 0);
 	}
 
+	// --- Discrete window resolution mode ---
+	const bool discreteWindowResolutions = ConfMan.getBool("opengl_discrete_window_resolutions");
+	const bool engineSupportsArbitraryResolutions = !g_engine ||
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+		(_renderer3d && g_engine->hasFeature(Engine::kSupportsArbitraryResolutions));
+#else
+		false;
+#endif
+
+	const bool isMaximized = (SDL_GetWindowFlags(_window->getSDLWindow()) & SDL_WINDOW_MAXIMIZED) != 0;
+	if (discreteWindowResolutions && !engineSupportsArbitraryResolutions && !_wantsFullScreen && !isMaximized && _lastRequestedWidth && _lastRequestedHeight) {
+		const int discreteWidth  = (int)(_lastRequestedWidth  * _graphicsScale * dpiScale + 0.5f);
+		const int discreteHeight = (int)(_lastRequestedHeight * _graphicsScale * dpiScale + 0.5f);
+		const float stepWidth  = _lastRequestedWidth  * dpiScale;
+		const float stepHeight = _lastRequestedHeight * dpiScale;
+
+		int direction = 0;
+		if (currentWidth > discreteWidth || currentHeight > discreteHeight) {
+			direction = +1;
+		} else if (currentWidth < discreteWidth || currentHeight < discreteHeight) {
+			direction = -1;
+		}
+
+		if (direction != 0) {
+			_graphicsScale = MAX<int>(_graphicsScale + direction, 1);
+
+			// Since we overwrite a user resize here we reset its
+			// flag here. This makes enabling AR smoother because it
+			// will change the window size like in surface SDL.
+			_gotResize = false;
+
+			unlockWindowSize();
+
+			if (!setupMode(_lastRequestedWidth * _graphicsScale, _lastRequestedHeight * _graphicsScale)) {
+				warning("OpenGLSdlGraphicsManager::notifyResize: Discrete resize failed ('%s')", SDL_GetError());
+				g_system->quit();
+			}
+		}
+		return;
+	}
+	// --- End discrete window resolution mode ---
+
 	handleResize(currentWidth, currentHeight);
 
 	// Remember window size in windowed mode
@@ -476,8 +520,34 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 	Common::Rect desktopRes = _window->getDesktopResolution();
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+	const bool engineSupportsArbitraryResolutions = !g_engine ||
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+		(_renderer3d && g_engine->hasFeature(Engine::kSupportsArbitraryResolutions));
+#else
+		false;
+#endif
+
 	if (!_wantsFullScreen) {
-		if (ConfMan.hasKey("last_window_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("last_window_height", Common::ConfigManager::kApplicationDomain)) {
+		const bool discreteWindowResolutions = ConfMan.getBool("opengl_discrete_window_resolutions");
+
+		if (discreteWindowResolutions && !engineSupportsArbitraryResolutions) {
+			// Calculate the graphics scale based on the current window size.
+			int currentWidth, currentHeight;
+			getWindowSizeFromSdl(&currentWidth, &currentHeight);
+			float dpiScale = _window->getSdlDpiScalingFactor();
+			if (dpiScale < 0.01f || dpiScale > 100.0f) {
+				dpiScale = 2.0f;
+			}
+
+			int scaleW = (int)(currentWidth / (_lastRequestedWidth * dpiScale) + 0.5f);
+			int scaleH = (int)(currentHeight / (_lastRequestedHeight * dpiScale) + 0.5f);
+			_graphicsScale = MAX<int>(MIN<int>(scaleW, scaleH), 1);
+
+			// Snapping initial window size to discrete multiple if mode is active.
+			requestedWidth  = _lastRequestedWidth  * _graphicsScale;
+			requestedHeight = _lastRequestedHeight * _graphicsScale;
+
+		} else if (ConfMan.hasKey("last_window_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("last_window_height", Common::ConfigManager::kApplicationDomain)) {
 			// Load previously stored window dimensions.
 			requestedWidth  = ConfMan.getInt("last_window_width", Common::ConfigManager::kApplicationDomain);
 			requestedHeight = ConfMan.getInt("last_window_height", Common::ConfigManager::kApplicationDomain);
@@ -505,17 +575,6 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 	requestedHeight = requestedWidth * 3 / 4;
 #endif
 
-	// In order to prevent any unnecessary downscaling (e.g. when launching
-	// a game in 800x600 while having a smaller screen size stored in the configuration file),
-	// we override the window dimensions with the "real" resolution request made by the engine.
-	// If it's the launcher or a 3D game supporting arbitrary resolutions, leave it as is
-	// as there is no downscale
-	const bool engineSupportsArbitraryResolutions = !g_engine ||
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
-		(_renderer3d && g_engine->hasFeature(Engine::kSupportsArbitraryResolutions));
-#else
-		false;
-#endif
 	if (!engineSupportsArbitraryResolutions) {
 		requestedWidth  = MAX<uint>(requestedWidth, _lastRequestedWidth  * _graphicsScale);
 		requestedHeight = MAX<uint>(requestedHeight, _lastRequestedHeight * _graphicsScale);
