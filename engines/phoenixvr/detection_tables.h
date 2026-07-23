@@ -35,7 +35,7 @@ const PlainGameDescriptor phoenixvrGames[] = {
 	{"amerzone", "Amerzone: The Explorer's Legacy"},
 	// V2 games
 	{"mysteryofmummy", "Sherlock Holmes: The Mystery of the Mummy"},
-	{"pharaoncurse", "The Cameron Files: Pharaoh's Curse "},
+	{"pharaoncurse", "The Cameron Files: Pharaoh's Curse"},
 	{0, 0}
 };
 
@@ -631,7 +631,7 @@ const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{"pharaoncurse",
-		"USA CD release - V2 games are not yet supported",
+		"USA CD release",
 		AD_ENTRY3s(
 			"Level_1/script.lst", "1bacc45e3ca6eea715ba5abd73986577", 211816,
 			"install/Start/script.lst", "40b17997a4d319605f024303d1513039", 17142,
@@ -639,18 +639,18 @@ const ADGameDescription gameDescriptions[] = {
 		),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_CD | PHOENIXVR_V2 | ADGF_UNSUPPORTED,
+		ADGF_DROPPLATFORM | ADGF_CD | PHOENIXVR_V2 | ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
 	{"pharaoncurse",
-		"Retail CD release - V2 games are not yet supported",
+		"Retail CD release",
 		AD_ENTRY2s(
 			"script.lst", "559f73dabf49f60afa5983b75ed7a317", 850,
 			"L0P01R01S00.vr", "92ca961d87b8bcdfefefb5e37773a19e", 207721
 		),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_CD | PHOENIXVR_V2 | ADGF_UNSUPPORTED,
+		ADGF_DROPPLATFORM | ADGF_CD | PHOENIXVR_V2 | ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
 
