@@ -1584,6 +1584,24 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 			}
 			}
 			break;
+		case P_3:         // Howard in dialog with Chewy, Holly, and Molly
+			if (mode == AAD_STR_START) {
+				switch (_G(gameState).mi[P_HOWARD]) {
+				case 2:
+					start_spz(50, 255, ANI_FRONT, P_HOWARD);
+					break;
+				case 3:
+					start_spz(57, 255, ANI_FRONT, P_HOWARD);
+					break;
+				default:
+					start_spz(HO_TALK_L, 255, ANI_FRONT, P_HOWARD);
+					break;
+				}
+			} else {
+				stop_spz();
+			}
+			break;
+
 		default:
 			break;
 		}
