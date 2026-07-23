@@ -99,6 +99,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		gameId == "idiotstale" ||
 		gameId == "imustkill" ||
 		gameId == "juliauntold" ||
+		gameId == "keshaskazok" ||
 		gameId == "klaymen1" ||
 		gameId == "leyendabiblio" ||
 		gameId == "lifein3minutes" ||
