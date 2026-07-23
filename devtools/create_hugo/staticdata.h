@@ -4318,7 +4318,7 @@ byte points_3d[] = {
 #define dropmask_1w     {kVDrop_1w,      0,           kDTnull,         0,         0, kDTsworn3_1w,    kDTnull,          kALdropmask_1w}
 #define droppkin_1w     {kVDrop_1w,      kRpkin_1w,   kDTnocgen_1w,    0,         1, kDTnull,         kDTnull,          kALpkin_1w}
 #define eatchop_1w      {kVEat_1w,       0,           kDTnull,         0,         0, kDTnull,         kDTnull,          kALeatchop2_1w}
-#define getchop_1w      {kVTake_1w,      0,           kDTnull,         0,         0, kDTnull,         kDTnull,          kALgetchop_1w}
+#define getchop_1w      {kVTake_1w,      0,           kDTnull,         DONT_CARE, 0, kDTnull,         kDTnull,          kALgetchop_1w}
 #define getdw_1w        {kVTake_1w,      0,           kDTnull,         0,         0, kDTnull,         kDTnull,          kALcupbdw_1w}
 #define getinboat_1w    {kVInto_1w,      0,           kDTnull,         DONT_CARE, 0, kDTnull,         kDTnull,          kALgetinboat_1w}
 #define getknife_1w     {kVTake_1w,      0,           kDTnull,         0,         0, kDTnull,         kDTnull,          kALcupbpk_1w}
@@ -4637,6 +4637,7 @@ const cmd *cmdList_3w[] = {
 #define dropmask_1d      {kVDrop_1d,   0,           0,               0,         0, kDTsworn3_1d,  0,               kALdropmask_1d}
 #define droppkin_1d      {kVDrop_1d,   kRpkin_1d,   kDTnocgen_1d,    0,         1, 0,             0,               kALpkin_1d}
 #define eatchop_1d       {kVEat_1d,    0,           0,               0,         0, 0,             0,               kALeatchop_1d}
+#define getchop_1d       {kVTake_1d,   0,           0,               DONT_CARE, 0, 0,             0,               kALgetchop_1d}
 #define getdw_1d         {kVTake_1d,   0,           0,               0,         0, 0,             0,               kALcupbdw_1d}
 #define getinboat_1d     {kVInto_1d,   0,           0,               DONT_CARE, 0, 0,             0,               kALgetinboat_1d}
 #define getknife_1d      {kVTake_1d,   0,           0,               0,         0, 0,             0,               kALcupbpk_1d}
@@ -4680,7 +4681,7 @@ cmd boat_1d[] =    {getinboat_1d,  getoutboat_1d,  pushboat_1d,   emptyCmd};
 cmd bolt_1d[] =    {oilbolt_1d,    openbolt_1d,    unlockbolt_1d, closebolt_1d,  lockbolt_1d, emptyCmd};
 cmd bung_1d[] =    {plugbung_1d,   emptyCmd};
 cmd carpet_1d[] =  {movecarp1_1d,  movecarp2_1d,   movecarp3_1d,  emptyCmd};
-cmd chop_1d[] =    {eatchop_1d,    throwchop_1d,   emptyCmd};
+cmd chop_1d[] =    {eatchop_1d,    throwchop_1d,   getchop_1d,    emptyCmd};
 cmd cupb_1d[] =    {lookcupb_1d,   emptyCmd};
 cmd door1_1d[] =   {opendoor1_1d,  closedoor1_1d,  unlkdoor_1d,   lockdoor_1d,   knock_1d,    emptyCmd};
 cmd door2_1d[] =   {opendoor2_1d,  closedoor2_1d,  knock_1d,      unlock_1d,     emptyCmd};
@@ -4901,7 +4902,7 @@ uint16 s3acts_1w[]  = {kALbut_1w,        kALrepredeye_1w,  kALreplips_1w,  kALre
 uint16 s4acts_1w[]  = {0};                                                                   // Bathroom
 uint16 s5acts_1w[]  = {0};                                                                   // Kitchen
 uint16 s6acts_1w[]  = {0};                                                                   // Garden
-uint16 s7acts_1w[]  = {kALdog_1w,        0};                                                 // Store room
+uint16 s7acts_1w[]  = {kALdogentry_1w,   0};                                                 // Store room
 uint16 s8acts_1w[]  = {kALhelp_1w,       0};                                                 // Basement
 uint16 s9acts_1w[]  = {kALbatattack_1w,  0};                                                 // Batcave
 uint16 s10acts_1w[] = {kALmum_1w,        0};                                                 // Mummy room
@@ -4988,7 +4989,7 @@ uint16 s3acts_1d[] =  {kALbut_1d,        kALrepredeye_1d,  kALreplips_1d,    kAL
 uint16 s4acts_1d[] =  {0};
 uint16 s5acts_1d[] =  {0};
 uint16 s6acts_1d[] =  {0};
-uint16 s7acts_1d[] =  {kALdog_1d,        0};
+uint16 s7acts_1d[] =  {kALdogentry_1d,   0};
 uint16 s8acts_1d[] =  {kALhelp_1d,       0};
 uint16 s9acts_1d[] =  {kALbatattack_1d,  0};
 uint16 s10acts_1d[] = {kALmum_1d,        0};
@@ -5996,6 +5997,7 @@ act9 abox12_1w      = {INIT_OBJSTATE, 0,                   GDOOR_1w,   1};
 act9 aigor33_1w     = {INIT_OBJSTATE, 0,                   GDOOR_1w,   4};
 act9 aigor23_1w     = {INIT_OBJSTATE, 0,                   GDOOR_1w,   3};
 act9 aigor14_1w     = {INIT_OBJSTATE, 0,                   GDOOR_1w,   2};
+act9 achopstate_1w  = {INIT_OBJSTATE, 0,                   CHOP_1w,    1};
 
 act10 ahchase3_1w = {INIT_PATH, 5 * NORMAL_TPS_v3d, DOG_1w,    CHASE,  DX * 2, DY * 2};
 act10 akchase3_1w = {INIT_PATH, 5 * NORMAL_TPS_v3d, DOG_1w,    CHASE,  DX * 2, DY * 2};
@@ -6057,6 +6059,7 @@ act11 aichk3_1w        = {COND_R,        0,   GDOOR_1w,    3, kALigor3_1w,      
 act11 aichk2_1w        = {COND_R,        0,   GDOOR_1w,    2, kALigor2_1w,      kALichk3_1w};
 act11 aichk1_1w        = {COND_R,        0,   GDOOR_1w,    1, kALigor1_1w,      kALichk2_1w};
 act11 aichk0_1w        = {COND_R,        0,   GDOOR_1w,    0, kALigor0_1w,      kALichk1_1w};
+act11 achkdog_1w       = {COND_R,        0,   CHOP_1w,     1, 0,                  kALdog_1w};
 
 act12 apbreak_1w     = {TEXT, 0,                      kSTspbreak_1w};
 act12 acuptxt0_1w    = {TEXT, 0,                      kSTsseepkdw_1w};
@@ -6308,7 +6311,7 @@ actListPtr AL_eatchop_1w[]    = {&adropchop_1w, &aeatchop_1w, &aridchop_1w, 0};
 actListPtr ALeatchop_1w[]     = {&achopprompt_1w, 0};
 actListPtr ALthrowchop_1w[]   = {&athrowchop_1w, 0};
 actListPtr ALchopfail_1w[]    = {&adropchop_1w, &aridchop_1w, &achopfail_1w, 0};
-actListPtr ALchoppass_1w[]    = {&ashowchop_1w, &achopthrown_1w, &adropchop_1w, &achopxy_1w, &adogchop_1w, &adogseq_1w, &adogcyc_1w, &adogseq2_1w, &achopbonus_1w, 0};
+actListPtr ALchoppass_1w[]    = {&ashowchop_1w, &achopthrown_1w, &adropchop_1w, &achopxy_1w, &adogchop_1w, &adogseq_1w, &adogcyc_1w, &adogseq2_1w, &achopbonus_1w, &achopstate_1w, 0};
 actListPtr ALrepredeye_1w[]   = {&ablink5a_1w, &ablink5b_1w, &ablink5c_1w, &ablink5d_1w, &arepredeye_1w, 0};
 actListPtr ALreplips_1w[]     = {&amunch_1w, &alips_1w, &areplips_1w, 0};
 actListPtr ALreparm_1w[]      = {&afork_1w, &aarm_1w, &areparm_1w, 0};
@@ -6427,6 +6430,7 @@ actListPtr ALichk2_1w[]       = {&aichk2_1w, 0};
 actListPtr ALichk1_1w[]       = {&aichk1_1w, 0};
 actListPtr ALichk0_1w[]       = {&aichk0_1w, 0};
 actListPtr ALigor_1w[]        = {&aichkbox_1w, 0};
+actListPtr ALdogentry_1w[]    = {&achkdog_1w, 0};
 
 actList actListArr_1w[] = {
 	ALDummy,         ALgoinside_1w,    ALopendoor1_1w,  ALclosedoor1_1w, ALightning_1w,
@@ -6463,7 +6467,7 @@ actList actListArr_1w[] = {
 	ALscr151_1w,     ALprof_1w,        ALlab_1w,        ALbox0_1w,       ALbbox_1w,
 	ALbox_1w,        ALweird_1w,       ALcycle_1w,      ALinorm_1w,      ALigor3_1w,
 	ALigor2_1w,      ALigor1_1w,       ALigor0_1w,      ALgobox_1w,      ALichk3_1w,
-	ALichk2_1w,      ALichk1_1w,       ALichk0_1w,      ALigor_1w
+	ALichk2_1w,      ALichk1_1w,       ALichk0_1w,      ALigor_1w,       ALdogentry_1w
 };
 
 // Hugo 2 Win
@@ -9045,6 +9049,7 @@ act9 ast01_1d =       {INIT_OBJSTATE, 0,                       DOOR1_1d,  1};  /
 act9 ast12_1d =       {INIT_OBJSTATE, 1 * NORMAL_TPS_v1d + 12, DOOR2_1d,  0};  // Close door after
 act9 ast14_1d =       {INIT_OBJSTATE, 1 * NORMAL_TPS_v1d + 12, DOOR3_1d,  0};  // Close door after
 act9 astatedoor4_1d = {INIT_OBJSTATE, 0,                       DOOR4_1d,  1};  // Change state to open
+act9 achopstate_1d =  {INIT_OBJSTATE, 0,                       CHOP_1d,   1};
 
 act10 abata1a_1d  = {INIT_PATH, 0,                  BAT2_1d,   CHASE,  DX * 2, DY * 2};
 act10 abata1b_1d  = {INIT_PATH, 7,                  BAT2_1d,   WANDER, DX,     DY};
@@ -9100,6 +9105,8 @@ act11 atcup0_1d =   {COND_R, 0,   CUPBOARD_1d, 0, kALcuptxt0_1d,    kALlookcupb1
 act11 atcup1_1d =   {COND_R, 0,   CUPBOARD_1d, 1, kALcuptxt1_1d,    kALlookcupb2_1d};
 act11 atcup2_1d =   {COND_R, 0,   CUPBOARD_1d, 2, kALcuptxt2_1d,    kALcuptxt3_1d};
 act11 atrap_1d =    {COND_R, 0,   BOLT_1d,     2, kALopenpass_1d,   kALopenfail_1d};
+act11 achkdog_1d =  {COND_R, 0,   CHOP_1d,     1, 0,                 kALdog_1d};
+act11 achkfatalchop_1d = {COND_R, 0, CHOP_1d,  1, kALfatalchop_1d,  kALdoggy_1d};
 
 act12 achopfail_1d =   {TEXT, 0,                      kSTsthrown_1d};
 act12 achopthrown_1d = {TEXT, 5 * NORMAL_TPS_v1d,     kSTsachopthrown_1d};
@@ -9184,6 +9191,7 @@ act13 aswaphero_1d = {SWAP_IMAGES, 0,  HERO, WHERO_1d};
 act13 aswapmask_1d = {SWAP_IMAGES, 0,  HERO, MONKEY_1d};
 
 act14 athrowchop_1d = {COND_SCR, 0, HERO, 7,  kALchoppass_1d,  kALchopfail_1d};
+act14 atakechop_1d =  {COND_SCR, 0, HERO, 7,  kALfatalchopcheck_1d, 0};
 act14 ablow1_1d =     {COND_SCR, 0, HERO, 1,  kALchasehall_1d, kALcond5_1d};
 act14 achkscr_1d =    {COND_SCR, 0, HERO, 12, kALgive_1d,      kALnogive_1d};
 act14 acond5_1d =     {COND_SCR, 0, HERO, 5,  kALchasekit_1d,  kALcond9_1d};
@@ -9233,7 +9241,8 @@ act25 aichkbox_1d = {COND_BOX, 0, HERO, 100, 153, 144, 163, kALichk0_1d, kALgobo
 
 act27 abut7b_1d = {ADD_SCORE, 0, CHOP_1d};          // Manually add score
 
-act28 a115f_1d = {SUB_SCORE, 0, MASK_1d};
+act28 a115f_1d =    {SUB_SCORE, 0, MASK_1d};
+act28 asubchop_1d = {SUB_SCORE, 0, CHOP_1d};
 
 act29 achkmask_1d =  {COND_CARRY, 0, MASK_1d, kALputmask_1d, 0};
 act29 achkmask2_1d = {COND_CARRY, 0, MASK_1d, kALridmask_1d, 0};
@@ -9269,7 +9278,7 @@ actListPtr ALchkd3_1d[]       = {&achkd3_1d, 0};          // State 3 ?
 actListPtr ALchkmove_1d[]     = {&achkmove_1d, 0};
 actListPtr ALchkout_1d[]      = {&achkout_1d, 0};
 actListPtr ALchopfail_1d[]    = {&adropchop_1d, &aridchop_1d, &achopfail_1d, 0};
-actListPtr ALchoppass_1d[]    = {&ashowchop_1d, &achopthrown_1d, &adropchop_1d, &achopxy_1d, &adogchop_1d, &adogseq_1d, &adogcyc_1d, &adogseq2_1d, 0};
+actListPtr ALchoppass_1d[]    = {&ashowchop_1d, &achopthrown_1d, &adropchop_1d, &achopxy_1d, &adogchop_1d, &adogseq_1d, &adogcyc_1d, &adogseq2_1d, &achopstate_1d, 0};
 actListPtr ALclosedoor1_1d[]  = {&aclosedoor1_1d, 0};
 actListPtr ALclosedoor4_1d[]  = {&aclosedoor4_1d, 0};
 actListPtr ALclosetrap_1d[]   = {&aclosetrap_1d, 0};
@@ -9399,6 +9408,10 @@ actListPtr ALthrowchop_1d[]   = {&athrowchop_1d, 0};
 actListPtr ALweird_1d[]       = {&abg1_1d, &abg2_1d, &abg3_1d, &abg4_1d, &abg5_1d, &abg6_1d, &abg7_1d, &abg8_1d, 0};
 actListPtr ALnobung_1d[]      = {&abung1_1d, 0};
 actListPtr ALgoodbye_1d[]     = {&bye1_1d, &bye2_1d, 0};
+actListPtr ALdogentry_1d[]    = {&achkdog_1d, 0};
+actListPtr ALgetchop_1d[]     = {&atakechop_1d, 0};
+actListPtr ALfatalchopcheck_1d[] = {&achkfatalchop_1d, 0};
+actListPtr ALfatalchop_1d[]   = {&asubchop_1d, &adoggy1_1d, &adoggy2_1d, &adoggy3_1d, &adoggy4_1d, &adoggy5_1d, &adoggy6_1d, 0};
 
 actList actListArr_1d[] = {
 	ALDummy,          ALbat_1d,        ALbatattack_1d,  ALbatrep_1d,     ALbats_1d,
@@ -9432,7 +9445,7 @@ actList actListArr_1d[] = {
 	ALscr53_1d,       ALscr56_1d,      ALscr57_1d,      ALscr65_1d,      ALscr75_1d,
 	ALscr87_1d,       ALscr89_1d,      ALscr910_1d,     ALscr98_1d,      ALshedoil_1d,
 	ALsong1_1d,       ALswapmask_1d,   ALthrowchop_1d,  ALweird_1d,      ALnobung_1d,
-	ALgoodbye_1d
+	ALgoodbye_1d,     ALdogentry_1d,   ALgetchop_1d,    ALfatalchopcheck_1d, ALfatalchop_1d
 };
 
 // Hugo 2 DOS

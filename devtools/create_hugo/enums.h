@@ -459,7 +459,7 @@ enum seqActList_1w {
 	kALprof_1w,        kALlab_1w,         kALbox0_1w,        kALbbox_1w,       kALbox_1w,
 	kALweird_1w,       kALcycle_1w,       kALinorm_1w,       kALigor3_1w,      kALigor2_1w,
 	kALigor1_1w,       kALigor0_1w,       kALgobox_1w,       kALichk3_1w,      kALichk2_1w,
-	kALichk1_1w,       kALichk0_1w,       kALigor_1w
+	kALichk1_1w,       kALichk0_1w,       kALigor_1w,        kALdogentry_1w
 };
 
 enum seqActList_2w {
@@ -622,7 +622,8 @@ enum seqActList_1d {
 	kALscr31_1d,      kALscr35_1d,      kALscr41_1d,      kALscr51_1d,      kALscr53_1d,
 	kALscr56_1d,      kALscr57_1d,      kALscr65_1d,      kALscr75_1d,      kALscr87_1d,
 	kALscr89_1d,      kALscr910_1d,     kALscr98_1d,      kALshedoil_1d,    kALsong1_1d,
-	kALswapmask_1d,   kALthrowchop_1d,  kALweird_1d,      kALnobung_1d,     kALgoodbye_1d
+	kALswapmask_1d,   kALthrowchop_1d,  kALweird_1d,      kALnobung_1d,     kALgoodbye_1d,
+	kALdogentry_1d,   kALgetchop_1d,    kALfatalchopcheck_1d, kALfatalchop_1d
 };
 
 enum seqActList_2d {
