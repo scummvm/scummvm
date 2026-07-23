@@ -325,6 +325,10 @@
   availability at 20 through 44, inventory unlocks at 50 through 69 with
   paired consumed bits at 100 through 119, WAC database scans beginning at
   70, story state beginning at 300, and cyberspace state beginning at 400.
+  ScummVM's engine-local debug console reads this same service. Its
+  case-insensitive `MILESTONES` command lists every `MILESTON.DEF` entry and
+  current value, `MILESTONES ACTIVE` lists every set bit in the 1,000-flag
+  store, and `MILESTONES <ID>` reports one store entry.
   Opcode
   `0x1e` named flags are different: `HandleSceneEntrySetOrClearNamedFlag` at
   `0x15dfe` updates the string-keyed startup asset catalog rather than this
