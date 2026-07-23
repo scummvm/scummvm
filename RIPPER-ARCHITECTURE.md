@@ -928,9 +928,14 @@
   advance the current section. Source flags `0xfa + section` allow that
   section to advance and completion flags `0x104 + section` record revealed
   progress. Resource `0xae` supplies the label for the continuously redrawn
-  percentage beneath the 330-by-222 journal panel. The database chooser,
-  scrollbar, persistent WAC controls, and help context 407 remain active while
-  this scene owns the left media viewport.
+  percentage in the 330-by-222 journal panel's heading. The
+  `SetActiveTextDrawPosition` call at `0x24587` uses panel top plus 1 and panel
+  left plus 50. The locked-scene call sequence at `0x24538` places the
+  200-pixel password control at panel top plus panel height plus 5; its
+  automatic one-row height includes the WAC heading and frame insets, so the
+  prompt is above the editable row rather than inline with it. The database
+  chooser, scrollbar, persistent WAC controls, and help context 407 remain
+  active while this scene owns the left media viewport.
 - Entries 10 and 11 dispatch `wacinv10.pcx` and `wacinv11.pcx` through
   `RunWacStillImageScreenWithOptionalAudio` at `0x22f1f`. These 300-by-393
   documents retain the database chooser, show a 282-row slice in the left WAC
