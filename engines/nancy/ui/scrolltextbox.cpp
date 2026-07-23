@@ -160,15 +160,16 @@ void ScrollTextBox::drawContent() {
 			scrollY = (int)(_scrollPos * (contentHeight - visibleTextHeight));
 		}
 	} else {
-		// A strip at the top of the overlay, sized to the text with a two-line
-		// minimum. Drop the chrome's bottom margin so it hugs the content.
+		// Fixed two-line strip at the top of the overlay. Overflow is clipped
+		// (hidden beneath the taskbar), matching the original rather than growing
+		// the box down over the UI.
 		const Font *font = g_nancy->_graphics->getFont(fontID);
 		const int lineStep = font->getLineHeight() + font->getLineHeight() / 9;
-		const int twoLineContent = _tboxData->scrollbarDefaultPos.y + 2 * lineStep;
-		const int miniHeight = MIN(viewport.top + MAX(contentHeight, twoLineContent), fullHeight);
+		const int stripContent = _tboxData->scrollbarDefaultPos.y + 2 * lineStep;
+		const int miniHeight = MIN(viewport.top + stripContent, fullHeight);
 		boxRect = Common::Rect(_fullPopupRect.left, _fullPopupRect.top,
 							   _fullPopupRect.right, _fullPopupRect.top + miniHeight);
-		visibleTextHeight = contentHeight;
+		visibleTextHeight = MIN(contentHeight, stripContent);
 	}
 
 	moveTo(boxRect);
