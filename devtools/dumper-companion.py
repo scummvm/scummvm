@@ -402,24 +402,83 @@ def check_extension(args: argparse.Namespace) -> Extension:
 
 
 MACVENTURE_STEAM_EXES = {
-    #  md5                               name          offset   size
-    "2b5e47b77d28d7201d3e7f8681ca9a9f": ("Deja Vu",    1413600, 819200),
-    "c606908f6906adcd1cfb8c575d6b8cf7": ("Deja Vu II", 1418112, 819200),
-    "129ad491400722b76eb3259440e9ad95": ("Shadowgate", 1474800, 839680),
-    "cae6c5101ffd7fa20e249fa7a972f958": ("Uninvited",  1449384, 819200),
+    #  md5                               name       HFS offset  size  IIGS offset  size
+    "2b5e47b77d28d7201d3e7f8681ca9a9f": ("Deja Vu",    1413600, 819200, 594328, 819271),
+    "c606908f6906adcd1cfb8c575d6b8cf7": ("Deja Vu II", 1418112, 819200, 598840, 819272),
+    "129ad491400722b76eb3259440e9ad95": ("Shadowgate", 1474800, 839680, 655520, 819274),
+    "cae6c5101ffd7fa20e249fa7a972f958": ("Uninvited",  1449384, 819200, 630104, 819273),
 }
 
 
-def read_macventure_steam_exe(path: Path) -> Optional[bytes]:
+def read_macventure_steam_exe(path: Path) -> Optional[tuple[bytes, bytes]]:
     if path.suffix.lower() != ".exe":
         return None
     data = path.read_bytes()
     entry = MACVENTURE_STEAM_EXES.get(hashlib.md5(data).hexdigest())
     if entry is None:
         return None
-    name, offset, size = entry
-    print(f"{path.name} from {name} is detected, extracting embedded HFS image")
-    return data[offset : offset + size]
+    name, offset, size, gs_offset, gs_size = entry
+    print(f"{path.name} from {name} is detected, extracting embedded HFS and IIGS images")
+    return data[offset : offset + size], data[gs_offset : gs_offset + gs_size]
+
+
+def extract_prodos_image(image: bytes, destination_dir: Path) -> None:
+    # Extract a ProDOS volume from a 2IMG (.2mg) Apple IIGS disk image.
+    # Data forks only, which is all the MacVenture IIGS games use.
+    data_offset, data_len = unpack("<II", image[0x18:0x20])
+    disk = image[data_offset : data_offset + data_len]
+
+    def read_block(num: int) -> bytes:
+        return disk[num * 512 : (num + 1) * 512]
+
+    def read_index(block: int, count: int) -> list[int]:
+        # An index block holds up to 256 pointers: low bytes first, high bytes at +256
+        blk = read_block(block)
+        return [blk[i] | (blk[256 + i] << 8) for i in range(count)]
+
+    def read_file(entry: bytes) -> Optional[bytes]:
+        storage_type = entry[0] >> 4
+        key_block = unpack("<H", entry[0x11:0x13])[0]
+        eof = entry[0x15] | (entry[0x16] << 8) | (entry[0x17] << 16)
+        num_blocks = (eof + 511) // 512
+        if storage_type == 1:  # seedling: key block is the data
+            blocks = [key_block]
+        elif storage_type == 2:  # sapling: key block is an index block
+            blocks = read_index(key_block, num_blocks)
+        elif storage_type == 3:  # tree: key block is a master index block
+            blocks = []
+            for master in read_index(key_block, (num_blocks + 255) // 256):
+                count = min(256, num_blocks - len(blocks))
+                blocks += read_index(master, count) if master else [0] * count
+        else:
+            return None
+        data = b"".join(read_block(b) if b else b"\x00" * 512 for b in blocks)
+        return data[:eof]
+
+    def walk(block: int, path: Path) -> None:
+        path.mkdir(parents=True, exist_ok=True)
+        while block:
+            blk = read_block(block)
+            next_block = unpack("<H", blk[2:4])[0]
+            for i in range(13):
+                entry = blk[4 + i * 0x27 :][:0x27]
+                storage_type = entry[0] >> 4
+                name_len = entry[0] & 0xF
+                if storage_type == 0 or name_len == 0:
+                    continue
+                name = entry[1 : 1 + name_len].decode("ascii", "replace")
+                if storage_type in (0xF, 0xE):  # volume/subdirectory header
+                    continue
+                if storage_type == 0xD:  # subdirectory
+                    walk(unpack("<H", entry[0x11:0x13])[0], path / name)
+                else:
+                    data = read_file(entry)
+                    if data is not None:
+                        (path / name).write_bytes(data)
+                        print(f"Extracted {path / name}")
+            block = next_block
+
+    walk(2, destination_dir)  # block 2 = volume directory key block
 
 
 def check_fs(iso: str) -> FileSystem:
@@ -529,11 +588,15 @@ def extract_iso(args: argparse.Namespace) -> None:
             raise ValueError("Invalid log level: %s" % loglevel)
         logging.basicConfig(format="%(levelname)s: %(message)s", level=numeric_level)
 
-        exe_image = read_macventure_steam_exe(args.src)
-        if exe_image is not None:
+        exe_images = read_macventure_steam_exe(args.src)
+        if exe_images is not None:
+            hfs_image, gs_image = exe_images
+            main_dir = args.dir
             vol = machfs.Volume()
-            vol.read(exe_image)
+            vol.read(hfs_image)
+            args.dir = main_dir / "mac"
             extract_partition(args, vol)
+            extract_prodos_image(gs_image, main_dir / "iigs")
             return
 
         if not args.fs:
