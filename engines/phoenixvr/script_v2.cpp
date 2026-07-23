@@ -134,6 +134,14 @@ void ScriptV2::closeAllScopes() {
 		closeScope();
 }
 
+void ScriptV2::closeAllScopesWithWarning(int lineno) {
+	if (_conditionals.empty())
+		return;
+	warning("condition didn't have endif at the last test at line %d", lineno);
+	assert(_currentTestScope);
+	closeAllScopes();
+}
+
 void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 	if (line.empty())
 		return;
@@ -142,7 +150,7 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 	if (p.atEnd())
 		return;
 
-	if (p.maybe("//"))
+	if (p.maybe("//") || p.maybe("--"))
 		return;
 
 	if (p.maybe('[')) {
@@ -160,11 +168,7 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 			if (p.maybe(','))
 				test = p.nextWord();
 
-			if (!_conditionals.empty()) {
-				warning("condition didn't have endif at the last test at line %d", lineno);
-				assert(_currentTest);
-				closeAllScopes();
-			}
+			closeAllScopesWithWarning(lineno);
 
 			_currentWarp.reset(new Warp{vr, Common::move(test), {}});
 			if (!_warpsIndex.contains(vr))
@@ -174,19 +178,19 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 			_warps.push_back(_currentWarp);
 			_warpNames.push_back(vr);
 			_currentTest.reset();
+			_currentTestScope = nullptr;
 		} else if (p.maybe("test]:")) {
 			if (!_currentWarp)
 				error("test without warp");
 			auto idx = p.nextInt();
 			if (!_currentWarp)
 				error("text must have parent wrap section");
-			if (!_conditionals.empty()) {
-				warning("condition didn't have endif at the last test at line %d", lineno);
-				assert(_currentTest);
-				closeAllScopes();
-			}
+
+			closeAllScopesWithWarning(lineno);
+
 			_currentTest.reset(new Test{idx, 0, {}, {}, {}});
 			_currentWarp->tests.push_back(_currentTest);
+			_currentTestScope = &_currentTest->scope;
 		} else if (p.maybe("ifand]:")) {
 			if (!_currentTest)
 				error("ifand without test at line %d", lineno);
@@ -205,10 +209,11 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 			if (_conditionals.empty())
 				error("else without conditional at line %d", lineno);
 			auto &top = _conditionals.back();
-			if (top.conditional->falseScope)
-				error("double else in condition at line %d", lineno);
-			top.conditional->falseScope.reset(new Scope());
-			top.scope = top.conditional->falseScope;
+			if (!top.conditional->falseScope) {
+				top.conditional->falseScope.reset(new Scope());
+				top.scope = top.conditional->falseScope;
+			} else
+				warning("double else in condition at line %d", lineno);
 		} else if (p.maybe("endif]")) {
 			if (!_currentTest)
 				error("endif without test at line %d", lineno);
@@ -217,10 +222,10 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 			} else
 				warning("endif without conditional at line %d", lineno);
 		} else if (p.maybe("clic]")) {
-			if (!_conditionals.empty())
-				error("[clic] inside conditional at line %d", lineno);
 			if (!_currentTest)
 				error("[clic] without test at line %d", lineno);
+			closeAllScopesWithWarning(lineno);
+			_currentTestScope = &_currentTest->scope;
 		} else if (p.maybe("in]")) {
 			if (!_conditionals.empty())
 				error("[in] inside conditional at line %d", lineno);
@@ -228,7 +233,9 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 				error("[in] without test at line %d", lineno);
 			if (_currentTest->enter)
 				error("duplicate [in] handler");
+			closeAllScopesWithWarning(lineno);
 			_currentTest->enter.reset(new Scope);
+			_currentTestScope = _currentTest->enter.get();
 		} else if (p.maybe("out]")) {
 			if (!_conditionals.empty())
 				error("[out] inside conditional at line %d", lineno);
@@ -236,7 +243,9 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 				error("out without test at line %d", lineno);
 			if (_currentTest->leave)
 				error("duplicate [out] handler");
+			closeAllScopesWithWarning(lineno);
 			_currentTest->leave.reset(new Scope);
+			_currentTestScope = _currentTest->leave.get();
 		} else {
 			error("invalid [] directive on line %u: %s", lineno, line.c_str());
 		}
