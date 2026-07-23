@@ -122,6 +122,18 @@ int ScriptV2::Condition::value() const {
 	error("invalid condition %s %s %s", arg1.c_str(), op.c_str(), arg2.c_str());
 }
 
+void ScriptV2::closeScope() {
+	assert(!_conditionals.empty());
+	auto conditional = _conditionals.back();
+	_conditionals.pop_back();
+	topScope().commands.push_back(Common::move(conditional.conditional));
+}
+
+void ScriptV2::closeAllScopes() {
+	while (!_conditionals.empty())
+		closeScope();
+}
+
 void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 	if (line.empty())
 		return;
@@ -147,6 +159,13 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 			Common::String test;
 			if (p.maybe(','))
 				test = p.nextWord();
+
+			if (!_conditionals.empty()) {
+				warning("condition didn't have endif at the last test at line %d", lineno);
+				assert(_currentTest);
+				closeAllScopes();
+			}
+
 			_currentWarp.reset(new Warp{vr, Common::move(test), {}});
 			if (!_warpsIndex.contains(vr))
 				_warpsIndex[vr] = _warps.size();
@@ -154,16 +173,20 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 				warning("duplicate warp %s", vr.c_str());
 			_warps.push_back(_currentWarp);
 			_warpNames.push_back(vr);
+			_currentTest.reset();
 		} else if (p.maybe("test]:")) {
 			if (!_currentWarp)
 				error("test without warp");
 			auto idx = p.nextInt();
 			if (!_currentWarp)
 				error("text must have parent wrap section");
+			if (!_conditionals.empty()) {
+				warning("condition didn't have endif at the last test at line %d", lineno);
+				assert(_currentTest);
+				closeAllScopes();
+			}
 			_currentTest.reset(new Test{idx, 0, {}, {}, {}});
 			_currentWarp->tests.push_back(_currentTest);
-			if (!_conditionals.empty())
-				error("condition didn't have endif at the last test at line %d", lineno);
 		} else if (p.maybe("ifand]:")) {
 			if (!_currentTest)
 				error("ifand without test at line %d", lineno);
@@ -189,11 +212,10 @@ void ScriptV2::parseLine(const Common::String &line, uint lineno) {
 		} else if (p.maybe("endif]")) {
 			if (!_currentTest)
 				error("endif without test at line %d", lineno);
-			if (_conditionals.empty())
-				error("endif without conditional at line %d", lineno);
-			auto conditional = _conditionals.back();
-			_conditionals.pop_back();
-			topScope().commands.push_back(Common::move(conditional.conditional));
+			if (!_conditionals.empty()) {
+				closeScope();
+			} else
+				warning("endif without conditional at line %d", lineno);
 		} else if (p.maybe("clic]")) {
 			if (!_conditionals.empty())
 				error("[clic] inside conditional at line %d", lineno);

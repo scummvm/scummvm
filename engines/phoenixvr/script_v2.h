@@ -58,8 +58,11 @@ private:
 	Common::Array<ConditionalScope> _conditionals;
 
 	Scope &topScope() const {
+		assert(_currentTest);
 		return !_conditionals.empty() ? *_conditionals.back().scope : _currentTest->scope;
 	}
+	void closeScope();
+	void closeAllScopes();
 
 private:
 	void parseLine(const Common::String &line, uint lineno) override;
