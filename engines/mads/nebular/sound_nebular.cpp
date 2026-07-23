@@ -107,62 +107,62 @@ void RexASound::channelCommand(byte *&pSrc, bool &updateFlag) {
 
 	switch (cmdNum) {
 	case 0:
-		if (!chan->_field17) {
+		if (!chan->_innerLoopCount) {
 			if (*++pSrc == 0) {
 				chan->_pSrc += 2;
-				chan->_ptr3 = chan->_pSrc;
-				chan->_field17 = 0;
+				chan->_innerLoopPtr = chan->_pSrc;
+				chan->_innerLoopCount = 0;
 			} else {
-				chan->_field17 = *pSrc;
-				chan->_pSrc = chan->_ptr3;
+				chan->_innerLoopCount = *pSrc;
+				chan->_pSrc = chan->_innerLoopPtr;
 			}
-		} else if (--chan->_field17) {
-			chan->_pSrc = chan->_ptr3;
+		} else if (--chan->_innerLoopCount) {
+			chan->_pSrc = chan->_innerLoopPtr;
 		} else {
 			chan->_pSrc += 2;
-			chan->_ptr3 = chan->_pSrc;
+			chan->_innerLoopPtr = chan->_pSrc;
 		}
 		break;
 
 	case 1:
-		if (!chan->_field19) {
+		if (!chan->_outerLoopCount) {
 			if (*++pSrc == 0) {
 				chan->_pSrc += 2;
-				chan->_ptr4 = chan->_pSrc;
-				chan->_ptr3 = chan->_pSrc;
-				chan->_field17 = 0;
-				chan->_field19 = 0;
+				chan->_outerLoopPtr = chan->_pSrc;
+				chan->_innerLoopPtr = chan->_pSrc;
+				chan->_innerLoopCount = 0;
+				chan->_outerLoopCount = 0;
 			} else {
-				chan->_field19 = *pSrc;
-				chan->_pSrc = chan->_ptr4;
-				chan->_ptr3 = chan->_ptr4;
+				chan->_outerLoopCount = *pSrc;
+				chan->_pSrc = chan->_outerLoopPtr;
+				chan->_innerLoopPtr = chan->_outerLoopPtr;
 			}
-		} else if (--chan->_field19) {
-			chan->_ptr4 = chan->_pSrc;
-			chan->_ptr3 = chan->_pSrc;
+		} else if (--chan->_outerLoopCount) {
+			chan->_outerLoopPtr = chan->_pSrc;
+			chan->_innerLoopPtr = chan->_pSrc;
 		} else {
 			chan->_pSrc += 2;
-			chan->_ptr4 = chan->_pSrc;
-			chan->_ptr3 = chan->_pSrc;
+			chan->_outerLoopPtr = chan->_pSrc;
+			chan->_innerLoopPtr = chan->_pSrc;
 		}
 		break;
 
 	case 2:
 		// Loop sound data
-		chan->_field1 = 0;
-		chan->_field2 = chan->_field3 = 0;
-		chan->_volume = chan->_field7 = 0;
-		chan->_field1D = chan->_volumeOffset = 0;
-		chan->_field8 = 0;
-		chan->_field9 = 0;
-		chan->_fieldB = 0;
-		chan->_field17 = 0;
-		chan->_field19 = 0;
-		chan->_fieldD = 0x40;
+		chan->_pitchBend = 0;
+		chan->_volumeFadeStep = chan->_attenFadeStep = 0;
+		chan->_volume = chan->_noteOffset = 0;
+		chan->_transpose = chan->_volumeOffset = 0;
+		chan->_keyOnDelay = 0;
+		chan->_volumeFadeCounter = 0;
+		chan->_attenFadeCounter = 0;
+		chan->_innerLoopCount = 0;
+		chan->_outerLoopCount = 0;
+		chan->_patchAttenuation = 0x40;
 		chan->_ptr1 = chan->_soundData;
 		chan->_pSrc = chan->_soundData;
-		chan->_ptr3 = chan->_soundData;
-		chan->_ptr4 = chan->_soundData;
+		chan->_innerLoopPtr = chan->_soundData;
+		chan->_outerLoopPtr = chan->_soundData;
 
 		chan->_pSrc += 2;
 		break;
@@ -174,18 +174,18 @@ void RexASound::channelCommand(byte *&pSrc, bool &updateFlag) {
 		break;
 
 	case 4:
-		chan->_field7 = *++pSrc;
+		chan->_noteOffset = *++pSrc;
 		chan->_pSrc += 2;
 		break;
 
 	case 5:
-		chan->_field1 = *++pSrc;
+		chan->_pitchBend = *++pSrc;
 		chan->_pSrc += 2;
 		break;
 
 	case 6:
 		++pSrc;
-		if (chan->_fieldE) {
+		if (chan->_pendingStop) {
 			chan->_pSrc += 2;
 		} else {
 			chan->_volume = *pSrc >> 1;
@@ -196,17 +196,17 @@ void RexASound::channelCommand(byte *&pSrc, bool &updateFlag) {
 
 	case 7:
 		++pSrc;
-		if (!chan->_fieldE) {
-			chan->_fieldA = *pSrc;
-			chan->_field2 = *++pSrc;
-			chan->_field9 = 1;
+		if (!chan->_pendingStop) {
+			chan->_volumeFadeReload = *pSrc;
+			chan->_volumeFadeStep = *++pSrc;
+			chan->_volumeFadeCounter = 1;
 		}
 
 		chan->_pSrc += 3;
 		break;
 
 	case 8:
-		chan->_field1D = (int8) * ++pSrc;
+		chan->_transpose = (int8) * ++pSrc;
 		chan->_pSrc += 2;
 		break;
 
@@ -225,7 +225,7 @@ void RexASound::channelCommand(byte *&pSrc, bool &updateFlag) {
 
 	case 10:
 		++pSrc;
-		if (chan->_fieldE) {
+		if (chan->_pendingStop) {
 			chan->_pSrc += 2;
 		} else {
 			chan->_volumeOffset = *pSrc >> 1;
@@ -235,15 +235,15 @@ void RexASound::channelCommand(byte *&pSrc, bool &updateFlag) {
 		break;
 
 	case 11:
-		chan->_fieldD = *++pSrc;
+		chan->_patchAttenuation = *++pSrc;
 		updateFlag = true;
 		chan->_pSrc += 2;
 		break;
 
 	case 12:
-		chan->_fieldC = *++pSrc;
-		chan->_field3 = *++pSrc;
-		chan->_fieldB = 1;
+		chan->_attenFadeReload = *++pSrc;
+		chan->_attenFadeStep = *++pSrc;
+		chan->_attenFadeCounter = 1;
 		chan->_pSrc += 2;
 		break;
 
@@ -253,7 +253,7 @@ void RexASound::channelCommand(byte *&pSrc, bool &updateFlag) {
 		break;
 
 	case 14:
-		chan->_field1F = *++pSrc;
+		chan->_octaveTranspose = *++pSrc;
 		chan->_pSrc += 2;
 		break;
 
@@ -1666,8 +1666,8 @@ int ASound5::command15() {
 	if (_channels[0]._ptr1 == pData) {
 		pData = loadData(0x1F2);
 		_channels[0]._soundData = pData;
-		_channels[0]._field17 = 1;
-		_channels[0]._field19 = 1;
+		_channels[0]._innerLoopCount = 1;
+		_channels[0]._outerLoopCount = 1;
 	}
 
 	return 0;
@@ -2064,8 +2064,8 @@ int ASound7::command19() {
 	byte *pData2 = loadData(0x2CAA);
 	if (_channels[8]._ptr1 == pData1 || _channels[8]._ptr1 == pData2) {
 		_channels[8]._soundData = loadData(0x2CBA);
-		_channels[8]._field17 = 1;
-		_channels[8]._field19 = 1;
+		_channels[8]._innerLoopCount = 1;
+		_channels[8]._outerLoopCount = 1;
 	}
 
 	return 0;
@@ -2278,8 +2278,8 @@ int ASound8::command15() {
 	byte *pData = loadData(0x169E);
 	if (_channels[8]._ptr1 == pData) {
 		_channels[8]._soundData = loadData(0x16B6);
-		_channels[8]._field17 = 1;
-		_channels[8]._field19 = 1;
+		_channels[8]._innerLoopCount = 1;
+		_channels[8]._outerLoopCount = 1;
 	}
 
 	return 0;
@@ -2477,8 +2477,8 @@ const ASound9::CommandPtr ASound9::_commandList[52] = {
 
 ASound9::ASound9(Audio::Mixer *mixer, OPL::OPL *opl) :
 		RexASound(mixer, opl, "asound.009", 0x16F0, 0x85a0) {
-	_v1 = _v2 = 0;
-	_soundPtr = nullptr;
+	_callbackCounter = _callbackPeriod = 0;
+	_callbackFnPtr = nullptr;
 
 	// Load sound samples
 	auto samplesStream = getDataStream(0x50);
@@ -2495,9 +2495,20 @@ int ASound9::command(int commandId, int param) {
 	return (this->*_commandList[commandId])();
 }
 
+void ASound9::tickCallback() {
+	if (!_callbackPeriod)
+		return;
+	if (--_callbackCounter)
+		return;
+
+	_callbackCounter = _callbackPeriod;
+	if (_callbackFnPtr)
+		(this->*_callbackFnPtr)();
+}
+
 int ASound9::command9() {
-	_v1 = 1848;
-	_v2 = 84;
+	_callbackCounter = 1848;
+	_callbackPeriod = 84;
 	_channels[0].load(loadData(0xAA4));
 	_channels[1].load(loadData(0xE4C));
 	_channels[2].load(loadData(0x1466));
@@ -2646,9 +2657,14 @@ int ASound9::command33() {
 }
 
 int ASound9::command34() {
-	// Skipped stuff in original
+	_callbackCounter = _callbackPeriod = 96;
+
+	*loadData(0x469B) = 2;
+	*loadData(0x57EF) = 2;
+	*loadData(0x6267) = 2;
+
 	_channels[0].load(loadData(0x17A4));
-	_channels[1].load(loadData(0x1CDE));
+	_channels[1].load(loadData(0x1CBE));
 	_channels[2].load(loadData(0x2672));
 	_channels[3].load(loadData(0x3336));
 	_channels[4].load(loadData(0x469E));
@@ -2682,32 +2698,84 @@ int ASound9::command37() {
 }
 
 int ASound9::command38() {
-	playSound(0x100E);
+	_callbackFnPtr = &ASound9::loadCommand38;
 	return 0;
+}
+
+void ASound9::loadCommand38() {
+	_callbackFnPtr = nullptr;
+	_channels[0].load(loadData(0xBA4));
+	_channels[1].load(loadData(0xF1E));
+	_channels[2].load(loadData(0x15C4));
+	_channels[3].load(loadData(0x1442));
+	_channels[4].load(loadData(0x111A));
+	_channels[5].load(loadData(0x12D6));
+	_channels[6].load(loadData(0xDBA));
 }
 
 int ASound9::command39() {
-	_soundPtr = loadData(0x1055);
+	_callbackFnPtr = &ASound9::loadCommand39;
 	return 0;
+}
+
+void ASound9::loadCommand39() {
+	_callbackFnPtr = nullptr;
+	_channels[0].load(loadData(0xC1C));
+	_channels[1].load(loadData(0xFB6));
+	_channels[2].load(loadData(0x16C4));
+	_channels[3].load(loadData(0x1464));
+	_channels[4].load(loadData(0x11C2));
+	_channels[5].load(loadData(0x137C));
+	_channels[6].load(loadData(0xE00));
 }
 
 int ASound9::command40() {
-	_soundPtr = loadData(0x118C);
+	_callbackFnPtr = &ASound9::loadCommand40;
 	return 0;
+}
+
+void ASound9::loadCommand40() {
+	_callbackFnPtr = nullptr;
+	_channels[0].load(loadData(0x1958));
+	_channels[1].load(loadData(0x1F52));
+	_channels[2].load(loadData(0x2C02));
+	_channels[3].load(loadData(0x3BE0));
+	_channels[4].load(loadData(0x4BCA));
+	_channels[5].load(loadData(0x5BA6));
 }
 
 int ASound9::command41() {
-	_soundPtr = loadData(0x11BE);
+	_callbackFnPtr = &ASound9::loadCommand41;
 	return 0;
+}
+
+void ASound9::loadCommand41() {
+	_callbackFnPtr = nullptr;
+	_channels[0].load(loadData(0x19E4));
+	_channels[1].load(loadData(0x1FFE));
+	_channels[2].load(loadData(0x2CB8));
+	_channels[3].load(loadData(0x3DC4));
+	_channels[4].load(loadData(0x4F6C));
+	_channels[5].load(loadData(0x5F20));
 }
 
 int ASound9::command42() {
-	_soundPtr = loadData(0x11F0);
+	_callbackFnPtr = &ASound9::loadCommand42;
 	return 0;
 }
 
+void ASound9::loadCommand42() {
+	_callbackFnPtr = nullptr;
+	_channels[0].load(loadData(0x1B3A));
+	_channels[1].load(loadData(0x2506));
+	_channels[2].load(loadData(0x3194));
+	_channels[3].load(loadData(0x42E2));
+	_channels[4].load(loadData(0x548A));
+	_channels[5].load(loadData(0x6036));
+}
+
 int ASound9::command43() {
-	_v1 = _v2 = 80;
+	_callbackCounter = _callbackPeriod = 80;
 	_channels[0].load(loadData(0x626A));
 	_channels[1].load(loadData(0x67F2));
 	_channels[2].load(loadData(0x6CFE));
@@ -2717,18 +2785,42 @@ int ASound9::command43() {
 }
 
 int ASound9::command44_46() {
-	_soundPtr = loadData(0x10D5);
+	_callbackFnPtr = &ASound9::loadCommand44_46;
 	return 0;
+}
+
+void ASound9::loadCommand44_46() {
+	_callbackFnPtr = nullptr;
+	_channels[0].load(loadData(0x62C4));
+	_channels[1].load(loadData(0x684E));
+	_channels[2].load(loadData(0x6DE6));
+	_channels[3].load(loadData(0x7232));
 }
 
 int ASound9::command45() {
-	_soundPtr = loadData(0x10FB);
+	_callbackFnPtr = &ASound9::loadCommand45;
 	return 0;
 }
 
+void ASound9::loadCommand45() {
+	_callbackFnPtr = nullptr;
+	_channels[0].load(loadData(0x6558));
+	_channels[1].load(loadData(0x6AA4));
+	_channels[2].load(loadData(0x6F92));
+	_channels[3].load(loadData(0x73DC));
+}
+
 int ASound9::command47() {
-	_soundPtr = loadData(0x1121);
+	_callbackFnPtr = &ASound9::loadCommand47;
 	return 0;
+}
+
+void ASound9::loadCommand47() {
+	_callbackFnPtr = nullptr;
+	_channels[0].load(loadData(0x7582));
+	_channels[1].load(loadData(0x76A6));
+	_channels[2].load(loadData(0x77CC));
+	_channels[3].load(loadData(0x795A));
 }
 
 int ASound9::command48() {
@@ -2749,12 +2841,32 @@ int ASound9::command49() {
 }
 
 int ASound9::command50() {
-	_soundPtr = loadData(0x1222);
+	_callbackFnPtr = &ASound9::loadCommand50;
 	return 0;
 }
 
+void ASound9::loadCommand50() {
+	_callbackFnPtr = nullptr;
+
+	*loadData(0x469B) = 0;
+	*loadData(0x57EF) = 0;
+	*loadData(0x6267) = 0;
+
+	_channels[0].load(loadData(0x1C30));
+	_channels[1].load(loadData(0x25E4));
+	_channels[2].load(loadData(0x32A8));
+	_channels[3].load(loadData(0x4596));
+	_channels[4].load(loadData(0x5718));
+	_channels[5].load(loadData(0x6140));
+}
+
 int ASound9::command51() {
-	// Skipped stuff in original
+	_callbackCounter = _callbackPeriod = 96;
+
+	*loadData(0x469B) = 2;
+	*loadData(0x57EF) = 2;
+	*loadData(0x6267) = 2;
+
 	_channels[0].load(loadData(0x17BC));
 	_channels[1].load(loadData(0x1CFC));
 	_channels[2].load(loadData(0x2A46));

@@ -37,40 +37,34 @@ public:
 	ASound *_owner;
 
 	int _activeCount;
-	int _field1;
-	int _field2;
-	int _field3;
-	int _field4;
+	int _pitchBend;         // signed pitch-bend offset added to frequency by updateFNumber()
+	int _volumeFadeStep;    // signed per-period volume delta applied to _volumeOffset
+	int _attenFadeStep;     // signed per-period delta applied to _patchAttenuation
+	int _note;              // note byte read from the sound-data stream
 	int _sampleIndex;
 	int _volume;
-	int _field7;
-	int _field8;
-	int _field9;
-	int _fieldA;
-	uint8 _fieldB;
-	int _fieldC;
-	int _fieldD;
-	int _fieldE;
+	int _noteOffset;        // subtracted from _activeCount to derive _keyOnDelay
+	int _keyOnDelay;        // countdown before the key-on bit is cleared (gate time)
+	int _volumeFadeCounter; // counts down to 0 before applying _volumeFadeStep
+	int _volumeFadeReload;  // reload value for _volumeFadeCounter
+	uint8 _attenFadeCounter;// counts down to 0 before applying _attenFadeStep
+	int _attenFadeReload;   // reload value for _attenFadeCounter
+	int _patchAttenuation;  // per-note attenuation offset added on top of the patch TL
+	int _pendingStop;       // non-zero while the channel is fading out to silence
 	byte *_ptr1;
 	byte *_pSrc;
-	byte *_ptr3;
-	byte *_ptr4;
-	int _field17;
-	int _field19;
+	byte *_innerLoopPtr;    // inner-loop restart address (opcode 0)
+	byte *_outerLoopPtr;    // outer-loop restart address (opcode 1)
+	int _innerLoopCount;    // remaining inner-loop iterations (opcode 0)
+	int _outerLoopCount;    // remaining outer-loop iterations (opcode 1)
 	byte *_soundData;
-	int _field1D;
+	int _transpose;         // fine-tune offset added into the frequency table lookup
 	int _volumeOffset;
-	int _field1F;
+	int _octaveTranspose;   // added to _note before the octave/semitone split
 
 	// TODO: Only used by asound.003. Figure out usage
 	byte _field20;
 
-	// Phantom-specific fields
-	int _field26;        // pitch delta (set in case -14, zeroed in case -3)
-	int _field28;        // zeroed in case -3
-	int _field2A;        // set in case -18
-	int _field2B;        // volume-cap flag (suppresses upward volume changes)
-	int _field2C;        // frequency counter (used with _field7 in cases -9/-10)
 public:
 	static bool _channelsEnabled;
 public:
@@ -85,10 +79,10 @@ public:
 
 class AdlibChannelData {
 public:
-	int _field0;
+	int _hasNoiseMode; // non-zero if this sample drives the 2-voice noise generator
 	int _freqMask;
 	int _freqBase;
-	int _field6;
+	int _freqStep;      // per-tick frequency-sweep increment
 };
 
 class AdlibSample {
@@ -107,10 +101,10 @@ public:
 	bool _ampMod;
 	int _vib;
 	int _alg;
-	int _fieldE;
+	int _noiseMode;    // copied into AdlibChannelData::_hasNoiseMode by loadSample()
 	int _freqMask;
 	int _freqBase;
-	int _field14;
+	int _freqStep;     // copied into AdlibChannelData::_freqStep by loadSample()
 
 	AdlibSample() {
 	}
@@ -187,6 +181,16 @@ protected:
 	int _commandParam;
 
 	virtual void channelCommand(byte *&pSrc, bool &updateFlag) = 0;
+
+	/**
+	 * Hook called once per update() frame, immediately after the disabled
+	 * check and before the frame counter/channel polling. Only ASound9's
+	 * driver data makes use of a recurring deferred-callback timer (the
+	 * word_1949E/word_194A0/_soundPtr trio in the original disassembly);
+	 * every other driver leaves this as a no-op.
+	 */
+	virtual void tickCallback() {
+	}
 
 	/**
 	 * Returns data for the specified offset
@@ -290,25 +294,25 @@ public:
 	Common::Queue<RegisterValue> _queue;
 	int _frameCounter;
 	bool _isDisabled;
-	int _v1;
-	int _v2;
+	int _noiseTicks1;       // remaining duration for noise voice 1 (byte_11F86)
+	int _noiseTicks2;       // remaining duration for noise voice 2 (byte_11F87)
 	int _activeChannelNumber;
 	int _freqMask1;
 	int _freqMask2;
 	int _freqBase1;
 	int _freqBase2;
-	int _channelNum1, _channelNum2;
-	int _v7;
-	int _v8;
-	int _v9;
-	int _v10;
+	int _noiseChannel1, _noiseChannel2;
+	int _noiseFreqStep1;    // per-tick frequency-sweep step for noise voice 1 (word_11F8A)
+	int _noiseFreqStep2;    // per-tick frequency-sweep step for noise voice 2 (word_11F8C)
+	int _savedNoiseTicks1;  // _noiseTicks1 saved across command6/7 (byte_194B0)
+	int _savedNoiseTicks2;  // _noiseTicks2 saved across command6/7 (byte_194B1)
 	int _pollResult;
 	int _resultFlag;
 	byte _nullData[2];
 	int _ports[256];
 	bool _stateFlag;
 	int _activeChannelReg;
-	int _v11;
+	int _outputReg;         // scratch OPL operator register offset used within loadSample()
 	bool _amDep, _vibDep, _splitPoint;
 public:
 	/**
