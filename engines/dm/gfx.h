@@ -332,6 +332,7 @@ enum GraphicIndice {
 #define k121_FirstWallOrn 121 // @ C121_GRAPHIC_FIRST_WALL_ORNAMENT
 #define k247_FirstFloorOrn 247 // @ C247_GRAPHIC_FIRST_FLOOR_ORNAMENT
 #define k303_FirstDoorOrn 303 // @ C303_GRAPHIC_FIRST_DOOR_ORNAMENT
+#define k695_FontDOS 695 // @ M653_GRAPHIC_FONT
 #define k730_DerivedBitmapMaximumCount 730 // @ C730_DERIVED_BITMAP_MAXIMUM_COUNT
 
 #define k16_Scale_D3 16 // @ C16_SCALE_D3
@@ -742,6 +743,8 @@ public:
 	uint16 getPixelHeight(uint16 index);
 	/// Looks up actual decompressed dimensions of a display bitmap buffer
 	bool getBitmapDimensions(const byte *bitmap, uint16 &width, uint16 &height);
+
+	uint16 getFontIndex() const;
 
 	void copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height); // @ F0099_DUNGEONVIEW_CopyBitmapAndFlipHorizontal
 	void drawFloorOrnament(uint16 floorOrnOrdinal, ViewFloor viewFloorIndex); // @ F0108_DUNGEONVIEW_DrawFloorOrnament
