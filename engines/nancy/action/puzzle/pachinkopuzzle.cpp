@@ -48,6 +48,20 @@ static const double kSpawnYJitter = 0.01;
 // a small constant drag is used here as an approximation.
 static const double kDrag = 12.0;				// px/s per second
 
+// Collision geometry. Pins are stored as 1x1 points on a staggered ~30px grid; on screen
+// they are small round bumpers, so the hit distance matches the drawn pin + ball radii (a
+// ball may still thread the wider gaps, which is fine - the stagger catches it a row later).
+static const double kPinRadius = 4.0;
+static const double kBallRadius = 5.0;
+static const int kPhysicsSubsteps = 4;			// per frame, to avoid tunnelling the pins
+
+static const uint32 kHoleLitMs = 400;			// how long a hole stays lit after a catch
+
+// A climber reaches the pot once its accumulated steps hit this goal. moverSpeed per catch
+// is 2 (Miner) / 3 (Yeti), so the Yeti climbs faster - matching the game's "the Yeti
+// usually wins". The exact goal is not recovered from the chunk; this is a tuned value.
+static const int kClimbGoal = 30;
+
 static double wrapAngle(double a) {
 	while (a < 0.0) {
 		a += kTwoPi;
@@ -63,7 +77,7 @@ void PachinkoPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	// 167-byte header blob.
 	readRect(stream, _ballSrc);					// ball sprite source
-	stream.skip(16);							// four unidentified int32
+	readRect(stream, _ballEntry);				// top-right entry chute
 	_velMin = stream.readSint32LE();			// launch-speed floor
 	_velMax = stream.readSint32LE();			// launch-speed ceiling
 	_spawnYMin = stream.readSint32LE();			// launch-heading (deg) range
@@ -71,7 +85,7 @@ void PachinkoPuzzle::readData(Common::SeekableReadStream &stream) {
 	stream.skip(4);
 	_launchVecLen = stream.readSint32LE();
 	stream.skip(4);
-	stream.skip(16);							// four unidentified int32
+	readRect(stream, _panelBounds);				// pin-panel bounds (walls + floor)
 	_eventFlag = stream.readSint16LE();			// "in progress" flag
 	readFilename(stream, _ballImageName);		// ball sprite sheet
 	readRect(stream, _launcherBallSrc);
@@ -143,15 +157,13 @@ void PachinkoPuzzle::readMachine(Common::SeekableReadStream &stream, Machine &m)
 
 	m.winchSound.readData(stream);				// snd1 - the winch-up cue
 
-	// The 55-byte blob: its leading filename is the result movie (MUS_PachinkoWinANIM for
-	// the Miner); an empty filename means no movie.
-	byte blob[55];
-	stream.read(blob, sizeof(blob));
-	int len = 0;
-	while (len < 33 && blob[len] != 0) {
-		++len;
-	}
-	m.movieName = Common::String((const char *)blob, len);
+	stream.skip(1);								// per-machine flag byte
+
+	// The 55-byte blob: a filename[33] (the result movie - MUS_PachinkoWinANIM /
+	// MUS_PachinkoLoseANIM), then its 16-byte destination rect, then int32 + int16.
+	readFilename(stream, m.movieName);
+	readRect(stream, m.movieDest);
+	stream.skip(6);
 
 	m.resultSound.readData(stream);				// snd2 - the win/lose voice cue
 
@@ -166,6 +178,74 @@ void PachinkoPuzzle::loadMachineImage(Machine &m) {
 		g_nancy->_resource->loadImage(m.imageName, m.image);
 		m.image.setTransparentColor(_drawSurface.getTransparentColor());
 	}
+}
+
+// The four holes are the bumper zones (type 0x16) that carry a bell sound. The sound name
+// maps each hole to its climber: Miner/Explosion feed the Gold Digger (win), Yeti/Ouch feed
+// the Yeti (lose).
+void PachinkoPuzzle::buildHoles() {
+	_holes.clear();
+	for (const ActionZone &z : _zones) {
+		if (z.type != 0x16 || z._sound.names.empty()) {
+			continue;
+		}
+
+		Machine *climber = nullptr;
+		for (const Common::String &n : z._sound.names) {
+			if (n.contains("Miner") || n.contains("Explosion")) {
+				climber = &_winMachine;
+				break;
+			}
+			if (n.contains("Yeti") || n.contains("Ouch")) {
+				climber = &_loseMachine;
+				break;
+			}
+		}
+		if (!climber) {
+			continue;
+		}
+
+		Hole hole;
+		hole.rect = z.rect;
+		hole.climber = climber;
+		hole.sound = z._sound;
+		_holes.push_back(hole);
+	}
+
+	// Attach each hole's "lit" sprite from the matching overlay (0x0d) zone, which shares
+	// the hole's rect and names the lit board overlay.
+	for (const ActionZone &z : _zones) {
+		if (z.type != 0x0d || z.overlaySrcRects.empty()) {
+			continue;
+		}
+		for (Hole &hole : _holes) {
+			if (hole.rect == z.rect) {
+				hole.litSrc = z.overlaySrcRects[0];
+				hole.litDest = z.overlayDestRect;
+				if (_litImageName.empty()) {
+					_litImageName = Common::Path(z.overlayName.c_str());
+				}
+				break;
+			}
+		}
+	}
+
+	if (!_litImageName.empty()) {
+		g_nancy->_resource->loadImage(_litImageName, _litImage);
+		_litImage.setTransparentColor(_drawSurface.getTransparentColor());
+	}
+}
+
+// The climber's current on-screen anchor: the point on its climb path from the bottom
+// (moverStart) to the pot (moverEnd), advanced by how many balls it has caught.
+Common::Point PachinkoPuzzle::climberAnchor(const Machine &m) const {
+	double t = (double)m.climbSteps / (double)kClimbGoal;
+	if (t > 1.0) {
+		t = 1.0;
+	}
+	Common::Point start((m.moverStart.left + m.moverStart.right) / 2, (m.moverStart.top + m.moverStart.bottom) / 2);
+	Common::Point end((m.moverEnd.left + m.moverEnd.right) / 2, (m.moverEnd.top + m.moverEnd.bottom) / 2);
+	return Common::Point((int16)(start.x + (end.x - start.x) * t), (int16)(start.y + (end.y - start.y) * t));
 }
 
 void PachinkoPuzzle::init() {
@@ -185,6 +265,8 @@ void PachinkoPuzzle::init() {
 
 	loadMachineImage(_winMachine);
 	loadMachineImage(_loseMachine);
+
+	buildHoles();
 
 	NancySceneState.setNoHeldItem();
 
@@ -249,63 +331,57 @@ void PachinkoPuzzle::spawnBall() {
 	Ball ball;
 	ball.speed = (double)(_velMax - _velMin) * launchParam + (double)_velMin;
 	ball.angle = wrapAngle(headingDeg * kDeg2Rad);
-	ball.x = (_launcherHotspot.left + _launcherHotspot.right) / 2.0;
-	ball.y = (_launcherBallDest.top + _launcherBallDest.bottom) / 2.0;
+	// Balls appear at the top-right entry chute and fall left/down through the pins.
+	ball.x = (_ballEntry.left + _ballEntry.right) / 2.0;
+	ball.y = (_ballEntry.top + _ballEntry.bottom) / 2.0;
 	ball.active = true;
 	_balls.push_back(ball);
 
 	playSoundBlock(_plinkSounds);
 }
 
-bool PachinkoPuzzle::collideBall(Ball &ball, double nx, double ny) const {
-	// Reflect off any pin or bumper rect the ball would enter. The axis of the smaller
-	// penetration decides which velocity component flips (an AABB response).
-	Common::Point p((int16)nx, (int16)ny);
+// Reflect the ball off any pin it now overlaps (pins collide as circles). Returns true if a
+// bounce happened.
+bool PachinkoPuzzle::collidePins(Ball &ball) const {
+	const double hitDist = kPinRadius + kBallRadius;
+	for (const Common::Rect &pin : _pins) {
+		double px = (pin.left + pin.right) / 2.0;
+		double py = (pin.top + pin.bottom) / 2.0;
+		double dx = ball.x - px;
+		double dy = ball.y - py;
+		double d2 = dx * dx + dy * dy;
+		if (d2 >= hitDist * hitDist || d2 < 1e-6) {
+			continue;
+		}
 
-	const Common::Rect *hit = nullptr;
-	for (const Common::Rect &r : _pins) {
-		if (r.contains(p)) {
-			hit = &r;
-			break;
+		// Reflect the velocity about the surface normal (pin centre -> ball) and push the
+		// ball back out to the contact distance.
+		double d = sqrt(d2);
+		double nxn = dx / d;
+		double nyn = dy / d;
+		double vx = cos(ball.angle) * ball.speed;
+		double vy = -sin(ball.angle) * ball.speed;
+		double dot = vx * nxn + vy * nyn;
+		vx -= 2.0 * dot * nxn;
+		vy -= 2.0 * dot * nyn;
+
+		ball.x = px + nxn * hitDist;
+		ball.y = py + nyn * hitDist;
+		ball.speed = sqrt(vx * vx + vy * vy) * kRestitution;
+		ball.angle = wrapAngle(atan2(-vy, vx));
+		return true;
+	}
+	return false;
+}
+
+int PachinkoPuzzle::catchInHole(const Ball &ball) const {
+	Common::Point p((int16)ball.x, (int16)ball.y);
+	for (uint i = 0; i < _holes.size(); ++i) {
+		if (_holes[i].rect.contains(p)) {
+			return (int)i;
 		}
 	}
-	if (!hit) {
-		for (const ActionZone &z : _zones) {
-			// Walls (type 1/0x14) and bumpers (0x16) are solid; overlays are not.
-			if ((z.type == 0x01 || z.type == 0x14 || z.type == 0x16) && z.rect.contains(p)) {
-				hit = &z.rect;
-				if (!z._sound.names.empty()) {
-					const_cast<PachinkoPuzzle *>(this)->playSoundBlock(z._sound);
-				}
-				break;
-			}
-		}
-	}
-
-	if (!hit) {
-		return false;
-	}
-
-	double vx = cos(ball.angle) * ball.speed;
-	double vy = -sin(ball.angle) * ball.speed;
-
-	// Penetration depth on each axis; flip the axis with the shallower overlap.
-	double penLeft = nx - hit->left;
-	double penRight = hit->right - nx;
-	double penTop = ny - hit->top;
-	double penBottom = hit->bottom - ny;
-	double penX = MIN(penLeft, penRight);
-	double penY = MIN(penTop, penBottom);
-
-	if (penX < penY) {
-		vx = -vx;
-	} else {
-		vy = -vy;
-	}
-
-	ball.speed = sqrt(vx * vx + vy * vy) * kRestitution;
-	ball.angle = wrapAngle(atan2(-vy, vx));
-	return true;
+	return -1;
 }
 
 void PachinkoPuzzle::stepBall(Ball &ball, double dt) {
@@ -322,23 +398,36 @@ void PachinkoPuzzle::stepBall(Ball &ball, double dt) {
 		ball.speed = 0.0;
 	}
 
-	// Move, reflecting on a collision (single sub-step is sufficient at this frame rate).
-	double dist = ball.speed * dt;
-	double nx = ball.x + cos(ball.angle) * dist;
-	double ny = ball.y - sin(ball.angle) * dist;
-	if (!collideBall(ball, nx, ny)) {
-		ball.x = nx;
-		ball.y = ny;
-	}
-}
+	// Advance in small sub-steps so the ball cannot tunnel between the pins, bouncing off a
+	// pin or a side wall on the way.
+	double subDt = dt / kPhysicsSubsteps;
+	for (int s = 0; s < kPhysicsSubsteps; ++s) {
+		ball.x += cos(ball.angle) * ball.speed * subDt;
+		ball.y -= sin(ball.angle) * ball.speed * subDt;
 
-bool PachinkoPuzzle::ballSettled(const Ball &ball, const Machine &m) const {
-	Common::Point c = m.catchPoint();
-	double dx = ball.x - c.x;
-	double dy = ball.y - c.y;
-	// A generous catch radius (the machine's mover end rect half-size).
-	int r = MAX(m.moverEnd.width(), m.moverEnd.height()) / 2 + 8;
-	return (dx * dx + dy * dy) <= (double)(r * r);
+		if (collidePins(ball)) {
+			continue;
+		}
+
+		// Side walls of the panel keep the ball in play; the ball enters from the right of
+		// the right wall, so that wall only reflects once the ball is inside.
+		double vx2 = cos(ball.angle) * ball.speed;
+		double vy2 = -sin(ball.angle) * ball.speed;
+		bool reflected = false;
+		if (ball.x < _panelBounds.left + kBallRadius && vx2 < 0.0) {
+			ball.x = _panelBounds.left + kBallRadius;
+			vx2 = -vx2;
+			reflected = true;
+		} else if (ball.x < _panelBounds.right && ball.x > _panelBounds.right - kBallRadius && vx2 > 0.0) {
+			ball.x = _panelBounds.right - kBallRadius;
+			vx2 = -vx2;
+			reflected = true;
+		}
+		if (reflected) {
+			ball.speed = sqrt(vx2 * vx2 + vy2 * vy2) * kRestitution;
+			ball.angle = wrapAngle(atan2(-vy2, vx2));
+		}
+	}
 }
 
 void PachinkoPuzzle::advanceMachine(Machine &m, uint32 now) {
@@ -355,7 +444,7 @@ void PachinkoPuzzle::advanceMachine(Machine &m, uint32 now) {
 void PachinkoPuzzle::redraw() {
 	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 
-	// The two machines (their current animation frame), drawn at their mover start.
+	// The two climbers, drawn bottom-centred on their current position along the climb path.
 	const Machine *machines[2] = { &_winMachine, &_loseMachine };
 	for (int i = 0; i < 2; ++i) {
 		const Machine &m = *machines[i];
@@ -363,7 +452,8 @@ void PachinkoPuzzle::redraw() {
 			continue;
 		}
 		const Common::Rect &src = m.frames[m.frame % m.frames.size()];
-		Common::Point pos(m.moverStart.left, m.moverStart.top);
+		Common::Point anchor = climberAnchor(m);
+		Common::Point pos(anchor.x - src.width() / 2, anchor.y - src.height());
 		_drawSurface.blitFrom(m.image, src, pos);
 	}
 
@@ -380,9 +470,19 @@ void PachinkoPuzzle::redraw() {
 		}
 	}
 
-	// The result animation, when playing.
-	if (_pzState == kWaitResult && _resultMovie.isVideoLoaded()) {
-		_resultMovie.drawFrame(_drawSurface, Common::Point(0, 0));
+	// Holes lit by a recent catch.
+	if (!_litImage.empty()) {
+		uint32 now = g_nancy->getTotalPlayTime();
+		for (const Hole &hole : _holes) {
+			if (hole.litUntil > now && !hole.litSrc.isEmpty()) {
+				_drawSurface.blitFrom(_litImage, hole.litSrc, Common::Point(hole.litDest.left, hole.litDest.top));
+			}
+		}
+	}
+
+	// The result animation, when playing, drawn at the active machine's movie dest.
+	if (_pzState == kWaitResult && _resultMovie.isVideoLoaded() && _activeMachine) {
+		_resultMovie.drawFrame(_drawSurface, Common::Point(_activeMachine->movieDest.left, _activeMachine->movieDest.top));
 	}
 
 	_needsRedraw = true;
@@ -423,26 +523,33 @@ void PachinkoPuzzle::execute() {
 				}
 				stepBall(ball, dt);
 
-				// A caught ball decides the outcome and starts that machine's result.
-				if (ballSettled(ball, _winMachine)) {
+				// A ball that drops in a hole is removed and climbs its machine a step.
+				int hole = catchInHole(ball);
+				if (hole >= 0) {
 					ball.active = false;
-					_solved = true;
-					_activeMachine = &_winMachine;
-					_pzState = kPlayResult;
-					break;
-				}
-				if (ballSettled(ball, _loseMachine)) {
-					ball.active = false;
-					_solved = false;
-					_activeMachine = &_loseMachine;
-					_pzState = kPlayResult;
-					break;
+					playSoundBlock(_holes[hole].sound);
+					_holes[hole].litUntil = now + kHoleLitMs;
+					Machine *climber = _holes[hole].climber;
+					climber->climbSteps += climber->moverSpeed;
+					continue;
 				}
 
-				// A ball that leaves the board is discarded.
-				if (ball.y > _drawSurface.h + 64 || ball.x < -64 || ball.x > _drawSurface.w + 64) {
+				// A ball that reaches the floor or leaves the panel is discarded (a miss).
+				if (ball.y > _panelBounds.bottom || ball.x < _panelBounds.left - 32 ||
+						ball.x > _panelBounds.right + 64 || ball.y > _drawSurface.h + 32) {
 					ball.active = false;
 				}
+			}
+
+			// The first climber to reach the pot ends the game (Gold Digger = win, Yeti = lose).
+			if (_winMachine.climbSteps >= kClimbGoal) {
+				_solved = true;
+				_activeMachine = &_winMachine;
+				_pzState = kPlayResult;
+			} else if (_loseMachine.climbSteps >= kClimbGoal) {
+				_solved = false;
+				_activeMachine = &_loseMachine;
+				_pzState = kPlayResult;
 			}
 
 			redraw();

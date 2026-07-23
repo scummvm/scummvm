@@ -64,28 +64,26 @@ public:
 protected:
 	Common::String getRecordTypeName() const override { return "PachinkoPuzzle"; }
 
-	// One of the two "machine" sub-objects (Miner = win, Yeti = lose). Each is an
-	// animated sprite whose frames slide from a start point to an end (catch) point.
+	// One of the two mountain climbers (Miner/Gold Digger = win, Yeti = lose). Each is an
+	// animated sprite that climbs from its start anchor (bottom of the mountain) up to its
+	// end anchor (the pot at the top) as balls fall into its holes.
 	struct Machine {
 		Common::Path imageName;					// the ANIM_OVL sprite strip
 		int32 animRate = 0;						// frames per second
 		Common::Array<Common::Rect> frames;		// sprite-strip source rects
-		Common::Rect moverStart;				// slide path start rect (its centre is the anchor)
-		Common::Rect moverEnd;					// slide path end / catch rect
-		int32 moverSpeed = 0;
+		Common::Rect moverStart;				// climb-path bottom anchor (2x2 point rect)
+		Common::Rect moverEnd;					// climb-path top anchor (the pot)
+		int32 moverSpeed = 0;					// climb steps gained per ball caught
 		RandomSoundBlock winchSound;			// [snd1] the winch-up cue
 		RandomSoundBlock resultSound;			// [snd2] the win/lose voice cue (MinerWin*/PachinkoLose*)
 		RandomSoundBlock fastSound;				// [snd3] the fast-winch cue
 		Common::Path movieName;					// result animation (blob[0], "" == none)
+		Common::Rect movieDest;					// where the result animation is drawn
 
 		Graphics::ManagedSurface image;
 		uint frame = 0;							// current animation frame
 		uint32 nextFrameTime = 0;
-
-		Common::Point catchPoint() const {
-			return Common::Point((moverEnd.left + moverEnd.right) / 2,
-				(moverEnd.top + moverEnd.bottom) / 2);
-		}
+		int climbSteps = 0;						// accumulated climb (moverSpeed per catch)
 	};
 
 	// A single launched ball. Physics run in viewport space; the heading is stored as a
@@ -99,14 +97,27 @@ protected:
 		bool active = false;
 	};
 
+	// One of the four holes on the panel. A ball that drops in advances its climber and
+	// briefly lights the hole (a sprite from the "lit" overlay).
+	struct Hole {
+		Common::Rect rect;
+		Machine *climber = nullptr;
+		RandomSoundBlock sound;			// the bell cue (PinballBell_*)
+		Common::Rect litSrc;			// lit-hole sprite source (in _litImage)
+		Common::Rect litDest;			// where it is drawn
+		uint32 litUntil = 0;			// keep it lit until this time
+	};
+
 	void readMachine(Common::SeekableReadStream &stream, Machine &m);
 	void loadMachineImage(Machine &m);
+	void buildHoles();
+	Common::Point climberAnchor(const Machine &m) const;
 
 	void redraw();
 	void spawnBall();
 	void stepBall(Ball &ball, double dt);
-	bool collideBall(Ball &ball, double nx, double ny) const;
-	bool ballSettled(const Ball &ball, const Machine &m) const;
+	bool collidePins(Ball &ball) const;
+	int catchInHole(const Ball &ball) const;	// hole index the ball fell into, or -1
 	void advanceMachine(Machine &m, uint32 now);
 	SoundDescription playSoundBlock(const RandomSoundBlock &block);
 	void setDataCursor(uint16 cursorType) const;
@@ -115,11 +126,13 @@ protected:
 	Common::Path _imageName;				// 0x00 - board overlay (MUS_PachinkoPUZ02_OVL)
 
 	Common::Rect _ballSrc;					// ball sprite source in the overlay
+	Common::Rect _ballEntry;				// top-right entry chute (where balls appear)
 	int32 _velMin = 0;						// launch-speed floor
 	int32 _velMax = 0;						// launch-speed ceiling
 	int32 _spawnYMin = 0;					// launch-heading (deg) range
 	int32 _spawnYMax = 0;
 	int32 _launchVecLen = 0;				// decorative launch nub length
+	Common::Rect _panelBounds;				// pin-panel bounds (side walls + floor)
 	int16 _eventFlag = 0;					// "in progress" flag id
 	Common::Path _ballImageName;			// the ball sprite sheet
 	Common::Rect _launcherBallSrc;			// ball-in-launcher sprite src
@@ -135,6 +148,7 @@ protected:
 
 	Common::Array<Common::Rect> _pins;		// static pin collision rects
 	Common::Array<ActionZone> _zones;		// bumpers / walls / overlays (Nancy13 layout)
+	Common::Array<Hole> _holes;				// the four catch holes (built from _zones)
 
 	// The give-up / exit hotspot (the base trailer's 23-byte record).
 	Common::Rect _exitHotspot;
@@ -161,8 +175,10 @@ protected:
 	uint32 _resultTime = 0;
 	SoundDescription _resultSoundDesc;
 
+	Common::Path _litImageName;				// "lit" board overlay (hole highlights)
 	Graphics::ManagedSurface _image;		// board overlay
 	Graphics::ManagedSurface _ballImage;	// ball sprite sheet
+	Graphics::ManagedSurface _litImage;		// lit-hole sprites
 	MoviePlayer _resultMovie;
 };
 
