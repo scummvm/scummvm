@@ -47,6 +47,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix M&M1 spelling mistakes.
    - Improved M&M1 Enhanced mouse support, character generation, and general in-game UI.
    - Fixed cutscene subtitle rendering.
+   - Added Xeen French translation
 
  NANCY:
    - Generic flags are no longer cleared when saving or auto-saving. Clearing
