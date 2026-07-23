@@ -434,6 +434,14 @@ struct Set_View_Angle : public Command {
 	}
 };
 
+struct Continue_Game : public Command {
+	Continue_Game(const Common::Array<Common::String> &args) {}
+	void exec(ExecutionContext &ctx) const override {
+		debug("continue game");
+		g_engine->setNextLevel();
+	}
+};
+
 struct Exit_Game : public Command {
 	Exit_Game(const Common::Array<Common::String> &args) {}
 	void exec(ExecutionContext &ctx) const override {
@@ -462,7 +470,6 @@ struct UnhandledV2Command : public Command {
 static const char *const kUnhandledV2Commands[] = {
 	"AND",
 	"BREAK",
-	"CONTINUE_GAME",
 	"CURSOR_CLOSE",
 	"CURSOR_MODE",
 	"CURSOR_SET",
@@ -500,6 +507,7 @@ static const char *const kUnhandledV2Commands[] = {
 
 #define COMMAND_LIST(E) \
 	E(Add)              \
+	E(Continue_Game)    \
 	E(Cursor_Load)      \
 	E(Cursor_Set)       \
 	E(Delay_Sound)      \
