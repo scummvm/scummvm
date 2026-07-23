@@ -118,11 +118,19 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_inscriptionThing = _vm->_thingNone;
 	_useByteBoxCoordinates = false;
 
+	_bitmapWallSetD2L2 = nullptr;
+	_bitmapWallSetD2R2 = nullptr;
 	_bitmapWallSetD3L2 = nullptr;
 	_bitmapWallSetD3R2 = nullptr;
 	_bitmapWallSetD3LCR = nullptr;
 	_bitmapWallSetD2LCR = nullptr;
 	_bitmapWallSetD1LCR = nullptr;
+	_bitmapWallSetD1L = nullptr;
+	_bitmapWallSetD1R = nullptr;
+	_bitmapWallSetD2L = nullptr;
+	_bitmapWallSetD2R = nullptr;
+	_bitmapWallSetD3L = nullptr;
+	_bitmapWallSetD3R = nullptr;
 	_bitmapWallSetWallD0L = nullptr;
 	_bitmapWallSetWallD0R = nullptr;
 	_bitmapWallSetDoorFrameTopD2LCR = nullptr;
@@ -663,11 +671,19 @@ DisplayMan::~DisplayMan() {
 
 	delete[] _bitmapCeiling;
 	delete[] _bitmapFloor;
+	delete[] _bitmapWallSetD2L2;
+	delete[] _bitmapWallSetD2R2;
 	delete[] _bitmapWallSetD3L2;
 	delete[] _bitmapWallSetD3R2;
 	delete[] _bitmapWallSetD3LCR;
 	delete[] _bitmapWallSetD2LCR;
 	delete[] _bitmapWallSetD1LCR;
+	delete[] _bitmapWallSetD1L;
+	delete[] _bitmapWallSetD1R;
+	delete[] _bitmapWallSetD2L;
+	delete[] _bitmapWallSetD2R;
+	delete[] _bitmapWallSetD3L;
+	delete[] _bitmapWallSetD3R;
 	delete[] _bitmapWallSetWallD0L;
 	delete[] _bitmapWallSetWallD0R;
 	delete[] _bitmapWallSetDoorFrameTopD2LCR;
@@ -737,6 +753,24 @@ void DisplayMan::initializeGraphicData() {
 	_bitmapWallSetD3LCR = new byte[getPixelWidth(d3LcrIdx) * getPixelHeight(d3LcrIdx)];
 	_bitmapWallSetD2LCR = new byte[getPixelWidth(d2LcrIdx) * getPixelHeight(d2LcrIdx)];
 	_bitmapWallSetD1LCR = new byte[getPixelWidth(d1LcrIdx) * getPixelHeight(d1LcrIdx)];
+	if (_vm->getPlatform() == Common::kPlatformDOS) {
+		int16 d1rIdx = firstWallSet + 9;
+		int16 d1lIdx = firstWallSet + 10;
+		int16 d2r2Idx = firstWallSet + 12;
+		int16 d2l2Idx = firstWallSet + 13;
+		int16 d2rIdx = firstWallSet + 14;
+		int16 d2lIdx = firstWallSet + 15;
+		int16 d3rIdx = firstWallSet + 19;
+		int16 d3lIdx = firstWallSet + 20;
+		_bitmapWallSetD1R = new byte[getPixelWidth(d1rIdx) * getPixelHeight(d1rIdx)];
+		_bitmapWallSetD1L = new byte[getPixelWidth(d1lIdx) * getPixelHeight(d1lIdx)];
+		_bitmapWallSetD2R2 = new byte[getPixelWidth(d2r2Idx) * getPixelHeight(d2r2Idx)];
+		_bitmapWallSetD2L2 = new byte[getPixelWidth(d2l2Idx) * getPixelHeight(d2l2Idx)];
+		_bitmapWallSetD2R = new byte[getPixelWidth(d2rIdx) * getPixelHeight(d2rIdx)];
+		_bitmapWallSetD2L = new byte[getPixelWidth(d2lIdx) * getPixelHeight(d2lIdx)];
+		_bitmapWallSetD3R = new byte[getPixelWidth(d3rIdx) * getPixelHeight(d3rIdx)];
+		_bitmapWallSetD3L = new byte[getPixelWidth(d3lIdx) * getPixelHeight(d3lIdx)];
+	}
 	_bitmapWallSetWallD0L = new byte[getPixelWidth(wallD0LIdx) * getPixelHeight(wallD0LIdx)];
 	_bitmapWallSetWallD0R = new byte[getPixelWidth(wallD0RIdx) * getPixelHeight(wallD0RIdx)];
 	_bitmapWallSetDoorFrameTopD2LCR = new byte[getPixelWidth(doorFrameTopD2LCRIdx) * getPixelHeight(doorFrameTopD2LCRIdx)];
@@ -1347,6 +1381,54 @@ bool DisplayMan::getBitmapDimensions(const byte *bitmap, uint16 &width, uint16 &
 		height = getPixelHeight(idx);
 		return true;
 	}
+	if (bitmap == _bitmapWallSetD1L) {
+		int16 idx = firstWallSet + 10;
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+	if (bitmap == _bitmapWallSetD1R) {
+		int16 idx = firstWallSet + 9;
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+	if (bitmap == _bitmapWallSetD2L2) {
+		int16 idx = firstWallSet + 13;
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+	if (bitmap == _bitmapWallSetD2R2) {
+		int16 idx = firstWallSet + 12;
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+	if (bitmap == _bitmapWallSetD2L) {
+		int16 idx = firstWallSet + 15;
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+	if (bitmap == _bitmapWallSetD2R) {
+		int16 idx = firstWallSet + 14;
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+	if (bitmap == _bitmapWallSetD3L) {
+		int16 idx = firstWallSet + 20;
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+	if (bitmap == _bitmapWallSetD3R) {
+		int16 idx = firstWallSet + 19;
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
 	return false;
 }
 
@@ -1812,17 +1894,21 @@ void DisplayMan::blitToScreen(byte *bitmap, const Box *box, int16 byteWidth, Col
 }
 
 void DisplayMan::drawWallSetBitmapWithoutTransparency(byte *bitmap, Frame &f) {
-	if (!f._srcByteWidth)
+	if (!bitmap || !f._srcByteWidth)
 		return;
 
-	blitToBitmap(bitmap, _bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth, k112_byteWidthViewport, kDMColorNoTransparency, f._srcHeight, k136_heightViewport);
+	uint16 srcX = (_vm->getPlatform() == Common::kPlatformDOS) ? 0 : f._srcX;
+	uint16 srcY = (_vm->getPlatform() == Common::kPlatformDOS) ? 0 : f._srcY;
+	blitToBitmap(bitmap, _bitmapViewport, f._box, srcX, srcY, f._srcByteWidth, k112_byteWidthViewport, kDMColorNoTransparency, f._srcHeight, k136_heightViewport);
 }
 
 void DisplayMan::drawWallSetBitmap(byte *bitmap, Frame &f) {
-	if (!f._srcByteWidth)
+	if (!bitmap || !f._srcByteWidth)
 		return;
 
-	blitToBitmap(bitmap, _bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth, k112_byteWidthViewport, kDMColorFlesh, f._srcHeight, k136_heightViewport);
+	uint16 srcX = (_vm->getPlatform() == Common::kPlatformDOS) ? 0 : f._srcX;
+	uint16 srcY = (_vm->getPlatform() == Common::kPlatformDOS) ? 0 : f._srcY;
+	blitToBitmap(bitmap, _bitmapViewport, f._box, srcX, srcY, f._srcByteWidth, k112_byteWidthViewport, kDMColorFlesh, f._srcHeight, k136_heightViewport);
 }
 
 
@@ -1862,7 +1948,7 @@ void DisplayMan::drawSquareD3L(Direction dir, int16 posX, int16 posY) {
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], kDMViewFloorD3L);
 		break;
 	case kDMElementTypeWall:
-		drawWallSetBitmap(_bitmapWallSetD3LCR, _frameWalls163[kDMViewSquareD3L]);
+		drawWallSetBitmap(_vm->getPlatform() == Common::kPlatformDOS ? _bitmapWallSetD3L : _bitmapWallSetD3LCR, _frameWalls163[kDMViewSquareD3L]);
 		isDrawnWallOrnAnAlcove(squareAspect[kDMSquareAspectRightWallOrnOrd], kDMViewWallD3LRight);
 		if (isDrawnWallOrnAnAlcove(squareAspect[kDMSquareFrontWallOrnOrd], kDMViewWallD3LFront))
 			order = kDMCellOrderAlcove;
@@ -1941,7 +2027,7 @@ void DisplayMan::drawSquareD3R(Direction dir, int16 posX, int16 posY) {
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], kDMViewFloorD3R);
 		break;
 	case kDMElementTypeWall:
-		drawWallSetBitmap(_bitmapWallSetD3LCR, _frameWalls163[kDMViewSquareD3R]);
+		drawWallSetBitmap(_vm->getPlatform() == Common::kPlatformDOS ? _bitmapWallSetD3R : _bitmapWallSetD3LCR, _frameWalls163[kDMViewSquareD3R]);
 		isDrawnWallOrnAnAlcove(squareAspect[kDMSquareAspectLeftWallOrnOrd], kDMViewWallD3RLeft);
 		if (isDrawnWallOrnAnAlcove(squareAspect[kDMSquareFrontWallOrnOrd], kDMViewWallD3RFront))
 			order = kDMCellOrderAlcove;
@@ -2104,7 +2190,7 @@ void DisplayMan::drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], kDMViewFloorD2L); /* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
 		break;
 	case kDMElementTypeWall:
-		drawWallSetBitmap(_bitmapWallSetD2LCR, _frameWalls163[kDMViewSquareD2L]);
+		drawWallSetBitmap(_vm->getPlatform() == Common::kPlatformDOS ? _bitmapWallSetD2L : _bitmapWallSetD2LCR, _frameWalls163[kDMViewSquareD2L]);
 		isDrawnWallOrnAnAlcove(squareAspect[kDMSquareAspectRightWallOrnOrd], kDMViewWallD2LRight);
 		if (isDrawnWallOrnAnAlcove(squareAspect[kDMSquareFrontWallOrnOrd], kDMViewWallD2LFront))
 			order = kDMCellOrderAlcove;
@@ -2189,7 +2275,7 @@ void DisplayMan::drawSquareD2R(Direction dir, int16 posX, int16 posY) {
 		drawCeilingPit(kDMGraphicIdxCeilingPitD2L, &frameCeilingPitD2R, posX, posY, true);
 		break;
 	case kDMElementTypeWall:
-		drawWallSetBitmap(_bitmapWallSetD2LCR, _frameWalls163[kDMViewSquareD2R]);
+		drawWallSetBitmap(_vm->getPlatform() == Common::kPlatformDOS ? _bitmapWallSetD2R : _bitmapWallSetD2LCR, _frameWalls163[kDMViewSquareD2R]);
 		isDrawnWallOrnAnAlcove(squareAspect[kDMSquareAspectLeftWallOrnOrd], kDMViewWallD2RLeft);
 		if (isDrawnWallOrnAnAlcove(squareAspect[kDMSquareFrontWallOrnOrd], kDMViewWallD2RFront))
 			order = kDMCellOrderAlcove;
@@ -2359,7 +2445,7 @@ void DisplayMan::drawSquareD1L(Direction dir, int16 posX, int16 posY) {
 		drawCeilingPit(kDMGraphicIdxCeilingPitD1L, &frameCeilingPitD1L, posX, posY, false);
 		break;
 	case kDMElementTypeWall:
-		drawWallSetBitmap(_bitmapWallSetD1LCR, _frameWalls163[kDMViewSquareD1L]);
+		drawWallSetBitmap(_vm->getPlatform() == Common::kPlatformDOS ? _bitmapWallSetD1L : _bitmapWallSetD1LCR, _frameWalls163[kDMViewSquareD1L]);
 		isDrawnWallOrnAnAlcove(squareAspect[kDMSquareAspectRightWallOrnOrd], kDMViewWallD1LRight);
 		return;
 	case kDMElementTypeStairsSide:
@@ -2438,7 +2524,7 @@ void DisplayMan::drawSquareD1R(Direction dir, int16 posX, int16 posY) {
 		drawCeilingPit(kDMGraphicIdxCeilingPitD1L, &frameCeilingPitD1R, posX, posY, true);
 		break;
 	case kDMElementTypeWall:
-		drawWallSetBitmap(_bitmapWallSetD1LCR, _frameWalls163[kDMViewSquareD1R]);
+		drawWallSetBitmap(_vm->getPlatform() == Common::kPlatformDOS ? _bitmapWallSetD1R : _bitmapWallSetD1LCR, _frameWalls163[kDMViewSquareD1R]);
 		isDrawnWallOrnAnAlcove(squareAspect[kDMSquareAspectLeftWallOrnOrd], kDMViewWallD1RLeft);
 		return;
 	case kDMElementTypeStairsSide:
@@ -2832,10 +2918,18 @@ void DisplayMan::loadWallSet(WallSet set) {
 		loadIntoBitmap(graphicIndice + 6, _bitmapWallSetDoorFrameTopD2LCR);
 		loadIntoBitmap(graphicIndice + 7, _bitmapWallSetWallD0R);   // C00_WALL_D0R (93)
 		loadIntoBitmap(graphicIndice + 8, _bitmapWallSetWallD0L);   // C01_WALL_D0L (94)
-		loadIntoBitmap(graphicIndice + 11, _bitmapWallSetD1LCR);   // C04_WALL_D1C (97)
-		loadIntoBitmap(graphicIndice + 16, _bitmapWallSetD2LCR);   // C09_WALL_D2C (102)
-		loadIntoBitmap(graphicIndice + 21, _bitmapWallSetD3LCR);   // C14_WALL_D3C (107)
-		loadIntoBitmap(graphicIndice + 18, _bitmapWallSetD3L2);    // C11_WALL_D3L2 (104)
+		loadIntoBitmap(graphicIndice + 9, _bitmapWallSetD1R);       // C02_WALL_D1R (95)
+		loadIntoBitmap(graphicIndice + 10, _bitmapWallSetD1L);      // C03_WALL_D1L (96)
+		loadIntoBitmap(graphicIndice + 11, _bitmapWallSetD1LCR);    // C04_WALL_D1C (97)
+		loadIntoBitmap(graphicIndice + 12, _bitmapWallSetD2R2);     // C05_WALL_D2R2 (98)
+		loadIntoBitmap(graphicIndice + 13, _bitmapWallSetD2L2);     // C06_WALL_D2L2 (99)
+		loadIntoBitmap(graphicIndice + 14, _bitmapWallSetD2R);      // C07_WALL_D2R (100)
+		loadIntoBitmap(graphicIndice + 15, _bitmapWallSetD2L);      // C08_WALL_D2L (101)
+		loadIntoBitmap(graphicIndice + 16, _bitmapWallSetD2LCR);    // C09_WALL_D2C (102)
+		loadIntoBitmap(graphicIndice + 18, _bitmapWallSetD3L2);     // C11_WALL_D3L2 (104)
+		loadIntoBitmap(graphicIndice + 19, _bitmapWallSetD3R);      // C12_WALL_D3R (105)
+		loadIntoBitmap(graphicIndice + 20, _bitmapWallSetD3L);      // C13_WALL_D3L (106)
+		loadIntoBitmap(graphicIndice + 21, _bitmapWallSetD3LCR);    // C14_WALL_D3C (107)
 	} else {
 		int16 graphicIndice = (set * k13_WallSetGraphicCount) + k77_FirstWallSet;
 		loadIntoBitmap(graphicIndice++, _bitmapWallSetDoorFrameFront);
