@@ -115,7 +115,7 @@ bool Rebel2PSX::playVideo(const Common::Path &path, int discNumber, bool version
 }
 
 bool Rebel2PSX::loadLevel1Assets(RA2PSXModel &model, RA2PSXModel &crosshair,
-		RA2PSXLevel1UI &ui) {
+		RA2PSXModel &laser, RA2PSXLevel1UI &ui) {
 	Common::SeekableReadStream *stream = openResource(1);
 	if (!stream)
 		return false;
@@ -127,8 +127,10 @@ bool Rebel2PSX::loadLevel1Assets(RA2PSXModel &model, RA2PSXModel &crosshair,
 
 	Common::Array<byte> modelData;
 	Common::Array<byte> crosshairData;
+	Common::Array<byte> laserData;
 	return archive.getMember("fOFS/TieFighter/main", modelData) && model.load(modelData) &&
 			archive.getMember("fOFS/CrosshairW", crosshairData) && crosshair.load(crosshairData) &&
+			archive.getMember("fOFS/WingLaser", laserData) && laser.load(laserData) &&
 			ui.load(archive);
 }
 
@@ -136,8 +138,9 @@ Common::Error Rebel2PSX::runGame() {
 #ifdef USE_TINYGL
 	RA2PSXModel model;
 	RA2PSXModel crosshair;
+	RA2PSXModel laser;
 	RA2PSXLevel1UI ui;
-	if (!loadLevel1Assets(model, crosshair, ui))
+	if (!loadLevel1Assets(model, crosshair, laser, ui))
 		return Common::Error(Common::kReadingFailed,
 				_("Could not load the PlayStation Level 1 resources"));
 
@@ -151,7 +154,7 @@ Common::Error Rebel2PSX::runGame() {
 	int lives = 3;
 	int score = 0;
 	while (!_vm->shouldQuit()) {
-		const Level1Result result = playLevel1(model, crosshair, ui, lives, score);
+		const Level1Result result = playLevel1(model, crosshair, laser, ui, lives, score);
 		if (result == kLevel1Quit)
 			return Common::kNoError;
 		if (result == kLevel1Error)

@@ -240,6 +240,90 @@ void RA2PSXTinyGLRenderer::renderModel(const RA2PSXModel &model, float x, float 
 		tglEnable(TGL_DEPTH_TEST);
 }
 
+void RA2PSXTinyGLRenderer::renderPerspectiveModel(const RA2PSXModel &model,
+		float x, float y, float z, float directionX, float directionY, float directionZ,
+		float roll, bool depthTest) {
+	if (!_context || model.vertices().empty())
+		return;
+
+	const float directionLength = sqrtf(directionX * directionX + directionY * directionY +
+			directionZ * directionZ);
+	if (directionLength < 0.001f)
+		return;
+	const float forwardX = directionX / directionLength;
+	const float forwardY = directionY / directionLength;
+	const float forwardZ = directionZ / directionLength;
+
+	float rightX = forwardZ;
+	float rightY = 0.0f;
+	float rightZ = -forwardX;
+	const float rightLength = sqrtf(rightX * rightX + rightZ * rightZ);
+	if (rightLength < 0.001f) {
+		rightX = 1.0f;
+		rightZ = 0.0f;
+	} else {
+		rightX /= rightLength;
+		rightZ /= rightLength;
+	}
+	const float downX = forwardY * rightZ - forwardZ * rightY;
+	const float downY = forwardZ * rightX - forwardX * rightZ;
+	const float downZ = forwardX * rightY - forwardY * rightX;
+	const float angle = roll * 0.017453292519943295f;
+	const float cosine = cosf(angle);
+	const float sine = sinf(angle);
+	const float modelXx = rightX * cosine + downX * sine;
+	const float modelXy = rightY * cosine + downY * sine;
+	const float modelXz = rightZ * cosine + downZ * sine;
+	const float modelYx = downX * cosine - rightX * sine;
+	const float modelYy = downY * cosine - rightY * sine;
+	const float modelYz = downZ * cosine - rightZ * sine;
+
+	struct ProjectedVertex {
+		float x;
+		float y;
+		bool visible;
+	};
+	Common::Array<ProjectedVertex> projected;
+	projected.resize(model.vertices().size());
+	const float centerX = _width * 0.5f;
+	const float centerY = _height * 0.5f;
+	const float focalLength = _width * 2.0f;
+	for (uint i = 0; i < model.vertices().size(); ++i) {
+		const RA2PSXVertex &vertex = model.vertices()[i];
+		const float worldX = x + modelXx * vertex.x + modelYx * vertex.y + forwardX * vertex.z;
+		const float worldY = y + modelXy * vertex.x + modelYy * vertex.y + forwardY * vertex.z;
+		const float worldZ = z + modelXz * vertex.x + modelYz * vertex.y + forwardZ * vertex.z;
+		projected[i].visible = worldZ > 1.0f;
+		if (projected[i].visible) {
+			projected[i].x = centerX + worldX * focalLength / worldZ;
+			projected[i].y = centerY + worldY * focalLength / worldZ;
+		}
+	}
+
+	TinyGL::setContext(_context);
+	if (!depthTest)
+		tglDisable(TGL_DEPTH_TEST);
+	const Common::Array<RA2PSXFace> &faces = model.faces();
+	for (uint faceIndex = 0; faceIndex < faces.size(); ++faceIndex) {
+		const RA2PSXFace &face = faces[faceIndex];
+		bool visible = true;
+		for (uint vertexIndex = 0; vertexIndex < face.vertexCount; ++vertexIndex)
+			visible &= projected[face.vertex[vertexIndex]].visible;
+		if (!visible)
+			continue;
+
+		tglColor3ub(face.r, face.g, face.b);
+		tglBegin(face.vertexCount == 4 ? TGL_QUADS : TGL_TRIANGLES);
+		for (uint vertexIndex = 0; vertexIndex < face.vertexCount; ++vertexIndex) {
+			const ProjectedVertex &vertex = projected[face.vertex[vertexIndex]];
+			tglVertex3f(vertex.x, vertex.y, 0.0f);
+		}
+		tglEnd();
+	}
+	if (!depthTest)
+		tglEnable(TGL_DEPTH_TEST);
+}
+
 void RA2PSXTinyGLRenderer::finishFrame(Graphics::Surface &surface) {
 	if (!_context)
 		return;

@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "common/config-manager.h"
 #include "common/events.h"
 #include "common/random.h"
 #include "common/system.h"
@@ -69,6 +70,23 @@ struct RA2PSXLevel1Explosion {
 	int y;
 };
 
+struct RA2PSXLevel1Shot {
+	RA2PSXLevel1Shot() : active(false), progress(0), targetX(0), targetY(0) {}
+
+	bool active;
+	int progress;
+	float targetX;
+	float targetY;
+};
+
+static const float kLevel1LaserStart[3][3] = {
+	{ -350.0f, 200.0f, 400.0f },
+	{ 350.0f, 200.0f, 400.0f },
+	{ 0.0f, 500.0f, 400.0f }
+};
+
+static const float kLevel1LaserRoll[3] = { -45.0f, 45.0f, 0.0f };
+
 static void updateLevel1Enemy(RA2PSXLevel1Enemy &enemy) {
 	const float t = MIN(1.0f, (float)enemy.age / enemy.lifetime);
 	const float inverse = 1.0f - t;
@@ -110,10 +128,106 @@ static void spawnLevel1Enemy(RA2PSXLevel1Enemy &enemy, Common::RandomSource &ran
 	updateLevel1Enemy(enemy);
 }
 
+static void updateLevel1Aim(int &x, int &y, int &velocityX, int &velocityY,
+		int &directionX, int &directionY, bool left, bool right, bool up, bool down) {
+	if (left && right)
+		left = right = false;
+	if (up && down)
+		up = down = false;
+
+	if (!left && !right) {
+		directionX = 0;
+		velocityX /= 2;
+	} else {
+		if (left) {
+			if (velocityX > 0)
+				velocityX = -velocityX / 4;
+			velocityX = MAX(-4096, velocityX - 448);
+			directionX = -1;
+		}
+		if (right) {
+			if (velocityX < 0)
+				velocityX = -velocityX / 4;
+			velocityX = MIN(4096, velocityX + 448);
+			directionX = 1;
+		}
+		if ((up || down) && ABS(velocityX) < ABS(velocityY) / 2)
+			velocityX = ABS(velocityY) * directionX / 2;
+	}
+	x = CLIP<int>(x + velocityX / 512, 30, 290);
+
+	if (!up && !down) {
+		directionY = 0;
+		velocityY /= 2;
+	} else {
+		if (up) {
+			if (velocityY > 0)
+				velocityY = -velocityY / 4;
+			velocityY = MAX(-4096, velocityY - 448);
+			directionY = -1;
+		}
+		if (down) {
+			if (velocityY < 0)
+				velocityY = -velocityY / 4;
+			velocityY = MIN(4096, velocityY + 448);
+			directionY = 1;
+		}
+		if ((left || right) && ABS(velocityX) / 2 > ABS(velocityY))
+			velocityY = ABS(velocityX) * directionY / 2;
+	}
+	y = CLIP<int>(y + velocityY / 512, 48, 178);
+}
+
+static void spawnLevel1Shot(RA2PSXLevel1Shot *shots, int aimX, int aimY) {
+	int slot = -1;
+	for (int i = 0; i < 8; ++i) {
+		if (!shots[i].active) {
+			slot = i;
+			break;
+		}
+	}
+	if (slot < 0)
+		return;
+
+	shots[slot].active = true;
+	shots[slot].progress = 400;
+	shots[slot].targetX = (aimX - 160) * 18000.0f / 640.0f;
+	shots[slot].targetY = (aimY - 120) * 18000.0f / 640.0f;
+}
+
+static void updateLevel1Shots(RA2PSXLevel1Shot *shots) {
+	for (int i = 0; i < 8; ++i) {
+		if (!shots[i].active)
+			continue;
+		shots[i].progress += 200;
+		if (shots[i].progress > 4399)
+			shots[i].active = false;
+	}
+}
+
+static void renderLevel1Shots(RA2PSXTinyGLRenderer &renderer, const RA2PSXModel &laser,
+		const RA2PSXLevel1Shot *shots) {
+	for (int shotIndex = 0; shotIndex < 8; ++shotIndex) {
+		const RA2PSXLevel1Shot &shot = shots[shotIndex];
+		if (!shot.active || shot.progress >= 4000)
+			continue;
+		const float progress = shot.progress / 4096.0f;
+		for (int laserIndex = 0; laserIndex < 3; ++laserIndex) {
+			const float *start = kLevel1LaserStart[laserIndex];
+			const float directionX = shot.targetX - start[0];
+			const float directionY = shot.targetY - start[1];
+			const float directionZ = 18000.0f - start[2];
+			renderer.renderPerspectiveModel(laser,
+					start[0] + directionX * progress,
+					start[1] + directionY * progress,
+					start[2] + directionZ * progress,
+					directionX, directionY, directionZ, kLevel1LaserRoll[laserIndex], false);
+		}
+	}
+}
+
 static void drawLevel1Effects(Graphics::Surface &surface, const RA2PSXLevel1UI &ui,
-		const RA2PSXLevel1Enemy *enemies, const RA2PSXLevel1Explosion *explosions,
-		int aimX, int aimY, int fireFrames) {
-	const uint32 red = surface.format.RGBToColor(255, 48, 32);
+		const RA2PSXLevel1Enemy *enemies, const RA2PSXLevel1Explosion *explosions) {
 	const uint32 green = surface.format.RGBToColor(64, 255, 96);
 
 	for (int i = 0; i < 3; ++i) {
@@ -127,19 +241,16 @@ static void drawLevel1Effects(Graphics::Surface &surface, const RA2PSXLevel1UI &
 			ui.drawExplosion(surface, explosions[i].x, explosions[i].y,
 					10 - explosions[i].frames);
 	}
-
-	if (fireFrames > 0) {
-		surface.drawLine(38, surface.h - 1, aimX - 2, aimY, red);
-		surface.drawLine(surface.w - 39, surface.h - 1, aimX + 2, aimY, red);
-	}
 }
 #endif
 
 Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &model,
-		const RA2PSXModel &crosshair, const RA2PSXLevel1UI &ui, int lives, int &score) {
+		const RA2PSXModel &crosshair, const RA2PSXModel &laser,
+		const RA2PSXLevel1UI &ui, int lives, int &score) {
 #ifndef USE_TINYGL
 	(void)model;
 	(void)crosshair;
+	(void)laser;
 	(void)ui;
 	(void)lives;
 	(void)score;
@@ -163,24 +274,37 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &model,
 
 	RA2PSXLevel1Enemy enemies[3];
 	RA2PSXLevel1Explosion explosions[3];
+	RA2PSXLevel1Shot shots[8];
 	int aimX = 160;
 	int aimY = 113;
+	int aimVelocityX = 0;
+	int aimVelocityY = 0;
+	int aimDirectionX = 0;
+	int aimDirectionY = 0;
 	int shield = 100;
 	int spawnDelay = 0;
 	int spawnRange = 80;
 	int spawnBase = 60;
 	int nextSpawnAdjustment = 0;
 	int lastFrame = -1;
-	int lastShotFrame = -10;
-	int fireFrames = 0;
+	int lastShotFrame = -4;
 	bool moveLeft = false;
 	bool moveRight = false;
 	bool moveUp = false;
 	bool moveDown = false;
+	bool actionLeft = false;
+	bool actionRight = false;
+	bool actionUp = false;
+	bool actionDown = false;
+	int joystickAxisX = 0;
+	int joystickAxisY = 0;
 	bool mouseFire = false;
 	bool keyFire = false;
+	bool actionFire = false;
 	bool fireRequested = false;
 	Level1Result result = kLevel1Complete;
+	const int joystickDeadzone = MIN<int>(Common::JOYAXIS_MAX,
+			MAX(0, ConfMan.getInt("joystick_deadzone")) * 1000);
 
 	const bool cursorWasVisible = CursorMan.isVisible();
 	CursorMan.showMouse(false);
@@ -194,6 +318,8 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &model,
 			case Common::EVENT_MOUSEMOVE:
 				aimX = CLIP<int>(event.mouse.x, 30, 290);
 				aimY = CLIP<int>(event.mouse.y, 48, 178);
+				aimVelocityX = aimVelocityY = 0;
+				aimDirectionX = aimDirectionY = 0;
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				aimX = CLIP<int>(event.mouse.x, 30, 290);
@@ -238,6 +364,61 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &model,
 						event.kbd.keycode == Common::KEYCODE_RETURN)
 					keyFire = false;
 				break;
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_END: {
+				const bool pressed = event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START;
+				switch (event.customType) {
+				case kScummActionInsaneLeft:
+					actionLeft = pressed;
+					break;
+				case kScummActionInsaneRight:
+					actionRight = pressed;
+					break;
+				case kScummActionInsaneUp:
+					actionUp = pressed;
+					break;
+				case kScummActionInsaneDown:
+					actionDown = pressed;
+					break;
+				case kScummActionInsaneAttack:
+					actionFire = pressed;
+					if (pressed)
+						fireRequested = true;
+					break;
+				case kScummActionInsaneBack:
+					if (pressed)
+						result = kLevel1Quit;
+					break;
+				default:
+					break;
+				}
+				break;
+			}
+			case Common::EVENT_CUSTOM_BACKEND_ACTION_AXIS: {
+				const int axisPosition = event.joystick.position == Common::JOYAXIS_MIN ?
+						Common::JOYAXIS_MAX : event.joystick.position;
+				switch (event.customType) {
+				case kScummBackendActionRebel2AxisUp:
+					if (event.joystick.position != 0 || joystickAxisY <= 0)
+						joystickAxisY = -axisPosition;
+					break;
+				case kScummBackendActionRebel2AxisDown:
+					if (event.joystick.position != 0 || joystickAxisY >= 0)
+						joystickAxisY = axisPosition;
+					break;
+				case kScummBackendActionRebel2AxisLeft:
+					if (event.joystick.position != 0 || joystickAxisX <= 0)
+						joystickAxisX = -axisPosition;
+					break;
+				case kScummBackendActionRebel2AxisRight:
+					if (event.joystick.position != 0 || joystickAxisX >= 0)
+						joystickAxisX = axisPosition;
+					break;
+				default:
+					break;
+				}
+				break;
+			}
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RETURN_TO_LAUNCHER:
 				_vm->quitGame();
@@ -260,10 +441,12 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &model,
 			const int currentFrame = decoder.getCurFrame();
 			while (lastFrame < currentFrame && shield > 0) {
 				++lastFrame;
-				aimX = CLIP<int>(aimX + ((int)moveRight - (int)moveLeft) * 6,
-						30, 290);
-				aimY = CLIP<int>(aimY + ((int)moveDown - (int)moveUp) * 6,
-						48, 178);
+				updateLevel1Aim(aimX, aimY, aimVelocityX, aimVelocityY,
+						aimDirectionX, aimDirectionY,
+						moveLeft || actionLeft || joystickAxisX < -joystickDeadzone,
+						moveRight || actionRight || joystickAxisX > joystickDeadzone,
+						moveUp || actionUp || joystickAxisY < -joystickDeadzone,
+						moveDown || actionDown || joystickAxisY > joystickDeadzone);
 
 				if (lastFrame >= nextSpawnAdjustment) {
 					nextSpawnAdjustment = lastFrame + 20;
@@ -285,8 +468,7 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &model,
 					spawnDelay = spawnBase + _vm->_rnd.getRandomNumber(spawnRange - 1);
 				}
 
-				if (fireFrames > 0)
-					--fireFrames;
+				updateLevel1Shots(shots);
 				for (int i = 0; i < 3; ++i) {
 					if (explosions[i].frames > 0)
 						--explosions[i].frames;
@@ -315,12 +497,13 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &model,
 				break;
 			}
 
-			const bool heldFire = mouseFire || keyFire;
-			if ((fireRequested || (heldFire && currentFrame - lastShotFrame >= 5)) &&
-					currentFrame - lastShotFrame >= 3) {
+			const bool heldFire = mouseFire || keyFire || actionFire;
+			const bool shootRequested = fireRequested ||
+					(heldFire && currentFrame - lastShotFrame >= 12);
+			fireRequested = false;
+			if (shootRequested && currentFrame - lastShotFrame >= 4) {
 				lastShotFrame = currentFrame;
-				fireRequested = false;
-				fireFrames = 2;
+				spawnLevel1Shot(shots, aimX, aimY);
 				int hitEnemy = -1;
 				float hitDistance = 1000000.0f;
 				for (int i = 0; i < 3; ++i) {
@@ -355,11 +538,15 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &model,
 					renderer.renderModel(model, enemies[i].x, enemies[i].y, enemies[i].size,
 							enemies[i].pitch, enemies[i].yaw, enemies[i].roll);
 			}
+			renderLevel1Shots(renderer, laser, shots);
+			const float crosshairX = (aimX - 160) * 620.0f / 640.0f;
+			const float crosshairY = (aimY - 120) * 620.0f / 640.0f;
 			renderer.renderModel(crosshair, aimX, aimY, 31.0f,
-					(aimY - 113) * 0.12f, -(aimX - 160) * 0.10f, 0.0f, false);
+					crosshairY * 720.0f / 4096.0f,
+					-crosshairX * 720.0f / 4096.0f, 0.0f, false);
 			Graphics::Surface output;
 			renderer.finishFrame(output);
-			drawLevel1Effects(output, ui, enemies, explosions, aimX, aimY, fireFrames);
+			drawLevel1Effects(output, ui, enemies, explosions);
 			ui.drawCockpit(output);
 			ui.drawHUD(output, score, lives, shield, currentFrame);
 			g_system->copyRectToScreen(output.getPixels(), output.pitch, 0, 0, output.w, output.h);
