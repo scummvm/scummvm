@@ -327,11 +327,24 @@ enum GraphicIndice {
 #define k77_FirstWallSet 77 // @ C077_GRAPHIC_FIRST_WALL_SET
 #define k86_FirstWallSetDOS 86 // @ M646_GRAPHIC_FIRST_WALL_SET
 #define k90_FirstStairs 90 // @ C090_GRAPHIC_FIRST_STAIRS
+#define k108_FirstStairsDOS 108 // @ M645_GRAPHIC_FIRST_STAIRS
 #define k108_FirstDoorSet 108 // @ C108_GRAPHIC_FIRST_DOOR_SET
+#define k246_FirstDoorSetDOS 246 // @ M633_GRAPHIC_FIRST_DOOR_SET
 #define k120_InscriptionFont 120 // @ C120_GRAPHIC_INSCRIPTION_FONT
+#define k258_InscriptionFontDOS 258 // @ M648_GRAPHIC_INSCRIPTION_FONT
 #define k121_FirstWallOrn 121 // @ C121_GRAPHIC_FIRST_WALL_ORNAMENT
+#define k259_FirstWallOrnDOS 259 // @ M615_GRAPHIC_FIRST_WALL_ORNAMENT
 #define k247_FirstFloorOrn 247 // @ C247_GRAPHIC_FIRST_FLOOR_ORNAMENT
+#define k385_FirstFloorOrnDOS 385 // @ M616_GRAPHIC_FIRST_FLOOR_ORNAMENT
+#define k439_DoorMaskDestroyedDOS 439 // @ M649_GRAPHIC_DOOR_MASK_DESTROYED
 #define k303_FirstDoorOrn 303 // @ C303_GRAPHIC_FIRST_DOOR_ORNAMENT
+#define k441_FirstDoorOrnDOS 441 // @ M617_GRAPHIC_FIRST_DOOR_ORNAMENT
+#define k453_FirstDoorButtonDOS 453 // @ M634_GRAPHIC_FIRST_DOOR_BUTTON
+#define k454_FirstProjectileDOS 454 // @ M613_GRAPHIC_FIRST_PROJECTILE
+#define k486_FirstExplosionDOS 486 // @ M614_GRAPHIC_FIRST_EXPLOSION
+#define k489_FirstExplosionPatternDOS 489 // @ M636_GRAPHIC_FIRST_EXPLOSION_PATTERN
+#define k498_FirstObjectDOS 498 // @ M612_GRAPHIC_FIRST_OBJECT
+#define k584_FirstCreatureDOS 584 // @ M618_GRAPHIC_FIRST_CREATURE
 #define k695_FontDOS 695 // @ M653_GRAPHIC_FONT
 #define k730_DerivedBitmapMaximumCount 730 // @ C730_DERIVED_BITMAP_MAXIMUM_COUNT
 
@@ -744,7 +757,7 @@ public:
 	/// Looks up actual decompressed dimensions of a display bitmap buffer
 	bool getBitmapDimensions(const byte *bitmap, uint16 &width, uint16 &height);
 
-	uint16 getFontIndex() const;
+	uint16 getGraphicIndex(uint16 index) const;
 
 	void copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height); // @ F0099_DUNGEONVIEW_CopyBitmapAndFlipHorizontal
 	void drawFloorOrnament(uint16 floorOrnOrdinal, ViewFloor viewFloorIndex); // @ F0108_DUNGEONVIEW_DrawFloorOrnament
