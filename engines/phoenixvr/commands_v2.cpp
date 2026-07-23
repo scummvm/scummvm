@@ -153,6 +153,16 @@ struct Delay_Sound : public Command {
 	}
 };
 
+struct Stop_Delay : public Command {
+	Common::String name;
+	Stop_Delay(const Common::Array<Common::String> &args) : name(args[0]) {}
+
+	void exec(ExecutionContext &ctx) const override {
+		warning("stop delay %s stub", name.c_str());
+		g_engine->stopSound(name);
+	}
+};
+
 struct Play_3DSound : public Command {
 	Common::String path;
 	int angle1;
@@ -482,7 +492,6 @@ static const char *const kUnhandledV2Commands[] = {
 	"SPRITE_SCREEN_MODE",
 	"SPRITE_WARP",
 	"SPRITE_WARP_MODE",
-	"STOP_DELAY",
 	"STOP_MUSIC",
 	"UNDERWATER_EFFECT",
 	"ZONES_CLICK_MODE"};
@@ -521,6 +530,7 @@ static const char *const kUnhandledV2Commands[] = {
 	E(Start_Timer)      \
 	E(Stop_All_Sounds)  \
 	E(Stop_AnimBloc)    \
+	E(Stop_Delay)       \
 	E(Stop_Light)       \
 	E(Stop_Sound)       \
 	E(Stop_Timer)       \
