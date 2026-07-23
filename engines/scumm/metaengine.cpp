@@ -1075,6 +1075,8 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 
 	Common::KeymapArray keymaps = MetaEngine::initKeymaps(target);
 	Common::String gameId = ConfMan.get("gameid", target);
+	const bool isRebel2PSX = gameId == "rebel2" &&
+			parsePlatform(ConfMan.get("platform", target)) == kPlatformPSX;
 	Action *act;
 
 	if (gameId == "rebel1" || gameId == "rebel2") {
@@ -1305,10 +1307,16 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_A");
 		rebel2Keymap->addAction(act);
 
-		act = new Action("RA2COVER", _("Cover"));
+		act = new Action("RA2COVER", isRebel2PSX ? _("Change view") : _("Cover"));
 		act->setCustomEngineActionEvent(kScummActionInsaneSwitch);
-		act->addDefaultInputMapping("JOY_X");
-		act->addDefaultInputMapping("JOY_Y");
+		if (isRebel2PSX) {
+			act->addDefaultInputMapping("TAB");
+			act->addDefaultInputMapping("JOY_Y");
+			act->addDefaultInputMapping("JOY_BACK");
+		} else {
+			act->addDefaultInputMapping("JOY_X");
+			act->addDefaultInputMapping("JOY_Y");
+		}
 		rebel2Keymap->addAction(act);
 
 		act = new Action("RA2SKIP", _("Skip / back"));

@@ -114,8 +114,8 @@ bool Rebel2PSX::playVideo(const Common::Path &path, int discNumber, bool version
 	return !_vm->shouldQuit();
 }
 
-bool Rebel2PSX::loadLevel1Assets(RA2PSXModel &model, RA2PSXModel &crosshair,
-		RA2PSXModel &laser, RA2PSXLevel1UI &ui) {
+bool Rebel2PSX::loadLevel1Assets(RA2PSXModel &enemy, RA2PSXModel &ship,
+		RA2PSXModel &crosshair, RA2PSXModel &laser, RA2PSXLevel1UI &ui) {
 	Common::SeekableReadStream *stream = openResource(1);
 	if (!stream)
 		return false;
@@ -125,10 +125,12 @@ bool Rebel2PSX::loadLevel1Assets(RA2PSXModel &model, RA2PSXModel &crosshair,
 	if (!loaded)
 		return false;
 
-	Common::Array<byte> modelData;
+	Common::Array<byte> enemyData;
+	Common::Array<byte> shipData;
 	Common::Array<byte> crosshairData;
 	Common::Array<byte> laserData;
-	return archive.getMember("fOFS/TieFighter/main", modelData) && model.load(modelData) &&
+	return archive.getMember("fOFS/TieFighter/main", enemyData) && enemy.load(enemyData) &&
+			archive.getMember("fOFS/Ship", shipData) && ship.load(shipData) &&
 			archive.getMember("fOFS/CrosshairW", crosshairData) && crosshair.load(crosshairData) &&
 			archive.getMember("fOFS/WingLaser", laserData) && laser.load(laserData) &&
 			ui.load(archive);
@@ -136,11 +138,12 @@ bool Rebel2PSX::loadLevel1Assets(RA2PSXModel &model, RA2PSXModel &crosshair,
 
 Common::Error Rebel2PSX::runGame() {
 #ifdef USE_TINYGL
-	RA2PSXModel model;
+	RA2PSXModel enemy;
+	RA2PSXModel ship;
 	RA2PSXModel crosshair;
 	RA2PSXModel laser;
 	RA2PSXLevel1UI ui;
-	if (!loadLevel1Assets(model, crosshair, laser, ui))
+	if (!loadLevel1Assets(enemy, ship, crosshair, laser, ui))
 		return Common::Error(Common::kReadingFailed,
 				_("Could not load the PlayStation Level 1 resources"));
 
@@ -154,7 +157,7 @@ Common::Error Rebel2PSX::runGame() {
 	int lives = 3;
 	int score = 0;
 	while (!_vm->shouldQuit()) {
-		const Level1Result result = playLevel1(model, crosshair, laser, ui, lives, score);
+		const Level1Result result = playLevel1(enemy, ship, crosshair, laser, ui, lives, score);
 		if (result == kLevel1Quit)
 			return Common::kNoError;
 		if (result == kLevel1Error)

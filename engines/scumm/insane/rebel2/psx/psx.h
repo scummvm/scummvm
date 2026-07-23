@@ -129,10 +129,11 @@ private:
 	Common::SeekableReadStream *openResource(int number);
 	Common::SeekableReadStream *openRawFile(const Common::Path &path, int discNumber);
 	bool playVideo(const Common::Path &path, int discNumber, bool version2);
-	bool loadLevel1Assets(RA2PSXModel &model, RA2PSXModel &crosshair,
-			RA2PSXModel &laser, RA2PSXLevel1UI &ui);
-	Level1Result playLevel1(const RA2PSXModel &model, const RA2PSXModel &crosshair,
-			const RA2PSXModel &laser, const RA2PSXLevel1UI &ui, int lives, int &score);
+	bool loadLevel1Assets(RA2PSXModel &enemy, RA2PSXModel &ship,
+			RA2PSXModel &crosshair, RA2PSXModel &laser, RA2PSXLevel1UI &ui);
+	Level1Result playLevel1(const RA2PSXModel &enemy, const RA2PSXModel &ship,
+			const RA2PSXModel &crosshair, const RA2PSXModel &laser,
+			const RA2PSXLevel1UI &ui, int lives, int &score);
 
 	ScummEngine_v7 *_vm;
 };
