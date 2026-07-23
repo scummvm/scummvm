@@ -923,7 +923,7 @@ void DisplayMan::loadGraphics() {
 
 void DisplayMan::unpackGraphics() {
 	uint16 lastGraphicIdx = (_vm->getPlatform() == Common::kPlatformDOS) ? 670 : 532;
-	uint16 fontIdx = getFontIndex();
+	uint16 fontIdx = getGraphicIndex(kDMGraphicIdxFont);
 	uint16 maxBitmapsCount = fontIdx + 1;
 
 	uint32 unpackedBitmapsSize = 0;
@@ -1006,7 +1006,7 @@ void DisplayMan::drawDoorButton(int16 doorButtonOrdinal, DoorButton doorButton) 
 
 		assert(doorButtonOrdinal == 0);
 
-		int16 nativeBitmapIndex = doorButtonOrdinal + kDMGraphicIdxFirstDoorButton;
+		int16 nativeBitmapIndex = doorButtonOrdinal + getGraphicIndex(kDMGraphicIdxFirstDoorButton);
 		int coordSet = _doorButtonCoordSet[doorButtonOrdinal];
 		uint16 *coordSetRedEagle = _doorButtonCoordSets[coordSet][doorButton];
 
@@ -1416,11 +1416,11 @@ byte *DisplayMan::getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int
 	byte *bitmap;
 	int16 derBitmapIndex = (explosionAspIndex * 14) + scale / 2 + kDMDerivedBitmapFirstExplosion - 2;
 	if ((scale == 32) && (explosionAspIndex != kDMExplosionAspectSmoke))
-		bitmap = getNativeBitmapOrGraphic(explosionAspIndex + kDMGraphicIdxFirstExplosion);
+		bitmap = getNativeBitmapOrGraphic(explosionAspIndex + getGraphicIndex(kDMGraphicIdxFirstExplosion));
 	else if (isDerivedBitmapInCache(derBitmapIndex))
 		bitmap = getDerivedBitmap(derBitmapIndex);
 	else {
-		byte *nativeBitmap = getNativeBitmapOrGraphic(MIN(explosionAspIndex, (uint16)kDMExplosionAspectPoison) + kDMGraphicIdxFirstExplosion);
+		byte *nativeBitmap = getNativeBitmapOrGraphic(MIN(explosionAspIndex, (uint16)kDMExplosionAspectPoison) + getGraphicIndex(kDMGraphicIdxFirstExplosion));
 		bitmap = getDerivedBitmap(derBitmapIndex);
 		blitToBitmapShrinkWithPalChange(nativeBitmap, bitmap, explAsp->_byteWidth * 2, explAsp->_height, pixelWidth * 2, height,
 			(explosionAspIndex == kDMExplosionAspectSmoke) ? _palChangeSmoke : _palChangesNoChanges);
@@ -1519,8 +1519,42 @@ uint16 DisplayMan::getPixelHeight(uint16 index) {
 	return readUint16(data + 2, _vm->getPlatform());
 }
 
-uint16 DisplayMan::getFontIndex() const {
-	return (_vm->getPlatform() == Common::kPlatformDOS) ? k695_FontDOS : kDMGraphicIdxFont;
+uint16 DisplayMan::getGraphicIndex(uint16 index) const {
+	if (_vm->getPlatform() != Common::kPlatformDOS)
+		return index;
+
+	switch (index) {
+	case k90_FirstStairs:
+		return k108_FirstStairsDOS;
+	case k108_FirstDoorSet:
+		return k246_FirstDoorSetDOS;
+	case k120_InscriptionFont:
+		return k258_InscriptionFontDOS;
+	case k121_FirstWallOrn:
+		return k259_FirstWallOrnDOS;
+	case k247_FirstFloorOrn:
+		return k385_FirstFloorOrnDOS;
+	case kDMGraphicIdxDoorMaskDestroyed:
+		return k439_DoorMaskDestroyedDOS;
+	case k303_FirstDoorOrn:
+		return k441_FirstDoorOrnDOS;
+	case kDMGraphicIdxFirstDoorButton:
+		return k453_FirstDoorButtonDOS;
+	case kDMGraphicIdxFirstProjectile:
+		return k454_FirstProjectileDOS;
+	case kDMGraphicIdxFirstExplosion:
+		return k486_FirstExplosionDOS;
+	case kDMGraphicIdxFirstExplosionPattern:
+		return k489_FirstExplosionPatternDOS;
+	case kDMGraphicIdxFirstObject:
+		return k498_FirstObjectDOS;
+	case kDMGraphicIdxFirstCreature:
+		return k584_FirstCreatureDOS;
+	case kDMGraphicIdxFont:
+		return k695_FontDOS;
+	default:
+		return index;
+	}
 }
 
 void DisplayMan::copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height) {
@@ -2899,7 +2933,7 @@ void DisplayMan::loadCurrentMapGraphics() {
 	copyBitmapAndFlipHorizontal(_bitmapWallD0RNative = _bitmapWallSetWallD0R, _bitmapWallD0LFlipped,
 									getPixelWidth(wallD0RIdx) / 2, getPixelHeight(wallD0RIdx));
 
-	int16 val = dungeon._currMap->_wallSet * k18_StairsGraphicCount + k90_FirstStairs;
+	int16 val = dungeon._currMap->_wallSet * k18_StairsGraphicCount + getGraphicIndex(k90_FirstStairs);
 	_stairsNativeBitmapIndexUpFrontD3L = val++;
 	_stairsNativeBitmapIndexUpFrontD3C = val++;
 	_stairsNativeBitmapIndexUpFrontD2L = val++;
@@ -2929,7 +2963,7 @@ void DisplayMan::loadCurrentMapGraphics() {
 	doorSets[0] = dungeon._currMap->_doorSet0;
 	doorSets[1] = dungeon._currMap->_doorSet1;
 	for (uint16 doorSet = 0; doorSet <= 1; doorSet++) {
-		int16 counter = k108_FirstDoorSet + (doorSets[doorSet] * k3_DoorSetGraphicsCount);
+		int16 counter = getGraphicIndex(k108_FirstDoorSet) + (doorSets[doorSet] * k3_DoorSetGraphicsCount);
 		_doorNativeBitmapIndexFrontD3LCR[doorSet] = counter++;
 		_doorNativeBitmapIndexFrontD2LCR[doorSet] = counter++;
 		_doorNativeBitmapIndexFrontD1LCR[doorSet] = counter++;
@@ -2944,7 +2978,7 @@ void DisplayMan::loadCurrentMapGraphics() {
 	for (int16 ornamentIndex = 0; ornamentIndex <= currMap._wallOrnCount; ornamentIndex++) {
 		uint16 greenOrn = _currMapWallOrnIndices[ornamentIndex];
 		/* Each wall ornament has 2 graphics */
-		_currMapWallOrnInfo[ornamentIndex].nativeIndice = k121_FirstWallOrn + greenOrn * 2;
+		_currMapWallOrnInfo[ornamentIndex].nativeIndice = getGraphicIndex(k121_FirstWallOrn) + greenOrn * 2;
 		for (int16 ornamentCounter = 0; ornamentCounter < k3_AlcoveOrnCount; ornamentCounter++) {
 			if (greenOrn == g192_AlcoveOrnIndices[ornamentCounter]) {
 				_currMapAlcoveOrnIndices[alcoveCount++] = ornamentIndex;
@@ -2973,16 +3007,14 @@ void DisplayMan::loadCurrentMapGraphics() {
 
 	for (uint16 i = 0; i < currMap._floorOrnCount; ++i) {
 		uint16 ornIndice = _currMapFloorOrnIndices[i];
-		uint16 nativeIndice = k247_FirstFloorOrn + ornIndice * 6;
+		uint16 nativeIndice = getGraphicIndex(k247_FirstFloorOrn) + ornIndice * 6;
 		_currMapFloorOrnInfo[i].nativeIndice = nativeIndice;
 		_currMapFloorOrnInfo[i].coordinateSet = floorOrnCoordSetIndices[ornIndice];
 	}
 
-
-
 	for (uint16 i = 0; i < currMap._doorOrnCount; ++i) {
 		uint16 ornIndice = _currMapDoorOrnIndices[i];
-		_currMapDoorOrnInfo[i].nativeIndice = k303_FirstDoorOrn + ornIndice;
+		_currMapDoorOrnInfo[i].nativeIndice = getGraphicIndex(k303_FirstDoorOrn) + ornIndice;
 		_currMapDoorOrnInfo[i].coordinateSet = doorOrnCoordIndices[ornIndice];
 
 		uint16 *coords = _doorOrnCoordSets[_currMapDoorOrnInfo[i].coordinateSet][0];
@@ -3121,7 +3153,7 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 			if (isInscription) {
 				blitToBitmap(_bitmapWallSetD1LCR, _bitmapViewport, boxWallPatchBehindInscription, 94, 28, _frameWalls163[kDMViewSquareD1C]._srcByteWidth, k112_byteWidthViewport, kDMColorNoTransparency, _frameWalls163[kDMViewSquareD1C]._srcHeight, k136_heightViewport);
 				byte *inscrString = inscriptionString;
-				byte *L0092_puc_Bitmap = getNativeBitmapOrGraphic(k120_InscriptionFont);
+				byte *L0092_puc_Bitmap = getNativeBitmapOrGraphic(getGraphicIndex(k120_InscriptionFont));
 				int16 textLineIndex = 0;
 				do {
 					int16 characterCount = 0;
@@ -3611,7 +3643,7 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 				if (aspectIndex >= k85_ObjAspectCount)
 					continue;
 				objectAspect = &(_objectAspects209[aspectIndex]);
-				AL_4_nativeBitmapIndex = kDMGraphicIdxFirstObject + objectAspect->_firstNativeBitmapRelativeIndex;
+				AL_4_nativeBitmapIndex = getGraphicIndex(kDMGraphicIdxFirstObject) + objectAspect->_firstNativeBitmapRelativeIndex;
 				useAlcoveObjectImage = (L0135_B_DrawAlcoveObjects && getFlag(objectAspect->_graphicInfo, k0x0010_ObjectAlcoveMask) && (viewLane == kDMViewLaneCenter));
 				if (useAlcoveObjectImage)
 					AL_4_nativeBitmapIndex++;
@@ -3802,7 +3834,7 @@ T0115077_DrawSecondHalfSquareCreature:
 		if (!coordinateSet[1])
 			goto T0115126_CreatureNotVisible;
 		creatureGraphicInfoRed = creatureGraphicInfoGreen;
-		AL_4_nativeBitmapIndex = kDMGraphicIdxFirstCreature + ((CreatureAspect *)objectAspect)->_firstNativeBitmapRelativeIndex; /* By default, assume using the front image */
+		AL_4_nativeBitmapIndex = getGraphicIndex(kDMGraphicIdxFirstCreature) + ((CreatureAspect *)objectAspect)->_firstNativeBitmapRelativeIndex; /* By default, assume using the front image */
 		derivedBitmapIndex = ((CreatureAspect *)objectAspect)->_firstDerivedBitmapIndex;
 		int16 sourceByteWidth;
 		int16 sourceHeight;
@@ -3991,7 +4023,7 @@ T0115129_DrawProjectiles:
 				AL_4_projectileAspect = dungeon.getProjectileAspect(projectile->_slot);
 				if (AL_4_projectileAspect < 0) { /* Negative value: projectile aspect is the ordinal of a PROJECTIL_ASPECT */
 					objectAspect = (ObjectAspect *)&_projectileAspect[_vm->ordinalToIndex(-AL_4_projectileAspect)];
-					AL_4_nativeBitmapIndex = ((ProjectileAspect *)objectAspect)->_firstNativeBitmapRelativeIndex + kDMGraphicIdxFirstProjectile;
+					AL_4_nativeBitmapIndex = ((ProjectileAspect *)objectAspect)->_firstNativeBitmapRelativeIndex + getGraphicIndex(kDMGraphicIdxFirstProjectile);
 					projectileAspectType = getFlag(((ProjectileAspect *)objectAspect)->_graphicInfo, k0x0003_ProjectileAspectTypeMask);
 
 					bool doNotScaleWithKineticEnergy = !getFlag(((ProjectileAspect *)objectAspect)->_graphicInfo, k0x0100_ProjectileScaleWithKineticEnergyMask);
@@ -4096,7 +4128,7 @@ T0115129_DrawProjectiles:
 					projectileCoordinates[1] = 47;
 					coordinateSet = projectileCoordinates;
 					objectAspect = &_objectAspects209[AL_4_projectileAspect];
-					AL_4_nativeBitmapIndex = objectAspect->_firstNativeBitmapRelativeIndex + kDMGraphicIdxFirstObject;
+					AL_4_nativeBitmapIndex = objectAspect->_firstNativeBitmapRelativeIndex + getGraphicIndex(kDMGraphicIdxFirstObject);
 					drawProjectileAsObject = true;
 					goto T0115015_DrawProjectileAsObject; /* Go to code section to draw an object. Once completed, it jumps back to T0115171_BackFromT0115015_DrawProjectileAsObject below */
 				}
@@ -4135,7 +4167,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 				} else {
 					if (AL_4_explosionType == kDMExplosionTypeRebirthStep1) {
 						objectAspect = (ObjectAspect *)&_projectileAspect[_vm->ordinalToIndex(-dungeon.getProjectileAspect(_vm->_thingExplLightningBolt))];
-						bitmapRedBanana = getNativeBitmapOrGraphic(((ProjectileAspect *)objectAspect)->_firstNativeBitmapRelativeIndex + (kDMGraphicIdxFirstProjectile + 1));
+						bitmapRedBanana = getNativeBitmapOrGraphic(((ProjectileAspect *)objectAspect)->_firstNativeBitmapRelativeIndex + (getGraphicIndex(kDMGraphicIdxFirstProjectile) + 1));
 						explosionCoordinates = rebirthStep1ExplosionCoordinates[AL_1_viewSquareExplosionIndex - 3];
 						byteWidth = getScaledDimension((((ProjectileAspect *)objectAspect)->_byteWidth), explosionCoordinates[2]);
 						heightRedEagle = getScaledDimension((((ProjectileAspect *)objectAspect)->_height), explosionCoordinates[2]);
@@ -4165,7 +4197,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 						AL_4_explosionAspectIndex++; /* Use third graphic in the pattern for large explosion attack */
 				}
 				isDerivedBitmapInCache(kDMDerivedBitmapViewport);
-				bitmapRedBanana = getNativeBitmapOrGraphic(AL_4_explosionAspectIndex + kDMGraphicIdxFirstExplosionPattern);
+				bitmapRedBanana = getNativeBitmapOrGraphic(AL_4_explosionAspectIndex + getGraphicIndex(kDMGraphicIdxFirstExplosionPattern));
 				if (smoke) {
 					blitToBitmapShrinkWithPalChange(bitmapRedBanana, _tmpBitmap, 48, 32, 48, 32, _palChangeSmoke);
 					bitmapRedBanana = _tmpBitmap;
