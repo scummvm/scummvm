@@ -104,7 +104,17 @@ static int room_picture_load(Room *room, int room_id, Buffer *picture, int load_
 
 	xs = art.xs;
 	ys = art.ys;
-	picture_size = xs * ys;
+
+	// The picture record's own declared uncompressed size (from the resource file's pack
+	// directory, read by loader_open() before this point) is authoritative for how many bytes
+	// the PFAB decompressor will actually produce. It's normally equal to xs*ys, but some
+	// full-screen title/cutscene art is packed with extra trailing rows beyond the picture's
+	// logical xs*ys footprint (e.g. a 320x200 packed image whose ART header only declares a
+	// 320x156 visible picture). The memory-to-memory decompressor (pFABexp2/fab_explode) has
+	// no concept of a caller-supplied output limit -- it just keeps writing until it hits the
+	// compressed stream's own end marker -- so under-sizing the destination buffer here causes
+	// a heap buffer overflow in exp_putbyte().
+	picture_size = MAX((long)xs * ys, load_handle.pack.strategy[load_handle.pack_list_marker].size);
 
 	// Copy the cycle list
 	room->cycle_list = art.cycle_list;
@@ -136,7 +146,13 @@ static int room_picture_load(Room *room, int room_id, Buffer *picture, int load_
 		}
 	}
 
-	buffer_init(picture, xs, ys);
+	// Allocate to picture_size (which may be larger than xs*ys -- see above) rather than via
+	// buffer_init(), while still reporting the logical xs/ys to the rest of the engine, so
+	// drawing/compositing code continues to treat this as an xs x ys picture; any extra bytes
+	// are trailing padding written by the decompressor but otherwise unused.
+	picture->data = (byte *)mem_get(picture_size);
+	picture->x = xs;
+	picture->y = ys;
 	if (picture->data == NULL) {
 		room_load_error = 3;
 		goto done;
