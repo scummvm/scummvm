@@ -765,9 +765,13 @@
   `shots2` value scores every raw hit; a nonzero value scores only groups that
   reach the required hit count. Class-1 points are subtracted from class-0
   points. The result screen draws the configured goal, final score, and target
-  marks, then sets the caller's milestone only when the score reaches the goal.
-  Escape exits without setting it; F1 opens help table `0x1a7`, and the hidden
-  keyword `paradise` sets the milestone and exits immediately.
+  marks. `RunKdShootingGalleryScene` loads each mark's logical X coordinate into
+  EDX, beginning at `0x6c` and advancing by the bitmap width plus one; ECX holds
+  the fixed class row at `0x8f` or `0x7a`. The result flame animation uses the
+  same display-update convention at logical `(0x6e, 0x84)`. The scene sets the
+  caller's milestone only when the score reaches the goal. Escape exits without
+  setting it; F1 opens help table `0x1a7`, and the hidden keyword `paradise`
+  sets the milestone and exits immediately.
 - `KD.PRJ` supplies the per-frame cue/volume pairs. The gallery separately
   fires `KD10.WAV` and `KD11.WAV` at frame 118, `KD7.WAV` at frame 995,
   `KD12.WAV` at frame 1005, stops cues 10, 7, and the looping `KD9.WAV`
