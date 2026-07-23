@@ -221,7 +221,9 @@ uint32 ShapeCastMember::getCastDataSize() {
 	// Total : 17 bytes
 	// For Director 4 : 1 byte extra for casttype (See Cast::loadCastData())
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
-		return 17 + 1;
+		// writeCAStResource() writes 1 byte for the cast type plus 1 for
+		// _flags1 when it isn't 0xFF
+		return 17 + 1 + (_flags1 != 0xFF ? 1 : 0);
 	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer1100) {
 		return 17;
 	} else {
@@ -231,11 +233,10 @@ uint32 ShapeCastMember::getCastDataSize() {
 }
 
 void ShapeCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
-	writeStream->writeByte(0);
-	writeStream->writeByte(1);
+	writeStream->writeUint16BE((uint16)_shapeType);
 
 	Movie::writeRect(writeStream, _initialRect);
-	writeStream->writeUint16LE(_pattern);
+	writeStream->writeUint16BE(_pattern);
 
 	// The foreground and background colors are transformed
 	// Need to retrieve the original colors for saving

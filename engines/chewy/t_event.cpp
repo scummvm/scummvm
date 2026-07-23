@@ -1217,7 +1217,8 @@ void endDialogCloseup(int16 diaNr, int16 blkNr, int16 strEndNr) {
 		_G(flags).AutoAniPlay = false;
 		break;
 
-	case 5:
+	case 5:  // R11_BORK_DIA
+		aadWait(-1);
 		autoMove(6, P_CHEWY);
 		break;
 
@@ -1284,6 +1285,9 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 	case 30000:
 	case 25:
 	case 34:
+	case 37:   // R17: energy_lever()
+	case 38:   // R17: energy_lever()
+	case 60:   // R17: get_oel()
 	case 62:   // R29: use_pumpe()
 	case 111:  // R12: use_linke_rohr()
 	case 114:  // R12: Chewy-as-Bork with terminal
@@ -1372,7 +1376,6 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 		break;
 
 	case 61:
-	case R14_HERMIT_DIA:
 	case R8_NIMOYANER1_DIA:
 	case R8_NIMOYANER2_DIA:
 	case R11_TERMINAL_DIA:
@@ -1389,7 +1392,13 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 
 	case R11_BORK_DIA:
 		oldFormat = true;
-		if (personNr == 1) {
+		if (personNr == P_CHEWY) {
+			if (mode == AAD_STR_START) {
+				start_spz(CH_BORK_TALK, 255, ANI_FRONT, P_CHEWY);
+			} else {
+				stop_spz();
+			}
+		} else if (personNr == 1) {
 			if (mode == AAD_STR_START) {
 				_G(talk_start_ani) = 9;
 				_G(talk_hide_static) = 8;
@@ -1426,6 +1435,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 
 	case 24:
 	case 26:
+	case R14_HERMIT_DIA:
 		oldFormat = true;
 		switch (personNr) {
 		case 0:
