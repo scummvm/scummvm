@@ -367,10 +367,7 @@ private:
 	int32  _field_60;
 	int32  _actionIdx3;
 	// TODO field_68 till field_617
-	ResourceId _walkingSound1;
-	ResourceId _walkingSound2;
-	ResourceId _walkingSound3;
-	ResourceId _walkingSound4;
+	ResourceId _walkingSounds[4];
 	uint32  _field_64C;
 	uint32  _field_650;
 	ResourceId  _graphicResourceIds[55];
