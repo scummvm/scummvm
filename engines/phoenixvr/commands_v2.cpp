@@ -126,18 +126,19 @@ struct Play_Amb : public Command {
 	int loops;
 	Play_Amb(const Common::Array<Common::String> &args) : path(args[0]), volume(atoi(args[1].c_str())), loops(atoi(args[2].c_str())) {}
 	void exec(ExecutionContext &ctx) const override {
-		g_engine->playSound(path, Audio::Mixer::kMusicSoundType, 100, loops);
+		g_engine->playSound(path, Audio::Mixer::kMusicSoundType, volume, loops);
 	}
 };
 
 struct Delay_Sound : public Command {
 	Common::String path;
-	int delay;
+	float delay;
 	int volume;
 	int loops;
-	Delay_Sound(const Common::Array<Common::String> &args) : path(args[0]), delay(atoi(args[1].c_str())), volume(atoi(args[2].c_str())), loops(atoi(args[3].c_str())) {}
+	Delay_Sound(const Common::Array<Common::String> &args) : path(args[0]), delay(atof(args[1].c_str())), volume(atoi(args[2].c_str())), loops(atoi(args[3].c_str())) {}
 	void exec(ExecutionContext &ctx) const override {
-		g_engine->playSound(path, Audio::Mixer::kMusicSoundType, 100, loops);
+		warning("delay sound stub, delay: %gs", delay);
+		g_engine->playSound(path, Audio::Mixer::kSFXSoundType, volume, loops);
 	}
 };
 
