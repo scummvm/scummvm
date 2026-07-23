@@ -263,6 +263,101 @@ bool decodeBitmapAssetSequence(Common::SeekableReadStream &stream,
 	return true;
 }
 
+bool decodePresentationFrameRegionTable(Common::SeekableReadStream &stream,
+		PresentationFrameRegionTable &table) {
+	// LoadPresentationFrameRegionTable at 0x35615 skips the 0x64-byte tool
+	// header, then separates frameCount * 6 state bytes from 9-byte regions.
+	table.frames.clear();
+	if (stream.size() < 0x68)
+		return false;
+
+	stream.seek(0x64);
+	const uint32 frameCount = stream.readUint32LE();
+	if (frameCount == 0 || frameCount > 10000 ||
+			(uint64)0x68 + (uint64)frameCount * 6 > (uint64)stream.size())
+		return false;
+
+	Common::Array<byte> frameRecords;
+	frameRecords.resize(frameCount * 6);
+	if (stream.read(frameRecords.data(), frameRecords.size()) != frameRecords.size())
+		return false;
+
+	uint regionCount = 0;
+	for (uint frame = 0; frame < frameCount; ++frame) {
+		const byte *record = frameRecords.data() + frame * 6;
+		const uint firstRegion = READ_LE_UINT16(record + 4);
+		regionCount = MAX<uint>(regionCount, firstRegion + record[1]);
+	}
+	if ((uint64)stream.pos() + (uint64)regionCount * 9 > (uint64)stream.size())
+		return false;
+
+	Common::Array<byte> regionRecords;
+	regionRecords.resize(regionCount * 9);
+	if (!regionRecords.empty() &&
+			stream.read(regionRecords.data(), regionRecords.size()) != regionRecords.size())
+		return false;
+
+	table.frames.resize(frameCount);
+	for (uint frame = 0; frame < frameCount; ++frame) {
+		const byte *record = frameRecords.data() + frame * 6;
+		PresentationFrameRegion &destination = table.frames[frame];
+		destination.state = record[0];
+		destination.auxiliary = record[2];
+		const uint firstRegion = READ_LE_UINT16(record + 4);
+		for (uint regionIndex = 0; regionIndex < record[1]; ++regionIndex) {
+			const byte *source =
+				regionRecords.data() + (firstRegion + regionIndex) * 9;
+			PresentationRegion region;
+			region.type = source[0];
+			region.coordinate1 = (int16)READ_LE_UINT16(source + 1);
+			region.coordinate2 = (int16)READ_LE_UINT16(source + 3);
+			region.extent1 = (int16)READ_LE_UINT16(source + 5);
+			region.extent2 = (int16)READ_LE_UINT16(source + 7);
+			destination.regions.push_back(region);
+		}
+	}
+	return !stream.err();
+}
+
+bool decodePresentationFrameAudioMap(Common::SeekableReadStream &stream,
+		uint frameCount, PresentationFrameAudioMap &map) {
+	// LoadPresentationFrameAudioCueMap at 0x3574a reads the 16-bit rate and
+	// optional 16-bit frame count, 60-byte source paths, then one
+	// cue-index/volume pair for every presentation frame.
+	map = PresentationFrameAudioMap();
+	if (stream.size() < 0x6c)
+		return false;
+
+	stream.seek(0x64);
+	map.frameRate = stream.readUint16LE();
+	const uint16 storedFrameCount = stream.readUint16LE();
+	const uint32 soundCount = stream.readUint32LE();
+	if ((storedFrameCount != 0 && storedFrameCount != frameCount) ||
+			soundCount > 256 ||
+			(uint64)stream.pos() + (uint64)soundCount * 60 +
+				(uint64)frameCount * 2 > (uint64)stream.size())
+		return false;
+
+	for (uint sound = 0; sound < soundCount; ++sound) {
+		char path[60];
+		if (stream.read(path, sizeof(path)) != sizeof(path))
+			return false;
+		uint length = 0;
+		while (length < sizeof(path) && path[length] != '\0')
+			++length;
+		map.sounds.push_back(Common::String(path, path + length));
+	}
+
+	map.cues.resize(frameCount);
+	for (uint frame = 0; frame < frameCount; ++frame) {
+		const byte soundIndex = stream.readByte();
+		map.cues[frame].volume = stream.readByte();
+		if (soundIndex != 0xff && soundIndex < soundCount)
+			map.cues[frame].soundIndex = soundIndex;
+	}
+	return !stream.err();
+}
+
 AssetLibrary::AssetLibrary() : _modernFormat(false) {
 }
 

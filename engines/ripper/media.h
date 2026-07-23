@@ -121,6 +121,8 @@ public:
 		uint16 *command = nullptr, uint boundedLoopStartFrame = 0xffffffff);
 	bool playCombatSequence(const Common::String &path,
 		MediaSequenceCallback *callback, uint16 *command = nullptr);
+	bool playShootingGallerySequence(const Common::String &path,
+		MediaSequenceCallback *callback, uint16 *command = nullptr);
 	bool playTransparentSmackerOverlay(const Common::String &path, int x, int y);
 	void fadePalette(bool fadeIn, uint stepCount);
 	bool playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
@@ -143,6 +145,8 @@ private:
 	bool playAudioClip(const Common::String &path, Audio::SoundHandle &handle,
 		Audio::Mixer::SoundType soundType, uint volumePercent, bool loop,
 		const char *description);
+	bool playScaledInteractiveSequence(const Common::String &path,
+		const char *description, MediaSequenceCallback *callback, uint16 *command);
 	bool playSmacker(Common::SeekableReadStream *stream, const Common::String &name,
 		const SmackerPlaybackRequest &request);
 	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name,

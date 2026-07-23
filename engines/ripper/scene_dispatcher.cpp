@@ -33,6 +33,7 @@
 #include "ripper/puzzles/clock.h"
 #include "ripper/puzzles/crystal.h"
 #include "ripper/puzzles/gc_csh.h"
+#include "ripper/puzzles/kd_shooting_gallery.h"
 #include "ripper/puzzles/rolodex.h"
 #include "ripper/puzzles/table_gate.h"
 #include "ripper/ripper.h"
@@ -164,6 +165,14 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		debugC(1, kDebugPuzzles,
 			"Ripper: clock puzzle scene action completed result=%d milestone=%u", result, argument);
 		return result != ClockPuzzle::kLoadFailed;
+	}
+	if (action == kSceneActionKdShootingGallery) {
+		KdShootingGallery gallery(engine);
+		const KdShootingGallery::Result result = gallery.run(argument);
+		debugC(1, kDebugPuzzles,
+			"Ripper: KD shooting-gallery scene action completed result=%d milestone=%u",
+			result, argument);
+		return result != KdShootingGallery::kLoadFailed;
 	}
 	if (action == kSceneActionGcCshPuzzle) {
 		GcCshPuzzle puzzle(engine);

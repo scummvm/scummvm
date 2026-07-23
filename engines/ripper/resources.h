@@ -46,6 +46,44 @@ struct BitmapAssetSequence {
 	Common::Array<BitmapAssetFrame> frames;
 };
 
+struct PresentationRegion {
+	byte type;
+	int16 coordinate1;
+	int16 coordinate2;
+	int16 extent1;
+	int16 extent2;
+
+	PresentationRegion() : type(0), coordinate1(0), coordinate2(0),
+		extent1(0), extent2(0) {}
+};
+
+struct PresentationFrameRegion {
+	byte state;
+	byte auxiliary;
+	Common::Array<PresentationRegion> regions;
+
+	PresentationFrameRegion() : state(0), auxiliary(0) {}
+};
+
+struct PresentationFrameRegionTable {
+	Common::Array<PresentationFrameRegion> frames;
+};
+
+struct PresentationFrameAudioCue {
+	int soundIndex;
+	byte volume;
+
+	PresentationFrameAudioCue() : soundIndex(-1), volume(0) {}
+};
+
+struct PresentationFrameAudioMap {
+	uint32 frameRate;
+	Common::Array<Common::String> sounds;
+	Common::Array<PresentationFrameAudioCue> cues;
+
+	PresentationFrameAudioMap() : frameRate(0) {}
+};
+
 struct BitmapFontGlyph {
 	uint32 pixelOffset;
 	byte width;
@@ -72,6 +110,10 @@ struct BitmapFontAsset {
 bool decodeBitmapAsset(Common::SeekableReadStream &stream, BitmapAssetFrame &frame);
 bool decodeBitmapAssetSequence(Common::SeekableReadStream &stream,
 	BitmapAssetSequence &sequence);
+bool decodePresentationFrameRegionTable(Common::SeekableReadStream &stream,
+	PresentationFrameRegionTable &table);
+bool decodePresentationFrameAudioMap(Common::SeekableReadStream &stream,
+	uint frameCount, PresentationFrameAudioMap &map);
 
 class AssetLibrary {
 public:
