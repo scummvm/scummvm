@@ -194,10 +194,13 @@ bool CombatEncounter::loadFrameRegions(const Common::String &name, SceneData &sc
 		const uint firstRegion = READ_LE_UINT16(record + 4);
 		for (uint i = 0; i < record[1]; ++i) {
 			const byte *source = regions.data() + (firstRegion + i) * 9;
-			const int x = (int16)READ_LE_UINT16(source + 1);
-			const int y = (int16)READ_LE_UINT16(source + 3);
-			const int width = (int16)READ_LE_UINT16(source + 5);
-			const int height = (int16)READ_LE_UINT16(source + 7);
+			// The hit-test loop at 0x320d0 compares the first coordinate pair
+			// with the logical pointer Y and the second pair with pointer X.
+			// DAT regions therefore store type, y, x, height, width.
+			const int y = (int16)READ_LE_UINT16(source + 1);
+			const int x = (int16)READ_LE_UINT16(source + 3);
+			const int height = (int16)READ_LE_UINT16(source + 5);
+			const int width = (int16)READ_LE_UINT16(source + 7);
 			if (width <= 0 || height <= 0)
 				continue;
 			HitRegion region;
@@ -210,6 +213,9 @@ bool CombatEncounter::loadFrameRegions(const Common::String &name, SceneData &sc
 	debugC(2, kDebugCombat,
 		"Ripper: loaded combat frame-region table file='%s' frames=%u regions=%u",
 		name.c_str(), frameCount, regionCount);
+	debugC(3, kDebugCombat,
+		"Ripper: decoded combat hit-region records file='%s' layout=type,y,x,height,width",
+		name.c_str());
 	return true;
 }
 
