@@ -1649,7 +1649,7 @@ void Process::moveCharacter(bool usermove) {
 	if (character) {
 		auto region = _engine->loadRegion(regionName);
 		if (region) {
-			if (character->moveTo(_object->getName(), region->center, direction)) {
+			if (character->moveTo(_object->getName(), region->center, direction, usermove)) {
 				deactivate();
 			}
 		}
@@ -1705,7 +1705,7 @@ void Process::leaveCharacter(const Common::String &name, const Common::String &r
 	if (character) {
 		RegionPtr region = _engine->loadRegion(regionName);
 		debug("region: %s", region->toString().c_str());
-		if (character->moveTo(getName(), region->center, dir))
+		if (character->moveTo(getName(), region->center, dir, false, true))
 			deactivate();
 	} else
 		warning("character %s could not be found", name.c_str());
@@ -1733,7 +1733,7 @@ void Process::setCharacter() {
 	auto character = _engine->getCharacter(id);
 	if (character) {
 		if (dir == -1)
-			dir = character->direction();
+			dir = character->baseDirection();
 		auto region = _engine->loadRegion(regionName);
 		if (region) {
 			debug("setting character position to %d,%d", region->center.x, region->center.y);
@@ -1809,7 +1809,13 @@ void Process::stopCharacter() {
 	debug("stopCharacter: %s, direction: %d", name.c_str(), direction);
 	Character *character = _engine->getCharacter(name);
 	if (character) {
-		if (direction != -1) {
+		if (character->walking()) {
+			// graceful stop: finish the current cycle, play the stop
+			// animation, then face 'direction'
+			character->requestStop(direction);
+			character->notifyProcess(getName());
+			deactivate();
+		} else if (direction != -1) {
 			character->direction(direction);
 			character->notifyProcess(getName());
 			deactivate();
@@ -1917,7 +1923,7 @@ void Process::setCharacterNotifyVars() {
 	debug("setCharacterNotifyVars, tell: %s, direction: %s", arg1.c_str(), arg2.c_str());
 	auto character = _engine->currentCharacter();
 	_engine->setGlobal(arg1, 0);
-	_engine->setGlobal(arg2, character ? character->direction() : 0);
+	_engine->setGlobal(arg2, character ? character->baseDirection() : 0);
 	_engine->textLayout().setCharNotifyVar(arg1);
 	_engine->textLayout().setCharDirectionNotifyVar(arg2);
 }

@@ -48,6 +48,21 @@ struct Region {
 	bool empty() const {
 		return regions.empty();
 	}
+
+	// Walk-region geometry: polygon 0 is the walkable boundary, further
+	// polygons are obstacles; center is an anchor inside the walkable area.
+
+	// 1 = inside, 0 = exactly on a vertex, -1 = outside
+	int walkPointInside(Common::Point p) const;
+	// move p to the closest walkable pixel within maxRadius
+	bool snapSpiral(Common::Point &p, int maxRadius) const;
+	// step from p along (dx, dy) until a walkable pixel is found
+	bool lineStepUntilInside(Common::Point &p, int dx, int dy) const;
+	// project p onto the nearest polygon edge
+	bool snapToNearestEdge(Common::Point &p, bool &onVertex) const;
+	// build waypoints from 'from' to 'to', empty on failure
+	bool buildWalkPath(Common::Array<Common::Point> &path,
+	                   Common::Point from, Common::Point to) const;
 };
 
 } // End of namespace AGDS

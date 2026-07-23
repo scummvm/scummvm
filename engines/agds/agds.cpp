@@ -316,7 +316,7 @@ void AGDSEngine::saveScreenPatch() {
 	patch->characterPresent = _currentCharacter != nullptr && _currentCharacter->visible();
 	if (_currentCharacter) {
 		patch->characterPosition = _currentCharacter->position();
-		patch->characterDirection = _currentCharacter->direction();
+		patch->characterDirection = _currentCharacter->baseDirection();
 	}
 	patch->defaultMouseCursor = _defaultMouseCursorName;
 }
@@ -657,10 +657,8 @@ Common::Error AGDSEngine::run() {
 						if (lclick) {
 							if (_currentCharacter && _currentCharacter->active() && _currentScreen && _currentScreen->region()) {
 								auto &region = _currentScreen->region();
-								if (region->pointIn(_mouse)) {
-									// FIXME: some object requires character to be in "trap" region
-									// Remove this after movement implementation.
-									_currentCharacter->moveTo(Common::String(), _mouse, -1);
+								if (region->walkPointInside(_mouse) > 0) {
+									_currentCharacter->moveTo(Common::String(), _mouse, -1, true);
 								}
 							}
 							auto scroll = _currentScreen->scrollPosition();
