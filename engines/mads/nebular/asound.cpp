@@ -50,7 +50,6 @@ AdlibChannel::AdlibChannel() {
 	_pSrc = nullptr;
 	_ptr3 = nullptr;
 	_ptr4 = nullptr;
-	_ptrEnd = nullptr;
 	_field17 = 0;
 	_field19 = 0;
 	_soundData = nullptr;
@@ -109,9 +108,6 @@ void AdlibChannel::load(byte *pData) {
 	_fieldB = 0;
 	_field17 = 0;
 	_field19 = 0;
-
-	auto &cacheEntry = _owner->getCachedData(pData);
-	_ptrEnd = cacheEntry._dataEnd;
 }
 
 void AdlibChannel::check(byte *nullPtr) {
@@ -213,33 +209,6 @@ void ASound::adlibInit() {
 	write(4, 0x80);
 }
 
-
-byte *ASound::loadData(int offset, int size) {
-	byte *ptr = &_soundData[offset];
-
-	// Check for an existing cache entry
-	uint idx;
-	for (idx = 0; idx < _dataCache.size() && _dataCache[idx]._dataStart != ptr; ++idx) {
-	}
-
-	if (idx == _dataCache.size())
-		_dataCache.push_back(CachedDataEntry(ptr, size));
-
-	// Return the data pointer
-	return ptr;
-}
-
-ASound::CachedDataEntry &ASound::getCachedData(byte *pData) {
-	Common::Array<CachedDataEntry>::iterator i;
-	for (i = _dataCache.begin(); i != _dataCache.end(); ++i) {
-		CachedDataEntry &e = *i;
-		if (e._dataStart == pData)
-			return e;
-	}
-
-	error("Could not find previously loaded data");
-}
-
 int ASound::stop() {
 	command0();
 	int result = _pollResult;
@@ -302,9 +271,9 @@ void ASound::resultCheck() {
 	}
 }
 
-void ASound::playSound(int offset, int size) {
+void ASound::playSound(int offset) {
 	// Load the specified data block
-	playSoundData(loadData(offset, size));
+	playSoundData(loadData(offset));
 }
 
 void ASound::playSoundData(byte *pData, int startingChannel) {
@@ -411,10 +380,6 @@ void ASound::pollActiveChannel() {
 				if (!chan->_ptr1 || !pSrc) {
 					warning("pollActiveChannel(): No data found for sound channel");
 					break;
-				}
-				if (pSrc > chan->_ptrEnd) {
-					warning("Read beyond end of loaded sound data");
-					return;
 				}
 
 				if (!(*pSrc & 0x80) || (*pSrc <= (0xff - _chanCommandCount))) {
