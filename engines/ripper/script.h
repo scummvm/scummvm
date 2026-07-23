@@ -273,6 +273,7 @@ private:
 	const ScriptInteraction *findBa0Interaction(const Common::Point &point,
 		uint *interactionIndex = nullptr) const;
 	bool isScenePlayed(const Common::String &scene) const;
+	void setScenePlayed(const Common::String &scene, bool played);
 	void markScenePlayed(const Common::String &scene);
 	static Common::String argumentString(const ScriptArgument &argument);
 	static bool textAnswersMatch(const Common::String &entered,

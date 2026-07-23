@@ -748,10 +748,26 @@ bool ScriptManager::isScenePlayed(const Common::String &scene) const {
 	return false;
 }
 
+void ScriptManager::setScenePlayed(const Common::String &scene, bool played) {
+	if (scene.empty())
+		return;
+
+	for (uint i = 0; i < _playedScenes.size(); ++i) {
+		if (!_playedScenes[i].equalsIgnoreCase(scene))
+			continue;
+		if (!played)
+			_playedScenes.remove_at(i);
+		return;
+	}
+
+	if (played)
+		_playedScenes.push_back(scene);
+}
+
 void ScriptManager::markScenePlayed(const Common::String &scene) {
 	if (scene.empty() || isScenePlayed(scene))
 		return;
-	_playedScenes.push_back(scene);
+	setScenePlayed(scene, true);
 	debugC(2, kDebugScene, "Ripper: marked scene played '%s'", scene.c_str());
 }
 
@@ -1078,6 +1094,24 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			_runtime.concurrentEntryLabel = entryLabel;
 			debugC(1, kDebugScene, "Ripper: created concurrent script='%s' entry='%s'",
 				target.c_str(), entryLabel.c_str());
+			break;
+		}
+
+		case kSetNamedFlag: {
+			if (command.arguments.size() < 2)
+				return false;
+			const bool played = command.arguments[0].value != 0;
+			const Common::String scene = argumentString(command.arguments[1]);
+			if (scene.empty())
+				return false;
+			const bool previous = isScenePlayed(scene);
+			// HandleSceneEntrySetOrClearNamedFlag at 0x15dfe forwards the
+			// first argument and named play-list entry to the shared bitset
+			// helper; zero clears the bit and nonzero sets it.
+			setScenePlayed(scene, played);
+			debugC(2, kDebugScene,
+				"Ripper: updated named scene flag scene='%s' value=%d previous=%d script='%s' offset=0x%x",
+				scene.c_str(), played, previous, script.getMemberName().c_str(), command.offset);
 			break;
 		}
 
