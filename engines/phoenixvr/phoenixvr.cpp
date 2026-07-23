@@ -803,8 +803,11 @@ bool PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 	if (savePrev) {
 		assert(_warpIdx >= 0);
 		if (version() >= 2) {
-			if (_warpIdx >= 0)
+			if (_warpIdx >= 0) {
 				_prevWarpHistory.push_back(_warpIdx);
+				if (_vr.isVR())
+					saveThumbnail();
+			}
 			if (_prevWarpHistory.size() > 10)
 				_prevWarpHistory.pop_front();
 		} else {
