@@ -30,9 +30,11 @@ class Serializer;
 
 namespace Ripper {
 
+class RipperEngine;
+
 class SceneAudioManager {
 public:
-	explicit SceneAudioManager(Audio::Mixer *mixer);
+	SceneAudioManager(RipperEngine *engine, Audio::Mixer *mixer);
 	~SceneAudioManager();
 
 	bool load(const Common::String &path, bool preserve);
@@ -81,6 +83,7 @@ private:
 	void applyVolume(Slot &slot);
 	Common::String describeSlots() const;
 
+	RipperEngine *_engine;
 	Audio::Mixer *_mixer;
 	Slot _slots[kSlotCount];
 };
