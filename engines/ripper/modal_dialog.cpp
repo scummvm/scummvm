@@ -525,22 +525,53 @@ void ModalDialogManager::drawTextEntry(const Common::String &prompt,
 	}
 
 	byte *pixels = (byte *)screen->getPixels();
-	drawFrame(pixels, screen->pitch, bounds, style);
 	const bool wacStyle = style == kWacPresentation;
 	const byte backgroundColor = wacStyle ? kWacModalBackgroundColor :
 		kModalBackgroundColor;
 	const byte textColor = wacStyle ? kWacModalTextColor : kModalTextColor;
-	for (int y = bounds.top + 2; y < bounds.bottom - 2; ++y)
-		memset(screen->getBasePtr(bounds.left + kTextEntryPadding, y),
-			backgroundColor, bounds.width() - kTextEntryPadding * 2);
-
-	const int textTop = bounds.top + (bounds.height() - _font.lineHeight) / 2;
-	int textLeft = bounds.left + kTextEntryPadding;
-	if (!prompt.empty()) {
-		drawText(pixels, screen->pitch, textLeft, textTop, prompt, textColor);
-		textLeft += measureText(prompt) + _font.spaceWidth;
+	if (wacStyle) {
+		for (int y = bounds.top; y < bounds.bottom; ++y)
+			memset(screen->getBasePtr(bounds.left, y), backgroundColor,
+				bounds.width());
+		drawFrame(pixels, screen->pitch, bounds, style);
+	} else {
+		drawFrame(pixels, screen->pitch, bounds, style);
+		for (int y = bounds.top + 2; y < bounds.bottom - 2; ++y)
+			memset(screen->getBasePtr(bounds.left + kTextEntryPadding, y),
+				backgroundColor, bounds.width() - kTextEntryPadding * 2);
 	}
-	const uint availableWidth = bounds.right - kTextEntryPadding - textLeft;
+
+	int textTop;
+	int textLeft;
+	int textRight;
+	if (wacStyle) {
+		// CreateTextEntryChooserControl at 0x59d93 passes the prompt as the
+		// chooser heading. BuildChooserControlVisuals centers it in the WAC
+		// template's 20-pixel heading, above the single editable row.
+		const int promptWidth = measureText(prompt);
+		const int contentWidth =
+			bounds.width() - kWacModalLeftPadding - kWacModalRightPadding;
+		drawText(pixels, screen->pitch,
+			bounds.left + kWacModalLeftPadding +
+				(contentWidth - promptWidth) / 2,
+			bounds.top +
+				(kWacModalHeadingTopPadding - _font.lineHeight) / 2,
+			prompt, textColor);
+		textTop = bounds.top + kWacModalHeadingTopPadding +
+			kModalTextVerticalInset +
+			(kModalRowHeight - _font.lineHeight) / 2;
+		textLeft = bounds.left + kWacModalLeftPadding;
+		textRight = bounds.right - kWacModalRightPadding;
+	} else {
+		textTop = bounds.top + (bounds.height() - _font.lineHeight) / 2;
+		textLeft = bounds.left + kTextEntryPadding;
+		textRight = bounds.right - kTextEntryPadding;
+		if (!prompt.empty()) {
+			drawText(pixels, screen->pitch, textLeft, textTop, prompt, textColor);
+			textLeft += measureText(prompt) + _font.spaceWidth;
+		}
+	}
+	const uint availableWidth = textRight - textLeft;
 	uint endVisible = firstVisible;
 	while (endVisible < text.size()) {
 		const Common::String candidate =
@@ -565,7 +596,13 @@ void ModalDialogManager::drawTextEntry(const Common::String &prompt,
 
 uint ModalDialogManager::textEntryCursorFromPoint(const Common::String &text,
 		uint firstVisible, int x, const Common::Rect &bounds) const {
-	const int relativeX = x - bounds.left - kTextEntryPadding;
+	const bool wacStyle = _textEntryStyle == kWacPresentation;
+	const int leftPadding = wacStyle ? kWacModalLeftPadding : kTextEntryPadding;
+	const int rightPadding = wacStyle ? kWacModalRightPadding : kTextEntryPadding;
+	int textLeft = bounds.left + leftPadding;
+	if (!wacStyle && !_textEntryPrompt.empty())
+		textLeft += measureText(_textEntryPrompt) + _font.spaceWidth;
+	const int relativeX = x - textLeft;
 	if (relativeX <= 0)
 		return firstVisible;
 	for (uint position = firstVisible; position < text.size(); ++position) {
@@ -575,17 +612,20 @@ uint ModalDialogManager::textEntryCursorFromPoint(const Common::String &text,
 			position - firstVisible + 1));
 		if ((uint)relativeX < left + (right - left) / 2)
 			return position;
-		if (right >= (uint)bounds.width() - kTextEntryPadding * 2)
+		if (right >= (uint)bounds.width() - leftPadding - rightPadding)
 			return position + 1;
 	}
 	return text.size();
 }
 
 void ModalDialogManager::updateTextEntryFirstVisible(const Common::Rect &bounds) {
-	int textLeft = bounds.left + kTextEntryPadding;
-	if (!_textEntryPrompt.empty())
+	const bool wacStyle = _textEntryStyle == kWacPresentation;
+	const int leftPadding = wacStyle ? kWacModalLeftPadding : kTextEntryPadding;
+	const int rightPadding = wacStyle ? kWacModalRightPadding : kTextEntryPadding;
+	int textLeft = bounds.left + leftPadding;
+	if (!wacStyle && !_textEntryPrompt.empty())
 		textLeft += measureText(_textEntryPrompt) + _font.spaceWidth;
-	const uint availableWidth = bounds.right - kTextEntryPadding - textLeft;
+	const uint availableWidth = bounds.right - rightPadding - textLeft;
 	const uint caretWidth = measureText("_");
 	if (_textEntryCursorPosition < _textEntryFirstVisible)
 		_textEntryFirstVisible = _textEntryCursorPosition;

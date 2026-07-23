@@ -104,11 +104,12 @@ static const uint kWacJournalSectionCount = 8;
 static const uint kWacJournalPasswordMaximumLength = 20;
 static const uint32 kWacJournalRevealInterval = 36 * kDosTickMillis;
 static const uint32 kWacJournalShuffleInterval = kDosTickMillis;
-static const int kWacJournalProgressTop = 277;
+static const int kWacJournalProgressLeft = kWacMediaLeft + 50;
+static const int kWacJournalProgressTop = kWacMediaTop + 1;
 static const int kWacJournalTextEntryWidth = 200;
-static const int kWacJournalTextEntryHeight = 20;
+static const int kWacJournalTextEntryHeight = 42;
 static const int kWacJournalTextEntryTop =
-	(kWacHeight - kWacJournalTextEntryHeight) / 2;
+	kWacMediaTop + kWacTextPanelHeight + 5;
 static const uint16 kWacDatabaseSelectionChanged = 0xfffe;
 static const uint16 kWacDatabaseTextScrolled = 0xfffd;
 
@@ -993,7 +994,7 @@ bool WacManager::drawJournalTextPanel(
 	const Common::String progressText = Common::String::format("%s %u%%",
 		resourceString(kWacJournalProgressResource).c_str(), progress);
 	drawText((byte *)screen->getPixels(), screen->pitch,
-		kWacMediaLeft + 1, kWacJournalProgressTop, progressText,
+		kWacJournalProgressLeft, kWacJournalProgressTop, progressText,
 		kWacDatabaseNormalText);
 	g_system->unlockScreen();
 	if (_databaseSkin.size() >= kWacDatabaseSkinFrameCount)
@@ -1070,11 +1071,18 @@ uint16 WacManager::runJournalRevealScene(DatabaseEntry &entry) {
 		"Ripper: entered WAC journal scene entry=%u label='%s' function=RunWacJournalRevealScene@0x24261 lines=%u unlocked=%d revealed=%u section=%u passwordResource=0x%x",
 		entry.originalIndex, entry.label.c_str(), sourceLines.size(), unlocked,
 		revealedLines, revealFlagIndex, passwordResource);
+	debugC(2, kDebugWac,
+		"Ripper: WAC journal chooser geometry panel=%d,%d,%d,%d progress=%d,%d password=%d,%d,%d,%d source=RunWacJournalRevealScene@0x24538",
+		kWacMediaLeft, kWacMediaTop, kWacTextPanelWidth, kWacTextPanelHeight,
+		kWacJournalProgressLeft, kWacJournalProgressTop,
+		kWacMediaLeft, kWacJournalTextEntryTop,
+		kWacJournalTextEntryWidth, kWacJournalTextEntryHeight);
 
 	bool cancelled = false;
 	while (!unlocked && !_engine->shouldQuit()) {
-		// The retail call supplies x=50, y=-1, and width=200. The shared chooser
-		// layout maps y=-1 to vertical centering in the 640-by-400 presentation.
+		// RunWacJournalRevealScene at 0x24538 places the password control five
+		// pixels below the journal panel. Its -1 size request produces one
+		// 14-pixel row plus the WAC heading, bottom, and frame insets.
 		const Common::Rect entryBounds(kWacMediaLeft, kWacJournalTextEntryTop,
 			kWacMediaLeft + kWacJournalTextEntryWidth,
 			kWacJournalTextEntryTop + kWacJournalTextEntryHeight);
