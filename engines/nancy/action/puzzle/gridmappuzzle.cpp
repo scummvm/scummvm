@@ -255,16 +255,22 @@ void GridMapPuzzle::execute() {
 
 Common::Rect GridMapPuzzle::mapCellRect(int row, int col) const {
 	// Stride uses the raw src-rect dimensions (right - left, before readRect's
-	// inclusive→exclusive +1), to match the original's cell layout.
-	int x = (int)_mapOriginX + col * ((int)_mapSpacingX + _mapCellW - 1);
-	int y = (int)_mapOriginY + row * ((int)_mapSpacingY + _mapCellH - 1);
-	return Common::Rect(x, y, x + _mapCellW, y + _mapCellH);
+	// inclusive→exclusive +1). The rect spans the full stride so cells tile the
+	// grid with no gaps, keeping the grab-hand cursor steady across the whole
+	// grid. Only blits read the rect's top-left, so sprites still land correctly.
+	int strideX = (int)_mapSpacingX + _mapCellW - 1;
+	int strideY = (int)_mapSpacingY + _mapCellH - 1;
+	int x = (int)_mapOriginX + col * strideX;
+	int y = (int)_mapOriginY + row * strideY;
+	return Common::Rect(x, y, x + strideX, y + strideY);
 }
 
 Common::Rect GridMapPuzzle::itemsCellRect(int row, int col) const {
-	int x = (int)_itemsOriginX + col * ((int)_itemsSpacingX + _itemsCellW - 1);
-	int y = (int)_itemsOriginY + row * ((int)_itemsSpacingY + _itemsCellH - 1);
-	return Common::Rect(x, y, x + _itemsCellW, y + _itemsCellH);
+	int strideX = (int)_itemsSpacingX + _itemsCellW - 1;
+	int strideY = (int)_itemsSpacingY + _itemsCellH - 1;
+	int x = (int)_itemsOriginX + col * strideX;
+	int y = (int)_itemsOriginY + row * strideY;
+	return Common::Rect(x, y, x + strideX, y + strideY);
 }
 
 bool GridMapPuzzle::hitTestMap(const Common::Point &p, int &outRow, int &outCol) const {
@@ -347,9 +353,10 @@ void GridMapPuzzle::handleInput(NancyInput &input) {
 	if (!hitMap)
 		hitItems = hitTestItems(mouseVP, iRow, iCol);
 
-	// Grid cells (map and items) use the grab-hand cursor; picking something up
-	// doesn't change it. The exit hotspot uses the puzzle-exit cursor, and every
-	// other area (letter headers, gaps) keeps the idle eyeglass.
+	// Both grids (map and items) show the grab-hand cursor across their whole
+	// area; picking something up doesn't change it. The exit hotspot uses the
+	// puzzle-exit cursor, and everything outside the grids (the letter strips,
+	// the gap between the grids) keeps the idle eyeglass.
 	if (!hitMap && !hitItems) {
 		if (!_exitHotspot.isEmpty() && _exitHotspot.contains(mouseVP)) {
 			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
