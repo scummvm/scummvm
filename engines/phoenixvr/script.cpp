@@ -65,7 +65,27 @@ Script *Script::load(Common::SeekableReadStream &s, int version) {
 	auto textSize = text.size();
 	while (lineStartOffset < textSize) {
 		auto lineStart = text.begin() + lineStartOffset;
-		auto lineEnd = Common::find(lineStart, text.end(), '\n');
+		auto lineEndCR = Common::find(lineStart, text.end(), '\r');
+		auto lineEndLF = Common::find(lineStart, text.end(), '\n');
+		bool hasCR = lineEndCR != text.end();
+		bool hasLF = lineEndLF != text.end();
+		char *lineEnd;
+		if (hasCR && hasLF) {
+			if (lineEndCR + 1 == lineEndLF) {
+				// CR LF
+				lineEnd = lineEndLF;
+			} else if (lineEndCR < lineEndLF) {
+				// CR first, but not followed by LF
+				lineEnd = lineEndCR;
+			} else
+				lineEnd = lineEndLF;
+		} else if (hasCR) {
+			lineEnd = lineEndCR;
+		} else if (hasLF) {
+			lineEnd = lineEndLF;
+		} else {
+			lineEnd = text.end();
+		}
 		lineStartOffset += Common::distance(lineStart, lineEnd) + 1;
 		while (lineEnd > lineStart && Common::isSpace(lineEnd[-1]))
 			--lineEnd;
