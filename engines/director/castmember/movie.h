@@ -23,6 +23,7 @@
 #define DIRECTOR_CASTMEMBER_MOVIE_H
 
 #include "director/castmember/filmloop.h"
+#include "director/movie.h"
 
 namespace Director {
 
@@ -30,6 +31,8 @@ class MovieCastMember : public FilmLoopCastMember {
 public:
 	MovieCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	MovieCastMember(Cast *cast, uint16 castId, MovieCastMember &source);
+
+	~MovieCastMember();
 
 	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new MovieCastMember(cast, castId, *this)); }
 
@@ -43,6 +46,7 @@ public:
 	Common::String formatInfo() override;
 
 	bool _enableScripts;
+	Movie *_linkedMovie;
 };
 
 } // End of namespace Director

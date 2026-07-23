@@ -24,7 +24,7 @@
 #include "director/sprite.h"
 
 #include "director/castmember/movie.h"
-
+#include "director/cast.h"
 #include "director/lingo/lingo-the.h"
 
 namespace Director {
@@ -34,6 +34,7 @@ MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 	_type = kCastMovie;
 
 	_enableScripts = _flags & 0x10;
+	_linkedMovie = nullptr;
 
 	if (debugChannelSet(2, kDebugLoading))
 		_initialRect.debugPrint(2, "MovieCastMember(): rect:");
@@ -50,6 +51,10 @@ MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, MovieCastMember &sou
 	_enableScripts = source._enableScripts;
 }
 
+MovieCastMember::~MovieCastMember() {
+	delete _linkedMovie;
+}
+
 Common::Array<Channel> *MovieCastMember::getSubChannels(Common::Rect &bbox, uint frame) {
 	if (_needsReload) {
 		_loaded = false;
@@ -63,11 +68,37 @@ void MovieCastMember::load() {
 	if (_loaded)
 		return;
 
-	FilmLoopCastMember::load();
+	Common::String rawMoviePath = _cast->getLinkedPath(_castId);
+	if(rawMoviePath.empty()) {
+		warning("MovieCastMember::load() No filename for linked movie in _castId %d", _castId);
+		_loaded = true;
+		return;
+	}
+
+	Common::Path moviePath = findMoviePath(rawMoviePath);
+	if(moviePath.empty()) {
+		warning("MovieCastMember::load(): Linked movie %s not found", rawMoviePath.c_str());
+		_loaded = true;
+		return;
+	}
+
+	Common::SharedPtr<Archive> archive = g_director->openArchive(moviePath);
+	if (!archive) {
+		warning("MovieCastMember::load(): Failed to load archive at %s", moviePath.toString().c_str());
+		_loaded = true;
+		return;
+	}
+
+	_linkedMovie = new Movie(_cast->getMovie()->getWindow());
+	_linkedMovie->setArchive(archive);
+	_linkedMovie->loadArchive();
+	_score = _linkedMovie->getScore();
 
 	_loaded = true;
-	_needsReload = false;
+	return;
 }
+
+
 
 bool MovieCastMember::hasField(int field) {
 	switch (field) {
