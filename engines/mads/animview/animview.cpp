@@ -441,6 +441,7 @@ static void animate() {
 		mcga_setpal(&cycling_palette);
 	}
 
+	g_engine->_soundManager->removeDriver();
 	speech_init();
 
 	for (count = 0; count < anim_count && !error_code; ++count) {
