@@ -4916,6 +4916,17 @@ static const ColorDef *const g_vgaPaletteTable[29] = { // @ G8176_PaletteTable
 void DisplayMan::setMultipleColorsInPalette(int16 paletteIndex) {
 	assert(paletteIndex >= 0 && paletteIndex < 29);
 	if (paletteIndex < 6) {
+		// Populate UI palette entries (0..15) from _interfacePaletteIndex
+		const ColorDef *uiColorDef = g_vgaPaletteTable[_interfacePaletteIndex];
+		int8 uiColorIndex;
+		while ((uiColorIndex = (int8)uiColorDef->index) >= 0) {
+			int8 targetIdx = uiColorIndex & 0x0F;
+			_vgaPalette[targetIdx * 3]     = (uiColorDef->r << 2) | (uiColorDef->r >> 4);
+			_vgaPalette[targetIdx * 3 + 1] = (uiColorDef->g << 2) | (uiColorDef->g >> 4);
+			_vgaPalette[targetIdx * 3 + 2] = (uiColorDef->b << 2) | (uiColorDef->b >> 4);
+			uiColorDef++;
+		}
+
 		/* Read light levels directly from _palDungeonView, which already
 		contains runtime-applied creature replacements. Bypasses the need
 		for DOS version's G8175_CREAT_PAL lookup table. */
