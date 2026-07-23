@@ -1207,6 +1207,13 @@
   `R_P_L1.WAV`, and presents only the first frame of `BAW1A.SMK`; its sole
   chooser callback hands control to the concurrent prologue runtime, which
   eventually transitions to ACT1.
+- Opcode `0x1e` reaches `HandleSceneEntrySetOrClearNamedFlag` at `0x15dfe`.
+  Its first argument selects clear (zero) or set (nonzero), while its second
+  names an entry in the same persistent play-list bitset queried by opcode
+  `0x09`. `SetStartupAssetCatalogEntryFlag` at `0x20125` resolves the name and
+  `UpdateIndexedBitFlag` at `0x20e4e` changes the bit. ScummVM mirrors this in
+  its serialized played-scene list; for example, `HA1.RUN` offset `0xa0e`
+  clears `T1_1_B` before continuing the `T1_1_XB` callback.
 - Opcode `0x1f` loads a named WAV into the first unoccupied entry in the
   original's 20-slot trigger table through
   `HandleSceneEntryLoadResourceIntoFirstFreeSlot` at `0x15e48`. Argument bit 0
