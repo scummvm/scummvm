@@ -25,11 +25,13 @@
 #include "common/endian.h"
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "common/file.h"
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
 
 #include "gui/message.h"
+#include "image/cgbi.h"
 #include "sky/compact.h"
 #include "sky/control.h"
 #include "sky/disk.h"
@@ -268,6 +270,46 @@ void Control::removePanel() {
 	if (_textSprite) {
 		free(_textSprite);
 		_textSprite = NULL;
+	}
+}
+
+void Control::initHelpPanel() {
+	Image::CgBIDecoder d;
+	Common::File f;
+	if (!f.open("hints_txtbox.png") || !d.loadStream(f)) {
+		debug("Cannot open file");
+		return;
+	}
+	Graphics::Surface *surface = d.getSurface();
+	if (!surface) {
+		debug("No surface");
+		return;
+	}
+	Graphics::Surface *converted = surface->convertTo(_skyScreen->_screen32.format);
+
+	float scaleX = (float)GAME_SCREEN_WIDTH / converted->w;
+	float scaleY = (float)FULL_SCREEN_HEIGHT / converted->h;
+	float scaleFactor = MIN(scaleX, scaleY);
+
+	int16 newW = (int16)(converted->w * scaleFactor);
+	int16 newH = (int16)(converted->h * scaleFactor);
+
+	Graphics::Surface *scaled = converted->scale(newW, newH, true);
+	converted->free();
+	delete converted;
+
+	int destX = (GAME_SCREEN_WIDTH - newW) / 2;
+	int destY = (FULL_SCREEN_HEIGHT - newH) / 2;
+	_skyScreen->_screen32.fillRect(Common::Rect(0, 0, _skyScreen->_screen32.w, _skyScreen->_screen32.h), 0);
+	_skyScreen->_screen32.copyRectToSurface(*scaled, destX, destY, Common::Rect(0, 0, scaled->w, scaled->h));
+	scaled->free();
+	delete scaled;
+
+	_mouseClicked = false;
+	while (!_mouseClicked && !Engine::shouldQuit()) {
+		_system->copyRectToScreen(_skyScreen->_screen32.getPixels(), _skyScreen->_screen32.pitch, 0, 0, _skyScreen->_screen32.w, _skyScreen->_screen32.h);
+		_system->updateScreen();
+		delay(ANIM_DELAY);
 	}
 }
 
@@ -557,6 +599,10 @@ void Control::doControlPanel() {
 	removePanel();
 	_skyMouse->spriteMouse(_savedMouse, 0, 0);
 	_skyText->fnSetFont(_savedCharSet);
+}
+
+void Control::doHelpPanel() {
+	initHelpPanel();
 }
 
 uint16 Control::handleClick(ConResource *pButton) {

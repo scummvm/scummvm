@@ -182,6 +182,7 @@ class Control {
 public:
 	Control(SkyEngine *vm, Common::SaveFileManager *saveFileMan, Screen *screen, Disk *disk, Mouse *mouse, Text *text, MusicBase *music, Logic *logic, Sound *sound, SkyCompact *skyCompact, OSystem *system, Common::Keymap *shortcutsKeymap);
 	void doControlPanel();
+	void doHelpPanel();
 	void doLoadSavePanel();
 	void restartGame();
 	void showGameQuitMsg();
@@ -201,6 +202,7 @@ private:
 	int displayMessage(MSVC_PRINTF const char *message, ...) GCC_PRINTF(2, 3);
 
 	void initPanel();
+	void initHelpPanel(); // for ibass
 	void removePanel();
 
 	void drawMainPanel();
