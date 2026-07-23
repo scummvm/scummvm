@@ -595,9 +595,12 @@
   loads each `<scene>.SMK`, `<scene>DAT.DAT`, and `<scene>PRJ.PRJ`, and loads the
   configured crosshair, explosion, shading, and audio resources. A DAT file has
   a 100-byte header, a 32-bit frame count, one six-byte state record per frame,
-  then nine-byte hit regions. A PRJ file has the same 100-byte header, a 32-bit
-  frame rate, a 32-bit sound count, 60-byte sound paths, and two bytes per frame
-  for cue index and volume. `COMBAT8.WAV` and `COMBAT12.WAV` are normalized to
+  then nine-byte hit regions. Each hit region stores its one-byte damage/effect
+  type followed by signed 16-bit `y`, `x`, `height`, and `width` values;
+  `RunCombatEncounterScene` compares those pairs with the logical 320-by-200
+  pointer at `0x320d0`. A PRJ file has the same 100-byte header, a 32-bit frame
+  rate, a 32-bit sound count, 60-byte sound paths, and two bytes per frame for
+  cue index and volume. `COMBAT8.WAV` and `COMBAT12.WAV` are normalized to
   `MECHWAV6.WAV` and `MECHWAV5.WAV` by the original loader.
 - The encounter owns four percent meters for health, creature, weapon, and
   shield. Their damage, recharge, drain, and tick intervals come from the INI;
@@ -605,7 +608,9 @@
   a hit region's damage/effect entry, while right mouse holds and drains the
   shield. `COMBAT0.BBM` supplies the right status panel, `COMBAT2.BBM` and
   `COMBAT3.BBM` are its filled and empty meter segments, and the four configured
-  crosshair strips meet at the logical 320-by-200 pointer position.
+  crosshair strips meet at the logical 320-by-200 pointer position. The fixed
+  meter-anchor table places player health and creature health at the upper left
+  and right, then weapon charge and shield charge at the lower left and right.
 - Each frame updates the health and creature timers before routing an incoming
   attack. A shielded hit applies shield damage before the timed shield drain;
   an unshielded hit recharges the inactive shield before applying health damage.
