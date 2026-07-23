@@ -10,6 +10,7 @@
  * (at your option) any later version.
  */
 
+#include "common/algorithm.h"
 #include "common/endian.h"
 #include "common/system.h"
 #include "common/util.h"
@@ -482,14 +483,7 @@ void RA2PSXTinyGLRenderer::renderModel(const RA2PSXModel &model, float x, float 
 	TinyGL::setContext(_context);
 	if (!depthTest)
 		tglDisable(TGL_DEPTH_TEST);
-	tglMatrixMode(TGL_MODELVIEW);
-	tglPushMatrix();
-	tglTranslatef(x, y, 0.0f);
-	tglRotatef(roll, 0.0f, 0.0f, 1.0f);
-	tglRotatef(pitch, 1.0f, 0.0f, 0.0f);
-	tglRotatef(yaw, 0.0f, 1.0f, 0.0f);
 	const float scale = size / model.radius();
-	tglScalef(scale, -scale, scale);
 	const float pitchAngle = pitch * 0.017453292519943295f;
 	const float yawAngle = yaw * 0.017453292519943295f;
 	const float rollAngle = roll * 0.017453292519943295f;
@@ -505,6 +499,7 @@ void RA2PSXTinyGLRenderer::renderModel(const RA2PSXModel &model, float x, float 
 	struct FacingVertex {
 		float x;
 		float y;
+		float z;
 	};
 	Common::Array<FacingVertex> facingVertices;
 	facingVertices.resize(vertices.size());
@@ -517,22 +512,19 @@ void RA2PSXTinyGLRenderer::renderModel(const RA2PSXModel &model, float x, float 
 		const float pitchY = pitchCosine * modelY - pitchSine * yawZ;
 		facingVertices[i].x = rollCosine * yawX - rollSine * pitchY;
 		facingVertices[i].y = rollSine * yawX + rollCosine * pitchY;
+		facingVertices[i].z = pitchSine * modelY + pitchCosine * yawZ;
 	}
 
 	const Common::Array<RA2PSXFace> &faces = model.faces();
 	for (uint faceIndex = 0; faceIndex < faces.size(); ++faceIndex) {
 		const RA2PSXFace &face = faces[faceIndex];
-		if (!(face.mode & 0x60)) {
-			const FacingVertex &v0 = facingVertices[face.vertex[0]];
-			const FacingVertex &v1 = facingVertices[face.vertex[1]];
-			const FacingVertex &v2 = facingVertices[face.vertex[2]];
-			if (v0.x * (v1.y - v2.y) + v1.x * (v2.y - v0.y) +
-					v2.x * (v0.y - v1.y) <= 0.0f)
-				continue;
-		}
 		const RA2PSXTexture *texture = model.texture(face.texture);
 		setFaceState(model, face);
-		tglBegin(face.vertexCount == 4 ? TGL_QUADS : TGL_TRIANGLES);
+		float faceDepth = 0.0f;
+		for (uint vertexIndex = 0; vertexIndex < face.vertexCount; ++vertexIndex)
+			faceDepth += facingVertices[face.vertex[vertexIndex]].z;
+		faceDepth = faceDepth * scale / face.vertexCount;
+		tglBegin(face.vertexCount == 4 ? TGL_QUAD_STRIP : TGL_TRIANGLES);
 		for (uint vertexIndex = 0; vertexIndex < face.vertexCount; ++vertexIndex) {
 			const float normalX = face.normalX[vertexIndex];
 			const float normalY = -face.normalY[vertexIndex];
@@ -547,12 +539,11 @@ void RA2PSXTinyGLRenderer::renderModel(const RA2PSXModel &model, float x, float 
 			if (texture)
 				tglTexCoord2f((face.u[vertexIndex] + 0.5f) / texture->width,
 						(face.v[vertexIndex] + 0.5f) / texture->height);
-			const RA2PSXVertex &vertex = vertices[face.vertex[vertexIndex]];
-			tglVertex3f((float)vertex.x, (float)vertex.y, (float)vertex.z);
+			const FacingVertex &vertex = facingVertices[face.vertex[vertexIndex]];
+			tglVertex3f(x + vertex.x * scale, y + vertex.y * scale, faceDepth);
 		}
 		tglEnd();
 	}
-	tglPopMatrix();
 	if (!depthTest)
 		tglEnable(TGL_DEPTH_TEST);
 }
@@ -618,31 +609,44 @@ void RA2PSXTinyGLRenderer::renderPerspectiveModel(const RA2PSXModel &model,
 			projected[i].y = centerY + worldY * focalLength / worldZ;
 		}
 	}
+	struct ProjectedFace {
+		uint index;
+		float depth;
+
+		bool operator<(const ProjectedFace &other) const {
+			return depth != other.depth ? depth > other.depth : index < other.index;
+		}
+	};
+	Common::Array<ProjectedFace> projectedFaces;
+	const Common::Array<RA2PSXFace> &faces = model.faces();
+	for (uint faceIndex = 0; faceIndex < faces.size(); ++faceIndex) {
+		const RA2PSXFace &face = faces[faceIndex];
+		ProjectedFace projectedFace = { faceIndex, 0.0f };
+		bool visible = true;
+		for (uint vertexIndex = 0; vertexIndex < face.vertexCount; ++vertexIndex) {
+			const ProjectedVertex &vertex = projected[face.vertex[vertexIndex]];
+			visible &= vertex.visible;
+			projectedFace.depth += vertex.z;
+		}
+		if (visible) {
+			projectedFace.depth /= face.vertexCount;
+			projectedFaces.push_back(projectedFace);
+		}
+	}
+	Common::sort(projectedFaces.begin(), projectedFaces.end());
 
 	TinyGL::setContext(_context);
 	if (!depthTest)
 		tglDisable(TGL_DEPTH_TEST);
-	const Common::Array<RA2PSXFace> &faces = model.faces();
-	for (uint faceIndex = 0; faceIndex < faces.size(); ++faceIndex) {
-		const RA2PSXFace &face = faces[faceIndex];
-		bool visible = true;
-		for (uint vertexIndex = 0; vertexIndex < face.vertexCount; ++vertexIndex)
-			visible &= projected[face.vertex[vertexIndex]].visible;
-		if (!visible)
-			continue;
-		if (!(face.mode & 0x60)) {
-			const ProjectedVertex &v0 = projected[face.vertex[0]];
-			const ProjectedVertex &v1 = projected[face.vertex[1]];
-			const ProjectedVertex &v2 = projected[face.vertex[2]];
-			if (v0.x * (v1.y - v2.y) + v1.x * (v2.y - v0.y) +
-					v2.x * (v0.y - v1.y) <= 0.0f)
-				continue;
-		}
+	for (uint faceIndex = 0; faceIndex < projectedFaces.size(); ++faceIndex) {
+		const ProjectedFace &projectedFace = projectedFaces[faceIndex];
+		const RA2PSXFace &face = faces[projectedFace.index];
+		const float orderingDepth = (z - projectedFace.depth) * 512.0f / model.radius();
 
 		const RA2PSXTexture *texture = model.texture(face.texture);
 		setFaceState(model, face);
 		const float faceDepth = projected[face.vertex[2]].z;
-		tglBegin(face.vertexCount == 4 ? TGL_QUADS : TGL_TRIANGLES);
+		tglBegin(face.vertexCount == 4 ? TGL_QUAD_STRIP : TGL_TRIANGLES);
 		for (uint vertexIndex = 0; vertexIndex < face.vertexCount; ++vertexIndex) {
 			setFaceColor(face, vertexIndex,
 					modelXx * face.normalX[vertexIndex] +
@@ -658,7 +662,7 @@ void RA2PSXTinyGLRenderer::renderPerspectiveModel(const RA2PSXModel &model,
 				tglTexCoord2f((face.u[vertexIndex] + 0.5f) / texture->width,
 						(face.v[vertexIndex] + 0.5f) / texture->height);
 			const ProjectedVertex &vertex = projected[face.vertex[vertexIndex]];
-			tglVertex3f(vertex.x, vertex.y, 0.0f);
+			tglVertex3f(vertex.x, vertex.y, orderingDepth);
 		}
 		tglEnd();
 	}
