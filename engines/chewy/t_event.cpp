@@ -1288,6 +1288,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 	case 37:   // R17: energy_lever()
 	case 38:   // R17: energy_lever()
 	case 60:   // R17: get_oel()
+	case 62:   // R29: use_pumpe()
 	case 111:  // R12: use_linke_rohr()
 	case 114:  // R12: Chewy-as-Bork with terminal
 	case 252:
@@ -1588,6 +1589,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 		}
 		break;
 
+	case 145:  // R37: talkWithRooster()
 	case 176:
 	case 177:
 	case 178:
