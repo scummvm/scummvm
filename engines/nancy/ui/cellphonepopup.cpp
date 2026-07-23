@@ -51,17 +51,17 @@ namespace UI {
 // message screens. The grid is anchored to the two rects stored in the chunk
 // (the "[<?>]" help and "[<->]" framing tiles): 171x164 tiles, 173px column
 // pitch, 166px row pitch.
-static const Common::Rect kN13PlainBg(174, 187, 345, 351);
-static const Common::Rect kN13MsgWelcome(1, 353, 172, 517);
-static const Common::Rect kN13MsgPictureSent(174, 353, 345, 517);
-static const Common::Rect kN13MsgNoPictures(347, 353, 518, 517);
-static const Common::Rect kN13MsgCameraFull(1, 519, 172, 683);
-static const Common::Rect kN13MsgDeleteConfirm(174, 519, 345, 683);
-static const Common::Rect kN13MsgPictureDeleted(347, 519, 518, 683);
+static constexpr Common::Rect kN13PlainBg(Common::Point(174, 187), 345 - 174, 351 - 187);
+static constexpr Common::Rect kN13MsgWelcome(Common::Point(1, 353), 172 - 1, 517 - 353);
+static constexpr Common::Rect kN13MsgPictureSent(Common::Point(174, 353), 345 - 174, 517 - 353);
+static constexpr Common::Rect kN13MsgNoPictures(Common::Point(347, 353), 518 - 347, 517 - 353);
+static constexpr Common::Rect kN13MsgCameraFull(Common::Point(1, 519), 172 - 1, 683 - 519);
+static constexpr Common::Rect kN13MsgDeleteConfirm(Common::Point(174, 519), 345 - 174, 683 - 519);
+static constexpr Common::Rect kN13MsgPictureDeleted(Common::Point(347, 519), 518 - 347, 683 - 519);
 // The two-phones "connecting" LCD graphic, drawn over the plain background while
 // a call is being placed. (This is the rect the chunk stores as the idle sprite
 // source; the "Welcome / River Heights" tile is kN13MsgWelcome.)
-static const Common::Rect kN13CallGraphic(347, 187, 518, 351);
+static constexpr Common::Rect kN13CallGraphic(Common::Point(347, 187), 518 - 347, 351 - 187);
 
 // Nancy 13 online sub-button roles (index = Ghidra widget id − 0x10). Nancy
 // 10-12 use a different 10-button layout, so these apply only when the game is
