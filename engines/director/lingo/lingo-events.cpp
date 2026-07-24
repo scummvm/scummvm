@@ -163,10 +163,7 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 			}
 
 			if (event.channelId > 0) {
-				// An embedded movie (a movie cast member) is composited into
-				// the host stage via getSubChannels(); hiliting its own
-				// channels would draw at the embedded movie's native origin.
-				if (!_isEmbedded && _score->_channels[event.channelId]->_sprite->shouldHilite()) {
+				if (_score->_channels[event.channelId]->_sprite->shouldHilite()) {
 					_currentHiliteChannelId = event.channelId;
 					g_director->_wm->_hilitingWidget = true;
 					g_director->getCurrentWindow()->setDirty(true);

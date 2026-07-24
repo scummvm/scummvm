@@ -233,6 +233,12 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 	if (!_currentMovie)
 		return false;
 
+	// An embedded movie is composited via getSubChannels(); it must never
+	// render the shared window itself (e.g. from its own updateStage), which
+	// would draw its channels at the embedded movie's native origin.
+	if (_currentMovie->_isEmbedded)
+		return false;
+
 	if (!blitTo)
 		blitTo = _window->getSurface();
 
