@@ -331,14 +331,39 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		displayScale = decoder.getHeight() < 0xc9 && decoder.getWidth() < 0x141 ? 2 : 1;
 	const uint outputWidth = decoder.getWidth() * displayScale;
 	const uint outputHeight = decoder.getHeight() * displayScale;
+	const int displayWidth = g_system->getWidth();
+	const int displayHeight = g_system->getHeight();
 	if (x < 0)
-		x = (g_system->getWidth() - outputWidth) / 2;
+		x = (displayWidth - outputWidth) / 2;
 	else
 		x *= displayScale;
 	if (y < 0)
-		y = (g_system->getHeight() - outputHeight) / 2;
-	else
-		y = y * displayScale + originY;
+		y = (displayHeight - outputHeight) / 2;
+	else {
+		y *= displayScale;
+		if (originY != 0 && y + originY + (int)outputHeight > displayHeight &&
+				y + (int)outputHeight <= displayHeight) {
+			// InitializeMediaPresentationDisplayModeCallback at 0x163a8
+			// switches a full-size packetized branch from the scene viewport
+			// to the full display context. Do not retain the viewport origin
+			// when the scaled branch already fills that display.
+			debugC(2, kDebugVideo,
+				"Ripper: suppressed Smacker scene origin media='%s' originY=%d "
+				"output=%ux%u display=%dx%d",
+				name.c_str(), originY, outputWidth, outputHeight,
+				displayWidth, displayHeight);
+		} else {
+			y += originY;
+		}
+	}
+	if (x < 0 || y < 0 || x + (int)outputWidth > displayWidth ||
+			y + (int)outputHeight > displayHeight) {
+		warning("Ripper: Smacker '%s' draw rectangle %d,%d,%ux%u exceeds display %dx%d",
+			name.c_str(), x, y, outputWidth, outputHeight,
+			displayWidth, displayHeight);
+		decoder.close();
+		return false;
+	}
 	debugC(repeatedLoopPass ? 3 : 1, kDebugVideo,
 		"Ripper: playing Smacker '%s' frames=%u source=%ux%u output=%ux%u at %d,%d controls=%d sceneUi=%d frameLimit=%u",
 		name.c_str(), decoder.getFrameCount(), decoder.getWidth(), decoder.getHeight(),
@@ -435,6 +460,12 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
 		} else {
 			Graphics::Surface *screen = g_system->lockScreen();
+			if (!screen) {
+				warning("Ripper: could not lock display for scaled Smacker '%s'",
+					name.c_str());
+				completed = false;
+				return;
+			}
 			Graphics::scaleBlit((byte *)screen->getBasePtr(x, y),
 				(const byte *)frame->getPixels(), screen->pitch, frame->pitch,
 				outputWidth, outputHeight, frame->w, frame->h, frame->format);
