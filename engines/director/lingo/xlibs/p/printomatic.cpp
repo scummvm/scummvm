@@ -32,6 +32,7 @@
  * USED IN:
  * Plates are People Too!
  * I Spy
+ * getaheadmath
  *
  **************************************************/
 
@@ -196,6 +197,7 @@ const char *PrintOMaticXObj::xlibName = "PrintOMatic";
 const XlibFileDesc PrintOMaticXObj::fileNames[] = {
 	{ "PrintOMatic",   nullptr },
 	{ "PMATIC",   nullptr },
+	{ "POMLITE",   nullptr },
 	{ nullptr,        nullptr },
 };
 

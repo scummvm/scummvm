@@ -164,12 +164,15 @@
 #include "director/lingo/xtras/d/directsound.h"
 #include "director/lingo/xtras/d/displayres.h"
 #include "director/lingo/xtras/d/datetime.h"
+#include "director/lingo/xtras/f/fileflex.h"
+#include "director/lingo/xtras/f/fileutil.h"
 #include "director/lingo/xtras/f/filextra.h"
 #include "director/lingo/xtras/f/filextra4.h"
 #include "director/lingo/xtras/g/getdir.h"
 #include "director/lingo/xtras/g/glu32.h"
 #include "director/lingo/xtras/k/keypoll.h"
 #include "director/lingo/xtras/m/masterapp.h"
+#include "director/lingo/xtras/m/mbox.h"
 #include "director/lingo/xtras/m/mui.h"
 #include "director/lingo/xtras/n/netlingo.h"
 #include "director/lingo/xtras/o/openurl.h"
@@ -304,7 +307,9 @@ static const struct XLibProto {
 	XLIBDEF(FadeGammaUpXCMD,	kXObj,			400),	// D4
 	XLIBDEF(FadeGammaXCMD,		kXObj,			400),	// D4
 	XLIBDEF(FileExists,			kXObj,			300),	// D3
+	XLIBDEF(FileFlexXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(FileIO,				kXObj | kXtraObj,200),	// D2
+	XLIBDEF(FileUtilXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(FileXtra,			kXtraObj,		500),	// D5
 	XLIBDEF(FileXtra4Xtra,			kXtraObj,					500),	// D5
 	XLIBDEF(FindFolder,			kXObj,			300),	// D3
@@ -335,6 +340,7 @@ static const struct XLibProto {
 	XLIBDEF(KeypollXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(LabelDrvXObj,		kXObj,			400),	// D4
 	XLIBDEF(ListDevXObj,		kXObj,			500),	// D5
+	XLIBDEF(MBoxXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(MMovieXObj,			kXObj,			400),	// D4
 	XLIBDEF(ManiacBgXObj,		kXObj,			300),	// D3
 	XLIBDEF(MapNavigatorXObj,	kXObj,			400),	// D4
@@ -514,6 +520,10 @@ void Lingo::openXLib(Common::String name, ObjectType type, const Common::Path &p
 		(*_xlibOpeners[name])(type, path);
 	} else {
 		warning("Lingo::openXLib: Unimplemented xlib: '%s'", name.c_str());
+		// in strict mode, break if the library is missing
+		if (debugChannelSet(-1, kDebugLingoStrict)) {
+			error("Lingo::openXLib: Unimplemented xlib: '%s'", name.c_str());
+		}
 	}
 }
 
