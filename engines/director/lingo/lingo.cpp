@@ -1970,23 +1970,35 @@ CastMemberID Lingo::resolveCastMember(const Datum &memberID, const Datum &castLi
 		return CastMemberID(-1, castLib.asInt());
 	}
 
-	switch (memberID.type) {
+	int libID = -1;
+	switch (castLib.type) {
 	case STRING:
-		return movie->getCastMemberIDByNameAndType(memberID.asString(), castLib.asInt(), type);
+		libID = movie->getCastLibIDByName(castLib.asString());
 		break;
 	case INT:
 	case FLOAT:
-		if (g_director->getVersion() >= 500 && memberID.asInt() > 0x20000) {
+	case VOID:
+		libID = castLib.asInt();
+		break;
+	default:
+		error("Lingo::resolveCastMember: unsupported castLib type %s", castLib.type2str());
+		break;
+	}
+
+	switch (memberID.type) {
+	case STRING:
+		return movie->getCastMemberIDByNameAndType(memberID.asString(), libID, type);
+		break;
+	case INT:
+	case FLOAT: {
 			// Composite ID
-			return CastMemberID().fromMultiplex(memberID.asInt());
-		}
-		if (castLib.asInt() == 0) {
-			// When specifying 0 as the castlib, D5 will assume this
-			// means the default (i.e. first) cast library. It will not
-			// try other libraries for matches if the member is a number.
-			return CastMemberID(memberID.asInt(), DEFAULT_CAST_LIB);
-		} else {
-			return CastMemberID(memberID.asInt(), castLib.asInt());
+			CastMemberID multi = CastMemberID().fromMultiplex(memberID.asInt());
+			// All numbers up to 0x20000 count as castLib 1, aka DEFAULT_CAST_LIB
+			// If the castLib is defined, then use the masked-off member number but
+			// override the castLib.
+			if (libID > 0)
+				multi.castLib = libID;
+			return multi;
 		}
 		break;
 	case VOID:
