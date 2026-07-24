@@ -34,6 +34,7 @@
 #include "ripper/puzzles/crystal.h"
 #include "ripper/puzzles/gc_csh.h"
 #include "ripper/puzzles/kd_shooting_gallery.h"
+#include "ripper/puzzles/kj_blob_shooter.h"
 #include "ripper/puzzles/rolodex.h"
 #include "ripper/puzzles/table_gate.h"
 #include "ripper/ripper.h"
@@ -187,6 +188,14 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		debugC(1, kDebugPuzzles,
 			"Ripper: table gate puzzle scene action completed result=%d milestone=%u", result, argument);
 		return result != TableGatePuzzle::kLoadFailed;
+	}
+	if (action == kSceneActionKjBlobShooter) {
+		KjBlobShooter shooter(engine);
+		const KjBlobShooter::Result result = shooter.run(argument);
+		debugC(1, kDebugPuzzles,
+			"Ripper: KJ blob-shooter scene action completed result=%d milestone=%u",
+			result, argument);
+		return result != KjBlobShooter::kLoadFailed;
 	}
 	if (action == kSceneActionMechiniCombat) {
 		MechiniEncounter encounter(engine);

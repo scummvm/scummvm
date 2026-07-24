@@ -1318,8 +1318,17 @@ bool MediaPlayer::playShootingGallerySequence(const Common::String &path,
 	return playScaledInteractiveSequence(path, "shooting-gallery", callback, command);
 }
 
+bool MediaPlayer::playBlobShooterSequence(const Common::String &path,
+		MediaSequenceCallback *callback, uint16 *command) {
+	// RunBlobShooterScene at 0x338a4 advances KJ.SMK continuously while its
+	// local actor loop remains active. Reconstruct frame one when the short
+	// background presentation wraps.
+	return playScaledInteractiveSequence(path, "blob-shooter", callback, command, 1);
+}
+
 bool MediaPlayer::playScaledInteractiveSequence(const Common::String &path,
-		const char *description, MediaSequenceCallback *callback, uint16 *command) {
+		const char *description, MediaSequenceCallback *callback, uint16 *command,
+		uint loopStartFrame) {
 	Common::File *file = new Common::File();
 	if (!file->open(Common::Path(path))) {
 		warning("Ripper: could not open %s media sequence '%s'", description, path.c_str());
@@ -1351,6 +1360,7 @@ bool MediaPlayer::playScaledInteractiveSequence(const Common::String &path,
 	// 0x3288e retain interface bitmap colors while their active Smacker
 	// palettes change.
 	request.patchInterfacePalette = true;
+	request.loopStartFrame = loopStartFrame;
 	request.sequenceCallback = callback;
 	request.sequenceCommand = command;
 	request.rememberVideoPalette = false;
