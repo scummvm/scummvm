@@ -67,7 +67,7 @@ private:
 	double _durationBetweenStepEvents = 0.0;
 	uint _currentPanStep = 0;
 	uint _maxPanStep = 0;
-	uint _startTime = 0;
+	uint _panStartTime = 0;
 	CameraPanState _panState = kCameraNotPanning;
 	Common::Point _offset;
 	Common::Point _currentViewportOrigin;

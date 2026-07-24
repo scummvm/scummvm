@@ -263,7 +263,6 @@ protected:
 	uint _contextId = 0;
 	Common::String _debugName;
 
-	uint _duration = 0;
 	Common::HashMap<uint, Common::Array<ScriptResponse *> > _scriptResponses;
 
 	// The original had these fields duplicated across several actors, but it made more

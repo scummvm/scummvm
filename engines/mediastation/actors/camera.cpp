@@ -474,7 +474,7 @@ void CameraActor::panToByTime(int16 x, int16 y, double duration) {
 	_panDest = Common::Point(x, y);
 	_totalPanDuration = duration;
 	_currentPanStep = 1;
-	_startTime = g_engine->getTotalPlayTime();
+	_panStartTime = g_engine->getTotalPlayTime();
 	debugC(6, kDebugCamera, "[%s] %s: panStart: (%d, %d); panDest: (%d, %d); panDuration: %f",
 		debugName(), __func__, _panStart.x, _panStart.y, _panDest.x, _panDest.y, _totalPanDuration);
 	setXYDelta();
@@ -519,7 +519,7 @@ void CameraActor::stopPan() {
 	g_engine->getTimerService()->stopTimer(_timer);
 
 	_totalPanDuration = 0.0;
-	_startTime = 0;
+	_panStartTime = 0;
 	_currentPanStep = 0;
 	_maxPanStep = 0;
 	debugC(6, kDebugCamera, "[%s] %s: nextViewportOrigin: (%d, %d); actualViewportOrigin: (%d, %d)",
@@ -707,7 +707,7 @@ double CameraActor::percentComplete() {
 	case kCameraPanToByTime: {
 		const double MILLISECONDS_IN_ONE_SECOND = 1000.0;
 		uint currentRuntime = g_engine->getTotalPlayTime();
-		uint elapsedTime = currentRuntime - _startTime;
+		uint elapsedTime = currentRuntime - _panStartTime;
 		double elapsedSeconds = elapsedTime / MILLISECONDS_IN_ONE_SECOND;
 		percentValue = elapsedSeconds / _totalPanDuration;
 		break;
