@@ -163,7 +163,7 @@ block2:
 	frameViewY = current_anim->frame[currentFrame].view_y;
 
 	if (frameViewX != currentViewX || frameViewY != currentViewY) {
-		if (!picture_map.one_to_one) {
+		if (g_engine->getGameID() != GType_RexNebular && !picture_map.one_to_one) {
 			tile_pan(&picture_map, frameViewX, frameViewY);
 			tile_pan(&depth_map, frameViewX, frameViewY);
 		}
