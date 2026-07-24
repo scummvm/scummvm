@@ -35,6 +35,12 @@ scummvmAssertEqual("Void, value(test))
 set test = QUOTE & "abra" & QUOTE & " & " & QUOTE & "kadabra" & QUOTE
 scummvmAssertEqual("abrakadabra", value(test))
 
+-- equality operator
+scummvmAssertEqual(1, value("5=5"))
+scummvmAssertEqual(0, value("5=2"))
+scummvmAssertEqual(1, value("0.500=0.500"))
+scummvmAssertEqual(0, value("0.500=2.500"))
+
 -- the kicker; you are allowed to have garbage on the end!!!
 -- if it hits a token it doesn't understand, the parser should try again but stopping just before that token.
 scummvmNoFatalError(true)
