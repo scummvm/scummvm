@@ -62,6 +62,7 @@ struct Breakpoint {
 	Common::String format() const;
 };
 
+class Cast;
 
 class Debugger : public GUI::Debugger {
 public:
@@ -83,6 +84,9 @@ public:
 	void entityWriteHook(int entity, int field);
 
 private:
+	void disasmAllCast(Cast *cast);
+	void disasmCast(Cast *cast, int scriptId, const Common::String &funcName);
+
 	bool cmdHelp(int argc, const char **argv);
 
 	bool cmdVersion(int argc, const char **argv);
