@@ -47,6 +47,7 @@ void AGSConsoleSysPlugin::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(AGSConsoleSysPlugin::SetTextureFilteringType^1, AGSConsoleSysPlugin::SetTextureFilteringType);
 
 	SCRIPT_METHOD(Game_RAG::EnableCheats^0, AGSConsoleSysPlugin::EnableCheats);
+	SCRIPT_METHOD(Game_RAG::IsAnyJoyconMouseInContact^0, AGSConsoleSysPlugin::IsAnyJoyconMouseInContact);
 }
 
 void AGSConsoleSysPlugin::GetSystemInputDeviceType(ScriptMethodParams &params) {
@@ -137,9 +138,14 @@ void AGSConsoleSysPlugin::SetTextureFilteringType(ScriptMethodParams &params) {
 }
 
 void AGSConsoleSysPlugin::EnableCheats(ScriptMethodParams &params) {
+	warning("AGSConsoleSysPlugin::EnableCheats STUB: returning false");
 	params._result = false;
 }
 
+void AGSConsoleSysPlugin::IsAnyJoyconMouseInContact(ScriptMethodParams &params) {
+	// warning("AGSConsoleSysPlugin::IsAnyJoyconMouseInContact STUB: returning false");
+	params._result = true;
+}
 
 } // namespace AGSConsoleSysPlugin
 } // namespace Plugins
