@@ -733,7 +733,17 @@ varorthe: var
 	;
 
 chunk: tFIELD refargs		{ $$ = new FuncNode(new Common::String("field"), $refargs); }
+	| tCAST simpleexpr[m] tOF tCASTLIB simpleexpr[l] {
+		NodeList *args = new NodeList;
+		args->push_back($m);
+		args->push_back($l);
+		$$ = new FuncNode(new Common::String("cast"), args);	}
 	| tCAST refargs			{ $$ = new FuncNode(new Common::String("cast"), $refargs); }
+	| tMEMBER simpleexpr[m] tOF tCASTLIB simpleexpr[l] {
+		NodeList *args = new NodeList;
+		args->push_back($m);
+		args->push_back($l);
+		$$ = new FuncNode(new Common::String("member"), args);	}
 	| tMEMBER refargs		{ $$ = new FuncNode(new Common::String("member"), $refargs); }
 	| tCASTLIB refargs		{ $$ = new FuncNode(new Common::String("castLib"), $refargs); }
 	| tCHAR expr[idx] tOF simpleexpr[src]	{
