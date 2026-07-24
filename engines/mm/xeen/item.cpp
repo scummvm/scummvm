@@ -355,13 +355,25 @@ void WeaponItems::equipItem(int itemIndex) {
 Common::String WeaponItems::getFullDescription(int itemIndex, int displayNum) {
 	XeenItem &i = operator[](itemIndex);
 	Common::String desc;
-	if (Common::RU_RUS == g_vm->getLanguage())
+	// Russian and French both order item names as name-then-material;
+	// French additionally places broken/cursed after the name
+	if (g_vm->getLanguage() == Common::RU_RUS)
 		desc = Common::String::format("\f%02u%s%s\f%02u%s%s%s%s", displayNum,
 			i._state._broken ? Res.ITEM_BROKEN : "",
 			i._state._cursed ? Res.ITEM_CURSED : "",
 			displayNum,
 			Res.WEAPON_NAMES[i._id],
 			i._state._cursed || i._state._broken ? "" : getMaeName(i._material),
+			!i._state._counter ? "" : Res.BONUS_NAMES[i._state._counter],
+			(i._state._cursed || i._state._broken) || !i._id ? "\b " : ""
+		);
+	else if (g_vm->getLanguage() == Common::FR_FRA)
+		desc = Common::String::format("\f%02u%s%s%s%s\f%02u%s%s", displayNum,
+			Res.WEAPON_NAMES[i._id],
+			i._state._cursed || i._state._broken ? "" : getMaeName(i._material),
+			i._state._broken ? Res.ITEM_BROKEN : "",
+			i._state._cursed ? Res.ITEM_CURSED : "",
+			displayNum,
 			!i._state._counter ? "" : Res.BONUS_NAMES[i._state._counter],
 			(i._state._cursed || i._state._broken) || !i._id ? "\b " : ""
 		);
@@ -540,13 +552,24 @@ Common::String ArmorItems::getFullDescription(int itemIndex, int displayNum) {
 	XeenItem &i = operator[](itemIndex);
 	Common::String desc;
 
-	if (Common::RU_RUS == g_vm->getLanguage())
+	// Russian and French both order item names as name-then-material;
+	// French additionally places broken/cursed after the name
+	if (g_vm->getLanguage() == Common::RU_RUS)
 		desc = Common::String::format("\f%02u%s%s\f%02u%s%s%s", displayNum,
 			i._state._broken ? Res.ITEM_BROKEN : "",
 			i._state._cursed ? Res.ITEM_CURSED : "",
 			displayNum,
 			Res.ARMOR_NAMES[i._id],
 			i._state._cursed || i._state._broken ? "" : getMaeName(i._material),
+			(i._state._cursed || i._state._broken) || !i._id ? "\b " : ""
+		);
+	else if (g_vm->getLanguage() == Common::FR_FRA)
+		desc = Common::String::format("\f%02u%s%s%s%s\f%02u%s", displayNum,
+			Res.ARMOR_NAMES[i._id],
+			i._state._cursed || i._state._broken ? "" : getMaeName(i._material),
+			i._state._broken ? Res.ITEM_BROKEN : "",
+			i._state._cursed ? Res.ITEM_CURSED : "",
+			displayNum,
 			(i._state._cursed || i._state._broken) || !i._id ? "\b " : ""
 		);
 	else
@@ -671,13 +694,24 @@ Common::String AccessoryItems::getFullDescription(int itemIndex, int displayNum)
 	XeenItem &i = operator[](itemIndex);
 	Common::String desc;
 
-	if (Common::RU_RUS == g_vm->getLanguage())
+	// Russian and French both order item names as name-then-material;
+	// French additionally places broken/cursed after the name
+	if (g_vm->getLanguage() == Common::RU_RUS)
 		desc = Common::String::format("\f%02u%s%s\f%02u%s%s%s", displayNum,
 			i._state._broken ? Res.ITEM_BROKEN : "",
 			i._state._cursed ? Res.ITEM_CURSED : "",
 			displayNum,
 			Res.ACCESSORY_NAMES[i._id],
 			i._state._cursed || i._state._broken ? "" : getMaeName(i._material),
+			(i._state._cursed || i._state._broken) || !i._id ? "\b " : ""
+		);
+	else if (g_vm->getLanguage() == Common::FR_FRA)
+		desc = Common::String::format("\f%02u%s%s%s%s\f%02u%s", displayNum,
+			Res.ACCESSORY_NAMES[i._id],
+			i._state._cursed || i._state._broken ? "" : getMaeName(i._material),
+			i._state._broken ? Res.ITEM_BROKEN : "",
+			i._state._cursed ? Res.ITEM_CURSED : "",
+			displayNum,
 			(i._state._cursed || i._state._broken) || !i._id ? "\b " : ""
 		);
 	else
@@ -727,15 +761,29 @@ Common::String AccessoryItems::getAttributes(XeenItem &item, const Common::Strin
 Common::String MiscItems::getFullDescription(int itemIndex, int displayNum) {
 	XeenItem &i = operator[](itemIndex);
 
-	Common::String desc = Common::String::format("\f%02u%s%s\f%02u%s%s%s%s", displayNum,
-		i._state._broken ? Res.ITEM_BROKEN : "",
-		i._state._cursed ? Res.ITEM_CURSED : "",
-		displayNum,
-		Res.MISC_NAMES[i._material],
-		(i._state._cursed || i._state._broken) || !i._id ? "" : Res.ITEM_OF,
-		(i._state._cursed || i._state._broken) ? "" : Res.SPECIAL_NAMES[i._id],
-		(i._state._cursed || i._state._broken) || !i._id ? "\b " : ""
-	);
+	Common::String desc;
+
+	// French places broken/cursed after the name
+	if (g_vm->getLanguage() == Common::FR_FRA)
+		desc = Common::String::format("\f%02u%s%s%s%s%s\f%02u%s", displayNum,
+			Res.MISC_NAMES[i._material],
+			(i._state._cursed || i._state._broken) || !i._id ? "" : Res.ITEM_OF,
+			(i._state._cursed || i._state._broken) ? "" : Res.SPECIAL_NAMES[i._id],
+			i._state._broken ? Res.ITEM_BROKEN : "",
+			i._state._cursed ? Res.ITEM_CURSED : "",
+			displayNum,
+			(i._state._cursed || i._state._broken) || !i._id ? "\b " : ""
+		);
+	else
+		desc = Common::String::format("\f%02u%s%s\f%02u%s%s%s%s", displayNum,
+			i._state._broken ? Res.ITEM_BROKEN : "",
+			i._state._cursed ? Res.ITEM_CURSED : "",
+			displayNum,
+			Res.MISC_NAMES[i._material],
+			(i._state._cursed || i._state._broken) || !i._id ? "" : Res.ITEM_OF,
+			(i._state._cursed || i._state._broken) ? "" : Res.SPECIAL_NAMES[i._id],
+			(i._state._cursed || i._state._broken) || !i._id ? "\b " : ""
+		);
 	capitalizeItem(desc);
 	return desc;
 }

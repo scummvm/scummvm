@@ -49,7 +49,7 @@ static void writeVersion() {
 	if (!f.open("version.txt", Common::kFileWriteMode))
 		error("Could not create version.txt");
 
-	f.write("1.2\n", 4);
+	f.write("1.3\n", 4);
 	f.close();
 }
 
