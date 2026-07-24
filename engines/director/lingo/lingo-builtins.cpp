@@ -1547,7 +1547,7 @@ void LB::b_setAt(int nargs) {
 	Datum list = g_lingo->pop();
 
 	TYPECHECK2(indexD, INT, FLOAT);
-	TYPECHECK3(list, ARRAY, PARRAY, RECT);
+	TYPECHECK4(list, ARRAY, PARRAY, POINT, RECT);
 	int index = indexD.asInt();
 
 	switch (list.type) {
@@ -1565,9 +1565,11 @@ void LB::b_setAt(int nargs) {
 		ARRBOUNDSCHECK(index, list);
 		list.u.parr->arr[index - 1].v = value;
 		break;
+	case POINT:
 	case RECT:
 		ARRBOUNDSCHECK(index, list);
 		list.u.farr->arr[index-1] = value;
+		break;
 	default:
 		break;
 	}
