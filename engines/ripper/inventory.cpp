@@ -75,6 +75,9 @@ static const byte kButtonBorderColor = 4;
 static const int kNoControl = -1;
 static const int kUseControl = -2;
 static const int kDoneControl = -3;
+static const char *const kQcsEntryMedia = "q_cs_1.avi";
+static const char *const kMagnottaMedia = "mag2.avi";
+static const char *const kMagnottaAudio = "q_p_40.wav";
 
 } // End of anonymous namespace
 
@@ -379,6 +382,87 @@ void Inventory::closePresentation(const char *reason) {
 		reason);
 }
 
+bool Inventory::runQcsMag2UnlockMediaScreen() {
+	// RunQcsMag2UnlockMediaScreen at 0x3bb08 preserves the active page and
+	// palette around two retained IAVF presentations. Its control uses the
+	// original vertical/horizontal layout (50,100,300,440), corresponding to
+	// the physical scene rectangle x=100..539, y=50..349.
+	const Common::Rect exitBounds(100, 50, 540, 350);
+	IndexedDisplaySnapshot savedDisplay;
+	if (!savedDisplay.capture()) {
+		warning("Ripper: could not preserve the scene display for inventory item 1");
+		return false;
+	}
+
+	CursorManager *cursor = _engine->getCursor();
+	InputManager *input = _engine->getInput();
+	cursor->update(0);
+	cursor->setVisible(false);
+	g_system->fillScreen(0);
+	g_system->updateScreen();
+	debugC(1, kDebugScene,
+		"Ripper: entered inventory item 1 presentation media='%s','%s' audio='%s' exitRect=%d,%d,%d,%d",
+		kQcsEntryMedia, kMagnottaMedia, kMagnottaAudio,
+		exitBounds.left, exitBounds.top, exitBounds.right, exitBounds.bottom);
+
+	bool result = _engine->getMedia()->play(kQcsEntryMedia, false);
+	if (result && !_engine->shouldQuit()) {
+		g_system->fillScreen(0);
+		g_system->updateScreen();
+		result = _engine->getMedia()->play(kMagnottaMedia, false);
+	}
+	if (result && !_engine->shouldQuit()) {
+		cursor->setVisible(true);
+		result = _engine->getMedia()->playBlockingAudio(kMagnottaAudio);
+	}
+
+	bool dismissed = false;
+	bool exitPressed = false;
+	const char *dismissReason = "none";
+	while (result && !_engine->shouldQuit() && !dismissed) {
+		if (input->pollEvents()) {
+			_engine->quitGame();
+			result = false;
+			break;
+		}
+		while (input->hasPendingKey()) {
+			if (input->consumeKey() == kEscapeCommand) {
+				dismissed = true;
+				dismissReason = "escape";
+				break;
+			}
+		}
+		const MouseState mouse = input->publishMouseState();
+		const bool exitHovered = exitBounds.contains(mouse.position);
+		cursor->update(exitHovered ? 7 : 0);
+		if (exitHovered &&
+				((mouse.pressed | mouse.buttons) & kMouseButtonLeft) != 0)
+			exitPressed = true;
+		if ((mouse.released & kMouseButtonLeft) != 0) {
+			if (exitPressed && exitHovered) {
+				dismissed = true;
+				dismissReason = "exit-control";
+			}
+			exitPressed = false;
+		}
+		cursor->refresh();
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+
+	if (!savedDisplay.restore()) {
+		warning("Ripper: could not restore the scene display after inventory item 1");
+		result = false;
+	}
+	cursor->update(0);
+	cursor->setVisible(true);
+	input->discardMouseTransitions();
+	debugC(result && dismissed ? 1 : 2, kDebugScene,
+		"Ripper: left inventory item 1 presentation result=%d dismissed=%d reason=%s quit=%d",
+		result, dismissed, dismissReason, _engine->shouldQuit());
+	return result && dismissed;
+}
+
 Inventory::ChoiceResult Inventory::executeChoice(uint unlockFlag,
 		const Common::String &sceneLabel) {
 	if (unlockFlag < kFirstUnlockFlag || unlockFlag > kLastUnlockFlag ||
@@ -412,7 +496,7 @@ Inventory::ChoiceResult Inventory::executeChoice(uint unlockFlag,
 	// invalid-use dialog, but accepted branches release it before presenting
 	// item-specific media.
 	restoreDisplay();
-	if (choiceId == 1 || choiceId == 5 || choiceId == 8) {
+	if (choiceId == 5 || choiceId == 8) {
 		warning("Ripper: inventory item %u requires an unimplemented dedicated presentation", choiceId);
 		return kChoiceFailed;
 	}
@@ -423,6 +507,12 @@ Inventory::ChoiceResult Inventory::executeChoice(uint unlockFlag,
 	if (choiceId == 0) {
 		if (!_engine->getMilestones()->set(26, true, "inventory-scan-card") ||
 				!_engine->getMedia()->play("verify.avi", true))
+			return kChoiceFailed;
+	} else if (choiceId == 1) {
+		const bool presented = runQcsMag2UnlockMediaScreen();
+		const bool reusable = _engine->getMilestones()->set(
+			unlockFlag + kConsumedFlagOffset, false, "inventory-reusable-item");
+		if (!presented || !reusable)
 			return kChoiceFailed;
 	} else if (choiceId == 6) {
 		if (!_engine->getMedia()->play("q_cs_3.avi", true))
