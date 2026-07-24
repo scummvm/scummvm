@@ -34,41 +34,46 @@ class ASound;
  */
 class AdlibChannel {
 public:
-	ASound *_owner;
+	ASound *_owner = nullptr;
 
-	int _activeCount;
-	int _pitchBend;         // signed pitch-bend offset added to frequency by updateFNumber()
-	int _volumeFadeStep;    // signed per-period volume delta applied to _volumeOffset
-	int _attenFadeStep;     // signed per-period delta applied to _patchAttenuation
-	int _note;              // note byte read from the sound-data stream
-	int _sampleIndex;
-	int _volume;
-	int _noteOffset;        // subtracted from _activeCount to derive _keyOnDelay
-	int _keyOnDelay;        // countdown before the key-on bit is cleared (gate time)
-	int _volumeFadeCounter; // counts down to 0 before applying _volumeFadeStep
-	int _volumeFadeReload;  // reload value for _volumeFadeCounter
-	uint8 _attenFadeCounter;// counts down to 0 before applying _attenFadeStep
-	int _attenFadeReload;   // reload value for _attenFadeCounter
-	int _patchAttenuation;  // per-note attenuation offset added on top of the patch TL
-	int _pendingStop;       // non-zero while the channel is fading out to silence
-	byte *_ptr1;
-	byte *_pSrc;
-	byte *_innerLoopPtr;    // inner-loop restart address (opcode 0)
-	byte *_outerLoopPtr;    // outer-loop restart address (opcode 1)
-	int _innerLoopCount;    // remaining inner-loop iterations (opcode 0)
-	int _outerLoopCount;    // remaining outer-loop iterations (opcode 1)
-	byte *_soundData;
-	int _transpose;         // fine-tune offset added into the frequency table lookup
-	int _volumeOffset;
-	int _octaveTranspose;   // added to _note before the octave/semitone split
+	int _activeCount = 0;
+	int _pitchBend = 0;         // signed pitch-bend offset added to frequency by updateFNumber()
+	int _volumeFadeStep = 0;    // signed per-period volume delta applied to _volumeOffset
+	int _attenFadeStep = 0;     // signed per-period delta applied to _patchAttenuation
+	int _note = 0;              // note byte read from the sound-data stream
+	int _sampleIndex = 0;
+	int _volume = 0;
+	int _noteOffset = 0;        // subtracted from _activeCount to derive _keyOnDelay
+	int _keyOnDelay = 0;        // countdown before the key-on bit is cleared (gate time)
+	int _volumeFadeCounter = 0; // counts down to 0 before applying _volumeFadeStep
+	int _volumeFadeReload = 0;  // reload value for _volumeFadeCounter
+	uint8 _attenFadeCounter = 0;// counts down to 0 before applying _attenFadeStep
+	int _attenFadeReload = 0;   // reload value for _attenFadeCounter
+	int _patchAttenuation = 0;  // per-note attenuation offset added on top of the patch TL
+	int _pendingStop = 0;       // non-zero while the channel is fading out to silence
+	byte *_ptr1 = nullptr;
+	byte *_pSrc = nullptr;
+	byte *_innerLoopPtr = nullptr;	// inner-loop restart address (opcode 0)
+	byte *_outerLoopPtr = nullptr;	// outer-loop restart address (opcode 1)
+	int _innerLoopCount = 0;    // remaining inner-loop iterations (opcode 0)
+	int _outerLoopCount = 0;    // remaining outer-loop iterations (opcode 1)
+	byte *_soundData = nullptr;
+	int _transpose = 0;         // fine-tune offset added into the frequency table lookup
+	int _volumeOffset = 0;
+	int _octaveTranspose = 0;   // added to _note before the octave/semitone split
 
-	// TODO: Only used by asound.003. Figure out usage
-	byte _field20;
+	// Extra static per-channel volume trim, confirmed via disassembly
+	// comparison to be a third additive term in updateActiveChannel()'s
+	// volume sum (volume + volumeOffset + channelAttenuation, clamped to
+	// [0, 63]). Only asound.003/asound.004's copy of the shared runtime
+	// reads this = 0; it is otherwise always 0, so summing it in unconditionally
+	// is harmless for every other driver.
+	byte _channelAttenuation = 0;
 
 public:
 	static bool _channelsEnabled;
 public:
-	AdlibChannel();
+	AdlibChannel() {}
 
 	void reset();
 	void enable(int flag);
@@ -239,10 +244,18 @@ protected:
 	void resultCheck();
 
 	/**
-	 * Play the specified sound
+	 * Play the specified sound, using any free channel from 5 to 8.
 	 * @param offset	Offset of sound data within sound player data segment
 	 */
 	void playSound(int offset);
+
+	/**
+	 * Play the specified sound using any channel from 0 to 8.
+	 * @param offset	Offset of sound data within sound player data segment
+	 */
+	void playSoundAny(int offset) {
+		playSoundData(loadData(offset), 0);
+	}
 
 	/**
 	 * Play the specified raw sound data

@@ -28,37 +28,6 @@ namespace RexNebular {
 
 bool AdlibChannel::_channelsEnabled;
 
-AdlibChannel::AdlibChannel() {
-	_owner = nullptr;
-	_activeCount = 0;
-	_pitchBend = 0;
-	_volumeFadeStep = 0;
-	_attenFadeStep = 0;
-	_note = 0;
-	_sampleIndex = 0;
-	_volume = 0;
-	_volumeOffset = 0;
-	_noteOffset = 0;
-	_keyOnDelay = 0;
-	_volumeFadeCounter = 0;
-	_volumeFadeReload = 0;
-	_attenFadeCounter = 0;
-	_attenFadeReload = 0;
-	_patchAttenuation = 0;
-	_pendingStop = 0;
-	_ptr1 = nullptr;
-	_pSrc = nullptr;
-	_innerLoopPtr = nullptr;
-	_outerLoopPtr = nullptr;
-	_innerLoopCount = 0;
-	_outerLoopCount = 0;
-	_soundData = nullptr;
-	_transpose = 0;
-	_octaveTranspose = 0;
-
-	_field20 = 0;
-}
-
 void AdlibChannel::reset() {
 	_activeCount = 0;
 	_pitchBend = 0;
@@ -507,7 +476,8 @@ static const int outputChannels[] = {
 void ASound::updateActiveChannel() {
 	int reg = 0x40 + outputChannels[outputIndexes[_activeChannelNumber * 2 + 1]];
 	int portVal = _ports[reg] & 0xFFC0;
-	int newVolume = CLIP(_activeChannelPtr->_volume + _activeChannelPtr->_volumeOffset, 0, 63);
+	int newVolume = CLIP(_activeChannelPtr->_volume + _activeChannelPtr->_volumeOffset
+		+ (int8)_activeChannelPtr->_channelAttenuation, 0, 63);
 	newVolume = newVolume * _masterVolume / 255;
 
 	// Note: Original had a whole block not seeming to be used, since the initialisation
