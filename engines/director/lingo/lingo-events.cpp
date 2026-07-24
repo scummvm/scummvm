@@ -449,12 +449,14 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 	uint16 channelId = 0;
 	uint16 pointedSpriteId = 0;
 
-	// In D6+ there are multiple behavors per sprite, find the sprite
+	// In D6+ there are multiple behavors per sprite, find the sprite.
+	// prepareFrame is broadcast per channel, so for it targetId 0 means
+	// "no sprite" rather than "whatever is under the mouse".
 	if (g_director->getVersion() >= 600) {
-		if (targetId == 0) {
-			pointedSpriteId = _score->getMouseSpriteIDFromPos(pos);
-		} else {
+		if (targetId != 0) {
 			pointedSpriteId = targetId;
+		} else if (event != kEventPrepareFrame) {
+			pointedSpriteId = _score->getMouseSpriteIDFromPos(pos);
 		}
 	}
 
@@ -615,7 +617,8 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 						queue.push(LingoEvent(event, eventId, kSpriteHandler, passThrough, pos, pointedSpriteId, i));
 					}
 
-					if (event == kEventBeginSprite || event == kEventEndSprite || event == kEventMouseUpOutSide) {
+					if (event == kEventBeginSprite || event == kEventEndSprite || event == kEventMouseUpOutSide
+							|| event == kEventPrepareFrame) {
 						// These events do not go any further than the sprite behaviors
 						break;
 					}
@@ -698,11 +701,9 @@ void Movie::broadcastEvent(LEvent event) {
 		}
 	}
 
-	// With no sprite behaviors, cast/frame/movie handlers were never queued
-	// at all; add a no-target pass. When behaviors exist, their pass()
-	// semantics already decide whether those handlers run.
-	if (queue.empty())
-		queueEvent(queue, event, 0);
+	// Each sprite is an independent recipient; the frame and movie scripts get
+	// the event exactly once, after every behavior.
+	queueEvent(queue, event, 0);
 
 	_vm->setCurrentWindow(this->getWindow());
 	_lingo->processEvents(queue, false);
