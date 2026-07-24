@@ -229,7 +229,7 @@ void DisplayContext::verifyClipSize() {
 }
 
 void DisplayContext::deleteClips() {
-	_clips.empty();
+	_clips.clear();
 }
 
 bool DisplayContext::clipIsEmpty() {
