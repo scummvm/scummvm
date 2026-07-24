@@ -227,7 +227,6 @@ public:
 
 private:
 	uint16 _dungeonId; // @ G0526_ui_DungeonID
-	byte *_entranceDoorAnimSteps[10]; // @ G0562_apuc_Bitmap_EntranceDoorAnimationSteps
 	byte *_interfaceCredits; // @ G0564_puc_Graphic5_InterfaceCredits
 	Common::RandomSource *_rnd;
 
@@ -235,6 +234,7 @@ private:
 	const DMADGameDescription *_gameVersion;
 	bool _canLoadFromGMM;
 public:
+	byte *_entranceDoorAnimSteps[10]; // @ G0562_apuc_Bitmap_EntranceDoorAnimationSteps
 	Console *_console;
 	DisplayMan *_displayMan;
 	DungeonMan *_dungeonMan;
