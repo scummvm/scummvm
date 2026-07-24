@@ -163,6 +163,9 @@ struct CachedFile {
 	// Mission Code: Millennium expects the installer to have added an empty save file.
 	{"mcmillennium", Common::kPlatformWindows, "pc/players", (const byte *)"", 0},
 
+	// Noir has a config file which it expects to contain information about the system paths.
+	{"noir", Common::kPlatformWindows, "NOIRCNFG.TXT", (const byte *)"1 C:\\ C:\\", -1},
+
 	// Pingu: A Barrel of Fun! expects a text file containing system paths to be written by InstallShield,
 	// and the placeholder text file in the archive will not work.
 	{ "pingu1", Common::kPlatformWindows, "PINGUDRV.PNG", (const byte *)"C:\\\r\nC:\\\r\nD:\\\r\n", -1},
@@ -344,6 +347,9 @@ const struct Quirk {
 	// Stay Tooned is D5, but expects the XObject version to be used.
 	{ "staytooned", Common::kPlatformWindows, &quirkForceFileIOXObj },
 	{ "staytooned", Common::kPlatformMacintosh, &quirkForceFileIOXObj },
+
+	// Noir is D5, but expects the XObject version to be used.
+	{ "noir", Common::kPlatformWindows, &quirkForceFileIOXObj },
 
 	// Ingenious bundles both the Xtra and XObject editions in the Xtra folder, but expects the XObject
 	// version to be available.
