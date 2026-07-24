@@ -245,7 +245,7 @@ static const BuiltinProto builtins[] = {
 	{ "true",			LB::b_true,			0, 0, 200, KBLTIN },	// D2 k
 	{ "version",		LB::b_version,		0, 0, 300, KBLTIN },	//		D3 k
 	// References
-	{ "cast",			LB::b_cast,			1, 1, 400, FBLTIN },	//			D4 f
+	{ "cast",			LB::b_member,			1, 2, 400, FBLTIN },	//			D4 f
 	{ "castLib",		LB::b_castLib,		1, 1, 500, FBLTIN },	//				D5 f
 	{ "member",			LB::b_member,		1, 2, 500, FBLTIN },	//				D5 f
 	{ "script",			LB::b_script,		1, 2, 400, FBLTIN },	//			D4 f
@@ -4191,13 +4191,6 @@ void LB::b_version(int nargs) {
 ///////////////////
 // References
 ///////////////////
-void LB::b_cast(int nargs) {
-	Datum d = g_lingo->pop();
-	Datum res = d.asMemberID();
-	res.type = CASTREF;
-	g_lingo->push(res);
-}
-
 void LB::b_castLib(int nargs) {
 	Datum d = g_lingo->pop();
 	Datum res(0);
@@ -4217,6 +4210,9 @@ void LB::b_member(int nargs) {
 		Datum member = g_lingo->pop();
 		res = member.asMemberID();
 	} else if (nargs == 2) {
+		if (g_director->getVersion() < 500) {
+			warning("b_member: included a castLib argument! These aren't supposed to exist until D5");
+		}
 		Datum library = g_lingo->pop();
 		Datum member = g_lingo->pop();
 		res = g_lingo->toCastMemberID(member, library);
