@@ -261,6 +261,10 @@ Common::Point FilmLoopCastMember::getRegistrationOffset(int16 currentWidth, int1
 	return Common::Point(currentWidth / 2, currentHeight / 2);
 }
 
+bool FilmLoopCastMember::canWriteCastData() {
+	return _cast->_version >= kFileVer400 && _cast->_version < kFileVer700;
+}
+
 uint32 FilmLoopCastMember::getCastDataSize() {
 	// We're only reading the _initialRect and _vflags from the Cast Data
 	// _initialRect : 8 bytes + flags : 4 bytes + 2 bytes unk1 + 2 bytes (castType and _flags1 (see Cast::loadCastData() for Director 4 only)

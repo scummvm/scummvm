@@ -63,6 +63,7 @@ public:
 
 	uint32 getCastDataSize() override;
 	void writeCastData(Common::SeekableWriteStream *writeStream) override;
+	bool canWriteCastData() override;
 
 	void writeSCVWResource(Common::SeekableWriteStream *writeStream, uint32 offset);
 	uint32 getSCVWResourceSize();

@@ -213,7 +213,7 @@ void TextXtraCastMember::setField(int field, const Datum &d) {
 	case kTheText:
 		_text = Common::U32String(d.asString(), Common::kUtf8);
 		_loaded = true;
-		_modified = true;
+		setModified(true);
 		return;
 	default:
 		break;

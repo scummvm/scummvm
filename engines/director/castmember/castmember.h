@@ -65,6 +65,7 @@ public:
 	virtual void setEditable(bool editable) {}
 	virtual bool isModified() { return _modified; }
 	virtual bool needsReload() { return _needsReload; }
+	bool isChanged() const { return _isChanged; }
 	void setModified(bool modified);
 	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) { return nullptr; }
 	virtual void updateWidget(Graphics::MacWidget *widget, Channel *channel) {}
@@ -111,8 +112,16 @@ public:
 	uint32 getCastResourceSize();
 	virtual void writeCastData(Common::SeekableWriteStream *writeStream);
 	virtual uint32 getCastDataSize();
+	// Whether writeCastData()/getCastDataSize() understand this member for
+	// the movie's version; members without a capable writer keep their
+	// original 'CASt' bytes when saving. New member types must opt in
+	// once their writer is implemented.
+	virtual bool canWriteCastData() { return false; }
 
 	CastType _type;
+	// The cast type stored on disk; differs from _type for promoted
+	// members (e.g. a quickTimeMedia Xtra promoted to digital video)
+	CastType _sourceType = kCastTypeNull;
 	Common::Rect _initialRect;
 	Common::Rect _boundingRect;
 	Common::Array<Resource> _children;

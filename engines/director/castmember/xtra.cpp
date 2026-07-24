@@ -145,13 +145,22 @@ Common::String XtraCastMember::formatInfo() {
 	return Common::String::format("Xtra");
 }
 
+bool XtraCastMember::canWriteCastData() {
+	// External members never parse their envelope (see the constructor)
+	return _cast->_version >= kFileVer500 && _cast->_version < kFileVer1200 && !_xtraSymbol.empty();
+}
+
 uint32 XtraCastMember::getCastDataSize() {
-	warning("XtraCastMember()::getCastDataSize(): CastMember version invalid or not handled");
-	return 0;
+	// symbol length + symbol + payload length + payload, as read by the
+	// constructor
+	return 4 + _xtraSymbol.size() + 4 + _xtraData.size();
 }
 
 void XtraCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
-	warning("XtraCastMember()::writeCastData(): CastMember version invalid or not handled");
+	writeStream->writeUint32BE(_xtraSymbol.size());
+	writeStream->write(_xtraSymbol.c_str(), _xtraSymbol.size());
+	writeStream->writeUint32BE(_xtraData.size());
+	writeStream->write(_xtraData.data(), _xtraData.size());
 }
 
 } // End of namespace Director

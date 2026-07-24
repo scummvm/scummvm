@@ -138,6 +138,11 @@ void PaletteCastMember::unload() {
 }
 
 // PaletteCastMember has no data in the 'CASt' resource or is ignored
+bool PaletteCastMember::canWriteCastData() {
+	// D5-D10 legitimately have no 'CASt' data (it lives in 'CLUT')
+	return _cast->_version >= kFileVer400 && _cast->_version < kFileVer1100;
+}
+
 // This is the data in 'CASt' resource
 uint32 PaletteCastMember::getCastDataSize() {
 	if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer1100) {

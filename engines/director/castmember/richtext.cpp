@@ -313,4 +313,9 @@ void RichTextCastMember::writeCastData(Common::SeekableWriteStream *writeStream)
 	}
 }
 
+bool RichTextCastMember::canWriteCastData() {
+	return _cast->_version >= kFileVer500 && _cast->_version < kFileVer1100;
+}
+
 }	// End of namespace Director
+

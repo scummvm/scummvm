@@ -69,6 +69,7 @@ public:
 	uint32 writeBITDResource(Common::SeekableWriteStream *writeStream, uint32 offset);
 
 	uint32 getCastDataSize() override;			// This is the size of the data in the 'CASt' resource
+	bool canWriteCastData() override;
 	uint32 getBITDResourceSize();
 
 	Picture *_picture = nullptr;
