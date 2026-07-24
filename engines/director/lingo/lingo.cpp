@@ -665,6 +665,8 @@ bool Lingo::execute(int targetFrame) {
 			if (g_system->getMillis() - lastUpdate > 20) {
 				lastUpdate = g_system->getMillis();
 				g_system->updateScreen();
+				// On Emscripten, updateScreen() may skip the swap, so force a yield here; a no-op elsewhere.
+				g_system->delayMillis(0);
 			}
 		}
 
