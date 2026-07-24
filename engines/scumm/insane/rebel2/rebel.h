@@ -270,6 +270,7 @@ public:
 	Common::String getLevelPrefix(int levelId);
 
 	// Per-level handlers.
+	class Level1Handler;
 	int runLevel1();
 	int runLevel2();
 	int runLevel3();

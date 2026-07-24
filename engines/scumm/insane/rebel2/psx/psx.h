@@ -228,6 +228,8 @@ public:
 	Common::Error runGame();
 
 private:
+	class Level1Handler;
+
 	enum MenuResult {
 		kMenuStart,
 		kMenuQuit

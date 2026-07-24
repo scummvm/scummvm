@@ -28,6 +28,7 @@
 #include "graphics/surface.h"
 
 #include "scumm/scumm_v7.h"
+#include "scumm/insane/rebel2/shared.h"
 #include "scumm/insane/rebel2/psx/psx.h"
 #include "scumm/insane/rebel2/psx/ui.h"
 #include "scumm/insane/rebel2/psx/video.h"
@@ -36,6 +37,79 @@ namespace Scumm {
 
 Rebel2PSX::Rebel2PSX(ScummEngine_v7 *vm) : _vm(vm) {
 }
+
+class Rebel2PSX::Level1Handler : public Rebel2Level1Handler {
+public:
+	enum Error {
+		kGameplayError,
+		kEndingError,
+		kDeathVideoError,
+		kGameOverVideoError
+	};
+
+	Level1Handler(Rebel2PSX &psx, const RA2PSXModel &enemy, const RA2PSXModel &ship,
+			const RA2PSXModel &crosshair, const RA2PSXModel &laser,
+			const RA2PSXLevel1UI &ui, int &score) :
+		_psx(psx), _enemy(enemy), _ship(ship), _crosshair(crosshair), _laser(laser),
+		_ui(ui), _score(score), _error(kGameplayError) {
+	}
+
+	bool shouldQuit() const override {
+		return _psx._vm->shouldQuit();
+	}
+
+	Result playAttempt(int &lives) override {
+		switch (_psx.playLevel1(_enemy, _ship, _crosshair, _laser, _ui, lives, _score)) {
+		case Rebel2PSX::kLevel1Quit:
+			return kQuit;
+		case Rebel2PSX::kLevel1Complete:
+			return kComplete;
+		case Rebel2PSX::kLevel1Death:
+			return kDeath;
+		case Rebel2PSX::kLevel1Error:
+			return kError;
+		}
+
+		return kError;
+	}
+
+	bool playComplete() override {
+		return playVideo("S1/L01_EXTR.STR", kEndingError);
+	}
+
+	bool playDeath() override {
+		return playVideo("S1/L01_DIE.STR", kDeathVideoError);
+	}
+
+	bool playRetry(int) override {
+		return true;
+	}
+
+	bool playGameOver(int) override {
+		return playVideo("S1/L01_OVER.STR", kGameOverVideoError);
+	}
+
+	Error getError() const {
+		return _error;
+	}
+
+private:
+	bool playVideo(const char *path, Error error) {
+		if (_psx.playVideo(path, 1, false))
+			return true;
+		_error = error;
+		return false;
+	}
+
+	Rebel2PSX &_psx;
+	const RA2PSXModel &_enemy;
+	const RA2PSXModel &_ship;
+	const RA2PSXModel &_crosshair;
+	const RA2PSXModel &_laser;
+	const RA2PSXLevel1UI &_ui;
+	int &_score;
+	Error _error;
+};
 
 Common::SeekableReadStream *Rebel2PSX::openResource(int number) {
 	const Common::Path path(Common::String::format("RESOURCE.%03d", number));
@@ -228,34 +302,24 @@ Common::Error Rebel2PSX::runGame() {
 
 	int lives = 3;
 	int score = 0;
-	while (!_vm->shouldQuit()) {
-		const Level1Result result = playLevel1(enemy, ship, crosshair, laser, ui, lives, score);
-		if (result == kLevel1Quit)
-			return Common::kNoError;
-		if (result == kLevel1Error)
-			return Common::Error(Common::kReadingFailed,
-					_("Could not run the PlayStation Level 1 gameplay"));
-		if (result == kLevel1Complete) {
-			if (!playVideo("S1/L01_EXTR.STR", 1, false) && !_vm->shouldQuit())
-				return Common::Error(Common::kReadingFailed,
-						_("Could not play the PlayStation Level 1 ending"));
-			return Common::kNoError;
-		}
+	Level1Handler handler(*this, enemy, ship, crosshair, laser, ui, score);
+	if (runRebel2Level1(handler, lives) != Rebel2Level1Handler::kError)
+		return Common::kNoError;
 
-		if (!playVideo("S1/L01_DIE.STR", 1, false)) {
-			if (_vm->shouldQuit())
-				return Common::kNoError;
-			return Common::Error(Common::kReadingFailed,
-					_("Could not play the PlayStation Level 1 death video"));
-		}
-		if (--lives == 0) {
-			if (!playVideo("S1/L01_OVER.STR", 1, false) && !_vm->shouldQuit())
-				return Common::Error(Common::kReadingFailed,
-						_("Could not play the PlayStation game-over video"));
-			return Common::kNoError;
-		}
+	switch (handler.getError()) {
+	case Level1Handler::kEndingError:
+		return Common::Error(Common::kReadingFailed,
+				_("Could not play the PlayStation Level 1 ending"));
+	case Level1Handler::kDeathVideoError:
+		return Common::Error(Common::kReadingFailed,
+				_("Could not play the PlayStation Level 1 death video"));
+	case Level1Handler::kGameOverVideoError:
+		return Common::Error(Common::kReadingFailed,
+				_("Could not play the PlayStation game-over video"));
+	default:
+		return Common::Error(Common::kReadingFailed,
+				_("Could not run the PlayStation Level 1 gameplay"));
 	}
-	return Common::kNoError;
 #else
 	return Common::Error(Common::kUnsupportedGameidError,
 			_s("Rebel Assault II PlayStation support requires TinyGL"));

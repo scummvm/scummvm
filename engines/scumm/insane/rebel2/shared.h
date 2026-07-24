@@ -30,6 +30,27 @@ enum {
 	kRebel2MenuResultNone = -1
 };
 
+class Rebel2Level1Handler {
+public:
+	enum Result {
+		kQuit,
+		kComplete,
+		kDeath,
+		kGameOver,
+		kError
+	};
+
+	virtual ~Rebel2Level1Handler() {}
+	virtual bool shouldQuit() const = 0;
+	virtual Result playAttempt(int &lives) = 0;
+	virtual bool playComplete() = 0;
+	virtual bool playDeath() = 0;
+	virtual bool playRetry(int lives) = 0;
+	virtual bool playGameOver(int lives) = 0;
+};
+
+Rebel2Level1Handler::Result runRebel2Level1(Rebel2Level1Handler &handler, int lives);
+
 inline Rebel2MenuCommand getRebel2MenuCommand(const Common::KeyState &key) {
 	switch (key.keycode) {
 	case Common::KEYCODE_UP:

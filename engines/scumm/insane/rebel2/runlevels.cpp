@@ -26,53 +26,112 @@
 #include "scumm/smush/smush_player.h"
 
 #include "scumm/insane/rebel2/rebel.h"
+#include "scumm/insane/rebel2/shared.h"
 
 namespace Scumm {
+
+Rebel2Level1Handler::Result runRebel2Level1(Rebel2Level1Handler &handler, int lives) {
+	while (!handler.shouldQuit()) {
+		const Rebel2Level1Handler::Result result = handler.playAttempt(lives);
+		if (result == Rebel2Level1Handler::kQuit || result == Rebel2Level1Handler::kError)
+			return result;
+		if (result == Rebel2Level1Handler::kComplete) {
+			if (!handler.playComplete())
+				return handler.shouldQuit() ? Rebel2Level1Handler::kQuit : Rebel2Level1Handler::kError;
+			return Rebel2Level1Handler::kComplete;
+		}
+
+		if (!handler.playDeath())
+			return handler.shouldQuit() ? Rebel2Level1Handler::kQuit : Rebel2Level1Handler::kError;
+		if (handler.shouldQuit())
+			return Rebel2Level1Handler::kQuit;
+
+		--lives;
+		if (lives <= 0) {
+			if (!handler.playGameOver(lives))
+				return handler.shouldQuit() ? Rebel2Level1Handler::kQuit : Rebel2Level1Handler::kError;
+			return Rebel2Level1Handler::kGameOver;
+		}
+
+		if (!handler.playRetry(lives))
+			return handler.shouldQuit() ? Rebel2Level1Handler::kQuit : Rebel2Level1Handler::kError;
+		if (handler.shouldQuit())
+			return Rebel2Level1Handler::kQuit;
+	}
+
+	return Rebel2Level1Handler::kQuit;
+}
+
+class InsaneRebel2::Level1Handler : public Rebel2Level1Handler {
+public:
+	explicit Level1Handler(InsaneRebel2 &rebel) : _rebel(rebel) {}
+
+	bool shouldQuit() const override {
+		return _rebel._vm->shouldQuit();
+	}
+
+	Result playAttempt(int &lives) override {
+		_rebel._playerLives = lives;
+		_rebel._playerShield = 255;
+		_rebel._playerDamage = 0;
+		_rebel._deathFrame = 0;
+		_rebel.resetExplosions();
+
+		_rebel.clearBit(0);
+		_rebel._rebelKillCounter = 0;
+		_rebel._rebelHitCounter = 0;
+
+		if (!_rebel.playLevelSegment("LEV01/01P01.SAN", 0x28))
+			return kQuit;
+
+		lives = _rebel._playerLives;
+		return _rebel._playerShield > 0 ? kComplete : kDeath;
+	}
+
+	bool playComplete() override {
+		const int accuracy = _rebel.calculateAccuracy(_rebel._rebelKillCounter, _rebel._rebelHitCounter);
+		debugC(DEBUG_INSANE, "Level 1 completed!");
+		_rebel.playLevelEnd(1, accuracy, -1, false);
+		_rebel._levelUnlocked[1] = true;
+		return true;
+	}
+
+	bool playDeath() override {
+		debugC(DEBUG_INSANE, "Level 1 death at frame %d, lives=%d", _rebel._deathFrame, _rebel._playerLives - 1);
+		_rebel.playLevelDeathVariant(1, 1, _rebel._deathFrame);
+		return true;
+	}
+
+	bool playRetry(int lives) override {
+		_rebel._playerLives = lives;
+		_rebel.playLevelRetry(1);
+		return true;
+	}
+
+	bool playGameOver(int lives) override {
+		_rebel._playerLives = lives;
+		_rebel.playLevelGameOver(1);
+		return true;
+	}
+
+private:
+	InsaneRebel2 &_rebel;
+};
 
 int InsaneRebel2::runLevel1() {
 	playLevelBegin(1);
 	if (_vm->shouldQuit())
 		return kLevelQuit;
 
-	while (!_vm->shouldQuit()) {
-		_playerShield = 255;
-		_playerDamage = 0;
-		_deathFrame = 0;
-		resetExplosions();
-
-		clearBit(0);
-		_rebelKillCounter = 0;
-		_rebelHitCounter = 0;
-
-		if (!playLevelSegment("LEV01/01P01.SAN", 0x28))
-			return kLevelQuit;
-
-		if (_playerShield > 0) {
-			int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
-			debugC(DEBUG_INSANE, "Level 1 completed!");
-			playLevelEnd(1, accuracy, -1, false);
-			_levelUnlocked[1] = true;
-			return kLevelNextLevel;
-		}
-
-		debugC(DEBUG_INSANE, "Level 1 death at frame %d, lives=%d", _deathFrame, _playerLives - 1);
-		playLevelDeathVariant(1, 1, _deathFrame);
-
-		if (_vm->shouldQuit())
-			return kLevelQuit;
-
-		_playerLives--;
-		if (_playerLives <= 0) {
-			playLevelGameOver(1);
-			return kLevelGameOver;
-		}
-
-		playLevelRetry(1);
-		if (_vm->shouldQuit())
-			return kLevelQuit;
+	Level1Handler handler(*this);
+	switch (runRebel2Level1(handler, _playerLives)) {
+	case Rebel2Level1Handler::kComplete:
+		return kLevelNextLevel;
+	case Rebel2Level1Handler::kGameOver:
+		return kLevelGameOver;
+	default:
+		return kLevelQuit;
 	}
-
-	return kLevelQuit;
 }
 
 InsaneRebel2::WaveEndResult InsaneRebel2::processWaveEnd(int16 mask, int16 *budget, int16 threshold, uint16 flags) {
