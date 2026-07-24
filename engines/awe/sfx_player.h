@@ -23,6 +23,7 @@
 #define AWE_SFX_PLAYER_H
 
 #include "awe/intern.h"
+#include "common/mutex.h"
 
 namespace Awe {
 
@@ -82,6 +83,8 @@ struct SfxPlayer {
 	int _rate = 0;
 	int _samplesLeft = 0;
 	SfxChannel _channels[NUM_CHANNELS];
+
+	Common::Mutex _mutex;
 
 	SfxPlayer(Resource *res);
 
