@@ -562,6 +562,7 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 		case kEventKeyUp:
 		case kEventKeyDown:
 		case kEventTimeout:
+		case kEventMenuCallback:
 			break;
 
 		default:
