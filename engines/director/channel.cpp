@@ -728,6 +728,17 @@ bool Channel::canKeepWidget(Sprite *currentSprite, Sprite *nextSprite) {
 // currently, when we are setting hilite, we delete the widget and the re-create it
 // so we may optimize this if this operation takes much time
 void Channel::replaceWidget(CastMemberID previousCastId, bool force) {
+	// An embedded movie is composited via getSubChannels(); its own channels
+	// must not create widgets, or the shared window would draw them at the
+	// embedded movie's native position.
+	if (_score && _score->getMovie() && _score->getMovie()->_isEmbedded) {
+		if (_widget) {
+			delete _widget;
+			_widget = nullptr;
+		}
+		return;
+	}
+
 	// if the castmember is the same, and we are not modifying anything which cannot be handle by channel. Then we don't replace the widget
 	if (!force && canKeepWidget(previousCastId)) {
 		debug(5, "Channel::replaceWidget(): skip deleting %s", _sprite->_castId.asString().c_str());

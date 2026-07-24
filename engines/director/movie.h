@@ -218,6 +218,10 @@ public:
 	// or recolour it.
 	bool _isEmbedded = false;
 
+	// For an embedded movie, the movie that hosts it. Its scripts share the
+	// host's handler scope, so getHandler() falls back to the parent.
+	Movie *_parentMovie = nullptr;
+
 private:
 	Window *_window;
 	DirectorEngine *_vm;

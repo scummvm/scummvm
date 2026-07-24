@@ -747,6 +747,11 @@ CastMemberID Movie::getCastMemberIDByNameAndType(const Common::String &name, int
 	} else {
 		warning("Movie::getCastMemberIDByNameAndType: Unknown castLib %d", castLib);
 	}
+	// An embedded movie shares its host's cast, so a member it lacks may
+	// live in the host movie.
+	if (result.member == -1 && _parentMovie)
+		return _parentMovie->getCastMemberIDByNameAndType(name, castLib, type);
+
 	if (result.member == -1) {
 		warning("Movie::getCastMemberIDByNameAndType: No match found for member name %s and lib %d", name.c_str(), castLib);
 	}
@@ -830,6 +835,11 @@ Symbol Movie::getHandler(const Common::String &name, uint16 castLibHint) {
 
 	if (_sharedCast && _sharedCast->_lingoArchive->functionHandlers.contains(name))
 		return _sharedCast->_lingoArchive->functionHandlers[name];
+
+	// An embedded movie shares its host's handler scope, so a handler it
+	// lacks may live in the host movie.
+	if (_parentMovie)
+		return _parentMovie->getHandler(name, castLibHint);
 
 	return Symbol();
 }

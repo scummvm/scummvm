@@ -45,6 +45,10 @@ public:
 
 	void update();
 
+	// Map a host-stage mouse position into the linked movie's space and
+	// queue the event for its scripts to handle on the next step.
+	void routeInputEvent(LEvent event, Common::Point hostPos, const Common::Rect &bbox);
+
 	Common::String formatInfo() override;
 
 	bool _enableScripts;

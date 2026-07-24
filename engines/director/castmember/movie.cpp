@@ -25,9 +25,11 @@
 
 #include "director/castmember/movie.h"
 #include "director/cast.h"
+#include "director/channel.h"
 #include "director/lingo/lingo-the.h"
 #include "director/frame.h"
 #include "director/score.h"
+#include "director/window.h"
 
 namespace Director {
 
@@ -68,7 +70,47 @@ Common::Array<Channel> *MovieCastMember::getSubChannels(Common::Rect &bbox, uint
 		load();
 	}
 
-	return FilmLoopCastMember::getSubChannels(bbox, frame);
+	// Composite the embedded score's live channels (frame ignored) so
+	// script-driven changes show, unlike a film loop's fixed frames.
+	Common::Rect widgetRect(bbox.width() ? bbox.width() : _initialRect.width(),
+			bbox.height() ? bbox.height() : _initialRect.height());
+
+	_subchannels.clear();
+
+	if (!_score || _score->_channels.empty())
+		return &_subchannels;
+
+	bool needToScale = (bbox.width() != _initialRect.width() || bbox.height() != _initialRect.height());
+	float scaleX = needToScale ? (float)bbox.width() / _initialRect.width() : 1.0f;
+	float scaleY = needToScale ? (float)bbox.height() / _initialRect.height() : 1.0f;
+
+	// channel 0 is the score's own frame channel; sprites start at 1
+	for (uint i = 1; i < _score->_channels.size(); ++i) {
+		Sprite *chanSprite = _score->_channels[i]->_sprite;
+		if (!chanSprite || chanSprite->_castId.isNull())
+			continue;
+
+		Sprite src = *chanSprite;
+
+		if (needToScale) {
+			src._startPoint.x = (src._startPoint.x - _initialRect.left) * scaleX + bbox.left;
+			src._startPoint.y = (src._startPoint.y - _initialRect.top) * scaleY + bbox.top;
+			src._width = widgetRect.width();
+			src._height = widgetRect.height();
+			src._stretch = true;
+		} else {
+			src._startPoint.x = (src._startPoint.x - _initialRect.left) + bbox.left;
+			src._startPoint.y = (src._startPoint.y - _initialRect.top) + bbox.top;
+		}
+
+		Channel chan(nullptr, &src);
+		_subchannels.push_back(chan);
+	}
+
+	for (auto &iter : _subchannels)
+		iter.replaceWidget();
+
+	return &_subchannels;
 }
 
 void MovieCastMember::load() {
@@ -105,6 +147,7 @@ void MovieCastMember::load() {
 	// the stage (resize, recolour, reset palette) like a normal movie does.
 	_linkedMovie = new Movie(_cast->getMovie()->getWindow());
 	_linkedMovie->_isEmbedded = true;
+	_linkedMovie->_parentMovie = _cast->getMovie();
 	_linkedMovie->setArchive(archive);
 	_linkedMovie->loadArchive();
 	_score = _linkedMovie->getScore();
@@ -119,30 +162,50 @@ void MovieCastMember::load() {
 }
 
 void MovieCastMember::update() {
-      if (!_loaded)
-              load();
-      if (!_linkedMovie)
-              return;
+	if (!_loaded)
+		load();
+	if (!_linkedMovie)
+		return;
 
-      Score *score = _linkedMovie->getScore();
-      switch (score->_playState) {
-      case kPlayNotStarted:
-              score->_playState = kPlayLoaded;
-              break;
-      case kPlayLoaded:
-              // startPlay() without kEventStartMovie: movie scripts do not
-              // run inside movie cast members
-              score->_haveInteractivity = false;
-              score->startPlay();
-              score->_haveInteractivity = true;
-              break;
-      case kPlayStarted:
-              // lockstep advance is host-driven in incrementFilmLoops();
-              // frame-script dispatch lands here (via the Score seam) later
-              break;
-      default:
-              break;
-      }
+	// Step the linked score once per host frame. Its renderFrame() is
+	// short-circuited (see Score::renderFrame) to refresh channels without
+	// drawing to the host window; the host composites them via getSubChannels().
+	Score *score = _linkedMovie->getScore();
+
+	// Scripts resolve context via getCurrentMovie(), so point the shared
+	// window at the linked movie for the step, then restore. This lets its
+	// go()/globals/events act on itself.
+	Window *window = _linkedMovie->getWindow();
+	Movie *hostMovie = window->getCurrentMovie();
+	window->setCurrentMovie(_linkedMovie);
+
+	if (score->_playState != kPlayStarted)
+		score->startPlay();
+
+	// A per-frame go() in exitFrame leaves hasJump/frozen state set, so
+	// step() never drains routed input. Drain here so the embedded movie's
+	// mouse handlers (e.g. mouseUp) fire.
+	if (!_linkedMovie->_inputEventQueue.empty())
+		g_lingo->processEvents(_linkedMovie->_inputEventQueue, true);
+
+	score->step();
+
+	window->setCurrentMovie(hostMovie);
+}
+
+void MovieCastMember::routeInputEvent(LEvent event, Common::Point hostPos, const Common::Rect &bbox) {
+	if (!_linkedMovie)
+		return;
+
+	// Invert getSubChannels()'s scaling to map the click into the linked
+	// movie's coordinate space.
+	Common::Point p = hostPos;
+	if (bbox.width() && bbox.height()) {
+		p.x = (hostPos.x - bbox.left) * _initialRect.width() / bbox.width() + _initialRect.left;
+		p.y = (hostPos.y - bbox.top) * _initialRect.height() / bbox.height() + _initialRect.top;
+	}
+
+	_linkedMovie->queueInputEvent(event, 0, p);
 }
 
 bool MovieCastMember::hasField(int field) {

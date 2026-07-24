@@ -854,6 +854,13 @@ void Score::update() {
 }
 
 void Score::renderFrame(uint16 frameId, RenderMode mode, bool sound1Changed, bool sound2Changed) {
+	// An embedded movie only refreshes its own channels for the host to
+	// composite via getSubChannels(); it must never touch the shared window.
+	if (_movie->_isEmbedded) {
+		updateSprites(mode);
+		return;
+	}
+
 	uint32 start = g_system->getMillis(false);
 	// Force cursor update if a new movie's started.
 	if (_window->_newMovieStarted)
@@ -922,19 +929,24 @@ void Score::incrementFilmLoops() {
 	if (_window->_playbackPaused)
 		return;
 
-	// In D4, film loops freeze only while an explicit jump (go the frame)
-	// holds the playhead on one frame; a movie that loops naturally on a
-	// single frame still advances them. D5 and later always animate.
-	if (_vm->getVersion() < 500 && _curFrameNumber == _filmLoopsLastFrame && _frameHeldByJump)
-		return;
-	_filmLoopsLastFrame = _curFrameNumber;
+	// In D4, film loops freeze while an explicit jump holds the playhead on
+	// one frame (a natural single-frame loop still advances them); D5+ always
+	// animate. Movie cast members are independent and always keep running.
+	bool filmLoopsFrozen = (_vm->getVersion() < 500 && _curFrameNumber == _filmLoopsLastFrame && _frameHeldByJump);
+	if (!filmLoopsFrozen)
+		_filmLoopsLastFrame = _curFrameNumber;
 
 	for (auto &it : _channels) {
-		if (!it->_sprite->_cast) continue;
+		if (!it->_sprite->_cast)
+			continue;
 		CastType type = it->_sprite->_cast->_type;
-		if (type == kCastFilmLoop || type == kCastMovie) {
-			FilmLoopCastMember *fl = ((FilmLoopCastMember *)it->_sprite->_cast);
 
+		if (type == kCastMovie) {
+			// A movie cast member steps its own embedded score like a normal
+			// movie, not the film loop flipbook.
+			((MovieCastMember *)it->_sprite->_cast)->update();
+		} else if (type == kCastFilmLoop && !filmLoopsFrozen) {
+			FilmLoopCastMember *fl = ((FilmLoopCastMember *)it->_sprite->_cast);
 			if (fl->_score && !fl->_score->_scoreCache.empty()) {
 				if (fl->_looping) {
 					it->_filmLoopFrame += 1;
@@ -945,12 +957,6 @@ void Score::incrementFilmLoops() {
 			} else {
 				warning("Score::incrementFilmLoops(): invalid film loop in castId %s", it->_sprite->_castId.asString().c_str());
 			}
-
-			if (type == kCastMovie) {
-				MovieCastMember *mv = ((MovieCastMember *)it->_sprite->_cast);
-				mv->update();
-			}
-
 		}
 	}
 }
