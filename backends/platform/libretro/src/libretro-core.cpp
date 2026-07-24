@@ -38,6 +38,8 @@
 #include <libgen.h>
 #endif
 
+#include <features/features_cpu.h> // cpu_features_get_time_usec()
+
 /**
  * Include base/internal_version.h to allow access to SCUMMVM_VERSION.
  * @see retro_get_system_info()
@@ -97,6 +99,8 @@ static float frame_rate = 0;
 static uint16 sample_rate = 0;
 static float audio_samples_per_frame   = 0.0f; // length in samples per frame
 static float audio_samples_accumulator = 0.0f;
+// Timestamp (usec) of the previous audio_run(); 0 reseeds from the per-frame count.
+static retro_time_t audio_last_time_usec = 0;
 
 static int16 *audio_sample_buffer = NULL; // pointer to output buffer
 
@@ -191,6 +195,7 @@ static void log_scummvm_exit_code(void) {
 
 static void audio_buffer_init(uint16 sample_rate, uint16 frame_rate) {
 	audio_samples_accumulator = 0.0f;
+	audio_last_time_usec      = 0;
 	audio_samples_per_frame   = (float)sample_rate / (float)frame_rate;
 	uint32 audio_sample_buffer_size  = ((uint32)retro_setting_get_audio_samples_buffer_size()) * 2 * sizeof(int16);
 	audio_sample_buffer       = audio_sample_buffer ? (int16 *)realloc(audio_sample_buffer, audio_sample_buffer_size) : (int16 *)malloc(audio_sample_buffer_size);
@@ -206,17 +211,38 @@ static void audio_run(void) {
 	uint32 samples_to_read;
 	uint32 samples_produced;
 
-	/* Audio_samples_per_frame is decimal;
-	 * get integer component */
-	samples_to_read = (uint32)audio_samples_per_frame;
+	/* Pace audio against elapsed wall time instead of a fixed sample_rate/frame_rate
+	 * batch, so output stays at sample_rate even when the frontend runs retro_run()
+	 * above or below frame_rate (a slow frontend would otherwise underrun the audio
+	 * buffer). Video stays frame-locked. */
+	float samples_target;
+	retro_time_t now_usec = cpu_features_get_time_usec();
+	if (audio_last_time_usec == 0) {
+		samples_target = audio_samples_per_frame;
+	} else {
+		retro_time_t elapsed_usec = now_usec - audio_last_time_usec;
+		if (elapsed_usec < 0)
+			elapsed_usec = 0;
+		samples_target = (float)sample_rate * (float)elapsed_usec / 1000000.0f;
+	}
+	audio_last_time_usec = now_usec;
+
+	/* Samples_target is decimal; get integer component */
+	samples_to_read = (uint32)samples_target;
 
 	/* Account for fractional component */
-	audio_samples_accumulator += audio_samples_per_frame - (float)samples_to_read;
+	audio_samples_accumulator += samples_target - (float)samples_to_read;
 
 	if (audio_samples_accumulator >= 1.0f) {
 		samples_to_read++;
 		audio_samples_accumulator -= 1.0f;
 	}
+
+	/* Bound the batch to the mix buffer: after a long stall (content load,
+	 * save-state) the elapsed interval would otherwise request a multi-second
+	 * batch and overrun audio_sample_buffer. */
+	if (samples_to_read > retro_setting_get_audio_samples_buffer_size())
+		samples_to_read = retro_setting_get_audio_samples_buffer_size();
 
 	samples_produced = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *) audio_sample_buffer, samples_to_read * 2 * sizeof(int16));
 
