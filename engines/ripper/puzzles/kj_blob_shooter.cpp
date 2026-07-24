@@ -29,6 +29,7 @@
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
+#include "ripper/display.h"
 #include "ripper/input.h"
 #include "ripper/media.h"
 #include "ripper/milestones.h"
@@ -702,6 +703,19 @@ uint16 KjBlobShooter::service(uint frame) {
 }
 
 Scene::Result KjBlobShooter::run(uint completionFlag) {
+	// RunBlobShooterScene at 0x338a4 enters a separate scene display context
+	// through InitializeSceneDisplayModeAndContext and restores the startup
+	// context on every exit. Preserve the script page independently of the
+	// full-screen KJ.SMK presentation so later 640x300 scene media cannot expose
+	// shooter pixels in the top and bottom bands.
+	IndexedDisplaySnapshot savedDisplay;
+	if (!savedDisplay.capture()) {
+		warning("Ripper: could not preserve the scene display for the KJ blob shooter");
+		return kLoadFailed;
+	}
+	debugC(2, kDebugPuzzles,
+		"Ripper: preserved KJ blob-shooter caller display size=%dx%d",
+		savedDisplay.bounds().width(), savedDisplay.bounds().height());
 	prepare("kj-blob-shooter-entry", 19, false);
 	_completionFlag = completionFlag;
 	_result = kExited;
@@ -769,6 +783,14 @@ Scene::Result KjBlobShooter::run(uint completionFlag) {
 
 	stopAllAudio();
 	finish("kj-blob-shooter-exit", 0, true);
+	if (!savedDisplay.restore()) {
+		warning("Ripper: could not restore the scene display after the KJ blob shooter");
+		_result = kLoadFailed;
+	} else {
+		debugC(2, kDebugPuzzles,
+			"Ripper: restored KJ blob-shooter caller display size=%dx%d",
+			savedDisplay.bounds().width(), savedDisplay.bounds().height());
+	}
 	debugC(_result == kLoadFailed ? 1 : 2, kDebugPuzzles,
 		"Ripper: left KJ blob-shooter result=%d difficulty=%u "
 		"completionFlag=%u missed=%d destroyed=%d spawnDelay=%d",
