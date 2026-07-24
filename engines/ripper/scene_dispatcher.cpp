@@ -30,6 +30,7 @@
 #include "ripper/detection.h"
 #include "ripper/milestones.h"
 #include "ripper/puzzles/calculator.h"
+#include "ripper/puzzles/cd_in_book.h"
 #include "ripper/puzzles/clock.h"
 #include "ripper/puzzles/crystal.h"
 #include "ripper/puzzles/gc_csh.h"
@@ -188,6 +189,14 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		debugC(1, kDebugPuzzles,
 			"Ripper: table gate puzzle scene action completed result=%d milestone=%u", result, argument);
 		return result != TableGatePuzzle::kLoadFailed;
+	}
+	if (action == kSceneActionCdInBookPuzzle) {
+		CdInBookPuzzle puzzle(engine);
+		const CdInBookPuzzle::Result result = puzzle.run(argument);
+		debugC(1, kDebugPuzzles,
+			"Ripper: CD-in-book puzzle scene action completed result=%d milestone=%u",
+			result, argument);
+		return result != CdInBookPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionKjBlobShooter) {
 		KjBlobShooter shooter(engine);

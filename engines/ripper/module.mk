@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	options_panel.o \
 	puzzles/broken_mug.o \
 	puzzles/calculator.o \
+	puzzles/cd_in_book.o \
 	puzzles/clock.o \
 	puzzles/crystal.o \
 	puzzles/gc_csh.o \
