@@ -33,6 +33,7 @@
 #include "dm/gfx.h"
 #include "dm/dungeonman.h"
 #include "dm/group.h"
+#include "dm/menus.h"
 #include "dm/timeline.h"
 #include "dm/champion.h"
 #include "dm/eventman.h"
@@ -1219,6 +1220,50 @@ bool DisplayMan::getBitmapDimensions(const byte *bitmap, uint16 &width, uint16 &
 	if (bitmap == nullptr)
 		return false;
 
+	if (_bitmaps && _bitmaps[0]) {
+		uint16 fontIdx = getGraphicIndex(kDMGraphicIdxFont);
+		uint16 maxBitmapsCount = fontIdx + 1;
+		for (uint16 i = 0; i < maxBitmapsCount; ++i) {
+			if (bitmap == _bitmaps[i]) {
+				width = getPixelWidth(i);
+				height = getPixelHeight(i);
+				return true;
+			}
+		}
+	}
+
+	if (_vm->_entranceDoorAnimSteps[0] && bitmap == _vm->_entranceDoorAnimSteps[0]) {
+		uint16 idx = kDMGraphicIdxEntranceLeftDoor;
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+	if (_vm->_entranceDoorAnimSteps[4] && bitmap == _vm->_entranceDoorAnimSteps[4]) {
+		uint16 idx = kDMGraphicIdxEntranceRightDoor;
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+
+	if (_vm->_menuMan && bitmap == _vm->_menuMan->_bitmapSpellAreaLines) {
+		uint16 idx = getGraphicIndex(kDMGraphicIdxMenuSpellAreLines);
+		width = getPixelWidth(idx);
+		height = getPixelHeight(idx);
+		return true;
+	}
+
+	int16 firstFloorSet = (_vm->getPlatform() == Common::kPlatformDOS) ? k78_FirstFloorSetDOS : k75_FirstFloorSet;
+	if (bitmap == _bitmapFloor) {
+		width = getPixelWidth(firstFloorSet);
+		height = getPixelHeight(firstFloorSet);
+		return true;
+	}
+	if (bitmap == _bitmapCeiling) {
+		width = getPixelWidth(firstFloorSet + 1);
+		height = getPixelHeight(firstFloorSet + 1);
+		return true;
+	}
+
 	int16 firstWallSet = (_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet;
 
 	if (bitmap == _bitmapWallSetD3LCR) {
@@ -1304,16 +1349,18 @@ bool DisplayMan::getBitmapDimensions(const byte *bitmap, uint16 &width, uint16 &
 
 void DisplayMan::blitToBitmap(byte *srcBitmap, byte *destBitmap, const Box &box, uint16 srcX, uint16 srcY, uint16 srcByteWidth,
 								   uint16 destByteWidth, Color transparent, int16 srcHeight, int16 destHight) {
-	uint16 srcWidth = srcByteWidth * 2;
-	uint16 actualWidth = srcWidth;
+	uint16 actualWidth = srcByteWidth * 2;
 	uint16 actualHeight = srcHeight;
-	uint16 lookupWidth, lookupHeight;
-	if (getBitmapDimensions(srcBitmap, lookupWidth, lookupHeight)) {
-		actualWidth = lookupWidth;
-		actualHeight = lookupHeight;
+	uint16 w, h;
+	if (getBitmapDimensions(srcBitmap, w, h)) {
+		actualWidth = w;
+		actualHeight = h;
 	}
 
 	uint16 destWidth = destByteWidth * 2;
+	if (getBitmapDimensions(destBitmap, w, h))
+		destWidth = w;
+
 	for (uint16 y = 0; y < box._rect.bottom + 1 - box._rect.top; ++y) { // + 1 for inclusive boundaries
 		for (uint16 x = 0; x < box._rect.right + 1 - box._rect.left; ++x) { // + 1 for inclusive boundaries
 			if (srcX + x < actualWidth && y + srcY < actualHeight
