@@ -188,10 +188,6 @@ public:
 	int _nextEventId;
 	Common::Queue<LingoEvent> _inputEventQueue;
 
-	uint16 _key;
-	int _keyCode;
-	byte _keyFlags;
-
 	int _selStart;
 	int _selEnd;
 
