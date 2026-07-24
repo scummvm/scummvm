@@ -26,6 +26,8 @@
 #include "director/castmember/movie.h"
 #include "director/cast.h"
 #include "director/lingo/lingo-the.h"
+#include "director/frame.h"
+#include "director/score.h"
 
 namespace Director {
 
@@ -49,6 +51,11 @@ MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, MovieCastMember &sou
 	_type = kCastMovie;
 
 	_enableScripts = source._enableScripts;
+
+	// the copy loads its own linked movie (this member owns it)
+	_linkedMovie = nullptr;
+	_score = nullptr;
+	_loaded = false;
 }
 
 MovieCastMember::~MovieCastMember() {
@@ -68,37 +75,75 @@ void MovieCastMember::load() {
 	if (_loaded)
 		return;
 
+	// A reload rebuilds the linked movie
+	delete _linkedMovie;
+	_linkedMovie = nullptr;
+	_score = nullptr;
+
+	_loaded = true;
+	_needsReload = false;
+
 	Common::String rawMoviePath = _cast->getLinkedPath(_castId);
-	if(rawMoviePath.empty()) {
-		warning("MovieCastMember::load() No filename for linked movie in _castId %d", _castId);
-		_loaded = true;
+	if (rawMoviePath.empty()) {
+		warning("MovieCastMember::load(): No filename for linked movie in castId %d", _castId);
 		return;
 	}
 
 	Common::Path moviePath = findMoviePath(rawMoviePath);
-	if(moviePath.empty()) {
+	if (moviePath.empty()) {
 		warning("MovieCastMember::load(): Linked movie %s not found", rawMoviePath.c_str());
-		_loaded = true;
 		return;
 	}
 
 	Common::SharedPtr<Archive> archive = g_director->openArchive(moviePath);
 	if (!archive) {
 		warning("MovieCastMember::load(): Failed to load archive at %s", moviePath.toString().c_str());
-		_loaded = true;
 		return;
 	}
 
+	// The linked movie borrows the host's window, so it must not take over
+	// the stage (resize, recolour, reset palette) like a normal movie does.
 	_linkedMovie = new Movie(_cast->getMovie()->getWindow());
+	_linkedMovie->_isEmbedded = true;
 	_linkedMovie->setArchive(archive);
 	_linkedMovie->loadArchive();
 	_score = _linkedMovie->getScore();
 
-	_loaded = true;
-	return;
+	// resolve the sprites against the linked movie's own cast
+	for (auto &frame : _score->_scoreCache) {
+		for (auto &sprite : frame->_sprites) {
+			if (sprite && !sprite->_castId.isNull())
+				sprite->setCast(sprite->_castId, false);
+		}
+	}
 }
 
+void MovieCastMember::update() {
+      if (!_loaded)
+              load();
+      if (!_linkedMovie)
+              return;
 
+      Score *score = _linkedMovie->getScore();
+      switch (score->_playState) {
+      case kPlayNotStarted:
+              score->_playState = kPlayLoaded;
+              break;
+      case kPlayLoaded:
+              // startPlay() without kEventStartMovie: movie scripts do not
+              // run inside movie cast members
+              score->_haveInteractivity = false;
+              score->startPlay();
+              score->_haveInteractivity = true;
+              break;
+      case kPlayStarted:
+              // lockstep advance is host-driven in incrementFilmLoops();
+              // frame-script dispatch lands here (via the Score seam) later
+              break;
+      default:
+              break;
+      }
+}
 
 bool MovieCastMember::hasField(int field) {
 	switch (field) {

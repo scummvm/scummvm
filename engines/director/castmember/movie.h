@@ -43,6 +43,8 @@ public:
 	Datum getField(int field) override;
 	void setField(int field, const Datum &value) override;
 
+	void update();
+
 	Common::String formatInfo() override;
 
 	bool _enableScripts;
