@@ -133,7 +133,7 @@ ChannelIdent ParameterReadStream::readTypedChannelIdent() {
 Chunk::Chunk(Common::SeekableReadStream *stream) : _parentStream(stream) {
 	_id = _parentStream->readUint32BE();
 	_length = _parentStream->readUint32LE();
-	_dataStartOffset = pos();
+	_dataStartOffset = _parentStream->pos();
 	_dataEndOffset = _dataStartOffset + _length;
 	debugC(5, kDebugLoading, "%s: Got chunk with ID \"%s\" and size 0x%x", __func__, tag2str(_id), _length);
 }
