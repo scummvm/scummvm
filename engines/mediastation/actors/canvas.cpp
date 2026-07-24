@@ -160,11 +160,7 @@ void CanvasActor::stampImage(const Common::Point &dest, uint actorId) {
 	// Set up the display context to draw to the canvas's image surface.
 	if (_image != nullptr) {
 		_displayContext._destImage = &_image->bitmap->_image;
-		if (_displayContext._destImage == nullptr) {
-			_displayContext.deleteClips();
-		} else {
-			_displayContext.verifyClipSize();
-		}
+		_displayContext.verifyClipSize();
 	}
 
 	// Although this method is named stampImage, it can actually stamp other spatial entities too.

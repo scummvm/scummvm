@@ -420,12 +420,8 @@ ScriptValue CodeChunk::evaluateAssign() {
 		error("%s: Attempt to assign an empty value to a variable", __func__);
 	}
 
-	if (targetVariable != nullptr) {
-		*targetVariable = value;
-		return value;
-	} else {
-		error("%s: Attempt to assign to null variable", __func__);
-	}
+	*targetVariable = value;
+	return value;
 }
 
 ScriptValue CodeChunk::evaluateBinaryOperation(Opcode op) {
