@@ -45,7 +45,7 @@ public:
 	void executeForever();
 
 protected:
-	StateType _currentState;
+	StateType _currentState = StateType();
 	Common::Queue<EventType> _events;
 	bool _handlingEvents = false;
 	virtual void executeNextState(EventType eventType) = 0;

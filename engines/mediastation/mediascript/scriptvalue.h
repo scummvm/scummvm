@@ -34,7 +34,7 @@ class Actor;
 
 class ScriptValue {
 public:
-	ScriptValue() : _type(kScriptValueTypeEmpty), _collection(nullptr) {}
+	ScriptValue() : _type(kScriptValueTypeEmpty), _u{}, _collection(nullptr) {}
 	ScriptValue(ParameterReadStream *stream);
 	ScriptValue(const ScriptValue &other);
 	~ScriptValue();
