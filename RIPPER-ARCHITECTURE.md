@@ -795,6 +795,12 @@
   `KJ_FIRE.PL`, and `KJ0.WAV` through `KJ8.WAV`. The available retail data set
   contains only `KJ1.INI`; ScummVM reports the requested numbered file and
   falls back to that available tuning file when necessary.
+- `RunBlobShooterScene` enters `InitializeSceneDisplayModeAndContext` before
+  presenting `KJ.SMK` and returns through `InitializeStartupDisplayModeAndContext`
+  on every exit. The active script page therefore remains distinct from the
+  full-screen shooter page. ScummVM snapshots and restores that indexed page so
+  a following controlled presentation cannot preserve shooter pixels around a
+  640x300 scene loop.
 - The blob origin tables at `0x31383` and `0x31397` use the original
   vertical/horizontal selection-point order. Converted to logical `(x, y)`,
   the five origins are `(185, 0)`, `(0, 0)`, `(0, 62)`, `(0, 0)`, and
