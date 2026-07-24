@@ -378,6 +378,13 @@
   service owns this milestone-backed enumeration, acquisition, use gating,
   and the currently implemented generic and direct-media item branches; its
   state is already covered by milestone save synchronization.
+- Inventory item 1 enters `RunQcsMag2UnlockMediaScreen` at `0x3bb08`. It
+  preserves the active indexed page and palette, clears the display, retains
+  `Q_CS_1.AVI`, clears again, retains `MAG2.AVI`, and plays the blocking
+  `Q_P_40.WAV` cue. The final image remains until Escape or the central
+  440-by-300 control is selected, after which the saved scene is restored.
+  `ExecuteUnlockSelectionChoice` clears consumed flag 101 after this helper
+  returns, leaving the item reusable.
 - `ACT1_CHK.RUN` tests flag 311 (`Eddie finishes conversation in Act I on
   earth`) before its Act II handoff. When the flag is clear, opcode `0x08` at
   script offset `0x2e1` branches to the clear-branch entry at `0x301`; the
