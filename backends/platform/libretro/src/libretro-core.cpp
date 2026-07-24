@@ -38,6 +38,10 @@
 #include <libgen.h>
 #endif
 
+/* cpu_features_get_time_usec(): monotonic microsecond clock used to pace audio
+ * generation against real wall time (see audio_run). */
+#include <features/features_cpu.h>
+
 /**
  * Include base/internal_version.h to allow access to SCUMMVM_VERSION.
  * @see retro_get_system_info()
@@ -97,6 +101,9 @@ static float frame_rate = 0;
 static uint16 sample_rate = 0;
 static float audio_samples_per_frame   = 0.0f; // length in samples per frame
 static float audio_samples_accumulator = 0.0f;
+// Wall-clock timestamp (usec) of the previous audio_run, or 0 to (re)seed from
+// the nominal per-frame count on the next call. See audio_run for the rationale.
+static retro_time_t audio_last_time_usec = 0;
 
 static int16 *audio_sample_buffer = NULL; // pointer to output buffer
 
@@ -191,6 +198,7 @@ static void log_scummvm_exit_code(void) {
 
 static void audio_buffer_init(uint16 sample_rate, uint16 frame_rate) {
 	audio_samples_accumulator = 0.0f;
+	audio_last_time_usec      = 0; // reseed pacing after a rate change
 	audio_samples_per_frame   = (float)sample_rate / (float)frame_rate;
 	uint32 audio_sample_buffer_size  = ((uint32)retro_setting_get_audio_samples_buffer_size()) * 2 * sizeof(int16);
 	audio_sample_buffer       = audio_sample_buffer ? (int16 *)realloc(audio_sample_buffer, audio_sample_buffer_size) : (int16 *)malloc(audio_sample_buffer_size);
@@ -206,12 +214,46 @@ static void audio_run(void) {
 	uint32 samples_to_read;
 	uint32 samples_produced;
 
-	/* Audio_samples_per_frame is decimal;
-	 * get integer component */
-	samples_to_read = (uint32)audio_samples_per_frame;
+	/* Pace audio generation against real elapsed wall time rather than emitting a
+	 * fixed sample_rate/frame_rate batch per call.
+	 *
+	 * audio_run() runs once per retro_run(). The frontend is free to call
+	 * retro_run() at a rate that differs from frame_rate: on lower-end devices a
+	 * heavy scene can drop it below frame_rate, and some frontends run it above.
+	 * A fixed per-frame batch ties the produced sample rate to the *achieved*
+	 * frame rate, so a frontend running at 55 fps only feeds 55/60 of the audio
+	 * its output device consumes and its buffer underruns (audible gaps), while a
+	 * frontend running fast overproduces. Deriving the batch from the elapsed time
+	 * keeps average production at exactly sample_rate regardless of the retro_run
+	 * cadence: samples/sec = calls/sec * sample_rate * sec/call = sample_rate.
+	 * Video stays frame-locked; only audio is decoupled. */
+	float samples_target;
+	retro_time_t now_usec = cpu_features_get_time_usec();
+	if (audio_last_time_usec == 0) {
+		/* First call after (re)init or a rate change: no interval to measure. */
+		samples_target = audio_samples_per_frame;
+	} else {
+		retro_time_t elapsed_usec = now_usec - audio_last_time_usec;
+		/* Bound the catch-up. A load pause, a save-state or a debugger stop can
+		 * leave a huge gap; without a cap that would dump a multi-second batch and
+		 * overflow both audio_sample_buffer and the frontend. Two frames absorbs
+		 * normal frame-time jitter and always fits: audio_sample_buffer is sized to
+		 * next_pow2(2 * samples-per-frame) (see retro_setting_get_audio_samples_buffer_size),
+		 * i.e. >= this two-frame maximum by construction. */
+		const retro_time_t max_usec = (retro_time_t)(2000000.0f / frame_rate);
+		if (elapsed_usec > max_usec)
+			elapsed_usec = max_usec;
+		else if (elapsed_usec < 0)
+			elapsed_usec = 0;
+		samples_target = (float)sample_rate * (float)elapsed_usec / 1000000.0f;
+	}
+	audio_last_time_usec = now_usec;
+
+	/* Samples_target is decimal; get integer component */
+	samples_to_read = (uint32)samples_target;
 
 	/* Account for fractional component */
-	audio_samples_accumulator += audio_samples_per_frame - (float)samples_to_read;
+	audio_samples_accumulator += samples_target - (float)samples_to_read;
 
 	if (audio_samples_accumulator >= 1.0f) {
 		samples_to_read++;
