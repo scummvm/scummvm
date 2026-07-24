@@ -10,6 +10,8 @@
  * (at your option) any later version.
  */
 
+#include "common/memstream.h"
+#include "common/stream.h"
 #include "common/util.h"
 
 #include "scumm/insane/rebel2/psx/ui.h"
@@ -49,6 +51,29 @@ static RA2PSXUIColor shieldColor(const RA2PSXUIGradientStop *stops, uint count, 
 
 bool RA2PSXTextureSet::append(const Common::Array<byte> &data) {
 	return loadRA2PSXTextures(data, _textures);
+}
+
+bool RA2PSXTextureSet::appendRaw24(const char *name, const Common::Array<byte> &data,
+		uint16 width, uint16 height) {
+	if (!width || !height || data.size() != (uint32)width * height * 3)
+		return false;
+
+	RA2PSXTexture texture;
+	texture.name = name;
+	texture.width = width;
+	texture.height = height;
+	texture.pixels.resize((uint32)width * height);
+	for (uint32 i = 0; i < texture.pixels.size(); ++i) {
+		const byte *pixel = data.data() + i * 3;
+		if (!(pixel[0] | pixel[1] | pixel[2])) {
+			texture.pixels[i] = 0;
+			continue;
+		}
+		texture.pixels[i] = 0x01000000 | ((uint32)pixel[0] << 16) |
+				((uint32)pixel[1] << 8) | pixel[2];
+	}
+	_textures.push_back(texture);
+	return true;
 }
 
 const RA2PSXTexture *RA2PSXTextureSet::find(const char *name) const {
@@ -138,6 +163,284 @@ void RA2PSXTextureSet::drawText(Graphics::Surface &surface, const char *font,
 		draw(surface, font, x, y, Common::Rect(sourceX, sourceY,
 				sourceX + widths[glyph], sourceY + 8));
 		x += widths[glyph] + 2;
+	}
+}
+
+struct RA2PSXMovieFont {
+	const char *texture;
+	const char *characters;
+	const byte *widths;
+	const byte *advances;
+	int fixedAdvance;
+	int height;
+	int rowStep;
+};
+
+struct RA2PSXMovieGlyph {
+	int x;
+	int row;
+	int width;
+};
+
+struct RA2PSXMovieTextRecord {
+	uint16 firstFrame;
+	uint16 duration;
+	byte style;
+	byte color;
+	byte initialCharacters;
+	int16 x;
+	int16 y;
+	const char *text;
+};
+
+static const byte kMovieBigAdvances[] = {
+	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 16, 8, 8, 8, 8,
+	8, 8, 8, 8, 8, 16, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+	8, 8, 8, 8, 8, 16, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 16,
+	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8
+};
+
+static const byte kMovieBigWidths[] = {
+	6, 6, 6, 6, 6, 6, 6, 6, 2, 6, 6, 6, 10, 6, 6, 6, 6,
+	6, 6, 6, 6, 8, 14, 6, 6, 6, 4, 6, 6, 6, 6, 6, 6, 6,
+	6, 2, 4, 6, 2, 10, 6, 4, 6, 6, 6, 4, 6, 6, 6, 6, 10,
+	6, 6, 6, 8, 2, 6, 4, 6, 6, 6, 6, 6, 6, 6, 6, 8, 4
+};
+
+static const byte kMovieSmallWidths[] = {
+	6, 6, 6, 6, 6, 6, 6, 6, 2, 6, 6, 6, 8, 6, 6, 6,
+	6, 6, 6, 6, 6, 6, 8, 6, 6, 6, 6, 4, 6, 6, 6, 6,
+	6, 6, 6, 6, 6, 6, 2, 2, 6, 2, 6, 10, 10, 10, 10, 2
+};
+
+static const byte kMovieTinyWidths[] = {
+	10, 10, 10, 10, 10, 10, 12, 12, 4, 10, 10, 8, 14, 10, 12,
+	10, 12, 10, 10, 12, 12, 12, 14, 10, 12, 10, 8, 8, 8, 8,
+	8, 6, 8, 8, 4, 6, 8, 4, 12, 8, 8, 8, 8, 6, 8, 6, 8, 8,
+	12, 10, 8, 8, 8, 6, 8, 8, 10, 8, 8, 8, 8, 8, 4, 6, 10,
+	4, 10, 4, 6, 4, 4, 6, 6, 8, 4, 8, 8, 14, 10, 4, 8, 8,
+	6, 6, 6, 6, 8, 6, 4, 6
+};
+
+static const RA2PSXMovieFont kMovieBigFont = {
+	"fNT24b",
+	"ABCDEFGHIJKLMN" "\x01" "OPQRSTUVWXYZ-" "\x01"
+	"abcdefghijklmn," "\x01" "opqrstuvwxyz%." "\x01" "0123456789? ",
+	kMovieBigWidths, kMovieBigAdvances, 0, 16, 16
+};
+
+static const RA2PSXMovieFont kMovieSmallFont = {
+	"fNT24s",
+	"abcdefghijkl" "\x01" "mnopqrstuvwx" "\x01" "yz0123456789" "\x01"
+	"%-:.? /{}[]|",
+	kMovieSmallWidths, nullptr, 12, 10, 10
+};
+
+static const RA2PSXMovieFont kMovieTinyFont = {
+	"fNT24t",
+	"ABCDEFGHIJ" "\x01" "KLMNOPQRST" "\x01" "UVWXYZabcd" "\x01"
+	"efghijklmn" "\x01" "opqrstuvwx" "\x01" "yz01234567" "\x01"
+	"89!'+,-./:" "\x01" "^()*;?=%_ " "\x01" "<>`[\\]@{|}",
+	kMovieTinyWidths, nullptr, 16, 16, 17
+};
+
+static const RA2PSXMovieTextRecord kOpeningText[] = {
+	{ 720, 30, 1, 2, 40,   0,  65, "starring" },
+	{ 720, 30, 6, 129, 40, 70,  85, "Jamison Jones" },
+	{ 720, 30, 6, 129, 40, 250, 100, "Julie Eccles" },
+	{ 758, 30, 1, 2, 40,   0,  85, "original design and story" },
+	{ 758, 30, 7, 129, 40,  0, 100, "Vince Lee" },
+	{ 796, 30, 1, 2, 40,   0,  85, "lead programmer" },
+	{ 796, 30, 7, 129, 40,  0, 100, "Jens Petersam" },
+	{ 834, 30, 1, 2, 40,   0,  85, "lead artist/animator" },
+	{ 834, 30, 7, 129, 40,  0, 100, "Richard Green" },
+	{ 872, 30, 1, 2, 40,   0,  80, "sound designers" },
+	{ 872, 30, 7, 129, 40,  0,  95, "Rudolf Stember" },
+	{ 872, 30, 7, 129, 40,  0, 115, "Larry the O" },
+	{ 910, 30, 1, 2, 40,   0,  85, "director of live action" },
+	{ 910, 30, 7, 129, 40,  0, 100, "Hal Barwood" },
+	{ 948, 68, 0, 2, 40, 146,  55, "artist-animators" },
+	{ 948, 34, 6, 129, 40, 60,  70, "Richard Green" },
+	{ 948, 34, 6, 129, 40, -1,  70, "Garry M.Gaber" },
+	{ 948, 34, 6, 129, 40, 60,  90, "Jon Knoles" },
+	{ 948, 34, 6, 129, 40, -1,  90, "Craig Rundels" },
+	{ 948, 34, 6, 129, 40, 60, 110, "Daniel Colon Jr." },
+	{ 948, 34, 6, 129, 40, -1, 110, "Clint Young" },
+	{ 948, 34, 6, 129, 40, 60, 130, "Ron K. Lussier" },
+	{ 948, 34, 6, 129, 40, -1, 130, "Seth Piezas" },
+	{ 982, 34, 6, 129, 40, 60,  70, "Eric Ingerson" },
+	{ 982, 34, 6, 129, 40, -1,  70, "Bill Stoneham" },
+	{ 982, 34, 6, 129, 40, 60,  90, "Mario Wagner" },
+	{ 982, 34, 6, 129, 40, -1,  90, "Andreas Escher" },
+	{ 982, 34, 0, 2, 40, 214, 110, "and" },
+	{ 982, 34, 6, 129, 40, 176, 130, "Mechadeus" },
+	{ 1024, 30, 0, 2, 40, 146, 85, "real-time models" },
+	{ 1024, 30, 6, 129, 40, 150, 100, "Tobias J. Richter" },
+	{ 1062, 30, 0, 2, 40, 40, 50, "lead video effects compositor" },
+	{ 1062, 30, 6, 129, 40, 100, 65, "Mark Christiansen" },
+	{ 1062, 30, 0, 2, 40, 160, 100, "video effects compositor" },
+	{ 1062, 30, 6, 129, 40, 230, 115, "Chris Weakley" },
+	{ 1100, 30, 0, 2, 40, 100, 50, "lead art technician" },
+	{ 1100, 30, 6, 129, 40, 120, 65, "Aaron Muszalski" },
+	{ 1100, 30, 0, 2, 40, 200, 100, "art technician" },
+	{ 1100, 30, 6, 129, 40, 200, 115, "Doug Shannon" },
+	{ 1138, 30, 1, 2, 40,   0,  80, "additional programmers" },
+	{ 1138, 30, 7, 129, 40,  0,  95, "Thomas Engel" },
+	{ 1138, 30, 7, 129, 40,  0, 115, "Holger Schmidt" },
+	{ 1176, 30, 1, 2, 40,   0,  85, "voice director and producer" },
+	{ 1176, 30, 7, 129, 40,  0, 100, "Tamlynn Barra" },
+	{ 1214, 30, 1, 2, 40,   0,  85, "lead tester" },
+	{ 1214, 30, 7, 129, 40,  0, 100, "Matthew Azeveda" },
+	{ 1252, 30, 1, 2, 40,   0,  85, "producer - factor 5" },
+	{ 1252, 30, 7, 129, 40,  0, 100, "Julian Eggebrecht" },
+	{ 1290, 30, 1, 2, 40,   0,  85, "director of production" },
+	{ 1290, 30, 7, 129, 40,  0, 100, "Steve Dauterman" },
+	{ 1328, 30, 1, 2, 40,   0,  80, "production coordinators" },
+	{ 1328, 30, 7, 129, 40,  0,  95, "Rachel Bryant" },
+	{ 1328, 30, 7, 129, 40,  0, 115, "Peggy Stok" },
+	{ 1366, 30, 1, 2, 40,   0,  85, "special thanks to" },
+	{ 1366, 30, 7, 129, 40,  0, 100, "George Lucas" }
+};
+
+static const RA2PSXMovieTextRecord kChapter1Text[] = {
+	{ 30, 80, 1, 1, 0, 0, 24, "chapter 1" },
+	{ 40, 70, 3, 128, 0, 0, 37, "The Dreighton Triangle" }
+};
+
+static bool findMovieGlyph(const RA2PSXMovieFont &font, char character,
+		RA2PSXMovieGlyph &glyph) {
+	int metric = 0;
+	int row = 0;
+	int x = 0;
+	for (const char *entry = font.characters; *entry; ++entry) {
+		if (*entry == '\x01') {
+			++row;
+			x = 0;
+			continue;
+		}
+		if (*entry == character) {
+			glyph.x = x;
+			glyph.row = row;
+			glyph.width = font.widths[metric];
+			return true;
+		}
+		x += font.advances ? font.advances[metric] : font.fixedAdvance;
+		++metric;
+	}
+	return false;
+}
+
+static const RA2PSXMovieFont &getMovieFont(byte style) {
+	if (style == 2 || style == 3)
+		return kMovieBigFont;
+	if (style == 6 || style == 7)
+		return kMovieTinyFont;
+	return kMovieSmallFont;
+}
+
+static int measureMovieText(const RA2PSXMovieFont &font, const char *text,
+		uint characters, int spacing) {
+	int width = 0;
+	uint drawn = 0;
+	for (; *text && drawn < characters; ++text, ++drawn) {
+		RA2PSXMovieGlyph glyph;
+		if (findMovieGlyph(font, *text, glyph))
+			width += glyph.width + spacing;
+	}
+	return width ? width - spacing : 0;
+}
+
+static int scaleMovieX(int x) {
+	const int remainder = x % 3;
+	if (remainder)
+		x += 3 - remainder;
+	return x * 2 / 3;
+}
+
+static int findMovieFontArchive(const Common::Array<byte> &data) {
+	for (uint offset = 0; offset + 40 <= data.size(); offset += 4) {
+		if (!memcmp(data.data() + offset, "fNT24s", 7) &&
+				!memcmp(data.data() + offset + 16, "fNT24b", 7) &&
+				!memcmp(data.data() + offset + 32, "fNT24t", 7))
+			return offset;
+	}
+	return -1;
+}
+
+bool RA2PSXMovieText::load(Common::SeekableReadStream &executable) {
+	if (executable.size() <= 0 || executable.size() > 2 * 1024 * 1024)
+		return false;
+
+	Common::Array<byte> executableData;
+	executableData.resize((uint32)executable.size());
+	executable.seek(0);
+	if (executable.read(executableData.data(), executableData.size()) != executableData.size())
+		return false;
+	const int archiveOffset = findMovieFontArchive(executableData);
+	if (archiveOffset < 0)
+		return false;
+
+	Common::MemoryReadStream stream(executableData.data() + archiveOffset,
+			executableData.size() - archiveOffset);
+	RA2PSXArchive archive;
+	if (!archive.load(stream))
+		return false;
+
+	Common::Array<byte> data;
+	_textures.clear();
+	// These sheets are packed RGB24, despite being uploaded as 16-bit VRAM words.
+	return archive.getMember("fNT24s", data) &&
+			_textures.appendRaw24("fNT24s", data, 144, 120) &&
+			archive.getMember("fNT24b", data) &&
+			_textures.appendRaw24("fNT24b", data, 128, 80) &&
+			archive.getMember("fNT24t", data) &&
+			_textures.appendRaw24("fNT24t", data, 160, 153);
+}
+
+void RA2PSXMovieText::draw(Graphics::Surface &surface,
+		RA2PSXMovieTextSequence sequence, int frame, int xOffset, int yOffset) const {
+	const RA2PSXMovieTextRecord *records = nullptr;
+	uint recordCount = 0;
+	if (sequence == kRA2PSXMovieTextOpening) {
+		records = kOpeningText;
+		recordCount = ARRAYSIZE(kOpeningText);
+	} else if (sequence == kRA2PSXMovieTextChapter1) {
+		records = kChapter1Text;
+		recordCount = ARRAYSIZE(kChapter1Text);
+	}
+
+	for (uint i = 0; i < recordCount; ++i) {
+		const RA2PSXMovieTextRecord &record = records[i];
+		if (frame < record.firstFrame || frame >= record.firstFrame + record.duration)
+			continue;
+
+		const RA2PSXMovieFont &font = getMovieFont(record.style);
+		const uint characters = MIN<uint>(40,
+				record.initialCharacters + frame - record.firstFrame);
+		const int spacing = record.style < 4 ? 2 : 0;
+		const int textWidth = measureMovieText(font, record.text, characters, spacing);
+		int movieX;
+		if (record.style & 1)
+			movieX = (480 - textWidth * 3 / 2) / 2;
+		else if (record.x < 0)
+			movieX = 360 - textWidth;
+		else
+			movieX = record.x;
+		int x = xOffset + scaleMovieX(movieX);
+
+		uint drawn = 0;
+		for (const char *text = record.text; *text && drawn < characters; ++text, ++drawn) {
+			RA2PSXMovieGlyph glyph;
+			if (!findMovieGlyph(font, *text, glyph))
+				continue;
+			int sourceY = glyph.row * font.rowStep;
+			if (record.style < 2)
+				sourceY += MIN<int>(record.color, 2) * 40;
+			_textures.draw(surface, font.texture, x, yOffset + record.y,
+					Common::Rect(glyph.x, sourceY, glyph.x + glyph.width,
+							sourceY + font.height));
+			x += glyph.width + spacing;
+		}
 	}
 }
 

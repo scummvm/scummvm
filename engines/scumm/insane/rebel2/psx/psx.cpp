@@ -65,7 +65,8 @@ Common::SeekableReadStream *Rebel2PSX::openRawFile(const Common::Path &path, int
 	return file;
 }
 
-bool Rebel2PSX::playVideo(const Common::Path &path, int discNumber, bool version2) {
+bool Rebel2PSX::playVideo(const Common::Path &path, int discNumber, bool version2,
+		const RA2PSXMovieText *movieText, RA2PSXMovieTextSequence textSequence) {
 	Common::SeekableReadStream *stream = openRawFile(path, discNumber);
 	if (!stream)
 		return false;
@@ -95,6 +96,13 @@ bool Rebel2PSX::playVideo(const Common::Path &path, int discNumber, bool version
 				const int destY = (_vm->_screenHeight - height) / 2;
 				g_system->copyRectToScreen(frame->getBasePtr(sourceX, sourceY), frame->pitch,
 						destX, destY, width, height);
+				if (movieText && textSequence != kRA2PSXMovieTextNone) {
+					Graphics::Surface *screen = g_system->lockScreen();
+					// The original callback advances the STR's one-based frame ID.
+					movieText->draw(*screen, textSequence, decoder.getCurFrame() + 2,
+							(_vm->_screenWidth - 320) / 2, (_vm->_screenHeight - 240) / 2);
+					g_system->unlockScreen();
+				}
 				g_system->updateScreen();
 			}
 		}
@@ -118,14 +126,16 @@ bool Rebel2PSX::playVideo(const Common::Path &path, int discNumber, bool version
 	return !_vm->shouldQuit();
 }
 
-bool Rebel2PSX::playIntroSequence() {
+bool Rebel2PSX::playIntroSequence(const RA2PSXMovieText &movieText) {
 	static const char *const videos[] = {
 		"LEC_LOGO.STR",
 		"F5_LOGO.STR",
 		"OPENING.STR"
 	};
 	for (uint i = 0; i < ARRAYSIZE(videos); ++i) {
-		if (!playVideo(videos[i], 1, false))
+		const RA2PSXMovieTextSequence textSequence = i == 2 ?
+				kRA2PSXMovieTextOpening : kRA2PSXMovieTextNone;
+		if (!playVideo(videos[i], 1, false, &movieText, textSequence))
 			return false;
 	}
 	return true;
@@ -145,6 +155,11 @@ bool Rebel2PSX::loadGlobalAssets(RA2PSXMainMenuUI &menu) {
 			archive.getMember("SNDsmp", soundData) &&
 			archive.getMember("sNDdata", soundProjectData) &&
 			_soundBank.load(soundData, soundProjectData);
+}
+
+bool Rebel2PSX::loadMovieTextAssets(RA2PSXMovieText &movieText) {
+	Common::File executable;
+	return executable.open("SLUS_003.81") && movieText.load(executable);
 }
 
 bool Rebel2PSX::loadLevel1Assets(RA2PSXModel &enemy, RA2PSXModel &ship,
@@ -176,10 +191,14 @@ bool Rebel2PSX::loadLevel1Assets(RA2PSXModel &enemy, RA2PSXModel &ship,
 Common::Error Rebel2PSX::runGame() {
 #ifdef USE_TINYGL
 	RA2PSXMainMenuUI menu;
+	RA2PSXMovieText movieText;
 	if (!loadGlobalAssets(menu))
 		return Common::Error(Common::kReadingFailed,
 				_("Could not load the PlayStation menu resources"));
-	if (!playIntroSequence()) {
+	if (!loadMovieTextAssets(movieText))
+		return Common::Error(Common::kReadingFailed,
+				_("Could not load the PlayStation movie fonts"));
+	if (!playIntroSequence(movieText)) {
 		if (_vm->shouldQuit())
 			return Common::kNoError;
 		return Common::Error(Common::kReadingFailed,
@@ -199,7 +218,8 @@ Common::Error Rebel2PSX::runGame() {
 		return Common::Error(Common::kReadingFailed,
 				_("Could not load the PlayStation Level 1 resources"));
 
-	if (!playVideo("S1/L01_INTR.STR", 1, false)) {
+	if (!playVideo("S1/L01_INTR.STR", 1, false, &movieText,
+			kRA2PSXMovieTextChapter1)) {
 		if (_vm->shouldQuit())
 			return Common::kNoError;
 		return Common::Error(Common::kReadingFailed,

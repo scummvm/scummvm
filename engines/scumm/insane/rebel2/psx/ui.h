@@ -30,6 +30,8 @@ public:
 
 	void clear() { _textures.clear(); }
 	bool append(const Common::Array<byte> &data);
+	bool appendRaw24(const char *name, const Common::Array<byte> &data,
+			uint16 width, uint16 height);
 	bool has(const char *name) const { return find(name) != nullptr; }
 	void draw(Graphics::Surface &surface, const char *name, int x, int y,
 			const Common::Rect &source, int brightness = 0x80,
@@ -40,6 +42,16 @@ public:
 private:
 	const RA2PSXTexture *find(const char *name) const;
 	Common::Array<RA2PSXTexture> _textures;
+};
+
+class RA2PSXMovieText {
+public:
+	bool load(Common::SeekableReadStream &executable);
+	void draw(Graphics::Surface &surface, RA2PSXMovieTextSequence sequence,
+			int frame, int xOffset, int yOffset) const;
+
+private:
+	RA2PSXTextureSet _textures;
 };
 
 class RA2PSXMainMenuUI {
