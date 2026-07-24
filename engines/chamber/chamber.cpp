@@ -55,6 +55,8 @@ ChamberEngine::ChamberEngine(OSystem *syst, const ADGameDescription *desc)
 	g_vm = this;
 	_gameDescription = desc;
 
+	initScriptVars();
+
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 
 	// Don't forget to register your random source

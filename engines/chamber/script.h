@@ -240,6 +240,8 @@ uint16 runCommandKeepSp(void);
 
 uint16 Swap16(uint16 x);
 
+void initScriptVars();
+
 } // End of namespace Chamber
 
 #endif
