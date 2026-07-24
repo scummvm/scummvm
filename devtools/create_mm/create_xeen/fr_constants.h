@@ -802,13 +802,13 @@ public:
 
 	const char *QUICK_REFERENCE() {
 		return "\r\x3"
-			   "cQuick Reference Chart\v012\x3l"
-			   "\t007#\t027Name\t110Cls\t140Lvl\t176H.P."
-			   "\t212S.P.\t241A.C.\t270Cond"
+			   "cR$f$rence Rapide\v012\x3l"
+			   "\t007*\t027Nom\t110Cls\t140Niv\t176P.V."
+			   "\t212P.S.\t241C.A.\t270Cond"
 			   "%s%s%s%s%s%s%s%s"
 			   "\v110\t064\x3"
-			   "cGold\t144Gems\t224Food\v119"
-			   "\t064\f15%u\t144%u\t224%u day%s\fd";
+			   "cOr\t144Gems\t224Nourrit\v119"
+			   "\t064\f15%u\t144%u\t224%u jour%s\fd";
 	}
 
 	const char *ITEMS_DIALOG_TEXT1() {
@@ -876,11 +876,11 @@ public:
 	}
 
 	const char *ITEM_BROKEN() {
-		return "\f32broken ";
+		return "\f32cass$(e) ";
 	}
 
 	const char *ITEM_CURSED() {
-		return "\f09 envout$(e) ";
+		return "\f09envout$(e) ";
 	}
 
 	const char *ITEM_OF() {
@@ -897,39 +897,39 @@ public:
 
 	const char **WEAPON_NAMES() {
 		static const char *_weaponNames[] = {
-			nullptr, "long sword ", "short sword ", "broad sword ", "scimitar ",
-				"cutlass ", "sabre ", "club ", "hand axe ", "katana ", "nunchakas ",
-				"wakazashi ", "dagger ", "mace ", "flail ", "cudgel ", "maul ", "spear ",
-				"bardiche ", "glaive ", "halberd ", "pike ", "flamberge ", "trident ",
-				"b&ton ", "hammer ", "naginata ", "battle axe ", "grand axe ", "great axe ",
-				"short bow ", "long bow ", "crossbow ", "sling ", "Xeen Slayer Sword ",
-				"Elder LongSword ", "Elder Dagger ", "Elder Mace ", "Elder Spear ",
-				"B&ton Ancien ", "Elder LongBow "
+			nullptr, "longue $p$e ", "$p$e courte ", "dble tranchant ", "cimeterre ",
+				"coutelat ", "sabre ", "matraque ", "hachette ", "katana ", "nunchakus ",
+				"wakazashi ", "poignard ", "massue ", "fleau ", "gourdin ", "maul ", "lance ",
+				"bardiche ", "glaive ", "hallebarde ", "pique ", "flamberge ", "trident ",
+				"b&ton ", "marteau ", "naginata ", "hache  ", "grde hache ", "super hache ",
+				"arc court ", "arc long ", "arbal%te ", "fronde ", "Ep$e Destruct Xeen ",
+				"Longue Ep$e Ancienne ", "Poignard Ancien ", "Massue Ancienne ", "Lance Ancienne ",
+				"B&ton Ancien ", "Arc Long Ancien "
 		};
 		return _weaponNames;
 	}
 
 	const char **ARMOR_NAMES() {
 		static const char *_armorNames[] = {
-			nullptr, "robes ", "$caille ", "ring mail ", "chain mail ",
-				"splint mail ", "plate mail ", "cuirace ", "shield ",
-				"helm ", "boots ", "cloak ", "cape ", "gauntlets "
+			nullptr, "robes ", "$caille ", "maille anneaux ", "maille chaines ",
+				"maille $clats ", "c[te de maille ", "cuirace ", "bouclier ",
+				"casque ", "boots ", "manteau ", "cape ", "gants "
 		};
 		return _armorNames;
 	}
 
 	const char **ACCESSORY_NAMES() {
 		static const char *_accessoryNames[] = {
-			nullptr, "ring ", "belt ", "brooch ", "medal ", "charm ", "cameo ",
-				"scarab ", "pendant ", "necklace ", "amulette "
+			nullptr, "bague ", "ceinture ", "broche ", "m$daille ", "charm ", "cam$e ",
+				"scarab$e ", "pendantif ", "collier ", "amulette "
 		};
 		return _accessoryNames;
 	}
 
 	const char **MISC_NAMES() {
 		static const char *_miscNames[] = {
-			nullptr, "rod ", "jewel ", "gem ", "box ", "orb ", "horn ", "coin ",
-				"wand ", "whistle ", "potion ", "parchemin ", "bogus", "bogus", "bogus",
+			nullptr, "baguette ", "bijoux ", "gem ", "boite ", "globe ", "trompe ", "pi%ce ",
+				"baguette ", "sifflet ", "potion ", "parchemin ", "bogus", "bogus", "bogus",
 				"bogus", "bogus", "bogus", "bogus", "bogus", "bogus", "bogus"
 		};
 		return _miscNames;
@@ -1085,7 +1085,7 @@ public:
 
 	const char *NOT_PROFICIENT() {
 		return "\t000\v007\x3"
-			   "c%ss are not proficient with a %s!";
+			   "c%ss n'est efficace avec un(e) %s!";
 	}
 
 	const char *NO_ITEMS_AVAILABLE() {
@@ -1165,11 +1165,11 @@ public:
 	}
 
 	const char *RING() {
-		return "ring";
+		return "bague";
 	}
 
 	const char *MEDAL() {
-		return "medal";
+		return "m$daille";
 	}
 
 	const char *CANNOT_REMOVE_CURSED_ITEM() {
@@ -1228,7 +1228,7 @@ public:
 
 	const char *NOT_ENCHANTABLE() {
 		return "\v012\t000\x3"
-			   "cNot Enchantable.  %s";
+			   "cPas d'enchantement possible.  %s";
 	}
 
 	const char *SPELL_FAILED() {
@@ -1281,7 +1281,7 @@ public:
 	}
 
 	const char *ELEMENTAL_XY_DAMAGE() {
-		return "%+d %s Damage";
+		return "%+d %s Dommage";
 	}
 
 	const char *ATTR_XY_BONUS() {
@@ -1318,12 +1318,12 @@ public:
 
 	const char *NO_AUTO_NOTES() {
 		return "\x3"
-			   "cNo Auto Notes";
+			   "cPas d'Auto Note";
 	}
 
 	const char *QUEST_ITEMS_DATA() {
 		return "\r\x1\fd\x3"
-			   "c\v000\t000Quest Items\x3l\x2\n"
+			   "c\v000\t000Objets Qu#tes\x3l\x2\n"
 			   "\f04 * \fd%s\n"
 			   "\f04 * \fd%s\n"
 			   "\f04 * \fd%s\n"
@@ -1337,7 +1337,7 @@ public:
 
 	const char *CURRENT_QUESTS_DATA() {
 		return "\r\x1\fd\x3"
-			   "c\t000\v000Current Quests\x3l\x2\n"
+			   "c\t000\v000Qu#tes en cours\x3l\x2\n"
 			   "%s\n"
 			   "\n"
 			   "%s\n"
@@ -1360,9 +1360,9 @@ public:
 	}
 
 	const char *REST_COMPLETE() {
-		return "\v000\t0008 hours pass.  Rest complete.\n"
+		return "\v000\t0008 hres passent.  Fin de Repos.\n"
 			   "%s\n"
-			   "%d food consumed.";
+			   "%d nourrit; consomm$s.";
 	}
 
 	const char *PARTY_IS_STARVING() {
@@ -1416,10 +1416,10 @@ public:
 
 	const char *CREATE_CHAR_DETAILS() {
 		return "\f04\x3"
-			   "c\x2\t144\v119\f37R\f04oll\t144\v149\f37C\f04reate"
-			   "\t144\v179\f37ESC\f04\x3l\x1\t195\v021\f37M\f04gt"
+			   "c\x2\t144\v119E\f37n\f04roler\t144\v149\f37C\f04r$er"
+			   "\t144\v179\f37ESC\f04\x3l\x1\t195\v021P\f37o\f04u"
 			   "\t195\v045\f37I\f04nt\t195\v069\f37P\f04er\t195\v093\f37E\f04nd"
-			   "\t195\v116\f37S\f04pd\t195\v140\f37A\f04cy\t195\v164\f37L\f04ck%s";
+			   "\t195\v116\f37V\f04it\t195\v140P\f37r\f04e\t195\v164C\f37h\f04a%s";
 	}
 
 	const char *NEW_CHAR_STATS() {
@@ -1880,15 +1880,15 @@ public:
 
 		class FR_DialogsCreateChar : public DialogsCreateChar {
 		public:
-			int KEY_ROLL()   { return Common::KEYCODE_r; }
+			int KEY_ROLL()   { return Common::KEYCODE_n; }
 			int KEY_CREATE() { return Common::KEYCODE_c; }
-			int KEY_MGT()    { return Common::KEYCODE_m; }
+			int KEY_MGT()    { return Common::KEYCODE_o; }
 			int KEY_INT()    { return Common::KEYCODE_i; }
 			int KEY_PER()    { return Common::KEYCODE_p; }
 			int KEY_END()    { return Common::KEYCODE_e; }
-			int KEY_SPD()    { return Common::KEYCODE_s; }
-			int KEY_ACY()    { return Common::KEYCODE_a; }
-			int KEY_LCK()    { return Common::KEYCODE_l; }
+			int KEY_SPD()    { return Common::KEYCODE_v; }
+			int KEY_ACY()    { return Common::KEYCODE_r; }
+			int KEY_LCK()    { return Common::KEYCODE_h; }
 		};
 		FR_DialogsCreateChar *dialogsCreateChar() {
 			if (!_dcc) _dcc = new FR_DialogsCreateChar();
