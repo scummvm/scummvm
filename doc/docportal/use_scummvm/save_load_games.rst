@@ -83,7 +83,7 @@ There are two views: list view and tile view. Click the list and tile icons at t
 
 In list view, the pane on the left shows a list of your saved games. Click on a saved game to highlight it.  In the pane on the right you can see timestamps, screenshots and playtime for that saved game.
 
-Once you have highlighted the game you want to play, click **Load**.
+Once you have highlighted the game you want to play, click **Restore**.
 
 To delete a saved game, highlight the saved game and click **Delete**.
 
