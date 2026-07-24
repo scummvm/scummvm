@@ -136,6 +136,8 @@ TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kTheNetThrottleTicks,	"netThrottleTicks",	false, 600, true }, //					D6 f, documented in D7
 	{ kTheOptionDown,		"optionDown",		false, 200, true },	// D2 f
 	{ kTheOrganizationName,	"organizationName",	false, 500, false },//				D5 p, documented in D7
+
+	{ kThePaletteMapping,		"paletteMapping",		false, 500, false },	//				D5 p
 	{ kTheParamCount,		"paramCount",		false, 400, true },	//			D4 f
 	{ kThePathName,			"pathName",			false, 200, true },	// D2 f
 	{ kThePauseState,		"pauseState",		false, 200, true },	// D2 f
@@ -156,6 +158,7 @@ TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kTheRunMode, 			"runMode",			false, 500, false },//				D5 f, documented in D6
 	{ kTheSafePlayer,		"safePlayer",		false, 600, false },//					D6 p, documented in D7
 	{ kTheScore,			"score",			false, 500, false },//				D5 p
+	{ kTheScoreSelection,		"scoreSelection",			false, 500, false },//				D5 p
 	{ kTheScummvmVersion,	"scummvmVersion",	false, 200, true }, // 					ScummVM only
 	{ kTheSearchCurrentFolder,"searchCurrentFolder",false,400, true },//		D4 f
 	{ kTheSearchPath,		"searchPath",		false, 400, true },	//			D4 f
@@ -192,6 +195,7 @@ TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kTheTraceLoad,		"traceLoad",		false, 400, false },//			D4 p
 	{ kTheTraceLogFile,		"traceLogFile",		false, 400, false },//			D4 p
 	{ kTheUpdateMovieEnabled,"updateMovieEnabled",false,400, false },//			D4 p
+	{ kTheUpdateLock,			"updateLock",			false, 500, false },//				D5 p
 	{ kTheUserName,			"userName",			false, 500, false },//				D5 p, documented in D7
 	{ kTheVideoForWindowsPresent,"videoForWindowsPresent",false, 400, true },//	D4 f
 	{ kTheWindow,			"window",			true,  400, false },//			D4
@@ -304,10 +308,7 @@ const TheEntityField fields[] = {
 	// tracks, number of track, seems to be unused
 
 	// Movie fields
-	{ kTheCast,		"paletteMapping",	kThePaletteMapping,	500 },//			D5 p
 	{ kTheCast,		"scriptsEnabled",	kTheScriptsEnabled,	500 },//			D5 p
-	{ kTheCast,		"scoreSelection",	kTheScoreSelection,	500 },//			D5 p
-	{ kTheCast,		"updateLock",		kTheUpdateLock,		500 },//			D5 p
 
 	// Bitmap fields
 	{ kTheCast,		"depth",		kTheDepth,		400 },//				D4 p
