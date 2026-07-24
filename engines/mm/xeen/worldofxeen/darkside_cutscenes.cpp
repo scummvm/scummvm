@@ -321,8 +321,10 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 		pyramid.draw(0, idx, Common::Point(132, 62));
 		_subtitles.show();
 
-		if (!sound.isSoundPlaying() && !phar2)
+		if (!sound.isSoundPlaying() && !phar2) {
 			sound.playVoice("pharoh1b.voc");
+			phar2 = true;
+		}
 
 		WAIT_SUBTITLES(4);
 	}
