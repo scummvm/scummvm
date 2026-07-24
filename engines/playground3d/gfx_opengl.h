@@ -55,6 +55,7 @@ public:
 	void setupViewport(int x, int y, int width, int height) override;
 	void drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) override;
 	void drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) override;
+	void drawQuadStripTest() override;
 	void dimRegionInOut(float fade) override;
 	void drawInViewport() override;
 	void drawRgbaTexture() override;

@@ -266,6 +266,46 @@ void TinyGLRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::V
 	tglDisable(TGL_POLYGON_OFFSET_FILL);
 }
 
+void TinyGLRenderer::drawQuadStripTest() {
+	tglMatrixMode(TGL_PROJECTION);
+	tglPushMatrix();
+	tglLoadIdentity();
+
+	tglMatrixMode(TGL_MODELVIEW);
+	tglPushMatrix();
+	tglLoadIdentity();
+
+	tglDisable(TGL_BLEND);
+	tglDisable(TGL_CULL_FACE);
+	tglDisable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_FALSE);
+	tglDisable(TGL_TEXTURE_2D);
+
+	tglColor4f(0.0f, 0.75f, 0.2f, 1.0f);
+	tglBegin(TGL_QUAD_STRIP);
+	tglVertex3f(-0.8f,  0.7f, 0.0f);
+	tglVertex3f( 0.8f,  0.7f, 0.0f);
+	tglVertex3f(-0.8f, -0.7f, 0.0f);
+	tglVertex3f( 0.8f, -0.7f, 0.0f);
+	tglEnd();
+
+	tglColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+	tglBegin(TGL_TRIANGLES);
+	tglVertex3f(-0.12f,  0.12f, 0.0f);
+	tglVertex3f( 0.12f,  0.12f, 0.0f);
+	tglVertex3f( 0.0f, -0.12f, 0.0f);
+	tglEnd();
+
+	tglDepthMask(TGL_TRUE);
+	tglEnable(TGL_DEPTH_TEST);
+
+	tglMatrixMode(TGL_MODELVIEW);
+	tglPopMatrix();
+
+	tglMatrixMode(TGL_PROJECTION);
+	tglPopMatrix();
+}
+
 void TinyGLRenderer::flipBuffer() {
 	Common::List<Common::Rect> dirtyAreas;
 	TinyGL::presentBuffer(dirtyAreas);

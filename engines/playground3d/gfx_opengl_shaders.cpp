@@ -71,6 +71,14 @@ static const GLfloat boxVertices[] = {
 	 0.1f,  0.1f,
 	-0.1f, -0.1f,
 	 0.1f, -0.1f,
+	// quad strip test
+	-0.8f,   0.7f,
+	 0.8f,   0.7f,
+	-0.8f,  -0.7f,
+	 0.8f,  -0.7f,
+	-0.12f,  0.12f,
+	 0.12f,  0.12f,
+	 0.0f,  -0.12f,
 };
 
 static const GLfloat bitmapVertices[] = {
@@ -281,6 +289,24 @@ void ShaderRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::V
 	_offsetShader->setUniform("triColor", Math::Vector3d(1.0f, 1.0f, 1.0f));
 	glDrawArrays(GL_TRIANGLES, 3, 3);
 	glDisable(GL_POLYGON_OFFSET_FILL);
+}
+
+void ShaderRenderer::drawQuadStripTest() {
+	glDisable(GL_BLEND);
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	_viewportShader->use();
+	_viewportShader->setUniform("offset", Math::Vector2d(0.0f, 0.0f));
+	_viewportShader->setUniform("color", Math::Vector3d(0.0f, 0.75f, 0.2f));
+	glDrawArrays(GL_TRIANGLE_STRIP, 8, 4);
+	_viewportShader->setUniform("color", Math::Vector3d(1.0f, 0.0f, 0.0f));
+	glDrawArrays(GL_TRIANGLES, 12, 3);
+	_viewportShader->unbind();
+
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
 }
 
 void ShaderRenderer::dimRegionInOut(float fade) {

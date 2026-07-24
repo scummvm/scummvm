@@ -109,6 +109,7 @@ Common::Error Playground3dEngine::run() {
 	// 3 - fade in/out
 	// 4 - moving filled rectangle in viewport
 	// 5 - drawing RGBA pattern texture to check endian correctness
+	// 6 - quad strip followed by a triangle
 	_testId = 1;
 	_fogEnable = false;
 	_scissorEnable = false;
@@ -138,6 +139,9 @@ Common::Error Playground3dEngine::run() {
 			}
 			break;
 		}
+		case 6:
+			_clearColor = Math::Vector4d(0.25f, 0.25f, 0.25f, 1.0f);
+			break;
 		default:
 			assert(false);
 	}
@@ -167,7 +171,7 @@ void Playground3dEngine::processInput() {
 		switch (event.customType) {
 		case kActionSwitchTest:
 			_testId++;
-			if (_testId > 5)
+			if (_testId > 6)
 				_testId = 1;
 			switch (_testId) {
 				case 1:
@@ -190,6 +194,9 @@ void Playground3dEngine::processInput() {
 					}
 					break;
 				}
+				case 6:
+					_clearColor = Math::Vector4d(0.25f, 0.25f, 0.25f, 1.0f);
+					break;
 				default:
 					assert(false);
 			}
@@ -312,6 +319,9 @@ void Playground3dEngine::drawFrame() {
 			_gfx->loadTextureRGBA5551(_rgba5551Texture);
 			_gfx->loadTextureRGBA4444(_rgba4444Texture);
 			drawRgbaTexture();
+			break;
+		case 6:
+			_gfx->drawQuadStripTest();
 			break;
 		default:
 			assert(false);

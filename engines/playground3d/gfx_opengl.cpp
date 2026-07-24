@@ -230,6 +230,46 @@ void OpenGLRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::V
 	glDisable(GL_POLYGON_OFFSET_FILL);
 }
 
+void OpenGLRenderer::drawQuadStripTest() {
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glDisable(GL_BLEND);
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+	glDisable(GL_TEXTURE_2D);
+
+	glColor4f(0.0f, 0.75f, 0.2f, 1.0f);
+	glBegin(GL_QUAD_STRIP);
+	glVertex3f(-0.8f,  0.7f, 0.0f);
+	glVertex3f( 0.8f,  0.7f, 0.0f);
+	glVertex3f(-0.8f, -0.7f, 0.0f);
+	glVertex3f( 0.8f, -0.7f, 0.0f);
+	glEnd();
+
+	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+	glBegin(GL_TRIANGLES);
+	glVertex3f(-0.12f,  0.12f, 0.0f);
+	glVertex3f( 0.12f,  0.12f, 0.0f);
+	glVertex3f( 0.0f, -0.12f, 0.0f);
+	glEnd();
+
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+}
+
 void OpenGLRenderer::dimRegionInOut(float fade) {
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();

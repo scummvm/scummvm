@@ -76,6 +76,7 @@ public:
 	virtual void loadTextureRGBA4444(Graphics::Surface *texture) = 0;
 	virtual void drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) = 0;
 	virtual void drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) = 0;
+	virtual void drawQuadStripTest() = 0;
 	virtual void dimRegionInOut(float fade) = 0;
 	virtual void drawInViewport() = 0;
 	virtual void drawRgbaTexture() = 0;
