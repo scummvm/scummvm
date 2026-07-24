@@ -309,6 +309,10 @@ public:
 	int _fileIOType;
 	bool _vfwPaletteHack;
 
+	uint16 _key;
+	int _keyCode;
+	byte _keyFlags;
+
 private:
 	byte _currentPalette[768];
 	uint16 _currentPaletteLength;

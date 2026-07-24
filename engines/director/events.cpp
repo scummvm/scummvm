@@ -280,7 +280,7 @@ bool Movie::processSysEvent(Common::Event &event) {
 				if (g_director->getPlatform() == Common::kPlatformMacintosh) {
 					// On Mac, when the mouse button and Control key are pressed
 					// at the same time, this simulates right button click
-					if (_keyFlags & Common::KBD_CTRL) {
+					if (_vm->_keyFlags & Common::KBD_CTRL) {
 						ev = kEventRightMouseDown;
 					}
 				}
@@ -315,7 +315,7 @@ bool Movie::processSysEvent(Common::Event &event) {
 				if (g_director->getPlatform() == Common::kPlatformMacintosh) {
 					// On Mac, when the mouse button and Control key are pressed
 					// at the same time, this simulates right button click
-					if (_keyFlags & Common::KBD_CTRL) {
+					if (_vm->_keyFlags & Common::KBD_CTRL) {
 						ev = kEventRightMouseUp;
 					}
 				}
@@ -334,27 +334,27 @@ bool Movie::processSysEvent(Common::Event &event) {
 		return result;
 
 	case Common::EVENT_KEYDOWN:
-		_keyCode = _vm->_KeyCodes.contains(event.kbd.keycode) ? _vm->_KeyCodes[event.kbd.keycode] : 0;
-		_key = event.kbd.ascii;
+		_vm->_keyCode = _vm->_KeyCodes.contains(event.kbd.keycode) ? _vm->_KeyCodes[event.kbd.keycode] : 0;
+		_vm->_key = event.kbd.ascii;
 		// While most non-letter keys don't affect "the keyPress", there
 		// are some that do and (sadly) we have to account for that.
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_LEFT:
-			_key = 28;
+			_vm->_key = 28;
 			break;
 		case Common::KEYCODE_RIGHT:
-			_key = 29;
+			_vm->_key = 29;
 			break;
 		case Common::KEYCODE_UP:
-			_key = 30;
+			_vm->_key = 30;
 			break;
 		case Common::KEYCODE_DOWN:
-			_key = 31;
+			_vm->_key = 31;
 			break;
 		default:
 			break;
 		}
-		_keyFlags = event.kbd.flags;
+		_vm->_keyFlags = event.kbd.flags;
 
 		if (event.kbd.keycode == Common::KEYCODE_LSHIFT || event.kbd.keycode == Common::KEYCODE_RSHIFT ||
 			event.kbd.keycode == Common::KEYCODE_LCTRL || event.kbd.keycode == Common::KEYCODE_RCTRL ||
@@ -364,7 +364,7 @@ bool Movie::processSysEvent(Common::Event &event) {
 			return true;
 		}
 
-		debugC(1, kDebugEvents, "Movie::processEvent(): movie '%s', keycode: %d", _macName.c_str(), _keyCode);
+		debugC(1, kDebugEvents, "Movie::processEvent(): movie '%s', keycode: %d", _macName.c_str(), _vm->_keyCode);
 
 		_lastEventTime = g_director->getMacTicks();
 		_lastKeyTime = _lastEventTime;
@@ -377,7 +377,7 @@ bool Movie::processSysEvent(Common::Event &event) {
 
 	case Common::EVENT_KEYUP:
 		result = processInputEvent(kEventKeyUp, sc->getSpriteIDOfActiveWidget());
-		_keyFlags = event.kbd.flags;
+		_vm->_keyFlags = event.kbd.flags;
 		return result;
 
 	default:

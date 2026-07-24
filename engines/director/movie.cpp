@@ -62,10 +62,6 @@ Movie::Movie(Window *window) {
 
 	_videoPlayback = false;
 
-	_key = 0;
-	_keyCode = 0;
-	_keyFlags = 0;
-
 	_currentDraggedChannel = nullptr;
 	_currentHiliteChannelId = 0;
 	_mouseDownWasInButton = false;

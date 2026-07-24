@@ -113,8 +113,7 @@ void GetUInfoXObj::m_rButtonDown(int nargs) {
 
 void GetUInfoXObj::m_keyPressed(int nargs) {
 	g_lingo->dropStack(nargs);
-	Movie *movie = g_director->getCurrentMovie();
-	g_lingo->push(Datum(movie ? movie->_keyCode : 0));
+	g_lingo->push(Datum(g_director->_keyCode));
 }
 
 }

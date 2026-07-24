@@ -591,12 +591,12 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheCommandDown:
 		if (g_director->getPlatform() == Common::kPlatformWindows)
-			d = (movie->_keyFlags & Common::KBD_CTRL) ? 1 : 0;
+			d = (_vm->_keyFlags & Common::KBD_CTRL) ? 1 : 0;
 		else
-			d = (movie->_keyFlags & Common::KBD_META) ? 1 : 0;
+			d = (_vm->_keyFlags & Common::KBD_META) ? 1 : 0;
 		break;
 	case kTheControlDown:
-		d = (movie->_keyFlags & Common::KBD_CTRL) ? 1 : 0;
+		d = (_vm->_keyFlags & Common::KBD_CTRL) ? 1 : 0;
 		break;
 	case kTheCpuHogTicks:
 		// Mac-onlym specifies how often Director yeilds to other applications.
@@ -678,14 +678,14 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		}
 		break;
 	case kTheKey:
-		if (movie->_key < 0x80) {
-			d = Common::String::format("%c", (char)movie->_key);
+		if (_vm->_key < 0x80) {
+			d = Common::String::format("%c", (char)_vm->_key);
 		} else {
 			d = Common::String();
 		}
 		break;
 	case kTheKeyCode:
-		d = movie->_keyCode;
+		d = _vm->_keyCode;
 		break;
 	case kTheKeyDownScript:
 		d.type = STRING;
@@ -697,7 +697,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheKeyPressed:
 		{
 			Common::U32String buf;
-			buf.insertChar(movie->_key, 0);
+			buf.insertChar(_vm->_key, 0);
 			d = buf.encode();
 		}
 		break;
@@ -958,7 +958,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = 15;
 		break;
 	case kTheOptionDown:
-		d = (movie->_keyFlags & Common::KBD_ALT) ? 1 : 0;
+		d = (_vm->_keyFlags & Common::KBD_ALT) ? 1 : 0;
 		break;
 	case kTheOrganizationName:
 		d = Common::String("ScummVM Team");
@@ -1081,7 +1081,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = Common::String("DRW600-01234-56789-01234");
 		break;
 	case kTheShiftDown:
-		d = (movie->_keyFlags & Common::KBD_SHIFT) ? 1 : 0;
+		d = (_vm->_keyFlags & Common::KBD_SHIFT) ? 1 : 0;
 		break;
 	case kTheSoundEnabled:
 		d = _vm->getCurrentWindow()->getSoundManager()->getSoundEnabled();

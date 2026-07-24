@@ -109,6 +109,10 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_fileIOType = 0;
 	_vfwPaletteHack = false;
 
+	_key = 0;
+	_keyCode = 0;
+	_keyFlags = 0;
+
 	_wm = nullptr;
 
 	_gameDataDir = Common::FSNode(ConfMan.getPath("path"));
