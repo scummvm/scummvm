@@ -110,6 +110,10 @@ void TimerActor::timerEvent(const TimerEvent &event) {
 	// The timer actor is subtly different from other actors that can have timer events called on them,
 	// which is why the default call to process timer events doesn't work here.
 	ScriptResponse *nextTimeScriptResponse = findNextTimeScriptResponseAfter(_lastProcessedTime);
+	if (nextTimeScriptResponse == nullptr) {
+		warning("%s: Expected timer script response after %d", __func__, _lastProcessedTime);
+		return;
+	}
 	double eventTimeInSeconds = nextTimeScriptResponse->_argumentValue.asFloat();
 	uint32 eventTimeInMilliseconds = eventTimeInSeconds * 1000;
 	// Increment by 1 to prevent re-triggering the same event. This works because in the original,
