@@ -788,6 +788,31 @@
   fires `KD10.WAV` and `KD11.WAV` at frame 118, `KD7.WAV` at frame 995,
   `KD12.WAV` at frame 1005, stops cues 10, 7, and the looping `KD9.WAV`
   ambience at frame 1952, and starts `KD8.WAV` at frame 1965.
+- Scene action 13 passes its flag argument to `RunBlobShooterScene` at
+  `0x338a4`. The handler selects `KJ%d.INI` from the same combat-level byte as
+  the combat controller, loops the full-screen `KJ.SMK` background, and owns
+  `KJ_MOUSE.BBM`, five `KJ_BLOB%d.PL` animation libraries, `KJ_EXP1.PL`,
+  `KJ_FIRE.PL`, and `KJ0.WAV` through `KJ8.WAV`. The available retail data set
+  contains only `KJ1.INI`; ScummVM reports the requested numbered file and
+  falls back to that available tuning file when necessary.
+- The blob origin tables at `0x31383` and `0x31397` use the original
+  vertical/horizontal selection-point order. Converted to logical `(x, y)`,
+  the five origins are `(185, 0)`, `(0, 0)`, `(0, 62)`, `(0, 0)`, and
+  `(210, 0)`. Each blob advances one library frame per presentation tick.
+  Reaching the configured `start whoosh` frame starts its movement cue;
+  reaching the end without a hit increments the miss count. A pointer hit
+  checks the current frame's nontransparent pixel, removes that blob, and
+  starts the fire and explosion bitmap groups at the hit point.
+- The KJ win condition is a rate race rather than a point total. New blobs use
+  the configured spawn delay; at the configured decrease interval that delay
+  falls by `spawn dec`. Reaching `win rate` sets the caller's flag and begins
+  a timed finale. The handler later enables scripted hits at the fixed
+  per-type points from `0x313ab` and `0x313bf`, continues accelerating down to
+  the two-tick minimum, stops spawning, waits for every active blob to clear,
+  and exits. Reaching `misses allowed` first exits without setting the flag.
+  Weapon charge, discharge, and rapid-fire timing also come from the INI.
+  Escape exits, F1 opens help table `0x1a8`, F10 captures a screenshot, and
+  the case-insensitive `caffeine` keyword sets the supplied flag immediately.
 - Scene action 5 calls `RunRolodexSequencePuzzleScene` at `0x280ae` with the
   caller-supplied named flag. It creates an advance control over physical
   rectangle (121, 101)-(486, 293) with cursor 16 and an Escape control over
