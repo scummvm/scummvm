@@ -78,10 +78,11 @@ void Document::readStartupInformation(Chunk &chunk) {
 	debugC(5, kDebugLoading, "%s: sectionType = 0x%x", __func__, static_cast<uint>(sectionType));
 	switch (sectionType) {
 	case kDocumentEntryScreen: {
-		uint entryPointScreenId = chunk.readTypedUint16();
+		uint originalEntryPointScreenId = chunk.readTypedUint16();
 		if (_entryPointScreenId == 0) {
-			// We don't want to reset the overridden screen entry point.
-			_entryPointScreenId = entryPointScreenId;
+			// We don't want to reset the overridden screen entry point,
+			// so only actually set the entry point if it has not already been set.
+			_entryPointScreenId = originalEntryPointScreenId;
 		}
 		break;
 	}
