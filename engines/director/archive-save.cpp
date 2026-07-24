@@ -169,7 +169,17 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 			break;
 
 		case MKTAG('V', 'W', 'S', 'C'):
-			movie->getScore()->writeVWSCResource(saveFile, it->offset);
+			if (movie->getScore()->getVWSCResourceSize() == 0) {
+				// The serializer can't handle this score (malformed detail
+				// index or unsupported version); keep the original bytes
+				warning("STUB: RIFXArchive::writeToFile(): score not serializable; keeping the original VWSC bytes");
+				saveFile->seek(it->offset, SEEK_SET);
+				saveFile->writeUint32LE(it->tag);
+				saveFile->writeUint32LE(it->size);
+				saveFile->writeStream(getResource(it->tag, it->index));
+			} else {
+				movie->getScore()->writeVWSCResource(saveFile, it->offset);
+			}
 			break;
 
 		default:
@@ -595,6 +605,10 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 
 		case MKTAG('V', 'W', 'S', 'C'):
 			resSize = movie->getScore()->getVWSCResourceSize();
+			if (resSize == 0) {
+				// Not serializable; the original bytes are kept (see writeToFile())
+				resSize = it->size;
+			}
 			it->size = resSize;
 			it->offset = currentSize;
 			currentSize += resSize + 8;		// The size doesn't include the header and the size entry
