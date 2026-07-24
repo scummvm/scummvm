@@ -213,6 +213,11 @@ public:
 	// shouldn't be recorded as movie event, which may cause undesirable change in the lingo script
 	bool _inGuiMessageBox = false;
 
+	// Set for a movie loaded inside a cast member. It shares the host's
+	// window but never owns the stage, so loadArchive() must not resize
+	// or recolour it.
+	bool _isEmbedded = false;
+
 private:
 	Window *_window;
 	DirectorEngine *_vm;
