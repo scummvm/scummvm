@@ -2806,7 +2806,7 @@ void LB::b_importFileInto(int nargs) {
 }
 
 void menuCommandsCallback(int action, Common::String &text, void *data) {
-	g_director->getCurrentMovie()->queueInputEvent(kEventMenuCallback, action);
+	g_director->getStage()->getCurrentMovie()->queueInputEvent(kEventMenuCallback, action);
 }
 
 void LB::b_installMenu(int nargs) {
@@ -2819,7 +2819,10 @@ void LB::b_installMenu(int nargs) {
 		g_director->_wm->removeMenu();
 		return;
 	}
-	Movie *movie = g_director->getCurrentMovie();
+	// FIXME: it might be possible for other windows than the stage to create and use menus.
+	// This would probably mean reworking MacWindowManager to have a per-window menu model.
+	Window *window = g_director->getStage();
+	Movie *movie = window->getCurrentMovie();
 	CastMember *member = movie->getCastMember(memberID);
 	if (!member) {
 		g_lingo->lingoError("installMenu: Unknown %s", memberID.asString().c_str());
@@ -2854,10 +2857,8 @@ void LB::b_installMenu(int nargs) {
 	char CODE_SEPARATOR_CHAR = '\xC5';
 	// FIXME: For some reason there are games which use º (Mac) or ¼ (Win) and it works too?
 	char CODE_SEPARATOR_CHAR_2 = '\xBC';
-	if (g_director->getVersion() >= 500) {
-		// D5 changed this to be the pipe | character, the same in Windows and Mac.
-		CODE_SEPARATOR_CHAR = '\x7C';
-	}
+	// D5 changed this to be the pipe | character, the same in Windows and Mac. ≈ also works.
+	char CODE_SEPARATOR_CHAR_3 = (g_director->getVersion() >= 500) ? '\x7C' : '\xC5';
 	// Continuation character is 0xac to denote a line running over.
 	// For Mac, this is ¨. For Windows, this is ¬.
 	const char CONTINUATION_CHAR = '\xAC';
@@ -2921,6 +2922,8 @@ void LB::b_installMenu(int nargs) {
 		size_t sepOffset = line.find(CODE_SEPARATOR_CHAR);
 		if (sepOffset == Common::String::npos)
 			sepOffset = line.find(CODE_SEPARATOR_CHAR_2);
+		if (sepOffset == Common::String::npos)
+			sepOffset = line.find(CODE_SEPARATOR_CHAR_3);
 
 		Common::String text;
 
@@ -2943,6 +2946,7 @@ void LB::b_installMenu(int nargs) {
 					commandId++;
 				}
 				mainArchive->replaceCode(command.decode(Common::kMacRoman), kEventScript, commandId);
+				debugC(3, kDebugLoading, "LB::b_installMenu(): %s -> %s (EventScript %d)", text.c_str(), command.c_str(), commandId);
 				submenuText += Common::String::format("[%d];", commandId);
 			} else {
 				submenuText += ';';
