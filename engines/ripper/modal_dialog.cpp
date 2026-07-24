@@ -514,6 +514,62 @@ bool ModalDialogManager::drawRetainedTextPanelLines(
 	return true;
 }
 
+bool ModalDialogManager::drawRetainedTextPanelLine(
+		const Common::Array<Common::String> &lines,
+		const Common::Rect &bounds, uint firstVisible, uint visibleRows,
+		uint lineIndex, PresentationStyle style) {
+	const bool wacStyle = style == kWacPresentation;
+	const int bottomPadding = wacStyle ?
+		kWacModalBottomPadding : kModalBottomPadding;
+	const int leftPadding = wacStyle ? kWacModalLeftPadding : kModalLeftPadding;
+	const int rightPadding = wacStyle ? kWacModalRightPadding : kModalRightPadding;
+	const int topPadding = wacStyle ?
+		kWacModalHeadingTopPadding : kModalBottomPadding;
+	if (!_initialized || lines.empty() || visibleRows == 0 ||
+			bounds.width() <= leftPadding + rightPadding ||
+			bounds.height() <= topPadding + bottomPadding +
+				kModalTextVerticalInset * 2)
+		return false;
+	if (lineIndex >= lines.size() || lineIndex < firstVisible ||
+			lineIndex >= firstVisible + visibleRows)
+		return true;
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen || screen->format.bytesPerPixel != 1) {
+		if (screen)
+			g_system->unlockScreen();
+		return false;
+	}
+
+	const uint visibleRow = lineIndex - firstVisible;
+	const int rowTop = bounds.top + topPadding + kModalTextVerticalInset +
+		visibleRow * kModalRowHeight;
+	const int rowBottom = MIN<int>(rowTop + kModalRowHeight,
+		bounds.bottom - bottomPadding);
+	const int clientLeft = bounds.left + leftPadding;
+	const int clientWidth = bounds.width() - leftPadding - rightPadding;
+	const byte backgroundColor = wacStyle ?
+		kWacModalBackgroundColor : kModalBackgroundColor;
+	const byte textColor = wacStyle ? kWacModalTextColor : kModalTextColor;
+	for (int y = rowTop; y < rowBottom; ++y)
+		memset(screen->getBasePtr(clientLeft, y), backgroundColor, clientWidth);
+	drawText((byte *)screen->getPixels(), screen->pitch,
+		clientLeft + kModalTextHorizontalInset,
+		rowTop + (kModalRowHeight - _font.lineHeight) / 2,
+		lines[lineIndex], textColor);
+	g_system->unlockScreen();
+	if (!wacStyle)
+		applyModalPalette();
+	_engine->getCursor()->refresh();
+	g_system->updateScreen();
+	debugC(3, kDebugScene,
+		"Ripper: redrew retained text panel line style=%s line=%u "
+		"firstLine=%u visibleRow=%u bounds=%d,%d,%d,%d",
+		wacStyle ? "wacmnu" : "menub", lineIndex, firstVisible, visibleRow,
+		bounds.left, bounds.top, bounds.width(), bounds.height());
+	return true;
+}
+
 void ModalDialogManager::drawTextEntry(const Common::String &prompt,
 		const Common::String &text, uint firstVisible, uint cursorPosition,
 		bool caretVisible, const Common::Rect &bounds, PresentationStyle style) const {

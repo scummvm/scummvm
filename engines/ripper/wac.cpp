@@ -1005,6 +1005,16 @@ bool WacManager::drawJournalTextPanel(
 	return true;
 }
 
+bool WacManager::drawJournalTextPanelLine(
+		const Common::Array<Common::String> &lines,
+		uint firstVisible, uint visibleRows, uint lineIndex) {
+	const Common::Rect bounds(kWacMediaLeft, kWacMediaTop,
+		kWacMediaLeft + kWacTextPanelWidth, kWacMediaTop + kWacTextPanelHeight);
+	return _engine->getModalDialog()->drawRetainedTextPanelLine(lines, bounds,
+		firstVisible, visibleRows, lineIndex,
+		ModalDialogManager::kWacPresentation);
+}
+
 uint16 WacManager::runJournalRevealScene(DatabaseEntry &entry) {
 	// RunWacJournalRevealScene at 0x24261 owns control 0x7b2. It wraps resource
 	// 0xaf once, scrambles those row buffers in place, and restores one original
@@ -1144,6 +1154,7 @@ uint16 WacManager::runJournalRevealScene(DatabaseEntry &entry) {
 		const uint16 command = serviceDatabaseMediaInput(entry.originalIndex,
 			&firstVisible, maximumFirstVisible, visibleRows);
 		bool redraw = false;
+		int redrawLine = -1;
 		if (command == kWacDatabaseTextScrolled ||
 				command == MediaSequenceCallback::kContinueRefreshPalette) {
 			visibleShuffleLine = MAX<uint>(revealedLines, firstVisible);
@@ -1190,15 +1201,20 @@ uint16 WacManager::runJournalRevealScene(DatabaseEntry &entry) {
 					visibleShuffleLine >= shuffleLimit)
 				visibleShuffleLine = firstShuffleLine;
 			if (visibleShuffleLine < shuffleLimit) {
-				shuffleJournalLine(displayLines[visibleShuffleLine], randomSource);
+				const uint shuffledLine = visibleShuffleLine;
+				shuffleJournalLine(displayLines[shuffledLine], randomSource);
 				++visibleShuffleLine;
-				redraw = true;
+				redrawLine = shuffledLine;
 			}
 			lastShuffleMillis = now;
 		}
 
 		if (redraw && !drawJournalTextPanel(displayLines, progress, firstVisible,
 				maximumFirstVisible, visibleRows))
+			break;
+		if (!redraw && redrawLine >= 0 &&
+				!drawJournalTextPanelLine(displayLines, firstVisible,
+					visibleRows, redrawLine))
 			break;
 		g_system->updateScreen();
 		g_system->delayMillis(10);
