@@ -249,6 +249,8 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id, co
 				&& searchFSNode(systmList, "GAME.TRS", langFile)
 				&& trs.open(langFile)) {
 				switch (trs.size()) {
+				case 46294:	// ed4b2312e8f60ad3fdd9d02db38da9a9
+					return Common::JA_JPN;
 				case 46746:	// d9aced0c3fcb8f6a0045dcd4cbf12590
 					return Common::EN_ANY;
 				case 48097:	// 66353d7250f680b28992459c355caa17
@@ -257,6 +259,8 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id, co
 					return Common::ES_ESP;
 				case 50094:	// 004fb2fd15f84a1f81cc362d73811c9c
 					return Common::DE_DEU;
+				case 58883:	// efffbf955884a87a3be6b8459ba559de
+					return Common::PT_BRA;
 				case 60976:	// c53823d48beca122c45a83d35027a0e7
 					return Common::FR_FRA;
 				default:

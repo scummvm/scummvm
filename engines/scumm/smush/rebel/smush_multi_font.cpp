@@ -63,7 +63,7 @@ Rebel2FontSet SmushMultiFont::getRebel2FontSet() {
 	const bool highRes = _vm->_screenWidth >= 640 && _vm->_screenHeight >= 400;
 	const char *const *ra2Fonts = highRes ? ra2FontsHi : ra2FontsLo;
 
-	Rebel2FontSet fontSet;
+	Rebel2FontSet fontSet(_vm->_language == Common::JA_JPN);
 	fontSet.numFonts = ARRAYSIZE(ra2FontsLo);
 	fontSet.defaultFont = CLIP<int>(_defaultFont, 0, fontSet.numFonts - 1);
 	for (int i = 0; i < fontSet.numFonts; i++) {

@@ -2795,6 +2795,7 @@ void InsaneRebel2::renderTextOverlay(byte *renderBitmap, int pitch, int width, i
 	}
 
 	const int textScale = isHiRes() ? 2 : 1;
+	const bool useCJK = _vm->_language == Common::JA_JPN;
 	int drawY = _textOverlayY * textScale;
 	int visCount = 0;
 
@@ -2813,11 +2814,13 @@ void InsaneRebel2::renderTextOverlay(byte *renderBitmap, int pitch, int width, i
 				if (parseRebel2TextOverlayFormat(s, mFont, mColor, fonts, ARRAYSIZE(fonts), defaultFont))
 					continue;
 				lineFont = mFont;
-				byte c = (byte)*s++;
+				uint charLen;
+				uint16 c = decodeRebel2Char(s, lineEnd - s, charLen, useCJK);
+				s += charLen;
 				if (c >= 'a' && c <= 'z')
 					c = c - 'a' + 'A';
-				if (mFont && c < mFont->getNumChars())
-					lineWidth += mFont->getCharWidth(c);
+				if (mFont && (c > 0xff || c < mFont->getNumChars()))
+					lineWidth += mFont->getCharWidth((byte)c);
 				lineVisCount++;
 			}
 		}
@@ -2831,14 +2834,16 @@ void InsaneRebel2::renderTextOverlay(byte *renderBitmap, int pitch, int width, i
 			while (s < lineEnd && (visCount + lineCharsDrawn) < displayLen) {
 				if (parseRebel2TextOverlayFormat(s, curFont, curColor, fonts, ARRAYSIZE(fonts), defaultFont))
 					continue;
-				byte c = (byte)*s++;
+				uint charLen;
+				uint16 c = decodeRebel2Char(s, lineEnd - s, charLen, useCJK);
+				s += charLen;
 				if (c >= 'a' && c <= 'z')
 					c = c - 'a' + 'A';
-				if (!curFont || c >= curFont->getNumChars()) {
+				if (!curFont || (c <= 0xff && c >= curFont->getNumChars())) {
 					lineCharsDrawn++;
 					continue;
 				}
-				int charW = curFont->getCharWidth(c);
+				int charW = curFont->getCharWidth((byte)c);
 				if (drawX >= 0 && drawY >= 0 && charW > 0) {
 					drawRebel2Char(curFont, renderBitmap, clipRect, drawX, drawY, pitch, curColor, c);
 				}
@@ -4168,7 +4173,7 @@ void InsaneRebel2::renderHandler8PovOverlay(byte *renderBitmap, int pitch, int w
 	if (_rebelHandler != 8 || !renderBitmap || !_smush_talkfontNut || !_smush_povfontNut)
 		return;
 
-	Rebel2FontSet fontSet;
+	Rebel2FontSet fontSet(_vm->_language == Common::JA_JPN);
 	fontSet.numFonts = 4;
 	fontSet.defaultFont = 0;
 	fontSet.fonts[0] = _smush_talkfontNut;

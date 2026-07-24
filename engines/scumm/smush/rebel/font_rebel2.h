@@ -40,8 +40,9 @@ struct Rebel2FontSet {
 	NutRenderer *fonts[kMaxFonts];
 	int numFonts;
 	int defaultFont;
+	bool useCJK;
 
-	Rebel2FontSet();
+	Rebel2FontSet(bool useCJKMode = false);
 	NutRenderer *getFont(int id) const;
 };
 
@@ -51,8 +52,9 @@ bool drawRebel2Codec23Sprite(NutRenderer *sprite, byte *buffer, int pitch, int w
 		const Common::Rect &clipRect, int x, int y, int spriteIdx, int scale);
 bool drawRebel2Codec45Sprite(NutRenderer *sprite, byte *buffer, int pitch, int width, int height,
 		const Common::Rect &clipRect, int x, int y, int spriteIdx, int scale);
+uint16 decodeRebel2Char(const char *str, uint len, uint &charLen, bool useCJK);
 int drawRebel2Char(NutRenderer *font, byte *buffer, Common::Rect &clipRect, int x, int y,
-		int pitch, int16 col, byte chr);
+		int pitch, int16 col, uint16 chr);
 int getRebel2StringWidth(const Rebel2FontSet &fontSet, const char *str, uint len);
 int getRebel2StringHeight(const Rebel2FontSet &fontSet, const char *str, uint len);
 void drawRebel2String(const Rebel2FontSet &fontSet, const char *str, uint len, byte *buffer,

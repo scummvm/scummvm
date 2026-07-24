@@ -116,7 +116,12 @@ void ScummEngine::loadCJKFont() {
 			numChar = 2350;
 			break;
 		case Common::JA_JPN:
-			fontFile = (_game.id == GID_DIG) ? "kanji16.fnt" : "japanese.fnt";
+			if (_game.id == GID_DIG)
+				fontFile = "kanji16.fnt";
+			else if (_game.id == GID_REBEL2)
+				fontFile = "LAUNCH/KANJI.FNT";
+			else
+				fontFile = "japanese.fnt";
 			numChar = 8192;
 			break;
 		case Common::ZH_TWN:

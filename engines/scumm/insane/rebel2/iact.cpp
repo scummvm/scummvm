@@ -2068,6 +2068,7 @@ void InsaneRebel2::iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStr
 	int srcLen = strlen(textStr);
 	int dstIdx = 0;
 	int numChars = _rebelMsgFont->getNumChars();
+	const bool useCJK = _vm->_language == Common::JA_JPN;
 
 	for (int i = 0; i < srcLen && dstIdx < (int)sizeof(convertedText) - 1; i++) {
 		byte ch = (byte)textStr[i];
@@ -2104,6 +2105,16 @@ void InsaneRebel2::iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStr
 			}
 		}
 
+		uint charLen;
+		decodeRebel2Char(textStr + i, srcLen - i, charLen, useCJK);
+		if (charLen == 2) {
+			if (dstIdx + 2 > (int)sizeof(convertedText) - 1)
+				break;
+			convertedText[dstIdx++] = textStr[i++];
+			convertedText[dstIdx++] = textStr[i];
+			continue;
+		}
+
 		if (ch >= 'a' && ch <= 'z') {
 			ch = ch - 'a' + 'A';
 		}
@@ -2119,7 +2130,7 @@ void InsaneRebel2::iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStr
 	convertedText[dstIdx] = '\0';
 
 	if (ConfMan.getBool("subtitles")) {
-		Rebel2FontSet fontSet;
+		Rebel2FontSet fontSet(_vm->_language == Common::JA_JPN);
 		fontSet.numFonts = 1;
 		fontSet.fonts[0] = _rebelMsgFont;
 
