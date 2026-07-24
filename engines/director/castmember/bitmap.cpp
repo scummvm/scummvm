@@ -1197,23 +1197,10 @@ uint32 BitmapCastMember::writeBITDResource(Common::SeekableWriteStream *writeStr
 	}
 
 	// No compression for now
-	// pixels.size() == bytes needed
 	Graphics::Surface pixels;
 	Graphics::PixelFormat format;
-
-	if (_bitsPerPixel >> 3) {
-		format.bytesPerPixel = _bitsPerPixel >> 3;
-		pixels.create(_picture->_surface.w, _picture->_surface.h, format);
-	} else {
-		format.bytesPerPixel = 1;
-		pixels.create(_pitch, _picture->_surface.h, format);
-	}
-
-	offset = 0;
-
-	if (_bitsPerPixel == 8 && _picture->_surface.w < (int)(_pitch * _picture->_surface.h / _picture->_surface.h)) {
-		offset = (_pitch - _picture->_surface.w) % 2;
-	}
+	format.bytesPerPixel = 1;
+	pixels.create(_pitch, _picture->_surface.h, format);
 
 	debugC(5, kDebugSaving, "BitmapCastMember::writeBITDResource: Saving 'BITD' Resource: bitsPerPixel: %d, castId: %d", _bitsPerPixel, _castId);
 	for (int y = 0; y < _picture->_surface.h; y++) {
@@ -1245,7 +1232,7 @@ uint32 BitmapCastMember::writeBITDResource(Common::SeekableWriteStream *writeStr
 				break;
 
 			case 8:
-				*(ptr + (y * offset)) = *((byte *)_picture->_surface.getBasePtr(x, y));
+				*ptr = *((byte *)_picture->_surface.getBasePtr(x, y));
 				ptr++; x++;
 				break;
 
@@ -1277,6 +1264,7 @@ uint32 BitmapCastMember::writeBITDResource(Common::SeekableWriteStream *writeStr
 	if (debugChannelSet(7, kDebugSaving)) {
 		dumpFile("BitmapData", _castId, MKTAG('B', 'I', 'T', 'D'), (byte *)pixels.getPixels(), _picture->_surface.h * _pitch);
 	}
+	pixels.free();
 	return 0;
 }
 
