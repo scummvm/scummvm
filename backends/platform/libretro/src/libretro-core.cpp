@@ -512,7 +512,7 @@ static void update_variables(void) {
 	var.value = NULL;
 	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
 		uint16 new_gui_height = (int)atoi(var.value);
-		av_status |= new_gui_height != gui_height && LIBRETRO_G_SYSTEM->inLauncher() ? AV_STATUS_UPDATE_GUI : 0;
+		av_status |= new_gui_height != gui_height && LIBRETRO_G_SYSTEM && LIBRETRO_G_SYSTEM->inLauncher() ? AV_STATUS_UPDATE_GUI : 0;
 		gui_height = new_gui_height;
 	}
 
@@ -526,7 +526,7 @@ static void update_variables(void) {
 			den = 9;
 		}
 		uint16 new_gui_width = gui_height * num / den + (gui_height * num % den != 0);
-		av_status |= (new_gui_width != gui_width) && LIBRETRO_G_SYSTEM->inLauncher() ? AV_STATUS_UPDATE_GUI : 0;
+		av_status |= (new_gui_width != gui_width) && LIBRETRO_G_SYSTEM && LIBRETRO_G_SYSTEM->inLauncher() ? AV_STATUS_UPDATE_GUI : 0;
 		gui_width = new_gui_width;
 	}
 #endif
