@@ -2211,7 +2211,7 @@ const ASound8::CommandPtr ASound8::_commandList[38] = {
 	&ASound8::command4, &ASound8::command5, &ASound8::command6, &ASound8::command7,
 	&ASound8::command8, &ASound8::command9, &ASound8::command10, &ASound8::command11,
 	&ASound8::command12, &ASound8::command13, &ASound8::command14, &ASound8::command15,
-	&ASound8::command16, &ASound8::command16, &ASound8::command18, &ASound8::command19,
+	&ASound8::command16, &ASound8::command17, &ASound8::command18, &ASound8::command19,
 	&ASound8::command20, &ASound8::command21, &ASound8::command22, &ASound8::command23,
 	&ASound8::command24, &ASound8::command25, &ASound8::command26, &ASound8::command27,
 	&ASound8::command28, &ASound8::command29, &ASound8::command30, &ASound8::command31,

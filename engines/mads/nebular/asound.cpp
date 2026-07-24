@@ -290,7 +290,7 @@ void ASound::playSoundData(byte *pData, int startingChannel) {
 }
 
 bool ASound::isSoundActive(byte *pData) {
-	for (int i = 0; i < ADLIB_CHANNEL_MIDWAY; ++i) {
+	for (int i = 0; i <= ADLIB_CHANNEL_MIDWAY; ++i) {
 		if (_channels[i]._activeCount && _channels[i]._soundData == pData)
 			return true;
 	}
