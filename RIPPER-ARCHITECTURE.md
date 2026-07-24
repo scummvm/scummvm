@@ -672,6 +672,14 @@
   223 (`solved wofford table puzzle`), tests it after the puzzle returns, and
   selects the success frame only when that flag is set. Escape and failed
   marker traversals return without setting it.
+- Scene action 11 calls `RunCdInBookButtonSequencePuzzleScene` at `0x28427`
+  with the caller-supplied completion flag. `JA2.RUN` callback `0xa41` supplies
+  milestone 57 after retaining `CD_ZOOM.AVI`. The puzzle loads `CDINBOOK.PL`,
+  presents `UP.PCX` in the 640-by-300 scene viewport, and creates button
+  controls `0x672` through `0x677` from the positions at `0x25d29`. The
+  six-button solution stored at `0x25d99` is `[1, 5, 5, 3, 6, 2]`; only that
+  sequence sets the supplied flag. Escape and either 140-pixel side control
+  exit without setting it, while F1 opens help table `0x1aa`.
 - Scene action 7 calls `RunClockPuzzleScene` at `0x374c5` with the
   caller-supplied completion flag. `GB1.RUN` callback `0x577` supplies flag 222
   after presenting `GBZ3.SMK`. The puzzle retains its two analog positions and
@@ -733,6 +741,13 @@
   the marker is inactive. A traversal begins at node zero, accelerates from one
   to six pixels per DOS tick, and sets the completion flag only after reaching
   the node whose terminal link is `-2`; the other terminal link is `-1`.
+- The CD-in-book puzzle uses `P01.BBM` through `P06.BBM` for pressed-button
+  feedback and `BUTON.WAV`/`BUTOFF.WAV` for the corresponding audio. It draws
+  `P07.BBM` at the eight dirty-region origins stored at `0x25d59`; after each
+  of the first five choices it restores a randomly selected marker backing,
+  with repeated random selections allowed. A wrong six-button attempt pauses
+  for four DOS timer ticks, plays `BUZER.WAV`, restores all eight markers, and
+  waits for the buzzer before accepting another attempt.
 - Scene action 24 calls `RunTubeSwitchScene` at `0x25e18` with the
   caller-supplied completion flag. `GA1.RUN` callback `0xaf2` supplies flag 215
   (`solved vacuum tube puzzle`). The scene counts consumed inventory flags 102,
