@@ -60,6 +60,7 @@ private:
 	};
 
 	ChoiceResult executeChoice(uint unlockFlag, const Common::String &sceneLabel);
+	bool runQcsMag2UnlockMediaScreen();
 	bool loadFrameSet(ResourceManager &resources, const char *prefix, uint count,
 		Common::Array<BitmapAssetFrame> &frames);
 	bool buildEntries(int initialUnlockFlag);
