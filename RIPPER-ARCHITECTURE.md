@@ -1403,6 +1403,12 @@
   display descriptor and its effective scaled extents are centered. This also
   expands `PROLOG2.AVI`'s 320x200 Smacker branches even though its IAVF canvas
   declares 640x400.
+- The same callback switches branches at least 321 pixels wide or 201 pixels
+  high from the scene display context to the full display context. A branch
+  whose scaled output already fills the 640x400 display therefore does not
+  inherit the scene viewport's 50-pixel physical Y origin. ScummVM applies
+  that origin only when the resulting rectangle remains inside the active
+  display and rejects any Smacker rectangle that still exceeds its bounds.
 - IAVF opcode `0x68` is a display boundary. `RunPacketizedMediaPlaybackCore`
   dispatches palette service `0x1d` and then display service `0x14`, whose
   target is `ClearGenericVideoLogicalPage` at `0x45ed8`. `PROINT.AVI` places
