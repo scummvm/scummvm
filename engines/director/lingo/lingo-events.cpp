@@ -32,6 +32,7 @@
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sprite.h"
+#include "director/castmember/movie.h"
 #include "director/types.h"
 #include "director/window.h"
 
@@ -162,7 +163,10 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 			}
 
 			if (event.channelId > 0) {
-				if (_score->_channels[event.channelId]->_sprite->shouldHilite()) {
+				// An embedded movie (a movie cast member) is composited into
+				// the host stage via getSubChannels(); hiliting its own
+				// channels would draw at the embedded movie's native origin.
+				if (!_isEmbedded && _score->_channels[event.channelId]->_sprite->shouldHilite()) {
 					_currentHiliteChannelId = event.channelId;
 					g_director->_wm->_hilitingWidget = true;
 					g_director->getCurrentWindow()->setDirty(true);
@@ -672,6 +676,17 @@ void Movie::queueInputEvent(LEvent event, int targetId, Common::Point pos) {
 
 
 bool Movie::processInputEvent(LEvent event, int targetId, Common::Point pos) {
+	// Route a click on a movie cast member into its linked movie so that
+	// movie's own scripts (mouseUp, the clickOn) handle it.
+	if (event == kEventMouseUp || event == kEventMouseDown) {
+		uint16 spriteId = _score->getMouseSpriteIDFromPos(pos);
+		if (spriteId) {
+			Channel *ch = _score->getChannelById(spriteId);
+			if (ch && ch->_sprite->_cast && ch->_sprite->_cast->_type == kCastMovie)
+				((MovieCastMember *)ch->_sprite->_cast)->routeInputEvent(event, pos, ch->getBbox());
+		}
+	}
+
 	queueInputEvent(event, targetId, pos);
 	if ((!_lingo->_state->callstack.empty()) || (_lingo->_currentInputEvent.type != VOIDSYM)) {
 		// We're in the middle of executing something else, queue input event for later

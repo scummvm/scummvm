@@ -134,6 +134,9 @@ public:
 	DirectorEngine *getVM() const { return _vm; }
 	Graphics::MacWindow *getMacWindow() const { return _window; }
 	Movie *getCurrentMovie() const { return _currentMovie; }
+	// Temporarily retarget the current movie when stepping an embedded movie
+	// so getCurrentMovie()-based context (go, globals, events) points at it.
+	void setCurrentMovie(Movie *movie) { _currentMovie = movie; }
 	Common::String getCurrentPath() const { return _currentPath; }
 	DirectorSound *getSoundManager() const { return _soundManager; }
 

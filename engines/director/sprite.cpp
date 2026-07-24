@@ -354,6 +354,11 @@ bool Sprite::respondsToMouse() {
 	if (_cast && _cast->_type == kCastButton)
 		return true;
 
+	// A movie cast member is interactive: its embedded movie may have mouse
+	// handlers, so clicks must be routed into it.
+	if (_cast && _cast->_type == kCastMovie)
+		return true;
+
 	// TODO: Check if we need to check against individual events like below
 	if (g_director->getVersion() >= 600) {
 		if (_behaviors.size() > 0)
