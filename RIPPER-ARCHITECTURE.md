@@ -1033,7 +1033,10 @@
   advance the current section. Source flags `0xfa + section` allow that
   section to advance and completion flags `0x104 + section` record revealed
   progress. Resource `0xae` supplies the label for the continuously redrawn
-  percentage in the 330-by-222 journal panel's heading. The
+  percentage in the 330-by-222 journal panel's heading. The one-tick shuffle
+  path calls `RenderChooserTextRow` for only the changed visible row; the
+  percentage and complete panel are redrawn on the separate 36-tick reveal
+  cadence. The
   `SetActiveTextDrawPosition` call at `0x24587` uses panel top plus 1 and panel
   left plus 50. The locked-scene call sequence at `0x24538` places the
   200-pixel password control at panel top plus panel height plus 5; its

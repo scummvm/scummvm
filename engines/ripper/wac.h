@@ -88,6 +88,8 @@ private:
 		Common::Array<Common::String> &lines) const;
 	bool drawJournalTextPanel(const Common::Array<Common::String> &lines, uint progress,
 		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows);
+	bool drawJournalTextPanelLine(const Common::Array<Common::String> &lines,
+		uint firstVisible, uint visibleRows, uint lineIndex);
 	uint16 runJournalRevealScene(DatabaseEntry &entry);
 	uint16 runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceId);
 	uint16 dispatchDatabaseEntry(DatabaseEntry &entry);
