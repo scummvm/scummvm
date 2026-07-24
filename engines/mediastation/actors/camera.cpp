@@ -466,6 +466,9 @@ void CameraActor::setXYDelta() {
 }
 
 void CameraActor::panToByTime(int16 x, int16 y, double duration) {
+	if (duration == 0) {
+		error("%s: Pan duration can't be zero", __func__);
+	}
 	_panState = kCameraPanToByTime;
 	_panStart = _currentViewportOrigin;
 	_panDest = Common::Point(x, y);
@@ -481,6 +484,12 @@ void CameraActor::panToByTime(int16 x, int16 y, double duration) {
 }
 
 void CameraActor::panToByStepCount(int16 x, int16 y, uint panSteps, double duration) {
+	if (duration == 0) {
+		error("%s: Pan duration can't be zero", __func__);
+	}
+	if (panSteps == 0) {
+		error("%s: Pan steps can't be zero", __func__);
+	}
 	_panState = kCameraPanByStepCount;
 	_panStart = _currentViewportOrigin;
 	_panDest = Common::Point(x, y);
