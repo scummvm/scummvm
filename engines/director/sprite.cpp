@@ -41,6 +41,7 @@ Sprite::Sprite(Frame *frame) {
 	_matte = nullptr;
 	_puppet = false;
 	_autoPuppet = kAPNone; // Based on Director in a Nutshell, page 15
+	_cast = nullptr;
 	reset();
 }
 
@@ -63,7 +64,10 @@ void Sprite::reset() {
 	if (_matte)
 		delete _matte;
 	_matte = nullptr;
-	_cast = nullptr;
+	if (_cast) {
+		_cast->decRefCount();
+		_cast = nullptr;
+	}
 
 	_thickness = 0;
 	_width = 0;
@@ -112,6 +116,8 @@ Sprite& Sprite::operator=(const Sprite &sprite) {
 	_trails = sprite._trails;
 
 	_cast = sprite._cast;
+	if (_cast)
+		_cast->incRefCount();
 
 	if (_matte)
 		delete _matte;
@@ -168,8 +174,15 @@ Sprite::Sprite(const Sprite &sprite) {
 }
 
 Sprite::~Sprite() {
-	if (_matte)
+	if (_cast) {
+		_cast->decRefCount();
+		_cast = nullptr;
+	}
+
+	if (_matte) {
 		delete _matte;
+		_matte = nullptr;
+	}
 }
 
 bool Sprite::isQDShape() {
@@ -349,8 +362,8 @@ bool Sprite::respondsToMouse() {
 
 	ScriptContext *spriteScript = _movie->getScriptContext(kScoreScript, _scriptId);
 	if (spriteScript && (spriteScript->_eventHandlers.contains(kEventGeneric)
-					  || spriteScript->_eventHandlers.contains(kEventMouseDown)
-					  || spriteScript->_eventHandlers.contains(kEventMouseUp)))
+					|| spriteScript->_eventHandlers.contains(kEventMouseDown)
+					|| spriteScript->_eventHandlers.contains(kEventMouseUp)))
 		return true;
 
 	ScriptContext *castScript = _movie->getScriptContext(kCastScript, _castId);
@@ -369,7 +382,7 @@ bool Sprite::isActive() {
 		return true;
 
 	return (_movie->getScriptContext(kScoreScript, _scriptId) != nullptr)
-			|| (_movie->getScriptContext(kCastScript, _castId) != nullptr);
+		|| (_movie->getScriptContext(kCastScript, _castId) != nullptr);
 }
 
 bool Sprite::shouldHilite() {
@@ -544,12 +557,16 @@ void Sprite::setCast(CastMemberID memberID, bool replaceDims) {
 	 */
 
 	_castId = memberID;
+	if (_cast) {
+		_cast->decRefCount();
+	}
 	_cast = _movie->getCastMember(_castId);
 	//As QDShapes don't have an associated cast, we must not change their _SpriteType.
 	if (g_director->getVersion() >= 400 && !isQDShape() && _castId != CastMemberID(0, 0))
 		_spriteType = kCastMemberSprite;
 
 	if (_cast) {
+		_cast->incRefCount();
 		if (g_director->getVersion() >= 400) {
 			// Set the sprite type to be more specific ONLY for bitmap or text.
 			// Others just use the generic kCastMemberSprite in D4.
@@ -667,7 +684,11 @@ void Sprite::replaceFrom(Sprite *nextSprite) {
 	if (!getAutoPuppet(kAPCast)) {
 		if (nextSprite->_copyBackMask & kSCBCastId) {
 			_castId = nextSprite->_castId;
+			if (_cast)
+				_cast->decRefCount();
 			_cast = nextSprite->_cast;
+			if (_cast)
+				_cast->incRefCount();
 		}
 		if (nextSprite->_copyBackMask & kSCBSpriteListIdx)
 			_spriteListIdx = nextSprite->_spriteListIdx;

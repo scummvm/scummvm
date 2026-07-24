@@ -78,13 +78,18 @@ FilmLoopCastMember::FilmLoopCastMember(Cast *cast, uint16 castId, FilmLoopCastMe
 	_enableSound = source._enableSound;
 	_crop = source._crop;
 	_center = source._center;
-	_score = source._score;
+	_score = nullptr;
+	if (source._score)
+		_score = new Score(*source._score);
 	_subchannels = source._subchannels;
 	_looping = source._looping;
 }
 
 FilmLoopCastMember::~FilmLoopCastMember() {
-
+	if (_score) {
+		delete _score;
+		_score = nullptr;
+	}
 }
 
 bool FilmLoopCastMember::isModified() {
@@ -139,7 +144,7 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, u
 			continue;
 
 		if (src._cast == nullptr && _cast != nullptr)
-			src._cast = _cast->getCastMember(src._castId.member, true);
+			src.setCast(src._castId);
 
 		debugCN(5, kDebugImages, "FilmLoopCastMember::getSubChannels(): sprite: %d - cast: %s, orig: %d,%d %dx%d",
 				iter, src._castId.asString().c_str(),
@@ -235,6 +240,11 @@ void FilmLoopCastMember::load() {
 		}
 	} else {
 		warning("STUB: FilmLoopCastMember::load(): Film loops not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
+	}
+
+	if (_score) {
+		delete _score;
+		_score = nullptr;
 	}
 
 	if (loop) {
