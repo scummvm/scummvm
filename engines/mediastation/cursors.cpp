@@ -74,7 +74,7 @@ void CursorManager::newCursor(Chunk &chunk) {
 	switch (cursorType) {
 	case kPlatformCursor: {
 		uint16 platformCursorId = chunk.readTypedUint16();
-		newPlatformCursor(cursorId, platformCursorId);
+		newPlatformCursor(platformCursorId, cursorId);
 		break;
 	}
 
