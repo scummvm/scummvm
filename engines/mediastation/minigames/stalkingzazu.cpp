@@ -1217,10 +1217,11 @@ bool StalkingZazuActor::mousePositionIsInteresting(const Common::Point &pos) {
 	bool isInteresting = true;
 	if (_acceptingMouseEvents) {
 		SpriteMovieActor *simba = static_cast<SpriteMovieActor *>(g_engine->getImtGod()->getActorByIdAndType(_simbaActorId, kActorTypeSprite));
-		if (simba == nullptr) {
+		if (simba != nullptr) {
+			isInteresting = simba->getBbox().contains(pos);
+		} else {
 			isInteresting = false;
 		}
-		isInteresting = simba->getBbox().contains(pos);
 	}
 	return isInteresting;
 }
