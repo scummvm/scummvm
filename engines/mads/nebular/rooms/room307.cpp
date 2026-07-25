@@ -29,7 +29,6 @@
 #include "mads/nebular/mads/words.h"
 #include "mads/nebular/rooms/section3.h"
 #include "mads/nebular/rooms/forcefield.h"
-#include "mads/nebular/rooms/thunks.h"
 #include "mads/nebular/rooms/dialog.h"
 
 namespace MADS {

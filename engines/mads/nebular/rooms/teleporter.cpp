@@ -23,7 +23,6 @@
 #include "mads/core/mouse.h"
 #include "mads/core/pal.h"
 #include "mads/nebular/rooms/teleporter.h"
-#include "mads/nebular/rooms/thunks.h"
 #include "mads/nebular/mads/words.h"
 #include "mads/nebular/global.h"
 

@@ -26,7 +26,6 @@
 #include "mads/nebular/mads/words.h"
 #include "mads/nebular/rooms/section7.h"
 #include "mads/nebular/rooms/dialog.h"
-#include "mads/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace RexNebular {

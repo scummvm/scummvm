@@ -77,7 +77,6 @@ MODULE_OBJS := \
 	nebular/popup.o \
 	nebular/sound_nebular.o \
 	nebular/mads/mads.o \
-	nebular/rooms/thunks.o \
 	nebular/rooms/room101.o \
 	nebular/rooms/room102.o \
 	nebular/rooms/room103.o \
