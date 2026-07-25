@@ -30,6 +30,7 @@
 #include "director/frame.h"
 #include "director/score.h"
 #include "director/window.h"
+#include "director/lingo/lingo.h"
 
 namespace Director {
 
@@ -62,6 +63,9 @@ MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, MovieCastMember &sou
 
 MovieCastMember::~MovieCastMember() {
 	delete _linkedMovie;
+	delete _embeddedLingoState;
+	for (auto &it : _embeddedFrozenStates)
+		delete it;
 }
 
 Common::Array<Channel> *MovieCastMember::getSubChannels(Common::Rect &bbox, uint frame) {
@@ -179,6 +183,13 @@ void MovieCastMember::update() {
 	Movie *hostMovie = window->getCurrentMovie();
 	window->setCurrentMovie(_linkedMovie);
 
+	// Give the linked movie its own Lingo state for the step, so its
+	// go()/freeze does not block the host's scripts.
+	if (!_embeddedLingoState)
+		_embeddedLingoState = new LingoState;
+	window->swapLingoState(_embeddedLingoState, _embeddedFrozenStates);
+	g_lingo->switchStateFromWindow();
+
 	if (score->_playState != kPlayStarted)
 		score->startPlay();
 
@@ -190,7 +201,9 @@ void MovieCastMember::update() {
 
 	score->step();
 
+	window->swapLingoState(_embeddedLingoState, _embeddedFrozenStates);
 	window->setCurrentMovie(hostMovie);
+	g_lingo->switchStateFromWindow();
 }
 
 void MovieCastMember::routeInputEvent(LEvent event, Common::Point hostPos, const Common::Rect &bbox) {
