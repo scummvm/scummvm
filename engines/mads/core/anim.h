@@ -199,7 +199,7 @@ struct SegmentBuf {
 
 	int    speech;
 
-	word   misc[10];
+	int16  misc[10];
 
 	int    num_sprite_changes;
 	word   sprite_change_frame[AA_MAX_CHANGES];
@@ -380,7 +380,7 @@ struct AnimFile {
 	uint16 font_auto_spacing;
 	uint16 background_type;                 /* black, or room, or whatever    */
 	uint16 background_room;                 /* room number to load            */
-	uint16 misc[10];                        /* see MISC_ defines above        */
+	int16 misc[10];                         /* see MISC_ defines above        */
 	char background_name[13];            /* if needed                      */
 	char series_name[AA_MAX_SERIES][13]; /* filenames for all your series  */
 	char sound_file_name[13];
