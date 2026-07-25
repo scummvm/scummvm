@@ -576,11 +576,10 @@ void RexNebularEngine::global_error_code() {
 		if (!global[kTalkInanimateCount]) {
 			text_show(2);
 		} else {
-			Common::String tmpMsg = "\"Greetings, ";
-			tmpMsg += vocab_string(inter_main_noun);
-			tmpMsg += "!\"";
+			static char msg[32];
+			Common::sprintf_s(msg, "\"Greetings, %s!\"", vocab_string(inter_main_noun));
 			kernel_message_purge();
-			kernel_message_add(const_cast<char *>(tmpMsg.c_str()), 0, 0, 0x1110, 120, 34, 0);
+			kernel_message_add(msg, 0, 0, 0x1110, 120, 0, 34);
 		}
 	} else if (player_said_3(give, door, ceiling) || player_said_2(close, chair))
 		text_show(3);
