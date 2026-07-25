@@ -94,6 +94,7 @@ public:
 
 	void writeCastData(Common::SeekableWriteStream *writeStream) override;
 	uint32 getCastDataSize() override;			// This is the size of the data in the 'CASt' resource
+	bool canWriteCastData() override;
 
 	uint32 getSTXTResourceSize();
 	uint32 writeSTXTResource(Common::SeekableWriteStream *writeStream, uint32 offset);

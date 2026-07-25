@@ -46,6 +46,15 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 		return false;
 	}
 
+	// Refuse rather than silently lose runtime changes to members whose
+	// writer can't re-serialize them for this version
+	for (auto &it : *movie->getCasts()) {
+		if (it._value->getArchive().get() == this && it._value->hasUnsavableChanges()) {
+			warning("RIFXArchive::writeToFile(): not saving '%s': modified cast members would lose their changes", movie->getMacName().c_str());
+			return false;
+		}
+	}
+
 	// If the filename is empty, we save the movie with the name of the current movie
 	if (filename.empty()) {
 		filename = movie->getMacName();
@@ -483,10 +492,11 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 				// The castIds of cast members start from _castArrayStart
 				CastMember *target = cast->getCastMember(it->castId + cast->_castArrayStart);
 
-				if (target) {
+				if (target && !cast->keepOriginalCastBytes(target)) {
 					resSize = target->getCastResourceSize();
 					it->size = resSize;		// getCastResourceSize returns size without header and size
 				} else {
+					// Members without a version-capable writer keep the original bytes
 					resSize = it->size;
 				}
 				it->offset = currentSize;

@@ -1139,6 +1139,11 @@ uint32 BitmapCastMember::getCastDataSize() {
 	return dataSize;
 }
 
+bool BitmapCastMember::canWriteCastData() {
+	// writeCastData() only knows the D4/D5 layout
+	return _cast->_version >= kFileVer400 && _cast->_version < kFileVer600;
+}
+
 void BitmapCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
 	writeStream->writeUint16BE(_pitch);
 
@@ -1147,8 +1152,6 @@ void BitmapCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
 
 	writeStream->writeUint16BE(_regY);
 	writeStream->writeUint16BE(_regX);
-
-	warning("BitmapCastMember::writeCastData(): TODO process D6+");
 
 	if (_bitsPerPixel != 0) {
 		writeStream->writeByte(0);		// Skip one byte (not stored)
