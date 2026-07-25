@@ -231,7 +231,7 @@ static void room_508_parser() {
 	} else if (player_said_3(put, compact_case, pedestal) || player_said_3(put, compact_case, laser_beam) || player_said_3(reflect, compact_case, laser_beam)) {
 		local._chosenObject = 2;
 		handlePedestral();
-	} else if (_action._lookFlag)
+	} else if (player.look_around)
 		text_show(50822);
 	else if (player_said_2(look, target_area))
 		text_show(50810);
@@ -288,7 +288,7 @@ static void room_508_parser() {
 	} else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_508_synchronize(Common::Serializer &s) {

@@ -275,15 +275,15 @@ static void room_101_pre_parser() {
 }
 
 static void room_101_parser() {
-	if (_action._lookFlag) {
+	if (player.look_around) {
 		text_show(10125);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(walkto, life_support_section)) {
 		_scene->_nextSceneId = 102;
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -298,7 +298,7 @@ static void room_101_parser() {
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[11], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				player.commands_allowed = false;
 				player.walker_visible = false;
-				_action._inProgress = false;
+				player.command_ready = false;
 				return;
 
 			case 1:
@@ -313,7 +313,7 @@ static void room_101_parser() {
 				_scene->_hotspots.activate(71, false);
 				local._chairHotspotId = _scene->_dynamicHotspots.add(words_chair, words_sit_in, -1, Common::Rect(159, 84, 159 + 33, 84 + 36));
 				if (!player_said_2(look, view_screen)) {
-					_action._inProgress = false;
+					player.command_ready = false;
 					return;
 				}
 				kernel.trigger = 0;
@@ -324,7 +324,7 @@ static void room_101_parser() {
 			}
 		} else {
 			text_show(10131);
-			_action._inProgress = false;
+			player.command_ready = false;
 			return;
 		}
 	}
@@ -352,7 +352,7 @@ static void room_101_parser() {
 		default:
 			break;
 		}
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -364,7 +364,7 @@ static void room_101_parser() {
 		_scene->_hotspots.activate(words_shield_modulator, false);
 		object_examine(OBJ_SHIELD_MODULATOR, 10120, 0);
 		g_engine->_soundManager->command(22, 0);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -377,13 +377,13 @@ static void room_101_parser() {
 		} else
 			text_show(10127);
 
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(open, shield_access_panel) && local._panelOpened) {
 		text_show(10130);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -425,139 +425,139 @@ static void room_101_parser() {
 				break;
 			}
 		}
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, chair)) {
 		text_show(10101);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if ((player_said_1(look) || player_said_1(peer_through)) && (player_said_1(front_window) || player_said_1(outside))) {
 		text_show(10102);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, hull) || player_said_2(look, outer_hull) || player_said_2(examine, hull) || player_said_2(examine, outer_hull)) {
 		text_show(10103);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, fuzzy_dice)) {
 		text_show(10104);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, mirror) || player_said_2(look_in, mirror)) {
 		text_show(10105);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, curtains)) {
 		text_show(10106);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, plastic_jesus)) {
 		text_show(10107);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, escape_hatch) || (player_said_2(open, escape_hatch) && !player_has(OBJ_REBREATHER))) {
 		text_show(10109);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(open, escape_hatch)) {
 		text_show(10110);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, target_computer)) {
 		text_show(10111);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, library_computer)) {
 		text_show(10126);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, damage_control_panel)) {
 		text_show(10112);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, navigation_controls)) {
 		text_show(10113);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, engineering_controls)) {
 		text_show(10114);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, weapons_display)) {
 		text_show(10115);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, shield_status_panel)) {
 		text_show(10116);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(take, plastic_jesus)) {
 		text_show(10118);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(take, fuzzy_dice)) {
 		text_show(10119);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(open, damage_control_panel)) {
 		text_show(10121);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(open, curtains)) {
 		text_show(10122);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(close, curtains)) {
 		text_show(10123);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if ((player_said_1(look) || player_said_1(play)) && player_said_1(video_game)) {
 		text_show(10124);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 }

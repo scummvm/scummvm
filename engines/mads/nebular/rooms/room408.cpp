@@ -163,7 +163,7 @@ static void room_408_parser() {
 		text_show(40843);
 	else if (player_said_2(look, corridor_to_south))
 		text_show(40844);
-	else if (_action._lookFlag)
+	else if (player.look_around)
 		text_show(40845);
 	else if (player_said_2(look, target_module) && object_is_here(OBJ_TARGET_MODULE))
 		text_show(40846);
@@ -174,7 +174,7 @@ static void room_408_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_408_synchronize(Common::Serializer &s) {

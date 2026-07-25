@@ -63,7 +63,7 @@ static void room_710_parser() {
 		else
 			_scene->_nextSceneId = 751;
 
-		_action._inProgress = false;
+		player.command_ready = false;
 	}
 }
 

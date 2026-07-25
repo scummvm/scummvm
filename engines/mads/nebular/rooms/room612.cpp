@@ -205,7 +205,7 @@ static void room_612_parser() {
 		local._cycleIndex = -2;
 		local._actionMode = 1;
 		handleWinchMovement();
-	} else if (_action._lookFlag || player_said_2(look, expressway))
+	} else if (player.look_around || player_said_2(look, expressway))
 		text_show(61210);
 	else if (player_said_2(look, rope) || player_said_2(look, armature)) {
 		if (_globals[kBoatRaised])
@@ -240,7 +240,7 @@ static void room_612_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_612_synchronize(Common::Serializer &s) {

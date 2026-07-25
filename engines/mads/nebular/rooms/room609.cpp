@@ -330,7 +330,7 @@ static void room_609_parser() {
 		default:
 			break;
 		}
-	} else if (_action._lookFlag)
+	} else if (player.look_around)
 		text_show(60910);
 	else if (player_said_2(look, street))
 		text_show(60911);
@@ -356,7 +356,7 @@ static void room_609_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_609_synchronize(Common::Serializer &s) {

@@ -76,7 +76,7 @@ static void room_702_parser() {
 		player.commands_allowed = false;
 		player.walker_visible = false;
 		_scene->_nextSceneId = 711;
-	} else if (player_said_2(take, bones) && (_action._mainObjectSource == CAT_HOTSPOT) && (!player_has(OBJ_BONES) || kernel.trigger)) {
+	} else if (player_said_2(take, bones) && (player.main_object_source == CAT_HOTSPOT) && (!player_has(OBJ_BONES) || kernel.trigger)) {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
@@ -101,7 +101,7 @@ static void room_702_parser() {
 		default:
 			break;
 		}
-	} else if (_action._lookFlag)
+	} else if (player.look_around)
 		text_show(70210);
 	else if (player_said_2(look, platform))
 		text_show(70211);
@@ -115,9 +115,9 @@ static void room_702_parser() {
 		text_show(70215);
 	else if (player_said_2(look, teleporter))
 		text_show(70216);
-	else if (player_said_2(look, bones) && (_action._mainObjectSource == CAT_HOTSPOT))
+	else if (player_said_2(look, bones) && (player.main_object_source == CAT_HOTSPOT))
 		text_show(70217);
-	else if (player_said_2(take, bones) && (_action._mainObjectSource == CAT_HOTSPOT)) {
+	else if (player_said_2(take, bones) && (player.main_object_source == CAT_HOTSPOT)) {
 		if (player_has(OBJ_BONES))
 			text_show(70219);
 	} else if (player_said_2(look, submerged_city))
@@ -125,7 +125,7 @@ static void room_702_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_702_synchronize(Common::Serializer &s) {

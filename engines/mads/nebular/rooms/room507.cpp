@@ -92,7 +92,7 @@ static void room_507_parser() {
 				break;
 			}
 		}
-	} else if (_action._lookFlag)
+	} else if (player.look_around)
 		text_show(50722);
 	else if (player_said_2(look, swirling_light))
 		text_show(50710);
@@ -142,7 +142,7 @@ static void room_507_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_507_synchronize(Common::Serializer &s) {

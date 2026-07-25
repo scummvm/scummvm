@@ -330,7 +330,7 @@ static void room_751_parser() {
 				break;
 			}
 		}
-	} else if (_action._lookFlag || player_said_2(look, city))
+	} else if (player.look_around || player_said_2(look, city))
 		text_show(75110);
 	else if (player_said_2(look, elevator))
 		text_show(75112);
@@ -358,7 +358,7 @@ static void room_751_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_751_synchronize(Common::Serializer &s) {

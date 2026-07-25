@@ -320,16 +320,16 @@ static void room_208_parser() {
 		text_show(20815);
 	else if (player_said_2(take, huge_legs) || player_said_2(pull, huge_legs))
 		text_show(20816);
-	else if (_action._savedFields._lookFlag && (_globals[kRhotundaStatus] == 1))
+	else if (player.look_around && (_globals[kRhotundaStatus] == 1))
 		text_show(20819);
-	else if (_action._savedFields._lookFlag && (_globals[kLeavesStatus] == 2))
+	else if (player.look_around && (_globals[kLeavesStatus] == 2))
 		text_show(20818);
-	else if (_action._savedFields._lookFlag)
+	else if (player.look_around)
 		text_show(20817);
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_208_synchronize(Common::Serializer &s) {

@@ -395,7 +395,7 @@ static void setDialogNode(int node) {
 }
 
 static void handleConversation1() {
-	switch (_action._activeAction._verbId) {
+	switch (player2.words[0]) {
 	case 180:
 		setDialogNode(2);
 		break;
@@ -422,7 +422,7 @@ static void handleConversation1() {
 }
 
 static void handleConversation2() {
-	switch (_action._activeAction._verbId) {
+	switch (player2.words[0]) {
 	case 187:
 		setDialogNode(3);
 		break;
@@ -441,7 +441,7 @@ static void handleConversation2() {
 }
 
 static void handleConversation3() {
-	switch (_action._activeAction._verbId) {
+	switch (player2.words[0]) {
 	case 193:
 		setDialogNode(6);
 		break;
@@ -464,7 +464,7 @@ static void handleConversation3() {
 }
 
 static void handleConversation5() {
-	switch (_action._activeAction._verbId) {
+	switch (player2.words[0]) {
 	case 204:
 		setDialogNode(6);
 		break;
@@ -484,7 +484,7 @@ static void handleConversation5() {
 }
 
 static void handleConversation6() {
-	switch (_action._activeAction._verbId) {
+	switch (player2.words[0]) {
 	case 211:
 		setDialogNode(7);
 		break;
@@ -503,7 +503,7 @@ static void handleConversation6() {
 }
 
 static void handleConversation7() {
-	switch (_action._activeAction._verbId) {
+	switch (player2.words[0]) {
 	case 216:
 	case 217:
 	case 219:
@@ -524,7 +524,7 @@ static void handleConversation7() {
 }
 
 static void handleConversation8() {
-	switch (_action._activeAction._verbId) {
+	switch (player2.words[0]) {
 	case 223:
 	case 224:
 		setDialogNode(4);
@@ -548,7 +548,7 @@ static void handleConversations() {
 	if (kernel.trigger == 0) {
 		_scene->_kernelMessages.reset();
 		player.commands_allowed = false;
-		const char *curQuote = quote_string(kernel.quotes, _action._activeAction._verbId);
+		const char *curQuote = quote_string(kernel.quotes, player2.words[0]);
 		if (_scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing) > 200) {
 			static char line1[40], line2[40];
 			quote_split_string(curQuote, line1, line2);
@@ -967,7 +967,7 @@ static void room_210_parser() {
 		default:
 			break;
 		}
-	} else if (player_said_2(give, native_woman) && player_has(object_named(_action._activeAction._objectNameId))) {
+	} else if (player_said_2(give, native_woman) && player_has(object_named(player2.words[1]))) {
 		switch (kernel.trigger) {
 		case 0:
 		{
@@ -1076,7 +1076,7 @@ static void room_210_parser() {
 		return;
 	}
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_210_synchronize(Common::Serializer &s) {

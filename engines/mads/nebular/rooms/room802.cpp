@@ -194,16 +194,16 @@ static void room_802_parser() {
 			break;
 		}
 	} else if (!_globals[kRemoteOnGround] && (player_has(OBJ_SHIELD_MODULATOR) || _globals[kShieldModInstalled])
-		&& (player_said_2(look, launch_pad) || _action._lookFlag))
+		&& (player_said_2(look, launch_pad) || player.look_around))
 		text_show(80210);
 	else if (!_globals[kRemoteOnGround] && !player_has(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled]
-		&& (player_said_2(look, launch_pad) || _action._lookFlag))
+		&& (player_said_2(look, launch_pad) || player.look_around))
 		text_show(80211);
 	else if (_globals[kRemoteOnGround] && !player_has(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled]
-		&& (player_said_2(look, launch_pad) || _action._lookFlag))
+		&& (player_said_2(look, launch_pad) || player.look_around))
 		text_show(80213);
 	else if (_globals[kRemoteOnGround] && (player_has(OBJ_SHIELD_MODULATOR) || _globals[kShieldModInstalled])
-		&& (player_said_2(look, launch_pad) || _action._lookFlag))
+		&& (player_said_2(look, launch_pad) || player.look_around))
 		text_show(80212);
 	else if (!player_has(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled] && player_said_2(look, shield_modulator))
 		text_show(80214);
@@ -229,7 +229,7 @@ static void room_802_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_802_synchronize(Common::Serializer &s) {

@@ -49,7 +49,7 @@ static void room_707_daemon() {
 
 static void room_707_parser() {
 	if (teleporter_parser()) {
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -67,12 +67,12 @@ static void room_707_parser() {
 		|| player_said_2(look, smile_key) || player_said_2(look, enter_key)
 		|| player_said_2(look, frown_key))
 		text_show(70713);
-	else if (player_said_2(look, device) || _action._lookFlag)
+	else if (player_said_2(look, device) || player.look_around)
 		text_show(70714);
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_707_synchronize(Common::Serializer &s) {

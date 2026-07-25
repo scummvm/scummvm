@@ -192,7 +192,7 @@ static void room_311_daemon() {
 }
 
 static void room_311_parser() {
-	if (_action._lookFlag)
+	if (player.look_around)
 		text_show(31119);
 	else if (local._checkGuardFl) {
 		local._checkGuardFl = false;
@@ -319,7 +319,7 @@ static void room_311_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_311_synchronize(Common::Serializer &s) {

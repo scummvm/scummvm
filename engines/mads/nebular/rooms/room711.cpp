@@ -53,7 +53,7 @@ static void room_711_daemon() {
 
 static void room_711_parser() {
 	if (teleporter_parser())
-		_action._inProgress = false;
+		player.command_ready = false;
 }
 
 void room_711_synchronize(Common::Serializer &s) {

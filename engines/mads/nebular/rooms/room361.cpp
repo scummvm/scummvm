@@ -385,7 +385,7 @@ static void room_361_pre_parser() {
 }
 
 static void room_361_parser() {
-	if (_action._lookFlag)
+	if (player.look_around)
 		text_show(36119);
 	else if (player_said_2(sit_at, desk)) {
 		_scene->_kernelMessages.reset();
@@ -418,7 +418,7 @@ static void room_361_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_361_synchronize(Common::Serializer &s) {

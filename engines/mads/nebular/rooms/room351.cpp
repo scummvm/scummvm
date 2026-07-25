@@ -115,7 +115,7 @@ static void room_351_daemon() {
 }
 
 static void room_351_parser() {
-	if (_action._lookFlag)
+	if (player.look_around)
 		text_show(35121);
 	else if (player_said_2(step_into, teleporter))
 		_scene->_nextSceneId = 322;
@@ -184,7 +184,7 @@ static void room_351_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_351_synchronize(Common::Serializer &s) {

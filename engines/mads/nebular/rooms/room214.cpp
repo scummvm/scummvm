@@ -116,7 +116,7 @@ static void room_214_daemon() {
 }
 
 static void room_214_parser() {
-	if (_action._lookFlag)
+	if (player.look_around)
 		text_show(21427);
 	else if (player_said_2(walk_outside, hut))
 		_scene->_nextSceneId = 207;
@@ -210,7 +210,7 @@ static void room_214_parser() {
 		text_show(21411);
 	else if (player_said_2(look, large_heads))
 		text_show(21428);
-	else if (player_said_2(look, poison_darts) && (_action._savedFields._mainObjectSource == 4))
+	else if (player_said_2(look, poison_darts) && (player.main_object_source == 4))
 		text_show(21412);
 	else if (player_said_2(open, experiment_cage))
 		text_show(21414);
@@ -243,7 +243,7 @@ static void room_214_parser() {
 	} else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_214_synchronize(Common::Serializer &s) {

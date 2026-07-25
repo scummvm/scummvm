@@ -122,27 +122,6 @@ enum StoryMode {
 #define kernel_animation_next_clock     kernel_anim[0].next_clock
 #endif
 
-struct Action {
-	struct ActiveAction {
-		int &_verbId = player2.words[0];
-		int &_objectNameId = player2.words[1];
-		int &_indirectObjectId = player2.words[2];
-	};
-	ActiveAction _activeAction;
-
-	struct SavedFields {
-		int &_lookFlag = player.look_around;
-		int &_mainObjectSource = player.main_object_source;
-	};
-	SavedFields _savedFields;
-
-	int &_mainObjectSource = player.main_object_source;
-	int &_lookFlag = player.look_around;
-	int &_inProgress = player.command_ready;
-	int &_commandSource = player.command_source;
-};
-extern Action _action;
-
 struct Globals {
 	int16 _spriteIndexes[30];
 	int16 _sequenceIndexes[30];

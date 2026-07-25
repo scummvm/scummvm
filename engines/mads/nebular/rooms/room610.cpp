@@ -173,7 +173,7 @@ static void room_610_parser() {
 		text_show(61013);
 	else if (player_said_2(look, video_store))
 		text_show(61014);
-	else if (_action._lookFlag)
+	else if (player.look_around)
 		text_show(61015);
 	else if (player_said_2(look, logo))
 		text_show(61018);
@@ -192,14 +192,14 @@ static void room_610_parser() {
 		text_show(61024);
 	else if (player_said_2(look, spotlight))
 		text_show(61025);
-	else if (player_said_2(look, phone_handset) && (_action._mainObjectSource == CAT_HOTSPOT))
+	else if (player_said_2(look, phone_handset) && (player.main_object_source == CAT_HOTSPOT))
 		text_show(61026);
 	else if (player_said_2(look, phone_cradle))
 		text_show(61027);
 	else if (player_said_2(look, return_slot))
 		text_show(61028);
 	else if (player_said_2(put, return_slot)
-		&& player_has(object_named(_action._activeAction._objectNameId)))
+		&& player_has(object_named(player2.words[1])))
 		text_show(61029);
 	else if (player_said_1(classic_videos) || player_said_1(more_classic_videos) || player_said_1(drama_videos)
 		|| player_said_1(new_release_videos) || player_said_1(porno_videos) || player_said_1(educational_videos)
@@ -214,7 +214,7 @@ static void room_610_parser() {
 	} else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_610_synchronize(Common::Serializer &s) {

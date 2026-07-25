@@ -204,7 +204,7 @@ static void room_109_pre_parser() {
 	if ((player_said_1(throw) || player_said_1(give) || player_said_1(put))
 		&& (player_said_1(small_hole) || player_said_1(tunnel))
 		&& (player_said_1(dead_fish) || player_said_1(stuffed_fish) || player_said_1(burger))) {
-		int idx = object_named(_action._activeAction._objectNameId);
+		int idx = object_named(player2.words[1]);
 		if ((idx >= 0) && player_has(idx)) {
 			player.prepare_walk_x = 106;
 			player.prepare_walk_y = 38;
@@ -222,15 +222,15 @@ static void room_109_pre_parser() {
 }
 
 static void room_109_parser() {
-	if (_action._lookFlag) {
+	if (player.look_around) {
 		text_show(10912);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if ((player_said_1(throw) || player_said_1(give)) && (player_said_1(small_hole) || player_said_1(tunnel))) {
 		if (player_said_1(dead_fish) || player_said_1(stuffed_fish) || player_said_1(burger)) {
-			local._throwingObjectId = object_named(_action._activeAction._objectNameId);
+			local._throwingObjectId = object_named(player2.words[1]);
 			if (local._throwingObjectId >= 0) {
 				if ((player_has(local._throwingObjectId) && _globals[kHoovicAlive]) || local._rexThrowingObject) {
 					switch (kernel.trigger) {
@@ -401,7 +401,7 @@ static void room_109_parser() {
 					default:
 						break;
 					}
-					_action._inProgress = false;
+					player.command_ready = false;
 					return;
 				} else if (player_has(local._throwingObjectId)) {
 					// Nothing.
@@ -441,7 +441,7 @@ static void room_109_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_109_synchronize(Common::Serializer &s) {

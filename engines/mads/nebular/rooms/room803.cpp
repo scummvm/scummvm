@@ -307,7 +307,7 @@ static void room_803_parser() {
 		_globals[kBeamIsUp] = false;
 	} else if (player_said_2(look, launch_pad))
 		text_show(80310);
-	else if (_action._lookFlag)
+	else if (player.look_around)
 		text_show(80310);
 	else if (player_said_2(look, pad_to_west))
 		text_show(80311);
@@ -331,7 +331,7 @@ static void room_803_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_803_synchronize(Common::Serializer &s) {

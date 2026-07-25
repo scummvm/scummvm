@@ -30,7 +30,6 @@ namespace MADS {
 namespace RexNebular {
 namespace Rooms {
 
-Action _action;
 Globals _globals;
 Scene _scene;
 

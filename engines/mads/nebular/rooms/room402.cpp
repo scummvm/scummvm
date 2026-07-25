@@ -118,7 +118,7 @@ static void setDialogNode(int node) {
 }
 
 static void handleConversation1() {
-	switch (_action._activeAction._verbId) {
+	switch (player2.words[0]) {
 	case 0x214:
 	{
 		int quoteId = 0;
@@ -179,7 +179,7 @@ static void handleConversation1() {
 }
 
 static void handleConversation2() {
-	switch (_action._activeAction._verbId) {
+	switch (player2.words[0]) {
 	case 0x216:
 		local._dialog2.write(0x216, false);
 		local._dialog2.write(0x21D, true);
@@ -245,7 +245,7 @@ static void handleConversation2() {
 
 	}
 
-	if (_action._activeAction._verbId != 0x21C) {
+	if (player2.words[0] != 0x21C) {
 		switch (g_engine->getRandomNumber(1, 3)) {
 		case 1:
 			kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
@@ -290,7 +290,7 @@ static void handleConversation2() {
 }
 
 static void handleConversation3() {
-	switch (_action._activeAction._verbId) {
+	switch (player2.words[0]) {
 	case 0x233:
 	case 0x234:
 	case 0x235:
@@ -319,7 +319,7 @@ static void handleConversation3() {
 }
 
 static void handleConversation4() {
-	switch (_action._activeAction._verbId) {
+	switch (player2.words[0]) {
 	case 0x238:
 		_scene->_kernelMessages.reset();
 		setDialogNode(0);
@@ -401,7 +401,7 @@ static void handleDialogs() {
 	if (kernel.trigger == 0) {
 		_scene->_kernelMessages.reset();
 		player.commands_allowed = false;
-		const char *curQuote = quote_string(kernel.quotes, _action._activeAction._verbId);
+		const char *curQuote = quote_string(kernel.quotes, player2.words[0]);
 		if (_scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing) > 200) {
 			static char subQuote1[34], subQuote2[34];
 			quote_split_string(curQuote, subQuote1, subQuote2);
@@ -2136,7 +2136,7 @@ static void room_402_parser() {
 		text_show(40218);
 	else if (player_said_2(look, corridor_to_south))
 		text_show(40219);
-	else if (_action._lookFlag)
+	else if (player.look_around)
 		text_show(40220);
 	else if (player_said_2(look, women))
 		text_show(40221);
@@ -2179,7 +2179,7 @@ static void room_402_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_402_synchronize(Common::Serializer &s) {

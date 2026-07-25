@@ -368,9 +368,9 @@ static void room_319_daemon() {
 static void room_319_parser() {
 	if (kernel.trigger == 0) {
 		player.commands_allowed = false;
-		handleRexDialogues(_action._activeAction._verbId);
+		handleRexDialogues(player2.words[0]);
 	} else {
-		if ((_action._activeAction._verbId == 0x165) || (_action._activeAction._verbId == 0x166)) {
+		if ((player2.words[0] == 0x165) || (player2.words[0] == 0x166)) {
 			if (kernel.trigger == 1) {
 				local._nextAction1 = 3;
 				local._slacheTalkingFl = false;
@@ -387,7 +387,7 @@ static void room_319_parser() {
 			}
 		}
 
-		if ((_action._activeAction._verbId == 0x171) || (_action._activeAction._verbId == 0x172)) {
+		if ((player2.words[0] == 0x171) || (player2.words[0] == 0x172)) {
 			if (kernel.trigger == 1) {
 				local._nextAction1 = 2;
 				local._slacheTalkingFl = false;
@@ -404,7 +404,7 @@ static void room_319_parser() {
 			}
 		}
 
-		if ((_action._activeAction._verbId == 0x17D) || (_action._activeAction._verbId == 0x17E)) {
+		if ((player2.words[0] == 0x17D) || (player2.words[0] == 0x17E)) {
 			if (kernel.trigger == 1) {
 				local._nextAction1 = 3;
 				local._slacheTalkingFl = false;
@@ -428,20 +428,20 @@ static void room_319_parser() {
 			}
 		}
 
-		if ((_action._activeAction._verbId == 0x168) || (_action._activeAction._verbId == 0x174) ||
-			(_action._activeAction._verbId == 0x180) || (_action._activeAction._verbId == 0x169) ||
-			(_action._activeAction._verbId == 0x175) || (_action._activeAction._verbId == 0x181) ||
-			(_action._activeAction._verbId == 0x16A) || (_action._activeAction._verbId == 0x176) ||
-			(_action._activeAction._verbId == 0x182) || (_action._activeAction._verbId == 0x183) ||
-			(_action._activeAction._verbId == 0x167) || (_action._activeAction._verbId == 0x173) ||
-			(_action._activeAction._verbId == 0x17F)) {
+		if ((player2.words[0] == 0x168) || (player2.words[0] == 0x174) ||
+			(player2.words[0] == 0x180) || (player2.words[0] == 0x169) ||
+			(player2.words[0] == 0x175) || (player2.words[0] == 0x181) ||
+			(player2.words[0] == 0x16A) || (player2.words[0] == 0x176) ||
+			(player2.words[0] == 0x182) || (player2.words[0] == 0x183) ||
+			(player2.words[0] == 0x167) || (player2.words[0] == 0x173) ||
+			(player2.words[0] == 0x17F)) {
 
-			bool addDialogLine = !((_action._activeAction._verbId == 0x167) || (_action._activeAction._verbId == 0x173) ||
-				(_action._activeAction._verbId == 0x17F) || (_action._activeAction._verbId == 0x16A) ||
-				(_action._activeAction._verbId == 0x176) || (_action._activeAction._verbId == 0x182) ||
-				(_action._activeAction._verbId == 0x183));
+			bool addDialogLine = !((player2.words[0] == 0x167) || (player2.words[0] == 0x173) ||
+				(player2.words[0] == 0x17F) || (player2.words[0] == 0x16A) ||
+				(player2.words[0] == 0x176) || (player2.words[0] == 0x182) ||
+				(player2.words[0] == 0x183));
 
-			int addVerbId = _action._activeAction._verbId + 1;
+			int addVerbId = player2.words[0] + 1;
 			if ((addVerbId == 0x182) && (config_file.naughtiness != STORYMODE_NAUGHTY))
 				addVerbId = 0x183;
 
@@ -456,10 +456,10 @@ static void room_319_parser() {
 				} else {
 					Dialog *curDialog;
 					int nextDocQuote;
-					if ((_action._activeAction._verbId == 0x168) || (_action._activeAction._verbId == 0x167)) {
+					if ((player2.words[0] == 0x168) || (player2.words[0] == 0x167)) {
 						curDialog = &local._dialog1;
 						nextDocQuote = 0x161;
-					} else if ((_action._activeAction._verbId == 0x174) || (_action._activeAction._verbId == 0x1753)) {
+					} else if ((player2.words[0] == 0x174) || (player2.words[0] == 0x1753)) {
 						nextDocQuote = 0x16D;
 						curDialog = &local._dialog2;
 					} else {
@@ -469,7 +469,7 @@ static void room_319_parser() {
 
 					handleSlacheDialogs(nextDocQuote, 2, INDEFINITE_TIMEOUT);
 					if (addDialogLine) {
-						curDialog->write(_action._activeAction._verbId, false);
+						curDialog->write(player2.words[0], false);
 						curDialog->write(addVerbId, true);
 					}
 
@@ -488,10 +488,10 @@ static void room_319_parser() {
 				} else {
 					Dialog *curDialog;
 					int nextDocQuote;
-					if ((_action._activeAction._verbId == 0x168) || (_action._activeAction._verbId == 0x169) || (_action._activeAction._verbId == 0x167)) {
+					if ((player2.words[0] == 0x168) || (player2.words[0] == 0x169) || (player2.words[0] == 0x167)) {
 						curDialog = &local._dialog1;
 						nextDocQuote = 0x163;
-					} else if ((_action._activeAction._verbId == 0x174) || (_action._activeAction._verbId == 0x175) || (_action._activeAction._verbId == 0x173)) {
+					} else if ((player2.words[0] == 0x174) || (player2.words[0] == 0x175) || (player2.words[0] == 0x173)) {
 						nextDocQuote = 0x16F;
 						curDialog = &local._dialog2;
 					} else {
@@ -501,7 +501,7 @@ static void room_319_parser() {
 
 					handleSlacheDialogs(nextDocQuote, 2, INDEFINITE_TIMEOUT);
 					if (addDialogLine) {
-						curDialog->write(_action._activeAction._verbId, false);
+						curDialog->write(player2.words[0], false);
 						curDialog->write(addVerbId, true);
 					}
 
@@ -516,7 +516,7 @@ static void room_319_parser() {
 		}
 	}
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_319_synchronize(Common::Serializer &s) {

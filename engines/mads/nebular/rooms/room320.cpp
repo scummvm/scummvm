@@ -95,7 +95,7 @@ static void setLeftView(int view) {
 }
 
 static void handleButtons() {
-	switch (_action._activeAction._objectNameId) {
+	switch (player2.words[1]) {
 	case 0x2DD:
 		local._buttonId = 5;
 		break;
@@ -237,7 +237,7 @@ static void room_320_daemon() {
 }
 
 static void room_320_parser() {
-	if (_action._lookFlag)
+	if (player.look_around)
 		text_show(32011);
 	else if ((player_said_1(press) || player_said_1(push)) &&
 		(player_said_1(left_1_key) || player_said_1(left_2_key) || player_said_1(left_3_key) || player_said_1(left_4_key) ||
@@ -344,7 +344,7 @@ static void room_320_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_320_synchronize(Common::Serializer &s) {

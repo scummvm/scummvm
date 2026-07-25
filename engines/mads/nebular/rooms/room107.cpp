@@ -108,7 +108,7 @@ static void room_107_pre_parser() {
 }
 
 static void room_107_parser() {
-	if (_action._lookFlag)
+	if (player.look_around)
 		text_show(10708);
 	else if (player_said_2(take, dead_fish) && _globals[kFishIn107]) {
 		if (player_has(OBJ_DEAD_FISH)) {
@@ -125,7 +125,7 @@ static void room_107_parser() {
 		_scene->_nextSceneId = 105;
 	else if (player_said_2(look, northern_sea_cliff))
 		text_show(10701);
-	else if (player_said_2(look, dead_fish) && (_action._mainObjectSource == CAT_HOTSPOT))
+	else if (player_said_2(look, dead_fish) && (player.main_object_source == CAT_HOTSPOT))
 		text_show(10702);
 	else if (player_said_2(look, bush_like_formation))
 		text_show(10703);
@@ -144,7 +144,7 @@ static void room_107_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_107_synchronize(Common::Serializer &s) {

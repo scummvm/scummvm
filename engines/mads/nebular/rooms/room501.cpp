@@ -368,7 +368,7 @@ static void room_501_parser() {
 		default:
 			break;
 		}
-	} else if (_action._lookFlag || player_said_2(look, street))
+	} else if (player.look_around || player_said_2(look, street))
 		text_show(50121);
 	else if (player_said_2(look, door))
 		text_show(50110);
@@ -403,7 +403,7 @@ static void room_501_parser() {
 	} else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_501_synchronize(Common::Serializer &s) {

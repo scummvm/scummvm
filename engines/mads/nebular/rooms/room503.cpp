@@ -108,7 +108,7 @@ static void room_503_parser() {
 				break;
 			}
 		}
-	} else if (_action._lookFlag)
+	} else if (player.look_around)
 		text_show(50328);
 	else if (player_said_2(look, monitoring_equipment))
 		text_show(50310);
@@ -139,18 +139,18 @@ static void room_503_parser() {
 			text_show(50323);
 		else
 			text_show(50324);
-	} else if (player_said_2(look, detonators) && (_action._savedFields._mainObjectSource == 4))
+	} else if (player_said_2(look, detonators) && (player.main_object_source == 4))
 		text_show(50325);
 	else if (player_said_2(look, windows))
 		text_show(50327);
 	else if (player_said_2(open, display_case))
 		text_show(50329);
-	else if (player_said_2(throw, display_case) && player_has(object_named(_action._activeAction._objectNameId)))
+	else if (player_said_2(throw, display_case) && player_has(object_named(player2.words[1])))
 		text_show(50330);
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_503_synchronize(Common::Serializer &s) {

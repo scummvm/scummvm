@@ -101,7 +101,7 @@ static void room_313_parser() {
 	} else if (!player_said_2(crawl_down, air_shaft))
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_313_synchronize(Common::Serializer &s) {

@@ -131,7 +131,7 @@ static void room_601_parser() {
 		default:
 			break;
 		}
-	} else if (_action._lookFlag || player_said_2(look, street)) {
+	} else if (player.look_around || player_said_2(look, street)) {
 		if (!_globals[kLaserHoleIsThere])
 			text_show(60110);
 		else
@@ -157,7 +157,7 @@ static void room_601_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_601_synchronize(Common::Serializer &s) {

@@ -212,7 +212,7 @@ static void room_406_parser() {
 		text_show(40616);
 	else if (player_said_2(look, corridor_to_west))
 		text_show(40617);
-	else if (player_said_2(look, corridor) || _action._lookFlag)
+	else if (player_said_2(look, corridor) || player.look_around)
 		text_show(40618);
 	else if (player_said_2(look, wall))
 		text_show(40619);
@@ -238,7 +238,7 @@ static void room_406_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_406_synchronize(Common::Serializer &s) {

@@ -58,7 +58,7 @@ static void room_360_pre_parser() {
 }
 
 static void room_360_parser() {
-	if (_action._lookFlag)
+	if (player.look_around)
 		text_show(36015);
 	else if (player_said_2(look, corridor_to_west))
 		text_show(36010);
@@ -79,7 +79,7 @@ static void room_360_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_360_synchronize(Common::Serializer &s) {

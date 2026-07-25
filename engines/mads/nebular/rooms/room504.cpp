@@ -203,7 +203,7 @@ static void room_504_parser() {
 		default:
 			break;
 		}
-	} else if (_action._lookFlag || player_said_2(look, interior_of_car))
+	} else if (player.look_around || player_said_2(look, interior_of_car))
 		text_show(50412);
 	else if (player_said_2(look, glove_compartment))
 		text_show(50410);
@@ -228,7 +228,7 @@ static void room_504_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_504_synchronize(Common::Serializer &s) {

@@ -280,7 +280,7 @@ static void room_505_daemon() {
 
 static void room_505_parser() {
 	if (player_said_1(press))
-		local._nextButtonId = _action._activeAction._objectNameId;
+		local._nextButtonId = player2.words[1];
 	else if (player_said_2(return_to, inside_of_car))
 		_scene->_nextSceneId = 504;
 	else if (player_said_2(look, view_screen))
@@ -290,7 +290,7 @@ static void room_505_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_505_synchronize(Common::Serializer &s) {

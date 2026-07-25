@@ -56,7 +56,7 @@ static void room_353_init() {
 }
 
 static void room_353_parser() {
-	if (_action._lookFlag)
+	if (player.look_around)
 		text_show(35315);
 	else if (player_said_2(walk_through, doorway))
 		_scene->_nextSceneId = 352;
@@ -81,7 +81,7 @@ static void room_353_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_353_synchronize(Common::Serializer &s) {

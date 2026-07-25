@@ -115,7 +115,7 @@ static int computeQuoteAndQuantity() {
 	int quoteId;
 	int quantity;
 
-	switch (_action._activeAction._verbId) {
+	switch (player2.words[0]) {
 	case 0x252:
 		quoteId = 0x26F;
 		quantity = 0;
@@ -229,7 +229,7 @@ static void handleKettleAction() {
 }
 
 static void handleDialog() {
-	if ((_action._activeAction._verbId != 0x262) && (kernel.trigger == 0)) {
+	if ((player2.words[0] != 0x262) && (kernel.trigger == 0)) {
 		if (player_has(local._newIngredient)) {
 			switch (local._newIngredient) {
 			case OBJ_FORMALDEHYDE:
@@ -266,7 +266,7 @@ static void handleDialog() {
 			local._killRox = true;
 
 		_scene->_userInterface.setup(kInputBuildingSentences);
-	} else if (_action._activeAction._verbId == 0x262)
+	} else if (player2.words[0] == 0x262)
 		_scene->_userInterface.setup(kInputBuildingSentences);
 }
 
@@ -523,14 +523,14 @@ static void room_411_pre_parser() {
 static void room_411_parser() {
 	if (inter_input_mode == kInputConversation) {
 		handleDialog();
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(walk_into, corridor_to_south)) {
 		_scene->_nextSceneId = 406;
 		g_engine->_soundManager->command(10, 0);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -584,11 +584,11 @@ static void room_411_parser() {
 		default:
 			break;
 		}
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	} else if (!player_has(OBJ_CHARGE_CASES) && player_said_2(take, explosives)) {
 		text_show(41143);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -625,7 +625,7 @@ static void room_411_parser() {
 		default:
 			break;
 		}
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -661,7 +661,7 @@ static void room_411_parser() {
 		default:
 			break;
 		}
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -674,7 +674,7 @@ static void room_411_parser() {
 		_scene->_sequences.addTimer(20, 100);
 		_scene->_sequences.remove(_globals._sequenceIndexes[7]);
 		inter_give_to_player(OBJ_FORMALDEHYDE);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -694,7 +694,7 @@ static void room_411_parser() {
 			player_said_1(formaldehyde) ||
 			player_said_1(lecithin) ||
 			player_said_1(alien_liquor)) {
-			local._newIngredient = object_named(_action._activeAction._objectNameId);
+			local._newIngredient = object_named(player2.words[1]);
 			switch (local._newIngredient) {
 			case OBJ_ALIEN_LIQUOR:
 				local._dialog1.start();
@@ -761,7 +761,7 @@ static void room_411_parser() {
 		text_show(41130);
 	else if (player_said_2(look, corridor_to_south))
 		text_show(41131);
-	else if (_action._lookFlag)
+	else if (player.look_around)
 		text_show(41132);
 	else if (player_said_2(look, air_horn))
 		text_show(41133);
@@ -784,7 +784,7 @@ static void room_411_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_411_synchronize(Common::Serializer &s) {

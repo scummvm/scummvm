@@ -428,7 +428,7 @@ static void room_607_parser() {
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2F6));
 		}
 		handleThrowingBone();
-	} else if (_action._lookFlag || player_said_2(look, street)) {
+	} else if (player.look_around || player_said_2(look, street)) {
 		if ((_globals[kDogStatus] == DOG_PRESENT) || (game.difficulty == DIFFICULTY_EASY))
 			text_show(60710);
 		else
@@ -476,7 +476,7 @@ static void room_607_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_607_synchronize(Common::Serializer &s) {

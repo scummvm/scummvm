@@ -288,7 +288,7 @@ static void room_602_parser() {
 		default:
 			break;
 		}
-	} else if (_action._lookFlag)
+	} else if (player.look_around)
 		text_show(60210);
 	else if (player_said_2(look, floor))
 		text_show(60211);
@@ -330,7 +330,7 @@ static void room_602_parser() {
 		text_show(60225);
 	else if (player_said_2(pull, safe))
 		text_show(60226);
-	else if (player_said_2(put, fireplace) && player_has(object_named(_action._activeAction._objectNameId)))
+	else if (player_said_2(put, fireplace) && player_has(object_named(player2.words[1])))
 		text_show(60227);
 	else if (player_said_2(look, hole))
 		text_show(60228);
@@ -345,7 +345,7 @@ static void room_602_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_602_synchronize(Common::Serializer &s) {

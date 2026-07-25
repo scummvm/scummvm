@@ -139,7 +139,7 @@ static void room_551_pre_parser() {
 static void room_551_parser() {
 	if (player_said_2(step_into, teleporter))
 		_scene->_nextSceneId = 502;
-	else if ((_action._lookFlag))
+	else if ((player.look_around))
 		text_show(55117);
 	else if (player_said_2(look, skeleton))
 		text_show(55110);
@@ -165,7 +165,7 @@ static void room_551_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_551_synchronize(Common::Serializer &s) {

@@ -137,12 +137,12 @@ static void room_407_parser() {
 		text_show(40713);
 	else if (player_said_2(look, corridor_to_north))
 		text_show(40714);
-	else if (_action._lookFlag)
+	else if (player.look_around)
 		text_show(40715);
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_407_synchronize(Common::Serializer &s) {

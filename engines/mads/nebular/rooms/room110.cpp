@@ -134,7 +134,7 @@ static void room_110_parser() {
 		default:
 			break;
 		}
-	} else if ((_action._lookFlag) || player_said_2(look, cave))
+	} else if ((player.look_around) || player_said_2(look, cave))
 		text_show(11001);
 	else if (player_said_2(look, cave_ceiling) || player_said_2(look_at, cave_ceiling))
 		text_show(11002);
@@ -153,7 +153,7 @@ static void room_110_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_110_synchronize(Common::Serializer &s) {

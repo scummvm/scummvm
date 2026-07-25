@@ -44,7 +44,7 @@ static void room_409_daemon() {
 
 static void room_409_parser() {
 	if (teleporter_parser()) {
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -67,12 +67,12 @@ static void room_409_parser() {
 		text_show(40913);
 	else if (player_said_2(look, device))
 		text_show(40914);
-	else if (_action._lookFlag)
+	else if (player.look_around)
 		text_show(40914);
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_409_synchronize(Common::Serializer &s) {

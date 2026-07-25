@@ -268,7 +268,7 @@ static void room_512_parser() {
 				break;
 			}
 		}
-	} else if (_action._lookFlag)
+	} else if (player.look_around)
 		text_show(51225);
 	else if (player_said_2(look, padlock_key) && object_is_here(OBJ_PADLOCK_KEY))
 		text_show(51215);
@@ -324,7 +324,7 @@ static void room_512_parser() {
 	} else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_512_synchronize(Common::Serializer &s) {

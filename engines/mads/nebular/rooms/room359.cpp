@@ -78,7 +78,7 @@ static void room_359_pre_parser() {
 }
 
 static void room_359_parser() {
-	if (_action._lookFlag) {
+	if (player.look_around) {
 		if ((game.difficulty != DIFFICULTY_HARD) && (object[OBJ_SECURITY_CARD].location == 359))
 			text_show(35914);
 		else
@@ -143,7 +143,7 @@ static void room_359_parser() {
 		text_show(35918);
 	else if (player_said_2(take, limb))
 		text_show(35919);
-	else if (player_said_2(look, security_card) && (_action._mainObjectSource == CAT_HOTSPOT))
+	else if (player_said_2(look, security_card) && (player.main_object_source == CAT_HOTSPOT))
 		text_show(35921);
 	else if (player_said_2(look, blood_stain)) {
 		if ((game.difficulty != DIFFICULTY_HARD) && (object[OBJ_SECURITY_CARD].location == 359))
@@ -168,7 +168,7 @@ static void room_359_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_359_synchronize(Common::Serializer &s) {

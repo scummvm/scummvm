@@ -58,7 +58,7 @@ static void room_358_pre_parser() {
 }
 
 static void room_358_parser() {
-	if (_action._lookFlag)
+	if (player.look_around)
 		text_show(35815);
 	else if (player_said_2(look, corridor_to_west))
 		text_show(35810);
@@ -77,7 +77,7 @@ static void room_358_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_358_synchronize(Common::Serializer &s) {

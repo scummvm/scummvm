@@ -55,7 +55,7 @@ static void room_212_pre_parser() {
 }
 
 static void room_212_parser() {
-	if (_action._lookFlag)
+	if (player.look_around)
 		text_show(21209);
 	else if (player_said_1(walk_towards) && (player_said_1(field_to_north) || player_said_1(mountains)))
 		_scene->_nextSceneId = 208;
@@ -80,7 +80,7 @@ static void room_212_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_212_synchronize(Common::Serializer &s) {

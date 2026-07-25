@@ -141,7 +141,7 @@ static void room_752_parser() {
 		default:
 			break;
 		}
-	} else if (player_said_2(take, bones) && (_action._savedFields._mainObjectSource == CAT_HOTSPOT) &&
+	} else if (player_said_2(take, bones) && (player.main_object_source == CAT_HOTSPOT) &&
 		(!player_has(OBJ_BONES) || kernel.trigger)) {
 		switch (kernel.trigger) {
 		case 0:
@@ -167,7 +167,7 @@ static void room_752_parser() {
 		default:
 			break;
 		}
-	} else if (_action._lookFlag || player_said_2(look, city)) {
+	} else if (player.look_around || player_said_2(look, city)) {
 		if (_globals[kLaserHoleIsThere])
 			text_show(75212);
 		else
@@ -184,18 +184,18 @@ static void room_752_parser() {
 		text_show(75217);
 	else if (player_said_2(look, teleporter))
 		text_show(75218);
-	else if ((player_said_2(look, bones) || player_said_2(look, id_card)) && (_action._mainObjectSource == CAT_HOTSPOT)) {
+	else if ((player_said_2(look, bones) || player_said_2(look, id_card)) && (player.main_object_source == CAT_HOTSPOT)) {
 		if (object[OBJ_ID_CARD].location == 752)
 			text_show(75219);
 		else
 			text_show(75220);
-	} else if (player_said_2(take, bones) && (_action._savedFields._mainObjectSource == CAT_HOTSPOT)) {
+	} else if (player_said_2(take, bones) && (player.main_object_source == CAT_HOTSPOT)) {
 		if (player_has(OBJ_BONES))
 			text_show(75222);
 	} else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_752_synchronize(Common::Serializer &s) {

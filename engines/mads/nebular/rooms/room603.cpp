@@ -120,7 +120,7 @@ static void room_603_parser() {
 			}
 		} else
 			text_show(60323);
-	} else if (_action._lookFlag)
+	} else if (player.look_around)
 		text_show(60310);
 	else if (player_said_2(look, bed))
 		text_show(60311);
@@ -159,7 +159,7 @@ static void room_603_parser() {
 			text_show(60327);
 		else
 			text_show(60328);
-	} else if (player_said_2(look, compact_case) && (_action._mainObjectSource == CAT_HOTSPOT))
+	} else if (player_said_2(look, compact_case) && (player.main_object_source == CAT_HOTSPOT))
 		text_show(60329);
 	// For the next two checks, the second part of the check wasn't surrounded par parenthesis, which was obviously wrong
 	else if (player_said_1(look) && (player_said_1(bra) || player_said_1(boa) || player_said_1(slip)))
@@ -169,7 +169,7 @@ static void room_603_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_603_synchronize(Common::Serializer &s) {

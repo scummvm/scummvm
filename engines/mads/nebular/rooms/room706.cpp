@@ -219,13 +219,13 @@ static void room_706_parser() {
 		player.commands_allowed = false;
 		player.walker_visible = false;
 		_scene->_nextSceneId = 707;
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(exit, room)) {
 		_scene->_nextSceneId = 705;
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -237,7 +237,7 @@ static void room_706_parser() {
 			handleTakeVase();
 			local._emptyPedestral = true;
 		}
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -247,26 +247,26 @@ static void room_706_parser() {
 			if (!player_has(OBJ_VASE) || kernel.trigger) {
 				local._vaseMode = 1;
 				handleTakeVase();
-				_action._inProgress = false;
+				player.command_ready = false;
 				return;
 			}
 		} else if (object_is_here(OBJ_VASE) || kernel.trigger) {
 			local._animationMode = 2;
 			handleRexDeath();
-			_action._inProgress = false;
+			player.command_ready = false;
 			return;
 		}
 	}
 
-	if (player_said_2(put, pedestal) && player_has(object_named(_action._activeAction._objectNameId))) {
-		int objectId = object_named(_action._activeAction._objectNameId);
+	if (player_said_2(put, pedestal) && player_has(object_named(player2.words[1]))) {
+		int objectId = object_named(player2.words[1]);
 		if (object_has_quality(objectId, 10))
 			text_show(70626);
 		else
 			text_show(70627);
 	} else if (player_said_2(take, bottle) && player_has(OBJ_VASE))
 		text_show(70631);
-	else if (_action._lookFlag) {
+	else if (player.look_around) {
 		if (object[OBJ_VASE].location == _scene->_currentSceneId)
 			text_show(70610);
 		else
@@ -298,12 +298,12 @@ static void room_706_parser() {
 		text_show(70623);
 	else if (player_said_2(look, vase) && (object[OBJ_VASE].location == _scene->_currentSceneId))
 		text_show(70624);
-	else if (player_said_2(look, bottle) && (_action._mainObjectSource == CAT_HOTSPOT))
+	else if (player_said_2(look, bottle) && (player.main_object_source == CAT_HOTSPOT))
 		text_show(70632);
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_706_synchronize(Common::Serializer &s) {

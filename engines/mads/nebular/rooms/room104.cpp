@@ -222,7 +222,7 @@ static void room_104_pre_parser() {
 }
 
 static void room_104_parser() {
-	if (_action._lookFlag)
+	if (player.look_around)
 		text_show(10405);
 	else if (player_said_2(look, curious_weed_patch))
 		text_show(10404);
@@ -235,7 +235,7 @@ static void room_104_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_104_synchronize(Common::Serializer &s) {

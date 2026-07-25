@@ -77,7 +77,7 @@ static void room_215_daemon() {
 }
 
 static void room_215_parser() {
-	if (_action._lookFlag)
+	if (player.look_around)
 		text_show(21509);
 	else if (player_said_2(take, twinkifruit)) {
 		if (!player_has(OBJ_TWINKIFRUIT) || kernel.trigger) {
@@ -132,7 +132,7 @@ static void room_215_parser() {
 		text_show(21505);
 	else if (player_said_2(look, picture))
 		text_show(21506);
-	else if (player_said_2(look, twinkifruit) && (_action._savedFields._mainObjectSource == 4))
+	else if (player_said_2(look, twinkifruit) && (player.main_object_source == 4))
 		text_show(21507);
 	else if (player_said_2(take, bear_rug))
 		text_show(21510);
@@ -147,7 +147,7 @@ static void room_215_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_215_synchronize(Common::Serializer &s) {

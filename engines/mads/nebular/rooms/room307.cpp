@@ -197,7 +197,7 @@ static void setDialogNode(int node) {
 }
 
 static void handlePrisonerEncounter() {
-	switch (_action._activeAction._verbId) {
+	switch (player2.words[0]) {
 	case 275:
 		setDialogNode(5);
 		break;
@@ -216,7 +216,7 @@ static void handlePrisonerEncounter() {
 }
 
 static void handlePrisonerDialog() {
-	switch (_action._activeAction._verbId) {
+	switch (player2.words[0]) {
 	case 0x11A:
 		setDialogNode(7);
 		break;
@@ -262,7 +262,7 @@ static void handleDialog() {
 	if (kernel.trigger == 0) {
 		_scene->_kernelMessages.reset();
 		player.commands_allowed = false;
-		handleRexDialog(_action._activeAction._verbId);
+		handleRexDialog(player2.words[0]);
 	} else {
 		player.commands_allowed = true;
 
@@ -452,7 +452,7 @@ static void room_307_daemon() {
 }
 
 static void room_307_parser() {
-	if (_action._lookFlag)
+	if (player.look_around)
 		text_show(30715);
 	else if (inter_input_mode == kInputConversation)
 		handleDialog();
@@ -740,7 +740,7 @@ static void room_307_parser() {
 	} else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_307_synchronize(Common::Serializer &s) {

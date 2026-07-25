@@ -63,7 +63,7 @@ static void room_357_pre_parser() {
 }
 
 static void room_357_parser() {
-	if (_action._lookFlag)
+	if (player.look_around)
 		text_show(35715);
 	else if (player_said_2(look, air_vent))
 		text_show(35710);
@@ -94,7 +94,7 @@ static void room_357_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_357_synchronize(Common::Serializer &s) {

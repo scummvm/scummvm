@@ -56,7 +56,7 @@ static void room_399_parser() {
 	} else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_399_synchronize(Common::Serializer &s) {

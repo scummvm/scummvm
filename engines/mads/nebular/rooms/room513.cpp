@@ -218,7 +218,7 @@ static void room_513_parser() {
 		default:
 			break;
 		}
-	} else if ((_action._lookFlag) || player_said_2(look, street))
+	} else if ((player.look_around) || player_said_2(look, street))
 		text_show(51318);
 	else if (player_said_2(look, elevator))
 		text_show(51310);
@@ -247,7 +247,7 @@ static void room_513_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_513_synchronize(Common::Serializer &s) {

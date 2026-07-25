@@ -176,12 +176,12 @@ static void room_205_parser() {
 
 		if (kernel.trigger == 0) {
 			player.commands_allowed = false;
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 18, 1, 120, quote_string(kernel.quotes, _action._activeAction._verbId));
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 18, 1, 120, quote_string(kernel.quotes, player2.words[0]));
 		} else {
-			if ((kernel.trigger > 1) || (_action._activeAction._verbId != 0x76))
+			if ((kernel.trigger > 1) || (player2.words[0] != 0x76))
 				player.commands_allowed = true;
 
-			switch (_action._activeAction._verbId) {
+			switch (player2.words[0]) {
 			case 0x5A:
 				handleWomanSpeech(0x7A);
 				local._dialog1.write(0x78, true);
@@ -197,7 +197,7 @@ static void room_205_parser() {
 			case 0x75:
 			case 0x78:
 				handleWomanSpeech(0x7B);
-				local._dialog1.write(_action._activeAction._verbId, false);
+				local._dialog1.write(player2.words[0], false);
 				text_show(20501);
 				break;
 
@@ -221,10 +221,10 @@ static void room_205_parser() {
 				break;
 			}
 
-			if (_action._activeAction._verbId != 0x77)
+			if (player2.words[0] != 0x77)
 				local._dialog1.start();
 		}
-	} else if (_action._lookFlag)
+	} else if (player.look_around)
 		text_show(20502);
 	else if (player_said_3(look, binoculars, opposite_bank))
 		text_show(20518);
@@ -239,7 +239,7 @@ static void room_205_parser() {
 			local._dialog1.write(0x75, true);
 			local._dialog1.start();
 		}
-	} else if (player_said_2(give, native_woman) && player_has(object_named(_action._activeAction._objectNameId))) {
+	} else if (player_said_2(give, native_woman) && player_has(object_named(player2.words[1]))) {
 		if (kernel.trigger == 0) {
 			player.commands_allowed = false;
 			int rndVal = g_engine->getRandomNumber(0xAC, 0xAE);
@@ -286,9 +286,9 @@ static void room_205_parser() {
 			text_show(20503);
 		else if (player_said_2(look, hut))
 			text_show(20504);
-		else if (player_said_2(look, chicken) && (_action._mainObjectSource == CAT_HOTSPOT))
+		else if (player_said_2(look, chicken) && (player.main_object_source == CAT_HOTSPOT))
 			text_show(20505);
-		else if (player_said_2(take, chicken) && (_action._mainObjectSource == CAT_HOTSPOT))
+		else if (player_said_2(take, chicken) && (player.main_object_source == CAT_HOTSPOT))
 			text_show(20506);
 		else if (player_said_2(look, chicken_on_spit))
 			text_show(20507);
@@ -300,7 +300,7 @@ static void room_205_parser() {
 			text_show(20510);
 		else if (player_said_2(look, opposite_bank))
 			text_show(20511);
-		else if (player_has(object_named(_action._activeAction._objectNameId))
+		else if (player_has(object_named(player2.words[1]))
 			&& (player_said_2(give, stream) || player_said_2(throw, stream)
 				|| player_said_2(give, piranha) || player_said_2(throw, piranha)))
 			text_show(20512);
@@ -316,7 +316,7 @@ static void room_205_parser() {
 			return;
 	}
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_205_synchronize(Common::Serializer &s) {

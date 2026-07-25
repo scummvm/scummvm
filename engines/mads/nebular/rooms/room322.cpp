@@ -52,14 +52,14 @@ static void room_322_daemon() {
 }
 
 static void room_322_parser() {
-	if (_action._lookFlag) {
+	if (player.look_around) {
 		text_show(32214);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (teleporter_parser()) {
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -82,7 +82,7 @@ static void room_322_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_322_synchronize(Common::Serializer &s) {

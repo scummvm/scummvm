@@ -247,7 +247,7 @@ static void room_801_parser() {
 		text_show(80111);
 	else if (player_said_2(look, teleporter))
 		text_show(80112);
-	else if (player_said_2(look, equipment) || _action._lookFlag)
+	else if (player_said_2(look, equipment) || player.look_around)
 		text_show(80113);
 	else if (player_said_2(look, speaker))
 		text_show(80114);
@@ -260,7 +260,7 @@ static void room_801_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_801_synchronize(Common::Serializer &s) {

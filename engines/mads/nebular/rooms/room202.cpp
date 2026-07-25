@@ -259,9 +259,9 @@ static void room_202_daemon() {
 			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
 
 			if (_globals[kMeteorologistWatch] == METEOROLOGIST_GROUND) {
-				_action._activeAction._verbId = words_look;
-				_action._activeAction._objectNameId = words_binoculars;
-				_action._activeAction._indirectObjectId = words_strange_device;
+				player2.words[0] = words_look;
+				player2.words[1] = words_binoculars;
+				player2.words[2] = words_strange_device;
 				kernel.trigger_setup_mode = SEQUENCE_TRIGGER_PARSER;
 				_scene->_sequences.addTimer(2 * 60, 2);
 				local._meteorologistSpecial = true;
@@ -448,7 +448,7 @@ static void room_202_pre_parser() {
 		}
 	}
 
-	if (player_said_2(look, binoculars) && (_action._activeAction._indirectObjectId > 0)) {
+	if (player_said_2(look, binoculars) && (player2.words[2] > 0)) {
 		if (!player.ready_to_walk || local._ladderTopFl)
 			player.need_to_walk = false;
 		else
@@ -460,13 +460,13 @@ static void room_202_pre_parser() {
 }
 
 static void room_202_parser() {
-	if (_action._lookFlag) {
+	if (player.look_around) {
 		text_show(20219);
 		return;
 	}
 
 	if (player_said_2(climb_down, ladder)) {
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	} else if (player_said_2(walk_towards, field_to_south)) {
 		_scene->_nextSceneId = 203;
@@ -478,7 +478,7 @@ static void room_202_parser() {
 				_globals[kMeteorologistStatus] = METEOROLOGIST_ABSENT;
 		}
 		_scene->_nextSceneId = 201;
-	} else if (player_said_2(take, bone) && (_action._savedFields._mainObjectSource == 4)) {
+	} else if (player_said_2(take, bone) && (player.main_object_source == 4)) {
 		switch (kernel.trigger) {
 		case 0:
 			if (player_has(OBJ_BONES)) {
@@ -518,7 +518,7 @@ static void room_202_parser() {
 			break;
 		}
 
-		_action._inProgress = false;
+		player.command_ready = false;
 	} else if (player_said_2(climb_up, ladder) && !_globals[kLadderBroken]) {
 		switch (kernel.trigger) {
 		case 0:
@@ -546,7 +546,7 @@ static void room_202_parser() {
 		}
 		break;
 		default:
-			_action._inProgress = false;
+			player.command_ready = false;
 			return;
 		}
 	} else if ((player_said_3(look, binoculars, field_to_north) || (player_said_3(look, binoculars, strange_device))) && (_globals[kSexOfRex] == SEX_MALE)) {
@@ -591,7 +591,7 @@ static void room_202_parser() {
 				player.walker_visible = true;
 				break;
 			default:
-				_action._inProgress = false;
+				player.command_ready = false;
 				return;
 			}
 		} else {
@@ -620,7 +620,7 @@ static void room_202_parser() {
 							int msgIndex = _scene->_kernelMessages.add(Common::Point(248, 15), 0x1110, 32, 0, 60, quote_string(kernel.quotes, 100));
 							_scene->_kernelMessages.setQuoted(msgIndex, 4, false);
 						} else {
-							_action._inProgress = false;
+							player.command_ready = false;
 							return;
 						}
 					}
@@ -645,7 +645,7 @@ static void room_202_parser() {
 				player.commands_allowed = true;
 				break;
 			default:
-				_action._inProgress = false;
+				player.command_ready = false;
 				return;
 			}
 		}
@@ -685,13 +685,13 @@ static void room_202_parser() {
 		text_show(20215);
 	} else if (player_said_2(take, skull)) {
 		text_show(20216);
-	} else if (player_said_2(look, bones) && _action._commandSource == 4) {
+	} else if (player_said_2(look, bones) && player.command_source == 4) {
 		text_show(20217);
 	} else {
 		return;
 	}
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_202_synchronize(Common::Serializer &s) {

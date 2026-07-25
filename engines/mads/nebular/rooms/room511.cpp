@@ -305,7 +305,7 @@ static void room_511_parser() {
 				}
 			}
 		}
-	} else if (player_said_2(look, street) || _action._lookFlag) {
+	} else if (player_said_2(look, street) || player.look_around) {
 		if (_globals[kLineStatus] == 2)
 			text_show(51110);
 		else {
@@ -339,9 +339,9 @@ static void room_511_parser() {
 			text_show(51128);
 	} else if (player_said_2(look, porthole))
 		text_show(51122);
-	else if (player_said_2(look, fishing_line) && (_action._mainObjectSource == CAT_HOTSPOT) && (_globals[kLineStatus] == 2))
+	else if (player_said_2(look, fishing_line) && (player.main_object_source == CAT_HOTSPOT) && (_globals[kLineStatus] == 2))
 		text_show(51126);
-	else if (player_said_2(look, fishing_line) && (_action._mainObjectSource == CAT_HOTSPOT) && (_globals[kLineStatus] == 3))
+	else if (player_said_2(look, fishing_line) && (player.main_object_source == CAT_HOTSPOT) && (_globals[kLineStatus] == 3))
 		text_show(51133);
 	else if (player_said_2(look, statue))
 		text_show(51127);
@@ -357,7 +357,7 @@ static void room_511_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_511_synchronize(Common::Serializer &s) {

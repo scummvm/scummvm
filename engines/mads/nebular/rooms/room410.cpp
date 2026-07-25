@@ -179,12 +179,12 @@ static void room_410_parser() {
 		text_show(41030);
 	else if (player_said_2(throw, rat))
 		text_show(41031);
-	else if (_action._lookFlag)
+	else if (player.look_around)
 		text_show(41033);
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_410_synchronize(Common::Serializer &s) {

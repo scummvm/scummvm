@@ -107,7 +107,7 @@ static void handleInternDialog(int quoteId, int quoteNum, uint32 timeout) {
 static void handleDialog() {
 	if (!kernel.trigger) {
 		player.commands_allowed = false;
-		handleRexDialogs(_action._activeAction._verbId);
+		handleRexDialogs(player2.words[0]);
 	} else if (kernel.trigger == 2) {
 		int synxIdx = _globals._sequenceIndexes[2];
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
@@ -118,10 +118,10 @@ static void handleDialog() {
 		_scene->_userInterface.setup(kInputBuildingSentences);
 		player.commands_allowed = true;
 	} else {
-		if (_action._activeAction._verbId < 0x19C)
-			local._dialog1.write(_action._activeAction._verbId, false);
+		if (player2.words[0] < 0x19C)
+			local._dialog1.write(player2.words[0], false);
 
-		switch (_action._activeAction._verbId) {
+		switch (player2.words[0]) {
 		case 0x191:
 			handleInternDialog(0x19E, 2, INDEFINITE_TIMEOUT);
 			local._dialog1.write(0x192, true);
@@ -189,7 +189,7 @@ static void handleDialog() {
 
 			local._dialogFl = false;
 			handleInternDialog(0x1D0, 1, 120);
-			if (local._dialog1.read(0) || (_action._activeAction._verbId == 0x19D)) {
+			if (local._dialog1.read(0) || (player2.words[0] == 0x19D)) {
 				local._explosionFl = true;
 				local._internCounter = 3420;
 			}
@@ -199,7 +199,7 @@ static void handleDialog() {
 			break;
 		}
 
-		if (_action._activeAction._verbId < 0x19C) {
+		if (player2.words[0] < 0x19C) {
 			local._dialog1.start();
 			player.commands_allowed = true;
 		}
@@ -463,7 +463,7 @@ static void room_318_pre_parser() {
 static void room_318_parser() {
 	if (inter_input_mode == kInputConversation) {
 		handleDialog();
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -504,7 +504,7 @@ static void room_318_parser() {
 		default:
 			break;
 		}
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -549,14 +549,14 @@ static void room_318_parser() {
 		default:
 			break;
 		}
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player.walker_visible) {
 		if (player_said_2(walk_down, corridor_to_south)) {
 			_scene->_nextSceneId = 407;
-			_action._inProgress = false;
+			player.command_ready = false;
 			return;
 		}
 
@@ -567,7 +567,7 @@ static void room_318_parser() {
 			} else
 				text_show(31834);
 
-			_action._inProgress = false;
+			player.command_ready = false;
 			return;
 		}
 
@@ -577,37 +577,37 @@ static void room_318_parser() {
 			else
 				text_show(31834);
 
-			_action._inProgress = false;
+			player.command_ready = false;
 			return;
 		}
 
 		if (player_said_2(walk_into, doctors_office)) {
 			text_show(31831);
-			_action._inProgress = false;
+			player.command_ready = false;
 			return;
 		}
 
 		if (player_said_2(look, gurney)) {
 			text_show(31823);
-			_action._inProgress = false;
+			player.command_ready = false;
 			return;
 		}
 
 		if (player_said_2(look, instrument_table)) {
 			text_show(31825);
-			_action._inProgress = false;
+			player.command_ready = false;
 			return;
 		}
 	} else { // Not visible
 		if (player_said_2(look, gurney)) {
 			text_show(31822);
-			_action._inProgress = false;
+			player.command_ready = false;
 			return;
 		}
 
 		if (player_said_2(look, instrument_table)) {
 			text_show(31824);
-			_action._inProgress = false;
+			player.command_ready = false;
 			return;
 		}
 	}
@@ -644,7 +644,7 @@ static void room_318_parser() {
 		text_show(31832);
 	else if (player_said_2(look, professors_gurney))
 		text_show(31836);
-	else if (_action._lookFlag) {
+	else if (player.look_around) {
 		if (player.walker_visible || player_has(OBJ_SCALPEL))
 			text_show(31828);
 		else if (local._internVisibleFl)
@@ -654,7 +654,7 @@ static void room_318_parser() {
 	} else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_318_synchronize(Common::Serializer &s) {

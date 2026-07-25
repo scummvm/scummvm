@@ -116,7 +116,7 @@ static void room_203_daemon() {
 static void room_203_pre_parser() {
 	if (local._rhotundaEatFl && !player_said_2(walk_towards, field_to_south)) {
 		player_walk(158, 136, FACING_SOUTH);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -125,7 +125,7 @@ static void room_203_pre_parser() {
 }
 
 static void room_203_parser() {
-	if (_action._savedFields._lookFlag) {
+	if (player.look_around) {
 		text_show(20307);
 	} else if (player_said_2(walk_towards, field_to_south)) {
 		_scene->_nextSceneId = 208;
@@ -146,7 +146,7 @@ static void room_203_parser() {
 	} else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_203_synchronize(Common::Serializer &s) {

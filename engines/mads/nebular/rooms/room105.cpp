@@ -145,7 +145,7 @@ static void room_105_pre_parser() {
 }
 
 static void room_105_parser() {
-	if (_action._lookFlag)
+	if (player.look_around)
 		text_show(10512);
 	else if (player_said_2(take, dead_fish) && _globals[kFishIn105]) {
 		if (player_has(OBJ_DEAD_FISH)) {
@@ -181,7 +181,7 @@ static void room_105_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_105_synchronize(Common::Serializer &s) {

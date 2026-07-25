@@ -163,7 +163,7 @@ static void room_103_pre_parser() {
 }
 
 static void room_103_parser() {
-	if (_action._savedFields._lookFlag)
+	if (player.look_around)
 		text_show(10322);
 	else if (player_said_2(walk_through, door)) {
 		switch (kernel.trigger) {
@@ -339,17 +339,17 @@ static void room_103_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_103_error() {
 	if (player_said_1(auxiliary_power) && !player_said_1(walkto)) {
 		text_show(10305);
-		_action._inProgress = false;
+		player.command_ready = false;
 	} else if (player_said_3(put, coal, furnace)) {
 		const char *msg = quote_string(kernel.quotes, 73);
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, msg);
-		_action._inProgress = false;
+		player.command_ready = false;
 	}
 }
 

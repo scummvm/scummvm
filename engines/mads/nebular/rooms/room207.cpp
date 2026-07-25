@@ -172,7 +172,7 @@ static void room_207_pre_parser() {
 }
 
 static void room_207_parser() {
-	if (_action._savedFields._lookFlag)
+	if (player.look_around)
 		text_show(20711);
 	else if (player_said_2(walk_through, doorway))
 		_scene->_nextSceneId = 214;
@@ -224,7 +224,7 @@ static void room_207_parser() {
 			return;
 	}
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_207_synchronize(Common::Serializer &s) {

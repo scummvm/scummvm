@@ -67,7 +67,7 @@ static void room_354_pre_parser() {
 }
 
 static void room_354_parser() {
-	if (_action._lookFlag)
+	if (player.look_around)
 		text_show(35414);
 	else if (player_said_2(walk_down, corridor_to_north)) {
 		player_start_walking(208, 0, FACING_NORTHEAST);
@@ -101,7 +101,7 @@ static void room_354_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_354_synchronize(Common::Serializer &s) {

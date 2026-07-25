@@ -286,7 +286,7 @@ static void room_211_pre_parser() {
 }
 
 static void room_211_parser() {
-	if (_action._lookFlag && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY))
+	if (player.look_around && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY))
 		text_show(21111);
 	else if (player_said_3(look, binoculars, palm_tree))
 		text_show(21116);
@@ -323,7 +323,7 @@ static void room_211_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_211_synchronize(Common::Serializer &s) {

@@ -285,7 +285,7 @@ static void room_604_parser() {
 			local._bombMode = 2;
 			handleBombActions();
 		}
-	} else if (_action._lookFlag)
+	} else if (player.look_around)
 		text_show(60411);
 	else if (player_said_2(look, viewport)) {
 		if (local._monsterActive) {
@@ -308,7 +308,7 @@ static void room_604_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_604_synchronize(Common::Serializer &s) {

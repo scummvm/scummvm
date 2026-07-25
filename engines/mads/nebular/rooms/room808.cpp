@@ -234,7 +234,7 @@ static void room_808_parser() {
 	} else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_808_synchronize(Common::Serializer &s) {

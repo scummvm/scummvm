@@ -1437,15 +1437,15 @@ static void room_209_pre_parser() {
 }
 
 static void room_209_parser() {
-	if (_action._lookFlag) {
+	if (player.look_around) {
 		text_show(20912);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(walk_towards, rocky_area_to_north)) {
 		_scene->_nextSceneId = 203;
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -1453,7 +1453,7 @@ static void room_209_parser() {
 		_scene->_sequences.addTimer(1, local._dialogAbortVal);
 		local._playingDialogFl = true;
 		player.commands_allowed = false;
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -1461,88 +1461,88 @@ static void room_209_parser() {
 	case 130:
 		player.commands_allowed = true;
 		local._playingDialogFl = false;
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 
 	case 5:
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 6, 180, quote_string(kernel.quotes, 139));
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 
 	case 6:
 		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 60, quote_string(kernel.quotes, 151));
 		_scene->_sequences.addTimer(60, 130);
 		local._dialogAbortVal = 7;
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 
 	case 7:
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 8, 180, quote_string(kernel.quotes, 140));
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 
 	case 8:
 		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 60, quote_string(kernel.quotes, 149));
 		_scene->_sequences.addTimer(60, 130);
 		local._dialogAbortVal = 9;
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 
 	case 9:
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 180, quote_string(kernel.quotes, 141));
 		_scene->_sequences.addTimer(200, 10);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 
 	case 10:
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 11, 180, quote_string(kernel.quotes, 142));
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 
 	case 11:
 		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 60, quote_string(kernel.quotes, 152));
 		_scene->_sequences.addTimer(60, 130);
 		local._dialogAbortVal = 12;
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 
 	case 12:
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 130, quote_string(kernel.quotes, 143));
 		_scene->_sequences.addTimer(150, 13);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 
 	case 13:
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 14, 180, quote_string(kernel.quotes, 145));
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 
 	case 14:
 		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 60, quote_string(kernel.quotes, 151));
 		_scene->_sequences.addTimer(60, 130);
 		local._dialogAbortVal = 15;
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 
 	case 15:
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 16, 180, quote_string(kernel.quotes, 146));
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 
 	case 16:
 		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 17, 60, quote_string(kernel.quotes, 154));
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 
 	case 17:
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 130, 60, quote_string(kernel.quotes, 147));
 		local._dialogAbortVal = 18;
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 
 	case 18:
@@ -1551,7 +1551,7 @@ static void room_209_parser() {
 		local._pitchFl = true;
 		local._playingDialogFl = false;
 		local._dialogAbortVal = 5;
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 
 	default:
@@ -1567,7 +1567,7 @@ static void room_209_parser() {
 				local._startShootingInTimerFl = true;
 				player.commands_allowed = false;
 				local._dodgeFl = true;
-				_action._inProgress = false;
+				player.command_ready = false;
 				return;
 			}
 
@@ -1577,7 +1577,7 @@ static void room_209_parser() {
 				player.commands_allowed = false;
 				local._fallFl = true;
 				local._startShootingInTimerFl = true;
-				_action._inProgress = false;
+				player.command_ready = false;
 				return;
 			}
 		}
@@ -1586,7 +1586,7 @@ static void room_209_parser() {
 			local._pitchFl = true;
 			player.commands_allowed = false;
 			text_show(20914);
-			_action._inProgress = false;
+			player.command_ready = false;
 			return;
 		}
 	}
@@ -1620,7 +1620,7 @@ static void room_209_parser() {
 		default:
 			break;
 		}
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -1656,75 +1656,75 @@ static void room_209_parser() {
 		default:
 			break;
 		}
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, sky)) {
 		text_show(20901);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, bamboo_like_plant)) {
 		text_show(20902);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, mountainside)) {
 		text_show(20903);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, grassy_field)) {
 		text_show(20904);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, field_to_west)) {
 		text_show(20905);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, rocky_area_to_north)) {
 		text_show(20906);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
-	if (player_said_2(look, plant_stalk) && (_action._savedFields._mainObjectSource == 4)) {
+	if (player_said_2(look, plant_stalk) && (player.main_object_source == 4)) {
 		text_show(20907);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_3(give, twinkifruit, monkey) || player_said_3(throw, twinkifruit, monkey)) {
 		text_show(20909);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, trees)) {
 		text_show(20913);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
-	if (player_said_2(throw, monkey) && player_has(object_named(_action._activeAction._objectNameId))) {
+	if (player_said_2(throw, monkey) && player_has(object_named(player2.words[1]))) {
 		if (!player_said_1(poison_darts)) {
 			text_show(20915);
 		}
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_3(throw, poison_darts, monkey)) {
 		text_show(20916);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -1740,19 +1740,19 @@ static void room_209_parser() {
 			else
 				text_show(20919);
 		}
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, melon_mush)) {
 		text_show(20920);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(take, melon_mush)) {
 		text_show(20921);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 }

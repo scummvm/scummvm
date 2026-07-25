@@ -163,12 +163,12 @@ static void room_401_parser() {
 		text_show(40114);
 	else if (player_said_2(look, corridor_to_north))
 		text_show(40115);
-	else if (_action._lookFlag)
+	else if (player.look_around)
 		text_show(40116);
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_401_synchronize(Common::Serializer &s) {

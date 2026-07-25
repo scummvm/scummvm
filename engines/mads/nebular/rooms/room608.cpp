@@ -927,7 +927,7 @@ static void room_608_parser() {
 		default:
 			break;
 		}
-	} else if (_action._lookFlag) {
+	} else if (player.look_around) {
 		if (game.difficulty != DIFFICULTY_HARD)
 			text_show(60810);
 		else if (_globals[kDogStatus] == DOG_DEAD)
@@ -967,7 +967,7 @@ static void room_608_parser() {
 			text_show(60824);
 	} else if (player_said_2(open, storage_box))
 		text_show(60826);
-	else if (player_said_2(look, rearview_mirror) && (_action._mainObjectSource == CAT_HOTSPOT))
+	else if (player_said_2(look, rearview_mirror) && (player.main_object_source == CAT_HOTSPOT))
 		text_show(60828);
 	else if (player_said_2(look, tool_box)) {
 		if (object[OBJ_POLYCEMENT].location == _scene->_currentSceneId)
@@ -989,7 +989,7 @@ static void room_608_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_608_synchronize(Common::Serializer &s) {

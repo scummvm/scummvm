@@ -199,7 +199,7 @@ static void room_106_pre_parser() {
 }
 
 static void room_106_parser() {
-	if (_action._lookFlag)
+	if (player.look_around)
 		text_show(10614);
 	else if (player_said_2(swim_to, main_airlock)) {
 		player.commands_allowed = false;
@@ -239,7 +239,7 @@ static void room_106_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_106_synchronize(Common::Serializer &s) {

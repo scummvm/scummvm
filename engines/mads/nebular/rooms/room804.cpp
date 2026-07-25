@@ -306,7 +306,7 @@ static void room_804_parser() {
 				text_show(80423);
 				player.commands_allowed = true;
 			} else {
-				_action._inProgress = false;
+				player.command_ready = false;
 
 				text_show(80424);
 				local._pullThrottleReally = true;
@@ -333,7 +333,7 @@ static void room_804_parser() {
 		}
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(2, 90);
-	} else  if (_action._lookFlag) {
+	} else  if (player.look_around) {
 		text_show(80410);
 	} else if ((player_said_2(look, window)) ||
 		(player_said_2(look_out, window))) {
@@ -367,7 +367,7 @@ static void room_804_parser() {
 	} else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_804_synchronize(Common::Serializer &s) {

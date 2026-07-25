@@ -196,7 +196,7 @@ static void room_201_daemon() {
 }
 
 static void room_201_parser() {
-	if (_action._lookFlag == false) {
+	if (player.look_around == false) {
 		if (player_said_2(walk_towards, field_to_south))
 			_scene->_nextSceneId = 202;
 		else if (player_said_2(climb_up, steps) || (player_said_2(walk_inside, teleporter)) || (player_said_2(walk_inside, strange_device))) {
@@ -238,7 +238,7 @@ static void room_201_parser() {
 	} else {
 		text_show(20111);
 	}
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_201_synchronize(Common::Serializer &s) {

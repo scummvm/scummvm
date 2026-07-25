@@ -241,9 +241,9 @@ static void room_352_pre_parser() {
 }
 
 static void room_352_parser() {
-	if (_action._lookFlag) {
+	if (player.look_around) {
 		text_show(35225);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -298,7 +298,7 @@ static void room_352_parser() {
 				break;
 			}
 		}
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -325,7 +325,7 @@ static void room_352_parser() {
 		else
 			_scene->_nextSceneId = 351;
 
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -363,7 +363,7 @@ static void room_352_parser() {
 			default:
 				break;
 			}
-			_action._inProgress = false;
+			player.command_ready = false;
 			return;
 		}
 	}
@@ -548,11 +548,11 @@ static void room_352_parser() {
 		text_show(35213);
 	else if (player_said_2(look, statue))
 		text_show(35214);
-	else if (player_said_2(look, tape_player) && (_action._savedFields._mainObjectSource == 4))
+	else if (player_said_2(look, tape_player) && (player.main_object_source == 4))
 		text_show(35215);
 	else if (player_said_2(look, air_vent))
 		text_show(35216);
-	else if (player_said_2(look, guards_arm2) && (_action._savedFields._mainObjectSource == 4))
+	else if (player_said_2(look, guards_arm2) && (player.main_object_source == 4))
 		text_show(35217);
 	else if (player_said_2(look, ironing_board))
 		text_show(35218);
@@ -588,7 +588,7 @@ static void room_352_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_352_synchronize(Common::Serializer &s) {

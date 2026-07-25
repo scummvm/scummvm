@@ -179,7 +179,7 @@ static void room_405_parser() {
 		text_show(40517);
 	else if (player_said_2(look, monitor))
 		text_show(40518);
-	else if (player_said_2(look, corridor) || _action._lookFlag)
+	else if (player_said_2(look, corridor) || player.look_around)
 		text_show(40519);
 	else if (player_said_2(look, wide_door)) {
 		if (_globals[kArmoryDoorOpen])
@@ -195,7 +195,7 @@ static void room_405_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_405_synchronize(Common::Serializer &s) {

@@ -227,7 +227,7 @@ static void room_705_daemon() {
 
 static void room_705_parser() {
 	if (inter_input_mode == kInputConversation)
-		handleFillBottle(_action._activeAction._verbId);
+		handleFillBottle(player2.words[0]);
 	else if (player_said_2(steer_towards, open_water_to_south)) {
 		switch (kernel.trigger) {
 		case 0:
@@ -282,7 +282,7 @@ static void room_705_parser() {
 			local._dialog1.start();
 		} else
 			text_show(70323);
-	} else if (_action._lookFlag || player_said_2(look, water))
+	} else if (player.look_around || player_said_2(look, water))
 		text_show(70511);
 	else if (player_said_2(look, volcano_rim))
 		text_show(70512);
@@ -297,7 +297,7 @@ static void room_705_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_705_synchronize(Common::Serializer &s) {

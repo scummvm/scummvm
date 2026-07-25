@@ -619,7 +619,7 @@ static void displayHermitQuestions(int question) {
 }
 
 static void handleSubDialog1() {
-	switch (_action._activeAction._verbId) {
+	switch (player2.words[0]) {
 	case 0x287:
 		local._stickFingerFl = true;
 		local._nextFrame = 34;
@@ -833,7 +833,7 @@ static void handleSubDialog1() {
 }
 
 static void handleSubDialog2() {
-	switch (_action._activeAction._verbId) {
+	switch (player2.words[0]) {
 	case 0x29C:
 		displayHermitQuestions(7);
 		setDialogNode(1);
@@ -874,7 +874,7 @@ static void handleDialog() {
 		_scene->_kernelMessages.reset();
 		player.commands_allowed = false;
 
-		const char *curQuote = quote_string(kernel.quotes, _action._activeAction._verbId);
+		const char *curQuote = quote_string(kernel.quotes, player2.words[0]);
 		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
 
 		if (width > 200) {
@@ -882,9 +882,9 @@ static void handleDialog() {
 			quote_split_string(curQuote, subQuote1, subQuote2);
 			_scene->_kernelMessages.add(Common::Point(0, -14), 0x1110, 34, 0, 150, subQuote1);
 
-			if (_action._activeAction._verbId == 0x29D)
+			if (player2.words[0] == 0x29D)
 				_scene->_kernelMessages.add(Common::Point(-18, 0), 0x1110, 34, 1, 150, subQuote2);
-			else if (_action._activeAction._verbId == 0x28A)
+			else if (player2.words[0] == 0x28A)
 				_scene->_kernelMessages.add(Common::Point(-10, 0), 0x1110, 34, 1, 150, subQuote2);
 			else
 				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 1, 150, subQuote2);
@@ -1344,7 +1344,7 @@ static void room_611_parser() {
 	if (inter_input_mode == kInputConversation)
 		handleDialog();
 	else if ((player_said_3(give, phone_cells, hermit)) || (player_said_3(give, durafail_cells, hermit))) {
-		_action._activeAction._verbId = 0x294;
+		player2.words[0] = 0x294;
 		local._giveBatteriesFl = true;
 		handleSubDialog1();
 	} else if (player_said_2(give, hermit)) {
@@ -1428,7 +1428,7 @@ static void room_611_parser() {
 		default:
 			break;
 		}
-	} else if (_action._lookFlag) {
+	} else if (player.look_around) {
 		if (_globals[kHasTalkedToHermit])
 			text_show(61111);
 		else
@@ -1460,7 +1460,7 @@ static void room_611_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_611_synchronize(Common::Serializer &s) {

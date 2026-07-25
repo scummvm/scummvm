@@ -343,7 +343,7 @@ static void room_701_parser() {
 		default:
 			break;
 		}
-	} else if (_action._lookFlag) {
+	} else if (player.look_around) {
 		if (_globals[kBoatStatus] != BOAT_GONE) {
 			if (_globals[kBoatStatus] == BOAT_TIED)
 				text_show(70128);
@@ -382,7 +382,7 @@ static void room_701_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_701_synchronize(Common::Serializer &s) {

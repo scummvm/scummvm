@@ -51,7 +51,7 @@ static void room_213_daemon() {
 
 static void room_213_parser() {
 	if (teleporter_parser()) {
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -76,7 +76,7 @@ static void room_213_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_213_synchronize(Common::Serializer &s) {

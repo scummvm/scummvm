@@ -217,9 +217,9 @@ static void room_102_pre_parser() {
 }
 
 static void room_102_parser() {
-	if (_action._lookFlag) {
+	if (player.look_around) {
 		text_show(10234);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -236,7 +236,7 @@ static void room_102_parser() {
 			}
 			player.commands_allowed = false;
 			g_engine->_soundManager->command(20, 0);
-			_action._inProgress = false;
+			player.command_ready = false;
 			return;
 
 		case 1:
@@ -249,7 +249,7 @@ static void room_102_parser() {
 			else
 				delay = 48;
 			_scene->_sequences.addTimer(delay, 2);
-			_action._inProgress = false;
+			player.command_ready = false;
 			return;
 
 		case 2:
@@ -274,7 +274,7 @@ static void room_102_parser() {
 			text_show(10229);
 
 		local._fridgeFirstOpenFl = false;
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -288,19 +288,19 @@ static void room_102_parser() {
 		_scene->_kernelMessages.add(Common::Point(210, 60), 0x1110, 0, 73, 120, curQuote);
 		_scene->_kernelMessages.add(Common::Point(214 + width, 60), 0x1110, 0, 73, 120, quote_string(kernel.quotes, 64));
 		local._activeMsgFl = true;
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(close, refrigerator)) {
 		text_show(10213);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(take, refrigerator)) {
 		text_show(8);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -320,85 +320,85 @@ static void room_102_parser() {
 		default:
 			break;
 		}
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(walkto, engineering_section)) {
 		_scene->_nextSceneId = 103;
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(walkto, poster) || player_said_2(look, poster) || player_said_2(walkto, binoculars)) {
 		addRandomMessage();
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, weight_machine)) {
 		text_show(10212);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, engineering_section)) {
 		text_show(10205);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, door)) {
 		text_show(10204);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(stare_at, ceiling) || player_said_2(look, ceiling)) {
 		text_show(10203);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(stare_at, overhead_lamp) || player_said_2(look, overhead_lamp)) {
 		text_show(10202);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, robo_kitchen)) {
 		text_show(10215);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_3(put, burger, robo_kitchen) && player_has(OBJ_BURGER)) {
 		text_show(10216);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
-	if (player_said_2(put, refrigerator) && player_has(object_named(_action._activeAction._objectNameId))) {
+	if (player_said_2(put, refrigerator) && player_has(object_named(player2.words[1]))) {
 		text_show(10217);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_3(put, dead_fish, robo_kitchen) || player_said_3(put, stuffed_fish, robo_kitchen)) {
 		text_show(10230);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(open, robo_kitchen)) {
 		text_show(10218);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, closet)) {
 		text_show(10219);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -406,12 +406,12 @@ static void room_102_parser() {
 		if (player_has(OBJ_REBREATHER)) {
 			if (!player_said_1(climb_up) && !player_said_1(climb_through)) {
 				text_show(10231);
-				_action._inProgress = false;
+				player.command_ready = false;
 				return;
 			}
 		} else if (player_said_1(look) || (game.difficulty != DIFFICULTY_HARD)) {
 			text_show(10222);
-			_action._inProgress = false;
+			player.command_ready = false;
 			return;
 		}
 	}
@@ -450,57 +450,57 @@ static void room_102_parser() {
 		default:
 			break;
 		}
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, power_status_panel)) {
 		text_show(10226);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, window) || player_said_2(look_through, window)) {
 		text_show(10227);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, doorway) || player_said_2(walkto, doorway)) {
 		text_show(10228);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, drawer) || ((player_said_2(close, drawer) || player_said_2(push, drawer)) && !local._drawerDescrFl)) {
 		text_show(10220);
 		local._drawerDescrFl = true;
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(close, drawer) || player_said_2(push, drawer)) {
 		text_show(10221);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(open, drawer)) {
 		text_show(10236);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, chair) || (player_said_2(sit_in, chair) && !local._chairDescrFl)) {
 		local._chairDescrFl = true;
 		text_show(10210);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(sit_in, chair)) {
 		text_show(10211);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -510,7 +510,7 @@ static void room_102_parser() {
 		else
 			text_show(10206);
 
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -537,7 +537,7 @@ static void room_102_parser() {
 		default:
 			break;
 		}
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -570,7 +570,7 @@ static void room_102_parser() {
 		default:
 			break;
 		}
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -597,7 +597,7 @@ static void room_102_parser() {
 		default:
 			break;
 		}
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
@@ -611,44 +611,44 @@ static void room_102_parser() {
 			player.walker_visible = true;
 			player.commands_allowed = true;
 		}
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(take, poster)) {
 		text_show(10224);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if ((player_said_1(push) || player_said_1(pull)) && player_said_1(weight_machine)) {
 		text_show(10225);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, floor)) {
 		text_show(10232);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(look, binoculars) && !player_has(OBJ_BINOCULARS)) {
 		text_show(10233);
-		_action._inProgress = false;
+		player.command_ready = false;
 		return;
 	}
 
-	if (player_said_2(look, burger) && (_action._mainObjectSource == CAT_HOTSPOT)) {
+	if (player_said_2(look, burger) && (player.main_object_source == CAT_HOTSPOT)) {
 		text_show(801);
-		_action._inProgress = false;
+		player.command_ready = false;
 	}
 }
 
 static void room_102_error() {
-	if (player_said_2(put, robo_kitchen) && player_has(object_named(_action._activeAction._objectNameId))) {
+	if (player_said_2(put, robo_kitchen) && player_has(object_named(player2.words[1]))) {
 		text_show(10217);
-		_action._inProgress = false;
+		player.command_ready = false;
 	}
 }
 

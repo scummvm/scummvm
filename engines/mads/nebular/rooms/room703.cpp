@@ -491,7 +491,7 @@ static void room_703_daemon() {
 
 static void room_703_parser() {
 	if (inter_input_mode == kInputConversation)
-		handleFillBottle(_action._activeAction._verbId);
+		handleFillBottle(player2.words[0]);
 	else if (player_said_2(steer_towards, dock_to_south)) {
 		player.commands_allowed = false;
 		if (_globals[kMonsterAlive])
@@ -548,7 +548,7 @@ static void room_703_parser() {
 			local._dialog1.start();
 		} else
 			text_show(70323);
-	} else if (_action._lookFlag || player_said_2(look, sea_monster)) {
+	} else if (player.look_around || player_said_2(look, sea_monster)) {
 		if (_globals[kMonsterAlive])
 			text_show(70310);
 	} else if (player_said_2(look, water)) {
@@ -568,7 +568,7 @@ static void room_703_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_703_synchronize(Common::Serializer &s) {

@@ -173,12 +173,12 @@ static void room_413_parser() {
 		text_show(41318);
 	else if (player_said_2(take, plant))
 		text_show(41319);
-	else if (_action._lookFlag)
+	else if (player.look_around)
 		text_show(41320);
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_413_synchronize(Common::Serializer &s) {

@@ -321,7 +321,7 @@ static void room_704_daemon() {
 
 static void room_704_parser() {
 	if (inter_input_mode == kInputConversation)
-		handleFillBottle(_action._activeAction._verbId);
+		handleFillBottle(player2.words[0]);
 	else if (player_said_2(steer_towards, open_water_to_south)) {
 		player.commands_allowed = false;
 		if (local._boatDirection == 1)
@@ -353,7 +353,7 @@ static void room_704_parser() {
 			} else
 				text_show(70323);
 		}
-	} else if (_action._lookFlag || player_said_2(look, water))
+	} else if (player.look_around || player_said_2(look, water))
 		text_show(70410);
 	else if (player_said_2(look, building_to_north)) {
 		if (player_has_been_in_room(710))
@@ -362,7 +362,7 @@ static void room_704_parser() {
 			text_show(70412);
 	} else if (player_said_2(look, volcano_rim))
 		text_show(70413);
-	else if (player_said_2(look, bottle) && (_action._mainObjectSource == CAT_HOTSPOT))
+	else if (player_said_2(look, bottle) && (player.main_object_source == CAT_HOTSPOT))
 		text_show(70414);
 	else if (player_said_2(look, open_water_to_south))
 		text_show(70416);
@@ -371,7 +371,7 @@ static void room_704_parser() {
 	else
 		return;
 
-	_action._inProgress = false;
+	player.command_ready = false;
 }
 
 void room_704_synchronize(Common::Serializer &s) {
