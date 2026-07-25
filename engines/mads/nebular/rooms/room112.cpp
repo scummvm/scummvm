@@ -39,9 +39,9 @@ static void room_112_init() {
 	g_sprite_ids[2] = kernel_load_series(kernel_name('X', 2), 0);
 	g_sprite_ids[3] = kernel_load_series(kernel_name('X', 5), 0);
 
-	g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 10, 0, 17, 20);
-	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 4, 0, 0, 0);
-	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 6, 0, 3, 0);
+	g_sequence_ids[0] = kernel_seq_forward(g_sprite_ids[0], false, 10, 20, 17, 0);
+	g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 4, 0, 0, 0);
+	g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 6, 0, 3, 0);
 
 	player.commands_allowed = false;
 	player.walker_visible = false;
@@ -61,9 +61,9 @@ static void room_112_daemon() {
 	}
 
 	if (kernel.trigger == 70) {
-		g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 7, 3, 0, 11);
-		_scene->_sequences.setDepth(g_sequence_ids[3], 1);
-		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 7, 11, 0, 3);
+		kernel_seq_depth(g_sequence_ids[3], 1);
+		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 	}
 
 	if (kernel.trigger == 71) {

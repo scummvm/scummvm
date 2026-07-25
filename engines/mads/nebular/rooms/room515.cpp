@@ -35,7 +35,7 @@ namespace Rooms {
 static void room_515_init() {
 	player.walker_visible = false;
 	player.commands_allowed = false;
-	_scene->_sequences.addTimer(30, 70);
+	kernel_timing_trigger(30, 70);
 
 	section_5_music();
 }

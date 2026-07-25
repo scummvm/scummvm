@@ -44,17 +44,17 @@ static void room_107_init() {
 
 	g_sprite_ids[4] = kernel_load_series(kernel_full_name(105, 'f', 4, "", EXT_SS), 0);
 
-	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 14, 0, 0, 7);
-	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 17, 0, 0, 13);
-	g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 19, 0, 0, 9);
+	g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 14, 7, 0, 0);
+	g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 17, 13, 0, 0);
+	g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 19, 9, 0, 0);
 
 	for (int i = 1; i < 4; i++)
-		_scene->_sequences.setDepth(g_sequence_ids[i], 0);
+		kernel_seq_depth(g_sequence_ids[i], 0);
 
 	if (global[kFishIn107]) {
-		g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 6, 0, 0, 0);
-		_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(68, 151));
-		_scene->_sequences.setDepth(g_sequence_ids[4], 1);
+		g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 6, 0, 0, 0);
+		kernel_seq_loc(g_sequence_ids[4], 68, 151);
+		kernel_seq_depth(g_sequence_ids[4], 1);
 		int idx = _scene->_dynamicHotspots.add(words_dead_fish, words_swim_to, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(78, 135), FACING_SOUTHWEST);
 	}
@@ -74,10 +74,10 @@ static void room_107_init() {
 
 	if (((previous_room == 105) || (previous_room == 106)) && (g_engine->getRandomNumber(1, 3) == 1)) {
 		g_sprite_ids[0] = kernel_load_series(kernel_full_name(105, 'R', 1, "", EXT_SS), 0);
-		g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], true, 4, 0, 0, 0);
-		_scene->_sequences.setPosition(g_sequence_ids[0], Common::Point(270, 150));
-		_scene->_sequences.setMotion(g_sequence_ids[0], SEQUENCE_TRIGGER_SPRITE, -200, 0);
-		_scene->_sequences.setDepth(g_sequence_ids[0], 2);
+		g_sequence_ids[0] = kernel_seq_forward(g_sprite_ids[0], true, 4, 0, 0, 0);
+		kernel_seq_loc(g_sequence_ids[0], 270, 150);
+		kernel_seq_motion(g_sequence_ids[0], SEQUENCE_TRIGGER_SPRITE, -200, 0);
+		kernel_seq_depth(g_sequence_ids[0], 2);
 		_scene->_dynamicHotspots.add(words_manta_ray, words_swim_to, g_sequence_ids[0], Common::Rect(0, 0, 0, 0));
 	}
 
@@ -116,7 +116,7 @@ static void room_107_parser() {
 			kernel_message_purge();
 			kernel_message_add(quote_string(kernel.quotes, randVal), 0, 0, 0x1110, 120, 0, 34);
 		} else {
-			_scene->_sequences.remove(g_sequence_ids[4]);
+			kernel_seq_delete(g_sequence_ids[4]);
 			inter_give_to_player(OBJ_DEAD_FISH);
 			global[kFishIn107] = false;
 			object_examine(OBJ_DEAD_FISH, 802, 0);

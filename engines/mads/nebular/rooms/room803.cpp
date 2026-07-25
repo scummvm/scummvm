@@ -42,15 +42,15 @@ static void room_803_init() {
 
 	if (global[kHoppyDead]) {
 		g_sprite_ids[7] = kernel_load_series(kernel_name('e', 1), 0);
-		g_sequence_ids[7] = _scene->_sequences.startCycle(g_sprite_ids[7], false, 1);
+		g_sequence_ids[7] = kernel_seq_stamp(g_sprite_ids[7], false, 1);
 		int idx = _scene->_dynamicHotspots.add(words_guts, words_walkto, g_sequence_ids[7], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(66, 123), FACING_SOUTH);
 	}
 
 	if (!global[kBeamIsUp] && !global[kReturnFromCut] && (!global[kFromCockpit] || global[kExitShip])) {
-		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 8, 1, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[1], 2, 2);
-		_scene->_sequences.setDepth(g_sequence_ids[1], 1);
+		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 8, 0, 0, 1);
+		kernel_seq_range(g_sequence_ids[1], 2, 2);
+		kernel_seq_depth(g_sequence_ids[1], 1);
 	}
 
 	if (!global[kFromCockpit]) {
@@ -67,11 +67,11 @@ static void room_803_init() {
 			g_sprite_ids[4] = kernel_load_series(kernel_name('a', 2), 0);
 			player.walker_visible = false;
 			player.commands_allowed = false;
-			g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
-			_scene->_sequences.setDepth(g_sequence_ids[3], 15);
-			g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 8, 1, 0, 0);
-			_scene->_sequences.setDepth(g_sequence_ids[3], 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
+			g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, 1);
+			kernel_seq_depth(g_sequence_ids[3], 15);
+			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 8, 0, 0, 1);
+			kernel_seq_depth(g_sequence_ids[3], 1);
+			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
 			g_engine->_soundManager->command(14, 0);
 		}
 
@@ -84,28 +84,28 @@ static void room_803_init() {
 			g_sprite_ids[5] = kernel_load_series(kernel_name('b', 1), 0);
 			g_engine->_soundManager->command(15, 0);
 			player.commands_allowed = false;
-			g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 12, 1, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[5], 1, 6);
-			_scene->_sequences.setDepth(g_sequence_ids[5], 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 100);
+			g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 12, 0, 0, 1);
+			kernel_seq_range(g_sequence_ids[5], 1, 6);
+			kernel_seq_depth(g_sequence_ids[5], 1);
+			kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 100);
 		}
 	} else if (!global[kExitShip]) {
 		if (!global[kBeamIsUp]) {
 			g_sprite_ids[3] = kernel_load_series(kernel_name('a', 1), 0);
 			player.walker_visible = false;
 			player.commands_allowed = false;
-			g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 8, 1, 0, 0);
-			_scene->_sequences.setDepth(g_sequence_ids[3], 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 130);
+			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 8, 0, 0, 1);
+			kernel_seq_depth(g_sequence_ids[3], 1);
+			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 130);
 			g_engine->_soundManager->command(14, 0);
 		} else {
 			g_sprite_ids[8] = kernel_load_series(kernel_name('c', 1), 0);
 			player.walker_visible = false;
 			player.commands_allowed = false;
-			g_sequence_ids[8] = _scene->_sequences.startCycle(g_sprite_ids[8], false, 1);
-			g_sequence_ids[8] = _scene->_sequences.addSpriteCycle(g_sprite_ids[8], false, 8, 1, 0, 0);
-			_scene->_sequences.setDepth(g_sequence_ids[8], 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 140);
+			g_sequence_ids[8] = kernel_seq_stamp(g_sprite_ids[8], false, 1);
+			g_sequence_ids[8] = kernel_seq_forward(g_sprite_ids[8], false, 8, 0, 0, 1);
+			kernel_seq_depth(g_sequence_ids[8], 1);
+			kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 140);
 		}
 	} else {
 		player.commands_allowed = false;
@@ -114,8 +114,8 @@ static void room_803_init() {
 		player.facing = FACING_SOUTHWEST;
 		player.walker_visible = true;
 		g_sprite_ids[6] = kernel_load_series(kernel_name('d', 1), 0);
-		g_sequence_ids[6] = _scene->_sequences.startCycle(g_sprite_ids[6], false, 19);
-		_scene->_sequences.addTimer(1, 150);
+		g_sequence_ids[6] = kernel_seq_stamp(g_sprite_ids[6], false, 19);
+		kernel_timing_trigger(1, 150);
 	}
 
 	section_8_music();
@@ -123,20 +123,20 @@ static void room_803_init() {
 
 static void room_803_daemon() {
 	if (kernel.trigger == 120) {
-		g_sequence_ids[6] = _scene->_sequences.startCycle(g_sprite_ids[6], false, 19);
+		g_sequence_ids[6] = kernel_seq_stamp(g_sprite_ids[6], false, 19);
 		new_room = 804;
 	}
 
 	if (kernel.trigger == 100) {
-		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 8, 1, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[1], 2, 2);
-		_scene->_sequences.setDepth(g_sequence_ids[1], 1);
+		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 8, 0, 0, 1);
+		kernel_seq_range(g_sequence_ids[1], 2, 2);
+		kernel_seq_depth(g_sequence_ids[1], 1);
 		if (!global[kHoppyDead]) {
-			g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 7, 1, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[5], 7, 12);
-			_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 101);
+			g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 7, 0, 0, 1);
+			kernel_seq_range(g_sequence_ids[5], 7, 12);
+			kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 101);
 		} else {
-			g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, -2);
+			g_sequence_ids[5] = kernel_seq_stamp(g_sprite_ids[5], false, -2);
 			int idx = _scene->_dynamicHotspots.add(words_guts, words_walkto, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(66, 123), FACING_SOUTH);
 			g_engine->_soundManager->command(16, 0);
@@ -155,7 +155,7 @@ static void room_803_daemon() {
 	}
 
 	if (kernel.trigger == 101) {
-		g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, -2);
+		g_sequence_ids[5] = kernel_seq_stamp(g_sprite_ids[5], false, -2);
 		int idx = _scene->_dynamicHotspots.add(words_guts, words_walkto, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(66, 123), FACING_SOUTH);
 		g_engine->_soundManager->command(16, 0);
@@ -174,29 +174,29 @@ static void room_803_daemon() {
 
 	if (kernel.trigger == 80) {
 		if (!global[kHoppyDead])
-			_scene->_sequences.addTimer(350, 70);
+			kernel_timing_trigger(350, 70);
 
-		g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 12, 1, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[4], 1, 3);
-		_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 90);
+		g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 12, 0, 0, 1);
+		kernel_seq_range(g_sequence_ids[4], 1, 3);
+		kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 90);
 	}
 
 	if (kernel.trigger == 70) {
-		g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 8, 1, 0, 0);
-		_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 8, 0, 0, 1);
+		kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 		g_engine->_soundManager->command(31, 0);
 	}
 
 	if (kernel.trigger == 71)
-		_scene->_sequences.addTimer(200, 110);
+		kernel_timing_trigger(200, 110);
 
 	if (kernel.trigger == 90) {
 		int syncIdx = g_sequence_ids[4];
-		g_sequence_ids[4] = _scene->_sequences.startPingPongCycle(g_sprite_ids[4], false, 15, 0, 0, 0);
-		_scene->_sequences.updateTimeout(g_sequence_ids[4], syncIdx);
-		_scene->_sequences.setAnimRange(g_sequence_ids[4], 4, 9);
+		g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 15, 0, 0, 0);
+		kernel_seq_timeout(syncIdx, g_sequence_ids[4]);
+		kernel_seq_range(g_sequence_ids[4], 4, 9);
 		if (global[kHoppyDead])
-			_scene->_sequences.addTimer(200, 110);
+			kernel_timing_trigger(200, 110);
 	}
 
 	if (kernel.trigger == 110)
@@ -225,12 +225,12 @@ static void room_803_daemon() {
 	}
 
 	if (kernel.trigger == 150) {
-		_scene->_sequences.remove(g_sequence_ids[6]);
+		kernel_seq_delete(g_sequence_ids[6]);
 		g_engine->_soundManager->command(18, 0);
-		g_sequence_ids[6] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[6], false, 8, 1, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[6], 1, 19);
-		_scene->_sequences.setDepth(g_sequence_ids[6], 4);
-		_scene->_sequences.addSubEntry(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 151);
+		g_sequence_ids[6] = kernel_seq_backward(g_sprite_ids[6], false, 8, 0, 0, 1);
+		kernel_seq_range(g_sequence_ids[6], 1, 19);
+		kernel_seq_depth(g_sequence_ids[6], 4);
+		kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 151);
 	}
 
 	if (kernel.trigger == 151) {
@@ -255,19 +255,19 @@ static void room_803_parser() {
 		case 0:
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			g_sequence_ids[9] = _scene->_sequences.addSpriteCycle(g_sprite_ids[9], true, 6, 1, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[9], 1, 4);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[9]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 160);
+			g_sequence_ids[9] = kernel_seq_forward(g_sprite_ids[9], true, 6, 0, 0, 1);
+			kernel_seq_range(g_sequence_ids[9], 1, 4);
+			kernel_seq_player(g_sequence_ids[9], false);
+			kernel_seq_trigger(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 160);
 			break;
 
 		case 160:
 		{
 			int syncIdx = g_sequence_ids[9];
-			g_sequence_ids[9] = _scene->_sequences.startCycle(g_sprite_ids[9], false, 4);
-			_scene->_sequences.updateTimeout(g_sequence_ids[9], syncIdx);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[9]);
-			_scene->_sequences.addTimer(60, 161);
+			g_sequence_ids[9] = kernel_seq_stamp(g_sprite_ids[9], false, 4);
+			kernel_seq_timeout(syncIdx, g_sequence_ids[9]);
+			kernel_seq_player(g_sequence_ids[9], false);
+			kernel_timing_trigger(60, 161);
 		}
 		break;
 
@@ -275,16 +275,16 @@ static void room_803_parser() {
 		{
 			int quoteId = 0x31A + g_engine->getRandomNumber(1, 8);
 			kernel_message_add(quote_string(kernel.quotes, quoteId), 64, 67, 0x1110, 80, 0, 32);
-			_scene->_sequences.addTimer(60, 162);
+			kernel_timing_trigger(60, 162);
 		}
 		break;
 
 		case 162:
-			_scene->_sequences.remove(g_sequence_ids[9]);
-			g_sequence_ids[9] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[9], true, 6, 1, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[9], 1, 4);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[9]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 163);
+			kernel_seq_delete(g_sequence_ids[9]);
+			g_sequence_ids[9] = kernel_seq_backward(g_sprite_ids[9], true, 6, 0, 0, 1);
+			kernel_seq_range(g_sequence_ids[9], 1, 4);
+			kernel_seq_player(g_sequence_ids[9], false);
+			kernel_seq_trigger(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 163);
 			break;
 
 		case 163:
@@ -300,10 +300,10 @@ static void room_803_parser() {
 		g_engine->_soundManager->command(17, 0);
 		player.commands_allowed = false;
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
-		g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(g_sprite_ids[6], false, 8, 1, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[6], 1, 19);
-		_scene->_sequences.setDepth(g_sequence_ids[6], 4);
-		_scene->_sequences.addSubEntry(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 120);
+		g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 8, 0, 0, 1);
+		kernel_seq_range(g_sequence_ids[6], 1, 19);
+		kernel_seq_depth(g_sequence_ids[6], 4);
+		kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 120);
 		global[kBeamIsUp] = false;
 	} else if (player_said_2(look, launch_pad))
 		text_show(80310);

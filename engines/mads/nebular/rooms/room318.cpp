@@ -92,12 +92,12 @@ static void handleInternDialog(int quoteId, int quoteNum, uint32 timeout) {
 	// WORKAROUND: In case the player launches multiple talk selections with the
 	// intern before previous ones have finished, take care of removing any
 	int seqIndex;
-	while ((seqIndex = _scene->_sequences.findByTrigger(63)) != -1)
-		_scene->_sequences.remove(seqIndex);
+	while ((seqIndex = kernel_seq_find_by_trigger(63)) != -1)
+		kernel_seq_delete(seqIndex);
 
 	for (int i = 0; i < quoteNum; i++) {
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
-		_scene->_sequences.addTimer(180, 63);
+		kernel_timing_trigger(180, 63);
 		kernel_message_add(quote_string(kernel.quotes, curQuoteId), posX, posY, 0xFDFC, timeout, 0, 0);
 		posY += 14;
 		curQuoteId++;
@@ -110,10 +110,10 @@ static void handleDialog() {
 		handleRexDialogs(player2.words[0]);
 	} else if (kernel.trigger == 2) {
 		int synxIdx = g_sequence_ids[2];
-		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 1);
-		_scene->_sequences.setDepth(g_sequence_ids[2], 1);
-		_scene->_sequences.setPosition(g_sequence_ids[2], Common::Point(142, 121));
-		_scene->_sequences.updateTimeout(g_sequence_ids[2], synxIdx);
+		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 1);
+		kernel_seq_depth(g_sequence_ids[2], 1);
+		kernel_seq_loc(g_sequence_ids[2], 142, 121);
+		kernel_seq_timeout(synxIdx, g_sequence_ids[2]);
 		g_engine->_soundManager->command(3, 0);
 		_scene->_userInterface.setup(kInputBuildingSentences);
 		player.commands_allowed = true;
@@ -180,12 +180,12 @@ static void handleDialog() {
 
 		case 0x19C:
 		case 0x19D:
-			_scene->_sequences.remove(g_sequence_ids[2]);
-			g_sequence_ids[2] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[2], false, 8, 1, 0, 0);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
-			_scene->_sequences.setPosition(g_sequence_ids[2], Common::Point(142, 121));
-			_scene->_sequences.setAnimRange(g_sequence_ids[2], 6, 8);
-			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_delete(g_sequence_ids[2]);
+			g_sequence_ids[2] = kernel_seq_backward(g_sprite_ids[2], false, 8, 0, 0, 1);
+			kernel_seq_depth(g_sequence_ids[2], 1);
+			kernel_seq_loc(g_sequence_ids[2], 142, 121);
+			kernel_seq_range(g_sequence_ids[2], 6, 8);
+			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 
 			local._dialogFl = false;
 			handleInternDialog(0x1D0, 1, 120);
@@ -221,8 +221,8 @@ static void room_318_init() {
 	}
 
 	if (object_is_here(OBJ_SCALPEL)) {
-		g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 6, 0, 0, 120);
-		_scene->_sequences.setDepth(g_sequence_ids[3], 4);
+		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 6, 120, 0, 0);
+		kernel_seq_depth(g_sequence_ids[3], 4);
 		_scene->_dynamicHotspots.add(words_scalpel, words_take, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
 	}
 
@@ -287,12 +287,12 @@ static void room_318_init() {
 
 			if (local._dialogFl) {
 				local._dialog1.start();
-				g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 8);
+				g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 8);
 			} else
-				g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 1);
+				g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 1);
 
-			_scene->_sequences.setPosition(g_sequence_ids[2], Common::Point(142, 121));
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
+			kernel_seq_loc(g_sequence_ids[2], 142, 121);
+			kernel_seq_depth(g_sequence_ids[2], 1);
 		}
 	}
 
@@ -446,8 +446,8 @@ static void room_318_daemon() {
 
 	if ((kernel.clock - local._dropTimer) > 600) {
 		g_engine->_soundManager->command(51, 0);
-		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 14, 1, 0, 0);
-		_scene->_sequences.setDepth(g_sequence_ids[1], 10);
+		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 14, 0, 0, 1);
+		kernel_seq_depth(g_sequence_ids[1], 10);
 		local._dropTimer = kernel.clock;
 	}
 }
@@ -476,12 +476,12 @@ static void room_318_parser() {
 			player.commands_allowed = false;
 			handleRexDialogs(g_engine->getRandomNumber(0x18C, 0x18E));
 
-			_scene->_sequences.remove(g_sequence_ids[2]);
-			g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 8, 1, 0, 80);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
-			_scene->_sequences.setPosition(g_sequence_ids[2], Common::Point(142, 121));
-			_scene->_sequences.setAnimRange(g_sequence_ids[2], 6, 8);
-			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_delete(g_sequence_ids[2]);
+			g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 8, 80, 0, 1);
+			kernel_seq_depth(g_sequence_ids[2], 1);
+			kernel_seq_loc(g_sequence_ids[2], 142, 121);
+			kernel_seq_range(g_sequence_ids[2], 6, 8);
+			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 		}
 		break;
 
@@ -494,10 +494,10 @@ static void room_318_parser() {
 		case 2:
 		{
 			int oldIdx = g_sequence_ids[2];
-			g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 8);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
-			_scene->_sequences.setPosition(g_sequence_ids[2], Common::Point(142, 121));
-			_scene->_sequences.updateTimeout(g_sequence_ids[2], oldIdx);
+			g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 8);
+			kernel_seq_depth(g_sequence_ids[2], 1);
+			kernel_seq_loc(g_sequence_ids[2], 142, 121);
+			kernel_seq_timeout(oldIdx, g_sequence_ids[2]);
 		}
 		break;
 
@@ -512,13 +512,13 @@ static void room_318_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_scene->_sequences.remove(g_sequence_ids[2]);
-			g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 8, 2, 0, 80);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
-			_scene->_sequences.setPosition(g_sequence_ids[2], Common::Point(142, 121));
-			_scene->_sequences.setAnimRange(g_sequence_ids[2], 2, 5);
-			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_delete(g_sequence_ids[2]);
+			g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 8, 80, 0, 2);
+			kernel_seq_depth(g_sequence_ids[2], 1);
+			kernel_seq_loc(g_sequence_ids[2], 142, 121);
+			kernel_seq_range(g_sequence_ids[2], 2, 5);
+			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
+			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
@@ -527,18 +527,18 @@ static void room_318_parser() {
 			else {
 				inter_give_to_player(OBJ_SCALPEL);
 				object_examine(OBJ_SCALPEL, 0x7C5D, 0);
-				_scene->_sequences.remove(g_sequence_ids[3]);
+				kernel_seq_delete(g_sequence_ids[3]);
 			}
 			break;
 
 		case 2:
 		{
 			int oldIdx = g_sequence_ids[2];
-			g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 1);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
-			_scene->_sequences.setPosition(g_sequence_ids[2], Common::Point(142, 121));
-			_scene->_sequences.updateTimeout(g_sequence_ids[2], oldIdx);
-			_scene->_sequences.addTimer(60, 3);
+			g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 1);
+			kernel_seq_depth(g_sequence_ids[2], 1);
+			kernel_seq_loc(g_sequence_ids[2], 142, 121);
+			kernel_seq_timeout(oldIdx, g_sequence_ids[2]);
+			kernel_timing_trigger(60, 3);
 		}
 		break;
 

@@ -236,7 +236,7 @@ static void room_703_daemon() {
 				nextBoatFrame = 61;
 				if (local._restartTrigger70Fl) {
 					local._restartTrigger70Fl = false;
-					_scene->_sequences.addTimer(15, 70);
+					kernel_timing_trigger(15, 70);
 				}
 			}
 
@@ -306,7 +306,7 @@ static void room_703_daemon() {
 			case 100:
 				nextBoatFrame = 56;
 				if (!player.commands_allowed) {
-					_scene->_sequences.addTimer(30, 80);
+					kernel_timing_trigger(30, 80);
 					player.commands_allowed = true;
 				}
 				break;
@@ -314,7 +314,7 @@ static void room_703_daemon() {
 			case 110:
 				nextBoatFrame = 9;
 				if (!player.commands_allowed) {
-					_scene->_sequences.addTimer(30, 80);
+					kernel_timing_trigger(30, 80);
 					player.commands_allowed = true;
 				}
 				break;

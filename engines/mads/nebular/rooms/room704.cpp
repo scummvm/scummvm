@@ -126,14 +126,14 @@ static void handleFillBottle(int quote) {
 static void room_704_init() {
 	if (object[OBJ_BOTTLE].location == room_id) {
 		g_sprite_ids[1] = kernel_load_series(kernel_name('b', 0), 0);
-		g_sequence_ids[1] = _scene->_sequences.startPingPongCycle(g_sprite_ids[1], false, 6, 0, 0, 0);
-		_scene->_sequences.setDepth(g_sequence_ids[1], 1);
+		g_sequence_ids[1] = kernel_seq_pingpong(g_sprite_ids[1], false, 6, 0, 0, 0);
+		kernel_seq_depth(g_sequence_ids[1], 1);
 		if (previous_room == 705) {
-			_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(123, 125));
-			_scene->_sequences.setDepth(g_sequence_ids[1], 1);
+			kernel_seq_loc(g_sequence_ids[1], 123, 125);
+			kernel_seq_depth(g_sequence_ids[1], 1);
 		} else {
-			_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(190, 122));
-			_scene->_sequences.setDepth(g_sequence_ids[1], 2);
+			kernel_seq_loc(g_sequence_ids[1], 190, 122);
+			kernel_seq_depth(g_sequence_ids[1], 2);
 		}
 		int idx = _scene->_dynamicHotspots.add(words_bottle, words_look_at, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		local._bottleHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
@@ -158,8 +158,8 @@ static void room_704_init() {
 		kernel_reset_animation(0, 8);
 	} else if (local._boatDirection == 2) {
 		if (object[OBJ_BOTTLE].location == room_id) {
-			_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(123, 125));
-			_scene->_sequences.setDepth(g_sequence_ids[1], 1);
+			kernel_seq_loc(g_sequence_ids[1], 123, 125);
+			kernel_seq_depth(g_sequence_ids[1], 1);
 		}
 		kernel_run_animation(kernel_name('A', -1), 0);
 		kernel_reset_animation(0, 57);
@@ -246,7 +246,7 @@ static void room_704_daemon() {
 
 			case 90:
 				if (local._takeBottleFl) {
-					_scene->_sequences.remove(g_sequence_ids[1]);
+					kernel_seq_delete(g_sequence_ids[1]);
 					_scene->_dynamicHotspots.remove(local._bottleHotspotId);
 					inter_give_to_player(OBJ_BOTTLE);
 					g_engine->_soundManager->command(15, 0);
@@ -257,14 +257,14 @@ static void room_704_daemon() {
 			case 92:
 				nextFrame = 57;
 				if (!player.commands_allowed && !local._takeBottleFl) {
-					_scene->_sequences.addTimer(30, 70);
+					kernel_timing_trigger(30, 70);
 					player.commands_allowed = true;
 				}
 				break;
 
 			case 98:
 				if (local._takeBottleFl) {
-					_scene->_sequences.remove(g_sequence_ids[1]);
+					kernel_seq_delete(g_sequence_ids[1]);
 					_scene->_dynamicHotspots.remove(local._bottleHotspotId);
 					inter_give_to_player(OBJ_BOTTLE);
 					g_engine->_soundManager->command(15, 0);
@@ -275,7 +275,7 @@ static void room_704_daemon() {
 			case 101:
 				nextFrame = 8;
 				if (!player.commands_allowed && !local._takeBottleFl) {
-					_scene->_sequences.addTimer(30, 70);
+					kernel_timing_trigger(30, 70);
 					player.commands_allowed = true;
 				}
 				break;

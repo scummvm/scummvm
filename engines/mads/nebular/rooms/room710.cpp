@@ -36,11 +36,11 @@ static void room_710_init() {
 
 	if (object[OBJ_VASE].location == 706) {
 		g_sprite_ids[1] = kernel_load_series(kernel_name('g', -1), 0);
-		g_sequence_ids[1] = _scene->_sequences.startPingPongCycle(g_sprite_ids[1], false, 6, 0, 0, 0);
+		g_sequence_ids[1] = kernel_seq_pingpong(g_sprite_ids[1], false, 6, 0, 0, 0);
 	}
 
 	player.walker_visible = false;
-	_scene->_sequences.addTimer(600, 70);
+	kernel_timing_trigger(600, 70);
 
 	section_7_music();
 }

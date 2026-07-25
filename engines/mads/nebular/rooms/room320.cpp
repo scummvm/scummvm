@@ -47,7 +47,7 @@ static Scratch local;
 
 
 static void setRightView(int view) {
-	if (local._rightItemId < 8) _scene->_sequences.remove(g_sequence_ids[10]);
+	if (local._rightItemId < 8) kernel_seq_delete(g_sequence_ids[10]);
 
 	int spriteNum;
 	switch (view) {
@@ -73,8 +73,8 @@ static void setRightView(int view) {
 	}
 
 	if (view != 8) {
-		g_sequence_ids[10] = _scene->_sequences.startCycle(g_sprite_ids[spriteNum], false, 1);
-		_scene->_sequences.setDepth(g_sequence_ids[10], 0);
+		g_sequence_ids[10] = kernel_seq_stamp(g_sprite_ids[spriteNum], false, 1);
+		kernel_seq_depth(g_sequence_ids[10], 0);
 	}
 
 	global[kRightView320] = local._rightItemId = view;
@@ -82,13 +82,13 @@ static void setRightView(int view) {
 
 static void setLeftView(int view) {
 	if (local._leftItemId < 10)
-		_scene->_sequences.remove(g_sequence_ids[0]);
+		kernel_seq_delete(g_sequence_ids[0]);
 
 	if (view != 10) {
-		g_sequence_ids[0] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[view], false, 6, 0, 0, 18);
-		_scene->_sequences.setDepth(g_sequence_ids[0], 0);
+		g_sequence_ids[0] = kernel_seq_backward(g_sprite_ids[view], false, 6, 18, 0, 0);
+		kernel_seq_depth(g_sequence_ids[0], 0);
 		if (!local._blinkFl)
-			_scene->_sequences.setAnimRange(g_sequence_ids[0], 2, 2);
+			kernel_seq_range(g_sequence_ids[0], 2, 2);
 	}
 
 	local._leftItemId = view;
@@ -249,12 +249,12 @@ static void room_320_parser() {
 		case 0:
 			player.commands_allowed = false;
 			handleButtons();
-			g_sequence_ids[18] = _scene->_sequences.startPingPongCycle(g_sprite_ids[18], local._flippedFl, 4, 2, 0, 0);
-			_scene->_sequences.setScale(g_sequence_ids[18], 60);
-			_scene->_sequences.setPosition(g_sequence_ids[18], Common::Point(local._posX, 170));
-			_scene->_sequences.setDepth(g_sequence_ids[18], 0);
-			_scene->_sequences.addSubEntry(g_sequence_ids[18], SEQUENCE_TRIGGER_LOOP, 0, 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[18], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[18] = kernel_seq_pingpong(g_sprite_ids[18], local._flippedFl, 4, 0, 0, 2);
+			kernel_seq_scale(g_sequence_ids[18], 60);
+			kernel_seq_loc(g_sequence_ids[18], local._posX, 170);
+			kernel_seq_depth(g_sequence_ids[18], 0);
+			kernel_seq_trigger(g_sequence_ids[18], SEQUENCE_TRIGGER_LOOP, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[18], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:

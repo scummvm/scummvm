@@ -35,9 +35,9 @@ static void room_303_init() {
 	g_sprite_ids[1] = kernel_load_series(kernel_name('b', 0), 0);
 	g_sprite_ids[2] = kernel_load_series(kernel_name('b', 1), 0);
 
-	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 10, 0, 50, 120);
-	_scene->_sequences.setDepth(g_sequence_ids[1], 1);
-	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 10, 0, 0, 0);
+	g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 10, 120, 50, 0);
+	kernel_seq_depth(g_sequence_ids[1], 1);
+	g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 10, 0, 0, 0);
 
 	player.walker_visible = false;
 	player.commands_allowed = false;

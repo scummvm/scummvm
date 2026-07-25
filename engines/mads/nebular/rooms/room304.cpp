@@ -52,8 +52,8 @@ static void room_304_init() {
 		g_sprite_ids[2] = kernel_load_series(kernel_name('a', 1), 0);
 		g_sprite_ids[3] = kernel_load_series(kernel_name('b', 0), 0);
 
-		g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 150, 0, 3, 0);
-		_scene->_sequences.setDepth(g_sequence_ids[3], 2);
+		g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 150, 0, 3, 0);
+		kernel_seq_depth(g_sequence_ids[3], 2);
 		pal_change_color(252, 45, 63, 45);
 		pal_change_color(253, 20, 45, 20);
 
@@ -66,9 +66,9 @@ static void room_304_init() {
 			player.y = 116;
 		}
 
-		g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 11, 0, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[2], -1, -1);
-		_scene->_sequences.addTimer(48, 70);
+		g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 11, 0, 0, 0);
+		kernel_seq_range(g_sequence_ids[2], -1, -1);
+		kernel_timing_trigger(48, 70);
 	}
 
 	section_3_music();
@@ -84,74 +84,74 @@ static void room_304_daemon() {
 		case 70:
 		{
 			player.walker_visible = false;
-			_scene->_sequences.remove(g_sequence_ids[2]);
-			g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 8, 1, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[2], 2, 4);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
+			kernel_seq_delete(g_sequence_ids[2]);
+			g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 8, 0, 0, 1);
+			kernel_seq_range(g_sequence_ids[2], 2, 4);
+			kernel_seq_depth(g_sequence_ids[2], 1);
 			if (global[kSexOfRex] == REX_MALE)
 				local._explosionSpriteId = g_sprite_ids[1];
 			else
 				local._explosionSpriteId = g_sprite_ids[4];
 
-			int sprIdx = _scene->_sequences.addSpriteCycle(local._explosionSpriteId, false, 8, 1, 0, 0);
-			_scene->_sequences.setAnimRange(sprIdx, -1, 4);
-			_scene->_sequences.setDepth(sprIdx, 1);
-			_scene->_sequences.addSubEntry(sprIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 71);
-			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
+			int sprIdx = kernel_seq_forward(local._explosionSpriteId, false, 8, 0, 0, 1);
+			kernel_seq_range(sprIdx, -1, 4);
+			kernel_seq_depth(sprIdx, 1);
+			kernel_seq_trigger(sprIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
 		}
 		break;
 
 		case 71:
 			kernel_message_purge();
 			kernel_message_add(quote_string(kernel.quotes, 0xEB), 0, 0, 0x1110, 60, 0, 34);
-			_scene->_sequences.addTimer(1, 72);
+			kernel_timing_trigger(1, 72);
 			break;
 
 		case 72:
 		{
 			g_engine->_soundManager->command(43, 0);
-			int sprIdx = _scene->_sequences.addSpriteCycle(local._explosionSpriteId, false, 8, 1, 0, 0);
-			_scene->_sequences.setAnimRange(sprIdx, 5, -2);
-			_scene->_sequences.setDepth(sprIdx, 1);
-			_scene->_sequences.addSubEntry(sprIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 73);
+			int sprIdx = kernel_seq_forward(local._explosionSpriteId, false, 8, 0, 0, 1);
+			kernel_seq_range(sprIdx, 5, -2);
+			kernel_seq_depth(sprIdx, 1);
+			kernel_seq_trigger(sprIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 73);
 			if (config_file.naughtiness == STORYMODE_NICE)
-				_scene->_sequences.addSubEntry(sprIdx, SEQUENCE_TRIGGER_SPRITE, 8, 78);
+				kernel_seq_trigger(sprIdx, SEQUENCE_TRIGGER_SPRITE, 8, 78);
 		}
 		break;
 
 		case 73:
 		{
-			int sprIdx = _scene->_sequences.addSpriteCycle(local._explosionSpriteId, false, 8, 0, 0, 0);
-			_scene->_sequences.setAnimRange(sprIdx, -2, -2);
-			_scene->_sequences.setDepth(sprIdx, 1);
+			int sprIdx = kernel_seq_forward(local._explosionSpriteId, false, 8, 0, 0, 0);
+			kernel_seq_range(sprIdx, -2, -2);
+			kernel_seq_depth(sprIdx, 1);
 		}
 		break;
 
 		case 74:
-			g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 8, 1, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[2], 5, -2);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
+			g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 8, 0, 0, 1);
+			kernel_seq_range(g_sequence_ids[2], 5, -2);
+			kernel_seq_depth(g_sequence_ids[2], 1);
+			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
 			break;
 
 		case 75:
-			g_sequence_ids[2] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[2], false, 8, 1, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[2], 2, -2);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 76);
+			g_sequence_ids[2] = kernel_seq_backward(g_sprite_ids[2], false, 8, 0, 0, 1);
+			kernel_seq_range(g_sequence_ids[2], 2, -2);
+			kernel_seq_depth(g_sequence_ids[2], 1);
+			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 76);
 			break;
 
 		case 76:
-			g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 8, 0, 0, 0);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
-			_scene->_sequences.setAnimRange(g_sequence_ids[2], 2, 2);
-			_scene->_sequences.addTimer(48, 77);
+			g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 8, 0, 0, 0);
+			kernel_seq_depth(g_sequence_ids[2], 1);
+			kernel_seq_range(g_sequence_ids[2], 2, 2);
+			kernel_timing_trigger(48, 77);
 			break;
 
 		case 77:
 			kernel_message_purge();
 			kernel_message_add(quote_string(kernel.quotes, 0xEC), 211, 45, 0xFDFC, 180, 0, 32);
-			_scene->_sequences.addTimer(120, 78);
+			kernel_timing_trigger(120, 78);
 			break;
 
 		case 78:

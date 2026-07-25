@@ -59,9 +59,9 @@ static void room_405_init() {
 	}
 
 	if (global[kArmoryDoorOpen])
-		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 1);
+		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 1);
 	else
-		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
+		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 1);
 
 	if (kernel.teleported_in) {
 		global[kArmoryDoorOpen] = false;
@@ -74,7 +74,7 @@ static void room_405_init() {
 
 static void room_405_daemon() {
 	if (kernel.trigger == 80) {
-		_scene->_sequences.addTimer(20, 81);
+		kernel_timing_trigger(20, 81);
 		player.clock = kernel.clock + player.frame_delay;
 		player.walker_visible = true;
 	}
@@ -87,26 +87,26 @@ static void room_405_daemon() {
 	if (kernel.trigger == 70) {
 		player.clock = kernel.clock + player.frame_delay;
 		player.walker_visible = true;
-		g_sequence_ids[1] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[1], false, 6, 1, 0, 0);
-		_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		g_sequence_ids[1] = kernel_seq_backward(g_sprite_ids[1], false, 6, 0, 0, 1);
+		kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 		g_engine->_soundManager->command(19, 0);
 	}
 
 	if (kernel.trigger == 71) {
-		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
+		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 1);
 		global[kArmoryDoorOpen] = false;
-		_scene->_sequences.remove(g_sequence_ids[2]);
+		kernel_seq_delete(g_sequence_ids[2]);
 		player.commands_allowed = true;
 	}
 
 	if (kernel.trigger == 75) {
 		player.clock = kernel.clock + player.frame_delay;
 		player.walker_visible = true;
-		_scene->_sequences.remove(g_sequence_ids[1]);
-		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 6, 1, 0, 0);
+		kernel_seq_delete(g_sequence_ids[1]);
+		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 6, 0, 0, 1);
 		global[kArmoryDoorOpen] = true;
 		player.commands_allowed = true;
-		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2],
+		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2],
 			false, 1);
 		g_engine->_soundManager->command(19, 0);
 	}
@@ -137,30 +137,30 @@ static void room_405_parser() {
 		player.commands_allowed = false;
 		player.walker_visible = false;
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
-		g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 7, 2, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 2);
-		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
+		g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 7, 0, 0, 2);
+		kernel_seq_range(g_sequence_ids[3], 1, 2);
+		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
 		Common::Point msgPos = Common::Point(player.x, player.y + 1);
-		_scene->_sequences.setPosition(g_sequence_ids[3], msgPos);
-		_scene->_sequences.setScale(g_sequence_ids[3], 87);
+		kernel_seq_loc(g_sequence_ids[3], msgPos.x, msgPos.y);
+		kernel_seq_scale(g_sequence_ids[3], 87);
 	} else if ((player_said_3(put, security_card, card_slot) || player_said_2(close, wide_door)) && global[kArmoryDoorOpen]) {
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 7, 2, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 2);
-		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
-		_scene->_sequences.setPosition(g_sequence_ids[3], Common::Point(player.x, player.y));
-		_scene->_sequences.setScale(g_sequence_ids[3], 87);
+		g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 7, 0, 0, 2);
+		kernel_seq_range(g_sequence_ids[3], 1, 2);
+		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+		kernel_seq_loc(g_sequence_ids[3], player.x, player.y);
+		kernel_seq_scale(g_sequence_ids[3], 87);
 	} else if (player_said_2(put, card_slot)) {
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 7, 2, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 2);
-		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
-		_scene->_sequences.setPosition(g_sequence_ids[3], Common::Point(player.x, player.y));
-		_scene->_sequences.setScale(g_sequence_ids[3], 87);
+		g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 7, 0, 0, 2);
+		kernel_seq_range(g_sequence_ids[3], 1, 2);
+		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
+		kernel_seq_loc(g_sequence_ids[3], player.x, player.y);
+		kernel_seq_scale(g_sequence_ids[3], 87);
 	} else if (player_said_2(look, cannon_balls))
 		text_show(40510);
 	else if (player_said_2(take, cannon_balls))

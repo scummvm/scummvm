@@ -67,10 +67,10 @@ static void room_211_init() {
 	}
 
 	if (g_engine->getRandomNumber(1, 8) == 1) {
-		g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 6, 0, 0, 0);
-		_scene->_sequences.setPosition(g_sequence_ids[2], Common::Point(202, 126));
-		_scene->_sequences.setDepth(g_sequence_ids[2], 8);
-		_scene->_sequences.setMotion(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, -200, 0);
+		g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[1], false, 6, 0, 0, 0);
+		kernel_seq_loc(g_sequence_ids[2], 202, 126);
+		kernel_seq_depth(g_sequence_ids[2], 8);
+		kernel_seq_motion(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, -200, 0);
 		_scene->_dynamicHotspots.add(words_slithering_snake, words_walkto, g_sequence_ids[2], Common::Rect(1, 1, 1 + 41, 1 + 10));
 	}
 

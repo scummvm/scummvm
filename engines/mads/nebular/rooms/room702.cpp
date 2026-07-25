@@ -81,10 +81,10 @@ static void room_702_parser() {
 		case 0:
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			g_sequence_ids[12] = _scene->_sequences.startPingPongCycle(g_sprite_ids[12], false, 5, 2, 0, 0);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[12]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[12] = kernel_seq_pingpong(g_sprite_ids[12], false, 5, 0, 0, 2);
+			kernel_seq_player(g_sequence_ids[12], false);
+			kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
+			kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 		case 1:
 			g_engine->_soundManager->command(0xF, 0);
@@ -94,7 +94,7 @@ static void room_702_parser() {
 			object_examine(OBJ_BONES, 70218, 0);
 			break;
 		case 2:
-			_scene->_sequences.updateTimeout(-1, g_sequence_ids[12]);
+			kernel_seq_timeout(g_sequence_ids[12], -1);
 			player.walker_visible = true;
 			player.commands_allowed = true;
 			break;

@@ -96,7 +96,7 @@ void teleporter_init() {
 	_meteorologistCurPlace = 0;
 
 	if (global[kMeteorologistWatch] != METEOROLOGIST_NORMAL)
-		_scene->_sequences.addTimer(30, 230);
+		kernel_timing_trigger(30, 230);
 
 	g_engine->_soundManager->command(36, 0);
 }
@@ -176,11 +176,11 @@ void teleporter_handle_key() {
 	case 0: {
 		player.commands_allowed = false;
 		Common::Point msgPos = teleporter_compute_location();
-		_handSequenceId = _scene->_sequences.startPingPongCycle(g_sprite_ids[4], false, 4, 2, 0, 0);
-		_scene->_sequences.setPosition(_handSequenceId, msgPos);
-		_scene->_sequences.setDepth(_handSequenceId, 2);
-		_scene->_sequences.addSubEntry(_handSequenceId, SEQUENCE_TRIGGER_LOOP, 0, 1);
-		_scene->_sequences.addSubEntry(_handSequenceId, SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+		_handSequenceId = kernel_seq_pingpong(g_sprite_ids[4], false, 4, 0, 0, 2);
+		kernel_seq_loc(_handSequenceId, msgPos.x, msgPos.y);
+		kernel_seq_depth(_handSequenceId, 2);
+		kernel_seq_trigger(_handSequenceId, SEQUENCE_TRIGGER_LOOP, 0, 1);
+		kernel_seq_trigger(_handSequenceId, SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 
 		if (global[kMeteorologistWatch] == METEOROLOGIST_NORMAL)
 			mouse_hide();
@@ -188,7 +188,7 @@ void teleporter_handle_key() {
 	}
 
 	case 1:
-		_scene->_sequences.addSubEntry(_handSequenceId, SEQUENCE_TRIGGER_SPRITE, 3, 3);
+		kernel_seq_trigger(_handSequenceId, SEQUENCE_TRIGGER_SPRITE, 3, 3);
 		if (_buttonTyped <= 9) {
 			if (_digitCount < 4) {
 				_curCode *= 10;
@@ -252,7 +252,7 @@ void teleporter_handle_key() {
 				}
 			}
 		} else if (global[kMeteorologistWatch] != METEOROLOGIST_NORMAL)
-			_scene->_sequences.addTimer(30, 230 + _meteorologistCurPlace);
+			kernel_timing_trigger(30, 230 + _meteorologistCurPlace);
 
 		break;
 

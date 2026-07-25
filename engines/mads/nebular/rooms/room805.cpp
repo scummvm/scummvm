@@ -40,14 +40,14 @@ static void room_805_init() {
 
 	if (global[kShieldModInstalled]) {
 		_scene->_hotspots.activate(OBJ_SHIELD_MODULATOR, false);
-		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 25);
+		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 25);
 		int idx = _scene->_dynamicHotspots.add(words_shield_modulator, words_remove, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), 0);
 	}
 
 	if (global[kTargetModInstalled]) {
 		_scene->_hotspots.activate(OBJ_TARGET_MODULE, false);
-		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 12);
+		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 12);
 		int idx = _scene->_dynamicHotspots.add(words_target_module, words_remove, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), 0);
 	}
@@ -60,7 +60,7 @@ static void room_805_daemon() {
 
 	if (kernel.trigger == 70) {
 		_scene->_hotspots.activate(OBJ_SHIELD_MODULATOR, false);
-		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 25);
+		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 25);
 		int idx = _scene->_dynamicHotspots.add(words_shield_modulator, words_remove, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), 0);
 		global[kShieldModInstalled] = true;
@@ -72,7 +72,7 @@ static void room_805_daemon() {
 
 	if (kernel.trigger == 80) {
 		_scene->_hotspots.activate(OBJ_TARGET_MODULE, false);
-		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 12);
+		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 12);
 		int idx = _scene->_dynamicHotspots.add(words_target_module, words_remove, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), 0);
 		global[kTargetModInstalled] = true;
@@ -106,29 +106,29 @@ static void room_805_parser() {
 		new_room = 804;
 	else if (player_said_2(install, shield_modulator) && player_has(OBJ_SHIELD_MODULATOR)) {
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
-		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 7, 1, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[1], -1, -2);
-		_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 7, 0, 0, 1);
+		kernel_seq_range(g_sequence_ids[1], -1, -2);
+		kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 		player.commands_allowed = false;
 	} else if (player_said_2(install, target_module) && player_has(OBJ_TARGET_MODULE)) {
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
-		g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 7, 1, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[2], -1, -2);
-		_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
+		g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 7, 0, 0, 1);
+		kernel_seq_range(g_sequence_ids[2], -1, -2);
+		kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
 		player.commands_allowed = false;
 	} else if (player_said_2(remove, shield_modulator) && global[kShieldModInstalled]) {
-		_scene->_sequences.remove(g_sequence_ids[1]);
+		kernel_seq_delete(g_sequence_ids[1]);
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
-		g_sequence_ids[1] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[1], false, 7, 1, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[1], -1, -2);
-		_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		g_sequence_ids[1] = kernel_seq_backward(g_sprite_ids[1], false, 7, 0, 0, 1);
+		kernel_seq_range(g_sequence_ids[1], -1, -2);
+		kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 		player.commands_allowed = false;
 	} else if (player_said_2(remove, target_module) && global[kTargetModInstalled]) {
-		_scene->_sequences.remove(g_sequence_ids[2]);
+		kernel_seq_delete(g_sequence_ids[2]);
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
-		g_sequence_ids[2] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[2], false, 7, 1, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[2], -1, -2);
-		_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
+		g_sequence_ids[2] = kernel_seq_backward(g_sprite_ids[2], false, 7, 0, 0, 1);
+		kernel_seq_range(g_sequence_ids[2], -1, -2);
+		kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
 		player.commands_allowed = false;
 	} else if (player_said_2(install, shield_modulator) && !player_has(OBJ_SHIELD_MODULATOR))
 		text_show(80511);

@@ -89,18 +89,18 @@ static void room_319_init() {
 	g_sprite_ids[4] = kernel_load_series(kernel_name('k', -1), 0);
 
 	if (!player_has(OBJ_SCALPEL)) {
-		g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);
-		_scene->_sequences.setDepth(g_sequence_ids[4], 1);
+		g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 1);
+		kernel_seq_depth(g_sequence_ids[4], 1);
 	}
 
-	g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 18, 0, 0, 300);
-	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 67, 0, 0, 377);
-	g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 173, 0, 0, 233);
-	_scene->_sequences.setDepth(g_sequence_ids[2], 14);
-	_scene->_sequences.setDepth(g_sequence_ids[3], 14);
+	g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 18, 300, 0, 0);
+	g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 67, 377, 0, 0);
+	g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 173, 233, 0, 0);
+	kernel_seq_depth(g_sequence_ids[2], 14);
+	kernel_seq_depth(g_sequence_ids[3], 14);
 
-	g_sequence_ids[0] = _scene->_sequences.startCycle(g_sprite_ids[0], false, 1);
-	g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
+	g_sequence_ids[0] = kernel_seq_stamp(g_sprite_ids[0], false, 1);
+	g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 1);
 
 	local._dialog1.setup(0x43, 0x165, 0x166, 0x167, 0x168, 0x169, 0x16A, 0);
 	local._dialog2.setup(0x44, 0x171, 0x172, 0x173, 0x174, 0x175, 0x176, 0);
@@ -260,14 +260,14 @@ static void room_319_daemon() {
 				}
 
 				if (!local._animFrame) {
-					_scene->_sequences.remove(g_sequence_ids[0]);
-					_scene->_sequences.remove(g_sequence_ids[1]);
+					kernel_seq_delete(g_sequence_ids[0]);
+					kernel_seq_delete(g_sequence_ids[1]);
 
 					for (int i = 0; i <= 1; i++) {
-						g_sequence_ids[i] = _scene->_sequences.addSpriteCycle(g_sprite_ids[i], false, 8, 1, 0, 0);
-						_scene->_sequences.setAnimRange(g_sequence_ids[i], 1, 7);
+						g_sequence_ids[i] = kernel_seq_forward(g_sprite_ids[i], false, 8, 0, 0, 1);
+						kernel_seq_range(g_sequence_ids[i], 1, 7);
 					}
-					_scene->_sequences.addSubEntry(g_sequence_ids[0], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
+					kernel_seq_trigger(g_sequence_ids[0], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
 				}
 			}
 		}
@@ -317,18 +317,18 @@ static void room_319_daemon() {
 
 		for (int i = 0; i <= 1; i++) {
 			int oldIdx = g_sequence_ids[i];
-			_scene->_sequences.remove(g_sequence_ids[i]);
-			g_sequence_ids[i] = _scene->_sequences.addSpriteCycle(g_sprite_ids[i], false, 8, 1, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[i], 8, 13);
-			_scene->_sequences.updateTimeout(g_sequence_ids[i], oldIdx);
+			kernel_seq_delete(g_sequence_ids[i]);
+			g_sequence_ids[i] = kernel_seq_forward(g_sprite_ids[i], false, 8, 0, 0, 1);
+			kernel_seq_range(g_sequence_ids[i], 8, 13);
+			kernel_seq_timeout(oldIdx, g_sequence_ids[i]);
 		}
-		_scene->_sequences.addSubEntry(g_sequence_ids[0], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
+		kernel_seq_trigger(g_sequence_ids[0], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
 
 		// WORKAROUND: This fixes the game sometimes going into an endless waiting
 		// loop even after the doctor has finished hitting Rex. Note sure if it's due
 		// to a bug in room script or in the engine, but this at least fixes it
-		int seqIndex = _scene->_sequences.findByTrigger(2);
-		_scene->_sequences[seqIndex]._doneFlag = false;
+		int seqIndex = kernel_seq_find_by_trigger(2);
+		sequence_list[seqIndex].expired = false;
 		break;
 	}
 
@@ -344,19 +344,19 @@ static void room_319_daemon() {
 	case 73:
 		for (int i = 0; i <= 1; i++) {
 			int oldIdx = g_sequence_ids[i];
-			_scene->_sequences.remove(g_sequence_ids[i]);
-			g_sequence_ids[i] = _scene->_sequences.addSpriteCycle(g_sprite_ids[i], false, 8, 0, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[i], 6, 7);
-			_scene->_sequences.updateTimeout(g_sequence_ids[i], oldIdx);
+			kernel_seq_delete(g_sequence_ids[i]);
+			g_sequence_ids[i] = kernel_seq_forward(g_sprite_ids[i], false, 8, 0, 0, 0);
+			kernel_seq_range(g_sequence_ids[i], 6, 7);
+			kernel_seq_timeout(oldIdx, g_sequence_ids[i]);
 		}
 		break;
 
 	case 74:
 		for (int i = 0; i <= 1; i++) {
 			int oldIdx = g_sequence_ids[i];
-			_scene->_sequences.remove(g_sequence_ids[i]);
-			g_sequence_ids[i] = _scene->_sequences.startCycle(g_sprite_ids[i], false, 1);
-			_scene->_sequences.updateTimeout(g_sequence_ids[i], oldIdx);
+			kernel_seq_delete(g_sequence_ids[i]);
+			g_sequence_ids[i] = kernel_seq_stamp(g_sprite_ids[i], false, 1);
+			kernel_seq_timeout(oldIdx, g_sequence_ids[i]);
 		}
 		break;
 
@@ -379,7 +379,7 @@ static void room_319_parser() {
 			}
 
 			if (!local._slacheTalkingFl) {
-				_scene->_sequences.addTimer(4, 2);
+				kernel_timing_trigger(4, 2);
 			} else {
 				handleSlacheDialogs(0x16B, 2, INDEFINITE_TIMEOUT);
 				local._dialog2.start();
@@ -396,7 +396,7 @@ static void room_319_parser() {
 			}
 
 			if (!local._slacheTalkingFl) {
-				_scene->_sequences.addTimer(4, 2);
+				kernel_timing_trigger(4, 2);
 			} else {
 				handleSlacheDialogs(0x177, 2, INDEFINITE_TIMEOUT);
 				local._dialog3.start();
@@ -414,13 +414,13 @@ static void room_319_parser() {
 			}
 
 			if (!local._slacheTalkingFl) {
-				_scene->_sequences.addTimer(4, 2);
+				kernel_timing_trigger(4, 2);
 			} else {
 				if (kernel.trigger == 2)
 					handleSlacheDialogs(0x184, 2, 180);
 
 				if (!local._slacheReady) {
-					_scene->_sequences.addTimer(120, 3);
+					kernel_timing_trigger(120, 3);
 				} else {
 					global[kRexHasMetSlache] = true;
 					new_room = 318;
@@ -452,7 +452,7 @@ static void room_319_parser() {
 				}
 
 				if (local._nextAction1 != local._nextAction2) {
-					_scene->_sequences.addTimer(4, 2);
+					kernel_timing_trigger(4, 2);
 				} else {
 					Dialog *curDialog;
 					int nextDocQuote;
@@ -484,7 +484,7 @@ static void room_319_parser() {
 				}
 
 				if (local._nextAction1 != local._nextAction2) {
-					_scene->_sequences.addTimer(4, 2);
+					kernel_timing_trigger(4, 2);
 				} else {
 					Dialog *curDialog;
 					int nextDocQuote;

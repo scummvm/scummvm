@@ -66,25 +66,25 @@ static void room_202_init() {
 	g_sprite_ids[9] = kernel_load_series(kernel_name('a', 1), 0);
 	g_sprite_ids[11] = kernel_load_series(kernel_name('a', 2), 0);
 
-	g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 6, 0, 0, 0);
-	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 6, 0, 0, 0);
-	_scene->_sequences.setPosition(g_sequence_ids[2], Common::Point(149, 113));
-	_scene->_sequences.setDepth(g_sequence_ids[2], 10);
+	g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 6, 0, 0, 0);
+	g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 6, 0, 0, 0);
+	kernel_seq_loc(g_sequence_ids[2], 149, 113);
+	kernel_seq_depth(g_sequence_ids[2], 10);
 	int idx = _scene->_dynamicHotspots.add(words_skull, words_walkto, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(153, 97), FACING_SOUTH);
 
 	if (!(global[kBone202Status] & 1)) {
-		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 6, 0, 0, 0);
-		_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(130, 108));
-		_scene->_sequences.setDepth(g_sequence_ids[1], 10);
+		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 6, 0, 0, 0);
+		kernel_seq_loc(g_sequence_ids[1], 130, 108);
+		kernel_seq_depth(g_sequence_ids[1], 10);
 		idx = _scene->_dynamicHotspots.add(words_bone, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(132, 97), FACING_SOUTH);
 	}
 
 	if (!(global[kBone202Status] & 2)) {
-		g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(g_sprite_ids[6], false, 6, 0, 0, 0);
-		_scene->_sequences.setPosition(g_sequence_ids[6], Common::Point(166, 110));
-		_scene->_sequences.setDepth(g_sequence_ids[6], 10);
+		g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 6, 0, 0, 0);
+		kernel_seq_loc(g_sequence_ids[6], 166, 110);
+		kernel_seq_depth(g_sequence_ids[6], 10);
 		idx = _scene->_dynamicHotspots.add(words_bone, words_walkto, g_sequence_ids[6], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(165, 99), FACING_SOUTH);
 	}
@@ -103,8 +103,8 @@ static void room_202_init() {
 	}
 
 	if (global[kLadderBroken]) {
-		g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 6, 0, 0, 0);
-		_scene->_sequences.setDepth(g_sequence_ids[5], 6);
+		g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 6, 0, 0, 0);
+		kernel_seq_depth(g_sequence_ids[5], 6);
 		_scene->_hotspots.activate(words_ladder, false);
 		idx = _scene->_dynamicHotspots.add(words_broken_ladder, words_walkto, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(246, 124), FACING_NORTH);
@@ -115,7 +115,7 @@ static void room_202_init() {
 
 	if (previous_room == RETURNING_FROM_DIALOG) {
 		if (local._waitingMeteoFl) {
-			g_sequence_ids[9] = _scene->_sequences.startCycle(g_sprite_ids[9], false, 1);
+			g_sequence_ids[9] = kernel_seq_stamp(g_sprite_ids[9], false, 1);
 			player.walker_visible = false;
 		}
 	} else {
@@ -134,19 +134,19 @@ static void room_202_init() {
 		local._ladderTopFl = (global[kMeteorologistWatch] == METEOROLOGIST_TOWER);
 
 		if (local._ladderTopFl) {
-			g_sequence_ids[10] = _scene->_sequences.startCycle(g_sprite_ids[9], true, 8);
-			_scene->_sequences.setDepth(g_sequence_ids[10], 1);
+			g_sequence_ids[10] = kernel_seq_stamp(g_sprite_ids[9], true, 8);
+			kernel_seq_depth(g_sequence_ids[10], 1);
 
-			_scene->_sequences.setPosition(g_sequence_ids[10], Common::Point(247, 82));
+			kernel_seq_loc(g_sequence_ids[10], 247, 82);
 			player.x = 246;
 			player.y = 124;
 			player.facing = FACING_NORTH;
 			global[kTeleporterUnderstood] = true;
 		} else {
-			g_sequence_ids[10] = _scene->_sequences.startCycle(g_sprite_ids[9], false, 6);
-			_scene->_sequences.setDepth(g_sequence_ids[10], 1);
+			g_sequence_ids[10] = kernel_seq_stamp(g_sprite_ids[9], false, 6);
+			kernel_seq_depth(g_sequence_ids[10], 1);
 
-			_scene->_sequences.setPosition(g_sequence_ids[10], Common::Point(172, 123));
+			kernel_seq_loc(g_sequence_ids[10], 172, 123);
 			player.x = 171;
 			player.y = 122;
 			player.facing = FACING_NORTH;
@@ -157,9 +157,9 @@ static void room_202_init() {
 	} else {
 		if (local._ladderTopFl) {
 			player.walker_visible = false;
-			_scene->_sequences.startCycle(g_sequence_ids[9], true, 1);
-			_scene->_sequences.setDepth(g_sequence_ids[9], 1);
-			_scene->_sequences.setPosition(g_sequence_ids[9], Common::Point(247, 82));
+			kernel_seq_stamp(g_sequence_ids[9], true, 1);
+			kernel_seq_depth(g_sequence_ids[9], 1);
+			kernel_seq_loc(g_sequence_ids[9], 247, 82);
 			player.x = 246;
 			player.y = 124;
 			player.facing = FACING_NORTH;
@@ -263,10 +263,10 @@ static void room_202_daemon() {
 				player2.words[1] = words_binoculars;
 				player2.words[2] = words_strange_device;
 				kernel.trigger_setup_mode = SEQUENCE_TRIGGER_PARSER;
-				_scene->_sequences.addTimer(2 * 60, 2);
+				kernel_timing_trigger(2 * 60, 2);
 				local._meteorologistSpecial = true;
 			} else if (global[kMeteorologistWatch] == METEOROLOGIST_TOWER) {
-				_scene->_sequences.addTimer(2 * 60, 90);
+				kernel_timing_trigger(2 * 60, 90);
 			}
 		}
 
@@ -276,24 +276,24 @@ static void room_202_daemon() {
 	switch (kernel.trigger) {
 	case 90:
 		g_engine->_soundManager->command(41, 0);
-		_scene->_sequences.remove(g_sequence_ids[10]);
-		g_sequence_ids[9] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[9], true, 6, 1, 0, 0);
-		_scene->_sequences.setPosition(g_sequence_ids[9], Common::Point(247, 82));
-		_scene->_sequences.setDepth(g_sequence_ids[9], 1);
-		_scene->_sequences.addSubEntry(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 91);
+		kernel_seq_delete(g_sequence_ids[10]);
+		g_sequence_ids[9] = kernel_seq_backward(g_sprite_ids[9], true, 6, 0, 0, 1);
+		kernel_seq_loc(g_sequence_ids[9], 247, 82);
+		kernel_seq_depth(g_sequence_ids[9], 1);
+		kernel_seq_trigger(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 91);
 		break;
 	case 91:
-		g_sequence_ids[9] = _scene->_sequences.startCycle(g_sprite_ids[9], true, 1);
-		_scene->_sequences.setPosition(g_sequence_ids[9], Common::Point(247, 82));
-		_scene->_sequences.setDepth(g_sequence_ids[9], 1);
-		_scene->_sequences.addTimer(60, 92);
+		g_sequence_ids[9] = kernel_seq_stamp(g_sprite_ids[9], true, 1);
+		kernel_seq_loc(g_sequence_ids[9], 247, 82);
+		kernel_seq_depth(g_sequence_ids[9], 1);
+		kernel_timing_trigger(60, 92);
 		break;
 	case 92:
 	{
-		_scene->_sequences.remove(g_sequence_ids[9]);
-		g_sequence_ids[11] = _scene->_sequences.addSpriteCycle(g_sprite_ids[11], false, 6, 1, 0, 0);
-		_scene->_sequences.setDepth(g_sequence_ids[11], 1);
-		_scene->_sequences.addSubEntry(g_sequence_ids[11], SEQUENCE_TRIGGER_EXPIRE, 0, 93);
+		kernel_seq_delete(g_sequence_ids[9]);
+		g_sequence_ids[11] = kernel_seq_forward(g_sprite_ids[11], false, 6, 0, 0, 1);
+		kernel_seq_depth(g_sequence_ids[11], 1);
+		kernel_seq_trigger(g_sequence_ids[11], SEQUENCE_TRIGGER_EXPIRE, 0, 93);
 		kernel_message_purge();
 		int msgIndex = kernel_message_add(quote_string(kernel.quotes, 98), 0, -65, 0x1110, 60, 0, 32);
 		kernel_message_attach(msgIndex, g_sequence_ids[11]);
@@ -302,12 +302,12 @@ static void room_202_daemon() {
 	case 93:
 	{
 		global[kLadderBroken] = false;
-		g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 6, 0, 0, 0);
+		g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 6, 0, 0, 0);
 		_scene->_hotspots.activate(words_ladder, false);
 		int idx = _scene->_dynamicHotspots.add(words_broken_ladder, words_walkto, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(246, 124), FACING_NORTH);
-		_scene->_sequences.updateTimeout(g_sequence_ids[11], g_sequence_ids[5]);
-		_scene->_sequences.updateTimeout(-1, g_sequence_ids[11]);
+		kernel_seq_timeout(g_sequence_ids[5], g_sequence_ids[11]);
+		kernel_seq_timeout(g_sequence_ids[11], -1);
 		player.commands_allowed = true;
 		player.walker_visible = true;
 		local._ladderTopFl = false;
@@ -434,12 +434,12 @@ static void room_202_pre_parser() {
 			g_engine->_soundManager->command(29, 0);
 			player.ready_to_walk = false;
 			player.commands_allowed = false;
-			_scene->_sequences.remove(g_sequence_ids[9]);
-			g_sequence_ids[8] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[8], false, 6, 1, 0, 0);
-			_scene->_sequences.setDepth(g_sequence_ids[8], 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_delete(g_sequence_ids[9]);
+			g_sequence_ids[8] = kernel_seq_backward(g_sprite_ids[8], false, 6, 0, 0, 1);
+			kernel_seq_depth(g_sequence_ids[8], 1);
+			kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 		} else if (kernel.trigger == 1) {
-			_scene->_sequences.updateTimeout(-1, g_sequence_ids[8]);
+			kernel_seq_timeout(g_sequence_ids[8], -1);
 			_scene->_dynamicHotspots.remove(local._ladderHotspotId);
 			player.walker_visible = true;
 			player.ready_to_walk = true;
@@ -486,18 +486,18 @@ static void room_202_parser() {
 			} else {
 				player.commands_allowed = false;
 				player.walker_visible = false;
-				g_sequence_ids[7] = _scene->_sequences.startPingPongCycle(g_sprite_ids[7], false, 3, 2, 0, 0);
-				_scene->_sequences.setMsgLayout(g_sequence_ids[7]);
-				_scene->_sequences.addSubEntry(g_sequence_ids[7], SEQUENCE_TRIGGER_SPRITE, 6, 1);
-				_scene->_sequences.addSubEntry(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				g_sequence_ids[7] = kernel_seq_pingpong(g_sprite_ids[7], false, 3, 0, 0, 2);
+				kernel_seq_player(g_sequence_ids[7], false);
+				kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_SPRITE, 6, 1);
+				kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			}
 			break;
 		case 1:
 			if (Common::Point(player.x, player.y) == Common::Point(132, 97)) {
-				_scene->_sequences.remove(g_sequence_ids[1]);
+				kernel_seq_delete(g_sequence_ids[1]);
 				global[kBone202Status] |= BONE_202_LEFT_GONE;
 			} else {
-				_scene->_sequences.remove(g_sequence_ids[6]);
+				kernel_seq_delete(g_sequence_ids[6]);
 				global[kBone202Status] |= BONE_202_RIGHT_GONE;
 			}
 			break;
@@ -529,16 +529,16 @@ static void room_202_parser() {
 
 			local._ladderHotspotId = _scene->_dynamicHotspots.add(words_ladder, words_climb_down, -1, Common::Rect(241, 68, 241 + 12, 68 + 54));
 			_scene->_dynamicHotspots.setPosition(local._ladderHotspotId, Common::Point(246, 124), FACING_NORTH);
-			g_sequence_ids[8] = _scene->_sequences.addSpriteCycle(g_sprite_ids[8], false, 6, 1, 0, 0);
-			_scene->_sequences.setDepth(g_sequence_ids[8], 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			g_sequence_ids[8] = kernel_seq_forward(g_sprite_ids[8], false, 6, 0, 0, 1);
+			kernel_seq_depth(g_sequence_ids[8], 1);
+			kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 		case 1:
 		{
-			g_sequence_ids[9] = _scene->_sequences.startCycle(g_sprite_ids[9], true, 1);
-			_scene->_sequences.setPosition(g_sequence_ids[9], Common::Point(247, 82));
-			_scene->_sequences.setDepth(g_sequence_ids[9], 1);
-			_scene->_sequences.updateTimeout(g_sequence_ids[8], g_sequence_ids[9]);
+			g_sequence_ids[9] = kernel_seq_stamp(g_sprite_ids[9], true, 1);
+			kernel_seq_loc(g_sequence_ids[9], 247, 82);
+			kernel_seq_depth(g_sequence_ids[9], 1);
+			kernel_seq_timeout(g_sequence_ids[9], g_sequence_ids[8]);
 			local._ladderTopFl = true;
 			player.commands_allowed = true;
 			int msgIndex = kernel_message_add(quote_string(kernel.quotes, 97), 248, 15, 0x1110, 60, 0, 32);
@@ -556,37 +556,37 @@ static void room_202_parser() {
 				local._toTeleportFl = true;
 				player.commands_allowed = false;
 				player.walker_visible = false;
-				g_sequence_ids[10] = _scene->_sequences.addSpriteCycle(g_sprite_ids[9], false, 6, 1, 0, 0);
-				_scene->_sequences.setAnimRange(g_sequence_ids[10], 1, 6);
-				_scene->_sequences.setPosition(g_sequence_ids[10], Common::Point(172, 123));
-				_scene->_sequences.setDepth(g_sequence_ids[10], 1);
-				_scene->_sequences.updateTimeout(-1, g_sequence_ids[10]);
-				_scene->_sequences.addSubEntry(g_sequence_ids[10], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				g_sequence_ids[10] = kernel_seq_forward(g_sprite_ids[9], false, 6, 0, 0, 1);
+				kernel_seq_range(g_sequence_ids[10], 1, 6);
+				kernel_seq_loc(g_sequence_ids[10], 172, 123);
+				kernel_seq_depth(g_sequence_ids[10], 1);
+				kernel_seq_timeout(g_sequence_ids[10], -1);
+				kernel_seq_trigger(g_sequence_ids[10], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				break;
 			case 1:
-				g_sequence_ids[10] = _scene->_sequences.startCycle(g_sprite_ids[9], false, 6);
-				_scene->_sequences.setDepth(g_sequence_ids[10], 1);
-				_scene->_sequences.setPosition(g_sequence_ids[10], Common::Point(172, 123));
+				g_sequence_ids[10] = kernel_seq_stamp(g_sprite_ids[9], false, 6);
+				kernel_seq_depth(g_sequence_ids[10], 1);
+				kernel_seq_loc(g_sequence_ids[10], 172, 123);
 				if ((kernel_anim[0].anim != nullptr)) {
 					local._waitingMeteoFl = true;
 					global[kMeteorologistWatch] = METEOROLOGIST_GROUND;
 				} else {
-					_scene->_sequences.addTimer(120, 2);
+					kernel_timing_trigger(120, 2);
 				}
 				break;
 			case 2:
 				if ((kernel_anim[0].anim == nullptr) && !local._meteorologistSpecial) {
 					text_show(20222);
 				}
-				_scene->_sequences.remove(g_sequence_ids[10]);
-				g_sequence_ids[10] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[9], false, 6, 1, 0, 0);
-				_scene->_sequences.setDepth(g_sequence_ids[10], 1);
-				_scene->_sequences.setAnimRange(g_sequence_ids[10], 1, 6);
-				_scene->_sequences.setPosition(g_sequence_ids[10], Common::Point(172, 123));
-				_scene->_sequences.addSubEntry(g_sequence_ids[10], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+				kernel_seq_delete(g_sequence_ids[10]);
+				g_sequence_ids[10] = kernel_seq_backward(g_sprite_ids[9], false, 6, 0, 0, 1);
+				kernel_seq_depth(g_sequence_ids[10], 1);
+				kernel_seq_range(g_sequence_ids[10], 1, 6);
+				kernel_seq_loc(g_sequence_ids[10], 172, 123);
+				kernel_seq_trigger(g_sequence_ids[10], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 				break;
 			case 3:
-				_scene->_sequences.updateTimeout(-1, g_sequence_ids[10]);
+				kernel_seq_timeout(g_sequence_ids[10], -1);
 				player.commands_allowed = true;
 				player.walker_visible = true;
 				break;
@@ -599,19 +599,19 @@ static void room_202_parser() {
 			case 0:
 				local._toTeleportFl = true;
 				player.commands_allowed = false;
-				_scene->_sequences.remove(g_sequence_ids[9]);
-				g_sequence_ids[9] = _scene->_sequences.addSpriteCycle(g_sprite_ids[9], true, 6, 1, 0, 0);
-				_scene->_sequences.setPosition(g_sequence_ids[9], Common::Point(247, 82));
-				_scene->_sequences.setDepth(g_sequence_ids[9], 1);
-				_scene->_sequences.addSubEntry(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				kernel_seq_delete(g_sequence_ids[9]);
+				g_sequence_ids[9] = kernel_seq_forward(g_sprite_ids[9], true, 6, 0, 0, 1);
+				kernel_seq_loc(g_sequence_ids[9], 247, 82);
+				kernel_seq_depth(g_sequence_ids[9], 1);
+				kernel_seq_trigger(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				break;
 			case 1:
-				g_sequence_ids[10] = _scene->_sequences.startCycle(g_sprite_ids[9], true, -2);
-				_scene->_sequences.setPosition(g_sequence_ids[10], Common::Point(247, 82));
-				_scene->_sequences.setDepth(g_sequence_ids[10], 1);
+				g_sequence_ids[10] = kernel_seq_stamp(g_sprite_ids[9], true, -2);
+				kernel_seq_loc(g_sequence_ids[10], 247, 82);
+				kernel_seq_depth(g_sequence_ids[10], 1);
 				if ((kernel_anim[0].anim != nullptr)) {
 					if (kernel_anim[0].frame > 200) {
-						_scene->_sequences.addTimer(120, 2);
+						kernel_timing_trigger(120, 2);
 					} else {
 						local._waitingMeteoFl = true;
 						global[kMeteorologistWatch] = METEOROLOGIST_GONE;
@@ -625,23 +625,23 @@ static void room_202_parser() {
 						}
 					}
 				} else {
-					_scene->_sequences.addTimer(120, 2);
+					kernel_timing_trigger(120, 2);
 				}
 				break;
 			case 2:
 				if ((kernel_anim[0].anim == nullptr))
 					text_show(20222);
 				local._meteorologistSpecial = false;
-				_scene->_sequences.remove(g_sequence_ids[10]);
-				g_sequence_ids[9] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[9], false, 6, 1, 0, 0);
-				_scene->_sequences.setPosition(g_sequence_ids[9], Common::Point(247, 82));
-				_scene->_sequences.setDepth(g_sequence_ids[9], 1);
-				_scene->_sequences.addSubEntry(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+				kernel_seq_delete(g_sequence_ids[10]);
+				g_sequence_ids[9] = kernel_seq_backward(g_sprite_ids[9], false, 6, 0, 0, 1);
+				kernel_seq_loc(g_sequence_ids[9], 247, 82);
+				kernel_seq_depth(g_sequence_ids[9], 1);
+				kernel_seq_trigger(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 				break;
 			case 3:
-				g_sequence_ids[9] = _scene->_sequences.startCycle(g_sprite_ids[9], true, 1);
-				_scene->_sequences.setPosition(g_sequence_ids[9], Common::Point(247, 82));
-				_scene->_sequences.setDepth(g_sequence_ids[9], 1);
+				g_sequence_ids[9] = kernel_seq_stamp(g_sprite_ids[9], true, 1);
+				kernel_seq_loc(g_sequence_ids[9], 247, 82);
+				kernel_seq_depth(g_sequence_ids[9], 1);
 				player.commands_allowed = true;
 				break;
 			default:

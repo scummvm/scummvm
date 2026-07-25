@@ -51,7 +51,7 @@ static void room_810_init() {
 static void room_810_daemon() {
 	if ((kernel_anim[0].anim != nullptr) && (kernel_anim[0].frame == 200)
 		&& local._moveAllowed) {
-		_scene->_sequences.addTimer(100, 70);
+		kernel_timing_trigger(100, 70);
 		local._moveAllowed = false;
 	}
 

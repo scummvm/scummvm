@@ -43,8 +43,8 @@ static Scratch local;
 
 static void updateTrap() {
 	if (global[kRhotundaStatus] == 1) {
-		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 8, 0, 0, 24);
-		_scene->_sequences.setDepth(g_sequence_ids[1], 5);
+		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 8, 24, 0, 0);
+		kernel_seq_depth(g_sequence_ids[1], 5);
 		int idx = _scene->_dynamicHotspots.add(words_huge_legs, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(100, 146), FACING_NORTH);
 		_scene->_hotspots.activate(414, false);
@@ -54,16 +54,16 @@ static void updateTrap() {
 	switch (global[kLeavesStatus]) {
 	case LEAVES_ON_GROUND:
 	{
-		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 1);
-		_scene->_sequences.setDepth(g_sequence_ids[2], 15);
+		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 1);
+		kernel_seq_depth(g_sequence_ids[2], 15);
 		int idx = _scene->_dynamicHotspots.add(words_pile_of_leaves, words_walkto, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(60, 152), FACING_NORTH);
 	}
 	break;
 	case LEAVES_ON_TRAP:
 	{
-		_scene->_sequences.setDepth(g_sequence_ids[3], 15);
-		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
+		kernel_seq_depth(g_sequence_ids[3], 15);
+		g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, 1);
 		_scene->_hotspots.activate(words_deep_pit, false);
 		int idx = _scene->_dynamicHotspots.add(words_leaf_covered_pit, words_walkto, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(100, 146), FACING_NORTH);
@@ -126,7 +126,7 @@ static void room_208_daemon() {
 		local._rhotundaTime = kernel_anim[0].frame;
 
 		if (local._rhotundaTime == 125)
-			_scene->_sequences.remove(g_sequence_ids[4]);
+			kernel_seq_delete(g_sequence_ids[4]);
 	}
 
 	if (!local._rhotundaTurnFl)
@@ -146,10 +146,10 @@ static void room_208_daemon() {
 		local._rhotundaTime = 0;
 		break;
 	case 81:
-		_scene->_sequences.remove(g_sprite_ids[15]);
+		kernel_seq_delete(g_sprite_ids[15]);
 		global[kRhotundaStatus] = 1;
 		updateTrap();
-		_scene->_sequences.addTimer(90, 82);
+		kernel_timing_trigger(90, 82);
 		break;
 	case 82:
 		player.commands_allowed = true;
@@ -177,8 +177,8 @@ static void subAction(int mode) {
 	{
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 6, 1, 0, 0);
-		_scene->_sequences.setMsgLayout(g_sequence_ids[5]);
+		g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 6, 0, 0, 1);
+		kernel_seq_player(g_sequence_ids[5], false);
 
 		int endTrigger;
 		if ((mode == 1) || (mode == 2))
@@ -186,17 +186,17 @@ static void subAction(int mode) {
 		else
 			endTrigger = 2;
 
-		_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, endTrigger);
+		kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, endTrigger);
 	}
 	break;
 	case 1:
 	{
 		int oldSeq = g_sequence_ids[5];
-		g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 12, 3, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[5], 3, 4);
-		_scene->_sequences.setMsgLayout(g_sequence_ids[5]);
-		_scene->_sequences.updateTimeout(g_sequence_ids[5], oldSeq);
-		_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+		g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 12, 0, 0, 3);
+		kernel_seq_range(g_sequence_ids[5], 3, 4);
+		kernel_seq_player(g_sequence_ids[5], false);
+		kernel_seq_timeout(oldSeq, g_sequence_ids[5]);
+		kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 		g_engine->_soundManager->command(20, 0);
 	}
 	break;
@@ -206,7 +206,7 @@ static void subAction(int mode) {
 		switch (mode) {
 		case 1:
 			inter_give_to_player(OBJ_BIG_LEAVES);
-			_scene->_sequences.remove(g_sequence_ids[2]);
+			kernel_seq_delete(g_sequence_ids[2]);
 			global[kLeavesStatus] = 1;
 			break;
 
@@ -217,8 +217,8 @@ static void subAction(int mode) {
 			break;
 
 		case 3:
-			_scene->_sequences.remove(g_sequence_ids[3]);
-			g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);
+			kernel_seq_delete(g_sequence_ids[3]);
+			g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 1);
 			inter_take_from_player(OBJ_TWINKIFRUIT, 1);
 			g_engine->_soundManager->command(34, 0);
 			break;
@@ -238,11 +238,11 @@ static void subAction(int mode) {
 		}
 
 		int oldVal = g_sequence_ids[5];
-		g_sequence_ids[5] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[5], false, 6, 1, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[5], 1, 3);
-		_scene->_sequences.setMsgLayout(g_sequence_ids[5]);
-		_scene->_sequences.updateTimeout(g_sequence_ids[5], oldVal);
-		_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+		g_sequence_ids[5] = kernel_seq_backward(g_sprite_ids[5], false, 6, 0, 0, 1);
+		kernel_seq_range(g_sequence_ids[5], 1, 3);
+		kernel_seq_player(g_sequence_ids[5], false);
+		kernel_seq_timeout(oldVal, g_sequence_ids[5]);
+		kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 	}
 	break;
 

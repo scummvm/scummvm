@@ -114,11 +114,11 @@ void handle_forcefield(Forcefield *force, int16 *sprites) {
 		}
 
 		if (id >= 0) {
-			force->_seqId[id] = _scene->_sequences.addSpriteCycle(sprites[spriteId], mirror, 2, 0, 0, 0);
-			_scene->_sequences.setDepth(force->_seqId[id], 8);
-			_scene->_sequences.setPosition(force->_seqId[id], Common::Point(posX, posY));
-			_scene->_sequences.setMotion(force->_seqId[id], 2, speedX, speedY);
-			_scene->_sequences.addSubEntry(force->_seqId[id], SEQUENCE_TRIGGER_EXPIRE, 0, 150 + id);
+			force->_seqId[id] = kernel_seq_forward(sprites[spriteId], mirror, 2, 0, 0, 0);
+			kernel_seq_depth(force->_seqId[id], 8);
+			kernel_seq_loc(force->_seqId[id], posX, posY);
+			kernel_seq_motion(force->_seqId[id], 2, speedX, speedY);
+			kernel_seq_trigger(force->_seqId[id], SEQUENCE_TRIGGER_EXPIRE, 0, 150 + id);
 			if (spriteId == 2)
 				force->_horizontal++;
 			else

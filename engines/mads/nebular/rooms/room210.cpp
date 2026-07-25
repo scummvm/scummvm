@@ -117,16 +117,16 @@ static void setDialogNode(int node) {
 			player.commands_allowed = false;
 			if (local._twinklesTalking) {
 				handleTwinklesSpeech(0xB9, -1, 0);
-				_scene->_sequences.addTimer(180, 2);
+				kernel_timing_trigger(180, 2);
 			} else {
-				_scene->_sequences.addTimer(6, 1);
+				kernel_timing_trigger(6, 1);
 			}
 			break;
 
 		case 2:
 			local._nextHandsPlace = 0;
 			handleTwinklesSpeech(186, 0, 0);
-			_scene->_sequences.addTimer(180, 3);
+			kernel_timing_trigger(180, 3);
 			break;
 
 		default:
@@ -146,20 +146,20 @@ static void setDialogNode(int node) {
 			player.commands_allowed = false;
 			if (local._twinklesTalking) {
 				handleTwinklesSpeech(0xBE, -2, 0);
-				_scene->_sequences.addTimer(180, 2);
+				kernel_timing_trigger(180, 2);
 			} else {
-				_scene->_sequences.addTimer(6, 1);
+				kernel_timing_trigger(6, 1);
 			}
 			break;
 		case 2:
 			local._nextHandsPlace = 2;
 			handleTwinklesSpeech(191, -1, 0);
-			_scene->_sequences.addTimer(180, 3);
+			kernel_timing_trigger(180, 3);
 			break;
 		case 3:
 			local._nextHandsPlace = 0;
 			handleTwinklesSpeech(192, 0, 0);
-			_scene->_sequences.addTimer(180, 4);
+			kernel_timing_trigger(180, 4);
 			break;
 		default:
 			local._shouldTalk = false;
@@ -183,9 +183,9 @@ static void setDialogNode(int node) {
 
 			if (local._twinklesTalking) {
 				handleTwinklesSpeech(quote, 0, 360);
-				_scene->_sequences.addTimer(120, 2);
+				kernel_timing_trigger(120, 2);
 			} else {
-				_scene->_sequences.addTimer(6, 1);
+				kernel_timing_trigger(6, 1);
 			}
 		} else {
 			_scene->_userInterface.setup(kInputBuildingSentences);
@@ -203,16 +203,16 @@ static void setDialogNode(int node) {
 			player.commands_allowed = false;
 			if (local._twinklesTalking) {
 				handleTwinklesSpeech(0xCA, -1, 0);
-				_scene->_sequences.addTimer(180, 2);
+				kernel_timing_trigger(180, 2);
 			} else {
-				_scene->_sequences.addTimer(6, 1);
+				kernel_timing_trigger(6, 1);
 			}
 			break;
 
 		case 2:
 			local._nextHandsPlace = 1;
 			handleTwinklesSpeech(0xCB, 0, 0);
-			_scene->_sequences.addTimer(180, 3);
+			kernel_timing_trigger(180, 3);
 			break;
 
 		default:
@@ -232,21 +232,21 @@ static void setDialogNode(int node) {
 			player.commands_allowed = false;
 			if (local._twinklesTalking) {
 				handleTwinklesSpeech(0xD0, -2, 0);
-				_scene->_sequences.addTimer(180, 2);
+				kernel_timing_trigger(180, 2);
 			} else {
-				_scene->_sequences.addTimer(6, 1);
+				kernel_timing_trigger(6, 1);
 			}
 			break;
 
 		case 2:
 			handleTwinklesSpeech(0xD1, -1, 0);
-			_scene->_sequences.addTimer(180, 3);
+			kernel_timing_trigger(180, 3);
 			break;
 
 		case 3:
 			local._nextHandsPlace = 1;
 			handleTwinklesSpeech(0xD2, 0, 0);
-			_scene->_sequences.addTimer(180, 4);
+			kernel_timing_trigger(180, 4);
 			break;
 
 		default:
@@ -266,15 +266,15 @@ static void setDialogNode(int node) {
 			player.commands_allowed = false;
 			if (local._twinklesTalking) {
 				handleTwinklesSpeech(0xD6, -1, 0);
-				_scene->_sequences.addTimer(180, 2);
+				kernel_timing_trigger(180, 2);
 			} else {
-				_scene->_sequences.addTimer(6, 1);
+				kernel_timing_trigger(6, 1);
 			}
 			break;
 
 		case 2:
 			handleTwinklesSpeech(0xD7, 0, 0);
-			_scene->_sequences.addTimer(180, 3);
+			kernel_timing_trigger(180, 3);
 			break;
 
 		default:
@@ -293,15 +293,15 @@ static void setDialogNode(int node) {
 			player.commands_allowed = false;
 			if (local._twinklesTalking) {
 				handleTwinklesSpeech(0xDD, -1, 0);
-				_scene->_sequences.addTimer(180, 2);
+				kernel_timing_trigger(180, 2);
 			} else {
-				_scene->_sequences.addTimer(6, 1);
+				kernel_timing_trigger(6, 1);
 			}
 			break;
 
 		case 2:
 			handleTwinklesSpeech(0xDE, 0, 0);
-			_scene->_sequences.addTimer(180, 3);
+			kernel_timing_trigger(180, 3);
 			break;
 
 		default:
@@ -323,15 +323,15 @@ static void setDialogNode(int node) {
 				_scene->_userInterface.emptyConversationList();
 				_scene->_userInterface.setup(kInputConversation);
 				handleTwinklesSpeech(0xE4, -1, 0);
-				_scene->_sequences.addTimer(180, 2);
+				kernel_timing_trigger(180, 2);
 			} else {
-				_scene->_sequences.addTimer(6, 1);
+				kernel_timing_trigger(6, 1);
 			}
 			break;
 
 		case 2:
 			handleTwinklesSpeech(0xE5, 0, 0);
-			_scene->_sequences.addTimer(180, 3);
+			kernel_timing_trigger(180, 3);
 			break;
 
 		case 3:
@@ -350,8 +350,8 @@ static void setDialogNode(int node) {
 
 		case 4:
 		{
-			g_sprite_ids[8] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 5);
-			_scene->_sequences.setDepth(g_sprite_ids[8], 1);
+			g_sprite_ids[8] = kernel_seq_stamp(g_sprite_ids[1], false, 5);
+			kernel_seq_depth(g_sprite_ids[8], 1);
 
 			int msgIndex = kernel_message_add(quote_string(kernel.quotes, 231), 160, 20, 0x1110, 180, 5, 32);
 			kernel_message_teletype(msgIndex, 4, true);
@@ -554,13 +554,13 @@ static void handleConversations() {
 			quote_split_string(curQuote, line1, line2);
 			Common::strcpy_s(local._subQuote2, line2);
 			kernel_message_add(line1, 0, -14, 0x1110, 240, 0, 34);
-			_scene->_sequences.addTimer(60, 50);
+			kernel_timing_trigger(60, 50);
 		} else {
 			kernel_message_add(curQuote, 0, 0, 0x1110, 120, 1, 34);
 		}
 	} else if (kernel.trigger == 50) {
 		kernel_message_add(local._subQuote2, 0, 0, 0x1110, 240, 0, 34);
-		_scene->_sequences.addTimer(180, 1);
+		kernel_timing_trigger(180, 1);
 	} else {
 		if (kernel.trigger == 1)
 			kernel_message_purge();
@@ -633,8 +633,8 @@ static void room_210_init() {
 	}
 
 	if (!global[kCurtainOpen]) {
-		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 5);
-		_scene->_sequences.setDepth(g_sequence_ids[1], 5);
+		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 5);
+		kernel_seq_depth(g_sequence_ids[1], 5);
 	} else {
 		int idx = _scene->_dynamicHotspots.add(words_doorway, words_walk_through, -1, Common::Rect(163, 87, 163 + 19, 87 + 36));
 		local._doorway = _scene->_dynamicHotspots.setPosition(idx, Common::Point(168, 127), FACING_NORTH);
@@ -936,7 +936,7 @@ static void room_210_parser() {
 		case 1:
 			local._shouldTalk = true;
 			if (!local._twinklesTalking) {
-				_scene->_sequences.addTimer(6, 1);
+				kernel_timing_trigger(6, 1);
 			} else {
 				if (global[kTwinklesApproached] == 0) {
 					handleTwinklesSpeech(0xAF, -1, 0);
@@ -948,7 +948,7 @@ static void room_210_parser() {
 					local._twinklesTalk2 = true;
 					handleTwinklesSpeech(quote, 0, 0);
 				}
-				_scene->_sequences.addTimer(60, 3);
+				kernel_timing_trigger(60, 3);
 			}
 			break;
 
@@ -975,7 +975,7 @@ static void room_210_parser() {
 			local._shouldMoveHead = true;
 			player.commands_allowed = false;
 			handleTwinklesSpeech(quote, 0, 120);
-			_scene->_sequences.addTimer(120, 1);
+			kernel_timing_trigger(120, 1);
 		}
 		break;
 
@@ -995,10 +995,10 @@ static void room_210_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_scene->_sequences.remove(g_sequence_ids[1]);
-			g_sequence_ids[1] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[1], false, 12, 1, 0, 0);
-			_scene->_sequences.setDepth(g_sequence_ids[1], 5);
-			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_delete(g_sequence_ids[1]);
+			g_sequence_ids[1] = kernel_seq_backward(g_sprite_ids[1], false, 12, 0, 0, 1);
+			kernel_seq_depth(g_sequence_ids[1], 5);
+			kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
@@ -1015,18 +1015,18 @@ static void room_210_parser() {
 	} else if ((player_said_2(pull, curtain) || player_said_2(close, curtain)) && global[kCurtainOpen]) {
 		switch (kernel.trigger) {
 		case 0:
-			_scene->_sequences.remove(g_sequence_ids[1]);
+			kernel_seq_delete(g_sequence_ids[1]);
 			player.commands_allowed = false;
 			player.facing = FACING_NORTH;
-			g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 12, 0, 0, 1);
-			_scene->_sequences.setDepth(g_sequence_ids[1], 5);
-			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 12, 1, 0, 0);
+			kernel_seq_depth(g_sequence_ids[1], 5);
+			kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			player.commands_allowed = false;
 			break;
 		case 1:
-			g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 5);
-			_scene->_sequences.setDepth(g_sequence_ids[1], 5);
-			_scene->_sequences.addTimer(48, 2);
+			g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 5);
+			kernel_seq_depth(g_sequence_ids[1], 5);
+			kernel_timing_trigger(48, 2);
 			break;
 		case 2:
 			_scene->_dynamicHotspots.remove(local._doorway);

@@ -71,19 +71,19 @@ static void room_802_init() {
 
 	if (global[kHasWatchedAntigrav] && !global[kRemoteSequenceRan]) {
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
-		_scene->_sequences.addTimer(200, 70);
+		kernel_timing_trigger(200, 70);
 	}
 
 	if ((global[kRemoteOnGround]) && (!player_has(OBJ_REMOTE))) {
-		g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);
-		_scene->_sequences.setDepth(g_sequence_ids[4], 8);
+		g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 1);
+		kernel_seq_depth(g_sequence_ids[4], 8);
 		int idx = _scene->_dynamicHotspots.add(words_remote, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(107, 99), FACING_NORTH);
 	}
 
 	if (!player_has(OBJ_SHIELD_MODULATOR) && !global[kShieldModInstalled]) {
-		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
-		_scene->_sequences.setDepth(g_sequence_ids[1], 8);
+		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 1);
+		kernel_seq_depth(g_sequence_ids[1], 8);
 		int idx = _scene->_dynamicHotspots.add(words_shield_modulator, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(93, 97), FACING_NORTH);
 	}
@@ -93,15 +93,15 @@ static void room_802_init() {
 static void room_802_daemon() {
 	if (kernel.trigger == 70) {
 		player.commands_allowed = false;
-		g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 8, 1, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 19);
-		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
-		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 4, 72);
+		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 8, 0, 0, 1);
+		kernel_seq_range(g_sequence_ids[3], 1, 19);
+		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 4, 72);
 	}
 
 	if (kernel.trigger == 71) {
-		g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);
-		_scene->_sequences.setDepth(g_sequence_ids[4], 8);
+		g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 1);
+		kernel_seq_depth(g_sequence_ids[4], 8);
 		int idx = _scene->_dynamicHotspots.add(words_remote, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(107, 99), FACING_NORTH);
 
@@ -133,22 +133,22 @@ static void room_802_parser() {
 		case 0:
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], true, 7, 2, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[2], 1, 2);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[2]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 2, 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], true, 7, 0, 0, 2);
+			kernel_seq_range(g_sequence_ids[2], 1, 2);
+			kernel_seq_player(g_sequence_ids[2], false);
+			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 2, 1);
+			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
-			_scene->_sequences.remove(g_sequence_ids[1]);
+			kernel_seq_delete(g_sequence_ids[1]);
 			g_engine->_soundManager->command(9, 0);
 			break;
 
 		case 2:
 			player.clock = kernel.clock + player.frame_delay;
 			player.walker_visible = true;
-			_scene->_sequences.addTimer(20, 3);
+			kernel_timing_trigger(20, 3);
 			break;
 
 		case 3:
@@ -165,15 +165,15 @@ static void room_802_parser() {
 		case 0:
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			g_sequence_ids[5] = _scene->_sequences.startPingPongCycle(g_sprite_ids[5], true, 7, 2, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[5], 1, 4);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[5]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[5] = kernel_seq_pingpong(g_sprite_ids[5], true, 7, 0, 0, 2);
+			kernel_seq_range(g_sequence_ids[5], 1, 4);
+			kernel_seq_player(g_sequence_ids[5], false);
+			kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_SPRITE, 4, 1);
+			kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
-			_scene->_sequences.remove(g_sequence_ids[4]);
+			kernel_seq_delete(g_sequence_ids[4]);
 			g_engine->_soundManager->command(9, 0);
 			global[kRemoteOnGround] = false;
 			break;
@@ -181,7 +181,7 @@ static void room_802_parser() {
 		case 2:
 			player.clock = kernel.clock + player.frame_delay;
 			player.walker_visible = true;
-			_scene->_sequences.addTimer(20, 3);
+			kernel_timing_trigger(20, 3);
 			break;
 
 		case 3:

@@ -68,30 +68,30 @@ static void room_102_init() {
 	g_sprite_ids[11] = kernel_load_series("*RXMRC_8", 0);
 	g_sprite_ids[13] = kernel_load_series(kernel_name('x', 0), 0);
 
-	g_sequence_ids[1] = _scene->_sequences.startPingPongCycle(g_sprite_ids[1], false, 8, 0, 0, 0);
-	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 170, 0, 1, 6);
-	g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 11, 0, 2, 3);
-	g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 4, 0, 1, 0);
-	g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 3, 0, 0, 5);
+	g_sequence_ids[1] = kernel_seq_pingpong(g_sprite_ids[1], false, 8, 0, 0, 0);
+	g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 170, 6, 1, 0);
+	g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 11, 3, 2, 0);
+	g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 4, 0, 1, 0);
+	g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 3, 5, 0, 0);
 
 	if (object_is_here(OBJ_BINOCULARS))
-		g_sequence_ids[9] = _scene->_sequences.addSpriteCycle(g_sprite_ids[9], false, 24, 0, 0, 24);
+		g_sequence_ids[9] = kernel_seq_forward(g_sprite_ids[9], false, 24, 24, 0, 0);
 	else
 		_scene->_hotspots.activate(words_binoculars, false);
 
 	_scene->_hotspots.activate(words_burger, false);
 
 	if (global[kMedicineCabinetOpen]) {
-		g_sequence_ids[8] = _scene->_sequences.addSpriteCycle(g_sprite_ids[8], false, 6, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[8], -2, -2);
+		g_sequence_ids[8] = kernel_seq_forward(g_sprite_ids[8], false, 6, 0, 0, 0);
+		kernel_seq_range(g_sequence_ids[8], -2, -2);
 	}
 
 	if (previous_room == 101) {
 		player.x = 229;
 		player.y = 109;
 		player.commands_allowed = false;
-		g_sequence_ids[6] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[6], false, 6, 1, 2, 0);
-		_scene->_sequences.addSubEntry(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+		g_sequence_ids[6] = kernel_seq_backward(g_sprite_ids[6], false, 6, 0, 2, 1);
+		kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 	} else if (previous_room == 103) {
 		player.x = 47;
 		player.y = 152;
@@ -104,16 +104,16 @@ static void room_102_init() {
 
 	if (previous_room != 106) {
 		if (global[kWaterInAPuddle]) {
-			g_sequence_ids[13] = _scene->_sequences.addSpriteCycle(g_sprite_ids[13], false, 6, 0, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[13], -2, -2);
-			_scene->_sequences.setDepth(g_sequence_ids[13], 5);
+			g_sequence_ids[13] = kernel_seq_forward(g_sprite_ids[13], false, 6, 0, 0, 0);
+			kernel_seq_range(g_sequence_ids[13], -2, -2);
+			kernel_seq_depth(g_sequence_ids[13], 5);
 		}
 	} else {
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		g_sequence_ids[13] = _scene->_sequences.addSpriteCycle(g_sprite_ids[13], false, 6, 1, 0, 0);
-		_scene->_sequences.addSubEntry(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
-		_scene->_sequences.setDepth(g_sequence_ids[13], 5);
+		g_sequence_ids[13] = kernel_seq_forward(g_sprite_ids[13], false, 6, 0, 0, 1);
+		kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+		kernel_seq_depth(g_sequence_ids[13], 5);
 		g_engine->_soundManager->command(24, 0);
 		g_engine->_soundManager->command(28, 0);
 	}
@@ -136,10 +136,10 @@ static void room_102_daemon() {
 		player.commands_allowed = true;
 
 	if (kernel.trigger == 72) {
-		g_sequence_ids[13] = _scene->_sequences.addSpriteCycle(g_sprite_ids[13], false, 6, 0, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[13], -2, -2);
-		_scene->_sequences.setDepth(g_sequence_ids[13], 5);
-		_scene->_sequences.addTimer(48, 90);
+		g_sequence_ids[13] = kernel_seq_forward(g_sprite_ids[13], false, 6, 0, 0, 0);
+		kernel_seq_range(g_sequence_ids[13], -2, -2);
+		kernel_seq_depth(g_sequence_ids[13], 5);
+		kernel_timing_trigger(48, 90);
 	}
 
 	if (kernel.trigger >= 90) {
@@ -152,7 +152,7 @@ static void room_102_daemon() {
 			g_engine->_soundManager->command(24, 0);
 		} else {
 			g_engine->_soundManager->command(23, 0);
-			_scene->_sequences.addTimer(48, kernel.trigger + 1);
+			kernel_timing_trigger(48, kernel.trigger + 1);
 		}
 	}
 
@@ -189,10 +189,10 @@ static void room_102_pre_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			if (player.need_to_walk) {
-				_scene->_sequences.remove(g_sequence_ids[7]);
-				g_sequence_ids[7] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[7], false, 6, 1, 0, 0);
-				_scene->_sequences.addSubEntry(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
-				_scene->_sequences.setDepth(g_sequence_ids[7], 15);
+				kernel_seq_delete(g_sequence_ids[7]);
+				g_sequence_ids[7] = kernel_seq_backward(g_sprite_ids[7], false, 6, 0, 0, 1);
+				kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				kernel_seq_depth(g_sequence_ids[7], 15);
 				player.commands_allowed = false;
 				g_engine->_soundManager->command(20, 0);
 			}
@@ -200,7 +200,7 @@ static void room_102_pre_parser() {
 
 		case 1:
 			if (object_is_here(OBJ_BURGER)) {
-				_scene->_sequences.remove(g_sequence_ids[10]);
+				kernel_seq_delete(g_sequence_ids[10]);
 				_scene->_hotspots.activate(words_burger, false);
 			}
 			local._fridgeOpenedFl = false;
@@ -227,12 +227,12 @@ static void room_102_parser() {
 	if (player_said_1(refrigerator) && !local._fridgeOpenedFl) {
 		switch (kernel.trigger) {
 		case 0:
-			g_sequence_ids[7] = _scene->_sequences.addSpriteCycle(g_sprite_ids[7], false, 6, 1, 0, 0);
-			_scene->_sequences.setDepth(g_sequence_ids[7], 15);
-			_scene->_sequences.addSubEntry(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			g_sequence_ids[7] = kernel_seq_forward(g_sprite_ids[7], false, 6, 0, 0, 1);
+			kernel_seq_depth(g_sequence_ids[7], 15);
+			kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			if (object_is_here(OBJ_BURGER)) {
-				g_sequence_ids[10] = _scene->_sequences.addSpriteCycle(g_sprite_ids[10], false, 7, 0, 0, 0);
-				_scene->_sequences.setDepth(g_sequence_ids[10], 14);
+				g_sequence_ids[10] = kernel_seq_forward(g_sprite_ids[10], false, 7, 0, 0, 0);
+				kernel_seq_depth(g_sequence_ids[10], 14);
 			}
 			player.commands_allowed = false;
 			g_engine->_soundManager->command(20, 0);
@@ -240,15 +240,15 @@ static void room_102_parser() {
 			return;
 
 		case 1:
-			g_sequence_ids[7] = _scene->_sequences.addSpriteCycle(g_sprite_ids[7], false, 6, 0, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[7], -2, -2);
-			_scene->_sequences.setDepth(g_sequence_ids[7], 15);
+			g_sequence_ids[7] = kernel_seq_forward(g_sprite_ids[7], false, 6, 0, 0, 0);
+			kernel_seq_range(g_sequence_ids[7], -2, -2);
+			kernel_seq_depth(g_sequence_ids[7], 15);
 			int delay;
 			if (player_said_1(walkto) && !local._fridgeFirstOpenFl)
 				delay = 0;
 			else
 				delay = 48;
-			_scene->_sequences.addTimer(delay, 2);
+			kernel_timing_trigger(delay, 2);
 			player.command_ready = false;
 			return;
 
@@ -307,8 +307,8 @@ static void room_102_parser() {
 	if (player_said_2(walk_through, door)) {
 		switch (kernel.trigger) {
 		case 0:
-			g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(g_sprite_ids[6], false, 6, 1, 0, 0);
-			_scene->_sequences.addSubEntry(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 6, 0, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			player.commands_allowed = false;
 			g_engine->_soundManager->command(20, 0);
 			break;
@@ -426,19 +426,19 @@ static void room_102_parser() {
 
 		case 1:
 			g_engine->_soundManager->command(24, 0);
-			_scene->_sequences.addTimer(48, 2);
+			kernel_timing_trigger(48, 2);
 			break;
 
 		case 2:
 		case 3:
 		case 4:
 			g_engine->_soundManager->command(23, 0);
-			_scene->_sequences.addTimer(48, kernel.trigger + 1);
+			kernel_timing_trigger(48, kernel.trigger + 1);
 			break;
 
 		case 5:
 			g_engine->_soundManager->command(24, 0);
-			_scene->_sequences.addTimer(48, kernel.trigger + 1);
+			kernel_timing_trigger(48, kernel.trigger + 1);
 			break;
 
 		case 6:
@@ -517,15 +517,15 @@ static void room_102_parser() {
 	if (player_said_2(close, medicine_cabinet) && global[kMedicineCabinetOpen]) {
 		switch (kernel.trigger) {
 		case 0:
-			_scene->_sequences.remove(g_sequence_ids[8]);
-			g_sequence_ids[8] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[8], false, 6, 1, 0, 0);
-			_scene->_sequences.addSubEntry(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_delete(g_sequence_ids[8]);
+			g_sequence_ids[8] = kernel_seq_backward(g_sprite_ids[8], false, 6, 0, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			player.commands_allowed = false;
 			g_engine->_soundManager->command(21, 0);
 			break;
 
 		case 1:
-			_scene->_sequences.addTimer(48, 2);
+			kernel_timing_trigger(48, 2);
 			break;
 
 		case 2:
@@ -544,16 +544,16 @@ static void room_102_parser() {
 	if (player_said_2(open, medicine_cabinet) && !global[kMedicineCabinetOpen]) {
 		switch (kernel.trigger) {
 		case 0:
-			g_sequence_ids[8] = _scene->_sequences.addSpriteCycle(g_sprite_ids[8], false, 6, 1, 0, 0);
-			_scene->_sequences.addSubEntry(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			g_sequence_ids[8] = kernel_seq_forward(g_sprite_ids[8], false, 6, 0, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			player.commands_allowed = false;
 			g_engine->_soundManager->command(21, 0);
 			break;
 
 		case 1:
-			g_sequence_ids[8] = _scene->_sequences.addSpriteCycle(g_sprite_ids[8], false, 6, 0, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[8], -2, -2);
-			_scene->_sequences.addTimer(48, 2);
+			g_sequence_ids[8] = kernel_seq_forward(g_sprite_ids[8], false, 6, 0, 0, 0);
+			kernel_seq_range(g_sequence_ids[8], -2, -2);
+			kernel_timing_trigger(48, 2);
 			break;
 
 		case 2:
@@ -577,16 +577,16 @@ static void room_102_parser() {
 	if (player_said_2(take, binoculars) && object_is_here(OBJ_BINOCULARS)) {
 		switch (kernel.trigger) {
 		case 0:
-			g_sequence_ids[11] = _scene->_sequences.startPingPongCycle(g_sprite_ids[11], false, 3, 1, 0, 0);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[11]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[11], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			g_sequence_ids[11] = kernel_seq_pingpong(g_sprite_ids[11], false, 3, 0, 0, 1);
+			kernel_seq_player(g_sequence_ids[11], false);
+			kernel_seq_trigger(g_sequence_ids[11], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			player.walker_visible = false;
 			player.commands_allowed = false;
 			break;
 
 		case 1:
 			inter_give_to_player(OBJ_BINOCULARS);
-			_scene->_sequences.remove(g_sequence_ids[9]);
+			kernel_seq_delete(g_sequence_ids[9]);
 			_scene->_hotspots.activate(words_binoculars, false);
 			player.walker_visible = true;
 			player.commands_allowed = true;
@@ -604,7 +604,7 @@ static void room_102_parser() {
 	if (player_said_2(take, burger) && object_is_here(OBJ_BURGER)) {
 		if (kernel.trigger == 0) {
 			object_examine(OBJ_BURGER, 10235, 0);
-			_scene->_sequences.remove(g_sequence_ids[10]);
+			kernel_seq_delete(g_sequence_ids[10]);
 			inter_give_to_player(OBJ_BURGER);
 			_scene->_hotspots.activate(words_burger, false);
 			g_engine->_soundManager->command(22, 0);

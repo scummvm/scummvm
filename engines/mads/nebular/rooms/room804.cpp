@@ -75,26 +75,26 @@ static void room_804_init() {
 
 	if (global[kInSpace]) {
 		if (global[kWindowFixed]) {
-			g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], 0, 1);
-			_scene->_sequences.addTimer(60, 100);
+			g_sequence_ids[5] = kernel_seq_stamp(g_sprite_ids[5], 0, 1);
+			kernel_timing_trigger(60, 100);
 		} else {
-			g_sequence_ids[6] = _scene->_sequences.startCycle(g_sprite_ids[6], false, 1);
-			g_sequence_ids[7] = _scene->_sequences.startPingPongCycle(g_sprite_ids[7], false, 4, 0, 0, 0);
-			_scene->_sequences.addTimer(160, 70);
+			g_sequence_ids[6] = kernel_seq_stamp(g_sprite_ids[6], false, 1);
+			g_sequence_ids[7] = kernel_seq_pingpong(g_sprite_ids[7], false, 4, 0, 0, 0);
+			kernel_timing_trigger(160, 70);
 			player.commands_allowed = false;
 		}
 	} else {
 		if (global[kBeamIsUp]) {
-			g_sequence_ids[8] = _scene->_sequences.startCycle(g_sprite_ids[8], false, 1);
-			_scene->_sequences.setDepth(g_sequence_ids[8], 7);
+			g_sequence_ids[8] = kernel_seq_stamp(g_sprite_ids[8], false, 1);
+			kernel_seq_depth(g_sequence_ids[8], 7);
 		}
 
 		if (global[kWindowFixed])
-			g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);
+			g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 1);
 
-		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
-		_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(133, 139));
-		_scene->_sequences.setDepth(g_sequence_ids[1], 8);
+		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 1);
+		kernel_seq_loc(g_sequence_ids[1], 133, 139);
+		kernel_seq_depth(g_sequence_ids[1], 8);
 	}
 
 	kernel_run_animation(kernel_full_name(804, 'r', 1, "", EXT_AA), 0);
@@ -111,10 +111,9 @@ static void room_804_daemon() {
 	if (!local._messWithThrottle) {
 
 		if ((local._throttleGone) && (local._movingThrottle) && (kernel_anim[0].frame == 39)) {
-			g_sequence_ids[1] = _scene->_sequences.startCycle
-			(g_sprite_ids[1], false, 1);
-			_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(133, 139));
-			_scene->_sequences.setDepth(g_sequence_ids[1], 8);
+			g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 1);
+			kernel_seq_loc(g_sequence_ids[1], 133, 139);
+			kernel_seq_depth(g_sequence_ids[1], 8);
 			local._throttleGone = false;
 		}
 
@@ -128,7 +127,7 @@ static void room_804_daemon() {
 		}
 
 		if (kernel_anim[0].frame == 65)
-			_scene->_sequences.remove(g_sequence_ids[7]);
+			kernel_seq_delete(g_sequence_ids[7]);
 
 		switch (config_file.naughtiness) {
 		case STORYMODE_NAUGHTY:
@@ -158,14 +157,14 @@ static void room_804_daemon() {
 
 		if (kernel_anim[0].frame == 34) {
 			local._resetFrame = 36;
-			_scene->_sequences.remove(g_sequence_ids[1]);
+			kernel_seq_delete(g_sequence_ids[1]);
 		}
 
 		if (kernel_anim[0].frame == 37) {
 			local._resetFrame = 36;
 			if (!local._dontPullThrottleAgain) {
 				local._dontPullThrottleAgain = true;
-				_scene->_sequences.addTimer(60, 80);
+				kernel_timing_trigger(60, 80);
 			}
 		}
 
@@ -174,8 +173,8 @@ static void room_804_daemon() {
 		}
 
 		if ((kernel_anim[0].frame == 7) && (!global[kWindowFixed])) {
-			g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);
-			_scene->_sequences.addTimer(20, 110);
+			g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 1);
+			kernel_timing_trigger(20, 110);
 			global[kWindowFixed] = true;
 		}
 
@@ -215,7 +214,7 @@ static void room_804_daemon() {
 		}
 	} else {
 		if ((kernel_anim[0].frame == 36) && (!local._throttleGone)) {
-			_scene->_sequences.remove(g_sequence_ids[1]);
+			kernel_seq_delete(g_sequence_ids[1]);
 			local._throttleGone = true;
 		}
 
@@ -225,7 +224,7 @@ static void room_804_daemon() {
 			case 1:
 				break;
 			case 3:
-				_scene->_sequences.addTimer(130, 120);
+				kernel_timing_trigger(130, 120);
 				break;
 			default:
 				break;
@@ -295,7 +294,7 @@ static void room_804_parser() {
 				// Player turning off remote
 				global[kBeamIsUp] = false;
 				global[kUpBecauseOfRemote] = false;
-				_scene->_sequences.remove(g_sequence_ids[8]);
+				kernel_seq_delete(g_sequence_ids[8]);
 				g_engine->_soundManager->command(15, 0);
 			}
 		}
@@ -326,12 +325,12 @@ static void room_804_parser() {
 		global[kFromCockpit] = true;
 		if (global[kBeamIsUp]) {
 			text_show(80425);
-			_scene->_sequences.remove(g_sequence_ids[8]);
+			kernel_seq_delete(g_sequence_ids[8]);
 			g_engine->_soundManager->command(15, 0);
 			global[kBeamIsUp] = false;
 		}
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
-		_scene->_sequences.addTimer(2, 90);
+		kernel_timing_trigger(2, 90);
 	} else  if (player.look_around) {
 		text_show(80410);
 	} else if ((player_said_2(look, window)) ||

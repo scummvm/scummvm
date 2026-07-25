@@ -49,17 +49,17 @@ static void room_214_init() {
 	local._devilRunningFl = false;
 
 	if (object_is_here(OBJ_POISON_DARTS)) {
-		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 6, 0, 0, 0);
-		_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(103, 86));
-		_scene->_sequences.setDepth(g_sequence_ids[1], 11);
+		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 6, 0, 0, 0);
+		kernel_seq_loc(g_sequence_ids[1], 103, 86);
+		kernel_seq_depth(g_sequence_ids[1], 11);
 	} else {
 		_scene->_hotspots.activate(words_poison_darts, false);
 	}
 
 	if (object_is_here(OBJ_BLOWGUN)) {
-		g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 6, 0, 0, 0);
-		_scene->_sequences.setPosition(g_sequence_ids[2], Common::Point(90, 87));
-		_scene->_sequences.setDepth(g_sequence_ids[2], 13);
+		g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 6, 0, 0, 0);
+		kernel_seq_loc(g_sequence_ids[2], 90, 87);
+		kernel_seq_depth(g_sequence_ids[2], 13);
 	} else {
 		_scene->_hotspots.activate(words_blowgun, false);
 	}
@@ -75,11 +75,11 @@ static void room_214_init() {
 static void room_214_daemon() {
 	if ((player.clock - local._devilTime > 800) && !local._devilRunningFl) {
 		local._devilRunningFl = true;
-		g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 9, 1, 6, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 4);
-		_scene->_sequences.setDepth(g_sequence_ids[3], 2);
+		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 9, 0, 6, 1);
+		kernel_seq_range(g_sequence_ids[3], 1, 4);
+		kernel_seq_depth(g_sequence_ids[3], 2);
 		_scene->_dynamicHotspots.add(words_captive_creature, words_walkto, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
-		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 	}
 
 	if (local._devilRunningFl) {
@@ -87,23 +87,23 @@ static void room_214_daemon() {
 		case 71:
 		{
 			int oldIdx = g_sequence_ids[3];
-			g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 9, 5, 0, 0);
-			_scene->_sequences.updateTimeout(g_sequence_ids[3], oldIdx);
+			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 9, 0, 0, 5);
+			kernel_seq_timeout(oldIdx, g_sequence_ids[3]);
 			_scene->_dynamicHotspots.add(words_captive_creature, words_walkto, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
-			_scene->_sequences.setAnimRange(g_sequence_ids[3], 5, 8);
-			_scene->_sequences.setDepth(g_sequence_ids[3], 2);
-			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+			kernel_seq_range(g_sequence_ids[3], 5, 8);
+			kernel_seq_depth(g_sequence_ids[3], 2);
+			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
 		}
 		break;
 
 		case 72:
 		{
 			int oldIdx = g_sequence_ids[3];
-			g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 9, 1, 0, 0);
-			_scene->_sequences.updateTimeout(g_sequence_ids[3], oldIdx);
+			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 9, 0, 0, 1);
+			kernel_seq_timeout(oldIdx, g_sequence_ids[3]);
 			_scene->_dynamicHotspots.add(words_captive_creature, words_walkto, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
-			_scene->_sequences.setAnimRange(g_sequence_ids[3], 9, -2);
-			_scene->_sequences.setDepth(g_sequence_ids[3], 2);
+			kernel_seq_range(g_sequence_ids[3], 9, -2);
+			kernel_seq_depth(g_sequence_ids[3], 2);
 			local._devilTime = player.clock;
 			local._devilRunningFl = false;
 		}
@@ -125,23 +125,23 @@ static void room_214_parser() {
 		case 0:
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], true, 6, 1, 0, 0);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], true, 6, 0, 0, 1);
+			kernel_seq_player(g_sequence_ids[4], false);
+			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
-			g_sequence_ids[4] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[4], true, 6, 1, 0, 0);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
-			_scene->_sequences.remove(g_sequence_ids[1]);
+			g_sequence_ids[4] = kernel_seq_backward(g_sprite_ids[4], true, 6, 0, 0, 1);
+			kernel_seq_player(g_sequence_ids[4], false);
+			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_delete(g_sequence_ids[1]);
 			inter_give_to_player(OBJ_POISON_DARTS);
 			_scene->_hotspots.activate(words_poison_darts, false);
 			break;
 
 		case 2:
 			player.walker_visible = true;
-			_scene->_sequences.addTimer(48, 3);
+			kernel_timing_trigger(48, 3);
 			break;
 
 		case 3:
@@ -157,23 +157,23 @@ static void room_214_parser() {
 		case 0:
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 6, 1, 0, 0);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 6, 0, 0, 1);
+			kernel_seq_player(g_sequence_ids[4], false);
+			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
-			g_sequence_ids[4] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[4], false, 6, 1, 0, 0);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
-			_scene->_sequences.remove(g_sequence_ids[2]);
+			g_sequence_ids[4] = kernel_seq_backward(g_sprite_ids[4], false, 6, 0, 0, 1);
+			kernel_seq_player(g_sequence_ids[4], false);
+			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_delete(g_sequence_ids[2]);
 			inter_give_to_player(OBJ_BLOWGUN);
 			_scene->_hotspots.activate(words_blowgun, false);
 			break;
 
 		case 2:
 			player.walker_visible = true;
-			_scene->_sequences.addTimer(48, 3);
+			kernel_timing_trigger(48, 3);
 			break;
 
 		case 3:

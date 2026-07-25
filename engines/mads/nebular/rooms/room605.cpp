@@ -39,16 +39,16 @@ static void room_605_init() {
 	g_sprite_ids[5] = kernel_load_series(kernel_name('n', -1), 0);
 	g_sprite_ids[6] = kernel_load_series(kernel_name('f', -1), 0);
 
-	g_sequence_ids[1] = _scene->_sequences.startPingPongCycle(g_sprite_ids[1], false, 15, 0, 0, 0);
-	g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 17, 0, 0, 0);
-	g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 14, 0, 0, 0);
-	g_sequence_ids[4] = _scene->_sequences.startPingPongCycle(g_sprite_ids[4], false, 13, 0, 0, 0);
-	g_sequence_ids[5] = _scene->_sequences.startPingPongCycle(g_sprite_ids[5], false, 17, 0, 0, 0);
-	g_sequence_ids[6] = _scene->_sequences.startPingPongCycle(g_sprite_ids[6], false, 18, 0, 0, 0);
+	g_sequence_ids[1] = kernel_seq_pingpong(g_sprite_ids[1], false, 15, 0, 0, 0);
+	g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 17, 0, 0, 0);
+	g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 14, 0, 0, 0);
+	g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 13, 0, 0, 0);
+	g_sequence_ids[5] = kernel_seq_pingpong(g_sprite_ids[5], false, 17, 0, 0, 0);
+	g_sequence_ids[6] = kernel_seq_pingpong(g_sprite_ids[6], false, 18, 0, 0, 0);
 
 	player.walker_visible = false;
 	player.commands_allowed = false;
-	_scene->_sequences.addTimer(600, 70);
+	kernel_timing_trigger(600, 70);
 	_scene->_userInterface.setup(kInputLimitedSentences);
 	section_6_music();
 	g_engine->_soundManager->command(22, 0);

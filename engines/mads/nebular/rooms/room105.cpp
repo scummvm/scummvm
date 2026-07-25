@@ -41,11 +41,11 @@ static Scratch local;
 static void room_105_init() {
 	g_sprite_ids[1] = kernel_load_series(kernel_name('m', 1), 0);
 	g_sprite_ids[4] = kernel_load_series(kernel_name('f', 4), 0);
-	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 8, 0, 0, 0);
+	g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 8, 0, 0, 0);
 
 	if (global[kFishIn105]) {
-		g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 6, 0, 0, 0);
-		_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(48, 144));
+		g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 6, 0, 0, 0);
+		kernel_seq_loc(g_sequence_ids[4], 48, 144);
 
 		int idx = _scene->_dynamicHotspots.add(words_dead_fish, words_swim_to, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(56, 141), FACING_NORTHWEST);
@@ -83,39 +83,39 @@ static void room_105_daemon() {
 			kernel_seq_init();
 			kernel_new_palette();
 
-			g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 6, 1, 0, 0);
-			_scene->_sequences.setDepth(g_sequence_ids[0], 8);
-			_scene->_sequences.addSubEntry(g_sequence_ids[0], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			g_sequence_ids[0] = kernel_seq_forward(g_sprite_ids[0], false, 6, 0, 0, 1);
+			kernel_seq_depth(g_sequence_ids[0], 8);
+			kernel_seq_trigger(g_sequence_ids[0], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 
 			if (config_file.naughtiness >= STORYMODE_NICE)
-				_scene->_sequences.addSubEntry(g_sequence_ids[0], SEQUENCE_TRIGGER_SPRITE, 8, 3);
+				kernel_seq_trigger(g_sequence_ids[0], SEQUENCE_TRIGGER_SPRITE, 8, 3);
 			break;
 
 		case 1:
-			g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 6, 0, 0, 0);
-			_scene->_sequences.setDepth(g_sequence_ids[3], 8);
-			_scene->_sequences.setAnimRange(g_sequence_ids[3], -2, -2);
-			g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 9, 1, 0, 0);
-			_scene->_sequences.updateTimeout(g_sequence_ids[2], g_sequence_ids[0]);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 8);
-			_scene->_sequences.setAnimRange(g_sequence_ids[2], 5, 7);
-			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 6, 0, 0, 0);
+			kernel_seq_depth(g_sequence_ids[3], 8);
+			kernel_seq_range(g_sequence_ids[3], -2, -2);
+			g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 9, 0, 0, 1);
+			kernel_seq_timeout(g_sequence_ids[0], g_sequence_ids[2]);
+			kernel_seq_depth(g_sequence_ids[2], 8);
+			kernel_seq_range(g_sequence_ids[2], 5, 7);
+			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 2:
 		{
 			int oldIdx = g_sequence_ids[2];
-			g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 9, 0, 0, 0);
-			_scene->_sequences.updateTimeout(g_sequence_ids[2], oldIdx);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 8);
-			_scene->_sequences.addTimer(90, 3);
+			g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 9, 0, 0, 0);
+			kernel_seq_timeout(oldIdx, g_sequence_ids[2]);
+			kernel_seq_depth(g_sequence_ids[2], 8);
+			kernel_timing_trigger(90, 3);
 		}
 		break;
 
 		case 3:
 			text_show(10507);
 			kernel.force_restart = true;
-			_scene->_sequences.addTimer(90, 4);
+			kernel_timing_trigger(90, 4);
 			break;
 
 		default:
@@ -153,7 +153,7 @@ static void room_105_parser() {
 			kernel_message_purge();
 			kernel_message_add(quote_string(kernel.quotes, randVal), 0, 0, 0x1110, 120, 0, 34);
 		} else {
-			_scene->_sequences.remove(g_sequence_ids[4]);
+			kernel_seq_delete(g_sequence_ids[4]);
 			inter_give_to_player(OBJ_DEAD_FISH);
 			global[kFishIn105] = false;
 			object_examine(OBJ_DEAD_FISH, 802, 0);

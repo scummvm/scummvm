@@ -65,9 +65,9 @@ static Scratch local;
 
 static void handleRatMoves() {
 	local._ratPresentFl = false;
-	_scene->_sequences.remove(g_sequence_ids[1]);
-	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 12, 1, 0, 0);
-	_scene->_sequences.setAnimRange(g_sequence_ids[1], 11, -2);
+	kernel_seq_delete(g_sequence_ids[1]);
+	g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 12, 0, 0, 1);
+	kernel_seq_range(g_sequence_ids[1], 11, -2);
 	local._ratTimer = player.clock;
 	_scene->_dynamicHotspots.remove(local._ratHotspotId);
 }
@@ -134,7 +134,7 @@ static void handleTalking(int delay) {
 
 	local._hermitTalkingFl = true;
 	kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
-	_scene->_sequences.addTimer(delay, 100);
+	kernel_timing_trigger(delay, 100);
 }
 
 static void displayHermitQuestions(int question) {
@@ -889,10 +889,10 @@ static void handleDialog() {
 			else
 				kernel_message_add(subQuote2, 0, 0, 0x1110, 150, 1, 34);
 
-			_scene->_sequences.addTimer(170, 50);
+			kernel_timing_trigger(170, 50);
 		} else {
 			kernel_message_add(curQuote, 0, 0, 0x1110, 120, 1, 34);
-			_scene->_sequences.addTimer(140, 50);
+			kernel_timing_trigger(140, 50);
 		}
 	} else if (kernel.trigger == 50) {
 		if (local._hermitDialogNode == 1)
@@ -999,23 +999,23 @@ static void room_611_init() {
 static void room_611_daemon() {
 	if (local._seenRatFl && (g_engine->getRandomNumber(1, 100) == 10)) {
 		local._seenRatFl = false;
-		_scene->_sequences.addTimer(1, 80);
+		kernel_timing_trigger(1, 80);
 	}
 
 	if (kernel.trigger == 80) {
-		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 12, 1, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[1], 1, 8);
-		_scene->_sequences.setDepth(g_sequence_ids[1], 1);
+		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 12, 0, 0, 1);
+		kernel_seq_range(g_sequence_ids[1], 1, 8);
+		kernel_seq_depth(g_sequence_ids[1], 1);
 		local._ratPresentFl = true;
-		_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
+		kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
 	} else if (kernel.trigger == 81) {
 		int syncId = g_sequence_ids[1];
-		g_sequence_ids[1] = _scene->_sequences.startPingPongCycle(g_sprite_ids[1], false, 20, 0, 0, 0);
+		g_sequence_ids[1] = kernel_seq_pingpong(g_sprite_ids[1], false, 20, 0, 0, 0);
 		int idx = _scene->_dynamicHotspots.add(words_rat, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		local._ratHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(272, 154), FACING_SOUTHEAST);
-		_scene->_sequences.setAnimRange(g_sequence_ids[1], 9, 10);
-		_scene->_sequences.updateTimeout(g_sequence_ids[1], syncId);
-		_scene->_sequences.setDepth(g_sequence_ids[1], 1);
+		kernel_seq_range(g_sequence_ids[1], 9, 10);
+		kernel_seq_timeout(syncId, g_sequence_ids[1]);
+		kernel_seq_depth(g_sequence_ids[1], 1);
 		local._ratTimer = player.clock;
 	}
 
@@ -1025,103 +1025,103 @@ static void room_611_daemon() {
 	if (!local._eyesRunningFl) {
 		local._randVal = g_engine->getRandomNumber(1, 30);
 		local._eyesRunningFl = true;
-		_scene->_sequences.addTimer(1, 70);
+		kernel_timing_trigger(1, 70);
 	}
 
 	if (kernel.trigger == 70) {
 		switch (local._randVal) {
 		case 2:
-			g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 1);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
+			g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 1);
+			kernel_seq_depth(g_sequence_ids[2], 1);
 			local._shouldRemoveEyes = true;
-			_scene->_sequences.addTimer(60, 71);
+			kernel_timing_trigger(60, 71);
 			break;
 
 		case 6:
-			g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 12, 3, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[2], 2, 4);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+			g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 12, 0, 0, 3);
+			kernel_seq_range(g_sequence_ids[2], 2, 4);
+			kernel_seq_depth(g_sequence_ids[2], 1);
+			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 			break;
 
 		case 7:
-			g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 5);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
+			g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 5);
+			kernel_seq_depth(g_sequence_ids[2], 1);
 			local._shouldRemoveEyes = true;
-			_scene->_sequences.addTimer(60, 71);
+			kernel_timing_trigger(60, 71);
 			break;
 
 		case 9:
-			g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 6);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
+			g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 6);
+			kernel_seq_depth(g_sequence_ids[2], 1);
 			local._shouldRemoveEyes = true;
-			_scene->_sequences.addTimer(60, 71);
+			kernel_timing_trigger(60, 71);
 			break;
 
 		case 13:
-			g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 7);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
+			g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 7);
+			kernel_seq_depth(g_sequence_ids[2], 1);
 			local._shouldRemoveEyes = true;
-			_scene->_sequences.addTimer(60, 71);
+			kernel_timing_trigger(60, 71);
 			break;
 
 		case 14:
-			g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 8);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
+			g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 8);
+			kernel_seq_depth(g_sequence_ids[2], 1);
 			local._shouldRemoveEyes = true;
-			_scene->_sequences.addTimer(60, 71);
+			kernel_timing_trigger(60, 71);
 			break;
 
 		case 15:
-			g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 24, 1, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[2], 5, 8);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+			g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 24, 0, 0, 1);
+			kernel_seq_range(g_sequence_ids[2], 5, 8);
+			kernel_seq_depth(g_sequence_ids[2], 1);
+			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 			break;
 
 		case 17:
-			g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 20, 1, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[2], 9, 11);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+			g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 20, 0, 0, 1);
+			kernel_seq_range(g_sequence_ids[2], 9, 11);
+			kernel_seq_depth(g_sequence_ids[2], 1);
+			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 			break;
 
 		case 21:
-			g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 9);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
+			g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 9);
+			kernel_seq_depth(g_sequence_ids[2], 1);
 			local._shouldRemoveEyes = true;
-			_scene->_sequences.addTimer(60, 71);
+			kernel_timing_trigger(60, 71);
 			break;
 
 		case 25:
-			g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 10);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
+			g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 10);
+			kernel_seq_depth(g_sequence_ids[2], 1);
 			local._shouldRemoveEyes = true;
-			_scene->_sequences.addTimer(60, 71);
+			kernel_timing_trigger(60, 71);
 			break;
 
 		case 27:
-			g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 11);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
+			g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 11);
+			kernel_seq_depth(g_sequence_ids[2], 1);
 			local._shouldRemoveEyes = true;
-			_scene->_sequences.addTimer(60, 71);
+			kernel_timing_trigger(60, 71);
 			break;
 
 		case 29:
-			g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 20, 1, 0, 0);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+			g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 20, 0, 0, 1);
+			kernel_seq_depth(g_sequence_ids[2], 1);
+			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 			break;
 
 		default:
-			_scene->_sequences.addTimer(1, 71);
+			kernel_timing_trigger(1, 71);
 			break;
 		}
 	}
 
 	if (kernel.trigger == 71) {
 		if (local._shouldRemoveEyes) {
-			_scene->_sequences.remove(g_sequence_ids[2]);
+			kernel_seq_delete(g_sequence_ids[2]);
 			local._shouldRemoveEyes = false;
 		}
 		local._eyesRunningFl = false;
@@ -1144,13 +1144,13 @@ static void room_611_daemon() {
 	if (kernel_anim[0].anim != nullptr && (kernel_anim[0].frame == 240) && local._check1Fl) {
 		local._check1Fl = false;
 		kernel_message_add(quote_string(kernel.quotes, 0x27E), 33, 88, 0xFDFC, 90, 0, 0);
-		_scene->_sequences.addTimer(120, 120);
+		kernel_timing_trigger(120, 120);
 	}
 
 	if (kernel.trigger == 120) {
 		int msgIdx = kernel_message_add(quote_string(kernel.quotes, 0x27F), 28, 102, 0xFDFC, 90, 0, 0);
 		kernel_message_teletype(msgIdx, 4, true);
-		_scene->_sequences.addTimer(100, 121);
+		kernel_timing_trigger(100, 121);
 	}
 
 	if (kernel.trigger == 121) {
@@ -1163,7 +1163,7 @@ static void room_611_daemon() {
 			local._hermitMode = 6;
 			local._hermitMovingFl = false;
 			local._hermitTalkingFl = false;
-			_scene->_sequences.addTimer(1, 110);
+			kernel_timing_trigger(1, 110);
 		} else if (local._hermitTalkingFl) {
 			local._hermitMode = 2;
 			local._nextFrame = 18;
@@ -1201,7 +1201,7 @@ static void room_611_daemon() {
 			local._hermitMode = 6;
 			local._hermitMovingFl = false;
 			local._hermitTalkingFl = false;
-			_scene->_sequences.addTimer(1, 110);
+			kernel_timing_trigger(1, 110);
 		} else if (local._hermitMovingFl) {
 			local._hermitMode = 1;
 			local._nextFrame = 47;
@@ -1236,17 +1236,17 @@ static void room_611_daemon() {
 	if (kernel.trigger == 110) {
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 7, 1, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 2);
-		_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
-		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 111);
+		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 7, 0, 0, 1);
+		kernel_seq_range(g_sequence_ids[3], 1, 2);
+		kernel_seq_player(g_sequence_ids[3], false);
+		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 111);
 	}
 
 	if (kernel.trigger == 111) {
 		int syncIdx = g_sequence_ids[3];
-		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 2);
-		_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
-		_scene->_sequences.updateTimeout(g_sequence_ids[3], syncIdx);
+		g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, 2);
+		kernel_seq_player(g_sequence_ids[3], false);
+		kernel_seq_timeout(syncIdx, g_sequence_ids[3]);
 		local._nextFrame = 1;
 	}
 
@@ -1257,11 +1257,11 @@ static void room_611_daemon() {
 
 	if (local._hermitMode == 6) {
 		if ((kernel_anim[0].frame == 9) && local._check1Fl) {
-			_scene->_sequences.remove(g_sequence_ids[3]);
-			g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 7, 1, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 2);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 112);
+			kernel_seq_delete(g_sequence_ids[3]);
+			g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 7, 0, 0, 1);
+			kernel_seq_range(g_sequence_ids[3], 1, 2);
+			kernel_seq_player(g_sequence_ids[3], false);
+			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 112);
 			local._check1Fl = false;
 		}
 
@@ -1281,28 +1281,28 @@ static void room_611_daemon() {
 
 		if ((kernel_anim[0].frame == 9) && !local._check1Fl) {
 			local._nextFrame = 8;
-			_scene->_sequences.addTimer(1, 113);
+			kernel_timing_trigger(1, 113);
 			local._check1Fl = true;
 		}
 	}
 
 	if (kernel.trigger == 113) {
 		player.walker_visible = false;
-		g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 7, 1, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 2);
-		_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
-		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 114);
+		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 7, 0, 0, 1);
+		kernel_seq_range(g_sequence_ids[3], 1, 2);
+		kernel_seq_player(g_sequence_ids[3], false);
+		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 114);
 	}
 
 	if (kernel.trigger == 114) {
 		local._resetBatterieText = true;
 		int syncIdx = g_sequence_ids[3];
 		local._nextFrame = 10;
-		g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 7, 1, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 2);
-		_scene->_sequences.updateTimeout(g_sequence_ids[3], syncIdx);
-		_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
-		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 115);
+		g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 7, 0, 0, 1);
+		kernel_seq_range(g_sequence_ids[3], 1, 2);
+		kernel_seq_timeout(syncIdx, g_sequence_ids[3]);
+		kernel_seq_player(g_sequence_ids[3], false);
+		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 115);
 	}
 
 	if ((local._nextFrame >= 0) && (local._nextFrame != kernel_anim[0].frame)) {
@@ -1389,7 +1389,7 @@ static void room_611_parser() {
 		if (!local._dialog1.read(0x287)) {
 			kernel_message_purge();
 			kernel_message_add(quote_string(kernel.quotes, 0x27A), 0, 0, 0x1110, 120, 0, 34);
-			_scene->_sequences.addTimer(120, 90);
+			kernel_timing_trigger(120, 90);
 		} else {
 			int nextQuote = 0;
 			switch (g_engine->getRandomNumber(1, 3)) {
@@ -1410,14 +1410,14 @@ static void room_611_parser() {
 			}
 			kernel_message_purge();
 			kernel_message_add(quote_string(kernel.quotes, nextQuote), 0, 0, 0x1110, 120, 0, 34);
-			_scene->_sequences.addTimer(120, 90);
+			kernel_timing_trigger(120, 90);
 		}
 	} else if ((player_said_1(walkto) || player_said_1(look)) && player_said_1(rat)) {
 		switch (kernel.trigger) {
 		case 0:
 			kernel_message_purge();
 			kernel_message_add(quote_string(kernel.quotes, 0x279), 0, 0, 0x1110, 120, 0, 34);
-			_scene->_sequences.addTimer(60, 1);
+			kernel_timing_trigger(60, 1);
 			break;
 
 		case 1:

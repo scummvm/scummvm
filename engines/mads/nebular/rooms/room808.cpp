@@ -47,9 +47,9 @@ static void room_808_init() {
 	g_sprite_ids[3] = kernel_load_series(kernel_name('b', 2), 0);
 
 	if (global[kTopButtonPushed])
-		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
+		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 1);
 	else
-		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 1);
+		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 1);
 
 	local._goingTo803 = false;
 
@@ -72,8 +72,8 @@ static void room_808_init() {
 	global[kBetweenRooms] = false;
 
 	if (global[kBeamIsUp]) {
-		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
-		_scene->_sequences.setDepth(g_sequence_ids[3], 8);
+		g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, 1);
+		kernel_seq_depth(g_sequence_ids[3], 8);
 	}
 
 	section_8_music();
@@ -84,24 +84,24 @@ static void room_808_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 4, 1, 0, 0);
-			_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(248, 211));
-			_scene->_sequences.setDepth(g_sequence_ids[4], 2);
-			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+			g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 4, 0, 0, 1);
+			kernel_seq_loc(g_sequence_ids[4], 248, 211);
+			kernel_seq_depth(g_sequence_ids[4], 2);
+			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 			break;
 
 		case 70:
 			if (!global[kBeamIsUp] && !global[kTopButtonPushed]) {
-				g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
-				_scene->_sequences.setDepth(g_sequence_ids[3], 8);
+				g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, 1);
+				kernel_seq_depth(g_sequence_ids[3], 8);
 				local._goingTo803 = true;
 				g_engine->_soundManager->command(20, 0);
 				g_engine->_soundManager->command(25, 0);
 			}
-			g_sequence_ids[4] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[4], false, 4, 1, 0, 0);
-			_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(248, 211));
-			_scene->_sequences.setDepth(g_sequence_ids[4], 2);
-			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+			g_sequence_ids[4] = kernel_seq_backward(g_sprite_ids[4], false, 4, 0, 0, 1);
+			kernel_seq_loc(g_sequence_ids[4], 248, 211);
+			kernel_seq_depth(g_sequence_ids[4], 2);
+			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 			break;
 
 		case 71:
@@ -120,23 +120,23 @@ static void room_808_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 4, 1, 0, 0);
-			_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(248, 186));
-			_scene->_sequences.setDepth(g_sequence_ids[4], 2);
-			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 90);
+			g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 4, 0, 0, 1);
+			kernel_seq_loc(g_sequence_ids[4], 248, 186);
+			kernel_seq_depth(g_sequence_ids[4], 2);
+			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 90);
 			break;
 		case 90:
 			if (global[kTopButtonPushed]) {
-				_scene->_sequences.remove(g_sequence_ids[1]);
-				g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 1);
-				_scene->_sequences.setDepth(g_sequence_ids[2], 8);
+				kernel_seq_delete(g_sequence_ids[1]);
+				g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 1);
+				kernel_seq_depth(g_sequence_ids[2], 8);
 				g_engine->_soundManager->command(20, 0);
 			}
 			global[kTopButtonPushed] = false;
-			g_sequence_ids[4] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[4], false, 4, 1, 0, 0);
-			_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(248, 186));
-			_scene->_sequences.setDepth(g_sequence_ids[4], 2);
-			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 91);
+			g_sequence_ids[4] = kernel_seq_backward(g_sprite_ids[4], false, 4, 0, 0, 1);
+			kernel_seq_loc(g_sequence_ids[4], 248, 186);
+			kernel_seq_depth(g_sequence_ids[4], 2);
+			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 91);
 			break;
 
 		case 91:
@@ -150,24 +150,24 @@ static void room_808_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 4, 1, 0, 0);
-			_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(248, 163));
-			_scene->_sequences.setDepth(g_sequence_ids[4], 2);
-			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
+			g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 4, 0, 0, 1);
+			kernel_seq_loc(g_sequence_ids[4], 248, 163);
+			kernel_seq_depth(g_sequence_ids[4], 2);
+			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
 			break;
 
 		case 80:
 			if (!global[kTopButtonPushed]) {
-				_scene->_sequences.remove(g_sequence_ids[2]);
-				g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
-				_scene->_sequences.setDepth(g_sequence_ids[1], 8);
+				kernel_seq_delete(g_sequence_ids[2]);
+				g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 1);
+				kernel_seq_depth(g_sequence_ids[1], 8);
 				g_engine->_soundManager->command(20, 0);
 			}
 			global[kTopButtonPushed] = true;
-			g_sequence_ids[4] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[4], false, 4, 1, 0, 0);
-			_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(248, 163));
-			_scene->_sequences.setDepth(g_sequence_ids[4], 2);
-			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
+			g_sequence_ids[4] = kernel_seq_backward(g_sprite_ids[4], false, 4, 0, 0, 1);
+			kernel_seq_loc(g_sequence_ids[4], 248, 163);
+			kernel_seq_depth(g_sequence_ids[4], 2);
+			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
 			break;
 
 		case 81:
@@ -181,10 +181,10 @@ static void room_808_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			g_sequence_ids[4] = _scene->_sequences.startPingPongCycle(g_sprite_ids[4], false, 4, 2, 0, 0);
-			_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(168, 211));
-			_scene->_sequences.setDepth(g_sequence_ids[4], 2);
-			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+			g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 4, 0, 0, 2);
+			kernel_seq_loc(g_sequence_ids[4], 168, 211);
+			kernel_seq_depth(g_sequence_ids[4], 2);
+			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 			break;
 
 		case 70:
@@ -198,10 +198,10 @@ static void room_808_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			g_sequence_ids[4] = _scene->_sequences.startPingPongCycle(g_sprite_ids[4], false, 4, 2, 0, 0);
-			_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(172, 163));
-			_scene->_sequences.setDepth(g_sequence_ids[4], 2);
-			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
+			g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 4, 0, 0, 2);
+			kernel_seq_loc(g_sequence_ids[4], 172, 163);
+			kernel_seq_depth(g_sequence_ids[4], 2);
+			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
 			break;
 
 		case 80:
@@ -215,10 +215,10 @@ static void room_808_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			g_sequence_ids[4] = _scene->_sequences.startPingPongCycle(g_sprite_ids[4], false, 4, 2, 0, 0);
-			_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(172, 186));
-			_scene->_sequences.setDepth(g_sequence_ids[4], 2);
-			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 90);
+			g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 4, 0, 0, 2);
+			kernel_seq_loc(g_sequence_ids[4], 172, 186);
+			kernel_seq_depth(g_sequence_ids[4], 2);
+			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 90);
 			break;
 
 		case 90:

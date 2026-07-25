@@ -75,21 +75,21 @@ static void handleTakeVase() {
 	case 0:
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 4, 2, 0, 0);
-		_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
-		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 7, 1);
-		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+		g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 4, 0, 0, 2);
+		kernel_seq_player(g_sequence_ids[3], false);
+		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 7, 1);
+		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 		break;
 
 	case 1:
 		g_engine->_soundManager->command(9, 0);
-		_scene->_sequences.remove(g_sequence_ids[1]);
+		kernel_seq_delete(g_sequence_ids[1]);
 		_scene->_dynamicHotspots.remove(local._vaseHotspotId);
 		inter_give_to_player(OBJ_VASE);
 		if (local._vaseMode == 1) {
-			g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);
-			_scene->_sequences.setDepth(g_sequence_ids[4], 4);
-			_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(195, 99));
+			g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 1);
+			kernel_seq_depth(g_sequence_ids[4], 4);
+			kernel_seq_loc(g_sequence_ids[4], 195, 99);
 			int idx = _scene->_dynamicHotspots.add(words_bottle, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
 			inter_move_object(OBJ_BOTTLE, room_id);
@@ -97,7 +97,7 @@ static void handleTakeVase() {
 		break;
 
 	case 2:
-		_scene->_sequences.updateTimeout(-1, g_sequence_ids[3]);
+		kernel_seq_timeout(g_sequence_ids[3], -1);
 		player.walker_visible = true;
 		object_examine(OBJ_VASE, 70630, 0);
 		player.commands_allowed = true;
@@ -117,14 +117,14 @@ static void room_706_init() {
 
 	if (object[OBJ_VASE].location == room_id) {
 		g_sprite_ids[1] = kernel_load_series(kernel_name('v', -1), 0);
-		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
-		_scene->_sequences.setDepth(g_sequence_ids[1], 4);
+		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 1);
+		kernel_seq_depth(g_sequence_ids[1], 4);
 		int idx = _scene->_dynamicHotspots.add(words_vase, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		local._vaseHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
 	} else if (object_is_here(OBJ_BOTTLE)) {
-		g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);
-		_scene->_sequences.setDepth(g_sequence_ids[4], 4);
-		_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(195, 99));
+		g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 1);
+		kernel_seq_depth(g_sequence_ids[4], 4);
+		kernel_seq_loc(g_sequence_ids[4], 195, 99);
 		int idx = _scene->_dynamicHotspots.add(words_bottle, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
 	}
@@ -192,15 +192,15 @@ static void room_706_daemon() {
 			local._animationFrame = kernel_anim[0].frame;
 
 			if (local._animationFrame == 6) {
-				_scene->_sequences.remove(g_sequence_ids[1]);
+				kernel_seq_delete(g_sequence_ids[1]);
 				inter_move_object(OBJ_VASE, 2);
 
 				if (local._animationMode == 2) {
 					inter_move_object(OBJ_BOTTLE, 1);
 
-					g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);
-					_scene->_sequences.setDepth(g_sequence_ids[4], 4);
-					_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(195, 99));
+					g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 1);
+					kernel_seq_depth(g_sequence_ids[4], 4);
+					kernel_seq_loc(g_sequence_ids[4], 195, 99);
 					int idx = _scene->_dynamicHotspots.add(words_bottle, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 					_scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
 				}

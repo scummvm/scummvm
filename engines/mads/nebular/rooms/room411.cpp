@@ -209,14 +209,12 @@ static int computeQuoteAndQuantity() {
 static void handleKettleAction() {
 	switch (global[kNextIngredient]) {
 	case 1:
-		g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4],
-			false, 15, 0, 0, 0);
+		g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 15, 0, 0, 0);
 		break;
 
 	case 2:
-		_scene->_sequences.remove(g_sequence_ids[4]);
-		g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4],
-			false, 6, 0, 0, 0);
+		kernel_seq_delete(g_sequence_ids[4]);
+		g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 6, 0, 0, 0);
 		break;
 
 	case 3:
@@ -316,8 +314,8 @@ static void room_411_init() {
 	g_sprite_ids[11] = kernel_load_series(kernel_name('a', 1), 0);
 	g_sprite_ids[8] = kernel_load_series("*ROXRC_9", 0);
 
-	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 5, 0, 0, 0);
-	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 50, 0, 0, 0);
+	g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 5, 0, 0, 0);
+	g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 50, 0, 0, 0);
 
 	kernel.quotes = quote_load(0x252, 0x25E, 0x25A, 0x256, 0x253, 0x25F, 0x25B, 0x257, 0x254, 0x260, 0x25C, 0x258, 0x255,
 		0x261, 0x25D, 0x259, 0x262, 0x267, 0x263, 0x26B, 0x26F, 0x268, 0x264, 0x26C, 0x270, 0x26A, 0x266, 0x26E,
@@ -337,7 +335,7 @@ static void room_411_init() {
 	}
 
 	if (global[kNextIngredient] >= 4 && object_check_quality(OBJ_CHARGE_CASES, 3)) {
-		g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], true, 6);
+		g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], true, 6);
 	} else if (!object_check_quality(OBJ_CHARGE_CASES, 3)) {
 		switch (global[kNextIngredient]) {
 		case 1:
@@ -347,14 +345,14 @@ static void room_411_init() {
 		case 2:
 			g_engine->_soundManager->command(53, 0);
 			g_engine->_soundManager->command(54, 0);
-			g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 15, 0, 0, 0);
+			g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 15, 0, 0, 0);
 			break;
 
 		case 3:
 			g_engine->_soundManager->command(53, 0);
 			g_engine->_soundManager->command(54, 0);
 			g_engine->_soundManager->command(55, 0);
-			g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 6, 0, 0, 0);
+			g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 6, 0, 0, 0);
 			break;
 
 		case 4:
@@ -362,7 +360,7 @@ static void room_411_init() {
 			g_engine->_soundManager->command(54, 0);
 			g_engine->_soundManager->command(55, 0);
 			g_engine->_soundManager->command(56, 0);
-			g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 6, 0, 0, 0);
+			g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 6, 0, 0, 0);
 			break;
 
 		default:
@@ -372,27 +370,27 @@ static void room_411_init() {
 	}
 
 	if (global[kNextIngredient] >= 4 && object_check_quality(OBJ_CHARGE_CASES, 3)) {
-		g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], true, 6);
-		_scene->_sequences.setDepth(g_sequence_ids[4], 1);
+		g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], true, 6);
+		kernel_seq_depth(g_sequence_ids[4], 1);
 	}
 
 	if (object_is_here(OBJ_FORMALDEHYDE)) {
-		g_sequence_ids[7] = _scene->_sequences.startCycle(g_sprite_ids[7], false, 1);
-		_scene->_sequences.setDepth(g_sequence_ids[7], 1);
+		g_sequence_ids[7] = kernel_seq_stamp(g_sprite_ids[7], false, 1);
+		kernel_seq_depth(g_sequence_ids[7], 1);
 		int idx = _scene->_dynamicHotspots.add(words_formaldehyde, words_walkto, g_sequence_ids[7], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(206, 145), FACING_SOUTHEAST);
 	}
 
 	if (object_is_here(OBJ_PETROX)) {
-		g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, 1);
-		_scene->_sequences.setDepth(g_sequence_ids[5], 8);
+		g_sequence_ids[5] = kernel_seq_stamp(g_sprite_ids[5], false, 1);
+		kernel_seq_depth(g_sequence_ids[5], 8);
 		int idx = _scene->_dynamicHotspots.add(words_petrox, words_walkto, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(186, 112), FACING_NORTHEAST);
 	}
 
 	if (object_is_here(OBJ_LECITHIN)) {
-		g_sequence_ids[6] = _scene->_sequences.startCycle(g_sprite_ids[6], false, 1);
-		_scene->_sequences.setDepth(g_sequence_ids[6], 8);
+		g_sequence_ids[6] = kernel_seq_stamp(g_sprite_ids[6], false, 1);
+		kernel_seq_depth(g_sequence_ids[6], 8);
 		int idx = _scene->_dynamicHotspots.add(words_lecithin, words_walkto, g_sequence_ids[6], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(220, 121), FACING_NORTHEAST);
 	}
@@ -470,7 +468,7 @@ static void room_411_daemon() {
 			case 59:
 			case 115:
 				if (local._makeMushroomCloud) {
-					g_sequence_ids[9] = _scene->_sequences.addSpriteCycle(g_sprite_ids[9], false, 5, 1, 0, 0);
+					g_sequence_ids[9] = kernel_seq_forward(g_sprite_ids[9], false, 5, 0, 0, 1);
 					local._makeMushroomCloud = false;
 					_scene->_hotspots.activate(words_kettle, false);
 					_scene->_hotspots.activate(words_explosives, true);
@@ -543,35 +541,35 @@ static void room_411_parser() {
 			g_engine->_soundManager->command(57, 0);
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			g_sequence_ids[10] = _scene->_sequences.addSpriteCycle(g_sprite_ids[10], false, 8, 1, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[10], 1, 6);
-			_scene->_sequences.setDepth(g_sequence_ids[10], 3);
-			_scene->_sequences.addSubEntry(g_sequence_ids[10], SEQUENCE_TRIGGER_EXPIRE, 0, 110);
+			g_sequence_ids[10] = kernel_seq_forward(g_sprite_ids[10], false, 8, 0, 0, 1);
+			kernel_seq_range(g_sequence_ids[10], 1, 6);
+			kernel_seq_depth(g_sequence_ids[10], 3);
+			kernel_seq_trigger(g_sequence_ids[10], SEQUENCE_TRIGGER_EXPIRE, 0, 110);
 			break;
 
 		case 110:
 		{
 			int idx = g_sequence_ids[10];
-			g_sequence_ids[10] = _scene->_sequences.startCycle(g_sprite_ids[10], false, 6);
-			_scene->_sequences.setDepth(g_sequence_ids[10], 3);
-			_scene->_sequences.updateTimeout(g_sequence_ids[10], idx);
-			_scene->_sequences.addTimer(180, 111);
+			g_sequence_ids[10] = kernel_seq_stamp(g_sprite_ids[10], false, 6);
+			kernel_seq_depth(g_sequence_ids[10], 3);
+			kernel_seq_timeout(idx, g_sequence_ids[10]);
+			kernel_timing_trigger(180, 111);
 		}
 		break;
 
 		case 111:
 			_scene->_hotspots.activate(words_kettle, true);
 			_scene->_hotspots.activate(words_explosives, false);
-			_scene->_sequences.remove(g_sequence_ids[4]);
-			_scene->_sequences.remove(g_sequence_ids[10]);
+			kernel_seq_delete(g_sequence_ids[4]);
+			kernel_seq_delete(g_sequence_ids[10]);
 
-			g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], true, 6);
-			_scene->_sequences.setDepth(g_sequence_ids[4], 1);
+			g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], true, 6);
+			kernel_seq_depth(g_sequence_ids[4], 1);
 
-			g_sequence_ids[10] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[10], false, 8, 1, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[10], 1, 6);
-			_scene->_sequences.setDepth(g_sequence_ids[10], 3);
-			_scene->_sequences.addSubEntry(g_sequence_ids[10], SEQUENCE_TRIGGER_EXPIRE, 0, 112);
+			g_sequence_ids[10] = kernel_seq_backward(g_sprite_ids[10], false, 8, 0, 0, 1);
+			kernel_seq_range(g_sequence_ids[10], 1, 6);
+			kernel_seq_depth(g_sequence_ids[10], 3);
+			kernel_seq_trigger(g_sequence_ids[10], SEQUENCE_TRIGGER_EXPIRE, 0, 112);
 			// fall through
 		case 112:
 			player.clock = kernel.clock - player.frame_delay;
@@ -598,15 +596,15 @@ static void room_411_parser() {
 			g_engine->_soundManager->command(57, 0);
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			g_sequence_ids[8] = _scene->_sequences.startPingPongCycle(g_sprite_ids[8], false, 7, 2, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[8], 1, 2);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[8]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[8], SEQUENCE_TRIGGER_SPRITE, 2, 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[8] = kernel_seq_pingpong(g_sprite_ids[8], false, 7, 0, 0, 2);
+			kernel_seq_range(g_sequence_ids[8], 1, 2);
+			kernel_seq_player(g_sequence_ids[8], false);
+			kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_SPRITE, 2, 1);
+			kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
-			_scene->_sequences.remove(g_sequence_ids[5]);
+			kernel_seq_delete(g_sequence_ids[5]);
 			inter_give_to_player(OBJ_PETROX);
 			object_examine(OBJ_PETROX, 41120, 0);
 			break;
@@ -615,7 +613,7 @@ static void room_411_parser() {
 			player.clock = kernel.clock + player.frame_delay;
 			player.clock = kernel.clock + player.frame_delay;
 			player.walker_visible = true;
-			_scene->_sequences.addTimer(20, 3);
+			kernel_timing_trigger(20, 3);
 			break;
 
 		case 3:
@@ -635,15 +633,15 @@ static void room_411_parser() {
 			g_engine->_soundManager->command(57, 0);
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			g_sequence_ids[8] = _scene->_sequences.startPingPongCycle(g_sprite_ids[8], false, 7, 2, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[8], 1, 2);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[8]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[8], SEQUENCE_TRIGGER_SPRITE, 2, 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[8] = kernel_seq_pingpong(g_sprite_ids[8], false, 7, 0, 0, 2);
+			kernel_seq_range(g_sequence_ids[8], 1, 2);
+			kernel_seq_player(g_sequence_ids[8], false);
+			kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_SPRITE, 2, 1);
+			kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
-			_scene->_sequences.remove(g_sequence_ids[6]);
+			kernel_seq_delete(g_sequence_ids[6]);
 			inter_give_to_player(OBJ_LECITHIN);
 			object_examine(OBJ_LECITHIN, 41124, 0);
 			break;
@@ -651,7 +649,7 @@ static void room_411_parser() {
 		case 2:
 			player.clock = kernel.clock + player.frame_delay;
 			player.walker_visible = true;
-			_scene->_sequences.addTimer(20, 3);
+			kernel_timing_trigger(20, 3);
 			break;
 
 		case 3:
@@ -669,21 +667,21 @@ static void room_411_parser() {
 		g_engine->_soundManager->command(57, 0);
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		g_sequence_ids[11] = _scene->_sequences.startCycle(g_sprite_ids[11], false, 2);
-		_scene->_sequences.setDepth(g_sequence_ids[11], 1);
-		_scene->_sequences.addTimer(20, 100);
-		_scene->_sequences.remove(g_sequence_ids[7]);
+		g_sequence_ids[11] = kernel_seq_stamp(g_sprite_ids[11], false, 2);
+		kernel_seq_depth(g_sequence_ids[11], 1);
+		kernel_timing_trigger(20, 100);
+		kernel_seq_delete(g_sequence_ids[7]);
 		inter_give_to_player(OBJ_FORMALDEHYDE);
 		player.command_ready = false;
 		return;
 	}
 
 	if (kernel.trigger == 100) {
-		_scene->_sequences.remove(g_sequence_ids[11]);
+		kernel_seq_delete(g_sequence_ids[11]);
 		player.clock = kernel.clock - player.frame_delay;
 		player.walker_visible = true;
 		player.commands_allowed = true;
-		_scene->_sequences.addTimer(20, 10);
+		kernel_timing_trigger(20, 10);
 	}
 
 	if (kernel.trigger == 10)

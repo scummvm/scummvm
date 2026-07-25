@@ -167,46 +167,6 @@ struct Scene {
 	};
 	Rails _rails;
 
-	struct SequenceProxy {
-		struct SequencePosition {
-			int &x;
-			int &y;
-			SequencePosition(int &sx, int &sy) : x(sx), y(sy) {}
-		};
-		SequencePosition _position;
-		byte &_doneFlag;
-
-		SequenceProxy(SequencePtr seqPtr) : _position(seqPtr->x, seqPtr->y), _doneFlag(seqPtr->expired) {
-		}
-	};
-
-	struct Sequences {
-		int16 addSpriteCycle(int series_id, int mirror, word ticks, word expire = 0,
-			word start_ticks = 0, int interval_ticks = 0); 	// ***WARNING***: Last 3 params reversed
-		int16 addReverseSpriteCycle(int series_id, int mirror, word ticks, word expire = 0,
-			word start_ticks = 0, int interval_ticks = 0);	// ***WARNING***: Last 3 params reversed
-		int startPingPongCycle(int series_id, int mirror, word ticks, word expire = 0,
-			word start_ticks = 0, int interval_ticks = 0);	// ***WARNING***: Last 3 params reversed
-
-		void remove(int sequence_id);
-		SequenceProxy operator[](uint sequence_id);
-
-		int16 addSubEntry(int sequence_id, int trigger_type, int trigger_sprite, int trigger_code);
-		void setDepth(int sequence_id, int depth);
-		void setScale(int sequence_id, int scale);
-		void setAnimRange(int sequence_id, int first, int last);
-		void addTimer(int ticks, int trigger_code);
-		void setMsgLayout(int sequence_id);
-		void setPosition(int sequence_id, const Common::Point &pt);
-		void setMotion(int sequence_id, int flags, int delta_x_times_100, int delta_y_times_100);
-		void updateTimeout(int new_sequence_id, int old_sequence_id);		// ***WARNING***: params reversed
-		void scan();
-		int startCycle(int srcSpriteIdx, bool flipped, int cycleIndex);
-		void setDone(int sequence_id);
-		int findByTrigger(int trigger);
-	};
-	Sequences _sequences;
-
 	struct SpriteSlots {
 		void clear();
 		void fullRefresh();

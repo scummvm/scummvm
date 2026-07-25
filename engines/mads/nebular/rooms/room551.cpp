@@ -112,14 +112,14 @@ static void room_551_daemon() {
 
 	case 90:
 		if (global[kSexOfRex] == REX_MALE) {
-			g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -2);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 8);
+			g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, -2);
+			kernel_seq_depth(g_sequence_ids[2], 8);
 		} else {
-			g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
-			_scene->_sequences.setDepth(g_sequence_ids[3], 8);
+			g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -2);
+			kernel_seq_depth(g_sequence_ids[3], 8);
 		}
 		g_engine->_soundManager->command(28, 0);
-		_scene->_sequences.addTimer(60, 91);
+		kernel_timing_trigger(60, 91);
 		break;
 
 	case 91:

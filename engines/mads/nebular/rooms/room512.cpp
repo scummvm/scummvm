@@ -50,7 +50,7 @@ static void room_512_init() {
 	g_sprite_ids[6] = kernel_load_series(kernel_name('x', 3), 0);
 
 	if (object[OBJ_FISHING_ROD].location == room_id) {
-		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 9, 0, 0, 0);
+		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 9, 0, 0, 0);
 		local._fishingRodHotspotId = _scene->_dynamicHotspots.add(words_fishing_rod, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._fishingRodHotspotId, Common::Point(199, 101), FACING_NORTHEAST);
 	}
@@ -61,25 +61,25 @@ static void room_512_init() {
 	_scene->_hotspots.activate(words_padlock_key, false);
 	if (game.difficulty == DIFFICULTY_EASY) {
 		if (object[OBJ_PADLOCK_KEY].location == room_id) {
-			g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(g_sprite_ids[6], false, 10, 0, 0, 0);
-			_scene->_sequences.setDepth(g_sequence_ids[6], 3);
+			g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 10, 0, 0, 0);
+			kernel_seq_depth(g_sequence_ids[6], 3);
 			local._keyHotspotId = _scene->_dynamicHotspots.add(words_padlock_key, words_walkto, g_sequence_ids[6], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(local._keyHotspotId, Common::Point(218, 152), FACING_NORTHEAST);
 		}
 		if (global[kRegisterOpen]) {
-			g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
-			_scene->_sequences.setDepth(g_sequence_ids[3], 3);
+			g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -2);
+			kernel_seq_depth(g_sequence_ids[3], 3);
 			_scene->_hotspots.activate(words_padlock_key, false);
 		}
 	} else if (global[kRegisterOpen]) {
 		if (object[OBJ_PADLOCK_KEY].location == room_id) {
 			_scene->_hotspots.activate(words_padlock_key, true);
-			g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, -2);
-			_scene->_sequences.setDepth(g_sequence_ids[5], 3);
+			g_sequence_ids[5] = kernel_seq_stamp(g_sprite_ids[5], false, -2);
+			kernel_seq_depth(g_sequence_ids[5], 3);
 		} else {
 			_scene->_hotspots.activate(words_padlock_key, false);
-			g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
-			_scene->_sequences.setDepth(g_sequence_ids[3], 3);
+			g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -2);
+			kernel_seq_depth(g_sequence_ids[3], 3);
 		}
 	} else
 		_scene->_hotspots.activate(words_padlock_key, false);
@@ -102,22 +102,22 @@ static void room_512_parser() {
 			case 0:
 				player.commands_allowed = false;
 				player.walker_visible = false;
-				g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 8, 1, 0, 0);
-				_scene->_sequences.setMsgLayout(g_sequence_ids[2]);
-				_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
-				_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 8, 0, 0, 1);
+				kernel_seq_player(g_sequence_ids[2], false);
+				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
+				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 1:
 				g_engine->_soundManager->command(9, 0);
-				_scene->_sequences.remove(g_sequence_ids[1]);
+				kernel_seq_delete(g_sequence_ids[1]);
 				_scene->_dynamicHotspots.remove(local._fishingRodHotspotId);
 				inter_give_to_player(OBJ_FISHING_ROD);
 				object_examine(OBJ_FISHING_ROD, 51217, 0);
 				break;
 
 			case 2:
-				_scene->_sequences.updateTimeout(-1, g_sequence_ids[2]);
+				kernel_seq_timeout(g_sequence_ids[2], -1);
 				player.walker_visible = true;
 				player.commands_allowed = true;
 				break;
@@ -133,48 +133,48 @@ static void room_512_parser() {
 				text_show(51236);
 				player.commands_allowed = false;
 				player.facing = FACING_NORTH;
-				_scene->_sequences.addTimer(15, 1);
+				kernel_timing_trigger(15, 1);
 				break;
 
 			case 1:
 				player.walker_visible = false;
-				g_sequence_ids[8] = _scene->_sequences.startPingPongCycle(g_sprite_ids[8], false, 9, 1, 0, 0);
-				_scene->_sequences.setAnimRange(g_sequence_ids[8], 1, 3);
-				_scene->_sequences.setMsgLayout(g_sequence_ids[8]);
-				_scene->_sequences.addSubEntry(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				g_sequence_ids[8] = kernel_seq_pingpong(g_sprite_ids[8], false, 9, 0, 0, 1);
+				kernel_seq_range(g_sequence_ids[8], 1, 3);
+				kernel_seq_player(g_sequence_ids[8], false);
+				kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 2:
-				_scene->_sequences.updateTimeout(-1, g_sequence_ids[8]);
+				kernel_seq_timeout(g_sequence_ids[8], -1);
 				player.walker_visible = true;
-				_scene->_sequences.addTimer(30, 3);
+				kernel_timing_trigger(30, 3);
 				break;
 
 			case 3:
 				player.facing = FACING_NORTHEAST;
 				if (!object_is_here(OBJ_PADLOCK_KEY) || (game.difficulty == DIFFICULTY_EASY)) {
-					g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 12, 1, 0, 0);
-					_scene->_sequences.setDepth(g_sequence_ids[3], 3);
-					_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
+					g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 12, 0, 0, 1);
+					kernel_seq_depth(g_sequence_ids[3], 3);
+					kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
 				} else {
-					g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 12, 1, 0, 0);
-					_scene->_sequences.setDepth(g_sequence_ids[4], 3);
-					_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 5);
+					g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 12, 0, 0, 1);
+					kernel_seq_depth(g_sequence_ids[4], 3);
+					kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 5);
 				}
 				g_engine->_soundManager->command(23, 0);
 				break;
 
 			case 4:
-				g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
-				_scene->_sequences.setDepth(g_sequence_ids[3], 3);
-				_scene->_sequences.addTimer(60, 6);
+				g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -2);
+				kernel_seq_depth(g_sequence_ids[3], 3);
+				kernel_timing_trigger(60, 6);
 				break;
 
 			case 5:
-				g_sequence_ids[5] = _scene->_sequences.startPingPongCycle(g_sprite_ids[5], false, 14, 0, 0, 0);
-				_scene->_sequences.setDepth(g_sequence_ids[5], 3);
+				g_sequence_ids[5] = kernel_seq_pingpong(g_sprite_ids[5], false, 14, 0, 0, 0);
+				kernel_seq_depth(g_sequence_ids[5], 3);
 				_scene->_hotspots.activate(words_padlock_key, true);
-				_scene->_sequences.addTimer(60, 6);
+				kernel_timing_trigger(60, 6);
 				break;
 
 			case 6:
@@ -192,26 +192,26 @@ static void room_512_parser() {
 		case 0:
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 10, 1, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[2], 1, 2);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[2]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 10, 0, 0, 1);
+			kernel_seq_range(g_sequence_ids[2], 1, 2);
+			kernel_seq_player(g_sequence_ids[2], false);
+			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
-			_scene->_sequences.updateTimeout(-1, g_sequence_ids[2]);
+			kernel_seq_timeout(g_sequence_ids[2], -1);
 			player.walker_visible = true;
 			if (!object_is_here(OBJ_PADLOCK_KEY) || game.difficulty == DIFFICULTY_EASY) {
-				_scene->_sequences.remove(g_sequence_ids[3]);
-				g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 12, 1, 0, 0);
-				_scene->_sequences.setDepth(g_sequence_ids[3], 3);
-				_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_delete(g_sequence_ids[3]);
+				g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 12, 0, 0, 1);
+				kernel_seq_depth(g_sequence_ids[3], 3);
+				kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			} else {
-				_scene->_sequences.remove(g_sequence_ids[5]);
-				g_sequence_ids[4] = _scene->_sequences.startPingPongCycle(g_sprite_ids[4], false, 12, 1, 0, 0);
-				_scene->_sequences.setDepth(g_sequence_ids[4], 3);
+				kernel_seq_delete(g_sequence_ids[5]);
+				g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 12, 0, 0, 1);
+				kernel_seq_depth(g_sequence_ids[4], 3);
 				_scene->_hotspots.activate(words_padlock_key, false);
-				_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			}
 			break;
 
@@ -236,21 +236,21 @@ static void room_512_parser() {
 				else
 					endVal = 2;
 
-				g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 10, 1, 0, 0);
-				_scene->_sequences.setAnimRange(g_sequence_ids[2], 1, endVal);
-				_scene->_sequences.setMsgLayout(g_sequence_ids[2]);
-				_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, endVal, 1);
-				_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 10, 0, 0, 1);
+				kernel_seq_range(g_sequence_ids[2], 1, endVal);
+				kernel_seq_player(g_sequence_ids[2], false);
+				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, endVal, 1);
+				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 1:
 				if (Common::Point(player.x, player.y) == Common::Point(218, 152)) {
-					_scene->_sequences.remove(g_sequence_ids[6]);
+					kernel_seq_delete(g_sequence_ids[6]);
 					_scene->_dynamicHotspots.remove(local._keyHotspotId);
 				} else {
-					_scene->_sequences.remove(g_sequence_ids[5]);
-					g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
-					_scene->_sequences.setDepth(g_sequence_ids[3], 3);
+					kernel_seq_delete(g_sequence_ids[5]);
+					g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -2);
+					kernel_seq_depth(g_sequence_ids[3], 3);
 					_scene->_hotspots.activate(words_padlock_key, false);
 				}
 				g_engine->_soundManager->command(9, 0);
@@ -259,7 +259,7 @@ static void room_512_parser() {
 				break;
 
 			case 2:
-				_scene->_sequences.updateTimeout(-1, g_sequence_ids[2]);
+				kernel_seq_timeout(g_sequence_ids[2], -1);
 				player.walker_visible = true;
 				player.commands_allowed = true;
 				break;

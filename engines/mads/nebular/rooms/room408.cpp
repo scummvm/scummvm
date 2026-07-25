@@ -40,8 +40,8 @@ static void room_408_init() {
 	g_sprite_ids[2] = kernel_load_series(kernel_name('m', -1), 0);
 
 	if (object_is_here(OBJ_TARGET_MODULE)) {
-		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 1);
-		_scene->_sequences.setDepth(g_sequence_ids[2], 3);
+		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 1);
+		kernel_seq_depth(g_sequence_ids[2], 3);
 		int idx = _scene->_dynamicHotspots.add(words_target_module, words_walkto, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(283, 128), FACING_NORTHEAST);
 	}
@@ -66,15 +66,15 @@ static void room_408_parser() {
 			g_engine->_soundManager->command(57, 0);
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			g_sequence_ids[1] = _scene->_sequences.startPingPongCycle(g_sprite_ids[1], true, 7, 2, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[1], 1, 2);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[1]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_SPRITE, 2, 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[1] = kernel_seq_pingpong(g_sprite_ids[1], true, 7, 0, 0, 2);
+			kernel_seq_range(g_sequence_ids[1], 1, 2);
+			kernel_seq_player(g_sequence_ids[1], false);
+			kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_SPRITE, 2, 1);
+			kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
-			_scene->_sequences.remove(g_sequence_ids[2]);
+			kernel_seq_delete(g_sequence_ids[2]);
 			inter_give_to_player(OBJ_TARGET_MODULE);
 			object_examine(OBJ_TARGET_MODULE, 40847, 0);
 			break;
@@ -82,7 +82,7 @@ static void room_408_parser() {
 		case 2:
 			player.clock = player.frame_delay + kernel.clock;
 			player.walker_visible = true;
-			_scene->_sequences.addTimer(20, 3);
+			kernel_timing_trigger(20, 3);
 			break;
 
 		case 3:

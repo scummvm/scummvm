@@ -51,10 +51,10 @@ static void room_110_init() {
 		player.y = 71;
 		player.facing = FACING_EAST;
 
-		g_sequence_ids[0] = _scene->_sequences.startCycle(g_sprite_ids[0], false, 1);
-		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
-		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 1);
-		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
+		g_sequence_ids[0] = kernel_seq_stamp(g_sprite_ids[0], false, 1);
+		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 1);
+		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 1);
+		g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, 1);
 
 		local._crabsFl = true;
 
@@ -96,15 +96,15 @@ static void room_110_pre_parser() {
 	if (local._crabsFl) {
 		local._crabsFl = false;
 
-		_scene->_sequences.remove(g_sequence_ids[0]);
-		_scene->_sequences.remove(g_sequence_ids[1]);
-		_scene->_sequences.remove(g_sequence_ids[2]);
-		_scene->_sequences.remove(g_sequence_ids[3]);
+		kernel_seq_delete(g_sequence_ids[0]);
+		kernel_seq_delete(g_sequence_ids[1]);
+		kernel_seq_delete(g_sequence_ids[2]);
+		kernel_seq_delete(g_sequence_ids[3]);
 
-		g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 16, 1, 0, 0);
-		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 16, 1, 0, 0);
-		g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 16, 1, 0, 0);
-		g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 16, 1, 0, 0);
+		g_sequence_ids[0] = kernel_seq_forward(g_sprite_ids[0], false, 16, 0, 0, 1);
+		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 16, 0, 0, 1);
+		g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 16, 0, 0, 1);
+		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 16, 0, 0, 1);
 
 		int idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, g_sequence_ids[0], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);

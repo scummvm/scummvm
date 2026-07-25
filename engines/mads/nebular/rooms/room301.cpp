@@ -33,7 +33,7 @@ namespace Rooms {
 
 static void room_301_init() {
 	g_sprite_ids[1] = kernel_load_series(kernel_name('x', 0), 0);
-	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 9, 0, 0, 0);
+	g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 9, 0, 0, 0);
 
 	global[kMeteorologistStatus] = METEOROLOGIST_GONE;
 	global[kTeleporterCommand] = TELEPORTER_NONE;

@@ -51,13 +51,13 @@ static void room_106_init() {
 	}
 
 	g_sprite_ids[2] = kernel_load_series(kernel_name('G', -1), 0);
-	g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 21, 0, 0, 0);
+	g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 21, 0, 0, 0);
 	g_sprite_ids[4] = kernel_load_series(kernel_name('I', -1), 0);
-	g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 6, 0, 32, 47);
+	g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 6, 47, 32, 0);
 
 	if (previous_room == 102) {
-		g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 6, 1, 4, 0);
-		_scene->_sequences.addSubEntry(g_sequence_ids[0], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+		g_sequence_ids[0] = kernel_seq_forward(g_sprite_ids[0], false, 6, 0, 4, 1);
+		kernel_seq_trigger(g_sequence_ids[0], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 		player.walker_visible = false;
 		player.commands_allowed = false;
 		player.facing = FACING_EAST;
@@ -82,9 +82,9 @@ static void room_106_init() {
 	}
 
 	if (previous_room != 102) {
-		g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 6, 0, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[0], -2, -2);
-		_scene->_sequences.setDepth(g_sequence_ids[0], 14);
+		g_sequence_ids[0] = kernel_seq_forward(g_sprite_ids[0], false, 6, 0, 0, 0);
+		kernel_seq_range(g_sequence_ids[0], -2, -2);
+		kernel_seq_depth(g_sequence_ids[0], 14);
 	}
 
 	local._backToShipFl = false;
@@ -97,15 +97,15 @@ static void room_106_init() {
 
 static void room_106_daemon() {
 	if (kernel.trigger == 70) {
-		g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 6, 0, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[0], -2, -2);
-		_scene->_sequences.setDepth(g_sequence_ids[0], 14);
+		g_sequence_ids[0] = kernel_seq_forward(g_sprite_ids[0], false, 6, 0, 0, 0);
+		kernel_seq_range(g_sequence_ids[0], -2, -2);
+		kernel_seq_depth(g_sequence_ids[0], 14);
 
 		if (!player_has(OBJ_REBREATHER) && !kernel.teleported_in) {
 			kernel_run_animation(kernel_full_name(106, 'A', -1, "", EXT_AA), 75);
 		} else {
-			g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 4, 1, 0, 0);
-			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_SPRITE, 28, 71);
+			g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 4, 0, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_SPRITE, 28, 71);
 		}
 	}
 
@@ -161,7 +161,7 @@ static void room_106_daemon() {
 		if (msgId >= 0) {
 			int nextTrigger = kernel.trigger + 1;
 			kernel_message_add(quote_string(kernel.quotes, msgId), 15, local._positionY, 0x1110, 360, 0, 0);
-			_scene->_sequences.addTimer(150, nextTrigger);
+			kernel_timing_trigger(150, nextTrigger);
 			local._positionY += 14;
 		}
 	}
@@ -170,14 +170,14 @@ static void room_106_daemon() {
 		if (!local._shadowFl) {
 			if (player.x < 204) {
 				local._shadowFl = true;
-				g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 4, 1, 0, 0);
-				_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
-				_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 44, 73);
+				g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 4, 0, 0, 1);
+				kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+				kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 44, 73);
 			}
 		} else if (kernel.trigger == 73)
 			player.walker_visible = false;
 		else if (kernel.trigger == 72)
-			_scene->_sequences.addTimer(24, 74);
+			kernel_timing_trigger(24, 74);
 		else if (kernel.trigger == 74)
 			new_room = 102;
 	}

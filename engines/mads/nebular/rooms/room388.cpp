@@ -39,7 +39,7 @@ static void room_388_init() {
 		_scene->_hotspots.activate(words_sauropod, false);
 	else {
 		g_sprite_ids[0] = kernel_load_series(kernel_name('b', 0), 0);
-		g_sequence_ids[0] = _scene->_sequences.startCycle(g_sprite_ids[0], false, 1);
+		g_sequence_ids[0] = kernel_seq_stamp(g_sprite_ids[0], false, 1);
 	}
 
 	player.walker_visible = false;

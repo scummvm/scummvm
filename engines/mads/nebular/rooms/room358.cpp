@@ -33,9 +33,9 @@ namespace Rooms {
 
 static void room_358_init() {
 	g_sprite_ids[1] = kernel_load_series(kernel_full_name(307, 'X', 0, "", EXT_SS), 0);
-	g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
-	_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(127, 78));
-	_scene->_sequences.setDepth(g_sequence_ids[1], 15);
+	g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 1);
+	kernel_seq_loc(g_sequence_ids[1], 127, 78);
+	kernel_seq_depth(g_sequence_ids[1], 15);
 
 	if (previous_room == 357) {
 		player.x = 305;

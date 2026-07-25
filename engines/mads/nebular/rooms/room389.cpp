@@ -50,7 +50,7 @@ static void room_389_init() {
 		_scene->_hotspots.activate(words_monster, false);
 	else {
 		g_sprite_ids[0] = kernel_load_series(kernel_name('m', -1), 0);
-		g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 6, 0, 0, 0);
+		g_sequence_ids[0] = kernel_seq_forward(g_sprite_ids[0], false, 6, 0, 0, 0);
 		kernel_random_messages_init(1, 88, 177, 19, 77, 13, 2, 0xFDFC, 60, 247, 248, 249, 0);
 	}
 

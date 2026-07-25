@@ -50,16 +50,16 @@ static void room_111_init() {
 	g_sprite_ids[4] = kernel_load_series(kernel_name('B', 1), 0);
 	g_sprite_ids[5] = kernel_load_series(kernel_name('B', 2), 0);
 
-	g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 8, 0, 0, 0);
-	_scene->_sequences.addSubEntry(g_sequence_ids[0], SEQUENCE_TRIGGER_SPRITE, 9, 73);
-	_scene->_sequences.addSubEntry(g_sequence_ids[0], SEQUENCE_TRIGGER_SPRITE, 13, 73);
+	g_sequence_ids[0] = kernel_seq_forward(g_sprite_ids[0], false, 8, 0, 0, 0);
+	kernel_seq_trigger(g_sequence_ids[0], SEQUENCE_TRIGGER_SPRITE, 9, 73);
+	kernel_seq_trigger(g_sequence_ids[0], SEQUENCE_TRIGGER_SPRITE, 13, 73);
 
-	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 5, 0, 0, 0);
-	_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_SPRITE, 71, 71);
+	g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 5, 0, 0, 0);
+	kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_SPRITE, 71, 71);
 
-	g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 12, 0, 0, 0);
-	g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);
-	g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, 1);
+	g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 12, 0, 0, 0);
+	g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 1);
+	g_sequence_ids[5] = kernel_seq_stamp(g_sprite_ids[5], false, 1);
 
 	int idx = _scene->_dynamicHotspots.add(words_bats, words_look_at, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
@@ -105,26 +105,26 @@ static void room_111_daemon() {
 
 	if ((kernel.trigger == 71) && !local._stampedFl) {
 		local._stampedFl = true;
-		g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 18, 1, 0, 0);
-		_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+		g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 18, 0, 0, 1);
+		kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
 	}
 
 	if (kernel.trigger == 72) {
-		_scene->_sequences.remove(g_sequence_ids[2]);
-		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 20);
+		kernel_seq_delete(g_sequence_ids[2]);
+		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 20);
 	}
 
 	if (!local._launch1Fl && (g_engine->getRandomNumber(1, 5000) == 1)) {
-		_scene->_sequences.remove(g_sequence_ids[4]);
-		g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 5, 1, 0, 0);
+		kernel_seq_delete(g_sequence_ids[4]);
+		g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 5, 0, 0, 1);
 		local._launch1Fl = true;
 		int idx = _scene->_dynamicHotspots.add(words_bats, words_look_at, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 	}
 
 	if (!local._launched2Fl && (g_engine->getRandomNumber(1, 30000) == 1)) {
-		_scene->_sequences.remove(g_sequence_ids[5]);
-		g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 5, 1, 0, 0);
+		kernel_seq_delete(g_sequence_ids[5]);
+		g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 5, 0, 0, 1);
 		int idx = _scene->_dynamicHotspots.add(words_bats, words_look_at, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 		local._launched2Fl = true;

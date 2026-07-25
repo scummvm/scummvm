@@ -52,8 +52,8 @@ static void room_207_init() {
 	g_sprite_ids[6] = kernel_load_series(kernel_name('e', 1), 0);
 	g_sprite_ids[7] = kernel_load_series(kernel_name('g', 1), 0);
 	g_sprite_ids[8] = kernel_load_series(kernel_name('g', 0), 0);
-	g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 7, 0, 0, 0);
-	_scene->_sequences.setDepth(g_sequence_ids[5], 7);
+	g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 7, 0, 0, 0);
+	kernel_seq_depth(g_sequence_ids[5], 7);
 
 	int var2;
 	if (!player.been_here_before) {
@@ -70,14 +70,14 @@ static void room_207_init() {
 	local._spiderFl = (var2 & 1);
 
 	if (local._vultureFl) {
-		g_sequence_ids[1] = _scene->_sequences.startPingPongCycle(g_sprite_ids[1], false, 30, 0, 0, 400);
+		g_sequence_ids[1] = kernel_seq_pingpong(g_sprite_ids[1], false, 30, 400, 0, 0);
 		local._vultureHotspotId = _scene->_dynamicHotspots.add(words_vulture, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._vultureHotspotId, Common::Point(254, 94), FACING_WEST);
 	}
 
 	if (local._spiderFl) {
-		g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 7, 1, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[4], -1, -1);
+		g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 7, 0, 0, 1);
+		kernel_seq_range(g_sequence_ids[4], -1, -1);
 		local._spiderHotspotId = _scene->_dynamicHotspots.add(words_spider, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._spiderHotspotId, Common::Point(59, 132), FACING_SOUTH);
 	}
@@ -98,15 +98,15 @@ static void room_207_init() {
 
 	section_2_music();
 
-	g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(g_sprite_ids[6], false, 10, 1, 0, 0);
-	_scene->_sequences.setAnimRange(g_sequence_ids[6], 1, 22);
-	_scene->_sequences.setDepth(g_sequence_ids[6], 6);
-	_scene->_sequences.addSubEntry(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+	g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 10, 0, 0, 1);
+	kernel_seq_range(g_sequence_ids[6], 1, 22);
+	kernel_seq_depth(g_sequence_ids[6], 6);
+	kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 }
 
 static void moveVulture() {
-	_scene->_sequences.remove(g_sequence_ids[1]);
-	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 7, 1, 0, 0);
+	kernel_seq_delete(g_sequence_ids[1]);
+	g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 7, 0, 0, 1);
 	g_engine->_soundManager->command(43, 0);
 	local._vultureFl = false;
 	local._vultureTime = player.clock;
@@ -114,8 +114,8 @@ static void moveVulture() {
 }
 
 static void moveSpider() {
-	_scene->_sequences.remove(g_sequence_ids[4]);
-	g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 5, 1, 0, 0);
+	kernel_seq_delete(g_sequence_ids[4]);
+	g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 5, 0, 0, 1);
 	local._spiderFl = false;
 	local._spiderTime = player.clock;
 	_scene->_dynamicHotspots.remove(local._spiderHotspotId);
@@ -134,9 +134,9 @@ static void room_207_daemon() {
 	}
 
 	if (kernel.trigger == 70) {
-		g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(g_sprite_ids[6], false, 10, 0, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[6], 23, 34);
-		_scene->_sequences.setDepth(g_sequence_ids[6], 6);
+		g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 10, 0, 0, 0);
+		kernel_seq_range(g_sequence_ids[6], 23, 34);
+		kernel_seq_depth(g_sequence_ids[6], 6);
 	}
 
 	if (kernel.trigger == 71)
@@ -146,11 +146,11 @@ static void room_207_daemon() {
 		return;
 
 	if ((player.x >= 124) && (player.x <= 201)) {
-		g_sequence_ids[7] = _scene->_sequences.addSpriteCycle(g_sprite_ids[7], false, 10, 1, 0, 0);
-		g_sequence_ids[8] = _scene->_sequences.addSpriteCycle(g_sprite_ids[8], false, 8, 1, 0, 0);
-		_scene->_sequences.setDepth(g_sequence_ids[7], 6);
-		_scene->_sequences.setDepth(g_sequence_ids[8], 6);
-		_scene->_sequences.addSubEntry(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		g_sequence_ids[7] = kernel_seq_forward(g_sprite_ids[7], false, 10, 0, 0, 1);
+		g_sequence_ids[8] = kernel_seq_forward(g_sprite_ids[8], false, 8, 0, 0, 1);
+		kernel_seq_depth(g_sequence_ids[7], 6);
+		kernel_seq_depth(g_sequence_ids[8], 6);
+		kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 		local._eyeFl = true;
 	}
 }
@@ -181,14 +181,14 @@ static void room_207_parser() {
 			(player.y > 111) && (player.y < 130)) {
 			if ((player.x <= 162) || (player.x >= 181) ||
 				(player.y <= 115) || (player.y >= 126)) {
-				g_sequence_ids[7] = _scene->_sequences.addSpriteCycle(g_sprite_ids[7], false, 10, 2, 0, 0);
-				g_sequence_ids[8] = _scene->_sequences.addSpriteCycle(g_sprite_ids[8], false, 8, 2, 0, 0);
-				_scene->_sequences.setDepth(g_sequence_ids[7], 6);
-				_scene->_sequences.setDepth(g_sequence_ids[8], 6);
+				g_sequence_ids[7] = kernel_seq_forward(g_sprite_ids[7], false, 10, 0, 0, 2);
+				g_sequence_ids[8] = kernel_seq_forward(g_sprite_ids[8], false, 8, 0, 0, 2);
+				kernel_seq_depth(g_sequence_ids[7], 6);
+				kernel_seq_depth(g_sequence_ids[8], 6);
 			}
 		} else if (local._eyeFl) {
-			_scene->_sequences.remove(g_sequence_ids[7]);
-			_scene->_sequences.remove(g_sequence_ids[8]);
+			kernel_seq_delete(g_sequence_ids[7]);
+			kernel_seq_delete(g_sequence_ids[8]);
 			local._eyeFl = false;
 		}
 

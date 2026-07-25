@@ -53,14 +53,14 @@ static void room_309_init() {
 	g_sprite_ids[3] = kernel_load_series(kernel_name('x', 0), 0);
 	g_sprite_ids[4] = kernel_load_series(kernel_full_name(307, 'X', 0, "", EXT_SS), 0);
 
-	g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);
-	_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(127, 78));
-	_scene->_sequences.setDepth(g_sequence_ids[4], 15);
+	g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 1);
+	kernel_seq_loc(g_sequence_ids[4], 127, 78);
+	kernel_seq_depth(g_sequence_ids[4], 15);
 
-	g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 7, 1, 0, 0);
-	_scene->_sequences.setAnimRange(g_sequence_ids[3], -1, 3);
-	_scene->_sequences.setDepth(g_sequence_ids[3], 11);
-	_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 3, 70);
+	g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 7, 0, 0, 1);
+	kernel_seq_range(g_sequence_ids[3], -1, 3);
+	kernel_seq_depth(g_sequence_ids[3], 11);
+	kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 3, 70);
 
 	pal_change_color(252, 63, 37, 26);
 	pal_change_color(253, 45, 24, 17);
@@ -136,91 +136,91 @@ static void room_309_daemon() {
 		{
 			int idx = _scene->_dynamicHotspots.add(words_ghastly_beast, words_gawk_at, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(142, 146), FACING_NORTHEAST);
-			g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 7, 4, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[3], 2, 3);
-			_scene->_sequences.setDepth(g_sequence_ids[3], 11);
-			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+			g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 7, 0, 0, 4);
+			kernel_seq_range(g_sequence_ids[3], 2, 3);
+			kernel_seq_depth(g_sequence_ids[3], 11);
+			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 		}
 		break;
 
 		case 71:
 		{
 			int _oldIdx = g_sequence_ids[3];
-			g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 7, 1, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[3], 4, 7);
-			_scene->_sequences.setDepth(g_sequence_ids[3], 11);
-			_scene->_sequences.updateTimeout(g_sequence_ids[3], _oldIdx);
+			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 7, 0, 0, 1);
+			kernel_seq_range(g_sequence_ids[3], 4, 7);
+			kernel_seq_depth(g_sequence_ids[3], 11);
+			kernel_seq_timeout(_oldIdx, g_sequence_ids[3]);
 			int idx = kernel_message_add(quote_string(kernel.quotes, 248), 85, 37, 0xFDFC, 120, 0, 0);
 			kernel_message_teletype(idx, 2, true);
-			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
 		}
 		break;
 
 		case 72:
 		{
 			int _oldIdx = g_sequence_ids[3];
-			g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 7, 8, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[3], 8, 11);
-			_scene->_sequences.setDepth(g_sequence_ids[3], 11);
-			_scene->_sequences.updateTimeout(g_sequence_ids[3], _oldIdx);
-			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
+			g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 7, 0, 0, 8);
+			kernel_seq_range(g_sequence_ids[3], 8, 11);
+			kernel_seq_depth(g_sequence_ids[3], 11);
+			kernel_seq_timeout(_oldIdx, g_sequence_ids[3]);
+			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
 		}
 		break;
 
 		case 73:
 		{
 			int _oldIdx = g_sequence_ids[3];
-			g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 7, 1, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[3], 12, 20);
-			_scene->_sequences.setDepth(g_sequence_ids[3], 11);
-			_scene->_sequences.updateTimeout(g_sequence_ids[3], _oldIdx);
+			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 7, 0, 0, 1);
+			kernel_seq_range(g_sequence_ids[3], 12, 20);
+			kernel_seq_depth(g_sequence_ids[3], 11);
+			kernel_seq_timeout(_oldIdx, g_sequence_ids[3]);
 			int idx = kernel_message_add(quote_string(kernel.quotes, 249), 170, 49, 0xFDFC, 120, 0, 0);
 			kernel_message_teletype(idx, 2, true);
-			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
+			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
 		}
 		break;
 
 		case 74:
 		{
 			int _oldIdx = g_sequence_ids[3];
-			g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 7, 6, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[3], 21, 23);
-			_scene->_sequences.setDepth(g_sequence_ids[3], 11);
-			_scene->_sequences.updateTimeout(g_sequence_ids[3], _oldIdx);
-			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
+			g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 7, 0, 0, 6);
+			kernel_seq_range(g_sequence_ids[3], 21, 23);
+			kernel_seq_depth(g_sequence_ids[3], 11);
+			kernel_seq_timeout(_oldIdx, g_sequence_ids[3]);
+			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
 		}
 		break;
 
 		case 75:
 		{
 			int _oldIdx = g_sequence_ids[3];
-			g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 12, 6, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[3], 24, 25);
-			_scene->_sequences.updateTimeout(g_sequence_ids[3], _oldIdx);
-			_scene->_sequences.setDepth(g_sequence_ids[3], 11);
-			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 76);
+			g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 12, 0, 0, 6);
+			kernel_seq_range(g_sequence_ids[3], 24, 25);
+			kernel_seq_timeout(_oldIdx, g_sequence_ids[3]);
+			kernel_seq_depth(g_sequence_ids[3], 11);
+			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 76);
 		}
 		break;
 
 		case 76:
 		{
 			int _oldIdx = g_sequence_ids[3];
-			g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 12, 1, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[3], 26, 28);
-			_scene->_sequences.updateTimeout(g_sequence_ids[3], _oldIdx);
-			_scene->_sequences.setDepth(g_sequence_ids[3], 11);
-			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 77);
+			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 12, 0, 0, 1);
+			kernel_seq_range(g_sequence_ids[3], 26, 28);
+			kernel_seq_timeout(_oldIdx, g_sequence_ids[3]);
+			kernel_seq_depth(g_sequence_ids[3], 11);
+			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 77);
 		}
 		break;
 
 		case 77:
 		{
-			g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 90, 0, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[3], 29, 30);
-			_scene->_sequences.setDepth(g_sequence_ids[3], 11);
+			g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 90, 0, 0, 0);
+			kernel_seq_range(g_sequence_ids[3], 29, 30);
+			kernel_seq_depth(g_sequence_ids[3], 11);
 			int idx = kernel_message_add(quote_string(kernel.quotes, 247), 15, 46, 0xFDFC, 120, 0, 0);
 			kernel_message_teletype(idx, 2, true);
-			_scene->_sequences.addTimer(120, 78);
+			kernel_timing_trigger(120, 78);
 		}
 		break;
 

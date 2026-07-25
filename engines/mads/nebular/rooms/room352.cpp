@@ -50,28 +50,28 @@ static void putArmDown(bool corridorExit, bool doorwayExit) {
 	switch (kernel.trigger) {
 	case 0:
 		kernel_message_add(quote_string(kernel.quotes, 0xFF), 0, 0, 0x1110, 120, 0, 34);
-		_scene->_sequences.addTimer(48, 1);
+		kernel_timing_trigger(48, 1);
 		break;
 
 	case 1:
 		player.commands_allowed = false;
 		player.walker_visible = false;
 		if (global[kSexOfRex] == REX_FEMALE) {
-			g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 5, 2, 0, 0);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 5, 2);
-			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 5, 0, 0, 2);
+			kernel_seq_player(g_sequence_ids[3], false);
+			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 5, 2);
+			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 		} else {
-			g_sequence_ids[4] = _scene->_sequences.startPingPongCycle(g_sprite_ids[4], false, 5, 2, 0, 0);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_SPRITE, 6, 2);
-			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 5, 0, 0, 2);
+			kernel_seq_player(g_sequence_ids[4], false);
+			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_SPRITE, 6, 2);
+			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 		}
 		break;
 
 	case 2:
 	{
-		g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 6, 0, 0, 0);
+		g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 6, 0, 0, 0);
 		int idx = _scene->_dynamicHotspots.add(words_guards_arm2, words_walkto, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(230, 117), FACING_NORTHWEST);
 		kernel_load_variant(0);
@@ -84,9 +84,9 @@ static void putArmDown(bool corridorExit, bool doorwayExit) {
 		inter_move_object(OBJ_GUARDS_ARM, room_id);
 		player.walker_visible = true;
 		if (corridorExit)
-			_scene->_sequences.addTimer(48, 6);
+			kernel_timing_trigger(48, 6);
 		else if (doorwayExit)
-			_scene->_sequences.addTimer(48, 4);
+			kernel_timing_trigger(48, 4);
 		else {
 			local._mustPutArmDownFl = false;
 			player.commands_allowed = true;
@@ -96,7 +96,7 @@ static void putArmDown(bool corridorExit, bool doorwayExit) {
 	case 4:
 		player_walk(116, 107, FACING_NORTH);
 		local._mustPutArmDownFl = false;
-		_scene->_sequences.addTimer(180, 5);
+		kernel_timing_trigger(180, 5);
 		local._leaveRoomFl = true;
 		break;
 
@@ -110,7 +110,7 @@ static void putArmDown(bool corridorExit, bool doorwayExit) {
 		player_walk(171, 152, FACING_SOUTH);
 		player.commands_allowed = true;
 		local._mustPutArmDownFl = false;
-		_scene->_sequences.addTimer(180, 7);
+		kernel_timing_trigger(180, 7);
 		local._leaveRoomFl = true;
 		break;
 
@@ -150,8 +150,8 @@ static void room_352_init() {
 	local._leaveRoomFl = false;
 
 	if (object_is_here(OBJ_TAPE_PLAYER)) {
-		g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 12, 0, 0, 0);
-		_scene->_sequences.setDepth(g_sequence_ids[5], 5);
+		g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 12, 0, 0, 0);
+		kernel_seq_depth(g_sequence_ids[5], 5);
 		int idx = _scene->_dynamicHotspots.add(words_tape_player, words_walkto, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
 		local._tapePlayerHotspotIdx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(84, 145), FACING_WEST);
 	}
@@ -165,7 +165,7 @@ static void room_352_init() {
 	}
 
 	if (object_is_here(OBJ_GUARDS_ARM)) {
-		g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 6, 0, 0, 0);
+		g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 6, 0, 0, 0);
 		int idx = _scene->_dynamicHotspots.add(words_guards_arm2, words_walkto, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(230, 117), FACING_NORTHWEST);
 	} else
@@ -204,11 +204,11 @@ static void room_352_pre_parser() {
 		case 0:
 			if (player.need_to_walk) {
 				player.commands_allowed = false;
-				_scene->_sequences.remove(local._commonSequenceIdx);
+				kernel_seq_delete(local._commonSequenceIdx);
 				g_engine->_soundManager->command(20, 0);
-				local._commonSequenceIdx = _scene->_sequences.addReverseSpriteCycle(local._commonSpriteIndex, false, 6, 1, 0, 0);
-				_scene->_sequences.addSubEntry(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 1);
-				_scene->_sequences.setDepth(local._commonSequenceIdx, 15);
+				local._commonSequenceIdx = kernel_seq_backward(local._commonSpriteIndex, false, 6, 0, 0, 1);
+				kernel_seq_trigger(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				kernel_seq_depth(local._commonSequenceIdx, 15);
 			}
 			break;
 
@@ -258,35 +258,35 @@ static void room_352_parser() {
 				else
 					local._commonSpriteIndex = g_sprite_ids[8];
 
-				local._commonSequenceIdx = _scene->_sequences.addSpriteCycle(local._commonSpriteIndex, false, 8, 1, 0, 0);
-				_scene->_sequences.updateTimeout(local._commonSequenceIdx, -1);
-				_scene->_sequences.addSubEntry(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				local._commonSequenceIdx = kernel_seq_forward(local._commonSpriteIndex, false, 8, 0, 0, 1);
+				kernel_seq_timeout(-1, local._commonSequenceIdx);
+				kernel_seq_trigger(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				break;
 
 			case 1:
 			{
 				g_engine->_soundManager->command(21, 0);
-				g_sequence_ids[12] = _scene->_sequences.startPingPongCycle(g_sprite_ids[12], false, 7, 2, 20, 0);
-				_scene->_sequences.setDepth(g_sequence_ids[12], FACING_NORTH);
+				g_sequence_ids[12] = kernel_seq_pingpong(g_sprite_ids[12], false, 7, 0, 20, 2);
+				kernel_seq_depth(g_sequence_ids[12], FACING_NORTH);
 				int oldIdx = local._commonSequenceIdx;
-				local._commonSequenceIdx = _scene->_sequences.startCycle(local._commonSpriteIndex, false, -2);
-				_scene->_sequences.updateTimeout(local._commonSequenceIdx, oldIdx);
-				_scene->_sequences.addSubEntry(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				local._commonSequenceIdx = kernel_seq_stamp(local._commonSpriteIndex, false, -2);
+				kernel_seq_timeout(oldIdx, local._commonSequenceIdx);
+				kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			}
 			break;
 
 			case 2:
 				g_engine->_soundManager->command(22, 0);
-				_scene->_sequences.remove(local._commonSequenceIdx);
-				local._commonSequenceIdx = _scene->_sequences.startPingPongCycle(local._commonSpriteIndex, false, 8, 1, 0, 0);
-				_scene->_sequences.setAnimRange(local._commonSequenceIdx, 1, 3);
-				_scene->_sequences.addSubEntry(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+				kernel_seq_delete(local._commonSequenceIdx);
+				local._commonSequenceIdx = kernel_seq_pingpong(local._commonSpriteIndex, false, 8, 0, 0, 1);
+				kernel_seq_range(local._commonSequenceIdx, 1, 3);
+				kernel_seq_trigger(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 				break;
 
 			case 3:
-				_scene->_sequences.updateTimeout(-1, local._commonSequenceIdx);
+				kernel_seq_timeout(local._commonSequenceIdx, -1);
 				player.walker_visible = true;
-				_scene->_sequences.addTimer(60, 4);
+				kernel_timing_trigger(60, 4);
 				break;
 
 			case 4:
@@ -336,20 +336,20 @@ static void room_352_parser() {
 				player.commands_allowed = false;
 				player.walker_visible = false;
 				if (global[kSexOfRex] == REX_FEMALE) {
-					g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 5, 2, 0, 0);
-					_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
-					_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 5, 1);
-					_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+					g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 5, 0, 0, 2);
+					kernel_seq_player(g_sequence_ids[3], false);
+					kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 5, 1);
+					kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				} else {
-					g_sequence_ids[4] = _scene->_sequences.startPingPongCycle(g_sprite_ids[4], false, 5, 2, 0, 0);
-					_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
-					_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_SPRITE, 6, 1);
-					_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+					g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 5, 0, 0, 2);
+					kernel_seq_player(g_sequence_ids[4], false);
+					kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_SPRITE, 6, 1);
+					kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				}
 				break;
 
 			case 1:
-				_scene->_sequences.remove(g_sequence_ids[2]);
+				kernel_seq_delete(g_sequence_ids[2]);
 				inter_give_to_player(OBJ_GUARDS_ARM);
 				kernel_load_variant(1);
 				break;
@@ -379,34 +379,34 @@ static void room_352_parser() {
 				else
 					local._commonSpriteIndex = g_sprite_ids[10];
 
-				local._commonSequenceIdx = _scene->_sequences.addSpriteCycle(local._commonSpriteIndex, false, 8, 1, 0, 0);
-				_scene->_sequences.updateTimeout(local._commonSequenceIdx, -1);
-				_scene->_sequences.addSubEntry(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				local._commonSequenceIdx = kernel_seq_forward(local._commonSpriteIndex, false, 8, 0, 0, 1);
+				kernel_seq_timeout(-1, local._commonSequenceIdx);
+				kernel_seq_trigger(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				break;
 
 			case 1:
 			{
 				g_engine->_soundManager->command(21, 0);
-				g_sequence_ids[12] = _scene->_sequences.startPingPongCycle(g_sprite_ids[12], false, 7, 2, 20, 0);
-				_scene->_sequences.setDepth(g_sequence_ids[12], 8);
+				g_sequence_ids[12] = kernel_seq_pingpong(g_sprite_ids[12], false, 7, 0, 20, 2);
+				kernel_seq_depth(g_sequence_ids[12], 8);
 				int oldIdx = local._commonSequenceIdx;
-				local._commonSequenceIdx = _scene->_sequences.startCycle(local._commonSpriteIndex, false, -2);
-				_scene->_sequences.updateTimeout(local._commonSequenceIdx, oldIdx);
-				_scene->_sequences.addSubEntry(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				local._commonSequenceIdx = kernel_seq_stamp(local._commonSpriteIndex, false, -2);
+				kernel_seq_timeout(oldIdx, local._commonSequenceIdx);
+				kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			}
 			break;
 
 			case 2:
 				g_engine->_soundManager->command(23, 0);
-				_scene->_sequences.remove(local._commonSequenceIdx);
-				local._commonSequenceIdx = _scene->_sequences.addReverseSpriteCycle(local._commonSpriteIndex, false, 8, 1, 0, 0);
-				_scene->_sequences.setAnimRange(local._commonSequenceIdx, 1, 4);
-				_scene->_sequences.addSubEntry(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+				kernel_seq_delete(local._commonSequenceIdx);
+				local._commonSequenceIdx = kernel_seq_backward(local._commonSpriteIndex, false, 8, 0, 0, 1);
+				kernel_seq_range(local._commonSequenceIdx, 1, 4);
+				kernel_seq_trigger(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 				break;
 
 
 			case 3:
-				_scene->_sequences.updateTimeout(-1, local._commonSequenceIdx);
+				kernel_seq_timeout(local._commonSequenceIdx, -1);
 				player.walker_visible = true;
 				if (global[kHaveYourStuff])
 					local._commonSpriteIndex = g_sprite_ids[13];
@@ -414,16 +414,16 @@ static void room_352_parser() {
 					local._commonSpriteIndex = g_sprite_ids[1];
 
 				g_engine->_soundManager->command(20, 0);
-				local._commonSequenceIdx = _scene->_sequences.addSpriteCycle(local._commonSpriteIndex, false, 6, 1, 0, 0);
-				_scene->_sequences.setDepth(local._commonSequenceIdx, 15);
-				_scene->_sequences.addSubEntry(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 4);
+				local._commonSequenceIdx = kernel_seq_forward(local._commonSpriteIndex, false, 6, 0, 0, 1);
+				kernel_seq_depth(local._commonSequenceIdx, 15);
+				kernel_seq_trigger(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 4);
 				break;
 
 			case 4:
-				local._commonSequenceIdx = _scene->_sequences.addSpriteCycle(local._commonSpriteIndex, false, 6, 0, 0, 0);
-				_scene->_sequences.setAnimRange(local._commonSequenceIdx, -2, -2);
-				_scene->_sequences.setDepth(local._commonSequenceIdx, 15);
-				_scene->_sequences.addTimer(60, 5);
+				local._commonSequenceIdx = kernel_seq_forward(local._commonSpriteIndex, false, 6, 0, 0, 0);
+				kernel_seq_range(local._commonSequenceIdx, -2, -2);
+				kernel_seq_depth(local._commonSequenceIdx, 15);
+				kernel_timing_trigger(60, 5);
 				break;
 
 			case 5:
@@ -458,17 +458,17 @@ static void room_352_parser() {
 			player.commands_allowed = false;
 			player.walker_visible = false;
 			if (global[kSexOfRex] == REX_MALE) {
-				g_sequence_ids[14] = _scene->_sequences.startPingPongCycle(g_sprite_ids[14], false, 8, 1, 0, 0);
-				_scene->_sequences.setAnimRange(g_sequence_ids[14], 1, 2);
-				_scene->_sequences.setMsgLayout(g_sequence_ids[14]);
-				_scene->_sequences.addSubEntry(g_sequence_ids[14], SEQUENCE_TRIGGER_SPRITE, 2, 1);
-				_scene->_sequences.addSubEntry(g_sequence_ids[14], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				g_sequence_ids[14] = kernel_seq_pingpong(g_sprite_ids[14], false, 8, 0, 0, 1);
+				kernel_seq_range(g_sequence_ids[14], 1, 2);
+				kernel_seq_player(g_sequence_ids[14], false);
+				kernel_seq_trigger(g_sequence_ids[14], SEQUENCE_TRIGGER_SPRITE, 2, 1);
+				kernel_seq_trigger(g_sequence_ids[14], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			} else {
-				g_sequence_ids[15] = _scene->_sequences.startPingPongCycle(g_sprite_ids[15], false, 8, 1, 0, 0);
-				_scene->_sequences.setAnimRange(g_sequence_ids[15], 1, 2);
-				_scene->_sequences.setMsgLayout(g_sequence_ids[15]);
-				_scene->_sequences.addSubEntry(g_sequence_ids[15], SEQUENCE_TRIGGER_SPRITE, 2, 1);
-				_scene->_sequences.addSubEntry(g_sequence_ids[15], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				g_sequence_ids[15] = kernel_seq_pingpong(g_sprite_ids[15], false, 8, 0, 0, 1);
+				kernel_seq_range(g_sequence_ids[15], 1, 2);
+				kernel_seq_player(g_sequence_ids[15], false);
+				kernel_seq_trigger(g_sequence_ids[15], SEQUENCE_TRIGGER_SPRITE, 2, 1);
+				kernel_seq_trigger(g_sequence_ids[15], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			}
 			break;
 
@@ -481,16 +481,16 @@ static void room_352_parser() {
 					inter_give_to_player(i);
 			}
 
-			_scene->_sequences.remove(g_sequence_ids[1]);
-			g_sequence_ids[13] = _scene->_sequences.startCycle(g_sprite_ids[13], false, -2);
-			_scene->_sequences.setDepth(g_sequence_ids[13], 15);
+			kernel_seq_delete(g_sequence_ids[1]);
+			g_sequence_ids[13] = kernel_seq_stamp(g_sprite_ids[13], false, -2);
+			kernel_seq_depth(g_sequence_ids[13], 15);
 			break;
 
 		case 2:
 			if (global[kSexOfRex] == REX_MALE)
-				_scene->_sequences.updateTimeout(-1, g_sequence_ids[14]);
+				kernel_seq_timeout(g_sequence_ids[14], -1);
 			else
-				_scene->_sequences.updateTimeout(-1, g_sequence_ids[15]);
+				kernel_seq_timeout(g_sequence_ids[15], -1);
 
 			player.walker_visible = true;
 			player.commands_allowed = true;
@@ -505,29 +505,29 @@ static void room_352_parser() {
 			player.commands_allowed = false;
 			player.walker_visible = false;
 			if (global[kSexOfRex] == REX_MALE) {
-				g_sequence_ids[6] = _scene->_sequences.startPingPongCycle(g_sprite_ids[6], true, 6, 2, 0, 0);
-				_scene->_sequences.setMsgLayout(g_sequence_ids[6]);
-				_scene->_sequences.addSubEntry(g_sequence_ids[6], SEQUENCE_TRIGGER_SPRITE, 6, 1);
-				_scene->_sequences.addSubEntry(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				g_sequence_ids[6] = kernel_seq_pingpong(g_sprite_ids[6], true, 6, 0, 0, 2);
+				kernel_seq_player(g_sequence_ids[6], false);
+				kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_SPRITE, 6, 1);
+				kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			} else {
-				g_sequence_ids[7] = _scene->_sequences.startPingPongCycle(g_sprite_ids[7], true, 6, 2, 0, 0);
-				_scene->_sequences.setMsgLayout(g_sequence_ids[7]);
-				_scene->_sequences.addSubEntry(g_sequence_ids[7], SEQUENCE_TRIGGER_SPRITE, 6, 1);
-				_scene->_sequences.addSubEntry(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				g_sequence_ids[7] = kernel_seq_pingpong(g_sprite_ids[7], true, 6, 0, 0, 2);
+				kernel_seq_player(g_sequence_ids[7], false);
+				kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_SPRITE, 6, 1);
+				kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			}
 			break;
 
 		case 1:
-			_scene->_sequences.remove(g_sequence_ids[5]);
+			kernel_seq_delete(g_sequence_ids[5]);
 			_scene->_dynamicHotspots.remove(local._tapePlayerHotspotIdx);
 			break;
 
 		case 2:
 			inter_give_to_player(OBJ_TAPE_PLAYER);
 			if (global[kSexOfRex] == REX_MALE)
-				_scene->_sequences.updateTimeout(-1, g_sequence_ids[6]);
+				kernel_seq_timeout(g_sequence_ids[6], -1);
 			else
-				_scene->_sequences.updateTimeout(-1, g_sequence_ids[7]);
+				kernel_seq_timeout(g_sequence_ids[7], -1);
 
 			player.walker_visible = true;
 			player.commands_allowed = true;

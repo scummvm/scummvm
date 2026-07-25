@@ -35,9 +35,9 @@ static void room_215_init() {
 	g_sprite_ids[1] = kernel_load_series(kernel_name('e', 0), 0);
 	g_sprite_ids[3] = kernel_load_series(kernel_name('a', 0), 0);
 
-	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 7, 0, 0, 0);
-	_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(235, 83));
-	_scene->_sequences.setDepth(g_sequence_ids[1], 15);
+	g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 7, 0, 0, 0);
+	kernel_seq_loc(g_sequence_ids[1], 235, 83);
+	kernel_seq_depth(g_sequence_ids[1], 15);
 
 	if (global[kSexOfRex] == REX_MALE)
 		g_sprite_ids[2] = kernel_load_series("*RXMRC_9", 0);
@@ -50,8 +50,8 @@ static void room_215_init() {
 		player.facing = FACING_SOUTHWEST;
 		player.walker_visible = false;
 		player.commands_allowed = false;
-		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
-		_scene->_sequences.addTimer(120, 70);
+		g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, 1);
+		kernel_timing_trigger(120, 70);
 	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 204;
 		player.y = 152;
@@ -64,13 +64,13 @@ static void room_215_init() {
 
 static void room_215_daemon() {
 	if (kernel.trigger == 70) {
-		_scene->_sequences.remove(g_sequence_ids[3]);
-		g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 6, 1, 0, 0);
-		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		kernel_seq_delete(g_sequence_ids[3]);
+		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 6, 0, 0, 1);
+		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 	}
 
 	if (kernel.trigger == 71) {
-		_scene->_sequences.updateTimeout(-1, g_sequence_ids[3]);
+		kernel_seq_timeout(g_sequence_ids[3], -1);
 		player.walker_visible = true;
 		player.commands_allowed = true;
 	}
@@ -86,11 +86,11 @@ static void room_215_parser() {
 				if (global[kSexOfRex] == REX_MALE) {
 					player.walker_visible = false;
 					player.commands_allowed = false;
-					g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 6, 2, 0, 0);
-					_scene->_sequences.setAnimRange(g_sequence_ids[2], 1, 4);
-					_scene->_sequences.setMsgLayout(g_sequence_ids[2]);
-					_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_LOOP, 0, 1);
-					_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+					g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 6, 0, 0, 2);
+					kernel_seq_range(g_sequence_ids[2], 1, 4);
+					kernel_seq_player(g_sequence_ids[2], false);
+					kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_LOOP, 0, 1);
+					kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				} else {
 					inter_give_to_player(OBJ_TWINKIFRUIT);
 					object_examine(OBJ_TWINKIFRUIT, 0x5404, 0);
@@ -107,7 +107,7 @@ static void room_215_parser() {
 			case 2:
 				player.walker_visible = true;
 				player.commands_allowed = true;
-				_scene->_sequences.updateTimeout(-1, g_sequence_ids[2]);
+				kernel_seq_timeout(g_sequence_ids[2], -1);
 				break;
 
 			default:

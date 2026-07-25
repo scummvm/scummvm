@@ -51,7 +51,7 @@ static void room_604_init() {
 	g_sprite_ids[5] = kernel_load_series("*RXMRC_9", 0);
 
 	if (global[kTimebombStatus] == 1) {
-		g_sequence_ids[6] = _scene->_sequences.startCycle(g_sprite_ids[6], false, -1);
+		g_sequence_ids[6] = kernel_seq_stamp(g_sprite_ids[6], false, -1);
 		local._timebombHotspotId = _scene->_dynamicHotspots.add(words_timebomb, words_walkto, g_sequence_ids[6], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._timebombHotspotId, Common::Point(166, 118), FACING_NORTHEAST);
 	}
@@ -69,13 +69,13 @@ static void room_604_init() {
 		player.facing = FACING_NORTHEAST;
 		player.walker_visible = false;
 		player.commands_allowed = false;
-		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
-		_scene->_sequences.setDepth(g_sequence_ids[2], 1);
+		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, -1);
+		kernel_seq_depth(g_sequence_ids[2], 1);
 		kernel_run_animation(kernel_name('R', 1), 70);
 		local._animationActiveFl = true;
 	} else {
-		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -2);
-		_scene->_sequences.setDepth(g_sequence_ids[2], 1);
+		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, -2);
+		kernel_seq_depth(g_sequence_ids[2], 1);
 	}
 
 	local._monsterTimer = kernel.clock;
@@ -90,19 +90,19 @@ static void room_604_daemon() {
 	case 70:
 		player.walker_visible = true;
 		player.clock = kernel_anim[0].next_clock - player.frame_delay;
-		_scene->_sequences.addTimer(30, 71);
+		kernel_timing_trigger(30, 71);
 		break;
 
 	case 71:
-		_scene->_sequences.remove(g_sequence_ids[2]);
-		g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 6, 1, 0, 0);
-		_scene->_sequences.setDepth(g_sequence_ids[2], 1);
-		_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+		kernel_seq_delete(g_sequence_ids[2]);
+		g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 6, 0, 0, 1);
+		kernel_seq_depth(g_sequence_ids[2], 1);
+		kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
 		break;
 
 	case 72:
-		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -2);
-		_scene->_sequences.setDepth(g_sequence_ids[2], 1);
+		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, -2);
+		kernel_seq_depth(g_sequence_ids[2], 1);
 		player.commands_allowed = true;
 		local._animationActiveFl = false;
 		break;
@@ -173,32 +173,32 @@ static void handleBombActions() {
 	case 0:
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		g_sequence_ids[5] = _scene->_sequences.startPingPongCycle(g_sprite_ids[5], false, 9, 1, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[5], 1, 3);
-		_scene->_sequences.setMsgLayout(g_sequence_ids[5]);
+		g_sequence_ids[5] = kernel_seq_pingpong(g_sprite_ids[5], false, 9, 0, 0, 1);
+		kernel_seq_range(g_sequence_ids[5], 1, 3);
+		kernel_seq_player(g_sequence_ids[5], false);
 		if (local._bombMode == 1)
-			_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_SPRITE, 3, 1);
+			kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_SPRITE, 3, 1);
 		else
-			_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_SPRITE, 3, 2);
+			kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_SPRITE, 3, 2);
 
-		_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+		kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 		break;
 
 	case 1:
-		g_sequence_ids[6] = _scene->_sequences.startCycle(g_sprite_ids[6], false, -1);
+		g_sequence_ids[6] = kernel_seq_stamp(g_sprite_ids[6], false, -1);
 		local._timebombHotspotId = _scene->_dynamicHotspots.add(words_timebomb, words_walkto, g_sequence_ids[6], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._timebombHotspotId, Common::Point(166, 118), FACING_NORTHEAST);
 		inter_move_object(OBJ_TIMEBOMB, room_id);
 		break;
 
 	case 2:
-		_scene->_sequences.remove(g_sequence_ids[6]);
+		kernel_seq_delete(g_sequence_ids[6]);
 		_scene->_dynamicHotspots.remove(local._timebombHotspotId);
 		inter_give_to_player(OBJ_TIMEBOMB);
 		break;
 
 	case 3:
-		_scene->_sequences.updateTimeout(-1, g_sequence_ids[5]);
+		kernel_seq_timeout(g_sequence_ids[5], -1);
 		player.walker_visible = true;
 		player.commands_allowed = true;
 		if (local._bombMode == 1) {
@@ -222,35 +222,35 @@ static void room_604_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_scene->_sequences.remove(g_sequence_ids[2]);
-			g_sequence_ids[2] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[2], false, 6, 1, 0, 0);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_delete(g_sequence_ids[2]);
+			g_sequence_ids[2] = kernel_seq_backward(g_sprite_ids[2], false, 6, 0, 0, 1);
+			kernel_seq_depth(g_sequence_ids[2], 1);
+			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
 		{
 			int syncIdx = g_sequence_ids[2];
-			g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
-			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
-			_scene->_sequences.updateTimeout(g_sequence_ids[2], syncIdx);
-			_scene->_sequences.addTimer(6, 2);
+			g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, -1);
+			kernel_seq_depth(g_sequence_ids[2], 1);
+			kernel_seq_timeout(syncIdx, g_sequence_ids[2]);
+			kernel_timing_trigger(6, 2);
 		}
 		break;
 
 		case 2:
 			player.walker_visible = false;
-			g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 10, 1, 0, 0);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 10, 0, 0, 1);
+			kernel_seq_player(g_sequence_ids[4], false);
+			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 			break;
 
 		case 3:
 		{
 			int syncIdx = g_sequence_ids[4];
-			g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, -2);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
-			_scene->_sequences.updateTimeout(g_sequence_ids[4], syncIdx);
+			g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, -2);
+			kernel_seq_player(g_sequence_ids[4], false);
+			kernel_seq_timeout(syncIdx, g_sequence_ids[4]);
 			new_room = 504;
 		}
 		break;

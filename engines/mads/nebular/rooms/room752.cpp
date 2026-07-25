@@ -56,15 +56,15 @@ static void room_752_init() {
 
 	if (object[OBJ_ID_CARD].location == 752) {
 		g_sprite_ids[13] = kernel_load_series(kernel_name('i', -1), 0);
-		g_sequence_ids[13] = _scene->_sequences.startCycle(g_sprite_ids[13], false, 1);
-		_scene->_sequences.setDepth(g_sequence_ids[13], 8);
+		g_sequence_ids[13] = kernel_seq_stamp(g_sprite_ids[13], false, 1);
+		kernel_seq_depth(g_sequence_ids[13], 8);
 		int idx = _scene->_dynamicHotspots.add(words_id_card, words_walkto, g_sequence_ids[13], Common::Rect(0, 0, 0, 0));
 		local._cardId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 135), FACING_NORTH);
 	}
 
 	if (global[kLaserHoleIsThere]) {
-		g_sequence_ids[14] = _scene->_sequences.startCycle(g_sprite_ids[14], false, 1);
-		_scene->_sequences.setDepth(g_sequence_ids[14], 13);
+		g_sequence_ids[14] = kernel_seq_stamp(g_sprite_ids[14], false, 1);
+		kernel_seq_depth(g_sequence_ids[14], 13);
 		int idx = _scene->_dynamicHotspots.add(words_laser_beam, words_look_at, g_sequence_ids[14], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(215, 130), FACING_NORTHWEST);
 	}
@@ -122,14 +122,14 @@ static void room_752_parser() {
 		case 0:
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			g_sequence_ids[12] = _scene->_sequences.startPingPongCycle(g_sprite_ids[12], false, 5, 2, 0, 0);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[12]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[12] = kernel_seq_pingpong(g_sprite_ids[12], false, 5, 0, 0, 2);
+			kernel_seq_player(g_sequence_ids[12], false);
+			kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
+			kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 		case 1:
 			g_engine->_soundManager->command(15, 0);
-			_scene->_sequences.remove(g_sequence_ids[13]);
+			kernel_seq_delete(g_sequence_ids[13]);
 			inter_give_to_player(OBJ_ID_CARD);
 			_scene->_dynamicHotspots.remove(local._cardId);
 			object_examine(OBJ_ID_CARD, 830, 0);
@@ -147,10 +147,10 @@ static void room_752_parser() {
 		case 0:
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			g_sequence_ids[12] = _scene->_sequences.startPingPongCycle(g_sprite_ids[12], false, 5, 2, 0, 0);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[12]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[12] = kernel_seq_pingpong(g_sprite_ids[12], false, 5, 0, 0, 2);
+			kernel_seq_player(g_sequence_ids[12], false);
+			kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
+			kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 		case 1:
 			g_engine->_soundManager->command(15, 0);
@@ -160,7 +160,7 @@ static void room_752_parser() {
 			object_examine(OBJ_BONES, 75221, 0);
 			break;
 		case 2:
-			_scene->_sequences.updateTimeout(-1, g_sequence_ids[12]);
+			kernel_seq_timeout(g_sequence_ids[12], -1);
 			player.walker_visible = true;
 			player.commands_allowed = true;
 			break;

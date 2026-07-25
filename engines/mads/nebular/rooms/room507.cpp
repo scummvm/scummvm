@@ -44,7 +44,7 @@ static void room_507_init() {
 	g_sprite_ids[2] = kernel_load_series("*RXMRD_3", 0);
 
 	if ((game.difficulty != DIFFICULTY_EASY) && (object[OBJ_PENLIGHT].location == room_id)) {
-		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 9, 0, 0, 0);
+		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 9, 0, 0, 0);
 		local._penlightHotspotId = _scene->_dynamicHotspots.add(words_penlight, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._penlightHotspotId, Common::Point(233, 152), FACING_SOUTHEAST);
 	}
@@ -67,15 +67,15 @@ static void room_507_parser() {
 			case 0:
 				player.commands_allowed = false;
 				player.walker_visible = false;
-				g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 6, 1, 0, 0);
-				_scene->_sequences.setAnimRange(g_sequence_ids[2], 1, 5);
-				_scene->_sequences.setMsgLayout(g_sequence_ids[2]);
-				_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
-				_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 6, 0, 0, 1);
+				kernel_seq_range(g_sequence_ids[2], 1, 5);
+				kernel_seq_player(g_sequence_ids[2], false);
+				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
+				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 1:
-				_scene->_sequences.remove(g_sequence_ids[1]);
+				kernel_seq_delete(g_sequence_ids[1]);
 				_scene->_dynamicHotspots.remove(local._penlightHotspotId);
 				g_engine->_soundManager->command(27, 0);
 				inter_give_to_player(OBJ_PENLIGHT);
@@ -83,7 +83,7 @@ static void room_507_parser() {
 				break;
 
 			case 2:
-				_scene->_sequences.updateTimeout(-1, g_sequence_ids[2]);
+				kernel_seq_timeout(g_sequence_ids[2], -1);
 				player.walker_visible = true;
 				player.commands_allowed = true;
 				break;

@@ -40,8 +40,8 @@ static void room_351_init() {
 	g_sprite_ids[3] = kernel_load_series("*RXRD_7", 0);
 
 	if (object_is_here(OBJ_CREDIT_CHIP)) {
-		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 6, 0, 0, 0);
-		_scene->_sequences.setDepth(g_sequence_ids[1], 4);
+		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 6, 0, 0, 0);
+		kernel_seq_depth(g_sequence_ids[1], 4);
 	} else
 		_scene->_hotspots.activate(words_credit_chip, false);
 
@@ -128,21 +128,21 @@ static void room_351_parser() {
 				player.commands_allowed = false;
 				player.walker_visible = false;
 				if (global[kSexOfRex] == REX_FEMALE) {
-					g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 5, 2, 0, 0);
-					_scene->_sequences.setMsgLayout(g_sequence_ids[2]);
-					_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
-					_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+					g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 5, 0, 0, 2);
+					kernel_seq_player(g_sequence_ids[2], false);
+					kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
+					kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				} else {
-					g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 5, 2, 0, 0);
-					_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
-					_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 6, 1);
-					_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+					g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 5, 0, 0, 2);
+					kernel_seq_player(g_sequence_ids[3], false);
+					kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 6, 1);
+					kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				}
 				break;
 
 			case 1:
 				_scene->_hotspots.activate(words_credit_chip, false);
-				_scene->_sequences.remove(g_sequence_ids[1]);
+				kernel_seq_delete(g_sequence_ids[1]);
 				inter_give_to_player(OBJ_CREDIT_CHIP);
 				break;
 

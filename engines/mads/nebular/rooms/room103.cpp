@@ -56,35 +56,35 @@ static void room_103_init() {
 	g_sprite_ids[11] = kernel_load_series(kernel_name('c', -1), 0);
 	g_sprite_ids[12] = kernel_load_series("*RXMBD_2", 0);
 	g_sprite_ids[13] = kernel_load_series("*RXMRD_3", 0);
-	g_sprite_ids[15] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 7, 0, 1, 0);
+	g_sprite_ids[15] = kernel_seq_forward(g_sprite_ids[0], false, 7, 0, 1, 0);
 
-	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 6, 0, 2, 0);
-	_scene->_sequences.setDepth(g_sequence_ids[1], 0);
+	g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 6, 0, 2, 0);
+	kernel_seq_depth(g_sequence_ids[1], 0);
 
-	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 6, 0, 0, 25);
-	_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 2, 72);
+	g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 6, 25, 0, 0);
+	kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 2, 72);
 
-	g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 6, 0, 1, 37);
-	_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 2, 73);
+	g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 6, 37, 1, 0);
+	kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 2, 73);
 
-	g_sequence_ids[8] = _scene->_sequences.addSpriteCycle(g_sprite_ids[8], false, 8);
-	g_sequence_ids[7] = _scene->_sequences.addSpriteCycle(g_sprite_ids[7], false, 6);
-	g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 6);
-	g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 6);
+	g_sequence_ids[8] = kernel_seq_forward(g_sprite_ids[8], false, 8, 0, 0, 0);
+	g_sequence_ids[7] = kernel_seq_forward(g_sprite_ids[7], false, 6, 0, 0, 0);
+	g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 6, 0, 0, 0);
+	g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 6, 0, 0, 0);
 
 	if (object_is_here(OBJ_TIMER_MODULE))
-		g_sequence_ids[11] = _scene->_sequences.addSpriteCycle(g_sprite_ids[11], false, 6);
+		g_sequence_ids[11] = kernel_seq_forward(g_sprite_ids[11], false, 6, 0, 0, 0);
 	else
 		_scene._hotspots.activate(371, false);
 
 	if (object_is_here(OBJ_REBREATHER))
-		g_sequence_ids[10] = _scene->_sequences.addSpriteCycle(g_sprite_ids[10], false, 6);
+		g_sequence_ids[10] = kernel_seq_forward(g_sprite_ids[10], false, 6, 0, 0, 0);
 	else
 		_scene._hotspots.activate(289, false);
 
 	if (global[kTurkeyExploded]) {
-		g_sequence_ids[9] = _scene->_sequences.addSpriteCycle(g_sprite_ids[9], false, 6);
-		_scene->_sequences.setAnimRange(g_sequence_ids[9], -2, -2);
+		g_sequence_ids[9] = kernel_seq_forward(g_sprite_ids[9], false, 6, 0, 0, 0);
+		kernel_seq_range(g_sequence_ids[9], -2, -2);
 		_scene->_hotspots.activate(362, false);
 	}
 
@@ -95,8 +95,8 @@ static void room_103_init() {
 
 	if (previous_room == 102) {
 		player.commands_allowed = false;
-		g_sequence_ids[6] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[6], false, 6, 1, 0, 0);
-		_scene->_sequences.addSubEntry(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+		g_sequence_ids[6] = kernel_seq_backward(g_sprite_ids[6], false, 6, 0, 0, 1);
+		kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 	}
 
 	section_1_music();
@@ -169,8 +169,8 @@ static void room_103_parser() {
 	else if (player_said_2(walk_through, door)) {
 		switch (kernel.trigger) {
 		case 0:
-			g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(g_sprite_ids[6], false, 6, 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 6, 0, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			player.commands_allowed = false;
 			g_engine->_soundManager->command(20, 0);
 			break;
@@ -188,16 +188,16 @@ static void room_103_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			kernel_load_variant(1);
-			g_sequence_ids[13] = _scene->_sequences.startPingPongCycle(g_sprite_ids[13], false, 3, 2);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[13]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[13], SEQUENCE_TRIGGER_SPRITE, 7, 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[13] = kernel_seq_pingpong(g_sprite_ids[13], false, 3, 0, 0, 2);
+			kernel_seq_player(g_sequence_ids[13], false);
+			kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_SPRITE, 7, 1);
+			kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			player.walker_visible = false;
 			player.commands_allowed = false;
 			break;
 
 		case 1:
-			_scene->_sequences.remove(g_sequence_ids[11]);
+			kernel_seq_delete(g_sequence_ids[11]);
 			break;
 
 		case 2:
@@ -217,16 +217,16 @@ static void room_103_parser() {
 	} else if (player_said_2(take, rebreather) && object_is_here(OBJ_REBREATHER)) {
 		switch (kernel.trigger) {
 		case 0:
-			g_sequence_ids[12] = _scene->_sequences.startPingPongCycle(g_sprite_ids[12], false, 3, 2);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[12]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[12], SEQUENCE_TRIGGER_SPRITE, 6, 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[12] = kernel_seq_pingpong(g_sprite_ids[12], false, 3, 0, 0, 2);
+			kernel_seq_player(g_sequence_ids[12], false);
+			kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_SPRITE, 6, 1);
+			kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			player.walker_visible = false;
 			player.commands_allowed = false;
 			break;
 
 		case 1:
-			_scene->_sequences.remove(g_sequence_ids[10]);
+			kernel_seq_delete(g_sequence_ids[10]);
 			break;
 
 		case 2:
@@ -249,18 +249,18 @@ static void room_103_parser() {
 			g_engine->_soundManager->command(31, 0);
 
 		if (kernel.trigger < 2) {
-			g_sequence_ids[9] = _scene->_sequences.addSpriteCycle(g_sprite_ids[9], false, 6, kernel.trigger < 1 ? 1 : 0);
+			g_sequence_ids[9] = kernel_seq_forward(g_sprite_ids[9], false, 6, 0, 0, kernel.trigger < 1 ? 1 : 0);
 			if (kernel.trigger) {
 				// Lock the turkey into a permanent "exploded" frame
-				_scene->_sequences.setAnimRange(g_sequence_ids[9], -2, -2);
+				kernel_seq_range(g_sequence_ids[9], -2, -2);
 
 				// Rex says "Gads.."
 				char *msg = quote_string(kernel.quotes, 51);
 				kernel_message_add(msg, 0, 0, 0x1110, 60, 0, 18);
-				_scene->_sequences.addTimer(120, kernel.trigger + 1);
+				kernel_timing_trigger(120, kernel.trigger + 1);
 			} else {
 				// Initial turky explosion
-				_scene->_sequences.addSubEntry(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				kernel_seq_trigger(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			}
 		}
 
@@ -294,7 +294,7 @@ static void room_103_parser() {
 
 		case 2:
 			kernel_message_purge();
-			_scene->_sequences.addTimer(1, 3);
+			kernel_timing_trigger(1, 3);
 			break;
 
 		case 3:

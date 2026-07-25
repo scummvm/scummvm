@@ -53,16 +53,16 @@ static void room_504_init() {
 		kernel_load_variant(1);
 	}
 
-	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 6, 1, 0, 0);
-	_scene->_sequences.setDepth(g_sequence_ids[1], 0);
-	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 6, 0, 0, 0);
+	g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 6, 0, 0, 1);
+	kernel_seq_depth(g_sequence_ids[1], 0);
+	g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 6, 0, 0, 0);
 	local._carFrame = -1;
 
 	if ((previous_room == 505) && (global[kHoverCarDestination] != global[kHoverCarLocation])) {
 		local._carAnimationMode = 1;
 		kernel_run_animation(kernel_name('A', -1), 0);
 		g_engine->_soundManager->command(14, 0);
-		_scene->_sequences.addTimer(1, 70);
+		kernel_timing_trigger(1, 70);
 		player.commands_allowed = false;
 	} else {
 		g_sprite_ids[3] = kernel_load_series(kernel_name('a', 3), 0);
@@ -71,7 +71,7 @@ static void room_504_init() {
 		if ((previous_room != RETURNING_FROM_DIALOG) && (previous_room != 505))
 			global[kHoverCarLocation] = previous_room;
 
-		g_sequence_ids[7] = _scene->_sequences.startCycle(g_sprite_ids[7], false, 1);
+		g_sequence_ids[7] = kernel_seq_stamp(g_sprite_ids[7], false, 1);
 	}
 
 	if (global[kTimebombTimer] > 10500)
@@ -149,41 +149,41 @@ static void room_504_parser() {
 		case 0:
 			player.commands_allowed = false;
 			g_engine->_soundManager->command(39, 0);
-			g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 6, 1, 0, 0);
-			_scene->_sequences.setDepth(g_sequence_ids[3], 13);
-			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
-			_scene->_sequences.remove(g_sequence_ids[7]);
-			g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 18, 0, 0, 0);
-			_scene->_sequences.setDepth(g_sequence_ids[5], 14);
+			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 6, 0, 0, 1);
+			kernel_seq_depth(g_sequence_ids[3], 13);
+			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_delete(g_sequence_ids[7]);
+			g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 18, 0, 0, 0);
+			kernel_seq_depth(g_sequence_ids[5], 14);
 			break;
 
 		case 1:
 		{
 			int syncIdx = g_sequence_ids[3];
-			g_sequence_ids[3] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[3], false, 6, 1, 0, 0);
-			_scene->_sequences.setDepth(g_sequence_ids[3], 13);
-			_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 6);
-			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
-			_scene->_sequences.updateTimeout(g_sequence_ids[3], syncIdx);
+			g_sequence_ids[3] = kernel_seq_backward(g_sprite_ids[3], false, 6, 0, 0, 1);
+			kernel_seq_depth(g_sequence_ids[3], 13);
+			kernel_seq_range(g_sequence_ids[3], 1, 6);
+			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_timeout(syncIdx, g_sequence_ids[3]);
 		}
 		break;
 
 		case 2:
-			_scene->_sequences.addTimer(10, 3);
+			kernel_timing_trigger(10, 3);
 			break;
 
 		case 3:
-			_scene->_sequences.remove(g_sequence_ids[5]);
+			kernel_seq_delete(g_sequence_ids[5]);
 			if (global[kSexOfRex] == REX_MALE) {
 				g_engine->_soundManager->command(34, 0);
-				_scene->_sequences.addTimer(60, 4);
-				g_sequence_ids[6] = _scene->_sequences.startCycle(g_sprite_ids[6], false, 1);
-				_scene->_sequences.setDepth(g_sequence_ids[6], 14);
+				kernel_timing_trigger(60, 4);
+				g_sequence_ids[6] = kernel_seq_stamp(g_sprite_ids[6], false, 1);
+				kernel_seq_depth(g_sequence_ids[6], 14);
 			} else {
 				g_engine->_soundManager->command(40, 0);
-				g_sequence_ids[8] = _scene->_sequences.addSpriteCycle(g_sprite_ids[8], false, 18, 0, 0, 0);
-				_scene->_sequences.setDepth(g_sequence_ids[8], 14);
-				_scene->_sequences.addTimer(120, 5);
+				g_sequence_ids[8] = kernel_seq_forward(g_sprite_ids[8], false, 18, 0, 0, 0);
+				kernel_seq_depth(g_sequence_ids[8], 14);
+				kernel_timing_trigger(120, 5);
 			}
 			break;
 
@@ -195,8 +195,8 @@ static void room_504_parser() {
 
 		case 5:
 			player.commands_allowed = true;
-			_scene->_sequences.remove(g_sequence_ids[8]);
-			g_sequence_ids[7] = _scene->_sequences.startCycle(g_sprite_ids[7], false, 1);
+			kernel_seq_delete(g_sequence_ids[8]);
+			g_sequence_ids[7] = kernel_seq_stamp(g_sprite_ids[7], false, 1);
 			text_show(50421);
 			break;
 

@@ -54,26 +54,26 @@ static void room_508_init() {
 	}
 
 	if (!global[kLaserOn]) {
-		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
-		_scene->_sequences.setDepth(g_sequence_ids[3], 8);
-		g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, -2);
+		g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -2);
+		kernel_seq_depth(g_sequence_ids[3], 8);
+		g_sequence_ids[5] = kernel_seq_stamp(g_sprite_ids[5], false, -2);
 		int idx = _scene->_dynamicHotspots.add(words_spinach_patch_doll, words_walkto, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(57, 116), FACING_NORTHEAST);
 		_scene->_hotspots.activate(words_hole, false);
 		_scene->_hotspots.activate(words_laser_beam, false);
 	} else {
 		kernel_load_variant(1);
-		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
-		_scene->_sequences.setDepth(g_sequence_ids[3], 8);
-		g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, -2);
-		_scene->_sequences.setDepth(g_sequence_ids[4], 11);
+		g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -2);
+		kernel_seq_depth(g_sequence_ids[3], 8);
+		g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, -2);
+		kernel_seq_depth(g_sequence_ids[4], 11);
 		int idx = _scene->_dynamicHotspots.add(words_laser_beam, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(57, 116), FACING_NORTHEAST);
-		g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 15, 0, 0, 0);
-		_scene->_sequences.setAnimRange(g_sequence_ids[2], 6, 8);
-		_scene->_sequences.setDepth(g_sequence_ids[2], 6);
+		g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 15, 0, 0, 0);
+		kernel_seq_range(g_sequence_ids[2], 6, 8);
+		kernel_seq_depth(g_sequence_ids[2], 6);
 		if (global[kLaserHoleIsThere]) {
-			g_sequence_ids[7] = _scene->_sequences.startCycle(g_sprite_ids[7], false, -2);
+			g_sequence_ids[7] = kernel_seq_stamp(g_sprite_ids[7], false, -2);
 			_scene->_hotspots.activate(words_hole, true);
 			_scene->_hotspots.activate(words_laser_beam, true);
 		}
@@ -117,11 +117,11 @@ static void handlePedestral() {
 		case 0:
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			g_sequence_ids[6] = _scene->_sequences.startPingPongCycle(g_sprite_ids[6], false, 9, 1, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[6], 1, 4);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[6]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[6], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			g_sequence_ids[6] = kernel_seq_pingpong(g_sprite_ids[6], false, 9, 0, 0, 1);
+			kernel_seq_range(g_sequence_ids[6], 1, 4);
+			kernel_seq_player(g_sequence_ids[6], false);
+			kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_SPRITE, 4, 1);
+			kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 			break;
 
 		case 1:
@@ -130,20 +130,20 @@ static void handlePedestral() {
 			else
 				inter_take_from_player(OBJ_REARVIEW_MIRROR, 1);
 
-			g_sequence_ids[7] = _scene->_sequences.addSpriteCycle(g_sprite_ids[7], false, 6, 1, 0, 0);
-			_scene->_sequences.addSubEntry(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[7] = kernel_seq_forward(g_sprite_ids[7], false, 6, 0, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 2:
-			g_sequence_ids[7] = _scene->_sequences.startCycle(g_sprite_ids[7], false, -2);
+			g_sequence_ids[7] = kernel_seq_stamp(g_sprite_ids[7], false, -2);
 			_scene->_hotspots.activate(words_hole, true);
 			_scene->_hotspots.activate(words_laser_beam, true);
 			break;
 
 		case 3:
-			_scene->_sequences.updateTimeout(-1, g_sequence_ids[6]);
+			kernel_seq_timeout(g_sequence_ids[6], -1);
 			player.walker_visible = true;
-			_scene->_sequences.addTimer(120, 4);
+			kernel_timing_trigger(120, 4);
 			break;
 
 		case 4:
@@ -170,46 +170,46 @@ static void room_508_parser() {
 
 			case 2:
 				player.walker_visible = false;
-				_scene->_sequences.remove(g_sequence_ids[3]);
-				g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 10, 1, 0, 0);
-				_scene->_sequences.setDepth(g_sequence_ids[1], 7);
-				_scene->_sequences.updateTimeout(g_sequence_ids[1], -1);
-				_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+				kernel_seq_delete(g_sequence_ids[3]);
+				g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 10, 0, 0, 1);
+				kernel_seq_depth(g_sequence_ids[1], 7);
+				kernel_seq_timeout(-1, g_sequence_ids[1]);
+				kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 				break;
 
 			case 3:
 				g_engine->_soundManager->command(19, 0);
-				g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 15, 1, 0, 0);
-				_scene->_sequences.setDepth(g_sequence_ids[2], 6);
-				_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
-				g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
-				_scene->_sequences.setDepth(g_sequence_ids[3], 8);
-				_scene->_sequences.updateTimeout(-1, g_sequence_ids[1]);
+				g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 15, 0, 0, 1);
+				kernel_seq_depth(g_sequence_ids[2], 6);
+				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
+				g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -2);
+				kernel_seq_depth(g_sequence_ids[3], 8);
+				kernel_seq_timeout(g_sequence_ids[1], -1);
 				player.walker_visible = true;
-				_scene->_sequences.addTimer(15, 5);
+				kernel_timing_trigger(15, 5);
 				break;
 
 			case 4:
-				g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 15, 0, 0, 0);
-				_scene->_sequences.setAnimRange(g_sequence_ids[2], 6, 8);
-				_scene->_sequences.setDepth(g_sequence_ids[2], 6);
+				g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 15, 0, 0, 0);
+				kernel_seq_range(g_sequence_ids[2], 6, 8);
+				kernel_seq_depth(g_sequence_ids[2], 6);
 				break;
 
 			case 5:
-				_scene->_sequences.remove(g_sequence_ids[5]);
+				kernel_seq_delete(g_sequence_ids[5]);
 				kernel_run_animation(kernel_name('B', 1), 6);
 				break;
 
 			case 6:
 			{
 				g_engine->_soundManager->command(22, 0);
-				g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, -2);
-				_scene->_sequences.setDepth(g_sequence_ids[4], 11);
+				g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, -2);
+				kernel_seq_depth(g_sequence_ids[4], 11);
 				int idx = _scene->_dynamicHotspots.add(words_laser_beam, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(57, 116), FACING_NORTHEAST);
 				kernel_message_purge();
 				kernel_load_variant(1);
-				_scene->_sequences.addTimer(30, 7);
+				kernel_timing_trigger(30, 7);
 			}
 			break;
 

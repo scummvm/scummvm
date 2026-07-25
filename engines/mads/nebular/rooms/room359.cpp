@@ -47,12 +47,12 @@ static void room_359_init() {
 	else
 		g_sprite_ids[4] = kernel_load_series("*ROXBD_2", 0);
 
-	g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
-	_scene->_sequences.setPosition(g_sequence_ids[3], Common::Point(127, 78));
-	_scene->_sequences.setDepth(g_sequence_ids[3], 15);
+	g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, 1);
+	kernel_seq_loc(g_sequence_ids[3], 127, 78);
+	kernel_seq_depth(g_sequence_ids[3], 15);
 
 	if (object_is_here(OBJ_SECURITY_CARD)) {
-		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 9, 0, 0, 0);
+		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 9, 0, 0, 0);
 		local._cardHotspotId = _scene->_dynamicHotspots.add(words_security_card, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._cardHotspotId, Common::Point(107, 107), FACING_SOUTH);
 	}
@@ -91,21 +91,21 @@ static void room_359_parser() {
 				player.walker_visible = false;
 				text_show(35920);
 				if (global[kSexOfRex] == REX_MALE) {
-					g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 4, 2, 0, 0);
-					_scene->_sequences.setMsgLayout(g_sequence_ids[2]);
-					_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 6, 1);
-					_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+					g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 4, 0, 0, 2);
+					kernel_seq_player(g_sequence_ids[2], false);
+					kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 6, 1);
+					kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				} else {
-					g_sequence_ids[4] = _scene->_sequences.startPingPongCycle(g_sprite_ids[4], true, 7, 2, 0, 0);
-					_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
-					_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(106, 110));
-					_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_SPRITE, 6, 1);
-					_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+					g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], true, 7, 0, 0, 2);
+					kernel_seq_player(g_sequence_ids[4], false);
+					kernel_seq_loc(g_sequence_ids[4], 106, 110);
+					kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_SPRITE, 6, 1);
+					kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				}
 				break;
 
 			case 1:
-				_scene->_sequences.remove(g_sequence_ids[1]);
+				kernel_seq_delete(g_sequence_ids[1]);
 				_scene->_dynamicHotspots.remove(local._cardHotspotId);
 				g_engine->_soundManager->command(57, 0);
 				inter_give_to_player(OBJ_SECURITY_CARD);
@@ -115,9 +115,9 @@ static void room_359_parser() {
 
 			case 2:
 				if (global[kSexOfRex] == REX_MALE)
-					_scene->_sequences.updateTimeout(-1, g_sequence_ids[2]);
+					kernel_seq_timeout(g_sequence_ids[2], -1);
 				else
-					_scene->_sequences.updateTimeout(-1, g_sequence_ids[4]);
+					kernel_seq_timeout(g_sequence_ids[4], -1);
 
 				player.walker_visible = true;
 				player.commands_allowed = true;

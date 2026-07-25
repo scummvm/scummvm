@@ -41,8 +41,8 @@ static Scratch local;
 
 static void room_104_init() {
 	g_sprite_ids[1] = kernel_load_series(kernel_name('h', -1), 0);
-	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 14, 0, 0, 1);
-	_scene->_sequences.setDepth(g_sequence_ids[1], 8);
+	g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 14, 1, 0, 0);
+	kernel_seq_depth(g_sequence_ids[1], 8);
 
 	if (previous_room == 105) {
 		player.x = 302;
@@ -91,17 +91,17 @@ static void room_104_daemon() {
 				player.walker_visible = false;
 				g_sprite_ids[2] = kernel_load_series(kernel_name('a', 0), 0);
 				kernel_new_palette();
-				g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], mirrorFl, 7, 1, 0, 0);
-				_scene->_sequences.setPosition(g_sequence_ids[2], Common::Point(198, 143));
-				_scene->_sequences.setDepth(g_sequence_ids[2], 4);
-				_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], mirrorFl, 7, 0, 0, 1);
+				kernel_seq_loc(g_sequence_ids[2], 198, 143);
+				kernel_seq_depth(g_sequence_ids[2], 4);
+				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				break;
 
 			case 1:
-				g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], mirrorFl, 7, 0, 0, 0);
-				_scene->_sequences.setPosition(g_sequence_ids[2], Common::Point(198, 143));
-				_scene->_sequences.setAnimRange(g_sequence_ids[2], -2, -2);
-				_scene->_sequences.addTimer(90, 2);
+				g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], mirrorFl, 7, 0, 0, 0);
+				kernel_seq_loc(g_sequence_ids[2], 198, 143);
+				kernel_seq_range(g_sequence_ids[2], -2, -2);
+				kernel_timing_trigger(90, 2);
 				break;
 
 			case 2:
@@ -124,26 +124,26 @@ static void room_104_daemon() {
 				player.walker_visible = false;
 				g_sprite_ids[3] = kernel_load_series(kernel_name('a', 1), 0);
 				kernel_new_palette();
-				g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 6, 1, 0, 0);
-				_scene->_sequences.setPosition(g_sequence_ids[3], Common::Point(198, 143));
-				_scene->_sequences.setDepth(g_sequence_ids[3], 4);
-				_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 14);
-				_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 6, 0, 0, 1);
+				kernel_seq_loc(g_sequence_ids[3], 198, 143);
+				kernel_seq_depth(g_sequence_ids[3], 4);
+				kernel_seq_range(g_sequence_ids[3], 1, 14);
+				kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				break;
 
 			case 1:
-				g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 5, 1, 0, 0);
-				_scene->_sequences.setPosition(g_sequence_ids[3], Common::Point(198, 143));
-				_scene->_sequences.setDepth(g_sequence_ids[3], 4);
-				_scene->_sequences.setAnimRange(g_sequence_ids[3], 15, 32);
-				_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 5, 0, 0, 1);
+				kernel_seq_loc(g_sequence_ids[3], 198, 143);
+				kernel_seq_depth(g_sequence_ids[3], 4);
+				kernel_seq_range(g_sequence_ids[3], 15, 32);
+				kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 2:
-				g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 3, 0, 0, 0);
-				_scene->_sequences.setPosition(g_sequence_ids[3], Common::Point(198, 143));
-				_scene->_sequences.setAnimRange(g_sequence_ids[3], -2, -2);
-				_scene->_sequences.addTimer(90, 3);
+				g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 3, 0, 0, 0);
+				kernel_seq_loc(g_sequence_ids[3], 198, 143);
+				kernel_seq_range(g_sequence_ids[3], -2, -2);
+				kernel_timing_trigger(90, 3);
 				break;
 
 			case 3:
@@ -166,19 +166,19 @@ static void room_104_daemon() {
 				player.walker_visible = false;
 				g_sprite_ids[4] = kernel_load_series(kernel_name('a', 2), 0);
 				kernel_new_palette();
-				g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 8, 1, 0, 0);
-				_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(198, 143));
-				_scene->_sequences.setDepth(g_sequence_ids[4], 4);
-				_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 8, 0, 0, 1);
+				kernel_seq_loc(g_sequence_ids[4], 198, 143);
+				kernel_seq_depth(g_sequence_ids[4], 4);
+				kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				if (config_file.naughtiness >= STORYMODE_NICE)
-					_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_SPRITE, 15, 2);
+					kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_SPRITE, 15, 2);
 				break;
 
 			case 1:
-				g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 8, 0, 0, 0);
-				_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(198, 143));
-				_scene->_sequences.setAnimRange(g_sequence_ids[4], -2, -2);
-				_scene->_sequences.addTimer(90, 2);
+				g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 8, 0, 0, 0);
+				kernel_seq_loc(g_sequence_ids[4], 198, 143);
+				kernel_seq_range(g_sequence_ids[4], -2, -2);
+				kernel_timing_trigger(90, 2);
 				break;
 
 			case 2:

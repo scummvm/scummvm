@@ -56,10 +56,10 @@ static void room_511_init() {
 
 	if (global[kLineStatus] == 2 || global[kLineStatus] == 3) {
 		g_sprite_ids[7] = kernel_load_series(kernel_name('b', 4), 0);
-		g_sequence_ids[7] = _scene->_sequences.startCycle(g_sprite_ids[7], false, frame);
+		g_sequence_ids[7] = kernel_seq_stamp(g_sprite_ids[7], false, frame);
 		int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, g_sequence_ids[7], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(26, 153), FACING_NORTHEAST);
-		_scene->_sequences.setDepth(g_sequence_ids[7], 3);
+		kernel_seq_depth(g_sequence_ids[7], 3);
 		if (global[kBoatRaised])
 			kernel_load_variant(2);
 	}
@@ -69,8 +69,8 @@ static void room_511_init() {
 
 	if (global[kBoatRaised]) {
 		g_sprite_ids[2] = kernel_load_series(kernel_name('b', 0), 0);
-		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 1);
-		_scene->_sequences.setDepth(g_sequence_ids[2], 3);
+		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 1);
+		kernel_seq_depth(g_sequence_ids[2], 3);
 		_scene->_hotspots.activate(words_boat, false);
 		int idx = _scene->_dynamicHotspots.add(words_boat, words_walkto, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(75, 124), FACING_NORTH);
@@ -80,14 +80,14 @@ static void room_511_init() {
 		g_sprite_ids[6] = kernel_load_series(kernel_name('b', 3), 0);
 		g_sprite_ids[3] = kernel_load_series(kernel_name('b', 1), 0);
 
-		g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 1, 1, 0, 0);
-		_scene->_sequences.setDepth(g_sequence_ids[3], 5);
+		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 1, 0, 0, 1);
+		kernel_seq_depth(g_sequence_ids[3], 5);
 
-		g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, 1);
-		_scene->_sequences.setDepth(g_sequence_ids[5], 4);
+		g_sequence_ids[5] = kernel_seq_stamp(g_sprite_ids[5], false, 1);
+		kernel_seq_depth(g_sequence_ids[5], 4);
 
-		g_sequence_ids[6] = _scene->_sequences.startCycle(g_sprite_ids[6], false, 1);
-		_scene->_sequences.setDepth(g_sequence_ids[6], 5);
+		g_sequence_ids[6] = kernel_seq_stamp(g_sprite_ids[6], false, 1);
+		kernel_seq_depth(g_sequence_ids[6], 5);
 
 		_scene->_hotspots.activate(words_rope, true);
 		_scene->_hotspots.activate(words_boat, true);
@@ -97,8 +97,8 @@ static void room_511_init() {
 	local._lineFrame = -1;
 	local._lineMoving = false;
 
-	g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, -2);
-	_scene->_sequences.setDepth(g_sequence_ids[1], 1);
+	g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, -2);
+	kernel_seq_depth(g_sequence_ids[1], 1);
 
 	if (previous_room == 512) {
 		player.x = 60;
@@ -110,9 +110,9 @@ static void room_511_init() {
 		player.facing = FACING_NORTHWEST;
 		player.walker_visible = false;
 		player.commands_allowed = false;
-		_scene->_sequences.remove(g_sequence_ids[1]);
-		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, -1);
-		_scene->_sequences.setDepth(g_sequence_ids[1], 1);
+		kernel_seq_delete(g_sequence_ids[1]);
+		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, -1);
+		kernel_seq_depth(g_sequence_ids[1], 1);
 		kernel_run_animation(kernel_name('R', 1), 70);
 	} else if (local._handingLine) {
 		player.walker_visible = false;
@@ -154,19 +154,19 @@ static void room_511_daemon() {
 	case 70:
 		player.walker_visible = true;
 		player.clock = kernel_anim[0].next_clock - player.frame_delay;
-		_scene->_sequences.addTimer(6, 71);
+		kernel_timing_trigger(6, 71);
 		break;
 
 	case 71:
-		_scene->_sequences.remove(g_sequence_ids[1]);
-		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 6, 1, 0, 0);
-		_scene->_sequences.setDepth(g_sequence_ids[1], 1);
-		_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+		kernel_seq_delete(g_sequence_ids[1]);
+		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 6, 0, 0, 1);
+		kernel_seq_depth(g_sequence_ids[1], 1);
+		kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
 		break;
 
 	case 72:
-		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, -2);
-		_scene->_sequences.setDepth(g_sequence_ids[1], 1);
+		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, -2);
+		kernel_seq_depth(g_sequence_ids[1], 1);
 		player.commands_allowed = true;
 		break;
 
@@ -207,35 +207,35 @@ static void room_511_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_scene->_sequences.remove(g_sequence_ids[1]);
-			g_sequence_ids[1] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[1], false, 6, 1, 0, 0);
-			_scene->_sequences.setDepth(g_sequence_ids[1], 1);
-			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_delete(g_sequence_ids[1]);
+			g_sequence_ids[1] = kernel_seq_backward(g_sprite_ids[1], false, 6, 0, 0, 1);
+			kernel_seq_depth(g_sequence_ids[1], 1);
+			kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
 		{
 			int syncIdx = g_sequence_ids[1];
-			g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, -1);
-			_scene->_sequences.setDepth(g_sequence_ids[1], 1);
-			_scene->_sequences.updateTimeout(g_sequence_ids[1], syncIdx);
-			_scene->_sequences.addTimer(6, 2);
+			g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, -1);
+			kernel_seq_depth(g_sequence_ids[1], 1);
+			kernel_seq_timeout(syncIdx, g_sequence_ids[1]);
+			kernel_timing_trigger(6, 2);
 		}
 		break;
 
 		case 2:
 			player.walker_visible = false;
-			g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 8, 1, 0, 0);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
-			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 8, 0, 0, 1);
+			kernel_seq_player(g_sequence_ids[4], false);
+			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 			break;
 
 		case 3:
 		{
 			int syncIdx = g_sequence_ids[4];
-			g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, -2);
-			_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
-			_scene->_sequences.updateTimeout(g_sequence_ids[4], syncIdx);
+			g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, -2);
+			kernel_seq_player(g_sequence_ids[4], false);
+			kernel_seq_timeout(syncIdx, g_sequence_ids[4]);
 			new_room = 504;
 		}
 		break;
@@ -255,10 +255,10 @@ static void room_511_parser() {
 						local._lineAnimationPosition = 1;
 						local._lineMoving = true;
 						kernel_run_animation(kernel_name('R', -1), 0);
-						_scene->_sequences.addTimer(1, 1);
+						kernel_timing_trigger(1, 1);
 					} else if (kernel.trigger == 1) {
 						if (local._lineMoving) {
-							_scene->_sequences.addTimer(1, 1);
+							kernel_timing_trigger(1, 1);
 						} else {
 							inter_give_to_player(OBJ_FISHING_LINE);
 							local._lineMoving = true;
@@ -283,17 +283,17 @@ static void room_511_parser() {
 			if (global[kLineStatus] != 3) {
 				if (kernel.trigger == 0) {
 					player.commands_allowed = false;
-					_scene->_sequences.remove(g_sequence_ids[7]);
+					kernel_seq_delete(g_sequence_ids[7]);
 					local._lineMoving = true;
 					local._lineAnimationPosition = 2;
-					_scene->_sequences.addTimer(1, 1);
+					kernel_timing_trigger(1, 1);
 				} else if (kernel.trigger == 1) {
 					if (local._lineMoving)
-						_scene->_sequences.addTimer(1, 1);
+						kernel_timing_trigger(1, 1);
 					else {
 						player.walker_visible = true;
-						g_sequence_ids[7] = _scene->_sequences.startCycle(g_sprite_ids[7], false, -2);
-						_scene->_sequences.setDepth(g_sequence_ids[7], 4);
+						g_sequence_ids[7] = kernel_seq_stamp(g_sprite_ids[7], false, -2);
+						kernel_seq_depth(g_sequence_ids[7], 4);
 						int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, g_sequence_ids[7], Common::Rect(0, 0, 0, 0));
 						_scene->_dynamicHotspots.setPosition(idx, Common::Point(26, 153), FACING_NORTHEAST);
 						inter_take_from_player(OBJ_FISHING_LINE, 1);

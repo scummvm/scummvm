@@ -48,7 +48,7 @@ static void room_503_init() {
 		g_sprite_ids[3] = kernel_load_series("*ROXBD_2", 0);
 
 	if (object[OBJ_DETONATORS].location == room_id) {
-		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 9, 0, 0, 0);
+		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 9, 0, 0, 0);
 		local._detonatorHotspotId = _scene->_dynamicHotspots.add(words_detonators, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._detonatorHotspotId, Common::Point(254, 135), FACING_SOUTH);
 	}
@@ -72,23 +72,23 @@ static void room_503_parser() {
 				player.commands_allowed = false;
 				player.walker_visible = false;
 				if (global[kSexOfRex] == REX_MALE) {
-					g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 8, 1, 0, 0);
-					_scene->_sequences.setAnimRange(g_sequence_ids[2], 1, 3);
-					_scene->_sequences.setMsgLayout(g_sequence_ids[2]);
-					_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 3, 1);
-					_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+					g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 8, 0, 0, 1);
+					kernel_seq_range(g_sequence_ids[2], 1, 3);
+					kernel_seq_player(g_sequence_ids[2], false);
+					kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 3, 1);
+					kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				} else {
-					g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], true, 8, 1, 0, 0);
-					_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 4);
-					_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
-					_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-					_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+					g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], true, 8, 0, 0, 1);
+					kernel_seq_range(g_sequence_ids[3], 1, 4);
+					kernel_seq_player(g_sequence_ids[3], false);
+					kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 4, 1);
+					kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				}
 				break;
 
 			case 1:
 				g_engine->_soundManager->command(9, 0);
-				_scene->_sequences.remove(g_sequence_ids[1]);
+				kernel_seq_delete(g_sequence_ids[1]);
 				_scene->_dynamicHotspots.remove(local._detonatorHotspotId);
 				inter_give_to_player(OBJ_DETONATORS);
 				object_examine(OBJ_DETONATORS, 50326, 0);
@@ -96,9 +96,9 @@ static void room_503_parser() {
 
 			case 2:
 				if (global[kSexOfRex] == REX_MALE)
-					_scene->_sequences.updateTimeout(-1, g_sequence_ids[2]);
+					kernel_seq_timeout(g_sequence_ids[2], -1);
 				else
-					_scene->_sequences.updateTimeout(-1, g_sequence_ids[3]);
+					kernel_seq_timeout(g_sequence_ids[3], -1);
 
 				player.walker_visible = true;
 				player.commands_allowed = true;

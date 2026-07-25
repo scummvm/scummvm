@@ -69,19 +69,19 @@ static void room_413_init() {
 		case 1:
 			g_engine->_soundManager->command(30, 0);
 			player.walker_visible = false;
-			g_sequence_ids[1] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[1], false, 7, 1, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[1], 1, 19);
-			_scene->_sequences.setDepth(g_sequence_ids[1], 8);
-			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 76);
+			g_sequence_ids[1] = kernel_seq_backward(g_sprite_ids[1], false, 7, 0, 0, 1);
+			kernel_seq_range(g_sequence_ids[1], 1, 19);
+			kernel_seq_depth(g_sequence_ids[1], 8);
+			kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 76);
 			break;
 
 		case 2:
 			player.walker_visible = false;
 			g_engine->_soundManager->command(30, 0);
-			g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 7, 1, 0, 0);
-			_scene->_sequences.setAnimRange(g_sequence_ids[1], 1, 20);
-			_scene->_sequences.setDepth(g_sequence_ids[1], 8);
-			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 77);
+			g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 7, 0, 0, 1);
+			kernel_seq_range(g_sequence_ids[1], 1, 20);
+			kernel_seq_depth(g_sequence_ids[1], 8);
+			kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 77);
 			break;
 
 		case 3:

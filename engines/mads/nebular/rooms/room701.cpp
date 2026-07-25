@@ -69,25 +69,25 @@ static void room_701_init() {
 			global[kBoatStatus] = BOAT_TIED;
 	}
 
-	g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
-	_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(48, 136));
-	_scene->_sequences.setDepth(g_sequence_ids[1], 10);
+	g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 1);
+	kernel_seq_loc(g_sequence_ids[1], 48, 136);
+	kernel_seq_depth(g_sequence_ids[1], 10);
 
 	int boatStatus = (previous_room == 703) ? BOAT_GONE : global[kBoatStatus];
 
 	switch (boatStatus) {
 	case BOAT_TIED_FLOATING:
-		g_sequence_ids[4] = _scene->_sequences.startPingPongCycle(g_sprite_ids[4], false, 20, 0, 0, 0);
-		_scene->_sequences.setDepth(g_sequence_ids[4], 10);
+		g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 20, 0, 0, 0);
+		kernel_seq_depth(g_sequence_ids[4], 10);
 		break;
 	case BOAT_ADRIFT:
-		g_sequence_ids[6] = _scene->_sequences.startPingPongCycle(g_sprite_ids[6], false, 20, 0, 0, 0);
-		_scene->_sequences.setDepth(g_sequence_ids[6], 10);
+		g_sequence_ids[6] = kernel_seq_pingpong(g_sprite_ids[6], false, 20, 0, 0, 0);
+		kernel_seq_depth(g_sequence_ids[6], 10);
 		break;
 	case BOAT_TIED:
 	{
-		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
-		_scene->_sequences.setDepth(g_sequence_ids[2], 9);
+		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, -1);
+		kernel_seq_depth(g_sequence_ids[2], 9);
 		int idx = _scene->_dynamicHotspots.add(words_boat, words_climb_into, g_sequence_ids[2], Common::Rect());
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(231, 127), FACING_NORTH);
 		break;
@@ -100,8 +100,8 @@ static void room_701_init() {
 	}
 
 	if (global[kLineStatus] == LINE_DROPPED || global[kLineStatus] == LINE_TIED) {
-		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -1);
-		_scene->_sequences.setDepth(g_sequence_ids[3], 8);
+		g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -1);
+		kernel_seq_depth(g_sequence_ids[3], 8);
 		int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
 		local._fishingLineId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 129), FACING_NORTHEAST);
 	}
@@ -116,9 +116,9 @@ static void room_701_init() {
 		player.facing = FACING_NORTH;
 		player.walker_visible = false;
 		player.commands_allowed = false;
-		g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, 1);
-		_scene->_sequences.setPosition(g_sequence_ids[5], Common::Point(155, 129));
-		_scene->_sequences.addTimer(15, 60);
+		g_sequence_ids[5] = kernel_seq_stamp(g_sprite_ids[5], false, 1);
+		kernel_seq_loc(g_sequence_ids[5], 155, 129);
+		kernel_timing_trigger(15, 60);
 	} else if (previous_room == 703) {
 		player.x = 231;
 		player.y = 127;
@@ -132,7 +132,7 @@ static void room_701_init() {
 		player.y = 131;
 		player.facing = FACING_EAST;
 		player.commands_allowed = false;
-		_scene->_sequences.addTimer(60, 70);
+		kernel_timing_trigger(60, 70);
 	}
 
 	kernel.quotes = quote_load(0x310, 0x30F, 0);
@@ -142,45 +142,45 @@ static void room_701_init() {
 static void room_701_daemon() {
 	switch (kernel.trigger) {
 	case 60:
-		_scene->_sequences.remove(g_sequence_ids[5]);
-		g_sequence_ids[5] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[5], false, 6, 1, 0, 0);
-		_scene->_sequences.setPosition(g_sequence_ids[5], Common::Point(155, 129));
-		_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 61);
+		kernel_seq_delete(g_sequence_ids[5]);
+		g_sequence_ids[5] = kernel_seq_backward(g_sprite_ids[5], false, 6, 0, 0, 1);
+		kernel_seq_loc(g_sequence_ids[5], 155, 129);
+		kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 61);
 		break;
 
 	case 61:
-		_scene->_sequences.updateTimeout(-1, g_sequence_ids[5]);
+		kernel_seq_timeout(g_sequence_ids[5], -1);
 		player.walker_visible = true;
 		player.commands_allowed = true;
 		break;
 
 	case 70:
 		g_engine->_soundManager->command(16, 0);
-		_scene->_sequences.remove(g_sequence_ids[1]);
-		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 5, 1, 0, 0);
-		_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(48, 136));
-		_scene->_sequences.setDepth(g_sequence_ids[1], 10);
-		_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		kernel_seq_delete(g_sequence_ids[1]);
+		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 5, 0, 0, 1);
+		kernel_seq_loc(g_sequence_ids[1], 48, 136);
+		kernel_seq_depth(g_sequence_ids[1], 10);
+		kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 		break;
 
 	case 71:
 		player_walk(61, 131, FACING_EAST);
-		_scene->_sequences.addTimer(120, 72);
+		kernel_timing_trigger(120, 72);
 		break;
 
 	case 72:
 		g_engine->_soundManager->command(17, 0);
-		g_sequence_ids[1] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[1], false, 5, 1, 0, 0);
-		_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(48, 136));
-		_scene->_sequences.setDepth(g_sequence_ids[1], 10);
-		_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
+		g_sequence_ids[1] = kernel_seq_backward(g_sprite_ids[1], false, 5, 0, 0, 1);
+		kernel_seq_loc(g_sequence_ids[1], 48, 136);
+		kernel_seq_depth(g_sequence_ids[1], 10);
+		kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
 		break;
 
 	case 73:
 		player.commands_allowed = true;
-		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, -1);
-		_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(48, 136));
-		_scene->_sequences.setDepth(g_sequence_ids[1], 10);
+		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, -1);
+		kernel_seq_loc(g_sequence_ids[1], 48, 136);
+		kernel_seq_depth(g_sequence_ids[1], 10);
 		kernel_message_purge();
 		break;
 
@@ -188,8 +188,8 @@ static void room_701_daemon() {
 	{
 		player.walker_visible = true;
 		player.clock = kernel.clock - player.frame_delay;
-		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
-		_scene->_sequences.setDepth(g_sequence_ids[2], 9);
+		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, -1);
+		kernel_seq_depth(g_sequence_ids[2], 9);
 		int idx = _scene->_dynamicHotspots.add(words_boat, words_climb_into, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 129), FACING_NORTH);
 		global[kBoatStatus] = BOAT_TIED;
@@ -220,18 +220,18 @@ static void room_701_parser() {
 		case 0:
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 6, 1, 0, 0);
-			_scene->_sequences.setPosition(g_sequence_ids[5], Common::Point(155, 129));
-			_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 6, 0, 0, 1);
+			kernel_seq_loc(g_sequence_ids[5], 155, 129);
+			kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
 		{
 			int temp = g_sequence_ids[5];
-			g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, -2);
-			_scene->_sequences.setPosition(g_sequence_ids[5], Common::Point(155, 129));
-			_scene->_sequences.updateTimeout(g_sequence_ids[5], temp);
-			_scene->_sequences.addTimer(15, 2);
+			g_sequence_ids[5] = kernel_seq_stamp(g_sprite_ids[5], false, -2);
+			kernel_seq_loc(g_sequence_ids[5], 155, 129);
+			kernel_seq_timeout(temp, g_sequence_ids[5]);
+			kernel_timing_trigger(15, 2);
 		}
 		break;
 
@@ -246,33 +246,33 @@ static void room_701_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_scene->_sequences.remove(g_sequence_ids[1]);
+			kernel_seq_delete(g_sequence_ids[1]);
 			g_engine->_soundManager->command(16, 0);
-			g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 5, 1, 0, 0);
-			_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(48, 136));
-			_scene->_sequences.setDepth(g_sequence_ids[1], 10);
+			g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 5, 0, 0, 1);
+			kernel_seq_loc(g_sequence_ids[1], 48, 136);
+			kernel_seq_depth(g_sequence_ids[1], 10);
 			kernel_message_purge();
 			kernel_message_add(quote_string(kernel.quotes, 0x30D), 0, 0, 0x310, 120, 0, 34);
-			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
 			player_walk(22, 131, FACING_EAST);
-			_scene->_sequences.addTimer(120, 3);
+			kernel_timing_trigger(120, 3);
 			break;
 
 		case 3:
 			g_engine->_soundManager->command(17, 0);
-			g_sequence_ids[1] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[1], false, 5, 1, 0, 0);
-			_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(48, 136));
-			_scene->_sequences.setDepth(g_sequence_ids[1], 10);
-			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
+			g_sequence_ids[1] = kernel_seq_backward(g_sprite_ids[1], false, 5, 0, 0, 1);
+			kernel_seq_loc(g_sequence_ids[1], 48, 136);
+			kernel_seq_depth(g_sequence_ids[1], 10);
+			kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
 			break;
 
 		case 4:
-			g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, -1);
-			_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(48, 136));
-			_scene->_sequences.setDepth(g_sequence_ids[1], 10);
+			g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, -1);
+			kernel_seq_loc(g_sequence_ids[1], 48, 136);
+			kernel_seq_depth(g_sequence_ids[1], 10);
 			global[kResurrectRoom] = 701;
 			new_room = 605;
 			break;
@@ -287,8 +287,8 @@ static void room_701_parser() {
 			switch (kernel.trigger) {
 			case 0:
 				player.commands_allowed = false;
-				_scene->_sequences.remove(g_sequence_ids[4]);
-				_scene->_sequences.remove(g_sequence_ids[3]);
+				kernel_seq_delete(g_sequence_ids[4]);
+				kernel_seq_delete(g_sequence_ids[3]);
 				_scene->_dynamicHotspots.remove(local._fishingLineId);
 				_scene->_hotspots.activate(words_boat, false);
 				player.walker_visible = false;
@@ -299,11 +299,11 @@ static void room_701_parser() {
 			{
 				player.walker_visible = true;
 				player.clock = kernel_anim[0].next_clock - player.frame_delay;
-				g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
-				_scene->_sequences.setDepth(g_sequence_ids[2], 9);
+				g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, -1);
+				kernel_seq_depth(g_sequence_ids[2], 9);
 				int idx = _scene->_dynamicHotspots.add(words_boat, words_climb_into, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(231, 127), FACING_NORTH);
-				_scene->_sequences.addTimer(15, 2);
+				kernel_timing_trigger(15, 2);
 			}
 			break;
 
@@ -322,7 +322,7 @@ static void room_701_parser() {
 			global[kLineStatus] = LINE_NOW_UNTIED;
 			inter_give_to_player(OBJ_FISHING_LINE);
 			g_engine->_soundManager->command(15, 0);
-			_scene->_sequences.remove(g_sequence_ids[3]);
+			kernel_seq_delete(g_sequence_ids[3]);
 			object_examine(OBJ_FISHING_LINE, 70126, 0);
 		} else {
 			text_show(70127);
@@ -331,7 +331,7 @@ static void room_701_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_scene->_sequences.remove(g_sequence_ids[2]);
+			kernel_seq_delete(g_sequence_ids[2]);
 			player.walker_visible = false;
 			kernel_run_animation(kernel_name('B', 0), 1);
 			break;
