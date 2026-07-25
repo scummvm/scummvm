@@ -276,7 +276,7 @@ public:
 			float pitch, float yaw, float roll, bool depthTest = true);
 	void renderPerspectiveModel(const RA2PSXModel &model, float x, float y, float z,
 			float directionX, float directionY, float directionZ, float roll,
-			bool depthTest = true);
+			bool depthTest = true, int scale = 0x1000);
 	void renderTransformedModel(const RA2PSXModel &model, const RA2PSXMatrix &transform,
 			bool depthTest = true);
 	void finishFrame(Graphics::Surface &surface);
@@ -346,7 +346,7 @@ private:
 	Level1Result playLevel1(const RA2PSXModel &enemy, const RA2PSXModel &ship,
 			const RA2PSXModel &crosshair, const RA2PSXModel &laser,
 			const RA2PSXModel &tieLaser, const Common::Array<RA2PSXModel> &debris,
-			const RA2PSXLevel1UI &ui, int lives, int &score);
+			const RA2PSXLevel1UI &ui, int &lives, int &score);
 
 	ScummEngine_v7 *_vm;
 	RA2PSXSoundBank _soundBank;

@@ -969,9 +969,10 @@ void drawRA2PSXHitFlash(Graphics::Surface &surface, int frame) {
 	}
 }
 
-void RA2PSXLevel1UI::drawCockpit(Graphics::Surface &surface, int scale) const {
-	const int xOffset = (surface.w - 320) / 2;
-	const int yOffset = (surface.h - 240) / 2 + 120;
+void RA2PSXLevel1UI::drawCockpit(Graphics::Surface &surface, int scale,
+		int driftX, int driftY) const {
+	const int xOffset = (surface.w - 320) / 2 + driftX;
+	const int yOffset = (surface.h - 240) / 2 + 120 + driftY;
 	if (scale >= 0x1000) {
 		_textures.draw(surface, "COCKPITL", xOffset, yOffset, Common::Rect(0, 0, 224, 120));
 		_textures.draw(surface, "COCKPITR", xOffset + 224, yOffset, Common::Rect(0, 0, 120, 120));

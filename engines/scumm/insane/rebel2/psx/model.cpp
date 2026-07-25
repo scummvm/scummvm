@@ -745,7 +745,7 @@ void RA2PSXTinyGLRenderer::renderModel(const RA2PSXModel &model, float x, float 
 
 void RA2PSXTinyGLRenderer::renderPerspectiveModel(const RA2PSXModel &model,
 		float x, float y, float z, float directionX, float directionY, float directionZ,
-		float roll, bool depthTest) {
+		float roll, bool depthTest, int scale) {
 	if (!_context || model.vertices().empty())
 		return;
 
@@ -791,6 +791,13 @@ void RA2PSXTinyGLRenderer::renderPerspectiveModel(const RA2PSXModel &model,
 	transform.rotation[2][0] = modelXz;
 	transform.rotation[2][1] = modelYz;
 	transform.rotation[2][2] = forwardZ;
+	if (scale != 0x1000) {
+		const float factor = scale / 4096.0f;
+		for (uint row = 0; row < 3; ++row) {
+			for (uint column = 0; column < 3; ++column)
+				transform.rotation[row][column] *= factor;
+		}
+	}
 	transform.translation[0] = x;
 	transform.translation[1] = y;
 	transform.translation[2] = z;
