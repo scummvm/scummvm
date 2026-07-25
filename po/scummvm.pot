@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-24 11:32+0000\n"
+"POT-Creation-Date: 2026-07-25 04:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2745,7 +2745,7 @@ msgstr ""
 msgid "Restore game:"
 msgstr ""
 
-#: gui/saveload.cpp:37 engines/fool/fool_game.cpp:97
+#: gui/saveload.cpp:37 engines/fool/fool_game.cpp:102
 #: engines/groovie/script.cpp:853 engines/lab/savegame.cpp:237
 #: engines/nancy/state/loadsave.cpp:108 engines/parallaction/metaengine.cpp:157
 #: engines/saga/metaengine.cpp:469 engines/tinsel/metaengine.cpp:323
@@ -5833,7 +5833,7 @@ msgid "Look"
 msgstr ""
 
 #: engines/access/metaengine.cpp:314 engines/drascula/metaengine.cpp:240
-#: engines/fool/fool_game.cpp:97 engines/queen/metaengine.cpp:259
+#: engines/fool/fool_game.cpp:102 engines/queen/metaengine.cpp:259
 #: engines/saga/metaengine.cpp:369 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:193 engines/scumm/help.cpp:211
