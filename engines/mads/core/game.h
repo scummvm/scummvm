@@ -31,6 +31,7 @@
 #include "mads/core/mads.h"
 #include "mads/core/heap.h"
 #include "mads/core/popup.h"
+#include "mads/core/text.h"
 
 namespace MADS {
 

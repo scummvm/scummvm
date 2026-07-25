@@ -274,7 +274,7 @@ static void room_803_parser() {
 		case 161:
 		{
 			int quoteId = 0x31A + g_engine->getRandomNumber(1, 8);
-			_scene->_kernelMessages.add(Common::Point(64, 67), 0x1110, 32, 0, 80, quote_string(kernel.quotes, quoteId));
+			kernel_message_add(quote_string(kernel.quotes, quoteId), 64, 67, 0x1110, 80, 0, 32);
 			_scene->_sequences.addTimer(60, 162);
 		}
 		break;

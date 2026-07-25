@@ -427,9 +427,9 @@ static void room_316_parser() {
 			g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 7, 1, 0, 0);
 			_scene->_sequences.setAnimRange(g_sequence_ids[1], 8, -2);
 			_scene->_sequences.setDepth(g_sequence_ids[1], 2);
-			_scene->_kernelMessages.reset();
+			kernel_message_purge();
 			if (!player_has_been_in_room(321))
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 253));
+				kernel_message_add(quote_string(kernel.quotes, 253), 0, 0, 0x1110, 120, 0, 34);
 
 			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;

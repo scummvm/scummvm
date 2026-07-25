@@ -107,7 +107,7 @@ static void room_407_parser() {
 			g_engine->_soundManager->command(21, 0);
 			kernel_run_animation(kernel_name('s', 1), 70);
 			global[kHasBeenScanned] = true;
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, quote_string(kernel.quotes, 592));
+			kernel_message_add(quote_string(kernel.quotes, 592), 0, 0, 0x1110, 60, 0, 34);
 			g_engine->_soundManager->command(22, 0);
 		}
 

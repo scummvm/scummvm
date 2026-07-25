@@ -130,8 +130,8 @@ static void room_401_parser() {
 			kernel_run_animation(kernel_name('s', 1), 70);
 			global[kHasBeenScanned] = true;
 			g_engine->_soundManager->command(22, 0);
-			int idx = _scene->_kernelMessages.add(Common::Point(153, 46), 0x1110, 32, 0, 60, quote_string(kernel.quotes, 0x1D4));
-			_scene->_kernelMessages.setQuoted(idx, 4, true);
+			int idx = kernel_message_add(quote_string(kernel.quotes, 0x1D4), 153, 46, 0x1110, 60, 0, 32);
+			kernel_message_teletype(idx, 4, true);
 		}
 
 		if (global[kSexOfRex] == REX_FEMALE) {

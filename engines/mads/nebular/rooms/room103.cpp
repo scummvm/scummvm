@@ -104,8 +104,8 @@ static void room_103_init() {
 	kernel.quotes = quote_load(70, 51, 71, 7, 73, 0);
 
 	if (!player.been_here_before) {
-		int msgIndex = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 70));
-		_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+		int msgIndex = kernel_message_add(quote_string(kernel.quotes, 70), 0, 0, 0x1110, 120, 0, 34);
+		kernel_message_teletype(msgIndex, 4, true);
 	}
 
 	if (previous_room == 102)
@@ -255,8 +255,8 @@ static void room_103_parser() {
 				_scene->_sequences.setAnimRange(g_sequence_ids[9], -2, -2);
 
 				// Rex says "Gads.."
-				const char *msg = quote_string(kernel.quotes, 51);
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 18, 0, 60, msg);
+				char *msg = quote_string(kernel.quotes, 51);
+				kernel_message_add(msg, 0, 0, 0x1110, 60, 0, 18);
 				_scene->_sequences.addTimer(120, kernel.trigger + 1);
 			} else {
 				// Initial turky explosion
@@ -280,20 +280,20 @@ static void room_103_parser() {
 		case 0:
 		{
 			player.commands_allowed = false;
-			const char *msg = quote_string(kernel.quotes, 71);
-			_scene->_kernelMessages.add(Common::Point(), 0x1110, 18, 1, 120, msg);
+			char *msg = quote_string(kernel.quotes, 71);
+			kernel_message_add(msg, Common::Point().x, Common::Point().y, 0x1110, 120, 1, 18);
 			break;
 		}
 
 		case 1:
 		{
-			const char *msg = quote_string(kernel.quotes, 72);
-			_scene->_kernelMessages.add(Common::Point(310, 132), 0xFDFC, 16, 2, 120, msg);
+			char *msg = quote_string(kernel.quotes, 72);
+			kernel_message_add(msg, 310, 132, 0xFDFC, 120, 2, 16);
 			break;
 		}
 
 		case 2:
-			_scene->_kernelMessages.reset();
+			kernel_message_purge();
 			_scene->_sequences.addTimer(1, 3);
 			break;
 
@@ -348,8 +348,8 @@ void room_103_error() {
 		text_show(10305);
 		player.command_ready = false;
 	} else if (player_said_3(put, coal, furnace)) {
-		const char *msg = quote_string(kernel.quotes, 73);
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, msg);
+		char *msg = quote_string(kernel.quotes, 73);
+		kernel_message_add(msg, 0, 0, 0x1110, 120, 0, 34);
 		player.command_ready = false;
 	}
 }

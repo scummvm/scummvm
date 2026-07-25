@@ -45,10 +45,10 @@ struct Scratch {
 static Scratch local;
 
 static void addRandomMessage() {
-	_scene->_kernelMessages.reset();
+	kernel_message_purge();
 	kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 	int quoteId = g_engine->getRandomNumber(65, 69);
-	_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 73, 120, quote_string(kernel.quotes, quoteId));
+	kernel_message_add(quote_string(kernel.quotes, quoteId), 0, 0, 0x1110, 120, 73, 34);
 	local._activeMsgFl = true;
 }
 
@@ -172,7 +172,7 @@ static void room_102_daemon() {
 
 	if (!local._activeMsgFl && (Common::Point(player.x, player.y) == Common::Point(177, 114)) && (player.facing == FACING_NORTH)
 		&& (g_engine->getRandomNumber(1, 5000) == 1)) {
-		_scene->_kernelMessages.reset();
+		kernel_message_purge();
 		local._activeMsgFl = false;
 		addRandomMessage();
 	}
@@ -213,7 +213,7 @@ static void room_102_pre_parser() {
 	}
 
 	if (player.need_to_walk)
-		_scene->_kernelMessages.reset();
+		kernel_message_purge();
 }
 
 static void room_102_parser() {
@@ -281,12 +281,12 @@ static void room_102_parser() {
 	if (player_said_2(walkto, refrigerator) && justOpenedFl) {
 		local._fridgeFirstOpenFl = false;
 		int quoteId = g_engine->getRandomNumber(59, 63);
-		const char *curQuote = quote_string(kernel.quotes, quoteId);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, -1);
-		_scene->_kernelMessages.reset();
+		char *curQuote = quote_string(kernel.quotes, quoteId);
+		int width = font_string_width(kernel_message_font, curQuote, -1);
+		kernel_message_purge();
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
-		_scene->_kernelMessages.add(Common::Point(210, 60), 0x1110, 0, 73, 120, curQuote);
-		_scene->_kernelMessages.add(Common::Point(214 + width, 60), 0x1110, 0, 73, 120, quote_string(kernel.quotes, 64));
+		kernel_message_add(curQuote, 210, 60, 0x1110, 120, 73, 0);
+		kernel_message_add(quote_string(kernel.quotes, 64), 214 + width, 60, 0x1110, 120, 73, 0);
 		local._activeMsgFl = true;
 		player.command_ready = false;
 		return;

@@ -187,8 +187,8 @@ static void room_513_parser() {
 			g_sequence_ids[2] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[2], false, 7, 1, 0, 0);
 			_scene->_sequences.setDepth(g_sequence_ids[2], 2);
 			g_engine->_soundManager->command(24, 0);
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x278));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 0x278), 0, 0, 0x1110, 120, 0, 34);
 			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 

@@ -49,7 +49,7 @@ static Scratch local;
 static void putArmDown(bool corridorExit, bool doorwayExit) {
 	switch (kernel.trigger) {
 	case 0:
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0xFF));
+		kernel_message_add(quote_string(kernel.quotes, 0xFF), 0, 0, 0x1110, 120, 0, 34);
 		_scene->_sequences.addTimer(48, 1);
 		break;
 
@@ -79,8 +79,8 @@ static void putArmDown(bool corridorExit, bool doorwayExit) {
 	break;
 
 	case 3:
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x100));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 0x100), 0, 0, 0x1110, 120, 0, 34);
 		inter_move_object(OBJ_GUARDS_ARM, room_id);
 		player.walker_visible = true;
 		if (corridorExit)
@@ -290,7 +290,7 @@ static void room_352_parser() {
 				break;
 
 			case 4:
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x101));
+				kernel_message_add(quote_string(kernel.quotes, 0x101), 0, 0, 0x1110, 120, 0, 34);
 				player.commands_allowed = true;
 				break;
 
@@ -434,10 +434,10 @@ static void room_352_parser() {
 					idx = _scene->_dynamicHotspots.add(words_your_stuff, words_walkto, -1, Common::Rect(282, 87, 282 + 13, 87 + 7));
 					local._hotspot2Idx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(280, 111), FACING_NORTHEAST);
 					g_sequence_ids[1] = local._commonSequenceIdx;
-					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x102));
+					kernel_message_add(quote_string(kernel.quotes, 0x102), 0, 0, 0x1110, 120, 0, 34);
 				} else {
 					g_sequence_ids[13] = local._commonSequenceIdx;
-					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x103));
+					kernel_message_add(quote_string(kernel.quotes, 0x103), 0, 0, 0x1110, 120, 0, 34);
 				}
 
 				idx = _scene->_dynamicHotspots.add(words_other_stuff, words_walkto, -1, Common::Rect(282, 48, 282 + 36, 48 + 27));

@@ -202,7 +202,7 @@ static int computeQuoteAndQuantity() {
 		break;
 	}
 
-	_scene->_kernelMessages.add(Common::Point(202, 82), 0x1110, 32, 0, 120, quote_string(kernel.quotes, quoteId));
+	kernel_message_add(quote_string(kernel.quotes, quoteId), 202, 82, 0x1110, 120, 0, 32);
 	return quantity;
 }
 
@@ -254,7 +254,7 @@ static void handleDialog() {
 			player.commands_allowed = false;
 			_scene->_animation[0]->setCurrentFrame(local._resetFrame);
 		}
-		_scene->_kernelMessages.reset();
+		kernel_message_purge();
 		local._newQuantity = computeQuoteAndQuantity();
 
 		if ((global[kNextIngredient] == 1) && (global[kBadFirstIngredient] > -1))

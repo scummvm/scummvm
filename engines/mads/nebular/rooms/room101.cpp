@@ -61,7 +61,7 @@ static void room_101_say_dang() {
 	case 72:
 		g_sequence_ids[11] = _scene->_sequences.addSpriteCycle(g_sprite_ids[11], false, 6, 0, 0, 0);
 		_scene->_sequences.setAnimRange(g_sequence_ids[11], 17, 17);
-		_scene->_kernelMessages.add(Common::Point(143, 61), 0x1110, 0, 0, 60, quote_string(kernel.quotes, 57));
+		kernel_message_add(quote_string(kernel.quotes, 57), 143, 61, 0x1110, 60, 0, 0);
 		_scene->_sequences.addTimer(120, 73);
 		break;
 
@@ -182,31 +182,31 @@ static void room_101_daemon() {
 	if (_scene->_animation[0] != nullptr) {
 		if ((_scene->_animation[0]->getCurrentFrame() >= 6) && (local._messageNum == 0)) {
 			local._messageNum++;
-			_scene->_kernelMessages.add(Common::Point(63, local._posY), 0x1110, 0, 0, 240, quote_string(kernel.quotes, 49));
+			kernel_message_add(quote_string(kernel.quotes, 49), 63, local._posY, 0x1110, 240, 0, 0);
 			local._posY += 14;
 		}
 
 		if ((_scene->_animation[0]->getCurrentFrame() >= 7) && (local._messageNum == 1)) {
 			local._messageNum++;
-			_scene->_kernelMessages.add(Common::Point(63, local._posY), 0x1110, 0, 0, 240, quote_string(kernel.quotes, 54));
+			kernel_message_add(quote_string(kernel.quotes, 54), 63, local._posY, 0x1110, 240, 0, 0);
 			local._posY += 14;
 		}
 
 		if ((_scene->_animation[0]->getCurrentFrame() >= 10) && (local._messageNum == 2)) {
 			local._messageNum++;
-			_scene->_kernelMessages.add(Common::Point(63, local._posY), 0x1110, 0, 0, 240, quote_string(kernel.quotes, 55));
+			kernel_message_add(quote_string(kernel.quotes, 55), 63, local._posY, 0x1110, 240, 0, 0);
 			local._posY += 14;
 		}
 
 		if ((_scene->_animation[0]->getCurrentFrame() >= 17) && (local._messageNum == 3)) {
 			local._messageNum++;
-			_scene->_kernelMessages.add(Common::Point(63, local._posY), 0x1110, 0, 0, 240, quote_string(kernel.quotes, 56));
+			kernel_message_add(quote_string(kernel.quotes, 56), 63, local._posY, 0x1110, 240, 0, 0);
 			local._posY += 14;
 		}
 
 		if ((_scene->_animation[0]->getCurrentFrame() >= 20) && (local._messageNum == 4)) {
 			local._messageNum++;
-			_scene->_kernelMessages.add(Common::Point(63, local._posY), 0x1110, 0, 0, 240, quote_string(kernel.quotes, 50));
+			kernel_message_add(quote_string(kernel.quotes, 50), 63, local._posY, 0x1110, 240, 0, 0);
 			local._posY += 14;
 		}
 	}

@@ -54,17 +54,17 @@ static Scratch local;
 
 
 static void handleRexDialogs(int quote) {
-	_scene->_kernelMessages.reset();
+	kernel_message_purge();
 
-	const char *curQuote = quote_string(kernel.quotes, quote);
-	if (_scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing) > 200) {
+	char *curQuote = quote_string(kernel.quotes, quote);
+	if (font_string_width(kernel_message_font, curQuote, kernel_message_spacing) > 200) {
 		static char subQuote1[34], subQuote2[34];
 		quote_split_string(curQuote, subQuote1, subQuote2);
 
-		_scene->_kernelMessages.add(Common::Point(138, 59), 0x1110, 32, 0, 240, subQuote1);
-		_scene->_kernelMessages.add(Common::Point(138, 73), 0x1110, 32, 1, 180, subQuote2);
+		kernel_message_add(subQuote1, 138, 59, 0x1110, 240, 0, 32);
+		kernel_message_add(subQuote2, 138, 73, 0x1110, 180, 1, 32);
 	} else
-		_scene->_kernelMessages.add(Common::Point(138, 73), 0x1110, 32, 1, 120, curQuote);
+		kernel_message_add(curQuote, 138, 73, 0x1110, 120, 1, 32);
 }
 
 static void handleInternDialog(int quoteId, int quoteNum, uint32 timeout) {
@@ -79,14 +79,14 @@ static void handleInternDialog(int quoteId, int quoteNum, uint32 timeout) {
 
 	int maxWidth = 0;
 	for (int i = 0; i < quoteNum; i++) {
-		maxWidth = MAX(maxWidth, _scene->_kernelMessages._talkFont->getWidth(quote_string(kernel.quotes, curQuoteId), -1));
+		maxWidth = MAX(maxWidth, font_string_width(kernel_message_font, quote_string(kernel.quotes, curQuoteId), -1));
 		curQuoteId++;
 	}
 
 	int posX = MIN(319 - maxWidth, 178 - (maxWidth >> 1));
 	curQuoteId = quoteId;
 
-	_scene->_kernelMessages.reset();
+	kernel_message_purge();
 	local._internTalkingFl = true;
 
 	// WORKAROUND: In case the player launches multiple talk selections with the
@@ -98,7 +98,7 @@ static void handleInternDialog(int quoteId, int quoteNum, uint32 timeout) {
 	for (int i = 0; i < quoteNum; i++) {
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(180, 63);
-		_scene->_kernelMessages.add(Common::Point(posX, posY), 0xFDFC, 0, 0, timeout, quote_string(kernel.quotes, curQuoteId));
+		kernel_message_add(quote_string(kernel.quotes, curQuoteId), posX, posY, 0xFDFC, timeout, 0, 0);
 		posY += 14;
 		curQuoteId++;
 	}

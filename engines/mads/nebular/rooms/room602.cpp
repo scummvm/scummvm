@@ -125,8 +125,8 @@ static void handleSafeActions() {
 	case 1:
 		if (local._safeMode == 1 || local._safeMode == 3) {
 			if (global[kSafeStatus] == 0 && local._safeMode == 1) {
-				_scene->_kernelMessages.reset();
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2F1));
+				kernel_message_purge();
+				kernel_message_add(quote_string(kernel.quotes, 0x2F1), 0, 0, 0x1110, 120, 0, 34);
 				_scene->_sequences.addTimer(120, 4);
 			} else {
 				_scene->_sequences.remove(local._lastSequenceIdx);
@@ -168,8 +168,8 @@ static void handleSafeActions() {
 		int idx = _scene->_dynamicHotspots.add(words_safe, words_walkto, local._lastSequenceIdx, Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(185, 113), FACING_NORTHWEST);
 		if (local._safeMode == 3) {
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2F3));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 0x2F3), 0, 0, 0x1110, 120, 0, 34);
 			_scene->_sequences.addTimer(120, 4);
 		} else
 			_scene->_sequences.addTimer(60, 4);
@@ -250,8 +250,8 @@ static void room_602_parser() {
 		break;
 
 		case 2:
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2F2));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 0x2F2), 0, 0, 0x1110, 120, 0, 34);
 			global[kSafeStatus] = 2;
 			player.commands_allowed = true;
 			break;

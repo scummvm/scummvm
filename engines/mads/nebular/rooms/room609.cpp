@@ -163,15 +163,15 @@ static void enterStore() {
 		if (local._videoDoorMode == 2)
 			_scene->_sequences.addTimer(1, 4);
 		else {
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x305));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 0x305), 0, 0, 0x1110, 120, 0, 34);
 			_scene->_sequences.addTimer(120, 1);
 		}
 		break;
 
 	case 1:
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x306));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 0x306), 0, 0, 0x1110, 120, 0, 34);
 		_scene->_sequences.addTimer(60, 2);
 		break;
 
@@ -210,8 +210,8 @@ static void enterStore() {
 	case 6:
 		_scene->_hotspots.activate(words_video_store_door, false);
 		if (local._videoDoorMode == 1) {
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 180, quote_string(kernel.quotes, 0x307));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 0x307), 0, 0, 0x1110, 180, 0, 34);
 		}
 		player_walk(23, 90, FACING_WEST);
 		_scene->_sequences.addTimer(180, 7);
@@ -251,8 +251,8 @@ static void room_609_parser() {
 			switch (kernel.trigger) {
 			case 0:
 				player.commands_allowed = false;
-				_scene->_kernelMessages.reset();
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x308));
+				kernel_message_purge();
+				kernel_message_add(quote_string(kernel.quotes, 0x308), 0, 0, 0x1110, 120, 0, 34);
 				_scene->_sequences.addTimer(120, 1);
 				break;
 
@@ -271,8 +271,8 @@ static void room_609_parser() {
 				break;
 
 			case 3:
-				_scene->_kernelMessages.reset();
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x309));
+				kernel_message_purge();
+				kernel_message_add(quote_string(kernel.quotes, 0x309), 0, 0, 0x1110, 120, 0, 34);
 				_scene->_sequences.addTimer(120, 4);
 				break;
 

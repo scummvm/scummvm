@@ -310,8 +310,7 @@ static void room_804_parser() {
 
 				text_show(80424);
 				local._pullThrottleReally = true;
-				_scene->_kernelMessages.add(Common::Point(78, 75), 0x1110, 0, 0,
-					120, quote_string(kernel.quotes, 791));
+				kernel_message_add(quote_string(kernel.quotes, 791), 78, 75, 0x1110, 120, 0, 0);
 			}
 		} else {
 			local._messWithThrottle = true;

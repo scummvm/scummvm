@@ -196,8 +196,8 @@ static void room_311_parser() {
 		text_show(31119);
 	else if (local._checkGuardFl) {
 		local._checkGuardFl = false;
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.addQuote(250, 0, 240);
+		kernel_message_purge();
+		kernel_message_player(250, 240, 0);
 	} else if (player_said_2(sit_at, desk))
 		new_room = 320;
 	else if (player_said_2(climb_into, air_vent)) {

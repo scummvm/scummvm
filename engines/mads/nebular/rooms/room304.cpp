@@ -102,8 +102,8 @@ static void room_304_daemon() {
 		break;
 
 		case 71:
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, quote_string(kernel.quotes, 0xEB));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 0xEB), 0, 0, 0x1110, 60, 0, 34);
 			_scene->_sequences.addTimer(1, 72);
 			break;
 
@@ -149,8 +149,8 @@ static void room_304_daemon() {
 			break;
 
 		case 77:
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(211, 45), 0xFDFC, 32, 0, 180, quote_string(kernel.quotes, 0xEC));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 0xEC), 211, 45, 0xFDFC, 180, 0, 32);
 			_scene->_sequences.addTimer(120, 78);
 			break;
 

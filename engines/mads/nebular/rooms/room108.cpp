@@ -84,8 +84,8 @@ static void room_108_parser() {
 	else if (player_said_2(take, dead_fish) && global[kFishIn108]) {
 		if (player_has(OBJ_DEAD_FISH)) {
 			int randVal = g_engine->getRandomNumber(74, 76);
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, randVal));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, randVal), 0, 0, 0x1110, 120, 0, 34);
 		} else {
 			_scene->_sequences.remove(g_sequence_ids[4]);
 			inter_give_to_player(OBJ_DEAD_FISH);

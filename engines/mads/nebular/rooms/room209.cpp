@@ -700,8 +700,8 @@ static void handleMonkeyEating() {
 	case 207:
 	{
 		g_engine->_soundManager->command(18, 0);
-		int msgIndex = _scene->_kernelMessages.add(Common::Point(180, 25), 0xFDFC, 0, 0, 90, quote_string(kernel.quotes, 130));
-		_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+		int msgIndex = kernel_message_add(quote_string(kernel.quotes, 130), 180, 25, 0xFDFC, 90, 0, 0);
+		kernel_message_teletype(msgIndex, 4, true);
 
 		int oldIdx = g_sequence_ids[4];
 		g_sequence_ids[4] = _scene->_sequences.startPingPongCycle(g_sprite_ids[4], false, 15, 4, 0, 0);
@@ -713,7 +713,7 @@ static void handleMonkeyEating() {
 
 	case 208:
 	{
-		_scene->_kernelMessages.add(Common::Point(180, 39), 0xFDFC, 0, 0, 90, quote_string(kernel.quotes, 131));
+		kernel_message_add(quote_string(kernel.quotes, 131), 180, 39, 0xFDFC, 90, 0, 0);
 		int oldIdx = g_sequence_ids[4];
 		g_sequence_ids[4] = _scene->_sequences.startPingPongCycle(g_sprite_ids[4], false, 10, 4, 0, 0);
 		_scene->_sequences.setAnimRange(g_sequence_ids[4], 28, 29);
@@ -751,7 +751,7 @@ static void handleMonkeyFall() {
 		matte_deallocate_series(g_sprite_ids[4], true);
 
 		g_sprite_ids[8] = kernel_load_series(kernel_name('m', 4), 0);
-		_scene->_kernelMessages.add(Common::Point(180, 26), 0xFDFC, 0, 0, 90, quote_string(kernel.quotes, 151));
+		kernel_message_add(quote_string(kernel.quotes, 151), 180, 26, 0xFDFC, 90, 0, 0);
 		_scene->_sequences.addTimer(40, 100);
 		_scene->_hotspots.activate(227, false);
 		int oldIdx = g_sequence_ids[3];
@@ -768,7 +768,7 @@ static void handleMonkeyFall() {
 	case 220:
 	{
 		g_engine->_soundManager->command(18, 0);
-		_scene->_kernelMessages.add(Common::Point(182, 109), 0xFDFC, 0, 0, 90, quote_string(kernel.quotes, 159));
+		kernel_message_add(quote_string(kernel.quotes, 159), 182, 109, 0xFDFC, 90, 0, 0);
 		_scene->_hotspots.activate(227, false);
 		int oldIdx = g_sequence_ids[3];
 		local._monkeyPosition = 1;
@@ -801,7 +801,7 @@ static void handleMonkeyFall() {
 
 	case 222:
 	{
-		_scene->_kernelMessages.add(Common::Point(182, 109), 0xFDFC, 0, 0, 70, quote_string(kernel.quotes, 160));
+		kernel_message_add(quote_string(kernel.quotes, 160), 182, 109, 0xFDFC, 70, 0, 0);
 		int oldIdx = g_sequence_ids[8];
 		g_sequence_ids[8] = _scene->_sequences.addSpriteCycle(g_sprite_ids[8], false, 8, 1, 0, 0);
 		_scene->_sequences.setAnimRange(g_sequence_ids[8], 73, 78);
@@ -855,8 +855,8 @@ static void handleMonkey1() {
 		_scene->_sequences.setAnimRange(g_sequence_ids[7], 23, 26);
 		_scene->_sequences.updateTimeout(g_sequence_ids[7], oldIdx);
 		_scene->_sequences.addSubEntry(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 215);
-		int msgIndex = _scene->_kernelMessages.add(Common::Point(170, 21), 0xFDFC, 0, 0, 90, quote_string(kernel.quotes, 156));
-		_scene->_kernelMessages.setQuoted(msgIndex, 3, true);
+		int msgIndex = kernel_message_add(quote_string(kernel.quotes, 156), 170, 21, 0xFDFC, 90, 0, 0);
+		kernel_message_teletype(msgIndex, 3, true);
 	}
 	break;
 
@@ -896,7 +896,7 @@ static void handleMonkey1() {
 static void handleMonkey2() {
 	switch (kernel.trigger) {
 	case 251:
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, quote_string(kernel.quotes, 137));
+		kernel_message_add(quote_string(kernel.quotes, 137), 0, 0, 0x1110, 60, 0, 34);
 		g_engine->_soundManager->command(22, 0);
 		g_sequence_ids[12] = _scene->_sequences.addSpriteCycle(g_sprite_ids[12], false, 11, 1, 0, 0);
 		_scene->_sequences.setPosition(g_sequence_ids[12], Common::Point(111, 133));
@@ -909,8 +909,8 @@ static void handleMonkey2() {
 
 	case 252:
 	{
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 132));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 132), 0, 0, 0x1110, 120, 0, 34);
 		int oldIdx = g_sequence_ids[12];
 		g_sequence_ids[12] = _scene->_sequences.startCycle(g_sprite_ids[12], false, 7);
 		_scene->_sequences.setPosition(g_sequence_ids[12], Common::Point(111, 133));
@@ -954,13 +954,13 @@ static void handleDodge() {
 		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 6);
 		local._playingAnimFl = false;
 		local._pauseMode = 0;
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 90, quote_string(kernel.quotes, 155));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 155), 180, 21, 0xFDFC, 90, 0, 0);
 		if (!local._shootMissedLastFl) {
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 135));
+			kernel_message_add(quote_string(kernel.quotes, 135), 0, 0, 0x1110, 120, 0, 34);
 			local._shootMissedLastFl = true;
 		} else {
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 136));
+			kernel_message_add(quote_string(kernel.quotes, 136), 0, 0, 0x1110, 120, 0, 34);
 		}
 		break;
 
@@ -1316,11 +1316,11 @@ static void room_209_daemon() {
 			_scene->_sequences.setDepth(g_sequence_ids[2], 4);
 			_scene->_sequences.updateTimeout(g_sequence_ids[2], oldIdx);
 			_scene->_sequences.addTimer(2, 233);
-			_scene->_kernelMessages.reset();
+			kernel_message_purge();
 			if (local._dodgeFl && (local._monkeyPosition != 1) && (local._monkeyPosition != 2))
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 34463, quote_string(kernel.quotes, 138));
+				kernel_message_add(quote_string(kernel.quotes, 138), 0, 0, 0x1110, 34463, 0, 34);
 			if (local._fallFl && (local._monkeyPosition != 3))
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 34463, quote_string(kernel.quotes, 138));
+				kernel_message_add(quote_string(kernel.quotes, 138), 0, 0, 0x1110, 34463, 0, 34);
 		}
 		break;
 
@@ -1330,7 +1330,7 @@ static void room_209_daemon() {
 
 		case 234:
 			_scene->_sequences.remove(g_sequence_ids[2]);
-			_scene->_kernelMessages.reset();
+			kernel_message_purge();
 			if (player_said_3(hose_down, blowgun, monkey)) {
 				g_sequence_ids[2] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[2], false, 7, 16, 0, 0);
 				_scene->_sequences.setAnimRange(g_sequence_ids[2], 11, 12);
@@ -1405,7 +1405,7 @@ static void room_209_daemon() {
 	}
 
 	if (kernel.trigger == 100)
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 134));
+		kernel_message_add(quote_string(kernel.quotes, 134), 0, 0, 0x1110, 120, 0, 34);
 
 	if (local._shootReadyFl && (local._shouldFallFl || local._shouldDodgeFl)) {
 		_scene->_sequences.addTimer(4, 234);
@@ -1466,89 +1466,89 @@ static void room_209_parser() {
 		return;
 
 	case 5:
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 6, 180, quote_string(kernel.quotes, 139));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 139), 0, 0, 0x1110, 180, 6, 34);
 		player.command_ready = false;
 		return;
 
 	case 6:
-		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 60, quote_string(kernel.quotes, 151));
+		kernel_message_add(quote_string(kernel.quotes, 151), 180, 21, 0xFDFC, 60, 0, 0);
 		_scene->_sequences.addTimer(60, 130);
 		local._dialogAbortVal = 7;
 		player.command_ready = false;
 		return;
 
 	case 7:
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 8, 180, quote_string(kernel.quotes, 140));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 140), 0, 0, 0x1110, 180, 8, 34);
 		player.command_ready = false;
 		return;
 
 	case 8:
-		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 60, quote_string(kernel.quotes, 149));
+		kernel_message_add(quote_string(kernel.quotes, 149), 180, 21, 0xFDFC, 60, 0, 0);
 		_scene->_sequences.addTimer(60, 130);
 		local._dialogAbortVal = 9;
 		player.command_ready = false;
 		return;
 
 	case 9:
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 180, quote_string(kernel.quotes, 141));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 141), 0, 0, 0x1110, 180, 0, 34);
 		_scene->_sequences.addTimer(200, 10);
 		player.command_ready = false;
 		return;
 
 	case 10:
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 11, 180, quote_string(kernel.quotes, 142));
+		kernel_message_add(quote_string(kernel.quotes, 142), 0, 0, 0x1110, 180, 11, 34);
 		player.command_ready = false;
 		return;
 
 	case 11:
-		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 60, quote_string(kernel.quotes, 152));
+		kernel_message_add(quote_string(kernel.quotes, 152), 180, 21, 0xFDFC, 60, 0, 0);
 		_scene->_sequences.addTimer(60, 130);
 		local._dialogAbortVal = 12;
 		player.command_ready = false;
 		return;
 
 	case 12:
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 130, quote_string(kernel.quotes, 143));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 143), 0, 0, 0x1110, 130, 0, 34);
 		_scene->_sequences.addTimer(150, 13);
 		player.command_ready = false;
 		return;
 
 	case 13:
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 14, 180, quote_string(kernel.quotes, 145));
+		kernel_message_add(quote_string(kernel.quotes, 145), 0, 0, 0x1110, 180, 14, 34);
 		player.command_ready = false;
 		return;
 
 	case 14:
-		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 60, quote_string(kernel.quotes, 151));
+		kernel_message_add(quote_string(kernel.quotes, 151), 180, 21, 0xFDFC, 60, 0, 0);
 		_scene->_sequences.addTimer(60, 130);
 		local._dialogAbortVal = 15;
 		player.command_ready = false;
 		return;
 
 	case 15:
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 16, 180, quote_string(kernel.quotes, 146));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 146), 0, 0, 0x1110, 180, 16, 34);
 		player.command_ready = false;
 		return;
 
 	case 16:
-		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 17, 60, quote_string(kernel.quotes, 154));
+		kernel_message_add(quote_string(kernel.quotes, 154), 180, 21, 0xFDFC, 60, 17, 0);
 		player.command_ready = false;
 		return;
 
 	case 17:
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 130, 60, quote_string(kernel.quotes, 147));
+		kernel_message_add(quote_string(kernel.quotes, 147), 0, 0, 0x1110, 60, 130, 34);
 		local._dialogAbortVal = 18;
 		player.command_ready = false;
 		return;
 
 	case 18:
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 180, quote_string(kernel.quotes, 148));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 148), 0, 0, 0x1110, 180, 0, 34);
 		local._pitchFl = true;
 		local._playingDialogFl = false;
 		local._dialogAbortVal = 5;

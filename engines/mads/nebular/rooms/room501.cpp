@@ -292,8 +292,8 @@ static void room_501_parser() {
 				kernel_run_animation(kernel_name('G', 1), 5);
 			} else {
 				local._rexPunched = false;
-				_scene->_kernelMessages.reset();
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 6, 120, quote_string(kernel.quotes, 0x277));
+				kernel_message_purge();
+				kernel_message_add(quote_string(kernel.quotes, 0x277), 0, 0, 0x1110, 120, 6, 34);
 			}
 			break;
 
@@ -306,12 +306,12 @@ static void room_501_parser() {
 		case 6:
 			if (global[kSexOfRex] == REX_MALE) {
 				if (local._rexPunched) {
-					_scene->_kernelMessages.reset();
-					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x275));
+					kernel_message_purge();
+					kernel_message_add(quote_string(kernel.quotes, 0x275), 0, 0, 0x1110, 120, 0, 34);
 					local._rexPunched = false;
 				} else {
-					_scene->_kernelMessages.reset();
-					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x276));
+					kernel_message_purge();
+					kernel_message_add(quote_string(kernel.quotes, 0x276), 0, 0, 0x1110, 120, 0, 34);
 				}
 			}
 			player.commands_allowed = true;

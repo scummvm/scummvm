@@ -209,7 +209,7 @@ static void room_320_daemon() {
 				break;
 
 			case 191:
-				_scene->_kernelMessages.add(Common::Point(1, 1), 0xFDFC, 0, 0, 60, quote_string(kernel.quotes, 0xFE));
+				kernel_message_add(quote_string(kernel.quotes, 0xFE), 1, 1, 0xFDFC, 60, 0, 0);
 				break;
 
 			case 417:
@@ -289,7 +289,7 @@ static void room_320_parser() {
 					player.commands_allowed = false;
 					setRightView(8);
 					setLeftView(10);
-					_scene->_kernelMessages.reset();
+					kernel_message_purge();
 					kernel_dump_all();
 					g_sprite_ids[2] = kernel_load_series(kernel_name('m', 2), 0);
 					g_sprite_ids[4] = kernel_load_series(kernel_name('m', 4), 0);

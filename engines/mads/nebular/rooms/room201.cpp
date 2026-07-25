@@ -111,7 +111,7 @@ static void room_201_init() {
 		player_walk(157, 143, FACING_NORTH);
 		pal_change_color(252, 45, 63, 45);
 		pal_change_color(253, 20, 45, 20);
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 2, 0, 120, quote_string(kernel.quotes, 90));
+		kernel_message_add(quote_string(kernel.quotes, 90), 0, 0, 0x1110, 120, 0, 2);
 	} else
 		local._pterodactylFlag = true;
 
@@ -145,7 +145,7 @@ static void room_201_daemon() {
 	}
 
 	if (kernel.trigger == 81) {
-		_scene->_kernelMessages.reset();
+		kernel_message_purge();
 	}
 
 	if (kernel.trigger == 71) {
@@ -164,7 +164,7 @@ static void room_201_daemon() {
 	if (kernel.trigger == 74) {
 		g_engine->_soundManager->command(40, 0);
 
-		_scene->_kernelMessages.add(Common::Point(125, 56), 0xFDFC, 32, 82, 180, quote_string(kernel.quotes, 91));
+		kernel_message_add(quote_string(kernel.quotes, 91), 125, 56, 0xFDFC, 180, 82, 32);
 		g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(g_sprite_ids[6], false, 9, 0, 0, 0);
 		_scene->_sequences.setDepth(g_sequence_ids[6], 1);
 		_scene->_sequences.setAnimRange(g_sequence_ids[6], -2, -2);

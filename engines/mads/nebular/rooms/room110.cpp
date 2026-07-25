@@ -79,7 +79,7 @@ static void room_110_init() {
 	kernel.quotes = quote_load(89, 0);
 
 	if (!player.been_here_before && (previous_room == 109))
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 89));
+		kernel_message_add(quote_string(kernel.quotes, 89), 0, 0, 0x1110, 120, 0, 34);
 }
 
 static void room_110_daemon() {

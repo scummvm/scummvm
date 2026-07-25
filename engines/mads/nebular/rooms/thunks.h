@@ -27,7 +27,6 @@
 #include "mads/core/inter.h"
 #include "mads/core/kernel.h"
 #include "mads/core/player.h"
-#include "mads/core/text.h"
 
 namespace MADS {
 namespace RexNebular {
@@ -200,47 +199,6 @@ struct Scene {
 		void activate(int hotspot, int active);
 	};
 	Hotspots _hotspots;
-
-	struct KernelMessages {
-		struct TalkFont {
-			TalkFont *operator->() {
-				return this;
-			}
-			const TalkFont *operator->() const {
-				return this;
-			}
-			TalkFont &operator=(FontPtr font);
-			int getWidth(const Common::String &message, int spacing) const;
-		};
-		TalkFont _talkFont;
-
-		struct KernelMessageProxy {
-			long &_frameTimer;
-
-			KernelMessageProxy(KernelMessagePtr kmsg) : _frameTimer(kmsg->update_time) {
-			}
-		};
-		struct Entries {
-			KernelMessageProxy operator[](uint handle);
-		};
-		Entries _entries;
-
-		int add(const Common::Point &pt, uint fontColor, uint8 flags, int endTrigger,
-			uint32 timeout, const char *msg);
-		int addQuote(int quoteId, int endTrigger, uint32 timeout);
-		void remove(int msgIndex);
-		void reset();
-		void setQuoted(int msgIndex, int numTicks, bool quoted);
-		void setSeqIndex(int msgIndex, int seqIndex);
-
-		void initRandomMessages(int maxSimultaneousMessages,
-			const Common::Rect &bounds, int minYSpacing, int scrollRate,
-			int color, int duration, int quoteId, ...);
-		void randomServer();
-		int checkRandom();
-		bool generateRandom(int major, int minor);
-	};
-	KernelMessages _kernelMessages;
 
 	struct PaletteCycles {
 		int size() const;

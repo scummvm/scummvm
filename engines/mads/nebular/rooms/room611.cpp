@@ -138,478 +138,478 @@ static void handleTalking(int delay) {
 }
 
 static void displayHermitQuestions(int question) {
-	_scene->_kernelMessages.reset();
+	kernel_message_purge();
 	local._hermitDisplayedQuestion = question;
 
 	switch (question) {
 	case 1:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x281);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x281);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x282);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 14, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 	}
 	break;
 
 	case 2:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x283);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x283);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x284);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 14, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 	}
 	break;
 
 	case 3:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x285);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x285);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 14, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 	}
 	break;
 
 	case 4:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x286);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x286);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 14, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 	}
 	break;
 
 	case 5:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x297);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x297);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y - 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y - 14, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x298);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x299);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 14, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 	}
 	break;
 
 	case 6:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x29A);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x29A);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x29B);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 14, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 	}
 	break;
 
 	case 7:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x2A0);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x2A0);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 45, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2A1);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 59, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 	}
 	break;
 
 	case 8:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x2A2);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x2A2);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 31, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2A3);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 45, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2A4);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 59, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 	}
 	break;
 
 	case 9:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x2A5);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x2A5);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 45, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2A6);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 59, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 	}
 	break;
 
 	case 10:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x2A8);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x2A8);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 31, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2A9);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 45, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2AA);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 59, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 	}
 	break;
 
 	case 11:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x2AB);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x2AB);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 17, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2AC);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 31, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2AD);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 45, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2AE);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 59, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 	}
 	break;
 
 	case 12:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x2AF);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x2AF);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 17, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2B0);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 31, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2B1);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 45, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2B2);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 59, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 	}
 	break;
 
 	case 13:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x2B3);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x2B3);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 3), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 3, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2B4);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 17, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2B5);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 31, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2B6);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 45, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
-		_scene->_kernelMessages.add(Common::Point(11, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x2B7));
-		_scene->_kernelMessages.add(Common::Point(11, local._defaultDialogPos_y + 73), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x2B8));
-		_scene->_kernelMessages.add(Common::Point(11, local._defaultDialogPos_y + 87), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x2B9));
+		kernel_message_add(quote_string(kernel.quotes, 0x2B7), 11, local._defaultDialogPos_y + 59, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
+		kernel_message_add(quote_string(kernel.quotes, 0x2B8), 11, local._defaultDialogPos_y + 73, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
+		kernel_message_add(quote_string(kernel.quotes, 0x2B9), 11, local._defaultDialogPos_y + 87, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 	}
 	break;
 
 	case 14:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x2BA);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x2BA);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 17, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2BB);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 31, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2BC);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 45, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2BD);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 59, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 	}
 	break;
 
 	case 15:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x2BE);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x2BE);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 17, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2BF);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 31, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2C0);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 45, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2C1);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 59, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 	}
 	break;
 
 	case 16:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x2C2);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x2C2);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 3), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 3, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2C3);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 17, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2C4);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 31, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2C5);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 45, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2C6);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 59, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 	}
 	break;
 
 	case 17:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x2C7);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x2C7);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 17, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2C8);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 31, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2C9);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 45, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2CA);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 59, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 	}
 	break;
 
 	case 18:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x2CB);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x2CB);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 31, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2CC);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 45, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2CD);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 59, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 	}
 	break;
 
 	case 19:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x2CE);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x2CE);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 31, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2CF);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 45, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2D0);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 59, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 	}
 	break;
 
 	case 20:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x2E1);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x2E1);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 3), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 3, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2E2);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 17, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2E3);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 31, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2E4);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 45, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2E5);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 59, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 	}
 	break;
 
 	case 21:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x2D3);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x2D3);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 3), 0xFDFC, 0, 0, 800, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 3, 0xFDFC, 800, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2D4);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, 800, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 17, 0xFDFC, 800, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2D5);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, 800, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 31, 0xFDFC, 800, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2D6);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, 800, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 45, 0xFDFC, 800, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2D7);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, 800, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 59, 0xFDFC, 800, 0, 0);
 	}
 	break;
 
 	case 22:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x2D8);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x2D8);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, 700, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 17, 0xFDFC, 700, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2D9);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, 700, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 31, 0xFDFC, 700, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2DA);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, 700, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 45, 0xFDFC, 700, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2DB);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, 700, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 59, 0xFDFC, 700, 0, 0);
 	}
 	break;
 
 	case 23:
 	{
-		const char *curQuote = quote_string(kernel.quotes, 0x2DC);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x2DC);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 3), 0xFDFC, 0, 0, 700, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 3, 0xFDFC, 700, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2DD);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, 700, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 17, 0xFDFC, 700, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2DE);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, 700, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 31, 0xFDFC, 700, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2DF);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, 700, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 45, 0xFDFC, 700, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2E0);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, 700, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 59, 0xFDFC, 700, 0, 0);
 	}
 	break;
 
@@ -755,17 +755,17 @@ static void handleSubDialog1() {
 	case 0x293:
 	{
 		handleTalking(200);
-		_scene->_kernelMessages.reset();
+		kernel_message_purge();
 
-		const char *curQuote = quote_string(kernel.quotes, 0x2D1);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x2D1);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y), 0xFDFC, 0, 0, 120, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y, 0xFDFC, 120, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x2D2);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, 120, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 14, 0xFDFC, 120, 0, 0);
 
 		local._dialog1.write(0x293, false);
 		setDialogNode(0);
@@ -815,12 +815,12 @@ static void handleSubDialog1() {
 
 	case 0x296:
 	{
-		_scene->_kernelMessages.reset();
+		kernel_message_purge();
 
-		const char *curQuote = quote_string(kernel.quotes, 0x2E6);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x2E6);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, 120, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 14, 0xFDFC, 120, 0, 0);
 
 		setDialogNode(0);
 		handleTalking(200);
@@ -854,11 +854,11 @@ static void handleSubDialog2() {
 
 	case 0x29F:
 	{
-		_scene->_kernelMessages.reset();
-		const char *curQuote = quote_string(kernel.quotes, 0x2A7);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		kernel_message_purge();
+		char *curQuote = quote_string(kernel.quotes, 0x2A7);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, 120, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 14, 0xFDFC, 120, 0, 0);
 		setDialogNode(0);
 		local._dialog2.write(0x29F, false);
 	}
@@ -871,27 +871,27 @@ static void handleSubDialog2() {
 
 static void handleDialog() {
 	if (kernel.trigger == 0) {
-		_scene->_kernelMessages.reset();
+		kernel_message_purge();
 		player.commands_allowed = false;
 
-		const char *curQuote = quote_string(kernel.quotes, player2.words[0]);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, player2.words[0]);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 
 		if (width > 200) {
 			static char subQuote1[34], subQuote2[34];
 			quote_split_string(curQuote, subQuote1, subQuote2);
-			_scene->_kernelMessages.add(Common::Point(0, -14), 0x1110, 34, 0, 150, subQuote1);
+			kernel_message_add(subQuote1, 0, -14, 0x1110, 150, 0, 34);
 
 			if (player2.words[0] == 0x29D)
-				_scene->_kernelMessages.add(Common::Point(-18, 0), 0x1110, 34, 1, 150, subQuote2);
+				kernel_message_add(subQuote2, -18, 0, 0x1110, 150, 1, 34);
 			else if (player2.words[0] == 0x28A)
-				_scene->_kernelMessages.add(Common::Point(-10, 0), 0x1110, 34, 1, 150, subQuote2);
+				kernel_message_add(subQuote2, -10, 0, 0x1110, 150, 1, 34);
 			else
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 1, 150, subQuote2);
+				kernel_message_add(subQuote2, 0, 0, 0x1110, 150, 1, 34);
 
 			_scene->_sequences.addTimer(170, 50);
 		} else {
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 1, 120, curQuote);
+			kernel_message_add(curQuote, 0, 0, 0x1110, 120, 1, 34);
 			_scene->_sequences.addTimer(140, 50);
 		}
 	} else if (kernel.trigger == 50) {
@@ -1143,19 +1143,19 @@ static void room_611_daemon() {
 
 	if (_scene->_animation[0] != nullptr && (_scene->_animation[0]->getCurrentFrame() == 240) && local._check1Fl) {
 		local._check1Fl = false;
-		_scene->_kernelMessages.add(Common::Point(33, 88), 0xFDFC, 0, 0, 90, quote_string(kernel.quotes, 0x27E));
+		kernel_message_add(quote_string(kernel.quotes, 0x27E), 33, 88, 0xFDFC, 90, 0, 0);
 		_scene->_sequences.addTimer(120, 120);
 	}
 
 	if (kernel.trigger == 120) {
-		int msgIdx = _scene->_kernelMessages.add(Common::Point(28, 102), 0xFDFC, 0, 0, 90, quote_string(kernel.quotes, 0x27F));
-		_scene->_kernelMessages.setQuoted(msgIdx, 4, true);
+		int msgIdx = kernel_message_add(quote_string(kernel.quotes, 0x27F), 28, 102, 0xFDFC, 90, 0, 0);
+		kernel_message_teletype(msgIdx, 4, true);
 		_scene->_sequences.addTimer(100, 121);
 	}
 
 	if (kernel.trigger == 121) {
-		int msgIdx = _scene->_kernelMessages.add(Common::Point(23, 116), 0xFDFC, 0, 0, 90, quote_string(kernel.quotes, 0x280));
-		_scene->_kernelMessages.setQuoted(msgIdx, 4, true);
+		int msgIdx = kernel_message_add(quote_string(kernel.quotes, 0x280), 23, 116, 0xFDFC, 90, 0, 0);
+		kernel_message_teletype(msgIdx, 4, true);
 	}
 
 	if (local._hermitMode == 1) {
@@ -1337,7 +1337,7 @@ static void room_611_pre_parser() {
 		player.walk_off_edge_to_room = 609;
 
 	if (local._resetBatterieText)
-		_scene->_kernelMessages.reset();
+		kernel_message_purge();
 }
 
 static void room_611_parser() {
@@ -1348,17 +1348,17 @@ static void room_611_parser() {
 		local._giveBatteriesFl = true;
 		handleSubDialog1();
 	} else if (player_said_2(give, hermit)) {
-		_scene->_kernelMessages.reset();
+		kernel_message_purge();
 
-		const char *curQuote = quote_string(kernel.quotes, 0x323);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		char *curQuote = quote_string(kernel.quotes, 0x323);
+		int width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y), 0xFDFC, 0, 0, 120, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y, 0xFDFC, 120, 0, 0);
 
 		curQuote = quote_string(kernel.quotes, 0x324);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
+		width = font_string_width(kernel_message_font, curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, 120, curQuote);
+		kernel_message_add(curQuote, quotePosX, local._defaultDialogPos_y + 14, 0xFDFC, 120, 0, 0);
 	} else if (kernel.trigger == 90) {
 		if (local._dialog2.read(0x29C) && local._dialog2.read(0x29D) && local._dialog2.read(0x29E)) {
 			handleTalking(180);
@@ -1387,8 +1387,8 @@ static void room_611_parser() {
 		}
 	} else if (player_said_2(talkto, hermit)) {
 		if (!local._dialog1.read(0x287)) {
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x27A));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 0x27A), 0, 0, 0x1110, 120, 0, 34);
 			_scene->_sequences.addTimer(120, 90);
 		} else {
 			int nextQuote = 0;
@@ -1408,15 +1408,15 @@ static void room_611_parser() {
 			default:
 				break;
 			}
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, nextQuote));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, nextQuote), 0, 0, 0x1110, 120, 0, 34);
 			_scene->_sequences.addTimer(120, 90);
 		}
 	} else if ((player_said_1(walkto) || player_said_1(look)) && player_said_1(rat)) {
 		switch (kernel.trigger) {
 		case 0:
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x279));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 0x279), 0, 0, 0x1110, 120, 0, 34);
 			_scene->_sequences.addTimer(60, 1);
 			break;
 

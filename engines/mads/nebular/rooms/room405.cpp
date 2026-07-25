@@ -132,7 +132,7 @@ static void room_405_parser() {
 	else if (player_said_2(walk_through, wide_door) && global[kArmoryDoorOpen])
 		new_room = 408;
 	else if (player_said_2(walk_through, wide_door) && !global[kArmoryDoorOpen])
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, quote_string(kernel.quotes, 0x24F));
+		kernel_message_add(quote_string(kernel.quotes, 0x24F), 0, 0, 0x1110, 60, 0, 34);
 	else if (player_said_3(put, security_card, card_slot) && !global[kArmoryDoorOpen]) {
 		player.commands_allowed = false;
 		player.walker_visible = false;

@@ -82,9 +82,7 @@ static void room_211_init() {
 	kernel.quotes = quote_load(0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0x97, 0x98, 0x99, 0x9A, 0x9B, 0x9C, 0x9D, 0x9E, 1, 0);
 
 	if (global[kMonkeyStatus] == MONKEY_AMBUSH_READY)
-		_scene->_kernelMessages.initRandomMessages(2,
-			Common::Rect(0, 0, 54, 30), 13, 2, 0xFDFC, 60,
-			151, 152, 153, 154, 0);
+		kernel_random_messages_init(2, 0, 54, 0, 30, 13, 2, 0xFDFC, 60, 151, 152, 153, 154, 0);
 
 	local._monkeyTime = kernel.clock;
 	local._scrollY = 30;
@@ -97,11 +95,11 @@ static void room_211_init() {
 
 static void room_211_daemon() {
 	if (global[kMonkeyStatus] == MONKEY_AMBUSH_READY) {
-		_scene->_kernelMessages.randomServer();
+		kernel_random_message_server();
 
 		if (!local._ambushFl && !local._wakeFl && (kernel.clock >= local._monkeyTime)) {
-			int chanceMinor = _scene->_kernelMessages.checkRandom() * 4 + 1;
-			if (_scene->_kernelMessages.generateRandom(80, chanceMinor))
+			int chanceMinor = kernel_check_random() * 4 + 1;
+			if (kernel_generate_random_message(80, chanceMinor))
 				g_engine->_soundManager->command(18, 0);
 
 			local._monkeyTime = kernel.clock + 2;
@@ -116,7 +114,7 @@ static void room_211_daemon() {
 					local._monkeyFrame = 0;
 					player.commands_allowed = false;
 					player.walker_visible = false;
-					_scene->_kernelMessages.reset();
+					kernel_message_purge();
 					kernel_run_animation(kernel_name('A', -1), 90);
 					g_engine->_soundManager->command(19, 0);
 					int count = (int)inven_num_objects;
@@ -148,33 +146,33 @@ static void room_211_daemon() {
 		switch (local._monkeyFrame) {
 		case 2:
 		{
-			int msgIndex = _scene->_kernelMessages.add(Common::Point(12, 4), 0xFDFC, 0, 0, 60, quote_string(kernel.quotes, 157));
-			_scene->_kernelMessages.setQuoted(msgIndex, 2, true);
+			int msgIndex = kernel_message_add(quote_string(kernel.quotes, 157), 12, 4, 0xFDFC, 60, 0, 0);
+			kernel_message_teletype(msgIndex, 2, true);
 		}
 		break;
 
 		case 12:
 		{
-			int msgIndex = _scene->_kernelMessages.add(Common::Point(35, 20), 0xFDFC, 0, 0, 60, quote_string(kernel.quotes, 155));
-			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+			int msgIndex = kernel_message_add(quote_string(kernel.quotes, 155), 35, 20, 0xFDFC, 60, 0, 0);
+			kernel_message_teletype(msgIndex, 4, true);
 		}
 		break;
 
 		case 42:
 		{
-			int msgIndex = _scene->_kernelMessages.add(Common::Point(60, 45), 0xFDFC, 0, 0, 60, quote_string(kernel.quotes, 156));
-			_scene->_kernelMessages.setQuoted(msgIndex, 6, true);
+			int msgIndex = kernel_message_add(quote_string(kernel.quotes, 156), 60, 45, 0xFDFC, 60, 0, 0);
+			kernel_message_teletype(msgIndex, 6, true);
 		}
 		break;
 
 		case 73:
-			_scene->_kernelMessages.add(Common::Point(102, 95), 0xFDFC, 32, 0, 75, quote_string(kernel.quotes, 157));
+			kernel_message_add(quote_string(kernel.quotes, 157), 102, 95, 0xFDFC, 75, 0, 32);
 			break;
 
 		case 90:
 		{
-			int msgIndex = _scene->_kernelMessages.add(Common::Point(102, 95), 0xFDFC, 32, 0, 60, quote_string(kernel.quotes, 158));
-			_scene->_kernelMessages.setQuoted(msgIndex, 6, true);
+			int msgIndex = kernel_message_add(quote_string(kernel.quotes, 158), 102, 95, 0xFDFC, 60, 0, 32);
+			kernel_message_teletype(msgIndex, 6, true);
 		}
 		break;
 
@@ -185,32 +183,32 @@ static void room_211_daemon() {
 
 		case 177:
 		{
-			int msgIndex = _scene->_kernelMessages.add(Common::Point(63, local._scrollY), 0x1110, 0, 0, 180, quote_string(kernel.quotes, 161));
-			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+			int msgIndex = kernel_message_add(quote_string(kernel.quotes, 161), 63, local._scrollY, 0x1110, 180, 0, 0);
+			kernel_message_teletype(msgIndex, 4, true);
 			local._scrollY += 14;
 		}
 		break;
 
 		case 181:
 		{
-			int msgIndex = _scene->_kernelMessages.add(Common::Point(63, local._scrollY), 0x1110, 0, 0, 180, quote_string(kernel.quotes, 162));
-			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+			int msgIndex = kernel_message_add(quote_string(kernel.quotes, 162), 63, local._scrollY, 0x1110, 180, 0, 0);
+			kernel_message_teletype(msgIndex, 4, true);
 			local._scrollY += 14;
 		}
 		break;
 
 		case 188:
 		{
-			int msgIndex = _scene->_kernelMessages.add(Common::Point(63, local._scrollY), 0x1110, 0, 0, 180, quote_string(kernel.quotes, 163));
-			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+			int msgIndex = kernel_message_add(quote_string(kernel.quotes, 163), 63, local._scrollY, 0x1110, 180, 0, 0);
+			kernel_message_teletype(msgIndex, 4, true);
 			local._scrollY += 14;
 		}
 		break;
 
 		case 200:
 		{
-			int msgIndex = _scene->_kernelMessages.add(Common::Point(63, local._scrollY), 0x1110, 0, 0, 180, quote_string(kernel.quotes, 164));
-			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+			int msgIndex = kernel_message_add(quote_string(kernel.quotes, 164), 63, local._scrollY, 0x1110, 180, 0, 0);
+			kernel_message_teletype(msgIndex, 4, true);
 			local._scrollY += 14;
 		}
 		break;
@@ -232,32 +230,32 @@ static void room_211_daemon() {
 			switch (_scene->_animation[0]->getCurrentFrame()) {
 			case 177:
 			{
-				int msgIndex = _scene->_kernelMessages.add(Common::Point(63, local._scrollY), 0x1110, 0, 0, 180, quote_string(kernel.quotes, 165));
-				_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+				int msgIndex = kernel_message_add(quote_string(kernel.quotes, 165), 63, local._scrollY, 0x1110, 180, 0, 0);
+				kernel_message_teletype(msgIndex, 4, true);
 				local._scrollY += 14;
 			}
 			break;
 
 			case 181:
 			{
-				int msgIndex = _scene->_kernelMessages.add(Common::Point(63, local._scrollY), 0x1110, 0, 0, 180, quote_string(kernel.quotes, 166));
-				_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+				int msgIndex = kernel_message_add(quote_string(kernel.quotes, 166), 63, local._scrollY, 0x1110, 180, 0, 0);
+				kernel_message_teletype(msgIndex, 4, true);
 				local._scrollY += 14;
 			}
 			break;
 
 			case 188:
 			{
-				int msgIndex = _scene->_kernelMessages.add(Common::Point(63, local._scrollY), 0x1110, 0, 0, 180, quote_string(kernel.quotes, 167));
-				_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+				int msgIndex = kernel_message_add(quote_string(kernel.quotes, 167), 63, local._scrollY, 0x1110, 180, 0, 0);
+				kernel_message_teletype(msgIndex, 4, true);
 				local._scrollY += 14;
 			}
 			break;
 
 			case 200:
 			{
-				int msgIndex = _scene->_kernelMessages.add(Common::Point(63, local._scrollY), 0x1110, 0, 0, 180, quote_string(kernel.quotes, 168));
-				_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+				int msgIndex = kernel_message_add(quote_string(kernel.quotes, 168), 63, local._scrollY, 0x1110, 180, 0, 0);
+				kernel_message_teletype(msgIndex, 4, true);
 				local._scrollY += 14;
 			}
 			break;

@@ -59,7 +59,7 @@ static Scratch local;
 
 
 static void handleTwinklesSpeech(int quoteId, int shiftX, uint32 delay) {
-	_scene->_kernelMessages.add(Common::Point(10, 70 + (shiftX * 14)), 0xFDFC, 0, 0, (delay == 0) ? INDEFINITE_TIMEOUT : delay, quote_string(kernel.quotes, quoteId));
+	kernel_message_add(quote_string(kernel.quotes, quoteId), 10, 70 + (shiftX * 14), 0xFDFC, (delay == 0) ? INDEFINITE_TIMEOUT : delay, 0, 0);
 }
 
 static void newNode(int node) {
@@ -339,7 +339,7 @@ static void setDialogNode(int node) {
 			global[kCurtainOpen] = true;
 			player.walker_visible = false;
 			pal_lock();
-			_scene->_kernelMessages.reset();
+			kernel_message_purge();
 			kernel_abort_animation(0);
 			kernel_dump_all();
 
@@ -353,29 +353,29 @@ static void setDialogNode(int node) {
 			g_sprite_ids[8] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 5);
 			_scene->_sequences.setDepth(g_sprite_ids[8], 1);
 
-			int msgIndex = _scene->_kernelMessages.add(Common::Point(160, 20), 0x1110, 32, 5, 180, quote_string(kernel.quotes, 231));
-			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+			int msgIndex = kernel_message_add(quote_string(kernel.quotes, 231), 160, 20, 0x1110, 180, 5, 32);
+			kernel_message_teletype(msgIndex, 4, true);
 		}
 		break;
 
 		case 5:
 		{
-			int msgIndex = _scene->_kernelMessages.add(Common::Point(160, 40), 0xFDFC, 32, 6, 180, quote_string(kernel.quotes, 233));
-			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+			int msgIndex = kernel_message_add(quote_string(kernel.quotes, 233), 160, 40, 0xFDFC, 180, 6, 32);
+			kernel_message_teletype(msgIndex, 4, true);
 		}
 		break;
 
 		case 6:
 		{
-			int msgIndex = _scene->_kernelMessages.add(Common::Point(160, 60), 0x1110, 32, 7, 180, quote_string(kernel.quotes, 232));
-			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+			int msgIndex = kernel_message_add(quote_string(kernel.quotes, 232), 160, 60, 0x1110, 180, 7, 32);
+			kernel_message_teletype(msgIndex, 4, true);
 		}
 		break;
 
 		case 7:
 		{
-			int msgIndex = _scene->_kernelMessages.add(Common::Point(160, 80), 0xFDFC, 32, 8, 180, quote_string(kernel.quotes, 234));
-			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+			int msgIndex = kernel_message_add(quote_string(kernel.quotes, 234), 160, 80, 0xFDFC, 180, 8, 32);
+			kernel_message_teletype(msgIndex, 4, true);
 		}
 		break;
 
@@ -546,24 +546,24 @@ static void handleConversation8() {
 
 static void handleConversations() {
 	if (kernel.trigger == 0) {
-		_scene->_kernelMessages.reset();
+		kernel_message_purge();
 		player.commands_allowed = false;
-		const char *curQuote = quote_string(kernel.quotes, player2.words[0]);
-		if (_scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing) > 200) {
+		char *curQuote = quote_string(kernel.quotes, player2.words[0]);
+		if (font_string_width(kernel_message_font, curQuote, kernel_message_spacing) > 200) {
 			static char line1[40], line2[40];
 			quote_split_string(curQuote, line1, line2);
 			Common::strcpy_s(local._subQuote2, line2);
-			_scene->_kernelMessages.add(Common::Point(0, -14), 0x1110, 34, 0, 240, line1);
+			kernel_message_add(line1, 0, -14, 0x1110, 240, 0, 34);
 			_scene->_sequences.addTimer(60, 50);
 		} else {
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 1, 120, curQuote);
+			kernel_message_add(curQuote, 0, 0, 0x1110, 120, 1, 34);
 		}
 	} else if (kernel.trigger == 50) {
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 240, local._subQuote2);
+		kernel_message_add(local._subQuote2, 0, 0, 0x1110, 240, 0, 34);
 		_scene->_sequences.addTimer(180, 1);
 	} else {
 		if (kernel.trigger == 1)
-			_scene->_kernelMessages.reset();
+			kernel_message_purge();
 
 		switch (local._curDialogNode) {
 		case 1:
@@ -878,7 +878,7 @@ static void room_210_daemon() {
 			int reset_frame = -1;
 
 			if (local._twinklesCurrentFrame == 53) {
-				_scene->_kernelMessages.add(Common::Point(151, 61), 0xFDFC, 32, 70, 180, quote_string(kernel.quotes, 230));
+				kernel_message_add(quote_string(kernel.quotes, 230), 151, 61, 0xFDFC, 180, 70, 32);
 				local._shouldTalk = true;
 			} else if ((local._twinklesCurrentFrame == 75) && local._shouldTalk)
 				reset_frame = 60;
@@ -928,8 +928,8 @@ static void room_210_parser() {
 
 			local._shouldFaceRex = true;
 			local._nextHandsPlace = 0;
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.addQuote(quote, 1, 120);
+			kernel_message_purge();
+			kernel_message_player(quote, 120, 1);
 		}
 		break;
 

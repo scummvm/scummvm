@@ -155,8 +155,8 @@ static void handleThrowingBone() {
 
 	case 3:
 		if (local._throwMode != 6) {
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x304));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 0x304), 0, 0, 0x1110, 120, 0, 34);
 			_scene->_sequences.addTimer(120, 4);
 		} else
 			restoreAnimations();
@@ -339,7 +339,7 @@ static void room_608_daemon() {
 			g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, 1);
 			_scene->_sequences.setDepth(g_sequence_ids[5], 6);
 			_scene->_sequences.updateTimeout(g_sequence_ids[5], syncIdx);
-			_scene->_kernelMessages.reset();
+			kernel_message_purge();
 			local._dogBarkingFl = false;
 		}
 	}
@@ -370,7 +370,7 @@ static void room_608_daemon() {
 			default:
 				break;
 			}
-			_scene->_kernelMessages.add(_barkPos, 0xFDFC, 0, 0, 120, quote_string(kernel.quotes, 0x2FB));
+			kernel_message_add(quote_string(kernel.quotes, 0x2FB), _barkPos.x, _barkPos.y, 0xFDFC, 120, 0, 0);
 		}
 	}
 
@@ -403,10 +403,10 @@ static void room_608_daemon() {
 		_scene->_sequences.remove(g_sequence_ids[10]);
 		local._dogUnderCar = false;
 		local._dogYelping = false;
-		_scene->_kernelMessages.reset();
+		kernel_message_purge();
 		g_sequence_ids[11] = _scene->_sequences.addSpriteCycle(g_sprite_ids[11], false, 6, 1, 0, 0);
 		_scene->_sequences.addSubEntry(g_sequence_ids[11], SEQUENCE_TRIGGER_EXPIRE, 0, 92);
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2FF));
+		kernel_message_add(quote_string(kernel.quotes, 0x2FF), 0, 0, 0x1110, 120, 0, 34);
 	}
 
 	if (kernel.trigger == 92) {
@@ -469,19 +469,19 @@ static void room_608_daemon() {
 				_scene->_sequences.addTimer(22, 111);
 				_scene->_sequences.addTimer(120, 112);
 			}
-			_scene->_kernelMessages.reset();
+			kernel_message_purge();
 		}
 	} else
 		local._dogYelping = false;
 
 	if (kernel.trigger == 110) {
 		g_engine->_soundManager->command(12, 0);
-		_scene->_kernelMessages.add(Common::Point(150, 97), 0xFDFC, 0, 0, 60, quote_string(kernel.quotes, 0x303));
+		kernel_message_add(quote_string(kernel.quotes, 0x303), 150, 97, 0xFDFC, 60, 0, 0);
 	}
 
 	if (kernel.trigger == 111) {
 		g_engine->_soundManager->command(12, 0);
-		_scene->_kernelMessages.add(Common::Point(183, 93), 0xFDFC, 0, 0, 60, quote_string(kernel.quotes, 0x303));
+		kernel_message_add(quote_string(kernel.quotes, 0x303), 183, 93, 0xFDFC, 60, 0, 0);
 	}
 
 	if (kernel.trigger == 112)
@@ -624,8 +624,8 @@ static void room_608_daemon() {
 			_scene->_sequences.setAnimRange(g_sequence_ids[9], 3, 5);
 			_scene->_sequences.setDepth(g_sequence_ids[9], 5);
 			_scene->_sequences.updateTimeout(g_sequence_ids[9], -1);
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2FC));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 0x2FC), 0, 0, 0x1110, 120, 0, 34);
 			_scene->_sequences.addSubEntry(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
 			break;
 
@@ -729,8 +729,8 @@ static void room_608_parser() {
 			if (local._dogDeathMode == 0)
 				local._carMode = 0;
 			else if (local._dogDeathMode == 1) {
-				_scene->_kernelMessages.reset();
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x300));
+				kernel_message_purge();
+				kernel_message_add(quote_string(kernel.quotes, 0x300), 0, 0, 0x1110, 120, 0, 34);
 				global[kCarStatus] = CAR_SQUASHES_DOG;
 				local._carMode = 2;
 				global[kDogStatus] = DOG_DEAD;
@@ -773,7 +773,7 @@ static void room_608_parser() {
 			break;
 
 		case 3:
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x302));
+			kernel_message_add(quote_string(kernel.quotes, 0x302), 0, 0, 0x1110, 120, 0, 34);
 			global[kCarStatus] = CAR_DOWN_ON_SQUASHED_DOG;
 			local._carMode = 3;
 			local._dogDeathMode = 2;
@@ -838,8 +838,8 @@ static void room_608_parser() {
 		player.commands_allowed = true;
 		if (local._dogActiveFl) {
 			if (kernel.trigger == 0) {
-				_scene->_kernelMessages.reset();
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2FE));
+				kernel_message_purge();
+				kernel_message_add(quote_string(kernel.quotes, 0x2FE), 0, 0, 0x1110, 120, 0, 34);
 			}
 			local._throwMode = 4;
 			handleThrowingBone();
@@ -849,8 +849,8 @@ static void room_608_parser() {
 		player.commands_allowed = true;
 		if (local._dogActiveFl) {
 			if (kernel.trigger == 0) {
-				_scene->_kernelMessages.reset();
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2FD));
+				kernel_message_purge();
+				kernel_message_add(quote_string(kernel.quotes, 0x2FD), 0, 0, 0x1110, 120, 0, 34);
 			}
 			local._throwMode = 5;
 			handleThrowingBone();
@@ -862,8 +862,8 @@ static void room_608_parser() {
 		if ((global[kCarStatus] == CAR_UP) && local._dogActiveFl) {
 			if (local._dogActiveFl) {
 				if (kernel.trigger == 0) {
-					_scene->_kernelMessages.reset();
-					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x301));
+					kernel_message_purge();
+					kernel_message_add(quote_string(kernel.quotes, 0x301), 0, 0, 0x1110, 120, 0, 34);
 				}
 				local._throwMode = 6;
 				handleThrowingBone();

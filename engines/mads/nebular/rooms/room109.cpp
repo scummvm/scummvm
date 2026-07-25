@@ -192,9 +192,9 @@ static void room_109_daemon() {
 		_scene->_spriteSlots.fullRefresh();
 
 		int randVal = g_engine->getRandomNumber(85, 88);
-		int idx = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, randVal));
-		_scene->_kernelMessages.setQuoted(idx, 4, true);
-		_scene->_kernelMessages._entries[idx]._frameTimer = kernel.clock + 4;
+		int idx = kernel_message_add(quote_string(kernel.quotes, randVal), 0, 0, 0x1110, 120, 0, 34);
+		kernel_message_teletype(idx, 4, true);
+		kernel_message[idx].update_time = kernel.clock + 4;
 	}
 }
 
@@ -340,7 +340,7 @@ static void room_109_parser() {
 
 								if (global[kHoovicFishEaten] >= threshold) {
 									int randVal = g_engine->getRandomNumber(83, 84);
-									_scene->_kernelMessages.add(Common::Point(230, 24), 0xFDFC, 0, 0, 120, quote_string(kernel.quotes, randVal));
+									kernel_message_add(quote_string(kernel.quotes, randVal), 230, 24, 0xFDFC, 120, 0, 0);
 									global[kHoovicFishEaten] = 0;
 									global[kHoovicSated] = 1;
 									kernel_load_variant(1);

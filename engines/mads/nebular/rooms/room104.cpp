@@ -84,7 +84,7 @@ static void room_104_daemon() {
 		case FACING_EAST:
 			switch (kernel.trigger) {
 			case 0:
-				_scene->_kernelMessages.reset();
+				kernel_message_purge();
 				kernel_abort_animation(0);
 				kernel_dump_all();
 				player.commands_allowed = false;
@@ -117,7 +117,7 @@ static void room_104_daemon() {
 		case FACING_SOUTH:
 			switch (kernel.trigger) {
 			case 0:
-				_scene->_kernelMessages.reset();
+				kernel_message_purge();
 				kernel_abort_animation(0);
 				kernel_dump_all();
 				player.commands_allowed = false;
@@ -159,7 +159,7 @@ static void room_104_daemon() {
 		case FACING_NORTH:
 			switch (kernel.trigger) {
 			case 0:
-				_scene->_kernelMessages.reset();
+				kernel_message_purge();
 				kernel_abort_animation(0);
 				kernel_dump_all();
 				player.commands_allowed = false;
@@ -208,7 +208,7 @@ static void room_104_daemon() {
 		player.commands_allowed = false;
 
 	if (local._kargShootingFl && (_scene->_animation[0]->getCurrentFrame() >= 19)) {
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 52));
+		kernel_message_add(quote_string(kernel.quotes, 52), 0, 0, 0x1110, 120, 0, 34);
 		local._kargShootingFl = false;
 	}
 }

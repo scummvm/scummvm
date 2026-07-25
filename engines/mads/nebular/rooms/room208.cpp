@@ -86,7 +86,7 @@ static void room_208_init() {
 
 	local._rhotundaTurnFl = false;
 	local._boundingFl = false;
-	_scene->_kernelMessages._talkFont = font_inter;
+	kernel_message_font = font_inter;
 	kernel_message_spacing = 0;
 
 	if (previous_room == 207) {
@@ -110,8 +110,8 @@ static void room_208_init() {
 	kernel.quotes = quote_load(0x81, 0x46, 0);
 
 	if ((previous_room == 207) && (global[kMonkeyStatus] == MONKEY_HAS_BINOCULARS)) {
-		int msgIndex = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 129));
-		_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+		int msgIndex = kernel_message_add(quote_string(kernel.quotes, 129), 0, 0, 0x1110, 120, 0, 34);
+		kernel_message_teletype(msgIndex, 4, true);
 	}
 
 	pal_change_color(16, 0, 0, 63);
@@ -262,8 +262,8 @@ static void room_208_parser() {
 			new_room = 203;
 		else if (kernel.trigger == 0) {
 			player.commands_allowed = false;
-			int msgIndex = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 1, 120, quote_string(kernel.quotes, 70));
-			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+			int msgIndex = kernel_message_add(quote_string(kernel.quotes, 70), 0, 0, 0x1110, 120, 1, 34);
+			kernel_message_teletype(msgIndex, 4, true);
 		} else if (kernel.trigger == 1)
 			new_room = 203;
 	} else if (player_said_2(walk_towards, field_to_south))

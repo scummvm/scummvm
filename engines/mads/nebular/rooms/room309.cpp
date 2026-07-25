@@ -101,12 +101,12 @@ static void room_309_daemon() {
 		if (local._lastFrame != _scene->_animation[0]->getCurrentFrame()) {
 			local._lastFrame = _scene->_animation[0]->getCurrentFrame();
 			if (local._lastFrame == 39) {
-				local._messagesIndexes[0] = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 32, 61, 210, quote_string(kernel.quotes, 348));
-				local._messagesIndexes[1] = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 32, 0, 210, quote_string(kernel.quotes, 349));
+				local._messagesIndexes[0] = kernel_message_add(quote_string(kernel.quotes, 348), 0, 0, 0x1110, 210, 61, 32);
+				local._messagesIndexes[1] = kernel_message_add(quote_string(kernel.quotes, 349), 0, 0, 0x1110, 210, 0, 32);
 			}
 
 			if (local._lastFrame == 97)
-				local._messagesIndexes[2] = _scene->_kernelMessages.add(Common::Point(0, 0), 0xFBFA, 32, 62, 180, quote_string(kernel.quotes, 350));
+				local._messagesIndexes[2] = kernel_message_add(quote_string(kernel.quotes, 350), 0, 0, 0xFBFA, 180, 62, 32);
 
 			for (int charIdx = 0; charIdx < 3; charIdx++) {
 				if (local._messagesIndexes[charIdx] >= 0) {
@@ -150,8 +150,8 @@ static void room_309_daemon() {
 			_scene->_sequences.setAnimRange(g_sequence_ids[3], 4, 7);
 			_scene->_sequences.setDepth(g_sequence_ids[3], 11);
 			_scene->_sequences.updateTimeout(g_sequence_ids[3], _oldIdx);
-			int idx = _scene->_kernelMessages.add(Common::Point(85, 37), 0xFDFC, 0, 0, 120, quote_string(kernel.quotes, 248));
-			_scene->_kernelMessages.setQuoted(idx, 2, true);
+			int idx = kernel_message_add(quote_string(kernel.quotes, 248), 85, 37, 0xFDFC, 120, 0, 0);
+			kernel_message_teletype(idx, 2, true);
 			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
 		}
 		break;
@@ -174,8 +174,8 @@ static void room_309_daemon() {
 			_scene->_sequences.setAnimRange(g_sequence_ids[3], 12, 20);
 			_scene->_sequences.setDepth(g_sequence_ids[3], 11);
 			_scene->_sequences.updateTimeout(g_sequence_ids[3], _oldIdx);
-			int idx = _scene->_kernelMessages.add(Common::Point(170, 49), 0xFDFC, 0, 0, 120, quote_string(kernel.quotes, 249));
-			_scene->_kernelMessages.setQuoted(idx, 2, true);
+			int idx = kernel_message_add(quote_string(kernel.quotes, 249), 170, 49, 0xFDFC, 120, 0, 0);
+			kernel_message_teletype(idx, 2, true);
 			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
 		}
 		break;
@@ -218,8 +218,8 @@ static void room_309_daemon() {
 			g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 90, 0, 0, 0);
 			_scene->_sequences.setAnimRange(g_sequence_ids[3], 29, 30);
 			_scene->_sequences.setDepth(g_sequence_ids[3], 11);
-			int idx = _scene->_kernelMessages.add(Common::Point(15, 46), 0xFDFC, 0, 0, 120, quote_string(kernel.quotes, 247));
-			_scene->_kernelMessages.setQuoted(idx, 2, true);
+			int idx = kernel_message_add(quote_string(kernel.quotes, 247), 15, 46, 0xFDFC, 120, 0, 0);
+			kernel_message_teletype(idx, 2, true);
 			_scene->_sequences.addTimer(120, 78);
 		}
 		break;

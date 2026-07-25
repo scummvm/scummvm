@@ -164,8 +164,8 @@ static void room_508_parser() {
 			switch (kernel.trigger) {
 			case 0:
 				player.commands_allowed = false;
-				_scene->_kernelMessages.reset();
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 2, 120, quote_string(kernel.quotes, 0x273));
+				kernel_message_purge();
+				kernel_message_add(quote_string(kernel.quotes, 0x273), 0, 0, 0x1110, 120, 2, 34);
 				break;
 
 			case 2:
@@ -207,7 +207,7 @@ static void room_508_parser() {
 				_scene->_sequences.setDepth(g_sequence_ids[4], 11);
 				int idx = _scene->_dynamicHotspots.add(words_laser_beam, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(57, 116), FACING_NORTHEAST);
-				_scene->_kernelMessages.reset();
+				kernel_message_purge();
 				kernel_load_variant(1);
 				_scene->_sequences.addTimer(30, 7);
 			}

@@ -91,66 +91,6 @@ void Scene::Hotspots::activate(int hotspot, int active) {
 	kernel_flip_hotspot(hotspot, active);
 }
 
-Scene::KernelMessages::TalkFont &Scene::KernelMessages::TalkFont::operator=(FontPtr font) {
-	kernel_message_font = font;
-	return *this;
-}
-
-int Scene::KernelMessages::TalkFont::getWidth(const Common::String &message, int spacing) const {
-	return font_string_width(kernel_message_font, message.c_str(), spacing);
-}
-
-int Scene::KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags, int endTrigger,
-		uint32 timeout, const char *msg) {
-	return kernel_message_add(const_cast<char *>(msg), pt.x, pt.y, fontColor, timeout, endTrigger, flags);
-}
-
-int Scene::KernelMessages::addQuote(int quoteId, int endTrigger, uint32 timeout) {
-	return kernel_message_player(quoteId, timeout, endTrigger);
-}
-
-void Scene::KernelMessages::remove(int msgIndex) {
-	kernel_message_delete(msgIndex);
-}
-
-void Scene::KernelMessages::reset() {
-	kernel_message_purge();
-}
-
-void Scene::KernelMessages::setQuoted(int msgIndex, int numTicks, bool quoted) {
-	kernel_message_teletype(msgIndex, numTicks, quoted);
-}
-
-void Scene::KernelMessages::setSeqIndex(int msgIndex, int seqIndex) {
-	kernel_message_attach(msgIndex, seqIndex);
-}
-
-void Scene::KernelMessages::initRandomMessages(int maxSimultaneousMessages,
-		const Common::Rect &bounds, int minYSpacing, int scrollRate,
-		int color, int duration, int quoteId, ...) {
-	va_list marker;
-	va_start(marker, quoteId);
-	kernel_random_messages_vinit(maxSimultaneousMessages, bounds.left, bounds.right,
-		bounds.top, bounds.bottom, minYSpacing, scrollRate, color, duration, quoteId, marker);
-	va_end(marker);
-}
-
-void Scene::KernelMessages::randomServer() {
-	kernel_random_message_server();
-}
-
-int Scene::KernelMessages::checkRandom() {
-	return kernel_check_random();
-}
-
-bool Scene::KernelMessages::generateRandom(int major, int minor) {
-	return kernel_generate_random_message(major, minor);
-}
-
-Scene::KernelMessages::KernelMessageProxy Scene::KernelMessages::Entries::operator[](uint handle) {
-	return KernelMessageProxy(&kernel_message[handle]);
-}
-
 int Scene::Rails::getNext() const {
 	return player.next_special_code;
 }

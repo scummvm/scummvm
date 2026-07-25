@@ -142,7 +142,7 @@ static void room_607_daemon() {
 		_scene->_sequences.remove(g_sequence_ids[1]);
 		g_sequence_ids[1] = _scene->_sequences.startPingPongCycle(g_sprite_ids[1], false, 5, 8, 0, 0);
 		_scene->_sequences.setDepth(g_sequence_ids[1], 6);
-		_scene->_kernelMessages.reset();
+		kernel_message_purge();
 		_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_SPRITE, 2, 100);
 		_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 		local._counter = 0;
@@ -153,7 +153,7 @@ static void room_607_daemon() {
 		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
 		_scene->_sequences.setDepth(g_sequence_ids[1], 6);
 		_scene->_sequences.updateTimeout(g_sequence_ids[1], syncIdx);
-		_scene->_kernelMessages.reset();
+		kernel_message_purge();
 		local._dogBarking = false;
 	}
 
@@ -183,7 +183,7 @@ static void room_607_daemon() {
 			default:
 				break;
 			}
-			_scene->_kernelMessages.add(pos, 0xFDFC, 0, 0, 120, quote_string(kernel.quotes, 0x2F9));
+			kernel_message_add(quote_string(kernel.quotes, 0x2F9), pos.x, pos.y, 0xFDFC, 120, 0, 0);
 		}
 	}
 
@@ -208,8 +208,8 @@ static void room_607_daemon() {
 			g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 10, 1, 0, 0);
 			_scene->_sequences.setAnimRange(g_sequence_ids[4], -1, 7);
 			_scene->_sequences.setDepth(g_sequence_ids[4], 1);
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2FA));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 0x2FA), 0, 0, 0x1110, 120, 0, 34);
 			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
 			_scene->_sequences.addTimer(10, 64);
 			break;
@@ -337,8 +337,8 @@ static void handleThrowingBone() {
 			local._dogTimer = 0;
 		}
 
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, quoteId));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, quoteId), 0, 0, 0x1110, 120, 0, 34);
 		_scene->_sequences.addTimer(60, 3);
 	}
 	break;
@@ -414,9 +414,9 @@ static void room_607_parser() {
 	} else if (player_said_3(throw, bones, obnoxious_dog) || player_said_3(throw, bone, obnoxious_dog)) {
 		if (game.difficulty != DIFFICULTY_EASY) {
 			local._animationMode = 1;
-			_scene->_kernelMessages.reset();
+			kernel_message_purge();
 			if (kernel.trigger == 0)
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2F6));
+				kernel_message_add(quote_string(kernel.quotes, 0x2F6), 0, 0, 0x1110, 120, 0, 34);
 
 			handleThrowingBone();
 		}
@@ -424,8 +424,8 @@ static void room_607_parser() {
 		&& ((global[kDogStatus] == DOG_PRESENT) || kernel.trigger)) {
 		local._animationMode = 2;
 		if (kernel.trigger == 0) {
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2F6));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 0x2F6), 0, 0, 0x1110, 120, 0, 34);
 		}
 		handleThrowingBone();
 	} else if (player.look_around || player_said_2(look, street)) {

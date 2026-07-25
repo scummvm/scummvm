@@ -173,9 +173,9 @@ static void room_202_init() {
 
 static void setRandomKernelMessage() {
 	int vocabId = g_engine->getRandomNumber(92, 96);
-	_scene->_kernelMessages.reset();
+	kernel_message_purge();
 	kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
-	_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 70, 120, quote_string(kernel.quotes, vocabId));
+	kernel_message_add(quote_string(kernel.quotes, vocabId), 0, 0, 0x1110, 120, 70, 34);
 	local._activeMsgFl = true;
 }
 
@@ -230,7 +230,7 @@ static int subStep4(int randVal) {
 
 static void room_202_daemon() {
 	if (!local._activeMsgFl && (Common::Point(player.x, player.y) == Common::Point(77, 105)) && (player.facing == FACING_NORTH) && (g_engine->getRandomNumber(999) == 0)) {
-		_scene->_kernelMessages.reset();
+		kernel_message_purge();
 		local._activeMsgFl = false;
 		if (g_engine->getRandomNumber(4) == 0)
 			setRandomKernelMessage();
@@ -255,8 +255,8 @@ static void room_202_daemon() {
 				msgPos = Common::Point(248, 15);
 				msgFlag = 0;
 			}
-			int msgIndex = _scene->_kernelMessages.add(msgPos, 0x1110, msgFlag | 32, 0, 120, quote_string(kernel.quotes, 102));
-			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+			int msgIndex = kernel_message_add(quote_string(kernel.quotes, 102), msgPos.x, msgPos.y, 0x1110, 120, 0, msgFlag | 32);
+			kernel_message_teletype(msgIndex, 4, true);
 
 			if (global[kMeteorologistWatch] == METEOROLOGIST_GROUND) {
 				player2.words[0] = words_look;
@@ -294,9 +294,9 @@ static void room_202_daemon() {
 		g_sequence_ids[11] = _scene->_sequences.addSpriteCycle(g_sprite_ids[11], false, 6, 1, 0, 0);
 		_scene->_sequences.setDepth(g_sequence_ids[11], 1);
 		_scene->_sequences.addSubEntry(g_sequence_ids[11], SEQUENCE_TRIGGER_EXPIRE, 0, 93);
-		_scene->_kernelMessages.reset();
-		int msgIndex = _scene->_kernelMessages.add(Common::Point(0, -65), 0x1110, 32, 0, 60, quote_string(kernel.quotes, 98));
-		_scene->_kernelMessages.setSeqIndex(msgIndex, g_sequence_ids[11]);
+		kernel_message_purge();
+		int msgIndex = kernel_message_add(quote_string(kernel.quotes, 98), 0, -65, 0x1110, 60, 0, 32);
+		kernel_message_attach(msgIndex, g_sequence_ids[11]);
 	}
 	break;
 	case 93:
@@ -311,8 +311,8 @@ static void room_202_daemon() {
 		player.commands_allowed = true;
 		player.walker_visible = true;
 		local._ladderTopFl = false;
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 99));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 99), 0, 0, 0x1110, 120, 0, 34);
 	}
 	break;
 	default:
@@ -361,8 +361,8 @@ static void room_202_daemon() {
 				msgPos = Common::Point(248, 15);
 				msgFlag = 0;
 			}
-			int msgIndex = _scene->_kernelMessages.add(msgPos, 0x1110, msgFlag | 32, 0, 120, quote_string(kernel.quotes, 101));
-			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+			int msgIndex = kernel_message_add(quote_string(kernel.quotes, 101), msgPos.x, msgPos.y, 0x1110, 120, 0, msgFlag | 32);
+			kernel_message_teletype(msgIndex, 4, true);
 		}
 	}
 
@@ -427,7 +427,7 @@ static void room_202_daemon() {
 static void room_202_pre_parser() {
 
 	if (player.need_to_walk)
-		_scene->_kernelMessages.reset();
+		kernel_message_purge();
 
 	if (local._ladderTopFl && (player_said_2(climb_down, ladder) || player.need_to_walk)) {
 		if (kernel.trigger == 0) {
@@ -541,8 +541,8 @@ static void room_202_parser() {
 			_scene->_sequences.updateTimeout(g_sequence_ids[8], g_sequence_ids[9]);
 			local._ladderTopFl = true;
 			player.commands_allowed = true;
-			int msgIndex = _scene->_kernelMessages.add(Common::Point(248, 15), 0x1110, 32, 0, 60, quote_string(kernel.quotes, 97));
-			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+			int msgIndex = kernel_message_add(quote_string(kernel.quotes, 97), 248, 15, 0x1110, 60, 0, 32);
+			kernel_message_teletype(msgIndex, 4, true);
 		}
 		break;
 		default:
@@ -616,9 +616,9 @@ static void room_202_parser() {
 						local._waitingMeteoFl = true;
 						global[kMeteorologistWatch] = METEOROLOGIST_GONE;
 						if ((_scene->_animation[0]->getCurrentFrame() >= 44) && (_scene->_animation[0]->getCurrentFrame() <= 75)) {
-							_scene->_kernelMessages.reset();
-							int msgIndex = _scene->_kernelMessages.add(Common::Point(248, 15), 0x1110, 32, 0, 60, quote_string(kernel.quotes, 100));
-							_scene->_kernelMessages.setQuoted(msgIndex, 4, false);
+							kernel_message_purge();
+							int msgIndex = kernel_message_add(quote_string(kernel.quotes, 100), 248, 15, 0x1110, 60, 0, 32);
+							kernel_message_teletype(msgIndex, 4, false);
 						} else {
 							player.command_ready = false;
 							return;

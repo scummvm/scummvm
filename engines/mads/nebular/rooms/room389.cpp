@@ -51,9 +51,7 @@ static void room_389_init() {
 	else {
 		g_sprite_ids[0] = kernel_load_series(kernel_name('m', -1), 0);
 		g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 6, 0, 0, 0);
-		_scene->_kernelMessages.initRandomMessages(1,
-			Common::Rect(88, 19, 177, 77), 13, 2, 0xFDFC, 60,
-			247, 248, 249, 0);
+		kernel_random_messages_init(1, 88, 177, 19, 77, 13, 2, 0xFDFC, 60, 247, 248, 249, 0);
 	}
 
 	pal_change_color(252, 63, 37, 26);
@@ -65,10 +63,10 @@ static void room_389_init() {
 }
 
 static void room_389_daemon() {
-	_scene->_kernelMessages.randomServer();
+	kernel_random_message_server();
 	if (kernel.clock >= local._monsterTime) {
-		int chanceMinor = _scene->_kernelMessages.checkRandom() * 4 + 1;
-		_scene->_kernelMessages.generateRandom(20, chanceMinor);
+		int chanceMinor = kernel_check_random() * 4 + 1;
+		kernel_generate_random_message(20, chanceMinor);
 		local._monsterTime = kernel.clock + 2;
 	}
 }
@@ -80,7 +78,7 @@ static void room_389_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_scene->_kernelMessages.add(Common::Point(160, 136), 0x1110, 32, 1, 120, quote_string(kernel.quotes, local._circularQuoteId));
+			kernel_message_add(quote_string(kernel.quotes, local._circularQuoteId), 160, 136, 0x1110, 120, 1, 32);
 			local._circularQuoteId++;
 			if (local._circularQuoteId > 0x15B)
 				local._circularQuoteId = 0x159;

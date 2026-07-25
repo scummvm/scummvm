@@ -128,7 +128,7 @@ static void room_106_daemon() {
 
 	if (local._firstEmergingFl && (_scene->_animation[0]->getCurrentFrame() >= 19)) {
 		local._firstEmergingFl = false;
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 52));
+		kernel_message_add(quote_string(kernel.quotes, 52), 0, 0, 0x1110, 120, 0, 34);
 	}
 
 	if ((kernel.trigger >= 80) && (kernel.trigger <= 87)) {
@@ -160,7 +160,7 @@ static void room_106_daemon() {
 
 		if (msgId >= 0) {
 			int nextTrigger = kernel.trigger + 1;
-			_scene->_kernelMessages.add(Common::Point(15, local._positionY), 0x1110, 0, 0, 360, quote_string(kernel.quotes, msgId));
+			kernel_message_add(quote_string(kernel.quotes, msgId), 15, local._positionY, 0x1110, 360, 0, 0);
 			_scene->_sequences.addTimer(150, nextTrigger);
 			local._positionY += 14;
 		}

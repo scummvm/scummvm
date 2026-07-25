@@ -56,7 +56,7 @@ void teleporter_init() {
 
 	player.walker_visible = false;
 	player.commands_allowed = (global[kMeteorologistWatch] == METEOROLOGIST_NORMAL);
-	_scene->_kernelMessages._talkFont = font_tele;
+	kernel_message_font = font_tele;
 	kernel_message_spacing = 0;
 	_curCode = 0;
 	_digitCount = 0;
@@ -89,8 +89,8 @@ void teleporter_init() {
 	Common::sprintf_s(_msgText1, "#%.4d", codeVal);
 
 	if (room_id != 711) {
-		_scene->_kernelMessages.add(Common::Point(133, 34), 0, 32, 0, INDEFINITE_TIMEOUT, _msgText1);
-		_scene->_kernelMessages.add(Common::Point(143, 61), 0xFDFC, 16, 0, INDEFINITE_TIMEOUT, _msgText2);
+		kernel_message_add(_msgText1, 133, 34, 0, INDEFINITE_TIMEOUT, 0, 32);
+		kernel_message_add(_msgText2, 143, 61, 0xFDFC, INDEFINITE_TIMEOUT, 0, 16);
 	}
 
 	_meteorologistCurPlace = 0;
@@ -227,8 +227,8 @@ void teleporter_handle_key() {
 
 		if (room_id != 711) {
 			if (_curMessageId >= 0)
-				_scene->_kernelMessages.remove(_curMessageId);
-			_curMessageId = _scene->_kernelMessages.add(Common::Point(143, 61), 0xFDFC, 16, 0, INDEFINITE_TIMEOUT, _msgText2);
+				kernel_message_delete(_curMessageId);
+			_curMessageId = kernel_message_add(_msgText2, 143, 61, 0xFDFC, INDEFINITE_TIMEOUT, 0, 16);
 		}
 		break;
 

@@ -56,18 +56,18 @@ static Scratch local;
 
 
 static void handleRexDialogues(int quote) {
-	_scene->_kernelMessages.reset();
+	kernel_message_purge();
 
-	const char *curQuote = quote_string(kernel.quotes, quote);
-	if (_scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing) > 200) {
+	char *curQuote = quote_string(kernel.quotes, quote);
+	if (font_string_width(kernel_message_font, curQuote, kernel_message_spacing) > 200) {
 		static char subQuote1[34], subQuote2[34];
 		quote_split_string(curQuote, subQuote1, subQuote2);
 		Common::strcpy_s(local._subQuote2, subQuote2);
 
-		_scene->_kernelMessages.add(Common::Point(160, 106), 0x1110, 32, 0, 120, subQuote1);
-		_scene->_kernelMessages.add(Common::Point(160, 120), 0x1110, 32, 1, 120, local._subQuote2);
+		kernel_message_add(subQuote1, 160, 106, 0x1110, 120, 0, 32);
+		kernel_message_add(local._subQuote2, 160, 120, 0x1110, 120, 1, 32);
 	} else
-		_scene->_kernelMessages.add(Common::Point(160, 120), 0x1110, 32, 1, 120, curQuote);
+		kernel_message_add(curQuote, 160, 120, 0x1110, 120, 1, 32);
 }
 
 static void handleSlacheDialogs(int quoteId, int counter, uint32 timer) {
@@ -75,7 +75,7 @@ static void handleSlacheDialogs(int quoteId, int counter, uint32 timer) {
 	int posY = 5 + (local._slachePosY * 14);
 
 	for (int count = 0; count < counter; count++, curQuote++) {
-		_scene->_kernelMessages.add(Common::Point(8, posY), 0xFDFC, 0, 0, timer, quote_string(kernel.quotes, curQuote));
+		kernel_message_add(quote_string(kernel.quotes, curQuote), 8, posY, 0xFDFC, timer, 0, 0);
 		posY += 14;
 	}
 }

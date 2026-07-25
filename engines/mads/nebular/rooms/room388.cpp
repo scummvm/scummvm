@@ -57,19 +57,19 @@ static void room_388_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(160, 136), 0x1110, 32, 1, 120, quote_string(kernel.quotes, 0x154));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 0x154), 160, 136, 0x1110, 120, 1, 32);
 			break;
 
 		case 1:
-			_scene->_kernelMessages.add(Common::Point(82, 38), 0xFDFC, 0, 0, 300, quote_string(kernel.quotes, 0x156));
-			_scene->_kernelMessages.add(Common::Point(82, 52), 0xFDFC, 0, 0, 300, quote_string(kernel.quotes, 0x157));
-			_scene->_kernelMessages.add(Common::Point(82, 66), 0xFDFC, 0, 2, 300, quote_string(kernel.quotes, 0x158));
+			kernel_message_add(quote_string(kernel.quotes, 0x156), 82, 38, 0xFDFC, 300, 0, 0);
+			kernel_message_add(quote_string(kernel.quotes, 0x157), 82, 52, 0xFDFC, 300, 0, 0);
+			kernel_message_add(quote_string(kernel.quotes, 0x158), 82, 66, 0xFDFC, 300, 2, 0);
 			break;
 
 		case 2:
 			player.commands_allowed = true;
-			_scene->_kernelMessages.add(Common::Point(160, 136), 0x1110, 32, 0, 120, quote_string(kernel.quotes, 0x155));
+			kernel_message_add(quote_string(kernel.quotes, 0x155), 160, 136, 0x1110, 120, 0, 32);
 			break;
 
 		default:

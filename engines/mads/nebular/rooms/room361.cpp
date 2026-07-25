@@ -269,7 +269,7 @@ static void room_361_init() {
 	kernel.quotes = quote_load(0xFB, 0xFC, 0);
 
 	if (previous_room == 320)
-		_scene->_kernelMessages.setQuoted(_scene->_kernelMessages.addQuote(0xFB, 0, 0x78), 4, true);
+		kernel_message_teletype(kernel_message_player(0xFB, 0x78, 0), 4, true);
 
 	section_3_music();
 }
@@ -388,8 +388,8 @@ static void room_361_parser() {
 	if (player.look_around)
 		text_show(36119);
 	else if (player_said_2(sit_at, desk)) {
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.addQuote(252, 0, 120);
+		kernel_message_purge();
+		kernel_message_player(252, 120, 0);
 	} else if (player_said_2(climb_into, air_vent)) {
 		if (global[kSexOfRex] == REX_FEMALE)
 			handleRoxAction();

@@ -80,8 +80,8 @@ static void handleWinchMovement() {
 		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, local._cycleIndex);
 		_scene->_sequences.setDepth(g_sequence_ids[2], 1);
 		_scene->_sequences.updateTimeout(g_sequence_ids[2], syncIdx);
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2F4));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 0x2F4), 0, 0, 0x1110, 120, 0, 34);
 		player.commands_allowed = true;
 
 		text_show(61217);

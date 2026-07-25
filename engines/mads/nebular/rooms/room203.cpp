@@ -80,7 +80,7 @@ static void room_203_init() {
 	kernel.quotes = quote_load(0x67, 0x68, 0x69, 0x6A, 0x5A, 0);
 
 	if (local._rhotundaEatFl) {
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, g_engine->getRandomNumber(103, 106)));
+		kernel_message_add(quote_string(kernel.quotes, g_engine->getRandomNumber(103, 106)), 0, 0, 0x1110, 120, 0, 34);
 	}
 
 	section_2_music();
@@ -102,7 +102,7 @@ static void room_203_daemon() {
 		player.walker_visible = false;
 		player.commands_allowed = false;
 		pal_lock();
-		_scene->_kernelMessages.reset();
+		kernel_message_purge();
 		kernel_dump_all();
 		cursor_id = CURSOR_WAIT;
 		mouse_cursor_sprite(cursor, CURSOR_WAIT);

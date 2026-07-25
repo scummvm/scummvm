@@ -145,8 +145,8 @@ static void handleConversation1() {
 		default:
 			break;
 		}
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(quotePosX, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, quoteId));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, quoteId), quotePosX, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 100);
 		local._talkTimer = 120;
@@ -155,8 +155,8 @@ static void handleConversation1() {
 	break;
 
 	case 0x215:
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(260, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1EC));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 0x1EC), 260, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 100);
 		local._talkTimer = 120;
@@ -165,8 +165,8 @@ static void handleConversation1() {
 		break;
 
 	case 0x237:
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(208, 41), 0xFDFC, 0, 0, 100, quote_string(kernel.quotes, 0x1FD));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 0x1FD), 208, 41, 0xFDFC, 100, 0, 0);
 		setDialogNode(0);
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 100);
@@ -251,9 +251,9 @@ static void handleConversation2() {
 			kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 			_scene->_sequences.addTimer(1, 100);
 			local._talkTimer = 180;
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(198, 27), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1E7));
-			_scene->_kernelMessages.add(Common::Point(201, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1E8));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 0x1E7), 198, 27, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
+			kernel_message_add(quote_string(kernel.quotes, 0x1E8), 201, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 			local._bartenderCurrentQuestion = 7;
 			break;
 
@@ -261,9 +261,9 @@ static void handleConversation2() {
 			kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 			_scene->_sequences.addTimer(1, 100);
 			local._talkTimer = 180;
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(220, 27), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1E9));
-			_scene->_kernelMessages.add(Common::Point(190, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1EA));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 0x1E9), 220, 27, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
+			kernel_message_add(quote_string(kernel.quotes, 0x1EA), 190, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 			local._bartenderCurrentQuestion = 8;
 			break;
 
@@ -271,8 +271,8 @@ static void handleConversation2() {
 			kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 			_scene->_sequences.addTimer(1, 100);
 			local._talkTimer = 150;
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(196, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1EB));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 0x1EB), 196, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 			local._bartenderCurrentQuestion = 9;
 			break;
 
@@ -281,8 +281,8 @@ static void handleConversation2() {
 		}
 		local._dialog2.start();
 	} else {
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(208, 41), 0xFDFC, 0, 0, 100, quote_string(kernel.quotes, 0x1FD));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 0x1FD), 208, 41, 0xFDFC, 100, 0, 0);
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 100);
 		local._talkTimer = 1120;
@@ -297,16 +297,16 @@ static void handleConversation3() {
 	case 0x236:
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 86);
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(188, 27), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1ED));
-		_scene->_kernelMessages.add(Common::Point(199, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1EE));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 0x1ED), 188, 27, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
+		kernel_message_add(quote_string(kernel.quotes, 0x1EE), 199, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 		setDialogNode(4);
 		local._bartenderCurrentQuestion = 2;
 		break;
 
 	case 0x237:
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(208, 41), 0xFDFC, 0, 0, 100, quote_string(kernel.quotes, 0x1FD));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 0x1FD), 208, 41, 0xFDFC, 100, 0, 0);
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 100);
 		local._talkTimer = 1120;
@@ -321,12 +321,12 @@ static void handleConversation3() {
 static void handleConversation4() {
 	switch (player2.words[0]) {
 	case 0x238:
-		_scene->_kernelMessages.reset();
+		kernel_message_purge();
 		setDialogNode(0);
 		player.commands_allowed = false;
-		_scene->_kernelMessages.add(Common::Point(196, 13), 0xFDFC, 0, 0, 180, quote_string(kernel.quotes, 0x1F0));
-		_scene->_kernelMessages.add(Common::Point(184, 27), 0xFDFC, 0, 0, 180, quote_string(kernel.quotes, 0x1F1));
-		_scene->_kernelMessages.add(Common::Point(200, 41), 0xFDFC, 0, 0, 180, quote_string(kernel.quotes, 0x1F2));
+		kernel_message_add(quote_string(kernel.quotes, 0x1F0), 196, 13, 0xFDFC, 180, 0, 0);
+		kernel_message_add(quote_string(kernel.quotes, 0x1F1), 184, 27, 0xFDFC, 180, 0, 0);
+		kernel_message_add(quote_string(kernel.quotes, 0x1F2), 200, 41, 0xFDFC, 180, 0, 0);
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 100);
 		local._talkTimer = 1100;
@@ -349,8 +349,8 @@ static void handleConversation4() {
 	case 0x23A:
 		setDialogNode(0);
 		player.commands_allowed = false;
-		_scene->_kernelMessages.add(Common::Point(193, 27), 0xFDFC, 0, 0, 150, quote_string(kernel.quotes, 0x1F4));
-		_scene->_kernelMessages.add(Common::Point(230, 41), 0xFDFC, 0, 0, 150, quote_string(kernel.quotes, 0x1F5));
+		kernel_message_add(quote_string(kernel.quotes, 0x1F4), 193, 27, 0xFDFC, 150, 0, 0);
+		kernel_message_add(quote_string(kernel.quotes, 0x1F5), 230, 41, 0xFDFC, 150, 0, 0);
 		local._dialog4.write(0x23A, false);
 		global[kHasSaidTimer] = true;
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
@@ -365,8 +365,8 @@ static void handleConversation4() {
 	case 0x23D:
 		setDialogNode(0);
 		player.commands_allowed = false;
-		_scene->_kernelMessages.add(Common::Point(153, 27), 0xFDFC, 0, 0, 150, quote_string(kernel.quotes, 0x1F6));
-		_scene->_kernelMessages.add(Common::Point(230, 41), 0xFDFC, 0, 0, 150, quote_string(kernel.quotes, 0x1F7));
+		kernel_message_add(quote_string(kernel.quotes, 0x1F6), 153, 27, 0xFDFC, 150, 0, 0);
+		kernel_message_add(quote_string(kernel.quotes, 0x1F7), 230, 41, 0xFDFC, 150, 0, 0);
 		local._dialog4.write(0x23D, false);
 		global[kHasSaidBinocs] = true;
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
@@ -379,10 +379,10 @@ static void handleConversation4() {
 		break;
 
 	case 0x23E:
-		_scene->_kernelMessages.reset();
+		kernel_message_purge();
 		setDialogNode(0);
 		player.commands_allowed = false;
-		_scene->_kernelMessages.add(Common::Point(205, 41), 0xFDFC, 0, 0, 100, quote_string(kernel.quotes, 0x1F8));
+		kernel_message_add(quote_string(kernel.quotes, 0x1F8), 205, 41, 0xFDFC, 100, 0, 0);
 		local._bartenderMode = 22;
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 100);
@@ -399,17 +399,17 @@ static void handleConversation4() {
 
 static void handleDialogs() {
 	if (kernel.trigger == 0) {
-		_scene->_kernelMessages.reset();
+		kernel_message_purge();
 		player.commands_allowed = false;
-		const char *curQuote = quote_string(kernel.quotes, player2.words[0]);
-		if (_scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing) > 200) {
+		char *curQuote = quote_string(kernel.quotes, player2.words[0]);
+		if (font_string_width(kernel_message_font, curQuote, kernel_message_spacing) > 200) {
 			static char subQuote1[34], subQuote2[34];
 			quote_split_string(curQuote, subQuote1, subQuote2);
-			_scene->_kernelMessages.add(Common::Point(230, 42), 0x1110, 32, 0, 140, subQuote1);
-			_scene->_kernelMessages.add(Common::Point(230, 56), 0x1110, 32, 0, 140, subQuote2);
+			kernel_message_add(subQuote1, 230, 42, 0x1110, 140, 0, 32);
+			kernel_message_add(subQuote2, 230, 56, 0x1110, 140, 0, 32);
 			_scene->_sequences.addTimer(160, 120);
 		} else {
-			_scene->_kernelMessages.add(Common::Point(230, 56), 0x1110, 32, 1, 140, curQuote);
+			kernel_message_add(curQuote, 230, 56, 0x1110, 140, 1, 32);
 			_scene->_sequences.addTimer(160, 120);
 		}
 	} else if (kernel.trigger == 120) {
@@ -551,47 +551,47 @@ static void room_402_init() {
 
 		switch (local._bartenderCurrentQuestion) {
 		case 1:
-			_scene->_kernelMessages.add(Common::Point(260, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1EC));
+			kernel_message_add(quote_string(kernel.quotes, 0x1EC), 260, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 			break;
 
 		case 2:
-			_scene->_kernelMessages.add(Common::Point(188, 27), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1ED));
-			_scene->_kernelMessages.add(Common::Point(199, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1EE));
+			kernel_message_add(quote_string(kernel.quotes, 0x1ED), 188, 27, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
+			kernel_message_add(quote_string(kernel.quotes, 0x1EE), 199, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 			break;
 
 		case 3:
-			_scene->_kernelMessages.add(Common::Point(177, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1EF));
+			kernel_message_add(quote_string(kernel.quotes, 0x1EF), 177, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 			break;
 
 		case 4:
-			_scene->_kernelMessages.add(Common::Point(205, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1E4));
+			kernel_message_add(quote_string(kernel.quotes, 0x1E4), 205, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 			break;
 
 		case 5:
-			_scene->_kernelMessages.add(Common::Point(203, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1E5));
+			kernel_message_add(quote_string(kernel.quotes, 0x1E5), 203, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 			break;
 
 		case 6:
-			_scene->_kernelMessages.add(Common::Point(260, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1E6));
+			kernel_message_add(quote_string(kernel.quotes, 0x1E6), 260, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 			break;
 
 		case 7:
-			_scene->_kernelMessages.add(Common::Point(198, 27), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1E7));
-			_scene->_kernelMessages.add(Common::Point(201, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1E8));
+			kernel_message_add(quote_string(kernel.quotes, 0x1E7), 198, 27, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
+			kernel_message_add(quote_string(kernel.quotes, 0x1E8), 201, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 			break;
 
 		case 8:
-			_scene->_kernelMessages.add(Common::Point(220, 27), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1E9));
-			_scene->_kernelMessages.add(Common::Point(190, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1EA));
+			kernel_message_add(quote_string(kernel.quotes, 0x1E9), 220, 27, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
+			kernel_message_add(quote_string(kernel.quotes, 0x1EA), 190, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 			break;
 
 		case 9:
-			_scene->_kernelMessages.add(Common::Point(196, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1EB));
+			kernel_message_add(quote_string(kernel.quotes, 0x1EB), 196, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 			break;
 
 		case 10:
-			_scene->_kernelMessages.add(Common::Point(198, 27), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1E2));
-			_scene->_kernelMessages.add(Common::Point(199, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1E3));
+			kernel_message_add(quote_string(kernel.quotes, 0x1E2), 198, 27, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
+			kernel_message_add(quote_string(kernel.quotes, 0x1E3), 199, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 			break;
 
 		default:
@@ -803,8 +803,8 @@ static void room_402_daemon() {
 		_scene->_sequences.setDepth(g_sequence_ids[6], 5);
 		_scene->_sequences.updateTimeout(g_sequence_ids[6], seqIdx);
 		if (local._roxMode == 22) {
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(230, 56), 0x1110, 32, 0, 120, quote_string(kernel.quotes, 0x23F));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 0x23F), 230, 56, 0x1110, 120, 0, 32);
 			local._bartenderMode = 21;
 			global[kHasPurchased] = true;
 			_scene->_sequences.addTimer(140, 95);
@@ -906,8 +906,8 @@ static void room_402_daemon() {
 		_scene->_sequences.updateTimeout(g_sequence_ids[9], seqIdx);
 		_scene->_sequences.setDepth(g_sequence_ids[9], 8);
 		if (local._bartenderMode == 20) {
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(210, 41), 0xFDFC, 0, 0, 100, quote_string(kernel.quotes, 0x1F3));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 0x1F3), 210, 41, 0xFDFC, 100, 0, 0);
 			_scene->_sequences.addTimer(5, 100);
 			local._talkTimer = 180;
 			local._roxMode = 22;
@@ -1362,29 +1362,29 @@ static void room_402_daemon() {
 
 	switch (kernel.trigger) {
 	case 39:
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(89, 67), 0xFDFC, 32, 0, 120, quote_string(kernel.quotes, 0x1D8));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 0x1D8), 89, 67, 0xFDFC, 120, 0, 32);
 		_scene->_sequences.addTimer(150, 40);
 		break;
 
 	case 40:
-		_scene->_kernelMessages.add(Common::Point(89, 67), 0xFDFC, 32, 0, 120, quote_string(kernel.quotes, 0x1D9));
+		kernel_message_add(quote_string(kernel.quotes, 0x1D9), 89, 67, 0xFDFC, 120, 0, 32);
 		_scene->_sequences.addTimer(150, 41);
 		break;
 
 	case 41:
-		_scene->_kernelMessages.add(Common::Point(89, 67), 0xFDFC, 32, 0, 120, quote_string(kernel.quotes, 0x1DA));
+		kernel_message_add(quote_string(kernel.quotes, 0x1DA), 89, 67, 0xFDFC, 120, 0, 32);
 		player.commands_allowed = true;
 		break;
 
 	case 42:
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(89, 67), 0xFDFC, 32, 0, 120, quote_string(kernel.quotes, 0x1DC));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 0x1DC), 89, 67, 0xFDFC, 120, 0, 32);
 		_scene->_sequences.addTimer(150, 43);
 		break;
 
 	case 43:
-		_scene->_kernelMessages.add(Common::Point(89, 67), 0xFDFC, 32, 0, 120, quote_string(kernel.quotes, 0x1DD));
+		kernel_message_add(quote_string(kernel.quotes, 0x1DD), 89, 67, 0xFDFC, 120, 0, 32);
 		player.commands_allowed = true;
 		break;
 
@@ -1416,8 +1416,8 @@ static void room_402_daemon() {
 			_scene->_sequences.setDepth(g_sequence_ids[9], 8);
 		}
 		player.commands_allowed = false;
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(180, 47), 0xFBFA, 0, 0, 100, quote_string(kernel.quotes, 0x1FE));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 0x1FE), 180, 47, 0xFBFA, 100, 0, 0);
 		_scene->_sequences.addTimer(120, 56);
 		break;
 
@@ -1477,9 +1477,9 @@ static void room_402_daemon() {
 	break;
 
 	case 61:
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(181, 33), 0xFBFA, 0, 0, 130, quote_string(kernel.quotes, 0x1FF));
-		_scene->_kernelMessages.add(Common::Point(171, 47), 0xFBFA, 0, 0, 130, quote_string(kernel.quotes, 0x200));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 0x1FF), 181, 33, 0xFBFA, 130, 0, 0);
+		kernel_message_add(quote_string(kernel.quotes, 0x200), 171, 47, 0xFBFA, 130, 0, 0);
 		_scene->_sequences.addTimer(150, 63);
 		_scene->_sequences.remove(g_sequence_ids[13]);
 		g_sequence_ids[13] = _scene->_sequences.startPingPongCycle(g_sprite_ids[13], false, 30, 4, 0, 0);
@@ -1498,16 +1498,16 @@ static void room_402_daemon() {
 	break;
 
 	case 63:
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(160, 33), 0xFBFA, 0, 0, 130, quote_string(kernel.quotes, 0x201));
-		_scene->_kernelMessages.add(Common::Point(165, 47), 0xFBFA, 0, 0, 130, quote_string(kernel.quotes, 0x202));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 0x201), 160, 33, 0xFBFA, 130, 0, 0);
+		kernel_message_add(quote_string(kernel.quotes, 0x202), 165, 47, 0xFBFA, 130, 0, 0);
 		_scene->_sequences.addTimer(150, 64);
 		break;
 
 	case 64:
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(210, 27), 0xFDFC, 0, 0, 130, quote_string(kernel.quotes, 0x1E0));
-		_scene->_kernelMessages.add(Common::Point(198, 41), 0xFDFC, 0, 0, 130, quote_string(kernel.quotes, 0x1E1));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 0x1E0), 210, 27, 0xFDFC, 130, 0, 0);
+		kernel_message_add(quote_string(kernel.quotes, 0x1E1), 198, 41, 0xFDFC, 130, 0, 0);
 		_scene->_sequences.addTimer(150, 65);
 		_scene->_sequences.addTimer(1, 100);
 		local._talkTimer = 1130;
@@ -1563,9 +1563,9 @@ static void room_402_daemon() {
 		_scene->_sequences.setDepth(g_sequence_ids[13], 8);
 		_scene->_sequences.updateTimeout(g_sequence_ids[13], seqIdx);
 
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(179, 33), 0xFBFA, 0, 0, 130, quote_string(kernel.quotes, 0x203));
-		_scene->_kernelMessages.add(Common::Point(167, 47), 0xFBFA, 0, 0, 130, quote_string(kernel.quotes, 0x204));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 0x203), 179, 33, 0xFBFA, 130, 0, 0);
+		kernel_message_add(quote_string(kernel.quotes, 0x204), 167, 47, 0xFBFA, 130, 0, 0);
 		_scene->_sequences.addTimer(150, 71);
 		_scene->_sequences.addSubEntry(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 	}
@@ -1580,9 +1580,9 @@ static void room_402_daemon() {
 
 	case 71:
 		_scene->_sequences.addTimer(210, 73);
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(168, 33), 0xFBFA, 0, 0, 180, quote_string(kernel.quotes, 0x205));
-		_scene->_kernelMessages.add(Common::Point(151, 47), 0xFBFA, 0, 0, 180, quote_string(kernel.quotes, 0x206));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 0x205), 168, 33, 0xFBFA, 180, 0, 0);
+		kernel_message_add(quote_string(kernel.quotes, 0x206), 151, 47, 0xFBFA, 180, 0, 0);
 		if (!player_has(OBJ_REPAIR_LIST))
 			local._activeArrows = true;
 		break;
@@ -1597,9 +1597,9 @@ static void room_402_daemon() {
 	break;
 
 	case 73:
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(177, 33), 0xFBFA, 0, 0, 150, quote_string(kernel.quotes, 0x207));
-		_scene->_kernelMessages.add(Common::Point(172, 47), 0xFBFA, 0, 0, 150, quote_string(kernel.quotes, 0x208));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 0x207), 177, 33, 0xFBFA, 150, 0, 0);
+		kernel_message_add(quote_string(kernel.quotes, 0x208), 172, 47, 0xFBFA, 150, 0, 0);
 		local._bartenderSteady = true;
 		player.commands_allowed = true;
 		local._helgaReady = true;
@@ -1902,17 +1902,17 @@ static void room_402_parser() {
 
 			switch (random) {
 			case 1:
-				_scene->_kernelMessages.add(centerPos, 0x1110, 32 | centerFlag, 0, 90, quote_string(kernel.quotes, 0x211));
+				kernel_message_add(quote_string(kernel.quotes, 0x211), centerPos.x, centerPos.y, 0x1110, 90, 0, 32 | centerFlag);
 				_scene->_sequences.addTimer(110, 25);
 				break;
 
 			case 2:
-				_scene->_kernelMessages.add(centerPos, 0x1110, 32 | centerFlag, 0, 90, quote_string(kernel.quotes, 0x212));
+				kernel_message_add(quote_string(kernel.quotes, 0x212), centerPos.x, centerPos.y, 0x1110, 90, 0, 32 | centerFlag);
 				_scene->_sequences.addTimer(110, 25);
 				break;
 
 			case 3:
-				_scene->_kernelMessages.add(centerPos, 0x1110, 32 | centerFlag, 0, 90, quote_string(kernel.quotes, 0x213));
+				kernel_message_add(quote_string(kernel.quotes, 0x213), centerPos.x, centerPos.y, 0x1110, 90, 0, 32 | centerFlag);
 				_scene->_sequences.addTimer(110, 25);
 				break;
 
@@ -1927,8 +1927,8 @@ static void room_402_parser() {
 			case 0:
 				player.commands_allowed = false;
 				local._helgaTalkMode = 1;
-				_scene->_kernelMessages.add(Common::Point(177, 33), 0xFBFA, 0, 0, 130, quote_string(kernel.quotes, 0x209));
-				_scene->_kernelMessages.add(Common::Point(182, 47), 0xFBFA, 0, 0, 130, quote_string(kernel.quotes, 0x20A));
+				kernel_message_add(quote_string(kernel.quotes, 0x209), 177, 33, 0xFBFA, 130, 0, 0);
+				kernel_message_add(quote_string(kernel.quotes, 0x20A), 182, 47, 0xFBFA, 130, 0, 0);
 				kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 				_scene->_sequences.addTimer(130, 28);
 				break;
@@ -1936,7 +1936,7 @@ static void room_402_parser() {
 			case 1:
 				player.commands_allowed = false;
 				local._helgaTalkMode = 2;
-				_scene->_kernelMessages.add(Common::Point(157, 47), 0xFBFA, 0, 0, 100, quote_string(kernel.quotes, 0x20B));
+				kernel_message_add(quote_string(kernel.quotes, 0x20B), 157, 47, 0xFBFA, 100, 0, 0);
 				kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 				_scene->_sequences.addTimer(100, 28);
 				break;
@@ -1944,7 +1944,7 @@ static void room_402_parser() {
 			case 2:
 				player.commands_allowed = false;
 				local._helgaTalkMode = 3;
-				_scene->_kernelMessages.add(Common::Point(172, 47), 0xFBFA, 0, 0, 100, quote_string(kernel.quotes, 0x20C));
+				kernel_message_add(quote_string(kernel.quotes, 0x20C), 172, 47, 0xFBFA, 100, 0, 0);
 				kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 				_scene->_sequences.addTimer(100, 28);
 				break;
@@ -1962,24 +1962,24 @@ static void room_402_parser() {
 			break;
 		}
 	} else if (player_said_2(talkto, woman_in_chair) && !local._firstTalkToGirlInChair) {
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x1D7));
+		kernel_message_add(quote_string(kernel.quotes, 0x1D7), 0, 0, 0x1110, 120, 0, 34);
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(150, 39);
 		player.commands_allowed = false;
 		local._firstTalkToGirlInChair = true;
 	} else if (player_said_2(talkto, woman_in_chair) && local._firstTalkToGirlInChair) {
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x1DB));
+		kernel_message_add(quote_string(kernel.quotes, 0x1DB), 0, 0, 0x1110, 120, 0, 34);
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(150, 42);
 		player.commands_allowed = false;
 	} else if (player_said_2(talkto, woman_in_alcove) || player_said_2(walkto, woman_in_alcove)) {
-		_scene->_kernelMessages.add(Common::Point(102, 48), 0xFBFA, 0, 0, 120, quote_string(kernel.quotes, 0x1DE));
+		kernel_message_add(quote_string(kernel.quotes, 0x1DE), 102, 48, 0xFBFA, 120, 0, 0);
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(120, 44);
 		player.commands_allowed = false;
 	} else if (player_said_2(sit_on, bar_stool) && (player.target_x == 248)) {
-		_scene->_kernelMessages.add(Common::Point(0, -14), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x20D));
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x20E));
+		kernel_message_add(quote_string(kernel.quotes, 0x20D), 0, -14, 0x1110, 120, 0, 34);
+		kernel_message_add(quote_string(kernel.quotes, 0x20E), 0, 0, 0x1110, 120, 0, 34);
 	} else if (player_said_2(sit_on, bar_stool) && !local._roxOnStool && (player.target_x != 248)) {
 		player.walker_visible = false;
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
@@ -2025,8 +2025,8 @@ static void room_402_parser() {
 				quoteId = 0x20F;
 				local._bartenderCalled = true;
 			}
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(centerPos, 0x1110, 32 | centerFlag, 0, 90, quote_string(kernel.quotes, quoteId));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, quoteId), centerPos.x, centerPos.y, 0x1110, 90, 0, 32 | centerFlag);
 			_scene->_sequences.addTimer(110, 29);
 			kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 			_scene->_sequences.addTimer(90, 28);
@@ -2034,23 +2034,23 @@ static void room_402_parser() {
 		break;
 
 		case 29:
-			_scene->_kernelMessages.reset();
+			kernel_message_purge();
 			if (!local._roxOnStool) {
 				if (object_is_here(OBJ_ALIEN_LIQUOR)) {
-					_scene->_kernelMessages.add(Common::Point(177, 41), 0xFDFC, 0, 0, 120, quote_string(kernel.quotes, 0x1DF));
+					kernel_message_add(quote_string(kernel.quotes, 0x1DF), 177, 41, 0xFDFC, 120, 0, 0);
 					kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 					_scene->_sequences.addTimer(1, 100);
 					local._talkTimer = 120;
 				} else if (local._rexMode == 0) {
-					_scene->_kernelMessages.add(Common::Point(175, 13), 0xFDFC, 0, 0, 180, quote_string(kernel.quotes, 0x1F9));
-					_scene->_kernelMessages.add(Common::Point(184, 27), 0xFDFC, 0, 0, 180, quote_string(kernel.quotes, 0x1FA));
-					_scene->_kernelMessages.add(Common::Point(200, 41), 0xFDFC, 0, 0, 180, quote_string(kernel.quotes, 0x1FB));
+					kernel_message_add(quote_string(kernel.quotes, 0x1F9), 175, 13, 0xFDFC, 180, 0, 0);
+					kernel_message_add(quote_string(kernel.quotes, 0x1FA), 184, 27, 0xFDFC, 180, 0, 0);
+					kernel_message_add(quote_string(kernel.quotes, 0x1FB), 200, 41, 0xFDFC, 180, 0, 0);
 					kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 					_scene->_sequences.addTimer(1, 100);
 					local._talkTimer = 180;
 					local._rexMode = 1;
 				} else if (local._rexMode == 1) {
-					_scene->_kernelMessages.add(Common::Point(205, 41), 0xFDFC, 0, 0, 120, quote_string(kernel.quotes, 0x1FC));
+					kernel_message_add(quote_string(kernel.quotes, 0x1FC), 205, 41, 0xFDFC, 120, 0, 0);
 					player.commands_allowed = true;
 					kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 					_scene->_sequences.addTimer(1, 100);
@@ -2062,9 +2062,9 @@ static void room_402_parser() {
 			} else {
 				if (object_is_here(OBJ_ALIEN_LIQUOR)) {
 					if (!local._refuseAlienLiquor) {
-						_scene->_kernelMessages.reset();
-						_scene->_kernelMessages.add(Common::Point(198, 27), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1E2));
-						_scene->_kernelMessages.add(Common::Point(199, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1E3));
+						kernel_message_purge();
+						kernel_message_add(quote_string(kernel.quotes, 0x1E2), 198, 27, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
+						kernel_message_add(quote_string(kernel.quotes, 0x1E3), 199, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 						local._bartenderCurrentQuestion = 10;
 						kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 						_scene->_sequences.addTimer(1, 100);
@@ -2076,7 +2076,7 @@ static void room_402_parser() {
 
 						local._dialog1.start();
 					} else {
-						_scene->_kernelMessages.add(Common::Point(177, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, 0x1EF));
+						kernel_message_add(quote_string(kernel.quotes, 0x1EF), 177, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 						kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 						_scene->_sequences.addTimer(1, 100);
 						local._talkTimer = 120;
@@ -2091,15 +2091,15 @@ static void room_402_parser() {
 					}
 				} else {
 					if (local._rexMode == 0) {
-						_scene->_kernelMessages.add(Common::Point(175, 13), 0xFDFC, 0, 0, 180, quote_string(kernel.quotes, 0x1F9));
-						_scene->_kernelMessages.add(Common::Point(184, 27), 0xFDFC, 0, 0, 180, quote_string(kernel.quotes, 0x1FA));
-						_scene->_kernelMessages.add(Common::Point(200, 41), 0xFDFC, 0, 0, 180, quote_string(kernel.quotes, 0x1FB));
+						kernel_message_add(quote_string(kernel.quotes, 0x1F9), 175, 13, 0xFDFC, 180, 0, 0);
+						kernel_message_add(quote_string(kernel.quotes, 0x1FA), 184, 27, 0xFDFC, 180, 0, 0);
+						kernel_message_add(quote_string(kernel.quotes, 0x1FB), 200, 41, 0xFDFC, 180, 0, 0);
 						kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 						_scene->_sequences.addTimer(1, 100);
 						local._talkTimer = 180;
 						local._rexMode = 1;
 					} else if (local._rexMode == 1) {
-						_scene->_kernelMessages.add(Common::Point(205, 41), 0xFDFC, 0, 0, 120, quote_string(kernel.quotes, 0x1FC));
+						kernel_message_add(quote_string(kernel.quotes, 0x1FC), 205, 41, 0xFDFC, 120, 0, 0);
 						player.commands_allowed = true;
 						kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 						_scene->_sequences.addTimer(1, 100);

@@ -181,7 +181,7 @@ static void room_701_daemon() {
 		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, -1);
 		_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(48, 136));
 		_scene->_sequences.setDepth(g_sequence_ids[1], 10);
-		_scene->_kernelMessages.reset();
+		kernel_message_purge();
 		break;
 
 	case 80:
@@ -251,8 +251,8 @@ static void room_701_parser() {
 			g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 5, 1, 0, 0);
 			_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(48, 136));
 			_scene->_sequences.setDepth(g_sequence_ids[1], 10);
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x310, 34, 0, 120, quote_string(kernel.quotes, 0x30D));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 0x30D), 0, 0, 0x310, 120, 0, 34);
 			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 

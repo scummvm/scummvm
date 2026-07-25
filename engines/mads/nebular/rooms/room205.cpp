@@ -96,9 +96,7 @@ static void room_205_init() {
 	local._chickenTime = kernel.clock;
 
 	if (global[kSexOfRex] == SEX_FEMALE)
-		_scene->_kernelMessages.initRandomMessages(3,
-			Common::Rect(195, 99, 264, 134), 13, 2, 0xFDFC, 60,
-			108, 108, 109, 109, 110, 110, 111, 108, 0);
+		kernel_random_messages_init(3, 195, 264, 99, 134, 13, 2, 0xFDFC, 60, 108, 108, 109, 109, 110, 110, 111, 108, 0);
 
 	if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 99;
@@ -124,11 +122,11 @@ static void room_205_init() {
 
 static void room_205_daemon() {
 	if (global[kSexOfRex] == SEX_FEMALE) {
-		_scene->_kernelMessages.randomServer();
+		kernel_random_message_server();
 
 		if (kernel.clock >= local._chickenTime) {
-			int chanceMinor = _scene->_kernelMessages.checkRandom() + 1;
-			if (_scene->_kernelMessages.generateRandom(100, chanceMinor))
+			int chanceMinor = kernel_check_random() + 1;
+			if (kernel_generate_random_message(100, chanceMinor))
 				g_engine->_soundManager->command(28, 0);
 
 			local._chickenTime = kernel.clock + 2;
@@ -145,19 +143,19 @@ static void room_205_daemon() {
 	}
 
 	if (kernel.trigger == 73)
-		_scene->_kernelMessages.add(Common::Point(160, 68), 0xFBFA, 32, 0, 60, quote_string(kernel.quotes, 112));
+		kernel_message_add(quote_string(kernel.quotes, 112), 160, 68, 0xFBFA, 60, 0, 32);
 
 	if (kernel.trigger == 74) {
 		g_engine->_soundManager->command(26, 0);
-		_scene->_kernelMessages.add(Common::Point(106, 90), 0x1110, 32, 0, 60, quote_string(kernel.quotes, 113));
+		kernel_message_add(quote_string(kernel.quotes, 113), 106, 90, 0x1110, 60, 0, 32);
 	}
 
 	if (kernel.trigger == 71) {
 		g_sequence_ids[8] = _scene->_sequences.addSpriteCycle(g_sprite_ids[8], false, 6, 0, 0, 0);
 		_scene->_sequences.setDepth(g_sequence_ids[8], 2);
 		_scene->_sequences.setAnimRange(g_sequence_ids[8], -2, -2);
-		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(160, 68), 0xFBFA, 32, 72, 180, quote_string(kernel.quotes, 114));
+		kernel_message_purge();
+		kernel_message_add(quote_string(kernel.quotes, 114), 160, 68, 0xFBFA, 180, 72, 32);
 	}
 
 	if (kernel.trigger == 72)
@@ -165,18 +163,18 @@ static void room_205_daemon() {
 }
 
 static void handleWomanSpeech(int quote) {
-	local._kernelMessage = _scene->_kernelMessages.add(Common::Point(186, 27), 0xFBFA, 0, 0, INDEFINITE_TIMEOUT, quote_string(kernel.quotes, quote));
+	local._kernelMessage = kernel_message_add(quote_string(kernel.quotes, quote), 186, 27, 0xFBFA, INDEFINITE_TIMEOUT, 0, 0);
 }
 
 static void room_205_parser() {
 	if (inter_input_mode == kInputConversation) {
 		if (local._kernelMessage >= 0)
-			_scene->_kernelMessages.remove(local._kernelMessage);
+			kernel_message_delete(local._kernelMessage);
 		local._kernelMessage = -1;
 
 		if (kernel.trigger == 0) {
 			player.commands_allowed = false;
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 18, 1, 120, quote_string(kernel.quotes, player2.words[0]));
+			kernel_message_add(quote_string(kernel.quotes, player2.words[0]), 0, 0, 0x1110, 120, 1, 18);
 		} else {
 			if ((kernel.trigger > 1) || (player2.words[0] != 0x76))
 				player.commands_allowed = true;
@@ -213,7 +211,7 @@ static void room_205_parser() {
 				break;
 
 			case 0x77:
-				_scene->_kernelMessages.add(Common::Point(186, 27), 0xFBFA, 0, 0, 120, quote_string(kernel.quotes, 0x7F));
+				kernel_message_add(quote_string(kernel.quotes, 0x7F), 186, 27, 0xFBFA, 120, 0, 0);
 				_scene->_userInterface.setup(kInputBuildingSentences);
 				break;
 
@@ -231,7 +229,7 @@ static void room_205_parser() {
 	else if (player_said_2(talkto, native_woman)) {
 		if (kernel.trigger == 0) {
 			player.commands_allowed = false;
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 18, 1, 120, quote_string(kernel.quotes, 0x73));
+			kernel_message_add(quote_string(kernel.quotes, 0x73), 0, 0, 0x1110, 120, 1, 18);
 		} else if (kernel.trigger == 1) {
 			player.commands_allowed = true;
 			handleWomanSpeech(0x79);
@@ -243,7 +241,7 @@ static void room_205_parser() {
 		if (kernel.trigger == 0) {
 			player.commands_allowed = false;
 			int rndVal = g_engine->getRandomNumber(0xAC, 0xAE);
-			_scene->_kernelMessages.add(Common::Point(186, 27), 0xFBFA, 32, 1, 120, quote_string(kernel.quotes, rndVal));
+			kernel_message_add(quote_string(kernel.quotes, rndVal), 186, 27, 0xFBFA, 120, 1, 32);
 		} else if (kernel.trigger == 1)
 			player.commands_allowed = true;
 	} else if (player_said_2(walkto, opposite_bank)) {
@@ -251,7 +249,7 @@ static void room_205_parser() {
 			player.walker_visible = false;
 			player.commands_allowed = false;
 			pal_lock();
-			_scene->_kernelMessages.reset();
+			kernel_message_purge();
 			kernel_dump_walker_only();
 			g_sprite_ids[9] = kernel_load_series(kernel_name('a', 0), 0);
 			kernel_new_palette();
@@ -272,8 +270,8 @@ static void room_205_parser() {
 
 		if (player_said_2(walkto, fire_pit) || player_said_2(walkto, chicken_on_spit)) {
 			if (object_is_here(OBJ_CHICKEN)) {
-				_scene->_kernelMessages.reset();
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x6B));
+				kernel_message_purge();
+				kernel_message_add(quote_string(kernel.quotes, 0x6B), 0, 0, 0x1110, 120, 0, 34);
 			}
 		} else if (player_said_2(take, chicken_on_spit) && global[kChickenPermitted] && object_is_here(OBJ_CHICKEN)) {
 			inter_give_to_player(OBJ_CHICKEN);
@@ -281,7 +279,7 @@ static void room_205_parser() {
 			_scene->_hotspots.activate(words_chicken_on_spit, false);
 			object_examine(OBJ_CHICKEN, 812, 0);
 		} else if (player_said_2(take, chicken_on_spit) && (!global[kChickenPermitted]))
-			_scene->_kernelMessages.add(Common::Point(186, 27), 0xFBFA, 32, 0, 120, quote_string(kernel.quotes, 0x80));
+			kernel_message_add(quote_string(kernel.quotes, 0x80), 186, 27, 0xFBFA, 120, 0, 32);
 		else if (player_said_2(look, native_woman))
 			text_show(20503);
 		else if (player_said_2(look, hut))

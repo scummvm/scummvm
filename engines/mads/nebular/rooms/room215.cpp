@@ -115,8 +115,8 @@ static void room_215_parser() {
 			}
 		} else {
 			int idx = g_engine->getRandomNumber(169, 170);
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, idx));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, idx), 0, 0, 0x1110, 120, 0, 34);
 		}
 	} else if (player_said_2(walk_outside, hut))
 		new_room = 210;

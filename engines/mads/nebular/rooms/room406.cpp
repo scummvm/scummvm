@@ -164,7 +164,7 @@ static void room_406_parser() {
 	} else if (player_said_2(walk_through, door) && global[kStorageDoorOpen] && (player.target_x < 100))
 		new_room = 410;
 	else if (player_said_2(walk_through, door) && !global[kStorageDoorOpen] && (player.target_x < 100)) {
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, quote_string(kernel.quotes, 0x24F));
+		kernel_message_add(quote_string(kernel.quotes, 0x24F), 0, 0, 0x1110, 60, 0, 34);
 		if (!local._hitStorageDoor) {
 			kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 			_scene->_sequences.addTimer(80, 100);

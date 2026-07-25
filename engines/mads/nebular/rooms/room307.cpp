@@ -57,16 +57,16 @@ static Scratch local;
 
 
 static void handleRexDialog(int quote) {
-	const char *curQuote = quote_string(kernel.quotes, quote);
-	if (_scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing) > 200) {
+	char *curQuote = quote_string(kernel.quotes, quote);
+	if (font_string_width(kernel_message_font, curQuote, kernel_message_spacing) > 200) {
 		static char subQuote1[34], subQuote2[34];
 		quote_split_string(curQuote, subQuote1, subQuote2);
 		Common::strcpy_s(local._subQuote2, subQuote2);
 
-		_scene->_kernelMessages.add(Common::Point(0, -14), 0x1110, 34, 0, 240, subQuote1);
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 1, 180, local._subQuote2);
+		kernel_message_add(subQuote1, 0, -14, 0x1110, 240, 0, 34);
+		kernel_message_add(local._subQuote2, 0, 0, 0x1110, 180, 1, 34);
 	} else
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 1, 120, curQuote);
+		kernel_message_add(curQuote, 0, 0, 0x1110, 120, 1, 34);
 }
 
 static void handlePrisonerSpeech(int firstQuoteId, int number, uint32 timeout) {
@@ -78,13 +78,13 @@ static void handlePrisonerSpeech(int firstQuoteId, int number, uint32 timeout) {
 	else
 		posY = 78 - (height / 2);
 
-	_scene->_kernelMessages.reset();
+	kernel_message_purge();
 	local._activePrisonerFl = true;
 
 	int quoteId = firstQuoteId;
 	for (int count = 0; count < number; count++) {
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
-		_scene->_kernelMessages.add(Common::Point(5, posY), 0xFDFC, 0, 81, timeout, quote_string(kernel.quotes, quoteId));
+		kernel_message_add(quote_string(kernel.quotes, quoteId), 5, posY, 0xFDFC, timeout, 81, 0);
 		posY += 14;
 		quoteId++;
 	}
@@ -261,7 +261,7 @@ static void handlePrisonerDialog() {
 
 static void handleDialog() {
 	if (kernel.trigger == 0) {
-		_scene->_kernelMessages.reset();
+		kernel_message_purge();
 		player.commands_allowed = false;
 		handleRexDialog(player2.words[0]);
 	} else {
@@ -365,7 +365,7 @@ static void room_307_init() {
 	section_3_music();
 
 	if ((previous_room == 318) || (previous_room == 387))
-		_scene->_kernelMessages.addQuote(0xF3, 0, 120);
+		kernel_message_player(0xF3, 120, 0);
 }
 
 static void room_307_daemon() {
@@ -427,14 +427,14 @@ static void room_307_daemon() {
 				if (local._prisonerMessageId == -1)
 					local._prisonerMessageId = 0x104;
 
-				int idx = _scene->_kernelMessages.add(Common::Point(5, 51), 0xFDFC, 0, 81, 120, quote_string(kernel.quotes, local._prisonerMessageId));
-				_scene->_kernelMessages.setQuoted(idx, 4, true);
+				int idx = kernel_message_add(quote_string(kernel.quotes, local._prisonerMessageId), 5, 51, 0xFDFC, 120, 81, 0);
+				kernel_message_teletype(idx, 4, true);
 				local._prisonerMessageId++;
 				if (local._prisonerMessageId > 0x10A)
 					local._prisonerMessageId = 0x104;
 			} else if (global[kKnowsBuddyBeast] && (local._dialog2.read(0) > 1) && (g_engine->getRandomNumber(1, 3) == 1)) {
-				int idx = _scene->_kernelMessages.add(Common::Point(5, 51), 0xFDFC, 0, 81, 120, quote_string(kernel.quotes, 267));
-				_scene->_kernelMessages.setQuoted(idx, 4, true);
+				int idx = kernel_message_add(quote_string(kernel.quotes, 267), 5, 51, 0xFDFC, 120, 81, 0);
+				kernel_message_teletype(idx, 4, true);
 			}
 			local._prisonerTimer = 0;
 		}
@@ -486,8 +486,8 @@ static void room_307_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 239));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 239), 0, 0, 0x1110, 120, 0, 34);
 			_scene->_sequences.addTimer(120, 1);
 			break;
 
@@ -532,8 +532,8 @@ static void room_307_parser() {
 
 		case 5:
 			g_engine->_soundManager->command(10, 0);
-			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 241));
+			kernel_message_purge();
+			kernel_message_add(quote_string(kernel.quotes, 241), 0, 0, 0x1110, 120, 0, 34);
 			_scene->_sequences.addTimer(120, 6);
 			break;
 
@@ -548,7 +548,7 @@ static void room_307_parser() {
 			int hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(129, 104), FACING_NORTH);
 			_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_UP);
 			inter_take_from_player(OBJ_SCALPEL, NOWHERE);
-			_scene->_kernelMessages.addQuote(0xF2, 7, 120);
+			kernel_message_player(0xF2, 120, 7);
 		}
 		break;
 
@@ -677,9 +677,9 @@ static void room_307_parser() {
 			case 3:
 			{
 				matte_deallocate_series(g_sprite_ids[3], true);
-				_scene->_kernelMessages.reset();
-				int idx = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 4, 120, quote_string(kernel.quotes, 237));
-				_scene->_kernelMessages.setQuoted(idx, 4, true);
+				kernel_message_purge();
+				int idx = kernel_message_add(quote_string(kernel.quotes, 237), 0, 0, 0x1110, 120, 4, 34);
+				kernel_message_teletype(idx, 4, true);
 			}
 			break;
 
@@ -693,9 +693,9 @@ static void room_307_parser() {
 				break;
 			}
 		} else {
-			_scene->_kernelMessages.reset();
-			int idx = _scene->_kernelMessages.add(Common::Point(85, 39), 0x1110, 0, 0, 180, quote_string(kernel.quotes, 238));
-			_scene->_kernelMessages.setQuoted(idx, 4, true);
+			kernel_message_purge();
+			int idx = kernel_message_add(quote_string(kernel.quotes, 238), 85, 39, 0x1110, 180, 0, 0);
+			kernel_message_teletype(idx, 4, true);
 		}
 	} else if (player_said_2(look, air_vent)) {
 		if (!local._grateOpenedFl)
