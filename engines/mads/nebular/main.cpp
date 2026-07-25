@@ -219,7 +219,7 @@ static void main_cold_data_init() {
 	Common::strcpy_s(save_game_key, "rex");
 	Common::strcpy_s(restart_game_key, "rex");
 
-	Common::strcpy_s(player.series_name, "RAL");
+	*player.series_name = '\0';
 	player.walker_must_reload = true;
 	player.walker_loads_first = false;
 	player.walker_visible = true;
@@ -336,7 +336,13 @@ void nebular_main() {
 		case 0:
 			// Start Game
 			game_main(2, CMD_LINE);
-			return;
+
+			if (win_status != WIN_NOTHING) {
+				selected_item = win_status + 16;
+			} else {
+				return;
+			}
+			break;
 
 		case 1: {
 			// Resume savegame
@@ -368,21 +374,24 @@ void nebular_main() {
 			selected_item = -1;
 			break;
 
-		case 17:
-			// Endgame cutscene
+		case WIN_QUICK_DEATH + 16:
 			AnimView::animview_main("@rexend1");
-			AnimView::animview_main("@rexend2");
-			AnimView::animview_main("@rexend3");
-			TextView::textview_main("ending4");
-			selected_item = -1;
-			break;
-
-		case 33:
 			TextView::textview_main("ending1");
+			return;
+
+		case WIN_SLOW_DEATH + 16:
+			AnimView::animview_main("@rexend2");
 			TextView::textview_main("ending2");
+			return;
+
+		case WIN_ALL_THE_MONEY + 16:
+			AnimView::animview_main("@rexend3");
 			TextView::textview_main("credits");
-			selected_item = -1;
-			break;
+			return;
+
+		case WIN_A_HEAD_POW + 16:
+			TextView::textview_main("ending4");
+			return;
 
 		case 5:
 		default:

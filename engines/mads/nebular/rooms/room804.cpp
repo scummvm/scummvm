@@ -75,15 +75,18 @@ static void room_804_init() {
 
 	if (global[kInSpace]) {
 		if (global[kWindowFixed]) {
+			// You're okay
 			g_sequence_ids[5] = kernel_seq_stamp(g_sprite_ids[5], 0, 1);
 			kernel_timing_trigger(60, 100);
 		} else {
+			// You're screwed
 			g_sequence_ids[6] = kernel_seq_stamp(g_sprite_ids[6], false, 1);
 			g_sequence_ids[7] = kernel_seq_pingpong(g_sprite_ids[7], false, 4, 0, 0, 0);
 			kernel_timing_trigger(160, 70);
 			player.commands_allowed = false;
 		}
 	} else {
+		// Still on the ground
 		if (global[kBeamIsUp]) {
 			g_sequence_ids[8] = kernel_seq_stamp(g_sprite_ids[8], false, 1);
 			kernel_seq_depth(g_sequence_ids[8], 7);
@@ -137,9 +140,8 @@ static void room_804_daemon() {
 				global[kInSpace] = false;
 				global[kBeamIsUp] = true;
 
-				//assert(!global[kCopyProtectFailed]);
-				win_status = 4;
-				return;
+				win_status = WIN_A_HEAD_POW;
+				game.going = false;
 			}
 			break;
 
@@ -149,10 +151,10 @@ static void room_804_daemon() {
 				global[kInSpace] = false;
 				global[kBeamIsUp] = true;
 
-				assert(!global[kCopyProtectFailed]);
-				win_status = 4;
-				return;
+				win_status = WIN_A_HEAD_POW;
+				game.going = false;
 			}
+			break;
 		}
 
 		if (kernel_anim[0].frame == 34) {

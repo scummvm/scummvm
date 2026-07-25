@@ -1160,16 +1160,8 @@ void game_control() {
 
 	} else if (!game_restore_flag) {
 		result = main_copy_verify();
-		if (result == COPY_FAIL) {
-			game.going = false;
-			force_chain = true;
-			game_restore_flag = false;
+		if (!game.going)
 			return;
-			
-		} else if (result == COPY_ESCAPE) {
-			game.going = false;
-			force_chain = true;
-		}
 	}
 
 	kernel.clock = timer_read();

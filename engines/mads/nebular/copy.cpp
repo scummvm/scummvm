@@ -26,6 +26,7 @@
 #include "mads/core/global.h"
 #include "mads/core/imath.h"
 #include "mads/nebular/copy.h"
+#include "mads/nebular/global.h"
 #include "mads/nebular/popup.h"
 
 namespace MADS {
@@ -212,7 +213,20 @@ int global_copy_verify() {
 	// remained the same, and if so, bypass the copy protection check. And even if there wasn't
 	// an existing match, it would only sometimes prompt the user
 
-	return copy_pop_and_ask();
+	int result = copy_pop_and_ask();
+
+	if (result == COPY_FAIL) {
+		new_room = 804;
+		new_section = 8;
+		global_init_code();
+		global[kCopyProtectFailed] = true;
+		game_restore_flag = false;
+
+	} else if (result == COPY_ESCAPE) {
+		game.going = false;
+	}
+
+	return result;
 }
 
 } // namespace RexNebular

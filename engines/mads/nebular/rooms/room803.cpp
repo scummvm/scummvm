@@ -213,11 +213,11 @@ static void room_803_daemon() {
 			global[kInSpace] = true;
 		} else {
 			if (!global[kShieldModInstalled])
-				win_status = 1;
+				win_status = WIN_QUICK_DEATH;
 			else if (!global[kTargetModInstalled])
-				win_status = 2;
+				win_status = WIN_SLOW_DEATH;
 			else
-				win_status = 3;
+				win_status = WIN_ALL_THE_MONEY;
 
 			game.going = false;
 			return;
