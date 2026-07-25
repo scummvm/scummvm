@@ -332,6 +332,11 @@ bool TTFFont::load(Common::SeekableReadStream *ttfFile, DisposeAfterUse::Flag di
 		_renderMode = FT_RENDER_MODE_MONO;
 		break;
 
+	case kTTFRenderModeNormalWithGridFitting:
+		_loadFlags = FT_LOAD_TARGET_MONO;
+		_renderMode = FT_RENDER_MODE_NORMAL;
+		break;
+
 	default:
 		break;
 	}

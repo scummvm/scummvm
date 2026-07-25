@@ -57,7 +57,13 @@ enum TTFRenderMode {
 	 * Render fully monochrome. This makes glyph pixels either be fully opaque
 	 * or fully transparent.
 	 */
-	kTTFRenderModeMonochrome
+	kTTFRenderModeMonochrome,
+
+	/**
+	 * Standard render mode, but uses strong grid-fitting.
+	 * Equivalent of FreeType2's FT_RENDER_MODE_NORMAL with FT_LOAD_TARGET_MONO
+	 */
+	kTTFRenderModeNormalWithGridFitting
 };
 
 /**
