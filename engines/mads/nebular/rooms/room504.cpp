@@ -68,7 +68,7 @@ static void room_504_init() {
 		g_sprite_ids[3] = kernel_load_series(kernel_name('a', 3), 0);
 		local._carAnimationMode = 1;
 		kernel_run_animation(kernel_name('A', -1), 0);
-		if ((previous_room != RETURNING_FROM_DIALOG) && (previous_room != 505))
+		if ((previous_room != KERNEL_RESTORING_GAME) && (previous_room != 505))
 			global[kHoverCarLocation] = previous_room;
 
 		g_sequence_ids[7] = kernel_seq_stamp(g_sprite_ids[7], false, 1);
@@ -151,7 +151,7 @@ static void room_504_parser() {
 			g_engine->_soundManager->command(39, 0);
 			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 6, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[3], 13);
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			kernel_seq_delete(g_sequence_ids[7]);
 			g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 18, 0, 0, 0);
 			kernel_seq_depth(g_sequence_ids[5], 14);
@@ -163,7 +163,7 @@ static void room_504_parser() {
 			g_sequence_ids[3] = kernel_seq_backward(g_sprite_ids[3], false, 6, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[3], 13);
 			kernel_seq_range(g_sequence_ids[3], 1, 6);
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			kernel_seq_timeout(syncIdx, g_sequence_ids[3]);
 		}
 		break;

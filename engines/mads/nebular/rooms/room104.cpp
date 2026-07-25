@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/core/quote.h"
 #include "mads/nebular/global.h"
@@ -47,7 +48,7 @@ static void room_104_init() {
 	if (previous_room == 105) {
 		player.x = 302;
 		player.y = 107;
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 160;
 		player.y = 134;
 	}
@@ -57,7 +58,7 @@ static void room_104_init() {
 	local._kargShootingFl = false;
 
 	if (g_engine->getRandomNumber(1, 3) == 1) {
-		kernel_run_animation(kernel_full_name(104, 'B', -1, "", EXT_AA), 0);
+		kernel_run_animation(kernel_full_name(104, 'B', -1, "", KERNEL_AA), 0);
 		local._kargShootingFl = true;
 	}
 
@@ -94,7 +95,7 @@ static void room_104_daemon() {
 				g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], mirrorFl, 7, 0, 0, 1);
 				kernel_seq_loc(g_sequence_ids[2], 198, 143);
 				kernel_seq_depth(g_sequence_ids[2], 4);
-				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 1);
 				break;
 
 			case 1:
@@ -128,7 +129,7 @@ static void room_104_daemon() {
 				kernel_seq_loc(g_sequence_ids[3], 198, 143);
 				kernel_seq_depth(g_sequence_ids[3], 4);
 				kernel_seq_range(g_sequence_ids[3], 1, 14);
-				kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 1);
 				break;
 
 			case 1:
@@ -136,7 +137,7 @@ static void room_104_daemon() {
 				kernel_seq_loc(g_sequence_ids[3], 198, 143);
 				kernel_seq_depth(g_sequence_ids[3], 4);
 				kernel_seq_range(g_sequence_ids[3], 15, 32);
-				kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 2:
@@ -169,9 +170,9 @@ static void room_104_daemon() {
 				g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 8, 0, 0, 1);
 				kernel_seq_loc(g_sequence_ids[4], 198, 143);
 				kernel_seq_depth(g_sequence_ids[4], 4);
-				kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
-				if (config_file.naughtiness >= STORYMODE_NICE)
-					kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_SPRITE, 15, 2);
+				kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 1);
+				if (config_file.naughtiness >= NICE)
+					kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_SPRITE, 15, 2);
 				break;
 
 			case 1:

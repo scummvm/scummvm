@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
@@ -59,13 +60,13 @@ static void putArmDown(bool corridorExit, bool doorwayExit) {
 		if (global[kSexOfRex] == REX_FEMALE) {
 			g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 5, 0, 0, 2);
 			kernel_seq_player(g_sequence_ids[3], false);
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 5, 2);
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_SPRITE, 5, 2);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 3);
 		} else {
 			g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 5, 0, 0, 2);
 			kernel_seq_player(g_sequence_ids[4], false);
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_SPRITE, 6, 2);
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_SPRITE, 6, 2);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 3);
 		}
 		break;
 
@@ -159,7 +160,7 @@ static void room_352_init() {
 
 	local._vaultOpenFl = false;
 
-	if (previous_room != RETURNING_FROM_DIALOG) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		local._mustPutArmDownFl = false;
 		if (!player.been_here_before)
 			global[kHaveYourStuff] = false;
@@ -176,7 +177,7 @@ static void room_352_init() {
 		player.x = 171;
 		player.y = 155;
 	}
-	else if (previous_room != RETURNING_FROM_DIALOG) {
+	else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 116;
 		player.y = 107;
 	}
@@ -208,7 +209,7 @@ static void room_352_pre_parser() {
 				kernel_seq_delete(local._commonSequenceIdx);
 				g_engine->_soundManager->command(20, 0);
 				local._commonSequenceIdx = kernel_seq_backward(local._commonSpriteIndex, false, 6, 0, 0, 1);
-				kernel_seq_trigger(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				kernel_seq_trigger(local._commonSequenceIdx, KERNEL_TRIGGER_EXPIRE, 0, 1);
 				kernel_seq_depth(local._commonSequenceIdx, 15);
 			}
 			break;
@@ -261,7 +262,7 @@ static void room_352_parser() {
 
 				local._commonSequenceIdx = kernel_seq_forward(local._commonSpriteIndex, false, 8, 0, 0, 1);
 				kernel_seq_timeout(-1, local._commonSequenceIdx);
-				kernel_seq_trigger(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				kernel_seq_trigger(local._commonSequenceIdx, KERNEL_TRIGGER_EXPIRE, 0, 1);
 				break;
 
 			case 1:
@@ -272,7 +273,7 @@ static void room_352_parser() {
 				int oldIdx = local._commonSequenceIdx;
 				local._commonSequenceIdx = kernel_seq_stamp(local._commonSpriteIndex, false, -2);
 				kernel_seq_timeout(oldIdx, local._commonSequenceIdx);
-				kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(g_sequence_ids[12], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			}
 			break;
 
@@ -281,7 +282,7 @@ static void room_352_parser() {
 				kernel_seq_delete(local._commonSequenceIdx);
 				local._commonSequenceIdx = kernel_seq_pingpong(local._commonSpriteIndex, false, 8, 0, 0, 1);
 				kernel_seq_range(local._commonSequenceIdx, 1, 3);
-				kernel_seq_trigger(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+				kernel_seq_trigger(local._commonSequenceIdx, KERNEL_TRIGGER_EXPIRE, 0, 3);
 				break;
 
 			case 3:
@@ -339,13 +340,13 @@ static void room_352_parser() {
 				if (global[kSexOfRex] == REX_FEMALE) {
 					g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 5, 0, 0, 2);
 					kernel_seq_player(g_sequence_ids[3], false);
-					kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 5, 1);
-					kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+					kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_SPRITE, 5, 1);
+					kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 2);
 				} else {
 					g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 5, 0, 0, 2);
 					kernel_seq_player(g_sequence_ids[4], false);
-					kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_SPRITE, 6, 1);
-					kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+					kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_SPRITE, 6, 1);
+					kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 2);
 				}
 				break;
 
@@ -382,7 +383,7 @@ static void room_352_parser() {
 
 				local._commonSequenceIdx = kernel_seq_forward(local._commonSpriteIndex, false, 8, 0, 0, 1);
 				kernel_seq_timeout(-1, local._commonSequenceIdx);
-				kernel_seq_trigger(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				kernel_seq_trigger(local._commonSequenceIdx, KERNEL_TRIGGER_EXPIRE, 0, 1);
 				break;
 
 			case 1:
@@ -393,7 +394,7 @@ static void room_352_parser() {
 				int oldIdx = local._commonSequenceIdx;
 				local._commonSequenceIdx = kernel_seq_stamp(local._commonSpriteIndex, false, -2);
 				kernel_seq_timeout(oldIdx, local._commonSequenceIdx);
-				kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(g_sequence_ids[12], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			}
 			break;
 
@@ -402,7 +403,7 @@ static void room_352_parser() {
 				kernel_seq_delete(local._commonSequenceIdx);
 				local._commonSequenceIdx = kernel_seq_backward(local._commonSpriteIndex, false, 8, 0, 0, 1);
 				kernel_seq_range(local._commonSequenceIdx, 1, 4);
-				kernel_seq_trigger(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+				kernel_seq_trigger(local._commonSequenceIdx, KERNEL_TRIGGER_EXPIRE, 0, 3);
 				break;
 
 
@@ -417,7 +418,7 @@ static void room_352_parser() {
 				g_engine->_soundManager->command(20, 0);
 				local._commonSequenceIdx = kernel_seq_forward(local._commonSpriteIndex, false, 6, 0, 0, 1);
 				kernel_seq_depth(local._commonSequenceIdx, 15);
-				kernel_seq_trigger(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 4);
+				kernel_seq_trigger(local._commonSequenceIdx, KERNEL_TRIGGER_EXPIRE, 0, 4);
 				break;
 
 			case 4:
@@ -465,14 +466,14 @@ static void room_352_parser() {
 				g_sequence_ids[14] = kernel_seq_pingpong(g_sprite_ids[14], false, 8, 0, 0, 1);
 				kernel_seq_range(g_sequence_ids[14], 1, 2);
 				kernel_seq_player(g_sequence_ids[14], false);
-				kernel_seq_trigger(g_sequence_ids[14], SEQUENCE_TRIGGER_SPRITE, 2, 1);
-				kernel_seq_trigger(g_sequence_ids[14], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(g_sequence_ids[14], KERNEL_TRIGGER_SPRITE, 2, 1);
+				kernel_seq_trigger(g_sequence_ids[14], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			} else {
 				g_sequence_ids[15] = kernel_seq_pingpong(g_sprite_ids[15], false, 8, 0, 0, 1);
 				kernel_seq_range(g_sequence_ids[15], 1, 2);
 				kernel_seq_player(g_sequence_ids[15], false);
-				kernel_seq_trigger(g_sequence_ids[15], SEQUENCE_TRIGGER_SPRITE, 2, 1);
-				kernel_seq_trigger(g_sequence_ids[15], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(g_sequence_ids[15], KERNEL_TRIGGER_SPRITE, 2, 1);
+				kernel_seq_trigger(g_sequence_ids[15], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			}
 			break;
 
@@ -511,13 +512,13 @@ static void room_352_parser() {
 			if (global[kSexOfRex] == REX_MALE) {
 				g_sequence_ids[6] = kernel_seq_pingpong(g_sprite_ids[6], true, 6, 0, 0, 2);
 				kernel_seq_player(g_sequence_ids[6], false);
-				kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_SPRITE, 6, 1);
-				kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(g_sequence_ids[6], KERNEL_TRIGGER_SPRITE, 6, 1);
+				kernel_seq_trigger(g_sequence_ids[6], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			} else {
 				g_sequence_ids[7] = kernel_seq_pingpong(g_sprite_ids[7], true, 6, 0, 0, 2);
 				kernel_seq_player(g_sequence_ids[7], false);
-				kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_SPRITE, 6, 1);
-				kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(g_sequence_ids[7], KERNEL_TRIGGER_SPRITE, 6, 1);
+				kernel_seq_trigger(g_sequence_ids[7], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			}
 			break;
 
@@ -544,7 +545,7 @@ static void room_352_parser() {
 	} else if (player_said_2(look, scanner))
 		text_show(35210);
 	else if (player_said_2(look, monitor)) {
-		if (config_file.naughtiness == STORYMODE_NAUGHTY)
+		if (config_file.naughtiness == NAUGHTY)
 			text_show(35211);
 		else
 			text_show(35212);

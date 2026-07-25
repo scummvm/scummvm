@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
@@ -40,7 +41,7 @@ static Scratch local;
 
 static void room_359_init() {
 	g_sprite_ids[1] = kernel_load_series(kernel_name('b', -1), 0);
-	g_sprite_ids[3] = kernel_load_series(kernel_full_name(307, 'X', 0, "", EXT_SS), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_full_name(307, 'X', 0, "", KERNEL_SS), 0);
 
 	if (global[kSexOfRex] == REX_MALE)
 		g_sprite_ids[2] = kernel_load_series("*RXMBD_2", 0);
@@ -61,7 +62,7 @@ static void room_359_init() {
 		player.x = 301;
 		player.y = 141;
 	}
-	else if (previous_room != RETURNING_FROM_DIALOG) {
+	else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 15;
 		player.y = 148;
 	}
@@ -93,14 +94,14 @@ static void room_359_parser() {
 				if (global[kSexOfRex] == REX_MALE) {
 					g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 4, 0, 0, 2);
 					kernel_seq_player(g_sequence_ids[2], false);
-					kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 6, 1);
-					kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+					kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_SPRITE, 6, 1);
+					kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 2);
 				} else {
 					g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], true, 7, 0, 0, 2);
 					kernel_seq_player(g_sequence_ids[4], false);
 					kernel_seq_loc(g_sequence_ids[4], 106, 110);
-					kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_SPRITE, 6, 1);
-					kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+					kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_SPRITE, 6, 1);
+					kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 2);
 				}
 				break;
 
@@ -143,7 +144,7 @@ static void room_359_parser() {
 		text_show(35918);
 	else if (player_said_2(take, limb))
 		text_show(35919);
-	else if (player_said_2(look, security_card) && (player.main_object_source == CAT_HOTSPOT))
+	else if (player_said_2(look, security_card) && (player.main_object_source == STROKE_INTERFACE))
 		text_show(35921);
 	else if (player_said_2(look, blood_stain)) {
 		if ((game.difficulty != DIFFICULTY_HARD) && (object[OBJ_SECURITY_CARD].location == 359))

@@ -98,7 +98,7 @@ static void room_205_init() {
 	if (global[kSexOfRex] == SEX_FEMALE)
 		kernel_random_messages_init(3, 195, 264, 99, 134, 13, 2, 0xFDFC, 60, 108, 108, 109, 109, 110, 110, 111, 108, 0);
 
-	if (previous_room != RETURNING_FROM_DIALOG) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 99;
 		player.y = 152;
 	}
@@ -112,9 +112,9 @@ static void room_205_init() {
 		player.walker_visible = false;
 		player.commands_allowed = false;
 		kernel_seq_depth(g_sequence_ids[8], 2);
-		kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_SPRITE, 6, 73);
-		kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_SPRITE, 11, 74);
-		kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		kernel_seq_trigger(g_sequence_ids[8], KERNEL_TRIGGER_SPRITE, 6, 73);
+		kernel_seq_trigger(g_sequence_ids[8], KERNEL_TRIGGER_SPRITE, 11, 74);
+		kernel_seq_trigger(g_sequence_ids[8], KERNEL_TRIGGER_EXPIRE, 0, 71);
 	}
 
 	section_2_music();
@@ -165,7 +165,7 @@ static void handleWomanSpeech(int quote) {
 }
 
 static void room_205_parser() {
-	if (inter_input_mode == kInputConversation) {
+	if (inter_input_mode == INTER_CONVERSATION) {
 		if (local._kernelMessage >= 0)
 			kernel_message_delete(local._kernelMessage);
 		local._kernelMessage = -1;
@@ -210,7 +210,7 @@ static void room_205_parser() {
 
 			case 0x77:
 				kernel_message_add(quote_string(kernel.quotes, 0x7F), 186, 27, 0xFBFA, 120, 0, 0);
-				kernel_set_interface_mode(kInputBuildingSentences);
+				kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 				break;
 
 			default:
@@ -252,7 +252,7 @@ static void room_205_parser() {
 			g_sprite_ids[9] = kernel_load_series(kernel_name('a', 0), 0);
 			kernel_new_palette();
 			g_sequence_ids[9] = kernel_seq_forward(g_sprite_ids[9], false, 6, 0, 0, 1);
-			kernel_seq_trigger(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[9], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			kernel_seq_timeout(-1, g_sequence_ids[9]);
 			g_engine->_soundManager->command(27, 0);
 		} else if (kernel.trigger == 1) {
@@ -282,9 +282,9 @@ static void room_205_parser() {
 			text_show(20503);
 		else if (player_said_2(look, hut))
 			text_show(20504);
-		else if (player_said_2(look, chicken) && (player.main_object_source == CAT_HOTSPOT))
+		else if (player_said_2(look, chicken) && (player.main_object_source == STROKE_INTERFACE))
 			text_show(20505);
-		else if (player_said_2(take, chicken) && (player.main_object_source == CAT_HOTSPOT))
+		else if (player_said_2(take, chicken) && (player.main_object_source == STROKE_INTERFACE))
 			text_show(20506);
 		else if (player_said_2(look, chicken_on_spit))
 			text_show(20507);

@@ -33,7 +33,7 @@ namespace Rooms {
 
 static void room_805_init() {
 	player.walker_visible = false;
-	kernel_set_interface_mode(kInputLimitedSentences);
+	kernel_set_interface_mode(INTER_LIMITED_SENTENCES);
 
 	g_sprite_ids[1] = kernel_load_series(kernel_name('a', 1), 0);
 	g_sprite_ids[2] = kernel_load_series(kernel_name('a', 2), 0);
@@ -104,30 +104,30 @@ static void room_805_parser() {
 	if (player_said_2(exit, service_panel))
 		new_room = 804;
 	else if (player_said_2(install, shield_modulator) && player_has(OBJ_SHIELD_MODULATOR)) {
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 7, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[1], -1, -2);
-		kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+		kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 70);
 		player.commands_allowed = false;
 	} else if (player_said_2(install, target_module) && player_has(OBJ_TARGET_MODULE)) {
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 7, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[2], -1, -2);
-		kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
+		kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 80);
 		player.commands_allowed = false;
 	} else if (player_said_2(remove, shield_modulator) && global[kShieldModInstalled]) {
 		kernel_seq_delete(g_sequence_ids[1]);
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		g_sequence_ids[1] = kernel_seq_backward(g_sprite_ids[1], false, 7, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[1], -1, -2);
-		kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 71);
 		player.commands_allowed = false;
 	} else if (player_said_2(remove, target_module) && global[kTargetModInstalled]) {
 		kernel_seq_delete(g_sequence_ids[2]);
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		g_sequence_ids[2] = kernel_seq_backward(g_sprite_ids[2], false, 7, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[2], -1, -2);
-		kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
+		kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 81);
 		player.commands_allowed = false;
 	} else if (player_said_2(install, shield_modulator) && !player_has(OBJ_SHIELD_MODULATOR))
 		text_show(80511);

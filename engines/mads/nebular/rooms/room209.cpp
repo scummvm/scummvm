@@ -91,7 +91,7 @@ static void handlePeek() {
 		g_engine->_soundManager->command(18, 0);
 		g_sequence_ids[3] = kernel_seq_backward(g_sprite_ids[3], false, 8, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[3], 51, 52);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 134);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 134);
 		break;
 
 	case 134:
@@ -119,7 +119,7 @@ static void handlePeek() {
 		kernel_seq_delete(g_sequence_ids[3]);
 		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 8, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[3], 51, 52);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 138);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 138);
 		break;
 
 	case 138:
@@ -138,7 +138,7 @@ static void handleVerticalMove() {
 	case 140:
 		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 8, 1, 0, 8);
 		kernel_seq_range(g_sequence_ids[3], 1, 5);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 141);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 141);
 		break;
 
 	case 141:
@@ -155,7 +155,7 @@ static void handleVerticalMove() {
 		kernel_seq_delete(g_sequence_ids[3]);
 		g_sequence_ids[3] = kernel_seq_backward(g_sprite_ids[3], false, 8, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[3], 1, 5);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 143);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 143);
 		break;
 
 	case 143:
@@ -176,7 +176,7 @@ static void handleLookStay() {
 		local._monkeyPosition = 2;
 		g_sequence_ids[3] = kernel_seq_backward(g_sprite_ids[3], false, 8, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[3], 51, 52);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 146);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 146);
 		break;
 
 	case 146:
@@ -221,7 +221,7 @@ static void handleLookRight() {
 		kernel_seq_delete(g_sequence_ids[3]);
 		g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 8, 0, 0, 2);
 		kernel_seq_range(g_sequence_ids[3], 8, 14);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 152);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 152);
 		break;
 
 	case 152:
@@ -283,11 +283,11 @@ static void handleGetBinoculars() {
 		kernel_seq_delete(g_sequence_ids[3]);
 		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 8, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[3], 8, 24);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 20, 165);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_SPRITE, 20, 165);
 		if (!local._fallFl && !local._dodgeFl) {
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 162);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 162);
 		} else {
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 163);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 163);
 		}
 		break;
 
@@ -297,7 +297,7 @@ static void handleGetBinoculars() {
 		g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 8, 0, 0, 6);
 		kernel_seq_range(g_sequence_ids[3], 23, 25);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[3]);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 163);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 163);
 	}
 	break;
 
@@ -335,7 +335,7 @@ static void handleBinocularBlink() {
 		g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 8, 0, 0, 2);
 		kernel_seq_range(g_sequence_ids[3], 23, 25);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[3]);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 168);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 168);
 	}
 	break;
 
@@ -369,7 +369,7 @@ static void handleBinocularScan() {
 		g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 12, 0, 0, 2);
 		kernel_seq_range(g_sequence_ids[3], 43, 45);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[3]);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 172);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 172);
 	}
 	break;
 
@@ -389,7 +389,7 @@ static void handleBinocularScan() {
 		}
 		kernel_seq_range(g_sequence_ids[3], 23, 25);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[3]);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 173);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 173);
 	}
 	break;
 
@@ -399,7 +399,7 @@ static void handleBinocularScan() {
 		g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 12, 0, 0, 2);
 		kernel_seq_range(g_sequence_ids[3], 26, 30);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[3]);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 174);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 174);
 	}
 	break;
 
@@ -440,7 +440,7 @@ static void handleJumpInTree() {
 		if (!local._removeMonkeyFl)
 			kernel_seq_timeout(oldIdx, g_sequence_ids[3]);
 
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 179);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 179);
 	}
 	break;
 
@@ -451,7 +451,7 @@ static void handleJumpInTree() {
 		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 8, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[3], 53, 61);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[3]);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 180);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 180);
 	}
 	break;
 
@@ -476,7 +476,7 @@ static void handleTongue() {
 		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 12, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[3], 26, 30);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[3]);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 183);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 183);
 	}
 	break;
 
@@ -486,7 +486,7 @@ static void handleTongue() {
 		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 12, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[3], 31, 33);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[3]);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 184);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 184);
 	}
 	break;
 
@@ -496,7 +496,7 @@ static void handleTongue() {
 		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 12, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[3], 36, 37);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[3]);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 185);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 185);
 	}
 	break;
 
@@ -507,7 +507,7 @@ static void handleTongue() {
 		g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 6, 0, 0, 20);
 		kernel_seq_range(g_sequence_ids[3], 38, 39);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[3]);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 186);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 186);
 	}
 	break;
 
@@ -517,7 +517,7 @@ static void handleTongue() {
 		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 12, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[3], 40, 41);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[3]);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 178);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 178);
 		local._removeMonkeyFl = false;
 	}
 	break;
@@ -546,7 +546,7 @@ static void handleStandFromPeek() {
 		kernel_seq_delete(g_sequence_ids[3]);
 		g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 8, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[6], 1, 5);
-		kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 192);
+		kernel_seq_trigger(g_sequence_ids[6], KERNEL_TRIGGER_EXPIRE, 0, 192);
 		break;
 
 	case 192:
@@ -612,7 +612,7 @@ static void handleJumpAndHide() {
 		kernel_seq_delete(g_sequence_ids[4]);
 		g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 8, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[5], 1, 16);
-		kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 197);
+		kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, 197);
 		break;
 
 	case 197:
@@ -633,7 +633,7 @@ static void handleMonkeyEating() {
 		kernel_seq_delete(g_sequence_ids[4]);
 		g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 10, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[4], 1, 14);
-		kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 200);
+		kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 200);
 		break;
 
 	case 200:
@@ -642,7 +642,7 @@ static void handleMonkeyEating() {
 		g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 10, 0, 0, 10);
 		kernel_seq_range(g_sequence_ids[4], 15, 16);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[4]);
-		kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 201);
+		kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 201);
 	}
 	break;
 
@@ -671,7 +671,7 @@ static void handleMonkeyEating() {
 		kernel_seq_delete(g_sequence_ids[4]);
 		g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 10, 0, 0, 8);
 		kernel_seq_range(g_sequence_ids[4], 18, 19);
-		kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 205);
+		kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 205);
 		break;
 
 	case 205:
@@ -680,7 +680,7 @@ static void handleMonkeyEating() {
 		g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 10, 0, 0, 8);
 		kernel_seq_range(g_sequence_ids[4], 20, 21);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[4]);
-		kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 206);
+		kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 206);
 	}
 	break;
 
@@ -691,9 +691,9 @@ static void handleMonkeyEating() {
 		kernel_seq_range(g_sequence_ids[4], 22, 25);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[4]);
 		if (!local._dodgeFl && !local._fallFl)
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 207);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 207);
 		else
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 209);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 209);
 	}
 	break;
 
@@ -707,7 +707,7 @@ static void handleMonkeyEating() {
 		g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 15, 0, 0, 4);
 		kernel_seq_range(g_sequence_ids[4], 26, 27);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[4]);
-		kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 208);
+		kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 208);
 	}
 	break;
 
@@ -718,7 +718,7 @@ static void handleMonkeyEating() {
 		g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 10, 0, 0, 4);
 		kernel_seq_range(g_sequence_ids[4], 28, 29);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[4]);
-		kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 209);
+		kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 209);
 	}
 	break;
 
@@ -761,7 +761,7 @@ static void handleMonkeyFall() {
 		kernel_seq_range(g_sequence_ids[8], 1, 35);
 		kernel_seq_depth(g_sequence_ids[8], 6);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[3]);
-		kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 220);
+		kernel_seq_trigger(g_sequence_ids[8], KERNEL_TRIGGER_EXPIRE, 0, 220);
 	}
 	break;
 
@@ -777,7 +777,7 @@ static void handleMonkeyFall() {
 		kernel_seq_range(g_sequence_ids[8], 36, 42);
 		kernel_seq_depth(g_sequence_ids[8], 6);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[3]);
-		kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 221);
+		kernel_seq_trigger(g_sequence_ids[8], KERNEL_TRIGGER_EXPIRE, 0, 221);
 	}
 	break;
 
@@ -793,7 +793,7 @@ static void handleMonkeyFall() {
 		kernel_seq_depth(g_sequence_ids[9], 8);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[8]);
 		kernel_seq_range(g_sequence_ids[8], 43, 72);
-		kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 222);
+		kernel_seq_trigger(g_sequence_ids[8], KERNEL_TRIGGER_EXPIRE, 0, 222);
 		int idx = kernel_add_dynamic(words_binoculars, words_walkto, 0, g_sequence_ids[9], 0, 0, 0, 0);
 		kernel_dynamic_walk(idx, 200, 133, FACING_NORTH);
 	}
@@ -806,12 +806,12 @@ static void handleMonkeyFall() {
 		g_sequence_ids[8] = kernel_seq_forward(g_sprite_ids[8], false, 8, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[8], 73, 78);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[8]);
-		kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 223);
+		kernel_seq_trigger(g_sequence_ids[8], KERNEL_TRIGGER_EXPIRE, 0, 223);
 	}
 	break;
 
 	case 223:
-		kernel_run_animation(kernel_full_name(209, 'e', -1, "", EXT_AA), 224);
+		kernel_run_animation(kernel_full_name(209, 'e', -1, "", KERNEL_AA), 224);
 		g_engine->_soundManager->command(38, 0);
 		break;
 
@@ -835,7 +835,7 @@ static void handleMonkey1() {
 		kernel_seq_delete(g_sequence_ids[4]);
 		g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 9, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[4], 1, 13);
-		kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 213);
+		kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 213);
 		break;
 
 	case 213:
@@ -844,7 +844,7 @@ static void handleMonkey1() {
 		g_sequence_ids[7] = kernel_seq_forward(g_sprite_ids[7], false, 7, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[7], 1, 22);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[7]);
-		kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 214);
+		kernel_seq_trigger(g_sequence_ids[7], KERNEL_TRIGGER_EXPIRE, 0, 214);
 	}
 	break;
 
@@ -854,7 +854,7 @@ static void handleMonkey1() {
 		g_sequence_ids[7] = kernel_seq_forward(g_sprite_ids[7], false, 7, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[7], 23, 26);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[7]);
-		kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 215);
+		kernel_seq_trigger(g_sequence_ids[7], KERNEL_TRIGGER_EXPIRE, 0, 215);
 		int msgIndex = kernel_message_add(quote_string(kernel.quotes, 156), 170, 21, 0xFDFC, 90, 0, 0);
 		kernel_message_teletype(msgIndex, 3, true);
 	}
@@ -863,12 +863,12 @@ static void handleMonkey1() {
 	case 215:
 	{
 		g_engine->_soundManager->command(18, 0);
-		kernel_run_animation(kernel_full_name(209, 'a', -1, "", EXT_AA), 251);
+		kernel_run_animation(kernel_full_name(209, 'a', -1, "", KERNEL_AA), 251);
 		int oldIdx = g_sequence_ids[7];
 		g_sequence_ids[7] = kernel_seq_forward(g_sprite_ids[7], false, 7, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[7], 27, 35);
 		kernel_seq_timeout(oldIdx, g_sequence_ids[7]);
-		kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 216);
+		kernel_seq_trigger(g_sequence_ids[7], KERNEL_TRIGGER_EXPIRE, 0, 216);
 	}
 	break;
 
@@ -902,7 +902,7 @@ static void handleMonkey2() {
 		kernel_seq_loc(g_sequence_ids[12], 111, 133);
 		kernel_seq_scale(g_sequence_ids[12], 79);
 		kernel_seq_range(g_sequence_ids[12], 1, 6);
-		kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 252);
+		kernel_seq_trigger(g_sequence_ids[12], KERNEL_TRIGGER_EXPIRE, 0, 252);
 		player.clock = kernel.clock - player.frame_delay;
 		player.walker_visible = false;
 		break;
@@ -998,7 +998,7 @@ static void room_209_init() {
 		player.x = 11;
 		player.y = 121;
 		player.facing = FACING_EAST;
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 28;
 		player.y = 121;
 		player.facing = FACING_SOUTH;
@@ -1270,7 +1270,7 @@ static void room_209_daemon() {
 			kernel_seq_range(g_sequence_ids[2], 1, 7);
 			kernel_seq_loc(g_sequence_ids[2], 116, 131);
 			kernel_seq_depth(g_sequence_ids[2], 4);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 229);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 229);
 			break;
 
 		case 229:
@@ -1290,7 +1290,7 @@ static void room_209_daemon() {
 			kernel_seq_range(g_sequence_ids[2], 1, 7);
 			kernel_seq_loc(g_sequence_ids[2], 116, 131);
 			kernel_seq_depth(g_sequence_ids[2], 4);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 231);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 231);
 			break;
 
 		case 231:
@@ -1301,7 +1301,7 @@ static void room_209_daemon() {
 			kernel_seq_loc(g_sequence_ids[2], 116, 131);
 			kernel_seq_depth(g_sequence_ids[2], 4);
 			kernel_seq_timeout(oldIdx, g_sequence_ids[2]);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 232);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 232);
 			player.clock = kernel.clock - player.frame_delay;
 			kernel_seq_timeout(-1, g_sequence_ids[2]);
 			player.walker_visible = false;
@@ -1336,14 +1336,14 @@ static void room_209_daemon() {
 				kernel_seq_range(g_sequence_ids[2], 11, 12);
 				kernel_seq_loc(g_sequence_ids[2], 116, 131);
 				kernel_seq_depth(g_sequence_ids[2], 4);
-				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 12, 239);
-				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 235);
+				kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_SPRITE, 12, 239);
+				kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 235);
 			} else if (player_said_3(shoot, blowgun, monkey)) {
 				g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 8, 0, 0, 1);
 				kernel_seq_range(g_sequence_ids[2], 11, 12);
 				kernel_seq_loc(g_sequence_ids[2], 116, 131);
 				kernel_seq_depth(g_sequence_ids[2], 4);
-				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 235);
+				kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 235);
 				g_engine->_soundManager->command(23, 0);
 			}
 			break;
@@ -1367,7 +1367,7 @@ static void room_209_daemon() {
 			kernel_seq_range(g_sequence_ids[2], 14, 16);
 			kernel_seq_loc(g_sequence_ids[2], 116, 131);
 			kernel_seq_depth(g_sequence_ids[2], 4);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 237);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 237);
 			break;
 
 		case 237:
@@ -1563,7 +1563,7 @@ static void room_209_parser() {
 		if ((player_said_1(shoot) || player_said_1(hose_down)) && player_said_1(monkey)
 			&& player_said_1(blowgun) && player_has(OBJ_BLOWGUN) && player_has(OBJ_POISON_DARTS)) {
 			if (player_said_3(shoot, blowgun, monkey) && !local._startShootingInTimerFl) {
-				kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+				kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 				kernel_timing_trigger(1, 231);
 				local._startShootingInTimerFl = true;
 				player.commands_allowed = false;
@@ -1573,7 +1573,7 @@ static void room_209_parser() {
 			}
 
 			if (player_said_3(hose_down, blowgun, monkey) && !local._startShootingInTimerFl) {
-				kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+				kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 				kernel_timing_trigger(1, 228);
 				player.commands_allowed = false;
 				local._fallFl = true;
@@ -1599,8 +1599,8 @@ static void room_209_parser() {
 			player.walker_visible = false;
 			g_sequence_ids[11] = kernel_seq_pingpong(g_sprite_ids[11], false, 3, 0, 0, 2);
 			kernel_seq_player(g_sequence_ids[11], false);
-			kernel_seq_trigger(g_sequence_ids[11], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-			kernel_seq_trigger(g_sequence_ids[11], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[11], KERNEL_TRIGGER_SPRITE, 4, 1);
+			kernel_seq_trigger(g_sequence_ids[11], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
@@ -1633,8 +1633,8 @@ static void room_209_parser() {
 			player.walker_visible = false;
 			g_sequence_ids[10] = kernel_seq_pingpong(g_sprite_ids[10], false, 3, 0, 0, 2);
 			kernel_seq_player(g_sequence_ids[10], false);
-			kernel_seq_trigger(g_sequence_ids[10], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-			kernel_seq_trigger(g_sequence_ids[10], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[10], KERNEL_TRIGGER_SPRITE, 4, 1);
+			kernel_seq_trigger(g_sequence_ids[10], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:

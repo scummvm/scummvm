@@ -39,7 +39,7 @@ static Scratch local;
 
 
 static void room_808_init() {
-	kernel_set_interface_mode(kInputLimitedSentences);
+	kernel_set_interface_mode(INTER_LIMITED_SENTENCES);
 
 	g_sprite_ids[4] = kernel_load_series("*REXHAND", 0);
 	g_sprite_ids[1] = kernel_load_series(kernel_name('b', 0), 0);
@@ -87,7 +87,7 @@ static void room_808_parser() {
 			g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 4, 0, 0, 1);
 			kernel_seq_loc(g_sequence_ids[4], 248, 211);
 			kernel_seq_depth(g_sequence_ids[4], 2);
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 70);
 			break;
 
 		case 70:
@@ -101,7 +101,7 @@ static void room_808_parser() {
 			g_sequence_ids[4] = kernel_seq_backward(g_sprite_ids[4], false, 4, 0, 0, 1);
 			kernel_seq_loc(g_sequence_ids[4], 248, 211);
 			kernel_seq_depth(g_sequence_ids[4], 2);
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 71);
 			break;
 
 		case 71:
@@ -123,7 +123,7 @@ static void room_808_parser() {
 			g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 4, 0, 0, 1);
 			kernel_seq_loc(g_sequence_ids[4], 248, 186);
 			kernel_seq_depth(g_sequence_ids[4], 2);
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 90);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 90);
 			break;
 		case 90:
 			if (global[kTopButtonPushed]) {
@@ -136,7 +136,7 @@ static void room_808_parser() {
 			g_sequence_ids[4] = kernel_seq_backward(g_sprite_ids[4], false, 4, 0, 0, 1);
 			kernel_seq_loc(g_sequence_ids[4], 248, 186);
 			kernel_seq_depth(g_sequence_ids[4], 2);
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 91);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 91);
 			break;
 
 		case 91:
@@ -153,7 +153,7 @@ static void room_808_parser() {
 			g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 4, 0, 0, 1);
 			kernel_seq_loc(g_sequence_ids[4], 248, 163);
 			kernel_seq_depth(g_sequence_ids[4], 2);
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 80);
 			break;
 
 		case 80:
@@ -167,7 +167,7 @@ static void room_808_parser() {
 			g_sequence_ids[4] = kernel_seq_backward(g_sprite_ids[4], false, 4, 0, 0, 1);
 			kernel_seq_loc(g_sequence_ids[4], 248, 163);
 			kernel_seq_depth(g_sequence_ids[4], 2);
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 81);
 			break;
 
 		case 81:
@@ -184,7 +184,7 @@ static void room_808_parser() {
 			g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 4, 0, 0, 2);
 			kernel_seq_loc(g_sequence_ids[4], 168, 211);
 			kernel_seq_depth(g_sequence_ids[4], 2);
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 70);
 			break;
 
 		case 70:
@@ -201,7 +201,7 @@ static void room_808_parser() {
 			g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 4, 0, 0, 2);
 			kernel_seq_loc(g_sequence_ids[4], 172, 163);
 			kernel_seq_depth(g_sequence_ids[4], 2);
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 80);
 			break;
 
 		case 80:
@@ -218,7 +218,7 @@ static void room_808_parser() {
 			g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 4, 0, 0, 2);
 			kernel_seq_loc(g_sequence_ids[4], 172, 186);
 			kernel_seq_depth(g_sequence_ids[4], 2);
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 90);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 90);
 			break;
 
 		case 90:

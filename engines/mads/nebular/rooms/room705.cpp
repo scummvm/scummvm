@@ -79,10 +79,10 @@ static void handleBottleInterface() {
 }
 
 static void setBottleSequence() {
-	kernel_set_interface_mode(kInputBuildingSentences);
+	kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 	player.commands_allowed = false;
 	kernel_seq_delete(g_sequence_ids[3]);
-	kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+	kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 	kernel_run_animation(kernel_name('F', -1), 90);
 }
 
@@ -109,7 +109,7 @@ static void handleFillBottle(int quote) {
 		break;
 
 	case 0x315:
-		kernel_set_interface_mode(kInputBuildingSentences);
+		kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 		break;
 
 	default:
@@ -128,8 +128,8 @@ static void room_705_init() {
 		player.commands_allowed = false;
 		g_sequence_ids[3] = kernel_seq_backward(g_sprite_ids[3], false, 9, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[3], 1, 4);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 71);
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.commands_allowed = false;
 		kernel_timing_trigger(1, 80);
 		g_engine->_soundManager->command(28, 0);
@@ -149,7 +149,7 @@ static void room_705_daemon() {
 	case 70:
 		g_sequence_ids[3] = kernel_seq_backward(g_sprite_ids[3], false, 9, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[3], 1, 4);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 71);
 		break;
 
 	case 71:
@@ -169,7 +169,7 @@ static void room_705_daemon() {
 	case 80:
 		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 9, 0, 0, 1);
 		kernel_seq_depth(g_sequence_ids[1], 2);
-		kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
+		kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 81);
 		break;
 
 	case 81:
@@ -226,7 +226,7 @@ static void room_705_daemon() {
 }
 
 static void room_705_parser() {
-	if (inter_input_mode == kInputConversation)
+	if (inter_input_mode == INTER_CONVERSATION)
 		handleFillBottle(player2.words[0]);
 	else if (player_said_2(steer_towards, open_water_to_south)) {
 		switch (kernel.trigger) {
@@ -235,7 +235,7 @@ static void room_705_parser() {
 			kernel_seq_delete(g_sequence_ids[3]);
 			g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 6, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[2], 2);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			g_engine->_soundManager->command(18, 0);
 			break;
 
@@ -260,7 +260,7 @@ static void room_705_parser() {
 			kernel_seq_delete(g_sequence_ids[3]);
 			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 6, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[3], 1, 16);
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:

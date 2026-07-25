@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
@@ -58,7 +59,7 @@ static void room_603_init() {
 		kernel_dynamic_walk(local._noteHotspotId, 242, 118, FACING_NORTHEAST);
 	}
 
-	if (previous_room != RETURNING_FROM_DIALOG) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 113;
 		player.y = 134;
 	}
@@ -78,8 +79,8 @@ static void room_603_parser() {
 				g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 8, 0, 0, 1);
 				kernel_seq_range(g_sequence_ids[4], 1, 5);
 				kernel_seq_player(g_sequence_ids[4], false);
-				kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_SPRITE, 5, 1);
-				kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_SPRITE, 5, 1);
+				kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 1:
@@ -159,7 +160,7 @@ static void room_603_parser() {
 			text_show(60327);
 		else
 			text_show(60328);
-	} else if (player_said_2(look, compact_case) && (player.main_object_source == CAT_HOTSPOT))
+	} else if (player_said_2(look, compact_case) && (player.main_object_source == STROKE_INTERFACE))
 		text_show(60329);
 	// For the next two checks, the second part of the check wasn't surrounded par parenthesis, which was obviously wrong
 	else if (player_said_1(look) && (player_said_1(bra) || player_said_1(boa) || player_said_1(slip)))

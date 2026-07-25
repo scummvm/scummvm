@@ -38,7 +38,7 @@ static void room_702_init() {
 		player.x = 13;
 		player.y = 145;
 		player.facing = FACING_EAST;
-	} else if (previous_room != RETURNING_FROM_DIALOG && previous_room != 620) {
+	} else if (previous_room != KERNEL_RESTORING_GAME && previous_room != 620) {
 		player.x = 289;
 		player.y = 138;
 		player_walk(262, 148, FACING_WEST);
@@ -76,15 +76,15 @@ static void room_702_parser() {
 		player.commands_allowed = false;
 		player.walker_visible = false;
 		new_room = 711;
-	} else if (player_said_2(take, bones) && (player.main_object_source == CAT_HOTSPOT) && (!player_has(OBJ_BONES) || kernel.trigger)) {
+	} else if (player_said_2(take, bones) && (player.main_object_source == STROKE_INTERFACE) && (!player_has(OBJ_BONES) || kernel.trigger)) {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
 			player.walker_visible = false;
 			g_sequence_ids[12] = kernel_seq_pingpong(g_sprite_ids[12], false, 5, 0, 0, 2);
 			kernel_seq_player(g_sequence_ids[12], false);
-			kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-			kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[12], KERNEL_TRIGGER_SPRITE, 4, 1);
+			kernel_seq_trigger(g_sequence_ids[12], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 		case 1:
 			g_engine->_soundManager->command(0xF, 0);
@@ -115,9 +115,9 @@ static void room_702_parser() {
 		text_show(70215);
 	else if (player_said_2(look, teleporter))
 		text_show(70216);
-	else if (player_said_2(look, bones) && (player.main_object_source == CAT_HOTSPOT))
+	else if (player_said_2(look, bones) && (player.main_object_source == STROKE_INTERFACE))
 		text_show(70217);
-	else if (player_said_2(take, bones) && (player.main_object_source == CAT_HOTSPOT)) {
+	else if (player_said_2(take, bones) && (player.main_object_source == STROKE_INTERFACE)) {
 		if (player_has(OBJ_BONES))
 			text_show(70219);
 	} else if (player_said_2(look, submerged_city))

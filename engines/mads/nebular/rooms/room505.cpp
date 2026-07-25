@@ -54,11 +54,11 @@ static void room_505_init() {
 	g_sprite_ids[11] = kernel_load_series(kernel_name('t', -1), 0);
 	g_sprite_ids[12] = kernel_load_series(kernel_name('e', -1), 0);
 
-	if (previous_room != RETURNING_FROM_DIALOG)
+	if (previous_room != KERNEL_RESTORING_GAME)
 		g_sequence_ids[12] = kernel_seq_backward(g_sprite_ids[12], false, 6, 0, 0, 1);
 
 	g_sequence_ids[13] = kernel_seq_forward(g_sprite_ids[13], false, 6, 0, 120, 1);
-	kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
+	kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 60);
 	kernel_timing_trigger(30, 62);
 
 	local._carLocations[0] = 501;
@@ -76,7 +76,7 @@ static void room_505_init() {
 	for (int i = 0; i < 9; i++) {
 		if (global[kHoverCarLocation] == local._carLocations[i]) {
 			local._homeSelectedId = i;
-			if (previous_room != RETURNING_FROM_DIALOG)
+			if (previous_room != KERNEL_RESTORING_GAME)
 				local._selectedId = i;
 		}
 	}
@@ -140,7 +140,7 @@ static void room_505_daemon() {
 					kernel_seq_delete(g_sequence_ids[0]);
 					kernel_seq_delete(g_sequence_ids[13]);
 					g_sequence_ids[13] = kernel_seq_backward(g_sprite_ids[13], false, 6, 0, 0, 1);
-					kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 63);
+					kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 63);
 					g_engine->_soundManager->command(18, 0);
 				}
 			}
@@ -265,7 +265,7 @@ static void room_505_daemon() {
 	case 62:
 		g_sequence_ids[9] = kernel_seq_forward(g_sprite_ids[9], false, 8, 0, 0, 1);
 		kernel_seq_depth(g_sequence_ids[9], 8);
-		kernel_seq_trigger(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 61);
+		kernel_seq_trigger(g_sequence_ids[9], KERNEL_TRIGGER_EXPIRE, 0, 61);
 		break;
 
 	case 63:

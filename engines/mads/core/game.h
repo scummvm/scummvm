@@ -25,6 +25,7 @@
 #include "common/serializer.h"
 #include "mads/core/general.h"
 #include "mads/core/global.h"
+#include "mads/core/kernel.h"
 #include "mads/core/object.h"
 #include "mads/core/player.h"
 #include "mads/core/quote.h"

@@ -48,7 +48,7 @@ static void room_308_init() {
 	init_forcefield(&local._forcefield, true);
 
 	g_sprite_ids[3] = kernel_load_series(kernel_name('b', 0), 0);
-	g_sprite_ids[4] = kernel_load_series(kernel_full_name(307, 'X', 0, "", EXT_SS), 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_full_name(307, 'X', 0, "", KERNEL_SS), 0);
 
 	pal_change_color(252, 63, 30, 20);
 	pal_change_color(253, 45, 15, 12);
@@ -87,7 +87,7 @@ static void room_308_daemon() {
 		kernel_message_purge();
 		int idx = kernel_message_add(quote_string(kernel.quotes, 244), 171, 21, 0xFDFC, 120, 0, 0);
 		kernel_message_teletype(idx, 2, true);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 71);
 	}
 	break;
 
@@ -107,7 +107,7 @@ static void room_308_daemon() {
 		kernel_seq_range(g_sequence_ids[3], 3, 4);
 		kernel_seq_depth(g_sequence_ids[3], 9);
 		kernel_message_purge();
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 73);
 		break;
 
 	case 73:
@@ -129,7 +129,7 @@ static void room_308_daemon() {
 		kernel_message_purge();
 		int idx = kernel_message_add(quote_string(kernel.quotes, 245), 171, 21, 0xFDFC, 120, 0, 0);
 		kernel_message_teletype(idx, 2, true);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 75);
 	}
 	break;
 
@@ -140,7 +140,7 @@ static void room_308_daemon() {
 		kernel_seq_range(g_sequence_ids[3], 8, 10);
 		kernel_seq_depth(g_sequence_ids[3], 9);
 		kernel_seq_timeout(seqIdx, g_sequence_ids[3]);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 76);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 76);
 	}
 	break;
 

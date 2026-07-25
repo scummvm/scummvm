@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/core/pal.h"
 #include "mads/nebular/global.h"
@@ -42,7 +43,7 @@ static Scratch local;
 
 
 static void room_389_init() {
-	kernel_set_interface_mode(kInputLimitedSentences);
+	kernel_set_interface_mode(INTER_LIMITED_SENTENCES);
 	local._monsterTime = 0;
 	local._circularQuoteId = 0x159;
 

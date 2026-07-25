@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
@@ -55,7 +56,7 @@ static void room_803_init() {
 
 	if (!global[kFromCockpit]) {
 		if (!global[kReturnFromCut]) {
-			if (previous_room != RETURNING_FROM_DIALOG) {
+			if (previous_room != KERNEL_RESTORING_GAME) {
 				player.x = 15;
 				player.y = 130;
 				player.facing = FACING_EAST;
@@ -71,7 +72,7 @@ static void room_803_init() {
 			kernel_seq_depth(g_sequence_ids[3], 15);
 			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 8, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[3], 1);
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 80);
 			g_engine->_soundManager->command(14, 0);
 		}
 
@@ -87,7 +88,7 @@ static void room_803_init() {
 			g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 12, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[5], 1, 6);
 			kernel_seq_depth(g_sequence_ids[5], 1);
-			kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 100);
+			kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, 100);
 		}
 	} else if (!global[kExitShip]) {
 		if (!global[kBeamIsUp]) {
@@ -96,7 +97,7 @@ static void room_803_init() {
 			player.commands_allowed = false;
 			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 8, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[3], 1);
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 130);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 130);
 			g_engine->_soundManager->command(14, 0);
 		} else {
 			g_sprite_ids[8] = kernel_load_series(kernel_name('c', 1), 0);
@@ -105,7 +106,7 @@ static void room_803_init() {
 			g_sequence_ids[8] = kernel_seq_stamp(g_sprite_ids[8], false, 1);
 			g_sequence_ids[8] = kernel_seq_forward(g_sprite_ids[8], false, 8, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[8], 1);
-			kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 140);
+			kernel_seq_trigger(g_sequence_ids[8], KERNEL_TRIGGER_EXPIRE, 0, 140);
 		}
 	} else {
 		player.commands_allowed = false;
@@ -134,7 +135,7 @@ static void room_803_daemon() {
 		if (!global[kHoppyDead]) {
 			g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 7, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[5], 7, 12);
-			kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 101);
+			kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, 101);
 		} else {
 			g_sequence_ids[5] = kernel_seq_stamp(g_sprite_ids[5], false, -2);
 			int idx = kernel_add_dynamic(words_guts, words_walkto, 0, g_sequence_ids[5], 0, 0, 0, 0);
@@ -178,12 +179,12 @@ static void room_803_daemon() {
 
 		g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 12, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[4], 1, 3);
-		kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 90);
+		kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 90);
 	}
 
 	if (kernel.trigger == 70) {
 		g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 8, 0, 0, 1);
-		kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 71);
 		g_engine->_soundManager->command(31, 0);
 	}
 
@@ -230,7 +231,7 @@ static void room_803_daemon() {
 		g_sequence_ids[6] = kernel_seq_backward(g_sprite_ids[6], false, 8, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[6], 1, 19);
 		kernel_seq_depth(g_sequence_ids[6], 4);
-		kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 151);
+		kernel_seq_trigger(g_sequence_ids[6], KERNEL_TRIGGER_EXPIRE, 0, 151);
 	}
 
 	if (kernel.trigger == 151) {
@@ -258,7 +259,7 @@ static void room_803_parser() {
 			g_sequence_ids[9] = kernel_seq_forward(g_sprite_ids[9], true, 6, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[9], 1, 4);
 			kernel_seq_player(g_sequence_ids[9], false);
-			kernel_seq_trigger(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 160);
+			kernel_seq_trigger(g_sequence_ids[9], KERNEL_TRIGGER_EXPIRE, 0, 160);
 			break;
 
 		case 160:
@@ -284,7 +285,7 @@ static void room_803_parser() {
 			g_sequence_ids[9] = kernel_seq_backward(g_sprite_ids[9], true, 6, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[9], 1, 4);
 			kernel_seq_player(g_sequence_ids[9], false);
-			kernel_seq_trigger(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 163);
+			kernel_seq_trigger(g_sequence_ids[9], KERNEL_TRIGGER_EXPIRE, 0, 163);
 			break;
 
 		case 163:
@@ -299,11 +300,11 @@ static void room_803_parser() {
 	} else if (player_said_2(enter, ship)) {
 		g_engine->_soundManager->command(17, 0);
 		player.commands_allowed = false;
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 8, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[6], 1, 19);
 		kernel_seq_depth(g_sequence_ids[6], 4);
-		kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 120);
+		kernel_seq_trigger(g_sequence_ids[6], KERNEL_TRIGGER_EXPIRE, 0, 120);
 		global[kBeamIsUp] = false;
 	} else if (player_said_2(look, launch_pad))
 		text_show(80310);
@@ -312,7 +313,7 @@ static void room_803_parser() {
 	else if (player_said_2(look, pad_to_west))
 		text_show(80311);
 	else if (player_said_2(look, guts)) {
-		if (config_file.naughtiness == STORYMODE_NICE)
+		if (config_file.naughtiness == NICE)
 			text_show(80312);
 		else
 			text_show(80313);

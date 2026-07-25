@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/core/pal.h"
 #include "mads/nebular/global.h"
@@ -102,7 +103,7 @@ static void newNode(int node) {
 static void setDialogNode(int node) {
 	switch (node) {
 	case 0:
-		kernel_set_interface_mode(kInputBuildingSentences);
+		kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 		local._shouldFaceRex = false;
 		local._shouldTalk = false;
 		player.commands_allowed = true;
@@ -176,7 +177,7 @@ static void setDialogNode(int node) {
 			player.commands_allowed = false;
 
 			int quote;
-			if (config_file.naughtiness == STORYMODE_NAUGHTY)
+			if (config_file.naughtiness == NAUGHTY)
 				quote = g_engine->getRandomNumber(199, 201);
 			else
 				quote = g_engine->getRandomNumber(197, 198);
@@ -188,7 +189,7 @@ static void setDialogNode(int node) {
 				kernel_timing_trigger(6, 1);
 			}
 		} else {
-			kernel_set_interface_mode(kInputBuildingSentences);
+			kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 			local._shouldFaceRex = false;
 			local._shouldTalk = false;
 			player.commands_allowed = true;
@@ -321,7 +322,7 @@ static void setDialogNode(int node) {
 			player.commands_allowed = false;
 			if (local._twinklesTalking) {
 				inter_reset_dialog();
-				kernel_set_interface_mode(kInputConversation);
+				kernel_set_interface_mode(INTER_CONVERSATION);
 				handleTwinklesSpeech(0xE4, -1, 0);
 				kernel_timing_trigger(180, 2);
 			} else {
@@ -627,7 +628,7 @@ static void room_210_init() {
 		player.y = 128;
 		player.facing = FACING_SOUTH;
 		global[kCurtainOpen] = true;
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 308;
 		player.y = 132;
 	}
@@ -639,7 +640,7 @@ static void room_210_init() {
 		int idx = kernel_add_dynamic(words_doorway, words_walk_through, 0, -1, 163, 87, 19, 36);
 		kernel_dynamic_walk(idx, 168, 127, FACING_NORTH);
 		local._doorway = idx;
-		kernel_dynamic_cursor(local._doorway, CURSOR_GO_UP);
+		kernel_dynamic_cursor(local._doorway, CURSOR_UP);
 	}
 
 	kernel.quotes = quote_load(0x5A, 0x73, 0xAB, 0xAC, 0xAD, 0xAE, 0xAF, 0xB0, 0xB1, 0xB2, 0xB3, 0xB4, 0xB5, 0xB6, 0xB8, 0xB7,
@@ -667,7 +668,7 @@ static void room_210_init() {
 	local._twinkleAnimationType = 0;
 	local._twinklesCurrentFrame = 0;
 
-	if (previous_room != RETURNING_FROM_DIALOG) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		local._shouldMoveHead = false;
 		local._shouldFaceRex = false;
 		local._shouldTalk = false;
@@ -911,7 +912,7 @@ static void room_210_pre_parser() {
 static void room_210_parser() {
 	if (player_said_3(look, binoculars, hut_to_north)) {
 		text_show(21017);
-	} else if (inter_input_mode == kInputConversation) {
+	} else if (inter_input_mode == INTER_CONVERSATION) {
 		handleConversations();
 	} else if (player_said_2(talkto, native_woman) ||
 		((Common::Point(player.x, player.y) == Common::Point(214, 150)) && (player.facing == FACING_NORTHWEST) && (local._twinkleAnimationType == 1) && local._stopWalking)) {
@@ -999,7 +1000,7 @@ static void room_210_parser() {
 			kernel_seq_delete(g_sequence_ids[1]);
 			g_sequence_ids[1] = kernel_seq_backward(g_sprite_ids[1], false, 12, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[1], 5);
-			kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
@@ -1007,7 +1008,7 @@ static void room_210_parser() {
 			global[kCurtainOpen] = true;
 			local._doorway = kernel_add_dynamic(words_doorway, words_walk_through, 0, -1, 163, 87, 19, 36);
 			kernel_dynamic_walk(local._doorway, 168, 127, FACING_NORTH);
-			kernel_dynamic_cursor(local._doorway, CURSOR_GO_UP);
+			kernel_dynamic_cursor(local._doorway, CURSOR_UP);
 			break;
 
 		default:
@@ -1021,7 +1022,7 @@ static void room_210_parser() {
 			player.facing = FACING_NORTH;
 			g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 12, 1, 0, 0);
 			kernel_seq_depth(g_sequence_ids[1], 5);
-			kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			player.commands_allowed = false;
 			break;
 		case 1:
@@ -1039,7 +1040,7 @@ static void room_210_parser() {
 		}
 	} else if (player_said_2(look, hut)) {
 		if (global[kTwinklesStatus] == TWINKLES_GONE) {
-			if (config_file.naughtiness == STORYMODE_NAUGHTY)
+			if (config_file.naughtiness == NAUGHTY)
 				text_show(21003);
 			else
 				text_show(21002);

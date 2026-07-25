@@ -33,7 +33,7 @@ namespace Rooms {
 
 static void room_357_init() {
 	global[kAfterHavoc] = true;
-	g_sprite_ids[1] = kernel_load_series(kernel_full_name(307, 'X', 0, "", EXT_SS), 0);
+	g_sprite_ids[1] = kernel_load_series(kernel_full_name(307, 'X', 0, "", KERNEL_SS), 0);
 	g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 1);
 	kernel_seq_loc(g_sequence_ids[1], 127, 78);
 	kernel_seq_depth(g_sequence_ids[1], 15);
@@ -46,7 +46,7 @@ static void room_357_init() {
 		player.x = 127;
 		player.y = 101;
 	}
-	else if (previous_room != RETURNING_FROM_DIALOG) {
+	else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 15;
 		player.y = 148;
 	}

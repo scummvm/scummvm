@@ -20,6 +20,7 @@
  */
 
 #include "mads/mads.h"
+#include "mads/core/config.h"
 #include "mads/core/pal.h"
 #include "mads/nebular/rooms/section2.h"
 #include "mads/nebular/rooms/thunks.h"

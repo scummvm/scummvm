@@ -33,7 +33,7 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_388_init() {
-	kernel_set_interface_mode(kInputLimitedSentences);
+	kernel_set_interface_mode(INTER_LIMITED_SENTENCES);
 
 	if (global[kAfterHavoc])
 		kernel_flip_hotspot(words_sauropod, false);

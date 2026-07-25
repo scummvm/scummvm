@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
@@ -97,12 +98,12 @@ static void room_804_init() {
 		kernel_seq_depth(g_sequence_ids[1], 8);
 	}
 
-	kernel_run_animation(kernel_full_name(804, 'r', 1, "", EXT_AA), 0);
+	kernel_run_animation(kernel_full_name(804, 'r', 1, "", KERNEL_AA), 0);
 
 	section_8_music();
 
 	if (global[kInSpace] && !global[kWindowFixed]) {
-		kernel_set_interface_mode(kInputLimitedSentences);
+		kernel_set_interface_mode(INTER_LIMITED_SENTENCES);
 		g_engine->_soundManager->command(19, 0);
 	}
 }
@@ -130,7 +131,7 @@ static void room_804_daemon() {
 			kernel_seq_delete(g_sequence_ids[7]);
 
 		switch (config_file.naughtiness) {
-		case STORYMODE_NAUGHTY:
+		case NAUGHTY:
 		default:
 			if (kernel_anim[0].frame == 81) {
 				local._resetFrame = 80;
@@ -143,7 +144,7 @@ static void room_804_daemon() {
 			}
 			break;
 
-		case STORYMODE_NICE:
+		case NICE:
 			if (kernel_anim[0].frame == 68) {
 				local._resetFrame = 66;
 				global[kInSpace] = false;
@@ -329,7 +330,7 @@ static void room_804_parser() {
 			g_engine->_soundManager->command(15, 0);
 			global[kBeamIsUp] = false;
 		}
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(2, 90);
 	} else  if (player.look_around) {
 		text_show(80410);

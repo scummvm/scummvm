@@ -263,9 +263,9 @@ static void handleDialog() {
 		} else
 			local._killRox = true;
 
-		kernel_set_interface_mode(kInputBuildingSentences);
+		kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 	} else if (player2.words[0] == 0x262)
-		kernel_set_interface_mode(kInputBuildingSentences);
+		kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 }
 
 static void giveToRex(int object_id) {
@@ -395,7 +395,7 @@ static void room_411_init() {
 		kernel_dynamic_walk(idx, 220, 121, FACING_NORTHEAST);
 	}
 
-	if (previous_room != RETURNING_FROM_DIALOG) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 60;
 		player.y = 146;
 		player.facing = FACING_NORTHEAST;
@@ -519,7 +519,7 @@ static void room_411_pre_parser() {
 }
 
 static void room_411_parser() {
-	if (inter_input_mode == kInputConversation) {
+	if (inter_input_mode == INTER_CONVERSATION) {
 		handleDialog();
 		player.command_ready = false;
 		return;
@@ -544,7 +544,7 @@ static void room_411_parser() {
 			g_sequence_ids[10] = kernel_seq_forward(g_sprite_ids[10], false, 8, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[10], 1, 6);
 			kernel_seq_depth(g_sequence_ids[10], 3);
-			kernel_seq_trigger(g_sequence_ids[10], SEQUENCE_TRIGGER_EXPIRE, 0, 110);
+			kernel_seq_trigger(g_sequence_ids[10], KERNEL_TRIGGER_EXPIRE, 0, 110);
 			break;
 
 		case 110:
@@ -569,7 +569,7 @@ static void room_411_parser() {
 			g_sequence_ids[10] = kernel_seq_backward(g_sprite_ids[10], false, 8, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[10], 1, 6);
 			kernel_seq_depth(g_sequence_ids[10], 3);
-			kernel_seq_trigger(g_sequence_ids[10], SEQUENCE_TRIGGER_EXPIRE, 0, 112);
+			kernel_seq_trigger(g_sequence_ids[10], KERNEL_TRIGGER_EXPIRE, 0, 112);
 			// fall through
 		case 112:
 			player.clock = kernel.clock - player.frame_delay;
@@ -599,8 +599,8 @@ static void room_411_parser() {
 			g_sequence_ids[8] = kernel_seq_pingpong(g_sprite_ids[8], false, 7, 0, 0, 2);
 			kernel_seq_range(g_sequence_ids[8], 1, 2);
 			kernel_seq_player(g_sequence_ids[8], false);
-			kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_SPRITE, 2, 1);
-			kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[8], KERNEL_TRIGGER_SPRITE, 2, 1);
+			kernel_seq_trigger(g_sequence_ids[8], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
@@ -636,8 +636,8 @@ static void room_411_parser() {
 			g_sequence_ids[8] = kernel_seq_pingpong(g_sprite_ids[8], false, 7, 0, 0, 2);
 			kernel_seq_range(g_sequence_ids[8], 1, 2);
 			kernel_seq_player(g_sequence_ids[8], false);
-			kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_SPRITE, 2, 1);
-			kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[8], KERNEL_TRIGGER_SPRITE, 2, 1);
+			kernel_seq_trigger(g_sequence_ids[8], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:

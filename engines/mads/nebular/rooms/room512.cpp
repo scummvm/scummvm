@@ -19,7 +19,7 @@
  *
  */
 
-#include "math/utils.h"
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
@@ -84,7 +84,7 @@ static void room_512_init() {
 	} else
 		kernel_flip_hotspot(words_padlock_key, false);
 
-	if (previous_room != RETURNING_FROM_DIALOG) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 144;
 		player.y = 152;
 		player.facing = FACING_NORTHEAST;
@@ -104,8 +104,8 @@ static void room_512_parser() {
 				player.walker_visible = false;
 				g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 8, 0, 0, 1);
 				kernel_seq_player(g_sequence_ids[2], false);
-				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
-				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_SPRITE, 5, 1);
+				kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 1:
@@ -141,7 +141,7 @@ static void room_512_parser() {
 				g_sequence_ids[8] = kernel_seq_pingpong(g_sprite_ids[8], false, 9, 0, 0, 1);
 				kernel_seq_range(g_sequence_ids[8], 1, 3);
 				kernel_seq_player(g_sequence_ids[8], false);
-				kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(g_sequence_ids[8], KERNEL_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 2:
@@ -155,11 +155,11 @@ static void room_512_parser() {
 				if (!object_is_here(OBJ_PADLOCK_KEY) || (game.difficulty == DIFFICULTY_EASY)) {
 					g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 12, 0, 0, 1);
 					kernel_seq_depth(g_sequence_ids[3], 3);
-					kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
+					kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 4);
 				} else {
 					g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 12, 0, 0, 1);
 					kernel_seq_depth(g_sequence_ids[4], 3);
-					kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 5);
+					kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 5);
 				}
 				g_engine->_soundManager->command(23, 0);
 				break;
@@ -195,7 +195,7 @@ static void room_512_parser() {
 			g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 10, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[2], 1, 2);
 			kernel_seq_player(g_sequence_ids[2], false);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
@@ -205,13 +205,13 @@ static void room_512_parser() {
 				kernel_seq_delete(g_sequence_ids[3]);
 				g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 12, 0, 0, 1);
 				kernel_seq_depth(g_sequence_ids[3], 3);
-				kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			} else {
 				kernel_seq_delete(g_sequence_ids[5]);
 				g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 12, 0, 0, 1);
 				kernel_seq_depth(g_sequence_ids[4], 3);
 				kernel_flip_hotspot(words_padlock_key, false);
-				kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			}
 			break;
 
@@ -239,8 +239,8 @@ static void room_512_parser() {
 				g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 10, 0, 0, 1);
 				kernel_seq_range(g_sequence_ids[2], 1, endVal);
 				kernel_seq_player(g_sequence_ids[2], false);
-				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, endVal, 1);
-				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_SPRITE, endVal, 1);
+				kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 1:

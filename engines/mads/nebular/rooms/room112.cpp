@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
@@ -47,13 +48,13 @@ static void room_112_init() {
 	player.walker_visible = false;
 
 	inter_reset_dialog();
-	kernel_set_interface_mode(kInputConversation);
+	kernel_set_interface_mode(INTER_CONVERSATION);
 
-	kernel_run_animation(kernel_full_name(112, 'X', -1, "", EXT_AA), 70);
+	kernel_run_animation(kernel_full_name(112, 'X', -1, "", KERNEL_AA), 70);
 }
 
 static void room_112_daemon() {
-	if ((kernel_anim[0].anim != nullptr) && (config_file.naughtiness == STORYMODE_NICE)) {
+	if ((kernel_anim[0].anim != nullptr) && (config_file.naughtiness == NICE)) {
 		if (kernel_anim[0].frame >= 54) {
 			kernel_abort_animation(0);
 			kernel.trigger = 70;
@@ -63,7 +64,7 @@ static void room_112_daemon() {
 	if (kernel.trigger == 70) {
 		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 7, 11, 0, 3);
 		kernel_seq_depth(g_sequence_ids[3], 1);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 71);
 	}
 
 	if (kernel.trigger == 71) {

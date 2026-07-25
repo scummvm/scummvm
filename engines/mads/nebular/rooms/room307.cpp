@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/core/matte.h"
 #include "mads/core/pal.h"
@@ -83,7 +84,7 @@ static void handlePrisonerSpeech(int firstQuoteId, int number, uint32 timeout) {
 
 	int quoteId = firstQuoteId;
 	for (int count = 0; count < number; count++) {
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_message_add(quote_string(kernel.quotes, quoteId), 5, posY, 0xFDFC, timeout, 81, 0);
 		posY += 14;
 		quoteId++;
@@ -94,7 +95,7 @@ static void setDialogNode(int node) {
 	switch (node) {
 	case 0:
 		handlePrisonerSpeech(0x153, 2, 120);
-		kernel_set_interface_mode(kInputBuildingSentences);
+		kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 		break;
 
 	case 1:
@@ -111,7 +112,7 @@ static void setDialogNode(int node) {
 
 	case 4:
 		handlePrisonerSpeech(0x116, 1, 120);
-		kernel_set_interface_mode(kInputBuildingSentences);
+		kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 		break;
 
 	case 5:
@@ -122,7 +123,7 @@ static void setDialogNode(int node) {
 
 	case 6:
 		handlePrisonerSpeech(0x123, 1, 120);
-		kernel_set_interface_mode(kInputBuildingSentences);
+		kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 		break;
 
 	case 7:
@@ -183,7 +184,7 @@ static void setDialogNode(int node) {
 
 	case 15:
 		handlePrisonerSpeech(0x152, 1, 120);
-		kernel_set_interface_mode(kInputBuildingSentences);
+		kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 		break;
 
 	case 16:
@@ -309,7 +310,7 @@ static void room_307_init() {
 		local._dialog2.write(0x11E, true);
 
 
-	if (previous_room == RETURNING_FROM_DIALOG) {
+	if (previous_room == KERNEL_RESTORING_GAME) {
 		if (local._grateOpenedFl)
 			g_engine->_soundManager->command(10, 0);
 		else
@@ -352,7 +353,7 @@ static void room_307_init() {
 		int idx = kernel_add_dynamic(words_air_vent, words_climb_into, 0, -1, 117, 67, 19, 13);
 		kernel_dynamic_walk(idx, 129, 104, FACING_NORTH);
 		int hotspotId = idx;
-		kernel_dynamic_cursor(hotspotId, CURSOR_GO_UP);
+		kernel_dynamic_cursor(hotspotId, CURSOR_UP);
 
 		kernel_seq_delete(g_sequence_ids[4]);
 		g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 2);
@@ -414,7 +415,7 @@ static void room_307_daemon() {
 		local._lastFrameTime = kernel.clock;
 
 		if ((local._guardTime > 3000) && !local._duringPeeingFl && (kernel_anim[0].anim == nullptr)
-			&& (inter_input_mode != kInputConversation) && global[kMetBuddyBeast] && !local._activePrisonerFl) {
+			&& (inter_input_mode != INTER_CONVERSATION) && global[kMetBuddyBeast] && !local._activePrisonerFl) {
 			if (!player_has(OBJ_SCALPEL) && !local._grateOpenedFl) {
 				player.commands_allowed = false;
 				player_walk(151, 119, FACING_SOUTHEAST);
@@ -423,7 +424,7 @@ static void room_307_daemon() {
 				kernel_run_animation(kernel_name('b', -1), 70);
 			}
 			local._guardTime = 0;
-		} else if ((local._prisonerTimer > 300) && (inter_input_mode != kInputConversation) && (kernel_anim[0].anim == nullptr) && !local._activePrisonerFl) {
+		} else if ((local._prisonerTimer > 300) && (inter_input_mode != INTER_CONVERSATION) && (kernel_anim[0].anim == nullptr) && !local._activePrisonerFl) {
 			if (!global[kMetBuddyBeast]) {
 				if (local._prisonerMessageId == -1)
 					local._prisonerMessageId = 0x104;
@@ -456,7 +457,7 @@ static void room_307_daemon() {
 static void room_307_parser() {
 	if (player.look_around)
 		text_show(30715);
-	else if (inter_input_mode == kInputConversation)
+	else if (inter_input_mode == INTER_CONVERSATION)
 		handleDialog();
 	else if (player_said_2(talkto, cell_wall) || player_said_2(talkto, wall) || player_said_2(talkto, toilet)) {
 		int node, say;
@@ -498,7 +499,7 @@ static void room_307_parser() {
 			g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 12, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[5], -1, 3);
 			kernel_seq_player(g_sequence_ids[5], false);
-			kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 2:
@@ -508,7 +509,7 @@ static void room_307_parser() {
 			kernel_seq_player(g_sequence_ids[5], false);
 			kernel_seq_range(g_sequence_ids[5], 2, 3);
 			kernel_seq_timeout(oldIdx, g_sequence_ids[5]);
-			kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, 3);
 		}
 		break;
 
@@ -548,7 +549,7 @@ static void room_307_parser() {
 			int idx = kernel_add_dynamic(words_air_vent, words_climb_into, 0, -1, 117, 67, 19, 13);
 			kernel_dynamic_walk(idx, 129, 104, FACING_NORTH);
 			int hotspotId = idx;
-			kernel_dynamic_cursor(hotspotId, CURSOR_GO_UP);
+			kernel_dynamic_cursor(hotspotId, CURSOR_UP);
 			inter_take_from_player(OBJ_SCALPEL, NOWHERE);
 			kernel_message_player(0xF2, 120, 7);
 		}
@@ -577,8 +578,8 @@ static void room_307_parser() {
 				g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 18, 0, 0, 1);
 				kernel_seq_range(g_sequence_ids[5], -1, 4);
 				kernel_seq_player(g_sequence_ids[5], false);
-				kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
-				kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 1);
+				kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 1:
@@ -594,7 +595,7 @@ static void room_307_parser() {
 				kernel_seq_range(g_sequence_ids[5], 4, 10);
 				kernel_seq_player(g_sequence_ids[5], false);
 				kernel_seq_timeout(oldIdx, g_sequence_ids[5]);
-				kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+				kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, 3);
 			}
 			break;
 
@@ -619,7 +620,7 @@ static void room_307_parser() {
 				kernel_seq_range(g_sequence_ids[5], 12, 14);
 				kernel_seq_player(g_sequence_ids[5], false);
 				kernel_seq_loc(g_sequence_ids[5], 129, 102);
-				kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 5);
+				kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, 5);
 				break;
 
 			case 5:
@@ -646,7 +647,7 @@ static void room_307_parser() {
 				break;
 			}
 		}
-	} else if (player_said_2(use, toilet) && (config_file.naughtiness != STORYMODE_NAUGHTY))
+	} else if (player_said_2(use, toilet) && (config_file.naughtiness != NAUGHTY))
 		text_show(30723);
 	else if (player_said_2(use, toilet)) {
 		if (!local._afterPeeingFl) {
@@ -660,14 +661,14 @@ static void room_307_parser() {
 				g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 9, 0, 0, 1);
 				kernel_seq_range(g_sequence_ids[3], -1, 2);
 				kernel_seq_depth(g_sequence_ids[3], 9);
-				kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 1);
 				break;
 
 			case 1:
 				g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 9, 0, 0, 5);
 				kernel_seq_range(g_sequence_ids[3], 3, -2);
 				kernel_seq_depth(g_sequence_ids[3], 9);
-				kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 2:

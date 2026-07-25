@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
@@ -67,7 +68,7 @@ static void room_610_init() {
 	if (kernel.teleported_in && game.difficulty != DIFFICULTY_EASY)
 		inter_give_to_player(OBJ_PENLIGHT);
 
-	if (previous_room != RETURNING_FROM_DIALOG) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 175;
 		player.y = 152;
 		player.facing = FACING_NORTHWEST;
@@ -109,8 +110,8 @@ static void room_610_parser() {
 				g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], true, 8, 0, 0, 1);
 				kernel_seq_range(g_sequence_ids[2], 1, 2);
 				kernel_seq_player(g_sequence_ids[2], false);
-				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 2, 1);
-				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_SPRITE, 2, 1);
+				kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 1:
@@ -139,8 +140,8 @@ static void room_610_parser() {
 			g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], true, 8, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[2], 1, 2);
 			kernel_seq_player(g_sequence_ids[2], false);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 2, 1);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_SPRITE, 2, 1);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
@@ -192,7 +193,7 @@ static void room_610_parser() {
 		text_show(61024);
 	else if (player_said_2(look, spotlight))
 		text_show(61025);
-	else if (player_said_2(look, phone_handset) && (player.main_object_source == CAT_HOTSPOT))
+	else if (player_said_2(look, phone_handset) && (player.main_object_source == STROKE_INTERFACE))
 		text_show(61026);
 	else if (player_said_2(look, phone_cradle))
 		text_show(61027);

@@ -57,13 +57,13 @@ static void room_106_init() {
 
 	if (previous_room == 102) {
 		g_sequence_ids[0] = kernel_seq_forward(g_sprite_ids[0], false, 6, 0, 4, 1);
-		kernel_seq_trigger(g_sequence_ids[0], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+		kernel_seq_trigger(g_sequence_ids[0], KERNEL_TRIGGER_EXPIRE, 0, 70);
 		player.walker_visible = false;
 		player.commands_allowed = false;
 		player.facing = FACING_EAST;
 		player.x = 106;
 		player.y = 69;
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		if (previous_room == 107) {
 			player.x = 319;
 			player.y = 84;
@@ -102,10 +102,10 @@ static void room_106_daemon() {
 		kernel_seq_depth(g_sequence_ids[0], 14);
 
 		if (!player_has(OBJ_REBREATHER) && !kernel.teleported_in) {
-			kernel_run_animation(kernel_full_name(106, 'A', -1, "", EXT_AA), 75);
+			kernel_run_animation(kernel_full_name(106, 'A', -1, "", KERNEL_AA), 75);
 		} else {
 			g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 4, 0, 0, 1);
-			kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_SPRITE, 28, 71);
+			kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_SPRITE, 28, 71);
 		}
 	}
 
@@ -122,7 +122,7 @@ static void room_106_daemon() {
 		} else {
 			player.prepare_walk_facing = FACING_SOUTHWEST;
 			local._firstEmergingFl = true;
-			kernel_run_animation(kernel_full_name(106, 'B', -1, "", EXT_AA), 80);
+			kernel_run_animation(kernel_full_name(106, 'B', -1, "", KERNEL_AA), 80);
 		}
 	}
 
@@ -171,8 +171,8 @@ static void room_106_daemon() {
 			if (player.x < 204) {
 				local._shadowFl = true;
 				g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 4, 0, 0, 1);
-				kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
-				kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 44, 73);
+				kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 72);
+				kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_SPRITE, 44, 73);
 			}
 		} else if (kernel.trigger == 73)
 			player.walker_visible = false;

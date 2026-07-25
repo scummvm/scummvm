@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
@@ -46,7 +47,7 @@ static void handleRexInGrate() {
 		g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 12, 0, 0, 3);
 		kernel_seq_range(g_sequence_ids[4], 2, 3);
 		kernel_seq_player(g_sequence_ids[4], false);
-		kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+		kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 2);
 		break;
 
 	case 2:
@@ -61,8 +62,8 @@ static void handleRexInGrate() {
 		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 12, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[3], 2, -2);
 		kernel_seq_depth(g_sequence_ids[3], 12);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
-		kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 3);
+		kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 4);
 	}
 	break;
 
@@ -87,7 +88,7 @@ static void handleRexInGrate() {
 		g_sequence_ids[3] = kernel_seq_backward(g_sprite_ids[3], false, 12, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[3], 5, -2);
 		kernel_seq_depth(g_sequence_ids[3], 3);
-		kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 5);
+		kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 5);
 	}
 	break;
 
@@ -116,8 +117,8 @@ static void handleRexInGrate() {
 		g_sequence_ids[3] = kernel_seq_backward(g_sprite_ids[3], false, 12, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[3], 2, 3);
 		kernel_seq_depth(g_sequence_ids[3], 3);
-		kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 7);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 8);
+		kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 7);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 8);
 		break;
 
 	case 7:
@@ -171,7 +172,7 @@ static void handleRoxInGrate() {
 		g_sequence_ids[5] = kernel_seq_pingpong(g_sprite_ids[5], false, 17, 0, 0, 3);
 		kernel_seq_range(g_sequence_ids[5], 2, 3);
 		kernel_seq_player(g_sequence_ids[5], false);
-		kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+		kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, 2);
 		break;
 
 	case 2:
@@ -185,8 +186,8 @@ static void handleRoxInGrate() {
 		kernel_seq_range(g_sequence_ids[5], 4, 8);
 		kernel_seq_player(g_sequence_ids[5], false);
 		kernel_seq_timeout(temp, g_sequence_ids[5]);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
-		kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 3);
+		kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, 4);
 		break;
 
 	case 3:
@@ -207,7 +208,7 @@ static void handleRoxInGrate() {
 		g_sequence_ids[3] = kernel_seq_backward(g_sprite_ids[3], false, 17, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[3], 5, -2);
 		kernel_seq_depth(g_sequence_ids[3], 3);
-		kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 5);
+		kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, 5);
 		break;
 
 	case 5:
@@ -233,8 +234,8 @@ static void handleRoxInGrate() {
 		g_sequence_ids[3] = kernel_seq_backward(g_sprite_ids[3], false, 17, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[3], 2, 3);
 		kernel_seq_depth(g_sequence_ids[3], 3);
-		kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 7);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 8);
+		kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, 7);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 8);
 		break;
 
 	case 7:
@@ -299,8 +300,8 @@ static void room_316_init() {
 		int spriteIdx = (global[kSexOfRex] == REX_MALE) ? 1 : 2;
 		g_sequence_ids[1] = kernel_seq_backward(g_sprite_ids[spriteIdx], false, 6, 0, 0, 1);
 		kernel_seq_depth(g_sequence_ids[1], 2);
-		kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+		kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 60);
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 291;
 		player.y = 126;
 	}
@@ -327,8 +328,8 @@ static void room_316_daemon() {
 			g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 12, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[6], 1, 5);
 			kernel_seq_player(g_sequence_ids[6], false);
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
-			kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 71);
+			kernel_seq_trigger(g_sequence_ids[6], KERNEL_TRIGGER_EXPIRE, 0, 72);
 			break;
 
 		case 71:
@@ -347,7 +348,7 @@ static void room_316_daemon() {
 			kernel_seq_range(g_sequence_ids[6], 6, 9);
 			kernel_seq_player(g_sequence_ids[6], false);
 			kernel_seq_timeout(synxIdx, g_sequence_ids[6]);
-			kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
+			kernel_seq_trigger(g_sequence_ids[6], KERNEL_TRIGGER_EXPIRE, 0, 73);
 		}
 		break;
 
@@ -361,8 +362,8 @@ static void room_316_daemon() {
 			g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 12, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[6], 10, -2);
 			kernel_seq_player(g_sequence_ids[6], false);
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
-			kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 74);
+			kernel_seq_trigger(g_sequence_ids[6], KERNEL_TRIGGER_EXPIRE, 0, 75);
 			break;
 
 		case 74:
@@ -414,11 +415,11 @@ static void room_316_parser() {
 					g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 7, 0, 0, 1);
 					kernel_seq_range(g_sequence_ids[1], -1, 7);
 					kernel_seq_depth(g_sequence_ids[1], 2);
-					kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+					kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 1);
 				} else {
 					g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 7, 0, 0, 1);
 					kernel_seq_depth(g_sequence_ids[2], 2);
-					kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+					kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 3);
 				}
 			}
 			break;
@@ -431,7 +432,7 @@ static void room_316_parser() {
 			if (!player_has_been_in_room(321))
 				kernel_message_add(quote_string(kernel.quotes, 253), 0, 0, 0x1110, 120, 0, 34);
 
-			kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 2:

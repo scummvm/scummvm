@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/core/pal.h"
 #include "mads/nebular/global.h"
@@ -60,7 +61,7 @@ static void room_211_init() {
 		player.walker_visible = false;
 		kernel_run_animation(kernel_name('A', -1), 100);
 		kernel_reset_animation(0, 169);
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 310;
 		player.y = 31;
 		player.facing = FACING_SOUTHWEST;
@@ -70,7 +71,7 @@ static void room_211_init() {
 		g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[1], false, 6, 0, 0, 0);
 		kernel_seq_loc(g_sequence_ids[2], 202, 126);
 		kernel_seq_depth(g_sequence_ids[2], 8);
-		kernel_seq_motion(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, -200, 0);
+		kernel_seq_motion(g_sequence_ids[2], KERNEL_TRIGGER_SPRITE, -200, 0);
 		kernel_add_dynamic(words_slithering_snake, words_walkto, 0, g_sequence_ids[2], 1, 1, 41, 10);
 	}
 
@@ -294,7 +295,7 @@ static void room_211_parser() {
 		text_show(21102);
 	else if (player_said_2(look, palm_tree)) {
 		if (global[kMonkeyStatus] == MONKEY_AMBUSH_READY) {
-			if (config_file.naughtiness == STORYMODE_NAUGHTY)
+			if (config_file.naughtiness == NAUGHTY)
 				text_show(21103);
 			else
 				text_show(21104);
@@ -302,7 +303,7 @@ static void room_211_parser() {
 			text_show(21105);
 		}
 	} else if (player_said_2(look, thick_undergrowth)) {
-		if (config_file.naughtiness == STORYMODE_NAUGHTY)
+		if (config_file.naughtiness == NAUGHTY)
 			text_show(21106);
 		else
 			text_show(21107);

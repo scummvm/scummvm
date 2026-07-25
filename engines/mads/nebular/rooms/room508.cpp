@@ -85,7 +85,7 @@ static void room_508_init() {
 		player.x = 57;
 		player.y = 116;
 		player.facing = FACING_NORTHEAST;
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 289;
 		player.y = 139;
 		player.facing = FACING_WEST;
@@ -120,8 +120,8 @@ static void handlePedestral() {
 			g_sequence_ids[6] = kernel_seq_pingpong(g_sprite_ids[6], false, 9, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[6], 1, 4);
 			kernel_seq_player(g_sequence_ids[6], false);
-			kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-			kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			kernel_seq_trigger(g_sequence_ids[6], KERNEL_TRIGGER_SPRITE, 4, 1);
+			kernel_seq_trigger(g_sequence_ids[6], KERNEL_TRIGGER_EXPIRE, 0, 3);
 			break;
 
 		case 1:
@@ -131,7 +131,7 @@ static void handlePedestral() {
 				inter_take_from_player(OBJ_REARVIEW_MIRROR, 1);
 
 			g_sequence_ids[7] = kernel_seq_forward(g_sprite_ids[7], false, 6, 0, 0, 1);
-			kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[7], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 2:
@@ -174,14 +174,14 @@ static void room_508_parser() {
 				g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 10, 0, 0, 1);
 				kernel_seq_depth(g_sequence_ids[1], 7);
 				kernel_seq_timeout(-1, g_sequence_ids[1]);
-				kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+				kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 3);
 				break;
 
 			case 3:
 				g_engine->_soundManager->command(19, 0);
 				g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 15, 0, 0, 1);
 				kernel_seq_depth(g_sequence_ids[2], 6);
-				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
+				kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 4);
 				g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -2);
 				kernel_seq_depth(g_sequence_ids[3], 8);
 				kernel_seq_timeout(g_sequence_ids[1], -1);

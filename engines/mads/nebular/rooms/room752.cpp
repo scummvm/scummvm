@@ -46,7 +46,7 @@ static void room_752_init() {
 		player.x = 13;
 		player.y = 145;
 		player.facing = FACING_EAST;
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 289;
 		player.y = 138;
 		player_walk(262, 148, FACING_WEST);
@@ -125,8 +125,8 @@ static void room_752_parser() {
 			player.walker_visible = false;
 			g_sequence_ids[12] = kernel_seq_pingpong(g_sprite_ids[12], false, 5, 0, 0, 2);
 			kernel_seq_player(g_sequence_ids[12], false);
-			kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-			kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[12], KERNEL_TRIGGER_SPRITE, 4, 1);
+			kernel_seq_trigger(g_sequence_ids[12], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 		case 1:
 			g_engine->_soundManager->command(15, 0);
@@ -142,7 +142,7 @@ static void room_752_parser() {
 		default:
 			break;
 		}
-	} else if (player_said_2(take, bones) && (player.main_object_source == CAT_HOTSPOT) &&
+	} else if (player_said_2(take, bones) && (player.main_object_source == STROKE_INTERFACE) &&
 		(!player_has(OBJ_BONES) || kernel.trigger)) {
 		switch (kernel.trigger) {
 		case 0:
@@ -150,8 +150,8 @@ static void room_752_parser() {
 			player.walker_visible = false;
 			g_sequence_ids[12] = kernel_seq_pingpong(g_sprite_ids[12], false, 5, 0, 0, 2);
 			kernel_seq_player(g_sequence_ids[12], false);
-			kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-			kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[12], KERNEL_TRIGGER_SPRITE, 4, 1);
+			kernel_seq_trigger(g_sequence_ids[12], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 		case 1:
 			g_engine->_soundManager->command(15, 0);
@@ -185,12 +185,12 @@ static void room_752_parser() {
 		text_show(75217);
 	else if (player_said_2(look, teleporter))
 		text_show(75218);
-	else if ((player_said_2(look, bones) || player_said_2(look, id_card)) && (player.main_object_source == CAT_HOTSPOT)) {
+	else if ((player_said_2(look, bones) || player_said_2(look, id_card)) && (player.main_object_source == STROKE_INTERFACE)) {
 		if (object[OBJ_ID_CARD].location == 752)
 			text_show(75219);
 		else
 			text_show(75220);
-	} else if (player_said_2(take, bones) && (player.main_object_source == CAT_HOTSPOT)) {
+	} else if (player_said_2(take, bones) && (player.main_object_source == STROKE_INTERFACE)) {
 		if (player_has(OBJ_BONES))
 			text_show(75222);
 	} else

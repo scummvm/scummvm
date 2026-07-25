@@ -34,7 +34,7 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_313_init() {
-	kernel_set_interface_mode(kInputLimitedSentences);
+	kernel_set_interface_mode(INTER_LIMITED_SENTENCES);
 
 	if ((previous_room == 366) || (previous_room == 316)) {
 		player.x = 30;
@@ -56,7 +56,7 @@ static void room_313_init() {
 		player.x = 199;
 		player.y = 70;
 		player.facing = FACING_WEST;
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 234;
 		player.y = 70;
 		player.facing = FACING_WEST;

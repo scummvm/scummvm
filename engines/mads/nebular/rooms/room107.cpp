@@ -42,7 +42,7 @@ static void room_107_init() {
 	for (int i = 0; i < 3; i++)
 		g_sprite_ids[i + 1] = kernel_load_series(kernel_name('G', i), 0);
 
-	g_sprite_ids[4] = kernel_load_series(kernel_full_name(105, 'f', 4, "", EXT_SS), 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_full_name(105, 'f', 4, "", KERNEL_SS), 0);
 
 	g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 14, 7, 0, 0);
 	g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 17, 13, 0, 0);
@@ -67,16 +67,16 @@ static void room_107_init() {
 		player.x = 20;
 		player.y = 91;
 	}
-	else if (previous_room != RETURNING_FROM_DIALOG) {
+	else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 223;
 		player.y = 151;
 	}
 
 	if (((previous_room == 105) || (previous_room == 106)) && (g_engine->getRandomNumber(1, 3) == 1)) {
-		g_sprite_ids[0] = kernel_load_series(kernel_full_name(105, 'R', 1, "", EXT_SS), 0);
+		g_sprite_ids[0] = kernel_load_series(kernel_full_name(105, 'R', 1, "", KERNEL_SS), 0);
 		g_sequence_ids[0] = kernel_seq_forward(g_sprite_ids[0], true, 4, 0, 0, 0);
 		kernel_seq_loc(g_sequence_ids[0], 270, 150);
-		kernel_seq_motion(g_sequence_ids[0], SEQUENCE_TRIGGER_SPRITE, -200, 0);
+		kernel_seq_motion(g_sequence_ids[0], KERNEL_TRIGGER_SPRITE, -200, 0);
 		kernel_seq_depth(g_sequence_ids[0], 2);
 		kernel_add_dynamic(words_manta_ray, words_swim_to, 0, g_sequence_ids[0], 0, 0, 0, 0);
 	}
@@ -85,7 +85,7 @@ static void room_107_init() {
 	local._shootingFl = false;
 
 	if (g_engine->getRandomNumber(1, 3) == 1) {
-		kernel_run_animation(kernel_full_name(107, 'B', -1, "", EXT_AA), 0);
+		kernel_run_animation(kernel_full_name(107, 'B', -1, "", KERNEL_AA), 0);
 		local._shootingFl = true;
 	}
 
@@ -125,7 +125,7 @@ static void room_107_parser() {
 		new_room = 105;
 	else if (player_said_2(look, northern_sea_cliff))
 		text_show(10701);
-	else if (player_said_2(look, dead_fish) && (player.main_object_source == CAT_HOTSPOT))
+	else if (player_said_2(look, dead_fish) && (player.main_object_source == STROKE_INTERFACE))
 		text_show(10702);
 	else if (player_said_2(look, bush_like_formation))
 		text_show(10703);

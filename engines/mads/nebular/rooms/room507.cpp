@@ -19,7 +19,7 @@
  *
  */
 
-#include "math/utils.h"
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
@@ -49,7 +49,7 @@ static void room_507_init() {
 		kernel_dynamic_walk(local._penlightHotspotId, 233, 152, FACING_SOUTHEAST);
 	}
 
-	if (previous_room != RETURNING_FROM_DIALOG) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 121;
 		player.y = 147;
 		player.facing = FACING_NORTH;
@@ -70,8 +70,8 @@ static void room_507_parser() {
 				g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 6, 0, 0, 1);
 				kernel_seq_range(g_sequence_ids[2], 1, 5);
 				kernel_seq_player(g_sequence_ids[2], false);
-				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
-				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_SPRITE, 5, 1);
+				kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 1:

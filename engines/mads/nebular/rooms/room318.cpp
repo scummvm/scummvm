@@ -96,7 +96,7 @@ static void handleInternDialog(int quoteId, int quoteNum, uint32 timeout) {
 		kernel_seq_delete(seqIndex);
 
 	for (int i = 0; i < quoteNum; i++) {
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(180, 63);
 		kernel_message_add(quote_string(kernel.quotes, curQuoteId), posX, posY, 0xFDFC, timeout, 0, 0);
 		posY += 14;
@@ -115,7 +115,7 @@ static void handleDialog() {
 		kernel_seq_loc(g_sequence_ids[2], 142, 121);
 		kernel_seq_timeout(synxIdx, g_sequence_ids[2]);
 		g_engine->_soundManager->command(3, 0);
-		kernel_set_interface_mode(kInputBuildingSentences);
+		kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 		player.commands_allowed = true;
 	} else {
 		if (player2.words[0] < 0x19C)
@@ -185,7 +185,7 @@ static void handleDialog() {
 			kernel_seq_depth(g_sequence_ids[2], 1);
 			kernel_seq_loc(g_sequence_ids[2], 142, 121);
 			kernel_seq_range(g_sequence_ids[2], 6, 8);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 2);
 
 			local._dialogFl = false;
 			handleInternDialog(0x1D0, 1, 120);
@@ -230,7 +230,7 @@ static void room_318_init() {
 		player.x = 15;
 		player.y = 110;
 	}
-	else if (previous_room != RETURNING_FROM_DIALOG) {
+	else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 214;
 		player.y = 152;
 	}
@@ -253,7 +253,7 @@ static void room_318_init() {
 	local._lastFrame = 0;
 	kernel_flip_hotspot(words_intern, false);
 
-	if (previous_room != RETURNING_FROM_DIALOG) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		local._dialogFl = false;
 		local._internWalkingFl = false;
 		local._counter = 0;
@@ -270,8 +270,8 @@ static void room_318_init() {
 		0x1C8, 0x1C9, 0x1CA, 0x1CB, 0x1CC, 0x1CD, 0x1CE, 0x1CF, 0x1D0, 0x1D1, 0x1D2, 0x1D3,
 		0x190, 0x19D, 0);
 
-	if ((previous_room == RETURNING_FROM_DIALOG) || (((previous_room == 318) ||
-		(previous_room == RETURNING_FROM_LOADING)) && (!global[kAfterHavoc]))) {
+	if ((previous_room == KERNEL_RESTORING_GAME) || (((previous_room == 318) ||
+		(previous_room == KERNEL_STARTING_GAME)) && (!global[kAfterHavoc]))) {
 		if (!global[kAfterHavoc]) {
 			player.walker_visible = false;
 			g_sprite_ids[2] = kernel_load_series(kernel_name('g', -1), 0);
@@ -431,7 +431,7 @@ static void room_318_daemon() {
 			local._animMode = 3;
 		}
 	} else if ((local._animMode == 2) && local._explosionFl && local._internVisibleFl && !local._dialogFl
-		&& !local._internWalkingFl && (inter_input_mode != kInputConversation)) {
+		&& !local._internWalkingFl && (inter_input_mode != INTER_CONVERSATION)) {
 		if ((diffFrame >= 0) && (diffFrame <= 4))
 			local._internCounter += diffFrame;
 		else
@@ -461,7 +461,7 @@ static void room_318_pre_parser() {
 }
 
 static void room_318_parser() {
-	if (inter_input_mode == kInputConversation) {
+	if (inter_input_mode == INTER_CONVERSATION) {
 		handleDialog();
 		player.command_ready = false;
 		return;
@@ -481,7 +481,7 @@ static void room_318_parser() {
 			kernel_seq_depth(g_sequence_ids[2], 1);
 			kernel_seq_loc(g_sequence_ids[2], 142, 121);
 			kernel_seq_range(g_sequence_ids[2], 6, 8);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 2);
 		}
 		break;
 
@@ -517,8 +517,8 @@ static void room_318_parser() {
 			kernel_seq_depth(g_sequence_ids[2], 1);
 			kernel_seq_loc(g_sequence_ids[2], 142, 121);
 			kernel_seq_range(g_sequence_ids[2], 2, 5);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_SPRITE, 5, 1);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:

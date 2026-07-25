@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
@@ -64,7 +65,7 @@ static void room_214_init() {
 		kernel_flip_hotspot(words_blowgun, false);
 	}
 
-	if (previous_room != RETURNING_FROM_DIALOG) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 191;
 		player.y = 152;
 	}
@@ -79,7 +80,7 @@ static void room_214_daemon() {
 		kernel_seq_range(g_sequence_ids[3], 1, 4);
 		kernel_seq_depth(g_sequence_ids[3], 2);
 		kernel_add_dynamic(words_captive_creature, words_walkto, 0, g_sequence_ids[3], 0, 0, 0, 0);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 71);
 	}
 
 	if (local._devilRunningFl) {
@@ -92,7 +93,7 @@ static void room_214_daemon() {
 			kernel_add_dynamic(words_captive_creature, words_walkto, 0, g_sequence_ids[3], 0, 0, 0, 0);
 			kernel_seq_range(g_sequence_ids[3], 5, 8);
 			kernel_seq_depth(g_sequence_ids[3], 2);
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 72);
 		}
 		break;
 
@@ -127,13 +128,13 @@ static void room_214_parser() {
 			player.walker_visible = false;
 			g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], true, 6, 0, 0, 1);
 			kernel_seq_player(g_sequence_ids[4], false);
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
 			g_sequence_ids[4] = kernel_seq_backward(g_sprite_ids[4], true, 6, 0, 0, 1);
 			kernel_seq_player(g_sequence_ids[4], false);
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			kernel_seq_delete(g_sequence_ids[1]);
 			inter_give_to_player(OBJ_POISON_DARTS);
 			kernel_flip_hotspot(words_poison_darts, false);
@@ -159,13 +160,13 @@ static void room_214_parser() {
 			player.walker_visible = false;
 			g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 6, 0, 0, 1);
 			kernel_seq_player(g_sequence_ids[4], false);
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
 			g_sequence_ids[4] = kernel_seq_backward(g_sprite_ids[4], false, 6, 0, 0, 1);
 			kernel_seq_player(g_sequence_ids[4], false);
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			kernel_seq_delete(g_sequence_ids[2]);
 			inter_give_to_player(OBJ_BLOWGUN);
 			kernel_flip_hotspot(words_blowgun, false);
@@ -195,7 +196,7 @@ static void room_214_parser() {
 	else if (player_said_2(look, trophy))
 		text_show(21405);
 	else if (player_said_2(look, large_bowl)) {
-		if (config_file.naughtiness == STORYMODE_NAUGHTY) {
+		if (config_file.naughtiness == NAUGHTY) {
 			text_show(21406);
 		} else {
 			text_show(21407);

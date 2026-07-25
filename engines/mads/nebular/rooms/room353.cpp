@@ -39,7 +39,7 @@ static Scratch local;
 
 
 static void room_353_init() {
-	g_sprite_ids[1] = kernel_load_series(kernel_full_name(303, 'B', 0, "", EXT_SS), 0);
+	g_sprite_ids[1] = kernel_load_series(kernel_full_name(303, 'B', 0, "", KERNEL_SS), 0);
 	g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 5, 0, 5, 0);
 	kernel_seq_depth(g_sequence_ids[1], 1);
 

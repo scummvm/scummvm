@@ -51,11 +51,11 @@ static void room_111_init() {
 	g_sprite_ids[5] = kernel_load_series(kernel_name('B', 2), 0);
 
 	g_sequence_ids[0] = kernel_seq_forward(g_sprite_ids[0], false, 8, 0, 0, 0);
-	kernel_seq_trigger(g_sequence_ids[0], SEQUENCE_TRIGGER_SPRITE, 9, 73);
-	kernel_seq_trigger(g_sequence_ids[0], SEQUENCE_TRIGGER_SPRITE, 13, 73);
+	kernel_seq_trigger(g_sequence_ids[0], KERNEL_TRIGGER_SPRITE, 9, 73);
+	kernel_seq_trigger(g_sequence_ids[0], KERNEL_TRIGGER_SPRITE, 13, 73);
 
 	g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 5, 0, 0, 0);
-	kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_SPRITE, 71, 71);
+	kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_SPRITE, 71, 71);
 
 	g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 12, 0, 0, 0);
 	g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 1);
@@ -72,10 +72,10 @@ static void room_111_init() {
 	local._launched2Fl = false;
 	local._stampedFl = false;
 
-	if ((previous_room < 201) && (previous_room != RETURNING_FROM_DIALOG)) {
+	if ((previous_room < 201) && (previous_room != KERNEL_RESTORING_GAME)) {
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		kernel_run_animation(kernel_full_name(111, 'A', 0, "", EXT_AA), 70);
+		kernel_run_animation(kernel_full_name(111, 'A', 0, "", KERNEL_AA), 70);
 		player.x = 234;
 		player.y = 116;
 		player.facing = FACING_EAST;
@@ -84,7 +84,7 @@ static void room_111_init() {
 		local._launched2Fl = true;
 
 		g_engine->_soundManager->command(36, 0);
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 300;
 		player.y = 130;
 		player.facing = FACING_WEST;
@@ -106,7 +106,7 @@ static void room_111_daemon() {
 	if ((kernel.trigger == 71) && !local._stampedFl) {
 		local._stampedFl = true;
 		g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 18, 0, 0, 1);
-		kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+		kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 72);
 	}
 
 	if (kernel.trigger == 72) {
@@ -148,7 +148,7 @@ static void room_111_parser() {
 	if (player_said_2(dive_into, pool) && player_has(OBJ_REBREATHER)) {
 		switch (kernel.trigger) {
 		case 0:
-			kernel_run_animation(kernel_full_name(111, 'A', 1, "", EXT_AA), 1);
+			kernel_run_animation(kernel_full_name(111, 'A', 1, "", KERNEL_AA), 1);
 			local._rexDivingFl = true;
 			player.commands_allowed = false;
 			player.walker_visible = false;

@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
@@ -94,7 +95,7 @@ static void room_602_init() {
 		player.x = 228;
 		player.y = 126;
 		player.facing = FACING_WEST;
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 50;
 		player.y = 127;
 		player.facing = FACING_EAST;
@@ -118,8 +119,8 @@ static void handleSafeActions() {
 		g_sequence_ids[5] = kernel_seq_pingpong(g_sprite_ids[5], true, 12, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[5], 1, 3);
 		kernel_seq_player(g_sequence_ids[5], false);
-		kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_SPRITE, 3, 1);
-		kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+		kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_SPRITE, 3, 1);
+		kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, 3);
 		break;
 
 	case 1:
@@ -141,7 +142,7 @@ static void handleSafeActions() {
 					kernel_flip_hotspot(words_door_key, true);
 
 				kernel_seq_trigger(local._lastSequenceIdx,
-					SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+					KERNEL_TRIGGER_EXPIRE, 0, 2);
 			}
 		} else {
 			kernel_seq_delete(local._lastSequenceIdx);
@@ -155,7 +156,7 @@ static void handleSafeActions() {
 			if (object[OBJ_DOOR_KEY].location == room_id)
 				kernel_flip_hotspot(words_door_key, false);
 
-			kernel_seq_trigger(local._lastSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(local._lastSequenceIdx, KERNEL_TRIGGER_EXPIRE, 0, 2);
 		}
 		break;
 
@@ -267,8 +268,8 @@ static void room_602_parser() {
 			g_sequence_ids[5] = kernel_seq_pingpong(g_sprite_ids[5], true, 8, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[5], 1, 3);
 			kernel_seq_player(g_sequence_ids[5], false);
-			kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_SPRITE, 3, 1);
-			kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_SPRITE, 3, 1);
+			kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:

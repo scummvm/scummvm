@@ -40,7 +40,7 @@ static void room_410_init() {
 	else
 		kernel_flip_hotspot(words_charge_cases, false);
 
-	if (previous_room != RETURNING_FROM_DIALOG) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 155;
 		player.y = 150;
 		player.facing = FACING_NORTH;
@@ -48,7 +48,7 @@ static void room_410_init() {
 
 	section_4_music();
 
-	kernel_run_animation(kernel_full_name(410, 'r', -1, "", EXT_AA), 0);
+	kernel_run_animation(kernel_full_name(410, 'r', -1, "", KERNEL_AA), 0);
 	kernel_anim[0].repeat = true;
 }
 
@@ -108,8 +108,8 @@ static void room_410_parser() {
 			g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 7, 0, 0, 2);
 			kernel_seq_range(g_sequence_ids[2], 1, 3);
 			kernel_seq_player(g_sequence_ids[2], false);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 3, 1);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_SPRITE, 3, 1);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:

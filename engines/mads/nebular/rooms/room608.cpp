@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/core/pal.h"
 #include "mads/nebular/global.h"
@@ -276,7 +277,7 @@ static void room_608_init() {
 	pal_change_color(252, 63, 44, 30);
 	pal_change_color(253, 63, 20, 22);
 
-	if (previous_room != RETURNING_FROM_DIALOG) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 46;
 		player.y = 132;
 		player.facing = FACING_EAST;
@@ -320,7 +321,7 @@ static void room_608_daemon() {
 		g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 11, 0, 0, 1);
 		kernel_seq_depth(g_sequence_ids[4], 1);
 		g_engine->_soundManager->command(14, 0);
-		kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+		kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 70);
 		local._dogWindowTimer = 0;
 	}
 
@@ -337,8 +338,8 @@ static void room_608_daemon() {
 				int idx = kernel_add_dynamic(words_obnoxious_dog, words_walkto, 0, g_sequence_ids[5], 0, 0, 0, 0);
 				kernel_dynamic_walk(idx, 194, 142, FACING_EAST);
 				local._barkCount = 0;
-				kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_SPRITE, 2, 100);
-				kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
+				kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_SPRITE, 2, 100);
+				kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, 60);
 			}
 		} else if (kernel.trigger == 60) {
 			int syncIdx = g_sequence_ids[5];
@@ -411,7 +412,7 @@ static void room_608_daemon() {
 		local._dogYelping = false;
 		kernel_message_purge();
 		g_sequence_ids[11] = kernel_seq_forward(g_sprite_ids[11], false, 6, 0, 0, 1);
-		kernel_seq_trigger(g_sequence_ids[11], SEQUENCE_TRIGGER_EXPIRE, 0, 92);
+		kernel_seq_trigger(g_sequence_ids[11], KERNEL_TRIGGER_EXPIRE, 0, 92);
 		kernel_message_add(quote_string(kernel.quotes, 0x2FF), 0, 0, 0x1110, 120, 0, 34);
 	}
 
@@ -620,7 +621,7 @@ static void room_608_daemon() {
 			g_sequence_ids[9] = kernel_seq_forward(g_sprite_ids[9], false, 10, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[9], 1, 2);
 			kernel_seq_depth(g_sequence_ids[9], 5);
-			kernel_seq_trigger(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
+			kernel_seq_trigger(g_sequence_ids[9], KERNEL_TRIGGER_EXPIRE, 0, 80);
 			kernel_timing_trigger(10, 85);
 			break;
 
@@ -632,7 +633,7 @@ static void room_608_daemon() {
 			kernel_seq_timeout(-1, g_sequence_ids[9]);
 			kernel_message_purge();
 			kernel_message_add(quote_string(kernel.quotes, 0x2FC), 0, 0, 0x1110, 120, 0, 34);
-			kernel_seq_trigger(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
+			kernel_seq_trigger(g_sequence_ids[9], KERNEL_TRIGGER_EXPIRE, 0, 81);
 			break;
 
 		case 81:
@@ -642,7 +643,7 @@ static void room_608_daemon() {
 			kernel_seq_range(g_sequence_ids[9], 6, 38);
 			kernel_seq_depth(g_sequence_ids[9], 5);
 			kernel_seq_timeout(syncIdx, g_sequence_ids[9]);
-			kernel_seq_trigger(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 82);
+			kernel_seq_trigger(g_sequence_ids[9], KERNEL_TRIGGER_EXPIRE, 0, 82);
 		}
 		break;
 
@@ -653,7 +654,7 @@ static void room_608_daemon() {
 			kernel_seq_range(g_sequence_ids[9], 39, 40);
 			kernel_seq_depth(g_sequence_ids[9], 5);
 			kernel_seq_timeout(syncIdx, g_sequence_ids[9]);
-			kernel_seq_trigger(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 83);
+			kernel_seq_trigger(g_sequence_ids[9], KERNEL_TRIGGER_EXPIRE, 0, 83);
 		}
 		break;
 
@@ -689,7 +690,7 @@ static void room_608_daemon() {
 }
 
 static void room_608_pre_parser() {
-	kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+	kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 
 	if ((player_said_3(throw, bone, rear_of_garage) || player_said_3(throw, bones, rear_of_garage)
 		|| player_said_3(throw, bone, front_of_garage) || player_said_3(throw, bones, front_of_garage)
@@ -724,7 +725,7 @@ static void room_608_parser() {
 				g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], true, 6, 0, 0, 2);
 				kernel_seq_range(g_sequence_ids[3], 1, 2);
 				kernel_seq_player(g_sequence_ids[3], false);
-				kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			} else
 				text_show(60839);
 			break;
@@ -799,7 +800,7 @@ static void room_608_parser() {
 				g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], true, 6, 0, 0, 2);
 				kernel_seq_range(g_sequence_ids[3], 1, 3);
 				kernel_seq_player(g_sequence_ids[3], false);
-				kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			} else
 				text_show(60840);
 			break;
@@ -886,8 +887,8 @@ static void room_608_parser() {
 			player.walker_visible = false;
 			g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], true, 6, 0, 0, 2);
 			kernel_seq_player(g_sequence_ids[2], false);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_SPRITE, 4, 1);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
@@ -915,8 +916,8 @@ static void room_608_parser() {
 			g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], true, 6, 0, 0, 2);
 			kernel_seq_range(g_sequence_ids[2], 1, 2);
 			kernel_seq_player(g_sequence_ids[2], false);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 2, 1);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_SPRITE, 2, 1);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
@@ -975,7 +976,7 @@ static void room_608_parser() {
 			text_show(60824);
 	} else if (player_said_2(open, storage_box))
 		text_show(60826);
-	else if (player_said_2(look, rearview_mirror) && (player.main_object_source == CAT_HOTSPOT))
+	else if (player_said_2(look, rearview_mirror) && (player.main_object_source == STROKE_INTERFACE))
 		text_show(60828);
 	else if (player_said_2(look, tool_box)) {
 		if (object[OBJ_POLYCEMENT].location == room_id)

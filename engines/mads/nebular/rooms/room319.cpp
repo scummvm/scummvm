@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/core/magic.h"
 #include "mads/core/mcga.h"
@@ -106,7 +107,7 @@ static void room_319_init() {
 	local._dialog2.setup(0x44, 0x171, 0x172, 0x173, 0x174, 0x175, 0x176, 0);
 	local._dialog3.setup(0x45, 0x17D, 0x17E, 0x17F, 0x180, 0x181, 0x182, 0x183, 0);
 
-	if (previous_room != RETURNING_FROM_DIALOG) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		local._dialog1.set(0x165, 0x166, 0x167, 0x168, 0);
 		local._dialog2.set(0x171, 0x172, 0x173, 0x174, 0);
 		local._dialog3.set(0x17D, 0x17E, 0x17F, 0x180, 0);
@@ -129,7 +130,7 @@ static void room_319_init() {
 
 	kernel_run_animation(kernel_name('b', 0), 0);
 
-	if (previous_room != RETURNING_FROM_DIALOG) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		local._animMode = 1;
 		local._nextAction1 = 2;
 		local._nextAction2 = 2;
@@ -267,7 +268,7 @@ static void room_319_daemon() {
 						g_sequence_ids[i] = kernel_seq_forward(g_sprite_ids[i], false, 8, 0, 0, 1);
 						kernel_seq_range(g_sequence_ids[i], 1, 7);
 					}
-					kernel_seq_trigger(g_sequence_ids[0], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
+					kernel_seq_trigger(g_sequence_ids[0], KERNEL_TRIGGER_EXPIRE, 0, 73);
 				}
 			}
 		}
@@ -322,7 +323,7 @@ static void room_319_daemon() {
 			kernel_seq_range(g_sequence_ids[i], 8, 13);
 			kernel_seq_timeout(oldIdx, g_sequence_ids[i]);
 		}
-		kernel_seq_trigger(g_sequence_ids[0], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
+		kernel_seq_trigger(g_sequence_ids[0], KERNEL_TRIGGER_EXPIRE, 0, 74);
 
 		// WORKAROUND: This fixes the game sometimes going into an endless waiting
 		// loop even after the doctor has finished hitting Rex. Note sure if it's due
@@ -442,7 +443,7 @@ static void room_319_parser() {
 				(player2.words[0] == 0x183));
 
 			int addVerbId = player2.words[0] + 1;
-			if ((addVerbId == 0x182) && (config_file.naughtiness != STORYMODE_NAUGHTY))
+			if ((addVerbId == 0x182) && (config_file.naughtiness != NAUGHTY))
 				addVerbId = 0x183;
 
 			if (local._slacheMode == 1) {

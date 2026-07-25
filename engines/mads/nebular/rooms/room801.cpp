@@ -69,7 +69,7 @@ static void room_801_init() {
 		player.y = 111;
 		player_walk(270, 118, FACING_WEST);
 		player.walker_visible = true;
-	} else if ((previous_room != RETURNING_FROM_DIALOG) && !global[kTeleporterCommand]) {
+	} else if ((previous_room != KERNEL_RESTORING_GAME) && !global[kTeleporterCommand]) {
 		player.x = 8;
 		player.y = 117;
 		player_walk(41, 115, FACING_EAST);
@@ -87,8 +87,8 @@ static void room_801_init() {
 			global[kTeleporterUnderstood] = true;
 			g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 8, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[1], 1, 13);
-			kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
-			kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
+			kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
+			kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 75);
 			g_engine->_soundManager->command(30, 0);
 			break;
 
@@ -98,8 +98,8 @@ static void room_801_init() {
 			global[kTeleporterUnderstood] = true;
 			g_sequence_ids[1] = kernel_seq_backward(g_sprite_ids[1], false, 8, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[1], 1, 13);
-			kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
-			kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
+			kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
+			kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 80);
 			g_engine->_soundManager->command(30, 0);
 			break;
 
@@ -140,7 +140,7 @@ static void room_801_daemon() {
 		if (global[kSexOfRex] == REX_FEMALE) {
 			g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 8, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[5], 1, 8);
-			kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 140);
+			kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, 140);
 		} else {
 			player.commands_allowed = true;
 			player.walker_visible = true;
@@ -174,7 +174,7 @@ static void room_801_daemon() {
 		kernel_seq_range(g_sequence_ids[2], 1, 5);
 		kernel_seq_depth(g_sequence_ids[2], 10);
 		local._walkThroughDoor = false;
-		kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 120);
+		kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 120);
 	}
 
 	if (kernel.trigger == 120) {
@@ -195,7 +195,7 @@ static void room_801_daemon() {
 		g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 4, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[2], 1, 5);
 		kernel_seq_depth(g_sequence_ids[2], 10);
-		kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 110);
+		kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 110);
 	}
 
 	if (kernel.trigger == 110) {
@@ -234,10 +234,10 @@ static void room_801_parser() {
 		player.facing = FACING_EAST;
 		player_select_series();
 		global[kBetweenRooms] = true;
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_seq_delete(g_sequence_ids[2]);
 		g_sequence_ids[2] = kernel_seq_backward(g_sprite_ids[2], false, 4, 0, 0, 1);
-		kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 90);
+		kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 90);
 		kernel_seq_range(g_sequence_ids[2], 1, 5);
 		kernel_seq_depth(g_sequence_ids[2], 13);
 		g_engine->_soundManager->command(11, 0);

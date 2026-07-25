@@ -50,7 +50,7 @@ static void room_203_init() {
 		player.x = 308;
 		player.y = 117;
 		player.facing = FACING_WEST;
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 155;
 		player.y = 152;
 		player.facing = FACING_NORTH;
@@ -64,7 +64,7 @@ static void room_203_init() {
 		player_walk(158, 135, FACING_SOUTH);
 		int idx = kernel_add_dynamic(words_field_to_south, words_walk_towards, 0, 0, 0, 0, 320, 156);
 		kernel_dynamic_walk(idx, 155, 152, FACING_SOUTH);
-		kernel_dynamic_cursor(idx, CURSOR_GO_DOWN);
+		kernel_dynamic_cursor(idx, CURSOR_DOWN);
 	}
 
 	if (!local._rhotundaEatFl) {
@@ -106,7 +106,7 @@ static void room_203_daemon() {
 		kernel_dump_all();
 		cursor_id = CURSOR_WAIT;
 		mouse_cursor_sprite(cursor, CURSOR_WAIT);
-		kernel_run_animation(kernel_full_name(203, 'a', -1, "", EXT_AA), 81);
+		kernel_run_animation(kernel_full_name(203, 'a', -1, "", KERNEL_AA), 81);
 	} else if (kernel.trigger == 81) {
 		new_room = 208;
 		kernel.force_restart = true;

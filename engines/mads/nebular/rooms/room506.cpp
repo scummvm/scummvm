@@ -49,7 +49,7 @@ static Scratch local;
 
 
 static void handleDoorSequences() {
-	kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+	kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 
 	if (local._firstDoorFl) {
 		if (player_said_2(walk_into, software_store) || ((previous_room == 507) && !local._actionFl)) {
@@ -74,7 +74,7 @@ static void handleDoorSequences() {
 		local._doorSequenceIdx = kernel_seq_forward(local._doorSpriteIdx, false, 7, 0, 0, 1);
 		kernel_seq_depth(local._doorSequenceIdx, local._doorDepth);
 		kernel_load_variant(1);
-		kernel_seq_trigger(local._doorSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 81);
+		kernel_seq_trigger(local._doorSequenceIdx, KERNEL_TRIGGER_EXPIRE, 0, 81);
 		break;
 
 
@@ -91,9 +91,9 @@ static void handleDoorSequences() {
 		local._doorSequenceIdx = kernel_seq_backward(local._doorSpriteIdx, false, 7, 0, 0, 1);
 		kernel_seq_depth(local._doorSequenceIdx, local._doorDepth);
 		if (local._actionFl)
-			kernel_seq_trigger(local._doorSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 84);
+			kernel_seq_trigger(local._doorSequenceIdx, KERNEL_TRIGGER_EXPIRE, 0, 84);
 		else
-			kernel_seq_trigger(local._doorSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 83);
+			kernel_seq_trigger(local._doorSequenceIdx, KERNEL_TRIGGER_EXPIRE, 0, 83);
 
 		break;
 
@@ -103,7 +103,7 @@ static void handleDoorSequences() {
 		int idx = kernel_add_dynamic(local._doorWord, words_walk_into, 0, local._doorSequenceIdx, 0, 0, 0, 0);
 		kernel_dynamic_walk(idx, local._doorPos_x, local._doorPos_y, FACING_NORTHWEST);
 		int hotspotId = idx;
-		kernel_dynamic_cursor(hotspotId, CURSOR_GO_LEFT);
+		kernel_dynamic_cursor(hotspotId, CURSOR_LEFT);
 		kernel_seq_depth(local._doorSequenceIdx, local._doorDepth);
 		local._firstDoorFl = true;
 		if (local._labDoorFl) {
@@ -152,13 +152,13 @@ static void room_506_init() {
 	int idx = kernel_add_dynamic(words_laboratory, words_walk_into, 0, g_sequence_ids[1], 0, 0, 0, 0);
 	kernel_dynamic_walk(idx, 65, 125, FACING_NORTHWEST);
 	int hotspotId = idx;
-	kernel_dynamic_cursor(hotspotId, CURSOR_GO_LEFT);
+	kernel_dynamic_cursor(hotspotId, CURSOR_LEFT);
 	kernel_seq_depth(g_sequence_ids[1], 10);
 	g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 1);
 	idx = kernel_add_dynamic(words_software_store, words_walk_into, 0, g_sequence_ids[2], 0, 0, 0, 0);
 	kernel_dynamic_walk(idx, 112, 102, FACING_NORTHWEST);
 	hotspotId = idx;
-	kernel_dynamic_cursor(hotspotId, CURSOR_GO_LEFT);
+	kernel_dynamic_cursor(hotspotId, CURSOR_LEFT);
 	kernel_seq_depth(g_sequence_ids[2], 13);
 
 	g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -1);
@@ -178,7 +178,7 @@ static void room_506_init() {
 		player.facing = FACING_SOUTHEAST;
 		kernel_timing_trigger(60, 80);
 		player.commands_allowed = false;
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 138;
 		player.y = 116;
 		player.facing = FACING_NORTHEAST;
@@ -219,7 +219,7 @@ static void room_506_daemon() {
 			kernel_seq_delete(g_sequence_ids[3]);
 			g_sequence_ids[3] = kernel_seq_backward(g_sprite_ids[3], false, 6, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[3], 5);
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 72);
 			break;
 
 		case 72:
@@ -258,7 +258,7 @@ static void room_506_parser() {
 			kernel_seq_delete(g_sequence_ids[3]);
 			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 6, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[3], 5);
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
@@ -274,7 +274,7 @@ static void room_506_parser() {
 			player.walker_visible = false;
 			g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 10, 0, 0, 1);
 			kernel_seq_player(g_sequence_ids[4], false);
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 3);
 			break;
 
 		case 3:

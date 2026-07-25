@@ -52,7 +52,7 @@ static void room_405_init() {
 		player.x = 284;
 		player.y = 109;
 		player.facing = FACING_SOUTH;
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 23;
 		player.y = 123;
 		player.facing = FACING_EAST;
@@ -88,7 +88,7 @@ static void room_405_daemon() {
 		player.clock = kernel.clock + player.frame_delay;
 		player.walker_visible = true;
 		g_sequence_ids[1] = kernel_seq_backward(g_sprite_ids[1], false, 6, 0, 0, 1);
-		kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 71);
 		g_engine->_soundManager->command(19, 0);
 	}
 
@@ -136,29 +136,29 @@ static void room_405_parser() {
 	else if (player_said_3(put, security_card, card_slot) && !global[kArmoryDoorOpen]) {
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 7, 0, 0, 2);
 		kernel_seq_range(g_sequence_ids[3], 1, 2);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 75);
 		Common::Point msgPos = Common::Point(player.x, player.y + 1);
 		kernel_seq_loc(g_sequence_ids[3], msgPos.x, msgPos.y);
 		kernel_seq_scale(g_sequence_ids[3], 87);
 	} else if ((player_said_3(put, security_card, card_slot) || player_said_2(close, wide_door)) && global[kArmoryDoorOpen]) {
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		player.commands_allowed = false;
 		player.walker_visible = false;
 		g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 7, 0, 0, 2);
 		kernel_seq_range(g_sequence_ids[3], 1, 2);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 70);
 		kernel_seq_loc(g_sequence_ids[3], player.x, player.y);
 		kernel_seq_scale(g_sequence_ids[3], 87);
 	} else if (player_said_2(put, card_slot)) {
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		player.commands_allowed = false;
 		player.walker_visible = false;
 		g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 7, 0, 0, 2);
 		kernel_seq_range(g_sequence_ids[3], 1, 2);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 80);
 		kernel_seq_loc(g_sequence_ids[3], player.x, player.y);
 		kernel_seq_scale(g_sequence_ids[3], 87);
 	} else if (player_said_2(look, cannon_balls))

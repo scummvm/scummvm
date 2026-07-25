@@ -41,7 +41,7 @@ static Scratch local;
 
 
 static void room_407_init() {
-	if (previous_room != RETURNING_FROM_DIALOG)
+	if (previous_room != KERNEL_RESTORING_GAME)
 		local._fromNorth = false;
 
 	if (previous_room == 318) {
@@ -49,7 +49,7 @@ static void room_407_init() {
 		player.y = 92;
 		player.facing = FACING_SOUTH;
 		local._fromNorth = true;
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 172;
 		player.y = 132;
 		player.facing = FACING_NORTH;
@@ -101,7 +101,7 @@ static void room_407_pre_parser() {
 static void room_407_parser() {
 	if (player.x == local._dest_x && player.y == local._dest_y && local._fromNorth) {
 		if (global[kSexOfRex] == REX_MALE) {
-			kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+			kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 			player.commands_allowed = false;
 			player.walker_visible = false;
 			g_engine->_soundManager->command(21, 0);
@@ -112,7 +112,7 @@ static void room_407_parser() {
 		}
 
 		if (global[kSexOfRex] == REX_FEMALE) {
-			kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+			kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 			player.commands_allowed = false;
 			player.walker_visible = false;
 			g_engine->_soundManager->command(21, 0);

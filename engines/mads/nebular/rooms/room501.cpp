@@ -61,8 +61,8 @@ static void handleSlotActions() {
 		kernel_seq_range(local._mainSequenceId, 1, frameIndex);
 		kernel_seq_player(local._mainSequenceId, false);
 		g_engine->_soundManager->command(10, 0);
-		kernel_seq_trigger(local._mainSequenceId, SEQUENCE_TRIGGER_SPRITE, frameIndex, 1);
-		kernel_seq_trigger(local._mainSequenceId, SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+		kernel_seq_trigger(local._mainSequenceId, KERNEL_TRIGGER_SPRITE, frameIndex, 1);
+		kernel_seq_trigger(local._mainSequenceId, KERNEL_TRIGGER_EXPIRE, 0, 2);
 		break;
 
 	case 1:
@@ -102,7 +102,7 @@ static void room_501_init() {
 	int idx = kernel_add_dynamic(words_door, words_walk_through, 0, g_sequence_ids[3], 0, 0, 0, 0);
 	kernel_dynamic_walk(idx, 282, 110, FACING_NORTH);
 	local._doorHotspotid = idx;
-	kernel_dynamic_cursor(local._doorHotspotid, CURSOR_GO_UP);
+	kernel_dynamic_cursor(local._doorHotspotid, CURSOR_UP);
 	kernel_seq_depth(g_sequence_ids[3], 7);
 	g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, -1);
 	kernel_seq_depth(g_sequence_ids[2], 4);
@@ -127,7 +127,7 @@ static void room_501_init() {
 		player.y = 102;
 		player.facing = FACING_SOUTHWEST;
 		kernel_timing_trigger(15, 80);
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 299;
 		player.y = 131;
 	}
@@ -158,7 +158,7 @@ static void room_501_daemon() {
 			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 9, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[3], 7);
 			g_engine->_soundManager->command(11, 0);
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 81);
 			break;
 
 		case 81:
@@ -173,8 +173,8 @@ static void room_501_daemon() {
 			g_engine->_soundManager->command(12, 0);
 			local._doorHotspotid = kernel_add_dynamic(words_door, words_walk_through, 0, g_sequence_ids[3], 0, 0, 0, 0);
 			kernel_dynamic_walk(g_sequence_ids[3], 282, 110, FACING_NORTH);
-			kernel_dynamic_cursor(local._doorHotspotid, CURSOR_GO_UP);
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 83);
+			kernel_dynamic_cursor(local._doorHotspotid, CURSOR_UP);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 83);
 			break;
 
 		case 83:
@@ -205,7 +205,7 @@ static void room_501_daemon() {
 			kernel_seq_delete(g_sequence_ids[2]);
 			g_sequence_ids[2] = kernel_seq_backward(g_sprite_ids[2], false, 6, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[2], 4);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 73);
 			break;
 
 		case 73:
@@ -233,7 +233,7 @@ static void room_501_parser() {
 			kernel_seq_delete(g_sequence_ids[2]);
 			g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 6, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[2], 4);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
@@ -255,7 +255,7 @@ static void room_501_parser() {
 
 			local._mainSequenceId = kernel_seq_forward(local._mainSpriteId, false, 8, 0, 0, 1);
 			kernel_seq_player(local._mainSequenceId, false);
-			kernel_seq_trigger(local._mainSequenceId, SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			kernel_seq_trigger(local._mainSequenceId, KERNEL_TRIGGER_EXPIRE, 0, 3);
 			break;
 
 		case 3:
@@ -336,7 +336,7 @@ static void room_501_parser() {
 			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 9, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[3], 7);
 			g_engine->_soundManager->command(11, 0);
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 6);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 6);
 			break;
 
 		case 6:
@@ -352,7 +352,7 @@ static void room_501_parser() {
 			kernel_seq_depth(g_sequence_ids[3], 7);
 			kernel_seq_timeout(syncIdx, g_sequence_ids[3]);
 			g_engine->_soundManager->command(12, 0);
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 8);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 8);
 		}
 		break;
 

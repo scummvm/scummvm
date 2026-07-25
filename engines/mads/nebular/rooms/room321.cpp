@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
@@ -36,7 +37,7 @@ static void room_321_init() {
 	player.commands_allowed = false;
 
 	inter_reset_dialog();
-	kernel_set_interface_mode(kInputConversation);
+	kernel_set_interface_mode(INTER_CONVERSATION);
 
 	int suffixNum;
 	if (global[kSexOfRex] == REX_FEMALE) {
@@ -53,7 +54,7 @@ static void room_321_init() {
 
 static void room_321_daemon() {
 	if (kernel_anim[0].anim != nullptr) {
-		if ((kernel_anim[0].frame >= 260) && (global[kSexOfRex] == REX_MALE) && (config_file.naughtiness >= STORYMODE_NICE))
+		if ((kernel_anim[0].frame >= 260) && (global[kSexOfRex] == REX_MALE) && (config_file.naughtiness >= NICE))
 			new_room = 316;
 	}
 

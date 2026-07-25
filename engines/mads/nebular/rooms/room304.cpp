@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/core/pal.h"
 #include "mads/nebular/global.h"
@@ -96,8 +97,8 @@ static void room_304_daemon() {
 			int sprIdx = kernel_seq_forward(local._explosionSpriteId, false, 8, 0, 0, 1);
 			kernel_seq_range(sprIdx, -1, 4);
 			kernel_seq_depth(sprIdx, 1);
-			kernel_seq_trigger(sprIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 71);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
+			kernel_seq_trigger(sprIdx, KERNEL_TRIGGER_EXPIRE, 0, 71);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 74);
 		}
 		break;
 
@@ -113,9 +114,9 @@ static void room_304_daemon() {
 			int sprIdx = kernel_seq_forward(local._explosionSpriteId, false, 8, 0, 0, 1);
 			kernel_seq_range(sprIdx, 5, -2);
 			kernel_seq_depth(sprIdx, 1);
-			kernel_seq_trigger(sprIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 73);
-			if (config_file.naughtiness == STORYMODE_NICE)
-				kernel_seq_trigger(sprIdx, SEQUENCE_TRIGGER_SPRITE, 8, 78);
+			kernel_seq_trigger(sprIdx, KERNEL_TRIGGER_EXPIRE, 0, 73);
+			if (config_file.naughtiness == NICE)
+				kernel_seq_trigger(sprIdx, KERNEL_TRIGGER_SPRITE, 8, 78);
 		}
 		break;
 
@@ -131,14 +132,14 @@ static void room_304_daemon() {
 			g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 8, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[2], 5, -2);
 			kernel_seq_depth(g_sequence_ids[2], 1);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 75);
 			break;
 
 		case 75:
 			g_sequence_ids[2] = kernel_seq_backward(g_sprite_ids[2], false, 8, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[2], 2, -2);
 			kernel_seq_depth(g_sequence_ids[2], 1);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 76);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 76);
 			break;
 
 		case 76:

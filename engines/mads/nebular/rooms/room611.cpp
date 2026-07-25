@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/core/pal.h"
 #include "mads/nebular/global.h"
@@ -90,7 +91,7 @@ static void setDialogNode(int node) {
 
 	switch (node) {
 	case 0:
-		kernel_set_interface_mode(kInputBuildingSentences);
+		kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 		local._duringDialogFl = false;
 		local._hermitDialogNode = 0;
 		break;
@@ -133,7 +134,7 @@ static void handleTalking(int delay) {
 		local._alreadyTalkingFl = true;
 
 	local._hermitTalkingFl = true;
-	kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+	kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 	kernel_timing_trigger(delay, 100);
 }
 
@@ -942,7 +943,7 @@ static void room_611_init() {
 	local._alreadyTalkingFl = false;
 	local._startTradingFl = false;
 
-	if (previous_room != RETURNING_FROM_DIALOG) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 22;
 		player.y = 132;
 		player.facing = FACING_EAST;
@@ -950,7 +951,7 @@ static void room_611_init() {
 	}
 
 	if (!global[kHasTalkedToHermit]) {
-		kernel_run_animation(kernel_full_name(611, 'h', -1, "", EXT_AA), 0);
+		kernel_run_animation(kernel_full_name(611, 'h', -1, "", KERNEL_AA), 0);
 		local._nextFrame = 47;
 		local._hermitMode = 1;
 		local._hermitTalkingFl = false;
@@ -975,7 +976,7 @@ static void room_611_init() {
 
 		switch (local._hermitDialogNode) {
 		case 0:
-			kernel_set_interface_mode(kInputBuildingSentences);
+			kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 			local._hermitDialogNode = 1;
 			break;
 
@@ -1007,7 +1008,7 @@ static void room_611_daemon() {
 		kernel_seq_range(g_sequence_ids[1], 1, 8);
 		kernel_seq_depth(g_sequence_ids[1], 1);
 		local._ratPresentFl = true;
-		kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
+		kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 81);
 	} else if (kernel.trigger == 81) {
 		int syncId = g_sequence_ids[1];
 		g_sequence_ids[1] = kernel_seq_pingpong(g_sprite_ids[1], false, 20, 0, 0, 0);
@@ -1042,7 +1043,7 @@ static void room_611_daemon() {
 			g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 12, 0, 0, 3);
 			kernel_seq_range(g_sequence_ids[2], 2, 4);
 			kernel_seq_depth(g_sequence_ids[2], 1);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 71);
 			break;
 
 		case 7:
@@ -1077,14 +1078,14 @@ static void room_611_daemon() {
 			g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 24, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[2], 5, 8);
 			kernel_seq_depth(g_sequence_ids[2], 1);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 71);
 			break;
 
 		case 17:
 			g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 20, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[2], 9, 11);
 			kernel_seq_depth(g_sequence_ids[2], 1);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 71);
 			break;
 
 		case 21:
@@ -1111,7 +1112,7 @@ static void room_611_daemon() {
 		case 29:
 			g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 20, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[2], 1);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 71);
 			break;
 
 		default:
@@ -1240,7 +1241,7 @@ static void room_611_daemon() {
 		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 7, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[3], 1, 2);
 		kernel_seq_player(g_sequence_ids[3], false);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 111);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 111);
 	}
 
 	if (kernel.trigger == 111) {
@@ -1262,7 +1263,7 @@ static void room_611_daemon() {
 			g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 7, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[3], 1, 2);
 			kernel_seq_player(g_sequence_ids[3], false);
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 112);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 112);
 			local._check1Fl = false;
 		}
 
@@ -1292,7 +1293,7 @@ static void room_611_daemon() {
 		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 7, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[3], 1, 2);
 		kernel_seq_player(g_sequence_ids[3], false);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 114);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 114);
 	}
 
 	if (kernel.trigger == 114) {
@@ -1303,7 +1304,7 @@ static void room_611_daemon() {
 		kernel_seq_range(g_sequence_ids[3], 1, 2);
 		kernel_seq_timeout(syncIdx, g_sequence_ids[3]);
 		kernel_seq_player(g_sequence_ids[3], false);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 115);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 115);
 	}
 
 	if ((local._nextFrame >= 0) && (local._nextFrame != kernel_anim[0].frame)) {
@@ -1342,7 +1343,7 @@ static void room_611_pre_parser() {
 }
 
 static void room_611_parser() {
-	if (inter_input_mode == kInputConversation)
+	if (inter_input_mode == INTER_CONVERSATION)
 		handleDialog();
 	else if ((player_said_3(give, phone_cells, hermit)) || (player_said_3(give, durafail_cells, hermit))) {
 		player2.words[0] = 0x294;

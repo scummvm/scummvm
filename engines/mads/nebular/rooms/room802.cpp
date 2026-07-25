@@ -59,7 +59,7 @@ static void room_802_init() {
 		player.y = 119;
 		player.facing = FACING_WEST;
 
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 15;
 		player.y = 129;
 		player.facing = FACING_EAST;
@@ -70,7 +70,7 @@ static void room_802_init() {
 
 
 	if (global[kHasWatchedAntigrav] && !global[kRemoteSequenceRan]) {
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(200, 70);
 	}
 
@@ -95,8 +95,8 @@ static void room_802_daemon() {
 		player.commands_allowed = false;
 		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 8, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[3], 1, 19);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
-		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 4, 72);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 71);
+		kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_SPRITE, 4, 72);
 	}
 
 	if (kernel.trigger == 71) {
@@ -136,8 +136,8 @@ static void room_802_parser() {
 			g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], true, 7, 0, 0, 2);
 			kernel_seq_range(g_sequence_ids[2], 1, 2);
 			kernel_seq_player(g_sequence_ids[2], false);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 2, 1);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_SPRITE, 2, 1);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
@@ -168,8 +168,8 @@ static void room_802_parser() {
 			g_sequence_ids[5] = kernel_seq_pingpong(g_sprite_ids[5], true, 7, 0, 0, 2);
 			kernel_seq_range(g_sequence_ids[5], 1, 4);
 			kernel_seq_player(g_sequence_ids[5], false);
-			kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-			kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_SPRITE, 4, 1);
+			kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:

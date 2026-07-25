@@ -72,7 +72,7 @@ struct RoomFileRex {
 };
 
 
-static int room_picture_load(Room *room, int room_id, Buffer *picture, int load_flags) {
+static int room_picture_load(Room *roomPtr, int id, Buffer *picture, int load_flags) {
 	int error_flag = true;
 	int xs, ys;
 	long picture_size;
@@ -83,7 +83,7 @@ static int room_picture_load(Room *room, int room_id, Buffer *picture, int load_
 
 	load_handle.open = false;
 
-	env_get_level_path(temp_buf, ROOM, ".ART", 0, room_id);
+	env_get_level_path(temp_buf, ROOM, ".ART", 0, id);
 
 	if (loader_open(&load_handle, temp_buf, "rb", true)) {
 		room_load_error = 1;
@@ -117,7 +117,7 @@ static int room_picture_load(Room *room, int room_id, Buffer *picture, int load_
 	picture_size = MAX((long)xs * ys, load_handle.pack.strategy[load_handle.pack_list_marker].size);
 
 	// Copy the cycle list
-	room->cycle_list = art.cycle_list;
+	roomPtr->cycle_list = art.cycle_list;
 
 	if (!(load_flags & ROOM_LOAD_TRANSLATE)) {
 		if (master_shadow) {
@@ -127,8 +127,8 @@ static int room_picture_load(Room *room, int room_id, Buffer *picture, int load_
 
 		int pal_flags = (load_flags & (PAL_MAP_RESERVED | PAL_MAP_ANY_TO_CLOSEST |
 			PAL_MAP_ALL_TO_CLOSEST | PAL_MAP_TOP_COLORS)) | PAL_MAP_BACKGROUND;
-		room->color_handle = pal_allocate(&art.color_list, master_shadow, pal_flags);
-		if (room->color_handle < 0) {
+		roomPtr->color_handle = pal_allocate(&art.color_list, master_shadow, pal_flags);
+		if (roomPtr->color_handle < 0) {
 			room_load_error = 4;
 			goto done;
 		}
@@ -140,9 +140,9 @@ static int room_picture_load(Room *room, int room_id, Buffer *picture, int load_
 			}
 		}
 
-		for (count = 0; count < room->cycle_list.num_cycles; ++count) {
-			int col = room->cycle_list.table[count].first_list_color;
-			room->cycle_list.table[count].first_palette_color = art.color_list.table[col].x16;
+		for (count = 0; count < roomPtr->cycle_list.num_cycles; ++count) {
+			int col = roomPtr->cycle_list.table[count].first_list_color;
+			roomPtr->cycle_list.table[count].first_palette_color = art.color_list.table[col].x16;
 		}
 	}
 

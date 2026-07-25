@@ -42,6 +42,7 @@ namespace MADS {
 #define MATTE_LIST_SIZE         (IMAGE_LIST_SIZE + MESSAGE_LIST_SIZE)
 #define FIRST_MESSAGE_MATTE     IMAGE_LIST_SIZE
 
+#define MATTE_FX_NONE                 0
 #define MATTE_FX_FADE_FROM_BLACK      1
 #define MATTE_FX_FADE_THRU_BLACK      2
 #define MATTE_FX_CORNER_LOWER_LEFT    3

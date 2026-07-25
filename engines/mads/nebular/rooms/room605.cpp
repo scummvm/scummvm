@@ -49,7 +49,7 @@ static void room_605_init() {
 	player.walker_visible = false;
 	player.commands_allowed = false;
 	kernel_timing_trigger(600, 70);
-	kernel_set_interface_mode(kInputLimitedSentences);
+	kernel_set_interface_mode(INTER_LIMITED_SENTENCES);
 	section_6_music();
 	g_engine->_soundManager->command(22, 0);
 }

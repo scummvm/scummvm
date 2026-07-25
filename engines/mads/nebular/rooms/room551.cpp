@@ -42,7 +42,7 @@ static void room_551_init() {
 		player.x = 18;
 		player.y = 130;
 	}
-	else if (previous_room != RETURNING_FROM_DIALOG) {
+	else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 124;
 		player.y = 119;
 		player.facing = FACING_NORTH;

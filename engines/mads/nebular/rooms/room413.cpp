@@ -48,9 +48,9 @@ static void room_413_init() {
 		player.y = 146;
 		player.facing = FACING_NORTH;
 		player.walker_visible = true;
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		if (global[kSexOfRex] == REX_MALE) {
-			kernel_run_animation(kernel_full_name(413, 'd', 1, "", EXT_AA), 78);
+			kernel_run_animation(kernel_full_name(413, 'd', 1, "", KERNEL_AA), 78);
 			g_engine->_soundManager->command(30, 0);
 			player.walker_visible = false;
 			player.commands_allowed = false;
@@ -72,7 +72,7 @@ static void room_413_init() {
 			g_sequence_ids[1] = kernel_seq_backward(g_sprite_ids[1], false, 7, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[1], 1, 19);
 			kernel_seq_depth(g_sequence_ids[1], 8);
-			kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 76);
+			kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 76);
 			break;
 
 		case 2:
@@ -81,7 +81,7 @@ static void room_413_init() {
 			g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 7, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[1], 1, 20);
 			kernel_seq_depth(g_sequence_ids[1], 8);
-			kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 77);
+			kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 77);
 			break;
 
 		case 3:

@@ -96,7 +96,7 @@ static void room_202_init() {
 		player.x = 190;
 		player.y = 91;
 		player.facing = FACING_SOUTH;
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 178;
 		player.y = 152;
 		player.facing = FACING_NORTH;
@@ -113,7 +113,7 @@ static void room_202_init() {
 	kernel.quotes = quote_load(0x5C, 0x5D, 0x5E, 0x5F, 0x60, 0x62, 0x63, 0x64, 0x65, 0x66, 0x61, 0);
 	local._activeMsgFl = false;
 
-	if (previous_room == RETURNING_FROM_DIALOG) {
+	if (previous_room == KERNEL_RESTORING_GAME) {
 		if (local._waitingMeteoFl) {
 			g_sequence_ids[9] = kernel_seq_stamp(g_sprite_ids[9], false, 1);
 			player.walker_visible = false;
@@ -174,7 +174,7 @@ static void room_202_init() {
 static void setRandomKernelMessage() {
 	int vocabId = g_engine->getRandomNumber(92, 96);
 	kernel_message_purge();
-	kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+	kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 	kernel_message_add(quote_string(kernel.quotes, vocabId), 0, 0, 0x1110, 120, 70, 34);
 	local._activeMsgFl = true;
 }
@@ -262,7 +262,7 @@ static void room_202_daemon() {
 				player2.words[0] = words_look;
 				player2.words[1] = words_binoculars;
 				player2.words[2] = words_strange_device;
-				kernel.trigger_setup_mode = SEQUENCE_TRIGGER_PARSER;
+				kernel.trigger_setup_mode = KERNEL_TRIGGER_PARSER;
 				kernel_timing_trigger(2 * 60, 2);
 				local._meteorologistSpecial = true;
 			} else if (global[kMeteorologistWatch] == METEOROLOGIST_TOWER) {
@@ -280,7 +280,7 @@ static void room_202_daemon() {
 		g_sequence_ids[9] = kernel_seq_backward(g_sprite_ids[9], true, 6, 0, 0, 1);
 		kernel_seq_loc(g_sequence_ids[9], 247, 82);
 		kernel_seq_depth(g_sequence_ids[9], 1);
-		kernel_seq_trigger(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 91);
+		kernel_seq_trigger(g_sequence_ids[9], KERNEL_TRIGGER_EXPIRE, 0, 91);
 		break;
 	case 91:
 		g_sequence_ids[9] = kernel_seq_stamp(g_sprite_ids[9], true, 1);
@@ -293,7 +293,7 @@ static void room_202_daemon() {
 		kernel_seq_delete(g_sequence_ids[9]);
 		g_sequence_ids[11] = kernel_seq_forward(g_sprite_ids[11], false, 6, 0, 0, 1);
 		kernel_seq_depth(g_sequence_ids[11], 1);
-		kernel_seq_trigger(g_sequence_ids[11], SEQUENCE_TRIGGER_EXPIRE, 0, 93);
+		kernel_seq_trigger(g_sequence_ids[11], KERNEL_TRIGGER_EXPIRE, 0, 93);
 		kernel_message_purge();
 		int msgIndex = kernel_message_add(quote_string(kernel.quotes, 98), 0, -65, 0x1110, 60, 0, 32);
 		kernel_message_attach(msgIndex, g_sequence_ids[11]);
@@ -437,7 +437,7 @@ static void room_202_pre_parser() {
 			kernel_seq_delete(g_sequence_ids[9]);
 			g_sequence_ids[8] = kernel_seq_backward(g_sprite_ids[8], false, 6, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[8], 1);
-			kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[8], KERNEL_TRIGGER_EXPIRE, 0, 1);
 		} else if (kernel.trigger == 1) {
 			kernel_seq_timeout(g_sequence_ids[8], -1);
 			kernel_delete_dynamic(local._ladderHotspotId);
@@ -488,8 +488,8 @@ static void room_202_parser() {
 				player.walker_visible = false;
 				g_sequence_ids[7] = kernel_seq_pingpong(g_sprite_ids[7], false, 3, 0, 0, 2);
 				kernel_seq_player(g_sequence_ids[7], false);
-				kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_SPRITE, 6, 1);
-				kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(g_sequence_ids[7], KERNEL_TRIGGER_SPRITE, 6, 1);
+				kernel_seq_trigger(g_sequence_ids[7], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			}
 			break;
 		case 1:
@@ -531,7 +531,7 @@ static void room_202_parser() {
 			kernel_dynamic_walk(local._ladderHotspotId, 246, 124, FACING_NORTH);
 			g_sequence_ids[8] = kernel_seq_forward(g_sprite_ids[8], false, 6, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[8], 1);
-			kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[8], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			break;
 		case 1:
 		{
@@ -561,7 +561,7 @@ static void room_202_parser() {
 				kernel_seq_loc(g_sequence_ids[10], 172, 123);
 				kernel_seq_depth(g_sequence_ids[10], 1);
 				kernel_seq_timeout(g_sequence_ids[10], -1);
-				kernel_seq_trigger(g_sequence_ids[10], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				kernel_seq_trigger(g_sequence_ids[10], KERNEL_TRIGGER_EXPIRE, 0, 1);
 				break;
 			case 1:
 				g_sequence_ids[10] = kernel_seq_stamp(g_sprite_ids[9], false, 6);
@@ -583,7 +583,7 @@ static void room_202_parser() {
 				kernel_seq_depth(g_sequence_ids[10], 1);
 				kernel_seq_range(g_sequence_ids[10], 1, 6);
 				kernel_seq_loc(g_sequence_ids[10], 172, 123);
-				kernel_seq_trigger(g_sequence_ids[10], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+				kernel_seq_trigger(g_sequence_ids[10], KERNEL_TRIGGER_EXPIRE, 0, 3);
 				break;
 			case 3:
 				kernel_seq_timeout(g_sequence_ids[10], -1);
@@ -603,7 +603,7 @@ static void room_202_parser() {
 				g_sequence_ids[9] = kernel_seq_forward(g_sprite_ids[9], true, 6, 0, 0, 1);
 				kernel_seq_loc(g_sequence_ids[9], 247, 82);
 				kernel_seq_depth(g_sequence_ids[9], 1);
-				kernel_seq_trigger(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				kernel_seq_trigger(g_sequence_ids[9], KERNEL_TRIGGER_EXPIRE, 0, 1);
 				break;
 			case 1:
 				g_sequence_ids[10] = kernel_seq_stamp(g_sprite_ids[9], true, -2);
@@ -636,7 +636,7 @@ static void room_202_parser() {
 				g_sequence_ids[9] = kernel_seq_backward(g_sprite_ids[9], false, 6, 0, 0, 1);
 				kernel_seq_loc(g_sequence_ids[9], 247, 82);
 				kernel_seq_depth(g_sequence_ids[9], 1);
-				kernel_seq_trigger(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+				kernel_seq_trigger(g_sequence_ids[9], KERNEL_TRIGGER_EXPIRE, 0, 3);
 				break;
 			case 3:
 				g_sequence_ids[9] = kernel_seq_stamp(g_sprite_ids[9], true, 1);

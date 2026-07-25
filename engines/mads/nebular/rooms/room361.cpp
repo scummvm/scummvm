@@ -45,8 +45,8 @@ static void handleRexAction() {
 		g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 15, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[2], -1, 4);
 		kernel_seq_player(g_sequence_ids[2], false);
-		kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
-		kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+		kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 1);
+		kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 2);
 		break;
 
 	case 1:
@@ -66,7 +66,7 @@ static void handleRexAction() {
 		kernel_seq_range(g_sequence_ids[2], 4, 10);
 		kernel_seq_player(g_sequence_ids[2], false);
 		kernel_seq_timeout(seqIdx, g_sequence_ids[2]);
-		kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+		kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 3);
 	}
 	break;
 
@@ -97,7 +97,7 @@ static void handleRexAction() {
 		kernel_seq_range(g_sequence_ids[2], 12, 14);
 		kernel_seq_player(g_sequence_ids[2], false);
 		kernel_seq_loc(g_sequence_ids[2], 167, 100);
-		kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 5);
+		kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 5);
 		break;
 
 	case 5:
@@ -143,8 +143,8 @@ static void handleRoxAction() {
 		g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 18, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[4], -1, 3);
 		kernel_seq_player(g_sequence_ids[4], false);
-		kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
-		kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+		kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 1);
+		kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 2);
 		break;
 
 	case 1:
@@ -164,7 +164,7 @@ static void handleRoxAction() {
 		kernel_seq_range(g_sequence_ids[4], 4, 8);
 		kernel_seq_player(g_sequence_ids[4], false);
 		kernel_seq_timeout(tmpIdx, g_sequence_ids[4]);
-		kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+		kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 3);
 	}
 	break;
 
@@ -181,7 +181,7 @@ static void handleRoxAction() {
 		kernel_seq_player(g_sequence_ids[4], false);
 		kernel_seq_loc(g_sequence_ids[4], 167, 100);
 		kernel_seq_timeout(tmpIdx, g_sequence_ids[4]);
-		kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
+		kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 4);
 	}
 	break;
 
@@ -198,7 +198,7 @@ static void handleRoxAction() {
 		kernel_seq_player(g_sequence_ids[4], false);
 		kernel_seq_loc(g_sequence_ids[4], 167, 100);
 		kernel_seq_timeout(tmpIdx, g_sequence_ids[4]);
-		kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 5);
+		kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 5);
 	}
 	break;
 
@@ -233,7 +233,7 @@ static void handleRoxAction() {
 }
 
 static void room_361_init() {
-	g_sprite_ids[1] = kernel_load_series(kernel_full_name(307, 'X', 0, "", EXT_SS), 0);
+	g_sprite_ids[1] = kernel_load_series(kernel_full_name(307, 'X', 0, "", KERNEL_SS), 0);
 
 	if (global[kSexOfRex] == REX_MALE) {
 		g_sprite_ids[2] = kernel_load_series("*RXCL_8", 0);
@@ -261,7 +261,7 @@ static void room_361_init() {
 		player.x = 129;
 		player.y = 113;
 		player.facing = FACING_SOUTH;
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 13;
 		player.y = 145;
 	}
@@ -312,7 +312,7 @@ static void room_361_daemon() {
 			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 12, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[3], 4, 5);
 			kernel_seq_player(g_sequence_ids[3], false);
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 74);
 			break;
 
 		case 74:
@@ -361,7 +361,7 @@ static void room_361_daemon() {
 			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 12, 0, 0, 1);
 			kernel_seq_range(g_sequence_ids[3], 10, -2);
 			kernel_seq_player(g_sequence_ids[3], false);
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 79);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 79);
 			break;
 
 		case 79:

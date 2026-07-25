@@ -91,7 +91,7 @@ static void room_207_init() {
 		player.x = 164;
 		player.y = 117;
 		player.facing = FACING_SOUTH;
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 305;
 		player.y = 131;
 	}
@@ -101,7 +101,7 @@ static void room_207_init() {
 	g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 10, 0, 0, 1);
 	kernel_seq_range(g_sequence_ids[6], 1, 22);
 	kernel_seq_depth(g_sequence_ids[6], 6);
-	kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+	kernel_seq_trigger(g_sequence_ids[6], KERNEL_TRIGGER_EXPIRE, 0, 70);
 }
 
 static void moveVulture() {
@@ -150,7 +150,7 @@ static void room_207_daemon() {
 		g_sequence_ids[8] = kernel_seq_forward(g_sprite_ids[8], false, 8, 0, 0, 1);
 		kernel_seq_depth(g_sequence_ids[7], 6);
 		kernel_seq_depth(g_sequence_ids[8], 6);
-		kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		kernel_seq_trigger(g_sequence_ids[7], KERNEL_TRIGGER_EXPIRE, 0, 71);
 		local._eyeFl = true;
 	}
 }

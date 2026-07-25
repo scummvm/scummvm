@@ -69,8 +69,8 @@ static void room_408_parser() {
 			g_sequence_ids[1] = kernel_seq_pingpong(g_sprite_ids[1], true, 7, 0, 0, 2);
 			kernel_seq_range(g_sequence_ids[1], 1, 2);
 			kernel_seq_player(g_sequence_ids[1], false);
-			kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_SPRITE, 2, 1);
-			kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_SPRITE, 2, 1);
+			kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:

@@ -62,10 +62,10 @@ static void room_103_init() {
 	kernel_seq_depth(g_sequence_ids[1], 0);
 
 	g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 6, 25, 0, 0);
-	kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 2, 72);
+	kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_SPRITE, 2, 72);
 
 	g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 6, 37, 1, 0);
-	kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 2, 73);
+	kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_SPRITE, 2, 73);
 
 	g_sequence_ids[8] = kernel_seq_forward(g_sprite_ids[8], false, 8, 0, 0, 0);
 	g_sequence_ids[7] = kernel_seq_forward(g_sprite_ids[7], false, 6, 0, 0, 0);
@@ -88,7 +88,7 @@ static void room_103_init() {
 		kernel_flip_hotspot(362, false);
 	}
 
-	if (previous_room != RETURNING_FROM_DIALOG) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 237;
 		player.y = 74;
 	}
@@ -96,7 +96,7 @@ static void room_103_init() {
 	if (previous_room == 102) {
 		player.commands_allowed = false;
 		g_sequence_ids[6] = kernel_seq_backward(g_sprite_ids[6], false, 6, 0, 0, 1);
-		kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+		kernel_seq_trigger(g_sequence_ids[6], KERNEL_TRIGGER_EXPIRE, 0, 70);
 	}
 
 	section_1_music();
@@ -170,7 +170,7 @@ static void room_103_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 6, 0, 0, 1);
-			kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[6], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			player.commands_allowed = false;
 			g_engine->_soundManager->command(20, 0);
 			break;
@@ -190,8 +190,8 @@ static void room_103_parser() {
 			kernel_load_variant(1);
 			g_sequence_ids[13] = kernel_seq_pingpong(g_sprite_ids[13], false, 3, 0, 0, 2);
 			kernel_seq_player(g_sequence_ids[13], false);
-			kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_SPRITE, 7, 1);
-			kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_SPRITE, 7, 1);
+			kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			player.walker_visible = false;
 			player.commands_allowed = false;
 			break;
@@ -204,7 +204,7 @@ static void room_103_parser() {
 			g_engine->_soundManager->command(22, 0);
 			inter_give_to_player(OBJ_TIMER_MODULE);
 			kernel_load_variant(0);
-			matte_frame(kTransitionNone, false);
+			matte_frame(MATTE_FX_NONE, false);
 			kernel_flip_hotspot(371, false);
 			player.walker_visible = true;
 			player.commands_allowed = true;
@@ -219,8 +219,8 @@ static void room_103_parser() {
 		case 0:
 			g_sequence_ids[12] = kernel_seq_pingpong(g_sprite_ids[12], false, 3, 0, 0, 2);
 			kernel_seq_player(g_sequence_ids[12], false);
-			kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_SPRITE, 6, 1);
-			kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[12], KERNEL_TRIGGER_SPRITE, 6, 1);
+			kernel_seq_trigger(g_sequence_ids[12], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			player.walker_visible = false;
 			player.commands_allowed = false;
 			break;
@@ -260,7 +260,7 @@ static void room_103_parser() {
 				kernel_timing_trigger(120, kernel.trigger + 1);
 			} else {
 				// Initial turky explosion
-				kernel_seq_trigger(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				kernel_seq_trigger(g_sequence_ids[9], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			}
 		}
 

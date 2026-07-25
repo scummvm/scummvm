@@ -118,7 +118,7 @@ void handle_forcefield(Forcefield *force, int16 *sprites) {
 			kernel_seq_depth(force->_seqId[id], 8);
 			kernel_seq_loc(force->_seqId[id], posX, posY);
 			kernel_seq_motion(force->_seqId[id], 2, speedX, speedY);
-			kernel_seq_trigger(force->_seqId[id], SEQUENCE_TRIGGER_EXPIRE, 0, 150 + id);
+			kernel_seq_trigger(force->_seqId[id], KERNEL_TRIGGER_EXPIRE, 0, 150 + id);
 			if (spriteId == 2)
 				force->_horizontal++;
 			else

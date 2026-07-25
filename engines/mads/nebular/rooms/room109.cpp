@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/core/himem.h"
 #include "mads/core/matte.h"
@@ -68,7 +69,7 @@ static void room_109_init() {
 		player.x = 248;
 		player.y = 38;
 		global[kHoovicSated] = 2;
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 20;
 		player.y = 68;
 		player.facing = FACING_EAST;
@@ -110,7 +111,7 @@ static void room_109_init() {
 	local._eatingFirstFish = (!player.been_here_before) && (previous_room < 110);
 
 	if (local._eatingFirstFish) {
-		g_sprite_ids[10] = kernel_load_series(kernel_full_name(105, 'F', 1, "", EXT_SS), 0);
+		g_sprite_ids[10] = kernel_load_series(kernel_full_name(105, 'F', 1, "", KERNEL_SS), 0);
 		g_sprite_ids[9] = kernel_load_series(kernel_name('H', 1), 0);
 
 		g_sequence_ids[10] = kernel_seq_pingpong(g_sprite_ids[10], true, 4, 0, 0, 0);
@@ -130,8 +131,8 @@ static void room_109_daemon() {
 			if (player.x > 205) {
 				g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 6, 0, 0, 1);
 				kernel_seq_depth(g_sequence_ids[4], 4);
-				kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_SPRITE, 6, 70);
-				kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+				kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_SPRITE, 6, 70);
+				kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 71);
 
 				local._eatingRex = true;
 				g_engine->_soundManager->command(34, 0);
@@ -172,8 +173,8 @@ static void room_109_daemon() {
 	if (local._eatingFirstFish && (sequence_list[g_sequence_ids[10]].x >= 178)) {
 		g_sequence_ids[9] = kernel_seq_forward(g_sprite_ids[9], false, 4, 0, 0, 1);
 		kernel_seq_depth(g_sequence_ids[9], 4);
-		kernel_seq_trigger(g_sequence_ids[9], SEQUENCE_TRIGGER_SPRITE, 29, 72);
-		kernel_seq_trigger(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 29, 73);
+		kernel_seq_trigger(g_sequence_ids[9], KERNEL_TRIGGER_SPRITE, 29, 72);
+		kernel_seq_trigger(g_sequence_ids[9], KERNEL_TRIGGER_EXPIRE, 29, 73);
 		kernel_seq_timeout(g_sequence_ids[9], g_sequence_ids[10]);
 		local._eatingFirstFish = false;
 		player.commands_allowed = true;
@@ -241,7 +242,7 @@ static void room_109_parser() {
 						inter_move_object(local._throwingObjectId, NOWHERE);
 						g_sequence_ids[0] = kernel_seq_forward(g_sprite_ids[0], false, 4, 0, 0, 1);
 						kernel_seq_player(g_sequence_ids[0], false);
-						kernel_seq_trigger(g_sequence_ids[0], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+						kernel_seq_trigger(g_sequence_ids[0], KERNEL_TRIGGER_EXPIRE, 0, 1);
 						player.walker_visible = false;
 						player.commands_allowed = false;
 
@@ -269,23 +270,23 @@ static void room_109_parser() {
 						switch (local._throwingObjectId) {
 						case OBJ_BURGER:
 							g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, (local._hoovicDifficultFl ? 4 : 6), 0, 0, 1);
-							kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 2, 2);
+							kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_SPRITE, 2, 2);
 							if (local._hoovicDifficultFl) {
 								kernel_seq_range(g_sequence_ids[3], 1, 30);
-								kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 5);
+								kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 5);
 							} else {
 								kernel_seq_range(g_sequence_ids[3], 1, 4);
-								kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 8);
+								kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 8);
 								local._hoovicTrigger = 3;
 							}
 							break;
 						case OBJ_DEAD_FISH:
 							g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 4, 0, 0, 1);
-							kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_SPRITE, 2, 2);
+							kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_SPRITE, 2, 2);
 							break;
 						case OBJ_STUFFED_FISH:
 							g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 4, 0, 0, 1);
-							kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 2, 2);
+							kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_SPRITE, 2, 2);
 							local._hoovicTrigger = 3;
 							break;
 						default:
@@ -300,12 +301,12 @@ static void room_109_parser() {
 							g_sequence_ids[8] = kernel_seq_forward(g_sprite_ids[8], false, 4, 0, 0, 1);
 
 						kernel_seq_depth(g_sequence_ids[8], 4);
-						kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, local._hoovicTrigger);
+						kernel_seq_trigger(g_sequence_ids[8], KERNEL_TRIGGER_EXPIRE, 0, local._hoovicTrigger);
 						g_engine->_soundManager->command(34, 0);
 						break;
 
 					case 3:
-						kernel_run_animation(kernel_full_name(109, 'H', 2, "", EXT_AA), 4);
+						kernel_run_animation(kernel_full_name(109, 'H', 2, "", KERNEL_AA), 4);
 						g_engine->_soundManager->command(35, 0);
 						global[kHoovicAlive] = false;
 						break;
@@ -380,7 +381,7 @@ static void room_109_parser() {
 						kernel_seq_range(g_sequence_ids[3], 31, 46);
 						int idx = kernel_add_dynamic(words_burger, words_swim_to, 0, g_sequence_ids[3], 0, 0, 0, 0);
 						kernel_dynamic_walk(idx, -3, 0, FACING_NORTHEAST);
-						kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 7);
+						kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 7);
 					}
 					break;
 

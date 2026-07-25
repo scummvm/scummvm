@@ -64,7 +64,7 @@ static void room_511_init() {
 			kernel_load_variant(2);
 	}
 
-	if (previous_room != RETURNING_FROM_DIALOG)
+	if (previous_room != KERNEL_RESTORING_GAME)
 		local._handingLine = false;
 
 	if (global[kBoatRaised]) {
@@ -104,7 +104,7 @@ static void room_511_init() {
 		player.x = 60;
 		player.y = 112;
 		player.facing = FACING_SOUTHEAST;
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 55;
 		player.y = 152;
 		player.facing = FACING_NORTHWEST;
@@ -161,7 +161,7 @@ static void room_511_daemon() {
 		kernel_seq_delete(g_sequence_ids[1]);
 		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 6, 0, 0, 1);
 		kernel_seq_depth(g_sequence_ids[1], 1);
-		kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+		kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 72);
 		break;
 
 	case 72:
@@ -210,7 +210,7 @@ static void room_511_parser() {
 			kernel_seq_delete(g_sequence_ids[1]);
 			g_sequence_ids[1] = kernel_seq_backward(g_sprite_ids[1], false, 6, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[1], 1);
-			kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
@@ -227,7 +227,7 @@ static void room_511_parser() {
 			player.walker_visible = false;
 			g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 8, 0, 0, 1);
 			kernel_seq_player(g_sequence_ids[4], false);
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 3);
 			break;
 
 		case 3:
@@ -339,9 +339,9 @@ static void room_511_parser() {
 			text_show(51128);
 	} else if (player_said_2(look, porthole))
 		text_show(51122);
-	else if (player_said_2(look, fishing_line) && (player.main_object_source == CAT_HOTSPOT) && (global[kLineStatus] == 2))
+	else if (player_said_2(look, fishing_line) && (player.main_object_source == STROKE_INTERFACE) && (global[kLineStatus] == 2))
 		text_show(51126);
-	else if (player_said_2(look, fishing_line) && (player.main_object_source == CAT_HOTSPOT) && (global[kLineStatus] == 3))
+	else if (player_said_2(look, fishing_line) && (player.main_object_source == STROKE_INTERFACE) && (global[kLineStatus] == 3))
 		text_show(51133);
 	else if (player_said_2(look, statue))
 		text_show(51127);

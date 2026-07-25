@@ -54,7 +54,7 @@ static void room_601_init() {
 		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, -2);
 		kernel_seq_depth(g_sequence_ids[2], 3);
 		kernel_run_animation(kernel_name('R', 1), 70);
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 229;
 		player.y = 129;
 		player.facing = FACING_SOUTHWEST;
@@ -75,7 +75,7 @@ static void room_601_daemon() {
 		kernel_seq_delete(g_sequence_ids[2]);
 		g_sequence_ids[2] = kernel_seq_backward(g_sprite_ids[2], false, 6, 0, 0, 1);
 		kernel_seq_depth(g_sequence_ids[2], 3);
-		kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+		kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 72);
 		break;
 
 	case 72:
@@ -99,7 +99,7 @@ static void room_601_parser() {
 			kernel_seq_delete(g_sequence_ids[2]);
 			g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 6, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[2], 3);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
@@ -115,7 +115,7 @@ static void room_601_parser() {
 			player.walker_visible = false;
 			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 10, 0, 0, 1);
 			kernel_seq_player(g_sequence_ids[3], false);
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 3);
 			break;
 
 		case 3:

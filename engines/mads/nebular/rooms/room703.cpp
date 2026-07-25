@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
@@ -92,7 +93,7 @@ static void handleBottleInterface() {
 }
 
 static void setBottleSequence() {
-	kernel_set_interface_mode(kInputBuildingSentences);
+	kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 	player.commands_allowed = false;
 	if (local._boatDir == 2)
 		local._curSequence = 6;
@@ -123,7 +124,7 @@ static void handleFillBottle(int quote) {
 		break;
 
 	case 0x315:
-		kernel_set_interface_mode(kInputBuildingSentences);
+		kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 		break;
 
 	default:
@@ -158,7 +159,7 @@ static void room_703_init() {
 		local._monsterMode = 0;
 		kernel_run_animation(kernel_name('A', -1), 0);
 		kernel_reset_animation(0, 34);
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.commands_allowed = false;
 		local._boatDir = 1;
 		if (global[kMonsterAlive]) {
@@ -470,7 +471,7 @@ static void room_703_daemon() {
 				kernel_run_animation(kernel_name('A', -1), 0);
 				kernel_reset_animation(0, 9);
 				player.commands_allowed = true;
-				if (config_file.naughtiness == STORYMODE_NAUGHTY)
+				if (config_file.naughtiness == NAUGHTY)
 					text_show(70321);
 				else
 					text_show(70322);
@@ -490,7 +491,7 @@ static void room_703_daemon() {
 }
 
 static void room_703_parser() {
-	if (inter_input_mode == kInputConversation)
+	if (inter_input_mode == INTER_CONVERSATION)
 		handleFillBottle(player2.words[0]);
 	else if (player_said_2(steer_towards, dock_to_south)) {
 		player.commands_allowed = false;

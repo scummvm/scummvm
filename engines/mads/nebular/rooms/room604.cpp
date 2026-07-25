@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/core/pal.h"
 #include "mads/nebular/global.h"
@@ -47,7 +48,7 @@ static Scratch local;
 static void room_604_init() {
 	g_sprite_ids[2] = kernel_load_series(kernel_name('c', 0), 0);
 	g_sprite_ids[4] = kernel_load_series("*RXCD_9", 0);
-	g_sprite_ids[6] = kernel_load_series(kernel_full_name(620, 'b', 0, "", EXT_SS), 0);
+	g_sprite_ids[6] = kernel_load_series(kernel_full_name(620, 'b', 0, "", KERNEL_SS), 0);
 	g_sprite_ids[5] = kernel_load_series("*RXMRC_9", 0);
 
 	if (global[kTimebombStatus] == 1) {
@@ -63,7 +64,7 @@ static void room_604_init() {
 	pal_change_color(253, 45, 24, 17);
 	local._animationActiveFl = false;
 
-	if (previous_room != RETURNING_FROM_DIALOG) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 72;
 		player.y = 149;
 		player.facing = FACING_NORTHEAST;
@@ -97,7 +98,7 @@ static void room_604_daemon() {
 		kernel_seq_delete(g_sequence_ids[2]);
 		g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 6, 0, 0, 1);
 		kernel_seq_depth(g_sequence_ids[2], 1);
-		kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+		kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 72);
 		break;
 
 	case 72:
@@ -177,11 +178,11 @@ static void handleBombActions() {
 		kernel_seq_range(g_sequence_ids[5], 1, 3);
 		kernel_seq_player(g_sequence_ids[5], false);
 		if (local._bombMode == 1)
-			kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_SPRITE, 3, 1);
+			kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_SPRITE, 3, 1);
 		else
-			kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_SPRITE, 3, 2);
+			kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_SPRITE, 3, 2);
 
-		kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+		kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, 3);
 		break;
 
 	case 1:
@@ -225,7 +226,7 @@ static void room_604_parser() {
 			kernel_seq_delete(g_sequence_ids[2]);
 			g_sequence_ids[2] = kernel_seq_backward(g_sprite_ids[2], false, 6, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[2], 1);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
@@ -242,7 +243,7 @@ static void room_604_parser() {
 			player.walker_visible = false;
 			g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 10, 0, 0, 1);
 			kernel_seq_player(g_sequence_ids[4], false);
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 3);
 			break;
 
 		case 3:

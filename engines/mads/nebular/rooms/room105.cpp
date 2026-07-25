@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
@@ -55,7 +56,7 @@ static void room_105_init() {
 		player.x = 13;
 		player.y = 97;
 	}
-	else if (previous_room != RETURNING_FROM_DIALOG) {
+	else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 116;
 		player.y = 147;
 	}
@@ -85,10 +86,10 @@ static void room_105_daemon() {
 
 			g_sequence_ids[0] = kernel_seq_forward(g_sprite_ids[0], false, 6, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[0], 8);
-			kernel_seq_trigger(g_sequence_ids[0], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[0], KERNEL_TRIGGER_EXPIRE, 0, 1);
 
-			if (config_file.naughtiness >= STORYMODE_NICE)
-				kernel_seq_trigger(g_sequence_ids[0], SEQUENCE_TRIGGER_SPRITE, 8, 3);
+			if (config_file.naughtiness >= NICE)
+				kernel_seq_trigger(g_sequence_ids[0], KERNEL_TRIGGER_SPRITE, 8, 3);
 			break;
 
 		case 1:
@@ -99,7 +100,7 @@ static void room_105_daemon() {
 			kernel_seq_timeout(g_sequence_ids[0], g_sequence_ids[2]);
 			kernel_seq_depth(g_sequence_ids[2], 8);
 			kernel_seq_range(g_sequence_ids[2], 5, 7);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 2:

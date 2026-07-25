@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
@@ -32,7 +33,7 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_399_init() {
-	kernel_set_interface_mode(kInputLimitedSentences);
+	kernel_set_interface_mode(INTER_LIMITED_SENTENCES);
 	player.walker_visible = false;
 	section_3_music();
 }

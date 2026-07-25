@@ -87,7 +87,7 @@ static void setDialogNode(int node) {
 
 	switch (node) {
 	case 0:
-		kernel_set_interface_mode(kInputBuildingSentences);
+		kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 		local._conversationFl = false;
 		local._bartenderDialogNode = 0;
 		break;
@@ -147,7 +147,7 @@ static void handleConversation1() {
 		}
 		kernel_message_purge();
 		kernel_message_add(quote_string(kernel.quotes, quoteId), quotePosX, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(1, 100);
 		local._talkTimer = 120;
 		setDialogNode(2);
@@ -157,7 +157,7 @@ static void handleConversation1() {
 	case 0x215:
 		kernel_message_purge();
 		kernel_message_add(quote_string(kernel.quotes, 0x1EC), 260, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(1, 100);
 		local._talkTimer = 120;
 		local._bartenderCurrentQuestion = 1;
@@ -168,7 +168,7 @@ static void handleConversation1() {
 		kernel_message_purge();
 		kernel_message_add(quote_string(kernel.quotes, 0x1FD), 208, 41, 0xFDFC, 100, 0, 0);
 		setDialogNode(0);
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(1, 100);
 		local._talkTimer = 1120;
 		break;
@@ -248,7 +248,7 @@ static void handleConversation2() {
 	if (player2.words[0] != 0x21C) {
 		switch (g_engine->getRandomNumber(1, 3)) {
 		case 1:
-			kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+			kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 			kernel_timing_trigger(1, 100);
 			local._talkTimer = 180;
 			kernel_message_purge();
@@ -258,7 +258,7 @@ static void handleConversation2() {
 			break;
 
 		case 2:
-			kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+			kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 			kernel_timing_trigger(1, 100);
 			local._talkTimer = 180;
 			kernel_message_purge();
@@ -268,7 +268,7 @@ static void handleConversation2() {
 			break;
 
 		case 3:
-			kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+			kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 			kernel_timing_trigger(1, 100);
 			local._talkTimer = 150;
 			kernel_message_purge();
@@ -283,7 +283,7 @@ static void handleConversation2() {
 	} else {
 		kernel_message_purge();
 		kernel_message_add(quote_string(kernel.quotes, 0x1FD), 208, 41, 0xFDFC, 100, 0, 0);
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(1, 100);
 		local._talkTimer = 1120;
 	}
@@ -295,7 +295,7 @@ static void handleConversation3() {
 	case 0x234:
 	case 0x235:
 	case 0x236:
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(1, 86);
 		kernel_message_purge();
 		kernel_message_add(quote_string(kernel.quotes, 0x1ED), 188, 27, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
@@ -307,7 +307,7 @@ static void handleConversation3() {
 	case 0x237:
 		kernel_message_purge();
 		kernel_message_add(quote_string(kernel.quotes, 0x1FD), 208, 41, 0xFDFC, 100, 0, 0);
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(1, 100);
 		local._talkTimer = 1120;
 		setDialogNode(0);
@@ -327,12 +327,12 @@ static void handleConversation4() {
 		kernel_message_add(quote_string(kernel.quotes, 0x1F0), 196, 13, 0xFDFC, 180, 0, 0);
 		kernel_message_add(quote_string(kernel.quotes, 0x1F1), 184, 27, 0xFDFC, 180, 0, 0);
 		kernel_message_add(quote_string(kernel.quotes, 0x1F2), 200, 41, 0xFDFC, 180, 0, 0);
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(1, 100);
 		local._talkTimer = 1100;
 		local._dialog4.write(0x238, false);
 		local._bartenderMode = 22;
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(100, 95);
 		local._refuseAlienLiquor = true;
 		break;
@@ -340,9 +340,9 @@ static void handleConversation4() {
 	case 0x239:
 		player.commands_allowed = false;
 		local._roxMode = 21;
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(1, 92);
-		kernel_set_interface_mode(kInputBuildingSentences);
+		kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 		local._conversationFl = false;
 		break;
 
@@ -353,11 +353,11 @@ static void handleConversation4() {
 		kernel_message_add(quote_string(kernel.quotes, 0x1F5), 230, 41, 0xFDFC, 150, 0, 0);
 		local._dialog4.write(0x23A, false);
 		global[kHasSaidTimer] = true;
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(1, 100);
 		local._talkTimer = 1100;
 		local._bartenderMode = 22;
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(100, 95);
 		local._refuseAlienLiquor = true;
 		break;
@@ -369,11 +369,11 @@ static void handleConversation4() {
 		kernel_message_add(quote_string(kernel.quotes, 0x1F7), 230, 41, 0xFDFC, 150, 0, 0);
 		local._dialog4.write(0x23D, false);
 		global[kHasSaidBinocs] = true;
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(1, 100);
 		local._talkTimer = 1100;
 		local._bartenderMode = 22;
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(100, 95);
 		local._refuseAlienLiquor = true;
 		break;
@@ -384,10 +384,10 @@ static void handleConversation4() {
 		player.commands_allowed = false;
 		kernel_message_add(quote_string(kernel.quotes, 0x1F8), 205, 41, 0xFDFC, 100, 0, 0);
 		local._bartenderMode = 22;
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(1, 100);
 		local._talkTimer = 1050;
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(50, 95);
 		local._refuseAlienLiquor = true;
 		break;
@@ -469,7 +469,7 @@ static void room_402_init() {
 		local._roxOnStool = false;
 		local._bartenderDialogNode = 1;
 		local._conversationFl = false;
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 160;
 		player.y = 150;
 		player.facing = FACING_NORTH;
@@ -525,7 +525,7 @@ static void room_402_init() {
 	if (local._conversationFl) {
 		switch (local._bartenderDialogNode) {
 		case 0:
-			kernel_set_interface_mode(kInputBuildingSentences);
+			kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 			local._bartenderDialogNode = 1;
 			break;
 
@@ -627,7 +627,7 @@ static void room_402_init() {
 	local._rexMode = 0;
 	local._refuseAlienLiquor = false;
 
-	kernel_run_animation(kernel_full_name(402, 'd', 1, "", EXT_AA), 0);
+	kernel_run_animation(kernel_full_name(402, 'd', 1, "", KERNEL_AA), 0);
 	kernel_anim[0].repeat = true;
 
 	g_sequence_ids[5] = kernel_seq_stamp(g_sprite_ids[5], false, 1);
@@ -692,7 +692,7 @@ static void room_402_daemon() {
 		g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 13, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[4], 1, 11);
 		kernel_seq_depth(g_sequence_ids[4], 14);
-		kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 48);
+		kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 48);
 		local._activeTeleporter = true;
 		global[kSomeoneHasExploded] = true;
 	}
@@ -749,7 +749,7 @@ static void room_402_daemon() {
 		g_sequence_ids[7] = kernel_seq_forward(g_sprite_ids[7], false, 10, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[7], 1, 2);
 		kernel_seq_depth(g_sequence_ids[7], 5);
-		kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 93);
+		kernel_seq_trigger(g_sequence_ids[7], KERNEL_TRIGGER_EXPIRE, 0, 93);
 		break;
 
 	case 93:
@@ -784,7 +784,7 @@ static void room_402_daemon() {
 		kernel_seq_range(g_sequence_ids[7], 1, 3);
 		kernel_seq_depth(g_sequence_ids[7], 5);
 		kernel_seq_timeout(seqIdx, g_sequence_ids[7]);
-		kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 94);
+		kernel_seq_trigger(g_sequence_ids[7], KERNEL_TRIGGER_EXPIRE, 0, 94);
 
 		if (local._roxMode == 21) {
 			if (player_has(OBJ_CREDIT_CHIP))
@@ -840,7 +840,7 @@ static void room_402_daemon() {
 		g_sequence_ids[12] = kernel_seq_forward(g_sprite_ids[12], false, 10, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[12], 1, 4);
 		kernel_seq_depth(g_sequence_ids[12], 8);
-		kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 96);
+		kernel_seq_trigger(g_sequence_ids[12], KERNEL_TRIGGER_EXPIRE, 0, 96);
 		break;
 
 	case 96:
@@ -850,7 +850,7 @@ static void room_402_daemon() {
 		kernel_seq_range(g_sequence_ids[12], 6, 7);
 		kernel_seq_depth(g_sequence_ids[12], 8);
 		kernel_seq_timeout(seqIdx, g_sequence_ids[12]);
-		kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 97);
+		kernel_seq_trigger(g_sequence_ids[12], KERNEL_TRIGGER_EXPIRE, 0, 97);
 	}
 	break;
 
@@ -893,7 +893,7 @@ static void room_402_daemon() {
 		g_sequence_ids[12] = kernel_seq_backward(g_sprite_ids[12], false, 10, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[12], 1, 4);
 		kernel_seq_depth(g_sequence_ids[12], 8);
-		kernel_seq_trigger(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 99);
+		kernel_seq_trigger(g_sequence_ids[12], KERNEL_TRIGGER_EXPIRE, 0, 99);
 		break;
 
 	case 99:
@@ -942,7 +942,7 @@ static void room_402_daemon() {
 		g_sequence_ids[9] = kernel_seq_forward(g_sprite_ids[9], false, 10, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[9], 1, 9);
 		kernel_seq_depth(g_sequence_ids[9], 8);
-		kernel_seq_trigger(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 87);
+		kernel_seq_trigger(g_sequence_ids[9], KERNEL_TRIGGER_EXPIRE, 0, 87);
 		break;
 
 	case 87:
@@ -956,7 +956,7 @@ static void room_402_daemon() {
 		g_sequence_ids[8] = kernel_seq_forward(g_sprite_ids[8], false, 10, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[8], 1, 4);
 		kernel_seq_depth(g_sequence_ids[8], 7);
-		kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 88);
+		kernel_seq_trigger(g_sequence_ids[8], KERNEL_TRIGGER_EXPIRE, 0, 88);
 	}
 	break;
 
@@ -1136,7 +1136,7 @@ static void room_402_daemon() {
 		g_sequence_ids[7] = kernel_seq_forward(g_sprite_ids[7], false, 10, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[7], 10, 12);
 		kernel_seq_depth(g_sequence_ids[7], 5);
-		kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 78);
+		kernel_seq_trigger(g_sequence_ids[7], KERNEL_TRIGGER_EXPIRE, 0, 78);
 		break;
 
 	case 78:
@@ -1149,7 +1149,7 @@ static void room_402_daemon() {
 		kernel_seq_range(g_sequence_ids[7], 10, 12);
 		kernel_seq_depth(g_sequence_ids[7], 5);
 		kernel_seq_timeout(seqIdx, g_sequence_ids[7]);
-		kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 79);
+		kernel_seq_trigger(g_sequence_ids[7], KERNEL_TRIGGER_EXPIRE, 0, 79);
 	}
 	break;
 
@@ -1193,7 +1193,7 @@ static void room_402_daemon() {
 		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 8, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[1], 1, 14);
 		kernel_seq_depth(g_sequence_ids[1], 14);
-		kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 30);
+		kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 30);
 		local._blowingSmoke = true;
 	}
 
@@ -1202,7 +1202,7 @@ static void room_402_daemon() {
 		g_sequence_ids[1] = kernel_seq_backward(g_sprite_ids[1], false, 8, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[1], 1, 5);
 		kernel_seq_depth(g_sequence_ids[1], 14);
-		kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 31);
+		kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 31);
 		break;
 
 	case 31:
@@ -1219,7 +1219,7 @@ static void room_402_daemon() {
 			case 1:
 				g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 12, 0, 0, 1);
 				kernel_seq_range(g_sequence_ids[2], 1, 8);
-				kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 33);
+				kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 33);
 				local._leftWomanMoving = true;
 				break;
 
@@ -1249,7 +1249,7 @@ static void room_402_daemon() {
 		kernel_seq_delete(g_sequence_ids[2]);
 		g_sequence_ids[2] = kernel_seq_backward(g_sprite_ids[2], false, 12, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[2], 1, 8);
-		kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 38);
+		kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 38);
 		break;
 
 	case 35:
@@ -1283,28 +1283,28 @@ static void room_402_daemon() {
 			case 1:
 				g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 12, 0, 0, 1);
 				kernel_seq_range(g_sequence_ids[3], 1, 4);
-				kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 32);
+				kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 32);
 				local._rightWomanMoving = true;
 				break;
 
 			case 2:
 				g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 12, 0, 0, 2);
 				kernel_seq_range(g_sequence_ids[3], 4, 5);
-				kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 32);
+				kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 32);
 				local._rightWomanMoving = true;
 				break;
 
 			case 3:
 				g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 12, 0, 0, 2);
 				kernel_seq_range(g_sequence_ids[3], 4, 5);
-				kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 32);
+				kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 32);
 				local._rightWomanMoving = true;
 				break;
 
 			case 4:
 				g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 12, 0, 0, 2);
 				kernel_seq_range(g_sequence_ids[3], 3, 4);
-				kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 32);
+				kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 32);
 				local._rightWomanMoving = true;
 				break;
 
@@ -1426,7 +1426,7 @@ static void room_402_daemon() {
 		g_sequence_ids[13] = kernel_seq_forward(g_sprite_ids[13], false, 10, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[13], 2, 5);
 		kernel_seq_depth(g_sequence_ids[13], 8);
-		kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 57);
+		kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 57);
 		break;
 
 	case 57:
@@ -1437,7 +1437,7 @@ static void room_402_daemon() {
 		kernel_seq_range(g_sequence_ids[13], 6, 9);
 		kernel_seq_depth(g_sequence_ids[13], 8);
 		kernel_seq_timeout(seqIdx, g_sequence_ids[13]);
-		kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 58);
+		kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 58);
 	}
 	break;
 
@@ -1448,7 +1448,7 @@ static void room_402_daemon() {
 		kernel_seq_range(g_sequence_ids[13], 5, 9);
 		kernel_seq_depth(g_sequence_ids[13], 8);
 		kernel_seq_timeout(seqIdx, g_sequence_ids[13]);
-		kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 59);
+		kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 59);
 	}
 	break;
 
@@ -1459,7 +1459,7 @@ static void room_402_daemon() {
 		kernel_seq_range(g_sequence_ids[13], 1, 4);
 		kernel_seq_depth(g_sequence_ids[13], 8);
 		kernel_seq_timeout(seqIdx, g_sequence_ids[13]);
-		kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
+		kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 60);
 		g_sequence_ids[20] = kernel_seq_stamp(g_sprite_ids[20], false, 1);
 		kernel_seq_depth(g_sequence_ids[20], 8);
 		kernel_seq_loc(g_sequence_ids[20], 234, 72);
@@ -1485,7 +1485,7 @@ static void room_402_daemon() {
 		g_sequence_ids[13] = kernel_seq_pingpong(g_sprite_ids[13], false, 30, 0, 0, 4);
 		kernel_seq_range(g_sequence_ids[13], 10, 11);
 		kernel_seq_depth(g_sequence_ids[13], 8);
-		kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 62);
+		kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 62);
 		break;
 
 	case 62:
@@ -1518,7 +1518,7 @@ static void room_402_daemon() {
 		g_sequence_ids[16] = kernel_seq_forward(g_sprite_ids[16], false, 10, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[16], 1, 6);
 		kernel_seq_depth(g_sequence_ids[16], 9);
-		kernel_seq_trigger(g_sequence_ids[16], SEQUENCE_TRIGGER_EXPIRE, 0, 66);
+		kernel_seq_trigger(g_sequence_ids[16], KERNEL_TRIGGER_EXPIRE, 0, 66);
 		break;
 
 	case 66:
@@ -1528,13 +1528,13 @@ static void room_402_daemon() {
 		kernel_seq_range(g_sequence_ids[16], 7, 37);
 		kernel_seq_depth(g_sequence_ids[16], 9);
 		kernel_seq_timeout(seqIdx, g_sequence_ids[16]);
-		kernel_seq_trigger(g_sequence_ids[16], SEQUENCE_TRIGGER_EXPIRE, 0, 68);
+		kernel_seq_trigger(g_sequence_ids[16], KERNEL_TRIGGER_EXPIRE, 0, 68);
 
 		kernel_seq_delete(g_sequence_ids[13]);
 		g_sequence_ids[13] = kernel_seq_forward(g_sprite_ids[13], false, 10, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[13], 12, 13);
 		kernel_seq_depth(g_sequence_ids[13], 8);
-		kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 67);
+		kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 67);
 	}
 	break;
 
@@ -1552,7 +1552,7 @@ static void room_402_daemon() {
 		g_sequence_ids[13] = kernel_seq_backward(g_sprite_ids[13], false, 10, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[13], 12, 13);
 		kernel_seq_depth(g_sequence_ids[13], 8);
-		kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 69);
+		kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 69);
 		break;
 
 	case 69:
@@ -1567,7 +1567,7 @@ static void room_402_daemon() {
 		kernel_message_add(quote_string(kernel.quotes, 0x203), 179, 33, 0xFBFA, 130, 0, 0);
 		kernel_message_add(quote_string(kernel.quotes, 0x204), 167, 47, 0xFBFA, 130, 0, 0);
 		kernel_timing_trigger(150, 71);
-		kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+		kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 70);
 	}
 	break;
 
@@ -1575,7 +1575,7 @@ static void room_402_daemon() {
 		g_sequence_ids[13] = kernel_seq_pingpong(g_sprite_ids[13], false, 25, 0, 0, 4);
 		kernel_seq_range(g_sequence_ids[13], 10, 12);
 		kernel_seq_depth(g_sequence_ids[13], 8);
-		kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+		kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 72);
 		break;
 
 	case 71:
@@ -1623,7 +1623,7 @@ static void room_402_daemon() {
 				g_sequence_ids[13] = kernel_seq_forward(g_sprite_ids[13], false, 10, 0, 0, 1);
 				kernel_seq_range(g_sequence_ids[13], 2, 5);
 				kernel_seq_depth(g_sequence_ids[13], 8);
-				kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 82);
+				kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 82);
 				break;
 
 			case 2:
@@ -1633,7 +1633,7 @@ static void room_402_daemon() {
 				g_sequence_ids[13] = kernel_seq_pingpong(g_sprite_ids[13], false, 15, 0, 0, 2);
 				kernel_seq_range(g_sequence_ids[13], 11, 13);
 				kernel_seq_depth(g_sequence_ids[13], 8);
-				kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 26);
+				kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 26);
 				break;
 
 			case 3:
@@ -1643,7 +1643,7 @@ static void room_402_daemon() {
 				g_sequence_ids[13] = kernel_seq_forward(g_sprite_ids[13], false, 10, 0, 0, 1);
 				kernel_seq_range(g_sequence_ids[13], 10, 11);
 				kernel_seq_depth(g_sequence_ids[13], 8);
-				kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 26);
+				kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 26);
 				break;
 
 			case 4:
@@ -1653,7 +1653,7 @@ static void room_402_daemon() {
 				g_sequence_ids[13] = kernel_seq_pingpong(g_sprite_ids[13], false, 15, 0, 0, 2);
 				kernel_seq_range(g_sequence_ids[13], 14, 15);
 				kernel_seq_depth(g_sequence_ids[13], 8);
-				kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 26);
+				kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 26);
 				break;
 
 			case 5:
@@ -1663,7 +1663,7 @@ static void room_402_daemon() {
 				g_sequence_ids[13] = kernel_seq_forward(g_sprite_ids[13], false, 10, 0, 0, 1);
 				kernel_seq_range(g_sequence_ids[13], 16, 19);
 				kernel_seq_depth(g_sequence_ids[13], 8);
-				kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
+				kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 80);
 				break;
 
 			default:
@@ -1684,7 +1684,7 @@ static void room_402_daemon() {
 		g_sequence_ids[13] = kernel_seq_backward(g_sprite_ids[13], false, 10, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[13], 16, 19);
 		kernel_seq_depth(g_sequence_ids[13], 8);
-		kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 26);
+		kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 26);
 	}
 
 	if (kernel.trigger == 26) {
@@ -1705,7 +1705,7 @@ static void room_402_daemon() {
 		kernel_seq_range(g_sequence_ids[13], 6, 9);
 		kernel_seq_depth(g_sequence_ids[13], 8);
 		kernel_seq_timeout(seqIdx, g_sequence_ids[13]);
-		kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 83);
+		kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 83);
 	}
 
 	if (kernel.trigger == 83) {
@@ -1714,7 +1714,7 @@ static void room_402_daemon() {
 		kernel_seq_range(g_sequence_ids[13], 5, 9);
 		kernel_seq_depth(g_sequence_ids[13], 8);
 		kernel_seq_timeout(seqIdx, g_sequence_ids[13]);
-		kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 84);
+		kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 84);
 	}
 
 	if (kernel.trigger == 84) {
@@ -1723,7 +1723,7 @@ static void room_402_daemon() {
 		kernel_seq_range(g_sequence_ids[13], 1, 4);
 		kernel_seq_depth(g_sequence_ids[13], 8);
 		kernel_seq_timeout(seqIdx, g_sequence_ids[13]);
-		kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 85);
+		kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 85);
 
 		g_sequence_ids[20] = kernel_seq_stamp(g_sprite_ids[20], false, 1);
 		kernel_seq_depth(g_sequence_ids[20], 8);
@@ -1746,7 +1746,7 @@ static void room_402_daemon() {
 		g_sequence_ids[7] = kernel_seq_forward(g_sprite_ids[7], false, 8, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[7], 14, 18);
 		kernel_seq_depth(g_sequence_ids[7], 5);
-		kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 103);
+		kernel_seq_trigger(g_sequence_ids[7], KERNEL_TRIGGER_EXPIRE, 0, 103);
 	} else if (kernel.trigger == 103) {
 		player.clock = kernel.clock + player.frame_delay;
 		local._roxOnStool = false;
@@ -1835,7 +1835,7 @@ static void room_402_pre_parser() {
 			player.facing = FACING_SOUTH;
 			player.ready_to_walk = false;
 			player.commands_allowed = false;
-			kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+			kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 			kernel_timing_trigger(1, 102);
 		}
 	}
@@ -1852,7 +1852,7 @@ static void room_402_pre_parser() {
 
 static void room_402_parser() {
 	if (player_said_2(take, repair_list) && object_is_here(OBJ_REPAIR_LIST) && local._roxOnStool) {
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(1, 77);
 		player.need_to_walk = false;
 	} else if (player_said_2(take, repair_list) && object_is_here(OBJ_REPAIR_LIST) && !local._roxOnStool) {
@@ -1862,8 +1862,8 @@ static void room_402_parser() {
 			g_sequence_ids[21] = kernel_seq_pingpong(g_sprite_ids[21], false, 7, 0, 0, 2);
 			kernel_seq_range(g_sequence_ids[21], 1, 2);
 			kernel_seq_player(g_sequence_ids[21], false);
-			kernel_seq_trigger(g_sequence_ids[21], SEQUENCE_TRIGGER_SPRITE, 2, 165);
-			kernel_seq_trigger(g_sequence_ids[21], SEQUENCE_TRIGGER_EXPIRE, 0, 166);
+			kernel_seq_trigger(g_sequence_ids[21], KERNEL_TRIGGER_SPRITE, 2, 165);
+			kernel_seq_trigger(g_sequence_ids[21], KERNEL_TRIGGER_EXPIRE, 0, 166);
 		} else if (kernel.trigger == 165) {
 			kernel_seq_delete(g_sequence_ids[14]);
 			inter_give_to_player(OBJ_REPAIR_LIST);
@@ -1875,7 +1875,7 @@ static void room_402_parser() {
 	} else if (kernel.trigger == 167) {
 		object_examine(OBJ_REPAIR_LIST, 40240, 0);
 		player.commands_allowed = true;
-	} else if (inter_input_mode == kInputConversation)
+	} else if (inter_input_mode == INTER_CONVERSATION)
 		handleDialogs();
 	else if (player_said_2(walk_into, corridor_to_south))
 		new_room = 401;
@@ -1929,7 +1929,7 @@ static void room_402_parser() {
 				local._helgaTalkMode = 1;
 				kernel_message_add(quote_string(kernel.quotes, 0x209), 177, 33, 0xFBFA, 130, 0, 0);
 				kernel_message_add(quote_string(kernel.quotes, 0x20A), 182, 47, 0xFBFA, 130, 0, 0);
-				kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+				kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 				kernel_timing_trigger(130, 28);
 				break;
 
@@ -1937,7 +1937,7 @@ static void room_402_parser() {
 				player.commands_allowed = false;
 				local._helgaTalkMode = 2;
 				kernel_message_add(quote_string(kernel.quotes, 0x20B), 157, 47, 0xFBFA, 100, 0, 0);
-				kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+				kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 				kernel_timing_trigger(100, 28);
 				break;
 
@@ -1945,7 +1945,7 @@ static void room_402_parser() {
 				player.commands_allowed = false;
 				local._helgaTalkMode = 3;
 				kernel_message_add(quote_string(kernel.quotes, 0x20C), 172, 47, 0xFBFA, 100, 0, 0);
-				kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+				kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 				kernel_timing_trigger(100, 28);
 				break;
 
@@ -1963,18 +1963,18 @@ static void room_402_parser() {
 		}
 	} else if (player_said_2(talkto, woman_in_chair) && !local._firstTalkToGirlInChair) {
 		kernel_message_add(quote_string(kernel.quotes, 0x1D7), 0, 0, 0x1110, 120, 0, 34);
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(150, 39);
 		player.commands_allowed = false;
 		local._firstTalkToGirlInChair = true;
 	} else if (player_said_2(talkto, woman_in_chair) && local._firstTalkToGirlInChair) {
 		kernel_message_add(quote_string(kernel.quotes, 0x1DB), 0, 0, 0x1110, 120, 0, 34);
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(150, 42);
 		player.commands_allowed = false;
 	} else if (player_said_2(talkto, woman_in_alcove) || player_said_2(walkto, woman_in_alcove)) {
 		kernel_message_add(quote_string(kernel.quotes, 0x1DE), 102, 48, 0xFBFA, 120, 0, 0);
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(120, 44);
 		player.commands_allowed = false;
 	} else if (player_said_2(sit_on, bar_stool) && (player.target_x == 248)) {
@@ -1982,18 +1982,18 @@ static void room_402_parser() {
 		kernel_message_add(quote_string(kernel.quotes, 0x20E), 0, 0, 0x1110, 120, 0, 34);
 	} else if (player_said_2(sit_on, bar_stool) && !local._roxOnStool && (player.target_x != 248)) {
 		player.walker_visible = false;
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 7, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[6], 1, 11);
 		kernel_seq_depth(g_sequence_ids[6], 5);
-		kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 76);
+		kernel_seq_trigger(g_sequence_ids[6], KERNEL_TRIGGER_EXPIRE, 0, 76);
 		player.commands_allowed = false;
 	} else if (player_said_2(take, credit_chip) && !player_has(OBJ_CREDIT_CHIP) && local._roxOnStool) {
 		local._roxMode = 20;
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_timing_trigger(1, 92);
 	} else if (player_said_2(take, credit_chip) && !player_has(OBJ_CREDIT_CHIP) && !local._roxOnStool) {
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		player.commands_allowed = false;
 		player.walker_visible = false;
 		g_sequence_ids[22] = kernel_seq_pingpong(g_sprite_ids[22], false, 7, 0, 0, 2);
@@ -2001,8 +2001,8 @@ static void room_402_parser() {
 		kernel_seq_loc(g_sequence_ids[22], player.x, player.y + 1);
 		kernel_seq_depth(g_sequence_ids[22], 5);
 		kernel_seq_scale(g_sequence_ids[22], 88);
-		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
-		kernel_seq_trigger(g_sequence_ids[22], SEQUENCE_TRIGGER_EXPIRE, 0, 104);
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
+		kernel_seq_trigger(g_sequence_ids[22], KERNEL_TRIGGER_EXPIRE, 0, 104);
 	} else if (player_said_2(talkto, bartender)) {
 		switch (kernel.trigger) {
 		case 0:
@@ -2028,7 +2028,7 @@ static void room_402_parser() {
 			kernel_message_purge();
 			kernel_message_add(quote_string(kernel.quotes, quoteId), centerPos.x, centerPos.y, 0x1110, 90, 0, 32 | centerFlag);
 			kernel_timing_trigger(110, 29);
-			kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+			kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 			kernel_timing_trigger(90, 28);
 		}
 		break;
@@ -2038,21 +2038,21 @@ static void room_402_parser() {
 			if (!local._roxOnStool) {
 				if (object_is_here(OBJ_ALIEN_LIQUOR)) {
 					kernel_message_add(quote_string(kernel.quotes, 0x1DF), 177, 41, 0xFDFC, 120, 0, 0);
-					kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+					kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 					kernel_timing_trigger(1, 100);
 					local._talkTimer = 120;
 				} else if (local._rexMode == 0) {
 					kernel_message_add(quote_string(kernel.quotes, 0x1F9), 175, 13, 0xFDFC, 180, 0, 0);
 					kernel_message_add(quote_string(kernel.quotes, 0x1FA), 184, 27, 0xFDFC, 180, 0, 0);
 					kernel_message_add(quote_string(kernel.quotes, 0x1FB), 200, 41, 0xFDFC, 180, 0, 0);
-					kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+					kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 					kernel_timing_trigger(1, 100);
 					local._talkTimer = 180;
 					local._rexMode = 1;
 				} else if (local._rexMode == 1) {
 					kernel_message_add(quote_string(kernel.quotes, 0x1FC), 205, 41, 0xFDFC, 120, 0, 0);
 					player.commands_allowed = true;
-					kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+					kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 					kernel_timing_trigger(1, 100);
 					local._talkTimer = 120;
 					local._rexMode = 3;
@@ -2066,7 +2066,7 @@ static void room_402_parser() {
 						kernel_message_add(quote_string(kernel.quotes, 0x1E2), 198, 27, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 						kernel_message_add(quote_string(kernel.quotes, 0x1E3), 199, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
 						local._bartenderCurrentQuestion = 10;
-						kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+						kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 						kernel_timing_trigger(1, 100);
 						local._talkTimer = 120;
 						local._conversationFl = true;
@@ -2077,7 +2077,7 @@ static void room_402_parser() {
 						local._dialog1.start();
 					} else {
 						kernel_message_add(quote_string(kernel.quotes, 0x1EF), 177, 41, 0xFDFC, INDEFINITE_TIMEOUT, 0, 0);
-						kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+						kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 						kernel_timing_trigger(1, 100);
 						local._talkTimer = 120;
 						local._bartenderCurrentQuestion = 3;
@@ -2094,14 +2094,14 @@ static void room_402_parser() {
 						kernel_message_add(quote_string(kernel.quotes, 0x1F9), 175, 13, 0xFDFC, 180, 0, 0);
 						kernel_message_add(quote_string(kernel.quotes, 0x1FA), 184, 27, 0xFDFC, 180, 0, 0);
 						kernel_message_add(quote_string(kernel.quotes, 0x1FB), 200, 41, 0xFDFC, 180, 0, 0);
-						kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+						kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 						kernel_timing_trigger(1, 100);
 						local._talkTimer = 180;
 						local._rexMode = 1;
 					} else if (local._rexMode == 1) {
 						kernel_message_add(quote_string(kernel.quotes, 0x1FC), 205, 41, 0xFDFC, 120, 0, 0);
 						player.commands_allowed = true;
-						kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+						kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 						kernel_timing_trigger(1, 100);
 						local._talkTimer = 120;
 						local._rexMode = 3;

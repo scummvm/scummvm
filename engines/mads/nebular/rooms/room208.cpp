@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/core/pal.h"
 #include "mads/nebular/global.h"
@@ -101,7 +102,7 @@ static void room_208_init() {
 		player.x = 307;
 		player.y = 123;
 		player.facing = FACING_WEST;
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 162;
 		player.y = 149;
 		player.facing = FACING_NORTH;
@@ -186,7 +187,7 @@ static void subAction(int mode) {
 		else
 			endTrigger = 2;
 
-		kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, endTrigger);
+		kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, endTrigger);
 	}
 	break;
 	case 1:
@@ -196,7 +197,7 @@ static void subAction(int mode) {
 		kernel_seq_range(g_sequence_ids[5], 3, 4);
 		kernel_seq_player(g_sequence_ids[5], false);
 		kernel_seq_timeout(oldSeq, g_sequence_ids[5]);
-		kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+		kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, 2);
 		g_engine->_soundManager->command(20, 0);
 	}
 	break;
@@ -242,7 +243,7 @@ static void subAction(int mode) {
 		kernel_seq_range(g_sequence_ids[5], 1, 3);
 		kernel_seq_player(g_sequence_ids[5], false);
 		kernel_seq_timeout(oldVal, g_sequence_ids[5]);
-		kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+		kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, 3);
 	}
 	break;
 

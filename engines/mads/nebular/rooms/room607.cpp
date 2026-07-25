@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/core/pal.h"
 #include "mads/nebular/global.h"
@@ -81,7 +82,7 @@ static void room_607_init() {
 		player.x = 297;
 		player.y = 50;
 		player.facing = FACING_SOUTHEAST;
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 40;
 		player.y = 104;
 		player.facing = FACING_SOUTHEAST;
@@ -123,7 +124,7 @@ static void room_607_daemon() {
 		local._dogLoop = true;
 		g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 10, 0, 0, 1);
 		kernel_seq_depth(g_sequence_ids[5], 1);
-		kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 91);
+		kernel_seq_trigger(g_sequence_ids[5], KERNEL_TRIGGER_EXPIRE, 0, 91);
 		local._dogLoop = false;
 		local._dogTimer = 0;
 	}
@@ -143,8 +144,8 @@ static void room_607_daemon() {
 		g_sequence_ids[1] = kernel_seq_pingpong(g_sprite_ids[1], false, 5, 0, 0, 8);
 		kernel_seq_depth(g_sequence_ids[1], 6);
 		kernel_message_purge();
-		kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_SPRITE, 2, 100);
-		kernel_seq_trigger(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+		kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_SPRITE, 2, 100);
+		kernel_seq_trigger(g_sequence_ids[1], KERNEL_TRIGGER_EXPIRE, 0, 70);
 		local._counter = 0;
 	}
 
@@ -210,7 +211,7 @@ static void room_607_daemon() {
 			kernel_seq_depth(g_sequence_ids[4], 1);
 			kernel_message_purge();
 			kernel_message_add(quote_string(kernel.quotes, 0x2FA), 0, 0, 0x1110, 120, 0, 34);
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 60);
 			kernel_timing_trigger(10, 64);
 			break;
 
@@ -221,7 +222,7 @@ static void room_607_daemon() {
 			kernel_seq_range(g_sequence_ids[4], 8, 45);
 			kernel_seq_depth(g_sequence_ids[4], 1);
 			kernel_seq_timeout(syncIdx, g_sequence_ids[4]);
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 61);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 61);
 		}
 		break;
 
@@ -232,7 +233,7 @@ static void room_607_daemon() {
 			kernel_seq_range(g_sequence_ids[4], 46, -2);
 			kernel_seq_depth(g_sequence_ids[4], 1);
 			kernel_seq_timeout(syncIdx, g_sequence_ids[4]);
-			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 62);
+			kernel_seq_trigger(g_sequence_ids[4], KERNEL_TRIGGER_EXPIRE, 0, 62);
 		}
 		break;
 
@@ -278,7 +279,7 @@ static void room_607_daemon() {
 		kernel_seq_delete(g_sequence_ids[2]);
 		g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 6, 0, 0, 1);
 		kernel_seq_depth(g_sequence_ids[2], 4);
-		kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 82);
+		kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 82);
 		break;
 
 	case 82:
@@ -379,7 +380,7 @@ static void room_607_parser() {
 			kernel_seq_delete(g_sequence_ids[2]);
 			g_sequence_ids[2] = kernel_seq_backward(g_sprite_ids[2], false, 6, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[2], 4);
-			kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
@@ -395,7 +396,7 @@ static void room_607_parser() {
 			player.walker_visible = false;
 			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 10, 0, 0, 1);
 			kernel_seq_player(g_sequence_ids[3], false);
-			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 3);
 			break;
 
 		case 3:

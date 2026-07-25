@@ -55,7 +55,7 @@ static void room_201_init() {
 	int idx = kernel_add_dynamic(words_birds, words_look_at, 0, g_sequence_ids[4], 0, 0, 0, 0);
 	kernel_dynamic_walk(idx, 186, 81, FACING_NORTH);
 
-	if ((previous_room == 202) || (previous_room == RETURNING_FROM_LOADING)) {
+	if ((previous_room == 202) || (previous_room == KERNEL_STARTING_GAME)) {
 		player.x = 165;
 		player.y = 152;
 	} else {
@@ -105,7 +105,7 @@ static void room_201_init() {
 		player.commands_allowed = false;
 		g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 7, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[6], -1, 12);
-		kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_SPRITE, 12, 70);
+		kernel_seq_trigger(g_sequence_ids[6], KERNEL_TRIGGER_SPRITE, 12, 70);
 		kernel_seq_depth(g_sequence_ids[6], 1);
 		local._pterodactylFlag = false;
 		player_walk(157, 143, FACING_NORTH);
@@ -139,9 +139,9 @@ static void room_201_daemon() {
 		g_engine->_soundManager->command(42, 0);
 		kernel_seq_depth(g_sequence_ids[6], 1);
 		kernel_seq_depth(g_sequence_ids[7], 1);
-		kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_SPRITE, 3, 81);
-		kernel_seq_trigger(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
-		kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
+		kernel_seq_trigger(g_sequence_ids[7], KERNEL_TRIGGER_SPRITE, 3, 81);
+		kernel_seq_trigger(g_sequence_ids[7], KERNEL_TRIGGER_EXPIRE, 0, 71);
+		kernel_seq_trigger(g_sequence_ids[6], KERNEL_TRIGGER_EXPIRE, 0, 73);
 	}
 
 	if (kernel.trigger == 81) {
@@ -157,7 +157,7 @@ static void room_201_daemon() {
 	if (kernel.trigger == 73) {
 		g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 9, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[6], 17, -2);
-		kernel_seq_trigger(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
+		kernel_seq_trigger(g_sequence_ids[6], KERNEL_TRIGGER_EXPIRE, 0, 74);
 		kernel_seq_depth(g_sequence_ids[6], 1);
 	}
 

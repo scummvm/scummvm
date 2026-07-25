@@ -53,7 +53,7 @@ static void room_503_init() {
 		kernel_dynamic_walk(local._detonatorHotspotId, 254, 135, FACING_SOUTH);
 	}
 
-	if (previous_room != RETURNING_FROM_DIALOG) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 191;
 		player.y = 152;
 		player.facing = FACING_NORTHWEST;
@@ -75,14 +75,14 @@ static void room_503_parser() {
 					g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 8, 0, 0, 1);
 					kernel_seq_range(g_sequence_ids[2], 1, 3);
 					kernel_seq_player(g_sequence_ids[2], false);
-					kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 3, 1);
-					kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+					kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_SPRITE, 3, 1);
+					kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 2);
 				} else {
 					g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], true, 8, 0, 0, 1);
 					kernel_seq_range(g_sequence_ids[3], 1, 4);
 					kernel_seq_player(g_sequence_ids[3], false);
-					kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-					kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+					kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_SPRITE, 4, 1);
+					kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 2);
 				}
 				break;
 

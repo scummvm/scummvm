@@ -32,7 +32,7 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_366_init() {
-	kernel_set_interface_mode(kInputLimitedSentences);
+	kernel_set_interface_mode(INTER_LIMITED_SENTENCES);
 	player.walker_visible = false;
 	section_3_music();
 }

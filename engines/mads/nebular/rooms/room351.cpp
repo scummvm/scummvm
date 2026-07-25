@@ -49,7 +49,7 @@ static void room_351_init() {
 		player.x = 148;
 		player.y = 152;
 	}
-	else if (previous_room != RETURNING_FROM_DIALOG) {
+	else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 207;
 		player.y = 81;
 		player.facing = FACING_NORTH;
@@ -130,13 +130,13 @@ static void room_351_parser() {
 				if (global[kSexOfRex] == REX_FEMALE) {
 					g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 5, 0, 0, 2);
 					kernel_seq_player(g_sequence_ids[2], false);
-					kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
-					kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+					kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_SPRITE, 5, 1);
+					kernel_seq_trigger(g_sequence_ids[2], KERNEL_TRIGGER_EXPIRE, 0, 2);
 				} else {
 					g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 5, 0, 0, 2);
 					kernel_seq_player(g_sequence_ids[3], false);
-					kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 6, 1);
-					kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+					kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_SPRITE, 6, 1);
+					kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_EXPIRE, 0, 2);
 				}
 				break;
 

@@ -66,13 +66,13 @@ static void room_110_init() {
 		kernel_dynamic_walk(idx, -1, 0, FACING_NONE);
 		idx = kernel_add_dynamic(words_crab, words_swim_to, 0, g_sequence_ids[3], 0, 0, 0, 0);
 		kernel_dynamic_walk(idx, -1, 0, FACING_NONE);
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 194;
 		player.y = 23;
 		player.facing = FACING_SOUTH;
 		player.walker_visible = false;
 		player.commands_allowed = false;
-		kernel_run_animation(kernel_full_name(110, 'T', 1, "", EXT_AA), 70);
+		kernel_run_animation(kernel_full_name(110, 'T', 1, "", KERNEL_AA), 70);
 	}
 
 	section_1_music();
@@ -121,7 +121,7 @@ static void room_110_parser() {
 	if (player_said_2(swim_through, tunnel)) {
 		switch (kernel.trigger) {
 		case 0:
-			kernel_run_animation(kernel_full_name(110, 'T', 0, "", EXT_AA), 1);
+			kernel_run_animation(kernel_full_name(110, 'T', 0, "", KERNEL_AA), 1);
 			kernel_anim[0].next_clock = player.frame_delay + player.clock;
 			player.commands_allowed = false;
 			player.walker_visible = false;

@@ -45,7 +45,7 @@ static Scratch local;
 
 
 static void room_101_say_dang() {
-	kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+	kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 	player.commands_allowed = false;
 
 	switch (kernel.trigger) {
@@ -53,7 +53,7 @@ static void room_101_say_dang() {
 		kernel_seq_delete(g_sequence_ids[11]);
 		g_sequence_ids[11] = kernel_seq_pingpong(g_sprite_ids[11], false, 3, 0, 0, 6);
 		kernel_seq_range(g_sequence_ids[11], 17, 21);
-		kernel_seq_trigger(g_sequence_ids[11], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+		kernel_seq_trigger(g_sequence_ids[11], KERNEL_TRIGGER_EXPIRE, 0, 72);
 		g_engine->_soundManager->command(17, 0);
 		g_sequence_ids[8] = kernel_seq_forward(g_sprite_ids[8], false, 3, 0, 0, 2);
 		break;
@@ -94,7 +94,7 @@ static void room_101_init() {
 	g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 5, 25, 0, 0);
 	g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 4, 0, 1, 0);
 	g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 6, 0, 2, 0);
-	kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 7, 70);
+	kernel_seq_trigger(g_sequence_ids[3], KERNEL_TRIGGER_SPRITE, 7, 70);
 	g_sequence_ids[4] = kernel_seq_backward(g_sprite_ids[4], false, 10, 60, 0, 0);
 	g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 5, 0, 1, 0);
 	g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 10, 0, 2, 0);
@@ -105,15 +105,15 @@ static void room_101_init() {
 	kernel_flip_hotspot(words_shield_modulator, false);
 	local._panelOpened = false;
 
-	if (previous_room != RETURNING_FROM_LOADING)
+	if (previous_room != KERNEL_STARTING_GAME)
 		global[kNeedToStandUp] = false;
 
-	if (previous_room != RETURNING_FROM_DIALOG) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 100;
 		player.y = 152;
 	}
 
-	if ((previous_room == 112) || ((previous_room == RETURNING_FROM_DIALOG) && local._sittingFl)) {
+	if ((previous_room == 112) || ((previous_room == KERNEL_RESTORING_GAME) && local._sittingFl)) {
 		player.walker_visible = false;
 		local._sittingFl = true;
 		player.x = 161;
@@ -133,7 +133,7 @@ static void room_101_init() {
 	kernel.quotes = quote_load(0x31, 0x32, 0x39, 0x36, 0x37, 0x38, 0);
 
 	if (global[kNeedToStandUp]) {
-		kernel_run_animation(kernel_full_name(101, 'S', -1, "", EXT_AA), 71);
+		kernel_run_animation(kernel_full_name(101, 'S', -1, "", KERNEL_AA), 71);
 		player.walker_visible = false;
 		player.commands_allowed = false;
 		player.x = 68;
@@ -227,7 +227,7 @@ static void room_101_pre_parser() {
 				player.commands_allowed = false;
 				kernel_seq_delete(g_sequence_ids[11]);
 				g_sequence_ids[11] = kernel_seq_backward(g_sprite_ids[11], false, 3, 0, 0, 1);
-				kernel_seq_trigger(g_sequence_ids[11], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				kernel_seq_trigger(g_sequence_ids[11], KERNEL_TRIGGER_EXPIRE, 0, 1);
 				kernel_seq_range(g_sequence_ids[11], 1, 17);
 				g_engine->_soundManager->command(16, 0);
 				break;
@@ -256,7 +256,7 @@ static void room_101_pre_parser() {
 				kernel_seq_delete(g_sequence_ids[13]);
 				local._shieldSpriteIdx = object_is_here(OBJ_SHIELD_MODULATOR) ? 13 : 14;
 				g_sequence_ids[13] = kernel_seq_backward(g_sprite_ids[local._shieldSpriteIdx], false, 6, 0, 0, 1);
-				kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 1);
 				player.commands_allowed = false;
 				g_engine->_soundManager->command(20, 0);
 			}
@@ -294,8 +294,8 @@ static void room_101_parser() {
 				kernel_seq_delete(g_sequence_ids[12]);
 				g_sequence_ids[11] = kernel_seq_forward(g_sprite_ids[11], false, 3, 0, 0, 1);
 				kernel_seq_range(g_sequence_ids[11], 1, 17);
-				kernel_seq_trigger(g_sequence_ids[11], SEQUENCE_TRIGGER_SPRITE, 10, 1);
-				kernel_seq_trigger(g_sequence_ids[11], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(g_sequence_ids[11], KERNEL_TRIGGER_SPRITE, 10, 1);
+				kernel_seq_trigger(g_sequence_ids[11], KERNEL_TRIGGER_EXPIRE, 0, 2);
 				player.commands_allowed = false;
 				player.walker_visible = false;
 				player.command_ready = false;
@@ -334,7 +334,7 @@ static void room_101_parser() {
 		case 0:
 			local._shieldSpriteIdx = object_is_here(OBJ_SHIELD_MODULATOR) ? 13 : 14;
 			g_sequence_ids[13] = kernel_seq_forward(g_sprite_ids[local._shieldSpriteIdx], false, 6, 0, 0, 1);
-			kernel_seq_trigger(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			player.commands_allowed = false;
 			g_engine->_soundManager->command(20, 0);
 			break;
@@ -397,13 +397,13 @@ static void room_101_parser() {
 				kernel_seq_delete(g_sequence_ids[11]);
 				g_sequence_ids[11] = kernel_seq_forward(g_sprite_ids[11], false, 3, 0, 0, 1);
 				kernel_seq_range(g_sequence_ids[11], 17, 21);
-				kernel_seq_trigger(g_sequence_ids[11], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				kernel_seq_trigger(g_sequence_ids[11], KERNEL_TRIGGER_EXPIRE, 0, 1);
 				g_engine->_soundManager->command(17, 0);
 				break;
 
 			case 1:
 				g_sequence_ids[11] = kernel_seq_backward(g_sprite_ids[11], false, 3, 0, 0, 1);
-				kernel_seq_trigger(g_sequence_ids[11], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(g_sequence_ids[11], KERNEL_TRIGGER_EXPIRE, 0, 2);
 				kernel_seq_range(g_sequence_ids[11], 17, 21);
 				break;
 
@@ -411,7 +411,7 @@ static void room_101_parser() {
 				g_sequence_ids[11] = kernel_seq_forward(g_sprite_ids[11], false, 3, 0, 0, 0);
 				kernel_seq_range(g_sequence_ids[11], 17, 17);
 				g_sequence_ids[8] = kernel_seq_forward(g_sprite_ids[8], false, 3, 0, 0, 1);
-				kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+				kernel_seq_trigger(g_sequence_ids[8], KERNEL_TRIGGER_EXPIRE, 0, 3);
 				break;
 
 			case 3:

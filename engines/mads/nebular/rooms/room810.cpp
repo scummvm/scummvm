@@ -39,10 +39,10 @@ static Scratch local;
 
 
 static void room_810_init() {
-	kernel_set_interface_mode(kInputLimitedSentences);
+	kernel_set_interface_mode(INTER_LIMITED_SENTENCES);
 	player.walker_visible = false;
 	player.commands_allowed = false;
-	kernel_run_animation(kernel_full_name(810, 'a', -1, "", EXT_AA), 0);
+	kernel_run_animation(kernel_full_name(810, 'a', -1, "", KERNEL_AA), 0);
 	local._moveAllowed = true;
 
 	section_8_music();

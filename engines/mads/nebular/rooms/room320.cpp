@@ -253,8 +253,8 @@ static void room_320_parser() {
 			kernel_seq_scale(g_sequence_ids[18], 60);
 			kernel_seq_loc(g_sequence_ids[18], local._posX, 170);
 			kernel_seq_depth(g_sequence_ids[18], 0);
-			kernel_seq_trigger(g_sequence_ids[18], SEQUENCE_TRIGGER_LOOP, 0, 1);
-			kernel_seq_trigger(g_sequence_ids[18], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			kernel_seq_trigger(g_sequence_ids[18], KERNEL_TRIGGER_LOOP, 0, 1);
+			kernel_seq_trigger(g_sequence_ids[18], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
@@ -297,7 +297,7 @@ static void room_320_parser() {
 					local._blinkFl = false;
 					setLeftView(2);
 					kernel.quotes = quote_load(0xFE, 0);
-					kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+					kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 					kernel_run_animation(kernel_name('a', -1), 70);
 					g_engine->_soundManager->command(17, 0);
 				}

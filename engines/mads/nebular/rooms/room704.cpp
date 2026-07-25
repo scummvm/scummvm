@@ -84,7 +84,7 @@ static void handleBottleInterface() {
 }
 
 static void setBottleSequence() {
-	kernel_set_interface_mode(kInputBuildingSentences);
+	kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 	player.commands_allowed = false;
 	if (local._boatDirection == 2)
 		local._animationMode = 6;
@@ -115,7 +115,7 @@ static void handleFillBottle(int quote) {
 		break;
 
 	case 0x315:
-		kernel_set_interface_mode(kInputBuildingSentences);
+		kernel_set_interface_mode(INTER_BUILDING_SENTENCES);
 		break;
 
 	default:
@@ -150,7 +150,7 @@ static void room_704_init() {
 		local._boatDirection = 2;
 		kernel_run_animation(kernel_name('A', -1), 0);
 		kernel_reset_animation(0, 36);
-	} else if (previous_room != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.commands_allowed = false;
 		local._boatDirection = 1;
 		kernel_run_animation(kernel_name('A', -1), 0);
@@ -321,7 +321,7 @@ static void room_704_daemon() {
 }
 
 static void room_704_parser() {
-	if (inter_input_mode == kInputConversation)
+	if (inter_input_mode == INTER_CONVERSATION)
 		handleFillBottle(player2.words[0]);
 	else if (player_said_2(steer_towards, open_water_to_south)) {
 		player.commands_allowed = false;
@@ -363,7 +363,7 @@ static void room_704_parser() {
 			text_show(70412);
 	} else if (player_said_2(look, volcano_rim))
 		text_show(70413);
-	else if (player_said_2(look, bottle) && (player.main_object_source == CAT_HOTSPOT))
+	else if (player_said_2(look, bottle) && (player.main_object_source == STROKE_INTERFACE))
 		text_show(70414);
 	else if (player_said_2(look, open_water_to_south))
 		text_show(70416);

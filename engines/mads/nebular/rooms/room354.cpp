@@ -53,7 +53,7 @@ static void room_354_init() {
 		player.x = 71;
 		player.y = 107;
 	}
-	else if (previous_room != RETURNING_FROM_DIALOG) {
+	else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 167;
 		player.y = 57;
 	}
