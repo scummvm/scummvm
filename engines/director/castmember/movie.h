@@ -27,6 +27,8 @@
 
 namespace Director {
 
+struct LingoState;
+
 class MovieCastMember : public FilmLoopCastMember {
 public:
 	MovieCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
@@ -53,6 +55,11 @@ public:
 
 	bool _enableScripts;
 	Movie *_linkedMovie;
+
+	// The linked movie's own Lingo state, swapped onto the shared window
+	// while it steps to isolate its go()/freeze from the host.
+	LingoState *_embeddedLingoState = nullptr;
+	Common::Array<LingoState *> _embeddedFrozenStates;
 };
 
 } // End of namespace Director
