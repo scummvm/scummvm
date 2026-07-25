@@ -645,6 +645,8 @@ void animview_main(const char *resName) {
 	}
 
 	animate();
+
+	g_engine->flushKeys();
 }
 
 } // namespace AnimView

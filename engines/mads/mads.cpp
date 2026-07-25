@@ -378,6 +378,7 @@ void MADSEngine::flushKeys() {
 	pollEvents();
 
 	_keyEvents.clear();
+	_mouseButtons = 0;
 }
 
 int MADSEngine::getMouseState(int &x, int &y) {
