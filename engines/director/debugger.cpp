@@ -611,7 +611,6 @@ bool Debugger::cmdDisasm(int argc, const char **argv) {
 
 	if (argc == 2) {
 		if (!strcmp(argv[1], "all")) {
-			Movie *movie = g_director->getCurrentMovie();
 			Score *score = movie->getScore();
 			ScriptContext *csc = lingo->_state->context;
 			if (csc) {
