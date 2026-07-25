@@ -30,6 +30,7 @@
 #include "scumm/insane/rebel2/shared.h"
 #include "scumm/insane/rebel2/psx/psx.h"
 #include "scumm/insane/rebel2/psx/ui.h"
+#include "scumm/insane/rebel2/psx/video.h"
 
 namespace Scumm {
 
@@ -43,6 +44,7 @@ enum {
 	kMenuSfxEnter = 0x1f,
 	kMenuSfxLeave = 0x20,
 	kMenuSfxConfirm = 0x40,
+	kMenuSfxLocked = 0x21,
 	kMenuSfxStart = 0x44,
 	kMenuSfxDefaults = 0x45
 };
@@ -53,6 +55,9 @@ void RA2PSXSettings::reset() {
 	music = 0xc00;
 	movies = 0xc00;
 	mono = false;
+	for (int i = 0; i < ARRAYSIZE(unlocked); ++i)
+		unlocked[i] = 1;
+	unlockAll = false;
 }
 
 void RA2PSXSettings::load() {
@@ -70,6 +75,12 @@ void RA2PSXSettings::load() {
 	if (ConfMan.hasKey("speech_volume"))
 		movies = CLIP(ConfMan.getInt("speech_volume"), 0, 255) * kCDMaximum / 255 /
 				kCDStep * kCDStep;
+	unlockAll = ConfMan.getBool("rebel2_unlock_all");
+	for (int i = 0; i < ARRAYSIZE(unlocked); ++i) {
+		const Common::String key = Common::String::format("rebel2_psx_chapters%d", i);
+		if (ConfMan.hasKey(key))
+			unlocked[i] = CLIP(ConfMan.getInt(key), 1, 16);
+	}
 }
 
 void RA2PSXSettings::save() const {
@@ -78,11 +89,17 @@ void RA2PSXSettings::save() const {
 	ConfMan.setInt("sfx_volume", sfx * 255 / kSFXMaximum);
 	ConfMan.setInt("music_volume", MIN<int>(255, music * 255 / kCDMaximum));
 	ConfMan.setInt("speech_volume", MIN<int>(255, movies * 255 / kCDMaximum));
+	for (int i = 0; i < ARRAYSIZE(unlocked); ++i)
+		ConfMan.setInt(Common::String::format("rebel2_psx_chapters%d", i), unlocked[i]);
 }
 
 void RA2PSXSettings::apply(ScummEngine_v7 *vm) const {
 	save();
 	vm->syncSoundSettings();
+}
+
+int RA2PSXSettings::unlockedChapters() const {
+	return unlockAll ? 16 : CLIP<int>(unlocked[CLIP(difficulty, 0, 2)], 1, 16);
 }
 
 byte RA2PSXSettings::videoVolume() const {
@@ -463,6 +480,198 @@ void Rebel2PSX::runOptionsMenu(const RA2PSXOptionsUI &ui, RA2PSXSoundPlayer &sou
 	ConfMan.flushToDisk();
 }
 
+int Rebel2PSX::runChapterSelect(const RA2PSXChapterSelectUI &ui) {
+	RA2PSXTinyGLRenderer renderer;
+	if (!renderer.init(_vm->_screenWidth, _vm->_screenHeight))
+		return 0;
+
+	// The tile previews are frames of LEVELSEL.STR, looped for as long as the
+	// screen is up; without them the tiles stay empty.
+	Common::SeekableReadStream *stream = openRawFile("LEVELSEL.STR", 1);
+	RA2PSXStreamDecoder decoder(RA2PSXStreamDecoder::kVersion2);
+	bool previewsReady = stream && decoder.loadStream(stream) &&
+			decoder.setOutputPixelFormat(g_system->getScreenFormat());
+	if (previewsReady) {
+		decoder.setVolume(_settings.videoVolume());
+		decoder.start();
+	} else {
+		decoder.close();
+	}
+
+	Graphics::Surface background;
+	background.create(_vm->_screenWidth, _vm->_screenHeight, g_system->getScreenFormat());
+	background.fillRect(Common::Rect(background.w, background.h), 0);
+
+	RA2PSXSoundPlayer sound(_vm, _soundBank);
+	const bool cursorWasVisible = CursorMan.isVisible();
+	CursorMan.showMouse(true);
+
+	const int unlocked = _settings.unlockedChapters();
+	// Kept in our own surface so it survives restarting the stream.
+	Graphics::Surface previews;
+	bool havePreviews = false;
+	int selection = 0;
+	int chosen = 0;
+	int scroll = 0;
+	int target = 0;
+	int velocity = 0;
+	int direction = 1;
+	int cloakAngle = 0x800;
+	int crestAngle = 0;
+	int logicFrame = -1;
+	bool leaving = false;
+	RA2PSXMenuFade fade;
+	fade.fadeIn(8);
+
+	// Accumulates across iterations; a press between logic steps must not be lost.
+	RA2PSXMenuEvents events;
+	const uint32 startTime = g_system->getMillis();
+	while (!_vm->shouldQuit()) {
+		pollMenuEvents(_vm, events);
+		if (_vm->shouldQuit())
+			break;
+		if (events.globalMenu) {
+			_vm->openMainMenuDialog();
+			events = RA2PSXMenuEvents();
+			continue;
+		}
+
+		if (previewsReady) {
+			while (decoder.needsUpdate()) {
+				const Graphics::Surface *frame = decoder.decodeNextFrame();
+				if (!frame || frame->w < 320 || frame->h < 240)
+					break;
+				if (!previews.getPixels())
+					previews.create(320, 240, frame->format);
+				previews.copyRectToSurface(*frame, 0, 0, Common::Rect(320, 240));
+				havePreviews = true;
+			}
+			// The clip only runs for about twelve seconds, so start it over.
+			if (decoder.endOfVideo()) {
+				decoder.close();
+				stream = openRawFile("LEVELSEL.STR", 1);
+				previewsReady = stream && decoder.loadStream(stream) &&
+						decoder.setOutputPixelFormat(g_system->getScreenFormat());
+				if (previewsReady) {
+					decoder.setVolume(_settings.videoVolume());
+					decoder.start();
+				} else {
+					decoder.close();
+				}
+			}
+		}
+
+		const uint32 elapsed = g_system->getMillis() - startTime;
+		const int targetFrame = (int)((uint64)elapsed * kMenuFrameRate / 1000);
+		if (logicFrame >= targetFrame) {
+			g_system->delayMillis(5);
+			continue;
+		}
+
+		bool fadedOut = false;
+		while (logicFrame < targetFrame) {
+			++logicFrame;
+			cloakAngle = (cloakAngle + 6) & 0xfff;
+			crestAngle = (crestAngle + 0x14) & 0xfff;
+			fadedOut |= fade.update();
+
+			// The list eases towards the selected row and never overshoots.
+			if (scroll != target) {
+				scroll += (MIN(velocity, 0x8000) >> 12) * direction;
+				if (direction > 0 ? scroll >= target : scroll <= target) {
+					scroll = target;
+					velocity = 0;
+				}
+			}
+			if (velocity) {
+				velocity = velocity * 0xe80 >> 12;
+				if (velocity < 0x1000)
+					velocity = 0x1000;
+			}
+		}
+		if (fadedOut && leaving)
+			break;
+
+		sound.update();
+		if (!fade.active) {
+			int mouseHit = -1;
+			if (events.mouseMoved) {
+				const int xOffset = (background.w - 320) / 2;
+				const int yOffset = (background.h - 240) / 2;
+				for (int chapter = 0; chapter < RA2PSXChapterSelectUI::kChapterCount; ++chapter) {
+					Common::Rect rect = RA2PSXChapterSelectUI::tileRect(chapter, scroll);
+					rect.translate(xOffset, yOffset);
+					if (rect.contains(events.mouseX, events.mouseY)) {
+						mouseHit = chapter;
+						break;
+					}
+				}
+			}
+
+			int step = 0;
+			if (events.down && selection < RA2PSXChapterSelectUI::kChapterCount - 1)
+				step = 1;
+			else if (events.up && selection > 0)
+				step = -1;
+			else if (mouseHit >= 0 && mouseHit != selection)
+				step = mouseHit > selection ? 1 : -1;
+			if (step) {
+				const int rows = mouseHit >= 0 && !events.up && !events.down ?
+						ABS(mouseHit - selection) : 1;
+				selection += step * rows;
+				target += step * rows * RA2PSXChapterSelectUI::kRowPitch;
+				direction = step;
+				velocity += 0x8000;
+				sound.play(kMenuSfxMove, 0x7f, 0x40);
+			}
+
+			const bool activate = events.accept ||
+					(events.mouseClicked && mouseHit == selection);
+			if (events.cancel) {
+				leaving = true;
+				sound.play(kMenuSfxLeave, 0x7f, 0x40);
+				fade.fadeOut(8);
+			} else if (activate) {
+				if (selection >= unlocked) {
+					// The original just refuses a locked chapter with a buzz.
+					sound.play(kMenuSfxLocked, 0x7f, 0x40);
+				} else {
+					chosen = selection + 1;
+					leaving = true;
+					sound.play(kMenuSfxStart, 0x7f, 0x40);
+					fade.fadeOut(8);
+				}
+			}
+		}
+
+		events = RA2PSXMenuEvents();
+		renderer.beginFrame(background);
+		RA2PSXMatrix transform;
+		transform.setRotationZ(-0x100);
+		transform.preRotateY(cloakAngle);
+		transform.setTranslation(0, 0, 0x604);
+		renderer.renderTransformedModel(_cloakModel, transform, false);
+		transform.setScale(0x6f5, 0x6f5, 0x6f5);
+		transform.preRotateY(crestAngle);
+		transform.setTranslation(-0x120, -0xd6, 0x604);
+		renderer.renderTransformedModel(_crestModel, transform, false);
+
+		Graphics::Surface output;
+		renderer.finishFrame(output);
+		ui.draw(output, havePreviews ? &previews : nullptr, scroll, selection, unlocked);
+		fade.apply(output);
+		g_system->copyRectToScreen(output.getPixels(), output.pitch, 0, 0, output.w, output.h);
+		g_system->updateScreen();
+	}
+
+	sound.stopAll();
+	decoder.close();
+	previews.free();
+	background.free();
+	CursorMan.showMouse(cursorWasVisible);
+	return _vm->shouldQuit() ? 0 : chosen;
+}
+
 Rebel2PSX::MenuResult Rebel2PSX::runMainMenu(const RA2PSXMainMenuUI &ui,
 		const RA2PSXOptionsUI &options) {
 	enum Action {
@@ -587,6 +796,11 @@ Rebel2PSX::MenuResult Rebel2PSX::runMainMenu(const RA2PSXMainMenuUI &ui,
 	(void)ui;
 	(void)options;
 	return kMenuQuit;
+}
+
+int Rebel2PSX::runChapterSelect(const RA2PSXChapterSelectUI &ui) {
+	(void)ui;
+	return 0;
 }
 
 #endif

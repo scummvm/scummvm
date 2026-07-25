@@ -57,6 +57,8 @@ void subtractRA2PSXRect(Graphics::Surface &surface, const Common::Rect &rect,
 		int r, int g, int b);
 void drawRA2PSXGouraudLine(Graphics::Surface &surface, int x0, int y0, int x1, int y1,
 		const byte *from, const byte *to);
+// The "back" and "select" button captions along the bottom of every menu page.
+void drawRA2PSXMenuHints(Graphics::Surface &surface, const RA2PSXTextureSet &textures);
 
 class RA2PSXMovieText {
 public:
@@ -123,6 +125,33 @@ private:
 	void drawItem(Graphics::Surface &surface, const char *text, int x, int y,
 			bool centered, int state) const;
 	void drawVolume(Graphics::Surface &surface, int y, int level) const;
+
+	const RA2PSXTextureSet &_textures;
+};
+
+// The scrolling chapter grid, whose tiles are frames of LEVELSEL.STR diced into
+// a four by four atlas of 80x60 previews.
+class RA2PSXChapterSelectUI {
+public:
+	enum {
+		kChapterCount = 16,
+		kTileWidth = 80,
+		kTileHeight = 60,
+		kRowPitch = 62
+	};
+
+	explicit RA2PSXChapterSelectUI(const RA2PSXTextureSet &textures) : _textures(textures) {}
+
+	void draw(Graphics::Surface &surface, const Graphics::Surface *previews,
+			int scroll, int selection, int unlocked) const;
+	static int rowY(int chapter, int scroll);
+	static Common::Rect tileRect(int chapter, int scroll);
+
+private:
+	void drawTile(Graphics::Surface &surface, int chapter, int y,
+			const Graphics::Surface *previews, bool selected, bool unlocked) const;
+	void drawLabel(Graphics::Surface &surface, int chapter, int y,
+			bool selected, bool unlocked) const;
 
 	const RA2PSXTextureSet &_textures;
 };

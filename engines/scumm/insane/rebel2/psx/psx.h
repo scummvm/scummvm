@@ -40,6 +40,7 @@ class RA2PSXLevel1UI;
 class RA2PSXMainMenuUI;
 class RA2PSXMovieText;
 class RA2PSXOptionsUI;
+class RA2PSXChapterSelectUI;
 
 enum RA2PSXMovieTextSequence {
 	kRA2PSXMovieTextNone,
@@ -149,12 +150,16 @@ struct RA2PSXSettings {
 	void save() const;
 	void apply(ScummEngine_v7 *vm) const;
 	byte videoVolume() const;
+	// The original keeps a per-difficulty count of the chapters reached.
+	int unlockedChapters() const;
 
 	int difficulty;
 	int sfx;
 	int music;
 	int movies;
 	bool mono;
+	int unlocked[3];
+	bool unlockAll;
 };
 
 struct RA2PSXVertex {
@@ -300,6 +305,8 @@ private:
 	void runOptionsMenu(const RA2PSXOptionsUI &ui, RA2PSXSoundPlayer &sound,
 			RA2PSXTinyGLRenderer &renderer);
 #endif
+	// Returns the chosen chapter, 1 to 16, or 0 when the player backs out.
+	int runChapterSelect(const RA2PSXChapterSelectUI &ui);
 	bool loadGlobalAssets(RA2PSXMainMenuUI &menu);
 	bool loadMovieTextAssets(RA2PSXMovieText &movieText);
 	bool loadLevel1Assets(RA2PSXModel &enemy, RA2PSXModel &ship,
@@ -311,9 +318,11 @@ private:
 	ScummEngine_v7 *_vm;
 	RA2PSXSoundBank _soundBank;
 	RA2PSXSettings _settings;
-	// The crest on the title screen and the freighter behind the options list.
+	// The crest on the title screen, the freighter behind the options list and
+	// the double sided crest on the chapter select.
 	RA2PSXModel _logoModel;
 	RA2PSXModel _cloakModel;
+	RA2PSXModel _crestModel;
 };
 
 } // End of namespace Scumm

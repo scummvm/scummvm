@@ -230,11 +230,13 @@ bool Rebel2PSX::loadGlobalAssets(RA2PSXMainMenuUI &menu) {
 	Common::Array<byte> textureData;
 	Common::Array<byte> logoData;
 	Common::Array<byte> cloakData;
+	Common::Array<byte> crestData;
 	if (!archive.getMember("menuTex", textureData) ||
 			!archive.getMember("fOFS/Logo", logoData) || !_logoModel.load(logoData) ||
 			!_logoModel.loadTextures(textureData) ||
 			!archive.getMember("fOFS/Cloak", cloakData) || !_cloakModel.load(cloakData) ||
-			!_cloakModel.loadTextures(textureData))
+			!_cloakModel.loadTextures(textureData) ||
+			!archive.getMember("fOFS/LogoDbl", crestData) || !_crestModel.load(crestData))
 		return false;
 
 	Common::Array<byte> soundData;
@@ -284,6 +286,7 @@ Common::Error Rebel2PSX::runGame() {
 		return Common::Error(Common::kReadingFailed,
 				_("Could not load the PlayStation menu resources"));
 	const RA2PSXOptionsUI options(menu.textures());
+	const RA2PSXChapterSelectUI chapters(menu.textures());
 	if (!loadMovieTextAssets(movieText))
 		return Common::Error(Common::kReadingFailed,
 				_("Could not load the PlayStation movie fonts"));
@@ -294,8 +297,25 @@ Common::Error Rebel2PSX::runGame() {
 				_("Could not play the PlayStation introduction"));
 	}
 
-	const MenuResult menuResult = runMainMenu(menu, options);
-	if (menuResult == kMenuQuit)
+	int chapter = 0;
+	while (!chapter && !_vm->shouldQuit()) {
+		if (runMainMenu(menu, options) == kMenuQuit)
+			return Common::kNoError;
+
+		bool backedOut = false;
+		while (!chapter && !backedOut && !_vm->shouldQuit()) {
+			const int picked = runChapterSelect(chapters);
+			if (!picked)
+				backedOut = true;
+			else if (picked > 1)
+				// Only chapter 1 is ported; stay on the list rather than
+				// pretending to start the rest.
+				warning("Rebel Assault II: chapter %d is not implemented yet", picked);
+			else
+				chapter = picked;
+		}
+	}
+	if (_vm->shouldQuit())
 		return Common::kNoError;
 
 	RA2PSXModel enemy;

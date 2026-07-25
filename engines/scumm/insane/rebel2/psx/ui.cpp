@@ -198,6 +198,13 @@ void drawRA2PSXGouraudLine(Graphics::Surface &surface, int x0, int y0, int x1, i
 	}
 }
 
+void drawRA2PSXMenuHints(Graphics::Surface &surface, const RA2PSXTextureSet &textures) {
+	const int xOffset = (surface.w - 320) / 2;
+	const int yOffset = (surface.h - 240) / 2;
+	textures.draw(surface, "BACK", xOffset + 20, yOffset + 216, Common::Rect(0, 0, 46, 11));
+	textures.draw(surface, "SELECT", xOffset + 252, yOffset + 216, Common::Rect(0, 0, 56, 11));
+}
+
 static const char kSmallGlyphs[] = "abcdefghijklmnopqrstuvwxyz0123456789%-:.?+/C ";
 static const byte kSmallWidths[] = {
 	6, 6, 6, 6, 6, 6, 6, 6, 2, 6, 6, 6, 8, 6, 6, 6,
@@ -538,7 +545,7 @@ void RA2PSXMovieText::draw(Graphics::Surface &surface,
 
 bool RA2PSXMainMenuUI::load(const RA2PSXArchive &archive) {
 	static const char *const required[] = {
-		"BACK_L", "BACK_R", "TITLE", "FNT24BIG", "VOLUMES",
+		"BACK_L", "BACK_R", "TITLE", "FNT24BIG", "VOLUMES", "BACK", "SELECT",
 		"STD_FT2", "STD_FT3", "STD_FT4", "STD_FT5", "STD_FT6"
 	};
 
@@ -672,6 +679,8 @@ void RA2PSXOptionsUI::drawMain(Graphics::Surface &surface, int selection,
 				entries[item].centered, state);
 	}
 
+	drawRA2PSXMenuHints(surface, _textures);
+
 	// The value dims while the difficulty row itself is highlighted.
 	const Entry &value = difficulties[CLIP<int>(settings.difficulty, 0, 2)];
 	drawItem(surface, value.text, value.x, kOptionRowY[kItemDifficulty], false,
@@ -712,6 +721,7 @@ void RA2PSXOptionsUI::drawSound(Graphics::Surface &surface, int selection,
 
 	drawItem(surface, settings.mono ? "mono" : "stereo", settings.mono ? 186 : 179, 87,
 			false, selection == kSoundItemMode ? kOptionStateValue : kOptionStateNormal);
+	drawRA2PSXMenuHints(surface, _textures);
 	drawVolume(surface, 102, (settings.sfx + 1) / 14);
 	drawVolume(surface, 117, settings.music / RA2PSXSettings::kCDStep);
 	drawVolume(surface, 132, settings.movies / RA2PSXSettings::kCDStep);
@@ -772,6 +782,137 @@ void RA2PSXOptionsUI::drawDialog(Graphics::Surface &surface, const char *headlin
 				xOffset + left + width - 0x1e, yOffset + top + 0x32,
 				selection == 0 ? 0x80 : 100);
 	}
+}
+
+// Row positions and label offsets from the original chapter table.
+struct RA2PSXChapterEntry {
+	const char *title;
+	int16 titleX;
+	const char *name;
+	int16 nameX;
+	int16 barWidth;
+};
+
+static const RA2PSXChapterEntry kChapters[RA2PSXChapterSelectUI::kChapterCount] = {
+	{ "chapter 1:",  142, "the dreighton triangle",       52, 158 },
+	{ "chapter 2:",  110, "the corellia star",           110, 122 },
+	{ "chapter 3:",  140, "mining tunnels",              110, 100 },
+	{ "chapter 4:",  110, "the mine field",              110,  96 },
+	{ "chapter 5:",  140, "interceptor attack",           76, 134 },
+	{ "chapter 6:",  110, "the mining facility",         110, 128 },
+	{ "chapter 7:",  140, "tie training",                132,  78 },
+	{ "chapter 8:",  110, "flight to imdaar",            110, 112 },
+	{ "chapter 9:",  140, "the asteroid field",           84, 126 },
+	{ "chapter 10:", 110, "speeder bikes",               110,  94 },
+	{ "chapter 11:", 136, "aboard the terror",            84, 126 },
+	{ "chapter 12:", 110, "the sewer",                   110,  76 },
+	{ "chapter 13:", 134, "escaping the star destroyer",  12, 198 },
+	{ "chapter 14:", 110, "tie attack",                  110,  78 },
+	{ "chapter 15:", 134, "imdaar alpha",                122,  88 },
+	{ "finale:",     110, "the return home",             110, 112 }
+};
+
+int RA2PSXChapterSelectUI::rowY(int chapter, int scroll) {
+	return 91 - scroll + chapter * kRowPitch;
+}
+
+Common::Rect RA2PSXChapterSelectUI::tileRect(int chapter, int scroll) {
+	// Even chapters put the tile on the right, odd ones on the left.
+	const int x = (chapter & 1) ? 20 : 220;
+	const int y = rowY(chapter, scroll);
+	return Common::Rect(x, y, x + kTileWidth, y + kTileHeight);
+}
+
+void RA2PSXChapterSelectUI::drawTile(Graphics::Surface &surface, int chapter, int y,
+		const Graphics::Surface *previews, bool selected, bool unlocked) const {
+	static const byte kIdleCorner[3] = { 0x80, 0x80, 0x80 };
+	static const byte kIdleEdge[3] = { 0xff, 0xff, 0xff };
+	// The original cycles the highlight through an animated CLUT; this uses the
+	// same accent the menu dialogs are drawn with.
+	static const byte kActiveCorner[3] = { 0xfc, 0xc8, 0x19 };
+	static const byte kActiveEdge[3] = { 0x80, 0x65, 0x0c };
+
+	const int xOffset = (surface.w - 320) / 2;
+	const int yOffset = (surface.h - 240) / 2;
+	const int left = xOffset + ((chapter & 1) ? 20 : 220);
+	const int top = yOffset + y;
+
+	if (unlocked && previews && previews->w >= 320 && previews->h >= 240) {
+		const int sourceX = (chapter % 4) * kTileWidth;
+		const int sourceY = (chapter / 4) * kTileHeight;
+		Common::Rect source(sourceX, sourceY, sourceX + kTileWidth, sourceY + kTileHeight);
+		int destX = left;
+		int destY = top;
+		if (destY < 0) {
+			source.top -= destY;
+			destY = 0;
+		}
+		source.bottom = MIN<int>(source.bottom, source.top + surface.h - destY);
+		if (source.top < source.bottom && destX >= 0 && destX + kTileWidth <= surface.w)
+			surface.copyRectToSurface(*previews, destX, destY, source);
+	}
+
+	const byte *corner = selected ? kActiveCorner : kIdleCorner;
+	const byte *edge = selected ? kActiveEdge : kIdleEdge;
+	const int midX = left + kTileWidth / 2;
+	const int midY = top + kTileHeight / 2;
+	const int right = left + kTileWidth;
+	const int bottom = top + kTileHeight;
+	drawRA2PSXGouraudLine(surface, left, top, midX, top, corner, edge);
+	drawRA2PSXGouraudLine(surface, midX, top, right, top, edge, corner);
+	drawRA2PSXGouraudLine(surface, right, top, right, midY, corner, edge);
+	drawRA2PSXGouraudLine(surface, right, midY, right, bottom, edge, corner);
+	drawRA2PSXGouraudLine(surface, right, bottom, midX, bottom, corner, edge);
+	drawRA2PSXGouraudLine(surface, midX, bottom, left, bottom, edge, corner);
+	drawRA2PSXGouraudLine(surface, left, bottom, left, midY, corner, edge);
+	drawRA2PSXGouraudLine(surface, left, midY, left, top, edge, corner);
+}
+
+void RA2PSXChapterSelectUI::drawLabel(Graphics::Surface &surface, int chapter, int y,
+		bool selected, bool unlocked) const {
+	const RA2PSXChapterEntry &entry = kChapters[chapter];
+	const char *const font = selected ? "STD_FT4" : "STD_FT2";
+	const int xOffset = (surface.w - 320) / 2;
+	const int yOffset = (surface.h - 240) / 2;
+
+	if (!unlocked) {
+		// Locked chapters only get their number, without the episode name.
+		Common::String text = chapter == kChapterCount - 1 ?
+				Common::String("finale") : Common::String::format("chapter %d", chapter + 1);
+		const int width = _textures.measureText(text.c_str());
+		const int x = (chapter & 1) ? 110 : 210 - width;
+		if (selected)
+			subtractRA2PSXRect(surface, Common::Rect(xOffset + ((chapter & 1) ? 106 : 206 - width),
+					yOffset + y + 40, xOffset + ((chapter & 1) ? 106 : 206 - width) + width + 8,
+					yOffset + y + 54), 0x28, 0x28, 0x28);
+		_textures.drawText(surface, font, text.c_str(), xOffset + x, yOffset + y + 26, 0x7f);
+		return;
+	}
+
+	if (selected)
+		subtractRA2PSXRect(surface, Common::Rect(xOffset + ((chapter & 1) ? 106 : 206 - entry.barWidth),
+				yOffset + y + 17, xOffset + ((chapter & 1) ? 106 : 206 - entry.barWidth) +
+				entry.barWidth + 8, yOffset + y + 44), 0x28, 0x28, 0x28);
+	_textures.drawText(surface, font, entry.title, xOffset + entry.titleX, yOffset + y + 20, 0x7f);
+	_textures.drawText(surface, font, entry.name, xOffset + entry.nameX, yOffset + y + 33, 0x7f);
+}
+
+void RA2PSXChapterSelectUI::draw(Graphics::Surface &surface, const Graphics::Surface *previews,
+		int scroll, int selection, int unlocked) const {
+	const int xOffset = (surface.w - 320) / 2;
+	const int yOffset = (surface.h - 240) / 2;
+	for (int chapter = 0; chapter < kChapterCount; ++chapter) {
+		const int y = rowY(chapter, scroll);
+		if (y < -kRowPitch || y > 240)
+			continue;
+		const bool selected = chapter == selection;
+		const bool open = chapter < unlocked;
+		drawTile(surface, chapter, y, previews, selected, open);
+		drawLabel(surface, chapter, y, selected, open);
+	}
+	// The headline and the button captions sit over the rows.
+	_textures.drawHeadline(surface, "Select Chapter", xOffset + 110, yOffset + 20);
+	drawRA2PSXMenuHints(surface, _textures);
 }
 
 bool RA2PSXLevel1UI::load(const RA2PSXArchive &archive) {
