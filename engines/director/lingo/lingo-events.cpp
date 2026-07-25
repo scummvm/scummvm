@@ -672,7 +672,7 @@ void Movie::queueInputEvent(LEvent event, int targetId, Common::Point pos) {
 
 
 bool Movie::processInputEvent(LEvent event, int targetId, Common::Point pos) {
-	if (!_lingo->_state->callstack.empty()) {
+	if ((!_lingo->_state->callstack.empty()) || (_lingo->_currentInputEvent.type != VOIDSYM)) {
 		// We're in the middle of executing something else, queue input event for later
 		queueInputEvent(event, targetId, pos);
 		return true;
