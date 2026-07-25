@@ -107,6 +107,37 @@ struct RA2PSXPitch {
 
 typedef Common::SharedPtr<RA2PSXPitch> RA2PSXPitchRef;
 
+// A sample whose ADPCM blocks ask the voice to repeat plays until something stops it.
+class RA2PSXLoopStream : public Audio::RewindableAudioStream {
+public:
+	explicit RA2PSXLoopStream(Audio::RewindableAudioStream *stream) : _stream(stream) {}
+	~RA2PSXLoopStream() override { delete _stream; }
+
+	int readBuffer(int16 *buffer, const int numSamples) override {
+		int produced = 0;
+		while (produced < numSamples) {
+			const int read = _stream->readBuffer(buffer + produced, numSamples - produced);
+			if (read > 0) {
+				produced += read;
+				continue;
+			}
+			// An empty pass after rewinding means there is nothing to loop over.
+			if (!_stream->rewind() || _stream->readBuffer(buffer + produced, 1) <= 0)
+				break;
+			++produced;
+		}
+		return produced;
+	}
+
+	bool isStereo() const override { return _stream->isStereo(); }
+	int getRate() const override { return _stream->getRate(); }
+	bool endOfData() const override { return false; }
+	bool rewind() override { return _stream->rewind(); }
+
+private:
+	Audio::RewindableAudioStream *_stream;
+};
+
 class RA2PSXPitchStream : public Audio::RewindableAudioStream {
 public:
 	RA2PSXPitchStream(Audio::RewindableAudioStream *stream, const RA2PSXPitchRef &pitch)
@@ -365,9 +396,23 @@ Audio::RewindableAudioStream *RA2PSXSoundBank::makeStream(uint16 id, uint32 macr
 		return nullptr;
 	memcpy(copy, _data.data() + sample->offset, size);
 
+	// Every ADPCM block carries flags: bit 2 opens a loop, bit 1 asks the voice to repeat
+	// at the end. Nearly every sample points that at its own final block, which is just a
+	// sustain tail; only a genuine loop - the engine rumbles - opens earlier than that.
+	uint32 loopStart = size;
+	for (uint32 block = 0; block + 16 <= size; block += 16) {
+		if (copy[block + 1] & 0x04) {
+			loopStart = block;
+			break;
+		}
+	}
+	const bool loops = size >= 32 && (copy[size - 15] & 0x02) && loopStart + 16 < size;
+
 	Common::SeekableReadStream *source =
 			new Common::MemoryReadStream(copy, size, DisposeAfterUse::YES);
 	Audio::RewindableAudioStream *stream = Audio::makeXAStream(source, rate);
+	if (loops)
+		stream = new RA2PSXLoopStream(stream);
 	const ADSR *adsr = findADSR(adsrId);
 	if (adsr)
 		stream = new RA2PSXADSRStream(stream, adsr->attack, adsr->decay, adsr->sustain);
@@ -384,7 +429,7 @@ struct RA2PSXSoundPlayer::Impl {
 
 	struct Voice {
 		Voice() : active(false), waiting(false), waitForSampleEnd(false), macroDone(false),
-				root(false), sound(0), macro(0), step(0), adsr(0xffff), rate(0),
+				root(false), sound(0), macro(0), step(0), loopsLeft(-1), adsr(0xffff), rate(0),
 				sampleId(0), bendUp(2), bendDown(2),
 				pitch(RA2PSXSoundPlayer::kNeutralBend), volume(0), pan(64), priority(0),
 				born(0), readyTick(0),
@@ -398,6 +443,8 @@ struct RA2PSXSoundPlayer::Impl {
 		SoundId sound;
 		uint16 macro;
 		uint16 step;
+		// Countdown for macro op 5; negative means it has not been armed yet.
+		int loopsLeft;
 		uint16 adsr;
 		uint16 sampleId;
 		RA2PSXPitchRef pitchRef;
@@ -617,6 +664,18 @@ struct RA2PSXSoundPlayer::Impl {
 				}
 				break;
 			}
+			case 5:
+				// Jump back to a step, repeating the count in bytes 6-7; 0xffff never
+				// runs out. Only the low shield alarm uses it: 05 01 .. ff ff, so the
+				// beep-pause-beep body repeats for as long as the sound is held.
+				if (voice.loopsLeft == 0)
+					break;
+				if (voice.loopsLeft > 0)
+					--voice.loopsLeft;
+				else if (READ_LE_UINT16(command + 6) != 0xffff)
+					voice.loopsLeft = READ_LE_UINT16(command + 6);
+				voice.step = command[1];
+				break;
 			case 0xc:
 				voice.adsr = READ_LE_UINT16(command + 1);
 				break;
