@@ -102,7 +102,7 @@ static void room_804_init() {
 	section_8_music();
 
 	if (global[kInSpace] && !global[kWindowFixed]) {
-		_scene->_userInterface.setup(kInputLimitedSentences);
+		kernel_set_interface_mode(kInputLimitedSentences);
 		g_engine->_soundManager->command(19, 0);
 	}
 }

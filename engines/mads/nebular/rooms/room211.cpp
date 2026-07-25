@@ -71,7 +71,7 @@ static void room_211_init() {
 		kernel_seq_loc(g_sequence_ids[2], 202, 126);
 		kernel_seq_depth(g_sequence_ids[2], 8);
 		kernel_seq_motion(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, -200, 0);
-		_scene->_dynamicHotspots.add(words_slithering_snake, words_walkto, g_sequence_ids[2], Common::Rect(1, 1, 1 + 41, 1 + 10));
+		kernel_add_dynamic(words_slithering_snake, words_walkto, 0, g_sequence_ids[2], 1, 1, 41, 10);
 	}
 
 	if (kernel.teleported_in)
@@ -119,8 +119,8 @@ static void room_211_daemon() {
 					g_engine->_soundManager->command(19, 0);
 					int count = (int)inven_num_objects;
 					for (int idx = 0; idx < count; idx++) {
-						if ((inven[idx] == OBJ_BINOCULARS) && (_scene->_userInterface._selectedInvIndex != idx))
-							_scene->_userInterface.selectObject(idx);
+						if ((inven[idx] == OBJ_BINOCULARS) && (active_inven != idx))
+							inter_set_active_inven(idx);
 					}
 				}
 				break;
@@ -177,7 +177,7 @@ static void room_211_daemon() {
 		break;
 
 		case 97:
-			_scene->_userInterface.selectObject(-1);
+			inter_set_active_inven(-1);
 			inter_take_from_player(OBJ_BINOCULARS, 1);
 			break;
 
@@ -269,7 +269,7 @@ static void room_211_daemon() {
 
 static void room_211_pre_parser() {
 	if (player_said_2(walk_down, jungle_path) && player_has(OBJ_BINOCULARS) && (global[kMonkeyStatus] == MONKEY_AMBUSH_READY)
-		&& (_scene->_customDest.x <= 52) && (_scene->_customDest.y >= 132))
+		&& (inter_point_x <= 52) && (inter_point_y >= 132))
 		player_walk(52, 132, FACING_WEST);
 
 	if (player_said_2(walk_down, path_to_west)) {

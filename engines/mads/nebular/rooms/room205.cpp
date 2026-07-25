@@ -56,12 +56,12 @@ static void room_205_init() {
 		g_sprite_ids[8] = kernel_load_series(kernel_name('a', 1), 0);
 
 	g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 10, 3, 0, 0);
-	int idx = _scene->_dynamicHotspots.add(words_chicken, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-	_scene->_dynamicHotspots.setPosition(idx, Common::Point(162, 120), FACING_NORTHEAST);
+	int idx = kernel_add_dynamic(words_chicken, words_walkto, 0, g_sequence_ids[1], 0, 0, 0, 0);
+	kernel_dynamic_walk(idx, 162, 120, FACING_NORTHEAST);
 
 	g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 15, 0, 0, 0);
-	idx = _scene->_dynamicHotspots.add(words_chicken, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-	_scene->_dynamicHotspots.setPosition(idx, Common::Point(162, 120), FACING_NORTHEAST);
+	idx = kernel_add_dynamic(words_chicken, words_walkto, 0, g_sequence_ids[1], 0, 0, 0, 0);
+	kernel_dynamic_walk(idx, 162, 120, FACING_NORTHEAST);
 
 	g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 9, 0, 0, 0);
 	g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 6, 0, 0, 0);
@@ -69,15 +69,15 @@ static void room_205_init() {
 
 	if (!player.been_here_before) {
 		g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 7, 0, 0, 1);
-		idx = _scene->_dynamicHotspots.add(words_piranha, words_walkto, g_sequence_ids[6], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(49, 86), FACING_NORTH);
+		idx = kernel_add_dynamic(words_piranha, words_walkto, 0, g_sequence_ids[6], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 49, 86, FACING_NORTH);
 	}
 
 	if (object[12].location == 205) {
 		g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 7, 0, 0, 0);
 		kernel_seq_depth(g_sequence_ids[4], 11);
 	} else {
-		_scene->_hotspots.activate(450, false);
+		kernel_flip_hotspot(450, false);
 	}
 
 	local._beingKicked = false;
@@ -135,9 +135,8 @@ static void room_205_daemon() {
 
 	if (kernel.clock - local._lastFishTime > 1300) {
 		g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 5, 0, 0, 1);
-		int idx = _scene->_dynamicHotspots.add(words_piranha, words_walkto, g_sequence_ids[6],
-			Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(49, 86), FACING_NORTH);
+		int idx = kernel_add_dynamic(words_piranha, words_walkto, 0, g_sequence_ids[6], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 49, 86, FACING_NORTH);
 		local._lastFishTime = kernel.clock;
 	}
 
@@ -211,7 +210,7 @@ static void room_205_parser() {
 
 			case 0x77:
 				kernel_message_add(quote_string(kernel.quotes, 0x7F), 186, 27, 0xFBFA, 120, 0, 0);
-				_scene->_userInterface.setup(kInputBuildingSentences);
+				kernel_set_interface_mode(kInputBuildingSentences);
 				break;
 
 			default:
@@ -275,7 +274,7 @@ static void room_205_parser() {
 		} else if (player_said_2(take, chicken_on_spit) && global[kChickenPermitted] && object_is_here(OBJ_CHICKEN)) {
 			inter_give_to_player(OBJ_CHICKEN);
 			kernel_seq_delete(g_sequence_ids[4]);
-			_scene->_hotspots.activate(words_chicken_on_spit, false);
+			kernel_flip_hotspot(words_chicken_on_spit, false);
 			object_examine(OBJ_CHICKEN, 812, 0);
 		} else if (player_said_2(take, chicken_on_spit) && (!global[kChickenPermitted]))
 			kernel_message_add(quote_string(kernel.quotes, 0x80), 186, 27, 0xFBFA, 120, 0, 32);

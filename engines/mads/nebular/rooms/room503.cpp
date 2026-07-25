@@ -49,8 +49,8 @@ static void room_503_init() {
 
 	if (object[OBJ_DETONATORS].location == room_id) {
 		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 9, 0, 0, 0);
-		local._detonatorHotspotId = _scene->_dynamicHotspots.add(words_detonators, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(local._detonatorHotspotId, Common::Point(254, 135), FACING_SOUTH);
+		local._detonatorHotspotId = kernel_add_dynamic(words_detonators, words_walkto, 0, g_sequence_ids[1], 0, 0, 0, 0);
+		kernel_dynamic_walk(local._detonatorHotspotId, 254, 135, FACING_SOUTH);
 	}
 
 	if (previous_room != RETURNING_FROM_DIALOG) {
@@ -89,7 +89,7 @@ static void room_503_parser() {
 			case 1:
 				g_engine->_soundManager->command(9, 0);
 				kernel_seq_delete(g_sequence_ids[1]);
-				_scene->_dynamicHotspots.remove(local._detonatorHotspotId);
+				kernel_delete_dynamic(local._detonatorHotspotId);
 				inter_give_to_player(OBJ_DETONATORS);
 				object_examine(OBJ_DETONATORS, 50326, 0);
 				break;

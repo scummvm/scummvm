@@ -52,8 +52,8 @@ static void room_604_init() {
 
 	if (global[kTimebombStatus] == 1) {
 		g_sequence_ids[6] = kernel_seq_stamp(g_sprite_ids[6], false, -1);
-		local._timebombHotspotId = _scene->_dynamicHotspots.add(words_timebomb, words_walkto, g_sequence_ids[6], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(local._timebombHotspotId, Common::Point(166, 118), FACING_NORTHEAST);
+		local._timebombHotspotId = kernel_add_dynamic(words_timebomb, words_walkto, 0, g_sequence_ids[6], 0, 0, 0, 0);
+		kernel_dynamic_walk(local._timebombHotspotId, 166, 118, FACING_NORTHEAST);
 	}
 
 	if (kernel.teleported_in)
@@ -186,14 +186,14 @@ static void handleBombActions() {
 
 	case 1:
 		g_sequence_ids[6] = kernel_seq_stamp(g_sprite_ids[6], false, -1);
-		local._timebombHotspotId = _scene->_dynamicHotspots.add(words_timebomb, words_walkto, g_sequence_ids[6], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(local._timebombHotspotId, Common::Point(166, 118), FACING_NORTHEAST);
+		local._timebombHotspotId = kernel_add_dynamic(words_timebomb, words_walkto, 0, g_sequence_ids[6], 0, 0, 0, 0);
+		kernel_dynamic_walk(local._timebombHotspotId, 166, 118, FACING_NORTHEAST);
 		inter_move_object(OBJ_TIMEBOMB, room_id);
 		break;
 
 	case 2:
 		kernel_seq_delete(g_sequence_ids[6]);
-		_scene->_dynamicHotspots.remove(local._timebombHotspotId);
+		kernel_delete_dynamic(local._timebombHotspotId);
 		inter_give_to_player(OBJ_TIMEBOMB);
 		break;
 

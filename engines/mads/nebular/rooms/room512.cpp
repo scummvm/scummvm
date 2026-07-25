@@ -51,38 +51,38 @@ static void room_512_init() {
 
 	if (object[OBJ_FISHING_ROD].location == room_id) {
 		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 9, 0, 0, 0);
-		local._fishingRodHotspotId = _scene->_dynamicHotspots.add(words_fishing_rod, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(local._fishingRodHotspotId, Common::Point(199, 101), FACING_NORTHEAST);
+		local._fishingRodHotspotId = kernel_add_dynamic(words_fishing_rod, words_walkto, 0, g_sequence_ids[1], 0, 0, 0, 0);
+		kernel_dynamic_walk(local._fishingRodHotspotId, 199, 101, FACING_NORTHEAST);
 	}
 
 	if (!player.been_here_before)
 		global[kRegisterOpen] = false;
 
-	_scene->_hotspots.activate(words_padlock_key, false);
+	kernel_flip_hotspot(words_padlock_key, false);
 	if (game.difficulty == DIFFICULTY_EASY) {
 		if (object[OBJ_PADLOCK_KEY].location == room_id) {
 			g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 10, 0, 0, 0);
 			kernel_seq_depth(g_sequence_ids[6], 3);
-			local._keyHotspotId = _scene->_dynamicHotspots.add(words_padlock_key, words_walkto, g_sequence_ids[6], Common::Rect(0, 0, 0, 0));
-			_scene->_dynamicHotspots.setPosition(local._keyHotspotId, Common::Point(218, 152), FACING_NORTHEAST);
+			local._keyHotspotId = kernel_add_dynamic(words_padlock_key, words_walkto, 0, g_sequence_ids[6], 0, 0, 0, 0);
+			kernel_dynamic_walk(local._keyHotspotId, 218, 152, FACING_NORTHEAST);
 		}
 		if (global[kRegisterOpen]) {
 			g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -2);
 			kernel_seq_depth(g_sequence_ids[3], 3);
-			_scene->_hotspots.activate(words_padlock_key, false);
+			kernel_flip_hotspot(words_padlock_key, false);
 		}
 	} else if (global[kRegisterOpen]) {
 		if (object[OBJ_PADLOCK_KEY].location == room_id) {
-			_scene->_hotspots.activate(words_padlock_key, true);
+			kernel_flip_hotspot(words_padlock_key, true);
 			g_sequence_ids[5] = kernel_seq_stamp(g_sprite_ids[5], false, -2);
 			kernel_seq_depth(g_sequence_ids[5], 3);
 		} else {
-			_scene->_hotspots.activate(words_padlock_key, false);
+			kernel_flip_hotspot(words_padlock_key, false);
 			g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -2);
 			kernel_seq_depth(g_sequence_ids[3], 3);
 		}
 	} else
-		_scene->_hotspots.activate(words_padlock_key, false);
+		kernel_flip_hotspot(words_padlock_key, false);
 
 	if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 144;
@@ -111,7 +111,7 @@ static void room_512_parser() {
 			case 1:
 				g_engine->_soundManager->command(9, 0);
 				kernel_seq_delete(g_sequence_ids[1]);
-				_scene->_dynamicHotspots.remove(local._fishingRodHotspotId);
+				kernel_delete_dynamic(local._fishingRodHotspotId);
 				inter_give_to_player(OBJ_FISHING_ROD);
 				object_examine(OBJ_FISHING_ROD, 51217, 0);
 				break;
@@ -173,7 +173,7 @@ static void room_512_parser() {
 			case 5:
 				g_sequence_ids[5] = kernel_seq_pingpong(g_sprite_ids[5], false, 14, 0, 0, 0);
 				kernel_seq_depth(g_sequence_ids[5], 3);
-				_scene->_hotspots.activate(words_padlock_key, true);
+				kernel_flip_hotspot(words_padlock_key, true);
 				kernel_timing_trigger(60, 6);
 				break;
 
@@ -210,7 +210,7 @@ static void room_512_parser() {
 				kernel_seq_delete(g_sequence_ids[5]);
 				g_sequence_ids[4] = kernel_seq_pingpong(g_sprite_ids[4], false, 12, 0, 0, 1);
 				kernel_seq_depth(g_sequence_ids[4], 3);
-				_scene->_hotspots.activate(words_padlock_key, false);
+				kernel_flip_hotspot(words_padlock_key, false);
 				kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			}
 			break;
@@ -246,12 +246,12 @@ static void room_512_parser() {
 			case 1:
 				if (Common::Point(player.x, player.y) == Common::Point(218, 152)) {
 					kernel_seq_delete(g_sequence_ids[6]);
-					_scene->_dynamicHotspots.remove(local._keyHotspotId);
+					kernel_delete_dynamic(local._keyHotspotId);
 				} else {
 					kernel_seq_delete(g_sequence_ids[5]);
 					g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -2);
 					kernel_seq_depth(g_sequence_ids[3], 3);
-					_scene->_hotspots.activate(words_padlock_key, false);
+					kernel_flip_hotspot(words_padlock_key, false);
 				}
 				g_engine->_soundManager->command(9, 0);
 				inter_give_to_player(OBJ_PADLOCK_KEY);

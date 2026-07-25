@@ -102,7 +102,7 @@ static void newNode(int node) {
 static void setDialogNode(int node) {
 	switch (node) {
 	case 0:
-		_scene->_userInterface.setup(kInputBuildingSentences);
+		kernel_set_interface_mode(kInputBuildingSentences);
 		local._shouldFaceRex = false;
 		local._shouldTalk = false;
 		player.commands_allowed = true;
@@ -188,7 +188,7 @@ static void setDialogNode(int node) {
 				kernel_timing_trigger(6, 1);
 			}
 		} else {
-			_scene->_userInterface.setup(kInputBuildingSentences);
+			kernel_set_interface_mode(kInputBuildingSentences);
 			local._shouldFaceRex = false;
 			local._shouldTalk = false;
 			player.commands_allowed = true;
@@ -320,8 +320,8 @@ static void setDialogNode(int node) {
 			local._shouldTalk = true;
 			player.commands_allowed = false;
 			if (local._twinklesTalking) {
-				_scene->_userInterface.emptyConversationList();
-				_scene->_userInterface.setup(kInputConversation);
+				inter_reset_dialog();
+				kernel_set_interface_mode(kInputConversation);
 				handleTwinklesSpeech(0xE4, -1, 0);
 				kernel_timing_trigger(180, 2);
 			} else {
@@ -636,9 +636,10 @@ static void room_210_init() {
 		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 5);
 		kernel_seq_depth(g_sequence_ids[1], 5);
 	} else {
-		int idx = _scene->_dynamicHotspots.add(words_doorway, words_walk_through, -1, Common::Rect(163, 87, 163 + 19, 87 + 36));
-		local._doorway = _scene->_dynamicHotspots.setPosition(idx, Common::Point(168, 127), FACING_NORTH);
-		_scene->_dynamicHotspots.setCursor(local._doorway, CURSOR_GO_UP);
+		int idx = kernel_add_dynamic(words_doorway, words_walk_through, 0, -1, 163, 87, 19, 36);
+		kernel_dynamic_walk(idx, 168, 127, FACING_NORTH);
+		local._doorway = idx;
+		kernel_dynamic_cursor(local._doorway, CURSOR_GO_UP);
 	}
 
 	kernel.quotes = quote_load(0x5A, 0x73, 0xAB, 0xAC, 0xAD, 0xAE, 0xAF, 0xB0, 0xB1, 0xB2, 0xB3, 0xB4, 0xB5, 0xB6, 0xB8, 0xB7,
@@ -681,7 +682,7 @@ static void room_210_init() {
 		kernel_run_animation(kernel_name('A', -1), 0);
 		local._twinkleAnimationType = 1;
 	} else
-		_scene->_hotspots.activate(476, false);
+		kernel_flip_hotspot(476, false);
 
 	if (local._curDialogNode) {
 		int quote = 0;
@@ -893,9 +894,9 @@ static void room_210_daemon() {
 			local._shouldTalk = false;
 	}
 
-	if ((local._twinkleAnimationType == 1) && (_scene->_rails.getNext() > 0)) {
+	if ((local._twinkleAnimationType == 1) && (player.next_special_code > 0)) {
 		player_walk(214, 150, FACING_NORTHWEST);
-		_scene->_rails.resetNext();
+		player.next_special_code = 0;
 		local._stopWalking = true;
 	}
 }
@@ -1004,9 +1005,9 @@ static void room_210_parser() {
 		case 1:
 			player.commands_allowed = true;
 			global[kCurtainOpen] = true;
-			local._doorway = _scene->_dynamicHotspots.add(words_doorway, words_walk_through, -1, Common::Rect(163, 87, 163 + 19, 87 + 36));
-			_scene->_dynamicHotspots.setPosition(local._doorway, Common::Point(168, 127), FACING_NORTH);
-			_scene->_dynamicHotspots.setCursor(local._doorway, CURSOR_GO_UP);
+			local._doorway = kernel_add_dynamic(words_doorway, words_walk_through, 0, -1, 163, 87, 19, 36);
+			kernel_dynamic_walk(local._doorway, 168, 127, FACING_NORTH);
+			kernel_dynamic_cursor(local._doorway, CURSOR_GO_UP);
 			break;
 
 		default:
@@ -1029,7 +1030,7 @@ static void room_210_parser() {
 			kernel_timing_trigger(48, 2);
 			break;
 		case 2:
-			_scene->_dynamicHotspots.remove(local._doorway);
+			kernel_delete_dynamic(local._doorway);
 			player.commands_allowed = true;
 			global[kCurtainOpen] = false;
 			break;

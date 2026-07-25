@@ -52,8 +52,8 @@ static void room_108_init() {
 	if (global[kFishIn108]) {
 		g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 6, 0, 0, 0);
 		kernel_seq_loc(g_sequence_ids[4], 41, 109);
-		int idx = _scene->_dynamicHotspots.add(words_dead_fish, words_swim_to, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(41, 109), FACING_NORTHWEST);
+		int idx = kernel_add_dynamic(words_dead_fish, words_swim_to, 0, g_sequence_ids[4], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 41, 109, FACING_NORTHWEST);
 	}
 
 	if (previous_room == 107) {

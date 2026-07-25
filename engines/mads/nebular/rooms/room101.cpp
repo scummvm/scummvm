@@ -102,7 +102,7 @@ static void room_101_init() {
 	g_sequence_ids[9] = kernel_seq_forward(g_sprite_ids[9], false, 6, 4, 10, 0);
 	g_sequence_ids[10] = kernel_seq_forward(g_sprite_ids[10], false, 6, 47, 32, 0);
 
-	_scene->_hotspots.activate(words_shield_modulator, false);
+	kernel_flip_hotspot(words_shield_modulator, false);
 	local._panelOpened = false;
 
 	if (previous_room != RETURNING_FROM_LOADING)
@@ -121,8 +121,8 @@ static void room_101_init() {
 		player.facing = FACING_NORTHEAST;
 		g_sequence_ids[11] = kernel_seq_forward(g_sprite_ids[11], false, 3, 0, 0, 0);
 		kernel_seq_range(g_sequence_ids[11], 17, 17);
-		_scene->_hotspots.activate(words_chair, false);
-		local._chairHotspotId = _scene->_dynamicHotspots.add(words_chair, words_sit_in, -1, Common::Rect(159, 84, 159 + 33, 84 + 36));
+		kernel_flip_hotspot(words_chair, false);
+		local._chairHotspotId = kernel_add_dynamic(words_chair, words_sit_in, 0, -1, 159, 84, 33, 36);
 		if (previous_room == 112)
 			room_101_say_dang();
 	} else {
@@ -237,8 +237,8 @@ static void room_101_pre_parser() {
 				player.walker_visible = true;
 				player.commands_allowed = true;
 				player.ready_to_walk = true;
-				_scene->_hotspots.activate(71, true);
-				_scene->_dynamicHotspots.remove(local._chairHotspotId);
+				kernel_flip_hotspot(71, true);
+				kernel_delete_dynamic(local._chairHotspotId);
 				g_sequence_ids[12] = kernel_seq_forward(g_sprite_ids[12], false, 6, 0, 0, 0);
 				kernel_seq_depth(g_sequence_ids[12], 4);
 				break;
@@ -265,7 +265,7 @@ static void room_101_pre_parser() {
 		case 1:
 			player.commands_allowed = true;
 			local._panelOpened = false;
-			_scene->_hotspots.activate(words_shield_modulator, false);
+			kernel_flip_hotspot(words_shield_modulator, false);
 			break;
 
 		default:
@@ -310,8 +310,8 @@ static void room_101_parser() {
 				kernel_seq_range(g_sequence_ids[11], 17, 17);
 				player.commands_allowed = true;
 				local._sittingFl = true;
-				_scene->_hotspots.activate(71, false);
-				local._chairHotspotId = _scene->_dynamicHotspots.add(words_chair, words_sit_in, -1, Common::Rect(159, 84, 159 + 33, 84 + 36));
+				kernel_flip_hotspot(71, false);
+				local._chairHotspotId = kernel_add_dynamic(words_chair, words_sit_in, 0, -1, 159, 84, 33, 36);
 				if (!player_said_2(look, view_screen)) {
 					player.command_ready = false;
 					return;
@@ -346,7 +346,7 @@ static void room_101_parser() {
 			player.commands_allowed = true;
 			local._panelOpened = true;
 			if (object_is_here(OBJ_SHIELD_MODULATOR))
-				_scene->_hotspots.activate(words_shield_modulator, true);
+				kernel_flip_hotspot(words_shield_modulator, true);
 			break;
 
 		default:
@@ -361,7 +361,7 @@ static void room_101_parser() {
 		kernel_seq_delete(g_sequence_ids[13]);
 		g_sequence_ids[13] = kernel_seq_forward(g_sprite_ids[14], false, 6, 0, 0, 0);
 		kernel_seq_range(g_sequence_ids[13], -2, -2);
-		_scene->_hotspots.activate(words_shield_modulator, false);
+		kernel_flip_hotspot(words_shield_modulator, false);
 		object_examine(OBJ_SHIELD_MODULATOR, 10120, 0);
 		g_engine->_soundManager->command(22, 0);
 		player.command_ready = false;

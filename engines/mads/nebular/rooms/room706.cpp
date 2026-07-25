@@ -84,14 +84,14 @@ static void handleTakeVase() {
 	case 1:
 		g_engine->_soundManager->command(9, 0);
 		kernel_seq_delete(g_sequence_ids[1]);
-		_scene->_dynamicHotspots.remove(local._vaseHotspotId);
+		kernel_delete_dynamic(local._vaseHotspotId);
 		inter_give_to_player(OBJ_VASE);
 		if (local._vaseMode == 1) {
 			g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 1);
 			kernel_seq_depth(g_sequence_ids[4], 4);
 			kernel_seq_loc(g_sequence_ids[4], 195, 99);
-			int idx = _scene->_dynamicHotspots.add(words_bottle, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
-			_scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
+			int idx = kernel_add_dynamic(words_bottle, words_walkto, 0, g_sequence_ids[4], 0, 0, 0, 0);
+			kernel_dynamic_walk(idx, 175, 124, FACING_SOUTHEAST);
 			inter_move_object(OBJ_BOTTLE, room_id);
 		}
 		break;
@@ -119,14 +119,15 @@ static void room_706_init() {
 		g_sprite_ids[1] = kernel_load_series(kernel_name('v', -1), 0);
 		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 1);
 		kernel_seq_depth(g_sequence_ids[1], 4);
-		int idx = _scene->_dynamicHotspots.add(words_vase, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-		local._vaseHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
+		int idx = kernel_add_dynamic(words_vase, words_walkto, 0, g_sequence_ids[1], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 175, 124, FACING_SOUTHEAST);
+		local._vaseHotspotId = idx;
 	} else if (object_is_here(OBJ_BOTTLE)) {
 		g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 1);
 		kernel_seq_depth(g_sequence_ids[4], 4);
 		kernel_seq_loc(g_sequence_ids[4], 195, 99);
-		int idx = _scene->_dynamicHotspots.add(words_bottle, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
+		int idx = kernel_add_dynamic(words_bottle, words_walkto, 0, g_sequence_ids[4], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 175, 124, FACING_SOUTHEAST);
 	}
 
 	player.walker_visible = true;
@@ -201,8 +202,8 @@ static void room_706_daemon() {
 					g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 1);
 					kernel_seq_depth(g_sequence_ids[4], 4);
 					kernel_seq_loc(g_sequence_ids[4], 195, 99);
-					int idx = _scene->_dynamicHotspots.add(words_bottle, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
-					_scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
+					int idx = kernel_add_dynamic(words_bottle, words_walkto, 0, g_sequence_ids[4], 0, 0, 0, 0);
+					kernel_dynamic_walk(idx, 175, 124, FACING_SOUTHEAST);
 				}
 			}
 		}

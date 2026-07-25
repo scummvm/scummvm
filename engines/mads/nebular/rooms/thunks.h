@@ -22,11 +22,9 @@
 #ifndef MADS_NEBULAR_ROOMS_THUNKS_H
 #define MADS_NEBULAR_ROOMS_THUNKS_H
 
-#include "common/rect.h"
 #include "mads/core/config.h"
 #include "mads/core/inter.h"
 #include "mads/core/kernel.h"
-#include "mads/core/player.h"
 
 namespace MADS {
 namespace RexNebular {
@@ -119,69 +117,6 @@ enum StoryMode {
 #define kernel_animation_trigger_words  kernel_anim[0].trigger_words
 #define kernel_animation_next_clock     kernel_anim[0].next_clock
 #endif
-
-struct Scene {
-	Scene *operator->() {
-		return this;
-	}
-	const Scene *operator->() const {
-		return this;
-	}
-
-	struct CustomDest {
-		int &x = inter_point_x;
-		int &y = inter_point_y;
-	};
-	CustomDest _customDest;
-
-	struct DynamicHotspot {
-		byte &_articleNumber;
-
-		DynamicHotspot(int index);
-	};
-
-	struct DynamicHotspots {
-		int add(int vocab_id, int verb_id, int auto_sequence, const Common::Rect &r);
-		void remove(int dyn_id);
-		int setPosition(int id, const Common::Point &pt, int facing);
-		int setCursor(int id, int cursor);
-
-		DynamicHotspot operator[](int idx);
-	};
-	DynamicHotspots _dynamicHotspots;
-
-	struct Hotspots {
-		void activate(int hotspot, int active);
-	};
-	Hotspots _hotspots;
-
-	struct PaletteCycles {
-		int size() const;
-
-	};
-	PaletteCycles _paletteCycles;
-
-	struct Rails {
-		int getNext() const;
-		void resetNext();
-	};
-	Rails _rails;
-
-	struct SpriteSlots {
-		void clear();
-		void fullRefresh();
-	};
-	SpriteSlots _spriteSlots;
-
-	struct UserInterface {
-		int &_selectedInvIndex = active_inven;
-		void emptyConversationList();
-		void setup(int inputMode);
-		void selectObject(int item_id);
-	};
-	UserInterface _userInterface;
-};
-extern Scene _scene;
 
 enum {
 	RETURNING_FROM_DIALOG = KERNEL_RESTORING_GAME,

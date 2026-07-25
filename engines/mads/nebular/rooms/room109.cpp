@@ -79,12 +79,12 @@ static void room_109_init() {
 		kernel_seq_depth(g_sequence_ids[6], 4);
 		kernel_seq_range(g_sequence_ids[6], -2, -2);
 
-		int idx = _scene->_dynamicHotspots.add(words_dead_purple_monster, words_swim_to, -1, Common::Rect(256, 57, 267, 87));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
-		idx = _scene->_dynamicHotspots.add(words_dead_purple_monster, words_swim_to, -1, Common::Rect(242, 79, 265, 90));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
-		idx = _scene->_dynamicHotspots.add(words_monster_sludge, words_swim_to, -1, Common::Rect(231, 88, 253, 94));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
+		int idx = kernel_add_dynamic(words_dead_purple_monster, words_swim_to, 0, -1, 256, 57, 11, 30);
+		kernel_dynamic_walk(idx, 241, 91, FACING_NORTHEAST);
+		idx = kernel_add_dynamic(words_dead_purple_monster, words_swim_to, 0, -1, 242, 79, 23, 11);
+		kernel_dynamic_walk(idx, 241, 91, FACING_NORTHEAST);
+		idx = kernel_add_dynamic(words_monster_sludge, words_swim_to, 0, -1, 231, 88, 22, 6);
+		kernel_dynamic_walk(idx, 241, 91, FACING_NORTHEAST);
 	}
 
 	if (!global[kHoovicAlive] || global[kHoovicSated])
@@ -93,8 +93,8 @@ static void room_109_init() {
 	if (object_is_here(OBJ_BURGER)) {
 		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 6, 0, 0, 0);
 		kernel_seq_range(g_sequence_ids[3], -2, -2);
-		int idx = _scene->_dynamicHotspots.add(words_burger, words_swim_to, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
+		int idx = kernel_add_dynamic(words_burger, words_swim_to, 0, g_sequence_ids[3], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, -3, 0, FACING_NORTHEAST);
 	} else if (kernel.teleported_in)
 		inter_give_to_player(OBJ_BURGER);
 
@@ -162,10 +162,10 @@ static void room_109_daemon() {
 		kernel_new_palette();
 	}
 
-	if (player.walking && (_scene->_rails.getNext() > 0) && global[kHoovicAlive] && !global[kHoovicSated] && !local._hungryFl && !local._beforeEatingRex) {
+	if (player.walking && (player.next_special_code > 0) && global[kHoovicAlive] && !global[kHoovicSated] && !local._hungryFl && !local._beforeEatingRex) {
 		player_cancel_command();
 		player_start_walking(160, 32, FACING_EAST);
-		_scene->_rails.resetNext();
+		player.next_special_code = 0;
 		local._hungryFl = true;
 	}
 
@@ -188,8 +188,8 @@ static void room_109_daemon() {
 		matte_deallocate_series(g_sprite_ids[9], true);
 		matte_deallocate_series(g_sprite_ids[10], true);
 
-		_scene->_spriteSlots.clear();
-		_scene->_spriteSlots.fullRefresh();
+		image_marker = 0;
+		matte_refresh_work();
 
 		int randVal = g_engine->getRandomNumber(85, 88);
 		int idx = kernel_message_add(quote_string(kernel.quotes, randVal), 0, 0, 0x1110, 120, 0, 34);
@@ -315,12 +315,12 @@ static void room_109_parser() {
 							g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 6, 0, 0, 1);
 							kernel_seq_depth(g_sequence_ids[6], 4);
 							kernel_seq_range(g_sequence_ids[6], -2, -2);
-							int idx = _scene->_dynamicHotspots.add(words_dead_purple_monster, words_swim_to, -1, Common::Rect(256, 57, 256 + 12, 57 + 31));
-							_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
-							idx = _scene->_dynamicHotspots.add(words_dead_purple_monster, words_swim_to, -1, Common::Rect(242, 79, 242 + 24, 79 + 12));
-							_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
-							idx = _scene->_dynamicHotspots.add(words_monster_sludge, words_swim_to, -1, Common::Rect(231, 88, 231 + 23, 88 + 7));
-							_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
+							int idx = kernel_add_dynamic(words_dead_purple_monster, words_swim_to, 0, -1, 256, 57, 12, 31);
+							kernel_dynamic_walk(idx, 241, 91, FACING_NORTHEAST);
+							idx = kernel_add_dynamic(words_dead_purple_monster, words_swim_to, 0, -1, 242, 79, 24, 12);
+							kernel_dynamic_walk(idx, 241, 91, FACING_NORTHEAST);
+							idx = kernel_add_dynamic(words_monster_sludge, words_swim_to, 0, -1, 231, 88, 23, 7);
+							kernel_dynamic_walk(idx, 241, 91, FACING_NORTHEAST);
 							kernel_load_variant(1);
 						} else {
 							if (local._throwingObjectId == OBJ_DEAD_FISH) {
@@ -350,8 +350,8 @@ static void room_109_parser() {
 						kernel_abort_animation(0);
 						kernel_seq_delete(g_sequence_ids[8]);
 						matte_deallocate_series(g_sprite_ids[8], true);
-						_scene->_spriteSlots.clear();
-						_scene->_spriteSlots.fullRefresh();
+						image_marker = 0;
+						matte_refresh_work();
 						kernel_seq_full_update();
 						if (player.walker_visible) {
 							player.sprite_changed = true;
@@ -367,8 +367,8 @@ static void room_109_parser() {
 						inter_move_object(OBJ_BURGER, room_id);
 						g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 6, 0, 0, 0);
 						kernel_seq_range(g_sequence_ids[3], 30, 30);
-						int idx = _scene->_dynamicHotspots.add(words_burger, words_swim_to, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
-						_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
+						int idx = kernel_add_dynamic(words_burger, words_swim_to, 0, g_sequence_ids[3], 0, 0, 0, 0);
+						kernel_dynamic_walk(idx, -3, 0, FACING_NORTHEAST);
 						kernel_timing_trigger(65, 6);
 					}
 					break;
@@ -378,8 +378,8 @@ static void room_109_parser() {
 						kernel_seq_delete(g_sequence_ids[3]);
 						g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 6, 0, 0, 1);
 						kernel_seq_range(g_sequence_ids[3], 31, 46);
-						int idx = _scene->_dynamicHotspots.add(words_burger, words_swim_to, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
-						_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
+						int idx = kernel_add_dynamic(words_burger, words_swim_to, 0, g_sequence_ids[3], 0, 0, 0, 0);
+						kernel_dynamic_walk(idx, -3, 0, FACING_NORTHEAST);
 						kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 7);
 					}
 					break;
@@ -388,8 +388,8 @@ static void room_109_parser() {
 					{
 						kernel_seq_delete(g_sequence_ids[3]);
 						g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -2);
-						int idx = _scene->_dynamicHotspots.add(words_burger, words_swim_to, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
-						_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
+						int idx = kernel_add_dynamic(words_burger, words_swim_to, 0, g_sequence_ids[3], 0, 0, 0, 0);
+						kernel_dynamic_walk(idx, -3, 0, FACING_NORTHEAST);
 						text_show(10915);
 					}
 					break;

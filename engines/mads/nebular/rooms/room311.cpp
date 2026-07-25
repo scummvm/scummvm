@@ -178,7 +178,7 @@ static void room_311_daemon() {
 		break;
 	}
 
-	if (player.walking && (_scene->_rails.getNext() > 0)) {
+	if (player.walking && (player.next_special_code > 0)) {
 		int x = player.prepare_walk_x;
 		if (x < 75)
 			x = 75;
@@ -187,7 +187,7 @@ static void room_311_daemon() {
 
 		local._checkGuardFl = true;
 		player_start_walking(x, 122, FACING_SOUTH);
-		_scene->_rails.resetNext();
+		player.next_special_code = 0;
 	}
 }
 

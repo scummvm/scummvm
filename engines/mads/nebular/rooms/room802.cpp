@@ -77,15 +77,15 @@ static void room_802_init() {
 	if ((global[kRemoteOnGround]) && (!player_has(OBJ_REMOTE))) {
 		g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 1);
 		kernel_seq_depth(g_sequence_ids[4], 8);
-		int idx = _scene->_dynamicHotspots.add(words_remote, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(107, 99), FACING_NORTH);
+		int idx = kernel_add_dynamic(words_remote, words_walkto, 0, g_sequence_ids[4], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 107, 99, FACING_NORTH);
 	}
 
 	if (!player_has(OBJ_SHIELD_MODULATOR) && !global[kShieldModInstalled]) {
 		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 1);
 		kernel_seq_depth(g_sequence_ids[1], 8);
-		int idx = _scene->_dynamicHotspots.add(words_shield_modulator, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(93, 97), FACING_NORTH);
+		int idx = kernel_add_dynamic(words_shield_modulator, words_walkto, 0, g_sequence_ids[1], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 93, 97, FACING_NORTH);
 	}
 	section_8_music();
 }
@@ -102,8 +102,8 @@ static void room_802_daemon() {
 	if (kernel.trigger == 71) {
 		g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 1);
 		kernel_seq_depth(g_sequence_ids[4], 8);
-		int idx = _scene->_dynamicHotspots.add(words_remote, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(107, 99), FACING_NORTH);
+		int idx = kernel_add_dynamic(words_remote, words_walkto, 0, g_sequence_ids[4], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 107, 99, FACING_NORTH);
 
 		global[kRemoteSequenceRan] = true;
 		global[kRemoteOnGround] = true;

@@ -34,7 +34,7 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_313_init() {
-	_scene->_userInterface.setup(kInputLimitedSentences);
+	kernel_set_interface_mode(kInputLimitedSentences);
 
 	if ((previous_room == 366) || (previous_room == 316)) {
 		player.x = 30;

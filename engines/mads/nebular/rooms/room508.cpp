@@ -57,25 +57,25 @@ static void room_508_init() {
 		g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -2);
 		kernel_seq_depth(g_sequence_ids[3], 8);
 		g_sequence_ids[5] = kernel_seq_stamp(g_sprite_ids[5], false, -2);
-		int idx = _scene->_dynamicHotspots.add(words_spinach_patch_doll, words_walkto, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(57, 116), FACING_NORTHEAST);
-		_scene->_hotspots.activate(words_hole, false);
-		_scene->_hotspots.activate(words_laser_beam, false);
+		int idx = kernel_add_dynamic(words_spinach_patch_doll, words_walkto, 0, g_sequence_ids[5], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 57, 116, FACING_NORTHEAST);
+		kernel_flip_hotspot(words_hole, false);
+		kernel_flip_hotspot(words_laser_beam, false);
 	} else {
 		kernel_load_variant(1);
 		g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -2);
 		kernel_seq_depth(g_sequence_ids[3], 8);
 		g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, -2);
 		kernel_seq_depth(g_sequence_ids[4], 11);
-		int idx = _scene->_dynamicHotspots.add(words_laser_beam, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(57, 116), FACING_NORTHEAST);
+		int idx = kernel_add_dynamic(words_laser_beam, words_walkto, 0, g_sequence_ids[4], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 57, 116, FACING_NORTHEAST);
 		g_sequence_ids[2] = kernel_seq_pingpong(g_sprite_ids[2], false, 15, 0, 0, 0);
 		kernel_seq_range(g_sequence_ids[2], 6, 8);
 		kernel_seq_depth(g_sequence_ids[2], 6);
 		if (global[kLaserHoleIsThere]) {
 			g_sequence_ids[7] = kernel_seq_stamp(g_sprite_ids[7], false, -2);
-			_scene->_hotspots.activate(words_hole, true);
-			_scene->_hotspots.activate(words_laser_beam, true);
+			kernel_flip_hotspot(words_hole, true);
+			kernel_flip_hotspot(words_laser_beam, true);
 		}
 		g_engine->_soundManager->command(21, 0);
 	}
@@ -136,8 +136,8 @@ static void handlePedestral() {
 
 		case 2:
 			g_sequence_ids[7] = kernel_seq_stamp(g_sprite_ids[7], false, -2);
-			_scene->_hotspots.activate(words_hole, true);
-			_scene->_hotspots.activate(words_laser_beam, true);
+			kernel_flip_hotspot(words_hole, true);
+			kernel_flip_hotspot(words_laser_beam, true);
 			break;
 
 		case 3:
@@ -205,8 +205,8 @@ static void room_508_parser() {
 				g_engine->_soundManager->command(22, 0);
 				g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, -2);
 				kernel_seq_depth(g_sequence_ids[4], 11);
-				int idx = _scene->_dynamicHotspots.add(words_laser_beam, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
-				_scene->_dynamicHotspots.setPosition(idx, Common::Point(57, 116), FACING_NORTHEAST);
+				int idx = kernel_add_dynamic(words_laser_beam, words_walkto, 0, g_sequence_ids[4], 0, 0, 0, 0);
+				kernel_dynamic_walk(idx, 57, 116, FACING_NORTHEAST);
 				kernel_message_purge();
 				kernel_load_variant(1);
 				kernel_timing_trigger(30, 7);

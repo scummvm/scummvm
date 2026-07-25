@@ -45,9 +45,9 @@ static void updateTrap() {
 	if (global[kRhotundaStatus] == 1) {
 		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 8, 24, 0, 0);
 		kernel_seq_depth(g_sequence_ids[1], 5);
-		int idx = _scene->_dynamicHotspots.add(words_huge_legs, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(100, 146), FACING_NORTH);
-		_scene->_hotspots.activate(414, false);
+		int idx = kernel_add_dynamic(words_huge_legs, words_walkto, 0, g_sequence_ids[1], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 100, 146, FACING_NORTH);
+		kernel_flip_hotspot(414, false);
 		return;
 	}
 
@@ -56,18 +56,18 @@ static void updateTrap() {
 	{
 		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 1);
 		kernel_seq_depth(g_sequence_ids[2], 15);
-		int idx = _scene->_dynamicHotspots.add(words_pile_of_leaves, words_walkto, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(60, 152), FACING_NORTH);
+		int idx = kernel_add_dynamic(words_pile_of_leaves, words_walkto, 0, g_sequence_ids[2], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 60, 152, FACING_NORTH);
 	}
 	break;
 	case LEAVES_ON_TRAP:
 	{
 		kernel_seq_depth(g_sequence_ids[3], 15);
 		g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, 1);
-		_scene->_hotspots.activate(words_deep_pit, false);
-		int idx = _scene->_dynamicHotspots.add(words_leaf_covered_pit, words_walkto, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(100, 146), FACING_NORTH);
-		_scene->_dynamicHotspots[idx]._articleNumber = PREP_ON;
+		kernel_flip_hotspot(words_deep_pit, false);
+		int idx = kernel_add_dynamic(words_leaf_covered_pit, words_walkto, 0, g_sequence_ids[3], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 100, 146, FACING_NORTH);
+		kernel_dynamic_hot[idx].prep = PREP_ON;
 	}
 	break;
 	default:

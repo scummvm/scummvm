@@ -45,8 +45,8 @@ static void room_603_init() {
 		g_sprite_ids[1] = kernel_load_series(kernel_name('c', -1), 0);
 		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, -1);
 		kernel_seq_depth(g_sequence_ids[1], 1);
-		local._compactCaseHotspotId = _scene->_dynamicHotspots.add(words_compact_case, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(local._compactCaseHotspotId, Common::Point(250, 152), FACING_SOUTHEAST);
+		local._compactCaseHotspotId = kernel_add_dynamic(words_compact_case, words_walkto, 0, g_sequence_ids[1], 0, 0, 0, 0);
+		kernel_dynamic_walk(local._compactCaseHotspotId, 250, 152, FACING_SOUTHEAST);
 	}
 
 	if ((game.difficulty != DIFFICULTY_HARD) && (object[OBJ_NOTE].location == room_id)) {
@@ -54,8 +54,8 @@ static void room_603_init() {
 		g_sprite_ids[2] = kernel_load_series(kernel_name('p', -1), 0);
 		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, -1);
 		kernel_seq_depth(g_sequence_ids[2], 14);
-		local._noteHotspotId = _scene->_dynamicHotspots.add(words_note, words_walkto, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(local._noteHotspotId, Common::Point(242, 118), FACING_NORTHEAST);
+		local._noteHotspotId = kernel_add_dynamic(words_note, words_walkto, 0, g_sequence_ids[2], 0, 0, 0, 0);
+		kernel_dynamic_walk(local._noteHotspotId, 242, 118, FACING_NORTHEAST);
 	}
 
 	if (previous_room != RETURNING_FROM_DIALOG) {
@@ -85,7 +85,7 @@ static void room_603_parser() {
 			case 1:
 				g_engine->_soundManager->command(9, 0);
 				kernel_seq_delete(g_sequence_ids[1]);
-				_scene->_dynamicHotspots.remove(local._compactCaseHotspotId);
+				kernel_delete_dynamic(local._compactCaseHotspotId);
 				inter_give_to_player(OBJ_COMPACT_CASE);
 				object_examine(OBJ_COMPACT_CASE, 60330, 0);
 				break;
@@ -111,7 +111,7 @@ static void room_603_parser() {
 			} else if (kernel.trigger == 1) {
 				g_engine->_soundManager->command(9, 0);
 				kernel_seq_delete(g_sequence_ids[2]);
-				_scene->_dynamicHotspots.remove(local._noteHotspotId);
+				kernel_delete_dynamic(local._noteHotspotId);
 				inter_give_to_player(OBJ_NOTE);
 				kernel_seq_delete(g_sequence_ids[3]);
 				player.clock = kernel.clock - player.frame_delay;

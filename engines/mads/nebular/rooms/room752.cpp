@@ -58,15 +58,16 @@ static void room_752_init() {
 		g_sprite_ids[13] = kernel_load_series(kernel_name('i', -1), 0);
 		g_sequence_ids[13] = kernel_seq_stamp(g_sprite_ids[13], false, 1);
 		kernel_seq_depth(g_sequence_ids[13], 8);
-		int idx = _scene->_dynamicHotspots.add(words_id_card, words_walkto, g_sequence_ids[13], Common::Rect(0, 0, 0, 0));
-		local._cardId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 135), FACING_NORTH);
+		int idx = kernel_add_dynamic(words_id_card, words_walkto, 0, g_sequence_ids[13], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 234, 135, FACING_NORTH);
+		local._cardId = idx;
 	}
 
 	if (global[kLaserHoleIsThere]) {
 		g_sequence_ids[14] = kernel_seq_stamp(g_sprite_ids[14], false, 1);
 		kernel_seq_depth(g_sequence_ids[14], 13);
-		int idx = _scene->_dynamicHotspots.add(words_laser_beam, words_look_at, g_sequence_ids[14], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(215, 130), FACING_NORTHWEST);
+		int idx = kernel_add_dynamic(words_laser_beam, words_look_at, 0, g_sequence_ids[14], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 215, 130, FACING_NORTHWEST);
 	}
 
 	if (global[kTeleporterCommand]) {
@@ -131,7 +132,7 @@ static void room_752_parser() {
 			g_engine->_soundManager->command(15, 0);
 			kernel_seq_delete(g_sequence_ids[13]);
 			inter_give_to_player(OBJ_ID_CARD);
-			_scene->_dynamicHotspots.remove(local._cardId);
+			kernel_delete_dynamic(local._cardId);
 			object_examine(OBJ_ID_CARD, 830, 0);
 			break;
 		case 2:

@@ -53,7 +53,7 @@ static void room_214_init() {
 		kernel_seq_loc(g_sequence_ids[1], 103, 86);
 		kernel_seq_depth(g_sequence_ids[1], 11);
 	} else {
-		_scene->_hotspots.activate(words_poison_darts, false);
+		kernel_flip_hotspot(words_poison_darts, false);
 	}
 
 	if (object_is_here(OBJ_BLOWGUN)) {
@@ -61,7 +61,7 @@ static void room_214_init() {
 		kernel_seq_loc(g_sequence_ids[2], 90, 87);
 		kernel_seq_depth(g_sequence_ids[2], 13);
 	} else {
-		_scene->_hotspots.activate(words_blowgun, false);
+		kernel_flip_hotspot(words_blowgun, false);
 	}
 
 	if (previous_room != RETURNING_FROM_DIALOG) {
@@ -78,7 +78,7 @@ static void room_214_daemon() {
 		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 9, 0, 6, 1);
 		kernel_seq_range(g_sequence_ids[3], 1, 4);
 		kernel_seq_depth(g_sequence_ids[3], 2);
-		_scene->_dynamicHotspots.add(words_captive_creature, words_walkto, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
+		kernel_add_dynamic(words_captive_creature, words_walkto, 0, g_sequence_ids[3], 0, 0, 0, 0);
 		kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 	}
 
@@ -89,7 +89,7 @@ static void room_214_daemon() {
 			int oldIdx = g_sequence_ids[3];
 			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 9, 0, 0, 5);
 			kernel_seq_timeout(oldIdx, g_sequence_ids[3]);
-			_scene->_dynamicHotspots.add(words_captive_creature, words_walkto, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
+			kernel_add_dynamic(words_captive_creature, words_walkto, 0, g_sequence_ids[3], 0, 0, 0, 0);
 			kernel_seq_range(g_sequence_ids[3], 5, 8);
 			kernel_seq_depth(g_sequence_ids[3], 2);
 			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
@@ -101,7 +101,7 @@ static void room_214_daemon() {
 			int oldIdx = g_sequence_ids[3];
 			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 9, 0, 0, 1);
 			kernel_seq_timeout(oldIdx, g_sequence_ids[3]);
-			_scene->_dynamicHotspots.add(words_captive_creature, words_walkto, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
+			kernel_add_dynamic(words_captive_creature, words_walkto, 0, g_sequence_ids[3], 0, 0, 0, 0);
 			kernel_seq_range(g_sequence_ids[3], 9, -2);
 			kernel_seq_depth(g_sequence_ids[3], 2);
 			local._devilTime = player.clock;
@@ -136,7 +136,7 @@ static void room_214_parser() {
 			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			kernel_seq_delete(g_sequence_ids[1]);
 			inter_give_to_player(OBJ_POISON_DARTS);
-			_scene->_hotspots.activate(words_poison_darts, false);
+			kernel_flip_hotspot(words_poison_darts, false);
 			break;
 
 		case 2:
@@ -168,7 +168,7 @@ static void room_214_parser() {
 			kernel_seq_trigger(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			kernel_seq_delete(g_sequence_ids[2]);
 			inter_give_to_player(OBJ_BLOWGUN);
-			_scene->_hotspots.activate(words_blowgun, false);
+			kernel_flip_hotspot(words_blowgun, false);
 			break;
 
 		case 2:

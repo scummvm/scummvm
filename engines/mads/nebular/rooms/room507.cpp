@@ -45,8 +45,8 @@ static void room_507_init() {
 
 	if ((game.difficulty != DIFFICULTY_EASY) && (object[OBJ_PENLIGHT].location == room_id)) {
 		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 9, 0, 0, 0);
-		local._penlightHotspotId = _scene->_dynamicHotspots.add(words_penlight, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(local._penlightHotspotId, Common::Point(233, 152), FACING_SOUTHEAST);
+		local._penlightHotspotId = kernel_add_dynamic(words_penlight, words_walkto, 0, g_sequence_ids[1], 0, 0, 0, 0);
+		kernel_dynamic_walk(local._penlightHotspotId, 233, 152, FACING_SOUTHEAST);
 	}
 
 	if (previous_room != RETURNING_FROM_DIALOG) {
@@ -76,7 +76,7 @@ static void room_507_parser() {
 
 			case 1:
 				kernel_seq_delete(g_sequence_ids[1]);
-				_scene->_dynamicHotspots.remove(local._penlightHotspotId);
+				kernel_delete_dynamic(local._penlightHotspotId);
 				g_engine->_soundManager->command(27, 0);
 				inter_give_to_player(OBJ_PENLIGHT);
 				object_examine(OBJ_PENLIGHT, 50730, 0);
@@ -107,7 +107,7 @@ static void room_507_parser() {
 	else if (player_said_2(look, advertising_poster))
 		text_show(50715);
 	else if (player_said_2(look, sign)) {
-		if (_scene->_customDest.x < 100)
+		if (inter_point_x < 100)
 			text_show(50726);
 		else
 			text_show(50716);

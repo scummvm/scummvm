@@ -134,8 +134,8 @@ static void room_309_daemon() {
 		switch (kernel.trigger) {
 		case 70:
 		{
-			int idx = _scene->_dynamicHotspots.add(words_ghastly_beast, words_gawk_at, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
-			_scene->_dynamicHotspots.setPosition(idx, Common::Point(142, 146), FACING_NORTHEAST);
+			int idx = kernel_add_dynamic(words_ghastly_beast, words_gawk_at, 0, g_sequence_ids[3], 0, 0, 0, 0);
+			kernel_dynamic_walk(idx, 142, 146, FACING_NORTHEAST);
 			g_sequence_ids[3] = kernel_seq_pingpong(g_sprite_ids[3], false, 7, 0, 0, 4);
 			kernel_seq_range(g_sequence_ids[3], 2, 3);
 			kernel_seq_depth(g_sequence_ids[3], 11);

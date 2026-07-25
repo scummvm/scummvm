@@ -69,7 +69,7 @@ static void handleRatMoves() {
 	g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 12, 0, 0, 1);
 	kernel_seq_range(g_sequence_ids[1], 11, -2);
 	local._ratTimer = player.clock;
-	_scene->_dynamicHotspots.remove(local._ratHotspotId);
+	kernel_delete_dynamic(local._ratHotspotId);
 }
 
 static void handleTrading() {
@@ -90,7 +90,7 @@ static void setDialogNode(int node) {
 
 	switch (node) {
 	case 0:
-		_scene->_userInterface.setup(kInputBuildingSentences);
+		kernel_set_interface_mode(kInputBuildingSentences);
 		local._duringDialogFl = false;
 		local._hermitDialogNode = 0;
 		break;
@@ -959,7 +959,7 @@ static void room_611_init() {
 		local._stickFingerFl = false;
 	} else {
 		local._hermitMode = 0;
-		_scene->_hotspots.activate(words_hermit, false);
+		kernel_flip_hotspot(words_hermit, false);
 	}
 
 	// WORKAROUND: Fix original adding 'give batteries' option even if you don't have them
@@ -975,7 +975,7 @@ static void room_611_init() {
 
 		switch (local._hermitDialogNode) {
 		case 0:
-			_scene->_userInterface.setup(kInputBuildingSentences);
+			kernel_set_interface_mode(kInputBuildingSentences);
 			local._hermitDialogNode = 1;
 			break;
 
@@ -1011,8 +1011,9 @@ static void room_611_daemon() {
 	} else if (kernel.trigger == 81) {
 		int syncId = g_sequence_ids[1];
 		g_sequence_ids[1] = kernel_seq_pingpong(g_sprite_ids[1], false, 20, 0, 0, 0);
-		int idx = _scene->_dynamicHotspots.add(words_rat, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-		local._ratHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(272, 154), FACING_SOUTHEAST);
+		int idx = kernel_add_dynamic(words_rat, words_walkto, 0, g_sequence_ids[1], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 272, 154, FACING_SOUTHEAST);
+		local._ratHotspotId = idx;
 		kernel_seq_range(g_sequence_ids[1], 9, 10);
 		kernel_seq_timeout(syncId, g_sequence_ids[1]);
 		kernel_seq_depth(g_sequence_ids[1], 1);
@@ -1320,7 +1321,7 @@ static void room_611_daemon() {
 			local._startTradingFl = false;
 			local._nextFrame = 52;
 			global[kHasTalkedToHermit] = true;
-			_scene->_hotspots.activate(words_hermit, false);
+			kernel_flip_hotspot(words_hermit, false);
 		} else {
 			player.commands_allowed = true;
 			local._hermitMode = 1;

@@ -42,8 +42,8 @@ static void room_408_init() {
 	if (object_is_here(OBJ_TARGET_MODULE)) {
 		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 1);
 		kernel_seq_depth(g_sequence_ids[2], 3);
-		int idx = _scene->_dynamicHotspots.add(words_target_module, words_walkto, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(283, 128), FACING_NORTHEAST);
+		int idx = kernel_add_dynamic(words_target_module, words_walkto, 0, g_sequence_ids[2], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 283, 128, FACING_NORTHEAST);
 	}
 	section_4_music();
 }

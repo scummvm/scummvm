@@ -96,7 +96,7 @@ static void room_609_daemon() {
 		break;
 
 	case 61:
-		_scene->_hotspots.activate(words_video_store_door, false);
+		kernel_flip_hotspot(words_video_store_door, false);
 		player_walk(101, 100, FACING_EAST);
 		kernel_timing_trigger(180, 62);
 		break;
@@ -104,7 +104,7 @@ static void room_609_daemon() {
 	case 62:
 		kernel_seq_delete(g_sequence_ids[2]);
 		g_sequence_ids[2] = kernel_seq_backward(g_sprite_ids[2], false, 7, 0, 0, 1);
-		_scene->_hotspots.activate(words_video_store_door, true);
+		kernel_flip_hotspot(words_video_store_door, true);
 		kernel_seq_depth(g_sequence_ids[2], 9);
 		kernel_seq_trigger(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 63);
 		break;
@@ -208,7 +208,7 @@ static void enterStore() {
 		break;
 
 	case 6:
-		_scene->_hotspots.activate(words_video_store_door, false);
+		kernel_flip_hotspot(words_video_store_door, false);
 		if (local._videoDoorMode == 1) {
 			kernel_message_purge();
 			kernel_message_add(quote_string(kernel.quotes, 0x307), 0, 0, 0x1110, 180, 0, 34);
@@ -225,7 +225,7 @@ static void enterStore() {
 		break;
 
 	case 8:
-		_scene->_hotspots.activate(words_video_store_door, true);
+		kernel_flip_hotspot(words_video_store_door, true);
 		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, -1);
 		kernel_seq_depth(g_sequence_ids[2], 9);
 		global[kBeenInVideoStore] = true;

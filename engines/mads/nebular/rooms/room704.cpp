@@ -84,7 +84,7 @@ static void handleBottleInterface() {
 }
 
 static void setBottleSequence() {
-	_scene->_userInterface.setup(kInputBuildingSentences);
+	kernel_set_interface_mode(kInputBuildingSentences);
 	player.commands_allowed = false;
 	if (local._boatDirection == 2)
 		local._animationMode = 6;
@@ -115,7 +115,7 @@ static void handleFillBottle(int quote) {
 		break;
 
 	case 0x315:
-		_scene->_userInterface.setup(kInputBuildingSentences);
+		kernel_set_interface_mode(kInputBuildingSentences);
 		break;
 
 	default:
@@ -135,8 +135,9 @@ static void room_704_init() {
 			kernel_seq_loc(g_sequence_ids[1], 190, 122);
 			kernel_seq_depth(g_sequence_ids[1], 2);
 		}
-		int idx = _scene->_dynamicHotspots.add(words_bottle, words_look_at, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-		local._bottleHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
+		int idx = kernel_add_dynamic(words_bottle, words_look_at, 0, g_sequence_ids[1], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, -2, 0, FACING_NONE);
+		local._bottleHotspotId = idx;
 	}
 
 	player.walker_visible = false;
@@ -247,7 +248,7 @@ static void room_704_daemon() {
 			case 90:
 				if (local._takeBottleFl) {
 					kernel_seq_delete(g_sequence_ids[1]);
-					_scene->_dynamicHotspots.remove(local._bottleHotspotId);
+					kernel_delete_dynamic(local._bottleHotspotId);
 					inter_give_to_player(OBJ_BOTTLE);
 					g_engine->_soundManager->command(15, 0);
 					object_examine(OBJ_BOTTLE, 70415, 0);
@@ -265,7 +266,7 @@ static void room_704_daemon() {
 			case 98:
 				if (local._takeBottleFl) {
 					kernel_seq_delete(g_sequence_ids[1]);
-					_scene->_dynamicHotspots.remove(local._bottleHotspotId);
+					kernel_delete_dynamic(local._bottleHotspotId);
 					inter_give_to_player(OBJ_BOTTLE);
 					g_engine->_soundManager->command(15, 0);
 					object_examine(OBJ_BOTTLE, 70415, 0);

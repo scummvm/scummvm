@@ -43,8 +43,8 @@ static void room_803_init() {
 	if (global[kHoppyDead]) {
 		g_sprite_ids[7] = kernel_load_series(kernel_name('e', 1), 0);
 		g_sequence_ids[7] = kernel_seq_stamp(g_sprite_ids[7], false, 1);
-		int idx = _scene->_dynamicHotspots.add(words_guts, words_walkto, g_sequence_ids[7], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(66, 123), FACING_SOUTH);
+		int idx = kernel_add_dynamic(words_guts, words_walkto, 0, g_sequence_ids[7], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 66, 123, FACING_SOUTH);
 	}
 
 	if (!global[kBeamIsUp] && !global[kReturnFromCut] && (!global[kFromCockpit] || global[kExitShip])) {
@@ -137,8 +137,8 @@ static void room_803_daemon() {
 			kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 101);
 		} else {
 			g_sequence_ids[5] = kernel_seq_stamp(g_sprite_ids[5], false, -2);
-			int idx = _scene->_dynamicHotspots.add(words_guts, words_walkto, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
-			_scene->_dynamicHotspots.setPosition(idx, Common::Point(66, 123), FACING_SOUTH);
+			int idx = kernel_add_dynamic(words_guts, words_walkto, 0, g_sequence_ids[5], 0, 0, 0, 0);
+			kernel_dynamic_walk(idx, 66, 123, FACING_SOUTH);
 			g_engine->_soundManager->command(16, 0);
 			global[kCameFromCut] = true;
 			global[kBeamIsUp] = false;
@@ -156,8 +156,8 @@ static void room_803_daemon() {
 
 	if (kernel.trigger == 101) {
 		g_sequence_ids[5] = kernel_seq_stamp(g_sprite_ids[5], false, -2);
-		int idx = _scene->_dynamicHotspots.add(words_guts, words_walkto, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(66, 123), FACING_SOUTH);
+		int idx = kernel_add_dynamic(words_guts, words_walkto, 0, g_sequence_ids[5], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 66, 123, FACING_SOUTH);
 		g_engine->_soundManager->command(16, 0);
 		global[kCameFromCut] = true;
 		global[kBeamIsUp] = false;

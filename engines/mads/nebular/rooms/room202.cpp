@@ -70,23 +70,23 @@ static void room_202_init() {
 	g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 6, 0, 0, 0);
 	kernel_seq_loc(g_sequence_ids[2], 149, 113);
 	kernel_seq_depth(g_sequence_ids[2], 10);
-	int idx = _scene->_dynamicHotspots.add(words_skull, words_walkto, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
-	_scene->_dynamicHotspots.setPosition(idx, Common::Point(153, 97), FACING_SOUTH);
+	int idx = kernel_add_dynamic(words_skull, words_walkto, 0, g_sequence_ids[2], 0, 0, 0, 0);
+	kernel_dynamic_walk(idx, 153, 97, FACING_SOUTH);
 
 	if (!(global[kBone202Status] & 1)) {
 		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 6, 0, 0, 0);
 		kernel_seq_loc(g_sequence_ids[1], 130, 108);
 		kernel_seq_depth(g_sequence_ids[1], 10);
-		idx = _scene->_dynamicHotspots.add(words_bone, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(132, 97), FACING_SOUTH);
+		idx = kernel_add_dynamic(words_bone, words_walkto, 0, g_sequence_ids[1], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 132, 97, FACING_SOUTH);
 	}
 
 	if (!(global[kBone202Status] & 2)) {
 		g_sequence_ids[6] = kernel_seq_forward(g_sprite_ids[6], false, 6, 0, 0, 0);
 		kernel_seq_loc(g_sequence_ids[6], 166, 110);
 		kernel_seq_depth(g_sequence_ids[6], 10);
-		idx = _scene->_dynamicHotspots.add(words_bone, words_walkto, g_sequence_ids[6], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(165, 99), FACING_SOUTH);
+		idx = kernel_add_dynamic(words_bone, words_walkto, 0, g_sequence_ids[6], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 165, 99, FACING_SOUTH);
 	}
 
 	if (global[kBone202Status])
@@ -105,9 +105,9 @@ static void room_202_init() {
 	if (global[kLadderBroken]) {
 		g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 6, 0, 0, 0);
 		kernel_seq_depth(g_sequence_ids[5], 6);
-		_scene->_hotspots.activate(words_ladder, false);
-		idx = _scene->_dynamicHotspots.add(words_broken_ladder, words_walkto, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(246, 124), FACING_NORTH);
+		kernel_flip_hotspot(words_ladder, false);
+		idx = kernel_add_dynamic(words_broken_ladder, words_walkto, 0, g_sequence_ids[5], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 246, 124, FACING_NORTH);
 	}
 
 	kernel.quotes = quote_load(0x5C, 0x5D, 0x5E, 0x5F, 0x60, 0x62, 0x63, 0x64, 0x65, 0x66, 0x61, 0);
@@ -303,9 +303,9 @@ static void room_202_daemon() {
 	{
 		global[kLadderBroken] = false;
 		g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 6, 0, 0, 0);
-		_scene->_hotspots.activate(words_ladder, false);
-		int idx = _scene->_dynamicHotspots.add(words_broken_ladder, words_walkto, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(246, 124), FACING_NORTH);
+		kernel_flip_hotspot(words_ladder, false);
+		int idx = kernel_add_dynamic(words_broken_ladder, words_walkto, 0, g_sequence_ids[5], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 246, 124, FACING_NORTH);
 		kernel_seq_timeout(g_sequence_ids[5], g_sequence_ids[11]);
 		kernel_seq_timeout(g_sequence_ids[11], -1);
 		player.commands_allowed = true;
@@ -440,7 +440,7 @@ static void room_202_pre_parser() {
 			kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 		} else if (kernel.trigger == 1) {
 			kernel_seq_timeout(g_sequence_ids[8], -1);
-			_scene->_dynamicHotspots.remove(local._ladderHotspotId);
+			kernel_delete_dynamic(local._ladderHotspotId);
 			player.walker_visible = true;
 			player.ready_to_walk = true;
 			player.commands_allowed = true;
@@ -527,8 +527,8 @@ static void room_202_parser() {
 			player.walker_visible = false;
 			player.commands_allowed = false;
 
-			local._ladderHotspotId = _scene->_dynamicHotspots.add(words_ladder, words_climb_down, -1, Common::Rect(241, 68, 241 + 12, 68 + 54));
-			_scene->_dynamicHotspots.setPosition(local._ladderHotspotId, Common::Point(246, 124), FACING_NORTH);
+			local._ladderHotspotId = kernel_add_dynamic(words_ladder, words_climb_down, 0, -1, 241, 68, 12, 54);
+			kernel_dynamic_walk(local._ladderHotspotId, 246, 124, FACING_NORTH);
 			g_sequence_ids[8] = kernel_seq_forward(g_sprite_ids[8], false, 6, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[8], 1);
 			kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 1);

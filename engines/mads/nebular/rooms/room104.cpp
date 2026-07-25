@@ -198,10 +198,10 @@ static void room_104_daemon() {
 			g_engine->_soundManager->command(34, 0);
 	}
 
-	if (player.walking && (_scene->_rails.getNext() > 0)) {
+	if (player.walking && (player.next_special_code > 0)) {
 		player_cancel_command();
 		player_start_walking(189, 70, FACING_NONE);
-		_scene->_rails.resetNext();
+		player.next_special_code = 0;
 	}
 
 	if ((player.special_code > 0) && player.commands_allowed)

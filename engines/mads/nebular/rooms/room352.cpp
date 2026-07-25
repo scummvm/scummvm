@@ -72,8 +72,8 @@ static void putArmDown(bool corridorExit, bool doorwayExit) {
 	case 2:
 	{
 		g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 6, 0, 0, 0);
-		int idx = _scene->_dynamicHotspots.add(words_guards_arm2, words_walkto, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(230, 117), FACING_NORTHWEST);
+		int idx = kernel_add_dynamic(words_guards_arm2, words_walkto, 0, g_sequence_ids[2], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 230, 117, FACING_NORTHWEST);
 		kernel_load_variant(0);
 	}
 	break;
@@ -152,8 +152,9 @@ static void room_352_init() {
 	if (object_is_here(OBJ_TAPE_PLAYER)) {
 		g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 12, 0, 0, 0);
 		kernel_seq_depth(g_sequence_ids[5], 5);
-		int idx = _scene->_dynamicHotspots.add(words_tape_player, words_walkto, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
-		local._tapePlayerHotspotIdx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(84, 145), FACING_WEST);
+		int idx = kernel_add_dynamic(words_tape_player, words_walkto, 0, g_sequence_ids[5], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 84, 145, FACING_WEST);
+		local._tapePlayerHotspotIdx = idx;
 	}
 
 	local._vaultOpenFl = false;
@@ -166,8 +167,8 @@ static void room_352_init() {
 
 	if (object_is_here(OBJ_GUARDS_ARM)) {
 		g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 6, 0, 0, 0);
-		int idx = _scene->_dynamicHotspots.add(words_guards_arm2, words_walkto, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(230, 117), FACING_NORTHWEST);
+		int idx = kernel_add_dynamic(words_guards_arm2, words_walkto, 0, g_sequence_ids[2], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 230, 117, FACING_NORTHWEST);
 	} else
 		local._mustPutArmDownFl = true;
 
@@ -214,10 +215,10 @@ static void room_352_pre_parser() {
 
 		case 1:
 			if (!global[kHaveYourStuff])
-				_scene->_dynamicHotspots.remove(local._hotspot2Idx);
+				kernel_delete_dynamic(local._hotspot2Idx);
 
-			_scene->_dynamicHotspots.remove(local._hotspot1Idx);
-			_scene->_dynamicHotspots.remove(local._lampHostpotIdx);
+			kernel_delete_dynamic(local._hotspot1Idx);
+			kernel_delete_dynamic(local._lampHostpotIdx);
 			local._vaultOpenFl = false;
 			player.commands_allowed = true;
 			break;
@@ -431,8 +432,9 @@ static void room_352_parser() {
 				local._vaultOpenFl = true;
 				int idx;
 				if (!global[kHaveYourStuff]) {
-					idx = _scene->_dynamicHotspots.add(words_your_stuff, words_walkto, -1, Common::Rect(282, 87, 282 + 13, 87 + 7));
-					local._hotspot2Idx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(280, 111), FACING_NORTHEAST);
+					idx = kernel_add_dynamic(words_your_stuff, words_walkto, 0, -1, 282, 87, 13, 7);
+					kernel_dynamic_walk(idx, 280, 111, FACING_NORTHEAST);
+					local._hotspot2Idx = idx;
 					g_sequence_ids[1] = local._commonSequenceIdx;
 					kernel_message_add(quote_string(kernel.quotes, 0x102), 0, 0, 0x1110, 120, 0, 34);
 				} else {
@@ -440,10 +442,12 @@ static void room_352_parser() {
 					kernel_message_add(quote_string(kernel.quotes, 0x103), 0, 0, 0x1110, 120, 0, 34);
 				}
 
-				idx = _scene->_dynamicHotspots.add(words_other_stuff, words_walkto, -1, Common::Rect(282, 48, 282 + 36, 48 + 27));
-				local._hotspot1Idx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(287, 115), FACING_NORTHEAST);
-				idx = _scene->_dynamicHotspots.add(words_lamp, words_walkto, -1, Common::Rect(296, 76, 296 + 11, 76 + 17));
-				local._lampHostpotIdx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(287, 115), FACING_NORTHEAST);
+				idx = kernel_add_dynamic(words_other_stuff, words_walkto, 0, -1, 282, 48, 36, 27);
+				kernel_dynamic_walk(idx, 287, 115, FACING_NORTHEAST);
+				local._hotspot1Idx = idx;
+				idx = kernel_add_dynamic(words_lamp, words_walkto, 0, -1, 296, 76, 11, 17);
+				kernel_dynamic_walk(idx, 287, 115, FACING_NORTHEAST);
+				local._lampHostpotIdx = idx;
 				player.commands_allowed = true;
 			}
 			break;
@@ -473,7 +477,7 @@ static void room_352_parser() {
 			break;
 
 		case 1:
-			_scene->_dynamicHotspots.remove(local._hotspot2Idx);
+			kernel_delete_dynamic(local._hotspot2Idx);
 			global[kHaveYourStuff] = true;
 
 			for (uint16 i = 0; i < num_objects; i++) {
@@ -519,7 +523,7 @@ static void room_352_parser() {
 
 		case 1:
 			kernel_seq_delete(g_sequence_ids[5]);
-			_scene->_dynamicHotspots.remove(local._tapePlayerHotspotIdx);
+			kernel_delete_dynamic(local._tapePlayerHotspotIdx);
 			break;
 
 		case 2:

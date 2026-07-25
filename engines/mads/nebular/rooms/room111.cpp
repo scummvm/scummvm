@@ -61,12 +61,12 @@ static void room_111_init() {
 	g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 1);
 	g_sequence_ids[5] = kernel_seq_stamp(g_sprite_ids[5], false, 1);
 
-	int idx = _scene->_dynamicHotspots.add(words_bats, words_look_at, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
-	_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
-	idx = _scene->_dynamicHotspots.add(words_bats, words_look_at, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
-	_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
-	idx = _scene->_dynamicHotspots.add(words_bats, words_look_at, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
-	_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
+	int idx = kernel_add_dynamic(words_bats, words_look_at, 0, g_sequence_ids[3], 0, 0, 0, 0);
+	kernel_dynamic_walk(idx, -2, 0, FACING_NONE);
+	idx = kernel_add_dynamic(words_bats, words_look_at, 0, g_sequence_ids[4], 0, 0, 0, 0);
+	kernel_dynamic_walk(idx, -2, 0, FACING_NONE);
+	idx = kernel_add_dynamic(words_bats, words_look_at, 0, g_sequence_ids[5], 0, 0, 0, 0);
+	kernel_dynamic_walk(idx, -2, 0, FACING_NONE);
 
 	local._launch1Fl = false;
 	local._launched2Fl = false;
@@ -118,15 +118,15 @@ static void room_111_daemon() {
 		kernel_seq_delete(g_sequence_ids[4]);
 		g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 5, 0, 0, 1);
 		local._launch1Fl = true;
-		int idx = _scene->_dynamicHotspots.add(words_bats, words_look_at, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
+		int idx = kernel_add_dynamic(words_bats, words_look_at, 0, g_sequence_ids[4], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, -2, 0, FACING_NONE);
 	}
 
 	if (!local._launched2Fl && (g_engine->getRandomNumber(1, 30000) == 1)) {
 		kernel_seq_delete(g_sequence_ids[5]);
 		g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 5, 0, 0, 1);
-		int idx = _scene->_dynamicHotspots.add(words_bats, words_look_at, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
+		int idx = kernel_add_dynamic(words_bats, words_look_at, 0, g_sequence_ids[5], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, -2, 0, FACING_NONE);
 		local._launched2Fl = true;
 	}
 

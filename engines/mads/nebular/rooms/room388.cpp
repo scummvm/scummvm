@@ -33,10 +33,10 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_388_init() {
-	_scene->_userInterface.setup(kInputLimitedSentences);
+	kernel_set_interface_mode(kInputLimitedSentences);
 
 	if (global[kAfterHavoc])
-		_scene->_hotspots.activate(words_sauropod, false);
+		kernel_flip_hotspot(words_sauropod, false);
 	else {
 		g_sprite_ids[0] = kernel_load_series(kernel_name('b', 0), 0);
 		g_sequence_ids[0] = kernel_seq_stamp(g_sprite_ids[0], false, 1);

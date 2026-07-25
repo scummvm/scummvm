@@ -87,7 +87,7 @@ static void setDialogNode(int node) {
 
 	switch (node) {
 	case 0:
-		_scene->_userInterface.setup(kInputBuildingSentences);
+		kernel_set_interface_mode(kInputBuildingSentences);
 		local._conversationFl = false;
 		local._bartenderDialogNode = 0;
 		break;
@@ -342,7 +342,7 @@ static void handleConversation4() {
 		local._roxMode = 21;
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		kernel_timing_trigger(1, 92);
-		_scene->_userInterface.setup(kInputBuildingSentences);
+		kernel_set_interface_mode(kInputBuildingSentences);
 		local._conversationFl = false;
 		break;
 
@@ -525,7 +525,7 @@ static void room_402_init() {
 	if (local._conversationFl) {
 		switch (local._bartenderDialogNode) {
 		case 0:
-			_scene->_userInterface.setup(kInputBuildingSentences);
+			kernel_set_interface_mode(kInputBuildingSentences);
 			local._bartenderDialogNode = 1;
 			break;
 
@@ -640,23 +640,23 @@ static void room_402_init() {
 		g_sequence_ids[14] = kernel_seq_stamp(g_sprite_ids[14], false, 1);
 		kernel_seq_depth(g_sequence_ids[14], 7);
 		kernel_seq_loc(g_sequence_ids[14], 210, 80);
-		int idx = _scene->_dynamicHotspots.add(words_repair_list, words_look_at, g_sequence_ids[14], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), FACING_NONE);
+		int idx = kernel_add_dynamic(words_repair_list, words_look_at, 0, g_sequence_ids[14], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 0, 0, FACING_NONE);
 	}
 
 	{
 		g_sequence_ids[9] = kernel_seq_stamp(g_sprite_ids[9], false, 1);
 		kernel_seq_depth(g_sequence_ids[9], 8);
-		int idx = _scene->_dynamicHotspots.add(words_bartender, words_walkto, g_sequence_ids[9], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
+		int idx = kernel_add_dynamic(words_bartender, words_walkto, 0, g_sequence_ids[9], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 228, 83, FACING_SOUTH);
 	}
 
 	if (!object_is_here(OBJ_ALIEN_LIQUOR) && !player_has(OBJ_CREDIT_CHIP)) {
 		g_sequence_ids[15] = kernel_seq_stamp(g_sprite_ids[15], false, 1);
 		kernel_seq_depth(g_sequence_ids[15], 8);
 		kernel_seq_loc(g_sequence_ids[15], 250, 80);
-		int idx = _scene->_dynamicHotspots.add(words_credit_chip, words_take, g_sequence_ids[15], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), FACING_NONE);
+		int idx = kernel_add_dynamic(words_credit_chip, words_take, 0, g_sequence_ids[15], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 0, 0, FACING_NONE);
 	}
 
 	g_sequence_ids[20] = kernel_seq_stamp(g_sprite_ids[20], false, 1);
@@ -717,8 +717,8 @@ static void room_402_daemon() {
 			g_sequence_ids[10] = kernel_seq_pingpong(g_sprite_ids[10], false, 7, 0, 0, 0);
 			kernel_seq_range(g_sequence_ids[10], 3, 4);
 			kernel_seq_depth(g_sequence_ids[10], 8);
-			int idx = _scene->_dynamicHotspots.add(words_bartender, words_walkto, g_sequence_ids[10], Common::Rect(0, 0, 0, 0));
-			_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
+			int idx = kernel_add_dynamic(words_bartender, words_walkto, 0, g_sequence_ids[10], 0, 0, 0, 0);
+			kernel_dynamic_walk(idx, 228, 83, FACING_SOUTH);
 			local._bartenderTalking = true;
 			if (local._talkTimer > 1000)
 				kernel_timing_trigger(local._talkTimer - 1000, 101);
@@ -730,8 +730,8 @@ static void room_402_daemon() {
 	if ((kernel.trigger == 101) && local._bartenderTalking) {
 		kernel_seq_delete(g_sequence_ids[10]);
 		g_sequence_ids[9] = kernel_seq_stamp(g_sprite_ids[9], false, 1);
-		int idx = _scene->_dynamicHotspots.add(words_bartender, words_walkto, g_sequence_ids[9], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
+		int idx = kernel_add_dynamic(words_bartender, words_walkto, 0, g_sequence_ids[9], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 228, 83, FACING_SOUTH);
 		kernel_seq_depth(g_sequence_ids[9], 8);
 		local._bartenderSteady = true;
 		local._bartenderTalking = false;
@@ -867,8 +867,8 @@ static void room_402_daemon() {
 			g_sequence_ids[15] = kernel_seq_stamp(g_sprite_ids[15], false, 1);
 			kernel_seq_depth(g_sequence_ids[15], 8);
 			kernel_seq_loc(g_sequence_ids[15], 250, 80);
-			int idx = _scene->_dynamicHotspots.add(words_credit_chip, words_take, g_sequence_ids[15], Common::Rect(0, 0, 0, 0));
-			_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), FACING_NONE);
+			int idx = kernel_add_dynamic(words_credit_chip, words_take, 0, g_sequence_ids[15], 0, 0, 0, 0);
+			kernel_dynamic_walk(idx, 0, 0, FACING_NONE);
 		}
 		break;
 
@@ -901,8 +901,8 @@ static void room_402_daemon() {
 		int seqIdx = g_sequence_ids[12];
 		g_sequence_ids[9] = kernel_seq_stamp(g_sprite_ids[9], false, 1);
 		local._bartenderSteady = true;
-		int idx = _scene->_dynamicHotspots.add(words_bartender, words_walkto, g_sequence_ids[9], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
+		int idx = kernel_add_dynamic(words_bartender, words_walkto, 0, g_sequence_ids[9], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 228, 83, FACING_SOUTH);
 		kernel_seq_timeout(seqIdx, g_sequence_ids[9]);
 		kernel_seq_depth(g_sequence_ids[9], 8);
 		if (local._bartenderMode == 20) {
@@ -984,8 +984,8 @@ static void room_402_daemon() {
 	{
 		kernel_seq_delete(g_sequence_ids[9]);
 		g_sequence_ids[9] = kernel_seq_stamp(g_sprite_ids[9], false, 1);
-		int idx = _scene->_dynamicHotspots.add(words_bartender, words_walkto, g_sequence_ids[9], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
+		int idx = kernel_add_dynamic(words_bartender, words_walkto, 0, g_sequence_ids[9], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 228, 83, FACING_SOUTH);
 		kernel_seq_depth(g_sequence_ids[9], 8);
 		local._bartenderSteady = true;
 		player.commands_allowed = true;
@@ -1083,8 +1083,8 @@ static void room_402_daemon() {
 			{
 				g_sequence_ids[10] = kernel_seq_stamp(g_sprite_ids[10], false, 4);
 				kernel_seq_depth(g_sequence_ids[10], 8);
-				int idx = _scene->_dynamicHotspots.add(words_bartender, words_walkto, g_sequence_ids[10], Common::Rect(0, 0, 0, 0));
-				_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
+				int idx = kernel_add_dynamic(words_bartender, words_walkto, 0, g_sequence_ids[10], 0, 0, 0, 0);
+				kernel_dynamic_walk(idx, 228, 83, FACING_SOUTH);
 				local._bartenderHandsHips = true;
 			}
 			break;
@@ -1093,8 +1093,8 @@ static void room_402_daemon() {
 			{
 				g_sequence_ids[11] = kernel_seq_stamp(g_sprite_ids[11], false, 2);
 				kernel_seq_depth(g_sequence_ids[11], 8);
-				int idx = _scene->_dynamicHotspots.add(words_bartender, words_walkto, g_sequence_ids[11], Common::Rect(0, 0, 0, 0));
-				_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
+				int idx = kernel_add_dynamic(words_bartender, words_walkto, 0, g_sequence_ids[11], 0, 0, 0, 0);
+				kernel_dynamic_walk(idx, 228, 83, FACING_SOUTH);
 				local._bartenderLooksLeft = true;
 			}
 			break;
@@ -1103,8 +1103,8 @@ static void room_402_daemon() {
 			{
 				g_sequence_ids[9] = kernel_seq_stamp(g_sprite_ids[9], false, 1);
 				kernel_seq_depth(g_sequence_ids[9], 8);
-				int idx = _scene->_dynamicHotspots.add(words_bartender, words_walkto, g_sequence_ids[9], Common::Rect(0, 0, 0, 0));
-				_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
+				int idx = kernel_add_dynamic(words_bartender, words_walkto, 0, g_sequence_ids[9], 0, 0, 0, 0);
+				kernel_dynamic_walk(idx, 228, 83, FACING_SOUTH);
 				local._bartenderSteady = true;
 			}
 			break;
@@ -1402,16 +1402,16 @@ static void room_402_daemon() {
 			kernel_seq_delete(g_sequence_ids[10]);
 			local._bartenderHandsHips = false;
 			g_sequence_ids[9] = kernel_seq_stamp(g_sprite_ids[9], false, 1);
-			int idx = _scene->_dynamicHotspots.add(words_bartender, words_walkto, g_sequence_ids[9], Common::Rect(0, 0, 0, 0));
-			_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
+			int idx = kernel_add_dynamic(words_bartender, words_walkto, 0, g_sequence_ids[9], 0, 0, 0, 0);
+			kernel_dynamic_walk(idx, 228, 83, FACING_SOUTH);
 			local._bartenderSteady = true;
 			kernel_seq_depth(g_sequence_ids[9], 8);
 		} else if (local._bartenderLooksLeft) {
 			kernel_seq_delete(g_sequence_ids[11]);
 			local._bartenderLooksLeft = false;
 			g_sequence_ids[9] = kernel_seq_stamp(g_sprite_ids[9], false, 1);
-			int idx = _scene->_dynamicHotspots.add(words_bartender, words_walkto, g_sequence_ids[9], Common::Rect(0, 0, 0, 0));
-			_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
+			int idx = kernel_add_dynamic(words_bartender, words_walkto, 0, g_sequence_ids[9], 0, 0, 0, 0);
+			kernel_dynamic_walk(idx, 228, 83, FACING_SOUTH);
 			local._bartenderSteady = true;
 			kernel_seq_depth(g_sequence_ids[9], 8);
 		}

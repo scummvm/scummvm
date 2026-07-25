@@ -42,12 +42,12 @@ static Scratch local;
 
 
 static void room_389_init() {
-	_scene->_userInterface.setup(kInputLimitedSentences);
+	kernel_set_interface_mode(kInputLimitedSentences);
 	local._monsterTime = 0;
 	local._circularQuoteId = 0x159;
 
 	if (global[kAfterHavoc])
-		_scene->_hotspots.activate(words_monster, false);
+		kernel_flip_hotspot(words_monster, false);
 	else {
 		g_sprite_ids[0] = kernel_load_series(kernel_name('m', -1), 0);
 		g_sequence_ids[0] = kernel_seq_forward(g_sprite_ids[0], false, 6, 0, 0, 0);

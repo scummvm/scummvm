@@ -58,14 +58,14 @@ static void room_110_init() {
 
 		local._crabsFl = true;
 
-		int idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, g_sequence_ids[0], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
+		int idx = kernel_add_dynamic(words_crab, words_swim_to, 0, g_sequence_ids[0], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, -1, 0, FACING_NONE);
+		idx = kernel_add_dynamic(words_crab, words_swim_to, 0, g_sequence_ids[1], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, -1, 0, FACING_NONE);
+		idx = kernel_add_dynamic(words_crab, words_swim_to, 0, g_sequence_ids[2], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, -1, 0, FACING_NONE);
+		idx = kernel_add_dynamic(words_crab, words_swim_to, 0, g_sequence_ids[3], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, -1, 0, FACING_NONE);
 	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 194;
 		player.y = 23;
@@ -106,14 +106,14 @@ static void room_110_pre_parser() {
 		g_sequence_ids[2] = kernel_seq_forward(g_sprite_ids[2], false, 16, 0, 0, 1);
 		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 16, 0, 0, 1);
 
-		int idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, g_sequence_ids[0], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
+		int idx = kernel_add_dynamic(words_crab, words_swim_to, 0, g_sequence_ids[0], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, -1, 0, FACING_NONE);
+		idx = kernel_add_dynamic(words_crab, words_swim_to, 0, g_sequence_ids[1], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, -1, 0, FACING_NONE);
+		idx = kernel_add_dynamic(words_crab, words_swim_to, 0, g_sequence_ids[2], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, -1, 0, FACING_NONE);
+		idx = kernel_add_dynamic(words_crab, words_swim_to, 0, g_sequence_ids[3], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, -1, 0, FACING_NONE);
 	}
 }
 

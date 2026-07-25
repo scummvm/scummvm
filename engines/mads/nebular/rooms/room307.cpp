@@ -94,7 +94,7 @@ static void setDialogNode(int node) {
 	switch (node) {
 	case 0:
 		handlePrisonerSpeech(0x153, 2, 120);
-		_scene->_userInterface.setup(kInputBuildingSentences);
+		kernel_set_interface_mode(kInputBuildingSentences);
 		break;
 
 	case 1:
@@ -111,7 +111,7 @@ static void setDialogNode(int node) {
 
 	case 4:
 		handlePrisonerSpeech(0x116, 1, 120);
-		_scene->_userInterface.setup(kInputBuildingSentences);
+		kernel_set_interface_mode(kInputBuildingSentences);
 		break;
 
 	case 5:
@@ -122,7 +122,7 @@ static void setDialogNode(int node) {
 
 	case 6:
 		handlePrisonerSpeech(0x123, 1, 120);
-		_scene->_userInterface.setup(kInputBuildingSentences);
+		kernel_set_interface_mode(kInputBuildingSentences);
 		break;
 
 	case 7:
@@ -183,7 +183,7 @@ static void setDialogNode(int node) {
 
 	case 15:
 		handlePrisonerSpeech(0x152, 1, 120);
-		_scene->_userInterface.setup(kInputBuildingSentences);
+		kernel_set_interface_mode(kInputBuildingSentences);
 		break;
 
 	case 16:
@@ -347,11 +347,12 @@ static void room_307_init() {
 	}
 
 	if (local._grateOpenedFl) {
-		_scene->_hotspots.activate(17, false);
+		kernel_flip_hotspot(17, false);
 
-		int idx = _scene->_dynamicHotspots.add(words_air_vent, words_climb_into, -1, Common::Rect(117, 67, 117 + 19, 67 + 13));
-		int hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(129, 104), FACING_NORTH);
-		_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_UP);
+		int idx = kernel_add_dynamic(words_air_vent, words_climb_into, 0, -1, 117, 67, 19, 13);
+		kernel_dynamic_walk(idx, 129, 104, FACING_NORTH);
+		int hotspotId = idx;
+		kernel_dynamic_cursor(hotspotId, CURSOR_GO_UP);
 
 		kernel_seq_delete(g_sequence_ids[4]);
 		g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 2);
@@ -543,10 +544,11 @@ static void room_307_parser() {
 			player.clock = kernel.clock - player.frame_delay;
 			kernel_seq_delete(g_sequence_ids[5]);
 			local._grateOpenedFl = true;
-			_scene->_hotspots.activate(17, false);
-			int idx = _scene->_dynamicHotspots.add(words_air_vent, words_climb_into, -1, Common::Rect(117, 67, 117 + 19, 67 + 13));
-			int hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(129, 104), FACING_NORTH);
-			_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_UP);
+			kernel_flip_hotspot(17, false);
+			int idx = kernel_add_dynamic(words_air_vent, words_climb_into, 0, -1, 117, 67, 19, 13);
+			kernel_dynamic_walk(idx, 129, 104, FACING_NORTH);
+			int hotspotId = idx;
+			kernel_dynamic_cursor(hotspotId, CURSOR_GO_UP);
 			inter_take_from_player(OBJ_SCALPEL, NOWHERE);
 			kernel_message_player(0xF2, 120, 7);
 		}

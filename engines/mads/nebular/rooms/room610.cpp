@@ -58,8 +58,8 @@ static void room_610_init() {
 
 	if (object[OBJ_PHONE_HANDSET].location == room_id) {
 		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 9, 0, 0, 0);
-		local._handsetHotspotId = _scene->_dynamicHotspots.add(words_phone_handset, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(local._handsetHotspotId, Common::Point(132, 121), FACING_NORTHWEST);
+		local._handsetHotspotId = kernel_add_dynamic(words_phone_handset, words_walkto, 0, g_sequence_ids[1], 0, 0, 0, 0);
+		kernel_dynamic_walk(local._handsetHotspotId, 132, 121, FACING_NORTHWEST);
 		if ((global[kHandsetCellStatus] == 2) && (game.difficulty == DIFFICULTY_HARD) && !global[kDurafailRecharged])
 			global[kHandsetCellStatus] = 1;
 	}
@@ -116,7 +116,7 @@ static void room_610_parser() {
 			case 1:
 				g_engine->_soundManager->command(9, 0);
 				kernel_seq_delete(g_sequence_ids[1]);
-				_scene->_dynamicHotspots.remove(local._handsetHotspotId);
+				kernel_delete_dynamic(local._handsetHotspotId);
 				inter_give_to_player(OBJ_PHONE_HANDSET);
 				object_examine(OBJ_PHONE_HANDSET, 61017, 0);
 				break;
@@ -145,8 +145,8 @@ static void room_610_parser() {
 
 		case 1:
 			g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 9, 0, 0, 0);
-			local._handsetHotspotId = _scene->_dynamicHotspots.add(words_phone_handset, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-			_scene->_dynamicHotspots.setPosition(local._handsetHotspotId, Common::Point(132, 121), FACING_NORTHWEST);
+			local._handsetHotspotId = kernel_add_dynamic(words_phone_handset, words_walkto, 0, g_sequence_ids[1], 0, 0, 0, 0);
+			kernel_dynamic_walk(local._handsetHotspotId, 132, 121, FACING_NORTHWEST);
 			inter_move_object(OBJ_PHONE_HANDSET, room_id);
 			break;
 

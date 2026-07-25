@@ -100,9 +100,10 @@ static void handleDoorSequences() {
 	case 83:
 	{
 		local._doorSequenceIdx = kernel_seq_stamp(local._doorSpriteIdx, false, 1);
-		int idx = _scene->_dynamicHotspots.add(local._doorWord, words_walk_into, local._doorSequenceIdx, Common::Rect(0, 0, 0, 0));
-		int hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(local._doorPos_x, local._doorPos_y), FACING_NORTHWEST);
-		_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_LEFT);
+		int idx = kernel_add_dynamic(local._doorWord, words_walk_into, 0, local._doorSequenceIdx, 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, local._doorPos_x, local._doorPos_y, FACING_NORTHWEST);
+		int hotspotId = idx;
+		kernel_dynamic_cursor(hotspotId, CURSOR_GO_LEFT);
 		kernel_seq_depth(local._doorSequenceIdx, local._doorDepth);
 		local._firstDoorFl = true;
 		if (local._labDoorFl) {
@@ -148,14 +149,16 @@ static void room_506_init() {
 	}
 
 	g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 1);
-	int idx = _scene->_dynamicHotspots.add(words_laboratory, words_walk_into, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-	int hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(65, 125), FACING_NORTHWEST);
-	_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_LEFT);
+	int idx = kernel_add_dynamic(words_laboratory, words_walk_into, 0, g_sequence_ids[1], 0, 0, 0, 0);
+	kernel_dynamic_walk(idx, 65, 125, FACING_NORTHWEST);
+	int hotspotId = idx;
+	kernel_dynamic_cursor(hotspotId, CURSOR_GO_LEFT);
 	kernel_seq_depth(g_sequence_ids[1], 10);
 	g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 1);
-	idx = _scene->_dynamicHotspots.add(words_software_store, words_walk_into, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
-	hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(112, 102), FACING_NORTHWEST);
-	_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_LEFT);
+	idx = kernel_add_dynamic(words_software_store, words_walk_into, 0, g_sequence_ids[2], 0, 0, 0, 0);
+	kernel_dynamic_walk(idx, 112, 102, FACING_NORTHWEST);
+	hotspotId = idx;
+	kernel_dynamic_cursor(hotspotId, CURSOR_GO_LEFT);
 	kernel_seq_depth(g_sequence_ids[2], 13);
 
 	g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -1);

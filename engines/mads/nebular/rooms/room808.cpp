@@ -39,7 +39,7 @@ static Scratch local;
 
 
 static void room_808_init() {
-	_scene->_userInterface.setup(kInputLimitedSentences);
+	kernel_set_interface_mode(kInputLimitedSentences);
 
 	g_sprite_ids[4] = kernel_load_series("*REXHAND", 0);
 	g_sprite_ids[1] = kernel_load_series(kernel_name('b', 0), 0);

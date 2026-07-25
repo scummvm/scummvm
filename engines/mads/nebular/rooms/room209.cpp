@@ -124,7 +124,7 @@ static void handlePeek() {
 
 	case 138:
 		local._pauseMode = 1;
-		_scene->_hotspots.activate(227, false);
+		kernel_flip_hotspot(227, false);
 		local._playingAnimFl = false;
 		break;
 
@@ -161,7 +161,7 @@ static void handleVerticalMove() {
 	case 143:
 		local._pauseMode = 1;
 		local._playingAnimFl = false;
-		_scene->_hotspots.activate(227, false);
+		kernel_flip_hotspot(227, false);
 		break;
 
 	default:
@@ -459,7 +459,7 @@ static void handleJumpInTree() {
 		local._removeMonkeyFl = true;
 		local._pauseMode = 1;
 		local._playingAnimFl = false;
-		_scene->_hotspots.activate(227, false);
+		kernel_flip_hotspot(227, false);
 		break;
 
 	default:
@@ -617,7 +617,7 @@ static void handleJumpAndHide() {
 
 	case 197:
 		local._pauseMode = 1;
-		_scene->_hotspots.activate(227, false);
+		kernel_flip_hotspot(227, false);
 		local._playingAnimFl = false;
 		break;
 
@@ -753,7 +753,7 @@ static void handleMonkeyFall() {
 		g_sprite_ids[8] = kernel_load_series(kernel_name('m', 4), 0);
 		kernel_message_add(quote_string(kernel.quotes, 151), 180, 26, 0xFDFC, 90, 0, 0);
 		kernel_timing_trigger(40, 100);
-		_scene->_hotspots.activate(227, false);
+		kernel_flip_hotspot(227, false);
 		int oldIdx = g_sequence_ids[3];
 		local._monkeyPosition = 1;
 		kernel_seq_delete(g_sequence_ids[3]);
@@ -769,7 +769,7 @@ static void handleMonkeyFall() {
 	{
 		g_engine->_soundManager->command(18, 0);
 		kernel_message_add(quote_string(kernel.quotes, 159), 182, 109, 0xFDFC, 90, 0, 0);
-		_scene->_hotspots.activate(227, false);
+		kernel_flip_hotspot(227, false);
 		int oldIdx = g_sequence_ids[3];
 		local._monkeyPosition = 1;
 		kernel_seq_delete(g_sequence_ids[3]);
@@ -794,8 +794,8 @@ static void handleMonkeyFall() {
 		kernel_seq_timeout(oldIdx, g_sequence_ids[8]);
 		kernel_seq_range(g_sequence_ids[8], 43, 72);
 		kernel_seq_trigger(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 222);
-		int idx = _scene->_dynamicHotspots.add(words_binoculars, words_walkto, g_sequence_ids[9], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(200, 133), FACING_NORTH);
+		int idx = kernel_add_dynamic(words_binoculars, words_walkto, 0, g_sequence_ids[9], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 200, 133, FACING_NORTH);
 	}
 	break;
 
@@ -935,7 +935,7 @@ static void handleMonkey2() {
 static void handleDodge() {
 	switch (kernel.trigger) {
 	case 241:
-		_scene->_hotspots.activate(227, true);
+		kernel_flip_hotspot(227, true);
 		kernel_seq_delete(g_sequence_ids[3]);
 		g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, 7);
 		kernel_timing_trigger(6, 242);
@@ -989,8 +989,8 @@ static void room_209_init() {
 
 	if (object_is_here(OBJ_PLANT_STALK)) {
 		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 1);
-		int idx = _scene->_dynamicHotspots.add(words_plant_stalk, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(263, 129), FACING_SOUTH);
+		int idx = kernel_add_dynamic(words_plant_stalk, words_walkto, 0, g_sequence_ids[1], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 263, 129, FACING_SOUTH);
 		kernel_seq_depth(g_sequence_ids[1], 13);
 	}
 
@@ -1008,8 +1008,8 @@ static void room_209_init() {
 		g_sequence_ids[9] = kernel_seq_stamp(g_sprite_ids[9], false, 1);
 		kernel_seq_loc(g_sequence_ids[9], 201, 131);
 		kernel_seq_depth(g_sequence_ids[9], 8);
-		int idx = _scene->_dynamicHotspots.add(words_binoculars, words_walkto, g_sequence_ids[9], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(200, 133), FACING_NORTH);
+		int idx = kernel_add_dynamic(words_binoculars, words_walkto, 0, g_sequence_ids[9], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 200, 133, FACING_NORTH);
 	}
 
 	if (kernel.teleported_in) {
@@ -1037,7 +1037,7 @@ static void room_209_init() {
 	local._removeMonkeyFl = true;
 	local._shootReadyFl = false;
 
-	_scene->_hotspots.activate(227, false);
+	kernel_flip_hotspot(227, false);
 
 	section_2_music();
 }
@@ -1050,7 +1050,7 @@ static void room_209_daemon() {
 			if ((local._monkeyPosition == 1) && (local._counter < 2)) {
 				kernel_timing_trigger(1, 133);
 				local._playingAnimFl = true;
-				_scene->_hotspots.activate(227, true);
+				kernel_flip_hotspot(227, true);
 				++local._counter;
 			}
 			break;
@@ -1058,7 +1058,7 @@ static void room_209_daemon() {
 		case 2:
 			if ((local._monkeyPosition == 1) && (local._counter < 2)) {
 				kernel_timing_trigger(1, 140);
-				_scene->_hotspots.activate(227, true);
+				kernel_flip_hotspot(227, true);
 				local._playingAnimFl = true;
 				++local._counter;
 			}
@@ -1067,7 +1067,7 @@ static void room_209_daemon() {
 		case 3:
 			if (local._monkeyPosition == 1) {
 				kernel_timing_trigger(1, 145);
-				_scene->_hotspots.activate(227, true);
+				kernel_flip_hotspot(227, true);
 				local._playingAnimFl = true;
 				local._counter = 0;
 			}
@@ -1076,7 +1076,7 @@ static void room_209_daemon() {
 		case 4:
 			if ((local._monkeyPosition == 2) && (local._counter < 2)) {
 				kernel_timing_trigger(1, 151);
-				_scene->_hotspots.activate(227, true);
+				kernel_flip_hotspot(227, true);
 				++local._counter;
 				local._playingAnimFl = true;
 			}
@@ -1085,7 +1085,7 @@ static void room_209_daemon() {
 		case 5:
 			if (local._monkeyPosition == 2) {
 				kernel_timing_trigger(1, 161);
-				_scene->_hotspots.activate(227, true);
+				kernel_flip_hotspot(227, true);
 				local._counter = 0;
 				local._playingAnimFl = true;
 			}
@@ -1094,14 +1094,14 @@ static void room_209_daemon() {
 		case 6:
 			if (local._monkeyPosition == 2) {
 				kernel_timing_trigger(1, 189);
-				_scene->_hotspots.activate(227, true);
+				kernel_flip_hotspot(227, true);
 				local._counter = 0;
 				local._playingAnimFl = true;
 			}
 			break;
 		case 7:
 			if (local._monkeyPosition == 3) {
-				_scene->_hotspots.activate(227, true);
+				kernel_flip_hotspot(227, true);
 				kernel_timing_trigger(1, 167);
 				local._playingAnimFl = true;
 			}
@@ -1111,7 +1111,7 @@ static void room_209_daemon() {
 			if (local._monkeyPosition == 3) {
 				kernel_timing_trigger(1, 178);
 				local._playingAnimFl = true;
-				_scene->_hotspots.activate(227, true);
+				kernel_flip_hotspot(227, true);
 				local._counter = 0;
 			}
 			break;
@@ -1119,7 +1119,7 @@ static void room_209_daemon() {
 		case 9:
 			if ((local._monkeyPosition == 3) && (player.x < 120)) {
 				kernel_timing_trigger(1, 182);
-				_scene->_hotspots.activate(227, true);
+				kernel_flip_hotspot(227, true);
 				local._counter = 0;
 				local._playingAnimFl = true;
 			}
@@ -1128,7 +1128,7 @@ static void room_209_daemon() {
 		case 10:
 			if (local._monkeyPosition == 4) {
 				kernel_timing_trigger(1, 196);
-				_scene->_hotspots.activate(227, true);
+				kernel_flip_hotspot(227, true);
 				local._playingAnimFl = true;
 				local._counter = 0;
 			}
@@ -1137,7 +1137,7 @@ static void room_209_daemon() {
 		case 11:
 			if ((local._monkeyPosition == 4) && (local._counter < 3)) {
 				kernel_timing_trigger(1, 199);
-				_scene->_hotspots.activate(227, true);
+				kernel_flip_hotspot(227, true);
 				++local._counter;
 				local._playingAnimFl = true;
 			}
@@ -1146,7 +1146,7 @@ static void room_209_daemon() {
 		case 30:
 			if (local._monkeyPosition == 4) {
 				kernel_timing_trigger(1, 246);
-				_scene->_hotspots.activate(227, true);
+				kernel_flip_hotspot(227, true);
 				local._counter = 0;
 				local._playingAnimFl = true;
 			}

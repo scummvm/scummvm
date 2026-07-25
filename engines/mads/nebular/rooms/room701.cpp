@@ -88,12 +88,12 @@ static void room_701_init() {
 	{
 		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, -1);
 		kernel_seq_depth(g_sequence_ids[2], 9);
-		int idx = _scene->_dynamicHotspots.add(words_boat, words_climb_into, g_sequence_ids[2], Common::Rect());
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(231, 127), FACING_NORTH);
+		int idx = kernel_add_dynamic(words_boat, words_climb_into, 0, g_sequence_ids[2], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 231, 127, FACING_NORTH);
 		break;
 	}
 	case BOAT_GONE:
-		_scene->_hotspots.activate(words_boat, false);
+		kernel_flip_hotspot(words_boat, false);
 		break;
 	default:
 		break;
@@ -102,8 +102,9 @@ static void room_701_init() {
 	if (global[kLineStatus] == LINE_DROPPED || global[kLineStatus] == LINE_TIED) {
 		g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -1);
 		kernel_seq_depth(g_sequence_ids[3], 8);
-		int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
-		local._fishingLineId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 129), FACING_NORTHEAST);
+		int idx = kernel_add_dynamic(words_fishing_line, words_walkto, 0, g_sequence_ids[3], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 234, 129, FACING_NORTHEAST);
+		local._fishingLineId = idx;
 	}
 
 	if (previous_room == 702) {
@@ -190,8 +191,8 @@ static void room_701_daemon() {
 		player.clock = kernel.clock - player.frame_delay;
 		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, -1);
 		kernel_seq_depth(g_sequence_ids[2], 9);
-		int idx = _scene->_dynamicHotspots.add(words_boat, words_climb_into, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 129), FACING_NORTH);
+		int idx = kernel_add_dynamic(words_boat, words_climb_into, 0, g_sequence_ids[2], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 234, 129, FACING_NORTH);
 		global[kBoatStatus] = BOAT_TIED;
 		player.commands_allowed = true;
 	}
@@ -289,8 +290,8 @@ static void room_701_parser() {
 				player.commands_allowed = false;
 				kernel_seq_delete(g_sequence_ids[4]);
 				kernel_seq_delete(g_sequence_ids[3]);
-				_scene->_dynamicHotspots.remove(local._fishingLineId);
-				_scene->_hotspots.activate(words_boat, false);
+				kernel_delete_dynamic(local._fishingLineId);
+				kernel_flip_hotspot(words_boat, false);
 				player.walker_visible = false;
 				kernel_run_animation(kernel_name('E', -1), 1);
 				break;
@@ -301,8 +302,8 @@ static void room_701_parser() {
 				player.clock = kernel_anim[0].next_clock - player.frame_delay;
 				g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, -1);
 				kernel_seq_depth(g_sequence_ids[2], 9);
-				int idx = _scene->_dynamicHotspots.add(words_boat, words_climb_into, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
-				_scene->_dynamicHotspots.setPosition(idx, Common::Point(231, 127), FACING_NORTH);
+				int idx = kernel_add_dynamic(words_boat, words_climb_into, 0, g_sequence_ids[2], 0, 0, 0, 0);
+				kernel_dynamic_walk(idx, 231, 127, FACING_NORTH);
 				kernel_timing_trigger(15, 2);
 			}
 			break;

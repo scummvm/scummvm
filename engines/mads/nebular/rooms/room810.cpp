@@ -39,7 +39,7 @@ static Scratch local;
 
 
 static void room_810_init() {
-	_scene->_userInterface.setup(kInputLimitedSentences);
+	kernel_set_interface_mode(kInputLimitedSentences);
 	player.walker_visible = false;
 	player.commands_allowed = false;
 	kernel_run_animation(kernel_full_name(810, 'a', -1, "", EXT_AA), 0);

@@ -38,7 +38,7 @@ static void room_410_init() {
 	if (object_is_here(OBJ_CHARGE_CASES))
 		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 1);
 	else
-		_scene->_hotspots.activate(words_charge_cases, false);
+		kernel_flip_hotspot(words_charge_cases, false);
 
 	if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 155;
@@ -114,7 +114,7 @@ static void room_410_parser() {
 
 		case 1:
 			kernel_seq_delete(g_sequence_ids[1]);
-			_scene->_hotspots.activate(words_charge_cases, false);
+			kernel_flip_hotspot(words_charge_cases, false);
 			inter_give_to_player(OBJ_CHARGE_CASES);
 			object_examine(OBJ_CHARGE_CASES, 41032, 0);
 			break;

@@ -38,7 +38,7 @@ static void room_601_init() {
 
 	if (global[kLaserHoleIsThere]) {
 		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, -2);
-		_scene->_dynamicHotspots.add(words_laser_beam, words_look_at, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
+		kernel_add_dynamic(words_laser_beam, words_look_at, 0, g_sequence_ids[1], 0, 0, 0, 0);
 	}
 
 	g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, -1);

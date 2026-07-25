@@ -71,15 +71,15 @@ static void room_207_init() {
 
 	if (local._vultureFl) {
 		g_sequence_ids[1] = kernel_seq_pingpong(g_sprite_ids[1], false, 30, 400, 0, 0);
-		local._vultureHotspotId = _scene->_dynamicHotspots.add(words_vulture, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(local._vultureHotspotId, Common::Point(254, 94), FACING_WEST);
+		local._vultureHotspotId = kernel_add_dynamic(words_vulture, words_walkto, 0, g_sequence_ids[1], 0, 0, 0, 0);
+		kernel_dynamic_walk(local._vultureHotspotId, 254, 94, FACING_WEST);
 	}
 
 	if (local._spiderFl) {
 		g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 7, 0, 0, 1);
 		kernel_seq_range(g_sequence_ids[4], -1, -1);
-		local._spiderHotspotId = _scene->_dynamicHotspots.add(words_spider, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(local._spiderHotspotId, Common::Point(59, 132), FACING_SOUTH);
+		local._spiderHotspotId = kernel_add_dynamic(words_spider, words_walkto, 0, g_sequence_ids[4], 0, 0, 0, 0);
+		kernel_dynamic_walk(local._spiderHotspotId, 59, 132, FACING_SOUTH);
 	}
 
 	local._eyeFl = false;
@@ -110,7 +110,7 @@ static void moveVulture() {
 	g_engine->_soundManager->command(43, 0);
 	local._vultureFl = false;
 	local._vultureTime = player.clock;
-	_scene->_dynamicHotspots.remove(local._vultureHotspotId);
+	kernel_delete_dynamic(local._vultureHotspotId);
 }
 
 static void moveSpider() {
@@ -118,7 +118,7 @@ static void moveSpider() {
 	g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 5, 0, 0, 1);
 	local._spiderFl = false;
 	local._spiderTime = player.clock;
-	_scene->_dynamicHotspots.remove(local._spiderHotspotId);
+	kernel_delete_dynamic(local._spiderHotspotId);
 }
 
 static void room_207_daemon() {

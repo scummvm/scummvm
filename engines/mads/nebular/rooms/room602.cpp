@@ -56,11 +56,11 @@ static void room_602_init() {
 		kernel_seq_depth(g_sequence_ids[1], 9);
 		g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 1);
 		kernel_seq_depth(g_sequence_ids[4], 9);
-		int idx = _scene->_dynamicHotspots.add(words_laser_beam, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(80, 134), FACING_NORTHEAST);
+		int idx = kernel_add_dynamic(words_laser_beam, words_walkto, 0, g_sequence_ids[4], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 80, 134, FACING_NORTHEAST);
 		kernel_load_variant(1);
 	} else
-		_scene->_hotspots.activate(words_hole, false);
+		kernel_flip_hotspot(words_hole, false);
 
 	if (global[kSafeStatus] == 0) {
 		local._lastSpriteIdx = g_sprite_ids[2];
@@ -78,17 +78,17 @@ static void room_602_init() {
 
 	local._lastSequenceIdx = kernel_seq_stamp(local._lastSpriteIdx, false, local._cycleIndex);
 	kernel_seq_depth(local._lastSequenceIdx, 14);
-	int idx = _scene->_dynamicHotspots.add(words_safe, words_walkto, local._lastSequenceIdx, Common::Rect(0, 0, 0, 0));
-	_scene->_dynamicHotspots.setPosition(idx, Common::Point(185, 113), FACING_NORTHWEST);
+	int idx = kernel_add_dynamic(words_safe, words_walkto, 0, local._lastSequenceIdx, 0, 0, 0, 0);
+	kernel_dynamic_walk(idx, 185, 113, FACING_NORTHWEST);
 
 	if (object_is_here(OBJ_DOOR_KEY)) {
 		g_sprite_ids[6] = kernel_load_series(kernel_name('k', -1), 0);
 		g_sequence_ids[6] = kernel_seq_stamp(g_sprite_ids[6], false, -1);
 		kernel_seq_depth(g_sequence_ids[6], 15);
 		if (global[kSafeStatus] == 0 || global[kSafeStatus] == 2)
-			_scene->_hotspots.activate(words_door_key, false);
+			kernel_flip_hotspot(words_door_key, false);
 	} else
-		_scene->_hotspots.activate(words_door_key, false);
+		kernel_flip_hotspot(words_door_key, false);
 
 	if (previous_room == 603) {
 		player.x = 228;
@@ -138,7 +138,7 @@ static void handleSafeActions() {
 				local._lastSequenceIdx = kernel_seq_forward(local._lastSpriteIdx, false, 12, 0, 0, 1);
 				kernel_seq_depth(local._lastSequenceIdx, 14);
 				if (object[OBJ_DOOR_KEY].location == room_id)
-					_scene->_hotspots.activate(words_door_key, true);
+					kernel_flip_hotspot(words_door_key, true);
 
 				kernel_seq_trigger(local._lastSequenceIdx,
 					SEQUENCE_TRIGGER_EXPIRE, 0, 2);
@@ -153,7 +153,7 @@ static void handleSafeActions() {
 			local._lastSequenceIdx = kernel_seq_pingpong(local._lastSpriteIdx, false, 12, 0, 0, 1);
 			kernel_seq_depth(local._lastSequenceIdx, 14);
 			if (object[OBJ_DOOR_KEY].location == room_id)
-				_scene->_hotspots.activate(words_door_key, false);
+				kernel_flip_hotspot(words_door_key, false);
 
 			kernel_seq_trigger(local._lastSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 		}
@@ -165,8 +165,8 @@ static void handleSafeActions() {
 		local._lastSequenceIdx = kernel_seq_stamp(local._lastSpriteIdx, false, local._cycleIndex);
 		kernel_seq_depth(local._lastSequenceIdx, 14);
 		kernel_seq_timeout(synxIdx, local._lastSequenceIdx);
-		int idx = _scene->_dynamicHotspots.add(words_safe, words_walkto, local._lastSequenceIdx, Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(185, 113), FACING_NORTHWEST);
+		int idx = kernel_add_dynamic(words_safe, words_walkto, 0, local._lastSequenceIdx, 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 185, 113, FACING_NORTHWEST);
 		if (local._safeMode == 3) {
 			kernel_message_purge();
 			kernel_message_add(quote_string(kernel.quotes, 0x2F3), 0, 0, 0x1110, 120, 0, 34);
@@ -239,12 +239,12 @@ static void room_602_parser() {
 			local._lastSpriteIdx = g_sprite_ids[3];
 			local._lastSequenceIdx = kernel_seq_stamp(local._lastSpriteIdx, false, -1);
 			kernel_seq_depth(local._lastSequenceIdx, 14);
-			int idx = _scene->_dynamicHotspots.add(words_safe, words_walkto, local._lastSequenceIdx, Common::Rect(0, 0, 0, 0));
-			_scene->_dynamicHotspots.setPosition(idx, Common::Point(185, 113), FACING_NORTHWEST);
+			int idx = kernel_add_dynamic(words_safe, words_walkto, 0, local._lastSequenceIdx, 0, 0, 0, 0);
+			kernel_dynamic_walk(idx, 185, 113, FACING_NORTHWEST);
 			g_sequence_ids[4] = kernel_seq_stamp(g_sprite_ids[4], false, 1);
 			kernel_seq_depth(g_sequence_ids[4], 9);
-			idx = _scene->_dynamicHotspots.add(words_laser_beam, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
-			_scene->_dynamicHotspots.setPosition(idx, Common::Point(80, 134), FACING_NORTHEAST);
+			idx = kernel_add_dynamic(words_laser_beam, words_walkto, 0, g_sequence_ids[4], 0, 0, 0, 0);
+			kernel_dynamic_walk(idx, 80, 134, FACING_NORTHEAST);
 			kernel_timing_trigger(60, 2);
 		}
 		break;
@@ -273,7 +273,7 @@ static void room_602_parser() {
 
 		case 1:
 			kernel_seq_delete(g_sequence_ids[6]);
-			_scene->_hotspots.activate(words_door_key, false);
+			kernel_flip_hotspot(words_door_key, false);
 			g_engine->_soundManager->command(9, 0);
 			inter_give_to_player(OBJ_DOOR_KEY);
 			break;

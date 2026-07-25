@@ -55,8 +55,8 @@ static void room_107_init() {
 		g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 6, 0, 0, 0);
 		kernel_seq_loc(g_sequence_ids[4], 68, 151);
 		kernel_seq_depth(g_sequence_ids[4], 1);
-		int idx = _scene->_dynamicHotspots.add(words_dead_fish, words_swim_to, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(78, 135), FACING_SOUTHWEST);
+		int idx = kernel_add_dynamic(words_dead_fish, words_swim_to, 0, g_sequence_ids[4], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 78, 135, FACING_SOUTHWEST);
 	}
 
 	if (previous_room == 105) {
@@ -78,7 +78,7 @@ static void room_107_init() {
 		kernel_seq_loc(g_sequence_ids[0], 270, 150);
 		kernel_seq_motion(g_sequence_ids[0], SEQUENCE_TRIGGER_SPRITE, -200, 0);
 		kernel_seq_depth(g_sequence_ids[0], 2);
-		_scene->_dynamicHotspots.add(words_manta_ray, words_swim_to, g_sequence_ids[0], Common::Rect(0, 0, 0, 0));
+		kernel_add_dynamic(words_manta_ray, words_swim_to, 0, g_sequence_ids[0], 0, 0, 0, 0);
 	}
 
 	kernel.quotes = quote_load(0x4A, 0x4B, 0x4C, 0x35, 0x34, 0);

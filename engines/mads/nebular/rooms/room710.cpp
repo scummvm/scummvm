@@ -32,7 +32,7 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_710_init() {
-	_scene->_userInterface.setup(kInputLimitedSentences);
+	kernel_set_interface_mode(kInputLimitedSentences);
 
 	if (object[OBJ_VASE].location == 706) {
 		g_sprite_ids[1] = kernel_load_series(kernel_name('g', -1), 0);

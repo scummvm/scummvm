@@ -57,8 +57,8 @@ static void room_511_init() {
 	if (global[kLineStatus] == 2 || global[kLineStatus] == 3) {
 		g_sprite_ids[7] = kernel_load_series(kernel_name('b', 4), 0);
 		g_sequence_ids[7] = kernel_seq_stamp(g_sprite_ids[7], false, frame);
-		int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, g_sequence_ids[7], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(26, 153), FACING_NORTHEAST);
+		int idx = kernel_add_dynamic(words_fishing_line, words_walkto, 0, g_sequence_ids[7], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 26, 153, FACING_NORTHEAST);
 		kernel_seq_depth(g_sequence_ids[7], 3);
 		if (global[kBoatRaised])
 			kernel_load_variant(2);
@@ -71,10 +71,10 @@ static void room_511_init() {
 		g_sprite_ids[2] = kernel_load_series(kernel_name('b', 0), 0);
 		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 1);
 		kernel_seq_depth(g_sequence_ids[2], 3);
-		_scene->_hotspots.activate(words_boat, false);
-		int idx = _scene->_dynamicHotspots.add(words_boat, words_walkto, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(75, 124), FACING_NORTH);
-		_scene->_hotspots.activate(words_rope, false);
+		kernel_flip_hotspot(words_boat, false);
+		int idx = kernel_add_dynamic(words_boat, words_walkto, 0, g_sequence_ids[2], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 75, 124, FACING_NORTH);
+		kernel_flip_hotspot(words_rope, false);
 	} else {
 		g_sprite_ids[5] = kernel_load_series(kernel_name('b', 2), 0);
 		g_sprite_ids[6] = kernel_load_series(kernel_name('b', 3), 0);
@@ -89,8 +89,8 @@ static void room_511_init() {
 		g_sequence_ids[6] = kernel_seq_stamp(g_sprite_ids[6], false, 1);
 		kernel_seq_depth(g_sequence_ids[6], 5);
 
-		_scene->_hotspots.activate(words_rope, true);
-		_scene->_hotspots.activate(words_boat, true);
+		kernel_flip_hotspot(words_rope, true);
+		kernel_flip_hotspot(words_boat, true);
 		kernel_load_variant(1);
 	}
 
@@ -294,8 +294,8 @@ static void room_511_parser() {
 						player.walker_visible = true;
 						g_sequence_ids[7] = kernel_seq_stamp(g_sprite_ids[7], false, -2);
 						kernel_seq_depth(g_sequence_ids[7], 4);
-						int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, g_sequence_ids[7], Common::Rect(0, 0, 0, 0));
-						_scene->_dynamicHotspots.setPosition(idx, Common::Point(26, 153), FACING_NORTHEAST);
+						int idx = kernel_add_dynamic(words_fishing_line, words_walkto, 0, g_sequence_ids[7], 0, 0, 0, 0);
+						kernel_dynamic_walk(idx, 26, 153, FACING_NORTHEAST);
 						inter_take_from_player(OBJ_FISHING_LINE, 1);
 						local._handingLine = false;
 						local._lineMoving = true;

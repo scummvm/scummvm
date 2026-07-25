@@ -79,7 +79,7 @@ static void handleBottleInterface() {
 }
 
 static void setBottleSequence() {
-	_scene->_userInterface.setup(kInputBuildingSentences);
+	kernel_set_interface_mode(kInputBuildingSentences);
 	player.commands_allowed = false;
 	kernel_seq_delete(g_sequence_ids[3]);
 	kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
@@ -109,7 +109,7 @@ static void handleFillBottle(int quote) {
 		break;
 
 	case 0x315:
-		_scene->_userInterface.setup(kInputBuildingSentences);
+		kernel_set_interface_mode(kInputBuildingSentences);
 		break;
 
 	default:

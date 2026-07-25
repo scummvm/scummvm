@@ -43,7 +43,7 @@ static void room_351_init() {
 		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 6, 0, 0, 0);
 		kernel_seq_depth(g_sequence_ids[1], 4);
 	} else
-		_scene->_hotspots.activate(words_credit_chip, false);
+		kernel_flip_hotspot(words_credit_chip, false);
 
 	if (previous_room == 352) {
 		player.x = 148;
@@ -141,7 +141,7 @@ static void room_351_parser() {
 				break;
 
 			case 1:
-				_scene->_hotspots.activate(words_credit_chip, false);
+				kernel_flip_hotspot(words_credit_chip, false);
 				kernel_seq_delete(g_sequence_ids[1]);
 				inter_give_to_player(OBJ_CREDIT_CHIP);
 				break;

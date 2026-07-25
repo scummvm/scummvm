@@ -92,7 +92,7 @@ static void handleBottleInterface() {
 }
 
 static void setBottleSequence() {
-	_scene->_userInterface.setup(kInputBuildingSentences);
+	kernel_set_interface_mode(kInputBuildingSentences);
 	player.commands_allowed = false;
 	if (local._boatDir == 2)
 		local._curSequence = 6;
@@ -123,7 +123,7 @@ static void handleFillBottle(int quote) {
 		break;
 
 	case 0x315:
-		_scene->_userInterface.setup(kInputBuildingSentences);
+		kernel_set_interface_mode(kInputBuildingSentences);
 		break;
 
 	default:
@@ -149,7 +149,7 @@ static void room_703_init() {
 	local._boatFrame = -1;
 
 	if (!global[kMonsterAlive])
-		_scene->_hotspots.activate(words_sea_monster, false);
+		kernel_flip_hotspot(words_sea_monster, false);
 
 	if (previous_room == 704) {
 		player.commands_allowed = false;
@@ -463,7 +463,7 @@ static void room_703_daemon() {
 				break;
 
 			case 126:
-				_scene->_hotspots.activate(words_sea_monster, false);
+				kernel_flip_hotspot(words_sea_monster, false);
 				global[kMonsterAlive] = false;
 				kernel_abort_animation(0);
 				local._monsterMode = 0;

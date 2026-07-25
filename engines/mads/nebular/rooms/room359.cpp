@@ -53,8 +53,8 @@ static void room_359_init() {
 
 	if (object_is_here(OBJ_SECURITY_CARD)) {
 		g_sequence_ids[1] = kernel_seq_forward(g_sprite_ids[1], false, 9, 0, 0, 0);
-		local._cardHotspotId = _scene->_dynamicHotspots.add(words_security_card, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(local._cardHotspotId, Common::Point(107, 107), FACING_SOUTH);
+		local._cardHotspotId = kernel_add_dynamic(words_security_card, words_walkto, 0, g_sequence_ids[1], 0, 0, 0, 0);
+		kernel_dynamic_walk(local._cardHotspotId, 107, 107, FACING_SOUTH);
 	}
 
 	if (previous_room == 358) {
@@ -106,7 +106,7 @@ static void room_359_parser() {
 
 			case 1:
 				kernel_seq_delete(g_sequence_ids[1]);
-				_scene->_dynamicHotspots.remove(local._cardHotspotId);
+				kernel_delete_dynamic(local._cardHotspotId);
 				g_engine->_soundManager->command(57, 0);
 				inter_give_to_player(OBJ_SECURITY_CARD);
 				object_examine(OBJ_SECURITY_CARD, 0x330, 0);

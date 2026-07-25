@@ -75,17 +75,17 @@ static void room_103_init() {
 	if (object_is_here(OBJ_TIMER_MODULE))
 		g_sequence_ids[11] = kernel_seq_forward(g_sprite_ids[11], false, 6, 0, 0, 0);
 	else
-		_scene._hotspots.activate(371, false);
+		kernel_flip_hotspot(371, false);
 
 	if (object_is_here(OBJ_REBREATHER))
 		g_sequence_ids[10] = kernel_seq_forward(g_sprite_ids[10], false, 6, 0, 0, 0);
 	else
-		_scene._hotspots.activate(289, false);
+		kernel_flip_hotspot(289, false);
 
 	if (global[kTurkeyExploded]) {
 		g_sequence_ids[9] = kernel_seq_forward(g_sprite_ids[9], false, 6, 0, 0, 0);
 		kernel_seq_range(g_sequence_ids[9], -2, -2);
-		_scene->_hotspots.activate(362, false);
+		kernel_flip_hotspot(362, false);
 	}
 
 	if (previous_room != RETURNING_FROM_DIALOG) {
@@ -205,7 +205,7 @@ static void room_103_parser() {
 			inter_give_to_player(OBJ_TIMER_MODULE);
 			kernel_load_variant(0);
 			matte_frame(kTransitionNone, false);
-			_scene->_hotspots.activate(371, false);
+			kernel_flip_hotspot(371, false);
 			player.walker_visible = true;
 			player.commands_allowed = true;
 			object_examine(OBJ_TIMER_MODULE, 805, 0);
@@ -232,7 +232,7 @@ static void room_103_parser() {
 		case 2:
 			g_engine->_soundManager->command(22, 0);
 			inter_give_to_player(OBJ_REBREATHER);
-			_scene->_hotspots.activate(289, false);
+			kernel_flip_hotspot(289, false);
 			player.walker_visible = true;
 			player.commands_allowed = true;
 			object_examine(OBJ_REBREATHER, 804, 0);
@@ -271,7 +271,7 @@ static void room_103_parser() {
 		if (kernel.trigger == 2) {
 			// Show exposition dialog at end of sequence
 			text_show(10302);
-			_scene->_hotspots.activate(362, false);
+			kernel_flip_hotspot(362, false);
 		}
 	} else if (player_said_2(look, oven))
 		text_show(!global[kTurkeyExploded] ? 10323 : 10303);

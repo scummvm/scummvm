@@ -263,9 +263,9 @@ static void handleDialog() {
 		} else
 			local._killRox = true;
 
-		_scene->_userInterface.setup(kInputBuildingSentences);
+		kernel_set_interface_mode(kInputBuildingSentences);
 	} else if (player2.words[0] == 0x262)
-		_scene->_userInterface.setup(kInputBuildingSentences);
+		kernel_set_interface_mode(kInputBuildingSentences);
 }
 
 static void giveToRex(int object_id) {
@@ -327,11 +327,11 @@ static void room_411_init() {
 	local._dialog4.setup(0x5E, 0x255, 0x261, 0x25D, 0x259, 0x262, -1);
 
 	if (global[kNextIngredient] >= 4 && !object_check_quality(OBJ_CHARGE_CASES, 3)) {
-		_scene->_hotspots.activate(words_kettle, false);
-		_scene->_hotspots.activate(words_explosives, true);
+		kernel_flip_hotspot(words_kettle, false);
+		kernel_flip_hotspot(words_explosives, true);
 	} else {
-		_scene->_hotspots.activate(words_explosives, false);
-		_scene->_hotspots.activate(words_kettle, true);
+		kernel_flip_hotspot(words_explosives, false);
+		kernel_flip_hotspot(words_kettle, true);
 	}
 
 	if (global[kNextIngredient] >= 4 && object_check_quality(OBJ_CHARGE_CASES, 3)) {
@@ -377,22 +377,22 @@ static void room_411_init() {
 	if (object_is_here(OBJ_FORMALDEHYDE)) {
 		g_sequence_ids[7] = kernel_seq_stamp(g_sprite_ids[7], false, 1);
 		kernel_seq_depth(g_sequence_ids[7], 1);
-		int idx = _scene->_dynamicHotspots.add(words_formaldehyde, words_walkto, g_sequence_ids[7], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(206, 145), FACING_SOUTHEAST);
+		int idx = kernel_add_dynamic(words_formaldehyde, words_walkto, 0, g_sequence_ids[7], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 206, 145, FACING_SOUTHEAST);
 	}
 
 	if (object_is_here(OBJ_PETROX)) {
 		g_sequence_ids[5] = kernel_seq_stamp(g_sprite_ids[5], false, 1);
 		kernel_seq_depth(g_sequence_ids[5], 8);
-		int idx = _scene->_dynamicHotspots.add(words_petrox, words_walkto, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(186, 112), FACING_NORTHEAST);
+		int idx = kernel_add_dynamic(words_petrox, words_walkto, 0, g_sequence_ids[5], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 186, 112, FACING_NORTHEAST);
 	}
 
 	if (object_is_here(OBJ_LECITHIN)) {
 		g_sequence_ids[6] = kernel_seq_stamp(g_sprite_ids[6], false, 1);
 		kernel_seq_depth(g_sequence_ids[6], 8);
-		int idx = _scene->_dynamicHotspots.add(words_lecithin, words_walkto, g_sequence_ids[6], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(220, 121), FACING_NORTHEAST);
+		int idx = kernel_add_dynamic(words_lecithin, words_walkto, 0, g_sequence_ids[6], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 220, 121, FACING_NORTHEAST);
 	}
 
 	if (previous_room != RETURNING_FROM_DIALOG) {
@@ -470,8 +470,8 @@ static void room_411_daemon() {
 				if (local._makeMushroomCloud) {
 					g_sequence_ids[9] = kernel_seq_forward(g_sprite_ids[9], false, 5, 0, 0, 1);
 					local._makeMushroomCloud = false;
-					_scene->_hotspots.activate(words_kettle, false);
-					_scene->_hotspots.activate(words_explosives, true);
+					kernel_flip_hotspot(words_kettle, false);
+					kernel_flip_hotspot(words_explosives, true);
 				}
 				break;
 
@@ -558,8 +558,8 @@ static void room_411_parser() {
 		break;
 
 		case 111:
-			_scene->_hotspots.activate(words_kettle, true);
-			_scene->_hotspots.activate(words_explosives, false);
+			kernel_flip_hotspot(words_kettle, true);
+			kernel_flip_hotspot(words_explosives, false);
 			kernel_seq_delete(g_sequence_ids[4]);
 			kernel_seq_delete(g_sequence_ids[10]);
 

@@ -33,64 +33,63 @@ namespace Rooms {
 
 static void room_805_init() {
 	player.walker_visible = false;
-	_scene->_userInterface.setup(kInputLimitedSentences);
+	kernel_set_interface_mode(kInputLimitedSentences);
 
 	g_sprite_ids[1] = kernel_load_series(kernel_name('a', 1), 0);
 	g_sprite_ids[2] = kernel_load_series(kernel_name('a', 2), 0);
 
 	if (global[kShieldModInstalled]) {
-		_scene->_hotspots.activate(OBJ_SHIELD_MODULATOR, false);
+		kernel_flip_hotspot(OBJ_SHIELD_MODULATOR, false);
 		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 25);
-		int idx = _scene->_dynamicHotspots.add(words_shield_modulator, words_remove, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), 0);
+		int idx = kernel_add_dynamic(words_shield_modulator, words_remove, 0, g_sequence_ids[1], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 0, 0, 0);
 	}
 
 	if (global[kTargetModInstalled]) {
-		_scene->_hotspots.activate(OBJ_TARGET_MODULE, false);
+		kernel_flip_hotspot(OBJ_TARGET_MODULE, false);
 		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 12);
-		int idx = _scene->_dynamicHotspots.add(words_target_module, words_remove, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), 0);
+		int idx = kernel_add_dynamic(words_target_module, words_remove, 0, g_sequence_ids[2], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 0, 0, 0);
 	}
 
 	section_8_music();
 }
 
 static void room_805_daemon() {
-	auto &userInterface = _scene._userInterface;
 
 	if (kernel.trigger == 70) {
-		_scene->_hotspots.activate(OBJ_SHIELD_MODULATOR, false);
+		kernel_flip_hotspot(OBJ_SHIELD_MODULATOR, false);
 		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 25);
-		int idx = _scene->_dynamicHotspots.add(words_shield_modulator, words_remove, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), 0);
+		int idx = kernel_add_dynamic(words_shield_modulator, words_remove, 0, g_sequence_ids[1], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 0, 0, 0);
 		global[kShieldModInstalled] = true;
 		inter_move_object(OBJ_SHIELD_MODULATOR, NOWHERE);
-		userInterface._selectedInvIndex = -1;
+		active_inven = -1;
 		player.commands_allowed = true;
 		g_engine->_soundManager->command(24, 0);
 	}
 
 	if (kernel.trigger == 80) {
-		_scene->_hotspots.activate(OBJ_TARGET_MODULE, false);
+		kernel_flip_hotspot(OBJ_TARGET_MODULE, false);
 		g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, 12);
-		int idx = _scene->_dynamicHotspots.add(words_target_module, words_remove, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), 0);
+		int idx = kernel_add_dynamic(words_target_module, words_remove, 0, g_sequence_ids[2], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 0, 0, 0);
 		global[kTargetModInstalled] = true;
 		inter_move_object(OBJ_TARGET_MODULE, NOWHERE);
-		userInterface._selectedInvIndex = -1;
+		active_inven = -1;
 		player.commands_allowed = true;
 		g_engine->_soundManager->command(24, 0);
 	}
 
 	if (kernel.trigger == 71) {
-		_scene->_hotspots.activate(OBJ_SHIELD_MODULATOR, true);
+		kernel_flip_hotspot(OBJ_SHIELD_MODULATOR, true);
 		global[kShieldModInstalled] = false;
 		inter_give_to_player(OBJ_SHIELD_MODULATOR);
 		player.commands_allowed = true;
 	}
 
 	if (kernel.trigger == 81) {
-		_scene->_hotspots.activate(OBJ_TARGET_MODULE, true);
+		kernel_flip_hotspot(OBJ_TARGET_MODULE, true);
 		global[kTargetModInstalled] = false;
 		inter_give_to_player(OBJ_TARGET_MODULE);
 		player.commands_allowed = true;

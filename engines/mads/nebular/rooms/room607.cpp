@@ -72,7 +72,7 @@ static void room_607_init() {
 		local._dogEatsRex = false;
 		local._dogTimer = 0;
 	} else
-		_scene->_hotspots.activate(words_obnoxious_dog, false);
+		kernel_flip_hotspot(words_obnoxious_dog, false);
 
 	g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, -2);
 	kernel_seq_depth(g_sequence_ids[2], 4);
@@ -133,7 +133,7 @@ static void room_607_daemon() {
 		kernel_seq_depth(g_sequence_ids[1], 6);
 		local._dogBarking = false;
 		global[kDogStatus] = DOG_PRESENT;
-		_scene->_hotspots.activate(words_obnoxious_dog, true);
+		kernel_flip_hotspot(words_obnoxious_dog, true);
 	}
 
 	if (!local._dogEatsRex && (game.difficulty != DIFFICULTY_EASY) && !local._animationActive && (global[kDogStatus] == DOG_PRESENT)
@@ -187,10 +187,10 @@ static void room_607_daemon() {
 		}
 	}
 
-	if (player.walking && (game.difficulty != DIFFICULTY_EASY) && !local._shopAvailable && (global[kDogStatus] == DOG_PRESENT) && (_scene->_rails.getNext() > 0)) {
+	if (player.walking && (game.difficulty != DIFFICULTY_EASY) && !local._shopAvailable && (global[kDogStatus] == DOG_PRESENT) && (player.next_special_code > 0)) {
 		player_cancel_command();
 		player_start_walking(268, 72, FACING_NORTHEAST);
-		_scene->_rails.resetNext();
+		player.next_special_code = 0;
 	}
 
 	if ((player.special_code > 0) && (game.difficulty != DIFFICULTY_EASY) && (global[kDogStatus] == DOG_PRESENT) && player.commands_allowed)
@@ -307,7 +307,7 @@ static void handleThrowingBone() {
 		player.clock = kernel_anim[0].next_clock - player.frame_delay;
 
 		if (local._animationMode != 1)
-			_scene->_hotspots.activate(words_obnoxious_dog, false);
+			kernel_flip_hotspot(words_obnoxious_dog, false);
 		else {
 			g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 1);
 			kernel_seq_depth(g_sequence_ids[1], 6);

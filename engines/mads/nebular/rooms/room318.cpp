@@ -115,7 +115,7 @@ static void handleDialog() {
 		kernel_seq_loc(g_sequence_ids[2], 142, 121);
 		kernel_seq_timeout(synxIdx, g_sequence_ids[2]);
 		g_engine->_soundManager->command(3, 0);
-		_scene->_userInterface.setup(kInputBuildingSentences);
+		kernel_set_interface_mode(kInputBuildingSentences);
 		player.commands_allowed = true;
 	} else {
 		if (player2.words[0] < 0x19C)
@@ -215,15 +215,15 @@ static void room_318_init() {
 		kernel_run_animation(kernel_name('f', -1), 0);
 		kernel_anim[0].repeat = true;
 	} else if (!global[kHasSeenProfPyro]) {
-		_scene->_hotspots.activate(words_professors_gurney, false);
-		_scene->_hotspots.activate(words_professor, false);
-		_scene->_hotspots.activate(words_tape_player, false);
+		kernel_flip_hotspot(words_professors_gurney, false);
+		kernel_flip_hotspot(words_professor, false);
+		kernel_flip_hotspot(words_tape_player, false);
 	}
 
 	if (object_is_here(OBJ_SCALPEL)) {
 		g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 6, 120, 0, 0);
 		kernel_seq_depth(g_sequence_ids[3], 4);
-		_scene->_dynamicHotspots.add(words_scalpel, words_take, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
+		kernel_add_dynamic(words_scalpel, words_take, 0, g_sequence_ids[3], 0, 0, 0, 0);
 	}
 
 	if (previous_room == 357) {
@@ -251,7 +251,7 @@ static void room_318_init() {
 	}
 
 	local._lastFrame = 0;
-	_scene->_hotspots.activate(words_intern, false);
+	kernel_flip_hotspot(words_intern, false);
 
 	if (previous_room != RETURNING_FROM_DIALOG) {
 		local._dialogFl = false;
@@ -282,7 +282,7 @@ static void room_318_init() {
 				local._dialogFl = false;
 			} else {
 				kernel_run_animation(kernel_name('b', -1), 61);
-				_scene->_hotspots.activate(words_intern, true);
+				kernel_flip_hotspot(words_intern, true);
 			}
 
 			if (local._dialogFl) {
@@ -368,7 +368,7 @@ static void room_318_daemon() {
 
 				if (nextFrame == 184) {
 					handleInternDialog(0x1D1, 3, 240);
-					_scene->_hotspots.activate(words_intern, false);
+					kernel_flip_hotspot(words_intern, false);
 					local._internVisibleFl = false;
 				}
 				break;

@@ -35,8 +35,8 @@ void room_216_init() {
 	player.commands_allowed = false;
 	player.walker_visible = false;
 
-	_scene->_userInterface.emptyConversationList();
-	_scene->_userInterface.setup(kInputConversation);
+	inter_reset_dialog();
+	kernel_set_interface_mode(kInputConversation);
 	kernel_run_animation(kernel_name('A', -1), 60);
 
 	section_2_music();

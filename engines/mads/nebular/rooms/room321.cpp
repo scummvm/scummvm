@@ -35,8 +35,8 @@ static void room_321_init() {
 	player.walker_visible = false;
 	player.commands_allowed = false;
 
-	_scene->_userInterface.emptyConversationList();
-	_scene->_userInterface.setup(kInputConversation);
+	inter_reset_dialog();
+	kernel_set_interface_mode(kInputConversation);
 
 	int suffixNum;
 	if (global[kSexOfRex] == REX_FEMALE) {

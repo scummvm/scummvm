@@ -52,8 +52,8 @@ static void room_201_init() {
 	kernel_seq_depth(g_sequence_ids[4], 8);
 	kernel_seq_loc(g_sequence_ids[4], 185, 46);
 
-	int idx = _scene->_dynamicHotspots.add(words_birds, words_look_at, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
-	_scene->_dynamicHotspots.setPosition(idx, Common::Point(186, 81), FACING_NORTH);
+	int idx = kernel_add_dynamic(words_birds, words_look_at, 0, g_sequence_ids[4], 0, 0, 0, 0);
+	kernel_dynamic_walk(idx, 186, 81, FACING_NORTH);
 
 	if ((previous_room == 202) || (previous_room == RETURNING_FROM_LOADING)) {
 		player.x = 165;
@@ -116,7 +116,7 @@ static void room_201_init() {
 		local._pterodactylFlag = true;
 
 	if (global[kTeleporterUnderstood])
-		_scene->_hotspots.activate(words_strange_device, false);
+		kernel_flip_hotspot(words_strange_device, false);
 
 	section_2_music();
 }
@@ -124,8 +124,8 @@ static void room_201_init() {
 static void room_201_daemon() {
 	if (local._pterodactylFlag && (g_engine->getRandomNumber(5000) == 9)) {
 		g_sequence_ids[5] = kernel_seq_forward(g_sprite_ids[5], false, 5, 0, 6, 1);
-		int idx = _scene->_dynamicHotspots.add(words_swooping_creature, words_walkto, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(270, 80), FACING_EAST);
+		int idx = kernel_add_dynamic(words_swooping_creature, words_walkto, 0, g_sequence_ids[5], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 270, 80, FACING_EAST);
 		kernel_seq_depth(g_sequence_ids[5], 8);
 		g_engine->_soundManager->command(14, 0);
 		local._pterodactylFlag = false;

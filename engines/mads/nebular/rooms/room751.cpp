@@ -50,8 +50,8 @@ static void room_751_init() {
 	if (global[kLineStatus] == 2 || global[kLineStatus] == 3) {
 		g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -1);
 		kernel_seq_depth(g_sequence_ids[3], 7);
-		int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(268, 140), FACING_NORTHWEST);
+		int idx = kernel_add_dynamic(words_fishing_line, words_walkto, 0, g_sequence_ids[3], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 268, 140, FACING_NORTHWEST);
 	}
 
 	g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 1);
@@ -88,8 +88,8 @@ static void room_751_init() {
 	} else if (global[kLineStatus] == 2) {
 		g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -1);
 		kernel_seq_depth(g_sequence_ids[3], 7);
-		int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(268, 140), FACING_NORTHWEST);
+		int idx = kernel_add_dynamic(words_fishing_line, words_walkto, 0, g_sequence_ids[3], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 268, 140, FACING_NORTHWEST);
 	}
 
 	if (kernel.teleported_in) {
@@ -315,8 +315,8 @@ static void room_751_parser() {
 				player.walker_visible = true;
 				g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, -1);
 				kernel_seq_depth(g_sequence_ids[3], 7);
-				int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
-				_scene->_dynamicHotspots.setPosition(idx, Common::Point(268, 140), FACING_NORTHWEST);
+				int idx = kernel_add_dynamic(words_fishing_line, words_walkto, 0, g_sequence_ids[3], 0, 0, 0, 0);
+				kernel_dynamic_walk(idx, 268, 140, FACING_NORTHWEST);
 				kernel_message_purge();
 				inter_move_object(OBJ_FISHING_LINE, room_id);
 				local._rexHandingLine = false;

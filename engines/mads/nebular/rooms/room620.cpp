@@ -37,7 +37,7 @@ static void room_620_init() {
 	player.commands_allowed = false;
 	player.walker_visible = false;
 	kernel_timing_trigger(30, 70);
-	_scene->_userInterface.setup(kInputLimitedSentences);
+	kernel_set_interface_mode(kInputLimitedSentences);
 	section_6_music();
 }
 

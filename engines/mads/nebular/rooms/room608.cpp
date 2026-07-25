@@ -68,8 +68,8 @@ static Scratch local;
 
 static void resetDogVariables() {
 	g_sequence_ids[5] = kernel_seq_stamp(g_sprite_ids[5], false, 1);
-	int idx = _scene->_dynamicHotspots.add(words_obnoxious_dog, words_walkto, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
-	_scene->_dynamicHotspots.setPosition(idx, Common::Point(194, 142), FACING_EAST);
+	int idx = kernel_add_dynamic(words_obnoxious_dog, words_walkto, 0, g_sequence_ids[5], 0, 0, 0, 0);
+	kernel_dynamic_walk(idx, 194, 142, FACING_EAST);
 	kernel_seq_depth(g_sequence_ids[5], 4);
 	local._dogBarkingFl = false;
 	local._dogFirstEncounter = false;
@@ -181,16 +181,17 @@ static void room_608_init() {
 	if (object_is_here(OBJ_POLYCEMENT)) {
 		g_sprite_ids[1] = kernel_load_series(kernel_name('g', -1), 0);
 		g_sequence_ids[1] = kernel_seq_stamp(g_sprite_ids[1], false, 1);
-		int idx = _scene->_dynamicHotspots.add(words_polycement, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
-		local._polycementHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(249, 129), FACING_NORTHEAST);
+		int idx = kernel_add_dynamic(words_polycement, words_walkto, 0, g_sequence_ids[1], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 249, 129, FACING_NORTHEAST);
+		local._polycementHotspotId = idx;
 		kernel_seq_depth(g_sequence_ids[1], 6);
 	}
 
 	if (object_is_here(OBJ_REARVIEW_MIRROR)) {
 		g_sprite_ids[12] = kernel_load_series(kernel_name('m', -1), 0);
 		g_sequence_ids[12] = kernel_seq_stamp(g_sprite_ids[12], false, 1);
-		int idx = _scene->_dynamicHotspots.add(words_rearview_mirror, words_walkto, g_sequence_ids[12], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(71, 113), FACING_NORTHEAST);
+		int idx = kernel_add_dynamic(words_rearview_mirror, words_walkto, 0, g_sequence_ids[12], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 71, 113, FACING_NORTHEAST);
 		kernel_seq_depth(g_sequence_ids[12], 15);
 	}
 
@@ -233,37 +234,42 @@ static void room_608_init() {
 		local._carMode = 0;
 		local._dogDeathMode = 0;
 		local._resetPositionsFl = false;
-		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
-		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
+		int idx = kernel_add_dynamic(words_car, words_walkto, 0, -1, 99, 69, 82, 25);
+		kernel_dynamic_walk(idx, 96, 132, FACING_NORTHEAST);
+		local._carHotspotId = idx;
 		kernel_run_animation(kernel_name('A', -1), 0);
 	} else if (global[kCarStatus] == CAR_DOWN) {
 		local._carMode = 0;
 		local._dogDeathMode = 0;
 		local._resetPositionsFl = false;
-		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
-		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
+		int idx = kernel_add_dynamic(words_car, words_walkto, 0, -1, 100, 100, 82, 25);
+		kernel_dynamic_walk(idx, 96, 132, FACING_NORTHEAST);
+		local._carHotspotId = idx;
 		kernel_run_animation(kernel_name('A', -1), 0);
 		kernel_reset_animation(0, 6);
 	} else if (global[kCarStatus] == CAR_SQUASHES_DOG) {
 		local._carMode = 2;
 		local._dogDeathMode = 0;
 		local._resetPositionsFl = false;
-		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
-		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
+		int idx = kernel_add_dynamic(words_car, words_walkto, 0, -1, 99, 69, 82, 25);
+		kernel_dynamic_walk(idx, 96, 132, FACING_NORTHEAST);
+		local._carHotspotId = idx;
 		kernel_run_animation(kernel_name('C', -1), 0);
 	} else if (global[kCarStatus] == CAR_SQUASHES_DOG_AGAIN) {
 		local._carMode = 1;
 		local._dogDeathMode = 2;
 		local._resetPositionsFl = true;
-		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
-		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
+		int idx = kernel_add_dynamic(words_car, words_walkto, 0, -1, 99, 69, 82, 25);
+		kernel_dynamic_walk(idx, 96, 132, FACING_NORTHEAST);
+		local._carHotspotId = idx;
 		kernel_run_animation(kernel_name('B', -1), 0);
 	} else {
 		local._carMode = 3;
 		local._dogDeathMode = 2;
 		local._resetPositionsFl = true;
-		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
-		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
+		int idx = kernel_add_dynamic(words_car, words_walkto, 0, -1, 100, 100, 82, 25);
+		kernel_dynamic_walk(idx, 96, 132, FACING_NORTHEAST);
+		local._carHotspotId = idx;
 		kernel_run_animation(kernel_name('D', -1), 0);
 	}
 
@@ -328,8 +334,8 @@ static void room_608_daemon() {
 				kernel_seq_delete(g_sequence_ids[5]);
 				g_sequence_ids[5] = kernel_seq_pingpong(g_sprite_ids[5], false, 5, 0, 0, 8);
 				kernel_seq_depth(g_sequence_ids[5], 4);
-				int idx = _scene->_dynamicHotspots.add(words_obnoxious_dog, words_walkto, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
-				_scene->_dynamicHotspots.setPosition(idx, Common::Point(194, 142), FACING_EAST);
+				int idx = kernel_add_dynamic(words_obnoxious_dog, words_walkto, 0, g_sequence_ids[5], 0, 0, 0, 0);
+				kernel_dynamic_walk(idx, 194, 142, FACING_EAST);
 				local._barkCount = 0;
 				kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_SPRITE, 2, 100);
 				kernel_seq_trigger(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
@@ -392,7 +398,7 @@ static void room_608_daemon() {
 		local._dogRunTimer = 0;
 	} else {
 		local._dogSafeFl = false;
-		if (player.walking && (game.difficulty == DIFFICULTY_HARD) && local._dogActiveFl && (_scene->_rails.getNext() > 0) && local._dogUnderCar)
+		if (player.walking && (game.difficulty == DIFFICULTY_HARD) && local._dogActiveFl && (player.next_special_code > 0) && local._dogUnderCar)
 			local._dogSafeFl = true;
 	}
 
@@ -593,10 +599,10 @@ static void room_608_daemon() {
 		}
 	}
 
-	if (player.walking && (game.difficulty == DIFFICULTY_HARD) && local._dogActiveFl && (_scene->_rails.getNext() > 0)) {
+	if (player.walking && (game.difficulty == DIFFICULTY_HARD) && local._dogActiveFl && (player.next_special_code > 0)) {
 		player_cancel_command();
 		player_start_walking(194, 142, FACING_EAST);
-		_scene->_rails.resetNext();
+		player.next_special_code = 0;
 		if (local._dogUnderCar)
 			local._dogSafeFl = true;
 	}
@@ -754,9 +760,10 @@ static void room_608_parser() {
 			if (local._carMoveMode != 0)
 				kernel_timing_trigger(1, 2);
 			else {
-				_scene->_dynamicHotspots.remove(local._carHotspotId);
-				int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
-				local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
+				kernel_delete_dynamic(local._carHotspotId);
+				int idx = kernel_add_dynamic(words_car, words_walkto, 0, -1, 100, 100, 82, 25);
+				kernel_dynamic_walk(idx, 96, 132, FACING_NORTHEAST);
+				local._carHotspotId = idx;
 				if (global[kCarStatus] == CAR_SQUASHES_DOG)
 					kernel_timing_trigger(120, 3);
 				else {
@@ -823,9 +830,10 @@ static void room_608_parser() {
 				local._carMode = 3;
 				local._dogDeathMode = 2;
 			}
-			_scene->_dynamicHotspots.remove(local._carHotspotId);
-			int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
-			local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
+			kernel_delete_dynamic(local._carHotspotId);
+			int idx = kernel_add_dynamic(words_car, words_walkto, 0, -1, 99, 69, 82, 25);
+			kernel_dynamic_walk(idx, 96, 132, FACING_NORTHEAST);
+			local._carHotspotId = idx;
 			player.commands_allowed = true;
 		}
 		break;
@@ -885,7 +893,7 @@ static void room_608_parser() {
 		case 1:
 			g_engine->_soundManager->command(9, 0);
 			kernel_seq_delete(g_sequence_ids[1]);
-			_scene->_dynamicHotspots.remove(local._polycementHotspotId);
+			kernel_delete_dynamic(local._polycementHotspotId);
 			break;
 
 		case 2:

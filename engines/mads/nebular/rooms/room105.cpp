@@ -47,8 +47,8 @@ static void room_105_init() {
 		g_sequence_ids[4] = kernel_seq_forward(g_sprite_ids[4], false, 6, 0, 0, 0);
 		kernel_seq_loc(g_sequence_ids[4], 48, 144);
 
-		int idx = _scene->_dynamicHotspots.add(words_dead_fish, words_swim_to, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(56, 141), FACING_NORTHWEST);
+		int idx = kernel_add_dynamic(words_dead_fish, words_swim_to, 0, g_sequence_ids[4], 0, 0, 0, 0);
+		kernel_dynamic_walk(idx, 56, 141, FACING_NORTHWEST);
 	}
 
 	if (previous_room == 104) {
@@ -123,10 +123,10 @@ static void room_105_daemon() {
 		}
 	}
 
-	if (player.walking && (_scene->_rails.getNext() > 0)) {
+	if (player.walking && (player.next_special_code > 0)) {
 		player_cancel_command();
 		player_start_walking(170, 87, FACING_NONE);
-		_scene->_rails.resetNext();
+		player.next_special_code = 0;
 	}
 
 	if ((player.special_code > 0) && player.commands_allowed)

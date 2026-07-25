@@ -77,9 +77,9 @@ static void room_102_init() {
 	if (object_is_here(OBJ_BINOCULARS))
 		g_sequence_ids[9] = kernel_seq_forward(g_sprite_ids[9], false, 24, 24, 0, 0);
 	else
-		_scene->_hotspots.activate(words_binoculars, false);
+		kernel_flip_hotspot(words_binoculars, false);
 
-	_scene->_hotspots.activate(words_burger, false);
+	kernel_flip_hotspot(words_burger, false);
 
 	if (global[kMedicineCabinetOpen]) {
 		g_sequence_ids[8] = kernel_seq_forward(g_sprite_ids[8], false, 6, 0, 0, 0);
@@ -201,7 +201,7 @@ static void room_102_pre_parser() {
 		case 1:
 			if (object_is_here(OBJ_BURGER)) {
 				kernel_seq_delete(g_sequence_ids[10]);
-				_scene->_hotspots.activate(words_burger, false);
+				kernel_flip_hotspot(words_burger, false);
 			}
 			local._fridgeOpenedFl = false;
 			player.commands_allowed = true;
@@ -259,7 +259,7 @@ static void room_102_parser() {
 			player.commands_allowed = true;
 			justOpenedFl = true;
 			if (object_is_here(OBJ_BURGER))
-				_scene->_hotspots.activate(words_burger, true);
+				kernel_flip_hotspot(words_burger, true);
 			break;
 
 		default:
@@ -587,7 +587,7 @@ static void room_102_parser() {
 		case 1:
 			inter_give_to_player(OBJ_BINOCULARS);
 			kernel_seq_delete(g_sequence_ids[9]);
-			_scene->_hotspots.activate(words_binoculars, false);
+			kernel_flip_hotspot(words_binoculars, false);
 			player.walker_visible = true;
 			player.commands_allowed = true;
 			g_engine->_soundManager->command(22, 0);
@@ -606,7 +606,7 @@ static void room_102_parser() {
 			object_examine(OBJ_BURGER, 10235, 0);
 			kernel_seq_delete(g_sequence_ids[10]);
 			inter_give_to_player(OBJ_BURGER);
-			_scene->_hotspots.activate(words_burger, false);
+			kernel_flip_hotspot(words_burger, false);
 			g_engine->_soundManager->command(22, 0);
 			player.walker_visible = true;
 			player.commands_allowed = true;

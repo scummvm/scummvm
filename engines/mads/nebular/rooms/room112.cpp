@@ -46,8 +46,8 @@ static void room_112_init() {
 	player.commands_allowed = false;
 	player.walker_visible = false;
 
-	_scene->_userInterface.emptyConversationList();
-	_scene->_userInterface.setup(kInputConversation);
+	inter_reset_dialog();
+	kernel_set_interface_mode(kInputConversation);
 
 	kernel_run_animation(kernel_full_name(112, 'X', -1, "", EXT_AA), 70);
 }

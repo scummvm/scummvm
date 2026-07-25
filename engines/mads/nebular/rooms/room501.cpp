@@ -99,9 +99,10 @@ static void room_501_init() {
 	}
 
 	g_sequence_ids[3] = kernel_seq_stamp(g_sprite_ids[3], false, 1);
-	int idx = _scene->_dynamicHotspots.add(words_door, words_walk_through, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
-	local._doorHotspotid = _scene->_dynamicHotspots.setPosition(idx, Common::Point(282, 110), FACING_NORTH);
-	_scene->_dynamicHotspots.setCursor(local._doorHotspotid, CURSOR_GO_UP);
+	int idx = kernel_add_dynamic(words_door, words_walk_through, 0, g_sequence_ids[3], 0, 0, 0, 0);
+	kernel_dynamic_walk(idx, 282, 110, FACING_NORTH);
+	local._doorHotspotid = idx;
+	kernel_dynamic_cursor(local._doorHotspotid, CURSOR_GO_UP);
 	kernel_seq_depth(g_sequence_ids[3], 7);
 	g_sequence_ids[2] = kernel_seq_stamp(g_sprite_ids[2], false, -1);
 	kernel_seq_depth(g_sequence_ids[2], 4);
@@ -161,7 +162,7 @@ static void room_501_daemon() {
 			break;
 
 		case 81:
-			_scene->_dynamicHotspots.remove(local._doorHotspotid);
+			kernel_delete_dynamic(local._doorHotspotid);
 			player_walk(276, 110, FACING_SOUTHWEST);
 			kernel_timing_trigger(120, 82);
 			break;
@@ -170,9 +171,9 @@ static void room_501_daemon() {
 			g_sequence_ids[3] = kernel_seq_backward(g_sprite_ids[3], false, 9, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[3], 7);
 			g_engine->_soundManager->command(12, 0);
-			local._doorHotspotid = _scene->_dynamicHotspots.add(words_door, words_walk_through, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
-			_scene->_dynamicHotspots.setPosition(g_sequence_ids[3], Common::Point(282, 110), FACING_NORTH);
-			_scene->_dynamicHotspots.setCursor(local._doorHotspotid, CURSOR_GO_UP);
+			local._doorHotspotid = kernel_add_dynamic(words_door, words_walk_through, 0, g_sequence_ids[3], 0, 0, 0, 0);
+			kernel_dynamic_walk(g_sequence_ids[3], 282, 110, FACING_NORTH);
+			kernel_dynamic_cursor(local._doorHotspotid, CURSOR_GO_UP);
 			kernel_seq_trigger(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 83);
 			break;
 
@@ -331,7 +332,7 @@ static void room_501_parser() {
 
 		case 4:
 			kernel_seq_delete(g_sequence_ids[3]);
-			_scene->_dynamicHotspots.remove(local._doorHotspotid);
+			kernel_delete_dynamic(local._doorHotspotid);
 			g_sequence_ids[3] = kernel_seq_forward(g_sprite_ids[3], false, 9, 0, 0, 1);
 			kernel_seq_depth(g_sequence_ids[3], 7);
 			g_engine->_soundManager->command(11, 0);
