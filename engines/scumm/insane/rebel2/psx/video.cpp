@@ -26,11 +26,11 @@
 
 namespace Scumm {
 
-static const uint32 kRawSectorSize = 2352;
-static const uint32 kFrameDataOffset = 56;
-static const byte kSectorTypeMask = 0x0e;
-static const byte kDataSectorType = 0x08;
-static const byte kVideoSectorType = 0x02;
+const uint32 kRawSectorSize = 2352;
+const uint32 kFrameDataOffset = 56;
+const byte kSectorTypeMask = 0x0e;
+const byte kDataSectorType = 0x08;
+const byte kVideoSectorType = 0x02;
 
 class RA2PSXVideoReadStream final : public Common::SeekableReadStream {
 public:

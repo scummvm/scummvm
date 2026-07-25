@@ -29,7 +29,7 @@ struct RA2PSXUIGradientStop {
 	RA2PSXUIColor color;
 };
 
-static RA2PSXUIColor interpolateColor(const RA2PSXUIColor &from,
+RA2PSXUIColor interpolateColor(const RA2PSXUIColor &from,
 		const RA2PSXUIColor &to, int value, int maximum) {
 	if (maximum <= 0)
 		return from;
@@ -40,7 +40,7 @@ static RA2PSXUIColor interpolateColor(const RA2PSXUIColor &from,
 	return color;
 }
 
-static RA2PSXUIColor shieldColor(const RA2PSXUIGradientStop *stops, uint count, int index) {
+RA2PSXUIColor shieldColor(const RA2PSXUIGradientStop *stops, uint count, int index) {
 	for (uint i = 1; i < count; ++i) {
 		if (index <= stops[i].index)
 			return interpolateColor(stops[i - 1].color, stops[i].color,
@@ -205,8 +205,8 @@ void drawRA2PSXMenuHints(Graphics::Surface &surface, const RA2PSXTextureSet &tex
 	textures.draw(surface, "SELECT", xOffset + 252, yOffset + 216, Common::Rect(0, 0, 56, 11));
 }
 
-static const char kSmallGlyphs[] = "abcdefghijklmnopqrstuvwxyz0123456789%-:.?+/C ";
-static const byte kSmallWidths[] = {
+const char kSmallGlyphs[] = "abcdefghijklmnopqrstuvwxyz0123456789%-:.?+/C ";
+const byte kSmallWidths[] = {
 	6, 6, 6, 6, 6, 6, 6, 6, 2, 6, 6, 6, 8, 6, 6, 6,
 	6, 6, 6, 6, 6, 6, 8, 6, 7, 6, 6, 4, 6, 6, 6, 6,
 	6, 6, 6, 6, 6, 6, 2, 2, 6, 6, 6, 8, 2
@@ -214,7 +214,7 @@ static const byte kSmallWidths[] = {
 static_assert(ARRAYSIZE(kSmallGlyphs) == ARRAYSIZE(kSmallWidths) + 1,
 		"RA2 PSX glyph widths do not match the font map");
 
-static int findSmallGlyph(char character) {
+int findSmallGlyph(char character) {
 	for (uint i = 0; i < ARRAYSIZE(kSmallWidths); ++i) {
 		if (character == kSmallGlyphs[i])
 			return i;
@@ -274,27 +274,27 @@ struct RA2PSXMovieTextRecord {
 	const char *text;
 };
 
-static const byte kMovieBigAdvances[] = {
+const byte kMovieBigAdvances[] = {
 	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 16, 8, 8, 8, 8,
 	8, 8, 8, 8, 8, 16, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
 	8, 8, 8, 8, 8, 16, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 16,
 	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8
 };
 
-static const byte kMovieBigWidths[] = {
+const byte kMovieBigWidths[] = {
 	6, 6, 6, 6, 6, 6, 6, 6, 2, 6, 6, 6, 10, 6, 6, 6, 6,
 	6, 6, 6, 6, 8, 14, 6, 6, 6, 4, 6, 6, 6, 6, 6, 6, 6,
 	6, 2, 4, 6, 2, 10, 6, 4, 6, 6, 6, 4, 6, 6, 6, 6, 10,
 	6, 6, 6, 8, 2, 6, 4, 6, 6, 6, 6, 6, 6, 6, 6, 8, 4
 };
 
-static const byte kMovieSmallWidths[] = {
+const byte kMovieSmallWidths[] = {
 	6, 6, 6, 6, 6, 6, 6, 6, 2, 6, 6, 6, 8, 6, 6, 6,
 	6, 6, 6, 6, 6, 6, 8, 6, 6, 6, 6, 4, 6, 6, 6, 6,
 	6, 6, 6, 6, 6, 6, 2, 2, 6, 2, 6, 10, 10, 10, 10, 2
 };
 
-static const byte kMovieTinyWidths[] = {
+const byte kMovieTinyWidths[] = {
 	10, 10, 10, 10, 10, 10, 12, 12, 4, 10, 10, 8, 14, 10, 12,
 	10, 12, 10, 10, 12, 12, 12, 14, 10, 12, 10, 8, 8, 8, 8,
 	8, 6, 8, 8, 4, 6, 8, 4, 12, 8, 8, 8, 8, 6, 8, 6, 8, 8,
@@ -303,21 +303,21 @@ static const byte kMovieTinyWidths[] = {
 	6, 6, 6, 6, 8, 6, 4, 6
 };
 
-static const RA2PSXMovieFont kMovieBigFont = {
+const RA2PSXMovieFont kMovieBigFont = {
 	"fNT24b",
 	"ABCDEFGHIJKLMN" "\x01" "OPQRSTUVWXYZ-" "\x01"
 	"abcdefghijklmn," "\x01" "opqrstuvwxyz%." "\x01" "0123456789? ",
 	kMovieBigWidths, kMovieBigAdvances, 0, 16, 16
 };
 
-static const RA2PSXMovieFont kMovieSmallFont = {
+const RA2PSXMovieFont kMovieSmallFont = {
 	"fNT24s",
 	"abcdefghijkl" "\x01" "mnopqrstuvwx" "\x01" "yz0123456789" "\x01"
 	"%-:.? /{}[]|",
 	kMovieSmallWidths, nullptr, 12, 10, 10
 };
 
-static const RA2PSXMovieFont kMovieTinyFont = {
+const RA2PSXMovieFont kMovieTinyFont = {
 	"fNT24t",
 	"ABCDEFGHIJ" "\x01" "KLMNOPQRST" "\x01" "UVWXYZabcd" "\x01"
 	"efghijklmn" "\x01" "opqrstuvwx" "\x01" "yz01234567" "\x01"
@@ -325,7 +325,7 @@ static const RA2PSXMovieFont kMovieTinyFont = {
 	kMovieTinyWidths, nullptr, 16, 16, 17
 };
 
-static const RA2PSXMovieTextRecord kOpeningText[] = {
+const RA2PSXMovieTextRecord kOpeningText[] = {
 	{ 720, 30, 1, 2, 40,   0,  65, "starring" },
 	{ 720, 30, 6, 129, 40, 70,  85, "Jamison Jones" },
 	{ 720, 30, 6, 129, 40, 250, 100, "Julie Eccles" },
@@ -383,12 +383,12 @@ static const RA2PSXMovieTextRecord kOpeningText[] = {
 	{ 1366, 30, 7, 129, 40,  0, 100, "George Lucas" }
 };
 
-static const RA2PSXMovieTextRecord kChapter1Text[] = {
+const RA2PSXMovieTextRecord kChapter1Text[] = {
 	{ 30, 80, 1, 1, 0, 0, 24, "chapter 1" },
 	{ 40, 70, 3, 128, 0, 0, 37, "The Dreighton Triangle" }
 };
 
-static bool findMovieGlyph(const RA2PSXMovieFont &font, char character,
+bool findMovieGlyph(const RA2PSXMovieFont &font, char character,
 		RA2PSXMovieGlyph &glyph) {
 	int metric = 0;
 	int row = 0;
@@ -411,7 +411,7 @@ static bool findMovieGlyph(const RA2PSXMovieFont &font, char character,
 	return false;
 }
 
-static const RA2PSXMovieFont &getMovieFont(byte style) {
+const RA2PSXMovieFont &getMovieFont(byte style) {
 	if (style == 2 || style == 3)
 		return kMovieBigFont;
 	if (style == 6 || style == 7)
@@ -419,7 +419,7 @@ static const RA2PSXMovieFont &getMovieFont(byte style) {
 	return kMovieSmallFont;
 }
 
-static int measureMovieText(const RA2PSXMovieFont &font, const char *text,
+int measureMovieText(const RA2PSXMovieFont &font, const char *text,
 		uint characters, int spacing) {
 	int width = 0;
 	uint drawn = 0;
@@ -449,14 +449,14 @@ void RA2PSXTextureSet::drawHeadline(Graphics::Surface &surface, const char *text
 	}
 }
 
-static int scaleMovieX(int x) {
+int scaleMovieX(int x) {
 	const int remainder = x % 3;
 	if (remainder)
 		x += 3 - remainder;
 	return x * 2 / 3;
 }
 
-static int findMovieFontArchive(const Common::Array<byte> &data) {
+int findMovieFontArchive(const Common::Array<byte> &data) {
 	for (uint offset = 0; offset + 40 <= data.size(); offset += 4) {
 		if (!memcmp(data.data() + offset, "fNT24s", 7) &&
 				!memcmp(data.data() + offset + 16, "fNT24b", 7) &&
@@ -593,8 +593,8 @@ Common::Rect RA2PSXMainMenuUI::itemRect(int item) {
 }
 
 // Row positions from the original widget tables.
-static const int16 kOptionRowY[] = { 70, 85, 100, 115, 130, 145, 160, 190 };
-static const int16 kSoundRowY[] = { 87, 102, 117, 132, 162 };
+const int16 kOptionRowY[] = { 70, 85, 100, 115, 130, 145, 160, 190 };
+const int16 kSoundRowY[] = { 87, 102, 117, 132, 162 };
 
 Common::Rect RA2PSXOptionsUI::mainItemRect(int item) {
 	const int y = kOptionRowY[CLIP<int>(item, 0, ARRAYSIZE(kOptionRowY) - 1)];
@@ -793,7 +793,7 @@ struct RA2PSXChapterEntry {
 	int16 barWidth;
 };
 
-static const RA2PSXChapterEntry kChapters[RA2PSXChapterSelectUI::kChapterCount] = {
+const RA2PSXChapterEntry kChapters[RA2PSXChapterSelectUI::kChapterCount] = {
 	{ "chapter 1:",  142, "the dreighton triangle",       52, 158 },
 	{ "chapter 2:",  110, "the corellia star",           110, 122 },
 	{ "chapter 3:",  140, "mining tunnels",              110, 100 },

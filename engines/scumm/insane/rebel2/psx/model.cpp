@@ -21,14 +21,14 @@
 
 namespace Scumm {
 
-static bool readU16(const Common::Array<byte> &data, uint32 offset, uint16 &value) {
+bool readU16(const Common::Array<byte> &data, uint32 offset, uint16 &value) {
 	if (offset + 2 > data.size())
 		return false;
 	value = READ_LE_UINT16(data.data() + offset);
 	return true;
 }
 
-static bool readU32(const Common::Array<byte> &data, uint32 offset, uint32 &value) {
+bool readU32(const Common::Array<byte> &data, uint32 offset, uint32 &value) {
 	if (offset + 4 > data.size())
 		return false;
 	value = READ_LE_UINT32(data.data() + offset);
@@ -36,7 +36,7 @@ static bool readU32(const Common::Array<byte> &data, uint32 offset, uint32 &valu
 }
 
 // One turn is 4096 PlayStation angle units.
-static const float kRA2PSXAngleScale = 0.0015339807878856412f;
+const float kRA2PSXAngleScale = 0.0015339807878856412f;
 
 void RA2PSXMatrix::setIdentity() {
 	for (uint row = 0; row < 3; ++row) {
@@ -83,7 +83,7 @@ void RA2PSXMatrix::setRotationZ(int angle) {
 	rotation[1][1] = cosine;
 }
 
-static void preMultiply(RA2PSXMatrix &matrix, const RA2PSXMatrix &left) {
+void preMultiply(RA2PSXMatrix &matrix, const RA2PSXMatrix &left) {
 	RA2PSXMatrix result;
 	for (uint row = 0; row < 3; ++row) {
 		for (uint column = 0; column < 3; ++column) {
@@ -486,7 +486,7 @@ void RA2PSXTinyGLRenderer::setFaceState(const RA2PSXModel &model, const RA2PSXFa
 	}
 }
 
-static int getRA2PSXDepthCue(float depth, float focalLength) {
+int getRA2PSXDepthCue(float depth, float focalLength) {
 	if (depth <= 0.0f)
 		return 4096;
 	const int quotient = MIN(0x1ffff, (int)(focalLength * 65536.0f / depth));

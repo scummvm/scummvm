@@ -49,9 +49,9 @@ public:
 
 	Level1Handler(Rebel2PSX &psx, const RA2PSXModel &enemy, const RA2PSXModel &ship,
 			const RA2PSXModel &crosshair, const RA2PSXModel &laser,
-			const RA2PSXLevel1UI &ui, int &score) :
+			const RA2PSXModel &tieLaser, const RA2PSXLevel1UI &ui, int &score) :
 		_psx(psx), _enemy(enemy), _ship(ship), _crosshair(crosshair), _laser(laser),
-		_ui(ui), _score(score), _error(kGameplayError) {
+		_tieLaser(tieLaser), _ui(ui), _score(score), _error(kGameplayError) {
 	}
 
 	bool shouldQuit() const override {
@@ -59,7 +59,8 @@ public:
 	}
 
 	Result playAttempt(int &lives) override {
-		switch (_psx.playLevel1(_enemy, _ship, _crosshair, _laser, _ui, lives, _score)) {
+		switch (_psx.playLevel1(_enemy, _ship, _crosshair, _laser, _tieLaser, _ui,
+				lives, _score)) {
 		case Rebel2PSX::kLevel1Quit:
 			return kQuit;
 		case Rebel2PSX::kLevel1Complete:
@@ -106,6 +107,7 @@ private:
 	const RA2PSXModel &_ship;
 	const RA2PSXModel &_crosshair;
 	const RA2PSXModel &_laser;
+	const RA2PSXModel &_tieLaser;
 	const RA2PSXLevel1UI &_ui;
 	int &_score;
 	Error _error;
@@ -252,7 +254,8 @@ bool Rebel2PSX::loadMovieTextAssets(RA2PSXMovieText &movieText) {
 }
 
 bool Rebel2PSX::loadLevel1Assets(RA2PSXModel &enemy, RA2PSXModel &ship,
-		RA2PSXModel &crosshair, RA2PSXModel &laser, RA2PSXLevel1UI &ui) {
+		RA2PSXModel &crosshair, RA2PSXModel &laser, RA2PSXModel &tieLaser,
+		RA2PSXLevel1UI &ui) {
 	Common::SeekableReadStream *stream = openResource(1);
 	if (!stream)
 		return false;
@@ -266,6 +269,7 @@ bool Rebel2PSX::loadLevel1Assets(RA2PSXModel &enemy, RA2PSXModel &ship,
 	Common::Array<byte> shipData;
 	Common::Array<byte> crosshairData;
 	Common::Array<byte> laserData;
+	Common::Array<byte> tieLaserData;
 	Common::Array<byte> enemyTextureData;
 	Common::Array<byte> shipTextureData;
 	return archive.getMember("fOFS/TieFighter/main", enemyData) && enemy.load(enemyData) &&
@@ -274,6 +278,7 @@ bool Rebel2PSX::loadLevel1Assets(RA2PSXModel &enemy, RA2PSXModel &ship,
 			archive.getMember("tex/BWingCockp", shipTextureData) && ship.loadTextures(shipTextureData) &&
 			archive.getMember("fOFS/CrosshairW", crosshairData) && crosshair.load(crosshairData) &&
 			archive.getMember("fOFS/WingLaser", laserData) && laser.load(laserData) &&
+			archive.getMember("fOFS/TieLaser", tieLaserData) && tieLaser.load(tieLaserData) &&
 			ui.load(archive);
 }
 
@@ -322,8 +327,9 @@ Common::Error Rebel2PSX::runGame() {
 	RA2PSXModel ship;
 	RA2PSXModel crosshair;
 	RA2PSXModel laser;
+	RA2PSXModel tieLaser;
 	RA2PSXLevel1UI ui;
-	if (!loadLevel1Assets(enemy, ship, crosshair, laser, ui))
+	if (!loadLevel1Assets(enemy, ship, crosshair, laser, tieLaser, ui))
 		return Common::Error(Common::kReadingFailed,
 				_("Could not load the PlayStation Level 1 resources"));
 
@@ -337,7 +343,7 @@ Common::Error Rebel2PSX::runGame() {
 
 	int lives = 3;
 	int score = 0;
-	Level1Handler handler(*this, enemy, ship, crosshair, laser, ui, score);
+	Level1Handler handler(*this, enemy, ship, crosshair, laser, tieLaser, ui, score);
 	if (runRebel2Level1(handler, lives) != Rebel2Level1Handler::kError)
 		return Common::kNoError;
 

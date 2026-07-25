@@ -33,9 +33,9 @@
 
 namespace Scumm {
 
-static const int kRebel2GameplayAimCenterX = 160;
-static const int kRebel2GameplayAimCenterY = 100;
-static const uint32 kRebel2GameplayMouseSettleMs = 1000;
+const int kRebel2GameplayAimCenterX = 160;
+const int kRebel2GameplayAimCenterY = 100;
+const uint32 kRebel2GameplayMouseSettleMs = 1000;
 
 struct Rebel2LevelEndParams {
 	int titleStartBeforeEnd;
@@ -46,7 +46,7 @@ struct Rebel2LevelEndParams {
 	int errHigh;
 };
 
-static const Rebel2LevelEndParams kRebel2LevelEndParams[16] = {
+const Rebel2LevelEndParams kRebel2LevelEndParams[16] = {
 	{ 0,   0,  -1,  -1, -1, -1 },
 	{ 120, 10,  96, 100, -1, -1 },
 	{ 120, 10,  80,  94, -1, -1 },
@@ -65,7 +65,7 @@ static const Rebel2LevelEndParams kRebel2LevelEndParams[16] = {
 	{ 100, 10,  60,  68,  1,  3 }
 };
 
-static void purgeRebel2GameplayInputEvents(Common::EventManager *eventMan) {
+void purgeRebel2GameplayInputEvents(Common::EventManager *eventMan) {
 	if (!eventMan)
 		return;
 

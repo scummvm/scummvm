@@ -89,7 +89,7 @@ private:
 
 // A 14 bit bend centred on kNeutralBend, scaled into semitones by the range
 // macro command 0x33 sets.
-static int bendToStep(int bend, int rangeUp, int rangeDown) {
+int bendToStep(int bend, int rangeUp, int rangeDown) {
 	const int offset = CLIP(bend, 0, 0x3fff) - RA2PSXSoundPlayer::kNeutralBend;
 	if (!offset)
 		return 0x1000;
@@ -163,15 +163,15 @@ private:
 	int16 _current[2];
 };
 
-static bool matchesTag(const Common::Array<byte> &data, uint32 offset, const char *tag) {
+bool matchesTag(const Common::Array<byte> &data, uint32 offset, const char *tag) {
 	return offset + 4 <= data.size() && !memcmp(data.data() + offset, tag, 4);
 }
 
-static bool timeReached(uint32 now, uint32 target) {
+bool timeReached(uint32 now, uint32 target) {
 	return (int32)(now - target) >= 0;
 }
 
-static int soundBalance(int pan) {
+int soundBalance(int pan) {
 	// "sound mode: mono" in the options menu collapses the panning.
 	if (ConfMan.hasKey("rebel2_mono") && ConfMan.getBool("rebel2_mono"))
 		return 0;

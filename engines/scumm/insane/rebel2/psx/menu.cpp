@@ -35,7 +35,7 @@
 namespace Scumm {
 
 // The menus run one logic step per vertical blank.
-static const int kMenuFrameRate = 60;
+const int kMenuFrameRate = 60;
 
 // Sound effect ids the menus use.
 enum {
@@ -173,7 +173,7 @@ struct RA2PSXMenuEvents {
 	int mouseY;
 };
 
-static void pollMenuEvents(ScummEngine_v7 *vm, RA2PSXMenuEvents &events) {
+void pollMenuEvents(ScummEngine_v7 *vm, RA2PSXMenuEvents &events) {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
@@ -259,7 +259,7 @@ static void pollMenuEvents(ScummEngine_v7 *vm, RA2PSXMenuEvents &events) {
 	}
 }
 
-static int hitTestMenu(Common::Rect (*itemRect)(int), int count, const Graphics::Surface &surface,
+int hitTestMenu(Common::Rect (*itemRect)(int), int count, const Graphics::Surface &surface,
 		int x, int y) {
 	const int xOffset = (surface.w - 320) / 2;
 	const int yOffset = (surface.h - 240) / 2;

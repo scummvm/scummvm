@@ -315,10 +315,11 @@ private:
 	bool loadGlobalAssets(RA2PSXMainMenuUI &menu);
 	bool loadMovieTextAssets(RA2PSXMovieText &movieText);
 	bool loadLevel1Assets(RA2PSXModel &enemy, RA2PSXModel &ship,
-			RA2PSXModel &crosshair, RA2PSXModel &laser, RA2PSXLevel1UI &ui);
+			RA2PSXModel &crosshair, RA2PSXModel &laser, RA2PSXModel &tieLaser,
+			RA2PSXLevel1UI &ui);
 	Level1Result playLevel1(const RA2PSXModel &enemy, const RA2PSXModel &ship,
 			const RA2PSXModel &crosshair, const RA2PSXModel &laser,
-			const RA2PSXLevel1UI &ui, int lives, int &score);
+			const RA2PSXModel &tieLaser, const RA2PSXLevel1UI &ui, int lives, int &score);
 
 	ScummEngine_v7 *_vm;
 	RA2PSXSoundBank _soundBank;

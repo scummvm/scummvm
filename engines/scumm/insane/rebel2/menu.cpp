@@ -41,7 +41,7 @@
 
 namespace Scumm {
 
-static void setRebel2MixerVolume(ScummEngine_v7 *vm, int volumeLevel) {
+void setRebel2MixerVolume(ScummEngine_v7 *vm, int volumeLevel) {
 	const int mixerVolume = CLIP<int>(volumeLevel * 2, 0, (int)Audio::Mixer::kMaxMixerVolume);
 	vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, mixerVolume);
 	vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, mixerVolume);

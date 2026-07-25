@@ -38,7 +38,7 @@ const int kRA2Handler7DirectInputNumerator = 4;
 const int kRA2Handler7DirectInputDenominator = 5;
 const int kRA2Handler7MouseTargetRangeX = 0xc0;
 
-static bool readLevel2BackgroundChunkHeader(Common::SeekableReadStream &stream, int64 containerEnd, const char *context,
+bool readLevel2BackgroundChunkHeader(Common::SeekableReadStream &stream, int64 containerEnd, const char *context,
 		uint32 &tag, uint32 &chunkSize, int64 &dataEnd, int64 &nextChunkPos) {
 	const int64 headerPos = stream.pos();
 	if (headerPos < 0 || headerPos + 8 > containerEnd)

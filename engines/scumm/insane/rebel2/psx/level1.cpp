@@ -38,12 +38,7 @@
 namespace Scumm {
 
 #ifdef USE_TINYGL
-static const int kLevel1FrameRate = 30;
-
-// The original pans as (x * 640 / z) / 2 + 0x40, saturating before the edges.
-static int getLevel1SoundPan(float screenX) {
-	return CLIP<int>((int)((screenX - 160.0f) * 0.5f) + 64, 0, 127);
-}
+const int kLevel1FrameRate = 30;
 
 enum {
 	kLevel1SfxTieApproachA = 0x19,
@@ -66,43 +61,257 @@ enum {
 	kLevel1MixMaximum = 0x7f
 };
 
-static int approachMix(int current, int target) {
+int approachMix(int current, int target) {
 	if (current < target)
 		return MIN(target, current + kLevel1MixStep);
 	return MAX(target, current - kLevel1MixStep);
 }
 
 // Points per kill and the extra life thresholds, by difficulty.
-static const int kLevel1KillScore[3] = { 80, 100, 150 };
-static const int kLevel1ExtraLife[3][3] = {
+const int kLevel1KillScore[3] = { 80, 100, 150 };
+const int kLevel1ExtraLife[3][3] = {
 	{ 5000, 5000, 10000 },
 	{ 5000, 5000, 30000 },
 	{ 10000, 20000, 30000 }
 };
 
+// The TIEs fly five point Hermite splines in world space; angles run 4096 units to
+// the turn and fractions are 1/4096.
+enum {
+	kLevel1SplinePoints = 5,
+	kLevel1SplineStep = 0x40,
+	kLevel1LeadFrames = 30,
+	kLevel1EnemyCount = 3,
+	kLevel1ShotCount = 8,
+	kLevel1ShieldFull = 0x1000,
+	kLevel1LowShield = 0x501,
+	kLevel1FireFacing = 0xf3c,
+	kLevel1HitRadius = 0xc000
+};
+
+const int kLevel1SplineDepth[kLevel1SplinePoints] = { 17000, 14000, 11000, -4000, -8000 };
+
+// Bolt damage by view then difficulty, and the far heavier damage from a TIE that rams.
+const int kLevel1BoltDamage[2][3] = { { 100, 200, 240 }, { 112, 160, 220 } };
+const int kLevel1RamDamage[3] = { 256, 512, 1024 };
+// Per cent chance that a shot is aimed at the player instead of fired straight ahead.
+const int kLevel1AimChance[2][3] = { { 5, 5, 5 }, { 15, 20, 20 } };
+// A TIE that gets this close without being shot collides with the player.
+const int kLevel1RamRadius[2] = { 200, 220 };
+
+// The original truncates its 1/4096 products toward zero.
+int fixedShift12(int value) {
+	return (value < 0 ? value + 0xfff : value) >> 12;
+}
+
+void normalizeVector12(const int *source, int *result) {
+	const int x = source[0];
+	const int y = source[1];
+	const int z = source[2];
+	const double square = (double)x * x + (double)y * y + (double)z * z;
+	const int length = MAX(1, (int)sqrt(square));
+	result[0] = x * 4096 / length;
+	result[1] = y * 4096 / length;
+	result[2] = z * 4096 / length;
+}
+
+// asin(value / 4096) in the PlayStation's 4096 units to the turn.
+int lookupAsinAngle(int value) {
+	return (int)(asin(CLIP(value, 0, 4096) / 4096.0) * 651.8986469044033 + 0.5);
+}
+
+int signedAsinAngle(int value) {
+	return value < 0 ? -lookupAsinAngle(-value) : lookupAsinAngle(value);
+}
+
+struct RA2PSXLevel1Spline {
+	RA2PSXLevel1Spline() {
+		memset(this, 0, sizeof(*this));
+		segmentCount = kLevel1SplinePoints;
+		step = kLevel1SplineStep;
+	}
+
+	int control[kLevel1SplinePoints][3];
+	int tangentA[3];
+	int tangentB[3];
+	int previous[3];
+	int coefficient[3][4];
+	int position[3];
+	int segment;
+	int segmentCount;
+	int t;
+	int step;
+};
+
+void updateSplineTangents(RA2PSXLevel1Spline &spline, int segment) {
+	for (int axis = 0; axis < 3; ++axis)
+		spline.tangentA[axis] = spline.tangentB[axis];
+
+	if (segment == 0) {
+		for (int axis = 0; axis < 3; ++axis) {
+			spline.tangentB[axis] = spline.control[1][axis] - spline.control[0][axis];
+			spline.previous[axis] = spline.tangentB[axis];
+			spline.tangentA[axis] = spline.control[0][axis];
+		}
+		// The original only overwrites x and y, leaving z at the first control point.
+		spline.tangentA[0] = 1;
+		spline.tangentA[1] = 1;
+	} else if (segment == spline.segmentCount - 1) {
+		for (int axis = 0; axis < 3; ++axis)
+			spline.tangentB[axis] = spline.previous[axis];
+	} else {
+		for (int axis = 0; axis < 3; ++axis) {
+			const int old = spline.previous[axis];
+			spline.previous[axis] = spline.control[segment + 1][axis] -
+					spline.control[segment][axis];
+			spline.tangentB[axis] = (old + spline.previous[axis]) / 2;
+		}
+	}
+}
+
+// Hermite basis, one row per source term and one column per power of t.
+const int kLevel1SplineBasis[4][4] = {
+	{ 2, -3, 0, 1 },
+	{ -2, 3, 0, 0 },
+	{ 1, -2, 1, 0 },
+	{ 1, -1, 0, 0 }
+};
+
+void buildSplineSegmentCoefficients(RA2PSXLevel1Spline &spline, int segment) {
+	if (segment < 1 || segment >= kLevel1SplinePoints)
+		return;
+	for (int axis = 0; axis < 3; ++axis) {
+		const int source[4] = {
+			spline.control[segment - 1][axis], spline.control[segment][axis],
+			spline.tangentA[axis], spline.tangentB[axis]
+		};
+		for (int power = 0; power < 4; ++power) {
+			int value = 0;
+			for (int term = 0; term < 4; ++term)
+				value += source[term] * kLevel1SplineBasis[term][power];
+			spline.coefficient[axis][power] = value;
+		}
+	}
+}
+
+void advanceSplineObject(RA2PSXLevel1Spline &spline) {
+	const int t1 = spline.t;
+	const int t2 = t1 * t1 >> 12;
+	const int t3 = t1 * t2 >> 12;
+	for (int axis = 0; axis < 3; ++axis)
+		spline.position[axis] = (int16)(((spline.coefficient[axis][0] * t3 +
+				spline.coefficient[axis][1] * t2 +
+				spline.coefficient[axis][2] * t1) >> 12) + spline.coefficient[axis][3]);
+
+	spline.t += spline.step;
+	if (spline.t <= 0xfff)
+		return;
+	spline.t -= 0x1000;
+	if (++spline.segment == spline.segmentCount)
+		return;
+	updateSplineTangents(spline, spline.segment);
+	buildSplineSegmentCoefficients(spline, spline.segment + 1);
+}
+
+void randomizeTieSplineControlPoints(RA2PSXLevel1Spline &spline, int mode,
+		int spread, int base, Common::RandomSource &random) {
+	if (mode < 1 || mode > 3)
+		return;
+	const int offset = base / 2;
+	if (mode != 1) {
+		for (int axis = 0; axis < 2; ++axis)
+			spline.control[1][axis] += (int)random.getRandomNumber(spread * 2 - 1) -
+					spread + offset;
+	}
+	if (mode != 2) {
+		for (int axis = 0; axis < 2; ++axis)
+			spline.control[2][axis] += (int)random.getRandomNumber(spread * 2 - 1) -
+					spread + offset;
+	}
+	if (mode == 1)
+		return;
+	for (int axis = 0; axis < 2; ++axis)
+		spline.control[3][axis] += (int)random.getRandomNumber(spread * 2 - 1) - spread + offset;
+}
+
+// Head on attack run: the far and near ends are picked first, the rest strung between them.
+void initTieSplinePatternA(RA2PSXLevel1Spline &spline, Common::RandomSource &random) {
+	spline = RA2PSXLevel1Spline();
+
+	int last = (int)random.getRandomNumber(349) + 500;
+	if (!random.getRandomBit())
+		last = -last;
+	spline.control[4][0] = last;
+	last = (int)random.getRandomNumber(349) + 500;
+	if (!random.getRandomBit())
+		last = -last;
+	spline.control[4][1] = last;
+	spline.control[4][2] = kLevel1SplineDepth[4];
+
+	const int lead = spline.control[4][0] > 0 ? -kLevel1SplineDepth[0] : kLevel1SplineDepth[0];
+	spline.control[0][0] = (int)random.getRandomNumber(179) * lead / 640;
+	spline.control[0][1] = spline.control[4][1] < 1 ? 0 :
+			(int)random.getRandomNumber(139) * -kLevel1SplineDepth[0] / 640;
+	spline.control[0][2] = kLevel1SplineDepth[0];
+
+	int direction[3];
+	for (int axis = 0; axis < 3; ++axis)
+		direction[axis] = spline.control[0][axis] - spline.control[4][axis];
+	normalizeVector12(direction, direction);
+	for (int point = 3; point >= 1; --point) {
+		const int depth = kLevel1SplineDepth[point];
+		spline.control[point][0] = fixedShift12(direction[0] * depth) + spline.control[4][0];
+		spline.control[point][1] = fixedShift12(direction[1] * depth) + spline.control[4][1];
+		spline.control[point][2] = depth;
+	}
+
+	randomizeTieSplineControlPoints(spline, (int)random.getRandomNumber(2),
+			(int)random.getRandomNumber(499) + 1000, 800, random);
+	updateSplineTangents(spline, 0);
+	buildSplineSegmentCoefficients(spline, 1);
+}
+
+// Loose weave: every control point is scattered across the view at its own depth.
+void initTieSplinePatternB(RA2PSXLevel1Spline &spline, Common::RandomSource &random) {
+	spline = RA2PSXLevel1Spline();
+
+	for (int point = 0; point < kLevel1SplinePoints - 1; ++point) {
+		const int depth = kLevel1SplineDepth[point];
+		spline.control[point][2] = depth;
+		spline.control[point][0] = ((int)random.getRandomNumber(259) - 130) * depth / 640;
+		spline.control[point][1] = ((int)random.getRandomNumber(179) - 90) * depth / 640;
+	}
+
+	const int depth = kLevel1SplineDepth[kLevel1SplinePoints - 1];
+	spline.control[4][2] = depth;
+	int offset = (int)random.getRandomNumber(299) + 800;
+	if ((int)random.getRandomNumber(1999) > 1000)
+		offset = -offset;
+	spline.control[4][0] = offset * depth / 640;
+	offset = (int)random.getRandomNumber(299) + 600;
+	if ((int)random.getRandomNumber(1999) > 1000)
+		offset = -offset;
+	spline.control[4][1] = offset * depth / 640;
+
+	spline.control[0][0] += (int)random.getRandomNumber(2999) - 1500;
+	spline.control[0][1] += (int)random.getRandomNumber(1499) - 750;
+	updateSplineTangents(spline, 0);
+	buildSplineSegmentCoefficients(spline, 1);
+}
+
 struct RA2PSXLevel1Enemy {
-	RA2PSXLevel1Enemy() : active(false), pattern(0), age(0), lifetime(0), fireFrame(0),
-			laserFrames(0), startX(0), startY(0), controlX(0), controlY(0), endX(0), endY(0),
-			x(0), y(0), size(0), pitch(0), yaw(0), roll(0) {}
+	RA2PSXLevel1Enemy() : active(false), previousYaw(0), facing(0), fireCountdown(0) {
+		rotation[0] = rotation[1] = rotation[2] = 0;
+	}
 
 	bool active;
-	int pattern;
-	int age;
-	int lifetime;
-	int fireFrame;
-	int laserFrames;
-	float startX;
-	float startY;
-	float controlX;
-	float controlY;
-	float endX;
-	float endY;
-	float x;
-	float y;
-	float size;
-	float pitch;
-	float yaw;
-	float roll;
+	RA2PSXLevel1Spline path;
+	// A copy of the path run 30 frames ahead; the gap gives the heading.
+	RA2PSXLevel1Spline lead;
+	int rotation[3];
+	int previousYaw;
+	int facing;
+	int fireCountdown;
 };
 
 struct RA2PSXLevel1Explosion {
@@ -111,6 +320,18 @@ struct RA2PSXLevel1Explosion {
 	int frames;
 	int x;
 	int y;
+};
+
+struct RA2PSXLevel1TieShot {
+	RA2PSXLevel1TieShot() : active(false), distance(0), length(0) {}
+
+	bool active;
+	int origin[2][3];
+	int direction[2][3];
+	int yaw[2];
+	int pitch[2];
+	int distance;
+	int length;
 };
 
 struct RA2PSXLevel1Shot {
@@ -123,6 +344,10 @@ struct RA2PSXLevel1Shot {
 	float targetX;
 	float targetY;
 	float targetZ;
+	// The line the player aims along, sampled once per logic frame for the hit test.
+	float traceStart[3];
+	float trace[3];
+	float previousTrace[3];
 };
 
 struct RA2PSXLevel1Ship {
@@ -135,62 +360,199 @@ struct RA2PSXLevel1Ship {
 	int velocityY;
 };
 
-static const float kLevel1LaserStart[3][3] = {
+const float kLevel1LaserStart[3][3] = {
 	{ -350.0f, 200.0f, 400.0f },
 	{ 350.0f, 200.0f, 400.0f },
 	{ 0.0f, 500.0f, 400.0f }
 };
 
-static const float kLevel1LaserRoll[3] = { -45.0f, 45.0f, 0.0f };
+const float kLevel1LaserRoll[3] = { -45.0f, 45.0f, 0.0f };
 
-static const float kLevel1ShipLaserStart[3][3] = {
+const float kLevel1ShipLaserStart[3][3] = {
 	{ -93.0f, 11.0f, -139.0f },
 	{ 93.0f, 11.0f, -139.0f },
 	{ 4.0f, 210.0f, -111.0f }
 };
 
-static void updateLevel1Enemy(RA2PSXLevel1Enemy &enemy) {
-	const float t = MIN(1.0f, (float)enemy.age / enemy.lifetime);
-	const float inverse = 1.0f - t;
-	enemy.x = inverse * inverse * enemy.startX + 2.0f * inverse * t * enemy.controlX +
-			t * t * enemy.endX;
-	enemy.y = inverse * inverse * enemy.startY + 2.0f * inverse * t * enemy.controlY +
-			t * t * enemy.endY;
-	enemy.size = 5.0f + 72.0f * t * t;
-	enemy.yaw = (enemy.controlX - enemy.startX) * 0.18f + sinf(enemy.age * 0.09f) * 18.0f;
-	enemy.pitch = -8.0f + sinf(enemy.age * 0.06f) * 10.0f;
-	enemy.roll = (enemy.controlY - enemy.startY) * 0.12f + sinf(enemy.age * 0.12f) * 8.0f;
+// The two cannon mounts, in the TIE's own space.
+const int kLevel1TieMuzzle[2][3] = { { -60, 10, -50 }, { 60, 10, -50 } };
+
+void rotateVector(const RA2PSXMatrix &transform, const int *source, int *result) {
+	for (int row = 0; row < 3; ++row) {
+		float value = 0.0f;
+		for (int column = 0; column < 3; ++column)
+			value += transform.rotation[row][column] * source[column];
+		result[row] = (int)value;
+	}
 }
 
-static void spawnLevel1Enemy(RA2PSXLevel1Enemy &enemy, Common::RandomSource &random) {
+void spawnLevel1Enemy(RA2PSXLevel1Enemy &enemy, Common::RandomSource &random) {
 	enemy = RA2PSXLevel1Enemy();
 	enemy.active = true;
-	enemy.pattern = random.getRandomBit();
-	enemy.lifetime = random.getRandomNumberRng(95, 150);
-	enemy.fireFrame = enemy.lifetime * random.getRandomNumberRng(45, 70) / 100;
-
-	const bool fromLeft = random.getRandomBit();
-	if (enemy.pattern == 0) {
-		enemy.startX = fromLeft ? -24.0f : 344.0f;
-		enemy.startY = (float)random.getRandomNumberRng(25, 175);
-		enemy.controlX = (float)random.getRandomNumberRng(95, 225);
-		enemy.controlY = (float)random.getRandomNumberRng(35, 170);
-		enemy.endX = fromLeft ? (float)random.getRandomNumberRng(210, 390) :
-				(float)random.getRandomNumberRngSigned(-70, 110);
-	} else {
-		enemy.startX = (float)random.getRandomNumberRng(35, 285);
-		enemy.startY = (float)random.getRandomNumberRng(20, 155);
-		enemy.controlX = fromLeft ? (float)random.getRandomNumberRng(180, 310) :
-				(float)random.getRandomNumberRng(10, 140);
-		enemy.controlY = (float)random.getRandomNumberRng(20, 190);
-		enemy.endX = fromLeft ? (float)random.getRandomNumberRngSigned(-80, 80) :
-				(float)random.getRandomNumberRng(240, 400);
-	}
-	enemy.endY = (float)random.getRandomNumberRngSigned(-25, 245);
-	updateLevel1Enemy(enemy);
+	if (random.getRandomNumber(999) < 500)
+		initTieSplinePatternA(enemy.path, random);
+	else
+		initTieSplinePatternB(enemy.path, random);
+	enemy.lead = enemy.path;
+	enemy.lead.t += enemy.path.step * kLevel1LeadFrames;
+	enemy.rotation[1] = 0x800;
+	enemy.previousYaw = 0x800;
+	enemy.fireCountdown = (int)random.getRandomNumber(14) + 8;
 }
 
-static void updateLevel1Aim(int &x, int &y, int &velocityX, int &velocityY,
+// The TIE points down its own path and banks into the turn; facing measures how squarely
+// that path runs at the player, which is what lets it open fire.
+void orientTieAlongSpline(RA2PSXLevel1Enemy &enemy, int playerX, int playerY) {
+	int delta[3];
+	for (int axis = 0; axis < 3; ++axis)
+		delta[axis] = enemy.path.position[axis] - enemy.lead.position[axis];
+
+	int vector[3] = { 0, delta[1], delta[2] };
+	normalizeVector12(vector, vector);
+	enemy.rotation[0] = signedAsinAngle(vector[1]);
+
+	vector[0] = delta[0];
+	vector[1] = 0;
+	vector[2] = delta[2];
+	normalizeVector12(vector, vector);
+	const int yaw = (int16)(-signedAsinAngle(vector[0]) + 0x800);
+	enemy.rotation[2] = (int16)fixedShift12(((yaw - enemy.previousYaw) * 2 +
+			enemy.rotation[2]) * 0xf00);
+	enemy.rotation[1] = yaw;
+	enemy.previousYaw = yaw;
+
+	for (int axis = 0; axis < 3; ++axis)
+		delta[axis] = enemy.lead.position[axis] - enemy.path.position[axis];
+	normalizeVector12(delta, delta);
+	int toPlayer[3] = {
+		playerX - enemy.path.position[0],
+		playerY - enemy.path.position[1],
+		-enemy.path.position[2]
+	};
+	normalizeVector12(toPlayer, toPlayer);
+	enemy.facing = fixedShift12(delta[0] * toPlayer[0]) + fixedShift12(delta[1] * toPlayer[1]) +
+			fixedShift12(delta[2] * toPlayer[2]);
+}
+
+// pan = (x * 640 / z) / 2 + 0x40, which saturates well before the screen edges.
+int getLevel1WorldPan(const int *position) {
+	if (!position[2])
+		return 0x40;
+	return CLIP<int>((position[0] * 640 / position[2]) / 2 + 0x40, 0, 0x7f);
+}
+
+bool spawnLevel1TieShot(RA2PSXLevel1TieShot *shots, const RA2PSXLevel1Enemy &enemy,
+		bool aimed, bool outsideView, const int *shipPosition, Common::RandomSource &random) {
+	int slot = -1;
+	for (int i = 0; i < kLevel1ShotCount; ++i) {
+		if (!shots[i].active) {
+			slot = i;
+			break;
+		}
+	}
+	if (slot < 0)
+		return false;
+
+	RA2PSXLevel1TieShot &shot = shots[slot];
+	shot = RA2PSXLevel1TieShot();
+	shot.active = true;
+	shot.distance = 0x380;
+	shot.length = 0x100;
+
+	RA2PSXMatrix transform;
+	transform.preRotateX(-enemy.rotation[0]);
+	transform.preRotateY(enemy.rotation[1]);
+	transform.preRotateZ(enemy.rotation[2]);
+
+	// Aimed shots converge on the player; in the cockpit that is a point scattered
+	// across the canopy rather than the camera itself.
+	int target[3];
+	if (outsideView) {
+		for (int axis = 0; axis < 3; ++axis)
+			target[axis] = shipPosition[axis];
+	} else {
+		target[0] = (int)random.getRandomNumber(999) - 500;
+		target[1] = (int)random.getRandomNumber(799) - 400;
+		target[2] = 0x280;
+	}
+
+	for (int bolt = 0; bolt < 2; ++bolt) {
+		rotateVector(transform, kLevel1TieMuzzle[bolt], shot.origin[bolt]);
+		for (int axis = 0; axis < 3; ++axis)
+			shot.origin[bolt][axis] += enemy.path.position[axis];
+
+		int *direction = shot.direction[bolt];
+		if (aimed) {
+			for (int axis = 0; axis < 3; ++axis)
+				direction[axis] = enemy.path.position[axis] - target[axis];
+			normalizeVector12(direction, direction);
+		} else {
+			const int forward[3] = { 0, 0, -0x1000 };
+			rotateVector(transform, forward, direction);
+		}
+
+		int vector[3] = { direction[0], 0, direction[2] };
+		normalizeVector12(vector, vector);
+		shot.yaw[bolt] = -signedAsinAngle(vector[0]);
+		vector[0] = 0;
+		vector[1] = direction[1];
+		vector[2] = direction[2];
+		normalizeVector12(vector, vector);
+		shot.pitch[bolt] = signedAsinAngle(vector[1]);
+	}
+	return true;
+}
+
+void getLevel1TieShotPosition(const RA2PSXLevel1TieShot &shot, int bolt, int *position) {
+	for (int axis = 0; axis < 3; ++axis)
+		position[axis] = shot.origin[bolt][axis] - (shot.direction[bolt][axis] * shot.distance >> 12);
+}
+
+// Returns false once the bolt is spent; hit is set only when it reaches the player.
+bool updateLevel1TieShot(RA2PSXLevel1TieShot &shot, bool outsideView,
+		const int *shipPosition, bool &hit) {
+	int position[3];
+	getLevel1TieShotPosition(shot, 1, position);
+	shot.length = MIN(0x1000, shot.length + 0x400);
+	shot.distance += 0x380;
+	hit = false;
+
+	if (!outsideView) {
+		if (position[2] > 0x280)
+			return true;
+		hit = position[0] * position[0] + position[1] * position[1] < 450000;
+		return false;
+	}
+
+	const int dx = position[0] - shipPosition[0];
+	const int dy = position[1] - shipPosition[1];
+	const int dz = position[2] - shipPosition[2];
+	if ((int)sqrt((double)dx * dx + (double)dy * dy + (double)dz * dz) < 500) {
+		hit = true;
+		return false;
+	}
+	return position[2] > 200;
+}
+
+void renderLevel1TieShots(RA2PSXTinyGLRenderer &renderer, const RA2PSXModel &bolt,
+		const RA2PSXLevel1TieShot *shots) {
+	for (int i = 0; i < kLevel1ShotCount; ++i) {
+		if (!shots[i].active)
+			continue;
+		for (int index = 0; index < 2; ++index) {
+			int position[3];
+			getLevel1TieShotPosition(shots[i], index, position);
+			RA2PSXMatrix transform;
+			transform.setScale(0x1000, 0x1000, shots[i].length);
+			transform.preRotateY(shots[i].yaw[index]);
+			transform.preRotateX(shots[i].pitch[index]);
+			transform.setTranslation(position[0], position[1], position[2]);
+			renderer.renderTransformedModel(bolt, transform, false);
+		}
+	}
+}
+
+void updateLevel1Aim(int &x, int &y, int &velocityX, int &velocityY,
 		int &directionX, int &directionY, bool left, bool right, bool up, bool down) {
 	if (left && right)
 		left = right = false;
@@ -240,7 +602,7 @@ static void updateLevel1Aim(int &x, int &y, int &velocityX, int &velocityY,
 	y = CLIP<int>(y + velocityY / 512, 48, 178);
 }
 
-static void updateLevel1Ship(RA2PSXLevel1Ship &ship,
+void updateLevel1Ship(RA2PSXLevel1Ship &ship,
 		bool left, bool right, bool up, bool down) {
 	if (left == right) {
 		ship.velocityX = ship.velocityX * 3 / 4;
@@ -262,17 +624,22 @@ static void updateLevel1Ship(RA2PSXLevel1Ship &ship,
 	ship.y = CLIP<int>(ship.y + ship.velocityY * 10 / 4096, -142, 157);
 }
 
-static void getLevel1ShipOrientation(const RA2PSXLevel1Ship &ship,
+// The nose follows both sticks, as the original's ship does: banking yaws it and
+// climbing pitches it, and the guns fire along that nose.
+void getLevel1ShipOrientation(const RA2PSXLevel1Ship &ship,
 		float &forwardX, float &forwardY, float &forwardZ, float &roll) {
 	const float bank = (ship.velocityX / 16) * 360.0f / 4096.0f;
+	const float climb = (ship.velocityY / 16) * 360.0f / 4096.0f;
 	const float yaw = -bank * 0.5f * 0.017453292519943295f;
-	forwardX = sinf(yaw);
-	forwardY = 0.0f;
-	forwardZ = -cosf(yaw);
+	const float pitch = climb * 0.5f * 0.017453292519943295f;
+	const float pitchCosine = cosf(pitch);
+	forwardX = sinf(yaw) * pitchCosine;
+	forwardY = -sinf(pitch);
+	forwardZ = -cosf(yaw) * pitchCosine;
 	roll = bank;
 }
 
-static void transformLevel1ShipPoint(const RA2PSXLevel1Ship &ship,
+void transformLevel1ShipPoint(const RA2PSXLevel1Ship &ship,
 		float localX, float localY, float localZ,
 		float &worldX, float &worldY, float &worldZ) {
 	float forwardX;
@@ -291,10 +658,17 @@ static void transformLevel1ShipPoint(const RA2PSXLevel1Ship &ship,
 			forwardZ * localZ;
 }
 
-static bool spawnLevel1Shot(RA2PSXLevel1Shot *shots, int aimX, int aimY,
-		const RA2PSXLevel1Ship *ship, int &targetScreenX, int &targetScreenY) {
+void traceLevel1Shot(RA2PSXLevel1Shot &shot) {
+	const float progress = shot.progress / 4096.0f;
+	shot.trace[0] = shot.traceStart[0] + (shot.targetX - shot.traceStart[0]) * progress;
+	shot.trace[1] = shot.traceStart[1] + (shot.targetY - shot.traceStart[1]) * progress;
+	shot.trace[2] = shot.traceStart[2] + (shot.targetZ - shot.traceStart[2]) * progress;
+}
+
+bool spawnLevel1Shot(RA2PSXLevel1Shot *shots, int aimX, int aimY,
+		int centerX, int centerY, int focal, const RA2PSXLevel1Ship *ship) {
 	int slot = -1;
-	for (int i = 0; i < 8; ++i) {
+	for (int i = 0; i < kLevel1ShotCount; ++i) {
 		if (!shots[i].active) {
 			slot = i;
 			break;
@@ -304,17 +678,23 @@ static bool spawnLevel1Shot(RA2PSXLevel1Shot *shots, int aimX, int aimY,
 		return false;
 
 	RA2PSXLevel1Shot &shot = shots[slot];
+	shot = RA2PSXLevel1Shot();
 	shot.active = true;
-	shot.progress = 400;
+	// The original launches from the muzzle in the cockpit and only skips ahead outside.
+	shot.progress = ship ? 400 : 0;
 	if (!ship) {
 		for (int i = 0; i < 3; ++i) {
 			for (int axis = 0; axis < 3; ++axis)
 				shot.start[i][axis] = kLevel1LaserStart[i][axis];
 			shot.roll[i] = kLevel1LaserRoll[i];
 		}
-		shot.targetX = (aimX - 160) * 18000.0f / 640.0f;
-		shot.targetY = (aimY - 120) * 18000.0f / 640.0f;
+		shot.targetX = (float)(aimX - centerX) * 18000.0f / focal;
+		shot.targetY = (float)(aimY - centerY) * 18000.0f / focal;
 		shot.targetZ = 18000.0f;
+		// Midway between the two cannon the original alternates between.
+		shot.traceStart[0] = 0.0f;
+		shot.traceStart[1] = 50.0f;
+		shot.traceStart[2] = 400.0f;
 	} else {
 		float forwardX;
 		float forwardY;
@@ -328,30 +708,50 @@ static bool spawnLevel1Shot(RA2PSXLevel1Shot *shots, int aimX, int aimY,
 			shot.roll[i] = kLevel1LaserRoll[i] + shipRoll;
 		}
 		transformLevel1ShipPoint(*ship, 0.0f, -70.0f, -100.0f,
-				shot.targetX, shot.targetY, shot.targetZ);
+				shot.traceStart[0], shot.traceStart[1], shot.traceStart[2]);
+		shot.targetX = shot.traceStart[0];
+		shot.targetY = shot.traceStart[1];
+		shot.targetZ = shot.traceStart[2];
 		shot.targetX -= forwardX * 18000.0f;
 		shot.targetY -= forwardY * 18000.0f;
 		shot.targetZ -= forwardZ * 18000.0f;
 	}
 
-	targetScreenX = 160 + (int)(shot.targetX * 640.0f / shot.targetZ);
-	targetScreenY = 120 + (int)(shot.targetY * 640.0f / shot.targetZ);
+	traceLevel1Shot(shot);
+	for (int axis = 0; axis < 3; ++axis)
+		shot.previousTrace[axis] = shot.trace[axis];
 	return true;
 }
 
-static void updateLevel1Shots(RA2PSXLevel1Shot *shots) {
-	for (int i = 0; i < 8; ++i) {
+void updateLevel1Shots(RA2PSXLevel1Shot *shots) {
+	for (int i = 0; i < kLevel1ShotCount; ++i) {
 		if (!shots[i].active)
 			continue;
+		for (int axis = 0; axis < 3; ++axis)
+			shots[i].previousTrace[axis] = shots[i].trace[axis];
 		shots[i].progress += 200;
 		if (shots[i].progress > 4399)
 			shots[i].active = false;
+		else
+			traceLevel1Shot(shots[i]);
 	}
 }
 
-static void renderLevel1Shots(RA2PSXTinyGLRenderer &renderer, const RA2PSXModel &laser,
+// ra2FindPlayerShotHit: once the bolt's midpoint is past the TIE it keeps testing every
+// frame, so aiming inside a TIE still scores as the bolt sweeps outwards.
+bool level1ShotHitsEnemy(const RA2PSXLevel1Shot &shot, const int *position) {
+	const float toPrevious = position[2] - shot.previousTrace[2];
+	const float toCurrent = position[2] - shot.trace[2];
+	if (toPrevious * toPrevious >= toCurrent * toCurrent)
+		return false;
+	const float dx = shot.trace[0] - position[0];
+	const float dy = shot.trace[1] - position[1];
+	return dx * dx + dy * dy <= (float)kLevel1HitRadius;
+}
+
+void renderLevel1Shots(RA2PSXTinyGLRenderer &renderer, const RA2PSXModel &laser,
 		const RA2PSXLevel1Shot *shots) {
-	for (int shotIndex = 0; shotIndex < 8; ++shotIndex) {
+	for (int shotIndex = 0; shotIndex < kLevel1ShotCount; ++shotIndex) {
 		const RA2PSXLevel1Shot &shot = shots[shotIndex];
 		if (!shot.active || shot.progress >= 4000)
 			continue;
@@ -370,18 +770,9 @@ static void renderLevel1Shots(RA2PSXTinyGLRenderer &renderer, const RA2PSXModel 
 	}
 }
 
-static void drawLevel1Effects(Graphics::Surface &surface, const RA2PSXLevel1UI &ui,
-		const RA2PSXLevel1Enemy *enemies, const RA2PSXLevel1Explosion *explosions,
-		int laserTargetX, int laserTargetY) {
-	const uint32 green = surface.format.RGBToColor(64, 255, 96);
-
-	for (int i = 0; i < 3; ++i) {
-		if (enemies[i].active && enemies[i].laserFrames > 0) {
-			surface.drawLine((int)enemies[i].x - 2, (int)enemies[i].y,
-					laserTargetX - 15, laserTargetY, green);
-			surface.drawLine((int)enemies[i].x + 2, (int)enemies[i].y,
-					laserTargetX + 15, laserTargetY, green);
-		}
+void drawLevel1Effects(Graphics::Surface &surface, const RA2PSXLevel1UI &ui,
+		const RA2PSXLevel1Explosion *explosions) {
+	for (int i = 0; i < kLevel1EnemyCount; ++i) {
 		if (explosions[i].frames > 0)
 			ui.drawExplosion(surface, explosions[i].x, explosions[i].y,
 					10 - explosions[i].frames);
@@ -391,12 +782,14 @@ static void drawLevel1Effects(Graphics::Surface &surface, const RA2PSXLevel1UI &
 
 Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 		const RA2PSXModel &shipModel, const RA2PSXModel &crosshair,
-		const RA2PSXModel &laser, const RA2PSXLevel1UI &ui, int lives, int &score) {
+		const RA2PSXModel &laser, const RA2PSXModel &tieLaser,
+		const RA2PSXLevel1UI &ui, int lives, int &score) {
 #ifndef USE_TINYGL
 	(void)enemyModel;
 	(void)shipModel;
 	(void)crosshair;
 	(void)laser;
+	(void)tieLaser;
 	(void)ui;
 	(void)lives;
 	(void)score;
@@ -418,12 +811,18 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 		return kLevel1Error;
 	}
 
-	RA2PSXLevel1Enemy enemies[3];
-	RA2PSXLevel1Explosion explosions[3];
-	RA2PSXLevel1Shot shots[8];
+	// The renderer's own projection, so aiming and the world agree.
+	const int centerX = _vm->_screenWidth / 2;
+	const int centerY = _vm->_screenHeight / 2;
+	const int focal = _vm->_screenWidth * 2;
+
+	RA2PSXLevel1Enemy enemies[kLevel1EnemyCount];
+	RA2PSXLevel1Explosion explosions[kLevel1EnemyCount];
+	RA2PSXLevel1Shot shots[kLevel1ShotCount];
+	RA2PSXLevel1TieShot tieShots[kLevel1ShotCount];
 	RA2PSXLevel1Ship ship;
 	RA2PSXSoundPlayer soundPlayer(_vm, _soundBank);
-	RA2PSXSoundPlayer::SoundId approachSounds[3] = {};
+	RA2PSXSoundPlayer::SoundId approachSounds[kLevel1EnemyCount] = {};
 	// A hard left/right pair for the cockpit and a centred one for outside,
 	// cross-faded as the view changes.
 	const RA2PSXSoundPlayer::SoundId engineLeft =
@@ -444,7 +843,7 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 	int aimVelocityY = 0;
 	int aimDirectionX = 0;
 	int aimDirectionY = 0;
-	int shield = 100;
+	int shield = kLevel1ShieldFull;
 	int spawnDelay = 0;
 	int spawnRange = 80;
 	int spawnBase = 60;
@@ -679,7 +1078,7 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 			}
 
 			// Started once, then left running, as in the original.
-			if (shield <= 31 && lowShieldAlarm == RA2PSXSoundPlayer::kInvalidSoundId)
+			if (shield < kLevel1LowShield && lowShieldAlarm == RA2PSXSoundPlayer::kInvalidSoundId)
 				lowShieldAlarm = soundPlayer.play(kLevel1SfxLowShield, 0x50, 0x40);
 
 			if (logicFrame >= nextSpawnAdjustment) {
@@ -688,58 +1087,133 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 				spawnBase = MAX(20, spawnBase - 1);
 			}
 
+			const int view = thirdPersonView ? 1 : 0;
+			const int shipPosition[3] = { ship.x, ship.y, ship.z };
+			// The cockpit aims from the camera, so the fire gate uses the origin there.
+			const int playerX = thirdPersonView ? ship.x : 0;
+			const int playerY = thirdPersonView ? ship.y : 0;
+
 			int activeEnemies = 0;
-			for (int i = 0; i < 3; ++i)
+			for (int i = 0; i < kLevel1EnemyCount; ++i)
 				activeEnemies += enemies[i].active ? 1 : 0;
 			--spawnDelay;
-			if (videoFrame < 1599 && activeEnemies < 3 && spawnDelay <= 0) {
-				int spawnedEnemy = -1;
-				for (int i = 0; i < 3; ++i) {
+			if (videoFrame < 1599 && activeEnemies < kLevel1EnemyCount && spawnDelay <= 0) {
+				for (int i = 0; i < kLevel1EnemyCount; ++i) {
 					if (!enemies[i].active) {
 						spawnLevel1Enemy(enemies[i], _vm->_rnd);
-						spawnedEnemy = i;
 						break;
 					}
-				}
-				if (spawnedEnemy >= 0) {
-					const uint16 sfx = _vm->_rnd.getRandomNumber(999) < 800 ?
-							kLevel1SfxTieApproachA : kLevel1SfxTieApproachB;
-					const int pitch = 0x1c18 + _vm->_rnd.getRandomNumber(1999);
-					approachSounds[spawnedEnemy] = soundPlayer.play(sfx, 0x5e, 0x40, pitch);
 				}
 				spawnDelay = spawnBase + _vm->_rnd.getRandomNumber(spawnRange - 1);
 			}
 
 			updateLevel1Shots(shots);
-			for (int i = 0; i < 3; ++i) {
+			for (int i = 0; i < kLevel1ShotCount; ++i) {
+				if (!tieShots[i].active)
+					continue;
+				bool hit = false;
+				if (!updateLevel1TieShot(tieShots[i], thirdPersonView, shipPosition, hit))
+					tieShots[i].active = false;
+				if (hit) {
+					shield = MAX(0, shield - kLevel1BoltDamage[view][difficulty]);
+					soundPlayer.play(kLevel1SfxPlayerHit, 0x7f, 0x40);
+				}
+			}
+
+			for (int i = 0; i < kLevel1EnemyCount; ++i) {
 				if (explosions[i].frames > 0)
 					--explosions[i].frames;
 				if (!enemies[i].active)
 					continue;
 
-				if (enemies[i].laserFrames > 0)
-					--enemies[i].laserFrames;
-				++enemies[i].age;
-				updateLevel1Enemy(enemies[i]);
-				const int soundPan = getLevel1SoundPan(enemies[i].x);
-				soundPlayer.setPan(approachSounds[i], soundPan);
-				if (enemies[i].age == enemies[i].fireFrame) {
-					enemies[i].laserFrames = 4;
-					soundPlayer.play(kLevel1SfxTieFire, 0x4e, soundPan);
-					if (_vm->_rnd.getRandomNumber(99) < 38) {
-						shield = MAX(0, shield - (int)_vm->_rnd.getRandomNumberRng(6, 10));
-						soundPlayer.play(kLevel1SfxPlayerHit, 0x7f, 0x40);
+				RA2PSXLevel1Enemy &enemy = enemies[i];
+				advanceSplineObject(enemy.lead);
+				advanceSplineObject(enemy.path);
+				orientTieAlongSpline(enemy, playerX, playerY);
+
+				const int *position = enemy.path.position;
+				const int soundPan = getLevel1WorldPan(position);
+				bool destroyed = false;
+
+				// Close in, a TIE that has not been shot down collides with the player.
+				if (position[2] <= 1499) {
+					bool rammed;
+					if (thirdPersonView) {
+						const int dx = position[0] - ship.x;
+						const int dy = position[1] - ship.y;
+						const int dz = position[2] - ship.z;
+						rammed = (int)sqrt((double)dx * dx + (double)dy * dy +
+								(double)dz * dz) < kLevel1RamRadius[1];
+					} else {
+						rammed = (int)sqrt((double)position[0] * position[0] +
+								(double)position[1] * position[1]) < kLevel1RamRadius[0];
+					}
+					if (rammed) {
+						shield = MAX(0, shield - kLevel1RamDamage[difficulty]);
+						destroyed = true;
 					}
 				}
-				if (enemies[i].age >= enemies[i].lifetime) {
+
+				if (!destroyed && position[2] < 0) {
+					soundPlayer.stop(approachSounds[i]);
+					approachSounds[i] = RA2PSXSoundPlayer::kInvalidSoundId;
+					enemy.active = false;
+					continue;
+				}
+
+				if (!destroyed) {
+					if (position[2] < 10000 &&
+							approachSounds[i] == RA2PSXSoundPlayer::kInvalidSoundId) {
+						const uint16 sfx = _vm->_rnd.getRandomNumber(999) < 800 ?
+								kLevel1SfxTieApproachA : kLevel1SfxTieApproachB;
+						const int pitch = 0x1c18 + _vm->_rnd.getRandomNumber(1999);
+						approachSounds[i] = soundPlayer.play(sfx, 0x5e, 0x40, pitch);
+					}
+					soundPlayer.setPan(approachSounds[i], soundPan);
+
+					for (int shotIndex = 0; shotIndex < kLevel1ShotCount && !destroyed; ++shotIndex) {
+						if (shots[shotIndex].active &&
+								level1ShotHitsEnemy(shots[shotIndex], position)) {
+							shots[shotIndex].active = false;
+							destroyed = true;
+							score = MIN(9999999, score + kLevel1KillScore[difficulty]);
+							if (score >= nextExtraLife) {
+								// The original also awards a life; the shared runner owns it.
+								soundPlayer.play(kLevel1SfxExtraLife, 0x7f, 0x40);
+								extraLifeStage = MIN(extraLifeStage + 1, 2);
+								nextExtraLife += kLevel1ExtraLife[difficulty][extraLifeStage];
+							}
+						}
+					}
+				}
+
+				// A TIE only shoots while it is still out at range and running square at
+				// the player; most shots are sprayed ahead rather than aimed.
+				if (!destroyed && position[2] < 16000 && --enemy.fireCountdown < 0 &&
+						enemy.facing >= kLevel1FireFacing && position[2] >= 2000) {
+					enemy.fireCountdown = (int)_vm->_rnd.getRandomNumber(44) + 8;
+					const bool aimed = (int)_vm->_rnd.getRandomNumber(99) <
+							kLevel1AimChance[view][difficulty];
+					if (spawnLevel1TieShot(tieShots, enemy, aimed, thirdPersonView,
+							shipPosition, _vm->_rnd))
+						soundPlayer.play(kLevel1SfxTieFire, 0x4e, soundPan);
+				}
+
+				if (destroyed) {
 					const int pitch = _vm->_rnd.getRandomNumber(0x3fff);
 					soundPlayer.play(kLevel1SfxTieExplode, 0x5a, soundPan, pitch);
 					soundPlayer.stop(approachSounds[i]);
 					approachSounds[i] = RA2PSXSoundPlayer::kInvalidSoundId;
-					enemies[i].active = false;
-					if (_vm->_rnd.getRandomNumber(99) < 18) {
-						shield = MAX(0, shield - 12);
-						soundPlayer.play(kLevel1SfxPlayerHit, 0x7f, 0x40);
+					enemy.active = false;
+					for (int slot = 0; slot < kLevel1EnemyCount; ++slot) {
+						if (explosions[slot].frames == 0) {
+							explosions[slot].frames = 10;
+							explosions[slot].x = centerX +
+									position[0] * focal / MAX(1, position[2]);
+							explosions[slot].y = centerY +
+									position[1] * focal / MAX(1, position[2]);
+							break;
+						}
 					}
 				}
 			}
@@ -750,51 +1224,9 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 			fireWasPressed = heldFire;
 			const bool shootRequested = fireRequested || triggerShot;
 			fireRequested = false;
-			if (shootRequested) {
-				int shotTargetX;
-				int shotTargetY;
-				if (!spawnLevel1Shot(shots, aimX, aimY,
-						thirdPersonView ? &ship : nullptr, shotTargetX, shotTargetY))
-					continue;
+			if (shootRequested && spawnLevel1Shot(shots, aimX, aimY, centerX, centerY, focal,
+					thirdPersonView ? &ship : nullptr))
 				soundPlayer.play(kLevel1SfxPlayerFire, 0x3f, 0x40);
-				int hitEnemy = -1;
-				float hitDistance = 1000000.0f;
-				for (int i = 0; i < 3; ++i) {
-					if (!enemies[i].active)
-						continue;
-					const float dx = enemies[i].x - shotTargetX;
-					const float dy = enemies[i].y - shotTargetY;
-					const float distance = dx * dx + dy * dy;
-					const float radius = MAX(10.0f, enemies[i].size * 0.72f);
-					if (distance <= radius * radius && distance < hitDistance) {
-						hitEnemy = i;
-						hitDistance = distance;
-					}
-				}
-				if (hitEnemy >= 0) {
-					const int soundPan = getLevel1SoundPan(enemies[hitEnemy].x);
-					const int pitch = _vm->_rnd.getRandomNumber(0x3fff);
-					soundPlayer.play(kLevel1SfxTieExplode, 0x5a, soundPan, pitch);
-					soundPlayer.stop(approachSounds[hitEnemy]);
-					approachSounds[hitEnemy] = RA2PSXSoundPlayer::kInvalidSoundId;
-					enemies[hitEnemy].active = false;
-					score = MIN(9999999, score + kLevel1KillScore[difficulty]);
-					if (score >= nextExtraLife) {
-						// The original also awards a life; the shared runner owns it.
-						soundPlayer.play(kLevel1SfxExtraLife, 0x7f, 0x40);
-						extraLifeStage = MIN(extraLifeStage + 1, 2);
-						nextExtraLife += kLevel1ExtraLife[difficulty][extraLifeStage];
-					}
-					for (int i = 0; i < 3; ++i) {
-						if (explosions[i].frames == 0) {
-							explosions[i].frames = 10;
-							explosions[i].x = (int)enemies[hitEnemy].x;
-							explosions[i].y = (int)enemies[hitEnemy].y;
-							break;
-						}
-					}
-				}
-			}
 		}
 
 		if (shield <= 0) {
@@ -804,11 +1236,28 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 
 		if (background && redraw) {
 			renderer.beginFrame(*background);
-			for (int i = 0; i < 3; ++i) {
-				if (enemies[i].active)
-					renderer.renderModel(enemyModel, enemies[i].x, enemies[i].y, enemies[i].size,
-							enemies[i].pitch, enemies[i].yaw, enemies[i].roll);
+			// Everything shares one painter's pass, farthest first, as the original's
+			// ordering table does.
+			int order[kLevel1EnemyCount] = { 0, 1, 2 };
+			for (int i = 0; i < kLevel1EnemyCount; ++i) {
+				for (int j = i + 1; j < kLevel1EnemyCount; ++j) {
+					if (enemies[order[j]].path.position[2] > enemies[order[i]].path.position[2])
+						SWAP(order[i], order[j]);
+				}
 			}
+			for (int i = 0; i < kLevel1EnemyCount; ++i) {
+				const RA2PSXLevel1Enemy &enemy = enemies[order[i]];
+				if (!enemy.active)
+					continue;
+				RA2PSXMatrix transform;
+				transform.setRotationZ(enemy.rotation[2]);
+				transform.preRotateY(enemy.rotation[1]);
+				transform.preRotateX(enemy.rotation[0]);
+				transform.setTranslation(enemy.path.position[0], enemy.path.position[1],
+						enemy.path.position[2]);
+				renderer.renderTransformedModel(enemyModel, transform, false);
+			}
+			renderLevel1TieShots(renderer, tieLaser, tieShots);
 			renderLevel1Shots(renderer, laser, shots);
 			if (thirdPersonView) {
 				float forwardX;
@@ -824,12 +1273,10 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 			}
 			Graphics::Surface output;
 			renderer.finishFrame(output);
-			const int laserTargetX = thirdPersonView ? 160 + ship.x * 640 / ship.z : 160;
-			const int laserTargetY = thirdPersonView ? 120 + ship.y * 640 / ship.z : output.h - 1;
-			drawLevel1Effects(output, ui, enemies, explosions, laserTargetX, laserTargetY);
+			drawLevel1Effects(output, ui, explosions);
 			if (!thirdPersonView)
 				ui.drawCockpit(output);
-			ui.drawHUD(output, score, lives, shield, logicFrame);
+			ui.drawHUD(output, score, lives, shield * 100 / kLevel1ShieldFull, logicFrame);
 			g_system->copyRectToScreen(output.getPixels(), output.pitch, 0, 0, output.w, output.h);
 			g_system->updateScreen();
 		}
