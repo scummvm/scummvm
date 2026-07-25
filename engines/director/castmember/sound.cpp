@@ -300,6 +300,11 @@ void SoundCastMember::setField(int field, const Datum &d) {
 	CastMember::setField(field, d);
 }
 
+bool SoundCastMember::canWriteCastData() {
+	// D5-D6 legitimately have no 'CASt' data (it lives in 'snd '/'sndH')
+	return _cast->_version >= kFileVer400 && _cast->_version < kFileVer700;
+}
+
 // Similar to PaletteCastMember, SoundCastMember has no data in the 'CASt' resource or is ignored
 // This is the data in 'CASt' resource
 uint32 SoundCastMember::getCastDataSize() {
