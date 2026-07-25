@@ -140,6 +140,12 @@ private:
 	int16 _rightCurlyBracketOffset          = -1;
 	int16 _euroOffset                       = -1;
 
+	// Specific offsets in French variant of nancy12
+	int16 _uppercaseCWithCedillaOffset		= -1;
+	int16 _uWithCircumflexOffset			= -1;
+	int16 _oeLigatureOffset					= -1;
+	int16 _iWithDiaeresisOffset				= -1;
+
 	Common::Array<Common::Rect> _characterRects;
 
 	Graphics::ManagedSurface _image;

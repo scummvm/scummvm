@@ -95,9 +95,15 @@ void Font::read(Common::SeekableReadStream &stream) {
 			_aWithCircumflexOffset			= stream.readUint16LE();
 			_iWithCircumflexOffset			= stream.readUint16LE();
 			_uWithGraveOffset 				= stream.readUint16LE();
-			_uppercaseAWithDiaeresisOffset	= stream.readUint16LE();
+			if (g_nancy->getGameLanguage() == Common::FR_FRA)
+				_uppercaseCWithCedillaOffset = stream.readUint16LE();
+			else
+				_uppercaseAWithDiaeresisOffset = stream.readUint16LE();
 			_aWithDiaeresisOffset			= stream.readUint16LE();
-			_uppercaseOWithDiaeresisOffset	= stream.readUint16LE();
+			if (g_nancy->getGameLanguage() == Common::FR_FRA)
+				_uWithCircumflexOffset		= stream.readUint16LE();
+			else
+				_uppercaseOWithDiaeresisOffset = stream.readUint16LE();
 			_oWithDiaeresisOffset			= stream.readUint16LE();
 			_uppercaseUWithDiaeresisOffset	= stream.readUint16LE();
 			_uWithDiaeresisOffset			= stream.readUint16LE();
@@ -117,8 +123,13 @@ void Font::read(Common::SeekableReadStream &stream) {
 
 		if (g_nancy->getGameType() >= kGameTypeNancy10) {
 			// Nancy10 added even more characters to its fonts
-			_uppercaseAWithDotOffset        = stream.readUint16LE();
-			_aWithDotOffset                 = stream.readUint16LE();
+			if (g_nancy->getGameLanguage() == Common::FR_FRA) {
+				_oeLigatureOffset			= stream.readUint16LE();
+				_iWithDiaeresisOffset		= stream.readUint16LE();
+			} else {
+				_uppercaseAWithDotOffset	= stream.readUint16LE();
+				_aWithDotOffset				= stream.readUint16LE();
+			}
 			_underscoreOffset               = stream.readUint16LE();
 			_hashOffset                     = stream.readUint16LE();
 			_dollarOffset                   = stream.readUint16LE();
@@ -359,9 +370,19 @@ Common::Rect Font::getCharacterSourceRect(char chr) const {
 					offset = -1;
 				}
 				break;
+			case '\xc7':
+				offset = _uppercaseCWithCedillaOffset;
+				break;
+			case '\xfb':
+				offset = _uWithCircumflexOffset;
+				break;
+			case '\xef':
+				offset = _iWithDiaeresisOffset;
+				break;
 			// TODO: _uppercaseAWithDotOffset
 			// TODO: _aWithDotOffset
 			// TODO: _euroOffset
+			// TODO: _oeLigatureOffset
 			default:
 				offset = -1;
 				break;
