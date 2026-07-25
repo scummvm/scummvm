@@ -106,8 +106,8 @@ bool BaseSurfaceOpenGL3D::display(int x, int y, Common::Rect32 rect, Graphics::T
 bool BaseSurfaceOpenGL3D::displayTransRotate(int x, int y, float rotate, int32 hotspotX, int32 hotspotY, Common::Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	prepareToDraw();
 
-	x -= hotspotX;
-	y -= hotspotY;
+	x -= (hotspotX * (zoomX / 100.0f));
+	y -= (hotspotY * (zoomY / 100.0f));
 
 	DXVector2 position(x, y);
 	DXVector2 rotation;
