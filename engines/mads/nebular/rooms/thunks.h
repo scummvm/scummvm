@@ -122,14 +122,6 @@ enum StoryMode {
 #define kernel_animation_next_clock     kernel_anim[0].next_clock
 #endif
 
-struct Globals {
-	int16 _spriteIndexes[30];
-	int16 _sequenceIndexes[30];
-
-	int16 &operator[](int idx);
-};
-extern Globals _globals;
-
 struct Scene {
 	Scene *operator->() {
 		return this;

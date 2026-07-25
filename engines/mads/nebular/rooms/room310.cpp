@@ -40,16 +40,16 @@ static Scratch local;
 
 
 static void room_310_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*SC003x0");
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*SC003x1");
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*SC003x2");
+	g_sprite_ids[1] = _scene->_sprites.addSprites("*SC003x0");
+	g_sprite_ids[0] = _scene->_sprites.addSprites("*SC003x1");
+	g_sprite_ids[2] = _scene->_sprites.addSprites("*SC003x2");
 
 	init_forcefield(&local._forcefield, true);
 
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_full_name(307, 'X', 0, "", EXT_SS));
-	_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
-	_scene->_sequences.setPosition(_globals._sequenceIndexes[3], Common::Point(127, 78));
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 15);
+	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_full_name(307, 'X', 0, "", EXT_SS));
+	g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
+	_scene->_sequences.setPosition(g_sequence_ids[3], Common::Point(127, 78));
+	_scene->_sequences.setDepth(g_sequence_ids[3], 15);
 
 	player.walker_visible = false;
 	player.commands_allowed = false;
@@ -59,7 +59,7 @@ static void room_310_init() {
 }
 
 static void room_310_daemon() {
-	handle_forcefield(&local._forcefield, &_globals._spriteIndexes[0]);
+	handle_forcefield(&local._forcefield, &g_sprite_ids[0]);
 
 	if (kernel.trigger == 70)
 		_scene->_nextSceneId = 309;

@@ -87,7 +87,7 @@ static void room_407_pre_parser() {
 	}
 
 	if (player.need_to_walk && local._fromNorth) {
-		if (_globals[kSexOfRex] == REX_MALE) {
+		if (global[kSexOfRex] == REX_MALE) {
 			local._dest_x = 171;
 			local._dest_y = 95;
 		} else {
@@ -100,25 +100,25 @@ static void room_407_pre_parser() {
 
 static void room_407_parser() {
 	if (player.x == local._dest_x && player.y == local._dest_y && local._fromNorth) {
-		if (_globals[kSexOfRex] == REX_MALE) {
+		if (global[kSexOfRex] == REX_MALE) {
 			kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 			player.commands_allowed = false;
 			player.walker_visible = false;
 			g_engine->_soundManager->command(21, 0);
 			_scene->loadAnimation(kernel_name('s', 1), 70);
-			_globals[kHasBeenScanned] = true;
+			global[kHasBeenScanned] = true;
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, quote_string(kernel.quotes, 592));
 			g_engine->_soundManager->command(22, 0);
 		}
 
-		if (_globals[kSexOfRex] == REX_FEMALE) {
+		if (global[kSexOfRex] == REX_FEMALE) {
 			kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 			player.commands_allowed = false;
 			player.walker_visible = false;
 			g_engine->_soundManager->command(21, 0);
 			_scene->loadAnimation(kernel_name('s', 2), 80);
 			g_engine->_soundManager->command(23, 0);
-			_globals[kHasBeenScanned] = true;
+			global[kHasBeenScanned] = true;
 		}
 	}
 
@@ -127,7 +127,7 @@ static void room_407_parser() {
 	else if (player_said_2(walk_down, corridor_to_north))
 		_scene->_nextSceneId = 318;
 	else if (player_said_2(look, scanner)) {
-		if (_globals[kHasBeenScanned])
+		if (global[kHasBeenScanned])
 			text_show(40711);
 		else
 			text_show(40710);

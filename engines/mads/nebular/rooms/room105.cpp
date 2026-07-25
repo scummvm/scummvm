@@ -39,15 +39,15 @@ static Scratch local;
 
 
 static void room_105_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('m', 1));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('f', 4));
-	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 8, 0, 0, 0);
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('m', 1));
+	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('f', 4));
+	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 8, 0, 0, 0);
 
-	if (_globals[kFishIn105]) {
-		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6, 0, 0, 0);
-		_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(48, 144));
+	if (global[kFishIn105]) {
+		g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 6, 0, 0, 0);
+		_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(48, 144));
 
-		int idx = _scene->_dynamicHotspots.add(words_dead_fish, words_swim_to, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_dead_fish, words_swim_to, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(56, 141), FACING_NORTHWEST);
 	}
 
@@ -76,38 +76,38 @@ static void room_105_daemon() {
 			player.commands_allowed = false;
 			player.walker_visible = false;
 
-			_globals._spriteIndexes[0] = _scene->_sprites.addSprites(kernel_name('m', 0));
-			_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('m', 2));
-			_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('m', 3));
+			g_sprite_ids[0] = _scene->_sprites.addSprites(kernel_name('m', 0));
+			g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('m', 2));
+			g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('m', 3));
 			g_engine->_soundManager->command(33, 0);
 			_scene->clearSequenceList();
 			kernel_new_palette();
 
-			_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 6, 1, 0, 0);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 8);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 6, 1, 0, 0);
+			_scene->_sequences.setDepth(g_sequence_ids[0], 8);
+			_scene->_sequences.addSubEntry(g_sequence_ids[0], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 
 			if (config_file.naughtiness >= STORYMODE_NICE)
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_SPRITE, 8, 3);
+				_scene->_sequences.addSubEntry(g_sequence_ids[0], SEQUENCE_TRIGGER_SPRITE, 8, 3);
 			break;
 
 		case 1:
-			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 0, 0, 0);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], -2, -2);
-			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 9, 1, 0, 0);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], _globals._sequenceIndexes[0]);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 8);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 5, 7);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 6, 0, 0, 0);
+			_scene->_sequences.setDepth(g_sequence_ids[3], 8);
+			_scene->_sequences.setAnimRange(g_sequence_ids[3], -2, -2);
+			g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 9, 1, 0, 0);
+			_scene->_sequences.updateTimeout(g_sequence_ids[2], g_sequence_ids[0]);
+			_scene->_sequences.setDepth(g_sequence_ids[2], 8);
+			_scene->_sequences.setAnimRange(g_sequence_ids[2], 5, 7);
+			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 2:
 		{
-			int oldIdx = _globals._sequenceIndexes[2];
-			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 9, 0, 0, 0);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], oldIdx);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 8);
+			int oldIdx = g_sequence_ids[2];
+			g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 9, 0, 0, 0);
+			_scene->_sequences.updateTimeout(g_sequence_ids[2], oldIdx);
+			_scene->_sequences.setDepth(g_sequence_ids[2], 8);
 			_scene->_sequences.addTimer(90, 3);
 		}
 		break;
@@ -147,15 +147,15 @@ static void room_105_pre_parser() {
 static void room_105_parser() {
 	if (player.look_around)
 		text_show(10512);
-	else if (player_said_2(take, dead_fish) && _globals[kFishIn105]) {
+	else if (player_said_2(take, dead_fish) && global[kFishIn105]) {
 		if (player_has(OBJ_DEAD_FISH)) {
 			int randVal = g_engine->getRandomNumber(74, 76);
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, randVal));
 		} else {
-			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
+			_scene->_sequences.remove(g_sequence_ids[4]);
 			inter_give_to_player(OBJ_DEAD_FISH);
-			_globals[kFishIn105] = false;
+			global[kFishIn105] = false;
 			object_examine(OBJ_DEAD_FISH, 802, 0);
 		}
 	} else if (player_said_2(look, western_cliff_face))

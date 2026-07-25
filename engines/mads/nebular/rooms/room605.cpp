@@ -32,19 +32,19 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_605_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('r', -1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('b', -1));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('l', -1));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('p', -1));
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('n', -1));
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_name('f', -1));
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('r', -1));
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('b', -1));
+	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('l', -1));
+	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('p', -1));
+	g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('n', -1));
+	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('f', -1));
 
-	_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 15, 0, 0, 0);
-	_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 17, 0, 0, 0);
-	_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 14, 0, 0, 0);
-	_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 13, 0, 0, 0);
-	_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], false, 17, 0, 0, 0);
-	_globals._sequenceIndexes[6] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[6], false, 18, 0, 0, 0);
+	g_sequence_ids[1] = _scene->_sequences.startPingPongCycle(g_sprite_ids[1], false, 15, 0, 0, 0);
+	g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 17, 0, 0, 0);
+	g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 14, 0, 0, 0);
+	g_sequence_ids[4] = _scene->_sequences.startPingPongCycle(g_sprite_ids[4], false, 13, 0, 0, 0);
+	g_sequence_ids[5] = _scene->_sequences.startPingPongCycle(g_sprite_ids[5], false, 17, 0, 0, 0);
+	g_sequence_ids[6] = _scene->_sequences.startPingPongCycle(g_sprite_ids[6], false, 18, 0, 0, 0);
 
 	player.walker_visible = false;
 	player.commands_allowed = false;
@@ -57,12 +57,12 @@ static void room_605_init() {
 static void room_605_daemon() {
 	if (kernel.trigger == 70) {
 		g_engine->_soundManager->command(23, 0);
-		if (_globals[kResurrectRoom] >= 700)
+		if (global[kResurrectRoom] >= 700)
 			text_show(60598);
 		else
 			text_show(60599);
 
-		_scene->_nextSceneId = _globals[kResurrectRoom];
+		_scene->_nextSceneId = global[kResurrectRoom];
 	}
 }
 

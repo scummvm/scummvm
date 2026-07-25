@@ -40,9 +40,9 @@ struct Scratch {
 static Scratch local;
 
 static void room_104_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('h', -1));
-	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 14, 0, 0, 1);
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('h', -1));
+	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 14, 0, 0, 1);
+	_scene->_sequences.setDepth(g_sequence_ids[1], 8);
 
 	if (_scene->_priorSceneId == 105) {
 		player.x = 302;
@@ -89,18 +89,18 @@ static void room_104_daemon() {
 				_scene->resetScene();
 				player.commands_allowed = false;
 				player.walker_visible = false;
-				_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('a', 0));
+				g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('a', 0));
 				kernel_new_palette();
-				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], mirrorFl, 7, 1, 0, 0);
-				_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(198, 143));
-				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], mirrorFl, 7, 1, 0, 0);
+				_scene->_sequences.setPosition(g_sequence_ids[2], Common::Point(198, 143));
+				_scene->_sequences.setDepth(g_sequence_ids[2], 4);
+				_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				break;
 
 			case 1:
-				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], mirrorFl, 7, 0, 0, 0);
-				_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(198, 143));
-				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], -2, -2);
+				g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], mirrorFl, 7, 0, 0, 0);
+				_scene->_sequences.setPosition(g_sequence_ids[2], Common::Point(198, 143));
+				_scene->_sequences.setAnimRange(g_sequence_ids[2], -2, -2);
 				_scene->_sequences.addTimer(90, 2);
 				break;
 
@@ -122,27 +122,27 @@ static void room_104_daemon() {
 				_scene->resetScene();
 				player.commands_allowed = false;
 				player.walker_visible = false;
-				_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('a', 1));
+				g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('a', 1));
 				kernel_new_palette();
-				_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
-				_scene->_sequences.setPosition(_globals._sequenceIndexes[3], Common::Point(198, 143));
-				_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 4);
-				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 14);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 6, 1, 0, 0);
+				_scene->_sequences.setPosition(g_sequence_ids[3], Common::Point(198, 143));
+				_scene->_sequences.setDepth(g_sequence_ids[3], 4);
+				_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 14);
+				_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				break;
 
 			case 1:
-				_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 5, 1, 0, 0);
-				_scene->_sequences.setPosition(_globals._sequenceIndexes[3], Common::Point(198, 143));
-				_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 4);
-				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 15, 32);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 5, 1, 0, 0);
+				_scene->_sequences.setPosition(g_sequence_ids[3], Common::Point(198, 143));
+				_scene->_sequences.setDepth(g_sequence_ids[3], 4);
+				_scene->_sequences.setAnimRange(g_sequence_ids[3], 15, 32);
+				_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 2:
-				_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 3, 0, 0, 0);
-				_scene->_sequences.setPosition(_globals._sequenceIndexes[3], Common::Point(198, 143));
-				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], -2, -2);
+				g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 3, 0, 0, 0);
+				_scene->_sequences.setPosition(g_sequence_ids[3], Common::Point(198, 143));
+				_scene->_sequences.setAnimRange(g_sequence_ids[3], -2, -2);
 				_scene->_sequences.addTimer(90, 3);
 				break;
 
@@ -164,20 +164,20 @@ static void room_104_daemon() {
 				_scene->resetScene();
 				player.commands_allowed = false;
 				player.walker_visible = false;
-				_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('a', 2));
+				g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('a', 2));
 				kernel_new_palette();
-				_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 8, 1, 0, 0);
-				_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(198, 143));
-				_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 8, 1, 0, 0);
+				_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(198, 143));
+				_scene->_sequences.setDepth(g_sequence_ids[4], 4);
+				_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				if (config_file.naughtiness >= STORYMODE_NICE)
-					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_SPRITE, 15, 2);
+					_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_SPRITE, 15, 2);
 				break;
 
 			case 1:
-				_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 8, 0, 0, 0);
-				_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(198, 143));
-				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], -2, -2);
+				g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 8, 0, 0, 0);
+				_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(198, 143));
+				_scene->_sequences.setAnimRange(g_sequence_ids[4], -2, -2);
 				_scene->_sequences.addTimer(90, 2);
 				break;
 

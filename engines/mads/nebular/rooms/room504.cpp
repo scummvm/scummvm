@@ -41,41 +41,41 @@ static Scratch local;
 
 
 static void room_504_init() {
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('a', 2));
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('a', 2));
 
 	for (int i = 0; i < 4; i++)
-		_globals._spriteIndexes[5 + i] = _scene->_sprites.addSprites(kernel_name('m', i));
+		g_sprite_ids[5 + i] = _scene->_sprites.addSprites(kernel_name('m', i));
 
-	if (_globals[kSexOfRex] == REX_MALE)
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('a', 0));
+	if (global[kSexOfRex] == REX_MALE)
+		g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('a', 0));
 	else {
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('a', 1));
+		g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('a', 1));
 		_scene->changeVariant(1);
 	}
 
-	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 1, 0, 0);
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 0);
-	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
+	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 6, 1, 0, 0);
+	_scene->_sequences.setDepth(g_sequence_ids[1], 0);
+	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 6, 0, 0, 0);
 	local._carFrame = -1;
 
-	if ((_scene->_priorSceneId == 505) && (_globals[kHoverCarDestination] != _globals[kHoverCarLocation])) {
+	if ((_scene->_priorSceneId == 505) && (global[kHoverCarDestination] != global[kHoverCarLocation])) {
 		local._carAnimationMode = 1;
 		_scene->loadAnimation(kernel_name('A', -1));
 		g_engine->_soundManager->command(14, 0);
 		_scene->_sequences.addTimer(1, 70);
 		player.commands_allowed = false;
 	} else {
-		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('a', 3));
+		g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('a', 3));
 		local._carAnimationMode = 1;
 		_scene->loadAnimation(kernel_name('A', -1));
 		if ((_scene->_priorSceneId != RETURNING_FROM_DIALOG) && (_scene->_priorSceneId != 505))
-			_globals[kHoverCarLocation] = _scene->_priorSceneId;
+			global[kHoverCarLocation] = _scene->_priorSceneId;
 
-		_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, 1);
+		g_sequence_ids[7] = _scene->_sequences.startCycle(g_sprite_ids[7], false, 1);
 	}
 
-	if (_globals[kTimebombTimer] > 10500)
-		_globals[kTimebombTimer] = 10500;
+	if (global[kTimebombTimer] > 10500)
+		global[kTimebombTimer] = 10500;
 
 	section_5_music();
 }
@@ -102,16 +102,16 @@ static void room_504_daemon() {
 	if (kernel.trigger >= 70) {
 		switch (kernel.trigger) {
 		case 70:
-			if (_globals[kHoverCarDestination] != -1) {
+			if (global[kHoverCarDestination] != -1) {
 				player.commands_allowed = false;
 				_scene->freeAnimation();
 				local._carAnimationMode = 2;
-				if (((_globals[kHoverCarLocation] >= 500 && _globals[kHoverCarLocation] <= 599) &&
-					(_globals[kHoverCarDestination] >= 500 && _globals[kHoverCarDestination] <= 599)) ||
-					((_globals[kHoverCarLocation] >= 600 && _globals[kHoverCarLocation] <= 699) &&
-						(_globals[kHoverCarDestination] >= 600 && _globals[kHoverCarDestination] <= 699))) {
+				if (((global[kHoverCarLocation] >= 500 && global[kHoverCarLocation] <= 599) &&
+					(global[kHoverCarDestination] >= 500 && global[kHoverCarDestination] <= 599)) ||
+					((global[kHoverCarLocation] >= 600 && global[kHoverCarLocation] <= 699) &&
+						(global[kHoverCarDestination] >= 600 && global[kHoverCarDestination] <= 699))) {
 					_scene->loadAnimation(kernel_name('A', -1), 71);
-				} else if (_globals[kHoverCarLocation] > _globals[kHoverCarDestination])
+				} else if (global[kHoverCarLocation] > global[kHoverCarDestination])
 					_scene->loadAnimation(kernel_name('C', -1), 71);
 				else
 					_scene->loadAnimation(kernel_name('B', -1), 71);
@@ -120,7 +120,7 @@ static void room_504_daemon() {
 
 		case 71:
 			g_engine->_soundManager->command(15, 0);
-			_scene->_nextSceneId = _globals[kHoverCarDestination];
+			_scene->_nextSceneId = global[kHoverCarDestination];
 			break;
 
 		default:
@@ -128,10 +128,10 @@ static void room_504_daemon() {
 		}
 	}
 
-	if ((_globals[kTimebombTimer] >= 10800) && (_globals[kTimebombStatus] == TIMEBOMB_ACTIVATED) && (game.difficulty != 3)) {
-		_globals[kTimebombStatus] = TIMEBOMB_DEAD;
-		_globals[kTimebombTimer] = 0;
-		_globals[kCheckDaemonTimebomb] = false;
+	if ((global[kTimebombTimer] >= 10800) && (global[kTimebombStatus] == TIMEBOMB_ACTIVATED) && (game.difficulty != 3)) {
+		global[kTimebombStatus] = TIMEBOMB_DEAD;
+		global[kTimebombTimer] = 0;
+		global[kCheckDaemonTimebomb] = false;
 		_scene->_nextSceneId = 620;
 	}
 }
@@ -143,28 +143,28 @@ static void room_504_pre_parser() {
 static void room_504_parser() {
 	if (player_said_2(exit_from, car)) {
 		g_engine->_soundManager->command(15, 0);
-		_scene->_nextSceneId = _globals[kHoverCarLocation];
+		_scene->_nextSceneId = global[kHoverCarLocation];
 	} else if (player_said_2(activate, car_controls)) {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
 			g_engine->_soundManager->command(39, 0);
-			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 13);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
-			_scene->_sequences.remove(_globals._sequenceIndexes[7]);
-			_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 18, 0, 0, 0);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 14);
+			g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 6, 1, 0, 0);
+			_scene->_sequences.setDepth(g_sequence_ids[3], 13);
+			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			_scene->_sequences.remove(g_sequence_ids[7]);
+			g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 18, 0, 0, 0);
+			_scene->_sequences.setDepth(g_sequence_ids[5], 14);
 			break;
 
 		case 1:
 		{
-			int syncIdx = _globals._sequenceIndexes[3];
-			_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 13);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 6);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
+			int syncIdx = g_sequence_ids[3];
+			g_sequence_ids[3] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[3], false, 6, 1, 0, 0);
+			_scene->_sequences.setDepth(g_sequence_ids[3], 13);
+			_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 6);
+			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			_scene->_sequences.updateTimeout(g_sequence_ids[3], syncIdx);
 		}
 		break;
 
@@ -173,30 +173,30 @@ static void room_504_parser() {
 			break;
 
 		case 3:
-			_scene->_sequences.remove(_globals._sequenceIndexes[5]);
-			if (_globals[kSexOfRex] == REX_MALE) {
+			_scene->_sequences.remove(g_sequence_ids[5]);
+			if (global[kSexOfRex] == REX_MALE) {
 				g_engine->_soundManager->command(34, 0);
 				_scene->_sequences.addTimer(60, 4);
-				_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, 1);
-				_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 14);
+				g_sequence_ids[6] = _scene->_sequences.startCycle(g_sprite_ids[6], false, 1);
+				_scene->_sequences.setDepth(g_sequence_ids[6], 14);
 			} else {
 				g_engine->_soundManager->command(40, 0);
-				_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 18, 0, 0, 0);
-				_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 14);
+				g_sequence_ids[8] = _scene->_sequences.addSpriteCycle(g_sprite_ids[8], false, 18, 0, 0, 0);
+				_scene->_sequences.setDepth(g_sequence_ids[8], 14);
 				_scene->_sequences.addTimer(120, 5);
 			}
 			break;
 
 		case 4:
 			player.commands_allowed = true;
-			_globals[kHoverCarDestination] = _globals[kHoverCarLocation];
+			global[kHoverCarDestination] = global[kHoverCarLocation];
 			_scene->_nextSceneId = 505;
 			break;
 
 		case 5:
 			player.commands_allowed = true;
-			_scene->_sequences.remove(_globals._sequenceIndexes[8]);
-			_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, 1);
+			_scene->_sequences.remove(g_sequence_ids[8]);
+			g_sequence_ids[7] = _scene->_sequences.startCycle(g_sprite_ids[7], false, 1);
 			text_show(50421);
 			break;
 

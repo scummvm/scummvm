@@ -40,16 +40,16 @@ static Scratch local;
 
 
 static void room_503_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('c', -1));
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('c', -1));
 
-	if (_globals[kSexOfRex] == REX_MALE)
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMBD_2");
+	if (global[kSexOfRex] == REX_MALE)
+		g_sprite_ids[2] = _scene->_sprites.addSprites("*RXMBD_2");
 	else
-		_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*ROXBD_2");
+		g_sprite_ids[3] = _scene->_sprites.addSprites("*ROXBD_2");
 
 	if (object[OBJ_DETONATORS].location == _scene->_currentSceneId) {
-		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-		local._detonatorHotspotId = _scene->_dynamicHotspots.add(words_detonators, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 9, 0, 0, 0);
+		local._detonatorHotspotId = _scene->_dynamicHotspots.add(words_detonators, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._detonatorHotspotId, Common::Point(254, 135), FACING_SOUTH);
 	}
 
@@ -71,34 +71,34 @@ static void room_503_parser() {
 			case 0:
 				player.commands_allowed = false;
 				player.walker_visible = false;
-				if (_globals[kSexOfRex] == REX_MALE) {
-					_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
-					_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 3);
-					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
-					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 3, 1);
-					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				if (global[kSexOfRex] == REX_MALE) {
+					g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 8, 1, 0, 0);
+					_scene->_sequences.setAnimRange(g_sequence_ids[2], 1, 3);
+					_scene->_sequences.setMsgLayout(g_sequence_ids[2]);
+					_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 3, 1);
+					_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				} else {
-					_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], true, 8, 1, 0, 0);
-					_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 4);
-					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
-					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+					g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], true, 8, 1, 0, 0);
+					_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 4);
+					_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
+					_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 4, 1);
+					_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				}
 				break;
 
 			case 1:
 				g_engine->_soundManager->command(9, 0);
-				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+				_scene->_sequences.remove(g_sequence_ids[1]);
 				_scene->_dynamicHotspots.remove(local._detonatorHotspotId);
 				inter_give_to_player(OBJ_DETONATORS);
 				object_examine(OBJ_DETONATORS, 50326, 0);
 				break;
 
 			case 2:
-				if (_globals[kSexOfRex] == REX_MALE)
-					_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
+				if (global[kSexOfRex] == REX_MALE)
+					_scene->_sequences.updateTimeout(-1, g_sequence_ids[2]);
 				else
-					_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[3]);
+					_scene->_sequences.updateTimeout(-1, g_sequence_ids[3]);
 
 				player.walker_visible = true;
 				player.commands_allowed = true;

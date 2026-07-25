@@ -46,11 +46,11 @@ static void room_389_init() {
 	local._monsterTime = 0;
 	local._circularQuoteId = 0x159;
 
-	if (_globals[kAfterHavoc])
+	if (global[kAfterHavoc])
 		_scene->_hotspots.activate(words_monster, false);
 	else {
-		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(kernel_name('m', -1));
-		_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 6, 0, 0, 0);
+		g_sprite_ids[0] = _scene->_sprites.addSprites(kernel_name('m', -1));
+		g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 6, 0, 0, 0);
 		_scene->_kernelMessages.initRandomMessages(1,
 			Common::Rect(88, 19, 177, 77), 13, 2, 0xFDFC, 60,
 			247, 248, 249, 0);
@@ -95,7 +95,7 @@ static void room_389_parser() {
 			break;
 		}
 	} else if (player_said_2(look_through, grate)) {
-		if (_globals[kAfterHavoc]) {
+		if (global[kAfterHavoc]) {
 			if ((game.difficulty != DIFFICULTY_HARD) && (object[OBJ_SECURITY_CARD].location == 359))
 				text_show(38911);
 			else
@@ -103,7 +103,7 @@ static void room_389_parser() {
 		} else
 			text_show(38910);
 	} else if (player_said_2(open, grate)) {
-		if (_globals[kAfterHavoc])
+		if (global[kAfterHavoc])
 			text_show(38914);
 		else
 			text_show(38913);

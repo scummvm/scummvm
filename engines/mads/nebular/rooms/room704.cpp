@@ -45,7 +45,7 @@ static Scratch local;
 
 
 static void handleBottleInterface() {
-	switch (_globals[kBottleStatus]) {
+	switch (global[kBottleStatus]) {
 	case 0:
 		local._dialog1.write(0x311, true);
 		local._dialog1.write(0x312, true);
@@ -95,22 +95,22 @@ static void setBottleSequence() {
 static void handleFillBottle(int quote) {
 	switch (quote) {
 	case 0x311:
-		_globals[kBottleStatus] = 1;
+		global[kBottleStatus] = 1;
 		setBottleSequence();
 		break;
 
 	case 0x312:
-		_globals[kBottleStatus] = 2;
+		global[kBottleStatus] = 2;
 		setBottleSequence();
 		break;
 
 	case 0x313:
-		_globals[kBottleStatus] = 3;
+		global[kBottleStatus] = 3;
 		setBottleSequence();
 		break;
 
 	case 0x314:
-		_globals[kBottleStatus] = 4;
+		global[kBottleStatus] = 4;
 		setBottleSequence();
 		break;
 
@@ -125,17 +125,17 @@ static void handleFillBottle(int quote) {
 
 static void room_704_init() {
 	if (object[OBJ_BOTTLE].location == _scene->_currentSceneId) {
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('b', 0));
-		_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
+		g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('b', 0));
+		g_sequence_ids[1] = _scene->_sequences.startPingPongCycle(g_sprite_ids[1], false, 6, 0, 0, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[1], 1);
 		if (_scene->_priorSceneId == 705) {
-			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(123, 125));
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
+			_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(123, 125));
+			_scene->_sequences.setDepth(g_sequence_ids[1], 1);
 		} else {
-			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(190, 122));
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 2);
+			_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(190, 122));
+			_scene->_sequences.setDepth(g_sequence_ids[1], 2);
 		}
-		int idx = _scene->_dynamicHotspots.add(words_bottle, words_look_at, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_bottle, words_look_at, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		local._bottleHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 	}
 
@@ -158,15 +158,15 @@ static void room_704_init() {
 		_scene->_animation[0]->setCurrentFrame(8);
 	} else if (local._boatDirection == 2) {
 		if (object[OBJ_BOTTLE].location == _scene->_currentSceneId) {
-			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(123, 125));
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
+			_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(123, 125));
+			_scene->_sequences.setDepth(g_sequence_ids[1], 1);
 		}
 		_scene->loadAnimation(kernel_name('A', -1));
 		_scene->_animation[0]->setCurrentFrame(57);
 	}
 
 	if (_scene->_roomChanged)
-		_globals[kMonsterAlive] = false;
+		global[kMonsterAlive] = false;
 
 	kernel.quotes = quote_load(0x311, 0x312, 0x313, 0x314, 0x315, 0);
 	local._dialog1.setup(0x98, 0x311, 0x312, 0x313, 0x314, 0x315, 0);
@@ -246,7 +246,7 @@ static void room_704_daemon() {
 
 			case 90:
 				if (local._takeBottleFl) {
-					_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+					_scene->_sequences.remove(g_sequence_ids[1]);
 					_scene->_dynamicHotspots.remove(local._bottleHotspotId);
 					inter_give_to_player(OBJ_BOTTLE);
 					g_engine->_soundManager->command(15, 0);
@@ -264,7 +264,7 @@ static void room_704_daemon() {
 
 			case 98:
 				if (local._takeBottleFl) {
-					_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+					_scene->_sequences.remove(g_sequence_ids[1]);
 					_scene->_dynamicHotspots.remove(local._bottleHotspotId);
 					inter_give_to_player(OBJ_BOTTLE);
 					g_engine->_soundManager->command(15, 0);
@@ -292,7 +292,7 @@ static void room_704_daemon() {
 	}
 
 	if (kernel.trigger == 70) {
-		switch (_globals[kBottleStatus]) {
+		switch (global[kBottleStatus]) {
 		case 0:
 			text_show(432);
 			break;
@@ -346,7 +346,7 @@ static void room_704_parser() {
 		}
 	} else if (player_said_3(put, bottle, water) || player_said_3(fill, bottle, water)) {
 		if (player_has(OBJ_BOTTLE)) {
-			if (_globals[kBottleStatus] != 4) {
+			if (global[kBottleStatus] != 4) {
 				local._takeBottleFl = false;
 				handleBottleInterface();
 				local._dialog1.start();

@@ -46,19 +46,19 @@ static Scratch local;
 
 static void room_505_init() {
 	for (int i = 0; i < 9; i++)
-		_globals._spriteIndexes[i] = _scene->_sprites.addSprites(kernel_name('a', i + 1));
+		g_sprite_ids[i] = _scene->_sprites.addSprites(kernel_name('a', i + 1));
 
-	_globals._spriteIndexes[13] = _scene->_sprites.addSprites(kernel_name('b', 1));
-	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(kernel_name('g', 1));
-	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(kernel_name('g', 0));
-	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(kernel_name('t', -1));
-	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(kernel_name('e', -1));
+	g_sprite_ids[13] = _scene->_sprites.addSprites(kernel_name('b', 1));
+	g_sprite_ids[9] = _scene->_sprites.addSprites(kernel_name('g', 1));
+	g_sprite_ids[10] = _scene->_sprites.addSprites(kernel_name('g', 0));
+	g_sprite_ids[11] = _scene->_sprites.addSprites(kernel_name('t', -1));
+	g_sprite_ids[12] = _scene->_sprites.addSprites(kernel_name('e', -1));
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
-		_globals._sequenceIndexes[12] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[12], false, 6, 1, 0, 0);
+		g_sequence_ids[12] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[12], false, 6, 1, 0, 0);
 
-	_globals._sequenceIndexes[13] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[13], false, 6, 1, 120, 0);
-	_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
+	g_sequence_ids[13] = _scene->_sequences.addSpriteCycle(g_sprite_ids[13], false, 6, 1, 120, 0);
+	_scene->_sequences.addSubEntry(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
 	_scene->_sequences.addTimer(30, 62);
 
 	local._carLocations[0] = 501;
@@ -74,7 +74,7 @@ static void room_505_init() {
 	local._activeCars = false;
 
 	for (int i = 0; i < 9; i++) {
-		if (_globals[kHoverCarLocation] == local._carLocations[i]) {
+		if (global[kHoverCarLocation] == local._carLocations[i]) {
 			local._homeSelectedId = i;
 			if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 				local._selectedId = i;
@@ -130,17 +130,17 @@ static void room_505_daemon() {
 					local._selectedId = 8;
 			} else {
 				this_button = 0x2DE;
-				if ((_globals[kTimebombStatus] == TIMEBOMB_ACTIVATED) && (local._carLocations[local._selectedId] == 501))
+				if ((global[kTimebombStatus] == TIMEBOMB_ACTIVATED) && (local._carLocations[local._selectedId] == 501))
 					text_show(431);
 				else if (local._selectedId != local._homeSelectedId) {
 					local._nextButtonId = 0;
 					local._activeCars = true;
 					player.commands_allowed = false;
-					_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-					_scene->_sequences.remove(_globals._sequenceIndexes[0]);
-					_scene->_sequences.remove(_globals._sequenceIndexes[13]);
-					_globals._sequenceIndexes[13] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[13], false, 6, 1, 0, 0);
-					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_EXPIRE, 0, 63);
+					_scene->_sequences.remove(g_sequence_ids[1]);
+					_scene->_sequences.remove(g_sequence_ids[0]);
+					_scene->_sequences.remove(g_sequence_ids[13]);
+					g_sequence_ids[13] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[13], false, 6, 1, 0, 0);
+					_scene->_sequences.addSubEntry(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 63);
 					g_engine->_soundManager->command(18, 0);
 				}
 			}
@@ -149,14 +149,14 @@ static void room_505_daemon() {
 				local._nextButtonId = 0;
 
 			if (old_select != local._selectedId) {
-				_scene->_sequences.remove(_globals._sequenceIndexes[11]);
-				_globals._sequenceIndexes[11] = _scene->_sequences.startCycle(_globals._spriteIndexes[11], false, local._selectedId + 1);
+				_scene->_sequences.remove(g_sequence_ids[11]);
+				g_sequence_ids[11] = _scene->_sequences.startCycle(g_sprite_ids[11], false, local._selectedId + 1);
 				if (old_select != local._homeSelectedId)
-					_scene->_sequences.remove(_globals._sequenceIndexes[0]);
+					_scene->_sequences.remove(g_sequence_ids[0]);
 
 				if (local._selectedId != local._homeSelectedId) {
-					_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0 + local._selectedId], false, 24, 0, 0, 0);
-					_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 1);
+					g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0 + local._selectedId], false, 24, 0, 0, 0);
+					_scene->_sequences.setDepth(g_sequence_ids[0], 1);
 				}
 			}
 			break;
@@ -193,7 +193,7 @@ static void room_505_daemon() {
 		case 58:
 		case 87:
 			if (local._activeCars)
-				_globals[kHoverCarDestination] = local._carLocations[local._selectedId];
+				global[kHoverCarDestination] = local._carLocations[local._selectedId];
 
 			if (local._nextButtonId == 0x38A)
 				resetFrame = 0;
@@ -241,35 +241,35 @@ static void room_505_daemon() {
 	case 60:
 	{
 		player.commands_allowed = true;
-		int syncIdx = _globals._sequenceIndexes[13];
-		_globals._sequenceIndexes[13] = _scene->_sequences.startCycle(_globals._spriteIndexes[13], false, -2);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[13], 8);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[13], syncIdx);
-		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[local._homeSelectedId], false, 1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
-		_globals._sequenceIndexes[11] = _scene->_sequences.startCycle(_globals._spriteIndexes[11], false, local._selectedId + 1);
+		int syncIdx = g_sequence_ids[13];
+		g_sequence_ids[13] = _scene->_sequences.startCycle(g_sprite_ids[13], false, -2);
+		_scene->_sequences.setDepth(g_sequence_ids[13], 8);
+		_scene->_sequences.updateTimeout(g_sequence_ids[13], syncIdx);
+		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[local._homeSelectedId], false, 1);
+		_scene->_sequences.setDepth(g_sequence_ids[1], 1);
+		g_sequence_ids[11] = _scene->_sequences.startCycle(g_sprite_ids[11], false, local._selectedId + 1);
 
 		if (local._selectedId != local._homeSelectedId) {
-			_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0 + local._selectedId], false, 24, 0, 0, 0);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 1);
+			g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0 + local._selectedId], false, 24, 0, 0, 0);
+			_scene->_sequences.setDepth(g_sequence_ids[0], 1);
 		}
 		break;
 	}
 
 	case 61:
-		_globals._sequenceIndexes[10] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[10], false, 8, 0, 0, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 8);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[10], _globals._sequenceIndexes[9]);
+		g_sequence_ids[10] = _scene->_sequences.addSpriteCycle(g_sprite_ids[10], false, 8, 0, 0, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[10], 8);
+		_scene->_sequences.updateTimeout(g_sequence_ids[10], g_sequence_ids[9]);
 		break;
 
 	case 62:
-		_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 8, 1, 0, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 8);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SEQUENCE_TRIGGER_EXPIRE, 0, 61);
+		g_sequence_ids[9] = _scene->_sequences.addSpriteCycle(g_sprite_ids[9], false, 8, 1, 0, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[9], 8);
+		_scene->_sequences.addSubEntry(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 61);
 		break;
 
 	case 63:
-		_globals[kHoverCarDestination] = local._carLocations[local._selectedId];
+		global[kHoverCarDestination] = local._carLocations[local._selectedId];
 		_scene->_nextSceneId = 504;
 		break;
 

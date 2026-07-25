@@ -41,7 +41,7 @@ static void room_399_parser() {
 	if (player_said_2(return_to, air_shaft))
 		_scene->_nextSceneId = 313;
 	else if (player_said_2(look_through, grate)) {
-		if (_globals[kAfterHavoc]) {
+		if (global[kAfterHavoc]) {
 			if ((game.difficulty != DIFFICULTY_HARD) && (object[OBJ_SECURITY_CARD].location == 359))
 				text_show(38911);
 			else
@@ -49,7 +49,7 @@ static void room_399_parser() {
 		} else
 			text_show(38910);
 	} else if (player_said_2(open, grate)) {
-		if (_globals[kAfterHavoc])
+		if (global[kAfterHavoc])
 			text_show(38914);
 		else
 			text_show(38913);

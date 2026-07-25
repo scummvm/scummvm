@@ -44,7 +44,7 @@ static Scratch local;
 
 
 static void room_211_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*SC002Z2");
+	g_sprite_ids[1] = _scene->_sprites.addSprites("*SC002Z2");
 	local._wakeFl = false;
 
 	if (_scene->_priorSceneId == 210) {
@@ -67,11 +67,11 @@ static void room_211_init() {
 	}
 
 	if (g_engine->getRandomNumber(1, 8) == 1) {
-		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
-		_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(202, 126));
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 8);
-		_scene->_sequences.setMotion(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, -200, 0);
-		_scene->_dynamicHotspots.add(words_slithering_snake, words_walkto, _globals._sequenceIndexes[2], Common::Rect(1, 1, 1 + 41, 1 + 10));
+		g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 6, 0, 0, 0);
+		_scene->_sequences.setPosition(g_sequence_ids[2], Common::Point(202, 126));
+		_scene->_sequences.setDepth(g_sequence_ids[2], 8);
+		_scene->_sequences.setMotion(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, -200, 0);
+		_scene->_dynamicHotspots.add(words_slithering_snake, words_walkto, g_sequence_ids[2], Common::Rect(1, 1, 1 + 41, 1 + 10));
 	}
 
 	if (_scene->_roomChanged)
@@ -81,7 +81,7 @@ static void room_211_init() {
 	pal_change_color(253, 63, 20, 22);
 	kernel.quotes = quote_load(0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0x97, 0x98, 0x99, 0x9A, 0x9B, 0x9C, 0x9D, 0x9E, 1, 0);
 
-	if (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY)
+	if (global[kMonkeyStatus] == MONKEY_AMBUSH_READY)
 		_scene->_kernelMessages.initRandomMessages(2,
 			Common::Rect(0, 0, 54, 30), 13, 2, 0xFDFC, 60,
 			151, 152, 153, 154, 0);
@@ -96,7 +96,7 @@ static void room_211_init() {
 }
 
 static void room_211_daemon() {
-	if (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY) {
+	if (global[kMonkeyStatus] == MONKEY_AMBUSH_READY) {
 		_scene->_kernelMessages.randomServer();
 
 		if (!local._ambushFl && !local._wakeFl && (_scene._frameStartTime >= local._monkeyTime)) {
@@ -134,7 +134,7 @@ static void room_211_daemon() {
 				player.x = 49;
 				player.y = 133;
 				local._ambushFl = false;
-				_globals[kMonkeyStatus] = MONKEY_HAS_BINOCULARS;
+				global[kMonkeyStatus] = MONKEY_HAS_BINOCULARS;
 				break;
 
 			default:
@@ -270,12 +270,12 @@ static void room_211_daemon() {
 }
 
 static void room_211_pre_parser() {
-	if (player_said_2(walk_down, jungle_path) && player_has(OBJ_BINOCULARS) && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY)
+	if (player_said_2(walk_down, jungle_path) && player_has(OBJ_BINOCULARS) && (global[kMonkeyStatus] == MONKEY_AMBUSH_READY)
 		&& (_scene->_customDest.x <= 52) && (_scene->_customDest.y >= 132))
 		player_walk(52, 132, FACING_WEST);
 
 	if (player_said_2(walk_down, path_to_west)) {
-		if (player_has(OBJ_BINOCULARS) && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY))
+		if (player_has(OBJ_BINOCULARS) && (global[kMonkeyStatus] == MONKEY_AMBUSH_READY))
 			player_walk(52, 132, FACING_WEST);
 		else
 			player.walk_off_edge_to_room = 210;
@@ -286,7 +286,7 @@ static void room_211_pre_parser() {
 }
 
 static void room_211_parser() {
-	if (player.look_around && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY))
+	if (player.look_around && (global[kMonkeyStatus] == MONKEY_AMBUSH_READY))
 		text_show(21111);
 	else if (player_said_3(look, binoculars, palm_tree))
 		text_show(21116);
@@ -295,7 +295,7 @@ static void room_211_parser() {
 	else if (player_said_2(look, jungle_path))
 		text_show(21102);
 	else if (player_said_2(look, palm_tree)) {
-		if (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY) {
+		if (global[kMonkeyStatus] == MONKEY_AMBUSH_READY) {
 			if (config_file.naughtiness == STORYMODE_NAUGHTY)
 				text_show(21103);
 			else

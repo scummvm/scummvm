@@ -40,19 +40,19 @@ static Scratch local;
 
 
 static void room_201_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('x', 1));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('m', -1));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('b', -1));
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*SC002Z1");
-	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 1, 0);
-	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 15, 0, 0, 50);
-	_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 4, 0, 0, 0);
-	_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6, 0, 0, 0);
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 8);
-	_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(185, 46));
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('x', 1));
+	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('m', -1));
+	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('b', -1));
+	g_sprite_ids[5] = _scene->_sprites.addSprites("*SC002Z1");
+	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 6, 0, 1, 0);
+	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 15, 0, 0, 50);
+	g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 4, 0, 0, 0);
+	g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 6, 0, 0, 0);
+	_scene->_sequences.setDepth(g_sequence_ids[4], 8);
+	_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(185, 46));
 
-	int idx = _scene->_dynamicHotspots.add(words_birds, words_look_at, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(words_birds, words_look_at, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(186, 81), FACING_NORTH);
 
 	if ((_scene->_priorSceneId == 202) || (_scene->_priorSceneId == RETURNING_FROM_LOADING)) {
@@ -64,18 +64,18 @@ static void room_201_init() {
 		player.facing = FACING_SOUTH;
 	}
 
-	if (_globals[kTeleporterCommand]) {
+	if (global[kTeleporterCommand]) {
 		player.walker_visible = false;
 		player.commands_allowed = false;
-		int sepChar = (_globals[kSexOfRex] == SEX_MALE) ? 't' : 'u';
+		int sepChar = (global[kSexOfRex] == SEX_MALE) ? 't' : 'u';
 		// Guess values. What is the default value used by the compiler?
 		int suffixNum = -1;
 		int endTrigger = -1;
-		switch (_globals[kTeleporterCommand]) {
+		switch (global[kTeleporterCommand]) {
 		case 1:
 			suffixNum = 3;
 			endTrigger = 76;
-			_globals[kTeleporterUnderstood] = true;
+			global[kTeleporterUnderstood] = true;
 			break;
 		case 2:
 			suffixNum = 1;
@@ -93,20 +93,20 @@ static void room_201_init() {
 		default:
 			break;
 		}
-		_globals[kTeleporterCommand] = 0;
+		global[kTeleporterCommand] = 0;
 		if (suffixNum >= 0)
 			_scene->loadAnimation(kernel_name(sepChar, suffixNum), endTrigger);
 	}
 
-	if ((_scene->_priorSceneId == 202) && (_globals[kMeteorologistStatus] == METEOROLOGIST_PRESENT) && !_scene->_roomChanged) {
-		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_name('a', 0));
-		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(kernel_name('a', 1));
+	if ((_scene->_priorSceneId == 202) && (global[kMeteorologistStatus] == METEOROLOGIST_PRESENT) && !_scene->_roomChanged) {
+		g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('a', 0));
+		g_sprite_ids[7] = _scene->_sprites.addSprites(kernel_name('a', 1));
 		kernel.quotes = quote_load(90, 91, 0);
 		player.commands_allowed = false;
-		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 7, 1, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], -1, 12);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_SPRITE, 12, 70);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 1);
+		g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(g_sprite_ids[6], false, 7, 1, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[6], -1, 12);
+		_scene->_sequences.addSubEntry(g_sequence_ids[6], SEQUENCE_TRIGGER_SPRITE, 12, 70);
+		_scene->_sequences.setDepth(g_sequence_ids[6], 1);
 		local._pterodactylFlag = false;
 		player_walk(157, 143, FACING_NORTH);
 		pal_change_color(252, 45, 63, 45);
@@ -115,7 +115,7 @@ static void room_201_init() {
 	} else
 		local._pterodactylFlag = true;
 
-	if (_globals[kTeleporterUnderstood])
+	if (global[kTeleporterUnderstood])
 		_scene->_hotspots.activate(words_strange_device, false);
 
 	section_2_music();
@@ -123,25 +123,25 @@ static void room_201_init() {
 
 static void room_201_daemon() {
 	if (local._pterodactylFlag && (g_engine->getRandomNumber(5000) == 9)) {
-		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 5, 1, 6, 0);
-		int idx = _scene->_dynamicHotspots.add(words_swooping_creature, words_walkto, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 5, 1, 6, 0);
+		int idx = _scene->_dynamicHotspots.add(words_swooping_creature, words_walkto, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(270, 80), FACING_EAST);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 8);
+		_scene->_sequences.setDepth(g_sequence_ids[5], 8);
 		g_engine->_soundManager->command(14, 0);
 		local._pterodactylFlag = false;
 	}
 
 	if (kernel.trigger == 70) {
-		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 9, 1, 0, 0);
+		g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(g_sprite_ids[6], false, 9, 1, 0, 0);
 		player.walker_visible = false;
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], 12, 16);
-		_globals._sequenceIndexes[7] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 9, 1, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[6], 12, 16);
+		g_sequence_ids[7] = _scene->_sequences.addSpriteCycle(g_sprite_ids[7], false, 9, 1, 0, 0);
 		g_engine->_soundManager->command(42, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 1);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[7], SEQUENCE_TRIGGER_SPRITE, 3, 81);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[7], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
+		_scene->_sequences.setDepth(g_sequence_ids[6], 1);
+		_scene->_sequences.setDepth(g_sequence_ids[7], 1);
+		_scene->_sequences.addSubEntry(g_sequence_ids[7], SEQUENCE_TRIGGER_SPRITE, 3, 81);
+		_scene->_sequences.addSubEntry(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		_scene->_sequences.addSubEntry(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
 	}
 
 	if (kernel.trigger == 81) {
@@ -149,30 +149,30 @@ static void room_201_daemon() {
 	}
 
 	if (kernel.trigger == 71) {
-		_globals._sequenceIndexes[7] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 9, 0, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[7], -2, -2);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 1);
+		g_sequence_ids[7] = _scene->_sequences.addSpriteCycle(g_sprite_ids[7], false, 9, 0, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[7], -2, -2);
+		_scene->_sequences.setDepth(g_sequence_ids[7], 1);
 	}
 
 	if (kernel.trigger == 73) {
-		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 9, 1, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], 17, -2);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 1);
+		g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(g_sprite_ids[6], false, 9, 1, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[6], 17, -2);
+		_scene->_sequences.addSubEntry(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
+		_scene->_sequences.setDepth(g_sequence_ids[6], 1);
 	}
 
 	if (kernel.trigger == 74) {
 		g_engine->_soundManager->command(40, 0);
 
 		_scene->_kernelMessages.add(Common::Point(125, 56), 0xFDFC, 32, 82, 180, quote_string(kernel.quotes, 91));
-		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 9, 0, 0, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 1);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], -2, -2);
+		g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(g_sprite_ids[6], false, 9, 0, 0, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[6], 1);
+		_scene->_sequences.setAnimRange(g_sequence_ids[6], -2, -2);
 		_scene->_sequences.addTimer(180, 75);
 	}
 
 	if (kernel.trigger == 75) {
-		_globals[kMeteorologistEverSeen] = 0;
+		global[kMeteorologistEverSeen] = 0;
 		_scene->_nextSceneId = 202;
 	}
 
@@ -183,8 +183,8 @@ static void room_201_daemon() {
 	}
 
 	if (kernel.trigger == 77) {
-		_globals[kTeleporterCommand] = 1;
-		_scene->_nextSceneId = _globals[kTeleporterDestination];
+		global[kTeleporterCommand] = 1;
+		_scene->_nextSceneId = global[kTeleporterDestination];
 		_scene->_reloadSceneFlag = true;
 	}
 
@@ -203,7 +203,7 @@ static void room_201_parser() {
 			if (kernel.trigger == 0) {
 				player.commands_allowed = false;
 				player.walker_visible = false;
-				int sepChar = (_globals[kSexOfRex] == SEX_MALE) ? 't' : 'u';
+				int sepChar = (global[kSexOfRex] == SEX_MALE) ? 't' : 'u';
 				_scene->loadAnimation(kernel_name(sepChar, 0), 1);
 			} else if (kernel.trigger == 1) {
 				_scene->_nextSceneId = 213;
@@ -227,7 +227,7 @@ static void room_201_parser() {
 		} else if (player_said_2(look, field_to_south)) {
 			text_show(20110);
 		} else if (player_said_2(look, strange_device)) {
-			if (_globals[kMeteorologistEverSeen])
+			if (global[kMeteorologistEverSeen])
 				text_show(20112);
 			else
 				text_show(20109);

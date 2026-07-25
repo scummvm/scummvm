@@ -41,39 +41,39 @@ static Scratch local;
 static void room_808_init() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
 
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*REXHAND");
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('b', 0));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('b', 1));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('b', 2));
+	g_sprite_ids[4] = _scene->_sprites.addSprites("*REXHAND");
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('b', 0));
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('b', 1));
+	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('b', 2));
 
-	if (_globals[kTopButtonPushed])
-		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
+	if (global[kTopButtonPushed])
+		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
 	else
-		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
+		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 1);
 
 	local._goingTo803 = false;
 
-	if (_globals[kCameFromCut] && _globals[kCutX] != 0) {
-		_globals[kCutX] = 0;
-		_globals[kCameFromCut] = false;
-		_globals[kReturnFromCut] = false;
-		_globals[kBeamIsUp] = false;
-		_globals[kForceBeamDown] = false;
-		_globals[kDontRepeat] = false;
-	} else if ((_scene->_priorSceneId == 803) && _globals[kReturnFromCut]) {
-		_globals[kDontRepeat] = false;
-		_globals[kBeamIsUp] = true;
-		_globals[kAntigravClock] = _scene->_frameStartTime;
-		_globals[kAntigravTiming] = _scene->_frameStartTime;
-		_globals[kForceBeamDown] = false;
-		_globals[kReturnFromCut] = false;
+	if (global[kCameFromCut] && global[kCutX] != 0) {
+		global[kCutX] = 0;
+		global[kCameFromCut] = false;
+		global[kReturnFromCut] = false;
+		global[kBeamIsUp] = false;
+		global[kForceBeamDown] = false;
+		global[kDontRepeat] = false;
+	} else if ((_scene->_priorSceneId == 803) && global[kReturnFromCut]) {
+		global[kDontRepeat] = false;
+		global[kBeamIsUp] = true;
+		global[kAntigravClock] = _scene->_frameStartTime;
+		global[kAntigravTiming] = _scene->_frameStartTime;
+		global[kForceBeamDown] = false;
+		global[kReturnFromCut] = false;
 	}
 
-	_globals[kBetweenRooms] = false;
+	global[kBetweenRooms] = false;
 
-	if (_globals[kBeamIsUp]) {
-		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
+	if (global[kBeamIsUp]) {
+		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
+		_scene->_sequences.setDepth(g_sequence_ids[3], 8);
 	}
 
 	section_8_music();
@@ -84,31 +84,31 @@ static void room_808_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
-			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(248, 211));
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+			g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 4, 1, 0, 0);
+			_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(248, 211));
+			_scene->_sequences.setDepth(g_sequence_ids[4], 2);
+			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 			break;
 
 		case 70:
-			if (!_globals[kBeamIsUp] && !_globals[kTopButtonPushed]) {
-				_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
-				_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
+			if (!global[kBeamIsUp] && !global[kTopButtonPushed]) {
+				g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
+				_scene->_sequences.setDepth(g_sequence_ids[3], 8);
 				local._goingTo803 = true;
 				g_engine->_soundManager->command(20, 0);
 				g_engine->_soundManager->command(25, 0);
 			}
-			_globals._sequenceIndexes[4] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
-			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(248, 211));
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+			g_sequence_ids[4] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[4], false, 4, 1, 0, 0);
+			_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(248, 211));
+			_scene->_sequences.setDepth(g_sequence_ids[4], 2);
+			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 			break;
 
 		case 71:
 			player.commands_allowed = true;
-			if (local._goingTo803 && !_globals[kTopButtonPushed]) {
+			if (local._goingTo803 && !global[kTopButtonPushed]) {
 				local._goingTo803 = false;
-				_globals[kReturnFromCut] = true;
+				global[kReturnFromCut] = true;
 				_scene->_nextSceneId = 803;
 			}
 			break;
@@ -120,23 +120,23 @@ static void room_808_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
-			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(248, 186));
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 90);
+			g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 4, 1, 0, 0);
+			_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(248, 186));
+			_scene->_sequences.setDepth(g_sequence_ids[4], 2);
+			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 90);
 			break;
 		case 90:
-			if (_globals[kTopButtonPushed]) {
-				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-				_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
-				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 8);
+			if (global[kTopButtonPushed]) {
+				_scene->_sequences.remove(g_sequence_ids[1]);
+				g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 1);
+				_scene->_sequences.setDepth(g_sequence_ids[2], 8);
 				g_engine->_soundManager->command(20, 0);
 			}
-			_globals[kTopButtonPushed] = false;
-			_globals._sequenceIndexes[4] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
-			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(248, 186));
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 91);
+			global[kTopButtonPushed] = false;
+			g_sequence_ids[4] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[4], false, 4, 1, 0, 0);
+			_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(248, 186));
+			_scene->_sequences.setDepth(g_sequence_ids[4], 2);
+			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 91);
 			break;
 
 		case 91:
@@ -150,24 +150,24 @@ static void room_808_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
-			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(248, 163));
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
+			g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 4, 1, 0, 0);
+			_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(248, 163));
+			_scene->_sequences.setDepth(g_sequence_ids[4], 2);
+			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
 			break;
 
 		case 80:
-			if (!_globals[kTopButtonPushed]) {
-				_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-				_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-				_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
+			if (!global[kTopButtonPushed]) {
+				_scene->_sequences.remove(g_sequence_ids[2]);
+				g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
+				_scene->_sequences.setDepth(g_sequence_ids[1], 8);
 				g_engine->_soundManager->command(20, 0);
 			}
-			_globals[kTopButtonPushed] = true;
-			_globals._sequenceIndexes[4] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
-			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(248, 163));
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
+			global[kTopButtonPushed] = true;
+			g_sequence_ids[4] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[4], false, 4, 1, 0, 0);
+			_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(248, 163));
+			_scene->_sequences.setDepth(g_sequence_ids[4], 2);
+			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
 			break;
 
 		case 81:
@@ -181,10 +181,10 @@ static void room_808_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 4, 2, 0, 0);
-			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(168, 211));
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+			g_sequence_ids[4] = _scene->_sequences.startPingPongCycle(g_sprite_ids[4], false, 4, 2, 0, 0);
+			_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(168, 211));
+			_scene->_sequences.setDepth(g_sequence_ids[4], 2);
+			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 			break;
 
 		case 70:
@@ -198,10 +198,10 @@ static void room_808_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 4, 2, 0, 0);
-			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(172, 163));
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
+			g_sequence_ids[4] = _scene->_sequences.startPingPongCycle(g_sprite_ids[4], false, 4, 2, 0, 0);
+			_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(172, 163));
+			_scene->_sequences.setDepth(g_sequence_ids[4], 2);
+			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
 			break;
 
 		case 80:
@@ -215,10 +215,10 @@ static void room_808_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 4, 2, 0, 0);
-			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(172, 186));
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 90);
+			g_sequence_ids[4] = _scene->_sequences.startPingPongCycle(g_sprite_ids[4], false, 4, 2, 0, 0);
+			_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(172, 186));
+			_scene->_sequences.setDepth(g_sequence_ids[4], 2);
+			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 90);
 			break;
 
 		case 90:
@@ -230,7 +230,7 @@ static void room_808_parser() {
 		}
 	} else if (player_said_2(exit, panel)) {
 		_scene->_nextSceneId = 801;
-		_globals[kBetweenRooms] = true;
+		global[kBetweenRooms] = true;
 	} else
 		return;
 

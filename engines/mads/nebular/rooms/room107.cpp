@@ -40,22 +40,22 @@ static Scratch local;
 
 static void room_107_init() {
 	for (int i = 0; i < 3; i++)
-		_globals._spriteIndexes[i + 1] = _scene->_sprites.addSprites(kernel_name('G', i));
+		g_sprite_ids[i + 1] = _scene->_sprites.addSprites(kernel_name('G', i));
 
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_full_name(105, 'f', 4, "", EXT_SS));
+	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_full_name(105, 'f', 4, "", EXT_SS));
 
-	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 14, 0, 0, 7);
-	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 17, 0, 0, 13);
-	_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 19, 0, 0, 9);
+	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 14, 0, 0, 7);
+	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 17, 0, 0, 13);
+	g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 19, 0, 0, 9);
 
 	for (int i = 1; i < 4; i++)
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[i], 0);
+		_scene->_sequences.setDepth(g_sequence_ids[i], 0);
 
-	if (_globals[kFishIn107]) {
-		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6, 0, 0, 0);
-		_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(68, 151));
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 1);
-		int idx = _scene->_dynamicHotspots.add(words_dead_fish, words_swim_to, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+	if (global[kFishIn107]) {
+		g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 6, 0, 0, 0);
+		_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(68, 151));
+		_scene->_sequences.setDepth(g_sequence_ids[4], 1);
+		int idx = _scene->_dynamicHotspots.add(words_dead_fish, words_swim_to, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(78, 135), FACING_SOUTHWEST);
 	}
 
@@ -73,12 +73,12 @@ static void room_107_init() {
 	}
 
 	if (((_scene->_priorSceneId == 105) || (_scene->_priorSceneId == 106)) && (g_engine->getRandomNumber(1, 3) == 1)) {
-		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(kernel_full_name(105, 'R', 1, "", EXT_SS));
-		_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], true, 4, 0, 0, 0);
-		_scene->_sequences.setPosition(_globals._sequenceIndexes[0], Common::Point(270, 150));
-		_scene->_sequences.setMotion(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_SPRITE, -200, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 2);
-		_scene->_dynamicHotspots.add(words_manta_ray, words_swim_to, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
+		g_sprite_ids[0] = _scene->_sprites.addSprites(kernel_full_name(105, 'R', 1, "", EXT_SS));
+		g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], true, 4, 0, 0, 0);
+		_scene->_sequences.setPosition(g_sequence_ids[0], Common::Point(270, 150));
+		_scene->_sequences.setMotion(g_sequence_ids[0], SEQUENCE_TRIGGER_SPRITE, -200, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[0], 2);
+		_scene->_dynamicHotspots.add(words_manta_ray, words_swim_to, g_sequence_ids[0], Common::Rect(0, 0, 0, 0));
 	}
 
 	kernel.quotes = quote_load(0x4A, 0x4B, 0x4C, 0x35, 0x34, 0);
@@ -110,15 +110,15 @@ static void room_107_pre_parser() {
 static void room_107_parser() {
 	if (player.look_around)
 		text_show(10708);
-	else if (player_said_2(take, dead_fish) && _globals[kFishIn107]) {
+	else if (player_said_2(take, dead_fish) && global[kFishIn107]) {
 		if (player_has(OBJ_DEAD_FISH)) {
 			int randVal = g_engine->getRandomNumber(74, 76);
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, randVal));
 		} else {
-			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
+			_scene->_sequences.remove(g_sequence_ids[4]);
 			inter_give_to_player(OBJ_DEAD_FISH);
-			_globals[kFishIn107] = false;
+			global[kFishIn107] = false;
 			object_examine(OBJ_DEAD_FISH, 802, 0);
 		}
 	} else if (player_said_2(swim_towards, northern_sea_cliff))

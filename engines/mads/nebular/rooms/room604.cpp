@@ -45,14 +45,14 @@ static Scratch local;
 
 
 static void room_604_init() {
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('c', 0));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXCD_9");
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_full_name(620, 'b', 0, "", EXT_SS));
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RXMRC_9");
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('c', 0));
+	g_sprite_ids[4] = _scene->_sprites.addSprites("*RXCD_9");
+	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_full_name(620, 'b', 0, "", EXT_SS));
+	g_sprite_ids[5] = _scene->_sprites.addSprites("*RXMRC_9");
 
-	if (_globals[kTimebombStatus] == 1) {
-		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, -1);
-		local._timebombHotspotId = _scene->_dynamicHotspots.add(words_timebomb, words_walkto, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
+	if (global[kTimebombStatus] == 1) {
+		g_sequence_ids[6] = _scene->_sequences.startCycle(g_sprite_ids[6], false, -1);
+		local._timebombHotspotId = _scene->_dynamicHotspots.add(words_timebomb, words_walkto, g_sequence_ids[6], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._timebombHotspotId, Common::Point(166, 118), FACING_NORTHEAST);
 	}
 
@@ -69,13 +69,13 @@ static void room_604_init() {
 		player.facing = FACING_NORTHEAST;
 		player.walker_visible = false;
 		player.commands_allowed = false;
-		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
+		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
+		_scene->_sequences.setDepth(g_sequence_ids[2], 1);
 		_scene->loadAnimation(kernel_name('R', 1), 70);
 		local._animationActiveFl = true;
 	} else {
-		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
+		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -2);
+		_scene->_sequences.setDepth(g_sequence_ids[2], 1);
 	}
 
 	local._monsterTimer = _scene->_frameStartTime;
@@ -94,15 +94,15 @@ static void room_604_daemon() {
 		break;
 
 	case 71:
-		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 1, 0, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+		_scene->_sequences.remove(g_sequence_ids[2]);
+		g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 6, 1, 0, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[2], 1);
+		_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
 		break;
 
 	case 72:
-		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
+		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -2);
+		_scene->_sequences.setDepth(g_sequence_ids[2], 1);
 		player.commands_allowed = true;
 		local._animationActiveFl = false;
 		break;
@@ -173,42 +173,42 @@ static void handleBombActions() {
 	case 0:
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], false, 9, 1, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 1, 3);
-		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
+		g_sequence_ids[5] = _scene->_sequences.startPingPongCycle(g_sprite_ids[5], false, 9, 1, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[5], 1, 3);
+		_scene->_sequences.setMsgLayout(g_sequence_ids[5]);
 		if (local._bombMode == 1)
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_SPRITE, 3, 1);
+			_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_SPRITE, 3, 1);
 		else
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_SPRITE, 3, 2);
+			_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_SPRITE, 3, 2);
 
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+		_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 		break;
 
 	case 1:
-		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, -1);
-		local._timebombHotspotId = _scene->_dynamicHotspots.add(words_timebomb, words_walkto, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
+		g_sequence_ids[6] = _scene->_sequences.startCycle(g_sprite_ids[6], false, -1);
+		local._timebombHotspotId = _scene->_dynamicHotspots.add(words_timebomb, words_walkto, g_sequence_ids[6], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._timebombHotspotId, Common::Point(166, 118), FACING_NORTHEAST);
 		inter_move_object(OBJ_TIMEBOMB, _scene->_currentSceneId);
 		break;
 
 	case 2:
-		_scene->_sequences.remove(_globals._sequenceIndexes[6]);
+		_scene->_sequences.remove(g_sequence_ids[6]);
 		_scene->_dynamicHotspots.remove(local._timebombHotspotId);
 		inter_give_to_player(OBJ_TIMEBOMB);
 		break;
 
 	case 3:
-		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[5]);
+		_scene->_sequences.updateTimeout(-1, g_sequence_ids[5]);
 		player.walker_visible = true;
 		player.commands_allowed = true;
 		if (local._bombMode == 1) {
 			text_show(60421);
-			_globals[kTimebombStatus] = TIMEBOMB_ACTIVATED;
-			_globals[kTimebombTimer] = 0;
+			global[kTimebombStatus] = TIMEBOMB_ACTIVATED;
+			global[kTimebombTimer] = 0;
 		} else {
 			text_show(60423);
-			_globals[kTimebombStatus] = TIMEBOMB_DEACTIVATED;
-			_globals[kTimebombTimer] = 0;
+			global[kTimebombStatus] = TIMEBOMB_DEACTIVATED;
+			global[kTimebombTimer] = 0;
 		}
 		break;
 
@@ -222,35 +222,35 @@ static void room_604_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-			_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 6, 1, 0, 0);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			_scene->_sequences.remove(g_sequence_ids[2]);
+			g_sequence_ids[2] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[2], false, 6, 1, 0, 0);
+			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
+			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
 		{
-			int syncIdx = _globals._sequenceIndexes[2];
-			_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], syncIdx);
+			int syncIdx = g_sequence_ids[2];
+			g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
+			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
+			_scene->_sequences.updateTimeout(g_sequence_ids[2], syncIdx);
 			_scene->_sequences.addTimer(6, 2);
 		}
 		break;
 
 		case 2:
 			player.walker_visible = false;
-			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 10, 1, 0, 0);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 10, 1, 0, 0);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
+			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 			break;
 
 		case 3:
 		{
-			int syncIdx = _globals._sequenceIndexes[4];
-			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, -2);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], syncIdx);
+			int syncIdx = g_sequence_ids[4];
+			g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, -2);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
+			_scene->_sequences.updateTimeout(g_sequence_ids[4], syncIdx);
 			_scene->_nextSceneId = 504;
 		}
 		break;
@@ -263,11 +263,11 @@ static void room_604_parser() {
 		text_show(60420);
 	else if (player_said_3(put, timebomb, ledge) || player_said_3(put, timebomb, viewport)) {
 		local._bombMode = 1;
-		if ((game.difficulty == DIFFICULTY_HARD) || _globals[kWarnedFloodCity])
+		if ((game.difficulty == DIFFICULTY_HARD) || global[kWarnedFloodCity])
 			handleBombActions();
 		else if (
 			(player_has(OBJ_POLYCEMENT) && (player_has(OBJ_CHICKEN) || player_has(OBJ_CHICKEN_BOMB)))
-			&& (_globals[kLineStatus] == LINE_TIED || (game.difficulty == DIFFICULTY_EASY && !_globals[kBoatRaised]))
+			&& (global[kLineStatus] == LINE_TIED || (game.difficulty == DIFFICULTY_EASY && !global[kBoatRaised]))
 			)
 			// The original can get in an impossible state at this point, if the player has
 			// combined the chicken with the bomb before placing the timer bomb on the ledge.
@@ -278,7 +278,7 @@ static void room_604_parser() {
 			text_show(60424);
 		else {
 			text_show(60425);
-			_globals[kWarnedFloodCity] = true;
+			global[kWarnedFloodCity] = true;
 		}
 	} else if (player_said_2(take, timebomb)) {
 		if (kernel.trigger || !player_has(OBJ_TIMEBOMB)) {

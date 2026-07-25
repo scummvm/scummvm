@@ -36,111 +36,111 @@ static void handleRexInGrate() {
 	case 0:
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
-		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
+		g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);
+		_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
 		_scene->_sequences.addTimer(15, 1);
 		break;
 
 	case 1:
-		_scene->_sequences.setDone(_globals._sequenceIndexes[4]);
-		_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 12, 3, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 2, 3);
-		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+		_scene->_sequences.setDone(g_sequence_ids[4]);
+		g_sequence_ids[4] = _scene->_sequences.startPingPongCycle(g_sprite_ids[4], false, 12, 3, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[4], 2, 3);
+		_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
+		_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 		break;
 
 	case 2:
 	{
-		int oldIdx = _globals._sequenceIndexes[4];
-		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 12, 1, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 4, 8);
-		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], oldIdx);
+		int oldIdx = g_sequence_ids[4];
+		g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 12, 1, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[4], 4, 8);
+		_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
+		_scene->_sequences.updateTimeout(g_sequence_ids[4], oldIdx);
 
-		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 12, 1, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 2, -2);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 12);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
+		_scene->_sequences.remove(g_sequence_ids[3]);
+		g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 12, 1, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[3], 2, -2);
+		_scene->_sequences.setDepth(g_sequence_ids[3], 12);
+		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+		_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
 	}
 	break;
 
 	case 3:
 	{
-		int oldIdx = _globals._sequenceIndexes[3];
-		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 12);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], oldIdx);
+		int oldIdx = g_sequence_ids[3];
+		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
+		_scene->_sequences.setDepth(g_sequence_ids[3], 12);
+		_scene->_sequences.updateTimeout(g_sequence_ids[3], oldIdx);
 	}
 	break;
 
 	case 4:
 	{
-		int oldIdx = _globals._sequenceIndexes[4];
-		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 12, 1, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 10, 11);
-		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], oldIdx);
+		int oldIdx = g_sequence_ids[4];
+		g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 12, 1, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[4], 10, 11);
+		_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
+		_scene->_sequences.updateTimeout(g_sequence_ids[4], oldIdx);
 
-		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-		_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 12, 1, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 5, -2);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 5);
+		_scene->_sequences.remove(g_sequence_ids[3]);
+		g_sequence_ids[3] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[3], false, 12, 1, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[3], 5, -2);
+		_scene->_sequences.setDepth(g_sequence_ids[3], 3);
+		_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 5);
 	}
 	break;
 
 	case 5:
 	{
-		int oldIdx = _globals._sequenceIndexes[3];
-		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 3);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], oldIdx);
+		int oldIdx = g_sequence_ids[3];
+		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 3);
+		_scene->_sequences.setDepth(g_sequence_ids[3], 3);
+		_scene->_sequences.updateTimeout(g_sequence_ids[3], oldIdx);
 
-		oldIdx = _globals._sequenceIndexes[4];
-		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 12);
-		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], oldIdx);
+		oldIdx = g_sequence_ids[4];
+		g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 12);
+		_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
+		_scene->_sequences.updateTimeout(g_sequence_ids[4], oldIdx);
 		_scene->_sequences.addTimer(15, 6);
 	}
 	break;
 
 	case 6:
-		_scene->_sequences.setDone(_globals._sequenceIndexes[4]);
-		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 12, 1, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 13, 14);
-		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
+		_scene->_sequences.setDone(g_sequence_ids[4]);
+		g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 12, 1, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[4], 13, 14);
+		_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
 
-		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-		_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 12, 1, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 2, 3);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 7);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 8);
+		_scene->_sequences.remove(g_sequence_ids[3]);
+		g_sequence_ids[3] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[3], false, 12, 1, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[3], 2, 3);
+		_scene->_sequences.setDepth(g_sequence_ids[3], 3);
+		_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 7);
+		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 8);
 		break;
 
 	case 7:
-		_scene->_sequences.setDone(_globals._sequenceIndexes[4]);
-		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 15);
-		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], -1);
+		_scene->_sequences.setDone(g_sequence_ids[4]);
+		g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 15);
+		_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
+		_scene->_sequences.updateTimeout(g_sequence_ids[4], -1);
 		break;
 
 	case 8:
 	{
-		int oldIdx = _globals._sequenceIndexes[3];
-		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 2);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], oldIdx);
+		int oldIdx = g_sequence_ids[3];
+		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 2);
+		_scene->_sequences.setDepth(g_sequence_ids[3], 3);
+		_scene->_sequences.updateTimeout(g_sequence_ids[3], oldIdx);
 		_scene->_sequences.addTimer(15, 9);
 	}
 	break;
 
 	case 9:
-		_scene->_sequences.setDone(_globals._sequenceIndexes[4]);
-		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
+		_scene->_sequences.setDone(g_sequence_ids[4]);
+		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
+		_scene->_sequences.setDepth(g_sequence_ids[3], 3);
 		_scene->_sequences.addTimer(48, 10);
 		break;
 
@@ -161,101 +161,101 @@ static void handleRoxInGrate() {
 	case 0:
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
-		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
+		g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, 1);
+		_scene->_sequences.setMsgLayout(g_sequence_ids[5]);
 		_scene->_sequences.addTimer(15, 1);
 		break;
 
 	case 1:
-		_scene->_sequences.setDone(_globals._sequenceIndexes[5]);
-		_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], false, 17, 3, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 2, 3);
-		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+		_scene->_sequences.setDone(g_sequence_ids[5]);
+		g_sequence_ids[5] = _scene->_sequences.startPingPongCycle(g_sprite_ids[5], false, 17, 3, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[5], 2, 3);
+		_scene->_sequences.setMsgLayout(g_sequence_ids[5]);
+		_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 		break;
 
 	case 2:
-		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 17, 1, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 2, -2);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 12);
+		_scene->_sequences.remove(g_sequence_ids[3]);
+		g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 17, 1, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[3], 2, -2);
+		_scene->_sequences.setDepth(g_sequence_ids[3], 12);
 
-		temp = _globals._sequenceIndexes[5];
-		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 17, 1, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 4, 8);
-		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[5], temp);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
+		temp = g_sequence_ids[5];
+		g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 17, 1, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[5], 4, 8);
+		_scene->_sequences.setMsgLayout(g_sequence_ids[5]);
+		_scene->_sequences.updateTimeout(g_sequence_ids[5], temp);
+		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+		_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
 		break;
 
 	case 3:
-		temp1 = _globals._sequenceIndexes[3];
-		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 12);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], temp1);
+		temp1 = g_sequence_ids[3];
+		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
+		_scene->_sequences.setDepth(g_sequence_ids[3], 12);
+		_scene->_sequences.updateTimeout(g_sequence_ids[3], temp1);
 		break;
 
 	case 4:
-		temp = _globals._sequenceIndexes[5];
-		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 17, 1, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 10, 11);
-		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[5], temp);
+		temp = g_sequence_ids[5];
+		g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 17, 1, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[5], 10, 11);
+		_scene->_sequences.setMsgLayout(g_sequence_ids[5]);
+		_scene->_sequences.updateTimeout(g_sequence_ids[5], temp);
 
-		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-		_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 17, 1, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 5, -2);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 5);
+		_scene->_sequences.remove(g_sequence_ids[3]);
+		g_sequence_ids[3] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[3], false, 17, 1, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[3], 5, -2);
+		_scene->_sequences.setDepth(g_sequence_ids[3], 3);
+		_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 5);
 		break;
 
 	case 5:
-		temp = _globals._sequenceIndexes[3];
-		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 3);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], temp);
+		temp = g_sequence_ids[3];
+		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 3);
+		_scene->_sequences.setDepth(g_sequence_ids[3], 3);
+		_scene->_sequences.updateTimeout(g_sequence_ids[3], temp);
 
-		temp = _globals._sequenceIndexes[5];
-		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 12);
-		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[5], temp);
+		temp = g_sequence_ids[5];
+		g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, 12);
+		_scene->_sequences.setMsgLayout(g_sequence_ids[5]);
+		_scene->_sequences.updateTimeout(g_sequence_ids[5], temp);
 		_scene->_sequences.addTimer(20, 6);
 		break;
 
 	case 6:
-		_scene->_sequences.setDone(_globals._sequenceIndexes[5]);
-		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 17, 1, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 13, 15);
-		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
+		_scene->_sequences.setDone(g_sequence_ids[5]);
+		g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 17, 1, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[5], 13, 15);
+		_scene->_sequences.setMsgLayout(g_sequence_ids[5]);
 
-		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-		_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 17, 1, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 2, 3);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 7);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 8);
+		_scene->_sequences.remove(g_sequence_ids[3]);
+		g_sequence_ids[3] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[3], false, 17, 1, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[3], 2, 3);
+		_scene->_sequences.setDepth(g_sequence_ids[3], 3);
+		_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 7);
+		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 8);
 		break;
 
 	case 7:
-		_scene->_sequences.setDone(_globals._sequenceIndexes[5]);
-		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 16);
-		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[5], -1);
+		_scene->_sequences.setDone(g_sequence_ids[5]);
+		g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, 16);
+		_scene->_sequences.setMsgLayout(g_sequence_ids[5]);
+		_scene->_sequences.updateTimeout(g_sequence_ids[5], -1);
 		break;
 
 	case 8:
-		temp = _globals._sequenceIndexes[3];
-		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 2);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], temp);
+		temp = g_sequence_ids[3];
+		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 2);
+		_scene->_sequences.setDepth(g_sequence_ids[3], 3);
+		_scene->_sequences.updateTimeout(g_sequence_ids[3], temp);
 		_scene->_sequences.addTimer(20, 9);
 		break;
 
 	case 9:
-		_scene->_sequences.setDone(_globals._sequenceIndexes[5]);
-		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
+		_scene->_sequences.setDone(g_sequence_ids[5]);
+		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
+		_scene->_sequences.setDepth(g_sequence_ids[3], 3);
 		_scene->_sequences.addTimer(48, 10);
 		break;
 
@@ -269,18 +269,18 @@ static void handleRoxInGrate() {
 }
 
 static void room_316_init() {
-	if (_globals[kSexOfRex] == REX_MALE) {
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('g', -1));
-		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXCL_8");
-		_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*RXCL_2");
+	if (global[kSexOfRex] == REX_MALE) {
+		g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('g', -1));
+		g_sprite_ids[4] = _scene->_sprites.addSprites("*RXCL_8");
+		g_sprite_ids[6] = _scene->_sprites.addSprites("*RXCL_2");
 	} else {
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('g', 0));
-		_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*ROXCL_8");
+		g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('g', 0));
+		g_sprite_ids[5] = _scene->_sprites.addSprites("*ROXCL_8");
 	}
 
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('v', 0));
-	_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 12);
+	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('v', 0));
+	g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
+	_scene->_sequences.setDepth(g_sequence_ids[3], 12);
 
 	if (_scene->_priorSceneId == 366) {
 		player.commands_allowed = false;
@@ -296,10 +296,10 @@ static void room_316_init() {
 		player.commands_allowed = false;
 		player.walker_visible = false;
 		g_engine->_soundManager->command(44, 0);
-		int spriteIdx = (_globals[kSexOfRex] == REX_MALE) ? 1 : 2;
-		_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[spriteIdx], false, 6, 1, 0, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 2);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
+		int spriteIdx = (global[kSexOfRex] == REX_MALE) ? 1 : 2;
+		g_sequence_ids[1] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[spriteIdx], false, 6, 1, 0, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[1], 2);
+		_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		player.x = 291;
 		player.y = 126;
@@ -311,7 +311,7 @@ static void room_316_init() {
 
 static void room_316_daemon() {
 	if (kernel.trigger == 60) {
-		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[1]);
+		_scene->_sequences.updateTimeout(-1, g_sequence_ids[1]);
 		player.walker_visible = true;
 		player.commands_allowed = true;
 	}
@@ -319,63 +319,63 @@ static void room_316_daemon() {
 	if (kernel.trigger >= 70) {
 		switch (kernel.trigger) {
 		case 70:
-			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 12, 1, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 2, 6);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
+			_scene->_sequences.remove(g_sequence_ids[3]);
+			g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 12, 1, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[3], 2, 6);
+			_scene->_sequences.setDepth(g_sequence_ids[3], 3);
 
-			_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 12, 1, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], 1, 5);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[6]);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+			g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(g_sprite_ids[6], false, 12, 1, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[6], 1, 5);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[6]);
+			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+			_scene->_sequences.addSubEntry(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
 			break;
 
 		case 71:
 		{
-			int synxIdx = _globals._sequenceIndexes[3];
-			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], synxIdx);
+			int synxIdx = g_sequence_ids[3];
+			g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
+			_scene->_sequences.setDepth(g_sequence_ids[3], 3);
+			_scene->_sequences.updateTimeout(g_sequence_ids[3], synxIdx);
 		}
 		break;
 
 		case 72:
 		{
-			int synxIdx = _globals._sequenceIndexes[6];
-			_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 12, 1, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], 6, 9);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[6]);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[6], synxIdx);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
+			int synxIdx = g_sequence_ids[6];
+			g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(g_sprite_ids[6], false, 12, 1, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[6], 6, 9);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[6]);
+			_scene->_sequences.updateTimeout(g_sequence_ids[6], synxIdx);
+			_scene->_sequences.addSubEntry(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
 		}
 		break;
 
 		case 73:
-			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-			_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 12, 1, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 5);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 12);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[6]);
+			_scene->_sequences.remove(g_sequence_ids[3]);
+			g_sequence_ids[3] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[3], false, 12, 1, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 5);
+			_scene->_sequences.setDepth(g_sequence_ids[3], 12);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[6]);
 
-			_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 12, 1, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], 10, -2);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[6]);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
+			g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(g_sprite_ids[6], false, 12, 1, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[6], 10, -2);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[6]);
+			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
+			_scene->_sequences.addSubEntry(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
 			break;
 
 		case 74:
 		{
-			int synxIdx = _globals._sequenceIndexes[3];
-			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 12);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], synxIdx);
+			int synxIdx = g_sequence_ids[3];
+			g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
+			_scene->_sequences.setDepth(g_sequence_ids[3], 12);
+			_scene->_sequences.updateTimeout(g_sequence_ids[3], synxIdx);
 		}
 		break;
 
 		case 75:
-			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[6]);
+			_scene->_sequences.updateTimeout(-1, g_sequence_ids[6]);
 			player.commands_allowed = true;
 			player.walker_visible = true;
 			break;
@@ -388,7 +388,7 @@ static void room_316_daemon() {
 
 static void room_316_pre_parser() {
 	if (player_said_2(walk_down, corridor_to_east)) {
-		if (_globals[kAfterHavoc])
+		if (global[kAfterHavoc])
 			player.walk_off_edge_to_room = 354;
 		else
 			player.walk_off_edge_to_room = 304;
@@ -397,54 +397,54 @@ static void room_316_pre_parser() {
 
 static void room_316_parser() {
 	if (player_said_2(climb_into, air_vent)) {
-		if (_globals[kSexOfRex] == REX_FEMALE)
+		if (global[kSexOfRex] == REX_FEMALE)
 			handleRoxInGrate();
 		else
 			handleRexInGrate();
 	} else if (player_said_2(walk_up, ramp) || player_said_2(walk_onto, platform)) {
 		switch (kernel.trigger) {
 		case 0:
-			if (_globals[kCityFlooded]) {
+			if (global[kCityFlooded]) {
 				text_show(31623);
 			} else {
 				g_engine->_soundManager->command(45, 0);
 				player.commands_allowed = false;
 				player.walker_visible = false;
-				if (_globals[kSexOfRex] == REX_MALE) {
-					_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 7, 1, 0, 0);
-					_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], -1, 7);
-					_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 2);
-					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				if (global[kSexOfRex] == REX_MALE) {
+					g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 7, 1, 0, 0);
+					_scene->_sequences.setAnimRange(g_sequence_ids[1], -1, 7);
+					_scene->_sequences.setDepth(g_sequence_ids[1], 2);
+					_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				} else {
-					_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
-					_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 2);
-					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+					g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 7, 1, 0, 0);
+					_scene->_sequences.setDepth(g_sequence_ids[2], 2);
+					_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 				}
 			}
 			break;
 
 		case 1:
-			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 7, 1, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 8, -2);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 2);
+			g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 7, 1, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[1], 8, -2);
+			_scene->_sequences.setDepth(g_sequence_ids[1], 2);
 			_scene->_kernelMessages.reset();
 			if (!player_has_been_in_room(321))
 				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 253));
 
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 2:
-			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 7, 0, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], -2, -2);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 2);
+			g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 7, 0, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[1], -2, -2);
+			_scene->_sequences.setDepth(g_sequence_ids[1], 2);
 			_scene->_sequences.addTimer(48, 4);
 			break;
 
 		case 3:
-			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 7, 0, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], -2, -2);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 2);
+			g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 7, 0, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[2], -2, -2);
+			_scene->_sequences.setDepth(g_sequence_ids[2], 2);
 			_scene->_sequences.addTimer(48, 4);
 			break;
 
@@ -475,7 +475,7 @@ static void room_316_parser() {
 	else if (player_said_2(look, air_vent))
 		text_show(31618);
 	else if (player_said_2(look, corridor_to_east)) {
-		if (!_globals[kAfterHavoc]) {
+		if (!global[kAfterHavoc]) {
 			if (game.difficulty != DIFFICULTY_EASY)
 				text_show(31620);
 			else

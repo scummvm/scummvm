@@ -41,20 +41,20 @@ static Scratch local;
 
 static void room_603_init() {
 	if (object[OBJ_COMPACT_CASE].location == _scene->_currentSceneId) {
-		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXMRD_3");
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('c', -1));
-		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
-		local._compactCaseHotspotId = _scene->_dynamicHotspots.add(words_compact_case, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		g_sprite_ids[4] = _scene->_sprites.addSprites("*RXMRD_3");
+		g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('c', -1));
+		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, -1);
+		_scene->_sequences.setDepth(g_sequence_ids[1], 1);
+		local._compactCaseHotspotId = _scene->_dynamicHotspots.add(words_compact_case, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._compactCaseHotspotId, Common::Point(250, 152), FACING_SOUTHEAST);
 	}
 
 	if ((game.difficulty != DIFFICULTY_HARD) && (object[OBJ_NOTE].location == _scene->_currentSceneId)) {
-		_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXMRC_9");
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('p', -1));
-		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
-		local._noteHotspotId = _scene->_dynamicHotspots.add(words_note, words_walkto, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		g_sprite_ids[3] = _scene->_sprites.addSprites("*RXMRC_9");
+		g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('p', -1));
+		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
+		_scene->_sequences.setDepth(g_sequence_ids[2], 14);
+		local._noteHotspotId = _scene->_dynamicHotspots.add(words_note, words_walkto, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._noteHotspotId, Common::Point(242, 118), FACING_NORTHEAST);
 	}
 
@@ -75,23 +75,23 @@ static void room_603_parser() {
 			case 0:
 				player.commands_allowed = false;
 				player.walker_visible = false;
-				_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 8, 1, 0, 0);
-				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 1, 5);
-				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_SPRITE, 5, 1);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				g_sequence_ids[4] = _scene->_sequences.startPingPongCycle(g_sprite_ids[4], false, 8, 1, 0, 0);
+				_scene->_sequences.setAnimRange(g_sequence_ids[4], 1, 5);
+				_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
+				_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_SPRITE, 5, 1);
+				_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 1:
 				g_engine->_soundManager->command(9, 0);
-				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+				_scene->_sequences.remove(g_sequence_ids[1]);
 				_scene->_dynamicHotspots.remove(local._compactCaseHotspotId);
 				inter_give_to_player(OBJ_COMPACT_CASE);
 				object_examine(OBJ_COMPACT_CASE, 60330, 0);
 				break;
 
 			case 2:
-				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[4]);
+				_scene->_sequences.updateTimeout(-1, g_sequence_ids[4]);
 				player.walker_visible = true;
 				player.commands_allowed = true;
 				break;
@@ -105,15 +105,15 @@ static void room_603_parser() {
 			if (kernel.trigger == 0) {
 				player.commands_allowed = false;
 				player.walker_visible = false;
-				_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
-				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
+				g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
+				_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
 				_scene->_sequences.addTimer(15, 1);
 			} else if (kernel.trigger == 1) {
 				g_engine->_soundManager->command(9, 0);
-				_scene->_sequences.remove(_globals._sequenceIndexes[2]);
+				_scene->_sequences.remove(g_sequence_ids[2]);
 				_scene->_dynamicHotspots.remove(local._noteHotspotId);
 				inter_give_to_player(OBJ_NOTE);
-				_scene->_sequences.remove(_globals._sequenceIndexes[3]);
+				_scene->_sequences.remove(g_sequence_ids[3]);
 				player.clock = _scene->_frameStartTime - player.frame_delay;
 				player.walker_visible = true;
 				player.commands_allowed = true;

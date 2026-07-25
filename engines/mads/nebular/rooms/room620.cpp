@@ -32,8 +32,8 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_620_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('b', 0));
-	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('b', 0));
+	g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, -1);
 	player.commands_allowed = false;
 	player.walker_visible = false;
 	_scene->_sequences.addTimer(30, 70);
@@ -44,28 +44,28 @@ static void room_620_init() {
 static void room_620_daemon() {
 	switch (kernel.trigger) {
 	case 70:
-		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+		_scene->_sequences.remove(g_sequence_ids[1]);
 		_scene->loadAnimation(kernel_name('E', -1), 71);
 		break;
 
 	case 71:
 		if (_scene->_priorSceneId == 751) {
-			_globals[kCityFlooded] = true;
-			_globals[kTeleporterRoom + 5] = 0;
+			global[kCityFlooded] = true;
+			global[kTeleporterRoom + 5] = 0;
 			_scene->_nextSceneId = 701;
 		} else if (_scene->_priorSceneId == 752) {
-			_globals[kCityFlooded] = true;
-			_globals[kTeleporterRoom + 5] = 0;
+			global[kCityFlooded] = true;
+			global[kTeleporterRoom + 5] = 0;
 			_scene->_nextSceneId = 702;
 		} else if (_scene->_priorSceneId < 501 || _scene->_priorSceneId > 752) {
-			_globals[kCityFlooded] = true;
-			_globals[kTeleporterRoom + 5] = 0;
+			global[kCityFlooded] = true;
+			global[kTeleporterRoom + 5] = 0;
 			_scene->_nextSceneId = _scene->_priorSceneId;
 		} else if (_scene->_priorSceneId >= 501 && _scene->_priorSceneId <= 612) {
-			_globals[kResurrectRoom] = _globals[kHoverCarLocation];
+			global[kResurrectRoom] = global[kHoverCarLocation];
 			inter_give_to_player(OBJ_TIMEBOMB);
-			_globals[kTimebombStatus] = 0;
-			_globals[kTimebombTimer] = 0;
+			global[kTimebombStatus] = 0;
+			global[kTimebombTimer] = 0;
 			_scene->_nextSceneId = 605;
 		}
 		player.commands_allowed = true;

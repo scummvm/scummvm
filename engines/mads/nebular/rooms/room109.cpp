@@ -49,13 +49,13 @@ static Scratch local;
 
 
 static void room_109_init() {
-	_globals[kFishIn105] = true;
+	global[kFishIn105] = true;
 
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*RXSWRC_6");
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('O', 1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('O', 2));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('O', 0));
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_name('H', 4));
+	g_sprite_ids[0] = _scene->_sprites.addSprites("*RXSWRC_6");
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('O', 1));
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('O', 2));
+	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('O', 0));
+	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('H', 4));
 
 	local._rexThrowingObject = false;
 	local._throwingObjectId = 0;
@@ -66,17 +66,17 @@ static void room_109_init() {
 	if (_scene->_priorSceneId == 110) {
 		player.x = 248;
 		player.y = 38;
-		_globals[kHoovicSated] = 2;
+		global[kHoovicSated] = 2;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		player.x = 20;
 		player.y = 68;
 		player.facing = FACING_EAST;
 	}
 
-	if (!_globals[kHoovicAlive]) {
-		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 1, 0, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 4);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], -2, -2);
+	if (!global[kHoovicAlive]) {
+		g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(g_sprite_ids[6], false, 6, 1, 0, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[6], 4);
+		_scene->_sequences.setAnimRange(g_sequence_ids[6], -2, -2);
 
 		int idx = _scene->_dynamicHotspots.add(words_dead_purple_monster, words_swim_to, -1, Common::Rect(256, 57, 267, 87));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
@@ -86,13 +86,13 @@ static void room_109_init() {
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
 	}
 
-	if (!_globals[kHoovicAlive] || _globals[kHoovicSated])
+	if (!global[kHoovicAlive] || global[kHoovicSated])
 		_scene->changeVariant(1);
 
 	if (object_is_here(OBJ_BURGER)) {
-		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 0, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], -2, -2);
-		int idx = _scene->_dynamicHotspots.add(words_burger, words_swim_to, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+		g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 6, 0, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[3], -2, -2);
+		int idx = _scene->_dynamicHotspots.add(words_burger, words_swim_to, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
 	} else if (_scene->_roomChanged)
 		inter_give_to_player(OBJ_BURGER);
@@ -109,14 +109,14 @@ static void room_109_init() {
 	local._eatingFirstFish = (!player.been_here_before) && (_scene->_priorSceneId < 110);
 
 	if (local._eatingFirstFish) {
-		_globals._spriteIndexes[10] = _scene->_sprites.addSprites(kernel_full_name(105, 'F', 1, "", EXT_SS));
-		_globals._spriteIndexes[9] = _scene->_sprites.addSprites(kernel_name('H', 1));
+		g_sprite_ids[10] = _scene->_sprites.addSprites(kernel_full_name(105, 'F', 1, "", EXT_SS));
+		g_sprite_ids[9] = _scene->_sprites.addSprites(kernel_name('H', 1));
 
-		_globals._sequenceIndexes[10] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[10], true, 4, 0, 0, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 5);
-		_scene->_sequences.setPosition(_globals._sequenceIndexes[10], Common::Point(126, 39));
-		_scene->_sequences.setMotion(_globals._sequenceIndexes[10], 0, 200, 0);
-		_scene->_sequences.setScale(_globals._sequenceIndexes[10], 80);
+		g_sequence_ids[10] = _scene->_sequences.startPingPongCycle(g_sprite_ids[10], true, 4, 0, 0, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[10], 5);
+		_scene->_sequences.setPosition(g_sequence_ids[10], Common::Point(126, 39));
+		_scene->_sequences.setMotion(g_sequence_ids[10], 0, 200, 0);
+		_scene->_sequences.setScale(g_sequence_ids[10], 80);
 		player.commands_allowed = false;
 	}
 
@@ -127,10 +127,10 @@ static void room_109_daemon() {
 	if (local._beforeEatingRex) {
 		if (!local._eatingRex) {
 			if (player.x > 205) {
-				_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6, 1, 0, 0);
-				_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_SPRITE, 6, 70);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+				g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 6, 1, 0, 0);
+				_scene->_sequences.setDepth(g_sequence_ids[4], 4);
+				_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_SPRITE, 6, 70);
+				_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 
 				local._eatingRex = true;
 				g_engine->_soundManager->command(34, 0);
@@ -156,36 +156,36 @@ static void room_109_daemon() {
 		player.commands_allowed = false;
 		local._hungryFl = false;
 		local._beforeEatingRex = true;
-		_scene->_sprites.remove(_globals._spriteIndexes[6]);
-		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('H', 0));
+		_scene->_sprites.remove(g_sprite_ids[6]);
+		g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('H', 0));
 		kernel_new_palette();
 	}
 
-	if (player.walking && (_scene->_rails.getNext() > 0) && _globals[kHoovicAlive] && !_globals[kHoovicSated] && !local._hungryFl && !local._beforeEatingRex) {
+	if (player.walking && (_scene->_rails.getNext() > 0) && global[kHoovicAlive] && !global[kHoovicSated] && !local._hungryFl && !local._beforeEatingRex) {
 		player_cancel_command();
 		player_start_walking(160, 32, FACING_EAST);
 		_scene->_rails.resetNext();
 		local._hungryFl = true;
 	}
 
-	if (local._eatingFirstFish && (_scene->_sequences[_globals._sequenceIndexes[10]]._position.x >= 178)) {
-		_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 4, 1, 0, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 4);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SEQUENCE_TRIGGER_SPRITE, 29, 72);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SEQUENCE_TRIGGER_EXPIRE, 29, 73);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[10], _globals._sequenceIndexes[9]);
+	if (local._eatingFirstFish && (_scene->_sequences[g_sequence_ids[10]]._position.x >= 178)) {
+		g_sequence_ids[9] = _scene->_sequences.addSpriteCycle(g_sprite_ids[9], false, 4, 1, 0, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[9], 4);
+		_scene->_sequences.addSubEntry(g_sequence_ids[9], SEQUENCE_TRIGGER_SPRITE, 29, 72);
+		_scene->_sequences.addSubEntry(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 29, 73);
+		_scene->_sequences.updateTimeout(g_sequence_ids[10], g_sequence_ids[9]);
 		local._eatingFirstFish = false;
 		player.commands_allowed = true;
 		g_engine->_soundManager->command(34, 0);
 	}
 
 	if (kernel.trigger == 72)
-		_scene->_sequences.remove(_globals._sequenceIndexes[10]);
+		_scene->_sequences.remove(g_sequence_ids[10]);
 
 	if (kernel.trigger == 73) {
-		_scene->_sequences.remove(_globals._sequenceIndexes[9]);
-		_scene->_sprites.remove(_globals._spriteIndexes[9]);
-		_scene->_sprites.remove(_globals._spriteIndexes[10]);
+		_scene->_sequences.remove(g_sequence_ids[9]);
+		_scene->_sprites.remove(g_sprite_ids[9]);
+		_scene->_sprites.remove(g_sprite_ids[10]);
 
 		_scene->_spriteSlots.clear();
 		_scene->_spriteSlots.fullRefresh();
@@ -215,7 +215,7 @@ static void room_109_pre_parser() {
 	}
 
 	if ((player_said_2(swim_into, tunnel) || player_said_2(swim_to, small_hole))
-		&& (!_globals[kHoovicAlive] || _globals[kHoovicSated]) && (player_said_1(tunnel)))
+		&& (!global[kHoovicAlive] || global[kHoovicSated]) && (player_said_1(tunnel)))
 		player.walk_off_edge_to_room = 110;
 
 	local._hungryFl = false;
@@ -232,27 +232,27 @@ static void room_109_parser() {
 		if (player_said_1(dead_fish) || player_said_1(stuffed_fish) || player_said_1(burger)) {
 			local._throwingObjectId = object_named(player2.words[1]);
 			if (local._throwingObjectId >= 0) {
-				if ((player_has(local._throwingObjectId) && _globals[kHoovicAlive]) || local._rexThrowingObject) {
+				if ((player_has(local._throwingObjectId) && global[kHoovicAlive]) || local._rexThrowingObject) {
 					switch (kernel.trigger) {
 					case 0:
 						local._rexThrowingObject = true;
 						local._hoovicDifficultFl = false;
 						inter_move_object(local._throwingObjectId, NOWHERE);
-						_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 4, 1, 0, 0);
-						_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[0]);
-						_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+						g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 4, 1, 0, 0);
+						_scene->_sequences.setMsgLayout(g_sequence_ids[0]);
+						_scene->_sequences.addSubEntry(g_sequence_ids[0], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 						player.walker_visible = false;
 						player.commands_allowed = false;
 
 						switch (local._throwingObjectId) {
 						case OBJ_DEAD_FISH:
 						case OBJ_STUFFED_FISH:
-							_globals._spriteIndexes[8] = _scene->_sprites.addSprites(kernel_name('H', 1));
+							g_sprite_ids[8] = _scene->_sprites.addSprites(kernel_name('H', 1));
 							break;
 
 						case OBJ_BURGER:
 							local._hoovicDifficultFl = (game.difficulty == DIFFICULTY_HARD);
-							_globals._spriteIndexes[8] = _scene->_sprites.addSprites(kernel_name('H', (local._hoovicDifficultFl ? 3 : 1)));
+							g_sprite_ids[8] = _scene->_sprites.addSprites(kernel_name('H', (local._hoovicDifficultFl ? 3 : 1)));
 							break;
 
 						default:
@@ -267,24 +267,24 @@ static void room_109_parser() {
 						local._hoovicTrigger = 4;
 						switch (local._throwingObjectId) {
 						case OBJ_BURGER:
-							_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, (local._hoovicDifficultFl ? 4 : 6), 1, 0, 0);
-							_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 2, 2);
+							g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, (local._hoovicDifficultFl ? 4 : 6), 1, 0, 0);
+							_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 2, 2);
 							if (local._hoovicDifficultFl) {
-								_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 30);
-								_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 5);
+								_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 30);
+								_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 5);
 							} else {
-								_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 4);
-								_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 8);
+								_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 4);
+								_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 8);
 								local._hoovicTrigger = 3;
 							}
 							break;
 						case OBJ_DEAD_FISH:
-							_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 4, 1, 0, 0);
-							_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_SPRITE, 2, 2);
+							g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 4, 1, 0, 0);
+							_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_SPRITE, 2, 2);
 							break;
 						case OBJ_STUFFED_FISH:
-							_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 4, 1, 0, 0);
-							_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 2, 2);
+							g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 4, 1, 0, 0);
+							_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 2, 2);
 							local._hoovicTrigger = 3;
 							break;
 						default:
@@ -294,26 +294,26 @@ static void room_109_parser() {
 
 					case 2:
 						if (local._hoovicDifficultFl)
-							_globals._sequenceIndexes[8] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[8], false, 4, 2, 0, 0);
+							g_sequence_ids[8] = _scene->_sequences.startPingPongCycle(g_sprite_ids[8], false, 4, 2, 0, 0);
 						else
-							_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 4, 1, 0, 0);
+							g_sequence_ids[8] = _scene->_sequences.addSpriteCycle(g_sprite_ids[8], false, 4, 1, 0, 0);
 
-						_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 4);
-						_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_EXPIRE, 0, local._hoovicTrigger);
+						_scene->_sequences.setDepth(g_sequence_ids[8], 4);
+						_scene->_sequences.addSubEntry(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, local._hoovicTrigger);
 						g_engine->_soundManager->command(34, 0);
 						break;
 
 					case 3:
 						_scene->loadAnimation(kernel_full_name(109, 'H', 2, "", EXT_AA), 4);
 						g_engine->_soundManager->command(35, 0);
-						_globals[kHoovicAlive] = false;
+						global[kHoovicAlive] = false;
 						break;
 
 					case 4:
-						if (!_globals[kHoovicAlive]) {
-							_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 1, 0, 0);
-							_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 4);
-							_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], -2, -2);
+						if (!global[kHoovicAlive]) {
+							g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(g_sprite_ids[6], false, 6, 1, 0, 0);
+							_scene->_sequences.setDepth(g_sequence_ids[6], 4);
+							_scene->_sequences.setAnimRange(g_sequence_ids[6], -2, -2);
 							int idx = _scene->_dynamicHotspots.add(words_dead_purple_monster, words_swim_to, -1, Common::Rect(256, 57, 256 + 12, 57 + 31));
 							_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
 							idx = _scene->_dynamicHotspots.add(words_dead_purple_monster, words_swim_to, -1, Common::Rect(242, 79, 242 + 24, 79 + 12));
@@ -323,7 +323,7 @@ static void room_109_parser() {
 							_scene->changeVariant(1);
 						} else {
 							if (local._throwingObjectId == OBJ_DEAD_FISH) {
-								++_globals[kHoovicFishEaten];
+								++global[kHoovicFishEaten];
 								int threshold;
 								switch (game.difficulty) {
 								case DIFFICULTY_HARD:
@@ -337,18 +337,18 @@ static void room_109_parser() {
 									break;
 								}
 
-								if (_globals[kHoovicFishEaten] >= threshold) {
+								if (global[kHoovicFishEaten] >= threshold) {
 									int randVal = g_engine->getRandomNumber(83, 84);
 									_scene->_kernelMessages.add(Common::Point(230, 24), 0xFDFC, 0, 0, 120, quote_string(kernel.quotes, randVal));
-									_globals[kHoovicFishEaten] = 0;
-									_globals[kHoovicSated] = 1;
+									global[kHoovicFishEaten] = 0;
+									global[kHoovicSated] = 1;
 									_scene->changeVariant(1);
 								}
 							}
 						}
 						_scene->freeAnimation();
-						_scene->_sequences.remove(_globals._sequenceIndexes[8]);
-						_scene->_sprites.remove(_globals._spriteIndexes[8]);
+						_scene->_sequences.remove(g_sequence_ids[8]);
+						_scene->_sprites.remove(g_sprite_ids[8]);
 						_scene->_spriteSlots.clear();
 						_scene->_spriteSlots.fullRefresh();
 						_scene->_sequences.scan();
@@ -364,9 +364,9 @@ static void room_109_parser() {
 					case 5:
 					{
 						inter_move_object(OBJ_BURGER, _scene->_currentSceneId);
-						_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 0, 0, 0);
-						_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 30, 30);
-						int idx = _scene->_dynamicHotspots.add(words_burger, words_swim_to, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+						g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 6, 0, 0, 0);
+						_scene->_sequences.setAnimRange(g_sequence_ids[3], 30, 30);
+						int idx = _scene->_dynamicHotspots.add(words_burger, words_swim_to, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
 						_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
 						_scene->_sequences.addTimer(65, 6);
 					}
@@ -374,28 +374,28 @@ static void room_109_parser() {
 
 					case 6:
 					{
-						_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-						_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
-						_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 31, 46);
-						int idx = _scene->_dynamicHotspots.add(words_burger, words_swim_to, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+						_scene->_sequences.remove(g_sequence_ids[3]);
+						g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 6, 1, 0, 0);
+						_scene->_sequences.setAnimRange(g_sequence_ids[3], 31, 46);
+						int idx = _scene->_dynamicHotspots.add(words_burger, words_swim_to, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
 						_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
-						_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 7);
+						_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 7);
 					}
 					break;
 
 					case 7:
 					{
-						_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-						_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
-						int idx = _scene->_dynamicHotspots.add(words_burger, words_swim_to, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+						_scene->_sequences.remove(g_sequence_ids[3]);
+						g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
+						int idx = _scene->_dynamicHotspots.add(words_burger, words_swim_to, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
 						_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
 						text_show(10915);
 					}
 					break;
 
 					case 8:
-						_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 7, 1, 0, 0);
-						_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 5, 16);
+						g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 7, 1, 0, 0);
+						_scene->_sequences.setAnimRange(g_sequence_ids[3], 5, 16);
 						break;
 
 					default:
@@ -411,7 +411,7 @@ static void room_109_parser() {
 	}
 
 	if (player_said_2(take, burger) && object_is_here(OBJ_BURGER)) {
-		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
+		_scene->_sequences.remove(g_sequence_ids[3]);
 		inter_give_to_player(OBJ_BURGER);
 	} else if (player_said_2(look, ocean_floor))
 		text_show(10901);
@@ -426,7 +426,7 @@ static void room_109_parser() {
 	else if (player_said_2(look, cave_wall))
 		text_show(10906);
 	else if (player_said_2(look, tunnel)) {
-		if (_globals[kHoovicAlive])
+		if (global[kHoovicAlive])
 			text_show(10907);
 		else
 			text_show(10913);

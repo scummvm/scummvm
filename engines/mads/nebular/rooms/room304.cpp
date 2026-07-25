@@ -44,20 +44,20 @@ static void room_304_init() {
 		player.commands_allowed = false;
 		_scene->loadAnimation(kernel_name('a', -1), 60);
 	} else {
-		if (_globals[kSexOfRex] == REX_MALE)
-			_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('a', 0));
+		if (global[kSexOfRex] == REX_MALE)
+			g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('a', 0));
 		else
-			_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('a', 2));
+			g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('a', 2));
 
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('a', 1));
-		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('b', 0));
+		g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('a', 1));
+		g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('b', 0));
 
-		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 150, 0, 3, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 2);
+		g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 150, 0, 3, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[3], 2);
 		pal_change_color(252, 45, 63, 45);
 		pal_change_color(253, 20, 45, 20);
 
-		if (_globals[kSexOfRex] == REX_MALE) {
+		if (global[kSexOfRex] == REX_MALE) {
 			player.x = 111;
 			player.y = 117;
 		}
@@ -66,8 +66,8 @@ static void room_304_init() {
 			player.y = 116;
 		}
 
-		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 11, 0, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], -1, -1);
+		g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 11, 0, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[2], -1, -1);
 		_scene->_sequences.addTimer(48, 70);
 	}
 
@@ -84,20 +84,20 @@ static void room_304_daemon() {
 		case 70:
 		{
 			player.walker_visible = false;
-			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 2, 4);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
-			if (_globals[kSexOfRex] == REX_MALE)
-				local._explosionSpriteId = _globals._spriteIndexes[1];
+			_scene->_sequences.remove(g_sequence_ids[2]);
+			g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 8, 1, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[2], 2, 4);
+			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
+			if (global[kSexOfRex] == REX_MALE)
+				local._explosionSpriteId = g_sprite_ids[1];
 			else
-				local._explosionSpriteId = _globals._spriteIndexes[4];
+				local._explosionSpriteId = g_sprite_ids[4];
 
 			int sprIdx = _scene->_sequences.addSpriteCycle(local._explosionSpriteId, false, 8, 1, 0, 0);
 			_scene->_sequences.setAnimRange(sprIdx, -1, 4);
 			_scene->_sequences.setDepth(sprIdx, 1);
 			_scene->_sequences.addSubEntry(sprIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 71);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
+			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
 		}
 		break;
 
@@ -128,23 +128,23 @@ static void room_304_daemon() {
 		break;
 
 		case 74:
-			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 5, -2);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
+			g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 8, 1, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[2], 5, -2);
+			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
+			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
 			break;
 
 		case 75:
-			_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 2, -2);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 76);
+			g_sequence_ids[2] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[2], false, 8, 1, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[2], 2, -2);
+			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
+			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 76);
 			break;
 
 		case 76:
-			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 8, 0, 0, 0);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 2, 2);
+			g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 8, 0, 0, 0);
+			_scene->_sequences.setDepth(g_sequence_ids[2], 1);
+			_scene->_sequences.setAnimRange(g_sequence_ids[2], 2, 2);
 			_scene->_sequences.addTimer(48, 77);
 			break;
 

@@ -32,11 +32,11 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_301_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 9, 0, 0, 0);
 
-	_globals[kMeteorologistStatus] = METEOROLOGIST_GONE;
-	_globals[kTeleporterCommand] = TELEPORTER_NONE;
+	global[kMeteorologistStatus] = METEOROLOGIST_GONE;
+	global[kTeleporterCommand] = TELEPORTER_NONE;
 
 	player.commands_allowed = false;
 	player.walker_visible = false;

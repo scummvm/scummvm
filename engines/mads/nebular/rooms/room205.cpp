@@ -45,37 +45,37 @@ static Scratch local;
 
 
 static void room_205_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('x', 1));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('x', 2));
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('f', -1));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('c', -1));
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_name('p', -1));
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('x', 1));
+	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('x', 2));
+	g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('f', -1));
+	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('c', -1));
+	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('p', -1));
 
-	if (_globals[kSexOfRex] == SEX_MALE)
-		_globals._spriteIndexes[8] = _scene->_sprites.addSprites(kernel_name('a', 1));
+	if (global[kSexOfRex] == SEX_MALE)
+		g_sprite_ids[8] = _scene->_sprites.addSprites(kernel_name('a', 1));
 
-	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 10, 0, 0, 3);
-	int idx = _scene->_dynamicHotspots.add(words_chicken, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 10, 0, 0, 3);
+	int idx = _scene->_dynamicHotspots.add(words_chicken, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(162, 120), FACING_NORTHEAST);
 
-	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 15, 0, 0, 0);
-	idx = _scene->_dynamicHotspots.add(words_chicken, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 15, 0, 0, 0);
+	idx = _scene->_dynamicHotspots.add(words_chicken, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(162, 120), FACING_NORTHEAST);
 
-	_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 0, 0, 0);
-	_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 0, 0, 0);
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 11);
+	g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 9, 0, 0, 0);
+	g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 6, 0, 0, 0);
+	_scene->_sequences.setDepth(g_sequence_ids[5], 11);
 
 	if (!player.been_here_before) {
-		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 7, 1, 0, 0);
-		idx = _scene->_dynamicHotspots.add(words_piranha, words_walkto, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
+		g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(g_sprite_ids[6], false, 7, 1, 0, 0);
+		idx = _scene->_dynamicHotspots.add(words_piranha, words_walkto, g_sequence_ids[6], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(49, 86), FACING_NORTH);
 	}
 
 	if (object[12].location == 205) {
-		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 7, 0, 0, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 11);
+		g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 7, 0, 0, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[4], 11);
 	} else {
 		_scene->_hotspots.activate(450, false);
 	}
@@ -95,7 +95,7 @@ static void room_205_init() {
 
 	local._chickenTime = _scene._frameStartTime;
 
-	if (_globals[kSexOfRex] == SEX_FEMALE)
+	if (global[kSexOfRex] == SEX_FEMALE)
 		_scene->_kernelMessages.initRandomMessages(3,
 			Common::Rect(195, 99, 264, 134), 13, 2, 0xFDFC, 60,
 			108, 108, 109, 109, 110, 110, 111, 108, 0);
@@ -105,25 +105,25 @@ static void room_205_init() {
 		player.y = 152;
 	}
 
-	if (_globals[kSexOfRex] != SEX_MALE) {
+	if (global[kSexOfRex] != SEX_MALE) {
 		_scene->loadAnimation(kernel_name('a', -1));
 		_scene->_animation[0]->_repeatFlag = true;
 	} else {
 		local._beingKicked = true;
-		_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 8, 1, 0, 0);
+		g_sequence_ids[8] = _scene->_sequences.addSpriteCycle(g_sprite_ids[8], false, 8, 1, 0, 0);
 		player.walker_visible = false;
 		player.commands_allowed = false;
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 2);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_SPRITE, 6, 73);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_SPRITE, 11, 74);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		_scene->_sequences.setDepth(g_sequence_ids[8], 2);
+		_scene->_sequences.addSubEntry(g_sequence_ids[8], SEQUENCE_TRIGGER_SPRITE, 6, 73);
+		_scene->_sequences.addSubEntry(g_sequence_ids[8], SEQUENCE_TRIGGER_SPRITE, 11, 74);
+		_scene->_sequences.addSubEntry(g_sequence_ids[8], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 	}
 
 	section_2_music();
 }
 
 static void room_205_daemon() {
-	if (_globals[kSexOfRex] == SEX_FEMALE) {
+	if (global[kSexOfRex] == SEX_FEMALE) {
 		_scene->_kernelMessages.randomServer();
 
 		if (_scene._frameStartTime >= local._chickenTime) {
@@ -136,9 +136,9 @@ static void room_205_daemon() {
 	}
 
 	if (_scene._frameStartTime - local._lastFishTime > 1300) {
-		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(
-			_globals._spriteIndexes[6], false, 5, 1, 0, 0);
-		int idx = _scene->_dynamicHotspots.add(words_piranha, words_walkto, _globals._sequenceIndexes[6],
+		g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(
+			g_sprite_ids[6], false, 5, 1, 0, 0);
+		int idx = _scene->_dynamicHotspots.add(words_piranha, words_walkto, g_sequence_ids[6],
 			Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(49, 86), FACING_NORTH);
 		local._lastFishTime = _scene._frameStartTime;
@@ -153,9 +153,9 @@ static void room_205_daemon() {
 	}
 
 	if (kernel.trigger == 71) {
-		_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 6, 0, 0, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 2);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[8], -2, -2);
+		g_sequence_ids[8] = _scene->_sequences.addSpriteCycle(g_sprite_ids[8], false, 6, 0, 0, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[8], 2);
+		_scene->_sequences.setAnimRange(g_sequence_ids[8], -2, -2);
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.add(Common::Point(160, 68), 0xFBFA, 32, 72, 180, quote_string(kernel.quotes, 114));
 	}
@@ -208,7 +208,7 @@ static void room_205_parser() {
 				} else if (kernel.trigger == 2) {
 					handleWomanSpeech(0x7E);
 					local._dialog1.write(0x76, false);
-					_globals[kChickenPermitted] = true;
+					global[kChickenPermitted] = true;
 				}
 				break;
 
@@ -253,11 +253,11 @@ static void room_205_parser() {
 			pal_lock();
 			_scene->_kernelMessages.reset();
 			kernel_dump_walker_only();
-			_globals._spriteIndexes[9] = _scene->_sprites.addSprites(kernel_name('a', 0));
+			g_sprite_ids[9] = _scene->_sprites.addSprites(kernel_name('a', 0));
 			kernel_new_palette();
-			_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 6, 1, 0, 0);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[9], -1);
+			g_sequence_ids[9] = _scene->_sequences.addSpriteCycle(g_sprite_ids[9], false, 6, 1, 0, 0);
+			_scene->_sequences.addSubEntry(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			_scene->_sequences.updateTimeout(g_sequence_ids[9], -1);
 			g_engine->_soundManager->command(27, 0);
 		} else if (kernel.trigger == 1) {
 			if (_scene->_animation[0] != nullptr)
@@ -275,12 +275,12 @@ static void room_205_parser() {
 				_scene->_kernelMessages.reset();
 				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x6B));
 			}
-		} else if (player_said_2(take, chicken_on_spit) && _globals[kChickenPermitted] && object_is_here(OBJ_CHICKEN)) {
+		} else if (player_said_2(take, chicken_on_spit) && global[kChickenPermitted] && object_is_here(OBJ_CHICKEN)) {
 			inter_give_to_player(OBJ_CHICKEN);
-			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
+			_scene->_sequences.remove(g_sequence_ids[4]);
 			_scene->_hotspots.activate(words_chicken_on_spit, false);
 			object_examine(OBJ_CHICKEN, 812, 0);
-		} else if (player_said_2(take, chicken_on_spit) && (!_globals[kChickenPermitted]))
+		} else if (player_said_2(take, chicken_on_spit) && (!global[kChickenPermitted]))
 			_scene->_kernelMessages.add(Common::Point(186, 27), 0xFBFA, 32, 0, 120, quote_string(kernel.quotes, 0x80));
 		else if (player_said_2(look, native_woman))
 			text_show(20503);

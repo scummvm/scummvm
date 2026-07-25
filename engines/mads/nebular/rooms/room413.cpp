@@ -40,7 +40,7 @@ static Scratch  local;
 
 
 static void room_413_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('a', 2));
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('a', 2));
 	local._rexDeath = false;
 
 	if (_scene->_priorSceneId == 405) {
@@ -49,13 +49,13 @@ static void room_413_init() {
 		player.facing = FACING_NORTH;
 		player.walker_visible = true;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		if (_globals[kSexOfRex] == REX_MALE) {
+		if (global[kSexOfRex] == REX_MALE) {
 			_scene->loadAnimation(kernel_full_name(413, 'd', 1, "", EXT_AA), 78);
 			g_engine->_soundManager->command(30, 0);
 			player.walker_visible = false;
 			player.commands_allowed = false;
 			local._rexDeath = true;
-		} else if (!_globals[kTeleporterCommand]) {
+		} else if (!global[kTeleporterCommand]) {
 			player.x = 136;
 			player.y = 117;
 			player_walk(141, 130, FACING_SOUTH);
@@ -64,24 +64,24 @@ static void room_413_init() {
 		}
 	}
 
-	if ((_globals[kTeleporterCommand]) && (!local._rexDeath)) {
-		switch (_globals[kTeleporterCommand]) {
+	if ((global[kTeleporterCommand]) && (!local._rexDeath)) {
+		switch (global[kTeleporterCommand]) {
 		case 1:
 			g_engine->_soundManager->command(30, 0);
 			player.walker_visible = false;
-			_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 7, 1, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 19);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 76);
+			g_sequence_ids[1] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[1], false, 7, 1, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[1], 1, 19);
+			_scene->_sequences.setDepth(g_sequence_ids[1], 8);
+			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 76);
 			break;
 
 		case 2:
 			player.walker_visible = false;
 			g_engine->_soundManager->command(30, 0);
-			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 7, 1, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 20);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 77);
+			g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 7, 1, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[1], 1, 20);
+			_scene->_sequences.setDepth(g_sequence_ids[1], 8);
+			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 77);
 			break;
 
 		case 3:
@@ -97,7 +97,7 @@ static void room_413_init() {
 		default:
 			break;
 		}
-		_globals[kTeleporterCommand] = 0;
+		global[kTeleporterCommand] = 0;
 	}
 
 	local._canMove = true;
@@ -124,15 +124,15 @@ static void room_413_daemon() {
 	}
 
 	if (kernel.trigger == 77) {
-		_globals[kTeleporterCommand] = TELEPORTER_BEAM_IN;
-		_scene->_nextSceneId = _globals[kTeleporterDestination];
+		global[kTeleporterCommand] = TELEPORTER_BEAM_IN;
+		_scene->_nextSceneId = global[kTeleporterDestination];
 		_scene->_reloadSceneFlag = true;
 	}
 
 	if (kernel.trigger == 78) {
 		_scene->_reloadSceneFlag = true;
 		_scene->_nextSceneId = _scene->_priorSceneId;
-		_globals[kTeleporterCommand] = TELEPORTER_NONE;
+		global[kTeleporterCommand] = TELEPORTER_NONE;
 	}
 }
 

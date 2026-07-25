@@ -39,11 +39,11 @@ static void room_321_init() {
 	_scene->_userInterface.setup(kInputConversation);
 
 	int suffixNum;
-	if (_globals[kSexOfRex] == REX_FEMALE) {
-		_globals[kSexOfRex] = REX_MALE;
+	if (global[kSexOfRex] == REX_FEMALE) {
+		global[kSexOfRex] = REX_MALE;
 		suffixNum = 1;
 	} else {
-		_globals[kSexOfRex] = REX_FEMALE;
+		global[kSexOfRex] = REX_FEMALE;
 		suffixNum = player.been_here_before ? 2 : 0;
 	}
 
@@ -53,7 +53,7 @@ static void room_321_init() {
 
 static void room_321_daemon() {
 	if (_scene->_animation[0] != nullptr) {
-		if ((_scene->_animation[0]->getCurrentFrame() >= 260) && (_globals[kSexOfRex] == REX_MALE) && (config_file.naughtiness >= STORYMODE_NICE))
+		if ((_scene->_animation[0]->getCurrentFrame() >= 260) && (global[kSexOfRex] == REX_MALE) && (config_file.naughtiness >= STORYMODE_NICE))
 			_scene->_nextSceneId = 316;
 	}
 

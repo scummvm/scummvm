@@ -32,11 +32,11 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_410_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('y', -1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*ROXRC_7");
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('y', -1));
+	g_sprite_ids[2] = _scene->_sprites.addSprites("*ROXRC_7");
 
 	if (object_is_here(OBJ_CHARGE_CASES))
-		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
+		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
 	else
 		_scene->_hotspots.activate(words_charge_cases, false);
 
@@ -105,15 +105,15 @@ static void room_410_parser() {
 			g_engine->_soundManager->command(57, 0);
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 7, 2, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 3);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 3, 1);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 7, 2, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[2], 1, 3);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[2]);
+			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 3, 1);
+			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
-			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+			_scene->_sequences.remove(g_sequence_ids[1]);
 			_scene->_hotspots.activate(words_charge_cases, false);
 			inter_give_to_player(OBJ_CHARGE_CASES);
 			object_examine(OBJ_CHARGE_CASES, 41032, 0);

@@ -42,37 +42,37 @@ static Scratch local;
 
 
 static void room_602_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('h', -1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('x', 1));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('l', 0));
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RXMRC_9");
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('h', -1));
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('x', 1));
+	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('l', 0));
+	g_sprite_ids[5] = _scene->_sprites.addSprites("*RXMRC_9");
 
 	if (!player.been_here_before)
-		_globals[kSafeStatus] = 0;
+		global[kSafeStatus] = 0;
 
-	if (_globals[kLaserHoleIsThere]) {
-		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 9);
-		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 9);
-		int idx = _scene->_dynamicHotspots.add(words_laser_beam, words_walkto, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+	if (global[kLaserHoleIsThere]) {
+		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
+		_scene->_sequences.setDepth(g_sequence_ids[1], 9);
+		g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);
+		_scene->_sequences.setDepth(g_sequence_ids[4], 9);
+		int idx = _scene->_dynamicHotspots.add(words_laser_beam, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(80, 134), FACING_NORTHEAST);
 		_scene->changeVariant(1);
 	} else
 		_scene->_hotspots.activate(words_hole, false);
 
-	if (_globals[kSafeStatus] == 0) {
-		local._lastSpriteIdx = _globals._spriteIndexes[2];
+	if (global[kSafeStatus] == 0) {
+		local._lastSpriteIdx = g_sprite_ids[2];
 		local._cycleIndex = -1;
-	} else if (_globals[kSafeStatus] == 1) {
-		local._lastSpriteIdx = _globals._spriteIndexes[2];
+	} else if (global[kSafeStatus] == 1) {
+		local._lastSpriteIdx = g_sprite_ids[2];
 		local._cycleIndex = -2;
-	} else if (_globals[kSafeStatus] == 3) {
-		local._lastSpriteIdx = _globals._spriteIndexes[3];
+	} else if (global[kSafeStatus] == 3) {
+		local._lastSpriteIdx = g_sprite_ids[3];
 		local._cycleIndex = -2;
 	} else {
-		local._lastSpriteIdx = _globals._spriteIndexes[3];
+		local._lastSpriteIdx = g_sprite_ids[3];
 		local._cycleIndex = -1;
 	}
 
@@ -82,10 +82,10 @@ static void room_602_init() {
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(185, 113), FACING_NORTHWEST);
 
 	if (object_is_here(OBJ_DOOR_KEY)) {
-		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_name('k', -1));
-		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, -1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 15);
-		if (_globals[kSafeStatus] == 0 || _globals[kSafeStatus] == 2)
+		g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('k', -1));
+		g_sequence_ids[6] = _scene->_sequences.startCycle(g_sprite_ids[6], false, -1);
+		_scene->_sequences.setDepth(g_sequence_ids[6], 15);
+		if (global[kSafeStatus] == 0 || global[kSafeStatus] == 2)
 			_scene->_hotspots.activate(words_door_key, false);
 	} else
 		_scene->_hotspots.activate(words_door_key, false);
@@ -115,25 +115,25 @@ static void handleSafeActions() {
 	case 0:
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], true, 12, 1, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 1, 3);
-		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_SPRITE, 3, 1);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+		g_sequence_ids[5] = _scene->_sequences.startPingPongCycle(g_sprite_ids[5], true, 12, 1, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[5], 1, 3);
+		_scene->_sequences.setMsgLayout(g_sequence_ids[5]);
+		_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_SPRITE, 3, 1);
+		_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 		break;
 
 	case 1:
 		if (local._safeMode == 1 || local._safeMode == 3) {
-			if (_globals[kSafeStatus] == 0 && local._safeMode == 1) {
+			if (global[kSafeStatus] == 0 && local._safeMode == 1) {
 				_scene->_kernelMessages.reset();
 				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2F1));
 				_scene->_sequences.addTimer(120, 4);
 			} else {
 				_scene->_sequences.remove(local._lastSequenceIdx);
 				if (local._safeMode == 3)
-					local._lastSpriteIdx = _globals._spriteIndexes[2];
+					local._lastSpriteIdx = g_sprite_ids[2];
 				else
-					local._lastSpriteIdx = _globals._spriteIndexes[3];
+					local._lastSpriteIdx = g_sprite_ids[3];
 
 				local._lastSequenceIdx = _scene->_sequences.addSpriteCycle(local._lastSpriteIdx, false, 12, 1, 0, 0);
 				_scene->_sequences.setDepth(local._lastSequenceIdx, 14);
@@ -145,10 +145,10 @@ static void handleSafeActions() {
 			}
 		} else {
 			_scene->_sequences.remove(local._lastSequenceIdx);
-			if (_globals[kSafeStatus] == 1)
-				local._lastSpriteIdx = _globals._spriteIndexes[2];
+			if (global[kSafeStatus] == 1)
+				local._lastSpriteIdx = g_sprite_ids[2];
 			else
-				local._lastSpriteIdx = _globals._spriteIndexes[3];
+				local._lastSpriteIdx = g_sprite_ids[3];
 
 			local._lastSequenceIdx = _scene->_sequences.startPingPongCycle(local._lastSpriteIdx, false, 12, 1, 0, 0);
 			_scene->_sequences.setDepth(local._lastSequenceIdx, 14);
@@ -177,21 +177,21 @@ static void handleSafeActions() {
 	}
 
 	case 3:
-		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[5]);
+		_scene->_sequences.updateTimeout(-1, g_sequence_ids[5]);
 		player.walker_visible = true;
 		break;
 
 	case 4:
 		if (local._safeMode == 1) {
-			if (_globals[kSafeStatus] == 2)
-				_globals[kSafeStatus] = 3;
+			if (global[kSafeStatus] == 2)
+				global[kSafeStatus] = 3;
 		} else if (local._safeMode == 2) {
-			if (_globals[kSafeStatus] == 3)
-				_globals[kSafeStatus] = 2;
+			if (global[kSafeStatus] == 3)
+				global[kSafeStatus] = 2;
 			else
-				_globals[kSafeStatus] = 0;
+				global[kSafeStatus] = 0;
 		} else
-			_globals[kSafeStatus] = 1;
+			global[kSafeStatus] = 1;
 
 		player.commands_allowed = true;
 		break;
@@ -206,28 +206,28 @@ static void room_602_parser() {
 		_scene->_nextSceneId = 601;
 	else if (player_said_2(walk_through, doorway))
 		_scene->_nextSceneId = 603;
-	else if (player_said_2(open, safe) && ((_globals[kSafeStatus] == 0) || (_globals[kSafeStatus] == 2))) {
+	else if (player_said_2(open, safe) && ((global[kSafeStatus] == 0) || (global[kSafeStatus] == 2))) {
 		local._safeMode = 1;
 		local._cycleIndex = -2;
 		handleSafeActions();
-	} else if (player_said_2(close, safe) && ((_globals[kSafeStatus] == 1) || (_globals[kSafeStatus] == 3))) {
+	} else if (player_said_2(close, safe) && ((global[kSafeStatus] == 1) || (global[kSafeStatus] == 3))) {
 		local._safeMode = 2;
 		local._cycleIndex = -1;
 		handleSafeActions();
 	} else if (player_said_3(unlock, combination, safe)) {
-		if ((_globals[kSafeStatus] == 0) && (game.difficulty != DIFFICULTY_HARD)) {
+		if ((global[kSafeStatus] == 0) && (game.difficulty != DIFFICULTY_HARD)) {
 			local._safeMode = 3;
 			local._cycleIndex = -2;
 			handleSafeActions();
 		}
 	} else if ((player_said_3(put, rearview_mirror, laser_beam) || player_said_3(put, compact_case, laser_beam)
-		|| player_said_3(reflect, compact_case, laser_beam) || player_said_3(reflect, rearview_mirror, laser_beam)) && (_globals[kSafeStatus] == 0)) {
+		|| player_said_3(reflect, compact_case, laser_beam) || player_said_3(reflect, rearview_mirror, laser_beam)) && (global[kSafeStatus] == 0)) {
 		switch (kernel.trigger) {
 		case 0:
 			text_show(60230);
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
+			_scene->_sequences.remove(g_sequence_ids[4]);
 			_scene->_sequences.remove(local._lastSequenceIdx);
 			_scene->loadAnimation(kernel_name('L', 1), 1);
 			break;
@@ -236,14 +236,14 @@ static void room_602_parser() {
 		{
 			player.walker_visible = true;
 			player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
-			local._lastSpriteIdx = _globals._spriteIndexes[3];
+			local._lastSpriteIdx = g_sprite_ids[3];
 			local._lastSequenceIdx = _scene->_sequences.startCycle(local._lastSpriteIdx, false, -1);
 			_scene->_sequences.setDepth(local._lastSequenceIdx, 14);
 			int idx = _scene->_dynamicHotspots.add(words_safe, words_walkto, local._lastSequenceIdx, Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(185, 113), FACING_NORTHWEST);
-			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 9);
-			idx = _scene->_dynamicHotspots.add(words_laser_beam, words_walkto, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+			g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);
+			_scene->_sequences.setDepth(g_sequence_ids[4], 9);
+			idx = _scene->_dynamicHotspots.add(words_laser_beam, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(80, 134), FACING_NORTHEAST);
 			_scene->_sequences.addTimer(60, 2);
 		}
@@ -252,7 +252,7 @@ static void room_602_parser() {
 		case 2:
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2F2));
-			_globals[kSafeStatus] = 2;
+			global[kSafeStatus] = 2;
 			player.commands_allowed = true;
 			break;
 
@@ -264,22 +264,22 @@ static void room_602_parser() {
 		case 0:
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], true, 8, 1, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 1, 3);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_SPRITE, 3, 1);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[5] = _scene->_sequences.startPingPongCycle(g_sprite_ids[5], true, 8, 1, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[5], 1, 3);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[5]);
+			_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_SPRITE, 3, 1);
+			_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
-			_scene->_sequences.remove(_globals._sequenceIndexes[6]);
+			_scene->_sequences.remove(g_sequence_ids[6]);
 			_scene->_hotspots.activate(words_door_key, false);
 			g_engine->_soundManager->command(9, 0);
 			inter_give_to_player(OBJ_DOOR_KEY);
 			break;
 
 		case 2:
-			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[5]);
+			_scene->_sequences.updateTimeout(-1, g_sequence_ids[5]);
 			player.walker_visible = true;
 			player.commands_allowed = true;
 			object_examine(OBJ_DOOR_KEY, 835, 0);
@@ -313,14 +313,14 @@ static void room_602_parser() {
 	else if (player_said_2(look, doorway))
 		text_show(60221);
 	else if (player_said_2(look, safe)) {
-		if (_globals[kSafeStatus] == 0)
+		if (global[kSafeStatus] == 0)
 			text_show(60222);
-		else if (_globals[kSafeStatus] == 1) {
+		else if (global[kSafeStatus] == 1) {
 			if (!object_is_here(OBJ_DOOR_KEY))
 				text_show(60223);
 			else
 				text_show(60224);
-		} else if (_globals[kSafeStatus] == 2)
+		} else if (global[kSafeStatus] == 2)
 			text_show(60234);
 		else if (object_is_here(OBJ_DOOR_KEY))
 			text_show(60235);

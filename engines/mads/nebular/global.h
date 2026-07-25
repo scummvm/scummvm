@@ -28,6 +28,11 @@
 namespace MADS {
 namespace RexNebular {
 
+namespace Rooms {
+extern int16 g_sprite_ids[30];
+extern int16 g_sequence_ids[30];
+} // namespace Rooms
+
 enum GlobalId {
 	kSexOfRex				= 0,
 	kOldSexOfRex			= 1,

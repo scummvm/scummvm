@@ -336,22 +336,22 @@ static void setDialogNode(int node) {
 
 		case 3:
 			local._twinkleAnimationType = 2;
-			_globals[kCurtainOpen] = true;
+			global[kCurtainOpen] = true;
 			player.walker_visible = false;
 			pal_lock();
 			_scene->_kernelMessages.reset();
 			_scene->freeAnimation();
 			_scene->resetScene();
 
-			_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('c', -1));
+			g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('c', -1));
 			kernel.quotes = quote_load(0xE6, 0xE9, 0xEA, 0xE7, 0xE8, 0);
 			_scene->loadAnimation(kernel_name('B', -1), 4);
 			break;
 
 		case 4:
 		{
-			_globals._spriteIndexes[8] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 5);
-			_scene->_sequences.setDepth(_globals._spriteIndexes[8], 1);
+			g_sprite_ids[8] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 5);
+			_scene->_sequences.setDepth(g_sprite_ids[8], 1);
 
 			int msgIndex = _scene->_kernelMessages.add(Common::Point(160, 20), 0x1110, 32, 5, 180, quote_string(kernel.quotes, 231));
 			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
@@ -380,7 +380,7 @@ static void setDialogNode(int node) {
 		break;
 
 		case 8:
-			_globals[kTwinklesStatus] = TWINKLES_GONE;
+			global[kTwinklesStatus] = TWINKLES_GONE;
 			_scene->_nextSceneId = 216;
 			break;
 
@@ -613,10 +613,10 @@ static void restoreDialogNode(int node, int msgId, int posY) {
 }
 
 static void room_210_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('c', -1));
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('c', -1));
 
 	if (!player.been_here_before)
-		_globals[kCurtainOpen] = 0;
+		global[kCurtainOpen] = 0;
 
 	if (_scene->_priorSceneId == 205) {
 		player.x = 277;
@@ -626,15 +626,15 @@ static void room_210_init() {
 		player.x = 168;
 		player.y = 128;
 		player.facing = FACING_SOUTH;
-		_globals[kCurtainOpen] = true;
+		global[kCurtainOpen] = true;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		player.x = 308;
 		player.y = 132;
 	}
 
-	if (!_globals[kCurtainOpen]) {
-		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 5);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 5);
+	if (!global[kCurtainOpen]) {
+		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 5);
+		_scene->_sequences.setDepth(g_sequence_ids[1], 5);
 	} else {
 		int idx = _scene->_dynamicHotspots.add(words_doorway, words_walk_through, -1, Common::Rect(163, 87, 163 + 19, 87 + 36));
 		local._doorway = _scene->_dynamicHotspots.setPosition(idx, Common::Point(168, 127), FACING_NORTH);
@@ -674,10 +674,10 @@ static void room_210_init() {
 		local._twinklesTalking = false;
 		local._curDialogNode = 0;
 		local._stopWalking = false;
-		local._twinklesTalk2 = (_globals[kTwinklesApproached] > 0);
+		local._twinklesTalk2 = (global[kTwinklesApproached] > 0);
 	}
 
-	if (_globals[kTwinklesStatus] == 0) {
+	if (global[kTwinklesStatus] == 0) {
 		_scene->loadAnimation(kernel_name('A', -1));
 		local._twinkleAnimationType = 1;
 	} else
@@ -919,9 +919,9 @@ static void room_210_parser() {
 		{
 			player.commands_allowed = false;
 			int quote;
-			if (_globals[kTwinklesApproached] == 0)
+			if (global[kTwinklesApproached] == 0)
 				quote = 90;
-			else if (_globals[kTwinklesApproached] == 1)
+			else if (global[kTwinklesApproached] == 1)
 				quote = 115;
 			else
 				quote = 171;
@@ -938,10 +938,10 @@ static void room_210_parser() {
 			if (!local._twinklesTalking) {
 				_scene->_sequences.addTimer(6, 1);
 			} else {
-				if (_globals[kTwinklesApproached] == 0) {
+				if (global[kTwinklesApproached] == 0) {
 					handleTwinklesSpeech(0xAF, -1, 0);
 					handleTwinklesSpeech(0xB0, 0, 0);
-				} else if (_globals[kTwinklesApproached] == 1) {
+				} else if (global[kTwinklesApproached] == 1) {
 					handleTwinklesSpeech(0xB1, 0, 0);
 				} else {
 					int quote = local._twinklesTalk2 ? 0xB3 : 0xB2;
@@ -957,8 +957,8 @@ static void room_210_parser() {
 			local._shouldMoveHead = false;
 			local._shouldTalk = false;
 
-			if (_globals[kTwinklesApproached] < 2)
-				_globals[kTwinklesApproached]++;
+			if (global[kTwinklesApproached] < 2)
+				global[kTwinklesApproached]++;
 
 			local._conv1.start();
 			local._curDialogNode = 1;
@@ -991,19 +991,19 @@ static void room_210_parser() {
 		_scene->_nextSceneId = 205;
 	} else if (player_said_2(walk_through, doorway)) {
 		_scene->_nextSceneId = 215;
-	} else if ((player_said_2(pull, curtain) || player_said_2(open, curtain)) && !_globals[kCurtainOpen]) {
+	} else if ((player_said_2(pull, curtain) || player_said_2(open, curtain)) && !global[kCurtainOpen]) {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-			_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 12, 1, 0, 0);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 5);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			_scene->_sequences.remove(g_sequence_ids[1]);
+			g_sequence_ids[1] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[1], false, 12, 1, 0, 0);
+			_scene->_sequences.setDepth(g_sequence_ids[1], 5);
+			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
 			player.commands_allowed = true;
-			_globals[kCurtainOpen] = true;
+			global[kCurtainOpen] = true;
 			local._doorway = _scene->_dynamicHotspots.add(words_doorway, words_walk_through, -1, Common::Rect(163, 87, 163 + 19, 87 + 36));
 			_scene->_dynamicHotspots.setPosition(local._doorway, Common::Point(168, 127), FACING_NORTH);
 			_scene->_dynamicHotspots.setCursor(local._doorway, CURSOR_GO_UP);
@@ -1012,32 +1012,32 @@ static void room_210_parser() {
 		default:
 			break;
 		}
-	} else if ((player_said_2(pull, curtain) || player_said_2(close, curtain)) && _globals[kCurtainOpen]) {
+	} else if ((player_said_2(pull, curtain) || player_said_2(close, curtain)) && global[kCurtainOpen]) {
 		switch (kernel.trigger) {
 		case 0:
-			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+			_scene->_sequences.remove(g_sequence_ids[1]);
 			player.commands_allowed = false;
 			player.facing = FACING_NORTH;
-			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 12, 0, 0, 1);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 5);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 12, 0, 0, 1);
+			_scene->_sequences.setDepth(g_sequence_ids[1], 5);
+			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			player.commands_allowed = false;
 			break;
 		case 1:
-			_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 5);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 5);
+			g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 5);
+			_scene->_sequences.setDepth(g_sequence_ids[1], 5);
 			_scene->_sequences.addTimer(48, 2);
 			break;
 		case 2:
 			_scene->_dynamicHotspots.remove(local._doorway);
 			player.commands_allowed = true;
-			_globals[kCurtainOpen] = false;
+			global[kCurtainOpen] = false;
 			break;
 		default:
 			break;
 		}
 	} else if (player_said_2(look, hut)) {
-		if (_globals[kTwinklesStatus] == TWINKLES_GONE) {
+		if (global[kTwinklesStatus] == TWINKLES_GONE) {
 			if (config_file.naughtiness == STORYMODE_NAUGHTY)
 				text_show(21003);
 			else

@@ -32,12 +32,12 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_303_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('b', 0));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('b', 1));
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('b', 0));
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('b', 1));
 
-	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 10, 0, 50, 120);
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
-	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 10, 0, 0, 0);
+	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 10, 0, 50, 120);
+	_scene->_sequences.setDepth(g_sequence_ids[1], 1);
+	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 10, 0, 0, 0);
 
 	player.walker_visible = false;
 	player.commands_allowed = false;

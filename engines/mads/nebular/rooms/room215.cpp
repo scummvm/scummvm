@@ -32,17 +32,17 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_215_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('e', 0));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('a', 0));
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('e', 0));
+	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('a', 0));
 
-	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 7, 0, 0, 0);
-	_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(235, 83));
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 15);
+	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 7, 0, 0, 0);
+	_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(235, 83));
+	_scene->_sequences.setDepth(g_sequence_ids[1], 15);
 
-	if (_globals[kSexOfRex] == REX_MALE)
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMRC_9");
+	if (global[kSexOfRex] == REX_MALE)
+		g_sprite_ids[2] = _scene->_sprites.addSprites("*RXMRC_9");
 	else
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*ROXRC_9");
+		g_sprite_ids[2] = _scene->_sprites.addSprites("*ROXRC_9");
 
 	if (_scene->_priorSceneId == 216) {
 		player.x = 140;
@@ -50,7 +50,7 @@ static void room_215_init() {
 		player.facing = FACING_SOUTHWEST;
 		player.walker_visible = false;
 		player.commands_allowed = false;
-		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
+		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
 		_scene->_sequences.addTimer(120, 70);
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		player.x = 204;
@@ -64,13 +64,13 @@ static void room_215_init() {
 
 static void room_215_daemon() {
 	if (kernel.trigger == 70) {
-		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		_scene->_sequences.remove(g_sequence_ids[3]);
+		g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 6, 1, 0, 0);
+		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 	}
 
 	if (kernel.trigger == 71) {
-		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[3]);
+		_scene->_sequences.updateTimeout(-1, g_sequence_ids[3]);
 		player.walker_visible = true;
 		player.commands_allowed = true;
 	}
@@ -83,14 +83,14 @@ static void room_215_parser() {
 		if (!player_has(OBJ_TWINKIFRUIT) || kernel.trigger) {
 			switch (kernel.trigger) {
 			case 0:
-				if (_globals[kSexOfRex] == REX_MALE) {
+				if (global[kSexOfRex] == REX_MALE) {
 					player.walker_visible = false;
 					player.commands_allowed = false;
-					_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 6, 2, 0, 0);
-					_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 4);
-					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
-					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_LOOP, 0, 1);
-					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+					g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 6, 2, 0, 0);
+					_scene->_sequences.setAnimRange(g_sequence_ids[2], 1, 4);
+					_scene->_sequences.setMsgLayout(g_sequence_ids[2]);
+					_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_LOOP, 0, 1);
+					_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				} else {
 					inter_give_to_player(OBJ_TWINKIFRUIT);
 					object_examine(OBJ_TWINKIFRUIT, 0x5404, 0);
@@ -107,7 +107,7 @@ static void room_215_parser() {
 			case 2:
 				player.walker_visible = true;
 				player.commands_allowed = true;
-				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
+				_scene->_sequences.updateTimeout(-1, g_sequence_ids[2]);
 				break;
 
 			default:

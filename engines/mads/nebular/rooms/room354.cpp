@@ -38,8 +38,8 @@ struct Scratch {
 static Scratch local;
 
 static void room_354_init() {
-	_globals[kAfterHavoc] = true;
-	_globals[kTeleporterRoom + 1] = 351;
+	global[kAfterHavoc] = true;
+	global[kTeleporterRoom + 1] = 351;
 
 	if (_scene->_priorSceneId == 361) {
 		player.x = 231;

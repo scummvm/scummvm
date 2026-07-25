@@ -32,10 +32,10 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_360_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_full_name(307, 'X', 0, "", EXT_SS));
-	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-	_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(127, 78));
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 15);
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_full_name(307, 'X', 0, "", EXT_SS));
+	g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
+	_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(127, 78));
+	_scene->_sequences.setDepth(g_sequence_ids[1], 15);
 
 	if (_scene->_priorSceneId == 359) {
 		player.x = 304;

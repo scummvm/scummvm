@@ -35,6 +35,9 @@ namespace MADS {
 namespace RexNebular {
 namespace Rooms {
 
+int16 g_sprite_ids[30];
+int16 g_sequence_ids[30];
+
 // Section preloads
 extern void section_1_preload();
 extern void section_2_preload();

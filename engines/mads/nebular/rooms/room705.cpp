@@ -40,7 +40,7 @@ static Scratch local;
 
 
 static void handleBottleInterface() {
-	switch (_globals[kBottleStatus]) {
+	switch (global[kBottleStatus]) {
 	case 0:
 		local._dialog1.write(0x311, true);
 		local._dialog1.write(0x312, true);
@@ -81,7 +81,7 @@ static void handleBottleInterface() {
 static void setBottleSequence() {
 	_scene->_userInterface.setup(kInputBuildingSentences);
 	player.commands_allowed = false;
-	_scene->_sequences.remove(_globals._sequenceIndexes[3]);
+	_scene->_sequences.remove(g_sequence_ids[3]);
 	kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 	_scene->loadAnimation(kernel_name('F', -1), 90);
 }
@@ -89,22 +89,22 @@ static void setBottleSequence() {
 static void handleFillBottle(int quote) {
 	switch (quote) {
 	case 0x311:
-		_globals[kBottleStatus] = 1;
+		global[kBottleStatus] = 1;
 		setBottleSequence();
 		break;
 
 	case 0x312:
-		_globals[kBottleStatus] = 2;
+		global[kBottleStatus] = 2;
 		setBottleSequence();
 		break;
 
 	case 0x313:
-		_globals[kBottleStatus] = 3;
+		global[kBottleStatus] = 3;
 		setBottleSequence();
 		break;
 
 	case 0x314:
-		_globals[kBottleStatus] = 4;
+		global[kBottleStatus] = 4;
 		setBottleSequence();
 		break;
 
@@ -118,23 +118,23 @@ static void handleFillBottle(int quote) {
 }
 
 static void room_705_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('b', 0));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('b', 1));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('a', 0));
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('b', 0));
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('b', 1));
+	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('a', 0));
 
 	player.walker_visible = false;
 
 	if (_scene->_priorSceneId == 706) {
 		player.commands_allowed = false;
-		_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 4);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		g_sequence_ids[3] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[3], false, 9, 1, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 4);
+		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		player.commands_allowed = false;
 		_scene->_sequences.addTimer(1, 80);
 		g_engine->_soundManager->command(28, 0);
 	} else
-		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
+		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
 
 	if (_scene->_roomChanged)
 		inter_give_to_player(OBJ_BOTTLE);
@@ -147,16 +147,16 @@ static void room_705_init() {
 static void room_705_daemon() {
 	switch (kernel.trigger) {
 	case 70:
-		_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 4);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		g_sequence_ids[3] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[3], false, 9, 1, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 4);
+		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 		break;
 
 	case 71:
 	{
-		int syncIdx = _globals._sequenceIndexes[3];
-		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
+		int syncIdx = g_sequence_ids[3];
+		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
+		_scene->_sequences.updateTimeout(g_sequence_ids[3], syncIdx);
 		player.commands_allowed = true;
 	}
 	break;
@@ -167,17 +167,17 @@ static void room_705_daemon() {
 
 	switch (kernel.trigger) {
 	case 80:
-		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 1, 0, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 2);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
+		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 9, 1, 0, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[1], 2);
+		_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
 		break;
 
 	case 81:
 	{
 		g_engine->_soundManager->command(19, 0);
-		int syncIdx = _globals._sequenceIndexes[1];
-		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
+		int syncIdx = g_sequence_ids[1];
+		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
+		_scene->_sequences.updateTimeout(g_sequence_ids[3], syncIdx);
 		player.commands_allowed = true;
 	}
 	break;
@@ -188,12 +188,12 @@ static void room_705_daemon() {
 
 	switch (kernel.trigger) {
 	case 90:
-		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
+		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
 		_scene->_sequences.addTimer(30, 91);
 		break;
 
 	case 91:
-		switch (_globals[kBottleStatus]) {
+		switch (global[kBottleStatus]) {
 		case 0:
 			text_show(432);
 			break;
@@ -232,19 +232,19 @@ static void room_705_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 1, 0, 0);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 2);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			_scene->_sequences.remove(g_sequence_ids[3]);
+			g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 6, 1, 0, 0);
+			_scene->_sequences.setDepth(g_sequence_ids[2], 2);
+			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			g_engine->_soundManager->command(18, 0);
 			break;
 
 		case 1:
 		{
-			int syncIdx = _globals._sequenceIndexes[2];
-			_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 2);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], syncIdx);
+			int syncIdx = g_sequence_ids[2];
+			g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -2);
+			_scene->_sequences.setDepth(g_sequence_ids[2], 2);
+			_scene->_sequences.updateTimeout(g_sequence_ids[2], syncIdx);
 			_scene->_nextSceneId = 704;
 			player.commands_allowed = true;
 		}
@@ -257,17 +257,17 @@ static void room_705_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 16);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			_scene->_sequences.remove(g_sequence_ids[3]);
+			g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 6, 1, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 16);
+			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
 		{
-			int syncIdx = _globals._sequenceIndexes[3];
-			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 16);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
+			int syncIdx = g_sequence_ids[3];
+			g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 16);
+			_scene->_sequences.updateTimeout(g_sequence_ids[3], syncIdx);
 			_scene->_nextSceneId = 706;
 			player.commands_allowed = true;
 		}
@@ -277,7 +277,7 @@ static void room_705_parser() {
 			break;
 		}
 	} else if (player_said_3(fill, bottle, water) || player_said_3(put, bottle, water)) {
-		if (_globals[kBottleStatus] != 4) {
+		if (global[kBottleStatus] != 4) {
 			handleBottleInterface();
 			local._dialog1.start();
 		} else

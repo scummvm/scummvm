@@ -39,8 +39,8 @@ static Scratch local;
 
 
 static void room_752_init() {
-	_globals._spriteIndexes[14] = _scene->_sprites.addSprites(kernel_name('l', -1));
-	_globals._spriteIndexes[12] = _scene->_sprites.addSprites("*RXMBD_8");
+	g_sprite_ids[14] = _scene->_sprites.addSprites(kernel_name('l', -1));
+	g_sprite_ids[12] = _scene->_sprites.addSprites("*RXMBD_8");
 
 	if (_scene->_priorSceneId == 751) {
 		player.x = 13;
@@ -55,22 +55,22 @@ static void room_752_init() {
 	}
 
 	if (object[OBJ_ID_CARD].location == 752) {
-		_globals._spriteIndexes[13] = _scene->_sprites.addSprites(kernel_name('i', -1));
-		_globals._sequenceIndexes[13] = _scene->_sequences.startCycle(_globals._spriteIndexes[13], false, 1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[13], 8);
-		int idx = _scene->_dynamicHotspots.add(words_id_card, words_walkto, _globals._sequenceIndexes[13], Common::Rect(0, 0, 0, 0));
+		g_sprite_ids[13] = _scene->_sprites.addSprites(kernel_name('i', -1));
+		g_sequence_ids[13] = _scene->_sequences.startCycle(g_sprite_ids[13], false, 1);
+		_scene->_sequences.setDepth(g_sequence_ids[13], 8);
+		int idx = _scene->_dynamicHotspots.add(words_id_card, words_walkto, g_sequence_ids[13], Common::Rect(0, 0, 0, 0));
 		local._cardId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 135), FACING_NORTH);
 	}
 
-	if (_globals[kLaserHoleIsThere]) {
-		_globals._sequenceIndexes[14] = _scene->_sequences.startCycle(_globals._spriteIndexes[14], false, 1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[14], 13);
-		int idx = _scene->_dynamicHotspots.add(words_laser_beam, words_look_at, _globals._sequenceIndexes[14], Common::Rect(0, 0, 0, 0));
+	if (global[kLaserHoleIsThere]) {
+		g_sequence_ids[14] = _scene->_sequences.startCycle(g_sprite_ids[14], false, 1);
+		_scene->_sequences.setDepth(g_sequence_ids[14], 13);
+		int idx = _scene->_dynamicHotspots.add(words_laser_beam, words_look_at, g_sequence_ids[14], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(215, 130), FACING_NORTHWEST);
 	}
 
-	if (_globals[kTeleporterCommand]) {
-		switch (_globals[kTeleporterCommand]) {
+	if (global[kTeleporterCommand]) {
+		switch (global[kTeleporterCommand]) {
 		case TELEPORTER_BEAM_OUT:
 		case TELEPORTER_WRONG:
 		case TELEPORTER_STEP_OUT:
@@ -81,7 +81,7 @@ static void room_752_init() {
 			break;
 		}
 
-		_globals[kTeleporterCommand] = TELEPORTER_NONE;
+		global[kTeleporterCommand] = TELEPORTER_NONE;
 	}
 
 	int32 timer = (global[kTimebombTimer + 1] << 16) | global[kTimebombTimer];
@@ -96,10 +96,10 @@ static void room_752_init() {
 static void room_752_daemon() {
 	int32 timer = (global[kTimebombTimer + 1] << 16) | global[kTimebombTimer];
 
-	if (timer >= 10800 && _globals[kTimebombStatus] == TIMEBOMB_ACTIVATED) {
+	if (timer >= 10800 && global[kTimebombStatus] == TIMEBOMB_ACTIVATED) {
 		global[kTimebombStatus] = TIMEBOMB_DEAD;
 		global[kTimebombTimer] = global[kTimebombTimer + 1] = 0;
-		_globals[kCheckDaemonTimebomb] = false;
+		global[kCheckDaemonTimebomb] = false;
 		_scene->_nextSceneId = 620;
 	}
 }
@@ -122,14 +122,14 @@ static void room_752_parser() {
 		case 0:
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			_globals._sequenceIndexes[12] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[12], false, 5, 2, 0, 0);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[12]);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[12] = _scene->_sequences.startPingPongCycle(g_sprite_ids[12], false, 5, 2, 0, 0);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[12]);
+			_scene->_sequences.addSubEntry(g_sequence_ids[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
+			_scene->_sequences.addSubEntry(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 		case 1:
 			g_engine->_soundManager->command(15, 0);
-			_scene->_sequences.remove(_globals._sequenceIndexes[13]);
+			_scene->_sequences.remove(g_sequence_ids[13]);
 			inter_give_to_player(OBJ_ID_CARD);
 			_scene->_dynamicHotspots.remove(local._cardId);
 			object_examine(OBJ_ID_CARD, 830, 0);
@@ -147,10 +147,10 @@ static void room_752_parser() {
 		case 0:
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			_globals._sequenceIndexes[12] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[12], false, 5, 2, 0, 0);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[12]);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[12] = _scene->_sequences.startPingPongCycle(g_sprite_ids[12], false, 5, 2, 0, 0);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[12]);
+			_scene->_sequences.addSubEntry(g_sequence_ids[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
+			_scene->_sequences.addSubEntry(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 		case 1:
 			g_engine->_soundManager->command(15, 0);
@@ -160,7 +160,7 @@ static void room_752_parser() {
 			object_examine(OBJ_BONES, 75221, 0);
 			break;
 		case 2:
-			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[12]);
+			_scene->_sequences.updateTimeout(-1, g_sequence_ids[12]);
 			player.walker_visible = true;
 			player.commands_allowed = true;
 			break;
@@ -168,7 +168,7 @@ static void room_752_parser() {
 			break;
 		}
 	} else if (player.look_around || player_said_2(look, city)) {
-		if (_globals[kLaserHoleIsThere])
+		if (global[kLaserHoleIsThere])
 			text_show(75212);
 		else
 			text_show(75210);

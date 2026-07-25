@@ -43,25 +43,25 @@ static Scratch local;
 
 
 static void room_610_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('p', -1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMRC_9");
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('x', 1));
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('p', -1));
+	g_sprite_ids[2] = _scene->_sprites.addSprites("*RXMRC_9");
+	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('x', 1));
 
-	_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 60, 0, 0, 0);
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 13);
-	_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 30, 0, 0, 0);
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 9);
+	g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 60, 0, 0, 0);
+	_scene->_sequences.setDepth(g_sequence_ids[4], 13);
+	g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 30, 0, 0, 0);
+	_scene->_sequences.setDepth(g_sequence_ids[3], 9);
 
 	if (!player.been_here_before)
 		local._cellCharging = false;
 
 	if (object[OBJ_PHONE_HANDSET].location == _scene->_currentSceneId) {
-		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-		local._handsetHotspotId = _scene->_dynamicHotspots.add(words_phone_handset, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 9, 0, 0, 0);
+		local._handsetHotspotId = _scene->_dynamicHotspots.add(words_phone_handset, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._handsetHotspotId, Common::Point(132, 121), FACING_NORTHWEST);
-		if ((_globals[kHandsetCellStatus] == 2) && (game.difficulty == DIFFICULTY_HARD) && !_globals[kDurafailRecharged])
-			_globals[kHandsetCellStatus] = 1;
+		if ((global[kHandsetCellStatus] == 2) && (game.difficulty == DIFFICULTY_HARD) && !global[kDurafailRecharged])
+			global[kHandsetCellStatus] = 1;
 	}
 
 	if (_scene->_roomChanged && game.difficulty != DIFFICULTY_EASY)
@@ -90,7 +90,7 @@ static void room_610_daemon() {
 	// CHECKME: local._checkVal is always false, could be removed
 	if ((local._cellChargingTimer >= 60) && !local._checkVal) {
 		local._checkVal = true;
-		_globals[kHandsetCellStatus] = 1;
+		global[kHandsetCellStatus] = 1;
 		local._cellCharging = false;
 		local._checkVal = false;
 		local._cellChargingTimer = 0;
@@ -106,23 +106,23 @@ static void room_610_parser() {
 			case 0:
 				player.commands_allowed = false;
 				player.walker_visible = false;
-				_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], true, 8, 1, 0, 0);
-				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 2);
-				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 2, 1);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], true, 8, 1, 0, 0);
+				_scene->_sequences.setAnimRange(g_sequence_ids[2], 1, 2);
+				_scene->_sequences.setMsgLayout(g_sequence_ids[2]);
+				_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 2, 1);
+				_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 1:
 				g_engine->_soundManager->command(9, 0);
-				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+				_scene->_sequences.remove(g_sequence_ids[1]);
 				_scene->_dynamicHotspots.remove(local._handsetHotspotId);
 				inter_give_to_player(OBJ_PHONE_HANDSET);
 				object_examine(OBJ_PHONE_HANDSET, 61017, 0);
 				break;
 
 			case 2:
-				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
+				_scene->_sequences.updateTimeout(-1, g_sequence_ids[2]);
 				player.walker_visible = true;
 				player.commands_allowed = true;
 				break;
@@ -136,25 +136,25 @@ static void room_610_parser() {
 		case 0:
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], true, 8, 1, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 2);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 2, 1);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], true, 8, 1, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[2], 1, 2);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[2]);
+			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 2, 1);
+			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
-			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-			local._handsetHotspotId = _scene->_dynamicHotspots.add(words_phone_handset, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+			g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 9, 0, 0, 0);
+			local._handsetHotspotId = _scene->_dynamicHotspots.add(words_phone_handset, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(local._handsetHotspotId, Common::Point(132, 121), FACING_NORTHWEST);
 			inter_move_object(OBJ_PHONE_HANDSET, _scene->_currentSceneId);
 			break;
 
 		case 2:
-			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
+			_scene->_sequences.updateTimeout(-1, g_sequence_ids[2]);
 			player.walker_visible = true;
 			player.commands_allowed = true;
-			if ((_globals[kHandsetCellStatus] == 2) && (game.difficulty == DIFFICULTY_HARD) && !_globals[kDurafailRecharged])
+			if ((global[kHandsetCellStatus] == 2) && (game.difficulty == DIFFICULTY_HARD) && !global[kDurafailRecharged])
 				local._cellCharging = true;
 
 			text_show(61032);

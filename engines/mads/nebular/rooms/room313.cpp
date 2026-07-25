@@ -62,7 +62,7 @@ static void room_313_init() {
 		player.facing = FACING_WEST;
 	}
 
-	if (_globals[kAfterHavoc]) {
+	if (global[kAfterHavoc]) {
 		for (uint16 i = 0; i < cycle_list.num_cycles; i++) {
 			int palIdx = cycle_list.table[i].first_list_color;
 			int size = cycle_list.table[i].num_colors * 3;
@@ -80,21 +80,21 @@ static void room_313_parser() {
 	else if (player_said_2(crawl_to, third_cell))
 		_scene->_nextSceneId = 388;
 	else if (player_said_2(crawl_to, second_cell)) {
-		if (_globals[kAfterHavoc])
+		if (global[kAfterHavoc])
 			_scene->_nextSceneId = 399;
 		else
 			_scene->_nextSceneId = 389;
 	} else if (player_said_2(crawl_to, first_cell))
 		_scene->_nextSceneId = 390;
 	else if (player_said_2(crawl_to, security_station)) {
-		if (_globals[kSexOfRex] == REX_FEMALE) {
-			_globals[kSexOfRex] = REX_MALE;
+		if (global[kSexOfRex] == REX_FEMALE) {
+			global[kSexOfRex] = REX_MALE;
 			text_show(31301);
 		}
 		_scene->_nextSceneId = 391;
 	} else if (player_said_2(crawl_to, equipment_room)) {
-		if (_globals[kSexOfRex] == REX_FEMALE) {
-			_globals[kSexOfRex] = REX_MALE;
+		if (global[kSexOfRex] == REX_FEMALE) {
+			global[kSexOfRex] = REX_MALE;
 			text_show(31301);
 		}
 		_scene->_nextSceneId = 366;

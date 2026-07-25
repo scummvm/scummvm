@@ -67,10 +67,10 @@ static Scratch local;
 
 
 static void resetDogVariables() {
-	_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
-	int idx = _scene->_dynamicHotspots.add(words_obnoxious_dog, words_walkto, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+	g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, 1);
+	int idx = _scene->_dynamicHotspots.add(words_obnoxious_dog, words_walkto, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(194, 142), FACING_EAST);
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 4);
+	_scene->_sequences.setDepth(g_sequence_ids[5], 4);
 	local._dogBarkingFl = false;
 	local._dogFirstEncounter = false;
 }
@@ -82,14 +82,14 @@ static void restoreAnimations() {
 	if (local._throwMode == 6)
 		local._dogSquashFl = true;
 
-	if (_globals[kCarStatus] == CAR_UP) {
-		_scene->_sequences.remove(_globals._sequenceIndexes[6]);
-		_scene->_sequences.remove(_globals._sequenceIndexes[7]);
+	if (global[kCarStatus] == CAR_UP) {
+		_scene->_sequences.remove(g_sequence_ids[6]);
+		_scene->_sequences.remove(g_sequence_ids[7]);
 		_scene->loadAnimation(kernel_name('A', -1));
 	} else {
-		_scene->_sequences.remove(_globals._sequenceIndexes[8]);
-		_scene->_sequences.remove(_globals._sequenceIndexes[6]);
-		_scene->_sequences.remove(_globals._sequenceIndexes[7]);
+		_scene->_sequences.remove(g_sequence_ids[8]);
+		_scene->_sequences.remove(g_sequence_ids[6]);
+		_scene->_sequences.remove(g_sequence_ids[7]);
 		_scene->loadAnimation(kernel_name('A', -1));
 		_scene->_animation[0]->setCurrentFrame(6);
 	}
@@ -97,23 +97,23 @@ static void restoreAnimations() {
 
 static void setCarAnimations() {
 	_scene->freeAnimation();
-	if (_globals[kCarStatus] == CAR_UP) {
-		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, 1);
-		_scene->_sequences.setPosition(_globals._sequenceIndexes[6], Common::Point(143, 98));
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 6);
-		_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, 1);
-		_scene->_sequences.setPosition(_globals._sequenceIndexes[7], Common::Point(141, 67));
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 15);
+	if (global[kCarStatus] == CAR_UP) {
+		g_sequence_ids[6] = _scene->_sequences.startCycle(g_sprite_ids[6], false, 1);
+		_scene->_sequences.setPosition(g_sequence_ids[6], Common::Point(143, 98));
+		_scene->_sequences.setDepth(g_sequence_ids[6], 6);
+		g_sequence_ids[7] = _scene->_sequences.startCycle(g_sprite_ids[7], false, 1);
+		_scene->_sequences.setPosition(g_sequence_ids[7], Common::Point(141, 67));
+		_scene->_sequences.setDepth(g_sequence_ids[7], 15);
 	} else {
-		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, 1);
-		_scene->_sequences.setPosition(_globals._sequenceIndexes[6], Common::Point(143, 128));
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 6);
-		_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, 1);
-		_scene->_sequences.setPosition(_globals._sequenceIndexes[7], Common::Point(141, 97));
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 15);
-		_globals._sequenceIndexes[8] = _scene->_sequences.startCycle(_globals._spriteIndexes[8], false, 1);
-		_scene->_sequences.setPosition(_globals._sequenceIndexes[8], Common::Point(144, 126));
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 5);
+		g_sequence_ids[6] = _scene->_sequences.startCycle(g_sprite_ids[6], false, 1);
+		_scene->_sequences.setPosition(g_sequence_ids[6], Common::Point(143, 128));
+		_scene->_sequences.setDepth(g_sequence_ids[6], 6);
+		g_sequence_ids[7] = _scene->_sequences.startCycle(g_sprite_ids[7], false, 1);
+		_scene->_sequences.setPosition(g_sequence_ids[7], Common::Point(141, 97));
+		_scene->_sequences.setDepth(g_sequence_ids[7], 15);
+		g_sequence_ids[8] = _scene->_sequences.startCycle(g_sprite_ids[8], false, 1);
+		_scene->_sequences.setPosition(g_sequence_ids[8], Common::Point(144, 126));
+		_scene->_sequences.setDepth(g_sequence_ids[8], 5);
 	}
 }
 
@@ -122,7 +122,7 @@ static void handleThrowingBone() {
 	case 0:
 		player.commands_allowed = false;
 		setCarAnimations();
-		_scene->_sequences.remove(_globals._sequenceIndexes[5]);
+		_scene->_sequences.remove(g_sequence_ids[5]);
 		local._animationMode = -1;
 		player.walker_visible = false;
 		local._carMode = local._throwMode;
@@ -172,43 +172,43 @@ static void handleThrowingBone() {
 }
 
 static void room_608_init() {
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMRD_7");
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXMRC_9");
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_name('c', 2));
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(kernel_name('c', 0));
-	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(kernel_name('c', 1));
+	g_sprite_ids[2] = _scene->_sprites.addSprites("*RXMRD_7");
+	g_sprite_ids[3] = _scene->_sprites.addSprites("*RXMRC_9");
+	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('c', 2));
+	g_sprite_ids[7] = _scene->_sprites.addSprites(kernel_name('c', 0));
+	g_sprite_ids[8] = _scene->_sprites.addSprites(kernel_name('c', 1));
 
 	if (object_is_here(OBJ_POLYCEMENT)) {
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('g', -1));
-		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-		int idx = _scene->_dynamicHotspots.add(words_polycement, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('g', -1));
+		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
+		int idx = _scene->_dynamicHotspots.add(words_polycement, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		local._polycementHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(249, 129), FACING_NORTHEAST);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 6);
+		_scene->_sequences.setDepth(g_sequence_ids[1], 6);
 	}
 
 	if (object_is_here(OBJ_REARVIEW_MIRROR)) {
-		_globals._spriteIndexes[12] = _scene->_sprites.addSprites(kernel_name('m', -1));
-		_globals._sequenceIndexes[12] = _scene->_sequences.startCycle(_globals._spriteIndexes[12], false, 1);
-		int idx = _scene->_dynamicHotspots.add(words_rearview_mirror, words_walkto, _globals._sequenceIndexes[12], Common::Rect(0, 0, 0, 0));
+		g_sprite_ids[12] = _scene->_sprites.addSprites(kernel_name('m', -1));
+		g_sequence_ids[12] = _scene->_sequences.startCycle(g_sprite_ids[12], false, 1);
+		int idx = _scene->_dynamicHotspots.add(words_rearview_mirror, words_walkto, g_sequence_ids[12], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(71, 113), FACING_NORTHEAST);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 15);
+		_scene->_sequences.setDepth(g_sequence_ids[12], 15);
 	}
 
 	if (game.difficulty == DIFFICULTY_HARD) {
-		_globals._spriteIndexes[9] = _scene->_sprites.addSprites(kernel_name('g', 0));
-		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('g', 1));
-		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('g', 2));
-		_globals._spriteIndexes[10] = _scene->_sprites.addSprites(kernel_name('h', 2));
-		_globals._spriteIndexes[11] = _scene->_sprites.addSprites(kernel_name('h', 3));
+		g_sprite_ids[9] = _scene->_sprites.addSprites(kernel_name('g', 0));
+		g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('g', 1));
+		g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('g', 2));
+		g_sprite_ids[10] = _scene->_sprites.addSprites(kernel_name('h', 2));
+		g_sprite_ids[11] = _scene->_sprites.addSprites(kernel_name('h', 3));
 		local._rexBeingEaten = false;
 
 		if (!player.been_here_before) {
-			_globals[kDogStatus] = DOG_GONE;
+			global[kDogStatus] = DOG_GONE;
 			local._dogActiveFl = true;
 		} else
-			local._dogActiveFl = (_globals[kDogStatus] != DOG_DEAD);
+			local._dogActiveFl = (global[kDogStatus] != DOG_DEAD);
 	} else {
-		_globals[kDogStatus] = DOG_DEAD;
+		global[kDogStatus] = DOG_DEAD;
 		local._dogActiveFl = false;
 	}
 
@@ -223,20 +223,20 @@ static void room_608_init() {
 
 
 	if (!player.been_here_before)
-		_globals[kCarStatus] = CAR_UP;
+		global[kCarStatus] = CAR_UP;
 
 	local._animationMode = 0;
 	local._carMoveMode = 0;
 	local._carFrame = -1;
 
-	if (_globals[kCarStatus] == CAR_UP) {
+	if (global[kCarStatus] == CAR_UP) {
 		local._carMode = 0;
 		local._dogDeathMode = 0;
 		local._resetPositionsFl = false;
 		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
 		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 		_scene->loadAnimation(kernel_name('A', -1));
-	} else if (_globals[kCarStatus] == CAR_DOWN) {
+	} else if (global[kCarStatus] == CAR_DOWN) {
 		local._carMode = 0;
 		local._dogDeathMode = 0;
 		local._resetPositionsFl = false;
@@ -244,14 +244,14 @@ static void room_608_init() {
 		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 		_scene->loadAnimation(kernel_name('A', -1));
 		_scene->_animation[0]->setCurrentFrame(6);
-	} else if (_globals[kCarStatus] == CAR_SQUASHES_DOG) {
+	} else if (global[kCarStatus] == CAR_SQUASHES_DOG) {
 		local._carMode = 2;
 		local._dogDeathMode = 0;
 		local._resetPositionsFl = false;
 		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
 		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 		_scene->loadAnimation(kernel_name('C', -1));
-	} else if (_globals[kCarStatus] == CAR_SQUASHES_DOG_AGAIN) {
+	} else if (global[kCarStatus] == CAR_SQUASHES_DOG_AGAIN) {
 		local._carMode = 1;
 		local._dogDeathMode = 2;
 		local._resetPositionsFl = true;
@@ -284,9 +284,9 @@ static void room_608_init() {
 		if (!local._dogUnderCar)
 			resetDogVariables();
 		else {
-			_globals._sequenceIndexes[10] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[10], false, 9, 0, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[10], 10, 11);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 6);
+			g_sequence_ids[10] = _scene->_sequences.startPingPongCycle(g_sprite_ids[10], false, 9, 0, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[10], 10, 11);
+			_scene->_sequences.setDepth(g_sequence_ids[10], 6);
 		}
 	}
 
@@ -311,10 +311,10 @@ static void room_608_daemon() {
 
 	if (local._dogActiveFl && (local._dogWindowTimer >= 2) && !local._dogHitWindow) {
 		local._dogHitWindow = true;
-		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 11, 1, 0, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 1);
+		g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 11, 1, 0, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[4], 1);
 		g_engine->_soundManager->command(14, 0);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+		_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 		local._dogWindowTimer = 0;
 	}
 
@@ -325,20 +325,20 @@ static void room_608_daemon() {
 		if (!local._dogBarkingFl) {
 			if (g_engine->getRandomNumber(1, 50) == 10) {
 				local._dogBarkingFl = true;
-				_scene->_sequences.remove(_globals._sequenceIndexes[5]);
-				_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], false, 5, 8, 0, 0);
-				_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 4);
-				int idx = _scene->_dynamicHotspots.add(words_obnoxious_dog, words_walkto, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+				_scene->_sequences.remove(g_sequence_ids[5]);
+				g_sequence_ids[5] = _scene->_sequences.startPingPongCycle(g_sprite_ids[5], false, 5, 8, 0, 0);
+				_scene->_sequences.setDepth(g_sequence_ids[5], 4);
+				int idx = _scene->_dynamicHotspots.add(words_obnoxious_dog, words_walkto, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(194, 142), FACING_EAST);
 				local._barkCount = 0;
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_SPRITE, 2, 100);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
+				_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_SPRITE, 2, 100);
+				_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
 			}
 		} else if (kernel.trigger == 60) {
-			int syncIdx = _globals._sequenceIndexes[5];
-			_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 6);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[5], syncIdx);
+			int syncIdx = g_sequence_ids[5];
+			g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, 1);
+			_scene->_sequences.setDepth(g_sequence_ids[5], 6);
+			_scene->_sequences.updateTimeout(g_sequence_ids[5], syncIdx);
 			_scene->_kernelMessages.reset();
 			local._dogBarkingFl = false;
 		}
@@ -398,14 +398,14 @@ static void room_608_daemon() {
 
 	if (local._dogActiveFl && local._dogSafeFl && !local._buttonPressedonTimeFl) {
 		local._dogDeathMode = 0;
-		_globals[kCarStatus] = CAR_UP;
+		global[kCarStatus] = CAR_UP;
 		local._carMode = 0;
-		_scene->_sequences.remove(_globals._sequenceIndexes[10]);
+		_scene->_sequences.remove(g_sequence_ids[10]);
 		local._dogUnderCar = false;
 		local._dogYelping = false;
 		_scene->_kernelMessages.reset();
-		_globals._sequenceIndexes[11] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[11], false, 6, 1, 0, 0);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[11], SEQUENCE_TRIGGER_EXPIRE, 0, 92);
+		g_sequence_ids[11] = _scene->_sequences.addSpriteCycle(g_sprite_ids[11], false, 6, 1, 0, 0);
+		_scene->_sequences.addSubEntry(g_sequence_ids[11], SEQUENCE_TRIGGER_EXPIRE, 0, 92);
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2FF));
 	}
 
@@ -451,9 +451,9 @@ static void room_608_daemon() {
 				player.walker_visible = true;
 				player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
 			} else if (local._carFrame == 41) {
-				_globals._sequenceIndexes[10] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[10], false, 9, 0, 0, 0);
-				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[10], 10, 11);
-				_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 6);
+				g_sequence_ids[10] = _scene->_sequences.startPingPongCycle(g_sprite_ids[10], false, 9, 0, 0, 0);
+				_scene->_sequences.setAnimRange(g_sequence_ids[10], 10, 11);
+				_scene->_sequences.setDepth(g_sequence_ids[10], 6);
 				local._dogUnderCar = true;
 				local._nextTrigger = 2;
 			}
@@ -492,10 +492,10 @@ static void room_608_daemon() {
 			local._carFrame = _scene->_animation[0]->getCurrentFrame();
 			int nextFrame = -1;
 
-			if ((_globals[kCarStatus] == CAR_UP) || (_globals[kCarStatus] == CAR_DOWN)) {
+			if ((global[kCarStatus] == CAR_UP) || (global[kCarStatus] == CAR_DOWN)) {
 				switch (local._carMoveMode) {
 				case 0:
-					if (_globals[kCarStatus] == CAR_UP)
+					if (global[kCarStatus] == CAR_UP)
 						nextFrame = 0;
 					else
 						nextFrame = 6;
@@ -505,7 +505,7 @@ static void room_608_daemon() {
 					if (_scene->_animation[0]->getCurrentFrame() >= 12) {
 						nextFrame = 0;
 						local._carMoveMode = 0;
-						_globals[kCarStatus] = CAR_UP;
+						global[kCarStatus] = CAR_UP;
 					}
 					break;
 
@@ -513,7 +513,7 @@ static void room_608_daemon() {
 					if (_scene->_animation[0]->getCurrentFrame() >= 6) {
 						nextFrame = 6;
 						local._carMoveMode = 0;
-						_globals[kCarStatus] = CAR_DOWN;
+						global[kCarStatus] = CAR_DOWN;
 					}
 					break;
 
@@ -609,55 +609,55 @@ static void room_608_daemon() {
 		local._rexBeingEaten = true;
 		switch (kernel.trigger) {
 		case 0:
-			_scene->_sequences.remove(_globals._sequenceIndexes[5]);
+			_scene->_sequences.remove(g_sequence_ids[5]);
 			local._animationMode = 1;
-			_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 10, 1, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[9], 1, 2);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 5);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
+			g_sequence_ids[9] = _scene->_sequences.addSpriteCycle(g_sprite_ids[9], false, 10, 1, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[9], 1, 2);
+			_scene->_sequences.setDepth(g_sequence_ids[9], 5);
+			_scene->_sequences.addSubEntry(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
 			_scene->_sequences.addTimer(10, 85);
 			break;
 
 		case 80:
 			player.walker_visible = false;
-			_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 10, 1, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[9], 3, 5);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 5);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[9], -1);
+			g_sequence_ids[9] = _scene->_sequences.addSpriteCycle(g_sprite_ids[9], false, 10, 1, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[9], 3, 5);
+			_scene->_sequences.setDepth(g_sequence_ids[9], 5);
+			_scene->_sequences.updateTimeout(g_sequence_ids[9], -1);
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2FC));
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
+			_scene->_sequences.addSubEntry(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
 			break;
 
 		case 81:
 		{
-			int syncIdx = _globals._sequenceIndexes[9];
-			_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 5, 1, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[9], 6, 38);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 5);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[9], syncIdx);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SEQUENCE_TRIGGER_EXPIRE, 0, 82);
+			int syncIdx = g_sequence_ids[9];
+			g_sequence_ids[9] = _scene->_sequences.addSpriteCycle(g_sprite_ids[9], false, 5, 1, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[9], 6, 38);
+			_scene->_sequences.setDepth(g_sequence_ids[9], 5);
+			_scene->_sequences.updateTimeout(g_sequence_ids[9], syncIdx);
+			_scene->_sequences.addSubEntry(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 82);
 		}
 		break;
 
 		case 82:
 		{
-			int syncIdx = _globals._sequenceIndexes[9];
-			_globals._sequenceIndexes[9] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[9], false, 15, 5, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[9], 39, 40);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 5);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[9], syncIdx);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SEQUENCE_TRIGGER_EXPIRE, 0, 83);
+			int syncIdx = g_sequence_ids[9];
+			g_sequence_ids[9] = _scene->_sequences.startPingPongCycle(g_sprite_ids[9], false, 15, 5, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[9], 39, 40);
+			_scene->_sequences.setDepth(g_sequence_ids[9], 5);
+			_scene->_sequences.updateTimeout(g_sequence_ids[9], syncIdx);
+			_scene->_sequences.addSubEntry(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 83);
 		}
 		break;
 
 		case 83:
 		{
 			local._animationMode = 2;
-			int syncIdx = _globals._sequenceIndexes[9];
-			_globals._sequenceIndexes[9] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, -2);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 5);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[9], syncIdx);
+			int syncIdx = g_sequence_ids[9];
+			g_sequence_ids[9] = _scene->_sequences.startCycle(g_sprite_ids[9], false, -2);
+			_scene->_sequences.setDepth(g_sequence_ids[9], 5);
+			_scene->_sequences.updateTimeout(g_sequence_ids[9], syncIdx);
 			_scene->_sequences.addTimer(60, 84);
 		}
 		break;
@@ -712,31 +712,31 @@ static void room_608_parser() {
 		player.commands_allowed = true;
 		switch (kernel.trigger) {
 		case 0:
-			if ((_globals[kCarStatus] == CAR_UP) || (_globals[kCarStatus] == CAR_SQUASHES_DOG) || (_globals[kCarStatus] == CAR_SQUASHES_DOG_AGAIN)) {
+			if ((global[kCarStatus] == CAR_UP) || (global[kCarStatus] == CAR_SQUASHES_DOG) || (global[kCarStatus] == CAR_SQUASHES_DOG_AGAIN)) {
 				player.commands_allowed = false;
 				player.walker_visible = false;
-				_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], true, 6, 2, 0, 0);
-				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 2);
-				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], true, 6, 2, 0, 0);
+				_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 2);
+				_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
+				_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			} else
 				text_show(60839);
 			break;
 
 		case 1:
-			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[3]);
+			_scene->_sequences.updateTimeout(-1, g_sequence_ids[3]);
 			player.walker_visible = true;
 			if (local._dogDeathMode == 0)
 				local._carMode = 0;
 			else if (local._dogDeathMode == 1) {
 				_scene->_kernelMessages.reset();
 				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x300));
-				_globals[kCarStatus] = CAR_SQUASHES_DOG;
+				global[kCarStatus] = CAR_SQUASHES_DOG;
 				local._carMode = 2;
-				_globals[kDogStatus] = DOG_DEAD;
+				global[kDogStatus] = DOG_DEAD;
 				local._dogActiveFl = false;
 				local._dogUnderCar = false;
-				_scene->_sequences.remove(_globals._sequenceIndexes[10]);
+				_scene->_sequences.remove(g_sequence_ids[10]);
 				_scene->freeAnimation();
 				_scene->loadAnimation(kernel_name('C', -1));
 			} else {
@@ -757,13 +757,13 @@ static void room_608_parser() {
 				_scene->_dynamicHotspots.remove(local._carHotspotId);
 				int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
 				local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
-				if (_globals[kCarStatus] == CAR_SQUASHES_DOG)
+				if (global[kCarStatus] == CAR_SQUASHES_DOG)
 					_scene->_sequences.addTimer(120, 3);
 				else {
 					if (local._dogDeathMode == 0)
-						_globals[kCarStatus] = CAR_DOWN;
+						global[kCarStatus] = CAR_DOWN;
 					else {
-						_globals[kCarStatus] = CAR_DOWN_ON_SQUASHED_DOG;
+						global[kCarStatus] = CAR_DOWN_ON_SQUASHED_DOG;
 						local._carMode = 3;
 						local._dogDeathMode = 2;
 					}
@@ -774,7 +774,7 @@ static void room_608_parser() {
 
 		case 3:
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x302));
-			_globals[kCarStatus] = CAR_DOWN_ON_SQUASHED_DOG;
+			global[kCarStatus] = CAR_DOWN_ON_SQUASHED_DOG;
 			local._carMode = 3;
 			local._dogDeathMode = 2;
 			player.commands_allowed = true;
@@ -786,19 +786,19 @@ static void room_608_parser() {
 	} else if (player_said_2(push, up_button)) {
 		switch (kernel.trigger) {
 		case 0:
-			if ((_globals[kCarStatus] == CAR_DOWN) || (_globals[kCarStatus] == CAR_DOWN_ON_SQUASHED_DOG)) {
+			if ((global[kCarStatus] == CAR_DOWN) || (global[kCarStatus] == CAR_DOWN_ON_SQUASHED_DOG)) {
 				player.commands_allowed = false;
 				player.walker_visible = false;
-				_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], true, 6, 2, 0, 0);
-				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 3);
-				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], true, 6, 2, 0, 0);
+				_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 3);
+				_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
+				_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			} else
 				text_show(60840);
 			break;
 
 		case 1:
-			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[3]);
+			_scene->_sequences.updateTimeout(-1, g_sequence_ids[3]);
 			player.walker_visible = true;
 			if (local._dogDeathMode == 0)
 				local._carMode = 0;
@@ -817,9 +817,9 @@ static void room_608_parser() {
 			if (local._carMoveMode != 0)
 				_scene->_sequences.addTimer(1, 2);
 			else if (local._dogDeathMode == 0)
-				_globals[kCarStatus] = CAR_UP;
+				global[kCarStatus] = CAR_UP;
 			else if (local._dogDeathMode == 2) {
-				_globals[kCarStatus] = CAR_SQUASHES_DOG_AGAIN;
+				global[kCarStatus] = CAR_SQUASHES_DOG_AGAIN;
 				local._carMode = 3;
 				local._dogDeathMode = 2;
 			}
@@ -859,7 +859,7 @@ static void room_608_parser() {
 	} else if (player_said_3(throw, bones, area_behind_car) || player_said_3(throw, bone, area_behind_car)
 		|| player_said_3(throw, bones, danger_zone) || player_said_3(throw, bone, danger_zone)) {
 		player.commands_allowed = true;
-		if ((_globals[kCarStatus] == CAR_UP) && local._dogActiveFl) {
+		if ((global[kCarStatus] == CAR_UP) && local._dogActiveFl) {
 			if (local._dogActiveFl) {
 				if (kernel.trigger == 0) {
 					_scene->_kernelMessages.reset();
@@ -876,21 +876,21 @@ static void room_608_parser() {
 		case 0:
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], true, 6, 2, 0, 0);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], true, 6, 2, 0, 0);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[2]);
+			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 4, 1);
+			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
 			g_engine->_soundManager->command(9, 0);
-			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+			_scene->_sequences.remove(g_sequence_ids[1]);
 			_scene->_dynamicHotspots.remove(local._polycementHotspotId);
 			break;
 
 		case 2:
 			inter_give_to_player(OBJ_POLYCEMENT);
-			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
+			_scene->_sequences.updateTimeout(-1, g_sequence_ids[2]);
 			player.walker_visible = true;
 			player.commands_allowed = true;
 			object_examine(OBJ_POLYCEMENT, 60833, 0);
@@ -904,22 +904,22 @@ static void room_608_parser() {
 		case 0:
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], true, 6, 2, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 2);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 2, 1);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], true, 6, 2, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[2], 1, 2);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[2]);
+			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 2, 1);
+			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
 			g_engine->_soundManager->command(9, 0);
-			_scene->_sequences.remove(_globals._sequenceIndexes[12]);
+			_scene->_sequences.remove(g_sequence_ids[12]);
 			inter_give_to_player(OBJ_REARVIEW_MIRROR);
 			object_examine(OBJ_REARVIEW_MIRROR, 60827, 0);
 			break;
 
 		case 2:
-			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
+			_scene->_sequences.updateTimeout(-1, g_sequence_ids[2]);
 			player.walker_visible = true;
 			player.commands_allowed = true;
 			break;
@@ -930,7 +930,7 @@ static void room_608_parser() {
 	} else if (player.look_around) {
 		if (game.difficulty != DIFFICULTY_HARD)
 			text_show(60810);
-		else if (_globals[kDogStatus] == DOG_DEAD)
+		else if (global[kDogStatus] == DOG_DEAD)
 			text_show(60812);
 		else
 			text_show(60811);

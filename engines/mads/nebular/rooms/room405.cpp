@@ -32,9 +32,9 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_405_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('x', 1));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*ROXCL_8");
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('x', 1));
+	g_sprite_ids[3] = _scene->_sprites.addSprites("*ROXCL_8");
 
 	if (_scene->_priorSceneId == 401) {
 		player.x = 23;
@@ -58,13 +58,13 @@ static void room_405_init() {
 		player.facing = FACING_EAST;
 	}
 
-	if (_globals[kArmoryDoorOpen])
-		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
+	if (global[kArmoryDoorOpen])
+		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 1);
 	else
-		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
+		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
 
 	if (_scene->_roomChanged) {
-		_globals[kArmoryDoorOpen] = false;
+		global[kArmoryDoorOpen] = false;
 		inter_give_to_player(OBJ_SECURITY_CARD);
 	}
 
@@ -87,26 +87,26 @@ static void room_405_daemon() {
 	if (kernel.trigger == 70) {
 		player.clock = _scene->_frameStartTime + player.frame_delay;
 		player.walker_visible = true;
-		_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 6, 1, 0, 0);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		g_sequence_ids[1] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[1], false, 6, 1, 0, 0);
+		_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 		g_engine->_soundManager->command(19, 0);
 	}
 
 	if (kernel.trigger == 71) {
-		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-		_globals[kArmoryDoorOpen] = false;
-		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
+		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
+		global[kArmoryDoorOpen] = false;
+		_scene->_sequences.remove(g_sequence_ids[2]);
 		player.commands_allowed = true;
 	}
 
 	if (kernel.trigger == 75) {
 		player.clock = _scene->_frameStartTime + player.frame_delay;
 		player.walker_visible = true;
-		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 1, 0, 0);
-		_globals[kArmoryDoorOpen] = true;
+		_scene->_sequences.remove(g_sequence_ids[1]);
+		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 6, 1, 0, 0);
+		global[kArmoryDoorOpen] = true;
 		player.commands_allowed = true;
-		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2],
+		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2],
 			false, 1);
 		g_engine->_soundManager->command(19, 0);
 	}
@@ -122,45 +122,45 @@ static void room_405_pre_parser() {
 	if (player_said_2(walk_down, corridor_to_east))
 		player.walk_off_edge_to_room = 406;
 
-	if (player_said_2(close, wide_door) && _globals[kArmoryDoorOpen])
+	if (player_said_2(close, wide_door) && global[kArmoryDoorOpen])
 		player_walk(212, 113, FACING_NORTH);
 }
 
 static void room_405_parser() {
 	if (player_said_2(walk_through, door))
 		_scene->_nextSceneId = 413;
-	else if (player_said_2(walk_through, wide_door) && _globals[kArmoryDoorOpen])
+	else if (player_said_2(walk_through, wide_door) && global[kArmoryDoorOpen])
 		_scene->_nextSceneId = 408;
-	else if (player_said_2(walk_through, wide_door) && !_globals[kArmoryDoorOpen])
+	else if (player_said_2(walk_through, wide_door) && !global[kArmoryDoorOpen])
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, quote_string(kernel.quotes, 0x24F));
-	else if (player_said_3(put, security_card, card_slot) && !_globals[kArmoryDoorOpen]) {
+	else if (player_said_3(put, security_card, card_slot) && !global[kArmoryDoorOpen]) {
 		player.commands_allowed = false;
 		player.walker_visible = false;
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
-		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 7, 2, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 2);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
+		g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 7, 2, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 2);
+		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
 		Common::Point msgPos = Common::Point(player.x, player.y + 1);
-		_scene->_sequences.setPosition(_globals._sequenceIndexes[3], msgPos);
-		_scene->_sequences.setScale(_globals._sequenceIndexes[3], 87);
-	} else if ((player_said_3(put, security_card, card_slot) || player_said_2(close, wide_door)) && _globals[kArmoryDoorOpen]) {
+		_scene->_sequences.setPosition(g_sequence_ids[3], msgPos);
+		_scene->_sequences.setScale(g_sequence_ids[3], 87);
+	} else if ((player_said_3(put, security_card, card_slot) || player_said_2(close, wide_door)) && global[kArmoryDoorOpen]) {
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 7, 2, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 2);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
-		_scene->_sequences.setPosition(_globals._sequenceIndexes[3], Common::Point(player.x, player.y));
-		_scene->_sequences.setScale(_globals._sequenceIndexes[3], 87);
+		g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 7, 2, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 2);
+		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+		_scene->_sequences.setPosition(g_sequence_ids[3], Common::Point(player.x, player.y));
+		_scene->_sequences.setScale(g_sequence_ids[3], 87);
 	} else if (player_said_2(put, card_slot)) {
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 7, 2, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 2);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
-		_scene->_sequences.setPosition(_globals._sequenceIndexes[3], Common::Point(player.x, player.y));
-		_scene->_sequences.setScale(_globals._sequenceIndexes[3], 87);
+		g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 7, 2, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 2);
+		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
+		_scene->_sequences.setPosition(g_sequence_ids[3], Common::Point(player.x, player.y));
+		_scene->_sequences.setScale(g_sequence_ids[3], 87);
 	} else if (player_said_2(look, cannon_balls))
 		text_show(40510);
 	else if (player_said_2(take, cannon_balls))
@@ -182,7 +182,7 @@ static void room_405_parser() {
 	else if (player_said_2(look, corridor) || player.look_around)
 		text_show(40519);
 	else if (player_said_2(look, wide_door)) {
-		if (_globals[kArmoryDoorOpen])
+		if (global[kArmoryDoorOpen])
 			text_show(40521);
 		else
 			text_show(40520);

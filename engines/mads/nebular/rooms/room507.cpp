@@ -40,12 +40,12 @@ static Scratch local;
 
 
 static void room_507_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('p', -1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMRD_3");
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('p', -1));
+	g_sprite_ids[2] = _scene->_sprites.addSprites("*RXMRD_3");
 
 	if ((game.difficulty != DIFFICULTY_EASY) && (object[OBJ_PENLIGHT].location == _scene->_currentSceneId)) {
-		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-		local._penlightHotspotId = _scene->_dynamicHotspots.add(words_penlight, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 9, 0, 0, 0);
+		local._penlightHotspotId = _scene->_dynamicHotspots.add(words_penlight, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._penlightHotspotId, Common::Point(233, 152), FACING_SOUTHEAST);
 	}
 
@@ -67,15 +67,15 @@ static void room_507_parser() {
 			case 0:
 				player.commands_allowed = false;
 				player.walker_visible = false;
-				_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 6, 1, 0, 0);
-				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 5);
-				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 6, 1, 0, 0);
+				_scene->_sequences.setAnimRange(g_sequence_ids[2], 1, 5);
+				_scene->_sequences.setMsgLayout(g_sequence_ids[2]);
+				_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
+				_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 1:
-				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+				_scene->_sequences.remove(g_sequence_ids[1]);
 				_scene->_dynamicHotspots.remove(local._penlightHotspotId);
 				g_engine->_soundManager->command(27, 0);
 				inter_give_to_player(OBJ_PENLIGHT);
@@ -83,7 +83,7 @@ static void room_507_parser() {
 				break;
 
 			case 2:
-				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
+				_scene->_sequences.updateTimeout(-1, g_sequence_ids[2]);
 				player.walker_visible = true;
 				player.commands_allowed = true;
 				break;

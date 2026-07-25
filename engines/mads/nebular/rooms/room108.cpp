@@ -32,27 +32,27 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_108_init() {
-	if (_globals[kHoovicSated] == 2)
-		_globals[kHoovicSated] = 0;
+	if (global[kHoovicSated] == 2)
+		global[kHoovicSated] = 0;
 
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(kernel_name('X', 0));
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('X', 1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('X', 2));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('X', 3));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_full_name(105, 'f', 4, "", EXT_SS));
+	g_sprite_ids[0] = _scene->_sprites.addSprites(kernel_name('X', 0));
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('X', 1));
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('X', 2));
+	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('X', 3));
+	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_full_name(105, 'f', 4, "", EXT_SS));
 
-	_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 13, 0, 0, 7);
-	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 16, 0, 0, 9);
-	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 17, 0, 0, 3);
-	_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 14, 0, 0, 13);
+	g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 13, 0, 0, 7);
+	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 16, 0, 0, 9);
+	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 17, 0, 0, 3);
+	g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 14, 0, 0, 13);
 
 	for (int i = 0; i <= 3; i++)
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[i], 0);
+		_scene->_sequences.setDepth(g_sequence_ids[i], 0);
 
-	if (_globals[kFishIn108]) {
-		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6, 0, 0, 0);
-		_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(41, 109));
-		int idx = _scene->_dynamicHotspots.add(words_dead_fish, words_swim_to, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+	if (global[kFishIn108]) {
+		g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 6, 0, 0, 0);
+		_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(41, 109));
+		int idx = _scene->_dynamicHotspots.add(words_dead_fish, words_swim_to, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(41, 109), FACING_NORTHWEST);
 	}
 
@@ -81,15 +81,15 @@ static void room_108_pre_parser() {
 static void room_108_parser() {
 	if (player.look_around)
 		text_show(10812);
-	else if (player_said_2(take, dead_fish) && _globals[kFishIn108]) {
+	else if (player_said_2(take, dead_fish) && global[kFishIn108]) {
 		if (player_has(OBJ_DEAD_FISH)) {
 			int randVal = g_engine->getRandomNumber(74, 76);
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, randVal));
 		} else {
-			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
+			_scene->_sequences.remove(g_sequence_ids[4]);
 			inter_give_to_player(OBJ_DEAD_FISH);
-			_globals[kFishIn108] = false;
+			global[kFishIn108] = false;
 			object_examine(OBJ_DEAD_FISH, 10808, 0);
 		}
 	} else if (player_said_2(swim_towards, open_area_to_north))

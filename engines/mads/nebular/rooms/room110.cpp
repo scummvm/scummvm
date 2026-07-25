@@ -39,10 +39,10 @@ static Scratch local;
 
 
 static void room_110_init() {
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(kernel_name('X', 0));
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('X', 1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('X', 2));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('X', 3));
+	g_sprite_ids[0] = _scene->_sprites.addSprites(kernel_name('X', 0));
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('X', 1));
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('X', 2));
+	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('X', 3));
 
 	local._crabsFl = false;
 
@@ -51,20 +51,20 @@ static void room_110_init() {
 		player.y = 71;
 		player.facing = FACING_EAST;
 
-		_globals._sequenceIndexes[0] = _scene->_sequences.startCycle(_globals._spriteIndexes[0], false, 1);
-		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
-		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
+		g_sequence_ids[0] = _scene->_sequences.startCycle(g_sprite_ids[0], false, 1);
+		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
+		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 1);
+		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
 
 		local._crabsFl = true;
 
-		int idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, g_sequence_ids[0], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		player.x = 194;
@@ -96,23 +96,23 @@ static void room_110_pre_parser() {
 	if (local._crabsFl) {
 		local._crabsFl = false;
 
-		_scene->_sequences.remove(_globals._sequenceIndexes[0]);
-		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
+		_scene->_sequences.remove(g_sequence_ids[0]);
+		_scene->_sequences.remove(g_sequence_ids[1]);
+		_scene->_sequences.remove(g_sequence_ids[2]);
+		_scene->_sequences.remove(g_sequence_ids[3]);
 
-		_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 16, 1, 0, 0);
-		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 16, 1, 0, 0);
-		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 16, 1, 0, 0);
-		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 16, 1, 0, 0);
+		g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 16, 1, 0, 0);
+		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 16, 1, 0, 0);
+		g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 16, 1, 0, 0);
+		g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 16, 1, 0, 0);
 
-		int idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, g_sequence_ids[0], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
 	}
 }

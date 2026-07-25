@@ -42,21 +42,21 @@ static Scratch local;
 
 
 static void room_106_init() {
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(kernel_name('H', -1));
+	g_sprite_ids[0] = _scene->_sprites.addSprites(kernel_name('H', -1));
 
 	if (player_has(OBJ_REBREATHER) || (_scene->_priorSceneId != 102) || _scene->_roomChanged) {
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('A', 0));
-		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('A', 1));
+		g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('A', 0));
+		g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('A', 1));
 	}
 
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('G', -1));
-	_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 21, 0, 0, 0);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('I', -1));
-	_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6, 0, 32, 47);
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('G', -1));
+	g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 21, 0, 0, 0);
+	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('I', -1));
+	g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 6, 0, 32, 47);
 
 	if (_scene->_priorSceneId == 102) {
-		_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 6, 1, 4, 0);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+		g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 6, 1, 4, 0);
+		_scene->_sequences.addSubEntry(g_sequence_ids[0], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 		player.walker_visible = false;
 		player.commands_allowed = false;
 		player.facing = FACING_EAST;
@@ -81,9 +81,9 @@ static void room_106_init() {
 	}
 
 	if (_scene->_priorSceneId != 102) {
-		_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 6, 0, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], -2, -2);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
+		g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 6, 0, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[0], -2, -2);
+		_scene->_sequences.setDepth(g_sequence_ids[0], 14);
 	}
 
 	local._backToShipFl = false;
@@ -96,15 +96,15 @@ static void room_106_init() {
 
 static void room_106_daemon() {
 	if (kernel.trigger == 70) {
-		_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 6, 0, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], -2, -2);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
+		g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 6, 0, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[0], -2, -2);
+		_scene->_sequences.setDepth(g_sequence_ids[0], 14);
 
 		if (!player_has(OBJ_REBREATHER) && !_scene->_roomChanged) {
 			_scene->loadAnimation(kernel_full_name(106, 'A', -1, "", EXT_AA), 75);
 		} else {
-			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 4, 1, 0, 0);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_SPRITE, 28, 71);
+			g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 4, 1, 0, 0);
+			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_SPRITE, 28, 71);
 		}
 	}
 
@@ -169,9 +169,9 @@ static void room_106_daemon() {
 		if (!local._shadowFl) {
 			if (player.x < 204) {
 				local._shadowFl = true;
-				_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 4, 1, 0, 0);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 44, 73);
+				g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 4, 1, 0, 0);
+				_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+				_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 44, 73);
 			}
 		} else if (kernel.trigger == 73)
 			player.walker_visible = false;

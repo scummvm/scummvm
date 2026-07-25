@@ -32,17 +32,17 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_601_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('c', 0));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXCD_4");
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('c', 0));
+	g_sprite_ids[3] = _scene->_sprites.addSprites("*RXCD_4");
 
-	if (_globals[kLaserHoleIsThere]) {
-		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -2);
-		_scene->_dynamicHotspots.add(words_laser_beam, words_look_at, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+	if (global[kLaserHoleIsThere]) {
+		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, -2);
+		_scene->_dynamicHotspots.add(words_laser_beam, words_look_at, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 	}
 
-	_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
+	g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
+	_scene->_sequences.setDepth(g_sequence_ids[2], 3);
 
 	if (_scene->_priorSceneId == 504) {
 		player.x = 73;
@@ -50,9 +50,9 @@ static void room_601_init() {
 		player.facing = FACING_WEST;
 		player.walker_visible = false;
 		player.commands_allowed = false;
-		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
+		_scene->_sequences.remove(g_sequence_ids[2]);
+		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -2);
+		_scene->_sequences.setDepth(g_sequence_ids[2], 3);
 		_scene->loadAnimation(kernel_name('R', 1), 70);
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		player.x = 229;
@@ -72,15 +72,15 @@ static void room_601_daemon() {
 		break;
 
 	case 71:
-		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-		_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 6, 1, 0, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+		_scene->_sequences.remove(g_sequence_ids[2]);
+		g_sequence_ids[2] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[2], false, 6, 1, 0, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[2], 3);
+		_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
 		break;
 
 	case 72:
-		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
+		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
+		_scene->_sequences.setDepth(g_sequence_ids[2], 3);
 		player.commands_allowed = true;
 		break;
 
@@ -96,34 +96,34 @@ static void room_601_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 1, 0, 0);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			_scene->_sequences.remove(g_sequence_ids[2]);
+			g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 6, 1, 0, 0);
+			_scene->_sequences.setDepth(g_sequence_ids[2], 3);
+			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
 		{
-			int syncIdx = _globals._sequenceIndexes[2];
-			_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], syncIdx);
+			int syncIdx = g_sequence_ids[2];
+			g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -2);
+			_scene->_sequences.updateTimeout(g_sequence_ids[2], syncIdx);
 			_scene->_sequences.addTimer(6, 2);
 		}
 		break;
 
 		case 2:
 			player.walker_visible = false;
-			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 10, 1, 0, 0);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 10, 1, 0, 0);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
+			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 			break;
 
 		case 3:
 		{
-			int syncIdx = _globals._sequenceIndexes[3];
-			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
+			int syncIdx = g_sequence_ids[3];
+			g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
+			_scene->_sequences.updateTimeout(g_sequence_ids[3], syncIdx);
 			_scene->_nextSceneId = 504;
 		}
 		break;
@@ -132,7 +132,7 @@ static void room_601_parser() {
 			break;
 		}
 	} else if (player.look_around || player_said_2(look, street)) {
-		if (!_globals[kLaserHoleIsThere])
+		if (!global[kLaserHoleIsThere])
 			text_show(60110);
 		else
 			text_show(60111);

@@ -53,7 +53,7 @@ static Scratch local;
 
 
 static void handleBottleInterface() {
-	switch (_globals[kBottleStatus]) {
+	switch (global[kBottleStatus]) {
 	case 0:
 		local._dialog1.write(0x311, true);
 		local._dialog1.write(0x312, true);
@@ -103,22 +103,22 @@ static void setBottleSequence() {
 static void handleFillBottle(int quote) {
 	switch (quote) {
 	case 0x311:
-		_globals[kBottleStatus] = 1;
+		global[kBottleStatus] = 1;
 		setBottleSequence();
 		break;
 
 	case 0x312:
-		_globals[kBottleStatus] = 2;
+		global[kBottleStatus] = 2;
 		setBottleSequence();
 		break;
 
 	case 0x313:
-		_globals[kBottleStatus] = 3;
+		global[kBottleStatus] = 3;
 		setBottleSequence();
 		break;
 
 	case 0x314:
-		_globals[kBottleStatus] = 4;
+		global[kBottleStatus] = 4;
 		setBottleSequence();
 		break;
 
@@ -136,9 +136,9 @@ static void room_703_init() {
 
 	if (!player.been_here_before) {
 		if (_scene->_priorSceneId == 704)
-			_globals[kMonsterAlive] = false;
+			global[kMonsterAlive] = false;
 		else
-			_globals[kMonsterAlive] = true;
+			global[kMonsterAlive] = true;
 	}
 
 	local._startMonsterTimer = true;
@@ -148,7 +148,7 @@ static void room_703_init() {
 	local._useBomb = false;
 	local._boatFrame = -1;
 
-	if (!_globals[kMonsterAlive])
+	if (!global[kMonsterAlive])
 		_scene->_hotspots.activate(words_sea_monster, false);
 
 	if (_scene->_priorSceneId == 704) {
@@ -161,7 +161,7 @@ static void room_703_init() {
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		player.commands_allowed = false;
 		local._boatDir = 1;
-		if (_globals[kMonsterAlive]) {
+		if (global[kMonsterAlive]) {
 			local._monsterMode = 1;
 			local._curSequence = 0;
 			_scene->loadAnimation(kernel_name('B', -1));
@@ -170,7 +170,7 @@ static void room_703_init() {
 			local._monsterMode = 0;
 			_scene->loadAnimation(kernel_name('A', -1));
 		}
-	} else if (_globals[kMonsterAlive]) {
+	} else if (global[kMonsterAlive]) {
 		local._curSequence = 0;
 		local._boatDir = 1;
 		local._monsterMode = 1;
@@ -331,7 +331,7 @@ static void room_703_daemon() {
 	}
 
 	if (kernel.trigger == 80) {
-		switch (_globals[kBottleStatus]) {
+		switch (global[kBottleStatus]) {
 		case 0:
 			text_show(432);
 			break;
@@ -464,7 +464,7 @@ static void room_703_daemon() {
 
 			case 126:
 				_scene->_hotspots.activate(words_sea_monster, false);
-				_globals[kMonsterAlive] = false;
+				global[kMonsterAlive] = false;
 				_scene->freeAnimation();
 				local._monsterMode = 0;
 				_scene->loadAnimation(kernel_name('A', -1));
@@ -494,7 +494,7 @@ static void room_703_parser() {
 		handleFillBottle(player2.words[0]);
 	else if (player_said_2(steer_towards, dock_to_south)) {
 		player.commands_allowed = false;
-		if (_globals[kMonsterAlive])
+		if (global[kMonsterAlive])
 			local._curSequence = 8;
 		else if (local._boatDir == 1)
 			local._curSequence = 5;
@@ -502,7 +502,7 @@ static void room_703_parser() {
 			local._curSequence = 3;
 	} else if (player_said_2(steer_towards, building_to_north)) {
 		player.commands_allowed = false;
-		if (_globals[kMonsterAlive]) {
+		if (global[kMonsterAlive]) {
 			local._startMonsterTimer = false;
 			local._rexDeathFl = true;
 			local._monsterTime = 0;
@@ -543,21 +543,21 @@ static void room_703_parser() {
 		local._monsterMode = 2;
 		_scene->loadAnimation(kernel_name('C', -1));
 	} else if (player_said_3(put, bottle, water) || player_said_3(fill, bottle, water)) {
-		if (_globals[kBottleStatus] != 4) {
+		if (global[kBottleStatus] != 4) {
 			handleBottleInterface();
 			local._dialog1.start();
 		} else
 			text_show(70323);
 	} else if (player.look_around || player_said_2(look, sea_monster)) {
-		if (_globals[kMonsterAlive])
+		if (global[kMonsterAlive])
 			text_show(70310);
 	} else if (player_said_2(look, water)) {
-		if (!_globals[kMonsterAlive])
+		if (!global[kMonsterAlive])
 			text_show(70311);
 		else
 			text_show(70312);
 	} else if (player_said_2(look, building_to_north)) {
-		if (_globals[kMonsterAlive])
+		if (global[kMonsterAlive])
 			text_show(70313);
 		else if (player_has_been_in_room(710))
 			text_show(70314);

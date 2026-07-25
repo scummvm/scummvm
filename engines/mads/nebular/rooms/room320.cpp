@@ -47,7 +47,7 @@ static Scratch local;
 
 
 static void setRightView(int view) {
-	if (local._rightItemId < 8) _scene->_sequences.remove(_globals._sequenceIndexes[10]);
+	if (local._rightItemId < 8) _scene->_sequences.remove(g_sequence_ids[10]);
 
 	int spriteNum;
 	switch (view) {
@@ -73,22 +73,22 @@ static void setRightView(int view) {
 	}
 
 	if (view != 8) {
-		_globals._sequenceIndexes[10] = _scene->_sequences.startCycle(_globals._spriteIndexes[spriteNum], false, 1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 0);
+		g_sequence_ids[10] = _scene->_sequences.startCycle(g_sprite_ids[spriteNum], false, 1);
+		_scene->_sequences.setDepth(g_sequence_ids[10], 0);
 	}
 
-	_globals[kRightView320] = local._rightItemId = view;
+	global[kRightView320] = local._rightItemId = view;
 }
 
 static void setLeftView(int view) {
 	if (local._leftItemId < 10)
-		_scene->_sequences.remove(_globals._sequenceIndexes[0]);
+		_scene->_sequences.remove(g_sequence_ids[0]);
 
 	if (view != 10) {
-		_globals._sequenceIndexes[0] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[view], false, 6, 0, 0, 18);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 0);
+		g_sequence_ids[0] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[view], false, 6, 0, 0, 18);
+		_scene->_sequences.setDepth(g_sequence_ids[0], 0);
 		if (!local._blinkFl)
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], 2, 2);
+			_scene->_sequences.setAnimRange(g_sequence_ids[0], 2, 2);
 	}
 
 	local._leftItemId = view;
@@ -175,15 +175,15 @@ static void room_320_init() {
 	local._lastFrame = 0;
 
 	for (int i = 0; i < 10; i++)
-		_globals._spriteIndexes[i] = _scene->_sprites.addSprites(kernel_name('M', i));
+		g_sprite_ids[i] = _scene->_sprites.addSprites(kernel_name('M', i));
 
 	for (int i = 0; i < 8; i++)
-		_globals._spriteIndexes[10 + i] = _scene->_sprites.addSprites(kernel_name('N', i));
+		g_sprite_ids[10 + i] = _scene->_sprites.addSprites(kernel_name('N', i));
 
-	_globals._spriteIndexes[18] = _scene->_sprites.addSprites("*REXHAND");
+	g_sprite_ids[18] = _scene->_sprites.addSprites("*REXHAND");
 	player.walker_visible = false;
 
-	setRightView(_globals[kRightView320]);
+	setRightView(global[kRightView320]);
 	setLeftView(0);
 
 	pal_change_color(252, 63, 30, 20);
@@ -230,8 +230,8 @@ static void room_320_daemon() {
 	}
 
 	if (kernel.trigger == 70) {
-		_globals[kAfterHavoc] = true;
-		_globals[kTeleporterRoom + 1] = 351;
+		global[kAfterHavoc] = true;
+		global[kTeleporterRoom + 1] = 351;
 		_scene->_nextSceneId = 361;
 	}
 }
@@ -249,12 +249,12 @@ static void room_320_parser() {
 		case 0:
 			player.commands_allowed = false;
 			handleButtons();
-			_globals._sequenceIndexes[18] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[18], local._flippedFl, 4, 2, 0, 0);
-			_scene->_sequences.setScale(_globals._sequenceIndexes[18], 60);
-			_scene->_sequences.setPosition(_globals._sequenceIndexes[18], Common::Point(local._posX, 170));
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[18], 0);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[18], SEQUENCE_TRIGGER_LOOP, 0, 1);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[18], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[18] = _scene->_sequences.startPingPongCycle(g_sprite_ids[18], local._flippedFl, 4, 2, 0, 0);
+			_scene->_sequences.setScale(g_sequence_ids[18], 60);
+			_scene->_sequences.setPosition(g_sequence_ids[18], Common::Point(local._posX, 170));
+			_scene->_sequences.setDepth(g_sequence_ids[18], 0);
+			_scene->_sequences.addSubEntry(g_sequence_ids[18], SEQUENCE_TRIGGER_LOOP, 0, 1);
+			_scene->_sequences.addSubEntry(g_sequence_ids[18], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
@@ -291,9 +291,9 @@ static void room_320_parser() {
 					setLeftView(10);
 					_scene->_kernelMessages.reset();
 					_scene->resetScene();
-					_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('m', 2));
-					_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('m', 4));
-					_globals._spriteIndexes[9] = _scene->_sprites.addSprites(kernel_name('m', 9));
+					g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('m', 2));
+					g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('m', 4));
+					g_sprite_ids[9] = _scene->_sprites.addSprites(kernel_name('m', 9));
 					local._blinkFl = false;
 					setLeftView(2);
 					kernel.quotes = quote_load(0xFE, 0);

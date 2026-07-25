@@ -42,30 +42,30 @@ static Scratch local;
 
 
 static void updateTrap() {
-	if (_globals[kRhotundaStatus] == 1) {
-		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 8, 0, 0, 24);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 5);
-		int idx = _scene->_dynamicHotspots.add(words_huge_legs, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+	if (global[kRhotundaStatus] == 1) {
+		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 8, 0, 0, 24);
+		_scene->_sequences.setDepth(g_sequence_ids[1], 5);
+		int idx = _scene->_dynamicHotspots.add(words_huge_legs, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(100, 146), FACING_NORTH);
 		_scene->_hotspots.activate(414, false);
 		return;
 	}
 
-	switch (_globals[kLeavesStatus]) {
+	switch (global[kLeavesStatus]) {
 	case LEAVES_ON_GROUND:
 	{
-		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 15);
-		int idx = _scene->_dynamicHotspots.add(words_pile_of_leaves, words_walkto, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 1);
+		_scene->_sequences.setDepth(g_sequence_ids[2], 15);
+		int idx = _scene->_dynamicHotspots.add(words_pile_of_leaves, words_walkto, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(60, 152), FACING_NORTH);
 	}
 	break;
 	case LEAVES_ON_TRAP:
 	{
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 15);
-		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
+		_scene->_sequences.setDepth(g_sequence_ids[3], 15);
+		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
 		_scene->_hotspots.activate(words_deep_pit, false);
-		int idx = _scene->_dynamicHotspots.add(words_leaf_covered_pit, words_walkto, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(words_leaf_covered_pit, words_walkto, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(100, 146), FACING_NORTH);
 		_scene->_dynamicHotspots[idx]._articleNumber = PREP_ON;
 	}
@@ -76,11 +76,11 @@ static void updateTrap() {
 }
 
 static void room_208_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('a', 1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('x', 1));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('x', 2));
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RXMBD_8");
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('a', 1));
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('x', 1));
+	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('x', 2));
+	g_sprite_ids[5] = _scene->_sprites.addSprites("*RXMBD_8");
 
 	updateTrap();
 
@@ -109,7 +109,7 @@ static void room_208_init() {
 
 	kernel.quotes = quote_load(0x81, 0x46, 0);
 
-	if ((_scene->_priorSceneId == 207) && (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS)) {
+	if ((_scene->_priorSceneId == 207) && (global[kMonkeyStatus] == MONKEY_HAS_BINOCULARS)) {
 		int msgIndex = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 129));
 		_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
 	}
@@ -126,7 +126,7 @@ static void room_208_daemon() {
 		local._rhotundaTime = _scene->_animation[0]->getCurrentFrame();
 
 		if (local._rhotundaTime == 125)
-			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
+			_scene->_sequences.remove(g_sequence_ids[4]);
 	}
 
 	if (!local._rhotundaTurnFl)
@@ -146,8 +146,8 @@ static void room_208_daemon() {
 		local._rhotundaTime = 0;
 		break;
 	case 81:
-		_scene->_sequences.remove(_globals._spriteIndexes[15]);
-		_globals[kRhotundaStatus] = 1;
+		_scene->_sequences.remove(g_sprite_ids[15]);
+		global[kRhotundaStatus] = 1;
 		updateTrap();
 		_scene->_sequences.addTimer(90, 82);
 		break;
@@ -177,8 +177,8 @@ static void subAction(int mode) {
 	{
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 1, 0, 0);
-		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
+		g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 6, 1, 0, 0);
+		_scene->_sequences.setMsgLayout(g_sequence_ids[5]);
 
 		int endTrigger;
 		if ((mode == 1) || (mode == 2))
@@ -186,17 +186,17 @@ static void subAction(int mode) {
 		else
 			endTrigger = 2;
 
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, endTrigger);
+		_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, endTrigger);
 	}
 	break;
 	case 1:
 	{
-		int oldSeq = _globals._sequenceIndexes[5];
-		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 12, 3, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 3, 4);
-		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[5], oldSeq);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+		int oldSeq = g_sequence_ids[5];
+		g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 12, 3, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[5], 3, 4);
+		_scene->_sequences.setMsgLayout(g_sequence_ids[5]);
+		_scene->_sequences.updateTimeout(g_sequence_ids[5], oldSeq);
+		_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 		g_engine->_soundManager->command(20, 0);
 	}
 	break;
@@ -206,19 +206,19 @@ static void subAction(int mode) {
 		switch (mode) {
 		case 1:
 			inter_give_to_player(OBJ_BIG_LEAVES);
-			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-			_globals[kLeavesStatus] = 1;
+			_scene->_sequences.remove(g_sequence_ids[2]);
+			global[kLeavesStatus] = 1;
 			break;
 
 		case 2:
 			inter_move_object(OBJ_BIG_LEAVES, 1);
-			_globals[kLeavesStatus] = 2;
+			global[kLeavesStatus] = 2;
 			updateTrap();
 			break;
 
 		case 3:
-			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
+			_scene->_sequences.remove(g_sequence_ids[3]);
+			g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);
 			inter_take_from_player(OBJ_TWINKIFRUIT, 1);
 			g_engine->_soundManager->command(34, 0);
 			break;
@@ -237,12 +237,12 @@ static void subAction(int mode) {
 			break;
 		}
 
-		int oldVal = _globals._sequenceIndexes[5];
-		_globals._sequenceIndexes[5] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[5], false, 6, 1, 0, 0);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 1, 3);
-		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[5], oldVal);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+		int oldVal = g_sequence_ids[5];
+		g_sequence_ids[5] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[5], false, 6, 1, 0, 0);
+		_scene->_sequences.setAnimRange(g_sequence_ids[5], 1, 3);
+		_scene->_sequences.setMsgLayout(g_sequence_ids[5]);
+		_scene->_sequences.updateTimeout(g_sequence_ids[5], oldVal);
+		_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 	}
 	break;
 
@@ -258,7 +258,7 @@ static void subAction(int mode) {
 
 static void room_208_parser() {
 	if (player_said_2(walk_towards, lowlands_to_north)) {
-		if (_globals[kRhotundaStatus])
+		if (global[kRhotundaStatus])
 			_scene->_nextSceneId = 203;
 		else if (kernel.trigger == 0) {
 			player.commands_allowed = false;
@@ -268,11 +268,11 @@ static void room_208_parser() {
 			_scene->_nextSceneId = 203;
 	} else if (player_said_2(walk_towards, field_to_south))
 		_scene->_nextSceneId = 212;
-	else if (player_said_2(take, pile_of_leaves) && (!_globals[kLeavesStatus] || kernel.trigger)) {
+	else if (player_said_2(take, pile_of_leaves) && (!global[kLeavesStatus] || kernel.trigger)) {
 		subAction(1);
 		if (player.commands_allowed)
 			object_examine(OBJ_BIG_LEAVES, 0x326, 0);
-	} else if (player_said_3(put, big_leaves, deep_pit) && (_globals[kLeavesStatus] == 1 || kernel.trigger))
+	} else if (player_said_3(put, big_leaves, deep_pit) && (global[kLeavesStatus] == 1 || kernel.trigger))
 		subAction(2);
 	else if (player_said_3(put, twinkifruit, leaf_covered_pit)) {
 		subAction(3);
@@ -320,9 +320,9 @@ static void room_208_parser() {
 		text_show(20815);
 	else if (player_said_2(take, huge_legs) || player_said_2(pull, huge_legs))
 		text_show(20816);
-	else if (player.look_around && (_globals[kRhotundaStatus] == 1))
+	else if (player.look_around && (global[kRhotundaStatus] == 1))
 		text_show(20819);
-	else if (player.look_around && (_globals[kLeavesStatus] == 2))
+	else if (player.look_around && (global[kLeavesStatus] == 2))
 		text_show(20818);
 	else if (player.look_around)
 		text_show(20817);

@@ -52,7 +52,7 @@ static void handleRexDeath() {
 	case 2:
 		if (local._animationMode == 1)
 			text_show(70625);
-		else if (_globals[kBottleStatus] < 2)
+		else if (global[kBottleStatus] < 2)
 			text_show(70628);
 		else
 			text_show(70629);
@@ -75,29 +75,29 @@ static void handleTakeVase() {
 	case 0:
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 4, 2, 0, 0);
-		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 7, 1);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+		g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 4, 2, 0, 0);
+		_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
+		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 7, 1);
+		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 		break;
 
 	case 1:
 		g_engine->_soundManager->command(9, 0);
-		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+		_scene->_sequences.remove(g_sequence_ids[1]);
 		_scene->_dynamicHotspots.remove(local._vaseHotspotId);
 		inter_give_to_player(OBJ_VASE);
 		if (local._vaseMode == 1) {
-			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
-			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(195, 99));
-			int idx = _scene->_dynamicHotspots.add(words_bottle, words_walkto, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+			g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);
+			_scene->_sequences.setDepth(g_sequence_ids[4], 4);
+			_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(195, 99));
+			int idx = _scene->_dynamicHotspots.add(words_bottle, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
 			inter_move_object(OBJ_BOTTLE, _scene->_currentSceneId);
 		}
 		break;
 
 	case 2:
-		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[3]);
+		_scene->_sequences.updateTimeout(-1, g_sequence_ids[3]);
 		player.walker_visible = true;
 		object_examine(OBJ_VASE, 70630, 0);
 		player.commands_allowed = true;
@@ -109,23 +109,23 @@ static void handleTakeVase() {
 }
 
 static void room_706_init() {
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXMRC_3");
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('b', -1));
+	g_sprite_ids[3] = _scene->_sprites.addSprites("*RXMRC_3");
+	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('b', -1));
 
 	if (!player.been_here_before)
 		local._emptyPedestral = false;
 
 	if (object[OBJ_VASE].location == _scene->_currentSceneId) {
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('v', -1));
-		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 4);
-		int idx = _scene->_dynamicHotspots.add(words_vase, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('v', -1));
+		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
+		_scene->_sequences.setDepth(g_sequence_ids[1], 4);
+		int idx = _scene->_dynamicHotspots.add(words_vase, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		local._vaseHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
 	} else if (object_is_here(OBJ_BOTTLE)) {
-		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
-		_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(195, 99));
-		int idx = _scene->_dynamicHotspots.add(words_bottle, words_walkto, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);
+		_scene->_sequences.setDepth(g_sequence_ids[4], 4);
+		_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(195, 99));
+		int idx = _scene->_dynamicHotspots.add(words_bottle, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
 	}
 
@@ -141,11 +141,11 @@ static void room_706_init() {
 		player.facing = FACING_NORTH;
 	}
 
-	if (_globals[kTeleporterCommand]) {
+	if (global[kTeleporterCommand]) {
 		player.walker_visible = false;
 		player.commands_allowed = false;
 
-		switch (_globals[kTeleporterCommand]) {
+		switch (global[kTeleporterCommand]) {
 		case 1:
 			_scene->loadAnimation(kernel_name('E', 1), 75);
 			break;
@@ -160,14 +160,14 @@ static void room_706_init() {
 			player.commands_allowed = true;
 			break;
 		}
-		_globals[kTeleporterCommand] = 0;
+		global[kTeleporterCommand] = 0;
 	}
 
 	local._animationMode = 0;
 
 	if (_scene->_roomChanged) {
 		inter_give_to_player(OBJ_BOTTLE);
-		_globals[kBottleStatus] = 2;
+		global[kBottleStatus] = 2;
 	}
 
 	section_7_music();
@@ -182,8 +182,8 @@ static void room_706_daemon() {
 	}
 
 	if (kernel.trigger == 80) {
-		_globals[kTeleporterCommand] = 1;
-		_scene->_nextSceneId = _globals[kTeleporterDestination];
+		global[kTeleporterCommand] = 1;
+		_scene->_nextSceneId = global[kTeleporterDestination];
 		_scene->_reloadSceneFlag = true;
 	}
 
@@ -192,16 +192,16 @@ static void room_706_daemon() {
 			local._animationFrame = _scene->_animation[0]->getCurrentFrame();
 
 			if (local._animationFrame == 6) {
-				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+				_scene->_sequences.remove(g_sequence_ids[1]);
 				inter_move_object(OBJ_VASE, 2);
 
 				if (local._animationMode == 2) {
 					inter_move_object(OBJ_BOTTLE, 1);
 
-					_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
-					_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
-					_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(195, 99));
-					int idx = _scene->_dynamicHotspots.add(words_bottle, words_walkto, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+					g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);
+					_scene->_sequences.setDepth(g_sequence_ids[4], 4);
+					_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(195, 99));
+					int idx = _scene->_dynamicHotspots.add(words_bottle, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 					_scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
 				}
 			}
@@ -242,8 +242,8 @@ static void room_706_parser() {
 	}
 
 	if (player_said_3(put, bottle, pedestal)) {
-		if ((_globals[kBottleStatus] == 2 && game.difficulty == DIFFICULTY_HARD) ||
-			(_globals[kBottleStatus] != 0 && game.difficulty != DIFFICULTY_HARD)) {
+		if ((global[kBottleStatus] == 2 && game.difficulty == DIFFICULTY_HARD) ||
+			(global[kBottleStatus] != 0 && game.difficulty != DIFFICULTY_HARD)) {
 			if (!player_has(OBJ_VASE) || kernel.trigger) {
 				local._vaseMode = 1;
 				handleTakeVase();

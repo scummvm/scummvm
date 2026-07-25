@@ -41,19 +41,19 @@ static void room_391_parser() {
 	if (player_said_2(return_to, air_shaft))
 		_scene->_nextSceneId = 313;
 	else if (player_said_2(open, grate)) {
-		if (_globals[kKickedIn391Grate])
+		if (global[kKickedIn391Grate])
 			text_show(39113);
 		else {
 			text_show(39112);
-			_globals[kKickedIn391Grate] = true;
+			global[kKickedIn391Grate] = true;
 		}
 
-		if (_globals[kAfterHavoc])
+		if (global[kAfterHavoc])
 			_scene->_nextSceneId = 361;
 		else
 			_scene->_nextSceneId = 311;
 	} else if (player_said_2(look_through, grate)) {
-		if (_globals[kAfterHavoc])
+		if (global[kAfterHavoc])
 			text_show(39111);
 		else
 			text_show(39110);

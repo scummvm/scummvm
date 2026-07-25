@@ -32,7 +32,7 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_702_init() {
-	_globals._spriteIndexes[12] = _scene->_sprites.addSprites("*RXMBD_8");
+	g_sprite_ids[12] = _scene->_sprites.addSprites("*RXMBD_8");
 
 	if (_scene->_priorSceneId == 701) {
 		player.x = 13;
@@ -46,8 +46,8 @@ static void room_702_init() {
 		player.walker_visible = true;
 	}
 
-	if (_globals[kTeleporterCommand]) {
-		switch (_globals[kTeleporterCommand]) {
+	if (global[kTeleporterCommand]) {
+		switch (global[kTeleporterCommand]) {
 		case TELEPORTER_BEAM_OUT:
 		case TELEPORTER_WRONG:
 		case TELEPORTER_STEP_OUT:
@@ -58,7 +58,7 @@ static void room_702_init() {
 			break;
 		}
 
-		_globals[kTeleporterCommand] = TELEPORTER_NONE;
+		global[kTeleporterCommand] = TELEPORTER_NONE;
 	}
 
 	section_7_music();
@@ -81,10 +81,10 @@ static void room_702_parser() {
 		case 0:
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			_globals._sequenceIndexes[12] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[12], false, 5, 2, 0, 0);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[12]);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[12] = _scene->_sequences.startPingPongCycle(g_sprite_ids[12], false, 5, 2, 0, 0);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[12]);
+			_scene->_sequences.addSubEntry(g_sequence_ids[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
+			_scene->_sequences.addSubEntry(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 		case 1:
 			g_engine->_soundManager->command(0xF, 0);
@@ -94,7 +94,7 @@ static void room_702_parser() {
 			object_examine(OBJ_BONES, 70218, 0);
 			break;
 		case 2:
-			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[12]);
+			_scene->_sequences.updateTimeout(-1, g_sequence_ids[12]);
 			player.walker_visible = true;
 			player.commands_allowed = true;
 			break;

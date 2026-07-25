@@ -33,12 +33,12 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_213_init() {
-	if (_globals[kMeteorologistWatch] != METEOROLOGIST_NORMAL)
-		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*METHAND");
-	else if (_globals[kSexOfRex] == REX_MALE)
-		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*REXHAND");
+	if (global[kMeteorologistWatch] != METEOROLOGIST_NORMAL)
+		g_sprite_ids[4] = _scene->_sprites.addSprites("*METHAND");
+	else if (global[kSexOfRex] == REX_MALE)
+		g_sprite_ids[4] = _scene->_sprites.addSprites("*REXHAND");
 	else
-		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*ROXHAND");
+		g_sprite_ids[4] = _scene->_sprites.addSprites("*ROXHAND");
 
 	teleporter_init();
 

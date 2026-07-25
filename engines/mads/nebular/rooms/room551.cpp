@@ -33,10 +33,10 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_551_init() {
-	if (_globals[kSexOfRex] == REX_MALE)
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('a', 0));
+	if (global[kSexOfRex] == REX_MALE)
+		g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('a', 0));
 	else
-		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('a', 1));
+		g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('a', 1));
 
 	if (_scene->_priorSceneId == 501) {
 		player.x = 18;
@@ -48,12 +48,12 @@ static void room_551_init() {
 		player.facing = FACING_NORTH;
 	}
 
-	if (_globals[kTeleporterCommand]) {
+	if (global[kTeleporterCommand]) {
 		player.walker_visible = false;
 		player.commands_allowed = false;
 
 		char sepChar;
-		if (_globals[kSexOfRex] == REX_MALE)
+		if (global[kSexOfRex] == REX_MALE)
 			sepChar = 'e';
 		else
 			sepChar = 'u';
@@ -61,11 +61,11 @@ static void room_551_init() {
 		int suffixNum;
 		int trigger;
 
-		switch (_globals[kTeleporterCommand]) {
+		switch (global[kTeleporterCommand]) {
 		case 1:
 			suffixNum = 3;
 			trigger = 75;
-			_globals[kTeleporterUnderstood] = true;
+			global[kTeleporterUnderstood] = true;
 			break;
 
 		case 2:
@@ -83,7 +83,7 @@ static void room_551_init() {
 			suffixNum = 0;
 		}
 
-		_globals[kTeleporterCommand] = 0;
+		global[kTeleporterCommand] = 0;
 
 		if (suffixNum > 0)
 			_scene->loadAnimation(kernel_name(sepChar, suffixNum), trigger);
@@ -105,18 +105,18 @@ static void room_551_daemon() {
 		break;
 
 	case 80:
-		_globals[kTeleporterCommand] = 1;
-		_scene->_nextSceneId = _globals[kTeleporterDestination];
+		global[kTeleporterCommand] = 1;
+		_scene->_nextSceneId = global[kTeleporterDestination];
 		_scene->_reloadSceneFlag = true;
 		break;
 
 	case 90:
-		if (_globals[kSexOfRex] == REX_MALE) {
-			_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 8);
+		if (global[kSexOfRex] == REX_MALE) {
+			g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -2);
+			_scene->_sequences.setDepth(g_sequence_ids[2], 8);
 		} else {
-			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
+			g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
+			_scene->_sequences.setDepth(g_sequence_ids[3], 8);
 		}
 		g_engine->_soundManager->command(28, 0);
 		_scene->_sequences.addTimer(60, 91);

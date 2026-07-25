@@ -39,9 +39,9 @@ static Scratch local;
 
 
 static void room_353_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_full_name(303, 'B', 0, "", EXT_SS));
-	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 0, 5, 0);
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_full_name(303, 'B', 0, "", EXT_SS));
+	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 5, 0, 5, 0);
+	_scene->_sequences.setDepth(g_sequence_ids[1], 1);
 
 	if (_scene->_priorSceneId == 352) {
 		player.x = 144;

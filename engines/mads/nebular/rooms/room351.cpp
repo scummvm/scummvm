@@ -32,16 +32,16 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_351_init() {
-	_globals[kAfterHavoc] = -1;
-	_globals[kTeleporterRoom + 1] = 351;
+	global[kAfterHavoc] = -1;
+	global[kTeleporterRoom + 1] = 351;
 
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('c', -1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*ROXRC_7");
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXRD_7");
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('c', -1));
+	g_sprite_ids[2] = _scene->_sprites.addSprites("*ROXRC_7");
+	g_sprite_ids[3] = _scene->_sprites.addSprites("*RXRD_7");
 
 	if (object_is_here(OBJ_CREDIT_CHIP)) {
-		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 4);
+		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 6, 0, 0, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[1], 4);
 	} else
 		_scene->_hotspots.activate(words_credit_chip, false);
 
@@ -55,22 +55,22 @@ static void room_351_init() {
 		player.facing = FACING_NORTH;
 	}
 
-	if (_globals[kTeleporterCommand]) {
+	if (global[kTeleporterCommand]) {
 		player.walker_visible = false;
 		player.commands_allowed = false;
 
 		char sepChar = 'a';
-		if (_globals[kSexOfRex] != REX_MALE)
+		if (global[kSexOfRex] != REX_MALE)
 			sepChar = 'b';
 
 		int suffixNum = -1;
 		int trigger = 0;
 
-		switch (_globals[kTeleporterCommand]) {
+		switch (global[kTeleporterCommand]) {
 		case 1:
 			suffixNum = 0;
 			trigger = 60;
-			_globals[kTeleporterCommand] = true;
+			global[kTeleporterCommand] = true;
 			break;
 
 		case 2:
@@ -90,7 +90,7 @@ static void room_351_init() {
 			break;
 		}
 
-		_globals[kTeleporterCommand] = 0;
+		global[kTeleporterCommand] = 0;
 
 		if (suffixNum >= 0)
 			_scene->loadAnimation(kernel_name(sepChar, suffixNum), trigger);
@@ -108,8 +108,8 @@ static void room_351_daemon() {
 	}
 
 	if (kernel.trigger == 61) {
-		_globals[kTeleporterCommand] = 1;
-		_scene->_nextSceneId = _globals[kTeleporterDestination];
+		global[kTeleporterCommand] = 1;
+		_scene->_nextSceneId = global[kTeleporterDestination];
 		_scene->_reloadSceneFlag = true;
 	}
 }
@@ -127,22 +127,22 @@ static void room_351_parser() {
 			case 0:
 				player.commands_allowed = false;
 				player.walker_visible = false;
-				if (_globals[kSexOfRex] == REX_FEMALE) {
-					_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 5, 2, 0, 0);
-					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
-					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
-					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				if (global[kSexOfRex] == REX_FEMALE) {
+					g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 5, 2, 0, 0);
+					_scene->_sequences.setMsgLayout(g_sequence_ids[2]);
+					_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
+					_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				} else {
-					_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 5, 2, 0, 0);
-					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
-					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 6, 1);
-					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+					g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 5, 2, 0, 0);
+					_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
+					_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 6, 1);
+					_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				}
 				break;
 
 			case 1:
 				_scene->_hotspots.activate(words_credit_chip, false);
-				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+				_scene->_sequences.remove(g_sequence_ids[1]);
 				inter_give_to_player(OBJ_CREDIT_CHIP);
 				break;
 
@@ -197,7 +197,7 @@ void room_351_preload() {
 	room_daemon_code_pointer = room_351_daemon;
 
 	if (_scene->_currentSceneId == 391)
-		_globals[kSexOfRex] = REX_MALE;
+		global[kSexOfRex] = REX_MALE;
 
 	section_3_walker();
 	section_3_interface();

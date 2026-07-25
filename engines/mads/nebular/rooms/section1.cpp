@@ -48,22 +48,22 @@ void section_1_walker() {
 	g_engine->_soundManager->command(5, 0);
 	Common::String oldName = (&player.series_name[0]);
 	if (_scene->_nextSceneId <= 103 || _scene->_nextSceneId == 111) {
-		if (_globals[kSexOfRex] == SEX_FEMALE)
+		if (global[kSexOfRex] == SEX_FEMALE)
 			Common::strcpy_s(player.series_name, "ROX");
 		else {
 			Common::strcpy_s(player.series_name, "RXM");
-			_globals[kSexOfRex] = SEX_MALE;
+			global[kSexOfRex] = SEX_MALE;
 		}
 	} else if (_scene->_nextSceneId <= 110) {
 		Common::strcpy_s(player.series_name, "RXSW");
-		_globals[kSexOfRex] = SEX_UNKNOWN;
+		global[kSexOfRex] = SEX_UNKNOWN;
 	} else if (_scene->_nextSceneId == 112)
 		Common::strcpy_s(player.series_name, "");
 
 	if (oldName != (&player.series_name[0]))
 		player.walker_must_reload = true;
 
-	if (_scene->_nextSceneId == 105 || (_scene->_nextSceneId == 109 && _globals[kHoovicAlive])) {
+	if (_scene->_nextSceneId == 105 || (_scene->_nextSceneId == 109 && global[kHoovicAlive])) {
 		player.walker_must_reload = true;
 		player.walker_loads_first = false;
 	}

@@ -54,13 +54,13 @@ static void handleDoorSequences() {
 	if (local._firstDoorFl) {
 		if (player_said_2(walk_into, software_store) || ((_scene->_priorSceneId == 507) && !local._actionFl)) {
 			local._doorDepth = 13;
-			local._doorSpriteIdx = _globals._spriteIndexes[2];
-			local._doorSequenceIdx = _globals._sequenceIndexes[2];
+			local._doorSpriteIdx = g_sprite_ids[2];
+			local._doorSequenceIdx = g_sequence_ids[2];
 			local._labDoorFl = false;
 		} else {
 			local._doorDepth = 10;
-			local._doorSpriteIdx = _globals._spriteIndexes[1];
-			local._doorSequenceIdx = _globals._sequenceIndexes[1];
+			local._doorSpriteIdx = g_sprite_ids[1];
+			local._doorSequenceIdx = g_sequence_ids[1];
 			local._labDoorFl = true;
 		}
 		local._firstDoorFl = false;
@@ -106,11 +106,11 @@ static void handleDoorSequences() {
 		_scene->_sequences.setDepth(local._doorSequenceIdx, local._doorDepth);
 		local._firstDoorFl = true;
 		if (local._labDoorFl) {
-			_globals._spriteIndexes[1] = local._doorSpriteIdx;
-			_globals._sequenceIndexes[1] = local._doorSequenceIdx;
+			g_sprite_ids[1] = local._doorSpriteIdx;
+			g_sequence_ids[1] = local._doorSequenceIdx;
 		} else {
-			_globals._spriteIndexes[2] = local._doorSpriteIdx;
-			_globals._sequenceIndexes[2] = local._doorSequenceIdx;
+			g_sprite_ids[2] = local._doorSpriteIdx;
+			g_sequence_ids[2] = local._doorSequenceIdx;
 		}
 		player.commands_allowed = true;
 
@@ -133,33 +133,33 @@ static void handleDoorSequences() {
 }
 
 static void room_506_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('q', 0));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('q', 1));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('c', -1));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXCD_3");
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('q', 0));
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('q', 1));
+	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('c', -1));
+	g_sprite_ids[4] = _scene->_sprites.addSprites("*RXCD_3");
 
 	// WORKAROUND: Set the animation before creating the door hotspots, since otherwise
 	// with the newer engine core the hotspot areas were never updated to match the attached sprites
 	if (previous_room != 508 && previous_room != 507 && previous_room != KERNEL_RESTORING_GAME) {
-		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 5);
+		_scene->_sequences.remove(g_sequence_ids[3]);
+		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
+		_scene->_sequences.setDepth(g_sequence_ids[3], 5);
 		_scene->loadAnimation(kernel_name('R', 1), 70);
 	}
 
-	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-	int idx = _scene->_dynamicHotspots.add(words_laboratory, words_walk_into, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+	g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
+	int idx = _scene->_dynamicHotspots.add(words_laboratory, words_walk_into, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 	int hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(65, 125), FACING_NORTHWEST);
 	_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_LEFT);
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
-	_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
-	idx = _scene->_dynamicHotspots.add(words_software_store, words_walk_into, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+	_scene->_sequences.setDepth(g_sequence_ids[1], 10);
+	g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 1);
+	idx = _scene->_dynamicHotspots.add(words_software_store, words_walk_into, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
 	hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(112, 102), FACING_NORTHWEST);
 	_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_LEFT);
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 13);
+	_scene->_sequences.setDepth(g_sequence_ids[2], 13);
 
-	_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -1);
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 5);
+	g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -1);
+	_scene->_sequences.setDepth(g_sequence_ids[3], 5);
 	local._firstDoorFl = true;
 	local._actionFl = false;
 
@@ -213,15 +213,15 @@ static void room_506_daemon() {
 			break;
 
 		case 71:
-			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-			_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 5);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+			_scene->_sequences.remove(g_sequence_ids[3]);
+			g_sequence_ids[3] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[3], false, 6, 1, 0, 0);
+			_scene->_sequences.setDepth(g_sequence_ids[3], 5);
+			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
 			break;
 
 		case 72:
-			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -1);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 5);
+			g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -1);
+			_scene->_sequences.setDepth(g_sequence_ids[3], 5);
 			player.commands_allowed = true;
 			break;
 
@@ -252,34 +252,34 @@ static void room_506_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 5);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			_scene->_sequences.remove(g_sequence_ids[3]);
+			g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 6, 1, 0, 0);
+			_scene->_sequences.setDepth(g_sequence_ids[3], 5);
+			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
 		{
-			int syncIdx = _globals._sequenceIndexes[3];
-			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
+			int syncIdx = g_sequence_ids[3];
+			g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
+			_scene->_sequences.updateTimeout(g_sequence_ids[3], syncIdx);
 			_scene->_sequences.addTimer(6, 2);
 		}
 		break;
 
 		case 2:
 			player.walker_visible = false;
-			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 10, 1, 0, 0);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 10, 1, 0, 0);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
+			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 			break;
 
 		case 3:
 		{
-			int syncIdx = _globals._sequenceIndexes[4];
-			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, -2);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], syncIdx);
+			int syncIdx = g_sequence_ids[4];
+			g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, -2);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
+			_scene->_sequences.updateTimeout(g_sequence_ids[4], syncIdx);
 			_scene->_nextSceneId = 504;
 		}
 		break;

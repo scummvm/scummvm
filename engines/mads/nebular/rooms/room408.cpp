@@ -36,13 +36,13 @@ static void room_408_init() {
 	player.y = 150;
 	player.facing = FACING_NORTH;
 
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*ROXRC_7");
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('m', -1));
+	g_sprite_ids[1] = _scene->_sprites.addSprites("*ROXRC_7");
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('m', -1));
 
 	if (object_is_here(OBJ_TARGET_MODULE)) {
-		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
-		int idx = _scene->_dynamicHotspots.add(words_target_module, words_walkto, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 1);
+		_scene->_sequences.setDepth(g_sequence_ids[2], 3);
+		int idx = _scene->_dynamicHotspots.add(words_target_module, words_walkto, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(283, 128), FACING_NORTHEAST);
 	}
 	section_4_music();
@@ -66,15 +66,15 @@ static void room_408_parser() {
 			g_engine->_soundManager->command(57, 0);
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], true, 7, 2, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 2);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[1]);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_SPRITE, 2, 1);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[1] = _scene->_sequences.startPingPongCycle(g_sprite_ids[1], true, 7, 2, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[1], 1, 2);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[1]);
+			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_SPRITE, 2, 1);
+			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
-			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
+			_scene->_sequences.remove(g_sequence_ids[2]);
 			inter_give_to_player(OBJ_TARGET_MODULE);
 			object_examine(OBJ_TARGET_MODULE, 40847, 0);
 			break;

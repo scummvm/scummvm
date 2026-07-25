@@ -41,49 +41,49 @@ static Scratch local;
 
 
 static void room_103_init() {
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('x', 1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('x', 2));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('x', 3));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('x', 4));
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('x', 5));
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_name('b', -1));
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(kernel_name('h', -1));
-	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(kernel_name('m', -1));
-	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(kernel_name('t', -1));
-	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(kernel_name('r', -1));
-	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(kernel_name('c', -1));
-	_globals._spriteIndexes[12] = _scene->_sprites.addSprites("*RXMBD_2");
-	_globals._spriteIndexes[13] = _scene->_sprites.addSprites("*RXMRD_3");
-	_globals._spriteIndexes[15] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 7, 0, 1, 0);
+	g_sprite_ids[0] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('x', 1));
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('x', 2));
+	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('x', 3));
+	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('x', 4));
+	g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('x', 5));
+	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('b', -1));
+	g_sprite_ids[7] = _scene->_sprites.addSprites(kernel_name('h', -1));
+	g_sprite_ids[8] = _scene->_sprites.addSprites(kernel_name('m', -1));
+	g_sprite_ids[9] = _scene->_sprites.addSprites(kernel_name('t', -1));
+	g_sprite_ids[10] = _scene->_sprites.addSprites(kernel_name('r', -1));
+	g_sprite_ids[11] = _scene->_sprites.addSprites(kernel_name('c', -1));
+	g_sprite_ids[12] = _scene->_sprites.addSprites("*RXMBD_2");
+	g_sprite_ids[13] = _scene->_sprites.addSprites("*RXMRD_3");
+	g_sprite_ids[15] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 7, 0, 1, 0);
 
-	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 2, 0);
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 0);
+	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 6, 0, 2, 0);
+	_scene->_sequences.setDepth(g_sequence_ids[1], 0);
 
-	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 25);
-	_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 2, 72);
+	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 6, 0, 0, 25);
+	_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_SPRITE, 2, 72);
 
-	_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 0, 1, 37);
-	_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 2, 73);
+	g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 6, 0, 1, 37);
+	_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_SPRITE, 2, 73);
 
-	_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 8);
-	_globals._sequenceIndexes[7] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 6);
-	_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6);
-	_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6);
+	g_sequence_ids[8] = _scene->_sequences.addSpriteCycle(g_sprite_ids[8], false, 8);
+	g_sequence_ids[7] = _scene->_sequences.addSpriteCycle(g_sprite_ids[7], false, 6);
+	g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 6);
+	g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 6);
 
 	if (object_is_here(OBJ_TIMER_MODULE))
-		_globals._sequenceIndexes[11] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[11], false, 6);
+		g_sequence_ids[11] = _scene->_sequences.addSpriteCycle(g_sprite_ids[11], false, 6);
 	else
 		_scene._hotspots.activate(371, false);
 
 	if (object_is_here(OBJ_REBREATHER))
-		_globals._sequenceIndexes[10] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[10], false, 6);
+		g_sequence_ids[10] = _scene->_sequences.addSpriteCycle(g_sprite_ids[10], false, 6);
 	else
 		_scene._hotspots.activate(289, false);
 
-	if (_globals[kTurkeyExploded]) {
-		_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 6);
-		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[9], -2, -2);
+	if (global[kTurkeyExploded]) {
+		g_sequence_ids[9] = _scene->_sequences.addSpriteCycle(g_sprite_ids[9], false, 6);
+		_scene->_sequences.setAnimRange(g_sequence_ids[9], -2, -2);
 		_scene->_hotspots.activate(362, false);
 	}
 
@@ -94,8 +94,8 @@ static void room_103_init() {
 
 	if (_scene->_priorSceneId == 102) {
 		player.commands_allowed = false;
-		_globals._sequenceIndexes[6] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[6], false, 6, 1, 0, 0);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+		g_sequence_ids[6] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[6], false, 6, 1, 0, 0);
+		_scene->_sequences.addSubEntry(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 	}
 
 	section_1_music();
@@ -168,8 +168,8 @@ static void room_103_parser() {
 	else if (player_said_2(walk_through, door)) {
 		switch (kernel.trigger) {
 		case 0:
-			_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 1);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(g_sprite_ids[6], false, 6, 1);
+			_scene->_sequences.addSubEntry(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			player.commands_allowed = false;
 			g_engine->_soundManager->command(20, 0);
 			break;
@@ -187,16 +187,16 @@ static void room_103_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			_scene->changeVariant(1);
-			_globals._sequenceIndexes[13] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[13], false, 3, 2);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[13]);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_SPRITE, 7, 1);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[13] = _scene->_sequences.startPingPongCycle(g_sprite_ids[13], false, 3, 2);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[13]);
+			_scene->_sequences.addSubEntry(g_sequence_ids[13], SEQUENCE_TRIGGER_SPRITE, 7, 1);
+			_scene->_sequences.addSubEntry(g_sequence_ids[13], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			player.walker_visible = false;
 			player.commands_allowed = false;
 			break;
 
 		case 1:
-			_scene->_sequences.remove(_globals._sequenceIndexes[11]);
+			_scene->_sequences.remove(g_sequence_ids[11]);
 			break;
 
 		case 2:
@@ -216,16 +216,16 @@ static void room_103_parser() {
 	} else if (player_said_2(take, rebreather) && object_is_here(OBJ_REBREATHER)) {
 		switch (kernel.trigger) {
 		case 0:
-			_globals._sequenceIndexes[12] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[12], false, 3, 2);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[12]);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_SPRITE, 6, 1);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			g_sequence_ids[12] = _scene->_sequences.startPingPongCycle(g_sprite_ids[12], false, 3, 2);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[12]);
+			_scene->_sequences.addSubEntry(g_sequence_ids[12], SEQUENCE_TRIGGER_SPRITE, 6, 1);
+			_scene->_sequences.addSubEntry(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			player.walker_visible = false;
 			player.commands_allowed = false;
 			break;
 
 		case 1:
-			_scene->_sequences.remove(_globals._sequenceIndexes[10]);
+			_scene->_sequences.remove(g_sequence_ids[10]);
 			break;
 
 		case 2:
@@ -248,10 +248,10 @@ static void room_103_parser() {
 			g_engine->_soundManager->command(31, 0);
 
 		if (kernel.trigger < 2) {
-			_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 6, kernel.trigger < 1 ? 1 : 0);
+			g_sequence_ids[9] = _scene->_sequences.addSpriteCycle(g_sprite_ids[9], false, 6, kernel.trigger < 1 ? 1 : 0);
 			if (kernel.trigger) {
 				// Lock the turkey into a permanent "exploded" frame
-				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[9], -2, -2);
+				_scene->_sequences.setAnimRange(g_sequence_ids[9], -2, -2);
 
 				// Rex says "Gads.."
 				const char *msg = quote_string(kernel.quotes, 51);
@@ -259,13 +259,13 @@ static void room_103_parser() {
 				_scene->_sequences.addTimer(120, kernel.trigger + 1);
 			} else {
 				// Initial turky explosion
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				_scene->_sequences.addSubEntry(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			}
 		}
 
 		// Re-enable player if sequence is ended, and set global flag
 		player.commands_allowed = kernel.trigger == 2;
-		_globals[kTurkeyExploded] = -1;
+		global[kTurkeyExploded] = -1;
 
 		if (kernel.trigger == 2) {
 			// Show exposition dialog at end of sequence
@@ -273,7 +273,7 @@ static void room_103_parser() {
 			_scene->_hotspots.activate(362, false);
 		}
 	} else if (player_said_2(look, oven))
-		text_show(!_globals[kTurkeyExploded] ? 10323 : 10303);
+		text_show(!global[kTurkeyExploded] ? 10323 : 10303);
 	else if (player_said_2(talkto, auxiliary_power)) {
 		switch (kernel.trigger) {
 		case 0:

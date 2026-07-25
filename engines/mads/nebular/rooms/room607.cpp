@@ -48,24 +48,24 @@ static Scratch local;
 
 
 static void room_607_init() {
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('c', 0));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXCD_3");
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('c', 0));
+	g_sprite_ids[3] = _scene->_sprites.addSprites("*RXCD_3");
 
 	if (!player.been_here_before && (_scene->_priorSceneId != 608))
-		_globals[kDogStatus] = DOG_PRESENT;
+		global[kDogStatus] = DOG_PRESENT;
 
-	if ((_scene->_priorSceneId == 608) && (_globals[kDogStatus] < DOG_GONE))
-		_globals[kDogStatus] = DOG_GONE;
+	if ((_scene->_priorSceneId == 608) && (global[kDogStatus] < DOG_GONE))
+		global[kDogStatus] = DOG_GONE;
 
 	local._animationActive = 0;
 
-	if ((_globals[kDogStatus] == DOG_PRESENT) && (game.difficulty != DIFFICULTY_EASY)) {
-		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('g', 3));
-		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('g', 7));
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('g', 0));
+	if ((global[kDogStatus] == DOG_PRESENT) && (game.difficulty != DIFFICULTY_EASY)) {
+		g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('g', 3));
+		g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('g', 7));
+		g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('g', 0));
 
-		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 6);
+		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
+		_scene->_sequences.setDepth(g_sequence_ids[1], 6);
 		local._dogBarking = false;
 		local._dogLoop = false;
 		local._shopAvailable = false;
@@ -74,8 +74,8 @@ static void room_607_init() {
 	} else
 		_scene->_hotspots.activate(words_obnoxious_dog, false);
 
-	_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
+	g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -2);
+	_scene->_sequences.setDepth(g_sequence_ids[2], 4);
 
 	if (_scene->_priorSceneId == 608) {
 		player.x = 297;
@@ -87,14 +87,14 @@ static void room_607_init() {
 		player.facing = FACING_SOUTHEAST;
 		player.walker_visible = false;
 		player.commands_allowed = false;
-		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
+		_scene->_sequences.remove(g_sequence_ids[2]);
+		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
+		_scene->_sequences.setDepth(g_sequence_ids[2], 4);
 		_scene->loadAnimation(kernel_name('R', 1), 80);
-	} else if (_globals[kDogStatus] == DOG_LEFT) {
-		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('g', 3));
-		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('g', 7));
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('g', 0));
+	} else if (global[kDogStatus] == DOG_LEFT) {
+		g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('g', 3));
+		g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('g', 7));
+		g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('g', 0));
 	}
 
 	section_6_music();
@@ -108,7 +108,7 @@ static void room_607_init() {
 }
 
 static void room_607_daemon() {
-	if (_globals[kDogStatus] == DOG_LEFT) {
+	if (global[kDogStatus] == DOG_LEFT) {
 		int32 diff = _scene->_frameStartTime - local._lastFrameTime;
 		if ((diff >= 0) && (diff <= 4))
 			local._dogTimer += diff;
@@ -118,41 +118,41 @@ static void room_607_daemon() {
 		local._lastFrameTime = _scene->_frameStartTime;
 	}
 
-	if ((local._dogTimer >= 480) && !local._dogLoop && !local._shopAvailable && (_globals[kDogStatus] == DOG_LEFT) && !player.special_code) {
+	if ((local._dogTimer >= 480) && !local._dogLoop && !local._shopAvailable && (global[kDogStatus] == DOG_LEFT) && !player.special_code) {
 		g_engine->_soundManager->command(14, 0);
 		local._dogLoop = true;
-		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 10, 1, 0, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 91);
+		g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 10, 1, 0, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[5], 1);
+		_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 91);
 		local._dogLoop = false;
 		local._dogTimer = 0;
 	}
 
 	if (kernel.trigger == 91) {
-		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 6);
+		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
+		_scene->_sequences.setDepth(g_sequence_ids[1], 6);
 		local._dogBarking = false;
-		_globals[kDogStatus] = DOG_PRESENT;
+		global[kDogStatus] = DOG_PRESENT;
 		_scene->_hotspots.activate(words_obnoxious_dog, true);
 	}
 
-	if (!local._dogEatsRex && (game.difficulty != DIFFICULTY_EASY) && !local._animationActive && (_globals[kDogStatus] == DOG_PRESENT)
+	if (!local._dogEatsRex && (game.difficulty != DIFFICULTY_EASY) && !local._animationActive && (global[kDogStatus] == DOG_PRESENT)
 		&& !local._dogBarking && (g_engine->getRandomNumber(1, 50) == 10)) {
 		local._dogBarking = true;
-		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-		_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 5, 8, 0, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 6);
+		_scene->_sequences.remove(g_sequence_ids[1]);
+		g_sequence_ids[1] = _scene->_sequences.startPingPongCycle(g_sprite_ids[1], false, 5, 8, 0, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[1], 6);
 		_scene->_kernelMessages.reset();
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_SPRITE, 2, 100);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+		_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_SPRITE, 2, 100);
+		_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 		local._counter = 0;
 	}
 
-	if ((kernel.trigger == 70) && !local._dogEatsRex && (_globals[kDogStatus] == DOG_PRESENT) && !local._animationActive) {
-		int syncIdx = _globals._sequenceIndexes[1];
-		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 6);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[1], syncIdx);
+	if ((kernel.trigger == 70) && !local._dogEatsRex && (global[kDogStatus] == DOG_PRESENT) && !local._animationActive) {
+		int syncIdx = g_sequence_ids[1];
+		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
+		_scene->_sequences.setDepth(g_sequence_ids[1], 6);
+		_scene->_sequences.updateTimeout(g_sequence_ids[1], syncIdx);
 		_scene->_kernelMessages.reset();
 		local._dogBarking = false;
 	}
@@ -187,16 +187,16 @@ static void room_607_daemon() {
 		}
 	}
 
-	if (player.walking && (game.difficulty != DIFFICULTY_EASY) && !local._shopAvailable && (_globals[kDogStatus] == DOG_PRESENT) && (_scene->_rails.getNext() > 0)) {
+	if (player.walking && (game.difficulty != DIFFICULTY_EASY) && !local._shopAvailable && (global[kDogStatus] == DOG_PRESENT) && (_scene->_rails.getNext() > 0)) {
 		player_cancel_command();
 		player_start_walking(268, 72, FACING_NORTHEAST);
 		_scene->_rails.resetNext();
 	}
 
-	if ((player.special_code > 0) && (game.difficulty != DIFFICULTY_EASY) && (_globals[kDogStatus] == DOG_PRESENT) && player.commands_allowed)
+	if ((player.special_code > 0) && (game.difficulty != DIFFICULTY_EASY) && (global[kDogStatus] == DOG_PRESENT) && player.commands_allowed)
 		player.commands_allowed = false;
 
-	if ((game.difficulty != DIFFICULTY_EASY) && (_globals[kDogStatus] == DOG_PRESENT) && (Common::Point(player.x, player.y) == Common::Point(268, 72))
+	if ((game.difficulty != DIFFICULTY_EASY) && (global[kDogStatus] == DOG_PRESENT) && (Common::Point(player.x, player.y) == Common::Point(268, 72))
 		&& (kernel.trigger || !local._dogEatsRex)) {
 		local._dogEatsRex = true;
 		switch (kernel.trigger) {
@@ -204,45 +204,45 @@ static void room_607_daemon() {
 		case 0:
 			local._animationActive = 1;
 			player.walker_visible = false;
-			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 10, 1, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], -1, 7);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 1);
+			_scene->_sequences.remove(g_sequence_ids[1]);
+			g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 10, 1, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[4], -1, 7);
+			_scene->_sequences.setDepth(g_sequence_ids[4], 1);
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2FA));
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
+			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
 			_scene->_sequences.addTimer(10, 64);
 			break;
 
 		case 60:
 		{
-			int syncIdx = _globals._sequenceIndexes[4];
-			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 5, 1, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 8, 45);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 1);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], syncIdx);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 61);
+			int syncIdx = g_sequence_ids[4];
+			g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 5, 1, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[4], 8, 45);
+			_scene->_sequences.setDepth(g_sequence_ids[4], 1);
+			_scene->_sequences.updateTimeout(g_sequence_ids[4], syncIdx);
+			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 61);
 		}
 		break;
 
 		case 61:
 		{
-			int syncIdx = _globals._sequenceIndexes[4];
-			_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 15, 3, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 46, -2);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 1);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], syncIdx);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 62);
+			int syncIdx = g_sequence_ids[4];
+			g_sequence_ids[4] = _scene->_sequences.startPingPongCycle(g_sprite_ids[4], false, 15, 3, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[4], 46, -2);
+			_scene->_sequences.setDepth(g_sequence_ids[4], 1);
+			_scene->_sequences.updateTimeout(g_sequence_ids[4], syncIdx);
+			_scene->_sequences.addSubEntry(g_sequence_ids[4], SEQUENCE_TRIGGER_EXPIRE, 0, 62);
 		}
 		break;
 
 		case 62:
 		{
-			int syncIdx = _globals._sequenceIndexes[4];
+			int syncIdx = g_sequence_ids[4];
 			local._animationActive = 2;
-			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, -2);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 1);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], syncIdx);
+			g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, -2);
+			_scene->_sequences.setDepth(g_sequence_ids[4], 1);
+			_scene->_sequences.updateTimeout(g_sequence_ids[4], syncIdx);
 			_scene->_sequences.addTimer(60, 63);
 		}
 		break;
@@ -275,15 +275,15 @@ static void room_607_daemon() {
 		break;
 
 	case 81:
-		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 1, 0, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 82);
+		_scene->_sequences.remove(g_sequence_ids[2]);
+		g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 6, 1, 0, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[2], 4);
+		_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 82);
 		break;
 
 	case 82:
-		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
+		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -2);
+		_scene->_sequences.setDepth(g_sequence_ids[2], 4);
 		player.commands_allowed = true;
 		break;
 
@@ -297,7 +297,7 @@ static void handleThrowingBone() {
 	switch (kernel.trigger) {
 	case 0:
 		player.commands_allowed = false;
-		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+		_scene->_sequences.remove(g_sequence_ids[1]);
 		player.walker_visible = false;
 		_scene->loadAnimation(kernel_name('D', local._animationMode), 1);
 		break;
@@ -309,15 +309,15 @@ static void handleThrowingBone() {
 		if (local._animationMode != 1)
 			_scene->_hotspots.activate(words_obnoxious_dog, false);
 		else {
-			_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 6);
+			g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
+			_scene->_sequences.setDepth(g_sequence_ids[1], 6);
 		}
 
 		local._dogBarking = false;
 		if (player_has(OBJ_BONE)) {
 			inter_move_object(OBJ_BONE, 1);
 			if (local._animationMode == 1)
-				_globals[kBone202Status] = 0;
+				global[kBone202Status] = 0;
 		} else {
 			inter_move_object(OBJ_BONES, 1);
 			inter_give_to_player(OBJ_BONE);
@@ -333,7 +333,7 @@ static void handleThrowingBone() {
 			quoteId = 0x2F7;
 
 		if (local._animationMode == 2) {
-			_globals[kDogStatus] = DOG_LEFT;
+			global[kDogStatus] = DOG_LEFT;
 			local._dogTimer = 0;
 		}
 
@@ -357,7 +357,7 @@ static void room_607_pre_parser() {
 	if (player_said_2(talkto, obnoxious_dog))
 		player.need_to_walk = false;
 
-	if (player_said_2(walk_through, side_entrance) && (_globals[kDogStatus] == DOG_LEFT) && (game.difficulty != DIFFICULTY_EASY)) {
+	if (player_said_2(walk_through, side_entrance) && (global[kDogStatus] == DOG_LEFT) && (game.difficulty != DIFFICULTY_EASY)) {
 		local._shopAvailable = true;
 		local._dogTimer = 0;
 	}
@@ -376,34 +376,34 @@ static void room_607_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-			_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 6, 1, 0, 0);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			_scene->_sequences.remove(g_sequence_ids[2]);
+			g_sequence_ids[2] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[2], false, 6, 1, 0, 0);
+			_scene->_sequences.setDepth(g_sequence_ids[2], 4);
+			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
 		{
-			int syncIdx = _globals._sequenceIndexes[2];
-			_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], syncIdx);
+			int syncIdx = g_sequence_ids[2];
+			g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
+			_scene->_sequences.updateTimeout(g_sequence_ids[2], syncIdx);
 			_scene->_sequences.addTimer(6, 2);
 		}
 		break;
 
 		case 2:
 			player.walker_visible = false;
-			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 10, 1, 0, 0);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 10, 1, 0, 0);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
+			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 			break;
 
 		case 3:
 		{
-			int syncIdx = _globals._sequenceIndexes[3];
-			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
-			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
+			int syncIdx = g_sequence_ids[3];
+			g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
+			_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
+			_scene->_sequences.updateTimeout(g_sequence_ids[3], syncIdx);
 			_scene->_nextSceneId = 504;
 		}
 		break;
@@ -421,7 +421,7 @@ static void room_607_parser() {
 			handleThrowingBone();
 		}
 	} else if ((player_said_3(throw, bones, fence) || player_said_3(throw, bone, fence)) && (game.difficulty != DIFFICULTY_EASY)
-		&& ((_globals[kDogStatus] == DOG_PRESENT) || kernel.trigger)) {
+		&& ((global[kDogStatus] == DOG_PRESENT) || kernel.trigger)) {
 		local._animationMode = 2;
 		if (kernel.trigger == 0) {
 			_scene->_kernelMessages.reset();
@@ -429,7 +429,7 @@ static void room_607_parser() {
 		}
 		handleThrowingBone();
 	} else if (player.look_around || player_said_2(look, street)) {
-		if ((_globals[kDogStatus] == DOG_PRESENT) || (game.difficulty == DIFFICULTY_EASY))
+		if ((global[kDogStatus] == DOG_PRESENT) || (game.difficulty == DIFFICULTY_EASY))
 			text_show(60710);
 		else
 			text_show(60711);
@@ -441,7 +441,7 @@ static void room_607_parser() {
 		text_show(60714);
 	else if (player_said_2(look, manhole))
 		text_show(60715);
-	else if (player_said_2(look, fire_hydrant) && (_globals[kDogStatus] == DOG_PRESENT))
+	else if (player_said_2(look, fire_hydrant) && (global[kDogStatus] == DOG_PRESENT))
 		text_show(60716);
 	else if (player_said_2(look, sign))
 		text_show(60717);
@@ -454,12 +454,12 @@ static void room_607_parser() {
 	else if (player_said_2(look, air_hose))
 		text_show(60721);
 	else if (player_said_2(look, auto_shop)) {
-		if (_globals[kDogStatus] == DOG_PRESENT)
+		if (global[kDogStatus] == DOG_PRESENT)
 			text_show(60723);
 		else
 			text_show(60722);
 	} else if (player_said_2(look, side_entrance)) {
-		if (_globals[kDogStatus] == DOG_PRESENT)
+		if (global[kDogStatus] == DOG_PRESENT)
 			text_show(60725);
 		else
 			text_show(60724);

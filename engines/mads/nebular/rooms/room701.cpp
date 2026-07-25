@@ -39,12 +39,12 @@ static Scratch local;
 
 
 static void room_701_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('b', 5));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('b', 0));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('b', 1));
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RM202A1");
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_name('b', 8));
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('b', 5));
+	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('b', 0));
+	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('b', 1));
+	g_sprite_ids[5] = _scene->_sprites.addSprites("*RM202A1");
+	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('b', 8));
 
 	if (_scene->_roomChanged) {
 		inter_give_to_player(OBJ_BINOCULARS);
@@ -53,42 +53,42 @@ static void room_701_init() {
 		inter_give_to_player(OBJ_CHICKEN);
 		inter_give_to_player(OBJ_BONES);
 
-		_globals[kCityFlooded] = true;
-		_globals[kLineStatus] = LINE_TIED;
-		_globals[kBoatRaised] = false;
+		global[kCityFlooded] = true;
+		global[kLineStatus] = LINE_TIED;
+		global[kBoatRaised] = false;
 	}
 
-	if (_globals[kBoatStatus] == BOAT_UNFLOODED) {
-		if (_globals[kBoatRaised])
-			_globals[kBoatStatus] = BOAT_GONE;
-		else if (_globals[kLineStatus] == LINE_TIED)
-			_globals[kBoatStatus] = BOAT_TIED_FLOATING;
+	if (global[kBoatStatus] == BOAT_UNFLOODED) {
+		if (global[kBoatRaised])
+			global[kBoatStatus] = BOAT_GONE;
+		else if (global[kLineStatus] == LINE_TIED)
+			global[kBoatStatus] = BOAT_TIED_FLOATING;
 		else if (game.difficulty == DIFFICULTY_HARD)
-			_globals[kBoatStatus] = BOAT_ADRIFT;
+			global[kBoatStatus] = BOAT_ADRIFT;
 		else
-			_globals[kBoatStatus] = BOAT_TIED;
+			global[kBoatStatus] = BOAT_TIED;
 	}
 
-	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-	_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
+	g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
+	_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(48, 136));
+	_scene->_sequences.setDepth(g_sequence_ids[1], 10);
 
-	int boatStatus = (_scene->_priorSceneId == 703) ? BOAT_GONE : _globals[kBoatStatus];
+	int boatStatus = (_scene->_priorSceneId == 703) ? BOAT_GONE : global[kBoatStatus];
 
 	switch (boatStatus) {
 	case BOAT_TIED_FLOATING:
-		_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 20, 0, 0, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 10);
+		g_sequence_ids[4] = _scene->_sequences.startPingPongCycle(g_sprite_ids[4], false, 20, 0, 0, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[4], 10);
 		break;
 	case BOAT_ADRIFT:
-		_globals._sequenceIndexes[6] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[6], false, 20, 0, 0, 0);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 10);
+		g_sequence_ids[6] = _scene->_sequences.startPingPongCycle(g_sprite_ids[6], false, 20, 0, 0, 0);
+		_scene->_sequences.setDepth(g_sequence_ids[6], 10);
 		break;
 	case BOAT_TIED:
 	{
-		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
-		int idx = _scene->_dynamicHotspots.add(words_boat, words_climb_into, _globals._sequenceIndexes[2], Common::Rect());
+		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
+		_scene->_sequences.setDepth(g_sequence_ids[2], 9);
+		int idx = _scene->_dynamicHotspots.add(words_boat, words_climb_into, g_sequence_ids[2], Common::Rect());
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(231, 127), FACING_NORTH);
 		break;
 	}
@@ -99,10 +99,10 @@ static void room_701_init() {
 		break;
 	}
 
-	if (_globals[kLineStatus] == LINE_DROPPED || _globals[kLineStatus] == LINE_TIED) {
-		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
-		int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+	if (global[kLineStatus] == LINE_DROPPED || global[kLineStatus] == LINE_TIED) {
+		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -1);
+		_scene->_sequences.setDepth(g_sequence_ids[3], 8);
+		int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
 		local._fishingLineId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 129), FACING_NORTHEAST);
 	}
 
@@ -116,8 +116,8 @@ static void room_701_init() {
 		player.facing = FACING_NORTH;
 		player.walker_visible = false;
 		player.commands_allowed = false;
-		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
-		_scene->_sequences.setPosition(_globals._sequenceIndexes[5], Common::Point(155, 129));
+		g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, 1);
+		_scene->_sequences.setPosition(g_sequence_ids[5], Common::Point(155, 129));
 		_scene->_sequences.addTimer(15, 60);
 	} else if (_scene->_priorSceneId == 703) {
 		player.x = 231;
@@ -142,25 +142,25 @@ static void room_701_init() {
 static void room_701_daemon() {
 	switch (kernel.trigger) {
 	case 60:
-		_scene->_sequences.remove(_globals._sequenceIndexes[5]);
-		_globals._sequenceIndexes[5] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[5], false, 6, 1, 0, 0);
-		_scene->_sequences.setPosition(_globals._sequenceIndexes[5], Common::Point(155, 129));
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 61);
+		_scene->_sequences.remove(g_sequence_ids[5]);
+		g_sequence_ids[5] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[5], false, 6, 1, 0, 0);
+		_scene->_sequences.setPosition(g_sequence_ids[5], Common::Point(155, 129));
+		_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 61);
 		break;
 
 	case 61:
-		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[5]);
+		_scene->_sequences.updateTimeout(-1, g_sequence_ids[5]);
 		player.walker_visible = true;
 		player.commands_allowed = true;
 		break;
 
 	case 70:
 		g_engine->_soundManager->command(16, 0);
-		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
-		_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		_scene->_sequences.remove(g_sequence_ids[1]);
+		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 5, 1, 0, 0);
+		_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(48, 136));
+		_scene->_sequences.setDepth(g_sequence_ids[1], 10);
+		_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 		break;
 
 	case 71:
@@ -170,17 +170,17 @@ static void room_701_daemon() {
 
 	case 72:
 		g_engine->_soundManager->command(17, 0);
-		_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
-		_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
+		g_sequence_ids[1] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[1], false, 5, 1, 0, 0);
+		_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(48, 136));
+		_scene->_sequences.setDepth(g_sequence_ids[1], 10);
+		_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
 		break;
 
 	case 73:
 		player.commands_allowed = true;
-		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
-		_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
+		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, -1);
+		_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(48, 136));
+		_scene->_sequences.setDepth(g_sequence_ids[1], 10);
 		_scene->_kernelMessages.reset();
 		break;
 
@@ -188,11 +188,11 @@ static void room_701_daemon() {
 	{
 		player.walker_visible = true;
 		player.clock = _scene->_frameStartTime - player.frame_delay;
-		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
-		int idx = _scene->_dynamicHotspots.add(words_boat, words_climb_into, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
+		_scene->_sequences.setDepth(g_sequence_ids[2], 9);
+		int idx = _scene->_dynamicHotspots.add(words_boat, words_climb_into, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 129), FACING_NORTH);
-		_globals[kBoatStatus] = BOAT_TIED;
+		global[kBoatStatus] = BOAT_TIED;
 		player.commands_allowed = true;
 	}
 	break;
@@ -220,17 +220,17 @@ static void room_701_parser() {
 		case 0:
 			player.commands_allowed = false;
 			player.walker_visible = false;
-			_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 1, 0, 0);
-			_scene->_sequences.setPosition(_globals._sequenceIndexes[5], Common::Point(155, 129));
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 6, 1, 0, 0);
+			_scene->_sequences.setPosition(g_sequence_ids[5], Common::Point(155, 129));
+			_scene->_sequences.addSubEntry(g_sequence_ids[5], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
 		{
-			int temp = _globals._sequenceIndexes[5];
-			_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -2);
-			_scene->_sequences.setPosition(_globals._sequenceIndexes[5], Common::Point(155, 129));
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[5], temp);
+			int temp = g_sequence_ids[5];
+			g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, -2);
+			_scene->_sequences.setPosition(g_sequence_ids[5], Common::Point(155, 129));
+			_scene->_sequences.updateTimeout(g_sequence_ids[5], temp);
 			_scene->_sequences.addTimer(15, 2);
 		}
 		break;
@@ -246,14 +246,14 @@ static void room_701_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+			_scene->_sequences.remove(g_sequence_ids[1]);
 			g_engine->_soundManager->command(16, 0);
-			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
-			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
+			g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 5, 1, 0, 0);
+			_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(48, 136));
+			_scene->_sequences.setDepth(g_sequence_ids[1], 10);
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x310, 34, 0, 120, quote_string(kernel.quotes, 0x30D));
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
@@ -263,17 +263,17 @@ static void room_701_parser() {
 
 		case 3:
 			g_engine->_soundManager->command(17, 0);
-			_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
-			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
+			g_sequence_ids[1] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[1], false, 5, 1, 0, 0);
+			_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(48, 136));
+			_scene->_sequences.setDepth(g_sequence_ids[1], 10);
+			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
 			break;
 
 		case 4:
-			_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
-			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
-			_globals[kResurrectRoom] = 701;
+			g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, -1);
+			_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(48, 136));
+			_scene->_sequences.setDepth(g_sequence_ids[1], 10);
+			global[kResurrectRoom] = 701;
 			_scene->_nextSceneId = 605;
 			break;
 
@@ -283,12 +283,12 @@ static void room_701_parser() {
 	} else if ((player_said_2(pull, boat) || player_said_2(take, boat) ||
 		player_said_2(pull, fishing_line) || player_said_2(take, fishing_line)) &&
 		!player_has(OBJ_FISHING_LINE)) {
-		if (_globals[kBoatStatus] == BOAT_TIED_FLOATING) {
+		if (global[kBoatStatus] == BOAT_TIED_FLOATING) {
 			switch (kernel.trigger) {
 			case 0:
 				player.commands_allowed = false;
-				_scene->_sequences.remove(_globals._sequenceIndexes[4]);
-				_scene->_sequences.remove(_globals._sequenceIndexes[3]);
+				_scene->_sequences.remove(g_sequence_ids[4]);
+				_scene->_sequences.remove(g_sequence_ids[3]);
 				_scene->_dynamicHotspots.remove(local._fishingLineId);
 				_scene->_hotspots.activate(words_boat, false);
 				player.walker_visible = false;
@@ -299,39 +299,39 @@ static void room_701_parser() {
 			{
 				player.walker_visible = true;
 				player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
-				_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
-				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
-				int idx = _scene->_dynamicHotspots.add(words_boat, words_climb_into, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+				g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
+				_scene->_sequences.setDepth(g_sequence_ids[2], 9);
+				int idx = _scene->_dynamicHotspots.add(words_boat, words_climb_into, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(231, 127), FACING_NORTH);
 				_scene->_sequences.addTimer(15, 2);
 			}
 			break;
 
 			case 2:
-				_globals[kBoatStatus] = BOAT_TIED;
-				_globals[kLineStatus] = LINE_NOW_UNTIED;
+				global[kBoatStatus] = BOAT_TIED;
+				global[kLineStatus] = LINE_NOW_UNTIED;
 				player.commands_allowed = true;
 				break;
 
 			default:
 				break;
 			}
-		} else if (_globals[kBoatStatus] == BOAT_TIED) {
+		} else if (global[kBoatStatus] == BOAT_TIED) {
 			text_show(70125);
-		} else if (_globals[kLineStatus] == LINE_DROPPED) {
-			_globals[kLineStatus] = LINE_NOW_UNTIED;
+		} else if (global[kLineStatus] == LINE_DROPPED) {
+			global[kLineStatus] = LINE_NOW_UNTIED;
 			inter_give_to_player(OBJ_FISHING_LINE);
 			g_engine->_soundManager->command(15, 0);
-			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
+			_scene->_sequences.remove(g_sequence_ids[3]);
 			object_examine(OBJ_FISHING_LINE, 70126, 0);
 		} else {
 			text_show(70127);
 		}
-	} else if (player_said_2(climb_into, boat) && _globals[kBoatStatus] == BOAT_TIED) {
+	} else if (player_said_2(climb_into, boat) && global[kBoatStatus] == BOAT_TIED) {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
+			_scene->_sequences.remove(g_sequence_ids[2]);
 			player.walker_visible = false;
 			_scene->loadAnimation(kernel_name('B', 0), 1);
 			break;
@@ -344,8 +344,8 @@ static void room_701_parser() {
 			break;
 		}
 	} else if (player.look_around) {
-		if (_globals[kBoatStatus] != BOAT_GONE) {
-			if (_globals[kBoatStatus] == BOAT_TIED)
+		if (global[kBoatStatus] != BOAT_GONE) {
+			if (global[kBoatStatus] == BOAT_TIED)
 				text_show(70128);
 			else
 				text_show(70110);
@@ -360,7 +360,7 @@ static void room_701_parser() {
 	else if (player_said_2(look, cement_pylon))
 		text_show(70115);
 	else if (player_said_2(look, hook)) {
-		if (_globals[kLineStatus] == LINE_NOT_DROPPED || _globals[kLineStatus] == LINE_NOW_UNTIED)
+		if (global[kLineStatus] == LINE_NOT_DROPPED || global[kLineStatus] == LINE_NOW_UNTIED)
 			text_show(70116);
 		else
 			text_show(70117);
@@ -373,7 +373,7 @@ static void room_701_parser() {
 	else if (player_said_2(look, building))
 		text_show(70121);
 	else if (player_said_2(look, boat)) {
-		if (_globals[kBoatStatus] == BOAT_ADRIFT || _globals[kBoatStatus] == BOAT_TIED_FLOATING)
+		if (global[kBoatStatus] == BOAT_ADRIFT || global[kBoatStatus] == BOAT_TIED_FLOATING)
 			text_show(70122);
 		else
 			text_show(70123);

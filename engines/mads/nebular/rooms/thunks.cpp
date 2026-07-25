@@ -30,12 +30,7 @@ namespace MADS {
 namespace RexNebular {
 namespace Rooms {
 
-Globals _globals;
 Scene _scene;
-
-int16 &Globals::operator[](int idx) {
-	return global[idx];
-}
 
 static uint16 dummy_num_images;
 Scene::Animation::Animation(int anim_id) : _id(anim_id),

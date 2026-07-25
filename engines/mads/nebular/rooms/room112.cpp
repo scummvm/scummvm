@@ -34,14 +34,14 @@ namespace Rooms {
 static void room_112_init() {
 	section_1_music();
 
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(kernel_name('X', 0));
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('X', 1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('X', 2));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('X', 5));
+	g_sprite_ids[0] = _scene->_sprites.addSprites(kernel_name('X', 0));
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('X', 1));
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('X', 2));
+	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('X', 5));
 
-	_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 10, 0, 17, 20);
-	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 4, 0, 0, 0);
-	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 3, 0);
+	g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 10, 0, 17, 20);
+	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 4, 0, 0, 0);
+	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 6, 0, 3, 0);
 
 	player.commands_allowed = false;
 	player.walker_visible = false;
@@ -61,9 +61,9 @@ static void room_112_daemon() {
 	}
 
 	if (kernel.trigger == 70) {
-		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 7, 3, 0, 11);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 1);
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 7, 3, 0, 11);
+		_scene->_sequences.setDepth(g_sequence_ids[3], 1);
+		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 	}
 
 	if (kernel.trigger == 71) {

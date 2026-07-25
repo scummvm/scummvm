@@ -59,7 +59,7 @@ static void room_203_init() {
 	local._rhotundaEatFl = false;
 	local._rhotundaEat2Fl = false;
 
-	if ((_globals[kRhotundaStatus] == 0) && (!_scene->_roomChanged)) {
+	if ((global[kRhotundaStatus] == 0) && (!_scene->_roomChanged)) {
 		local._rhotundaEatFl = true;
 		player_walk(158, 135, FACING_SOUTH);
 		int idx = _scene->_dynamicHotspots.add(words_field_to_south, words_walk_towards, 0, Common::Rect(0, 0, 320, 156));
@@ -68,10 +68,10 @@ static void room_203_init() {
 	}
 
 	if (!local._rhotundaEatFl) {
-		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(kernel_name('b', -1));
+		g_sprite_ids[0] = _scene->_sprites.addSprites(kernel_name('b', -1));
 		if (g_engine->getRandomNumber(1, 3) == 2) {
-			_globals._spriteIndexes[15] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 9, 1, 0, 0);
-			int idx = _scene->_dynamicHotspots.add(words_yellow_bird, words_look_at, _globals._spriteIndexes[15], Common::Rect(0, 0, 0, 0));
+			g_sprite_ids[15] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 9, 1, 0, 0);
+			int idx = _scene->_dynamicHotspots.add(words_yellow_bird, words_look_at, g_sprite_ids[15], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 			g_engine->_soundManager->command(14, 0);
 		}

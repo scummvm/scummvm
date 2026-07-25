@@ -81,26 +81,26 @@ static void handleSlacheDialogs(int quoteId, int counter, uint32 timer) {
 }
 
 static void room_319_init() {
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('e', 0));
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(kernel_name('a', 0));
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('a', 1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('a', 2));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('a', 3));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('k', -1));
+	g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('e', 0));
+	g_sprite_ids[0] = _scene->_sprites.addSprites(kernel_name('a', 0));
+	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('a', 1));
+	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('a', 2));
+	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('a', 3));
+	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('k', -1));
 
 	if (!player_has(OBJ_SCALPEL)) {
-		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 1);
+		g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);
+		_scene->_sequences.setDepth(g_sequence_ids[4], 1);
 	}
 
-	_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 18, 0, 0, 300);
-	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 67, 0, 0, 377);
-	_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 173, 0, 0, 233);
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 14);
+	g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 18, 0, 0, 300);
+	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 67, 0, 0, 377);
+	g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 173, 0, 0, 233);
+	_scene->_sequences.setDepth(g_sequence_ids[2], 14);
+	_scene->_sequences.setDepth(g_sequence_ids[3], 14);
 
-	_globals._sequenceIndexes[0] = _scene->_sequences.startCycle(_globals._spriteIndexes[0], false, 1);
-	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
+	g_sequence_ids[0] = _scene->_sequences.startCycle(g_sprite_ids[0], false, 1);
+	g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
 
 	local._dialog1.setup(0x43, 0x165, 0x166, 0x167, 0x168, 0x169, 0x16A, 0);
 	local._dialog2.setup(0x44, 0x171, 0x172, 0x173, 0x174, 0x175, 0x176, 0);
@@ -137,7 +137,7 @@ static void room_319_init() {
 		local._slacheTopic = 1;
 		local._slacheInitFl = true;
 
-		if (_globals[kRexHasMetSlache]) {
+		if (global[kRexHasMetSlache]) {
 			handleSlacheDialogs(words_walk_outside, 2, INDEFINITE_TIMEOUT);
 			local._slachePosY = 3;
 		} else {
@@ -260,14 +260,14 @@ static void room_319_daemon() {
 				}
 
 				if (!local._animFrame) {
-					_scene->_sequences.remove(_globals._sequenceIndexes[0]);
-					_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+					_scene->_sequences.remove(g_sequence_ids[0]);
+					_scene->_sequences.remove(g_sequence_ids[1]);
 
 					for (int i = 0; i <= 1; i++) {
-						_globals._sequenceIndexes[i] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[i], false, 8, 1, 0, 0);
-						_scene->_sequences.setAnimRange(_globals._sequenceIndexes[i], 1, 7);
+						g_sequence_ids[i] = _scene->_sequences.addSpriteCycle(g_sprite_ids[i], false, 8, 1, 0, 0);
+						_scene->_sequences.setAnimRange(g_sequence_ids[i], 1, 7);
 					}
-					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
+					_scene->_sequences.addSubEntry(g_sequence_ids[0], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
 				}
 			}
 		}
@@ -316,13 +316,13 @@ static void room_319_daemon() {
 		mcga_shakes = 1;
 
 		for (int i = 0; i <= 1; i++) {
-			int oldIdx = _globals._sequenceIndexes[i];
-			_scene->_sequences.remove(_globals._sequenceIndexes[i]);
-			_globals._sequenceIndexes[i] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[i], false, 8, 1, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[i], 8, 13);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[i], oldIdx);
+			int oldIdx = g_sequence_ids[i];
+			_scene->_sequences.remove(g_sequence_ids[i]);
+			g_sequence_ids[i] = _scene->_sequences.addSpriteCycle(g_sprite_ids[i], false, 8, 1, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[i], 8, 13);
+			_scene->_sequences.updateTimeout(g_sequence_ids[i], oldIdx);
 		}
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
+		_scene->_sequences.addSubEntry(g_sequence_ids[0], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
 
 		// WORKAROUND: This fixes the game sometimes going into an endless waiting
 		// loop even after the doctor has finished hitting Rex. Note sure if it's due
@@ -343,20 +343,20 @@ static void room_319_daemon() {
 
 	case 73:
 		for (int i = 0; i <= 1; i++) {
-			int oldIdx = _globals._sequenceIndexes[i];
-			_scene->_sequences.remove(_globals._sequenceIndexes[i]);
-			_globals._sequenceIndexes[i] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[i], false, 8, 0, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[i], 6, 7);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[i], oldIdx);
+			int oldIdx = g_sequence_ids[i];
+			_scene->_sequences.remove(g_sequence_ids[i]);
+			g_sequence_ids[i] = _scene->_sequences.addSpriteCycle(g_sprite_ids[i], false, 8, 0, 0, 0);
+			_scene->_sequences.setAnimRange(g_sequence_ids[i], 6, 7);
+			_scene->_sequences.updateTimeout(g_sequence_ids[i], oldIdx);
 		}
 		break;
 
 	case 74:
 		for (int i = 0; i <= 1; i++) {
-			int oldIdx = _globals._sequenceIndexes[i];
-			_scene->_sequences.remove(_globals._sequenceIndexes[i]);
-			_globals._sequenceIndexes[i] = _scene->_sequences.startCycle(_globals._spriteIndexes[i], false, 1);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[i], oldIdx);
+			int oldIdx = g_sequence_ids[i];
+			_scene->_sequences.remove(g_sequence_ids[i]);
+			g_sequence_ids[i] = _scene->_sequences.startCycle(g_sprite_ids[i], false, 1);
+			_scene->_sequences.updateTimeout(g_sequence_ids[i], oldIdx);
 		}
 		break;
 
@@ -422,7 +422,7 @@ static void room_319_parser() {
 				if (!local._slacheReady) {
 					_scene->_sequences.addTimer(120, 3);
 				} else {
-					_globals[kRexHasMetSlache] = true;
+					global[kRexHasMetSlache] = true;
 					_scene->_nextSceneId = 318;
 				}
 			}
