@@ -964,11 +964,12 @@ void RA2PSXLevel1UI::drawShield(Graphics::Surface &surface, int shield,
 		{ 0, { 226, 207, 0 } }, { 15, { 219, 24, 0 } }, { 31, { 139, 3, 0 } }
 	};
 
-	shield = CLIP<int>(shield, 0, 100);
-	const int width = shield * 68 / 100;
+	// The gauge runs on the original's 0x1000 scale: 68 pixels wide, 32 colour steps.
+	shield = CLIP<int>(shield, 0, kRA2PSXShieldFull);
+	const int width = shield * 0x44 >> 12;
 	if (!width)
 		return;
-	const int colorIndex = CLIP<int>(32 - shield * 32 / 100, 0, 31);
+	const int colorIndex = CLIP<int>(0x20 - (shield >> 7), 0, 31);
 	const RA2PSXUIColor tl = shieldColor(topLeft, ARRAYSIZE(topLeft), colorIndex);
 	const RA2PSXUIColor tr = shieldColor(topRight, ARRAYSIZE(topRight), colorIndex);
 	const RA2PSXUIColor bl = shieldColor(bottomLeft, ARRAYSIZE(bottomLeft), colorIndex);
@@ -1027,7 +1028,7 @@ void RA2PSXLevel1UI::drawHUD(Graphics::Surface &surface, int score, int lives,
 	_textures.draw(surface, "FONT8X9", xOffset + 283, yOffset + 29, Common::Rect(80, 0, 88, 9));
 
 	int shieldLabelBrightness = 0x5a;
-	if (shield <= 31) {
+	if (shield < kRA2PSXLowShield) {
 		const int phase = (MAX(frame, 0) / 2) % 14;
 		shieldLabelBrightness += phase < 7 ? -50 + phase * 10 : 20 - (phase - 7) * 10;
 	}

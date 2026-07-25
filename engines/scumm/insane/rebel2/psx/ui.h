@@ -156,6 +156,12 @@ private:
 	const RA2PSXTextureSet &_textures;
 };
 
+// The shield gauge runs 0 to 0x1000, and warns below 0x501.
+enum {
+	kRA2PSXShieldFull = 0x1000,
+	kRA2PSXLowShield = 0x501
+};
+
 class RA2PSXLevel1UI {
 public:
 	bool load(const RA2PSXArchive &archive);

@@ -179,6 +179,45 @@ bool loadRA2PSXTextures(const Common::Array<byte> &data,
 	return textures.size() > initialCount;
 }
 
+bool loadRA2PSXSpriteAnimation(const Common::Array<byte> &data, uint16 frameHeight,
+		Common::Array<RA2PSXTexture> &frames) {
+	if (data.size() < 4 + 512 || !frameHeight)
+		return false;
+	const uint16 widthField = READ_LE_UINT16(data.data());
+	const uint16 width = (widthField & 0xff) ? widthField & 0xff : 256;
+	if (!(widthField & 0x100) || !width)
+		return false;
+
+	const uint32 paletteOffset = 4;
+	const uint32 pixelsOffset = paletteOffset + 512;
+	const uint32 frameBytes = (uint32)width * frameHeight;
+	const uint32 frameCount = (data.size() - pixelsOffset) / frameBytes;
+	const uint32 height = frameHeight;
+	if (!frameCount)
+		return false;
+
+	for (uint32 frame = 0; frame < frameCount; ++frame) {
+		RA2PSXTexture texture;
+		texture.width = width;
+		texture.height = (uint16)height;
+		texture.pixels.resize(frameBytes);
+		for (uint32 i = 0; i < frameBytes; ++i) {
+			const byte paletteIndex = data[pixelsOffset + frame * frameBytes + i];
+			const uint16 value = READ_LE_UINT16(data.data() + paletteOffset + paletteIndex * 2);
+			if (!value) {
+				texture.pixels[i] = 0;
+				continue;
+			}
+			const uint32 r = ((value & 0x1f) << 3) | ((value & 0x1f) >> 2);
+			const uint32 g = (((value >> 5) & 0x1f) << 3) | (((value >> 5) & 0x1f) >> 2);
+			const uint32 b = (((value >> 10) & 0x1f) << 3) | (((value >> 10) & 0x1f) >> 2);
+			texture.pixels[i] = 0x01000000 | (r << 16) | (g << 8) | b;
+		}
+		frames.push_back(texture);
+	}
+	return true;
+}
+
 RA2PSXModel::RA2PSXModel() : _radius(1.0f) {
 }
 
@@ -541,6 +580,14 @@ void RA2PSXTinyGLRenderer::setFaceColor(const RA2PSXFace &face, uint vertexIndex
 }
 
 void RA2PSXTinyGLRenderer::beginFrame(const Graphics::Surface &background) {
+	RA2PSXBackgroundView view;
+	view.panX = (background.w - MIN<int>(background.w, _width)) / 2;
+	view.panY = (background.h - MIN<int>(background.h, _height)) / 2;
+	beginFrame(background, view);
+}
+
+void RA2PSXTinyGLRenderer::beginFrame(const Graphics::Surface &background,
+		const RA2PSXBackgroundView &view) {
 	if (!_context)
 		return;
 	TinyGL::setContext(_context);
@@ -550,12 +597,28 @@ void RA2PSXTinyGLRenderer::beginFrame(const Graphics::Surface &background) {
 	surface.fillRect(Common::Rect(surface.w, surface.h), 0);
 	const int width = MIN<int>(background.w, surface.w);
 	const int height = MIN<int>(background.h, surface.h);
-	const int sourceX = (background.w - width) / 2;
-	const int sourceY = (background.h - height) / 2;
 	const int destX = (surface.w - width) / 2;
 	const int destY = (surface.h - height) / 2;
-	surface.copyRectToSurface(background, destX, destY,
-			Common::Rect(sourceX, sourceY, sourceX + width, sourceY + height));
+	// The source row ramps from one screen edge to the other, which rolls the view.
+	// Columns that land on the same row are copied as one run, as the original does.
+	const int span = MAX(1, width - 1);
+	const int bytesPerPixel = background.format.bytesPerPixel;
+	int column = 0;
+	while (column < width) {
+		const int tilt = view.tiltLeft + (view.tiltRight - view.tiltLeft) * column / span;
+		int end = column + 1;
+		while (end < width &&
+				view.tiltLeft + (view.tiltRight - view.tiltLeft) * end / span == tilt)
+			++end;
+		const int sourceX = CLIP(view.panX + column, 0, background.w - 1);
+		const int run = MIN(end - column, background.w - sourceX);
+		for (int row = 0; row < height; ++row) {
+			const int sourceY = CLIP(view.panY + tilt + row, 0, background.h - 1);
+			memcpy(surface.getBasePtr(destX + column, destY + row),
+					background.getBasePtr(sourceX, sourceY), run * bytesPerPixel);
+		}
+		column = end;
+	}
 	tglClear(TGL_DEPTH_BUFFER_BIT);
 
 	tglMatrixMode(TGL_PROJECTION);
@@ -563,6 +626,47 @@ void RA2PSXTinyGLRenderer::beginFrame(const Graphics::Surface &background) {
 	tglOrthof(0.0f, (float)_width, (float)_height, 0.0f, -1024.0f, 1024.0f);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
+}
+
+void RA2PSXTinyGLRenderer::renderSprite(const RA2PSXTexture &texture, float x, float y, float z,
+		float halfWidth, float halfHeight, int rotation) {
+	if (!_context || z <= 1.0f || texture.pixels.empty())
+		return;
+	TinyGL::setContext(_context);
+
+	const float focalLength = _width * 2.0f;
+	const float centerX = _width * 0.5f + x * focalLength / z;
+	const float centerY = _height * 0.5f + y * focalLength / z;
+	const float scaleX = halfWidth * focalLength / z;
+	const float scaleY = halfHeight * focalLength / z;
+	const float angle = rotation * kRA2PSXAngleScale;
+	const float cosine = cosf(angle);
+	const float sine = sinf(angle);
+	const float cornerX[4] = { -scaleX, scaleX, -scaleX, scaleX };
+	const float cornerY[4] = { -scaleY, -scaleY, scaleY, scaleY };
+	const float u[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
+	const float v[4] = { 0.0f, 0.0f, 1.0f, 1.0f };
+
+	tglDisable(TGL_DEPTH_TEST);
+	tglEnable(TGL_TEXTURE_2D);
+	tglEnable(TGL_ALPHA_TEST);
+	tglEnable(TGL_BLEND);
+	tglBindTexture(TGL_TEXTURE_2D, getTextureId(texture));
+	tglColor4ub(0xff, 0xff, 0xff, 0xff);
+	tglBegin(TGL_QUAD_STRIP);
+	for (uint corner = 0; corner < 4; ++corner) {
+		tglTexCoord2f(u[corner], v[corner]);
+		tglVertex3f(centerX + cornerX[corner] * cosine - cornerY[corner] * sine,
+				centerY + cornerX[corner] * sine + cornerY[corner] * cosine, 0.0f);
+	}
+	tglEnd();
+	tglDisable(TGL_BLEND);
+	tglDisable(TGL_ALPHA_TEST);
+	tglDisable(TGL_TEXTURE_2D);
+	tglEnable(TGL_DEPTH_TEST);
+	_activeTexture = nullptr;
+	_textureEnabled = false;
+	_blendEnabled = false;
 }
 
 void RA2PSXTinyGLRenderer::renderModel(const RA2PSXModel &model, float x, float y, float size,

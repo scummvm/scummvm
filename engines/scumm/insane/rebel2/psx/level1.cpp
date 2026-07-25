@@ -83,8 +83,11 @@ enum {
 	kLevel1LeadFrames = 30,
 	kLevel1EnemyCount = 3,
 	kLevel1ShotCount = 8,
-	kLevel1ShieldFull = 0x1000,
-	kLevel1LowShield = 0x501,
+	kLevel1ShieldFull = kRA2PSXShieldFull,
+	kLevel1LowShield = kRA2PSXLowShield,
+	// The gauge chases the real value by 40 a frame, and a hit shakes the view.
+	kLevel1ShieldStep = 0x28,
+	kLevel1ShakeFrames = 6,
 	kLevel1FireFacing = 0xf3c,
 	kLevel1HitRadius = 0xc000
 };
@@ -314,13 +317,217 @@ struct RA2PSXLevel1Enemy {
 	int fireCountdown;
 };
 
-struct RA2PSXLevel1Explosion {
-	RA2PSXLevel1Explosion() : frames(0), x(0), y(0) {}
-
-	int frames;
-	int x;
-	int y;
+// The fireball billboard is scaled about eight times its 68x56 texture, drifts toward
+// the camera and runs one frame per tick; only five may burn at once.
+enum {
+	kLevel1ExplosionSlots = 5,
+	kLevel1ExplosionScale = 0x7fff,
+	kLevel1ExplosionDrift = 0x32,
+	kLevel1DebrisCount = 16,
+	kLevel1DebrisLife = 30
 };
+
+struct RA2PSXLevel1Explosion {
+	RA2PSXLevel1Explosion() : frame(-1), rotation(0) {
+		position[0] = position[1] = position[2] = 0;
+	}
+
+	int frame;
+	int rotation;
+	int position[3];
+};
+
+struct RA2PSXLevel1Debris {
+	RA2PSXLevel1Debris() : life(0), model(0) {
+		for (int axis = 0; axis < 3; ++axis)
+			position[axis] = velocity[axis] = rotation[axis] = spin[axis] = 0;
+	}
+
+	int life;
+	int model;
+	int position[3];
+	int velocity[3];
+	int rotation[3];
+	int spin[3];
+};
+
+void spawnLevel1Explosion(RA2PSXLevel1Explosion *explosions, const int *position,
+		Common::RandomSource &random) {
+	int slot = -1;
+	int oldest = -1;
+	for (int i = 0; i < kLevel1ExplosionSlots; ++i) {
+		if (explosions[i].frame < 0) {
+			slot = i;
+			break;
+		}
+		if (explosions[i].frame > oldest) {
+			oldest = explosions[i].frame;
+			slot = i;
+		}
+	}
+
+	RA2PSXLevel1Explosion &explosion = explosions[slot];
+	explosion.frame = 0;
+	explosion.rotation = (int)random.getRandomNumber(15) * 0x100;
+	for (int axis = 0; axis < 3; ++axis)
+		explosion.position[axis] = position[axis];
+}
+
+void updateLevel1Explosions(RA2PSXLevel1Explosion *explosions, int frameCount) {
+	for (int i = 0; i < kLevel1ExplosionSlots; ++i) {
+		if (explosions[i].frame < 0)
+			continue;
+		if (++explosions[i].frame >= frameCount) {
+			explosions[i].frame = -1;
+			continue;
+		}
+		explosions[i].position[2] -= kLevel1ExplosionDrift;
+	}
+}
+
+void renderLevel1Explosions(RA2PSXTinyGLRenderer &renderer,
+		const Common::Array<RA2PSXTexture> &frames, const RA2PSXLevel1Explosion *explosions) {
+	for (int i = 0; i < kLevel1ExplosionSlots; ++i) {
+		const RA2PSXLevel1Explosion &explosion = explosions[i];
+		if (explosion.frame < 0 || (uint)explosion.frame >= frames.size())
+			continue;
+		const RA2PSXTexture &frame = frames[explosion.frame];
+		const float scale = kLevel1ExplosionScale / 4096.0f;
+		renderer.renderSprite(frame, (float)explosion.position[0], (float)explosion.position[1],
+				(float)explosion.position[2], frame.width * 0.5f * scale,
+				frame.height * 0.5f * scale, explosion.rotation);
+	}
+}
+
+// Each shard gets a tumble and a shove back toward the camera; one spin axis is dropped
+// so the pieces do not all rotate the same way.
+int debrisImpulse(Common::RandomSource &random) {
+	const int magnitude = (int)random.getRandomNumber(31) + 16;
+	return random.getRandomBit() ? magnitude : -magnitude;
+}
+
+void spawnLevel1Debris(RA2PSXLevel1Debris *debris, const int *position,
+		const int *rotation, int count, int modelCount, Common::RandomSource &random) {
+	for (int piece = 0; piece < count; ++piece) {
+		int slot = -1;
+		for (int i = 0; i < kLevel1DebrisCount; ++i) {
+			if (!debris[i].life) {
+				slot = i;
+				break;
+			}
+		}
+		if (slot < 0)
+			return;
+
+		RA2PSXLevel1Debris &shard = debris[slot];
+		shard = RA2PSXLevel1Debris();
+		shard.life = kLevel1DebrisLife;
+		shard.model = modelCount ? (int)random.getRandomNumber(modelCount - 1) : 0;
+		for (int axis = 0; axis < 3; ++axis) {
+			shard.position[axis] = position[axis];
+			shard.rotation[axis] = rotation[axis];
+			shard.spin[axis] = debrisImpulse(random);
+		}
+		shard.velocity[0] = debrisImpulse(random);
+		shard.velocity[1] = debrisImpulse(random);
+		shard.velocity[2] = -((int)random.getRandomNumber(63) + 32);
+		shard.spin[(int)random.getRandomNumber(2)] = 0;
+	}
+}
+
+void updateLevel1Debris(RA2PSXLevel1Debris *debris) {
+	for (int i = 0; i < kLevel1DebrisCount; ++i) {
+		if (!debris[i].life)
+			continue;
+		for (int axis = 0; axis < 3; ++axis) {
+			debris[i].position[axis] += debris[i].velocity[axis];
+			debris[i].rotation[axis] = (int16)(debris[i].rotation[axis] + debris[i].spin[axis]);
+		}
+		if (--debris[i].life && debris[i].position[2] < 0)
+			debris[i].life = 0;
+	}
+}
+
+void renderLevel1Debris(RA2PSXTinyGLRenderer &renderer,
+		const Common::Array<RA2PSXModel> &models, const RA2PSXLevel1Debris *debris) {
+	if (models.empty())
+		return;
+	for (int i = 0; i < kLevel1DebrisCount; ++i) {
+		if (!debris[i].life)
+			continue;
+		RA2PSXMatrix transform;
+		transform.setRotationZ(debris[i].rotation[2]);
+		transform.preRotateY(debris[i].rotation[1]);
+		transform.preRotateX(debris[i].rotation[0]);
+		transform.setTranslation(debris[i].position[0], debris[i].position[1],
+				debris[i].position[2]);
+		renderer.renderTransformedModel(models[debris[i].model % models.size()], transform, false);
+	}
+}
+
+// The gameplay frames are wider and taller than the screen; the view slides around
+// inside them and tilts, following a twenty frame average of where the player is aiming.
+enum {
+	kLevel1ViewHistory = 20,
+	kLevel1ViewCenterX = 0x34,
+	kLevel1ViewCenterY = 0x13,
+	kLevel1ViewTiltBase = 0x10
+};
+
+struct RA2PSXLevel1ViewTracker {
+	RA2PSXLevel1ViewTracker() : next(0), filled(0) {
+		for (int i = 0; i < kLevel1ViewHistory; ++i)
+			historyX[i] = historyY[i] = 0;
+	}
+
+	void push(int x, int y) {
+		historyX[next] = x;
+		historyY[next] = y;
+		next = (next + 1) % kLevel1ViewHistory;
+		filled = MIN(filled + 1, (int)kLevel1ViewHistory);
+	}
+
+	void average(int &x, int &y) const {
+		int totalX = 0;
+		int totalY = 0;
+		for (int i = 0; i < kLevel1ViewHistory; ++i) {
+			totalX += historyX[i];
+			totalY += historyY[i];
+		}
+		x = totalX / kLevel1ViewHistory;
+		y = totalY / kLevel1ViewHistory;
+	}
+
+	int historyX[kLevel1ViewHistory];
+	int historyY[kLevel1ViewHistory];
+	int next;
+	int filled;
+};
+
+// The original scales by 0x400000 then shifts back down by 11, rounding away from zero.
+int scaleViewOffset(int value, int divisor) {
+	const int scaled = (int)((int64)value * 0x400000 / divisor);
+	return (scaled + (scaled < 0 ? -0x400 : 0x400)) >> 11;
+}
+
+void getLevel1BackgroundView(const RA2PSXLevel1ViewTracker &tracker,
+		const Graphics::Surface &background, int width, int height,
+		RA2PSXBackgroundView &view) {
+	int averageX = 0;
+	int averageY = 0;
+	tracker.average(averageX, averageY);
+
+	const int tilt = scaleViewOffset(averageX, 0x4f00);
+	view.tiltLeft = kLevel1ViewTiltBase - tilt;
+	view.tiltRight = kLevel1ViewTiltBase + tilt;
+	view.panX = kLevel1ViewCenterX + scaleViewOffset(averageX, 5220);
+	// The band sits eight rows below the top of the port's cropped frame.
+	view.panY = kLevel1ViewCenterY + scaleViewOffset(averageY, 0x1ce3) - 8;
+
+	const int slack = MAX(0, (int)background.h - height) - MAX(view.tiltLeft, view.tiltRight);
+	view.panX = CLIP(view.panX, 0, MAX(0, (int)background.w - width));
+	view.panY = CLIP(view.panY, 0, MAX(0, slack));
+}
 
 struct RA2PSXLevel1TieShot {
 	RA2PSXLevel1TieShot() : active(false), distance(0), length(0) {}
@@ -770,26 +977,20 @@ void renderLevel1Shots(RA2PSXTinyGLRenderer &renderer, const RA2PSXModel &laser,
 	}
 }
 
-void drawLevel1Effects(Graphics::Surface &surface, const RA2PSXLevel1UI &ui,
-		const RA2PSXLevel1Explosion *explosions) {
-	for (int i = 0; i < kLevel1EnemyCount; ++i) {
-		if (explosions[i].frames > 0)
-			ui.drawExplosion(surface, explosions[i].x, explosions[i].y,
-					10 - explosions[i].frames);
-	}
-}
 #endif
 
 Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 		const RA2PSXModel &shipModel, const RA2PSXModel &crosshair,
 		const RA2PSXModel &laser, const RA2PSXModel &tieLaser,
-		const RA2PSXLevel1UI &ui, int lives, int &score) {
+		const Common::Array<RA2PSXModel> &debrisModels, const RA2PSXLevel1UI &ui,
+		int lives, int &score) {
 #ifndef USE_TINYGL
 	(void)enemyModel;
 	(void)shipModel;
 	(void)crosshair;
 	(void)laser;
 	(void)tieLaser;
+	(void)debrisModels;
 	(void)ui;
 	(void)lives;
 	(void)score;
@@ -817,7 +1018,9 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 	const int focal = _vm->_screenWidth * 2;
 
 	RA2PSXLevel1Enemy enemies[kLevel1EnemyCount];
-	RA2PSXLevel1Explosion explosions[kLevel1EnemyCount];
+	RA2PSXLevel1Explosion explosions[kLevel1ExplosionSlots];
+	RA2PSXLevel1Debris debris[kLevel1DebrisCount];
+	RA2PSXLevel1ViewTracker viewTracker;
 	RA2PSXLevel1Shot shots[kLevel1ShotCount];
 	RA2PSXLevel1TieShot tieShots[kLevel1ShotCount];
 	RA2PSXLevel1Ship ship;
@@ -844,6 +1047,10 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 	int aimDirectionX = 0;
 	int aimDirectionY = 0;
 	int shield = kLevel1ShieldFull;
+	int shieldDisplayed = kLevel1ShieldFull;
+	int shakeFrames = 0;
+	int shakeX = 0;
+	int shakeY = 0;
 	int spawnDelay = 0;
 	int spawnRange = 80;
 	int spawnBase = 60;
@@ -1077,8 +1284,23 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 						CLIP<int>(ship.x * 4096 / 0x479f + 64, 0, 127));
 			}
 
+			if (shieldDisplayed != shield) {
+				shieldDisplayed = shieldDisplayed < shield ?
+						MIN(shield, shieldDisplayed + kLevel1ShieldStep) :
+						MAX(shield, shieldDisplayed - kLevel1ShieldStep);
+				shieldDisplayed = MAX(1, shieldDisplayed);
+			}
+			if (shakeFrames > 0) {
+				--shakeFrames;
+				shakeX = (int)_vm->_rnd.getRandomNumber(3);
+				shakeY = (int)_vm->_rnd.getRandomNumber(3);
+			} else {
+				shakeX = shakeY = 0;
+			}
+
 			// Started once, then left running, as in the original.
-			if (shield < kLevel1LowShield && lowShieldAlarm == RA2PSXSoundPlayer::kInvalidSoundId)
+			if (shieldDisplayed < kLevel1LowShield &&
+					lowShieldAlarm == RA2PSXSoundPlayer::kInvalidSoundId)
 				lowShieldAlarm = soundPlayer.play(kLevel1SfxLowShield, 0x50, 0x40);
 
 			if (logicFrame >= nextSpawnAdjustment) {
@@ -1108,6 +1330,10 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 			}
 
 			updateLevel1Shots(shots);
+			updateLevel1Explosions(explosions, _explosionFrames.size());
+			updateLevel1Debris(debris);
+			viewTracker.push(thirdPersonView ? ship.x * focal / MAX(1, ship.z) : aimX - centerX,
+					thirdPersonView ? ship.y * focal / MAX(1, ship.z) : aimY - centerY);
 			for (int i = 0; i < kLevel1ShotCount; ++i) {
 				if (!tieShots[i].active)
 					continue;
@@ -1116,13 +1342,12 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 					tieShots[i].active = false;
 				if (hit) {
 					shield = MAX(0, shield - kLevel1BoltDamage[view][difficulty]);
+					shakeFrames = kLevel1ShakeFrames;
 					soundPlayer.play(kLevel1SfxPlayerHit, 0x7f, 0x40);
 				}
 			}
 
 			for (int i = 0; i < kLevel1EnemyCount; ++i) {
-				if (explosions[i].frames > 0)
-					--explosions[i].frames;
 				if (!enemies[i].active)
 					continue;
 
@@ -1150,6 +1375,7 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 					}
 					if (rammed) {
 						shield = MAX(0, shield - kLevel1RamDamage[difficulty]);
+						shakeFrames = kLevel1ShakeFrames;
 						destroyed = true;
 					}
 				}
@@ -1205,16 +1431,9 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 					soundPlayer.stop(approachSounds[i]);
 					approachSounds[i] = RA2PSXSoundPlayer::kInvalidSoundId;
 					enemy.active = false;
-					for (int slot = 0; slot < kLevel1EnemyCount; ++slot) {
-						if (explosions[slot].frames == 0) {
-							explosions[slot].frames = 10;
-							explosions[slot].x = centerX +
-									position[0] * focal / MAX(1, position[2]);
-							explosions[slot].y = centerY +
-									position[1] * focal / MAX(1, position[2]);
-							break;
-						}
-					}
+					spawnLevel1Explosion(explosions, position, _vm->_rnd);
+					spawnLevel1Debris(debris, position, enemy.rotation,
+							(int)_vm->_rnd.getRandomNumber(4) + 1, debrisModels.size(), _vm->_rnd);
 				}
 			}
 
@@ -1235,7 +1454,10 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 		}
 
 		if (background && redraw) {
-			renderer.beginFrame(*background);
+			RA2PSXBackgroundView view;
+			getLevel1BackgroundView(viewTracker, *background, _vm->_screenWidth,
+					_vm->_screenHeight, view);
+			renderer.beginFrame(*background, view);
 			// Everything shares one painter's pass, farthest first, as the original's
 			// ordering table does.
 			int order[kLevel1EnemyCount] = { 0, 1, 2 };
@@ -1259,6 +1481,8 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 			}
 			renderLevel1TieShots(renderer, tieLaser, tieShots);
 			renderLevel1Shots(renderer, laser, shots);
+			renderLevel1Debris(renderer, debrisModels, debris);
+			renderLevel1Explosions(renderer, _explosionFrames, explosions);
 			if (thirdPersonView) {
 				float forwardX;
 				float forwardY;
@@ -1273,11 +1497,11 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 			}
 			Graphics::Surface output;
 			renderer.finishFrame(output);
-			drawLevel1Effects(output, ui, explosions);
 			if (!thirdPersonView)
 				ui.drawCockpit(output);
-			ui.drawHUD(output, score, lives, shield * 100 / kLevel1ShieldFull, logicFrame);
-			g_system->copyRectToScreen(output.getPixels(), output.pitch, 0, 0, output.w, output.h);
+			ui.drawHUD(output, score, lives, shieldDisplayed, logicFrame);
+			g_system->copyRectToScreen(output.getPixels(), output.pitch, shakeX, shakeY,
+					output.w - shakeX, output.h - shakeY);
 			g_system->updateScreen();
 		}
 		g_system->delayMillis(5);

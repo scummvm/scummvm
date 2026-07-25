@@ -41,6 +41,11 @@ class RA2PSXMainMenuUI;
 class RA2PSXMovieText;
 class RA2PSXOptionsUI;
 class RA2PSXChapterSelectUI;
+class RA2PSXArchive;
+class RA2PSXModel;
+
+bool loadRA2PSXDebrisModels(const RA2PSXArchive &archive,
+		const Common::Array<byte> &textureData, Common::Array<RA2PSXModel> &models);
 
 enum RA2PSXMovieTextSequence {
 	kRA2PSXMovieTextNone,
@@ -202,6 +207,23 @@ struct RA2PSXTexture {
 bool loadRA2PSXTextures(const Common::Array<byte> &data,
 		Common::Array<RA2PSXTexture> &textures);
 
+// The fireball frames are 68x56, the size the original's VRAM upload uses.
+enum { kRA2PSXExplosionHeight = 56 };
+
+// bigEx: a 4 byte format word, a 256 colour palette and equal sized 8 bit frames.
+bool loadRA2PSXSpriteAnimation(const Common::Array<byte> &data, uint16 frameHeight,
+		Common::Array<RA2PSXTexture> &frames);
+
+// How far the level 1 background is panned and tilted inside its oversized frame.
+struct RA2PSXBackgroundView {
+	RA2PSXBackgroundView() : panX(0), panY(0), tiltLeft(0), tiltRight(0) {}
+
+	int panX;
+	int panY;
+	int tiltLeft;
+	int tiltRight;
+};
+
 struct RA2PSXFace {
 	uint16 vertex[4];
 	int16 normalX[4];
@@ -246,6 +268,10 @@ public:
 
 	bool init(int width, int height);
 	void beginFrame(const Graphics::Surface &background);
+	void beginFrame(const Graphics::Surface &background, const RA2PSXBackgroundView &view);
+	// A camera facing quad, sized in world units like the original's explosion billboard.
+	void renderSprite(const RA2PSXTexture &texture, float x, float y, float z,
+			float halfWidth, float halfHeight, int rotation);
 	void renderModel(const RA2PSXModel &model, float x, float y, float size,
 			float pitch, float yaw, float roll, bool depthTest = true);
 	void renderPerspectiveModel(const RA2PSXModel &model, float x, float y, float z,
@@ -316,10 +342,11 @@ private:
 	bool loadMovieTextAssets(RA2PSXMovieText &movieText);
 	bool loadLevel1Assets(RA2PSXModel &enemy, RA2PSXModel &ship,
 			RA2PSXModel &crosshair, RA2PSXModel &laser, RA2PSXModel &tieLaser,
-			RA2PSXLevel1UI &ui);
+			Common::Array<RA2PSXModel> &debris, RA2PSXLevel1UI &ui);
 	Level1Result playLevel1(const RA2PSXModel &enemy, const RA2PSXModel &ship,
 			const RA2PSXModel &crosshair, const RA2PSXModel &laser,
-			const RA2PSXModel &tieLaser, const RA2PSXLevel1UI &ui, int lives, int &score);
+			const RA2PSXModel &tieLaser, const Common::Array<RA2PSXModel> &debris,
+			const RA2PSXLevel1UI &ui, int lives, int &score);
 
 	ScummEngine_v7 *_vm;
 	RA2PSXSoundBank _soundBank;
@@ -329,6 +356,8 @@ private:
 	RA2PSXModel _logoModel;
 	RA2PSXModel _cloakModel;
 	RA2PSXModel _crestModel;
+	// The 42 frame fireball the original streams from the bigEx resource.
+	Common::Array<RA2PSXTexture> _explosionFrames;
 };
 
 } // End of namespace Scumm
