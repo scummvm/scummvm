@@ -33,7 +33,7 @@ namespace Rooms {
 
 static void room_390_init() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
-	_game._player._visible = false;
+	player.walker_visible = false;
 
 	section_3_music();
 }

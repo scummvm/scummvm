@@ -37,23 +37,29 @@ static void room_313_init() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
 
 	if ((_scene->_priorSceneId == 366) || (_scene->_priorSceneId == 316)) {
-		_game._player._playerPos = Common::Point(30, 80);
-		_game._player._facing = FACING_NORTH;
+		player.x = 30;
+		player.y = 80;
+		player.facing = FACING_NORTH;
 	} else if ((_scene->_priorSceneId == 311) || (_scene->_priorSceneId == 361) || (_scene->_priorSceneId == 391)) {
-		_game._player._playerPos = Common::Point(90, 70);
-		_game._player._facing = FACING_EAST;
+		player.x = 90;
+		player.y = 70;
+		player.facing = FACING_EAST;
 	} else if (_scene->_priorSceneId == 390) {
-		_game._player._playerPos = Common::Point(126, 70);
-		_game._player._facing = FACING_EAST;
+		player.x = 126;
+		player.y = 70;
+		player.facing = FACING_EAST;
 	} else if ((_scene->_priorSceneId == 389) || (_scene->_priorSceneId == 399)) {
-		_game._player._playerPos = Common::Point(163, 70);
-		_game._player._facing = FACING_WEST;
+		player.x = 163;
+		player.y = 70;
+		player.facing = FACING_WEST;
 	} else if (_scene->_priorSceneId == 388) {
-		_game._player._playerPos = Common::Point(199, 70);
-		_game._player._facing = FACING_WEST;
+		player.x = 199;
+		player.y = 70;
+		player.facing = FACING_WEST;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(234, 70);
-		_game._player._facing = FACING_WEST;
+		player.x = 234;
+		player.y = 70;
+		player.facing = FACING_WEST;
 	}
 
 	if (_globals[kAfterHavoc]) {

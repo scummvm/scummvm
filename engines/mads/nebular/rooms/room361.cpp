@@ -32,10 +32,10 @@ namespace RexNebular {
 namespace Rooms {
 
 static void handleRexAction() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 0:
-		_game._player._stepEnabled = false;
-		_game._player._visible = false;
+		player.commands_allowed = false;
+		player.walker_visible = false;
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 50, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 3, -2);
@@ -130,10 +130,10 @@ static void handleRexAction() {
 }
 
 static void handleRoxAction() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 0:
-		_game._player._stepEnabled = false;
-		_game._player._visible = false;
+		player.commands_allowed = false;
+		player.walker_visible = false;
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 18, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 2, 4);
@@ -233,7 +233,7 @@ static void handleRoxAction() {
 }
 
 static void room_361_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(Resources::formatName(307, 'X', 0, EXT_SS, ""));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_full_name(307, 'X', 0, "", EXT_SS));
 
 	if (_globals[kSexOfRex] == REX_MALE) {
 		_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXCL_8");
@@ -247,20 +247,26 @@ static void room_361_init() {
 
 	if (_scene->_priorSceneId == 391) {
 		_globals[kSexOfRex] = REX_MALE;
-		_game._player._stepEnabled = false;
-		_game._player._visible = false;
-		_game._player._facing = FACING_SOUTH;
-		_game._player._playerPos = Common::Point(166, 101);
+		player.commands_allowed = false;
+		player.walker_visible = false;
+		player.facing = FACING_SOUTH;
+		player.x = 166;
+		player.y = 101;
 		_scene->_sequences.addTimer(120, 70);
-	} else if (_scene->_priorSceneId == 360)
-		_game._player._playerPos = Common::Point(302, 145);
+	} else if (_scene->_priorSceneId == 360) {
+		player.x = 302;
+		player.y = 145;
+	}
 	else if (_scene->_priorSceneId == 320) {
-		_game._player._playerPos = Common::Point(129, 113);
-		_game._player._facing = FACING_SOUTH;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
-		_game._player._playerPos = Common::Point(13, 145);
+		player.x = 129;
+		player.y = 113;
+		player.facing = FACING_SOUTH;
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+		player.x = 13;
+		player.y = 145;
+	}
 
-	_game.loadQuoteSet(0xFB, 0xFC, 0);
+	kernel.quotes = quote_load(0xFB, 0xFC, 0);
 
 	if (_scene->_priorSceneId == 320)
 		_scene->_kernelMessages.setQuoted(_scene->_kernelMessages.addQuote(0xFB, 0, 0x78), 4, true);
@@ -269,8 +275,8 @@ static void room_361_init() {
 }
 
 static void room_361_daemon() {
-	if (_game._trigger >= 70) {
-		switch (_game._trigger) {
+	if (kernel.trigger >= 70) {
+		switch (kernel.trigger) {
 		case 70:
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 			_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 2);
@@ -360,8 +366,8 @@ static void room_361_daemon() {
 
 		case 79:
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[3]);
-			_game._player._stepEnabled = true;
-			_game._player._visible = true;
+			player.commands_allowed = true;
+			player.walker_visible = true;
 			break;
 
 		default:
@@ -372,10 +378,10 @@ static void room_361_daemon() {
 
 static void room_361_pre_parser() {
 	if (player_said_2(walk_down, corridor_to_east))
-		_game._player._walkOffScreenSceneId = 360;
+		player.walk_off_edge_to_room = 360;
 
 	if (player_said_2(walk_down, corridor_to_west))
-		_game._player._walkOffScreenSceneId = 354;
+		player.walk_off_edge_to_room = 354;
 }
 
 static void room_361_parser() {

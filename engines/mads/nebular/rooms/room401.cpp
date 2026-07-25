@@ -49,37 +49,40 @@ static void room_401_init() {
 	local._timer = 0;
 
 	if (_scene->_priorSceneId == 402) {
-		_game._player._playerPos = Common::Point(203, 115);
-		_game._player._facing = FACING_WEST;
+		player.x = 203;
+		player.y = 115;
+		player.facing = FACING_WEST;
 	} else if (_scene->_priorSceneId == 354) {
-		_game._player._playerPos = Common::Point(149, 90);
-		_game._player._facing = FACING_SOUTH;
+		player.x = 149;
+		player.y = 90;
+		player.facing = FACING_SOUTH;
 		local._northFl = true;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(142, 131);
-		_game._player._facing = FACING_NORTH;
+		player.x = 142;
+		player.y = 131;
+		player.facing = FACING_NORTH;
 	}
 
-	_game.loadQuoteSet(0x1D4, 0);
+	kernel.quotes = quote_load(0x1D4, 0);
 	section_4_music();
 }
 
 static void room_401_daemon() {
-	if (_game._trigger == 70) {
+	if (kernel.trigger == 70) {
 		_scene->_nextSceneId = 354;
 		_scene->_reloadSceneFlag = true;
 	}
 
-	if (_game._trigger == 80) {
-		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
-		_game._player._stepEnabled = true;
-		_game._player._visible = true;
+	if (kernel.trigger == 80) {
+		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.commands_allowed = true;
+		player.walker_visible = true;
 		local._northFl = false;
-		_game._player.walk(Common::Point(149, 110), FACING_SOUTH);
+		player_walk(149, 110, FACING_SOUTH);
 	}
 
 	if (_scene->_frameStartTime >= local._timer) {
-		int dist = 64 - ((Math::hypotenuse(_game._player._playerPos.x - 219, _game._player._playerPos.y - 115) * 64) / 120);
+		int dist = 64 - ((Math::hypotenuse(player.x - 219, player.y - 115) * 64) / 120);
 
 		if (dist > 64)
 			dist = 64;
@@ -87,24 +90,24 @@ static void room_401_daemon() {
 			dist = 1;
 
 		g_engine->_soundManager->command(12, dist);
-		local._timer = _scene->_frameStartTime + _game._player._ticksAmount;
+		local._timer = _scene->_frameStartTime + player.frame_delay;
 	}
 
 }
 
 static void room_401_pre_parser() {
 	if (player_said_2(walk_down, corridor_to_north)) {
-		_game._player.walk(Common::Point(149, 89), FACING_NORTH);
+		player_walk(149, 89, FACING_NORTH);
 		local._northFl = false;
 	}
 
 	if (player_said_2(walk_down, corridor_to_south) && !local._northFl)
-		_game._player._walkOffScreenSceneId = 405;
+		player.walk_off_edge_to_room = 405;
 
 	if (player_said_1(take))
-		_game._player._needToWalk = false;
+		player.need_to_walk = false;
 
-	if (_game._player._needToWalk && local._northFl) {
+	if (player.need_to_walk && local._northFl) {
 		if (_globals[kSexOfRex] == REX_MALE) {
 			local._dest_x = 148;
 			local._dest_y = 94;
@@ -113,30 +116,30 @@ static void room_401_pre_parser() {
 			local._dest_y = 99;
 		}
 
-		_game._player.walk(Common::Point(local._dest_x, local._dest_y), FACING_SOUTH);
+		player_walk(local._dest_x, local._dest_y, FACING_SOUTH);
 	}
 }
 
 static void room_401_parser() {
-	if (_game._player._playerPos.x == local._dest_x && _game._player._playerPos.y && local._northFl) {
+	if (player.x == local._dest_x && player.y && local._northFl) {
 		if (_globals[kSexOfRex] == REX_MALE) {
-			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			g_engine->_soundManager->command(21, 0);
-			_scene->loadAnimation(formAnimName('s', 1), 70);
+			_scene->loadAnimation(kernel_name('s', 1), 70);
 			_globals[kHasBeenScanned] = true;
 			g_engine->_soundManager->command(22, 0);
-			int idx = _scene->_kernelMessages.add(Common::Point(153, 46), 0x1110, 32, 0, 60, _game.getQuote(0x1D4));
+			int idx = _scene->_kernelMessages.add(Common::Point(153, 46), 0x1110, 32, 0, 60, quote_string(kernel.quotes, 0x1D4));
 			_scene->_kernelMessages.setQuoted(idx, 4, true);
 		}
 
 		if (_globals[kSexOfRex] == REX_FEMALE) {
-			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			g_engine->_soundManager->command(21, 0);
-			_scene->loadAnimation(formAnimName('s', 2), 80);
+			_scene->loadAnimation(kernel_name('s', 2), 80);
 			g_engine->_soundManager->command(23, 0);
 			_globals[kHasBeenScanned] = true;
 		}

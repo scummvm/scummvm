@@ -175,13 +175,13 @@ static void room_320_init() {
 	local._lastFrame = 0;
 
 	for (int i = 0; i < 10; i++)
-		_globals._spriteIndexes[i] = _scene->_sprites.addSprites(formAnimName('M', i));
+		_globals._spriteIndexes[i] = _scene->_sprites.addSprites(kernel_name('M', i));
 
 	for (int i = 0; i < 8; i++)
-		_globals._spriteIndexes[10 + i] = _scene->_sprites.addSprites(formAnimName('N', i));
+		_globals._spriteIndexes[10 + i] = _scene->_sprites.addSprites(kernel_name('N', i));
 
 	_globals._spriteIndexes[18] = _scene->_sprites.addSprites("*REXHAND");
-	_game._player._visible = false;
+	player.walker_visible = false;
 
 	setRightView(_globals[kRightView320]);
 	setLeftView(0);
@@ -209,7 +209,7 @@ static void room_320_daemon() {
 				break;
 
 			case 191:
-				_scene->_kernelMessages.add(Common::Point(1, 1), 0xFDFC, 0, 0, 60, _game.getQuote(0xFE));
+				_scene->_kernelMessages.add(Common::Point(1, 1), 0xFDFC, 0, 0, 60, quote_string(kernel.quotes, 0xFE));
 				break;
 
 			case 417:
@@ -229,7 +229,7 @@ static void room_320_daemon() {
 		}
 	}
 
-	if (_game._trigger == 70) {
+	if (kernel.trigger == 70) {
 		_globals[kAfterHavoc] = true;
 		_globals[kTeleporterRoom + 1] = 351;
 		_scene->_nextSceneId = 361;
@@ -245,9 +245,9 @@ static void room_320_parser() {
 			player_said_1(right_3_key) || player_said_1(right_4_key) || player_said_1(right_5_key) || player_said_1(right_6_key) ||
 			player_said_1(right_7_key) || player_said_1(right_8_key)
 			)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			handleButtons();
 			_globals._sequenceIndexes[18] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[18], local._flippedFl, 4, 2, 0, 0);
 			_scene->_sequences.setScale(_globals._sequenceIndexes[18], 60);
@@ -283,22 +283,22 @@ static void room_320_parser() {
 			break;
 
 		case 2:
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			if (local._buttonId == 5) {
 				if (local._leftItemId == 2) {
-					_game._player._stepEnabled = false;
+					player.commands_allowed = false;
 					setRightView(8);
 					setLeftView(10);
 					_scene->_kernelMessages.reset();
 					_scene->resetScene();
-					_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('m', 2));
-					_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('m', 4));
-					_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('m', 9));
+					_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('m', 2));
+					_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('m', 4));
+					_globals._spriteIndexes[9] = _scene->_sprites.addSprites(kernel_name('m', 9));
 					local._blinkFl = false;
 					setLeftView(2);
-					_game.loadQuoteSet(0xFE, 0);
-					_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
-					_scene->loadAnimation(formAnimName('a', -1), 70);
+					kernel.quotes = quote_load(0xFE, 0);
+					kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+					_scene->loadAnimation(kernel_name('a', -1), 70);
 					g_engine->_soundManager->command(17, 0);
 				}
 			}

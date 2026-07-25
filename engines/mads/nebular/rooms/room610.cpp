@@ -43,33 +43,34 @@ static Scratch local;
 
 
 static void room_610_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('p', -1));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('p', -1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMRC_9");
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 0));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('x', 1));
 
 	_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 60, 0, 0, 0);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 13);
 	_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 30, 0, 0, 0);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 9);
 
-	if (!_game._visitedScenes._sceneRevisited)
+	if (!player.been_here_before)
 		local._cellCharging = false;
 
-	if (_game._objects[OBJ_PHONE_HANDSET]._roomNumber == _scene->_currentSceneId) {
+	if (object[OBJ_PHONE_HANDSET].location == _scene->_currentSceneId) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
 		local._handsetHotspotId = _scene->_dynamicHotspots.add(words_phone_handset, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._handsetHotspotId, Common::Point(132, 121), FACING_NORTHWEST);
-		if ((_globals[kHandsetCellStatus] == 2) && (_game._difficulty == DIFFICULTY_HARD) && !_globals[kDurafailRecharged])
+		if ((_globals[kHandsetCellStatus] == 2) && (game.difficulty == DIFFICULTY_HARD) && !_globals[kDurafailRecharged])
 			_globals[kHandsetCellStatus] = 1;
 	}
 
-	if (_scene->_roomChanged && _game._difficulty != DIFFICULTY_EASY)
-		_game._objects.addToInventory(OBJ_PENLIGHT);
+	if (_scene->_roomChanged && game.difficulty != DIFFICULTY_EASY)
+		inter_give_to_player(OBJ_PENLIGHT);
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(175, 152);
-		_game._player._facing = FACING_NORTHWEST;
+		player.x = 175;
+		player.y = 152;
+		player.facing = FACING_NORTHWEST;
 	}
 
 	section_6_music();
@@ -100,11 +101,11 @@ static void room_610_parser() {
 	if (player_said_2(exit_from, video_store))
 		_scene->_nextSceneId = 609;
 	else if (player_said_2(take, phone_handset)) {
-		if (_game._trigger || !_game._objects.isInInventory(OBJ_PHONE_HANDSET)) {
-			switch (_game._trigger) {
+		if (kernel.trigger || !player_has(OBJ_PHONE_HANDSET)) {
+			switch (kernel.trigger) {
 			case 0:
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
+				player.commands_allowed = false;
+				player.walker_visible = false;
 				_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], true, 8, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 2);
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
@@ -116,14 +117,14 @@ static void room_610_parser() {
 				g_engine->_soundManager->command(9, 0);
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 				_scene->_dynamicHotspots.remove(local._handsetHotspotId);
-				_game._objects.addToInventory(OBJ_PHONE_HANDSET);
+				inter_give_to_player(OBJ_PHONE_HANDSET);
 				object_examine(OBJ_PHONE_HANDSET, 61017, 0);
 				break;
 
 			case 2:
 				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
-				_game._player._visible = true;
-				_game._player._stepEnabled = true;
+				player.walker_visible = true;
+				player.commands_allowed = true;
 				break;
 
 			default:
@@ -131,10 +132,10 @@ static void room_610_parser() {
 			}
 		}
 	} else if (player_said_3(put, phone_handset, phone_cradle)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], true, 8, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 2);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
@@ -146,14 +147,14 @@ static void room_610_parser() {
 			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
 			local._handsetHotspotId = _scene->_dynamicHotspots.add(words_phone_handset, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(local._handsetHotspotId, Common::Point(132, 121), FACING_NORTHWEST);
-			_game._objects.setRoom(OBJ_PHONE_HANDSET, _scene->_currentSceneId);
+			inter_move_object(OBJ_PHONE_HANDSET, _scene->_currentSceneId);
 			break;
 
 		case 2:
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
-			_game._player._visible = true;
-			_game._player._stepEnabled = true;
-			if ((_globals[kHandsetCellStatus] == 2) && (_game._difficulty == DIFFICULTY_HARD) && !_globals[kDurafailRecharged])
+			player.walker_visible = true;
+			player.commands_allowed = true;
+			if ((_globals[kHandsetCellStatus] == 2) && (game.difficulty == DIFFICULTY_HARD) && !_globals[kDurafailRecharged])
 				local._cellCharging = true;
 
 			text_show(61032);
@@ -177,7 +178,7 @@ static void room_610_parser() {
 	else if (player_said_2(look, logo))
 		text_show(61018);
 	else if (player_said_2(look, cement)) {
-		if (_game._visitedScenes.exists(601))
+		if (player_has_been_in_room(601))
 			text_show(61020);
 		else
 			text_show(61019);
@@ -198,7 +199,7 @@ static void room_610_parser() {
 	else if (player_said_2(look, return_slot))
 		text_show(61028);
 	else if (player_said_2(put, return_slot)
-		&& _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId)))
+		&& player_has(object_named(_action._activeAction._objectNameId)))
 		text_show(61029);
 	else if (player_said_1(classic_videos) || player_said_1(more_classic_videos) || player_said_1(drama_videos)
 		|| player_said_1(new_release_videos) || player_said_1(porno_videos) || player_said_1(educational_videos)

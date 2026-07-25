@@ -38,14 +38,14 @@ static void room_388_init() {
 	if (_globals[kAfterHavoc])
 		_scene->_hotspots.activate(words_sauropod, false);
 	else {
-		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('b', 0));
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(kernel_name('b', 0));
 		_globals._sequenceIndexes[0] = _scene->_sequences.startCycle(_globals._spriteIndexes[0], false, 1);
 	}
 
-	_game._player._visible = false;
+	player.walker_visible = false;
 	pal_change_color(252, 63, 30, 20);
 	pal_change_color(253, 45, 15, 12);
-	_game.loadQuoteSet(0x154, 0x155, 0x156, 0x157, 0x158, 0);
+	kernel.quotes = quote_load(0x154, 0x155, 0x156, 0x157, 0x158, 0);
 
 	section_3_music();
 }
@@ -54,22 +54,22 @@ static void room_388_parser() {
 	if (player_said_2(return_to, air_shaft))
 		_scene->_nextSceneId = 313;
 	else if (player_said_2(talkto, sauropod)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(160, 136), 0x1110, 32, 1, 120, _game.getQuote(0x154));
+			_scene->_kernelMessages.add(Common::Point(160, 136), 0x1110, 32, 1, 120, quote_string(kernel.quotes, 0x154));
 			break;
 
 		case 1:
-			_scene->_kernelMessages.add(Common::Point(82, 38), 0xFDFC, 0, 0, 300, _game.getQuote(0x156));
-			_scene->_kernelMessages.add(Common::Point(82, 52), 0xFDFC, 0, 0, 300, _game.getQuote(0x157));
-			_scene->_kernelMessages.add(Common::Point(82, 66), 0xFDFC, 0, 2, 300, _game.getQuote(0x158));
+			_scene->_kernelMessages.add(Common::Point(82, 38), 0xFDFC, 0, 0, 300, quote_string(kernel.quotes, 0x156));
+			_scene->_kernelMessages.add(Common::Point(82, 52), 0xFDFC, 0, 0, 300, quote_string(kernel.quotes, 0x157));
+			_scene->_kernelMessages.add(Common::Point(82, 66), 0xFDFC, 0, 2, 300, quote_string(kernel.quotes, 0x158));
 			break;
 
 		case 2:
-			_game._player._stepEnabled = true;
-			_scene->_kernelMessages.add(Common::Point(160, 136), 0x1110, 32, 0, 120, _game.getQuote(0x155));
+			player.commands_allowed = true;
+			_scene->_kernelMessages.add(Common::Point(160, 136), 0x1110, 32, 0, 120, quote_string(kernel.quotes, 0x155));
 			break;
 
 		default:

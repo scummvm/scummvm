@@ -32,22 +32,22 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_303_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('b', 0));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', 1));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('b', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('b', 1));
 
 	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 10, 0, 50, 120);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 10, 0, 0, 0);
 
-	_game._player._visible = false;
-	_game._player._stepEnabled = false;
-	_scene->loadAnimation(formAnimName('a', -1), 60);
+	player.walker_visible = false;
+	player.commands_allowed = false;
+	_scene->loadAnimation(kernel_name('a', -1), 60);
 
 	section_3_music();
 }
 
 static void room_303_daemon() {
-	if (_game._trigger == 60)
+	if (kernel.trigger == 60)
 		_scene->_nextSceneId = 304;
 }
 

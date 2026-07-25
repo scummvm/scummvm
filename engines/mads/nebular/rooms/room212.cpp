@@ -33,11 +33,13 @@ namespace Rooms {
 
 static void room_212_init() {
 	if (_scene->_priorSceneId == 208) {
-		_game._player._playerPos = Common::Point(195, 85);
-		_game._player._facing = FACING_SOUTH;
+		player.x = 195;
+		player.y = 85;
+		player.facing = FACING_SOUTH;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(67, 117);
-		_game._player._facing = FACING_NORTHEAST;
+		player.x = 67;
+		player.y = 117;
+		player.facing = FACING_NORTHEAST;
 	}
 
 	section_2_music();
@@ -49,7 +51,7 @@ static void room_212_daemon() {
 
 static void room_212_pre_parser() {
 	if (player_said_2(walk_through, cave_entrance))
-		_game._player._walkOffScreenSceneId = 111;
+		player.walk_off_edge_to_room = 111;
 }
 
 static void room_212_parser() {

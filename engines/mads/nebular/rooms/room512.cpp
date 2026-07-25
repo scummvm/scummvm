@@ -41,26 +41,26 @@ static Scratch local;
 
 
 static void room_512_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('r', -1));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('r', -1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMRC_9");
 	_globals._spriteIndexes[8] = _scene->_sprites.addSprites("*RXMRC_8");
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 0));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 1));
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 2));
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('x', 3));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('x', 1));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('x', 2));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_name('x', 3));
 
-	if (_game._objects[OBJ_FISHING_ROD]._roomNumber == _scene->_currentSceneId) {
+	if (object[OBJ_FISHING_ROD].location == _scene->_currentSceneId) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
 		local._fishingRodHotspotId = _scene->_dynamicHotspots.add(words_fishing_rod, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._fishingRodHotspotId, Common::Point(199, 101), FACING_NORTHEAST);
 	}
 
-	if (!_game._visitedScenes._sceneRevisited)
+	if (!player.been_here_before)
 		_globals[kRegisterOpen] = false;
 
 	_scene->_hotspots.activate(words_padlock_key, false);
-	if (_game._difficulty == DIFFICULTY_EASY) {
-		if (_game._objects[OBJ_PADLOCK_KEY]._roomNumber == _scene->_currentSceneId) {
+	if (game.difficulty == DIFFICULTY_EASY) {
+		if (object[OBJ_PADLOCK_KEY].location == _scene->_currentSceneId) {
 			_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 10, 0, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 3);
 			local._keyHotspotId = _scene->_dynamicHotspots.add(words_padlock_key, words_walkto, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
@@ -72,7 +72,7 @@ static void room_512_init() {
 			_scene->_hotspots.activate(words_padlock_key, false);
 		}
 	} else if (_globals[kRegisterOpen]) {
-		if (_game._objects[OBJ_PADLOCK_KEY]._roomNumber == _scene->_currentSceneId) {
+		if (object[OBJ_PADLOCK_KEY].location == _scene->_currentSceneId) {
 			_scene->_hotspots.activate(words_padlock_key, true);
 			_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 3);
@@ -85,8 +85,9 @@ static void room_512_init() {
 		_scene->_hotspots.activate(words_padlock_key, false);
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(144, 152);
-		_game._player._facing = FACING_NORTHEAST;
+		player.x = 144;
+		player.y = 152;
+		player.facing = FACING_NORTHEAST;
 	}
 
 	section_5_music();
@@ -96,11 +97,11 @@ static void room_512_parser() {
 	if (player_said_2(walk, outside))
 		_scene->_nextSceneId = 511;
 	else if (player_said_2(take, fishing_rod)) {
-		if (_game._trigger || !_game._objects.isInInventory(OBJ_FISHING_ROD)) {
-			switch (_game._trigger) {
+		if (kernel.trigger || !player_has(OBJ_FISHING_ROD)) {
+			switch (kernel.trigger) {
 			case 0:
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
+				player.commands_allowed = false;
+				player.walker_visible = false;
 				_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
@@ -111,14 +112,14 @@ static void room_512_parser() {
 				g_engine->_soundManager->command(9, 0);
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 				_scene->_dynamicHotspots.remove(local._fishingRodHotspotId);
-				_game._objects.addToInventory(OBJ_FISHING_ROD);
+				inter_give_to_player(OBJ_FISHING_ROD);
 				object_examine(OBJ_FISHING_ROD, 51217, 0);
 				break;
 
 			case 2:
 				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
-				_game._player._visible = true;
-				_game._player._stepEnabled = true;
+				player.walker_visible = true;
+				player.commands_allowed = true;
 				break;
 
 			default:
@@ -127,16 +128,16 @@ static void room_512_parser() {
 		}
 	} else if (player_said_2(open, cash_register)) {
 		if (!_globals[kRegisterOpen]) {
-			switch (_game._trigger) {
+			switch (kernel.trigger) {
 			case 0:
 				text_show(51236);
-				_game._player._stepEnabled = false;
-				_game._player._facing = FACING_NORTH;
+				player.commands_allowed = false;
+				player.facing = FACING_NORTH;
 				_scene->_sequences.addTimer(15, 1);
 				break;
 
 			case 1:
-				_game._player._visible = false;
+				player.walker_visible = false;
 				_globals._sequenceIndexes[8] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[8], false, 9, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[8], 1, 3);
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[8]);
@@ -145,13 +146,13 @@ static void room_512_parser() {
 
 			case 2:
 				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[8]);
-				_game._player._visible = true;
+				player.walker_visible = true;
 				_scene->_sequences.addTimer(30, 3);
 				break;
 
 			case 3:
-				_game._player._facing = FACING_NORTHEAST;
-				if (!_game._objects.isInRoom(OBJ_PADLOCK_KEY) || (_game._difficulty == DIFFICULTY_EASY)) {
+				player.facing = FACING_NORTHEAST;
+				if (!object_is_here(OBJ_PADLOCK_KEY) || (game.difficulty == DIFFICULTY_EASY)) {
 					_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 12, 1, 0, 0);
 					_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
@@ -178,7 +179,7 @@ static void room_512_parser() {
 
 			case 6:
 				_globals[kRegisterOpen] = true;
-				_game._player._stepEnabled = true;
+				player.commands_allowed = true;
 				break;
 
 			default:
@@ -187,10 +188,10 @@ static void room_512_parser() {
 		} else
 			text_show(51239);
 	} else if (player_said_2(close, cash_register) && _globals[kRegisterOpen]) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 10, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 2);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
@@ -199,8 +200,8 @@ static void room_512_parser() {
 
 		case 1:
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
-			_game._player._visible = true;
-			if (!_game._objects.isInRoom(OBJ_PADLOCK_KEY) || _game._difficulty == DIFFICULTY_EASY) {
+			player.walker_visible = true;
+			if (!object_is_here(OBJ_PADLOCK_KEY) || game.difficulty == DIFFICULTY_EASY) {
 				_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 				_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 12, 1, 0, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
@@ -216,21 +217,21 @@ static void room_512_parser() {
 
 		case 2:
 			_globals[kRegisterOpen] = false;
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			break;
 
 		default:
 			break;
 		}
 	} else if (player_said_2(take, padlock_key)) {
-		if (_game._trigger || !_game._objects.isInInventory(OBJ_PADLOCK_KEY)) {
-			switch (_game._trigger) {
+		if (kernel.trigger || !player_has(OBJ_PADLOCK_KEY)) {
+			switch (kernel.trigger) {
 			case 0:
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
+				player.commands_allowed = false;
+				player.walker_visible = false;
 
 				int endVal;
-				if (_game._player._playerPos == Common::Point(218, 152))
+				if (Common::Point(player.x, player.y) == Common::Point(218, 152))
 					endVal = 3;
 				else
 					endVal = 2;
@@ -243,7 +244,7 @@ static void room_512_parser() {
 				break;
 
 			case 1:
-				if (_game._player._playerPos == Common::Point(218, 152)) {
+				if (Common::Point(player.x, player.y) == Common::Point(218, 152)) {
 					_scene->_sequences.remove(_globals._sequenceIndexes[6]);
 					_scene->_dynamicHotspots.remove(local._keyHotspotId);
 				} else {
@@ -253,14 +254,14 @@ static void room_512_parser() {
 					_scene->_hotspots.activate(words_padlock_key, false);
 				}
 				g_engine->_soundManager->command(9, 0);
-				_game._objects.addToInventory(OBJ_PADLOCK_KEY);
+				inter_give_to_player(OBJ_PADLOCK_KEY);
 				object_examine(OBJ_PADLOCK_KEY, 51226, 0);
 				break;
 
 			case 2:
 				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
-				_game._player._visible = true;
-				_game._player._stepEnabled = true;
+				player.walker_visible = true;
+				player.commands_allowed = true;
 				break;
 
 			default:
@@ -269,7 +270,7 @@ static void room_512_parser() {
 		}
 	} else if (_action._lookFlag)
 		text_show(51225);
-	else if (player_said_2(look, padlock_key) && _game._objects.isInRoom(OBJ_PADLOCK_KEY))
+	else if (player_said_2(look, padlock_key) && object_is_here(OBJ_PADLOCK_KEY))
 		text_show(51215);
 	else if (player_said_2(look, fishing_rod) && (!_scene->_animation[0] ||
 		_scene->_animation[0]->getCurrentFrame() == 4))
@@ -293,7 +294,7 @@ static void room_512_parser() {
 	else if (player_said_2(take, poster))
 		text_show(51228);
 	else if (player_said_2(look, trophy)) {
-		if (_game._visitedScenes.exists(604))
+		if (player_has_been_in_room(604))
 			text_show(51229);
 		else
 			text_show(51230);
@@ -316,7 +317,7 @@ static void room_512_parser() {
 	else if (player_said_2(look, cash_register)) {
 		if (!_globals[kRegisterOpen])
 			text_show(51212);
-		else if (_game._objects.isInRoom(OBJ_PADLOCK_KEY))
+		else if (object_is_here(OBJ_PADLOCK_KEY))
 			text_show(51214);
 		else
 			text_show(51213);

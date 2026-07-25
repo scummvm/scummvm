@@ -32,25 +32,29 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_360_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(Resources::formatName(307, 'X', 0, EXT_SS, ""));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_full_name(307, 'X', 0, "", EXT_SS));
 	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 	_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(127, 78));
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 15);
 
-	if (_scene->_priorSceneId == 359)
-		_game._player._playerPos = Common::Point(304, 143);
-	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
-		_game._player._playerPos = Common::Point(13, 141);
+	if (_scene->_priorSceneId == 359) {
+		player.x = 304;
+		player.y = 143;
+	}
+	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+		player.x = 13;
+		player.y = 141;
+	}
 
 	section_3_music();
 }
 
 static void room_360_pre_parser() {
 	if (player_said_2(walk_down, corridor_to_east))
-		_game._player._walkOffScreenSceneId = 359;
+		player.walk_off_edge_to_room = 359;
 
 	if (player_said_2(walk_down, corridor_to_west))
-		_game._player._walkOffScreenSceneId = 361;
+		player.walk_off_edge_to_room = 361;
 }
 
 static void room_360_parser() {

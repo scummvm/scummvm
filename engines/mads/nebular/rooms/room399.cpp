@@ -33,7 +33,7 @@ namespace Rooms {
 
 static void room_399_init() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
-	_game._player._visible = false;
+	player.walker_visible = false;
 	section_3_music();
 }
 
@@ -42,7 +42,7 @@ static void room_399_parser() {
 		_scene->_nextSceneId = 313;
 	else if (player_said_2(look_through, grate)) {
 		if (_globals[kAfterHavoc]) {
-			if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
+			if ((game.difficulty != DIFFICULTY_HARD) && (object[OBJ_SECURITY_CARD].location == 359))
 				text_show(38911);
 			else
 				text_show(38912);

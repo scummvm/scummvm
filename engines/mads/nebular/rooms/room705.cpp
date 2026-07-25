@@ -80,10 +80,10 @@ static void handleBottleInterface() {
 
 static void setBottleSequence() {
 	_scene->_userInterface.setup(kInputBuildingSentences);
-	_game._player._stepEnabled = false;
+	player.commands_allowed = false;
 	_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
-	_scene->loadAnimation(formAnimName('F', -1), 90);
+	kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+	_scene->loadAnimation(kernel_name('F', -1), 90);
 }
 
 static void handleFillBottle(int quote) {
@@ -118,34 +118,34 @@ static void handleFillBottle(int quote) {
 }
 
 static void room_705_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('b', 0));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', 1));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('b', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('b', 1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('a', 0));
 
-	_game._player._visible = false;
+	player.walker_visible = false;
 
 	if (_scene->_priorSceneId == 706) {
-		_game._player._stepEnabled = false;
+		player.commands_allowed = false;
 		_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 4);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._stepEnabled = false;
+		player.commands_allowed = false;
 		_scene->_sequences.addTimer(1, 80);
 		g_engine->_soundManager->command(28, 0);
 	} else
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 
 	if (_scene->_roomChanged)
-		_game._objects.addToInventory(OBJ_BOTTLE);
+		inter_give_to_player(OBJ_BOTTLE);
 
-	_game.loadQuoteSet(0x311, 0x312, 0x313, 0x314, 0x315, 0);
+	kernel.quotes = quote_load(0x311, 0x312, 0x313, 0x314, 0x315, 0);
 	local._dialog1.setup(0x98, 0x311, 0x312, 0x313, 0x314, 0x315, 0);
 	section_7_music();
 }
 
 static void room_705_daemon() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 70:
 		_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 4);
@@ -157,7 +157,7 @@ static void room_705_daemon() {
 		int syncIdx = _globals._sequenceIndexes[3];
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 	}
 	break;
 
@@ -165,7 +165,7 @@ static void room_705_daemon() {
 		break;
 	}
 
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 80:
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 1, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 2);
@@ -178,7 +178,7 @@ static void room_705_daemon() {
 		int syncIdx = _globals._sequenceIndexes[1];
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 	}
 	break;
 
@@ -186,7 +186,7 @@ static void room_705_daemon() {
 		break;
 	}
 
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 90:
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 		_scene->_sequences.addTimer(30, 91);
@@ -217,7 +217,7 @@ static void room_705_daemon() {
 		default:
 			break;
 		}
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 		break;
 
 	default:
@@ -226,12 +226,12 @@ static void room_705_daemon() {
 }
 
 static void room_705_parser() {
-	if (_game._screenObjects._inputMode == kInputConversation)
+	if (inter_input_mode == kInputConversation)
 		handleFillBottle(_action._activeAction._verbId);
 	else if (player_said_2(steer_towards, open_water_to_south)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 2);
@@ -246,7 +246,7 @@ static void room_705_parser() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 2);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], syncIdx);
 			_scene->_nextSceneId = 704;
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 		}
 		break;
 
@@ -254,9 +254,9 @@ static void room_705_parser() {
 			break;
 		}
 	} else if (player_said_2(climb_through, window)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 16);
@@ -269,7 +269,7 @@ static void room_705_parser() {
 			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 16);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
 			_scene->_nextSceneId = 706;
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 		}
 		break;
 

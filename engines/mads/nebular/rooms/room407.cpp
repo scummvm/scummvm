@@ -45,46 +45,48 @@ static void room_407_init() {
 		local._fromNorth = false;
 
 	if (_scene->_priorSceneId == 318) {
-		_game._player._playerPos = Common::Point(172, 92);
-		_game._player._facing = FACING_SOUTH;
+		player.x = 172;
+		player.y = 92;
+		player.facing = FACING_SOUTH;
 		local._fromNorth = true;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(172, 132);
-		_game._player._facing = FACING_NORTH;
+		player.x = 172;
+		player.y = 132;
+		player.facing = FACING_NORTH;
 	}
 
-	_game.loadQuoteSet(0x250, 0);
+	kernel.quotes = quote_load(0x250, 0);
 	section_4_music();
 }
 
 static void room_407_daemon() {
-	if (_game._trigger == 70) {
+	if (kernel.trigger == 70) {
 		_scene->_nextSceneId = 318;
 		_scene->_reloadSceneFlag = true;
 	}
 
-	if (_game._trigger == 80) {
-		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
-		_game._player._stepEnabled = true;
-		_game._player._visible = true;
+	if (kernel.trigger == 80) {
+		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.commands_allowed = true;
+		player.walker_visible = true;
 		local._fromNorth = false;
-		_game._player.walk(Common::Point(173, 104), FACING_SOUTH);
+		player_walk(173, 104, FACING_SOUTH);
 	}
 }
 
 static void room_407_pre_parser() {
 	if (player_said_1(take))
-		_game._player._needToWalk = false;
+		player.need_to_walk = false;
 
 	if (player_said_2(look, door))
-		_game._player._needToWalk = true;
+		player.need_to_walk = true;
 
 	if (player_said_2(walk_down, corridor_to_north)) {
-		_game._player.walk(Common::Point(172, 91), FACING_NORTH);
+		player_walk(172, 91, FACING_NORTH);
 		local._fromNorth = false;
 	}
 
-	if (_game._player._needToWalk && local._fromNorth) {
+	if (player.need_to_walk && local._fromNorth) {
 		if (_globals[kSexOfRex] == REX_MALE) {
 			local._dest_x = 171;
 			local._dest_y = 95;
@@ -92,29 +94,29 @@ static void room_407_pre_parser() {
 			local._dest_x = 173;
 			local._dest_y = 96;
 		}
-		_game._player.walk(Common::Point(local._dest_x, local._dest_y), FACING_SOUTH);
+		player_walk(local._dest_x, local._dest_y, FACING_SOUTH);
 	}
 }
 
 static void room_407_parser() {
-	if (_game._player._playerPos.x == local._dest_x && _game._player._playerPos.y == local._dest_y && local._fromNorth) {
+	if (player.x == local._dest_x && player.y == local._dest_y && local._fromNorth) {
 		if (_globals[kSexOfRex] == REX_MALE) {
-			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			g_engine->_soundManager->command(21, 0);
-			_scene->loadAnimation(formAnimName('s', 1), 70);
+			_scene->loadAnimation(kernel_name('s', 1), 70);
 			_globals[kHasBeenScanned] = true;
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, _game.getQuote(592));
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, quote_string(kernel.quotes, 592));
 			g_engine->_soundManager->command(22, 0);
 		}
 
 		if (_globals[kSexOfRex] == REX_FEMALE) {
-			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			g_engine->_soundManager->command(21, 0);
-			_scene->loadAnimation(formAnimName('s', 2), 80);
+			_scene->loadAnimation(kernel_name('s', 2), 80);
 			g_engine->_soundManager->command(23, 0);
 			_globals[kHasBeenScanned] = true;
 		}

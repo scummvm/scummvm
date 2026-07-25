@@ -41,30 +41,37 @@ static void room_354_init() {
 	_globals[kAfterHavoc] = true;
 	_globals[kTeleporterRoom + 1] = 351;
 
-	if (_scene->_priorSceneId == 361)
-		_game._player._playerPos = Common::Point(231, 110);
+	if (_scene->_priorSceneId == 361) {
+		player.x = 231;
+		player.y = 110;
+	}
 	else if (_scene->_priorSceneId == 401) {
-		_game._player._playerPos = Common::Point(106, 152);
-		_game._player._facing = FACING_NORTH;
-	} else if (_scene->_priorSceneId == 316)
-		_game._player._playerPos = Common::Point(71, 107);
-	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
-		_game._player._playerPos = Common::Point(167, 57);
+		player.x = 106;
+		player.y = 152;
+		player.facing = FACING_NORTH;
+	} else if (_scene->_priorSceneId == 316) {
+		player.x = 71;
+		player.y = 107;
+	}
+	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+		player.x = 167;
+		player.y = 57;
+	}
 
 	section_3_music();
 }
 
 static void room_354_pre_parser() {
 	if (player_said_2(walk_down, corridor_to_south))
-		_game._player._walkOffScreenSceneId = 401;
+		player.walk_off_edge_to_room = 401;
 }
 
 static void room_354_parser() {
 	if (_action._lookFlag)
 		text_show(35414);
 	else if (player_said_2(walk_down, corridor_to_north)) {
-		_game._player.startWalking(Common::Point(208, 0), FACING_NORTHEAST);
-		_game._player._walkOffScreenSceneId = 353;
+		player_start_walking(208, 0, FACING_NORTHEAST);
+		player.walk_off_edge_to_room = 353;
 	} else if (player_said_2(walk_down, corridor_to_east))
 		_scene->_nextSceneId = 361;
 	else if (player_said_2(walk_down, corridor_to_west))

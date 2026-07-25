@@ -64,14 +64,14 @@ static void room_804_init() {
 		_globals[kWindowFixed] = 0;
 	}
 
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 0));
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 1));
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('x', 2));
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 3));
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('x', 4));
-	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('f', 1));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('x', 1));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_name('x', 2));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('x', 3));
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(kernel_name('x', 4));
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(kernel_name('f', 1));
 
-	_game.loadQuoteSet(791, 0);
+	kernel.quotes = quote_load(791, 0);
 
 	if (_globals[kInSpace]) {
 		if (_globals[kWindowFixed]) {
@@ -81,7 +81,7 @@ static void room_804_init() {
 			_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, 1);
 			_globals._sequenceIndexes[7] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[7], false, 4, 0, 0, 0);
 			_scene->_sequences.addTimer(160, 70);
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 		}
 	} else {
 		if (_globals[kBeamIsUp]) {
@@ -97,7 +97,7 @@ static void room_804_init() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
 	}
 
-	_scene->loadAnimation(Resources::formatName(804, 'r', 1, EXT_AA, ""));
+	_scene->loadAnimation(kernel_full_name(804, 'r', 1, "", EXT_AA));
 
 	section_8_music();
 
@@ -123,14 +123,14 @@ static void room_804_daemon() {
 			local._movingThrottle = false;
 		}
 
-		if (_game._trigger == 70) {
+		if (kernel.trigger == 70) {
 			local._resetFrame = 42;
 		}
 
 		if (_scene->_animation[0]->getCurrentFrame() == 65)
 			_scene->_sequences.remove(_globals._sequenceIndexes[7]);
 
-		switch (_game._storyMode) {
+		switch (config_file.naughtiness) {
 		case STORYMODE_NAUGHTY:
 		default:
 			if (_scene->_animation[0]->getCurrentFrame() == 81) {
@@ -139,7 +139,7 @@ static void room_804_daemon() {
 				_globals[kBeamIsUp] = true;
 
 				//assert(!_globals[kCopyProtectFailed]);
-				_game._winStatus = 4;
+				win_status = 4;
 				return;
 			}
 			break;
@@ -151,7 +151,7 @@ static void room_804_daemon() {
 				_globals[kBeamIsUp] = true;
 
 				assert(!_globals[kCopyProtectFailed]);
-				_game._winStatus = 4;
+				win_status = 4;
 				return;
 			}
 		}
@@ -169,7 +169,7 @@ static void room_804_daemon() {
 			}
 		}
 
-		if (_game._trigger == 80) {
+		if (kernel.trigger == 80) {
 			_scene->_nextSceneId = 803;
 		}
 
@@ -181,8 +181,8 @@ static void room_804_daemon() {
 
 		if (_scene->_animation[0]->getCurrentFrame() == 10) {
 			local._resetFrame = 0;
-			_game._player._stepEnabled = true;
-			_game._objects.setRoom(OBJ_POLYCEMENT, NOWHERE);
+			player.commands_allowed = true;
+			inter_move_object(OBJ_POLYCEMENT, NOWHERE);
 		}
 
 		// FIXME: Original doesn't have resetFrame check. Check why this has been needed
@@ -240,16 +240,16 @@ static void room_804_daemon() {
 			} else {
 				local._messWithThrottle = false;
 				local._throttleCounter = 0;
-				_game._player._stepEnabled = true;
+				player.commands_allowed = true;
 			}
 		}
 	}
 
-	if (_game._trigger == 120) {
+	if (kernel.trigger == 120) {
 		text_show(80422);
 	}
 
-	if (_game._trigger == 110) {
+	if (kernel.trigger == 110) {
 		text_show(80426);
 	}
 
@@ -265,7 +265,7 @@ static void room_804_daemon() {
 		}
 	}
 
-	if (_game._trigger == 90) {
+	if (kernel.trigger == 90) {
 		_scene->_nextSceneId = 803;
 	}
 
@@ -300,18 +300,18 @@ static void room_804_parser() {
 			}
 		}
 	} else if (player_said_2(pull, throttle)) {
-		_game._player._stepEnabled = false;
+		player.commands_allowed = false;
 		if (_globals[kBeamIsUp]) {
-			if (!_game._objects.isInInventory(OBJ_VASE) && _globals[kWindowFixed]) {
+			if (!player_has(OBJ_VASE) && _globals[kWindowFixed]) {
 				text_show(80423);
-				_game._player._stepEnabled = true;
+				player.commands_allowed = true;
 			} else {
 				_action._inProgress = false;
 
 				text_show(80424);
 				local._pullThrottleReally = true;
 				_scene->_kernelMessages.add(Common::Point(78, 75), 0x1110, 0, 0,
-					120, _game.getQuote(791));
+					120, quote_string(kernel.quotes, 791));
 			}
 		} else {
 			local._messWithThrottle = true;
@@ -320,7 +320,7 @@ static void room_804_parser() {
 		player_said_3(put, polycement, crack)) {
 		if (!_globals[kWindowFixed]) {
 			local._resetFrame = 2;
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 		}
 	} else if (player_said_2(exit, ship)) {
 		_globals[kExitShip] = true;
@@ -331,7 +331,7 @@ static void room_804_parser() {
 			g_engine->_soundManager->command(15, 0);
 			_globals[kBeamIsUp] = false;
 		}
-		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(2, 90);
 	} else  if (_action._lookFlag) {
 		text_show(80410);

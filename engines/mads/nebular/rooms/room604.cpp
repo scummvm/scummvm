@@ -45,9 +45,9 @@ static Scratch local;
 
 
 static void room_604_init() {
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('c', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('c', 0));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXCD_9");
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(Resources::formatName(620, 'b', 0, EXT_SS, ""));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_full_name(620, 'b', 0, "", EXT_SS));
 	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RXMRC_9");
 
 	if (_globals[kTimebombStatus] == 1) {
@@ -57,20 +57,21 @@ static void room_604_init() {
 	}
 
 	if (_scene->_roomChanged)
-		_game._objects.addToInventory(OBJ_TIMEBOMB);
+		inter_give_to_player(OBJ_TIMEBOMB);
 
 	pal_change_color(252, 63, 37, 26);
 	pal_change_color(253, 45, 24, 17);
 	local._animationActiveFl = false;
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(72, 149);
-		_game._player._facing = FACING_NORTHEAST;
-		_game._player._visible = false;
-		_game._player._stepEnabled = false;
+		player.x = 72;
+		player.y = 149;
+		player.facing = FACING_NORTHEAST;
+		player.walker_visible = false;
+		player.commands_allowed = false;
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
-		_scene->loadAnimation(formAnimName('R', 1), 70);
+		_scene->loadAnimation(kernel_name('R', 1), 70);
 		local._animationActiveFl = true;
 	} else {
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
@@ -81,14 +82,14 @@ static void room_604_init() {
 	local._monsterActive = false;
 
 	section_6_music();
-	_game.loadQuoteSet(0x2E7, 0x2E8, 0x2E9, 0x2EA, 0x2EB, 0x2EC, 0x2ED, 0x2EE, 0x2EF, 0x2F0, 0);
+	kernel.quotes = quote_load(0x2E7, 0x2E8, 0x2E9, 0x2EA, 0x2EB, 0x2EC, 0x2ED, 0x2EE, 0x2EF, 0x2F0, 0);
 }
 
 static void room_604_daemon() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 70:
-		_game._player._visible = true;
-		_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
+		player.walker_visible = true;
+		player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
 		_scene->_sequences.addTimer(30, 71);
 		break;
 
@@ -102,7 +103,7 @@ static void room_604_daemon() {
 	case 72:
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 		local._animationActiveFl = false;
 		break;
 
@@ -121,10 +122,10 @@ static void room_604_daemon() {
 			case 174:
 			{
 				int randVal = g_engine->getRandomNumber(1, 1000);
-				if ((randVal <= 450) && (_game._player._special)) {
-					if (_game._player._special == 1)
+				if ((randVal <= 450) && (player.special_code)) {
+					if (player.special_code == 1)
 						nextMonsterFrame = 50;
-					else if (_game._player._special == 2)
+					else if (player.special_code == 2)
 						nextMonsterFrame = 84;
 					else
 						nextMonsterFrame = 137;
@@ -159,19 +160,19 @@ static void room_604_daemon() {
 
 	if ((!local._monsterActive && !local._animationActiveFl) && (_scene->_frameStartTime > (local._monsterTimer + 4))) {
 		local._monsterTimer = _scene->_frameStartTime;
-		if ((g_engine->getRandomNumber(1, 1000) < 25) || !_game._visitedScenes._sceneRevisited) {
+		if ((g_engine->getRandomNumber(1, 1000) < 25) || !player.been_here_before) {
 			local._monsterActive = true;
 			_scene->freeAnimation();
-			_scene->loadAnimation(formAnimName('m', -1));
+			_scene->loadAnimation(kernel_name('m', -1));
 		}
 	}
 }
 
 static void handleBombActions() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 0:
-		_game._player._stepEnabled = false;
-		_game._player._visible = false;
+		player.commands_allowed = false;
+		player.walker_visible = false;
 		_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], false, 9, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 1, 3);
 		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
@@ -187,19 +188,19 @@ static void handleBombActions() {
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, -1);
 		local._timebombHotspotId = _scene->_dynamicHotspots.add(words_timebomb, words_walkto, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._timebombHotspotId, Common::Point(166, 118), FACING_NORTHEAST);
-		_game._objects.setRoom(OBJ_TIMEBOMB, _scene->_currentSceneId);
+		inter_move_object(OBJ_TIMEBOMB, _scene->_currentSceneId);
 		break;
 
 	case 2:
 		_scene->_sequences.remove(_globals._sequenceIndexes[6]);
 		_scene->_dynamicHotspots.remove(local._timebombHotspotId);
-		_game._objects.addToInventory(OBJ_TIMEBOMB);
+		inter_give_to_player(OBJ_TIMEBOMB);
 		break;
 
 	case 3:
 		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[5]);
-		_game._player._visible = true;
-		_game._player._stepEnabled = true;
+		player.walker_visible = true;
+		player.commands_allowed = true;
 		if (local._bombMode == 1) {
 			text_show(60421);
 			_globals[kTimebombStatus] = TIMEBOMB_ACTIVATED;
@@ -218,9 +219,9 @@ static void handleBombActions() {
 
 static void room_604_parser() {
 	if (player_said_2(get_inside, car)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
@@ -238,7 +239,7 @@ static void room_604_parser() {
 		break;
 
 		case 2:
-			_game._player._visible = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 10, 1, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
@@ -262,25 +263,25 @@ static void room_604_parser() {
 		text_show(60420);
 	else if (player_said_3(put, timebomb, ledge) || player_said_3(put, timebomb, viewport)) {
 		local._bombMode = 1;
-		if ((_game._difficulty == DIFFICULTY_HARD) || _globals[kWarnedFloodCity])
+		if ((game.difficulty == DIFFICULTY_HARD) || _globals[kWarnedFloodCity])
 			handleBombActions();
 		else if (
-			(_game._objects.isInInventory(OBJ_POLYCEMENT) && (_game._objects.isInInventory(OBJ_CHICKEN) || _game._objects.isInInventory(OBJ_CHICKEN_BOMB)))
-			&& (_globals[kLineStatus] == LINE_TIED || (_game._difficulty == DIFFICULTY_EASY && !_globals[kBoatRaised]))
+			(player_has(OBJ_POLYCEMENT) && (player_has(OBJ_CHICKEN) || player_has(OBJ_CHICKEN_BOMB)))
+			&& (_globals[kLineStatus] == LINE_TIED || (game.difficulty == DIFFICULTY_EASY && !_globals[kBoatRaised]))
 			)
 			// The original can get in an impossible state at this point, if the player has
 			// combined the chicken with the bomb before placing the timer bomb on the ledge.
 			// Therefore, we also allow the player to place the bomb if the chicken bomb is
 			// in the inventory.
 			handleBombActions();
-		else if (_game._difficulty == DIFFICULTY_EASY)
+		else if (game.difficulty == DIFFICULTY_EASY)
 			text_show(60424);
 		else {
 			text_show(60425);
 			_globals[kWarnedFloodCity] = true;
 		}
 	} else if (player_said_2(take, timebomb)) {
-		if (_game._trigger || !_game._objects.isInInventory(OBJ_TIMEBOMB)) {
+		if (kernel.trigger || !player_has(OBJ_TIMEBOMB)) {
 			local._bombMode = 2;
 			handleBombActions();
 		}

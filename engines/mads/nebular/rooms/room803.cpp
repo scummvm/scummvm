@@ -33,15 +33,15 @@ namespace Rooms {
 
 static void room_803_init() {
 	_globals[kBetweenRooms] = false;
-	_game._player._visible = false;
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('f', 1));
+	player.walker_visible = false;
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('f', 1));
 	_globals._spriteIndexes[9] = _scene->_sprites.addSprites("*RXMBD_2");
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('d', 1));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_name('d', 1));
 
-	_game.loadQuoteSet(0x31B, 0x31C, 0x31D, 0x31E, 0x31F, 0x320, 0x321, 0x322, 0);
+	kernel.quotes = quote_load(0x31B, 0x31C, 0x31D, 0x31E, 0x31F, 0x320, 0x321, 0x322, 0);
 
 	if (_globals[kHoppyDead]) {
-		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('e', 1));
+		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(kernel_name('e', 1));
 		_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, 1);
 		int idx = _scene->_dynamicHotspots.add(words_guts, words_walkto, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(66, 123), FACING_SOUTH);
@@ -56,16 +56,17 @@ static void room_803_init() {
 	if (!_globals[kFromCockpit]) {
 		if (!_globals[kReturnFromCut]) {
 			if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-				_game._player._playerPos = Common::Point(15, 130);
-				_game._player._facing = FACING_EAST;
+				player.x = 15;
+				player.y = 130;
+				player.facing = FACING_EAST;
 			}
-			_game._player._visible = true;
+			player.walker_visible = true;
 		} else if (!_globals[kBeamIsUp]) {
-			_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 1));
-			_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 3));
-			_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('a', 2));
-			_game._player._visible = false;
-			_game._player._stepEnabled = false;
+			_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('a', 1));
+			_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('a', 3));
+			_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('a', 2));
+			player.walker_visible = false;
+			player.commands_allowed = false;
 			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 15);
 			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 8, 1, 0, 0);
@@ -76,13 +77,13 @@ static void room_803_init() {
 
 		if (_globals[kBeamIsUp] && !_globals[kReturnFromCut]) {
 			if (_globals[kForceBeamDown])
-				_game._player._visible = false;
+				player.walker_visible = false;
 			else
-				_game._player._visible = true;
+				player.walker_visible = true;
 
-			_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('b', 1));
+			_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('b', 1));
 			g_engine->_soundManager->command(15, 0);
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 12, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 1, 6);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);
@@ -90,28 +91,29 @@ static void room_803_init() {
 		}
 	} else if (!_globals[kExitShip]) {
 		if (!_globals[kBeamIsUp]) {
-			_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 1));
-			_game._player._visible = false;
-			_game._player._stepEnabled = false;
+			_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('a', 1));
+			player.walker_visible = false;
+			player.commands_allowed = false;
 			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 8, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 1);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 130);
 			g_engine->_soundManager->command(14, 0);
 		} else {
-			_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('c', 1));
-			_game._player._visible = false;
-			_game._player._stepEnabled = false;
+			_globals._spriteIndexes[8] = _scene->_sprites.addSprites(kernel_name('c', 1));
+			player.walker_visible = false;
+			player.commands_allowed = false;
 			_globals._sequenceIndexes[8] = _scene->_sequences.startCycle(_globals._spriteIndexes[8], false, 1);
 			_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 8, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 1);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_EXPIRE, 0, 140);
 		}
 	} else {
-		_game._player._stepEnabled = false;
-		_game._player._playerPos = Common::Point(197, 96);
-		_game._player._facing = FACING_SOUTHWEST;
-		_game._player._visible = true;
-		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('d', 1));
+		player.commands_allowed = false;
+		player.x = 197;
+		player.y = 96;
+		player.facing = FACING_SOUTHWEST;
+		player.walker_visible = true;
+		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_name('d', 1));
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, 19);
 		_scene->_sequences.addTimer(1, 150);
 	}
@@ -120,12 +122,12 @@ static void room_803_init() {
 }
 
 static void room_803_daemon() {
-	if (_game._trigger == 120) {
+	if (kernel.trigger == 120) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, 19);
 		_scene->_nextSceneId = 804;
 	}
 
-	if (_game._trigger == 100) {
+	if (kernel.trigger == 100) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 8, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 2, 2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
@@ -148,11 +150,11 @@ static void room_803_daemon() {
 			if (_globals[kForceBeamDown])
 				_scene->_nextSceneId = _scene->_priorSceneId;
 			else
-				_game._player._stepEnabled = true;
+				player.commands_allowed = true;
 		}
 	}
 
-	if (_game._trigger == 101) {
+	if (kernel.trigger == 101) {
 		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -2);
 		int idx = _scene->_dynamicHotspots.add(words_guts, words_walkto, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(66, 123), FACING_SOUTH);
@@ -167,10 +169,10 @@ static void room_803_daemon() {
 		if (_globals[kForceBeamDown])
 			_scene->_nextSceneId = _scene->_priorSceneId;
 		else
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 	}
 
-	if (_game._trigger == 80) {
+	if (kernel.trigger == 80) {
 		if (!_globals[kHoppyDead])
 			_scene->_sequences.addTimer(350, 70);
 
@@ -179,16 +181,16 @@ static void room_803_daemon() {
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 90);
 	}
 
-	if (_game._trigger == 70) {
+	if (kernel.trigger == 70) {
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 		g_engine->_soundManager->command(31, 0);
 	}
 
-	if (_game._trigger == 71)
+	if (kernel.trigger == 71)
 		_scene->_sequences.addTimer(200, 110);
 
-	if (_game._trigger == 90) {
+	if (kernel.trigger == 90) {
 		int syncIdx = _globals._sequenceIndexes[4];
 		_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 15, 0, 0, 0);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], syncIdx);
@@ -197,32 +199,32 @@ static void room_803_daemon() {
 			_scene->_sequences.addTimer(200, 110);
 	}
 
-	if (_game._trigger == 110)
+	if (kernel.trigger == 110)
 		_scene->_nextSceneId = 808;
 
-	if (_game._trigger == 130) {
+	if (kernel.trigger == 130) {
 		_globals[kBeamIsUp] = true;
 		_scene->_nextSceneId = 804;
 	}
 
-	if (_game._trigger == 140) {
+	if (kernel.trigger == 140) {
 		if (!_globals[kWindowFixed]) {
 			_scene->_nextSceneId = 810;
 			_globals[kInSpace] = true;
 		} else {
 			if (!_globals[kShieldModInstalled])
-				_game._winStatus = 1;
+				win_status = 1;
 			else if (!_globals[kTargetModInstalled])
-				_game._winStatus = 2;
+				win_status = 2;
 			else
-				_game._winStatus = 3;
+				win_status = 3;
 
 			game.going = false;
 			return;
 		}
 	}
 
-	if (_game._trigger == 150) {
+	if (kernel.trigger == 150) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[6]);
 		g_engine->_soundManager->command(18, 0);
 		_globals._sequenceIndexes[6] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[6], false, 8, 1, 0, 0);
@@ -231,28 +233,28 @@ static void room_803_daemon() {
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 151);
 	}
 
-	if (_game._trigger == 151) {
+	if (kernel.trigger == 151) {
 		_globals[kBeamIsUp] = false;
 		_globals[kFromCockpit] = false;
 		_globals[kExitShip] = false;
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 	}
 }
 
 static void room_803_pre_parser() {
 	if (player_said_2(walk_down, path_to_west))
-		_game._player._walkOffScreenSceneId = 802;
+		player.walk_off_edge_to_room = 802;
 
 	if (player_said_2(take, ship))
-		_game._player._needToWalk = false;
+		player.need_to_walk = false;
 }
 
 static void room_803_parser() {
 	if (player_said_2(take, guts)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], true, 6, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[9], 1, 4);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[9]);
@@ -272,7 +274,7 @@ static void room_803_parser() {
 		case 161:
 		{
 			int quoteId = 0x31A + g_engine->getRandomNumber(1, 8);
-			_scene->_kernelMessages.add(Common::Point(64, 67), 0x1110, 32, 0, 80, _game.getQuote(quoteId));
+			_scene->_kernelMessages.add(Common::Point(64, 67), 0x1110, 32, 0, 80, quote_string(kernel.quotes, quoteId));
 			_scene->_sequences.addTimer(60, 162);
 		}
 		break;
@@ -286,9 +288,9 @@ static void room_803_parser() {
 			break;
 
 		case 163:
-			_game._player._priorTimer = _scene->_frameStartTime + _game._player._ticksAmount;
-			_game._player._visible = true;
-			_game._player._stepEnabled = true;
+			player.clock = _scene->_frameStartTime + player.frame_delay;
+			player.walker_visible = true;
+			player.commands_allowed = true;
 			break;
 
 		default:
@@ -296,8 +298,8 @@ static void room_803_parser() {
 		}
 	} else if (player_said_2(enter, ship)) {
 		g_engine->_soundManager->command(17, 0);
-		_game._player._stepEnabled = false;
-		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+		player.commands_allowed = false;
+		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 8, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], 1, 19);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 4);
@@ -310,7 +312,7 @@ static void room_803_parser() {
 	else if (player_said_2(look, pad_to_west))
 		text_show(80311);
 	else if (player_said_2(look, guts)) {
-		if (_game._storyMode == STORYMODE_NICE)
+		if (config_file.naughtiness == STORYMODE_NICE)
 			text_show(80312);
 		else
 			text_show(80313);

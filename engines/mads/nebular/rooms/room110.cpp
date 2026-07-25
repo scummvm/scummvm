@@ -39,16 +39,17 @@ static Scratch local;
 
 
 static void room_110_init() {
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('X', 0));
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('X', 1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('X', 2));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('X', 3));
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(kernel_name('X', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('X', 1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('X', 2));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('X', 3));
 
 	local._crabsFl = false;
 
 	if (_scene->_priorSceneId == 109) {
-		_game._player._playerPos = Common::Point(59, 71);
-		_game._player._facing = FACING_EAST;
+		player.x = 59;
+		player.y = 71;
+		player.facing = FACING_EAST;
 
 		_globals._sequenceIndexes[0] = _scene->_sequences.startCycle(_globals._spriteIndexes[0], false, 1);
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
@@ -66,30 +67,31 @@ static void room_110_init() {
 		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(194, 23);
-		_game._player._facing = FACING_SOUTH;
-		_game._player._visible = false;
-		_game._player._stepEnabled = false;
-		_scene->loadAnimation(Resources::formatName(110, 'T', 1, EXT_AA, ""), 70);
+		player.x = 194;
+		player.y = 23;
+		player.facing = FACING_SOUTH;
+		player.walker_visible = false;
+		player.commands_allowed = false;
+		_scene->loadAnimation(kernel_full_name(110, 'T', 1, "", EXT_AA), 70);
 	}
 
 	section_1_music();
-	_game.loadQuoteSet(89, 0);
+	kernel.quotes = quote_load(89, 0);
 
-	if (!_game._visitedScenes._sceneRevisited && (_scene->_priorSceneId == 109))
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(89));
+	if (!player.been_here_before && (_scene->_priorSceneId == 109))
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 89));
 }
 
 static void room_110_daemon() {
-	if (_game._trigger == 70) {
-		_game._player._visible = true;
-		_game._player._stepEnabled = true;
+	if (kernel.trigger == 70) {
+		player.walker_visible = true;
+		player.commands_allowed = true;
 	}
 }
 
 static void room_110_pre_parser() {
 	if (player_said_2(swim_through, cave_entrance))
-		_game._player._walkOffScreenSceneId = 109;
+		player.walk_off_edge_to_room = 109;
 
 	if (local._crabsFl) {
 		local._crabsFl = false;
@@ -117,16 +119,16 @@ static void room_110_pre_parser() {
 
 static void room_110_parser() {
 	if (player_said_2(swim_through, tunnel)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_scene->loadAnimation(Resources::formatName(110, 'T', 0, EXT_AA, ""), 1);
-			_scene->_animation[0]->setNextFrameTimer(_game._player._ticksAmount + _game._player._priorTimer);
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			_scene->loadAnimation(kernel_full_name(110, 'T', 0, "", EXT_AA), 1);
+			_scene->_animation[0]->setNextFrameTimer(player.frame_delay + player.clock);
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			break;
 		case 1:
-			_game._player._visible = true;
-			_game._player._stepEnabled = true;
+			player.walker_visible = true;
+			player.commands_allowed = true;
 			_scene->_nextSceneId = 111;
 			break;
 		default:

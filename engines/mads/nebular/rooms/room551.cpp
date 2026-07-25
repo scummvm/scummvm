@@ -34,20 +34,23 @@ namespace Rooms {
 
 static void room_551_init() {
 	if (_globals[kSexOfRex] == REX_MALE)
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 0));
+		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('a', 0));
 	else
-		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 1));
+		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('a', 1));
 
-	if (_scene->_priorSceneId == 501)
-		_game._player._playerPos = Common::Point(18, 130);
+	if (_scene->_priorSceneId == 501) {
+		player.x = 18;
+		player.y = 130;
+	}
 	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(124, 119);
-		_game._player._facing = FACING_NORTH;
+		player.x = 124;
+		player.y = 119;
+		player.facing = FACING_NORTH;
 	}
 
 	if (_globals[kTeleporterCommand]) {
-		_game._player._visible = false;
-		_game._player._stepEnabled = false;
+		player.walker_visible = false;
+		player.commands_allowed = false;
 
 		char sepChar;
 		if (_globals[kSexOfRex] == REX_MALE)
@@ -83,10 +86,10 @@ static void room_551_init() {
 		_globals[kTeleporterCommand] = 0;
 
 		if (suffixNum > 0)
-			_scene->loadAnimation(formAnimName(sepChar, suffixNum), trigger);
+			_scene->loadAnimation(kernel_name(sepChar, suffixNum), trigger);
 		else {
-			_game._player._visible = true;
-			_game._player._stepEnabled = true;
+			player.walker_visible = true;
+			player.commands_allowed = true;
 		}
 	}
 
@@ -94,11 +97,11 @@ static void room_551_init() {
 }
 
 static void room_551_daemon() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 75:
-		_game._player._stepEnabled = true;
-		_game._player._visible = true;
-		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
+		player.commands_allowed = true;
+		player.walker_visible = true;
+		player.clock = _scene->_frameStartTime - player.frame_delay;
 		break;
 
 	case 80:
@@ -130,7 +133,7 @@ static void room_551_daemon() {
 
 static void room_551_pre_parser() {
 	if (player_said_1(walk_down) && (player_said_1(street_to_west) || player_said_1(sidewalk_to_west)))
-		_game._player._walkOffScreenSceneId = 501;
+		player.walk_off_edge_to_room = 501;
 }
 
 static void room_551_parser() {
@@ -149,7 +152,7 @@ static void room_551_parser() {
 	else if (player_said_2(look, teleporter))
 		text_show(55114);
 	else if (player_said_2(look, sidewalk_to_west)) {
-		if (_game._visitedScenes.exists(505))
+		if (player_has_been_in_room(505))
 			text_show(55116);
 		else
 			text_show(55115);

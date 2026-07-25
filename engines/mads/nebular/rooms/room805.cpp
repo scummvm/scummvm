@@ -32,11 +32,11 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_805_init() {
-	_game._player._visible = false;
+	player.walker_visible = false;
 	_scene->_userInterface.setup(kInputLimitedSentences);
 
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('a', 1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 2));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('a', 1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('a', 2));
 
 	if (_globals[kShieldModInstalled]) {
 		_scene->_hotspots.activate(OBJ_SHIELD_MODULATOR, false);
@@ -56,83 +56,83 @@ static void room_805_init() {
 }
 
 static void room_805_daemon() {
-	auto &userInterface = _game->_scene._userInterface;
+	auto &userInterface = _scene._userInterface;
 
-	if (_game._trigger == 70) {
+	if (kernel.trigger == 70) {
 		_scene->_hotspots.activate(OBJ_SHIELD_MODULATOR, false);
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 25);
 		int idx = _scene->_dynamicHotspots.add(words_shield_modulator, words_remove, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), 0);
 		_globals[kShieldModInstalled] = true;
-		_game._objects.setRoom(OBJ_SHIELD_MODULATOR, NOWHERE);
+		inter_move_object(OBJ_SHIELD_MODULATOR, NOWHERE);
 		userInterface._selectedInvIndex = -1;
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 		g_engine->_soundManager->command(24, 0);
 	}
 
-	if (_game._trigger == 80) {
+	if (kernel.trigger == 80) {
 		_scene->_hotspots.activate(OBJ_TARGET_MODULE, false);
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 12);
 		int idx = _scene->_dynamicHotspots.add(words_target_module, words_remove, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), 0);
 		_globals[kTargetModInstalled] = true;
-		_game._objects.setRoom(OBJ_TARGET_MODULE, NOWHERE);
+		inter_move_object(OBJ_TARGET_MODULE, NOWHERE);
 		userInterface._selectedInvIndex = -1;
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 		g_engine->_soundManager->command(24, 0);
 	}
 
-	if (_game._trigger == 71) {
+	if (kernel.trigger == 71) {
 		_scene->_hotspots.activate(OBJ_SHIELD_MODULATOR, true);
 		_globals[kShieldModInstalled] = false;
-		_game._objects.addToInventory(OBJ_SHIELD_MODULATOR);
-		_game._player._stepEnabled = true;
+		inter_give_to_player(OBJ_SHIELD_MODULATOR);
+		player.commands_allowed = true;
 	}
 
-	if (_game._trigger == 81) {
+	if (kernel.trigger == 81) {
 		_scene->_hotspots.activate(OBJ_TARGET_MODULE, true);
 		_globals[kTargetModInstalled] = false;
-		_game._objects.addToInventory(OBJ_TARGET_MODULE);
-		_game._player._stepEnabled = true;
+		inter_give_to_player(OBJ_TARGET_MODULE);
+		player.commands_allowed = true;
 	}
 }
 
 static void room_805_pre_parser() {
-	_game._player._needToWalk = false;
+	player.need_to_walk = false;
 }
 
 static void room_805_parser() {
 	if (player_said_2(exit, service_panel))
 		_scene->_nextSceneId = 804;
-	else if (player_said_2(install, shield_modulator) && _game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) {
-		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+	else if (player_said_2(install, shield_modulator) && player_has(OBJ_SHIELD_MODULATOR)) {
+		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], -1, -2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
-		_game._player._stepEnabled = false;
-	} else if (player_said_2(install, target_module) && _game._objects.isInInventory(OBJ_TARGET_MODULE)) {
-		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+		player.commands_allowed = false;
+	} else if (player_said_2(install, target_module) && player_has(OBJ_TARGET_MODULE)) {
+		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], -1, -2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
-		_game._player._stepEnabled = false;
+		player.commands_allowed = false;
 	} else if (player_said_2(remove, shield_modulator) && _globals[kShieldModInstalled]) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], -1, -2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
-		_game._player._stepEnabled = false;
+		player.commands_allowed = false;
 	} else if (player_said_2(remove, target_module) && _globals[kTargetModInstalled]) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], -1, -2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
-		_game._player._stepEnabled = false;
-	} else if (player_said_2(install, shield_modulator) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR))
+		player.commands_allowed = false;
+	} else if (player_said_2(install, shield_modulator) && !player_has(OBJ_SHIELD_MODULATOR))
 		text_show(80511);
-	else if (player_said_2(install, target_module) && !_game._objects.isInInventory(OBJ_TARGET_MODULE))
+	else if (player_said_2(install, target_module) && !player_has(OBJ_TARGET_MODULE))
 		text_show(80510);
 	else if (player_said_2(remove, life_support_module))
 		text_show(80512);

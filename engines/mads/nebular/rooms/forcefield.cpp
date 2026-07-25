@@ -49,8 +49,8 @@ void init_forcefield(Forcefield *force, bool flag) {
 }
 
 void handle_forcefield(Forcefield *force, int16 *sprites) {
-	if (_game._trigger >= 150) {
-		int id = _game._trigger - 150;
+	if (kernel.trigger >= 150) {
+		int id = kernel.trigger - 150;
 		if (id < 40) {
 			if (id < 20)
 				force->_vertical--;

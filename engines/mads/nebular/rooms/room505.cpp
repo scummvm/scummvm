@@ -46,13 +46,13 @@ static Scratch local;
 
 static void room_505_init() {
 	for (int i = 0; i < 9; i++)
-		_globals._spriteIndexes[i] = _scene->_sprites.addSprites(formAnimName('a', i + 1));
+		_globals._spriteIndexes[i] = _scene->_sprites.addSprites(kernel_name('a', i + 1));
 
-	_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('b', 1));
-	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('g', 1));
-	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('g', 0));
-	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('t', -1));
-	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('e', -1));
+	_globals._spriteIndexes[13] = _scene->_sprites.addSprites(kernel_name('b', 1));
+	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(kernel_name('g', 1));
+	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(kernel_name('g', 0));
+	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(kernel_name('t', -1));
+	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(kernel_name('e', -1));
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_globals._sequenceIndexes[12] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[12], false, 6, 1, 0, 0);
@@ -81,10 +81,10 @@ static void room_505_init() {
 		}
 	}
 
-	_game._player._visible = false;
-	_game._player._stepEnabled = false;
+	player.walker_visible = false;
+	player.commands_allowed = false;
 	local._frame = -1;
-	_scene->loadAnimation(formAnimName('a', -1));
+	_scene->loadAnimation(kernel_name('a', -1));
 	_scene->_animation[0]->setCurrentFrame(86);
 
 	section_5_music();
@@ -135,7 +135,7 @@ static void room_505_daemon() {
 				else if (local._selectedId != local._homeSelectedId) {
 					local._nextButtonId = 0;
 					local._activeCars = true;
-					_game._player._stepEnabled = false;
+					player.commands_allowed = false;
 					_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 					_scene->_sequences.remove(_globals._sequenceIndexes[0]);
 					_scene->_sequences.remove(_globals._sequenceIndexes[13]);
@@ -237,10 +237,10 @@ static void room_505_daemon() {
 		}
 	}
 
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 60:
 	{
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 		int syncIdx = _globals._sequenceIndexes[13];
 		_globals._sequenceIndexes[13] = _scene->_sequences.startCycle(_globals._spriteIndexes[13], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[13], 8);

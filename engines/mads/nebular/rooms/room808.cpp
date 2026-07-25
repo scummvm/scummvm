@@ -42,9 +42,9 @@ static void room_808_init() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
 
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*REXHAND");
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('b', 0));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', 1));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('b', 2));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('b', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('b', 1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('b', 2));
 
 	if (_globals[kTopButtonPushed])
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
@@ -81,9 +81,9 @@ static void room_808_init() {
 
 static void room_808_parser() {
 	if (player_said_2(press, start_button_2)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(248, 211));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
@@ -105,7 +105,7 @@ static void room_808_parser() {
 			break;
 
 		case 71:
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			if (local._goingTo803 && !_globals[kTopButtonPushed]) {
 				local._goingTo803 = false;
 				_globals[kReturnFromCut] = true;
@@ -117,9 +117,9 @@ static void room_808_parser() {
 			break;
 		}
 	} else if (player_said_2(press, timer_button_2)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(248, 186));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
@@ -140,16 +140,16 @@ static void room_808_parser() {
 			break;
 
 		case 91:
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			break;
 
 		default:
 			break;
 		}
 	} else if (player_said_2(press, remote_button_2)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(248, 163));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
@@ -171,16 +171,16 @@ static void room_808_parser() {
 			break;
 
 		case 81:
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			break;
 
 		default:
 			break;
 		}
 	} else if (player_said_2(press, start_button_1)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 4, 2, 0, 0);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(168, 211));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
@@ -188,16 +188,16 @@ static void room_808_parser() {
 			break;
 
 		case 70:
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			break;
 
 		default:
 			break;
 		}
 	} else if (player_said_2(press, remote_button_1)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 4, 2, 0, 0);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(172, 163));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
@@ -205,16 +205,16 @@ static void room_808_parser() {
 			break;
 
 		case 80:
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			break;
 
 		default:
 			break;
 		}
 	} else if (player_said_2(press, timer_button_1)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 4, 2, 0, 0);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(172, 186));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
@@ -222,7 +222,7 @@ static void room_808_parser() {
 			break;
 
 		case 90:
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			break;
 
 		default:

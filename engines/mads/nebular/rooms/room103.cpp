@@ -41,18 +41,18 @@ static Scratch local;
 
 
 static void room_103_init() {
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0));
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 2));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 3));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 4));
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 5));
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', -1));
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('h', -1));
-	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('m', -1));
-	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('t', -1));
-	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('r', -1));
-	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('c', -1));
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('x', 1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('x', 2));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('x', 3));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('x', 4));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('x', 5));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_name('b', -1));
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(kernel_name('h', -1));
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(kernel_name('m', -1));
+	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(kernel_name('t', -1));
+	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(kernel_name('r', -1));
+	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(kernel_name('c', -1));
 	_globals._spriteIndexes[12] = _scene->_sprites.addSprites("*RXMBD_2");
 	_globals._spriteIndexes[13] = _scene->_sprites.addSprites("*RXMRD_3");
 	_globals._spriteIndexes[15] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 7, 0, 1, 0);
@@ -71,15 +71,15 @@ static void room_103_init() {
 	_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6);
 	_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6);
 
-	if (_game._objects.isInRoom(OBJ_TIMER_MODULE))
+	if (object_is_here(OBJ_TIMER_MODULE))
 		_globals._sequenceIndexes[11] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[11], false, 6);
 	else
-		_game->_scene._hotspots.activate(371, false);
+		_scene._hotspots.activate(371, false);
 
-	if (_game._objects.isInRoom(OBJ_REBREATHER))
+	if (object_is_here(OBJ_REBREATHER))
 		_globals._sequenceIndexes[10] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[10], false, 6);
 	else
-		_game->_scene._hotspots.activate(289, false);
+		_scene._hotspots.activate(289, false);
 
 	if (_globals[kTurkeyExploded]) {
 		_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 6);
@@ -87,21 +87,23 @@ static void room_103_init() {
 		_scene->_hotspots.activate(362, false);
 	}
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
-		_game._player._playerPos = Common::Point(237, 74);
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+		player.x = 237;
+		player.y = 74;
+	}
 
 	if (_scene->_priorSceneId == 102) {
-		_game._player._stepEnabled = false;
+		player.commands_allowed = false;
 		_globals._sequenceIndexes[6] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[6], false, 6, 1, 0, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 	}
 
 	section_1_music();
 
-	_game->loadQuoteSet(70, 51, 71, 7, 73, 0);
+	kernel.quotes = quote_load(70, 51, 71, 7, 73, 0);
 
-	if (!_game._visitedScenes._sceneRevisited) {
-		int msgIndex = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(70));
+	if (!player.been_here_before) {
+		int msgIndex = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 70));
 		_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
 	}
 
@@ -114,14 +116,14 @@ static void room_103_init() {
 }
 
 static void room_103_daemon() {
-	switch (_game->_trigger) {
+	switch (kernel.trigger) {
 	case 70:
-		_game->_player._stepEnabled = true;
+		player.commands_allowed = true;
 		break;
 
 	case 72:
 	{
-		Common::Point pt = _game->_player._playerPos;
+		Common::Point pt = Common::Point(player.x, player.y);
 		int dist = Math::hypotenuse(pt.x - 58, pt.y - 93);
 		g_engine->_soundManager->command(27, (dist * -128 / 378) + 127);
 	}
@@ -129,7 +131,7 @@ static void room_103_daemon() {
 
 	case 73:
 	{
-		Common::Point pt = _game->_player._playerPos;
+		Common::Point pt = Common::Point(player.x, player.y);
 		int dist = Math::hypotenuse(pt.x - 266, pt.y - 81);
 		g_engine->_soundManager->command(27, (dist * -127 / 378) + 127);
 	}
@@ -140,19 +142,19 @@ static void room_103_daemon() {
 	}
 
 	if (_scene->_frameStartTime >= local._updateClock) {
-		Common::Point pt = _game->_player._playerPos;
+		Common::Point pt = Common::Point(player.x, player.y);
 		int dist = Math::hypotenuse(pt.x - 79, pt.y - 137);
 		g_engine->_soundManager->command(29, (dist * -127 / 378) + 127);
 
-		pt = _game->_player._playerPos;
+		pt = Common::Point(player.x, player.y);
 		dist = Math::hypotenuse(pt.x - 69, pt.y - 80);
 		g_engine->_soundManager->command(30, (dist * -127 / 378) + 127);
 
-		pt = _game->_player._playerPos;
+		pt = Common::Point(player.x, player.y);
 		dist = Math::hypotenuse(pt.x - 266, pt.y - 138);
 		g_engine->_soundManager->command(32, (dist * -127 / 378) + 127);
 
-		local._updateClock = _scene->_frameStartTime + _game->_player._ticksAmount;
+		local._updateClock = _scene->_frameStartTime + player.frame_delay;
 	}
 }
 
@@ -164,33 +166,33 @@ static void room_103_parser() {
 	if (_action._savedFields._lookFlag)
 		text_show(10322);
 	else if (player_said_2(walk_through, door)) {
-		switch (_game->_trigger) {
+		switch (kernel.trigger) {
 		case 0:
 			_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 1);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			g_engine->_soundManager->command(20, 0);
 			break;
 
 		case 1:
 			g_engine->_soundManager->command(1, 0);
 			_scene->_nextSceneId = 102;
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			break;
 
 		default:
 			break;
 		}
-	} else if (player_said_2(take, timer_module) && _game._objects.isInRoom(OBJ_TIMER_MODULE)) {
-		switch (_game->_trigger) {
+	} else if (player_said_2(take, timer_module) && object_is_here(OBJ_TIMER_MODULE)) {
+		switch (kernel.trigger) {
 		case 0:
 			_scene->changeVariant(1);
 			_globals._sequenceIndexes[13] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[13], false, 3, 2);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[13]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_SPRITE, 7, 1);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
-			_game->_player._visible = false;
-			_game->_player._stepEnabled = false;
+			player.walker_visible = false;
+			player.commands_allowed = false;
 			break;
 
 		case 1:
@@ -199,27 +201,27 @@ static void room_103_parser() {
 
 		case 2:
 			g_engine->_soundManager->command(22, 0);
-			_game._objects.addToInventory(OBJ_TIMER_MODULE);
+			inter_give_to_player(OBJ_TIMER_MODULE);
 			_scene->changeVariant(0);
 			_scene->drawElements(kTransitionNone, false);
 			_scene->_hotspots.activate(371, false);
-			_game->_player._visible = true;
-			_game->_player._stepEnabled = true;
+			player.walker_visible = true;
+			player.commands_allowed = true;
 			object_examine(OBJ_TIMER_MODULE, 805, 0);
 			break;
 
 		default:
 			break;
 		}
-	} else if (player_said_2(take, rebreather) && _game._objects.isInRoom(OBJ_REBREATHER)) {
-		switch (_game->_trigger) {
+	} else if (player_said_2(take, rebreather) && object_is_here(OBJ_REBREATHER)) {
+		switch (kernel.trigger) {
 		case 0:
 			_globals._sequenceIndexes[12] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[12], false, 3, 2);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[12]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_SPRITE, 6, 1);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
-			_game->_player._visible = false;
-			_game->_player._stepEnabled = false;
+			player.walker_visible = false;
+			player.commands_allowed = false;
 			break;
 
 		case 1:
@@ -228,10 +230,10 @@ static void room_103_parser() {
 
 		case 2:
 			g_engine->_soundManager->command(22, 0);
-			_game._objects.addToInventory(OBJ_REBREATHER);
+			inter_give_to_player(OBJ_REBREATHER);
 			_scene->_hotspots.activate(289, false);
-			_game->_player._visible = true;
-			_game->_player._stepEnabled = true;
+			player.walker_visible = true;
+			player.commands_allowed = true;
 			object_examine(OBJ_REBREATHER, 804, 0);
 			break;
 
@@ -242,19 +244,19 @@ static void room_103_parser() {
 		text_show(10301);
 	else if (player_said_2(take, tasty_turkey)) {
 		// Take Turkey
-		if (!_game->_trigger)
+		if (!kernel.trigger)
 			g_engine->_soundManager->command(31, 0);
 
-		if (_game->_trigger < 2) {
-			_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 6, _game->_trigger < 1 ? 1 : 0);
-			if (_game->_trigger) {
+		if (kernel.trigger < 2) {
+			_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 6, kernel.trigger < 1 ? 1 : 0);
+			if (kernel.trigger) {
 				// Lock the turkey into a permanent "exploded" frame
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[9], -2, -2);
 
 				// Rex says "Gads.."
-				const char *msg = _game.getQuote(51);
+				const char *msg = quote_string(kernel.quotes, 51);
 				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 18, 0, 60, msg);
-				_scene->_sequences.addTimer(120, _game->_trigger + 1);
+				_scene->_sequences.addTimer(120, kernel.trigger + 1);
 			} else {
 				// Initial turky explosion
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
@@ -262,10 +264,10 @@ static void room_103_parser() {
 		}
 
 		// Re-enable player if sequence is ended, and set global flag
-		_game._player._stepEnabled = _game._trigger == 2;
+		player.commands_allowed = kernel.trigger == 2;
 		_globals[kTurkeyExploded] = -1;
 
-		if (_game._trigger == 2) {
+		if (kernel.trigger == 2) {
 			// Show exposition dialog at end of sequence
 			text_show(10302);
 			_scene->_hotspots.activate(362, false);
@@ -273,18 +275,18 @@ static void room_103_parser() {
 	} else if (player_said_2(look, oven))
 		text_show(!_globals[kTurkeyExploded] ? 10323 : 10303);
 	else if (player_said_2(talkto, auxiliary_power)) {
-		switch (_game->_trigger) {
+		switch (kernel.trigger) {
 		case 0:
 		{
-			_game._player._stepEnabled = false;
-			const char *msg = _game.getQuote(71);
+			player.commands_allowed = false;
+			const char *msg = quote_string(kernel.quotes, 71);
 			_scene->_kernelMessages.add(Common::Point(), 0x1110, 18, 1, 120, msg);
 			break;
 		}
 
 		case 1:
 		{
-			const char *msg = _game.getQuote(72);
+			const char *msg = quote_string(kernel.quotes, 72);
 			_scene->_kernelMessages.add(Common::Point(310, 132), 0xFDFC, 16, 2, 120, msg);
 			break;
 		}
@@ -295,7 +297,7 @@ static void room_103_parser() {
 			break;
 
 		case 3:
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			text_show(10306);
 			break;
 
@@ -326,14 +328,14 @@ static void room_103_parser() {
 		text_show(10317);
 	else if (player_said_2(look, engineering_controls))
 		text_show(10318);
-	else if (player_said_2(look, rebreather) && _game._objects.isInInventory(OBJ_REBREATHER))
+	else if (player_said_2(look, rebreather) && player_has(OBJ_REBREATHER))
 		text_show(10319);
-	else if (player_said_2(look, timer_module) && _game._objects.isInInventory(OBJ_TIMER_MODULE))
+	else if (player_said_2(look, timer_module) && player_has(OBJ_TIMER_MODULE))
 		text_show(10320);
 	else if (player_said_2(look, floor))
 		text_show(10321);
 	else if (player_said_2(look, workbench))
-		text_show(_game._objects.isInInventory(OBJ_TIMER_MODULE) ? 10324 : 10325);
+		text_show(player_has(OBJ_TIMER_MODULE) ? 10324 : 10325);
 	else
 		return;
 
@@ -345,7 +347,7 @@ void room_103_error() {
 		text_show(10305);
 		_action._inProgress = false;
 	} else if (player_said_3(put, coal, furnace)) {
-		const char *msg = _game.getQuote(73);
+		const char *msg = quote_string(kernel.quotes, 73);
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, msg);
 		_action._inProgress = false;
 	}
@@ -364,7 +366,7 @@ void room_103_preload() {
 	room_daemon_code_pointer = room_103_daemon;
 	room_error_code_pointer = room_103_error;
 
-	anim_himem_preload(formAnimName('A', -1), 3);
+	anim_himem_preload(kernel_name('A', -1), 3);
 
 	section_1_walker();
 	section_1_interface();

@@ -40,11 +40,11 @@ static Scratch local;
 
 static void room_751_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RM701X0");
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 0));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('f', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('a', 0));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('f', 0));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RM202A1");
 
-	if (!_game._visitedScenes._sceneRevisited)
+	if (!player.been_here_before)
 		local._rexHandingLine = false;
 
 	if (_globals[kLineStatus] == 2 || _globals[kLineStatus] == 3) {
@@ -59,26 +59,30 @@ static void room_751_init() {
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 
 	if (_scene->_priorSceneId == 752) {
-		_game._player._playerPos = Common::Point(309, 138);
-		_game._player._facing = FACING_WEST;
+		player.x = 309;
+		player.y = 138;
+		player.facing = FACING_WEST;
 	} else if (_scene->_priorSceneId == 710) {
-		_game._player._playerPos = Common::Point(154, 129);
-		_game._player._facing = FACING_NORTH;
-		_game._player._visible = false;
-		_game._player._stepEnabled = false;
+		player.x = 154;
+		player.y = 129;
+		player.facing = FACING_NORTH;
+		player.walker_visible = false;
+		player.commands_allowed = false;
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, -2);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(155, 129));
 		_scene->_sequences.addTimer(15, 70);
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(22, 131);
-		_game._player._facing = FACING_EAST;
-		_game._player._stepEnabled = false;
+		player.x = 22;
+		player.y = 131;
+		player.facing = FACING_EAST;
+		player.commands_allowed = false;
 		_scene->_sequences.addTimer(60, 60);
 	} else if (local._rexHandingLine) {
-		_game._player._visible = false;
-		_game._player._playerPos = Common::Point(268, 140);
-		_game._player._facing = FACING_NORTHWEST;
-		_game._player._visible = false;
+		player.walker_visible = false;
+		player.x = 268;
+		player.y = 140;
+		player.facing = FACING_NORTHWEST;
+		player.walker_visible = false;
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 7);
 		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
 	} else if (_globals[kLineStatus] == 2) {
@@ -89,19 +93,19 @@ static void room_751_init() {
 	}
 
 	if (_scene->_roomChanged) {
-		_game._objects.addToInventory(OBJ_FISHING_LINE);
-		_game._objects.addToInventory(OBJ_BINOCULARS);
+		inter_give_to_player(OBJ_FISHING_LINE);
+		inter_give_to_player(OBJ_BINOCULARS);
 	}
 
 	section_7_music();
-	_game.loadQuoteSet(0x30A, 0x30B, 0x30C, 0x30D, 0x30E, 0);
+	kernel.quotes = quote_load(0x30A, 0x30B, 0x30C, 0x30D, 0x30E, 0);
 
 	if (_globals[kTimebombTimer] > 0)
 		_globals[kTimebombTimer] = 10200;
 }
 
 static void room_751_daemon() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 70:
 		_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 		_globals._sequenceIndexes[4] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[4], false, 6, 1, 0, 0);
@@ -111,8 +115,8 @@ static void room_751_daemon() {
 
 	case 71:
 		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[4]);
-		_game._player._visible = true;
-		_game._player._stepEnabled = true;
+		player.walker_visible = true;
+		player.commands_allowed = true;
 		break;
 
 	default:
@@ -126,7 +130,7 @@ static void room_751_daemon() {
 		_scene->_nextSceneId = 620;
 	}
 
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 60:
 		g_engine->_soundManager->command(16, 0);
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
@@ -137,7 +141,7 @@ static void room_751_daemon() {
 		break;
 
 	case 61:
-		_game._player.walk(Common::Point(61, 131), FACING_EAST);
+		player_walk(61, 131, FACING_EAST);
 		_scene->_sequences.addTimer(120, 62);
 		break;
 
@@ -153,7 +157,7 @@ static void room_751_daemon() {
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 		_scene->_kernelMessages.reset();
 		break;
 
@@ -164,26 +168,26 @@ static void room_751_daemon() {
 
 static void room_751_pre_parser() {
 	if (player_said_2(look, tall_building))
-		_game._player.walk(Common::Point(154, 129), FACING_NORTHEAST);
+		player_walk(154, 129, FACING_NORTHEAST);
 
 	if (player_said_3(look, binoculars, tall_building))
-		_game._player.walk(Common::Point(154, 129), FACING_NORTH);
+		player_walk(154, 129, FACING_NORTH);
 
 	if (player_said_2(walkto, east_end_of_platform))
-		_game._player._walkOffScreenSceneId = 752;
+		player.walk_off_edge_to_room = 752;
 
 	if (!local._rexHandingLine)
 		return;
 
 	if (player_said_1(look) || player_said_1(fishing_line) || player_said_1(talkto))
-		_game._player._needToWalk = false;
+		player.need_to_walk = false;
 
 	if ((!player_said_3(put, fishing_line, hook) || !player_said_3(tie, fishing_line, hook) || !player_said_3(attach, fishing_line, hook))
-		&& (_game._player._needToWalk)) {
-		switch (_game._trigger) {
+		&& (player.need_to_walk)) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._readyToWalk = false;
-			_game._player._stepEnabled = false;
+			player.ready_to_walk = false;
+			player.commands_allowed = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 11, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], -1, 7);
@@ -192,10 +196,10 @@ static void room_751_pre_parser() {
 
 		case 1:
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
-			_game._player._visible = true;
+			player.walker_visible = true;
 			local._rexHandingLine = false;
-			_game._player._stepEnabled = true;
-			_game._player._readyToWalk = true;
+			player.commands_allowed = true;
+			player.ready_to_walk = true;
 			break;
 
 		default:
@@ -208,10 +212,10 @@ static void room_751_parser() {
 	if (player_said_2(walk_along, platform))
 		; // Nothing
 	else if (player_said_3(look, binoculars, tall_building)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6, 1, 0, 0);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(155, 129));
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
@@ -235,21 +239,21 @@ static void room_751_parser() {
 			break;
 		}
 	} else if (player_said_2(step_into, elevator)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 			g_engine->_soundManager->command(16, 0);
 			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x30D));
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x30D));
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
-			_game._player.walk(Common::Point(22, 131), FACING_EAST);
+			player_walk(22, 131, FACING_EAST);
 			_scene->_sequences.addTimer(120, 3);
 			break;
 
@@ -269,7 +273,7 @@ static void room_751_parser() {
 			break;
 
 		case 5:
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			_scene->_nextSceneId = 513;
 			break;
 
@@ -278,10 +282,10 @@ static void room_751_parser() {
 		}
 	} else if (player_said_3(put, fishing_line, hook) || player_said_3(tie, fishing_line, hook) || player_said_3(attach, fishing_line, hook)) {
 		if (_globals[kLineStatus] == 1) {
-			switch (_game._trigger) {
+			switch (kernel.trigger) {
 			case 0:
-				_game._player._visible = false;
-				_game._player._stepEnabled = false;
+				player.walker_visible = false;
+				player.commands_allowed = false;
 				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], -1, 6);
 				_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], -1);
@@ -308,16 +312,16 @@ static void room_751_parser() {
 			case 3:
 			{
 				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
-				_game._player._visible = true;
+				player.walker_visible = true;
 				_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
 				int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(268, 140), FACING_NORTHWEST);
 				_scene->_kernelMessages.reset();
-				_game._objects.setRoom(OBJ_FISHING_LINE, _scene->_currentSceneId);
+				inter_move_object(OBJ_FISHING_LINE, _scene->_currentSceneId);
 				local._rexHandingLine = false;
 				_globals[kLineStatus] = 2;
-				_game._player._stepEnabled = true;
+				player.commands_allowed = true;
 				text_show(75120);
 			}
 			break;

@@ -32,21 +32,21 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_301_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('x', 0));
 	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
 
 	_globals[kMeteorologistStatus] = METEOROLOGIST_GONE;
 	_globals[kTeleporterCommand] = TELEPORTER_NONE;
 
-	_game._player._stepEnabled = false;
-	_game._player._visible = false;
-	_scene->loadAnimation(formAnimName('a', -1), 60);
+	player.commands_allowed = false;
+	player.walker_visible = false;
+	_scene->loadAnimation(kernel_name('a', -1), 60);
 
 	section_3_music();
 }
 
 static void room_301_daemon() {
-	if (_game._trigger == 60)
+	if (kernel.trigger == 60)
 		_scene->_nextSceneId = 302;
 }
 

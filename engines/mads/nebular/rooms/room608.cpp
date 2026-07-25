@@ -78,19 +78,19 @@ static void resetDogVariables() {
 static void restoreAnimations() {
 	_scene->freeAnimation();
 	local._carMode = 0;
-	_game._player._stepEnabled = true;
+	player.commands_allowed = true;
 	if (local._throwMode == 6)
 		local._dogSquashFl = true;
 
 	if (_globals[kCarStatus] == CAR_UP) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[6]);
 		_scene->_sequences.remove(_globals._sequenceIndexes[7]);
-		_scene->loadAnimation(formAnimName('A', -1));
+		_scene->loadAnimation(kernel_name('A', -1));
 	} else {
 		_scene->_sequences.remove(_globals._sequenceIndexes[8]);
 		_scene->_sequences.remove(_globals._sequenceIndexes[6]);
 		_scene->_sequences.remove(_globals._sequenceIndexes[7]);
-		_scene->loadAnimation(formAnimName('A', -1));
+		_scene->loadAnimation(kernel_name('A', -1));
 		_scene->_animation[0]->setCurrentFrame(6);
 	}
 }
@@ -118,20 +118,20 @@ static void setCarAnimations() {
 }
 
 static void handleThrowingBone() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 0:
-		_game._player._stepEnabled = false;
+		player.commands_allowed = false;
 		setCarAnimations();
 		_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 		local._animationMode = -1;
-		_game._player._visible = false;
+		player.walker_visible = false;
 		local._carMode = local._throwMode;
 		if (local._throwMode == 4)
-			_scene->loadAnimation(formAnimName('X', 2), 1);
+			_scene->loadAnimation(kernel_name('X', 2), 1);
 		else if (local._throwMode == 5)
-			_scene->loadAnimation(formAnimName('X', 1), 1);
+			_scene->loadAnimation(kernel_name('X', 1), 1);
 		else
-			_scene->loadAnimation(formAnimName('X', 3), 1);
+			_scene->loadAnimation(kernel_name('X', 3), 1);
 		break;
 
 	case 1:
@@ -143,11 +143,11 @@ static void handleThrowingBone() {
 		if (local._nextTrigger != 2)
 			_scene->_sequences.addTimer(1, 2);
 		else {
-			if (_game._objects.isInInventory(OBJ_BONE))
-				_game._objects.setRoom(OBJ_BONE, 1);
+			if (player_has(OBJ_BONE))
+				inter_move_object(OBJ_BONE, 1);
 			else {
-				_game._objects.setRoom(OBJ_BONES, 1);
-				_game._objects.addToInventory(OBJ_BONE);
+				inter_move_object(OBJ_BONES, 1);
+				inter_give_to_player(OBJ_BONE);
 			}
 			_scene->_sequences.addTimer(60, 3);
 		}
@@ -156,7 +156,7 @@ static void handleThrowingBone() {
 	case 3:
 		if (local._throwMode != 6) {
 			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x304));
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x304));
 			_scene->_sequences.addTimer(120, 4);
 		} else
 			restoreAnimations();
@@ -174,35 +174,35 @@ static void handleThrowingBone() {
 static void room_608_init() {
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMRD_7");
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXMRC_9");
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('c', 2));
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('c', 0));
-	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('c', 1));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_name('c', 2));
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(kernel_name('c', 0));
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(kernel_name('c', 1));
 
-	if (_game._objects.isInRoom(OBJ_POLYCEMENT)) {
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('g', -1));
+	if (object_is_here(OBJ_POLYCEMENT)) {
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('g', -1));
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 		int idx = _scene->_dynamicHotspots.add(words_polycement, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		local._polycementHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(249, 129), FACING_NORTHEAST);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 6);
 	}
 
-	if (_game._objects.isInRoom(OBJ_REARVIEW_MIRROR)) {
-		_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('m', -1));
+	if (object_is_here(OBJ_REARVIEW_MIRROR)) {
+		_globals._spriteIndexes[12] = _scene->_sprites.addSprites(kernel_name('m', -1));
 		_globals._sequenceIndexes[12] = _scene->_sequences.startCycle(_globals._spriteIndexes[12], false, 1);
 		int idx = _scene->_dynamicHotspots.add(words_rearview_mirror, words_walkto, _globals._sequenceIndexes[12], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(71, 113), FACING_NORTHEAST);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 15);
 	}
 
-	if (_game._difficulty == DIFFICULTY_HARD) {
-		_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('g', 0));
-		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('g', 1));
-		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('g', 2));
-		_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('h', 2));
-		_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('h', 3));
+	if (game.difficulty == DIFFICULTY_HARD) {
+		_globals._spriteIndexes[9] = _scene->_sprites.addSprites(kernel_name('g', 0));
+		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('g', 1));
+		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('g', 2));
+		_globals._spriteIndexes[10] = _scene->_sprites.addSprites(kernel_name('h', 2));
+		_globals._spriteIndexes[11] = _scene->_sprites.addSprites(kernel_name('h', 3));
 		local._rexBeingEaten = false;
 
-		if (!_game._visitedScenes._sceneRevisited) {
+		if (!player.been_here_before) {
 			_globals[kDogStatus] = DOG_GONE;
 			local._dogActiveFl = true;
 		} else
@@ -222,7 +222,7 @@ static void room_608_init() {
 	local._dogYelping = false;
 
 
-	if (!_game._visitedScenes._sceneRevisited)
+	if (!player.been_here_before)
 		_globals[kCarStatus] = CAR_UP;
 
 	local._animationMode = 0;
@@ -235,14 +235,14 @@ static void room_608_init() {
 		local._resetPositionsFl = false;
 		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
 		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
-		_scene->loadAnimation(formAnimName('A', -1));
+		_scene->loadAnimation(kernel_name('A', -1));
 	} else if (_globals[kCarStatus] == CAR_DOWN) {
 		local._carMode = 0;
 		local._dogDeathMode = 0;
 		local._resetPositionsFl = false;
 		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
 		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
-		_scene->loadAnimation(formAnimName('A', -1));
+		_scene->loadAnimation(kernel_name('A', -1));
 		_scene->_animation[0]->setCurrentFrame(6);
 	} else if (_globals[kCarStatus] == CAR_SQUASHES_DOG) {
 		local._carMode = 2;
@@ -250,36 +250,37 @@ static void room_608_init() {
 		local._resetPositionsFl = false;
 		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
 		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
-		_scene->loadAnimation(formAnimName('C', -1));
+		_scene->loadAnimation(kernel_name('C', -1));
 	} else if (_globals[kCarStatus] == CAR_SQUASHES_DOG_AGAIN) {
 		local._carMode = 1;
 		local._dogDeathMode = 2;
 		local._resetPositionsFl = true;
 		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
 		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
-		_scene->loadAnimation(formAnimName('B', -1));
+		_scene->loadAnimation(kernel_name('B', -1));
 	} else {
 		local._carMode = 3;
 		local._dogDeathMode = 2;
 		local._resetPositionsFl = true;
 		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
 		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
-		_scene->loadAnimation(formAnimName('D', -1));
+		_scene->loadAnimation(kernel_name('D', -1));
 	}
 
 	pal_change_color(252, 63, 44, 30);
 	pal_change_color(253, 63, 20, 22);
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(46, 132);
-		_game._player._facing = FACING_EAST;
-		if (_game._difficulty == DIFFICULTY_HARD) {
-			if (!_game._visitedScenes._sceneRevisited)
+		player.x = 46;
+		player.y = 132;
+		player.facing = FACING_EAST;
+		if (game.difficulty == DIFFICULTY_HARD) {
+			if (!player.been_here_before)
 				local._dogFirstEncounter = true;
 			else if (local._dogActiveFl)
 				resetDogVariables();
 		}
-	} else if ((_game._difficulty == DIFFICULTY_HARD) && !local._dogFirstEncounter && local._dogActiveFl) {
+	} else if ((game.difficulty == DIFFICULTY_HARD) && !local._dogFirstEncounter && local._dogActiveFl) {
 		if (!local._dogUnderCar)
 			resetDogVariables();
 		else {
@@ -292,9 +293,9 @@ static void room_608_init() {
 	section_6_music();
 
 	if (_scene->_roomChanged)
-		_game._objects.addToInventory(OBJ_BONES);
+		inter_give_to_player(OBJ_BONES);
 
-	_game.loadQuoteSet(0x2FB, 0x2FC, 0x2FE, 0x2FD, 0x2FF, 0x300, 0x301, 0x302, 0x303, 0x304, 0);
+	kernel.quotes = quote_load(0x2FB, 0x2FC, 0x2FE, 0x2FD, 0x2FF, 0x300, 0x301, 0x302, 0x303, 0x304, 0);
 }
 
 static void room_608_daemon() {
@@ -317,10 +318,10 @@ static void room_608_daemon() {
 		local._dogWindowTimer = 0;
 	}
 
-	if (_game._trigger == 70)
+	if (kernel.trigger == 70)
 		resetDogVariables();
 
-	if ((_game._difficulty == DIFFICULTY_HARD) && !local._animationMode && local._dogActiveFl && !local._dogFirstEncounter && !local._dogUnderCar) {
+	if ((game.difficulty == DIFFICULTY_HARD) && !local._animationMode && local._dogActiveFl && !local._dogFirstEncounter && !local._dogUnderCar) {
 		if (!local._dogBarkingFl) {
 			if (g_engine->getRandomNumber(1, 50) == 10) {
 				local._dogBarkingFl = true;
@@ -333,7 +334,7 @@ static void room_608_daemon() {
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_SPRITE, 2, 100);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
 			}
-		} else if (_game._trigger == 60) {
+		} else if (kernel.trigger == 60) {
 			int syncIdx = _globals._sequenceIndexes[5];
 			_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 6);
@@ -343,7 +344,7 @@ static void room_608_daemon() {
 		}
 	}
 
-	if ((_game._trigger == 100) && local._dogBarkingFl) {
+	if ((kernel.trigger == 100) && local._dogBarkingFl) {
 		g_engine->_soundManager->command(12, 0);
 		local._barkCount++;
 
@@ -369,7 +370,7 @@ static void room_608_daemon() {
 			default:
 				break;
 			}
-			_scene->_kernelMessages.add(_barkPos, 0xFDFC, 0, 0, 120, _game.getQuote(0x2FB));
+			_scene->_kernelMessages.add(_barkPos, 0xFDFC, 0, 0, 120, quote_string(kernel.quotes, 0x2FB));
 		}
 	}
 
@@ -391,7 +392,7 @@ static void room_608_daemon() {
 		local._dogRunTimer = 0;
 	} else {
 		local._dogSafeFl = false;
-		if (_game._player._moving && (_game._difficulty == DIFFICULTY_HARD) && local._dogActiveFl && (_scene->_rails.getNext() > 0) && local._dogUnderCar)
+		if (player.walking && (game.difficulty == DIFFICULTY_HARD) && local._dogActiveFl && (_scene->_rails.getNext() > 0) && local._dogUnderCar)
 			local._dogSafeFl = true;
 	}
 
@@ -405,10 +406,10 @@ static void room_608_daemon() {
 		_scene->_kernelMessages.reset();
 		_globals._sequenceIndexes[11] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[11], false, 6, 1, 0, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[11], SEQUENCE_TRIGGER_EXPIRE, 0, 92);
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x2FF));
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2FF));
 	}
 
-	if (_game._trigger == 92) {
+	if (kernel.trigger == 92) {
 		resetDogVariables();
 		local._animationMode = 0;
 	}
@@ -418,8 +419,8 @@ static void room_608_daemon() {
 			local._carFrame = _scene->_animation[0]->getCurrentFrame();
 
 			if (local._carFrame == 10) {
-				_game._player._visible = true;
-				_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
+				player.walker_visible = true;
+				player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
 			} else if (local._carFrame == 56) {
 				resetDogVariables();
 				local._animationMode = 0;
@@ -432,8 +433,8 @@ static void room_608_daemon() {
 		if (_scene->_animation[0]->getCurrentFrame() != local._carFrame) {
 			local._carFrame = _scene->_animation[0]->getCurrentFrame();
 			if (local._carFrame == 10) {
-				_game._player._visible = true;
-				_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
+				player.walker_visible = true;
+				player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
 			} else if (local._carFrame == 52) {
 				resetDogVariables();
 				local._animationMode = 0;
@@ -447,8 +448,8 @@ static void room_608_daemon() {
 			local._carFrame = _scene->_animation[0]->getCurrentFrame();
 
 			if (local._carFrame == 11) {
-				_game._player._visible = true;
-				_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
+				player.walker_visible = true;
+				player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
 			} else if (local._carFrame == 41) {
 				_globals._sequenceIndexes[10] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[10], false, 9, 0, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[10], 10, 11);
@@ -473,17 +474,17 @@ static void room_608_daemon() {
 	} else
 		local._dogYelping = false;
 
-	if (_game._trigger == 110) {
+	if (kernel.trigger == 110) {
 		g_engine->_soundManager->command(12, 0);
-		_scene->_kernelMessages.add(Common::Point(150, 97), 0xFDFC, 0, 0, 60, _game.getQuote(0x303));
+		_scene->_kernelMessages.add(Common::Point(150, 97), 0xFDFC, 0, 0, 60, quote_string(kernel.quotes, 0x303));
 	}
 
-	if (_game._trigger == 111) {
+	if (kernel.trigger == 111) {
 		g_engine->_soundManager->command(12, 0);
-		_scene->_kernelMessages.add(Common::Point(183, 93), 0xFDFC, 0, 0, 60, _game.getQuote(0x303));
+		_scene->_kernelMessages.add(Common::Point(183, 93), 0xFDFC, 0, 0, 60, quote_string(kernel.quotes, 0x303));
 	}
 
-	if (_game._trigger == 112)
+	if (kernel.trigger == 112)
 		local._dogYelping = false;
 
 	if ((local._carMode == 0) && (_scene->_animation[0] != nullptr)) {
@@ -592,21 +593,21 @@ static void room_608_daemon() {
 		}
 	}
 
-	if (_game._player._moving && (_game._difficulty == DIFFICULTY_HARD) && local._dogActiveFl && (_scene->_rails.getNext() > 0)) {
-		_game._player.cancelCommand();
-		_game._player.startWalking(Common::Point(194, 142), FACING_EAST);
+	if (player.walking && (game.difficulty == DIFFICULTY_HARD) && local._dogActiveFl && (_scene->_rails.getNext() > 0)) {
+		player_cancel_command();
+		player_start_walking(194, 142, FACING_EAST);
 		_scene->_rails.resetNext();
 		if (local._dogUnderCar)
 			local._dogSafeFl = true;
 	}
 
-	if (_game._player._special > 0 && (_game._difficulty == DIFFICULTY_HARD) && local._dogActiveFl && _game._player._stepEnabled)
-		_game._player._stepEnabled = false;
+	if (player.special_code > 0 && (game.difficulty == DIFFICULTY_HARD) && local._dogActiveFl && player.commands_allowed)
+		player.commands_allowed = false;
 
-	if ((_game._difficulty == DIFFICULTY_HARD) && local._dogActiveFl && (_game._player._playerPos == Common::Point(194, 142))
-		&& (_game._trigger || !local._rexBeingEaten)) {
+	if ((game.difficulty == DIFFICULTY_HARD) && local._dogActiveFl && (Common::Point(player.x, player.y) == Common::Point(194, 142))
+		&& (kernel.trigger || !local._rexBeingEaten)) {
 		local._rexBeingEaten = true;
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
 			_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 			local._animationMode = 1;
@@ -618,13 +619,13 @@ static void room_608_daemon() {
 			break;
 
 		case 80:
-			_game._player._visible = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 10, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[9], 3, 5);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 5);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[9], -1);
 			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x2FC));
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2FC));
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
 			break;
 
@@ -665,7 +666,7 @@ static void room_608_daemon() {
 			local._rexBeingEaten = false;
 			local._animationMode = 0;
 			_scene->_reloadSceneFlag = true;
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			break;
 
 		case 85:
@@ -682,19 +683,19 @@ static void room_608_daemon() {
 }
 
 static void room_608_pre_parser() {
-	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+	kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 
 	if ((player_said_3(throw, bone, rear_of_garage) || player_said_3(throw, bones, rear_of_garage)
 		|| player_said_3(throw, bone, front_of_garage) || player_said_3(throw, bones, front_of_garage)
 		|| player_said_3(throw, bones, obnoxious_dog) || player_said_3(throw, bone, obnoxious_dog)) && local._dogActiveFl) {
-		_game._player._stepEnabled = false;
-		_game._player.walk(Common::Point(56, 146), FACING_EAST);
+		player.commands_allowed = false;
+		player_walk(56, 146, FACING_EAST);
 	}
 
 	if ((player_said_3(throw, bones, area_behind_car) || player_said_3(throw, bone, area_behind_car)
 		|| player_said_3(throw, bones, danger_zone) || player_said_3(throw, bone, danger_zone)) && local._dogActiveFl) {
-		_game._player._stepEnabled = false;
-		_game._player.walk(Common::Point(75, 136), FACING_EAST);
+		player.commands_allowed = false;
+		player_walk(75, 136, FACING_EAST);
 	}
 
 	if (player_said_2(push, down_button) && local._dogUnderCar) {
@@ -708,12 +709,12 @@ static void room_608_parser() {
 	if (player_said_2(walk_through, doorway))
 		_scene->_nextSceneId = 607;
 	else if (player_said_2(push, down_button)) {
-		_game._player._stepEnabled = true;
-		switch (_game._trigger) {
+		player.commands_allowed = true;
+		switch (kernel.trigger) {
 		case 0:
 			if ((_globals[kCarStatus] == CAR_UP) || (_globals[kCarStatus] == CAR_SQUASHES_DOG) || (_globals[kCarStatus] == CAR_SQUASHES_DOG_AGAIN)) {
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
+				player.commands_allowed = false;
+				player.walker_visible = false;
 				_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], true, 6, 2, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 2);
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
@@ -724,12 +725,12 @@ static void room_608_parser() {
 
 		case 1:
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[3]);
-			_game._player._visible = true;
+			player.walker_visible = true;
 			if (local._dogDeathMode == 0)
 				local._carMode = 0;
 			else if (local._dogDeathMode == 1) {
 				_scene->_kernelMessages.reset();
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x300));
+				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x300));
 				_globals[kCarStatus] = CAR_SQUASHES_DOG;
 				local._carMode = 2;
 				_globals[kDogStatus] = DOG_DEAD;
@@ -737,12 +738,12 @@ static void room_608_parser() {
 				local._dogUnderCar = false;
 				_scene->_sequences.remove(_globals._sequenceIndexes[10]);
 				_scene->freeAnimation();
-				_scene->loadAnimation(formAnimName('C', -1));
+				_scene->loadAnimation(kernel_name('C', -1));
 			} else {
 				local._resetPositionsFl = false;
 				local._carMode = 1;
 				_scene->freeAnimation();
-				_scene->loadAnimation(formAnimName('B', -1));
+				_scene->loadAnimation(kernel_name('B', -1));
 			}
 
 			local._carMoveMode = 2;
@@ -766,28 +767,28 @@ static void room_608_parser() {
 						local._carMode = 3;
 						local._dogDeathMode = 2;
 					}
-					_game._player._stepEnabled = true;
+					player.commands_allowed = true;
 				}
 			}
 			break;
 
 		case 3:
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x302));
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x302));
 			_globals[kCarStatus] = CAR_DOWN_ON_SQUASHED_DOG;
 			local._carMode = 3;
 			local._dogDeathMode = 2;
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			break;
 
 		default:
 			break;
 		}
 	} else if (player_said_2(push, up_button)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
 			if ((_globals[kCarStatus] == CAR_DOWN) || (_globals[kCarStatus] == CAR_DOWN_ON_SQUASHED_DOG)) {
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
+				player.commands_allowed = false;
+				player.walker_visible = false;
 				_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], true, 6, 2, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 3);
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
@@ -798,14 +799,14 @@ static void room_608_parser() {
 
 		case 1:
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[3]);
-			_game._player._visible = true;
+			player.walker_visible = true;
 			if (local._dogDeathMode == 0)
 				local._carMode = 0;
 			else {
 				local._carMode = 3;
 				local._resetPositionsFl = false;
 				_scene->freeAnimation();
-				_scene->loadAnimation(formAnimName('D', -1));
+				_scene->loadAnimation(kernel_name('D', -1));
 			}
 			local._carMoveMode = 1;
 			_scene->_sequences.addTimer(1, 2);
@@ -825,7 +826,7 @@ static void room_608_parser() {
 			_scene->_dynamicHotspots.remove(local._carHotspotId);
 			int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
 			local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 		}
 		break;
 
@@ -834,22 +835,22 @@ static void room_608_parser() {
 		}
 	} else if (player_said_3(throw, bone, rear_of_garage) || player_said_3(throw, bones, rear_of_garage)
 		|| player_said_3(throw, bones, obnoxious_dog) || player_said_3(throw, bone, obnoxious_dog)) {
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 		if (local._dogActiveFl) {
-			if (_game._trigger == 0) {
+			if (kernel.trigger == 0) {
 				_scene->_kernelMessages.reset();
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x2FE));
+				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2FE));
 			}
 			local._throwMode = 4;
 			handleThrowingBone();
 		} else
 			text_show(60841);
 	} else if (player_said_3(throw, bone, front_of_garage) || player_said_3(throw, bones, front_of_garage)) {
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 		if (local._dogActiveFl) {
-			if (_game._trigger == 0) {
+			if (kernel.trigger == 0) {
 				_scene->_kernelMessages.reset();
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x2FD));
+				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2FD));
 			}
 			local._throwMode = 5;
 			handleThrowingBone();
@@ -857,12 +858,12 @@ static void room_608_parser() {
 			text_show(60841);
 	} else if (player_said_3(throw, bones, area_behind_car) || player_said_3(throw, bone, area_behind_car)
 		|| player_said_3(throw, bones, danger_zone) || player_said_3(throw, bone, danger_zone)) {
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 		if ((_globals[kCarStatus] == CAR_UP) && local._dogActiveFl) {
 			if (local._dogActiveFl) {
-				if (_game._trigger == 0) {
+				if (kernel.trigger == 0) {
 					_scene->_kernelMessages.reset();
-					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x301));
+					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x301));
 				}
 				local._throwMode = 6;
 				handleThrowingBone();
@@ -870,11 +871,11 @@ static void room_608_parser() {
 				text_show(60841);
 		} else
 			text_show(60842);
-	} else if (player_said_2(take, polycement) && (_game._trigger || !_game._objects.isInInventory(OBJ_POLYCEMENT))) {
-		switch (_game._trigger) {
+	} else if (player_said_2(take, polycement) && (kernel.trigger || !player_has(OBJ_POLYCEMENT))) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], true, 6, 2, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 4, 1);
@@ -888,21 +889,21 @@ static void room_608_parser() {
 			break;
 
 		case 2:
-			_game._objects.addToInventory(OBJ_POLYCEMENT);
+			inter_give_to_player(OBJ_POLYCEMENT);
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
-			_game._player._visible = true;
-			_game._player._stepEnabled = true;
+			player.walker_visible = true;
+			player.commands_allowed = true;
 			object_examine(OBJ_POLYCEMENT, 60833, 0);
 			break;
 
 		default:
 			break;
 		}
-	} else if (player_said_2(take, rearview_mirror) && (_game._trigger || !_game._objects.isInInventory(OBJ_REARVIEW_MIRROR))) {
-		switch (_game._trigger) {
+	} else if (player_said_2(take, rearview_mirror) && (kernel.trigger || !player_has(OBJ_REARVIEW_MIRROR))) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], true, 6, 2, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 2);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
@@ -913,21 +914,21 @@ static void room_608_parser() {
 		case 1:
 			g_engine->_soundManager->command(9, 0);
 			_scene->_sequences.remove(_globals._sequenceIndexes[12]);
-			_game._objects.addToInventory(OBJ_REARVIEW_MIRROR);
+			inter_give_to_player(OBJ_REARVIEW_MIRROR);
 			object_examine(OBJ_REARVIEW_MIRROR, 60827, 0);
 			break;
 
 		case 2:
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
-			_game._player._visible = true;
-			_game._player._stepEnabled = true;
+			player.walker_visible = true;
+			player.commands_allowed = true;
 			break;
 
 		default:
 			break;
 		}
 	} else if (_action._lookFlag) {
-		if (_game._difficulty != DIFFICULTY_HARD)
+		if (game.difficulty != DIFFICULTY_HARD)
 			text_show(60810);
 		else if (_globals[kDogStatus] == DOG_DEAD)
 			text_show(60812);
@@ -947,7 +948,7 @@ static void room_608_parser() {
 	} else if (player_said_2(look, spare_ribs))
 		text_show(60817);
 	else if (player_said_2(take, spare_ribs)) {
-		if (_game._difficulty == DIFFICULTY_HARD)
+		if (game.difficulty == DIFFICULTY_HARD)
 			text_show(60818);
 		else
 			text_show(60819);
@@ -960,7 +961,7 @@ static void room_608_parser() {
 	else if (player_said_2(look, calendar))
 		text_show(60823);
 	else if (player_said_2(look, storage_box)) {
-		if (_game._objects[OBJ_REARVIEW_MIRROR]._roomNumber == _scene->_currentSceneId)
+		if (object[OBJ_REARVIEW_MIRROR].location == _scene->_currentSceneId)
 			text_show(60825);
 		else
 			text_show(60824);
@@ -969,13 +970,13 @@ static void room_608_parser() {
 	else if (player_said_2(look, rearview_mirror) && (_action._mainObjectSource == CAT_HOTSPOT))
 		text_show(60828);
 	else if (player_said_2(look, tool_box)) {
-		if (_game._objects[OBJ_POLYCEMENT]._roomNumber == _scene->_currentSceneId)
+		if (object[OBJ_POLYCEMENT].location == _scene->_currentSceneId)
 			text_show(60829);
 		else
 			text_show(60830);
 	} else if (player_said_2(open, tool_box))
 		text_show(60831);
-	else if ((player_said_2(look, polycement)) && (_game._objects.isInRoom(OBJ_POLYCEMENT)))
+	else if ((player_said_2(look, polycement)) && (object_is_here(OBJ_POLYCEMENT)))
 		text_show(60832);
 	else if (player_said_2(look, grease_can) || player_said_2(look, oil_can))
 		text_show(60834);

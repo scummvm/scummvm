@@ -20,6 +20,7 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/quote.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
@@ -39,21 +40,24 @@ struct Scratch {
 static Scratch local;
 
 static void room_104_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('h', -1));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('h', -1));
 	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 14, 0, 0, 1);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
 
-	if (_scene->_priorSceneId == 105)
-		_game._player._playerPos = Common::Point(302, 107);
-	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
-		_game._player._playerPos = Common::Point(160, 134);
+	if (_scene->_priorSceneId == 105) {
+		player.x = 302;
+		player.y = 107;
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+		player.x = 160;
+		player.y = 134;
+	}
 
 	local._loseFl = false;
-	_game.loadQuoteSet(0x35, 0x34, 0);
+	kernel.quotes = quote_load(0x35, 0x34, 0);
 	local._kargShootingFl = false;
 
 	if (g_engine->getRandomNumber(1, 3) == 1) {
-		_scene->loadAnimation(Resources::formatName(104, 'B', -1, EXT_AA, ""), 0);
+		_scene->loadAnimation(kernel_full_name(104, 'B', -1, "", EXT_AA), 0);
 		local._kargShootingFl = true;
 	}
 
@@ -61,31 +65,31 @@ static void room_104_init() {
 }
 
 static void room_104_daemon() {
-	if ((_game._player._playerPos == Common::Point(189, 70)) && (_game._trigger || !local._loseFl)) {
-		if (_game._player._facing == FACING_SOUTHWEST || _game._player._facing == FACING_SOUTHEAST)
-			_game._player._facing = FACING_SOUTH;
+	if ((Common::Point(player.x, player.y) == Common::Point(189, 70)) && (kernel.trigger || !local._loseFl)) {
+		if (player.facing == FACING_SOUTHWEST || player.facing == FACING_SOUTHEAST)
+			player.facing = FACING_SOUTH;
 
-		if (_game._player._facing == FACING_NORTHWEST || _game._player._facing == FACING_NORTHEAST)
-			_game._player._facing = FACING_NORTH;
+		if (player.facing == FACING_NORTHWEST || player.facing == FACING_NORTHEAST)
+			player.facing = FACING_NORTH;
 
 		bool mirrorFl = false;
-		if (_game._player._facing == FACING_WEST) {
-			_game._player._facing = FACING_EAST;
+		if (player.facing == FACING_WEST) {
+			player.facing = FACING_EAST;
 			mirrorFl = true;
 		}
 
 		local._loseFl = true;
 
-		switch (_game._player._facing) {
+		switch (player.facing) {
 		case FACING_EAST:
-			switch (_game._trigger) {
+			switch (kernel.trigger) {
 			case 0:
 				_scene->_kernelMessages.reset();
 				_scene->freeAnimation();
 				_scene->resetScene();
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
-				_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 0));
+				player.commands_allowed = false;
+				player.walker_visible = false;
+				_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('a', 0));
 				kernel_new_palette();
 				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], mirrorFl, 7, 1, 0, 0);
 				_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(198, 143));
@@ -111,14 +115,14 @@ static void room_104_daemon() {
 			break;
 
 		case FACING_SOUTH:
-			switch (_game._trigger) {
+			switch (kernel.trigger) {
 			case 0:
 				_scene->_kernelMessages.reset();
 				_scene->freeAnimation();
 				_scene->resetScene();
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
-				_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 1));
+				player.commands_allowed = false;
+				player.walker_visible = false;
+				_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('a', 1));
 				kernel_new_palette();
 				_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
 				_scene->_sequences.setPosition(_globals._sequenceIndexes[3], Common::Point(198, 143));
@@ -153,20 +157,20 @@ static void room_104_daemon() {
 			break;
 
 		case FACING_NORTH:
-			switch (_game._trigger) {
+			switch (kernel.trigger) {
 			case 0:
 				_scene->_kernelMessages.reset();
 				_scene->freeAnimation();
 				_scene->resetScene();
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
-				_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('a', 2));
+				player.commands_allowed = false;
+				player.walker_visible = false;
+				_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('a', 2));
 				kernel_new_palette();
 				_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 8, 1, 0, 0);
 				_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(198, 143));
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
-				if (_game._storyMode >= STORYMODE_NICE)
+				if (config_file.naughtiness >= STORYMODE_NICE)
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_SPRITE, 15, 2);
 				break;
 
@@ -190,31 +194,31 @@ static void room_104_daemon() {
 			break;
 		}
 
-		if (!_game._trigger)
+		if (!kernel.trigger)
 			g_engine->_soundManager->command(34, 0);
 	}
 
-	if (_game._player._moving && (_scene->_rails.getNext() > 0)) {
-		_game._player.cancelCommand();
-		_game._player.startWalking(Common::Point(189, 70), FACING_NONE);
+	if (player.walking && (_scene->_rails.getNext() > 0)) {
+		player_cancel_command();
+		player_start_walking(189, 70, FACING_NONE);
 		_scene->_rails.resetNext();
 	}
 
-	if ((_game._player._special > 0) && _game._player._stepEnabled)
-		_game._player._stepEnabled = false;
+	if ((player.special_code > 0) && player.commands_allowed)
+		player.commands_allowed = false;
 
 	if (local._kargShootingFl && (_scene->_animation[0]->getCurrentFrame() >= 19)) {
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(52));
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 52));
 		local._kargShootingFl = false;
 	}
 }
 
 static void room_104_pre_parser() {
 	if (player_said_2(swim_towards, eastern_cliff_face))
-		_game._player._walkOffScreenSceneId = 105;
+		player.walk_off_edge_to_room = 105;
 
 	if (player_said_2(swim_towards, open_area_to_south))
-		_game._player._walkOffScreenSceneId = 106;
+		player.walk_off_edge_to_room = 106;
 }
 
 static void room_104_parser() {
@@ -245,7 +249,7 @@ void room_104_preload() {
 	room_parser_code_pointer = room_104_parser;
 	room_daemon_code_pointer = room_104_daemon;
 
-	anim_himem_preload(formAnimName('A', -1), 3);
+	anim_himem_preload(kernel_name('A', -1), 3);
 
 	section_1_walker();
 	section_1_interface();

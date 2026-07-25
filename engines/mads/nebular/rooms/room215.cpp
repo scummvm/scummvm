@@ -32,8 +32,8 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_215_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('e', 0));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('e', 0));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('a', 0));
 
 	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 7, 0, 0, 0);
 	_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(235, 83));
@@ -45,32 +45,34 @@ static void room_215_init() {
 		_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*ROXRC_9");
 
 	if (_scene->_priorSceneId == 216) {
-		_game._player._playerPos = Common::Point(140, 119);
-		_game._player._facing = FACING_SOUTHWEST;
-		_game._player._visible = false;
-		_game._player._stepEnabled = false;
+		player.x = 140;
+		player.y = 119;
+		player.facing = FACING_SOUTHWEST;
+		player.walker_visible = false;
+		player.commands_allowed = false;
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 		_scene->_sequences.addTimer(120, 70);
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(204, 152);
-		_game._player._facing = FACING_NORTH;
+		player.x = 204;
+		player.y = 152;
+		player.facing = FACING_NORTH;
 	}
 
-	_game.loadQuoteSet(0xA9, 0xAA, 0);
+	kernel.quotes = quote_load(0xA9, 0xAA, 0);
 	section_2_music();
 }
 
 static void room_215_daemon() {
-	if (_game._trigger == 70) {
+	if (kernel.trigger == 70) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 	}
 
-	if (_game._trigger == 71) {
+	if (kernel.trigger == 71) {
 		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[3]);
-		_game._player._visible = true;
-		_game._player._stepEnabled = true;
+		player.walker_visible = true;
+		player.commands_allowed = true;
 	}
 }
 
@@ -78,33 +80,33 @@ static void room_215_parser() {
 	if (_action._lookFlag)
 		text_show(21509);
 	else if (player_said_2(take, twinkifruit)) {
-		if (!_game._objects.isInInventory(OBJ_TWINKIFRUIT) || _game._trigger) {
-			switch (_game._trigger) {
+		if (!player_has(OBJ_TWINKIFRUIT) || kernel.trigger) {
+			switch (kernel.trigger) {
 			case 0:
 				if (_globals[kSexOfRex] == REX_MALE) {
-					_game._player._visible = false;
-					_game._player._stepEnabled = false;
+					player.walker_visible = false;
+					player.commands_allowed = false;
 					_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 6, 2, 0, 0);
 					_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 4);
 					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_LOOP, 0, 1);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				} else {
-					_game._objects.addToInventory(OBJ_TWINKIFRUIT);
+					inter_give_to_player(OBJ_TWINKIFRUIT);
 					object_examine(OBJ_TWINKIFRUIT, 0x5404, 0);
 				}
 				break;
 
 			case 1:
-				if (!_game._objects.isInInventory(OBJ_TWINKIFRUIT)) {
-					_game._objects.addToInventory(OBJ_TWINKIFRUIT);
+				if (!player_has(OBJ_TWINKIFRUIT)) {
+					inter_give_to_player(OBJ_TWINKIFRUIT);
 					object_examine(OBJ_TWINKIFRUIT, 0x5404, 0);
 				}
 				break;
 
 			case 2:
-				_game._player._visible = true;
-				_game._player._stepEnabled = true;
+				player.walker_visible = true;
+				player.commands_allowed = true;
 				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
 				break;
 
@@ -114,7 +116,7 @@ static void room_215_parser() {
 		} else {
 			int idx = g_engine->getRandomNumber(169, 170);
 			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(idx));
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, idx));
 		}
 	} else if (player_said_2(walk_outside, hut))
 		_scene->_nextSceneId = 210;

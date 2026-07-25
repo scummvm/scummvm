@@ -43,14 +43,17 @@ static Scratch local;
 
 static void room_203_init() {
 	if (_scene->_priorSceneId == 202) {
-		_game._player._playerPos = Common::Point(187, 99);
-		_game._player._facing = FACING_SOUTH;
+		player.x = 187;
+		player.y = 99;
+		player.facing = FACING_SOUTH;
 	} else if (_scene->_priorSceneId == 209) {
-		_game._player._playerPos = Common::Point(308, 117);
-		_game._player._facing = FACING_WEST;
+		player.x = 308;
+		player.y = 117;
+		player.facing = FACING_WEST;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(155, 152);
-		_game._player._facing = FACING_NORTH;
+		player.x = 155;
+		player.y = 152;
+		player.facing = FACING_NORTH;
 	}
 
 	local._rhotundaEatFl = false;
@@ -58,14 +61,14 @@ static void room_203_init() {
 
 	if ((_globals[kRhotundaStatus] == 0) && (!_scene->_roomChanged)) {
 		local._rhotundaEatFl = true;
-		_game._player.walk(Common::Point(158, 135), FACING_SOUTH);
+		player_walk(158, 135, FACING_SOUTH);
 		int idx = _scene->_dynamicHotspots.add(words_field_to_south, words_walk_towards, 0, Common::Rect(0, 0, 320, 156));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(155, 152), FACING_SOUTH);
 		_scene->_dynamicHotspots.setCursor(idx, CURSOR_GO_DOWN);
 	}
 
 	if (!local._rhotundaEatFl) {
-		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('b', -1));
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(kernel_name('b', -1));
 		if (g_engine->getRandomNumber(1, 3) == 2) {
 			_globals._spriteIndexes[15] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 9, 1, 0, 0);
 			int idx = _scene->_dynamicHotspots.add(words_yellow_bird, words_look_at, _globals._spriteIndexes[15], Common::Rect(0, 0, 0, 0));
@@ -74,10 +77,10 @@ static void room_203_init() {
 		}
 	}
 
-	_game.loadQuoteSet(0x67, 0x68, 0x69, 0x6A, 0x5A, 0);
+	kernel.quotes = quote_load(0x67, 0x68, 0x69, 0x6A, 0x5A, 0);
 
 	if (local._rhotundaEatFl) {
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(g_engine->getRandomNumber(103, 106)));
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, g_engine->getRandomNumber(103, 106)));
 	}
 
 	section_2_music();
@@ -87,24 +90,24 @@ static void room_203_daemon() {
 	if (!local._rhotundaEatFl)
 		return;
 
-	if ((_game._trigger == 0) && local._rhotundaEat2Fl)
+	if ((kernel.trigger == 0) && local._rhotundaEat2Fl)
 		return;
 
-	if ((_game._player._playerPos != Common::Point(158, 136)) || (_game._player._facing != FACING_SOUTH))
+	if ((Common::Point(player.x, player.y) != Common::Point(158, 136)) || (player.facing != FACING_SOUTH))
 		return;
 
 	local._rhotundaEat2Fl = true;
 
-	if (_game._trigger == 0) {
-		_game._player._visible = false;
-		_game._player._stepEnabled = false;
+	if (kernel.trigger == 0) {
+		player.walker_visible = false;
+		player.commands_allowed = false;
 		pal_lock();
 		_scene->_kernelMessages.reset();
 		_scene->resetScene();
 		cursor_id = CURSOR_WAIT;
 		mouse_cursor_sprite(cursor, CURSOR_WAIT);
-		_scene->loadAnimation(Resources::formatName(203, 'a', -1, EXT_AA, ""), 81);
-	} else if (_game._trigger == 81) {
+		_scene->loadAnimation(kernel_full_name(203, 'a', -1, "", EXT_AA), 81);
+	} else if (kernel.trigger == 81) {
 		_scene->_nextSceneId = 208;
 		_scene->_reloadSceneFlag = true;
 	}
@@ -112,13 +115,13 @@ static void room_203_daemon() {
 
 static void room_203_pre_parser() {
 	if (local._rhotundaEatFl && !player_said_2(walk_towards, field_to_south)) {
-		_game._player.walk(Common::Point(158, 136), FACING_SOUTH);
+		player_walk(158, 136, FACING_SOUTH);
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(walkto, open_area_to_east))
-		_game._player._walkOffScreenSceneId = 209;
+		player.walk_off_edge_to_room = 209;
 }
 
 static void room_203_parser() {

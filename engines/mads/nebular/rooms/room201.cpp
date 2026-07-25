@@ -40,10 +40,10 @@ static Scratch local;
 
 
 static void room_201_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('m', -1));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('b', -1));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('x', 1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('m', -1));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('b', -1));
 	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*SC002Z1");
 	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 1, 0);
 	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 15, 0, 0, 50);
@@ -56,15 +56,17 @@ static void room_201_init() {
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(186, 81), FACING_NORTH);
 
 	if ((_scene->_priorSceneId == 202) || (_scene->_priorSceneId == RETURNING_FROM_LOADING)) {
-		_game._player._playerPos = Common::Point(165, 152);
+		player.x = 165;
+		player.y = 152;
 	} else {
-		_game._player._playerPos = Common::Point(223, 149);
-		_game._player._facing = FACING_SOUTH;
+		player.x = 223;
+		player.y = 149;
+		player.facing = FACING_SOUTH;
 	}
 
 	if (_globals[kTeleporterCommand]) {
-		_game._player._visible = false;
-		_game._player._stepEnabled = false;
+		player.walker_visible = false;
+		player.commands_allowed = false;
 		int sepChar = (_globals[kSexOfRex] == SEX_MALE) ? 't' : 'u';
 		// Guess values. What is the default value used by the compiler?
 		int suffixNum = -1;
@@ -80,8 +82,8 @@ static void room_201_init() {
 			endTrigger = 77;
 			break;
 		case 3:
-			_game._player._visible = true;
-			_game._player._stepEnabled = true;
+			player.walker_visible = true;
+			player.commands_allowed = true;
 			suffixNum = -1;
 			break;
 		case 4:
@@ -93,23 +95,23 @@ static void room_201_init() {
 		}
 		_globals[kTeleporterCommand] = 0;
 		if (suffixNum >= 0)
-			_scene->loadAnimation(formAnimName(sepChar, suffixNum), endTrigger);
+			_scene->loadAnimation(kernel_name(sepChar, suffixNum), endTrigger);
 	}
 
 	if ((_scene->_priorSceneId == 202) && (_globals[kMeteorologistStatus] == METEOROLOGIST_PRESENT) && !_scene->_roomChanged) {
-		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('a', 0));
-		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('a', 1));
-		_game.loadQuoteSet(90, 91, 0);
-		_game._player._stepEnabled = false;
+		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_name('a', 0));
+		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(kernel_name('a', 1));
+		kernel.quotes = quote_load(90, 91, 0);
+		player.commands_allowed = false;
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], -1, 12);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_SPRITE, 12, 70);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 1);
 		local._pterodactylFlag = false;
-		_game._player.walk(Common::Point(157, 143), FACING_NORTH);
+		player_walk(157, 143, FACING_NORTH);
 		pal_change_color(252, 45, 63, 45);
 		pal_change_color(253, 20, 45, 20);
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 2, 0, 120, _game.getQuote(90));
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 2, 0, 120, quote_string(kernel.quotes, 90));
 	} else
 		local._pterodactylFlag = true;
 
@@ -129,9 +131,9 @@ static void room_201_daemon() {
 		local._pterodactylFlag = false;
 	}
 
-	if (_game._trigger == 70) {
+	if (kernel.trigger == 70) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 9, 1, 0, 0);
-		_game._player._visible = false;
+		player.walker_visible = false;
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], 12, 16);
 		_globals._sequenceIndexes[7] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 9, 1, 0, 0);
 		g_engine->_soundManager->command(42, 0);
@@ -142,51 +144,51 @@ static void room_201_daemon() {
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
 	}
 
-	if (_game._trigger == 81) {
+	if (kernel.trigger == 81) {
 		_scene->_kernelMessages.reset();
 	}
 
-	if (_game._trigger == 71) {
+	if (kernel.trigger == 71) {
 		_globals._sequenceIndexes[7] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 9, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[7], -2, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 1);
 	}
 
-	if (_game._trigger == 73) {
+	if (kernel.trigger == 73) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 9, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], 17, -2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 1);
 	}
 
-	if (_game._trigger == 74) {
+	if (kernel.trigger == 74) {
 		g_engine->_soundManager->command(40, 0);
 
-		_scene->_kernelMessages.add(Common::Point(125, 56), 0xFDFC, 32, 82, 180, _game.getQuote(91));
+		_scene->_kernelMessages.add(Common::Point(125, 56), 0xFDFC, 32, 82, 180, quote_string(kernel.quotes, 91));
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 9, 0, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 1);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], -2, -2);
 		_scene->_sequences.addTimer(180, 75);
 	}
 
-	if (_game._trigger == 75) {
+	if (kernel.trigger == 75) {
 		_globals[kMeteorologistEverSeen] = 0;
 		_scene->_nextSceneId = 202;
 	}
 
-	if (_game._trigger == 76) {
-		_game._player._stepEnabled = true;
-		_game._player._visible = true;
-		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
+	if (kernel.trigger == 76) {
+		player.commands_allowed = true;
+		player.walker_visible = true;
+		player.clock = _scene->_frameStartTime - player.frame_delay;
 	}
 
-	if (_game._trigger == 77) {
+	if (kernel.trigger == 77) {
 		_globals[kTeleporterCommand] = 1;
 		_scene->_nextSceneId = _globals[kTeleporterDestination];
 		_scene->_reloadSceneFlag = true;
 	}
 
-	if (_game._trigger == 78) {
+	if (kernel.trigger == 78) {
 		g_engine->_soundManager->command(40, 0);
 		text_show(20114);
 		_scene->_reloadSceneFlag = true;
@@ -198,12 +200,12 @@ static void room_201_parser() {
 		if (player_said_2(walk_towards, field_to_south))
 			_scene->_nextSceneId = 202;
 		else if (player_said_2(climb_up, steps) || (player_said_2(walk_inside, teleporter)) || (player_said_2(walk_inside, strange_device))) {
-			if (_game._trigger == 0) {
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
+			if (kernel.trigger == 0) {
+				player.commands_allowed = false;
+				player.walker_visible = false;
 				int sepChar = (_globals[kSexOfRex] == SEX_MALE) ? 't' : 'u';
-				_scene->loadAnimation(formAnimName(sepChar, 0), 1);
-			} else if (_game._trigger == 1) {
+				_scene->loadAnimation(kernel_name(sepChar, 0), 1);
+			} else if (kernel.trigger == 1) {
 				_scene->_nextSceneId = 213;
 			}
 		} else if (player_said_2(look, grassy_field)) {

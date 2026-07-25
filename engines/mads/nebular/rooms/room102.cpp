@@ -46,27 +46,27 @@ static Scratch local;
 
 static void addRandomMessage() {
 	_scene->_kernelMessages.reset();
-	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+	kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 	int quoteId = g_engine->getRandomNumber(65, 69);
-	_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 73, 120, _game.getQuote(quoteId));
+	_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 73, 120, quote_string(kernel.quotes, quoteId));
 	local._activeMsgFl = true;
 }
 
 static void room_102_init() {
 	section_1_music();
 
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 2));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 3));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 4));
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 5));
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', -1));
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('c', -1));
-	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('e', -1));
-	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('n', -1));
-	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('g', -1));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('x', 1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('x', 2));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('x', 3));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('x', 4));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('x', 5));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_name('b', -1));
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(kernel_name('c', -1));
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(kernel_name('e', -1));
+	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(kernel_name('n', -1));
+	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(kernel_name('g', -1));
 	_globals._spriteIndexes[11] = _scene->_sprites.addSprites("*RXMRC_8");
-	_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[13] = _scene->_sprites.addSprites(kernel_name('x', 0));
 
 	_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 8, 0, 0, 0);
 	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 170, 0, 1, 6);
@@ -74,7 +74,7 @@ static void room_102_init() {
 	_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 4, 0, 1, 0);
 	_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 3, 0, 0, 5);
 
-	if (_game._objects.isInRoom(OBJ_BINOCULARS))
+	if (object_is_here(OBJ_BINOCULARS))
 		_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 24, 0, 0, 24);
 	else
 		_scene->_hotspots.activate(words_binoculars, false);
@@ -87,15 +87,19 @@ static void room_102_init() {
 	}
 
 	if (_scene->_priorSceneId == 101) {
-		_game._player._playerPos = Common::Point(229, 109);
-		_game._player._stepEnabled = false;
+		player.x = 229;
+		player.y = 109;
+		player.commands_allowed = false;
 		_globals._sequenceIndexes[6] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[6], false, 6, 1, 2, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
-	} else if (_scene->_priorSceneId == 103)
-		_game._player._playerPos = Common::Point(47, 152);
+	} else if (_scene->_priorSceneId == 103) {
+		player.x = 47;
+		player.y = 152;
+	}
 	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._facing = FACING_NORTHWEST;
-		_game._player._playerPos = Common::Point(32, 129);
+		player.facing = FACING_NORTHWEST;
+		player.x = 32;
+		player.y = 129;
 	}
 
 	if (_scene->_priorSceneId != 106) {
@@ -105,8 +109,8 @@ static void room_102_init() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[13], 5);
 		}
 	} else {
-		_game._player._stepEnabled = false;
-		_game._player._visible = false;
+		player.commands_allowed = false;
+		player.walker_visible = false;
 		_globals._sequenceIndexes[13] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[13], false, 6, 1, 0, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[13], 5);
@@ -121,41 +125,41 @@ static void room_102_init() {
 	local._chairDescrFl = false;
 	local._activeMsgFl = false;
 
-	_game.loadQuoteSet(0x3B, 0x3C, 0x3D, 0x3E, 0x3F, 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0);
+	kernel.quotes = quote_load(0x3B, 0x3C, 0x3D, 0x3E, 0x3F, 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0);
 
 	if (_scene->_priorSceneId == 101)
 		g_engine->_soundManager->command(20, 0);
 }
 
 static void room_102_daemon() {
-	if (_game._trigger == 70)
-		_game._player._stepEnabled = true;
+	if (kernel.trigger == 70)
+		player.commands_allowed = true;
 
-	if (_game._trigger == 72) {
+	if (kernel.trigger == 72) {
 		_globals._sequenceIndexes[13] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[13], false, 6, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[13], -2, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[13], 5);
 		_scene->_sequences.addTimer(48, 90);
 	}
 
-	if (_game._trigger >= 90) {
-		if (_game._trigger >= 94) {
-			_scene->loadAnimation(formAnimName('B', -1), 71);
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+	if (kernel.trigger >= 90) {
+		if (kernel.trigger >= 94) {
+			_scene->loadAnimation(kernel_name('B', -1), 71);
+			player.commands_allowed = false;
+			player.walker_visible = false;
 
 			_globals[kWaterInAPuddle] = true;
 			g_engine->_soundManager->command(24, 0);
 		} else {
 			g_engine->_soundManager->command(23, 0);
-			_scene->_sequences.addTimer(48, _game._trigger + 1);
+			_scene->_sequences.addTimer(48, kernel.trigger + 1);
 		}
 	}
 
-	if (_game._trigger == 71) {
-		_game._player._stepEnabled = true;
-		_game._player._visible = true;
-		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
+	if (kernel.trigger == 71) {
+		player.commands_allowed = true;
+		player.walker_visible = true;
+		player.clock = _scene->_frameStartTime - player.frame_delay;
 	}
 
 	if (local._fridgeOpenedFl && !local._fridgeOpenedDescr) {
@@ -166,41 +170,41 @@ static void room_102_daemon() {
 		}
 	}
 
-	if (!local._activeMsgFl && (_game._player._playerPos == Common::Point(177, 114)) && (_game._player._facing == FACING_NORTH)
+	if (!local._activeMsgFl && (Common::Point(player.x, player.y) == Common::Point(177, 114)) && (player.facing == FACING_NORTH)
 		&& (g_engine->getRandomNumber(1, 5000) == 1)) {
 		_scene->_kernelMessages.reset();
 		local._activeMsgFl = false;
 		addRandomMessage();
 	}
 
-	if (_game._trigger == 73)
+	if (kernel.trigger == 73)
 		local._activeMsgFl = false;
 }
 
 static void room_102_pre_parser() {
 	if (player_said_1(refrigerator) || player_said_1(poster))
-		_game._player._needToWalk = _game._player._readyToWalk;
+		player.need_to_walk = player.ready_to_walk;
 
 	if (local._fridgeOpenedFl && !player_said_1(refrigerator)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			if (_game._player._needToWalk) {
+			if (player.need_to_walk) {
 				_scene->_sequences.remove(_globals._sequenceIndexes[7]);
 				_globals._sequenceIndexes[7] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[7], false, 6, 1, 0, 0);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[7], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 15);
-				_game._player._stepEnabled = false;
+				player.commands_allowed = false;
 				g_engine->_soundManager->command(20, 0);
 			}
 			break;
 
 		case 1:
-			if (_game._objects.isInRoom(OBJ_BURGER)) {
+			if (object_is_here(OBJ_BURGER)) {
 				_scene->_sequences.remove(_globals._sequenceIndexes[10]);
 				_scene->_hotspots.activate(words_burger, false);
 			}
 			local._fridgeOpenedFl = false;
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			break;
 
 		default:
@@ -208,7 +212,7 @@ static void room_102_pre_parser() {
 		}
 	}
 
-	if (_game._player._needToWalk)
+	if (player.need_to_walk)
 		_scene->_kernelMessages.reset();
 }
 
@@ -221,16 +225,16 @@ static void room_102_parser() {
 
 	bool justOpenedFl = false;
 	if (player_said_1(refrigerator) && !local._fridgeOpenedFl) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
 			_globals._sequenceIndexes[7] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 15);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[7], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
-			if (_game._objects.isInRoom(OBJ_BURGER)) {
+			if (object_is_here(OBJ_BURGER)) {
 				_globals._sequenceIndexes[10] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[10], false, 7, 0, 0, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 14);
 			}
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			g_engine->_soundManager->command(20, 0);
 			_action._inProgress = false;
 			return;
@@ -252,9 +256,9 @@ static void room_102_parser() {
 			local._fridgeOpenedFl = true;
 			local._fridgeOpenedDescr = false;
 			local._fridgeCommentCount = 0;
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			justOpenedFl = true;
-			if (_game._objects.isInRoom(OBJ_BURGER))
+			if (object_is_here(OBJ_BURGER))
 				_scene->_hotspots.activate(words_burger, true);
 			break;
 
@@ -264,7 +268,7 @@ static void room_102_parser() {
 	}
 
 	if (player_said_2(look, refrigerator) || player_said_2(open, refrigerator)) {
-		if (_game._objects.isInRoom(OBJ_BURGER))
+		if (object_is_here(OBJ_BURGER))
 			text_show(10230);
 		else
 			text_show(10229);
@@ -277,12 +281,12 @@ static void room_102_parser() {
 	if (player_said_2(walkto, refrigerator) && justOpenedFl) {
 		local._fridgeFirstOpenFl = false;
 		int quoteId = g_engine->getRandomNumber(59, 63);
-		const char *curQuote = _game.getQuote(quoteId);
+		const char *curQuote = quote_string(kernel.quotes, quoteId);
 		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, -1);
 		_scene->_kernelMessages.reset();
-		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_kernelMessages.add(Common::Point(210, 60), 0x1110, 0, 73, 120, curQuote);
-		_scene->_kernelMessages.add(Common::Point(214 + width, 60), 0x1110, 0, 73, 120, _game.getQuote(64));
+		_scene->_kernelMessages.add(Common::Point(214 + width, 60), 0x1110, 0, 73, 120, quote_string(kernel.quotes, 64));
 		local._activeMsgFl = true;
 		_action._inProgress = false;
 		return;
@@ -301,11 +305,11 @@ static void room_102_parser() {
 	}
 
 	if (player_said_2(walk_through, door)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
 			_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 1, 0, 0);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			g_engine->_soundManager->command(20, 0);
 			break;
 
@@ -368,13 +372,13 @@ static void room_102_parser() {
 		return;
 	}
 
-	if (player_said_3(put, burger, robo_kitchen) && _game._objects.isInInventory(OBJ_BURGER)) {
+	if (player_said_3(put, burger, robo_kitchen) && player_has(OBJ_BURGER)) {
 		text_show(10216);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (player_said_2(put, refrigerator) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
+	if (player_said_2(put, refrigerator) && player_has(object_named(_action._activeAction._objectNameId))) {
 		text_show(10217);
 		_action._inProgress = false;
 		return;
@@ -399,13 +403,13 @@ static void room_102_parser() {
 	}
 
 	if ((player_said_1(ladder) || player_said_1(hatchway)) && (player_said_1(look) || player_said_1(climb_up) || player_said_1(climb_through))) {
-		if (_game._objects.isInInventory(OBJ_REBREATHER)) {
+		if (player_has(OBJ_REBREATHER)) {
 			if (!player_said_1(climb_up) && !player_said_1(climb_through)) {
 				text_show(10231);
 				_action._inProgress = false;
 				return;
 			}
-		} else if (player_said_1(look) || (_game._difficulty != DIFFICULTY_HARD)) {
+		} else if (player_said_1(look) || (game.difficulty != DIFFICULTY_HARD)) {
 			text_show(10222);
 			_action._inProgress = false;
 			return;
@@ -413,11 +417,11 @@ static void room_102_parser() {
 	}
 
 	if ((player_said_1(ladder) || player_said_1(hatchway)) && (player_said_1(climb_up) || player_said_1(climb_through))) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_scene->loadAnimation(formAnimName('A', -1), 1);
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			_scene->loadAnimation(kernel_name('A', -1), 1);
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			break;
 
 		case 1:
@@ -429,16 +433,16 @@ static void room_102_parser() {
 		case 3:
 		case 4:
 			g_engine->_soundManager->command(23, 0);
-			_scene->_sequences.addTimer(48, _game._trigger + 1);
+			_scene->_sequences.addTimer(48, kernel.trigger + 1);
 			break;
 
 		case 5:
 			g_engine->_soundManager->command(24, 0);
-			_scene->_sequences.addTimer(48, _game._trigger + 1);
+			_scene->_sequences.addTimer(48, kernel.trigger + 1);
 			break;
 
 		case 6:
-			if (_game._objects.isInInventory(OBJ_REBREATHER) && !_game._visitedScenes.exists(106))
+			if (player_has(OBJ_REBREATHER) && !player_has_been_in_room(106))
 				text_show(10237);
 			_scene->_nextSceneId = 106;
 			break;
@@ -511,12 +515,12 @@ static void room_102_parser() {
 	}
 
 	if (player_said_2(close, medicine_cabinet) && _globals[kMedicineCabinetOpen]) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
 			_scene->_sequences.remove(_globals._sequenceIndexes[8]);
 			_globals._sequenceIndexes[8] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[8], false, 6, 1, 0, 0);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			g_engine->_soundManager->command(21, 0);
 			break;
 
@@ -525,7 +529,7 @@ static void room_102_parser() {
 			break;
 
 		case 2:
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			_globals[kMedicineCabinetOpen] = false;
 			text_show(10209);
 			break;
@@ -538,11 +542,11 @@ static void room_102_parser() {
 	}
 
 	if (player_said_2(open, medicine_cabinet) && !_globals[kMedicineCabinetOpen]) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
 			_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 6, 1, 0, 0);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			g_engine->_soundManager->command(21, 0);
 			break;
 
@@ -553,7 +557,7 @@ static void room_102_parser() {
 			break;
 
 		case 2:
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			_globals[kMedicineCabinetOpen] = true;
 			if (_globals[kMedicineCabinetVirgin]) {
 				text_show(10208);
@@ -570,22 +574,22 @@ static void room_102_parser() {
 		return;
 	}
 
-	if (player_said_2(take, binoculars) && _game._objects.isInRoom(OBJ_BINOCULARS)) {
-		switch (_game._trigger) {
+	if (player_said_2(take, binoculars) && object_is_here(OBJ_BINOCULARS)) {
+		switch (kernel.trigger) {
 		case 0:
 			_globals._sequenceIndexes[11] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[11], false, 3, 1, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[11]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[11], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
-			_game._player._visible = false;
-			_game._player._stepEnabled = false;
+			player.walker_visible = false;
+			player.commands_allowed = false;
 			break;
 
 		case 1:
-			_game._objects.addToInventory(OBJ_BINOCULARS);
+			inter_give_to_player(OBJ_BINOCULARS);
 			_scene->_sequences.remove(_globals._sequenceIndexes[9]);
 			_scene->_hotspots.activate(words_binoculars, false);
-			_game._player._visible = true;
-			_game._player._stepEnabled = true;
+			player.walker_visible = true;
+			player.commands_allowed = true;
 			g_engine->_soundManager->command(22, 0);
 			object_examine(OBJ_BINOCULARS, 10201, 0);
 			break;
@@ -597,15 +601,15 @@ static void room_102_parser() {
 		return;
 	}
 
-	if (player_said_2(take, burger) && _game._objects.isInRoom(OBJ_BURGER)) {
-		if (_game._trigger == 0) {
+	if (player_said_2(take, burger) && object_is_here(OBJ_BURGER)) {
+		if (kernel.trigger == 0) {
 			object_examine(OBJ_BURGER, 10235, 0);
 			_scene->_sequences.remove(_globals._sequenceIndexes[10]);
-			_game._objects.addToInventory(OBJ_BURGER);
+			inter_give_to_player(OBJ_BURGER);
 			_scene->_hotspots.activate(words_burger, false);
 			g_engine->_soundManager->command(22, 0);
-			_game._player._visible = true;
-			_game._player._stepEnabled = true;
+			player.walker_visible = true;
+			player.commands_allowed = true;
 		}
 		_action._inProgress = false;
 		return;
@@ -629,7 +633,7 @@ static void room_102_parser() {
 		return;
 	}
 
-	if (player_said_2(look, binoculars) && !_game._objects.isInInventory(OBJ_BINOCULARS)) {
+	if (player_said_2(look, binoculars) && !player_has(OBJ_BINOCULARS)) {
 		text_show(10233);
 		_action._inProgress = false;
 		return;
@@ -642,7 +646,7 @@ static void room_102_parser() {
 }
 
 static void room_102_error() {
-	if (player_said_2(put, robo_kitchen) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
+	if (player_said_2(put, robo_kitchen) && player_has(object_named(_action._activeAction._objectNameId))) {
 		text_show(10217);
 		_action._inProgress = false;
 	}
@@ -666,7 +670,7 @@ void room_102_preload() {
 	room_daemon_code_pointer = room_102_daemon;
 	room_error_code_pointer = room_102_error;
 
-	anim_himem_preload(formAnimName('A', -1), 3);
+	anim_himem_preload(kernel_name('A', -1), 3);
 
 	section_1_walker();
 	section_1_interface();

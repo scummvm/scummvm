@@ -50,8 +50,8 @@ static void room_309_init() {
 
 	init_forcefield(&local._forcefield, true);
 
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 0));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(Resources::formatName(307, 'X', 0, EXT_SS, ""));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_full_name(307, 'X', 0, "", EXT_SS));
 
 	_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 	_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(127, 78));
@@ -69,9 +69,9 @@ static void room_309_init() {
 	pal_change_color(250, 63, 20, 20);
 	pal_change_color(251, 45, 10, 10);
 
-	_game._player._visible = false;
-	_game._player._stepEnabled = false;
-	_scene->loadAnimation(formAnimName('a', -1), 60);
+	player.walker_visible = false;
+	player.commands_allowed = false;
+	_scene->loadAnimation(kernel_name('a', -1), 60);
 
 	local._characterSpriteIndexes[0] = _scene->_animation[0]->_spriteListIndexes[2];
 	local._characterSpriteIndexes[1] = _scene->_animation[0]->_spriteListIndexes[2];
@@ -83,30 +83,30 @@ static void room_309_init() {
 
 	section_3_music();
 
-	_game.loadQuoteSet(0xF7, 0xF8, 0xF9, 0x15C, 0x15D, 0x15E, 0);
+	kernel.quotes = quote_load(0xF7, 0xF8, 0xF9, 0x15C, 0x15D, 0x15E, 0);
 }
 
 static void room_309_daemon() {
 	handle_forcefield(&local._forcefield, &_globals._spriteIndexes[0]);
 
-	if (_game._trigger == 61) {
+	if (kernel.trigger == 61) {
 		local._messagesIndexes[0] = -1;
 		local._messagesIndexes[1] = -1;
 	}
 
-	if (_game._trigger == 62)
+	if (kernel.trigger == 62)
 		local._messagesIndexes[2] = -1;
 
 	if (_scene->_animation[0] != nullptr) {
 		if (local._lastFrame != _scene->_animation[0]->getCurrentFrame()) {
 			local._lastFrame = _scene->_animation[0]->getCurrentFrame();
 			if (local._lastFrame == 39) {
-				local._messagesIndexes[0] = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 32, 61, 210, _game.getQuote(348));
-				local._messagesIndexes[1] = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 32, 0, 210, _game.getQuote(349));
+				local._messagesIndexes[0] = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 32, 61, 210, quote_string(kernel.quotes, 348));
+				local._messagesIndexes[1] = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 32, 0, 210, quote_string(kernel.quotes, 349));
 			}
 
 			if (local._lastFrame == 97)
-				local._messagesIndexes[2] = _scene->_kernelMessages.add(Common::Point(0, 0), 0xFBFA, 32, 62, 180, _game.getQuote(350));
+				local._messagesIndexes[2] = _scene->_kernelMessages.add(Common::Point(0, 0), 0xFBFA, 32, 62, 180, quote_string(kernel.quotes, 350));
 
 			for (int charIdx = 0; charIdx < 3; charIdx++) {
 				if (local._messagesIndexes[charIdx] >= 0) {
@@ -130,8 +130,8 @@ static void room_309_daemon() {
 		}
 	}
 
-	if (_game._trigger >= 70) {
-		switch (_game._trigger) {
+	if (kernel.trigger >= 70) {
+		switch (kernel.trigger) {
 		case 70:
 		{
 			int idx = _scene->_dynamicHotspots.add(words_ghastly_beast, words_gawk_at, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
@@ -150,7 +150,7 @@ static void room_309_daemon() {
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 4, 7);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 11);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], _oldIdx);
-			int idx = _scene->_kernelMessages.add(Common::Point(85, 37), 0xFDFC, 0, 0, 120, _game.getQuote(248));
+			int idx = _scene->_kernelMessages.add(Common::Point(85, 37), 0xFDFC, 0, 0, 120, quote_string(kernel.quotes, 248));
 			_scene->_kernelMessages.setQuoted(idx, 2, true);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
 		}
@@ -174,7 +174,7 @@ static void room_309_daemon() {
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 12, 20);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 11);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], _oldIdx);
-			int idx = _scene->_kernelMessages.add(Common::Point(170, 49), 0xFDFC, 0, 0, 120, _game.getQuote(249));
+			int idx = _scene->_kernelMessages.add(Common::Point(170, 49), 0xFDFC, 0, 0, 120, quote_string(kernel.quotes, 249));
 			_scene->_kernelMessages.setQuoted(idx, 2, true);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
 		}
@@ -218,7 +218,7 @@ static void room_309_daemon() {
 			_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 90, 0, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 29, 30);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 11);
-			int idx = _scene->_kernelMessages.add(Common::Point(15, 46), 0xFDFC, 0, 0, 120, _game.getQuote(247));
+			int idx = _scene->_kernelMessages.add(Common::Point(15, 46), 0xFDFC, 0, 0, 120, quote_string(kernel.quotes, 247));
 			_scene->_kernelMessages.setQuoted(idx, 2, true);
 			_scene->_sequences.addTimer(120, 78);
 		}
@@ -229,7 +229,7 @@ static void room_309_daemon() {
 		}
 	}
 
-	if (_game._trigger == 60)
+	if (kernel.trigger == 60)
 		_scene->_nextSceneId = 308;
 }
 

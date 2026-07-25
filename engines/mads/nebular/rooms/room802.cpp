@@ -33,16 +33,16 @@ namespace Rooms {
 
 static void room_802_init() {
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMRC_8");
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('f', 2));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('f', 0));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('f', 1));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('f', 2));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('f', 0));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('f', 1));
 	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RXMBD_8");
 	_globals[kBetweenRooms] = false;
 
 	if ((_globals[kCameFromCut]) && (_globals[kCutX] != 0)) {
-		_game._player._playerPos.x = _globals[kCutX];
-		_game._player._playerPos.y = _globals[kCutY];
-		_game._player._facing = _globals[kCutFacing];
+		player.x = _globals[kCutX];
+		player.y = _globals[kCutY];
+		player.facing = _globals[kCutFacing];
 		_globals[kCutX] = 0;
 		_globals[kCameFromCut] = false;
 		_globals[kReturnFromCut] = false;
@@ -51,34 +51,37 @@ static void room_802_init() {
 		_globals[kDontRepeat] = false;
 		_globals[kAntigravClock] = _scene->_frameStartTime;
 	} else if (_scene->_priorSceneId == 801) {
-		_game._player._playerPos = Common::Point(15, 129);
-		_game._player._facing = FACING_EAST;
+		player.x = 15;
+		player.y = 129;
+		player.facing = FACING_EAST;
 	} else if (_scene->_priorSceneId == 803) {
-		_game._player._playerPos = Common::Point(303, 119);
-		_game._player._facing = FACING_WEST;
+		player.x = 303;
+		player.y = 119;
+		player.facing = FACING_WEST;
 
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(15, 129);
-		_game._player._facing = FACING_EAST;
+		player.x = 15;
+		player.y = 129;
+		player.facing = FACING_EAST;
 	}
 
-	_game._player._visible = true;
+	player.walker_visible = true;
 
 
 
 	if (_globals[kHasWatchedAntigrav] && !_globals[kRemoteSequenceRan]) {
-		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(200, 70);
 	}
 
-	if ((_globals[kRemoteOnGround]) && (!_game._objects.isInInventory(OBJ_REMOTE))) {
+	if ((_globals[kRemoteOnGround]) && (!player_has(OBJ_REMOTE))) {
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 8);
 		int idx = _scene->_dynamicHotspots.add(words_remote, words_walkto, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(107, 99), FACING_NORTH);
 	}
 
-	if (!_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled]) {
+	if (!player_has(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled]) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
 		int idx = _scene->_dynamicHotspots.add(words_shield_modulator, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
@@ -88,15 +91,15 @@ static void room_802_init() {
 }
 
 static void room_802_daemon() {
-	if (_game._trigger == 70) {
-		_game._player._stepEnabled = false;
+	if (kernel.trigger == 70) {
+		player.commands_allowed = false;
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 8, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 19);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 4, 72);
 	}
 
-	if (_game._trigger == 71) {
+	if (kernel.trigger == 71) {
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 8);
 		int idx = _scene->_dynamicHotspots.add(words_remote, words_walkto, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
@@ -104,32 +107,32 @@ static void room_802_daemon() {
 
 		_globals[kRemoteSequenceRan] = true;
 		_globals[kRemoteOnGround] = true;
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 	}
 
-	if (_game._trigger == 72)
+	if (kernel.trigger == 72)
 		g_engine->_soundManager->command(13, 0);
 }
 
 static void room_802_pre_parser() {
 	if (player_said_2(walk_towards, building_to_west))
-		_game._player._walkOffScreenSceneId = 801;
+		player.walk_off_edge_to_room = 801;
 
 	if (player_said_2(walk_down, path_to_east)) {
-		_game._player._walkOffScreenSceneId = 803;
+		player.walk_off_edge_to_room = 803;
 		_globals[kForceBeamDown] = false;
 	}
 
 	if (player_said_2(take, ship))
-		_game._player._needToWalk = false;
+		player.need_to_walk = false;
 }
 
 static void room_802_parser() {
-	if (player_said_2(take, shield_modulator) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) {
-		switch (_game._trigger) {
+	if (player_said_2(take, shield_modulator) && !player_has(OBJ_SHIELD_MODULATOR)) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], true, 7, 2, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 2);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
@@ -143,25 +146,25 @@ static void room_802_parser() {
 			break;
 
 		case 2:
-			_game._player._priorTimer = _scene->_frameStartTime + _game._player._ticksAmount;
-			_game._player._visible = true;
+			player.clock = _scene->_frameStartTime + player.frame_delay;
+			player.walker_visible = true;
 			_scene->_sequences.addTimer(20, 3);
 			break;
 
 		case 3:
-			_game._player._stepEnabled = true;
-			_game._objects.addToInventory(OBJ_SHIELD_MODULATOR);
+			player.commands_allowed = true;
+			inter_give_to_player(OBJ_SHIELD_MODULATOR);
 			object_examine(OBJ_SHIELD_MODULATOR, 80215, 0);
 			break;
 
 		default:
 			break;
 		}
-	} else if ((player_said_2(take, remote)) && (!_game._objects.isInInventory(OBJ_REMOTE))) {
-		switch (_game._trigger) {
+	} else if ((player_said_2(take, remote)) && (!player_has(OBJ_REMOTE))) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], true, 7, 2, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 1, 4);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
@@ -176,38 +179,38 @@ static void room_802_parser() {
 			break;
 
 		case 2:
-			_game._player._priorTimer = _scene->_frameStartTime + _game._player._ticksAmount;
-			_game._player._visible = true;
+			player.clock = _scene->_frameStartTime + player.frame_delay;
+			player.walker_visible = true;
 			_scene->_sequences.addTimer(20, 3);
 			break;
 
 		case 3:
-			_game._player._stepEnabled = true;
-			_game._objects.addToInventory(OBJ_REMOTE);
+			player.commands_allowed = true;
+			inter_give_to_player(OBJ_REMOTE);
 			object_examine(OBJ_REMOTE, 80223, 0);
 			break;
 
 		default:
 			break;
 		}
-	} else if (!_globals[kRemoteOnGround] && (_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) || _globals[kShieldModInstalled])
+	} else if (!_globals[kRemoteOnGround] && (player_has(OBJ_SHIELD_MODULATOR) || _globals[kShieldModInstalled])
 		&& (player_said_2(look, launch_pad) || _action._lookFlag))
 		text_show(80210);
-	else if (!_globals[kRemoteOnGround] && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled]
+	else if (!_globals[kRemoteOnGround] && !player_has(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled]
 		&& (player_said_2(look, launch_pad) || _action._lookFlag))
 		text_show(80211);
-	else if (_globals[kRemoteOnGround] && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled]
+	else if (_globals[kRemoteOnGround] && !player_has(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled]
 		&& (player_said_2(look, launch_pad) || _action._lookFlag))
 		text_show(80213);
-	else if (_globals[kRemoteOnGround] && (_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) || _globals[kShieldModInstalled])
+	else if (_globals[kRemoteOnGround] && (player_has(OBJ_SHIELD_MODULATOR) || _globals[kShieldModInstalled])
 		&& (player_said_2(look, launch_pad) || _action._lookFlag))
 		text_show(80212);
-	else if (!_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled] && player_said_2(look, shield_modulator))
+	else if (!player_has(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled] && player_said_2(look, shield_modulator))
 		text_show(80214);
 	else if (_globals[kRemoteOnGround] && player_said_2(look, remote))
 		text_show(80216);
 	else if (player_said_2(look, ship)) {
-		if ((!_game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) && (!_globals[kShieldModInstalled]))
+		if ((!player_has(OBJ_SHIELD_MODULATOR)) && (!_globals[kShieldModInstalled]))
 			text_show(80218);
 		else
 			text_show(80217);

@@ -32,12 +32,12 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_605_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('r', -1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', -1));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('l', -1));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('p', -1));
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('n', -1));
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('f', -1));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('r', -1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('b', -1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('l', -1));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('p', -1));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('n', -1));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_name('f', -1));
 
 	_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 15, 0, 0, 0);
 	_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 17, 0, 0, 0);
@@ -46,8 +46,8 @@ static void room_605_init() {
 	_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], false, 17, 0, 0, 0);
 	_globals._sequenceIndexes[6] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[6], false, 18, 0, 0, 0);
 
-	_game._player._visible = false;
-	_game._player._stepEnabled = false;
+	player.walker_visible = false;
+	player.commands_allowed = false;
 	_scene->_sequences.addTimer(600, 70);
 	_scene->_userInterface.setup(kInputLimitedSentences);
 	section_6_music();
@@ -55,7 +55,7 @@ static void room_605_init() {
 }
 
 static void room_605_daemon() {
-	if (_game._trigger == 70) {
+	if (kernel.trigger == 70) {
 		g_engine->_soundManager->command(23, 0);
 		if (_globals[kResurrectRoom] >= 700)
 			text_show(60598);

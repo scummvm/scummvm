@@ -56,10 +56,10 @@ static Scratch local;
 
 
 static void handleRexDialog(int quote) {
-	const char *curQuote = _game.getQuote(quote);
+	const char *curQuote = quote_string(kernel.quotes, quote);
 	if (_scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing) > 200) {
 		static char subQuote1[34], subQuote2[34];
-		_game.splitQuote(curQuote, subQuote1, subQuote2);
+		quote_split_string(curQuote, subQuote1, subQuote2);
 		Common::strcpy_s(local._subQuote2, subQuote2);
 
 		_scene->_kernelMessages.add(Common::Point(0, -14), 0x1110, 34, 0, 240, subQuote1);
@@ -82,8 +82,8 @@ static void handlePrisonerSpeech(int firstQuoteId, int number, uint32 timeout) {
 
 	int quoteId = firstQuoteId;
 	for (int count = 0; count < number; count++) {
-		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
-		_scene->_kernelMessages.add(Common::Point(5, posY), 0xFDFC, 0, 81, timeout, _game.getQuote(quoteId));
+		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+		_scene->_kernelMessages.add(Common::Point(5, posY), 0xFDFC, 0, 81, timeout, quote_string(kernel.quotes, quoteId));
 		posY += 14;
 		quoteId++;
 	}
@@ -259,12 +259,12 @@ static void handlePrisonerDialog() {
 }
 
 static void handleDialog() {
-	if (_game._trigger == 0) {
+	if (kernel.trigger == 0) {
 		_scene->_kernelMessages.reset();
-		_game._player._stepEnabled = false;
+		player.commands_allowed = false;
 		handleRexDialog(_action._activeAction._verbId);
 	} else {
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 
 		if (!_globals[kKnowsBuddyBeast]) {
 			handlePrisonerEncounter();
@@ -278,7 +278,7 @@ static void room_307_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*SC003x0");
 	_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*SC003x1");
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*SC003x2");
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('x', 0));
 
 	init_forcefield(&local._forcefield, true);
 
@@ -291,7 +291,7 @@ static void room_307_init() {
 
 	_scene->changeVariant(1);
 
-	_game.loadQuoteSet(0xED, 0xEE, 0xEF, 0xF0, 0xF1, 0xF2, 0xF3, 0x10C, 0x104, 0x106, 0x107, 0x108, 0x105,
+	kernel.quotes = quote_load(0xED, 0xEE, 0xEF, 0xF0, 0xF1, 0xF2, 0xF3, 0x10C, 0x104, 0x106, 0x107, 0x108, 0x105,
 		0x109, 0x10A, 0x10B, 0x10D, 0x10E, 0x10F, 0x110, 0x111, 0x112, 0x113, 0x114, 0x115, 0x116, 0x117,
 		0x118, 0x119, 0x11A, 0x11B, 0x11C, 0x11D, 0x11E, 0x11F, 0x120, 0x121, 0x122, 0x123, 0x124, 0x125,
 		0x126, 0x127, 0x128, 0x129, 0x12A, 0x12B, 0x12C, 0x12D, 0x12E, 0x12F, 0x130, 0x131, 0x132, 0x133,
@@ -302,7 +302,7 @@ static void room_307_init() {
 	local._dialog1.setup(0x3F, 0x113, 0x114, 0x115, -1);
 	local._dialog2.setup(0x40, 0x11A, 0x11B, 0x11C, 0x11D, 0x11E, 0x11F, 0x120, 0x121, 0x122, 0);
 
-	if (!_game._visitedScenes._sceneRevisited)
+	if (!player.been_here_before)
 		local._dialog2.set(0x11A, 0x122, 0);
 	else if (_scene->_priorSceneId == 318)
 		local._dialog2.write(0x11E, true);
@@ -323,21 +323,24 @@ static void room_307_init() {
 		local._prisonerMessageId = 0x104;
 
 		if (_scene->_priorSceneId == 308) {
-			_game._player._visible = false;
-			_game._player._stepEnabled = false;
-			_game._player._playerPos = Common::Point(156, 113);
-			_game._player._facing = FACING_NORTH;
+			player.walker_visible = false;
+			player.commands_allowed = false;
+			player.x = 156;
+			player.y = 113;
+			player.facing = FACING_NORTH;
 			local._animationMode = 1;
 			g_engine->_soundManager->command(11, 0);
-			_scene->loadAnimation(formAnimName('a', -1), 60);
+			_scene->loadAnimation(kernel_name('a', -1), 60);
 		} else if (_scene->_priorSceneId == 387) {
-			_game._player._playerPos = Common::Point(129, 108);
-			_game._player._facing = FACING_NORTH;
+			player.x = 129;
+			player.y = 108;
+			player.facing = FACING_NORTH;
 			g_engine->_soundManager->command(3, 0);
 			local._grateOpenedFl = true;
 		} else {
-			_game._player._playerPos = Common::Point(159, 109);
-			_game._player._facing = FACING_SOUTH;
+			player.x = 159;
+			player.y = 109;
+			player.facing = FACING_SOUTH;
 			g_engine->_soundManager->command(3, 0);
 		}
 	}
@@ -384,15 +387,15 @@ static void room_307_daemon() {
 			local._forcefield._flag = false;
 
 		if (_scene->_animation[0]->getCurrentFrame() == 150) {
-			_game._player._visible = false;
-			_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
+			player.walker_visible = false;
+			player.clock = _scene->_frameStartTime - player.frame_delay;
 		}
 	}
 
-	if (_game._trigger == 60) {
-		_game._player._visible = true;
-		_game._player._stepEnabled = true;
-		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
+	if (kernel.trigger == 60) {
+		player.walker_visible = true;
+		player.commands_allowed = true;
+		player.clock = _scene->_frameStartTime - player.frame_delay;
 		local._animationMode = 0;
 		g_engine->_soundManager->command(9, 0);
 	}
@@ -409,37 +412,37 @@ static void room_307_daemon() {
 		local._lastFrameTime = _scene->_frameStartTime;
 
 		if ((local._guardTime > 3000) && !local._duringPeeingFl && (_scene->_animation[0] == nullptr)
-			&& (_game._screenObjects._inputMode != kInputConversation) && _globals[kMetBuddyBeast] && !local._activePrisonerFl) {
-			if (!_game._objects.isInInventory(OBJ_SCALPEL) && !local._grateOpenedFl) {
-				_game._player._stepEnabled = false;
-				_game._player.walk(Common::Point(151, 119), FACING_SOUTHEAST);
+			&& (inter_input_mode != kInputConversation) && _globals[kMetBuddyBeast] && !local._activePrisonerFl) {
+			if (!player_has(OBJ_SCALPEL) && !local._grateOpenedFl) {
+				player.commands_allowed = false;
+				player_walk(151, 119, FACING_SOUTHEAST);
 				local._animationMode = 2;
 				g_engine->_soundManager->command(11, 0);
-				_scene->loadAnimation(formAnimName('b', -1), 70);
+				_scene->loadAnimation(kernel_name('b', -1), 70);
 			}
 			local._guardTime = 0;
-		} else if ((local._prisonerTimer > 300) && (_game._screenObjects._inputMode != kInputConversation) && (_scene->_animation[0] == nullptr) && !local._activePrisonerFl) {
+		} else if ((local._prisonerTimer > 300) && (inter_input_mode != kInputConversation) && (_scene->_animation[0] == nullptr) && !local._activePrisonerFl) {
 			if (!_globals[kMetBuddyBeast]) {
 				if (local._prisonerMessageId == -1)
 					local._prisonerMessageId = 0x104;
 
-				int idx = _scene->_kernelMessages.add(Common::Point(5, 51), 0xFDFC, 0, 81, 120, _game.getQuote(local._prisonerMessageId));
+				int idx = _scene->_kernelMessages.add(Common::Point(5, 51), 0xFDFC, 0, 81, 120, quote_string(kernel.quotes, local._prisonerMessageId));
 				_scene->_kernelMessages.setQuoted(idx, 4, true);
 				local._prisonerMessageId++;
 				if (local._prisonerMessageId > 0x10A)
 					local._prisonerMessageId = 0x104;
 			} else if (_globals[kKnowsBuddyBeast] && (local._dialog2.read(0) > 1) && (g_engine->getRandomNumber(1, 3) == 1)) {
-				int idx = _scene->_kernelMessages.add(Common::Point(5, 51), 0xFDFC, 0, 81, 120, _game.getQuote(267));
+				int idx = _scene->_kernelMessages.add(Common::Point(5, 51), 0xFDFC, 0, 81, 120, quote_string(kernel.quotes, 267));
 				_scene->_kernelMessages.setQuoted(idx, 4, true);
 			}
 			local._prisonerTimer = 0;
 		}
 	}
 
-	if (_game._trigger == 70)
+	if (kernel.trigger == 70)
 		_scene->_nextSceneId = 318;
 
-	if (_game._trigger == 81) {
+	if (kernel.trigger == 81) {
 		local._prisonerTimer = 0;
 		if (local._activePrisonerFl && (local._guardTime > 2600))
 			local._guardTime = 3000 - g_engine->getRandomNumber(1, 800);
@@ -451,7 +454,7 @@ static void room_307_daemon() {
 static void room_307_parser() {
 	if (_action._lookFlag)
 		text_show(30715);
-	else if (_game._screenObjects._inputMode == kInputConversation)
+	else if (inter_input_mode == kInputConversation)
 		handleDialog();
 	else if (player_said_2(talkto, cell_wall) || player_said_2(talkto, wall) || player_said_2(talkto, toilet)) {
 		int node, say;
@@ -466,7 +469,7 @@ static void room_307_parser() {
 			node = 1;
 		}
 
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
 			handleRexDialog(say);
 			break;
@@ -479,17 +482,17 @@ static void room_307_parser() {
 			break;
 		}
 	} else if (player_said_3(pry, scalpel, air_vent)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(239));
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 239));
 			_scene->_sequences.addTimer(120, 1);
 			break;
 
 		case 1:
 			_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RXCL_8");
-			_game._player._visible = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 12, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], -1, 3);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
@@ -529,28 +532,28 @@ static void room_307_parser() {
 		case 5:
 			g_engine->_soundManager->command(10, 0);
 			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(241));
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 241));
 			_scene->_sequences.addTimer(120, 6);
 			break;
 
 		case 6:
 		{
-			_game._player._visible = true;
-			_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
+			player.walker_visible = true;
+			player.clock = _scene->_frameStartTime - player.frame_delay;
 			_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 			local._grateOpenedFl = true;
 			_scene->_hotspots.activate(17, false);
 			int idx = _scene->_dynamicHotspots.add(words_air_vent, words_climb_into, -1, Common::Rect(117, 67, 117 + 19, 67 + 13));
 			int hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(129, 104), FACING_NORTH);
 			_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_UP);
-			_game._objects.removeFromInventory(OBJ_SCALPEL, NOWHERE);
+			inter_take_from_player(OBJ_SCALPEL, NOWHERE);
 			_scene->_kernelMessages.addQuote(0xF2, 7, 120);
 		}
 		break;
 
 		case 7:
 			_scene->_sprites.remove(_globals._spriteIndexes[5]);
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			break;
 
 		default:
@@ -558,11 +561,11 @@ static void room_307_parser() {
 		}
 	} else if (player_said_2(climb_into, air_vent)) {
 		if (local._grateOpenedFl) {
-			switch (_game._trigger) {
+			switch (kernel.trigger) {
 			case 0:
 				_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RXCL_8");
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
+				player.commands_allowed = false;
+				player.walker_visible = false;
 				_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 				_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 60, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 3, -2);
@@ -640,17 +643,17 @@ static void room_307_parser() {
 				break;
 			}
 		}
-	} else if (player_said_2(use, toilet) && (_game._storyMode != STORYMODE_NAUGHTY))
+	} else if (player_said_2(use, toilet) && (config_file.naughtiness != STORYMODE_NAUGHTY))
 		text_show(30723);
 	else if (player_said_2(use, toilet)) {
 		if (!local._afterPeeingFl) {
-			switch (_game._trigger) {
+			switch (kernel.trigger) {
 			case 0:
 				g_engine->_soundManager->command(25, 0);
-				_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 0));
+				_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('a', 0));
 				local._duringPeeingFl = true;
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
+				player.commands_allowed = false;
+				player.walker_visible = false;
 				_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], -1, 2);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 9);
@@ -666,7 +669,7 @@ static void room_307_parser() {
 
 			case 2:
 				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[3]);
-				_game._player._visible = true;
+				player.walker_visible = true;
 				_scene->_sequences.addTimer(48, 3);
 				break;
 
@@ -674,13 +677,13 @@ static void room_307_parser() {
 			{
 				_scene->_sprites.remove(_globals._spriteIndexes[3]);
 				_scene->_kernelMessages.reset();
-				int idx = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 4, 120, _game.getQuote(237));
+				int idx = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 4, 120, quote_string(kernel.quotes, 237));
 				_scene->_kernelMessages.setQuoted(idx, 4, true);
 			}
 			break;
 
 			case 4:
-				_game._player._stepEnabled = true;
+				player.commands_allowed = true;
 				local._duringPeeingFl = false;
 				local._afterPeeingFl = true;
 				break;
@@ -690,7 +693,7 @@ static void room_307_parser() {
 			}
 		} else {
 			_scene->_kernelMessages.reset();
-			int idx = _scene->_kernelMessages.add(Common::Point(85, 39), 0x1110, 0, 0, 180, _game.getQuote(238));
+			int idx = _scene->_kernelMessages.add(Common::Point(85, 39), 0x1110, 0, 0, 180, quote_string(kernel.quotes, 238));
 			_scene->_kernelMessages.setQuoted(idx, 4, true);
 		}
 	} else if (player_said_2(look, air_vent)) {

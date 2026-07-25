@@ -40,18 +40,19 @@ static Scratch local;
 
 
 static void room_507_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('p', -1));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('p', -1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMRD_3");
 
-	if ((_game._difficulty != DIFFICULTY_EASY) && (_game._objects[OBJ_PENLIGHT]._roomNumber == _scene->_currentSceneId)) {
+	if ((game.difficulty != DIFFICULTY_EASY) && (object[OBJ_PENLIGHT].location == _scene->_currentSceneId)) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
 		local._penlightHotspotId = _scene->_dynamicHotspots.add(words_penlight, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._penlightHotspotId, Common::Point(233, 152), FACING_SOUTHEAST);
 	}
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(121, 147);
-		_game._player._facing = FACING_NORTH;
+		player.x = 121;
+		player.y = 147;
+		player.facing = FACING_NORTH;
 	}
 
 	section_5_music();
@@ -61,11 +62,11 @@ static void room_507_parser() {
 	if (player_said_2(walk_through, entrance))
 		_scene->_nextSceneId = 506;
 	else if (player_said_2(take, penlight)) {
-		if (_game._trigger || !_game._objects.isInInventory(OBJ_PENLIGHT)) {
-			switch (_game._trigger) {
+		if (kernel.trigger || !player_has(OBJ_PENLIGHT)) {
+			switch (kernel.trigger) {
 			case 0:
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
+				player.commands_allowed = false;
+				player.walker_visible = false;
 				_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 6, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 5);
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
@@ -77,14 +78,14 @@ static void room_507_parser() {
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 				_scene->_dynamicHotspots.remove(local._penlightHotspotId);
 				g_engine->_soundManager->command(27, 0);
-				_game._objects.addToInventory(OBJ_PENLIGHT);
+				inter_give_to_player(OBJ_PENLIGHT);
 				object_examine(OBJ_PENLIGHT, 50730, 0);
 				break;
 
 			case 2:
 				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
-				_game._player._visible = true;
-				_game._player._stepEnabled = true;
+				player.walker_visible = true;
+				player.commands_allowed = true;
 				break;
 
 			default:
@@ -129,12 +130,12 @@ static void room_507_parser() {
 	else if (player_said_2(walk_behind, counter)) {
 		// WORKAROUND: Empty handling to prevent default "can't do that" dialogs showing
 	} else if (player_said_2(look, counter)) {
-		if (_game._objects.isInRoom(OBJ_PENLIGHT))
+		if (object_is_here(OBJ_PENLIGHT))
 			text_show(50728);
 		else
 			text_show(50727);
-	} else if (player_said_2(look, penlight) && !_game._objects.isInInventory(OBJ_PENLIGHT)) {
-		if (_game._objects.isInRoom(OBJ_PENLIGHT))
+	} else if (player_said_2(look, penlight) && !player_has(OBJ_PENLIGHT)) {
+		if (object_is_here(OBJ_PENLIGHT))
 			text_show(50729);
 	} else if (player_said_2(look, emergency_light))
 		text_show(50731);

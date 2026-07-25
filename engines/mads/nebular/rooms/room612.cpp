@@ -40,10 +40,10 @@ static Scratch local;
 
 
 static void handleWinchMovement() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 0:
-		_game._player._stepEnabled = false;
-		_game._player._visible = false;
+		player.commands_allowed = false;
+		player.walker_visible = false;
 		_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 10, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 1, 5);
 		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
@@ -58,7 +58,7 @@ static void handleWinchMovement() {
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 17, 7, 0, 0);
 			g_engine->_soundManager->command(19, 0);
-			_game._objects.setRoom(OBJ_PADLOCK_KEY, 1);
+			inter_move_object(OBJ_PADLOCK_KEY, 1);
 			_globals[kBoatRaised] = false;
 		} else {
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
@@ -71,7 +71,7 @@ static void handleWinchMovement() {
 
 	case 2:
 		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[4]);
-		_game._player._visible = true;
+		player.walker_visible = true;
 		break;
 
 	case 3:
@@ -81,8 +81,8 @@ static void handleWinchMovement() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], syncIdx);
 		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x2F4));
-		_game._player._stepEnabled = true;
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x2F4));
+		player.commands_allowed = true;
 
 		text_show(61217);
 	}
@@ -94,13 +94,13 @@ static void handleWinchMovement() {
 }
 
 static void room_612_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', -1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('p', -1));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('c', -1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('p', -1));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXCD_3");
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXRC_6");
 
 	if ((_globals[kLineStatus] == 2) || (_globals[kLineStatus] == 3)) {
-		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('f', -1));
+		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('f', -1));
 		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);
 		int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
@@ -116,28 +116,29 @@ static void room_612_init() {
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(280, 75);
-		_game._player._facing = FACING_SOUTHWEST;
-		_game._player._visible = false;
-		_game._player._stepEnabled = false;
+		player.x = 280;
+		player.y = 75;
+		player.facing = FACING_SOUTHWEST;
+		player.walker_visible = false;
+		player.commands_allowed = false;
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 3);
-		_scene->loadAnimation(formAnimName('R', 1), 70);
+		_scene->loadAnimation(kernel_name('R', 1), 70);
 	}
 
 	section_6_music();
 
 	if (_scene->_roomChanged)
-		_game._objects.addToInventory(OBJ_PADLOCK_KEY);
+		inter_give_to_player(OBJ_PADLOCK_KEY);
 
-	_game.loadQuoteSet(0x2F5, 0x2F4, 0);
+	kernel.quotes = quote_load(0x2F5, 0x2F4, 0);
 }
 
 static void room_612_daemon() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 70:
-		_game._player._visible = true;
-		_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
+		player.walker_visible = true;
+		player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
 		_scene->_sequences.addTimer(6, 71);
 		break;
 
@@ -151,7 +152,7 @@ static void room_612_daemon() {
 	case 72:
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 2);
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 		break;
 
 	default:
@@ -161,9 +162,9 @@ static void room_612_daemon() {
 
 static void room_612_parser() {
 	if (player_said_2(get_inside, car)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 			_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 2);
@@ -181,7 +182,7 @@ static void room_612_parser() {
 		break;
 
 		case 2:
-			_game._player._visible = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], true, 10, 1, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 3);

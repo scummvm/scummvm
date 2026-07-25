@@ -85,7 +85,7 @@ static void handleBottleInterface() {
 
 static void setBottleSequence() {
 	_scene->_userInterface.setup(kInputBuildingSentences);
-	_game._player._stepEnabled = false;
+	player.commands_allowed = false;
 	if (local._boatDirection == 2)
 		local._animationMode = 6;
 	else
@@ -124,8 +124,8 @@ static void handleFillBottle(int quote) {
 }
 
 static void room_704_init() {
-	if (_game._objects[OBJ_BOTTLE]._roomNumber == _scene->_currentSceneId) {
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('b', 0));
+	if (object[OBJ_BOTTLE].location == _scene->_currentSceneId) {
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('b', 0));
 		_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 		if (_scene->_priorSceneId == 705) {
@@ -139,36 +139,36 @@ static void room_704_init() {
 		local._bottleHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 	}
 
-	_game._player._visible = false;
+	player.walker_visible = false;
 	local._takeBottleFl = false;
 	local._boatCurrentFrame = -1;
 
 	if (_scene->_priorSceneId == 705) {
-		_game._player._stepEnabled = false;
+		player.commands_allowed = false;
 		local._animationMode = 2;
 		local._boatDirection = 2;
-		_scene->loadAnimation(formAnimName('A', -1));
+		_scene->loadAnimation(kernel_name('A', -1));
 		_scene->_animation[0]->setCurrentFrame(36);
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._stepEnabled = false;
+		player.commands_allowed = false;
 		local._boatDirection = 1;
-		_scene->loadAnimation(formAnimName('A', -1));
+		_scene->loadAnimation(kernel_name('A', -1));
 	} else if (local._boatDirection == 1) {
-		_scene->loadAnimation(formAnimName('A', -1));
+		_scene->loadAnimation(kernel_name('A', -1));
 		_scene->_animation[0]->setCurrentFrame(8);
 	} else if (local._boatDirection == 2) {
-		if (_game._objects[OBJ_BOTTLE]._roomNumber == _scene->_currentSceneId) {
+		if (object[OBJ_BOTTLE].location == _scene->_currentSceneId) {
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(123, 125));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 		}
-		_scene->loadAnimation(formAnimName('A', -1));
+		_scene->loadAnimation(kernel_name('A', -1));
 		_scene->_animation[0]->setCurrentFrame(57);
 	}
 
 	if (_scene->_roomChanged)
 		_globals[kMonsterAlive] = false;
 
-	_game.loadQuoteSet(0x311, 0x312, 0x313, 0x314, 0x315, 0);
+	kernel.quotes = quote_load(0x311, 0x312, 0x313, 0x314, 0x315, 0);
 	local._dialog1.setup(0x98, 0x311, 0x312, 0x313, 0x314, 0x315, 0);
 
 	section_7_music();
@@ -195,8 +195,8 @@ static void room_704_daemon() {
 					nextFrame = 92;
 					break;
 				default:
-					if (!_game._player._stepEnabled)
-						_game._player._stepEnabled = true;
+					if (!player.commands_allowed)
+						player.commands_allowed = true;
 
 					nextFrame = 8;
 					break;
@@ -224,8 +224,8 @@ static void room_704_daemon() {
 					break;
 
 				default:
-					if (!_game._player._stepEnabled) {
-						_game._player._stepEnabled = true;
+					if (!player.commands_allowed) {
+						player.commands_allowed = true;
 					}
 					nextFrame = 57;
 					break;
@@ -248,7 +248,7 @@ static void room_704_daemon() {
 				if (local._takeBottleFl) {
 					_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 					_scene->_dynamicHotspots.remove(local._bottleHotspotId);
-					_game._objects.addToInventory(OBJ_BOTTLE);
+					inter_give_to_player(OBJ_BOTTLE);
 					g_engine->_soundManager->command(15, 0);
 					object_examine(OBJ_BOTTLE, 70415, 0);
 				}
@@ -256,9 +256,9 @@ static void room_704_daemon() {
 
 			case 92:
 				nextFrame = 57;
-				if (!_game._player._stepEnabled && !local._takeBottleFl) {
+				if (!player.commands_allowed && !local._takeBottleFl) {
 					_scene->_sequences.addTimer(30, 70);
-					_game._player._stepEnabled = true;
+					player.commands_allowed = true;
 				}
 				break;
 
@@ -266,7 +266,7 @@ static void room_704_daemon() {
 				if (local._takeBottleFl) {
 					_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 					_scene->_dynamicHotspots.remove(local._bottleHotspotId);
-					_game._objects.addToInventory(OBJ_BOTTLE);
+					inter_give_to_player(OBJ_BOTTLE);
 					g_engine->_soundManager->command(15, 0);
 					object_examine(OBJ_BOTTLE, 70415, 0);
 				}
@@ -274,9 +274,9 @@ static void room_704_daemon() {
 
 			case 101:
 				nextFrame = 8;
-				if (!_game._player._stepEnabled && !local._takeBottleFl) {
+				if (!player.commands_allowed && !local._takeBottleFl) {
 					_scene->_sequences.addTimer(30, 70);
-					_game._player._stepEnabled = true;
+					player.commands_allowed = true;
 				}
 				break;
 
@@ -291,7 +291,7 @@ static void room_704_daemon() {
 		}
 	}
 
-	if (_game._trigger == 70) {
+	if (kernel.trigger == 70) {
 		switch (_globals[kBottleStatus]) {
 		case 0:
 			text_show(432);
@@ -320,23 +320,23 @@ static void room_704_daemon() {
 }
 
 static void room_704_parser() {
-	if (_game._screenObjects._inputMode == kInputConversation)
+	if (inter_input_mode == kInputConversation)
 		handleFillBottle(_action._activeAction._verbId);
 	else if (player_said_2(steer_towards, open_water_to_south)) {
-		_game._player._stepEnabled = false;
+		player.commands_allowed = false;
 		if (local._boatDirection == 1)
 			local._animationMode = 5;
 		else
 			local._animationMode = 3;
 	} else if (player_said_2(steer_towards, building_to_north)) {
-		_game._player._stepEnabled = false;
+		player.commands_allowed = false;
 		if (local._boatDirection == 2)
 			local._animationMode = 4;
 		else
 			local._animationMode = 1;
 	} else if (player_said_2(take, bottle)) {
-		if (!_game._objects.isInInventory(OBJ_BOTTLE)) {
-			_game._player._stepEnabled = false;
+		if (!player_has(OBJ_BOTTLE)) {
+			player.commands_allowed = false;
 			local._takeBottleFl = true;
 			if (local._boatDirection == 2) {
 				local._animationMode = 6;
@@ -345,7 +345,7 @@ static void room_704_parser() {
 			}
 		}
 	} else if (player_said_3(put, bottle, water) || player_said_3(fill, bottle, water)) {
-		if (_game._objects.isInInventory(OBJ_BOTTLE)) {
+		if (player_has(OBJ_BOTTLE)) {
 			if (_globals[kBottleStatus] != 4) {
 				local._takeBottleFl = false;
 				handleBottleInterface();
@@ -356,7 +356,7 @@ static void room_704_parser() {
 	} else if (_action._lookFlag || player_said_2(look, water))
 		text_show(70410);
 	else if (player_said_2(look, building_to_north)) {
-		if (_game._visitedScenes.exists(710))
+		if (player_has_been_in_room(710))
 			text_show(70411);
 		else
 			text_show(70412);

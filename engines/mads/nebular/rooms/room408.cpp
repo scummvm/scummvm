@@ -32,13 +32,14 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_408_init() {
-	_game._player._playerPos = Common::Point(137, 150);
-	_game._player._facing = FACING_NORTH;
+	player.x = 137;
+	player.y = 150;
+	player.facing = FACING_NORTH;
 
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*ROXRC_7");
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('m', -1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('m', -1));
 
-	if (_game._objects.isInRoom(OBJ_TARGET_MODULE)) {
+	if (object_is_here(OBJ_TARGET_MODULE)) {
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
 		int idx = _scene->_dynamicHotspots.add(words_target_module, words_walkto, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
@@ -49,22 +50,22 @@ static void room_408_init() {
 
 static void room_408_pre_parser() {
 	if ((player_said_1(take) && !player_said_1(target_module)) || player_said_2(pull, pin) || player_said_2(open, carton))
-		_game._player._needToWalk = false;
+		player.need_to_walk = false;
 
-	if ((player_said_2(look, target_module) && _game._objects.isInRoom(OBJ_TARGET_MODULE)) || player_said_2(look, chest))
-		_game._player._needToWalk = true;
+	if ((player_said_2(look, target_module) && object_is_here(OBJ_TARGET_MODULE)) || player_said_2(look, chest))
+		player.need_to_walk = true;
 }
 
 static void room_408_parser() {
 	if (player_said_2(walk_into, corridor_to_south)) {
 		_scene->_nextSceneId = 405;
 		g_engine->_soundManager->command(58, 0);
-	} else if (player_said_2(take, target_module) && (_game._objects.isInRoom(OBJ_TARGET_MODULE) || _game._trigger)) {
-		switch (_game._trigger) {
+	} else if (player_said_2(take, target_module) && (object_is_here(OBJ_TARGET_MODULE) || kernel.trigger)) {
+		switch (kernel.trigger) {
 		case 0:
 			g_engine->_soundManager->command(57, 0);
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], true, 7, 2, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 2);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[1]);
@@ -74,18 +75,18 @@ static void room_408_parser() {
 
 		case 1:
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-			_game._objects.addToInventory(OBJ_TARGET_MODULE);
+			inter_give_to_player(OBJ_TARGET_MODULE);
 			object_examine(OBJ_TARGET_MODULE, 40847, 0);
 			break;
 
 		case 2:
-			_game._player._priorTimer = _game._player._ticksAmount + _scene->_frameStartTime;
-			_game._player._visible = true;
+			player.clock = player.frame_delay + _scene->_frameStartTime;
+			player.walker_visible = true;
 			_scene->_sequences.addTimer(20, 3);
 			break;
 
 		case 3:
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			break;
 
 		default:
@@ -118,7 +119,7 @@ static void room_408_parser() {
 	else if (player_said_2(take, catapult))
 		text_show(40822);
 	else if (player_said_2(look, chest)) {
-		if (_game._objects.isInRoom(OBJ_TARGET_MODULE))
+		if (object_is_here(OBJ_TARGET_MODULE))
 			text_show(40823);
 		else
 			text_show(40824);
@@ -164,7 +165,7 @@ static void room_408_parser() {
 		text_show(40844);
 	else if (_action._lookFlag)
 		text_show(40845);
-	else if (player_said_2(look, target_module) && _game._objects.isInRoom(OBJ_TARGET_MODULE))
+	else if (player_said_2(look, target_module) && object_is_here(OBJ_TARGET_MODULE))
 		text_show(40846);
 	else if (player_said_2(look, loading_ramp))
 		text_show(40848);

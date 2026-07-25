@@ -39,47 +39,49 @@ static Scratch local;
 
 
 static void room_752_init() {
-	_globals._spriteIndexes[14] = _scene->_sprites.addSprites(formAnimName('l', -1));
+	_globals._spriteIndexes[14] = _scene->_sprites.addSprites(kernel_name('l', -1));
 	_globals._spriteIndexes[12] = _scene->_sprites.addSprites("*RXMBD_8");
 
 	if (_scene->_priorSceneId == 751) {
-		_game._player._playerPos = Common::Point(13, 145);
-		_game._player._facing = FACING_EAST;
+		player.x = 13;
+		player.y = 145;
+		player.facing = FACING_EAST;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(289, 138);
-		_game._player.walk(Common::Point(262, 148), FACING_WEST);
-		_game._player._facing = FACING_WEST;
-		_game._player._visible = true;
+		player.x = 289;
+		player.y = 138;
+		player_walk(262, 148, FACING_WEST);
+		player.facing = FACING_WEST;
+		player.walker_visible = true;
 	}
 
-	if (_game._objects[OBJ_ID_CARD]._roomNumber == 752) {
-		_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('i', -1));
+	if (object[OBJ_ID_CARD].location == 752) {
+		_globals._spriteIndexes[13] = _scene->_sprites.addSprites(kernel_name('i', -1));
 		_globals._sequenceIndexes[13] = _scene->_sequences.startCycle(_globals._spriteIndexes[13], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[13], 8);
 		int idx = _scene->_dynamicHotspots.add(words_id_card, words_walkto, _globals._sequenceIndexes[13], Common::Rect(0, 0, 0, 0));
 		local._cardId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 135), FACING_NORTH);
 	}
 
-	if (_game._globals[kLaserHoleIsThere]) {
+	if (_globals[kLaserHoleIsThere]) {
 		_globals._sequenceIndexes[14] = _scene->_sequences.startCycle(_globals._spriteIndexes[14], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[14], 13);
 		int idx = _scene->_dynamicHotspots.add(words_laser_beam, words_look_at, _globals._sequenceIndexes[14], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(215, 130), FACING_NORTHWEST);
 	}
 
-	if (_game._globals[kTeleporterCommand]) {
-		switch (_game._globals[kTeleporterCommand]) {
+	if (_globals[kTeleporterCommand]) {
+		switch (_globals[kTeleporterCommand]) {
 		case TELEPORTER_BEAM_OUT:
 		case TELEPORTER_WRONG:
 		case TELEPORTER_STEP_OUT:
-			_game._player._visible = true;
-			_game._player._stepEnabled = true;
+			player.walker_visible = true;
+			player.commands_allowed = true;
 			break;
 		default:
 			break;
 		}
 
-		_game._globals[kTeleporterCommand] = TELEPORTER_NONE;
+		_globals[kTeleporterCommand] = TELEPORTER_NONE;
 	}
 
 	int32 timer = (global[kTimebombTimer + 1] << 16) | global[kTimebombTimer];
@@ -94,7 +96,7 @@ static void room_752_init() {
 static void room_752_daemon() {
 	int32 timer = (global[kTimebombTimer + 1] << 16) | global[kTimebombTimer];
 
-	if (timer >= 10800 && _game._globals[kTimebombStatus] == TIMEBOMB_ACTIVATED) {
+	if (timer >= 10800 && _globals[kTimebombStatus] == TIMEBOMB_ACTIVATED) {
 		global[kTimebombStatus] = TIMEBOMB_DEAD;
 		global[kTimebombTimer] = global[kTimebombTimer + 1] = 0;
 		_globals[kCheckDaemonTimebomb] = false;
@@ -104,7 +106,7 @@ static void room_752_daemon() {
 
 static void room_752_pre_parser() {
 	if (player_said_2(walkto, west_end_of_platform)) {
-		_game._player._walkOffScreenSceneId = 751;
+		player.walk_off_edge_to_room = 751;
 	}
 }
 
@@ -112,14 +114,14 @@ static void room_752_parser() {
 	if (player_said_2(walk_along, platform))
 		;
 	else if (player_said_2(step_into, teleporter)) {
-		_game._player._stepEnabled = false;
-		_game._player._visible = false;
+		player.commands_allowed = false;
+		player.walker_visible = false;
 		_scene->_nextSceneId = 711;
-	} else if (player_said_2(take, id_card) && (!_game._objects.isInInventory(OBJ_ID_CARD) || _game._trigger)) {
-		switch (_game._trigger) {
+	} else if (player_said_2(take, id_card) && (!player_has(OBJ_ID_CARD) || kernel.trigger)) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[12] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[12], false, 5, 2, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[12]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
@@ -128,23 +130,23 @@ static void room_752_parser() {
 		case 1:
 			g_engine->_soundManager->command(15, 0);
 			_scene->_sequences.remove(_globals._sequenceIndexes[13]);
-			_game._objects.addToInventory(OBJ_ID_CARD);
+			inter_give_to_player(OBJ_ID_CARD);
 			_scene->_dynamicHotspots.remove(local._cardId);
 			object_examine(OBJ_ID_CARD, 830, 0);
 			break;
 		case 2:
-			_game._player._visible = true;
-			_game._player._stepEnabled = true;
+			player.walker_visible = true;
+			player.commands_allowed = true;
 			break;
 		default:
 			break;
 		}
 	} else if (player_said_2(take, bones) && (_action._savedFields._mainObjectSource == CAT_HOTSPOT) &&
-		(!_game._objects.isInInventory(OBJ_BONES) || _game._trigger)) {
-		switch (_game._trigger) {
+		(!player_has(OBJ_BONES) || kernel.trigger)) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[12] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[12], false, 5, 2, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[12]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
@@ -152,15 +154,15 @@ static void room_752_parser() {
 			break;
 		case 1:
 			g_engine->_soundManager->command(15, 0);
-			if (_game._objects.isInInventory(OBJ_BONE))
-				_game._objects.setRoom(OBJ_BONE, NOWHERE);
-			_game._objects.addToInventory(OBJ_BONES);
+			if (player_has(OBJ_BONE))
+				inter_move_object(OBJ_BONE, NOWHERE);
+			inter_give_to_player(OBJ_BONES);
 			object_examine(OBJ_BONES, 75221, 0);
 			break;
 		case 2:
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[12]);
-			_game._player._visible = true;
-			_game._player._stepEnabled = true;
+			player.walker_visible = true;
+			player.commands_allowed = true;
 			break;
 		default:
 			break;
@@ -183,12 +185,12 @@ static void room_752_parser() {
 	else if (player_said_2(look, teleporter))
 		text_show(75218);
 	else if ((player_said_2(look, bones) || player_said_2(look, id_card)) && (_action._mainObjectSource == CAT_HOTSPOT)) {
-		if (_game._objects[OBJ_ID_CARD]._roomNumber == 752)
+		if (object[OBJ_ID_CARD].location == 752)
 			text_show(75219);
 		else
 			text_show(75220);
 	} else if (player_said_2(take, bones) && (_action._savedFields._mainObjectSource == CAT_HOTSPOT)) {
-		if (_game._objects.isInInventory(OBJ_BONES))
+		if (player_has(OBJ_BONES))
 			text_show(75222);
 	} else
 		return;

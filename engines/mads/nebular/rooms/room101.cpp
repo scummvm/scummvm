@@ -45,10 +45,10 @@ static Scratch local;
 
 
 static void room_101_say_dang() {
-	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
-	_game._player._stepEnabled = false;
+	kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
+	player.commands_allowed = false;
 
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 0:
 		_scene->_sequences.remove(_globals._sequenceIndexes[11]);
 		_globals._sequenceIndexes[11] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[11], false, 3, 6, 0, 0);
@@ -61,13 +61,13 @@ static void room_101_say_dang() {
 	case 72:
 		_globals._sequenceIndexes[11] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[11], false, 6, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[11], 17, 17);
-		_scene->_kernelMessages.add(Common::Point(143, 61), 0x1110, 0, 0, 60, _game.getQuote(57));
+		_scene->_kernelMessages.add(Common::Point(143, 61), 0x1110, 0, 0, 60, quote_string(kernel.quotes, 57));
 		_scene->_sequences.addTimer(120, 73);
 		break;
 
 	case 73:
 		text_show(10117);
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 		break;
 
 	default:
@@ -76,20 +76,20 @@ static void room_101_say_dang() {
 }
 
 static void room_101_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 2));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 3));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 4));
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 5));
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('x', 6));
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('x', 7));
-	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('m', -1));
-	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('b', 1));
-	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('b', 2));
-	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('a', 0));
-	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('a', 1));
-	_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('x', 8));
-	_globals._spriteIndexes[14] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('x', 1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('x', 2));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('x', 3));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('x', 4));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('x', 5));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_name('x', 6));
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(kernel_name('x', 7));
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(kernel_name('m', -1));
+	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(kernel_name('b', 1));
+	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(kernel_name('b', 2));
+	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(kernel_name('a', 0));
+	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(kernel_name('a', 1));
+	_globals._spriteIndexes[13] = _scene->_sprites.addSprites(kernel_name('x', 8));
+	_globals._spriteIndexes[14] = _scene->_sprites.addSprites(kernel_name('x', 0));
 
 	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 0, 0, 25);
 	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 4, 0, 1, 0);
@@ -108,14 +108,17 @@ static void room_101_init() {
 	if (_scene->_priorSceneId != RETURNING_FROM_LOADING)
 		_globals[kNeedToStandUp] = false;
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
-		_game._player._playerPos = Common::Point(100, 152);
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+		player.x = 100;
+		player.y = 152;
+	}
 
 	if ((_scene->_priorSceneId == 112) || ((_scene->_priorSceneId == RETURNING_FROM_DIALOG) && local._sittingFl)) {
-		_game._player._visible = false;
+		player.walker_visible = false;
 		local._sittingFl = true;
-		_game._player._playerPos = Common::Point(161, 123);
-		_game._player._facing = FACING_NORTHEAST;
+		player.x = 161;
+		player.y = 123;
+		player.facing = FACING_NORTHEAST;
 		_globals._sequenceIndexes[11] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[11], false, 3, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[11], 17, 17);
 		_scene->_hotspots.activate(words_chair, false);
@@ -127,14 +130,15 @@ static void room_101_init() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 4);
 	}
 
-	_game.loadQuoteSet(0x31, 0x32, 0x39, 0x36, 0x37, 0x38, 0);
+	kernel.quotes = quote_load(0x31, 0x32, 0x39, 0x36, 0x37, 0x38, 0);
 
 	if (_globals[kNeedToStandUp]) {
-		_scene->loadAnimation(Resources::formatName(101, 'S', -1, EXT_AA, ""), 71);
-		_game._player._visible = false;
-		_game._player._stepEnabled = false;
-		_game._player._playerPos = Common::Point(68, 140);
-		_game._player._facing = FACING_WEST;
+		_scene->loadAnimation(kernel_full_name(101, 'S', -1, "", EXT_AA), 71);
+		player.walker_visible = false;
+		player.commands_allowed = false;
+		player.x = 68;
+		player.y = 140;
+		player.facing = FACING_WEST;
 
 		local._messageNum = 0;
 		local._posY = 30;
@@ -146,24 +150,24 @@ static void room_101_init() {
 }
 
 static void room_101_daemon() {
-	if (local._oldSpecial != _game._player._special) {
-		local._oldSpecial = _game._player._special;
+	if (local._oldSpecial != player.special_code) {
+		local._oldSpecial = player.special_code;
 		if (local._oldSpecial)
 			g_engine->_soundManager->command(39, 0);
 		else
 			g_engine->_soundManager->command(11, 0);
 	}
 
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 70:
 		g_engine->_soundManager->command(9, 0);
 		break;
 
 	case 71:
 		_globals[kNeedToStandUp] = false;
-		_game._player._visible = true;
-		_game._player._stepEnabled = true;
-		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
+		player.walker_visible = true;
+		player.commands_allowed = true;
+		player.clock = _scene->_frameStartTime - player.frame_delay;
 		break;
 
 	case 72:
@@ -178,31 +182,31 @@ static void room_101_daemon() {
 	if (_scene->_animation[0] != nullptr) {
 		if ((_scene->_animation[0]->getCurrentFrame() >= 6) && (local._messageNum == 0)) {
 			local._messageNum++;
-			_scene->_kernelMessages.add(Common::Point(63, local._posY), 0x1110, 0, 0, 240, _game.getQuote(49));
+			_scene->_kernelMessages.add(Common::Point(63, local._posY), 0x1110, 0, 0, 240, quote_string(kernel.quotes, 49));
 			local._posY += 14;
 		}
 
 		if ((_scene->_animation[0]->getCurrentFrame() >= 7) && (local._messageNum == 1)) {
 			local._messageNum++;
-			_scene->_kernelMessages.add(Common::Point(63, local._posY), 0x1110, 0, 0, 240, _game.getQuote(54));
+			_scene->_kernelMessages.add(Common::Point(63, local._posY), 0x1110, 0, 0, 240, quote_string(kernel.quotes, 54));
 			local._posY += 14;
 		}
 
 		if ((_scene->_animation[0]->getCurrentFrame() >= 10) && (local._messageNum == 2)) {
 			local._messageNum++;
-			_scene->_kernelMessages.add(Common::Point(63, local._posY), 0x1110, 0, 0, 240, _game.getQuote(55));
+			_scene->_kernelMessages.add(Common::Point(63, local._posY), 0x1110, 0, 0, 240, quote_string(kernel.quotes, 55));
 			local._posY += 14;
 		}
 
 		if ((_scene->_animation[0]->getCurrentFrame() >= 17) && (local._messageNum == 3)) {
 			local._messageNum++;
-			_scene->_kernelMessages.add(Common::Point(63, local._posY), 0x1110, 0, 0, 240, _game.getQuote(56));
+			_scene->_kernelMessages.add(Common::Point(63, local._posY), 0x1110, 0, 0, 240, quote_string(kernel.quotes, 56));
 			local._posY += 14;
 		}
 
 		if ((_scene->_animation[0]->getCurrentFrame() >= 20) && (local._messageNum == 4)) {
 			local._messageNum++;
-			_scene->_kernelMessages.add(Common::Point(63, local._posY), 0x1110, 0, 0, 240, _game.getQuote(50));
+			_scene->_kernelMessages.add(Common::Point(63, local._posY), 0x1110, 0, 0, 240, quote_string(kernel.quotes, 50));
 			local._posY += 14;
 		}
 	}
@@ -210,17 +214,17 @@ static void room_101_daemon() {
 
 static void room_101_pre_parser() {
 	if (player_said_2(look, view_screen))
-		_game._player._needToWalk = true;
+		player.need_to_walk = true;
 
 	if (local._sittingFl) {
 		if (player_said_1(look) || player_said_1(chair) || player_said_1(talkto) || player_said_1(peer_through) || player_said_1(examine))
-			_game._player._needToWalk = false;
+			player.need_to_walk = false;
 
-		if (_game._player._needToWalk) {
-			switch (_game._trigger) {
+		if (player.need_to_walk) {
+			switch (kernel.trigger) {
 			case 0:
-				_game._player._readyToWalk = false;
-				_game._player._stepEnabled = false;
+				player.ready_to_walk = false;
+				player.commands_allowed = false;
 				_scene->_sequences.remove(_globals._sequenceIndexes[11]);
 				_globals._sequenceIndexes[11] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[11], false, 3, 1, 0, 0);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[11], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
@@ -230,9 +234,9 @@ static void room_101_pre_parser() {
 
 			case 1:
 				local._sittingFl = false;
-				_game._player._visible = true;
-				_game._player._stepEnabled = true;
-				_game._player._readyToWalk = true;
+				player.walker_visible = true;
+				player.commands_allowed = true;
+				player.ready_to_walk = true;
 				_scene->_hotspots.activate(71, true);
 				_scene->_dynamicHotspots.remove(local._chairHotspotId);
 				_globals._sequenceIndexes[12] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[12], false, 6, 0, 0, 0);
@@ -246,20 +250,20 @@ static void room_101_pre_parser() {
 	}
 
 	if (local._panelOpened && !(player_said_1(shield_access_panel) || player_said_1(shield_modulator))) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			if (_game._player._needToWalk) {
+			if (player.need_to_walk) {
 				_scene->_sequences.remove(_globals._sequenceIndexes[13]);
-				local._shieldSpriteIdx = _game._objects.isInRoom(OBJ_SHIELD_MODULATOR) ? 13 : 14;
+				local._shieldSpriteIdx = object_is_here(OBJ_SHIELD_MODULATOR) ? 13 : 14;
 				_globals._sequenceIndexes[13] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[local._shieldSpriteIdx], false, 6, 1, 0, 0);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
-				_game._player._stepEnabled = false;
+				player.commands_allowed = false;
 				g_engine->_soundManager->command(20, 0);
 			}
 			break;
 
 		case 1:
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			local._panelOpened = false;
 			_scene->_hotspots.activate(words_shield_modulator, false);
 			break;
@@ -285,15 +289,15 @@ static void room_101_parser() {
 
 	if (player_said_2(sit_in, chair) || (player_said_2(look, view_screen) && !local._sittingFl)) {
 		if (!local._sittingFl) {
-			switch (_game._trigger) {
+			switch (kernel.trigger) {
 			case 0:
 				_scene->_sequences.remove(_globals._sequenceIndexes[12]);
 				_globals._sequenceIndexes[11] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[11], false, 3, 1);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[11], 1, 17);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[11], SEQUENCE_TRIGGER_SPRITE, 10, 1);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[11], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
+				player.commands_allowed = false;
+				player.walker_visible = false;
 				_action._inProgress = false;
 				return;
 
@@ -304,7 +308,7 @@ static void room_101_parser() {
 			case 2:
 				_globals._sequenceIndexes[11] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[11], false, 3, 0, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[11], 17, 17);
-				_game._player._stepEnabled = true;
+				player.commands_allowed = true;
 				local._sittingFl = true;
 				_scene->_hotspots.activate(71, false);
 				local._chairHotspotId = _scene->_dynamicHotspots.add(words_chair, words_sit_in, -1, Common::Rect(159, 84, 159 + 33, 84 + 36));
@@ -312,7 +316,7 @@ static void room_101_parser() {
 					_action._inProgress = false;
 					return;
 				}
-				_game._trigger = 0;
+				kernel.trigger = 0;
 				break;
 
 			default:
@@ -326,12 +330,12 @@ static void room_101_parser() {
 	}
 
 	if ((player_said_2(walkto, shield_access_panel) || player_said_2(open, shield_access_panel)) && !local._panelOpened) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			local._shieldSpriteIdx = _game._objects.isInRoom(OBJ_SHIELD_MODULATOR) ? 13 : 14;
+			local._shieldSpriteIdx = object_is_here(OBJ_SHIELD_MODULATOR) ? 13 : 14;
 			_globals._sequenceIndexes[13] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[local._shieldSpriteIdx], false, 6, 1, 0, 0);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			g_engine->_soundManager->command(20, 0);
 			break;
 
@@ -339,9 +343,9 @@ static void room_101_parser() {
 			_scene->_sequences.remove(_globals._sequenceIndexes[13]);
 			_globals._sequenceIndexes[13] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[local._shieldSpriteIdx], false, 6, 0, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[13], -2, -2);
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			local._panelOpened = true;
-			if (_game._objects.isInRoom(OBJ_SHIELD_MODULATOR))
+			if (object_is_here(OBJ_SHIELD_MODULATOR))
 				_scene->_hotspots.activate(words_shield_modulator, true);
 			break;
 
@@ -352,8 +356,8 @@ static void room_101_parser() {
 		return;
 	}
 
-	if ((player_said_2(take, shield_modulator) || player_said_2(pull, shield_modulator)) && _game._objects.isInRoom(OBJ_SHIELD_MODULATOR)) {
-		_game._objects.addToInventory(OBJ_SHIELD_MODULATOR);
+	if ((player_said_2(take, shield_modulator) || player_said_2(pull, shield_modulator)) && object_is_here(OBJ_SHIELD_MODULATOR)) {
+		inter_give_to_player(OBJ_SHIELD_MODULATOR);
 		_scene->_sequences.remove(_globals._sequenceIndexes[13]);
 		_globals._sequenceIndexes[13] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[14], false, 6, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[13], -2, -2);
@@ -364,9 +368,9 @@ static void room_101_parser() {
 		return;
 	}
 
-	if (player_said_2(look, shield_access_panel) || (player_said_2(look, shield_modulator) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR))) {
+	if (player_said_2(look, shield_access_panel) || (player_said_2(look, shield_modulator) && !player_has(OBJ_SHIELD_MODULATOR))) {
 		if (local._panelOpened) {
-			if (_game._objects.isInRoom(OBJ_SHIELD_MODULATOR))
+			if (object_is_here(OBJ_SHIELD_MODULATOR))
 				text_show(10128);
 			else
 				text_show(10129);
@@ -387,9 +391,9 @@ static void room_101_parser() {
 		if (_globals[kWatchedViewScreen])
 			room_101_say_dang();
 		else {
-			switch (_game._trigger) {
+			switch (kernel.trigger) {
 			case 0:
-				_game._player._stepEnabled = false;
+				player.commands_allowed = false;
 				_scene->_sequences.remove(_globals._sequenceIndexes[11]);
 				_globals._sequenceIndexes[11] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[11], false, 3, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[11], 17, 21);
@@ -411,7 +415,7 @@ static void room_101_parser() {
 				break;
 
 			case 3:
-				_game._player._stepEnabled = true;
+				player.commands_allowed = true;
 				_globals[kWatchedViewScreen] = true;
 				local._sittingFl = true;
 				_scene->_nextSceneId = 112;
@@ -467,7 +471,7 @@ static void room_101_parser() {
 		return;
 	}
 
-	if (player_said_2(look, escape_hatch) || (player_said_2(open, escape_hatch) && !_game._objects.isInInventory(OBJ_REBREATHER))) {
+	if (player_said_2(look, escape_hatch) || (player_said_2(open, escape_hatch) && !player_has(OBJ_REBREATHER))) {
 		text_show(10109);
 		_action._inProgress = false;
 		return;
@@ -574,7 +578,7 @@ void room_101_preload() {
 	room_parser_code_pointer = room_101_parser;
 	room_daemon_code_pointer = room_101_daemon;
 
-	anim_himem_preload(formAnimName('A', -1), 3);
+	anim_himem_preload(kernel_name('A', -1), 3);
 
 	section_1_walker();
 	section_1_interface();

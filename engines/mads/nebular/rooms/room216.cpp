@@ -32,18 +32,18 @@ namespace RexNebular {
 namespace Rooms {
 
 void room_216_init() {
-	_game._player._stepEnabled = false;
-	_game._player._visible = false;
+	player.commands_allowed = false;
+	player.walker_visible = false;
 
 	_scene->_userInterface.emptyConversationList();
 	_scene->_userInterface.setup(kInputConversation);
-	_scene->loadAnimation(formAnimName('A', -1), 60);
+	_scene->loadAnimation(kernel_name('A', -1), 60);
 
 	section_2_music();
 }
 
 void room_216_daemon() {
-	if (_game._trigger == 60)
+	if (kernel.trigger == 60)
 		_scene->_nextSceneId = 215;
 }
 

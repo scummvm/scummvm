@@ -58,10 +58,10 @@ static Scratch local;
 static void handleRexDialogues(int quote) {
 	_scene->_kernelMessages.reset();
 
-	const char *curQuote = _game.getQuote(quote);
+	const char *curQuote = quote_string(kernel.quotes, quote);
 	if (_scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing) > 200) {
 		static char subQuote1[34], subQuote2[34];
-		_game.splitQuote(curQuote, subQuote1, subQuote2);
+		quote_split_string(curQuote, subQuote1, subQuote2);
 		Common::strcpy_s(local._subQuote2, subQuote2);
 
 		_scene->_kernelMessages.add(Common::Point(160, 106), 0x1110, 32, 0, 120, subQuote1);
@@ -75,20 +75,20 @@ static void handleSlacheDialogs(int quoteId, int counter, uint32 timer) {
 	int posY = 5 + (local._slachePosY * 14);
 
 	for (int count = 0; count < counter; count++, curQuote++) {
-		_scene->_kernelMessages.add(Common::Point(8, posY), 0xFDFC, 0, 0, timer, _game.getQuote(curQuote));
+		_scene->_kernelMessages.add(Common::Point(8, posY), 0xFDFC, 0, 0, timer, quote_string(kernel.quotes, curQuote));
 		posY += 14;
 	}
 }
 
 static void room_319_init() {
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('e', 0));
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('a', 0));
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('a', 1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 2));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 3));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('k', -1));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('e', 0));
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(kernel_name('a', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('a', 1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('a', 2));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('a', 3));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('k', -1));
 
-	if (!_game._objects.isInInventory(OBJ_SCALPEL)) {
+	if (!player_has(OBJ_SCALPEL)) {
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 1);
 	}
@@ -112,7 +112,7 @@ static void room_319_init() {
 		local._dialog3.set(0x17D, 0x17E, 0x17F, 0x180, 0);
 	}
 
-	_game.loadQuoteSet(0x15F, 0x160, 0x161, 0x162, 0x163, 0x164, 0x16B, 0x16C, 0x16D,
+	kernel.quotes = quote_load(0x15F, 0x160, 0x161, 0x162, 0x163, 0x164, 0x16B, 0x16C, 0x16D,
 		0x16E, 0x16F, 0x170, 0x177, 0x178, 0x179, 0x17A, 0x17B, 0x17C, 0x165, 0x166,
 		0x167, 0x168, 0x169, 0x16A, 0x171, 0x172, 0x173, 0x174, 0x175, 0x176, 0x17D,
 		0x17E, 0x17F, 0x180, 0x181, 0x182, 0x183, 0x184, 0x185, 0x186, 0x187, 0x188,
@@ -127,7 +127,7 @@ static void room_319_init() {
 	local._slacheReady = false;
 	local._animFrame = 0;
 
-	_scene->loadAnimation(formAnimName('b', 0));
+	_scene->loadAnimation(kernel_name('b', 0));
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		local._animMode = 1;
@@ -206,7 +206,7 @@ static void room_319_daemon() {
 					nextFrame = 85;
 					local._slacheTalkingFl = true;
 				} else if (local._animFrame == 85) {
-					if (!_game._player._stepEnabled)
+					if (!player.commands_allowed)
 						local._slacheTalkingFl = true;
 					nextFrame = 40;
 				}
@@ -219,7 +219,7 @@ static void room_319_daemon() {
 			case 129:
 				if (local._nextAction1 == 3) {
 					nextFrame = 115;
-					if (!_game._player._stepEnabled)
+					if (!player.commands_allowed)
 						local._slacheTalkingFl = true;
 				}
 				break;
@@ -238,21 +238,21 @@ static void room_319_daemon() {
 					local._animFrame = 0;
 					_scene->freeAnimation();
 					local._animMode = 2;
-					_scene->loadAnimation(formAnimName('b', 3), 70);
+					_scene->loadAnimation(kernel_name('b', 3), 70);
 					break;
 
 				case 5:
 					local._animFrame = 0;
 					_scene->freeAnimation();
 					local._animMode = 3;
-					_scene->loadAnimation(formAnimName('b', 4), 71);
+					_scene->loadAnimation(kernel_name('b', 4), 71);
 					break;
 
 				case 6:
 					local._animFrame = 0;
 					_scene->freeAnimation();
 					local._animMode = 4;
-					_scene->loadAnimation(formAnimName('b', 5), 72);
+					_scene->loadAnimation(kernel_name('b', 5), 72);
 					break;
 
 				default:
@@ -297,7 +297,7 @@ static void room_319_daemon() {
 		}
 	}
 
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 70:
 	case 71:
 	{
@@ -305,7 +305,7 @@ static void room_319_daemon() {
 		local._nextAction1 = local._nextAction2;
 		local._animFrame = 0;
 		_scene->freeAnimation();
-		_scene->loadAnimation(formAnimName('b', 0));
+		_scene->loadAnimation(kernel_name('b', 0));
 		if (local._nextAction1 == 3)
 			_scene->_animation[0]->setCurrentFrame(85);
 		else if (local._nextAction1 == 1)
@@ -366,12 +366,12 @@ static void room_319_daemon() {
 }
 
 static void room_319_parser() {
-	if (_game._trigger == 0) {
-		_game._player._stepEnabled = false;
+	if (kernel.trigger == 0) {
+		player.commands_allowed = false;
 		handleRexDialogues(_action._activeAction._verbId);
 	} else {
 		if ((_action._activeAction._verbId == 0x165) || (_action._activeAction._verbId == 0x166)) {
-			if (_game._trigger == 1) {
+			if (kernel.trigger == 1) {
 				local._nextAction1 = 3;
 				local._slacheTalkingFl = false;
 				local._slacheMode = 1;
@@ -383,12 +383,12 @@ static void room_319_parser() {
 			} else {
 				handleSlacheDialogs(0x16B, 2, INDEFINITE_TIMEOUT);
 				local._dialog2.start();
-				_game._player._stepEnabled = true;
+				player.commands_allowed = true;
 			}
 		}
 
 		if ((_action._activeAction._verbId == 0x171) || (_action._activeAction._verbId == 0x172)) {
-			if (_game._trigger == 1) {
+			if (kernel.trigger == 1) {
 				local._nextAction1 = 2;
 				local._slacheTalkingFl = false;
 				local._slacheMode = 1;
@@ -400,12 +400,12 @@ static void room_319_parser() {
 			} else {
 				handleSlacheDialogs(0x177, 2, INDEFINITE_TIMEOUT);
 				local._dialog3.start();
-				_game._player._stepEnabled = true;
+				player.commands_allowed = true;
 			}
 		}
 
 		if ((_action._activeAction._verbId == 0x17D) || (_action._activeAction._verbId == 0x17E)) {
-			if (_game._trigger == 1) {
+			if (kernel.trigger == 1) {
 				local._nextAction1 = 3;
 				local._slacheTalkingFl = false;
 				local._slacheReady = false;
@@ -416,7 +416,7 @@ static void room_319_parser() {
 			if (!local._slacheTalkingFl) {
 				_scene->_sequences.addTimer(4, 2);
 			} else {
-				if (_game._trigger == 2)
+				if (kernel.trigger == 2)
 					handleSlacheDialogs(0x184, 2, 180);
 
 				if (!local._slacheReady) {
@@ -442,11 +442,11 @@ static void room_319_parser() {
 				(_action._activeAction._verbId == 0x183));
 
 			int addVerbId = _action._activeAction._verbId + 1;
-			if ((addVerbId == 0x182) && (_game._storyMode != STORYMODE_NAUGHTY))
+			if ((addVerbId == 0x182) && (config_file.naughtiness != STORYMODE_NAUGHTY))
 				addVerbId = 0x183;
 
 			if (local._slacheMode == 1) {
-				if (_game._trigger == 1) {
+				if (kernel.trigger == 1) {
 					local._nextAction2 = local._nextAction1;
 					local._nextAction1 = 4;
 				}
@@ -474,11 +474,11 @@ static void room_319_parser() {
 					}
 
 					curDialog->start();
-					_game._player._stepEnabled = true;
+					player.commands_allowed = true;
 					local._slacheMode = 2;
 				}
 			} else if (local._slacheMode == 2) {
-				if (_game._trigger == 1) {
+				if (kernel.trigger == 1) {
 					local._nextAction2 = local._nextAction1;
 					local._nextAction1 = 5;
 				}
@@ -506,7 +506,7 @@ static void room_319_parser() {
 					}
 
 					curDialog->start();
-					_game._player._stepEnabled = true;
+					player.commands_allowed = true;
 					local._slacheMode = 3;
 				}
 			} else {

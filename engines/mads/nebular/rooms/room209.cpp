@@ -59,7 +59,7 @@ static Scratch local;
 
 
 static void handlePause() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 124:
 		if (++local._pauseCounter <= local._pauseCounterThreshold)
 			_scene->_sequences.addTimer(60, 124);
@@ -72,7 +72,7 @@ static void handlePause() {
 }
 
 static void initPauseCounterThreshold() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 226:
 		_scene->_sequences.addTimer(1, 124);
 		local._pauseCounterThreshold = g_engine->getRandomNumber(7, 12);
@@ -85,7 +85,7 @@ static void initPauseCounterThreshold() {
 }
 
 static void handlePeek() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 133:
 		g_engine->_soundManager->command(18, 0);
 		_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 8, 1, 0, 0);
@@ -133,7 +133,7 @@ static void handlePeek() {
 }
 
 static void handleVerticalMove() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 140:
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 8, 8, 0, 1);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 5);
@@ -169,7 +169,7 @@ static void handleVerticalMove() {
 }
 
 static void handleLookStay() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 145:
 		g_engine->_soundManager->command(18, 0);
 		local._monkeyPosition = 2;
@@ -215,7 +215,7 @@ static void handleLookStay() {
 }
 
 static void handleLookRight() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 151:
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 8, 2, 0, 0);
@@ -244,7 +244,7 @@ static void handleLookRight() {
 }
 
 static void handleBlink() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 155:
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 6);
@@ -275,7 +275,7 @@ static void handleBlink() {
 }
 
 static void handleGetBinoculars() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 161:
 		g_engine->_soundManager->command(18, 0);
 		local._monkeyPosition = 3;
@@ -326,7 +326,7 @@ static void handleGetBinoculars() {
 }
 
 static void handleBinocularBlink() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 167:
 	{
 		int oldIdx = _globals._sequenceIndexes[3];
@@ -360,7 +360,7 @@ static void handleBinocularBlink() {
 }
 
 static void handleBinocularScan() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 171:
 	{
 		int oldIdx = _globals._sequenceIndexes[3];
@@ -424,7 +424,7 @@ static void handleBinocularScan() {
 }
 
 static void handleJumpInTree() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 178:
 	{
 		int oldIdx = 0;
@@ -467,7 +467,7 @@ static void handleJumpInTree() {
 }
 
 static void handleTongue() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 182:
 	{
 		int oldIdx = _globals._sequenceIndexes[3];
@@ -527,7 +527,7 @@ static void handleTongue() {
 }
 
 static void handleStandFromPeek() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 189:
 		local._monkeyPosition = 4;
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
@@ -575,7 +575,7 @@ static void handleStandFromPeek() {
 }
 
 static void handleStandBlink() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 246:
 		_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 22);
@@ -604,7 +604,7 @@ static void handleStandBlink() {
 }
 
 static void handleJumpAndHide() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 196:
 		g_engine->_soundManager->command(18, 0);
 		local._monkeyPosition = 1;
@@ -626,7 +626,7 @@ static void handleJumpAndHide() {
 }
 
 static void handleMonkeyEating() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 199:
 		g_engine->_soundManager->command(18, 0);
 		_scene->_sequences.remove(_globals._sequenceIndexes[4]);
@@ -699,7 +699,7 @@ static void handleMonkeyEating() {
 	case 207:
 	{
 		g_engine->_soundManager->command(18, 0);
-		int msgIndex = _scene->_kernelMessages.add(Common::Point(180, 25), 0xFDFC, 0, 0, 90, _game.getQuote(130));
+		int msgIndex = _scene->_kernelMessages.add(Common::Point(180, 25), 0xFDFC, 0, 0, 90, quote_string(kernel.quotes, 130));
 		_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
 
 		int oldIdx = _globals._sequenceIndexes[4];
@@ -712,7 +712,7 @@ static void handleMonkeyEating() {
 
 	case 208:
 	{
-		_scene->_kernelMessages.add(Common::Point(180, 39), 0xFDFC, 0, 0, 90, _game.getQuote(131));
+		_scene->_kernelMessages.add(Common::Point(180, 39), 0xFDFC, 0, 0, 90, quote_string(kernel.quotes, 131));
 		int oldIdx = _globals._sequenceIndexes[4];
 		_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 10, 4, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 28, 29);
@@ -740,7 +740,7 @@ static void handleMonkeyEating() {
 }
 
 static void handleMonkeyFall() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 219:
 	{
 		g_engine->_soundManager->command(25, 0);
@@ -749,8 +749,8 @@ static void handleMonkeyFall() {
 		_scene->_sprites.remove(_globals._spriteIndexes[5]);
 		_scene->_sprites.remove(_globals._spriteIndexes[4]);
 
-		_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('m', 4));
-		_scene->_kernelMessages.add(Common::Point(180, 26), 0xFDFC, 0, 0, 90, _game.getQuote(151));
+		_globals._spriteIndexes[8] = _scene->_sprites.addSprites(kernel_name('m', 4));
+		_scene->_kernelMessages.add(Common::Point(180, 26), 0xFDFC, 0, 0, 90, quote_string(kernel.quotes, 151));
 		_scene->_sequences.addTimer(40, 100);
 		_scene->_hotspots.activate(227, false);
 		int oldIdx = _globals._sequenceIndexes[3];
@@ -767,7 +767,7 @@ static void handleMonkeyFall() {
 	case 220:
 	{
 		g_engine->_soundManager->command(18, 0);
-		_scene->_kernelMessages.add(Common::Point(182, 109), 0xFDFC, 0, 0, 90, _game.getQuote(159));
+		_scene->_kernelMessages.add(Common::Point(182, 109), 0xFDFC, 0, 0, 90, quote_string(kernel.quotes, 159));
 		_scene->_hotspots.activate(227, false);
 		int oldIdx = _globals._sequenceIndexes[3];
 		local._monkeyPosition = 1;
@@ -782,7 +782,7 @@ static void handleMonkeyFall() {
 
 	case 221:
 	{
-		_game._objects.setRoom(OBJ_BINOCULARS, 209);
+		inter_move_object(OBJ_BINOCULARS, 209);
 		local._binocularsDroppedFl = true;
 		int oldIdx = _globals._sequenceIndexes[8];
 		_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 8, 1, 0, 0);
@@ -800,7 +800,7 @@ static void handleMonkeyFall() {
 
 	case 222:
 	{
-		_scene->_kernelMessages.add(Common::Point(182, 109), 0xFDFC, 0, 0, 70, _game.getQuote(160));
+		_scene->_kernelMessages.add(Common::Point(182, 109), 0xFDFC, 0, 0, 70, quote_string(kernel.quotes, 160));
 		int oldIdx = _globals._sequenceIndexes[8];
 		_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 8, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[8], 73, 78);
@@ -810,7 +810,7 @@ static void handleMonkeyFall() {
 	break;
 
 	case 223:
-		_scene->loadAnimation(Resources::formatName(209, 'e', -1, EXT_AA, ""), 224);
+		_scene->loadAnimation(kernel_full_name(209, 'e', -1, "", EXT_AA), 224);
 		g_engine->_soundManager->command(38, 0);
 		break;
 
@@ -820,7 +820,7 @@ static void handleMonkeyFall() {
 		local._counter = 0;
 		local._pauseMode = 0;
 		text_show(20910);
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 		break;
 
 	default:
@@ -829,7 +829,7 @@ static void handleMonkeyFall() {
 }
 
 static void handleMonkey1() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 212:
 		_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 9, 1, 0, 0);
@@ -854,7 +854,7 @@ static void handleMonkey1() {
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[7], 23, 26);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[7], oldIdx);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[7], SEQUENCE_TRIGGER_EXPIRE, 0, 215);
-		int msgIndex = _scene->_kernelMessages.add(Common::Point(170, 21), 0xFDFC, 0, 0, 90, _game.getQuote(156));
+		int msgIndex = _scene->_kernelMessages.add(Common::Point(170, 21), 0xFDFC, 0, 0, 90, quote_string(kernel.quotes, 156));
 		_scene->_kernelMessages.setQuoted(msgIndex, 3, true);
 	}
 	break;
@@ -862,7 +862,7 @@ static void handleMonkey1() {
 	case 215:
 	{
 		g_engine->_soundManager->command(18, 0);
-		_scene->loadAnimation(Resources::formatName(209, 'a', -1, EXT_AA, ""), 251);
+		_scene->loadAnimation(kernel_full_name(209, 'a', -1, "", EXT_AA), 251);
 		int oldIdx = _globals._sequenceIndexes[7];
 		_globals._sequenceIndexes[7] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[7], 27, 35);
@@ -893,23 +893,23 @@ static void handleMonkey1() {
 }
 
 static void handleMonkey2() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 251:
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, _game.getQuote(137));
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, quote_string(kernel.quotes, 137));
 		g_engine->_soundManager->command(22, 0);
 		_globals._sequenceIndexes[12] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[12], false, 11, 1, 0, 0);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[12], Common::Point(111, 133));
 		_scene->_sequences.setScale(_globals._sequenceIndexes[12], 79);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[12], 1, 6);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 252);
-		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
-		_game._player._visible = false;
+		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.walker_visible = false;
 		break;
 
 	case 252:
 	{
 		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(132));
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 132));
 		int oldIdx = _globals._sequenceIndexes[12];
 		_globals._sequenceIndexes[12] = _scene->_sequences.startCycle(_globals._spriteIndexes[12], false, 7);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[12], Common::Point(111, 133));
@@ -921,9 +921,9 @@ static void handleMonkey2() {
 
 	case 253:
 		_scene->_sequences.remove(_globals._sequenceIndexes[12]);
-		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
-		_game._player._visible = true;
-		_game._player._stepEnabled = true;
+		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.walker_visible = true;
+		player.commands_allowed = true;
 		break;
 
 	default:
@@ -932,7 +932,7 @@ static void handleMonkey2() {
 }
 
 static void handleDodge() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 241:
 		_scene->_hotspots.activate(227, true);
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
@@ -954,12 +954,12 @@ static void handleDodge() {
 		local._playingAnimFl = false;
 		local._pauseMode = 0;
 		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 90, _game.getQuote(155));
+		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 90, quote_string(kernel.quotes, 155));
 		if (!local._shootMissedLastFl) {
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(135));
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 135));
 			local._shootMissedLastFl = true;
 		} else {
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(136));
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 136));
 		}
 		break;
 
@@ -970,23 +970,23 @@ static void handleDodge() {
 
 static void room_209_init() {
 	_globals._spriteIndexes[11] = _scene->_sprites.addSprites("*RXMBD_2");
-	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('a', 1));
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('e', -1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 0));
-	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('b', 1));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('m', 0));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('m', 1));
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('m', 3));
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('m', 6));
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('m', 8));
+	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(kernel_name('a', 1));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('e', -1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('a', 0));
+	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(kernel_name('b', 1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('m', 0));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('m', 1));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('m', 3));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_name('m', 6));
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(kernel_name('m', 8));
 
-	_game.loadQuoteSet(0x82, 0x83, 0x84, 0x9C, 0x97, 0x95, 0x99, 0x9E, 0x98, 0x9B, 0xA0, 0x96, 0x9F,
+	kernel.quotes = quote_load(0x82, 0x83, 0x84, 0x9C, 0x97, 0x95, 0x99, 0x9E, 0x98, 0x9B, 0xA0, 0x96, 0x9F,
 		0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x91, 0x92, 0x93, 0x94, 0x89, 0x85, 0x8A, 0x86, 0x87, 0x88, 0);
 
 	pal_change_color(252, 63, 44, 30);
 	pal_change_color(253, 63, 20, 22);
 
-	if (_game._objects.isInRoom(OBJ_PLANT_STALK)) {
+	if (object_is_here(OBJ_PLANT_STALK)) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 		int idx = _scene->_dynamicHotspots.add(words_plant_stalk, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(263, 129), FACING_SOUTH);
@@ -994,14 +994,16 @@ static void room_209_init() {
 	}
 
 	if (_scene->_priorSceneId == 208) {
-		_game._player._playerPos = Common::Point(11, 121);
-		_game._player._facing = FACING_EAST;
+		player.x = 11;
+		player.y = 121;
+		player.facing = FACING_EAST;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(28, 121);
-		_game._player._facing = FACING_SOUTH;
+		player.x = 28;
+		player.y = 121;
+		player.facing = FACING_SOUTH;
 	}
 
-	if (_game._objects.isInRoom(OBJ_BINOCULARS)) {
+	if (object_is_here(OBJ_BINOCULARS)) {
 		_globals._sequenceIndexes[9] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 1);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[9], Common::Point(201, 131));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 8);
@@ -1010,8 +1012,8 @@ static void room_209_init() {
 	}
 
 	if (_scene->_roomChanged) {
-		_game._objects.addToInventory(OBJ_POISON_DARTS);
-		_game._objects.addToInventory(OBJ_BLOWGUN);
+		inter_give_to_player(OBJ_POISON_DARTS);
+		inter_give_to_player(OBJ_BLOWGUN);
 		_globals[kMonkeyStatus] = MONKEY_HAS_BINOCULARS;
 	}
 
@@ -1114,7 +1116,7 @@ static void room_209_daemon() {
 			break;
 
 		case 9:
-			if ((local._monkeyPosition == 3) && (_game._player._playerPos.x < 120)) {
+			if ((local._monkeyPosition == 3) && (player.x < 120)) {
 				_scene->_sequences.addTimer(1, 182);
 				_scene->_hotspots.activate(227, true);
 				local._counter = 0;
@@ -1260,9 +1262,9 @@ static void room_209_daemon() {
 		if (!local._playingAnimFl && (local._monkeyPosition == 3))
 			local._shouldFallFl = true;
 
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 228:
-			_game._player._visible = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 7);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(116, 131));
@@ -1299,9 +1301,9 @@ static void room_209_daemon() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], oldIdx);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 232);
-			_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
+			player.clock = _scene->_frameStartTime - player.frame_delay;
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], -1);
-			_game._player._visible = false;
+			player.walker_visible = false;
 		}
 		break;
 
@@ -1315,9 +1317,9 @@ static void room_209_daemon() {
 			_scene->_sequences.addTimer(2, 233);
 			_scene->_kernelMessages.reset();
 			if (local._dodgeFl && (local._monkeyPosition != 1) && (local._monkeyPosition != 2))
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 34463, _game.getQuote(138));
+				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 34463, quote_string(kernel.quotes, 138));
 			if (local._fallFl && (local._monkeyPosition != 3))
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 34463, _game.getQuote(138));
+				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 34463, quote_string(kernel.quotes, 138));
 		}
 		break;
 
@@ -1368,21 +1370,21 @@ static void room_209_daemon() {
 			break;
 
 		case 237:
-			_game._player._visible = true;
-			_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
+			player.walker_visible = true;
+			player.clock = _scene->_frameStartTime - player.frame_delay;
 			_scene->_sequences.addTimer(1, 238);
 			break;
 
 		case 238:
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			if (local._dodgeFl)
-				_game._player._stepEnabled = true;
+				player.commands_allowed = true;
 
 			local._startShootingInTimerFl = false;
 
 			if (local._fallFl) {
 				_globals[kMonkeyStatus] = MONKEY_IS_GONE;
-				_game._objects.setRoom(OBJ_POISON_DARTS, NOWHERE);
+				inter_move_object(OBJ_POISON_DARTS, NOWHERE);
 			}
 			local._dodgeFl = false;
 			local._fallFl = false;
@@ -1401,8 +1403,8 @@ static void room_209_daemon() {
 		}
 	}
 
-	if (_game._trigger == 100)
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(134));
+	if (kernel.trigger == 100)
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 134));
 
 	if (local._shootReadyFl && (local._shouldFallFl || local._shouldDodgeFl)) {
 		_scene->_sequences.addTimer(4, 234);
@@ -1412,22 +1414,24 @@ static void room_209_daemon() {
 
 static void room_209_pre_parser() {
 	if (player_said_2(walk_towards, field_to_west))
-		_game._player._walkOffScreenSceneId = 208;
+		player.walk_off_edge_to_room = 208;
 
 	if (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS) {
 		if ((player_said_1(shoot) || player_said_1(hose_down)) && player_said_1(monkey)
-			&& player_said_1(blowgun) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
-			_game._player._prepareWalkPos = Common::Point(111, 129);
-			_game._player._prepareWalkFacing = FACING_NORTHEAST;
-			_game._player._needToWalk = true;
-			_game._player._readyToWalk = true;
+			&& player_said_1(blowgun) && player_has(OBJ_BLOWGUN) && player_has(OBJ_POISON_DARTS)) {
+			player.prepare_walk_x = 111;
+			player.prepare_walk_y = 129;
+			player.prepare_walk_facing = FACING_NORTHEAST;
+			player.need_to_walk = true;
+			player.ready_to_walk = true;
 		}
 
 		if (player_said_2(look, monkey) || player_said_2(talkto, monkey)) {
-			_game._player._prepareWalkPos = Common::Point(111, 129);
-			_game._player._prepareWalkFacing = FACING_NORTHEAST;
-			_game._player._needToWalk = true;
-			_game._player._readyToWalk = true;
+			player.prepare_walk_x = 111;
+			player.prepare_walk_y = 129;
+			player.prepare_walk_facing = FACING_NORTHEAST;
+			player.need_to_walk = true;
+			player.ready_to_walk = true;
 		}
 	}
 }
@@ -1448,26 +1452,26 @@ static void room_209_parser() {
 	if (player_said_2(talkto, monkey) && !local._pitchFl && !local._playingDialogFl) {
 		_scene->_sequences.addTimer(1, local._dialogAbortVal);
 		local._playingDialogFl = true;
-		_game._player._stepEnabled = false;
+		player.commands_allowed = false;
 		_action._inProgress = false;
 		return;
 	}
 
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 130:
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 		local._playingDialogFl = false;
 		_action._inProgress = false;
 		return;
 
 	case 5:
 		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 6, 180, _game.getQuote(139));
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 6, 180, quote_string(kernel.quotes, 139));
 		_action._inProgress = false;
 		return;
 
 	case 6:
-		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 60, _game.getQuote(151));
+		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 60, quote_string(kernel.quotes, 151));
 		_scene->_sequences.addTimer(60, 130);
 		local._dialogAbortVal = 7;
 		_action._inProgress = false;
@@ -1475,12 +1479,12 @@ static void room_209_parser() {
 
 	case 7:
 		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 8, 180, _game.getQuote(140));
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 8, 180, quote_string(kernel.quotes, 140));
 		_action._inProgress = false;
 		return;
 
 	case 8:
-		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 60, _game.getQuote(149));
+		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 60, quote_string(kernel.quotes, 149));
 		_scene->_sequences.addTimer(60, 130);
 		local._dialogAbortVal = 9;
 		_action._inProgress = false;
@@ -1488,18 +1492,18 @@ static void room_209_parser() {
 
 	case 9:
 		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 180, _game.getQuote(141));
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 180, quote_string(kernel.quotes, 141));
 		_scene->_sequences.addTimer(200, 10);
 		_action._inProgress = false;
 		return;
 
 	case 10:
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 11, 180, _game.getQuote(142));
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 11, 180, quote_string(kernel.quotes, 142));
 		_action._inProgress = false;
 		return;
 
 	case 11:
-		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 60, _game.getQuote(152));
+		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 60, quote_string(kernel.quotes, 152));
 		_scene->_sequences.addTimer(60, 130);
 		local._dialogAbortVal = 12;
 		_action._inProgress = false;
@@ -1507,18 +1511,18 @@ static void room_209_parser() {
 
 	case 12:
 		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 130, _game.getQuote(143));
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 130, quote_string(kernel.quotes, 143));
 		_scene->_sequences.addTimer(150, 13);
 		_action._inProgress = false;
 		return;
 
 	case 13:
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 14, 180, _game.getQuote(145));
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 14, 180, quote_string(kernel.quotes, 145));
 		_action._inProgress = false;
 		return;
 
 	case 14:
-		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 60, _game.getQuote(151));
+		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 60, quote_string(kernel.quotes, 151));
 		_scene->_sequences.addTimer(60, 130);
 		local._dialogAbortVal = 15;
 		_action._inProgress = false;
@@ -1526,24 +1530,24 @@ static void room_209_parser() {
 
 	case 15:
 		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 16, 180, _game.getQuote(146));
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 16, 180, quote_string(kernel.quotes, 146));
 		_action._inProgress = false;
 		return;
 
 	case 16:
-		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 17, 60, _game.getQuote(154));
+		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 17, 60, quote_string(kernel.quotes, 154));
 		_action._inProgress = false;
 		return;
 
 	case 17:
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 130, 60, _game.getQuote(147));
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 130, 60, quote_string(kernel.quotes, 147));
 		local._dialogAbortVal = 18;
 		_action._inProgress = false;
 		return;
 
 	case 18:
 		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 180, _game.getQuote(148));
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 180, quote_string(kernel.quotes, 148));
 		local._pitchFl = true;
 		local._playingDialogFl = false;
 		local._dialogAbortVal = 5;
@@ -1556,21 +1560,21 @@ static void room_209_parser() {
 
 	if (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS) {
 		if ((player_said_1(shoot) || player_said_1(hose_down)) && player_said_1(monkey)
-			&& player_said_1(blowgun) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
+			&& player_said_1(blowgun) && player_has(OBJ_BLOWGUN) && player_has(OBJ_POISON_DARTS)) {
 			if (player_said_3(shoot, blowgun, monkey) && !local._startShootingInTimerFl) {
-				_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+				kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 				_scene->_sequences.addTimer(1, 231);
 				local._startShootingInTimerFl = true;
-				_game._player._stepEnabled = false;
+				player.commands_allowed = false;
 				local._dodgeFl = true;
 				_action._inProgress = false;
 				return;
 			}
 
 			if (player_said_3(hose_down, blowgun, monkey) && !local._startShootingInTimerFl) {
-				_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+				kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 				_scene->_sequences.addTimer(1, 228);
-				_game._player._stepEnabled = false;
+				player.commands_allowed = false;
 				local._fallFl = true;
 				local._startShootingInTimerFl = true;
 				_action._inProgress = false;
@@ -1580,18 +1584,18 @@ static void room_209_parser() {
 
 		if (player_said_2(look, monkey)) {
 			local._pitchFl = true;
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			text_show(20914);
 			_action._inProgress = false;
 			return;
 		}
 	}
 
-	if (player_said_2(take, plant_stalk) && (_game._trigger || _game._objects.isInRoom(OBJ_PLANT_STALK))) {
-		switch (_game._trigger) {
+	if (player_said_2(take, plant_stalk) && (kernel.trigger || object_is_here(OBJ_PLANT_STALK))) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[11] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[11], false, 3, 2, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[11]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[11], SEQUENCE_TRIGGER_SPRITE, 4, 1);
@@ -1600,12 +1604,12 @@ static void room_209_parser() {
 
 		case 1:
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-			_game._objects.addToInventory(OBJ_PLANT_STALK);
+			inter_give_to_player(OBJ_PLANT_STALK);
 			break;
 
 		case 2:
-			_game._player._visible = true;
-			_game._player._stepEnabled = true;
+			player.walker_visible = true;
+			player.commands_allowed = true;
 			_scene->_sequences.addTimer(4, 3);
 			object_examine(OBJ_PLANT_STALK, 0x328, 0);
 			break;
@@ -1620,12 +1624,12 @@ static void room_209_parser() {
 		return;
 	}
 
-	if (player_said_2(take, binoculars) && (_game._trigger || _game._objects.isInRoom(OBJ_BINOCULARS))) {
-		switch (_game._trigger) {
+	if (player_said_2(take, binoculars) && (kernel.trigger || object_is_here(OBJ_BINOCULARS))) {
+		switch (kernel.trigger) {
 		case 0:
 			_globals._spriteIndexes[10] = _scene->_sprites.addSprites("*RXMBD_8");
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[10] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[10], false, 3, 2, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[10]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[10], SEQUENCE_TRIGGER_SPRITE, 4, 1);
@@ -1634,12 +1638,12 @@ static void room_209_parser() {
 
 		case 1:
 			_scene->_sequences.remove(_globals._sequenceIndexes[9]);
-			_game._objects.addToInventory(OBJ_BINOCULARS);
+			inter_give_to_player(OBJ_BINOCULARS);
 			break;
 
 		case 2:
-			_game._player._visible = true;
-			_game._player._stepEnabled = true;
+			player.walker_visible = true;
+			player.commands_allowed = true;
 			local._binocularsDroppedFl = false;
 			_scene->_sequences.addTimer(4, 3);
 			break;
@@ -1710,7 +1714,7 @@ static void room_209_parser() {
 		return;
 	}
 
-	if (player_said_2(throw, monkey) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
+	if (player_said_2(throw, monkey) && player_has(object_named(_action._activeAction._objectNameId))) {
 		if (!player_said_1(poison_darts)) {
 			text_show(20915);
 		}

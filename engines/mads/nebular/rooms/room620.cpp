@@ -32,20 +32,20 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_620_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('b', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('b', 0));
 	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
-	_game._player._stepEnabled = false;
-	_game._player._visible = false;
+	player.commands_allowed = false;
+	player.walker_visible = false;
 	_scene->_sequences.addTimer(30, 70);
 	_scene->_userInterface.setup(kInputLimitedSentences);
 	section_6_music();
 }
 
 static void room_620_daemon() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 70:
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-		_scene->loadAnimation(formAnimName('E', -1), 71);
+		_scene->loadAnimation(kernel_name('E', -1), 71);
 		break;
 
 	case 71:
@@ -63,12 +63,12 @@ static void room_620_daemon() {
 			_scene->_nextSceneId = _scene->_priorSceneId;
 		} else if (_scene->_priorSceneId >= 501 && _scene->_priorSceneId <= 612) {
 			_globals[kResurrectRoom] = _globals[kHoverCarLocation];
-			_game._objects.addToInventory(OBJ_TIMEBOMB);
+			inter_give_to_player(OBJ_TIMEBOMB);
 			_globals[kTimebombStatus] = 0;
 			_globals[kTimebombTimer] = 0;
 			_scene->_nextSceneId = 605;
 		}
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 		break;
 
 	default:

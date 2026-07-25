@@ -47,15 +47,15 @@ static Scratch local;
 
 
 static void putArmDown(bool corridorExit, bool doorwayExit) {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 0:
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0xFF));
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0xFF));
 		_scene->_sequences.addTimer(48, 1);
 		break;
 
 	case 1:
-		_game._player._stepEnabled = false;
-		_game._player._visible = false;
+		player.commands_allowed = false;
+		player.walker_visible = false;
 		if (_globals[kSexOfRex] == REX_FEMALE) {
 			_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 5, 2, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
@@ -80,21 +80,21 @@ static void putArmDown(bool corridorExit, bool doorwayExit) {
 
 	case 3:
 		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x100));
-		_game._objects.setRoom(OBJ_GUARDS_ARM, _scene->_currentSceneId);
-		_game._player._visible = true;
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x100));
+		inter_move_object(OBJ_GUARDS_ARM, _scene->_currentSceneId);
+		player.walker_visible = true;
 		if (corridorExit)
 			_scene->_sequences.addTimer(48, 6);
 		else if (doorwayExit)
 			_scene->_sequences.addTimer(48, 4);
 		else {
 			local._mustPutArmDownFl = false;
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 		}
 		break;
 
 	case 4:
-		_game._player.walk(Common::Point(116, 107), FACING_NORTH);
+		player_walk(116, 107, FACING_NORTH);
 		local._mustPutArmDownFl = false;
 		_scene->_sequences.addTimer(180, 5);
 		local._leaveRoomFl = true;
@@ -107,8 +107,8 @@ static void putArmDown(bool corridorExit, bool doorwayExit) {
 		break;
 
 	case 6:
-		_game._player.walk(Common::Point(171, 152), FACING_SOUTH);
-		_game._player._stepEnabled = true;
+		player_walk(171, 152, FACING_SOUTH);
+		player.commands_allowed = true;
 		local._mustPutArmDownFl = false;
 		_scene->_sequences.addTimer(180, 7);
 		local._leaveRoomFl = true;
@@ -129,27 +129,27 @@ static void room_352_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RM302x0");
 	_globals._spriteIndexes[13] = _scene->_sprites.addSprites("*RM302x2");
 	_globals._spriteIndexes[12] = _scene->_sprites.addSprites("*RM302x3");
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('g', -1));
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('b', -1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('g', -1));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('b', -1));
 
 
 	if (_globals[kSexOfRex] == REX_FEMALE) {
 		_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*ROXRC_7");
 		_globals._spriteIndexes[7] = _scene->_sprites.addSprites("*ROXRC_6");
 		_globals._spriteIndexes[15] = _scene->_sprites.addSprites("*ROXRC_9");
-		_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('a', 3));
-		_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('a', 2));
+		_globals._spriteIndexes[11] = _scene->_sprites.addSprites(kernel_name('a', 3));
+		_globals._spriteIndexes[9] = _scene->_sprites.addSprites(kernel_name('a', 2));
 	} else {
 		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXRD_7");
 		_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*RXRC_6");
 		_globals._spriteIndexes[14] = _scene->_sprites.addSprites("*RXMRC_9");
-		_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('a', 1));
-		_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 0));
+		_globals._spriteIndexes[10] = _scene->_sprites.addSprites(kernel_name('a', 1));
+		_globals._spriteIndexes[8] = _scene->_sprites.addSprites(kernel_name('a', 0));
 	}
 
 	local._leaveRoomFl = false;
 
-	if (_game._objects.isInRoom(OBJ_TAPE_PLAYER)) {
+	if (object_is_here(OBJ_TAPE_PLAYER)) {
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 12, 0, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 5);
 		int idx = _scene->_dynamicHotspots.add(words_tape_player, words_walkto, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
@@ -160,32 +160,36 @@ static void room_352_init() {
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		local._mustPutArmDownFl = false;
-		if (!_game._visitedScenes._sceneRevisited)
+		if (!player.been_here_before)
 			_globals[kHaveYourStuff] = false;
 	}
 
-	if (_game._objects.isInRoom(OBJ_GUARDS_ARM)) {
+	if (object_is_here(OBJ_GUARDS_ARM)) {
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
 		int idx = _scene->_dynamicHotspots.add(words_guards_arm2, words_walkto, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(230, 117), FACING_NORTHWEST);
 	} else
 		local._mustPutArmDownFl = true;
 
-	if (_scene->_priorSceneId == 353)
-		_game._player._playerPos = Common::Point(171, 155);
-	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
-		_game._player._playerPos = Common::Point(116, 107);
+	if (_scene->_priorSceneId == 353) {
+		player.x = 171;
+		player.y = 155;
+	}
+	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+		player.x = 116;
+		player.y = 107;
+	}
 
 	section_3_music();
 
-	_game.loadQuoteSet(0xFF, 0x100, 0x101, 0x102, 0x103, 0);
+	kernel.quotes = quote_load(0xFF, 0x100, 0x101, 0x102, 0x103, 0);
 }
 
 static void room_352_pre_parser() {
 	local._leaveRoomFl = false;
 
 	if (player_said_2(open, vault))
-		_game._player.walk(Common::Point(266, 111), FACING_NORTHEAST);
+		player_walk(266, 111, FACING_NORTHEAST);
 
 	if (local._vaultOpenFl && !player_said_1(vault) && !player_said_1(lamp) && !player_said_1(other_stuff) && !player_said_1(your_stuff)) {
 		if (_globals[kHaveYourStuff]) {
@@ -196,10 +200,10 @@ static void room_352_pre_parser() {
 			local._commonSequenceIdx = _globals._sequenceIndexes[1];
 		}
 
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			if (_game._player._needToWalk) {
-				_game._player._stepEnabled = false;
+			if (player.need_to_walk) {
+				player.commands_allowed = false;
 				_scene->_sequences.remove(local._commonSequenceIdx);
 				g_engine->_soundManager->command(20, 0);
 				local._commonSequenceIdx = _scene->_sequences.addReverseSpriteCycle(local._commonSpriteIndex, false, 6, 1, 0, 0);
@@ -215,7 +219,7 @@ static void room_352_pre_parser() {
 			_scene->_dynamicHotspots.remove(local._hotspot1Idx);
 			_scene->_dynamicHotspots.remove(local._lampHostpotIdx);
 			local._vaultOpenFl = false;
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			break;
 
 		default:
@@ -225,14 +229,14 @@ static void room_352_pre_parser() {
 
 	if (player_said_3(put, guards_arm2, scanner)) {
 		if (_globals[kSexOfRex] == REX_MALE)
-			_game._player.walk(Common::Point(269, 111), FACING_NORTHEAST);
+			player_walk(269, 111, FACING_NORTHEAST);
 		else
-			_game._player.walk(Common::Point(271, 111), FACING_NORTHEAST);
+			player_walk(271, 111, FACING_NORTHEAST);
 	}
 
 	if (player_said_2(walk_through, doorway) || player_said_2(walk_down, corridor_to_south) || player_said_3(put, guards_arm2, floor)) {
-		if (_game._objects.isInInventory(OBJ_GUARDS_ARM))
-			_game._player.walk(Common::Point(230, 117), FACING_NORTHWEST);
+		if (player_has(OBJ_GUARDS_ARM))
+			player_walk(230, 117, FACING_NORTHWEST);
 	}
 }
 
@@ -245,10 +249,10 @@ static void room_352_parser() {
 
 	if (player_said_2(open, vault)) {
 		if (!local._vaultOpenFl) {
-			switch (_game._trigger) {
+			switch (kernel.trigger) {
 			case 0:
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
+				player.commands_allowed = false;
+				player.walker_visible = false;
 				if (_globals[kSexOfRex] == REX_FEMALE)
 					local._commonSpriteIndex = _globals._spriteIndexes[9];
 				else
@@ -281,13 +285,13 @@ static void room_352_parser() {
 
 			case 3:
 				_scene->_sequences.updateTimeout(-1, local._commonSequenceIdx);
-				_game._player._visible = true;
+				player.walker_visible = true;
 				_scene->_sequences.addTimer(60, 4);
 				break;
 
 			case 4:
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x101));
-				_game._player._stepEnabled = true;
+				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x101));
+				player.commands_allowed = true;
 				break;
 
 			default:
@@ -298,7 +302,7 @@ static void room_352_parser() {
 		return;
 	}
 
-	if (_game._objects.isInInventory(OBJ_GUARDS_ARM)) {
+	if (player_has(OBJ_GUARDS_ARM)) {
 		local._mustPutArmDownFl = true;
 	}
 
@@ -326,11 +330,11 @@ static void room_352_parser() {
 	}
 
 	if (player_said_2(take, guards_arm2)) {
-		if (_game._trigger || !_game._objects.isInInventory(OBJ_GUARDS_ARM)) {
-			switch (_game._trigger) {
+		if (kernel.trigger || !player_has(OBJ_GUARDS_ARM)) {
+			switch (kernel.trigger) {
 			case 0:
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
+				player.commands_allowed = false;
+				player.walker_visible = false;
 				if (_globals[kSexOfRex] == REX_FEMALE) {
 					_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 5, 2, 0, 0);
 					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
@@ -346,13 +350,13 @@ static void room_352_parser() {
 
 			case 1:
 				_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-				_game._objects.addToInventory(OBJ_GUARDS_ARM);
+				inter_give_to_player(OBJ_GUARDS_ARM);
 				_scene->changeVariant(1);
 				break;
 
 			case 2:
-				_game._player._visible = true;
-				_game._player._stepEnabled = true;
+				player.walker_visible = true;
+				player.commands_allowed = true;
 				object_examine(OBJ_GUARDS_ARM, 0x899C, 0);
 				break;
 
@@ -366,10 +370,10 @@ static void room_352_parser() {
 
 	if (player_said_3(put, guards_arm2, scanner)) {
 		if (!local._vaultOpenFl) {
-			switch (_game._trigger) {
+			switch (kernel.trigger) {
 			case 0:
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
+				player.commands_allowed = false;
+				player.walker_visible = false;
 				if (_globals[kSexOfRex] == REX_FEMALE)
 					local._commonSpriteIndex = _globals._spriteIndexes[11];
 				else
@@ -403,7 +407,7 @@ static void room_352_parser() {
 
 			case 3:
 				_scene->_sequences.updateTimeout(-1, local._commonSequenceIdx);
-				_game._player._visible = true;
+				player.walker_visible = true;
 				if (_globals[kHaveYourStuff])
 					local._commonSpriteIndex = _globals._spriteIndexes[13];
 				else
@@ -430,17 +434,17 @@ static void room_352_parser() {
 					idx = _scene->_dynamicHotspots.add(words_your_stuff, words_walkto, -1, Common::Rect(282, 87, 282 + 13, 87 + 7));
 					local._hotspot2Idx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(280, 111), FACING_NORTHEAST);
 					_globals._sequenceIndexes[1] = local._commonSequenceIdx;
-					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x102));
+					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x102));
 				} else {
 					_globals._sequenceIndexes[13] = local._commonSequenceIdx;
-					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x103));
+					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x103));
 				}
 
 				idx = _scene->_dynamicHotspots.add(words_other_stuff, words_walkto, -1, Common::Rect(282, 48, 282 + 36, 48 + 27));
 				local._hotspot1Idx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(287, 115), FACING_NORTHEAST);
 				idx = _scene->_dynamicHotspots.add(words_lamp, words_walkto, -1, Common::Rect(296, 76, 296 + 11, 76 + 17));
 				local._lampHostpotIdx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(287, 115), FACING_NORTHEAST);
-				_game._player._stepEnabled = true;
+				player.commands_allowed = true;
 			}
 			break;
 
@@ -449,10 +453,10 @@ static void room_352_parser() {
 			}
 		}
 	} else if (player_said_2(take, your_stuff)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			if (_globals[kSexOfRex] == REX_MALE) {
 				_globals._sequenceIndexes[14] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[14], false, 8, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[14], 1, 2);
@@ -472,9 +476,9 @@ static void room_352_parser() {
 			_scene->_dynamicHotspots.remove(local._hotspot2Idx);
 			_globals[kHaveYourStuff] = true;
 
-			for (uint16 i = 0; i < _game._objects.size(); i++) {
-				if (_game._objects[i]._roomNumber == 50)
-					_game._objects.addToInventory(i);
+			for (uint16 i = 0; i < num_objects; i++) {
+				if (object[i].location == 50)
+					inter_give_to_player(i);
 			}
 
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
@@ -488,18 +492,18 @@ static void room_352_parser() {
 			else
 				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[15]);
 
-			_game._player._visible = true;
-			_game._player._stepEnabled = true;
+			player.walker_visible = true;
+			player.commands_allowed = true;
 			break;
 
 		default:
 			break;
 		}
-	} else if (player_said_2(take, tape_player) && !_game._objects.isInInventory(OBJ_TAPE_PLAYER)) {
-		switch (_game._trigger) {
+	} else if (player_said_2(take, tape_player) && !player_has(OBJ_TAPE_PLAYER)) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			if (_globals[kSexOfRex] == REX_MALE) {
 				_globals._sequenceIndexes[6] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[6], true, 6, 2, 0, 0);
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[6]);
@@ -519,14 +523,14 @@ static void room_352_parser() {
 			break;
 
 		case 2:
-			_game._objects.addToInventory(OBJ_TAPE_PLAYER);
+			inter_give_to_player(OBJ_TAPE_PLAYER);
 			if (_globals[kSexOfRex] == REX_MALE)
 				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[6]);
 			else
 				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[7]);
 
-			_game._player._visible = true;
-			_game._player._stepEnabled = true;
+			player.walker_visible = true;
+			player.commands_allowed = true;
 			object_examine(OBJ_TAPE_PLAYER, 35227, 0);
 			break;
 
@@ -536,7 +540,7 @@ static void room_352_parser() {
 	} else if (player_said_2(look, scanner))
 		text_show(35210);
 	else if (player_said_2(look, monitor)) {
-		if (_game._storyMode == STORYMODE_NAUGHTY)
+		if (config_file.naughtiness == STORYMODE_NAUGHTY)
 			text_show(35211);
 		else
 			text_show(35212);

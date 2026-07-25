@@ -40,9 +40,9 @@ static Scratch local;
 
 static void room_107_init() {
 	for (int i = 0; i < 3; i++)
-		_globals._spriteIndexes[i + 1] = _scene->_sprites.addSprites(formAnimName('G', i));
+		_globals._spriteIndexes[i + 1] = _scene->_sprites.addSprites(kernel_name('G', i));
 
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(Resources::formatName(105, 'f', 4, EXT_SS, ""));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_full_name(105, 'f', 4, "", EXT_SS));
 
 	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 14, 0, 0, 7);
 	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 17, 0, 0, 13);
@@ -59,15 +59,21 @@ static void room_107_init() {
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(78, 135), FACING_SOUTHWEST);
 	}
 
-	if (_scene->_priorSceneId == 105)
-		_game._player._playerPos = Common::Point(132, 47);
-	else if (_scene->_priorSceneId == 106)
-		_game._player._playerPos = Common::Point(20, 91);
-	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
-		_game._player._playerPos = Common::Point(223, 151);
+	if (_scene->_priorSceneId == 105) {
+		player.x = 132;
+		player.y = 47;
+	}
+	else if (_scene->_priorSceneId == 106) {
+		player.x = 20;
+		player.y = 91;
+	}
+	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+		player.x = 223;
+		player.y = 151;
+	}
 
 	if (((_scene->_priorSceneId == 105) || (_scene->_priorSceneId == 106)) && (g_engine->getRandomNumber(1, 3) == 1)) {
-		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(Resources::formatName(105, 'R', 1, EXT_SS, ""));
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(kernel_full_name(105, 'R', 1, "", EXT_SS));
 		_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], true, 4, 0, 0, 0);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[0], Common::Point(270, 150));
 		_scene->_sequences.setMotion(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_SPRITE, -200, 0);
@@ -75,11 +81,11 @@ static void room_107_init() {
 		_scene->_dynamicHotspots.add(words_manta_ray, words_swim_to, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
 	}
 
-	_game.loadQuoteSet(0x4A, 0x4B, 0x4C, 0x35, 0x34, 0);
+	kernel.quotes = quote_load(0x4A, 0x4B, 0x4C, 0x35, 0x34, 0);
 	local._shootingFl = false;
 
 	if (g_engine->getRandomNumber(1, 3) == 1) {
-		_scene->loadAnimation(Resources::formatName(107, 'B', -1, EXT_AA, ""), 0);
+		_scene->loadAnimation(kernel_full_name(107, 'B', -1, "", EXT_AA), 0);
 		local._shootingFl = true;
 	}
 
@@ -88,30 +94,30 @@ static void room_107_init() {
 
 static void room_107_daemon() {
 	if (local._shootingFl && (_scene->_animation[0]->getCurrentFrame() >= 19)) {
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(52));
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 52));
 		local._shootingFl = false;
 	}
 }
 
 static void room_107_pre_parser() {
 	if (player_said_2(swim_towards, open_area_to_west))
-		_game._player._walkOffScreenSceneId = 106;
+		player.walk_off_edge_to_room = 106;
 
 	if (player_said_2(swim_towards, open_area_to_south))
-		_game._player._walkOffScreenSceneId = 108;
+		player.walk_off_edge_to_room = 108;
 }
 
 static void room_107_parser() {
 	if (_action._lookFlag)
 		text_show(10708);
 	else if (player_said_2(take, dead_fish) && _globals[kFishIn107]) {
-		if (_game._objects.isInInventory(OBJ_DEAD_FISH)) {
+		if (player_has(OBJ_DEAD_FISH)) {
 			int randVal = g_engine->getRandomNumber(74, 76);
 			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(randVal));
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, randVal));
 		} else {
 			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
-			_game._objects.addToInventory(OBJ_DEAD_FISH);
+			inter_give_to_player(OBJ_DEAD_FISH);
 			_globals[kFishIn107] = false;
 			object_examine(OBJ_DEAD_FISH, 802, 0);
 		}

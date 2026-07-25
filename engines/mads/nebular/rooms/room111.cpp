@@ -42,13 +42,13 @@ static Scratch local;
 
 
 static void room_111_init() {
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('X', 0));
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('X', 1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('X', 2));
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(kernel_name('X', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('X', 1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('X', 2));
 
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('B', 0));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('B', 1));
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('B', 2));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('B', 0));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('B', 1));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('B', 2));
 
 	_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 8, 0, 0, 0);
 	_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_SPRITE, 9, 73);
@@ -73,19 +73,21 @@ static void room_111_init() {
 	local._stampedFl = false;
 
 	if ((_scene->_priorSceneId < 201) && (_scene->_priorSceneId != RETURNING_FROM_DIALOG)) {
-		_game._player._stepEnabled = false;
-		_game._player._visible = false;
-		_scene->loadAnimation(Resources::formatName(111, 'A', 0, EXT_AA, ""), 70);
-		_game._player._playerPos = Common::Point(234, 116);
-		_game._player._facing = FACING_EAST;
+		player.commands_allowed = false;
+		player.walker_visible = false;
+		_scene->loadAnimation(kernel_full_name(111, 'A', 0, "", EXT_AA), 70);
+		player.x = 234;
+		player.y = 116;
+		player.facing = FACING_EAST;
 
 		local._launch1Fl = true;
 		local._launched2Fl = true;
 
 		g_engine->_soundManager->command(36, 0);
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(300, 130);
-		_game._player._facing = FACING_WEST;
+		player.x = 300;
+		player.y = 130;
+		player.facing = FACING_WEST;
 	}
 
 	local._rexDivingFl = false;
@@ -94,20 +96,20 @@ static void room_111_init() {
 }
 
 static void room_111_daemon() {
-	if (_game._trigger == 70) {
-		_game._player._stepEnabled = true;
-		_game._player._visible = true;
+	if (kernel.trigger == 70) {
+		player.commands_allowed = true;
+		player.walker_visible = true;
 		local._launch1Fl = false;
 		local._launched2Fl = false;
 	}
 
-	if ((_game._trigger == 71) && !local._stampedFl) {
+	if ((kernel.trigger == 71) && !local._stampedFl) {
 		local._stampedFl = true;
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 18, 1, 0, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
 	}
 
-	if (_game._trigger == 72) {
+	if (kernel.trigger == 72) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 20);
 	}
@@ -128,7 +130,7 @@ static void room_111_daemon() {
 		local._launched2Fl = true;
 	}
 
-	if (_game._trigger == 73)
+	if (kernel.trigger == 73)
 		g_engine->_soundManager->command(37, 0);
 
 	if (local._rexDivingFl && (_scene->_animation[0]->getCurrentFrame() >= 9)) {
@@ -139,17 +141,17 @@ static void room_111_daemon() {
 
 static void room_111_pre_parser() {
 	if (player_said_2(walk_through, cave_entrance))
-		_game._player._walkOffScreenSceneId = 212;
+		player.walk_off_edge_to_room = 212;
 }
 
 static void room_111_parser() {
-	if (player_said_2(dive_into, pool) && _game._objects.isInInventory(OBJ_REBREATHER)) {
-		switch (_game._trigger) {
+	if (player_said_2(dive_into, pool) && player_has(OBJ_REBREATHER)) {
+		switch (kernel.trigger) {
 		case 0:
-			_scene->loadAnimation(Resources::formatName(111, 'A', 1, EXT_AA, ""), 1);
+			_scene->loadAnimation(kernel_full_name(111, 'A', 1, "", EXT_AA), 1);
 			local._rexDivingFl = true;
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			break;
 
 		case 1:

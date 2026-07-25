@@ -39,9 +39,9 @@ static Scratch local;
 
 
 static void room_609_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 0));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('h', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('c', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('h', 0));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXCD_9");
 	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RXMRC_9");
 
@@ -50,42 +50,45 @@ static void room_609_init() {
 	_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
 
-	if (!_game._visitedScenes._sceneRevisited)
+	if (!player.been_here_before)
 		_globals[kBeenInVideoStore] = false;
 
 	if (_scene->_priorSceneId == 611) {
-		_game._player._playerPos = Common::Point(264, 69);
-		_game._player._facing = FACING_SOUTHWEST;
+		player.x = 264;
+		player.y = 69;
+		player.facing = FACING_SOUTHWEST;
 	} else if (_scene->_priorSceneId == 610) {
-		_game._player._playerPos = Common::Point(23, 90);
-		_game._player._facing = FACING_EAST;
+		player.x = 23;
+		player.y = 90;
+		player.facing = FACING_EAST;
 		_scene->_sequences.addTimer(60, 60);
-		_game._player._stepEnabled = false;
+		player.commands_allowed = false;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(86, 136);
-		_game._player._facing = FACING_NORTHEAST;
-		_game._player._visible = false;
-		_game._player._stepEnabled = false;
+		player.x = 86;
+		player.y = 136;
+		player.facing = FACING_NORTHEAST;
+		player.walker_visible = false;
+		player.commands_allowed = false;
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 5);
-		_scene->loadAnimation(formAnimName('R', 1), 70);
+		_scene->loadAnimation(kernel_name('R', 1), 70);
 	}
 
 	if (_scene->_roomChanged) {
-		_game._objects.addToInventory(OBJ_DOOR_KEY);
-		if (_game._difficulty != DIFFICULTY_EASY)
-			_game._objects.addToInventory(OBJ_PENLIGHT);
+		inter_give_to_player(OBJ_DOOR_KEY);
+		if (game.difficulty != DIFFICULTY_EASY)
+			inter_give_to_player(OBJ_PENLIGHT);
 	}
 
 	section_6_music();
-	_game.loadQuoteSet(0x305, 0x306, 0x307, 0x308, 0x309, 0);
+	kernel.quotes = quote_load(0x305, 0x306, 0x307, 0x308, 0x309, 0);
 }
 
 static void room_609_daemon() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 60:
-		_game._player._stepEnabled = false;
+		player.commands_allowed = false;
 		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
@@ -94,7 +97,7 @@ static void room_609_daemon() {
 
 	case 61:
 		_scene->_hotspots.activate(words_video_store_door, false);
-		_game._player.walk(Common::Point(101, 100), FACING_EAST);
+		player_walk(101, 100, FACING_EAST);
 		_scene->_sequences.addTimer(180, 62);
 		break;
 
@@ -107,7 +110,7 @@ static void room_609_daemon() {
 		break;
 
 	case 63:
-		if (!_globals[kHasTalkedToHermit] && (_game._difficulty != DIFFICULTY_HARD)) {
+		if (!_globals[kHasTalkedToHermit] && (game.difficulty != DIFFICULTY_HARD)) {
 			_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 26, 2, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[3], Common::Point(287, 73));
@@ -115,17 +118,17 @@ static void room_609_daemon() {
 		}
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 		break;
 
 	default:
 		break;
 	}
 
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 70:
-		_game._player._visible = true;
-		_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
+		player.walker_visible = true;
+		player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
 		_scene->_sequences.addTimer(6, 71);
 		break;
 
@@ -145,7 +148,7 @@ static void room_609_daemon() {
 	case 72:
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 5);
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 		break;
 
 	default:
@@ -154,26 +157,26 @@ static void room_609_daemon() {
 }
 
 static void enterStore() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 0:
-		_game._player._stepEnabled = false;
+		player.commands_allowed = false;
 		if (local._videoDoorMode == 2)
 			_scene->_sequences.addTimer(1, 4);
 		else {
 			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x305));
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x305));
 			_scene->_sequences.addTimer(120, 1);
 		}
 		break;
 
 	case 1:
 		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x306));
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x306));
 		_scene->_sequences.addTimer(60, 2);
 		break;
 
 	case 2:
-		_game._player._visible = false;
+		player.walker_visible = false;
 		_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], true, 11, 2, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 1, 2);
 		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
@@ -182,13 +185,13 @@ static void enterStore() {
 
 	case 3:
 		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[5]);
-		_game._player._visible = true;
-		_game._objects.setRoom(OBJ_DOOR_KEY, 1);
+		player.walker_visible = true;
+		inter_move_object(OBJ_DOOR_KEY, 1);
 		_scene->_sequences.addTimer(15, 4);
 		break;
 
 	case 4:
-		_game._player._visible = false;
+		player.walker_visible = false;
 		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], true, 1);
 		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
 		_scene->_sequences.addTimer(15, 5);
@@ -196,8 +199,8 @@ static void enterStore() {
 
 	case 5:
 		_scene->_sequences.remove(_globals._sequenceIndexes[5]);
-		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
-		_game._player._visible = true;
+		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.walker_visible = true;
 		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
@@ -208,9 +211,9 @@ static void enterStore() {
 		_scene->_hotspots.activate(words_video_store_door, false);
 		if (local._videoDoorMode == 1) {
 			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 180, _game.getQuote(0x307));
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 180, quote_string(kernel.quotes, 0x307));
 		}
-		_game._player.walk(Common::Point(23, 90), FACING_WEST);
+		player_walk(23, 90, FACING_WEST);
 		_scene->_sequences.addTimer(180, 7);
 		break;
 
@@ -226,7 +229,7 @@ static void enterStore() {
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
 		_globals[kBeenInVideoStore] = true;
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 		_scene->_nextSceneId = 610;
 		break;
 
@@ -237,7 +240,7 @@ static void enterStore() {
 
 static void room_609_pre_parser() {
 	if (player_said_3(unlock, door_key, video_store_door))
-		_game._player.walk(Common::Point(78, 99), FACING_NORTHWEST);
+		player_walk(78, 99, FACING_NORTHWEST);
 }
 
 static void room_609_parser() {
@@ -245,16 +248,16 @@ static void room_609_parser() {
 		_scene->_nextSceneId = 611;
 	else if (player_said_2(walk_through, video_store_door)) {
 		if (!_globals[kBeenInVideoStore]) {
-			switch (_game._trigger) {
+			switch (kernel.trigger) {
 			case 0:
-				_game._player._stepEnabled = false;
+				player.commands_allowed = false;
 				_scene->_kernelMessages.reset();
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x308));
+				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x308));
 				_scene->_sequences.addTimer(120, 1);
 				break;
 
 			case 1:
-				_game._player._visible = false;
+				player.walker_visible = false;
 				_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], true, 1);
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
 				_scene->_sequences.addTimer(30, 2);
@@ -262,19 +265,19 @@ static void room_609_parser() {
 
 			case 2:
 				_scene->_sequences.remove(_globals._sequenceIndexes[5]);
-				_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
-				_game._player._visible = true;
+				player.clock = _scene->_frameStartTime - player.frame_delay;
+				player.walker_visible = true;
 				_scene->_sequences.addTimer(60, 3);
 				break;
 
 			case 3:
 				_scene->_kernelMessages.reset();
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x309));
+				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x309));
 				_scene->_sequences.addTimer(120, 4);
 				break;
 
 			case 4:
-				_game._player._stepEnabled = true;
+				player.commands_allowed = true;
 				break;
 
 			default:
@@ -288,9 +291,9 @@ static void room_609_parser() {
 		local._videoDoorMode = 1;
 		enterStore();
 	} else if (player_said_2(get_inside, car)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 			_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 5);
@@ -308,7 +311,7 @@ static void room_609_parser() {
 		break;
 
 		case 2:
-			_game._player._visible = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 10, 1, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);

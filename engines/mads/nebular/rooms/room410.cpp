@@ -32,22 +32,23 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_410_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('y', -1));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('y', -1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*ROXRC_7");
 
-	if (_game._objects.isInRoom(OBJ_CHARGE_CASES))
+	if (object_is_here(OBJ_CHARGE_CASES))
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 	else
 		_scene->_hotspots.activate(words_charge_cases, false);
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(155, 150);
-		_game._player._facing = FACING_NORTH;
+		player.x = 155;
+		player.y = 150;
+		player.facing = FACING_NORTH;
 	}
 
 	section_4_music();
 
-	_scene->loadAnimation(Resources::formatName(410, 'r', -1, EXT_AA, ""));
+	_scene->loadAnimation(kernel_full_name(410, 'r', -1, "", EXT_AA));
 	_scene->_animation[0]->_repeatFlag = true;
 }
 
@@ -83,27 +84,27 @@ static void room_410_daemon() {
 
 static void room_410_pre_parser() {
 	if (player_said_1(take) && !player_said_1(charge_cases))
-		_game._player._needToWalk = false;
+		player.need_to_walk = false;
 
-	if (player_said_2(look, charge_cases) && _game._objects.isInRoom(OBJ_CHARGE_CASES))
-		_game._player._needToWalk = true;
+	if (player_said_2(look, charge_cases) && object_is_here(OBJ_CHARGE_CASES))
+		player.need_to_walk = true;
 
 	if (player_said_2(open, sacks) || player_said_2(open, sack))
-		_game._player._needToWalk = false;
+		player.need_to_walk = false;
 
 	if (player_said_2(look, can))
-		_game._player._needToWalk = true;
+		player.need_to_walk = true;
 }
 
 static void room_410_parser() {
 	if (player_said_2(walk_into, corridor_to_south))
 		_scene->_nextSceneId = 406;
-	else if (player_said_2(take, charge_cases) && (_game._objects.isInRoom(OBJ_CHARGE_CASES) || _game._trigger)) {
-		switch (_game._trigger) {
+	else if (player_said_2(take, charge_cases) && (object_is_here(OBJ_CHARGE_CASES) || kernel.trigger)) {
+		switch (kernel.trigger) {
 		case 0:
 			g_engine->_soundManager->command(57, 0);
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 7, 2, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 3);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
@@ -114,18 +115,18 @@ static void room_410_parser() {
 		case 1:
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 			_scene->_hotspots.activate(words_charge_cases, false);
-			_game._objects.addToInventory(OBJ_CHARGE_CASES);
+			inter_give_to_player(OBJ_CHARGE_CASES);
 			object_examine(OBJ_CHARGE_CASES, 41032, 0);
 			break;
 
 		case 2:
-			_game._player._priorTimer = _game._player._ticksAmount + _scene->_frameStartTime;
-			_game._player._visible = true;
+			player.clock = player.frame_delay + _scene->_frameStartTime;
+			player.walker_visible = true;
 			_scene->_sequences.addTimer(20, 3);
 			break;
 
 		case 3:
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			break;
 
 		default:
@@ -142,7 +143,7 @@ static void room_410_parser() {
 	else if (player_said_2(take, rug))
 		text_show(41014);
 	else if (player_said_2(look, carton) || player_said_2(open, carton)) {
-		if (_game._objects.isInRoom(OBJ_CHARGE_CASES))
+		if (object_is_here(OBJ_CHARGE_CASES))
 			text_show(41015);
 		else
 			text_show(41016);
@@ -166,7 +167,7 @@ static void room_410_parser() {
 		text_show(41023);
 	else if (player_said_2(take, can))
 		text_show(41024);
-	else if (player_said_2(look, charge_cases) && _game._objects.isInRoom(OBJ_CHARGE_CASES))
+	else if (player_said_2(look, charge_cases) && object_is_here(OBJ_CHARGE_CASES))
 		text_show(41025);
 	else if (player_said_2(look, fence))
 		text_show(41027);

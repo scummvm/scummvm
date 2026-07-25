@@ -44,7 +44,7 @@ static Scratch local;
 
 
 static void room_511_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('c', 0));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXCD_6");
 
 	// WORKARUND: Doing this earlier to allow to ensure hotspot bounds will get set from it's image
@@ -55,7 +55,7 @@ static void room_511_init() {
 		frame = -2;
 
 	if (_globals[kLineStatus] == 2 || _globals[kLineStatus] == 3) {
-		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('b', 4));
+		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(kernel_name('b', 4));
 		_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, frame);
 		int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(26, 153), FACING_NORTHEAST);
@@ -68,7 +68,7 @@ static void room_511_init() {
 		local._handingLine = false;
 
 	if (_globals[kBoatRaised]) {
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', 0));
+		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('b', 0));
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
 		_scene->_hotspots.activate(words_boat, false);
@@ -76,9 +76,9 @@ static void room_511_init() {
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(75, 124), FACING_NORTH);
 		_scene->_hotspots.activate(words_rope, false);
 	} else {
-		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('b', 2));
-		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', 3));
-		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('b', 1));
+		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('b', 2));
+		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_name('b', 3));
+		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('b', 1));
 
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 1, 1, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 5);
@@ -101,22 +101,24 @@ static void room_511_init() {
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 
 	if (_scene->_priorSceneId == 512) {
-		_game._player._playerPos = Common::Point(60, 112);
-		_game._player._facing = FACING_SOUTHEAST;
+		player.x = 60;
+		player.y = 112;
+		player.facing = FACING_SOUTHEAST;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(55, 152);
-		_game._player._facing = FACING_NORTHWEST;
-		_game._player._visible = false;
-		_game._player._stepEnabled = false;
+		player.x = 55;
+		player.y = 152;
+		player.facing = FACING_NORTHWEST;
+		player.walker_visible = false;
+		player.commands_allowed = false;
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
-		_scene->loadAnimation(formAnimName('R', 1), 70);
+		_scene->loadAnimation(kernel_name('R', 1), 70);
 	} else if (local._handingLine) {
-		_game._player._visible = false;
+		player.walker_visible = false;
 		local._lineAnimationMode = 1;
 		local._lineAnimationPosition = 1;
-		_scene->loadAnimation(formAnimName('R', -1));
+		_scene->loadAnimation(kernel_name('R', -1));
 		local._lineFrame = 2;
 	}
 	section_5_music();
@@ -148,10 +150,10 @@ static void room_511_daemon() {
 		}
 	}
 
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 70:
-		_game._player._visible = true;
-		_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
+		player.walker_visible = true;
+		player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
 		_scene->_sequences.addTimer(6, 71);
 		break;
 
@@ -165,7 +167,7 @@ static void room_511_daemon() {
 	case 72:
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 		break;
 
 	default:
@@ -178,22 +180,22 @@ static void room_511_pre_parser() {
 		return;
 
 	if (player_said_1(look) || player_said_1(fishing_line) || player_said_1(talkto))
-		_game._player._needToWalk = false;
+		player.need_to_walk = false;
 
-	if ((!player_said_3(tie, fishing_line, boat) || !player_said_3(attach, fishing_line, boat)) && _game._player._needToWalk) {
-		if (_game._trigger == 0) {
-			_game._player._readyToWalk = false;
-			_game._player._stepEnabled = false;
+	if ((!player_said_3(tie, fishing_line, boat) || !player_said_3(attach, fishing_line, boat)) && player.need_to_walk) {
+		if (kernel.trigger == 0) {
+			player.ready_to_walk = false;
+			player.commands_allowed = false;
 			_scene->freeAnimation();
 			local._lineAnimationMode = 2;
-			_scene->loadAnimation(formAnimName('R', 2), 1);
-		} else if (_game._trigger == 1) {
-			_game._player._visible = true;
-			_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
-			_game._objects.setRoom(OBJ_FISHING_LINE, 1);
+			_scene->loadAnimation(kernel_name('R', 2), 1);
+		} else if (kernel.trigger == 1) {
+			player.walker_visible = true;
+			player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
+			inter_move_object(OBJ_FISHING_LINE, 1);
 			local._handingLine = false;
-			_game._player._stepEnabled = true;
-			_game._player._readyToWalk = true;
+			player.commands_allowed = true;
+			player.ready_to_walk = true;
 		}
 	}
 }
@@ -202,9 +204,9 @@ static void room_511_parser() {
 	if (player_said_2(walk_into, restaurant))
 		_scene->_nextSceneId = 512;
 	else if (player_said_2(get_into, car)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 			_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
@@ -222,7 +224,7 @@ static void room_511_parser() {
 		break;
 
 		case 2:
-			_game._player._visible = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 8, 1, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
@@ -245,23 +247,23 @@ static void room_511_parser() {
 		if (!_globals[kBoatRaised]) {
 			if (_globals[kLineStatus] == 2) {
 				if (_globals[kLineStatus] != 3) {
-					if (_game._trigger == 0) {
-						_game._player._stepEnabled = false;
-						_game._player._visible = false;
-						_game._player.update();
+					if (kernel.trigger == 0) {
+						player.commands_allowed = false;
+						player.walker_visible = false;
+						player_set_image();
 						local._lineAnimationMode = 1;
 						local._lineAnimationPosition = 1;
 						local._lineMoving = true;
-						_scene->loadAnimation(formAnimName('R', -1));
+						_scene->loadAnimation(kernel_name('R', -1));
 						_scene->_sequences.addTimer(1, 1);
-					} else if (_game._trigger == 1) {
+					} else if (kernel.trigger == 1) {
 						if (local._lineMoving) {
 							_scene->_sequences.addTimer(1, 1);
 						} else {
-							_game._objects.addToInventory(OBJ_FISHING_LINE);
+							inter_give_to_player(OBJ_FISHING_LINE);
 							local._lineMoving = true;
 							local._handingLine = true;
-							_game._player._stepEnabled = true;
+							player.commands_allowed = true;
 						}
 					}
 				} else
@@ -279,26 +281,26 @@ static void room_511_parser() {
 			text_show(51130);
 		else if (!_globals[kBoatRaised] && local._handingLine) {
 			if (_globals[kLineStatus] != 3) {
-				if (_game._trigger == 0) {
-					_game._player._stepEnabled = false;
+				if (kernel.trigger == 0) {
+					player.commands_allowed = false;
 					_scene->_sequences.remove(_globals._sequenceIndexes[7]);
 					local._lineMoving = true;
 					local._lineAnimationPosition = 2;
 					_scene->_sequences.addTimer(1, 1);
-				} else if (_game._trigger == 1) {
+				} else if (kernel.trigger == 1) {
 					if (local._lineMoving)
 						_scene->_sequences.addTimer(1, 1);
 					else {
-						_game._player._visible = true;
+						player.walker_visible = true;
 						_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, -2);
 						_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 4);
 						int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
 						_scene->_dynamicHotspots.setPosition(idx, Common::Point(26, 153), FACING_NORTHEAST);
-						_game._objects.removeFromInventory(OBJ_FISHING_LINE, 1);
+						inter_take_from_player(OBJ_FISHING_LINE, 1);
 						local._handingLine = false;
 						local._lineMoving = true;
 						_globals[kLineStatus] = 3;
-						_game._player._stepEnabled = true;
+						player.commands_allowed = true;
 					}
 				}
 			}

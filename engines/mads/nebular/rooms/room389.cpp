@@ -49,7 +49,7 @@ static void room_389_init() {
 	if (_globals[kAfterHavoc])
 		_scene->_hotspots.activate(words_monster, false);
 	else {
-		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('m', -1));
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(kernel_name('m', -1));
 		_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 6, 0, 0, 0);
 		_scene->_kernelMessages.initRandomMessages(1,
 			Common::Rect(88, 19, 177, 77), 13, 2, 0xFDFC, 60,
@@ -58,8 +58,8 @@ static void room_389_init() {
 
 	pal_change_color(252, 63, 37, 26);
 	pal_change_color(253, 45, 24, 17);
-	_game._player._visible = false;
-	_game.loadQuoteSet(0xF7, 0xF8, 0xF9, 0x159, 0x15A, 0x15B, 0);
+	player.walker_visible = false;
+	kernel.quotes = quote_load(0xF7, 0xF8, 0xF9, 0x159, 0x15A, 0x15B, 0);
 
 	section_3_music();
 }
@@ -77,10 +77,10 @@ static void room_389_parser() {
 	if (player_said_2(return_to, air_shaft))
 		_scene->_nextSceneId = 313;
 	else if (player_said_2(talkto, monster)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
-			_scene->_kernelMessages.add(Common::Point(160, 136), 0x1110, 32, 1, 120, _game.getQuote(local._circularQuoteId));
+			player.commands_allowed = false;
+			_scene->_kernelMessages.add(Common::Point(160, 136), 0x1110, 32, 1, 120, quote_string(kernel.quotes, local._circularQuoteId));
 			local._circularQuoteId++;
 			if (local._circularQuoteId > 0x15B)
 				local._circularQuoteId = 0x159;
@@ -88,7 +88,7 @@ static void room_389_parser() {
 			break;
 
 		case 1:
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			break;
 
 		default:
@@ -96,7 +96,7 @@ static void room_389_parser() {
 		}
 	} else if (player_said_2(look_through, grate)) {
 		if (_globals[kAfterHavoc]) {
-			if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
+			if ((game.difficulty != DIFFICULTY_HARD) && (object[OBJ_SECURITY_CARD].location == 359))
 				text_show(38911);
 			else
 				text_show(38912);

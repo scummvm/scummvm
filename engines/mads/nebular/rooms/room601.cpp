@@ -32,8 +32,8 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_601_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('c', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('c', 0));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXCD_4");
 
 	if (_globals[kLaserHoleIsThere]) {
@@ -45,27 +45,29 @@ static void room_601_init() {
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
 
 	if (_scene->_priorSceneId == 504) {
-		_game._player._playerPos = Common::Point(73, 148);
-		_game._player._facing = FACING_WEST;
-		_game._player._visible = false;
-		_game._player._stepEnabled = false;
+		player.x = 73;
+		player.y = 148;
+		player.facing = FACING_WEST;
+		player.walker_visible = false;
+		player.commands_allowed = false;
 		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
-		_scene->loadAnimation(formAnimName('R', 1), 70);
+		_scene->loadAnimation(kernel_name('R', 1), 70);
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(229, 129);
-		_game._player._facing = FACING_SOUTHWEST;
+		player.x = 229;
+		player.y = 129;
+		player.facing = FACING_SOUTHWEST;
 	}
 
 	section_6_music();
 }
 
 static void room_601_daemon() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 70:
-		_game._player._visible = true;
-		_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
+		player.walker_visible = true;
+		player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
 		_scene->_sequences.addTimer(30, 71);
 		break;
 
@@ -79,7 +81,7 @@ static void room_601_daemon() {
 	case 72:
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 		break;
 
 	default:
@@ -91,9 +93,9 @@ static void room_601_parser() {
 	if (player_said_2(walk_through, entrance))
 		_scene->_nextSceneId = 602;
 	else if (player_said_2(get_inside, car)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
@@ -110,7 +112,7 @@ static void room_601_parser() {
 		break;
 
 		case 2:
-			_game._player._visible = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 10, 1, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 3);

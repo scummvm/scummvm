@@ -35,26 +35,29 @@ static void room_351_init() {
 	_globals[kAfterHavoc] = -1;
 	_globals[kTeleporterRoom + 1] = 351;
 
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', -1));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('c', -1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*ROXRC_7");
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXRD_7");
 
-	if (_game._objects.isInRoom(OBJ_CREDIT_CHIP)) {
+	if (object_is_here(OBJ_CREDIT_CHIP)) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 4);
 	} else
 		_scene->_hotspots.activate(words_credit_chip, false);
 
-	if (_scene->_priorSceneId == 352)
-		_game._player._playerPos = Common::Point(148, 152);
+	if (_scene->_priorSceneId == 352) {
+		player.x = 148;
+		player.y = 152;
+	}
 	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(207, 81);
-		_game._player._facing = FACING_NORTH;
+		player.x = 207;
+		player.y = 81;
+		player.facing = FACING_NORTH;
 	}
 
 	if (_globals[kTeleporterCommand]) {
-		_game._player._visible = false;
-		_game._player._stepEnabled = false;
+		player.walker_visible = false;
+		player.commands_allowed = false;
 
 		char sepChar = 'a';
 		if (_globals[kSexOfRex] != REX_MALE)
@@ -77,9 +80,9 @@ static void room_351_init() {
 
 		case 3:
 		case 4:
-			_game._player._visible = true;
-			_game._player._stepEnabled = true;
-			_game._player._turnToFacing = FACING_SOUTH;
+			player.walker_visible = true;
+			player.commands_allowed = true;
+			player.turn_to_facing = FACING_SOUTH;
 			suffixNum = -1;
 			break;
 
@@ -90,21 +93,21 @@ static void room_351_init() {
 		_globals[kTeleporterCommand] = 0;
 
 		if (suffixNum >= 0)
-			_scene->loadAnimation(formAnimName(sepChar, suffixNum), trigger);
+			_scene->loadAnimation(kernel_name(sepChar, suffixNum), trigger);
 	}
 
 	section_3_music();
 }
 
 static void room_351_daemon() {
-	if (_game._trigger == 60) {
-		_game._player._stepEnabled = true;
-		_game._player._visible = true;
-		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
-		_game._player._turnToFacing = FACING_SOUTH;
+	if (kernel.trigger == 60) {
+		player.commands_allowed = true;
+		player.walker_visible = true;
+		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.turn_to_facing = FACING_SOUTH;
 	}
 
-	if (_game._trigger == 61) {
+	if (kernel.trigger == 61) {
 		_globals[kTeleporterCommand] = 1;
 		_scene->_nextSceneId = _globals[kTeleporterDestination];
 		_scene->_reloadSceneFlag = true;
@@ -119,11 +122,11 @@ static void room_351_parser() {
 	else if (player_said_2(walk_down, corridor_to_south))
 		_scene->_nextSceneId = 352;
 	else if (player_said_2(take, credit_chip)) {
-		if (_game._trigger || !_game._objects.isInInventory(OBJ_CREDIT_CHIP)) {
-			switch (_game._trigger) {
+		if (kernel.trigger || !player_has(OBJ_CREDIT_CHIP)) {
+			switch (kernel.trigger) {
 			case 0:
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
+				player.commands_allowed = false;
+				player.walker_visible = false;
 				if (_globals[kSexOfRex] == REX_FEMALE) {
 					_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 5, 2, 0, 0);
 					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
@@ -140,12 +143,12 @@ static void room_351_parser() {
 			case 1:
 				_scene->_hotspots.activate(words_credit_chip, false);
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-				_game._objects.addToInventory(OBJ_CREDIT_CHIP);
+				inter_give_to_player(OBJ_CREDIT_CHIP);
 				break;
 
 			case 2:
-				_game._player._visible = true;
-				_game._player._stepEnabled = true;
+				player.walker_visible = true;
+				player.commands_allowed = true;
 				object_examine(OBJ_CREDIT_CHIP, 0x32F, 0);
 				break;
 
@@ -160,7 +163,7 @@ static void room_351_parser() {
 	else if (player_said_2(look, fire_hydrant))
 		text_show(35112);
 	else if (player_said_2(look, guard)) {
-		if (_game._objects[0xF]._roomNumber == 351)
+		if (object[0xF].location == 351)
 			text_show(35114);
 		else
 			text_show(35113);

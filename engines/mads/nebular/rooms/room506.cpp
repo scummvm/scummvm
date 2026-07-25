@@ -49,7 +49,7 @@ static Scratch local;
 
 
 static void handleDoorSequences() {
-	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+	kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 
 	if (local._firstDoorFl) {
 		if (player_said_2(walk_into, software_store) || ((_scene->_priorSceneId == 507) && !local._actionFl)) {
@@ -66,10 +66,10 @@ static void handleDoorSequences() {
 		local._firstDoorFl = false;
 	}
 
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 0:
 	case 80:
-		_game._player._stepEnabled = false;
+		player.commands_allowed = false;
 		_scene->_sequences.remove(local._doorSequenceIdx);
 		local._doorSequenceIdx = _scene->_sequences.addSpriteCycle(local._doorSpriteIdx, false, 7, 1, 0, 0);
 		_scene->_sequences.setDepth(local._doorSequenceIdx, local._doorDepth);
@@ -81,8 +81,8 @@ static void handleDoorSequences() {
 	case 81:
 		local._doorSequenceIdx = _scene->_sequences.startCycle(local._doorSpriteIdx, false, -2);
 		_scene->_sequences.setDepth(local._doorSequenceIdx, local._doorDepth);
-		_game._player._walkAnywhere = true;
-		_game._player.walk(Common::Point(local._doorPos_x, local._doorPos_y), local._heroFacing);
+		player.walk_anywhere = true;
+		player_walk(local._doorPos_x, local._doorPos_y, local._heroFacing);
 		_scene->_sequences.addTimer(120, 82);
 		break;
 
@@ -112,14 +112,14 @@ static void handleDoorSequences() {
 			_globals._spriteIndexes[2] = local._doorSpriteIdx;
 			_globals._sequenceIndexes[2] = local._doorSequenceIdx;
 		}
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 
 	}
 	break;
 
 	case 84:
 		local._actionFl = false;
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 		if (local._labDoorFl)
 			_scene->_nextSceneId = 508;
 		else
@@ -133,9 +133,9 @@ static void handleDoorSequences() {
 }
 
 static void room_506_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('q', 0));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('q', 1));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('c', -1));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('q', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('q', 1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('c', -1));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXCD_3");
 
 	// WORKAROUND: Set the animation before creating the door hotspots, since otherwise
@@ -144,7 +144,7 @@ static void room_506_init() {
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 5);
-		_scene->loadAnimation(formAnimName('R', 1), 70);
+		_scene->loadAnimation(kernel_name('R', 1), 70);
 	}
 
 	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
@@ -164,27 +164,30 @@ static void room_506_init() {
 	local._actionFl = false;
 
 	if (_scene->_priorSceneId == 508) {
-		_game._player._playerPos = Common::Point(16, 111);
-		_game._player._facing = FACING_SOUTHEAST;
+		player.x = 16;
+		player.y = 111;
+		player.facing = FACING_SOUTHEAST;
 		_scene->_sequences.addTimer(15, 80);
-		_game._player._stepEnabled = false;
+		player.commands_allowed = false;
 	} else if (_scene->_priorSceneId == 507) {
-		_game._player._playerPos = Common::Point(80, 102);
-		_game._player._facing = FACING_SOUTHEAST;
+		player.x = 80;
+		player.y = 102;
+		player.facing = FACING_SOUTHEAST;
 		_scene->_sequences.addTimer(60, 80);
-		_game._player._stepEnabled = false;
+		player.commands_allowed = false;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(138, 116);
-		_game._player._facing = FACING_NORTHEAST;
-		_game._player._visible = false;
-		_game._player._stepEnabled = false;
+		player.x = 138;
+		player.y = 116;
+		player.facing = FACING_NORTHEAST;
+		player.walker_visible = false;
+		player.commands_allowed = false;
 	}
 
 	section_5_music();
 }
 
 static void room_506_daemon() {
-	if (_game._trigger >= 80) {
+	if (kernel.trigger >= 80) {
 		if (local._firstDoorFl) {
 			local._heroFacing = FACING_SOUTHEAST;
 			if (_scene->_priorSceneId == 507) {
@@ -201,11 +204,11 @@ static void room_506_daemon() {
 		handleDoorSequences();
 	}
 
-	if (_game._trigger >= 70) {
-		switch (_game._trigger) {
+	if (kernel.trigger >= 70) {
+		switch (kernel.trigger) {
 		case 70:
-			_game._player._visible = true;
-			_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
+			player.walker_visible = true;
+			player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
 			_scene->_sequences.addTimer(6, 71);
 			break;
 
@@ -219,7 +222,7 @@ static void room_506_daemon() {
 		case 72:
 			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 5);
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			break;
 
 		default:
@@ -246,9 +249,9 @@ static void room_506_parser() {
 		local._actionFl = true;
 		handleDoorSequences();
 	} else if (player_said_2(get_into, car)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 5);
@@ -265,7 +268,7 @@ static void room_506_parser() {
 		break;
 
 		case 2:
-			_game._player._visible = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 10, 1, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);

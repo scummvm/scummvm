@@ -32,8 +32,8 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_321_init() {
-	_game._player._visible = false;
-	_game._player._stepEnabled = false;
+	player.walker_visible = false;
+	player.commands_allowed = false;
 
 	_scene->_userInterface.emptyConversationList();
 	_scene->_userInterface.setup(kInputConversation);
@@ -44,20 +44,20 @@ static void room_321_init() {
 		suffixNum = 1;
 	} else {
 		_globals[kSexOfRex] = REX_FEMALE;
-		suffixNum = _game._visitedScenes._sceneRevisited ? 2 : 0;
+		suffixNum = player.been_here_before ? 2 : 0;
 	}
 
-	_scene->loadAnimation(formAnimName('g', suffixNum), 60);
+	_scene->loadAnimation(kernel_name('g', suffixNum), 60);
 	section_3_music();
 }
 
 static void room_321_daemon() {
 	if (_scene->_animation[0] != nullptr) {
-		if ((_scene->_animation[0]->getCurrentFrame() >= 260) && (_globals[kSexOfRex] == REX_MALE) && (_game._storyMode >= STORYMODE_NICE))
+		if ((_scene->_animation[0]->getCurrentFrame() >= 260) && (_globals[kSexOfRex] == REX_MALE) && (config_file.naughtiness >= STORYMODE_NICE))
 			_scene->_nextSceneId = 316;
 	}
 
-	if (_game._trigger == 60)
+	if (kernel.trigger == 60)
 		_scene->_nextSceneId = 316;
 }
 

@@ -35,28 +35,30 @@ static void room_702_init() {
 	_globals._spriteIndexes[12] = _scene->_sprites.addSprites("*RXMBD_8");
 
 	if (_scene->_priorSceneId == 701) {
-		_game._player._playerPos = Common::Point(13, 145);
-		_game._player._facing = FACING_EAST;
+		player.x = 13;
+		player.y = 145;
+		player.facing = FACING_EAST;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG && _scene->_priorSceneId != 620) {
-		_game._player._playerPos = Common::Point(289, 138);
-		_game._player.walk(Common::Point(262, 148), FACING_WEST);
-		_game._player._facing = FACING_WEST;
-		_game._player._visible = true;
+		player.x = 289;
+		player.y = 138;
+		player_walk(262, 148, FACING_WEST);
+		player.facing = FACING_WEST;
+		player.walker_visible = true;
 	}
 
-	if (_game._globals[kTeleporterCommand]) {
-		switch (_game._globals[kTeleporterCommand]) {
+	if (_globals[kTeleporterCommand]) {
+		switch (_globals[kTeleporterCommand]) {
 		case TELEPORTER_BEAM_OUT:
 		case TELEPORTER_WRONG:
 		case TELEPORTER_STEP_OUT:
-			_game._player._visible = true;
-			_game._player._stepEnabled = true;
+			player.walker_visible = true;
+			player.commands_allowed = true;
 			break;
 		default:
 			break;
 		}
 
-		_game._globals[kTeleporterCommand] = TELEPORTER_NONE;
+		_globals[kTeleporterCommand] = TELEPORTER_NONE;
 	}
 
 	section_7_music();
@@ -64,21 +66,21 @@ static void room_702_init() {
 
 static void room_702_pre_parser() {
 	if (player_said_2(walkto, west_end_of_platform))
-		_game._player._walkOffScreenSceneId = 701;
+		player.walk_off_edge_to_room = 701;
 }
 
 static void room_702_parser() {
 	if (player_said_2(walk_along, platform))
 		; // Only set the action as finished
 	else if (player_said_2(step_into, teleporter)) {
-		_game._player._stepEnabled = false;
-		_game._player._visible = false;
+		player.commands_allowed = false;
+		player.walker_visible = false;
 		_scene->_nextSceneId = 711;
-	} else if (player_said_2(take, bones) && (_action._mainObjectSource == CAT_HOTSPOT) && (!_game._objects.isInInventory(OBJ_BONES) || _game._trigger)) {
-		switch (_game._trigger) {
+	} else if (player_said_2(take, bones) && (_action._mainObjectSource == CAT_HOTSPOT) && (!player_has(OBJ_BONES) || kernel.trigger)) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[12] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[12], false, 5, 2, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[12]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
@@ -86,15 +88,15 @@ static void room_702_parser() {
 			break;
 		case 1:
 			g_engine->_soundManager->command(0xF, 0);
-			if (_game._objects.isInInventory(OBJ_BONE))
-				_game._objects.setRoom(OBJ_BONE, 1);
-			_game._objects.addToInventory(OBJ_BONES);
+			if (player_has(OBJ_BONE))
+				inter_move_object(OBJ_BONE, 1);
+			inter_give_to_player(OBJ_BONES);
 			object_examine(OBJ_BONES, 70218, 0);
 			break;
 		case 2:
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[12]);
-			_game._player._visible = true;
-			_game._player._stepEnabled = true;
+			player.walker_visible = true;
+			player.commands_allowed = true;
 			break;
 		default:
 			break;
@@ -116,7 +118,7 @@ static void room_702_parser() {
 	else if (player_said_2(look, bones) && (_action._mainObjectSource == CAT_HOTSPOT))
 		text_show(70217);
 	else if (player_said_2(take, bones) && (_action._mainObjectSource == CAT_HOTSPOT)) {
-		if (_game._objects.isInInventory(OBJ_BONES))
+		if (player_has(OBJ_BONES))
 			text_show(70219);
 	} else if (player_said_2(look, submerged_city))
 		text_show(70220);

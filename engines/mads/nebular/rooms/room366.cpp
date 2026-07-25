@@ -33,7 +33,7 @@ namespace Rooms {
 
 static void room_366_init() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
-	_game._player._visible = false;
+	player.walker_visible = false;
 	section_3_music();
 }
 
@@ -41,13 +41,13 @@ static void room_366_parser() {
 	if (player_said_2(return_to, air_shaft))
 		_scene->_nextSceneId = 302;
 	else if (player_said_2(open, grate)) {
-		if (_game._visitedScenes.exists(316))
+		if (player_has_been_in_room(316))
 			text_show(36612);
 		else
 			text_show(36613);
 		_scene->_nextSceneId = 316;
 	} else if (player_said_2(look_through, grate)) {
-		if (_game._visitedScenes.exists(321))
+		if (player_has_been_in_room(321))
 			text_show(36611);
 		else
 			text_show(36610);

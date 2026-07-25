@@ -23,131 +23,19 @@
 #include "mads/core/global.h"
 #include "mads/core/kernel.h"
 #include "mads/core/matte.h"
-#include "mads/core/object.h"
 #include "mads/core/player.h"
-#include "mads/core/quote.h"
 #include "mads/nebular/rooms/thunks.h"
-#include "mads/nebular/nebular.h"
 
 namespace MADS {
 namespace RexNebular {
 namespace Rooms {
 
 Action _action;
-Game _game;
 Globals _globals;
 Scene _scene;
 
-void Game::Objects::addToInventory(int object_id) {
-	inter_give_to_player(object_id);
-}
-
-bool Game::Objects::isInRoom(int object_id) const {
-	return object_is_here(object_id);
-}
-
-bool Game::Objects::isInInventory(int object_id) const {
-	return player_has(object_id);
-}
-
-int Game::Objects::getIdFromDesc(int desc_id) const {
-	return object_named(desc_id);
-}
-
-void Game::Objects::setRoom(int object_id, int roomNum) {
-	inter_move_object(object_id, roomNum);
-}
-
-void Game::Objects::removeFromInventory(int objectId, int newScene) {
-	inter_take_from_player(objectId, newScene);
-}
-
-int Game::Objects::size() const {
-	return num_objects;
-}
-
-Game::Object Game::Objects::operator[](int idx) {
-	return Game::Object(idx);
-}
-
-Game::Object::Object(int idx) : _object_id(idx), _roomNumber(object[idx].location) {
-}
-
-int Game::Object::getQuality(int quality_id) {
-	return object_check_quality(_object_id, quality_id);
-}
-
-void Game::Object::setQuality(int quality_id, long quality_value) {
-	object_set_quality(_object_id, quality_id, quality_value);
-}
-
-bool Game::Object::hasQuality(int quality_id) {
-	return object_has_quality(_object_id, quality_id);
-}
-
-void Game::VisitedScenes::add(int roomNum) {
-	player_discover_room(roomNum);
-}
-
-bool Game::VisitedScenes::exists(int roomNum) const {
-	return player_has_been_in_room(roomNum);
-}
-
-void Game::VisitedScenes::pop_back() {
-	player_undiscover_room();
-}
-
-void Game::loadQuoteSet(int quote1, ...) {
-	va_list va;
-	va_start(va, quote1);
-
-	kernel.quotes = quote_vload(quote1, va);
-
-	va_end(va);
-}
-
-char *Game::getQuote(int quote_id) {
-	return quote_string(kernel.quotes, quote_id);
-}
-
-void Game::splitQuote(const char *source, char *line1, char *line2) {
-	quote_split_string(source, line1, line2);
-}
-
 int16 &Globals::operator[](int idx) {
 	return global[idx];
-}
-
-void Game::Player::startWalking(const Common::Point &pt, int facing) {
-	player_start_walking(pt.x, pt.y, facing);
-}
-
-void Game::Player::walk(const Common::Point &pt, int facing) {
-	player_walk(pt.x, pt.y, facing);
-}
-
-void Game::Player::cancelCommand() {
-	player_cancel_command();
-}
-
-void Game::Player::update() {
-	player_set_image();
-}
-
-void Game::Player::removePlayerSprites() {
-	kernel_dump_walker_only();
-}
-
-void Game::Player::selectSeries() {
-	player_select_series();
-}
-
-char *Resources::formatName(int my_room, char type, int num, int ext, const char *text) {
-	return kernel_full_name(my_room, type, num, text, ext);
-}
-
-char *Resources::formatAAName(int num) {
-	return kernel_interface_name(num);
 }
 
 static uint16 dummy_num_images;
@@ -415,10 +303,6 @@ void Scene::clearSequenceList() {
 
 void Scene::addActiveVocab(int vocab_id) {
 	vocab_make_active(vocab_id);
-}
-
-char *formAnimName(char type, int num) {
-	return kernel_name(type, num);
 }
 
 } // namespace Rooms

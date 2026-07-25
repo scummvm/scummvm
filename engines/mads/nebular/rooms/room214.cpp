@@ -40,15 +40,15 @@ static Scratch local;
 
 
 static void room_214_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('e', 0));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('e', 1));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('t', -1));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('e', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('e', 1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('t', -1));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXMRD_7");
 
-	local._devilTime = _game._player._priorTimer;
+	local._devilTime = player.clock;
 	local._devilRunningFl = false;
 
-	if (_game._objects.isInRoom(OBJ_POISON_DARTS)) {
+	if (object_is_here(OBJ_POISON_DARTS)) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(103, 86));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 11);
@@ -56,7 +56,7 @@ static void room_214_init() {
 		_scene->_hotspots.activate(words_poison_darts, false);
 	}
 
-	if (_game._objects.isInRoom(OBJ_BLOWGUN)) {
+	if (object_is_here(OBJ_BLOWGUN)) {
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(90, 87));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 13);
@@ -64,14 +64,16 @@ static void room_214_init() {
 		_scene->_hotspots.activate(words_blowgun, false);
 	}
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
-		_game._player._playerPos = Common::Point(191, 152);
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+		player.x = 191;
+		player.y = 152;
+	}
 
 	section_2_music();
 }
 
 static void room_214_daemon() {
-	if ((_game._player._priorTimer - local._devilTime > 800) && !local._devilRunningFl) {
+	if ((player.clock - local._devilTime > 800) && !local._devilRunningFl) {
 		local._devilRunningFl = true;
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 6, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 4);
@@ -81,7 +83,7 @@ static void room_214_daemon() {
 	}
 
 	if (local._devilRunningFl) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 71:
 		{
 			int oldIdx = _globals._sequenceIndexes[3];
@@ -102,7 +104,7 @@ static void room_214_daemon() {
 			_scene->_dynamicHotspots.add(words_captive_creature, words_walkto, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 9, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 2);
-			local._devilTime = _game._player._priorTimer;
+			local._devilTime = player.clock;
 			local._devilRunningFl = false;
 		}
 		break;
@@ -118,11 +120,11 @@ static void room_214_parser() {
 		text_show(21427);
 	else if (player_said_2(walk_outside, hut))
 		_scene->_nextSceneId = 207;
-	else if (player_said_2(take, poison_darts) && (_game._trigger || _game._objects.isInRoom(OBJ_POISON_DARTS))) {
-		switch (_game._trigger) {
+	else if (player_said_2(take, poison_darts) && (kernel.trigger || object_is_here(OBJ_POISON_DARTS))) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], true, 6, 1, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
@@ -133,28 +135,28 @@ static void room_214_parser() {
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-			_game._objects.addToInventory(OBJ_POISON_DARTS);
+			inter_give_to_player(OBJ_POISON_DARTS);
 			_scene->_hotspots.activate(words_poison_darts, false);
 			break;
 
 		case 2:
-			_game._player._visible = true;
+			player.walker_visible = true;
 			_scene->_sequences.addTimer(48, 3);
 			break;
 
 		case 3:
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			object_examine(OBJ_POISON_DARTS, 0x53A5, 0);
 			break;
 
 		default:
 			break;
 		}
-	} else if (player_said_2(take, blowgun) && (_game._trigger || _game._objects.isInRoom(OBJ_BLOWGUN))) {
-		switch (_game._trigger) {
+	} else if (player_said_2(take, blowgun) && (kernel.trigger || object_is_here(OBJ_BLOWGUN))) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6, 1, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
@@ -165,17 +167,17 @@ static void room_214_parser() {
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-			_game._objects.addToInventory(OBJ_BLOWGUN);
+			inter_give_to_player(OBJ_BLOWGUN);
 			_scene->_hotspots.activate(words_blowgun, false);
 			break;
 
 		case 2:
-			_game._player._visible = true;
+			player.walker_visible = true;
 			_scene->_sequences.addTimer(48, 3);
 			break;
 
 		case 3:
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			object_examine(OBJ_BLOWGUN, 0x329, 0);
 			break;
 
@@ -193,7 +195,7 @@ static void room_214_parser() {
 	else if (player_said_2(look, trophy))
 		text_show(21405);
 	else if (player_said_2(look, large_bowl)) {
-		if (_game._storyMode == STORYMODE_NAUGHTY) {
+		if (config_file.naughtiness == STORYMODE_NAUGHTY) {
 			text_show(21406);
 		} else {
 			text_show(21407);
@@ -229,11 +231,11 @@ static void room_214_parser() {
 	else if (player_said_2(look, blowgun))
 		text_show(21422);
 	else if (player_said_2(look, table)) {
-		if (_game._objects.isInRoom(OBJ_POISON_DARTS) && _game._objects.isInRoom(OBJ_BLOWGUN)) {
+		if (object_is_here(OBJ_POISON_DARTS) && object_is_here(OBJ_BLOWGUN)) {
 			text_show(21423);
-		} else if (_game._objects.isInRoom(OBJ_POISON_DARTS) && !_game._objects.isInRoom(OBJ_BLOWGUN)) {
+		} else if (object_is_here(OBJ_POISON_DARTS) && !object_is_here(OBJ_BLOWGUN)) {
 			text_show(21424);
-		} else if (!_game._objects.isInRoom(OBJ_POISON_DARTS) && _game._objects.isInRoom(OBJ_BLOWGUN)) {
+		} else if (!object_is_here(OBJ_POISON_DARTS) && object_is_here(OBJ_BLOWGUN)) {
 			text_show(21425);
 		} else {
 			text_show(21426);

@@ -40,26 +40,28 @@ static Scratch local;
 
 
 static void room_603_init() {
-	if (_game._objects[OBJ_COMPACT_CASE]._roomNumber == _scene->_currentSceneId) {
+	if (object[OBJ_COMPACT_CASE].location == _scene->_currentSceneId) {
 		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXMRD_3");
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', -1));
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('c', -1));
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 		local._compactCaseHotspotId = _scene->_dynamicHotspots.add(words_compact_case, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._compactCaseHotspotId, Common::Point(250, 152), FACING_SOUTHEAST);
 	}
 
-	if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_NOTE]._roomNumber == _scene->_currentSceneId)) {
+	if ((game.difficulty != DIFFICULTY_HARD) && (object[OBJ_NOTE].location == _scene->_currentSceneId)) {
 		_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXMRC_9");
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('p', -1));
+		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('p', -1));
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
 		local._noteHotspotId = _scene->_dynamicHotspots.add(words_note, words_walkto, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._noteHotspotId, Common::Point(242, 118), FACING_NORTHEAST);
 	}
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
-		_game._player._playerPos = Common::Point(113, 134);
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+		player.x = 113;
+		player.y = 134;
+	}
 
 	section_6_music();
 }
@@ -68,11 +70,11 @@ static void room_603_parser() {
 	if (player_said_2(walk_towards, livingroom))
 		_scene->_nextSceneId = 602;
 	else if (player_said_2(take, compact_case)) {
-		if (_game._trigger || !_game._objects.isInInventory(OBJ_COMPACT_CASE)) {
-			switch (_game._trigger) {
+		if (kernel.trigger || !player_has(OBJ_COMPACT_CASE)) {
+			switch (kernel.trigger) {
 			case 0:
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
+				player.commands_allowed = false;
+				player.walker_visible = false;
 				_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 8, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 1, 5);
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
@@ -84,14 +86,14 @@ static void room_603_parser() {
 				g_engine->_soundManager->command(9, 0);
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 				_scene->_dynamicHotspots.remove(local._compactCaseHotspotId);
-				_game._objects.addToInventory(OBJ_COMPACT_CASE);
+				inter_give_to_player(OBJ_COMPACT_CASE);
 				object_examine(OBJ_COMPACT_CASE, 60330, 0);
 				break;
 
 			case 2:
 				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[4]);
-				_game._player._visible = true;
-				_game._player._stepEnabled = true;
+				player.walker_visible = true;
+				player.commands_allowed = true;
 				break;
 
 			default:
@@ -99,22 +101,22 @@ static void room_603_parser() {
 			}
 		}
 	} else if (player_said_2(take, note)) {
-		if (_game._trigger || !_game._objects.isInInventory(OBJ_NOTE)) {
-			if (_game._trigger == 0) {
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
+		if (kernel.trigger || !player_has(OBJ_NOTE)) {
+			if (kernel.trigger == 0) {
+				player.commands_allowed = false;
+				player.walker_visible = false;
 				_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
 				_scene->_sequences.addTimer(15, 1);
-			} else if (_game._trigger == 1) {
+			} else if (kernel.trigger == 1) {
 				g_engine->_soundManager->command(9, 0);
 				_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 				_scene->_dynamicHotspots.remove(local._noteHotspotId);
-				_game._objects.addToInventory(OBJ_NOTE);
+				inter_give_to_player(OBJ_NOTE);
 				_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-				_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
-				_game._player._visible = true;
-				_game._player._stepEnabled = true;
+				player.clock = _scene->_frameStartTime - player.frame_delay;
+				player.walker_visible = true;
+				player.commands_allowed = true;
 			}
 		} else
 			text_show(60323);
@@ -145,15 +147,15 @@ static void room_603_parser() {
 	else if (player_said_2(take, perfume))
 		text_show(60322);
 	else if (player_said_2(look, note)) {
-		if (_game._objects[OBJ_NOTE]._roomNumber == _scene->_currentSceneId)
+		if (object[OBJ_NOTE].location == _scene->_currentSceneId)
 			text_show(60324);
 	} else if (player_said_2(look, corner_table)) {
-		if (_game._objects[OBJ_NOTE]._roomNumber == _scene->_currentSceneId)
+		if (object[OBJ_NOTE].location == _scene->_currentSceneId)
 			text_show(60326);
 		else
 			text_show(60325);
 	} else if (player_said_2(look, vanity)) {
-		if (_game._objects[OBJ_COMPACT_CASE]._roomNumber == _scene->_currentSceneId)
+		if (object[OBJ_COMPACT_CASE].location == _scene->_currentSceneId)
 			text_show(60327);
 		else
 			text_show(60328);

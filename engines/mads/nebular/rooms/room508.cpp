@@ -40,15 +40,15 @@ static Scratch local;
 
 
 static void room_508_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('a', 0));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('m', 0));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('h', 0));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('l', 2));
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('t', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('a', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('m', 0));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('h', 0));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('l', 2));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('t', 0));
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*RXMRC_9");
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('l', 3));
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(kernel_name('l', 3));
 
-	if (!_game._visitedScenes._sceneRevisited) {
+	if (!player.been_here_before) {
 		_globals[kLaserOn] = false;
 		local._chosenObject = 0;
 	}
@@ -82,25 +82,27 @@ static void room_508_init() {
 	g_engine->_soundManager->command(20, 0);
 
 	if (_scene->_priorSceneId == 515) {
-		_game._player._playerPos = Common::Point(57, 116);
-		_game._player._facing = FACING_NORTHEAST;
+		player.x = 57;
+		player.y = 116;
+		player.facing = FACING_NORTHEAST;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(289, 139);
-		_game._player._facing = FACING_WEST;
+		player.x = 289;
+		player.y = 139;
+		player.facing = FACING_WEST;
 	}
 
 	section_5_music();
-	_game.loadQuoteSet(0x273, 0);
+	kernel.quotes = quote_load(0x273, 0);
 
 	if (_scene->_roomChanged) {
-		_game._objects.addToInventory(OBJ_COMPACT_CASE);
-		_game._objects.addToInventory(OBJ_REARVIEW_MIRROR);
+		inter_give_to_player(OBJ_COMPACT_CASE);
+		inter_give_to_player(OBJ_REARVIEW_MIRROR);
 	}
 }
 
 static void room_508_pre_parser() {
 	if (player_said_2(walk, outside))
-		_game._player._walkOffScreenSceneId = 506;
+		player.walk_off_edge_to_room = 506;
 }
 
 static void handlePedestral() {
@@ -111,10 +113,10 @@ static void handlePedestral() {
 		text_show(50836);
 
 	if (_globals[kLaserOn] && !_globals[kLaserHoleIsThere]) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[6] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[6], false, 9, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], 1, 4);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[6]);
@@ -124,9 +126,9 @@ static void handlePedestral() {
 
 		case 1:
 			if (local._chosenObject == 2)
-				_game._objects.removeFromInventory(OBJ_COMPACT_CASE, 1);
+				inter_take_from_player(OBJ_COMPACT_CASE, 1);
 			else
-				_game._objects.removeFromInventory(OBJ_REARVIEW_MIRROR, 1);
+				inter_take_from_player(OBJ_REARVIEW_MIRROR, 1);
 
 			_globals._sequenceIndexes[7] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 6, 1, 0, 0);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[7], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
@@ -140,7 +142,7 @@ static void handlePedestral() {
 
 		case 3:
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[6]);
-			_game._player._visible = true;
+			player.walker_visible = true;
 			_scene->_sequences.addTimer(120, 4);
 			break;
 
@@ -159,15 +161,15 @@ static void handlePedestral() {
 static void room_508_parser() {
 	if (player_said_2(pull, lever)) {
 		if (!_globals[kLaserOn]) {
-			switch (_game._trigger) {
+			switch (kernel.trigger) {
 			case 0:
-				_game._player._stepEnabled = false;
+				player.commands_allowed = false;
 				_scene->_kernelMessages.reset();
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 2, 120, _game.getQuote(0x273));
+				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 2, 120, quote_string(kernel.quotes, 0x273));
 				break;
 
 			case 2:
-				_game._player._visible = false;
+				player.walker_visible = false;
 				_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 				_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 10, 1, 0, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 7);
@@ -183,7 +185,7 @@ static void room_508_parser() {
 				_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
 				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[1]);
-				_game._player._visible = true;
+				player.walker_visible = true;
 				_scene->_sequences.addTimer(15, 5);
 				break;
 
@@ -195,7 +197,7 @@ static void room_508_parser() {
 
 			case 5:
 				_scene->_sequences.remove(_globals._sequenceIndexes[5]);
-				_scene->loadAnimation(formAnimName('B', 1), 6);
+				_scene->loadAnimation(kernel_name('B', 1), 6);
 				break;
 
 			case 6:
@@ -214,7 +216,7 @@ static void room_508_parser() {
 			case 7:
 				_globals[kLaserOn] = true;
 				text_show(50833);
-				_game._player._stepEnabled = true;
+				player.commands_allowed = true;
 				break;
 
 			default:

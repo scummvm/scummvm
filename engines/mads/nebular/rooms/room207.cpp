@@ -45,18 +45,18 @@ static Scratch local;
 
 
 static void room_207_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('h', 0));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('h', 1));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('c', -1));
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('e', 0));
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('e', 1));
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('g', 1));
-	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('g', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('h', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('h', 1));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('c', -1));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(kernel_name('e', 0));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(kernel_name('e', 1));
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(kernel_name('g', 1));
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(kernel_name('g', 0));
 	_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 7, 0, 0, 0);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 7);
 
 	int var2;
-	if (!_game._visitedScenes._sceneRevisited) {
+	if (!player.been_here_before) {
 		var2 = 1;
 	} else {
 		var2 = g_engine->getRandomNumber(4) + 1;
@@ -84,13 +84,16 @@ static void room_207_init() {
 
 	local._eyeFl = false;
 	if (_scene->_priorSceneId == 211) {
-		_game._player._playerPos = Common::Point(13, 105);
-		_game._player._facing = FACING_EAST;
+		player.x = 13;
+		player.y = 105;
+		player.facing = FACING_EAST;
 	} else if (_scene->_priorSceneId == 214) {
-		_game._player._playerPos = Common::Point(164, 117);
-		_game._player._facing = FACING_SOUTH;
+		player.x = 164;
+		player.y = 117;
+		player.facing = FACING_SOUTH;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(305, 131);
+		player.x = 305;
+		player.y = 131;
 	}
 
 	section_2_music();
@@ -106,7 +109,7 @@ static void moveVulture() {
 	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
 	g_engine->_soundManager->command(43, 0);
 	local._vultureFl = false;
-	local._vultureTime = _game._player._priorTimer;
+	local._vultureTime = player.clock;
 	_scene->_dynamicHotspots.remove(local._vultureHotspotId);
 }
 
@@ -114,36 +117,35 @@ static void moveSpider() {
 	_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 	_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 5, 1, 0, 0);
 	local._spiderFl = false;
-	local._spiderTime = _game._player._priorTimer;
+	local._spiderTime = player.clock;
 	_scene->_dynamicHotspots.remove(local._spiderHotspotId);
 }
 
 static void room_207_daemon() {
-	auto &gplayer = _game._player;
 
 	if (local._vultureFl) {
-		if (((int32)gplayer._priorTimer - local._vultureTime) > 1700)
+		if (((int32)player.clock - local._vultureTime) > 1700)
 			moveVulture();
 	}
 
 	if (local._spiderFl) {
-		if (((int32)gplayer._priorTimer - local._spiderTime) > 800)
+		if (((int32)player.clock - local._spiderTime) > 800)
 			moveSpider();
 	}
 
-	if (_game._trigger == 70) {
+	if (kernel.trigger == 70) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 10, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], 23, 34);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 6);
 	}
 
-	if (_game._trigger == 71)
+	if (kernel.trigger == 71)
 		local._eyeFl = false;
 
 	if (local._eyeFl)
 		return;
 
-	if ((_game._player._playerPos.x >= 124) && (_game._player._playerPos.x <= 201)) {
+	if ((player.x >= 124) && (player.x <= 201)) {
 		_globals._sequenceIndexes[7] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 10, 1, 0, 0);
 		_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 8, 1, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 6);
@@ -155,10 +157,10 @@ static void room_207_daemon() {
 
 static void room_207_pre_parser() {
 	if (player_said_2(walk_down, path_to_west))
-		_game._player._walkOffScreenSceneId = 211;
+		player.walk_off_edge_to_room = 211;
 
 	if (player_said_2(walk_towards, open_field_to_east))
-		_game._player._walkOffScreenSceneId = 208;
+		player.walk_off_edge_to_room = 208;
 
 	if (player_said_1(walkto) || player_said_1(look)) {
 		if (player_said_1(vulture)) {
@@ -175,10 +177,10 @@ static void room_207_parser() {
 	else if (player_said_2(walk_through, doorway))
 		_scene->_nextSceneId = 214;
 	else {
-		if ((_game._player._playerPos.x > 150) && (_game._player._playerPos.x < 189) &&
-			(_game._player._playerPos.y > 111) && (_game._player._playerPos.y < 130)) {
-			if ((_game._player._playerPos.x <= 162) || (_game._player._playerPos.x >= 181) ||
-				(_game._player._playerPos.y <= 115) || (_game._player._playerPos.y >= 126)) {
+		if ((player.x > 150) && (player.x < 189) &&
+			(player.y > 111) && (player.y < 130)) {
+			if ((player.x <= 162) || (player.x >= 181) ||
+				(player.y <= 115) || (player.y >= 126)) {
 				_globals._sequenceIndexes[7] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 10, 2, 0, 0);
 				_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 8, 2, 0, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 6);
@@ -235,8 +237,8 @@ void room_207_synchronize(Common::Serializer &s) {
 }
 
 void room_207_preload() {
-	local._spiderTime = _game._player._priorTimer;
-	local._vultureTime = _game._player._priorTimer;
+	local._spiderTime = player.clock;
+	local._vultureTime = player.clock;
 
 	room_init_code_pointer = room_207_init;
 	room_pre_parser_code_pointer = room_207_pre_parser;

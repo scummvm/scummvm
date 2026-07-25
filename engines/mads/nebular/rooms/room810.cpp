@@ -40,9 +40,9 @@ static Scratch local;
 
 static void room_810_init() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
-	_game._player._visible = false;
-	_game._player._stepEnabled = false;
-	_scene->loadAnimation(Resources::formatName(810, 'a', -1, EXT_AA, ""));
+	player.walker_visible = false;
+	player.commands_allowed = false;
+	_scene->loadAnimation(kernel_full_name(810, 'a', -1, "", EXT_AA));
 	local._moveAllowed = true;
 
 	section_8_music();
@@ -55,7 +55,7 @@ static void room_810_daemon() {
 		local._moveAllowed = false;
 	}
 
-	if (_game._trigger == 70)
+	if (kernel.trigger == 70)
 		_scene->_nextSceneId = 804;
 }
 

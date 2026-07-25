@@ -54,8 +54,8 @@ void teleporter_init() {
 	_meteorologistCurPlace = -1;
 	_teleporterSceneId = -1;
 
-	_game._player._visible = false;
-	_game._player._stepEnabled = (_globals[kMeteorologistWatch] == METEOROLOGIST_NORMAL);
+	player.walker_visible = false;
+	player.commands_allowed = (_globals[kMeteorologistWatch] == METEOROLOGIST_NORMAL);
 	_scene->_kernelMessages._talkFont = font_tele;
 	_scene->_textSpacing = 0;
 	_curCode = 0;
@@ -172,9 +172,9 @@ Common::Point teleporter_compute_location() {
 }
 
 void teleporter_handle_key() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 0: {
-		_game._player._stepEnabled = false;
+		player.commands_allowed = false;
 		Common::Point msgPos = teleporter_compute_location();
 		_handSequenceId = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 4, 2, 0, 0);
 		_scene->_sequences.setPosition(_handSequenceId, msgPos);
@@ -259,7 +259,7 @@ void teleporter_handle_key() {
 	case 3:
 		if (!_finishedCodeCounter) {
 			if (_globals[kMeteorologistWatch] == METEOROLOGIST_NORMAL) {
-				_game._player._stepEnabled = true;
+				player.commands_allowed = true;
 				mouse_show();
 			}
 		}
@@ -296,8 +296,8 @@ void teleporter_daemon() {
 	if (_globals[kMeteorologistWatch] == METEOROLOGIST_NORMAL)
 		return;
 
-	if (_game._trigger >= 230) {
-		int place = _game._trigger - 230;
+	if (kernel.trigger >= 230) {
+		int place = kernel.trigger - 230;
 		int digit;
 
 		if (place < 4) {
@@ -311,12 +311,12 @@ void teleporter_daemon() {
 		}
 		_buttonTyped = digit;
 		_meteorologistCurPlace = place + 1;
-		_game._trigger = -1;
+		kernel.trigger = -1;
 	}
 
-	if (_game._trigger) {
-		if (_game._trigger == -1)
-			_game._trigger = 0;
+	if (kernel.trigger) {
+		if (kernel.trigger == -1)
+			kernel.trigger = 0;
 		teleporter_handle_key();
 	}
 }

@@ -76,10 +76,10 @@ static void updateTrap() {
 }
 
 static void room_208_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('a', 1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 1));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 2));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('a', 1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('x', 1));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('x', 2));
 	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RXMBD_8");
 
 	updateTrap();
@@ -90,23 +90,27 @@ static void room_208_init() {
 	_scene->_textSpacing = 0;
 
 	if (_scene->_priorSceneId == 207) {
-		_game._player._playerPos = Common::Point(8, 122);
-		_game._player._facing = FACING_EAST;
+		player.x = 8;
+		player.y = 122;
+		player.facing = FACING_EAST;
 	} else if (_scene->_priorSceneId == 203) {
-		_game._player._playerPos = Common::Point(142, 108);
-		_game._player._facing = FACING_SOUTH;
+		player.x = 142;
+		player.y = 108;
+		player.facing = FACING_SOUTH;
 	} else if (_scene->_priorSceneId == 209) {
-		_game._player._playerPos = Common::Point(307, 123);
-		_game._player._facing = FACING_WEST;
+		player.x = 307;
+		player.y = 123;
+		player.facing = FACING_WEST;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._playerPos = Common::Point(162, 149);
-		_game._player._facing = FACING_NORTH;
+		player.x = 162;
+		player.y = 149;
+		player.facing = FACING_NORTH;
 	}
 
-	_game.loadQuoteSet(0x81, 0x46, 0);
+	kernel.quotes = quote_load(0x81, 0x46, 0);
 
 	if ((_scene->_priorSceneId == 207) && (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS)) {
-		int msgIndex = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(129));
+		int msgIndex = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 129));
 		_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
 	}
 
@@ -128,17 +132,17 @@ static void room_208_daemon() {
 	if (!local._rhotundaTurnFl)
 		return;
 
-	if ((_game._player._playerPos != Common::Point(20, 148)) || (_game._player._facing != FACING_EAST))
+	if ((Common::Point(player.x, player.y) != Common::Point(20, 148)) || (player.facing != FACING_EAST))
 		return;
 
-	if ((_game._trigger == 0) && local._boundingFl)
+	if ((kernel.trigger == 0) && local._boundingFl)
 		return;
 
 	local._boundingFl = true;
 
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 0:
-		_scene->loadAnimation(formAnimName('A', -1), 81);
+		_scene->loadAnimation(kernel_name('A', -1), 81);
 		local._rhotundaTime = 0;
 		break;
 	case 81:
@@ -148,7 +152,7 @@ static void room_208_daemon() {
 		_scene->_sequences.addTimer(90, 82);
 		break;
 	case 82:
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 		break;
 	default:
 		break;
@@ -156,24 +160,23 @@ static void room_208_daemon() {
 }
 
 static void room_208_pre_parser() {
-	auto &gplayer = _game->_player;
 
-	if (player_said_1(look) && gplayer._readyToWalk)
-		gplayer._needToWalk = true;
+	if (player_said_1(look) && player.ready_to_walk)
+		player.need_to_walk = true;
 
 	if (player_said_2(walk_towards, grassland_to_east))
-		gplayer._walkOffScreenSceneId = 209;
+		player.walk_off_edge_to_room = 209;
 
 	if (player_said_2(walk_towards, open_area_to_west))
-		gplayer._walkOffScreenSceneId = 207;
+		player.walk_off_edge_to_room = 207;
 }
 
 static void subAction(int mode) {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 0:
 	{
-		_game._player._stepEnabled = false;
-		_game._player._visible = false;
+		player.commands_allowed = false;
+		player.walker_visible = false;
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 1, 0, 0);
 		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
 
@@ -202,13 +205,13 @@ static void subAction(int mode) {
 	{
 		switch (mode) {
 		case 1:
-			_game._objects.addToInventory(OBJ_BIG_LEAVES);
+			inter_give_to_player(OBJ_BIG_LEAVES);
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			_globals[kLeavesStatus] = 1;
 			break;
 
 		case 2:
-			_game._objects.setRoom(OBJ_BIG_LEAVES, 1);
+			inter_move_object(OBJ_BIG_LEAVES, 1);
 			_globals[kLeavesStatus] = 2;
 			updateTrap();
 			break;
@@ -216,17 +219,17 @@ static void subAction(int mode) {
 		case 3:
 			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
-			_game._objects.removeFromInventory(OBJ_TWINKIFRUIT, 1);
+			inter_take_from_player(OBJ_TWINKIFRUIT, 1);
 			g_engine->_soundManager->command(34, 0);
 			break;
 
 		case 4:
-			_game._objects.removeFromInventory(OBJ_BURGER, 1);
+			inter_take_from_player(OBJ_BURGER, 1);
 			g_engine->_soundManager->command(33, 0);
 			break;
 
 		case 5:
-			_game._objects.removeFromInventory(OBJ_DEAD_FISH, 1);
+			inter_take_from_player(OBJ_DEAD_FISH, 1);
 			g_engine->_soundManager->command(33, 0);
 			break;
 
@@ -244,8 +247,8 @@ static void subAction(int mode) {
 	break;
 
 	case 3:
-		_game._player._visible = true;
-		_game._player._stepEnabled = true;
+		player.walker_visible = true;
+		player.commands_allowed = true;
 		break;
 
 	default:
@@ -257,34 +260,34 @@ static void room_208_parser() {
 	if (player_said_2(walk_towards, lowlands_to_north)) {
 		if (_globals[kRhotundaStatus])
 			_scene->_nextSceneId = 203;
-		else if (_game._trigger == 0) {
-			_game._player._stepEnabled = false;
-			int msgIndex = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 1, 120, _game.getQuote(70));
+		else if (kernel.trigger == 0) {
+			player.commands_allowed = false;
+			int msgIndex = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 1, 120, quote_string(kernel.quotes, 70));
 			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
-		} else if (_game._trigger == 1)
+		} else if (kernel.trigger == 1)
 			_scene->_nextSceneId = 203;
 	} else if (player_said_2(walk_towards, field_to_south))
 		_scene->_nextSceneId = 212;
-	else if (player_said_2(take, pile_of_leaves) && (!_globals[kLeavesStatus] || _game._trigger)) {
+	else if (player_said_2(take, pile_of_leaves) && (!_globals[kLeavesStatus] || kernel.trigger)) {
 		subAction(1);
-		if (_game._player._stepEnabled)
+		if (player.commands_allowed)
 			object_examine(OBJ_BIG_LEAVES, 0x326, 0);
-	} else if (player_said_3(put, big_leaves, deep_pit) && (_globals[kLeavesStatus] == 1 || _game._trigger))
+	} else if (player_said_3(put, big_leaves, deep_pit) && (_globals[kLeavesStatus] == 1 || kernel.trigger))
 		subAction(2);
 	else if (player_said_3(put, twinkifruit, leaf_covered_pit)) {
 		subAction(3);
-		if (_game._player._stepEnabled) {
-			_game._player._stepEnabled = false;
+		if (player.commands_allowed) {
+			player.commands_allowed = false;
 			local._rhotundaTurnFl = true;
-			_game._player.walk(Common::Point(20, 148), FACING_EAST);
+			player_walk(20, 148, FACING_EAST);
 		}
 	} else if (player_said_3(put, burger, leaf_covered_pit)) {
 		subAction(4);
-		if (_game._player._stepEnabled)
+		if (player.commands_allowed)
 			text_show(20812);
 	} else if (player_said_3(put, dead_fish, leaf_covered_pit)) {
 		subAction(5);
-		if (_game._player._stepEnabled)
+		if (player.commands_allowed)
 			text_show(20812);
 	} else if (player_said_2(look, cumulous_cloud))
 		text_show(20801);
@@ -305,7 +308,7 @@ static void room_208_parser() {
 	else if (player_said_2(look, pile_of_leaves))
 		text_show(20809);
 	else if (player_said_2(look, leaf_covered_pit)) {
-		if (_game._difficulty == DIFFICULTY_EASY)
+		if (game.difficulty == DIFFICULTY_EASY)
 			text_show(20810);
 		else
 			text_show(20811);

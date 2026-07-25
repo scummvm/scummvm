@@ -40,25 +40,27 @@ static Scratch  local;
 
 
 static void room_413_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('a', 2));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('a', 2));
 	local._rexDeath = false;
 
 	if (_scene->_priorSceneId == 405) {
-		_game._player._playerPos = Common::Point(142, 146);
-		_game._player._facing = FACING_NORTH;
-		_game._player._visible = true;
+		player.x = 142;
+		player.y = 146;
+		player.facing = FACING_NORTH;
+		player.walker_visible = true;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		if (_globals[kSexOfRex] == REX_MALE) {
-			_scene->loadAnimation(Resources::formatName(413, 'd', 1, EXT_AA, ""), 78);
+			_scene->loadAnimation(kernel_full_name(413, 'd', 1, "", EXT_AA), 78);
 			g_engine->_soundManager->command(30, 0);
-			_game._player._visible = false;
-			_game._player._stepEnabled = false;
+			player.walker_visible = false;
+			player.commands_allowed = false;
 			local._rexDeath = true;
 		} else if (!_globals[kTeleporterCommand]) {
-			_game._player._playerPos = Common::Point(136, 117);
-			_game._player.walk(Common::Point(141, 130), FACING_SOUTH);
-			_game._player._facing = FACING_SOUTH;
-			_game._player._visible = true;
+			player.x = 136;
+			player.y = 117;
+			player_walk(141, 130, FACING_SOUTH);
+			player.facing = FACING_SOUTH;
+			player.walker_visible = true;
 		}
 	}
 
@@ -66,7 +68,7 @@ static void room_413_init() {
 		switch (_globals[kTeleporterCommand]) {
 		case 1:
 			g_engine->_soundManager->command(30, 0);
-			_game._player._visible = false;
+			player.walker_visible = false;
 			_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 7, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 19);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
@@ -74,7 +76,7 @@ static void room_413_init() {
 			break;
 
 		case 2:
-			_game._player._visible = false;
+			player.walker_visible = false;
 			g_engine->_soundManager->command(30, 0);
 			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 7, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 20);
@@ -84,11 +86,12 @@ static void room_413_init() {
 
 		case 3:
 		case 4:
-			_game._player._playerPos = Common::Point(136, 117);
-			_game._player._facing = FACING_SOUTH;
-			_game._player.walk(Common::Point(141, 130), FACING_SOUTH);
-			_game._player._visible = true;
-			_game._player._stepEnabled = true;
+			player.x = 136;
+			player.y = 117;
+			player.facing = FACING_SOUTH;
+			player_walk(141, 130, FACING_SOUTH);
+			player.walker_visible = true;
+			player.commands_allowed = true;
 			break;
 
 		default:
@@ -110,22 +113,23 @@ static void room_413_daemon() {
 		local._canMove = false;
 	}
 
-	if (_game._trigger == 76) {
-		_game._player._playerPos = Common::Point(136, 117);
-		_game._player.walk(Common::Point(141, 130), FACING_SOUTH);
-		_game._player._facing = FACING_SOUTH;
-		_game._player.selectSeries();
-		_game._player._visible = true;
-		_game._player._stepEnabled = true;
+	if (kernel.trigger == 76) {
+		player.x = 136;
+		player.y = 117;
+		player_walk(141, 130, FACING_SOUTH);
+		player.facing = FACING_SOUTH;
+		player_select_series();
+		player.walker_visible = true;
+		player.commands_allowed = true;
 	}
 
-	if (_game._trigger == 77) {
+	if (kernel.trigger == 77) {
 		_globals[kTeleporterCommand] = TELEPORTER_BEAM_IN;
 		_scene->_nextSceneId = _globals[kTeleporterDestination];
 		_scene->_reloadSceneFlag = true;
 	}
 
-	if (_game._trigger == 78) {
+	if (kernel.trigger == 78) {
 		_scene->_reloadSceneFlag = true;
 		_scene->_nextSceneId = _scene->_priorSceneId;
 		_globals[kTeleporterCommand] = TELEPORTER_NONE;
@@ -134,18 +138,18 @@ static void room_413_daemon() {
 
 static void room_413_pre_parser() {
 	if (player_said_1(take) || player_said_2(put, conveyor_belt))
-		_game._player._needToWalk = false;
+		player.need_to_walk = false;
 
 	if (player_said_2(look, wooden_statue) || player_said_2(look, display)
 		|| player_said_2(look, picture) || player_said_2(look, plant)) {
-		_game._player._needToWalk = true;
+		player.need_to_walk = true;
 	}
 }
 
 static void room_413_parser() {
 	if (player_said_2(walk_inside, teleporter)) {
-		_game._player._stepEnabled = false;
-		_game._player._visible = false;
+		player.commands_allowed = false;
+		player.walker_visible = false;
 		_scene->_nextSceneId = 409;
 	} else if (player_said_2(walk_into, corridor_to_south))
 		_scene->_nextSceneId = 405;

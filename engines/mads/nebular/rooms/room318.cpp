@@ -56,10 +56,10 @@ static Scratch local;
 static void handleRexDialogs(int quote) {
 	_scene->_kernelMessages.reset();
 
-	const char *curQuote = _game.getQuote(quote);
+	const char *curQuote = quote_string(kernel.quotes, quote);
 	if (_scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing) > 200) {
 		static char subQuote1[34], subQuote2[34];
-		_game.splitQuote(curQuote, subQuote1, subQuote2);
+		quote_split_string(curQuote, subQuote1, subQuote2);
 
 		_scene->_kernelMessages.add(Common::Point(138, 59), 0x1110, 32, 0, 240, subQuote1);
 		_scene->_kernelMessages.add(Common::Point(138, 73), 0x1110, 32, 1, 180, subQuote2);
@@ -79,7 +79,7 @@ static void handleInternDialog(int quoteId, int quoteNum, uint32 timeout) {
 
 	int maxWidth = 0;
 	for (int i = 0; i < quoteNum; i++) {
-		maxWidth = MAX(maxWidth, _scene->_kernelMessages._talkFont->getWidth(_game.getQuote(curQuoteId), -1));
+		maxWidth = MAX(maxWidth, _scene->_kernelMessages._talkFont->getWidth(quote_string(kernel.quotes, curQuoteId), -1));
 		curQuoteId++;
 	}
 
@@ -96,19 +96,19 @@ static void handleInternDialog(int quoteId, int quoteNum, uint32 timeout) {
 		_scene->_sequences.remove(seqIndex);
 
 	for (int i = 0; i < quoteNum; i++) {
-		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(180, 63);
-		_scene->_kernelMessages.add(Common::Point(posX, posY), 0xFDFC, 0, 0, timeout, _game.getQuote(curQuoteId));
+		_scene->_kernelMessages.add(Common::Point(posX, posY), 0xFDFC, 0, 0, timeout, quote_string(kernel.quotes, curQuoteId));
 		posY += 14;
 		curQuoteId++;
 	}
 }
 
 static void handleDialog() {
-	if (!_game._trigger) {
-		_game._player._stepEnabled = false;
+	if (!kernel.trigger) {
+		player.commands_allowed = false;
 		handleRexDialogs(_action._activeAction._verbId);
-	} else if (_game._trigger == 2) {
+	} else if (kernel.trigger == 2) {
 		int synxIdx = _globals._sequenceIndexes[2];
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
@@ -116,7 +116,7 @@ static void handleDialog() {
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], synxIdx);
 		g_engine->_soundManager->command(3, 0);
 		_scene->_userInterface.setup(kInputBuildingSentences);
-		_game._player._stepEnabled = true;
+		player.commands_allowed = true;
 	} else {
 		if (_action._activeAction._verbId < 0x19C)
 			local._dialog1.write(_action._activeAction._verbId, false);
@@ -201,18 +201,18 @@ static void handleDialog() {
 
 		if (_action._activeAction._verbId < 0x19C) {
 			local._dialog1.start();
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 		}
 
 	}
 }
 
 static void room_318_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('k', -1));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('k', -1));
 
 	if (_globals[kAfterHavoc]) {
-		_scene->loadAnimation(formAnimName('f', -1));
+		_scene->loadAnimation(kernel_name('f', -1));
 		_scene->_animation[0]->_repeatFlag = true;
 	} else if (!_globals[kHasSeenProfPyro]) {
 		_scene->_hotspots.activate(words_professors_gurney, false);
@@ -220,29 +220,33 @@ static void room_318_init() {
 		_scene->_hotspots.activate(words_tape_player, false);
 	}
 
-	if (_game._objects.isInRoom(OBJ_SCALPEL)) {
+	if (object_is_here(OBJ_SCALPEL)) {
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 0, 0, 120);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 4);
 		_scene->_dynamicHotspots.add(words_scalpel, words_take, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 	}
 
-	if (_scene->_priorSceneId == 357)
-		_game._player._playerPos = Common::Point(15, 110);
-	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
-		_game._player._playerPos = Common::Point(214, 152);
+	if (_scene->_priorSceneId == 357) {
+		player.x = 15;
+		player.y = 110;
+	}
+	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+		player.x = 214;
+		player.y = 152;
+	}
 
 	local._dialog1.setup(0x47, 0x191, 0x192, 0x193, 0x194, 0x195, 0x196, 0x197, 0x198, 0x199, 0x19A, 0x19B, 0x19C, 0x19D, 0);
 
-	if (!_game._visitedScenes._sceneRevisited) {
+	if (!player.been_here_before) {
 		local._dialog1.set(0x191, 0x198, 0x199, 0x19C, 0);
-		if (_game._widepipeCtr >= 2)
+		if (kernel.cheating >= 2)
 			local._dialog1.write(0x19D, true);
 	}
 
 	if (_scene->_priorSceneId == 307) {
-		_game._player._visible = false;
-		_game._player._stepEnabled = false;
-		_scene->loadAnimation(formAnimName('a', -1), 60);
+		player.walker_visible = false;
+		player.commands_allowed = false;
+		_scene->loadAnimation(kernel_name('a', -1), 60);
 		local._animMode = 1;
 	}
 
@@ -258,7 +262,7 @@ static void room_318_init() {
 		local._explosionFl = false;
 	}
 
-	_game.loadQuoteSet(0x18C, 0x18D, 0x18E, 0x18F, 0x191, 0x192, 0x193, 0x194, 0x195, 0x196,
+	kernel.quotes = quote_load(0x18C, 0x18D, 0x18E, 0x18F, 0x191, 0x192, 0x193, 0x194, 0x195, 0x196,
 		0x197, 0x198, 0x199, 0x19A, 0x19B, 0x19C, 0x19E, 0x19F, 0x1A0, 0x1A1, 0x1A2, 0x1A3,
 		0x1A4, 0x1A5, 0x1A6, 0x1A7, 0x1A8, 0x1A9, 0x1AA, 0x1AB, 0x1AC, 0x1AD, 0x1AE, 0x1AF,
 		0x1B0, 0x1B1, 0x1B2, 0x1B3, 0x1B4, 0x1B5, 0x1B6, 0x1B7, 0x1B8, 0x1B9, 0x1BA, 0x1BB,
@@ -269,15 +273,15 @@ static void room_318_init() {
 	if ((_scene->_priorSceneId == RETURNING_FROM_DIALOG) || (((_scene->_priorSceneId == 318) ||
 		(_scene->_priorSceneId == RETURNING_FROM_LOADING)) && (!_globals[kAfterHavoc]))) {
 		if (!_globals[kAfterHavoc]) {
-			_game._player._visible = false;
-			_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('g', -1));
+			player.walker_visible = false;
+			_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('g', -1));
 			local._animMode = 2;
 
-			if (_game._visitedScenes.exists(319) || !local._internVisibleFl) {
+			if (player_has_been_in_room(319) || !local._internVisibleFl) {
 				local._internVisibleFl = false;
 				local._dialogFl = false;
 			} else {
-				_scene->loadAnimation(formAnimName('b', -1), 61);
+				_scene->loadAnimation(kernel_name('b', -1), 61);
 				_scene->_hotspots.activate(words_intern, true);
 			}
 
@@ -293,14 +297,14 @@ static void room_318_init() {
 	}
 
 	if (_scene->_priorSceneId == 319) {
-		_game._player._stepEnabled = false;
-		_game._player._visible = false;
+		player.commands_allowed = false;
+		player.walker_visible = false;
 		local._animMode = 4;
 		if (!_globals[kHasSeenProfPyro]) {
-			_scene->loadAnimation(formAnimName('d', -1), 64);
+			_scene->loadAnimation(kernel_name('d', -1), 64);
 			_globals[kHasSeenProfPyro] = true;
 		} else {
-			_scene->loadAnimation(formAnimName('e', -1), 64);
+			_scene->loadAnimation(kernel_name('e', -1), 64);
 		}
 	}
 
@@ -308,7 +312,7 @@ static void room_318_init() {
 	pal_change_color(252, 63, 63, 10);
 	pal_change_color(253, 45, 45, 05);
 
-	local._dropTimer = _game->_scene._frameStartTime;
+	local._dropTimer = _scene._frameStartTime;
 	section_3_music();
 
 	if (local._dialogFl)
@@ -380,7 +384,7 @@ static void room_318_daemon() {
 		}
 	}
 
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 60:
 		g_engine->_soundManager->command(3, 0);
 		local._animMode = 2;
@@ -412,22 +416,22 @@ static void room_318_daemon() {
 	long diffFrame = tmpFrame - local._lastFrameCounter;
 	local._lastFrameCounter = tmpFrame;
 
-	if ((local._animMode == 2) && !local._internVisibleFl && _game._player._stepEnabled) {
+	if ((local._animMode == 2) && !local._internVisibleFl && player.commands_allowed) {
 		if ((diffFrame >= 0) && (diffFrame <= 4))
 			local._counter += diffFrame;
 		else
 			local._counter++;
 
-		int extraCounter = _game._objects.isInInventory(OBJ_SCALPEL) ? 900 : 0;
+		int extraCounter = player_has(OBJ_SCALPEL) ? 900 : 0;
 
 		if (local._counter + extraCounter >= 1800) {
 			_scene->freeAnimation();
-			_game._player._stepEnabled = false;
-			_scene->loadAnimation(formAnimName('c', -1), 62);
+			player.commands_allowed = false;
+			_scene->loadAnimation(kernel_name('c', -1), 62);
 			local._animMode = 3;
 		}
 	} else if ((local._animMode == 2) && local._explosionFl && local._internVisibleFl && !local._dialogFl
-		&& !local._internWalkingFl && (_game._screenObjects._inputMode != kInputConversation)) {
+		&& !local._internWalkingFl && (inter_input_mode != kInputConversation)) {
 		if ((diffFrame >= 0) && (diffFrame <= 4))
 			local._internCounter += diffFrame;
 		else
@@ -440,36 +444,36 @@ static void room_318_daemon() {
 		}
 	}
 
-	if ((_game->_scene._frameStartTime - local._dropTimer) > 600) {
+	if ((_scene._frameStartTime - local._dropTimer) > 600) {
 		g_engine->_soundManager->command(51, 0);
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 14, 1, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
-		local._dropTimer = _game->_scene._frameStartTime;
+		local._dropTimer = _scene._frameStartTime;
 	}
 }
 
 static void room_318_pre_parser() {
-	if (_game._player._needToWalk)
-		_game._player._needToWalk = _game._player._visible;
+	if (player.need_to_walk)
+		player.need_to_walk = player.walker_visible;
 
 	if (player_said_2(walk_down, corridor_to_west))
-		_game._player._walkOffScreenSceneId = 357;
+		player.walk_off_edge_to_room = 357;
 }
 
 static void room_318_parser() {
-	if (_game._screenObjects._inputMode == kInputConversation) {
+	if (inter_input_mode == kInputConversation) {
 		handleDialog();
 		_action._inProgress = false;
 		return;
 	}
 
 	if (player_said_2(talkto, intern)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
 		{
 			local._dialogFl = true;
 			g_engine->_soundManager->command(15, 0);
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			handleRexDialogs(g_engine->getRandomNumber(0x18C, 0x18E));
 
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
@@ -482,7 +486,7 @@ static void room_318_parser() {
 		break;
 
 		case 1:
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			handleInternDialog(0x18F, 1, INDEFINITE_TIMEOUT);
 			local._dialog1.start();
 			break;
@@ -504,10 +508,10 @@ static void room_318_parser() {
 		return;
 	}
 
-	if (player_said_2(take, scalpel) && (_game._objects.isInRoom(OBJ_SCALPEL) || _game._trigger)) {
-		switch (_game._trigger) {
+	if (player_said_2(take, scalpel) && (object_is_here(OBJ_SCALPEL) || kernel.trigger)) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 8, 2, 0, 80);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
@@ -521,7 +525,7 @@ static void room_318_parser() {
 			if (local._internVisibleFl)
 				handleInternDialog(0x190, 1, 120);
 			else {
-				_game._objects.addToInventory(OBJ_SCALPEL);
+				inter_give_to_player(OBJ_SCALPEL);
 				object_examine(OBJ_SCALPEL, 0x7C5D, 0);
 				_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 			}
@@ -539,7 +543,7 @@ static void room_318_parser() {
 		break;
 
 		case 3:
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			break;
 
 		default:
@@ -549,7 +553,7 @@ static void room_318_parser() {
 		return;
 	}
 
-	if (_game._player._visible) {
+	if (player.walker_visible) {
 		if (player_said_2(walk_down, corridor_to_south)) {
 			_scene->_nextSceneId = 407;
 			_action._inProgress = false;
@@ -557,9 +561,9 @@ static void room_318_parser() {
 		}
 
 		if (player_said_2(take, tape_player)) {
-			if (_game._objects.isInRoom(OBJ_AUDIO_TAPE)) {
+			if (object_is_here(OBJ_AUDIO_TAPE)) {
 				object_examine(OBJ_AUDIO_TAPE, 0x7C5B, 0);
-				_game._objects.addToInventory(OBJ_AUDIO_TAPE);
+				inter_give_to_player(OBJ_AUDIO_TAPE);
 			} else
 				text_show(31834);
 
@@ -568,7 +572,7 @@ static void room_318_parser() {
 		}
 
 		if (player_said_2(look, tape_player)) {
-			if (_game._objects.isInRoom(OBJ_AUDIO_TAPE))
+			if (object_is_here(OBJ_AUDIO_TAPE))
 				text_show(31833);
 			else
 				text_show(31834);
@@ -641,7 +645,7 @@ static void room_318_parser() {
 	else if (player_said_2(look, professors_gurney))
 		text_show(31836);
 	else if (_action._lookFlag) {
-		if (_game._player._visible || _game._objects.isInInventory(OBJ_SCALPEL))
+		if (player.walker_visible || player_has(OBJ_SCALPEL))
 			text_show(31828);
 		else if (local._internVisibleFl)
 			text_show(31826);

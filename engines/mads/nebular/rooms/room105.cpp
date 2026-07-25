@@ -39,8 +39,8 @@ static Scratch local;
 
 
 static void room_105_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('m', 1));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('f', 4));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('m', 1));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('f', 4));
 	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 8, 0, 0, 0);
 
 	if (_globals[kFishIn105]) {
@@ -51,30 +51,34 @@ static void room_105_init() {
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(56, 141), FACING_NORTHWEST);
 	}
 
-	if (_scene->_priorSceneId == 104)
-		_game._player._playerPos = Common::Point(13, 97);
-	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
-		_game._player._playerPos = Common::Point(116, 147);
+	if (_scene->_priorSceneId == 104) {
+		player.x = 13;
+		player.y = 97;
+	}
+	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+		player.x = 116;
+		player.y = 147;
+	}
 
-	_game.loadQuoteSet(0x4A, 0x4B, 0x4C, 0x35, 0x34, 0);
+	kernel.quotes = quote_load(0x4A, 0x4B, 0x4C, 0x35, 0x34, 0);
 	local._explosionFl = false;
 
 	section_1_music();
 }
 
 static void room_105_daemon() {
-	if ((_game._player._playerPos == Common::Point(170, 87)) && (_game._trigger || !local._explosionFl)) {
+	if ((Common::Point(player.x, player.y) == Common::Point(170, 87)) && (kernel.trigger || !local._explosionFl)) {
 		local._explosionFl = true;
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
 			_scene->_kernelMessages.reset();
 			_scene->resetScene();
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 
-			_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('m', 0));
-			_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('m', 2));
-			_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('m', 3));
+			_globals._spriteIndexes[0] = _scene->_sprites.addSprites(kernel_name('m', 0));
+			_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('m', 2));
+			_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('m', 3));
 			g_engine->_soundManager->command(33, 0);
 			_scene->clearSequenceList();
 			kernel_new_palette();
@@ -83,7 +87,7 @@ static void room_105_daemon() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 8);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 
-			if (_game._storyMode >= STORYMODE_NICE)
+			if (config_file.naughtiness >= STORYMODE_NICE)
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_SPRITE, 8, 3);
 			break;
 
@@ -119,38 +123,38 @@ static void room_105_daemon() {
 		}
 	}
 
-	if (_game._player._moving && (_scene->_rails.getNext() > 0)) {
-		_game._player.cancelCommand();
-		_game._player.startWalking(Common::Point(170, 87), FACING_NONE);
+	if (player.walking && (_scene->_rails.getNext() > 0)) {
+		player_cancel_command();
+		player_start_walking(170, 87, FACING_NONE);
 		_scene->_rails.resetNext();
 	}
 
-	if ((_game._player._special > 0) && _game._player._stepEnabled)
-		_game._player._stepEnabled = false;
+	if ((player.special_code > 0) && player.commands_allowed)
+		player.commands_allowed = false;
 }
 
 static void room_105_pre_parser() {
 	if (player_said_2(swim_towards, western_cliff_face))
-		_game._player._walkOffScreenSceneId = 104;
+		player.walk_off_edge_to_room = 104;
 
 	if (player_said_2(swim_towards, open_area_to_south))
-		_game._player._walkOffScreenSceneId = 107;
+		player.walk_off_edge_to_room = 107;
 
 	if (player_said_1(mine) && (player_said_1(talkto) || player_said_1(look)))
-		_game._player._needToWalk = false;
+		player.need_to_walk = false;
 }
 
 static void room_105_parser() {
 	if (_action._lookFlag)
 		text_show(10512);
 	else if (player_said_2(take, dead_fish) && _globals[kFishIn105]) {
-		if (_game._objects.isInInventory(OBJ_DEAD_FISH)) {
+		if (player_has(OBJ_DEAD_FISH)) {
 			int randVal = g_engine->getRandomNumber(74, 76);
 			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(randVal));
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, randVal));
 		} else {
 			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
-			_game._objects.addToInventory(OBJ_DEAD_FISH);
+			inter_give_to_player(OBJ_DEAD_FISH);
 			_globals[kFishIn105] = false;
 			object_examine(OBJ_DEAD_FISH, 802, 0);
 		}
@@ -190,7 +194,7 @@ void room_105_preload() {
 	room_parser_code_pointer = room_105_parser;
 	room_daemon_code_pointer = room_105_daemon;
 
-	anim_himem_preload(formAnimName('A', -1), 3);
+	anim_himem_preload(kernel_name('A', -1), 3);
 
 	section_1_walker();
 	section_1_interface();

@@ -39,8 +39,8 @@ static Scratch local;
 
 
 static void room_359_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('b', -1));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(Resources::formatName(307, 'X', 0, EXT_SS, ""));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('b', -1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_full_name(307, 'X', 0, "", EXT_SS));
 
 	if (_globals[kSexOfRex] == REX_MALE)
 		_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMBD_2");
@@ -51,40 +51,44 @@ static void room_359_init() {
 	_scene->_sequences.setPosition(_globals._sequenceIndexes[3], Common::Point(127, 78));
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 15);
 
-	if (_game._objects.isInRoom(OBJ_SECURITY_CARD)) {
+	if (object_is_here(OBJ_SECURITY_CARD)) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
 		local._cardHotspotId = _scene->_dynamicHotspots.add(words_security_card, words_walkto, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._cardHotspotId, Common::Point(107, 107), FACING_SOUTH);
 	}
 
-	if (_scene->_priorSceneId == 358)
-		_game._player._playerPos = Common::Point(301, 141);
-	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
-		_game._player._playerPos = Common::Point(15, 148);
+	if (_scene->_priorSceneId == 358) {
+		player.x = 301;
+		player.y = 141;
+	}
+	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+		player.x = 15;
+		player.y = 148;
+	}
 
 	section_3_music();
 }
 
 static void room_359_pre_parser() {
 	if (player_said_2(walk_down, corridor_to_east))
-		_game._player._walkOffScreenSceneId = 358;
+		player.walk_off_edge_to_room = 358;
 
 	if (player_said_2(walk_down, corridor_to_west))
-		_game._player._walkOffScreenSceneId = 360;
+		player.walk_off_edge_to_room = 360;
 }
 
 static void room_359_parser() {
 	if (_action._lookFlag) {
-		if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
+		if ((game.difficulty != DIFFICULTY_HARD) && (object[OBJ_SECURITY_CARD].location == 359))
 			text_show(35914);
 		else
 			text_show(35915);
 	} else if (player_said_2(take, security_card)) {
-		if (_game._trigger || !_game._objects.isInInventory(OBJ_SECURITY_CARD)) {
-			switch (_game._trigger) {
+		if (kernel.trigger || !player_has(OBJ_SECURITY_CARD)) {
+			switch (kernel.trigger) {
 			case 0:
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
+				player.commands_allowed = false;
+				player.walker_visible = false;
 				text_show(35920);
 				if (_globals[kSexOfRex] == REX_MALE) {
 					_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 4, 2, 0, 0);
@@ -104,7 +108,7 @@ static void room_359_parser() {
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 				_scene->_dynamicHotspots.remove(local._cardHotspotId);
 				g_engine->_soundManager->command(57, 0);
-				_game._objects.addToInventory(OBJ_SECURITY_CARD);
+				inter_give_to_player(OBJ_SECURITY_CARD);
 				object_examine(OBJ_SECURITY_CARD, 0x330, 0);
 				_scene->changeVariant(1);
 				break;
@@ -115,8 +119,8 @@ static void room_359_parser() {
 				else
 					_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[4]);
 
-				_game._player._visible = true;
-				_game._player._stepEnabled = true;
+				player.walker_visible = true;
+				player.commands_allowed = true;
 				break;
 
 			default:
@@ -142,7 +146,7 @@ static void room_359_parser() {
 	else if (player_said_2(look, security_card) && (_action._mainObjectSource == CAT_HOTSPOT))
 		text_show(35921);
 	else if (player_said_2(look, blood_stain)) {
-		if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
+		if ((game.difficulty != DIFFICULTY_HARD) && (object[OBJ_SECURITY_CARD].location == 359))
 			text_show(35922);
 		else
 			text_show(35923);
@@ -155,7 +159,7 @@ static void room_359_parser() {
 	else if (player_said_2(look, corridor))
 		text_show(35927);
 	else if (player_said_2(look, floor)) {
-		if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
+		if ((game.difficulty != DIFFICULTY_HARD) && (object[OBJ_SECURITY_CARD].location == 359))
 			text_show(35928);
 		else
 			text_show(35929);

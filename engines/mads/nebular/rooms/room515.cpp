@@ -33,17 +33,17 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_515_init() {
-	_game._player._visible = false;
-	_game._player._stepEnabled = false;
+	player.walker_visible = false;
+	player.commands_allowed = false;
 	_scene->_sequences.addTimer(30, 70);
 
 	section_5_music();
 }
 
 static void room_515_daemon() {
-	if (_game._trigger == 70)
-		_scene->loadAnimation(formAnimName('A', -1), 71);
-	else if (_game._trigger == 71)
+	if (kernel.trigger == 70)
+		_scene->loadAnimation(kernel_name('A', -1), 71);
+	else if (kernel.trigger == 71)
 		_scene->_nextSceneId = 508;
 }
 

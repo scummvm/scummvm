@@ -32,10 +32,10 @@ namespace RexNebular {
 namespace Rooms {
 
 static void handleRexInGrate() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 0:
-		_game._player._stepEnabled = false;
-		_game._player._visible = false;
+		player.commands_allowed = false;
+		player.walker_visible = false;
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 		_scene->_sequences.addTimer(15, 1);
@@ -157,10 +157,10 @@ static void handleRoxInGrate() {
 	int temp;
 	int temp1;
 
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 0:
-		_game._player._stepEnabled = false;
-		_game._player._visible = false;
+		player.commands_allowed = false;
+		player.walker_visible = false;
 		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
 		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
 		_scene->_sequences.addTimer(15, 1);
@@ -270,50 +270,54 @@ static void handleRoxInGrate() {
 
 static void room_316_init() {
 	if (_globals[kSexOfRex] == REX_MALE) {
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('g', -1));
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('g', -1));
 		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXCL_8");
 		_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*RXCL_2");
 	} else {
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('g', 0));
+		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('g', 0));
 		_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*ROXCL_8");
 	}
 
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('v', 0));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('v', 0));
 	_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 12);
 
 	if (_scene->_priorSceneId == 366) {
-		_game._player._stepEnabled = false;
-		_game._player._visible = false;
-		_game._player._playerPos = Common::Point(78, 87);
-		_game._player._facing = FACING_SOUTH;
+		player.commands_allowed = false;
+		player.walker_visible = false;
+		player.x = 78;
+		player.y = 87;
+		player.facing = FACING_SOUTH;
 		_scene->_sequences.addTimer(48, 70);
 	} else if (_scene->_priorSceneId == 321) {
-		_game._player._playerPos = Common::Point(153, 102);
-		_game._player._facing = FACING_SOUTH;
-		_game._player._stepEnabled = false;
-		_game._player._visible = false;
+		player.x = 153;
+		player.y = 102;
+		player.facing = FACING_SOUTH;
+		player.commands_allowed = false;
+		player.walker_visible = false;
 		g_engine->_soundManager->command(44, 0);
 		int spriteIdx = (_globals[kSexOfRex] == REX_MALE) ? 1 : 2;
 		_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[spriteIdx], false, 6, 1, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
-		_game._player._playerPos = Common::Point(291, 126);
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+		player.x = 291;
+		player.y = 126;
+	}
 
 	section_3_music();
-	_game.loadQuoteSet(0xFD, 0);
+	kernel.quotes = quote_load(0xFD, 0);
 }
 
 static void room_316_daemon() {
-	if (_game._trigger == 60) {
+	if (kernel.trigger == 60) {
 		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[1]);
-		_game._player._visible = true;
-		_game._player._stepEnabled = true;
+		player.walker_visible = true;
+		player.commands_allowed = true;
 	}
 
-	if (_game._trigger >= 70) {
-		switch (_game._trigger) {
+	if (kernel.trigger >= 70) {
+		switch (kernel.trigger) {
 		case 70:
 			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 12, 1, 0, 0);
@@ -372,8 +376,8 @@ static void room_316_daemon() {
 
 		case 75:
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[6]);
-			_game._player._stepEnabled = true;
-			_game._player._visible = true;
+			player.commands_allowed = true;
+			player.walker_visible = true;
 			break;
 
 		default:
@@ -385,9 +389,9 @@ static void room_316_daemon() {
 static void room_316_pre_parser() {
 	if (player_said_2(walk_down, corridor_to_east)) {
 		if (_globals[kAfterHavoc])
-			_game._player._walkOffScreenSceneId = 354;
+			player.walk_off_edge_to_room = 354;
 		else
-			_game._player._walkOffScreenSceneId = 304;
+			player.walk_off_edge_to_room = 304;
 	}
 }
 
@@ -398,14 +402,14 @@ static void room_316_parser() {
 		else
 			handleRexInGrate();
 	} else if (player_said_2(walk_up, ramp) || player_said_2(walk_onto, platform)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
 			if (_globals[kCityFlooded]) {
 				text_show(31623);
 			} else {
 				g_engine->_soundManager->command(45, 0);
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
+				player.commands_allowed = false;
+				player.walker_visible = false;
 				if (_globals[kSexOfRex] == REX_MALE) {
 					_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 7, 1, 0, 0);
 					_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], -1, 7);
@@ -424,8 +428,8 @@ static void room_316_parser() {
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 8, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 2);
 			_scene->_kernelMessages.reset();
-			if (!_game._visitedScenes.exists(321))
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(253));
+			if (!player_has_been_in_room(321))
+				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 253));
 
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
@@ -454,7 +458,7 @@ static void room_316_parser() {
 	} else if (player_said_2(look, platform))
 		text_show(31610);
 	else if (player_said_2(look, strange_device)) {
-		if (_game._visitedScenes.exists(321))
+		if (player_has_been_in_room(321))
 			text_show(31612);
 		else
 			text_show(31611);
@@ -472,7 +476,7 @@ static void room_316_parser() {
 		text_show(31618);
 	else if (player_said_2(look, corridor_to_east)) {
 		if (!_globals[kAfterHavoc]) {
-			if (_game._difficulty != DIFFICULTY_EASY)
+			if (game.difficulty != DIFFICULTY_EASY)
 				text_show(31620);
 			else
 				text_show(31619);

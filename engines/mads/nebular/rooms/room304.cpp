@@ -40,27 +40,31 @@ static Scratch local;
 
 static void room_304_init() {
 	if (_scene->_priorSceneId == 303) {
-		_game._player._visible = false;
-		_game._player._stepEnabled = false;
-		_scene->loadAnimation(formAnimName('a', -1), 60);
+		player.walker_visible = false;
+		player.commands_allowed = false;
+		_scene->loadAnimation(kernel_name('a', -1), 60);
 	} else {
 		if (_globals[kSexOfRex] == REX_MALE)
-			_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('a', 0));
+			_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('a', 0));
 		else
-			_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('a', 2));
+			_globals._spriteIndexes[4] = _scene->_sprites.addSprites(kernel_name('a', 2));
 
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 1));
-		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('b', 0));
+		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('a', 1));
+		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('b', 0));
 
 		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 150, 0, 3, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 2);
 		pal_change_color(252, 45, 63, 45);
 		pal_change_color(253, 20, 45, 20);
 
-		if (_globals[kSexOfRex] == REX_MALE)
-			_game._player._playerPos = Common::Point(111, 117);
-		else
-			_game._player._playerPos = Common::Point(113, 116);
+		if (_globals[kSexOfRex] == REX_MALE) {
+			player.x = 111;
+			player.y = 117;
+		}
+		else {
+			player.x = 113;
+			player.y = 116;
+		}
 
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 11, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], -1, -1);
@@ -68,18 +72,18 @@ static void room_304_init() {
 	}
 
 	section_3_music();
-	_game.loadQuoteSet(0xEB, 0xEC, 0);
+	kernel.quotes = quote_load(0xEB, 0xEC, 0);
 }
 
 static void room_304_daemon() {
-	if (_game._trigger == 60)
+	if (kernel.trigger == 60)
 		_scene->_nextSceneId = 311;
 
-	if (_game._trigger >= 70) {
-		switch (_game._trigger) {
+	if (kernel.trigger >= 70) {
+		switch (kernel.trigger) {
 		case 70:
 		{
-			_game._player._visible = false;
+			player.walker_visible = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 2, 4);
@@ -99,7 +103,7 @@ static void room_304_daemon() {
 
 		case 71:
 			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, _game.getQuote(0xEB));
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, quote_string(kernel.quotes, 0xEB));
 			_scene->_sequences.addTimer(1, 72);
 			break;
 
@@ -110,7 +114,7 @@ static void room_304_daemon() {
 			_scene->_sequences.setAnimRange(sprIdx, 5, -2);
 			_scene->_sequences.setDepth(sprIdx, 1);
 			_scene->_sequences.addSubEntry(sprIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 73);
-			if (_game._storyMode == STORYMODE_NICE)
+			if (config_file.naughtiness == STORYMODE_NICE)
 				_scene->_sequences.addSubEntry(sprIdx, SEQUENCE_TRIGGER_SPRITE, 8, 78);
 		}
 		break;
@@ -146,7 +150,7 @@ static void room_304_daemon() {
 
 		case 77:
 			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(211, 45), 0xFDFC, 32, 0, 180, _game.getQuote(0xEC));
+			_scene->_kernelMessages.add(Common::Point(211, 45), 0xFDFC, 32, 0, 180, quote_string(kernel.quotes, 0xEC));
 			_scene->_sequences.addTimer(120, 78);
 			break;
 

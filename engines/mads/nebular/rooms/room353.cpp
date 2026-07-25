@@ -39,14 +39,18 @@ static Scratch local;
 
 
 static void room_353_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(Resources::formatName(303, 'B', 0, EXT_SS, ""));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_full_name(303, 'B', 0, "", EXT_SS));
 	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 0, 5, 0);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 
-	if (_scene->_priorSceneId == 352)
-		_game._player._playerPos = Common::Point(144, 95);
-	else
-		_game._player._playerPos = Common::Point(139, 155);
+	if (_scene->_priorSceneId == 352) {
+		player.x = 144;
+		player.y = 95;
+	}
+	else {
+		player.x = 139;
+		player.y = 155;
+	}
 
 	section_3_music();
 }

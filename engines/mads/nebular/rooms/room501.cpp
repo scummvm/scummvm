@@ -42,10 +42,10 @@ struct Scratch {
 static Scratch local;
 
 static void handleSlotActions() {
-	switch (_game._trigger) {
+	switch (kernel.trigger) {
 	case 0:
-		_game._player._stepEnabled = false;
-		_game._player._visible = false;
+		player.commands_allowed = false;
+		player.walker_visible = false;
 		int numTicks, frameIndex;
 		if (_globals[kSexOfRex] == REX_MALE) {
 			local._mainSpriteId = _globals._spriteIndexes[4];
@@ -71,12 +71,12 @@ static void handleSlotActions() {
 
 	case 2:
 		_scene->_sequences.updateTimeout(-1, local._mainSequenceId);
-		_game._player._visible = true;
+		player.walker_visible = true;
 		_scene->_sequences.addTimer(15, 3);
 		break;
 
 	case 3:
-		_game._player.walk(Common::Point(282, 110), FACING_NORTH);
+		player_walk(282, 110, FACING_NORTH);
 		_scene->_sequences.addTimer(60, 4);
 		break;
 
@@ -86,9 +86,9 @@ static void handleSlotActions() {
 }
 
 static void room_501_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('c', 0));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_name('x', 1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(kernel_name('c', 0));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_name('x', 0));
 
 	if (_globals[kSexOfRex] == REX_MALE) {
 		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXMRC_9");
@@ -108,46 +108,50 @@ static void room_501_init() {
 	local._rexPunched = true;
 
 	if (_scene->_priorSceneId == 504) {
-		_game._player._stepEnabled = false;
-		_game._player._playerPos = Common::Point(74, 121);
-		_game._player._facing = FACING_NORTHWEST;
-		_game._player._visible = false;
-		_game._player._stepEnabled = false;
+		player.commands_allowed = false;
+		player.x = 74;
+		player.y = 121;
+		player.facing = FACING_NORTHWEST;
+		player.walker_visible = false;
+		player.commands_allowed = false;
 		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
 		if (_globals[kSexOfRex] == REX_MALE)
-			_scene->loadAnimation(formAnimName('G', 2), 70);
+			_scene->loadAnimation(kernel_name('G', 2), 70);
 		else
-			_scene->loadAnimation(formAnimName('R', 2), 70);
+			_scene->loadAnimation(kernel_name('R', 2), 70);
 	} else if (_scene->_priorSceneId == 503) {
-		_game._player._playerPos = Common::Point(317, 102);
-		_game._player._facing = FACING_SOUTHWEST;
+		player.x = 317;
+		player.y = 102;
+		player.facing = FACING_SOUTHWEST;
 		_scene->_sequences.addTimer(15, 80);
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
-		_game._player._playerPos = Common::Point(299, 131);
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+		player.x = 299;
+		player.y = 131;
+	}
 
 	if (_scene->_roomChanged) {
-		_game._objects.addToInventory(OBJ_FAKE_ID);
-		_game._objects.addToInventory(OBJ_SECURITY_CARD);
-		_game._objects.addToInventory(OBJ_ID_CARD);
+		inter_give_to_player(OBJ_FAKE_ID);
+		inter_give_to_player(OBJ_SECURITY_CARD);
+		inter_give_to_player(OBJ_ID_CARD);
 	}
 
 	section_5_music();
-	_game.loadQuoteSet(0x275, 0x276, 0x277, 0);
+	kernel.quotes = quote_load(0x275, 0x276, 0x277, 0);
 
-	if (!_game._visitedScenes._sceneRevisited)
+	if (!player.been_here_before)
 		_scene->_sequences.addTimer(2, 90);
 }
 
 static void room_501_daemon() {
-	if (_game._trigger == 90)
+	if (kernel.trigger == 90)
 		text_show(50127);
 
-	if (_game._trigger >= 80) {
-		switch (_game._trigger) {
+	if (kernel.trigger >= 80) {
+		switch (kernel.trigger) {
 		case 80:
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 12, 6, 0, 0);
 			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
@@ -158,7 +162,7 @@ static void room_501_daemon() {
 
 		case 81:
 			_scene->_dynamicHotspots.remove(local._doorHotspotid);
-			_game._player.walk(Common::Point(276, 110), FACING_SOUTHWEST);
+			player_walk(276, 110, FACING_SOUTHWEST);
 			_scene->_sequences.addTimer(120, 82);
 			break;
 
@@ -173,7 +177,7 @@ static void room_501_daemon() {
 			break;
 
 		case 83:
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
 			break;
@@ -183,16 +187,16 @@ static void room_501_daemon() {
 		}
 	}
 
-	if (_game._trigger >= 70 && _game._trigger <= 73) {
-		switch (_game._trigger) {
+	if (kernel.trigger >= 70 && kernel.trigger <= 73) {
+		switch (kernel.trigger) {
 		case 70:
-			_game._player._visible = true;
-			_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
+			player.walker_visible = true;
+			player.clock = _scene->_frameStartTime - player.frame_delay;
 			_scene->_sequences.addTimer(15, 71);
 			break;
 
 		case 71:
-			_game._player.walk(Common::Point(92, 130), FACING_SOUTH);
+			player_walk(92, 130, FACING_SOUTH);
 			_scene->_sequences.addTimer(30, 72);
 			break;
 
@@ -204,7 +208,7 @@ static void room_501_daemon() {
 			break;
 
 		case 73:
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
 			break;
@@ -217,14 +221,14 @@ static void room_501_daemon() {
 
 static void room_501_pre_parser() {
 	if (player_said_1(walk_down) && (player_said_1(street_to_east) || player_said_1(sidewalk_to_east)))
-		_game._player._walkOffScreenSceneId = 551;
+		player.walk_off_edge_to_room = 551;
 }
 
 static void room_501_parser() {
 	if (player_said_2(get_into, car)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
+			player.commands_allowed = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
@@ -242,7 +246,7 @@ static void room_501_parser() {
 		break;
 
 		case 2:
-			_game._player._visible = false;
+			player.walker_visible = false;
 			if (_globals[kSexOfRex] == REX_MALE)
 				local._mainSpriteId = _globals._spriteIndexes[6];
 			else
@@ -273,7 +277,7 @@ static void room_501_parser() {
 	} else if (player_said_3(put, security_card, card_slot))
 		text_show(50113);
 	else if (player_said_3(put, fake_id, card_slot)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
 		case 1:
 		case 2:
@@ -283,19 +287,19 @@ static void room_501_parser() {
 
 		case 4:
 			if (_globals[kSexOfRex] == REX_MALE) {
-				_game._player._visible = false;
+				player.walker_visible = false;
 				g_engine->_soundManager->command(13, 0);
-				_scene->loadAnimation(formAnimName('G', 1), 5);
+				_scene->loadAnimation(kernel_name('G', 1), 5);
 			} else {
 				local._rexPunched = false;
 				_scene->_kernelMessages.reset();
-				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 6, 120, _game.getQuote(0x277));
+				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 6, 120, quote_string(kernel.quotes, 0x277));
 			}
 			break;
 
 		case 5:
-			_game._player._visible = true;
-			_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
+			player.walker_visible = true;
+			player.clock = _scene->_frameStartTime - player.frame_delay;
 			_scene->_sequences.addTimer(30, 6);
 			break;
 
@@ -303,21 +307,21 @@ static void room_501_parser() {
 			if (_globals[kSexOfRex] == REX_MALE) {
 				if (local._rexPunched) {
 					_scene->_kernelMessages.reset();
-					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x275));
+					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x275));
 					local._rexPunched = false;
 				} else {
 					_scene->_kernelMessages.reset();
-					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x276));
+					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x276));
 				}
 			}
-			_game._player._stepEnabled = true;
+			player.commands_allowed = true;
 			break;
 
 		default:
 			break;
 		}
 	} else if (player_said_3(put, id_card, card_slot)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
 		case 1:
 		case 2:
@@ -335,7 +339,7 @@ static void room_501_parser() {
 			break;
 
 		case 6:
-			_game._player.walk(Common::Point(317, 102), FACING_NORTHEAST);
+			player_walk(317, 102, FACING_NORTHEAST);
 			_scene->_sequences.addTimer(120, 7);
 			break;
 
@@ -392,7 +396,7 @@ static void room_501_parser() {
 	else if (player_said_2(look, pipes) || player_said_2(look, pipe))
 		text_show(50126);
 	else if (player_said_2(look, car)) {
-		if (!_game._visitedScenes.exists(504))
+		if (!player_has_been_in_room(504))
 			text_show(50116);
 		else
 			text_show(50117);

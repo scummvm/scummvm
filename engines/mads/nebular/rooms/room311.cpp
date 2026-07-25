@@ -39,7 +39,7 @@ static Scratch local;
 
 
 static void room_311_init() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(Resources::formatName(307, 'X', 0, EXT_SS, ""));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(kernel_full_name(307, 'X', 0, "", EXT_SS));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXCL_8");
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXCL_2");
 
@@ -48,24 +48,28 @@ static void room_311_init() {
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 15);
 
 	local._checkGuardFl = false;
-	_game.loadQuoteSet(0xFA, 0);
+	kernel.quotes = quote_load(0xFA, 0);
 
 	if (_scene->_priorSceneId == 391) {
 		_globals[kSexOfRex] = REX_MALE;
-		_game._player._stepEnabled = false;
-		_game._player._visible = false;
-		_game._player._facing = FACING_SOUTH;
-		_game._player._playerPos = Common::Point(166, 101);
+		player.commands_allowed = false;
+		player.walker_visible = false;
+		player.facing = FACING_SOUTH;
+		player.x = 166;
+		player.y = 101;
 		_scene->_sequences.addTimer(120, 71);
-	} else if (_scene->_priorSceneId == 310)
-		_game._player._playerPos = Common::Point(302, 145);
+	} else if (_scene->_priorSceneId == 310) {
+		player.x = 302;
+		player.y = 145;
+	}
 	else if (_scene->_priorSceneId == 320) {
-		_game._player._playerPos = Common::Point(129, 113);
-		_game._player._facing = FACING_SOUTH;
+		player.x = 129;
+		player.y = 113;
+		player.facing = FACING_SOUTH;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_game._player._visible = false;
-		_game._player._stepEnabled = false;
-		_scene->loadAnimation(formAnimName('a', -1), 70);
+		player.walker_visible = false;
+		player.commands_allowed = false;
+		_scene->loadAnimation(kernel_name('a', -1), 70);
 	}
 
 	section_3_music();
@@ -166,23 +170,23 @@ static void room_311_daemon() {
 
 	case 80:
 		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[3]);
-		_game._player._stepEnabled = true;
-		_game._player._visible = true;
+		player.commands_allowed = true;
+		player.walker_visible = true;
 		break;
 
 	default:
 		break;
 	}
 
-	if (_game._player._moving && (_scene->_rails.getNext() > 0)) {
-		int x = _game._player._prepareWalkPos.x;
+	if (player.walking && (_scene->_rails.getNext() > 0)) {
+		int x = player.prepare_walk_x;
 		if (x < 75)
 			x = 75;
 		if (x > 207)
 			x = 207;
 
 		local._checkGuardFl = true;
-		_game._player.startWalking(Common::Point(x, 122), FACING_SOUTH);
+		player_start_walking(x, 122, FACING_SOUTH);
 		_scene->_rails.resetNext();
 	}
 }
@@ -197,10 +201,10 @@ static void room_311_parser() {
 	} else if (player_said_2(sit_at, desk))
 		_scene->_nextSceneId = 320;
 	else if (player_said_2(climb_into, air_vent)) {
-		switch (_game._trigger) {
+		switch (kernel.trigger) {
 		case 0:
-			_game._player._stepEnabled = false;
-			_game._player._visible = false;
+			player.commands_allowed = false;
+			player.walker_visible = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 50, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 3, -2);

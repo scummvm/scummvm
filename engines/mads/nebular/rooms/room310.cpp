@@ -46,14 +46,14 @@ static void room_310_init() {
 
 	init_forcefield(&local._forcefield, true);
 
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(Resources::formatName(307, 'X', 0, EXT_SS, ""));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(kernel_full_name(307, 'X', 0, "", EXT_SS));
 	_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 	_scene->_sequences.setPosition(_globals._sequenceIndexes[3], Common::Point(127, 78));
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 15);
 
-	_game._player._visible = false;
-	_game._player._stepEnabled = false;
-	_scene->loadAnimation(formAnimName('a', -1), 70);
+	player.walker_visible = false;
+	player.commands_allowed = false;
+	_scene->loadAnimation(kernel_name('a', -1), 70);
 
 	section_3_music();
 }
@@ -61,7 +61,7 @@ static void room_310_init() {
 static void room_310_daemon() {
 	handle_forcefield(&local._forcefield, &_globals._spriteIndexes[0]);
 
-	if (_game._trigger == 70)
+	if (kernel.trigger == 70)
 		_scene->_nextSceneId = 309;
 }
 
