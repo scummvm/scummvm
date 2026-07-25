@@ -517,7 +517,9 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Common::Rect
 		glDisable(GL_BLEND);
 	}
 
-	if (_lastTexture != texture) {
+	GLint boundTexture;
+	glGetIntegerv(GL_TEXTURE_BINDING_2D, &boundTexture);
+	if (_lastTexture != texture || (GLuint)boundTexture != texture->getTextureName()) {
 		_lastTexture = texture;
 		glBindTexture(GL_TEXTURE_2D, texture->getTextureName());
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
