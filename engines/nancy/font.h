@@ -74,25 +74,25 @@ private:
 	uint16 _spaceWidth = 0;
 
 	// Specific offsets into the _characterRects array
-	uint16 _uppercaseOffset			= 0;
-	uint16 _lowercaseOffset			= 0;
-	uint16 _digitOffset				= 0;
-	uint16 _periodOffset			= 0;
-	uint16 _commaOffset				= 0;
-	uint16 _equalitySignOffset		= 0;
-	uint16 _colonOffset				= 0;
-	uint16 _dashOffset				= 0;
-	uint16 _questionMarkOffset		= 0;
-	uint16 _exclamationMarkOffset	= 0;
-	uint16 _percentOffset			= 0;
-	uint16 _ampersandOffset			= 0;
-	uint16 _asteriskOffset			= 0;
-	uint16 _leftBracketOffset		= 0;
-	uint16 _rightBracketOffset		= 0;
-	uint16 _plusOffset				= 0;
-	uint16 _apostropheOffset		= 0;
-	uint16 _semicolonOffset			= 0;
-	uint16 _slashOffset				= 0;
+	uint16 _uppercaseOffset					= 0;
+	uint16 _lowercaseOffset					= 0;
+	uint16 _digitOffset						= 0;
+	uint16 _periodOffset					= 0;
+	uint16 _commaOffset						= 0;
+	uint16 _equalitySignOffset				= 0;
+	uint16 _colonOffset						= 0;
+	uint16 _dashOffset						= 0;
+	uint16 _questionMarkOffset				= 0;
+	uint16 _exclamationMarkOffset			= 0;
+	uint16 _percentOffset					= 0;
+	uint16 _ampersandOffset					= 0;
+	uint16 _asteriskOffset					= 0;
+	uint16 _leftBracketOffset				= 0;
+	uint16 _rightBracketOffset				= 0;
+	uint16 _plusOffset						= 0;
+	uint16 _apostropheOffset				= 0;
+	uint16 _semicolonOffset					= 0;
+	uint16 _slashOffset						= 0;
 
 	// Specific offsets for Cyrillic characters. Introduced in nancy5, only used in Russian variants
 	// The original data references the letters one by one, out of order. We only keep the two offsets below
@@ -129,16 +129,16 @@ private:
 	int16 _eszettOffset						= -1;
 
 	// Even more specific offsets for extended ASCII characters. Introduced in nancy10
-	int16 _uppercaseAWithDotOffset          = -1;
-	int16 _aWithDotOffset                   = -1;
-	int16 _underscoreOffset                 = -1;
-	int16 _hashOffset                       = -1;
-	int16 _dollarOffset                     = -1;
-	int16 _lessThanOffset                   = -1;
-	int16 _greaterThanOffset                = -1;
-	int16 _leftCurlyBracketOffset           = -1;
-	int16 _rightCurlyBracketOffset          = -1;
-	int16 _euroOffset                       = -1;
+	int16 _uppercaseAWithDotOffset			= -1;
+	int16 _aWithDotOffset					= -1;
+	int16 _underscoreOffset					= -1;
+	int16 _hashOffset						= -1;
+	int16 _dollarOffset						= -1;
+	int16 _lessThanOffset					= -1;
+	int16 _greaterThanOffset				= -1;
+	int16 _leftCurlyBracketOffset			= -1;
+	int16 _rightCurlyBracketOffset			= -1;
+	int16 _euroOffset						= -1;
 
 	// Specific offsets in French variant of nancy12
 	int16 _uppercaseCWithCedillaOffset		= -1;
