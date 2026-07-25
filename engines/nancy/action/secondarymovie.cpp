@@ -757,8 +757,24 @@ void PlaySecondaryMovie::execute() {
 				srcRect = Common::Rect(_fullFrame.w, _fullFrame.h);
 			}
 
+			Common::Rect destRect = _videoDescs[descID].destRect;
+
+			// The videoDesc's size might be larger than the decoded video (for example, nancy10's
+			// COR_AceFidgetEars_ANIM, and nancy12's PAR_ArcadeAnimationB); clamp here to avoid
+			// reading out-of-bounds during draw. (Adjust destRect too: avoid stretching)
+			const int16 decodedWidth = (int16)_decoder.getWidth();
+			if (srcRect.width() > decodedWidth) {
+				srcRect.setWidth(decodedWidth);
+				destRect.setWidth(decodedWidth);
+			}
+			const int16 decodedHeight = (int16)_decoder.getHeight();
+			if (srcRect.height() > decodedHeight) {
+				srcRect.setHeight(decodedHeight);
+				destRect.setHeight(decodedHeight);
+			}
+
 			_drawSurface.create(_fullFrame, srcRect);
-			moveTo(_videoDescs[descID].destRect);
+			moveTo(destRect);
 
 			_needsRedraw = true;
 
