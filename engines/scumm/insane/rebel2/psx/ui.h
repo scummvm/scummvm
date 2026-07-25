@@ -156,6 +156,11 @@ private:
 	const RA2PSXTextureSet &_textures;
 };
 
+// A hit washes the screen for five frames.
+enum { kRA2PSXHitFlashFrames = 5 };
+
+void drawRA2PSXHitFlash(Graphics::Surface &surface, int frame);
+
 // The shield gauge runs 0 to 0x1000, and warns below 0x501.
 enum {
 	kRA2PSXShieldFull = 0x1000,

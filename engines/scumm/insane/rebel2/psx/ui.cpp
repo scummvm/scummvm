@@ -934,6 +934,41 @@ bool RA2PSXLevel1UI::load(const RA2PSXArchive &archive) {
 	return true;
 }
 
+// The damage wash: a full screen Gouraud quad whose corners run through the five frame
+// CFlash table in the executable's own resource directory, green against orange.
+const byte kRA2PSXHitFlash[4][kRA2PSXHitFlashFrames][3] = {
+	{ {   0,  39,   0 }, {   0,  91,   0 }, {   0,  69,   0 }, {   0,  48,   0 }, {   0,  27,   0 } },
+	{ {  63,   0,   0 }, { 147,  23,   0 }, { 116,  19,   0 }, {  85,  15,   0 }, {  55,  11,   0 } },
+	{ {  55,  11,   0 }, {  85,  15,   0 }, { 116,  19,   0 }, { 147,  23,   0 }, {  63,   0,   0 } },
+	{ {   0,  27,   0 }, {   0,  48,   0 }, {   0,  69,   0 }, {   0,  91,   0 }, {   0,  39,   0 } }
+};
+
+void drawRA2PSXHitFlash(Graphics::Surface &surface, int frame) {
+	if (frame < 0 || frame >= kRA2PSXHitFlashFrames)
+		return;
+	const int lastX = MAX(1, surface.w - 1);
+	const int lastY = MAX(1, surface.h - 1);
+	for (int y = 0; y < surface.h; ++y) {
+		int left[3];
+		int right[3];
+		for (int channel = 0; channel < 3; ++channel) {
+			left[channel] = (kRA2PSXHitFlash[0][frame][channel] * (lastY - y) +
+					kRA2PSXHitFlash[2][frame][channel] * y) / lastY;
+			right[channel] = (kRA2PSXHitFlash[1][frame][channel] * (lastY - y) +
+					kRA2PSXHitFlash[3][frame][channel] * y) / lastY;
+		}
+		for (int x = 0; x < surface.w; ++x) {
+			byte r, g, b;
+			surface.format.colorToRGB(surface.getPixel(x, y), r, g, b);
+			const int addR = (left[0] * (lastX - x) + right[0] * x) / lastX;
+			const int addG = (left[1] * (lastX - x) + right[1] * x) / lastX;
+			const int addB = (left[2] * (lastX - x) + right[2] * x) / lastX;
+			surface.setPixel(x, y, surface.format.RGBToColor(
+					MIN(0xff, r + addR), MIN(0xff, g + addG), MIN(0xff, b + addB)));
+		}
+	}
+}
+
 void RA2PSXLevel1UI::drawCockpit(Graphics::Surface &surface) const {
 	const int xOffset = (surface.w - 320) / 2;
 	const int yOffset = (surface.h - 240) / 2 + 120;

@@ -629,7 +629,7 @@ void RA2PSXTinyGLRenderer::beginFrame(const Graphics::Surface &background,
 }
 
 void RA2PSXTinyGLRenderer::renderSprite(const RA2PSXTexture &texture, float x, float y, float z,
-		float halfWidth, float halfHeight, int rotation) {
+		float halfWidth, float halfHeight, int rotation, int brightness) {
 	if (!_context || z <= 1.0f || texture.pixels.empty())
 		return;
 	TinyGL::setContext(_context);
@@ -652,7 +652,9 @@ void RA2PSXTinyGLRenderer::renderSprite(const RA2PSXTexture &texture, float x, f
 	tglEnable(TGL_ALPHA_TEST);
 	tglEnable(TGL_BLEND);
 	tglBindTexture(TGL_TEXTURE_2D, getTextureId(texture));
-	tglColor4ub(0xff, 0xff, 0xff, 0xff);
+	// Textured primitives treat 0x80 as neutral, so the tint doubles.
+	const byte tint = (byte)MIN(brightness * 2, 0xff);
+	tglColor4ub(tint, tint, tint, 0xff);
 	tglBegin(TGL_QUAD_STRIP);
 	for (uint corner = 0; corner < 4; ++corner) {
 		tglTexCoord2f(u[corner], v[corner]);

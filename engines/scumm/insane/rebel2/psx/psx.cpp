@@ -115,6 +115,28 @@ private:
 	Error _error;
 };
 
+// The smoke trail draws the third 16x16 cell of the SMALLEX strip.
+static bool extractRA2PSXSmokeCell(const Common::Array<byte> &sheet, RA2PSXTexture &smoke) {
+	Common::Array<RA2PSXTexture> textures;
+	if (!loadRA2PSXTextures(sheet, textures))
+		return false;
+	for (uint i = 0; i < textures.size(); ++i) {
+		const RA2PSXTexture &source = textures[i];
+		if (!source.name.equalsIgnoreCase("SMALLEX") || source.width < 48 || source.height < 16)
+			continue;
+		smoke.name = "SMOKE";
+		smoke.width = 16;
+		smoke.height = 16;
+		smoke.pixels.resize(16 * 16);
+		for (int y = 0; y < 16; ++y) {
+			for (int x = 0; x < 16; ++x)
+				smoke.pixels[y * 16 + x] = source.pixels[y * source.width + 32 + x];
+		}
+		return true;
+	}
+	return false;
+}
+
 // The TIE breaks into its own body and wing pieces, five of each.
 bool loadRA2PSXDebrisModels(const RA2PSXArchive &archive,
 		const Common::Array<byte> &textureData, Common::Array<RA2PSXModel> &models) {
@@ -296,6 +318,7 @@ bool Rebel2PSX::loadLevel1Assets(RA2PSXModel &enemy, RA2PSXModel &ship,
 	Common::Array<byte> tieLaserData;
 	Common::Array<byte> enemyTextureData;
 	Common::Array<byte> shipTextureData;
+	Common::Array<byte> commonTextureData;
 	return archive.getMember("fOFS/TieFighter/main", enemyData) && enemy.load(enemyData) &&
 			archive.getMember("tex/Ties", enemyTextureData) && enemy.loadTextures(enemyTextureData) &&
 			archive.getMember("fOFS/Ship", shipData) && ship.load(shipData) &&
@@ -304,6 +327,8 @@ bool Rebel2PSX::loadLevel1Assets(RA2PSXModel &enemy, RA2PSXModel &ship,
 			archive.getMember("fOFS/WingLaser", laserData) && laser.load(laserData) &&
 			archive.getMember("fOFS/TieLaser", tieLaserData) && tieLaser.load(tieLaserData) &&
 			loadRA2PSXDebrisModels(archive, enemyTextureData, debris) &&
+			archive.getMember("tex/Common", commonTextureData) &&
+			extractRA2PSXSmokeCell(commonTextureData, _smokeTexture) &&
 			ui.load(archive);
 }
 

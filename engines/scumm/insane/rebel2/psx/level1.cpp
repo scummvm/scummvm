@@ -435,10 +435,80 @@ void spawnLevel1Debris(RA2PSXLevel1Debris *debris, const int *position,
 	}
 }
 
-void updateLevel1Debris(RA2PSXLevel1Debris *debris) {
+// Each shard drags a smoke trail: a SMALLEX cell that spins and dims three steps a
+// frame from the grey the original picks on spawn.
+enum {
+	kLevel1PuffCount = 48,
+	kLevel1PuffSpin = 0x10,
+	kLevel1PuffFade = 3,
+	kLevel1PuffInterval = 3,
+	kLevel1PuffHalfSize = 64
+};
+
+struct RA2PSXLevel1Puff {
+	RA2PSXLevel1Puff() : brightness(0), rotation(0), spin(0) {
+		position[0] = position[1] = position[2] = 0;
+	}
+
+	int brightness;
+	int rotation;
+	int spin;
+	int position[3];
+};
+
+void spawnLevel1Puff(RA2PSXLevel1Puff *puffs, const int *position,
+		Common::RandomSource &random) {
+	int slot = -1;
+	int dimmest = 0x7fffffff;
+	for (int i = 0; i < kLevel1PuffCount; ++i) {
+		if (!puffs[i].brightness) {
+			slot = i;
+			break;
+		}
+		if (puffs[i].brightness < dimmest) {
+			dimmest = puffs[i].brightness;
+			slot = i;
+		}
+	}
+
+	RA2PSXLevel1Puff &puff = puffs[slot];
+	puff.brightness = (int)random.getRandomNumber(31) + 0x60;
+	puff.rotation = (int)random.getRandomNumber(0xfff);
+	puff.spin = 0;
+	for (int axis = 0; axis < 3; ++axis)
+		puff.position[axis] = position[axis];
+}
+
+void updateLevel1Puffs(RA2PSXLevel1Puff *puffs) {
+	for (int i = 0; i < kLevel1PuffCount; ++i) {
+		if (!puffs[i].brightness)
+			continue;
+		puffs[i].spin += kLevel1PuffSpin;
+		puffs[i].brightness = MAX(0, puffs[i].brightness - kLevel1PuffFade);
+	}
+}
+
+void renderLevel1Puffs(RA2PSXTinyGLRenderer &renderer, const RA2PSXTexture &texture,
+		const RA2PSXLevel1Puff *puffs) {
+	if (texture.pixels.empty())
+		return;
+	for (int i = 0; i < kLevel1PuffCount; ++i) {
+		const RA2PSXLevel1Puff &puff = puffs[i];
+		if (!puff.brightness)
+			continue;
+		renderer.renderSprite(texture, (float)puff.position[0], (float)puff.position[1],
+				(float)puff.position[2], kLevel1PuffHalfSize, kLevel1PuffHalfSize,
+				(int16)(puff.rotation + puff.spin), puff.brightness);
+	}
+}
+
+void updateLevel1Debris(RA2PSXLevel1Debris *debris, RA2PSXLevel1Puff *puffs,
+		Common::RandomSource &random) {
 	for (int i = 0; i < kLevel1DebrisCount; ++i) {
 		if (!debris[i].life)
 			continue;
+		if (debris[i].life % kLevel1PuffInterval == 0)
+			spawnLevel1Puff(puffs, debris[i].position, random);
 		for (int axis = 0; axis < 3; ++axis) {
 			debris[i].position[axis] += debris[i].velocity[axis];
 			debris[i].rotation[axis] = (int16)(debris[i].rotation[axis] + debris[i].spin[axis]);
@@ -1020,6 +1090,7 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 	RA2PSXLevel1Enemy enemies[kLevel1EnemyCount];
 	RA2PSXLevel1Explosion explosions[kLevel1ExplosionSlots];
 	RA2PSXLevel1Debris debris[kLevel1DebrisCount];
+	RA2PSXLevel1Puff puffs[kLevel1PuffCount];
 	RA2PSXLevel1ViewTracker viewTracker;
 	RA2PSXLevel1Shot shots[kLevel1ShotCount];
 	RA2PSXLevel1TieShot tieShots[kLevel1ShotCount];
@@ -1049,6 +1120,7 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 	int shield = kLevel1ShieldFull;
 	int shieldDisplayed = kLevel1ShieldFull;
 	int shakeFrames = 0;
+	int flashFrame = -1;
 	int shakeX = 0;
 	int shakeY = 0;
 	int spawnDelay = 0;
@@ -1290,6 +1362,8 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 						MAX(shield, shieldDisplayed - kLevel1ShieldStep);
 				shieldDisplayed = MAX(1, shieldDisplayed);
 			}
+			if (flashFrame >= 0 && ++flashFrame >= kRA2PSXHitFlashFrames)
+				flashFrame = -1;
 			if (shakeFrames > 0) {
 				--shakeFrames;
 				shakeX = (int)_vm->_rnd.getRandomNumber(3);
@@ -1331,7 +1405,8 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 
 			updateLevel1Shots(shots);
 			updateLevel1Explosions(explosions, _explosionFrames.size());
-			updateLevel1Debris(debris);
+			updateLevel1Debris(debris, puffs, _vm->_rnd);
+			updateLevel1Puffs(puffs);
 			viewTracker.push(thirdPersonView ? ship.x * focal / MAX(1, ship.z) : aimX - centerX,
 					thirdPersonView ? ship.y * focal / MAX(1, ship.z) : aimY - centerY);
 			for (int i = 0; i < kLevel1ShotCount; ++i) {
@@ -1343,6 +1418,7 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 				if (hit) {
 					shield = MAX(0, shield - kLevel1BoltDamage[view][difficulty]);
 					shakeFrames = kLevel1ShakeFrames;
+					flashFrame = 0;
 					soundPlayer.play(kLevel1SfxPlayerHit, 0x7f, 0x40);
 				}
 			}
@@ -1376,6 +1452,7 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 					if (rammed) {
 						shield = MAX(0, shield - kLevel1RamDamage[difficulty]);
 						shakeFrames = kLevel1ShakeFrames;
+						flashFrame = 0;
 						destroyed = true;
 					}
 				}
@@ -1482,6 +1559,7 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 			renderLevel1TieShots(renderer, tieLaser, tieShots);
 			renderLevel1Shots(renderer, laser, shots);
 			renderLevel1Debris(renderer, debrisModels, debris);
+			renderLevel1Puffs(renderer, _smokeTexture, puffs);
 			renderLevel1Explosions(renderer, _explosionFrames, explosions);
 			if (thirdPersonView) {
 				float forwardX;
@@ -1497,6 +1575,7 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 			}
 			Graphics::Surface output;
 			renderer.finishFrame(output);
+			drawRA2PSXHitFlash(output, flashFrame);
 			if (!thirdPersonView)
 				ui.drawCockpit(output);
 			ui.drawHUD(output, score, lives, shieldDisplayed, logicFrame);

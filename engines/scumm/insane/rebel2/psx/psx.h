@@ -271,7 +271,7 @@ public:
 	void beginFrame(const Graphics::Surface &background, const RA2PSXBackgroundView &view);
 	// A camera facing quad, sized in world units like the original's explosion billboard.
 	void renderSprite(const RA2PSXTexture &texture, float x, float y, float z,
-			float halfWidth, float halfHeight, int rotation);
+			float halfWidth, float halfHeight, int rotation, int brightness = 0x80);
 	void renderModel(const RA2PSXModel &model, float x, float y, float size,
 			float pitch, float yaw, float roll, bool depthTest = true);
 	void renderPerspectiveModel(const RA2PSXModel &model, float x, float y, float z,
@@ -356,8 +356,10 @@ private:
 	RA2PSXModel _logoModel;
 	RA2PSXModel _cloakModel;
 	RA2PSXModel _crestModel;
-	// The 42 frame fireball the original streams from the bigEx resource.
+	// The 42 frame fireball the original streams from the bigEx resource, and the
+	// single SMALLEX cell it trails smoke with.
 	Common::Array<RA2PSXTexture> _explosionFrames;
+	RA2PSXTexture _smokeTexture;
 };
 
 } // End of namespace Scumm
