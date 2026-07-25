@@ -152,6 +152,7 @@ bool Rebel2PSX::playVideo(const Common::Path &path, int discNumber, bool version
 		decoder.close();
 		return false;
 	}
+	decoder.setVolume(_settings.videoVolume());
 	decoder.start();
 	const bool cursorWasVisible = CursorMan.isVisible();
 	CursorMan.showMouse(false);
@@ -223,10 +224,22 @@ bool Rebel2PSX::loadGlobalAssets(RA2PSXMainMenuUI &menu) {
 	RA2PSXArchive archive;
 	const bool loaded = archive.load(*stream);
 	delete stream;
+	if (!loaded || !menu.load(archive))
+		return false;
+
+	Common::Array<byte> textureData;
+	Common::Array<byte> logoData;
+	Common::Array<byte> cloakData;
+	if (!archive.getMember("menuTex", textureData) ||
+			!archive.getMember("fOFS/Logo", logoData) || !_logoModel.load(logoData) ||
+			!_logoModel.loadTextures(textureData) ||
+			!archive.getMember("fOFS/Cloak", cloakData) || !_cloakModel.load(cloakData) ||
+			!_cloakModel.loadTextures(textureData))
+		return false;
+
 	Common::Array<byte> soundData;
 	Common::Array<byte> soundProjectData;
-	return loaded && menu.load(archive) &&
-			archive.getMember("SNDsmp", soundData) &&
+	return archive.getMember("SNDsmp", soundData) &&
 			archive.getMember("sNDdata", soundProjectData) &&
 			_soundBank.load(soundData, soundProjectData);
 }
@@ -266,9 +279,11 @@ Common::Error Rebel2PSX::runGame() {
 #ifdef USE_TINYGL
 	RA2PSXMainMenuUI menu;
 	RA2PSXMovieText movieText;
+	_settings.load();
 	if (!loadGlobalAssets(menu))
 		return Common::Error(Common::kReadingFailed,
 				_("Could not load the PlayStation menu resources"));
+	const RA2PSXOptionsUI options(menu.textures());
 	if (!loadMovieTextAssets(movieText))
 		return Common::Error(Common::kReadingFailed,
 				_("Could not load the PlayStation movie fonts"));
@@ -279,7 +294,7 @@ Common::Error Rebel2PSX::runGame() {
 				_("Could not play the PlayStation introduction"));
 	}
 
-	const MenuResult menuResult = runMainMenu(menu);
+	const MenuResult menuResult = runMainMenu(menu, options);
 	if (menuResult == kMenuQuit)
 		return Common::kNoError;
 

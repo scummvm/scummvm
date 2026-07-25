@@ -427,6 +427,7 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 	const bool cursorWasVisible = CursorMan.isVisible();
 	CursorMan.showMouse(false);
 	g_system->warpMouse(160, 120);
+	decoder.setVolume(_settings.videoVolume());
 	decoder.start();
 	const uint32 gameplayStartTime = g_system->getMillis();
 	const Graphics::Surface *background = nullptr;

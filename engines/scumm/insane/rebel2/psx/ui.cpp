@@ -124,46 +124,120 @@ void RA2PSXTextureSet::draw(Graphics::Surface &surface, const char *name,
 			g = MIN(g, 0xff);
 			b = MIN(b, 0xff);
 			const int destX = x + sourceX - sourceLeft;
-			if (blend == kBlendAdditive) {
+			if (blend != kBlendOpaque) {
 				byte destR, destG, destB;
 				surface.format.colorToRGB(surface.getPixel(destX, destY), destR, destG, destB);
-				r = MIN<int>(0xff, r + destR);
-				g = MIN<int>(0xff, g + destG);
-				b = MIN<int>(0xff, b + destB);
+				if (blend == kBlendAdditive) {
+					r = MIN<int>(0xff, r + destR);
+					g = MIN<int>(0xff, g + destG);
+					b = MIN<int>(0xff, b + destB);
+				} else {
+					r = (r + destR) / 2;
+					g = (g + destG) / 2;
+					b = (b + destB) / 2;
+				}
 			}
 			surface.setPixel(destX, destY, surface.format.RGBToColor(r, g, b));
 		}
 	}
 }
 
-void RA2PSXTextureSet::drawText(Graphics::Surface &surface, const char *font,
-		const char *text, int x, int y) const {
-	static const char glyphs[] = "abcdefghijklmnopqrstuvwxyz0123456789%-:.,+/C ";
-	static const byte widths[] = {
-		6, 6, 6, 6, 6, 6, 6, 6, 2, 6, 6, 6, 8, 6, 6, 6,
-		6, 6, 6, 6, 6, 6, 8, 6, 7, 6, 6, 4, 6, 6, 6, 6,
-		6, 6, 6, 6, 6, 6, 2, 2, 2, 6, 6, 8, 2
-	};
-	static_assert(ARRAYSIZE(glyphs) == ARRAYSIZE(widths) + 1,
-			"RA2 PSX glyph widths do not match the font map");
+void RA2PSXTextureSet::drawShape(Graphics::Surface &surface, const char *name,
+		int x, int y, const Common::Rect &source, byte r, byte g, byte b) const {
+	const RA2PSXTexture *texture = find(name);
+	if (!texture)
+		return;
 
-	for (; *text; ++text) {
-		int glyph = -1;
-		for (uint i = 0; i < ARRAYSIZE(widths); ++i) {
-			if (*text == glyphs[i]) {
-				glyph = i;
-				break;
-			}
+	const int sourceLeft = MAX<int>(0, source.left);
+	const int sourceTop = MAX<int>(0, source.top);
+	const int sourceRight = MIN<int>(texture->width, source.right);
+	const int sourceBottom = MIN<int>(texture->height, source.bottom);
+	const uint32 color = surface.format.RGBToColor(r, g, b);
+	for (int sourceY = sourceTop; sourceY < sourceBottom; ++sourceY) {
+		const int destY = y + sourceY - source.top;
+		if (destY < 0 || destY >= surface.h)
+			continue;
+		for (int sourceX = sourceLeft; sourceX < sourceRight; ++sourceX) {
+			const int destX = x + sourceX - source.left;
+			if (destX < 0 || destX >= surface.w)
+				continue;
+			if (texture->pixels[sourceY * texture->width + sourceX] & 0x01000000)
+				surface.setPixel(destX, destY, color);
 		}
+	}
+}
+
+void subtractRA2PSXRect(Graphics::Surface &surface, const Common::Rect &rect,
+		int r, int g, int b) {
+	const int left = MAX<int>(0, rect.left);
+	const int top = MAX<int>(0, rect.top);
+	const int right = MIN<int>(surface.w, rect.right);
+	const int bottom = MIN<int>(surface.h, rect.bottom);
+	for (int y = top; y < bottom; ++y) {
+		for (int x = left; x < right; ++x) {
+			byte destR, destG, destB;
+			surface.format.colorToRGB(surface.getPixel(x, y), destR, destG, destB);
+			surface.setPixel(x, y, surface.format.RGBToColor(MAX<int>(0, destR - r),
+					MAX<int>(0, destG - g), MAX<int>(0, destB - b)));
+		}
+	}
+}
+
+void drawRA2PSXGouraudLine(Graphics::Surface &surface, int x0, int y0, int x1, int y1,
+		const byte *from, const byte *to) {
+	const int steps = MAX(ABS(x1 - x0), ABS(y1 - y0));
+	for (int step = 0; step <= steps; ++step) {
+		const int x = steps ? x0 + (x1 - x0) * step / steps : x0;
+		const int y = steps ? y0 + (y1 - y0) * step / steps : y0;
+		if (x < 0 || x >= surface.w || y < 0 || y >= surface.h)
+			continue;
+		const int r = steps ? from[0] + (to[0] - from[0]) * step / steps : from[0];
+		const int g = steps ? from[1] + (to[1] - from[1]) * step / steps : from[1];
+		const int b = steps ? from[2] + (to[2] - from[2]) * step / steps : from[2];
+		surface.setPixel(x, y, surface.format.RGBToColor(r, g, b));
+	}
+}
+
+static const char kSmallGlyphs[] = "abcdefghijklmnopqrstuvwxyz0123456789%-:.?+/C ";
+static const byte kSmallWidths[] = {
+	6, 6, 6, 6, 6, 6, 6, 6, 2, 6, 6, 6, 8, 6, 6, 6,
+	6, 6, 6, 6, 6, 6, 8, 6, 7, 6, 6, 4, 6, 6, 6, 6,
+	6, 6, 6, 6, 6, 6, 2, 2, 6, 6, 6, 8, 2
+};
+static_assert(ARRAYSIZE(kSmallGlyphs) == ARRAYSIZE(kSmallWidths) + 1,
+		"RA2 PSX glyph widths do not match the font map");
+
+static int findSmallGlyph(char character) {
+	for (uint i = 0; i < ARRAYSIZE(kSmallWidths); ++i) {
+		if (character == kSmallGlyphs[i])
+			return i;
+	}
+	return -1;
+}
+
+void RA2PSXTextureSet::drawText(Graphics::Surface &surface, const char *font,
+		const char *text, int x, int y, int brightness) const {
+	for (; *text; ++text) {
+		const int glyph = findSmallGlyph(*text);
 		if (glyph < 0)
 			continue;
 
 		const int sourceX = (glyph % 12) * 8;
 		const int sourceY = (glyph / 12) * 8;
 		draw(surface, font, x, y, Common::Rect(sourceX, sourceY,
-				sourceX + widths[glyph], sourceY + 8));
-		x += widths[glyph] + 2;
+				sourceX + kSmallWidths[glyph], sourceY + 8), brightness);
+		x += kSmallWidths[glyph] + 2;
 	}
+}
+
+int RA2PSXTextureSet::measureText(const char *text) const {
+	int width = 0;
+	for (; *text; ++text) {
+		const int glyph = findSmallGlyph(*text);
+		if (glyph >= 0)
+			width += kSmallWidths[glyph] + 2;
+	}
+	return width ? width - 2 : 0;
 }
 
 struct RA2PSXMovieFont {
@@ -350,6 +424,24 @@ static int measureMovieText(const RA2PSXMovieFont &font, const char *text,
 	return width ? width - spacing : 0;
 }
 
+int RA2PSXTextureSet::measureHeadline(const char *text) const {
+	return measureMovieText(kMovieBigFont, text, 0xffff, 2);
+}
+
+void RA2PSXTextureSet::drawHeadline(Graphics::Surface &surface, const char *text,
+		int x, int y) const {
+	for (; *text; ++text) {
+		RA2PSXMovieGlyph glyph;
+		if (!findMovieGlyph(kMovieBigFont, *text, glyph))
+			continue;
+		const Common::Rect source(glyph.x, glyph.row * kMovieBigFont.rowStep,
+				glyph.x + glyph.width, glyph.row * kMovieBigFont.rowStep + kMovieBigFont.height);
+		drawShape(surface, "FNT24BIG", x + 1, y + 1, source, 0, 0, 0);
+		draw(surface, "FNT24BIG", x, y, source);
+		x += glyph.width + 2;
+	}
+}
+
 static int scaleMovieX(int x) {
 	const int remainder = x % 3;
 	if (remainder)
@@ -445,20 +537,37 @@ void RA2PSXMovieText::draw(Graphics::Surface &surface,
 }
 
 bool RA2PSXMainMenuUI::load(const RA2PSXArchive &archive) {
+	static const char *const required[] = {
+		"BACK_L", "BACK_R", "TITLE", "FNT24BIG", "VOLUMES",
+		"STD_FT2", "STD_FT3", "STD_FT4", "STD_FT5", "STD_FT6"
+	};
+
 	Common::Array<byte> data;
 	_textures.clear();
-	return archive.getMember("menuTex", data) && _textures.append(data) &&
-			_textures.has("BACK_L") && _textures.has("BACK_R") &&
-			_textures.has("TITLE") && _textures.has("STD_FT2") &&
-			_textures.has("STD_FT4") && _textures.has("STD_FT6");
+	if (!archive.getMember("menuTex", data) || !_textures.append(data))
+		return false;
+	for (uint i = 0; i < ARRAYSIZE(required); ++i) {
+		if (!_textures.has(required[i]))
+			return false;
+	}
+	return true;
 }
 
-void RA2PSXMainMenuUI::draw(Graphics::Surface &surface, int selection) const {
+void RA2PSXMainMenuUI::drawBackground(Graphics::Surface &surface) const {
 	const int xOffset = (surface.w - 320) / 2;
 	const int yOffset = (surface.h - 240) / 2;
-	_textures.draw(surface, "BACK_L", xOffset, yOffset, Common::Rect(0, 0, 224, 240));
-	_textures.draw(surface, "BACK_R", xOffset + 224, yOffset, Common::Rect(0, 0, 96, 240));
-	_textures.draw(surface, "TITLE", xOffset + 72, yOffset + 22, Common::Rect(0, 0, 176, 124));
+	// The original dims both halves of the backdrop to 0x60/0x80.
+	_textures.draw(surface, "BACK_L", xOffset, yOffset, Common::Rect(0, 0, 224, 240), 0x60);
+	_textures.draw(surface, "BACK_R", xOffset + 224, yOffset, Common::Rect(0, 0, 96, 240), 0x60);
+}
+
+void RA2PSXMainMenuUI::drawForeground(Graphics::Surface &surface, int selection) const {
+	const int xOffset = (surface.w - 320) / 2;
+	const int yOffset = (surface.h - 240) / 2;
+	subtractRA2PSXRect(surface, Common::Rect(xOffset + 127, yOffset + 161,
+			xOffset + 193, yOffset + 191), 0x46, 0x46, 0x46);
+	_textures.draw(surface, "TITLE", xOffset + 72, yOffset + 22, Common::Rect(0, 0, 176, 124),
+			0x80, RA2PSXTextureSet::kBlendAverage);
 
 	static const char *const items[] = { "start", "options" };
 	static const int itemX[] = { 141, 134 };
@@ -472,8 +581,197 @@ void RA2PSXMainMenuUI::draw(Graphics::Surface &surface, int selection) const {
 			xOffset + 16, yOffset + 212);
 }
 
-Common::Rect RA2PSXMainMenuUI::itemRect(int item) const {
+Common::Rect RA2PSXMainMenuUI::itemRect(int item) {
 	return Common::Rect(120, 164 + item * 10, 200, 174 + item * 10);
+}
+
+// Row positions from the original widget tables.
+static const int16 kOptionRowY[] = { 70, 85, 100, 115, 130, 145, 160, 190 };
+static const int16 kSoundRowY[] = { 87, 102, 117, 132, 162 };
+
+Common::Rect RA2PSXOptionsUI::mainItemRect(int item) {
+	const int y = kOptionRowY[CLIP<int>(item, 0, ARRAYSIZE(kOptionRowY) - 1)];
+	return Common::Rect(90, y - 1, 230, y + 9);
+}
+
+Common::Rect RA2PSXOptionsUI::soundItemRect(int item) {
+	const int y = kSoundRowY[CLIP<int>(item, 0, ARRAYSIZE(kSoundRowY) - 1)];
+	return Common::Rect(90, y - 1, 230, y + 9);
+}
+
+enum {
+	kOptionStateNormal,
+	kOptionStateValue,
+	kOptionStateSelected,
+	// Ours, not the original's: the plain colour dimmed.
+	kOptionStateUnavailable
+};
+
+bool RA2PSXOptionsUI::isItemAvailable(int item) {
+	switch (item) {
+	case kItemDifficulty:
+	case kItemAdjustSound:
+	case kItemResetSettings:
+	case kItemExit:
+		return true;
+	default:
+		// These four still need their own screens.
+		return false;
+	}
+}
+
+void RA2PSXOptionsUI::drawItem(Graphics::Surface &surface, const char *text, int x, int y,
+		bool centered, int state) const {
+	static const char *const fonts[] = { "STD_FT3", "STD_FT2", "STD_FT4", "STD_FT3" };
+	static const int brightness[] = { 100, 0x80, 0x80, 0x30 };
+	const int xOffset = (surface.w - 320) / 2;
+	const int yOffset = (surface.h - 240) / 2;
+	if (centered)
+		x = (320 - _textures.measureText(text)) / 2;
+	_textures.drawText(surface, fonts[state], text, xOffset + x, yOffset + y,
+			brightness[state]);
+}
+
+void RA2PSXOptionsUI::drawMain(Graphics::Surface &surface, int selection,
+		const RA2PSXSettings &settings) const {
+	struct Entry {
+		const char *text;
+		int16 x;
+		bool centered;
+	};
+	static const Entry entries[kItemCount] = {
+		{ "difficulty:",    96, false },
+		{ "adjust sound",   70, true },
+		{ "enter passcode", 70, true },
+		{ "memory card",    70, true },
+		{ "high scores",    70, true },
+		{ "controls",       70, true },
+		{ "reset settings", 70, true },
+		{ "exit",           70, true }
+	};
+	static const Entry difficulties[] = {
+		{ "easy",   182, false },
+		{ "medium", 176, false },
+		{ "hard",   182, false }
+	};
+
+	const int xOffset = (surface.w - 320) / 2;
+	const int yOffset = (surface.h - 240) / 2;
+	subtractRA2PSXRect(surface, Common::Rect(xOffset + 90, yOffset + 63,
+			xOffset + 230, yOffset + 203), 0x20, 0x20, 0x20);
+	_textures.drawHeadline(surface, "Options",
+			xOffset + (320 - _textures.measureHeadline("Options")) / 2, yOffset + 36);
+
+	for (int item = 0; item < kItemCount; ++item) {
+		int state = kOptionStateNormal;
+		if (item == selection)
+			state = kOptionStateSelected;
+		else if (!isItemAvailable(item))
+			state = kOptionStateUnavailable;
+		drawItem(surface, entries[item].text, entries[item].x, kOptionRowY[item],
+				entries[item].centered, state);
+	}
+
+	// The value dims while the difficulty row itself is highlighted.
+	const Entry &value = difficulties[CLIP<int>(settings.difficulty, 0, 2)];
+	drawItem(surface, value.text, value.x, kOptionRowY[kItemDifficulty], false,
+			selection == kItemDifficulty ? kOptionStateValue : kOptionStateNormal);
+}
+
+void RA2PSXOptionsUI::drawVolume(Graphics::Surface &surface, int y, int level) const {
+	const int xOffset = (surface.w - 320) / 2;
+	const int yOffset = (surface.h - 240) / 2;
+	const int filled = CLIP(level, 0, 8) * 4;
+	if (filled)
+		_textures.draw(surface, "VOLUMES", xOffset + 180, yOffset + y,
+				Common::Rect(0, 0, filled, 8), 0x60);
+	if (filled < 32)
+		_textures.draw(surface, "VOLUMES", xOffset + 180 + filled, yOffset + y,
+				Common::Rect(filled, 8, 32, 16), 0x32);
+}
+
+void RA2PSXOptionsUI::drawSound(Graphics::Surface &surface, int selection,
+		const RA2PSXSettings &settings) const {
+	static const char *const labels[kSoundItemCount] = {
+		"sound mode:", "game f/x:", "game music:", "movies:", "exit"
+	};
+	static const int16 labelX[kSoundItemCount] = { 94, 110, 96, 126, 0 };
+
+	const int xOffset = (surface.w - 320) / 2;
+	const int yOffset = (surface.h - 240) / 2;
+	subtractRA2PSXRect(surface, Common::Rect(xOffset + 90, yOffset + 83,
+			xOffset + 230, yOffset + 173), 0x20, 0x20, 0x20);
+	_textures.drawHeadline(surface, "Adjust Sound",
+			xOffset + (320 - _textures.measureHeadline("Adjust Sound")) / 2, yOffset + 37);
+
+	for (int item = 0; item < kSoundItemCount; ++item) {
+		drawItem(surface, labels[item], labelX[item], kSoundRowY[item],
+				item == kSoundItemExit, item == selection ?
+						kOptionStateSelected : kOptionStateNormal);
+	}
+
+	drawItem(surface, settings.mono ? "mono" : "stereo", settings.mono ? 186 : 179, 87,
+			false, selection == kSoundItemMode ? kOptionStateValue : kOptionStateNormal);
+	drawVolume(surface, 102, (settings.sfx + 1) / 14);
+	drawVolume(surface, 117, settings.music / RA2PSXSettings::kCDStep);
+	drawVolume(surface, 132, settings.movies / RA2PSXSettings::kCDStep);
+}
+
+void RA2PSXOptionsUI::drawDialog(Graphics::Surface &surface, const char *headline,
+		const char *question, const char *detail, int selection) const {
+	static const byte kBright[3] = { 0xfc, 0xc8, 0x19 };
+	static const byte kDark[3] = { 0x80, 0x65, 0x0c };
+	static const byte kMessageBright[3] = { 0xff, 0xff, 0xff };
+	static const byte kMessageDark[3] = { 0x80, 0x80, 0x80 };
+
+	const bool message = headline == nullptr;
+	const int xOffset = (surface.w - 320) / 2;
+	const int yOffset = (surface.h - 240) / 2;
+	const int height = message ? 0x20 : 0x40;
+	int width = MAX(_textures.measureText(question), detail ? _textures.measureText(detail) : 0);
+	if (!message)
+		width = MAX(width, _textures.measureText(headline));
+	const int left = (320 - width) / 2;
+	const int top = (240 - height) / 2;
+
+	const Common::Rect box(xOffset + left - 6, yOffset + top - 4,
+			xOffset + left - 6 + width + 12, yOffset + top - 4 + height + 8);
+	subtractRA2PSXRect(surface, box, 0xff, 0xff, 0xff);
+
+	const byte *bright = message ? kMessageBright : kBright;
+	const byte *dark = message ? kMessageDark : kDark;
+	const int midX = box.left + (width + 12) / 2;
+	const int midY = box.top + (height + 8) / 2;
+	drawRA2PSXGouraudLine(surface, box.left, box.top, midX, box.top, bright, dark);
+	drawRA2PSXGouraudLine(surface, midX, box.top, box.right, box.top, dark, bright);
+	drawRA2PSXGouraudLine(surface, box.right, box.top, box.right, midY, bright, dark);
+	drawRA2PSXGouraudLine(surface, box.right, midY, box.right, box.bottom, dark, bright);
+	drawRA2PSXGouraudLine(surface, box.right, box.bottom, midX, box.bottom, bright, dark);
+	drawRA2PSXGouraudLine(surface, midX, box.bottom, box.left, box.bottom, dark, bright);
+	drawRA2PSXGouraudLine(surface, box.left, box.bottom, box.left, midY, bright, dark);
+	drawRA2PSXGouraudLine(surface, box.left, midY, box.left, box.top, dark, bright);
+
+	const char *const bodyFont = message ? "STD_FT3" : "STD_FT2";
+	const int questionY = message ? (detail ? 9 : 13) : (detail ? 0x14 : 0x19);
+	if (!message)
+		_textures.drawText(surface, "STD_FT5", headline,
+				xOffset + left + (width - _textures.measureText(headline)) / 2,
+				yOffset + top, 0x80);
+	_textures.drawText(surface, bodyFont, question,
+			xOffset + left + (width - _textures.measureText(question)) / 2,
+			yOffset + top + questionY, 0x80);
+	if (detail)
+		_textures.drawText(surface, bodyFont, detail,
+				xOffset + left + (width - _textures.measureText(detail)) / 2,
+				yOffset + top + (message ? 0x13 : 0x1e), 0x80);
+
+	if (selection >= 0) {
+		_textures.drawText(surface, selection == 1 ? "STD_FT4" : "STD_FT3", "yes",
+				xOffset + left + 10, yOffset + top + 0x32, selection == 1 ? 0x80 : 100);
+		_textures.drawText(surface, selection == 0 ? "STD_FT4" : "STD_FT3", "no",
+				xOffset + left + width - 0x1e, yOffset + top + 0x32,
+				selection == 0 ? 0x80 : 100);
+	}
 }
 
 bool RA2PSXLevel1UI::load(const RA2PSXArchive &archive) {

@@ -35,6 +35,95 @@ static bool readU32(const Common::Array<byte> &data, uint32 offset, uint32 &valu
 	return true;
 }
 
+// One turn is 4096 PlayStation angle units.
+static const float kRA2PSXAngleScale = 0.0015339807878856412f;
+
+void RA2PSXMatrix::setIdentity() {
+	for (uint row = 0; row < 3; ++row) {
+		for (uint column = 0; column < 3; ++column)
+			rotation[row][column] = row == column ? 1.0f : 0.0f;
+		translation[row] = 0.0f;
+	}
+}
+
+void RA2PSXMatrix::setScale(int x, int y, int z) {
+	setIdentity();
+	rotation[0][0] = x / 4096.0f;
+	rotation[1][1] = y / 4096.0f;
+	rotation[2][2] = z / 4096.0f;
+}
+
+void RA2PSXMatrix::setRotationX(int angle) {
+	const float cosine = cosf(angle * kRA2PSXAngleScale);
+	const float sine = sinf(angle * kRA2PSXAngleScale);
+	setIdentity();
+	rotation[1][1] = cosine;
+	rotation[1][2] = sine;
+	rotation[2][1] = -sine;
+	rotation[2][2] = cosine;
+}
+
+void RA2PSXMatrix::setRotationY(int angle) {
+	const float cosine = cosf(angle * kRA2PSXAngleScale);
+	const float sine = sinf(angle * kRA2PSXAngleScale);
+	setIdentity();
+	rotation[0][0] = cosine;
+	rotation[0][2] = -sine;
+	rotation[2][0] = sine;
+	rotation[2][2] = cosine;
+}
+
+void RA2PSXMatrix::setRotationZ(int angle) {
+	const float cosine = cosf(angle * kRA2PSXAngleScale);
+	const float sine = sinf(angle * kRA2PSXAngleScale);
+	setIdentity();
+	rotation[0][0] = cosine;
+	rotation[0][1] = sine;
+	rotation[1][0] = -sine;
+	rotation[1][1] = cosine;
+}
+
+static void preMultiply(RA2PSXMatrix &matrix, const RA2PSXMatrix &left) {
+	RA2PSXMatrix result;
+	for (uint row = 0; row < 3; ++row) {
+		for (uint column = 0; column < 3; ++column) {
+			float value = 0.0f;
+			for (uint i = 0; i < 3; ++i)
+				value += left.rotation[row][i] * matrix.rotation[i][column];
+			result.rotation[row][column] = value;
+		}
+		float value = left.translation[row];
+		for (uint i = 0; i < 3; ++i)
+			value += left.rotation[row][i] * matrix.translation[i];
+		result.translation[row] = value;
+	}
+	matrix = result;
+}
+
+void RA2PSXMatrix::preRotateX(int angle) {
+	RA2PSXMatrix rotate;
+	rotate.setRotationX(angle);
+	preMultiply(*this, rotate);
+}
+
+void RA2PSXMatrix::preRotateY(int angle) {
+	RA2PSXMatrix rotate;
+	rotate.setRotationY(angle);
+	preMultiply(*this, rotate);
+}
+
+void RA2PSXMatrix::preRotateZ(int angle) {
+	RA2PSXMatrix rotate;
+	rotate.setRotationZ(angle);
+	preMultiply(*this, rotate);
+}
+
+void RA2PSXMatrix::setTranslation(int x, int y, int z) {
+	translation[0] = (float)x;
+	translation[1] = (float)y;
+	translation[2] = (float)z;
+}
+
 bool loadRA2PSXTextures(const Common::Array<byte> &data,
 		Common::Array<RA2PSXTexture> &textures) {
 	const uint initialCount = textures.size();
@@ -586,6 +675,27 @@ void RA2PSXTinyGLRenderer::renderPerspectiveModel(const RA2PSXModel &model,
 	const float modelYy = downY * cosine - rightY * sine;
 	const float modelYz = downZ * cosine - rightZ * sine;
 
+	RA2PSXMatrix transform;
+	transform.rotation[0][0] = modelXx;
+	transform.rotation[0][1] = modelYx;
+	transform.rotation[0][2] = forwardX;
+	transform.rotation[1][0] = modelXy;
+	transform.rotation[1][1] = modelYy;
+	transform.rotation[1][2] = forwardY;
+	transform.rotation[2][0] = modelXz;
+	transform.rotation[2][1] = modelYz;
+	transform.rotation[2][2] = forwardZ;
+	transform.translation[0] = x;
+	transform.translation[1] = y;
+	transform.translation[2] = z;
+	renderTransformedModel(model, transform, depthTest);
+}
+
+void RA2PSXTinyGLRenderer::renderTransformedModel(const RA2PSXModel &model,
+		const RA2PSXMatrix &transform, bool depthTest) {
+	if (!_context || model.vertices().empty())
+		return;
+
 	struct ProjectedVertex {
 		float x;
 		float y;
@@ -599,9 +709,12 @@ void RA2PSXTinyGLRenderer::renderPerspectiveModel(const RA2PSXModel &model,
 	const float focalLength = _width * 2.0f;
 	for (uint i = 0; i < model.vertices().size(); ++i) {
 		const RA2PSXVertex &vertex = model.vertices()[i];
-		const float worldX = x + modelXx * vertex.x + modelYx * vertex.y + forwardX * vertex.z;
-		const float worldY = y + modelXy * vertex.x + modelYy * vertex.y + forwardY * vertex.z;
-		const float worldZ = z + modelXz * vertex.x + modelYz * vertex.y + forwardZ * vertex.z;
+		const float worldX = transform.translation[0] + transform.rotation[0][0] * vertex.x +
+				transform.rotation[0][1] * vertex.y + transform.rotation[0][2] * vertex.z;
+		const float worldY = transform.translation[1] + transform.rotation[1][0] * vertex.x +
+				transform.rotation[1][1] * vertex.y + transform.rotation[1][2] * vertex.z;
+		const float worldZ = transform.translation[2] + transform.rotation[2][0] * vertex.x +
+				transform.rotation[2][1] * vertex.y + transform.rotation[2][2] * vertex.z;
 		projected[i].z = worldZ;
 		projected[i].visible = worldZ > 1.0f;
 		if (projected[i].visible) {
@@ -641,7 +754,8 @@ void RA2PSXTinyGLRenderer::renderPerspectiveModel(const RA2PSXModel &model,
 	for (uint faceIndex = 0; faceIndex < projectedFaces.size(); ++faceIndex) {
 		const ProjectedFace &projectedFace = projectedFaces[faceIndex];
 		const RA2PSXFace &face = faces[projectedFace.index];
-		const float orderingDepth = (z - projectedFace.depth) * 512.0f / model.radius();
+		const float orderingDepth = (transform.translation[2] - projectedFace.depth) *
+				512.0f / model.radius();
 
 		const RA2PSXTexture *texture = model.texture(face.texture);
 		setFaceState(model, face);
@@ -649,15 +763,15 @@ void RA2PSXTinyGLRenderer::renderPerspectiveModel(const RA2PSXModel &model,
 		tglBegin(face.vertexCount == 4 ? TGL_QUAD_STRIP : TGL_TRIANGLES);
 		for (uint vertexIndex = 0; vertexIndex < face.vertexCount; ++vertexIndex) {
 			setFaceColor(face, vertexIndex,
-					modelXx * face.normalX[vertexIndex] +
-							modelYx * face.normalY[vertexIndex] +
-							forwardX * face.normalZ[vertexIndex],
-					modelXy * face.normalX[vertexIndex] +
-							modelYy * face.normalY[vertexIndex] +
-							forwardY * face.normalZ[vertexIndex],
-					modelXz * face.normalX[vertexIndex] +
-							modelYz * face.normalY[vertexIndex] +
-							forwardZ * face.normalZ[vertexIndex], faceDepth);
+					transform.rotation[0][0] * face.normalX[vertexIndex] +
+							transform.rotation[0][1] * face.normalY[vertexIndex] +
+							transform.rotation[0][2] * face.normalZ[vertexIndex],
+					transform.rotation[1][0] * face.normalX[vertexIndex] +
+							transform.rotation[1][1] * face.normalY[vertexIndex] +
+							transform.rotation[1][2] * face.normalZ[vertexIndex],
+					transform.rotation[2][0] * face.normalX[vertexIndex] +
+							transform.rotation[2][1] * face.normalY[vertexIndex] +
+							transform.rotation[2][2] * face.normalZ[vertexIndex], faceDepth);
 			if (texture)
 				tglTexCoord2f((face.u[vertexIndex] + 0.5f) / texture->width,
 						(face.v[vertexIndex] + 0.5f) / texture->height);

@@ -22,6 +22,7 @@
 #include "audio/decoders/xa.h"
 #include "audio/mixer.h"
 
+#include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/system.h"
@@ -92,6 +93,9 @@ static bool timeReached(uint32 now, uint32 target) {
 }
 
 static int soundBalance(int pan) {
+	// "sound mode: mono" in the options menu collapses the panning.
+	if (ConfMan.hasKey("rebel2_mono") && ConfMan.getBool("rebel2_mono"))
+		return 0;
 	return CLIP((pan - 64) * 2, -127, 127);
 }
 

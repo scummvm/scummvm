@@ -39,6 +39,7 @@ class ScummEngine_v7;
 class RA2PSXLevel1UI;
 class RA2PSXMainMenuUI;
 class RA2PSXMovieText;
+class RA2PSXOptionsUI;
 
 enum RA2PSXMovieTextSequence {
 	kRA2PSXMovieTextNone,
@@ -132,10 +133,53 @@ private:
 	Impl *_impl;
 };
 
+// Options menu settings; sfx steps by 7 up to 0x70, the CD volumes by 0x200 up to 0x1000.
+struct RA2PSXSettings {
+	enum {
+		kSFXMaximum = 0x70,
+		kSFXStep = 7,
+		kCDMaximum = 0x1000,
+		kCDStep = 0x200
+	};
+
+	RA2PSXSettings() { reset(); }
+
+	void reset();
+	void load();
+	void save() const;
+	void apply(ScummEngine_v7 *vm) const;
+	byte videoVolume() const;
+
+	int difficulty;
+	int sfx;
+	int music;
+	int movies;
+	bool mono;
+};
+
 struct RA2PSXVertex {
 	int16 x;
 	int16 y;
 	int16 z;
+};
+
+// PlayStation matrix helpers: 4096 angle units per turn, 1/4096 fixed point scales,
+// and pre-rotating multiplies from the left.
+struct RA2PSXMatrix {
+	RA2PSXMatrix() { setIdentity(); }
+
+	void setIdentity();
+	void setScale(int x, int y, int z);
+	void setRotationX(int angle);
+	void setRotationY(int angle);
+	void setRotationZ(int angle);
+	void preRotateX(int angle);
+	void preRotateY(int angle);
+	void preRotateZ(int angle);
+	void setTranslation(int x, int y, int z);
+
+	float rotation[3][3];
+	float translation[3];
 };
 
 struct RA2PSXTexture {
@@ -197,6 +241,8 @@ public:
 	void renderPerspectiveModel(const RA2PSXModel &model, float x, float y, float z,
 			float directionX, float directionY, float directionZ, float roll,
 			bool depthTest = true);
+	void renderTransformedModel(const RA2PSXModel &model, const RA2PSXMatrix &transform,
+			bool depthTest = true);
 	void finishFrame(Graphics::Surface &surface);
 
 private:
@@ -248,7 +294,12 @@ private:
 			const RA2PSXMovieText *movieText = nullptr,
 			RA2PSXMovieTextSequence textSequence = kRA2PSXMovieTextNone);
 	bool playIntroSequence(const RA2PSXMovieText &movieText);
-	MenuResult runMainMenu(const RA2PSXMainMenuUI &ui);
+	MenuResult runMainMenu(const RA2PSXMainMenuUI &ui, const RA2PSXOptionsUI &options);
+#ifdef USE_TINYGL
+	// TinyGL tracks one context, so the options screen borrows the title screen's renderer.
+	void runOptionsMenu(const RA2PSXOptionsUI &ui, RA2PSXSoundPlayer &sound,
+			RA2PSXTinyGLRenderer &renderer);
+#endif
 	bool loadGlobalAssets(RA2PSXMainMenuUI &menu);
 	bool loadMovieTextAssets(RA2PSXMovieText &movieText);
 	bool loadLevel1Assets(RA2PSXModel &enemy, RA2PSXModel &ship,
@@ -259,6 +310,10 @@ private:
 
 	ScummEngine_v7 *_vm;
 	RA2PSXSoundBank _soundBank;
+	RA2PSXSettings _settings;
+	// The crest on the title screen and the freighter behind the options list.
+	RA2PSXModel _logoModel;
+	RA2PSXModel _cloakModel;
 };
 
 } // End of namespace Scumm
