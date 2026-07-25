@@ -25,11 +25,14 @@
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/memstream.h"
+#include "common/ptr.h"
 #include "common/system.h"
 #include "common/util.h"
 
 #include "scumm/scumm_v7.h"
 #include "scumm/insane/rebel2/psx/psx.h"
+
+#include <math.h>
 
 namespace Scumm {
 
@@ -82,6 +85,82 @@ private:
 	uint64 _attackSamples;
 	uint64 _decaySamples;
 	uint32 _sustain;
+};
+
+// A 14 bit bend centred on kNeutralBend, scaled into semitones by the range
+// macro command 0x33 sets.
+static int bendToStep(int bend, int rangeUp, int rangeDown) {
+	const int offset = CLIP(bend, 0, 0x3fff) - RA2PSXSoundPlayer::kNeutralBend;
+	if (!offset)
+		return 0x1000;
+	const int range = offset < 0 ? rangeDown : rangeUp;
+	const double semitones = (double)offset * range / 8192.0;
+	return CLIP((int)(0x1000 * pow(2.0, semitones / 12.0)), 1, 0x8000);
+}
+
+// The SPU bends in place; the mixer cannot, so the step lives in a block the
+// voice keeps a reference to and the stream reads.
+struct RA2PSXPitch {
+	RA2PSXPitch(int initial) : pitch(initial) {}
+	int pitch;
+};
+
+typedef Common::SharedPtr<RA2PSXPitch> RA2PSXPitchRef;
+
+class RA2PSXPitchStream : public Audio::RewindableAudioStream {
+public:
+	RA2PSXPitchStream(Audio::RewindableAudioStream *stream, const RA2PSXPitchRef &pitch)
+			: _stream(stream), _pitch(pitch), _channels(stream->isStereo() ? 2 : 1),
+			_fraction(0x1000), _ended(false) {
+		for (int i = 0; i < 2; ++i)
+			_previous[i] = _current[i] = 0;
+	}
+
+	~RA2PSXPitchStream() override { delete _stream; }
+
+	int readBuffer(int16 *buffer, const int numSamples) override {
+		int produced = 0;
+		while (produced + _channels <= numSamples) {
+			while (_fraction >= 0x1000) {
+				int16 frame[2] = { 0, 0 };
+				if (_stream->readBuffer(frame, _channels) != _channels) {
+					_ended = true;
+					return produced;
+				}
+				for (int i = 0; i < _channels; ++i) {
+					_previous[i] = _current[i];
+					_current[i] = frame[i];
+				}
+				_fraction -= 0x1000;
+			}
+			for (int i = 0; i < _channels; ++i)
+				buffer[produced++] = (int16)((_previous[i] * (0x1000 - _fraction) +
+						_current[i] * _fraction) >> 12);
+			_fraction += CLIP(_pitch->pitch, 1, 0x3fff);
+		}
+		return produced;
+	}
+
+	bool isStereo() const override { return _channels == 2; }
+	bool endOfData() const override { return _ended || _stream->endOfData(); }
+	int getRate() const override { return _stream->getRate(); }
+
+	bool rewind() override {
+		_fraction = 0x1000;
+		_ended = false;
+		for (int i = 0; i < 2; ++i)
+			_previous[i] = _current[i] = 0;
+		return _stream->rewind();
+	}
+
+private:
+	Audio::RewindableAudioStream *_stream;
+	RA2PSXPitchRef _pitch;
+	int _channels;
+	int _fraction;
+	bool _ended;
+	int16 _previous[2];
+	int16 _current[2];
 };
 
 static bool matchesTag(const Common::Array<byte> &data, uint32 offset, const char *tag) {
@@ -148,14 +227,17 @@ bool RA2PSXSoundBank::load(const Common::Array<byte> &sampleData,
 	if (macroBase64 < 4 || macroBase64 > projectData.size())
 		return false;
 	const uint32 macroBase = (uint32)macroBase64;
-	for (uint32 record = macroBase - 4; record + 8 <= projectData.size() &&
+	// Records are (int32 offset relative to the table, uint32 id) pairs; swapping
+	// the two pairs every macro with the previous entry's id.
+	for (uint32 record = macroBase; record + 8 <= projectData.size() &&
 			macros.size() < 256; record += 8) {
-		const int32 relative = (int32)READ_LE_UINT32(projectData.data() + record + 4);
+		const int32 relative = (int32)READ_LE_UINT32(projectData.data() + record);
+		const uint32 id = READ_LE_UINT32(projectData.data() + record + 4);
 		const int64 target = (int64)macroBase + relative;
-		if (target < 0 || target + 8 > (int64)projectData.size() || (target & 3))
+		if (id > 0xffff || target < 0 || target + 8 > (int64)projectData.size() || (target & 3))
 			break;
 		Macro macro;
-		macro.id = READ_LE_UINT32(projectData.data() + record);
+		macro.id = (uint32)id;
 		macro.offset = (uint32)target;
 		macros.push_back(macro);
 	}
@@ -269,11 +351,13 @@ bool RA2PSXSoundBank::getMacroCommand(uint16 macro, uint16 step, byte *command) 
 	return false;
 }
 
-Audio::RewindableAudioStream *RA2PSXSoundBank::makeStream(uint16 id, uint32 rate,
+Audio::RewindableAudioStream *RA2PSXSoundBank::makeStream(uint16 id, uint32 macroRate,
 		uint16 adsrId) const {
 	const Sample *sample = findSample(id);
 	if (!sample)
 		return nullptr;
+
+	const uint32 rate = macroRate ? macroRate : sample->rate;
 
 	const uint32 size = (uint32)sample->blocks * 16;
 	byte *copy = (byte *)malloc(size);
@@ -283,8 +367,7 @@ Audio::RewindableAudioStream *RA2PSXSoundBank::makeStream(uint16 id, uint32 rate
 
 	Common::SeekableReadStream *source =
 			new Common::MemoryReadStream(copy, size, DisposeAfterUse::YES);
-	Audio::RewindableAudioStream *stream =
-			Audio::makeXAStream(source, rate ? rate : sample->rate);
+	Audio::RewindableAudioStream *stream = Audio::makeXAStream(source, rate);
 	const ADSR *adsr = findADSR(adsrId);
 	if (adsr)
 		stream = new RA2PSXADSRStream(stream, adsr->attack, adsr->decay, adsr->sustain);
@@ -302,7 +385,9 @@ struct RA2PSXSoundPlayer::Impl {
 	struct Voice {
 		Voice() : active(false), waiting(false), waitForSampleEnd(false), macroDone(false),
 				root(false), sound(0), macro(0), step(0), adsr(0xffff), rate(0),
-				rateOverride(-1), volume(0), pan(64), priority(0), born(0), readyTick(0),
+				sampleId(0), bendUp(2), bendDown(2),
+				pitch(RA2PSXSoundPlayer::kNeutralBend), volume(0), pan(64), priority(0),
+				born(0), readyTick(0),
 				startedAt(0), waitUntil(0) {}
 
 		bool active;
@@ -314,8 +399,12 @@ struct RA2PSXSoundPlayer::Impl {
 		uint16 macro;
 		uint16 step;
 		uint16 adsr;
+		uint16 sampleId;
+		RA2PSXPitchRef pitchRef;
+		int bendUp;
+		int bendDown;
 		uint32 rate;
-		int rateOverride;
+		int pitch;
 		int volume;
 		int pan;
 		byte priority;
@@ -365,13 +454,19 @@ struct RA2PSXSoundPlayer::Impl {
 		voices[index] = Voice();
 	}
 
-	void stopGroup(int index) {
-		const SoundId sound = groups[index].sound;
+	// Keyed on the sound, not the group: the group can be gone while voices play.
+	void stopSound(SoundId sound) {
 		for (int i = 0; i < kVoiceCount; ++i) {
 			if (voices[i].active && voices[i].sound == sound)
 				clearVoice(i);
 		}
-		groups[index] = Group();
+		const int group = findGroup(sound);
+		if (group >= 0)
+			groups[group] = Group();
+	}
+
+	void stopGroup(int index) {
+		stopSound(groups[index].sound);
 	}
 
 	int allocateGroup(SoundId sound) {
@@ -433,7 +528,7 @@ struct RA2PSXSoundPlayer::Impl {
 	}
 
 	int startVoice(SoundId sound, uint16 macro, uint16 step, byte priority,
-			byte maxVoices, int volume, int pan, int rateOverride, bool root,
+			byte maxVoices, int volume, int pan, int pitch, bool root,
 			uint32 now, int excluded) {
 		const int slot = allocateVoice(macro, priority, maxVoices, excluded);
 		if (slot < 0)
@@ -445,7 +540,7 @@ struct RA2PSXSoundPlayer::Impl {
 		voice.sound = sound;
 		voice.macro = macro;
 		voice.step = step;
-		voice.rateOverride = rateOverride;
+		voice.pitch = pitch;
 		voice.volume = CLIP(volume, 0, 127);
 		voice.pan = CLIP(pan, 0, 127);
 		voice.priority = priority;
@@ -470,11 +565,8 @@ struct RA2PSXSoundPlayer::Impl {
 	}
 
 	void finishVoice(int index) {
-		const SoundId sound = voices[index].sound;
 		if (voices[index].root) {
-			const int group = findGroup(sound);
-			if (group >= 0)
-				stopGroup(group);
+			stopSound(voices[index].sound);
 			return;
 		}
 		voices[index].macroDone = true;
@@ -505,8 +597,11 @@ struct RA2PSXSoundPlayer::Impl {
 					milliseconds = randomState % milliseconds;
 				}
 				voice.waitUntil = command[4] ? voice.startedAt + milliseconds : now + milliseconds;
-				voice.waitForSampleEnd = command[3] != 0;
+				// Byte 1 bit 0 also ends on the sample; 0xffff means no limit.
+				voice.waitForSampleEnd = (command[1] & 1) != 0;
 				voice.waiting = milliseconds != 0;
+				if (milliseconds == 0xffff)
+					voice.waitUntil = now + 0xffffff;
 				if (voice.root && nextCommandEnds(voice))
 					setGroupExpiry(voice.sound, voice.waitUntil);
 				if (voice.waiting)
@@ -518,27 +613,21 @@ struct RA2PSXSoundPlayer::Impl {
 				const uint16 step = READ_LE_UINT16(command + 4);
 				if (macro != voice.macro) {
 					startVoice(voice.sound, macro, step, command[6], command[7],
-							voice.volume, voice.pan, -1, false, now, index);
+							voice.volume, voice.pan, voice.pitch, false, now, index);
 				}
 				break;
 			}
 			case 0xc:
 				voice.adsr = READ_LE_UINT16(command + 1);
 				break;
+			case 0x33:
+				voice.bendUp = command[1] ? command[1] : 1;
+				voice.bendDown = command[2] ? command[2] : 1;
+				break;
 			case 0x10: {
 				vm->_mixer->stopHandle(voice.handle);
-				const uint32 rate = voice.rateOverride >= 0 ?
-						(uint32)voice.rateOverride : voice.rate;
-				if (rate != 0 || voice.rateOverride < 0) {
-					Audio::RewindableAudioStream *stream = bank.makeStream(
-							READ_LE_UINT16(command + 1), rate, voice.adsr);
-					if (stream) {
-						vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &voice.handle,
-								stream, -1,
-								voice.volume * Audio::Mixer::kMaxChannelVolume / 127,
-								soundBalance(voice.pan));
-					}
-				}
+				voice.sampleId = READ_LE_UINT16(command + 1);
+				startSample(index);
 				break;
 			}
 			case 0x1f:
@@ -552,7 +641,22 @@ struct RA2PSXSoundPlayer::Impl {
 		finishVoice(index);
 	}
 
-	SoundId play(uint16 sfxId, int volume, int pan, int rate) {
+	void startSample(int index) {
+		Voice &voice = voices[index];
+		if (!voice.sampleId)
+			return;
+		Audio::RewindableAudioStream *stream = bank.makeStream(voice.sampleId, voice.rate,
+				voice.adsr);
+		if (!stream)
+			return;
+		voice.pitchRef = RA2PSXPitchRef(new RA2PSXPitch(
+				bendToStep(voice.pitch, voice.bendUp, voice.bendDown)));
+		stream = new RA2PSXPitchStream(stream, voice.pitchRef);
+		vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &voice.handle, stream, -1,
+				voice.volume * Audio::Mixer::kMaxChannelVolume / 127, soundBalance(voice.pan));
+	}
+
+	SoundId play(uint16 sfxId, int volume, int pan, int pitch) {
 		uint16 macro;
 		byte priority;
 		byte maxVoices;
@@ -565,7 +669,7 @@ struct RA2PSXSoundPlayer::Impl {
 		const int group = allocateGroup(sound);
 		const uint32 now = g_system->getMillis();
 		const int voice = startVoice(sound, macro, 0, priority, maxVoices,
-				volume, pan, rate, true, now, -1);
+				volume, pan, pitch, true, now, -1);
 		if (voice < 0) {
 			groups[group] = Group();
 			return kInvalidSoundId;
@@ -632,10 +736,32 @@ struct RA2PSXSoundPlayer::Impl {
 		}
 	}
 
+	void setVolume(SoundId sound, int volume) {
+		volume = CLIP(volume, 0, 127);
+		for (int i = 0; i < kVoiceCount; ++i) {
+			if (!voices[i].active || voices[i].sound != sound)
+				continue;
+			voices[i].volume = volume;
+			if (vm->_mixer->isSoundHandleActive(voices[i].handle))
+				vm->_mixer->setChannelVolume(voices[i].handle,
+						volume * Audio::Mixer::kMaxChannelVolume / 127);
+		}
+	}
+
+	void setPitch(SoundId sound, int pitch) {
+		pitch = CLIP(pitch, 0, 0x3fff);
+		for (int i = 0; i < kVoiceCount; ++i) {
+			if (!voices[i].active || voices[i].sound != sound)
+				continue;
+			voices[i].pitch = pitch;
+			if (voices[i].pitchRef)
+				voices[i].pitchRef->pitch =
+						bendToStep(pitch, voices[i].bendUp, voices[i].bendDown);
+		}
+	}
+
 	void stop(SoundId sound) {
-		const int group = findGroup(sound);
-		if (group >= 0)
-			stopGroup(group);
+		stopSound(sound);
 	}
 
 	void stopAll() {
@@ -656,8 +782,8 @@ RA2PSXSoundPlayer::~RA2PSXSoundPlayer() {
 }
 
 RA2PSXSoundPlayer::SoundId RA2PSXSoundPlayer::play(uint16 sfx, int volume,
-		int pan, int rate) {
-	return _impl->play(sfx, volume, pan, rate);
+		int pan, int pitch) {
+	return _impl->play(sfx, volume, pan, pitch);
 }
 
 void RA2PSXSoundPlayer::update() {
@@ -666,6 +792,14 @@ void RA2PSXSoundPlayer::update() {
 
 void RA2PSXSoundPlayer::setPan(SoundId sound, int pan) {
 	_impl->setPan(sound, pan);
+}
+
+void RA2PSXSoundPlayer::setVolume(SoundId sound, int volume) {
+	_impl->setVolume(sound, volume);
+}
+
+void RA2PSXSoundPlayer::setPitch(SoundId sound, int pitch) {
+	_impl->setPitch(sound, pitch);
 }
 
 void RA2PSXSoundPlayer::stop(SoundId sound) {

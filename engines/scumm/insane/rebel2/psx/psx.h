@@ -74,7 +74,7 @@ private:
 class RA2PSXSoundBank {
 public:
 	bool load(const Common::Array<byte> &sampleData, const Common::Array<byte> &projectData);
-	Audio::RewindableAudioStream *makeStream(uint16 id, uint32 rate,
+	Audio::RewindableAudioStream *makeStream(uint16 id, uint32 macroRate,
 			uint16 adsrId = 0xffff) const;
 	bool getSFX(uint16 id, uint16 &macro, byte &priority, byte &maxVoices) const;
 	bool getMacroCommand(uint16 macro, uint16 step, byte *command) const;
@@ -123,9 +123,14 @@ public:
 	RA2PSXSoundPlayer(ScummEngine_v7 *vm, const RA2PSXSoundBank &bank);
 	~RA2PSXSoundPlayer();
 
-	SoundId play(uint16 sfx, int volume, int pan, int rate = -1);
+	// Pitch is a 14 bit bend; kNeutralBend leaves the sound at its own rate.
+	enum { kNeutralBend = 0x2000 };
+
+	SoundId play(uint16 sfx, int volume, int pan, int pitch = kNeutralBend);
 	void update();
 	void setPan(SoundId sound, int pan);
+	void setVolume(SoundId sound, int volume);
+	void setPitch(SoundId sound, int pitch);
 	void stop(SoundId sound);
 	void stopAll();
 

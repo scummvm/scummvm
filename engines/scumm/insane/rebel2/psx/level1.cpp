@@ -40,9 +40,45 @@ namespace Scumm {
 #ifdef USE_TINYGL
 static const int kLevel1FrameRate = 30;
 
+// The original pans as (x * 640 / z) / 2 + 0x40, saturating before the edges.
 static int getLevel1SoundPan(float screenX) {
-	return CLIP<int>((int)(screenX * 127.0f / 320.0f), 0, 127);
+	return CLIP<int>((int)((screenX - 160.0f) * 0.5f) + 64, 0, 127);
 }
+
+enum {
+	kLevel1SfxTieApproachA = 0x19,
+	kLevel1SfxTieApproachB = 0x1a,
+	kLevel1SfxTieExplode = 0x1b,
+	kLevel1SfxTieFire = 0x17,
+	kLevel1SfxPlayerFire = 0x18,
+	kLevel1SfxPlayerHit = 0x36,
+	kLevel1SfxLowShield = 0x2d,
+	kLevel1SfxEngineLeft = 0x32,
+	kLevel1SfxEngineRight = 0x33,
+	kLevel1SfxEngineOutside = 0x41,
+	kLevel1SfxExtraLife = 0x44
+};
+
+// Outside engine base volume, and the per-frame step of the mix cross-fade.
+enum {
+	kLevel1OutsideBase = 0x46,
+	kLevel1MixStep = 2,
+	kLevel1MixMaximum = 0x7f
+};
+
+static int approachMix(int current, int target) {
+	if (current < target)
+		return MIN(target, current + kLevel1MixStep);
+	return MAX(target, current - kLevel1MixStep);
+}
+
+// Points per kill and the extra life thresholds, by difficulty.
+static const int kLevel1KillScore[3] = { 80, 100, 150 };
+static const int kLevel1ExtraLife[3][3] = {
+	{ 5000, 5000, 10000 },
+	{ 5000, 5000, 30000 },
+	{ 10000, 20000, 30000 }
+};
 
 struct RA2PSXLevel1Enemy {
 	RA2PSXLevel1Enemy() : active(false), pattern(0), age(0), lifetime(0), fireFrame(0),
@@ -388,6 +424,20 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 	RA2PSXLevel1Ship ship;
 	RA2PSXSoundPlayer soundPlayer(_vm, _soundBank);
 	RA2PSXSoundPlayer::SoundId approachSounds[3] = {};
+	// A hard left/right pair for the cockpit and a centred one for outside,
+	// cross-faded as the view changes.
+	const RA2PSXSoundPlayer::SoundId engineLeft =
+			soundPlayer.play(kLevel1SfxEngineLeft, 0x28, 0x00);
+	const RA2PSXSoundPlayer::SoundId engineRight =
+			soundPlayer.play(kLevel1SfxEngineRight, 0x28, 0x7f);
+	const RA2PSXSoundPlayer::SoundId engineOutside =
+			soundPlayer.play(kLevel1SfxEngineOutside, kLevel1OutsideBase, 0x40);
+	RA2PSXSoundPlayer::SoundId lowShieldAlarm = RA2PSXSoundPlayer::kInvalidSoundId;
+	int cockpitMix = -1;
+	int outsideMix = -1;
+	const int difficulty = CLIP(_settings.difficulty, 0, 2);
+	int extraLifeStage = 0;
+	int nextExtraLife = kLevel1ExtraLife[difficulty][0];
 	int aimX = 160;
 	int aimY = 113;
 	int aimVelocityX = 0;
@@ -608,6 +658,30 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 						left, right, up, down);
 			}
 
+			const int cockpitTarget = thirdPersonView ? 0 : kLevel1MixMaximum;
+			const int outsideTarget = thirdPersonView ? kLevel1MixMaximum : 0;
+			if (cockpitMix != cockpitTarget || outsideMix != outsideTarget) {
+				cockpitMix = cockpitMix < 0 ? cockpitTarget :
+						approachMix(cockpitMix, cockpitTarget);
+				outsideMix = outsideMix < 0 ? outsideTarget :
+						approachMix(outsideMix, outsideTarget);
+				soundPlayer.setVolume(engineLeft, cockpitMix);
+				soundPlayer.setVolume(engineRight, cockpitMix);
+				soundPlayer.setVolume(engineOutside, outsideMix);
+			} else if (thirdPersonView) {
+				// Outside, the engine tracks how hard the ship is turning.
+				const int turn = MAX(ABS(ship.velocityX), ABS(ship.velocityY));
+				soundPlayer.setPitch(engineOutside, 0x2000 + turn);
+				soundPlayer.setVolume(engineOutside, kLevel1OutsideBase +
+						turn / (0xa0 - kLevel1OutsideBase));
+				soundPlayer.setPan(engineOutside,
+						CLIP<int>(ship.x * 4096 / 0x479f + 64, 0, 127));
+			}
+
+			// Started once, then left running, as in the original.
+			if (shield <= 31 && lowShieldAlarm == RA2PSXSoundPlayer::kInvalidSoundId)
+				lowShieldAlarm = soundPlayer.play(kLevel1SfxLowShield, 0x50, 0x40);
+
 			if (logicFrame >= nextSpawnAdjustment) {
 				nextSpawnAdjustment = logicFrame + 20;
 				spawnRange = MAX(40, spawnRange - 1);
@@ -628,9 +702,10 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 					}
 				}
 				if (spawnedEnemy >= 0) {
-					const uint16 sfx = _vm->_rnd.getRandomNumber(999) < 800 ? 0x19 : 0x1a;
-					const int rate = 0x1c18 + _vm->_rnd.getRandomNumber(1999);
-					approachSounds[spawnedEnemy] = soundPlayer.play(sfx, 0x5e, 0x40, rate);
+					const uint16 sfx = _vm->_rnd.getRandomNumber(999) < 800 ?
+							kLevel1SfxTieApproachA : kLevel1SfxTieApproachB;
+					const int pitch = 0x1c18 + _vm->_rnd.getRandomNumber(1999);
+					approachSounds[spawnedEnemy] = soundPlayer.play(sfx, 0x5e, 0x40, pitch);
 				}
 				spawnDelay = spawnBase + _vm->_rnd.getRandomNumber(spawnRange - 1);
 			}
@@ -650,21 +725,21 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 				soundPlayer.setPan(approachSounds[i], soundPan);
 				if (enemies[i].age == enemies[i].fireFrame) {
 					enemies[i].laserFrames = 4;
-					soundPlayer.play(0x17, 0x4e, soundPan);
+					soundPlayer.play(kLevel1SfxTieFire, 0x4e, soundPan);
 					if (_vm->_rnd.getRandomNumber(99) < 38) {
 						shield = MAX(0, shield - (int)_vm->_rnd.getRandomNumberRng(6, 10));
-						soundPlayer.play(0x36, 0x7f, 0x40);
+						soundPlayer.play(kLevel1SfxPlayerHit, 0x7f, 0x40);
 					}
 				}
 				if (enemies[i].age >= enemies[i].lifetime) {
-					const int rate = _vm->_rnd.getRandomNumber(0x3fff);
-					soundPlayer.play(0x1b, 0x5a, soundPan, rate);
+					const int pitch = _vm->_rnd.getRandomNumber(0x3fff);
+					soundPlayer.play(kLevel1SfxTieExplode, 0x5a, soundPan, pitch);
 					soundPlayer.stop(approachSounds[i]);
 					approachSounds[i] = RA2PSXSoundPlayer::kInvalidSoundId;
 					enemies[i].active = false;
 					if (_vm->_rnd.getRandomNumber(99) < 18) {
 						shield = MAX(0, shield - 12);
-						soundPlayer.play(0x36, 0x7f, 0x40);
+						soundPlayer.play(kLevel1SfxPlayerHit, 0x7f, 0x40);
 					}
 				}
 			}
@@ -681,7 +756,7 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 				if (!spawnLevel1Shot(shots, aimX, aimY,
 						thirdPersonView ? &ship : nullptr, shotTargetX, shotTargetY))
 					continue;
-				soundPlayer.play(0x18, 0x3f, 0x40);
+				soundPlayer.play(kLevel1SfxPlayerFire, 0x3f, 0x40);
 				int hitEnemy = -1;
 				float hitDistance = 1000000.0f;
 				for (int i = 0; i < 3; ++i) {
@@ -698,12 +773,18 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 				}
 				if (hitEnemy >= 0) {
 					const int soundPan = getLevel1SoundPan(enemies[hitEnemy].x);
-					const int rate = _vm->_rnd.getRandomNumber(0x3fff);
-					soundPlayer.play(0x1b, 0x5a, soundPan, rate);
+					const int pitch = _vm->_rnd.getRandomNumber(0x3fff);
+					soundPlayer.play(kLevel1SfxTieExplode, 0x5a, soundPan, pitch);
 					soundPlayer.stop(approachSounds[hitEnemy]);
 					approachSounds[hitEnemy] = RA2PSXSoundPlayer::kInvalidSoundId;
 					enemies[hitEnemy].active = false;
-					score = MIN(9999999, score + 100);
+					score = MIN(9999999, score + kLevel1KillScore[difficulty]);
+					if (score >= nextExtraLife) {
+						// The original also awards a life; the shared runner owns it.
+						soundPlayer.play(kLevel1SfxExtraLife, 0x7f, 0x40);
+						extraLifeStage = MIN(extraLifeStage + 1, 2);
+						nextExtraLife += kLevel1ExtraLife[difficulty][extraLifeStage];
+					}
 					for (int i = 0; i < 3; ++i) {
 						if (explosions[i].frames == 0) {
 							explosions[i].frames = 10;
