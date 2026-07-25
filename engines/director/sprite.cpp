@@ -28,6 +28,7 @@
 #include "director/sprite.h"
 #include "director/castmember/castmember.h"
 #include "director/castmember/digitalvideo.h"
+#include "director/castmember/movie.h"
 #include "director/castmember/shape.h"
 #include "director/castmember/text.h"
 
@@ -354,10 +355,10 @@ bool Sprite::respondsToMouse() {
 	if (_cast && _cast->_type == kCastButton)
 		return true;
 
-	// A movie cast member is interactive: its embedded movie may have mouse
-	// handlers, so clicks must be routed into it.
+	// A movie cast member is interactive only when its scripts are enabled:
+	// its embedded movie may then have mouse handlers to route clicks into.
 	if (_cast && _cast->_type == kCastMovie)
-		return true;
+		return ((MovieCastMember *)_cast)->_enableScripts;
 
 	// TODO: Check if we need to check against individual events like below
 	if (g_director->getVersion() >= 600) {

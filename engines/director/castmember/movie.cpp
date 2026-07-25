@@ -156,6 +156,10 @@ void MovieCastMember::load() {
 	_linkedMovie->loadArchive();
 	_score = _linkedMovie->getScore();
 
+	// scriptsEnabled off makes the linked movie a passive flipbook: its score
+	// advances and its channels refresh, but it runs no Lingo of its own.
+	_score->_haveInteractivity = _enableScripts;
+
 	// resolve the sprites against the linked movie's own cast
 	for (auto &frame : _score->_scoreCache) {
 		for (auto &sprite : frame->_sprites) {
@@ -183,12 +187,15 @@ void MovieCastMember::update() {
 	Movie *hostMovie = window->getCurrentMovie();
 	window->setCurrentMovie(_linkedMovie);
 
-	// Give the linked movie its own Lingo state for the step, so its
-	// go()/freeze does not block the host's scripts.
-	if (!_embeddedLingoState)
-		_embeddedLingoState = new LingoState;
-	window->swapLingoState(_embeddedLingoState, _embeddedFrozenStates);
-	g_lingo->switchStateFromWindow();
+	// With scripts enabled, give the linked movie its own Lingo state for the
+	// step so its go()/freeze does not block the host's scripts. With scripts
+	// disabled it runs no Lingo, so the swap and input routing do not apply.
+	if (_enableScripts) {
+		if (!_embeddedLingoState)
+			_embeddedLingoState = new LingoState;
+		window->swapLingoState(_embeddedLingoState, _embeddedFrozenStates);
+		g_lingo->switchStateFromWindow();
+	}
 
 	if (score->_playState != kPlayStarted)
 		score->startPlay();
@@ -196,14 +203,16 @@ void MovieCastMember::update() {
 	// A per-frame go() in exitFrame leaves hasJump/frozen state set, so
 	// step() never drains routed input. Drain here so the embedded movie's
 	// mouse handlers (e.g. mouseUp) fire.
-	if (!_linkedMovie->_inputEventQueue.empty())
+	if (_enableScripts && !_linkedMovie->_inputEventQueue.empty())
 		g_lingo->processEvents(_linkedMovie->_inputEventQueue, true);
 
 	score->step();
 
-	window->swapLingoState(_embeddedLingoState, _embeddedFrozenStates);
+	if (_enableScripts) {
+		window->swapLingoState(_embeddedLingoState, _embeddedFrozenStates);
+		g_lingo->switchStateFromWindow();
+	}
 	window->setCurrentMovie(hostMovie);
-	g_lingo->switchStateFromWindow();
 }
 
 void MovieCastMember::routeInputEvent(LEvent event, Common::Point hostPos, const Common::Rect &bbox) {
