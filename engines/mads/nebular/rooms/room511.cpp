@@ -44,8 +44,8 @@ static Scratch local;
 
 
 static void room_511_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('c', 0));
-	g_sprite_ids[4] = _scene->_sprites.addSprites("*RXCD_6");
+	g_sprite_ids[1] = kernel_load_series(kernel_name('c', 0), 0);
+	g_sprite_ids[4] = kernel_load_series("*RXCD_6", 0);
 
 	// WORKARUND: Doing this earlier to allow to ensure hotspot bounds will get set from it's image
 	int frame = 0;
@@ -55,7 +55,7 @@ static void room_511_init() {
 		frame = -2;
 
 	if (global[kLineStatus] == 2 || global[kLineStatus] == 3) {
-		g_sprite_ids[7] = _scene->_sprites.addSprites(kernel_name('b', 4));
+		g_sprite_ids[7] = kernel_load_series(kernel_name('b', 4), 0);
 		g_sequence_ids[7] = _scene->_sequences.startCycle(g_sprite_ids[7], false, frame);
 		int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, g_sequence_ids[7], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(26, 153), FACING_NORTHEAST);
@@ -68,7 +68,7 @@ static void room_511_init() {
 		local._handingLine = false;
 
 	if (global[kBoatRaised]) {
-		g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('b', 0));
+		g_sprite_ids[2] = kernel_load_series(kernel_name('b', 0), 0);
 		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 1);
 		_scene->_sequences.setDepth(g_sequence_ids[2], 3);
 		_scene->_hotspots.activate(words_boat, false);
@@ -76,9 +76,9 @@ static void room_511_init() {
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(75, 124), FACING_NORTH);
 		_scene->_hotspots.activate(words_rope, false);
 	} else {
-		g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('b', 2));
-		g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('b', 3));
-		g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('b', 1));
+		g_sprite_ids[5] = kernel_load_series(kernel_name('b', 2), 0);
+		g_sprite_ids[6] = kernel_load_series(kernel_name('b', 3), 0);
+		g_sprite_ids[3] = kernel_load_series(kernel_name('b', 1), 0);
 
 		g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 1, 1, 0, 0);
 		_scene->_sequences.setDepth(g_sequence_ids[3], 5);

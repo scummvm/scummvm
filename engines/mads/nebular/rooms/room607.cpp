@@ -48,8 +48,8 @@ static Scratch local;
 
 
 static void room_607_init() {
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('c', 0));
-	g_sprite_ids[3] = _scene->_sprites.addSprites("*RXCD_3");
+	g_sprite_ids[2] = kernel_load_series(kernel_name('c', 0), 0);
+	g_sprite_ids[3] = kernel_load_series("*RXCD_3", 0);
 
 	if (!player.been_here_before && (_scene->_priorSceneId != 608))
 		global[kDogStatus] = DOG_PRESENT;
@@ -60,9 +60,9 @@ static void room_607_init() {
 	local._animationActive = 0;
 
 	if ((global[kDogStatus] == DOG_PRESENT) && (game.difficulty != DIFFICULTY_EASY)) {
-		g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('g', 3));
-		g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('g', 7));
-		g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('g', 0));
+		g_sprite_ids[4] = kernel_load_series(kernel_name('g', 3), 0);
+		g_sprite_ids[5] = kernel_load_series(kernel_name('g', 7), 0);
+		g_sprite_ids[1] = kernel_load_series(kernel_name('g', 0), 0);
 
 		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
 		_scene->_sequences.setDepth(g_sequence_ids[1], 6);
@@ -92,9 +92,9 @@ static void room_607_init() {
 		_scene->_sequences.setDepth(g_sequence_ids[2], 4);
 		_scene->loadAnimation(kernel_name('R', 1), 80);
 	} else if (global[kDogStatus] == DOG_LEFT) {
-		g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('g', 3));
-		g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('g', 7));
-		g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('g', 0));
+		g_sprite_ids[4] = kernel_load_series(kernel_name('g', 3), 0);
+		g_sprite_ids[5] = kernel_load_series(kernel_name('g', 7), 0);
+		g_sprite_ids[1] = kernel_load_series(kernel_name('g', 0), 0);
 	}
 
 	section_6_music();

@@ -39,10 +39,10 @@ static Scratch local;
 
 
 static void room_751_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites("*RM701X0");
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('a', 0));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('f', 0));
-	g_sprite_ids[4] = _scene->_sprites.addSprites("*RM202A1");
+	g_sprite_ids[1] = kernel_load_series("*RM701X0", 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('a', 0), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('f', 0), 0);
+	g_sprite_ids[4] = kernel_load_series("*RM202A1", 0);
 
 	if (!player.been_here_before)
 		local._rexHandingLine = false;

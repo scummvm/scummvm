@@ -40,13 +40,13 @@ static Scratch local;
 
 
 static void room_508_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('a', 0));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('m', 0));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('h', 0));
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('l', 2));
-	g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('t', 0));
-	g_sprite_ids[6] = _scene->_sprites.addSprites("*RXMRC_9");
-	g_sprite_ids[7] = _scene->_sprites.addSprites(kernel_name('l', 3));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('a', 0), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('m', 0), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('h', 0), 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_name('l', 2), 0);
+	g_sprite_ids[5] = kernel_load_series(kernel_name('t', 0), 0);
+	g_sprite_ids[6] = kernel_load_series("*RXMRC_9", 0);
+	g_sprite_ids[7] = kernel_load_series(kernel_name('l', 3), 0);
 
 	if (!player.been_here_before) {
 		global[kLaserOn] = false;

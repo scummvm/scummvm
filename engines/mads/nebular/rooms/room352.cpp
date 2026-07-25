@@ -126,25 +126,25 @@ static void putArmDown(bool corridorExit, bool doorwayExit) {
 }
 
 static void room_352_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites("*RM302x0");
-	g_sprite_ids[13] = _scene->_sprites.addSprites("*RM302x2");
-	g_sprite_ids[12] = _scene->_sprites.addSprites("*RM302x3");
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('g', -1));
-	g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('b', -1));
+	g_sprite_ids[1] = kernel_load_series("*RM302x0", 0);
+	g_sprite_ids[13] = kernel_load_series("*RM302x2", 0);
+	g_sprite_ids[12] = kernel_load_series("*RM302x3", 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('g', -1), 0);
+	g_sprite_ids[5] = kernel_load_series(kernel_name('b', -1), 0);
 
 
 	if (global[kSexOfRex] == REX_FEMALE) {
-		g_sprite_ids[3] = _scene->_sprites.addSprites("*ROXRC_7");
-		g_sprite_ids[7] = _scene->_sprites.addSprites("*ROXRC_6");
-		g_sprite_ids[15] = _scene->_sprites.addSprites("*ROXRC_9");
-		g_sprite_ids[11] = _scene->_sprites.addSprites(kernel_name('a', 3));
-		g_sprite_ids[9] = _scene->_sprites.addSprites(kernel_name('a', 2));
+		g_sprite_ids[3] = kernel_load_series("*ROXRC_7", 0);
+		g_sprite_ids[7] = kernel_load_series("*ROXRC_6", 0);
+		g_sprite_ids[15] = kernel_load_series("*ROXRC_9", 0);
+		g_sprite_ids[11] = kernel_load_series(kernel_name('a', 3), 0);
+		g_sprite_ids[9] = kernel_load_series(kernel_name('a', 2), 0);
 	} else {
-		g_sprite_ids[4] = _scene->_sprites.addSprites("*RXRD_7");
-		g_sprite_ids[6] = _scene->_sprites.addSprites("*RXRC_6");
-		g_sprite_ids[14] = _scene->_sprites.addSprites("*RXMRC_9");
-		g_sprite_ids[10] = _scene->_sprites.addSprites(kernel_name('a', 1));
-		g_sprite_ids[8] = _scene->_sprites.addSprites(kernel_name('a', 0));
+		g_sprite_ids[4] = kernel_load_series("*RXRD_7", 0);
+		g_sprite_ids[6] = kernel_load_series("*RXRC_6", 0);
+		g_sprite_ids[14] = kernel_load_series("*RXMRC_9", 0);
+		g_sprite_ids[10] = kernel_load_series(kernel_name('a', 1), 0);
+		g_sprite_ids[8] = kernel_load_series(kernel_name('a', 0), 0);
 	}
 
 	local._leaveRoomFl = false;

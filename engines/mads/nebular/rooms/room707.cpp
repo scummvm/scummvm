@@ -33,7 +33,7 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_707_init() {
-	g_sprite_ids[4] = _scene->_sprites.addSprites("*REXHAND");
+	g_sprite_ids[4] = kernel_load_series("*REXHAND", 0);
 	teleporter_init();
 
 	// The original uses Scene7xx_section_7_music

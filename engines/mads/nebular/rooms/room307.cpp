@@ -20,6 +20,7 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/matte.h"
 #include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
@@ -275,10 +276,10 @@ static void handleDialog() {
 }
 
 static void room_307_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites("*SC003x0");
-	g_sprite_ids[0] = _scene->_sprites.addSprites("*SC003x1");
-	g_sprite_ids[2] = _scene->_sprites.addSprites("*SC003x2");
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	g_sprite_ids[1] = kernel_load_series("*SC003x0", 0);
+	g_sprite_ids[0] = kernel_load_series("*SC003x1", 0);
+	g_sprite_ids[2] = kernel_load_series("*SC003x2", 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_name('x', 0), 0);
 
 	init_forcefield(&local._forcefield, true);
 
@@ -491,7 +492,7 @@ static void room_307_parser() {
 			break;
 
 		case 1:
-			g_sprite_ids[5] = _scene->_sprites.addSprites("*RXCL_8");
+			g_sprite_ids[5] = kernel_load_series("*RXCL_8", 0);
 			player.walker_visible = false;
 			g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 12, 1, 0, 0);
 			_scene->_sequences.setAnimRange(g_sequence_ids[5], -1, 3);
@@ -552,7 +553,7 @@ static void room_307_parser() {
 		break;
 
 		case 7:
-			_scene->_sprites.remove(g_sprite_ids[5]);
+			matte_deallocate_series(g_sprite_ids[5], true);
 			player.commands_allowed = true;
 			break;
 
@@ -563,7 +564,7 @@ static void room_307_parser() {
 		if (local._grateOpenedFl) {
 			switch (kernel.trigger) {
 			case 0:
-				g_sprite_ids[5] = _scene->_sprites.addSprites("*RXCL_8");
+				g_sprite_ids[5] = kernel_load_series("*RXCL_8", 0);
 				player.commands_allowed = false;
 				player.walker_visible = false;
 				_scene->_sequences.remove(g_sequence_ids[4]);
@@ -650,7 +651,7 @@ static void room_307_parser() {
 			switch (kernel.trigger) {
 			case 0:
 				g_engine->_soundManager->command(25, 0);
-				g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('a', 0));
+				g_sprite_ids[3] = kernel_load_series(kernel_name('a', 0), 0);
 				local._duringPeeingFl = true;
 				player.commands_allowed = false;
 				player.walker_visible = false;
@@ -675,7 +676,7 @@ static void room_307_parser() {
 
 			case 3:
 			{
-				_scene->_sprites.remove(g_sprite_ids[3]);
+				matte_deallocate_series(g_sprite_ids[3], true);
 				_scene->_kernelMessages.reset();
 				int idx = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 4, 120, quote_string(kernel.quotes, 237));
 				_scene->_kernelMessages.setQuoted(idx, 4, true);

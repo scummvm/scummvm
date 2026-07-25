@@ -49,7 +49,7 @@ static void room_389_init() {
 	if (global[kAfterHavoc])
 		_scene->_hotspots.activate(words_monster, false);
 	else {
-		g_sprite_ids[0] = _scene->_sprites.addSprites(kernel_name('m', -1));
+		g_sprite_ids[0] = kernel_load_series(kernel_name('m', -1), 0);
 		g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 6, 0, 0, 0);
 		_scene->_kernelMessages.initRandomMessages(1,
 			Common::Rect(88, 19, 177, 77), 13, 2, 0xFDFC, 60,

@@ -36,8 +36,8 @@ static void room_408_init() {
 	player.y = 150;
 	player.facing = FACING_NORTH;
 
-	g_sprite_ids[1] = _scene->_sprites.addSprites("*ROXRC_7");
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('m', -1));
+	g_sprite_ids[1] = kernel_load_series("*ROXRC_7", 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('m', -1), 0);
 
 	if (object_is_here(OBJ_TARGET_MODULE)) {
 		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 1);

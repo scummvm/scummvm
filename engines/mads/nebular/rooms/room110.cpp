@@ -39,10 +39,10 @@ static Scratch local;
 
 
 static void room_110_init() {
-	g_sprite_ids[0] = _scene->_sprites.addSprites(kernel_name('X', 0));
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('X', 1));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('X', 2));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('X', 3));
+	g_sprite_ids[0] = kernel_load_series(kernel_name('X', 0), 0);
+	g_sprite_ids[1] = kernel_load_series(kernel_name('X', 1), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('X', 2), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('X', 3), 0);
 
 	local._crabsFl = false;
 

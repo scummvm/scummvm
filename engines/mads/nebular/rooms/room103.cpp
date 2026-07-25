@@ -41,20 +41,20 @@ static Scratch local;
 
 
 static void room_103_init() {
-	g_sprite_ids[0] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('x', 1));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('x', 2));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('x', 3));
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('x', 4));
-	g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('x', 5));
-	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('b', -1));
-	g_sprite_ids[7] = _scene->_sprites.addSprites(kernel_name('h', -1));
-	g_sprite_ids[8] = _scene->_sprites.addSprites(kernel_name('m', -1));
-	g_sprite_ids[9] = _scene->_sprites.addSprites(kernel_name('t', -1));
-	g_sprite_ids[10] = _scene->_sprites.addSprites(kernel_name('r', -1));
-	g_sprite_ids[11] = _scene->_sprites.addSprites(kernel_name('c', -1));
-	g_sprite_ids[12] = _scene->_sprites.addSprites("*RXMBD_2");
-	g_sprite_ids[13] = _scene->_sprites.addSprites("*RXMRD_3");
+	g_sprite_ids[0] = kernel_load_series(kernel_name('x', 0), 0);
+	g_sprite_ids[1] = kernel_load_series(kernel_name('x', 1), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('x', 2), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('x', 3), 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_name('x', 4), 0);
+	g_sprite_ids[5] = kernel_load_series(kernel_name('x', 5), 0);
+	g_sprite_ids[6] = kernel_load_series(kernel_name('b', -1), 0);
+	g_sprite_ids[7] = kernel_load_series(kernel_name('h', -1), 0);
+	g_sprite_ids[8] = kernel_load_series(kernel_name('m', -1), 0);
+	g_sprite_ids[9] = kernel_load_series(kernel_name('t', -1), 0);
+	g_sprite_ids[10] = kernel_load_series(kernel_name('r', -1), 0);
+	g_sprite_ids[11] = kernel_load_series(kernel_name('c', -1), 0);
+	g_sprite_ids[12] = kernel_load_series("*RXMBD_2", 0);
+	g_sprite_ids[13] = kernel_load_series("*RXMRD_3", 0);
 	g_sprite_ids[15] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 7, 0, 1, 0);
 
 	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 6, 0, 2, 0);

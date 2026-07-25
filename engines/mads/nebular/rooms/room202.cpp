@@ -52,19 +52,19 @@ static Scratch local;
 
 static void room_202_init() {
 	player.walker_been_visible = true;
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('b', 0));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('b', 1));
-	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('b', 2));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('l', -1));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('b', 0), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('b', 1), 0);
+	g_sprite_ids[6] = kernel_load_series(kernel_name('b', 2), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('x', 0), 0);
+	g_sprite_ids[5] = kernel_load_series(kernel_name('l', -1), 0);
 	if (global[kSexOfRex] != SEX_MALE) {
-		g_sprite_ids[7] = _scene->_sprites.addSprites("*ROXBD_2");
+		g_sprite_ids[7] = kernel_load_series("*ROXBD_2", 0);
 	} else {
-		g_sprite_ids[7] = _scene->_sprites.addSprites("*RXMBD_2");
+		g_sprite_ids[7] = kernel_load_series("*RXMBD_2", 0);
 	}
-	g_sprite_ids[8] = _scene->_sprites.addSprites(kernel_name('a', 0));
-	g_sprite_ids[9] = _scene->_sprites.addSprites(kernel_name('a', 1));
-	g_sprite_ids[11] = _scene->_sprites.addSprites(kernel_name('a', 2));
+	g_sprite_ids[8] = kernel_load_series(kernel_name('a', 0), 0);
+	g_sprite_ids[9] = kernel_load_series(kernel_name('a', 1), 0);
+	g_sprite_ids[11] = kernel_load_series(kernel_name('a', 2), 0);
 
 	g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 6, 0, 0, 0);
 	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 6, 0, 0, 0);

@@ -34,9 +34,9 @@ namespace Rooms {
 
 static void room_551_init() {
 	if (global[kSexOfRex] == REX_MALE)
-		g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('a', 0));
+		g_sprite_ids[2] = kernel_load_series(kernel_name('a', 0), 0);
 	else
-		g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('a', 1));
+		g_sprite_ids[3] = kernel_load_series(kernel_name('a', 1), 0);
 
 	if (_scene->_priorSceneId == 501) {
 		player.x = 18;

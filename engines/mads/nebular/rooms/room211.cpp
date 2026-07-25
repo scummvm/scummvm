@@ -44,7 +44,7 @@ static Scratch local;
 
 
 static void room_211_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites("*SC002Z2");
+	g_sprite_ids[1] = kernel_load_series("*SC002Z2", 0);
 	local._wakeFl = false;
 
 	if (_scene->_priorSceneId == 210) {

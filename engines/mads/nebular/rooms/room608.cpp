@@ -172,14 +172,14 @@ static void handleThrowingBone() {
 }
 
 static void room_608_init() {
-	g_sprite_ids[2] = _scene->_sprites.addSprites("*RXMRD_7");
-	g_sprite_ids[3] = _scene->_sprites.addSprites("*RXMRC_9");
-	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('c', 2));
-	g_sprite_ids[7] = _scene->_sprites.addSprites(kernel_name('c', 0));
-	g_sprite_ids[8] = _scene->_sprites.addSprites(kernel_name('c', 1));
+	g_sprite_ids[2] = kernel_load_series("*RXMRD_7", 0);
+	g_sprite_ids[3] = kernel_load_series("*RXMRC_9", 0);
+	g_sprite_ids[6] = kernel_load_series(kernel_name('c', 2), 0);
+	g_sprite_ids[7] = kernel_load_series(kernel_name('c', 0), 0);
+	g_sprite_ids[8] = kernel_load_series(kernel_name('c', 1), 0);
 
 	if (object_is_here(OBJ_POLYCEMENT)) {
-		g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('g', -1));
+		g_sprite_ids[1] = kernel_load_series(kernel_name('g', -1), 0);
 		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
 		int idx = _scene->_dynamicHotspots.add(words_polycement, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		local._polycementHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(249, 129), FACING_NORTHEAST);
@@ -187,7 +187,7 @@ static void room_608_init() {
 	}
 
 	if (object_is_here(OBJ_REARVIEW_MIRROR)) {
-		g_sprite_ids[12] = _scene->_sprites.addSprites(kernel_name('m', -1));
+		g_sprite_ids[12] = kernel_load_series(kernel_name('m', -1), 0);
 		g_sequence_ids[12] = _scene->_sequences.startCycle(g_sprite_ids[12], false, 1);
 		int idx = _scene->_dynamicHotspots.add(words_rearview_mirror, words_walkto, g_sequence_ids[12], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(71, 113), FACING_NORTHEAST);
@@ -195,11 +195,11 @@ static void room_608_init() {
 	}
 
 	if (game.difficulty == DIFFICULTY_HARD) {
-		g_sprite_ids[9] = _scene->_sprites.addSprites(kernel_name('g', 0));
-		g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('g', 1));
-		g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('g', 2));
-		g_sprite_ids[10] = _scene->_sprites.addSprites(kernel_name('h', 2));
-		g_sprite_ids[11] = _scene->_sprites.addSprites(kernel_name('h', 3));
+		g_sprite_ids[9] = kernel_load_series(kernel_name('g', 0), 0);
+		g_sprite_ids[4] = kernel_load_series(kernel_name('g', 1), 0);
+		g_sprite_ids[5] = kernel_load_series(kernel_name('g', 2), 0);
+		g_sprite_ids[10] = kernel_load_series(kernel_name('h', 2), 0);
+		g_sprite_ids[11] = kernel_load_series(kernel_name('h', 3), 0);
 		local._rexBeingEaten = false;
 
 		if (!player.been_here_before) {

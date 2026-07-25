@@ -42,11 +42,11 @@ static Scratch local;
 
 
 static void room_602_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('h', -1));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('x', 1));
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('l', 0));
-	g_sprite_ids[5] = _scene->_sprites.addSprites("*RXMRC_9");
+	g_sprite_ids[1] = kernel_load_series(kernel_name('h', -1), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('x', 0), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('x', 1), 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_name('l', 0), 0);
+	g_sprite_ids[5] = kernel_load_series("*RXMRC_9", 0);
 
 	if (!player.been_here_before)
 		global[kSafeStatus] = 0;
@@ -82,7 +82,7 @@ static void room_602_init() {
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(185, 113), FACING_NORTHWEST);
 
 	if (object_is_here(OBJ_DOOR_KEY)) {
-		g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('k', -1));
+		g_sprite_ids[6] = kernel_load_series(kernel_name('k', -1), 0);
 		g_sequence_ids[6] = _scene->_sequences.startCycle(g_sprite_ids[6], false, -1);
 		_scene->_sequences.setDepth(g_sequence_ids[6], 15);
 		if (global[kSafeStatus] == 0 || global[kSafeStatus] == 2)

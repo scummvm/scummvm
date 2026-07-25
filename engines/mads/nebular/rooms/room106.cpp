@@ -20,6 +20,7 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/matte.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
@@ -42,16 +43,16 @@ static Scratch local;
 
 
 static void room_106_init() {
-	g_sprite_ids[0] = _scene->_sprites.addSprites(kernel_name('H', -1));
+	g_sprite_ids[0] = kernel_load_series(kernel_name('H', -1), 0);
 
 	if (player_has(OBJ_REBREATHER) || (_scene->_priorSceneId != 102) || _scene->_roomChanged) {
-		g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('A', 0));
-		g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('A', 1));
+		g_sprite_ids[1] = kernel_load_series(kernel_name('A', 0), 0);
+		g_sprite_ids[3] = kernel_load_series(kernel_name('A', 1), 0);
 	}
 
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('G', -1));
+	g_sprite_ids[2] = kernel_load_series(kernel_name('G', -1), 0);
 	g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 21, 0, 0, 0);
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('I', -1));
+	g_sprite_ids[4] = kernel_load_series(kernel_name('I', -1), 0);
 	g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 6, 0, 32, 47);
 
 	if (_scene->_priorSceneId == 102) {
@@ -71,7 +72,7 @@ static void room_106_init() {
 			player.x = 319;
 			player.y = 44;
 			player.facing = player.prepare_walk_facing = FACING_SOUTHWEST;
-			_scene->_sprites[player.series_base + 3]->_charInfo->_velocity = 24;
+			series_list[player.series_base + 3]->walker->velocity = 24;
 		}
 
 		player.prepare_walk_x = 246;
@@ -190,7 +191,7 @@ static void room_106_daemon() {
 static void room_106_pre_parser() {
 	if (player_said_2(swim_towards, sea_cliff) || player_said_2(swim_towards, seaweed_bank)) {
 		player.commands_allowed = false;
-		_scene->_sprites[player.series_base + 1]->_charInfo->_velocity = 24;
+		series_list[player.series_base + 1]->walker->velocity = 24;
 		player.walk_off_edge_to_room = 104;
 	}
 

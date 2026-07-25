@@ -45,15 +45,15 @@ static Scratch local;
 
 
 static void room_205_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('x', 1));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('x', 2));
-	g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('f', -1));
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('c', -1));
-	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('p', -1));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('x', 0), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('x', 1), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('x', 2), 0);
+	g_sprite_ids[5] = kernel_load_series(kernel_name('f', -1), 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_name('c', -1), 0);
+	g_sprite_ids[6] = kernel_load_series(kernel_name('p', -1), 0);
 
 	if (global[kSexOfRex] == SEX_MALE)
-		g_sprite_ids[8] = _scene->_sprites.addSprites(kernel_name('a', 1));
+		g_sprite_ids[8] = kernel_load_series(kernel_name('a', 1), 0);
 
 	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 10, 0, 0, 3);
 	int idx = _scene->_dynamicHotspots.add(words_chicken, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
@@ -253,7 +253,7 @@ static void room_205_parser() {
 			pal_lock();
 			_scene->_kernelMessages.reset();
 			kernel_dump_walker_only();
-			g_sprite_ids[9] = _scene->_sprites.addSprites(kernel_name('a', 0));
+			g_sprite_ids[9] = kernel_load_series(kernel_name('a', 0), 0);
 			kernel_new_palette();
 			g_sequence_ids[9] = _scene->_sequences.addSpriteCycle(g_sprite_ids[9], false, 6, 1, 0, 0);
 			_scene->_sequences.addSubEntry(g_sequence_ids[9], SEQUENCE_TRIGGER_EXPIRE, 0, 1);

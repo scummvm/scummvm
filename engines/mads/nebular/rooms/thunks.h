@@ -27,7 +27,6 @@
 #include "mads/core/inter.h"
 #include "mads/core/kernel.h"
 #include "mads/core/player.h"
-#include "mads/core/sprite.h"
 #include "mads/core/text.h"
 
 namespace MADS {
@@ -294,39 +293,6 @@ struct Scene {
 		int findByTrigger(int trigger);
 	};
 	Sequences _sequences;
-
-	struct Sprite {
-		struct CharInfo {
-			CharInfo *operator->() {
-				return this;
-			}
-			const CharInfo *operator->() const {
-				return this;
-			}
-
-			int16 &_velocity;
-
-			CharInfo(WalkerInfoPtr info) : _velocity(info->velocity) {
-			}
-		};
-		CharInfo _charInfo;
-
-		Sprite(SeriesPtr series) : _charInfo(series->walker) {
-		}
-		Sprite *operator->() {
-			return this;
-		}
-		const Sprite *operator->() const {
-			return this;
-		}
-	};
-
-	struct Sprites {
-		int16 addSprites(const char *name, int load_flags = 0);
-		void remove(int sprite_id);
-		Sprite operator[](int idx);
-	};
-	Sprites _sprites;
 
 	struct SpriteSlots {
 		void clear();

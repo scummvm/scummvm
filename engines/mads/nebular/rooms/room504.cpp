@@ -41,15 +41,15 @@ static Scratch local;
 
 
 static void room_504_init() {
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('a', 2));
+	g_sprite_ids[2] = kernel_load_series(kernel_name('a', 2), 0);
 
 	for (int i = 0; i < 4; i++)
-		g_sprite_ids[5 + i] = _scene->_sprites.addSprites(kernel_name('m', i));
+		g_sprite_ids[5 + i] = kernel_load_series(kernel_name('m', i), 0);
 
 	if (global[kSexOfRex] == REX_MALE)
-		g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('a', 0));
+		g_sprite_ids[1] = kernel_load_series(kernel_name('a', 0), 0);
 	else {
-		g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('a', 1));
+		g_sprite_ids[1] = kernel_load_series(kernel_name('a', 1), 0);
 		_scene->changeVariant(1);
 	}
 
@@ -65,7 +65,7 @@ static void room_504_init() {
 		_scene->_sequences.addTimer(1, 70);
 		player.commands_allowed = false;
 	} else {
-		g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('a', 3));
+		g_sprite_ids[3] = kernel_load_series(kernel_name('a', 3), 0);
 		local._carAnimationMode = 1;
 		_scene->loadAnimation(kernel_name('A', -1));
 		if ((_scene->_priorSceneId != RETURNING_FROM_DIALOG) && (_scene->_priorSceneId != 505))

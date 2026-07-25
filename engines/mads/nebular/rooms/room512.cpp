@@ -41,13 +41,13 @@ static Scratch local;
 
 
 static void room_512_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('r', -1));
-	g_sprite_ids[2] = _scene->_sprites.addSprites("*RXMRC_9");
-	g_sprite_ids[8] = _scene->_sprites.addSprites("*RXMRC_8");
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('x', 1));
-	g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('x', 2));
-	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('x', 3));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('r', -1), 0);
+	g_sprite_ids[2] = kernel_load_series("*RXMRC_9", 0);
+	g_sprite_ids[8] = kernel_load_series("*RXMRC_8", 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('x', 0), 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_name('x', 1), 0);
+	g_sprite_ids[5] = kernel_load_series(kernel_name('x', 2), 0);
+	g_sprite_ids[6] = kernel_load_series(kernel_name('x', 3), 0);
 
 	if (object[OBJ_FISHING_ROD].location == _scene->_currentSceneId) {
 		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 9, 0, 0, 0);

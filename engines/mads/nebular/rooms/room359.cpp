@@ -39,13 +39,13 @@ static Scratch local;
 
 
 static void room_359_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('b', -1));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_full_name(307, 'X', 0, "", EXT_SS));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('b', -1), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_full_name(307, 'X', 0, "", EXT_SS), 0);
 
 	if (global[kSexOfRex] == REX_MALE)
-		g_sprite_ids[2] = _scene->_sprites.addSprites("*RXMBD_2");
+		g_sprite_ids[2] = kernel_load_series("*RXMBD_2", 0);
 	else
-		g_sprite_ids[4] = _scene->_sprites.addSprites("*ROXBD_2");
+		g_sprite_ids[4] = kernel_load_series("*ROXBD_2", 0);
 
 	g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
 	_scene->_sequences.setPosition(g_sequence_ids[3], Common::Point(127, 78));

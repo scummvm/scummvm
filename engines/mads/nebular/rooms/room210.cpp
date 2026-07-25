@@ -343,7 +343,7 @@ static void setDialogNode(int node) {
 			_scene->freeAnimation();
 			_scene->resetScene();
 
-			g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('c', -1));
+			g_sprite_ids[1] = kernel_load_series(kernel_name('c', -1), 0);
 			kernel.quotes = quote_load(0xE6, 0xE9, 0xEA, 0xE7, 0xE8, 0);
 			_scene->loadAnimation(kernel_name('B', -1), 4);
 			break;
@@ -613,7 +613,7 @@ static void restoreDialogNode(int node, int msgId, int posY) {
 }
 
 static void room_210_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('c', -1));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('c', -1), 0);
 
 	if (!player.been_here_before)
 		global[kCurtainOpen] = 0;

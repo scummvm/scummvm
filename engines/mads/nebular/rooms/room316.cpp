@@ -270,15 +270,15 @@ static void handleRoxInGrate() {
 
 static void room_316_init() {
 	if (global[kSexOfRex] == REX_MALE) {
-		g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('g', -1));
-		g_sprite_ids[4] = _scene->_sprites.addSprites("*RXCL_8");
-		g_sprite_ids[6] = _scene->_sprites.addSprites("*RXCL_2");
+		g_sprite_ids[1] = kernel_load_series(kernel_name('g', -1), 0);
+		g_sprite_ids[4] = kernel_load_series("*RXCL_8", 0);
+		g_sprite_ids[6] = kernel_load_series("*RXCL_2", 0);
 	} else {
-		g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('g', 0));
-		g_sprite_ids[5] = _scene->_sprites.addSprites("*ROXCL_8");
+		g_sprite_ids[2] = kernel_load_series(kernel_name('g', 0), 0);
+		g_sprite_ids[5] = kernel_load_series("*ROXCL_8", 0);
 	}
 
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('v', 0));
+	g_sprite_ids[3] = kernel_load_series(kernel_name('v', 0), 0);
 	g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
 	_scene->_sequences.setDepth(g_sequence_ids[3], 12);
 

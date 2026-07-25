@@ -45,13 +45,13 @@ static Scratch local;
 
 
 static void room_207_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('h', 0));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('h', 1));
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('c', -1));
-	g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('e', 0));
-	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('e', 1));
-	g_sprite_ids[7] = _scene->_sprites.addSprites(kernel_name('g', 1));
-	g_sprite_ids[8] = _scene->_sprites.addSprites(kernel_name('g', 0));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('h', 0), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('h', 1), 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_name('c', -1), 0);
+	g_sprite_ids[5] = kernel_load_series(kernel_name('e', 0), 0);
+	g_sprite_ids[6] = kernel_load_series(kernel_name('e', 1), 0);
+	g_sprite_ids[7] = kernel_load_series(kernel_name('g', 1), 0);
+	g_sprite_ids[8] = kernel_load_series(kernel_name('g', 0), 0);
 	g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 7, 0, 0, 0);
 	_scene->_sequences.setDepth(g_sequence_ids[5], 7);
 

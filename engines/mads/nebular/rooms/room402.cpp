@@ -438,29 +438,29 @@ static void handleDialogs() {
 }
 
 static void room_402_init() {
-	g_sprite_ids[0] = _scene->_sprites.addSprites(kernel_name('n', -1));
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('x', 2));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('x', 1));
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('g', 0));
-	g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('g', 1));
-	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('a', 0));
-	g_sprite_ids[7] = _scene->_sprites.addSprites(kernel_name('a', 1));
-	g_sprite_ids[15] = _scene->_sprites.addSprites(kernel_name('x', 5));
-	g_sprite_ids[8] = _scene->_sprites.addSprites(kernel_name('x', 4));
-	g_sprite_ids[9] = _scene->_sprites.addSprites(kernel_name('b', 0));
-	g_sprite_ids[10] = _scene->_sprites.addSprites(kernel_name('b', 1));
-	g_sprite_ids[11] = _scene->_sprites.addSprites(kernel_name('b', 2));
-	g_sprite_ids[12] = _scene->_sprites.addSprites(kernel_name('b', 3));
-	g_sprite_ids[13] = _scene->_sprites.addSprites(kernel_name('c', 0));
-	g_sprite_ids[14] = _scene->_sprites.addSprites(kernel_name('l', 0));
-	g_sprite_ids[16] = _scene->_sprites.addSprites(kernel_name('h', 0));
-	g_sprite_ids[17] = _scene->_sprites.addSprites(kernel_name('z', 0));
-	g_sprite_ids[18] = _scene->_sprites.addSprites(kernel_name('z', 1));
-	g_sprite_ids[19] = _scene->_sprites.addSprites(kernel_name('z', 2));
-	g_sprite_ids[20] = _scene->_sprites.addSprites(kernel_name('x', 6));
-	g_sprite_ids[21] = _scene->_sprites.addSprites("*ROXRC_9");
-	g_sprite_ids[22] = _scene->_sprites.addSprites("*ROXCL_8");
+	g_sprite_ids[0] = kernel_load_series(kernel_name('n', -1), 0);
+	g_sprite_ids[1] = kernel_load_series(kernel_name('x', 2), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('x', 0), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('x', 1), 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_name('g', 0), 0);
+	g_sprite_ids[5] = kernel_load_series(kernel_name('g', 1), 0);
+	g_sprite_ids[6] = kernel_load_series(kernel_name('a', 0), 0);
+	g_sprite_ids[7] = kernel_load_series(kernel_name('a', 1), 0);
+	g_sprite_ids[15] = kernel_load_series(kernel_name('x', 5), 0);
+	g_sprite_ids[8] = kernel_load_series(kernel_name('x', 4), 0);
+	g_sprite_ids[9] = kernel_load_series(kernel_name('b', 0), 0);
+	g_sprite_ids[10] = kernel_load_series(kernel_name('b', 1), 0);
+	g_sprite_ids[11] = kernel_load_series(kernel_name('b', 2), 0);
+	g_sprite_ids[12] = kernel_load_series(kernel_name('b', 3), 0);
+	g_sprite_ids[13] = kernel_load_series(kernel_name('c', 0), 0);
+	g_sprite_ids[14] = kernel_load_series(kernel_name('l', 0), 0);
+	g_sprite_ids[16] = kernel_load_series(kernel_name('h', 0), 0);
+	g_sprite_ids[17] = kernel_load_series(kernel_name('z', 0), 0);
+	g_sprite_ids[18] = kernel_load_series(kernel_name('z', 1), 0);
+	g_sprite_ids[19] = kernel_load_series(kernel_name('z', 2), 0);
+	g_sprite_ids[20] = kernel_load_series(kernel_name('x', 6), 0);
+	g_sprite_ids[21] = kernel_load_series("*ROXRC_9", 0);
+	g_sprite_ids[22] = kernel_load_series("*ROXCL_8", 0);
 
 	if (_scene->_priorSceneId == 401) {
 		player.x = 160;

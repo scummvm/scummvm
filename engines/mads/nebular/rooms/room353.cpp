@@ -39,7 +39,7 @@ static Scratch local;
 
 
 static void room_353_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_full_name(303, 'B', 0, "", EXT_SS));
+	g_sprite_ids[1] = kernel_load_series(kernel_full_name(303, 'B', 0, "", EXT_SS), 0);
 	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 5, 0, 5, 0);
 	_scene->_sequences.setDepth(g_sequence_ids[1], 1);
 

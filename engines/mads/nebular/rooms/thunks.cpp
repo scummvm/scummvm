@@ -159,18 +159,6 @@ void Scene::Rails::resetNext() {
 	player.next_special_code = 0;
 }
 
-int16 Scene::Sprites::addSprites(const char *name, int load_flags) {
-	return kernel_load_series(name, load_flags);
-}
-
-void Scene::Sprites::remove(int sprite_id) {
-	matte_deallocate_series(sprite_id, true);
-}
-
-Scene::Sprite Scene::Sprites::operator[](int idx) {
-	return Scene::Sprite(series_list[idx]);
-}
-
 void Scene::SpriteSlots::clear() {
 	image_marker = 0;
 }

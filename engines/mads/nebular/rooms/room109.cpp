@@ -21,6 +21,7 @@
 
 #include "mads/core/game.h"
 #include "mads/core/himem.h"
+#include "mads/core/matte.h"
 #include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
@@ -51,11 +52,11 @@ static Scratch local;
 static void room_109_init() {
 	global[kFishIn105] = true;
 
-	g_sprite_ids[0] = _scene->_sprites.addSprites("*RXSWRC_6");
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('O', 1));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('O', 2));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('O', 0));
-	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('H', 4));
+	g_sprite_ids[0] = kernel_load_series("*RXSWRC_6", 0);
+	g_sprite_ids[1] = kernel_load_series(kernel_name('O', 1), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('O', 2), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('O', 0), 0);
+	g_sprite_ids[6] = kernel_load_series(kernel_name('H', 4), 0);
 
 	local._rexThrowingObject = false;
 	local._throwingObjectId = 0;
@@ -109,8 +110,8 @@ static void room_109_init() {
 	local._eatingFirstFish = (!player.been_here_before) && (_scene->_priorSceneId < 110);
 
 	if (local._eatingFirstFish) {
-		g_sprite_ids[10] = _scene->_sprites.addSprites(kernel_full_name(105, 'F', 1, "", EXT_SS));
-		g_sprite_ids[9] = _scene->_sprites.addSprites(kernel_name('H', 1));
+		g_sprite_ids[10] = kernel_load_series(kernel_full_name(105, 'F', 1, "", EXT_SS), 0);
+		g_sprite_ids[9] = kernel_load_series(kernel_name('H', 1), 0);
 
 		g_sequence_ids[10] = _scene->_sequences.startPingPongCycle(g_sprite_ids[10], true, 4, 0, 0, 0);
 		_scene->_sequences.setDepth(g_sequence_ids[10], 5);
@@ -156,8 +157,8 @@ static void room_109_daemon() {
 		player.commands_allowed = false;
 		local._hungryFl = false;
 		local._beforeEatingRex = true;
-		_scene->_sprites.remove(g_sprite_ids[6]);
-		g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('H', 0));
+		matte_deallocate_series(g_sprite_ids[6], true);
+		g_sprite_ids[4] = kernel_load_series(kernel_name('H', 0), 0);
 		kernel_new_palette();
 	}
 
@@ -184,8 +185,8 @@ static void room_109_daemon() {
 
 	if (kernel.trigger == 73) {
 		_scene->_sequences.remove(g_sequence_ids[9]);
-		_scene->_sprites.remove(g_sprite_ids[9]);
-		_scene->_sprites.remove(g_sprite_ids[10]);
+		matte_deallocate_series(g_sprite_ids[9], true);
+		matte_deallocate_series(g_sprite_ids[10], true);
 
 		_scene->_spriteSlots.clear();
 		_scene->_spriteSlots.fullRefresh();
@@ -247,12 +248,12 @@ static void room_109_parser() {
 						switch (local._throwingObjectId) {
 						case OBJ_DEAD_FISH:
 						case OBJ_STUFFED_FISH:
-							g_sprite_ids[8] = _scene->_sprites.addSprites(kernel_name('H', 1));
+							g_sprite_ids[8] = kernel_load_series(kernel_name('H', 1), 0);
 							break;
 
 						case OBJ_BURGER:
 							local._hoovicDifficultFl = (game.difficulty == DIFFICULTY_HARD);
-							g_sprite_ids[8] = _scene->_sprites.addSprites(kernel_name('H', (local._hoovicDifficultFl ? 3 : 1)));
+							g_sprite_ids[8] = kernel_load_series(kernel_name('H', (local._hoovicDifficultFl ? 3 : 1)), 0);
 							break;
 
 						default:
@@ -348,7 +349,7 @@ static void room_109_parser() {
 						}
 						_scene->freeAnimation();
 						_scene->_sequences.remove(g_sequence_ids[8]);
-						_scene->_sprites.remove(g_sprite_ids[8]);
+						matte_deallocate_series(g_sprite_ids[8], true);
 						_scene->_spriteSlots.clear();
 						_scene->_spriteSlots.fullRefresh();
 						_scene->_sequences.scan();

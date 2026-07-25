@@ -76,11 +76,11 @@ static void updateTrap() {
 }
 
 static void room_208_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('a', 1));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('x', 1));
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('x', 2));
-	g_sprite_ids[5] = _scene->_sprites.addSprites("*RXMBD_8");
+	g_sprite_ids[1] = kernel_load_series(kernel_name('a', 1), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('x', 0), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('x', 1), 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_name('x', 2), 0);
+	g_sprite_ids[5] = kernel_load_series("*RXMBD_8", 0);
 
 	updateTrap();
 

@@ -45,12 +45,12 @@ static void room_304_init() {
 		_scene->loadAnimation(kernel_name('a', -1), 60);
 	} else {
 		if (global[kSexOfRex] == REX_MALE)
-			g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('a', 0));
+			g_sprite_ids[1] = kernel_load_series(kernel_name('a', 0), 0);
 		else
-			g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('a', 2));
+			g_sprite_ids[4] = kernel_load_series(kernel_name('a', 2), 0);
 
-		g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('a', 1));
-		g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('b', 0));
+		g_sprite_ids[2] = kernel_load_series(kernel_name('a', 1), 0);
+		g_sprite_ids[3] = kernel_load_series(kernel_name('b', 0), 0);
 
 		g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 150, 0, 3, 0);
 		_scene->_sequences.setDepth(g_sequence_ids[3], 2);

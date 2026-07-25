@@ -40,9 +40,9 @@ static Scratch local;
 
 static void room_107_init() {
 	for (int i = 0; i < 3; i++)
-		g_sprite_ids[i + 1] = _scene->_sprites.addSprites(kernel_name('G', i));
+		g_sprite_ids[i + 1] = kernel_load_series(kernel_name('G', i), 0);
 
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_full_name(105, 'f', 4, "", EXT_SS));
+	g_sprite_ids[4] = kernel_load_series(kernel_full_name(105, 'f', 4, "", EXT_SS), 0);
 
 	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 14, 0, 0, 7);
 	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 17, 0, 0, 13);
@@ -73,7 +73,7 @@ static void room_107_init() {
 	}
 
 	if (((_scene->_priorSceneId == 105) || (_scene->_priorSceneId == 106)) && (g_engine->getRandomNumber(1, 3) == 1)) {
-		g_sprite_ids[0] = _scene->_sprites.addSprites(kernel_full_name(105, 'R', 1, "", EXT_SS));
+		g_sprite_ids[0] = kernel_load_series(kernel_full_name(105, 'R', 1, "", EXT_SS), 0);
 		g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], true, 4, 0, 0, 0);
 		_scene->_sequences.setPosition(g_sequence_ids[0], Common::Point(270, 150));
 		_scene->_sequences.setMotion(g_sequence_ids[0], SEQUENCE_TRIGGER_SPRITE, -200, 0);

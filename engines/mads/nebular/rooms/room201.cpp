@@ -40,11 +40,11 @@ static Scratch local;
 
 
 static void room_201_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('x', 1));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('m', -1));
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('b', -1));
-	g_sprite_ids[5] = _scene->_sprites.addSprites("*SC002Z1");
+	g_sprite_ids[1] = kernel_load_series(kernel_name('x', 0), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('x', 1), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('m', -1), 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_name('b', -1), 0);
+	g_sprite_ids[5] = kernel_load_series("*SC002Z1", 0);
 	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 6, 0, 1, 0);
 	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 15, 0, 0, 50);
 	g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 4, 0, 0, 0);
@@ -99,8 +99,8 @@ static void room_201_init() {
 	}
 
 	if ((_scene->_priorSceneId == 202) && (global[kMeteorologistStatus] == METEOROLOGIST_PRESENT) && !_scene->_roomChanged) {
-		g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('a', 0));
-		g_sprite_ids[7] = _scene->_sprites.addSprites(kernel_name('a', 1));
+		g_sprite_ids[6] = kernel_load_series(kernel_name('a', 0), 0);
+		g_sprite_ids[7] = kernel_load_series(kernel_name('a', 1), 0);
 		kernel.quotes = quote_load(90, 91, 0);
 		player.commands_allowed = false;
 		g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(g_sprite_ids[6], false, 7, 1, 0, 0);

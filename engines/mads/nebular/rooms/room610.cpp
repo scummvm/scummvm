@@ -43,10 +43,10 @@ static Scratch local;
 
 
 static void room_610_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('p', -1));
-	g_sprite_ids[2] = _scene->_sprites.addSprites("*RXMRC_9");
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('x', 1));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('p', -1), 0);
+	g_sprite_ids[2] = kernel_load_series("*RXMRC_9", 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('x', 0), 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_name('x', 1), 0);
 
 	g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 60, 0, 0, 0);
 	_scene->_sequences.setDepth(g_sequence_ids[4], 13);

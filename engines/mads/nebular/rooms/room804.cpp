@@ -64,12 +64,12 @@ static void room_804_init() {
 		global[kWindowFixed] = 0;
 	}
 
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('x', 1));
-	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('x', 2));
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('x', 3));
-	g_sprite_ids[7] = _scene->_sprites.addSprites(kernel_name('x', 4));
-	g_sprite_ids[8] = _scene->_sprites.addSprites(kernel_name('f', 1));
+	g_sprite_ids[4] = kernel_load_series(kernel_name('x', 0), 0);
+	g_sprite_ids[5] = kernel_load_series(kernel_name('x', 1), 0);
+	g_sprite_ids[6] = kernel_load_series(kernel_name('x', 2), 0);
+	g_sprite_ids[1] = kernel_load_series(kernel_name('x', 3), 0);
+	g_sprite_ids[7] = kernel_load_series(kernel_name('x', 4), 0);
+	g_sprite_ids[8] = kernel_load_series(kernel_name('f', 1), 0);
 
 	kernel.quotes = quote_load(791, 0);
 

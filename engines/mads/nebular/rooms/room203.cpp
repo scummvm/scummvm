@@ -68,7 +68,7 @@ static void room_203_init() {
 	}
 
 	if (!local._rhotundaEatFl) {
-		g_sprite_ids[0] = _scene->_sprites.addSprites(kernel_name('b', -1));
+		g_sprite_ids[0] = kernel_load_series(kernel_name('b', -1), 0);
 		if (g_engine->getRandomNumber(1, 3) == 2) {
 			g_sprite_ids[15] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 9, 1, 0, 0);
 			int idx = _scene->_dynamicHotspots.add(words_yellow_bird, words_look_at, g_sprite_ids[15], Common::Rect(0, 0, 0, 0));

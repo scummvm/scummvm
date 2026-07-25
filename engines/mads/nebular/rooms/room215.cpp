@@ -32,17 +32,17 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_215_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('e', 0));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('a', 0));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('e', 0), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('a', 0), 0);
 
 	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 7, 0, 0, 0);
 	_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(235, 83));
 	_scene->_sequences.setDepth(g_sequence_ids[1], 15);
 
 	if (global[kSexOfRex] == REX_MALE)
-		g_sprite_ids[2] = _scene->_sprites.addSprites("*RXMRC_9");
+		g_sprite_ids[2] = kernel_load_series("*RXMRC_9", 0);
 	else
-		g_sprite_ids[2] = _scene->_sprites.addSprites("*ROXRC_9");
+		g_sprite_ids[2] = kernel_load_series("*ROXRC_9", 0);
 
 	if (_scene->_priorSceneId == 216) {
 		player.x = 140;

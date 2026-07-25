@@ -40,10 +40,10 @@ static Scratch local;
 
 
 static void room_214_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('e', 0));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('e', 1));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('t', -1));
-	g_sprite_ids[4] = _scene->_sprites.addSprites("*RXMRD_7");
+	g_sprite_ids[1] = kernel_load_series(kernel_name('e', 0), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('e', 1), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('t', -1), 0);
+	g_sprite_ids[4] = kernel_load_series("*RXMRD_7", 0);
 
 	local._devilTime = player.clock;
 	local._devilRunningFl = false;

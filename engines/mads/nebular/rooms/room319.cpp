@@ -81,12 +81,12 @@ static void handleSlacheDialogs(int quoteId, int counter, uint32 timer) {
 }
 
 static void room_319_init() {
-	g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('e', 0));
-	g_sprite_ids[0] = _scene->_sprites.addSprites(kernel_name('a', 0));
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('a', 1));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('a', 2));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('a', 3));
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('k', -1));
+	g_sprite_ids[5] = kernel_load_series(kernel_name('e', 0), 0);
+	g_sprite_ids[0] = kernel_load_series(kernel_name('a', 0), 0);
+	g_sprite_ids[1] = kernel_load_series(kernel_name('a', 1), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('a', 2), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('a', 3), 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_name('k', -1), 0);
 
 	if (!player_has(OBJ_SCALPEL)) {
 		g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);

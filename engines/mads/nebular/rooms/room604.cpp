@@ -45,10 +45,10 @@ static Scratch local;
 
 
 static void room_604_init() {
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('c', 0));
-	g_sprite_ids[4] = _scene->_sprites.addSprites("*RXCD_9");
-	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_full_name(620, 'b', 0, "", EXT_SS));
-	g_sprite_ids[5] = _scene->_sprites.addSprites("*RXMRC_9");
+	g_sprite_ids[2] = kernel_load_series(kernel_name('c', 0), 0);
+	g_sprite_ids[4] = kernel_load_series("*RXCD_9", 0);
+	g_sprite_ids[6] = kernel_load_series(kernel_full_name(620, 'b', 0, "", EXT_SS), 0);
+	g_sprite_ids[5] = kernel_load_series("*RXMRC_9", 0);
 
 	if (global[kTimebombStatus] == 1) {
 		g_sequence_ids[6] = _scene->_sequences.startCycle(g_sprite_ids[6], false, -1);

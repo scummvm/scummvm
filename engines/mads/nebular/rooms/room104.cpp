@@ -40,7 +40,7 @@ struct Scratch {
 static Scratch local;
 
 static void room_104_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('h', -1));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('h', -1), 0);
 	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 14, 0, 0, 1);
 	_scene->_sequences.setDepth(g_sequence_ids[1], 8);
 
@@ -89,7 +89,7 @@ static void room_104_daemon() {
 				_scene->resetScene();
 				player.commands_allowed = false;
 				player.walker_visible = false;
-				g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('a', 0));
+				g_sprite_ids[2] = kernel_load_series(kernel_name('a', 0), 0);
 				kernel_new_palette();
 				g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], mirrorFl, 7, 1, 0, 0);
 				_scene->_sequences.setPosition(g_sequence_ids[2], Common::Point(198, 143));
@@ -122,7 +122,7 @@ static void room_104_daemon() {
 				_scene->resetScene();
 				player.commands_allowed = false;
 				player.walker_visible = false;
-				g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('a', 1));
+				g_sprite_ids[3] = kernel_load_series(kernel_name('a', 1), 0);
 				kernel_new_palette();
 				g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 6, 1, 0, 0);
 				_scene->_sequences.setPosition(g_sequence_ids[3], Common::Point(198, 143));
@@ -164,7 +164,7 @@ static void room_104_daemon() {
 				_scene->resetScene();
 				player.commands_allowed = false;
 				player.walker_visible = false;
-				g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('a', 2));
+				g_sprite_ids[4] = kernel_load_series(kernel_name('a', 2), 0);
 				kernel_new_palette();
 				g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 8, 1, 0, 0);
 				_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(198, 143));

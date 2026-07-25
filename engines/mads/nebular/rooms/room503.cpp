@@ -40,12 +40,12 @@ static Scratch local;
 
 
 static void room_503_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('c', -1));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('c', -1), 0);
 
 	if (global[kSexOfRex] == REX_MALE)
-		g_sprite_ids[2] = _scene->_sprites.addSprites("*RXMBD_2");
+		g_sprite_ids[2] = kernel_load_series("*RXMBD_2", 0);
 	else
-		g_sprite_ids[3] = _scene->_sprites.addSprites("*ROXBD_2");
+		g_sprite_ids[3] = kernel_load_series("*ROXBD_2", 0);
 
 	if (object[OBJ_DETONATORS].location == _scene->_currentSceneId) {
 		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 9, 0, 0, 0);

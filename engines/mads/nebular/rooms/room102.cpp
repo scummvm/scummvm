@@ -55,18 +55,18 @@ static void addRandomMessage() {
 static void room_102_init() {
 	section_1_music();
 
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('x', 1));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('x', 2));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('x', 3));
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('x', 4));
-	g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('x', 5));
-	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('b', -1));
-	g_sprite_ids[7] = _scene->_sprites.addSprites(kernel_name('c', -1));
-	g_sprite_ids[8] = _scene->_sprites.addSprites(kernel_name('e', -1));
-	g_sprite_ids[9] = _scene->_sprites.addSprites(kernel_name('n', -1));
-	g_sprite_ids[10] = _scene->_sprites.addSprites(kernel_name('g', -1));
-	g_sprite_ids[11] = _scene->_sprites.addSprites("*RXMRC_8");
-	g_sprite_ids[13] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('x', 1), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('x', 2), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('x', 3), 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_name('x', 4), 0);
+	g_sprite_ids[5] = kernel_load_series(kernel_name('x', 5), 0);
+	g_sprite_ids[6] = kernel_load_series(kernel_name('b', -1), 0);
+	g_sprite_ids[7] = kernel_load_series(kernel_name('c', -1), 0);
+	g_sprite_ids[8] = kernel_load_series(kernel_name('e', -1), 0);
+	g_sprite_ids[9] = kernel_load_series(kernel_name('n', -1), 0);
+	g_sprite_ids[10] = kernel_load_series(kernel_name('g', -1), 0);
+	g_sprite_ids[11] = kernel_load_series("*RXMRC_8", 0);
+	g_sprite_ids[13] = kernel_load_series(kernel_name('x', 0), 0);
 
 	g_sequence_ids[1] = _scene->_sequences.startPingPongCycle(g_sprite_ids[1], false, 8, 0, 0, 0);
 	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 170, 0, 1, 6);

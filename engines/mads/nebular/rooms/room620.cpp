@@ -32,7 +32,7 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_620_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('b', 0));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('b', 0), 0);
 	g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, -1);
 	player.commands_allowed = false;
 	player.walker_visible = false;

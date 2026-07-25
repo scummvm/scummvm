@@ -46,13 +46,13 @@ static Scratch local;
 
 static void room_505_init() {
 	for (int i = 0; i < 9; i++)
-		g_sprite_ids[i] = _scene->_sprites.addSprites(kernel_name('a', i + 1));
+		g_sprite_ids[i] = kernel_load_series(kernel_name('a', i + 1), 0);
 
-	g_sprite_ids[13] = _scene->_sprites.addSprites(kernel_name('b', 1));
-	g_sprite_ids[9] = _scene->_sprites.addSprites(kernel_name('g', 1));
-	g_sprite_ids[10] = _scene->_sprites.addSprites(kernel_name('g', 0));
-	g_sprite_ids[11] = _scene->_sprites.addSprites(kernel_name('t', -1));
-	g_sprite_ids[12] = _scene->_sprites.addSprites(kernel_name('e', -1));
+	g_sprite_ids[13] = kernel_load_series(kernel_name('b', 1), 0);
+	g_sprite_ids[9] = kernel_load_series(kernel_name('g', 1), 0);
+	g_sprite_ids[10] = kernel_load_series(kernel_name('g', 0), 0);
+	g_sprite_ids[11] = kernel_load_series(kernel_name('t', -1), 0);
+	g_sprite_ids[12] = kernel_load_series(kernel_name('e', -1), 0);
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		g_sequence_ids[12] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[12], false, 6, 1, 0, 0);

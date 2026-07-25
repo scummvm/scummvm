@@ -86,16 +86,16 @@ static void handleSlotActions() {
 }
 
 static void room_501_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('x', 1));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('c', 0));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('x', 0));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('x', 1), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('c', 0), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('x', 0), 0);
 
 	if (global[kSexOfRex] == REX_MALE) {
-		g_sprite_ids[4] = _scene->_sprites.addSprites("*RXMRC_9");
-		g_sprite_ids[6] = _scene->_sprites.addSprites("*RXCD_7");
+		g_sprite_ids[4] = kernel_load_series("*RXMRC_9", 0);
+		g_sprite_ids[6] = kernel_load_series("*RXCD_7", 0);
 	} else {
-		g_sprite_ids[5] = _scene->_sprites.addSprites("*ROXRC_9");
-		g_sprite_ids[7] = _scene->_sprites.addSprites("*ROXCD_7");
+		g_sprite_ids[5] = kernel_load_series("*ROXRC_9", 0);
+		g_sprite_ids[7] = kernel_load_series("*ROXCD_7", 0);
 	}
 
 	g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);

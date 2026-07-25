@@ -35,8 +35,8 @@ static void room_805_init() {
 	player.walker_visible = false;
 	_scene->_userInterface.setup(kInputLimitedSentences);
 
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('a', 1));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('a', 2));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('a', 1), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('a', 2), 0);
 
 	if (global[kShieldModInstalled]) {
 		_scene->_hotspots.activate(OBJ_SHIELD_MODULATOR, false);

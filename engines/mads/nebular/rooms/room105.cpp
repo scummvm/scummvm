@@ -39,8 +39,8 @@ static Scratch local;
 
 
 static void room_105_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('m', 1));
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('f', 4));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('m', 1), 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_name('f', 4), 0);
 	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 8, 0, 0, 0);
 
 	if (global[kFishIn105]) {
@@ -76,9 +76,9 @@ static void room_105_daemon() {
 			player.commands_allowed = false;
 			player.walker_visible = false;
 
-			g_sprite_ids[0] = _scene->_sprites.addSprites(kernel_name('m', 0));
-			g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('m', 2));
-			g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('m', 3));
+			g_sprite_ids[0] = kernel_load_series(kernel_name('m', 0), 0);
+			g_sprite_ids[2] = kernel_load_series(kernel_name('m', 2), 0);
+			g_sprite_ids[3] = kernel_load_series(kernel_name('m', 3), 0);
 			g_engine->_soundManager->command(33, 0);
 			_scene->clearSequenceList();
 			kernel_new_palette();

@@ -39,11 +39,11 @@ static Scratch local;
 
 
 static void room_801_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('x', 1));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('x', 2));
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('x', 3));
-	g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('a', -1));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('x', 1), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('x', 0), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('x', 2), 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_name('x', 3), 0);
+	g_sprite_ids[5] = kernel_load_series(kernel_name('a', -1), 0);
 
 	if (_scene->_priorSceneId != 802) {
 		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 5);

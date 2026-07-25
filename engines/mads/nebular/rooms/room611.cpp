@@ -903,9 +903,9 @@ static void handleDialog() {
 }
 
 static void room_611_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('x', 1));
-	g_sprite_ids[3] = _scene->_sprites.addSprites("*RXMRC_9");
+	g_sprite_ids[1] = kernel_load_series(kernel_name('x', 0), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('x', 1), 0);
+	g_sprite_ids[3] = kernel_load_series("*RXMRC_9", 0);
 
 	kernel.quotes = quote_load(0x279, 0x27A, 0x27B, 0x27C, 0x27D, 0x27E, 0x27F, 0x280, 0x281, 0x282, 0x283, 0x284,
 		0x285, 0x286, 0x287, 0x288, 0x289, 0x28A, 0x28B, 0x28C, 0x28D, 0x28E, 0x28F, 0x290, 0x291, 0x292,

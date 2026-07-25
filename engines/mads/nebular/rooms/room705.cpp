@@ -118,9 +118,9 @@ static void handleFillBottle(int quote) {
 }
 
 static void room_705_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('b', 0));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('b', 1));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('a', 0));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('b', 0), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('b', 1), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('a', 0), 0);
 
 	player.walker_visible = false;
 

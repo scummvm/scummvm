@@ -32,12 +32,12 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_605_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('r', -1));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('b', -1));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('l', -1));
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('p', -1));
-	g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('n', -1));
-	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('f', -1));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('r', -1), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('b', -1), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('l', -1), 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_name('p', -1), 0);
+	g_sprite_ids[5] = kernel_load_series(kernel_name('n', -1), 0);
+	g_sprite_ids[6] = kernel_load_series(kernel_name('f', -1), 0);
 
 	g_sequence_ids[1] = _scene->_sequences.startPingPongCycle(g_sprite_ids[1], false, 15, 0, 0, 0);
 	g_sequence_ids[2] = _scene->_sequences.startPingPongCycle(g_sprite_ids[2], false, 17, 0, 0, 0);

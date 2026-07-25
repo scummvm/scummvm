@@ -20,6 +20,7 @@
  */
 
 #include "mads/core/game.h"
+#include "mads/core/matte.h"
 #include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
@@ -744,12 +745,12 @@ static void handleMonkeyFall() {
 	case 219:
 	{
 		g_engine->_soundManager->command(25, 0);
-		_scene->_sprites.remove(g_sprite_ids[7]);
-		_scene->_sprites.remove(g_sprite_ids[6]);
-		_scene->_sprites.remove(g_sprite_ids[5]);
-		_scene->_sprites.remove(g_sprite_ids[4]);
+		matte_deallocate_series(g_sprite_ids[7], true);
+		matte_deallocate_series(g_sprite_ids[6], true);
+		matte_deallocate_series(g_sprite_ids[5], true);
+		matte_deallocate_series(g_sprite_ids[4], true);
 
-		g_sprite_ids[8] = _scene->_sprites.addSprites(kernel_name('m', 4));
+		g_sprite_ids[8] = kernel_load_series(kernel_name('m', 4), 0);
 		_scene->_kernelMessages.add(Common::Point(180, 26), 0xFDFC, 0, 0, 90, quote_string(kernel.quotes, 151));
 		_scene->_sequences.addTimer(40, 100);
 		_scene->_hotspots.activate(227, false);
@@ -969,16 +970,16 @@ static void handleDodge() {
 }
 
 static void room_209_init() {
-	g_sprite_ids[11] = _scene->_sprites.addSprites("*RXMBD_2");
-	g_sprite_ids[12] = _scene->_sprites.addSprites(kernel_name('a', 1));
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('e', -1));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('a', 0));
-	g_sprite_ids[9] = _scene->_sprites.addSprites(kernel_name('b', 1));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('m', 0));
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('m', 1));
-	g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('m', 3));
-	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('m', 6));
-	g_sprite_ids[7] = _scene->_sprites.addSprites(kernel_name('m', 8));
+	g_sprite_ids[11] = kernel_load_series("*RXMBD_2", 0);
+	g_sprite_ids[12] = kernel_load_series(kernel_name('a', 1), 0);
+	g_sprite_ids[1] = kernel_load_series(kernel_name('e', -1), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('a', 0), 0);
+	g_sprite_ids[9] = kernel_load_series(kernel_name('b', 1), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('m', 0), 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_name('m', 1), 0);
+	g_sprite_ids[5] = kernel_load_series(kernel_name('m', 3), 0);
+	g_sprite_ids[6] = kernel_load_series(kernel_name('m', 6), 0);
+	g_sprite_ids[7] = kernel_load_series(kernel_name('m', 8), 0);
 
 	kernel.quotes = quote_load(0x82, 0x83, 0x84, 0x9C, 0x97, 0x95, 0x99, 0x9E, 0x98, 0x9B, 0xA0, 0x96, 0x9F,
 		0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x91, 0x92, 0x93, 0x94, 0x89, 0x85, 0x8A, 0x86, 0x87, 0x88, 0);
@@ -1627,7 +1628,7 @@ static void room_209_parser() {
 	if (player_said_2(take, binoculars) && (kernel.trigger || object_is_here(OBJ_BINOCULARS))) {
 		switch (kernel.trigger) {
 		case 0:
-			g_sprite_ids[10] = _scene->_sprites.addSprites("*RXMBD_8");
+			g_sprite_ids[10] = kernel_load_series("*RXMBD_8", 0);
 			player.commands_allowed = false;
 			player.walker_visible = false;
 			g_sequence_ids[10] = _scene->_sequences.startPingPongCycle(g_sprite_ids[10], false, 3, 2, 0, 0);
@@ -1650,7 +1651,7 @@ static void room_209_parser() {
 
 		case 3:
 			object_examine(OBJ_BINOCULARS, 0x51AF, 0);
-			_scene->_sprites.remove(g_sprite_ids[10]);
+			matte_deallocate_series(g_sprite_ids[10], true);
 			break;
 
 		default:

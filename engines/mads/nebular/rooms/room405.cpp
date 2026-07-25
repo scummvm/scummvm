@@ -32,9 +32,9 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_405_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('x', 1));
-	g_sprite_ids[3] = _scene->_sprites.addSprites("*ROXCL_8");
+	g_sprite_ids[1] = kernel_load_series(kernel_name('x', 0), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('x', 1), 0);
+	g_sprite_ids[3] = kernel_load_series("*ROXCL_8", 0);
 
 	if (_scene->_priorSceneId == 401) {
 		player.x = 23;

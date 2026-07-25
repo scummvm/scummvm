@@ -39,8 +39,8 @@ static Scratch local;
 
 
 static void room_752_init() {
-	g_sprite_ids[14] = _scene->_sprites.addSprites(kernel_name('l', -1));
-	g_sprite_ids[12] = _scene->_sprites.addSprites("*RXMBD_8");
+	g_sprite_ids[14] = kernel_load_series(kernel_name('l', -1), 0);
+	g_sprite_ids[12] = kernel_load_series("*RXMBD_8", 0);
 
 	if (_scene->_priorSceneId == 751) {
 		player.x = 13;
@@ -55,7 +55,7 @@ static void room_752_init() {
 	}
 
 	if (object[OBJ_ID_CARD].location == 752) {
-		g_sprite_ids[13] = _scene->_sprites.addSprites(kernel_name('i', -1));
+		g_sprite_ids[13] = kernel_load_series(kernel_name('i', -1), 0);
 		g_sequence_ids[13] = _scene->_sequences.startCycle(g_sprite_ids[13], false, 1);
 		_scene->_sequences.setDepth(g_sequence_ids[13], 8);
 		int idx = _scene->_dynamicHotspots.add(words_id_card, words_walkto, g_sequence_ids[13], Common::Rect(0, 0, 0, 0));

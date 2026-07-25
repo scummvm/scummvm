@@ -34,14 +34,14 @@ namespace Rooms {
 static void room_803_init() {
 	global[kBetweenRooms] = false;
 	player.walker_visible = false;
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('f', 1));
-	g_sprite_ids[9] = _scene->_sprites.addSprites("*RXMBD_2");
-	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('d', 1));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('f', 1), 0);
+	g_sprite_ids[9] = kernel_load_series("*RXMBD_2", 0);
+	g_sprite_ids[6] = kernel_load_series(kernel_name('d', 1), 0);
 
 	kernel.quotes = quote_load(0x31B, 0x31C, 0x31D, 0x31E, 0x31F, 0x320, 0x321, 0x322, 0);
 
 	if (global[kHoppyDead]) {
-		g_sprite_ids[7] = _scene->_sprites.addSprites(kernel_name('e', 1));
+		g_sprite_ids[7] = kernel_load_series(kernel_name('e', 1), 0);
 		g_sequence_ids[7] = _scene->_sequences.startCycle(g_sprite_ids[7], false, 1);
 		int idx = _scene->_dynamicHotspots.add(words_guts, words_walkto, g_sequence_ids[7], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(66, 123), FACING_SOUTH);
@@ -62,9 +62,9 @@ static void room_803_init() {
 			}
 			player.walker_visible = true;
 		} else if (!global[kBeamIsUp]) {
-			g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('a', 1));
-			g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('a', 3));
-			g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('a', 2));
+			g_sprite_ids[3] = kernel_load_series(kernel_name('a', 1), 0);
+			g_sprite_ids[2] = kernel_load_series(kernel_name('a', 3), 0);
+			g_sprite_ids[4] = kernel_load_series(kernel_name('a', 2), 0);
 			player.walker_visible = false;
 			player.commands_allowed = false;
 			g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
@@ -81,7 +81,7 @@ static void room_803_init() {
 			else
 				player.walker_visible = true;
 
-			g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('b', 1));
+			g_sprite_ids[5] = kernel_load_series(kernel_name('b', 1), 0);
 			g_engine->_soundManager->command(15, 0);
 			player.commands_allowed = false;
 			g_sequence_ids[5] = _scene->_sequences.addSpriteCycle(g_sprite_ids[5], false, 12, 1, 0, 0);
@@ -91,7 +91,7 @@ static void room_803_init() {
 		}
 	} else if (!global[kExitShip]) {
 		if (!global[kBeamIsUp]) {
-			g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('a', 1));
+			g_sprite_ids[3] = kernel_load_series(kernel_name('a', 1), 0);
 			player.walker_visible = false;
 			player.commands_allowed = false;
 			g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 8, 1, 0, 0);
@@ -99,7 +99,7 @@ static void room_803_init() {
 			_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 130);
 			g_engine->_soundManager->command(14, 0);
 		} else {
-			g_sprite_ids[8] = _scene->_sprites.addSprites(kernel_name('c', 1));
+			g_sprite_ids[8] = kernel_load_series(kernel_name('c', 1), 0);
 			player.walker_visible = false;
 			player.commands_allowed = false;
 			g_sequence_ids[8] = _scene->_sequences.startCycle(g_sprite_ids[8], false, 1);
@@ -113,7 +113,7 @@ static void room_803_init() {
 		player.y = 96;
 		player.facing = FACING_SOUTHWEST;
 		player.walker_visible = true;
-		g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('d', 1));
+		g_sprite_ids[6] = kernel_load_series(kernel_name('d', 1), 0);
 		g_sequence_ids[6] = _scene->_sequences.startCycle(g_sprite_ids[6], false, 19);
 		_scene->_sequences.addTimer(1, 150);
 	}

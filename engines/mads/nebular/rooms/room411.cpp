@@ -305,16 +305,16 @@ static void room_411_init() {
 		global[kBadFirstIngredient] = -1;
 	}
 
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('x', 1));
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('c', 0));
-	g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('f', 0));
-	g_sprite_ids[6] = _scene->_sprites.addSprites(kernel_name('f', 1));
-	g_sprite_ids[7] = _scene->_sprites.addSprites(kernel_name('f', 2));
-	g_sprite_ids[9] = _scene->_sprites.addSprites(kernel_name('c', 1));
-	g_sprite_ids[10] = _scene->_sprites.addSprites(kernel_name('a', 6));
-	g_sprite_ids[11] = _scene->_sprites.addSprites(kernel_name('a', 1));
-	g_sprite_ids[8] = _scene->_sprites.addSprites("*ROXRC_9");
+	g_sprite_ids[1] = kernel_load_series(kernel_name('x', 0), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('x', 1), 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_name('c', 0), 0);
+	g_sprite_ids[5] = kernel_load_series(kernel_name('f', 0), 0);
+	g_sprite_ids[6] = kernel_load_series(kernel_name('f', 1), 0);
+	g_sprite_ids[7] = kernel_load_series(kernel_name('f', 2), 0);
+	g_sprite_ids[9] = kernel_load_series(kernel_name('c', 1), 0);
+	g_sprite_ids[10] = kernel_load_series(kernel_name('a', 6), 0);
+	g_sprite_ids[11] = kernel_load_series(kernel_name('a', 1), 0);
+	g_sprite_ids[8] = kernel_load_series("*ROXRC_9", 0);
 
 	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 5, 0, 0, 0);
 	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 50, 0, 0, 0);

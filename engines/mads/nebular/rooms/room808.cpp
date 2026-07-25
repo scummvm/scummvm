@@ -41,10 +41,10 @@ static Scratch local;
 static void room_808_init() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
 
-	g_sprite_ids[4] = _scene->_sprites.addSprites("*REXHAND");
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('b', 0));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('b', 1));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('b', 2));
+	g_sprite_ids[4] = kernel_load_series("*REXHAND", 0);
+	g_sprite_ids[1] = kernel_load_series(kernel_name('b', 0), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('b', 1), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('b', 2), 0);
 
 	if (global[kTopButtonPushed])
 		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);

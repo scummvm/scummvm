@@ -41,8 +41,8 @@ static Scratch local;
 
 static void room_603_init() {
 	if (object[OBJ_COMPACT_CASE].location == _scene->_currentSceneId) {
-		g_sprite_ids[4] = _scene->_sprites.addSprites("*RXMRD_3");
-		g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('c', -1));
+		g_sprite_ids[4] = kernel_load_series("*RXMRD_3", 0);
+		g_sprite_ids[1] = kernel_load_series(kernel_name('c', -1), 0);
 		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, -1);
 		_scene->_sequences.setDepth(g_sequence_ids[1], 1);
 		local._compactCaseHotspotId = _scene->_dynamicHotspots.add(words_compact_case, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
@@ -50,8 +50,8 @@ static void room_603_init() {
 	}
 
 	if ((game.difficulty != DIFFICULTY_HARD) && (object[OBJ_NOTE].location == _scene->_currentSceneId)) {
-		g_sprite_ids[3] = _scene->_sprites.addSprites("*RXMRC_9");
-		g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('p', -1));
+		g_sprite_ids[3] = kernel_load_series("*RXMRC_9", 0);
+		g_sprite_ids[2] = kernel_load_series(kernel_name('p', -1), 0);
 		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
 		_scene->_sequences.setDepth(g_sequence_ids[2], 14);
 		local._noteHotspotId = _scene->_dynamicHotspots.add(words_note, words_walkto, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));

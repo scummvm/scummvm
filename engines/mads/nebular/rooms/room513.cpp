@@ -33,10 +33,10 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_513_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('c', 0));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	g_sprite_ids[3] = _scene->_sprites.addSprites("*RXCD_9");
-	g_sprite_ids[4] = _scene->_sprites.addSprites("*RXMRC_9");
+	g_sprite_ids[1] = kernel_load_series(kernel_name('c', 0), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('x', 0), 0);
+	g_sprite_ids[3] = kernel_load_series("*RXCD_9", 0);
+	g_sprite_ids[4] = kernel_load_series("*RXMRC_9", 0);
 
 	g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -2);
 	_scene->_sequences.setDepth(g_sequence_ids[2], 2);

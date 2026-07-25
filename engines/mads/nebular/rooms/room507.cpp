@@ -40,8 +40,8 @@ static Scratch local;
 
 
 static void room_507_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('p', -1));
-	g_sprite_ids[2] = _scene->_sprites.addSprites("*RXMRD_3");
+	g_sprite_ids[1] = kernel_load_series(kernel_name('p', -1), 0);
+	g_sprite_ids[2] = kernel_load_series("*RXMRD_3", 0);
 
 	if ((game.difficulty != DIFFICULTY_EASY) && (object[OBJ_PENLIGHT].location == _scene->_currentSceneId)) {
 		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 9, 0, 0, 0);

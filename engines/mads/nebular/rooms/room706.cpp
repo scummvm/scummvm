@@ -109,14 +109,14 @@ static void handleTakeVase() {
 }
 
 static void room_706_init() {
-	g_sprite_ids[3] = _scene->_sprites.addSprites("*RXMRC_3");
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('b', -1));
+	g_sprite_ids[3] = kernel_load_series("*RXMRC_3", 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_name('b', -1), 0);
 
 	if (!player.been_here_before)
 		local._emptyPedestral = false;
 
 	if (object[OBJ_VASE].location == _scene->_currentSceneId) {
-		g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('v', -1));
+		g_sprite_ids[1] = kernel_load_series(kernel_name('v', -1), 0);
 		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
 		_scene->_sequences.setDepth(g_sequence_ids[1], 4);
 		int idx = _scene->_dynamicHotspots.add(words_vase, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));

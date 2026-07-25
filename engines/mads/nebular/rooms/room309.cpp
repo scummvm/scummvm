@@ -44,14 +44,14 @@ static Scratch local;
 
 
 static void room_309_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites("*SC003x0");
-	g_sprite_ids[0] = _scene->_sprites.addSprites("*SC003x1");
-	g_sprite_ids[2] = _scene->_sprites.addSprites("*SC003x2");
+	g_sprite_ids[1] = kernel_load_series("*SC003x0", 0);
+	g_sprite_ids[0] = kernel_load_series("*SC003x1", 0);
+	g_sprite_ids[2] = kernel_load_series("*SC003x2", 0);
 
 	init_forcefield(&local._forcefield, true);
 
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('x', 0));
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_full_name(307, 'X', 0, "", EXT_SS));
+	g_sprite_ids[3] = kernel_load_series(kernel_name('x', 0), 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_full_name(307, 'X', 0, "", EXT_SS), 0);
 
 	g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);
 	_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(127, 78));

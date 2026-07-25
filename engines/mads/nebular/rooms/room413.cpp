@@ -40,7 +40,7 @@ static Scratch  local;
 
 
 static void room_413_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('a', 2));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('a', 2), 0);
 	local._rexDeath = false;
 
 	if (_scene->_priorSceneId == 405) {

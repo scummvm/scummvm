@@ -125,7 +125,7 @@ static void handleFillBottle(int quote) {
 
 static void room_704_init() {
 	if (object[OBJ_BOTTLE].location == _scene->_currentSceneId) {
-		g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('b', 0));
+		g_sprite_ids[1] = kernel_load_series(kernel_name('b', 0), 0);
 		g_sequence_ids[1] = _scene->_sequences.startPingPongCycle(g_sprite_ids[1], false, 6, 0, 0, 0);
 		_scene->_sequences.setDepth(g_sequence_ids[1], 1);
 		if (_scene->_priorSceneId == 705) {

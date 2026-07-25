@@ -94,13 +94,13 @@ static void handleWinchMovement() {
 }
 
 static void room_612_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('c', -1));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('p', -1));
-	g_sprite_ids[3] = _scene->_sprites.addSprites("*RXCD_3");
-	g_sprite_ids[4] = _scene->_sprites.addSprites("*RXRC_6");
+	g_sprite_ids[1] = kernel_load_series(kernel_name('c', -1), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('p', -1), 0);
+	g_sprite_ids[3] = kernel_load_series("*RXCD_3", 0);
+	g_sprite_ids[4] = kernel_load_series("*RXRC_6", 0);
 
 	if ((global[kLineStatus] == 2) || (global[kLineStatus] == 3)) {
-		g_sprite_ids[5] = _scene->_sprites.addSprites(kernel_name('f', -1));
+		g_sprite_ids[5] = kernel_load_series(kernel_name('f', -1), 0);
 		g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, -1);
 		_scene->_sequences.setDepth(g_sequence_ids[5], 1);
 		int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, g_sequence_ids[5], Common::Rect(0, 0, 0, 0));

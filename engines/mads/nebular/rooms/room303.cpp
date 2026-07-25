@@ -32,8 +32,8 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_303_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('b', 0));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('b', 1));
+	g_sprite_ids[1] = kernel_load_series(kernel_name('b', 0), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('b', 1), 0);
 
 	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 10, 0, 50, 120);
 	_scene->_sequences.setDepth(g_sequence_ids[1], 1);

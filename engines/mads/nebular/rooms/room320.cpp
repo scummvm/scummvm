@@ -175,12 +175,12 @@ static void room_320_init() {
 	local._lastFrame = 0;
 
 	for (int i = 0; i < 10; i++)
-		g_sprite_ids[i] = _scene->_sprites.addSprites(kernel_name('M', i));
+		g_sprite_ids[i] = kernel_load_series(kernel_name('M', i), 0);
 
 	for (int i = 0; i < 8; i++)
-		g_sprite_ids[10 + i] = _scene->_sprites.addSprites(kernel_name('N', i));
+		g_sprite_ids[10 + i] = kernel_load_series(kernel_name('N', i), 0);
 
-	g_sprite_ids[18] = _scene->_sprites.addSprites("*REXHAND");
+	g_sprite_ids[18] = kernel_load_series("*REXHAND", 0);
 	player.walker_visible = false;
 
 	setRightView(global[kRightView320]);
@@ -291,9 +291,9 @@ static void room_320_parser() {
 					setLeftView(10);
 					_scene->_kernelMessages.reset();
 					_scene->resetScene();
-					g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('m', 2));
-					g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_name('m', 4));
-					g_sprite_ids[9] = _scene->_sprites.addSprites(kernel_name('m', 9));
+					g_sprite_ids[2] = kernel_load_series(kernel_name('m', 2), 0);
+					g_sprite_ids[4] = kernel_load_series(kernel_name('m', 4), 0);
+					g_sprite_ids[9] = kernel_load_series(kernel_name('m', 9), 0);
 					local._blinkFl = false;
 					setLeftView(2);
 					kernel.quotes = quote_load(0xFE, 0);

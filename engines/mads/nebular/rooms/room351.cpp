@@ -35,9 +35,9 @@ static void room_351_init() {
 	global[kAfterHavoc] = -1;
 	global[kTeleporterRoom + 1] = 351;
 
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('c', -1));
-	g_sprite_ids[2] = _scene->_sprites.addSprites("*ROXRC_7");
-	g_sprite_ids[3] = _scene->_sprites.addSprites("*RXRD_7");
+	g_sprite_ids[1] = kernel_load_series(kernel_name('c', -1), 0);
+	g_sprite_ids[2] = kernel_load_series("*ROXRC_7", 0);
+	g_sprite_ids[3] = kernel_load_series("*RXRD_7", 0);
 
 	if (object_is_here(OBJ_CREDIT_CHIP)) {
 		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 6, 0, 0, 0);

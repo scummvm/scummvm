@@ -133,10 +133,10 @@ static void handleDoorSequences() {
 }
 
 static void room_506_init() {
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('q', 0));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('q', 1));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('c', -1));
-	g_sprite_ids[4] = _scene->_sprites.addSprites("*RXCD_3");
+	g_sprite_ids[1] = kernel_load_series(kernel_name('q', 0), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('q', 1), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('c', -1), 0);
+	g_sprite_ids[4] = kernel_load_series("*RXCD_3", 0);
 
 	// WORKAROUND: Set the animation before creating the door hotspots, since otherwise
 	// with the newer engine core the hotspot areas were never updated to match the attached sprites

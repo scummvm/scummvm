@@ -35,11 +35,11 @@ static void room_108_init() {
 	if (global[kHoovicSated] == 2)
 		global[kHoovicSated] = 0;
 
-	g_sprite_ids[0] = _scene->_sprites.addSprites(kernel_name('X', 0));
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('X', 1));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('X', 2));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('X', 3));
-	g_sprite_ids[4] = _scene->_sprites.addSprites(kernel_full_name(105, 'f', 4, "", EXT_SS));
+	g_sprite_ids[0] = kernel_load_series(kernel_name('X', 0), 0);
+	g_sprite_ids[1] = kernel_load_series(kernel_name('X', 1), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('X', 2), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('X', 3), 0);
+	g_sprite_ids[4] = kernel_load_series(kernel_full_name(105, 'f', 4, "", EXT_SS), 0);
 
 	g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 13, 0, 0, 7);
 	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 16, 0, 0, 9);

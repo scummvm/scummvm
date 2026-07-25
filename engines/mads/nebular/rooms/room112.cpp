@@ -34,10 +34,10 @@ namespace Rooms {
 static void room_112_init() {
 	section_1_music();
 
-	g_sprite_ids[0] = _scene->_sprites.addSprites(kernel_name('X', 0));
-	g_sprite_ids[1] = _scene->_sprites.addSprites(kernel_name('X', 1));
-	g_sprite_ids[2] = _scene->_sprites.addSprites(kernel_name('X', 2));
-	g_sprite_ids[3] = _scene->_sprites.addSprites(kernel_name('X', 5));
+	g_sprite_ids[0] = kernel_load_series(kernel_name('X', 0), 0);
+	g_sprite_ids[1] = kernel_load_series(kernel_name('X', 1), 0);
+	g_sprite_ids[2] = kernel_load_series(kernel_name('X', 2), 0);
+	g_sprite_ids[3] = kernel_load_series(kernel_name('X', 5), 0);
 
 	g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 10, 0, 17, 20);
 	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 4, 0, 0, 0);
