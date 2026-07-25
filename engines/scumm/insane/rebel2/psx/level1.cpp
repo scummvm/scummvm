@@ -625,9 +625,12 @@ void getLevel1BackgroundView(const RA2PSXLevel1ViewTracker &tracker,
 	const int tilt = scaleViewOffset(averageX, 0x4f00);
 	view.tiltLeft = kLevel1ViewTiltBase - tilt;
 	view.tiltRight = kLevel1ViewTiltBase + tilt;
-	view.panX = kLevel1ViewCenterX + scaleViewOffset(averageX, 5220);
+	// ra2SetProjectionOffset gets the same figure negated, so the 3D scene rides the pan.
+	view.sceneX = -scaleViewOffset(averageX, 5220);
+	view.sceneY = -scaleViewOffset(averageY, 0x1ce3);
+	view.panX = kLevel1ViewCenterX - view.sceneX;
 	// The band sits eight rows below the top of the port's cropped frame.
-	view.panY = kLevel1ViewCenterY + scaleViewOffset(averageY, 0x1ce3) - 8;
+	view.panY = kLevel1ViewCenterY - view.sceneY - 8;
 
 	const int slack = MAX(0, (int)background.h - height) - MAX(view.tiltLeft, view.tiltRight);
 	view.panX = CLIP(view.panX, 0, MAX(0, (int)background.w - width));
@@ -1029,7 +1032,8 @@ void traceLevel1Shot(RA2PSXLevel1Shot &shot) {
 }
 
 bool spawnLevel1Shot(RA2PSXLevel1Shot *shots, int aimX, int aimY,
-		int centerX, int centerY, int focal, const RA2PSXLevel1Ship *ship, int pair) {
+		int centerX, int centerY, int focal, const RA2PSXLevel1Ship *ship, int pair,
+		int sceneX, int sceneY) {
 	int slot = -1;
 	for (int i = 0; i < kLevel1ShotCount; ++i) {
 		if (!shots[i].active) {
@@ -1051,8 +1055,8 @@ bool spawnLevel1Shot(RA2PSXLevel1Shot *shots, int aimX, int aimY,
 				shot.start[i][axis] = kLevel1LaserStart[pair][i][axis];
 			shot.roll[i] = kLevel1LaserRoll[i];
 		}
-		shot.targetX = (float)(aimX - centerX) * 18000.0f / focal;
-		shot.targetY = (float)(aimY - centerY) * 18000.0f / focal;
+		shot.targetX = (float)(aimX - centerX - sceneX) * 18000.0f / focal;
+		shot.targetY = (float)(aimY - centerY - sceneY) * 18000.0f / focal;
 		shot.targetZ = 18000.0f;
 		// Midway between the two cannon the original alternates between.
 		shot.traceStart[0] = 0.0f;
@@ -1242,6 +1246,7 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 	bool fireWasPressed = false;
 	bool thirdPersonView = false;
 	RA2PSXLevel1ViewSwap viewSwap;
+	RA2PSXBackgroundView backgroundView;
 	Level1Result result = kLevel1Complete;
 	const int joystickDeadzone = MIN<int>(Common::JOYAXIS_MAX,
 			MAX(0, ConfMan.getInt("joystick_deadzone")) * 1000);
@@ -1517,6 +1522,9 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 			updateLevel1Puffs(puffs);
 			viewTracker.push(thirdPersonView ? ship.x * focal / MAX(1, ship.z) : aimX - centerX,
 					thirdPersonView ? ship.y * focal / MAX(1, ship.z) : aimY - centerY);
+			if (background)
+				getLevel1BackgroundView(viewTracker, *background, _vm->_screenWidth,
+						_vm->_screenHeight, backgroundView);
 			for (int i = 0; i < kLevel1ShotCount; ++i) {
 				if (!tieShots[i].active)
 					continue;
@@ -1640,7 +1648,8 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 				shootRequested = true;
 			}
 			if (shootRequested && spawnLevel1Shot(shots, aimX, aimY, centerX, centerY, focal,
-					thirdPersonView ? &ship : nullptr, cannonPair)) {
+					thirdPersonView ? &ship : nullptr, cannonPair,
+					backgroundView.sceneX, backgroundView.sceneY)) {
 				cannonPair ^= 1;
 				soundPlayer.play(kLevel1SfxPlayerFire, 0x3f, 0x40);
 			}
@@ -1652,10 +1661,8 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 		}
 
 		if (background && redraw) {
-			RA2PSXBackgroundView view;
-			getLevel1BackgroundView(viewTracker, *background, _vm->_screenWidth,
-					_vm->_screenHeight, view);
-			renderer.beginFrame(*background, view);
+			renderer.setViewOffset(backgroundView.sceneX, backgroundView.sceneY);
+			renderer.beginFrame(*background, backgroundView);
 			// Everything shares one painter's pass, farthest first, as the original's
 			// ordering table does.
 			int order[kLevel1EnemyCount] = { 0, 1, 2 };

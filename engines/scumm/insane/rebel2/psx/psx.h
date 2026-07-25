@@ -214,14 +214,18 @@ enum { kRA2PSXExplosionHeight = 56 };
 bool loadRA2PSXSpriteAnimation(const Common::Array<byte> &data, uint16 frameHeight,
 		Common::Array<RA2PSXTexture> &frames);
 
-// How far the level 1 background is panned and tilted inside its oversized frame.
+// How far the level 1 background is panned and tilted inside its oversized frame, and the
+// matching shift the 3D scene rides along with.
 struct RA2PSXBackgroundView {
-	RA2PSXBackgroundView() : panX(0), panY(0), tiltLeft(0), tiltRight(0) {}
+	RA2PSXBackgroundView() : panX(0), panY(0), tiltLeft(0), tiltRight(0),
+			sceneX(0), sceneY(0) {}
 
 	int panX;
 	int panY;
 	int tiltLeft;
 	int tiltRight;
+	int sceneX;
+	int sceneY;
 };
 
 struct RA2PSXFace {
@@ -269,6 +273,8 @@ public:
 	bool init(int width, int height);
 	void beginFrame(const Graphics::Surface &background);
 	void beginFrame(const Graphics::Surface &background, const RA2PSXBackgroundView &view);
+	// Shifts every world space draw, the way the original moves the GTE screen offset.
+	void setViewOffset(int x, int y) { _viewOffsetX = x; _viewOffsetY = y; }
 	// A camera facing quad, sized in world units like the original's explosion billboard.
 	void renderSprite(const RA2PSXTexture &texture, float x, float y, float z,
 			float halfWidth, float halfHeight, int rotation, int brightness = 0x80);
@@ -299,6 +305,8 @@ private:
 	bool _blendEnabled;
 	int _width;
 	int _height;
+	int _viewOffsetX;
+	int _viewOffsetY;
 };
 #endif
 

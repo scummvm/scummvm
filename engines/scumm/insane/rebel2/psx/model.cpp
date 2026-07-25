@@ -434,7 +434,8 @@ bool RA2PSXModel::parseObject(const Common::Array<byte> &data, uint32 objectOffs
 #ifdef USE_TINYGL
 
 RA2PSXTinyGLRenderer::RA2PSXTinyGLRenderer() : _context(nullptr), _activeTexture(nullptr),
-		_textureEnabled(false), _blendEnabled(false), _width(0), _height(0) {
+		_textureEnabled(false), _blendEnabled(false), _width(0), _height(0),
+		_viewOffsetX(0), _viewOffsetY(0) {
 }
 
 RA2PSXTinyGLRenderer::~RA2PSXTinyGLRenderer() {
@@ -635,8 +636,8 @@ void RA2PSXTinyGLRenderer::renderSprite(const RA2PSXTexture &texture, float x, f
 	TinyGL::setContext(_context);
 
 	const float focalLength = _width * 2.0f;
-	const float centerX = _width * 0.5f + x * focalLength / z;
-	const float centerY = _height * 0.5f + y * focalLength / z;
+	const float centerX = _width * 0.5f + _viewOffsetX + x * focalLength / z;
+	const float centerY = _height * 0.5f + _viewOffsetY + y * focalLength / z;
 	const float scaleX = halfWidth * focalLength / z;
 	const float scaleY = halfHeight * focalLength / z;
 	const float angle = rotation * kRA2PSXAngleScale;
@@ -817,8 +818,8 @@ void RA2PSXTinyGLRenderer::renderTransformedModel(const RA2PSXModel &model,
 	};
 	Common::Array<ProjectedVertex> projected;
 	projected.resize(model.vertices().size());
-	const float centerX = _width * 0.5f;
-	const float centerY = _height * 0.5f;
+	const float centerX = _width * 0.5f + _viewOffsetX;
+	const float centerY = _height * 0.5f + _viewOffsetY;
 	const float focalLength = _width * 2.0f;
 	for (uint i = 0; i < model.vertices().size(); ++i) {
 		const RA2PSXVertex &vertex = model.vertices()[i];
