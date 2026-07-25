@@ -59,7 +59,7 @@ static void room_211_init() {
 		player.commands_allowed = false;
 		player.walker_visible = false;
 		kernel_run_animation(kernel_name('A', -1), 100);
-		_scene->_animation[0]->setCurrentFrame(169);
+		kernel_reset_animation(0, 169);
 	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 310;
 		player.y = 31;
@@ -141,8 +141,8 @@ static void room_211_daemon() {
 		}
 	}
 
-	if (local._ambushFl && (_scene->_animation[0]->getCurrentFrame() > local._monkeyFrame)) {
-		local._monkeyFrame = _scene->_animation[0]->getCurrentFrame();
+	if (local._ambushFl && (kernel_anim[0].frame > local._monkeyFrame)) {
+		local._monkeyFrame = kernel_anim[0].frame;
 		switch (local._monkeyFrame) {
 		case 2:
 		{
@@ -225,9 +225,9 @@ static void room_211_daemon() {
 			local._wakeFl = false;
 		}
 
-		if (_scene->_animation[0]->getCurrentFrame() > local._monkeyFrame) {
-			local._monkeyFrame = _scene->_animation[0]->getCurrentFrame();
-			switch (_scene->_animation[0]->getCurrentFrame()) {
+		if (kernel_anim[0].frame > local._monkeyFrame) {
+			local._monkeyFrame = kernel_anim[0].frame;
+			switch (kernel_anim[0].frame) {
 			case 177:
 			{
 				int msgIndex = kernel_message_add(quote_string(kernel.quotes, 165), 63, local._scrollY, 0x1110, 180, 0, 0);

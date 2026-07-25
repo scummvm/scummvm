@@ -148,21 +148,21 @@ static void room_704_init() {
 		local._animationMode = 2;
 		local._boatDirection = 2;
 		kernel_run_animation(kernel_name('A', -1), 0);
-		_scene->_animation[0]->setCurrentFrame(36);
+		kernel_reset_animation(0, 36);
 	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.commands_allowed = false;
 		local._boatDirection = 1;
 		kernel_run_animation(kernel_name('A', -1), 0);
 	} else if (local._boatDirection == 1) {
 		kernel_run_animation(kernel_name('A', -1), 0);
-		_scene->_animation[0]->setCurrentFrame(8);
+		kernel_reset_animation(0, 8);
 	} else if (local._boatDirection == 2) {
 		if (object[OBJ_BOTTLE].location == room_id) {
 			_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(123, 125));
 			_scene->_sequences.setDepth(g_sequence_ids[1], 1);
 		}
 		kernel_run_animation(kernel_name('A', -1), 0);
-		_scene->_animation[0]->setCurrentFrame(57);
+		kernel_reset_animation(0, 57);
 	}
 
 	if (kernel.teleported_in)
@@ -176,9 +176,9 @@ static void room_704_init() {
 }
 
 static void room_704_daemon() {
-	if (_scene->_animation[0] != nullptr) {
-		if (_scene->_animation[0]->getCurrentFrame() != local._boatCurrentFrame) {
-			local._boatCurrentFrame = _scene->_animation[0]->getCurrentFrame();
+	if (kernel_anim[0].anim != nullptr) {
+		if (kernel_anim[0].frame != local._boatCurrentFrame) {
+			local._boatCurrentFrame = kernel_anim[0].frame;
 			int nextFrame = -1;
 
 			switch (local._boatCurrentFrame) {
@@ -284,8 +284,8 @@ static void room_704_daemon() {
 				break;
 			}
 
-			if ((nextFrame >= 0) && (nextFrame != _scene->_animation[0]->getCurrentFrame())) {
-				_scene->_animation[0]->setCurrentFrame(nextFrame);
+			if ((nextFrame >= 0) && (nextFrame != kernel_anim[0].frame)) {
+				kernel_reset_animation(0, nextFrame);
 				local._boatCurrentFrame = nextFrame;
 			}
 		}

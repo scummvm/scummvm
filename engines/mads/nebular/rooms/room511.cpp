@@ -125,9 +125,9 @@ static void room_511_init() {
 }
 
 static void room_511_daemon() {
-	if ((local._lineAnimationMode == 1) && _scene->_animation[0]) {
-		if (local._lineFrame != _scene->_animation[0]->getCurrentFrame()) {
-			local._lineFrame = _scene->_animation[0]->getCurrentFrame();
+	if ((local._lineAnimationMode == 1) && (kernel_anim[0].anim != nullptr)) {
+		if (local._lineFrame != kernel_anim[0].frame) {
+			local._lineFrame = kernel_anim[0].frame;
 			int resetFrame = -1;
 
 			if ((local._lineAnimationPosition == 2) && (local._lineFrame == 14))
@@ -143,8 +143,8 @@ static void room_511_daemon() {
 					resetFrame = 2;
 			}
 
-			if ((resetFrame >= 0) && (resetFrame != _scene->_animation[0]->getCurrentFrame())) {
-				_scene->_animation[0]->setCurrentFrame(resetFrame);
+			if ((resetFrame >= 0) && (resetFrame != kernel_anim[0].frame)) {
+				kernel_reset_animation(0, resetFrame);
 				local._lineFrame = resetFrame;
 			}
 		}
@@ -153,7 +153,7 @@ static void room_511_daemon() {
 	switch (kernel.trigger) {
 	case 70:
 		player.walker_visible = true;
-		player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
+		player.clock = kernel_anim[0].next_clock - player.frame_delay;
 		_scene->_sequences.addTimer(6, 71);
 		break;
 
@@ -191,7 +191,7 @@ static void room_511_pre_parser() {
 			kernel_run_animation(kernel_name('R', 2), 1);
 		} else if (kernel.trigger == 1) {
 			player.walker_visible = true;
-			player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
+			player.clock = kernel_anim[0].next_clock - player.frame_delay;
 			inter_move_object(OBJ_FISHING_LINE, 1);
 			local._handingLine = false;
 			player.commands_allowed = true;

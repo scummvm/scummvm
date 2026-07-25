@@ -252,7 +252,7 @@ static void handleDialog() {
 			player.clock = kernel.clock + player.frame_delay;
 			player.walker_visible = false;
 			player.commands_allowed = false;
-			_scene->_animation[0]->setCurrentFrame(local._resetFrame);
+			kernel_reset_animation(0, local._resetFrame);
 		}
 		kernel_message_purge();
 		local._newQuantity = computeQuoteAndQuantity();
@@ -413,16 +413,16 @@ static void room_411_init() {
 	}
 
 	kernel_run_animation(kernel_name('a', -1), 0);
-	_scene->_animation[0]->setCurrentFrame(128);
+	kernel_reset_animation(0, 128);
 
 	local._makeMushroomCloud = false;
 	local._killRox = false;
 }
 
 static void room_411_daemon() {
-	if (_scene->_animation[0] != nullptr) {
-		if (local._curAnimationFrame != _scene->_animation[0]->getCurrentFrame()) {
-			local._curAnimationFrame = _scene->_animation[0]->getCurrentFrame();
+	if (kernel_anim[0].anim != nullptr) {
+		if (local._curAnimationFrame != kernel_anim[0].frame) {
+			local._curAnimationFrame = kernel_anim[0].frame;
 			local._resetFrame = -1;
 
 			switch (local._curAnimationFrame) {
@@ -490,14 +490,14 @@ static void room_411_daemon() {
 				break;
 			}
 
-			if ((local._resetFrame >= 0) && (local._resetFrame != _scene->_animation[0]->getCurrentFrame())) {
-				_scene->_animation[0]->setCurrentFrame(local._resetFrame);
+			if ((local._resetFrame >= 0) && (local._resetFrame != kernel_anim[0].frame)) {
+				kernel_reset_animation(0, local._resetFrame);
 				local._curAnimationFrame = local._resetFrame;
 			}
 		}
 	}
 
-	if (_scene->_animation[0]->getCurrentFrame() == 86)
+	if (kernel_anim[0].frame == 86)
 		g_engine->_soundManager->command(59, 0);
 }
 

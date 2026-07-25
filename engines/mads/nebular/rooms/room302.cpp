@@ -50,8 +50,8 @@ static void room_302_daemon() {
 	if (kernel.trigger == 71)
 		new_room = 303;
 
-	if ((_scene->_animation[0] != nullptr) && (_scene->_animation[0]->getCurrentFrame() != local._oldFrame)) {
-		local._oldFrame = _scene->_animation[0]->getCurrentFrame();
+	if ((kernel_anim[0].anim != nullptr) && (kernel_anim[0].frame != local._oldFrame)) {
+		local._oldFrame = kernel_anim[0].frame;
 		if (local._oldFrame == 147) {
 			inter_move_object(OBJ_POISON_DARTS, 1);
 			inter_move_object(OBJ_BLOWGUN, 1);

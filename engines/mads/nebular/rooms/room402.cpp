@@ -628,7 +628,7 @@ static void room_402_init() {
 	local._refuseAlienLiquor = false;
 
 	kernel_run_animation(kernel_full_name(402, 'd', 1, "", EXT_AA), 0);
-	_scene->_animation[0]->_repeatFlag = true;
+	kernel_anim[0].repeat = true;
 
 	g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, 1);
 	_scene->_sequences.setDepth(g_sequence_ids[5], 1);
@@ -1317,43 +1317,43 @@ static void room_402_daemon() {
 	if (kernel.trigger == 32)
 		local._rightWomanMoving = false;
 
-	if (_scene->_animation[0]->getCurrentFrame() == 1) {
+	if (kernel_anim[0].frame == 1) {
 		switch (g_engine->getRandomNumber(1, 50)) {
 		case 1:
-			_scene->_animation[0]->setCurrentFrame(2);
+			kernel_reset_animation(0, 2);
 			break;
 
 		case 2:
-			_scene->_animation[0]->setCurrentFrame(7);
+			kernel_reset_animation(0, 7);
 			break;
 
 		case 3:
-			_scene->_animation[0]->setCurrentFrame(11);
+			kernel_reset_animation(0, 11);
 			break;
 
 		default:
-			_scene->_animation[0]->setCurrentFrame(0);
+			kernel_reset_animation(0, 0);
 			break;
 		}
 	}
 
-	if ((_scene->_animation[0]->getCurrentFrame() == 4) && (local._drinkTimer < 10)) {
+	if ((kernel_anim[0].frame == 4) && (local._drinkTimer < 10)) {
 		++local._drinkTimer;
-		_scene->_animation[0]->setCurrentFrame(3);
+		kernel_reset_animation(0, 3);
 	}
 
 	if (local._drinkTimer == 10) {
 		local._drinkTimer = 0;
-		_scene->_animation[0]->setCurrentFrame(4);
-		_scene->_animation[0]->_currentFrame = 5;
+		kernel_reset_animation(0, 4);
+		kernel_anim[0].frame = 5;
 	}
 
 
-	switch (_scene->_animation[0]->getCurrentFrame()) {
+	switch (kernel_anim[0].frame) {
 	case 6:
 	case 10:
 	case 14:
-		_scene->_animation[0]->setCurrentFrame(0);
+		kernel_reset_animation(0, 0);
 		break;
 
 	default:

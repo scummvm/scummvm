@@ -32,36 +32,6 @@ namespace Rooms {
 
 Scene _scene;
 
-static uint16 dummy_num_images;
-Scene::Animation::Animation(int anim_id) : _id(anim_id),
-		_currentFrame(kernel_anim[anim_id].frame),
-		_repeatFlag(kernel_anim[anim_id].repeat),
-		_spriteListIndexes(kernel_anim[anim_id].anim ? &kernel_anim[anim_id].anim->series_id[0] : nullptr),
-		_oldFrameEntry(kernel_anim[anim_id].image),
-		_frameEntriesCount(kernel_anim[anim_id].anim ? kernel_anim[anim_id].anim->num_images : dummy_num_images),
-		_frameEntries(kernel_anim[anim_id].anim ? kernel_anim[anim_id].anim->image : nullptr) {
-}
-
-int Scene::Animation::getCurrentFrame() const {
-	return _currentFrame;
-}
-
-void Scene::Animation::setNextFrameTimer(long time) {
-	kernel_anim[_id].next_clock = time;
-}
-
-long Scene::Animation::getNextFrameTimer() {
-	return 	kernel_anim[_id].next_clock;
-}
-
-void Scene::Animation::setCurrentFrame(int frameNum) {
-	kernel_reset_animation(_id, frameNum);
-}
-
-void Scene::Animation::resetSpriteSetsCount() {
-	kernel_anim[_id].anim->num_series = 0;
-}
-
 int Scene::DynamicHotspots::add(int vocab_id, int verb_id, int auto_sequence, const Common::Rect &r) {
 	return kernel_add_dynamic(vocab_id, verb_id, 0, auto_sequence,
 		r.left, r.top, r.width(), r.height());

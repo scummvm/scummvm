@@ -128,51 +128,6 @@ struct Scene {
 		return this;
 	}
 
-	struct Animation {
-		int16 _id;
-		int &_currentFrame;
-		int &_repeatFlag;
-		int *const _spriteListIndexes;
-		int &_oldFrameEntry;
-		uint16 &_frameEntriesCount;
-		Image *const _frameEntries;
-
-		Animation(int anim_id);
-
-		Animation *operator->() {
-			return this;
-		}
-		const Animation *operator->() const {
-			return this;
-		}
-
-		bool operator!() const {
-			return kernel_anim[_id].anim == nullptr;
-		}
-		bool operator!=(std::nullptr_t) const {
-			return kernel_anim[_id].anim != nullptr;
-		}
-		bool operator==(std::nullptr_t) const {
-			return kernel_anim[_id].anim == nullptr;
-		}
-		explicit operator bool() const {
-			return kernel_anim[_id].anim != nullptr;
-		}
-
-
-		int getCurrentFrame() const;
-		void setNextFrameTimer(long time);
-		long getNextFrameTimer();
-		void setCurrentFrame(int frameNum);
-		void resetSpriteSetsCount();
-	};
-	struct Animations {
-		Animation operator[](int anim_id) {
-			return Animation(anim_id);
-		}
-	};
-	Animations _animation;
-
 	struct CustomDest {
 		int &x = inter_point_x;
 		int &y = inter_point_y;

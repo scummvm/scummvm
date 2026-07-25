@@ -126,7 +126,7 @@ static void room_106_daemon() {
 		}
 	}
 
-	if (local._firstEmergingFl && (_scene->_animation[0]->getCurrentFrame() >= 19)) {
+	if (local._firstEmergingFl && (kernel_anim[0].frame >= 19)) {
 		local._firstEmergingFl = false;
 		kernel_message_add(quote_string(kernel.quotes, 52), 0, 0, 0x1110, 120, 0, 34);
 	}

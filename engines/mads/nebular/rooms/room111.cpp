@@ -133,7 +133,7 @@ static void room_111_daemon() {
 	if (kernel.trigger == 73)
 		g_engine->_soundManager->command(37, 0);
 
-	if (local._rexDivingFl && (_scene->_animation[0]->getCurrentFrame() >= 9)) {
+	if (local._rexDivingFl && (kernel_anim[0].frame >= 9)) {
 		g_engine->_soundManager->command(36, 0);
 		local._rexDivingFl = false;
 	}

@@ -193,9 +193,9 @@ static void room_320_init() {
 }
 
 static void room_320_daemon() {
-	if (_scene->_animation[0] != nullptr) {
-		if (local._lastFrame != _scene->_animation[0]->getCurrentFrame()) {
-			local._lastFrame = _scene->_animation[0]->getCurrentFrame();
+	if (kernel_anim[0].anim != nullptr) {
+		if (local._lastFrame != kernel_anim[0].frame) {
+			local._lastFrame = kernel_anim[0].frame;
 			switch (local._lastFrame) {
 			case 95:
 				local._blinkFl = true;

@@ -298,7 +298,7 @@ static void room_701_parser() {
 			case 1:
 			{
 				player.walker_visible = true;
-				player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
+				player.clock = kernel_anim[0].next_clock - player.frame_delay;
 				g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
 				_scene->_sequences.setDepth(g_sequence_ids[2], 9);
 				int idx = _scene->_dynamicHotspots.add(words_boat, words_climb_into, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));

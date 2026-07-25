@@ -53,8 +53,8 @@ static void room_112_init() {
 }
 
 static void room_112_daemon() {
-	if ((_scene->_animation[0] != nullptr) && (config_file.naughtiness == STORYMODE_NICE)) {
-		if (_scene->_animation[0]->getCurrentFrame() >= 54) {
+	if ((kernel_anim[0].anim != nullptr) && (config_file.naughtiness == STORYMODE_NICE)) {
+		if (kernel_anim[0].frame >= 54) {
 			kernel_abort_animation(0);
 			kernel.trigger = 70;
 		}

@@ -85,15 +85,15 @@ static void room_505_init() {
 	player.commands_allowed = false;
 	local._frame = -1;
 	kernel_run_animation(kernel_name('a', -1), 0);
-	_scene->_animation[0]->setCurrentFrame(86);
+	kernel_reset_animation(0, 86);
 
 	section_5_music();
 	g_engine->_soundManager->command(16, 0);
 }
 
 static void room_505_daemon() {
-	if (local._frame != _scene->_animation[0]->getCurrentFrame()) {
-		local._frame = _scene->_animation[0]->getCurrentFrame();
+	if (local._frame != kernel_anim[0].frame) {
+		local._frame = kernel_anim[0].frame;
 		int resetFrame = -1;
 
 		switch (local._frame) {
@@ -231,8 +231,8 @@ static void room_505_daemon() {
 			break;
 		}
 
-		if ((resetFrame >= 0) && (resetFrame != _scene->_animation[0]->getCurrentFrame())) {
-			_scene->_animation[0]->setCurrentFrame(resetFrame);
+		if ((resetFrame >= 0) && (resetFrame != kernel_anim[0].frame)) {
+			kernel_reset_animation(0, resetFrame);
 			local._frame = resetFrame;
 		}
 	}

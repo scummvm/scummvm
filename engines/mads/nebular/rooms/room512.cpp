@@ -272,8 +272,8 @@ static void room_512_parser() {
 		text_show(51225);
 	else if (player_said_2(look, padlock_key) && object_is_here(OBJ_PADLOCK_KEY))
 		text_show(51215);
-	else if (player_said_2(look, fishing_rod) && (!_scene->_animation[0] ||
-		_scene->_animation[0]->getCurrentFrame() == 4))
+	else if (player_said_2(look, fishing_rod) && ((kernel_anim[0].anim == nullptr) ||
+		kernel_anim[0].frame == 4))
 		text_show(51216);
 	else if (player_said_2(look, ships_wheel))
 		text_show(51218);

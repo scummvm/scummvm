@@ -157,7 +157,7 @@ static void room_703_init() {
 		local._boatDir = 2;
 		local._monsterMode = 0;
 		kernel_run_animation(kernel_name('A', -1), 0);
-		_scene->_animation[0]->setCurrentFrame(34);
+		kernel_reset_animation(0, 34);
 	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.commands_allowed = false;
 		local._boatDir = 1;
@@ -175,17 +175,17 @@ static void room_703_init() {
 		local._boatDir = 1;
 		local._monsterMode = 1;
 		kernel_run_animation(kernel_name('B', -1), 0);
-		_scene->_animation[0]->setCurrentFrame(39);
+		kernel_reset_animation(0, 39);
 	} else if (local._boatDir == 1) {
 		local._curSequence = 0;
 		local._monsterMode = 0;
 		kernel_run_animation(kernel_name('A', -1), 0);
-		_scene->_animation[0]->setCurrentFrame(9);
+		kernel_reset_animation(0, 9);
 	} else if (local._boatDir == 2) {
 		local._curSequence = 0;
 		local._monsterMode = 0;
 		kernel_run_animation(kernel_name('A', -1), 0);
-		_scene->_animation[0]->setCurrentFrame(56);
+		kernel_reset_animation(0, 56);
 	}
 
 	if (kernel.teleported_in) {
@@ -227,9 +227,9 @@ static void room_703_daemon() {
 	if (kernel.trigger == 70)
 		kernel.force_restart = true;
 
-	if ((local._monsterMode == 3) && (_scene->_animation[0] != nullptr)) {
-		if (_scene->_animation[0]->getCurrentFrame() != local._boatFrame) {
-			local._boatFrame = _scene->_animation[0]->getCurrentFrame();
+	if ((local._monsterMode == 3) && (kernel_anim[0].anim != nullptr)) {
+		if (kernel_anim[0].frame != local._boatFrame) {
+			local._boatFrame = kernel_anim[0].frame;
 			int nextBoatFrame = -1;
 
 			if (local._boatFrame == 62) {
@@ -240,8 +240,8 @@ static void room_703_daemon() {
 				}
 			}
 
-			if ((nextBoatFrame >= 0) && (nextBoatFrame != _scene->_animation[0]->getCurrentFrame())) {
-				_scene->_animation[0]->setCurrentFrame(nextBoatFrame);
+			if ((nextBoatFrame >= 0) && (nextBoatFrame != kernel_anim[0].frame)) {
+				kernel_reset_animation(0, nextBoatFrame);
 				local._boatFrame = nextBoatFrame;
 			}
 		}
@@ -250,9 +250,9 @@ static void room_703_daemon() {
 	if (kernel.trigger == 70)
 		kernel.force_restart = true;
 
-	if ((local._monsterMode == 0) && (_scene->_animation[0] != nullptr)) {
-		if (_scene->_animation[0]->getCurrentFrame() != local._boatFrame) {
-			local._boatFrame = _scene->_animation[0]->getCurrentFrame();
+	if ((local._monsterMode == 0) && (kernel_anim[0].anim != nullptr)) {
+		if (kernel_anim[0].frame != local._boatFrame) {
+			local._boatFrame = kernel_anim[0].frame;
 			int nextBoatFrame = -1;
 
 			switch (local._boatFrame) {
@@ -323,8 +323,8 @@ static void room_703_daemon() {
 				break;
 			}
 
-			if ((nextBoatFrame >= 0) && (nextBoatFrame != _scene->_animation[0]->getCurrentFrame())) {
-				_scene->_animation[0]->setCurrentFrame(nextBoatFrame);
+			if ((nextBoatFrame >= 0) && (nextBoatFrame != kernel_anim[0].frame)) {
+				kernel_reset_animation(0, nextBoatFrame);
 				local._boatFrame = nextBoatFrame;
 			}
 		}
@@ -358,9 +358,9 @@ static void room_703_daemon() {
 	}
 
 
-	if ((local._monsterMode == 1) && (_scene->_animation[0] != nullptr)) {
-		if (_scene->_animation[0]->getCurrentFrame() != local._boatFrame) {
-			local._boatFrame = _scene->_animation[0]->getCurrentFrame();
+	if ((local._monsterMode == 1) && (kernel_anim[0].anim != nullptr)) {
+		if (kernel_anim[0].frame != local._boatFrame) {
+			local._boatFrame = kernel_anim[0].frame;
 			int nextBoatFrame = -1;
 
 			switch (local._boatFrame) {
@@ -397,16 +397,16 @@ static void room_703_daemon() {
 				break;
 			}
 
-			if ((nextBoatFrame >= 0) && (nextBoatFrame != _scene->_animation[0]->getCurrentFrame())) {
-				_scene->_animation[0]->setCurrentFrame(nextBoatFrame);
+			if ((nextBoatFrame >= 0) && (nextBoatFrame != kernel_anim[0].frame)) {
+				kernel_reset_animation(0, nextBoatFrame);
 				local._boatFrame = nextBoatFrame;
 			}
 		}
 	}
 
-	if ((local._monsterMode == 2) && (_scene->_animation[0] != nullptr)) {
-		if (_scene->_animation[0]->getCurrentFrame() != local._boatFrame) {
-			local._boatFrame = _scene->_animation[0]->getCurrentFrame();
+	if ((local._monsterMode == 2) && (kernel_anim[0].anim != nullptr)) {
+		if (kernel_anim[0].frame != local._boatFrame) {
+			local._boatFrame = kernel_anim[0].frame;
 			int nextBoatFrame = -1;
 
 			switch (local._boatFrame) {
@@ -446,7 +446,7 @@ static void room_703_daemon() {
 				kernel_abort_animation(0);
 				local._monsterMode = 1;
 				kernel_run_animation(kernel_name('B', -1), 0);
-				_scene->_animation[0]->setCurrentFrame(39);
+				kernel_reset_animation(0, 39);
 				player.commands_allowed = true;
 				break;
 
@@ -455,7 +455,7 @@ static void room_703_daemon() {
 					kernel_abort_animation(0);
 					local._monsterMode = 1;
 					kernel_run_animation(kernel_name('B', -1), 0);
-					_scene->_animation[0]->setCurrentFrame(39);
+					kernel_reset_animation(0, 39);
 					player.commands_allowed = true;
 				} else
 					inter_move_object(OBJ_CHICKEN_BOMB, 1);
@@ -468,7 +468,7 @@ static void room_703_daemon() {
 				kernel_abort_animation(0);
 				local._monsterMode = 0;
 				kernel_run_animation(kernel_name('A', -1), 0);
-				_scene->_animation[0]->setCurrentFrame(9);
+				kernel_reset_animation(0, 9);
 				player.commands_allowed = true;
 				if (config_file.naughtiness == STORYMODE_NAUGHTY)
 					text_show(70321);
@@ -481,8 +481,8 @@ static void room_703_daemon() {
 				break;
 			}
 
-			if ((nextBoatFrame >= 0) && (nextBoatFrame != _scene->_animation[0]->getCurrentFrame())) {
-				_scene->_animation[0]->setCurrentFrame(nextBoatFrame);
+			if ((nextBoatFrame >= 0) && (nextBoatFrame != kernel_anim[0].frame)) {
+				kernel_reset_animation(0, nextBoatFrame);
 				local._boatFrame = nextBoatFrame;
 			}
 		}
@@ -518,7 +518,7 @@ static void room_703_parser() {
 		kernel_abort_animation(0);
 		local._monsterMode = 2;
 		kernel_run_animation(kernel_name('C', -1), 0);
-		_scene->_animation[0]->setCurrentFrame(19);
+		kernel_reset_animation(0, 19);
 	} else if (player_said_3(throw, chicken, sea_monster)) {
 		player.commands_allowed = false;
 		kernel_abort_animation(0);
@@ -529,13 +529,13 @@ static void room_703_parser() {
 		kernel_abort_animation(0);
 		local._monsterMode = 2;
 		kernel_run_animation(kernel_name('C', -1), 0);
-		_scene->_animation[0]->setCurrentFrame(39);
+		kernel_reset_animation(0, 39);
 	} else if (player_said_3(throw, bomb, sea_monster)) {
 		player.commands_allowed = false;
 		kernel_abort_animation(0);
 		local._monsterMode = 2;
 		kernel_run_animation(kernel_name('C', -1), 0);
-		_scene->_animation[0]->setCurrentFrame(59);
+		kernel_reset_animation(0, 59);
 	} else if (player_said_3(throw, chicken_bomb, sea_monster)) {
 		local._useBomb = true;
 		player.commands_allowed = false;

@@ -89,7 +89,7 @@ static void room_604_daemon() {
 	switch (kernel.trigger) {
 	case 70:
 		player.walker_visible = true;
-		player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
+		player.clock = kernel_anim[0].next_clock - player.frame_delay;
 		_scene->_sequences.addTimer(30, 71);
 		break;
 
@@ -111,9 +111,9 @@ static void room_604_daemon() {
 		break;
 	}
 
-	if (local._monsterActive && (_scene->_animation[0] != nullptr)) {
-		if (_scene->_animation[0]->getCurrentFrame() != local._monsterFrame) {
-			local._monsterFrame = _scene->_animation[0]->getCurrentFrame();
+	if (local._monsterActive && (kernel_anim[0].anim != nullptr)) {
+		if (kernel_anim[0].frame != local._monsterFrame) {
+			local._monsterFrame = kernel_anim[0].frame;
 			int nextMonsterFrame = -1;
 
 			switch (local._monsterFrame) {
@@ -152,7 +152,7 @@ static void room_604_daemon() {
 			}
 
 			if ((nextMonsterFrame >= 0) && (nextMonsterFrame != local._monsterFrame)) {
-				_scene->_animation[0]->setCurrentFrame(nextMonsterFrame);
+				kernel_reset_animation(0, nextMonsterFrame);
 				local._monsterFrame = nextMonsterFrame;
 			}
 		}

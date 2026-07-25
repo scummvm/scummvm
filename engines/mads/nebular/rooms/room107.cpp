@@ -93,7 +93,7 @@ static void room_107_init() {
 }
 
 static void room_107_daemon() {
-	if (local._shootingFl && (_scene->_animation[0]->getCurrentFrame() >= 19)) {
+	if (local._shootingFl && (kernel_anim[0].frame >= 19)) {
 		kernel_message_add(quote_string(kernel.quotes, 52), 0, 0, 0x1110, 120, 0, 34);
 		local._shootingFl = false;
 	}

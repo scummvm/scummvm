@@ -67,7 +67,7 @@ static void room_601_daemon() {
 	switch (kernel.trigger) {
 	case 70:
 		player.walker_visible = true;
-		player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
+		player.clock = kernel_anim[0].next_clock - player.frame_delay;
 		_scene->_sequences.addTimer(30, 71);
 		break;
 

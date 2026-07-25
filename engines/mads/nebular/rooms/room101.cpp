@@ -179,32 +179,32 @@ static void room_101_daemon() {
 		break;
 	}
 
-	if (_scene->_animation[0] != nullptr) {
-		if ((_scene->_animation[0]->getCurrentFrame() >= 6) && (local._messageNum == 0)) {
+	if (kernel_anim[0].anim != nullptr) {
+		if ((kernel_anim[0].frame >= 6) && (local._messageNum == 0)) {
 			local._messageNum++;
 			kernel_message_add(quote_string(kernel.quotes, 49), 63, local._posY, 0x1110, 240, 0, 0);
 			local._posY += 14;
 		}
 
-		if ((_scene->_animation[0]->getCurrentFrame() >= 7) && (local._messageNum == 1)) {
+		if ((kernel_anim[0].frame >= 7) && (local._messageNum == 1)) {
 			local._messageNum++;
 			kernel_message_add(quote_string(kernel.quotes, 54), 63, local._posY, 0x1110, 240, 0, 0);
 			local._posY += 14;
 		}
 
-		if ((_scene->_animation[0]->getCurrentFrame() >= 10) && (local._messageNum == 2)) {
+		if ((kernel_anim[0].frame >= 10) && (local._messageNum == 2)) {
 			local._messageNum++;
 			kernel_message_add(quote_string(kernel.quotes, 55), 63, local._posY, 0x1110, 240, 0, 0);
 			local._posY += 14;
 		}
 
-		if ((_scene->_animation[0]->getCurrentFrame() >= 17) && (local._messageNum == 3)) {
+		if ((kernel_anim[0].frame >= 17) && (local._messageNum == 3)) {
 			local._messageNum++;
 			kernel_message_add(quote_string(kernel.quotes, 56), 63, local._posY, 0x1110, 240, 0, 0);
 			local._posY += 14;
 		}
 
-		if ((_scene->_animation[0]->getCurrentFrame() >= 20) && (local._messageNum == 4)) {
+		if ((kernel_anim[0].frame >= 20) && (local._messageNum == 4)) {
 			local._messageNum++;
 			kernel_message_add(quote_string(kernel.quotes, 50), 63, local._posY, 0x1110, 240, 0, 0);
 			local._posY += 14;

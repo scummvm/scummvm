@@ -110,7 +110,7 @@ static void room_804_init() {
 static void room_804_daemon() {
 	if (!local._messWithThrottle) {
 
-		if ((local._throttleGone) && (local._movingThrottle) && (_scene->_animation[0]->getCurrentFrame() == 39)) {
+		if ((local._throttleGone) && (local._movingThrottle) && (kernel_anim[0].frame == 39)) {
 			g_sequence_ids[1] = _scene->_sequences.startCycle
 			(g_sprite_ids[1], false, 1);
 			_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(133, 139));
@@ -118,7 +118,7 @@ static void room_804_daemon() {
 			local._throttleGone = false;
 		}
 
-		if ((local._movingThrottle) && (_scene->_animation[0]->getCurrentFrame() == 42)) {
+		if ((local._movingThrottle) && (kernel_anim[0].frame == 42)) {
 			local._resetFrame = 0;
 			local._movingThrottle = false;
 		}
@@ -127,13 +127,13 @@ static void room_804_daemon() {
 			local._resetFrame = 42;
 		}
 
-		if (_scene->_animation[0]->getCurrentFrame() == 65)
+		if (kernel_anim[0].frame == 65)
 			_scene->_sequences.remove(g_sequence_ids[7]);
 
 		switch (config_file.naughtiness) {
 		case STORYMODE_NAUGHTY:
 		default:
-			if (_scene->_animation[0]->getCurrentFrame() == 81) {
+			if (kernel_anim[0].frame == 81) {
 				local._resetFrame = 80;
 				global[kInSpace] = false;
 				global[kBeamIsUp] = true;
@@ -145,7 +145,7 @@ static void room_804_daemon() {
 			break;
 
 		case STORYMODE_NICE:
-			if (_scene->_animation[0]->getCurrentFrame() == 68) {
+			if (kernel_anim[0].frame == 68) {
 				local._resetFrame = 66;
 				global[kInSpace] = false;
 				global[kBeamIsUp] = true;
@@ -156,12 +156,12 @@ static void room_804_daemon() {
 			}
 		}
 
-		if (_scene->_animation[0]->getCurrentFrame() == 34) {
+		if (kernel_anim[0].frame == 34) {
 			local._resetFrame = 36;
 			_scene->_sequences.remove(g_sequence_ids[1]);
 		}
 
-		if (_scene->_animation[0]->getCurrentFrame() == 37) {
+		if (kernel_anim[0].frame == 37) {
 			local._resetFrame = 36;
 			if (!local._dontPullThrottleAgain) {
 				local._dontPullThrottleAgain = true;
@@ -173,20 +173,20 @@ static void room_804_daemon() {
 			new_room = 803;
 		}
 
-		if ((_scene->_animation[0]->getCurrentFrame() == 7) && (!global[kWindowFixed])) {
+		if ((kernel_anim[0].frame == 7) && (!global[kWindowFixed])) {
 			g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, 1);
 			_scene->_sequences.addTimer(20, 110);
 			global[kWindowFixed] = true;
 		}
 
-		if (_scene->_animation[0]->getCurrentFrame() == 10) {
+		if (kernel_anim[0].frame == 10) {
 			local._resetFrame = 0;
 			player.commands_allowed = true;
 			inter_move_object(OBJ_POLYCEMENT, NOWHERE);
 		}
 
 		// FIXME: Original doesn't have resetFrame check. Check why this has been needed
-		if (local._resetFrame == -1 && _scene->_animation[0]->getCurrentFrame() == 1) {
+		if (local._resetFrame == -1 && kernel_anim[0].frame == 1) {
 			int randomVal = g_engine->getRandomNumber(29) + 1;
 			switch (randomVal) {
 			case 1:
@@ -204,7 +204,7 @@ static void room_804_daemon() {
 			}
 		}
 
-		switch (_scene->_animation[0]->getCurrentFrame()) {
+		switch (kernel_anim[0].frame) {
 		case 26:
 		case 28:
 		case 31:
@@ -214,12 +214,12 @@ static void room_804_daemon() {
 			break;
 		}
 	} else {
-		if ((_scene->_animation[0]->getCurrentFrame() == 36) && (!local._throttleGone)) {
+		if ((kernel_anim[0].frame == 36) && (!local._throttleGone)) {
 			_scene->_sequences.remove(g_sequence_ids[1]);
 			local._throttleGone = true;
 		}
 
-		if (_scene->_animation[0]->getCurrentFrame() == 39) {
+		if (kernel_anim[0].frame == 39) {
 			local._movingThrottle = false;
 			switch (local._throttleCounter) {
 			case 1:
@@ -259,8 +259,8 @@ static void room_804_daemon() {
 	}
 
 	if (local._resetFrame >= 0) {
-		if (local._resetFrame != _scene->_animation[0]->getCurrentFrame()) {
-			_scene->_animation[0]->setCurrentFrame(local._resetFrame);
+		if (local._resetFrame != kernel_anim[0].frame) {
+			kernel_reset_animation(0, local._resetFrame);
 			local._resetFrame = -1;
 		}
 	}
@@ -269,12 +269,12 @@ static void room_804_daemon() {
 		new_room = 803;
 	}
 
-	if ((_scene->_animation[0]->getCurrentFrame() == 72) && !local._alreadyPop) {
+	if ((kernel_anim[0].frame == 72) && !local._alreadyPop) {
 		g_engine->_soundManager->command(21, 0);
 		local._alreadyPop = true;
 	}
 
-	if ((_scene->_animation[0]->getCurrentFrame() == 80) && !local._alreadyOrgan) {
+	if ((kernel_anim[0].frame == 80) && !local._alreadyOrgan) {
 		g_engine->_soundManager->command(22, 0);
 		local._alreadyOrgan = true;
 	}

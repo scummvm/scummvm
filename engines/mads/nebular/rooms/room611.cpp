@@ -1135,13 +1135,13 @@ static void room_611_daemon() {
 			local._hermitMovingFl = true;
 	}
 
-	if (local._stickFingerFl && (_scene->_animation[0]->getCurrentFrame() == 47)) {
+	if (local._stickFingerFl && (kernel_anim[0].frame == 47)) {
 		local._stickFingerFl = false;
 		local._hermitMovingFl = true;
 		local._hermitMode = 1;
 	}
 
-	if (_scene->_animation[0] != nullptr && (_scene->_animation[0]->getCurrentFrame() == 240) && local._check1Fl) {
+	if (kernel_anim[0].anim != nullptr && (kernel_anim[0].frame == 240) && local._check1Fl) {
 		local._check1Fl = false;
 		kernel_message_add(quote_string(kernel.quotes, 0x27E), 33, 88, 0xFDFC, 90, 0, 0);
 		_scene->_sequences.addTimer(120, 120);
@@ -1230,7 +1230,7 @@ static void room_611_daemon() {
 		}
 	}
 
-	if (_scene->_animation[0] != nullptr && _scene->_animation[0]->getCurrentFrame() == 254)
+	if (kernel_anim[0].anim != nullptr && kernel_anim[0].frame == 254)
 		player.commands_allowed = true;
 
 	if (kernel.trigger == 110) {
@@ -1256,7 +1256,7 @@ static void room_611_daemon() {
 	}
 
 	if (local._hermitMode == 6) {
-		if ((_scene->_animation[0]->getCurrentFrame() == 9) && local._check1Fl) {
+		if ((kernel_anim[0].frame == 9) && local._check1Fl) {
 			_scene->_sequences.remove(g_sequence_ids[3]);
 			g_sequence_ids[3] = _scene->_sequences.startPingPongCycle(g_sprite_ids[3], false, 7, 1, 0, 0);
 			_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 2);
@@ -1265,7 +1265,7 @@ static void room_611_daemon() {
 			local._check1Fl = false;
 		}
 
-		if ((_scene->_animation[0]->getCurrentFrame() == 17) && !local._check1Fl) {
+		if ((kernel_anim[0].frame == 17) && !local._check1Fl) {
 			local._nextFrame = 26;
 			local._hermitMode = 4;
 			local._check1Fl = true;
@@ -1273,13 +1273,13 @@ static void room_611_daemon() {
 	}
 
 	if (local._hermitMode == 4) {
-		if ((_scene->_animation[0]->getCurrentFrame() == 33) && local._check1Fl) {
+		if ((kernel_anim[0].frame == 33) && local._check1Fl) {
 			displayHermitQuestions(local._hermitDisplayedQuestion);
 			local._nextFrame = 1;
 			local._check1Fl = false;
 		}
 
-		if ((_scene->_animation[0]->getCurrentFrame() == 9) && !local._check1Fl) {
+		if ((kernel_anim[0].frame == 9) && !local._check1Fl) {
 			local._nextFrame = 8;
 			_scene->_sequences.addTimer(1, 113);
 			local._check1Fl = true;
@@ -1305,8 +1305,8 @@ static void room_611_daemon() {
 		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 115);
 	}
 
-	if ((local._nextFrame >= 0) && (local._nextFrame != _scene->_animation[0]->getCurrentFrame())) {
-		_scene->_animation[0]->setCurrentFrame(local._nextFrame);
+	if ((local._nextFrame >= 0) && (local._nextFrame != kernel_anim[0].frame)) {
+		kernel_reset_animation(0, local._nextFrame);
 		local._nextFrame = -1;
 	}
 

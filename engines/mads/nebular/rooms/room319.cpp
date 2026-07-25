@@ -171,11 +171,11 @@ static void room_319_init() {
 }
 
 static void room_319_daemon() {
-	if (_scene->_animation[0] == nullptr)
+	if (kernel_anim[0].anim == nullptr)
 		return;
 
-	if (local._animFrame != _scene->_animation[0]->getCurrentFrame()) {
-		local._animFrame = _scene->_animation[0]->getCurrentFrame();
+	if (local._animFrame != kernel_anim[0].frame) {
+		local._animFrame = kernel_anim[0].frame;
 		int nextFrame = -1;
 		if (local._animMode == 1) {
 			switch (local._animFrame) {
@@ -291,8 +291,8 @@ static void room_319_daemon() {
 		if ((local._animMode == 4) && (local._animFrame == 16))
 			mcga_shakes = 80;
 
-		if ((nextFrame >= 0) && (nextFrame != _scene->_animation[0]->getCurrentFrame())) {
-			_scene->_animation[0]->setCurrentFrame(nextFrame);
+		if ((nextFrame >= 0) && (nextFrame != kernel_anim[0].frame)) {
+			kernel_reset_animation(0, nextFrame);
 			local._animFrame = nextFrame;
 		}
 	}
@@ -307,11 +307,11 @@ static void room_319_daemon() {
 		kernel_abort_animation(0);
 		kernel_run_animation(kernel_name('b', 0), 0);
 		if (local._nextAction1 == 3)
-			_scene->_animation[0]->setCurrentFrame(85);
+			kernel_reset_animation(0, 85);
 		else if (local._nextAction1 == 1)
-			_scene->_animation[0]->setCurrentFrame(40);
+			kernel_reset_animation(0, 40);
 
-		local._animFrame = _scene->_animation[0]->getCurrentFrame();
+		local._animFrame = kernel_anim[0].frame;
 		local._slacheTalkingFl = true;
 		mcga_shakes = 1;
 

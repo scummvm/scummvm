@@ -207,7 +207,7 @@ static void room_104_daemon() {
 	if ((player.special_code > 0) && player.commands_allowed)
 		player.commands_allowed = false;
 
-	if (local._kargShootingFl && (_scene->_animation[0]->getCurrentFrame() >= 19)) {
+	if (local._kargShootingFl && (kernel_anim[0].frame >= 19)) {
 		kernel_message_add(quote_string(kernel.quotes, 52), 0, 0, 0x1110, 120, 0, 34);
 		local._kargShootingFl = false;
 	}

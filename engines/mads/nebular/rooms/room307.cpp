@@ -371,23 +371,23 @@ static void room_307_init() {
 static void room_307_daemon() {
 	handle_forcefield(&local._forcefield, &g_sprite_ids[0]);
 
-	if ((local._animationMode == 1) && (_scene->_animation[0] != nullptr)) {
-		if (_scene->_animation[0]->getCurrentFrame() == 126) {
+	if ((local._animationMode == 1) && (kernel_anim[0].anim != nullptr)) {
+		if (kernel_anim[0].frame == 126) {
 			local._forcefield._flag = false;
 			g_engine->_soundManager->command(5, 0);
 		}
 
-		if (_scene->_animation[0]->getCurrentFrame() == 194) {
+		if (kernel_anim[0].frame == 194) {
 			local._forcefield._flag = true;
 			g_engine->_soundManager->command(24, 0);
 		}
 	}
 
-	if ((local._animationMode == 2) && (_scene->_animation[0] != nullptr)) {
-		if (_scene->_animation[0]->getCurrentFrame() == 54)
+	if ((local._animationMode == 2) && (kernel_anim[0].anim != nullptr)) {
+		if (kernel_anim[0].frame == 54)
 			local._forcefield._flag = false;
 
-		if (_scene->_animation[0]->getCurrentFrame() == 150) {
+		if (kernel_anim[0].frame == 150) {
 			player.walker_visible = false;
 			player.clock = kernel.clock - player.frame_delay;
 		}
@@ -412,7 +412,7 @@ static void room_307_daemon() {
 		}
 		local._lastFrameTime = kernel.clock;
 
-		if ((local._guardTime > 3000) && !local._duringPeeingFl && (_scene->_animation[0] == nullptr)
+		if ((local._guardTime > 3000) && !local._duringPeeingFl && (kernel_anim[0].anim == nullptr)
 			&& (inter_input_mode != kInputConversation) && global[kMetBuddyBeast] && !local._activePrisonerFl) {
 			if (!player_has(OBJ_SCALPEL) && !local._grateOpenedFl) {
 				player.commands_allowed = false;
@@ -422,7 +422,7 @@ static void room_307_daemon() {
 				kernel_run_animation(kernel_name('b', -1), 70);
 			}
 			local._guardTime = 0;
-		} else if ((local._prisonerTimer > 300) && (inter_input_mode != kInputConversation) && (_scene->_animation[0] == nullptr) && !local._activePrisonerFl) {
+		} else if ((local._prisonerTimer > 300) && (inter_input_mode != kInputConversation) && (kernel_anim[0].anim == nullptr) && !local._activePrisonerFl) {
 			if (!global[kMetBuddyBeast]) {
 				if (local._prisonerMessageId == -1)
 					local._prisonerMessageId = 0x104;

@@ -49,36 +49,36 @@ static void room_410_init() {
 	section_4_music();
 
 	kernel_run_animation(kernel_full_name(410, 'r', -1, "", EXT_AA), 0);
-	_scene->_animation[0]->_repeatFlag = true;
+	kernel_anim[0].repeat = true;
 }
 
 static void room_410_daemon() {
-	if (_scene->_animation[0]->getCurrentFrame() == 1) {
+	if (kernel_anim[0].frame == 1) {
 		if (g_engine->getRandomNumber(1, 30) == 1)
-			_scene->_animation[0]->setCurrentFrame(2);
+			kernel_reset_animation(0, 2);
 		else
-			_scene->_animation[0]->setCurrentFrame(0);
+			kernel_reset_animation(0, 0);
 	}
 
-	if (_scene->_animation[0]->getCurrentFrame() == 9) {
+	if (kernel_anim[0].frame == 9) {
 		if (g_engine->getRandomNumber(1, 30) == 1)
-			_scene->_animation[0]->setCurrentFrame(10);
+			kernel_reset_animation(0, 10);
 		else
-			_scene->_animation[0]->setCurrentFrame(8);
+			kernel_reset_animation(0, 8);
 	}
 
-	if (_scene->_animation[0]->getCurrentFrame() == 5) {
+	if (kernel_anim[0].frame == 5) {
 		if (g_engine->getRandomNumber(1, 30) == 1)
-			_scene->_animation[0]->setCurrentFrame(6);
+			kernel_reset_animation(0, 6);
 		else
-			_scene->_animation[0]->setCurrentFrame(4);
+			kernel_reset_animation(0, 4);
 	}
 
-	if (_scene->_animation[0]->getCurrentFrame() == 3) {
+	if (kernel_anim[0].frame == 3) {
 		if (g_engine->getRandomNumber(1, 2) == 1)
-			_scene->_animation[0]->setCurrentFrame(4);
+			kernel_reset_animation(0, 4);
 		else // == 2
-			_scene->_animation[0]->setCurrentFrame(8);
+			kernel_reset_animation(0, 8);
 	}
 }
 

@@ -91,7 +91,7 @@ static void restoreAnimations() {
 		_scene->_sequences.remove(g_sequence_ids[6]);
 		_scene->_sequences.remove(g_sequence_ids[7]);
 		kernel_run_animation(kernel_name('A', -1), 0);
-		_scene->_animation[0]->setCurrentFrame(6);
+		kernel_reset_animation(0, 6);
 	}
 }
 
@@ -243,7 +243,7 @@ static void room_608_init() {
 		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
 		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 		kernel_run_animation(kernel_name('A', -1), 0);
-		_scene->_animation[0]->setCurrentFrame(6);
+		kernel_reset_animation(0, 6);
 	} else if (global[kCarStatus] == CAR_SQUASHES_DOG) {
 		local._carMode = 2;
 		local._dogDeathMode = 0;
@@ -414,13 +414,13 @@ static void room_608_daemon() {
 		local._animationMode = 0;
 	}
 
-	if ((local._carMode == 4) && (_scene->_animation[0] != nullptr)) {
-		if (_scene->_animation[0]->getCurrentFrame() != local._carFrame) {
-			local._carFrame = _scene->_animation[0]->getCurrentFrame();
+	if ((local._carMode == 4) && (kernel_anim[0].anim != nullptr)) {
+		if (kernel_anim[0].frame != local._carFrame) {
+			local._carFrame = kernel_anim[0].frame;
 
 			if (local._carFrame == 10) {
 				player.walker_visible = true;
-				player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
+				player.clock = kernel_anim[0].next_clock - player.frame_delay;
 			} else if (local._carFrame == 56) {
 				resetDogVariables();
 				local._animationMode = 0;
@@ -429,12 +429,12 @@ static void room_608_daemon() {
 		}
 	}
 
-	if ((local._carMode == 5) && (_scene->_animation[0] != nullptr)) {
-		if (_scene->_animation[0]->getCurrentFrame() != local._carFrame) {
-			local._carFrame = _scene->_animation[0]->getCurrentFrame();
+	if ((local._carMode == 5) && (kernel_anim[0].anim != nullptr)) {
+		if (kernel_anim[0].frame != local._carFrame) {
+			local._carFrame = kernel_anim[0].frame;
 			if (local._carFrame == 10) {
 				player.walker_visible = true;
-				player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
+				player.clock = kernel_anim[0].next_clock - player.frame_delay;
 			} else if (local._carFrame == 52) {
 				resetDogVariables();
 				local._animationMode = 0;
@@ -443,13 +443,13 @@ static void room_608_daemon() {
 		}
 	}
 
-	if ((local._carMode == 6) && (_scene->_animation[0] != nullptr)) {
-		if (_scene->_animation[0]->getCurrentFrame() != local._carFrame) {
-			local._carFrame = _scene->_animation[0]->getCurrentFrame();
+	if ((local._carMode == 6) && (kernel_anim[0].anim != nullptr)) {
+		if (kernel_anim[0].frame != local._carFrame) {
+			local._carFrame = kernel_anim[0].frame;
 
 			if (local._carFrame == 11) {
 				player.walker_visible = true;
-				player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
+				player.clock = kernel_anim[0].next_clock - player.frame_delay;
 			} else if (local._carFrame == 41) {
 				g_sequence_ids[10] = _scene->_sequences.startPingPongCycle(g_sprite_ids[10], false, 9, 0, 0, 0);
 				_scene->_sequences.setAnimRange(g_sequence_ids[10], 10, 11);
@@ -487,9 +487,9 @@ static void room_608_daemon() {
 	if (kernel.trigger == 112)
 		local._dogYelping = false;
 
-	if ((local._carMode == 0) && (_scene->_animation[0] != nullptr)) {
-		if (_scene->_animation[0]->getCurrentFrame() != local._carFrame) {
-			local._carFrame = _scene->_animation[0]->getCurrentFrame();
+	if ((local._carMode == 0) && (kernel_anim[0].anim != nullptr)) {
+		if (kernel_anim[0].frame != local._carFrame) {
+			local._carFrame = kernel_anim[0].frame;
 			int nextFrame = -1;
 
 			if ((global[kCarStatus] == CAR_UP) || (global[kCarStatus] == CAR_DOWN)) {
@@ -502,7 +502,7 @@ static void room_608_daemon() {
 					break;
 
 				case 1:
-					if (_scene->_animation[0]->getCurrentFrame() >= 12) {
+					if (kernel_anim[0].frame >= 12) {
 						nextFrame = 0;
 						local._carMoveMode = 0;
 						global[kCarStatus] = CAR_UP;
@@ -510,7 +510,7 @@ static void room_608_daemon() {
 					break;
 
 				case 2:
-					if (_scene->_animation[0]->getCurrentFrame() >= 6) {
+					if (kernel_anim[0].frame >= 6) {
 						nextFrame = 6;
 						local._carMoveMode = 0;
 						global[kCarStatus] = CAR_DOWN;
@@ -522,35 +522,35 @@ static void room_608_daemon() {
 				}
 			}
 
-			if ((nextFrame >= 0) && (nextFrame != _scene->_animation[0]->getCurrentFrame())) {
-				_scene->_animation[0]->setCurrentFrame(nextFrame);
+			if ((nextFrame >= 0) && (nextFrame != kernel_anim[0].frame)) {
+				kernel_reset_animation(0, nextFrame);
 				local._carFrame = nextFrame;
 			}
 		}
 	}
 
-	if ((local._carMode == 2) && (_scene->_animation[0] != nullptr)) {
-		if (_scene->_animation[0]->getCurrentFrame() != local._carFrame) {
-			local._carFrame = _scene->_animation[0]->getCurrentFrame();
+	if ((local._carMode == 2) && (kernel_anim[0].anim != nullptr)) {
+		if (kernel_anim[0].frame != local._carFrame) {
+			local._carFrame = kernel_anim[0].frame;
 			int nextFrame = -1;
 
 			if (local._carMoveMode == 0)
 				nextFrame = 28;
-			else if (_scene->_animation[0]->getCurrentFrame() >= 28) {
+			else if (kernel_anim[0].frame >= 28) {
 				nextFrame = 28;
 				local._carMoveMode = 0;
 			}
 
-			if ((nextFrame >= 0) && (nextFrame != _scene->_animation[0]->getCurrentFrame())) {
-				_scene->_animation[0]->setCurrentFrame(nextFrame);
+			if ((nextFrame >= 0) && (nextFrame != kernel_anim[0].frame)) {
+				kernel_reset_animation(0, nextFrame);
 				local._carFrame = nextFrame;
 			}
 		}
 	}
 
-	if ((local._carMode == 3) && (_scene->_animation[0] != nullptr)) {
-		if (_scene->_animation[0]->getCurrentFrame() != local._carFrame) {
-			local._carFrame = _scene->_animation[0]->getCurrentFrame();
+	if ((local._carMode == 3) && (kernel_anim[0].anim != nullptr)) {
+		if (kernel_anim[0].frame != local._carFrame) {
+			local._carFrame = kernel_anim[0].frame;
 			int nextFrame = -1;
 
 			if (local._resetPositionsFl) {
@@ -558,22 +558,22 @@ static void room_608_daemon() {
 				local._carMoveMode = 0;
 			} else if (local._carMoveMode == 0)
 				nextFrame = 6;
-			else if (_scene->_animation[0]->getCurrentFrame() >= 6) {
+			else if (kernel_anim[0].frame >= 6) {
 				nextFrame = 6;
 				local._carMoveMode = 0;
 			}
 
-			if ((nextFrame >= 0) && (nextFrame != _scene->_animation[0]->getCurrentFrame())) {
-				_scene->_animation[0]->setCurrentFrame(nextFrame);
+			if ((nextFrame >= 0) && (nextFrame != kernel_anim[0].frame)) {
+				kernel_reset_animation(0, nextFrame);
 				local._carFrame = nextFrame;
 			}
 		}
 	}
 
 
-	if ((local._carMode == 1) && (_scene->_animation[0] != nullptr)) {
-		if (_scene->_animation[0]->getCurrentFrame() != local._carFrame) {
-			local._carFrame = _scene->_animation[0]->getCurrentFrame();
+	if ((local._carMode == 1) && (kernel_anim[0].anim != nullptr)) {
+		if (kernel_anim[0].frame != local._carFrame) {
+			local._carFrame = kernel_anim[0].frame;
 			int nextFrame = -1;
 
 			if (local._resetPositionsFl) {
@@ -581,13 +581,13 @@ static void room_608_daemon() {
 				local._carMoveMode = 0;
 			} else if (local._carMoveMode == 0)
 				nextFrame = 6;
-			else if (_scene->_animation[0]->getCurrentFrame() >= 6) {
+			else if (kernel_anim[0].frame >= 6) {
 				nextFrame = 6;
 				local._carMoveMode = 0;
 			}
 
-			if ((nextFrame >= 0) && (nextFrame != _scene->_animation[0]->getCurrentFrame())) {
-				_scene->_animation[0]->setCurrentFrame(nextFrame);
+			if ((nextFrame >= 0) && (nextFrame != kernel_anim[0].frame)) {
+				kernel_reset_animation(0, nextFrame);
 				local._carFrame = nextFrame;
 			}
 		}

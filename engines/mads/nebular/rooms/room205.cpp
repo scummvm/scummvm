@@ -105,7 +105,7 @@ static void room_205_init() {
 
 	if (global[kSexOfRex] != SEX_MALE) {
 		kernel_run_animation(kernel_name('a', -1), 0);
-		_scene->_animation[0]->_repeatFlag = true;
+		kernel_anim[0].repeat = true;
 	} else {
 		local._beingKicked = true;
 		g_sequence_ids[8] = _scene->_sequences.addSpriteCycle(g_sprite_ids[8], false, 8, 1, 0, 0);
@@ -258,8 +258,8 @@ static void room_205_parser() {
 			_scene->_sequences.updateTimeout(g_sequence_ids[9], -1);
 			g_engine->_soundManager->command(27, 0);
 		} else if (kernel.trigger == 1) {
-			if (_scene->_animation[0] != nullptr)
-				_scene->_animation[0]->resetSpriteSetsCount();
+			if (kernel_anim[0].anim != nullptr)
+				kernel_anim[0].anim->num_series = 0;
 
 			text_show(20516);
 			kernel.force_restart = true;

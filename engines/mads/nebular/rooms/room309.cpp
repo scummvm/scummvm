@@ -73,9 +73,9 @@ static void room_309_init() {
 	player.commands_allowed = false;
 	kernel_run_animation(kernel_name('a', -1), 60);
 
-	local._characterSpriteIndexes[0] = _scene->_animation[0]->_spriteListIndexes[2];
-	local._characterSpriteIndexes[1] = _scene->_animation[0]->_spriteListIndexes[2];
-	local._characterSpriteIndexes[2] = _scene->_animation[0]->_spriteListIndexes[1];
+	local._characterSpriteIndexes[0] = kernel_anim[0].anim->series_id[2];
+	local._characterSpriteIndexes[1] = kernel_anim[0].anim->series_id[2];
+	local._characterSpriteIndexes[2] = kernel_anim[0].anim->series_id[1];
 
 	local._messagesIndexes[0] = -1;
 	local._messagesIndexes[1] = -1;
@@ -97,9 +97,9 @@ static void room_309_daemon() {
 	if (kernel.trigger == 62)
 		local._messagesIndexes[2] = -1;
 
-	if (_scene->_animation[0] != nullptr) {
-		if (local._lastFrame != _scene->_animation[0]->getCurrentFrame()) {
-			local._lastFrame = _scene->_animation[0]->getCurrentFrame();
+	if (kernel_anim[0].anim != nullptr) {
+		if (local._lastFrame != kernel_anim[0].frame) {
+			local._lastFrame = kernel_anim[0].frame;
 			if (local._lastFrame == 39) {
 				local._messagesIndexes[0] = kernel_message_add(quote_string(kernel.quotes, 348), 0, 0, 0x1110, 210, 61, 32);
 				local._messagesIndexes[1] = kernel_message_add(quote_string(kernel.quotes, 349), 0, 0, 0x1110, 210, 0, 32);
@@ -112,15 +112,15 @@ static void room_309_daemon() {
 				if (local._messagesIndexes[charIdx] >= 0) {
 					bool match = false;
 					int j = -1;
-					for (j = _scene->_animation[0]->_oldFrameEntry; j < _scene->_animation[0]->_frameEntriesCount; j++) {
-						if (_scene->_animation[0]->_frameEntries[j].series_id == local._characterSpriteIndexes[charIdx]) {
+					for (j = kernel_anim[0].image; j < (kernel_anim[0].anim ? kernel_anim[0].anim->num_images : 0); j++) {
+						if (kernel_anim[0].anim->image[j].series_id == local._characterSpriteIndexes[charIdx]) {
 							match = true;
 							break;
 						}
 					}
 
 					if (match) {
-						const Image &img = _scene->_animation[0]->_frameEntries[j];
+						const Image &img = kernel_anim[0].anim->image[j];
 						KernelMessage &kmsg = kernel_message[local._messagesIndexes[charIdx]];
 						kmsg.x = img.x;
 						kmsg.y = img.y - (50 + (14 * ((charIdx == 0) ? 2 : 1)));

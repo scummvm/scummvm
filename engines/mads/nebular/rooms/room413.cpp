@@ -105,10 +105,10 @@ static void room_413_init() {
 }
 
 static void room_413_daemon() {
-	if (_scene->_animation[0] && _scene->_animation[0]->getCurrentFrame() == 38)
-		_scene->_animation[0]->setCurrentFrame(37);
+	if ((kernel_anim[0].anim != nullptr) && kernel_anim[0].frame == 38)
+		kernel_reset_animation(0, 37);
 
-	if (_scene->_animation[0] && _scene->_animation[0]->getCurrentFrame() == 21 && local._canMove) {
+	if ((kernel_anim[0].anim != nullptr) && kernel_anim[0].frame == 21 && local._canMove) {
 		g_engine->_soundManager->command(27, 0);
 		local._canMove = false;
 	}

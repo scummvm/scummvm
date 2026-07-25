@@ -235,7 +235,7 @@ static void room_602_parser() {
 		case 1:
 		{
 			player.walker_visible = true;
-			player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
+			player.clock = kernel_anim[0].next_clock - player.frame_delay;
 			local._lastSpriteIdx = g_sprite_ids[3];
 			local._lastSequenceIdx = _scene->_sequences.startCycle(local._lastSpriteIdx, false, -1);
 			_scene->_sequences.setDepth(local._lastSequenceIdx, 14);

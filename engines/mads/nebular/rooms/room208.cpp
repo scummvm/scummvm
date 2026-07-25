@@ -121,9 +121,9 @@ static void room_208_init() {
 }
 
 static void room_208_daemon() {
-	if (local._boundingFl && _scene->_animation[0] &&
-		(local._rhotundaTime <= _scene->_animation[0]->getCurrentFrame())) {
-		local._rhotundaTime = _scene->_animation[0]->getCurrentFrame();
+	if (local._boundingFl && (kernel_anim[0].anim != nullptr) &&
+		(local._rhotundaTime <= kernel_anim[0].frame)) {
+		local._rhotundaTime = kernel_anim[0].frame;
 
 		if (local._rhotundaTime == 125)
 			_scene->_sequences.remove(g_sequence_ids[4]);

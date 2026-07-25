@@ -122,7 +122,7 @@ static void room_110_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			kernel_run_animation(kernel_full_name(110, 'T', 0, "", EXT_AA), 1);
-			_scene->_animation[0]->setNextFrameTimer(player.frame_delay + player.clock);
+			kernel_anim[0].next_clock = player.frame_delay + player.clock;
 			player.commands_allowed = false;
 			player.walker_visible = false;
 			break;

@@ -187,9 +187,9 @@ static void room_706_daemon() {
 		kernel.force_restart = true;
 	}
 
-	if (_scene->_animation[0] != nullptr) {
-		if ((local._animationMode != 0) && (_scene->_animation[0]->getCurrentFrame() != local._animationFrame)) {
-			local._animationFrame = _scene->_animation[0]->getCurrentFrame();
+	if (kernel_anim[0].anim != nullptr) {
+		if ((local._animationMode != 0) && (kernel_anim[0].frame != local._animationFrame)) {
+			local._animationFrame = kernel_anim[0].frame;
 
 			if (local._animationFrame == 6) {
 				_scene->_sequences.remove(g_sequence_ids[1]);

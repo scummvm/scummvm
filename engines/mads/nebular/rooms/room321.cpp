@@ -52,8 +52,8 @@ static void room_321_init() {
 }
 
 static void room_321_daemon() {
-	if (_scene->_animation[0] != nullptr) {
-		if ((_scene->_animation[0]->getCurrentFrame() >= 260) && (global[kSexOfRex] == REX_MALE) && (config_file.naughtiness >= STORYMODE_NICE))
+	if (kernel_anim[0].anim != nullptr) {
+		if ((kernel_anim[0].frame >= 260) && (global[kSexOfRex] == REX_MALE) && (config_file.naughtiness >= STORYMODE_NICE))
 			new_room = 316;
 	}
 

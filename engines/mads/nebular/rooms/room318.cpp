@@ -213,7 +213,7 @@ static void room_318_init() {
 
 	if (global[kAfterHavoc]) {
 		kernel_run_animation(kernel_name('f', -1), 0);
-		_scene->_animation[0]->_repeatFlag = true;
+		kernel_anim[0].repeat = true;
 	} else if (!global[kHasSeenProfPyro]) {
 		_scene->_hotspots.activate(words_professors_gurney, false);
 		_scene->_hotspots.activate(words_professor, false);
@@ -320,9 +320,9 @@ static void room_318_init() {
 }
 
 static void room_318_daemon() {
-	if ((_scene->_animation[0] != nullptr) && (local._animMode == 2)) {
-		if (local._lastFrame != _scene->_animation[0]->getCurrentFrame()) {
-			local._lastFrame = _scene->_animation[0]->getCurrentFrame();
+	if ((kernel_anim[0].anim != nullptr) && (local._animMode == 2)) {
+		if (local._lastFrame != kernel_anim[0].frame) {
+			local._lastFrame = kernel_anim[0].frame;
 			int nextFrame = -1;
 
 			switch (local._lastFrame) {
@@ -377,8 +377,8 @@ static void room_318_daemon() {
 				break;
 			}
 
-			if ((nextFrame >= 0) && (nextFrame != _scene->_animation[0]->getCurrentFrame())) {
-				_scene->_animation[0]->setCurrentFrame(nextFrame);
+			if ((nextFrame >= 0) && (nextFrame != kernel_anim[0].frame)) {
+				kernel_reset_animation(0, nextFrame);
 				local._lastFrame = nextFrame;
 			}
 		}

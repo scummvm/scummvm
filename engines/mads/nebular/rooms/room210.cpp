@@ -721,8 +721,8 @@ static void room_210_init() {
 		}
 
 		restoreDialogNode(local._curDialogNode, quote, number);
-		if (_scene->_animation[0])
-			_scene->_animation[0]->setCurrentFrame(131);
+		if ((kernel_anim[0].anim != nullptr))
+			kernel_reset_animation(0, 131);
 	}
 
 	pal_change_color(252, 63, 63, 10);
@@ -732,9 +732,9 @@ static void room_210_init() {
 }
 
 static void room_210_daemon() {
-	if ((local._twinkleAnimationType == 1) && _scene->_animation[0]) {
-		if (local._twinklesCurrentFrame != _scene->_animation[0]->getCurrentFrame()) {
-			local._twinklesCurrentFrame = _scene->_animation[0]->getCurrentFrame();
+	if ((local._twinkleAnimationType == 1) && (kernel_anim[0].anim != nullptr)) {
+		if (local._twinklesCurrentFrame != kernel_anim[0].frame) {
+			local._twinklesCurrentFrame = kernel_anim[0].frame;
 			int reset_frame = -1;
 			int random = g_engine->getRandomNumber(1, 1000);
 
@@ -857,8 +857,8 @@ static void room_210_daemon() {
 			}
 
 			if (reset_frame >= 0) {
-				if (reset_frame != _scene->_animation[0]->getCurrentFrame()) {
-					_scene->_animation[0]->setCurrentFrame(reset_frame);
+				if (reset_frame != kernel_anim[0].frame) {
+					kernel_reset_animation(0, reset_frame);
 					local._twinklesCurrentFrame = reset_frame;
 				}
 
@@ -872,9 +872,9 @@ static void room_210_daemon() {
 		}
 	}
 
-	if ((local._twinkleAnimationType == 2) && _scene->_animation[0]) {
-		if (local._twinklesCurrentFrame != _scene->_animation[0]->getCurrentFrame()) {
-			local._twinklesCurrentFrame = _scene->_animation[0]->getCurrentFrame();
+	if ((local._twinkleAnimationType == 2) && (kernel_anim[0].anim != nullptr)) {
+		if (local._twinklesCurrentFrame != kernel_anim[0].frame) {
+			local._twinklesCurrentFrame = kernel_anim[0].frame;
 			int reset_frame = -1;
 
 			if (local._twinklesCurrentFrame == 53) {
@@ -883,8 +883,8 @@ static void room_210_daemon() {
 			} else if ((local._twinklesCurrentFrame == 75) && local._shouldTalk)
 				reset_frame = 60;
 
-			if ((reset_frame >= 0) && (reset_frame != _scene->_animation[0]->getCurrentFrame())) {
-				_scene->_animation[0]->setCurrentFrame(reset_frame);
+			if ((reset_frame >= 0) && (reset_frame != kernel_anim[0].frame)) {
+				kernel_reset_animation(0, reset_frame);
 				local._twinklesCurrentFrame = reset_frame;
 			}
 		}

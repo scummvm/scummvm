@@ -153,7 +153,7 @@ static void room_202_init() {
 		}
 
 		kernel_run_animation(kernel_name('M', -1), 71);
-		_scene->_animation[0]->setCurrentFrame(200);
+		kernel_reset_animation(0, 200);
 	} else {
 		if (local._ladderTopFl) {
 			player.walker_visible = false;
@@ -319,7 +319,7 @@ static void room_202_daemon() {
 		break;
 	}
 
-	if (!_scene->_animation[0] && (global[kMeteorologistStatus] != METEOROLOGIST_GONE) && (local._meteoClock2 <= kernel.clock) && (local._meteoClock1 <= kernel.clock)) {
+	if ((kernel_anim[0].anim == nullptr) && (global[kMeteorologistStatus] != METEOROLOGIST_GONE) && (local._meteoClock2 <= kernel.clock) && (local._meteoClock1 <= kernel.clock)) {
 		int randVal = g_engine->getRandomNumber(1, 500);
 		int threshold = 1;
 		if (local._ladderTopFl)
@@ -338,11 +338,11 @@ static void room_202_daemon() {
 		}
 	}
 
-	if (!_scene->_animation[0])
+	if ((kernel_anim[0].anim == nullptr))
 		return;
 
 	if (local._waitingMeteoFl) {
-		if (_scene->_animation[0]->getCurrentFrame() >= 200) {
+		if (kernel_anim[0].frame >= 200) {
 			if ((global[kMeteorologistWatch] == METEOROLOGIST_TOWER) || global[kLadderBroken]) {
 				new_room = 213;
 			} else {
@@ -351,7 +351,7 @@ static void room_202_daemon() {
 			}
 		}
 
-		if ((_scene->_animation[0]->getCurrentFrame() == 160) && (local._meteoFrame != _scene->_animation[0]->getCurrentFrame())) {
+		if ((kernel_anim[0].frame == 160) && (local._meteoFrame != kernel_anim[0].frame)) {
 			Common::Point msgPos;
 			int msgFlag;
 			if (!local._ladderTopFl) {
@@ -370,15 +370,15 @@ static void room_202_daemon() {
 		local._toTeleportFl = true;
 	}
 
-	if (_scene->_animation[0]->getCurrentFrame() == local._meteoFrame) {
+	if (kernel_anim[0].frame == local._meteoFrame) {
 		return;
 	}
 
-	local._meteoFrame = _scene->_animation[0]->getCurrentFrame();
+	local._meteoFrame = kernel_anim[0].frame;
 	int randVal = g_engine->getRandomNumber(1, 1000);
 	int frameStep = -1;
 
-	switch (_scene->_animation[0]->getCurrentFrame()) {
+	switch (kernel_anim[0].frame) {
 	case 42:
 	case 77:
 	case 96:
@@ -418,8 +418,8 @@ static void room_202_daemon() {
 		break;
 	}
 
-	if (frameStep >= 0 && frameStep != _scene->_animation[0]->getCurrentFrame() + 1) {
-		_scene->_animation[0]->setCurrentFrame(frameStep);
+	if (frameStep >= 0 && frameStep != kernel_anim[0].frame + 1) {
+		kernel_reset_animation(0, frameStep);
 		local._meteoFrame = frameStep;
 	}
 }
@@ -472,7 +472,7 @@ static void room_202_parser() {
 		new_room = 203;
 	} else if (player_said_2(walk_towards, field_to_north)) {
 		if (global[kMeteorologistStatus] != METEOROLOGIST_GONE) {
-			if (_scene->_animation[0])
+			if ((kernel_anim[0].anim != nullptr))
 				global[kMeteorologistStatus] = METEOROLOGIST_PRESENT;
 			else
 				global[kMeteorologistStatus] = METEOROLOGIST_ABSENT;
@@ -567,7 +567,7 @@ static void room_202_parser() {
 				g_sequence_ids[10] = _scene->_sequences.startCycle(g_sprite_ids[9], false, 6);
 				_scene->_sequences.setDepth(g_sequence_ids[10], 1);
 				_scene->_sequences.setPosition(g_sequence_ids[10], Common::Point(172, 123));
-				if (_scene->_animation[0]) {
+				if ((kernel_anim[0].anim != nullptr)) {
 					local._waitingMeteoFl = true;
 					global[kMeteorologistWatch] = METEOROLOGIST_GROUND;
 				} else {
@@ -575,7 +575,7 @@ static void room_202_parser() {
 				}
 				break;
 			case 2:
-				if (!_scene->_animation[0] && !local._meteorologistSpecial) {
+				if ((kernel_anim[0].anim == nullptr) && !local._meteorologistSpecial) {
 					text_show(20222);
 				}
 				_scene->_sequences.remove(g_sequence_ids[10]);
@@ -609,13 +609,13 @@ static void room_202_parser() {
 				g_sequence_ids[10] = _scene->_sequences.startCycle(g_sprite_ids[9], true, -2);
 				_scene->_sequences.setPosition(g_sequence_ids[10], Common::Point(247, 82));
 				_scene->_sequences.setDepth(g_sequence_ids[10], 1);
-				if (_scene->_animation[0]) {
-					if (_scene->_animation[0]->getCurrentFrame() > 200) {
+				if ((kernel_anim[0].anim != nullptr)) {
+					if (kernel_anim[0].frame > 200) {
 						_scene->_sequences.addTimer(120, 2);
 					} else {
 						local._waitingMeteoFl = true;
 						global[kMeteorologistWatch] = METEOROLOGIST_GONE;
-						if ((_scene->_animation[0]->getCurrentFrame() >= 44) && (_scene->_animation[0]->getCurrentFrame() <= 75)) {
+						if ((kernel_anim[0].frame >= 44) && (kernel_anim[0].frame <= 75)) {
 							kernel_message_purge();
 							int msgIndex = kernel_message_add(quote_string(kernel.quotes, 100), 248, 15, 0x1110, 60, 0, 32);
 							kernel_message_teletype(msgIndex, 4, false);
@@ -629,7 +629,7 @@ static void room_202_parser() {
 				}
 				break;
 			case 2:
-				if (!_scene->_animation[0])
+				if ((kernel_anim[0].anim == nullptr))
 					text_show(20222);
 				local._meteorologistSpecial = false;
 				_scene->_sequences.remove(g_sequence_ids[10]);

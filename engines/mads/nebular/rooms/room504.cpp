@@ -81,9 +81,9 @@ static void room_504_init() {
 }
 
 static void room_504_daemon() {
-	if ((local._carAnimationMode == 1) && (_scene->_animation[0] != nullptr)) {
-		if (_scene->_animation[0]->getCurrentFrame() != local._carFrame) {
-			local._carFrame = _scene->_animation[0]->getCurrentFrame();
+	if ((local._carAnimationMode == 1) && (kernel_anim[0].anim != nullptr)) {
+		if (kernel_anim[0].frame != local._carFrame) {
+			local._carFrame = kernel_anim[0].frame;
 			int nextFrame;
 
 			if (local._carFrame == 1)
@@ -91,8 +91,8 @@ static void room_504_daemon() {
 			else
 				nextFrame = -1;
 
-			if ((nextFrame >= 0) && (nextFrame != _scene->_animation[0]->getCurrentFrame())) {
-				_scene->_animation[0]->setCurrentFrame(nextFrame);
+			if ((nextFrame >= 0) && (nextFrame != kernel_anim[0].frame)) {
+				kernel_reset_animation(0, nextFrame);
 				local._carFrame = nextFrame;
 			}
 		}
