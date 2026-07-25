@@ -373,13 +373,14 @@ struct RA2PSXLevel1Explosion {
 };
 
 struct RA2PSXLevel1Debris {
-	RA2PSXLevel1Debris() : life(0), model(0) {
+	RA2PSXLevel1Debris() : life(0), model(0), puffCountdown(0) {
 		for (int axis = 0; axis < 3; ++axis)
 			position[axis] = velocity[axis] = rotation[axis] = spin[axis] = 0;
 	}
 
 	int life;
 	int model;
+	int puffCountdown;
 	int position[3];
 	int velocity[3];
 	int rotation[3];
@@ -470,25 +471,41 @@ void spawnLevel1Debris(RA2PSXLevel1Debris *debris, const int *position,
 	}
 }
 
-// Each shard drags a smoke trail: a SMALLEX cell that spins and dims three steps a
-// frame from the grey the original picks on spawn.
+void rotateVector(const RA2PSXMatrix &transform, const int *source, int *result) {
+	for (int row = 0; row < 3; ++row) {
+		float value = 0.0f;
+		for (int column = 0; column < 3; ++column)
+			value += transform.rotation[row][column] * source[column];
+		result[row] = (int)value;
+	}
+}
+
+// Each shard drags a smoke trail: a SMALLEX cell that spins and dims three steps a frame
+// from the grey the original picks on spawn. The emitter counts down 5 and is stepped
+// twice a frame, so a puff leaves every two and a half frames, and each one is thrown
+// along an upward base velocity turned through up to a quarter turn on all three axes.
 enum {
-	kLevel1PuffCount = 48,
+	kLevel1PuffCount = 64,
 	kLevel1PuffSpin = 0x10,
 	kLevel1PuffFade = 3,
-	kLevel1PuffInterval = 3,
-	kLevel1PuffHalfSize = 64
+	kLevel1PuffReload = 5,
+	kLevel1PuffStepsPerFrame = 2,
+	kLevel1PuffHalfSize = 64,
+	kLevel1PuffSpread = 0x400
 };
 
 struct RA2PSXLevel1Puff {
 	RA2PSXLevel1Puff() : brightness(0), rotation(0), spin(0) {
-		position[0] = position[1] = position[2] = 0;
+		for (int axis = 0; axis < 3; ++axis)
+			position[axis] = velocity[axis] = 0;
 	}
 
 	int brightness;
 	int rotation;
 	int spin;
+	// Kept in 1/4096 like the original's particles, so the drift stays smooth.
 	int position[3];
+	int velocity[3];
 };
 
 void spawnLevel1Puff(RA2PSXLevel1Puff *puffs, const int *position,
@@ -511,13 +528,28 @@ void spawnLevel1Puff(RA2PSXLevel1Puff *puffs, const int *position,
 	puff.rotation = (int)random.getRandomNumber(0xfff);
 	puff.spin = 0;
 	for (int axis = 0; axis < 3; ++axis)
-		puff.position[axis] = position[axis];
+		puff.position[axis] = position[axis] * 4096;
+
+	RA2PSXMatrix spin;
+	spin.preRotateX((int)random.getRandomNumber(kLevel1PuffSpread - 1) - kLevel1PuffSpread / 2);
+	spin.preRotateY((int)random.getRandomNumber(kLevel1PuffSpread - 1) - kLevel1PuffSpread / 2);
+	spin.preRotateZ((int)random.getRandomNumber(kLevel1PuffSpread - 1) - kLevel1PuffSpread / 2);
+	const int base[3] = {
+		(int)random.getRandomNumber(499) - 250,
+		-((int)random.getRandomNumber(299) + 0xb6a),
+		0
+	};
+	rotateVector(spin, base, puff.velocity);
+	for (int axis = 0; axis < 3; ++axis)
+		puff.velocity[axis] *= 16;
 }
 
 void updateLevel1Puffs(RA2PSXLevel1Puff *puffs) {
 	for (int i = 0; i < kLevel1PuffCount; ++i) {
 		if (!puffs[i].brightness)
 			continue;
+		for (int axis = 0; axis < 3; ++axis)
+			puffs[i].position[axis] += puffs[i].velocity[axis];
 		puffs[i].spin += kLevel1PuffSpin;
 		puffs[i].brightness = MAX(0, puffs[i].brightness - kLevel1PuffFade);
 	}
@@ -531,8 +563,8 @@ void renderLevel1Puffs(RA2PSXTinyGLRenderer &renderer, const RA2PSXTexture &text
 		const RA2PSXLevel1Puff &puff = puffs[i];
 		if (!puff.brightness)
 			continue;
-		renderer.renderSprite(texture, (float)puff.position[0], (float)puff.position[1],
-				(float)puff.position[2], kLevel1PuffHalfSize, kLevel1PuffHalfSize,
+		renderer.renderSprite(texture, puff.position[0] / 4096.0f, puff.position[1] / 4096.0f,
+				puff.position[2] / 4096.0f, kLevel1PuffHalfSize, kLevel1PuffHalfSize,
 				(int16)(puff.rotation + puff.spin), puff.brightness);
 	}
 }
@@ -542,8 +574,11 @@ void updateLevel1Debris(RA2PSXLevel1Debris *debris, RA2PSXLevel1Puff *puffs,
 	for (int i = 0; i < kLevel1DebrisCount; ++i) {
 		if (!debris[i].life)
 			continue;
-		if (debris[i].life % kLevel1PuffInterval == 0)
+		debris[i].puffCountdown -= kLevel1PuffStepsPerFrame;
+		while (debris[i].puffCountdown <= 0) {
+			debris[i].puffCountdown += kLevel1PuffReload;
 			spawnLevel1Puff(puffs, debris[i].position, random);
+		}
 		for (int axis = 0; axis < 3; ++axis) {
 			debris[i].position[axis] += debris[i].velocity[axis];
 			debris[i].rotation[axis] = (int16)(debris[i].rotation[axis] + debris[i].spin[axis]);
@@ -689,15 +724,6 @@ const float kLevel1ShipLaserStart[kLevel1BoltCount][3] = {
 
 // The two cannon mounts, in the TIE's own space.
 const int kLevel1TieMuzzle[2][3] = { { -60, 10, -50 }, { 60, 10, -50 } };
-
-void rotateVector(const RA2PSXMatrix &transform, const int *source, int *result) {
-	for (int row = 0; row < 3; ++row) {
-		float value = 0.0f;
-		for (int column = 0; column < 3; ++column)
-			value += transform.rotation[row][column] * source[column];
-		result[row] = (int)value;
-	}
-}
 
 void spawnLevel1Enemy(RA2PSXLevel1Enemy &enemy, Common::RandomSource &random) {
 	enemy = RA2PSXLevel1Enemy();
