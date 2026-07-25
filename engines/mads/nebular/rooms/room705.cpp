@@ -83,7 +83,7 @@ static void setBottleSequence() {
 	player.commands_allowed = false;
 	_scene->_sequences.remove(g_sequence_ids[3]);
 	kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
-	_scene->loadAnimation(kernel_name('F', -1), 90);
+	kernel_run_animation(kernel_name('F', -1), 90);
 }
 
 static void handleFillBottle(int quote) {
@@ -124,19 +124,19 @@ static void room_705_init() {
 
 	player.walker_visible = false;
 
-	if (_scene->_priorSceneId == 706) {
+	if (previous_room == 706) {
 		player.commands_allowed = false;
 		g_sequence_ids[3] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[3], false, 9, 1, 0, 0);
 		_scene->_sequences.setAnimRange(g_sequence_ids[3], 1, 4);
 		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.commands_allowed = false;
 		_scene->_sequences.addTimer(1, 80);
 		g_engine->_soundManager->command(28, 0);
 	} else
 		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
 
-	if (_scene->_roomChanged)
+	if (kernel.teleported_in)
 		inter_give_to_player(OBJ_BOTTLE);
 
 	kernel.quotes = quote_load(0x311, 0x312, 0x313, 0x314, 0x315, 0);
@@ -245,7 +245,7 @@ static void room_705_parser() {
 			g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -2);
 			_scene->_sequences.setDepth(g_sequence_ids[2], 2);
 			_scene->_sequences.updateTimeout(g_sequence_ids[2], syncIdx);
-			_scene->_nextSceneId = 704;
+			new_room = 704;
 			player.commands_allowed = true;
 		}
 		break;
@@ -268,7 +268,7 @@ static void room_705_parser() {
 			int syncIdx = g_sequence_ids[3];
 			g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 16);
 			_scene->_sequences.updateTimeout(g_sequence_ids[3], syncIdx);
-			_scene->_nextSceneId = 706;
+			new_room = 706;
 			player.commands_allowed = true;
 		}
 		break;

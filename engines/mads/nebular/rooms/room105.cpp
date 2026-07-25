@@ -51,11 +51,11 @@ static void room_105_init() {
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(56, 141), FACING_NORTHWEST);
 	}
 
-	if (_scene->_priorSceneId == 104) {
+	if (previous_room == 104) {
 		player.x = 13;
 		player.y = 97;
 	}
-	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 116;
 		player.y = 147;
 	}
@@ -72,7 +72,7 @@ static void room_105_daemon() {
 		switch (kernel.trigger) {
 		case 0:
 			_scene->_kernelMessages.reset();
-			_scene->resetScene();
+			kernel_dump_all();
 			player.commands_allowed = false;
 			player.walker_visible = false;
 
@@ -80,7 +80,7 @@ static void room_105_daemon() {
 			g_sprite_ids[2] = kernel_load_series(kernel_name('m', 2), 0);
 			g_sprite_ids[3] = kernel_load_series(kernel_name('m', 3), 0);
 			g_engine->_soundManager->command(33, 0);
-			_scene->clearSequenceList();
+			kernel_seq_init();
 			kernel_new_palette();
 
 			g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 6, 1, 0, 0);
@@ -114,7 +114,7 @@ static void room_105_daemon() {
 
 		case 3:
 			text_show(10507);
-			_scene->_reloadSceneFlag = true;
+			kernel.force_restart = true;
 			_scene->_sequences.addTimer(90, 4);
 			break;
 

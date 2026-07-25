@@ -249,7 +249,7 @@ static void handleDialog() {
 				break;
 			}
 
-			player.clock = _scene->_frameStartTime + player.frame_delay;
+			player.clock = kernel.clock + player.frame_delay;
 			player.walker_visible = false;
 			player.commands_allowed = false;
 			_scene->_animation[0]->setCurrentFrame(local._resetFrame);
@@ -294,7 +294,7 @@ static void giveToRex(int object_id) {
 }
 
 static void room_411_init() {
-	if (_scene->_priorSceneId == 411) {
+	if (previous_room == 411) {
 		if ((global[kNextIngredient] == 1) && (global[kBadFirstIngredient] > -1))
 			giveToRex(global[kBadFirstIngredient]);
 		else if (global[kNextIngredient] > 0) {
@@ -397,7 +397,7 @@ static void room_411_init() {
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(220, 121), FACING_NORTHEAST);
 	}
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 60;
 		player.y = 146;
 		player.facing = FACING_NORTHEAST;
@@ -405,14 +405,14 @@ static void room_411_init() {
 
 	section_4_music();
 
-	if (_scene->_roomChanged) {
+	if (kernel.teleported_in) {
 		inter_give_to_player(OBJ_ALIEN_LIQUOR);
 		inter_give_to_player(OBJ_CHARGE_CASES);
 		inter_give_to_player(OBJ_TAPE_PLAYER);
 		inter_give_to_player(OBJ_AUDIO_TAPE);
 	}
 
-	_scene->loadAnimation(kernel_name('a', -1));
+	kernel_run_animation(kernel_name('a', -1), 0);
 	_scene->_animation[0]->setCurrentFrame(128);
 
 	local._makeMushroomCloud = false;
@@ -428,7 +428,7 @@ static void room_411_daemon() {
 			switch (local._curAnimationFrame) {
 			case 16:
 				player.commands_allowed = true;
-				player.clock = _scene->_frameStartTime + player.frame_delay;
+				player.clock = kernel.clock + player.frame_delay;
 				player.walker_visible = true;
 				local._resetFrame = 128;
 				break;
@@ -479,7 +479,7 @@ static void room_411_daemon() {
 
 			case 111:
 				local._resetFrame = 111;
-				_scene->_reloadSceneFlag = true;
+				kernel.force_restart = true;
 				break;
 
 			case 129:
@@ -528,7 +528,7 @@ static void room_411_parser() {
 	}
 
 	if (player_said_2(walk_into, corridor_to_south)) {
-		_scene->_nextSceneId = 406;
+		new_room = 406;
 		g_engine->_soundManager->command(10, 0);
 		player.command_ready = false;
 		return;
@@ -574,7 +574,7 @@ static void room_411_parser() {
 			_scene->_sequences.addSubEntry(g_sequence_ids[10], SEQUENCE_TRIGGER_EXPIRE, 0, 112);
 			// fall through
 		case 112:
-			player.clock = _scene->_frameStartTime - player.frame_delay;
+			player.clock = kernel.clock - player.frame_delay;
 			player.walker_visible = true;
 			player.commands_allowed = true;
 			object_set_quality(OBJ_CHARGE_CASES, 3, 1);
@@ -612,8 +612,8 @@ static void room_411_parser() {
 			break;
 
 		case 2:
-			player.clock = _scene->_frameStartTime + player.frame_delay;
-			player.clock = _scene->_frameStartTime + player.frame_delay;
+			player.clock = kernel.clock + player.frame_delay;
+			player.clock = kernel.clock + player.frame_delay;
 			player.walker_visible = true;
 			_scene->_sequences.addTimer(20, 3);
 			break;
@@ -649,7 +649,7 @@ static void room_411_parser() {
 			break;
 
 		case 2:
-			player.clock = _scene->_frameStartTime + player.frame_delay;
+			player.clock = kernel.clock + player.frame_delay;
 			player.walker_visible = true;
 			_scene->_sequences.addTimer(20, 3);
 			break;
@@ -680,7 +680,7 @@ static void room_411_parser() {
 
 	if (kernel.trigger == 100) {
 		_scene->_sequences.remove(g_sequence_ids[11]);
-		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.clock = kernel.clock - player.frame_delay;
 		player.walker_visible = true;
 		player.commands_allowed = true;
 		_scene->_sequences.addTimer(20, 10);
@@ -806,11 +806,11 @@ void room_411_preload() {
 
 	section_4_walker();
 	section_4_interface();
-	_scene->addActiveVocab(words_walkto);
-	_scene->addActiveVocab(words_alien_liquor);
-	_scene->addActiveVocab(words_formaldehyde);
-	_scene->addActiveVocab(words_petrox);
-	_scene->addActiveVocab(words_lecithin);
+	vocab_make_active(words_walkto);
+	vocab_make_active(words_alien_liquor);
+	vocab_make_active(words_formaldehyde);
+	vocab_make_active(words_petrox);
+	vocab_make_active(words_lecithin);
 }
 
 } // namespace Rooms

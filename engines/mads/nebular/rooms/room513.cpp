@@ -44,13 +44,13 @@ static void room_513_init() {
 	g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, -2);
 	_scene->_sequences.setDepth(g_sequence_ids[1], 1);
 
-	if ((_scene->_priorSceneId == 751) || (_scene->_priorSceneId == 701)) {
+	if ((previous_room == 751) || (previous_room == 701)) {
 		player.x = 296;
 		player.y = 147;
 		player.facing = FACING_WEST;
 		player.commands_allowed = false;
 		_scene->_sequences.addTimer(15, 80);
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 63;
 		player.y = 149;
 		player.facing = FACING_NORTHEAST;
@@ -59,12 +59,12 @@ static void room_513_init() {
 		_scene->_sequences.remove(g_sequence_ids[1]);
 		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, -1);
 		_scene->_sequences.setDepth(g_sequence_ids[1], 1);
-		_scene->loadAnimation(kernel_name('R', 1), 70);
+		kernel_run_animation(kernel_name('R', 1), 70);
 	}
 
 	section_5_music();
 
-	if (_scene->_roomChanged)
+	if (kernel.teleported_in)
 		inter_give_to_player(OBJ_SECURITY_CARD);
 
 	kernel.quotes = quote_load(0x278, 0);
@@ -162,7 +162,7 @@ static void room_513_parser() {
 			g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
 			_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
 			_scene->_sequences.updateTimeout(g_sequence_ids[3], syncIdx);
-			_scene->_nextSceneId = 504;
+			new_room = 504;
 		}
 		break;
 
@@ -209,9 +209,9 @@ static void room_513_parser() {
 			_scene->_sequences.setDepth(g_sequence_ids[2], 2);
 			player.commands_allowed = true;
 			if (global[kCityFlooded])
-				_scene->_nextSceneId = 701;
+				new_room = 701;
 			else
-				_scene->_nextSceneId = 751;
+				new_room = 751;
 
 			break;
 
@@ -261,8 +261,8 @@ void room_513_preload() {
 
 	section_5_walker();
 	section_5_interface();
-	_scene->addActiveVocab(words_elevator_door);
-	_scene->addActiveVocab(words_walkto);
+	vocab_make_active(words_elevator_door);
+	vocab_make_active(words_walkto);
 }
 
 } // namespace Rooms

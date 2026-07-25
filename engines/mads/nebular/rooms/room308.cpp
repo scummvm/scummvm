@@ -62,7 +62,7 @@ static void room_308_init() {
 
 	player.walker_visible = false;
 	player.commands_allowed = false;
-	_scene->loadAnimation(kernel_name('a', -1), 60);
+	kernel_run_animation(kernel_name('a', -1), 60);
 
 	section_3_music();
 	kernel.quotes = quote_load(0xF4, 0xF5, 0xF6, 0);
@@ -72,7 +72,7 @@ static void room_308_daemon() {
 	handle_forcefield(&local._forcefield, &g_sprite_ids[0]);
 
 	if (kernel.trigger == 60)
-		_scene->_nextSceneId = 307;
+		new_room = 307;
 
 	if (kernel.trigger < 70)
 		return;

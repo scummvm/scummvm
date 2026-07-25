@@ -38,11 +38,11 @@ static void room_551_init() {
 	else
 		g_sprite_ids[3] = kernel_load_series(kernel_name('a', 1), 0);
 
-	if (_scene->_priorSceneId == 501) {
+	if (previous_room == 501) {
 		player.x = 18;
 		player.y = 130;
 	}
-	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 124;
 		player.y = 119;
 		player.facing = FACING_NORTH;
@@ -86,7 +86,7 @@ static void room_551_init() {
 		global[kTeleporterCommand] = 0;
 
 		if (suffixNum > 0)
-			_scene->loadAnimation(kernel_name(sepChar, suffixNum), trigger);
+			kernel_run_animation(kernel_name(sepChar, suffixNum), trigger);
 		else {
 			player.walker_visible = true;
 			player.commands_allowed = true;
@@ -101,13 +101,13 @@ static void room_551_daemon() {
 	case 75:
 		player.commands_allowed = true;
 		player.walker_visible = true;
-		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.clock = kernel.clock - player.frame_delay;
 		break;
 
 	case 80:
 		global[kTeleporterCommand] = 1;
-		_scene->_nextSceneId = global[kTeleporterDestination];
-		_scene->_reloadSceneFlag = true;
+		new_room = global[kTeleporterDestination];
+		kernel.force_restart = true;
 		break;
 
 	case 90:
@@ -123,7 +123,7 @@ static void room_551_daemon() {
 		break;
 
 	case 91:
-		_scene->_reloadSceneFlag = true;
+		kernel.force_restart = true;
 		break;
 
 	default:
@@ -138,7 +138,7 @@ static void room_551_pre_parser() {
 
 static void room_551_parser() {
 	if (player_said_2(step_into, teleporter))
-		_scene->_nextSceneId = 502;
+		new_room = 502;
 	else if ((player.look_around))
 		text_show(55117);
 	else if (player_said_2(look, skeleton))

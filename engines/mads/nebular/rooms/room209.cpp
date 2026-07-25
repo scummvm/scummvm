@@ -811,7 +811,7 @@ static void handleMonkeyFall() {
 	break;
 
 	case 223:
-		_scene->loadAnimation(kernel_full_name(209, 'e', -1, "", EXT_AA), 224);
+		kernel_run_animation(kernel_full_name(209, 'e', -1, "", EXT_AA), 224);
 		g_engine->_soundManager->command(38, 0);
 		break;
 
@@ -863,7 +863,7 @@ static void handleMonkey1() {
 	case 215:
 	{
 		g_engine->_soundManager->command(18, 0);
-		_scene->loadAnimation(kernel_full_name(209, 'a', -1, "", EXT_AA), 251);
+		kernel_run_animation(kernel_full_name(209, 'a', -1, "", EXT_AA), 251);
 		int oldIdx = g_sequence_ids[7];
 		g_sequence_ids[7] = _scene->_sequences.addSpriteCycle(g_sprite_ids[7], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(g_sequence_ids[7], 27, 35);
@@ -903,7 +903,7 @@ static void handleMonkey2() {
 		_scene->_sequences.setScale(g_sequence_ids[12], 79);
 		_scene->_sequences.setAnimRange(g_sequence_ids[12], 1, 6);
 		_scene->_sequences.addSubEntry(g_sequence_ids[12], SEQUENCE_TRIGGER_EXPIRE, 0, 252);
-		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.clock = kernel.clock - player.frame_delay;
 		player.walker_visible = false;
 		break;
 
@@ -922,7 +922,7 @@ static void handleMonkey2() {
 
 	case 253:
 		_scene->_sequences.remove(g_sequence_ids[12]);
-		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.clock = kernel.clock - player.frame_delay;
 		player.walker_visible = true;
 		player.commands_allowed = true;
 		break;
@@ -994,11 +994,11 @@ static void room_209_init() {
 		_scene->_sequences.setDepth(g_sequence_ids[1], 13);
 	}
 
-	if (_scene->_priorSceneId == 208) {
+	if (previous_room == 208) {
 		player.x = 11;
 		player.y = 121;
 		player.facing = FACING_EAST;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 28;
 		player.y = 121;
 		player.facing = FACING_SOUTH;
@@ -1012,7 +1012,7 @@ static void room_209_init() {
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(200, 133), FACING_NORTH);
 	}
 
-	if (_scene->_roomChanged) {
+	if (kernel.teleported_in) {
 		inter_give_to_player(OBJ_POISON_DARTS);
 		inter_give_to_player(OBJ_BLOWGUN);
 		global[kMonkeyStatus] = MONKEY_HAS_BINOCULARS;
@@ -1302,7 +1302,7 @@ static void room_209_daemon() {
 			_scene->_sequences.setDepth(g_sequence_ids[2], 4);
 			_scene->_sequences.updateTimeout(g_sequence_ids[2], oldIdx);
 			_scene->_sequences.addSubEntry(g_sequence_ids[2], SEQUENCE_TRIGGER_EXPIRE, 0, 232);
-			player.clock = _scene->_frameStartTime - player.frame_delay;
+			player.clock = kernel.clock - player.frame_delay;
 			_scene->_sequences.updateTimeout(g_sequence_ids[2], -1);
 			player.walker_visible = false;
 		}
@@ -1372,7 +1372,7 @@ static void room_209_daemon() {
 
 		case 237:
 			player.walker_visible = true;
-			player.clock = _scene->_frameStartTime - player.frame_delay;
+			player.clock = kernel.clock - player.frame_delay;
 			_scene->_sequences.addTimer(1, 238);
 			break;
 
@@ -1445,7 +1445,7 @@ static void room_209_parser() {
 	}
 
 	if (player_said_2(walk_towards, rocky_area_to_north)) {
-		_scene->_nextSceneId = 203;
+		new_room = 203;
 		player.command_ready = false;
 		return;
 	}
@@ -1794,7 +1794,7 @@ void room_209_preload() {
 
 	section_2_walker();
 	section_2_interface();
-	_scene->addActiveVocab(words_plant_stalk);
+	vocab_make_active(words_plant_stalk);
 }
 
 } // namespace Rooms

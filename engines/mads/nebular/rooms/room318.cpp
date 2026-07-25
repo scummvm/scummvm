@@ -57,7 +57,7 @@ static void handleRexDialogs(int quote) {
 	_scene->_kernelMessages.reset();
 
 	const char *curQuote = quote_string(kernel.quotes, quote);
-	if (_scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing) > 200) {
+	if (_scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing) > 200) {
 		static char subQuote1[34], subQuote2[34];
 		quote_split_string(curQuote, subQuote1, subQuote2);
 
@@ -212,7 +212,7 @@ static void room_318_init() {
 	g_sprite_ids[3] = kernel_load_series(kernel_name('k', -1), 0);
 
 	if (global[kAfterHavoc]) {
-		_scene->loadAnimation(kernel_name('f', -1));
+		kernel_run_animation(kernel_name('f', -1), 0);
 		_scene->_animation[0]->_repeatFlag = true;
 	} else if (!global[kHasSeenProfPyro]) {
 		_scene->_hotspots.activate(words_professors_gurney, false);
@@ -226,11 +226,11 @@ static void room_318_init() {
 		_scene->_dynamicHotspots.add(words_scalpel, words_take, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
 	}
 
-	if (_scene->_priorSceneId == 357) {
+	if (previous_room == 357) {
 		player.x = 15;
 		player.y = 110;
 	}
-	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 214;
 		player.y = 152;
 	}
@@ -243,17 +243,17 @@ static void room_318_init() {
 			local._dialog1.write(0x19D, true);
 	}
 
-	if (_scene->_priorSceneId == 307) {
+	if (previous_room == 307) {
 		player.walker_visible = false;
 		player.commands_allowed = false;
-		_scene->loadAnimation(kernel_name('a', -1), 60);
+		kernel_run_animation(kernel_name('a', -1), 60);
 		local._animMode = 1;
 	}
 
 	local._lastFrame = 0;
 	_scene->_hotspots.activate(words_intern, false);
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	if (previous_room != RETURNING_FROM_DIALOG) {
 		local._dialogFl = false;
 		local._internWalkingFl = false;
 		local._counter = 0;
@@ -270,8 +270,8 @@ static void room_318_init() {
 		0x1C8, 0x1C9, 0x1CA, 0x1CB, 0x1CC, 0x1CD, 0x1CE, 0x1CF, 0x1D0, 0x1D1, 0x1D2, 0x1D3,
 		0x190, 0x19D, 0);
 
-	if ((_scene->_priorSceneId == RETURNING_FROM_DIALOG) || (((_scene->_priorSceneId == 318) ||
-		(_scene->_priorSceneId == RETURNING_FROM_LOADING)) && (!global[kAfterHavoc]))) {
+	if ((previous_room == RETURNING_FROM_DIALOG) || (((previous_room == 318) ||
+		(previous_room == RETURNING_FROM_LOADING)) && (!global[kAfterHavoc]))) {
 		if (!global[kAfterHavoc]) {
 			player.walker_visible = false;
 			g_sprite_ids[2] = kernel_load_series(kernel_name('g', -1), 0);
@@ -281,7 +281,7 @@ static void room_318_init() {
 				local._internVisibleFl = false;
 				local._dialogFl = false;
 			} else {
-				_scene->loadAnimation(kernel_name('b', -1), 61);
+				kernel_run_animation(kernel_name('b', -1), 61);
 				_scene->_hotspots.activate(words_intern, true);
 			}
 
@@ -296,15 +296,15 @@ static void room_318_init() {
 		}
 	}
 
-	if (_scene->_priorSceneId == 319) {
+	if (previous_room == 319) {
 		player.commands_allowed = false;
 		player.walker_visible = false;
 		local._animMode = 4;
 		if (!global[kHasSeenProfPyro]) {
-			_scene->loadAnimation(kernel_name('d', -1), 64);
+			kernel_run_animation(kernel_name('d', -1), 64);
 			global[kHasSeenProfPyro] = true;
 		} else {
-			_scene->loadAnimation(kernel_name('e', -1), 64);
+			kernel_run_animation(kernel_name('e', -1), 64);
 		}
 	}
 
@@ -312,7 +312,7 @@ static void room_318_init() {
 	pal_change_color(252, 63, 63, 10);
 	pal_change_color(253, 45, 45, 05);
 
-	local._dropTimer = _scene._frameStartTime;
+	local._dropTimer = kernel.clock;
 	section_3_music();
 
 	if (local._dialogFl)
@@ -388,7 +388,7 @@ static void room_318_daemon() {
 	case 60:
 		g_engine->_soundManager->command(3, 0);
 		local._animMode = 2;
-		_scene->_reloadSceneFlag = true;
+		kernel.force_restart = true;
 		break;
 
 	case 61:
@@ -396,7 +396,7 @@ static void room_318_daemon() {
 		break;
 
 	case 62:
-		_scene->_nextSceneId = 319;
+		new_room = 319;
 		break;
 
 	case 63:
@@ -405,7 +405,7 @@ static void room_318_daemon() {
 
 	case 64:
 		g_engine->_soundManager->command(3, 0);
-		_scene->_nextSceneId = 307;
+		new_room = 307;
 		break;
 
 	default:
@@ -425,9 +425,9 @@ static void room_318_daemon() {
 		int extraCounter = player_has(OBJ_SCALPEL) ? 900 : 0;
 
 		if (local._counter + extraCounter >= 1800) {
-			_scene->freeAnimation();
+			kernel_abort_animation(0);
 			player.commands_allowed = false;
-			_scene->loadAnimation(kernel_name('c', -1), 62);
+			kernel_run_animation(kernel_name('c', -1), 62);
 			local._animMode = 3;
 		}
 	} else if ((local._animMode == 2) && local._explosionFl && local._internVisibleFl && !local._dialogFl
@@ -444,11 +444,11 @@ static void room_318_daemon() {
 		}
 	}
 
-	if ((_scene._frameStartTime - local._dropTimer) > 600) {
+	if ((kernel.clock - local._dropTimer) > 600) {
 		g_engine->_soundManager->command(51, 0);
 		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 14, 1, 0, 0);
 		_scene->_sequences.setDepth(g_sequence_ids[1], 10);
-		local._dropTimer = _scene._frameStartTime;
+		local._dropTimer = kernel.clock;
 	}
 }
 
@@ -555,7 +555,7 @@ static void room_318_parser() {
 
 	if (player.walker_visible) {
 		if (player_said_2(walk_down, corridor_to_south)) {
-			_scene->_nextSceneId = 407;
+			new_room = 407;
 			player.command_ready = false;
 			return;
 		}

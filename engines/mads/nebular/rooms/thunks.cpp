@@ -259,34 +259,6 @@ int Scene::Sequences::findByTrigger(int trigger) {
 	return kernel_seq_find_by_trigger(trigger);
 }
 
-int Scene::loadAnimation(const char *name, int trigger_code) {
-	return kernel_run_animation(name, trigger_code);
-}
-
-void Scene::freeAnimation() {
-	kernel_abort_animation(0);
-}
-
-void Scene::changeVariant(int num) {
-	kernel_load_variant(num);
-}
-
-void Scene::drawElements(int transitionType, bool surfaceFlag) {
-	matte_frame(transitionType, surfaceFlag);
-}
-
-void Scene::resetScene() {
-	kernel_dump_all();
-}
-
-void Scene::clearSequenceList() {
-	kernel_seq_init();
-}
-
-void Scene::addActiveVocab(int vocab_id) {
-	vocab_make_active(vocab_id);
-}
-
 } // namespace Rooms
 } // namespace RexNebular
 } // namespace MADS

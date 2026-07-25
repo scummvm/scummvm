@@ -55,7 +55,7 @@ static void room_803_init() {
 
 	if (!global[kFromCockpit]) {
 		if (!global[kReturnFromCut]) {
-			if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+			if (previous_room != RETURNING_FROM_DIALOG) {
 				player.x = 15;
 				player.y = 130;
 				player.facing = FACING_EAST;
@@ -124,7 +124,7 @@ static void room_803_init() {
 static void room_803_daemon() {
 	if (kernel.trigger == 120) {
 		g_sequence_ids[6] = _scene->_sequences.startCycle(g_sprite_ids[6], false, 19);
-		_scene->_nextSceneId = 804;
+		new_room = 804;
 	}
 
 	if (kernel.trigger == 100) {
@@ -148,7 +148,7 @@ static void room_803_daemon() {
 			global[kHasWatchedAntigrav] = true;
 
 			if (global[kForceBeamDown])
-				_scene->_nextSceneId = _scene->_priorSceneId;
+				new_room = previous_room;
 			else
 				player.commands_allowed = true;
 		}
@@ -167,7 +167,7 @@ static void room_803_daemon() {
 		global[kHasWatchedAntigrav] = true;
 
 		if (global[kForceBeamDown])
-			_scene->_nextSceneId = _scene->_priorSceneId;
+			new_room = previous_room;
 		else
 			player.commands_allowed = true;
 	}
@@ -200,16 +200,16 @@ static void room_803_daemon() {
 	}
 
 	if (kernel.trigger == 110)
-		_scene->_nextSceneId = 808;
+		new_room = 808;
 
 	if (kernel.trigger == 130) {
 		global[kBeamIsUp] = true;
-		_scene->_nextSceneId = 804;
+		new_room = 804;
 	}
 
 	if (kernel.trigger == 140) {
 		if (!global[kWindowFixed]) {
-			_scene->_nextSceneId = 810;
+			new_room = 810;
 			global[kInSpace] = true;
 		} else {
 			if (!global[kShieldModInstalled])
@@ -288,7 +288,7 @@ static void room_803_parser() {
 			break;
 
 		case 163:
-			player.clock = _scene->_frameStartTime + player.frame_delay;
+			player.clock = kernel.clock + player.frame_delay;
 			player.walker_visible = true;
 			player.commands_allowed = true;
 			break;
@@ -347,8 +347,8 @@ void room_803_preload() {
 	section_8_walker();
 	section_8_interface();
 
-	_scene->addActiveVocab(words_guts);
-	_scene->addActiveVocab(words_walkto);
+	vocab_make_active(words_guts);
+	vocab_make_active(words_walkto);
 
 	if ((!global[kFromCockpit] && global[kReturnFromCut] && !global[kBeamIsUp])
 		|| (global[kFromCockpit] && !global[kExitShip])) {

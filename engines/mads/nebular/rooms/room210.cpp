@@ -340,12 +340,12 @@ static void setDialogNode(int node) {
 			player.walker_visible = false;
 			pal_lock();
 			_scene->_kernelMessages.reset();
-			_scene->freeAnimation();
-			_scene->resetScene();
+			kernel_abort_animation(0);
+			kernel_dump_all();
 
 			g_sprite_ids[1] = kernel_load_series(kernel_name('c', -1), 0);
 			kernel.quotes = quote_load(0xE6, 0xE9, 0xEA, 0xE7, 0xE8, 0);
-			_scene->loadAnimation(kernel_name('B', -1), 4);
+			kernel_run_animation(kernel_name('B', -1), 4);
 			break;
 
 		case 4:
@@ -381,7 +381,7 @@ static void setDialogNode(int node) {
 
 		case 8:
 			global[kTwinklesStatus] = TWINKLES_GONE;
-			_scene->_nextSceneId = 216;
+			new_room = 216;
 			break;
 
 		default:
@@ -549,7 +549,7 @@ static void handleConversations() {
 		_scene->_kernelMessages.reset();
 		player.commands_allowed = false;
 		const char *curQuote = quote_string(kernel.quotes, player2.words[0]);
-		if (_scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing) > 200) {
+		if (_scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing) > 200) {
 			static char line1[40], line2[40];
 			quote_split_string(curQuote, line1, line2);
 			Common::strcpy_s(local._subQuote2, line2);
@@ -618,16 +618,16 @@ static void room_210_init() {
 	if (!player.been_here_before)
 		global[kCurtainOpen] = 0;
 
-	if (_scene->_priorSceneId == 205) {
+	if (previous_room == 205) {
 		player.x = 277;
 		player.y = 56;
 	}
-	else if (_scene->_priorSceneId == 215) {
+	else if (previous_room == 215) {
 		player.x = 168;
 		player.y = 128;
 		player.facing = FACING_SOUTH;
 		global[kCurtainOpen] = true;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 308;
 		player.y = 132;
 	}
@@ -666,7 +666,7 @@ static void room_210_init() {
 	local._twinkleAnimationType = 0;
 	local._twinklesCurrentFrame = 0;
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	if (previous_room != RETURNING_FROM_DIALOG) {
 		local._shouldMoveHead = false;
 		local._shouldFaceRex = false;
 		local._shouldTalk = false;
@@ -678,7 +678,7 @@ static void room_210_init() {
 	}
 
 	if (global[kTwinklesStatus] == 0) {
-		_scene->loadAnimation(kernel_name('A', -1));
+		kernel_run_animation(kernel_name('A', -1), 0);
 		local._twinkleAnimationType = 1;
 	} else
 		_scene->_hotspots.activate(476, false);
@@ -988,9 +988,9 @@ static void room_210_parser() {
 			break;
 		}
 	} else if (player_said_2(walk_down, path_to_north) || player_said_2(walk_towards, hut_to_north)) {
-		_scene->_nextSceneId = 205;
+		new_room = 205;
 	} else if (player_said_2(walk_through, doorway)) {
-		_scene->_nextSceneId = 215;
+		new_room = 215;
 	} else if ((player_said_2(pull, curtain) || player_said_2(open, curtain)) && !global[kCurtainOpen]) {
 		switch (kernel.trigger) {
 		case 0:
@@ -1108,8 +1108,8 @@ void room_210_preload() {
 
 	section_2_walker();
 	section_2_interface();
-	_scene->addActiveVocab(words_doorway);
-	_scene->addActiveVocab(words_walk_through);
+	vocab_make_active(words_doorway);
+	vocab_make_active(words_walk_through);
 }
 
 } // namespace Rooms

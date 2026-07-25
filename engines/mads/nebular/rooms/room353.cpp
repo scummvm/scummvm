@@ -43,7 +43,7 @@ static void room_353_init() {
 	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 5, 0, 5, 0);
 	_scene->_sequences.setDepth(g_sequence_ids[1], 1);
 
-	if (_scene->_priorSceneId == 352) {
+	if (previous_room == 352) {
 		player.x = 144;
 		player.y = 95;
 	}
@@ -59,9 +59,9 @@ static void room_353_parser() {
 	if (player.look_around)
 		text_show(35315);
 	else if (player_said_2(walk_through, doorway))
-		_scene->_nextSceneId = 352;
+		new_room = 352;
 	else if (player_said_2(walk_down, corridor_to_south))
-		_scene->_nextSceneId = 354;
+		new_room = 354;
 	else if (player_said_2(look, rock_chunk))
 		text_show(35310);
 	else if (player_said_2(look, pipes) || player_said_2(look, pipe))

@@ -36,27 +36,27 @@ namespace Rooms {
 static void room_313_init() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
 
-	if ((_scene->_priorSceneId == 366) || (_scene->_priorSceneId == 316)) {
+	if ((previous_room == 366) || (previous_room == 316)) {
 		player.x = 30;
 		player.y = 80;
 		player.facing = FACING_NORTH;
-	} else if ((_scene->_priorSceneId == 311) || (_scene->_priorSceneId == 361) || (_scene->_priorSceneId == 391)) {
+	} else if ((previous_room == 311) || (previous_room == 361) || (previous_room == 391)) {
 		player.x = 90;
 		player.y = 70;
 		player.facing = FACING_EAST;
-	} else if (_scene->_priorSceneId == 390) {
+	} else if (previous_room == 390) {
 		player.x = 126;
 		player.y = 70;
 		player.facing = FACING_EAST;
-	} else if ((_scene->_priorSceneId == 389) || (_scene->_priorSceneId == 399)) {
+	} else if ((previous_room == 389) || (previous_room == 399)) {
 		player.x = 163;
 		player.y = 70;
 		player.facing = FACING_WEST;
-	} else if (_scene->_priorSceneId == 388) {
+	} else if (previous_room == 388) {
 		player.x = 199;
 		player.y = 70;
 		player.facing = FACING_WEST;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 234;
 		player.y = 70;
 		player.facing = FACING_WEST;
@@ -76,28 +76,28 @@ static void room_313_init() {
 
 static void room_313_parser() {
 	if (player_said_2(crawl_to, fourth_cell))
-		_scene->_nextSceneId = 387;
+		new_room = 387;
 	else if (player_said_2(crawl_to, third_cell))
-		_scene->_nextSceneId = 388;
+		new_room = 388;
 	else if (player_said_2(crawl_to, second_cell)) {
 		if (global[kAfterHavoc])
-			_scene->_nextSceneId = 399;
+			new_room = 399;
 		else
-			_scene->_nextSceneId = 389;
+			new_room = 389;
 	} else if (player_said_2(crawl_to, first_cell))
-		_scene->_nextSceneId = 390;
+		new_room = 390;
 	else if (player_said_2(crawl_to, security_station)) {
 		if (global[kSexOfRex] == REX_FEMALE) {
 			global[kSexOfRex] = REX_MALE;
 			text_show(31301);
 		}
-		_scene->_nextSceneId = 391;
+		new_room = 391;
 	} else if (player_said_2(crawl_to, equipment_room)) {
 		if (global[kSexOfRex] == REX_FEMALE) {
 			global[kSexOfRex] = REX_MALE;
 			text_show(31301);
 		}
-		_scene->_nextSceneId = 366;
+		new_room = 366;
 	} else if (!player_said_2(crawl_down, air_shaft))
 		return;
 

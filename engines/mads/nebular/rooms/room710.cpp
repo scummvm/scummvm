@@ -48,9 +48,9 @@ static void room_710_init() {
 static void room_710_daemon() {
 	if (kernel.trigger == 70) {
 		if (global[kCityFlooded])
-			_scene->_nextSceneId = 701;
+			new_room = 701;
 		else
-			_scene->_nextSceneId = 751;
+			new_room = 751;
 	}
 }
 
@@ -59,9 +59,9 @@ static void room_710_parser() {
 		player.commands_allowed = false;
 
 		if (global[kCityFlooded])
-			_scene->_nextSceneId = 701;
+			new_room = 701;
 		else
-			_scene->_nextSceneId = 751;
+			new_room = 751;
 
 		player.command_ready = false;
 	}

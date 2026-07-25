@@ -51,10 +51,10 @@ static void room_607_init() {
 	g_sprite_ids[2] = kernel_load_series(kernel_name('c', 0), 0);
 	g_sprite_ids[3] = kernel_load_series("*RXCD_3", 0);
 
-	if (!player.been_here_before && (_scene->_priorSceneId != 608))
+	if (!player.been_here_before && (previous_room != 608))
 		global[kDogStatus] = DOG_PRESENT;
 
-	if ((_scene->_priorSceneId == 608) && (global[kDogStatus] < DOG_GONE))
+	if ((previous_room == 608) && (global[kDogStatus] < DOG_GONE))
 		global[kDogStatus] = DOG_GONE;
 
 	local._animationActive = 0;
@@ -77,11 +77,11 @@ static void room_607_init() {
 	g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -2);
 	_scene->_sequences.setDepth(g_sequence_ids[2], 4);
 
-	if (_scene->_priorSceneId == 608) {
+	if (previous_room == 608) {
 		player.x = 297;
 		player.y = 50;
 		player.facing = FACING_SOUTHEAST;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 40;
 		player.y = 104;
 		player.facing = FACING_SOUTHEAST;
@@ -90,7 +90,7 @@ static void room_607_init() {
 		_scene->_sequences.remove(g_sequence_ids[2]);
 		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
 		_scene->_sequences.setDepth(g_sequence_ids[2], 4);
-		_scene->loadAnimation(kernel_name('R', 1), 80);
+		kernel_run_animation(kernel_name('R', 1), 80);
 	} else if (global[kDogStatus] == DOG_LEFT) {
 		g_sprite_ids[4] = kernel_load_series(kernel_name('g', 3), 0);
 		g_sprite_ids[5] = kernel_load_series(kernel_name('g', 7), 0);
@@ -99,7 +99,7 @@ static void room_607_init() {
 
 	section_6_music();
 
-	if (_scene->_roomChanged)
+	if (kernel.teleported_in)
 		inter_give_to_player(OBJ_BONES);
 
 	pal_change_color(252, 63, 44, 30);
@@ -109,13 +109,13 @@ static void room_607_init() {
 
 static void room_607_daemon() {
 	if (global[kDogStatus] == DOG_LEFT) {
-		int32 diff = _scene->_frameStartTime - local._lastFrameTime;
+		int32 diff = kernel.clock - local._lastFrameTime;
 		if ((diff >= 0) && (diff <= 4))
 			local._dogTimer += diff;
 		else
 			local._dogTimer++;
 
-		local._lastFrameTime = _scene->_frameStartTime;
+		local._lastFrameTime = kernel.clock;
 	}
 
 	if ((local._dogTimer >= 480) && !local._dogLoop && !local._shopAvailable && (global[kDogStatus] == DOG_LEFT) && !player.special_code) {
@@ -251,7 +251,7 @@ static void room_607_daemon() {
 			text_show(60729);
 			local._animationActive = 0;
 			local._dogEatsRex = false;
-			_scene->_reloadSceneFlag = true;
+			kernel.force_restart = true;
 			player.commands_allowed = true;
 			break;
 
@@ -299,7 +299,7 @@ static void handleThrowingBone() {
 		player.commands_allowed = false;
 		_scene->_sequences.remove(g_sequence_ids[1]);
 		player.walker_visible = false;
-		_scene->loadAnimation(kernel_name('D', local._animationMode), 1);
+		kernel_run_animation(kernel_name('D', local._animationMode), 1);
 		break;
 
 	case 1:
@@ -371,7 +371,7 @@ static void room_607_pre_parser() {
 
 static void room_607_parser() {
 	if (player_said_2(walk_through, side_entrance))
-		_scene->_nextSceneId = 608;
+		new_room = 608;
 	else if (player_said_2(get_inside, car)) {
 		switch (kernel.trigger) {
 		case 0:
@@ -404,7 +404,7 @@ static void room_607_parser() {
 			g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
 			_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
 			_scene->_sequences.updateTimeout(g_sequence_ids[3], syncIdx);
-			_scene->_nextSceneId = 504;
+			new_room = 504;
 		}
 		break;
 
@@ -501,8 +501,8 @@ void room_607_preload() {
 
 	section_6_walker();
 	section_6_interface();
-	_scene->addActiveVocab(words_obnoxious_dog);
-	_scene->addActiveVocab(words_walkto);
+	vocab_make_active(words_obnoxious_dog);
+	vocab_make_active(words_walkto);
 }
 
 } // namespace Rooms

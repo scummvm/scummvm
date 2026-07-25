@@ -57,11 +57,11 @@ static void room_359_init() {
 		_scene->_dynamicHotspots.setPosition(local._cardHotspotId, Common::Point(107, 107), FACING_SOUTH);
 	}
 
-	if (_scene->_priorSceneId == 358) {
+	if (previous_room == 358) {
 		player.x = 301;
 		player.y = 141;
 	}
-	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 15;
 		player.y = 148;
 	}
@@ -110,7 +110,7 @@ static void room_359_parser() {
 				g_engine->_soundManager->command(57, 0);
 				inter_give_to_player(OBJ_SECURITY_CARD);
 				object_examine(OBJ_SECURITY_CARD, 0x330, 0);
-				_scene->changeVariant(1);
+				kernel_load_variant(1);
 				break;
 
 			case 2:
@@ -182,7 +182,7 @@ void room_359_preload() {
 
 	section_3_walker();
 	section_3_interface();
-	_scene->addActiveVocab(words_walkto);
+	vocab_make_active(words_walkto);
 }
 
 } // namespace Rooms

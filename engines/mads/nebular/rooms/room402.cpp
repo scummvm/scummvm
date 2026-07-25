@@ -402,7 +402,7 @@ static void handleDialogs() {
 		_scene->_kernelMessages.reset();
 		player.commands_allowed = false;
 		const char *curQuote = quote_string(kernel.quotes, player2.words[0]);
-		if (_scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing) > 200) {
+		if (_scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing) > 200) {
 			static char subQuote1[34], subQuote2[34];
 			quote_split_string(curQuote, subQuote1, subQuote2);
 			_scene->_kernelMessages.add(Common::Point(230, 42), 0x1110, 32, 0, 140, subQuote1);
@@ -462,14 +462,14 @@ static void room_402_init() {
 	g_sprite_ids[21] = kernel_load_series("*ROXRC_9", 0);
 	g_sprite_ids[22] = kernel_load_series("*ROXCL_8", 0);
 
-	if (_scene->_priorSceneId == 401) {
+	if (previous_room == 401) {
 		player.x = 160;
 		player.y = 150;
 		player.facing = FACING_NORTH;
 		local._roxOnStool = false;
 		local._bartenderDialogNode = 1;
 		local._conversationFl = false;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 160;
 		player.y = 150;
 		player.facing = FACING_NORTH;
@@ -627,7 +627,7 @@ static void room_402_init() {
 	local._rexMode = 0;
 	local._refuseAlienLiquor = false;
 
-	_scene->loadAnimation(kernel_full_name(402, 'd', 1, "", EXT_AA));
+	kernel_run_animation(kernel_full_name(402, 'd', 1, "", EXT_AA), 0);
 	_scene->_animation[0]->_repeatFlag = true;
 
 	g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, 1);
@@ -679,7 +679,7 @@ static void room_402_init() {
 
 static void room_402_daemon() {
 	if (kernel.trigger == 104) {
-		player.clock = _scene->_frameStartTime + player.frame_delay;
+		player.clock = kernel.clock + player.frame_delay;
 		player.walker_visible = true;
 		_scene->_sequences.remove(g_sequence_ids[15]);
 		inter_give_to_player(OBJ_CREDIT_CHIP);
@@ -1742,13 +1742,13 @@ static void room_402_daemon() {
 
 	if (kernel.trigger == 102) {
 		_scene->_sequences.remove(g_sequence_ids[6]);
-		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.clock = kernel.clock - player.frame_delay;
 		g_sequence_ids[7] = _scene->_sequences.addSpriteCycle(g_sprite_ids[7], false, 8, 1, 0, 0);
 		_scene->_sequences.setAnimRange(g_sequence_ids[7], 14, 18);
 		_scene->_sequences.setDepth(g_sequence_ids[7], 5);
 		_scene->_sequences.addSubEntry(g_sequence_ids[7], SEQUENCE_TRIGGER_EXPIRE, 0, 103);
 	} else if (kernel.trigger == 103) {
-		player.clock = _scene->_frameStartTime + player.frame_delay;
+		player.clock = kernel.clock + player.frame_delay;
 		local._roxOnStool = false;
 		player.facing = FACING_SOUTH;
 		player_select_series();
@@ -1869,7 +1869,7 @@ static void room_402_parser() {
 			inter_give_to_player(OBJ_REPAIR_LIST);
 		}
 	} else if (kernel.trigger == 166) {
-		player.clock = _scene->_frameStartTime + player.frame_delay;
+		player.clock = kernel.clock + player.frame_delay;
 		player.walker_visible = true;
 		_scene->_sequences.addTimer(20, 167);
 	} else if (kernel.trigger == 167) {
@@ -1878,7 +1878,7 @@ static void room_402_parser() {
 	} else if (inter_input_mode == kInputConversation)
 		handleDialogs();
 	else if (player_said_2(walk_into, corridor_to_south))
-		_scene->_nextSceneId = 401;
+		new_room = 401;
 	else if (player_said_2(walk_onto, dance_floor))
 		; // just... nothing
 	else if (player_said_2(talkto, repair_woman)) {
@@ -2229,15 +2229,15 @@ void room_402_preload() {
 	section_4_walker();
 	section_4_interface();
 
-	_scene->addActiveVocab(words_bartender);
-	_scene->addActiveVocab(words_alien_liquor);
-	_scene->addActiveVocab(words_drink);
-	_scene->addActiveVocab(words_binoculars);
-	_scene->addActiveVocab(words_walkto);
-	_scene->addActiveVocab(words_credit_chip);
-	_scene->addActiveVocab(words_take);
-	_scene->addActiveVocab(words_repair_list);
-	_scene->addActiveVocab(words_look_at);
+	vocab_make_active(words_bartender);
+	vocab_make_active(words_alien_liquor);
+	vocab_make_active(words_drink);
+	vocab_make_active(words_binoculars);
+	vocab_make_active(words_walkto);
+	vocab_make_active(words_credit_chip);
+	vocab_make_active(words_take);
+	vocab_make_active(words_repair_list);
+	vocab_make_active(words_look_at);
 }
 
 } // namespace Rooms

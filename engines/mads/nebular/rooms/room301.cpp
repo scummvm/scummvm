@@ -40,14 +40,14 @@ static void room_301_init() {
 
 	player.commands_allowed = false;
 	player.walker_visible = false;
-	_scene->loadAnimation(kernel_name('a', -1), 60);
+	kernel_run_animation(kernel_name('a', -1), 60);
 
 	section_3_music();
 }
 
 static void room_301_daemon() {
 	if (kernel.trigger == 60)
-		_scene->_nextSceneId = 302;
+		new_room = 302;
 }
 
 void room_301_synchronize(Common::Serializer &s) {

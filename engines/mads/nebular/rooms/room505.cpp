@@ -54,7 +54,7 @@ static void room_505_init() {
 	g_sprite_ids[11] = kernel_load_series(kernel_name('t', -1), 0);
 	g_sprite_ids[12] = kernel_load_series(kernel_name('e', -1), 0);
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
+	if (previous_room != RETURNING_FROM_DIALOG)
 		g_sequence_ids[12] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[12], false, 6, 1, 0, 0);
 
 	g_sequence_ids[13] = _scene->_sequences.addSpriteCycle(g_sprite_ids[13], false, 6, 1, 120, 0);
@@ -76,7 +76,7 @@ static void room_505_init() {
 	for (int i = 0; i < 9; i++) {
 		if (global[kHoverCarLocation] == local._carLocations[i]) {
 			local._homeSelectedId = i;
-			if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
+			if (previous_room != RETURNING_FROM_DIALOG)
 				local._selectedId = i;
 		}
 	}
@@ -84,7 +84,7 @@ static void room_505_init() {
 	player.walker_visible = false;
 	player.commands_allowed = false;
 	local._frame = -1;
-	_scene->loadAnimation(kernel_name('a', -1));
+	kernel_run_animation(kernel_name('a', -1), 0);
 	_scene->_animation[0]->setCurrentFrame(86);
 
 	section_5_music();
@@ -270,7 +270,7 @@ static void room_505_daemon() {
 
 	case 63:
 		global[kHoverCarDestination] = local._carLocations[local._selectedId];
-		_scene->_nextSceneId = 504;
+		new_room = 504;
 		break;
 
 	default:
@@ -282,7 +282,7 @@ static void room_505_parser() {
 	if (player_said_1(press))
 		local._nextButtonId = player2.words[1];
 	else if (player_said_2(return_to, inside_of_car))
-		_scene->_nextSceneId = 504;
+		new_room = 504;
 	else if (player_said_2(look, view_screen))
 		text_show(50510);
 	else if (player_said_2(look, control_panel))

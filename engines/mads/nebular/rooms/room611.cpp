@@ -145,12 +145,12 @@ static void displayHermitQuestions(int question) {
 	case 1:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x281);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x282);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 	}
@@ -159,12 +159,12 @@ static void displayHermitQuestions(int question) {
 	case 2:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x283);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x284);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 	}
@@ -173,7 +173,7 @@ static void displayHermitQuestions(int question) {
 	case 3:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x285);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 	}
@@ -182,7 +182,7 @@ static void displayHermitQuestions(int question) {
 	case 4:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x286);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 	}
@@ -191,17 +191,17 @@ static void displayHermitQuestions(int question) {
 	case 5:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x297);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y - 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x298);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x299);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 	}
@@ -210,12 +210,12 @@ static void displayHermitQuestions(int question) {
 	case 6:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x29A);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x29B);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 	}
@@ -224,12 +224,12 @@ static void displayHermitQuestions(int question) {
 	case 7:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x2A0);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2A1);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 	}
@@ -238,17 +238,17 @@ static void displayHermitQuestions(int question) {
 	case 8:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x2A2);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2A3);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2A4);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 	}
@@ -257,12 +257,12 @@ static void displayHermitQuestions(int question) {
 	case 9:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x2A5);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2A6);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 	}
@@ -271,17 +271,17 @@ static void displayHermitQuestions(int question) {
 	case 10:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x2A8);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2A9);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2AA);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 	}
@@ -290,22 +290,22 @@ static void displayHermitQuestions(int question) {
 	case 11:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x2AB);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2AC);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2AD);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2AE);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 	}
@@ -314,22 +314,22 @@ static void displayHermitQuestions(int question) {
 	case 12:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x2AF);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2B0);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2B1);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2B2);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 	}
@@ -338,22 +338,22 @@ static void displayHermitQuestions(int question) {
 	case 13:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x2B3);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 3), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2B4);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2B5);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2B6);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
@@ -366,22 +366,22 @@ static void displayHermitQuestions(int question) {
 	case 14:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x2BA);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2BB);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2BC);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2BD);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 	}
@@ -390,22 +390,22 @@ static void displayHermitQuestions(int question) {
 	case 15:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x2BE);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2BF);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2C0);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2C1);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 	}
@@ -414,27 +414,27 @@ static void displayHermitQuestions(int question) {
 	case 16:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x2C2);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 3), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2C3);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2C4);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2C5);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2C6);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 	}
@@ -443,22 +443,22 @@ static void displayHermitQuestions(int question) {
 	case 17:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x2C7);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2C8);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2C9);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2CA);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 	}
@@ -467,17 +467,17 @@ static void displayHermitQuestions(int question) {
 	case 18:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x2CB);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2CC);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2CD);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 	}
@@ -486,17 +486,17 @@ static void displayHermitQuestions(int question) {
 	case 19:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x2CE);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2CF);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2D0);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 	}
@@ -505,27 +505,27 @@ static void displayHermitQuestions(int question) {
 	case 20:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x2E1);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 3), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2E2);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2E3);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2E4);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2E5);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
 	}
@@ -534,27 +534,27 @@ static void displayHermitQuestions(int question) {
 	case 21:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x2D3);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 3), 0xFDFC, 0, 0, 800, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2D4);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, 800, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2D5);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, 800, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2D6);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, 800, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2D7);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, 800, curQuote);
 	}
@@ -563,22 +563,22 @@ static void displayHermitQuestions(int question) {
 	case 22:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x2D8);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, 700, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2D9);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, 700, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2DA);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, 700, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2DB);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, 700, curQuote);
 	}
@@ -587,27 +587,27 @@ static void displayHermitQuestions(int question) {
 	case 23:
 	{
 		const char *curQuote = quote_string(kernel.quotes, 0x2DC);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 3), 0xFDFC, 0, 0, 700, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2DD);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, 700, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2DE);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, 700, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2DF);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, 700, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2E0);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 59), 0xFDFC, 0, 0, 700, curQuote);
 	}
@@ -758,12 +758,12 @@ static void handleSubDialog1() {
 		_scene->_kernelMessages.reset();
 
 		const char *curQuote = quote_string(kernel.quotes, 0x2D1);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y), 0xFDFC, 0, 0, 120, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x2D2);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, 120, curQuote);
 
@@ -818,7 +818,7 @@ static void handleSubDialog1() {
 		_scene->_kernelMessages.reset();
 
 		const char *curQuote = quote_string(kernel.quotes, 0x2E6);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, 120, curQuote);
 
@@ -856,7 +856,7 @@ static void handleSubDialog2() {
 	{
 		_scene->_kernelMessages.reset();
 		const char *curQuote = quote_string(kernel.quotes, 0x2A7);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, 120, curQuote);
 		setDialogNode(0);
@@ -875,7 +875,7 @@ static void handleDialog() {
 		player.commands_allowed = false;
 
 		const char *curQuote = quote_string(kernel.quotes, player2.words[0]);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 
 		if (width > 200) {
 			static char subQuote1[34], subQuote2[34];
@@ -942,7 +942,7 @@ static void room_611_init() {
 	local._alreadyTalkingFl = false;
 	local._startTradingFl = false;
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 22;
 		player.y = 132;
 		player.facing = FACING_EAST;
@@ -950,7 +950,7 @@ static void room_611_init() {
 	}
 
 	if (!global[kHasTalkedToHermit]) {
-		_scene->loadAnimation(kernel_full_name(611, 'h', -1, "", EXT_AA), 0);
+		kernel_run_animation(kernel_full_name(611, 'h', -1, "", EXT_AA), 0);
 		local._nextFrame = 47;
 		local._hermitMode = 1;
 		local._hermitTalkingFl = false;
@@ -1251,7 +1251,7 @@ static void room_611_daemon() {
 	}
 
 	if (kernel.trigger == 112) {
-		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.clock = kernel.clock - player.frame_delay;
 		player.walker_visible = true;
 	}
 
@@ -1311,7 +1311,7 @@ static void room_611_daemon() {
 	}
 
 	if (kernel.trigger == 115) {
-		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.clock = kernel.clock - player.frame_delay;
 		player.walker_visible = true;
 		if (local._hermitDisplayedQuestion == 21) {
 			player.commands_allowed = false;
@@ -1351,12 +1351,12 @@ static void room_611_parser() {
 		_scene->_kernelMessages.reset();
 
 		const char *curQuote = quote_string(kernel.quotes, 0x323);
-		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y), 0xFDFC, 0, 0, 120, curQuote);
 
 		curQuote = quote_string(kernel.quotes, 0x324);
-		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing);
+		width = _scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing);
 		quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, 120, curQuote);
 	} else if (kernel.trigger == 90) {
@@ -1498,8 +1498,8 @@ void room_611_preload() {
 
 	section_6_walker();
 	section_6_interface();
-	_scene->addActiveVocab(words_rat);
-	_scene->addActiveVocab(words_walkto);
+	vocab_make_active(words_rat);
+	vocab_make_active(words_walkto);
 }
 
 } // namespace Rooms

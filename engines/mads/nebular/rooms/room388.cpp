@@ -52,7 +52,7 @@ static void room_388_init() {
 
 static void room_388_parser() {
 	if (player_said_2(return_to, air_shaft))
-		_scene->_nextSceneId = 313;
+		new_room = 313;
 	else if (player_said_2(talkto, sauropod)) {
 		switch (kernel.trigger) {
 		case 0:

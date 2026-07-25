@@ -40,23 +40,23 @@ static Scratch local;
 
 static void room_406_init() {
 	player.walker_visible = true;
-	if (_scene->_priorSceneId == 405) {
+	if (previous_room == 405) {
 		player.x = 15;
 		player.y = 129;
 		player.facing = FACING_EAST;
-	} else if (_scene->_priorSceneId == 407) {
+	} else if (previous_room == 407) {
 		player.x = 270;
 		player.y = 127;
 		player.facing = FACING_WEST;
-	} else if (_scene->_priorSceneId == 410) {
+	} else if (previous_room == 410) {
 		player.x = 30;
 		player.y = 108;
 		player.facing = FACING_SOUTH;
-	} else if (_scene->_priorSceneId == 411) {
+	} else if (previous_room == 411) {
 		player.x = 153;
 		player.y = 108;
 		player.facing = FACING_SOUTH;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 15;
 		player.y = 129;
 		player.facing = FACING_EAST;
@@ -66,7 +66,7 @@ static void room_406_init() {
 	g_sprite_ids[1] = kernel_load_series(kernel_name('x', 0), 0);
 	g_sprite_ids[3] = kernel_load_series(kernel_name('x', 1), 0);
 
-	if (_scene->_roomChanged) {
+	if (kernel.teleported_in) {
 		global[kStorageDoorOpen] = false;
 		inter_give_to_player(OBJ_SECURITY_CARD);
 	}
@@ -74,7 +74,7 @@ static void room_406_init() {
 	if (!global[kStorageDoorOpen])
 		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
 
-	if (_scene->_priorSceneId != 411)
+	if (previous_room != 411)
 		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
 	else {
 		player.commands_allowed = false;
@@ -96,7 +96,7 @@ static void room_406_daemon() {
 	}
 
 	if (kernel.trigger == 80)
-		_scene->_nextSceneId = 411;
+		new_room = 411;
 
 	if (kernel.trigger == 100) {
 		text_show(40622);
@@ -105,7 +105,7 @@ static void room_406_daemon() {
 
 	if (kernel.trigger == 110) {
 		_scene->_sequences.addTimer(20, 111);
-		player.clock = _scene->_frameStartTime + player.frame_delay;
+		player.clock = kernel.clock + player.frame_delay;
 		player.walker_visible = true;
 	}
 
@@ -115,7 +115,7 @@ static void room_406_daemon() {
 	}
 
 	if (kernel.trigger == 70) {
-		player.clock = _scene->_frameStartTime + player.frame_delay;
+		player.clock = kernel.clock + player.frame_delay;
 		player.walker_visible = true;
 		g_sequence_ids[1] = _scene->_sequences.startPingPongCycle(g_sprite_ids[1], false, 4, 1, 0, 0);
 		_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
@@ -133,7 +133,7 @@ static void room_406_daemon() {
 		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 4, 1, 0, 0);
 		global[kStorageDoorOpen] = true;
 		player.commands_allowed = true;
-		player.clock = _scene->_frameStartTime + player.frame_delay;
+		player.clock = kernel.clock + player.frame_delay;
 		player.walker_visible = true;
 		g_engine->_soundManager->command(19, 0);
 	}
@@ -162,7 +162,7 @@ static void room_406_parser() {
 		_scene->_sequences.addSubEntry(g_sequence_ids[3], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
 		g_engine->_soundManager->command(19, 0);
 	} else if (player_said_2(walk_through, door) && global[kStorageDoorOpen] && (player.target_x < 100))
-		_scene->_nextSceneId = 410;
+		new_room = 410;
 	else if (player_said_2(walk_through, door) && !global[kStorageDoorOpen] && (player.target_x < 100)) {
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, quote_string(kernel.quotes, 0x24F));
 		if (!local._hitStorageDoor) {

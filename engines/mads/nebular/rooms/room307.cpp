@@ -58,7 +58,7 @@ static Scratch local;
 
 static void handleRexDialog(int quote) {
 	const char *curQuote = quote_string(kernel.quotes, quote);
-	if (_scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing) > 200) {
+	if (_scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing) > 200) {
 		static char subQuote1[34], subQuote2[34];
 		quote_split_string(curQuote, subQuote1, subQuote2);
 		Common::strcpy_s(local._subQuote2, subQuote2);
@@ -290,7 +290,7 @@ static void room_307_init() {
 	local._animationMode = 0;
 	local._fieldCollisionCounter = 0;
 
-	_scene->changeVariant(1);
+	kernel_load_variant(1);
 
 	kernel.quotes = quote_load(0xED, 0xEE, 0xEF, 0xF0, 0xF1, 0xF2, 0xF3, 0x10C, 0x104, 0x106, 0x107, 0x108, 0x105,
 		0x109, 0x10A, 0x10B, 0x10D, 0x10E, 0x10F, 0x110, 0x111, 0x112, 0x113, 0x114, 0x115, 0x116, 0x117,
@@ -305,11 +305,11 @@ static void room_307_init() {
 
 	if (!player.been_here_before)
 		local._dialog2.set(0x11A, 0x122, 0);
-	else if (_scene->_priorSceneId == 318)
+	else if (previous_room == 318)
 		local._dialog2.write(0x11E, true);
 
 
-	if (_scene->_priorSceneId == RETURNING_FROM_DIALOG) {
+	if (previous_room == RETURNING_FROM_DIALOG) {
 		if (local._grateOpenedFl)
 			g_engine->_soundManager->command(10, 0);
 		else
@@ -323,7 +323,7 @@ static void room_307_init() {
 		local._prisonerTimer = 0;
 		local._prisonerMessageId = 0x104;
 
-		if (_scene->_priorSceneId == 308) {
+		if (previous_room == 308) {
 			player.walker_visible = false;
 			player.commands_allowed = false;
 			player.x = 156;
@@ -331,8 +331,8 @@ static void room_307_init() {
 			player.facing = FACING_NORTH;
 			local._animationMode = 1;
 			g_engine->_soundManager->command(11, 0);
-			_scene->loadAnimation(kernel_name('a', -1), 60);
-		} else if (_scene->_priorSceneId == 387) {
+			kernel_run_animation(kernel_name('a', -1), 60);
+		} else if (previous_room == 387) {
 			player.x = 129;
 			player.y = 108;
 			player.facing = FACING_NORTH;
@@ -364,7 +364,7 @@ static void room_307_init() {
 
 	section_3_music();
 
-	if ((_scene->_priorSceneId == 318) || (_scene->_priorSceneId == 387))
+	if ((previous_room == 318) || (previous_room == 387))
 		_scene->_kernelMessages.addQuote(0xF3, 0, 120);
 }
 
@@ -389,20 +389,20 @@ static void room_307_daemon() {
 
 		if (_scene->_animation[0]->getCurrentFrame() == 150) {
 			player.walker_visible = false;
-			player.clock = _scene->_frameStartTime - player.frame_delay;
+			player.clock = kernel.clock - player.frame_delay;
 		}
 	}
 
 	if (kernel.trigger == 60) {
 		player.walker_visible = true;
 		player.commands_allowed = true;
-		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.clock = kernel.clock - player.frame_delay;
 		local._animationMode = 0;
 		g_engine->_soundManager->command(9, 0);
 	}
 
-	if ((local._lastFrameTime != _scene->_frameStartTime) && !local._duringPeeingFl) {
-		int32 elapsedTime = local._lastFrameTime - _scene->_frameStartTime;
+	if ((local._lastFrameTime != kernel.clock) && !local._duringPeeingFl) {
+		int32 elapsedTime = local._lastFrameTime - kernel.clock;
 		if ((elapsedTime > 0) && (elapsedTime <= 4)) {
 			local._guardTime += elapsedTime;
 			local._prisonerTimer += elapsedTime;
@@ -410,7 +410,7 @@ static void room_307_daemon() {
 			local._guardTime++;
 			local._prisonerTimer++;
 		}
-		local._lastFrameTime = _scene->_frameStartTime;
+		local._lastFrameTime = kernel.clock;
 
 		if ((local._guardTime > 3000) && !local._duringPeeingFl && (_scene->_animation[0] == nullptr)
 			&& (inter_input_mode != kInputConversation) && global[kMetBuddyBeast] && !local._activePrisonerFl) {
@@ -419,7 +419,7 @@ static void room_307_daemon() {
 				player_walk(151, 119, FACING_SOUTHEAST);
 				local._animationMode = 2;
 				g_engine->_soundManager->command(11, 0);
-				_scene->loadAnimation(kernel_name('b', -1), 70);
+				kernel_run_animation(kernel_name('b', -1), 70);
 			}
 			local._guardTime = 0;
 		} else if ((local._prisonerTimer > 300) && (inter_input_mode != kInputConversation) && (_scene->_animation[0] == nullptr) && !local._activePrisonerFl) {
@@ -441,7 +441,7 @@ static void room_307_daemon() {
 	}
 
 	if (kernel.trigger == 70)
-		_scene->_nextSceneId = 318;
+		new_room = 318;
 
 	if (kernel.trigger == 81) {
 		local._prisonerTimer = 0;
@@ -540,7 +540,7 @@ static void room_307_parser() {
 		case 6:
 		{
 			player.walker_visible = true;
-			player.clock = _scene->_frameStartTime - player.frame_delay;
+			player.clock = kernel.clock - player.frame_delay;
 			_scene->_sequences.remove(g_sequence_ids[5]);
 			local._grateOpenedFl = true;
 			_scene->_hotspots.activate(17, false);
@@ -637,7 +637,7 @@ static void room_307_parser() {
 				break;
 
 			case 7:
-				_scene->_nextSceneId = 313;
+				new_room = 313;
 				break;
 
 			default:
@@ -775,8 +775,8 @@ void room_307_preload() {
 
 	section_3_walker();
 	section_3_interface();
-	_scene->addActiveVocab(words_air_vent);
-	_scene->addActiveVocab(words_climb_into);
+	vocab_make_active(words_air_vent);
+	vocab_make_active(words_climb_into);
 }
 
 } // namespace Rooms

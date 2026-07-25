@@ -76,7 +76,7 @@ static void resetDogVariables() {
 }
 
 static void restoreAnimations() {
-	_scene->freeAnimation();
+	kernel_abort_animation(0);
 	local._carMode = 0;
 	player.commands_allowed = true;
 	if (local._throwMode == 6)
@@ -85,18 +85,18 @@ static void restoreAnimations() {
 	if (global[kCarStatus] == CAR_UP) {
 		_scene->_sequences.remove(g_sequence_ids[6]);
 		_scene->_sequences.remove(g_sequence_ids[7]);
-		_scene->loadAnimation(kernel_name('A', -1));
+		kernel_run_animation(kernel_name('A', -1), 0);
 	} else {
 		_scene->_sequences.remove(g_sequence_ids[8]);
 		_scene->_sequences.remove(g_sequence_ids[6]);
 		_scene->_sequences.remove(g_sequence_ids[7]);
-		_scene->loadAnimation(kernel_name('A', -1));
+		kernel_run_animation(kernel_name('A', -1), 0);
 		_scene->_animation[0]->setCurrentFrame(6);
 	}
 }
 
 static void setCarAnimations() {
-	_scene->freeAnimation();
+	kernel_abort_animation(0);
 	if (global[kCarStatus] == CAR_UP) {
 		g_sequence_ids[6] = _scene->_sequences.startCycle(g_sprite_ids[6], false, 1);
 		_scene->_sequences.setPosition(g_sequence_ids[6], Common::Point(143, 98));
@@ -127,11 +127,11 @@ static void handleThrowingBone() {
 		player.walker_visible = false;
 		local._carMode = local._throwMode;
 		if (local._throwMode == 4)
-			_scene->loadAnimation(kernel_name('X', 2), 1);
+			kernel_run_animation(kernel_name('X', 2), 1);
 		else if (local._throwMode == 5)
-			_scene->loadAnimation(kernel_name('X', 1), 1);
+			kernel_run_animation(kernel_name('X', 1), 1);
 		else
-			_scene->loadAnimation(kernel_name('X', 3), 1);
+			kernel_run_animation(kernel_name('X', 3), 1);
 		break;
 
 	case 1:
@@ -235,14 +235,14 @@ static void room_608_init() {
 		local._resetPositionsFl = false;
 		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
 		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
-		_scene->loadAnimation(kernel_name('A', -1));
+		kernel_run_animation(kernel_name('A', -1), 0);
 	} else if (global[kCarStatus] == CAR_DOWN) {
 		local._carMode = 0;
 		local._dogDeathMode = 0;
 		local._resetPositionsFl = false;
 		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
 		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
-		_scene->loadAnimation(kernel_name('A', -1));
+		kernel_run_animation(kernel_name('A', -1), 0);
 		_scene->_animation[0]->setCurrentFrame(6);
 	} else if (global[kCarStatus] == CAR_SQUASHES_DOG) {
 		local._carMode = 2;
@@ -250,27 +250,27 @@ static void room_608_init() {
 		local._resetPositionsFl = false;
 		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
 		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
-		_scene->loadAnimation(kernel_name('C', -1));
+		kernel_run_animation(kernel_name('C', -1), 0);
 	} else if (global[kCarStatus] == CAR_SQUASHES_DOG_AGAIN) {
 		local._carMode = 1;
 		local._dogDeathMode = 2;
 		local._resetPositionsFl = true;
 		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
 		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
-		_scene->loadAnimation(kernel_name('B', -1));
+		kernel_run_animation(kernel_name('B', -1), 0);
 	} else {
 		local._carMode = 3;
 		local._dogDeathMode = 2;
 		local._resetPositionsFl = true;
 		int idx = _scene->_dynamicHotspots.add(words_car, words_walkto, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
 		local._carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
-		_scene->loadAnimation(kernel_name('D', -1));
+		kernel_run_animation(kernel_name('D', -1), 0);
 	}
 
 	pal_change_color(252, 63, 44, 30);
 	pal_change_color(253, 63, 20, 22);
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 46;
 		player.y = 132;
 		player.facing = FACING_EAST;
@@ -292,7 +292,7 @@ static void room_608_init() {
 
 	section_6_music();
 
-	if (_scene->_roomChanged)
+	if (kernel.teleported_in)
 		inter_give_to_player(OBJ_BONES);
 
 	kernel.quotes = quote_load(0x2FB, 0x2FC, 0x2FE, 0x2FD, 0x2FF, 0x300, 0x301, 0x302, 0x303, 0x304, 0);
@@ -300,13 +300,13 @@ static void room_608_init() {
 
 static void room_608_daemon() {
 	if (local._dogFirstEncounter) {
-		long diff = _scene->_frameStartTime - local._dogTimer1;
+		long diff = kernel.clock - local._dogTimer1;
 		if ((diff >= 0) && (diff <= 1))
 			local._dogWindowTimer += diff;
 		else
 			local._dogWindowTimer++;
 
-		local._dogTimer1 = _scene->_frameStartTime;
+		local._dogTimer1 = kernel.clock;
 	}
 
 	if (local._dogActiveFl && (local._dogWindowTimer >= 2) && !local._dogHitWindow) {
@@ -375,13 +375,13 @@ static void room_608_daemon() {
 	}
 
 	if (local._dogSquashFl && !local._dogFirstEncounter && local._dogUnderCar && local._dogActiveFl) {
-		long diff = _scene->_frameStartTime - local._dogTimer2;
+		long diff = kernel.clock - local._dogTimer2;
 		if ((diff >= 0) && (diff <= 4))
 			local._dogRunTimer += diff;
 		else
 			local._dogRunTimer++;
 
-		local._dogTimer2 = _scene->_frameStartTime;
+		local._dogTimer2 = kernel.clock;
 	}
 
 	if (local._dogRunTimer >= 480 && !local._checkFl && !local._buttonPressedonTimeFl && !local._dogFirstEncounter && local._dogUnderCar && local._dogActiveFl) {
@@ -665,7 +665,7 @@ static void room_608_daemon() {
 		case 84:
 			local._rexBeingEaten = false;
 			local._animationMode = 0;
-			_scene->_reloadSceneFlag = true;
+			kernel.force_restart = true;
 			player.commands_allowed = true;
 			break;
 
@@ -707,7 +707,7 @@ static void room_608_pre_parser() {
 
 static void room_608_parser() {
 	if (player_said_2(walk_through, doorway))
-		_scene->_nextSceneId = 607;
+		new_room = 607;
 	else if (player_said_2(push, down_button)) {
 		player.commands_allowed = true;
 		switch (kernel.trigger) {
@@ -737,13 +737,13 @@ static void room_608_parser() {
 				local._dogActiveFl = false;
 				local._dogUnderCar = false;
 				_scene->_sequences.remove(g_sequence_ids[10]);
-				_scene->freeAnimation();
-				_scene->loadAnimation(kernel_name('C', -1));
+				kernel_abort_animation(0);
+				kernel_run_animation(kernel_name('C', -1), 0);
 			} else {
 				local._resetPositionsFl = false;
 				local._carMode = 1;
-				_scene->freeAnimation();
-				_scene->loadAnimation(kernel_name('B', -1));
+				kernel_abort_animation(0);
+				kernel_run_animation(kernel_name('B', -1), 0);
 			}
 
 			local._carMoveMode = 2;
@@ -805,8 +805,8 @@ static void room_608_parser() {
 			else {
 				local._carMode = 3;
 				local._resetPositionsFl = false;
-				_scene->freeAnimation();
-				_scene->loadAnimation(kernel_name('D', -1));
+				kernel_abort_animation(0);
+				kernel_run_animation(kernel_name('D', -1), 0);
 			}
 			local._carMoveMode = 1;
 			_scene->_sequences.addTimer(1, 2);
@@ -961,7 +961,7 @@ static void room_608_parser() {
 	else if (player_said_2(look, calendar))
 		text_show(60823);
 	else if (player_said_2(look, storage_box)) {
-		if (object[OBJ_REARVIEW_MIRROR].location == _scene->_currentSceneId)
+		if (object[OBJ_REARVIEW_MIRROR].location == room_id)
 			text_show(60825);
 		else
 			text_show(60824);
@@ -970,7 +970,7 @@ static void room_608_parser() {
 	else if (player_said_2(look, rearview_mirror) && (player.main_object_source == CAT_HOTSPOT))
 		text_show(60828);
 	else if (player_said_2(look, tool_box)) {
-		if (object[OBJ_POLYCEMENT].location == _scene->_currentSceneId)
+		if (object[OBJ_POLYCEMENT].location == room_id)
 			text_show(60829);
 		else
 			text_show(60830);
@@ -1032,10 +1032,10 @@ void room_608_preload() {
 
 	section_6_walker();
 	section_6_interface();
-	_scene->addActiveVocab(words_walkto);
-	_scene->addActiveVocab(words_polycement);
-	_scene->addActiveVocab(words_car);
-	_scene->addActiveVocab(words_obnoxious_dog);
+	vocab_make_active(words_walkto);
+	vocab_make_active(words_polycement);
+	vocab_make_active(words_car);
+	vocab_make_active(words_obnoxious_dog);
 }
 
 } // namespace Rooms

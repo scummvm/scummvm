@@ -46,7 +46,7 @@ static void handleRexDeath() {
 	case 0:
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		_scene->loadAnimation(kernel_name('a', -1), 2);
+		kernel_run_animation(kernel_name('a', -1), 2);
 		break;
 
 	case 2:
@@ -57,12 +57,12 @@ static void handleRexDeath() {
 		else
 			text_show(70629);
 
-		inter_move_object(OBJ_VASE, _scene->_currentSceneId);
+		inter_move_object(OBJ_VASE, room_id);
 		if (local._animationMode == 2)
 			inter_move_object(OBJ_BOTTLE, 2);
 
 		local._animationMode = 0;
-		_scene->_reloadSceneFlag = true;
+		kernel.force_restart = true;
 		break;
 
 	default:
@@ -92,7 +92,7 @@ static void handleTakeVase() {
 			_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(195, 99));
 			int idx = _scene->_dynamicHotspots.add(words_bottle, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
-			inter_move_object(OBJ_BOTTLE, _scene->_currentSceneId);
+			inter_move_object(OBJ_BOTTLE, room_id);
 		}
 		break;
 
@@ -115,7 +115,7 @@ static void room_706_init() {
 	if (!player.been_here_before)
 		local._emptyPedestral = false;
 
-	if (object[OBJ_VASE].location == _scene->_currentSceneId) {
+	if (object[OBJ_VASE].location == room_id) {
 		g_sprite_ids[1] = kernel_load_series(kernel_name('v', -1), 0);
 		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
 		_scene->_sequences.setDepth(g_sequence_ids[1], 4);
@@ -131,11 +131,11 @@ static void room_706_init() {
 
 	player.walker_visible = true;
 
-	if (_scene->_priorSceneId == 707) {
+	if (previous_room == 707) {
 		player.x = 277;
 		player.y = 103;
 		player.facing = FACING_SOUTHWEST;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 167;
 		player.y = 152;
 		player.facing = FACING_NORTH;
@@ -147,11 +147,11 @@ static void room_706_init() {
 
 		switch (global[kTeleporterCommand]) {
 		case 1:
-			_scene->loadAnimation(kernel_name('E', 1), 75);
+			kernel_run_animation(kernel_name('E', 1), 75);
 			break;
 
 		case 2:
-			_scene->loadAnimation(kernel_name('E', -1), 80);
+			kernel_run_animation(kernel_name('E', -1), 80);
 			break;
 
 		default:
@@ -165,7 +165,7 @@ static void room_706_init() {
 
 	local._animationMode = 0;
 
-	if (_scene->_roomChanged) {
+	if (kernel.teleported_in) {
 		inter_give_to_player(OBJ_BOTTLE);
 		global[kBottleStatus] = 2;
 	}
@@ -177,14 +177,14 @@ static void room_706_daemon() {
 	if (kernel.trigger == 75) {
 		player.commands_allowed = true;
 		player.walker_visible = true;
-		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.clock = kernel.clock - player.frame_delay;
 		player_walk(264, 116, FACING_SOUTHWEST);
 	}
 
 	if (kernel.trigger == 80) {
 		global[kTeleporterCommand] = 1;
-		_scene->_nextSceneId = global[kTeleporterDestination];
-		_scene->_reloadSceneFlag = true;
+		new_room = global[kTeleporterDestination];
+		kernel.force_restart = true;
 	}
 
 	if (_scene->_animation[0] != nullptr) {
@@ -218,13 +218,13 @@ static void room_706_parser() {
 	if (player_said_2(walk_inside, teleporter)) {
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		_scene->_nextSceneId = 707;
+		new_room = 707;
 		player.command_ready = false;
 		return;
 	}
 
 	if (player_said_2(exit, room)) {
-		_scene->_nextSceneId = 705;
+		new_room = 705;
 		player.command_ready = false;
 		return;
 	}
@@ -267,7 +267,7 @@ static void room_706_parser() {
 	} else if (player_said_2(take, bottle) && player_has(OBJ_VASE))
 		text_show(70631);
 	else if (player.look_around) {
-		if (object[OBJ_VASE].location == _scene->_currentSceneId)
+		if (object[OBJ_VASE].location == room_id)
 			text_show(70610);
 		else
 			text_show(70611);
@@ -288,15 +288,15 @@ static void room_706_parser() {
 	else if (player_said_2(look, wall))
 		text_show(70619);
 	else if (player_said_2(look, pedestal)) {
-		if (object[OBJ_VASE].location == _scene->_currentSceneId)
+		if (object[OBJ_VASE].location == room_id)
 			text_show(70620);
-		else if (object[OBJ_BOTTLE].location == _scene->_currentSceneId)
+		else if (object[OBJ_BOTTLE].location == room_id)
 			text_show(70622);
 		else
 			text_show(70621);
 	} else if (player_said_2(look, teleporter))
 		text_show(70623);
-	else if (player_said_2(look, vase) && (object[OBJ_VASE].location == _scene->_currentSceneId))
+	else if (player_said_2(look, vase) && (object[OBJ_VASE].location == room_id))
 		text_show(70624);
 	else if (player_said_2(look, bottle) && (player.main_object_source == CAT_HOTSPOT))
 		text_show(70632);
@@ -323,9 +323,9 @@ void room_706_preload() {
 
 	section_7_walker();
 	section_7_interface();
-	_scene->addActiveVocab(words_bottle);
-	_scene->addActiveVocab(words_vase);
-	_scene->addActiveVocab(words_walkto);
+	vocab_make_active(words_bottle);
+	vocab_make_active(words_vase);
+	vocab_make_active(words_walkto);
 }
 
 } // namespace Rooms

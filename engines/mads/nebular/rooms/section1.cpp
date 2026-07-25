@@ -47,23 +47,23 @@ extern void room_112_preload();
 void section_1_walker() {
 	g_engine->_soundManager->command(5, 0);
 	Common::String oldName = (&player.series_name[0]);
-	if (_scene->_nextSceneId <= 103 || _scene->_nextSceneId == 111) {
+	if (new_room <= 103 || new_room == 111) {
 		if (global[kSexOfRex] == SEX_FEMALE)
 			Common::strcpy_s(player.series_name, "ROX");
 		else {
 			Common::strcpy_s(player.series_name, "RXM");
 			global[kSexOfRex] = SEX_MALE;
 		}
-	} else if (_scene->_nextSceneId <= 110) {
+	} else if (new_room <= 110) {
 		Common::strcpy_s(player.series_name, "RXSW");
 		global[kSexOfRex] = SEX_UNKNOWN;
-	} else if (_scene->_nextSceneId == 112)
+	} else if (new_room == 112)
 		Common::strcpy_s(player.series_name, "");
 
 	if (oldName != (&player.series_name[0]))
 		player.walker_must_reload = true;
 
-	if (_scene->_nextSceneId == 105 || (_scene->_nextSceneId == 109 && global[kHoovicAlive])) {
+	if (new_room == 105 || (new_room == 109 && global[kHoovicAlive])) {
 		player.walker_must_reload = true;
 		player.walker_loads_first = false;
 	}
@@ -74,7 +74,7 @@ void section_1_walker() {
 }
 
 void section_1_interface() {
-	int idx = (_scene->_nextSceneId > 103 && _scene->_nextSceneId < 112) ? 1 : 0;
+	int idx = (new_room > 103 && new_room < 112) ? 1 : 0;
 	Common::strcpy_s(kernel.interface, kernel_interface_name(idx));
 }
 
@@ -135,7 +135,7 @@ void section_1_constructor() {
 
 void section_1_music() {
 	if (config_file.music_flag) {
-		switch (_scene->_nextSceneId) {
+		switch (new_room) {
 		case 101:
 			g_engine->_soundManager->command(11, 0);
 			break;
@@ -159,7 +159,7 @@ void section_1_music() {
 			g_engine->_soundManager->command(15, 0);
 			break;
 		default:
-			if (_scene->_priorSceneId < 104 || _scene->_priorSceneId > 108)
+			if (previous_room < 104 || previous_room > 108)
 				g_engine->_soundManager->command(10, 0);
 			break;
 		}

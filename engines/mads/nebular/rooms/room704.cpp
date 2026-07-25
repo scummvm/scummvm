@@ -124,11 +124,11 @@ static void handleFillBottle(int quote) {
 }
 
 static void room_704_init() {
-	if (object[OBJ_BOTTLE].location == _scene->_currentSceneId) {
+	if (object[OBJ_BOTTLE].location == room_id) {
 		g_sprite_ids[1] = kernel_load_series(kernel_name('b', 0), 0);
 		g_sequence_ids[1] = _scene->_sequences.startPingPongCycle(g_sprite_ids[1], false, 6, 0, 0, 0);
 		_scene->_sequences.setDepth(g_sequence_ids[1], 1);
-		if (_scene->_priorSceneId == 705) {
+		if (previous_room == 705) {
 			_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(123, 125));
 			_scene->_sequences.setDepth(g_sequence_ids[1], 1);
 		} else {
@@ -143,29 +143,29 @@ static void room_704_init() {
 	local._takeBottleFl = false;
 	local._boatCurrentFrame = -1;
 
-	if (_scene->_priorSceneId == 705) {
+	if (previous_room == 705) {
 		player.commands_allowed = false;
 		local._animationMode = 2;
 		local._boatDirection = 2;
-		_scene->loadAnimation(kernel_name('A', -1));
+		kernel_run_animation(kernel_name('A', -1), 0);
 		_scene->_animation[0]->setCurrentFrame(36);
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.commands_allowed = false;
 		local._boatDirection = 1;
-		_scene->loadAnimation(kernel_name('A', -1));
+		kernel_run_animation(kernel_name('A', -1), 0);
 	} else if (local._boatDirection == 1) {
-		_scene->loadAnimation(kernel_name('A', -1));
+		kernel_run_animation(kernel_name('A', -1), 0);
 		_scene->_animation[0]->setCurrentFrame(8);
 	} else if (local._boatDirection == 2) {
-		if (object[OBJ_BOTTLE].location == _scene->_currentSceneId) {
+		if (object[OBJ_BOTTLE].location == room_id) {
 			_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(123, 125));
 			_scene->_sequences.setDepth(g_sequence_ids[1], 1);
 		}
-		_scene->loadAnimation(kernel_name('A', -1));
+		kernel_run_animation(kernel_name('A', -1), 0);
 		_scene->_animation[0]->setCurrentFrame(57);
 	}
 
-	if (_scene->_roomChanged)
+	if (kernel.teleported_in)
 		global[kMonsterAlive] = false;
 
 	kernel.quotes = quote_load(0x311, 0x312, 0x313, 0x314, 0x315, 0);
@@ -205,7 +205,7 @@ static void room_704_daemon() {
 
 			case 36:
 				if (local._animationMode != 2)
-					_scene->_nextSceneId = 705;
+					new_room = 705;
 				break;
 
 			case 59:
@@ -233,7 +233,7 @@ static void room_704_daemon() {
 				break;
 
 			case 65:
-				_scene->_nextSceneId = 703;
+				new_room = 703;
 				break;
 
 			case 74:
@@ -390,8 +390,8 @@ void room_704_preload() {
 
 	*player.series_name = '\0';
 	section_7_interface();
-	_scene->addActiveVocab(words_bottle);
-	_scene->addActiveVocab(words_look_at);
+	vocab_make_active(words_bottle);
+	vocab_make_active(words_look_at);
 }
 
 } // namespace Rooms

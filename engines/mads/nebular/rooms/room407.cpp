@@ -41,15 +41,15 @@ static Scratch local;
 
 
 static void room_407_init() {
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
+	if (previous_room != RETURNING_FROM_DIALOG)
 		local._fromNorth = false;
 
-	if (_scene->_priorSceneId == 318) {
+	if (previous_room == 318) {
 		player.x = 172;
 		player.y = 92;
 		player.facing = FACING_SOUTH;
 		local._fromNorth = true;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 172;
 		player.y = 132;
 		player.facing = FACING_NORTH;
@@ -61,12 +61,12 @@ static void room_407_init() {
 
 static void room_407_daemon() {
 	if (kernel.trigger == 70) {
-		_scene->_nextSceneId = 318;
-		_scene->_reloadSceneFlag = true;
+		new_room = 318;
+		kernel.force_restart = true;
 	}
 
 	if (kernel.trigger == 80) {
-		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.clock = kernel.clock - player.frame_delay;
 		player.commands_allowed = true;
 		player.walker_visible = true;
 		local._fromNorth = false;
@@ -105,7 +105,7 @@ static void room_407_parser() {
 			player.commands_allowed = false;
 			player.walker_visible = false;
 			g_engine->_soundManager->command(21, 0);
-			_scene->loadAnimation(kernel_name('s', 1), 70);
+			kernel_run_animation(kernel_name('s', 1), 70);
 			global[kHasBeenScanned] = true;
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, quote_string(kernel.quotes, 592));
 			g_engine->_soundManager->command(22, 0);
@@ -116,16 +116,16 @@ static void room_407_parser() {
 			player.commands_allowed = false;
 			player.walker_visible = false;
 			g_engine->_soundManager->command(21, 0);
-			_scene->loadAnimation(kernel_name('s', 2), 80);
+			kernel_run_animation(kernel_name('s', 2), 80);
 			g_engine->_soundManager->command(23, 0);
 			global[kHasBeenScanned] = true;
 		}
 	}
 
 	if (player_said_2(walk_down, corridor_to_south) && !local._fromNorth)
-		_scene->_nextSceneId = 406;
+		new_room = 406;
 	else if (player_said_2(walk_down, corridor_to_north))
-		_scene->_nextSceneId = 318;
+		new_room = 318;
 	else if (player_said_2(look, scanner)) {
 		if (global[kHasBeenScanned])
 			text_show(40711);

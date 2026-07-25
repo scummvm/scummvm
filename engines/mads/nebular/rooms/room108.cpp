@@ -56,11 +56,11 @@ static void room_108_init() {
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(41, 109), FACING_NORTHWEST);
 	}
 
-	if (_scene->_priorSceneId == 107) {
+	if (previous_room == 107) {
 		player.x = 138;
 		player.y = 58;
 	}
-	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 305;
 		player.y = 98;
 	}
@@ -93,7 +93,7 @@ static void room_108_parser() {
 			object_examine(OBJ_DEAD_FISH, 10808, 0);
 		}
 	} else if (player_said_2(swim_towards, open_area_to_north))
-		_scene->_nextSceneId = 107;
+		new_room = 107;
 	else if (player_said_2(look, cliff_face))
 		text_show(10801);
 	else if (player_said_2(look, ocean_floor))

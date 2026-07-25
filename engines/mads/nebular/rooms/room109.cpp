@@ -64,11 +64,11 @@ static void room_109_init() {
 	local._eatingRex = false;
 	local._hungryFl = false;
 
-	if (_scene->_priorSceneId == 110) {
+	if (previous_room == 110) {
 		player.x = 248;
 		player.y = 38;
 		global[kHoovicSated] = 2;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 20;
 		player.y = 68;
 		player.facing = FACING_EAST;
@@ -88,17 +88,17 @@ static void room_109_init() {
 	}
 
 	if (!global[kHoovicAlive] || global[kHoovicSated])
-		_scene->changeVariant(1);
+		kernel_load_variant(1);
 
 	if (object_is_here(OBJ_BURGER)) {
 		g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 6, 0, 0, 0);
 		_scene->_sequences.setAnimRange(g_sequence_ids[3], -2, -2);
 		int idx = _scene->_dynamicHotspots.add(words_burger, words_swim_to, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
-	} else if (_scene->_roomChanged)
+	} else if (kernel.teleported_in)
 		inter_give_to_player(OBJ_BURGER);
 
-	if (_scene->_roomChanged) {
+	if (kernel.teleported_in) {
 		inter_give_to_player(OBJ_DEAD_FISH);
 		inter_give_to_player(OBJ_STUFFED_FISH);
 	}
@@ -107,7 +107,7 @@ static void room_109_init() {
 	pal_change_color(253, 30, 30, 50);
 
 	kernel.quotes = quote_load(0x53, 0x52, 0x54, 0x55, 0x56, 0x57, 0x58, 0);
-	local._eatingFirstFish = (!player.been_here_before) && (_scene->_priorSceneId < 110);
+	local._eatingFirstFish = (!player.been_here_before) && (previous_room < 110);
 
 	if (local._eatingFirstFish) {
 		g_sprite_ids[10] = kernel_load_series(kernel_full_name(105, 'F', 1, "", EXT_SS), 0);
@@ -143,7 +143,7 @@ static void room_109_daemon() {
 				break;
 
 			case 71:
-				_scene->_reloadSceneFlag = true;
+				kernel.force_restart = true;
 				break;
 
 			default:
@@ -194,7 +194,7 @@ static void room_109_daemon() {
 		int randVal = g_engine->getRandomNumber(85, 88);
 		int idx = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, randVal));
 		_scene->_kernelMessages.setQuoted(idx, 4, true);
-		_scene->_kernelMessages._entries[idx]._frameTimer = _scene->_frameStartTime + 4;
+		_scene->_kernelMessages._entries[idx]._frameTimer = kernel.clock + 4;
 	}
 }
 
@@ -305,7 +305,7 @@ static void room_109_parser() {
 						break;
 
 					case 3:
-						_scene->loadAnimation(kernel_full_name(109, 'H', 2, "", EXT_AA), 4);
+						kernel_run_animation(kernel_full_name(109, 'H', 2, "", EXT_AA), 4);
 						g_engine->_soundManager->command(35, 0);
 						global[kHoovicAlive] = false;
 						break;
@@ -321,7 +321,7 @@ static void room_109_parser() {
 							_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
 							idx = _scene->_dynamicHotspots.add(words_monster_sludge, words_swim_to, -1, Common::Rect(231, 88, 231 + 23, 88 + 7));
 							_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
-							_scene->changeVariant(1);
+							kernel_load_variant(1);
 						} else {
 							if (local._throwingObjectId == OBJ_DEAD_FISH) {
 								++global[kHoovicFishEaten];
@@ -343,11 +343,11 @@ static void room_109_parser() {
 									_scene->_kernelMessages.add(Common::Point(230, 24), 0xFDFC, 0, 0, 120, quote_string(kernel.quotes, randVal));
 									global[kHoovicFishEaten] = 0;
 									global[kHoovicSated] = 1;
-									_scene->changeVariant(1);
+									kernel_load_variant(1);
 								}
 							}
 						}
-						_scene->freeAnimation();
+						kernel_abort_animation(0);
 						_scene->_sequences.remove(g_sequence_ids[8]);
 						matte_deallocate_series(g_sprite_ids[8], true);
 						_scene->_spriteSlots.clear();
@@ -364,7 +364,7 @@ static void room_109_parser() {
 
 					case 5:
 					{
-						inter_move_object(OBJ_BURGER, _scene->_currentSceneId);
+						inter_move_object(OBJ_BURGER, room_id);
 						g_sequence_ids[3] = _scene->_sequences.addSpriteCycle(g_sprite_ids[3], false, 6, 0, 0, 0);
 						_scene->_sequences.setAnimRange(g_sequence_ids[3], 30, 30);
 						int idx = _scene->_dynamicHotspots.add(words_burger, words_swim_to, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
@@ -466,8 +466,8 @@ void room_109_preload() {
 		himem_preload_series(kernel_full_name(109, 'H', count, nullptr, 0), 3);
 	}
 
-	_scene->addActiveVocab(words_dead_purple_monster);
-	_scene->addActiveVocab(words_monster_sludge);
+	vocab_make_active(words_dead_purple_monster);
+	vocab_make_active(words_monster_sludge);
 
 	section_1_walker();
 	section_1_interface();

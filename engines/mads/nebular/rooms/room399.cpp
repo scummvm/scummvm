@@ -39,7 +39,7 @@ static void room_399_init() {
 
 static void room_399_parser() {
 	if (player_said_2(return_to, air_shaft))
-		_scene->_nextSceneId = 313;
+		new_room = 313;
 	else if (player_said_2(look_through, grate)) {
 		if (global[kAfterHavoc]) {
 			if ((game.difficulty != DIFFICULTY_HARD) && (object[OBJ_SECURITY_CARD].location == 359))

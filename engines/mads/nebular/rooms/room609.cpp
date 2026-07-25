@@ -53,17 +53,17 @@ static void room_609_init() {
 	if (!player.been_here_before)
 		global[kBeenInVideoStore] = false;
 
-	if (_scene->_priorSceneId == 611) {
+	if (previous_room == 611) {
 		player.x = 264;
 		player.y = 69;
 		player.facing = FACING_SOUTHWEST;
-	} else if (_scene->_priorSceneId == 610) {
+	} else if (previous_room == 610) {
 		player.x = 23;
 		player.y = 90;
 		player.facing = FACING_EAST;
 		_scene->_sequences.addTimer(60, 60);
 		player.commands_allowed = false;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 86;
 		player.y = 136;
 		player.facing = FACING_NORTHEAST;
@@ -72,10 +72,10 @@ static void room_609_init() {
 		_scene->_sequences.remove(g_sequence_ids[1]);
 		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, -1);
 		_scene->_sequences.setDepth(g_sequence_ids[1], 5);
-		_scene->loadAnimation(kernel_name('R', 1), 70);
+		kernel_run_animation(kernel_name('R', 1), 70);
 	}
 
-	if (_scene->_roomChanged) {
+	if (kernel.teleported_in) {
 		inter_give_to_player(OBJ_DOOR_KEY);
 		if (game.difficulty != DIFFICULTY_EASY)
 			inter_give_to_player(OBJ_PENLIGHT);
@@ -199,7 +199,7 @@ static void enterStore() {
 
 	case 5:
 		_scene->_sequences.remove(g_sequence_ids[5]);
-		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.clock = kernel.clock - player.frame_delay;
 		player.walker_visible = true;
 		_scene->_sequences.remove(g_sequence_ids[2]);
 		g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 7, 1, 0, 0);
@@ -230,7 +230,7 @@ static void enterStore() {
 		_scene->_sequences.setDepth(g_sequence_ids[2], 9);
 		global[kBeenInVideoStore] = true;
 		player.commands_allowed = true;
-		_scene->_nextSceneId = 610;
+		new_room = 610;
 		break;
 
 	default:
@@ -245,7 +245,7 @@ static void room_609_pre_parser() {
 
 static void room_609_parser() {
 	if (player_said_2(walk_towards, alley))
-		_scene->_nextSceneId = 611;
+		new_room = 611;
 	else if (player_said_2(walk_through, video_store_door)) {
 		if (!global[kBeenInVideoStore]) {
 			switch (kernel.trigger) {
@@ -265,7 +265,7 @@ static void room_609_parser() {
 
 			case 2:
 				_scene->_sequences.remove(g_sequence_ids[5]);
-				player.clock = _scene->_frameStartTime - player.frame_delay;
+				player.clock = kernel.clock - player.frame_delay;
 				player.walker_visible = true;
 				_scene->_sequences.addTimer(60, 3);
 				break;
@@ -323,7 +323,7 @@ static void room_609_parser() {
 			g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, -2);
 			_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
 			_scene->_sequences.updateTimeout(g_sequence_ids[4], syncIdx);
-			_scene->_nextSceneId = 504;
+			new_room = 504;
 		}
 		break;
 

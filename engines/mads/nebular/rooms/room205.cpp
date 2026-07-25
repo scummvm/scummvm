@@ -93,20 +93,20 @@ static void room_205_init() {
 	pal_change_color(252, 63, 63, 40);
 	pal_change_color(253, 50, 50, 30);
 
-	local._chickenTime = _scene._frameStartTime;
+	local._chickenTime = kernel.clock;
 
 	if (global[kSexOfRex] == SEX_FEMALE)
 		_scene->_kernelMessages.initRandomMessages(3,
 			Common::Rect(195, 99, 264, 134), 13, 2, 0xFDFC, 60,
 			108, 108, 109, 109, 110, 110, 111, 108, 0);
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 99;
 		player.y = 152;
 	}
 
 	if (global[kSexOfRex] != SEX_MALE) {
-		_scene->loadAnimation(kernel_name('a', -1));
+		kernel_run_animation(kernel_name('a', -1), 0);
 		_scene->_animation[0]->_repeatFlag = true;
 	} else {
 		local._beingKicked = true;
@@ -126,22 +126,22 @@ static void room_205_daemon() {
 	if (global[kSexOfRex] == SEX_FEMALE) {
 		_scene->_kernelMessages.randomServer();
 
-		if (_scene._frameStartTime >= local._chickenTime) {
+		if (kernel.clock >= local._chickenTime) {
 			int chanceMinor = _scene->_kernelMessages.checkRandom() + 1;
 			if (_scene->_kernelMessages.generateRandom(100, chanceMinor))
 				g_engine->_soundManager->command(28, 0);
 
-			local._chickenTime = _scene._frameStartTime + 2;
+			local._chickenTime = kernel.clock + 2;
 		}
 	}
 
-	if (_scene._frameStartTime - local._lastFishTime > 1300) {
+	if (kernel.clock - local._lastFishTime > 1300) {
 		g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(
 			g_sprite_ids[6], false, 5, 1, 0, 0);
 		int idx = _scene->_dynamicHotspots.add(words_piranha, words_walkto, g_sequence_ids[6],
 			Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(49, 86), FACING_NORTH);
-		local._lastFishTime = _scene._frameStartTime;
+		local._lastFishTime = kernel.clock;
 	}
 
 	if (kernel.trigger == 73)
@@ -161,7 +161,7 @@ static void room_205_daemon() {
 	}
 
 	if (kernel.trigger == 72)
-		_scene->_nextSceneId = 211;
+		new_room = 211;
 }
 
 static void handleWomanSpeech(int quote) {
@@ -264,11 +264,11 @@ static void room_205_parser() {
 				_scene->_animation[0]->resetSpriteSetsCount();
 
 			text_show(20516);
-			_scene->_reloadSceneFlag = true;
+			kernel.force_restart = true;
 		}
 	} else {
 		if (player_said_2(walk_down, path_to_south))
-			_scene->_nextSceneId = 210;
+			new_room = 210;
 
 		if (player_said_2(walkto, fire_pit) || player_said_2(walkto, chicken_on_spit)) {
 			if (object_is_here(OBJ_CHICKEN)) {
@@ -325,8 +325,8 @@ void room_205_synchronize(Common::Serializer &s) {
 }
 
 void room_205_preload() {
-	local._lastFishTime = _scene->_frameStartTime;
-	local._chickenTime = _scene->_frameStartTime;
+	local._lastFishTime = kernel.clock;
+	local._chickenTime = kernel.clock;
 	local._beingKicked = false;
 	local._kernelMessage = -1;
 
@@ -336,9 +336,9 @@ void room_205_preload() {
 
 	section_2_walker();
 	section_2_interface();
-	_scene->addActiveVocab(words_walkto);
-	_scene->addActiveVocab(words_chicken);
-	_scene->addActiveVocab(words_piranha);
+	vocab_make_active(words_walkto);
+	vocab_make_active(words_chicken);
+	vocab_make_active(words_piranha);
 }
 
 } // namespace Rooms

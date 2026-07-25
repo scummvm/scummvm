@@ -307,22 +307,6 @@ struct Scene {
 		void selectObject(int item_id);
 	};
 	UserInterface _userInterface;
-
-	int16 &_priorSceneId = previous_room;
-	int16 &_nextSceneId = new_room;
-	long &_frameStartTime = kernel.clock;
-	byte &_reloadSceneFlag = kernel.force_restart;
-	byte &_roomChanged = kernel.teleported_in;
-	int &_currentSceneId = room_id;
-	int &_textSpacing = kernel_message_spacing;
-
-	int loadAnimation(const char *name, int trigger_code = 0);
-	void freeAnimation();
-	void changeVariant(int num);
-	void drawElements(int transitionType, bool surfaceFlag);
-	void resetScene();
-	void clearSequenceList();
-	void addActiveVocab(int vocab_id);
 };
 extern Scene _scene;
 

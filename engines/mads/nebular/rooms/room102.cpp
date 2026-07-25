@@ -86,23 +86,23 @@ static void room_102_init() {
 		_scene->_sequences.setAnimRange(g_sequence_ids[8], -2, -2);
 	}
 
-	if (_scene->_priorSceneId == 101) {
+	if (previous_room == 101) {
 		player.x = 229;
 		player.y = 109;
 		player.commands_allowed = false;
 		g_sequence_ids[6] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[6], false, 6, 1, 2, 0);
 		_scene->_sequences.addSubEntry(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
-	} else if (_scene->_priorSceneId == 103) {
+	} else if (previous_room == 103) {
 		player.x = 47;
 		player.y = 152;
 	}
-	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.facing = FACING_NORTHWEST;
 		player.x = 32;
 		player.y = 129;
 	}
 
-	if (_scene->_priorSceneId != 106) {
+	if (previous_room != 106) {
 		if (global[kWaterInAPuddle]) {
 			g_sequence_ids[13] = _scene->_sequences.addSpriteCycle(g_sprite_ids[13], false, 6, 0, 0, 0);
 			_scene->_sequences.setAnimRange(g_sequence_ids[13], -2, -2);
@@ -127,7 +127,7 @@ static void room_102_init() {
 
 	kernel.quotes = quote_load(0x3B, 0x3C, 0x3D, 0x3E, 0x3F, 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0);
 
-	if (_scene->_priorSceneId == 101)
+	if (previous_room == 101)
 		g_engine->_soundManager->command(20, 0);
 }
 
@@ -144,7 +144,7 @@ static void room_102_daemon() {
 
 	if (kernel.trigger >= 90) {
 		if (kernel.trigger >= 94) {
-			_scene->loadAnimation(kernel_name('B', -1), 71);
+			kernel_run_animation(kernel_name('B', -1), 71);
 			player.commands_allowed = false;
 			player.walker_visible = false;
 
@@ -159,7 +159,7 @@ static void room_102_daemon() {
 	if (kernel.trigger == 71) {
 		player.commands_allowed = true;
 		player.walker_visible = true;
-		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.clock = kernel.clock - player.frame_delay;
 	}
 
 	if (local._fridgeOpenedFl && !local._fridgeOpenedDescr) {
@@ -314,7 +314,7 @@ static void room_102_parser() {
 			break;
 
 		case 1:
-			_scene->_nextSceneId = 101;
+			new_room = 101;
 			break;
 
 		default:
@@ -325,7 +325,7 @@ static void room_102_parser() {
 	}
 
 	if (player_said_2(walkto, engineering_section)) {
-		_scene->_nextSceneId = 103;
+		new_room = 103;
 		player.command_ready = false;
 		return;
 	}
@@ -419,7 +419,7 @@ static void room_102_parser() {
 	if ((player_said_1(ladder) || player_said_1(hatchway)) && (player_said_1(climb_up) || player_said_1(climb_through))) {
 		switch (kernel.trigger) {
 		case 0:
-			_scene->loadAnimation(kernel_name('A', -1), 1);
+			kernel_run_animation(kernel_name('A', -1), 1);
 			player.commands_allowed = false;
 			player.walker_visible = false;
 			break;
@@ -444,7 +444,7 @@ static void room_102_parser() {
 		case 6:
 			if (player_has(OBJ_REBREATHER) && !player_has_been_in_room(106))
 				text_show(10237);
-			_scene->_nextSceneId = 106;
+			new_room = 106;
 			break;
 
 		default:

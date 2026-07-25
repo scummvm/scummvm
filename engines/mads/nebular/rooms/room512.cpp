@@ -49,7 +49,7 @@ static void room_512_init() {
 	g_sprite_ids[5] = kernel_load_series(kernel_name('x', 2), 0);
 	g_sprite_ids[6] = kernel_load_series(kernel_name('x', 3), 0);
 
-	if (object[OBJ_FISHING_ROD].location == _scene->_currentSceneId) {
+	if (object[OBJ_FISHING_ROD].location == room_id) {
 		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 9, 0, 0, 0);
 		local._fishingRodHotspotId = _scene->_dynamicHotspots.add(words_fishing_rod, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._fishingRodHotspotId, Common::Point(199, 101), FACING_NORTHEAST);
@@ -60,7 +60,7 @@ static void room_512_init() {
 
 	_scene->_hotspots.activate(words_padlock_key, false);
 	if (game.difficulty == DIFFICULTY_EASY) {
-		if (object[OBJ_PADLOCK_KEY].location == _scene->_currentSceneId) {
+		if (object[OBJ_PADLOCK_KEY].location == room_id) {
 			g_sequence_ids[6] = _scene->_sequences.addSpriteCycle(g_sprite_ids[6], false, 10, 0, 0, 0);
 			_scene->_sequences.setDepth(g_sequence_ids[6], 3);
 			local._keyHotspotId = _scene->_dynamicHotspots.add(words_padlock_key, words_walkto, g_sequence_ids[6], Common::Rect(0, 0, 0, 0));
@@ -72,7 +72,7 @@ static void room_512_init() {
 			_scene->_hotspots.activate(words_padlock_key, false);
 		}
 	} else if (global[kRegisterOpen]) {
-		if (object[OBJ_PADLOCK_KEY].location == _scene->_currentSceneId) {
+		if (object[OBJ_PADLOCK_KEY].location == room_id) {
 			_scene->_hotspots.activate(words_padlock_key, true);
 			g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, -2);
 			_scene->_sequences.setDepth(g_sequence_ids[5], 3);
@@ -84,7 +84,7 @@ static void room_512_init() {
 	} else
 		_scene->_hotspots.activate(words_padlock_key, false);
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 144;
 		player.y = 152;
 		player.facing = FACING_NORTHEAST;
@@ -95,7 +95,7 @@ static void room_512_init() {
 
 static void room_512_parser() {
 	if (player_said_2(walk, outside))
-		_scene->_nextSceneId = 511;
+		new_room = 511;
 	else if (player_said_2(take, fishing_rod)) {
 		if (kernel.trigger || !player_has(OBJ_FISHING_ROD)) {
 			switch (kernel.trigger) {
@@ -338,10 +338,10 @@ void room_512_preload() {
 
 	section_5_walker();
 	section_5_interface();
-	_scene->addActiveVocab(words_fishing_rod);
-	_scene->addActiveVocab(words_walkto);
-	_scene->addActiveVocab(words_padlock_key);
-	_scene->addActiveVocab(words_register_drawer);
+	vocab_make_active(words_fishing_rod);
+	vocab_make_active(words_walkto);
+	vocab_make_active(words_padlock_key);
+	vocab_make_active(words_register_drawer);
 }
 
 } // namespace Rooms

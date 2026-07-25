@@ -55,7 +55,7 @@ static void room_201_init() {
 	int idx = _scene->_dynamicHotspots.add(words_birds, words_look_at, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(186, 81), FACING_NORTH);
 
-	if ((_scene->_priorSceneId == 202) || (_scene->_priorSceneId == RETURNING_FROM_LOADING)) {
+	if ((previous_room == 202) || (previous_room == RETURNING_FROM_LOADING)) {
 		player.x = 165;
 		player.y = 152;
 	} else {
@@ -95,10 +95,10 @@ static void room_201_init() {
 		}
 		global[kTeleporterCommand] = 0;
 		if (suffixNum >= 0)
-			_scene->loadAnimation(kernel_name(sepChar, suffixNum), endTrigger);
+			kernel_run_animation(kernel_name(sepChar, suffixNum), endTrigger);
 	}
 
-	if ((_scene->_priorSceneId == 202) && (global[kMeteorologistStatus] == METEOROLOGIST_PRESENT) && !_scene->_roomChanged) {
+	if ((previous_room == 202) && (global[kMeteorologistStatus] == METEOROLOGIST_PRESENT) && !kernel.teleported_in) {
 		g_sprite_ids[6] = kernel_load_series(kernel_name('a', 0), 0);
 		g_sprite_ids[7] = kernel_load_series(kernel_name('a', 1), 0);
 		kernel.quotes = quote_load(90, 91, 0);
@@ -173,40 +173,40 @@ static void room_201_daemon() {
 
 	if (kernel.trigger == 75) {
 		global[kMeteorologistEverSeen] = 0;
-		_scene->_nextSceneId = 202;
+		new_room = 202;
 	}
 
 	if (kernel.trigger == 76) {
 		player.commands_allowed = true;
 		player.walker_visible = true;
-		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.clock = kernel.clock - player.frame_delay;
 	}
 
 	if (kernel.trigger == 77) {
 		global[kTeleporterCommand] = 1;
-		_scene->_nextSceneId = global[kTeleporterDestination];
-		_scene->_reloadSceneFlag = true;
+		new_room = global[kTeleporterDestination];
+		kernel.force_restart = true;
 	}
 
 	if (kernel.trigger == 78) {
 		g_engine->_soundManager->command(40, 0);
 		text_show(20114);
-		_scene->_reloadSceneFlag = true;
+		kernel.force_restart = true;
 	}
 }
 
 static void room_201_parser() {
 	if (player.look_around == false) {
 		if (player_said_2(walk_towards, field_to_south))
-			_scene->_nextSceneId = 202;
+			new_room = 202;
 		else if (player_said_2(climb_up, steps) || (player_said_2(walk_inside, teleporter)) || (player_said_2(walk_inside, strange_device))) {
 			if (kernel.trigger == 0) {
 				player.commands_allowed = false;
 				player.walker_visible = false;
 				int sepChar = (global[kSexOfRex] == SEX_MALE) ? 't' : 'u';
-				_scene->loadAnimation(kernel_name(sepChar, 0), 1);
+				kernel_run_animation(kernel_name(sepChar, 0), 1);
 			} else if (kernel.trigger == 1) {
-				_scene->_nextSceneId = 213;
+				new_room = 213;
 			}
 		} else if (player_said_2(look, grassy_field)) {
 			text_show(20101);
@@ -253,9 +253,9 @@ void room_201_preload() {
 	section_2_walker();
 	section_2_interface();
 
-	_scene->addActiveVocab(words_swooping_creature);
-	_scene->addActiveVocab(words_birds);
-	_scene->addActiveVocab(words_walkto);
+	vocab_make_active(words_swooping_creature);
+	vocab_make_active(words_birds);
+	vocab_make_active(words_walkto);
 }
 
 } // namespace Rooms

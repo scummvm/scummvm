@@ -44,7 +44,7 @@ static void room_502_init() {
 	// The original uses scene5xx_section_5_music
 	if (!config_file.music_flag)
 		g_engine->_soundManager->command(2, 0);
-	else if (_scene->_priorSceneId == 503)
+	else if (previous_room == 503)
 		g_engine->_soundManager->command(38, 0);
 	else
 		g_engine->_soundManager->command(29, 0);

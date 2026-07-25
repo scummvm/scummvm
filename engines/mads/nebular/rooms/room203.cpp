@@ -42,15 +42,15 @@ static Scratch local;
 
 
 static void room_203_init() {
-	if (_scene->_priorSceneId == 202) {
+	if (previous_room == 202) {
 		player.x = 187;
 		player.y = 99;
 		player.facing = FACING_SOUTH;
-	} else if (_scene->_priorSceneId == 209) {
+	} else if (previous_room == 209) {
 		player.x = 308;
 		player.y = 117;
 		player.facing = FACING_WEST;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 155;
 		player.y = 152;
 		player.facing = FACING_NORTH;
@@ -59,7 +59,7 @@ static void room_203_init() {
 	local._rhotundaEatFl = false;
 	local._rhotundaEat2Fl = false;
 
-	if ((global[kRhotundaStatus] == 0) && (!_scene->_roomChanged)) {
+	if ((global[kRhotundaStatus] == 0) && (!kernel.teleported_in)) {
 		local._rhotundaEatFl = true;
 		player_walk(158, 135, FACING_SOUTH);
 		int idx = _scene->_dynamicHotspots.add(words_field_to_south, words_walk_towards, 0, Common::Rect(0, 0, 320, 156));
@@ -103,13 +103,13 @@ static void room_203_daemon() {
 		player.commands_allowed = false;
 		pal_lock();
 		_scene->_kernelMessages.reset();
-		_scene->resetScene();
+		kernel_dump_all();
 		cursor_id = CURSOR_WAIT;
 		mouse_cursor_sprite(cursor, CURSOR_WAIT);
-		_scene->loadAnimation(kernel_full_name(203, 'a', -1, "", EXT_AA), 81);
+		kernel_run_animation(kernel_full_name(203, 'a', -1, "", EXT_AA), 81);
 	} else if (kernel.trigger == 81) {
-		_scene->_nextSceneId = 208;
-		_scene->_reloadSceneFlag = true;
+		new_room = 208;
+		kernel.force_restart = true;
 	}
 }
 
@@ -128,9 +128,9 @@ static void room_203_parser() {
 	if (player.look_around) {
 		text_show(20307);
 	} else if (player_said_2(walk_towards, field_to_south)) {
-		_scene->_nextSceneId = 208;
+		new_room = 208;
 	} else if (player_said_2(walk_towards, field_to_north)) {
-		_scene->_nextSceneId = 202;
+		new_room = 202;
 	} else if (player_said_2(look, sky)) {
 		text_show(20301);
 	} else if (player_said_2(look, cliff_face)) {
@@ -162,7 +162,7 @@ void room_203_preload() {
 
 	section_2_walker();
 	section_2_interface();
-	_scene->addActiveVocab(477);
+	vocab_make_active(477);
 }
 
 } // namespace Rooms

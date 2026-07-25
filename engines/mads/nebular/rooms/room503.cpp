@@ -47,13 +47,13 @@ static void room_503_init() {
 	else
 		g_sprite_ids[3] = kernel_load_series("*ROXBD_2", 0);
 
-	if (object[OBJ_DETONATORS].location == _scene->_currentSceneId) {
+	if (object[OBJ_DETONATORS].location == room_id) {
 		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 9, 0, 0, 0);
 		local._detonatorHotspotId = _scene->_dynamicHotspots.add(words_detonators, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._detonatorHotspotId, Common::Point(254, 135), FACING_SOUTH);
 	}
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 191;
 		player.y = 152;
 		player.facing = FACING_NORTHWEST;
@@ -64,7 +64,7 @@ static void room_503_init() {
 
 static void room_503_parser() {
 	if (player_said_2(walk, outside))
-		_scene->_nextSceneId = 501;
+		new_room = 501;
 	else if (player_said_2(take, detonators)) {
 		if (kernel.trigger || !player_has(OBJ_DETONATORS)) {
 			switch (kernel.trigger) {
@@ -163,8 +163,8 @@ void room_503_preload() {
 
 	section_5_walker();
 	section_5_interface();
-	_scene->addActiveVocab(words_detonators);
-	_scene->addActiveVocab(words_walkto);
+	vocab_make_active(words_detonators);
+	vocab_make_active(words_walkto);
 }
 
 } // namespace Rooms

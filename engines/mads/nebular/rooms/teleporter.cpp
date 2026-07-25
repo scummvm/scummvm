@@ -57,23 +57,23 @@ void teleporter_init() {
 	player.walker_visible = false;
 	player.commands_allowed = (global[kMeteorologistWatch] == METEOROLOGIST_NORMAL);
 	_scene->_kernelMessages._talkFont = font_tele;
-	_scene->_textSpacing = 0;
+	kernel_message_spacing = 0;
 	_curCode = 0;
 	_digitCount = 0;
 	_finishedCodeCounter = 0;
 	_curMessageId = -1;
 	Common::strcpy_s(_msgText2, "_");
 
-	if (_scene->_priorSceneId == RETURNING_FROM_DIALOG)
-		_scene->_priorSceneId = global[kTeleporterDestination];
+	if (previous_room == RETURNING_FROM_DIALOG)
+		previous_room = global[kTeleporterDestination];
 
-	if (_scene->_priorSceneId < 101)
-		_scene->_priorSceneId = 201;
+	if (previous_room < 101)
+		previous_room = 201;
 
-	global[kTeleporterDestination] = _scene->_priorSceneId;
+	global[kTeleporterDestination] = previous_room;
 	pal_change_color(252, 63, 63, 0);
 	pal_change_color(253, 0, 0, 0);
-	_teleporterSceneId = _scene->_priorSceneId;
+	_teleporterSceneId = previous_room;
 	if (_teleporterSceneId == 202)
 		_teleporterSceneId = 201;
 
@@ -88,7 +88,7 @@ void teleporter_init() {
 
 	Common::sprintf_s(_msgText1, "#%.4d", codeVal);
 
-	if (_scene->_currentSceneId != 711) {
+	if (room_id != 711) {
 		_scene->_kernelMessages.add(Common::Point(133, 34), 0, 32, 0, INDEFINITE_TIMEOUT, _msgText1);
 		_scene->_kernelMessages.add(Common::Point(143, 61), 0xFDFC, 16, 0, INDEFINITE_TIMEOUT, _msgText2);
 	}
@@ -201,31 +201,31 @@ void teleporter_handle_key() {
 				if (_digitCount < 4)
 					Common::strcat_s(_msgText2, "_");
 
-				if (_scene->_currentSceneId != 711)
+				if (room_id != 711)
 					g_engine->_soundManager->command(32, 0);
 			}
 		} else if (_buttonTyped == 11) {
 			_digitCount = 0;
 			_curCode = 0;
 			Common::strcpy_s(_msgText2, "_");
-			if (_scene->_currentSceneId != 711)
+			if (room_id != 711)
 				g_engine->_soundManager->command(33, 0);
 		} else if (_digitCount == 4) {
-			if (_scene->_currentSceneId != 711)
+			if (room_id != 711)
 				_finishedCodeCounter = 1;
 
 			if (teleporter_address(_curCode, true) > 0) {
 				pal_change_color(252, 0, 63, 0);
-				if (_scene->_currentSceneId != 711)
+				if (room_id != 711)
 					g_engine->_soundManager->command(34, 0);
 			} else {
 				pal_change_color(252, 63, 0, 0);
-				if (_scene->_currentSceneId != 711)
+				if (room_id != 711)
 					g_engine->_soundManager->command(35, 0);
 			}
 		}
 
-		if (_scene->_currentSceneId != 711) {
+		if (room_id != 711) {
 			if (_curMessageId >= 0)
 				_scene->_kernelMessages.remove(_curMessageId);
 			_curMessageId = _scene->_kernelMessages.add(Common::Point(143, 61), 0xFDFC, 16, 0, INDEFINITE_TIMEOUT, _msgText2);
@@ -237,18 +237,18 @@ void teleporter_handle_key() {
 			_finishedCodeCounter++;
 
 			if (global[kMeteorologistWatch] != METEOROLOGIST_NORMAL)
-				_scene->_nextSceneId = 202;
+				new_room = 202;
 			else {
 				mouse_show();
 				int destination = teleporter_address(_curCode, true);
 
 				if (destination > 0) {
 					global[kTeleporterCommand] = 2;
-					_scene->_nextSceneId = _teleporterSceneId;
+					new_room = _teleporterSceneId;
 					global[kTeleporterDestination] = destination;
 				} else {
 					global[kTeleporterCommand] = 4;
-					_scene->_nextSceneId = _teleporterSceneId;
+					new_room = _teleporterSceneId;
 				}
 			}
 		} else if (global[kMeteorologistWatch] != METEOROLOGIST_NORMAL)
@@ -285,7 +285,7 @@ bool teleporter_parser() {
 
 	if (player_said_2(exit_from, device)) {
 		global[kTeleporterCommand] = 3;
-		_scene->_nextSceneId = _teleporterSceneId;
+		new_room = _teleporterSceneId;
 		retVal = true;
 	}
 

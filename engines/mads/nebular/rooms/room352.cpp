@@ -74,14 +74,14 @@ static void putArmDown(bool corridorExit, bool doorwayExit) {
 		g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 6, 0, 0, 0);
 		int idx = _scene->_dynamicHotspots.add(words_guards_arm2, words_walkto, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(230, 117), FACING_NORTHWEST);
-		_scene->changeVariant(0);
+		kernel_load_variant(0);
 	}
 	break;
 
 	case 3:
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 0x100));
-		inter_move_object(OBJ_GUARDS_ARM, _scene->_currentSceneId);
+		inter_move_object(OBJ_GUARDS_ARM, room_id);
 		player.walker_visible = true;
 		if (corridorExit)
 			_scene->_sequences.addTimer(48, 6);
@@ -102,7 +102,7 @@ static void putArmDown(bool corridorExit, bool doorwayExit) {
 
 	case 5:
 		if (local._leaveRoomFl)
-			_scene->_nextSceneId = 351;
+			new_room = 351;
 
 		break;
 
@@ -116,7 +116,7 @@ static void putArmDown(bool corridorExit, bool doorwayExit) {
 
 	case 7:
 		if (local._leaveRoomFl)
-			_scene->_nextSceneId = 353;
+			new_room = 353;
 
 		break;
 
@@ -158,7 +158,7 @@ static void room_352_init() {
 
 	local._vaultOpenFl = false;
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	if (previous_room != RETURNING_FROM_DIALOG) {
 		local._mustPutArmDownFl = false;
 		if (!player.been_here_before)
 			global[kHaveYourStuff] = false;
@@ -171,11 +171,11 @@ static void room_352_init() {
 	} else
 		local._mustPutArmDownFl = true;
 
-	if (_scene->_priorSceneId == 353) {
+	if (previous_room == 353) {
 		player.x = 171;
 		player.y = 155;
 	}
-	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 116;
 		player.y = 107;
 	}
@@ -321,9 +321,9 @@ static void room_352_parser() {
 		if (local._mustPutArmDownFl)
 			putArmDown(exit_corridor, exit_doorway);
 		else if (exit_corridor)
-			_scene->_nextSceneId = 353;
+			new_room = 353;
 		else
-			_scene->_nextSceneId = 351;
+			new_room = 351;
 
 		player.command_ready = false;
 		return;
@@ -351,7 +351,7 @@ static void room_352_parser() {
 			case 1:
 				_scene->_sequences.remove(g_sequence_ids[2]);
 				inter_give_to_player(OBJ_GUARDS_ARM);
-				_scene->changeVariant(1);
+				kernel_load_variant(1);
 				break;
 
 			case 2:
@@ -611,10 +611,10 @@ void room_352_preload() {
 
 	section_3_walker();
 	section_3_interface();
-	_scene->addActiveVocab(words_walkto);
-	_scene->addActiveVocab(words_your_stuff);
-	_scene->addActiveVocab(words_other_stuff);
-	_scene->addActiveVocab(words_lamp);
+	vocab_make_active(words_walkto);
+	vocab_make_active(words_your_stuff);
+	vocab_make_active(words_other_stuff);
+	vocab_make_active(words_lamp);
 }
 
 } // namespace Rooms

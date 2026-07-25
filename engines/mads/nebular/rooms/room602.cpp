@@ -58,7 +58,7 @@ static void room_602_init() {
 		_scene->_sequences.setDepth(g_sequence_ids[4], 9);
 		int idx = _scene->_dynamicHotspots.add(words_laser_beam, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(80, 134), FACING_NORTHEAST);
-		_scene->changeVariant(1);
+		kernel_load_variant(1);
 	} else
 		_scene->_hotspots.activate(words_hole, false);
 
@@ -90,11 +90,11 @@ static void room_602_init() {
 	} else
 		_scene->_hotspots.activate(words_door_key, false);
 
-	if (_scene->_priorSceneId == 603) {
+	if (previous_room == 603) {
 		player.x = 228;
 		player.y = 126;
 		player.facing = FACING_WEST;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 50;
 		player.y = 127;
 		player.facing = FACING_EAST;
@@ -103,7 +103,7 @@ static void room_602_init() {
 	section_6_music();
 	kernel.quotes = quote_load(0x2F1, 0x2F2, 0x2F3, 0);
 
-	if (_scene->_roomChanged) {
+	if (kernel.teleported_in) {
 		inter_give_to_player(OBJ_NOTE);
 		inter_give_to_player(OBJ_REARVIEW_MIRROR);
 		inter_give_to_player(OBJ_COMPACT_CASE);
@@ -137,7 +137,7 @@ static void handleSafeActions() {
 
 				local._lastSequenceIdx = _scene->_sequences.addSpriteCycle(local._lastSpriteIdx, false, 12, 1, 0, 0);
 				_scene->_sequences.setDepth(local._lastSequenceIdx, 14);
-				if (object[OBJ_DOOR_KEY].location == _scene->_currentSceneId)
+				if (object[OBJ_DOOR_KEY].location == room_id)
 					_scene->_hotspots.activate(words_door_key, true);
 
 				_scene->_sequences.addSubEntry(local._lastSequenceIdx,
@@ -152,7 +152,7 @@ static void handleSafeActions() {
 
 			local._lastSequenceIdx = _scene->_sequences.startPingPongCycle(local._lastSpriteIdx, false, 12, 1, 0, 0);
 			_scene->_sequences.setDepth(local._lastSequenceIdx, 14);
-			if (object[OBJ_DOOR_KEY].location == _scene->_currentSceneId)
+			if (object[OBJ_DOOR_KEY].location == room_id)
 				_scene->_hotspots.activate(words_door_key, false);
 
 			_scene->_sequences.addSubEntry(local._lastSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 2);
@@ -203,9 +203,9 @@ static void handleSafeActions() {
 
 static void room_602_parser() {
 	if (player_said_2(walk_through, hallway))
-		_scene->_nextSceneId = 601;
+		new_room = 601;
 	else if (player_said_2(walk_through, doorway))
-		_scene->_nextSceneId = 603;
+		new_room = 603;
 	else if (player_said_2(open, safe) && ((global[kSafeStatus] == 0) || (global[kSafeStatus] == 2))) {
 		local._safeMode = 1;
 		local._cycleIndex = -2;
@@ -229,7 +229,7 @@ static void room_602_parser() {
 			player.walker_visible = false;
 			_scene->_sequences.remove(g_sequence_ids[4]);
 			_scene->_sequences.remove(local._lastSequenceIdx);
-			_scene->loadAnimation(kernel_name('L', 1), 1);
+			kernel_run_animation(kernel_name('L', 1), 1);
 			break;
 
 		case 1:
@@ -361,9 +361,9 @@ void room_602_preload() {
 
 	section_6_walker();
 	section_6_interface();
-	_scene->addActiveVocab(words_walkto);
-	_scene->addActiveVocab(words_safe);
-	_scene->addActiveVocab(words_laser_beam);
+	vocab_make_active(words_walkto);
+	vocab_make_active(words_safe);
+	vocab_make_active(words_laser_beam);
 }
 
 } // namespace Rooms

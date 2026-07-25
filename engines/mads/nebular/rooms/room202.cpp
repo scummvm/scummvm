@@ -90,13 +90,13 @@ static void room_202_init() {
 	}
 
 	if (global[kBone202Status])
-		_scene->changeVariant(global[kBone202Status]);
+		kernel_load_variant(global[kBone202Status]);
 
-	if (_scene->_priorSceneId == 201) {
+	if (previous_room == 201) {
 		player.x = 190;
 		player.y = 91;
 		player.facing = FACING_SOUTH;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 178;
 		player.y = 152;
 		player.facing = FACING_NORTH;
@@ -113,7 +113,7 @@ static void room_202_init() {
 	kernel.quotes = quote_load(0x5C, 0x5D, 0x5E, 0x5F, 0x60, 0x62, 0x63, 0x64, 0x65, 0x66, 0x61, 0);
 	local._activeMsgFl = false;
 
-	if (_scene->_priorSceneId == RETURNING_FROM_DIALOG) {
+	if (previous_room == RETURNING_FROM_DIALOG) {
 		if (local._waitingMeteoFl) {
 			g_sequence_ids[9] = _scene->_sequences.startCycle(g_sprite_ids[9], false, 1);
 			player.walker_visible = false;
@@ -123,9 +123,9 @@ static void room_202_init() {
 		local._ladderTopFl = false;
 	}
 
-	local._meteoClock1 = local._meteoClock2 = _scene->_frameStartTime;
+	local._meteoClock1 = local._meteoClock2 = kernel.clock;
 
-	if (_scene->_roomChanged)
+	if (kernel.teleported_in)
 		inter_give_to_player(OBJ_BINOCULARS);
 
 	if (global[kMeteorologistWatch] != METEOROLOGIST_NORMAL) {
@@ -152,7 +152,7 @@ static void room_202_init() {
 			player.facing = FACING_NORTH;
 		}
 
-		_scene->loadAnimation(kernel_name('M', -1), 71);
+		kernel_run_animation(kernel_name('M', -1), 71);
 		_scene->_animation[0]->setCurrentFrame(200);
 	} else {
 		if (local._ladderTopFl) {
@@ -243,7 +243,7 @@ static void room_202_daemon() {
 		g_engine->_soundManager->command(3, 0);
 		g_engine->_soundManager->command(9, 0);
 
-		local._meteoClock1 = _scene->_frameStartTime + 15 * 60;
+		local._meteoClock1 = kernel.clock + 15 * 60;
 
 		if (global[kMeteorologistWatch] != METEOROLOGIST_NORMAL) {
 			Common::Point msgPos;
@@ -319,7 +319,7 @@ static void room_202_daemon() {
 		break;
 	}
 
-	if (!_scene->_animation[0] && (global[kMeteorologistStatus] != METEOROLOGIST_GONE) && (local._meteoClock2 <= _scene->_frameStartTime) && (local._meteoClock1 <= _scene->_frameStartTime)) {
+	if (!_scene->_animation[0] && (global[kMeteorologistStatus] != METEOROLOGIST_GONE) && (local._meteoClock2 <= kernel.clock) && (local._meteoClock1 <= kernel.clock)) {
 		int randVal = g_engine->getRandomNumber(1, 500);
 		int threshold = 1;
 		if (local._ladderTopFl)
@@ -328,13 +328,13 @@ static void room_202_daemon() {
 			threshold += 25;
 		if (threshold >= randVal) {
 			g_engine->_soundManager->command(17, 0);
-			_scene->loadAnimation(kernel_name('M', -1), 71);
+			kernel_run_animation(kernel_name('M', -1), 71);
 			local._toStationFl = true;
 			local._toTeleportFl = false;
 			global[kMeteorologistEverSeen] = true;
 			local._lastRoute = 0;
 			local._stationCounter = 0;
-			local._meteoClock2 = _scene->_frameStartTime + 2;
+			local._meteoClock2 = kernel.clock + 2;
 		}
 	}
 
@@ -344,10 +344,10 @@ static void room_202_daemon() {
 	if (local._waitingMeteoFl) {
 		if (_scene->_animation[0]->getCurrentFrame() >= 200) {
 			if ((global[kMeteorologistWatch] == METEOROLOGIST_TOWER) || global[kLadderBroken]) {
-				_scene->_nextSceneId = 213;
+				new_room = 213;
 			} else {
 				text_show(20201);
-				_scene->_reloadSceneFlag = true;
+				kernel.force_restart = true;
 			}
 		}
 
@@ -366,7 +366,7 @@ static void room_202_daemon() {
 		}
 	}
 
-	if (local._meteoClock2 + 120 * 60 <= _scene->_frameStartTime) {
+	if (local._meteoClock2 + 120 * 60 <= kernel.clock) {
 		local._toTeleportFl = true;
 	}
 
@@ -469,7 +469,7 @@ static void room_202_parser() {
 		player.command_ready = false;
 		return;
 	} else if (player_said_2(walk_towards, field_to_south)) {
-		_scene->_nextSceneId = 203;
+		new_room = 203;
 	} else if (player_said_2(walk_towards, field_to_north)) {
 		if (global[kMeteorologistStatus] != METEOROLOGIST_GONE) {
 			if (_scene->_animation[0])
@@ -477,7 +477,7 @@ static void room_202_parser() {
 			else
 				global[kMeteorologistStatus] = METEOROLOGIST_ABSENT;
 		}
-		_scene->_nextSceneId = 201;
+		new_room = 201;
 	} else if (player_said_2(take, bone) && (player.main_object_source == 4)) {
 		switch (kernel.trigger) {
 		case 0:
@@ -510,7 +510,7 @@ static void room_202_parser() {
 				inter_give_to_player(OBJ_BONE);
 				object_examine(OBJ_BONE, 20218, 0);
 			}
-			_scene->changeVariant(global[kBone202Status]);
+			kernel_load_variant(global[kBone202Status]);
 			player.commands_allowed = true;
 			player.walker_visible = true;
 			break;
@@ -523,7 +523,7 @@ static void room_202_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			g_engine->_soundManager->command(29, 0);
-			local._meteoClock1 = _scene->_frameStartTime;
+			local._meteoClock1 = kernel.clock;
 			player.walker_visible = false;
 			player.commands_allowed = false;
 
@@ -722,12 +722,12 @@ void room_202_preload() {
 	section_2_walker();
 	section_2_interface();
 
-	_scene->addActiveVocab(words_ladder);
-	_scene->addActiveVocab(words_climb_down);
-	_scene->addActiveVocab(words_walkto);
-	_scene->addActiveVocab(words_bone);
-	_scene->addActiveVocab(words_skull);
-	_scene->addActiveVocab(words_broken_ladder);
+	vocab_make_active(words_ladder);
+	vocab_make_active(words_climb_down);
+	vocab_make_active(words_walkto);
+	vocab_make_active(words_bone);
+	vocab_make_active(words_skull);
+	vocab_make_active(words_broken_ladder);
 }
 
 } // namespace Rooms

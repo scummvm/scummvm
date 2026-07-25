@@ -45,28 +45,28 @@ static void room_620_daemon() {
 	switch (kernel.trigger) {
 	case 70:
 		_scene->_sequences.remove(g_sequence_ids[1]);
-		_scene->loadAnimation(kernel_name('E', -1), 71);
+		kernel_run_animation(kernel_name('E', -1), 71);
 		break;
 
 	case 71:
-		if (_scene->_priorSceneId == 751) {
+		if (previous_room == 751) {
 			global[kCityFlooded] = true;
 			global[kTeleporterRoom + 5] = 0;
-			_scene->_nextSceneId = 701;
-		} else if (_scene->_priorSceneId == 752) {
+			new_room = 701;
+		} else if (previous_room == 752) {
 			global[kCityFlooded] = true;
 			global[kTeleporterRoom + 5] = 0;
-			_scene->_nextSceneId = 702;
-		} else if (_scene->_priorSceneId < 501 || _scene->_priorSceneId > 752) {
+			new_room = 702;
+		} else if (previous_room < 501 || previous_room > 752) {
 			global[kCityFlooded] = true;
 			global[kTeleporterRoom + 5] = 0;
-			_scene->_nextSceneId = _scene->_priorSceneId;
-		} else if (_scene->_priorSceneId >= 501 && _scene->_priorSceneId <= 612) {
+			new_room = previous_room;
+		} else if (previous_room >= 501 && previous_room <= 612) {
 			global[kResurrectRoom] = global[kHoverCarLocation];
 			inter_give_to_player(OBJ_TIMEBOMB);
 			global[kTimebombStatus] = 0;
 			global[kTimebombTimer] = 0;
-			_scene->_nextSceneId = 605;
+			new_room = 605;
 		}
 		player.commands_allowed = true;
 		break;

@@ -41,19 +41,19 @@ static void room_354_init() {
 	global[kAfterHavoc] = true;
 	global[kTeleporterRoom + 1] = 351;
 
-	if (_scene->_priorSceneId == 361) {
+	if (previous_room == 361) {
 		player.x = 231;
 		player.y = 110;
 	}
-	else if (_scene->_priorSceneId == 401) {
+	else if (previous_room == 401) {
 		player.x = 106;
 		player.y = 152;
 		player.facing = FACING_NORTH;
-	} else if (_scene->_priorSceneId == 316) {
+	} else if (previous_room == 316) {
 		player.x = 71;
 		player.y = 107;
 	}
-	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 167;
 		player.y = 57;
 	}
@@ -73,11 +73,11 @@ static void room_354_parser() {
 		player_start_walking(208, 0, FACING_NORTHEAST);
 		player.walk_off_edge_to_room = 353;
 	} else if (player_said_2(walk_down, corridor_to_east))
-		_scene->_nextSceneId = 361;
+		new_room = 361;
 	else if (player_said_2(walk_down, corridor_to_west))
-		_scene->_nextSceneId = 316;
+		new_room = 316;
 	else if (player_said_2(walk_down, corridor_to_south))
-		_scene->_nextSceneId = 401;
+		new_room = 401;
 	else if (player_said_2(look, controls))
 		text_show(35410);
 	else if (player_said_2(look, signal))

@@ -115,7 +115,7 @@ static void room_612_init() {
 	g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, local._cycleIndex);
 	_scene->_sequences.setDepth(g_sequence_ids[2], 1);
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 280;
 		player.y = 75;
 		player.facing = FACING_SOUTHWEST;
@@ -123,12 +123,12 @@ static void room_612_init() {
 		player.commands_allowed = false;
 		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, -1);
 		_scene->_sequences.setDepth(g_sequence_ids[1], 3);
-		_scene->loadAnimation(kernel_name('R', 1), 70);
+		kernel_run_animation(kernel_name('R', 1), 70);
 	}
 
 	section_6_music();
 
-	if (_scene->_roomChanged)
+	if (kernel.teleported_in)
 		inter_give_to_player(OBJ_PADLOCK_KEY);
 
 	kernel.quotes = quote_load(0x2F5, 0x2F4, 0);
@@ -194,7 +194,7 @@ static void room_612_parser() {
 			g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], true, -2);
 			_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
 			_scene->_sequences.updateTimeout(g_sequence_ids[3], syncIdx);
-			_scene->_nextSceneId = 504;
+			new_room = 504;
 		}
 		break;
 
@@ -255,8 +255,8 @@ void room_612_preload() {
 
 	section_6_walker();
 	section_6_interface();
-	_scene->addActiveVocab(words_fishing_line);
-	_scene->addActiveVocab(words_walkto);
+	vocab_make_active(words_fishing_line);
+	vocab_make_active(words_walkto);
 }
 
 } // namespace Rooms

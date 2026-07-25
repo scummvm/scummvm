@@ -43,13 +43,13 @@ static void room_507_init() {
 	g_sprite_ids[1] = kernel_load_series(kernel_name('p', -1), 0);
 	g_sprite_ids[2] = kernel_load_series("*RXMRD_3", 0);
 
-	if ((game.difficulty != DIFFICULTY_EASY) && (object[OBJ_PENLIGHT].location == _scene->_currentSceneId)) {
+	if ((game.difficulty != DIFFICULTY_EASY) && (object[OBJ_PENLIGHT].location == room_id)) {
 		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 9, 0, 0, 0);
 		local._penlightHotspotId = _scene->_dynamicHotspots.add(words_penlight, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._penlightHotspotId, Common::Point(233, 152), FACING_SOUTHEAST);
 	}
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 121;
 		player.y = 147;
 		player.facing = FACING_NORTH;
@@ -60,7 +60,7 @@ static void room_507_init() {
 
 static void room_507_parser() {
 	if (player_said_2(walk_through, entrance))
-		_scene->_nextSceneId = 506;
+		new_room = 506;
 	else if (player_said_2(take, penlight)) {
 		if (kernel.trigger || !player_has(OBJ_PENLIGHT)) {
 			switch (kernel.trigger) {
@@ -155,8 +155,8 @@ void room_507_preload() {
 
 	section_5_walker();
 	section_5_interface();
-	_scene->addActiveVocab(words_penlight);
-	_scene->addActiveVocab(words_walkto);
+	vocab_make_active(words_penlight);
+	vocab_make_active(words_walkto);
 }
 
 } // namespace Rooms

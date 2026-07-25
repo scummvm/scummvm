@@ -56,14 +56,14 @@ static void room_604_init() {
 		_scene->_dynamicHotspots.setPosition(local._timebombHotspotId, Common::Point(166, 118), FACING_NORTHEAST);
 	}
 
-	if (_scene->_roomChanged)
+	if (kernel.teleported_in)
 		inter_give_to_player(OBJ_TIMEBOMB);
 
 	pal_change_color(252, 63, 37, 26);
 	pal_change_color(253, 45, 24, 17);
 	local._animationActiveFl = false;
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 72;
 		player.y = 149;
 		player.facing = FACING_NORTHEAST;
@@ -71,14 +71,14 @@ static void room_604_init() {
 		player.commands_allowed = false;
 		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
 		_scene->_sequences.setDepth(g_sequence_ids[2], 1);
-		_scene->loadAnimation(kernel_name('R', 1), 70);
+		kernel_run_animation(kernel_name('R', 1), 70);
 		local._animationActiveFl = true;
 	} else {
 		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -2);
 		_scene->_sequences.setDepth(g_sequence_ids[2], 1);
 	}
 
-	local._monsterTimer = _scene->_frameStartTime;
+	local._monsterTimer = kernel.clock;
 	local._monsterActive = false;
 
 	section_6_music();
@@ -158,12 +158,12 @@ static void room_604_daemon() {
 		}
 	}
 
-	if ((!local._monsterActive && !local._animationActiveFl) && (_scene->_frameStartTime > (local._monsterTimer + 4))) {
-		local._monsterTimer = _scene->_frameStartTime;
+	if ((!local._monsterActive && !local._animationActiveFl) && (kernel.clock > (local._monsterTimer + 4))) {
+		local._monsterTimer = kernel.clock;
 		if ((g_engine->getRandomNumber(1, 1000) < 25) || !player.been_here_before) {
 			local._monsterActive = true;
-			_scene->freeAnimation();
-			_scene->loadAnimation(kernel_name('m', -1));
+			kernel_abort_animation(0);
+			kernel_run_animation(kernel_name('m', -1), 0);
 		}
 	}
 }
@@ -188,7 +188,7 @@ static void handleBombActions() {
 		g_sequence_ids[6] = _scene->_sequences.startCycle(g_sprite_ids[6], false, -1);
 		local._timebombHotspotId = _scene->_dynamicHotspots.add(words_timebomb, words_walkto, g_sequence_ids[6], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._timebombHotspotId, Common::Point(166, 118), FACING_NORTHEAST);
-		inter_move_object(OBJ_TIMEBOMB, _scene->_currentSceneId);
+		inter_move_object(OBJ_TIMEBOMB, room_id);
 		break;
 
 	case 2:
@@ -251,7 +251,7 @@ static void room_604_parser() {
 			g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, -2);
 			_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
 			_scene->_sequences.updateTimeout(g_sequence_ids[4], syncIdx);
-			_scene->_nextSceneId = 504;
+			new_room = 504;
 		}
 		break;
 
@@ -328,9 +328,9 @@ void room_604_preload() {
 
 	section_6_walker();
 	section_6_interface();
-	_scene->addActiveVocab(words_sea_monster);
-	_scene->addActiveVocab(words_walkto);
-	_scene->addActiveVocab(words_timebomb);
+	vocab_make_active(words_sea_monster);
+	vocab_make_active(words_walkto);
+	vocab_make_active(words_timebomb);
 }
 
 } // namespace Rooms

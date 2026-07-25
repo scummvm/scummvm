@@ -62,7 +62,7 @@ static void room_508_init() {
 		_scene->_hotspots.activate(words_hole, false);
 		_scene->_hotspots.activate(words_laser_beam, false);
 	} else {
-		_scene->changeVariant(1);
+		kernel_load_variant(1);
 		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
 		_scene->_sequences.setDepth(g_sequence_ids[3], 8);
 		g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, -2);
@@ -81,11 +81,11 @@ static void room_508_init() {
 	}
 	g_engine->_soundManager->command(20, 0);
 
-	if (_scene->_priorSceneId == 515) {
+	if (previous_room == 515) {
 		player.x = 57;
 		player.y = 116;
 		player.facing = FACING_NORTHEAST;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 289;
 		player.y = 139;
 		player.facing = FACING_WEST;
@@ -94,7 +94,7 @@ static void room_508_init() {
 	section_5_music();
 	kernel.quotes = quote_load(0x273, 0);
 
-	if (_scene->_roomChanged) {
+	if (kernel.teleported_in) {
 		inter_give_to_player(OBJ_COMPACT_CASE);
 		inter_give_to_player(OBJ_REARVIEW_MIRROR);
 	}
@@ -149,7 +149,7 @@ static void handlePedestral() {
 		case 4:
 			text_show(50834);
 			global[kLaserHoleIsThere] = true;
-			_scene->_nextSceneId = 515;
+			new_room = 515;
 			break;
 
 		default:
@@ -197,7 +197,7 @@ static void room_508_parser() {
 
 			case 5:
 				_scene->_sequences.remove(g_sequence_ids[5]);
-				_scene->loadAnimation(kernel_name('B', 1), 6);
+				kernel_run_animation(kernel_name('B', 1), 6);
 				break;
 
 			case 6:
@@ -208,7 +208,7 @@ static void room_508_parser() {
 				int idx = _scene->_dynamicHotspots.add(words_laser_beam, words_walkto, g_sequence_ids[4], Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(57, 116), FACING_NORTHEAST);
 				_scene->_kernelMessages.reset();
-				_scene->changeVariant(1);
+				kernel_load_variant(1);
 				_scene->_sequences.addTimer(30, 7);
 			}
 			break;
@@ -302,9 +302,9 @@ void room_508_preload() {
 
 	section_5_walker();
 	section_5_interface();
-	_scene->addActiveVocab(words_spinach_patch_doll);
-	_scene->addActiveVocab(words_walkto);
-	_scene->addActiveVocab(words_laser_beam);
+	vocab_make_active(words_spinach_patch_doll);
+	vocab_make_active(words_walkto);
+	vocab_make_active(words_laser_beam);
 }
 
 } // namespace Rooms

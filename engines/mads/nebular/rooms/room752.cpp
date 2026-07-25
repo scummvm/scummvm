@@ -42,11 +42,11 @@ static void room_752_init() {
 	g_sprite_ids[14] = kernel_load_series(kernel_name('l', -1), 0);
 	g_sprite_ids[12] = kernel_load_series("*RXMBD_8", 0);
 
-	if (_scene->_priorSceneId == 751) {
+	if (previous_room == 751) {
 		player.x = 13;
 		player.y = 145;
 		player.facing = FACING_EAST;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 289;
 		player.y = 138;
 		player_walk(262, 148, FACING_WEST);
@@ -100,7 +100,7 @@ static void room_752_daemon() {
 		global[kTimebombStatus] = TIMEBOMB_DEAD;
 		global[kTimebombTimer] = global[kTimebombTimer + 1] = 0;
 		global[kCheckDaemonTimebomb] = false;
-		_scene->_nextSceneId = 620;
+		new_room = 620;
 	}
 }
 
@@ -116,7 +116,7 @@ static void room_752_parser() {
 	else if (player_said_2(step_into, teleporter)) {
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		_scene->_nextSceneId = 711;
+		new_room = 711;
 	} else if (player_said_2(take, id_card) && (!player_has(OBJ_ID_CARD) || kernel.trigger)) {
 		switch (kernel.trigger) {
 		case 0:
@@ -210,10 +210,10 @@ void room_752_preload() {
 
 	section_7_walker();
 	section_7_interface();
-	_scene->addActiveVocab(words_id_card);
-	_scene->addActiveVocab(words_walkto);
-	_scene->addActiveVocab(words_look_at);
-	_scene->addActiveVocab(words_laser_beam);
+	vocab_make_active(words_id_card);
+	vocab_make_active(words_walkto);
+	vocab_make_active(words_look_at);
+	vocab_make_active(words_laser_beam);
 }
 
 } // namespace Rooms

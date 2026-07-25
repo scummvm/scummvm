@@ -42,9 +42,9 @@ static void room_515_init() {
 
 static void room_515_daemon() {
 	if (kernel.trigger == 70)
-		_scene->loadAnimation(kernel_name('A', -1), 71);
+		kernel_run_animation(kernel_name('A', -1), 71);
 	else if (kernel.trigger == 71)
-		_scene->_nextSceneId = 508;
+		new_room = 508;
 }
 
 void room_515_synchronize(Common::Serializer &s) {

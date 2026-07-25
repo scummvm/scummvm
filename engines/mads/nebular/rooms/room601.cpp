@@ -44,7 +44,7 @@ static void room_601_init() {
 	g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
 	_scene->_sequences.setDepth(g_sequence_ids[2], 3);
 
-	if (_scene->_priorSceneId == 504) {
+	if (previous_room == 504) {
 		player.x = 73;
 		player.y = 148;
 		player.facing = FACING_WEST;
@@ -53,8 +53,8 @@ static void room_601_init() {
 		_scene->_sequences.remove(g_sequence_ids[2]);
 		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -2);
 		_scene->_sequences.setDepth(g_sequence_ids[2], 3);
-		_scene->loadAnimation(kernel_name('R', 1), 70);
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+		kernel_run_animation(kernel_name('R', 1), 70);
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 229;
 		player.y = 129;
 		player.facing = FACING_SOUTHWEST;
@@ -91,7 +91,7 @@ static void room_601_daemon() {
 
 static void room_601_parser() {
 	if (player_said_2(walk_through, entrance))
-		_scene->_nextSceneId = 602;
+		new_room = 602;
 	else if (player_said_2(get_inside, car)) {
 		switch (kernel.trigger) {
 		case 0:
@@ -124,7 +124,7 @@ static void room_601_parser() {
 			g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
 			_scene->_sequences.setMsgLayout(g_sequence_ids[3]);
 			_scene->_sequences.updateTimeout(g_sequence_ids[3], syncIdx);
-			_scene->_nextSceneId = 504;
+			new_room = 504;
 		}
 		break;
 
@@ -171,8 +171,8 @@ void room_601_preload() {
 
 	section_6_walker();
 	section_6_interface();
-	_scene->addActiveVocab(words_laser_beam);
-	_scene->addActiveVocab(words_look_at);
+	vocab_make_active(words_laser_beam);
+	vocab_make_active(words_look_at);
 }
 
 } // namespace Rooms

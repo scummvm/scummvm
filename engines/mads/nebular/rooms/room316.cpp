@@ -145,7 +145,7 @@ static void handleRexInGrate() {
 		break;
 
 	case 10:
-		_scene->_nextSceneId = 313;
+		new_room = 313;
 		break;
 
 	default:
@@ -260,7 +260,7 @@ static void handleRoxInGrate() {
 		break;
 
 	case 10:
-		_scene->_nextSceneId = 313;
+		new_room = 313;
 		break;
 
 	default:
@@ -282,14 +282,14 @@ static void room_316_init() {
 	g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
 	_scene->_sequences.setDepth(g_sequence_ids[3], 12);
 
-	if (_scene->_priorSceneId == 366) {
+	if (previous_room == 366) {
 		player.commands_allowed = false;
 		player.walker_visible = false;
 		player.x = 78;
 		player.y = 87;
 		player.facing = FACING_SOUTH;
 		_scene->_sequences.addTimer(48, 70);
-	} else if (_scene->_priorSceneId == 321) {
+	} else if (previous_room == 321) {
 		player.x = 153;
 		player.y = 102;
 		player.facing = FACING_SOUTH;
@@ -300,7 +300,7 @@ static void room_316_init() {
 		g_sequence_ids[1] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[spriteIdx], false, 6, 1, 0, 0);
 		_scene->_sequences.setDepth(g_sequence_ids[1], 2);
 		_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 291;
 		player.y = 126;
 	}
@@ -449,7 +449,7 @@ static void room_316_parser() {
 			break;
 
 		case 4:
-			_scene->_nextSceneId = 321;
+			new_room = 321;
 			break;
 
 		default:

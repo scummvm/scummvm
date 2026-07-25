@@ -50,7 +50,7 @@ static void room_504_init() {
 		g_sprite_ids[1] = kernel_load_series(kernel_name('a', 0), 0);
 	else {
 		g_sprite_ids[1] = kernel_load_series(kernel_name('a', 1), 0);
-		_scene->changeVariant(1);
+		kernel_load_variant(1);
 	}
 
 	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 6, 1, 0, 0);
@@ -58,18 +58,18 @@ static void room_504_init() {
 	g_sequence_ids[2] = _scene->_sequences.addSpriteCycle(g_sprite_ids[2], false, 6, 0, 0, 0);
 	local._carFrame = -1;
 
-	if ((_scene->_priorSceneId == 505) && (global[kHoverCarDestination] != global[kHoverCarLocation])) {
+	if ((previous_room == 505) && (global[kHoverCarDestination] != global[kHoverCarLocation])) {
 		local._carAnimationMode = 1;
-		_scene->loadAnimation(kernel_name('A', -1));
+		kernel_run_animation(kernel_name('A', -1), 0);
 		g_engine->_soundManager->command(14, 0);
 		_scene->_sequences.addTimer(1, 70);
 		player.commands_allowed = false;
 	} else {
 		g_sprite_ids[3] = kernel_load_series(kernel_name('a', 3), 0);
 		local._carAnimationMode = 1;
-		_scene->loadAnimation(kernel_name('A', -1));
-		if ((_scene->_priorSceneId != RETURNING_FROM_DIALOG) && (_scene->_priorSceneId != 505))
-			global[kHoverCarLocation] = _scene->_priorSceneId;
+		kernel_run_animation(kernel_name('A', -1), 0);
+		if ((previous_room != RETURNING_FROM_DIALOG) && (previous_room != 505))
+			global[kHoverCarLocation] = previous_room;
 
 		g_sequence_ids[7] = _scene->_sequences.startCycle(g_sprite_ids[7], false, 1);
 	}
@@ -104,23 +104,23 @@ static void room_504_daemon() {
 		case 70:
 			if (global[kHoverCarDestination] != -1) {
 				player.commands_allowed = false;
-				_scene->freeAnimation();
+				kernel_abort_animation(0);
 				local._carAnimationMode = 2;
 				if (((global[kHoverCarLocation] >= 500 && global[kHoverCarLocation] <= 599) &&
 					(global[kHoverCarDestination] >= 500 && global[kHoverCarDestination] <= 599)) ||
 					((global[kHoverCarLocation] >= 600 && global[kHoverCarLocation] <= 699) &&
 						(global[kHoverCarDestination] >= 600 && global[kHoverCarDestination] <= 699))) {
-					_scene->loadAnimation(kernel_name('A', -1), 71);
+					kernel_run_animation(kernel_name('A', -1), 71);
 				} else if (global[kHoverCarLocation] > global[kHoverCarDestination])
-					_scene->loadAnimation(kernel_name('C', -1), 71);
+					kernel_run_animation(kernel_name('C', -1), 71);
 				else
-					_scene->loadAnimation(kernel_name('B', -1), 71);
+					kernel_run_animation(kernel_name('B', -1), 71);
 			}
 			break;
 
 		case 71:
 			g_engine->_soundManager->command(15, 0);
-			_scene->_nextSceneId = global[kHoverCarDestination];
+			new_room = global[kHoverCarDestination];
 			break;
 
 		default:
@@ -132,7 +132,7 @@ static void room_504_daemon() {
 		global[kTimebombStatus] = TIMEBOMB_DEAD;
 		global[kTimebombTimer] = 0;
 		global[kCheckDaemonTimebomb] = false;
-		_scene->_nextSceneId = 620;
+		new_room = 620;
 	}
 }
 
@@ -143,7 +143,7 @@ static void room_504_pre_parser() {
 static void room_504_parser() {
 	if (player_said_2(exit_from, car)) {
 		g_engine->_soundManager->command(15, 0);
-		_scene->_nextSceneId = global[kHoverCarLocation];
+		new_room = global[kHoverCarLocation];
 	} else if (player_said_2(activate, car_controls)) {
 		switch (kernel.trigger) {
 		case 0:
@@ -190,7 +190,7 @@ static void room_504_parser() {
 		case 4:
 			player.commands_allowed = true;
 			global[kHoverCarDestination] = global[kHoverCarLocation];
-			_scene->_nextSceneId = 505;
+			new_room = 505;
 			break;
 
 		case 5:

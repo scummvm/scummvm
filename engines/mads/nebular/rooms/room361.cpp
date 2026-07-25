@@ -121,7 +121,7 @@ static void handleRexAction() {
 		break;
 
 	case 7:
-		_scene->_nextSceneId = 313;
+		new_room = 313;
 		break;
 
 	default:
@@ -224,7 +224,7 @@ static void handleRoxAction() {
 		break;
 
 	case 7:
-		_scene->_nextSceneId = 313;
+		new_room = 313;
 		break;
 
 	default:
@@ -245,7 +245,7 @@ static void room_361_init() {
 	_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(165, 76));
 	_scene->_sequences.setDepth(g_sequence_ids[1], 15);
 
-	if (_scene->_priorSceneId == 391) {
+	if (previous_room == 391) {
 		global[kSexOfRex] = REX_MALE;
 		player.commands_allowed = false;
 		player.walker_visible = false;
@@ -253,22 +253,22 @@ static void room_361_init() {
 		player.x = 166;
 		player.y = 101;
 		_scene->_sequences.addTimer(120, 70);
-	} else if (_scene->_priorSceneId == 360) {
+	} else if (previous_room == 360) {
 		player.x = 302;
 		player.y = 145;
 	}
-	else if (_scene->_priorSceneId == 320) {
+	else if (previous_room == 320) {
 		player.x = 129;
 		player.y = 113;
 		player.facing = FACING_SOUTH;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 13;
 		player.y = 145;
 	}
 
 	kernel.quotes = quote_load(0xFB, 0xFC, 0);
 
-	if (_scene->_priorSceneId == 320)
+	if (previous_room == 320)
 		_scene->_kernelMessages.setQuoted(_scene->_kernelMessages.addQuote(0xFB, 0, 0x78), 4, true);
 
 	section_3_music();
@@ -431,7 +431,7 @@ void room_361_preload() {
 	room_parser_code_pointer = room_361_parser;
 	room_daemon_code_pointer = room_361_daemon;
 
-	if (_scene->_currentSceneId == 391)
+	if (room_id == 391)
 		global[kSexOfRex] = REX_MALE;
 
 	section_3_walker();

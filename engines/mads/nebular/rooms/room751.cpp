@@ -58,11 +58,11 @@ static void room_751_init() {
 	_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(48, 136));
 	_scene->_sequences.setDepth(g_sequence_ids[1], 10);
 
-	if (_scene->_priorSceneId == 752) {
+	if (previous_room == 752) {
 		player.x = 309;
 		player.y = 138;
 		player.facing = FACING_WEST;
-	} else if (_scene->_priorSceneId == 710) {
+	} else if (previous_room == 710) {
 		player.x = 154;
 		player.y = 129;
 		player.facing = FACING_NORTH;
@@ -71,7 +71,7 @@ static void room_751_init() {
 		g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, -2);
 		_scene->_sequences.setPosition(g_sequence_ids[4], Common::Point(155, 129));
 		_scene->_sequences.addTimer(15, 70);
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 22;
 		player.y = 131;
 		player.facing = FACING_EAST;
@@ -92,7 +92,7 @@ static void room_751_init() {
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(268, 140), FACING_NORTHWEST);
 	}
 
-	if (_scene->_roomChanged) {
+	if (kernel.teleported_in) {
 		inter_give_to_player(OBJ_FISHING_LINE);
 		inter_give_to_player(OBJ_BINOCULARS);
 	}
@@ -127,7 +127,7 @@ static void room_751_daemon() {
 		global[kTimebombStatus] = 3;
 		global[kTimebombTimer] = 0;
 		global[kCheckDaemonTimebomb] = false;
-		_scene->_nextSceneId = 620;
+		new_room = 620;
 	}
 
 	switch (kernel.trigger) {
@@ -232,7 +232,7 @@ static void room_751_parser() {
 		break;
 
 		case 2:
-			_scene->_nextSceneId = 710;
+			new_room = 710;
 			break;
 
 		default:
@@ -274,7 +274,7 @@ static void room_751_parser() {
 
 		case 5:
 			player.commands_allowed = true;
-			_scene->_nextSceneId = 513;
+			new_room = 513;
 			break;
 
 		default:
@@ -318,7 +318,7 @@ static void room_751_parser() {
 				int idx = _scene->_dynamicHotspots.add(words_fishing_line, words_walkto, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(268, 140), FACING_NORTHWEST);
 				_scene->_kernelMessages.reset();
-				inter_move_object(OBJ_FISHING_LINE, _scene->_currentSceneId);
+				inter_move_object(OBJ_FISHING_LINE, room_id);
 				local._rexHandingLine = false;
 				global[kLineStatus] = 2;
 				player.commands_allowed = true;
@@ -373,8 +373,8 @@ void room_751_preload() {
 
 	section_7_walker();
 	section_7_interface();
-	_scene->addActiveVocab(words_fishing_line);
-	_scene->addActiveVocab(words_walkto);
+	vocab_make_active(words_fishing_line);
+	vocab_make_active(words_walkto);
 }
 
 } // namespace Rooms

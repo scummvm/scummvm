@@ -40,7 +40,7 @@ static void room_410_init() {
 	else
 		_scene->_hotspots.activate(words_charge_cases, false);
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 155;
 		player.y = 150;
 		player.facing = FACING_NORTH;
@@ -48,7 +48,7 @@ static void room_410_init() {
 
 	section_4_music();
 
-	_scene->loadAnimation(kernel_full_name(410, 'r', -1, "", EXT_AA));
+	kernel_run_animation(kernel_full_name(410, 'r', -1, "", EXT_AA), 0);
 	_scene->_animation[0]->_repeatFlag = true;
 }
 
@@ -98,7 +98,7 @@ static void room_410_pre_parser() {
 
 static void room_410_parser() {
 	if (player_said_2(walk_into, corridor_to_south))
-		_scene->_nextSceneId = 406;
+		new_room = 406;
 	else if (player_said_2(take, charge_cases) && (object_is_here(OBJ_CHARGE_CASES) || kernel.trigger)) {
 		switch (kernel.trigger) {
 		case 0:
@@ -120,7 +120,7 @@ static void room_410_parser() {
 			break;
 
 		case 2:
-			player.clock = player.frame_delay + _scene->_frameStartTime;
+			player.clock = player.frame_delay + kernel.clock;
 			player.walker_visible = true;
 			_scene->_sequences.addTimer(20, 3);
 			break;

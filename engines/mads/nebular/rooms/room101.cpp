@@ -105,15 +105,15 @@ static void room_101_init() {
 	_scene->_hotspots.activate(words_shield_modulator, false);
 	local._panelOpened = false;
 
-	if (_scene->_priorSceneId != RETURNING_FROM_LOADING)
+	if (previous_room != RETURNING_FROM_LOADING)
 		global[kNeedToStandUp] = false;
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 100;
 		player.y = 152;
 	}
 
-	if ((_scene->_priorSceneId == 112) || ((_scene->_priorSceneId == RETURNING_FROM_DIALOG) && local._sittingFl)) {
+	if ((previous_room == 112) || ((previous_room == RETURNING_FROM_DIALOG) && local._sittingFl)) {
 		player.walker_visible = false;
 		local._sittingFl = true;
 		player.x = 161;
@@ -123,7 +123,7 @@ static void room_101_init() {
 		_scene->_sequences.setAnimRange(g_sequence_ids[11], 17, 17);
 		_scene->_hotspots.activate(words_chair, false);
 		local._chairHotspotId = _scene->_dynamicHotspots.add(words_chair, words_sit_in, -1, Common::Rect(159, 84, 159 + 33, 84 + 36));
-		if (_scene->_priorSceneId == 112)
+		if (previous_room == 112)
 			room_101_say_dang();
 	} else {
 		g_sequence_ids[12] = _scene->_sequences.addSpriteCycle(g_sprite_ids[12], false, 6, 0, 0, 0);
@@ -133,7 +133,7 @@ static void room_101_init() {
 	kernel.quotes = quote_load(0x31, 0x32, 0x39, 0x36, 0x37, 0x38, 0);
 
 	if (global[kNeedToStandUp]) {
-		_scene->loadAnimation(kernel_full_name(101, 'S', -1, "", EXT_AA), 71);
+		kernel_run_animation(kernel_full_name(101, 'S', -1, "", EXT_AA), 71);
 		player.walker_visible = false;
 		player.commands_allowed = false;
 		player.x = 68;
@@ -167,7 +167,7 @@ static void room_101_daemon() {
 		global[kNeedToStandUp] = false;
 		player.walker_visible = true;
 		player.commands_allowed = true;
-		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.clock = kernel.clock - player.frame_delay;
 		break;
 
 	case 72:
@@ -282,7 +282,7 @@ static void room_101_parser() {
 	}
 
 	if (player_said_2(walkto, life_support_section)) {
-		_scene->_nextSceneId = 102;
+		new_room = 102;
 		player.command_ready = false;
 		return;
 	}
@@ -418,7 +418,7 @@ static void room_101_parser() {
 				player.commands_allowed = true;
 				global[kWatchedViewScreen] = true;
 				local._sittingFl = true;
-				_scene->_nextSceneId = 112;
+				new_room = 112;
 				break;
 
 			default:

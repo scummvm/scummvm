@@ -39,13 +39,13 @@ static void room_366_init() {
 
 static void room_366_parser() {
 	if (player_said_2(return_to, air_shaft))
-		_scene->_nextSceneId = 302;
+		new_room = 302;
 	else if (player_said_2(open, grate)) {
 		if (player_has_been_in_room(316))
 			text_show(36612);
 		else
 			text_show(36613);
-		_scene->_nextSceneId = 316;
+		new_room = 316;
 	} else if (player_said_2(look_through, grate)) {
 		if (player_has_been_in_room(321))
 			text_show(36611);

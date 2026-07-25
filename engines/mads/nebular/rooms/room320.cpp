@@ -232,7 +232,7 @@ static void room_320_daemon() {
 	if (kernel.trigger == 70) {
 		global[kAfterHavoc] = true;
 		global[kTeleporterRoom + 1] = 351;
-		_scene->_nextSceneId = 361;
+		new_room = 361;
 	}
 }
 
@@ -290,7 +290,7 @@ static void room_320_parser() {
 					setRightView(8);
 					setLeftView(10);
 					_scene->_kernelMessages.reset();
-					_scene->resetScene();
+					kernel_dump_all();
 					g_sprite_ids[2] = kernel_load_series(kernel_name('m', 2), 0);
 					g_sprite_ids[4] = kernel_load_series(kernel_name('m', 4), 0);
 					g_sprite_ids[9] = kernel_load_series(kernel_name('m', 9), 0);
@@ -298,7 +298,7 @@ static void room_320_parser() {
 					setLeftView(2);
 					kernel.quotes = quote_load(0xFE, 0);
 					kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
-					_scene->loadAnimation(kernel_name('a', -1), 70);
+					kernel_run_animation(kernel_name('a', -1), 70);
 					g_engine->_soundManager->command(17, 0);
 				}
 			}
@@ -308,7 +308,7 @@ static void room_320_parser() {
 			break;
 		}
 	} else if (player_said_2(leave, security_station))
-		_scene->_nextSceneId = 311;
+		new_room = 311;
 	else if (player_said_2(look, right_monitor))
 		text_show(32001);
 	else if (player_said_2(look, left_monitor))

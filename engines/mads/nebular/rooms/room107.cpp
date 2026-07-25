@@ -59,20 +59,20 @@ static void room_107_init() {
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(78, 135), FACING_SOUTHWEST);
 	}
 
-	if (_scene->_priorSceneId == 105) {
+	if (previous_room == 105) {
 		player.x = 132;
 		player.y = 47;
 	}
-	else if (_scene->_priorSceneId == 106) {
+	else if (previous_room == 106) {
 		player.x = 20;
 		player.y = 91;
 	}
-	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 223;
 		player.y = 151;
 	}
 
-	if (((_scene->_priorSceneId == 105) || (_scene->_priorSceneId == 106)) && (g_engine->getRandomNumber(1, 3) == 1)) {
+	if (((previous_room == 105) || (previous_room == 106)) && (g_engine->getRandomNumber(1, 3) == 1)) {
 		g_sprite_ids[0] = kernel_load_series(kernel_full_name(105, 'R', 1, "", EXT_SS), 0);
 		g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], true, 4, 0, 0, 0);
 		_scene->_sequences.setPosition(g_sequence_ids[0], Common::Point(270, 150));
@@ -85,7 +85,7 @@ static void room_107_init() {
 	local._shootingFl = false;
 
 	if (g_engine->getRandomNumber(1, 3) == 1) {
-		_scene->loadAnimation(kernel_full_name(107, 'B', -1, "", EXT_AA), 0);
+		kernel_run_animation(kernel_full_name(107, 'B', -1, "", EXT_AA), 0);
 		local._shootingFl = true;
 	}
 
@@ -122,7 +122,7 @@ static void room_107_parser() {
 			object_examine(OBJ_DEAD_FISH, 802, 0);
 		}
 	} else if (player_said_2(swim_towards, northern_sea_cliff))
-		_scene->_nextSceneId = 105;
+		new_room = 105;
 	else if (player_said_2(look, northern_sea_cliff))
 		text_show(10701);
 	else if (player_said_2(look, dead_fish) && (player.main_object_source == CAT_HOTSPOT))

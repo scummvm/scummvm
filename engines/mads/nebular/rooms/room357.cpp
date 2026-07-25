@@ -38,15 +38,15 @@ static void room_357_init() {
 	_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(127, 78));
 	_scene->_sequences.setDepth(g_sequence_ids[1], 15);
 
-	if (_scene->_priorSceneId == 318) {
+	if (previous_room == 318) {
 		player.x = 298;
 		player.y = 142;
 	}
-	else if (_scene->_priorSceneId == 313) {
+	else if (previous_room == 313) {
 		player.x = 127;
 		player.y = 101;
 	}
-	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 15;
 		player.y = 148;
 	}

@@ -103,7 +103,7 @@ static void room_805_pre_parser() {
 
 static void room_805_parser() {
 	if (player_said_2(exit, service_panel))
-		_scene->_nextSceneId = 804;
+		new_room = 804;
 	else if (player_said_2(install, shield_modulator) && player_has(OBJ_SHIELD_MODULATOR)) {
 		kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 7, 1, 0, 0);
@@ -154,9 +154,9 @@ void room_805_preload() {
 
 	section_8_walker();
 	section_8_interface();
-	_scene->addActiveVocab(words_remove);
-	_scene->addActiveVocab(words_target_module);
-	_scene->addActiveVocab(words_shield_modulator);
+	vocab_make_active(words_remove);
+	vocab_make_active(words_target_module);
+	vocab_make_active(words_shield_modulator);
 }
 
 } // namespace Rooms

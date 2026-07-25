@@ -72,10 +72,10 @@ static void room_111_init() {
 	local._launched2Fl = false;
 	local._stampedFl = false;
 
-	if ((_scene->_priorSceneId < 201) && (_scene->_priorSceneId != RETURNING_FROM_DIALOG)) {
+	if ((previous_room < 201) && (previous_room != RETURNING_FROM_DIALOG)) {
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		_scene->loadAnimation(kernel_full_name(111, 'A', 0, "", EXT_AA), 70);
+		kernel_run_animation(kernel_full_name(111, 'A', 0, "", EXT_AA), 70);
 		player.x = 234;
 		player.y = 116;
 		player.facing = FACING_EAST;
@@ -84,7 +84,7 @@ static void room_111_init() {
 		local._launched2Fl = true;
 
 		g_engine->_soundManager->command(36, 0);
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 300;
 		player.y = 130;
 		player.facing = FACING_WEST;
@@ -148,14 +148,14 @@ static void room_111_parser() {
 	if (player_said_2(dive_into, pool) && player_has(OBJ_REBREATHER)) {
 		switch (kernel.trigger) {
 		case 0:
-			_scene->loadAnimation(kernel_full_name(111, 'A', 1, "", EXT_AA), 1);
+			kernel_run_animation(kernel_full_name(111, 'A', 1, "", EXT_AA), 1);
 			local._rexDivingFl = true;
 			player.commands_allowed = false;
 			player.walker_visible = false;
 			break;
 
 		case 1:
-			_scene->_nextSceneId = 110;
+			new_room = 110;
 			break;
 
 		default:
@@ -192,7 +192,7 @@ void room_111_preload() {
 	room_parser_code_pointer = room_111_parser;
 	room_daemon_code_pointer = room_111_daemon;
 
-	_scene->addActiveVocab(words_bats);
+	vocab_make_active(words_bats);
 	section_1_walker();
 	section_1_interface();
 }

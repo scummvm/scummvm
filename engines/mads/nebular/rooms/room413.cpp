@@ -43,14 +43,14 @@ static void room_413_init() {
 	g_sprite_ids[1] = kernel_load_series(kernel_name('a', 2), 0);
 	local._rexDeath = false;
 
-	if (_scene->_priorSceneId == 405) {
+	if (previous_room == 405) {
 		player.x = 142;
 		player.y = 146;
 		player.facing = FACING_NORTH;
 		player.walker_visible = true;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		if (global[kSexOfRex] == REX_MALE) {
-			_scene->loadAnimation(kernel_full_name(413, 'd', 1, "", EXT_AA), 78);
+			kernel_run_animation(kernel_full_name(413, 'd', 1, "", EXT_AA), 78);
 			g_engine->_soundManager->command(30, 0);
 			player.walker_visible = false;
 			player.commands_allowed = false;
@@ -125,13 +125,13 @@ static void room_413_daemon() {
 
 	if (kernel.trigger == 77) {
 		global[kTeleporterCommand] = TELEPORTER_BEAM_IN;
-		_scene->_nextSceneId = global[kTeleporterDestination];
-		_scene->_reloadSceneFlag = true;
+		new_room = global[kTeleporterDestination];
+		kernel.force_restart = true;
 	}
 
 	if (kernel.trigger == 78) {
-		_scene->_reloadSceneFlag = true;
-		_scene->_nextSceneId = _scene->_priorSceneId;
+		kernel.force_restart = true;
+		new_room = previous_room;
 		global[kTeleporterCommand] = TELEPORTER_NONE;
 	}
 }
@@ -150,9 +150,9 @@ static void room_413_parser() {
 	if (player_said_2(walk_inside, teleporter)) {
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		_scene->_nextSceneId = 409;
+		new_room = 409;
 	} else if (player_said_2(walk_into, corridor_to_south))
-		_scene->_nextSceneId = 405;
+		new_room = 405;
 	else if (player_said_2(look, wooden_statue))
 		text_show(41310);
 	else if (player_said_2(take, wooden_statue))

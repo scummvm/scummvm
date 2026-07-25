@@ -36,23 +36,23 @@ static void room_405_init() {
 	g_sprite_ids[2] = kernel_load_series(kernel_name('x', 1), 0);
 	g_sprite_ids[3] = kernel_load_series("*ROXCL_8", 0);
 
-	if (_scene->_priorSceneId == 401) {
+	if (previous_room == 401) {
 		player.x = 23;
 		player.y = 123;
 		player.facing = FACING_EAST;
-	} else if (_scene->_priorSceneId == 406) {
+	} else if (previous_room == 406) {
 		player.x = 300;
 		player.y = 128;
 		player.facing = FACING_WEST;
-	} else if (_scene->_priorSceneId == 408) {
+	} else if (previous_room == 408) {
 		player.x = 154;
 		player.y = 109;
 		player.facing = FACING_SOUTH;
-	} else if (_scene->_priorSceneId == 413) {
+	} else if (previous_room == 413) {
 		player.x = 284;
 		player.y = 109;
 		player.facing = FACING_SOUTH;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 23;
 		player.y = 123;
 		player.facing = FACING_EAST;
@@ -63,7 +63,7 @@ static void room_405_init() {
 	else
 		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
 
-	if (_scene->_roomChanged) {
+	if (kernel.teleported_in) {
 		global[kArmoryDoorOpen] = false;
 		inter_give_to_player(OBJ_SECURITY_CARD);
 	}
@@ -75,7 +75,7 @@ static void room_405_init() {
 static void room_405_daemon() {
 	if (kernel.trigger == 80) {
 		_scene->_sequences.addTimer(20, 81);
-		player.clock = _scene->_frameStartTime + player.frame_delay;
+		player.clock = kernel.clock + player.frame_delay;
 		player.walker_visible = true;
 	}
 
@@ -85,7 +85,7 @@ static void room_405_daemon() {
 	}
 
 	if (kernel.trigger == 70) {
-		player.clock = _scene->_frameStartTime + player.frame_delay;
+		player.clock = kernel.clock + player.frame_delay;
 		player.walker_visible = true;
 		g_sequence_ids[1] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[1], false, 6, 1, 0, 0);
 		_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
@@ -100,7 +100,7 @@ static void room_405_daemon() {
 	}
 
 	if (kernel.trigger == 75) {
-		player.clock = _scene->_frameStartTime + player.frame_delay;
+		player.clock = kernel.clock + player.frame_delay;
 		player.walker_visible = true;
 		_scene->_sequences.remove(g_sequence_ids[1]);
 		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 6, 1, 0, 0);
@@ -128,9 +128,9 @@ static void room_405_pre_parser() {
 
 static void room_405_parser() {
 	if (player_said_2(walk_through, door))
-		_scene->_nextSceneId = 413;
+		new_room = 413;
 	else if (player_said_2(walk_through, wide_door) && global[kArmoryDoorOpen])
-		_scene->_nextSceneId = 408;
+		new_room = 408;
 	else if (player_said_2(walk_through, wide_door) && !global[kArmoryDoorOpen])
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, quote_string(kernel.quotes, 0x24F));
 	else if (player_said_3(put, security_card, card_slot) && !global[kArmoryDoorOpen]) {

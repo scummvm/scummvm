@@ -45,7 +45,7 @@ static void room_801_init() {
 	g_sprite_ids[4] = kernel_load_series(kernel_name('x', 3), 0);
 	g_sprite_ids[5] = kernel_load_series(kernel_name('a', -1), 0);
 
-	if (_scene->_priorSceneId != 802) {
+	if (previous_room != 802) {
 		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 5);
 		_scene->_sequences.setDepth(g_sequence_ids[2], 13);
 	}
@@ -60,16 +60,16 @@ static void room_801_init() {
 		global[kBeamIsUp] = false;
 		global[kForceBeamDown] = false;
 		global[kDontRepeat] = false;
-	} else if (_scene->_priorSceneId == 808) {
+	} else if (previous_room == 808) {
 		player.x = 148;
 		player.y = 110;
 		player.facing = FACING_NORTH;
-	} else if (_scene->_priorSceneId == 802) {
+	} else if (previous_room == 802) {
 		player.x = 307;
 		player.y = 111;
 		player_walk(270, 118, FACING_WEST);
 		player.walker_visible = true;
-	} else if ((_scene->_priorSceneId != RETURNING_FROM_DIALOG) && !global[kTeleporterCommand]) {
+	} else if ((previous_room != RETURNING_FROM_DIALOG) && !global[kTeleporterCommand]) {
 		player.x = 8;
 		player.y = 117;
 		player_walk(41, 115, FACING_EAST);
@@ -119,7 +119,7 @@ static void room_801_init() {
 	}
 
 	local._walkThroughDoor = false;
-	if (_scene->_priorSceneId == 802) {
+	if (previous_room == 802) {
 		player.commands_allowed = false;
 		local._walkThroughDoor = true;
 	}
@@ -157,15 +157,15 @@ static void room_801_daemon() {
 	}
 
 	if (kernel.trigger == 141) {
-		_scene->_reloadSceneFlag = true;
-		_scene->_nextSceneId = _scene->_priorSceneId;
+		kernel.force_restart = true;
+		new_room = previous_room;
 		global[kTeleporterCommand] = 0;
 	}
 
 	if (kernel.trigger == 80) {
 		global[kTeleporterCommand] = 1;
-		_scene->_nextSceneId = global[kTeleporterDestination];
-		_scene->_reloadSceneFlag = true;
+		new_room = global[kTeleporterDestination];
+		kernel.force_restart = true;
 	}
 
 	if (local._walkThroughDoor && (Common::Point(player.x, player.y) == Common::Point(270, 118))) {
@@ -201,7 +201,7 @@ static void room_801_daemon() {
 	if (kernel.trigger == 110) {
 		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, 5);
 		_scene->_sequences.setDepth(g_sequence_ids[2], 10);
-		_scene->_nextSceneId = 802;
+		new_room = 802;
 	}
 }
 
@@ -218,17 +218,17 @@ static void room_801_pre_parser() {
 		global[kCutFacing] = player.facing;
 		global[kForceBeamDown] = true;
 		global[kDontRepeat] = true;
-		_scene->_nextSceneId = 803;
+		new_room = 803;
 	}
 }
 
 static void room_801_parser() {
 	if (player_said_2(look, control_panel))
-		_scene->_nextSceneId = 808;
+		new_room = 808;
 	else if (player_said_2(walk_inside, teleporter)) {
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		_scene->_nextSceneId = 807;
+		new_room = 807;
 	} else if (player_said_2(walk_through, door) && (Common::Point(player.x, player.y) == Common::Point(270, 118))) {
 		player.commands_allowed = false;
 		player.facing = FACING_EAST;

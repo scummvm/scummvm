@@ -64,7 +64,7 @@ static void room_214_init() {
 		_scene->_hotspots.activate(words_blowgun, false);
 	}
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 191;
 		player.y = 152;
 	}
@@ -119,7 +119,7 @@ static void room_214_parser() {
 	if (player.look_around)
 		text_show(21427);
 	else if (player_said_2(walk_outside, hut))
-		_scene->_nextSceneId = 207;
+		new_room = 207;
 	else if (player_said_2(take, poison_darts) && (kernel.trigger || object_is_here(OBJ_POISON_DARTS))) {
 		switch (kernel.trigger) {
 		case 0:
@@ -258,8 +258,8 @@ void room_214_preload() {
 
 	section_2_walker();
 	section_2_interface();
-	_scene->addActiveVocab(words_captive_creature);
-	_scene->addActiveVocab(words_walkto);
+	vocab_make_active(words_captive_creature);
+	vocab_make_active(words_walkto);
 }
 
 } // namespace Rooms

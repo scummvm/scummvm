@@ -21,6 +21,7 @@
 
 #include "math/utils.h"
 #include "mads/core/game.h"
+#include "mads/core/matte.h"
 #include "mads/core/pal.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/nebular.h"
@@ -87,12 +88,12 @@ static void room_103_init() {
 		_scene->_hotspots.activate(362, false);
 	}
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 237;
 		player.y = 74;
 	}
 
-	if (_scene->_priorSceneId == 102) {
+	if (previous_room == 102) {
 		player.commands_allowed = false;
 		g_sequence_ids[6] = _scene->_sequences.addReverseSpriteCycle(g_sprite_ids[6], false, 6, 1, 0, 0);
 		_scene->_sequences.addSubEntry(g_sequence_ids[6], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
@@ -107,12 +108,12 @@ static void room_103_init() {
 		_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
 	}
 
-	if (_scene->_priorSceneId == 102)
+	if (previous_room == 102)
 		g_engine->_soundManager->command(20, 0);
 
 	pal_change_color(252, 63, 63, 10);
 	pal_change_color(253, 45, 45, 10);
-	local._updateClock = _scene->_frameStartTime;
+	local._updateClock = kernel.clock;
 }
 
 static void room_103_daemon() {
@@ -141,7 +142,7 @@ static void room_103_daemon() {
 		break;
 	}
 
-	if (_scene->_frameStartTime >= local._updateClock) {
+	if (kernel.clock >= local._updateClock) {
 		Common::Point pt = Common::Point(player.x, player.y);
 		int dist = Math::hypotenuse(pt.x - 79, pt.y - 137);
 		g_engine->_soundManager->command(29, (dist * -127 / 378) + 127);
@@ -154,7 +155,7 @@ static void room_103_daemon() {
 		dist = Math::hypotenuse(pt.x - 266, pt.y - 138);
 		g_engine->_soundManager->command(32, (dist * -127 / 378) + 127);
 
-		local._updateClock = _scene->_frameStartTime + player.frame_delay;
+		local._updateClock = kernel.clock + player.frame_delay;
 	}
 }
 
@@ -176,7 +177,7 @@ static void room_103_parser() {
 
 		case 1:
 			g_engine->_soundManager->command(1, 0);
-			_scene->_nextSceneId = 102;
+			new_room = 102;
 			player.commands_allowed = true;
 			break;
 
@@ -186,7 +187,7 @@ static void room_103_parser() {
 	} else if (player_said_2(take, timer_module) && object_is_here(OBJ_TIMER_MODULE)) {
 		switch (kernel.trigger) {
 		case 0:
-			_scene->changeVariant(1);
+			kernel_load_variant(1);
 			g_sequence_ids[13] = _scene->_sequences.startPingPongCycle(g_sprite_ids[13], false, 3, 2);
 			_scene->_sequences.setMsgLayout(g_sequence_ids[13]);
 			_scene->_sequences.addSubEntry(g_sequence_ids[13], SEQUENCE_TRIGGER_SPRITE, 7, 1);
@@ -202,8 +203,8 @@ static void room_103_parser() {
 		case 2:
 			g_engine->_soundManager->command(22, 0);
 			inter_give_to_player(OBJ_TIMER_MODULE);
-			_scene->changeVariant(0);
-			_scene->drawElements(kTransitionNone, false);
+			kernel_load_variant(0);
+			matte_frame(kTransitionNone, false);
 			_scene->_hotspots.activate(371, false);
 			player.walker_visible = true;
 			player.commands_allowed = true;

@@ -37,14 +37,14 @@ void room_216_init() {
 
 	_scene->_userInterface.emptyConversationList();
 	_scene->_userInterface.setup(kInputConversation);
-	_scene->loadAnimation(kernel_name('A', -1), 60);
+	kernel_run_animation(kernel_name('A', -1), 60);
 
 	section_2_music();
 }
 
 void room_216_daemon() {
 	if (kernel.trigger == 60)
-		_scene->_nextSceneId = 215;
+		new_room = 215;
 }
 
 void room_216_synchronize(Common::Serializer &s) {

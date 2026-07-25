@@ -49,17 +49,17 @@ static void room_802_init() {
 		global[kBeamIsUp] = false;
 		global[kForceBeamDown] = false;
 		global[kDontRepeat] = false;
-		global[kAntigravClock] = _scene->_frameStartTime;
-	} else if (_scene->_priorSceneId == 801) {
+		global[kAntigravClock] = kernel.clock;
+	} else if (previous_room == 801) {
 		player.x = 15;
 		player.y = 129;
 		player.facing = FACING_EAST;
-	} else if (_scene->_priorSceneId == 803) {
+	} else if (previous_room == 803) {
 		player.x = 303;
 		player.y = 119;
 		player.facing = FACING_WEST;
 
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 15;
 		player.y = 129;
 		player.facing = FACING_EAST;
@@ -146,7 +146,7 @@ static void room_802_parser() {
 			break;
 
 		case 2:
-			player.clock = _scene->_frameStartTime + player.frame_delay;
+			player.clock = kernel.clock + player.frame_delay;
 			player.walker_visible = true;
 			_scene->_sequences.addTimer(20, 3);
 			break;
@@ -179,7 +179,7 @@ static void room_802_parser() {
 			break;
 
 		case 2:
-			player.clock = _scene->_frameStartTime + player.frame_delay;
+			player.clock = kernel.clock + player.frame_delay;
 			player.walker_visible = true;
 			_scene->_sequences.addTimer(20, 3);
 			break;
@@ -244,9 +244,9 @@ void room_802_preload() {
 
 	section_8_walker();
 	section_8_interface();
-	_scene->addActiveVocab(words_shield_modulator);
-	_scene->addActiveVocab(words_walkto);
-	_scene->addActiveVocab(words_remote);
+	vocab_make_active(words_shield_modulator);
+	vocab_make_active(words_walkto);
+	vocab_make_active(words_remote);
 }
 
 } // namespace Rooms

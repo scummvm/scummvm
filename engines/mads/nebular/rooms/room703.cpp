@@ -135,7 +135,7 @@ static void room_703_init() {
 	player.walker_visible = false;
 
 	if (!player.been_here_before) {
-		if (_scene->_priorSceneId == 704)
+		if (previous_room == 704)
 			global[kMonsterAlive] = false;
 		else
 			global[kMonsterAlive] = true;
@@ -151,44 +151,44 @@ static void room_703_init() {
 	if (!global[kMonsterAlive])
 		_scene->_hotspots.activate(words_sea_monster, false);
 
-	if (_scene->_priorSceneId == 704) {
+	if (previous_room == 704) {
 		player.commands_allowed = false;
 		local._curSequence = 2;
 		local._boatDir = 2;
 		local._monsterMode = 0;
-		_scene->loadAnimation(kernel_name('A', -1));
+		kernel_run_animation(kernel_name('A', -1), 0);
 		_scene->_animation[0]->setCurrentFrame(34);
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.commands_allowed = false;
 		local._boatDir = 1;
 		if (global[kMonsterAlive]) {
 			local._monsterMode = 1;
 			local._curSequence = 0;
-			_scene->loadAnimation(kernel_name('B', -1));
+			kernel_run_animation(kernel_name('B', -1), 0);
 		} else {
 			local._curSequence = 0;
 			local._monsterMode = 0;
-			_scene->loadAnimation(kernel_name('A', -1));
+			kernel_run_animation(kernel_name('A', -1), 0);
 		}
 	} else if (global[kMonsterAlive]) {
 		local._curSequence = 0;
 		local._boatDir = 1;
 		local._monsterMode = 1;
-		_scene->loadAnimation(kernel_name('B', -1));
+		kernel_run_animation(kernel_name('B', -1), 0);
 		_scene->_animation[0]->setCurrentFrame(39);
 	} else if (local._boatDir == 1) {
 		local._curSequence = 0;
 		local._monsterMode = 0;
-		_scene->loadAnimation(kernel_name('A', -1));
+		kernel_run_animation(kernel_name('A', -1), 0);
 		_scene->_animation[0]->setCurrentFrame(9);
 	} else if (local._boatDir == 2) {
 		local._curSequence = 0;
 		local._monsterMode = 0;
-		_scene->loadAnimation(kernel_name('A', -1));
+		kernel_run_animation(kernel_name('A', -1), 0);
 		_scene->_animation[0]->setCurrentFrame(56);
 	}
 
-	if (_scene->_roomChanged) {
+	if (kernel.teleported_in) {
 		inter_give_to_player(OBJ_TWINKIFRUIT);
 		inter_give_to_player(OBJ_BOMB);
 		inter_give_to_player(OBJ_CHICKEN);
@@ -203,29 +203,29 @@ static void room_703_init() {
 
 static void room_703_daemon() {
 	if (local._startMonsterTimer) {
-		long diff = _scene->_frameStartTime - local._lastFrameTime;
+		long diff = kernel.clock - local._lastFrameTime;
 		if ((diff >= 0) && (diff <= 12))
 			local._monsterTime += diff;
 		else
 			local._monsterTime++;
 
-		local._lastFrameTime = _scene->_frameStartTime;
+		local._lastFrameTime = kernel.clock;
 	}
 
 	if ((local._monsterTime >= 2400) && !local._rexDeathFl && !local._useBomb) {
 		local._startMonsterTimer = false;
 		local._rexDeathFl = true;
 		player.commands_allowed = false;
-		_scene->freeAnimation();
+		kernel_abort_animation(0);
 		local._monsterMode = 3;
-		_scene->loadAnimation(kernel_name('D', -1));
+		kernel_run_animation(kernel_name('D', -1), 0);
 		local._rexDeathFl = false;
 		local._monsterTime = 0;
 	}
 
 
 	if (kernel.trigger == 70)
-		_scene->_reloadSceneFlag = true;
+		kernel.force_restart = true;
 
 	if ((local._monsterMode == 3) && (_scene->_animation[0] != nullptr)) {
 		if (_scene->_animation[0]->getCurrentFrame() != local._boatFrame) {
@@ -248,7 +248,7 @@ static void room_703_daemon() {
 	}
 
 	if (kernel.trigger == 70)
-		_scene->_reloadSceneFlag = true;
+		kernel.force_restart = true;
 
 	if ((local._monsterMode == 0) && (_scene->_animation[0] != nullptr)) {
 		if (_scene->_animation[0]->getCurrentFrame() != local._boatFrame) {
@@ -273,7 +273,7 @@ static void room_703_daemon() {
 
 			case 34:
 				if (local._curSequence != 2)
-					_scene->_nextSceneId = 704;
+					new_room = 704;
 				break;
 
 			case 57:
@@ -292,7 +292,7 @@ static void room_703_daemon() {
 				break;
 
 			case 73:
-				_scene->_nextSceneId = 701;
+				new_room = 701;
 				break;
 
 			case 82:
@@ -390,7 +390,7 @@ static void room_703_daemon() {
 				break;
 
 			case 151:
-				_scene->_nextSceneId = 701;
+				new_room = 701;
 				break;
 
 			default:
@@ -443,18 +443,18 @@ static void room_703_daemon() {
 				} else
 					text_show(70317);
 
-				_scene->freeAnimation();
+				kernel_abort_animation(0);
 				local._monsterMode = 1;
-				_scene->loadAnimation(kernel_name('B', -1));
+				kernel_run_animation(kernel_name('B', -1), 0);
 				_scene->_animation[0]->setCurrentFrame(39);
 				player.commands_allowed = true;
 				break;
 
 			case 91:
 				if (!local._useBomb) {
-					_scene->freeAnimation();
+					kernel_abort_animation(0);
 					local._monsterMode = 1;
-					_scene->loadAnimation(kernel_name('B', -1));
+					kernel_run_animation(kernel_name('B', -1), 0);
 					_scene->_animation[0]->setCurrentFrame(39);
 					player.commands_allowed = true;
 				} else
@@ -465,9 +465,9 @@ static void room_703_daemon() {
 			case 126:
 				_scene->_hotspots.activate(words_sea_monster, false);
 				global[kMonsterAlive] = false;
-				_scene->freeAnimation();
+				kernel_abort_animation(0);
 				local._monsterMode = 0;
-				_scene->loadAnimation(kernel_name('A', -1));
+				kernel_run_animation(kernel_name('A', -1), 0);
 				_scene->_animation[0]->setCurrentFrame(9);
 				player.commands_allowed = true;
 				if (config_file.naughtiness == STORYMODE_NAUGHTY)
@@ -506,42 +506,42 @@ static void room_703_parser() {
 			local._startMonsterTimer = false;
 			local._rexDeathFl = true;
 			local._monsterTime = 0;
-			_scene->freeAnimation();
+			kernel_abort_animation(0);
 			local._monsterMode = 3;
-			_scene->loadAnimation(kernel_name('D', -1));
+			kernel_run_animation(kernel_name('D', -1), 0);
 		} else if (local._boatDir == 2)
 			local._curSequence = 4;
 		else
 			local._curSequence = 1;
 	} else if (player_said_3(throw, bone, sea_monster) || player_said_3(throw, bones, sea_monster)) {
 		player.commands_allowed = false;
-		_scene->freeAnimation();
+		kernel_abort_animation(0);
 		local._monsterMode = 2;
-		_scene->loadAnimation(kernel_name('C', -1));
+		kernel_run_animation(kernel_name('C', -1), 0);
 		_scene->_animation[0]->setCurrentFrame(19);
 	} else if (player_said_3(throw, chicken, sea_monster)) {
 		player.commands_allowed = false;
-		_scene->freeAnimation();
+		kernel_abort_animation(0);
 		local._monsterMode = 2;
-		_scene->loadAnimation(kernel_name('C', -1));
+		kernel_run_animation(kernel_name('C', -1), 0);
 	} else if (player_said_3(throw, twinkifruit, sea_monster)) {
 		player.commands_allowed = false;
-		_scene->freeAnimation();
+		kernel_abort_animation(0);
 		local._monsterMode = 2;
-		_scene->loadAnimation(kernel_name('C', -1));
+		kernel_run_animation(kernel_name('C', -1), 0);
 		_scene->_animation[0]->setCurrentFrame(39);
 	} else if (player_said_3(throw, bomb, sea_monster)) {
 		player.commands_allowed = false;
-		_scene->freeAnimation();
+		kernel_abort_animation(0);
 		local._monsterMode = 2;
-		_scene->loadAnimation(kernel_name('C', -1));
+		kernel_run_animation(kernel_name('C', -1), 0);
 		_scene->_animation[0]->setCurrentFrame(59);
 	} else if (player_said_3(throw, chicken_bomb, sea_monster)) {
 		local._useBomb = true;
 		player.commands_allowed = false;
-		_scene->freeAnimation();
+		kernel_abort_animation(0);
 		local._monsterMode = 2;
-		_scene->loadAnimation(kernel_name('C', -1));
+		kernel_run_animation(kernel_name('C', -1), 0);
 	} else if (player_said_3(put, bottle, water) || player_said_3(fill, bottle, water)) {
 		if (global[kBottleStatus] != 4) {
 			handleBottleInterface();

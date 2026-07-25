@@ -34,11 +34,11 @@ namespace Rooms {
 static void room_702_init() {
 	g_sprite_ids[12] = kernel_load_series("*RXMBD_8", 0);
 
-	if (_scene->_priorSceneId == 701) {
+	if (previous_room == 701) {
 		player.x = 13;
 		player.y = 145;
 		player.facing = FACING_EAST;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG && _scene->_priorSceneId != 620) {
+	} else if (previous_room != RETURNING_FROM_DIALOG && previous_room != 620) {
 		player.x = 289;
 		player.y = 138;
 		player_walk(262, 148, FACING_WEST);
@@ -75,7 +75,7 @@ static void room_702_parser() {
 	else if (player_said_2(step_into, teleporter)) {
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		_scene->_nextSceneId = 711;
+		new_room = 711;
 	} else if (player_said_2(take, bones) && (player.main_object_source == CAT_HOTSPOT) && (!player_has(OBJ_BONES) || kernel.trigger)) {
 		switch (kernel.trigger) {
 		case 0:

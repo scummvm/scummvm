@@ -39,10 +39,10 @@ struct Scratch {
 static Scratch local;
 
 static void room_304_init() {
-	if (_scene->_priorSceneId == 303) {
+	if (previous_room == 303) {
 		player.walker_visible = false;
 		player.commands_allowed = false;
-		_scene->loadAnimation(kernel_name('a', -1), 60);
+		kernel_run_animation(kernel_name('a', -1), 60);
 	} else {
 		if (global[kSexOfRex] == REX_MALE)
 			g_sprite_ids[1] = kernel_load_series(kernel_name('a', 0), 0);
@@ -77,7 +77,7 @@ static void room_304_init() {
 
 static void room_304_daemon() {
 	if (kernel.trigger == 60)
-		_scene->_nextSceneId = 311;
+		new_room = 311;
 
 	if (kernel.trigger >= 70) {
 		switch (kernel.trigger) {
@@ -155,7 +155,7 @@ static void room_304_daemon() {
 			break;
 
 		case 78:
-			_scene->_nextSceneId = 316;
+			new_room = 316;
 			break;
 
 		default:

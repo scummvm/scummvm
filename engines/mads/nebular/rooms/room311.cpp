@@ -50,7 +50,7 @@ static void room_311_init() {
 	local._checkGuardFl = false;
 	kernel.quotes = quote_load(0xFA, 0);
 
-	if (_scene->_priorSceneId == 391) {
+	if (previous_room == 391) {
 		global[kSexOfRex] = REX_MALE;
 		player.commands_allowed = false;
 		player.walker_visible = false;
@@ -58,18 +58,18 @@ static void room_311_init() {
 		player.x = 166;
 		player.y = 101;
 		_scene->_sequences.addTimer(120, 71);
-	} else if (_scene->_priorSceneId == 310) {
+	} else if (previous_room == 310) {
 		player.x = 302;
 		player.y = 145;
 	}
-	else if (_scene->_priorSceneId == 320) {
+	else if (previous_room == 320) {
 		player.x = 129;
 		player.y = 113;
 		player.facing = FACING_SOUTH;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.walker_visible = false;
 		player.commands_allowed = false;
-		_scene->loadAnimation(kernel_name('a', -1), 70);
+		kernel_run_animation(kernel_name('a', -1), 70);
 	}
 
 	section_3_music();
@@ -80,7 +80,7 @@ static void room_311_daemon() {
 
 	switch (kernel.trigger) {
 	case 70:
-		_scene->_nextSceneId = 310;
+		new_room = 310;
 		break;
 
 	case 71:
@@ -199,7 +199,7 @@ static void room_311_parser() {
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.addQuote(250, 0, 240);
 	} else if (player_said_2(sit_at, desk))
-		_scene->_nextSceneId = 320;
+		new_room = 320;
 	else if (player_said_2(climb_into, air_vent)) {
 		switch (kernel.trigger) {
 		case 0:
@@ -290,7 +290,7 @@ static void room_311_parser() {
 			break;
 
 		case 7:
-			_scene->_nextSceneId = 313;
+			new_room = 313;
 			break;
 
 		default:

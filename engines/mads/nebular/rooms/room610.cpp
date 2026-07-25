@@ -56,7 +56,7 @@ static void room_610_init() {
 	if (!player.been_here_before)
 		local._cellCharging = false;
 
-	if (object[OBJ_PHONE_HANDSET].location == _scene->_currentSceneId) {
+	if (object[OBJ_PHONE_HANDSET].location == room_id) {
 		g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 9, 0, 0, 0);
 		local._handsetHotspotId = _scene->_dynamicHotspots.add(words_phone_handset, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(local._handsetHotspotId, Common::Point(132, 121), FACING_NORTHWEST);
@@ -64,10 +64,10 @@ static void room_610_init() {
 			global[kHandsetCellStatus] = 1;
 	}
 
-	if (_scene->_roomChanged && game.difficulty != DIFFICULTY_EASY)
+	if (kernel.teleported_in && game.difficulty != DIFFICULTY_EASY)
 		inter_give_to_player(OBJ_PENLIGHT);
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 175;
 		player.y = 152;
 		player.facing = FACING_NORTHWEST;
@@ -78,13 +78,13 @@ static void room_610_init() {
 
 static void room_610_daemon() {
 	if (local._cellCharging) {
-		long diff = _scene->_frameStartTime - local._lastFrameTimer;
+		long diff = kernel.clock - local._lastFrameTimer;
 		if ((diff >= 0) && (diff <= 60))
 			local._cellChargingTimer += diff;
 		else
 			local._cellChargingTimer++;
 
-		local._lastFrameTimer = _scene->_frameStartTime;
+		local._lastFrameTimer = kernel.clock;
 	}
 
 	// CHECKME: local._checkVal is always false, could be removed
@@ -99,7 +99,7 @@ static void room_610_daemon() {
 
 static void room_610_parser() {
 	if (player_said_2(exit_from, video_store))
-		_scene->_nextSceneId = 609;
+		new_room = 609;
 	else if (player_said_2(take, phone_handset)) {
 		if (kernel.trigger || !player_has(OBJ_PHONE_HANDSET)) {
 			switch (kernel.trigger) {
@@ -147,7 +147,7 @@ static void room_610_parser() {
 			g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 9, 0, 0, 0);
 			local._handsetHotspotId = _scene->_dynamicHotspots.add(words_phone_handset, words_walkto, g_sequence_ids[1], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(local._handsetHotspotId, Common::Point(132, 121), FACING_NORTHWEST);
-			inter_move_object(OBJ_PHONE_HANDSET, _scene->_currentSceneId);
+			inter_move_object(OBJ_PHONE_HANDSET, room_id);
 			break;
 
 		case 2:
@@ -234,8 +234,8 @@ void room_610_preload() {
 
 	section_6_walker();
 	section_6_interface();
-	_scene->addActiveVocab(words_phone_handset);
-	_scene->addActiveVocab(words_walkto);
+	vocab_make_active(words_phone_handset);
+	vocab_make_active(words_walkto);
 }
 
 } // namespace Rooms

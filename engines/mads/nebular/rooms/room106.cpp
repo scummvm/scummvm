@@ -45,7 +45,7 @@ static Scratch local;
 static void room_106_init() {
 	g_sprite_ids[0] = kernel_load_series(kernel_name('H', -1), 0);
 
-	if (player_has(OBJ_REBREATHER) || (_scene->_priorSceneId != 102) || _scene->_roomChanged) {
+	if (player_has(OBJ_REBREATHER) || (previous_room != 102) || kernel.teleported_in) {
 		g_sprite_ids[1] = kernel_load_series(kernel_name('A', 0), 0);
 		g_sprite_ids[3] = kernel_load_series(kernel_name('A', 1), 0);
 	}
@@ -55,7 +55,7 @@ static void room_106_init() {
 	g_sprite_ids[4] = kernel_load_series(kernel_name('I', -1), 0);
 	g_sequence_ids[4] = _scene->_sequences.addSpriteCycle(g_sprite_ids[4], false, 6, 0, 32, 47);
 
-	if (_scene->_priorSceneId == 102) {
+	if (previous_room == 102) {
 		g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 6, 1, 4, 0);
 		_scene->_sequences.addSubEntry(g_sequence_ids[0], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 		player.walker_visible = false;
@@ -63,8 +63,8 @@ static void room_106_init() {
 		player.facing = FACING_EAST;
 		player.x = 106;
 		player.y = 69;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		if (_scene->_priorSceneId == 107) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
+		if (previous_room == 107) {
 			player.x = 319;
 			player.y = 84;
 			player.facing = player.prepare_walk_facing = FACING_WEST;
@@ -81,7 +81,7 @@ static void room_106_init() {
 		player.ready_to_walk = true;
 	}
 
-	if (_scene->_priorSceneId != 102) {
+	if (previous_room != 102) {
 		g_sequence_ids[0] = _scene->_sequences.addSpriteCycle(g_sprite_ids[0], false, 6, 0, 0, 0);
 		_scene->_sequences.setAnimRange(g_sequence_ids[0], -2, -2);
 		_scene->_sequences.setDepth(g_sequence_ids[0], 14);
@@ -101,8 +101,8 @@ static void room_106_daemon() {
 		_scene->_sequences.setAnimRange(g_sequence_ids[0], -2, -2);
 		_scene->_sequences.setDepth(g_sequence_ids[0], 14);
 
-		if (!player_has(OBJ_REBREATHER) && !_scene->_roomChanged) {
-			_scene->loadAnimation(kernel_full_name(106, 'A', -1, "", EXT_AA), 75);
+		if (!player_has(OBJ_REBREATHER) && !kernel.teleported_in) {
+			kernel_run_animation(kernel_full_name(106, 'A', -1, "", EXT_AA), 75);
 		} else {
 			g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 4, 1, 0, 0);
 			_scene->_sequences.addSubEntry(g_sequence_ids[1], SEQUENCE_TRIGGER_SPRITE, 28, 71);
@@ -122,7 +122,7 @@ static void room_106_daemon() {
 		} else {
 			player.prepare_walk_facing = FACING_SOUTHWEST;
 			local._firstEmergingFl = true;
-			_scene->loadAnimation(kernel_full_name(106, 'B', -1, "", EXT_AA), 80);
+			kernel_run_animation(kernel_full_name(106, 'B', -1, "", EXT_AA), 80);
 		}
 	}
 
@@ -179,12 +179,12 @@ static void room_106_daemon() {
 		else if (kernel.trigger == 72)
 			_scene->_sequences.addTimer(24, 74);
 		else if (kernel.trigger == 74)
-			_scene->_nextSceneId = 102;
+			new_room = 102;
 	}
 
 	if (kernel.trigger == 75) {
 		player_undiscover_room();
-		_scene->_nextSceneId = 102;
+		new_room = 102;
 	}
 }
 
@@ -259,7 +259,7 @@ void room_106_preload() {
 	section_1_walker();
 	section_1_interface();
 
-	if ((_scene->_priorSceneId == 102) && !player_has(OBJ_REBREATHER) && !_scene->_roomChanged)
+	if ((previous_room == 102) && !player_has(OBJ_REBREATHER) && !kernel.teleported_in)
 		*player.series_name = '\0';
 
 	text_default_y = 100;

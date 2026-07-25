@@ -59,7 +59,7 @@ static void handleRexDialogues(int quote) {
 	_scene->_kernelMessages.reset();
 
 	const char *curQuote = quote_string(kernel.quotes, quote);
-	if (_scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing) > 200) {
+	if (_scene->_kernelMessages._talkFont->getWidth(curQuote, kernel_message_spacing) > 200) {
 		static char subQuote1[34], subQuote2[34];
 		quote_split_string(curQuote, subQuote1, subQuote2);
 		Common::strcpy_s(local._subQuote2, subQuote2);
@@ -106,7 +106,7 @@ static void room_319_init() {
 	local._dialog2.setup(0x44, 0x171, 0x172, 0x173, 0x174, 0x175, 0x176, 0);
 	local._dialog3.setup(0x45, 0x17D, 0x17E, 0x17F, 0x180, 0x181, 0x182, 0x183, 0);
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	if (previous_room != RETURNING_FROM_DIALOG) {
 		local._dialog1.set(0x165, 0x166, 0x167, 0x168, 0);
 		local._dialog2.set(0x171, 0x172, 0x173, 0x174, 0);
 		local._dialog3.set(0x17D, 0x17E, 0x17F, 0x180, 0);
@@ -127,9 +127,9 @@ static void room_319_init() {
 	local._slacheReady = false;
 	local._animFrame = 0;
 
-	_scene->loadAnimation(kernel_name('b', 0));
+	kernel_run_animation(kernel_name('b', 0), 0);
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	if (previous_room != RETURNING_FROM_DIALOG) {
 		local._animMode = 1;
 		local._nextAction1 = 2;
 		local._nextAction2 = 2;
@@ -236,23 +236,23 @@ static void room_319_daemon() {
 				switch (local._nextAction1) {
 				case 4:
 					local._animFrame = 0;
-					_scene->freeAnimation();
+					kernel_abort_animation(0);
 					local._animMode = 2;
-					_scene->loadAnimation(kernel_name('b', 3), 70);
+					kernel_run_animation(kernel_name('b', 3), 70);
 					break;
 
 				case 5:
 					local._animFrame = 0;
-					_scene->freeAnimation();
+					kernel_abort_animation(0);
 					local._animMode = 3;
-					_scene->loadAnimation(kernel_name('b', 4), 71);
+					kernel_run_animation(kernel_name('b', 4), 71);
 					break;
 
 				case 6:
 					local._animFrame = 0;
-					_scene->freeAnimation();
+					kernel_abort_animation(0);
 					local._animMode = 4;
-					_scene->loadAnimation(kernel_name('b', 5), 72);
+					kernel_run_animation(kernel_name('b', 5), 72);
 					break;
 
 				default:
@@ -304,8 +304,8 @@ static void room_319_daemon() {
 		local._animMode = 1;
 		local._nextAction1 = local._nextAction2;
 		local._animFrame = 0;
-		_scene->freeAnimation();
-		_scene->loadAnimation(kernel_name('b', 0));
+		kernel_abort_animation(0);
+		kernel_run_animation(kernel_name('b', 0), 0);
 		if (local._nextAction1 == 3)
 			_scene->_animation[0]->setCurrentFrame(85);
 		else if (local._nextAction1 == 1)
@@ -338,7 +338,7 @@ static void room_319_daemon() {
 		magic_fade_to_grey(master_palette, nullptr, 18, 228,
 			248, 0, 1, 16);
 		mcga_shakes = 1;
-		_scene->_reloadSceneFlag = true;
+		kernel.force_restart = true;
 		break;
 
 	case 73:
@@ -423,7 +423,7 @@ static void room_319_parser() {
 					_scene->_sequences.addTimer(120, 3);
 				} else {
 					global[kRexHasMetSlache] = true;
-					_scene->_nextSceneId = 318;
+					new_room = 318;
 				}
 			}
 		}

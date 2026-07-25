@@ -42,7 +42,7 @@ static void room_810_init() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
 	player.walker_visible = false;
 	player.commands_allowed = false;
-	_scene->loadAnimation(kernel_full_name(810, 'a', -1, "", EXT_AA));
+	kernel_run_animation(kernel_full_name(810, 'a', -1, "", EXT_AA), 0);
 	local._moveAllowed = true;
 
 	section_8_music();
@@ -56,7 +56,7 @@ static void room_810_daemon() {
 	}
 
 	if (kernel.trigger == 70)
-		_scene->_nextSceneId = 804;
+		new_room = 804;
 }
 
 void room_810_synchronize(Common::Serializer &s) {

@@ -83,15 +83,15 @@ static void room_207_init() {
 	}
 
 	local._eyeFl = false;
-	if (_scene->_priorSceneId == 211) {
+	if (previous_room == 211) {
 		player.x = 13;
 		player.y = 105;
 		player.facing = FACING_EAST;
-	} else if (_scene->_priorSceneId == 214) {
+	} else if (previous_room == 214) {
 		player.x = 164;
 		player.y = 117;
 		player.facing = FACING_SOUTH;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 305;
 		player.y = 131;
 	}
@@ -175,7 +175,7 @@ static void room_207_parser() {
 	if (player.look_around)
 		text_show(20711);
 	else if (player_said_2(walk_through, doorway))
-		_scene->_nextSceneId = 214;
+		new_room = 214;
 	else {
 		if ((player.x > 150) && (player.x < 189) &&
 			(player.y > 111) && (player.y < 130)) {
@@ -247,10 +247,10 @@ void room_207_preload() {
 
 	section_2_walker();
 	section_2_interface();
-	_scene->addActiveVocab(words_vulture);
-	_scene->addActiveVocab(words_walkto);
-	_scene->addActiveVocab(words_spider);
-	_scene->addActiveVocab(words_walkto);
+	vocab_make_active(words_vulture);
+	vocab_make_active(words_walkto);
+	vocab_make_active(words_spider);
+	vocab_make_active(words_walkto);
 }
 
 } // namespace Rooms

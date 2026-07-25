@@ -66,16 +66,16 @@ static void room_389_init() {
 
 static void room_389_daemon() {
 	_scene->_kernelMessages.randomServer();
-	if (_scene->_frameStartTime >= local._monsterTime) {
+	if (kernel.clock >= local._monsterTime) {
 		int chanceMinor = _scene->_kernelMessages.checkRandom() * 4 + 1;
 		_scene->_kernelMessages.generateRandom(20, chanceMinor);
-		local._monsterTime = _scene->_frameStartTime + 2;
+		local._monsterTime = kernel.clock + 2;
 	}
 }
 
 static void room_389_parser() {
 	if (player_said_2(return_to, air_shaft))
-		_scene->_nextSceneId = 313;
+		new_room = 313;
 	else if (player_said_2(talkto, monster)) {
 		switch (kernel.trigger) {
 		case 0:

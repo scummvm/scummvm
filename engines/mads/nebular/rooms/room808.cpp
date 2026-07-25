@@ -60,11 +60,11 @@ static void room_808_init() {
 		global[kBeamIsUp] = false;
 		global[kForceBeamDown] = false;
 		global[kDontRepeat] = false;
-	} else if ((_scene->_priorSceneId == 803) && global[kReturnFromCut]) {
+	} else if ((previous_room == 803) && global[kReturnFromCut]) {
 		global[kDontRepeat] = false;
 		global[kBeamIsUp] = true;
-		global[kAntigravClock] = _scene->_frameStartTime;
-		global[kAntigravTiming] = _scene->_frameStartTime;
+		global[kAntigravClock] = kernel.clock;
+		global[kAntigravTiming] = kernel.clock;
 		global[kForceBeamDown] = false;
 		global[kReturnFromCut] = false;
 	}
@@ -109,7 +109,7 @@ static void room_808_parser() {
 			if (local._goingTo803 && !global[kTopButtonPushed]) {
 				local._goingTo803 = false;
 				global[kReturnFromCut] = true;
-				_scene->_nextSceneId = 803;
+				new_room = 803;
 			}
 			break;
 
@@ -229,7 +229,7 @@ static void room_808_parser() {
 			break;
 		}
 	} else if (player_said_2(exit, panel)) {
-		_scene->_nextSceneId = 801;
+		new_room = 801;
 		global[kBetweenRooms] = true;
 	} else
 		return;

@@ -62,7 +62,7 @@ static void room_605_daemon() {
 		else
 			text_show(60599);
 
-		_scene->_nextSceneId = global[kResurrectRoom];
+		new_room = global[kResurrectRoom];
 	}
 }
 

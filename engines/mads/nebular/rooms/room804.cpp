@@ -97,7 +97,7 @@ static void room_804_init() {
 		_scene->_sequences.setDepth(g_sequence_ids[1], 8);
 	}
 
-	_scene->loadAnimation(kernel_full_name(804, 'r', 1, "", EXT_AA));
+	kernel_run_animation(kernel_full_name(804, 'r', 1, "", EXT_AA), 0);
 
 	section_8_music();
 
@@ -170,7 +170,7 @@ static void room_804_daemon() {
 		}
 
 		if (kernel.trigger == 80) {
-			_scene->_nextSceneId = 803;
+			new_room = 803;
 		}
 
 		if ((_scene->_animation[0]->getCurrentFrame() == 7) && (!global[kWindowFixed])) {
@@ -266,7 +266,7 @@ static void room_804_daemon() {
 	}
 
 	if (kernel.trigger == 90) {
-		_scene->_nextSceneId = 803;
+		new_room = 803;
 	}
 
 	if ((_scene->_animation[0]->getCurrentFrame() == 72) && !local._alreadyPop) {
@@ -283,14 +283,14 @@ static void room_804_daemon() {
 static void room_804_parser() {
 	if (player_said_2(look, service_panel) ||
 		player_said_2(open, service_panel)) {
-		_scene->_nextSceneId = 805;
+		new_room = 805;
 	} else if ((player_said_2(activate, remote)) && global[kTopButtonPushed]) {
 		if (!global[kInSpace]) {
 			// Top button pressed on panel in hanger control
 			if (!global[kBeamIsUp]) {
 				global[kFromCockpit] = true;
 				global[kUpBecauseOfRemote] = true;
-				_scene->_nextSceneId = 803;
+				new_room = 803;
 			} else {
 				// Player turning off remote
 				global[kBeamIsUp] = false;

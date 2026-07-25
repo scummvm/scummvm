@@ -42,13 +42,13 @@ static void room_302_init() {
 	player.commands_allowed = false;
 	player.walker_visible = false;
 
-	_scene->loadAnimation(kernel_name('a', -1), 71);
+	kernel_run_animation(kernel_name('a', -1), 71);
 	section_3_music();
 }
 
 static void room_302_daemon() {
 	if (kernel.trigger == 71)
-		_scene->_nextSceneId = 303;
+		new_room = 303;
 
 	if ((_scene->_animation[0] != nullptr) && (_scene->_animation[0]->getCurrentFrame() != local._oldFrame)) {
 		local._oldFrame = _scene->_animation[0]->getCurrentFrame();

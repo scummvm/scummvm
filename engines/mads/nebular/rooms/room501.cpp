@@ -107,7 +107,7 @@ static void room_501_init() {
 	_scene->_sequences.setDepth(g_sequence_ids[2], 4);
 	local._rexPunched = true;
 
-	if (_scene->_priorSceneId == 504) {
+	if (previous_room == 504) {
 		player.commands_allowed = false;
 		player.x = 74;
 		player.y = 121;
@@ -118,20 +118,20 @@ static void room_501_init() {
 		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -2);
 		_scene->_sequences.setDepth(g_sequence_ids[2], 4);
 		if (global[kSexOfRex] == REX_MALE)
-			_scene->loadAnimation(kernel_name('G', 2), 70);
+			kernel_run_animation(kernel_name('G', 2), 70);
 		else
-			_scene->loadAnimation(kernel_name('R', 2), 70);
-	} else if (_scene->_priorSceneId == 503) {
+			kernel_run_animation(kernel_name('R', 2), 70);
+	} else if (previous_room == 503) {
 		player.x = 317;
 		player.y = 102;
 		player.facing = FACING_SOUTHWEST;
 		_scene->_sequences.addTimer(15, 80);
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 299;
 		player.y = 131;
 	}
 
-	if (_scene->_roomChanged) {
+	if (kernel.teleported_in) {
 		inter_give_to_player(OBJ_FAKE_ID);
 		inter_give_to_player(OBJ_SECURITY_CARD);
 		inter_give_to_player(OBJ_ID_CARD);
@@ -191,7 +191,7 @@ static void room_501_daemon() {
 		switch (kernel.trigger) {
 		case 70:
 			player.walker_visible = true;
-			player.clock = _scene->_frameStartTime - player.frame_delay;
+			player.clock = kernel.clock - player.frame_delay;
 			_scene->_sequences.addTimer(15, 71);
 			break;
 
@@ -268,7 +268,7 @@ static void room_501_parser() {
 		break;
 
 		case 4:
-			_scene->_nextSceneId = 504;
+			new_room = 504;
 			break;
 
 		default:
@@ -289,7 +289,7 @@ static void room_501_parser() {
 			if (global[kSexOfRex] == REX_MALE) {
 				player.walker_visible = false;
 				g_engine->_soundManager->command(13, 0);
-				_scene->loadAnimation(kernel_name('G', 1), 5);
+				kernel_run_animation(kernel_name('G', 1), 5);
 			} else {
 				local._rexPunched = false;
 				_scene->_kernelMessages.reset();
@@ -299,7 +299,7 @@ static void room_501_parser() {
 
 		case 5:
 			player.walker_visible = true;
-			player.clock = _scene->_frameStartTime - player.frame_delay;
+			player.clock = kernel.clock - player.frame_delay;
 			_scene->_sequences.addTimer(30, 6);
 			break;
 
@@ -361,7 +361,7 @@ static void room_501_parser() {
 			g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
 			_scene->_sequences.setDepth(g_sequence_ids[3], 7);
 			_scene->_sequences.updateTimeout(g_sequence_ids[3], syncIdx);
-			_scene->_nextSceneId = 503;
+			new_room = 503;
 		}
 		break;
 
@@ -421,8 +421,8 @@ void room_501_preload() {
 
 	section_5_walker();
 	section_5_interface();
-	_scene->addActiveVocab(words_door);
-	_scene->addActiveVocab(words_walk_through);
+	vocab_make_active(words_door);
+	vocab_make_active(words_walk_through);
 }
 
 } // namespace Rooms

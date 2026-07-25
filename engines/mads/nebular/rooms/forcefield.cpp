@@ -62,7 +62,7 @@ void handle_forcefield(Forcefield *force, int16 *sprites) {
 		return;
 	}
 
-	if (!force->_flag || (_scene->_frameStartTime < force->_timer) || (force->_vertical + force->_horizontal >= 5))
+	if (!force->_flag || (kernel.clock < force->_timer) || (force->_vertical + force->_horizontal >= 5))
 		return;
 
 	if (g_engine->getRandomNumber(1, 1000) <= (200 + ((40 - (force->_vertical + force->_horizontal)) << 5))) {
@@ -126,7 +126,7 @@ void handle_forcefield(Forcefield *force, int16 *sprites) {
 		}
 	}
 
-	force->_timer = _scene->_frameStartTime + 4;
+	force->_timer = kernel.clock + 4;
 }
 
 } // namespace Rooms

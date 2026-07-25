@@ -52,7 +52,7 @@ static void handleDoorSequences() {
 	kernel.trigger_setup_mode = SEQUENCE_TRIGGER_DAEMON;
 
 	if (local._firstDoorFl) {
-		if (player_said_2(walk_into, software_store) || ((_scene->_priorSceneId == 507) && !local._actionFl)) {
+		if (player_said_2(walk_into, software_store) || ((previous_room == 507) && !local._actionFl)) {
 			local._doorDepth = 13;
 			local._doorSpriteIdx = g_sprite_ids[2];
 			local._doorSequenceIdx = g_sequence_ids[2];
@@ -73,7 +73,7 @@ static void handleDoorSequences() {
 		_scene->_sequences.remove(local._doorSequenceIdx);
 		local._doorSequenceIdx = _scene->_sequences.addSpriteCycle(local._doorSpriteIdx, false, 7, 1, 0, 0);
 		_scene->_sequences.setDepth(local._doorSequenceIdx, local._doorDepth);
-		_scene->changeVariant(1);
+		kernel_load_variant(1);
 		_scene->_sequences.addSubEntry(local._doorSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 81);
 		break;
 
@@ -121,9 +121,9 @@ static void handleDoorSequences() {
 		local._actionFl = false;
 		player.commands_allowed = true;
 		if (local._labDoorFl)
-			_scene->_nextSceneId = 508;
+			new_room = 508;
 		else
-			_scene->_nextSceneId = 507;
+			new_room = 507;
 
 		break;
 
@@ -144,7 +144,7 @@ static void room_506_init() {
 		_scene->_sequences.remove(g_sequence_ids[3]);
 		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, -2);
 		_scene->_sequences.setDepth(g_sequence_ids[3], 5);
-		_scene->loadAnimation(kernel_name('R', 1), 70);
+		kernel_run_animation(kernel_name('R', 1), 70);
 	}
 
 	g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, 1);
@@ -163,19 +163,19 @@ static void room_506_init() {
 	local._firstDoorFl = true;
 	local._actionFl = false;
 
-	if (_scene->_priorSceneId == 508) {
+	if (previous_room == 508) {
 		player.x = 16;
 		player.y = 111;
 		player.facing = FACING_SOUTHEAST;
 		_scene->_sequences.addTimer(15, 80);
 		player.commands_allowed = false;
-	} else if (_scene->_priorSceneId == 507) {
+	} else if (previous_room == 507) {
 		player.x = 80;
 		player.y = 102;
 		player.facing = FACING_SOUTHEAST;
 		_scene->_sequences.addTimer(60, 80);
 		player.commands_allowed = false;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 138;
 		player.y = 116;
 		player.facing = FACING_NORTHEAST;
@@ -190,7 +190,7 @@ static void room_506_daemon() {
 	if (kernel.trigger >= 80) {
 		if (local._firstDoorFl) {
 			local._heroFacing = FACING_SOUTHEAST;
-			if (_scene->_priorSceneId == 507) {
+			if (previous_room == 507) {
 				local._doorPos_x = 112;
 				local._doorPos_y = 102;
 				local._doorWord = 0x336;
@@ -280,7 +280,7 @@ static void room_506_parser() {
 			g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, -2);
 			_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
 			_scene->_sequences.updateTimeout(g_sequence_ids[4], syncIdx);
-			_scene->_nextSceneId = 504;
+			new_room = 504;
 		}
 		break;
 
@@ -340,9 +340,9 @@ void room_506_preload() {
 
 	section_5_walker();
 	section_5_interface();
-	_scene->addActiveVocab(words_walk_into);
-	_scene->addActiveVocab(words_software_store);
-	_scene->addActiveVocab(words_laboratory);
+	vocab_make_active(words_walk_into);
+	vocab_make_active(words_software_store);
+	vocab_make_active(words_laboratory);
 }
 
 } // namespace Rooms

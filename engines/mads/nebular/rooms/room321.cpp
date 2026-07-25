@@ -47,18 +47,18 @@ static void room_321_init() {
 		suffixNum = player.been_here_before ? 2 : 0;
 	}
 
-	_scene->loadAnimation(kernel_name('g', suffixNum), 60);
+	kernel_run_animation(kernel_name('g', suffixNum), 60);
 	section_3_music();
 }
 
 static void room_321_daemon() {
 	if (_scene->_animation[0] != nullptr) {
 		if ((_scene->_animation[0]->getCurrentFrame() >= 260) && (global[kSexOfRex] == REX_MALE) && (config_file.naughtiness >= STORYMODE_NICE))
-			_scene->_nextSceneId = 316;
+			new_room = 316;
 	}
 
 	if (kernel.trigger == 60)
-		_scene->_nextSceneId = 316;
+		new_room = 316;
 }
 
 void room_321_synchronize(Common::Serializer &s) {

@@ -40,7 +40,7 @@ static Scratch local;
 
 
 static void room_603_init() {
-	if (object[OBJ_COMPACT_CASE].location == _scene->_currentSceneId) {
+	if (object[OBJ_COMPACT_CASE].location == room_id) {
 		g_sprite_ids[4] = kernel_load_series("*RXMRD_3", 0);
 		g_sprite_ids[1] = kernel_load_series(kernel_name('c', -1), 0);
 		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, -1);
@@ -49,7 +49,7 @@ static void room_603_init() {
 		_scene->_dynamicHotspots.setPosition(local._compactCaseHotspotId, Common::Point(250, 152), FACING_SOUTHEAST);
 	}
 
-	if ((game.difficulty != DIFFICULTY_HARD) && (object[OBJ_NOTE].location == _scene->_currentSceneId)) {
+	if ((game.difficulty != DIFFICULTY_HARD) && (object[OBJ_NOTE].location == room_id)) {
 		g_sprite_ids[3] = kernel_load_series("*RXMRC_9", 0);
 		g_sprite_ids[2] = kernel_load_series(kernel_name('p', -1), 0);
 		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
@@ -58,7 +58,7 @@ static void room_603_init() {
 		_scene->_dynamicHotspots.setPosition(local._noteHotspotId, Common::Point(242, 118), FACING_NORTHEAST);
 	}
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 113;
 		player.y = 134;
 	}
@@ -68,7 +68,7 @@ static void room_603_init() {
 
 static void room_603_parser() {
 	if (player_said_2(walk_towards, livingroom))
-		_scene->_nextSceneId = 602;
+		new_room = 602;
 	else if (player_said_2(take, compact_case)) {
 		if (kernel.trigger || !player_has(OBJ_COMPACT_CASE)) {
 			switch (kernel.trigger) {
@@ -114,7 +114,7 @@ static void room_603_parser() {
 				_scene->_dynamicHotspots.remove(local._noteHotspotId);
 				inter_give_to_player(OBJ_NOTE);
 				_scene->_sequences.remove(g_sequence_ids[3]);
-				player.clock = _scene->_frameStartTime - player.frame_delay;
+				player.clock = kernel.clock - player.frame_delay;
 				player.walker_visible = true;
 				player.commands_allowed = true;
 			}
@@ -147,15 +147,15 @@ static void room_603_parser() {
 	else if (player_said_2(take, perfume))
 		text_show(60322);
 	else if (player_said_2(look, note)) {
-		if (object[OBJ_NOTE].location == _scene->_currentSceneId)
+		if (object[OBJ_NOTE].location == room_id)
 			text_show(60324);
 	} else if (player_said_2(look, corner_table)) {
-		if (object[OBJ_NOTE].location == _scene->_currentSceneId)
+		if (object[OBJ_NOTE].location == room_id)
 			text_show(60326);
 		else
 			text_show(60325);
 	} else if (player_said_2(look, vanity)) {
-		if (object[OBJ_COMPACT_CASE].location == _scene->_currentSceneId)
+		if (object[OBJ_COMPACT_CASE].location == room_id)
 			text_show(60327);
 		else
 			text_show(60328);
@@ -183,9 +183,9 @@ void room_603_preload() {
 
 	section_6_walker();
 	section_6_interface();
-	_scene->addActiveVocab(words_walkto);
-	_scene->addActiveVocab(words_compact_case);
-	_scene->addActiveVocab(words_note);
+	vocab_make_active(words_walkto);
+	vocab_make_active(words_compact_case);
+	vocab_make_active(words_note);
 }
 
 } // namespace Rooms

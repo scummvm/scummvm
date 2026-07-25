@@ -61,10 +61,10 @@ static void room_511_init() {
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(26, 153), FACING_NORTHEAST);
 		_scene->_sequences.setDepth(g_sequence_ids[7], 3);
 		if (global[kBoatRaised])
-			_scene->changeVariant(2);
+			kernel_load_variant(2);
 	}
 
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
+	if (previous_room != RETURNING_FROM_DIALOG)
 		local._handingLine = false;
 
 	if (global[kBoatRaised]) {
@@ -91,7 +91,7 @@ static void room_511_init() {
 
 		_scene->_hotspots.activate(words_rope, true);
 		_scene->_hotspots.activate(words_boat, true);
-		_scene->changeVariant(1);
+		kernel_load_variant(1);
 	}
 
 	local._lineFrame = -1;
@@ -100,11 +100,11 @@ static void room_511_init() {
 	g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, -2);
 	_scene->_sequences.setDepth(g_sequence_ids[1], 1);
 
-	if (_scene->_priorSceneId == 512) {
+	if (previous_room == 512) {
 		player.x = 60;
 		player.y = 112;
 		player.facing = FACING_SOUTHEAST;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 55;
 		player.y = 152;
 		player.facing = FACING_NORTHWEST;
@@ -113,12 +113,12 @@ static void room_511_init() {
 		_scene->_sequences.remove(g_sequence_ids[1]);
 		g_sequence_ids[1] = _scene->_sequences.startCycle(g_sprite_ids[1], false, -1);
 		_scene->_sequences.setDepth(g_sequence_ids[1], 1);
-		_scene->loadAnimation(kernel_name('R', 1), 70);
+		kernel_run_animation(kernel_name('R', 1), 70);
 	} else if (local._handingLine) {
 		player.walker_visible = false;
 		local._lineAnimationMode = 1;
 		local._lineAnimationPosition = 1;
-		_scene->loadAnimation(kernel_name('R', -1));
+		kernel_run_animation(kernel_name('R', -1), 0);
 		local._lineFrame = 2;
 	}
 	section_5_music();
@@ -186,9 +186,9 @@ static void room_511_pre_parser() {
 		if (kernel.trigger == 0) {
 			player.ready_to_walk = false;
 			player.commands_allowed = false;
-			_scene->freeAnimation();
+			kernel_abort_animation(0);
 			local._lineAnimationMode = 2;
-			_scene->loadAnimation(kernel_name('R', 2), 1);
+			kernel_run_animation(kernel_name('R', 2), 1);
 		} else if (kernel.trigger == 1) {
 			player.walker_visible = true;
 			player.clock = _scene->_animation[0]->getNextFrameTimer() - player.frame_delay;
@@ -202,7 +202,7 @@ static void room_511_pre_parser() {
 
 static void room_511_parser() {
 	if (player_said_2(walk_into, restaurant))
-		_scene->_nextSceneId = 512;
+		new_room = 512;
 	else if (player_said_2(get_into, car)) {
 		switch (kernel.trigger) {
 		case 0:
@@ -236,7 +236,7 @@ static void room_511_parser() {
 			g_sequence_ids[4] = _scene->_sequences.startCycle(g_sprite_ids[4], false, -2);
 			_scene->_sequences.setMsgLayout(g_sequence_ids[4]);
 			_scene->_sequences.updateTimeout(g_sequence_ids[4], syncIdx);
-			_scene->_nextSceneId = 504;
+			new_room = 504;
 		}
 		break;
 
@@ -254,7 +254,7 @@ static void room_511_parser() {
 						local._lineAnimationMode = 1;
 						local._lineAnimationPosition = 1;
 						local._lineMoving = true;
-						_scene->loadAnimation(kernel_name('R', -1));
+						kernel_run_animation(kernel_name('R', -1), 0);
 						_scene->_sequences.addTimer(1, 1);
 					} else if (kernel.trigger == 1) {
 						if (local._lineMoving) {
@@ -377,9 +377,9 @@ void room_511_preload() {
 
 	section_5_walker();
 	section_5_interface();
-	_scene->addActiveVocab(words_boat);
-	_scene->addActiveVocab(words_fishing_line);
-	_scene->addActiveVocab(words_walkto);
+	vocab_make_active(words_boat);
+	vocab_make_active(words_fishing_line);
+	vocab_make_active(words_walkto);
 }
 
 } // namespace Rooms

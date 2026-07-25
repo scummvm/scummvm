@@ -43,21 +43,21 @@ static Scratch local;
 
 
 static void room_401_init() {
-	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
+	if (previous_room != RETURNING_FROM_DIALOG)
 		local._northFl = false;
 
 	local._timer = 0;
 
-	if (_scene->_priorSceneId == 402) {
+	if (previous_room == 402) {
 		player.x = 203;
 		player.y = 115;
 		player.facing = FACING_WEST;
-	} else if (_scene->_priorSceneId == 354) {
+	} else if (previous_room == 354) {
 		player.x = 149;
 		player.y = 90;
 		player.facing = FACING_SOUTH;
 		local._northFl = true;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 142;
 		player.y = 131;
 		player.facing = FACING_NORTH;
@@ -69,19 +69,19 @@ static void room_401_init() {
 
 static void room_401_daemon() {
 	if (kernel.trigger == 70) {
-		_scene->_nextSceneId = 354;
-		_scene->_reloadSceneFlag = true;
+		new_room = 354;
+		kernel.force_restart = true;
 	}
 
 	if (kernel.trigger == 80) {
-		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.clock = kernel.clock - player.frame_delay;
 		player.commands_allowed = true;
 		player.walker_visible = true;
 		local._northFl = false;
 		player_walk(149, 110, FACING_SOUTH);
 	}
 
-	if (_scene->_frameStartTime >= local._timer) {
+	if (kernel.clock >= local._timer) {
 		int dist = 64 - ((Math::hypotenuse(player.x - 219, player.y - 115) * 64) / 120);
 
 		if (dist > 64)
@@ -90,7 +90,7 @@ static void room_401_daemon() {
 			dist = 1;
 
 		g_engine->_soundManager->command(12, dist);
-		local._timer = _scene->_frameStartTime + player.frame_delay;
+		local._timer = kernel.clock + player.frame_delay;
 	}
 
 }
@@ -127,7 +127,7 @@ static void room_401_parser() {
 			player.commands_allowed = false;
 			player.walker_visible = false;
 			g_engine->_soundManager->command(21, 0);
-			_scene->loadAnimation(kernel_name('s', 1), 70);
+			kernel_run_animation(kernel_name('s', 1), 70);
 			global[kHasBeenScanned] = true;
 			g_engine->_soundManager->command(22, 0);
 			int idx = _scene->_kernelMessages.add(Common::Point(153, 46), 0x1110, 32, 0, 60, quote_string(kernel.quotes, 0x1D4));
@@ -139,7 +139,7 @@ static void room_401_parser() {
 			player.commands_allowed = false;
 			player.walker_visible = false;
 			g_engine->_soundManager->command(21, 0);
-			_scene->loadAnimation(kernel_name('s', 2), 80);
+			kernel_run_animation(kernel_name('s', 2), 80);
 			g_engine->_soundManager->command(23, 0);
 			global[kHasBeenScanned] = true;
 		}
@@ -147,9 +147,9 @@ static void room_401_parser() {
 
 	if (player_said_2(walk_into, bar)) {
 		if (!local._northFl)
-			_scene->_nextSceneId = 402;
+			new_room = 402;
 	} else if (player_said_2(walk_down, corridor_to_north))
-		_scene->_nextSceneId = 354;
+		new_room = 354;
 	else if (player_said_2(look, scanner)) {
 		if (global[kHasBeenScanned])
 			text_show(40111);

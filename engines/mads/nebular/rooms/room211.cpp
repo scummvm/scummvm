@@ -47,20 +47,20 @@ static void room_211_init() {
 	g_sprite_ids[1] = kernel_load_series("*SC002Z2", 0);
 	local._wakeFl = false;
 
-	if (_scene->_priorSceneId == 210) {
+	if (previous_room == 210) {
 		player.x = 25;
 		player.y = 148;
 	}
-	else if (_scene->_priorSceneId == 205) {
+	else if (previous_room == 205) {
 		player.x = 49;
 		player.y = 133;
 		player.facing = FACING_WEST;
 		local._wakeFl = true;
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		_scene->loadAnimation(kernel_name('A', -1), 100);
+		kernel_run_animation(kernel_name('A', -1), 100);
 		_scene->_animation[0]->setCurrentFrame(169);
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 310;
 		player.y = 31;
 		player.facing = FACING_SOUTHWEST;
@@ -74,7 +74,7 @@ static void room_211_init() {
 		_scene->_dynamicHotspots.add(words_slithering_snake, words_walkto, g_sequence_ids[2], Common::Rect(1, 1, 1 + 41, 1 + 10));
 	}
 
-	if (_scene->_roomChanged)
+	if (kernel.teleported_in)
 		inter_give_to_player(OBJ_BINOCULARS);
 
 	pal_change_color(252, 63, 44, 30);
@@ -86,7 +86,7 @@ static void room_211_init() {
 			Common::Rect(0, 0, 54, 30), 13, 2, 0xFDFC, 60,
 			151, 152, 153, 154, 0);
 
-	local._monkeyTime = _scene._frameStartTime;
+	local._monkeyTime = kernel.clock;
 	local._scrollY = 30;
 
 	local._ambushFl = false;
@@ -99,12 +99,12 @@ static void room_211_daemon() {
 	if (global[kMonkeyStatus] == MONKEY_AMBUSH_READY) {
 		_scene->_kernelMessages.randomServer();
 
-		if (!local._ambushFl && !local._wakeFl && (_scene._frameStartTime >= local._monkeyTime)) {
+		if (!local._ambushFl && !local._wakeFl && (kernel.clock >= local._monkeyTime)) {
 			int chanceMinor = _scene->_kernelMessages.checkRandom() * 4 + 1;
 			if (_scene->_kernelMessages.generateRandom(80, chanceMinor))
 				g_engine->_soundManager->command(18, 0);
 
-			local._monkeyTime = _scene._frameStartTime + 2;
+			local._monkeyTime = kernel.clock + 2;
 		}
 
 		if ((Common::Point(player.x, player.y) == Common::Point(52, 132)) && (player.facing == FACING_WEST) && !player.walking &&
@@ -117,7 +117,7 @@ static void room_211_daemon() {
 					player.commands_allowed = false;
 					player.walker_visible = false;
 					_scene->_kernelMessages.reset();
-					_scene->loadAnimation(kernel_name('A', -1), 90);
+					kernel_run_animation(kernel_name('A', -1), 90);
 					g_engine->_soundManager->command(19, 0);
 					int count = (int)inven_num_objects;
 					for (int idx = 0; idx < count; idx++) {
@@ -343,7 +343,7 @@ void room_211_preload() {
 
 	section_2_walker();
 	section_2_interface();
-	_scene->addActiveVocab(words_slithering_snake);
+	vocab_make_active(words_slithering_snake);
 }
 
 } // namespace Rooms

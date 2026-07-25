@@ -53,7 +53,7 @@ static void room_310_init() {
 
 	player.walker_visible = false;
 	player.commands_allowed = false;
-	_scene->loadAnimation(kernel_name('a', -1), 70);
+	kernel_run_animation(kernel_name('a', -1), 70);
 
 	section_3_music();
 }
@@ -62,7 +62,7 @@ static void room_310_daemon() {
 	handle_forcefield(&local._forcefield, &g_sprite_ids[0]);
 
 	if (kernel.trigger == 70)
-		_scene->_nextSceneId = 309;
+		new_room = 309;
 }
 
 void room_310_synchronize(Common::Serializer &s) {

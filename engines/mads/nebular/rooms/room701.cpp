@@ -46,7 +46,7 @@ static void room_701_init() {
 	g_sprite_ids[5] = kernel_load_series("*RM202A1", 0);
 	g_sprite_ids[6] = kernel_load_series(kernel_name('b', 8), 0);
 
-	if (_scene->_roomChanged) {
+	if (kernel.teleported_in) {
 		inter_give_to_player(OBJ_BINOCULARS);
 		inter_give_to_player(OBJ_TWINKIFRUIT);
 		inter_give_to_player(OBJ_BOMB);
@@ -73,7 +73,7 @@ static void room_701_init() {
 	_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(48, 136));
 	_scene->_sequences.setDepth(g_sequence_ids[1], 10);
 
-	int boatStatus = (_scene->_priorSceneId == 703) ? BOAT_GONE : global[kBoatStatus];
+	int boatStatus = (previous_room == 703) ? BOAT_GONE : global[kBoatStatus];
 
 	switch (boatStatus) {
 	case BOAT_TIED_FLOATING:
@@ -106,11 +106,11 @@ static void room_701_init() {
 		local._fishingLineId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 129), FACING_NORTHEAST);
 	}
 
-	if (_scene->_priorSceneId == 702) {
+	if (previous_room == 702) {
 		player.x = 309;
 		player.y = 138;
 		player.facing = FACING_WEST;
-	} else if (_scene->_priorSceneId == 710) {
+	} else if (previous_room == 710) {
 		player.x = 154;
 		player.y = 129;
 		player.facing = FACING_NORTH;
@@ -119,15 +119,15 @@ static void room_701_init() {
 		g_sequence_ids[5] = _scene->_sequences.startCycle(g_sprite_ids[5], false, 1);
 		_scene->_sequences.setPosition(g_sequence_ids[5], Common::Point(155, 129));
 		_scene->_sequences.addTimer(15, 60);
-	} else if (_scene->_priorSceneId == 703) {
+	} else if (previous_room == 703) {
 		player.x = 231;
 		player.y = 127;
 		player.facing = FACING_SOUTH;
 		player.walker_visible = false;
 		player.commands_allowed = false;
-		_scene->loadAnimation(kernel_name('B', 1), 80);
+		kernel_run_animation(kernel_name('B', 1), 80);
 		g_engine->_soundManager->command(28, 0);
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG && _scene->_priorSceneId != 620) {
+	} else if (previous_room != RETURNING_FROM_DIALOG && previous_room != 620) {
 		player.x = 22;
 		player.y = 131;
 		player.facing = FACING_EAST;
@@ -187,7 +187,7 @@ static void room_701_daemon() {
 	case 80:
 	{
 		player.walker_visible = true;
-		player.clock = _scene->_frameStartTime - player.frame_delay;
+		player.clock = kernel.clock - player.frame_delay;
 		g_sequence_ids[2] = _scene->_sequences.startCycle(g_sprite_ids[2], false, -1);
 		_scene->_sequences.setDepth(g_sequence_ids[2], 9);
 		int idx = _scene->_dynamicHotspots.add(words_boat, words_climb_into, g_sequence_ids[2], Common::Rect(0, 0, 0, 0));
@@ -236,7 +236,7 @@ static void room_701_parser() {
 		break;
 
 		case 2:
-			_scene->_nextSceneId = 710;
+			new_room = 710;
 			break;
 
 		default:
@@ -274,7 +274,7 @@ static void room_701_parser() {
 			_scene->_sequences.setPosition(g_sequence_ids[1], Common::Point(48, 136));
 			_scene->_sequences.setDepth(g_sequence_ids[1], 10);
 			global[kResurrectRoom] = 701;
-			_scene->_nextSceneId = 605;
+			new_room = 605;
 			break;
 
 		default:
@@ -292,7 +292,7 @@ static void room_701_parser() {
 				_scene->_dynamicHotspots.remove(local._fishingLineId);
 				_scene->_hotspots.activate(words_boat, false);
 				player.walker_visible = false;
-				_scene->loadAnimation(kernel_name('E', -1), 1);
+				kernel_run_animation(kernel_name('E', -1), 1);
 				break;
 
 			case 1:
@@ -333,11 +333,11 @@ static void room_701_parser() {
 			player.commands_allowed = false;
 			_scene->_sequences.remove(g_sequence_ids[2]);
 			player.walker_visible = false;
-			_scene->loadAnimation(kernel_name('B', 0), 1);
+			kernel_run_animation(kernel_name('B', 0), 1);
 			break;
 
 		case 1:
-			_scene->_nextSceneId = 703;
+			new_room = 703;
 			break;
 
 		default:
@@ -397,10 +397,10 @@ void room_701_preload() {
 
 	section_7_walker();
 	section_7_interface();
-	_scene->addActiveVocab(words_boat);
-	_scene->addActiveVocab(words_climb_into);
-	_scene->addActiveVocab(words_fishing_line);
-	_scene->addActiveVocab(words_walkto);
+	vocab_make_active(words_boat);
+	vocab_make_active(words_climb_into);
+	vocab_make_active(words_fishing_line);
+	vocab_make_active(words_walkto);
 }
 
 } // namespace Rooms

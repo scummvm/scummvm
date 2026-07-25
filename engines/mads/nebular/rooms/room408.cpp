@@ -58,7 +58,7 @@ static void room_408_pre_parser() {
 
 static void room_408_parser() {
 	if (player_said_2(walk_into, corridor_to_south)) {
-		_scene->_nextSceneId = 405;
+		new_room = 405;
 		g_engine->_soundManager->command(58, 0);
 	} else if (player_said_2(take, target_module) && (object_is_here(OBJ_TARGET_MODULE) || kernel.trigger)) {
 		switch (kernel.trigger) {
@@ -80,7 +80,7 @@ static void room_408_parser() {
 			break;
 
 		case 2:
-			player.clock = player.frame_delay + _scene->_frameStartTime;
+			player.clock = player.frame_delay + kernel.clock;
 			player.walker_visible = true;
 			_scene->_sequences.addTimer(20, 3);
 			break;
@@ -188,8 +188,8 @@ void room_408_preload() {
 
 	section_4_walker();
 	section_4_interface();
-	_scene->addActiveVocab(words_target_module);
-	_scene->addActiveVocab(words_walkto);
+	vocab_make_active(words_target_module);
+	vocab_make_active(words_walkto);
 }
 
 } // namespace Rooms

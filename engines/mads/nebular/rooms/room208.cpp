@@ -87,21 +87,21 @@ static void room_208_init() {
 	local._rhotundaTurnFl = false;
 	local._boundingFl = false;
 	_scene->_kernelMessages._talkFont = font_inter;
-	_scene->_textSpacing = 0;
+	kernel_message_spacing = 0;
 
-	if (_scene->_priorSceneId == 207) {
+	if (previous_room == 207) {
 		player.x = 8;
 		player.y = 122;
 		player.facing = FACING_EAST;
-	} else if (_scene->_priorSceneId == 203) {
+	} else if (previous_room == 203) {
 		player.x = 142;
 		player.y = 108;
 		player.facing = FACING_SOUTH;
-	} else if (_scene->_priorSceneId == 209) {
+	} else if (previous_room == 209) {
 		player.x = 307;
 		player.y = 123;
 		player.facing = FACING_WEST;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 162;
 		player.y = 149;
 		player.facing = FACING_NORTH;
@@ -109,7 +109,7 @@ static void room_208_init() {
 
 	kernel.quotes = quote_load(0x81, 0x46, 0);
 
-	if ((_scene->_priorSceneId == 207) && (global[kMonkeyStatus] == MONKEY_HAS_BINOCULARS)) {
+	if ((previous_room == 207) && (global[kMonkeyStatus] == MONKEY_HAS_BINOCULARS)) {
 		int msgIndex = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 129));
 		_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
 	}
@@ -142,7 +142,7 @@ static void room_208_daemon() {
 
 	switch (kernel.trigger) {
 	case 0:
-		_scene->loadAnimation(kernel_name('A', -1), 81);
+		kernel_run_animation(kernel_name('A', -1), 81);
 		local._rhotundaTime = 0;
 		break;
 	case 81:
@@ -259,15 +259,15 @@ static void subAction(int mode) {
 static void room_208_parser() {
 	if (player_said_2(walk_towards, lowlands_to_north)) {
 		if (global[kRhotundaStatus])
-			_scene->_nextSceneId = 203;
+			new_room = 203;
 		else if (kernel.trigger == 0) {
 			player.commands_allowed = false;
 			int msgIndex = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 1, 120, quote_string(kernel.quotes, 70));
 			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
 		} else if (kernel.trigger == 1)
-			_scene->_nextSceneId = 203;
+			new_room = 203;
 	} else if (player_said_2(walk_towards, field_to_south))
-		_scene->_nextSceneId = 212;
+		new_room = 212;
 	else if (player_said_2(take, pile_of_leaves) && (!global[kLeavesStatus] || kernel.trigger)) {
 		subAction(1);
 		if (player.commands_allowed)
@@ -346,10 +346,10 @@ void room_208_preload() {
 
 	section_2_walker();
 	section_2_interface();
-	_scene->addActiveVocab(words_huge_legs);
-	_scene->addActiveVocab(words_leaf_covered_pit);
-	_scene->addActiveVocab(words_pile_of_leaves);
-	_scene->addActiveVocab(words_walkto);
+	vocab_make_active(words_huge_legs);
+	vocab_make_active(words_leaf_covered_pit);
+	vocab_make_active(words_pile_of_leaves);
+	vocab_make_active(words_walkto);
 }
 
 } // namespace Rooms

@@ -46,7 +46,7 @@ static void room_110_init() {
 
 	local._crabsFl = false;
 
-	if (_scene->_priorSceneId == 109) {
+	if (previous_room == 109) {
 		player.x = 59;
 		player.y = 71;
 		player.facing = FACING_EAST;
@@ -66,19 +66,19 @@ static void room_110_init() {
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
 		idx = _scene->_dynamicHotspots.add(words_crab, words_swim_to, g_sequence_ids[3], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 194;
 		player.y = 23;
 		player.facing = FACING_SOUTH;
 		player.walker_visible = false;
 		player.commands_allowed = false;
-		_scene->loadAnimation(kernel_full_name(110, 'T', 1, "", EXT_AA), 70);
+		kernel_run_animation(kernel_full_name(110, 'T', 1, "", EXT_AA), 70);
 	}
 
 	section_1_music();
 	kernel.quotes = quote_load(89, 0);
 
-	if (!player.been_here_before && (_scene->_priorSceneId == 109))
+	if (!player.been_here_before && (previous_room == 109))
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, 89));
 }
 
@@ -121,7 +121,7 @@ static void room_110_parser() {
 	if (player_said_2(swim_through, tunnel)) {
 		switch (kernel.trigger) {
 		case 0:
-			_scene->loadAnimation(kernel_full_name(110, 'T', 0, "", EXT_AA), 1);
+			kernel_run_animation(kernel_full_name(110, 'T', 0, "", EXT_AA), 1);
 			_scene->_animation[0]->setNextFrameTimer(player.frame_delay + player.clock);
 			player.commands_allowed = false;
 			player.walker_visible = false;
@@ -129,7 +129,7 @@ static void room_110_parser() {
 		case 1:
 			player.walker_visible = true;
 			player.commands_allowed = true;
-			_scene->_nextSceneId = 111;
+			new_room = 111;
 			break;
 		default:
 			break;
@@ -168,7 +168,7 @@ void room_110_preload() {
 
 	section_1_walker();
 	section_1_interface();
-	_scene->addActiveVocab(words_crab);
+	vocab_make_active(words_crab);
 }
 
 } // namespace Rooms

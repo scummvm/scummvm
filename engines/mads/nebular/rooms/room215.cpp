@@ -44,7 +44,7 @@ static void room_215_init() {
 	else
 		g_sprite_ids[2] = kernel_load_series("*ROXRC_9", 0);
 
-	if (_scene->_priorSceneId == 216) {
+	if (previous_room == 216) {
 		player.x = 140;
 		player.y = 119;
 		player.facing = FACING_SOUTHWEST;
@@ -52,7 +52,7 @@ static void room_215_init() {
 		player.commands_allowed = false;
 		g_sequence_ids[3] = _scene->_sequences.startCycle(g_sprite_ids[3], false, 1);
 		_scene->_sequences.addTimer(120, 70);
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 204;
 		player.y = 152;
 		player.facing = FACING_NORTH;
@@ -119,7 +119,7 @@ static void room_215_parser() {
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, quote_string(kernel.quotes, idx));
 		}
 	} else if (player_said_2(walk_outside, hut))
-		_scene->_nextSceneId = 210;
+		new_room = 210;
 	else if (player_said_2(look, bear_rug))
 		text_show(21501);
 	else if (player_said_2(look, bed))

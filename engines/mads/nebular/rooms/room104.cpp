@@ -44,10 +44,10 @@ static void room_104_init() {
 	g_sequence_ids[1] = _scene->_sequences.addSpriteCycle(g_sprite_ids[1], false, 14, 0, 0, 1);
 	_scene->_sequences.setDepth(g_sequence_ids[1], 8);
 
-	if (_scene->_priorSceneId == 105) {
+	if (previous_room == 105) {
 		player.x = 302;
 		player.y = 107;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 160;
 		player.y = 134;
 	}
@@ -57,7 +57,7 @@ static void room_104_init() {
 	local._kargShootingFl = false;
 
 	if (g_engine->getRandomNumber(1, 3) == 1) {
-		_scene->loadAnimation(kernel_full_name(104, 'B', -1, "", EXT_AA), 0);
+		kernel_run_animation(kernel_full_name(104, 'B', -1, "", EXT_AA), 0);
 		local._kargShootingFl = true;
 	}
 
@@ -85,8 +85,8 @@ static void room_104_daemon() {
 			switch (kernel.trigger) {
 			case 0:
 				_scene->_kernelMessages.reset();
-				_scene->freeAnimation();
-				_scene->resetScene();
+				kernel_abort_animation(0);
+				kernel_dump_all();
 				player.commands_allowed = false;
 				player.walker_visible = false;
 				g_sprite_ids[2] = kernel_load_series(kernel_name('a', 0), 0);
@@ -106,7 +106,7 @@ static void room_104_daemon() {
 
 			case 2:
 				text_show(10406);
-				_scene->_reloadSceneFlag = true;
+				kernel.force_restart = true;
 				break;
 
 			default:
@@ -118,8 +118,8 @@ static void room_104_daemon() {
 			switch (kernel.trigger) {
 			case 0:
 				_scene->_kernelMessages.reset();
-				_scene->freeAnimation();
-				_scene->resetScene();
+				kernel_abort_animation(0);
+				kernel_dump_all();
 				player.commands_allowed = false;
 				player.walker_visible = false;
 				g_sprite_ids[3] = kernel_load_series(kernel_name('a', 1), 0);
@@ -148,7 +148,7 @@ static void room_104_daemon() {
 
 			case 3:
 				text_show(10406);
-				_scene->_reloadSceneFlag = true;
+				kernel.force_restart = true;
 				break;
 
 			default:
@@ -160,8 +160,8 @@ static void room_104_daemon() {
 			switch (kernel.trigger) {
 			case 0:
 				_scene->_kernelMessages.reset();
-				_scene->freeAnimation();
-				_scene->resetScene();
+				kernel_abort_animation(0);
+				kernel_dump_all();
 				player.commands_allowed = false;
 				player.walker_visible = false;
 				g_sprite_ids[4] = kernel_load_series(kernel_name('a', 2), 0);
@@ -183,7 +183,7 @@ static void room_104_daemon() {
 
 			case 2:
 				text_show(10406);
-				_scene->_reloadSceneFlag = true;
+				kernel.force_restart = true;
 				break;
 
 			default:

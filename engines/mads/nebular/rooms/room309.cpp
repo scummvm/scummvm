@@ -71,7 +71,7 @@ static void room_309_init() {
 
 	player.walker_visible = false;
 	player.commands_allowed = false;
-	_scene->loadAnimation(kernel_name('a', -1), 60);
+	kernel_run_animation(kernel_name('a', -1), 60);
 
 	local._characterSpriteIndexes[0] = _scene->_animation[0]->_spriteListIndexes[2];
 	local._characterSpriteIndexes[1] = _scene->_animation[0]->_spriteListIndexes[2];
@@ -230,7 +230,7 @@ static void room_309_daemon() {
 	}
 
 	if (kernel.trigger == 60)
-		_scene->_nextSceneId = 308;
+		new_room = 308;
 }
 
 void room_309_synchronize(Common::Serializer &s) {

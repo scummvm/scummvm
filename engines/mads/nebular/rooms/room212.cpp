@@ -32,11 +32,11 @@ namespace RexNebular {
 namespace Rooms {
 
 static void room_212_init() {
-	if (_scene->_priorSceneId == 208) {
+	if (previous_room == 208) {
 		player.x = 195;
 		player.y = 85;
 		player.facing = FACING_SOUTH;
-	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+	} else if (previous_room != RETURNING_FROM_DIALOG) {
 		player.x = 67;
 		player.y = 117;
 		player.facing = FACING_NORTHEAST;
@@ -58,9 +58,9 @@ static void room_212_parser() {
 	if (player.look_around)
 		text_show(21209);
 	else if (player_said_1(walk_towards) && (player_said_1(field_to_north) || player_said_1(mountains)))
-		_scene->_nextSceneId = 208;
+		new_room = 208;
 	else if (player_said_2(walk_towards, cave))
-		_scene->_nextSceneId = 111;
+		new_room = 111;
 	else if (player_said_2(look, grass))
 		text_show(21201);
 	else if (player_said_2(look, rocks))
@@ -95,7 +95,7 @@ void room_212_preload() {
 
 	section_2_walker();
 	section_2_interface();
-	_scene->addActiveVocab(words_bouncing_reptile);
+	vocab_make_active(words_bouncing_reptile);
 }
 
 } // namespace Rooms

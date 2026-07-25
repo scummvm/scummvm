@@ -49,13 +49,13 @@ static void room_112_init() {
 	_scene->_userInterface.emptyConversationList();
 	_scene->_userInterface.setup(kInputConversation);
 
-	_scene->loadAnimation(kernel_full_name(112, 'X', -1, "", EXT_AA), 70);
+	kernel_run_animation(kernel_full_name(112, 'X', -1, "", EXT_AA), 70);
 }
 
 static void room_112_daemon() {
 	if ((_scene->_animation[0] != nullptr) && (config_file.naughtiness == STORYMODE_NICE)) {
 		if (_scene->_animation[0]->getCurrentFrame() >= 54) {
-			_scene->freeAnimation();
+			kernel_abort_animation(0);
 			kernel.trigger = 70;
 		}
 	}
@@ -67,7 +67,7 @@ static void room_112_daemon() {
 	}
 
 	if (kernel.trigger == 71) {
-		_scene->_nextSceneId = 101;
+		new_room = 101;
 		player.commands_allowed = true;
 		player.walker_visible = true;
 	}
