@@ -1545,7 +1545,7 @@ void Scene::handleInput() {
 		// original); restored automatically once the popup closes.
 		_taskbar->setPopupLockout(popupOpen);
 	}
-	if (_taskbar && !_textbox.isFullMode() && !popupOpen) {
+	if (_taskbar && !_textbox.coversTaskbar() && !popupOpen) {
 		// MENU and HELP leave gameplay entirely, which would cut off the
 		// taskbar click sound. The original defers the transition until that
 		// sound finishes, so we hold the click here and only switch state

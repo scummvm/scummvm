@@ -52,9 +52,13 @@ public:
 	void addTextLine(const Common::String &text, uint32 autoClearTime = 0);
 	void setOverrideFont(const uint fontID);
 
-	// Vestigial "full mode" toggle, now a no-op. Kept for the FrameTextBox AR.
-	void setFullMode(bool open, uint32 timeoutMs = 15000);
-	bool isFullMode() const { return false; }
+	// Nancy 10 only: picks the full, taskbar-covering box (AR 74) over the strip
+	// (AR 75). No effect on Nancy 1-9 (no such mode) or Nancy 11+ (a single box).
+	// The AR owns the full box's auto-close timer.
+	void setFullMode(bool open);
+	// True while the text box visually covers the taskbar buttons, so Scene can
+	// skip taskbar input. Always false before Nancy 10, whose box sits clear of them.
+	bool coversTaskbar() const;
 
 private:
 	uint16 getInnerHeight() const;

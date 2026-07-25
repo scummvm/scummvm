@@ -182,6 +182,7 @@ struct TBOX : public EngineData {
 	int32 maxScrollWidth = 0;
 	int32 firstLineY = 0; // added to the y-cursor when starting a new line
 	uint16 lineStartXCursor = 0; // left inset of the text within the text area
+	uint16 stripRightMargin = 0; // subtracted from contentWidth for the strip's text width
 	int32 unknown1 = 0;
 	int32 unknown2 = 0;
 	int32 contentWidth = 0;
@@ -553,7 +554,9 @@ struct TASK : public EngineData {
 	Common::Rect srcRect;
 	Common::Rect dstRect;
 	Common::Rect unkRect1;
-	Common::Rect unkRect2;
+	// Screen rect of the closed-caption text strip the taskbar draws (the
+	// ScrollTextBox's mini strip is positioned to it).
+	Common::Rect ccTextboxScreenRect;
 
 	ButtonRecord buttons[kNumButtons];
 };

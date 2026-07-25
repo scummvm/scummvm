@@ -288,7 +288,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new ModifyListEntry(ModifyListEntry::kDelete);
 	case 73:
 		return new ModifyListEntry(ModifyListEntry::kMark);
-	case 74:	// Nancy10
+	case 74:	// Nancy10 only: writes the full, taskbar-covering box
 		return new FrameTextBox(true);
 	case 75:
 		if (g_nancy->getGameType() <= kGameTypeNancy9)

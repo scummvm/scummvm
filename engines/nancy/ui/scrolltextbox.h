@@ -55,14 +55,20 @@ public:
 	// that many milliseconds (used by inventory closed captions).
 	void addTextLine(const Common::String &text, uint32 autoClearTime = 0);
 	void setOverrideFont(uint fontID);
+	// Nancy 10 only: pick the full box (AR 74) or the strip (AR 75). Ignored from
+	// Nancy 11 on, which picks by line count.
+	void setFullMode(bool fullMode);
+	// True while the full box is showing and covering the taskbar buttons.
+	bool coversTaskbar() const { return _isVisible && _expanded; }
 	void clear() override;
 
 private:
 	void drawBackground();
 	void drawContent();
+	// Render the text into the scratch surface, wrapping at wrapWidth.
+	void layoutText(int wrapWidth, uint16 fontID);
 	// Re-composite the expanded overlay at the current scroll position without
-	// re-laying out the text (which drawContent() does). Used while dragging the
-	// scrollbar, so a drag is a cheap slice re-blit rather than a full re-render.
+	// re-laying out the text; used for cheap scrollbar-drag updates.
 	void redrawScroll();
 	void drawScrollbar(UIButtonState state);
 	uint16 getInnerHeight() const;
@@ -70,6 +76,9 @@ private:
 	// The text content area in popup-local coordinates (the screen-space text
 	// viewport brought into the popup surface's space).
 	Common::Rect textViewportLocal() const;
+
+	// Width the strip wraps at: its own text area from TBOX, not the viewport.
+	int stripTextWidth() const;
 
 	// Popup-local bounding rect of the scrollbar thumb at the current scroll
 	// position, or an empty rect when the slider is disabled.
@@ -86,6 +95,9 @@ private:
 	// The fully-expanded popup rect on screen, with the game-frame offset
 	// applied. The mini strip shares its top edge.
 	Common::Rect _fullPopupRect;
+	// Screen rect the taskbar reserves for the caption strip (TASK chunk). The
+	// strip's text is aligned to it; empty when there is no taskbar data.
+	Common::Rect _stripScreenRect;
 	const TBOX *_tboxData;
 
 	Graphics::ManagedSurface _overlayImage;
@@ -95,8 +107,10 @@ private:
 	bool _scrollbarHovered;
 	int _scrollbarGrabOffset;
 
-	// True when text overflows the viewport: full overlay with scrollbar.
-	// False when it fits: mini strip above the taskbar, sized to content.
+	// Nancy 10 only: true selects the AR 74 full box, false the AR 75 strip.
+	// Defaults false since every writer but AR 74 uses the strip.
+	bool _fullMode;
+	// True for the full, taskbar-covering box (with scrollbar); false for the strip.
 	bool _expanded;
 
 	int _fontIDOverride;

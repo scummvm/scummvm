@@ -282,7 +282,7 @@ TBOX::TBOX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 
 	if (g_nancy->getGameType() >= kGameTypeNancy10) {
 		lineStartXCursor = chunkStream->readUint16LE();	// text left inset
-		chunkStream->skip(2);	// bottom margin
+		stripRightMargin = chunkStream->readUint16LE();	// strip text right margin (see FrameTextBox)
 		chunkStream->skip(2);	// unused
 		chunkStream->skip(2);	// initial color (we use the AR for this)
 	}
@@ -894,7 +894,7 @@ TASK::TASK(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readRect(*chunkStream, srcRect);
 	readRect(*chunkStream, dstRect);
 	readRect(*chunkStream, unkRect1);
-	readRect(*chunkStream, unkRect2);
+	readRect(*chunkStream, ccTextboxScreenRect);
 
 	// The button count varies by game (Nancy12 adds a 6th slot for the coin
 	// purse), so derive it from the chunk size. A slot marked "NO_UI_ITEM" (e.g.

@@ -119,9 +119,13 @@ void Textbox::updateGraphics() {
 	RenderObject::updateGraphics();
 }
 
-void Textbox::setFullMode(bool open, uint32 timeoutMs) {
-	// No-op: the Nancy 10+ overlay shows itself when it holds text, and the
-	// Nancy 1-9 box has no full mode. Kept for the FrameTextBox AR's API.
+bool Textbox::coversTaskbar() const {
+	return _scrollTextBox ? _scrollTextBox->coversTaskbar() : false;
+}
+
+void Textbox::setFullMode(bool open) {
+	if (_scrollTextBox)
+		_scrollTextBox->setFullMode(open);
 }
 
 void Textbox::handleInput(NancyInput &input) {
