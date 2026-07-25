@@ -15,6 +15,10 @@
 
 #include "common/keyboard.h"
 
+namespace Common {
+class RandomSource;
+}
+
 namespace Scumm {
 
 enum Rebel2MenuCommand {
@@ -50,6 +54,52 @@ public:
 };
 
 Rebel2Level1Handler::Result runRebel2Level1(Rebel2Level1Handler &handler, int lives);
+
+// Level 2 - and the chapters built on the same cover shooter - runs three phases of waves
+// against a budget. The flow below is the level's design rather than any one release's, so
+// the handler only has to play what the runner asks for and report the state it keeps.
+class Rebel2Level2Handler {
+public:
+	enum Result {
+		kQuit,
+		kComplete,
+		kGameOver,
+		kError
+	};
+
+	// What a finished wave credited toward picking the next one, and whether the phase
+	// should stop regardless.
+	struct WaveCredit {
+		WaveCredit() : bits(0), stop(false) {}
+
+		uint16 bits;
+		bool stop;
+	};
+
+	virtual ~Rebel2Level2Handler() {}
+	virtual bool shouldQuit() const = 0;
+
+	virtual bool playOpening() = 0;
+	virtual void beginAttempt() = 0;
+	virtual void beginPhase(int phase, bool clearEnemies) = 0;
+	virtual int16 waveBudget(int phase) = 0;
+	virtual bool playBackgroundWave(int phase) = 0;
+	virtual bool playWave(int phase, uint16 selection) = 0;
+	virtual WaveCredit creditWave(int16 mask, int16 *budget, int16 threshold) = 0;
+	virtual bool playPhaseEnd(int phase) = 0;
+
+	virtual uint16 phaseState() const = 0;
+	virtual bool playerDead() const = 0;
+	virtual void accumulateKills() = 0;
+	virtual void accumulateMisses() = 0;
+
+	// Returns true when the player still has a life and the attempt should restart.
+	virtual bool handleDeath(int phase, Result &result) = 0;
+	virtual void playComplete(int bonusCount) = 0;
+};
+
+Rebel2Level2Handler::Result runRebel2Level2(Rebel2Level2Handler &handler,
+		Common::RandomSource &random);
 
 inline Rebel2MenuCommand getRebel2MenuCommand(const Common::KeyState &key) {
 	switch (key.keycode) {

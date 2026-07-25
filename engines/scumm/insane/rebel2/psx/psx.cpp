@@ -362,9 +362,13 @@ Common::Error Rebel2PSX::runGame() {
 			const int picked = runChapterSelect(chapters);
 			if (!picked)
 				backedOut = true;
-			else if (picked > 1)
-				// Only chapter 1 is ported; stay on the list rather than
-				// pretending to start the rest.
+			else if (picked == 2) {
+				const Common::Error error = runLevel2();
+				if (error.getCode() != Common::kNoError)
+					return error;
+			} else if (picked > 2)
+				// Chapters 3 and up are not ported; stay on the list rather than
+				// pretending to start them.
 				warning("Rebel Assault II: chapter %d is not implemented yet", picked);
 			else
 				chapter = picked;

@@ -231,6 +231,8 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_rebelAutoPlay = false;
 	_rebelWaveState = 0;
 	_rebelPhaseState = 0;
+	_totalKills = 0;
+	_totalMisses = 0;
 
 	_rebelAutopilot = 0;
 	_rebelDamageLevel = 0;

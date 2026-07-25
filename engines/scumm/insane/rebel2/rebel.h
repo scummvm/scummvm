@@ -272,6 +272,7 @@ public:
 	// Per-level handlers.
 	class Level1Handler;
 	int runLevel1();
+	class Level2Handler;
 	int runLevel2();
 	int runLevel3();
 	int runLevel4();
@@ -685,6 +686,9 @@ public:
 
 	int _rebelWaveState;
 	int _rebelPhaseState;
+	// Kills and misses banked across the phases of a level 2 style attempt.
+	int _totalKills;
+	int _totalMisses;
 
 	int _rebelAutopilot;
 	int _rebelDamageLevel;

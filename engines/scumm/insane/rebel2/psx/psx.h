@@ -37,6 +37,7 @@ namespace Scumm {
 
 class ScummEngine_v7;
 class RA2PSXLevel1UI;
+class RA2PSXLevel2Scene;
 class RA2PSXMainMenuUI;
 class RA2PSXMovieText;
 class RA2PSXOptionsUI;
@@ -214,6 +215,46 @@ enum { kRA2PSXExplosionHeight = 56 };
 bool loadRA2PSXSpriteAnimation(const Common::Array<byte> &data, uint16 frameHeight,
 		Common::Array<RA2PSXTexture> &frames);
 
+// Level 2's three parts, each a sheet of backdrop halves, parallax walls and actors.
+enum {
+	kRA2PSXLevel2PartCount = 3,
+	kRA2PSXLevel2SceneTop = 28,
+	// Frames 0 to 4 are the rookie leaning out of cover; 5 to 29 are a five by five
+	// grid of aim poses picked from where the crosshair sits.
+	kRA2PSXLevel2CoverFrames = 5,
+	kRA2PSXLevel2FrameCount = 30,
+	kRA2PSXLevel2RookieDelay = 3,
+	kRA2PSXLevel2AimColumns = 5,
+	kRA2PSXLevel2AimRows = 5,
+	// The scroll eases to its target over this many ticks.
+	kRA2PSXLevel2ScrollSteps = 20
+};
+
+// Where each rookie frame is drawn, straight out of the original's per level table.
+struct RA2PSXLevel2Pose {
+	int16 x;
+	int16 y;
+	int16 width;
+	int16 height;
+};
+
+struct RA2PSXLevel2PartInfo {
+	const char *sheet;
+	const char *anims;
+	int backScroll;
+	int paraScroll;
+	int rookieOffsetX;
+	int rookieOffsetY;
+	bool hasMiddleStrip;
+	// Crosshair box, then the thresholds that split it into the aim grid.
+	int16 aimLeft, aimTop, aimRight, aimBottom;
+	int16 aimColumns[kRA2PSXLevel2AimColumns];
+	int16 aimRows[kRA2PSXLevel2AimRows];
+	RA2PSXLevel2Pose poses[kRA2PSXLevel2FrameCount];
+};
+
+extern const RA2PSXLevel2PartInfo kRA2PSXLevel2Parts[kRA2PSXLevel2PartCount];
+
 // How far the level 1 background is panned and tilted inside its oversized frame, and the
 // matching shift the 3D scene rides along with.
 struct RA2PSXBackgroundView {
@@ -319,6 +360,7 @@ public:
 
 private:
 	class Level1Handler;
+	class Level2Handler;
 
 	enum MenuResult {
 		kMenuStart,
@@ -351,6 +393,7 @@ private:
 	bool loadLevel1Assets(RA2PSXModel &enemy, RA2PSXModel &ship,
 			RA2PSXModel &crosshair, RA2PSXModel &laser, RA2PSXModel &tieLaser,
 			Common::Array<RA2PSXModel> &debris, RA2PSXLevel1UI &ui);
+	Common::Error runLevel2();
 	Level1Result playLevel1(const RA2PSXModel &enemy, const RA2PSXModel &ship,
 			const RA2PSXModel &crosshair, const RA2PSXModel &laser,
 			const RA2PSXModel &tieLaser, const Common::Array<RA2PSXModel> &debris,

@@ -52,6 +52,42 @@ private:
 	Common::Array<RA2PSXTexture> _textures;
 };
 
+// One part of level 2: the backdrop halves and parallax walls scroll behind the rookie,
+// who stands centred and ducks in and out of cover.
+class RA2PSXLevel2Scene {
+public:
+	RA2PSXLevel2Scene();
+
+	bool load(const RA2PSXArchive &archive, int part);
+	// Toggles between cover and the open; ignored while a move is already running.
+	void toggleCover();
+	void update(int aimX, int aimY);
+	bool outOfCover() const { return _out && !_moving; }
+	bool busy() const { return _moving; }
+	void draw(Graphics::Surface &surface, int aimX, int aimY) const;
+	const RA2PSXLevel2PartInfo &info() const;
+
+private:
+	void drawLayer(Graphics::Surface &surface, const char *name, int x, int y) const;
+	void drawFrame(Graphics::Surface &surface, const RA2PSXTexture &frame,
+			int x, int y) const;
+	void setScrollTarget(int backX, int backY, int paraX, int paraY);
+	int aimFrame(int aimX, int aimY) const;
+
+	RA2PSXTextureSet _textures;
+	RA2PSXTextureSet _hud;
+	Common::Array<RA2PSXTexture> _rookie;
+	int _part;
+	int _frame;
+	int _delay;
+	bool _out;
+	bool _moving;
+	// Background and parallax scroll, held in 16.16 with a target to ease toward.
+	int _scroll[2][2];
+	int _scrollTarget[2][2];
+	int _scrollStep[2][2];
+};
+
 // The GPU's semi-transparency mode 2: background minus source.
 void subtractRA2PSXRect(Graphics::Surface &surface, const Common::Rect &rect,
 		int r, int g, int b);
