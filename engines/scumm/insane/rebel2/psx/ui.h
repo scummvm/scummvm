@@ -171,7 +171,8 @@ class RA2PSXLevel1UI {
 public:
 	bool load(const RA2PSXArchive &archive);
 
-	void drawCockpit(Graphics::Surface &surface) const;
+	// The shell zooms away while the camera swaps views; 0x1000 is its resting size.
+	void drawCockpit(Graphics::Surface &surface, int scale = 0x1000) const;
 	void drawExplosion(Graphics::Surface &surface, int x, int y, int frame) const;
 	void drawHUD(Graphics::Surface &surface, int score, int lives, int shield, int frame) const;
 

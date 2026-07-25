@@ -102,6 +102,30 @@ const int kLevel1AimChance[2][3] = { { 5, 5, 5 }, { 15, 20, 20 } };
 // A TIE that gets this close without being shot collides with the player.
 const int kLevel1RamRadius[2] = { 200, 220 };
 
+// ra2InitializeCrosshair's box and start point, in the original's 240 line frame.
+enum {
+	kLevel1AimLeft = 30,
+	kLevel1AimWidth = 260,
+	kLevel1AimTop = 48,
+	kLevel1AimHeight = 130,
+	kLevel1AimStartX = 160,
+	kLevel1AimStartY = 113
+};
+
+// Swapping views dollies the ship out to 1000 and back to 40 at 20 a tick while the
+// cockpit shell zooms away; the original locks the controls until it lands.
+enum {
+	kLevel1ViewCockpitZ = 40,
+	kLevel1ViewOutsideZ = 1000,
+	kLevel1ViewStep = 20,
+	kLevel1ViewRecentre = 10,
+	kLevel1ViewZoomOutZ = 400,
+	kLevel1ViewZoomInZ = 300,
+	kLevel1CockpitScaleStep = 0xe0,
+	kLevel1CockpitScaleMin = 0x400,
+	kLevel1CockpitScaleFull = 0x1000
+};
+
 // The original truncates its 1/4096 products toward zero.
 int fixedShift12(int value) {
 	return (value < 0 ? value + 0xfff : value) >> 12;
@@ -830,7 +854,8 @@ void renderLevel1TieShots(RA2PSXTinyGLRenderer &renderer, const RA2PSXModel &bol
 }
 
 void updateLevel1Aim(int &x, int &y, int &velocityX, int &velocityY,
-		int &directionX, int &directionY, bool left, bool right, bool up, bool down) {
+		int &directionX, int &directionY, bool left, bool right, bool up, bool down,
+		const Common::Rect &bounds) {
 	if (left && right)
 		left = right = false;
 	if (up && down)
@@ -855,7 +880,7 @@ void updateLevel1Aim(int &x, int &y, int &velocityX, int &velocityY,
 		if ((up || down) && ABS(velocityX) < ABS(velocityY) / 2)
 			velocityX = ABS(velocityY) * directionX / 2;
 	}
-	x = CLIP<int>(x + velocityX / 512, 30, 290);
+	x = CLIP<int>(x + velocityX / 512, bounds.left, bounds.right);
 
 	if (!up && !down) {
 		directionY = 0;
@@ -876,7 +901,7 @@ void updateLevel1Aim(int &x, int &y, int &velocityX, int &velocityY,
 		if ((left || right) && ABS(velocityX) / 2 > ABS(velocityY))
 			velocityY = ABS(velocityX) * directionY / 2;
 	}
-	y = CLIP<int>(y + velocityY / 512, 48, 178);
+	y = CLIP<int>(y + velocityY / 512, bounds.top, bounds.bottom);
 }
 
 void updateLevel1Ship(RA2PSXLevel1Ship &ship,
@@ -1111,8 +1136,14 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 	const int difficulty = CLIP(_settings.difficulty, 0, 2);
 	int extraLifeStage = 0;
 	int nextExtraLife = kLevel1ExtraLife[difficulty][0];
-	int aimX = 160;
-	int aimY = 113;
+	// The crosshair box lives in the original's 240 line frame; the port crops 20 rows.
+	const int viewOffsetX = (_vm->_screenWidth - 320) / 2;
+	const int viewOffsetY = (_vm->_screenHeight - 240) / 2;
+	const Common::Rect aimBounds(kLevel1AimLeft + viewOffsetX, kLevel1AimTop + viewOffsetY,
+			kLevel1AimLeft + kLevel1AimWidth + viewOffsetX,
+			kLevel1AimTop + kLevel1AimHeight + viewOffsetY);
+	int aimX = kLevel1AimStartX + viewOffsetX;
+	int aimY = kLevel1AimStartY + viewOffsetY;
 	int aimVelocityX = 0;
 	int aimVelocityY = 0;
 	int aimDirectionX = 0;
@@ -1145,7 +1176,10 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 	bool actionFire = false;
 	bool fireRequested = false;
 	bool fireWasPressed = false;
-	bool thirdPersonView = true;
+	bool thirdPersonView = false;
+	int viewTransition = 0;
+	int cockpitScale = kLevel1CockpitScaleFull;
+	bool showCockpit = true;
 	Level1Result result = kLevel1Complete;
 	const int joystickDeadzone = MIN<int>(Common::JOYAXIS_MAX,
 			MAX(0, ConfMan.getInt("joystick_deadzone")) * 1000);
@@ -1168,20 +1202,20 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
 				if (thirdPersonView) {
-					ship.x = CLIP<int>((event.mouse.x - 160) * ship.z / 640, -282, 282);
-					ship.y = CLIP<int>((event.mouse.y - 120) * ship.z / 640, -142, 157);
+					ship.x = CLIP<int>((event.mouse.x - centerX) * ship.z / focal, -282, 282);
+					ship.y = CLIP<int>((event.mouse.y - centerY) * ship.z / focal, -142, 157);
 					ship.velocityX = ship.velocityY = 0;
 				} else {
-					aimX = CLIP<int>(event.mouse.x, 30, 290);
-					aimY = CLIP<int>(event.mouse.y, 48, 178);
+					aimX = CLIP<int>(event.mouse.x, aimBounds.left, aimBounds.right);
+					aimY = CLIP<int>(event.mouse.y, aimBounds.top, aimBounds.bottom);
 					aimVelocityX = aimVelocityY = 0;
 					aimDirectionX = aimDirectionY = 0;
 				}
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				if (!thirdPersonView) {
-					aimX = CLIP<int>(event.mouse.x, 30, 290);
-					aimY = CLIP<int>(event.mouse.y, 48, 178);
+					aimX = CLIP<int>(event.mouse.x, aimBounds.left, aimBounds.right);
+					aimY = CLIP<int>(event.mouse.y, aimBounds.top, aimBounds.bottom);
 				}
 				mouseFire = true;
 				fireRequested = true;
@@ -1294,14 +1328,13 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 				break;
 			}
 		}
-		if (toggleViewRequested) {
-			thirdPersonView = !thirdPersonView;
+		if (toggleViewRequested && !viewTransition) {
+			viewTransition = thirdPersonView ? -1 : 1;
 			ship.velocityX = ship.velocityY = 0;
-			aimX = 160;
-			aimY = 113;
 			aimVelocityX = aimVelocityY = 0;
 			aimDirectionX = aimDirectionY = 0;
-			g_system->warpMouse(160, thirdPersonView ? 120 : aimY);
+			if (viewTransition > 0)
+				ship.z = kLevel1ViewCockpitZ;
 			redraw = true;
 		}
 		if (result == kLevel1Quit)
@@ -1324,16 +1357,53 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 		while (logicFrame < targetLogicFrame && shield > 0) {
 			++logicFrame;
 			redraw = true;
-			const bool left = moveLeft || actionLeft || joystickAxisX < -joystickDeadzone;
-			const bool right = moveRight || actionRight || joystickAxisX > joystickDeadzone;
-			const bool up = moveUp || actionUp || joystickAxisY < -joystickDeadzone;
-			const bool down = moveDown || actionDown || joystickAxisY > joystickDeadzone;
-			if (thirdPersonView) {
+			// Controls are dead while the camera moves, exactly as the original does.
+			const bool steering = viewTransition == 0;
+			const bool left = steering && (moveLeft || actionLeft ||
+					joystickAxisX < -joystickDeadzone);
+			const bool right = steering && (moveRight || actionRight ||
+					joystickAxisX > joystickDeadzone);
+			const bool up = steering && (moveUp || actionUp || joystickAxisY < -joystickDeadzone);
+			const bool down = steering && (moveDown || actionDown ||
+					joystickAxisY > joystickDeadzone);
+			if (viewTransition > 0) {
+				ship.z += kLevel1ViewStep;
+				// The original only keeps the shell on screen while it is still zooming.
+				showCockpit = ship.z <= kLevel1ViewZoomOutZ;
+				if (showCockpit)
+					cockpitScale = MAX<int>(kLevel1CockpitScaleMin,
+							cockpitScale - kLevel1CockpitScaleStep);
+				if (ship.z >= kLevel1ViewOutsideZ) {
+					ship.z = kLevel1ViewOutsideZ;
+					thirdPersonView = true;
+					viewTransition = 0;
+				}
+			} else if (viewTransition < 0) {
+				ship.z -= kLevel1ViewStep;
+				ship.x -= CLIP(ship.x, -kLevel1ViewRecentre, (int)kLevel1ViewRecentre);
+				ship.y -= CLIP(ship.y, -kLevel1ViewRecentre, (int)kLevel1ViewRecentre);
+				showCockpit = ship.z <= kLevel1ViewZoomInZ;
+				if (showCockpit) {
+					cockpitScale = MIN<int>(kLevel1CockpitScaleFull,
+							cockpitScale + kLevel1CockpitScaleStep);
+					if (cockpitScale == kLevel1CockpitScaleFull)
+						ship.z = kLevel1ViewCockpitZ;
+				}
+				if (ship.z <= kLevel1ViewCockpitZ) {
+					ship.z = kLevel1ViewOutsideZ;
+					cockpitScale = kLevel1CockpitScaleFull;
+					thirdPersonView = false;
+					viewTransition = 0;
+					showCockpit = true;
+					aimX = kLevel1AimStartX + viewOffsetX;
+					aimY = kLevel1AimStartY + viewOffsetY;
+				}
+			} else if (thirdPersonView) {
 				updateLevel1Ship(ship, left, right, up, down);
 			} else {
 				updateLevel1Aim(aimX, aimY, aimVelocityX, aimVelocityY,
 						aimDirectionX, aimDirectionY,
-						left, right, up, down);
+						left, right, up, down, aimBounds);
 			}
 
 			const int cockpitTarget = thirdPersonView ? 0 : kLevel1MixMaximum;
@@ -1561,7 +1631,7 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 			renderLevel1Debris(renderer, debrisModels, debris);
 			renderLevel1Puffs(renderer, _smokeTexture, puffs);
 			renderLevel1Explosions(renderer, _explosionFrames, explosions);
-			if (thirdPersonView) {
+			if (thirdPersonView || viewTransition) {
 				float forwardX;
 				float forwardY;
 				float forwardZ;
@@ -1576,8 +1646,8 @@ Rebel2PSX::Level1Result Rebel2PSX::playLevel1(const RA2PSXModel &enemyModel,
 			Graphics::Surface output;
 			renderer.finishFrame(output);
 			drawRA2PSXHitFlash(output, flashFrame);
-			if (!thirdPersonView)
-				ui.drawCockpit(output);
+			if (showCockpit && (!thirdPersonView || viewTransition))
+				ui.drawCockpit(output, cockpitScale);
 			ui.drawHUD(output, score, lives, shieldDisplayed, logicFrame);
 			g_system->copyRectToScreen(output.getPixels(), output.pitch, shakeX, shakeY,
 					output.w - shakeX, output.h - shakeY);

@@ -969,11 +969,38 @@ void drawRA2PSXHitFlash(Graphics::Surface &surface, int frame) {
 	}
 }
 
-void RA2PSXLevel1UI::drawCockpit(Graphics::Surface &surface) const {
+void RA2PSXLevel1UI::drawCockpit(Graphics::Surface &surface, int scale) const {
 	const int xOffset = (surface.w - 320) / 2;
 	const int yOffset = (surface.h - 240) / 2 + 120;
-	_textures.draw(surface, "COCKPITL", xOffset, yOffset, Common::Rect(0, 0, 224, 120));
-	_textures.draw(surface, "COCKPITR", xOffset + 224, yOffset, Common::Rect(0, 0, 120, 120));
+	if (scale >= 0x1000) {
+		_textures.draw(surface, "COCKPITL", xOffset, yOffset, Common::Rect(0, 0, 224, 120));
+		_textures.draw(surface, "COCKPITR", xOffset + 224, yOffset, Common::Rect(0, 0, 120, 120));
+		return;
+	}
+
+	// Draw the shell once, then rescale it about the screen centre.
+	Graphics::Surface shell;
+	shell.create(320, 120, surface.format);
+	_textures.draw(shell, "COCKPITL", 0, 0, Common::Rect(0, 0, 224, 120));
+	_textures.draw(shell, "COCKPITR", 224, 0, Common::Rect(0, 0, 120, 120));
+
+	const int centerX = surface.w / 2;
+	const int centerY = surface.h / 2;
+	const uint32 transparent = shell.format.RGBToColor(0, 0, 0);
+	for (int y = 0; y < surface.h; ++y) {
+		const int sourceY = ((y - centerY) * 0x1000 / scale) + centerY - yOffset;
+		if (sourceY < 0 || sourceY >= shell.h)
+			continue;
+		for (int x = 0; x < surface.w; ++x) {
+			const int sourceX = ((x - centerX) * 0x1000 / scale) + centerX - xOffset;
+			if (sourceX < 0 || sourceX >= shell.w)
+				continue;
+			const uint32 pixel = shell.getPixel(sourceX, sourceY);
+			if (pixel != transparent)
+				surface.setPixel(x, y, pixel);
+		}
+	}
+	shell.free();
 }
 
 void RA2PSXLevel1UI::drawExplosion(Graphics::Surface &surface, int x, int y, int frame) const {
