@@ -54,7 +54,6 @@ public:
 
 	// Nancy 10 only: picks the full, taskbar-covering box (AR 74) over the strip
 	// (AR 75). No effect on Nancy 1-9 (no such mode) or Nancy 11+ (a single box).
-	// The AR owns the full box's auto-close timer.
 	void setFullMode(bool open);
 	// True while the text box visually covers the taskbar buttons, so Scene can
 	// skip taskbar input. Always false before Nancy 10, whose box sits clear of them.
