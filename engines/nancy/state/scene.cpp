@@ -1391,6 +1391,7 @@ void Scene::tickSoftwareTimers(uint32 deltaMs) {
 
 		timer.currentTimeMs += deltaMs;
 
+		// Nancy 11 single-config timers fire directly from the timer state
 		if ((timer.state == TimerData::Timer::kOneShot || timer.state == TimerData::Timer::kRepeating) &&
 			timer.durationMs > 0 && !timer.hasFired && timer.currentTimeMs >= timer.durationMs) {
 			fireSoftwareTimer(timer);
@@ -1401,6 +1402,27 @@ void Scene::tickSoftwareTimers(uint32 deltaMs) {
 			} else {
 				// Repeating timers keep counting up but will not fire again
 				timer.state = TimerData::Timer::kRunning;
+			}
+		}
+
+		// Nancy 12+ running timers fire from their triggers. A one-shot trigger
+		// clears the whole timer when it fires; a repeating one leaves it running.
+		if (timer.state == TimerData::Timer::kRunning) {
+			bool clearTimer = false;
+			for (uint j = 0; j < timer.triggers.size(); ++j) {
+				TimerData::Trigger &trigger = timer.triggers[j];
+				if (!trigger.hasFired && trigger.durationMs > 0 && timer.currentTimeMs >= trigger.durationMs) {
+					trigger.hasFired = true;
+					fireTimerTrigger(trigger);
+
+					if (trigger.type == TimerData::Trigger::kOneShot) {
+						clearTimer = true;
+					}
+				}
+			}
+
+			if (clearTimer) {
+				timer.reset();
 			}
 		}
 	}
@@ -1450,6 +1472,30 @@ void Scene::fireSoftwareTimer(TimerData::Timer &timer) {
 			}
 		} else if (!timer.caption.empty()) {
 			_textbox.addTextLine(timer.caption);
+		}
+	}
+}
+
+void Scene::fireTimerTrigger(TimerData::Trigger &trigger) {
+	// Set the trigger's event flags
+	for (uint i = 0; i < ARRAYSIZE(trigger.flags); ++i) {
+		if (trigger.flags[i].label != kFlagNoLabel) {
+			setEventFlag(trigger.flags[i]);
+		}
+	}
+
+	// Play the trigger's sound
+	if (trigger.sound.name != "NO SOUND") {
+		g_nancy->_sound->loadSound(trigger.sound);
+		g_nancy->_sound->playSound(trigger.sound);
+	}
+
+	// Nancy 12+ triggers carry no inline caption; the subtitle is looked up from
+	// the played sound's name
+	if (ConfMan.getBool("subtitles", ConfMan.getActiveDomainName()) && trigger.sound.name != "NO SOUND") {
+		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
+		if (autotext && autotext->texts.contains(trigger.sound.name)) {
+			_textbox.addTextLine(autotext->texts[trigger.sound.name]);
 		}
 	}
 }

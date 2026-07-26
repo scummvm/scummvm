@@ -285,14 +285,33 @@ protected:
 };
 
 // Starts the timer. Used in combination with Dependency types that check for
-// how much time has passed since the timer was started. From Nancy 11 onwards
-// the record also carries a software-timer slot index (see TimerControl).
+// how much time has passed since the timer was started. Nancy 11 also carries a
+// software-timer slot index (see TimerControl). From Nancy 12 the record became
+// a general "Control a Timer" command: a slot index plus a command whose value
+// selects a variable-size payload.
 class ResetAndStartTimer : public ActionRecord {
 public:
+	enum Command {
+		kStart           = 0, // Begin counting up from the current time
+		kClear           = 1, // Reset the slot back to idle
+		kConfigOneShot   = 2, // Set target/payload; fire once, then reset
+		kConfigRepeating = 3, // Set target/payload; fire once, then keep counting
+		kPause           = 4, // Suspend counting
+		kAddTime         = 5, // Add the duration to the elapsed time
+		kSubtractTime    = 6, // Subtract the duration from the elapsed time
+		kSetTime         = 7  // Set the elapsed time to the duration
+	};
+
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
-	byte _timerIndex = 0; // Nancy 11+ software-timer slot
+	int16 _timerIndex = 0;   // Software-timer slot (Nancy 11+)
+	int16 _command = kStart; // Nancy 12+
+	int16 _hours = 0;
+	int16 _minutes = 0;
+	int16 _seconds = 0;
+	SoundDescription _sound;               // Played on expiry when configured
+	Common::Array<FlagDescription> _flags; // Fired on expiry when configured
 
 protected:
 	Common::String getRecordTypeName() const override { return "ResetAndStartTimer"; }

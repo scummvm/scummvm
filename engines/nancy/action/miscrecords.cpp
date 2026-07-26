@@ -34,6 +34,7 @@
 
 #include "common/events.h"
 #include "common/config-manager.h"
+#include "common/random.h"
 #include "nancy/ui/taskbar.h"
 
 namespace Nancy {
@@ -439,19 +440,175 @@ static TimerData::Timer *getSoftwareTimer(int16 index) {
 	return timerData ? &timerData->timers[index] : nullptr;
 }
 
+// Nancy 12+: adds a trigger to a running timer, unless an identical one already
+// exists (so re-running the record on scene re-entry doesn't stack duplicates)
+// or the timer's kNumTriggers slots are full.
+static void addTimerTrigger(TimerData::Timer &timer, TimerData::Trigger::Type type,
+		uint32 durationMs, const SoundDescription &sound, const Common::Array<FlagDescription> &flags) {
+	for (uint i = 0; i < timer.triggers.size(); ++i) {
+		const TimerData::Trigger &t = timer.triggers[i];
+		if (t.type != type || t.durationMs != durationMs ||
+			t.sound.name != sound.name || t.sound.channelID != sound.channelID ||
+			t.sound.volume != sound.volume) {
+			continue;
+		}
+
+		bool flagsMatch = true;
+		for (uint j = 0; j < ARRAYSIZE(t.flags); ++j) {
+			FlagDescription incoming = j < flags.size() ? flags[j] : FlagDescription();
+			if (t.flags[j].label != incoming.label || t.flags[j].flag != incoming.flag) {
+				flagsMatch = false;
+				break;
+			}
+		}
+
+		if (flagsMatch) {
+			return;
+		}
+	}
+
+	if (timer.triggers.size() >= TimerData::kNumTriggers) {
+		return;
+	}
+
+	TimerData::Trigger trigger;
+	trigger.type = type;
+	trigger.durationMs = durationMs;
+	trigger.hasFired = false;
+	trigger.sound = sound;
+	for (uint i = 0; i < ARRAYSIZE(trigger.flags); ++i) {
+		trigger.flags[i] = i < flags.size() ? flags[i] : FlagDescription();
+	}
+
+	timer.triggers.push_back(trigger);
+}
+
+// Reads exactly size bytes from the stream, returning the text up to the first
+// null byte. Used for the fixed-size string fields inside a TimerControl chunk.
+static Common::String readFixedSizeString(Common::SeekableReadStream &stream, uint size) {
+	Common::String result;
+	bool ended = false;
+	for (uint i = 0; i < size; ++i) {
+		byte b = stream.readByte();
+		if (b == 0) {
+			ended = true;
+		}
+		if (!ended) {
+			result += (char)b;
+		}
+	}
+
+	return result;
+}
+
 void ResetAndStartTimer::readData(Common::SeekableReadStream &stream) {
-	_timerIndex = stream.readByte();
+	if (g_nancy->getGameType() < kGameTypeNancy12) {
+		_timerIndex = stream.readByte();
+		return;
+	}
+
+	_timerIndex = stream.readSint16LE();    // 0x00
+	_command = stream.readSint16LE();        // 0x02
+
+	switch (_command) {
+	case kAddTime:
+	case kSubtractTime:
+	case kSetTime:
+		_hours = stream.readSint16LE();      // 0x04
+		_minutes = stream.readSint16LE();    // 0x06
+		_seconds = stream.readSint16LE();    // 0x08
+		stream.skip(2);                      // 0x0a, unused
+		break;
+	case kConfigOneShot:
+	case kConfigRepeating: {
+		_hours = stream.readSint16LE();          // 0x04
+		_minutes = stream.readSint16LE();        // 0x06
+		_seconds = stream.readSint16LE();        // 0x08
+		stream.skip(2);                          // 0x0a, unused
+		_sound.volume = stream.readUint16LE();   // 0x0c
+		_sound.channelID = stream.readUint16LE(); // 0x0e
+		_sound.numLoops = 1;
+
+		// Three candidate expiry-sound names (0x10, 33 bytes each); one is
+		// picked at random, "NO SOUND" marks an empty slot
+		Common::Array<Common::String> names;
+		for (uint i = 0; i < 3; ++i) {
+			Common::String name = readFixedSizeString(stream, 0x21);
+			if (!name.empty() && !name.equalsIgnoreCase("NO SOUND")) {
+				names.push_back(name);
+			}
+		}
+
+		if (!names.empty()) {
+			_sound.name = names[g_nancy->_randomSource->getRandomNumber(names.size() - 1)];
+		}
+
+		// Event flags fired on expiry (count at 0x73)
+		uint16 numFlags = stream.readUint16LE();
+		_flags.resize(numFlags);
+		for (uint i = 0; i < numFlags; ++i) {
+			_flags[i].label = stream.readSint16LE();
+			_flags[i].flag = (byte)stream.readSint16LE();
+		}
+		break;
+	}
+	default:
+		// kStart, kClear and kPause carry no further data
+		break;
+	}
 }
 
 void ResetAndStartTimer::execute() {
-	NancySceneState.resetAndStartTimer();
+	if (g_nancy->getGameType() < kGameTypeNancy12) {
+		NancySceneState.resetAndStartTimer();
 
-	// Nancy 11 also resets and starts one of the software-timer slots
-	if (g_nancy->getGameType() >= kGameTypeNancy11) {
-		TimerData::Timer *timer = getSoftwareTimer(_timerIndex);
-		if (timer) {
-			timer->reset();
+		// Nancy 11 also resets and starts one of the software-timer slots
+		if (g_nancy->getGameType() >= kGameTypeNancy11) {
+			TimerData::Timer *timer = getSoftwareTimer(_timerIndex);
+			if (timer) {
+				timer->reset();
+				timer->state = TimerData::Timer::kRunning;
+			}
+		}
+
+		_isDone = true;
+		return;
+	}
+
+	// Nancy 12+ issues a command to one of the software-timer slots. Every
+	// command other than kStart only takes effect while the slot is running.
+	TimerData::Timer *timer = getSoftwareTimer(_timerIndex);
+	if (timer) {
+		if (_command == kStart) {
 			timer->state = TimerData::Timer::kRunning;
+		} else if (timer->state == TimerData::Timer::kRunning) {
+			const uint32 durationMs = ((uint32)_hours * 3600 + (uint32)_minutes * 60 + (uint32)_seconds) * 1000;
+
+			switch (_command) {
+			case kClear:
+				timer->reset();
+				break;
+			case kPause:
+				timer->state = TimerData::Timer::kPaused;
+				break;
+			case kAddTime:
+				timer->currentTimeMs += durationMs;
+				break;
+			case kSubtractTime:
+				timer->currentTimeMs = timer->currentTimeMs > durationMs ? timer->currentTimeMs - durationMs : 0;
+				break;
+			case kSetTime:
+				timer->currentTimeMs = durationMs;
+				break;
+			case kConfigOneShot:
+			case kConfigRepeating:
+				addTimerTrigger(*timer,
+					(_command == kConfigRepeating) ? TimerData::Trigger::kRepeating : TimerData::Trigger::kOneShot,
+					durationMs, _sound, _flags);
+				break;
+			default:
+				break;
+			}
 		}
 	}
 
@@ -473,24 +630,6 @@ void StopTimer::execute() {
 	}
 
 	_isDone = true;
-}
-
-// Reads exactly size bytes from the stream, returning the text up to the first
-// null byte. Used for the fixed-size string fields inside a TimerControl chunk.
-static Common::String readFixedSizeString(Common::SeekableReadStream &stream, uint size) {
-	Common::String result;
-	bool ended = false;
-	for (uint i = 0; i < size; ++i) {
-		byte b = stream.readByte();
-		if (b == 0) {
-			ended = true;
-		}
-		if (!ended) {
-			result += (char)b;
-		}
-	}
-
-	return result;
 }
 
 void TimerControl::readData(Common::SeekableReadStream &stream) {

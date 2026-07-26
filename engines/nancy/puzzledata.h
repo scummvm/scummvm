@@ -267,11 +267,26 @@ struct CellPhonePictureData : public PuzzleData {
 };
 
 // Nancy 11+ AR 69 (TimerControl). 10 software timers, each counting up from
-// zero. A "configured" timer (state 5/6) fires a set of event flags, plays an
-// optional sound and shows an optional caption once its target duration
-// elapses. Started/stopped via ResetAndStartTimer (104) and StopTimer (105),
-// which in Nancy 11 carry a timer-slot index.
+// zero. In Nancy 11 a "configured" timer (state 5/6) fires a set of event flags,
+// plays an optional sound and shows an optional caption once its target duration
+// elapses. From Nancy 12 a running timer instead carries up to kNumTriggers
+// independent triggers (see ResetAndStartTimer), each firing its own flags and
+// sound. Started/stopped via ResetAndStartTimer (104) and StopTimer (105), which
+// in Nancy 11 carry a timer-slot index.
 struct TimerData : public PuzzleData {
+	// Nancy 12+ per-timer trigger: fires its flags and sound once its target
+	// duration is reached. A one-shot trigger clears the whole timer when it
+	// fires; a repeating one leaves the timer counting.
+	struct Trigger {
+		enum Type { kOneShot = 1, kRepeating = 2 };
+
+		int32 type = kOneShot;
+		uint32 durationMs = 0;
+		bool hasFired = false;
+		SoundDescription sound;
+		FlagDescription flags[10];
+	};
+
 	struct Timer {
 		enum State { kIdle = 0, kRunning = 1, kPaused = 2, kOneShot = 5, kRepeating = 6 };
 
@@ -283,11 +298,13 @@ struct TimerData : public PuzzleData {
 		Common::String autotextKey;
 		Common::String caption;
 		FlagDescription flags[10];
+		Common::Array<Trigger> triggers; // Nancy 12+
 
 		void reset() { *this = Timer(); }
 	};
 
 	static const uint kNumTimers = 10;
+	static const uint kNumTriggers = 20;
 
 	TimerData() {}
 	virtual ~TimerData() {}

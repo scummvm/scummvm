@@ -396,6 +396,33 @@ void TimerData::synchronize(Common::Serializer &ser) {
 			ser.syncAsSint16LE(t.flags[j].label);
 			ser.syncAsByte(t.flags[j].flag);
 		}
+
+		// Nancy 12+ triggers, added in savegame version 6
+		if (ser.getVersion() >= 6) {
+			uint16 numTriggers = (uint16)t.triggers.size();
+			ser.syncAsUint16LE(numTriggers);
+			if (ser.isLoading()) {
+				t.triggers.resize(numTriggers);
+			}
+
+			for (uint j = 0; j < numTriggers; ++j) {
+				TimerData::Trigger &trig = t.triggers[j];
+				ser.syncAsSint32LE(trig.type);
+				ser.syncAsUint32LE(trig.durationMs);
+				ser.syncAsByte(trig.hasFired);
+
+				ser.syncString(trig.sound.name);
+				ser.syncAsUint16LE(trig.sound.channelID);
+				ser.syncAsUint16LE(trig.sound.playCommands);
+				ser.syncAsUint16LE(trig.sound.numLoops);
+				ser.syncAsUint16LE(trig.sound.volume);
+
+				for (uint k = 0; k < ARRAYSIZE(trig.flags); ++k) {
+					ser.syncAsSint16LE(trig.flags[k].label);
+					ser.syncAsByte(trig.flags[k].flag);
+				}
+			}
+		}
 	}
 }
 
