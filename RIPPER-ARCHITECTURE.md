@@ -846,6 +846,14 @@
   Weapon charge, discharge, and rapid-fire timing also come from the INI.
   Escape exits, F1 opens help table `0x1a8`, F10 captures a screenshot, and
   the case-insensitive `caffeine` keyword sets the supplied flag immediately.
+- Scene action 14 calls `RunEbz2sUnlockGatedActionMenuScene` at `0x36783`.
+  `EB2.RUN` callback `0x58b` reaches it from the `EB_HEAD` take interaction.
+  The scene loads `EBZ2S.PCX`, then conditionally grants inventory flag 58
+  (Eyeball) or 55 (Bug) through action 3 before looping with front-end mask
+  `0x84`, which exposes only Inventory and Help. The loop ends when consumed
+  flag 108 or 105 is set. `ExecuteUnlockSelectionChoice` at `0x364be` accepts
+  both items only in the `EB_HEAD` frame, presents `EBU2.PCX` for either, and
+  additionally plays `EYE_BUG.WAV` for the Bug.
 - Scene action 5 calls `RunRolodexSequencePuzzleScene` at `0x280ae` with the
   caller-supplied named flag. It creates an advance control over physical
   rectangle (121, 101)-(486, 293) with cursor 16 and an Escape control over
