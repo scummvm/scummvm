@@ -187,7 +187,7 @@ void Autotext::execute() {
 		}
 
 		_fullSurface.create(surf, surf.getBounds());
-		if(_transparency == kPlayOverlayTransparent) {
+		if (_transparency >= kPlayOverlayTransparent) {
 			_fullSurface.setTransparentColor(g_nancy->_graphics->getTransColor());
 		}
 
@@ -224,7 +224,7 @@ void Autotext::execute() {
 			_viewportRender = new AutotextRender(_placementMode);
 			_viewportRender->_drawSurface.create(surf, src);
 			_viewportRender->moveTo(_viewportDest);
-			_viewportRender->setTransparent(_transparency == kPlayOverlayTransparent);
+			_viewportRender->setTransparent(_transparency >= kPlayOverlayTransparent);
 			_viewportRender->setVisible(true);
 			_viewportRender->init();
 			_viewportRender->registerGraphics();

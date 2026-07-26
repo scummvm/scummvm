@@ -104,9 +104,12 @@ static const byte kLargeVideoFormat					= 2;
 static const byte kVideoPlaytypeAVF					= 0;
 static const byte kVideoPlaytypeBink				= 1;
 
-// Overlay
+// Overlay transparency mode. 1 = opaque, anything >= kPlayOverlayTransparent is
+// drawn transparent (the original engine is 16bpp color-key, with no alpha/blend
+// path, so every transparent mode - Nancy12 also uses 3 - is a plain color key).
 static const byte kPlayOverlayPlain					= 1;
 static const byte kPlayOverlayTransparent			= 2;
+static const byte kPlayOverlayTransparent2			= 3;
 
 static const byte kPlayOverlaySceneChange			= 1;
 static const byte kPlayOverlayNoSceneChange			= 2;

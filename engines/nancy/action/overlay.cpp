@@ -254,7 +254,7 @@ void Overlay::execute() {
 				}
 
 				_drawSurface.create(_fullSurface, srcRect);
-				setTransparent(_transparency == kPlayOverlayTransparent);
+				setTransparent(_transparency >= kPlayOverlayTransparent);
 
 				_currentFrame = nextFrame;
 				_needsRedraw = true;
@@ -330,7 +330,7 @@ void Overlay::execute() {
 
 						if (blitsForThisFrame.size() == 1) {
 							_drawSurface.create(_fullSurface, srcRect);
-							setTransparent(_transparency == kPlayOverlayTransparent);
+							setTransparent(_transparency >= kPlayOverlayTransparent);
 						} else {
 							Common::Rect d = _blitDescriptions[blitsForThisFrame[i]].dest;
 							d.translate(-destRect.left, -destRect.top);

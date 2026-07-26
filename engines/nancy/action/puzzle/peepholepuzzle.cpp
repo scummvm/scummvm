@@ -55,7 +55,7 @@ void PeepholePuzzle::init() {
 
 	_currentSrc = _startSrc;
 
-	setTransparent(_transparency == kPlayOverlayTransparent);
+	setTransparent(_transparency >= kPlayOverlayTransparent);
 	_drawSurface.clear(_drawSurface.getTransparentColor());
 	setVisible(true);
 
