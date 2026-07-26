@@ -21,6 +21,7 @@
 #include "ripper/input.h"
 
 #include "common/debug.h"
+#include "common/system.h"
 
 #include "ripper/detection.h"
 
@@ -84,6 +85,13 @@ void InputManager::updateMousePosition(const Common::Event &event) {
 	_mouseState.position = event.mouse;
 	debugC(3, kDebugInput, "Ripper: mouse position x=%d y=%d",
 		_mouseState.position.x, _mouseState.position.y);
+}
+
+void InputManager::warpMousePosition(const Common::Point &position) {
+	_mouseState.position = position;
+	g_system->warpMouse(position.x, position.y);
+	debugC(3, kDebugInput, "Ripper: warped mouse position x=%d y=%d",
+		position.x, position.y);
 }
 
 void InputManager::updateMouseButton(const Common::Event &event, uint16 button, bool pressed) {

@@ -54,6 +54,7 @@ public:
 	uint16 consumeKey();
 	void drainKeys();
 	void discardMouseTransitions();
+	void warpMousePosition(const Common::Point &position);
 	MouseState publishMouseState();
 	const MouseState &peekMouseState() const { return _mouseState; }
 

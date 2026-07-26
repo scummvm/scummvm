@@ -91,6 +91,7 @@ enum SceneAction {
 	kSceneActionGcCshPuzzle = 9,
 	kSceneActionTableGatePuzzle = 10,
 	kSceneActionCdInBookPuzzle = 11,
+	kSceneActionBoardArrangementPuzzle = 12,
 	kSceneActionKjBlobShooter = 13,
 	kSceneActionEbz2sMenu = 14,
 	kSceneActionMechiniCombat = 15,
