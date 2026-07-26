@@ -28,6 +28,7 @@
 namespace MADS {
 
 #define PACK_ID_STRING                "MADSPACK 2.0\032"
+#define PACK_ID_STRING_V1             "MADSPACK 1.0\032"
 #define PACK_ID_LENGTH                14
 #define PACK_ID_CHECK                 12
 
@@ -44,6 +45,7 @@ namespace MADS {
 #define PACK_NONE                     0       /* No compression */
 #define PACK_PFAB                     1       /* Dave's Stuff   */
 #define PACK_ZIP                      2       /* Zipped         */
+#define PACK_DCL                      3       /* PKWARE DCL     */
 
 #define PACK_IMPLODE_SIZE             35256   /* pkzip implode buffer */
 #define PACK_EXPLODE_SIZE             12574   /* pkzip explode buffer */
