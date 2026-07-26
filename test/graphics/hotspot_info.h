@@ -25,10 +25,10 @@
 class HotspotInfoTestSuite : public CxxTest::TestSuite {
 public:
 	void test_constructor_with_values() {
-		Graphics::HotspotInfo info(Common::Point(10, 20), "Test");
+		Graphics::HotspotInfo info(Common::Point(10, 20), Common::U32String("Test"));
 		TS_ASSERT_EQUALS(info.position.x, 10);
 		TS_ASSERT_EQUALS(info.position.y, 20);
-		TS_ASSERT_EQUALS(info.name, "Test");
+		TS_ASSERT_EQUALS(info.name, Common::U32String("Test"));
 	}
 
 	void test_default_constructor() {
@@ -39,29 +39,29 @@ public:
 	}
 
 	void test_empty_name() {
-		Graphics::HotspotInfo info(Common::Point(100, 200), "");
+		Graphics::HotspotInfo info(Common::Point(100, 200), Common::U32String(""));
 		TS_ASSERT_EQUALS(info.position.x, 100);
 		TS_ASSERT_EQUALS(info.position.y, 200);
 		TS_ASSERT(info.name.empty());
 	}
 
 	void test_negative_coordinates() {
-		Graphics::HotspotInfo info(Common::Point(-5, -10), "Negative");
+		Graphics::HotspotInfo info(Common::Point(-5, -10), Common::U32String("Negative"));
 		TS_ASSERT_EQUALS(info.position.x, -5);
 		TS_ASSERT_EQUALS(info.position.y, -10);
-		TS_ASSERT_EQUALS(info.name, "Negative");
+		TS_ASSERT_EQUALS(info.name, Common::U32String("Negative"));
 	}
 
 	void test_default_type() {
-		Graphics::HotspotInfo info(Common::Point(0, 0), "");
+		Graphics::HotspotInfo info(Common::Point(0, 0), Common::U32String(""));
 		TS_ASSERT_EQUALS(info.type, Graphics::kHotspotDefault);
 	}
 
 	void test_explicit_type() {
-		Graphics::HotspotInfo npc(Common::Point(10, 20), "Guard", Graphics::kHotspotNPC);
+		Graphics::HotspotInfo npc(Common::Point(10, 20), Common::U32String("Guard"), Graphics::kHotspotNPC);
 		TS_ASSERT_EQUALS(npc.type, Graphics::kHotspotNPC);
 
-		Graphics::HotspotInfo obj(Common::Point(30, 40), "Door", Graphics::kHotspotExit);
+		Graphics::HotspotInfo obj(Common::Point(30, 40), Common::U32String("Door"), Graphics::kHotspotExit);
 		TS_ASSERT_EQUALS(obj.type, Graphics::kHotspotExit);
 	}
 };
