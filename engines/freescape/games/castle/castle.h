@@ -67,6 +67,7 @@ public:
 	void loadAssets() override;
 	void loadAssetsDOSFullGame() override;
 	void loadAssetsDOSDemo() override;
+	void loadAssetsDOSDemoCGA();
 	void loadAssetsAmigaDemo() override;
 	void loadAssetsAmigaFullGame() override;
 	void loadAssetsAtariFullGame() override;
@@ -118,6 +119,10 @@ public:
 	void drawRiddleStringInSurface(const Common::String &str, int x, int y, uint32 fontColor, uint32 backColor, Graphics::Surface *surface);
 	Graphics::ManagedSurface *loadFrameWithHeaderDOS(Common::SeekableReadStream *file);
 	Common::Array <Graphics::ManagedSurface *>loadFramesWithHeaderDOS(Common::SeekableReadStream *file, int numFrames);
+	Graphics::ManagedSurface *loadFrameWithHeaderDOSIndexed(Common::SeekableReadStream *file);
+	Common::Array<Graphics::ManagedSurface *> loadFramesWithHeaderDOSIndexed(Common::SeekableReadStream *file, int numFrames);
+	Graphics::ManagedSurface *loadFrameDOS(Common::SeekableReadStream *file, int widthInBytes, int height);
+	void convertFrameDOS(Graphics::ManagedSurface *frame);
 
 	Common::Array<Graphics::ManagedSurface *> loadFramesWithHeader(Common::SeekableReadStream *file, int pos, int numFrames, uint32 front, uint32 back);
 	Graphics::ManagedSurface *loadFrameWithHeader(Common::SeekableReadStream *file, int pos, uint32 front, uint32 back);
@@ -129,6 +134,7 @@ public:
 	Graphics::ManagedSurface *loadFrameCPC(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int width, int height, const uint32 *cpcPalette);
 
 	Graphics::ManagedSurface *loadFrameFromPlanes(Common::SeekableReadStream *file, int widthInBytes, int height);
+	Graphics::ManagedSurface *loadFrameFromPackedPixels(Common::SeekableReadStream *file, int widthInBytes, int height);
 	Graphics::ManagedSurface *loadFrameFromPlanesInternal(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int width, int height);
 
 	Graphics::ManagedSurface *loadFrameFromPlanesVertical(Common::SeekableReadStream *file, int widthInBytes, int height);
@@ -163,12 +169,19 @@ public:
 	Graphics::ManagedSurface *_spiritsMeterBgCLUT8;
 	Graphics::ManagedSurface *_spiritsMeterIndCLUT8;
 	Graphics::ManagedSurface *_keysBorderCLUT8;
+	Graphics::ManagedSurface *_spiritsMeterSideCLUT8;
+	Common::Array<Graphics::ManagedSurface *> _keysBorderCLUT8Frames;
+	Common::Array<Graphics::ManagedSurface *> _keysMenuCLUT8Frames;
+	Graphics::ManagedSurface *_backgroundCLUT8;
 	Common::Array<Graphics::ManagedSurface *> _flagCLUT8;
 	uint32 _cpcUIPalette[4]; // used by gate rendering
 	void convertCPCSprite(Graphics::ManagedSurface *clut8, Graphics::ManagedSurface *&argb, bool transparentInk0 = false);
 	Graphics::ManagedSurface *loadFrameWithHeaderCPCIndexed(Common::SeekableReadStream *file, int pos);
 	Common::Array<Graphics::ManagedSurface *> loadFramesWithHeaderCPCIndexed(Common::SeekableReadStream *file, int pos, int numFrames);
 	void updateCPCSpritesPalette();
+	void updateCGASpritesPalette();
+	void updateCGAPalette(const byte *palette);
+	void updateFourColorSpritesPalette(const byte *palette);
 
 	Common::String _notEnoughRoomMessage;
 	Common::String _tooWeakMessage;

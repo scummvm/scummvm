@@ -93,6 +93,8 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_spiritsMeterBgCLUT8 = nullptr;
 	_spiritsMeterIndCLUT8 = nullptr;
 	_keysBorderCLUT8 = nullptr;
+	_spiritsMeterSideCLUT8 = nullptr;
+	_backgroundCLUT8 = nullptr;
 	_menu = nullptr;
 	_menuButtons = nullptr;
 	_cursorData = nullptr;
@@ -412,6 +414,43 @@ void CastleEngine::updateCPCSpritesPalette() {
 		palette[c * 3 + 2] = b;
 	}
 
+	updateFourColorSpritesPalette(palette);
+}
+
+void CastleEngine::updateCGASpritesPalette() {
+	// swapPalette() already picked the palette for the current area
+	if (_gfx->_palette)
+		updateCGAPalette(_gfx->_palette);
+}
+
+void CastleEngine::updateCGAPalette(const byte *palette) {
+	updateFourColorSpritesPalette(palette);
+
+	// The CGA glyphs use color 2 for their body and 3 for the highlights, which
+	// Font::drawChar() maps to the secondary and tertiary colors
+	uint32 secondary = _gfx->_texturePixelFormat.ARGBToColor(0xFF, palette[6], palette[7], palette[8]);
+	uint32 tertiary = _gfx->_texturePixelFormat.ARGBToColor(0xFF, palette[9], palette[10], palette[11]);
+
+	_font.setSecondaryColor(secondary);
+	_font.setTertiaryColor(tertiary);
+	_fontRiddle.setSecondaryColor(secondary);
+	_fontRiddle.setTertiaryColor(tertiary);
+}
+
+void CastleEngine::updateFourColorSpritesPalette(const byte *palette) {
+	// convertCPCSprite() writes through a reference, so the destinations must be
+	// as long as the indexed arrays. This also covers the conversion after loading
+	while (_keysBorderCLUT8 && _keysBorderFrames.empty())
+		_keysBorderFrames.push_back(nullptr);
+	while (_strenghtWeightsFrames.size() < _strenghtWeightsCLUT8.size())
+		_strenghtWeightsFrames.push_back(nullptr);
+	while (_flagFrames.size() < _flagCLUT8.size())
+		_flagFrames.push_back(nullptr);
+	while (_keysBorderFrames.size() < _keysBorderCLUT8Frames.size())
+		_keysBorderFrames.push_back(nullptr);
+	while (_keysMenuFrames.size() < _keysMenuCLUT8Frames.size())
+		_keysMenuFrames.push_back(nullptr);
+
 	if (_keysBorderCLUT8) {
 		_keysBorderCLUT8->setPalette(palette, 0, 4);
 		convertCPCSprite(_keysBorderCLUT8, _keysBorderFrames[0], true);
@@ -423,6 +462,25 @@ void CastleEngine::updateCPCSpritesPalette() {
 	if (_spiritsMeterIndCLUT8) {
 		_spiritsMeterIndCLUT8->setPalette(palette, 0, 4);
 		convertCPCSprite(_spiritsMeterIndCLUT8, _spiritsMeterIndicatorFrame, true);
+	}
+	for (int f = 0; f < (int)_keysBorderCLUT8Frames.size(); f++) {
+		_keysBorderCLUT8Frames[f]->setPalette(palette, 0, 4);
+		convertCPCSprite(_keysBorderCLUT8Frames[f], _keysBorderFrames[f], true);
+	}
+	for (int f = 0; f < (int)_keysMenuCLUT8Frames.size(); f++) {
+		_keysMenuCLUT8Frames[f]->setPalette(palette, 0, 4);
+		convertCPCSprite(_keysMenuCLUT8Frames[f], _keysMenuFrames[f], true);
+	}
+	if (_spiritsMeterSideCLUT8) {
+		_spiritsMeterSideCLUT8->setPalette(palette, 0, 4);
+		convertCPCSprite(_spiritsMeterSideCLUT8, _spiritsMeterIndicatorSideFrame);
+	}
+	if (_backgroundCLUT8) {
+		// Uploaded once as a texture, so drop it to have it rebuilt recolored
+		_backgroundCLUT8->setPalette(palette, 0, 4);
+		convertCPCSprite(_backgroundCLUT8, _background);
+		delete _skyTexture;
+		_skyTexture = nullptr;
 	}
 	if (_strenghtBackgroundCLUT8) {
 		_strenghtBackgroundCLUT8->setPalette(palette, 0, 4);
@@ -608,7 +666,8 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	// Ignore sky/ground fields
 	_gfx->_keyColor = 0;
 	_gfx->clearColorPairArray();
-	if (isCPC() || isC64())
+	// CGA takes its color pairs from the area color map, like CPC and C64 do
+	if (isCPC() || isC64() || _renderMode == Common::kRenderCGA)
 		_gfx->fillColorPairArray();
 
 	swapPalette(areaID);
@@ -619,8 +678,11 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	if (isCPC())
 		updateCPCSpritesPalette();
+	else if (isDOS() && _renderMode == Common::kRenderCGA)
+		updateCGASpritesPalette();
 
-	if (isDOS()) {
+	// The per area extra colors are pairs of EGA indexes, useless in CGA
+	if (isDOS() && _renderMode != Common::kRenderCGA) {
 		_gfx->_colorPair[_currentArea->_underFireBackgroundColor] = _currentArea->_extraColor[1];
 		_gfx->_colorPair[_currentArea->_usualBackgroundColor] = _currentArea->_extraColor[0];
 		_gfx->_colorPair[_currentArea->_paperColor] = _currentArea->_extraColor[2];
@@ -973,7 +1035,7 @@ void CastleEngine::drawInfoMenu() {
 		CursorMan.showMouse(true);
 		surface->copyRectToSurface(*_menu, 47, 35, Common::Rect(0, 0, _menu->w, _menu->h));
 
-		_gfx->readFromPalette(10, r, g, b);
+		_gfx->readFromPalette(_renderMode == Common::kRenderCGA ? 3 : 10, r, g, b);
 		front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 		drawStringInSurface(Common::String::format("%07d", score), 166, 71, front, black, surface);
 		drawStringInSurface(centerAndPadString(Common::String::format("%s", _messagesList[135 + shield / 6].c_str()), 10), 151, 102,  front, black, surface);
@@ -1704,6 +1766,9 @@ void CastleEngine::drawFullscreenRiddleAndWait(uint16 riddle) {
 		case Common::kRenderZX:
 			frontColor = 7;
 			break;
+		case Common::kRenderCGA:
+			frontColor = 3;
+			break;
 		case Common::kRenderCPC:
 			frontColor = _gfx->_inkColor;
 			break;
@@ -1921,6 +1986,11 @@ void CastleEngine::drawEnergyMeter(Graphics::Surface *surface, Common::Point ori
 		weightStep = 3;
 		weightOffset = 10;
 		rightWeightPos = 62;
+	} else if (_renderMode == Common::kRenderCGA) {
+		// The CGA discs are 4 pixels wide instead of 8
+		weightStep = 3;
+		weightOffset = 9;
+		rightWeightPos = 67;
 	} else { // DOS
 		weightStep = 3;
 		weightOffset = 10;

@@ -286,7 +286,16 @@ void FreescapeEngine::swapPalette(uint16 levelID) {
 }
 
 byte *FreescapeEngine::findCGAPalette(uint16 levelID) {
-	if (isDriller() || isDark() || isCastle()) {
+	if (isCastle()) {
+		// Castle Master always sets the intensity bit of the color select register
+		// (BIOS AH=0Bh, BH=0, BL=0x10 is a constant), so it runs bright. Driller
+		// reads that byte from a variable and keeps the dim palettes below
+		if (levelID % 2 == 0)
+			return (byte *)&kCGAPalettePinkBlueBright;
+		else
+			return (byte *)&kCGAPaletteRedGreenBright;
+	}
+	if (isDriller() || isDark()) {
 		if (levelID % 2 == 0)
 			return (byte *)&kCGAPalettePinkBlue;
 		else

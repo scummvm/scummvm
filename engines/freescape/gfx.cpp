@@ -323,7 +323,10 @@ void Renderer::setColorMap(ColorMap *colorMap_) {
 		}
 	} else if (_renderMode == Common::kRenderCGA) {
 		fillColorPairArray();
-		for (int i = 4; i < 15; i++) {
+		// As with CPC above, Castle Master uses color-map entry 3 as a genuine
+		// checker, so all 15 entries need a stipple. Harmless for the other
+		// games, since getRGBAtCGA() drops it whenever both colors are equal
+		for (int i = 0; i < 15; i++) {
 			byte pair = _colorPair[i];
 			byte c1 = pair & 0xf;
 			byte c2 = (pair >> 4) & 0xf;
