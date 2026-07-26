@@ -29,6 +29,7 @@
 #include "ripper/cyber.h"
 #include "ripper/detection.h"
 #include "ripper/milestones.h"
+#include "ripper/puzzles/board_arrangement.h"
 #include "ripper/puzzles/calculator.h"
 #include "ripper/puzzles/cd_in_book.h"
 #include "ripper/puzzles/clock.h"
@@ -199,6 +200,15 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 			"Ripper: CD-in-book puzzle scene action completed result=%d milestone=%u",
 			result, argument);
 		return result != CdInBookPuzzle::kLoadFailed;
+	}
+	if (action == kSceneActionBoardArrangementPuzzle) {
+		BoardArrangementPuzzle puzzle(engine);
+		const BoardArrangementPuzzle::Result result = puzzle.run(argument);
+		debugC(1, kDebugPuzzles,
+			"Ripper: board arrangement puzzle scene action completed "
+			"result=%d milestone=%u",
+			result, argument);
+		return result != BoardArrangementPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionKjBlobShooter) {
 		KjBlobShooter shooter(engine);
