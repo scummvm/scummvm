@@ -1049,6 +1049,10 @@
   prompt is above the editable row rather than inline with it. The database
   chooser, scrollbar, persistent WAC controls, and help context 407 remain
   active while this scene owns the left media viewport.
+- Entry 0 dispatches `WACINV0.PCX` through
+  `RunWacStillImageScreenWithOptionalAudio` at `0x22f1f` with no audio. The
+  Prescription Pad uses the shared WAC still-image viewport, palette patch,
+  and scroll controls while the database chooser remains active.
 - Entries 10 and 11 dispatch `wacinv10.pcx` and `wacinv11.pcx` through
   `RunWacStillImageScreenWithOptionalAudio` at `0x22f1f`. These 300-by-393
   documents retain the database chooser, show a 282-row slice in the left WAC

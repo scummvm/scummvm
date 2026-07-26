@@ -1340,7 +1340,8 @@ uint16 WacManager::dispatchDatabaseEntry(DatabaseEntry &entry) {
 	}
 	if (entry.originalIndex == 3)
 		return runJournalRevealScene(entry);
-	if (entry.originalIndex == 10 || entry.originalIndex == 11) {
+	if (entry.originalIndex == 0 ||
+			entry.originalIndex == 10 || entry.originalIndex == 11) {
 		const Common::String path = Common::String::format(
 			"wacinv%u.pcx", entry.originalIndex);
 		const bool loaded = loadDatabaseStillImage(path);
