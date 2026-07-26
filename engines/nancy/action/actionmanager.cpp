@@ -631,8 +631,15 @@ void ActionManager::synchronize(Common::Serializer &ser) {
 		ser.syncAsByte(rec->_isActive);
 		ser.syncAsByte(rec->_isDone);
 
-		// Forcefully re-activate Autotext records, since we need to regenerate the surface
-		if (ser.isLoading() && g_nancy->getGameType() >= kGameTypeNancy6 && rec->_type == 61) {
+		if (ser.isLoading()) {
+			// Records restart fresh on load, just like a normal scene entry: clearing
+			// _isDone lets one-shot records run again -- chained tutorial narration
+			// sounds, conversations, overlays, etc. Anything that must stay "done" is
+			// gated by its own dependencies (event flags, scene counts, inventory),
+			// which are restored separately. Without this, a sound or conversation
+			// that had finished before the save stays silent on load (e.g. the
+			// Nancy 10 movement tutorial). _isActive is recomputed from the record's
+			// dependencies on the next frame.
 			rec->_isDone = false;
 		}
 	}
