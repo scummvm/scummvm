@@ -792,12 +792,12 @@ private:
 					}
 				} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START ||
 						event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
-					const bool pressed = event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START;
+					const bool started = event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START;
 					if (event.customType == kScummActionInsaneAttack) {
-						if (pressed && !firePressed)
+						if (started && !firePressed)
 							fireEdge = true;
-						firePressed = pressed;
-					} else if (pressed && event.customType == kScummActionInsaneSwitch) {
+						firePressed = started;
+					} else if (started && event.customType == kScummActionInsaneSwitch) {
 						_scene.toggleCover();
 					}
 				} else if (event.type == Common::EVENT_MOUSEMOVE) {
