@@ -13,6 +13,7 @@
 #ifndef SCUMM_INSANE_REBEL2_PSX_UI_H
 #define SCUMM_INSANE_REBEL2_PSX_UI_H
 
+#include "common/random.h"
 #include "common/rect.h"
 
 #include "graphics/surface.h"
@@ -35,6 +36,8 @@ public:
 	bool appendRaw24(const char *name, const Common::Array<byte> &data,
 			uint16 width, uint16 height);
 	bool has(const char *name) const { return find(name) != nullptr; }
+	// Sprites streamed into a texture's VRAM slot are drawn through its CLUT.
+	const Common::Array<uint32> *palette(const char *name) const;
 	void draw(Graphics::Surface &surface, const char *name, int x, int y,
 			const Common::Rect &source, int brightness = 0x80,
 			BlendMode blend = kBlendOpaque) const;
@@ -53,31 +56,51 @@ private:
 };
 
 // One part of level 2: the backdrop halves and parallax walls scroll behind the rookie,
-// who stands centred and ducks in and out of cover.
+// who stands centred and ducks in and out of cover while scripted troopers trade fire.
 class RA2PSXLevel2Scene {
 public:
 	RA2PSXLevel2Scene();
 
-	bool load(const RA2PSXArchive &archive, int part);
+	bool load(const RA2PSXArchive &archive, int part, int difficulty,
+			Common::RandomSource &random);
 	// Toggles between cover and the open; ignored while a move is already running.
 	void toggleCover();
 	void update(int aimX, int aimY);
+	// One 60Hz tick of the trooper slots. Returns the shield damage it cost the player.
+	int updateEnemies(Common::RandomSource &random);
+	// Kills whatever the crosshair covers; returns the score it earned, or zero.
+	int shoot(int aimX, int aimY);
 	bool outOfCover() const { return _out && !_moving; }
+	// Anything but fully ducked; the original only shields a rookie who has finished.
+	bool exposed() const { return _out || _moving; }
 	bool busy() const { return _moving; }
+	bool cleared() const { return _clearTicks >= kRA2PSXLevel2ClearTicks; }
+	int kills() const { return _kills; }
+	int misses() const { return _misses; }
 	void draw(Graphics::Surface &surface, int aimX, int aimY) const;
 	const RA2PSXLevel2PartInfo &info() const;
 
 private:
-	void drawLayer(Graphics::Surface &surface, const char *name, int x, int y) const;
+	void drawLayer(Graphics::Surface &surface, const RA2PSXLevel2Layer &layer,
+			int left, int top) const;
 	void drawFrame(Graphics::Surface &surface, const RA2PSXTexture &frame,
 			int x, int y) const;
-	void setScrollTarget(int backX, int backY, int paraX, int paraY);
+	void drawPlayFrame(Graphics::Surface &surface, const RA2PSXPlayFrame &frame,
+			const Common::Array<uint32> &palette, int left, int top) const;
+	void setScrollTarget(const int16 target[2][2]);
 	int aimFrame(int aimX, int aimY) const;
+	// Restarts an actor on the given animation, the way the original's loader does.
+	void startActor(RA2PSXLevel2Actor &actor, int state, int animation);
+	const RA2PSXPlayFrame *actorFrame(const RA2PSXLevel2Actor &actor) const;
+	void advanceActor(RA2PSXLevel2Actor &actor);
+	int slotDelay(int base, int range, Common::RandomSource &random) const;
 
 	RA2PSXTextureSet _textures;
 	RA2PSXTextureSet _hud;
 	Common::Array<RA2PSXTexture> _rookie;
+	Common::Array<RA2PSXPlayAnimation> _play;
 	int _part;
+	int _difficulty;
 	int _frame;
 	int _delay;
 	bool _out;
@@ -86,6 +109,16 @@ private:
 	int _scroll[2][2];
 	int _scrollTarget[2][2];
 	int _scrollStep[2][2];
+	int _scrollHold[2][2];
+	// The trooper slots, the bolt each one has in the air, and the wave they draw from.
+	RA2PSXLevel2Actor _troopers[kRA2PSXLevel2TrooperCount];
+	RA2PSXLevel2Actor _bolts[kRA2PSXLevel2TrooperCount];
+	int _tick;
+	int _remaining;
+	int _active;
+	int _clearTicks;
+	int _kills;
+	int _misses;
 };
 
 // The GPU's semi-transparency mode 2: background minus source.

@@ -124,6 +124,16 @@ void RA2PSXMatrix::setTranslation(int x, int y, int z) {
 	translation[2] = (float)z;
 }
 
+// A 16 bit GPU colour, unpacked to opaque bit, semi transparency bit and 8 bit channels.
+uint32 decodeRA2PSXColor(uint16 value) {
+	if (!value)
+		return 0;
+	const uint32 r = ((value & 0x1f) << 3) | ((value & 0x1f) >> 2);
+	const uint32 g = (((value >> 5) & 0x1f) << 3) | (((value >> 5) & 0x1f) >> 2);
+	const uint32 b = (((value >> 10) & 0x1f) << 3) | (((value >> 10) & 0x1f) >> 2);
+	return 0x01000000 | ((value & 0x8000) ? 0x02000000 : 0) | (r << 16) | (g << 8) | b;
+}
+
 bool loadRA2PSXTextures(const Common::Array<byte> &data,
 		Common::Array<RA2PSXTexture> &textures) {
 	const uint initialCount = textures.size();
@@ -157,21 +167,15 @@ bool loadRA2PSXTextures(const Common::Array<byte> &data,
 		texture.name = name;
 		texture.width = width;
 		texture.height = height;
+		texture.palette.resize(paletteColors);
+		for (uint32 i = 0; i < paletteColors; ++i)
+			texture.palette[i] = decodeRA2PSXColor(
+					READ_LE_UINT16(data.data() + paletteOffset + i * 2));
 		texture.pixels.resize(pixelCount);
 		for (uint32 i = 0; i < pixelCount; ++i) {
 			const byte packed = data[pixelsOffset + (eightBit ? i : i / 2)];
 			const byte paletteIndex = eightBit ? packed : ((i & 1) ? packed >> 4 : packed & 0xf);
-			const uint16 value = READ_LE_UINT16(data.data() + paletteOffset + paletteIndex * 2);
-			if (!value) {
-				texture.pixels[i] = 0;
-				continue;
-			}
-
-			const uint32 r = ((value & 0x1f) << 3) | ((value & 0x1f) >> 2);
-			const uint32 g = (((value >> 5) & 0x1f) << 3) | (((value >> 5) & 0x1f) >> 2);
-			const uint32 b = (((value >> 10) & 0x1f) << 3) | (((value >> 10) & 0x1f) >> 2);
-			texture.pixels[i] = 0x01000000 | ((value & 0x8000) ? 0x02000000 : 0) |
-					(r << 16) | (g << 8) | b;
+			texture.pixels[i] = texture.palette[paletteIndex];
 		}
 		textures.push_back(texture);
 		offset += recordSize;
@@ -214,6 +218,80 @@ bool loadRA2PSXSpriteAnimation(const Common::Array<byte> &data, uint16 frameHeig
 			texture.pixels[i] = 0x01000000 | (r << 16) | (g << 8) | b;
 		}
 		frames.push_back(texture);
+	}
+	return true;
+}
+
+// The playN scripts stream their frames through one byte oriented RLE: a zero ends the
+// stream, a count with the top bit set repeats the next byte, and any other count copies
+// that many literals.
+bool decodeRA2PSXPlayRun(const Common::Array<byte> &data, uint32 &offset,
+		uint32 expected, Common::Array<byte> &pixels) {
+	pixels.clear();
+	pixels.reserve(expected);
+	while (offset < data.size()) {
+		const byte count = data[offset++];
+		if (!count)
+			return pixels.size() == expected;
+		if (count & 0x80) {
+			if (offset >= data.size())
+				return false;
+			const byte value = data[offset++];
+			for (int i = (count & 0x7f) + 1; i > 0; --i)
+				pixels.push_back(value);
+			continue;
+		}
+		if (offset + count > data.size())
+			return false;
+		for (int i = 0; i < count; ++i)
+			pixels.push_back(data[offset++]);
+	}
+	return false;
+}
+
+bool loadRA2PSXPlayScript(const Common::Array<byte> &data,
+		Common::Array<RA2PSXPlayAnimation> &animations) {
+	animations.clear();
+	if (data.size() < 4)
+		return false;
+
+	// The file opens with a table of animation offsets that runs up to the first one.
+	const uint32 first = READ_LE_UINT32(data.data());
+	if (first < 4 || first > data.size() || (first & 3))
+		return false;
+
+	animations.resize(first / 4);
+	for (uint index = 0; index < animations.size(); ++index) {
+		uint32 offset = READ_LE_UINT32(data.data() + index * 4);
+		while (offset && offset + 16 <= data.size()) {
+			RA2PSXPlayFrame frame;
+			const uint16 recordSize = READ_LE_UINT16(data.data() + offset);
+			frame.x = READ_LE_INT16(data.data() + offset + 2);
+			frame.y = READ_LE_INT16(data.data() + offset + 4);
+			frame.width = data[offset + 6];
+			frame.height = data[offset + 7];
+			frame.boxLeft = frame.x + (int8)data[offset + 8];
+			frame.boxTop = frame.y + (int8)data[offset + 9];
+			frame.boxRight = frame.boxLeft + (int8)data[offset + 10];
+			frame.boxBottom = frame.boxTop + (int8)data[offset + 11];
+			frame.flags = READ_LE_UINT16(data.data() + offset + 12);
+
+			const uint32 pixelCount = (uint32)frame.width * frame.height;
+			uint32 cursor = offset + 16;
+			if (frame.flags & kRA2PSXPlayCompressed) {
+				if (!decodeRA2PSXPlayRun(data, cursor, pixelCount, frame.pixels))
+					return false;
+			} else {
+				if (cursor + pixelCount > data.size())
+					return false;
+				frame.pixels.resize(pixelCount);
+				memcpy(frame.pixels.data(), data.data() + cursor, pixelCount);
+			}
+			animations[index].push_back(frame);
+			if ((frame.flags & kRA2PSXPlayLastFrame) || !recordSize)
+				break;
+			offset += recordSize;
+		}
 	}
 	return true;
 }

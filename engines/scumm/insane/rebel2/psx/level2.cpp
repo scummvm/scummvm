@@ -35,8 +35,18 @@ namespace Scumm {
 
 // Level 2 is a cover shooter, and the original runs its three parts as separate levels:
 // 2, 0xc9 and 0xca. The same engine drives chapters 11 and 12.
+//
+// Every trooper slot owns four animations - stepping out, an aimed burst, a wild burst
+// and falling - at play script indices 8i to 8i+3, with its bolt at 4+8i.
 const RA2PSXLevel2PartInfo kRA2PSXLevel2Parts[kRA2PSXLevel2PartCount] = {
-	{ "l2P1bg", "r1L2P1", 0x26, 0x68, 0, 0x26, true,
+	{ "l2P1bg", "r1L2P1",
+		{ { 0x26, 0 }, { 0x68, 0 } }, { { 0, 0 }, { 0, 0 } }, 0,
+		{ { "BACK_L",   0, 28, 256, 190, 0 },
+		  { "BACK_R", 256, 28,  64, 190, 0 },
+		  { "PARA_L",   0, 28,  54, 190, 1 },
+		  { "PARA_M",  54, 28, 180,  25, 1 },
+		  { "PARA_R", 234, 28, 190, 190, 1 } },
+		0, 0x26,
 		0x2a, 0x32, 0xcf, 0x8d,
 		{ 63, 104, 145, 186, 320 }, { 73, 88, 98, 118, 240 },
 		{
@@ -50,8 +60,19 @@ const RA2PSXLevel2PartInfo kRA2PSXLevel2Parts[kRA2PSXLevel2PartCount] = {
 		{ 180, 73, 80, 108 }, { 181, 73, 82, 108 }, { 182, 73, 80, 108 },
 		{ 182, 73, 80, 108 }, { 181, 73, 78, 109 }, { 181, 73, 78, 109 },
 		{ 182, 73, 78, 108 }, { 183, 73, 80, 108 }, { 183, 73, 80, 108 }
-		} },
-	{ "l2P2bg", "r1L2P2", 0x00, 0x00, -10, 0x12, false,
+		},
+		2, { "TRP_0", "TRP_1", nullptr }, { "LAS_0", "LAS_1", nullptr },
+		{ { { 7, 0x1f }, { 7, 0x1a }, { 8, 0x0b } },
+		  { { 7, 0x36 }, { 7, 0x28 }, { 8, 0x1a } },
+		  { { 0, 0 }, { 0, 0 }, { 0, 0 } } } },
+	{ "l2P2bg", "r1L2P2",
+		{ { 0, 0x28 }, { 0, 0x28 } }, { { 0, 0x0a }, { 0, -20 } }, 1,
+		{ { "BACK_L",   0,  28, 256, 200, 0 },
+		  { "BACK_R", 256,  28,  64, 200, 0 },
+		  { "PARA_L",   0,  28,  64, 230, 1 },
+		  { "PARA_R",  64, 151, 256, 107, 1 },
+		  { nullptr,    0,   0,   0,   0, 0 } },
+		-10, 0x12,
 		0x1c, 0x26, 0x11e, 0xa0,
 		{ 63, 104, 145, 186, 320 }, { 73, 88, 98, 118, 240 },
 		{
@@ -65,8 +86,19 @@ const RA2PSXLevel2PartInfo kRA2PSXLevel2Parts[kRA2PSXLevel2PartCount] = {
 		{ 180, 73, 80, 108 }, { 181, 73, 82, 108 }, { 182, 73, 80, 108 },
 		{ 182, 73, 80, 108 }, { 181, 73, 78, 109 }, { 181, 73, 78, 109 },
 		{ 182, 73, 78, 108 }, { 183, 73, 80, 108 }, { 183, 73, 80, 108 }
-		} },
-	{ "l2P3bg", "r1L2P3", 0x00, 0x00, 0, 0x23, false,
+		},
+		3, { "TRP_0", "TRP_1", "TRP_2" }, { "LAS_0", "LAS_1", "LAS_2" },
+		{ { { 0x12, 0x2b }, { 0x0e, 0x24 }, { 0x0e, 0x19 } },
+		  { { 0x17, 0x3a }, { 0x15, 0x28 }, { 0x15, 0x1e } },
+		  { { 0x0d, 0x3b }, { 0x0d, 0x29 }, { 0x0f, 0x1c } } } },
+	{ "l2P3bg", "r1L2P3",
+		{ { 0x0f, 0 }, { -114, 0 } }, { { 0x1e, 0 }, { -14, 0 } }, 0,
+		{ { "BACK_L",   0, 28, 256, 190, 0 },
+		  { "BACK_R", 256, 28,  94, 190, 0 },
+		  { "PARA_L",   0, 28,  46, 190, 1 },
+		  { "PARA_R",  46, 28,  44, 190, 1 },
+		  { nullptr,    0,  0,   0,   0, 0 } },
+		0, 0x23,
 		0x1a, 0x43, 0xc9, 0x92,
 		{ 63, 104, 145, 186, 320 }, { 73, 88, 98, 118, 240 },
 		{
@@ -80,14 +112,48 @@ const RA2PSXLevel2PartInfo kRA2PSXLevel2Parts[kRA2PSXLevel2PartCount] = {
 		{ 180, 73, 80, 108 }, { 181, 73, 82, 108 }, { 182, 73, 80, 108 },
 		{ 182, 73, 80, 108 }, { 181, 73, 78, 109 }, { 181, 73, 78, 109 },
 		{ 182, 73, 78, 108 }, { 183, 73, 80, 108 }, { 183, 73, 80, 108 }
-		} }
+		},
+		3, { "TRP_0", "TRP_1", "TRP_2" }, { "LAS_0", "LAS_1", "LAS_2" },
+		{ { { 0, 0 }, { 0, 0 }, { 0, 0 } },
+		  { { 0, 0 }, { 0, 0 }, { 0, 0 } },
+		  { { 0, 0 }, { 0, 0 }, { 0, 0 } } } }
 };
 
-RA2PSXLevel2Scene::RA2PSXLevel2Scene() : _part(0), _frame(0), _delay(0), _out(false),
-		_moving(false) {
+// How many troopers a part sends, as base plus a roll of range.
+const int16 kRA2PSXLevel2WaveTable[kRA2PSXLevel2PartCount][3][2] = {
+	{ { 4, 0 }, { 6, 2 }, { 6, 4 } },
+	{ { 5, 0 }, { 6, 3 }, { 7, 4 } },
+	{ { 6, 0 }, { 8, 4 }, { 9, 5 } }
+};
+
+// { reappear base, reappear range, aim chance percent, respawn base, respawn range }
+const int16 kRA2PSXLevel2SlotTable[kRA2PSXLevel2PartCount][3][5] = {
+	{ { 140, 20, 66, 120, 60 }, { 100, 20, 66, 120, 60 }, { 80, 20, 50, 90, 40 } },
+	{ { 140, 60, 66, 120, 60 }, { 100, 60, 58, 120, 60 }, { 80, 20, 50, 90, 40 } },
+	{ { 140, 80, 66, 120, 60 }, { 100, 80, 50, 120, 60 }, { 80, 20, 50, 90, 40 } }
+};
+
+const int16 kRA2PSXLevel2FireTable[2][3][2] = {
+	{ { 9, 6 }, { 8, 6 }, { 6, 4 } },
+	{ { 9, 6 }, { 10, 6 }, { 6, 4 } }
+};
+
+const int16 kRA2PSXLevel2BoltTable[kRA2PSXLevel2PartCount][3][2] = {
+	{ { 30, 180 }, { 40, 256 }, { 50, 256 } },
+	{ { 30, 180 }, { 40, 256 }, { 50, 256 } },
+	{ { 30, 180 }, { 40, 256 }, { 50, 256 } }
+};
+
+const int16 kRA2PSXLevel2KillScore[3] = { 80, 100, 150 };
+
+RA2PSXLevel2Scene::RA2PSXLevel2Scene() : _part(0), _difficulty(0), _frame(0), _delay(0),
+		_out(false), _moving(false), _tick(0), _remaining(0), _active(0), _clearTicks(0),
+		_kills(0), _misses(0) {
 	for (int layer = 0; layer < 2; ++layer) {
-		for (int axis = 0; axis < 2; ++axis)
-			_scroll[layer][axis] = _scrollTarget[layer][axis] = _scrollStep[layer][axis] = 0;
+		for (int axis = 0; axis < 2; ++axis) {
+			_scroll[layer][axis] = _scrollTarget[layer][axis] = 0;
+			_scrollStep[layer][axis] = _scrollHold[layer][axis] = 0;
+		}
 	}
 }
 
@@ -95,7 +161,8 @@ const RA2PSXLevel2PartInfo &RA2PSXLevel2Scene::info() const {
 	return kRA2PSXLevel2Parts[_part];
 }
 
-bool RA2PSXLevel2Scene::load(const RA2PSXArchive &archive, int part) {
+bool RA2PSXLevel2Scene::load(const RA2PSXArchive &archive, int part, int difficulty,
+		Common::RandomSource &random) {
 	if (part < 0 || part >= kRA2PSXLevel2PartCount)
 		return false;
 
@@ -130,32 +197,197 @@ bool RA2PSXLevel2Scene::load(const RA2PSXArchive &archive, int part) {
 	if (archive.getMember("trpTex", hud))
 		_hud.append(hud);
 
+	Common::Array<byte> script;
+	_play.clear();
+	if (!archive.getMember(Common::String::format("play%d", part + 1), script) ||
+			!loadRA2PSXPlayScript(script, _play))
+		return false;
+
 	_part = part;
+	_difficulty = CLIP(difficulty, 0, 2);
 	_frame = 0;
 	_delay = 0;
 	_out = false;
 	_moving = false;
 	const RA2PSXLevel2PartInfo &part_ = kRA2PSXLevel2Parts[part];
-	_scroll[0][0] = _scrollTarget[0][0] = part_.backScroll << 16;
-	_scroll[1][0] = _scrollTarget[1][0] = part_.paraScroll << 16;
-	_scroll[0][1] = _scrollTarget[0][1] = 0;
-	_scroll[1][1] = _scrollTarget[1][1] = 0;
-	for (int layer = 0; layer < 2; ++layer) {
-		for (int axis = 0; axis < 2; ++axis)
-			_scrollStep[layer][axis] = 0;
+	for (int plane = 0; plane < 2; ++plane) {
+		for (int axis = 0; axis < 2; ++axis) {
+			_scroll[plane][axis] = _scrollTarget[plane][axis] =
+					part_.coverScroll[plane][axis] << 16;
+			_scrollStep[plane][axis] = _scrollHold[plane][axis] = 0;
+		}
+	}
+
+	const int16 *wave = kRA2PSXLevel2WaveTable[part][_difficulty];
+	_tick = 0;
+	_remaining = wave[0] + (wave[1] ? (int)random.getRandomNumber(wave[1]) : 0);
+	_active = 0;
+	_clearTicks = 0;
+	_kills = 0;
+	_misses = 0;
+	for (int i = 0; i < kRA2PSXLevel2TrooperCount; ++i) {
+		_troopers[i] = RA2PSXLevel2Actor();
+		_bolts[i] = RA2PSXLevel2Actor();
+		// Nothing steps out before the part has settled.
+		_troopers[i].slotTick = slotDelay(kRA2PSXLevel2SlotTable[part][_difficulty][0],
+				kRA2PSXLevel2SlotTable[part][_difficulty][1], random);
 	}
 	return true;
 }
 
-void RA2PSXLevel2Scene::setScrollTarget(int backX, int backY, int paraX, int paraY) {
-	_scrollTarget[0][0] = backX;
-	_scrollTarget[0][1] = backY;
-	_scrollTarget[1][0] = paraX;
-	_scrollTarget[1][1] = paraY;
-	for (int layer = 0; layer < 2; ++layer) {
-		for (int axis = 0; axis < 2; ++axis)
-			_scrollStep[layer][axis] =
-					(_scrollTarget[layer][axis] - _scroll[layer][axis]) / kRA2PSXLevel2ScrollSteps;
+int RA2PSXLevel2Scene::slotDelay(int base, int range, Common::RandomSource &random) const {
+	return _tick + base + (range ? (int)random.getRandomNumber(range) : 0);
+}
+
+void RA2PSXLevel2Scene::startActor(RA2PSXLevel2Actor &actor, int state, int animation) {
+	actor.state = state;
+	actor.animation = animation;
+	actor.frame = 0;
+	actor.hold = kRA2PSXLevel2FrameTicks;
+	actor.hit = false;
+	actor.fireNext = 0;
+	actor.fireEnd = 0;
+}
+
+const RA2PSXPlayFrame *RA2PSXLevel2Scene::actorFrame(const RA2PSXLevel2Actor &actor) const {
+	if (actor.animation < 0 || (uint)actor.animation >= _play.size())
+		return nullptr;
+	const RA2PSXPlayAnimation &animation = _play[actor.animation];
+	if ((uint)actor.frame >= animation.size())
+		return nullptr;
+	return &animation[actor.frame];
+}
+
+void RA2PSXLevel2Scene::advanceActor(RA2PSXLevel2Actor &actor) {
+	const RA2PSXPlayFrame *frame = actorFrame(actor);
+	if (!frame || (frame->flags & kRA2PSXPlayLastFrame))
+		return;
+	++actor.frame;
+}
+
+int RA2PSXLevel2Scene::updateEnemies(Common::RandomSource &random) {
+	++_tick;
+	const RA2PSXLevel2PartInfo &part = info();
+	const int16 *slot = kRA2PSXLevel2SlotTable[_part][_difficulty];
+	const int16 *bolt = kRA2PSXLevel2BoltTable[_part][_difficulty];
+	int damage = 0;
+
+	for (int i = 0; i < part.trooperCount; ++i) {
+		RA2PSXLevel2Actor &trooper = _troopers[i];
+		RA2PSXLevel2Actor &shot = _bolts[i];
+
+		// The bolt goes first: its flagged frame is the moment the shot lands.
+		if (shot.state != kRA2PSXLevel2StateIdle && --shot.hold <= 0) {
+			shot.hold = kRA2PSXLevel2FrameTicks;
+			const RA2PSXPlayFrame *frame = actorFrame(shot);
+			if (frame && (frame->flags & kRA2PSXPlayHitsPlayer) && exposed() &&
+					(int)random.getRandomNumber(99) < bolt[0])
+				damage += bolt[1];
+			if (!frame || (frame->flags & kRA2PSXPlayLastFrame))
+				shot.state = kRA2PSXLevel2StateIdle;
+			else
+				++shot.frame;
+		}
+
+		switch (trooper.state) {
+		case kRA2PSXLevel2StateIdle:
+			// A fresh trooper only steps out while the wave still owes bodies.
+			if (_tick >= trooper.slotTick && _remaining - _active > 0) {
+				startActor(trooper, kRA2PSXLevel2StateAppear, i * 8);
+				++_active;
+				trooper.fireNext = part.fireWindows[i][0].start;
+				trooper.fireEnd = part.fireWindows[i][0].end;
+				if (!trooper.fireEnd)
+					startActor(shot, kRA2PSXLevel2StateShot, 4 + i * 8);
+			}
+			continue;
+		case kRA2PSXLevel2StateCover:
+			if (_tick >= trooper.slotTick) {
+				const bool aimed = (int)random.getRandomNumber(99) < slot[2];
+				const int state = aimed ? kRA2PSXLevel2StateAimed : kRA2PSXLevel2StateWild;
+				startActor(trooper, state, i * 8 + (aimed ? 1 : 2));
+				trooper.fireNext = part.fireWindows[i][aimed ? 1 : 2].start;
+				trooper.fireEnd = part.fireWindows[i][aimed ? 1 : 2].end;
+				if (!trooper.fireEnd)
+					startActor(shot, kRA2PSXLevel2StateShot, i * 8 + (aimed ? 5 : 6));
+			}
+			continue;
+		default:
+			break;
+		}
+
+		// Parts one and two shoot on a frame window inside the animation instead.
+		if (trooper.fireEnd && trooper.frame >= trooper.fireNext &&
+				trooper.frame <= trooper.fireEnd) {
+			const int16 *cadence = kRA2PSXLevel2FireTable[MIN(_part, 1)][_difficulty];
+			startActor(shot, kRA2PSXLevel2StateShot, 4 + i * 8);
+			trooper.fireNext = trooper.frame + cadence[0] +
+					(int)random.getRandomNumber(cadence[1]);
+		}
+
+		if (--trooper.hold > 0)
+			continue;
+		trooper.hold = kRA2PSXLevel2FrameTicks;
+		const RA2PSXPlayFrame *frame = actorFrame(trooper);
+		if (frame && !(frame->flags & kRA2PSXPlayLastFrame)) {
+			++trooper.frame;
+			continue;
+		}
+
+		if (trooper.state == kRA2PSXLevel2StateDie) {
+			trooper.state = kRA2PSXLevel2StateIdle;
+			--_active;
+			--_remaining;
+			trooper.slotTick = slotDelay(slot[3], slot[4], random);
+			continue;
+		}
+		// It ducked back untouched, which the original scores as a miss.
+		++_misses;
+		trooper.state = kRA2PSXLevel2StateCover;
+		trooper.slotTick = slotDelay(slot[0], slot[1], random);
+	}
+
+	if (_remaining <= 0)
+		++_clearTicks;
+	return damage;
+}
+
+int RA2PSXLevel2Scene::shoot(int aimX, int aimY) {
+	if (!outOfCover())
+		return 0;
+
+	for (int i = 0; i < info().trooperCount; ++i) {
+		RA2PSXLevel2Actor &trooper = _troopers[i];
+		if (trooper.state == kRA2PSXLevel2StateIdle ||
+				trooper.state == kRA2PSXLevel2StateCover ||
+				trooper.state == kRA2PSXLevel2StateDie)
+			continue;
+		const RA2PSXPlayFrame *frame = actorFrame(trooper);
+		if (!frame || !(frame->flags & kRA2PSXPlayTargetable))
+			continue;
+		if (aimX < frame->boxLeft || aimX > frame->boxRight ||
+				aimY < frame->boxTop || aimY > frame->boxBottom)
+			continue;
+
+		startActor(trooper, kRA2PSXLevel2StateDie, i * 8 + 3);
+		_bolts[i].state = kRA2PSXLevel2StateIdle;
+		++_kills;
+		return kRA2PSXLevel2KillScore[_difficulty];
+	}
+	return 0;
+}
+
+void RA2PSXLevel2Scene::setScrollTarget(const int16 target[2][2]) {
+	const RA2PSXLevel2PartInfo &part = info();
+	for (int plane = 0; plane < 2; ++plane) {
+		for (int axis = 0; axis < 2; ++axis) {
+			_scrollTarget[plane][axis] = target[plane][axis] << 16;
+			_scrollStep[plane][axis] =
+					(_scrollTarget[plane][axis] - _scroll[plane][axis]) / kRA2PSXLevel2ScrollSteps;
+			// Only the axis the part actually slides along eases out.
+			_scrollHold[plane][axis] =
+					axis == part.scrollAxis ? kRA2PSXLevel2ScrollHold : 1000;
+		}
 	}
 }
 
@@ -163,12 +395,7 @@ void RA2PSXLevel2Scene::toggleCover() {
 	if (_moving)
 		return;
 	_moving = true;
-	if (_out) {
-		// Ducking back puts the walls where they started.
-		setScrollTarget(info().backScroll << 16, 0, info().paraScroll << 16, 0);
-	} else {
-		setScrollTarget(0, 0, 0, 0);
-	}
+	setScrollTarget(_out ? info().coverScroll : info().openScroll);
 }
 
 int RA2PSXLevel2Scene::aimFrame(int aimX, int aimY) const {
@@ -187,10 +414,14 @@ void RA2PSXLevel2Scene::update(int aimX, int aimY) {
 	for (int layer = 0; layer < 2; ++layer) {
 		for (int axis = 0; axis < 2; ++axis) {
 			int &value = _scroll[layer][axis];
+			int &step = _scrollStep[layer][axis];
 			const int target = _scrollTarget[layer][axis];
-			const int step = _scrollStep[layer][axis];
 			if (value == target || !step)
 				continue;
+			if (_scrollHold[layer][axis] > 0)
+				--_scrollHold[layer][axis];
+			else
+				step = (step >> 8) * (kRA2PSXLevel2ScrollDamping >> 8);
 			value += step;
 			if ((step < 0 && value <= target) || (step > 0 && value >= target))
 				value = target;
@@ -227,11 +458,14 @@ void RA2PSXLevel2Scene::update(int aimX, int aimY) {
 		_frame = aimFrame(aimX, aimY);
 }
 
-void RA2PSXLevel2Scene::drawLayer(Graphics::Surface &surface, const char *name,
-		int x, int y) const {
-	if (!_textures.has(name))
+void RA2PSXLevel2Scene::drawLayer(Graphics::Surface &surface,
+		const RA2PSXLevel2Layer &layer, int left, int top) const {
+	if (!layer.name || !_textures.has(layer.name))
 		return;
-	_textures.draw(surface, name, x, y, Common::Rect(0, 0, 256, 256));
+	_textures.draw(surface, layer.name,
+			left + layer.x - (_scroll[layer.plane][0] >> 16),
+			top + layer.y - (_scroll[layer.plane][1] >> 16),
+			Common::Rect(0, 0, layer.width, layer.height));
 }
 
 void RA2PSXLevel2Scene::drawFrame(Graphics::Surface &surface, const RA2PSXTexture &frame,
@@ -253,38 +487,76 @@ void RA2PSXLevel2Scene::drawFrame(Graphics::Surface &surface, const RA2PSXTextur
 	}
 }
 
+void RA2PSXLevel2Scene::drawPlayFrame(Graphics::Surface &surface,
+		const RA2PSXPlayFrame &frame, const Common::Array<uint32> &palette,
+		int left, int top) const {
+	for (int row = 0; row < frame.height; ++row) {
+		const int destY = top + frame.y + row;
+		if (destY < 0 || destY >= surface.h)
+			continue;
+		for (int column = 0; column < frame.width; ++column) {
+			const int destX = left + frame.x + column;
+			if (destX < 0 || destX >= surface.w)
+				continue;
+			const byte index = frame.pixels[row * frame.width + column];
+			const uint32 pixel = index < palette.size() ? palette[index] : 0;
+			if (!(pixel & 0x01000000))
+				continue;
+			surface.setPixel(destX, destY, surface.format.RGBToColor(
+					(pixel >> 16) & 0xff, (pixel >> 8) & 0xff, pixel & 0xff));
+		}
+	}
+}
+
 void RA2PSXLevel2Scene::draw(Graphics::Surface &surface, int aimX, int aimY) const {
 	const RA2PSXLevel2PartInfo &part = info();
 	const int left = (surface.w - 320) / 2;
-	const int top = (surface.h - 240) / 2 + kRA2PSXLevel2SceneTop;
-	const int backX = _scroll[0][0] >> 16;
-	const int paraX = _scroll[1][0] >> 16;
+	const int top = (surface.h - 240) / 2;
 	surface.fillRect(Common::Rect(surface.w, surface.h), 0);
 
-	drawLayer(surface, "BACK_L", left - backX, top);
-	drawLayer(surface, "BACK_R", left + 256 - backX, top);
-	drawLayer(surface, "PARA_L", left - paraX, top);
-	if (part.hasMiddleStrip)
-		drawLayer(surface, "PARA_M", left + 0x36 - paraX, top);
-	drawLayer(surface, "PARA_R", left + 0x36 - paraX, top);
+	for (int i = 0; i < kRA2PSXLevel2LayerCount; ++i)
+		drawLayer(surface, part.layers[i], left, top);
 
 	if ((uint)_frame < _rookie.size()) {
 		const RA2PSXLevel2Pose &pose = part.poses[_frame];
 		drawFrame(surface, _rookie[_frame], left + pose.x + part.rookieOffsetX,
-				(surface.h - 240) / 2 + pose.y + part.rookieOffsetY);
+				top + pose.y + part.rookieOffsetY);
+	}
+
+	// Troopers ride the backdrop, so ducking slides them behind the near wall.
+	const int actorX = left - (_scroll[0][0] >> 16);
+	const int actorY = top + kRA2PSXLevel2SceneTop - (_scroll[0][1] >> 16);
+	for (int i = 0; i < part.trooperCount; ++i) {
+		const Common::Array<uint32> *palette = _textures.palette(part.trooperPalettes[i]);
+		if (!palette)
+			continue;
+		if (_troopers[i].state != kRA2PSXLevel2StateIdle &&
+				_troopers[i].state != kRA2PSXLevel2StateCover) {
+			const RA2PSXPlayFrame *frame = actorFrame(_troopers[i]);
+			if (frame)
+				drawPlayFrame(surface, *frame, *palette, actorX, actorY);
+		}
+		const Common::Array<uint32> *bolt = _textures.palette(part.boltPalettes[i]);
+		if (bolt && _bolts[i].state != kRA2PSXLevel2StateIdle) {
+			const RA2PSXPlayFrame *frame = actorFrame(_bolts[i]);
+			if (frame)
+				drawPlayFrame(surface, *frame, *bolt, actorX, actorY);
+		}
 	}
 
 	if (outOfCover() && _hud.has("CROSS"))
-		_hud.draw(surface, "CROSS", left + aimX - 4,
-				(surface.h - 240) / 2 + aimY - 3, Common::Rect(0, 0, 8, 7));
+		_hud.draw(surface, "CROSS", left + aimX - 4, top + aimY - 3,
+				Common::Rect(0, 0, 8, 7));
 }
 
 // The PSX release composites its waves from sprite sheets instead of playing a SMUSH
-// segment, but the level's shape is the same, so it rides runRebel2Level2 as well.
+// segment, but the level's shape is the same, so it rides runRebel2Level2 as well. Each
+// wave is one pass at the part's troopers; the part is over once its budget is spent.
 class Rebel2PSX::Level2Handler : public Rebel2Level2Handler {
 public:
 	Level2Handler(Rebel2PSX &psx, const RA2PSXArchive &archive) :
-		_psx(psx), _archive(archive), _phaseState(0) {
+		_psx(psx), _archive(archive), _phaseState(0), _shield(kRA2PSXShieldFull),
+		_score(0), _kills(0), _misses(0), _lives(3), _skipped(false) {
 	}
 
 	bool shouldQuit() const override { return _psx._vm->shouldQuit(); }
@@ -293,28 +565,44 @@ public:
 		return _psx.playVideo("S1/L02_INTR.STR", 1, false);
 	}
 
-	void beginAttempt() override {}
+	void beginAttempt() override {
+		_shield = kRA2PSXShieldFull;
+		_kills = 0;
+		_misses = 0;
+	}
 
 	void beginPhase(int phase, bool) override {
 		_phaseState = 0;
-		if (!_scene.load(_archive, phase - 1))
+		_skipped = false;
+		if (!_scene.load(_archive, phase - 1, _psx._settings.difficulty, _psx._vm->_rnd))
 			warning("Rebel Assault II: could not load level 2 part %d", phase);
 	}
 
+	// One wave per trooper the part scripts, so the shared loop runs the whole part.
 	int16 waveBudget(int phase) override {
-		// The per difficulty budget table is not read out of the PSX build yet.
-		return (int16)(4 + phase);
+		const int16 *wave = kRA2PSXLevel2WaveTable[CLIP(phase - 1, 0, 2)]
+				[CLIP(_psx._settings.difficulty, 0, 2)];
+		return (int16)(wave[0] + wave[1]);
 	}
 
 	bool playBackgroundWave(int phase) override { return showScene(phase); }
 	bool playWave(int phase, uint16) override { return showScene(phase); }
 
-	WaveCredit creditWave(int16, int16 *, int16) override {
-		// Nothing decodes r1L2P* or play* yet, so every phase reports itself finished
-		// rather than looping on waves that cannot be built.
+	// The PSX part is one continuous scene rather than a chain of movie waves, so a pass
+	// normally settles the phase outright. The budget only matters if one is cut short.
+	WaveCredit creditWave(int16 mask, int16 *budget, int16) override {
 		WaveCredit credit;
-		credit.stop = true;
-		_phaseState = 0x0e;
+		if (_scene.cleared() || playerDead() || _skipped) {
+			_phaseState = (uint16)mask;
+			credit.stop = true;
+			return credit;
+		}
+		if (budget && *budget > 0) {
+			--*budget;
+			credit.bits = 2;
+		} else {
+			credit.stop = true;
+		}
 		return credit;
 	}
 
@@ -326,12 +614,20 @@ public:
 	}
 
 	uint16 phaseState() const override { return _phaseState; }
-	bool playerDead() const override { return false; }
-	void accumulateKills() override {}
-	void accumulateMisses() override {}
+	bool playerDead() const override { return _shield <= 0; }
+	void accumulateKills() override { _kills += _scene.kills(); }
+	void accumulateMisses() override { _misses += _scene.misses(); }
 
+	// A death costs a life and restarts the level from its first part.
 	bool handleDeath(int, Result &result) override {
-		result = kQuit;
+		if (!_psx.playVideo("S1/L02_DIE.STR", 1, false)) {
+			result = shouldQuit() ? kQuit : kError;
+			return false;
+		}
+		if (--_lives > 0)
+			return true;
+		_psx.playVideo("S1/L02_OVER.STR", 1, false);
+		result = kGameOver;
 		return false;
 	}
 
@@ -341,8 +637,8 @@ public:
 	}
 
 private:
-	// Runs the part. The rookie leans out and ducks back, the crosshair picks one of the
-	// twenty five aim poses, and the walls slide between the two cover positions.
+	// Runs one pass at the part: the rookie leans out and ducks, the scripted troopers
+	// step out and trade fire, and the pass ends when the wave or the shield runs out.
 	bool showScene(int phase) {
 		const RA2PSXLevel2PartInfo &part = kRA2PSXLevel2Parts[phase - 1];
 		const bool cursorWasVisible = CursorMan.isVisible();
@@ -352,18 +648,25 @@ private:
 		int aimY = (part.aimTop + part.aimBottom) / 2;
 		bool left = false, right = false, up = false, down = false;
 		bool running = true;
+		int flashFrame = kRA2PSXHitFlashFrames;
+		int tick = -1;
+		const uint32 startTime = g_system->getMillis();
 		const int viewX = ((int)_psx._vm->_screenWidth - 320) / 2;
 		const int viewY = ((int)_psx._vm->_screenHeight - 240) / 2;
 
 		while (running && !shouldQuit()) {
+			bool shoot = false;
 			Common::Event event;
 			while (g_system->getEventManager()->pollEvent(event)) {
 				const bool pressed = event.type == Common::EVENT_KEYDOWN;
 				if (pressed || event.type == Common::EVENT_KEYUP) {
 					switch (event.kbd.keycode) {
 					case Common::KEYCODE_ESCAPE:
-						if (pressed)
+						// Stands in for the pause menu, which is not ported yet.
+						if (pressed) {
+							_skipped = true;
 							running = false;
+						}
 						break;
 					case Common::KEYCODE_LEFT:
 					case Common::KEYCODE_a:
@@ -381,10 +684,13 @@ private:
 					case Common::KEYCODE_s:
 						down = pressed;
 						break;
-					case Common::KEYCODE_SPACE:
 					case Common::KEYCODE_RETURN:
 						if (pressed && !event.kbdRepeat)
 							_scene.toggleCover();
+						break;
+					case Common::KEYCODE_SPACE:
+						if (pressed && !event.kbdRepeat)
+							shoot = true;
 						break;
 					default:
 						break;
@@ -395,32 +701,54 @@ private:
 				} else if (event.type == Common::EVENT_RBUTTONDOWN) {
 					_scene.toggleCover();
 				} else if (event.type == Common::EVENT_LBUTTONDOWN) {
-					if (!_scene.outOfCover())
-						_scene.toggleCover();
+					shoot = true;
 				} else if (event.type == Common::EVENT_QUIT ||
 						event.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 					_psx._vm->quitGame();
 				}
 			}
 
-			// Aiming only moves while the rookie is actually out of cover.
-			if (_scene.outOfCover()) {
-				aimX += (right ? 3 : 0) - (left ? 3 : 0);
-				aimY += (down ? 3 : 0) - (up ? 3 : 0);
-			}
-			aimX = CLIP<int>(aimX, part.aimLeft, part.aimRight);
-			aimY = CLIP<int>(aimY, part.aimTop, part.aimBottom);
-			_scene.update(aimX, aimY);
+			const uint32 elapsed = g_system->getMillis() - startTime;
+			const int target = (int)((uint64)elapsed * kRA2PSXLevel2TickRate / 1000);
+			bool redraw = false;
+			while (tick < target && running) {
+				++tick;
+				redraw = true;
+				if (_scene.outOfCover()) {
+					aimX += (right ? 2 : 0) - (left ? 2 : 0);
+					aimY += (down ? 2 : 0) - (up ? 2 : 0);
+				}
+				aimX = CLIP<int>(aimX, part.aimLeft, part.aimRight);
+				aimY = CLIP<int>(aimY, part.aimTop, part.aimBottom);
+				_scene.update(aimX, aimY);
 
-			Graphics::Surface output;
-			output.create(_psx._vm->_screenWidth, _psx._vm->_screenHeight,
-					g_system->getScreenFormat());
-			_scene.draw(output, aimX, aimY);
-			g_system->copyRectToScreen(output.getPixels(), output.pitch, 0, 0,
-					output.w, output.h);
-			output.free();
-			g_system->updateScreen();
-			g_system->delayMillis(20);
+				const int damage = _scene.updateEnemies(_psx._vm->_rnd);
+				if (damage) {
+					_shield = MAX(0, _shield - damage);
+					flashFrame = 0;
+				}
+				if (shoot) {
+					_score += _scene.shoot(aimX, aimY);
+					shoot = false;
+				}
+				if (flashFrame < kRA2PSXHitFlashFrames)
+					++flashFrame;
+				if (_shield <= 0 || _scene.cleared())
+					running = false;
+			}
+
+			if (redraw) {
+				Graphics::Surface output;
+				output.create(_psx._vm->_screenWidth, _psx._vm->_screenHeight,
+						g_system->getScreenFormat());
+				_scene.draw(output, aimX, aimY);
+				drawRA2PSXHitFlash(output, flashFrame);
+				g_system->copyRectToScreen(output.getPixels(), output.pitch, 0, 0,
+						output.w, output.h);
+				output.free();
+				g_system->updateScreen();
+			}
+			g_system->delayMillis(5);
 		}
 
 		CursorMan.showMouse(cursorWasVisible);
@@ -431,6 +759,12 @@ private:
 	const RA2PSXArchive &_archive;
 	RA2PSXLevel2Scene _scene;
 	uint16 _phaseState;
+	int _shield;
+	int _score;
+	int _kills;
+	int _misses;
+	int _lives;
+	bool _skipped;
 };
 
 Common::Error Rebel2PSX::runLevel2() {

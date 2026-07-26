@@ -76,6 +76,13 @@ bool RA2PSXTextureSet::appendRaw24(const char *name, const Common::Array<byte> &
 	return true;
 }
 
+const Common::Array<uint32> *RA2PSXTextureSet::palette(const char *name) const {
+	if (!name)
+		return nullptr;
+	const RA2PSXTexture *texture = find(name);
+	return texture && !texture->palette.empty() ? &texture->palette : nullptr;
+}
+
 const RA2PSXTexture *RA2PSXTextureSet::find(const char *name) const {
 	for (uint i = 0; i < _textures.size(); ++i) {
 		if (_textures[i].name.equalsIgnoreCase(name))

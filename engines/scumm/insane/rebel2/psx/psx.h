@@ -203,10 +203,46 @@ struct RA2PSXTexture {
 	uint16 width;
 	uint16 height;
 	Common::Array<uint32> pixels;
+	// The resolved CLUT, kept so sprites streamed into this texture's VRAM slot can
+	// borrow its colours the way the original's fixed page assignment does.
+	Common::Array<uint32> palette;
 };
 
+uint32 decodeRA2PSXColor(uint16 value);
 bool loadRA2PSXTextures(const Common::Array<byte> &data,
 		Common::Array<RA2PSXTexture> &textures);
+
+// One frame of a playN script: where it lands on screen, its 8 bit pixels, and the flags
+// that say whether it can be shot, whether it hurts the player, and when it makes noise.
+struct RA2PSXPlayFrame {
+	RA2PSXPlayFrame() : x(0), y(0), width(0), height(0), boxLeft(0), boxTop(0),
+			boxRight(0), boxBottom(0), flags(0) {}
+
+	int16 x;
+	int16 y;
+	int16 width;
+	int16 height;
+	int16 boxLeft;
+	int16 boxTop;
+	int16 boxRight;
+	int16 boxBottom;
+	uint16 flags;
+	Common::Array<byte> pixels;
+};
+
+enum {
+	kRA2PSXPlayLastFrame = 0x0001,
+	kRA2PSXPlayCompressed = 0x0002,
+	kRA2PSXPlayTargetable = 0x0004,
+	kRA2PSXPlayHitsPlayer = 0x0008,
+	kRA2PSXPlaySound = 0x0010
+};
+
+typedef Common::Array<RA2PSXPlayFrame> RA2PSXPlayAnimation;
+
+// playN: a table of animation offsets, each opening a chain of frame records.
+bool loadRA2PSXPlayScript(const Common::Array<byte> &data,
+		Common::Array<RA2PSXPlayAnimation> &animations);
 
 // The fireball frames are 68x56, the size the original's VRAM upload uses.
 enum { kRA2PSXExplosionHeight = 56 };
@@ -218,6 +254,7 @@ bool loadRA2PSXSpriteAnimation(const Common::Array<byte> &data, uint16 frameHeig
 // Level 2's three parts, each a sheet of backdrop halves, parallax walls and actors.
 enum {
 	kRA2PSXLevel2PartCount = 3,
+	kRA2PSXLevel2LayerCount = 5,
 	kRA2PSXLevel2SceneTop = 28,
 	// Frames 0 to 4 are the rookie leaning out of cover; 5 to 29 are a five by five
 	// grid of aim poses picked from where the crosshair sits.
@@ -226,8 +263,54 @@ enum {
 	kRA2PSXLevel2RookieDelay = 3,
 	kRA2PSXLevel2AimColumns = 5,
 	kRA2PSXLevel2AimRows = 5,
-	// The scroll eases to its target over this many ticks.
-	kRA2PSXLevel2ScrollSteps = 20
+	// The slide runs at a constant speed of distance/20 for 14 ticks, then decays by
+	// 0xe000/0x10000 a tick until it lands - ra2 eases out rather than lerping.
+	kRA2PSXLevel2ScrollSteps = 20,
+	kRA2PSXLevel2ScrollHold = 14,
+	kRA2PSXLevel2ScrollDamping = 0xe000
+};
+
+enum {
+	kRA2PSXLevel2TrooperCount = 3,
+	// The gameplay clock is the 60Hz vblank, and a play script steps every fourth tick.
+	kRA2PSXLevel2TickRate = 60,
+	kRA2PSXLevel2FrameTicks = 4,
+	// A part ends a second after its last trooper falls.
+	kRA2PSXLevel2ClearTicks = 60,
+	// A trooper hides behind its own sprite until its slot has counted down.
+	kRA2PSXLevel2SlotNever = 0x7fffffff
+};
+
+// The states a play script actor walks, named after the values the original stores.
+enum {
+	kRA2PSXLevel2StateIdle = 0,
+	kRA2PSXLevel2StateAppear = 1,
+	kRA2PSXLevel2StateAimed = 2,
+	kRA2PSXLevel2StateWild = 3,
+	kRA2PSXLevel2StateDie = 4,
+	kRA2PSXLevel2StateShot = 5,
+	kRA2PSXLevel2StateCover = 0x80
+};
+
+// One play script actor: a trooper, or the bolt it fires.
+struct RA2PSXLevel2Actor {
+	RA2PSXLevel2Actor() : state(kRA2PSXLevel2StateIdle), animation(-1), frame(0), hold(0),
+			hit(false), slotTick(0), fireNext(0), fireEnd(0) {}
+
+	int state;
+	int animation;
+	int frame;
+	int hold;
+	bool hit;
+	int slotTick;
+	int fireNext;
+	int fireEnd;
+};
+
+// The frame window a trooper shoots inside, per part, per trooper, per animation.
+struct RA2PSXLevel2FireWindow {
+	int16 start;
+	int16 end;
 };
 
 // Where each rookie frame is drawn, straight out of the original's per level table.
@@ -238,20 +321,53 @@ struct RA2PSXLevel2Pose {
 	int16 height;
 };
 
+// One backdrop sprite, as the original's display list holds it: a fixed screen position
+// the scroll is subtracted from, and the size the SPRT draws rather than the sheet's.
+struct RA2PSXLevel2Layer {
+	const char *name;
+	int16 x;
+	int16 y;
+	int16 width;
+	int16 height;
+	// 0 rides the backdrop scroll, 1 the nearer parallax one.
+	byte plane;
+};
+
 struct RA2PSXLevel2PartInfo {
 	const char *sheet;
 	const char *anims;
-	int backScroll;
-	int paraScroll;
+	// Where each plane sits in cover and out in the open, as 16.16 pixels.
+	int16 coverScroll[2][2];
+	int16 openScroll[2][2];
+	// Which axis eases out; the other one holds its speed all the way.
+	byte scrollAxis;
+	RA2PSXLevel2Layer layers[kRA2PSXLevel2LayerCount];
 	int rookieOffsetX;
 	int rookieOffsetY;
-	bool hasMiddleStrip;
 	// Crosshair box, then the thresholds that split it into the aim grid.
 	int16 aimLeft, aimTop, aimRight, aimBottom;
 	int16 aimColumns[kRA2PSXLevel2AimColumns];
 	int16 aimRows[kRA2PSXLevel2AimRows];
 	RA2PSXLevel2Pose poses[kRA2PSXLevel2FrameCount];
+	// How many trooper slots the part scripts, and the sheet sprites whose palettes the
+	// streamed trooper and bolt frames borrow.
+	int trooperCount;
+	const char *trooperPalettes[kRA2PSXLevel2TrooperCount];
+	const char *boltPalettes[kRA2PSXLevel2TrooperCount];
+	// Empty windows mean the part fires as it changes state instead of on a frame count.
+	RA2PSXLevel2FireWindow fireWindows[kRA2PSXLevel2TrooperCount][3];
 };
+
+// Waves per part by difficulty, and the timings and odds that drive a trooper's slot.
+extern const int16 kRA2PSXLevel2WaveTable[kRA2PSXLevel2PartCount][3][2];
+// Per slot: how long until it reappears, the odds it aims rather than sprays, and how
+// long a killed trooper's spot stays empty.
+extern const int16 kRA2PSXLevel2SlotTable[kRA2PSXLevel2PartCount][3][5];
+// How many animation frames pass between two shots. Part 3 fires on state changes only.
+extern const int16 kRA2PSXLevel2FireTable[2][3][2];
+// The odds an enemy bolt connects, and what it takes off the shield when it does.
+extern const int16 kRA2PSXLevel2BoltTable[kRA2PSXLevel2PartCount][3][2];
+extern const int16 kRA2PSXLevel2KillScore[3];
 
 extern const RA2PSXLevel2PartInfo kRA2PSXLevel2Parts[kRA2PSXLevel2PartCount];
 
