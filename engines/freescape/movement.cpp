@@ -474,6 +474,18 @@ void FreescapeEngine::checkIfStillInArea() {
 	}
 	if (_position.y() >= 2016)
 		_position.y() = _lastPosition.y();
+
+	// Workaround for Castle Master 2: the first area (the crypt) is indoors, but it shares
+	// its area ID with the Castle Master courtyard, so it also gets the unbounded synthetic
+	// floor added by Area::addFloor(). The player can then walk past the room walls and keep
+	// going, ending up far outside the room. Keep them within the room instead, which is the
+	// area covered by the crypt floor: 127 units, as in the original bound (MAX_COORDINATE is
+	// 127 * 64 in La5d9_move_player, expressed in 1/64th of a unit).
+	if (isCastleMaster2() && _currentArea->getAreaID() == _startArea) {
+		float roomSize = 127.0f * 32.0f / _currentArea->getScale();
+		_position.x() = CLIP(_position.x(), 0.0f, roomSize);
+		_position.z() = CLIP(_position.z(), 0.0f, roomSize);
+	}
 }
 
 void FreescapeEngine::updatePlayerMovement(float deltaTime) {
