@@ -753,6 +753,22 @@
   with repeated random selections allowed. A wrong six-button attempt pauses
   for four DOS timer ticks, plays `BUZER.WAV`, restores all eight markers, and
   waits for the buzzer before accepting another attempt.
+- Scene action 12 calls `RunBoardArrangementPuzzleScene` at `0x39d8f` with
+  the caller-supplied completion flag. `IB2.RUN` callback `0x536` supplies
+  milestone 41 after retaining `IBZ1.AVI` and presenting `Q_P_15.WAV`.
+  `BB_BG.PCX` supplies the 640-by-300 puzzle background; `SM_BB0.BBM`
+  through `SM_BB7.BBM` are the eight draggable cards, while the corresponding
+  `LG_BB` assets provide their 273-by-203 readable previews in the right-hand
+  panel. The initial scene-space Y/X pairs at `0x84b39` persist across re-entry.
+- The board solution order stored at `0x374b1` is `[1, 0, 3, 6, 2]`.
+  Each following card must sit entirely below the previous card and overlap it
+  horizontally; the other three cards do not participate in validation.
+  A newly selected card moves to the front of the hit-test and draw order.
+  Drops wholly inside the preview panel animate back to their origin at fifteen
+  pixels per DOS tick. The first valid arrangement sets the supplied flag and
+  presents `Q_P_16.WAV`, but leaves the puzzle active. Escape or either
+  80-pixel side control exits, F1 opens help table `0x1ab`, and `BB1.WAV`
+  accompanies selection of a card that was not already frontmost.
 - Scene action 24 calls `RunTubeSwitchScene` at `0x25e18` with the
   caller-supplied completion flag. `GA1.RUN` callback `0xaf2` supplies flag 215
   (`solved vacuum tube puzzle`). The scene counts consumed inventory flags 102,

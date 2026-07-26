@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	milestones.o \
 	modal_dialog.o \
 	options_panel.o \
+	puzzles/board_arrangement.o \
 	puzzles/broken_mug.o \
 	puzzles/calculator.o \
 	puzzles/cd_in_book.o \
