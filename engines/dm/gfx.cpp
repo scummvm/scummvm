@@ -1434,14 +1434,19 @@ byte *DisplayMan::getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int
 
 void DisplayMan::updateScreen() {
 	_vm->_textMan->updateMessageArea();
-	// apply copper
-	for (uint32 i = 320 * 30; i < 320 * 170; ++i)
-		_bitmapScreen[i] += 16;
-	g_system->copyRectToScreen(_bitmapScreen, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 
+	if (_paletteSwitchingEnabled)
+		for (uint16 y = 33; y <= 168; ++y)
+			for (uint16 x = 0; x <= 223; ++x)
+				_bitmapScreen[y * 320 + x] += 16;
+
+	g_system->copyRectToScreen(_bitmapScreen, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 	g_system->updateScreen();
-	for (uint32 i = 320 * 30; i < 320 * 170; ++i)
-		_bitmapScreen[i] -= 16;
+
+	if (_paletteSwitchingEnabled)
+		for (uint16 y = 33; y <= 168; ++y)
+			for (uint16 x = 0; x <= 223; ++x)
+				_bitmapScreen[y * 320 + x] -= 16;
 }
 
 void DisplayMan::drawViewport(int16 palSwitchingRequestedState) {
