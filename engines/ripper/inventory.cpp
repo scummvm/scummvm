@@ -590,13 +590,6 @@ Inventory::Result Inventory::run(const Common::String &sceneLabel,
 				hoveredControl = newHoveredControl;
 				_engine->getCursor()->update(hoveredControl != kNoControl ?
 					kChoiceCursor : kDefaultCursor);
-				if (hoveredControl >= 0) {
-					uint entryIndex = 0;
-					if (_chooser.resolveVisibleRow(hoveredControl, entryIndex) &&
-							_chooser.select(entryIndex, false)) {
-						draw();
-					}
-				}
 				debugC(3, kDebugScene,
 					"Ripper: inventory hover control=%d point=%d,%d selected=%u",
 					hoveredControl, mouse.position.x, mouse.position.y,
@@ -604,6 +597,16 @@ Inventory::Result Inventory::run(const Common::String &sceneLabel,
 			}
 			if ((mouse.pressed & kMouseButtonLeft) != 0) {
 				pressedControl = hoveredControl;
+				if (pressedControl >= 0) {
+					uint entryIndex = 0;
+					if (_chooser.resolveVisibleRow(pressedControl, entryIndex) &&
+							_chooser.select(entryIndex, false)) {
+						debugC(2, kDebugScene,
+							"Ripper: inventory selected row=%d index=%u unlockFlag=%u item=%u",
+							pressedControl, entryIndex, _entries[entryIndex].unlockFlag,
+							_entries[entryIndex].bitmapIndex);
+					}
+				}
 				draw(pressedControl == kUseControl,
 					pressedControl == kDoneControl);
 			}
