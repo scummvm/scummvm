@@ -776,6 +776,22 @@
   for the new installed count. Other inventory items present modal resource
   `0x4d`; F1 uses resource `0x1bb` in the inventory chooser and resource 400 in
   the main scene.
+- Scene action 28 calls `RunGymSelectorScene` at `0x3c64b` with the
+  caller-supplied completion flag. `FD2.RUN` callback `0xb59` supplies milestone
+  209 from frame `FDZ1`. The selector repeatedly presents `FD_GYM4.SMK` until
+  it receives input, then uses Up (`0x4800`) and Down (`0x5000`) to wrap through
+  states 0 through 3 and presents the matching `FD_GYM0.SMK` through
+  `FD_GYM3.SMK`. Reaching state 2 sets the supplied flag; the selector remains
+  active until Escape or until a state presentation finishes without input.
+- `RunGymSelectorScene` builds its two cursor-16 controls from
+  `FD_GYMB0.BBM` and `FD_GYMB1.BBM` at physical rectangles
+  (374, 308)-(397, 322) and (373, 327)-(395, 340). `GYM0_W.WAV` and
+  `GYM1_W.WAV` are the shared press/release cues. Each state transition starts
+  `GYM2_W.WAV`; `PollGymSelectorMediaSequenceInputCallback` at `0x3c58f`
+  stops it at one-based media frame `0x26`. The left-side
+  (0, 50)-(166, 350) control and Escape leave the selector, while F1 opens help
+  table `0x1a9`. Entry stores and dispatches cursor row 14, and cleanup stores
+  row 0 after restoring the prior control list.
 - `RunKaBookCodeEntryPrompt` at `0x2bc33` is a separate blocking puzzle called
   by `RunKaDialogueScene` after the book-response voice completes. It owns
   `KA_PUZ.PCX`, the seven input cells, `KA_KEY.WAV` feedback, F1 help table
