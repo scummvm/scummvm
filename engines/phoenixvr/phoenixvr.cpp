@@ -1534,7 +1534,6 @@ void PhoenixVREngine::renderLensflare() {
 		const Graphics::ManagedSurface &src = *it->_value;
 		const int dstX = static_cast<int>(sourceX + (_screenCenter.x - sourceX) * lens.scale);
 		const int dstY = static_cast<int>(sourceY + (_screenCenter.y - sourceY) * lens.scale);
-		const uint32 transparentColor = src.hasTransparentColor() ? src.getTransparentColor() : src.format.RGBToColor(0, 0, 0);
 
 		for (int y = 0; y != src.h; ++y) {
 			const int screenY = dstY + y;
@@ -1545,12 +1544,13 @@ void PhoenixVREngine::renderLensflare() {
 				if (screenX < 0 || screenX >= _screen->w)
 					continue;
 
-				const uint32 srcColor = src.getPixel(x, y);
-				if (srcColor == transparentColor)
+				uint8 srcR, srcG, srcB, srcA, dstR, dstG, dstB;
+				src.format.colorToARGB(src.getPixel(x, y), srcA, srcR, srcG, srcB);
+				srcR = srcR * srcA / 255;
+				srcG = srcG * srcA / 255;
+				srcB = srcB * srcA / 255;
+				if ((srcR | srcG | srcB) == 0)
 					continue;
-
-				uint8 srcR, srcG, srcB, dstR, dstG, dstB;
-				src.format.colorToRGB(srcColor, srcR, srcG, srcB);
 				_screen->format.colorToRGB(_screen->getPixel(screenX, screenY), dstR, dstG, dstB);
 				_screen->setPixel(screenX, screenY, _screen->format.RGBToColor(CLIP<int>(dstR + srcR, 0, 255), CLIP<int>(dstG + srcG, 0, 255), CLIP<int>(dstB + srcB, 0, 255)));
 			}
