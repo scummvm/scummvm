@@ -19,27 +19,29 @@
  *
  */
 
-#ifndef MADS_NEBULAR_SOUND_H
-#define MADS_NEBULAR_SOUND_H
+#ifndef MADS_PHANTOM_SOUND_H
+#define MADS_PHANTOM_SOUND_H
 
 #include "mads/core/sound_manager.h"
 
 namespace MADS {
-namespace RexNebular {
+namespace Phantom {
 
-class RexSoundManager : public SoundManager {
+class PhantomSoundManager : public SoundManager {
+private:
+	bool _isDemo;
+
 protected:
 	/**
-	 * Load the particular section sound handler
-	 * @param sectionNum	Section number
+	 * Load the appropriate sound driver for the current section of the game.
 	 */
 	void loadDriver(int sectionNum) override;
 
 public:
-	RexSoundManager(Audio::Mixer *mixer, bool &soundFlag) : SoundManager(mixer, soundFlag) {
+	PhantomSoundManager(Audio::Mixer *mixer, bool &soundFlag, bool isDemo) :
+		SoundManager(mixer, soundFlag), _isDemo(isDemo) {
 	}
-	~RexSoundManager() override {
-	}
+	~PhantomSoundManager() override {}
 
 	/**
 	 * Validate the sound driver files needed for data
@@ -47,7 +49,7 @@ public:
 	void validate() override;
 };
 
-} // namespace RexNebular
+} // namespace Phantom
 } // namespace MADS
 
 #endif

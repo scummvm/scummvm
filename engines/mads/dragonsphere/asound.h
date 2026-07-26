@@ -608,6 +608,12 @@ protected:
 
 public:
 	/**
+	 * Validate the sound driver files needed for data
+	 */
+	static void validate(bool isDemo);
+
+public:
+	/**
 	 * Constructor.
 	 * @param mixer       Mixer instance
 	 * @param filename    Path to the .DR1 (or equivalent) sound-driver file

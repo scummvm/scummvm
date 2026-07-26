@@ -105,9 +105,12 @@ public:
 	SoundManager(Audio::Mixer *mixer, bool &soundFlag);
 	virtual ~SoundManager();
 
-	virtual void validate() = 0;
-
 	bool _preferRoland;
+
+	/**
+	 * Validate the sound driver files needed for data
+	 */
+	virtual void validate() = 0;
 
 	/**
 	 * Initializes the sound driver for a given game section

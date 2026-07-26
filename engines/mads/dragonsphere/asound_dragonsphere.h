@@ -19,30 +19,13 @@
  *
  */
 
-#ifndef MADS_DRAGONSPHERE_SOUND_H
-#define MADS_DRAGONSPHERE_SOUND_H
+#ifndef MADS_DRAGONSPHERE_ASOUND_DRAGONSPHERE_H
+#define MADS_DRAGONSPHERE_ASOUND_DRAGONSPHERE_H
 
 #include "mads/dragonsphere/asound.h"
 
 namespace MADS {
 namespace Dragonsphere {
-
-class DragonSoundManager : public SoundManager {
-private:
-	bool _isDemo;
-
-protected:
-	void loadDriver(int sectionNum) override;
-
-public:
-	DragonSoundManager(Audio::Mixer *mixer, bool &soundFlag, bool isDemo) :
-		SoundManager(mixer, soundFlag), _isDemo(isDemo) {
-	}
-	~DragonSoundManager() override {
-	}
-
-	void validate() override;
-};
 
 /**
  * ASound1  (asound.dr1, _dataOffset = 0x2520, _dataSize = 0x49e0)

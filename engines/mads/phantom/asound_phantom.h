@@ -19,29 +19,13 @@
  *
  */
 
-#ifndef MADS_PHANTOM_SOUND_H
-#define MADS_PHANTOM_SOUND_H
+#ifndef MADS_PHANTOM_ASOUND_PHANTOM_H
+#define MADS_PHANTOM_ASOUND_PHANTOM_H
 
 #include "mads/phantom/asound.h"
 
 namespace MADS {
 namespace Phantom {
-
-class PhantomSoundManager : public SoundManager {
-private:
-	bool _isDemo;
-
-protected:
-	void loadDriver(int sectionNum) override;
-
-public:
-	PhantomSoundManager(Audio::Mixer *mixer, bool &soundFlag, bool isDemo) : SoundManager(mixer, soundFlag), _isDemo(isDemo) {
-	}
-	~PhantomSoundManager() override {
-	}
-
-	void validate() override;
-};
 
 /**
  * ASound1  (asound.ph1, _dataOffset = 0x21e0)

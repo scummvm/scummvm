@@ -192,7 +192,6 @@ void ASound::validate() {
 	}
 }
 
-
 void ASound::adlibInit() {
 	write(4, 0x60);
 	write(4, 0x80);

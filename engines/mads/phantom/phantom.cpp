@@ -35,7 +35,7 @@
 #include "mads/core/text.h"
 #include "mads/phantom/phantom.h"
 #include "mads/phantom/main.h"
-#include "mads/phantom/asound_phantom.h"
+#include "mads/phantom/sound.h"
 #include "mads/phantom/catacombs.h"
 #include "mads/phantom/global.h"
 #include "mads/phantom/rooms/section1.h"

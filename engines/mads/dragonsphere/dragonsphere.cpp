@@ -39,7 +39,7 @@
 #include "mads/dragonsphere/dragonsphere.h"
 #include "mads/dragonsphere/global.h"
 #include "mads/dragonsphere/main.h"
-#include "mads/dragonsphere/asound_dragonsphere.h"
+#include "mads/dragonsphere/sound.h"
 #include "mads/dragonsphere/rooms/section1.h"
 #include "mads/dragonsphere/rooms/section2.h"
 #include "mads/dragonsphere/rooms/section3.h"

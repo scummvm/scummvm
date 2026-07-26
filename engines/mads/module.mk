@@ -266,6 +266,7 @@ MODULE_OBJS := \
 	phantom/main_menu.o \
 	phantom/menus.o \
 	phantom/main.o \
+	phantom/sound.o \
 	dragonsphere/mads/mads.o \
 	dragonsphere/rooms/section1.o \
 	dragonsphere/rooms/room101.o \
@@ -346,6 +347,7 @@ MODULE_OBJS := \
 	dragonsphere/main.o \
 	dragonsphere/main_menu.o \
 	dragonsphere/menus.o \
+	dragonsphere/sound.o \
 	forest/forest.o \
 	forest/digi.o \
 	forest/extra.o \

@@ -20,6 +20,8 @@
  */
 
 #include "audio/fmopl.h"
+#include "common/file.h"
+#include "common/md5.h"
 #include "mads/phantom/asound.h"
 
 namespace MADS {
@@ -211,6 +213,45 @@ ASound::ASound(Audio::Mixer *mixer, const Common::Path &filename, int dataOffset
 	command0();
 
 	_opl->start(new Common::Functor0Mem<void, ASound>(this, &ASound::onTimer), CALLBACKS_PER_SECOND);
+}
+
+void ASound::validate(bool isDemo) {
+	Common::File f;
+	static const char *const MD5[] = {
+		"8edcb79a8c3514eac0835496326a72ae",
+		"4b81a46440f8404d9eda1ce5ae2c5579",
+		"11d8d441e47ad1ccd8faafd6572a17d0",
+		"4cd5c4d45126e60ca701690489ab8afa",
+		"588357d711bbcdabdf7d7e5d96013ce5",
+		nullptr,
+		nullptr,
+		nullptr,
+		"3d4843074c1dcbfd7919179c58aec9bc"
+	};
+
+	if (!isDemo) {
+		for (int i = 1; i <= 9; ++i) {
+			if (i >= 6 && i <= 8)
+				continue;
+			Common::Path filename(Common::String::format("asound.ph%d", i));
+			if (!f.open(filename))
+				error("Could not process - %s", filename.toString().c_str());
+			Common::String md5str = Common::computeStreamMD5AsString(f, 8192);
+			f.close();
+
+			if (md5str != MD5[i - 1])
+				error("Invalid sound file - %s", filename.toString().c_str());
+		}
+	} else {
+		// For demo we only have one sound driver
+		if (!f.open("asound.pha"))
+			error("Could not process - asound.pha");
+		Common::String md5str = Common::computeStreamMD5AsString(f, 8192);
+		f.close();
+
+		if (md5str != "49aecc9c42b3d2f3be01611747f9649a")
+			error("Invalid sound file - asound.pha");
+	}
 }
 
 int ASound::stop() {

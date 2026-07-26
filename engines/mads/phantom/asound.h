@@ -435,6 +435,12 @@ protected:
 
 public:
 	/**
+	 * Validates the presence of the sound driver files.
+	 */
+	static void validate(bool isDemo);
+
+public:
+	/**
 	 * Constructor
 	 * @param mixer			Mixer
 	 * @param filename		Specifies the adlib sound player file to use

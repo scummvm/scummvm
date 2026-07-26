@@ -19,35 +19,59 @@
  *
  */
 
-#ifndef MADS_NEBULAR_SOUND_H
-#define MADS_NEBULAR_SOUND_H
-
-#include "mads/core/sound_manager.h"
+#include "mads/phantom/sound.h"
+#include "mads/phantom/asound_phantom.h"
 
 namespace MADS {
-namespace RexNebular {
+namespace Phantom {
 
-class RexSoundManager : public SoundManager {
-protected:
-	/**
-	 * Load the particular section sound handler
-	 * @param sectionNum	Section number
-	 */
-	void loadDriver(int sectionNum) override;
-
-public:
-	RexSoundManager(Audio::Mixer *mixer, bool &soundFlag) : SoundManager(mixer, soundFlag) {
+void PhantomSoundManager::validate() {
+	if (_isMT32) {
+		assert(0 == 1);
+	} else {
+		ASound::validate(_isDemo);
 	}
-	~RexSoundManager() override {
+}
+
+void PhantomSoundManager::loadDriver(int sectionNumber) {
+	removeDriver();
+
+	if (_isMT32) {
+		// Roland MT32 drivers
+		assert(0 == 1);
+
+	} else {
+		// Adlib drivers
+		if (_isDemo) {
+			_driver = new ASoundDemo(_mixer);
+			return;
+		}
+
+		switch (sectionNumber) {
+		case 1:
+			_driver = new ASound1(_mixer);
+			break;
+		case 2:
+			_driver = new ASound2(_mixer);
+			break;
+		case 3:
+			_driver = new ASound3(_mixer);
+			break;
+		case 4:
+			_driver = new ASound4(_mixer);
+			break;
+		case 5:
+			_driver = new ASound5(_mixer);
+			break;
+		case 9:
+			_driver = new ASound9(_mixer);
+			break;
+		default:
+			_driver = nullptr;
+			return;
+		}
 	}
+}
 
-	/**
-	 * Validate the sound driver files needed for data
-	 */
-	void validate() override;
-};
-
-} // namespace RexNebular
+} // namespace Phantom
 } // namespace MADS
-
-#endif

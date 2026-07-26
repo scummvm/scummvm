@@ -19,86 +19,10 @@
  *
  */
 
-#include "common/endian.h"
-#include "common/file.h"
-#include "common/md5.h"
-#include "common/textconsole.h"
 #include "mads/dragonsphere/asound_dragonsphere.h"
 
 namespace MADS {
 namespace Dragonsphere {
-
-void DragonSoundManager::validate() {
-	Common::File f;
-	static const char *const MD5[] = {
-		"cac84f53ccf18ca56f4c03352037790f",
-		"2dcdbe18ca5225384cdb97ceb7f5642a",
-		"c6001b0dfe32cb9399ab60742b631c2e",
-		"1596b657c6171e13714eaf114bf94641",
-		"ecbb8bdf1e2e36fcacedce79761e625b",
-		"29639869e5faed1378dd2cdc1d132889",
-		nullptr,
-		nullptr,
-		"379fcc9af2142f15a3e7166eee6dd49d"
-	};
-	static const char *const MD5_DEMO[] = {
-		"c4fc9e9d7e2392c69ea7b3ca997e832d",
-		nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, nullptr,
-		"21432c2dd055d0d505ede8fecc77b29a"
-	};
-
-	for (int i = 1; i <= 9; ++i) {
-		if (i == 7 || i == 8)
-			continue;
-		if (_isDemo && i != 1 && i != 9)
-			continue;
-
-		Common::Path filename(Common::String::format("asound.dr%d", i));
-		if (!f.open(filename))
-			error("Could not process - %s", filename.toString().c_str());
-		Common::String md5str = Common::computeStreamMD5AsString(f, 8192);
-		f.close();
-
-		if (md5str != (_isDemo ? MD5_DEMO[i - 1] : MD5[i - 1]))
-			error("Invalid sound file - %s", filename.toString().c_str());
-	}
-}
-
-void DragonSoundManager::loadDriver(int sectionNumber) {
-	switch (sectionNumber) {
-	case 1:
-		if (_isDemo)
-			_driver = new ASoundDemo1(_mixer);
-		else
-			_driver = new ASound1(_mixer);
-		break;
-	case 2:
-		_driver = new ASound2(_mixer);
-		break;
-	case 3:
-		_driver = new ASound3(_mixer);
-		break;
-	case 4:
-		_driver = new ASound4(_mixer);
-		break;
-	case 5:
-		_driver = new ASound5(_mixer);
-		break;
-	case 6:
-		_driver = new ASound6(_mixer);
-		break;
-	case 9:
-		if (_isDemo)
-			_driver = new ASoundDemo9(_mixer);
-		else
-			_driver = new ASound9(_mixer);
-		break;
-	default:
-		_driver = nullptr;
-		return;
-	}
-}
 
 /*-----------------------------------------------------------------------*/
 /* ASound1  (asound.dr1)                                                  *

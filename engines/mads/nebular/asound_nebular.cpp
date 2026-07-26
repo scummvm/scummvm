@@ -19,7 +19,6 @@
  *
  */
 
-#include "audio/fmopl.h"
 #include "mads/nebular/asound_nebular.h"
 
 namespace MADS {
