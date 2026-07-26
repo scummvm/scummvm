@@ -38,6 +38,7 @@ MODULE_OBJS := \
 	scene_dispatcher.o \
 	scene_audio.o \
 	scenes/ebz2s_scene.o \
+	scenes/gym_scene.o \
 	scenes/librarian_scene.o \
 	scenes/scene.o \
 	scenes/tube_scene.o \

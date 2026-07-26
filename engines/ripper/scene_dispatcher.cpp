@@ -40,6 +40,7 @@
 #include "ripper/puzzles/table_gate.h"
 #include "ripper/ripper.h"
 #include "ripper/scenes/ebz2s_scene.h"
+#include "ripper/scenes/gym_scene.h"
 #include "ripper/scenes/tube_scene.h"
 #include "ripper/script.h"
 
@@ -228,6 +229,14 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		debugC(1, kDebugScene,
 			"Ripper: tube switch scene action completed result=%d milestone=%u", result, argument);
 		return result != TubeScene::kLoadFailed;
+	}
+	if (action == kSceneActionGymSelector) {
+		GymScene scene(engine);
+		const GymScene::Result result = scene.run(argument);
+		debugC(1, kDebugPuzzles,
+			"Ripper: gym selector scene action completed result=%d milestone=%u",
+			result, argument);
+		return result != GymScene::kLoadFailed;
 	}
 	if (action == kSceneActionCrystalPuzzle) {
 		CrystalPuzzle puzzle(engine);
