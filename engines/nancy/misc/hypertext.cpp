@@ -360,10 +360,14 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 						Common::Rect markSrc = mark->_markSrcs[change.index];
 						Common::Rect markDest = markSrc;
 						if (useLineAlignedMark) {
-							// Nancy 10+: align the mark with the current
-							// line top, matching the original engine.
+							// Nancy 10+: bottom-anchor the mark to the current line,
+							// matching the original engine. The mark's baseline stays
+							// fixed while sprites of different heights (e.g. an unchecked
+							// box vs. a checked one) grow upward, so toggling a checkbox
+							// does not shift it vertically.
+							const int lineTop = textBounds.top + _numDrawnLines * lineStep(font) + _imageVerticalOffset;
 							markDest.moveTo(textBounds.left + horizontalOffset + (newLineStart ? 0 : leftOffsetNonNewline) + 1,
-								textBounds.top + _numDrawnLines * lineStep(font) + _imageVerticalOffset);
+								lineTop + font->getFontHeight() - markSrc.height());
 						} else {
 							markDest.moveTo(textBounds.left + horizontalOffset + (newLineStart ? 0 : leftOffsetNonNewline) + 1,
 								lineNumber == 0 ?
