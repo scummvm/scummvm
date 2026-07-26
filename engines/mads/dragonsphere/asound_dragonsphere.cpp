@@ -23,7 +23,7 @@
 #include "common/file.h"
 #include "common/md5.h"
 #include "common/textconsole.h"
-#include "mads/dragonsphere/sound_dragonsphere.h"
+#include "mads/dragonsphere/asound_dragonsphere.h"
 
 namespace MADS {
 namespace Dragonsphere {

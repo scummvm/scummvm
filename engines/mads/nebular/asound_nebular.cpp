@@ -23,7 +23,7 @@
 #include "common/algorithm.h"
 #include "common/file.h"
 #include "common/md5.h"
-#include "mads/nebular/sound_nebular.h"
+#include "mads/nebular/asound_nebular.h"
 
 namespace Audio {
 class Mixer;

@@ -23,7 +23,7 @@
 #include "common/file.h"
 #include "common/md5.h"
 #include "common/textconsole.h"
-#include "mads/phantom/sound_phantom.h"
+#include "mads/phantom/asound_phantom.h"
 
 namespace MADS {
 namespace Phantom {
