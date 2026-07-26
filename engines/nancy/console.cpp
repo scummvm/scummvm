@@ -414,6 +414,11 @@ bool NancyConsole::Cmd_playSound(int argc, const char **argv) {
 		return true;
 	}
 
+	if (g_nancy->_sound->isCommonSound(argv[1])) {
+		g_nancy->_sound->playSound(argv[1]);
+		return true;
+	}
+
 	Common::File *f = new Common::File;
 	if (!f->open(Common::Path(argv[1]).appendInPlace(".his"))) {
 		debugPrintf("Failed to open '%s.his'\n", argv[1]);

@@ -122,6 +122,8 @@ public:
 	Audio::Timestamp getLength(const SoundDescription &description);
 	Audio::Timestamp getLength(const Common::String &chunkName);
 
+	bool isCommonSound(const Common::String &soundName) const { return _commonSounds.contains(soundName); }
+
 	void soundEffectMaintenance();
 	void recalculateSoundEffects();
 
