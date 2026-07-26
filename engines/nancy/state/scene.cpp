@@ -528,14 +528,47 @@ void Scene::installInventorySoundOverride(byte command, const SoundDescription &
 	}
 }
 
-void Scene::playItemCantSound(int16 itemID, bool notHoldingSound) {
-	if (ConfMan.getBool("subtitles") && g_nancy->getGameType() >= kGameTypeNancy2) {
-		_textbox.clear();
+// Nancy9 and newer no longer store the "can't" caption alongside the sound.
+// Instead, the caption is looked up in the CVTX text chunks by the played
+// sound's name: the narration/observations (AUTOTEXT) chunk is searched first,
+// then the conversation (CONVO) chunk.
+static Common::String getSoundSubtitle(const Common::String &soundName) {
+	if (soundName.empty() || soundName.equalsIgnoreCase("NO SOUND")) {
+		return Common::String();
 	}
 
+	const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
+	if (autotext) {
+		Common::String text = autotext->texts.getValOrDefault(soundName, "");
+		if (!text.empty()) {
+			return text;
+		}
+	}
+
+	const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
+	if (convo) {
+		return convo->texts.getValOrDefault(soundName, "");
+	}
+
+	return Common::String();
+}
+
+void Scene::playItemCantSound(int16 itemID, bool notHoldingSound) {
 	// Improvement: nancy2 never shows the caption text, even though it exists in the data; we show it
 	auto *inventoryData = GetEngineData(INV);
 	assert(inventoryData);
+
+	// Nancy9 and newer play every "can't" sound on the same dedicated sound-effects
+	// channel as the default "can't" sound. If one is already playing, leave it (and
+	// the current caption) alone instead of restarting it or overlapping a new one.
+	if (g_nancy->getGameType() >= kGameTypeNancy9 &&
+			g_nancy->_sound->isSoundPlaying(inventoryData->cantSound.channelID)) {
+		return;
+	}
+
+	if (ConfMan.getBool("subtitles") && g_nancy->getGameType() >= kGameTypeNancy2) {
+		_textbox.clear();
+	}
 
 	if (itemID < 0) {
 		if (inventoryData->cantSound.name.size()) {
@@ -597,13 +630,32 @@ void Scene::playItemCantSound(int16 itemID, bool notHoldingSound) {
 			SoundDescription cantSound = item.cantSound;
 			Common::String cantText = item.cantText;
 
-			// For Nancy9 and newer, we have multiple sounds to choose from,
-			// so randomly select one, if available
-			if (g_nancy->getGameType() >= kGameTypeNancy9 && !item.cantSounds[1].name.empty()) {
-				const uint maxSound = item.cantSounds[2].name.empty() ? 1 : 2;
-				uint soundIndex = g_nancy->_randomSource->getRandomNumber(maxSound);
-				cantSound = item.cantSounds[soundIndex];
-				cantText = item.cantTexts[soundIndex];
+			// Nancy9 and newer store up to three "can't" sound variants per item
+			// (the default in slot 0, plus two optional alternatives), but no longer
+			// store the playback settings or caption alongside them.
+			if (g_nancy->getGameType() >= kGameTypeNancy9) {
+				// Count the valid alternatives and pick one at random, including
+				// the default in slot 0
+				uint numChoices = 1;
+				while (numChoices < 3 && item.cantSounds[numChoices].name.size() &&
+						!item.cantSounds[numChoices].name.equalsIgnoreCase("NO SOUND")) {
+					++numChoices;
+				}
+
+				uint soundIndex = g_nancy->_randomSource->getRandomNumber(numChoices - 1);
+
+				// These sounds share the playback settings (channel, volume, ...) of
+				// the default "can't" sound, so they play on a sound-effects channel
+				// without cutting off the background music
+				cantSound = inventoryData->cantSound;
+				cantSound.name = item.cantSounds[soundIndex].name;
+
+				// The caption is looked up in the CVTX text chunks by the sound's
+				// name; the item's own caption field is only a fallback
+				cantText = getSoundSubtitle(cantSound.name);
+				if (cantText.empty()) {
+					cantText = item.cantTexts[soundIndex];
+				}
 			}
 
 			g_nancy->_sound->loadSound(cantSound);
