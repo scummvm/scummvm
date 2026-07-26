@@ -48,7 +48,7 @@ const RA2PSXLevel2PartInfo kRA2PSXLevel2Parts[kRA2PSXLevel2PartCount] = {
 		  { "PARA_R", 234, 28, 190, 190, 1 } },
 		0, 0x26,
 		0x2a, 0x32, 0xcf, 0x8d,
-		{ 63, 104, 145, 186, 320 }, { 73, 88, 98, 118, 240 },
+		{ 63, 104, 145, 186, 320 }, { 73, 88, 98, 118, 240 }, 0,
 		{
 		{ 255, 65, 78, 116 }, { 250, 68, 76, 113 }, { 234, 68, 76, 113 },
 		{ 219, 68, 70, 113 }, { 200, 72, 80, 109 }, { 169, 73, 88, 108 },
@@ -74,18 +74,18 @@ const RA2PSXLevel2PartInfo kRA2PSXLevel2Parts[kRA2PSXLevel2PartCount] = {
 		  { nullptr,    0,   0,   0,   0, 0 } },
 		-10, 0x12,
 		0x1c, 0x26, 0x11e, 0xa0,
-		{ 63, 104, 145, 186, 320 }, { 73, 88, 98, 118, 240 },
+		{ 59, 125, 190, 257, 320 }, { 60, 90, 120, 138, 240 }, 0,
 		{
-		{ 255, 65, 78, 116 }, { 250, 68, 76, 113 }, { 234, 68, 76, 113 },
-		{ 219, 68, 70, 113 }, { 200, 72, 80, 109 }, { 169, 73, 88, 108 },
-		{ 169, 73, 88, 108 }, { 167, 73, 90, 108 }, { 165, 73, 92, 108 },
-		{ 165, 73, 92, 108 }, { 179, 73, 78, 108 }, { 179, 73, 78, 108 },
-		{ 178, 73, 80, 108 }, { 174, 74, 84, 107 }, { 174, 74, 84, 107 },
-		{ 181, 73, 78, 109 }, { 181, 73, 78, 109 }, { 181, 73, 78, 108 },
-		{ 181, 73, 80, 108 }, { 181, 73, 80, 108 }, { 180, 73, 80, 108 },
-		{ 180, 73, 80, 108 }, { 181, 73, 82, 108 }, { 182, 73, 80, 108 },
-		{ 182, 73, 80, 108 }, { 181, 73, 78, 109 }, { 181, 73, 78, 109 },
-		{ 182, 73, 78, 108 }, { 183, 73, 80, 108 }, { 183, 73, 80, 108 }
+		{ 146, 150, 68, 50 }, { 140, 141, 74, 59 }, { 147, 112, 70, 88 },
+		{ 156, 106, 70, 94 }, { 164, 106, 70, 94 }, { 139, 106, 90, 94 },
+		{ 134, 113, 94, 87 }, { 132, 114, 96, 86 }, { 131, 115, 96, 85 },
+		{ 124, 118, 102, 82 }, { 157, 103, 76, 97 }, { 155, 113, 76, 87 },
+		{ 155, 114, 76, 86 }, { 154, 115, 76, 85 }, { 144, 117, 86, 83 },
+		{ 160, 103, 72, 97 }, { 159, 109, 74, 91 }, { 161, 111, 72, 89 },
+		{ 160, 112, 72, 88 }, { 161, 113, 72, 87 }, { 157, 106, 72, 94 },
+		{ 157, 108, 74, 92 }, { 158, 110, 72, 90 }, { 157, 111, 72, 89 },
+		{ 156, 112, 72, 88 }, { 159, 106, 72, 94 }, { 158, 112, 76, 88 },
+		{ 160, 112, 78, 88 }, { 159, 113, 80, 87 }, { 160, 115, 80, 85 }
 		},
 		3, { "TRP_0", "TRP_1", "TRP_2" }, { "LAS_0", "LAS_1", "LAS_2" },
 		{ { { 0x12, 0x2b }, { 0x0e, 0x24 }, { 0x0e, 0x19 } },
@@ -100,18 +100,19 @@ const RA2PSXLevel2PartInfo kRA2PSXLevel2Parts[kRA2PSXLevel2PartCount] = {
 		  { nullptr,    0,  0,   0,   0, 0 } },
 		0, 0x23,
 		0x1a, 0x43, 0xc9, 0x92,
-		{ 63, 104, 145, 186, 320 }, { 73, 88, 98, 118, 240 },
+		{ 48, 91, 134, 177, 320 }, { 77, 87, 106, 126, 240 }, 3,
 		{
-		{ 255, 65, 78, 116 }, { 250, 68, 76, 113 }, { 234, 68, 76, 113 },
-		{ 219, 68, 70, 113 }, { 200, 72, 80, 109 }, { 169, 73, 88, 108 },
-		{ 169, 73, 88, 108 }, { 167, 73, 90, 108 }, { 165, 73, 92, 108 },
-		{ 165, 73, 92, 108 }, { 179, 73, 78, 108 }, { 179, 73, 78, 108 },
-		{ 178, 73, 80, 108 }, { 174, 74, 84, 107 }, { 174, 74, 84, 107 },
-		{ 181, 73, 78, 109 }, { 181, 73, 78, 109 }, { 181, 73, 78, 108 },
-		{ 181, 73, 80, 108 }, { 181, 73, 80, 108 }, { 180, 73, 80, 108 },
-		{ 180, 73, 80, 108 }, { 181, 73, 82, 108 }, { 182, 73, 80, 108 },
-		{ 182, 73, 80, 108 }, { 181, 73, 78, 109 }, { 181, 73, 78, 109 },
-		{ 182, 73, 78, 108 }, { 183, 73, 80, 108 }, { 183, 73, 80, 108 }
+		{ 147, 103, 90, 81 }, { 156, 100, 78, 84 }, { 150, 99, 64, 85 },
+		{ 127, 98, 74, 86 }, { 121, 97, 74, 87 }, { 107, 101, 82, 83 },
+		{ 74, 101, 96, 83 }, { 81, 92, 86, 92 }, { 91, 95, 74, 89 },
+		{ 90, 99, 74, 85 }, { 92, 103, 74, 81 }, { 91, 103, 74, 81 },
+		{ 89, 102, 74, 82 }, { 91, 94, 76, 90 }, { 90, 99, 74, 85 },
+		{ 88, 103, 74, 81 }, { 89, 103, 74, 81 }, { 87, 102, 74, 82 },
+		{ 90, 95, 72, 89 }, { 92, 99, 70, 85 }, { 91, 102, 72, 82 },
+		{ 91, 102, 72, 82 }, { 90, 102, 72, 82 }, { 92, 95, 72, 89 },
+		{ 92, 100, 76, 84 }, { 89, 103, 78, 81 }, { 91, 103, 78, 81 },
+		{ 90, 102, 76, 82 }, { 93, 95, 90, 89 }, { 95, 101, 90, 83 },
+		{ 95, 103, 90, 81 }, { 95, 103, 92, 81 }, { 93, 103, 90, 81 }
 		},
 		3, { "TRP_0", "TRP_1", "TRP_2" }, { "LAS_0", "LAS_1", "LAS_2" },
 		{ { { 0, 0 }, { 0, 0 }, { 0, 0 } },
@@ -179,7 +180,8 @@ bool RA2PSXLevel2Scene::load(const RA2PSXArchive &archive, int part, int difficu
 
 	// Every rookie pose is its own member: a format word, a palette and one image.
 	_rookie.clear();
-	for (int frame = 0; frame < kRA2PSXLevel2FrameCount; ++frame) {
+	const int poseCount = kRA2PSXLevel2Parts[part].aimBase + 30;
+	for (int frame = 0; frame < poseCount; ++frame) {
 		const Common::String path = Common::String::format("%s/anim%02d",
 				kRA2PSXLevel2Parts[part].anims, frame);
 		Common::Array<byte> anim;
@@ -212,8 +214,9 @@ bool RA2PSXLevel2Scene::load(const RA2PSXArchive &archive, int part, int difficu
 	const RA2PSXLevel2PartInfo &part_ = kRA2PSXLevel2Parts[part];
 	for (int plane = 0; plane < 2; ++plane) {
 		for (int axis = 0; axis < 2; ++axis) {
+			// Multiply rather than shift: parts two and three scroll to negatives.
 			_scroll[plane][axis] = _scrollTarget[plane][axis] =
-					part_.coverScroll[plane][axis] << 16;
+					part_.coverScroll[plane][axis] * 0x10000;
 			_scrollStep[plane][axis] = _scrollHold[plane][axis] = 0;
 		}
 	}
@@ -356,6 +359,9 @@ int RA2PSXLevel2Scene::shoot(int aimX, int aimY) {
 	if (!outOfCover())
 		return 0;
 
+	// The crosshair is in screen space; a frame's box is where the backdrop puts it.
+	const int shotX = aimX + (_scroll[0][0] >> 16);
+	const int shotY = aimY - kRA2PSXLevel2SceneTop + (_scroll[0][1] >> 16);
 	for (int i = 0; i < info().trooperCount; ++i) {
 		RA2PSXLevel2Actor &trooper = _troopers[i];
 		if (trooper.state == kRA2PSXLevel2StateIdle ||
@@ -365,8 +371,8 @@ int RA2PSXLevel2Scene::shoot(int aimX, int aimY) {
 		const RA2PSXPlayFrame *frame = actorFrame(trooper);
 		if (!frame || !(frame->flags & kRA2PSXPlayTargetable))
 			continue;
-		if (aimX < frame->boxLeft || aimX > frame->boxRight ||
-				aimY < frame->boxTop || aimY > frame->boxBottom)
+		if (shotX < frame->boxLeft || shotX > frame->boxRight ||
+				shotY < frame->boxTop || shotY > frame->boxBottom)
 			continue;
 
 		startActor(trooper, kRA2PSXLevel2StateDie, i * 8 + 3);
@@ -381,7 +387,7 @@ void RA2PSXLevel2Scene::setScrollTarget(const int16 target[2][2]) {
 	const RA2PSXLevel2PartInfo &part = info();
 	for (int plane = 0; plane < 2; ++plane) {
 		for (int axis = 0; axis < 2; ++axis) {
-			_scrollTarget[plane][axis] = target[plane][axis] << 16;
+			_scrollTarget[plane][axis] = target[plane][axis] * 0x10000;
 			_scrollStep[plane][axis] =
 					(_scrollTarget[plane][axis] - _scroll[plane][axis]) / kRA2PSXLevel2ScrollSteps;
 			// Only the axis the part actually slides along eases out.
@@ -406,8 +412,12 @@ int RA2PSXLevel2Scene::aimFrame(int aimX, int aimY) const {
 	int row = 0;
 	while (row < kRA2PSXLevel2AimRows && part.aimRows[row] < aimY)
 		++row;
-	return CLIP<int>(column * kRA2PSXLevel2AimColumns + row,
-			(int)kRA2PSXLevel2CoverFrames, (int)kRA2PSXLevel2FrameCount - 1);
+	return CLIP<int>(column * kRA2PSXLevel2AimColumns + row + part.aimBase,
+			coverFrames(), part.aimBase + 29);
+}
+
+int RA2PSXLevel2Scene::coverFrames() const {
+	return info().aimBase + kRA2PSXLevel2CoverFrames;
 }
 
 void RA2PSXLevel2Scene::update(int aimX, int aimY) {
@@ -434,7 +444,7 @@ void RA2PSXLevel2Scene::update(int aimX, int aimY) {
 		_delay = kRA2PSXLevel2RookieDelay;
 		// Leaning out walks 0 to 4, ducking back walks it down again.
 		if (!_out) {
-			if (_frame < kRA2PSXLevel2CoverFrames - 1) {
+			if (_frame < coverFrames() - 1) {
 				++_frame;
 			} else {
 				_moving = false;
@@ -442,8 +452,8 @@ void RA2PSXLevel2Scene::update(int aimX, int aimY) {
 				_frame = aimFrame(aimX, aimY);
 			}
 		} else {
-			if (_frame >= kRA2PSXLevel2CoverFrames)
-				_frame = kRA2PSXLevel2CoverFrames - 1;
+			if (_frame >= coverFrames())
+				_frame = coverFrames() - 1;
 			if (_frame > 0) {
 				--_frame;
 			} else {
@@ -514,16 +524,13 @@ void RA2PSXLevel2Scene::draw(Graphics::Surface &surface, int aimX, int aimY) con
 	const int top = (surface.h - 240) / 2;
 	surface.fillRect(Common::Rect(surface.w, surface.h), 0);
 
-	for (int i = 0; i < kRA2PSXLevel2LayerCount; ++i)
-		drawLayer(surface, part.layers[i], left, top);
-
-	if ((uint)_frame < _rookie.size()) {
-		const RA2PSXLevel2Pose &pose = part.poses[_frame];
-		drawFrame(surface, _rookie[_frame], left + pose.x + part.rookieOffsetX,
-				top + pose.y + part.rookieOffsetY);
+	for (int i = 0; i < kRA2PSXLevel2LayerCount; ++i) {
+		if (!part.layers[i].plane)
+			drawLayer(surface, part.layers[i], left, top);
 	}
 
-	// Troopers ride the backdrop, so ducking slides them behind the near wall.
+	// Troopers ride the backdrop, so ducking both slides them along and puts the near
+	// wall in front of them.
 	const int actorX = left - (_scroll[0][0] >> 16);
 	const int actorY = top + kRA2PSXLevel2SceneTop - (_scroll[0][1] >> 16);
 	for (int i = 0; i < part.trooperCount; ++i) {
@@ -542,6 +549,18 @@ void RA2PSXLevel2Scene::draw(Graphics::Surface &surface, int aimX, int aimY) con
 			if (frame)
 				drawPlayFrame(surface, *frame, *bolt, actorX, actorY);
 		}
+	}
+
+	for (int i = 0; i < kRA2PSXLevel2LayerCount; ++i) {
+		if (part.layers[i].plane)
+			drawLayer(surface, part.layers[i], left, top);
+	}
+
+	// The rookie stands nearest of all, in front of his own cover.
+	if ((uint)_frame < _rookie.size()) {
+		const RA2PSXLevel2Pose &pose = part.poses[_frame];
+		drawFrame(surface, _rookie[_frame], left + pose.x + part.rookieOffsetX,
+				top + pose.y + part.rookieOffsetY);
 	}
 
 	if (outOfCover() && _hud.has("CROSS"))
@@ -648,6 +667,11 @@ private:
 		int aimY = (part.aimTop + part.aimBottom) / 2;
 		bool left = false, right = false, up = false, down = false;
 		bool running = true;
+		// The fire press has to outlive the poll that saw it: ticks run at 60Hz while
+		// events are drained several times as often, so a per pass flag loses presses.
+		bool firePressed = false;
+		bool fireEdge = false;
+		bool fireWasPressed = false;
 		int flashFrame = kRA2PSXHitFlashFrames;
 		int tick = -1;
 		const uint32 startTime = g_system->getMillis();
@@ -655,7 +679,6 @@ private:
 		const int viewY = ((int)_psx._vm->_screenHeight - 240) / 2;
 
 		while (running && !shouldQuit()) {
-			bool shoot = false;
 			Common::Event event;
 			while (g_system->getEventManager()->pollEvent(event)) {
 				const bool pressed = event.type == Common::EVENT_KEYDOWN;
@@ -684,16 +707,31 @@ private:
 					case Common::KEYCODE_s:
 						down = pressed;
 						break;
+					case Common::KEYCODE_SPACE:
 					case Common::KEYCODE_RETURN:
+					case Common::KEYCODE_KP_ENTER:
+						if (pressed && !firePressed && !event.kbdRepeat)
+							fireEdge = true;
+						firePressed = pressed;
+						break;
+					case Common::KEYCODE_TAB:
+					case Common::KEYCODE_LCTRL:
+					case Common::KEYCODE_RCTRL:
 						if (pressed && !event.kbdRepeat)
 							_scene.toggleCover();
 						break;
-					case Common::KEYCODE_SPACE:
-						if (pressed && !event.kbdRepeat)
-							shoot = true;
-						break;
 					default:
 						break;
+					}
+				} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START ||
+						event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
+					const bool pressed = event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START;
+					if (event.customType == kScummActionInsaneAttack) {
+						if (pressed && !firePressed)
+							fireEdge = true;
+						firePressed = pressed;
+					} else if (pressed && event.customType == kScummActionInsaneSwitch) {
+						_scene.toggleCover();
 					}
 				} else if (event.type == Common::EVENT_MOUSEMOVE) {
 					aimX = event.mouse.x - viewX;
@@ -701,7 +739,11 @@ private:
 				} else if (event.type == Common::EVENT_RBUTTONDOWN) {
 					_scene.toggleCover();
 				} else if (event.type == Common::EVENT_LBUTTONDOWN) {
-					shoot = true;
+					if (!firePressed)
+						fireEdge = true;
+					firePressed = true;
+				} else if (event.type == Common::EVENT_LBUTTONUP) {
+					firePressed = false;
 				} else if (event.type == Common::EVENT_QUIT ||
 						event.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 					_psx._vm->quitGame();
@@ -727,10 +769,13 @@ private:
 					_shield = MAX(0, _shield - damage);
 					flashFrame = 0;
 				}
-				if (shoot) {
+				// Holding fire keeps shooting, the way the original polls its pad.
+				const bool shoot = fireEdge || (firePressed && fireWasPressed &&
+						!(tick % kRA2PSXLevel2FireRepeat));
+				fireWasPressed = firePressed;
+				fireEdge = false;
+				if (shoot)
 					_score += _scene.shoot(aimX, aimY);
-					shoot = false;
-				}
 				if (flashFrame < kRA2PSXHitFlashFrames)
 					++flashFrame;
 				if (_shield <= 0 || _scene.cleared())

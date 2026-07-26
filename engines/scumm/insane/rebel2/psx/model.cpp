@@ -159,9 +159,14 @@ bool loadRA2PSXTextures(const Common::Array<byte> &data,
 		const uint32 pixelBytes = eightBit ? pixelCount : (pixelCount + 1) / 2;
 		const uint32 paletteOffset = offset + 20;
 		const uint32 pixelsOffset = paletteOffset + paletteColors * 2;
-		if (recordSize < 20 || offset + recordSize > data.size() ||
-				pixelsOffset + pixelBytes > offset + recordSize)
+		if (recordSize < 20 || offset + recordSize > data.size())
 			break;
+		// Some sheets open with a short header record that carries no image; skip it
+		// rather than giving up on the rest of the sheet.
+		if (pixelsOffset + pixelBytes > offset + recordSize) {
+			offset += recordSize;
+			continue;
+		}
 
 		RA2PSXTexture texture;
 		texture.name = name;

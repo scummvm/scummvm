@@ -89,6 +89,8 @@ private:
 			const Common::Array<uint32> &palette, int left, int top) const;
 	void setScrollTarget(const int16 target[2][2]);
 	int aimFrame(int aimX, int aimY) const;
+	// How many poses the rookie walks leaning out; the aim grid starts right after.
+	int coverFrames() const;
 	// Restarts an actor on the given animation, the way the original's loader does.
 	void startActor(RA2PSXLevel2Actor &actor, int state, int animation);
 	const RA2PSXPlayFrame *actorFrame(const RA2PSXLevel2Actor &actor) const;

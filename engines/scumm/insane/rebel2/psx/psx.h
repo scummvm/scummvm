@@ -259,7 +259,8 @@ enum {
 	// Frames 0 to 4 are the rookie leaning out of cover; 5 to 29 are a five by five
 	// grid of aim poses picked from where the crosshair sits.
 	kRA2PSXLevel2CoverFrames = 5,
-	kRA2PSXLevel2FrameCount = 30,
+	// Part three's rookie owns three more poses, and shifts its aim grid past them.
+	kRA2PSXLevel2FrameCount = 33,
 	kRA2PSXLevel2RookieDelay = 3,
 	kRA2PSXLevel2AimColumns = 5,
 	kRA2PSXLevel2AimRows = 5,
@@ -278,7 +279,9 @@ enum {
 	// A part ends a second after its last trooper falls.
 	kRA2PSXLevel2ClearTicks = 60,
 	// A trooper hides behind its own sprite until its slot has counted down.
-	kRA2PSXLevel2SlotNever = 0x7fffffff
+	kRA2PSXLevel2SlotNever = 0x7fffffff,
+	// How often a held fire button repeats, in ticks.
+	kRA2PSXLevel2FireRepeat = 12
 };
 
 // The states a play script actor walks, named after the values the original stores.
@@ -348,6 +351,8 @@ struct RA2PSXLevel2PartInfo {
 	int16 aimLeft, aimTop, aimRight, aimBottom;
 	int16 aimColumns[kRA2PSXLevel2AimColumns];
 	int16 aimRows[kRA2PSXLevel2AimRows];
+	// Where the aim grid starts; the cover run and the pose count shift with it.
+	int16 aimBase;
 	RA2PSXLevel2Pose poses[kRA2PSXLevel2FrameCount];
 	// How many trooper slots the part scripts, and the sheet sprites whose palettes the
 	// streamed trooper and bolt frames borrow.
