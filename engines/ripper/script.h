@@ -95,6 +95,7 @@ enum SceneAction {
 	kSceneActionEbz2sMenu = 14,
 	kSceneActionMechiniCombat = 15,
 	kSceneActionTubeSwitchScene = 24,
+	kSceneActionGymSelector = 28,
 	kSceneActionCrystalPuzzle = 29,
 	kSceneActionSetChooserTemplateMode = 30,
 	kSceneActionNoOp = 31,
