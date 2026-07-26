@@ -38,9 +38,37 @@ void RexSoundManager::loadDriver(int sectionNumber) {
 
 	if (_isMT32) {
 		// Roland MT32 drivers
-		assert(sectionNumber == 9);
-		_driver = new RexNebular::RSound9(_mixer);
-
+		switch (sectionNumber) {
+		case 1:
+			_driver = new RexNebular::RSound1(_mixer);
+			break;
+		case 2:
+			_driver = new RexNebular::RSound2(_mixer);
+			break;
+		case 3:
+			_driver = new RexNebular::RSound3(_mixer);
+			break;
+		case 4:
+			_driver = new RexNebular::RSound4(_mixer);
+			break;
+		case 5:
+			_driver = new RexNebular::RSound5(_mixer);
+			break;
+		case 6:
+			_driver = new RexNebular::RSound6(_mixer);
+			break;
+		case 7:
+			_driver = new RexNebular::RSound7(_mixer);
+			break;
+		case 8:
+			_driver = new RexNebular::RSound8(_mixer);
+			break;
+		case 9:
+			_driver = new RexNebular::RSound9(_mixer);
+			break;
+		default:
+			return;
+		}
 	} else {
 		// Adlib drivers
 		switch (sectionNumber) {

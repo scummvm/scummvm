@@ -471,6 +471,83 @@ public:
 	int command(int commandId, int param) override;
 };
 
+class RSound7 : public RSound {
+private:
+	typedef int (RSound7:: *CommandPtr)();
+	static const CommandPtr _commandList[38];
+
+	int command9();
+	int command15();
+	int command16();
+	int command17();
+	int command18();
+	int command19();
+	int command20();
+	int command21();
+	int command22();
+	int command23();
+	int command24();
+	int command25();
+	int command27();
+	int command30();
+	int command32();
+	int command33();
+	int command34();
+	int command35();
+	int command36();
+	int command37();
+public:
+	RSound7(Audio::Mixer *mixer);
+
+	int command(int commandId, int param) override;
+};
+
+class RSound8 : public RSound {
+private:
+	typedef int (RSound8:: *CommandPtr)();
+	static const CommandPtr _commandList[38];
+
+	/**
+	 * Shared tail (loc_109E2 in the disassembly) of command14/command15 -
+	 * mutates three bytes of the shared sound data then plays it 4 times.
+	 */
+	void setCommand1415Variant(byte v1, byte v2);
+
+	int command9();
+	int command10();
+	int command11();
+	int command12();
+	int command13();
+	int command14();
+	int command15();
+	int command16();
+	int command17();
+	int command18();
+	int command19();
+	int command20();
+	int command21();
+	int command22();
+	int command23();
+	int command24();
+	int command25();
+	int command26();
+	int command27();
+	int command28();
+	int command29();
+	int command30();
+	int command31();
+	int command32();
+	int command33();
+	int command34();
+	int command35();
+	int command36();
+	int command37();
+public:
+	RSound8(Audio::Mixer *mixer);
+
+	int command(int commandId, int param) override;
+};
+
 class RSound9 : public RSound {
 private:
 	/**
