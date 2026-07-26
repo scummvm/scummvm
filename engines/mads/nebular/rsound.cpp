@@ -85,29 +85,27 @@ RSound::RSound(Audio::Mixer *mixer, const Common::Path &filename,
 		_channels[i]._midiChannel = i + 1;
 	}
 
-	// rsound_init calls sub_10132 (resetAllChannels) directly, then later
+	// rsound_init calls resetAllChannels directly, then later
 	// (via initDeviceOnce, on successful hardware detection) calls
 	// rsound_command0, which resets the channels again and sends the
 	// GM-reset messages to the device. Since we don't do real hardware
 	// detection here, just go straight to command0() - matches ASound's
 	// constructor calling command0() directly.
 	command0();
-
-	//_opl->start(new Common::Functor0Mem<void, RSound>(this, &RSound::onTimer), CALLBACKS_PER_SECOND);
 }
 
 void RSound::validate() {
 	Common::File f;
 	static const char *const MD5[] = {
-		"205398468de2c8873b7d4d73d5be8ddc",
-		"f9b2d944a2fb782b1af5c0ad592306d3",
-		"7431f8dad77d6ddfc24e6f3c0c4ac7df",
-		"eb1f3f5a4673d3e73d8ac1818c957cf4",
-		"f936dd853073fa44f3daac512e91c476",
-		"3dc139d3e02437a6d9b732072407c366",
-		"af0edab2934947982e9a405476702e03",
-		"8cbc25570b50ba41c9b5361cad4fbedc",
-		"a31e4783e098f633cbb6689adb41dd4f"
+		"6b2f2f24b54ba0177938dde17baa6231",
+		"598dffd6aaa9c2dec820f981b2caec14",
+		"878332bbca47992c18e0eebd33669e9c",
+		"8de899aa94c3a9352dd437fca3a5dbbf",
+		"d6e1bddda9bd71d4a13825fe4092eefa",
+		"aa16aa7b6f27a631b0cc64c4f7f26468",
+		"3504e523c888541725f6aeb3d07631bc",
+		"40a2a8bd0d49f1acbb0569f1b22ec9b2",
+		"2ae093b2ce06f739f200ca3e9ff2af85"
 	};
 
 	for (int i = 1; i <= 9; ++i) {
@@ -121,7 +119,6 @@ void RSound::validate() {
 			error("Invalid sound file - %s", filename.toString().c_str());
 	}
 }
-
 
 int RSound::stop() {
 	command0();
