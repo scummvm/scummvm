@@ -529,11 +529,9 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	// Not dragging: only process when idle
-	if (_solveState != kIdle)
-		return;
-
-	// Find topmost piece under cursor (separately tracking unplaced vs any)
+	// Not dragging: find the topmost piece under the cursor. The hover cursor is
+	// refreshed even while a drop/placement sound plays (non-idle) so a piece put
+	// down off-target keeps the piece cursor; only clicks are gated on kIdle.
 	int16 topmostUnplaced = -1;
 	int16 topmostAny = -1;
 
@@ -552,6 +550,10 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 	if (topmostAny != -1) {
 		if (topmostUnplaced != -1)
 			setPieceCursor();
+
+		// Clicks are only processed when idle
+		if (_solveState != kIdle)
+			return;
 
 		// Left click on an unplaced piece: pick it up
 		// Right click: pick it up and rotate it
@@ -575,6 +577,10 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 		}
 		return;
 	}
+
+	// Nothing else is interactive while a drop/placement sound plays
+	if (_solveState != kIdle)
+		return;
 
 	// Check exit hotspot
 	Common::Rect exitScreen = NancySceneState.getViewport().convertViewportToScreen(_exitHotspot);
