@@ -1046,6 +1046,21 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDERZX, GAMEOPTION_WASD_CONTROLS)
 	},
+	{
+		// Only an EGA executable is shipped, unlike Castle Master
+		"castlemaster2",
+		"",
+		{
+			{"CRYPT.EXE", 0, "c1fdbb7cfbb4cb35fe9ccebf9883d8b8", 2582},
+			{"CRE.EXE", 0, "91838da45e67a0362a0658038a5f125f", 76878},
+			{"CREDF", 0, "cab9a101a8632927a96a635d796edffe", 17279},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GAMEOPTION_WASD_CONTROLS)
+	},
 	// 3D Construction Kit games
 	{
 		"3dkit",

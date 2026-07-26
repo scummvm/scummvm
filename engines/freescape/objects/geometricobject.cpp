@@ -178,8 +178,17 @@ GeometricObject::GeometricObject(
 			_ordinates->push_back(_origin.y() + _size.y());
 			_ordinates->push_back(_origin.z() + _size.z());
 		}
-	} else if (isPyramid(_type))
-		assert(_size.x() > 0 && _size.y() > 0 && _size.z() > 0);
+	} else if (isPyramid(_type)) {
+		// A pyramid flat along one axis has its base and apex faces in the same
+		// plane, and is drawn flat (Castle Master 2 object 191). Two flat axes
+		// would leave nothing to draw, and means a misparsed object.
+		int flatAxes = 0;
+		for (int i = 0; i < 3; i++) {
+			if (_size.getValue(i) == 0)
+				flatAxes++;
+		}
+		assert(flatAxes <= 1);
+	}
 
 	computeBoundingBox();
 }

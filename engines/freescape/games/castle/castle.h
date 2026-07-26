@@ -72,6 +72,7 @@ public:
 	void loadAssetsAtariFullGame() override;
 	void loadAssetsZXFullGame() override;
 	void loadAssetsCPCFullGame() override;
+	void loadMessagesCastleMaster2(Common::SeekableReadStream *file, int offset, int number);
 	void borderScreen() override;
 	void selectCharacterScreen();
 	bool playAmigaIntro();

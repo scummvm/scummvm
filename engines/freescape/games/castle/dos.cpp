@@ -152,12 +152,18 @@ void CastleEngine::loadAssetsDOSFullGame() {
 	Common::SeekableReadStream *stream = nullptr;
 
 	if (_renderMode == Common::kRenderEGA) {
-		file.open("CME.EXE");
+		// Every block below is byte identical in CRE.EXE and CME.EXE, but sits
+		// 0x30a0 earlier since CM2 has a smaller code section. The speaker
+		// tables are at the same offset in both.
+		const int delta = isCastleMaster2() ? -0x30a0 : 0;
+
+		file.open(isCastleMaster2() ? "CRE.EXE" : "CME.EXE");
 		stream = unpackEXE(file);
 		if (stream) {
 			_sound = loadSpeakerFxDOS(stream, 0x636d + 0x200, 0x63ed + 0x200, 30);
 
-			stream->seek(0x197c0);
+			stream->seek(0x197c0 + delta);
+			// Blank in CM2, but still parsed to reach the background after it
 			_endGameBackgroundFrame = loadFrameFromPlanes(stream, 112, 108);
 			_endGameBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
 
@@ -166,7 +172,7 @@ void CastleEngine::loadAssetsDOSFullGame() {
 			debug("%x", (int32)stream->pos());
 			// Eye widget is next to 0x1f058
 
-			stream->seek(0x1f4e3);
+			stream->seek(0x1f4e3 + delta);
 			for (int i = 0; i < 6; i++)
 				debug("i: %d -> %x", i, stream->readByte());
 			debug("%x", (int32)stream->pos());
@@ -191,7 +197,7 @@ void CastleEngine::loadAssetsDOSFullGame() {
 			//debug("%lx", stream->pos());
 			//assert(0);
 
-			stream->seek(0x20262);
+			stream->seek(0x20262 + delta);
 			_strenghtBackgroundFrame = loadFrameWithHeaderDOS(stream);
 			_strenghtBarFrame = loadFrameWithHeaderDOS(stream);
 			_strenghtWeightsFrames = loadFramesWithHeaderDOS(stream, 4);
@@ -205,7 +211,7 @@ void CastleEngine::loadAssetsDOSFullGame() {
 			debug("%lx", stream->pos());*/
 			//assert(0);
 
-			stream->seek(0x221ae);
+			stream->seek(0x221ae + delta);
 			// No header?
 			_menu = loadFrameFromPlanes(stream, 112, 115);
 			_menu->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
@@ -218,6 +224,7 @@ void CastleEngine::loadAssetsDOSFullGame() {
 			_menuFxOnIndicator = menuFrames[4];
 
 			_flagFrames = loadFramesWithHeaderDOS(stream, 4);
+			// Unused by CM2, but shipped, and parsed to keep reading in order
 			_riddleTopFrame = loadFrameWithHeaderDOS(stream);
 			_riddleBackgroundFrame = loadFrameWithHeaderDOS(stream);
 			_riddleBottomFrame = loadFrameWithHeaderDOS(stream);
@@ -234,7 +241,7 @@ void CastleEngine::loadAssetsDOSFullGame() {
 			thunderFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
 			_thunderFrames.push_back(thunderFrame);
 
-			stream->seek(0x29696);
+			stream->seek(0x29696 + delta);
 			Common::Array<Graphics::ManagedSurface *> chars;
 			Common::Array<Graphics::ManagedSurface *> charsRiddle;
 			for (int i = 0; i < 90; i++) {
@@ -259,20 +266,35 @@ void CastleEngine::loadAssetsDOSFullGame() {
 		delete stream;
 		file.close();
 
-		file.open("CMLE.DAT");
+		file.open(isCastleMaster2() ? "CRLE.DAT" : "CMLE.DAT");
 		_title = load8bitBinImage(&file, 0x0);
 		_title->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 		file.close();
 
-		file.open("CMOE.DAT");
-		_option = load8bitBinImage(&file, 0x0);
-		_option->setPalette((byte *)&kEGADefaultPalette, 0, 16);
-		file.close();
+		// CM2 draws its configuration menu as text, so it ships no CMOE.DAT
+		if (!isCastleMaster2()) {
+			file.open("CMOE.DAT");
+			_option = load8bitBinImage(&file, 0x0);
+			_option->setPalette((byte *)&kEGADefaultPalette, 0, 16);
+			file.close();
+		}
 
-		file.open("CME.DAT");
+		file.open(isCastleMaster2() ? "CRE.DAT" : "CME.DAT");
 		_border = load8bitBinImage(&file, 0x0);
 		_border->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 		file.close();
+
+		if (isCastleMaster2()) {
+			// 132 entries: game text, area names from 41, then front end strings
+			stream = decryptFile("CRLE");
+			loadMessagesCastleMaster2(stream, 0x10, 132);
+			delete stream;
+
+			stream = decryptFile("CREDF");
+			load8bitBinary(stream, 0, 16);
+			delete stream;
+			return;
+		}
 
 		switch (_language) {
 			case Common::ES_ESP:

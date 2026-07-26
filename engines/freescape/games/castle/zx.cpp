@@ -69,31 +69,8 @@ void CastleEngine::loadAssetsZXFullGame() {
 		error("Failed to open %s", dataFile.toString().c_str());
 
 	if (isCastleMaster2()) {
-		// CM2 game text (L6cb9_game_text) and area names (L6f49_area_names)
-		// are both fixed-size: 16 bytes per entry (1-byte indent flag + 15
-		// chars of text). The indent flag is used by Ld01c_draw_string for
-		// display positioning but is not part of the text content.
-		// Game text: 41 entries at offset 0x02B9.
-		// Area names: 40 entries at offset 0x0549.
-		// Both are loaded into _messagesList (game text at indices 0-40,
-		// area names at indices 41-80).
-		file.seek(0x02b9);
-		for (int i = 0; i < 41; i++) {
-			file.readByte(); // skip indent flag
-			char buf[16];
-			file.read(buf, 15);
-			buf[15] = '\0';
-			_messagesList.push_back(Common::String(buf));
-		}
-
-		// Area names follow immediately (L6f49_area_names, 40 entries).
-		for (int i = 0; i < 40; i++) {
-			file.readByte(); // skip indent flag
-			char buf[16];
-			file.read(buf, 15);
-			buf[15] = '\0';
-			_messagesList.push_back(Common::String(buf));
-		}
+		// 41 game text entries at 0x02B9, then 40 area names at 0x0549
+		loadMessagesCastleMaster2(&file, 0x02b9, 41 + 40);
 
 		load8bitBinary(&file, 0x6682, 16);
 		_sound = loadSpeakerFxZX(&file, 0x0bbf, 0x0bfb, 25);

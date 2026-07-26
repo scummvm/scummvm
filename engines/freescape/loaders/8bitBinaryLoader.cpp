@@ -753,10 +753,13 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 			skyColor = 0;
 	} else if (isCastle()) {
 		byte idx = readField(file, 8);
-		if (isAmiga() || isAtariST())
+		if (areaNumber == 255) {
+			// The room structure is not an area, the byte above is unrelated data
+			name = "GLOBAL";
+		} else if (isAmiga() || isAtariST())
 			name = _messagesList[idx + 51];
 		else if (isSpectrum() || isCPC() || isC64())
-			name = areaNumber == 255 ? "GLOBAL" : _messagesList[idx + (isCastleMaster2() ? 41 : 16)];
+			name = _messagesList[idx + (isCastleMaster2() ? 41 : 16)];
 		else
 			name = _messagesList[idx + 41];
 

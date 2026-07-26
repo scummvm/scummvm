@@ -1562,7 +1562,8 @@ void CastleEngine::loadAssets() {
 
 		it._value->addStructure(_areaMap[255]);
 
-		if (isDOS() || isAmiga() || isAtariST()) {
+		// CM2 reuses these object IDs for unrelated geometry, not spirit groups
+		if ((isDOS() || isAmiga() || isAtariST()) && !isCastleMaster2()) {
 			if (it._value->objectWithID(125)) {
 				_areaMap[it._key]->addGroupFromArea(195, _areaMap[255]);
 				//group = (Group *)_areaMap[it._key]->objectWithID(195);
@@ -1596,6 +1597,23 @@ void CastleEngine::loadAssets() {
 	_areaMap[1]->addFloor();
 	_areaMap[2]->addFloor();
 
+}
+
+void CastleEngine::loadMessagesCastleMaster2(Common::SeekableReadStream *file, int offset, int number) {
+	// Game text (L6cb9_game_text) and area names (L6f49_area_names) form a single
+	// table of 16-byte entries: an indent flag, then 15 characters. A zero flag
+	// would terminate the string, so loadMessagesFixedSize() cannot be used.
+	file->seek(offset);
+	debugC(1, kFreescapeDebugParser, "String table:");
+
+	for (int i = 0; i < number; i++) {
+		file->readByte(); // skip indent flag
+		char buf[16];
+		file->read(buf, 15);
+		buf[15] = '\0';
+		_messagesList.push_back(Common::String(buf));
+		debugC(1, kFreescapeDebugParser, "%d: '%s'", i, buf);
+	}
 }
 
 void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int number) {
@@ -2073,7 +2091,8 @@ void CastleEngine::borderScreen() {
 		return;
 	}
 
-	if (isSpectrum() || isCPC() || isC64())
+	// CM2 has no character selection, so it uses the plain configuration menu
+	if (isSpectrum() || isCPC() || isC64() || isCastleMaster2())
 		FreescapeEngine::borderScreen();
 	else {
 		uint32 color = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
