@@ -482,6 +482,13 @@ BoardArrangementPuzzle::Result BoardArrangementPuzzle::run(uint completionFlag) 
 		}
 		if (redraw)
 			render();
+		else {
+			// RunBoardArrangementPuzzleScene at 0x39d8f services
+			// ServiceUiControlStateSelection on every idle loop while the
+			// selection presentation is active. Submit unchanged puzzle frames
+			// too so ScummVM's software cursor tracks those input ticks.
+			g_system->updateScreen();
+		}
 		g_system->delayMillis(10);
 	}
 
