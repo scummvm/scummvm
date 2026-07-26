@@ -68,7 +68,7 @@ public:
 	void update(int aimX, int aimY);
 	// One 60Hz tick of the trooper slots. Returns the shield damage it cost the player.
 	int updateEnemies(Common::RandomSource &random);
-	// Kills whatever the crosshair covers; returns the score it earned, or zero.
+	// Fires a bolt at the crosshair and kills whatever it covers; returns the score.
 	int shoot(int aimX, int aimY);
 	bool outOfCover() const { return _out && !_moving; }
 	// Anything but fully ducked; the original only shields a rookie who has finished.
@@ -96,6 +96,8 @@ private:
 	const RA2PSXPlayFrame *actorFrame(const RA2PSXLevel2Actor &actor) const;
 	void advanceActor(RA2PSXLevel2Actor &actor);
 	int slotDelay(int base, int range, Common::RandomSource &random) const;
+	// Projects a bolt's 3D line onto the screen at the given point along it.
+	void projectShot(const RA2PSXLevel2Shot &shot, int step, int &x, int &y) const;
 
 	RA2PSXTextureSet _textures;
 	RA2PSXTextureSet _hud;
@@ -115,6 +117,7 @@ private:
 	// The trooper slots, the bolt each one has in the air, and the wave they draw from.
 	RA2PSXLevel2Actor _troopers[kRA2PSXLevel2TrooperCount];
 	RA2PSXLevel2Actor _bolts[kRA2PSXLevel2TrooperCount];
+	RA2PSXLevel2Shot _shots[kRA2PSXLevel2ShotCount];
 	int _tick;
 	int _remaining;
 	int _active;

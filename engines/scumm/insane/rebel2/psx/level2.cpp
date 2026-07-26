@@ -61,7 +61,7 @@ const RA2PSXLevel2PartInfo kRA2PSXLevel2Parts[kRA2PSXLevel2PartCount] = {
 		{ 182, 73, 80, 108 }, { 181, 73, 78, 109 }, { 181, 73, 78, 109 },
 		{ 182, 73, 78, 108 }, { 183, 73, 80, 108 }, { 183, 73, 80, 108 }
 		},
-		2, { "TRP_0", "TRP_1", nullptr }, { "LAS_0", "LAS_1", nullptr },
+		2, { "TRP_0", "TRP_1", nullptr }, { "LAS_0", "LAS_1", nullptr }, 1, 0x3e,
 		{ { { 7, 0x1f }, { 7, 0x1a }, { 8, 0x0b } },
 		  { { 7, 0x36 }, { 7, 0x28 }, { 8, 0x1a } },
 		  { { 0, 0 }, { 0, 0 }, { 0, 0 } } } },
@@ -87,7 +87,7 @@ const RA2PSXLevel2PartInfo kRA2PSXLevel2Parts[kRA2PSXLevel2PartCount] = {
 		{ 156, 112, 72, 88 }, { 159, 106, 72, 94 }, { 158, 112, 76, 88 },
 		{ 160, 112, 78, 88 }, { 159, 113, 80, 87 }, { 160, 115, 80, 85 }
 		},
-		3, { "TRP_0", "TRP_1", "TRP_2" }, { "LAS_0", "LAS_1", "LAS_2" },
+		3, { "TRP_0", "TRP_1", "TRP_2" }, { "LAS_0", "LAS_1", "LAS_2" }, 0, 0x44,
 		{ { { 0x12, 0x2b }, { 0x0e, 0x24 }, { 0x0e, 0x19 } },
 		  { { 0x17, 0x3a }, { 0x15, 0x28 }, { 0x15, 0x1e } },
 		  { { 0x0d, 0x3b }, { 0x0d, 0x29 }, { 0x0f, 0x1c } } } },
@@ -114,7 +114,7 @@ const RA2PSXLevel2PartInfo kRA2PSXLevel2Parts[kRA2PSXLevel2PartCount] = {
 		{ 90, 102, 76, 82 }, { 93, 95, 90, 89 }, { 95, 101, 90, 83 },
 		{ 95, 103, 90, 81 }, { 95, 103, 92, 81 }, { 93, 103, 90, 81 }
 		},
-		3, { "TRP_0", "TRP_1", "TRP_2" }, { "LAS_0", "LAS_1", "LAS_2" },
+		3, { "TRP_0", "TRP_1", "TRP_2" }, { "LAS_0", "LAS_1", "LAS_2" }, 0, 0x44,
 		{ { { 0, 0 }, { 0, 0 }, { 0, 0 } },
 		  { { 0, 0 }, { 0, 0 }, { 0, 0 } },
 		  { { 0, 0 }, { 0, 0 }, { 0, 0 } } } }
@@ -146,6 +146,26 @@ const int16 kRA2PSXLevel2BoltTable[kRA2PSXLevel2PartCount][3][2] = {
 };
 
 const int16 kRA2PSXLevel2KillScore[3] = { 80, 100, 150 };
+
+// Where the gun points for each aim pose. The five cover poses never fire.
+const int16 kRA2PSXLevel2Muzzles[2][30][2] = {
+	{
+	{ 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
+	{ 49, 86 }, { 49, 86 }, { 62, 100 }, { 65, 132 }, { 65, 132 },
+	{ 72, 80 }, { 80, 90 }, { 63, 100 }, { 65, 120 }, { 58, 125 },
+	{ 93, 81 }, { 93, 90 }, { 101, 99 }, { 89, 109 }, { 89, 129 },
+	{ 108, 82 }, { 108, 90 }, { 111, 100 }, { 116, 115 }, { 116, 130 },
+	{ 119, 83 }, { 119, 90 }, { 124, 100 }, { 127, 112 }, { 127, 130 }
+	},
+	{
+	{ 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
+	{ 63, 71 }, { 63, 80 }, { 67, 90 }, { 76, 123 }, { 76, 123 },
+	{ 78, 67 }, { 78, 70 }, { 81, 95 }, { 76, 122 }, { 76, 122 },
+	{ 87, 64 }, { 87, 72 }, { 96, 88 }, { 100, 102 }, { 100, 116 },
+	{ 101, 61 }, { 104, 73 }, { 105, 84 }, { 111, 99 }, { 111, 102 },
+	{ 109, 60 }, { 114, 76 }, { 122, 82 }, { 122, 95 }, { 122, 100 }
+	}
+};
 
 RA2PSXLevel2Scene::RA2PSXLevel2Scene() : _part(0), _difficulty(0), _frame(0), _delay(0),
 		_out(false), _moving(false), _tick(0), _remaining(0), _active(0), _clearTicks(0),
@@ -350,19 +370,57 @@ int RA2PSXLevel2Scene::updateEnemies(Common::RandomSource &random) {
 		trooper.slotTick = slotDelay(slot[0], slot[1], random);
 	}
 
+	for (int i = 0; i < kRA2PSXLevel2ShotCount; ++i) {
+		if (!_shots[i].step)
+			continue;
+		_shots[i].step += kRA2PSXLevel2ShotStep;
+		if (_shots[i].step > kRA2PSXLevel2ShotEnd)
+			_shots[i].step = 0;
+	}
+
 	if (_remaining <= 0)
 		++_clearTicks;
 	return damage;
+}
+
+void RA2PSXLevel2Scene::projectShot(const RA2PSXLevel2Shot &shot, int step,
+		int &x, int &y) const {
+	step = CLIP<int>(step, 0, 4096);
+	// The bolt is a straight 3D line from the gun at z 1000 to the crosshair at z 18000.
+	// Projecting that line back through its own endpoints cancels the focal length, so
+	// the screen position is a perspective weighted blend of the two screen points.
+	const int nearZ = kRA2PSXLevel2ShotNearZ;
+	const int farZ = kRA2PSXLevel2ShotFarZ;
+	const int z = nearZ + (farZ - nearZ) * step / 4096;
+	const int deltaX = shot.targetX * farZ - shot.muzzleX * nearZ;
+	const int deltaY = shot.targetY * farZ - shot.muzzleY * nearZ;
+	x = (int)((shot.muzzleX * nearZ + (int)(((int64)deltaX * step) >> 12)) / z);
+	y = (int)((shot.muzzleY * nearZ + (int)(((int64)deltaY * step) >> 12)) / z);
 }
 
 int RA2PSXLevel2Scene::shoot(int aimX, int aimY) {
 	if (!outOfCover())
 		return 0;
 
+	const RA2PSXLevel2PartInfo &part = info();
+	// The bolt leaves the gun this pose points, exactly as the DOS build's per sprite
+	// origin table does; the table is biased against the projection's own centre.
+	const int16 *muzzle = kRA2PSXLevel2Muzzles[part.muzzleTable][MIN(_frame, 29)];
+	for (int i = 0; i < kRA2PSXLevel2ShotCount; ++i) {
+		if (_shots[i].step)
+			continue;
+		_shots[i].step = kRA2PSXLevel2ShotStep;
+		_shots[i].muzzleX = muzzle[0] - 4;
+		_shots[i].muzzleY = muzzle[1] + 116 - part.muzzleBias;
+		_shots[i].targetX = aimX;
+		_shots[i].targetY = aimY;
+		break;
+	}
+
 	// The crosshair is in screen space; a frame's box is where the backdrop puts it.
 	const int shotX = aimX + (_scroll[0][0] >> 16);
 	const int shotY = aimY - kRA2PSXLevel2SceneTop + (_scroll[0][1] >> 16);
-	for (int i = 0; i < info().trooperCount; ++i) {
+	for (int i = 0; i < part.trooperCount; ++i) {
 		RA2PSXLevel2Actor &trooper = _troopers[i];
 		if (trooper.state == kRA2PSXLevel2StateIdle ||
 				trooper.state == kRA2PSXLevel2StateCover ||
@@ -543,12 +601,6 @@ void RA2PSXLevel2Scene::draw(Graphics::Surface &surface, int aimX, int aimY) con
 			if (frame)
 				drawPlayFrame(surface, *frame, *palette, actorX, actorY);
 		}
-		const Common::Array<uint32> *bolt = _textures.palette(part.boltPalettes[i]);
-		if (bolt && _bolts[i].state != kRA2PSXLevel2StateIdle) {
-			const RA2PSXPlayFrame *frame = actorFrame(_bolts[i]);
-			if (frame)
-				drawPlayFrame(surface, *frame, *bolt, actorX, actorY);
-		}
 	}
 
 	for (int i = 0; i < kRA2PSXLevel2LayerCount; ++i) {
@@ -556,11 +608,40 @@ void RA2PSXLevel2Scene::draw(Graphics::Surface &surface, int aimX, int aimY) con
 			drawLayer(surface, part.layers[i], left, top);
 	}
 
+	// A bolt flies past the near wall on its way to the camera, so it sits in front of
+	// it - but only while the rookie is out; cover stops the shot, as the DOS handler
+	// does by refusing to draw a beam at all while he is ducked.
+	if (exposed()) {
+		for (int i = 0; i < part.trooperCount; ++i) {
+			const Common::Array<uint32> *bolt = _textures.palette(part.boltPalettes[i]);
+			if (!bolt || _bolts[i].state == kRA2PSXLevel2StateIdle)
+				continue;
+			const RA2PSXPlayFrame *frame = actorFrame(_bolts[i]);
+			if (frame)
+				drawPlayFrame(surface, *frame, *bolt, actorX, actorY);
+		}
+	}
+
 	// The rookie stands nearest of all, in front of his own cover.
 	if ((uint)_frame < _rookie.size()) {
 		const RA2PSXLevel2Pose &pose = part.poses[_frame];
 		drawFrame(surface, _rookie[_frame], left + pose.x + part.rookieOffsetX,
 				top + pose.y + part.rookieOffsetY);
+	}
+
+	// The player's own bolts are nearest of all, and stop with him behind cover.
+	static const byte kShotHead[3] = { 0xff, 0xf0, 0xc0 };
+	static const byte kShotTail[3] = { 0xc0, 0x30, 0x00 };
+	for (int i = 0; exposed() && i < kRA2PSXLevel2ShotCount; ++i) {
+		if (!_shots[i].step || _shots[i].step >= kRA2PSXLevel2ShotDraw)
+			continue;
+		int headX, headY, tailX, tailY;
+		projectShot(_shots[i], _shots[i].step, headX, headY);
+		projectShot(_shots[i], _shots[i].step - kRA2PSXLevel2ShotStep, tailX, tailY);
+		for (int thickness = 0; thickness < 2; ++thickness) {
+			drawRA2PSXGouraudLine(surface, left + tailX, top + tailY + thickness,
+					left + headX, top + headY + thickness, kShotTail, kShotHead);
+		}
 	}
 
 	if (outOfCover() && _hud.has("CROSS"))
@@ -580,8 +661,10 @@ public:
 
 	bool shouldQuit() const override { return _psx._vm->shouldQuit(); }
 
+	// The briefing, then the long cinematic that drops the rookie into the corridor.
 	bool playOpening() override {
-		return _psx.playVideo("S1/L02_INTR.STR", 1, false);
+		return _psx.playVideo("S1/L02_INTR.STR", 1, false) &&
+				_psx.playVideo("S1/L02_CUT1.STR", 1, false);
 	}
 
 	void beginAttempt() override {
@@ -625,9 +708,10 @@ public:
 		return credit;
 	}
 
+	// The two short links between the parts; CUT1 belongs to the opening.
 	bool playPhaseEnd(int phase) override {
 		static const char *const cutscenes[] = {
-			"S1/L02_CUT1.STR", "S1/L02_CUT2.STR"
+			"S1/L02_CUT2.STR", "S1/L02_CUT3.STR"
 		};
 		return _psx.playVideo(cutscenes[phase - 1], 1, false);
 	}
@@ -651,7 +735,6 @@ public:
 	}
 
 	void playComplete(int) override {
-		_psx.playVideo("S1/L02_CUT3.STR", 1, false);
 		_psx.playVideo("S1/L02_EXTR.STR", 1, false);
 	}
 

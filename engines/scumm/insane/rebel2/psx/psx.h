@@ -281,7 +281,17 @@ enum {
 	// A trooper hides behind its own sprite until its slot has counted down.
 	kRA2PSXLevel2SlotNever = 0x7fffffff,
 	// How often a held fire button repeats, in ticks.
-	kRA2PSXLevel2FireRepeat = 12
+	kRA2PSXLevel2FireRepeat = 12,
+	// A player bolt runs a 3D line from the gun to the crosshair: the parameter steps
+	// by 300 of 4096 a tick, the bolt stops drawing at 4000 and is dropped past 0x112f.
+	// Two slots, the same as the DOS build's cover handler.
+	kRA2PSXLevel2ShotCount = 2,
+	kRA2PSXLevel2ShotStep = 300,
+	kRA2PSXLevel2ShotDraw = 4000,
+	kRA2PSXLevel2ShotEnd = 0x112f,
+	// The bolt leaves the muzzle at z 1000 and reaches the crosshair at z 18000.
+	kRA2PSXLevel2ShotNearZ = 1000,
+	kRA2PSXLevel2ShotFarZ = 18000
 };
 
 // The states a play script actor walks, named after the values the original stores.
@@ -294,6 +304,22 @@ enum {
 	kRA2PSXLevel2StateShot = 5,
 	kRA2PSXLevel2StateCover = 0x80
 };
+
+// One of the player's own bolts, travelling from the gun toward the crosshair.
+struct RA2PSXLevel2Shot {
+	RA2PSXLevel2Shot() : step(0), muzzleX(0), muzzleY(0), targetX(0), targetY(0) {}
+
+	// Zero when the slot is free; otherwise how far along the line the bolt is.
+	int step;
+	// Both ends in screen space: the gun this pose fires from, and the crosshair.
+	int muzzleX;
+	int muzzleY;
+	int targetX;
+	int targetY;
+};
+
+// Where the gun sits for each rookie pose, as the original's two tables hold it.
+extern const int16 kRA2PSXLevel2Muzzles[2][30][2];
 
 // One play script actor: a trooper, or the bolt it fires.
 struct RA2PSXLevel2Actor {
@@ -359,6 +385,9 @@ struct RA2PSXLevel2PartInfo {
 	int trooperCount;
 	const char *trooperPalettes[kRA2PSXLevel2TrooperCount];
 	const char *boltPalettes[kRA2PSXLevel2TrooperCount];
+	// Which muzzle table the part's poses index, and the bias its bolts start from.
+	byte muzzleTable;
+	int16 muzzleBias;
 	// Empty windows mean the part fires as it changes state instead of on a frame count.
 	RA2PSXLevel2FireWindow fireWindows[kRA2PSXLevel2TrooperCount][3];
 };
