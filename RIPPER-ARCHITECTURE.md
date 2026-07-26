@@ -1053,6 +1053,10 @@
   `RunWacStillImageScreenWithOptionalAudio` at `0x22f1f` with no audio. The
   Prescription Pad uses the shared WAC still-image viewport, palette patch,
   and scroll controls while the database chooser remains active.
+- Entry 4 dispatches `WACINV4.PCX` through the same
+  `RunWacStillImageScreenWithOptionalAudio` path with no audio. The Document
+  retains the database chooser and shares the still-image palette and vertical
+  scrolling behavior.
 - Entries 10 and 11 dispatch `wacinv10.pcx` and `wacinv11.pcx` through
   `RunWacStillImageScreenWithOptionalAudio` at `0x22f1f`. These 300-by-393
   documents retain the database chooser, show a 282-row slice in the left WAC
