@@ -37,6 +37,27 @@ class RSound;
  * field names/roles were derived by tracing Channel_pollActive() (the
  * per-channel opcode interpreter) and cross-referencing against the
  * equivalent AdlibChannel fields in asound.h.
+ *
+ * Confirmed against the real DOS struct layout (IDA struct dump,
+ * sizeof=0x22): every field below from _activeCount through _soundData
+ * matches the original both in name and in byte offset/order exactly:
+ *   0x00 _activeCount    0x0C _volume          0x18 _innerLoopPtr
+ *   0x01 _pitchBendFadeStep 0x0D _pitchBend     0x1A _outerLoopPtr
+ *   0x02 _volumeFadeStep  0x0E _pan             0x1C _innerLoopCount
+ *   0x03 _panFadeStep     0x0F _volumeFadeReload 0x1E _outerLoopCount
+ *   0x04 _note            0x10 _pitchBendFadeReload 0x20 _soundData
+ *   0x05 _program         0x11 _panFadeReload
+ *   0x06 _velocity        0x12 _pitchBendFadeCount
+ *   0x07 _noteOffset      0x13 _pendingStop
+ *   0x08 _keyOnDelay      0x14 _loopStartPtr
+ *   0x09 _volumeFadeCounter 0x16 _pSrc
+ *   0x0A _pitchBendFadeCounter
+ *   0x0B _panFadeCounter
+ * _owner and _midiChannel below are NOT part of the original struct (it
+ * has no equivalent fields) - they're C++-side conveniences so Channel
+ * methods and callers don't need the MIDI channel number (array index+1)
+ * threaded through separately. Any future raw "[bx+N]" disassembly offset
+ * can be mapped directly via the table above.
  */
 class Channel {
 public:
@@ -178,6 +199,15 @@ protected:
 	 * afterward.
 	 */
 	Channel *playSound(int offset);
+
+	/**
+	 * Play the specified sound using any channel from 0 to 8, including
+	 * channel 9 - confirmed distinct from playSound() by rsound.001's
+	 * disassembly (rsound_command30/32/38).
+	 */
+	Channel *playSoundAny(int offset) {
+		return playSoundData(loadData(offset), 0);
+	}
 
 	Channel *playSoundData(byte *pData, int startingChannel = 5);
 

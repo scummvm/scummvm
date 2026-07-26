@@ -146,9 +146,13 @@ Channel *RSound::playSound(int offset) {
 }
 
 Channel *RSound::playSoundData(byte *pData, int startingChannel) {
-	// Scan for a free channel. Deliberately excludes channel 9 (index 8),
-	// matching the disassembly - playSound() never reaches it.
-	for (int i = startingChannel; i < RSOUND_CHANNEL_COUNT - 1; ++i) {
+	// playSound() (startingChannel=5) deliberately excludes channel 9
+	// (index 8), matching rsound.009's disassembly. playSoundAny()
+	// (startingChannel=0) reaches all 9 channels.
+	int endChannel = (startingChannel == 0) ? RSOUND_CHANNEL_COUNT : RSOUND_CHANNEL_COUNT - 1;
+
+	// Scan for a free channel
+	for (int i = startingChannel; i < endChannel; ++i) {
 		if (!_channels[i]._activeCount) {
 			_channels[i].load(pData);
 			return &_channels[i];
@@ -156,7 +160,7 @@ Channel *RSound::playSoundData(byte *pData, int startingChannel) {
 	}
 
 	// None found; fall back to an interruptable (pending-stop) channel
-	for (int i = RSOUND_CHANNEL_COUNT - 2; i >= startingChannel; --i) {
+	for (int i = endChannel - 1; i >= startingChannel; --i) {
 		if (_channels[i]._pendingStop == 0xFF) {
 			_channels[i].load(pData);
 			return &_channels[i];
