@@ -760,6 +760,9 @@
   through `SM_BB7.BBM` are the eight draggable cards, while the corresponding
   `LG_BB` assets provide their 273-by-203 readable previews in the right-hand
   panel. The initial scene-space Y/X pairs at `0x84b39` persist across re-entry.
+  Its active loop services `ServiceUiControlStateSelection` on every idle
+  iteration, so the ScummVM loop presents every cursor-service tick even when
+  the hovered card does not change.
 - The board solution order stored at `0x374b1` is `[1, 0, 3, 6, 2]`.
   Each following card must sit entirely below the previous card and overlap it
   horizontally; the other three cards do not participate in validation.
