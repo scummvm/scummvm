@@ -171,7 +171,7 @@ private:
 	int command101();
 
 public:
-	ASound1(Audio::Mixer *mixer, OPL::OPL *opl);
+	ASound1(Audio::Mixer *mixer);
 	~ASound1() override {}
 	int command(int commandId, int param) override;
 };
@@ -218,7 +218,7 @@ private:
 	int command68(); int command69_70(); int command71(); int command72();
 
 public:
-	ASound2(Audio::Mixer *mixer, OPL::OPL *opl);
+	ASound2(Audio::Mixer *mixer);
 	~ASound2() override {}
 	int command(int commandId, int param) override;
 };
@@ -287,7 +287,7 @@ private:
 	int command73();
 
 public:
-	ASound3(Audio::Mixer *mixer, OPL::OPL *opl);
+	ASound3(Audio::Mixer *mixer);
 	~ASound3() override {}
 	int command(int commandId, int param) override;
 };
@@ -343,7 +343,7 @@ private:
 	int command80(); int command81();
 
 public:
-	ASound4(Audio::Mixer *mixer, OPL::OPL *opl);
+	ASound4(Audio::Mixer *mixer);
 	~ASound4() override {}
 	int command(int commandId, int param) override;
 };
@@ -402,7 +402,7 @@ private:
 	int command80(); int command81();
 
 public:
-	ASound5(Audio::Mixer *mixer, OPL::OPL *opl);
+	ASound5(Audio::Mixer *mixer);
 	~ASound5() override {}
 	int command(int commandId, int param) override;
 };
@@ -463,7 +463,7 @@ private:
 	int command100(); int command101();
 
 public:
-	ASound6(Audio::Mixer *mixer, OPL::OPL *opl);
+	ASound6(Audio::Mixer *mixer);
 	~ASound6() override {}
 	int command(int commandId, int param) override;
 };
@@ -514,7 +514,7 @@ private:
 	int command90(); int command91(); int command92();
 
 public:
-	ASoundDemo1(Audio::Mixer *mixer, OPL::OPL *opl);
+	ASoundDemo1(Audio::Mixer *mixer);
 	~ASoundDemo1() override {}
 	int command(int commandId, int param) override;
 };
@@ -563,7 +563,7 @@ private:
 	static const CommandPtr _commandList[65];
 
 public:
-	ASound9(Audio::Mixer *mixer, OPL::OPL *opl);
+	ASound9(Audio::Mixer *mixer);
 	~ASound9() override {}
 	int command(int commandId, int param) override;
 };
@@ -617,7 +617,7 @@ private:
 	int command50();
 
 public:
-	ASoundDemo9(Audio::Mixer *mixer, OPL::OPL *opl);
+	ASoundDemo9(Audio::Mixer *mixer);
 	~ASoundDemo9() override {}
 	int command(int commandId, int param) override;
 };

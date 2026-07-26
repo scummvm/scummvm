@@ -69,28 +69,28 @@ void PhantomSoundManager::validate() {
 
 void PhantomSoundManager::loadDriver(int sectionNumber) {
 	if (_isDemo) {
-		_driver = new ASoundDemo(_mixer, _opl);
+		_driver = new ASoundDemo(_mixer);
 		return;
 	}
 
 	switch (sectionNumber) {
 	case 1:
-		_driver = new ASound1(_mixer, _opl);
+		_driver = new ASound1(_mixer);
 		break;
 	case 2:
-		_driver = new ASound2(_mixer, _opl);
+		_driver = new ASound2(_mixer);
 		break;
 	case 3:
-		_driver = new ASound3(_mixer, _opl);
+		_driver = new ASound3(_mixer);
 		break;
 	case 4:
-		_driver = new ASound4(_mixer, _opl);
+		_driver = new ASound4(_mixer);
 		break;
 	case 5:
-		_driver = new ASound5(_mixer, _opl);
+		_driver = new ASound5(_mixer);
 		break;
 	case 9:
-		_driver = new ASound9(_mixer, _opl);
+		_driver = new ASound9(_mixer);
 		break;
 	default:
 		_driver = nullptr;
@@ -115,8 +115,8 @@ const ASound1::CommandPtr ASound1::_commandList[40] = {
 	&ASound1::command36, &ASound1::command37, &ASound1::command38, &ASound1::command39
 };
 
-ASound1::ASound1(Audio::Mixer *mixer, OPL::OPL *opl)
-		: ASound(mixer, opl, "asound.ph1", 0x21e0, 0x4d20) {
+ASound1::ASound1(Audio::Mixer *mixer)
+		: ASound(mixer, "asound.ph1", 0x21e0, 0x4d20) {
 	// Load sound samples
 	auto samplesStream = getDataStream(0x1d4);
 	for (int i = 0; i < 120; ++i)
@@ -398,8 +398,8 @@ const ASound2::CommandPtr ASound2::_commandList[73] = {
 	&ASound2::command72
 };
 
-ASound2::ASound2(Audio::Mixer *mixer, OPL::OPL *opl)
-		: ASound(mixer, opl, "asound.ph2", 0x2040, 0x2300) {
+ASound2::ASound2(Audio::Mixer *mixer)
+		: ASound(mixer, "asound.ph2", 0x2040, 0x2300) {
 	// Load sound samples
 	auto samplesStream = getDataStream(0x1d4);
 	for (int i = 0; i < 120; ++i)
@@ -628,8 +628,8 @@ const ASound3::CommandPtr ASound3::_commandList[77] = {
 	nullptr
 };
 
-ASound3::ASound3(Audio::Mixer *mixer, OPL::OPL *opl)
-		: ASound(mixer, opl, "asound.ph3", 0x20c0, 0x31a0) {
+ASound3::ASound3(Audio::Mixer *mixer)
+		: ASound(mixer, "asound.ph3", 0x20c0, 0x31a0) {
 	// Load sound samples
 	auto samplesStream = getDataStream(0x1d4);
 	for (int i = 0; i < 120; ++i)
@@ -907,8 +907,8 @@ const ASound4::CommandPtr ASound4::_commandList[71] = {
 	&ASound4::command68, &ASound4::command69, &ASound4::command70
 };
 
-ASound4::ASound4(Audio::Mixer *mixer, OPL::OPL *opl)
-		: ASound(mixer, opl, "asound.ph4", 0x1f90, 0x14d0) {
+ASound4::ASound4(Audio::Mixer *mixer)
+		: ASound(mixer, "asound.ph4", 0x1f90, 0x14d0) {
 	// Load sound samples
 	auto samplesStream = getDataStream(0x1d4);
 	for (int i = 0; i < 120; ++i)
@@ -1063,8 +1063,8 @@ const ASound5::CommandPtr ASound5::_commandList[79] = {
 	&ASound5::command76, &ASound5::command77, &ASound5::command78
 };
 
-ASound5::ASound5(Audio::Mixer *mixer, OPL::OPL *opl)
-		: ASound(mixer, opl, "asound.ph5", 0x2140, 0x5cd0) {
+ASound5::ASound5(Audio::Mixer *mixer)
+		: ASound(mixer, "asound.ph5", 0x2140, 0x5cd0) {
 	// Load sound samples
 	auto samplesStream = getDataStream(0x1d4);
 	for (int i = 0; i < 120; ++i)
@@ -1370,8 +1370,8 @@ const ASound9::CommandPtr ASound9::_commandList[72] = {
 	&ASound9::command68, &ASound9::command69, &ASound9::command70, &ASound9::command71
 };
 
-ASound9::ASound9(Audio::Mixer *mixer, OPL::OPL *opl) :
-		ASound(mixer, opl, "asound.ph9", 0x20c0, 0x3690) {
+ASound9::ASound9(Audio::Mixer *mixer) :
+		ASound(mixer, "asound.ph9", 0x20c0, 0x3690) {
 	// Load sound samples
 	auto samplesStream = getDataStream(0x1d4);
 	for (int i = 0; i < 120; ++i)
@@ -1596,8 +1596,8 @@ const ASoundDemo::CommandPtr ASoundDemo::_commandList[30] = {
 	&ASoundDemo::command28, &ASoundDemo::command29
 };
 
-ASoundDemo::ASoundDemo(Audio::Mixer *mixer, OPL::OPL *opl) :
-		ASound(mixer, opl, "asound.pha", 0x2240, 0x6f30) {
+ASoundDemo::ASoundDemo(Audio::Mixer *mixer) :
+		ASound(mixer, "asound.pha", 0x2240, 0x6f30) {
 	// Load sound samples
 	auto samplesStream = getDataStream(0x1d8);
 	for (int i = 0; i < 256; ++i)

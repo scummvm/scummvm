@@ -22,6 +22,7 @@
 #ifndef MADS_DRAGONSPHERE_ASOUND_H
 #define MADS_DRAGONSPHERE_ASOUND_H
 
+#include "audio/fmopl.h"
 #include "common/mutex.h"
 #include "common/queue.h"
 #include "common/util.h"
@@ -193,6 +194,8 @@ protected:
 	typedef void (ASound::*CallbackFunction)();
 
 private:
+	OPL::OPL *_opl = OPL::Config::create();
+
 	// ---- callback / tick state ------------------------------------------
 	uint16 _callbackCounter = 0;  // per-tick countdown
 	uint16 _callbackPeriod = 0;  // reload value; 0 = callback disabled
@@ -607,15 +610,15 @@ public:
 	/**
 	 * Constructor.
 	 * @param mixer       Mixer instance
-	 * @param opl         OPL chip instance
 	 * @param filename    Path to the .DR1 (or equivalent) sound-driver file
 	 * @param dataOffset  Offset in the file of the data segment
 	 * @param dataSize    Size of the data segment
 	 */
-	ASound(Audio::Mixer *mixer, OPL::OPL *opl, const Common::Path &filename,
+	ASound(Audio::Mixer *mixer, const Common::Path &filename,
 		int dataOffset, int dataSize);
 
 	~ASound() override {
+		delete _opl;
 	}
 
 	/** Stop all currently playing sounds (wraps command0). */

@@ -22,6 +22,7 @@
 #ifndef MADS_PHANTOM_ASOUND_H
 #define MADS_PHANTOM_ASOUND_H
 
+#include "audio/fmopl.h"
 #include "common/mutex.h"
 #include "common/queue.h"
 #include "common/util.h"
@@ -129,6 +130,7 @@ struct AdlibSample {
 
 class ASound : public SoundDriver {
 private:
+	OPL::OPL *_opl = OPL::Config::create();
 	uint16 _callbackCounter = 0;		// Period counter
 	uint16 _callbackPeriod = 0;			// Period reload
 	AdlibChannel *_activeChannelPtr = NULL;
@@ -435,17 +437,17 @@ public:
 	/**
 	 * Constructor
 	 * @param mixer			Mixer
-	 * @param opl			OPL
 	 * @param filename		Specifies the adlib sound player file to use
 	 * @param dataOffset	Offset in the file of the data segment
 	 */
-	ASound(Audio::Mixer *mixer, OPL::OPL *opl, const Common::Path &filename,
+	ASound(Audio::Mixer *mixer, const Common::Path &filename,
 		int dataOffset, int dataSize);
 
 	/**
 	 * Destructor
 	 */
 	~ASound() override {
+		delete _opl;
 	}
 
 	/**

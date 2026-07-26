@@ -20,6 +20,7 @@
  */
 
 #include "audio/fmopl.h"
+#include "audio/mididrv.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "mads/core/sound_manager.h"
@@ -31,8 +32,9 @@ class Mixer;
 namespace MADS {
 
 SoundManager::SoundManager(Audio::Mixer *mixer, bool &soundFlag) : _mixer(mixer), _soundFlag(soundFlag) {
-	_opl = OPL::Config::create();
-	_opl->init();
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32);
+	MusicType musicType = MidiDriver::getMusicType(dev);
+	_isMT32 = musicType == MT_MT32;
 }
 
 SoundManager::~SoundManager() {
@@ -40,17 +42,13 @@ SoundManager::~SoundManager() {
 		_driver->stop();
 		delete _driver;
 	}
-
-	delete _opl;
 }
 
 void SoundManager::init(int sectionNumber) {
 	assert(sectionNumber > 0 && sectionNumber < 10);
 
-	if (_driver != nullptr)
-		delete _driver;
-
 	// Load the correct driver for the section
+	removeDriver();
 	loadDriver(sectionNumber);
 
 	// Set volume for newly loaded driver
@@ -124,8 +122,8 @@ void SoundManager::noise() {
 
 //====================================================================
 
-SoundDriver::SoundDriver(Audio::Mixer *mixer, OPL::OPL *opl, const Common::Path &filename,
-		int dataOffset, int dataSize) : _mixer(mixer), _opl(opl) {
+SoundDriver::SoundDriver(Audio::Mixer *mixer, const Common::Path &filename,
+		int dataOffset, int dataSize) : _mixer(mixer) {
 	// Open up the appropriate sound file
 	Common::File soundFile;
 	if (!soundFile.open(filename))
@@ -134,10 +132,6 @@ SoundDriver::SoundDriver(Audio::Mixer *mixer, OPL::OPL *opl, const Common::Path 
 	_soundData.resize(dataSize);
 	soundFile.seek(dataOffset);
 	soundFile.read(&_soundData[0], dataSize);
-}
-
-SoundDriver::~SoundDriver() {
-	_opl->stop();
 }
 
 } // namespace MADS

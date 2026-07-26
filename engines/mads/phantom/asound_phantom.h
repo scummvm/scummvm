@@ -102,7 +102,7 @@ private:
 	int command39();
 
 public:
-	ASound1(Audio::Mixer *mixer, OPL::OPL *opl);
+	ASound1(Audio::Mixer *mixer);
 	~ASound1() override {}
 	int command(int commandId, int param) override;
 };
@@ -155,7 +155,7 @@ private:
 	int command72();
 
 public:
-	ASound2(Audio::Mixer *mixer, OPL::OPL *opl);
+	ASound2(Audio::Mixer *mixer);
 	~ASound2() override {}
 	int command(int commandId, int param) override;
 };
@@ -218,7 +218,7 @@ private:
 	int command75();
 
 public:
-	ASound3(Audio::Mixer *mixer, OPL::OPL *opl);
+	ASound3(Audio::Mixer *mixer);
 	~ASound3() override {}
 	int command(int commandId, int param) override;
 };
@@ -266,7 +266,7 @@ private:
 	int command70();
 
 public:
-	ASound4(Audio::Mixer *mixer, OPL::OPL *opl);
+	ASound4(Audio::Mixer *mixer);
 	~ASound4() override {}
 	int command(int commandId, int param) override;
 };
@@ -333,7 +333,7 @@ private:
 	int command78();
 
 public:
-	ASound5(Audio::Mixer *mixer, OPL::OPL *opl);
+	ASound5(Audio::Mixer *mixer);
 	~ASound5() override {}
 	int command(int commandId, int param) override;
 };
@@ -381,7 +381,7 @@ private:
 	static const CommandPtr _commandList[72];
 
 public:
-	ASound9(Audio::Mixer *mixer, OPL::OPL *opl);
+	ASound9(Audio::Mixer *mixer);
 	~ASound9() override {
 	}
 	int command(int commandId, int param) override;
@@ -424,7 +424,7 @@ private:
 	static const CommandPtr _commandList[30];
 
 public:
-	ASoundDemo(Audio::Mixer *mixer, OPL::OPL *opl);
+	ASoundDemo(Audio::Mixer *mixer);
 	~ASoundDemo() override {
 	}
 	int command(int commandId, int param) override;

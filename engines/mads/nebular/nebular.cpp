@@ -44,7 +44,7 @@
 #include "mads/nebular/popup.h"
 #include "mads/nebular/mads/inventory.h"
 #include "mads/nebular/mads/words.h"
-#include "mads/nebular/asound_nebular.h"
+#include "mads/nebular/sound.h"
 #include "mads/nebular/rooms/section1.h"
 #include "mads/nebular/rooms/section2.h"
 #include "mads/nebular/rooms/section3.h"

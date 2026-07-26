@@ -68,6 +68,8 @@ MODULE_OBJS := \
 	nebular/nebular.o \
 	nebular/asound.o \
 	nebular/asound_nebular.o \
+	nebular/rsound.o \
+	nebular/rsound_nebular.o \
 	nebular/console.o \
 	nebular/copy.o \
 	nebular/extra.o \
@@ -75,6 +77,7 @@ MODULE_OBJS := \
 	nebular/main.o \
 	nebular/main_menu.o \
 	nebular/menus.o \
+	nebular/sound.o \
 	nebular/popup.o \
 	nebular/mads/mads.o \
 	nebular/rooms/room101.o \

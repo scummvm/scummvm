@@ -235,9 +235,9 @@ void AdlibChannel::processChannelFade() {
 		_fadePeriodCounter = 1;
 }
 
-ASound::ASound(Audio::Mixer *mixer, OPL::OPL *opl, const Common::Path &filename,
+ASound::ASound(Audio::Mixer *mixer, const Common::Path &filename,
 	int dataOffset, int dataSize)
-	: SoundDriver(mixer, opl, filename, dataOffset, dataSize) {
+	: SoundDriver(mixer, filename, dataOffset, dataSize) {
 	AdlibChannel::_isDisabled = false;
 
 	/* Standard OPL timer-reset sequence. */

@@ -22,6 +22,7 @@
 #ifndef MADS_NEBULAR_ASOUND_H
 #define MADS_NEBULAR_ASOUND_H
 
+#include "audio/fmopl.h"
 #include "mads/core/sound_manager.h"
 
 namespace MADS {
@@ -133,6 +134,7 @@ struct RegisterValue {
  */
 class ASound : public SoundDriver {
 private:
+	OPL::OPL *_opl = OPL::Config::create();
 	uint16 _randomSeed;
 	int _masterVolume;
 
@@ -327,28 +329,29 @@ public:
 	int _activeChannelReg;
 	int _outputReg;         // scratch OPL operator register offset used within loadSample()
 	bool _amDep, _vibDep, _splitPoint;
+
+public:
+	/**
+	 * Validates the Adlib sound files
+	 */
+	static void validate();
+
 public:
 	/**
 	 * Constructor
 	 * @param mixer			Mixer
-	 * @param opl			OPL
 	 * @param filename		Specifies the adlib sound player file to use
 	 * @param dataOffset	Offset in the file of the data segment
 	 * @param dataSize		Size of the data segment
 	 */
-	ASound(Audio::Mixer *mixer, OPL::OPL *opl, const Common::Path &filename,
-		int dataOffset, int dataSize);
+	ASound(Audio::Mixer *mixer, const Common::Path &filename, int dataOffset, int dataSize);
 
 	/**
 	 * Destructor
 	 */
 	~ASound() override {
+		delete _opl;
 	}
-
-	/**
-	 * Validates the Adlib sound files
-	 */
-	static void validate();
 
 	/**
 	 * Stop all currently playing sounds
@@ -376,6 +379,15 @@ public:
 	 * Set the volume
 	 */
 	void setVolume(int volume) override;
+};
+
+// TODO: Merge RexASound into ASound
+class RexASound : public ASound {
+protected:
+	void channelCommand(byte *&pSrc, bool &updateFlag) override;
+
+public:
+	RexASound(Audio::Mixer *mixer,  const Common::Path &filename, int dataOffset, int dataSize);
 };
 
 } // namespace RexNebular

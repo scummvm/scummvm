@@ -31,10 +31,6 @@ namespace Audio {
 class Mixer;
 }
 
-namespace OPL {
-class OPL;
-}
-
 namespace MADS {
 
 #define CALLBACKS_PER_SECOND 60
@@ -42,7 +38,6 @@ namespace MADS {
 class SoundDriver {
 protected:
 	Audio::Mixer *_mixer;
-	OPL::OPL *_opl;
 	Common::Array<byte> _soundData;
 	Common::Mutex _driverMutex;
 
@@ -54,9 +49,9 @@ protected:
 	}
 
 public:
-	SoundDriver(Audio::Mixer *mixer, OPL::OPL *opl, const Common::Path &filename,
+	SoundDriver(Audio::Mixer *mixer, const Common::Path &filename,
 		int dataOffset, int dataSize);
-	virtual ~SoundDriver();
+	virtual ~SoundDriver() {}
 
 	/**
 	 * Execute a player command. Most commands represent sounds to play, but some
@@ -90,8 +85,8 @@ public:
 class SoundManager {
 protected:
 	Audio::Mixer *_mixer;
+	bool _isMT32;
 	bool &_soundFlag;
-	OPL::OPL *_opl = nullptr;
 	SoundDriver *_driver = nullptr;
 	bool _pollSoundEnabled = false;
 	bool _soundPollFlag = false;
