@@ -370,6 +370,107 @@ public:
 	int command(int commandId, int param) override;
 };
 
+class RSound5 : public RSound {
+private:
+	typedef int (RSound5:: *CommandPtr)();
+	static const CommandPtr _commandList[42];
+
+	/**
+	 * loc_1093A in the disassembly - shared tail of command29 and
+	 * command38, loading channels 4 and 9 (1-based; indices 3 and 8).
+	 */
+	void loadTailChannels();
+
+	int command9();
+	int command10();
+	int command11x24();
+	int command12x25();
+	int command13();
+	int command14();
+	int command15();
+	int command16();
+	int command17();
+	int command18();
+	int command19();
+	int command20();
+	int command21();
+	int command22();
+	int command23();
+	int command26();
+	int command27();
+	int command28();
+	int command29();
+	int command30();
+	int command31();
+	int command32();
+	int command33();
+	int command34();
+	int command35();
+	int command36();
+	int command37();
+	int command38();
+	int command39();
+	int command40();
+	int command41();
+public:
+	RSound5(Audio::Mixer *mixer);
+
+	int command(int commandId, int param) override;
+};
+
+class RSound6 : public RSound {
+private:
+	typedef int (RSound6:: *CommandPtr)();
+	static const CommandPtr _commandList[30];
+
+	/**
+	 * Confirmed via rsound_update's own body (its checkCallback-equivalent
+	 * is inlined directly rather than factored into a separate function
+	 * like RSound4's checkCallback()): word_121B6 is the reload period,
+	 * word_121B4 the countdown, and word_121B8 a genuine CODE pointer
+	 * ("call bx" - not sound data) invoked once the countdown reaches 0.
+	 * Matches RSound4's mechanism exactly in shape.
+	 */
+	typedef void (RSound6:: *CallbackFunction)();
+	int _callbackCounter = 0;
+	int _callbackPeriod = 0;
+	CallbackFunction _callbackFnPtr = nullptr;
+
+	void tickCallback() override;
+
+	/**
+	 * loc_109BA / loc_10968 in the disassembly - command24/command28's
+	 * own full-reload bodies. When channel 1 is currently playing the
+	 * OTHER command's theme, that command doesn't interrupt it
+	 * immediately - it just points _callbackFnPtr at this same reload
+	 * logic so the switch happens on the next callback tick instead.
+	 */
+	void reloadCommand24();
+	void reloadCommand28();
+
+	int command9();
+	int command10();
+	int command11();
+	int command12();
+	int command13x14();
+	int command15();
+	int command16();
+	int command17();
+	int command18();
+	int command19();
+	int command20();
+	int command21();
+	int command22();
+	int command23();
+	int command24();
+	int command25();
+	int command28();
+public:
+	RSound6(Audio::Mixer *mixer);
+
+	int command(int commandId, int param) override;
+};
+
 class RSound9 : public RSound {
 private:
 	/**

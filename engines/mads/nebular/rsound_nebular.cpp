@@ -1030,9 +1030,8 @@ const RSound4::CommandPtr RSound4::_commandList[60] = {
 	&RSound4::nullCommand, &RSound4::nullCommand, &RSound4::nullCommand, &RSound4::nullCommand,
 	&RSound4::nullCommand, &RSound4::nullCommand, &RSound4::nullCommand, &RSound4::nullCommand,
 	&RSound4::nullCommand, &RSound4::nullCommand, &RSound4::nullCommand, &RSound4::nullCommand,
-	&RSound4::nullCommand, &RSound4::nullCommand, &RSound4::command52, &RSound4::command53,
-	&RSound4::command54, &RSound4::command55, &RSound4::command56, &RSound4::command57,
-	&RSound4::command58, &RSound4::command59
+	&RSound4::command52, &RSound4::command53, &RSound4::command54, &RSound4::command55,
+	&RSound4::command56, &RSound4::command57, &RSound4::command58, &RSound4::command59
 };
 
 RSound4::RSound4(Audio::Mixer *mixer) : RSound(mixer, "rsound.004", 0x1340, 0x2E20) {
@@ -1226,6 +1225,392 @@ int RSound4::command58() {
 
 int RSound4::command59() {
 	playSound(0x11BE);
+	return 0;
+}
+
+/*-----------------------------------------------------------------------*/
+
+const RSound5::CommandPtr RSound5::_commandList[42] = {
+	&RSound5::command0, &RSound5::command1, &RSound5::command2, &RSound5::command3,
+	&RSound5::command4, &RSound5::command5, &RSound5::command6, &RSound5::command7,
+	&RSound5::command8, &RSound5::command9, &RSound5::command10, &RSound5::command11x24,
+	&RSound5::command12x25, &RSound5::command13, &RSound5::command14, &RSound5::command15,
+	&RSound5::command16, &RSound5::command17, &RSound5::command18, &RSound5::command19,
+	&RSound5::command20, &RSound5::command21, &RSound5::command22, &RSound5::command23,
+	&RSound5::command11x24, &RSound5::command12x25, &RSound5::command26, &RSound5::command27,
+	&RSound5::command28, &RSound5::command29, &RSound5::command30, &RSound5::command31,
+	&RSound5::command32, &RSound5::command33, &RSound5::command34, &RSound5::command35,
+	&RSound5::command36, &RSound5::command37, &RSound5::command38, &RSound5::command39,
+	&RSound5::command40, &RSound5::command41
+};
+
+RSound5::RSound5(Audio::Mixer *mixer) : RSound(mixer, "rsound.005", 0x12A0, 0x1FD0) {
+}
+
+int RSound5::command(int commandId, int param) {
+	if (commandId > 41)
+		return 0;
+
+	_commandParam = param;
+	_frameCounter = 0;
+	return (this->*_commandList[commandId])();
+}
+
+int RSound5::command9() {
+	playSound(0x11C4);
+	return 0;
+}
+
+int RSound5::command10() {
+	playSound(0x1238);
+	return 0;
+}
+
+int RSound5::command11x24() {
+	playSound(0x1196);
+	return 0;
+}
+
+int RSound5::command12x25() {
+	playSound(0x1242);
+	return 0;
+}
+
+int RSound5::command13() {
+	playSound(0x125E);
+	playSound(0x1268);
+	return 0;
+}
+
+int RSound5::command14() {
+	_channels[7].load(loadData(0x1272));
+	return 0;
+}
+
+int RSound5::command15() {
+	if (_channels[7]._soundData == loadData(0x1272)) {
+		byte *pData = loadData(0x1288);
+		_channels[7]._innerLoopPtr = pData;
+		_channels[7]._outerLoopPtr = pData;
+		_channels[7]._activeCount = 1;
+	}
+	return 0;
+}
+
+int RSound5::command16() {
+	playSound(0x129A);
+	playSound(0x129A);
+	playSound(0x129A);
+	playSound(0x129A);
+	return 0;
+}
+
+int RSound5::command17() {
+	playSound(0x11B4);
+	return 0;
+}
+
+int RSound5::command18() {
+	playSound(0x12E4);
+	playSound(0x12F6);
+	playSound(0x1308);
+	playSound(0x131A);
+	return 0;
+}
+
+int RSound5::command19() {
+	playSound(0x132C);
+	return 0;
+}
+
+int RSound5::command20() {
+	playSound(0x1368);
+	return 0;
+}
+
+int RSound5::command21() {
+	playSound(0x1388);
+	return 0;
+}
+
+int RSound5::command22() {
+	playSound(0x139A);
+	return 0;
+}
+
+int RSound5::command23() {
+	playSound(0x13AA);
+	playSound(0x13AA);
+	playSound(0x13AA);
+	playSound(0x13AA);
+	return 0;
+}
+
+int RSound5::command26() {
+	playSound(0x13D6);
+	return 0;
+}
+
+int RSound5::command27() {
+	playSound(0x13F0);
+	return 0;
+}
+
+int RSound5::command28() {
+	playSound(0x121C);
+	return 0;
+}
+
+void RSound5::loadTailChannels() {
+	_channels[3].load(loadData(0x1688));
+	_channels[8].load(loadData(0x1882));
+}
+
+int RSound5::command29() {
+	byte *pData = loadData(0x1488);
+	if (!isSoundActive(pData)) {
+		command1();
+		_channels[0].load(pData);
+		_channels[1].load(loadData(0x1534));
+		_channels[2].load(loadData(0x15EA));
+		loadTailChannels();
+	}
+	return 0;
+}
+
+int RSound5::command30() {
+	playSound(0x1212);
+	playSound(0x1208);
+	return 0;
+}
+
+int RSound5::command31() {
+	playSound(0x140A);
+	return 0;
+}
+
+int RSound5::command32() {
+	playSound(0x11D0);
+	return 0;
+}
+
+int RSound5::command33() {
+	playSound(0x11DC);
+	return 0;
+}
+
+int RSound5::command34() {
+	playSound(0x11E6);
+	return 0;
+}
+
+int RSound5::command35() {
+	playSound(0x11F6);
+	return 0;
+}
+
+int RSound5::command36() {
+	playSound(0x1464);
+	playSound(0x1478);
+	return 0;
+}
+
+int RSound5::command37() {
+	playSound(0x122A);
+	return 0;
+}
+
+int RSound5::command38() {
+	_channels[4]._pSrc = loadData(0x1182);
+	loadTailChannels();
+	return 0;
+}
+
+int RSound5::command39() {
+	playSound(0x141E);
+	playSound(0x1428);
+	return 0;
+}
+
+int RSound5::command40() {
+	playSound(0x1432);
+	return 0;
+}
+
+int RSound5::command41() {
+	_channels[8]._pSrc = loadData(0x1182);
+	_channels[3].load(loadData(0x1BB6));
+	return 0;
+}
+
+/*-----------------------------------------------------------------------*/
+
+const RSound6::CommandPtr RSound6::_commandList[30] = {
+	&RSound6::command0, &RSound6::command1, &RSound6::command2, &RSound6::command3,
+	&RSound6::command4, &RSound6::command5, &RSound6::command6, &RSound6::command7,
+	&RSound6::command8, &RSound6::command9, &RSound6::command10, &RSound6::command11,
+	&RSound6::command12, &RSound6::command13x14, &RSound6::command13x14, &RSound6::command15,
+	&RSound6::command16, &RSound6::command17, &RSound6::command18, &RSound6::command19,
+	&RSound6::command20, &RSound6::command21, &RSound6::command22, &RSound6::command23,
+	&RSound6::command24, &RSound6::command25, &RSound6::nullCommand, &RSound6::nullCommand,
+	&RSound6::nullCommand, &RSound6::command28
+};
+
+RSound6::RSound6(Audio::Mixer *mixer) : RSound(mixer, "rsound.006", 0x12D0, 0x1EF0) {
+}
+
+int RSound6::command(int commandId, int param) {
+	if (commandId > 29)
+		return 0;
+
+	_commandParam = param;
+	_frameCounter = 0;
+	return (this->*_commandList[commandId])();
+}
+
+void RSound6::tickCallback() {
+	if (!_callbackPeriod)
+		return;
+	if (--_callbackCounter)
+		return;
+
+	_callbackCounter = _callbackPeriod;
+	if (_callbackFnPtr)
+		(this->*_callbackFnPtr)();
+}
+
+void RSound6::reloadCommand24() {
+	_callbackFnPtr = nullptr;
+	command1();
+	_callbackCounter = 84;
+	_callbackPeriod = 84;
+	_channels[0].load(loadData(0x1A38));
+	_channels[1].load(loadData(0x1BBE));
+	_channels[8].load(loadData(0x1B90));
+}
+
+void RSound6::reloadCommand28() {
+	_callbackFnPtr = nullptr;
+	command1();
+	_callbackCounter = 84;
+	_callbackPeriod = 84;
+	_channels[0].load(loadData(0x130A));
+	_channels[1].load(loadData(0x13B6));
+	_channels[2].load(loadData(0x146C));
+	_channels[3].load(loadData(0x150A));
+	_channels[8].load(loadData(0x1704));
+}
+
+int RSound6::command9() {
+	playSound(0x111C);
+	return 0;
+}
+
+int RSound6::command10() {
+	playSound(0x1190);
+	return 0;
+}
+
+int RSound6::command11() {
+	playSound(0x11A4);
+	playSound(0x11A4);
+	playSound(0x11A4);
+	playSound(0x11A4);
+	return 0;
+}
+
+int RSound6::command12() {
+	playSound(0x11C8);
+	return 0;
+}
+
+int RSound6::command13x14() {
+	playSound(0x11E8);
+	return 0;
+}
+
+int RSound6::command15() {
+	playSound(0x11F2);
+	playSound(0x11F2);
+	playSound(0x11F2);
+	playSound(0x11F2);
+	return 0;
+}
+
+int RSound6::command16() {
+	playSound(0x121E);
+	return 0;
+}
+
+int RSound6::command17() {
+	playSound(0x1228);
+	playSound(0x1228);
+	playSound(0x1228);
+	playSound(0x1228);
+	return 0;
+}
+
+int RSound6::command18() {
+	playSound(0x1254);
+	return 0;
+}
+
+int RSound6::command19() {
+	playSound(0x1266);
+	return 0;
+}
+
+int RSound6::command20() {
+	playSound(0x1278);
+	return 0;
+}
+
+int RSound6::command21() {
+	_channels[4].load(loadData(0x1282));
+	playSound(0x1282);
+	playSound(0x1282);
+	playSound(0x12AA);
+	return 0;
+}
+
+int RSound6::command22() {
+	_channels[4].load(loadData(0x12CE));
+	_channels[5].load(loadData(0x12CE));
+	_channels[6].load(loadData(0x12CE));
+	_channels[7].load(loadData(0x12CE));
+	return 0;
+}
+
+int RSound6::command23() {
+	playSound(0x1174);
+	return 0;
+}
+
+int RSound6::command24() {
+	if (_channels[0]._activeCount && _channels[0]._soundData == loadData(0x130A)) {
+		_callbackFnPtr = &RSound6::reloadCommand24;
+		return 0;
+	}
+
+	reloadCommand24();
+	return 0;
+}
+
+int RSound6::command25() {
+	_channels[4].load(loadData(0x12FE));
+	return 0;
+}
+
+int RSound6::command28() {
+	if (isSoundActive(loadData(0x130A)))
+		return 0;
+
+	if (_channels[0]._activeCount && _channels[0]._soundData == loadData(0x1A38)) {
+		_callbackFnPtr = &RSound6::reloadCommand28;
+		return 0;
+	}
+
+	reloadCommand28();
 	return 0;
 }
 
