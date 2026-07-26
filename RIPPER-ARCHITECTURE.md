@@ -366,8 +366,13 @@
   secondary chooser from the 16 `MNU` frame assets and the small bitmap font,
   gives it the game-text resource 3 title (`Inventory`), and appends separate
   20-pixel Use and Done text-panel controls from resources `0x47` and `0x48`.
-  Choosing a row changes the candidate item; only Use dispatches
-  `ExecuteUnlockSelectionChoice`, while Done and Escape close the modal.
+  `ProcessChooserControlInput` at `0x57372` keeps its hit-tested row separate
+  from the committed chooser selection: pointer hover changes only focus and
+  cursor feedback, while transition bit 2, identified as the primary-button
+  press by `UpdateUiSelectionInputButtonFlags` at `0x4a230`, copies that row
+  into the selected index. Moving across another item therefore leaves the
+  clicked item selected. Only Use dispatches `ExecuteUnlockSelectionChoice`,
+  while Done and Escape close the modal.
 - `ExecuteUnlockSelectionChoice` at `0x364be` compares the active compiled
   frame label (the dword at frame-record offset `+5`) case-insensitively with
   game-text resource `270 + item ID`. A mismatch uses modal resource `0x4d`
