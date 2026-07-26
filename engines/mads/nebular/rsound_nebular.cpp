@@ -38,7 +38,7 @@ const RSound1::CommandPtr RSound1::_commandList[42] = {
 	&RSound1::command40, &RSound1::command41
 };
 
-RSound1::RSound1(Audio::Mixer *mixer) : RSound(mixer, "rsound.001", 0x1350, 0x1A90) {
+RSound1::RSound1(Audio::Mixer *mixer) : RSound(mixer, "rsound.001", 0x1350, 0x1A90, 0x67) {
 }
 
 int RSound1::command(int commandId, int param) {
@@ -320,7 +320,7 @@ const RSound2::CommandPtr RSound2::_commandList[44] = {
 	&RSound2::command40, &RSound2::command41, &RSound2::command42, &RSound2::command43
 };
 
-RSound2::RSound2(Audio::Mixer *mixer) : RSound(mixer, "rsound.002", 0x1390, 0x42F0) {
+RSound2::RSound2(Audio::Mixer *mixer) : RSound(mixer, "rsound.002", 0x1390, 0x42F0, 0x87) {
 }
 
 int RSound2::command(int commandId, int param) {
@@ -629,7 +629,7 @@ const RSound3::CommandPtr RSound3::_commandList[61] = {
 	&RSound3::command60
 };
 
-RSound3::RSound3(Audio::Mixer *mixer) : RSound(mixer, "rsound.003", 0x14E0, 0x4C60) {
+RSound3::RSound3(Audio::Mixer *mixer) : RSound(mixer, "rsound.003", 0x14E0, 0x4C60, 0x67) {
 }
 
 int RSound3::command(int commandId, int param) {
@@ -1034,7 +1034,7 @@ const RSound4::CommandPtr RSound4::_commandList[60] = {
 	&RSound4::command56, &RSound4::command57, &RSound4::command58, &RSound4::command59
 };
 
-RSound4::RSound4(Audio::Mixer *mixer) : RSound(mixer, "rsound.004", 0x1340, 0x2E20) {
+RSound4::RSound4(Audio::Mixer *mixer) : RSound(mixer, "rsound.004", 0x1340, 0x2E20, 0x67) {
 }
 
 int RSound4::command(int commandId, int param) {
@@ -1244,7 +1244,7 @@ const RSound5::CommandPtr RSound5::_commandList[42] = {
 	&RSound5::command40, &RSound5::command41
 };
 
-RSound5::RSound5(Audio::Mixer *mixer) : RSound(mixer, "rsound.005", 0x12A0, 0x1FD0) {
+RSound5::RSound5(Audio::Mixer *mixer) : RSound(mixer, "rsound.005", 0x12A0, 0x1FD0, 0x67) {
 }
 
 int RSound5::command(int commandId, int param) {
@@ -1456,7 +1456,7 @@ const RSound6::CommandPtr RSound6::_commandList[30] = {
 	&RSound6::nullCommand, &RSound6::command28
 };
 
-RSound6::RSound6(Audio::Mixer *mixer) : RSound(mixer, "rsound.006", 0x12D0, 0x1EF0) {
+RSound6::RSound6(Audio::Mixer *mixer) : RSound(mixer, "rsound.006", 0x12D0, 0x1EF0, 0x67) {
 }
 
 int RSound6::command(int commandId, int param) {
@@ -1629,7 +1629,7 @@ const RSound7::CommandPtr RSound7::_commandList[38] = {
 	&RSound7::command36, &RSound7::command37
 };
 
-RSound7::RSound7(Audio::Mixer *mixer) : RSound(mixer, "rsound.007", 0x1240, 0x1EF0) {
+RSound7::RSound7(Audio::Mixer *mixer) : RSound(mixer, "rsound.007", 0x1240, 0x1EF0, 0x67) {
 }
 
 int RSound7::command(int commandId, int param) {
@@ -1780,7 +1780,7 @@ const RSound8::CommandPtr RSound8::_commandList[38] = {
 	&RSound8::command36, &RSound8::command37
 };
 
-RSound8::RSound8(Audio::Mixer *mixer) : RSound(mixer, "rsound.008", 0x1290, 0x19A0) {
+RSound8::RSound8(Audio::Mixer *mixer) : RSound(mixer, "rsound.008", 0x1290, 0x19A0, 0x67) {
 }
 
 int RSound8::command(int commandId, int param) {
@@ -1989,7 +1989,7 @@ const RSound9::CommandPtr RSound9::_commandList[52] = {
 	&RSound9::command48, &RSound9::command49, &RSound9::command50, &RSound9::command51
 };
 
-RSound9::RSound9(Audio::Mixer *mixer) : RSound(mixer, "rsound.009", 0x1520, 0x8920) {
+RSound9::RSound9(Audio::Mixer *mixer) : RSound(mixer, "rsound.009", 0x1520, 0x8920, 0x6F) {
 	_callbackCounter = 0;
 	_callbackPeriod = 0;
 	_callbackFnPtr = nullptr;

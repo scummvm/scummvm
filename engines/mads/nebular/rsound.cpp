@@ -22,6 +22,7 @@
 #include "common/file.h"
 #include "common/md5.h"
 #include "common/memstream.h"
+#include "common/util.h"
 #include "mads/nebular/rsound.h"
 
 namespace MADS {
@@ -64,8 +65,10 @@ void Channel::load(byte *pData) {
 
 /*-----------------------------------------------------------------------*/
 
+const byte RSound::_sysExHeader[5] = { 0xF0, 0x41, 0x10, 0x16, 0x12 };
+
 RSound::RSound(Audio::Mixer *mixer, const Common::Path &filename,
-		int dataOffset, int dataSize) : SoundDriver(mixer, filename, dataOffset, dataSize) {
+		int dataOffset, int dataSize, int sysExOffset) : SoundDriver(mixer, filename, dataOffset, dataSize) {
 	_commandParam = 0;
 	_frameCounter = 0;
 	_isDisabled = false;
@@ -75,6 +78,7 @@ RSound::RSound(Audio::Mixer *mixer, const Common::Path &filename,
 	_noteTriggeredThisPoll = false;
 	_pollResult = 0;
 	_resultFlag = 0;
+	_sysExOffset = sysExOffset;
 
 	for (int i = 0; i < RSOUND_CHANNEL_COUNT; ++i) {
 		_channels[i]._owner = this;
@@ -257,7 +261,27 @@ void RSound::restoreChannelVolume(int midiChannel, int volume) {
 }
 
 void RSound::sendSysEx(int offset) {
-	warning("RSound: SysEx block at offset %04X not yet implemented (device init handshake)", offset);
+	if (offset < 0) {
+		// _sysExOffset wasn't given a confirmed value for this driver yet
+		// (see the constructor) - deliberately not scanning for a 0xFF
+		// terminator from an unconfirmed/arbitrary offset, since that
+		// could read well past the actual command0_array table.
+		warning("RSound::sendSysEx: command0_array offset not yet known for this driver");
+		return;
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_sysExHeader); ++i)
+		sendMidiByte(_sysExHeader[i]);
+
+	byte checksum = 0;
+	byte *pData = loadData(offset);
+	for (int i = 0; pData[i] != 0xFF; ++i) {
+		sendMidiByte(pData[i]);
+		checksum += pData[i];
+	}
+
+	sendMidiByte((~checksum + 1) & 0x7F);
+	sendMidiByte(0xF7);
 }
 
 /*-----------------------------------------------------------------------*/
@@ -630,10 +654,11 @@ int RSound::command0() {
 	sendGmReset(1, RSOUND_CHANNEL_COUNT);
 
 	// Matches the trailing "lea ax, unk_1138F; jmp sub_1041E" in rsound_command0.
-	// TODO: 0x6F is unk_1138F's address (0x1138F) relative to seg001's load
-	// address (0x11320) - the exact data-segment offset convention still
-	// needs verifying once dataOffset/dataSize below are confirmed.
-	sendSysEx(0x6F);
+	// _sysExOffset is this driver's own command0_array offset, supplied
+	// via the constructor (0x67 for rsound.001, 0x87 for rsound.002, 0x6F
+	// for rsound.009) - each driver's own resource file carries its own
+	// copy of this table, so no per-driver command0() override is needed.
+	sendSysEx(_sysExOffset);
 
 	_isDisabled = isDisabled;
 	return 0;

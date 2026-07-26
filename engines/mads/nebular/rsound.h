@@ -136,6 +136,25 @@ private:
 	bool _noteTriggeredThisPoll;      // throttles note-on dispatch to at most one per update() tick, across all channels
 	byte _heldNotes[RSOUND_CHANNEL_COUNT + 1][4]; // per-MIDI-channel held-note slots (index 0 unused; channels are 1-9)
 
+	/**
+	 * Data-segment offset of this driver's own "command0_array" (the
+	 * MT-32 title-display + patch-init SysEx table sent by command0()).
+	 * Each driver has its own copy of this table at its own offset
+	 * within its own resource file - unlike the fixed 5-byte SysEx
+	 * header (_sysExHeader below), the table's content differs per
+	 * driver beyond a shared prefix, so it can't be hardcoded once;
+	 * parameterizing the offset via the constructor avoids needing a
+	 * command0() override in every derived class.
+	 */
+	int _sysExOffset;
+
+	/**
+	 * Fixed Roland SysEx header (F0 41 10 16 12) - sendSysEx_array in the
+	 * disassembly, confirmed byte-for-byte identical across multiple
+	 * drivers (checked against rsound.001/002/009).
+	 */
+	static const byte _sysExHeader[5];
+
 	void update();
 	void pollAllChannels();
 	void Channel_pollActive(Channel *channel);
@@ -239,11 +258,17 @@ protected:
 	void sendGmReset(int first, int last);
 
 	/**
-	 * Sends a device-specific SysEx block (device init/handshake data).
-	 * TODO: the original's sendSysEx (sub_1041E) uses a two-pointer scheme
-	 * (a fixed header table plus a per-call payload table used only for
-	 * checksum purposes) that isn't fully resolved without the raw data
-	 * segment. Currently just logs a placeholder.
+	 * Sends a single Roland DT1-style SysEx message: the fixed
+	 * _sysExHeader (F0 41 10 16 12), then bytes from loadData(offset)
+	 * up to (but not including) a 0xFF terminator - each byte sent and
+	 * folded into a running checksum - then the two's-complement/7-bit
+	 * checksum byte and a closing F7. Matches sub_1041E exactly.
+	 *
+	 * The original follows this with a busy-wait delay loop
+	 * (_sysexDelayCount iterations) to give the MT-32 time to process
+	 * the message before the next one arrives; irrelevant while
+	 * sendMidiByte() is just a warning() stub, so not ported - will need
+	 * a real (non-blocking) delay once actual MIDI output exists.
 	 */
 	void sendSysEx(int offset);
 
@@ -278,9 +303,10 @@ public:
 	 * @param filename		Specifies the Roland sound player file to use
 	 * @param dataOffset	Offset in the file of the data segment
 	 * @param dataSize		Size of the data segment
+	 * @param sysExOffset	Offset of this driver's own command0_array
 	 */
 	RSound(Audio::Mixer *mixer, const Common::Path &filename,
-		int dataOffset, int dataSize);
+		int dataOffset, int dataSize, int sysExOffset);
 
 	~RSound() override {
 	}
