@@ -403,9 +403,15 @@ void OverlayStaticTerse::readData(Common::SeekableReadStream &stream) {
 	readRect(stream, dest);
 	readRect(stream, src);
 
-	_srcRects.push_back(src);
+	// The source rect only supplies the top-left offset into the image; the overlay
+	// is blitted 1:1, so the source region takes the destination's dimensions. Using
+	// the source rect's own (smaller) size here would scale the image to fit the destination.
+	Common::Rect srcRect(dest.width(), dest.height());
+	srcRect.moveTo(src.left, src.top);
+
+	_srcRects.push_back(srcRect);
 	_blitDescriptions.resize(1);
-	_blitDescriptions[0].src = Common::Rect(src.width(), src.height());
+	_blitDescriptions[0].src = Common::Rect(dest.width(), dest.height());
 	_blitDescriptions[0].dest = dest;
 
 	_overlayType = kPlayOverlayStatic;
