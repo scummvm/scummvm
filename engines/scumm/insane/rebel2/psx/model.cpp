@@ -189,7 +189,7 @@ bool loadRA2PSXTextures(const Common::Array<byte> &data,
 }
 
 bool loadRA2PSXSpriteAnimation(const Common::Array<byte> &data, uint16 frameHeight,
-		Common::Array<RA2PSXTexture> &frames) {
+		Common::Array<RA2PSXTexture> &frames, const Common::Array<uint32> *clut) {
 	if (data.size() < 4 + 512 || !frameHeight)
 		return false;
 	const uint16 widthField = READ_LE_UINT16(data.data());
@@ -212,15 +212,14 @@ bool loadRA2PSXSpriteAnimation(const Common::Array<byte> &data, uint16 frameHeig
 		texture.pixels.resize(frameBytes);
 		for (uint32 i = 0; i < frameBytes; ++i) {
 			const byte paletteIndex = data[pixelsOffset + frame * frameBytes + i];
-			const uint16 value = READ_LE_UINT16(data.data() + paletteOffset + paletteIndex * 2);
-			if (!value) {
-				texture.pixels[i] = 0;
+			// Frames streamed into another texture's VRAM slot are drawn through that
+			// slot's CLUT, not the one the member happens to carry.
+			if (clut) {
+				texture.pixels[i] = paletteIndex < clut->size() ? (*clut)[paletteIndex] : 0;
 				continue;
 			}
-			const uint32 r = ((value & 0x1f) << 3) | ((value & 0x1f) >> 2);
-			const uint32 g = (((value >> 5) & 0x1f) << 3) | (((value >> 5) & 0x1f) >> 2);
-			const uint32 b = (((value >> 10) & 0x1f) << 3) | (((value >> 10) & 0x1f) >> 2);
-			texture.pixels[i] = 0x01000000 | (r << 16) | (g << 8) | b;
+			texture.pixels[i] = decodeRA2PSXColor(
+					READ_LE_UINT16(data.data() + paletteOffset + paletteIndex * 2));
 		}
 		frames.push_back(texture);
 	}

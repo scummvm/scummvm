@@ -61,7 +61,7 @@ const RA2PSXLevel2PartInfo kRA2PSXLevel2Parts[kRA2PSXLevel2PartCount] = {
 		{ 182, 73, 80, 108 }, { 181, 73, 78, 109 }, { 181, 73, 78, 109 },
 		{ 182, 73, 78, 108 }, { 183, 73, 80, 108 }, { 183, 73, 80, 108 }
 		},
-		2, { "TRP_0", "TRP_1", nullptr }, { "LAS_0", "LAS_1", nullptr }, 1, 0x3e,
+		2, { "TRP_0", "TRP_1", nullptr }, { "LAS_0", "LAS_1", nullptr },
 		{ { { 7, 0x1f }, { 7, 0x1a }, { 8, 0x0b } },
 		  { { 7, 0x36 }, { 7, 0x28 }, { 8, 0x1a } },
 		  { { 0, 0 }, { 0, 0 }, { 0, 0 } } } },
@@ -87,7 +87,7 @@ const RA2PSXLevel2PartInfo kRA2PSXLevel2Parts[kRA2PSXLevel2PartCount] = {
 		{ 156, 112, 72, 88 }, { 159, 106, 72, 94 }, { 158, 112, 76, 88 },
 		{ 160, 112, 78, 88 }, { 159, 113, 80, 87 }, { 160, 115, 80, 85 }
 		},
-		3, { "TRP_0", "TRP_1", "TRP_2" }, { "LAS_0", "LAS_1", "LAS_2" }, 0, 0x44,
+		3, { "TRP_0", "TRP_1", "TRP_2" }, { "LAS_0", "LAS_1", "LAS_2" },
 		{ { { 0x12, 0x2b }, { 0x0e, 0x24 }, { 0x0e, 0x19 } },
 		  { { 0x17, 0x3a }, { 0x15, 0x28 }, { 0x15, 0x1e } },
 		  { { 0x0d, 0x3b }, { 0x0d, 0x29 }, { 0x0f, 0x1c } } } },
@@ -114,7 +114,7 @@ const RA2PSXLevel2PartInfo kRA2PSXLevel2Parts[kRA2PSXLevel2PartCount] = {
 		{ 90, 102, 76, 82 }, { 93, 95, 90, 89 }, { 95, 101, 90, 83 },
 		{ 95, 103, 90, 81 }, { 95, 103, 92, 81 }, { 93, 103, 90, 81 }
 		},
-		3, { "TRP_0", "TRP_1", "TRP_2" }, { "LAS_0", "LAS_1", "LAS_2" }, 0, 0x44,
+		3, { "TRP_0", "TRP_1", "TRP_2" }, { "LAS_0", "LAS_1", "LAS_2" },
 		{ { { 0, 0 }, { 0, 0 }, { 0, 0 } },
 		  { { 0, 0 }, { 0, 0 }, { 0, 0 } },
 		  { { 0, 0 }, { 0, 0 }, { 0, 0 } } } }
@@ -147,26 +147,6 @@ const int16 kRA2PSXLevel2BoltTable[kRA2PSXLevel2PartCount][3][2] = {
 
 const int16 kRA2PSXLevel2KillScore[3] = { 80, 100, 150 };
 
-// Where the gun points for each aim pose. The five cover poses never fire.
-const int16 kRA2PSXLevel2Muzzles[2][30][2] = {
-	{
-	{ 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
-	{ 49, 86 }, { 49, 86 }, { 62, 100 }, { 65, 132 }, { 65, 132 },
-	{ 72, 80 }, { 80, 90 }, { 63, 100 }, { 65, 120 }, { 58, 125 },
-	{ 93, 81 }, { 93, 90 }, { 101, 99 }, { 89, 109 }, { 89, 129 },
-	{ 108, 82 }, { 108, 90 }, { 111, 100 }, { 116, 115 }, { 116, 130 },
-	{ 119, 83 }, { 119, 90 }, { 124, 100 }, { 127, 112 }, { 127, 130 }
-	},
-	{
-	{ 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
-	{ 63, 71 }, { 63, 80 }, { 67, 90 }, { 76, 123 }, { 76, 123 },
-	{ 78, 67 }, { 78, 70 }, { 81, 95 }, { 76, 122 }, { 76, 122 },
-	{ 87, 64 }, { 87, 72 }, { 96, 88 }, { 100, 102 }, { 100, 116 },
-	{ 101, 61 }, { 104, 73 }, { 105, 84 }, { 111, 99 }, { 111, 102 },
-	{ 109, 60 }, { 114, 76 }, { 122, 82 }, { 122, 95 }, { 122, 100 }
-	}
-};
-
 RA2PSXLevel2Scene::RA2PSXLevel2Scene() : _part(0), _difficulty(0), _frame(0), _delay(0),
 		_out(false), _moving(false), _tick(0), _remaining(0), _active(0), _clearTicks(0),
 		_kills(0), _misses(0) {
@@ -198,7 +178,10 @@ bool RA2PSXLevel2Scene::load(const RA2PSXArchive &archive, int part, int difficu
 			return false;
 	}
 
-	// Every rookie pose is its own member: a format word, a palette and one image.
+	// Every rookie pose is its own member: a format word, a palette and one image. The
+	// poses stream into ROOKIE_A's VRAM slot, so they take that texture's CLUT - their
+	// own often leaves the backdrop index opaque.
+	const Common::Array<uint32> *rookieClut = _textures.palette("ROOKIE_A");
 	_rookie.clear();
 	const int poseCount = kRA2PSXLevel2Parts[part].aimBase + 30;
 	for (int frame = 0; frame < poseCount; ++frame) {
@@ -209,7 +192,8 @@ bool RA2PSXLevel2Scene::load(const RA2PSXArchive &archive, int part, int difficu
 		if (!archive.getMember(path, anim) || anim.size() < 8)
 			return false;
 		const uint16 height = READ_LE_UINT16(anim.data() + 2) & 0xff;
-		if (!loadRA2PSXSpriteAnimation(anim, height ? height : 256, decoded) || decoded.empty())
+		if (!loadRA2PSXSpriteAnimation(anim, height ? height : 256, decoded, rookieClut) ||
+				decoded.empty())
 			return false;
 		_rookie.push_back(decoded[0]);
 	}
@@ -403,15 +387,15 @@ int RA2PSXLevel2Scene::shoot(int aimX, int aimY) {
 		return 0;
 
 	const RA2PSXLevel2PartInfo &part = info();
-	// The bolt leaves the gun this pose points, exactly as the DOS build's per sprite
-	// origin table does; the table is biased against the projection's own centre.
-	const int16 *muzzle = kRA2PSXLevel2Muzzles[part.muzzleTable][MIN(_frame, 29)];
+	// The bolt leaves the pistol the rookie is holding, which the pose box locates: he
+	// aims across the frame, so the gun sits at the leading edge of his sprite.
+	const RA2PSXLevel2Pose &pose = part.poses[CLIP<int>(_frame, 0, kRA2PSXLevel2FrameCount - 1)];
 	for (int i = 0; i < kRA2PSXLevel2ShotCount; ++i) {
 		if (_shots[i].step)
 			continue;
 		_shots[i].step = kRA2PSXLevel2ShotStep;
-		_shots[i].muzzleX = muzzle[0] - 4;
-		_shots[i].muzzleY = muzzle[1] + 116 - part.muzzleBias;
+		_shots[i].muzzleX = pose.x + part.rookieOffsetX + pose.width / 8;
+		_shots[i].muzzleY = pose.y + part.rookieOffsetY + pose.height / 6;
 		_shots[i].targetX = aimX;
 		_shots[i].targetY = aimY;
 		break;

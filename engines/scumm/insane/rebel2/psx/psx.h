@@ -249,7 +249,7 @@ enum { kRA2PSXExplosionHeight = 56 };
 
 // bigEx: a 4 byte format word, a 256 colour palette and equal sized 8 bit frames.
 bool loadRA2PSXSpriteAnimation(const Common::Array<byte> &data, uint16 frameHeight,
-		Common::Array<RA2PSXTexture> &frames);
+		Common::Array<RA2PSXTexture> &frames, const Common::Array<uint32> *clut = nullptr);
 
 // Level 2's three parts, each a sheet of backdrop halves, parallax walls and actors.
 enum {
@@ -318,9 +318,6 @@ struct RA2PSXLevel2Shot {
 	int targetY;
 };
 
-// Where the gun sits for each rookie pose, as the original's two tables hold it.
-extern const int16 kRA2PSXLevel2Muzzles[2][30][2];
-
 // One play script actor: a trooper, or the bolt it fires.
 struct RA2PSXLevel2Actor {
 	RA2PSXLevel2Actor() : state(kRA2PSXLevel2StateIdle), animation(-1), frame(0), hold(0),
@@ -385,9 +382,6 @@ struct RA2PSXLevel2PartInfo {
 	int trooperCount;
 	const char *trooperPalettes[kRA2PSXLevel2TrooperCount];
 	const char *boltPalettes[kRA2PSXLevel2TrooperCount];
-	// Which muzzle table the part's poses index, and the bias its bolts start from.
-	byte muzzleTable;
-	int16 muzzleBias;
 	// Empty windows mean the part fires as it changes state instead of on a frame count.
 	RA2PSXLevel2FireWindow fireWindows[kRA2PSXLevel2TrooperCount][3];
 };
