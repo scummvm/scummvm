@@ -20,6 +20,8 @@
  */
 
 #include "common/textconsole.h"
+#include "common/compression/dcl.h"
+#include "common/memstream.h"
 #include "mads/core/loader.h"
 #include "mads/core/general.h"
 #include "mads/core/pack.h"
@@ -232,9 +234,15 @@ long loader_read(void *target, long record_size, long record_count, LoadHandle h
 			if (decompress_buffer != NULL) {
 				if (!fileio_fread_f(decompress_buffer, compressed_size, 1, handle->handle)) goto done;
 
-				result = pack_data(packing_flag, total_size,
-					FROM_MEMORY, decompress_buffer,
-					TO_MEMORY, target);
+				if (pack_strategy == PACK_DCL) {
+					Common::MemoryReadStream stream(decompress_buffer, compressed_size);
+					result = Common::decompressDCL(&stream, (byte *)target,
+						compressed_size, total_size) ? total_size : 0;
+				} else {
+					result = pack_data(packing_flag, total_size,
+						FROM_MEMORY, decompress_buffer,
+						TO_MEMORY, target);
+				}
 				already_unpacked = true;
 			}
 		}

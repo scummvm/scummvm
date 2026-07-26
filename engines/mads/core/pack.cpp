@@ -114,13 +114,19 @@ bool PackList::load(Common::SeekableReadStream *src) {
 	num_records = src->readUint16LE();
 
 	// Confirm that the ID is correct
-	if (strncmp(id_string, PACK_ID_STRING, PACK_ID_CHECK) != 0)
+	const bool isVersion1 = strncmp(id_string, PACK_ID_STRING_V1, PACK_ID_CHECK) == 0;
+	if (!isVersion1 && strncmp(id_string, PACK_ID_STRING, PACK_ID_CHECK) != 0)
 		return false;
 
 	// Read in the index. Note that only num_records worth of entries are
 	// valid, but space is left in the file for the maximum amount of entries
-	for (int i = 0; i < PACK_MAX_LIST_LENGTH; ++i)
+	for (int i = 0; i < PACK_MAX_LIST_LENGTH; ++i) {
 		strategy[i].load(src);
+		// MADSPACK 1.0 used value 1 for PKWARE compression. Version 2.0
+		// assigned that value to the newer pFAB compressor.
+		if (isVersion1 && strategy[i].type == PACK_PFAB)
+			strategy[i].type = PACK_DCL;
+	}
 
 	return true;
 }
