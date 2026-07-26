@@ -103,7 +103,7 @@ void Overlay::readData(Common::SeekableReadStream &stream) {
 	ser.skip(2); // VIDEO_STOP_RENDERING or VIDEO_CONTINUE_RENDERING
 	ser.syncAsUint16LE(_transparency);
 	ser.syncAsUint16LE(_hasSceneChange);
-	ser.syncAsUint16LE(_enableHotspot, kGameTypeNancy2, kGameTypeNancy2);
+	ser.syncAsUint16LE(_enableHotspotNancy2, kGameTypeNancy2, kGameTypeNancy2);
 	ser.syncAsUint16LE(_z, kGameTypeNancy2);
 	ser.syncAsUint16LE(_overlayType, kGameTypeNancy2);
 	ser.syncAsUint16LE(numSrcRects, kGameTypeNancy2);
@@ -121,12 +121,6 @@ void Overlay::readData(Common::SeekableReadStream &stream) {
 	}
 
 	ser.syncAsUint16LE(_z, kGameTypeNancy1, kGameTypeNancy1);
-
-	if (ser.getVersion() > kGameTypeNancy2) {
-		if (_overlayType == kPlayOverlayStatic) {
-			_enableHotspot = (_hasSceneChange == kPlayOverlaySceneChange) ? kPlayOverlayWithHotspot : kPlayOverlayNoHotspot;
-		}
-	}
 
 	if (_isInterruptible) {
 			ser.syncAsSint16LE(_interruptCondition.label);
@@ -201,9 +195,16 @@ void Overlay::execute() {
 							moveTo(_blitDescriptions[i].dest);
 							setVisible(true);
 
-							if (_enableHotspot == kPlayOverlayWithHotspot) {
-								_hotspot = _screenPosition;
-								_hasHotspot = true;
+							if (g_nancy->getGameType() <= kGameTypeNancy2) {
+								if (_enableHotspotNancy2 == kPlayOverlayWithHotspot) {
+									_hotspot = _screenPosition;
+									_hasHotspot = true;
+								}
+							} else {
+								if (_blitDescriptions[i].hasHotspot == kPlayOverlayWithHotspot) {
+									_hotspot = _screenPosition;
+									_hasHotspot = true;
+								}
 							}
 
 							break;
@@ -340,7 +341,7 @@ void Overlay::execute() {
 
 						if (g_nancy->getGameType() <= kGameTypeNancy2) {
 							// In nancy2, the presence of a hotspot relies on whether the Overlay has a scene change
-							if (_enableHotspot == kPlayOverlayWithHotspot) {
+							if (_enableHotspotNancy2 == kPlayOverlayWithHotspot) {
 								_hotspot = _screenPosition;
 								_hasHotspot = true;
 							}

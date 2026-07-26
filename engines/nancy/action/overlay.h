@@ -57,7 +57,7 @@ public:
 
 	uint16 _transparency = kPlayOverlayPlain;
 	uint16 _hasSceneChange = kPlayOverlaySceneChange;
-	uint16 _enableHotspot = kPlayOverlayNoHotspot;
+	uint16 _enableHotspotNancy2 = kPlayOverlayNoHotspot;
 	uint16 _overlayType = kPlayOverlayAnimated;
 	uint16 _playDirection = kPlayOverlayForward;
 	uint16 _loop = kPlayOverlayOnce;
@@ -85,6 +85,7 @@ public:
 
 	bool canHaveHotspot() const override { return true; }
 	bool isViewportRelative() const override { return true; }
+	Common::String getRecordExtraInfo() const override { return Common::String::format("Scene %d", _sceneChange.sceneID); }
 
 protected:
 	Common::String getRecordTypeName() const override;
