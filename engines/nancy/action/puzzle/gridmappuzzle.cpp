@@ -254,15 +254,13 @@ void GridMapPuzzle::execute() {
 }
 
 Common::Rect GridMapPuzzle::mapCellRect(int row, int col) const {
-	// Stride uses the raw src-rect dimensions (right - left, before readRect's
-	// inclusive→exclusive +1). The rect spans the full stride so cells tile the
-	// grid with no gaps, keeping the grab-hand cursor steady across the whole
-	// grid. Only blits read the rect's top-left, so sprites still land correctly.
+	// Sprite destination. Stride uses the raw src-rect dimensions (right - left,
+	// before readRect's inclusive→exclusive +1). Blits read the rect's top-left.
 	int strideX = (int)_mapSpacingX + _mapCellW - 1;
 	int strideY = (int)_mapSpacingY + _mapCellH - 1;
 	int x = (int)_mapOriginX + col * strideX;
 	int y = (int)_mapOriginY + row * strideY;
-	return Common::Rect(x, y, x + strideX, y + strideY);
+	return Common::Rect(x, y, x + _mapCellW, y + _mapCellH);
 }
 
 Common::Rect GridMapPuzzle::itemsCellRect(int row, int col) const {
@@ -270,13 +268,34 @@ Common::Rect GridMapPuzzle::itemsCellRect(int row, int col) const {
 	int strideY = (int)_itemsSpacingY + _itemsCellH - 1;
 	int x = (int)_itemsOriginX + col * strideX;
 	int y = (int)_itemsOriginY + row * strideY;
-	return Common::Rect(x, y, x + strideX, y + strideY);
+	return Common::Rect(x, y, x + _itemsCellW, y + _itemsCellH);
+}
+
+Common::Rect GridMapPuzzle::mapCellHitRect(int row, int col) const {
+	// Hit area = sprite rect grown by half the spacing on each side. Neighboring
+	// cells then meet with no gaps, so the whole grid reads as one hand-cursor
+	// region and every point maps to its nearest cell.
+	Common::Rect r = mapCellRect(row, col);
+	r.left   -= (int)_mapSpacingX / 2;
+	r.right  += (int)_mapSpacingX / 2;
+	r.top    -= (int)_mapSpacingY / 2;
+	r.bottom += (int)_mapSpacingY / 2;
+	return r;
+}
+
+Common::Rect GridMapPuzzle::itemsCellHitRect(int row, int col) const {
+	Common::Rect r = itemsCellRect(row, col);
+	r.left   -= (int)_itemsSpacingX / 2;
+	r.right  += (int)_itemsSpacingX / 2;
+	r.top    -= (int)_itemsSpacingY / 2;
+	r.bottom += (int)_itemsSpacingY / 2;
+	return r;
 }
 
 bool GridMapPuzzle::hitTestMap(const Common::Point &p, int &outRow, int &outCol) const {
 	for (int r = 0; r < (int)_mapRows; ++r) {
 		for (int c = 0; c < (int)_mapCols; ++c) {
-			if (mapCellRect(r, c).contains(p)) {
+			if (mapCellHitRect(r, c).contains(p)) {
 				outRow = r;
 				outCol = c;
 				return true;
@@ -289,7 +308,7 @@ bool GridMapPuzzle::hitTestMap(const Common::Point &p, int &outRow, int &outCol)
 bool GridMapPuzzle::hitTestItems(const Common::Point &p, int &outRow, int &outCol) const {
 	for (int r = 0; r < (int)_itemsRows; ++r) {
 		for (int c = 0; c < (int)_itemsCols; ++c) {
-			if (itemsCellRect(r, c).contains(p)) {
+			if (itemsCellHitRect(r, c).contains(p)) {
 				outRow = r;
 				outCol = c;
 				return true;
@@ -313,18 +332,6 @@ int GridMapPuzzle::findItemInItems(int row, int col) const {
 			return i;
 	}
 	return -1;
-}
-
-bool GridMapPuzzle::isValidMapSlot(int row, int col) const {
-	// A map cell is a real placement slot iff at least one solution places
-	// some item there. Empty map cells outside any solution reject drops.
-	for (int s = 0; s < (int)_numSolutions; ++s) {
-		for (int i = 0; i < (int)_numItems; ++i) {
-			if (_solutionRows[s][i] == (int16)row && _solutionCols[s][i] == (int16)col)
-				return true;
-		}
-	}
-	return false;
 }
 
 Common::Rect GridMapPuzzle::resultsCellRect(int row, int col) const {
@@ -397,13 +404,10 @@ void GridMapPuzzle::handleInput(NancyInput &input) {
 			g_nancy->_sound->playSound(_pickupSound);
 		}
 	} else {
-		// Drop. Map cells only accept the held item if they are real
-		// placement slots (i.e. used by some solution); items cells always
-		// accept. An occupied cell sends its current occupant back to the
-		// cursor so the player can swap.
-		if (hitMap && !isValidMapSlot(row, col))
-			return;
-
+		// Drop. Any map or items cell accepts the held item; the wrong
+		// placement just decodes to the wrong letters in the results strip.
+		// An occupied cell sends its current occupant back to the cursor so
+		// the player can swap.
 		if (existingItem != -1) {
 			if (hitMap) {
 				_items[existingItem].inMap = false;
@@ -520,14 +524,14 @@ void GridMapPuzzle::redraw() {
 		}
 	}
 
+	// The glyph following the cursor uses the small map sprite (on the board
+	// image), not the large items-grid sprite.
 	if (_heldItem >= 0 && _heldItem < (int)_numItems && !_skipHeldDraw) {
-		const Common::Rect &src = _itemsItemSrcRects[_heldItem].isEmpty()
-		                          ? _mapItemSrcRects[_heldItem]
-		                          : _itemsItemSrcRects[_heldItem];
+		const Common::Rect &src = _mapItemSrcRects[_heldItem];
 		if (!src.isEmpty()) {
 			int x = _heldDrawPos.x - src.width()  / 2;
 			int y = _heldDrawPos.y - src.height() / 2;
-			_drawSurface.blitFrom(_cursorImage, src, Common::Point(x, y));
+			_drawSurface.blitFrom(_boardImage, src, Common::Point(x, y));
 		}
 	}
 

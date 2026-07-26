@@ -485,6 +485,9 @@ void InventoryPopup::handleInput(NancyInput &input) {
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				NancySceneState.addItemToInventory(heldItem);
+				// Dropping a held item back plays the button-down sound
+				// layered over the item-added sound.
+				g_nancy->_sound->playSound("BUDE");
 			}
 			input.eatMouseInput();
 		}

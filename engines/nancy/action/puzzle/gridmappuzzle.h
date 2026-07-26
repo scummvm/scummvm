@@ -146,12 +146,13 @@ protected:
 	void redraw();
 	Common::Rect mapCellRect(int row, int col) const;
 	Common::Rect itemsCellRect(int row, int col) const;
+	Common::Rect mapCellHitRect(int row, int col) const;
+	Common::Rect itemsCellHitRect(int row, int col) const;
 	Common::Rect resultsCellRect(int row, int col) const;
 	bool hitTestMap(const Common::Point &p, int &outRow, int &outCol) const;
 	bool hitTestItems(const Common::Point &p, int &outRow, int &outCol) const;
 	int findItemInMap(int row, int col) const;
 	int findItemInItems(int row, int col) const;
-	bool isValidMapSlot(int row, int col) const;
 	void checkSolved();
 };
 

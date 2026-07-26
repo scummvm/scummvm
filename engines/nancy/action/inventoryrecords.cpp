@@ -214,6 +214,10 @@ void GoInvViewScene::execute() {
 	if (!disabled && item.keepItem == kInvItemNewSceneView) {
 		if (_addToInventory || NancySceneState.hasItem(_itemID)) {
 			NancySceneState.pushScene(_itemID);
+			// Viewing an item's close-up takes it out of the inventory; the
+			// re-add on return (popScene, or a cancel scene's AddInventory
+			// record) is what plays the "returned to inventory" click.
+			NancySceneState.removeItemFromInventory(_itemID, false);
 		} else {
 			// Do not add the item to the inventory, only go to its scene
 			NancySceneState.pushScene();
