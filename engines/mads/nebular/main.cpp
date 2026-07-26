@@ -241,7 +241,7 @@ static void game_main(int argc, const char **argv) {
 	mads_mode = env_verify();
 
 	new_section = 1;
-	new_room = 101;
+	new_room = g_engine->isDemo() ? 102 : 101;
 	player.x = 160;
 	player.y = 78;
 
@@ -313,6 +313,8 @@ void nebular_main() {
 
 	if (ConfMan.getBool("start_game") || ConfMan.hasKey("save_slot"))
 		selected_item = 0;
+	else if (g_engine->isDemo())
+		selected_item = 9;
 	else if (ConfMan.getBool("start_intro"))
 		selected_item = 3;
 	else
@@ -372,6 +374,13 @@ void nebular_main() {
 			// Quotes
 			TextView::textview_main("quotes");
 			selected_item = -1;
+			break;
+
+		case 9:
+			// The DOS demo batch file plays this ANIMVIEW playlist before
+			// starting its three-room playable section.
+			AnimView::animview_main("@demodisk");
+			selected_item = 0;
 			break;
 
 		case WIN_QUICK_DEATH + 16:
