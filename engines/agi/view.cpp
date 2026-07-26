@@ -243,10 +243,8 @@ int AgiEngine::decodeView(byte *resourceData, uint16 resourceSize, int16 viewNr)
 
 					if (isMirrorDataInLoopHeader) {
 						// 2.230 (early version of xmascard): mirror data is in loop header.
-						if (loopHeaderCelCountByte & 0x80) {
-							// mirror bit is set
-							// there is a second mirror bit whose purpose is currently unknown;
-							// both bits are set in every xmascard loop with mirror data.
+						if ((loopHeaderCelCountByte & 0xc0) == 0xc0) {
+							// mirror bits are set
 							byte celHeaderMirrorLoop = (loopHeaderCelCountByte >> 4) & 0x03;
 							if (celHeaderMirrorLoop != loopNr) {
 								// only set to mirrored in case we are not the original loop
