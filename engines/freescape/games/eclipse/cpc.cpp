@@ -79,7 +79,7 @@ void EclipseEngine::loadHeartFramesCPC(Common::SeekableReadStream *file, int res
 		auto *indexed = new Graphics::ManagedSurface();
 		indexed->create(widthBytes * 4, height, Graphics::PixelFormat::createFormatCLUT8());
 		loadFrameCPCIndexed(file, indexed, widthBytes, height);
-		_heartFramesCPCIndexed.push_back(indexed);
+		_heartFramesIndexed.push_back(indexed);
 	}
 }
 
@@ -191,9 +191,6 @@ void EclipseEngine::loadAssetsCPCDemo() {
 }
 
 void EclipseEngine::updateHeartFramesCPC() {
-	if (_heartFramesCPCIndexed.empty())
-		return;
-
 	uint8 r, g, b;
 	byte palette[4 * 3];
 	for (int c = 0; c < 4; c++) {
@@ -203,15 +200,22 @@ void EclipseEngine::updateHeartFramesCPC() {
 		palette[c * 3 + 2] = b;
 	}
 
+	updateHeartFrames(palette);
+}
+
+void EclipseEngine::updateHeartFrames(const byte *palette) {
+	if (_heartFramesIndexed.empty())
+		return;
+
 	for (auto &sprite : _eclipseSprites) {
 		sprite->free();
 		delete sprite;
 	}
 	_eclipseSprites.clear();
 
-	for (uint i = 0; i < _heartFramesCPCIndexed.size(); i++) {
+	for (uint i = 0; i < _heartFramesIndexed.size(); i++) {
 		Graphics::ManagedSurface clut8;
-		clut8.copyFrom(*_heartFramesCPCIndexed[i]);
+		clut8.copyFrom(*_heartFramesIndexed[i]);
 		clut8.setPalette(palette, 0, 4);
 
 		Graphics::Surface *converted = _gfx->convertImageFormatIfNecessary(&clut8);

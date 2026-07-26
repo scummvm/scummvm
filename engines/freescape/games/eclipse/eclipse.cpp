@@ -54,6 +54,8 @@ const WBTableOffsets kEclipseAmigaMusicOffsets = {
 };
 
 EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
+	_ankhIndicatorMask = nullptr;
+	_ankhCollectedMask = nullptr;
 	_playerC64Sfx = nullptr;
 	_playerMusic = nullptr;
 	_c64UseSFX = false;
@@ -454,6 +456,10 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 	swapPalette(areaID);
 	if (isCPC())
 		updateHeartFramesCPC();
+	else if (isDOS() && _renderMode == Common::kRenderCGA) {
+		updateHeartFrames(_gfx->_palette);
+		updateAnkhIndicator(_gfx->_palette);
+	}
 	if (isAmiga() || isAtariST())
 		_currentArea->_skyColor = 15;
 
@@ -987,12 +993,17 @@ void EclipseEngine::drawIndicator(Graphics::Surface *surface, int xPosition, int
 		return;
 
 	for (int i = 0; i < 5; i++) {
+		int frame = 0;
 		if (isSpectrum() || isC64()) {
 			if (_gameStateVars[kVariableEclipseAnkhs] <= i)
 				continue;
-		} else if (_gameStateVars[kVariableEclipseAnkhs] > i)
-			continue;
-		surface->copyRectToSurface(*_indicators[0], xPosition + separation * i, yPosition, Common::Rect(_indicators[0]->w, _indicators[0]->h));
+		} else if (_gameStateVars[kVariableEclipseAnkhs] > i) {
+			// CGA repaints these too: the border ankhs use another color
+			if (_indicators.size() < 2)
+				continue;
+			frame = 1;
+		}
+		surface->copyRectToSurface(*_indicators[frame], xPosition + separation * i, yPosition, Common::Rect(_indicators[frame]->w, _indicators[frame]->h));
 	}
 }
 

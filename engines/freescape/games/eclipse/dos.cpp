@@ -94,15 +94,73 @@ void EclipseEngine::loadHeartFramesDOS(Common::SeekableReadStream *file, int res
 						clut8.setPixel(col * 4 + px, y, (b >> (6 - px * 2)) & 3);
 				}
 
-			clut8.setPalette((byte *)kCGAPaletteRedGreenBright, 0, 4);
-
-			Graphics::Surface *converted = _gfx->convertImageFormatIfNecessary(&clut8);
-			auto *surf = new Graphics::ManagedSurface();
-			surf->copyFrom(*converted);
-			converted->free();
-			delete converted;
-			_eclipseSprites.push_back(surf);
+			// Kept indexed, since the CGA palette changes per area
+			auto *indexed = new Graphics::ManagedSurface();
+			indexed->copyFrom(clut8);
+			_heartFramesIndexed.push_back(indexed);
 		}
+	}
+}
+
+// The bundle has no CGA ankh, so the EGA one is reduced to a mask and colored here
+// The solid ankh the original paints over collected slots is already in the border
+void EclipseEngine::loadAnkhCollectedMaskCGA() {
+	_ankhCollectedMask = new Graphics::ManagedSurface();
+	_ankhCollectedMask->create(7, 12, Graphics::PixelFormat::createFormatCLUT8());
+
+	for (int y = 0; y < 12; y++)
+		for (int x = 0; x < 7; x++)
+			_ankhCollectedMask->setPixel(x, y, _border->getPixel(45 + x, 4 + y) ? 1 : 0);
+}
+
+void EclipseEngine::loadAnkhIndicatorCGA() {
+	Graphics::Surface *ega = loadBundledImage("eclipse_ankh_indicator_ega", false);
+	ega->convertToInPlace(_gfx->_texturePixelFormat);
+
+	_ankhIndicatorMask = new Graphics::ManagedSurface();
+	_ankhIndicatorMask->create(ega->w, ega->h, Graphics::PixelFormat::createFormatCLUT8());
+
+	for (int y = 0; y < ega->h; y++) {
+		for (int x = 0; x < ega->w; x++) {
+			uint8 r, g, b;
+			ega->format.colorToRGB(ega->getPixel(x, y), r, g, b);
+			_ankhIndicatorMask->setPixel(x, y, (r || g || b) ? 1 : 0);
+		}
+	}
+
+	ega->free();
+	delete ega;
+}
+
+void EclipseEngine::updateAnkhIndicator(const byte *palette) {
+	if (!_ankhIndicatorMask)
+		return;
+
+	for (auto &it : _indicators) {
+		it->free();
+		delete it;
+	}
+	_indicators.clear();
+
+	// The original draws the ankhs with color 1 of the area palette
+	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, palette[3], palette[4], palette[5]);
+	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, palette[0], palette[1], palette[2]);
+
+	// [0] goes over the slots still to collect, [1] over the collected ones
+	Graphics::ManagedSurface *masks[2] = { _ankhIndicatorMask, _ankhCollectedMask };
+
+	for (int i = 0; i < 2; i++) {
+		if (!masks[i])
+			continue;
+
+		Graphics::Surface *surface = new Graphics::Surface();
+		surface->create(masks[i]->w, masks[i]->h, _gfx->_texturePixelFormat);
+
+		for (int y = 0; y < surface->h; y++)
+			for (int x = 0; x < surface->w; x++)
+				surface->setPixel(x, y, masks[i]->getPixel(x, y) ? front : back);
+
+		_indicators.push_back(surface);
 	}
 }
 
@@ -155,9 +213,13 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 		load8bitBinary(&file, 0x2530, 4);
 		_border = load8bitBinImage(&file, 0x210);
 		_border->setPalette((byte *)&kCGAPaletteRedGreen, 0, 4);
-		// TODO: CGA heart palette changes per area, needs re-decoding on area change
-		// loadHeartFramesDOS(&file, 0x5F52, 0x5F84);
+		loadAnkhCollectedMaskCGA();
+		loadHeartFramesDOS(&file, 0x5F52, 0x5F84);
 		swapPalette(_startArea);
+		updateHeartFrames(_gfx->_palette);
+
+		loadAnkhIndicatorCGA();
+		updateAnkhIndicator(_gfx->_palette);
 	} else
 		error("Invalid or unsupported render mode %s for Total Eclipse", Common::getRenderModeDescription(_renderMode));
 
@@ -235,7 +297,10 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 	
 	Common::Rect jarWater(124, 192 - _gameStateVars[k8bitVariableEnergy], 148, 192);
 
-	drawIndicator(surface, 41, 4, 16);
+	if (_renderMode == Common::kRenderCGA)
+		drawIndicator(surface, 45, 4, 12);
+	else
+		drawIndicator(surface, 41, 4, 16);
 	drawHeartIndicator(surface, 176, 168);
 	if (_renderMode == Common::kRenderEGA) {
 		surface->fillRect(jarWater, blue);

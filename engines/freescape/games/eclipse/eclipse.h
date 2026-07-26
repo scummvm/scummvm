@@ -114,9 +114,17 @@ public:
 	void loadHeartFramesDOS(Common::SeekableReadStream *file, int restOffset, int beatOffset);
 	void drawHeartIndicator(Graphics::Surface *surface, int x, int y);
 
-	// CPC heart frames stored as indexed (CLUT8) for per-area re-paletting
-	Common::Array<Graphics::ManagedSurface *> _heartFramesCPCIndexed;
+	// Heart frames stored as indexed (CLUT8) for per-area re-paletting (CPC, CGA)
+	Common::Array<Graphics::ManagedSurface *> _heartFramesIndexed;
 	void updateHeartFramesCPC();
+	void updateHeartFrames(const byte *palette);
+
+	// No CGA ankh in the bundle, so the masks are built at load time
+	Graphics::ManagedSurface *_ankhIndicatorMask;
+	Graphics::ManagedSurface *_ankhCollectedMask;
+	void loadAnkhIndicatorCGA();
+	void loadAnkhCollectedMaskCGA();
+	void updateAnkhIndicator(const byte *palette);
 
 	Common::Array<byte> _musicData; // TEMUSIC.ST TEXT segment (Atari ST)
 	Common::Array<byte> _c64MusicData;
