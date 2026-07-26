@@ -39,6 +39,7 @@
 #include "ripper/puzzles/rolodex.h"
 #include "ripper/puzzles/table_gate.h"
 #include "ripper/ripper.h"
+#include "ripper/scenes/ebz2s_scene.h"
 #include "ripper/scenes/tube_scene.h"
 #include "ripper/script.h"
 
@@ -205,6 +206,14 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 			"Ripper: KJ blob-shooter scene action completed result=%d milestone=%u",
 			result, argument);
 		return result != KjBlobShooter::kLoadFailed;
+	}
+	if (action == kSceneActionEbz2sMenu) {
+		Ebz2sScene scene(engine);
+		const Ebz2sScene::Result result = scene.run(argument);
+		debugC(1, kDebugScene,
+			"Ripper: EBZ2S action-menu scene action completed result=%d argument=%u",
+			result, argument);
+		return result != Ebz2sScene::kLoadFailed;
 	}
 	if (action == kSceneActionMechiniCombat) {
 		MechiniEncounter encounter(engine);

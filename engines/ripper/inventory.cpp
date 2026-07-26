@@ -78,6 +78,8 @@ static const int kDoneControl = -3;
 static const char *const kQcsEntryMedia = "q_cs_1.avi";
 static const char *const kMagnottaMedia = "mag2.avi";
 static const char *const kMagnottaAudio = "q_p_40.wav";
+static const char *const kEbHeadMedia = "ebu2.pcx";
+static const char *const kEbBugAudio = "eye_bug.wav";
 
 } // End of anonymous namespace
 
@@ -496,11 +498,6 @@ Inventory::ChoiceResult Inventory::executeChoice(uint unlockFlag,
 	// invalid-use dialog, but accepted branches release it before presenting
 	// item-specific media.
 	restoreDisplay();
-	if (choiceId == 5 || choiceId == 8) {
-		warning("Ripper: inventory item %u requires an unimplemented dedicated presentation", choiceId);
-		return kChoiceFailed;
-	}
-
 	if (!_engine->getMilestones()->set(unlockFlag + kConsumedFlagOffset,
 			true, "inventory-use"))
 		return kChoiceFailed;
@@ -514,6 +511,12 @@ Inventory::ChoiceResult Inventory::executeChoice(uint unlockFlag,
 			unlockFlag + kConsumedFlagOffset, false, "inventory-reusable-item");
 		if (!presented || !reusable)
 			return kChoiceFailed;
+	} else if (choiceId == 5) {
+		// ExecuteUnlockSelectionChoice at 0x364be presents EBU2.PCX for the
+		// EB_HEAD Bug branch and then blocks on EYE_BUG.WAV.
+		if (!_engine->getMedia()->displayScenePcx(kEbHeadMedia) ||
+				!_engine->getMedia()->playBlockingAudio(kEbBugAudio))
+			return kChoiceFailed;
 	} else if (choiceId == 6) {
 		if (!_engine->getMedia()->play("q_cs_3.avi", true))
 			return kChoiceFailed;
@@ -521,6 +524,11 @@ Inventory::ChoiceResult Inventory::executeChoice(uint unlockFlag,
 		if (!_engine->getMedia()->play("p_shadow.avi", true) ||
 				!_engine->getMilestones()->set(unlockFlag + kConsumedFlagOffset,
 					false, "inventory-reusable-item"))
+			return kChoiceFailed;
+	} else if (choiceId == 8) {
+		// The EB_HEAD Eyeball branch uses the same retained PCX without the
+		// Bug branch's audio presentation.
+		if (!_engine->getMedia()->displayScenePcx(kEbHeadMedia))
 			return kChoiceFailed;
 	}
 	debugC(1, kDebugScene,

@@ -32,6 +32,7 @@
 #include "graphics/blit.h"
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
+#include "image/pcx.h"
 #include "video/smk_decoder.h"
 
 #include "ripper/cursor.h"
@@ -1107,6 +1108,55 @@ bool MediaPlayer::playInterfaceSequence(const Common::String &path, int x, int y
 	request.sourcePalette = &sourcePalette;
 	request.rememberVideoPalette = false;
 	return playSmacker(stream, path, request);
+}
+
+bool MediaPlayer::displayScenePcx(const Common::String &path) {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		_engine->getResources()->createReadStreamForPath(path));
+	Image::PCXDecoder decoder;
+	if (!stream || !decoder.loadStream(*stream)) {
+		warning("Ripper: could not decode scene PCX '%s'", path.c_str());
+		return false;
+	}
+
+	const Graphics::Surface *surface = decoder.getSurface();
+	const Graphics::Palette &sourcePalette = decoder.getPalette();
+	if (!surface || surface->format.bytesPerPixel != 1 ||
+			surface->w <= 0 || surface->w > 640 ||
+			surface->h <= 0 || surface->h > 300 ||
+			sourcePalette.size() < 256) {
+		warning("Ripper: invalid scene PCX '%s' size=%dx%d colors=%u",
+			path.c_str(), surface ? surface->w : 0, surface ? surface->h : 0,
+			sourcePalette.size());
+		return false;
+	}
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen || screen->format.bytesPerPixel != 1 ||
+			screen->w < 640 || screen->h < 400) {
+		if (screen)
+			g_system->unlockScreen();
+		return false;
+	}
+	for (int y = kScenePresentationTop; y < kScenePresentationTop + 300; ++y)
+		memset(screen->getBasePtr(0, y), 0, 640);
+	const int x = (640 - surface->w) / 2;
+	for (int y = 0; y < surface->h; ++y)
+		memcpy(screen->getBasePtr(x, kScenePresentationTop + y),
+			surface->getBasePtr(0, y), surface->w);
+	g_system->unlockScreen();
+
+	byte palette[256 * 3];
+	memcpy(palette, sourcePalette.data(), sizeof(palette));
+	_engine->getToolbar()->applySharedPalettePatch(palette, 256);
+	_engine->getSettings()->applyVideoPalette(palette, 256, true);
+	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+	_engine->getCursor()->refresh();
+	g_system->updateScreen();
+	debugC(1, kDebugVideo,
+		"Ripper: displayed scene PCX '%s' source=%ux%u destination=%d,%d interfacePalettePatch=1",
+		path.c_str(), surface->w, surface->h, x, kScenePresentationTop);
+	return true;
 }
 
 bool MediaPlayer::playBlockingAudio(const Common::String &path) {
