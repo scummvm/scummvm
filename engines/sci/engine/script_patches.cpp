@@ -26350,6 +26350,11 @@ static const uint16 torinSeraglioBoogleFlagPatch2[] = {
 // (it will just explode later when mismatched selectors are used). So, here we
 // are hot-patching all of the wrong offsets in the original heap to match the
 // patched script.
+//
+// The German PointSoft release (and possibly others) contains the same mismatch
+// in the resource volume, but it includes 20700.HEP and 20700.SCR patch files
+// from TORINPAT that override the mismatch.
+//
 // Applies to at least: French PointSoft CD release
 static const uint16 torinPointSoft20700HeapSignature[] = {
 	0xe1, 0x15, 0x23, 0x16, // end of patched 20700.SCR (so we don't
@@ -26444,11 +26449,43 @@ static const uint16 torinPointSoft20700HeapPatch[] = {
 	PATCH_END
 };
 
+// In the German version, the game crashes if the crystcorder is playing when
+//  Torin is throw into the Null Void. The room script attempts to stop the
+//  crystcorder but the crystcorder script was compiled with English selectors.
+//
+// At least the PointSoft release contains patch files from Sierra's TORINPAT
+//  and additional patch files for the crystcorder's script 56000. All of these
+//  patched scripts were compiled using the English version's selector table.
+//  Only a few selector values are different, but they involve the crystcorder.
+//  The jail cell (room 50500) is the one German script that sends a selector
+//  whose value changed to a patched script that expects English selectors.
+//
+// We fix this by patching the German jail cell script to send the English
+//  stopCorder selector to oCrystCorder in 56000. This patch is only enabled
+//  when the unique version of script 56000 with English selectors is present.
+//
+// Applies to at least: German PointSoft release
+// Responsible method: soPlayMovie2:changeState(8)
+static const uint16 torinGermanCrystcorderSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x04f5),      // pushi stopCorder [ German selector ]
+	0x76,                          // push0
+	0x7a,                          // push2
+	0x38, SIG_UINT16(0xdac0),      // pushi dac0 [ oCrystCorder script ] 
+	SIG_END
+};
+
+static const uint16 torinGermanCrystcorderPatch[] = {
+	0x38, PATCH_UINT16(0x04fe),    // pushi stopCorder [ English selector ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry torinSignatures[] = {
 	{  true, 20600, "fix boogle bag flag on fast-forward",         1, torinSeraglioBoogleFlagSignature1, torinSeraglioBoogleFlagPatch1 },
 	{  true, 20600, "fix boogle bag flag on fast-forward",         1, torinSeraglioBoogleFlagSignature2, torinSeraglioBoogleFlagPatch2 },
 	{  true, 20700, "fix bad heap in PointSoft release",           1, torinPointSoft20700HeapSignature,  torinPointSoft20700HeapPatch },
+	{ false, 50500, "fix German crystcorder selector",             1, torinGermanCrystcorderSignature,   torinGermanCrystcorderPatch },
 	{  true, 64000, "disable volume reset on startup (1/2)",       1, torinVolumeResetSignature1,        torinVolumeResetPatch1 },
 	{  true, 64000, "disable volume reset on startup (2/2)",       1, torinVolumeResetSignature2,        torinVolumeResetPatch2 },
 	{  true, 64866, "increase number of save games",               1, torinLarry7NumSavesSignature,      torinLarry7NumSavesPatch },
@@ -27256,6 +27293,16 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 			case GID_SQ6:
 				if (g_sci->isDemo()) {
 					enablePatch(signatureTable, "demo: fix inventory crash");
+				}
+				break;
+			case GID_TORIN:
+				if (!g_sci->isDemo()) {
+					// Enable patch to fix incompatible selectors when the German
+					// crystcorder script containing English selectors is present.
+					Resource *crystcorderScript = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 56000), false);
+					if (crystcorderScript && crystcorderScript->size() == 4104) {
+						enablePatch(signatureTable, "fix German crystcorder selector");
+					}
 				}
 				break;
 			default:
