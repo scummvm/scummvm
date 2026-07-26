@@ -485,7 +485,7 @@ static void inter_show_word(int class_, int id) {
 		} else {
 			inter_set_colors(LEFT_SELECT);
 		}
-		font_write(font_misc, &scr_inter, temp_buf, x, y, 0);
+		font_write(font_misc ? font_misc : font_inter, &scr_inter, temp_buf, x, y, 0);
 		goto done;
 		break;
 
