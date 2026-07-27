@@ -34,6 +34,16 @@
 namespace Nancy {
 namespace Action {
 
+// Size of a single drawn stitch, in pixels.
+static const int kStitchSize = 2;
+
+// Fallback seam x used if the mask scan fails.
+static const int kSeamStartX = 490;
+
+// Scene event flag that switches the needle between its animated and static
+// overlays (true while the cloth is being fed).
+static const int16 kNeedleAnimFlag = 1004;
+
 void SewingMachinePuzzle::readData(Common::SeekableReadStream &stream) {
 	// 87-byte PuzzleBase header blob.
 	readFilename(stream, _imageName);	// blob 0x00
@@ -56,22 +66,11 @@ void SewingMachinePuzzle::classifyZones() {
 	for (uint i = 0; i < _zones.size(); ++i) {
 		const ActionZone &z = _zones[i];
 		switch (z.type) {
-		case 0x0b:	// the needle line: touching it plays a stitch cue and sets a flag
+		case 0x0b:	// seam mask + mistake lines
 			_collisionZone = i;
 			break;
-		case 0x0c:	// bottom trigger: its SpecialEffect carries the win scene + fade
+		case 0x0c:	// bottom completion trigger
 			_triggerZones.push_back(i);
-			if (z.specialEffectId >= 1000 && _winScene.sceneID == kNoScene) {
-				_winScene.sceneID = z.specialEffectId;
-				_winEventFlag = z.val49;
-				if (z.hasSpecialEffect) {
-					_winHasFade = true;
-					_winFadeType = z.seType;
-					_winFadeTotalTime = z.seTotalTime;
-					_winFadeToBlackTime = z.seFadeToBlackTime;
-					_winFadeRect = z.seRect;
-				}
-			}
 			break;
 		case 0x14:	// play-area boundary
 			_boundaryZone = i;
@@ -101,43 +100,130 @@ void SewingMachinePuzzle::playSoundBlock(const RandomSoundBlock &block) {
 
 	g_nancy->_sound->loadSound(desc);
 	g_nancy->_sound->playSound(desc);
+
+	showSubtitle(name);
+}
+
+void SewingMachinePuzzle::showSubtitle(const Common::String &soundName) {
+	// The mistake lines carry no inline caption; look the subtitle up by sound name,
+	// first in the Autotext table, then in the conversation table.
+	Common::String text;
+
+	const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
+	if (autotext) {
+		text = autotext->texts.getValOrDefault(soundName, "");
+	}
+
+	if (text.empty()) {
+		const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
+		if (convo) {
+			text = convo->texts.getValOrDefault(soundName, "");
+		}
+	}
+
+	if (!text.empty()) {
+		NancySceneState.getTextbox().clear();
+		NancySceneState.getTextbox().addTextLine(text);
+	}
+}
+
+Common::Point SewingMachinePuzzle::needleInStrip() const {
+	// The needle is fixed on screen; map it back into cloth space.
+	return _needleScreen - _offset;
 }
 
 void SewingMachinePuzzle::drawCloth() {
-	// The cloth is a tall strip; the fixed needle (drawn by the scene) sits over it.
-	// The scene shows through wherever the strip does not cover.
+	// Draw the cloth at native size wherever it has been dragged; only the part
+	// within the viewport is blitted, so the scene shows where the cloth is not.
+	Common::Rect src(-_offset.x, -_offset.y, -_offset.x + _drawSurface.w, -_offset.y + _drawSurface.h);
+	src.clip(Common::Rect(_image.w, _image.h));
+
 	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	_drawSurface.blitFrom(_image, _clothPos);
+	if (!src.isEmpty()) {
+		Common::Point dest(src.left + _offset.x, src.top + _offset.y);
+		_drawSurface.blitFrom(_image, src, dest);
+	}
+
+	// Stitches sewn so far, as a dark dashed thread.
+	uint32 stitchColor = _drawSurface.format.RGBToColor(0, 0, 0);
+	Common::Rect surfaceBounds(_drawSurface.w, _drawSurface.h);
+	for (uint i = 0; i < _stitches.size(); ++i) {
+		int sx = _stitches[i].x + _offset.x;
+		int sy = _stitches[i].y + _offset.y;
+		Common::Rect dot(sx, sy, sx + kStitchSize, sy + kStitchSize);
+		dot.clip(surfaceBounds);
+		if (!dot.isEmpty()) {
+			_drawSurface.fillRect(dot, stitchColor);
+		}
+	}
+
 	_needsRedraw = true;
 }
 
 void SewingMachinePuzzle::feedCloth(const Common::Point &delta) {
-	Common::Point newPos(CLIP<int>(_clothPos.x + delta.x, -_maxSteer, _maxSteer),
-		CLIP<int>(_clothPos.y + delta.y, -_maxFeed, 0));
+	// Dragging moves the cloth: vertical feeds it, horizontal steers it.
+	Common::Point newOffset(CLIP<int>(_offset.x + delta.x, _minOffsetX, _maxOffsetX),
+		CLIP<int>(_offset.y + delta.y, _minOffsetY, _maxOffsetY));
 
-	int moved = ABS(newPos.x - _clothPos.x) + ABS(newPos.y - _clothPos.y);
-	_clothPos = newPos;
+	int moved = ABS(newOffset.x - _offset.x) + ABS(newOffset.y - _offset.y);
+	_offset = newOffset;
 
 	if (moved == 0) {
-		// A pause resets the stitch stroke, matching the original's hysteresis.
-		_strokeDistance = 0.0;
+		// The machine's needle only runs while the cloth is moving.
+		NancySceneState.setEventFlag(kNeedleAnimFlag, g_nancy->_false);
 		return;
 	}
 
-	_strokeDistance += moved;
+	// Run the needle animation (the scene swaps in its animated overlay).
+	NancySceneState.setEventFlag(kNeedleAnimFlag, g_nancy->_true);
+
+	// Lay down a stitch each time the cloth advances past the spacing.
+	Common::Point needle = needleInStrip();
+	int spacing = MAX<int>(1, _params[1]);
+	if (_stitches.empty() ||
+		ABS(needle.x - _stitches.back().x) + ABS(needle.y - _stitches.back().y) >= spacing) {
+		_stitches.push_back(needle);
+	}
+
 	drawCloth();
+	checkSeam();
 
-	// A stitch cue (needle sound) fires each time the cloth advances past the threshold.
-	if (_strokeDistance >= _params[1] && _collisionZone >= 0) {
-		_strokeDistance = 0.0;
-		playSoundBlock(_zones[_collisionZone]._sound);
+	// Reaching any bottom trigger finishes the seam.
+	if (!_solved) {
+		Common::Point end = needleInStrip();
+		for (uint i = 0; i < _triggerZones.size(); ++i) {
+			if (_zones[_triggerZones[i]].rect.contains(end)) {
+				_solved = true;
+				_state = kActionTrigger;
+				break;
+			}
+		}
+	}
+}
+
+void SewingMachinePuzzle::checkSeam() {
+	if (!_hasSeamMask || _collisionZone < 0) {
+		return;
 	}
 
-	// The seam is finished once the cloth has been fed all the way through.
-	if (_maxFeed > 0 && _clothPos.y <= -_maxFeed && !_solved) {
-		_solved = true;
-		_state = kActionTrigger;
+	Common::Point needle = needleInStrip();
+	int mx = (int)((needle.x - _maskOrigin.x) * _maskScaleX);
+	int my = (int)((needle.y - _maskOrigin.y) * _maskScaleY);
+
+	// The needle strays off the seam when, while inside the collision region, it lands
+	// on the mask's background instead of the marked corridor.
+	bool off = mx >= 0 && my >= 0 && mx < _seamMask.w && my < _seamMask.h &&
+		_seamMask.getPixel(mx, my) == _offSeamColor;
+
+	// Edge-triggered: comment once on leaving the seam, re-armed only once the needle
+	// returns to it.
+	if (off && !_offSeam) {
+		const ActionZone &seam = _zones[_collisionZone];
+		playSoundBlock(seam._sound);
+		NancySceneState.setEventFlag(seam.tailId, seam.tailFlag ? g_nancy->_true : g_nancy->_false);
 	}
+
+	_offSeam = off;
 }
 
 void SewingMachinePuzzle::init() {
@@ -152,38 +238,103 @@ void SewingMachinePuzzle::init() {
 	g_nancy->_resource->loadImage(_imageName, _image);
 	_image.setTransparentColor(_drawSurface.getTransparentColor());
 
-	// Feed scrolls the whole strip past the viewport; steer lets the cloth wiggle
-	// horizontally to follow the seam under the needle (range is a tunable guess).
-	_maxFeed = MAX(0, _image.h - _drawSurface.h);
-	_maxSteer = 100;
+	// The needle's fixed sewing point = the bottom-center of the needle overlay's
+	// dest rect (167,0,285,170).
+	_needleScreen = Common::Point((167 + 285) / 2, 170);
+
+	// Clamp so the needle can reach any point on the freely dragged cloth.
+	_maxOffsetX = _needleScreen.x;
+	_minOffsetX = _needleScreen.x - _image.w;
+	_maxOffsetY = _needleScreen.y;
+	_minOffsetY = _needleScreen.y - _image.h;
+
+	// Fill from the top; the seam x under the needle is refined by the mask scan below.
+	_offset.y = CLIP<int>(0, _minOffsetY, _maxOffsetY);
+	_offset.x = CLIP<int>(_needleScreen.x - kSeamStartX, _minOffsetX, _maxOffsetX);
+
+	// The collision zone's overlay is a per-pixel mask of the seam path.
+	if (_collisionZone < 0 || _zones[_collisionZone].ovlName.empty()) {
+		return;
+	}
+
+	g_nancy->_resource->loadImage(Common::Path(_zones[_collisionZone].ovlName), _seamMask);
+
+	// The mask covers only the cloth's seam region = the collision zone's rect, so
+	// cloth pixels map to mask pixels by that origin + scale.
+	Common::Rect region = _zones[_collisionZone].rect;
+	if (region.width() <= 0 || region.height() <= 0) {
+		return;
+	}
+	_maskOrigin = Common::Point(region.left, region.top);
+	_maskScaleX = (double)_seamMask.w / region.width();
+	_maskScaleY = (double)_seamMask.h / region.height();
+
+	// Dark corridor on a light background: sample the background at a corner, then
+	// center the needle on the corridor at its row.
+	_offSeamColor = _seamMask.getPixel(0, 0);
+	int maskRow = CLIP<int>((int)((needleInStrip().y - _maskOrigin.y) * _maskScaleY), 0, _seamMask.h - 1);
+	int first = -1, last = -1;
+	for (int x = 0; x < _seamMask.w; ++x) {
+		if (_seamMask.getPixel(x, maskRow) != _offSeamColor) {
+			if (first < 0) {
+				first = x;
+			}
+			last = x;
+		}
+	}
+
+	if (first >= 0) {
+		int seamClothX = _maskOrigin.x + (int)(((first + last) / 2) / _maskScaleX);
+		_offset.x = CLIP<int>(_needleScreen.x - seamClothX, _minOffsetX, _maxOffsetX);
+		_hasSeamMask = true;
+	} else {
+		warning("SewingMachinePuzzle: seam mask '%s' has no seam on the needle row; off-seam detection disabled",
+			_zones[_collisionZone].ovlName.c_str());
+	}
 }
 
 void SewingMachinePuzzle::execute() {
 	switch (_state) {
 	case kBegin:
+		classifyZones();	// init() needs the seam zone's mask
 		init();
 		registerGraphics();
-		classifyZones();
 		playSoundBlock(_soundBlock);	// start the sewing-machine ambience
 		drawCloth();
 		_state = kRun;
 		break;
 	case kRun:
 		break;
-	case kActionTrigger:
-		// Seam finished: raise the win flag, then cross-dissolve to the scene the
-		// trigger zone's SpecialEffect points at.
-		if (_winEventFlag != -1) {
-			NancySceneState.setEventFlag(_winEventFlag, g_nancy->_true);
-		}
-		if (_winScene.sceneID >= 1000 && _winScene.sceneID != kNoScene) {
-			if (_winHasFade) {
-				NancySceneState.specialEffect(_winFadeType, _winFadeTotalTime, _winFadeToBlackTime, _winFadeRect);
+	case kActionTrigger: {
+		// Raise a flag for every bottom trigger the needle finished inside: the wide
+		// zone marks the seam attempted, the narrow (centered) zone marks it solved.
+		// They share the win scene, so cross-dissolve to it once.
+		Common::Point end = needleInStrip();
+		const ActionZone *sceneZone = nullptr;
+		for (uint i = 0; i < _triggerZones.size(); ++i) {
+			const ActionZone &tz = _zones[_triggerZones[i]];
+			if (!tz.rect.contains(end)) {
+				continue;
 			}
-			NancySceneState.changeScene(_winScene);
+			if (tz.tailId != -1) {
+				NancySceneState.setEventFlag(tz.tailId, tz.tailFlag ? g_nancy->_true : g_nancy->_false);
+			}
+			if (!sceneZone) {
+				sceneZone = &tz;
+			}
+		}
+
+		if (sceneZone && sceneZone->specialEffectId >= 1000) {
+			if (sceneZone->hasSpecialEffect) {
+				NancySceneState.specialEffect(sceneZone->seType, sceneZone->seTotalTime, sceneZone->seFadeToBlackTime, sceneZone->seRect);
+			}
+			SceneChangeDescription scene;
+			scene.sceneID = sceneZone->specialEffectId;
+			NancySceneState.changeScene(scene);
 		}
 		finishExecution();
 		break;
+	}
 	}
 }
 
@@ -206,7 +357,7 @@ void SewingMachinePuzzle::handleInput(NancyInput &input) {
 
 	if (input.input & NancyInput::kLeftMouseButtonUp) {
 		_dragging = false;
-		_strokeDistance = 0.0;
+		NancySceneState.setEventFlag(kNeedleAnimFlag, g_nancy->_false);
 	}
 }
 
