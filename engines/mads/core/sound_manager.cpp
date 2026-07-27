@@ -21,6 +21,7 @@
 
 #include "audio/fmopl.h"
 #include "audio/mididrv.h"
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "mads/core/sound_manager.h"
@@ -34,6 +35,8 @@ namespace MADS {
 SoundManager::SoundManager(Audio::Mixer *mixer, bool &soundFlag) : _mixer(mixer), _soundFlag(soundFlag) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32);
 	MusicType musicType = MidiDriver::getMusicType(dev);
+	if ((musicType == MT_GM || musicType == MT_GS) && ConfMan.getBool("native_mt32"))
+		musicType = MT_MT32;
 	switch (musicType) {
 	case MT_MT32:
 		_driverType = SOUND_MT32;

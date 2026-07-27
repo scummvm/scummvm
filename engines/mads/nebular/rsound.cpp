@@ -65,7 +65,7 @@ void Channel::load(byte *pData) {
 
 /*-----------------------------------------------------------------------*/
 
-const byte RSound::_sysExHeader[5] = { 0xF0, 0x41, 0x10, 0x16, 0x12 };
+const uint32 RSound::UPDATE_DELTA = 1000000 / 60;
 
 RSound::RSound(Audio::Mixer *mixer, const Common::Path &filename,
 		int dataOffset, int dataSize, int sysExOffset) : SoundDriver(mixer, filename, dataOffset, dataSize) {
@@ -79,19 +79,42 @@ RSound::RSound(Audio::Mixer *mixer, const Common::Path &filename,
 	_pollResult = 0;
 	_resultFlag = 0;
 	_sysExOffset = sysExOffset;
+	_updateDeltaRemainder = 0;
 
 	for (int i = 0; i < RSOUND_CHANNEL_COUNT; ++i) {
 		_channels[i]._owner = this;
 		_channels[i]._midiChannel = i + 1;
 	}
 
+	_midiDriver = new MidiDriver_MT32GM(MusicType::MT_MT32);
+	int returnCode = _midiDriver->open();
+	if (returnCode != 0)
+		error("RSound - Failed to open MIDI music driver - error code %d.", returnCode);
+
+	_driverCallbackDelta = _midiDriver->getBaseTempo();
+
 	// rsound_init calls resetAllChannels directly, then later
 	// (via initDeviceOnce, on successful hardware detection) calls
 	// rsound_command0, which resets the channels again and sends the
-	// GM-reset messages to the device. Since we don't do real hardware
+	// MIDI channel reset messages to the device. Since we don't do real hardware
 	// detection here, just go straight to command0() - matches ASound's
 	// constructor calling command0() directly.
 	command0();
+
+	_midiDriver->setTimerCallback(this, &timerCallback);
+}
+
+RSound::~RSound() {
+	_isDisabled = true;
+	if (_midiDriver != nullptr) {
+		_midiDriver->setTimerCallback(nullptr, nullptr);
+		_midiDriver->close();
+
+		Common::StackLock lock(_driverMutex);
+
+		delete _midiDriver;
+		_midiDriver = nullptr;
+	}
 }
 
 void RSound::validate() {
@@ -190,7 +213,20 @@ int RSound::getRandomNumber() {
 
 void RSound::onTimer() {
 	Common::StackLock slock(_driverMutex);
-	poll();
+
+	// The frequency of the callbacks is dependent on the underlying driver
+	// implementation and might not be 60Hz. Adjust to make sure poll() is called
+	// with the correct frequency.
+	_updateDeltaRemainder += _driverCallbackDelta;
+	while (_updateDeltaRemainder >= UPDATE_DELTA) {
+		poll();
+		_updateDeltaRemainder -= UPDATE_DELTA;
+	}
+}
+
+void RSound::timerCallback(void* data) {
+	RSound *rsound = (RSound *)data;
+	rsound->onTimer();
 }
 
 void RSound::setVolume(int volume) {
@@ -204,6 +240,7 @@ void RSound::setVolume(int volume) {
 // needs to change once the real MT-32/MIDI output interface is wired up;
 // everything else funnels through it.
 
+/*
 void RSound::sendMidiByte(byte value) {
 	warning("RSound: MIDI byte %02X", value);
 }
@@ -215,46 +252,35 @@ void RSound::sendStatus(int midiChannel, byte statusNibble) {
 		sendMidiByte(status);
 	}
 }
+*/
 
 void RSound::sendNoteOn(int midiChannel, int note, int velocity) {
-	sendStatus(midiChannel, 0x90);
-	sendMidiByte(note);
-	sendMidiByte(velocity);
+	_midiDriver->send(MidiDriver::MIDI_COMMAND_NOTE_ON | midiChannel, note, velocity);
 }
 
 void RSound::sendProgramChange(int midiChannel, int program) {
-	sendStatus(midiChannel, 0xC0);
-	sendMidiByte(program);
+	_midiDriver->send(MidiDriver::MIDI_COMMAND_PROGRAM_CHANGE | midiChannel, program, 0);
 }
 
 void RSound::sendVolume(int midiChannel, int volume) {
-	sendStatus(midiChannel, 0xB0);
-	sendMidiByte(7); // CC#7: Channel Volume
-	sendMidiByte(volume);
+	_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | midiChannel, MidiDriver::MIDI_CONTROLLER_VOLUME, volume);
 }
 
 void RSound::sendPitchBend(int midiChannel, int value) {
-	sendStatus(midiChannel, 0xE0);
-	sendMidiByte(0);     // LSB always 0 - only coarse (MSB) control is used
-	sendMidiByte(value);
+	// LSB always 0 - only coarse (MSB) control is used
+	_midiDriver->send(MidiDriver::MIDI_COMMAND_PITCH_BEND | midiChannel, 0, value);
 }
 
 void RSound::sendPan(int midiChannel, int value) {
-	sendStatus(midiChannel, 0xB0);
-	sendMidiByte(10); // CC#10: Pan
-	sendMidiByte(value);
+	_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | midiChannel, MidiDriver::MIDI_CONTROLLER_PANNING, value);
 }
 
 void RSound::muteChannel(int midiChannel) {
-	sendStatus(midiChannel, 0xB0);
-	sendMidiByte(7);
-	sendMidiByte(0);
+	sendVolume(midiChannel, 0);
 }
 
 void RSound::restoreChannelVolume(int midiChannel, int volume) {
-	sendStatus(midiChannel, 0xB0);
-	sendMidiByte(7);
-	sendMidiByte(volume);
+	sendVolume(midiChannel, volume);
 }
 
 void RSound::sendSysEx(int offset) {
@@ -267,18 +293,29 @@ void RSound::sendSysEx(int offset) {
 		return;
 	}
 
-	for (int i = 0; i < ARRAYSIZE(_sysExHeader); ++i)
-		sendMidiByte(_sysExHeader[i]);
-
-	byte checksum = 0;
+	// There is a whole block of SysEx data at this offset that has to be
+	// sent to the MT-32. Each entry is terminated by 0xFF; the block seems to
+	// be terminated by a second 0xFF following the last entry.
+	// FIXME If the data is malformed, this will read out of bounds. Not sure
+	// how the original code handles this.
 	byte *pData = loadData(offset);
-	for (int i = 0; pData[i] != 0xFF; ++i) {
-		sendMidiByte(pData[i]);
-		checksum += pData[i];
+	while (true) {
+		uint16 length = 0;
+		for (int i = 0; pData[i] != 0xFF; ++i) {
+			length++;
+		}
+		if (length == 0) {
+			// Two subsequent 0xFF bytes - end of SysEx data block.
+			break;
+		}
+		// FIXME This call adds the necessary delay for the MT-32 to process the
+		// SysEx message, which will make the engine unresponsive.
+		// This can be fixed using the SysEx queue (specify true as 3rd param).
+		// Driver status can then be checked from the main event loop using
+		// _midiDriver->isReady().
+		_midiDriver->sysExMT32(pData, length);
+		pData += length + 1;
 	}
-
-	sendMidiByte((~checksum + 1) & 0x7F);
-	sendMidiByte(0xF7);
 }
 
 /*-----------------------------------------------------------------------*/
@@ -290,9 +327,7 @@ void RSound::Channel_flushHeldNotes(Channel *channel) {
 		if (slots[i] == 0xFF)
 			break;
 
-		sendStatus(channel->_midiChannel, 0x90);
-		sendMidiByte(slots[i]);
-		sendMidiByte(0); // velocity 0 = note off
+		sendNoteOn(channel->_midiChannel, slots[i], 0); // velocity 0 = note off
 		slots[i] = 0xFF;
 	}
 }
@@ -310,7 +345,8 @@ void RSound::Channel_checkFade(Channel *channel) {
 		// Fully silent - recycle the channel to the fixed "silence" stream
 		// (unk_14566 in the disassembly, at offset 0x3246 relative to
 		// seg001's load address - matches sub_1029F exactly)
-		channel->_pSrc = loadData(0x3246);
+		// FIXME This reads out of bounds
+		//channel->_pSrc = loadData(0x3246);
 		channel->_pendingStop = 0;
 	}
 }
@@ -625,21 +661,16 @@ void RSound::resetAllChannels() {
 }
 
 /**
- * Sends the GM-reset Control Change sequence (all notes off, reset all
- * controllers, volume=100, pan=center) to MIDI channels [first, last]
+ * Resets the MIDI channel state (all notes off, reset all
+ * controllers, volume=100, pan=center) of MIDI channels [first, last]
  * (both inclusive, 1-based). Shared tail used by command0/command2/command4.
  */
-void RSound::sendGmReset(int first, int last) {
+void RSound::sendMidiChannelReset(int first, int last) {
 	for (int ch = first; ch <= last; ++ch) {
-		sendStatus(ch, 0xB0);
-		sendMidiByte(0x7B); // All Notes Off
-		sendMidiByte(0);
-		sendMidiByte(0x79); // Reset All Controllers
-		sendMidiByte(0);
-		sendMidiByte(7);    // Channel Volume
-		sendMidiByte(100);
-		sendMidiByte(10);   // Pan
-		sendMidiByte(0x40);
+		_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | ch, MidiDriver::MIDI_CONTROLLER_ALL_NOTES_OFF, 0);
+		_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | ch, MidiDriver::MIDI_CONTROLLER_RESET_ALL_CONTROLLERS, 0);
+		_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | ch, MidiDriver::MIDI_CONTROLLER_VOLUME, 100);
+		_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | ch, MidiDriver::MIDI_CONTROLLER_PANNING, 0x40);
 	}
 }
 
@@ -648,7 +679,7 @@ int RSound::command0() {
 	_isDisabled = true;
 
 	resetAllChannels();
-	sendGmReset(1, RSOUND_CHANNEL_COUNT);
+	sendMidiChannelReset(1, RSOUND_CHANNEL_COUNT);
 
 	// Matches the trailing "lea ax, unk_1138F; jmp sub_1041E" in rsound_command0.
 	// _sysExOffset is this driver's own command0_array offset, supplied
@@ -669,10 +700,10 @@ int RSound::command1() {
 
 int RSound::command2() {
 	// Channels 1-5, matching sub_101A0 (also reinitializes the held-notes
-	// table) plus the GM-reset CC sequence for those same channels.
+	// table) plus the MIDI channel reset for those same channels.
 	resetChannelRange(0, 5);
 	resetHeldNotes();
-	sendGmReset(1, 5);
+	sendMidiChannelReset(1, 5);
 	return 0;
 }
 
@@ -684,9 +715,9 @@ int RSound::command3() {
 
 int RSound::command4() {
 	// Channels 6-9, matching sub_101EA (does NOT touch the held-notes
-	// table) plus the GM-reset CC sequence for those same channels.
+	// table) plus the MIDI channel reset for those same channels.
 	resetChannelRange(5, RSOUND_CHANNEL_COUNT);
-	sendGmReset(6, RSOUND_CHANNEL_COUNT);
+	sendMidiChannelReset(6, RSOUND_CHANNEL_COUNT);
 	return 0;
 }
 

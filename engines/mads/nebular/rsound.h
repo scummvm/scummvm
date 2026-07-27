@@ -24,6 +24,8 @@
 
 #include "mads/core/sound_manager.h"
 
+#include "audio/mt32gm.h"
+
 namespace MADS {
 namespace RexNebular {
 
@@ -130,6 +132,9 @@ public:
 class RSound : public SoundDriver {
 	friend class Channel;
 private:
+	// Number of microseconds between driver updates (60 Hz frequency)
+	static const uint32 UPDATE_DELTA;
+
 	uint16 _randomSeed;
 	int _masterVolume;
 	byte _lastMidiStatus;             // running-status cache, avoids resending an unchanged status byte
@@ -148,12 +153,9 @@ private:
 	 */
 	int _sysExOffset;
 
-	/**
-	 * Fixed Roland SysEx header (F0 41 10 16 12) - sendSysEx_array in the
-	 * disassembly, confirmed byte-for-byte identical across multiple
-	 * drivers (checked against rsound.001/002/009).
-	 */
-	static const byte _sysExHeader[5];
+	MidiDriver_MT32GM *_midiDriver;
+	uint32 _driverCallbackDelta;
+	uint32 _updateDeltaRemainder;
 
 	void update();
 	void pollAllChannels();
@@ -240,8 +242,8 @@ protected:
 	// ---- Low-level MIDI send helpers -------------------------------
 	// All funnel through sendMidiByte(), the single hook point for
 	// wiring up real MT-32/MIDI output.
-	void sendMidiByte(byte value);
-	void sendStatus(int midiChannel, byte statusNibble);
+	//void sendMidiByte(byte value);
+	//void sendStatus(int midiChannel, byte statusNibble);
 	void sendNoteOn(int midiChannel, int note, int velocity);
 	void sendProgramChange(int midiChannel, int program);
 	void sendVolume(int midiChannel, int volume);
@@ -251,11 +253,11 @@ protected:
 	void restoreChannelVolume(int midiChannel, int volume);
 
 	/**
-	 * Sends the GM-reset Control Change sequence (all notes off, reset all
-	 * controllers, volume=100, pan=center) to MIDI channels [first, last]
+	 * Resets the MIDI channel state (all notes off, reset all
+	 * controllers, volume=100, pan=center) of MIDI channels [first, last]
 	 * (inclusive, 1-based). Shared tail used by command0/command2/command4.
 	 */
-	void sendGmReset(int first, int last);
+	void sendMidiChannelReset(int first, int last);
 
 	/**
 	 * Sends a single Roland DT1-style SysEx message: the fixed
@@ -308,8 +310,7 @@ public:
 	RSound(Audio::Mixer *mixer, const Common::Path &filename,
 		int dataOffset, int dataSize, int sysExOffset);
 
-	~RSound() override {
-	}
+	~RSound() override;
 
 	int stop() override;
 	int poll() override;
@@ -322,8 +323,8 @@ public:
 		return _frameCounter;
 	}
 
-private:
 	void onTimer();
+	static void timerCallback(void *data);
 };
 
 } // namespace RexNebular
