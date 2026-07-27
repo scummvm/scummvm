@@ -21,6 +21,7 @@
 
 #include "mads/dragonsphere/sound.h"
 #include "mads/dragonsphere/asound_dragonsphere.h"
+#include "mads/dragonsphere/rsound_dragonsphere.h"
 
 namespace MADS {
 namespace Dragonsphere {
@@ -42,7 +43,23 @@ void DragonSoundManager::loadDriver(int sectionNumber) {
 	switch (_driverType) {
 	case SOUND_MT32:
 		// Roland MT32 drivers
-		assert(0 == 1);
+		switch (sectionNumber) {
+		case 1:
+			_driver = new RSound1(_mixer);
+			break;
+		case 2:
+			_driver = new RSound2(_mixer);
+			break;
+		case 3:
+			_driver = new RSound3(_mixer);
+			break;
+		case 4:
+			_driver = new RSound4(_mixer);
+			break;
+		default:
+			// TODO
+			break;
+		}
 		break;
 
 	default:

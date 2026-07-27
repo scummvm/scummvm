@@ -347,6 +347,8 @@ MODULE_OBJS := \
 	dragonsphere/dragonsphere.o \
 	dragonsphere/asound.o \
 	dragonsphere/asound_dragonsphere.o \
+	dragonsphere/rsound.o \
+	dragonsphere/rsound_dragonsphere.o \
 	dragonsphere/global.o \
 	dragonsphere/main.o \
 	dragonsphere/main_menu.o \
