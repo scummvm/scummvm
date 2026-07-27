@@ -41,18 +41,17 @@ void Room42::entry() {
 		_G(SetUpScreenFunc) = setup_func;
 
 		if (!_G(flags).LoadGame) {
-			_G(det)->stopDetail(0);
-			_G(timer_nr)[0] = _G(room)->set_timer(8, 5);
-			_G(det)->set_static_ani(8, -1);
 			_G(gameState).R42StationEmployeeAway = true;
-			_G(det)->stopSound(0);
-
-			_G(SetUpScreenFunc) = setup_func;
 
 			setPersonPos(80, 43, P_HOWARD, P_LEFT);
 			_G(atds)->set_all_ats_str(263, 1, ATS_DATA);
 			_G(atds)->set_all_ats_str(264, 1, ATS_DATA);
 		}
+
+		_G(det)->stopDetail(0);
+		_G(det)->stopSound(0);
+		_G(timer_nr)[0] = _G(room)->set_timer(8, 5);
+		_G(det)->set_static_ani(8, -1);
 
 		if (_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && !_G(gameState).R42LetterOk)
 			startAadWait(302);
