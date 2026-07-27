@@ -771,15 +771,27 @@ void ScriptManager::markScenePlayed(const Common::String &scene) {
 	debugC(2, kDebugScene, "Ripper: marked scene played '%s'", scene.c_str());
 }
 
-bool ScriptManager::findFrameByLabel(const CompiledScript &script, const Common::String &label,
-		uint &frameIndex) const {
+uint ScriptManager::resolveFrameIndex(const CompiledScript &script,
+		const Common::String &label) const {
+	if (label.empty())
+		return 0;
+
 	for (uint i = 0; i < script.getFrames().size(); ++i) {
 		if (script.getString(script.getFrames()[i].labelOffset).equalsIgnoreCase(label)) {
-			frameIndex = i;
-			return true;
+			return i;
 		}
 	}
-	return false;
+
+	// FindSceneFrameIndexByLabel at 0x1464d returns frame 0 when no label
+	// matches. HA2.RUN relies on this for its "hcw1in" handoff to HC2.RUN,
+	// whose first frame is labeled "HCW1CIN".
+	const Common::String fallbackLabel = script.getFrames().empty() ?
+		Common::String() : script.getString(script.getFrames()[0].labelOffset);
+	debugC(2, kDebugScene,
+		"Ripper: scene script='%s' entry='%s' not found, using retail fallback "
+		"frame=0 label='%s'",
+		script.getMemberName().c_str(), label.c_str(), fallbackLabel.c_str());
+	return 0;
 }
 
 void ScriptManager::beginBa0InteractionWait(const Common::String &frameLabel,
@@ -1325,12 +1337,8 @@ bool ScriptManager::executeConcurrentFrame() {
 	if (_runtime.concurrentScript.getFrames().empty())
 		return true;
 
-	uint frameIndex = 0;
-	if (!findFrameByLabel(_runtime.concurrentScript, _runtime.concurrentEntryLabel, frameIndex)) {
-		warning("Ripper: concurrent script '%s' has no frame '%s'",
-			_runtime.concurrentScript.getMemberName().c_str(), _runtime.concurrentEntryLabel.c_str());
-		return false;
-	}
+	const uint frameIndex =
+		resolveFrameIndex(_runtime.concurrentScript, _runtime.concurrentEntryLabel);
 
 	const ScriptFrame &frame = _runtime.concurrentScript.getFrames()[frameIndex];
 	debugC(2, kDebugScene, "Ripper: servicing concurrent script='%s' frame=%u label='%s'",
@@ -1390,12 +1398,7 @@ bool ScriptManager::performPendingSceneTransition() {
 	_dialogue->dismissForSceneTransition("scene-runtime-transition");
 	if (!_runtime.activeScript.load(_engine->getResources()->scripts(), memberName))
 		return false;
-	uint startFrame = 0;
-	if (!entryLabel.empty() && !findFrameByLabel(_runtime.activeScript, entryLabel, startFrame)) {
-		warning("Ripper: scene transition target '%s' has no entry '%s'",
-			memberName.c_str(), entryLabel.c_str());
-		return false;
-	}
+	const uint startFrame = resolveFrameIndex(_runtime.activeScript, entryLabel);
 
 	_runtime.previousFrameLabel.clear();
 	_runtime.activeFrame = startFrame;

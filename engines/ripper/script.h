@@ -276,7 +276,7 @@ private:
 	bool advanceBa0ToFrame(uint nextFrame);
 	bool executeConcurrentFrame();
 	bool performPendingSceneTransition();
-	bool findFrameByLabel(const CompiledScript &script, const Common::String &label, uint &frameIndex) const;
+	uint resolveFrameIndex(const CompiledScript &script, const Common::String &label) const;
 	Common::Rect interactionBounds(const ScriptInteraction &interaction) const;
 	const ScriptInteraction *findBa0Interaction(const Common::Point &point,
 		uint *interactionIndex = nullptr) const;
