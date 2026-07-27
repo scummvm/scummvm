@@ -1291,6 +1291,8 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 	case 62:   // R29: use_pumpe()
 	case 111:  // R12: use_linke_rohr()
 	case 114:  // R12: Chewy-as-Bork with terminal
+	case 206:  // R40: move_train(), before the train passes
+	case 207:  // R40: move_train(), after the train passes
 	case 252:
 	case 253:
 	case 259:
