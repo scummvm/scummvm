@@ -3081,6 +3081,57 @@ static const uint16 hoyle5PatchHeartsStrategy[] = {
 	PATCH_END
 };
 
+// Checkers can crash when the script calculates the computer's next move.
+//  Tree:alphaBeta is a large method that evaluates moves and potentially adds
+//  and removes elements to a List object. At the end, it sometimes selects a
+//  random move from the List, but without verifying that the List is not empty.
+//  There are codepaths where the List remains empty but is accessed anyway.
+//
+// We fix this by adding a check to skip selecting a random move when movLst is
+//  empty. This does not prevent the computer from making a move, as the script
+//  has already selected a default move.
+//
+// Applies to: All versions
+// Responsible method: Tree:alphaBeta
+// Fixes bug: #17020
+static const uint16 hoyle5SignatureCheckersAiWindows[] = {
+	0x31, 0x3d,                        // bnt 3d [ skip rng ]
+	SIG_ADDTOOFFSET(+17),              // acc = movLst:size
+	0x36,                              // push
+	0x35, 0x01, SIG_MAGICDWORD,        // ldi 01
+	0x04,                              // sub
+	0x36,                              // push
+	0x43, 0x3c, SIG_UINT16(0x0004),    // callk Random 04
+	0xa5, 0x00,                        // sat 00 [ unused ]
+	SIG_END
+};
+
+static const uint16 hoyle5PatchCheckersAiWindows[] = {
+	PATCH_ADDTOOFFSET(+19),
+	0x31, 0x2a,                        // bnt 2a [ skip rng if movLst:size == 0 ]
+	PATCH_GETORIGINALBYTES(19, 9),
+	PATCH_END
+};
+
+static const uint16 hoyle5SignatureCheckersAiMac[] = {
+	0x31, 0x31,                        // bnt 31 [ skip rng ]
+	SIG_ADDTOOFFSET(+11),              // acc = movLst:size
+	0x36,                              // push
+	0x35, 0x01, SIG_MAGICDWORD,        // ldi 01
+	0x04,                              // sub
+	0x36,                              // push
+	0x43, 0x3c, SIG_UINT16(0x0004),    // callk Random 04
+	0xa5, 0x00,                        // sat 00 [ unused ]
+	SIG_END
+};
+
+static const uint16 hoyle5PatchCheckersAiMac[] = {
+	PATCH_ADDTOOFFSET(+13),
+	0x31, 0x24,                        // bnt 24 [ skip rng if movLst:size == 0 ]
+	PATCH_GETORIGINALBYTES(13, 9),
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry hoyle5Signatures[] = {
 	{  true,     0, "disable volume reset on startup",             1, sci2VolumeResetSignature,         sci2VolumeResetPatch },
@@ -3089,6 +3140,8 @@ static const SciScriptPatcherEntry hoyle5Signatures[] = {
 	{  true,   200, "fix setScale calls",                         11, hoyle5SetScaleSignature,          hoyle5PatchSetScale },
 	{  true,   300, "hearts strategy",                             1, hoyle5SignatureHeartsStrategy,    hoyle5PatchHeartsStrategy },
 	{  true,   500, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
+	{  true,  1202, "fix checkers ai",                             1, hoyle5SignatureCheckersAiWindows, hoyle5PatchCheckersAiWindows },
+	{  true,  1202, "fix checkers ai",                             1, hoyle5SignatureCheckersAiMac,     hoyle5PatchCheckersAiMac },
 	{  true,  6001, "fix solitaire init",                          1, hoyle5SignatureSolitaireInit,     hoyle5PatchSolitaireInit },
 	{  true,  6002, "fix solitaire init",                          1, hoyle5SignatureSolitaireInit,     hoyle5PatchSolitaireInit },
 	{  true,  6004, "fix solitaire init",                          1, hoyle5SignatureSolitaireInit,     hoyle5PatchSolitaireInit },
