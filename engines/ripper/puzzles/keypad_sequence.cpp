@@ -50,6 +50,7 @@ static const uint16 kEscapeCommand = 0x1b;
 static const uint16 kHelpCommand = 0x3b00;
 static const uint kDosTickMillis = 55;
 
+static const int kMediaX = 100;
 static const int kCodeX = 142;
 // RunKeypadSequencePuzzleScene at 0x3bd30 loads ECX=0x8e and
 // EBX=g_presentationViewportTopY+0x109 before initializing control 0x672.
@@ -145,25 +146,15 @@ bool KeypadSequencePuzzle::loadAssets() {
 	return true;
 }
 
-bool KeypadSequencePuzzle::prepareEntryDisplay() {
-	Graphics::Surface *screen = g_system->lockScreen();
-	if (!screen || screen->format.bytesPerPixel != 1 ||
-			screen->w < kRipperScreenWidth ||
-			screen->h < kRipperScreenHeight) {
-		if (screen)
-			g_system->unlockScreen();
-		return false;
-	}
-	for (int y = kSceneOriginY; y < kSceneOriginY + kSceneHeight; ++y)
-		memset(screen->getBasePtr(0, y), 0, kRipperScreenWidth);
-	g_system->unlockScreen();
-	g_system->updateScreen();
+bool KeypadSequencePuzzle::captureEntryDisplay() {
+	// Retail clears logical page 1 at 0x3bd64, not the visible page containing
+	// the retained JB_DOOR frame. ScummVM presents both through one framebuffer.
 	return _baseDisplay.capture();
 }
 
 bool KeypadSequencePuzzle::openKeypad() {
 	_engine->getCursor()->setVisible(false);
-	if (!_engine->getMedia()->playScene(kOpenMedia, 0, 0, false,
+	if (!_engine->getMedia()->playScene(kOpenMedia, kMediaX, 0, false,
 			false, false))
 		return false;
 	if (!_baseDisplay.capture())
@@ -186,7 +177,7 @@ bool KeypadSequencePuzzle::openKeypad() {
 
 bool KeypadSequencePuzzle::closeKeypad() {
 	_engine->getCursor()->setVisible(false);
-	const bool result = _engine->getMedia()->playScene(kCloseMedia, 0, 0,
+	const bool result = _engine->getMedia()->playScene(kCloseMedia, kMediaX, 0,
 		false, false, false);
 	_engine->getInput()->discardMouseTransitions();
 	debugC(result ? 1 : 2, kDebugPuzzles,
@@ -431,7 +422,7 @@ void KeypadSequencePuzzle::stopAudio() {
 KeypadSequencePuzzle::Result KeypadSequencePuzzle::run(uint completionFlag) {
 	// DispatchSceneEntryAction at 0x36892 maps action 34 to
 	// RunKeypadSequencePuzzleScene at 0x3bd30.
-	if (!loadAssets() || !prepareEntryDisplay())
+	if (!loadAssets() || !captureEntryDisplay())
 		return kLoadFailed;
 
 	_engine->getToolbar()->leave();
