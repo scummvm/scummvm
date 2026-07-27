@@ -32,10 +32,12 @@
 
 #include "director/director.h"
 #include "director/cast.h"
+#include "director/channel.h"
 #include "director/images.h"
 #include "director/movie.h"
 #include "director/picture.h"
 #include "director/score.h"
+#include "director/sprite.h"
 #include "director/types.h"
 #include "director/window.h"
 #include "director/castmember/bitmap.h"
@@ -404,6 +406,16 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 			bbox,
 			pal
 		);
+	}
+
+	if (channel && channel->_sprite && (channel->_sprite->_thickness & kTFlip)) {
+		Graphics::Surface *surface = widget->getSurface()->surfacePtr();
+		Common::Rect whole(surface->w, surface->h);
+
+		if (channel->_sprite->_thickness & kTFlipH)
+			surface->flipHorizontal(whole);
+		if (channel->_sprite->_thickness & kTFlipV)
+			surface->flipVertical(whole);
 	}
 
 	return widget;

@@ -1965,16 +1965,12 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		channel->setDirty();
 
 		sprite->setAutoPuppet(kAPThickness, true);
-
-		warning("STUB: Sprite flipH was set to %d", d.asInt());
 		break;
 	case kTheFlipV: // D7
 		sprite->_thickness = (sprite->_thickness & ~kTFlipV) | ((d.asInt() ? kTFlipV : 0));
 		channel->setDirty();
 
 		sprite->setAutoPuppet(kAPThickness, true);
-
-		warning("STUB: Sprite flipV was set to %d", d.asInt());
 		break;
 	case kTheForeColor:
 		{

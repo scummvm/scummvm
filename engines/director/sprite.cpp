@@ -510,6 +510,13 @@ Common::Rect Sprite::getBbox(bool unstretched) {
 	if (_cast)
 		result = _cast->getBbox(_width, _height);
 
+	if (_cast && _cast->_type == kCastBitmap && (_thickness & kTFlip)) {
+		if (_thickness & kTFlipH)
+			result.moveTo(-result.right, result.top);
+		if (_thickness & kTFlipV)
+			result.moveTo(result.left, -result.bottom);
+	}
+
 	// The origin of the rect should be at the registration offset,
 	// e.g. for bitmap sprites this defaults to the centre.
 	// Now we move the rect to the correct spot.
