@@ -261,6 +261,8 @@ MODULE_OBJS := \
 	phantom/phantom.o \
 	phantom/asound.o \
 	phantom/asound_phantom.o \
+	phantom/rsound.o \
+	phantom/rsound_phantom.o \
 	phantom/catacombs.o \
 	phantom/global.o \
 	phantom/main_menu.o \

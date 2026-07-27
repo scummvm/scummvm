@@ -21,6 +21,7 @@
 
 #include "mads/phantom/sound.h"
 #include "mads/phantom/asound_phantom.h"
+#include "mads/phantom/rsound_phantom.h"
 
 namespace MADS {
 namespace Phantom {
@@ -38,7 +39,8 @@ void PhantomSoundManager::loadDriver(int sectionNumber) {
 
 	if (_isMT32) {
 		// Roland MT32 drivers
-		assert(0 == 1);
+		assert(sectionNumber == 1);
+		_driver = new RSound1(_mixer);
 
 	} else {
 		// Adlib drivers
