@@ -880,7 +880,7 @@ void PhoenixVREngine::setCursor(const Common::String &path, const Common::String
 	}
 	auto &cursors = _cursors[warp];
 	if (idx >= 0 && idx < static_cast<int>(cursors.size()))
-		cursors[idx] = path;
+		cursors[idx].name = path;
 	else
 		debug("index %d is out of range", idx);
 }
@@ -894,7 +894,7 @@ void PhoenixVREngine::hideCursor(const Common::String &wname, int idx) {
 	}
 	auto &cursors = _cursors[warp];
 	if (idx >= 0 && idx < static_cast<int>(cursors.size()))
-		cursors[idx].clear();
+		cursors[idx].hidden = true;
 	else
 		debug("index %d is out of range", idx);
 }
@@ -1786,6 +1786,9 @@ void PhoenixVREngine::tick(float dt) {
 		debug("warp %d -> %s %s", _nextWarp, _warp->vrFile.c_str(), _warp->testFile.c_str());
 		_nextWarp = -1;
 		_randomSounds.clear();
+		auto &cursors = _cursors[_warpIdx];
+		for (auto &cursor : cursors)
+			cursor.hidden = false;
 
 		{
 			Common::String origName;
@@ -1846,7 +1849,8 @@ void PhoenixVREngine::tick(float dt) {
 			continue;
 
 		if (_vr.isVR() ? region->contains3D(currentVRPos()) : region->contains2D(_mousePos.x, _mousePos.y)) {
-			anyMatched = true;
+			const bool validTestIdx = i < static_cast<int>(cursors.size());
+			anyMatched = !(validTestIdx && cursors[i].hidden);
 			if (gameIdMatches("messenger") && _warp && _warp->vrFile.equalsIgnoreCase("portef.vr") && i >= 0 && i < 12)
 				messengerInventoryHover = i;
 
@@ -1857,9 +1861,8 @@ void PhoenixVREngine::tick(float dt) {
 				executeTest(i);
 			}
 
-			if (!cursor && i < static_cast<int>(cursors.size())) {
-				auto &name = cursors[i];
-				cursor = loadCursor(name);
+			if (!cursor && validTestIdx) {
+				cursor = loadCursor(cursors[i].name);
 			}
 		} else if (i == _hoverIndex) {
 			debug("leaving hover region");
@@ -2220,7 +2223,7 @@ void PhoenixVREngine::captureContext() {
 	writeString({});
 	for (auto &warpCursors : _cursors)
 		for (auto &cursor : warpCursors)
-			writeString(cursor);
+			writeString(cursor.name);
 
 	for (auto &var : _script->getVars()) {
 		auto value = g_engine->getVariable(var.name);
@@ -2313,7 +2316,7 @@ bool PhoenixVREngine::enterScript() {
 				debug("ignoring VR cursor, original engine saves `LOAD.VR` as a cursor name at loading screen");
 				cursor.clear();
 			}
-			warpCursor = cursor;
+			warpCursor.name = cursor;
 		}
 	}
 	debug("vars at %08x", (uint32)ms.pos());

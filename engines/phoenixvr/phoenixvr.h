@@ -379,7 +379,11 @@ private:
 	float _lensflareY = 0.0f;
 	Common::Array<uint32> _lightEffect;
 
-	Common::Array<Common::Array<Common::String>> _cursors;
+	struct WarpCursorState {
+		Common::String name;
+		bool hidden = false;
+	};
+	Common::Array<Common::Array<WarpCursorState>> _cursors;
 	Common::String _defaultCursor[2];
 	Common::String _currentMusic;
 	int _currentMusicVolume = 0;
