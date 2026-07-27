@@ -47,6 +47,7 @@ public:
 	bool arm(uint selector, bool playNotification = true);
 	bool restore(bool armed, uint selector);
 	void clear();
+	void prepareForSceneTransition();
 	BriefingServiceResult service(const MouseState &mouse);
 	void draw();
 

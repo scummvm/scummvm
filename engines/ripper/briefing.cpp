@@ -42,7 +42,7 @@ static const uint32 kBriefingFrameInterval = 3 * kDosTickMillis;
 static const uint kBriefingAlertVolume = 35;
 
 static bool isImplementedBriefingSelector(uint selector) {
-	return selector == 1 || selector == 2;
+	return selector == 1 || selector == 2 || selector == 4;
 }
 
 BriefingManager::BriefingManager(RipperEngine *engine) : _engine(engine),
@@ -162,6 +162,18 @@ void BriefingManager::clear() {
 	_hovered = false;
 }
 
+void BriefingManager::prepareForSceneTransition() {
+	if (!_armed)
+		return;
+	// A briefing armed by WMAP*.RUN survives the following scene handoff.
+	// Discard its map-screen backing so the first destination frame captures
+	// the pixels that should be restored when the player activates the icon.
+	_backing.clear();
+	debugC(3, kDebugScene,
+		"Ripper: discarded briefing backing before scene transition selector=%u",
+		_selector);
+}
+
 void BriefingManager::captureBacking() {
 	if (!_backing.empty())
 		return;
@@ -223,6 +235,22 @@ bool BriefingManager::activate() {
 		// presenting media or changing milestone state.
 		debugC(1, kDebugScene,
 			"Ripper: completed briefing selector=2 without media or state changes");
+		break;
+	case 4:
+		result = _engine->getMedia()->play("sj_wacm.avi", true, 0, 0);
+		if (result)
+			result = _engine->getMilestones()->set(
+				kMilestoneReceivedJordanWacMessage, true, "briefing selector 4");
+		if (result)
+			result = _engine->getMilestones()->set(
+				kMilestoneWebRunnersLoftOpen, true, "briefing selector 4");
+		if (result) {
+			debugC(1, kDebugScene,
+				"Ripper: completed briefing selector=4 media='sj_wacm.avi' "
+				"messageFlag=%u travelFlag=%u",
+				(uint)kMilestoneReceivedJordanWacMessage,
+				(uint)kMilestoneWebRunnersLoftOpen);
+		}
 		break;
 	default:
 		warning("Ripper: unsupported briefing selector %u", selector);

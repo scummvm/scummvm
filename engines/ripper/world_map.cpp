@@ -360,15 +360,16 @@ uint WorldMap::resolveChapter() const {
 	return 0;
 }
 
-Common::String WorldMap::resolveTargetScript(uint locationIndex) const {
+Common::String WorldMap::resolveTargetScript(uint locationIndex, uint chapter) const {
 	if (locationIndex >= _locations.size())
 		return Common::String();
 	return Common::String::format(_locations[locationIndex].targetPattern.c_str(),
-		(int)resolveChapter());
+		(int)chapter);
 }
 
-bool WorldMap::run(Common::String &targetScript) {
+bool WorldMap::run(Common::String &targetScript, uint &chapter) {
 	targetScript.clear();
+	chapter = 0;
 	if (!_initialized || !captureDisplay())
 		return false;
 
@@ -462,10 +463,12 @@ bool WorldMap::run(Common::String &targetScript) {
 	_engine->getCursor()->setVisible(false);
 	if (selected) {
 		const uint locationIndex = _visibleLocations[_selectedVisible];
-		targetScript = resolveTargetScript(locationIndex);
+		chapter = resolveChapter();
+		targetScript = resolveTargetScript(locationIndex, chapter);
 		debugC(1, kDebugScene,
-			"Ripper: world map selected location=%u name='%s' target='%s'",
-			locationIndex, _locations[locationIndex].name.c_str(), targetScript.c_str());
+			"Ripper: world map selected location=%u name='%s' chapter=%u target='%s'",
+			locationIndex, _locations[locationIndex].name.c_str(), chapter,
+			targetScript.c_str());
 		g_system->fillScreen(0);
 		g_system->updateScreen();
 		_savedPixels.clear();
