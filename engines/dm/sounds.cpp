@@ -44,6 +44,7 @@ SoundMan *SoundMan::getSoundMan(DMEngine *vm, const DMADGameDescription *gameVer
 		warning("Unknown platform, using default Amiga SoundMan");
 		// fall through
 	case Common::kPlatformAmiga:
+	case Common::kPlatformDOS:
 		return new SoundMan(vm);
 	case Common::kPlatformAtariST:
 		return new SoundMan_Atari(vm);
@@ -51,7 +52,7 @@ SoundMan *SoundMan::getSoundMan(DMEngine *vm, const DMADGameDescription *gameVer
 }
 
 void SoundMan::initConstants() {
-	Sound sounds[kDMSoundCount] = {
+	Sound soundsAmiga[kDMSoundCount] = {
 		Sound(533, 112,  11, 3, 6), /* k00_soundMETALLIC_THUD 0 */
 		Sound(534, 112,  15, 0, 3), /* k01_soundSWITCH 1 */
 		Sound(535, 112,  72, 3, 6), /* k02_soundDOOR_RATTLE 2 */
@@ -87,8 +88,47 @@ void SoundMan::initConstants() {
 		Sound(573, 138,  29, 0, 4), /* k32_soundMOVE_RED_DRAGON 32 Atari ST: not present */
 		Sound(574, 150,  22, 0, 4)  /* k33_soundMOVE_SKELETON 33 Atari ST: not present */
 	};
+
+	Sound soundsDOS[kDMSoundCount] = {
+		Sound(671, 112,  11, 3, 6), /* k00_soundMETALLIC_THUD 0 */
+		Sound(672, 112,  15, 0, 3), /* k01_soundSWITCH 1 */
+		Sound(673, 112,  72, 3, 6), /* k02_soundDOOR_RATTLE 2 */
+		Sound(688, 112,  60, 3, 5), /* k03_soundATTACK_PAIN_RAT_HELLHOUND_RED_DRAGON 3 */
+		Sound(674, 112,  10, 3, 6), /* k04_soundWOODEN_THUD 4 */
+		Sound(675, 112,  99, 3, 7), /* k05_soundSTRONG_EXPLOSION 5 */
+		Sound(677, 112, 110, 3, 6), /* k06_soundSCREAM 6 */
+		Sound(689, 112,  55, 3, 5), /* k07_soundATTACK_MUMMY_GHOST_RIVE 7 */
+		Sound(678, 112,   2, 3, 6), /* k08_soundSWALLOW 8 */
+		Sound(679, 112,  80, 3, 6), /* k09_soundCHAMPION_0_DAMAGED 9 */
+		Sound(680, 112,  82, 3, 6), /* k10_soundCHAMPION_1_DAMAGED 10 */
+		Sound(681, 112,  84, 3, 6), /* k11_soundCHAMPION_2_DAMAGED 11 */
+		Sound(682, 112,  86, 3, 6), /* k12_soundCHAMPION_3_DAMAGED 12 */
+		Sound(683, 112,  95, 3, 6), /* k13_soundSPELL 13 */
+		Sound(690, 112,  57, 3, 5), /* k14_soundATTACK_SCREAMER_OITU 14 */
+		Sound(691, 112,  52, 3, 5), /* k15_soundATTACK_GIANT_SCORPION_SCORPION 15 */
+		Sound(684, 112,  40, 2, 4), /* k16_soundCOMBAT_ATTACK_SKELETON 16 */
+		Sound(685, 112,  70, 1, 4), /* k17_soundBUZZ 17 */
+		Sound(687, 138,  75, 3, 6), /* k18_soundPARTY_DAMAGED 18 */
+		Sound(692, 112,  50, 3, 5), /* k19_soundATTACK_MAGENTA_WORM_WORM 19 */
+		Sound(675, 112,  98, 0, 4), /* k20_soundWEAK_EXPLOSION 20 */
+		Sound(693, 112,  96, 2, 4), /* k21_soundATTACK_GIGGLER 21 */
+		Sound(701, 138,  24, 0, 4), /* k22_soundMOVE_ANIMATED_ARMOUR 22 */
+		Sound(702, 138,  21, 0, 4), /* k23_soundMOVE_COUATL 23 */
+		Sound(703, 138,  23, 0, 4), /* k24_soundMOVE_MUMMY 24 */
+		Sound(704, 138, 105, 0, 4), /* k25_soundBLOW_HORN 25 */
+		Sound(705, 138,  27, 0, 4), /* k26_soundMOVE_SCREAMER 26 */
+		Sound(706, 138,  28, 0, 4), /* k27_soundMOVE_SWAMP_SLIME 27 */
+		Sound(707, 138, 106, 0, 4), /* k28_soundWAR_CRY 28 */
+		Sound(708, 138,  56, 0, 4), /* k29_soundATTACK_ROCK 29 */
+		Sound(709, 138,  58, 0, 4), /* k30_soundATTACK_WATER_ELEMENTAL 30 */
+		Sound(710, 112,  53, 0, 4), /* k31_soundATTACK_COUATL 31 */
+		Sound(711, 138,  29, 0, 4), /* k32_soundMOVE_RED_DRAGON 32 */
+		Sound(712, 150,  22, 0, 4)  /* k33_soundMOVE_SKELETON 33 */
+	};
+
+	const Sound *src = (_vm->getPlatform() == Common::kPlatformDOS) ? soundsDOS : soundsAmiga;
 	for (int i = 0; i < kDMSoundCount; i++)
-		_sounds[i] = sounds[i];
+		_sounds[i] = src[i];
 }
 
 SoundMan::SoundMan(DMEngine *vm) : _vm(vm) {
@@ -109,14 +149,18 @@ void SoundMan::loadSounds() {
 		soundData->_firstSample = new byte[soundData->_byteCount];
 
 		Common::MemoryReadStream stream = _vm->_displayMan->getCompressedData(graphicIndex);
-		soundData->_sampleCount = stream.readUint16BE();
+		if (_vm->getPlatform() == Common::kPlatformDOS)
+			soundData->_sampleCount = stream.readUint16LE();
+		else
+			soundData->_sampleCount = stream.readUint16BE();
 		stream.read(soundData->_firstSample, soundData->_byteCount);
 	}
 }
 
 void SoundMan::play(uint16 soundIndex, uint16 period, uint8 leftVolume, uint8 rightVolume) {
 	SoundData *sound = &_soundData[soundIndex];
-	Audio::AudioStream *stream = Audio::makeRawStream(sound->_firstSample, sound->_byteCount, (72800 / period) * 8, 0, DisposeAfterUse::NO);
+	byte flags = (_vm->getPlatform() == Common::kPlatformDOS) ? Audio::FLAG_UNSIGNED : 0;
+	Audio::AudioStream *stream = Audio::makeRawStream(sound->_firstSample, sound->_byteCount, (72800 / period) * 8, flags, DisposeAfterUse::NO);
 
 	signed char balance = ((int16)rightVolume - (int16)leftVolume) / 2;
 
