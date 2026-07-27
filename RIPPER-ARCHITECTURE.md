@@ -1243,7 +1243,11 @@
   handler anchors mirror the callback table at `0x84040`; decoded script data
   retains those serialized values while engine control flow uses the labels.
 - `CreateSceneRuntime` at `0x12be7` loads a compiled script and binds its frame,
-  interaction, and callback tables.
+  interaction, and callback tables. A nonempty entry name is matched
+  case-insensitively by `FindSceneFrameIndexByLabel` at `0x1464d`; an
+  unmatched name resolves to frame zero rather than failing the transition.
+  `HA2.RUN` depends on that fallback when its `hcw1in` handoff enters
+  `HC2.RUN` at first-frame label `HCW1CIN`.
 - `SceneRuntimeState` owns the active and concurrent compiled scripts together
   with their frame, interaction, pending-transition, and Cyber control state.
   Entering a nested Cyber program moves this object into a snapshot and starts
