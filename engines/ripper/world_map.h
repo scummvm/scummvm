@@ -37,7 +37,7 @@ public:
 	explicit WorldMap(RipperEngine *engine);
 
 	bool initialize(ResourceManager &resources);
-	bool run(Common::String &targetScript);
+	bool run(Common::String &targetScript, uint &chapter);
 	uint locationCount() const { return _locations.size(); }
 	bool isLocationAvailable(uint locationIndex) const;
 	const Common::String &locationName(uint locationIndex) const;
@@ -67,7 +67,7 @@ private:
 	bool selectViewportEdge(bool last);
 	void updateFirstVisible();
 	uint resolveChapter() const;
-	Common::String resolveTargetScript(uint locationIndex) const;
+	Common::String resolveTargetScript(uint locationIndex, uint chapter) const;
 	const Common::String &resourceString(uint resourceId) const;
 
 	RipperEngine *_engine;

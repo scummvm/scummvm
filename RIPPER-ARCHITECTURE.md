@@ -419,9 +419,17 @@
 - Briefing selector 2 is an intentional no-op in
   `ServiceBriefingMediaTrigger` at `0x1945b`: selecting its armed control
   clears the trigger but presents no media and changes no milestone state.
-  ScummVM treats selectors beyond the implemented 1 and 2 as runtime failures
+  ScummVM treats selectors beyond the implemented 1, 2, and 4 as runtime failures
   when scripts arm them or saves attempt to restore them, rather than leaving
   an unsupported trigger active.
+- `HandleSceneSelectionAction` at `0x191e2` records the selected destination
+  before `RunFrontEndActionMenu` at `0x18b3a` runs the chapter-specific
+  `WMAP*.RUN` checkpoint. ScummVM preserves that boundary after the map UI and
+  before the destination handoff. In Act II, `WMAP2.RUN` first derives flags
+  303, 308, and 315 from completed scene state. Because its selector-4 gate
+  precedes the flag-315 derivation in the same callback, the Jordan briefing is
+  armed only on the following map transition. Selecting that briefing presents
+  `SJ_WACM.AVI`, sets flag 305, and restores Web Runner's Loft flag 41.
 - `WriteEmergencySaveGame` at `0x1ae3c` writes `0x7d` bytes for this store,
   exactly 125 bytes or 1,000 bits; `RestoreSavedRunState` at `0x1b8dd` caps the
   restored payload to the same size. ScummVM's engine-owned `Milestones`

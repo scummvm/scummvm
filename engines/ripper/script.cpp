@@ -690,9 +690,12 @@ bool ScriptManager::initialize(ResourceManager &resources) {
 
 bool ScriptManager::openWorldMap() {
 	Common::String targetScript;
-	if (!_engine->getWorldMap()->run(targetScript))
+	uint chapter = 0;
+	if (!_engine->getWorldMap()->run(targetScript, chapter))
 		return false;
 	if (!targetScript.empty()) {
+		if (!runWorldMapCheckpoint(chapter))
+			return false;
 		_runtime.pendingSceneMember = targetScript;
 		_runtime.pendingSceneEntryLabel.clear();
 		_runtime.clearPreservedAudioOnTransition = true;
@@ -700,6 +703,44 @@ bool ScriptManager::openWorldMap() {
 			"Ripper: queued world map scene transition target='%s'",
 			_runtime.pendingSceneMember.c_str());
 	}
+	return true;
+}
+
+bool ScriptManager::runWorldMapCheckpoint(uint chapter) {
+	const Common::String memberName =
+		Common::String::format("wmap%u.run", chapter);
+	AssetLibrary &scripts = _engine->getResources()->scripts();
+	if (!scripts.hasMember(memberName)) {
+		debugC(2, kDebugScripts,
+			"Ripper: no world-map checkpoint chapter=%u member='%s'",
+			chapter, memberName.c_str());
+		return true;
+	}
+
+	CompiledScript checkpoint;
+	if (!checkpoint.load(scripts, memberName) ||
+			checkpoint.getFrames().size() != 1) {
+		warning("Ripper: invalid world-map checkpoint chapter=%u member='%s'",
+			chapter, memberName.c_str());
+		return false;
+	}
+
+	// HandleSceneSelectionAction at 0x191e2 records the selected destination,
+	// then RunFrontEndActionMenu at 0x18b3a runs WMAP*.RUN before entering it.
+	// The shipped checkpoint scripts perform their work in the sole frame's
+	// entry callback; the exit callback only terminates that nested runtime.
+	const ScriptFrame &frame = checkpoint.getFrames()[0];
+	int result = 0;
+	if (!executeCallback(checkpoint, frame.enterCallbackOffset, result) ||
+			result != 0) {
+		warning("Ripper: world-map checkpoint chapter=%u member='%s' "
+			"enter=0x%x returned result=%d",
+			chapter, memberName.c_str(), frame.enterCallbackOffset, result);
+		return false;
+	}
+	debugC(1, kDebugScripts,
+		"Ripper: completed world-map checkpoint chapter=%u member='%s' enter=0x%x",
+		chapter, memberName.c_str(), frame.enterCallbackOffset);
 	return true;
 }
 
@@ -1397,6 +1438,7 @@ bool ScriptManager::performPendingSceneTransition() {
 	_runtime.clearPreservedAudioOnTransition = false;
 	_engine->getToolbar()->leave();
 	_dialogue->dismissForSceneTransition("scene-runtime-transition");
+	_briefing->prepareForSceneTransition();
 	if (!_runtime.activeScript.load(_engine->getResources()->scripts(), memberName))
 		return false;
 	const uint startFrame = resolveFrameIndex(_runtime.activeScript, entryLabel);
