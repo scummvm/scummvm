@@ -40,12 +40,14 @@ enum MilestoneFlag {
 	kMilestoneCompletedAct3 = 4,
 	kMilestoneFirstTravelLocation = 20,
 	kMilestoneMagnottaApartmentInteriorOpen = 31,
+	kMilestoneWebRunnersLoftOpen = 41,
 	kMilestoneLastTravelLocation = 44,
 	kMilestoneFirstWacDatabaseEntry = 70,
 	kMilestoneScannedMug = 71,
 	kMilestoneCompletedMug = 72,
 	kMilestonePlayedFinalPrologueScene = 300,
-	kMilestonePlayedFirstWacMessage = 301
+	kMilestonePlayedFirstWacMessage = 301,
+	kMilestoneReceivedJordanWacMessage = 305
 };
 
 class Milestones {
