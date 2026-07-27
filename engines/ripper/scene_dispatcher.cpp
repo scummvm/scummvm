@@ -36,6 +36,7 @@
 #include "ripper/puzzles/crystal.h"
 #include "ripper/puzzles/gc_csh.h"
 #include "ripper/puzzles/kd_shooting_gallery.h"
+#include "ripper/puzzles/keypad_sequence.h"
 #include "ripper/puzzles/kj_blob_shooter.h"
 #include "ripper/puzzles/rolodex.h"
 #include "ripper/puzzles/table_gate.h"
@@ -83,7 +84,7 @@ const char *SceneActionDispatcher::actionName(uint action) {
 	case 31: return "no-op";
 	case 32: return "clear active display";
 	case 33: return "stained glass puzzle";
-	case 34: return "keypad sequence puzzle";
+	case kSceneActionKeypadSequencePuzzle: return "keypad sequence puzzle";
 	case 35: return "set UI selection index";
 	case 36: return "update UI selection";
 	case kSceneActionSetFrontEndActionMask: return "set front-end action mask";
@@ -273,6 +274,15 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		g_system->updateScreen();
 		debugC(2, kDebugScene, "Ripper: cleared active scene display from scene action 32");
 		return true;
+	}
+	if (action == kSceneActionKeypadSequencePuzzle) {
+		KeypadSequencePuzzle puzzle(engine);
+		const KeypadSequencePuzzle::Result result = puzzle.run(argument);
+		debugC(1, kDebugPuzzles,
+			"Ripper: keypad sequence puzzle scene action completed "
+			"result=%d milestone=%u",
+			result, argument);
+		return result != KeypadSequencePuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionSetUiSelectionIndex) {
 		engine->getCursor()->setSelectionIndex(argument);

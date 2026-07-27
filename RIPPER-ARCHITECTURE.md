@@ -776,6 +776,19 @@
   presents `Q_P_16.WAV`, but leaves the puzzle active. Escape or either
   80-pixel side control exits, F1 opens help table `0x1ab`, and `BB1.WAV`
   accompanies selection of a card that was not already frontmost.
+- Scene action 34 calls `RunKeypadSequencePuzzleScene` at `0x3bd30` with
+  the caller-supplied completion flag. `JB2.RUN` callback `0x2da` supplies
+  milestone 220 after presenting `JB_DOOR.SMK`. The initial `KPEXTRA2.BBM`
+  code control opens `KPOPEN.AVI`; Escape, the left-edge control, or the code
+  control then presents `KPCLOSE.AVI` and exits. F1 opens help table `0x1ac`.
+- The twelve keypad controls use the scene-space Y/X positions at `0x84b8e`.
+  `JB_KEY0.BBM` through `JB_KEY8.BBM` are digits 1 through 9,
+  `JB_KEY9.BBM` is EX, `JB_KEY10.BBM` is zero, and `JB_KEY11.BBM` is RV.
+  EX and RV both run the reject/clear sweep. The nine-digit solution at
+  `0x84b7c` is `450144286`; matching it runs the success sweep and sets the
+  supplied completion flag. `KPEXTRA0.BBM` through `KPEXTRA3.BBM` provide the
+  entry-slot and blinking-prompt feedback, while `JB_LOC0.WAV` through
+  `JB_LOC5.WAV` supply control and result cues.
 - Scene action 24 calls `RunTubeSwitchScene` at `0x25e18` with the
   caller-supplied completion flag. `GA1.RUN` callback `0xaf2` supplies flag 215
   (`solved vacuum tube puzzle`). The scene counts consumed inventory flags 102,
