@@ -247,6 +247,9 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 	 * [D4 docs] */
 	case kSpriteHandler:
 		{
+			if (!event.channelId)
+				return;
+
 			CastMemberID scriptId;
 			bool immediate = false;
 			Common::String initializerParams;
@@ -256,9 +259,6 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 				scriptId = _currentMouseDownSpriteScriptID;
 				immediate = _currentMouseDownSpriteImmediate;
 			} else {
-				if (!event.channelId)
-					return;
-
 				// clickOn must reflect the release sprite so drop-target scripts
 				// can identify the channel
 				if ((event.event == kEventMouseUp || event.event == kEventRightMouseUp) && event.channelId)
@@ -672,16 +672,14 @@ void Movie::queueInputEvent(LEvent event, int targetId, Common::Point pos) {
 
 
 bool Movie::processInputEvent(LEvent event, int targetId, Common::Point pos) {
+	queueInputEvent(event, targetId, pos);
 	if ((!_lingo->_state->callstack.empty()) || (_lingo->_currentInputEvent.type != VOIDSYM)) {
 		// We're in the middle of executing something else, queue input event for later
-		queueInputEvent(event, targetId, pos);
 		return true;
 	}
-	// Try and process event inline
-	Common::Queue<LingoEvent> queue;
-	queueEvent(queue, event, targetId, pos);
+	// Try and process input events now
 	_vm->setCurrentWindow(this->getWindow());
-	_lingo->processEvents(queue, true);
+	_lingo->processEvents(_inputEventQueue, true);
 	return _lingo->_passEvent;
 }
 
