@@ -173,7 +173,7 @@ private:
 
 public:
 	ScummPAKFile(const ScummEngine *vm, bool indexFiles = true);
-	~ScummPAKFile() override { _pakIndex.clear(); }
+	~ScummPAKFile() override;
 
 	bool openSubFile(const Common::Path &filePath) override;
 	PAKFile *getPAKFileIndex(Common::String fileName);

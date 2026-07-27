@@ -225,6 +225,10 @@ ScummPAKFile::ScummPAKFile(const ScummEngine *vm, bool indexFiles) : ScummFile(v
 		readIndex(vm->_containerFile, vm->_game.id == GID_FT);
 }
 
+ScummPAKFile::~ScummPAKFile() {
+	_pakIndex.clear();
+}
+
 void ScummPAKFile::readIndex(const Common::Path &containerFile, bool isFT) {
 	// Based off DoubleFine Explorer: https://github.com/bgbennyboy/DoubleFine-Explorer/blob/master/uDFExplorer_LPAKManager.pas
 	ScummFile::open(containerFile);
