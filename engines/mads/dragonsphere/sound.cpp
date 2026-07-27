@@ -26,21 +26,26 @@ namespace MADS {
 namespace Dragonsphere {
 
 void DragonSoundManager::validate() {
-	if (_isMT32) {
-		// TODO
-	} else {
+	switch (_driverType) {
+	case SOUND_MT32:
+		error("MT32 is not yet supported");
+		break;
+	default:
 		ASound::validate(_isDemo);
+		break;
 	}
 }
 
 void DragonSoundManager::loadDriver(int sectionNumber) {
 	removeDriver();
 
-	if (_isMT32) {
+	switch (_driverType) {
+	case SOUND_MT32:
 		// Roland MT32 drivers
 		assert(0 == 1);
+		break;
 
-	} else {
+	default:
 		// Adlib drivers
 		switch (sectionNumber) {
 		case 1:

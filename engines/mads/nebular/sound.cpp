@@ -21,22 +21,33 @@
 
 #include "mads/nebular/sound.h"
 #include "mads/nebular/asound_nebular.h"
+#include "mads/nebular/isound_nebular.h"
 #include "mads/nebular/rsound_nebular.h"
 
 namespace MADS {
 namespace RexNebular {
 
 void RexSoundManager::validate() {
-	if (_isMT32)
+	switch (_driverType) {
+	case SOUND_MT32:
 		RSound::validate();
-	else
+		break;
+
+	case SOUND_PCSPEAKER:
+		// No validation needed
+		break;
+
+	default:
 		ASound::validate();
+		break;
+	}
 }
 
 void RexSoundManager::loadDriver(int sectionNumber) {
 	removeDriver();
 
-	if (_isMT32) {
+	switch (_driverType) {
+	case SOUND_MT32:
 		// Roland MT32 drivers
 		switch (sectionNumber) {
 		case 1:
@@ -69,7 +80,43 @@ void RexSoundManager::loadDriver(int sectionNumber) {
 		default:
 			return;
 		}
-	} else {
+		break;
+
+	case SOUND_PCSPEAKER:
+		switch (sectionNumber) {
+		case 1:
+			_driver = new RexNebular::ISound1(_mixer);
+			break;
+		case 2:
+			_driver = new RexNebular::ISound2(_mixer);
+			break;
+		case 3:
+			_driver = new RexNebular::ISound3(_mixer);
+			break;
+		case 4:
+			_driver = new RexNebular::ISound4(_mixer);
+			break;
+		case 5:
+			_driver = new RexNebular::ISound5(_mixer);
+			break;
+		case 6:
+			_driver = new RexNebular::ISound6(_mixer);
+			break;
+		case 7:
+			_driver = new RexNebular::ISound7(_mixer);
+			break;
+		case 8:
+			_driver = new RexNebular::ISound8(_mixer);
+			break;
+		case 9:
+			_driver = new RexNebular::ISound9(_mixer);
+			break;
+		default:
+			return;
+		}
+		break;
+
+	default:
 		// Adlib drivers
 		switch (sectionNumber) {
 		case 1:

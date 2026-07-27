@@ -68,6 +68,8 @@ MODULE_OBJS := \
 	nebular/nebular.o \
 	nebular/asound.o \
 	nebular/asound_nebular.o \
+	nebular/isound.o \
+	nebular/isound_nebular.o \
 	nebular/rsound.o \
 	nebular/rsound_nebular.o \
 	nebular/console.o \

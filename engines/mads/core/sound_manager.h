@@ -84,8 +84,9 @@ public:
 
 class SoundManager {
 protected:
+	enum DriverType { SOUND_ADLIB, SOUND_MT32, SOUND_PCSPEAKER };
 	Audio::Mixer *_mixer;
-	bool _isMT32;
+	DriverType _driverType;
 	bool &_soundFlag;
 	SoundDriver *_driver = nullptr;
 	bool _pollSoundEnabled = false;

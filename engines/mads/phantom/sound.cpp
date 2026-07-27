@@ -27,22 +27,30 @@ namespace MADS {
 namespace Phantom {
 
 void PhantomSoundManager::validate() {
-	if (_isMT32) {
+	switch (_driverType) {
+	case SOUND_MT32:
+		// TODO
 		assert(0 == 1);
-	} else {
+		break;
+
+	default:
+		// Adlib
 		ASound::validate(_isDemo);
+		break;
 	}
 }
 
 void PhantomSoundManager::loadDriver(int sectionNumber) {
 	removeDriver();
 
-	if (_isMT32) {
+	switch (_driverType) {
+	case SOUND_MT32:
 		// Roland MT32 drivers
 		assert(sectionNumber == 1);
 		_driver = new RSound1(_mixer);
+		break;
 
-	} else {
+	default:	
 		// Adlib drivers
 		if (_isDemo) {
 			_driver = new ASoundDemo(_mixer);
