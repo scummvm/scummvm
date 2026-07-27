@@ -462,12 +462,20 @@ BoardArrangementPuzzle::Result BoardArrangementPuzzle::run(uint completionFlag) 
 			redraw = true;
 			if ((mouse.released & kMouseButtonLeft) != 0 ||
 					(mouse.buttons & kMouseButtonLeft) == 0) {
+				const int droppedPiece = _draggedPiece;
 				finishDrag();
-				if (isSolved()) {
+				const bool arrangementSolved = isSolved();
+				if (arrangementSolved) {
 					result = complete(completionFlag) ? kSolved : kLoadFailed;
 					if (result == kLoadFailed)
 						active = false;
 				}
+				debugC(arrangementSolved ? 1 : 2, kDebugPuzzles,
+					"Ripper: board arrangement validation after drop piece=%d "
+					"outcome=%s milestone=%u milestoneSet=%d",
+					droppedPiece, arrangementSolved ? "SOLVED" : "NOT_SOLVED",
+					completionFlag,
+					_engine->getMilestones()->isSet(completionFlag));
 				redraw = true;
 			}
 		} else if ((mouse.pressed & kMouseButtonLeft) != 0) {
@@ -501,11 +509,13 @@ BoardArrangementPuzzle::Result BoardArrangementPuzzle::run(uint completionFlag) 
 	_engine->getCursor()->setVisible(true);
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
+	const bool arrangementSolved = isSolved();
 	debugC(result == kLoadFailed ? 2 : 1, kDebugPuzzles,
-		"Ripper: left board arrangement puzzle result=%d milestone=%u "
-		"solved=%d quit=%d",
-		result, completionFlag,
-		_engine->getMilestones()->isSet(completionFlag), _engine->shouldQuit());
+		"Ripper: left board arrangement puzzle result=%d "
+		"arrangementSolved=%d milestone=%u milestoneSet=%d quit=%d",
+		result, arrangementSolved, completionFlag,
+		_engine->getMilestones()->isSet(completionFlag),
+		_engine->shouldQuit());
 	return result;
 }
 
