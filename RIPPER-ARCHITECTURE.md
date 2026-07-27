@@ -765,7 +765,9 @@
   the hovered card does not change.
 - The board solution order stored at `0x374b1` is `[1, 0, 3, 6, 2]`.
   Each following card must sit entirely below the previous card and overlap it
-  horizontally; the other three cards do not participate in validation.
+  horizontally. There is no maximum vertical gap, and exact horizontal edge
+  contact passes because the retail separation comparisons use strict
+  less-than tests. The other three cards do not participate in validation.
   A newly selected card moves to the front of the hit-test and draw order.
   Drops wholly inside the preview panel animate back to their origin at fifteen
   pixels per DOS tick. The first valid arrangement sets the supplied flag and
