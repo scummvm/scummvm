@@ -52,7 +52,7 @@ private:
 
 	bool loadAssets();
 	bool loadFrame(const Common::String &path, BitmapAssetFrame &frame);
-	bool prepareEntryDisplay();
+	bool captureEntryDisplay();
 	bool openKeypad();
 	bool closeKeypad();
 	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
