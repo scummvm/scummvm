@@ -157,13 +157,21 @@ ASound::ASound(Audio::Mixer *mixer, const Common::Path &filename, int dataOffset
 
 	AdlibChannel::_channelsEnabled = false;
 
+	// Initialize the OPL instance
+	_opl = OPL::Config::create();
+	_opl->init();
+	_opl->start(new Common::Functor0Mem<void, ASound>(this, &ASound::onTimer), CALLBACKS_PER_SECOND);
+
 	// Initialize the Adlib
 	adlibInit();
 
 	// Reset the adlib
 	command0();
+}
 
-	_opl->start(new Common::Functor0Mem<void, ASound>(this, &ASound::onTimer), CALLBACKS_PER_SECOND);
+ASound::~ASound() {
+	_opl->stop();
+	delete _opl;
 }
 
 void ASound::validate() {

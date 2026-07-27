@@ -134,7 +134,7 @@ struct RegisterValue {
  */
 class ASound : public SoundDriver {
 private:
-	OPL::OPL *_opl = OPL::Config::create();
+	OPL::OPL *_opl;
 	uint16 _randomSeed;
 	int _masterVolume;
 
@@ -349,9 +349,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	~ASound() override {
-		delete _opl;
-	}
+	~ASound() override;
 
 	/**
 	 * Stop all currently playing sounds
