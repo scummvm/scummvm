@@ -604,9 +604,9 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 	}
 }
 
-void ActionManager::clearActionRecords() {
+void ActionManager::clearActionRecords(bool nextIsNoArt) {
 	for (auto it = _records.begin(); it != _records.end(); ) {
-		if ((*it)->isPersistentAcrossScenes()) {
+		if ((*it)->survivesSceneChange(nextIsNoArt)) {
 			++it;
 			continue;
 		}

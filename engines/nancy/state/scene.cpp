@@ -1182,9 +1182,6 @@ void Scene::load(bool fromSaveFile) {
 		_specialEffects.front().onSceneChange();
 	}
 
-	clearSceneData();
-	g_nancy->_graphics->suppressNextDraw();
-
 	// Scene IDs are prefixed with S inside the cif tree; e.g 100 -> S100
 	Common::Path sceneName(Common::String::format("S%u", _sceneState.nextScene.sceneID));
 	IFF *sceneIFF = g_nancy->_resource->loadIFF(sceneName);
@@ -1212,6 +1209,16 @@ void Scene::load(bool fromSaveFile) {
 	}
 
 	delete sceneSummaryChunk;
+
+	// A "NO_ART_SCENE" carries no viewport art: it keeps the previous scene's
+	// frame on screen and only overlays new logic (used, for example, by
+	// phone-call conversations). Clearing it must preserve the previous scene's
+	// ambient character videos, so the scene type has to be known before the
+	// scene data is wiped.
+	const bool nextIsNoArt = _sceneState.summary.videoFile == "NO_ART_SCENE";
+
+	clearSceneData(nextIsNoArt);
+	g_nancy->_graphics->suppressNextDraw();
 
 	debugC(0, kDebugScene, "Loading new scene %i: description \"%s\", frame %i, vertical scroll %i, %s",
 				_sceneState.nextScene.sceneID,
@@ -1821,7 +1828,7 @@ void Scene::initStaticData() {
 	_state = kLoad;
 }
 
-void Scene::clearSceneData() {
+void Scene::clearSceneData(bool nextIsNoArt) {
 	// Clear generic flags only
 	for (uint16 id : g_nancy->getStaticData().genericEventFlags) {
 		_flags.eventFlags[id] = g_nancy->_false;
@@ -1831,14 +1838,19 @@ void Scene::clearSceneData() {
 
 	// Stop a leftover random movie if the outgoing scene didn't include
 	// its own PSM(isRandom) AR (so it doesn't bleed into the next scene).
-	if (_activeMovie && _activeMovie->isPersistentAcrossScenes() && !_hadRandomMovieARThisScene) {
+	// A NO_ART_SCENE keeps the previous scene's ambient videos playing, so
+	// leave the active movie running in that case.
+	if (!nextIsNoArt && _activeMovie && _activeMovie->survivesSceneChange(false) && !_hadRandomMovieARThisScene) {
 		_activeMovie->stopRandom();
 	}
 	_hadRandomMovieARThisScene = false;
 
-	bool clearActiveMovie = _activeMovie && !_activeMovie->isPersistentAcrossScenes();
+	// The active movie is dropped unless it survives this change (a persistent
+	// ambient loop). When it survives, clearActionRecords keeps the record alive,
+	// so the pointer must be kept too; otherwise it is cleared to avoid dangling.
+	bool clearActiveMovie = _activeMovie && !_activeMovie->survivesSceneChange(nextIsNoArt);
 
-	_actionManager.clearActionRecords();
+	_actionManager.clearActionRecords(nextIsNoArt);
 
 	if (_lightning) {
 		_lightning->endLightning();

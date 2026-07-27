@@ -280,7 +280,7 @@ private:
 
 	void initStaticData();
 
-	void clearSceneData();
+	void clearSceneData(bool nextIsNoArt = false);
 	void clearPuzzleData();
 
 	// Maps an event flag label to its index in the eventFlags array

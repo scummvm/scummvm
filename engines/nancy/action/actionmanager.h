@@ -62,7 +62,7 @@ public:
 	void addNewActionRecord(Common::SeekableReadStream &inputData);
 	Common::Array<ActionRecord *> &getActionRecords() { return _records; }
 	ActionRecord *getActionRecord(uint id) { if (id < _records.size()) return _records[id]; else return nullptr;}
-	void clearActionRecords();
+	void clearActionRecords(bool nextIsNoArt = false);
 
 	void onPause(bool pause);
 

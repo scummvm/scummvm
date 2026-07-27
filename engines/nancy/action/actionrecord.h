@@ -125,8 +125,15 @@ public:
 	// Used for handling kCursorType dependency
 	virtual bool canHaveHotspot() const { return false; }
 
-	// Records returning true survive Scene::clearSceneData / ActionManager::clearActionRecords.
-	virtual bool isPersistentAcrossScenes() const { return false; }
+	// Records returning true survive the upcoming scene change (i.e. are not
+	// deleted by Scene::clearSceneData / ActionManager::clearActionRecords).
+	// `nextSceneIsNoArt` is true when the incoming scene is a "NO_ART_SCENE": a
+	// videoless scene that keeps the previous scene's frame on screen and only
+	// overlays new logic. The original engine's ClearNoArtSceneData clears the
+	// conversation / sound / phone records but leaves the ambient character
+	// videos playing, so e.g. a character stays visible while a phone-call
+	// conversation runs in front of them.
+	virtual bool survivesSceneChange(bool nextSceneIsNoArt) const { return false; }
 
 protected:
 	void finishExecution();

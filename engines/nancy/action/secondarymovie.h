@@ -169,7 +169,7 @@ public:
 
 	bool isViewportRelative() const override { return true; }
 
-	bool isPersistentAcrossScenes() const override;
+	bool survivesSceneChange(bool nextSceneIsNoArt) const override;
 
 	// Nancy13 talkable characters expose the character's on-screen box as a
 	// clickable hotspot with a talk cursor; clicking opens _talkSceneID, and
