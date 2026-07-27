@@ -377,7 +377,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" draw_cel - Draws a cel from a view resource\n");
 	debugPrintf(" pic_visualize - Enables visualization of the drawing process of EGA pictures\n");
 	debugPrintf(" undither - Enable/disable undithering\n");
-	debugPrintf(" play_video - Plays a SEQ, AVI, VMD, RBT or DUK video\n");
+	debugPrintf(" play_video - Plays a SEQ or AVI video\n");
 	debugPrintf(" animate_list / al - Shows the current list of objects in kAnimate's draw list (SCI0 - SCI1.1)\n");
 	debugPrintf(" window_list / wl - Shows a list of all the windows (ports) in the draw list (SCI0 - SCI1.1)\n");
 	debugPrintf(" plane_list / pl - Shows a list of all the planes in the draw list (SCI2+)\n");
