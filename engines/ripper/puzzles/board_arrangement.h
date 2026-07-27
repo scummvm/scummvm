@@ -58,7 +58,7 @@ private:
 	void finishDrag();
 	void animateInvalidDrop(const Common::Point &target);
 	bool isInvalidDrop(const Common::Point &position, const BitmapAssetFrame &frame) const;
-	bool isSolved() const;
+	bool isSolved(bool logPairs) const;
 	bool complete(uint completionFlag);
 	bool isExitPoint(const Common::Point &point) const;
 	void bringPieceToFront(uint piece);

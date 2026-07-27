@@ -370,21 +370,39 @@ void BoardArrangementPuzzle::finishDrag() {
 		piece, _positions[piece].x, _positions[piece].y);
 }
 
-bool BoardArrangementPuzzle::isSolved() const {
+bool BoardArrangementPuzzle::isSolved(bool logPairs) const {
+	bool solved = true;
 	for (uint order = 0; order + 1 < ARRAYSIZE(kValidationOrder); ++order) {
 		const uint first = kValidationOrder[order];
 		const uint second = kValidationOrder[order + 1];
 		const BitmapAssetFrame &firstFrame = _smallPieces[first];
 		const BitmapAssetFrame &secondFrame = _smallPieces[second];
-		if (_positions[second].y <
-				_positions[first].y + firstFrame.height ||
-				_positions[first].x + firstFrame.width <
-					_positions[second].x ||
-				_positions[second].x + secondFrame.width <
-					_positions[first].x)
-			return false;
+		const int minimumSecondTop =
+			_positions[first].y + firstFrame.height;
+		const int firstRight = _positions[first].x + firstFrame.width;
+		const int secondRight = _positions[second].x + secondFrame.width;
+		const bool verticalPass =
+			_positions[second].y >= minimumSecondTop;
+		const bool horizontalPass =
+			firstRight >= _positions[second].x &&
+			secondRight >= _positions[first].x;
+		if (logPairs) {
+			debugC(2, kDebugPuzzles,
+				"Ripper: board arrangement pair=%u->%u status=%s "
+				"vertical=%s nextTop=%d minimumTop=%d horizontal=%s "
+				"firstX=%d..%d secondX=%d..%d",
+				first, second,
+				verticalPass && horizontalPass ? "PASS" : "FAIL",
+				verticalPass ? "PASS" : "FAIL",
+				_positions[second].y, minimumSecondTop,
+				horizontalPass ? "PASS" : "FAIL",
+				_positions[first].x, firstRight,
+				_positions[second].x, secondRight);
+		}
+		if (!verticalPass || !horizontalPass)
+			solved = false;
 	}
-	return true;
+	return solved;
 }
 
 bool BoardArrangementPuzzle::complete(uint completionFlag) {
@@ -421,6 +439,10 @@ BoardArrangementPuzzle::Result BoardArrangementPuzzle::run(uint completionFlag) 
 		"milestone=%u help=0x%x dragBounds=[%d,%d,%d,%d] validation=1,0,3,6,2",
 		completionFlag, kHelpSelectionTable, kDragLeft, kDragTop,
 		kDragRight, kDragBottom);
+	debugC(1, kDebugPuzzles,
+		"Ripper: board arrangement rules topToBottom=1,0,3,6,2 "
+		"nextTop>=previousBottom horizontal=touch-or-overlap "
+		"maximumVerticalGap=none ignoredPieces=4,5,7");
 
 	Result result = _engine->getMilestones()->isSet(completionFlag) ?
 		kSolved : kExited;
@@ -464,7 +486,7 @@ BoardArrangementPuzzle::Result BoardArrangementPuzzle::run(uint completionFlag) 
 					(mouse.buttons & kMouseButtonLeft) == 0) {
 				const int droppedPiece = _draggedPiece;
 				finishDrag();
-				const bool arrangementSolved = isSolved();
+				const bool arrangementSolved = isSolved(true);
 				if (arrangementSolved) {
 					result = complete(completionFlag) ? kSolved : kLoadFailed;
 					if (result == kLoadFailed)
@@ -509,7 +531,7 @@ BoardArrangementPuzzle::Result BoardArrangementPuzzle::run(uint completionFlag) 
 	_engine->getCursor()->setVisible(true);
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
-	const bool arrangementSolved = isSolved();
+	const bool arrangementSolved = isSolved(false);
 	debugC(result == kLoadFailed ? 2 : 1, kDebugPuzzles,
 		"Ripper: left board arrangement puzzle result=%d "
 		"arrangementSolved=%d milestone=%u milestoneSet=%d quit=%d",
