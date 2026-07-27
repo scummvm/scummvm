@@ -527,8 +527,10 @@ Common::Point CollisionPuzzle::movePiece(uint pieceID, WallType direction) {
 		}
 	}
 
-	// Move result outside of grid when the exit is at an edge, and the moved piece is on top of the exit
-	if (_puzzleType == kTileMove && pieceID == 0) {
+	// Move result outside of grid when the exit is at an edge, and the moved piece is on top of the exit.
+	// Stair-slider puzzles solve by uncovering the exit cell instead, so their solve piece stays in the grid.
+	const bool isStairSlider = _tileMoveExitIndex == 20 && g_nancy->getGameType() >= kGameTypeNancy10;
+	if (_puzzleType == kTileMove && pieceID == 0 && !isStairSlider) {
 		Common::Rect compareRect(newPos.x, newPos.y, newPos.x + _pieces[pieceID]._w, newPos.y + _pieces[pieceID]._h);
 		if (compareRect.contains(_tileMoveExitPos)) {
 			if (horizontal && (_tileMoveExitPos.x == 0 || _tileMoveExitPos.x == (int)_grid[0].size() - 1)) {
