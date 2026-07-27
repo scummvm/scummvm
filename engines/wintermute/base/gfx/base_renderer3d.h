@@ -161,7 +161,6 @@ public:
 	float getBrightnessOknytt() {
 		return _brightnessOknytt;
 	}
-	}
 
 	// ScummVM specific methods <--
 
