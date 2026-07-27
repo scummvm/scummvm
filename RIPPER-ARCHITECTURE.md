@@ -781,6 +781,9 @@
   milestone 220 after presenting `JB_DOOR.SMK`. The initial `KPEXTRA2.BBM`
   code control opens `KPOPEN.AVI`; Escape, the left-edge control, or the code
   control then presents `KPCLOSE.AVI` and exits. F1 opens help table `0x1ac`.
+  Retail clears off-screen logical page 1 before installing the controls, while
+  the visible `JB_DOOR` frame remains behind the puzzle. Both keypad media
+  presentations are 220-by-236 overlays at physical position `(100, 50)`.
 - The twelve keypad controls use the scene-space Y/X positions at `0x84b8e`.
   `JB_KEY0.BBM` through `JB_KEY8.BBM` are digits 1 through 9,
   `JB_KEY9.BBM` is EX, `JB_KEY10.BBM` is zero, and `JB_KEY11.BBM` is RV.
