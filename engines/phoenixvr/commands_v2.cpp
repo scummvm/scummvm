@@ -199,13 +199,14 @@ struct Stop_All_Sounds : public Command {
 struct Cursor_Load : public Command {
 	Common::String index;
 	Common::String path;
-	Common::String width;
-	Common::String height;
+	Common::String offsetX;
+	Common::String offsetY;
 
-	Cursor_Load(const Common::Array<Common::String> &args) : index(args[0]), path(args[1]), width(args.size() > 2 ? args[2].c_str() : "0"), height(args.size() > 3 ? args[3].c_str() : "0") {}
+	Cursor_Load(const Common::Array<Common::String> &args) : index(args[0]), path(args[1]),
+															 offsetX(args.size() > 2 ? args[2].c_str() : "-1"), offsetY(args.size() > 3 ? args[3].c_str() : "-1") {}
 
 	void exec(ExecutionContext &ctx) const override {
-		g_engine->loadCursor(valueOf(index), path, valueOf(width), valueOf(height));
+		g_engine->loadCursor(valueOf(index), path, valueOf(offsetX), valueOf(offsetY));
 	}
 };
 

@@ -1279,31 +1279,34 @@ Graphics::ManagedSurface *PhoenixVREngine::loadSurface(const Common::String &pat
 	return s;
 }
 
-Graphics::ManagedSurface *PhoenixVREngine::loadCursor(const Common::String &path, int w, int h) {
+PhoenixVREngine::CachedCursor *PhoenixVREngine::loadCursor(const Common::String &path, int offsetX, int offsetY) {
 	if (path.empty())
 		return nullptr;
 	auto it = _cursorCache.find(path);
 	if (it != _cursorCache.end())
-		return it->_value.get();
+		return &it->_value;
 	Common::ScopedPtr<Graphics::ManagedSurface> s(loadSurface(path));
 	if (!s) {
 		warning("can't load cursor from %s", path.c_str());
 		return nullptr;
 	}
-	if (w > 0 && h > 0) {
-		s.reset(s->scale(w, h, true));
+	if (offsetX < 0 || offsetY < 0) {
+		offsetX = s->w / 2;
+		offsetY = s->h / 2;
 	}
 	auto &cursor = _cursorCache[path];
-	cursor = Common::move(s);
-	return cursor.get();
+	cursor.offset.x = offsetX;
+	cursor.offset.y = offsetY;
+	cursor.surface = Common::move(s);
+	return &cursor;
 }
 
-void PhoenixVREngine::loadCursor(int idx, const Common::String &path, int w, int h) {
-	debug("load cursor %d %s %d %d", idx, path.c_str(), w, h);
+void PhoenixVREngine::loadCursor(int idx, const Common::String &path, int offsetX, int offsetY) {
+	debug("load cursor %d %s %d %d", idx, path.c_str(), offsetX, offsetY);
 	auto &desc = _loadedCursors[idx];
 	desc.path = path;
 	_cursorCache.erase(path);
-	loadCursor(desc.path, w, h);
+	loadCursor(desc.path, offsetX, offsetY);
 }
 
 void PhoenixVREngine::spriteLoad(const Common::String &name, const Common::String &path) {
@@ -1832,7 +1835,7 @@ void PhoenixVREngine::tick(float dt) {
 	if (_nextWarp < 0 && _nextScript.empty())
 		renderVR(dt);
 
-	Graphics::ManagedSurface *cursor = nullptr;
+	CachedCursor *cursor = nullptr;
 	auto &cursors = _cursors[_warpIdx];
 	bool anyMatched = false;
 	int messengerInventoryHover = -1;
@@ -1896,10 +1899,10 @@ void PhoenixVREngine::tick(float dt) {
 	if (!cursor)
 		cursor = loadCursor(anyMatched ? _defaultCursor[1] : _defaultCursor[0]);
 	if (cursor) {
-		if (cursor->format.aBits() != 0)
-			_screen->blendBlitFrom(*cursor, _mousePos - Common::Point(cursor->w / 2, cursor->h / 2));
+		if (cursor->surface->format.aBits() != 0)
+			_screen->blendBlitFrom(*cursor->surface, _mousePos - cursor->offset);
 		else
-			_screen->simpleBlitFrom(*cursor, _mousePos - Common::Point(cursor->w / 2, cursor->h / 2));
+			_screen->simpleBlitFrom(*cursor->surface, _mousePos - cursor->offset);
 	}
 }
 

@@ -131,7 +131,7 @@ public:
 	bool goToWarp(const Common::String &warp, bool savePrev = false);
 	void goToLevel(const Common::String &name);
 	void returnToWarp();
-	void loadCursor(int idx, const Common::String &path, int w, int h);
+	void loadCursor(int idx, const Common::String &path, int offsetX, int offsetY);
 	void setCursorDefault(int idx, const Common::String &path);
 	void setCursorDefault(int idx, int cursorIdx);
 	void setCursor(const Common::String &path, const Common::String &warp, int idx);
@@ -268,12 +268,17 @@ private:
 		Common::String name;
 	};
 
+	struct CachedCursor {
+		Common::ScopedPtr<Graphics::ManagedSurface> surface;
+		Common::Point offset;
+	};
+
 	static Common::String removeDrive(const Common::String &path);
 	Common::SeekableReadStream *open(const Common::String &name, Common::String *origName = nullptr);
 	Common::SeekableReadStream *tryOpen(const Common::Path &name, Common::String *origName);
 
 	Graphics::ManagedSurface *loadSurface(const Common::String &path);
-	Graphics::ManagedSurface *loadCursor(const Common::String &path, int w = 0, int h = 0);
+	CachedCursor *loadCursor(const Common::String &path, int offsetX = -1, int offsetY = -1);
 	PointF currentVRPos() const {
 		return RectF::transform(_angleX.angle(), _angleY.angle(), _fov);
 	}
@@ -356,7 +361,7 @@ private:
 	};
 	Common::Array<PreloadedCursor> _loadedCursors;
 
-	Common::HashMap<Common::String, Common::ScopedPtr<Graphics::ManagedSurface>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _cursorCache;
+	Common::HashMap<Common::String, CachedCursor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _cursorCache;
 	Common::HashMap<Common::String, Common::ScopedPtr<Graphics::ManagedSurface>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _loadedSprites;
 	struct Sprite {
 		Common::String name;
