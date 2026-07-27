@@ -97,8 +97,8 @@ public:
 	void drawIndicator(Graphics::Surface *surface, int xPosition, int yPosition);
 
 	Common::Array<Graphics::ManagedSurface *> _indicatorsIndexed;
-	void loadIndicatorsCGA(Common::SeekableReadStream *file);
-	void updateIndicatorsCGA(const byte *palette);
+	void loadIndicatorsDOS(Common::SeekableReadStream *file);
+	void updateIndicatorsDOS(const byte *palette);
 
 	void drawSensorShoot(Sensor *sensor) override;
 	void drawDOSUI(Graphics::Surface *surface) override;
