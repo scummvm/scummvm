@@ -759,14 +759,16 @@
   `BB_BG.PCX` supplies the 640-by-300 puzzle background; `SM_BB0.BBM`
   through `SM_BB7.BBM` are the eight draggable cards, while the corresponding
   `LG_BB` assets provide their 273-by-203 readable previews in the right-hand
-  panel. The initial scene-space Y/X pairs at `0x84b39` persist across re-entry.
+  panel. The initial scene-space Y/X pairs at `0x84b39` persist across re-entry;
+  the retail controls likewise store Y/X and height/width before ScummVM
+  normalizes them to X/Y and width/height.
   Its active loop services `ServiceUiControlStateSelection` on every idle
   iteration, so the ScummVM loop presents every cursor-service tick even when
   the hovered card does not change.
 - The board solution order stored at `0x374b1` is `[1, 0, 3, 6, 2]`.
-  Each following card must sit entirely below the previous card and overlap it
-  horizontally. There is no maximum vertical gap, and exact horizontal edge
-  contact passes because the retail separation comparisons use strict
+  Each following card must sit entirely to the right of the previous card and
+  overlap it vertically. There is no maximum horizontal gap, and exact vertical
+  edge contact passes because the retail separation comparisons use strict
   less-than tests. The other three cards do not participate in validation.
   A newly selected card moves to the front of the hit-test and draw order.
   Drops wholly inside the preview panel animate back to their origin at fifteen
