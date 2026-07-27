@@ -636,7 +636,10 @@ void DisplayMan::initConstants() {
 	);
 
 	_boxThievesEyeViewPortVisibleArea = Box(64, 159, 19, 113); // @ G0106_s_Graphic558_Box_ThievesEye_ViewportVisibleArea
-	_boxMovementArrows = Box(224, 319, 124, 168); // @ G0002_s_Graphic562_Box_MovementArrows
+	if (_vm->getPlatform() == Common::kPlatformDOS)
+		_boxMovementArrows = Box(233, 319, 124, 168);
+	else
+		_boxMovementArrows = Box(224, 319, 124, 168); // @ G0002_s_Graphic562_Box_MovementArrows
 }
 
 DisplayMan::~DisplayMan() {

@@ -135,11 +135,19 @@ void MenuMan::initConstants() {
 		2   /* FUSE */
 	};
 
-	_boxActionArea1ActionMenu = Box(224, 319, 77, 97); // @ G0501_s_Graphic560_Box_ActionArea1ActionMenu
-	_boxActionArea2ActionMenu = Box(224, 319, 77, 109); // @ G0500_s_Graphic560_Box_ActionArea2ActionsMenu
-	_boxActionArea3ActionMenu = Box(224, 319, 77, 121); // @ G0499_s_Graphic560_Box_ActionArea3ActionsMenu
-	_boxActionArea = Box(224, 319, 77, 121); // @ G0001_s_Graphic562_Box_ActionArea
-	_boxSpellArea = Box(224, 319, 42, 74);
+	if (_vm->getPlatform() == Common::kPlatformDOS) {
+		_boxActionArea1ActionMenu = Box(233, 319, 77, 97);
+		_boxActionArea2ActionMenu = Box(233, 319, 77, 109);
+		_boxActionArea3ActionMenu = Box(233, 319, 77, 121);
+		_boxActionArea = Box(233, 319, 77, 121);
+		_boxSpellArea = Box(233, 319, 42, 74);
+	} else {
+		_boxActionArea1ActionMenu = Box(224, 319, 77, 97);
+		_boxActionArea2ActionMenu = Box(224, 319, 77, 109);
+		_boxActionArea3ActionMenu = Box(224, 319, 77, 121);
+		_boxActionArea = Box(224, 319, 77, 121);
+		_boxSpellArea = Box(224, 319, 42, 74);
+	}
 
 	for (int i = 0; i < 44; i++) {
 		_actionSkillIndex[i] = actionSkillIndex[i];
