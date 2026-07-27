@@ -122,8 +122,8 @@ public:
 	// No CGA ankh in the bundle, so the masks are built at load time
 	Graphics::ManagedSurface *_ankhIndicatorMask;
 	Graphics::ManagedSurface *_ankhCollectedMask;
-	void loadAnkhIndicatorCGA();
-	void loadAnkhCollectedMaskCGA();
+	void loadAnkhIndicatorMask();
+	void loadAnkhCollectedMask();
 	void updateAnkhIndicator(const byte *palette);
 
 	Common::Array<byte> _musicData; // TEMUSIC.ST TEXT segment (Atari ST)

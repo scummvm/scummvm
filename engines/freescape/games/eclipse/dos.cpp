@@ -31,7 +31,10 @@
 namespace Freescape {
 
 void EclipseEngine::initDOS() {
-	_viewArea = Common::Rect(40, 33, 280, 133);
+	if (_renderMode == Common::kRenderHercG)
+		_viewArea = Common::Rect(110, 79, 594, 242);
+	else
+		_viewArea = Common::Rect(40, 33, 280, 133);
 	_soundIndexShoot = 18;
 	_soundIndexCollide = 1;
 	_soundIndexStepDown = 3;
@@ -82,6 +85,26 @@ void EclipseEngine::loadHeartFramesDOS(Common::SeekableReadStream *file, int res
 			converted->free();
 			delete converted;
 			_eclipseSprites.push_back(surf);
+		} else if (_renderMode == Common::kRenderHercG) {
+			// Hercules: one bit per pixel, greys are dithered in the artwork
+			Graphics::ManagedSurface clut8;
+			clut8.create(widthBytes * 8, height, Graphics::PixelFormat::createFormatCLUT8());
+
+			for (int y = 0; y < height; y++)
+				for (int col = 0; col < widthBytes; col++) {
+					byte b = file->readByte();
+					for (int px = 0; px < 8; px++)
+						clut8.setPixel(col * 8 + px, y, (b >> (7 - px)) & 1);
+				}
+
+			clut8.setPalette((byte *)kHerculesPaletteGreen, 0, 2);
+
+			Graphics::Surface *converted = _gfx->convertImageFormatIfNecessary(&clut8);
+			auto *surf = new Graphics::ManagedSurface();
+			surf->copyFrom(*converted);
+			converted->free();
+			delete converted;
+			_eclipseSprites.push_back(surf);
 		} else {
 			// CGA: packed 2-bit pixels (4 pixels per byte), no planes.
 			Graphics::ManagedSurface clut8;
@@ -102,29 +125,36 @@ void EclipseEngine::loadHeartFramesDOS(Common::SeekableReadStream *file, int res
 	}
 }
 
-// The bundle has no CGA ankh, so the EGA one is reduced to a mask and colored here
-// The solid ankh the original paints over collected slots is already in the border
-void EclipseEngine::loadAnkhCollectedMaskCGA() {
+// The bundle has no CGA or Hercules ankh, so the EGA one is reduced to a mask and
+// colored here. The solid ankh over collected slots is lifted from the border.
+void EclipseEngine::loadAnkhCollectedMask() {
+	int scale = _renderMode == Common::kRenderHercG ? 2 : 1;
+	int srcX = _renderMode == Common::kRenderHercG ? 122 : 45;
+	int srcY = _renderMode == Common::kRenderHercG ? 52 : 4;
+
 	_ankhCollectedMask = new Graphics::ManagedSurface();
-	_ankhCollectedMask->create(7, 12, Graphics::PixelFormat::createFormatCLUT8());
+	_ankhCollectedMask->create(7 * scale, 12, Graphics::PixelFormat::createFormatCLUT8());
 
 	for (int y = 0; y < 12; y++)
-		for (int x = 0; x < 7; x++)
-			_ankhCollectedMask->setPixel(x, y, _border->getPixel(45 + x, 4 + y) ? 1 : 0);
+		for (int x = 0; x < 7 * scale; x++)
+			_ankhCollectedMask->setPixel(x, y, _border->getPixel(srcX + x, srcY + y) ? 1 : 0);
 }
 
-void EclipseEngine::loadAnkhIndicatorCGA() {
+void EclipseEngine::loadAnkhIndicatorMask() {
+	// Hercules pixels are half as wide, so the original doubles every column
+	int scale = _renderMode == Common::kRenderHercG ? 2 : 1;
 	Graphics::Surface *ega = loadBundledImage("eclipse_ankh_indicator_ega", false);
 	ega->convertToInPlace(_gfx->_texturePixelFormat);
 
 	_ankhIndicatorMask = new Graphics::ManagedSurface();
-	_ankhIndicatorMask->create(ega->w, ega->h, Graphics::PixelFormat::createFormatCLUT8());
+	_ankhIndicatorMask->create(ega->w * scale, ega->h, Graphics::PixelFormat::createFormatCLUT8());
 
 	for (int y = 0; y < ega->h; y++) {
 		for (int x = 0; x < ega->w; x++) {
 			uint8 r, g, b;
 			ega->format.colorToRGB(ega->getPixel(x, y), r, g, b);
-			_ankhIndicatorMask->setPixel(x, y, (r || g || b) ? 1 : 0);
+			for (int i = 0; i < scale; i++)
+				_ankhIndicatorMask->setPixel(x * scale + i, y, (r || g || b) ? 1 : 0);
 		}
 	}
 
@@ -213,13 +243,40 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 		load8bitBinary(&file, 0x2530, 4);
 		_border = load8bitBinImage(&file, 0x210);
 		_border->setPalette((byte *)&kCGAPaletteRedGreen, 0, 4);
-		loadAnkhCollectedMaskCGA();
+		loadAnkhCollectedMask();
 		loadHeartFramesDOS(&file, 0x5F52, 0x5F84);
 		swapPalette(_startArea);
 		updateHeartFrames(_gfx->_palette);
 
-		loadAnkhIndicatorCGA();
+		loadAnkhIndicatorMask();
 		updateAnkhIndicator(_gfx->_palette);
+	} else if (_renderMode == Common::kRenderHercG) {
+		file.open("SCN1H.DAT");
+		if (file.isOpen()) {
+			_title = load8bitBinImage(&file, 0x0);
+			_title->setPalette((byte *)&kHerculesPaletteGreen, 0, 2);
+		}
+		file.close();
+		file.open("TOTEH.EXE");
+
+		if (!file.isOpen())
+			error("Failed to open TOTEH.EXE");
+
+		loadMessagesFixedSize(&file, 0x688b, 16, 20);
+		_soundFx = loadSoundsFxDOS(&file, 0xc880, 5);
+		_sound = loadSpeakerFxDOS(&file, 0x6b12 + 0x200, 0x6a1d + 0x200, 20);
+		loadFonts(&file, 0xc609);
+		load8bitBinary(&file, 0x3340, 4);
+
+		_border = load8bitBinImage(&file, 0x210);
+		_border->setPalette((byte *)&kHerculesPaletteGreen, 0, 2);
+
+		loadAnkhCollectedMask();
+		loadHeartFramesDOS(&file, 0x6E8E, 0x6EC0);
+
+		// The Hercules palette never changes, so build the ankhs once
+		loadAnkhIndicatorMask();
+		updateAnkhIndicator((byte *)&kHerculesPaletteGreen);
 	} else
 		error("Invalid or unsupported render mode %s for Total Eclipse", Common::getRenderModeDescription(_renderMode));
 
@@ -247,7 +304,11 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 
     bool isCGAAltPalette = (_renderMode == Common::kRenderCGA && _currentArea && (_currentArea->_extraColor[0] & 0x01));
 
-    if (_renderMode == Common::kRenderEGA || isCGAAltPalette) {
+    if (_renderMode == Common::kRenderHercG) {
+        uint8 r, g, b;
+        _gfx->readFromPalette(1, r, g, b);
+        color1 = color2 = color3 = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+    } else if (_renderMode == Common::kRenderEGA || isCGAAltPalette) {
         color1 = green;
         color2 = redish;
         color3 = yellow;
@@ -257,51 +318,66 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
         color3 = white;
     }
 
+	bool isHercules = _renderMode == Common::kRenderHercG;
+	int textRow = isHercules ? 243 : 135;
+
 	Common::String message;
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
-		drawStringInSurface(message, 102, 135, black, color3, surface);
+		drawStringInSurface(message, isHercules ? 240 : 102, textRow, black, color3, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else if (!_currentAreaMessages.empty())
-		drawStringInSurface(_currentArea->_name, 102, 135, black, color3, surface);
+		drawStringInSurface(_currentArea->_name, isHercules ? 240 : 102, textRow, black, color3, surface);
 
 	if (_renderMode == Common::kRenderEGA)
 		drawScoreString(score, 136, 6, black, white, surface);
 	else if (_renderMode == Common::kRenderCGA)
 		drawScoreString(score, 136, 6, black, color2, surface);
+	else if (isHercules)
+		drawScoreString(score, 304, 54, black, color2, surface);
 
-	int x = 171;
-	if (shield < 10)
-		x = 179;
-	else if (shield < 100)
-		x = 175;
+	// The Hercules build does not print the shield percentage on the heart
+	if (!isHercules) {
+		int x = 171;
+		if (shield < 10)
+			x = 179;
+		else if (shield < 100)
+			x = 175;
 
-	Common::String shieldStr = Common::String::format("%d", shield);
-	drawStringInSurface(shieldStr, x, 162, black, color2, surface);
+		Common::String shieldStr = Common::String::format("%d", shield);
+		drawStringInSurface(shieldStr, x, 162, black, color2, surface);
+	}
 
-	drawStringInSurface(shiftStr("0", 'Z' - '$' + 1 - _angleRotationIndex), 79, 135, black, color3, surface);
-	drawStringInSurface(shiftStr("3", 'Z' - '$' + 1 - _playerStepIndex), 63, 135, black, color3, surface);
-	drawStringInSurface(shiftStr("7", 'Z' - '$' + 1 - _playerHeightNumber), 240, 135, black, color3, surface);
+	drawStringInSurface(shiftStr("0", 'Z' - '$' + 1 - _angleRotationIndex), isHercules ? 192 : 79, textRow, black, color3, surface);
+	drawStringInSurface(shiftStr("3", 'Z' - '$' + 1 - _playerStepIndex), isHercules ? 160 : 63, textRow, black, color3, surface);
+	// The height is a pair of glyphs, which the shoot indicator below overwrites
+	drawStringInSurface(shiftStr("67", 'Z' - '$' + 1 - _playerHeightNumber), isHercules ? 496 : 232, textRow, black, color3, surface);
 
 	if (_shootingFrames > 0) {
-		drawStringInSurface(shiftStr("4", 'Z' - '$' + 1), 232, 135, black, color3, surface);
-		drawStringInSurface(shiftStr("<", 'Z' - '$' + 1), 240, 135, black, color3, surface);
+		drawStringInSurface(shiftStr("4", 'Z' - '$' + 1), isHercules ? 496 : 232, textRow, black, color3, surface);
+		drawStringInSurface(shiftStr("<", 'Z' - '$' + 1), isHercules ? 512 : 240, textRow, black, color3, surface);
 	}
-	drawAnalogClock(surface, 90, 172, black, redish, white);
+	if (isHercules)
+		drawAnalogClock(surface, 212, 280, black, black, color1);
+	else
+		drawAnalogClock(surface, 90, 172, black, redish, white);
 
-	Common::Rect jarBackground(124, 165, 148, 192);
+	Common::Rect jarBackground = isHercules ? Common::Rect(280, 273, 328, 301) : Common::Rect(124, 165, 148, 192);
 	surface->fillRect(jarBackground, black);
 
-	
-	Common::Rect jarWater(124, 192 - _gameStateVars[k8bitVariableEnergy], 148, 192);
+	Common::Rect jarWater = isHercules
+		? Common::Rect(280, 300 - _gameStateVars[k8bitVariableEnergy], 328, 301)
+		: Common::Rect(124, 192 - _gameStateVars[k8bitVariableEnergy], 148, 192);
 
-	if (_renderMode == Common::kRenderCGA)
+	if (isHercules)
+		drawIndicator(surface, 122, 52, 24);
+	else if (_renderMode == Common::kRenderCGA)
 		drawIndicator(surface, 45, 4, 12);
 	else
 		drawIndicator(surface, 41, 4, 16);
-	drawHeartIndicator(surface, 176, 168);
+	drawHeartIndicator(surface, isHercules ? 384 : 176, isHercules ? 276 : 168);
 	if (_renderMode == Common::kRenderEGA) {
 		surface->fillRect(jarWater, blue);
 		drawEclipseIndicator(surface, 228, 0, color3, color1);
@@ -312,7 +388,15 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 		drawEclipseIndicator(surface, 228, 0, color3, color2, color1);
 		surface->fillRect(Common::Rect(225, 168, 235, 187), color3);
 	}
-	drawCompass(surface, 229, 177, _yaw, 10, black);
+	else if (isHercules) {
+		// Hercules has no second ink, so the water level is a 50% stipple
+		for (int wy = jarWater.top; wy < jarWater.bottom; wy++)
+			for (int wx = jarWater.left + 1; wx < jarWater.right; wx += 2)
+				surface->setPixel(wx, wy, color1);
+		drawEclipseIndicator(surface, 488, 48, color1, color1, black);
+		surface->fillRect(Common::Rect(482, 276, 502, 296), color3);
+	}
+	drawCompass(surface, isHercules ? 490 : 229, isHercules ? 286 : 177, _yaw, isHercules ? 20 : 10, black);
 }
 
 void EclipseEngine::playSoundFx(int index, bool sync, Sound::Type type) {
