@@ -96,6 +96,10 @@ public:
 	void drawBinaryClock(Graphics::Surface *surface, int xPosition, int yPosition, uint32 front, uint32 back);
 	void drawIndicator(Graphics::Surface *surface, int xPosition, int yPosition);
 
+	Common::Array<Graphics::ManagedSurface *> _indicatorsIndexed;
+	void loadIndicatorsCGA(Common::SeekableReadStream *file);
+	void updateIndicatorsCGA(const byte *palette);
+
 	void drawSensorShoot(Sensor *sensor) override;
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawC64UI(Graphics::Surface *surface) override;

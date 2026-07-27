@@ -125,6 +125,10 @@ DarkEngine::~DarkEngine() {
 		frame->free();
 		delete frame;
 	}
+	for (auto &indicator : _indicatorsIndexed) {
+		indicator->free();
+		delete indicator;
+	}
 }
 
 void DarkEngine::addECDs(Area *area) {
@@ -733,6 +737,8 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 	_gfx->setColorRemaps(&_currentArea->_colorRemaps);
 
 	swapPalette(areaID);
+	if (isDOS() && _renderMode == Common::kRenderCGA)
+		updateIndicatorsCGA(_gfx->_palette);
 	if (isCPC()) {
 		// The CPC loader still uses the generic area header parser, but the
 		// original Driller code does not use the first header byte as split
@@ -929,6 +935,11 @@ void DarkEngine::drawHorizontalCompass(int x, int y, float angle, uint32 front, 
 	} else if (isSpectrum()) {
 		// The ZX HUD uses a single ink color for all the text, including the compass.
 		green = front;
+	} else if (isDOS() && _renderMode == Common::kRenderCGA) {
+		// Use color 1 for labels; front (color 3) highlights the heading.
+		uint8 r, g, b;
+		_gfx->readFromPalette(1, r, g, b);
+		green = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 	}
 
 	int delta = (angle - 180) / 5.5;

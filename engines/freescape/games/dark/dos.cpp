@@ -39,6 +39,54 @@ void DarkEngine::initDOS() {
 	_maxShield = 79;
 }
 
+// DSIDEC.EXE stores the posture sprites as packed CGA bitmaps after a
+// height/byte-width header. Offset them four rows within the 24x24 HUD slot.
+void DarkEngine::loadIndicatorsCGA(Common::SeekableReadStream *file) {
+	const int offsets[4] = { 0x350a, 0x3490, 0x3416, 0x3395 }; // fallen, crouch, walk, jet
+
+	for (int i = 0; i < 4; i++) {
+		file->seek(offsets[i]);
+		int height = file->readByte();
+		int widthBytes = file->readByte();
+
+		auto *indexed = new Graphics::ManagedSurface();
+		indexed->create(widthBytes * 4, height + 4, Graphics::PixelFormat::createFormatCLUT8());
+		indexed->fillRect(Common::Rect(0, 0, widthBytes * 4, height + 4), 0);
+
+		for (int y = 0; y < height; y++)
+			for (int col = 0; col < widthBytes; col++) {
+				byte b = file->readByte();
+				for (int px = 0; px < 4; px++)
+					indexed->setPixel(col * 4 + px, y + 4, (b >> (6 - px * 2)) & 3);
+			}
+
+		_indicatorsIndexed.push_back(indexed);
+	}
+}
+
+void DarkEngine::updateIndicatorsCGA(const byte *palette) {
+	for (auto &it : _indicators) {
+		it->free();
+		delete it;
+	}
+	_indicators.clear();
+
+	uint32 colors[4];
+	for (int i = 0; i < 4; i++)
+		colors[i] = _gfx->_texturePixelFormat.ARGBToColor(0xFF, palette[3 * i], palette[3 * i + 1], palette[3 * i + 2]);
+
+	for (auto &indexed : _indicatorsIndexed) {
+		Graphics::Surface *surface = new Graphics::Surface();
+		surface->create(indexed->w, indexed->h, _gfx->_texturePixelFormat);
+
+		for (int y = 0; y < surface->h; y++)
+			for (int x = 0; x < surface->w; x++)
+				surface->setPixel(x, y, colors[indexed->getPixel(x, y) & 3]);
+
+		_indicators.push_back(surface);
+	}
+}
+
 void DarkEngine::loadAssetsDOSDemo() {
 	Common::File file;
 	if (_renderMode == Common::kRenderEGA) {
@@ -145,8 +193,10 @@ void DarkEngine::loadAssetsDOSFullGame() {
 		load8bitBinary(&file, 0x8600, 16);
 		_border = load8bitBinImage(&file, 0x210);
 		_border->setPalette((byte *)&kCGAPalettePinkBlue, 0, 4);
+		loadIndicatorsCGA(&file);
 
 		swapPalette(1);
+		updateIndicatorsCGA(_gfx->_palette);
 	} else
 		error("Invalid or unsupported render mode %s for Dark Side", Common::getRenderModeDescription(_renderMode));
 }
