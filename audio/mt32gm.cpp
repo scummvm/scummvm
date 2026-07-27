@@ -922,6 +922,12 @@ void MidiDriver_MT32GM::sysExQueue(const byte *msg, uint16 length, int8 source) 
 	_sysExQueueMutex.unlock();
 }
 
+uint16 MidiDriver_MT32GM::sysExMT32(const byte *msg, uint16 length, bool queue, bool delay, int8 source) {
+	assert(length > 3);
+	uint32 targetAddress = (msg[0] << 14) | (msg[1] << 7) | msg[2];
+	return sysExMT32(msg + 3, length - 3, targetAddress, queue, delay, source);
+}
+
 uint16 MidiDriver_MT32GM::sysExMT32(const byte *msg, uint16 length, const uint32 targetAddress, bool queue, bool delay, int8 source) {
 	if (!_nativeMT32)
 		// MT-32 SysExes have no effect on GM devices.

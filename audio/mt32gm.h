@@ -297,6 +297,7 @@ public:
 	 * not sent before this time has passed.
 	 */
 	uint16 sysExMT32(const byte *msg, uint16 length, const uint32 targetAddress, bool queue = false, bool delay = true, int8 source = -1);
+	uint16 sysExMT32(const byte *msg, uint16 length, bool queue = false, bool delay = true, int8 source = -1);
 	void metaEvent(int8 source, byte type, const byte *data, uint16 length) override;
 
 	void stopAllNotes(bool stopSustainedNotes = false) override;
