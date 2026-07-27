@@ -613,7 +613,8 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 	_runtime.activeFrame = activeFrame;
 	_runtime.frontEndActionMask = serializer.getVersion() >= 4 ? frontEndActionMask : 0xffff;
 	_runtime.awaitingInteraction = awaitingInteraction != 0;
-	_briefing->restore(briefingArmed != 0, briefingSelector);
+	if (!_briefing->restore(briefingArmed != 0, briefingSelector))
+		return false;
 	_runtime.pendingSceneMember.clear();
 	_runtime.pendingSceneEntryLabel.clear();
 	_runtime.clearPreservedAudioOnTransition = false;

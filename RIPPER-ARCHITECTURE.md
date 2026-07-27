@@ -416,6 +416,12 @@
   `RunMediaPresentation` at `0x168af` returns and selection presentation is
   restored. The script therefore records 301 at trigger-arm time, before the
   later UI event presents the media.
+- Briefing selector 2 is an intentional no-op in
+  `ServiceBriefingMediaTrigger` at `0x1945b`: selecting its armed control
+  clears the trigger but presents no media and changes no milestone state.
+  ScummVM treats selectors beyond the implemented 1 and 2 as runtime failures
+  when scripts arm them or saves attempt to restore them, rather than leaving
+  an unsupported trigger active.
 - `WriteEmergencySaveGame` at `0x1ae3c` writes `0x7d` bytes for this store,
   exactly 125 bytes or 1,000 bits; `RestoreSavedRunState` at `0x1b8dd` caps the
   restored payload to the same size. ScummVM's engine-owned `Milestones`
