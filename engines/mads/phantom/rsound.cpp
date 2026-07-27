@@ -179,16 +179,26 @@ Channel *RSound::playSound(int offset) {
 	return playSoundData(loadData(offset), 5, 7, 7);
 }
 
-Channel *RSound::playSoundAny(int offset) {
+Channel *RSound::playSoundChannels1To5(int offset) {
 	// Channels 1-5 (0-based 0-4) for the free scan, but the pending-stop
 	// fallback only reaches down to channel 4 (0-based 3) - channel 5
 	// can never be pre-empted here, confirmed from the disassembly.
 	return playSoundData(loadData(offset), 0, 4, 3);
 }
 
-Channel *RSound::playSoundChannels1To8(int offset) {
+Channel *RSound::playSoundAny(int offset) {
 	// Channels 1-8 (0-based 0-7), symmetric free/fallback scan.
 	return playSoundData(loadData(offset), 0, 7, 7);
+}
+
+Channel *RSound::playSoundChannels5To8(int offset) {
+	// Channels 5-8 (0-based 4-7), symmetric free/fallback scan.
+	return playSoundData(loadData(offset), 4, 7, 7);
+}
+
+Channel *RSound::playSoundChannels1To6(int offset) {
+	// Channels 1-6 (0-based 0-5), symmetric free/fallback scan.
+	return playSoundData(loadData(offset), 0, 5, 5);
 }
 
 bool RSound::isSoundActive(byte *pData) {
@@ -413,9 +423,15 @@ void RSound::checkFadingChannels() {
 /*-----------------------------------------------------------------------*/
 
 void RSound::resetChannelRange(int first, int last) {
+	// Matches the confirmed struct-field disassembly exactly: two
+	// word-sized writes, each zeroing a pair of adjacent byte fields -
+	// [bx+_activeCount] (covers _activeCount + _pitchBendFadeStep) and
+	// [bx+_volumeFadeStep] (covers _volumeFadeStep + _panFadeStep).
 	for (int i = first; i <= last; ++i) {
 		_channels[i]._activeCount = 0;
-		_channels[i]._pitchBendFadeStep = 0; // matches "mov [bx],ax; mov [bx+2],ax" zeroing the first 4 bytes
+		_channels[i]._pitchBendFadeStep = 0;
+		_channels[i]._volumeFadeStep = 0;
+		_channels[i]._panFadeStep = 0;
 	}
 }
 
@@ -438,9 +454,11 @@ void RSound::resetChannels1to5() {
 	_isDisabled = false;
 }
 
-void RSound::resetChannels6to9() {
+void RSound::resetChannels4to9() {
+	// CORRECTED (was wrongly named/ranged resetChannels6to9): channels
+	// 4-9, 0-based indices 3-8 - confirmed directly from disassembly.
 	_isDisabled = true;
-	resetChannelRange(5, 8);
+	resetChannelRange(3, 8);
 	_isDisabled = false;
 }
 
@@ -459,8 +477,13 @@ int RSound::command0() {
 }
 
 int RSound::command1() {
+	// IMPORTANT: falls through to the SAME tail as command5() (loc_108A9)
+	// directly and ungated - it must NOT call the virtual command5()
+	// here, since that would wrongly apply whatever driver-specific
+	// isSoundActive() gate command5() has. command1() itself is never
+	// gated in any driver confirmed so far.
 	command3();
-	command5(); // shares command1/command5's tail (enables channels 5-8) - see command5()
+	enableUpperChannels();
 	return 0;
 }
 
@@ -483,24 +506,23 @@ int RSound::command3() {
 	return 0;
 }
 
-int RSound::command4() {
-	// Matches rsound_command4's chunk at loc_106DB: reset channels 6-9,
-	// then a full sendGmReset(9) (all 9 channels) - the "reset 6-9" and
-	// "GM-reset all 9" are both really executed, matching the original
+void RSound::resetAndGmResetUpperChannels() {
+	// Matches loc_106DB (command4()'s shared tail in every driver
+	// confirmed so far): reset channels 4-9, then a full sendGmReset(9)
+	// (all 9 channels) - both really execute, matching the original
 	// exactly despite the apparent redundancy.
-	resetChannels6to9();
+	resetChannels4to9();
 	sendGmReset(RSOUND_CHANNEL_COUNT);
-	return 0;
 }
 
-int RSound::command5() {
-	// Matches rsound_command5/loc_108A9: enables channels 5,6,7,8.
+void RSound::enableUpperChannels() {
+	// Matches loc_108A9 (command1()'s and command5()'s shared tail in
+	// every driver confirmed so far): enables channels 5,6,7,8.
 	_fadeCheckPeriod = 1;
 	_channels[4].enable(0xFF);
 	_channels[5].enable(0xFF);
 	_channels[6].enable(0xFF);
 	_channels[7].enable(0xFF);
-	return 0;
 }
 
 int RSound::command6() {

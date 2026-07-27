@@ -176,7 +176,6 @@ private:
 	 * directly rather than an arbitrary function pointer.
 	 */
 	int _fadeCheckCounter;
-	int _fadeCheckPeriod;
 
 	/**
 	 * Cluster of globals written by opcodes 0xBE-0xC1 but with no
@@ -228,10 +227,15 @@ private:
 	 */
 	uint16 readScriptWord(byte *&pSrc);
 
-	void resetChannelRange(int first, int last);
 	void resetAllChannels();
 	void resetChannels1to5();
-	void resetChannels6to9();
+
+	/**
+	 * CORRECTED (was wrongly named/ranged resetChannels6to9): resets
+	 * channels 4-9 (0-based indices 3-8), confirmed directly from
+	 * disassembly - "CODE XREF: rsound_command4".
+	 */
+	void resetChannels4to9();
 
 	void checkFadingChannels();
 	void Channel_checkFade(Channel *channel, int midiChannel);
@@ -257,6 +261,28 @@ protected:
 	 * directly.
 	 */
 	int _randomAmbianceTriggerFlag;
+
+	/**
+	 * Half-rate fade-check period reload value (see _fadeCheckCounter
+	 * above). Protected (not private) so per-driver command1()/command3()/
+	 * command5() overrides that need to arm it directly (matching an
+	 * inline "mov cs:_fadeCheckPeriod, 1" in the disassembly, e.g.
+	 * RSound5's driver-specific 6-channel command3() and 3-channel
+	 * enableChannels678()) can do so without going through the base
+	 * class's own command3()/enableUpperChannels().
+	 */
+	int _fadeCheckPeriod;
+
+	/**
+	 * Zeroes _activeCount/_pitchBendFadeStep/_volumeFadeStep/_panFadeStep
+	 * for channels [first, last] (0-based indices). Protected (not
+	 * private) so per-driver command4()/command5() overrides that need a
+	 * narrower or differently-shaped reset than resetChannels4to9() /
+	 * resetAndGmResetUpperChannels() below can call it directly - e.g.
+	 * RSound3's command4(), confirmed to reset only channels 5-9
+	 * (indices 4-8), not 4-9.
+	 */
+	void resetChannelRange(int first, int last);
 
 	/**
 	 * Hook called once per update() frame after the disabled check.
@@ -285,7 +311,7 @@ protected:
 	 * channel 5 - a genuine asymmetry preserved exactly (channel 5 can
 	 * never be pre-empted by this call, only picked while free).
 	 */
-	Channel *playSoundAny(int offset);
+	Channel *playSoundChannels1To5(int offset);
 
 	/**
 	 * Plays the specified sound, using any free channel from 1 to 8
@@ -293,7 +319,22 @@ protected:
 	 * disassembly - a third, distinct scan range from playSound() and
 	 * playSoundAny() above.
 	 */
-	Channel *playSoundChannels1To8(int offset);
+	Channel *playSoundAny(int offset);
+
+	/**
+	 * Plays the specified sound, using any free channel from 5 to 8.
+	 * Matches playChannels5to8 in the disassembly - a fourth, distinct
+	 * scan range (symmetric free/fallback scan, unlike playSoundAny()'s
+	 * asymmetry, and one channel narrower than playSoundAny()'s 1-8).
+	 */
+	Channel *playSoundChannels5To8(int offset);
+
+	/**
+	 * Plays the specified sound, using any free channel from 1 to 6.
+	 * Matches playSoundChannels1to6 in the disassembly - a fifth,
+	 * distinct scan range (symmetric free/fallback scan).
+	 */
+	Channel *playSoundChannels1To6(int offset);
 
 	/**
 	 * Scans [startingChannel, freeScanEnd] for a free channel; if none
@@ -382,16 +423,32 @@ protected:
 	int command3();
 
 	/**
-	 * NOTE: virtual, unlike command1-3/6-8. Confirmed (from RSound1) that
-	 * this driver's own command4/command5 are gated by isSoundActive() on
-	 * a driver-specific data offset (0x3D98 for RSound1) before doing
-	 * anything else - a per-driver detail that doesn't belong hardcoded
-	 * in the shared base. This base implementation is an UNGATED
-	 * fallback for drivers whose own command4/5 haven't been confirmed
-	 * yet; override once their disassembly is available.
+	 * Shared tail of command1() (falls through into it after command3())
+	 * and command5() (jumps straight into it, ungated, in every driver
+	 * confirmed so far): enables channels 5,6,7,8. Matches loc_108A9.
 	 */
-	virtual int command4();
-	virtual int command5();
+	void enableUpperChannels();
+
+	/**
+	 * Shared tail of command4() in every driver confirmed so far:
+	 * resetChannels4to9() + sendGmReset(9). Matches loc_106DB.
+	 */
+	void resetAndGmResetUpperChannels();
+
+	/**
+	 * PURE VIRTUAL, unlike command1-3/6-8. Confirmed (from RSound1 AND
+	 * RSound2, independently) that every driver's command4/command5 are
+	 * gated by isSoundActive() on a driver-specific data offset before
+	 * calling resetAndGmResetUpperChannels()/enableUpperChannels() above
+	 * - a per-driver detail that must not live in the shared base.
+	 * Deliberately NO default implementation, so a new driver subclass
+	 * can't compile without explicitly providing its own gate - silently
+	 * falling back to an ungated version would be wrong (and was, in an
+	 * earlier version of this port, until RSound1/RSound2 confirmed the
+	 * gate is universal even though its offset isn't).
+	 */
+	virtual int command4() = 0;
+	virtual int command5() = 0;
 	int command6();
 	int command7();
 	int command8();
