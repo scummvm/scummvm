@@ -231,6 +231,8 @@ void GridMapPuzzle::execute() {
 		break;
 
 	case kActionTrigger:
+		// Restore the cursor in case the player left while holding a glyph.
+		g_nancy->_cursor->showCursor(true);
 		g_nancy->_sound->stopSound(_pickupSound);
 		g_nancy->_sound->stopSound(_placeSound);
 		g_nancy->_sound->stopSound(_winSound);
@@ -360,10 +362,13 @@ void GridMapPuzzle::handleInput(NancyInput &input) {
 	if (!hitMap)
 		hitItems = hitTestItems(mouseVP, iRow, iCol);
 
-	// Both grids (map and items) show the grab-hand cursor across their whole
-	// area; picking something up doesn't change it. The exit hotspot uses the
-	// puzzle-exit cursor, and everything outside the grids (the letter strips,
-	// the gap between the grids) keeps the idle eyeglass.
+	// A held glyph is drawn following the cursor, so hide the hardware cursor
+	// while carrying one — just the glyph shows, no hand. When empty-handed,
+	// both grids show the grab-hand, the exit hotspot uses the puzzle-exit
+	// cursor, and everything outside the grids (the letter strips, the gap
+	// between the grids) keeps the idle eyeglass.
+	g_nancy->_cursor->showCursor(_heldItem == -1);
+
 	if (!hitMap && !hitItems) {
 		if (!_exitHotspot.isEmpty() && _exitHotspot.contains(mouseVP)) {
 			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
@@ -375,7 +380,8 @@ void GridMapPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	g_nancy->_cursor->setCursorType(CursorManager::kDropHand);
+	if (_heldItem == -1)
+		g_nancy->_cursor->setCursorType(CursorManager::kDropHand);
 	if (!(input.input & NancyInput::kLeftMouseButtonUp))
 		return;
 
