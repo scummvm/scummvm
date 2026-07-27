@@ -33,6 +33,7 @@ MODULE_OBJS := \
 	puzzles/kj_blob_shooter.o \
 	puzzles/rolodex.o \
 	puzzles/table_gate.o \
+	puzzles/web_grid_shift.o \
 	remote_control.o \
 	resources.o \
 	ripper.o \

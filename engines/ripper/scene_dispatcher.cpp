@@ -40,6 +40,7 @@
 #include "ripper/puzzles/kj_blob_shooter.h"
 #include "ripper/puzzles/rolodex.h"
 #include "ripper/puzzles/table_gate.h"
+#include "ripper/puzzles/web_grid_shift.h"
 #include "ripper/ripper.h"
 #include "ripper/scenes/ebz2s_scene.h"
 #include "ripper/scenes/gym_scene.h"
@@ -69,7 +70,7 @@ const char *SceneActionDispatcher::actionName(uint action) {
 	case 16: return "key group puzzle";
 	case 17: return "date selection puzzle";
 	case 18: return "KI skull maze puzzle";
-	case 19: return "web grid shift puzzle";
+	case kSceneActionWebGridShiftPuzzle: return "web grid shift puzzle";
 	case 20: return "Horus word puzzle";
 	case 21: return "six-digit code puzzle";
 	case 22: return "shock lever puzzle";
@@ -233,6 +234,15 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		debugC(1, kDebugCombat,
 			"Ripper: Mechini combat scene action completed result=%d milestone=%u", result, argument);
 		return result != MechiniEncounter::kLoadFailed;
+	}
+	if (action == kSceneActionWebGridShiftPuzzle) {
+		WebGridShiftPuzzle puzzle(engine);
+		const WebGridShiftPuzzle::Result result = puzzle.run(argument);
+		debugC(1, kDebugPuzzles,
+			"Ripper: web grid shift puzzle scene action completed "
+			"result=%d milestone=%u",
+			result, argument);
+		return result != WebGridShiftPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionTubeSwitchScene) {
 		TubeScene scene(engine);
