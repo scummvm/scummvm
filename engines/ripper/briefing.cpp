@@ -41,6 +41,10 @@ static const uint32 kDosTickMillis = 55;
 static const uint32 kBriefingFrameInterval = 3 * kDosTickMillis;
 static const uint kBriefingAlertVolume = 35;
 
+static bool isImplementedBriefingSelector(uint selector) {
+	return selector == 1 || selector == 2;
+}
+
 BriefingManager::BriefingManager(RipperEngine *engine) : _engine(engine),
 		_lastFrameMillis(0), _frameIndex(0), _selector(0), _armed(false),
 		_initialized(false), _hovered(false) {
@@ -81,8 +85,12 @@ bool BriefingManager::initialize(ResourceManager &resources) {
 }
 
 bool BriefingManager::arm(uint selector, bool playNotification) {
-	if (!_initialized || selector == 0 || selector >= ARRAYSIZE(_announcedSelectors)) {
-		warning("Ripper: invalid briefing selector %u", selector);
+	if (!_initialized) {
+		warning("Ripper: briefing selector %u requested before initialization", selector);
+		return false;
+	}
+	if (!isImplementedBriefingSelector(selector)) {
+		warning("Ripper: unsupported briefing selector %u", selector);
 		return false;
 	}
 	if (_announcedSelectors[selector]) {
@@ -112,9 +120,17 @@ bool BriefingManager::arm(uint selector, bool playNotification) {
 	return true;
 }
 
-void BriefingManager::restore(bool armed, uint selector) {
+bool BriefingManager::restore(bool armed, uint selector) {
 	_engine->getMedia()->stopSoundEffect(_alertHandle);
 	_backing.clear();
+	if (armed && !isImplementedBriefingSelector(selector)) {
+		warning("Ripper: cannot restore unsupported briefing selector %u", selector);
+		_armed = false;
+		_selector = 0;
+		_frameIndex = 0;
+		_hovered = false;
+		return false;
+	}
 	_armed = armed && _initialized && selector != 0 &&
 		selector < ARRAYSIZE(_announcedSelectors);
 	_selector = _armed ? selector : 0;
@@ -127,6 +143,7 @@ void BriefingManager::restore(bool armed, uint selector) {
 			"Ripper: restored armed briefing trigger selector=%u control=0x4e1",
 			_selector);
 	}
+	return true;
 }
 
 void BriefingManager::clear() {
@@ -200,6 +217,12 @@ bool BriefingManager::activate() {
 				"Ripper: completed briefing selector=1 media='cp0_1_p1.avi' travelFlag=%u",
 				(uint)kMilestoneLastTravelLocation);
 		}
+		break;
+	case 2:
+		// ServiceBriefingMediaTrigger at 0x1945b clears selector 2 without
+		// presenting media or changing milestone state.
+		debugC(1, kDebugScene,
+			"Ripper: completed briefing selector=2 without media or state changes");
 		break;
 	default:
 		warning("Ripper: unsupported briefing selector %u", selector);

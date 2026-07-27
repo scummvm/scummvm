@@ -45,7 +45,7 @@ public:
 
 	bool initialize(ResourceManager &resources);
 	bool arm(uint selector, bool playNotification = true);
-	void restore(bool armed, uint selector);
+	bool restore(bool armed, uint selector);
 	void clear();
 	BriefingServiceResult service(const MouseState &mouse);
 	void draw();
