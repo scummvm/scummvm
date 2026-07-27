@@ -155,11 +155,12 @@ public:
 
 	void endSaveLoad() override;
 
-	void setGamma(int32 gamma) {
-		_gamma = gamma;
+	void setBrightnessOknytt(int32 brightness) {
+		_brightnessOknytt = brightness;
 	}
-	float getGamma() {
-		return _gamma;
+	float getBrightnessOknytt() {
+		return _brightnessOknytt;
+	}
 	}
 
 	// ScummVM specific methods <--
@@ -175,7 +176,7 @@ protected:
 	TRendererState _state;
 	PostFilter _postFilterMode;
 	bool _flipInProgress;
-	int32 _gamma;
+	int32 _brightnessOknytt;
 
 	virtual void setAmbientLightRenderState() = 0;
 };

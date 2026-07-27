@@ -1060,7 +1060,7 @@ void BaseRenderOpenGL3D::postfilter() {
 	};
 
 	// This is for game 'Oknytt'
-	if (_gamma != -1) {
+	if (_brightnessOknytt != -1) {
 		setup2D();
 		glViewport(0, 0, _width, _height);
 
@@ -1088,15 +1088,15 @@ void BaseRenderOpenGL3D::postfilter() {
 		glVertexPointer(2, GL_FLOAT, 0, vertices);
 		glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
 
-		if (_gamma <= 140) {
-			float factor = 1.0f - (140.0f - _gamma) / 50.0f;
+		if (_brightnessOknytt <= 140) {
+			float factor = 1.0f - (140.0f - _brightnessOknytt) / 50.0f;
 			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 			glColor4f(factor, factor, factor, 1.0f);
 			glDrawArrays(GL_QUADS, 0, 4);
 		} else {
 			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 			glDrawArrays(GL_QUADS, 0, 4);
-			float alpha = (_gamma - 140.0f) / 200.0f;
+			float alpha = (_brightnessOknytt - 140.0f) / 200.0f;
 			glDisable(GL_TEXTURE_2D);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

@@ -2884,7 +2884,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 #ifdef ENABLE_WME3D
 		if (_renderer3D)
-			_renderer3D->setGamma(gamma);
+			_renderer3D->setBrightnessOknytt(gamma);
 #endif
 		stack->pushNULL();
 
@@ -2900,7 +2900,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		int32 gamma = 0;
 #ifdef ENABLE_WME3D
 		if (_renderer3D)
-			gamma = _renderer3D->getGamma();
+			gamma = _renderer3D->getBrightnessOknytt();
 #endif
 		stack->pushInt(gamma);
 

@@ -45,7 +45,7 @@ BaseRenderer3D::BaseRenderer3D(Wintermute::BaseGame *inGame) : BaseRenderer(inGa
 	DXMatrixIdentity(&_viewMatrix);
 	DXMatrixIdentity(&_projectionMatrix);
 
-	_gamma = -1;
+	_brightnessOknytt = -1;
 }
 
 BaseRenderer3D::~BaseRenderer3D() {
