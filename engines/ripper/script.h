@@ -101,6 +101,7 @@ enum SceneAction {
 	kSceneActionSetChooserTemplateMode = 30,
 	kSceneActionNoOp = 31,
 	kSceneActionClearDisplay = 32,
+	kSceneActionKeypadSequencePuzzle = 34,
 	kSceneActionSetUiSelectionIndex = 35,
 	kSceneActionDispatchUiSelection = 36,
 	kSceneActionSetFrontEndActionMask = 37,
