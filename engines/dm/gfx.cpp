@@ -1605,6 +1605,8 @@ uint16 DisplayMan::getGraphicIndex(uint16 index) const {
 		return k498_FirstObjectDOS;
 	case kDMGraphicIdxFirstCreature:
 		return k584_FirstCreatureDOS;
+	case kDMGraphicIdxMenuSpellAreLines:
+		return k9_MenuSpellAreaLinesDOS;
 	case kDMGraphicIdxFont:
 		return k695_FontDOS;
 	default:

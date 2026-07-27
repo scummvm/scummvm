@@ -322,6 +322,7 @@ enum GraphicIndice {
 #define k1_ShiftSet_D1BackD2Front 1 // @ C1_SHIFT_SET_D1_BACK_OR_D2_FRONT
 #define k2_ShiftSet_D2BackD3Front 2 // @ C2_SHIFT_SET_D2_BACK_OR_D3_FRONT
 
+#define k9_MenuSpellAreaLinesDOS 9 // @ C009_GRAPHIC_MENU_SPELL_AREA_LINES
 #define k75_FirstFloorSet 75 // @ C075_GRAPHIC_FIRST_FLOOR_SET
 #define k78_FirstFloorSetDOS 78 // @ M644_GRAPHIC_FIRST_FLOOR_SET
 #define k77_FirstWallSet 77 // @ C077_GRAPHIC_FIRST_WALL_SET
