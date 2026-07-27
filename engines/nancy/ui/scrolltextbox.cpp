@@ -213,7 +213,9 @@ void ScrollTextBox::drawContent() {
 		setTransparent(true);
 		_drawSurface.clear(transColor);
 		if (haveStripRect) {
-			textTop = _stripScreenRect.top - _fullPopupRect.top;
+			// The caption rect has a small top inset (the vertical counterpart of
+			// lineStartXCursor).
+			textTop = (_stripScreenRect.top - _fullPopupRect.top) + 2;
 		} else {
 			// Nudge the first line down one pixel so its top padding matches the
 			// original's caption strip.
