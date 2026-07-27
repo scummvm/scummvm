@@ -284,6 +284,17 @@ protected:
 	void resetChannelRange(int first, int last);
 
 	/**
+	 * A driver-specific variant of Channel::enable() confirmed across
+	 * multiple drivers so far (RSound4's sub_1092A targeting 0x1F8B,
+	 * RSound5's sub_10854 targeting 0x20C9) - redirects _soundData (and,
+	 * if the channel is about to expire this tick, _pSrc too) to
+	 * loadData(offset) instead of nullptr. The specific offset is always
+	 * driver-specific "silence"/placeholder sound data, passed explicitly
+	 * rather than hardcoded here.
+	 */
+	void disableChannelTo(int channelIndex, byte flag, int offset);
+
+	/**
 	 * Resets the _heldNotes table (see its field comment). Protected so
 	 * per-driver reset helpers with a different channel range can still
 	 * clear this shared table without needing direct access to the

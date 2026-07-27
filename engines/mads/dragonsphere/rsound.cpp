@@ -426,6 +426,16 @@ void RSound::resetChannelRange(int first, int last) {
 	}
 }
 
+void RSound::disableChannelTo(int channelIndex, byte flag, int offset) {
+	Channel &ch = _channels[channelIndex];
+	if (!ch._activeCount)
+		return;
+	if (ch._activeCount == 1)
+		ch._pSrc = loadData(offset);
+	ch._pendingStop = flag;
+	ch._soundData = loadData(offset);
+}
+
 void RSound::resetHeldNotes() {
 	// Zeroes (0xFF-fills) the logically-used region of _heldNotes; the
 	// real table has extra unused padding rows beyond channel 9 that

@@ -334,10 +334,8 @@ public:
  *
  * command1/command2/command3/command4 are all genuinely different from
  * the base class, in two ways:
- *   - They use a NEW driver-specific channel-disable mechanic
- *     (disableChannel(), matching sub_1092A) instead of Channel::enable() -
- *     it redirects _soundData (and, if the channel is about to expire
- *     this tick, _pSrc too) to loadData(0x1F8B) instead of nullptr.
+ *   - They use the base class's disableChannelTo() (matching sub_1092A)
+ *     instead of Channel::enable(), targeting loadData(0x1F8B).
  *   - Channel 6 (the boundary between the "lower" 1-5,9 group and
  *     "upper" 6,7,8 group) is conditionally included/excluded based on
  *     isSoundActive(loadData(0x1F4F)) in command1/command3, and based on
@@ -355,13 +353,6 @@ public:
  */
 class RSound4 : public RSound {
 private:
-	/**
-	 * Matches sub_1092A: a driver-specific variant of Channel::enable()
-	 * that redirects _soundData (and _pSrc, if the channel is about to
-	 * expire this tick) to loadData(0x1F8B) instead of nullptr.
-	 */
-	void disableChannel(int channelIndex, byte flag);
-
 	int command1();
 	int command2();
 	int command3();
@@ -439,6 +430,105 @@ private:
 
 public:
 	RSound4(Audio::Mixer *mixer);
+
+	int command(int commandId, int param) override;
+};
+
+/**
+ * RSound5 (rsound.dr5)
+ *
+ * command0/command3/command4/command6/command7/command8 all confirmed
+ * to match the shared RSound base exactly (no overrides needed),
+ * including command4 (whose resetChannels6to8 matches the base class's
+ * unconditional 3-channel version exactly, unlike RSound4's conditional
+ * one) and command3 (matches the base's default 1-5,9 lower-group
+ * enable exactly).
+ *
+ * command5 uses the base class's disableChannelTo() (matching
+ * sub_10854) instead of Channel::enable(), targeting loadData(0x20C9) -
+ * for channels 6,7,8 (three channels, matching the base's default upper
+ * group range, just via a different mechanic).
+ *
+ * command1/2/3 are not virtual in the base class, so this driver's own
+ * command1() must be overridden too (calling THIS class's command5()) -
+ * same pitfall as every other Dragonsphere RSound driver so far.
+ */
+class RSound5 : public RSound {
+private:
+	typedef int (RSound5:: *CommandPtr)();
+	static const CommandPtr _commandList[79];
+
+	int command1();
+	int command5();
+
+	/**
+	 * Matches byte_134D8: false the first time command16 is ever called,
+	 * true forever after (there is no code path that resets it back to
+	 * false) - selects between two near-identical variants (A the first
+	 * time, B every time after).
+	 */
+	bool _command16Played = false;
+
+	int command16();
+	void loadCommand16A();
+	void loadCommand16B();
+
+	int command17();
+	int command18();
+
+	int command24();
+	int command25();
+	int command26();
+	int command27();
+	int command28();
+	int command29();
+	int command30();
+
+	/**
+	 * Shared tail of command31()/command78() (matches loc_126FF): writes
+	 * a variant byte (0x5A for command31, 0x78 for command78) into the
+	 * sound data at offset 0x2301 (3 bytes into the block about to be
+	 * played) before playing 0x22FE.
+	 */
+	void command31_78Tail(byte variant);
+	int command31();
+
+	int command32();
+	void loadCommand32();
+	int command33();
+	void loadCommand33();
+	int command34();
+	void loadCommand34();
+	int command35();
+	void loadCommand35();
+	int command36();
+
+	/** No gate at all (unlike every other bucket-4 command here): just clears _callbackFnPtr, calls command1(), then 4x playSoundChannels1To5(). */
+	int command37();
+
+	int command38();
+	void loadCommand38();
+
+	int command64();
+	int command65();
+	int command66();
+	int command67();
+	int command68();
+	int command69();
+	int command70();
+	int command71();
+	int command72();
+	int command73();
+	int command74();
+	int command75();
+	int command76();
+
+	/** Uses _commandParam: if 0, conditionally redirects channel 8's inner loop pointer; otherwise writes a clamped 7-bit value into the sound data at offset 0x20D6 (11 bytes into the block about to be played) and gate-loads channel 8. */
+	int command77();
+	int command78();
+
+public:
+	RSound5(Audio::Mixer *mixer);
 
 	int command(int commandId, int param) override;
 };
