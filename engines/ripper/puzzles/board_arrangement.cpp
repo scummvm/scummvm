@@ -370,6 +370,9 @@ void BoardArrangementPuzzle::finishDrag() {
 		piece, _positions[piece].x, _positions[piece].y);
 }
 
+// The RunBoardArrangementPuzzleScene validation block at 0x3a889 uses
+// UiControlState fields stored as Y, X, height, width. The positions and frames
+// below are normalized to ScummVM's X, Y, width, height ordering.
 bool BoardArrangementPuzzle::isSolved(bool logPairs) const {
 	bool solved = true;
 	for (uint order = 0; order + 1 < ARRAYSIZE(kValidationOrder); ++order) {
@@ -377,27 +380,27 @@ bool BoardArrangementPuzzle::isSolved(bool logPairs) const {
 		const uint second = kValidationOrder[order + 1];
 		const BitmapAssetFrame &firstFrame = _smallPieces[first];
 		const BitmapAssetFrame &secondFrame = _smallPieces[second];
-		const int minimumSecondTop =
-			_positions[first].y + firstFrame.height;
-		const int firstRight = _positions[first].x + firstFrame.width;
-		const int secondRight = _positions[second].x + secondFrame.width;
-		const bool verticalPass =
-			_positions[second].y >= minimumSecondTop;
+		const int minimumSecondLeft =
+			_positions[first].x + firstFrame.width;
+		const int firstBottom = _positions[first].y + firstFrame.height;
+		const int secondBottom = _positions[second].y + secondFrame.height;
 		const bool horizontalPass =
-			firstRight >= _positions[second].x &&
-			secondRight >= _positions[first].x;
+			_positions[second].x >= minimumSecondLeft;
+		const bool verticalPass =
+			firstBottom >= _positions[second].y &&
+			secondBottom >= _positions[first].y;
 		if (logPairs) {
 			debugC(2, kDebugPuzzles,
 				"Ripper: board arrangement pair=%u->%u status=%s "
-				"vertical=%s nextTop=%d minimumTop=%d horizontal=%s "
-				"firstX=%d..%d secondX=%d..%d",
+				"horizontal=%s nextLeft=%d minimumLeft=%d vertical=%s "
+				"firstY=%d..%d secondY=%d..%d",
 				first, second,
 				verticalPass && horizontalPass ? "PASS" : "FAIL",
-				verticalPass ? "PASS" : "FAIL",
-				_positions[second].y, minimumSecondTop,
 				horizontalPass ? "PASS" : "FAIL",
-				_positions[first].x, firstRight,
-				_positions[second].x, secondRight);
+				_positions[second].x, minimumSecondLeft,
+				verticalPass ? "PASS" : "FAIL",
+				_positions[first].y, firstBottom,
+				_positions[second].y, secondBottom);
 		}
 		if (!verticalPass || !horizontalPass)
 			solved = false;
@@ -440,9 +443,9 @@ BoardArrangementPuzzle::Result BoardArrangementPuzzle::run(uint completionFlag) 
 		completionFlag, kHelpSelectionTable, kDragLeft, kDragTop,
 		kDragRight, kDragBottom);
 	debugC(1, kDebugPuzzles,
-		"Ripper: board arrangement rules topToBottom=1,0,3,6,2 "
-		"nextTop>=previousBottom horizontal=touch-or-overlap "
-		"maximumVerticalGap=none ignoredPieces=4,5,7");
+		"Ripper: board arrangement rules leftToRight=1,0,3,6,2 "
+		"nextLeft>=previousRight vertical=touch-or-overlap "
+		"maximumHorizontalGap=none ignoredPieces=4,5,7");
 
 	Result result = _engine->getMilestones()->isSet(completionFlag) ?
 		kSolved : kExited;
