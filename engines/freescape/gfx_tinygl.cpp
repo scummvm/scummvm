@@ -554,6 +554,40 @@ void TinyGLRenderer::drawFloor(uint8 color) {
 	tglDisableClientState(TGL_VERTEX_ARRAY);
 }
 
+void TinyGLRenderer::fillViewportStippled(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2, byte *stipple) {
+	tglMatrixMode(TGL_PROJECTION);
+	tglPushMatrix();
+	tglLoadIdentity();
+	tglOrtho(0, _screenW, _screenH, 0, 0, 1);
+	tglMatrixMode(TGL_MODELVIEW);
+	tglPushMatrix();
+	tglLoadIdentity();
+	tglDepthMask(TGL_FALSE);
+
+	// The unstippled color has to be set first, since that is the one the
+	// two-color stipple keeps for the pixels the pattern leaves out
+	useColor(r1, g1, b1);
+	setStippleData(stipple);
+	useStipple(true);
+	useColor(r2, g2, b2);
+
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	copyToVertexArray(0, Math::Vector3d(0, 0, 0));
+	copyToVertexArray(1, Math::Vector3d(_screenW, 0, 0));
+	copyToVertexArray(2, Math::Vector3d(_screenW, _screenH, 0));
+	copyToVertexArray(3, Math::Vector3d(0, _screenH, 0));
+	tglVertexPointer(3, TGL_FLOAT, 0, _verts);
+	tglDrawArrays(TGL_QUADS, 0, 4);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
+
+	useStipple(false);
+	tglDepthMask(TGL_TRUE);
+	tglMatrixMode(TGL_PROJECTION);
+	tglPopMatrix();
+	tglMatrixMode(TGL_MODELVIEW);
+	tglPopMatrix();
+}
+
 void TinyGLRenderer::flipBuffer() {
 	Common::List<Common::Rect> dirtyAreas;
 	TinyGL::presentBuffer(dirtyAreas);

@@ -507,6 +507,7 @@ void OpenGLShaderRenderer::drawCelestialBody(const Math::Vector3d position, floa
 	uint8 r1, g1, b1, r2, g2, b2;
 	byte *stipple = nullptr;
 	getRGBAt(color, 0, r1, g1, b1, r2, g2, b2, stipple);
+	setStippleData(stipple);
 	useColor(r1, g1, b1);
 
 	// === Build circular vertex fan ===
@@ -879,6 +880,44 @@ void OpenGLShaderRenderer::drawFloor(uint8 color) {
 	glVertexPointer(3, GL_FLOAT, 0, _verts);
 	glDrawArrays(GL_QUADS, 0, 4);
 	glDisableClientState(GL_VERTEX_ARRAY);*/
+}
+
+void OpenGLShaderRenderer::fillViewportStippled(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2, byte *stipple) {
+	Math::Matrix4 identity;
+	identity(0, 0) = 1.0;
+	identity(1, 1) = 1.0;
+	identity(2, 2) = 1.0;
+	identity(3, 3) = 1.0;
+
+	_triangleShader->use();
+	_triangleShader->setUniform("mvpMatrix", identity);
+	_triangleShader->setUniform("shakeOffset", Math::Vector2d(0, 0));
+
+	glDepthMask(GL_FALSE);
+
+	useColor(r1, g1, b1);
+	setStippleData(stipple);
+	useStipple(true);
+	useColor(r2, g2, b2);
+
+	// Clockwise, since the renderer treats that as the front face
+	copyToVertexArray(0, Math::Vector3d(-1, 1, 0));
+	copyToVertexArray(1, Math::Vector3d(1, 1, 0));
+	copyToVertexArray(2, Math::Vector3d(1, -1, 0));
+	copyToVertexArray(3, Math::Vector3d(-1, -1, 0));
+
+	glBindBuffer(GL_ARRAY_BUFFER, _triangleVBO);
+	glBufferData(GL_ARRAY_BUFFER, 4 * 3 * sizeof(float), _verts, GL_DYNAMIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+	glDisableVertexAttribArray(0);
+
+	useStipple(false);
+	glDepthMask(GL_TRUE);
+	// The rest of the frame is still drawn with the camera set up by positionCamera()
+	_triangleShader->setUniform("shakeOffset",
+		Math::Vector2d(_shakeOffset.x * 0.025f, _shakeOffset.y * 0.025f));
 }
 
 void OpenGLShaderRenderer::flipBuffer() {}

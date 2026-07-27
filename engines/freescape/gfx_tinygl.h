@@ -97,6 +97,7 @@ public:
 
 	virtual void flipBuffer() override;
 	virtual void drawFloor(uint8 color) override;
+	virtual void fillViewportStippled(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2, byte *stipple) override;
 	virtual Graphics::Surface *getScreenshot() override;
 
 	byte _defaultStippleArray[128] = {

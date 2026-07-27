@@ -522,6 +522,10 @@ void EclipseEngine::drawBackground() {
 		} else if (isDOS() && _renderMode == Common::kRenderCGA) {
 			color1 = 2;
 			color2 = 8;
+		} else if (isDOS() && _renderMode == Common::kRenderHercG) {
+			// A solid sun and a 50% moon, against the 75% sky
+			color1 = 2;
+			color2 = 12;
 		}
 
 		_gfx->drawEclipse(color1, color2, progress);

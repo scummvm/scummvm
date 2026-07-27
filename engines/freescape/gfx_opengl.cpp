@@ -673,6 +673,40 @@ void OpenGLRenderer::drawFloor(uint8 color) {
 	glDisableClientState(GL_VERTEX_ARRAY);
 }
 
+void OpenGLRenderer::fillViewportStippled(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2, byte *stipple) {
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0, _screenW, _screenH, 0, 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glDepthMask(GL_FALSE);
+
+	// The unstippled color has to be set first, since that is the one the
+	// two-color stipple keeps for the pixels the pattern leaves out
+	useColor(r1, g1, b1);
+	setStippleData(stipple);
+	useStipple(true);
+	useColor(r2, g2, b2);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	copyToVertexArray(0, Math::Vector3d(0, 0, 0));
+	copyToVertexArray(1, Math::Vector3d(_screenW, 0, 0));
+	copyToVertexArray(2, Math::Vector3d(_screenW, _screenH, 0));
+	copyToVertexArray(3, Math::Vector3d(0, _screenH, 0));
+	glVertexPointer(3, GL_FLOAT, 0, _verts);
+	glDrawArrays(GL_QUADS, 0, 4);
+	glDisableClientState(GL_VERTEX_ARRAY);
+
+	useStipple(false);
+	glDepthMask(GL_TRUE);
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+}
+
 void OpenGLRenderer::flipBuffer() {}
 
 Graphics::Surface *OpenGLRenderer::getScreenshot() {

@@ -118,6 +118,7 @@ public:
 	virtual void clearDepthBuffer(bool ignoreViewport = false) {}
 	virtual void drawFloor(uint8 color) = 0;
 	virtual void drawBackground(uint8 color);
+	virtual void fillViewportStippled(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2, byte *stipple) {}
 
 	void drawEclipse(uint8 color1, uint8 color2, float difference);
 	virtual void drawSkybox(Texture *texture, Math::Vector3d camera) {};

@@ -94,6 +94,7 @@ public:
 
 	virtual void flipBuffer() override;
 	virtual void drawFloor(uint8 color) override;
+	virtual void fillViewportStippled(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2, byte *stipple) override;
 	void drawCelestialBody(Math::Vector3d position, float radius, uint8 color) override;
 	void drawSkybox(Texture *texture, Math::Vector3d camera) override;
 	void drawThunder(Texture *texture, Math::Vector3d camera, float size) override;

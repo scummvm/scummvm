@@ -1330,6 +1330,9 @@ void Renderer::drawBackground(uint8 color) {
 
 	getRGBAt(color, 0, r1, g1, b1, r2, g2, b2, stipple);
 	clear(r1, g1, b1);
+	// Skies are often a dither of two colors, which clear() cannot express
+	if (stipple && (r1 != r2 || g1 != g2 || b1 != b2))
+		fillViewportStippled(r1, g1, b1, r2, g2, b2, stipple);
 }
 
 void Renderer::drawEclipse(byte color1, byte color2, float progress) {
