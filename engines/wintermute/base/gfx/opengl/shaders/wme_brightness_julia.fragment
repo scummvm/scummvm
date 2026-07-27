@@ -1,0 +1,11 @@
+varying vec2 texPos;
+
+uniform sampler2D tex;
+uniform float brightnessValue;
+
+OUTPUT
+
+void main() {
+	vec4 color = texture2D(tex, texPos);
+	outColor = vec4(pow(color.rgb, vec3(1.0 / brightnessValue)), 1.0);
+}

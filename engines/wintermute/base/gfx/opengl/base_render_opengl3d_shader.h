@@ -191,7 +191,8 @@ private:
 	OpenGL::Shader *_shadowVolumeShader{};
 	OpenGL::Shader *_lineShader{};
 	OpenGL::Shader *_postfilterShader{};
-	OpenGL::Shader *_brightnessShader{};
+	OpenGL::Shader *_brightnessShaderOknytt{};
+	OpenGL::Shader *_brightnessShaderJulia{};
 	GLuint _postfilterTexture;
 };
 

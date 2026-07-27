@@ -191,9 +191,12 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	static const char *brightnessAttributes[] = { "position", "texcoord", nullptr };
-	_brightnessShader = OpenGL::Shader::fromFiles("wme_brightness_oknytt", brightnessAttributes);
-	_brightnessShader->enableVertexAttribute("position", _brightnessVBO, 2, GL_FLOAT, false, 4 * sizeof(GLfloat), 0);
-	_brightnessShader->enableVertexAttribute("texcoord", _brightnessVBO, 2, GL_FLOAT, false, 4 * sizeof(GLfloat), 8);
+	_brightnessShaderOknytt = OpenGL::Shader::fromFiles("wme_brightness_oknytt", brightnessAttributes);
+	_brightnessShaderOknytt->enableVertexAttribute("position", _brightnessVBO, 2, GL_FLOAT, false, 4 * sizeof(GLfloat), 0);
+	_brightnessShaderOknytt->enableVertexAttribute("texcoord", _brightnessVBO, 2, GL_FLOAT, false, 4 * sizeof(GLfloat), 8);
+	_brightnessShaderJulia = OpenGL::Shader::fromFiles("wme_brightness_julia", brightnessAttributes);
+	_brightnessShaderJulia->enableVertexAttribute("position", _brightnessVBO, 2, GL_FLOAT, false, 4 * sizeof(GLfloat), 0);
+	_brightnessShaderJulia->enableVertexAttribute("texcoord", _brightnessVBO, 2, GL_FLOAT, false, 4 * sizeof(GLfloat), 8);
 
 	glGenTextures(1, &_postfilterTexture);
 	glBindTexture(GL_TEXTURE_2D, _postfilterTexture);
@@ -1171,12 +1174,36 @@ void BaseRenderOpenGL3DShader::postfilter() {
 		glDisable(GL_BLEND);
 		glDisable(GL_CULL_FACE);
 
-		_brightnessShader->use();
+		_brightnessShaderOknytt->use();
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, _postfilterTexture);
-		glUniform1i(_brightnessShader->getUniformLocation("tex"), 0);
-		_brightnessShader->setUniform1f("brightnessValue", _brightnessOknytt);
+		glUniform1i(_brightnessShaderOknytt->getUniformLocation("tex"), 0);
+		_brightnessShaderOknytt->setUniform1f("brightnessValue", _brightnessOknytt);
+
+		g_system->presentBuffer();
+		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 0, 0, _width, _height, 0);
+
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		return;
+	}
+
+	// This is for game 'J.U.L.I.A.'
+	if (_brightnessJulia != -1.0f) {
+		setup2D();
+		glViewport(0, 0, _width, _height);
+		glDisable(GL_BLEND);
+		glDisable(GL_CULL_FACE);
+
+		_brightnessShaderJulia->use();
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, _postfilterTexture);
+		glUniform1i(_brightnessShaderJulia->getUniformLocation("tex"), 0);
+		_brightnessShaderJulia->setUniform1f("brightnessValue", _brightnessJulia);
 
 		g_system->presentBuffer();
 		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 0, 0, _width, _height, 0);

@@ -28,6 +28,7 @@
 #include "engines/wintermute/ad/ad_actor.h"
 #ifdef ENABLE_WME3D
 #include "engines/wintermute/ad/ad_actor_3dx.h"
+#include "engines/wintermute/base/gfx/base_renderer3d.h"
 #endif
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/ad/ad_entity.h"
@@ -952,6 +953,21 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		if (_sceneViewport) {
 			_sceneViewport->setRect(x, y, x + width, y + height);
 		}
+
+		stack->pushBool(true);
+
+		return STATUS_OK;
+	}
+
+	else if (strcmp(name, "SetBrightness") == 0) {
+		stack->correctParams(1);
+
+		float gamma = stack->pop()->getFloat(0.0f);
+
+#ifdef ENABLE_WME3D
+		if (_renderer3D)
+			_renderer3D->setBrightnessJulia(gamma);
+#endif
 
 		stack->pushBool(true);
 

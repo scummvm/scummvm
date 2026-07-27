@@ -161,6 +161,9 @@ public:
 	float getBrightnessOknytt() {
 		return _brightnessOknytt;
 	}
+	void setBrightnessJulia(float brightness) {
+		_brightnessJulia = brightness;
+	}
 
 	// ScummVM specific methods <--
 
@@ -176,6 +179,7 @@ protected:
 	PostFilter _postFilterMode;
 	bool _flipInProgress;
 	int32 _brightnessOknytt;
+	float _brightnessJulia;
 
 	virtual void setAmbientLightRenderState() = 0;
 };

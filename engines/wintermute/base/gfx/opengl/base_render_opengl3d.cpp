@@ -1116,6 +1116,62 @@ void BaseRenderOpenGL3D::postfilter() {
 		return;
 	}
 
+	// This is for game 'J.U.L.I.A.'
+	if (_brightnessJulia != -1.0f) {
+		setup2D();
+		glViewport(0, 0, _width, _height);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+
+		glMatrixMode(GL_TEXTURE);
+		glLoadIdentity();
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		glDisable(GL_BLEND);
+		glDisable(GL_ALPHA_TEST);
+		glDisable(GL_CULL_FACE);
+
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, _postfilterTexture);
+
+		g_system->presentBuffer();
+		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 0, 0, _width, _height, 0);
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glVertexPointer(2, GL_FLOAT, 0, vertices);
+		glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
+
+		if (_brightnessJulia <= 1.0f) {
+			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+			glColor4f(_brightnessJulia, _brightnessJulia, _brightnessJulia, 1.0f);
+			glDrawArrays(GL_QUADS, 0, 4);
+		} else {
+			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+			glDrawArrays(GL_QUADS, 0, 4);
+			float alpha = (_brightnessJulia - 1.0f) * 0.2f;
+			glDisable(GL_TEXTURE_2D);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glColor4f(1.0f, 1.0f, 1.0f, alpha);
+			glDrawArrays(GL_QUADS, 0, 4);
+			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			glDisable(GL_BLEND);
+		}
+
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_TEXTURE_2D);
+
+		return;
+	}
+
 	if (_postFilterMode == kPostFilterOff)
 		return;
 
