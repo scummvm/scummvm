@@ -792,6 +792,24 @@
   supplied completion flag. `KPEXTRA0.BBM` through `KPEXTRA3.BBM` provide the
   entry-slot and blinking-prompt feedback, while `JB_LOC0.WAV` through
   `JB_LOC5.WAV` supply control and result cues.
+- Scene action 19 calls `RunWebGridShiftPuzzleScene` at `0x2cdce` with the
+  caller-supplied completion flag. `KF.RUN` callback `0x2b6` supplies flag 221
+  after retaining the final `SPIDER.AVI` presentation. The routine captures
+  that display into a 5-by-5 grid of 85-by-70 tiles: row Y coordinates
+  `26, 96, 166, 236, 306` come from `0x843c2`, and column X coordinates
+  `107, 192, 277, 362, 447` come from `0x843d6`. These are physical screen
+  coordinates; retail cancels the 50-pixel presentation origin before
+  initializing the controls.
+- The web puzzle starts with the tracked tile at row 0, column 4 and performs
+  `150 * puzzle level` random adjacent moves, rejecting immediate reversal
+  directions. Selecting any other cell in the tracked tile's row or column
+  rotates that inclusive segment by one cell and moves the tracked position to
+  the selection. The identity tile order `0..24` is the solution. Escape exits,
+  F1 opens help table `0x1ad`, command `0x2300` temporarily previews the solved
+  grid, and the case-insensitive hidden keyword `zztop` completes the puzzle.
+  `WEB0.WAV` accompanies autoplay while `WEB1.WAV` and `WEB2.WAV` provide
+  randomized shift and preview feedback. Shared cleanup fades the 256-color
+  palette to black in nine steps and clears logical page 0.
 - Scene action 24 calls `RunTubeSwitchScene` at `0x25e18` with the
   caller-supplied completion flag. `GA1.RUN` callback `0xaf2` supplies flag 215
   (`solved vacuum tube puzzle`). The scene counts consumed inventory flags 102,
