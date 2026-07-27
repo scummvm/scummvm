@@ -51,7 +51,9 @@ static const uint16 kHelpCommand = 0x3b00;
 static const uint kDosTickMillis = 55;
 
 static const int kCodeX = 142;
-static const int kCodeY = kSceneOriginY;
+// RunKeypadSequencePuzzleScene at 0x3bd30 loads ECX=0x8e and
+// EBX=g_presentationViewportTopY+0x109 before initializing control 0x672.
+static const int kCodeY = 265 + kSceneOriginY;
 static const int kBlinkX = 126;
 static const int kBlinkY = 213 + kSceneOriginY;
 static const int kSlotY = 200 + kSceneOriginY;
