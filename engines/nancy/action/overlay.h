@@ -85,6 +85,7 @@ public:
 
 	bool canHaveHotspot() const override { return true; }
 	bool isViewportRelative() const override { return true; }
+	bool survivesSceneChange(bool nextSceneIsNoArt) const override { return nextSceneIsNoArt; }
 	Common::String getRecordExtraInfo() const override { return Common::String::format("Scene %d", _sceneChange.sceneID); }
 
 protected:
