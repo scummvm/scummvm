@@ -194,6 +194,13 @@ CastleEngine::~CastleEngine() {
 		}
 	}
 
+	for (int i = 0; i < int(_thunderCLUT8Frames.size()); i++) {
+		if (_thunderCLUT8Frames[i]) {
+			_thunderCLUT8Frames[i]->free();
+			delete _thunderCLUT8Frames[i];
+		}
+	}
+
 	for (int i = 0; i < int(_thunderTextures.size()); i++) {
 		if (_thunderTextures[i]) {
 			delete _thunderTextures[i];
@@ -707,6 +714,8 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 		(*palette)[5][0] = 0xcc;
 		(*palette)[5][1] = 0xcc;
 		(*palette)[5][2] = 0xcc;
+
+		updateThunderFramesPalette();
 	}
 
 	if (isSpectrum())
@@ -2578,9 +2587,13 @@ void CastleEngine::updateThunder() {
 		if (_thunderFrameDuration == 5)
 			_gfx->clear(255, 255, 255);
 
-		if (_thunderFrameDuration == 0)
-			if (isSpectrum() || isCPC() || isDOS())
+		if (_thunderFrameDuration == 0) {
+			// The Amiga and Atari ST end the strike with sound 7
+			if (isAmiga() || isAtariST())
+				playSound(7, false);
+			else if (isSpectrum() || isCPC() || isDOS())
 				playSound(8, false);
+		}
 		return;
 	}
 
@@ -2588,7 +2601,7 @@ void CastleEngine::updateThunder() {
 		//debug("Thunder ticks: %d", _thunderTicks);
 		_thunderTicks--;
 		if (_thunderTicks <= 0) {
-			if (isDOS())
+			if (isDOS() || isAmiga() || isAtariST())
 				_thunderFrameIndex = int(_rnd->getRandomNumber(_thunderTextures.size() - 1));
 			_thunderFrameDuration = 10;
 			_thunderOffset = Math::Vector3d();

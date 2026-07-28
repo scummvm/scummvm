@@ -141,6 +141,8 @@ public:
 	Graphics::ManagedSurface *loadFrameFromPlanesVertical(Common::SeekableReadStream *file, int widthInBytes, int height);
 	Graphics::ManagedSurface *loadFrameFromPlanesInternalVertical(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int width, int height, int plane);
 	Graphics::ManagedSurface *loadFrameFromPlanesInterleaved(Common::SeekableReadStream *file, int widthInWords, int height);
+	void loadThunderFramesAmiga(Common::SeekableReadStream *file, int offset);
+	void updateThunderFramesPalette();
 
 	Common::Array<Graphics::ManagedSurface *>_keysBorderFrames;
 	Common::Array<Graphics::ManagedSurface *>_keysMenuFrames;
@@ -231,6 +233,8 @@ private:
 	int _thunderFrameIndex;
 	Math::Vector3d _thunderOffset;
 	Common::Array<Texture *>_thunderTextures;
+	// Amiga and Atari ST: kept indexed, to be recolored per area
+	Common::Array<Graphics::ManagedSurface *> _thunderCLUT8Frames;
 };
 
 }

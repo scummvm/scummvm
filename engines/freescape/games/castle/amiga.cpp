@@ -1082,6 +1082,49 @@ Graphics::ManagedSurface *CastleEngine::loadFrameFromPlanesInterleaved(Common::S
 	return surface;
 }
 
+// Two lightning bolts of 2 words x 85 rows, one picked at random per strike. The
+// original stencils them onto the sky, keeping only the pixels where the screen
+// already holds color 15, so the color 15 of the bolt is its transparency.
+void CastleEngine::loadThunderFramesAmiga(Common::SeekableReadStream *file, int offset) {
+	file->seek(offset);
+	for (int i = 0; i < 2; i++) {
+		Graphics::ManagedSurface *frame = loadFrameFromPlanesInterleaved(file, 2, 85);
+		for (int y = 0; y < frame->h; y++) {
+			for (int x = 0; x < frame->w; x++) {
+				if (frame->getPixel(x, y) == 15)
+					frame->setPixel(x, y, 0);
+			}
+		}
+		_thunderCLUT8Frames.push_back(frame);
+	}
+}
+
+// The bolt is drawn into the viewport, so it takes the colors of the current area
+void CastleEngine::updateThunderFramesPalette() {
+	if (_thunderCLUT8Frames.empty() || !_gfx->_palette)
+		return;
+
+	while (_thunderFrames.size() < _thunderCLUT8Frames.size())
+		_thunderFrames.push_back(nullptr);
+
+	for (uint i = 0; i < _thunderCLUT8Frames.size(); i++) {
+		if (_thunderFrames[i]) {
+			_thunderFrames[i]->free();
+			delete _thunderFrames[i];
+		}
+
+		Graphics::ManagedSurface *frame = new Graphics::ManagedSurface();
+		frame->copyFrom(*_thunderCLUT8Frames[i]);
+		frame->convertToInPlace(_gfx->_texturePixelFormat, _gfx->_palette, 16);
+		_thunderFrames[i] = frame;
+	}
+
+	// Uploaded once, so drop them to have them rebuilt recolored
+	for (uint i = 0; i < _thunderTextures.size(); i++)
+		delete _thunderTextures[i];
+	_thunderTextures.clear();
+}
+
 void CastleEngine::loadAssetsAmigaDemo() {
 	Common::File file;
 	file.open("x");
@@ -1186,6 +1229,8 @@ void CastleEngine::loadAssetsAmigaDemo() {
 	file.seek(0x397c2);
 	_strenghtBarFrame = loadFrameFromPlanesInterleaved(&file, 5, 3);
 	_strenghtBarFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
+
+	loadThunderFramesAmiga(&file, 0x38b32); // Memory 0x38B16
 
 	// Eye icon sprites (memory 0x3C096, 12 frames, 16x7 each, interleaved 4-plane)
 	// Used for strength/compass display at screen (224, 164). Header at 0x3C08E.
@@ -1536,6 +1581,8 @@ void CastleEngine::loadAssetsAmigaFullGame() {
 	file.seek(0x38e16);
 	_strenghtBarFrame = loadFrameFromPlanesInterleaved(&file, 5, 3);
 	_strenghtBarFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
+
+	loadThunderFramesAmiga(&file, 0x38186); // Memory 0x3816A
 
 	// Eye icon sprites: 12 frames × 1 word × 7 rows. Header at 0x3b6fe.
 	file.seek(0x3b706);

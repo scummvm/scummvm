@@ -261,6 +261,8 @@ void CastleEngine::loadAssetsAtariFullGame() {
 	_strenghtBarFrame = loadFrameFromPlanesInterleaved(file, 5, 3);
 	_strenghtBarFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 
+	loadThunderFramesAmiga(file, 0x55f20);
+
 	file->seek(0x594a0);
 	for (int i = 0; i < 12; i++) {
 		Graphics::ManagedSurface *frame = loadFrameFromPlanesInterleaved(file, 1, 7);
