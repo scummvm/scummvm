@@ -249,6 +249,10 @@ public:
 	State getState() const { return _state; }
 	void setState(State state) { _state = state; }
 
+	// Close every open Nancy 10+ popup. Used before a script auto-opens one
+	// (e.g. the incoming game-over call) so two popups can't stack.
+	void closeActivePopups();
+
 	struct Timers {
 		Time pushedPlayTime;
 		Time lastTotalTime;

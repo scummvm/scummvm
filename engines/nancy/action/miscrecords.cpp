@@ -243,6 +243,11 @@ void ControlUIItems::execute() {
 	// phone, _startScene (when set) is the scene to jump to once it opens,
 	// which places a call that starts a conversation there.
 	if (_autoOpenOrBadgeSound == 1) {
+		// Only one popup shows at a time. If the player left one open (e.g. the
+		// inventory), close it before this AR auto-opens its target, so the
+		// game-over incoming call doesn't stack the phone over another popup.
+		NancySceneState.closeActivePopups();
+
 		switch (_uiButton) {
 		case kUITypeInventory:
 			NancySceneState.getInventoryPopup().open();

@@ -1525,6 +1525,13 @@ Common::Rect Scene::activePopupConfinement() const {
 	return Common::Rect();
 }
 
+void Scene::closeActivePopups() {
+	if (_conversationPopup.isVisible()) _conversationPopup.close();
+	if (_inventoryPopup.isOpen())       _inventoryPopup.close();
+	if (_notebookPopup.isVisible())     _notebookPopup.close();
+	if (_cellPhonePopup.isVisible())    _cellPhonePopup.close();
+}
+
 void Scene::handleInput() {
 	// While a UI prep scene is running the player shouldn't be able to interact
 	// with the (hidden, videoless) prep scenes. Swallow all input until the
