@@ -37,6 +37,14 @@ public:
 			Common::KeyState(Common::KEYCODE_DELETE, 0x7f)), 0x5300);
 	}
 
+	void testAltHUsesBiosPreviewCommand() {
+		TS_ASSERT_EQUALS(Ripper::translateKeyToCommand(
+			Common::KeyState(Common::KEYCODE_h, 'h', Common::KBD_ALT)),
+			0x2300);
+		TS_ASSERT_EQUALS(Ripper::translateKeyToCommand(
+			Common::KeyState(Common::KEYCODE_h, 'h')), (uint16)'h');
+	}
+
 	void testPrintableAndControlKeysRetainAscii() {
 		TS_ASSERT_EQUALS(Ripper::translateKeyToCommand(
 			Common::KeyState(Common::KEYCODE_a, 'a')), (uint16)'a');

@@ -819,8 +819,9 @@
   directions. Selecting any other cell in the tracked tile's row or column
   rotates that inclusive segment by one cell and moves the tracked position to
   the selection. The identity tile order `0..24` is the solution. Escape exits,
-  F1 opens help table `0x1ad`, command `0x2300` temporarily previews the solved
-  grid, and the case-insensitive hidden keyword `zztop` completes the puzzle.
+  F1 opens help table `0x1ad`, Alt+H (DOS BIOS command `0x2300`) temporarily
+  previews the solved grid, and the case-insensitive hidden keyword `zztop`
+  completes the puzzle.
   `WEB0.WAV` accompanies autoplay while `WEB1.WAV` and `WEB2.WAV` provide
   randomized shift and preview feedback. Shared cleanup fades the 256-color
   palette to black in nine steps and clears logical page 0.
