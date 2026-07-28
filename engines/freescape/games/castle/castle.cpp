@@ -1933,15 +1933,26 @@ void CastleEngine::drawRiddleStringInSurface(const Common::String &str, int x, i
 	}
 }
 
+void CastleEngine::drawStrengthWeight(Graphics::Surface *surface, int frameIdx, const Common::Point &position, int width, uint32 back) {
+	Graphics::ManagedSurface *frame = _strenghtWeightsFrames[frameIdx];
+	Common::Rect src(0, 0, width, frame->h);
+
+	// A Spectrum disc is drawn opaquely, so the shaft stays hidden in the gap
+	// it leaves; the other versions key out the black around theirs
+	if (isSpectrum())
+		surface->copyRectToSurface((const Graphics::Surface)*frame, position.x, position.y, src);
+	else
+		surface->copyRectToSurfaceWithKey((const Graphics::Surface)*frame, position.x, position.y, src, back);
+}
+
 void CastleEngine::drawEnergyMeter(Graphics::Surface *surface, Common::Point origin) {
 	if (_strenghtBackgroundFrame)
 		surface->copyRectToSurface((const Graphics::Surface)*_strenghtBackgroundFrame, origin.x, origin.y, Common::Rect(0, 0, _strenghtBackgroundFrame->w, _strenghtBackgroundFrame->h));
 
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
-	uint32 back = 0;
-
-	if (isDOS() || isAmiga() || isAtariST())
-		back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+	// The CPC weights are converted with transparency, the others keep the
+	// black they were loaded with and rely on it being the key colour
+	uint32 back = isCPC() ? 0 : black;
 
 	int strength = _gameStateVars[k8bitVariableShield];
 
@@ -1971,6 +1982,8 @@ void CastleEngine::drawEnergyMeter(Graphics::Surface *surface, Common::Point ori
 		return;
 
 	int weightWidth = _strenghtWeightsFrames[0]->w;
+	if (isSpectrum())
+		weightWidth = 4; // The disc only fills the half of its sprite the frame header masks in
 
 	// Weight discs overlap: step is smaller than sprite width (3 pixels in original ZX assembly).
 	// Each disc is drawn at pixel-level precision, converging from outside toward center.
@@ -2010,18 +2023,12 @@ void CastleEngine::drawEnergyMeter(Graphics::Surface *surface, Common::Point ori
 
 	if (frameIdx != 0) {
 		frameIdx = 4 - frameIdx;
-		if (isSpectrum())
-			surface->copyRectToSurface((const Graphics::Surface)*_strenghtWeightsFrames[frameIdx], weightPoint.x, weightPoint.y, Common::Rect(0, 0, weightWidth, _strenghtWeightsFrames[frameIdx]->h));
-		else
-			surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_strenghtWeightsFrames[frameIdx], weightPoint.x, weightPoint.y, Common::Rect(0, 0, weightWidth, _strenghtWeightsFrames[frameIdx]->h), back);
+		drawStrengthWeight(surface, frameIdx, weightPoint, weightWidth, back);
 		weightPoint += Common::Point(weightStep, 0);
 	}
 
 	for (int i = 0; i < strength / 4; i++) {
-		if (isSpectrum())
-			surface->copyRectToSurface((const Graphics::Surface)*_strenghtWeightsFrames[0], weightPoint.x, weightPoint.y, Common::Rect(0, 0, weightWidth, _strenghtWeightsFrames[0]->h));
-		else
-			surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_strenghtWeightsFrames[0], weightPoint.x, weightPoint.y, Common::Rect(0, 0, weightWidth, _strenghtWeightsFrames[0]->h), back);
+		drawStrengthWeight(surface, 0, weightPoint, weightWidth, back);
 		weightPoint += Common::Point(weightStep, 0);
 	}
 
@@ -2035,19 +2042,13 @@ void CastleEngine::drawEnergyMeter(Graphics::Surface *surface, Common::Point ori
 	weightPoint = Common::Point(origin.x + rightWeightPos - (totalRight - 1) * weightStep, weightY);
 
 	for (int i = 0; i < numFullRight; i++) {
-		if (isSpectrum())
-			surface->copyRectToSurface((const Graphics::Surface)*_strenghtWeightsFrames[0], weightPoint.x, weightPoint.y, Common::Rect(0, 0, weightWidth, _strenghtWeightsFrames[0]->h));
-		else
-			surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_strenghtWeightsFrames[0], weightPoint.x, weightPoint.y, Common::Rect(0, 0, weightWidth, _strenghtWeightsFrames[0]->h), back);
+		drawStrengthWeight(surface, 0, weightPoint, weightWidth, back);
 		weightPoint += Common::Point(weightStep, 0);
 	}
 
 	if (hasPartial) {
 		frameIdx = 4 - (strength % 4);
-		if (isSpectrum())
-			surface->copyRectToSurface((const Graphics::Surface)*_strenghtWeightsFrames[frameIdx], weightPoint.x, weightPoint.y, Common::Rect(0, 0, weightWidth, _strenghtWeightsFrames[frameIdx]->h));
-		else
-			surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_strenghtWeightsFrames[frameIdx], weightPoint.x, weightPoint.y, Common::Rect(0, 0, weightWidth, _strenghtWeightsFrames[frameIdx]->h), back);
+		drawStrengthWeight(surface, frameIdx, weightPoint, weightWidth, back);
 	}
 }
 

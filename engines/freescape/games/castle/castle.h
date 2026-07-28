@@ -93,6 +93,7 @@ public:
 	void drawCPCUI(Graphics::Surface *surface) override;
 	void drawAmigaAtariSTUI(Graphics::Surface *surface) override;
 	void drawEnergyMeter(Graphics::Surface *surface, Common::Point origin);
+	void drawStrengthWeight(Graphics::Surface *surface, int frameIdx, const Common::Point &position, int width, uint32 back);
 	void drawLiftingGate(Graphics::Surface *surface);
 	void drawDroppingGate(Graphics::Surface *surface);
 	void pressedKey(const int keycode) override;
