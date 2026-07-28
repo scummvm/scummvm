@@ -535,6 +535,24 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// QueryWindow
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "QueryWindow") == 0) {
+		stack->correctParams(1);
+		const char *findName = stack->pop()->getString();
+		for (int32 i = 0; i < _windows.getSize(); i++) {
+			if (scumm_stricmp(_windows[i]->_name, findName) == 0) {
+				stack->pushNative(_windows[i], true);
+				return STATUS_OK;
+			}
+		}
+
+		stack->pushNULL();
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// QueryItem
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "QueryItem") == 0) {
