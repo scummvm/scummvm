@@ -691,7 +691,10 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			}
 			if (skipToEnd && decoder.getFrameCount() != 0) {
 				const uint finalFrame = decoder.getFrameCount() - 1;
-				const Graphics::Surface *frame = decoder.forceSeekToFrame(finalFrame);
+				// Smacker pixels and palette packets are stateful. Rebuild the
+				// terminal frame from a cleared surface so the engine-added
+				// Escape fast-forward cannot retain intermediate frame state.
+				const Graphics::Surface *frame = decoder.restartAtFrame(finalFrame);
 				if (frame) {
 					presentFrame(frame, true);
 					if (sequenceCallback)
@@ -700,7 +703,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 						serviceSceneAudio(finalFrame + 1);
 					completed = true;
 					debugC(2, kDebugVideo,
-						"Ripper: Escape presented final Smacker frame '%s' frame=%u; completing presentation",
+						"Ripper: Escape reconstructed and presented final Smacker frame '%s' frame=%u; completing presentation",
 						name.c_str(), finalFrame);
 				}
 			}
