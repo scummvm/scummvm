@@ -45,6 +45,7 @@ public:
 private:
 	bool loadAssets();
 	bool loadPcx(const Common::String &path, BitmapAssetFrame &frame);
+	bool captureBackground();
 	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
 		int x, int y) const;
 	void render();
