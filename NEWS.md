@@ -40,8 +40,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for loading ZX Spectrum games directly from TAP/TZX tape images.
 
  Kyra:
+   - Added support for Korean fan-translation of kyra1 (added in 2026.3.0).
    - Restored non-Korean kyra1 games which got broken ("You're missing the 'KYRA.DAT'
-     engine data file or it got corrupted..." message)
+     engine data file or it got corrupted..." message).
 
  Lure:
    - Improved character pathfinding.
