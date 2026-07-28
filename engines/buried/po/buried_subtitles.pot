@@ -1,4 +1,4 @@
-# English translation transcriptions for Buried in Timein ScummVM.
+# English translation transcriptions for Buried in Time in ScummVM.
 # Copyright (C) 2026 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 #
@@ -7,183 +7,162 @@
 # Game: The Journeyman Project 2: Buried in Time
 # Protagonist: Agent 5 (Gage Blackwood), Temporal Security Agency (TSA)
 # Plot: Frame-up mystery. Gage travels across time to gather evidence clearing
-#       himself of altering history for perosnal gain.
+#       himself of altering history for personal gain.
 # Key Characters:
 #   - Gage Blackwood (Agent 5): Player character, TSA temporal agent.
-#   - Arthur: Gage's AI  companion (witty, sarcastic, highly informative) whom he meets
-#    during the evnets of the game and who serves as the game's hint system.
-#   - Michelle Visard (Agent 3): Fellow agent and friend to the protagonist. Agent
-#    3 is ultimately responsible for framing the main characcter to cover up her plot
-#    to give time travel technology to alien races.
+#   - Arthur: Gage's AI companion (witty, sarcastic, highly informative).
+#   - Michelle Visard (Agent 3): Fellow agent.
 # Locations:
-#
-#  Buried in Time is a time travel game. As such, its setting spans multiple terestrial
-#  and non-terestrial locations spanning the past and fuuture.
-#
-#   - Château Gaillard, France, (1204 AD)
+#   - Château Gaillard, France (1204 AD)
 #   - Leonardo da Vinci's Studio, Italy (1488 AD)
 #   - Chichen Itza, Mexico (1050 AD)
-#   - Farnstein's Laboratory (2247 AD) (A derelict mining and research space station)
+#   - Farnstein's Laboratory (2247 AD) or Gage's Apartment (2318 AD)
 # -----------------------------------------------------------------------------
 msgid ""
 msgstr ""
 "Project-Id-Version: Buried in Time\n"
 "Report-Msgid-Bugs-To: https://bugs.scummvm.org/\n"
-"POT-Creation-Date: 2026-07-27 19:49\n"
+"POT-Creation-Date: 2026-07-28 17:26\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 # =============================================================================
-# =============================================================================
-# =============================================================================
 # SECTION 1: Character & Speaker Names
 # =============================================================================
 
-# Ads shown while watching the news in Gage's apartment.
+#. Character / Speaker Name
 msgid "Advertisement"
 msgstr ""
 
-# A Temporal Security agent who arrests Gage.
+#. Character / Speaker Name
 msgid "Agent 8"
 msgstr ""
 
-# An announcer on a newscast.
+#. Character / Speaker Name
 msgid "Announcer"
 msgstr ""
 
-# The computer in Gage's apartment.
+#. Character / Speaker Name
 msgid "Apartment Computer"
 msgstr ""
 
-# A robot action figure, modeled after an antagonist from the previous game.
-# Included in the game as a gag.
+#. Character / Speaker Name
 msgid "Ares Action Figure"
 msgstr ""
 
-# An AI companion that you meet during the game and who joins you early in the
-# adventure. Arthur serves as the game's hint system as well as comic relief.
+#. Character / Speaker Name
 msgid "Arthur"
 msgstr ""
 
-# An English soldier guarding Chateau Gaillard.
+#. Character / Speaker Name
 msgid "Chateau Guard"
 msgstr ""
 
-# Chief Technician of the Temporal Security Agency.
+#. Character / Speaker Name
 msgid "Chief Technician Daughton"
 msgstr ""
 
-# Comissioner (leader) of the Temporal Security Agency
+#. Character / Speaker Name
 msgid "Commissioner Baldwin"
 msgstr ""
 
-# A dignitary awarding Gage an award for the heroic events of the first game.
+#. Character / Speaker Name
 msgid "Dignitary"
 msgstr ""
 
-# Reclusive scientist who lived alone on a remote space station.
-# Creator of Arthur.
+#. Character / Speaker Name
 msgid "Dr. Farnstein"
 msgstr ""
 
-# An English Knight defending Chateau Gaillard
+#. Character / Speaker Name
 msgid "English Knight"
 msgstr ""
 
-# The main character.
-# The protagonist interacts with a future version of himself. Dialog for "Gage"
-# is all attributed to the speaker "Gage". Dialog for the player is attributed to "You"
-# though the player is almost entirely voiceless throgh the entire game.
+#. Character / Speaker Name
 msgid "Gage"
 msgstr ""
 
-# Composer of Buried in Time. He plays himself in the game as a repeated gag.
-# Geno appears in several places singing his actual music.
+#. Character / Speaker Name
 msgid "Geno Andrews"
 msgstr ""
 
-# Alien ambassador from the Krynn. The Krynn are the masterminds of the game's overall
-# plot to steal time travel technology. Icarus is the game's final boss in the final level.
+#. Character / Speaker Name
 msgid "Icarus"
 msgstr ""
 
-# A judge who oversees the trial against the protagonist.
+#. Character / Speaker Name
 msgid "Judge"
 msgstr ""
 
-# The jury foreperson in the trial against the protagonist.
+#. Character / Speaker Name
 msgid "Jury Foreperson"
 msgstr ""
 
-# A robot action figure, modeled after an antagonist from the previous game.
-# Included in the game as a gag.
+#. Character / Speaker Name
 msgid "Mercury Action Figure"
 msgstr ""
 
-# A fellow Temporal Security Agent and friend to the protagonist. Michelle is
-# revealed to be one of the game's antagonists, responsible for framing the protagonist.
+#. Character / Speaker Name
 msgid "Michelle (Agent 3)"
 msgstr ""
 
-# A TV News Anchor
+#. Character / Speaker Name
 msgid "News Anchor"
 msgstr ""
 
-# The voiced game interface overview tutorial.
+#. Character / Speaker Name
 msgid "Overview"
 msgstr ""
 
-# The protagobist's phone and answering machine. "You have three messages!"
+#. Character / Speaker Name
 msgid "Phone"
 msgstr ""
 
-# The computer maintaining the protagonist's house arrest.
+#. Character / Speaker Name
 msgid "Police Computer"
 msgstr ""
 
-# A robot action figure, modeled after an antagonist from the previous game.
-# Included in the game as a gag.
+#. Character / Speaker Name
 msgid "Poseidon Action Figure"
 msgstr ""
 
-# A news reporter.
+#. Character / Speaker Name
 msgid "Reporter"
 msgstr ""
 
-# A news reporter, first in a montage sequence.
+#. Character / Speaker Name
 msgid "Reporter #1"
 msgstr ""
 
-# A news reporter, second in a montage sequence.
+#. Character / Speaker Name
 msgid "Reporter #2"
 msgstr ""
 
-# A news reporter, third in a montage sequence.
+#. Character / Speaker Name
 msgid "Reporter #3"
 msgstr ""
 
-# A scary voice trying to scare the protagonist away from Farnstein's lab.
-# This voice is later revealed to be Arthur.
+#. Character / Speaker Name
 msgid "Scary Voice"
 msgstr ""
 
-# The computer on the derelict Farnstein Laboratory station.
+#. Character / Speaker Name
 msgid "Station Computer"
 msgstr ""
 
-# The computer at the Temporal Security Agency
+#. Character / Speaker Name
 msgid "TSA Computer"
 msgstr ""
 
-# The computer in a personnel transporter. (Like a Star Trek transporter)
+#. Character / Speaker Name
 msgid "Transporter Computer"
 msgstr ""
 
-# A woman who voices the beginning of a Geno Andrew's song about romantic breakups.
+#. Character / Speaker Name
 msgid "Woman"
 msgstr ""
 
-#. The player-character.
+#. Character / Speaker Name
 msgid "You"
 msgstr ""
 
@@ -248,7 +227,7 @@ msgstr ""
 #. Location: AI voiceover comments (Arthur or station computers)
 #. Track ID: AICR_S04
 #. Speaker: Arthur
-msgid "So, what do you do? Travel around space looking for derelict crafts so you can terrorize the survivors. by redecorating while they're helpless? What what'd you do? Bring a spray can, too?!"
+msgid "So, what do you do? Travel around space looking for derelict crafts so you can terrorize the survivors by redecorating while they're helpless? What what'd you do? Bring a spray can, too?!"
 msgstr ""
 
 #. Location: AI voiceover comments (Arthur or station computers)
@@ -326,7 +305,7 @@ msgstr ""
 #. Location: AI voiceover comments (Arthur or station computers)
 #. Track ID: AIHW_C01
 #. Speaker: Arthur
-msgid "All right, the passageway has been destroyed, so the only way we're going to get to the biomass processing room. is through the ice-steroid. We're going to have to hurry though, because it's all in vacuum and your oxygen reserve isn't going to get you very far. You'll have to take the atmosphere mining lift."
+msgid "All right, the passageway has been destroyed, so the only way we're going to get to the biomass processing room is through the ice-steroid. We're going to have to hurry though, because it's all in vacuum and your oxygen reserve isn't going to get you very far. You'll have to take the atmosphere mining lift."
 msgstr ""
 
 #. Location: AI voiceover comments (Arthur or station computers)
@@ -482,7 +461,7 @@ msgstr ""
 #. Location: AI voiceover comments (Arthur or station computers)
 #. Track ID: AIIC_I01
 #. Speaker: Arthur
-msgid "These lifts weren't used too often. The atmosphere mining is all automated, so they're really only for maintenance. Doc used to come up here every once in a while because it's really quite beautiful inside the ice-steroid, but. it's such a pain to suit up, I suppose."
+msgid "These lifts weren't used too often. The atmosphere mining is all automated, so they're really only for maintenance. Doc used to come up here every once in a while because it's really quite beautiful inside the ice-steroid, but it's such a pain to suit up, I suppose."
 msgstr ""
 
 #. Location: AI voiceover comments (Arthur or station computers)
@@ -494,7 +473,7 @@ msgstr ""
 #. Location: AI voiceover comments (Arthur or station computers)
 #. Track ID: AIIC_I03
 #. Speaker: Arthur
-msgid "How do you like the feeling of thousands of tons of ice balanced above your head. while there's nothing beneath your feet? Getting anxious, hmm? Phobias creeping in, hmmm? High anxiety? No? Oh well."
+msgid "How do you like the feeling of thousands of tons of ice balanced above your head while there's nothing beneath your feet? Getting anxious, hmm? Phobias creeping in, hmmm? High anxiety? No? Oh well."
 msgstr ""
 
 #. Location: AI voiceover comments (Arthur or station computers)
@@ -518,7 +497,7 @@ msgstr ""
 #. Location: AI voiceover comments (Arthur or station computers)
 #. Track ID: AIIC_I07
 #. Speaker: Arthur
-msgid "Doc wanted to make this place self-sufficient, so he set all this up when he refurbished the station. It's a simple idea, really. You capture a large asteroid composed mainly of water ice, bore through the center, and set up a mining rig on a cable track. The ice is mined away from the inside out and melted at the junctions at either end, then pumped down to the atmosphere plant on the station proper. There, some of it's broken down into oxygen for breathable air. and hydrogen for the attitude jets and backup generator. This is mostly why Doc decided to move the station into orbit near Saturn's rings. Here there is an unlimited supply of ice-steroids. and, considering the station's only supporting a crew of one, Doc would only need to replace it once every decade or so."
+msgid "Doc wanted to make this place self-sufficient, so he set all this up when he refurbished the station. It's a simple idea, really. You capture a large asteroid composed mainly of water ice, bore through the center, and set up a mining rig on a cable track. The ice is mined away from the inside out and melted at the junctions at either end, then pumped down to the atmosphere plant on the station proper. There, some of it's broken down into oxygen for breathable air and hydrogen for the attitude jets and backup generator. This is mostly why Doc decided to move the station into orbit near Saturn's rings. Here there is an unlimited supply of ice-steroids and, considering the station's only supporting a crew of one, Doc would only need to replace it once every decade or so."
 msgstr ""
 
 #. Location: AI voiceover comments (Arthur or station computers)
@@ -536,7 +515,7 @@ msgstr ""
 #. Location: AI voiceover comments (Arthur or station computers)
 #. Track ID: AIIC_I10
 #. Speaker: Arthur
-msgid "Those remotes are what we call nibblers. They crawl along the inside walls and an arc of heated molecular filament rotates back and forth. like an ice cream scoop and carves out the ice-steroid. The ice is shattered by the vibration of the filament, and the small chunks are drawn into the processor by the gravitational pull of the mass driver rings."
+msgid "Those remotes are what we call nibblers. They crawl along the inside walls and an arc of heated molecular filament rotates back and forth like an ice cream scoop and carves out the ice-steroid. The ice is shattered by the vibration of the filament, and the small chunks are drawn into the processor by the gravitational pull of the mass driver rings."
 msgstr ""
 
 #. Location: AI voiceover comments (Arthur or station computers)
@@ -590,7 +569,7 @@ msgstr ""
 #. Location: AI voiceover comments (Arthur or station computers)
 #. Track ID: AIMR_H03
 #. Speaker: Arthur
-msgid "I think, somehow, we're going to need to duplicate whatever resonance frequency. was used to make the biomass react. That's the only way we'll be able to record how the sculpture was changed."
+msgid "I think, somehow, we're going to need to duplicate whatever resonance frequency was used to make the biomass react. That's the only way we'll be able to record how the sculpture was changed."
 msgstr ""
 
 #. Location: AI voiceover comments (Arthur or station computers)
@@ -638,7 +617,7 @@ msgstr ""
 #. Location: AI voiceover comments (Arthur or station computers)
 #. Track ID: AINX_C03
 #. Speaker: Arthur
-msgid "As to our mutual friend, he was reprogramming one of my sculptures in the biomass processing module. I think he set up some sort of harmonics response, but. the only way to find out for sure is to visit the scene of the crime. And that means getting to that part of the station. Now, I gather you don't have control over where you jump to in a time zone. So it maybe a trek, the accident really trashed that part of the station. In fact, we may want to come back to it later. All right, so maybe it won't make much difference when we get to it. But to be totally honest, I'd much rather go somewhere other than back to the station, my first trip out of here. You know what I mean? I could use a little adventure."
+msgid "As to our mutual friend, he was reprogramming one of my sculptures in the biomass processing module. I think he set up some sort of harmonics response, but the only way to find out for sure is to visit the scene of the crime. And that means getting to that part of the station. Now, I gather you don't have control over where you jump to in a time zone. So it maybe a trek, the accident really trashed that part of the station. In fact, we may want to come back to it later. All right, so maybe it won't make much difference when we get to it. But to be totally honest, I'd much rather go somewhere other than back to the station, my first trip out of here. You know what I mean? I could use a little adventure."
 msgstr ""
 
 #. Location: AI voiceover comments (Arthur or station computers)
@@ -656,7 +635,7 @@ msgstr ""
 #. Location: AI voiceover comments (Arthur or station computers)
 #. Track ID: AINX_S01
 #. Speaker: Arthur
-msgid "Welcome ...come ...come ...come to my brain ...brain ...brain ...brain. All that I am is contained in that sphere. You're going to have to open me up. There's a manual codelock. I'm not sure exactly how it works, but. I think it has to do with exchanging the red lights for green and vice-versa. You'll have to figure it out. After that, well, if it works, the next time I talk to you should be from inside your suit."
+msgid "Welcome ...come ...come ...come to my brain ...brain ...brain ...brain. All that I am is contained in that sphere. You're going to have to open me up. There's a manual codelock. I'm not sure exactly how it works, but I think it has to do with exchanging the red lights for green and vice-versa. You'll have to figure it out. After that, well, if it works, the next time I talk to you should be from inside your suit."
 msgstr ""
 
 #. Location: AI voiceover comments (Arthur or station computers)
@@ -674,7 +653,7 @@ msgstr ""
 #. Location: AI voiceover comments (Arthur or station computers)
 #. Track ID: AISCVID2
 #. Speaker: Arthur
-msgid "I'm afraid this conversation is going to be a little one-sided. My command level voice recognition module got a little jumbled in the accident. Well, I'm Arthur. You've probably figured out by now that I'm not ... \"real\". But I'm learning to accept it, really, I split off a few copies of myself and together we're sharing our feelings about it in group. Anyway, this is what I am, an artificial-, sorry, \"non-organic\" sentient being, if you want to be politically correct, trapped in this wreck with the power dying out a little quickly, I'm afraid. I've yet to figure out who *you* are, though. Well, I think I can safely rule out the fire department. I thought I was pretty advanced, but the technology I'm reading in your suit is astounding. And, this is crazy, but it almost seems like an evolution of mine. Look, if you'll let me, I should be able to interface with your logic system. and maybe get a clue as to who you are and how we can help each other. It means an intrusive scan, but we're both lost here and I ... need you to trust me. What do you say? I'm sorry. I've probably seen more than I should. I should have never scanned your biochips. Wait a second, your biochips! Gage, I'm going to make you an offer you can't refuse! Take me with you! Your biochips are derived from the same wetware as my brain, only a thousand times more advanced. If you take me with you, it'll cause a time distortion or whatever. But if I download a *copy* of myself onto a blank chip, nothing will have changed! And you need me! I know who framed you, the same person who messed with my sculpture! I can show you what they changed. What do you think? Is it a deal? Great! Oh, you're not going to regret this, Gage. Now, let's see... We should be able to transfer the data across optically from my core. It's going to work. That means we've got to get you inside the Nexus, which, of course, is inconveniently detached from the station at the moment. How do we do this? The door release! The decompression should propel you across to the Nexus. I'll have to give you the override code. It's risky, but it's doable."
+msgid "I'm afraid this conversation is going to be a little one-sided. My command level voice recognition module got a little jumbled in the accident. Well, I'm Arthur. You've probably figured out by now that I'm not ... \"real\". But I'm learning to accept it, really, I split off a few copies of myself and together we're sharing our feelings about it in group. Anyway, this is what I am, an artificial-, sorry, \"non-organic\" sentient being, if you want to be politically correct, trapped in this wreck with the power dying out a little quickly, I'm afraid. I've yet to figure out who *you* are, though. Well, I think I can safely rule out the fire department. I thought I was pretty advanced, but the technology I'm reading in your suit is astounding. And, this is crazy, but it almost seems like an evolution of mine. Look, if you'll let me, I should be able to interface with your logic system and maybe get a clue as to who you are and how we can help each other. It means an intrusive scan, but we're both lost here and I ... need you to trust me. What do you say? I'm sorry. I've probably seen more than I should. I should have never scanned your biochips. Wait a second, your biochips! Gage, I'm going to make you an offer you can't refuse! Take me with you! Your biochips are derived from the same wetware as my brain, only a thousand times more advanced. If you take me with you, it'll cause a time distortion or whatever. But if I download a *copy* of myself onto a blank chip, nothing will have changed! And you need me! I know who framed you, the same person who messed with my sculpture! I can show you what they changed. What do you think? Is it a deal? Great! Oh, you're not going to regret this, Gage. Now, let's see... We should be able to transfer the data across optically from my core. It's going to work. That means we've got to get you inside the Nexus, which, of course, is inconveniently detached from the station at the moment. How do we do this? The door release! The decompression should propel you across to the Nexus. I'll have to give you the override code. It's risky, but it's doable."
 msgstr ""
 
 #. Location: AI voiceover comments (Arthur or station computers)
@@ -830,13 +809,13 @@ msgstr ""
 #. Location: Unknown Environment
 #. Track ID: ALNMPRT2
 #. Speaker: Michelle (Agent 3)
-msgid "You probably think that I'm ill, that, uh, I'm insane. I really can't blame you. I mean, no one from our generation has ever seen how aggressive we can really be. Or, the generation before us, for that matter, or, the one before that. But, every single one of my historical research missions involved studying war. I've been to the Nazi death camps ... ... and Hiroshima ... I've seen the terrorist massacres. I've lived it. I know. You can't possibly imagine the horror of seeing a bustling city of thousands. vaporized by a nuclear firestorm, or a crowd of people shredded into bloody ribbons by a single shrap' bomb, as you watch, helpless. But that's what happens when we feel the need to bear our teeth. It's human nature, and it's not something that ... that just a couple hundred years can ... can erase. Look around you. Do you know what this place is? It's a ... it's a missile silo. Well, few centuries ago, there were tens of thousands of these, and each one contained a nuclear missile powerful enough to obliterate an entire sector. That's enough to destroy the world 50 times over. Yet just three centuries later, even before the physical reminders are gone, we're claiming that we've matured into a peaceful race of beings. How can we be that naive?"
+msgid "You probably think that I'm ill, that, uh, I'm insane. I really can't blame you. I mean, no one from our generation has ever seen how aggressive we can really be. Or, the generation before us, for that matter, or, the one before that. But, every single one of my historical research missions involved studying war. I've been to the Nazi death camps ... ... and Hiroshima ... I've seen the terrorist massacres. I've lived it. I know. You can't possibly imagine the horror of seeing a bustling city of thousands vaporized by a nuclear firestorm, or a crowd of people shredded into bloody ribbons by a single shrap' bomb, as you watch, helpless. But that's what happens when we feel the need to bear our teeth. It's human nature, and it's not something that ... that just a couple hundred years can ... can erase. Look around you. Do you know what this place is? It's a ... it's a missile silo. Well, few centuries ago, there were tens of thousands of these, and each one contained a nuclear missile powerful enough to obliterate an entire sector. That's enough to destroy the world 50 times over. Yet just three centuries later, even before the physical reminders are gone, we're claiming that we've matured into a peaceful race of beings. How can we be that naive?"
 msgstr ""
 
 #. Location: Unknown Environment
 #. Track ID: ALNMPRT3
 #. Speaker: Michelle (Agent 3)
-msgid "You probably figured out that I was the one that rigged the security grid. I had to be able to get the things I needed from the Pegasus warehouse without being seen. But when you started asking around about the mistake in the grid, well, I mean the future you, that is, I had to change my plans. So, instead of just sending the information to my contact, I came up with the idea of hiding it in historical artifacts. Artifacts from your research dates that were also slated for sale at the Louvre art auction. That way, all I had to do was tell my contact which items to buy. And the transaction was nearly impossible to trace. And, if anyone started digging around because of what they saw, well, they'd discover the ripples and come straight back to you. I even found some valuable trinkets to plant in your locker if that happened. Just that one simple move would give you a motive... ...and the court a scapegoat. But, um, I didn't want to have to do it. I never thought for a second that someone might accidentally discover the ripples. I mean, how often do we do manual scans? Someone must have been bored out of their mind that day. I'm sorry, Gage. I really am. If I could be the one that was arrested, if I could take responsibility for my actions, I would in a second, believe me. I had no choice. I ... I don't want to do this to you, but. if I don't, it will all have been for nothing. If they find out how the technology was spread, they'll be able to keep it from ever happening. That's ... that's the problem with time travel. Nothing's ever safe. That's why I had to do it. I had to even the playing field, even a little. I'm sorry if ... if I'm making you an unwilling martyr to my cause, but that's just the way it's got to be. Please understand. Why am I even bothering with this? You're not going to remember any of this anyway."
+msgid "You probably figured out that I was the one that rigged the security grid. I had to be able to get the things I needed from the Pegasus warehouse without being seen. But when you started asking around about the mistake in the grid, well, I mean the future you, that is, I had to change my plans. So, instead of just sending the information to my contact, I came up with the idea of hiding it in historical artifacts. Artifacts from your research dates that were also slated for sale at the Louvre art auction. That way, all I had to do was tell my contact which items to buy. And the transaction was nearly impossible to trace. And, if anyone started digging around because of what they saw, well, they'd discover the ripples and come straight back to you. I even found some valuable trinkets to plant in your locker if that happened. Just that one simple move would give you a motive... ...and the court a scapegoat. But, um, I didn't want to have to do it. I never thought for a second that someone might accidentally discover the ripples. I mean, how often do we do manual scans? Someone must have been bored out of their mind that day. I'm sorry, Gage. I really am. If I could be the one that was arrested, if I could take responsibility for my actions, I would in a second, believe me. I had no choice. I ... I don't want to do this to you, but if I don't, it will all have been for nothing. If they find out how the technology was spread, they'll be able to keep it from ever happening. That's ... that's the problem with time travel. Nothing's ever safe. That's why I had to do it. I had to even the playing field, even a little. I'm sorry if ... if I'm making you an unwilling martyr to my cause, but that's just the way it's got to be. Please understand. Why am I even bothering with this? You're not going to remember any of this anyway."
 msgstr ""
 
 #. Location: Unknown Environment
@@ -884,7 +863,7 @@ msgstr ""
 #. Location: Unknown Environment
 #. Track ID: ASRAVID3
 #. Speaker: Icarus
-msgid "Why are you here? I believe we- Oh ... *five* ...? So, did you find what you came for? Somehow, I suspect you have. We have also found what *we* have searched for. You cannot imagine what the secrets you carry in that suit would mean to my race. A means to correct the handicap that has plagued us since our patrons. \"lifted\" us from the waters many centuries ago. A mixed blessing. To be taken from the universe over which you have achieved complete mastery, and shown another, much greater one, and to be given the opportunity to build a bolder future. but it plagues you to find races already there. For 15 generations, my race has been trying to catch up. You have brought a tool with which to correct the evolutionary oversight which left us swimming. when we should've been collecting stars from the races who now call themselves our \"elders.\" We can learn much from that suit you're wearing. Transporting it off you will leave you without protection from our environment. It shames me that you'll die."
+msgid "Why are you here? I believe we- Oh ... *five* ...? So, did you find what you came for? Somehow, I suspect you have. We have also found what *we* have searched for. You cannot imagine what the secrets you carry in that suit would mean to my race. A means to correct the handicap that has plagued us since our patrons \"lifted\" us from the waters many centuries ago. A mixed blessing. To be taken from the universe over which you have achieved complete mastery, and shown another, much greater one, and to be given the opportunity to build a bolder future. but it plagues you to find races already there. For 15 generations, my race has been trying to catch up. You have brought a tool with which to correct the evolutionary oversight which left us swimming when we should've been collecting stars from the races who now call themselves our \"elders.\" We can learn much from that suit you're wearing. Transporting it off you will leave you without protection from our environment. It shames me that you'll die."
 msgstr ""
 
 #. Location: Unknown Environment
@@ -1178,7 +1157,7 @@ msgstr ""
 #. Location: Château Gaillard, France (1204 AD)
 #. Track ID: CGKS_I03
 #. Speaker: Arthur
-msgid "This should be the main door to the keep. It would usually put the entrance on the upper level because the narrow stairway to the door. would make attackers more vulnerable and the keep easier to defend."
+msgid "This should be the main door to the keep. It would usually put the entrance on the upper level because the narrow stairway to the door would make attackers more vulnerable and the keep easier to defend."
 msgstr ""
 
 #. Location: Château Gaillard, France (1204 AD)
@@ -1196,7 +1175,7 @@ msgstr ""
 #. Location: Château Gaillard, France (1204 AD)
 #. Track ID: CGKS_I06
 #. Speaker: Arthur
-msgid "This is the genealogy of the Plantagenet kings. Actually, Plantagenet wasn't even their proper name. Geoffrey of Anjou used to wear a wildflower in his cap called planta genista in Latin. and I guess the name stuck."
+msgid "This is the genealogy of the Plantagenet kings. Actually, Plantagenet wasn't even their proper name. Geoffrey of Anjou used to wear a wildflower in his cap called planta genista in Latin and I guess the name stuck."
 msgstr ""
 
 #. Location: Château Gaillard, France (1204 AD)
@@ -1388,7 +1367,7 @@ msgstr ""
 #. Location: Château Gaillard, France (1204 AD)
 #. Track ID: CGMW_I07
 #. Speaker: Arthur
-msgid "These holes in the walls, or they call them arrow loops, were designed to protect archers. while still giving them a wide angle of aim."
+msgid "These holes in the walls, or they call them arrow loops, were designed to protect archers while still giving them a wide angle of aim."
 msgstr ""
 
 #. Location: Château Gaillard, France (1204 AD)
@@ -1418,7 +1397,7 @@ msgstr ""
 #. Location: Château Gaillard, France (1204 AD)
 #. Track ID: CGMW_I13
 #. Speaker: Arthur
-msgid "Ah, see that bridge to the inner bailey? This was the castle's one weakness. Under cover of the bridge, Philip Augustus' men managed to dig under the wall. and collapse a section of it in what they called a ... let me look it up ... a \"sapping\" operation."
+msgid "Ah, see that bridge to the inner bailey? This was the castle's one weakness. Under cover of the bridge, Philip Augustus' men managed to dig under the wall and collapse a section of it in what they called a ... let me look it up ... a \"sapping\" operation."
 msgstr ""
 
 #. Location: Château Gaillard, France (1204 AD)
@@ -1550,7 +1529,7 @@ msgstr ""
 #. Location: Château Gaillard, France (1204 AD)
 #. Track ID: CGTR_I01
 #. Speaker: Arthur
-msgid "That's an enamel on leather portrait of Richard and John's grandfather, Geoffrey Plantagenet, made in 1158. Nice likeness, huh? It's one of the few pieces still around in my time. Too bad if you chip away the enamel and gold leaf, you can still see the numbers. Since life was so difficult in the Middle Ages, what with constant wars, and plagues and whatnot, people just didn't have time for art. The knowledge of the masters of past generations wasn't passed on and was eventually forgotten. That's why everything from this period of history was pretty crude compared to the ages before and after it. And very little of it has survived because it was mostly in the form of tapestries. and book illuminations, most of which have perished."
+msgid "That's an enamel on leather portrait of Richard and John's grandfather, Geoffrey Plantagenet, made in 1158. Nice likeness, huh? It's one of the few pieces still around in my time. Too bad if you chip away the enamel and gold leaf, you can still see the numbers. Since life was so difficult in the Middle Ages, what with constant wars, and plagues and whatnot, people just didn't have time for art. The knowledge of the masters of past generations wasn't passed on and was eventually forgotten. That's why everything from this period of history was pretty crude compared to the ages before and after it. And very little of it has survived because it was mostly in the form of tapestries and book illuminations, most of which have perished."
 msgstr ""
 
 #. Location: Château Gaillard, France (1204 AD)
@@ -1586,7 +1565,7 @@ msgstr ""
 #. Location: Château Gaillard, France (1204 AD)
 #. Track ID: CGTS_I05
 #. Speaker: Arthur
-msgid "It's kind of interesting how they use the more finished stone on the outside of the walls. to make the castle look more imposing and use the rough stone on the inside. The space in between was generally filled with rubble and, oh, I don't know, annoying singing frogs in metal boxes."
+msgid "It's kind of interesting how they use the more finished stone on the outside of the walls to make the castle look more imposing and use the rough stone on the inside. The space in between was generally filled with rubble and, oh, I don't know, annoying singing frogs in metal boxes."
 msgstr ""
 
 #. Location: Château Gaillard, France (1204 AD)
@@ -1790,13 +1769,13 @@ msgstr ""
 #. Location: Leonardo da Vinci's Studio, Italy (1488 AD)
 #. Track ID: DSCT_I08
 #. Speaker: Arthur
-msgid "It's no wonder Leonardo was being so secretive, human dissection was strictly prohibited by The Church. and might have gotten him arrested if anyone were to find out about it. Certainly the scandal wouldn't have put him in the Duke's favor. The elevator seems like it would have been a good idea for getting the cadavers up here on the quiet, though."
+msgid "It's no wonder Leonardo was being so secretive, human dissection was strictly prohibited by The Church and might have gotten him arrested if anyone were to find out about it. Certainly the scandal wouldn't have put him in the Duke's favor. The elevator seems like it would have been a good idea for getting the cadavers up here on the quiet, though."
 msgstr ""
 
 #. Location: Leonardo da Vinci's Studio, Italy (1488 AD)
 #. Track ID: DSCT_I09
 #. Speaker: Arthur
-msgid "Gage, look at these sketches. Da Vinci originally began studying anatomy as a foundation for his art, but his insatiable thirst for knowledge eventually drew him to the study of the human body in a lot more depth. In one of his writings, he talks of 120 books of anatomy that he had written. None of them were ever found, but what notes and sketches have survived. show that he did an in-depth study of human physiology. No one else had mapped the human body as comprehensively, partly due to the interdiction from The Church."
+msgid "Gage, look at these sketches. Da Vinci originally began studying anatomy as a foundation for his art, but his insatiable thirst for knowledge eventually drew him to the study of the human body in a lot more depth. In one of his writings, he talks of 120 books of anatomy that he had written. None of them were ever found, but what notes and sketches have survived show that he did an in-depth study of human physiology. No one else had mapped the human body as comprehensively, partly due to the interdiction from The Church."
 msgstr ""
 
 #. Location: Leonardo da Vinci's Studio, Italy (1488 AD)
@@ -1868,7 +1847,7 @@ msgstr ""
 #. Location: Leonardo da Vinci's Studio, Italy (1488 AD)
 #. Track ID: DSCY_H13
 #. Speaker: Arthur
-msgid "Well, there's a lever and two cranks. The lever's obviously for firing the grappling hook. The cranks must control the direction and angle of aim. It looks like the direction crank is only for making minor adjustments to aim, so you may have to get off. and find a way to make it point in the general direction first."
+msgid "Well, there's a lever and two cranks. The lever's obviously for firing the grappling hook. The cranks must control the direction and angle of aim. It looks like the direction crank is only for making minor adjustments to aim, so you may have to get off and find a way to make it point in the general direction first."
 msgstr ""
 
 #. Location: Leonardo da Vinci's Studio, Italy (1488 AD)
@@ -1904,7 +1883,7 @@ msgstr ""
 #. Location: Leonardo da Vinci's Studio, Italy (1488 AD)
 #. Track ID: DSCY_I05
 #. Speaker: Arthur
-msgid "Look, a primitive harvester! A harvester of human lives! *Cackling*. Sorry, too many episodes of Tales from the Crypt. Still, those chopped hay bales are ... *grunt* ... making me a little queasy."
+msgid "Look, a primitive harvester! A harvester of human lives! *Cackling* Sorry, too many episodes of Tales from the Crypt. Still, those chopped hay bales are ... *grunt* ... making me a little queasy."
 msgstr ""
 
 #. Location: Leonardo da Vinci's Studio, Italy (1488 AD)
@@ -1940,7 +1919,7 @@ msgstr ""
 #. Location: Leonardo da Vinci's Studio, Italy (1488 AD)
 #. Track ID: DSCY_I11
 #. Speaker: Arthur
-msgid "Da Vinci designed a series of these multi-barreled guns. predating the invention of the Gatling gun by close to 400 years."
+msgid "Da Vinci designed a series of these multi-barreled guns predating the invention of the Gatling gun by close to 400 years."
 msgstr ""
 
 #. Location: Leonardo da Vinci's Studio, Italy (1488 AD)
@@ -2240,7 +2219,7 @@ msgstr ""
 #. Location: Leonardo da Vinci's Studio, Italy (1488 AD)
 #. Track ID: DSWS_I01
 #. Speaker: Arthur
-msgid "It looks like da Vinci actually got a chance to put into practice his ideas for constructing a large dome. As a matter of fact, I believe this was the year that he entered a competition to design. the cupola for the unfinished cathedral of Milan. Unfortunately, the much larger dome of the cathedral was a bigger architectural challenge, which may have been why he mysteriously withdrew from the contest. It was in fact, Leonardo's rival, Brunelleschi of Florence, who eventually solved the problem."
+msgid "It looks like da Vinci actually got a chance to put into practice his ideas for constructing a large dome. As a matter of fact, I believe this was the year that he entered a competition to design the cupola for the unfinished cathedral of Milan. Unfortunately, the much larger dome of the cathedral was a bigger architectural challenge, which may have been why he mysteriously withdrew from the contest. It was in fact, Leonardo's rival, Brunelleschi of Florence, who eventually solved the problem."
 msgstr ""
 
 #. Location: Leonardo da Vinci's Studio, Italy (1488 AD)
@@ -2264,7 +2243,7 @@ msgstr ""
 #. Location: Leonardo da Vinci's Studio, Italy (1488 AD)
 #. Track ID: DSWS_I05
 #. Speaker: Arthur
-msgid "Lodovico Sforza, il Moro, the current Duke of Bari, is actually a usurper. His young nephew, Gian Galeazzo, is the rightful heir, but hey, what are uncles for!? \"Let me handle things till you grow up, kid!\" Pity he never got the chance. No big surprise that the kid died mysteriously before assuming the head of the family. The court of Milan was renowned for its pageantry, art, and music. Leonardo's previous patron, Lorenzo di Medici, may have sent him here. knowing that the gesture would placate his powerful and ambitious neighbor. Though why da Vinci made the move has always been a mystery. All this, of course, would seem to be a strong motivation."
+msgid "Lodovico Sforza, il Moro, the current Duke of Bari, is actually a usurper. His young nephew, Gian Galeazzo, is the rightful heir, but hey, what are uncles for!? \"Let me handle things till you grow up, kid!\" Pity he never got the chance. No big surprise that the kid died mysteriously before assuming the head of the family. The court of Milan was renowned for its pageantry, art, and music. Leonardo's previous patron, Lorenzo di Medici, may have sent him here knowing that the gesture would placate his powerful and ambitious neighbor. Though why da Vinci made the move has always been a mystery. All this, of course, would seem to be a strong motivation."
 msgstr ""
 
 #. Location: Leonardo da Vinci's Studio, Italy (1488 AD)
@@ -2276,13 +2255,13 @@ msgstr ""
 #. Location: Leonardo da Vinci's Studio, Italy (1488 AD)
 #. Track ID: DSWS_I07
 #. Speaker: Arthur
-msgid "Looks like school's in. Always good to keep a bunch of students and apprentices handy. to boost your standing and do all the grunt work for you. Like most Renaissance artists, Da Vinci believed that designing and giving orders were gentleman's work, and actually executing the piece was work for servants. That's why he rarely finished anything. Okay, okay. A little professional jealousy."
+msgid "Looks like school's in. Always good to keep a bunch of students and apprentices handy to boost your standing and do all the grunt work for you. Like most Renaissance artists, Da Vinci believed that designing and giving orders were gentleman's work, and actually executing the piece was work for servants. That's why he rarely finished anything. Okay, okay. A little professional jealousy."
 msgstr ""
 
 #. Location: Leonardo da Vinci's Studio, Italy (1488 AD)
 #. Track ID: DSWS_I08
 #. Speaker: Arthur
-msgid "That hoist design looks like the one that Leonardo sketched up for the casting. of the horse sculpture he was planning, but never got around to. Well, at least you got use out of the hoist."
+msgid "That hoist design looks like the one that Leonardo sketched up for the casting of the horse sculpture he was planning, but never got around to. Well, at least you got use out of the hoist."
 msgstr ""
 
 #. Location: Leonardo da Vinci's Studio, Italy (1488 AD)
@@ -2348,13 +2327,13 @@ msgstr ""
 #. Location: Farnstein's Lab (2247 AD) or Gage's Apartment (2318 AD)
 #. Track ID: FAERVID3
 #. Speaker: Geno Andrews
-msgid "~ You were like the wind moving fast and silent ~. ~ Never knowing where you were going, or where you'd been ~. ~ I pray somehow you hear these vows I've thrown into the wind ~. ~ And while you're gone, I'm moving on. I'll begin again ~. ~ Right or wrong, you're wondering if I'll be standing strong. You have my word ~. ~ I promise I'll be searching for a reason to go on ~"
+msgid "~ You were like the wind moving fast and silent ~ ~ Never knowing where you were going, or where you'd been ~ ~ I pray somehow you hear these vows I've thrown into the wind ~ ~ And while you're gone, I'm moving on. I'll begin again ~ ~ Right or wrong, you're wondering if I'll be standing strong. You have my word ~ ~ I promise I'll be searching for a reason to go on ~"
 msgstr ""
 
 #. Location: Farnstein's Lab (2247 AD) or Gage's Apartment (2318 AD)
 #. Track ID: FAERVID5
 #. Speaker: Michelle (Agent 3)
-msgid "Okay. This cartridge is the final piece you'll need to build a time machine. You should also have the Da Vinci codex, which contains various formulae, the sculpture which morphs into a schematic diagram, and the medieval sword which holds the energy focusing element. This cartridge contains all existing notes, plans, and diagrams on the construction of. the neutrino matrix accelerator, the time machine's power source. You'll be able to recreate the accelerator from these notes. By using the formulae, schematics, and focusing element to control the accelerator. and harness its power, you'll be able to turn it into a functioning time machine. The information on this cartridge has been arranged in chronological order, starting with the building of the accelerator's framework, and following the process of its construction to the final pieces. Good luck- Sorry to interrupt, Gage, but I need that back."
+msgid "Okay. This cartridge is the final piece you'll need to build a time machine. You should also have the Da Vinci codex, which contains various formulae, the sculpture which morphs into a schematic diagram, and the medieval sword which holds the energy focusing element. This cartridge contains all existing notes, plans, and diagrams on the construction of the neutrino matrix accelerator, the time machine's power source. You'll be able to recreate the accelerator from these notes. By using the formulae, schematics, and focusing element to control the accelerator and harness its power, you'll be able to turn it into a functioning time machine. The information on this cartridge has been arranged in chronological order, starting with the building of the accelerator's framework, and following the process of its construction to the final pieces. Good luck- Sorry to interrupt, Gage, but I need that back."
 msgstr ""
 
 #. Location: Farnstein's Lab (2247 AD) or Gage's Apartment (2318 AD)
@@ -2588,13 +2567,13 @@ msgstr ""
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNAD1_1
 #. Speaker: Reporter
-msgid "Prosecuting attorney Phil Stevens alleges that Agent 5 intentionally altered the past in four of the ten. time zones to which he had been sent for research purposes, his only apparent motive being personal gain. In so doing, Agent 5 would have knowingly violated Temporal Security Agency ethics, as well as the law. As temporal sabotage in any form is considered the worst possible crime against humanity, Stevens is aiming for the maximum allowable sentence."
+msgid "Prosecuting attorney Phil Stevens alleges that Agent 5 intentionally altered the past in four of the ten time zones to which he had been sent for research purposes, his only apparent motive being personal gain. In so doing, Agent 5 would have knowingly violated Temporal Security Agency ethics, as well as the law. As temporal sabotage in any form is considered the worst possible crime against humanity, Stevens is aiming for the maximum allowable sentence."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNAD1_2
 #. Speaker: Reporter
-msgid "The burden of proof lies on the prosecution. They have to prove beyond a reasonable doubt that Gage Blackwood was responsible for the distortion ripples. There is strong evidence working against Blackwood, including both computer records that place him at the altered historical locations. and contraband that was discovered in his locker. But the evidence alone is not enough to ensure a conviction. With this in mind, prosecuting attorney Stevens has directed his questioning. toward eliminating other possible explanations for the ripples."
+msgid "The burden of proof lies on the prosecution. They have to prove beyond a reasonable doubt that Gage Blackwood was responsible for the distortion ripples. There is strong evidence working against Blackwood, including both computer records that place him at the altered historical locations and contraband that was discovered in his locker. But the evidence alone is not enough to ensure a conviction. With this in mind, prosecuting attorney Stevens has directed his questioning toward eliminating other possible explanations for the ripples."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
@@ -2612,7 +2591,7 @@ msgstr ""
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNAD2_2
 #. Speaker: Reporter
-msgid "The defense has not yet had the opportunity to present its case. However, we have contacted both the chief technician and commissioner of the TSA. to ask them their feelings on the arrest of Gage Blackwood. Neither Agent 3 of the Temporal Security Agency nor Mr. Blackwood could be reached for comment."
+msgid "The defense has not yet had the opportunity to present its case. However, we have contacted both the chief technician and commissioner of the TSA to ask them their feelings on the arrest of Gage Blackwood. Neither Agent 3 of the Temporal Security Agency nor Mr. Blackwood could be reached for comment."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
@@ -2636,13 +2615,13 @@ msgstr ""
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNAD5_1
 #. Speaker: Reporter
-msgid "The opinion originally held by the majority of races represented at the talks. is that time travel technology is an invaluable tool for self-discovery. and, as such, should not be denied to any race. However, the Laxonie abandoned this position last week in favor of destroying the technology. Presumably, this sudden change of opinion was due in large part to the arrest of Agent 5, an unfortunate illustration of the danger of time travel."
+msgid "The opinion originally held by the majority of races represented at the talks is that time travel technology is an invaluable tool for self-discovery and, as such, should not be denied to any race. However, the Laxonie abandoned this position last week in favor of destroying the technology. Presumably, this sudden change of opinion was due in large part to the arrest of Agent 5, an unfortunate illustration of the danger of time travel."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNAD5_2
 #. Speaker: Reporter
-msgid "The Dorlün and Zâng-traqar on the other hand, have continued to cling tightly to their convictions. They're of the opinion that this technology is far too important to be buried because of paranoia. Time travel, the Zangtrakar argue, is like any other powerful tool. It represents a danger only if the user doesn't have the insight to take the proper precautions. And, if care is taken, there should be no reason whatsoever. to fear what should be the greatest advance the Symbiotry has ever known."
+msgid "The Dorlün and Zâng-traqar on the other hand, have continued to cling tightly to their convictions. They're of the opinion that this technology is far too important to be buried because of paranoia. Time travel, the Zangtrakar argue, is like any other powerful tool. It represents a danger only if the user doesn't have the insight to take the proper precautions. And, if care is taken, there should be no reason whatsoever to fear what should be the greatest advance the Symbiotry has ever known."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
@@ -2654,7 +2633,7 @@ msgstr ""
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNAD6_1
 #. Speaker: Reporter
-msgid "The third viewpoint, which was originally held only by the Unwá, is that the existence of time travel technology. represents a threat to the history of every race in the Symbiotry. For this reason, these races feel that all existing time machines should be completely dismantled. Following the arrest of Agent 5, the Lôxôni changed their allegiance from petitioning for the release of time travel technology. to requesting its destruction."
+msgid "The third viewpoint, which was originally held only by the Unwá, is that the existence of time travel technology represents a threat to the history of every race in the Symbiotry. For this reason, these races feel that all existing time machines should be completely dismantled. Following the arrest of Agent 5, the Lôxôni changed their allegiance from petitioning for the release of time travel technology to requesting its destruction."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
@@ -2666,13 +2645,13 @@ msgstr ""
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNAD6_3
 #. Speaker: Reporter
-msgid "Like the others that share their goal, they feel that humanity lacks the necessary discretion. to control such a powerful tool. As a side note, it should be mentioned that the Lôxôni themselves are among the eldest races of the Symbiotry."
+msgid "Like the others that share their goal, they feel that humanity lacks the necessary discretion to control such a powerful tool. As a side note, it should be mentioned that the Lôxôni themselves are among the eldest races of the Symbiotry."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNAD7_1
 #. Speaker: Reporter
-msgid "Despite being recently abandoned by the Krynn, two of humanity's staunchest supporters, the Cyrollans and the Ssar, have continued to defend our right to autonomy over time travel technology. Like those that favored dismantling it, these two races would rather leave their pasts buried than risk losing it all together. But unlike the others, the Cyrollans and Ssar believe that humanity harbors a maturity beyond its years. and can be entrusted with preserving the sanctity of history."
+msgid "Despite being recently abandoned by the Krynn, two of humanity's staunchest supporters, the Cyrollans and the Ssar, have continued to defend our right to autonomy over time travel technology. Like those that favored dismantling it, these two races would rather leave their pasts buried than risk losing it all together. But unlike the others, the Cyrollans and Ssar believe that humanity harbors a maturity beyond its years and can be entrusted with preserving the sanctity of history."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
@@ -2690,7 +2669,7 @@ msgstr ""
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNAD8_1
 #. Speaker: Reporter
-msgid "Despite the arguments made by the Symbiotry envoys, the general opinion of the heads of ministry, so far, appears unswayed. Michael Rozhenko of the Northwest Asia Collective rebutted that. the danger of time travel falling into the wrong hands and being used to change history, however slight, is still too great to even consider releasing the technology."
+msgid "Despite the arguments made by the Symbiotry envoys, the general opinion of the heads of ministry, so far, appears unswayed. Michael Rozhenko of the Northwest Asia Collective rebutted that the danger of time travel falling into the wrong hands and being used to change history, however slight, is still too great to even consider releasing the technology."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
@@ -2714,13 +2693,13 @@ msgstr ""
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNVD2_1
 #. Speaker: News Anchor
-msgid "The ongoing saga of Gage Blackwood took a frightening twist this morning. when the agent of the Deep Time Unit broke house arrest to jump nine years back in time. Fortunately, the illicit time jump was detected and he was immediately apprehended. by Agent Eight of the Temporal Protectorate. Although it's still not clear how and why Blackwood obtained the TSA jumpsuit, Temporal Security Agency officials did say that no distortion ripples have yet been detected, and that there is no reason whatsoever to believe that Blackwood has altered history in any way. Our Lisa Long has a report from TSA administrative headquarters."
+msgid "The ongoing saga of Gage Blackwood took a frightening twist this morning when the agent of the Deep Time Unit broke house arrest to jump nine years back in time. Fortunately, the illicit time jump was detected and he was immediately apprehended by Agent Eight of the Temporal Protectorate. Although it's still not clear how and why Blackwood obtained the TSA jumpsuit, Temporal Security Agency officials did say that no distortion ripples have yet been detected, and that there is no reason whatsoever to believe that Blackwood has altered history in any way. Our Lisa Long has a report from TSA administrative headquarters."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNVD2_2
 #. Speaker: Reporter
-msgid "In a strange turn of events that can only be described as unimaginable, the highly decorated Gage Blackwood, better known as Agent 5 of the Deep Time Unit, has been arrested and put on trial for the crime of historical sabotage. We apologize for the lack of trial footage, but because of the sensitive nature of the material being presented, no recording equipment has been allowed into the tribunal wing of the United Ministry Complex, where the trial is being held. The drama unfolded three weeks ago when Agent 2 of the Temporal Protectorate. discovered four distortion ripples while conducting an unscheduled historical scan. As it turned out, the dates of the ripples exactly coincided with. times to which Agent 5 had been sent for research purposes. The agent immediately contacted his supervisors, and, on their orders, three agents were sent to apprehend Agent 5, who offered no resistance. Later that day, more evidence was found in Blackwood's locker, suggesting that he had disobeyed Temple Security Agency directives for personal gain. Unless deemed absolutely necessary, the TSA will not send agents to investigate or restore the distortions. as any further tampering with history may cause adverse effects, possibly even turning the ripples into full reality distortion waves."
+msgid "In a strange turn of events that can only be described as unimaginable, the highly decorated Gage Blackwood, better known as Agent 5 of the Deep Time Unit, has been arrested and put on trial for the crime of historical sabotage. We apologize for the lack of trial footage, but because of the sensitive nature of the material being presented, no recording equipment has been allowed into the tribunal wing of the United Ministry Complex, where the trial is being held. The drama unfolded three weeks ago when Agent 2 of the Temporal Protectorate discovered four distortion ripples while conducting an unscheduled historical scan. As it turned out, the dates of the ripples exactly coincided with times to which Agent 5 had been sent for research purposes. The agent immediately contacted his supervisors, and, on their orders, three agents were sent to apprehend Agent 5, who offered no resistance. Later that day, more evidence was found in Blackwood's locker, suggesting that he had disobeyed Temple Security Agency directives for personal gain. Unless deemed absolutely necessary, the TSA will not send agents to investigate or restore the distortions as any further tampering with history may cause adverse effects, possibly even turning the ripples into full reality distortion waves."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
@@ -2798,7 +2777,7 @@ msgstr ""
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNVD2_4
 #. Speaker: Chief Technician Daughton
-msgid "Absolutely not. The thought that he could be guilty never even crossed my mind. I mean, friend or no, here you've got someone who's dedicated his whole life to protecting history. and now stands accused of violating it. That's ridiculous! And if you don't believe me, look at his record. The man's a decorated hero. You can't overlook that fact just because it doesn't fit neatly. into the story the prosecution's is trying to sell."
+msgid "Absolutely not. The thought that he could be guilty never even crossed my mind. I mean, friend or no, here you've got someone who's dedicated his whole life to protecting history and now stands accused of violating it. That's ridiculous! And if you don't believe me, look at his record. The man's a decorated hero. You can't overlook that fact just because it doesn't fit neatly into the story the prosecution's is trying to sell."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
@@ -2810,7 +2789,7 @@ msgstr ""
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNVD2_4
 #. Speaker: Chief Technician Daughton
-msgid "No, actually I testified the scanners didn't register anyone making a time jump to those locations. The computers are only as intelligent as their human programmers. Now, I believe it's possible that someone could have shadowed Agent 5's jumps. If a second time traveler were to make a jump. within a few seconds of the first and to the same location, the chronolog scanners probably wouldn't recognize it  as a second jump."
+msgid "No, actually I testified the scanners didn't register anyone making a time jump to those locations. The computers are only as intelligent as their human programmers. Now, I believe it's possible that someone could have shadowed Agent 5's jumps. If a second time traveler were to make a jump within a few seconds of the first and to the same location, the chronolog scanners probably wouldn't recognize it  as a second jump."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
@@ -2846,37 +2825,37 @@ msgstr ""
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNVD2_5
 #. Speaker: News Anchor
-msgid "If Blackwood is indeed guilty, he has altered more than just the past. The future, too, will likely feel the results of his actions. The Deep Time Unit will probably be discontinued before ever realizing its full potential. But there is an even greater issue at stake. That is whether the Temporal Security Agency itself is more of a risk than a safety measure. Many feel that it should be shut down and everything related to time travel destroyed. Others argue that the technology has already been invented, so there's nothing stopping it from being reinvented for the wrong reasons. So, in their opinion, the Temporal Security Agency must remain operational. to safeguard against future acts of historical sabotage."
+msgid "If Blackwood is indeed guilty, he has altered more than just the past. The future, too, will likely feel the results of his actions. The Deep Time Unit will probably be discontinued before ever realizing its full potential. But there is an even greater issue at stake. That is whether the Temporal Security Agency itself is more of a risk than a safety measure. Many feel that it should be shut down and everything related to time travel destroyed. Others argue that the technology has already been invented, so there's nothing stopping it from being reinvented for the wrong reasons. So, in their opinion, the Temporal Security Agency must remain operational to safeguard against future acts of historical sabotage."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNVD3_1
 #. Speaker: News Anchor
-msgid "In a last ditch effort to stay afloat, the Louvre Art Museum held an auction of unprecedented scale yesterday. The museum was forced to sell off many of its older collections to pay off creditors. and to raise funds desperately needed for renovations to the facility. In a fervent display of support, the art community rallied around the historic landmark, showing that the museum itself is every bit as valuable an artifact as any of the works of art it contains. The auction was an astounding success, raising 138.5 billion credits, easily surpassing the 100 billion credit goal. This windfall was due in large part to one generous bidder who preferred to remain unidentified. Martin Walker is standing by with a live report from the Louvre."
+msgid "In a last ditch effort to stay afloat, the Louvre Art Museum held an auction of unprecedented scale yesterday. The museum was forced to sell off many of its older collections to pay off creditors and to raise funds desperately needed for renovations to the facility. In a fervent display of support, the art community rallied around the historic landmark, showing that the museum itself is every bit as valuable an artifact as any of the works of art it contains. The auction was an astounding success, raising 138.5 billion credits, easily surpassing the 100 billion credit goal. This windfall was due in large part to one generous bidder who preferred to remain unidentified. Martin Walker is standing by with a live report from the Louvre."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNVD3_2
 #. Speaker: Reporter
-msgid "Thanks, Mark. I'm standing inside the historic Louvre Museum in Paris. Behind me sits one of the few pieces to survive yesterday's extensive art auction. Items up for auction included artifacts and works of art from many of the Louvre's oldest collections, including the da Vinci exhibit, the ancient Egyptian, and Toltec Mayan exhibits. Four particular items were snapped up by a generous bidder, who paid much more than the asking price. The bidder's identity is unknown, but it is assumed to be an art enthusiast who didn't want to see the Louvre shut down. There are rumors, however, that the buyer may actually have been acting on behalf of another race in the Symbiotry, which, according to the Earth History Preservation Act of 2322, would be illegal. We're told an investigation may follow. Museum sources that I spoke to speculated that the revenue from the auction. will be enough to keep the Louvre in operation for at least the next five years. However, they warned me that the price of admission may go up in order to help cover operating costs. A small price to pay for such a wealth of human history and culture."
+msgid "Thanks, Mark. I'm standing inside the historic Louvre Museum in Paris. Behind me sits one of the few pieces to survive yesterday's extensive art auction. Items up for auction included artifacts and works of art from many of the Louvre's oldest collections, including the da Vinci exhibit, the ancient Egyptian, and Toltec Mayan exhibits. Four particular items were snapped up by a generous bidder, who paid much more than the asking price. The bidder's identity is unknown, but it is assumed to be an art enthusiast who didn't want to see the Louvre shut down. There are rumors, however, that the buyer may actually have been acting on behalf of another race in the Symbiotry, which, according to the Earth History Preservation Act of 2322, would be illegal. We're told an investigation may follow. Museum sources that I spoke to speculated that the revenue from the auction will be enough to keep the Louvre in operation for at least the next five years. However, they warned me that the price of admission may go up in order to help cover operating costs. A small price to pay for such a wealth of human history and culture."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNVD4_1
 #. Speaker: News Anchor
-msgid "The heads of Ministry will continue to meet with Symbiotry representatives today. in the assembly hall of the United Ministry Complex. These talks were requested by several member races. as a forum in which to discuss the place of time travel technology in the Symbiotry of Peaceful Beings. Today marks the beginning of the third week of negotiations, yet there is still no end in sight. Sarah Michaels is standing by at the United Ministry Complex with a report."
+msgid "The heads of Ministry will continue to meet with Symbiotry representatives today in the assembly hall of the United Ministry Complex. These talks were requested by several member races as a forum in which to discuss the place of time travel technology in the Symbiotry of Peaceful Beings. Today marks the beginning of the third week of negotiations, yet there is still no end in sight. Sarah Michaels is standing by at the United Ministry Complex with a report."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNVD4_2
 #. Speaker: Reporter
-msgid "Thank you, Mark. The main factor protracting the discussions. is the inability of the Symbiotry to decide what should be done with the technology. The representatives have formed three distinct factions. whose strongly opposing views have caused them to remain tenaciously entrenched in a deadlock. While one group believes we are committing the unforgivable act of hoarding a vital technology, a second supports the Symbiotry tenet that each race has sovereignty over its own technologies. The third contingent, which has grown in strength since the arrest of Agent 5, contends that time travel represents a threat to every race of the Symbiotry and should be destroyed altogether. Even though most attending races strongly disagree with humanity's sole ownership of the technology, our heads of ministry refuse to acknowledge their arguments, citing its inevitable misuse as their foremost concern. Therefore, barring Symbiotry action, it is unlikely that the status of time travel as a proprietary technology of Earth will change."
+msgid "Thank you, Mark. The main factor protracting the discussions is the inability of the Symbiotry to decide what should be done with the technology. The representatives have formed three distinct factions whose strongly opposing views have caused them to remain tenaciously entrenched in a deadlock. While one group believes we are committing the unforgivable act of hoarding a vital technology, a second supports the Symbiotry tenet that each race has sovereignty over its own technologies. The third contingent, which has grown in strength since the arrest of Agent 5, contends that time travel represents a threat to every race of the Symbiotry and should be destroyed altogether. Even though most attending races strongly disagree with humanity's sole ownership of the technology, our heads of ministry refuse to acknowledge their arguments, citing its inevitable misuse as their foremost concern. Therefore, barring Symbiotry action, it is unlikely that the status of time travel as a proprietary technology of Earth will change."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNVD4_3
 #. Speaker: News Anchor
-msgid "In a late-breaking update from the technology discussions, the Krynn ambassador, Icarus, moments ago stormed out of the talks, apparently frustrated with the lack of progress. The conflict began when the ambassador said, quote, \"Even the Krynn can no longer deny the truth of the situation\", and that they don't understand. how anyone could defend our right to keep such a hazardous technology. Until last week, Icarus maintained the Krynn's usual position, that each race should be allowed complete autonomy over its own technologies. But their attitude changed soon after Agent 5 was arrested. Since then, the Krynn ambassador has repeatedly tried to gain the support of all the other envoys. in fighting for the abolishment of time travel. When this last plea once again met with resistance, Icarus launched into a tirade, exclaiming that, if they had known better, they would not have voted to let such an obstinate and naive race as humanity into the Symbiotry. He then abruptly departed. The talks will go on despite the Krynn withdrawal."
+msgid "In a late-breaking update from the technology discussions, the Krynn ambassador, Icarus, moments ago stormed out of the talks, apparently frustrated with the lack of progress. The conflict began when the ambassador said, quote, \"Even the Krynn can no longer deny the truth of the situation\", and that they don't understand how anyone could defend our right to keep such a hazardous technology. Until last week, Icarus maintained the Krynn's usual position, that each race should be allowed complete autonomy over its own technologies. But their attitude changed soon after Agent 5 was arrested. Since then, the Krynn ambassador has repeatedly tried to gain the support of all the other envoys in fighting for the abolishment of time travel. When this last plea once again met with resistance, Icarus launched into a tirade, exclaiming that, if they had known better, they would not have voted to let such an obstinate and naive race as humanity into the Symbiotry. He then abruptly departed. The talks will go on despite the Krynn withdrawal."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
@@ -2948,13 +2927,13 @@ msgstr ""
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INN_GENO
 #. Speaker: Advertisement
-msgid "All of his chart-topping videos are here, brought back from the archives of the past and completely remastered in stunning 4D sound! In fact, Geno, A Fond Remembrance is the most complete collection of Geno's hits. ever compiled on one EC! Call our toll-free Shopnet line now. and receive a free sample from the upcoming EC that's bound to be an instant classic. Geno, A Fond Remembrance."
+msgid "All of his chart-topping videos are here, brought back from the archives of the past and completely remastered in stunning 4D sound! In fact, Geno, A Fond Remembrance is the most complete collection of Geno's hits ever compiled on one EC! Call our toll-free Shopnet line now and receive a free sample from the upcoming EC that's bound to be an instant classic. Geno, A Fond Remembrance."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INN_SMCO
 #. Speaker: Advertisement
-msgid "[SPEAKING FOREIGN LANGUAGE] [SPEAKING SECOND FOREIGN LANGUAGE] [SPEAKING THIRD FOREIGN LANGUAGE] [SPEAKING ALIEN LANGUAGE] If you hadn't understood those important messages, you would have just... \"Wet Paint\" - Screwed up your best suit! \"Slippery When Wet\" - Driven off of a cliff! \"Cheap Meat\" - Been Poisoned! \"Restrooms Located In Lobby\" - And peed your pants on a foreign planet! Yes, for all those reasons and more, there's the Omniglot DM dual-mode translator biochip from Samco. Just pop the Omniglot DM into any standard biotech interface and voila! No more frustration! No more confusion! The Omniglot DM instantly translates the written and spoken forms of any known language. It does it all! The Omniglot DM translator biochip from Samco. Get it today. Samco translator biochip available at Frugal's and other fine stores for the low price of c199.90. Or order through Shopnet. Product order code: 689-22-378, 689-22-378. Order now!"
+msgid "[SPEAKING FOREIGN LANGUAGE] [SPEAKING SECOND FOREIGN LANGUAGE] [SPEAKING THIRD FOREIGN LANGUAGE] [SPEAKING ALIEN LANGUAGE] If you hadn't understood those important messages, you would have just... \"Wet Paint\" - Screwed up your best suit! \"Slippery When Wet\" - Driven off of a cliff! \"Cheap Meat\" - Been Poisoned! \"Restrooms Located In Lobby\" - And peed your pants on a foreign planet! Yes, for all those reasons and more, there's the Omniglot DM dual-mode translator biochip from Samco. Just pop the Omniglot DM into any standard biotech interface and voila! No more frustration! No more confusion! The Omniglot DM instantly translates the written and spoken forms of any known language. It does it all! The Omniglot DM translator biochip from Samco. Get it today. Samco translator biochip available at Frugal's and other fine stores for the low price of c199.90 Or order through Shopnet. Product order code: 689-22-378, 689-22-378. Order now!"
 msgstr ""
 
 #. Location: Gage's Apartment (2318 AD)
@@ -2972,7 +2951,7 @@ msgstr ""
 #. Location: Gage's Apartment (2318 AD)
 #. Track ID: INTRO_1
 #. Speaker: Reporter #2
-msgid "... conference this morning, the government admitted the existence. of the Temporal Security Agency, an organization ..."
+msgid "... conference this morning, the government admitted the existence of the Temporal Security Agency, an organization ..."
 msgstr ""
 
 #. Location: Gage's Apartment (2318 AD)
@@ -2996,13 +2975,13 @@ msgstr ""
 #. Location: Tutorial (No location)
 #. Track ID: IO_AUD_1
 #. Speaker: Overview
-msgid "The jumpsuits navigation buttons allow you to turn left and right, look up and down, and move forward. in the direction you're currently facing. A lit navigation button means that you can turn or move in that direction. You'll stop walking forward when you reach the next decision point."
+msgid "The jumpsuits navigation buttons allow you to turn left and right, look up and down, and move forward in the direction you're currently facing. A lit navigation button means that you can turn or move in that direction. You'll stop walking forward when you reach the next decision point."
 msgstr ""
 
 #. Location: Tutorial (No location)
 #. Track ID: IO_AUD_2
 #. Speaker: Overview
-msgid "You can scroll through the items in your possession. by clicking the up and down arrow buttons located next to the item list. Clicking the inspect button between the arrows brings up an information screen on the selected item. To pick something up, click and drag it from the view window down into your inventory and let go. To use an inventory item, click and drag its picture icon into the main view window and drop it on top of the object you want to use it on. Items used by or on your jumpsuit are activated by simply clicking on their pictures."
+msgid "You can scroll through the items in your possession by clicking the up and down arrow buttons located next to the item list. Clicking the inspect button between the arrows brings up an information screen on the selected item. To pick something up, click and drag it from the view window down into your inventory and let go. To use an inventory item, click and drag its picture icon into the main view window and drop it on top of the object you want to use it on. Items used by or on your jumpsuit are activated by simply clicking on their pictures."
 msgstr ""
 
 #. Location: Tutorial (No location)
@@ -3020,7 +2999,7 @@ msgstr ""
 #. Location: Tutorial (No location)
 #. Track ID: IO_AUD_5
 #. Speaker: Overview
-msgid "For further information on the jumpsuit and its interface, see the Buried in Time instruction manual. or access the files biochip after starting the game."
+msgid "For further information on the jumpsuit and its interface, see the Buried in Time instruction manual or access the files biochip after starting the game."
 msgstr ""
 
 #. Location: Chichen Itza, Mexico (1050 AD)
@@ -3122,7 +3101,7 @@ msgstr ""
 #. Location: Chichen Itza, Mexico (1050 AD)
 #. Track ID: MYAG_H17
 #. Speaker: Arthur
-msgid "Look, you need to get the second door open, right? We've only got three skulls to do it with, so you're going to have to do some juggling. So far, we've tried everything, and the only way we know to open the second door. is the serpent head at the entrance that also opens the first door. So we have to get that one jammed. Now to get to it, we have to leave the first door and the first set of spears jammed. So that leaves only one possible skull that we can take with us. The one that's now jamming the second set of spears! Once we get the second door open, we'll have to figure out a way to get those spears jammed again, but we can cross that bridge when you come to it."
+msgid "Look, you need to get the second door open, right? We've only got three skulls to do it with, so you're going to have to do some juggling. So far, we've tried everything, and the only way we know to open the second door is the serpent head at the entrance that also opens the first door. So we have to get that one jammed. Now to get to it, we have to leave the first door and the first set of spears jammed. So that leaves only one possible skull that we can take with us. The one that's now jamming the second set of spears! Once we get the second door open, we'll have to figure out a way to get those spears jammed again, but we can cross that bridge when you come to it."
 msgstr ""
 
 #. Location: Chichen Itza, Mexico (1050 AD)
@@ -3296,7 +3275,7 @@ msgstr ""
 #. Location: Chichen Itza, Mexico (1050 AD)
 #. Track ID: MYDG_H06
 #. Speaker: Arthur
-msgid "It's been said that the key phrase to open this container. would have been written somewhere on the walls of the temple. But since in our time the pyramid is in ruins, no one has been able to open it."
+msgid "It's been said that the key phrase to open this container would have been written somewhere on the walls of the temple. But since in our time the pyramid is in ruins, no one has been able to open it."
 msgstr ""
 
 #. Location: Chichen Itza, Mexico (1050 AD)
@@ -3398,7 +3377,7 @@ msgstr ""
 #. Location: Chichen Itza, Mexico (1050 AD)
 #. Track ID: MYMC_H11
 #. Speaker: Arthur
-msgid "Complete the pyramid. In Mayan mythology, you had to go through each of the other levels of the underworld. to reach the realm of the Death God. Maybe we need something to prove that we've passed the other levels."
+msgid "Complete the pyramid. In Mayan mythology, you had to go through each of the other levels of the underworld to reach the realm of the Death God. Maybe we need something to prove that we've passed the other levels."
 msgstr ""
 
 #. Location: Chichen Itza, Mexico (1050 AD)
@@ -3416,7 +3395,7 @@ msgstr ""
 #. Location: Chichen Itza, Mexico (1050 AD)
 #. Track ID: MYMC_I02
 #. Speaker: Arthur
-msgid "As I recall, the Mayan heavens and the underworld were usually represented. as a thirteen-step pyramid on top of an upside-down nine-step pyramid, with the Earth as a flat plane in between. The thirteen gods of the heavens ruled the daytime, and the nine gods of the underworld, the night. That's why they called them the \"Lords of the Night.\" Their heavens were pretty exclusive. Only certain people like sacrifice victims and children were let in. The underworld was for everyone else. Anyone that didn't get into heaven would have to make the journey through the nine levels of the underworld. to the dead land, which was ruled over by the God of Death."
+msgid "As I recall, the Mayan heavens and the underworld were usually represented as a thirteen-step pyramid on top of an upside-down nine-step pyramid, with the Earth as a flat plane in between. The thirteen gods of the heavens ruled the daytime, and the nine gods of the underworld, the night. That's why they called them the \"Lords of the Night.\" Their heavens were pretty exclusive. Only certain people like sacrifice victims and children were let in. The underworld was for everyone else. Anyone that didn't get into heaven would have to make the journey through the nine levels of the underworld to the dead land, which was ruled over by the God of Death."
 msgstr ""
 
 #. Location: Chichen Itza, Mexico (1050 AD)
@@ -3464,7 +3443,7 @@ msgstr ""
 #. Location: Chichen Itza, Mexico (1050 AD)
 #. Track ID: MYOT_O01
 #. Speaker: Arthur
-msgid "Gage, hello!? *tap* *tap* *tap*. Is this thing on?"
+msgid "Gage, hello!? *tap* *tap* *tap* Is this thing on?"
 msgstr ""
 
 #. Location: Chichen Itza, Mexico (1050 AD)
@@ -3584,7 +3563,7 @@ msgstr ""
 #. Location: Chichen Itza, Mexico (1050 AD)
 #. Track ID: MYTP_I02
 #. Speaker: Arthur
-msgid "That circular building is the Caracol, which means snail. The Maya built it as an astronomical observatory. They'd line up the sun and moon through rectangular slits in its walls. to identify important days like the summer and winter solstices."
+msgid "That circular building is the Caracol, which means snail. The Maya built it as an astronomical observatory. They'd line up the sun and moon through rectangular slits in its walls to identify important days like the summer and winter solstices."
 msgstr ""
 
 #. Location: Chichen Itza, Mexico (1050 AD)
@@ -3662,7 +3641,7 @@ msgstr ""
 #. Location: Chichen Itza, Mexico (1050 AD)
 #. Track ID: MYTP_I15
 #. Speaker: Arthur
-msgid "Historians think that certain days of the ceremonial year. were reserved for honoring the gods with human sacrifices, bloodletting, and other fun, rainy day activities. Hey, what can you say? I guess the Mayans can be summed up with one simple word: Fun."
+msgid "Historians think that certain days of the ceremonial year were reserved for honoring the gods with human sacrifices, bloodletting, and other fun, rainy day activities. Hey, what can you say? I guess the Mayans can be summed up with one simple word: Fun."
 msgstr ""
 
 #. Location: Chichen Itza, Mexico (1050 AD)
@@ -3716,7 +3695,7 @@ msgstr ""
 #. Location: Chichen Itza, Mexico (1050 AD)
 #. Track ID: MYWG_H03
 #. Speaker: Arthur
-msgid "The inscription above the door said that the followers of the God of Wealth. must turn their backs to worldly possessions and lower their heads in humility. It sounds like it's meant figuratively, but could it also be literal?"
+msgid "The inscription above the door said that the followers of the God of Wealth must turn their backs to worldly possessions and lower their heads in humility. It sounds like it's meant figuratively, but could it also be literal?"
 msgstr ""
 
 #. Location: Chichen Itza, Mexico (1050 AD)
@@ -3734,7 +3713,7 @@ msgstr ""
 #. Location: Chichen Itza, Mexico (1050 AD)
 #. Track ID: MYWG_H06
 #. Speaker: Arthur
-msgid "This must be the punishment for dishonoring the God of wealth. Remember? \"Turn your back to worldly possessions and lower your head in humility?\" Next time, try turning around and looking down after crossing the bridge. instead of being blinded by all the shiny, sparkly things."
+msgid "This must be the punishment for dishonoring the God of wealth. Remember? \"Turn your back to worldly possessions and lower your head in humility?\" Next time, try turning around and looking down after crossing the bridge instead of being blinded by all the shiny, sparkly things."
 msgstr ""
 
 #. Location: Chichen Itza, Mexico (1050 AD)
@@ -3962,7 +3941,7 @@ msgstr ""
 #. Location: Chichen Itza, Mexico (1050 AD)
 #. Track ID: MYWT_I04
 #. Speaker: Arthur
-msgid "Kukulkan was also the name of the Toltec chieftain who led his people to the Yucatan Peninsula. and settled them in Chichen Itza. And that's why his mug is plastered *everywhere*."
+msgid "Kukulkan was also the name of the Toltec chieftain who led his people to the Yucatan Peninsula and settled them in Chichen Itza. And that's why his mug is plastered *everywhere*."
 msgstr ""
 
 #. Location: Chichen Itza, Mexico (1050 AD)
