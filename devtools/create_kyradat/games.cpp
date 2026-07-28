@@ -100,6 +100,7 @@ const Game kyra2Games[] = {
 
 	{ kKyra2, kPlatformFMTowns, kNoSpecial, EN_ANY },
 	{ kKyra2, kPlatformFMTowns, kNoSpecial, JA_JPN },
+	{ kKyra2, kPlatformFMTowns, kNoSpecial, KO_KOR },
 
 	{ kKyra2, kPlatformPC98, kNoSpecial, EN_ANY },
 	{ kKyra2, kPlatformPC98, kNoSpecial, JA_JPN },
