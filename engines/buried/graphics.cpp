@@ -26,7 +26,6 @@
 #include "common/fs.h"
 #include "common/str-array.h"
 #include "common/system.h"
-#include "common/compression/unzip.h"
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
 #include "graphics/paletteman.h"
@@ -38,7 +37,6 @@
 #include "buried/buried.h"
 #include "buried/graphics.h"
 #include "buried/window.h"
-#include "common/std/algorithm.h"
 
 namespace Buried {
 
@@ -100,7 +98,7 @@ Graphics::Font *GraphicsManager::createArialFont(int size, bool bold) const {
 		break;
 	default:
 		size = size * 8 / 14;
-		size = Std::max(size, 6);
+		size = MAX(size, 6);
 		break;
 	}
 
