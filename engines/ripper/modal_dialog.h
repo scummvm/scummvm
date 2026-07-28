@@ -70,6 +70,7 @@ public:
 		const char *source, bool retainSceneCursorRegions = false,
 		PresentationStyle style = kMenubPresentation,
 		PaletteBehavior paletteBehavior = kApplyModalPalette);
+	bool runBinaryPrompt(uint promptResourceId, bool defaultFirstOption);
 	bool drawRetainedTextPanel(uint bodyResourceId, const Common::Rect &bounds,
 		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows,
 		PresentationStyle style,
@@ -122,6 +123,9 @@ private:
 	void drawTextEntry(const Common::String &prompt, const Common::String &text,
 		uint firstVisible, uint cursorPosition, bool caretVisible,
 		const Common::Rect &bounds, PresentationStyle style) const;
+	void drawBinaryPrompt(const Common::String &prompt,
+		const Common::String *options, uint selectedIndex,
+		const Common::Rect &bounds) const;
 	uint textEntryCursorFromPoint(const Common::String &text, uint firstVisible,
 		int x, const Common::Rect &bounds) const;
 	void updateTextEntryFirstVisible(const Common::Rect &bounds);

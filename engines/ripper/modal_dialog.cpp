@@ -58,6 +58,10 @@ static const byte kModalBackgroundColor = 253;
 static const byte kModalHeadingColor = 255;
 static const byte kModalTitleColor = 254;
 static const byte kModalTextColor = 4;
+static const byte kModalSelectedBackgroundColor = 248;
+static const uint kBinaryPromptYesResourceId = 0x3c;
+static const uint kBinaryPromptNoResourceId = 0x3d;
+static const uint kBinaryPromptOptionCount = 2;
 static const int kWacModalHeadingTopPadding = 20;
 static const int kWacModalBottomPadding = 6;
 static const int kWacModalLeftPadding = 5;
@@ -650,6 +654,57 @@ void ModalDialogManager::drawTextEntry(const Common::String &prompt,
 	g_system->updateScreen();
 }
 
+void ModalDialogManager::drawBinaryPrompt(const Common::String &prompt,
+		const Common::String *options, uint selectedIndex,
+		const Common::Rect &bounds) const {
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen || screen->format.bytesPerPixel != 1) {
+		if (screen)
+			g_system->unlockScreen();
+		return;
+	}
+
+	byte *pixels = (byte *)screen->getPixels();
+	drawFrame(pixels, screen->pitch, bounds, kMenubPresentation);
+	for (int y = bounds.top + 2; y < bounds.bottom - 2; ++y)
+		memset(screen->getBasePtr(bounds.left + kModalLeftPadding, y),
+			kModalBackgroundColor,
+			bounds.width() - kModalLeftPadding - kModalRightPadding);
+	for (int y = bounds.top + 2;
+			y < bounds.top + kModalHeadingTopPadding; ++y)
+		memset(screen->getBasePtr(bounds.left + kModalLeftPadding, y),
+			kModalHeadingColor,
+			bounds.width() - kModalLeftPadding - kModalRightPadding);
+
+	const int contentWidth =
+		bounds.width() - kModalLeftPadding - kModalRightPadding;
+	drawText(pixels, screen->pitch,
+		bounds.left + kModalLeftPadding +
+			(contentWidth - measureText(prompt)) / 2,
+		bounds.top +
+			(kModalHeadingTopPadding - _font.lineHeight) / 2,
+		prompt, kModalTitleColor);
+	for (uint option = 0; option < kBinaryPromptOptionCount; ++option) {
+		const int rowTop = bounds.top + kModalHeadingTopPadding +
+			option * kModalRowHeight;
+		if (option == selectedIndex) {
+			for (int y = rowTop; y < rowTop + kModalRowHeight; ++y)
+				memset(screen->getBasePtr(
+					bounds.left + kModalLeftPadding, y),
+					kModalSelectedBackgroundColor, contentWidth);
+		}
+		drawText(pixels, screen->pitch,
+			bounds.left + kModalLeftPadding +
+				kModalTextHorizontalInset,
+			rowTop + (kModalRowHeight - _font.lineHeight) / 2,
+			options[option], kModalTextColor);
+	}
+
+	g_system->unlockScreen();
+	_engine->getCursor()->refresh();
+	g_system->updateScreen();
+}
+
 uint ModalDialogManager::textEntryCursorFromPoint(const Common::String &text,
 		uint firstVisible, int x, const Common::Rect &bounds) const {
 	const bool wacStyle = _textEntryStyle == kWacPresentation;
@@ -902,6 +957,163 @@ bool ModalDialogManager::runText(const Common::String &title,
 		PaletteBehavior paletteBehavior) {
 	return runTextInternal(title, body, 0, source, retainSceneCursorRegions,
 		style, paletteBehavior);
+}
+
+bool ModalDialogManager::runBinaryPrompt(uint promptResourceId,
+		bool defaultFirstOption) {
+	const Common::String &prompt = resourceString(promptResourceId);
+	Common::String options[kBinaryPromptOptionCount] = {
+		resourceString(kBinaryPromptYesResourceId),
+		resourceString(kBinaryPromptNoResourceId)
+	};
+	if (!_initialized || prompt.empty() || options[0].empty() ||
+			options[1].empty() || !captureDisplay()) {
+		warning("Ripper: could not present binary prompt resource=%u",
+			promptResourceId);
+		return false;
+	}
+
+	// RunBinaryPromptChooser at 0x1803c creates a two-row list using the
+	// secondary chooser template at 0x8a392. Its auto-sized client is centered
+	// and uses the template's five-pixel horizontal padding, 17-pixel heading,
+	// and 14-pixel rows. A false default argument selects row one ("No").
+	const uint contentWidth = MAX<uint>(measureText(prompt),
+		MAX<uint>(measureText(options[0]), measureText(options[1])));
+	const int width = contentWidth + kModalLeftPadding +
+		kModalRightPadding + kModalTextHorizontalInset * 2;
+	const int height = kModalHeadingTopPadding +
+		kBinaryPromptOptionCount * kModalRowHeight + kModalBottomPadding;
+	const int left = (640 - width) / 2;
+	const int top = (400 - height) / 2;
+	const Common::Rect bounds(left, top, left + width, top + height);
+	uint selectedIndex = defaultFirstOption ? 0 : 1;
+	int pressedIndex = -1;
+	bool accepted = false;
+	bool active = true;
+	bool redraw = true;
+	const bool restoreCursorVisible = _engine->getCursor()->isVisible();
+	Common::Point cursorPoint =
+		_engine->getInput()->peekMouseState().position;
+
+	_engine->getInput()->drainKeys();
+	_engine->getInput()->discardMouseTransitions();
+	applyModalPalette();
+	_engine->getCursor()->update(kModalCursor);
+	debugC(1, kDebugScene,
+		"Ripper: entered binary prompt function=RunBinaryPromptChooser@0x1803c "
+		"resource=%u prompt='%s' default=%u bounds=%d,%d,%d,%d",
+		promptResourceId, prompt.c_str(), selectedIndex,
+		bounds.left, bounds.top, bounds.width(), bounds.height());
+
+	while (active && !_engine->shouldQuit()) {
+		if (_engine->getInput()->pollEvents()) {
+			_engine->quitGame();
+			break;
+		}
+		while (_engine->getInput()->hasPendingKey()) {
+			const uint16 command = _engine->getInput()->consumeKey();
+			debugC(3, kDebugInput,
+				"Ripper: binary prompt command=0x%04x selected=%u",
+				command, selectedIndex);
+			uint nextIndex = selectedIndex;
+			switch (command) {
+			case 0x1b:
+				active = false;
+				break;
+			case 0x0d:
+				accepted = true;
+				active = false;
+				break;
+			case 0x4700:
+			case 0x4800:
+			case 'y':
+			case 'Y':
+				nextIndex = 0;
+				break;
+			case 0x4f00:
+			case 0x5000:
+			case 'n':
+			case 'N':
+				nextIndex = 1;
+				break;
+			default:
+				break;
+			}
+			if (nextIndex != selectedIndex) {
+				selectedIndex = nextIndex;
+				redraw = true;
+				debugC(2, kDebugInput,
+					"Ripper: binary prompt keyboard selection=%u text='%s'",
+					selectedIndex, options[selectedIndex].c_str());
+			}
+			if (!active)
+				break;
+		}
+		if (!active)
+			break;
+
+		const MouseState mouse = _engine->getInput()->publishMouseState();
+		cursorPoint = mouse.position;
+		_engine->getCursor()->update(kModalCursor);
+		int hoveredIndex = -1;
+		for (uint option = 0; option < kBinaryPromptOptionCount; ++option) {
+			const Common::Rect rowBounds(
+				bounds.left + kModalLeftPadding,
+				bounds.top + kModalHeadingTopPadding +
+					option * kModalRowHeight,
+				bounds.right - kModalRightPadding,
+				bounds.top + kModalHeadingTopPadding +
+					(option + 1) * kModalRowHeight);
+			if (rowBounds.contains(mouse.position)) {
+				hoveredIndex = option;
+				break;
+			}
+		}
+		if (hoveredIndex >= 0 && (uint)hoveredIndex != selectedIndex) {
+			selectedIndex = hoveredIndex;
+			redraw = true;
+			debugC(2, kDebugInput,
+				"Ripper: binary prompt hover selection=%u text='%s' point=%d,%d",
+				selectedIndex, options[selectedIndex].c_str(),
+				mouse.position.x, mouse.position.y);
+		}
+		if ((mouse.pressed & kMouseButtonLeft) != 0)
+			pressedIndex = hoveredIndex;
+		if ((mouse.released & kMouseButtonLeft) != 0) {
+			if (pressedIndex >= 0 && pressedIndex == hoveredIndex) {
+				selectedIndex = pressedIndex;
+				accepted = true;
+				active = false;
+				debugC(2, kDebugInput,
+					"Ripper: binary prompt mouse accepted selection=%u "
+					"text='%s' point=%d,%d",
+					selectedIndex, options[selectedIndex].c_str(),
+					mouse.position.x, mouse.position.y);
+			}
+			pressedIndex = -1;
+		}
+
+		if (redraw) {
+			drawBinaryPrompt(prompt, options, selectedIndex, bounds);
+			redraw = false;
+		} else {
+			g_system->updateScreen();
+		}
+		g_system->delayMillis(10);
+	}
+
+	_engine->getInput()->discardMouseTransitions();
+	restoreDisplay();
+	if (!_engine->shouldQuit())
+		_engine->getScripts()->updateModalSceneCursor(cursorPoint);
+	_engine->getCursor()->setVisible(restoreCursorVisible);
+	const bool firstOptionSelected = accepted && selectedIndex == 0;
+	debugC(1, kDebugScene,
+		"Ripper: exited binary prompt resource=%u accepted=%d selection=%u "
+		"confirmed=%d quit=%d",
+		promptResourceId, accepted, selectedIndex, firstOptionSelected,
+		_engine->shouldQuit());
+	return firstOptionSelected;
 }
 
 bool ModalDialogManager::runTextInternal(const Common::String &title,
