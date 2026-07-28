@@ -22,10 +22,10 @@
  *
  */
 
+#include "buried/gameui.h"
 #include "buried/biochip_right.h"
 #include "buried/buried.h"
 #include "buried/frame_window.h"
-#include "buried/gameui.h"
 #include "buried/graphics.h"
 #include "buried/invdata.h"
 #include "buried/inventory_window.h"
@@ -35,10 +35,8 @@
 #include "buried/resources.h"
 #include "buried/scene_view.h"
 #include "buried/sound.h"
-#include "buried/subtitle_manager.h"
 #include "buried/video_window.h"
 
-#include "common/error.h"
 #include "common/keyboard.h"
 #include "common/system.h"
 #include "graphics/surface.h"
