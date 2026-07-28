@@ -34,12 +34,12 @@
 #include "mads/core/screen.h"
 #include "mads/core/sprite.h"
 #include "mads/core/timer.h"
-#include "mads/forest/digi.h"
+#include "mads/forest/sound/digi.h"
 #include "mads/forest/extra.h"
 #include "mads/forest/global.h"
 #include "mads/forest/inventory.h"
 #include "mads/forest/journal.h"
-#include "mads/forest/midi.h"
+#include "mads/forest/sound/midi.h"
 
 namespace MADS {
 namespace Forest {

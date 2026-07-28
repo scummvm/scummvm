@@ -35,7 +35,7 @@
 #include "mads/core/text.h"
 #include "mads/phantom/phantom.h"
 #include "mads/phantom/main.h"
-#include "mads/phantom/sound.h"
+#include "mads/phantom/sound/sound.h"
 #include "mads/phantom/catacombs.h"
 #include "mads/phantom/global.h"
 #include "mads/phantom/rooms/section1.h"
@@ -63,7 +63,7 @@ Common::Error PhantomEngine::run() {
 	}
 
 	// Set up sound manager
-	_soundManager = new PhantomSoundManager(_mixer, _soundFlag, isDemo());
+	_soundManager = new Sound::PhantomSoundManager(_mixer, _soundFlag, isDemo());
 	_soundManager->validate();
 
 	// Run the game

@@ -33,7 +33,7 @@
 #include "mads/forest/global.h"
 #include "mads/forest/mads/quotes.h"
 #include "mads/forest/menus.h"
-#include "mads/forest/midi.h"
+#include "mads/forest/sound/midi.h"
 
 namespace MADS {
 namespace Forest {

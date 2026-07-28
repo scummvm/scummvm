@@ -44,7 +44,7 @@
 #include "mads/nebular/popup.h"
 #include "mads/nebular/mads/inventory.h"
 #include "mads/nebular/mads/words.h"
-#include "mads/nebular/sound.h"
+#include "mads/nebular/sound/sound.h"
 #include "mads/nebular/rooms/section1.h"
 #include "mads/nebular/rooms/section2.h"
 #include "mads/nebular/rooms/section3.h"
@@ -79,7 +79,7 @@ Common::Error RexNebularEngine::run() {
 	}
 
 	// Set up sound manager
-	_soundManager = new RexSoundManager(_mixer, _soundFlag);
+	_soundManager = new Sound::RexSoundManager(_mixer, _soundFlag);
 	_soundManager->validate();
 
 	// Run the game

@@ -39,7 +39,7 @@
 #include "mads/dragonsphere/dragonsphere.h"
 #include "mads/dragonsphere/global.h"
 #include "mads/dragonsphere/main.h"
-#include "mads/dragonsphere/sound.h"
+#include "mads/dragonsphere/sound/sound.h"
 #include "mads/dragonsphere/rooms/section1.h"
 #include "mads/dragonsphere/rooms/section2.h"
 #include "mads/dragonsphere/rooms/section3.h"
@@ -71,7 +71,7 @@ Common::Error DragonsphereEngine::run() {
 	}
 
 	// Set up sound manager
-	_soundManager = new DragonSoundManager(_mixer, _soundFlag, isDemo());
+	_soundManager = new Sound::DragonSoundManager(_mixer, _soundFlag, isDemo());
 	_soundManager->validate();
 
 	// Run the game

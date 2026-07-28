@@ -22,7 +22,7 @@
 #include "mads/forest/rooms/section2.h"
 #include "mads/forest/mads/inventory.h"
 #include "mads/forest/mads/words.h"
-#include "mads/forest/digi.h"
+#include "mads/forest/sound/digi.h"
 #include "mads/forest/extra.h"
 #include "mads/forest/global.h"
 #include "mads/core/game.h"

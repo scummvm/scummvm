@@ -57,7 +57,7 @@
 #include "mads/core/quote.h"
 #include "mads/core/game.h"
 #include "mads/core/imath.h"
-#include "mads/forest/digi.h"
+#include "mads/forest/sound/digi.h"
 #include "mads/nebular/extra.h"
 
 namespace MADS {

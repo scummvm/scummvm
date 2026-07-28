@@ -22,7 +22,7 @@
 #include "common/config-manager.h"
 #include "mads/forest/rooms/section9.h"
 #include "mads/forest/global.h"
-#include "mads/forest/midi.h"
+#include "mads/forest/sound/midi.h"
 #include "mads/core/game.h"
 #include "mads/core/global.h"
 #include "mads/core/kernel.h"

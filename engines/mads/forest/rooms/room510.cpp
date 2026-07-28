@@ -19,9 +19,9 @@
  *
  */
 
-#include "mads/forest/digi.h"
+#include "mads/forest/sound/digi.h"
 #include "mads/forest/global.h"
-#include "mads/forest/midi.h"
+#include "mads/forest/sound/midi.h"
 #include "mads/core/config.h"
 #include "mads/core/font.h"
 #include "mads/core/game.h"

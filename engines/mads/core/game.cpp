@@ -62,7 +62,7 @@
 #include "mads/core/text.h"
 #include "mads/core/imath.h"
 #include "mads/core/screen.h"
-#include "mads/forest/digi.h"
+#include "mads/forest/sound/digi.h"
 #include "mads/forest/extra.h"
 #include "mads/forest/global.h"
 

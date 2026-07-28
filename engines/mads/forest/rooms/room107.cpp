@@ -20,7 +20,7 @@
  */
 
 #include "mads/forest/rooms/section1.h"
-#include "mads/forest/digi.h"
+#include "mads/forest/sound/digi.h"
 #include "mads/forest/global.h"
 #include "mads/core/game.h"
 #include "mads/core/kernel.h"

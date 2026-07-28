@@ -22,7 +22,7 @@
 #include "mads/forest/journal.h"
 #include "mads/forest/extra.h"
 #include "mads/forest/global.h"
-#include "mads/forest/midi.h"
+#include "mads/forest/sound/midi.h"
 #include "mads/core/global.h"
 #include "mads/core/kernel.h"
 #include "mads/core/player.h"

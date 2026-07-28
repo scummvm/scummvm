@@ -66,12 +66,6 @@ MODULE_OBJS := \
 	core/window.o \
 	core/xms.o \
 	nebular/nebular.o \
-	nebular/asound.o \
-	nebular/asound_nebular.o \
-	nebular/isound.o \
-	nebular/isound_nebular.o \
-	nebular/rsound.o \
-	nebular/rsound_nebular.o \
 	nebular/console.o \
 	nebular/copy.o \
 	nebular/extra.o \
@@ -79,7 +73,6 @@ MODULE_OBJS := \
 	nebular/main.o \
 	nebular/main_menu.o \
 	nebular/menus.o \
-	nebular/sound.o \
 	nebular/popup.o \
 	nebular/mads/mads.o \
 	nebular/rooms/room101.o \
@@ -205,6 +198,19 @@ MODULE_OBJS := \
 	nebular/rooms/dialog.o \
 	nebular/rooms/forcefield.o \
 	nebular/rooms/teleporter.o \
+	nebular/sound/asound.o \
+	nebular/sound/asound_nebular.o \
+	nebular/sound/isound.o \
+	nebular/sound/isound_nebular.o \
+	nebular/sound/rsound.o \
+	nebular/sound/rsound_nebular.o \
+	nebular/sound/sound.o \
+	phantom/phantom.o \
+	phantom/catacombs.o \
+	phantom/global.o \
+	phantom/main_menu.o \
+	phantom/menus.o \
+	phantom/main.o \
 	phantom/mads/mads.o \
 	phantom/rooms/section1.o \
 	phantom/rooms/room101.o \
@@ -260,17 +266,16 @@ MODULE_OBJS := \
 	phantom/rooms/room504.o \
 	phantom/rooms/room505.o \
 	phantom/rooms/room506.o \
-	phantom/phantom.o \
-	phantom/asound.o \
-	phantom/asound_phantom.o \
-	phantom/rsound.o \
-	phantom/rsound_phantom.o \
-	phantom/catacombs.o \
-	phantom/global.o \
-	phantom/main_menu.o \
-	phantom/menus.o \
-	phantom/main.o \
-	phantom/sound.o \
+	phantom/sound/asound.o \
+	phantom/sound/asound_phantom.o \
+	phantom/sound/rsound.o \
+	phantom/sound/rsound_phantom.o \
+	phantom/sound/sound.o \
+	dragonsphere/dragonsphere.o \
+	dragonsphere/global.o \
+	dragonsphere/main.o \
+	dragonsphere/main_menu.o \
+	dragonsphere/menus.o \
 	dragonsphere/mads/mads.o \
 	dragonsphere/rooms/section1.o \
 	dragonsphere/rooms/room101.o \
@@ -344,25 +349,18 @@ MODULE_OBJS := \
 	dragonsphere/rooms/room613.o \
 	dragonsphere/rooms/room614.o \
 	dragonsphere/rooms/room909.o \
-	dragonsphere/dragonsphere.o \
-	dragonsphere/asound.o \
-	dragonsphere/asound_dragonsphere.o \
-	dragonsphere/rsound.o \
-	dragonsphere/rsound_dragonsphere.o \
-	dragonsphere/global.o \
-	dragonsphere/main.o \
-	dragonsphere/main_menu.o \
-	dragonsphere/menus.o \
-	dragonsphere/sound.o \
+	dragonsphere/sound/asound.o \
+	dragonsphere/sound/asound_dragonsphere.o \
+	dragonsphere/sound/rsound.o \
+	dragonsphere/sound/rsound_dragonsphere.o \
+	dragonsphere/sound/sound.o \
 	forest/forest.o \
-	forest/digi.o \
 	forest/extra.o \
 	forest/global.o \
 	forest/inventory.o \
 	forest/journal.o \
 	forest/main.o \
 	forest/menus.o \
-	forest/midi.o \
 	forest/mads/mads.o \
 	forest/rooms/room101.o \
 	forest/rooms/room103.o \
@@ -407,7 +405,9 @@ MODULE_OBJS := \
 	forest/rooms/section3.o \
 	forest/rooms/section4.o \
 	forest/rooms/section5.o \
-	forest/rooms/section9.o
+	forest/rooms/section9.o \
+	forest/sound/digi.o \
+	forest/sound/midi.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_MADS), DYNAMIC_PLUGIN)

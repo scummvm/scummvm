@@ -23,8 +23,8 @@
 #define MADS_FOREST_H
 
 #include "mads/mads.h"
-#include "mads/forest/digi.h"
-#include "mads/forest/midi.h"
+#include "mads/forest/sound/digi.h"
+#include "mads/forest/sound/midi.h"
 
 namespace MADS {
 namespace Forest {
