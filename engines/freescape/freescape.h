@@ -531,7 +531,8 @@ public:
 	Sound *loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxTable, int sfxData, int numberSounds);
 	Sound *loadSpeakerFxDrillerZX();
 	Sound *loadSoundsCPC(Common::SeekableReadStream *file, int offsetTone, int sizeTone, int offsetEnvelope, int sizeEnvelope, int offsetSoundDef, int sizeSoundDef);
-	Sound *loadSoundsAmigaDemo(Common::SeekableReadStream *file, int offset, int numSounds, int modOffset);
+	// modOffset points at the embedded module used for one extra sample, or -1
+	Sound *loadSoundsAmiga(Common::SeekableReadStream *file, int offset, int numSounds, int modOffset);
 
 	int _soundIndexShoot;
 	int _soundIndexCollide;

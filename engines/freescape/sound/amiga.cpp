@@ -23,7 +23,10 @@
 #include "audio/mods/module.h"
 #include "audio/mods/paula.h"
 
+#include "common/file.h"
 #include "common/memstream.h"
+#include "common/mutex.h"
+#include "common/ptr.h"
 
 #include "freescape/freescape.h"
 
@@ -38,54 +41,46 @@ struct AmigaDmaSample {
 	Common::Array<int8> data;
 };
 
+// Priority of the sound currently playing (DAT_25E6). Shared with the stream,
+// which releases it from the mixer thread.
+struct AmigaSfxPriority {
+	AmigaSfxPriority() : value(0) {}
+	int value;
+};
+
 /**
- * Amiga Sound Effect Synthesizer
+ * Amiga (and Atari ST) Castle Master sound engine: a 50Hz command interpreter
+ * driving the four Paula channels.
  *
- * Synthesizes sound effects from a command stream, emulating the Castle Master
- * Amiga demo's custom sound engine. All 4 Amiga audio channels play the same
- * 64-byte square wave buffer (alternating +64/-64 signed bytes).
+ * All channels start out playing a shared 64-byte square wave (+64/-64 bytes),
+ * so a bare period command gives a tone at 3546895 / (period * 2) Hz. AUD0
+ * doubles as the sample channel: 0x5NNN points it at a PCM sample of the
+ * external `cmsnds2` bank and the audio interrupt counts buffer repeats.
  *
- * Command format: 16-bit big-endian words.
- *   Bits 15-12: command type
- *   Bits 11-0:  parameter
+ * Commands are 16-bit big-endian words: type in bits 15-12, parameter below.
  *
- * Period commands (set absolute frequency):
- *   0x0xxx: AUD1 period = xxx  (0 disables channel)
- *   0x1xxx: AUD2 period = xxx
- *   0x2xxx: AUD3 period = xxx
- *   0x3xxx: AUD0 period = xxx
- *
- * Relative period commands (pitch bend):
- *   0x8xxx: AUD1 period += sign_extend_12(xxx)
- *   0x9xxx: AUD2 period += sign_extend_12(xxx)
- *   0xAxxx: AUD3 period += sign_extend_12(xxx)
- *   0xBxxx: AUD0 period += sign_extend_12(xxx)
- *
- * Volume commands (channel select in bits 11-8):
- *   0x4Yxx: set volume = xx (Y=1: AUD1, Y=2: AUD2, else: AUD0+AUD3)
- *   0xCYxx: volume += sign_extend_8(xx) (same channel mapping)
- *
- * Control commands:
- *   0x5NNN: play note (reads 3 extra words; 3rd word = DMA repeat count)
- *   0x6xxx: delay xxx VBI ticks (50Hz)
- *   0x7000: full stop (silence all, end stream)
- *   0x7001: pause until DMA playback completes
- *   0x7002: loop (decrement counter, jump to saved position if > 0)
- *   0xDxxx: save loop position, set loop counter = xxx
- *   0xFxxx: end (stop interpreter)
- *
- * Tone frequency: 3,546,895 / (period * 2) Hz.
- * Paula plays bytes at 3,546,895 / period, and the 0x40/0xC0 waveform
- * alternates every byte (2 samples per cycle), adding a /2.
+ *   0x0xxx-0x3xxx  period of AUD1/AUD2/AUD3/AUD0 = xxx, and enable it
+ *                  (xxx = 0 only disables the channel)
+ *   0x8xxx-0xBxxx  same channels, period += sign_extend_12(xxx)
+ *   0x4Yxx         volume = xx (Y=1: AUD1, Y=2: AUD2, else AUD0+AUD3)
+ *   0xCYxx         volume += sign_extend_8(xx), same channel mapping
+ *   0x5NNN         play sample NNN on AUD0, consuming three more words:
+ *                  start offset, end trim and repeat count (NNN = 0: no-op)
+ *   0x6xxx         wait xxx ticks
+ *   0x7000         stop everything, 0x7001 wait for the sample to end,
+ *                  0x7002 loop back while the counter lasts
+ *   0xDxxx         mark loop position, loop counter = xxx
+ *   0xFxxx         end, leaving the channels running
  */
 class AmigaSfxStream : public Audio::Paula {
 public:
-	AmigaSfxStream(const uint16 *commands, int numCommands, const Common::Array<AmigaDmaSample> *dmaSamples, int rate = 44100)
+	AmigaSfxStream(const uint16 *commands, int numCommands, const Common::Array<AmigaDmaSample> *dmaSamples,
+				   const Common::SharedPtr<AmigaSfxPriority> &priority, int rate = 44100)
 		: Audio::Paula(false, rate, rate / 50),
-		  _dmaSamples(dmaSamples),
+		  _dmaSamples(dmaSamples), _priority(priority),
 		  _cmdPos(0), _delay(0), _paused(false),
-		  _dmaCounter(0), _dmaAud0Active(false), _loopPos(0), _loopCounter(0),
-		  _graceCounter(0) {
+		  _dmaActive(false), _dmaDone(true), _dmaStopPending(false), _dmaRepeats(0),
+		  _loopPos(0), _loopCounter(0), _graceCounter(0) {
 
 		_commands.resize(numCommands);
 		for (int i = 0; i < numCommands; i++)
@@ -96,7 +91,7 @@ public:
 			_squareWave[i + 1] = -64;
 		}
 
-		// FUN_2520 init values.
+		// Init periods, slightly detuned per channel
 		static const uint16 initPeriods[4] = { 0x1A1, 0x1AB, 0x1B5, 0x1BF };
 		for (int ch = 0; ch < 4; ch++) {
 			_periodShadow[ch] = initPeriods[ch];
@@ -107,305 +102,319 @@ public:
 			setChannelSampleLen(ch, 0x20); // 32 words = 64 bytes
 			setChannelPeriod(ch, _periodShadow[ch]);
 			setChannelVolume(ch, 0);
-			// FUN_2520 writes DMACON=0x000F (clear audio DMA bits), so channels
-			// are configured but disabled until command handlers enable them.
+			// Configured but silent until a command enables the channel
 			disableChannel(ch);
 		}
+		// Count AUD0 buffer repeats, as the audio interrupt does
+		setChannelInterrupt(0, true);
 		startPaula();
 	}
 
 private:
-	void interrupt() override {
-		tickUpdate();
-	}
+	// Tail given to a sound that ends with its channels still running: the
+	// original would keep them looping until the next sound is triggered.
+	static const int kEndGraceTicks = 25;
 
 	Common::Array<uint16> _commands;
 	const Common::Array<AmigaDmaSample> *_dmaSamples;
+	Common::SharedPtr<AmigaSfxPriority> _priority;
 	int _cmdPos;
-	int _delay;         // -1 = stopped, 0 = execute next, >0 = waiting
-	bool _paused;       // Waiting for DMA completion
-	int _dmaCounter;    // DMA ticks remaining (approximate)
-	bool _dmaAud0Active;
-	int _loopPos;       // Saved command position for looping
-	int _loopCounter;   // Loop iterations remaining
-	int _graceCounter;  // Ticks to keep playing after END before finishing
+	int _delay;            // -1 = interpreter stopped, 0 = execute next, >0 = waiting
+	bool _paused;          // Waiting for sample playback to complete (0x7001)
+	bool _dmaActive;       // AUD0 is playing a sample
+	bool _dmaDone;         // Sample playback finished
+	bool _dmaStopPending;  // Repeat counter expired inside the mixing loop
+	int _dmaRepeats;       // Times the sample buffer must be played
+	int _loopPos;
+	int _loopCounter;
+	int _graceCounter;     // Ticks left before winding down after END
 	uint16 _periodShadow[4];
 	int _volumeShadow[4];
-	bool _channelEnabled[4]; // Tracks DMA enable state per channel
+	bool _channelEnabled[4];
 	int8 _squareWave[64];
 
-	/**
-	 * Map period command nibble (0-3) to internal channel index.
-	 * Command 0 -> AUD1 (ch 1), 1 -> AUD2 (ch 2), 2 -> AUD3 (ch 3), 3 -> AUD0 (ch 0)
-	 */
+	// Period command 0 -> AUD1, 1 -> AUD2, 2 -> AUD3, 3 -> AUD0
 	static int periodCmdToChannel(int nibble) {
 		return (nibble + 1) & 3;
 	}
 
-	uint8 clampVolume(int value) const {
-		return (uint8)CLIP<int>(value, 0, 64);
+	// AUDxVOL only implements bits 6-0 and caps at 64, so a fade running past
+	// zero wraps around to full volume instead of going silent.
+	static byte hardwareVolume(int value) {
+		int vol = value & 0x7F;
+		return (byte)MIN(vol, 64);
+	}
+
+	void releasePriority() {
+		if (_priority)
+			_priority->value = 0;
 	}
 
 	void setAbsolutePeriod(int ch, uint16 period) {
 		_periodShadow[ch] = period;
 		setChannelPeriod(ch, period);
-		if (!_channelEnabled[ch]) {
-			// Channel was off -> enable DMA (like writing DMACON with SET bit).
-			// Restore square wave for AUD0 if not playing a DMA sample.
-			if (ch == 0 && !_dmaAud0Active) {
-				setChannelSampleStart(0, _squareWave);
-				setChannelSampleLen(0, 0x20);
-			}
-			enableChannel(ch);
-			_channelEnabled[ch] = true;
-		}
-		// If already enabled, just the period register update above is
-		// sufficient. On real hardware, writing AUDxPER only changes the
-		// DMA fetch rate without restarting the buffer position.
+		enableChannelDma(ch);
+	}
+
+	void enableChannelDma(int ch) {
+		// Setting the DMACON bit of a running channel is a no-op, so only
+		// restart the buffer when the channel was actually off.
+		if (_channelEnabled[ch])
+			return;
+		enableChannel(ch);
+		_channelEnabled[ch] = true;
+	}
+
+	void disableChannelDma(int ch) {
+		disableChannel(ch);
+		_channelEnabled[ch] = false;
 	}
 
 	void setRelativePeriod(int ch, int16 delta) {
-		// Original only writes to shadow + period register.
-		// Does NOT touch DMACON - channel retains its current enable state.
 		uint16 newPeriod = (uint16)(_periodShadow[ch] + delta);
-		_periodShadow[ch] = newPeriod;
 		if (newPeriod == 0) {
-			disableChannel(ch);
-			_channelEnabled[ch] = false;
+			// The shadow keeps its previous value here
+			disableChannelDma(ch);
 			return;
 		}
+		_periodShadow[ch] = newPeriod;
 		setChannelPeriod(ch, newPeriod);
+		enableChannelDma(ch);
 	}
 
-	void setAbsoluteVolume(int sel, uint8 vol) {
+	void setAbsoluteVolume(int sel, int vol) {
 		if (sel == 1) {
 			_volumeShadow[1] = vol;
-			setChannelVolume(1, clampVolume(_volumeShadow[1]));
+			setChannelVolume(1, hardwareVolume(_volumeShadow[1]));
 		} else if (sel == 2) {
 			_volumeShadow[2] = vol;
-			setChannelVolume(2, clampVolume(_volumeShadow[2]));
+			setChannelVolume(2, hardwareVolume(_volumeShadow[2]));
 		} else {
 			_volumeShadow[0] = vol;
 			_volumeShadow[3] = vol;
-			setChannelVolume(0, clampVolume(_volumeShadow[0]));
-			setChannelVolume(3, clampVolume(_volumeShadow[3]));
+			setChannelVolume(0, hardwareVolume(_volumeShadow[0]));
+			setChannelVolume(3, hardwareVolume(_volumeShadow[3]));
 		}
 	}
 
 	void addRelativeVolume(int sel, int8 delta) {
 		if (sel == 1) {
 			_volumeShadow[1] += delta;
-			setChannelVolume(1, clampVolume(_volumeShadow[1]));
+			setChannelVolume(1, hardwareVolume(_volumeShadow[1]));
 		} else if (sel == 2) {
 			_volumeShadow[2] += delta;
-			setChannelVolume(2, clampVolume(_volumeShadow[2]));
+			setChannelVolume(2, hardwareVolume(_volumeShadow[2]));
 		} else {
 			_volumeShadow[0] += delta;
 			_volumeShadow[3] += delta;
-			setChannelVolume(0, clampVolume(_volumeShadow[0]));
-			setChannelVolume(3, clampVolume(_volumeShadow[3]));
+			setChannelVolume(0, hardwareVolume(_volumeShadow[0]));
+			setChannelVolume(3, hardwareVolume(_volumeShadow[3]));
 		}
 	}
 
-	void tickUpdate() {
-		if (_dmaCounter > 0) {
-			_dmaCounter--;
-			if (_dmaCounter == 0 && _dmaAud0Active) {
-				disableChannel(0);
-				_channelEnabled[0] = false;
-				setChannelSampleStart(0, _squareWave);
-				setChannelSampleLen(0, 0x20);
-				setChannelOffset(0, Audio::Paula::Offset(0));
-				_dmaAud0Active = false;
-			}
-		}
+	// Start sample playback on AUD0. Paula interrupts once when DMA is switched
+	// on plus once per completed buffer, so the sample is heard exactly
+	// `repeats` times.
+	void triggerSample(int sampleNum, uint16 startOffset, uint16 endTrim, uint16 repeats) {
+		if (sampleNum <= 0 || repeats == 0)
+			return;
 
-		if (_paused) {
-			if (_dmaCounter <= 0)
+		if (!_dmaSamples || sampleNum >= (int)_dmaSamples->size())
+			return;
+
+		const AmigaDmaSample &sample = (*_dmaSamples)[sampleNum];
+		if (sample.data.empty())
+			return;
+
+		int size = sample.data.size();
+		int start = MIN<int>(startOffset, size);
+		int trim = MIN<int>(endTrim, size - start);
+		int playLen = (size - start - trim) & ~1; // AUD0LEN counts words
+		if (playLen <= 1)
+			return;
+
+		// The selected segment is reloaded on each buffer completion
+		const int8 *src = sample.data.data() + start;
+		setChannelData(0, src, src, playLen, playLen);
+		setChannelDmaCount(0, 0);
+		_dmaRepeats = repeats;
+		_dmaActive = true;
+		_dmaDone = false;
+		_dmaStopPending = false;
+		_channelEnabled[0] = true;
+	}
+
+	// AUD0 buffer wrap. Paula calls this from the middle of its mixing loop, so
+	// the channel can only be muted here: disabling it would leave the mixer
+	// dereferencing a null sample pointer for the rest of the buffer.
+	void interruptChannel(byte channel) override {
+		if (channel != 0 || !_dmaActive)
+			return;
+		if (getChannelDmaCount(0) < _dmaRepeats)
+			return;
+		setChannelVolume(0, 0);
+		_dmaStopPending = true;
+	}
+
+	void finishDma() {
+		disableChannelDma(0);
+		setChannelVolume(0, hardwareVolume(_volumeShadow[0])); // Undo the mute
+		_dmaActive = false;
+		_dmaStopPending = false;
+		_dmaDone = true;
+		releasePriority();
+	}
+
+	// Interpreter tick, once per emulated VBI
+	void interrupt() override {
+		if (_dmaActive && (_dmaStopPending || getChannelDmaCount(0) >= _dmaRepeats))
+			finishDma();
+
+		// The original re-enters the whole routine after every command, so a
+		// delay of N is decremented once on the tick that sets it: the next
+		// command runs exactly N ticks later.
+		for (;;) {
+			if (_paused) {
+				if (!_dmaDone)
+					return;
 				_paused = false;
-			else
+			} else if (_delay < 0) {
+				// Stopped, but the channels keep running: let the sample finish
+				if (_dmaActive)
+					return;
+				if (_graceCounter < 0)
+					_graceCounter = channelsAudible() ? kEndGraceTicks : 0;
+				if (_graceCounter > 0) {
+					_graceCounter--;
+					return;
+				}
+				stopPaula();
 				return;
-		}
-
-		if (_delay < 0) {
-			// After END command, allow a grace period so short sounds
-			// remain audible (original hardware keeps channels playing
-			// until next sound trigger silences them).
-			if (_graceCounter > 0) {
-				_graceCounter--;
+			} else if (_delay > 0) {
+				_delay--;
 				return;
 			}
-			_dmaAud0Active = false;
-			setChannelSampleStart(0, _squareWave);
-			setChannelSampleLen(0, 0x20);
-			setChannelOffset(0, Audio::Paula::Offset(0));
-			stopPaula();
-			return;
-		}
 
-		if (_delay > 0) {
-			_delay--;
-			return;
+			if (!executeCommand())
+				return;
 		}
-
-		// _delay == 0: execute commands
-		executeCommands();
 	}
 
-	void executeCommands() {
-		// Process commands until we hit a delay, stop, or end
-		while (_cmdPos < (int)_commands.size()) {
-			uint16 cmd = _commands[_cmdPos++];
-			int nibble = (cmd >> 12) & 0xF;
-			int param = cmd & 0xFFF;
-
-			switch (nibble) {
-			case 0: case 1: case 2: case 3: {
-				// Set absolute period
-				int ch = periodCmdToChannel(nibble);
-				if (param == 0) {
-					_periodShadow[ch] = 0;
-					disableChannel(ch);
-					_channelEnabled[ch] = false;
-				} else {
-					setAbsolutePeriod(ch, (uint16)param);
-				}
-				break;
-			}
-
-			case 4: {
-				// Set volume
-				int sel = (param >> 8) & 0xF;
-				int vol = param & 0xFF;
-				setAbsoluteVolume(sel, (uint8)vol);
-				break;
-			}
-
-			case 5: {
-				// Play note: NNN selects a sample, 3 extra words follow.
-				// FUN_26C2 does SUBQ #1, D0 (D0=NNN). If D0<0 (NNN=0) -> NO-OP.
-				// NNN>0: triggers DMA playback of a sample buffer on AUD0.
-				// Extra words: D2=start offset, D4=end trim, D3=repeat count.
-				// DMA plays buffer (D3+1) times total (SUBQ #1 + BPL counting).
-				if (_cmdPos + 3 <= (int)_commands.size()) {
-					uint16 startOffset = _commands[_cmdPos++]; // D2
-					uint16 endTrim = _commands[_cmdPos++];     // D4
-					uint16 dmaCount = _commands[_cmdPos++];    // D3
-					if (param > 0 && dmaCount > 0 && _periodShadow[0] > 0) {
-						int bufSize = 256;
-						if (_dmaSamples && param < (int)_dmaSamples->size()) {
-							const AmigaDmaSample &sample = (*_dmaSamples)[param];
-							if (!sample.data.empty()) {
-								int start = MIN<int>(startOffset, sample.data.size());
-								int trim = MIN<int>(endTrim, sample.data.size() - start);
-									int playLen = sample.data.size() - start - trim;
-									if (playLen > 1) {
-										const int8 *src = sample.data.data() + start;
-										// AUD0LC/AUD0LEN are reloaded on each DMA completion,
-										// so the selected segment repeats in full.
-										setChannelData(0, src, src, playLen, playLen);
-										bufSize = playLen;
-									}
-								}
-							}
-
-						double durationSec = (double)(dmaCount + 1) * bufSize * _periodShadow[0] / Audio::Paula::kPalPaulaClock;
-						_dmaCounter = (int)(durationSec * 50.0) + 1;
-						_dmaAud0Active = true;
-						enableChannel(0);
-						_channelEnabled[0] = true;
-					}
-				}
-				break;
-			}
-
-			case 6:
-				// Delay
-				_delay = param;
-				return;
-
-			case 7:
-				if (param == 0x000) {
-					// Full stop: silence all channels
-					for (int ch = 0; ch < 4; ch++) {
-						_volumeShadow[ch] = 0;
-						_channelEnabled[ch] = false;
-						setChannelVolume(ch, 0);
-						disableChannel(ch);
-					}
-					setChannelSampleStart(0, _squareWave);
-					setChannelSampleLen(0, 0x20);
-					setChannelOffset(0, Audio::Paula::Offset(0));
-					_dmaAud0Active = false;
-					_delay = -1;
-					stopPaula();
-					return;
-				} else if (param == 0x001) {
-					// Pause: wait for DMA completion
-					_paused = true;
-					return;
-				} else if (param == 0x002) {
-					// Loop: decrement counter, jump back if > 0
-					_loopCounter--;
-					if (_loopCounter > 0)
-						_cmdPos = _loopPos;
-					break;
-				}
-				break;
-
-			case 8: case 9: case 0xA: case 0xB: {
-				// Relative period (pitch bend)
-				int ch = periodCmdToChannel(nibble - 8);
-				// Sign-extend 12-bit parameter
-				int16 delta = (int16)(param << 4) >> 4;
-				setRelativePeriod(ch, delta);
-				break;
-			}
-
-			case 0xC: {
-				// Relative volume
-				int sel = (param >> 8) & 0xF;
-				int8 delta = (int8)(param & 0xFF);
-				addRelativeVolume(sel, delta);
-				break;
-			}
-
-			case 0xD:
-				// Save loop position and set counter
-				_loopPos = _cmdPos;
-				_loopCounter = param;
-				break;
-
-			case 0xF:
-				// End: stop interpreter but let channels keep playing.
-				// On real Amiga hardware, audio DMA channels loop their
-				// waveform buffer continuously until the next FUN_2652 call
-				// silences them. playSoundAmiga() calls stopHandle() before
-				// playing a new sound, matching this behavior.
-				// Grace period of 25 ticks (500ms) approximates the typical
-				// inter-sound gap during gameplay.
-				_delay = -1;
-				_graceCounter = 25;
-				return;
-
-			default:
-				break;
-			}
+	// Runs one command word, returning false when the tick is over
+	bool executeCommand() {
+		if (_cmdPos >= (int)_commands.size()) {
+			endInterpreter();
+			return false;
 		}
 
-		// Ran out of commands
+		uint16 cmd = _commands[_cmdPos++];
+		int nibble = (cmd >> 12) & 0xF;
+		int param = cmd & 0xFFF;
+
+		switch (nibble) {
+		case 0:
+		case 1:
+		case 2:
+		case 3: {
+			int ch = periodCmdToChannel(nibble);
+			if (param == 0)
+				disableChannelDma(ch);
+			else
+				setAbsolutePeriod(ch, (uint16)param);
+			break;
+		}
+
+		case 4:
+			setAbsoluteVolume((param >> 8) & 0xF, param & 0xFF);
+			break;
+
+		case 5: {
+			if (_cmdPos + 3 > (int)_commands.size()) {
+				endInterpreter();
+				return false;
+			}
+			uint16 startOffset = _commands[_cmdPos++];
+			uint16 endTrim = _commands[_cmdPos++];
+			uint16 repeats = _commands[_cmdPos++];
+			triggerSample(param, startOffset, endTrim, repeats);
+			break;
+		}
+
+		case 6:
+			_delay = param;
+			break;
+
+		case 7:
+			if (param == 0x000) {
+				for (int ch = 0; ch < 4; ch++) {
+					_volumeShadow[ch] = 0;
+					setChannelVolume(ch, 0);
+					disableChannelDma(ch);
+				}
+				_dmaActive = false;
+				_dmaStopPending = false;
+				_dmaDone = true;
+				_delay = -1;
+				releasePriority();
+				stopPaula();
+				return false;
+			} else if (param == 0x001) {
+				_paused = true;
+			} else if (param == 0x002) {
+				_loopCounter--;
+				if (_loopCounter > 0)
+					_cmdPos = _loopPos;
+			}
+			break;
+
+		case 8:
+		case 9:
+		case 0xA:
+		case 0xB: {
+			int ch = periodCmdToChannel(nibble - 8);
+			int delta = (param & 0x800) ? param - 0x1000 : param; // Sign-extended
+			setRelativePeriod(ch, (int16)delta);
+			break;
+		}
+
+		case 0xC:
+			addRelativeVolume((param >> 8) & 0xF, (int8)(param & 0xFF));
+			break;
+
+		case 0xD:
+			_loopPos = _cmdPos;
+			_loopCounter = param;
+			break;
+
+		case 0xF:
+			endInterpreter();
+			return false;
+
+		default:
+			// Unknown commands (0xE) are skipped by the original as well
+			break;
+		}
+
+		return true;
+	}
+
+	void endInterpreter() {
 		_delay = -1;
-		_dmaAud0Active = false;
-		setChannelSampleStart(0, _squareWave);
-		setChannelSampleLen(0, 0x20);
-		setChannelOffset(0, Audio::Paula::Offset(0));
-		stopPaula();
+		_graceCounter = -1; // Decided once the sample playback is over
+	}
+
+	bool channelsAudible() const {
+		for (int ch = 0; ch < 4; ch++) {
+			if (_channelEnabled[ch] && hardwareVolume(_volumeShadow[ch]) > 0)
+				return true;
+		}
+		return false;
 	}
 };
 
 class SoundAmigaDemo final : public Sound {
 public:
-	SoundAmigaDemo(Audio::Mixer *mixer) : _mixer(mixer) {}
+	SoundAmigaDemo(Audio::Mixer *mixer) : _priority(new AmigaSfxPriority()), _mixer(mixer) {}
 
 	void loadSounds(Common::SeekableReadStream *file, int offset, int numSounds, int modOffset);
 
@@ -413,15 +422,24 @@ public:
 
 	void stopSound(Type type) override {
 		_mixer->stopHandle(_soundFxHandle);
+		Common::StackLock lock(_mixer->mutex());
+		_priority->value = 0;
 	}
 
 	bool isPlayingSound(Type type) const override {
 		return _mixer->isSoundHandleActive(_soundFxHandle);
 	}
 
+	bool isSoundAvailable(int index) const override {
+		return index >= 0 && index < (int)_amigaSfxTable.size();
+	}
+
 private:
+	void loadDmaSamples(Common::SeekableReadStream *file, int modOffset);
+
 	Common::Array<AmigaSfxEntry> _amigaSfxTable;
 	Common::Array<AmigaDmaSample> _amigaDmaSamples;
+	Common::SharedPtr<AmigaSfxPriority> _priority;
 
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundFxHandle;
@@ -443,29 +461,62 @@ void SoundAmigaDemo::loadSounds(Common::SeekableReadStream *file, int offset, in
 	}
 	debugC(1, kFreescapeDebugParser, "Loaded %d Amiga sound effects", numSounds);
 
-	// Prepare DMA sample set for 0x5 commands from the embedded ProTracker module.
-	// Parameter N uses index N (1-based), so keep index 0 empty.
+	loadDmaSamples(file, modOffset);
+}
+
+// The samples played by 0x5NNN come from the `cmsnds2` bank, which the original
+// loads over the memory holding the ProTracker module (hence music and sound
+// effects being mutually exclusive there). Each of its 10 entries is a 4-byte
+// big endian length, a 2-byte sample rate and that many signed 8-bit samples.
+void SoundAmigaDemo::loadDmaSamples(Common::SeekableReadStream *file, int modOffset) {
+	// Parameter N uses index N, so index 0 stays empty; 11 is the extra slot
 	_amigaDmaSamples.clear();
 	_amigaDmaSamples.resize(12);
 
-	if (file->size() > modOffset + 1084) {
-		int modSize = file->size() - modOffset;
-		Common::Array<byte> modBytes;
-		modBytes.resize(modSize);
-		file->seek(modOffset);
-		file->read(modBytes.data(), modSize);
+	Common::File bank;
+	if (bank.open("cmsnds2")) {
+		int index = 1;
+		while (index <= 10 && bank.pos() + 6 <= bank.size()) {
+			uint32 length = bank.readUint32BE();
+			bank.readUint16BE(); // Nominal rate, unused: 0x3xxx sets the period
+			if (length == 0 || bank.pos() + (int64)length > bank.size())
+				break;
 
-		Common::MemoryReadStream modStream(modBytes.data(), modBytes.size());
-		Modules::Module module;
-		if (module.load(modStream, 0)) {
-			for (int i = 1; i <= 10; i++) {
-				const Modules::sample_t &sample = module.sample[i - 1];
-				if (sample.len > 0 && sample.data) {
-					_amigaDmaSamples[i].data.resize(sample.len);
-					memcpy(_amigaDmaSamples[i].data.data(), sample.data, sample.len);
-				}
-			}
+			_amigaDmaSamples[index].data.resize(length);
+			bank.read(_amigaDmaSamples[index].data.data(), length);
+			debugC(1, kFreescapeDebugParser, "Amiga DMA sample %d: %d bytes", index, length);
+			index++;
 		}
+		bank.close();
+	} else {
+		warning("Freescape: 'cmsnds2' is missing from the game data, so the sampled "
+				"part of the Amiga sound effects will not play");
+	}
+
+	if (modOffset < 0)
+		return;
+
+	// The demo points its extra sample slot at the third instrument of the
+	// music module; the full game leaves that pointer uninitialized
+	int64 fileSize = file->size();
+	if (fileSize <= modOffset + 1084)
+		return;
+
+	int modSize = fileSize - modOffset;
+	Common::Array<byte> modBytes;
+	modBytes.resize(modSize);
+	file->seek(modOffset);
+	file->read(modBytes.data(), modSize);
+
+	Common::MemoryReadStream modStream(modBytes.data(), modBytes.size());
+	Modules::Module module;
+	if (!module.load(modStream, 0))
+		return;
+
+	const Modules::sample_t &sample = module.sample[2];
+	if (sample.len > 0 && sample.data) {
+		_amigaDmaSamples[11].data.resize(sample.len);
+		memcpy(_amigaDmaSamples[11].data.data(), sample.data, sample.len);
 	}
 }
 
@@ -481,16 +532,32 @@ void SoundAmigaDemo::playSound(int index, Type type) {
 		return;
 	}
 
+	// A sound still holding the priority slot cannot be replaced by a lesser one
+	if (_mixer->isSoundHandleActive(_soundFxHandle)) {
+		Common::StackLock lock(_mixer->mutex());
+		if (entry.priority < _priority->value) {
+			debugC(1, kFreescapeDebugMedia, "Amiga sound %d skipped (priority %d < %d)",
+				index, entry.priority, _priority->value);
+			return;
+		}
+	}
+
 	debugC(1, kFreescapeDebugMedia, "Playing Amiga sound %d (priority=%d, commands=%d)",
 		index, entry.priority, (int)entry.commands.size());
 
-	AmigaSfxStream *stream = new AmigaSfxStream(entry.commands.data(), entry.commands.size(), &_amigaDmaSamples);
+	AmigaSfxStream *stream = new AmigaSfxStream(entry.commands.data(), entry.commands.size(), &_amigaDmaSamples, _priority);
+	// Claim the slot only once the previous stream is gone, so that its clean
+	// up cannot release the new claim
 	_mixer->stopHandle(_soundFxHandle);
+	{
+		Common::StackLock lock(_mixer->mutex());
+		_priority->value = entry.priority;
+	}
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, stream, -1,
 		Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
 }
 
-Sound *FreescapeEngine::loadSoundsAmigaDemo(Common::SeekableReadStream *file, int offset, int numSounds, int modOffset) {
+Sound *FreescapeEngine::loadSoundsAmiga(Common::SeekableReadStream *file, int offset, int numSounds, int modOffset) {
 	SoundAmigaDemo *sound = new SoundAmigaDemo(_mixer);
 	sound->loadSounds(file, offset, numSounds, modOffset);
 	return sound;
