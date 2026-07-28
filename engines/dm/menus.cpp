@@ -441,6 +441,8 @@ void MenuMan::buildSpellAreaLine(int16 spellAreaBitmapLine) {
 
 	char spellSymbolString[2] = {'\0', '\0'};
 	Champion *magicChampion = &championMan._champions[championMan._magicCasterChampionIndex];
+	// Clear the buffer before reusing to avoid ghost artifacts
+	memset(_bitmapSpellAreaLine, 0, 96 * 12);
 	if (spellAreaBitmapLine == kDMSpellAreaAvailableSymbols) {
 		_vm->_displayMan->_useByteBoxCoordinates = false;
 		_vm->_displayMan->blitToBitmap(_bitmapSpellAreaLines, _bitmapSpellAreaLine, boxSpellAreaLine, 0, 12, k48_byteWidth, k48_byteWidth, kDMColorNoTransparency, 36, 12);
