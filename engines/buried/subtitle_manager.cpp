@@ -143,6 +143,12 @@ bool SubtitleManager::loadSubtitlesData() {
 		return false;
 	}
 
+	uint16 version = file.readUint16BE();
+	if (version != kSubtitleDataVersion) {
+		warning("[SubtitleManager] Unsupported subtitle version in subtitles.dat: %d", version);
+		return false;
+	}
+
 	uint16 numTracks = file.readUint16BE();
 
 	struct TocEntry {
