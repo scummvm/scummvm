@@ -124,6 +124,13 @@
   before returning a control ID. A toolbar press therefore dispatches only
   when its release remains over the same action; leaving the control cancels
   the pending selection.
+- `DispatchFrontEndAction` at `0x190b7` routes toolbar action `0x51c` through
+  `RunBinaryPromptChooser` at `0x1803c` unless the Cyber transition flag is
+  active. The ordinary path resolves `GAMETEXT.TF` resources `0x3f`
+  (`Quit Game?`), `0x3c` (`Yes`), and `0x3d` (`No`), centers a two-row MENUB
+  chooser, and initially selects `No`; Escape or `No` resumes the scene, while
+  `Yes` returns the retail `-4` outer-runtime exit. ScummVM maps that confirmed
+  exit to its engine-quit request, returning control to the host launcher.
 - Engine-local rectangular controls use `UiControlRegistry`, which preserves
   the insertion-order first-hit behavior of `FindUiControlStateAtPoint` at
   `0x4aae8`. `ChooserModel` owns the selected and first-visible indices for

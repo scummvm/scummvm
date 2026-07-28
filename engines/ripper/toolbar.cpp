@@ -28,6 +28,7 @@
 #include "ripper/detection.h"
 #include "ripper/display.h"
 #include "ripper/input.h"
+#include "ripper/modal_dialog.h"
 #include "ripper/options_panel.h"
 #include "ripper/remote_control.h"
 #include "ripper/ripper.h"
@@ -47,6 +48,7 @@ static const byte kToolbarTextColor = 4;
 static const byte kToolbarFillColor = 253;
 static const uint kToolbarHelpActionIndex = 7;
 static const uint kToolbarExitActionIndex = 8;
+static const uint kToolbarExitPromptResourceId = 0x3f;
 
 static const char *const kToolbarHandlerNames[kToolbarActionCount] = {
 	"RunTake2IniSliderSetupMenu",
@@ -385,6 +387,26 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 			_actions[actionIndex].label.c_str());
 		if (!_engine->getScripts()->showHelp("toolbar"))
 			warning("Ripper: toolbar help action failed");
+		return;
+	}
+	if (actionIndex == kToolbarExitActionIndex) {
+		// DispatchFrontEndAction at 0x190b7 resolves GAMETEXT.TF resource
+		// 0x3f ("Quit Game?") and calls RunBinaryPromptChooser at 0x1803c
+		// with "No" selected. The Cyber path above bypasses this prompt.
+		debugC(1, kDebugGeneral,
+			"Ripper: toolbar action=9 id=0x51c label='%s' entering "
+			"RunBinaryPromptChooser",
+			_actions[actionIndex].label.c_str());
+		leave();
+		_engine->getInput()->discardMouseTransitions();
+		const bool confirmed = _engine->getModalDialog()->runBinaryPrompt(
+			kToolbarExitPromptResourceId, false);
+		_engine->getInput()->discardMouseTransitions();
+		debugC(1, kDebugGeneral,
+			"Ripper: toolbar quit prompt completed confirmed=%d quit=%d",
+			confirmed, _engine->shouldQuit());
+		if (confirmed)
+			_engine->quitGame();
 		return;
 	}
 	debugC(1, kDebugScene,
