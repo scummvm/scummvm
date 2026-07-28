@@ -380,16 +380,26 @@ protected:
 	 * checksum - then the checksum byte and a closing F7. The shared
 	 * core of sendSysEx()/sendReverbSysEx() below - split out so
 	 * hardcoded protocol buffers (not driver-specific loaded sound data)
-	 * can be sent without going through loadData().
+	 * can be sent without going through loadData(). Returns a pointer to
+	 * the terminating 0xFF byte (matching the disassembly's own si
+	 * register value on return), so callers walking a sequence of
+	 * consecutive messages can advance past it to find the next one.
 	 */
-	void sendSysExData(const byte *pData);
+	const byte *sendSysExData(const byte *pData);
+
+	/** sendSysExData() for a block already in this driver's own loaded sound data. */
+	const byte *sendSysEx(int offset);
 
 	/**
-	 * sendSysExData() for a block already in this driver's own loaded
-	 * sound data. Matches sendSysEx exactly (same algorithm as the
-	 * confirmed Rex Nebular RSound::sendSysEx()).
+	 * Matches sendSysExSequence: repeatedly calls sendSysEx(), starting
+	 * from this driver's own command0_array (_sysExOffset) and advancing
+	 * past each message's terminating 0xFF to the start of the next one,
+	 * until an empty message (two consecutive 0xFF bytes) marks the end
+	 * of the table. Called once from the constructor (matching
+	 * initDeviceOnce) - the disassembly's _deviceInitialized guard flag
+	 * isn't needed since nothing else ever calls this again.
 	 */
-	void sendSysEx(int offset);
+	void sendSysExSequence();
 
 	/**
 	 * TENTATIVE: matches sub_102BE - a nested loop (4 outer x 32 inner

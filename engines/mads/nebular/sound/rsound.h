@@ -261,19 +261,30 @@ protected:
 	void sendMidiChannelReset(int first, int last);
 
 	/**
-	 * Sends a single Roland DT1-style SysEx message: the fixed
-	 * _sysExHeader (F0 41 10 16 12), then bytes from loadData(offset)
-	 * up to (but not including) a 0xFF terminator - each byte sent and
-	 * folded into a running checksum - then the two's-complement/7-bit
-	 * checksum byte and a closing F7. Matches sub_1041E exactly.
-	 *
-	 * The original follows this with a busy-wait delay loop
-	 * (_sysexDelayCount iterations) to give the MT-32 time to process
-	 * the message before the next one arrives; irrelevant while
-	 * sendMidiByte() is just a warning() stub, so not ported - will need
-	 * a real (non-blocking) delay once actual MIDI output exists.
+	 * Sends a single SysEx message: bytes from pData up to (but not
+	 * including) a 0xFF terminator, via the real MT32GM MIDI driver
+	 * (_midiDriver->sysExMT32()) - this part is a work in progress and
+	 * intentionally NOT shared with the Dragonsphere/Phantom RSound
+	 * families, which still route through the sendMidiByte() warning()
+	 * stub. Returns a pointer to the terminating 0xFF byte, so callers
+	 * walking a sequence of consecutive messages can advance past it to
+	 * find the next one.
 	 */
-	void sendSysEx(int offset);
+	byte *sendSysExData(byte *pData);
+
+	/** sendSysExData() for a block already in this driver's own loaded sound data. */
+	byte *sendSysEx(int offset);
+
+	/**
+	 * Matches sendSysExSequence: repeatedly calls sendSysEx(), starting
+	 * from this driver's own command0_array (_sysExOffset) and advancing
+	 * past each message's terminating 0xFF to the start of the next one,
+	 * until an empty message (two consecutive 0xFF bytes) marks the end
+	 * of the table. Called once from the constructor (matching
+	 * initDeviceOnce) - the disassembly's _deviceInitialized guard flag
+	 * isn't needed since nothing else ever calls this again.
+	 */
+	void sendSysExSequence();
 
 	virtual int command0();
 	int command1();

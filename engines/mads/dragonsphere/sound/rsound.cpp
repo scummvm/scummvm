@@ -121,7 +121,12 @@ RSound::RSound(Audio::Mixer *mixer, const Common::Path &filename,
 	for (int i = 0; i < ARRAYSIZE(_scriptVariables); ++i)
 		_scriptVariables[i] = 0;
 
+	// Matches initDeviceOnce: command0() then sendSysExSequence(). The
+	// disassembly's _deviceInitialized guard flag is omitted - this
+	// constructor only ever runs once per driver instance, so there's
+	// nothing to guard against.
 	command0();
+	sendSysExSequence();
 }
 
 void RSound::validate() {
@@ -349,23 +354,36 @@ void RSound::sendGmResetRange(int high, int low) {
 	}
 }
 
-void RSound::sendSysExData(const byte *pData) {
+const byte *RSound::sendSysExData(const byte *pData) {
 	static const byte header[] = { 0xF0, 0x41, 0x10, 0x16, 0x12 };
 	for (int i = 0; i < ARRAYSIZE(header); ++i)
 		sendMidiByte(header[i]);
 
 	_sysexChecksum = 0;
-	for (int i = 0; pData[i] != 0xFF; ++i) {
+	int i = 0;
+	for (; pData[i] != 0xFF; ++i) {
 		sendMidiByte(pData[i]);
 		_sysexChecksum += pData[i];
 	}
 
 	sendMidiByte((~_sysexChecksum + 1) & 0x7F);
 	sendMidiByte(0xF7);
+
+	return &pData[i];
 }
 
-void RSound::sendSysEx(int offset) {
-	sendSysExData(loadData(offset));
+const byte *RSound::sendSysEx(int offset) {
+	return sendSysExData(loadData(offset));
+}
+
+void RSound::sendSysExSequence() {
+	const byte *pData = loadData(_sysExOffset);
+	for (;;) {
+		pData = sendSysExData(pData);
+		++pData;
+		if (*pData == 0xFF)
+			break;
+	}
 }
 
 void RSound::sendPatchInitSequence() {

@@ -483,12 +483,26 @@ protected:
 	 * Sends a single Roland DT1-style SysEx message from a raw buffer:
 	 * the fixed header, then bytes from pData up to (not including) a
 	 * 0xFF terminator - each byte sent and folded into a running
-	 * checksum - then the checksum byte and a closing F7.
+	 * checksum - then the checksum byte and a closing F7. Returns a
+	 * pointer to the terminating 0xFF byte (matching the disassembly's
+	 * own si register value on return), so callers walking a sequence
+	 * of consecutive messages can advance past it to find the next one.
 	 */
-	void sendSysExData(const byte *pData);
+	const byte *sendSysExData(const byte *pData);
 
 	/** sendSysExData() for a block already in this driver's own loaded sound data. */
-	void sendSysEx(int offset);
+	const byte *sendSysEx(int offset);
+
+	/**
+	 * Matches sendSysExSequence: repeatedly calls sendSysEx(), starting
+	 * from this driver's own command0_array (_sysExOffset) and advancing
+	 * past each message's terminating 0xFF to the start of the next one,
+	 * until an empty message (two consecutive 0xFF bytes) marks the end
+	 * of the table. Called once from the constructor (matching
+	 * initDeviceOnce) - the disassembly's _deviceInitialized guard flag
+	 * isn't needed since nothing else ever calls this again.
+	 */
+	void sendSysExSequence();
 
 	void sendPatchInitSequence();
 

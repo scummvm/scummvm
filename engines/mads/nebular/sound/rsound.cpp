@@ -100,7 +100,12 @@ RSound::RSound(Audio::Mixer *mixer, const Common::Path &filename,
 	// MIDI channel reset messages to the device. Since we don't do real hardware
 	// detection here, just go straight to command0() - matches ASound's
 	// constructor calling command0() directly.
+	// Matches initDeviceOnce: command0() then sendSysExSequence(). The
+	// disassembly's _deviceInitialized guard flag is omitted - this
+	// constructor only ever runs once per driver instance, so there's
+	// nothing to guard against.
 	command0();
+	sendSysExSequence();
 
 	_midiDriver->setTimerCallback(this, &timerCallback);
 }
@@ -284,38 +289,44 @@ void RSound::restoreChannelVolume(int midiChannel, int volume) {
 	sendVolume(midiChannel, volume);
 }
 
-void RSound::sendSysEx(int offset) {
+byte *RSound::sendSysExData(byte *pData) {
+	// FIXME If the data is malformed, this will read out of bounds. Not sure
+	// how the original code handles this.
+	uint16 length = 0;
+	for (int i = 0; pData[i] != 0xFF; ++i) {
+		length++;
+	}
+
+	// FIXME This call adds the necessary delay for the MT-32 to process the
+	// SysEx message, which will make the engine unresponsive.
+	// This can be fixed using the SysEx queue (specify true as 3rd param).
+	// Driver status can then be checked from the main event loop using
+	// _midiDriver->isReady().
+	_midiDriver->sysExMT32(pData, length);
+
+	return &pData[length];
+}
+
+byte *RSound::sendSysEx(int offset) {
 	if (offset < 0) {
 		// _sysExOffset wasn't given a confirmed value for this driver yet
 		// (see the constructor) - deliberately not scanning for a 0xFF
 		// terminator from an unconfirmed/arbitrary offset, since that
 		// could read well past the actual command0_array table.
 		warning("RSound::sendSysEx: command0_array offset not yet known for this driver");
-		return;
+		return nullptr;
 	}
 
-	// There is a whole block of SysEx data at this offset that has to be
-	// sent to the MT-32. Each entry is terminated by 0xFF; the block seems to
-	// be terminated by a second 0xFF following the last entry.
-	// FIXME If the data is malformed, this will read out of bounds. Not sure
-	// how the original code handles this.
-	byte *pData = loadData(offset);
-	while (true) {
-		uint16 length = 0;
-		for (int i = 0; pData[i] != 0xFF; ++i) {
-			length++;
-		}
-		if (length == 0) {
-			// Two subsequent 0xFF bytes - end of SysEx data block.
+	return sendSysExData(loadData(offset));
+}
+
+void RSound::sendSysExSequence() {
+	byte *pData = loadData(_sysExOffset);
+	for (;;) {
+		pData = sendSysExData(pData);
+		++pData;
+		if (*pData == 0xFF)
 			break;
-		}
-		// FIXME This call adds the necessary delay for the MT-32 to process the
-		// SysEx message, which will make the engine unresponsive.
-		// This can be fixed using the SysEx queue (specify true as 3rd param).
-		// Driver status can then be checked from the main event loop using
-		// _midiDriver->isReady().
-		_midiDriver->sysExMT32(pData, length);
-		pData += length + 1;
 	}
 }
 
