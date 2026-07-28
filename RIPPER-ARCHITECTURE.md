@@ -1060,6 +1060,10 @@
   as the row-major top, middle, and bottom frame tiles. For overflowing text,
   `TileChooserControlFrame` at `0x54fbe` draws `MENUB9` and `MENUB10` at the
   ends of a right-edge strip filled with `MENUB14`.
+  `ComputeChooserControlLayout` at `0x54e9a` through `0x54f17` reserves that
+  strip before wrapping: the 15-pixel `MENUB14` width plus its 4-pixel edge
+  inset, less the template's existing 5-pixel right padding, narrows the
+  overflowing text client by 14 pixels.
 - `InitializeSharedPresentationTemplates` at `0x1196f` loads `SMALL.FNT` for
   the modal and captures MENUB palette indices 4 through 9 and 246 through 255
   with `CaptureSharedDisplayPalettePatch` at `0x205a9`.

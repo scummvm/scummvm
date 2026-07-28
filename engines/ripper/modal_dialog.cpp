@@ -1131,8 +1131,23 @@ bool ModalDialogManager::runTextInternal(const Common::String &title,
 	const int bottomPadding = wacStyle ? kWacModalBottomPadding : kModalBottomPadding;
 	const int leftPadding = wacStyle ? kWacModalLeftPadding : kModalLeftPadding;
 	const int rightPadding = wacStyle ? kWacModalRightPadding : kModalRightPadding;
+	const Common::Array<BitmapAssetFrame> &skin =
+		wacStyle ? _wacSkin : _skin;
+	const int scrollEdgeInset = wacStyle ? 0 : kModalScrollEdgeInset;
+	int wrapWidth = kModalWidth - leftPadding - rightPadding;
 	Common::Array<Common::String> lines;
-	wrapText(body, kModalWidth - leftPadding - rightPadding, lines);
+	wrapText(body, wrapWidth, lines);
+	if (lines.size() > kModalMaximumRows &&
+			skin.size() > kModalScrollTrackFrame) {
+		// ComputeChooserControlLayout at 0x54e9a through 0x54f17 adjusts
+		// an overflowing text client's width by the scrollbar track width
+		// plus its edge inset, less the right padding already reserved by
+		// the chooser template.
+		wrapWidth -= skin[kModalScrollTrackFrame].width +
+			scrollEdgeInset - rightPadding;
+		if (wrapWidth > 0)
+			wrapText(body, wrapWidth, lines);
+	}
 	const uint visibleRows = MIN<uint>(lines.size(), kModalMaximumRows);
 	const int width = kModalWidth;
 	const int height = headingTopPadding + visibleRows * kModalRowHeight +
@@ -1150,6 +1165,13 @@ bool ModalDialogManager::runTextInternal(const Common::String &title,
 	if (applyPalette)
 		applyModalPalette();
 	drawDialog(title, lines, firstVisible, visibleRows, bounds, style);
+	debugC(3, kDebugScene,
+		"Ripper: modal text layout source='%s' resource=%u wrapWidth=%d "
+		"scrollTrackWidth=%u edgeInset=%d rightPadding=%d",
+		source, bodyResourceId, wrapWidth,
+		skin.size() > kModalScrollTrackFrame ?
+			skin[kModalScrollTrackFrame].width : 0,
+		scrollEdgeInset, rightPadding);
 	debugC(1, kDebugScene,
 		"Ripper: entered modal text dialog source='%s' resource=%u style=%s palette=%s title='%s' lines=%u bounds=%d,%d,%d,%d",
 		source, bodyResourceId, wacStyle ? "wacmnu" : "menub",
