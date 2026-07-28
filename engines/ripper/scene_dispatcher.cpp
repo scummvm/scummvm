@@ -32,6 +32,7 @@
 #include "ripper/puzzles/board_arrangement.h"
 #include "ripper/puzzles/calculator.h"
 #include "ripper/puzzles/cd_in_book.h"
+#include "ripper/puzzles/circuit_chip.h"
 #include "ripper/puzzles/clock.h"
 #include "ripper/puzzles/crystal.h"
 #include "ripper/puzzles/gc_csh.h"
@@ -52,7 +53,7 @@ namespace Ripper {
 const char *SceneActionDispatcher::actionName(uint action) {
 	switch (action) {
 	case 0: return "no action";
-	case 1: return "circuit chip placement puzzle";
+	case kSceneActionCircuitChipPuzzle: return "circuit chip placement puzzle";
 	case 2: return "scene selection menu";
 	case 3: return "unlock-gated selection menu";
 	case 4: return "calculator puzzle";
@@ -134,6 +135,15 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		"Ripper: dispatch scene action=%u name='%s' argument=%u script='%s' offset=0x%x",
 		action, actionName(action), argument, script.getMemberName().c_str(), command.offset);
 
+	if (action == kSceneActionCircuitChipPuzzle) {
+		CircuitChipPuzzle puzzle(engine);
+		const CircuitChipPuzzle::Result result = puzzle.run(argument);
+		debugC(1, kDebugPuzzles,
+			"Ripper: circuit chip puzzle scene action completed "
+			"result=%d milestone=%u",
+			result, argument);
+		return result != CircuitChipPuzzle::kLoadFailed;
+	}
 	if (action == kSceneActionWorldMap) {
 		if (!manager.openWorldMap())
 			return false;
