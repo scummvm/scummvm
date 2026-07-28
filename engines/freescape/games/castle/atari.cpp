@@ -248,12 +248,18 @@ void CastleEngine::loadAssetsAtariFullGame() {
 	_spiritsMeterIndicatorFrame = loadFrameFromPlanesInterleaved(file, 1, 10);
 	_spiritsMeterIndicatorFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 
-	file->seek(0x569e0);
+	// Weight discs of the strength barbell: 4 frames of 1 word x 15 rows,
+	// followed by the 5 word x 3 row shaft.
+	file->seek(0x569d0);
 	for (int i = 0; i < 4; i++) {
-		Graphics::ManagedSurface *frame = loadFrameFromPlanesInterleaved(file, 1, 14);
+		Graphics::ManagedSurface *frame = loadFrameFromPlanesInterleaved(file, 1, 15);
 		frame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 		_strenghtWeightsFrames.push_back(frame);
 	}
+
+	file->seek(0x56bb0);
+	_strenghtBarFrame = loadFrameFromPlanesInterleaved(file, 5, 3);
+	_strenghtBarFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 
 	file->seek(0x594a0);
 	for (int i = 0; i < 12; i++) {

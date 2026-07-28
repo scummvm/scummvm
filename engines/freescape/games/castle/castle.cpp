@@ -760,7 +760,8 @@ void CastleEngine::initGameState() {
 		}
 	}
 
-	_gameStateVars[k8bitVariableShield] = 16;
+	// The Amiga and Atari ST releases start with three weights per side
+	_gameStateVars[k8bitVariableShield] = (isAmiga() || isAtariST()) ? 12 : 16;
 	_gameStateVars[k8bitVariableEnergy] = 1;
 	_gameStateVars[8] = 128; // -1
 	_countdown = INT_MAX - 8;
@@ -1956,6 +1957,9 @@ void CastleEngine::drawEnergyMeter(Graphics::Surface *surface, Common::Point ori
 			barFrameOrigin += Common::Point(0, 6 + extraYOffset);
 		else if (isCPC())
 			barFrameOrigin += Common::Point(0, 6 + extraYOffset);
+		else if (isAmiga() || isAtariST())
+			// The shaft is 80 pixels wide and starts left of the discs
+			barFrameOrigin += Common::Point(-8, 6 + extraYOffset);
 
 		surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_strenghtBarFrame, barFrameOrigin.x, barFrameOrigin.y, Common::Rect(0, 0, _strenghtBarFrame->w, _strenghtBarFrame->h), black);
 	}
@@ -1984,8 +1988,8 @@ void CastleEngine::drawEnergyMeter(Graphics::Surface *surface, Common::Point ori
 		rightWeightPos = 63;
 	} else if (isAmiga() || isAtariST()) {
 		weightStep = 3;
-		weightOffset = 10;
-		rightWeightPos = 62;
+		weightOffset = 8;
+		rightWeightPos = 64;
 	} else if (_renderMode == Common::kRenderCGA) {
 		// The CGA discs are 4 pixels wide instead of 8
 		weightStep = 3;

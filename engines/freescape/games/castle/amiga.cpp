@@ -1173,18 +1173,19 @@ void CastleEngine::loadAssetsAmigaDemo() {
 	_spiritsMeterIndicatorFrame = loadFrameFromPlanesInterleaved(&file, 1, 10);
 	_spiritsMeterIndicatorFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 
-	// Strength weight sprites (file 0x395F2, 1 word x 14 rows x 4 frames)
-	file.seek(0x395f2);
+	// Weight discs of the strength barbell (memory 0x395C6): 4 frames of
+	// 1 word x 15 rows, i.e. 120 bytes each.
+	file.seek(0x395e2);
 	for (int i = 0; i < 4; i++) {
-		Graphics::ManagedSurface *frame = loadFrameFromPlanesInterleaved(&file, 1, 14);
+		Graphics::ManagedSurface *frame = loadFrameFromPlanesInterleaved(&file, 1, 15);
 		frame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 		_strenghtWeightsFrames.push_back(frame);
 	}
 
-	// Strength background with bar (file 0x397B2, 5 words x 20 rows)
-	//file.seek(0x397b2);
-	//_strenghtBackgroundFrame = loadFrameFromPlanesInterleaved(&file, 5, 4);
-	//_strenghtBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
+	// Barbell shaft (memory 0x397A6): 5 words x 3 rows.
+	file.seek(0x397c2);
+	_strenghtBarFrame = loadFrameFromPlanesInterleaved(&file, 5, 3);
+	_strenghtBarFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 
 	// Eye icon sprites (memory 0x3C096, 12 frames, 16x7 each, interleaved 4-plane)
 	// Used for strength/compass display at screen (224, 164). Header at 0x3C08E.
@@ -1522,13 +1523,19 @@ void CastleEngine::loadAssetsAmigaFullGame() {
 	_spiritsMeterIndicatorFrame = loadFrameFromPlanesInterleaved(&file, 1, 10);
 	_spiritsMeterIndicatorFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 
-	// Strength weight sprites: 4 frames × 1 word × 14 rows.
-	file.seek(0x38c46);
+	// Weight discs of the strength barbell (memory 0x38C1A): 4 frames of
+	// 1 word × 15 rows, i.e. 120 bytes each.
+	file.seek(0x38c36);
 	for (int i = 0; i < 4; i++) {
-		Graphics::ManagedSurface *frame = loadFrameFromPlanesInterleaved(&file, 1, 14);
+		Graphics::ManagedSurface *frame = loadFrameFromPlanesInterleaved(&file, 1, 15);
 		frame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 		_strenghtWeightsFrames.push_back(frame);
 	}
+
+	// Barbell shaft (memory 0x38DFA): 5 words × 3 rows.
+	file.seek(0x38e16);
+	_strenghtBarFrame = loadFrameFromPlanesInterleaved(&file, 5, 3);
+	_strenghtBarFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 
 	// Eye icon sprites: 12 frames × 1 word × 7 rows. Header at 0x3b6fe.
 	file.seek(0x3b706);
