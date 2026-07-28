@@ -183,6 +183,10 @@ uint CursorManager::resolveNancy10CursorID(CursorType type, int16 itemID, bool s
 	case kInvertedRotateLeft:   return kNewInvertedRotateLeft;
 	case kDragHand:             return kNewDragHand;
 	case kPuzzleArrow:          return kNewPuzzleArrow;
+	case kNewPuzzleSlideUp:     return kNewPuzzleSlideUp;
+	case kNewPuzzleSlideDown:   return kNewPuzzleSlideDown;
+	case kNewPuzzleSlideLeft:   return kNewPuzzleSlideLeft;
+	case kNewPuzzleSlideRight:  return kNewPuzzleSlideRight;
 	case kDropHand:             return kNewDropHand;
 	default:
 		return kNewNormal;

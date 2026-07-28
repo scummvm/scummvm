@@ -91,6 +91,10 @@ public:
 		kNewUseHand				= 36,	// Type 18 — Hand used while using items
 		kNewDragHand			= 38,	// Type 19 — Hand used while dragging puzzle pieces (e.g. SortPuzzle pickup action sets this)
 		kNewPuzzleArrow			= 45,	// Type 22 hotspot — Arrow cursor shown when hovering a clickable puzzle hotspot
+		kNewPuzzleSlideUp		= 47,	// Type 23 hotspot — Slide-arrow shown over a movable tile in CollisionPuzzle/TileMovePuzzle
+		kNewPuzzleSlideDown		= 49,	// Type 24 hotspot
+		kNewPuzzleSlideLeft		= 51,	// Type 25 hotspot
+		kNewPuzzleSlideRight	= 53,	// Type 26 hotspot
 		kNewDropHand			= 64,	// Type 32 — Hand shown when a held piece is dropped (briefly set on the drop action)
 
 		// Cursor types in Nancy13 and newer games. Nancy13 rebuilt the CURS
