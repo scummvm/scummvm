@@ -542,8 +542,9 @@ void CellPhonePopup::drawChrome() {
 	drawCloseButton(_closeButtonHovered);
 	// The help "?" button lives on the dialer face only. The original hides
 	// it once a call is being placed (the connecting / "We're sorry" screens)
-	// and on every sub-screen that shows its own heading.
-	if (_screenState == kWelcome || _screenState == kDialing) {
+	// and on every sub-screen that shows its own heading. With no signal the
+	// online help is unreachable, so the button is gone entirely.
+	if ((_screenState == kWelcome || _screenState == kDialing) && !_noSignal) {
 		drawHelpButton(_helpButtonHovered ? 1 : 0);
 	}
 	_needsRedraw = true;
@@ -683,7 +684,11 @@ void CellPhonePopup::drawScreenContent() {
 			drawHubButton(kN13SubViewPics);
 		} else {
 			drawHubButton(kSubEmail);
-			drawHubButton(kSubWeb);
+			// No cellular signal locks the phone to "Old Email Only", so the
+			// Internet Browser option is removed from the hub.
+			if (!_noSignal) {
+				drawHubButton(kSubWeb);
+			}
 		}
 		break;
 	}
@@ -943,8 +948,13 @@ void CellPhonePopup::drawStatusLabels() {
 		return;
 	}
 
-	const int x = _uiclData->statusTextX - _screenPosition.left;
-	const int yBase = _uiclData->statusTextY - _screenPosition.top;
+	// The status labels sit one pixel right of the dialed-number baseline.
+	const int x = _uiclData->statusTextX + 1 - _screenPosition.left;
+	// statusTextY + offset is the text baseline in the original, which draws
+	// upward from it; ScummVM's drawString anchors at the top of the line
+	// (baseline = y + getFontHeight()), so subtract the font height to land the
+	// block where the original centers it on the LCD.
+	const int yBase = _uiclData->statusTextY - _screenPosition.top - font->getFontHeight();
 	const int kLineYOffsets[UICL::kNumStatusLabels] = { -10, 20, 50 };
 
 	for (uint i = 0; i < UICL::kNumStatusLabels; ++i) {
@@ -1687,6 +1697,14 @@ void CellPhonePopup::enterScreenState(ScreenState newState) {
 	drawScreenContent();
 }
 
+bool CellPhonePopup::isDialKeyActive(uint slot) const {
+	if (_noSignal && (_screenState == kWelcome || _screenState == kDialing ||
+			_screenState == kOnlineHub)) {
+		return slot == 13;
+	}
+	return true;
+}
+
 void CellPhonePopup::cancelCall() {
 	if (!_callSound.name.empty()) {
 		g_nancy->_sound->stopSound(_callSound);
@@ -2248,7 +2266,7 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 
 	// Green-arrow highlight for the captioned "> HELP" and "< BACK" / HOME
 	// buttons: swap to the pressed sprite while the cursor is over them.
-	const bool helpVisible = (_screenState == kWelcome || _screenState == kDialing);
+	const bool helpVisible = (_screenState == kWelcome || _screenState == kDialing) && !_noSignal;
 	const bool overHelp = helpVisible &&
 			!_uiclData->helpButton.destRect.isEmpty() &&
 			_uiclData->helpButton.destRect.contains(chunkMouse);
@@ -2280,7 +2298,7 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 			(input.input & (NancyInput::kLeftMouseButtonDown | NancyInput::kLeftMouseButtonHeld)) &&
 			!(input.input & NancyInput::kLeftMouseButtonUp)) {
 		for (uint i = 0; i < UICL::kNumDialPadSlots; ++i) {
-			if (_uiclData->dialPadSlots[i].destRect.contains(chunkMouse)) {
+			if (_uiclData->dialPadSlots[i].destRect.contains(chunkMouse) && isDialKeyActive(i)) {
 				newPressed = (int)i;
 				break;
 			}
@@ -2293,7 +2311,7 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 
 	// Help "?" button: opens the help page in the content view. Hidden
 	// (and unclickable) on sub-screens that already show their own heading.
-	if (!isSubScreenState() &&
+	if (!isSubScreenState() && !_noSignal &&
 			!_uiclData->helpButton.destRect.isEmpty() && !_uiclData->helpTextKey.empty() &&
 			!(_screenState == kContentView && _contentKey == _uiclData->helpTextKey) &&
 			_uiclData->helpButton.destRect.contains(chunkMouse)) {
@@ -2386,10 +2404,13 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 
 		// Highlight whichever option button the cursor is over.
 		const bool n13Hub = g_nancy->getGameType() >= kGameTypeNancy13;
+		// No signal removes the Internet Browser option (the Nancy 13 "view
+		// pictures" option in the same slot is not signal-gated).
+		const bool webDisabled = _noSignal && !n13Hub;
 		const int emailSlot = n13Hub ? kN13SubEmail : kSubEmail;
 		const int webSlot = n13Hub ? kN13SubViewPics : kSubWeb;
 		const int newHubHover = emailR.contains(popupMouse) ? emailSlot
-								: webR.contains(popupMouse) ? webSlot : -1;
+								: (!webDisabled && webR.contains(popupMouse)) ? webSlot : -1;
 		if (newHubHover != _hoveredHubButton) {
 			_hoveredHubButton = newHubHover;
 			drawScreenContent();
@@ -2404,7 +2425,7 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 				input.eatMouseInput();
 				return;
 			}
-		} else if (webR.contains(popupMouse)) {
+		} else if (!webDisabled && webR.contains(popupMouse)) {
 			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				_directoryScroll = 0;
@@ -2761,7 +2782,8 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 	// Call/talk button. Checked before the dial-pad loop so an overlapping
 	// slot can't eat it. The Talk key is dial-pad slot 12. Only live while the
 	// keypad is on screen (skipped in the zoomed web / email / browser views).
-	if (keypadVisible && _uiclData->dialPadSlots[12].destRect.contains(chunkMouse)) {
+	if (keypadVisible && isDialKeyActive(12) &&
+			_uiclData->dialPadSlots[12].destRect.contains(chunkMouse)) {
 		g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
@@ -2822,7 +2844,7 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 	if (keypadVisible) {
 		for (uint i = 0; i < UICL::kNumDialPadSlots; ++i) {
 			const UICL::DialPadSlot &slot = _uiclData->dialPadSlots[i];
-			if (slot.destRect.contains(chunkMouse)) {
+			if (slot.destRect.contains(chunkMouse) && isDialKeyActive(i)) {
 				newHovered = (int)i;
 				break;
 			}

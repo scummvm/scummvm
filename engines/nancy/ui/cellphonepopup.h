@@ -220,6 +220,12 @@ private:
 
 	void resetDialPad();
 	void enterScreenState(ScreenState newState);
+	// With no signal the phone locks to "Old Email Only": on the welcome,
+	// dialing and online-hub screens every keypad key is dead except Menu
+	// (slot 13), which still reaches the e-mail list. Digits, *, #, Talk, Dir
+	// and the Help "?" go inert. The directory keeps its keys so the reachable
+	// e-mail path still works.
+	bool isDialKeyActive(uint slot) const;
 	// True while a player-placed call is ringing / waiting for pickup, so the
 	// connecting strip shows a Back button (subButtons[0]) that cancels it.
 	// Incoming calls have no Back button.
