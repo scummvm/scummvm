@@ -178,6 +178,12 @@ Channel *RSound::playSoundChannels6to8(int offset) {
 	return playSoundData(loadData(offset), 5, 7, 7);
 }
 
+Channel *RSound::playSoundChannels7to8(int offset) {
+	// Channels 7,8 (0-based 6-7), symmetric free/fallback scan. Matches
+	// the disassembly's own playSoundChannels7to8 exactly.
+	return playSoundData(loadData(offset), 6, 7, 7);
+}
+
 Channel *RSound::playSoundChannels1To5(int offset) {
 	// Matches the disassembly's own playSoundAny exactly: channels 1-5
 	// (0-based 0-4), fully symmetric free/fallback scan. Renamed from
@@ -287,9 +293,13 @@ void RSound::muteChannel(int midiChannel) {
 }
 
 void RSound::sendGmReset(int count) {
-	// Matches sendGmReset: counts DOWN from count to 1, using the counter
-	// itself as the MIDI channel number each iteration.
-	for (int midiChannel = count; midiChannel >= 1; --midiChannel) {
+	sendGmResetRange(count, 1);
+}
+
+void RSound::sendGmResetRange(int high, int low) {
+	// Matches sendGmReset: counts DOWN from high to low, using the
+	// counter itself as the MIDI channel number each iteration.
+	for (int midiChannel = high; midiChannel >= low; --midiChannel) {
 		_fadeCheckPeriod = 0;
 
 		byte status = 0xB0 | midiChannel;

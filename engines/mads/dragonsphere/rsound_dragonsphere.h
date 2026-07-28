@@ -203,13 +203,6 @@ private:
 	int command30();
 	int command31();
 
-	/**
-	 * Plays the specified sound, using any free channel from 7 to 8.
-	 * Matches playSoundChannels7to8: symmetric free/fallback scan (free
-	 * scan ch7 then ch8; fallback scan ch8 then ch7).
-	 */
-	Channel *playSoundChannels7to8(int offset);
-
 	int command32();
 	void loadCommand32();
 	int command33();
@@ -529,6 +522,306 @@ private:
 
 public:
 	RSound5(Audio::Mixer *mixer);
+
+	int command(int commandId, int param) override;
+};
+
+/**
+ * RSound6 (rsound.dr6)
+ *
+ * command0/command6/command7/command8 all confirmed to match the shared
+ * RSound base exactly (no overrides needed).
+ *
+ * command2/command3 use a genuinely wider group than the base class's
+ * default: channels 1-6 AND 9 (seven channels, confirmed via symbolic
+ * names) rather than 1-5,9 (six). command5 enables only channels 7,8
+ * (two channels, confirmed via address arithmetic against command3's
+ * range - channel spacing and the absence of any other channel
+ * unaccounted for).
+ *
+ * command4 uses a custom inline GM-reset loop bounded 8 down to 6
+ * (matches the new sendGmResetRange() helper) rather than the shared
+ * sendGmReset(count) (which always counts from count down to 1) -
+ * confirmed via resetChannels6to8(), which matches the base class
+ * exactly (channels 6,7,8).
+ *
+ * command1/2/3 are not virtual in the base class, so command1() must be
+ * overridden too (calling THIS class's command3()) - same pitfall as
+ * every other Dragonsphere RSound driver so far. isMusicChannelsActive()
+ * is likewise overridden (hiding the base's private method) to match
+ * command3()'s wider 7-channel group.
+ *
+ * Dispatch table layout (funcs_10A43/10A59/10A6F/10A89/10A9F):
+ *   commands  0-8   (base class, except command1-5 - see above)
+ *   commands 16-18  (this class)
+ *   commands 24-31  (this class); 29 confirmed nullsub_1
+ *   commands 32-46  (this class); 41,42,43,46 confirmed nullsub_1
+ *   commands 64-98  (this class, all populated)
+ */
+class RSound6 : public RSound {
+private:
+	int command1();
+	int command2();
+	int command3();
+	int command4();
+	int command5();
+
+	/**
+	 * Hides the base class's private method (inaccessible from here
+	 * otherwise). Confirmed to match the base class's exact shape
+	 * (channels 6,7,8 unconditionally).
+	 */
+	void resetChannels6to8();
+
+	/**
+	 * Hides the base class's method: matches sub_10539 - channels 1-6
+	 * AND 9 (seven channels), matching command3()'s own wider group,
+	 * not the base class's default (1-5,9).
+	 */
+	int isMusicChannelsActive();
+
+	/**
+	 * Plays the specified sound, using any free channel from 1 to 6.
+	 * Matches the disassembly's own playSoundChannesl1to6 (sic - a typo
+	 * in the disassembly's own symbol name, fixed here): symmetric
+	 * free/fallback scan.
+	 */
+	Channel *playSoundChannels1To6(int offset);
+
+	/**
+	 * Plays the specified sound, using any free channel from 1 to 8
+	 * (everything except channel 9). Matches this driver's own
+	 * playSoundAny exactly - a genuinely different (fuller) range than
+	 * RSound1's identically-named playSoundAny (renamed there to
+	 * playSoundChannels1To5 since it only reached channels 1-5).
+	 */
+	Channel *playSoundAny(int offset);
+
+	typedef int (RSound6:: *CommandPtr)();
+	static const CommandPtr _commandList[99];
+
+	int command16();
+	void loadCommand16();
+	int command17();
+	int command18();
+
+	int command24();
+	int command25();
+	int command26();
+	int command27();
+	int command28();
+	int command30();
+	int command31();
+
+	/**
+	 * command32/command33 share an intricate tail: command33's entry
+	 * gate falls through into command32's own shared-load logic (and,
+	 * in one branch, directly into command32's "load channel 4" tail,
+	 * skipping the main load) - see the .cpp for the full breakdown.
+	 */
+	int command32();
+	int command33();
+	void command32_33Load();
+	void command32_33LoadCh4();
+	byte _command33Flag = 0; // matches byte_13378
+
+	int command34();
+	void command34LoadCh1AndRest();
+	void command34LoadRestOnly();
+
+	int command35();
+
+	int command36();
+	int command37();
+	int command38();
+	int command39();
+	int command40();
+
+	int command44();
+	void loadCommand44();
+	int command45();
+
+	int command64();
+	int command65();
+	int command66();
+	int command67();
+	int command68();
+	int command69();
+	int command70();
+	int command71();
+	int command72();
+	int command73();
+	int command74();
+	int command75();
+	int command76();
+	int command77();
+	int command78();
+	int command79();
+	int command80();
+	int command81();
+	int command82();
+	int command83();
+	int command84();
+	int command85();
+	int command86();
+	int command87();
+	int command88();
+	int command89();
+	int command90();
+	int command91();
+	int command92();
+	int command93();
+	int command94();
+	int command95();
+	int command96();
+	int command97();
+	int command98();
+
+public:
+	RSound6(Audio::Mixer *mixer);
+
+	int command(int commandId, int param) override;
+};
+
+/**
+ * RSound9 (rsound.dr9)
+ *
+ * command0/command2/command4/command6/command7/command8 all confirmed to
+ * match the shared RSound base exactly (no overrides needed) - including
+ * command2's resetChannels1to5 (channels 1-5 AND 9, six channels) and
+ * command4's resetChannels6to8 (channels 6,7,8), both confirmed directly
+ * from the disassembly.
+ *
+ * command3/command5 are a genuinely different split from the base
+ * class's default (1-5,9 lower / 6,7,8 upper): here command3 enables
+ * only channels 1,2,3,4,9 (five channels - channel 5 is NOT included),
+ * and command5 enables channels 5,6,7,8 (four channels) - channel 5 has
+ * moved from the lower group into the upper group compared to the base.
+ *
+ * command1/2/3 are not virtual in the base class, so this driver's own
+ * command1() must be overridden too (calling THIS class's command3()/
+ * command5()) - same pitfall as every other Dragonsphere RSound driver
+ * so far.
+ *
+ * Dispatch table layout (funcs_10936/1094C/10962/10978):
+ *   commands  0-8   (base class, except command1/3/5 - see above)
+ *   commands 16-31  entirely unreachable (both bucket tables are 100%
+ *                    nullsub_2, regardless of exactly where the
+ *                    internal split between them falls)
+ *   commands 32-63  (this class); 44,56 confirmed nullsub_2. Two shared
+ *                    handlers: commands 33 and 47 point to the exact
+ *                    same function (command33Or47()); commands 34 and
+ *                    54 likewise (command34Or54()). command53's body is
+ *                    an unlabeled function in the disassembly (no proc
+ *                    name/index shown) - assigned to index 53 by
+ *                    elimination (the only index in this range with no
+ *                    other confirmed body), not from an explicit label;
+ *                    flag if that's wrong.
+ *   commands 64-95  CONFIRMED by the user to be an exact duplicate of
+ *                    the 32-63 table (index 64+N behaves identically to
+ *                    index 32+N) - the flat _commandList[] below just
+ *                    reuses the same function pointers for that range,
+ *                    no separate implementation needed.
+ */
+class RSound9 : public RSound {
+private:
+	int command1();
+	int command3();
+	int command5();
+
+	int command32();
+
+	/** Matches sub_123E0: writes a "variant A" set of bytes into the shared command33Or47()/command60() sound block, at the same 8 offsets touched by variantSetupB(). Called only by command60(). */
+	void variantSetupA();
+
+	/** Matches sub_123FF: same 8 offsets as variantSetupA(), with different "variant B" byte values. Called only by command33Or47(). */
+	void variantSetupB();
+
+	/**
+	 * Shared tail of command60()/command33Or47() (matches loc_12450) -
+	 * the two commands are otherwise identical (same gate, same
+	 * counter=98/period=84 timer) and differ only in which variant setup
+	 * helper runs first.
+	 */
+	void command33_47_60Load();
+	int command60();
+
+	/** Dispatch table entries 33 AND 47 both point to this single function (confirmed identical symbol at both table slots). */
+	int command33Or47();
+
+	/** Dispatch table entries 34 AND 54 both point to this single function (confirmed identical symbol at both table slots). */
+	int command34Or54();
+	void loadCommand34Or54();
+
+	int command35();
+	void loadCommand35();
+	int command36();
+	void loadCommand36();
+	int command37();
+	void loadCommand37();
+	int command38();
+	void loadCommand38();
+	int command39();
+	void loadCommand39();
+	int command40();
+	void loadCommand40();
+	int command41();
+	void loadCommand41();
+
+	/**
+	 * Matches an unlabeled function immediately following command41() in
+	 * the disassembly - see class comment re: its index being inferred
+	 * by elimination.
+	 */
+	int command53();
+	void loadCommand53();
+
+	int command42();
+	void loadCommand42();
+
+	int command43();
+
+	int command45();
+	int command46();
+
+	int command48();
+	int command49();
+	int command50();
+
+	int command51();
+	void loadCommand51();
+
+	/**
+	 * Matches rsound_command52: the deferred-schedule branch loads bx
+	 * with the callback target and immediately calls isSoundActive, but
+	 * cx (isSoundActive's data-offset parameter) is never set beforehand
+	 * on this path, and its result isn't tested by any branch either -
+	 * confirmed dead/vestigial code in the original, intentionally
+	 * omitted here.
+	 */
+	int command52();
+	void loadCommand52();
+
+	int command55();
+	void loadCommand55();
+	int command57();
+	void loadCommand57();
+
+	/** Calls the full command0() reset (not command1(), unlike every other command in this batch) before loading. */
+	int command58();
+	void loadCommand58();
+
+	int command59();
+
+	int command61();
+	int command62();
+	int command63();
+
+	typedef int (RSound9:: *CommandPtr)();
+	static const CommandPtr _commandList[96];
+
+public:
+	RSound9(Audio::Mixer *mixer);
 
 	int command(int commandId, int param) override;
 };

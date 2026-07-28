@@ -389,6 +389,14 @@ protected:
 	Channel *playSoundChannels6to8(int offset);
 
 	/**
+	 * Plays the specified sound, using any free channel from 7 to 8.
+	 * Matches playSoundChannels7to8: symmetric free/fallback scan (free
+	 * scan ch7 then ch8; fallback scan ch8 then ch7). Confirmed
+	 * identical across 2 drivers so far (RSound2, RSound6).
+	 */
+	Channel *playSoundChannels7to8(int offset);
+
+	/**
 	 * Plays the specified sound, using any free channel from 1 to 5, with
 	 * a fully symmetric free/fallback scan. Matches the disassembly's own
 	 * playSoundAny exactly - renamed here to playSoundChannels1To5 for
@@ -438,9 +446,19 @@ protected:
 	/**
 	 * Sends the GM-reset Control Change sequence (all notes off, reset all
 	 * controllers, volume=100, pan=center) to `count` MIDI channels,
-	 * counting down from `count` to 1.
+	 * counting down from `count` to 1. Implemented in terms of
+	 * sendGmResetRange(count, 1).
 	 */
 	void sendGmReset(int count);
+
+	/**
+	 * Sends the GM-reset Control Change sequence to MIDI channels
+	 * `high` down to `low` (inclusive), using each count value as the
+	 * MIDI channel number - a generalization of sendGmReset() confirmed
+	 * needed by RSound6's command4() (which only resets channels 8-6,
+	 * not 1..count like every other driver's command4()).
+	 */
+	void sendGmResetRange(int high, int low);
 
 	/**
 	 * Sends a single Roland DT1-style SysEx message from a raw buffer:
