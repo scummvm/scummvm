@@ -949,8 +949,13 @@ void Puzzles::pinball(int16 var) {
 					--rightToLeftJumpCountdown;
 				}
 				if (!rightToLeftJumpCountdown) {
-					_vm->_state->setVar(35, crashedRightFrame);
-					crashedRightFrame++;
+					if (crashedRightFrame != 801) {
+						_vm->_state->setVar(35, crashedRightFrame);
+						crashedRightFrame++;
+					} else {
+						// fix for right cups wheel animation glitch (bug #17033) - avoid setting var 35 to 801
+						warning("Skipping setting the next scripted frame (var 35) for right cups wheel to %d", crashedRightFrame);
+					}
 				}
 
 				_vm->_state->setVar(32, rightPanelFrame);

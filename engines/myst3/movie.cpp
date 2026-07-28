@@ -394,7 +394,6 @@ void ScriptedMovie::update(bool pauseAtFirstFrame) {
 						if (getId() == 12001
 						    && _vm->_state->getLocationRoom() == 1005 && _vm->_state->getLocationAge() == 10
 						    && nextFrame >= 200 && nextFrame < 250) {
-							debug("effectiveStartframe for getId(): %d (room: %d, age: %d) is: %d", getId(), _vm->_state->getLocationRoom(), _vm->_state->getLocationAge(), effectiveStartFrame);
 							// fix glitchy transition for rotation of the left turntable track (movie id 12001, room: 1005, age: 10),
 							// eg. when the left dial panel has no wood pegs
 							if (nextFrame >= 247) {
