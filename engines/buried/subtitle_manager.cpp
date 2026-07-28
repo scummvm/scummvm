@@ -402,11 +402,9 @@ void SubtitleManager::renderSubtitle(Graphics::Surface *destSurface, const Commo
 	const Common::String speakerPrefix = entry.speaker.empty() ? "" : (entry.speaker + ": ");
 	int speakerWidth = speakerPrefix.empty() ? 0 : _fontBold->getStringWidth(speakerPrefix);
 
-	// Word-wrap text across up to kMaxSubtitleLines lines. The first line loses some space for the speaker name.
-	// Subsequent lines get the full width.
-	int line1TextWidth = interiorWidth - speakerWidth;
-	int line2TextWidth = interiorWidth;
-	Common::Array<Common::String> lines = wrapText(entry.text, line1TextWidth, line2TextWidth);
+	// Word-wrap text using ScummVM's native Font::wordWrapText, passing speakerWidth as initWidth for line 1
+	Common::Array<Common::String> lines;
+	_font->wordWrapText(entry.text, interiorWidth, lines, speakerWidth);
 
 	// Draw wrapped text lines
 	for (size_t i = 0; i < lines.size() && i < (size_t)kMaxSubtitleLines; i++) {
@@ -416,8 +414,9 @@ void SubtitleManager::renderSubtitle(Graphics::Surface *destSurface, const Commo
 				_fontBold->drawString(destSurface, speakerPrefix, curX, curY, interiorWidth, speakerColor, Graphics::kTextAlignLeft);
 				curX += speakerWidth;
 			}
-			if (line1TextWidth > 0 && !lines[0].empty()) {
-				_font->drawString(destSurface, lines[0], curX, curY, line1TextWidth, dialogColor, Graphics::kTextAlignLeft);
+			int line1AvailableTextWidth = interiorWidth - speakerWidth;
+			if (line1AvailableTextWidth > 0 && !lines[0].empty()) {
+				_font->drawString(destSurface, lines[0], curX, curY, line1AvailableTextWidth, dialogColor, Graphics::kTextAlignLeft);
 			}
 		} else {
 			// Remaining lines only have dialog text.
@@ -432,70 +431,6 @@ void SubtitleManager::renderSubtitle(Graphics::Surface *destSurface, const Commo
 	_vm->_gfx->invalidateRect(boxRect, /* erase= */ false);
 }
 
-Common::Array<Common::String> SubtitleManager::wrapText(
-	const Common::String &text,
-	int line1AvailableTextWidth,
-	int line2AvailableTextWidth
-) {
-	Common::Array<Common::String> lines;
-	Common::String remaining = text;
-	bool firstLine = true;
-
-	while (!remaining.empty() && (int)lines.size() < kMaxSubtitleLines) {
-		int availableWidth = firstLine ? line1AvailableTextWidth : line2AvailableTextWidth;
-		// We've run out of space on line 1. Move to the next line!
-		if (availableWidth <= 0) {
-			firstLine = false;
-			availableWidth = line2AvailableTextWidth;
-		}
-
-		Common::String fittingLine;
-		Common::String rest = remaining;
-
-		// Move one word at a time, measuring the line length as words are progressively added to the line.
-		// Break out and proceed to the next line as soon as a word would make the line too long.
-		//
-		// This will need to be re-worked or augmented if the game is localized to languages like Chinese
-		// that do not use spaces as word boundaries.
-		while (!rest.empty()) {
-			uint nextSpace = 0;
-			while (nextSpace < rest.size() && rest[nextSpace] != ' ') {
-				nextSpace++;
-			}
-			Common::String word = rest.substr(0, nextSpace);
-			Common::String candidate = fittingLine.empty() ? word : (fittingLine + " " + word);
-
-			if (_font->getStringWidth(candidate) <= availableWidth) {
-				// The word fits. Keep going!
-				fittingLine = candidate;
-				rest = nextSpace < rest.size() ? rest.substr(nextSpace + 1) : "";
-			} else {
-				// The line would be too long if we add this word. Put it on the next line!
-				if (fittingLine.empty()) {
-					// If we are on line 1 (which has reduced width due to speaker name), check if the word
-					// would fit on line 2 (which has full width) before forcing it to overflow line 1.
-					if (firstLine && _font->getStringWidth(word) <= line2AvailableTextWidth) {
-						// The word will fit on line 2.
-						break;
-					}
-
-					// The word won't fit on any line. Avoid an infinite loop by drawing it on the current line, even
-					// though it will overflow.
-					fittingLine = word;
-					rest = nextSpace < rest.size() ? rest.substr(nextSpace + 1) : "";
-				}
-				break;
-			}
-		}
-
-		// Line complete. Add it to the array and keep going.
-		lines.push_back(fittingLine);
-		remaining = rest;
-		firstLine = false;
-	}
-
-	return lines;
-}
 
 int SubtitleManager::getFontHeight() const {
 	return _font->getFontHeight();

@@ -170,7 +170,6 @@ private:
 	Common::Rect getDefaultBoxBounds();
 
 	void updateFont();
-	Common::Array<Common::String> wrapText(const Common::String &text, int line1AvailableTextWidth, int line2AvailableTextWidth);
 
 	uint32 getColor(const ColorRGB &color) const;
 };
