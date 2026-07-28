@@ -686,6 +686,34 @@
   (`0x1d`) calls `RunCrystalPiecePlacementPuzzleScene` at `0x2710c`.
   `CA1.RUN` supplies flag 0 to the calculator and `JA1.RUN` supplies milestone
   206 (`solved crystal puzzle`) to the crystal puzzle.
+- Scene action 1 calls `RunCircuitChipPlacementPuzzleScene` at `0x28aa4`
+  with the caller-supplied completion flag. `ED2.RUN` callback `0x5e9`
+  supplies milestone 210 from frame `T7`. The puzzle presents `EDZ10.SMK`,
+  then manages sixteen `CHIP1.BBM` through `CHIP16.BBM` controls in the
+  source bank and sixteen target-slot controls, with `EMPTY.PCX` providing
+  the chip-removal backing. Both
+  coordinate tables at `0x842fe` and `0x8433e` store Y/X pairs; ScummVM
+  normalizes them to physical X/Y coordinates for the full 640-by-400
+  presentation.
+- Selecting a source chip or an occupied target attaches that chip to a
+  cursor-centered transient overlay. A subsequent selection returns it to
+  any empty source position or places it in an empty target whose connector
+  type matches. The target solution stored one based at `0x25db1` is
+  `[14, 4, 11, 6, 15, 16, 5, 1, 7, 12, 9, 2, 13, 8, 3, 10]`.
+  The meter groups at `0x25dd1` are
+  `[0, 14, 7, 15]`, `[1, 11, 8, 2]`, `[3, 6, 13, 12]`, and
+  `[4, 9, 5, 10]`; each group advances or regresses the corresponding
+  `METER2.SMK` or `METER3.SMK` segment. `METER.PL` supplies the repeating
+  idle overlay at physical `(27, 196)`.
+- All four correct groups set the supplied flag and exit after the final
+  meter transition. Escape exits without setting it, F1 opens help table
+  `0x1ae`, and the case-insensitive hidden keyword `theory` completes the
+  puzzle. `CIRC1.WAV` is the looping ambient cue, `CIRC0.WAV` accompanies
+  the idle meter cycle, `CIRC2.WAV` and `CIRC3.WAV` accompany regression
+  and progress, and `CIRC4.WAV` accompanies a valid drop.
+- If flag `0x55` is set, the circuit puzzle also presents `ED_WAC.SMK`,
+  resource `0xb6`, and the `CIRCTMPL.PCX` backing; otherwise it selects
+  `CIRCTMP2.PCX`. `CIRC5.WAV` accompanies the optional manual branch.
 - Scene action 10 calls `RunTableGateLeverPuzzleScene` at `0x38eb8` with the
   caller-supplied completion flag. `GB1.RUN` callback `0x74d` supplies milestone
   223 (`solved wofford table puzzle`), tests it after the puzzle returns, and
