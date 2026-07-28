@@ -28,7 +28,9 @@
 #include "buried/overview.h"
 #include "buried/resources.h"
 #include "buried/sound.h"
+#include "buried/subtitle_manager.h"
 
+#include "common/config-manager.h"
 #include "graphics/surface.h"
 
 namespace Buried {
@@ -79,7 +81,10 @@ bool OverviewWindow::startOverview() {
 	invalidateWindow();
 	setFocus();
 
-	_timer = setTimer(1000);
+	// The game originally set this timer to 1000ms. That was fast enough to advance the state of
+	// the interface overview visuals, but was too slow to show subtitle cards that line up with
+	// the audio.
+	_timer = setTimer(250);
 	return true;
 }
 
@@ -110,6 +115,8 @@ void OverviewWindow::onPaint() {
 			break;
 		}
 	}
+
+	_vm->_subtitles->renderSubtitlesForActiveAudio(_vm->_gfx->getScreen());
 }
 
 bool OverviewWindow::onEraseBackground() {
@@ -132,8 +139,12 @@ void OverviewWindow::onActionEnd(const Common::CustomEventType &action, uint fla
 void OverviewWindow::onTimer(uint timer) {
 	_vm->_sound->timerCallback();
 
-	if (_currentStatus >= 0 && _vm->_sound->isInterfaceSoundPlaying())
+	// Is audio still playing or should we advance to the next state?
+	if (_currentStatus > kOverviewStateUnstarted && _vm->_sound->isInterfaceSoundPlaying()) {
+		// Audio is still playing for the current state. Ensure subtitles are fresh.
+		_vm->_subtitles->markSubtitlesDirty(this);
 		return;
+	}
 
 	if (_currentImage) {
 		_currentImage->free();

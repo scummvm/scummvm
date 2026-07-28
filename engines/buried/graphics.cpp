@@ -38,6 +38,7 @@
 #include "buried/buried.h"
 #include "buried/graphics.h"
 #include "buried/window.h"
+#include "common/std/algorithm.h"
 
 namespace Buried {
 
@@ -85,24 +86,22 @@ Graphics::Font *GraphicsManager::createArialFont(int size, bool bold) const {
 
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(defaultBaseName);
 
-	// Map the heights needed to point sizes
-	if (bold) {
-		if (size != 20)
-			error("Unhandled Arial Bold height %d", size);
-
+	// Map requested pixel height to point size
+	switch (size) {
+	case 12:
+	case 13:
+		size = 7;
+		break;
+	case 14:
+		size = 8;
+		break;
+	case 20:
 		size = 12;
-	} else {
-		switch (size) {
-		case 12:
-		case 13:
-			size = 7;
-			break;
-		case 14:
-			size = 8;
-			break;
-		default:
-			error("Unhandled Arial height %d", size);
-		}
+		break;
+	default:
+		size = size * 8 / 14;
+		size = Std::max(size, 6);
+		break;
 	}
 
 	// TODO: Make the monochrome mode optional
