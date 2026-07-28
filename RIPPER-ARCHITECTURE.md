@@ -744,10 +744,13 @@
   `g_primaryChooserPresentationTemplate` at `0x8a284`, not the tertiary WAC
   template used by the database's standalone circuit-manual entry. The primary
   template uses `7PT_FONT.FNT`, zero padding, and 9-pixel rows. The wrapped
-  control preserves the `ED_WAC.SMK` client backing, and its normal
-  `DrawCenteredTextPanelLabel` path at `0x4c795` selects palette index 4 for
-  text. Its two `MNARROW0.BBM` through `MNARROW3.BBM` scroll controls begin
-  five pixels beyond the panel's right edge and align with its top and bottom.
+  control preserves the `ED_WAC.SMK` client backing. For its active text rows,
+  `RenderChooserTextRow` at `0x58651` selects the style pointer at template
+  offset `+0x0c`; startup initializes that pointer from `0x84038`, whose value
+  is palette index 254. The shared `MNU0` palette maps index 254 to red
+  `(200, 0, 0)`. Its two `MNARROW0.BBM` through `MNARROW3.BBM` scroll controls
+  begin five pixels beyond the panel's right edge and align with its top and
+  bottom.
 - Scene action 10 calls `RunTableGateLeverPuzzleScene` at `0x38eb8` with the
   caller-supplied completion flag. `GB1.RUN` callback `0x74d` supplies milestone
   223 (`solved wofford table puzzle`), tests it after the puzzle returns, and
