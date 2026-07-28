@@ -31,6 +31,12 @@ InputManager::InputManager(Common::EventManager *eventManager) : _eventManager(e
 }
 
 uint16 translateKeyToCommand(const Common::KeyState &key) {
+	// RunWebGridShiftPuzzleScene at 0x2cdce handles the DOS BIOS Alt+H
+	// command (scan code 0x23, ASCII 0) as the solved-grid preview.
+	if ((key.flags & Common::KBD_ALT) != 0 &&
+			key.keycode == Common::KEYCODE_h)
+		return 0x2300;
+
 	// ScummVM backends may publish navigation keys in both keycode and ascii
 	// (for example, Right Arrow arrives with ascii 0x0113). Resolve mapped
 	// non-printing keys first so they retain the BIOS command values consumed by
