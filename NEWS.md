@@ -39,6 +39,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  Freescape:
    - Added support for loading ZX Spectrum games directly from TAP/TZX tape images.
 
+ Kyra:
+   - Restored non-Korean kyra1 games which got broken ("You're missing the 'KYRA.DAT'
+     engine data file or it got corrupted..." message)
+
  Lure:
    - Improved character pathfinding.
    - Fix being unable to talk to characters after a one-sided conversation.
