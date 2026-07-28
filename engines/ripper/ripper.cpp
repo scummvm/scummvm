@@ -69,6 +69,17 @@ bool RipperEngine::hasFeature(EngineFeature feature) const {
 		feature == kSupportsSavingDuringRuntime;
 }
 
+void RipperEngine::pauseEngineIntern(bool pause) {
+	// ScummVM's global dialogs suspend this engine while its blocking media loop
+	// is still on the stack. Freeze the decoder before its wall clock can advance
+	// behind the dialog, then resume audio before releasing that clock.
+	if (pause && _media)
+		_media->pauseActiveMedia(true);
+	Engine::pauseEngineIntern(pause);
+	if (!pause && _media)
+		_media->pauseActiveMedia(false);
+}
+
 void RipperEngine::registerSearchPaths() {
 	const Common::FSNode gamePath(ConfMan.getPath("path"));
 	static const char *const directories[] = {
