@@ -647,7 +647,7 @@ void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const 
 		}
 
 
-		if (g_sci->isLanguageRTL())
+		if (g_sci->isLanguageRTL() && offset > 0)
 			// In the game fonts, characters have spacing on the left, and no spacing on the right,
 			// therefore, when we start drawing from the right, they "start from the border"
 			// e.g., in SQ3 Hebrew user's input prompt.
