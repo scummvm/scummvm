@@ -227,11 +227,6 @@ protected:
 	int write2(int state, int reg, int val);
 
 	/**
-	 * Flush any pending Adlib register values to the OPL driver
-	 */
-	void flush();
-
-	/**
 	 * Turn a channel on
 	 */
 	void channelOn(int reg, int volume);
@@ -307,7 +302,6 @@ public:
 	AdlibChannelData _channelData[11];
 	Common::Array<AdlibSample> _samples;
 	AdlibSample *_samplePtr;
-	Common::Queue<RegisterValue> _queue;
 	int _frameCounter;
 	bool _isDisabled;
 	int _noiseTicks1;       // remaining duration for noise voice 1 (byte_11F86)

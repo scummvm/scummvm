@@ -240,21 +240,13 @@ void ASound::noise() {
 }
 
 void ASound::write(int reg, int val) {
-	_queue.push(RegisterValue(reg, val));
+	_opl->writeReg(reg, val);
 }
 
 int ASound::write2(int state, int reg, int val) {
-	// TODO: Original has a state parameter, not used when in Adlib mode?
 	_ports[reg] = val;
 	write(reg, val);
 	return state;
-}
-
-void ASound::flush() {
-	while (!_queue.empty()) {
-		RegisterValue v = _queue.pop();
-		_opl->writeReg(v._regNum, v._value);
-	}
 }
 
 void ASound::channelOn(int reg, int volume) {
@@ -590,9 +582,7 @@ void ASound::updateFNumber() {
 }
 
 void ASound::onTimer() {
-	Common::StackLock slock(_driverMutex);
 	poll();
-	flush();
 }
 
 void ASound::setVolume(int volume) {
