@@ -1035,9 +1035,9 @@ void AdvancedMetaEngineDetectionBase::preprocessDescriptions() {
 		// Collect all unique file names for early rejection
 		for (const ADGameFileDescription *fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			Common::String fname = fileDesc->fileName;
-
+			MD5Properties props = gameFileToMD5Props(fileDesc, g->flags);
 			// For archive entries, extract the archive name
-			if (gameFileToMD5Props(fileDesc, g->flags) & kMD5Archive) {
+			if (props & kMD5Archive) {
 				Common::StringTokenizer tok(fname, ":");
 				tok.nextToken(); // skip archive type
 				fname = tok.nextToken(); // archive name
@@ -1049,8 +1049,16 @@ void AdvancedMetaEngineDetectionBase::preprocessDescriptions() {
 				fname = Common::Path(fname).baseName();
 			}
 
-			_fileNamesMap.setVal(Common::Path(fname, fname.contains('/')
-				? '/' : Common::Path::kNoSeparator), true);
+			Common::Path pname(fname, fname.contains('/') ? '/' : Common::Path::kNoSeparator);
+
+
+			_fileNamesMap.setVal(pname, true);
+
+			if (props & kMD5MacResFork) {
+debug("We have an MD5 Mac Res Fork: %s", pname.toString().c_str());
+				_fileNamesMap.setVal(pname.append(".bin"), true);
+				_fileNamesMap.setVal(pname.append(".rsrc"), true);
+			}
 		}
 
 		// Scan for potential directory globs
