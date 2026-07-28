@@ -131,7 +131,7 @@ struct AdlibSample {
 
 class ASound : public SoundDriver {
 private:
-	OPL::OPL *_opl = OPL::Config::create();
+	OPL::OPL *_opl;
 	uint16 _callbackCounter = 0;		// Period counter
 	uint16 _callbackPeriod = 0;			// Period reload
 	AdlibChannel *_activeChannelPtr = NULL;
@@ -453,9 +453,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	~ASound() override {
-		delete _opl;
-	}
+	~ASound() override;
 
 	/**
 	 * Stop all currently playing sounds

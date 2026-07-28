@@ -28,36 +28,48 @@ namespace Phantom {
 namespace Sound {
 
 void PhantomSoundManager::validate() {
-	switch (_driverType) {
-	case SOUND_MT32:
-		// TODO
-		assert(0 == 1);
-		break;
-
-	default:
+	if (_driverType == SOUND_MT32 && !_isDemo) {
+		// MT32
+		RSound::validate();
+	} else {
 		// Adlib
 		ASound::validate(_isDemo);
-		break;
 	}
 }
 
 void PhantomSoundManager::loadDriver(int sectionNumber) {
 	removeDriver();
 
-	switch (_driverType) {
-	case SOUND_MT32:
-		// Roland MT32 drivers
-		assert(sectionNumber == 1);
-		_driver = new RSound1(_mixer);
-		break;
+	if (_isDemo) {
+		_driver = new ASoundDemo(_mixer);
 
-	default:	
-		// Adlib drivers
-		if (_isDemo) {
-			_driver = new ASoundDemo(_mixer);
-			return;
+	} else if (_driverType == SOUND_MT32) {
+		// MT32
+		switch (sectionNumber) {
+		case 1:
+			_driver = new RSound1(_mixer);
+			break;
+		case 2:
+			_driver = new RSound2(_mixer);
+			break;
+		case 3:
+			_driver = new RSound3(_mixer);
+			break;
+		case 4:
+			_driver = new RSound4(_mixer);
+			break;
+		case 5:
+			_driver = new RSound5(_mixer);
+			break;
+		case 9:
+			_driver = new RSound9(_mixer);
+			break;
+		default:
+			_driver = nullptr;
+			break;
 		}
-
+	} else {
+		// Adlib
 		switch (sectionNumber) {
 		case 1:
 			_driver = new ASound1(_mixer);
@@ -79,7 +91,7 @@ void PhantomSoundManager::loadDriver(int sectionNumber) {
 			break;
 		default:
 			_driver = nullptr;
-			return;
+			break;
 		}
 	}
 }

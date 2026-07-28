@@ -203,6 +203,11 @@ ASound::ASound(Audio::Mixer *mixer, const Common::Path &filename, int dataOffset
 		SoundDriver(mixer, filename, dataOffset, dataSize) {
 	AdlibChannel::_isDisabled = false;
 
+	// Initialize the OPL
+	_opl = OPL::Config::create();
+	_opl->init();
+	_opl->start(new Common::Functor0Mem<void, ASound>(this, &ASound::onTimer), CALLBACKS_PER_SECOND);
+
 	write(4, 0x60);		// Mask off both adlib timers
 	write(4, 0x80);		// IRQ reset timer flags
 	write(2, 0xff);		// Timer 1 rate 80us
@@ -212,8 +217,11 @@ ASound::ASound(Audio::Mixer *mixer, const Common::Path &filename, int dataOffset
 
 	Common::fill(_adlibPorts, _adlibPorts + 256, 0);
 	command0();
+}
 
-	_opl->start(new Common::Functor0Mem<void, ASound>(this, &ASound::onTimer), CALLBACKS_PER_SECOND);
+ASound::~ASound() {
+	_opl->stop();
+	delete _opl;
 }
 
 void ASound::validate(bool isDemo) {

@@ -466,6 +466,12 @@ public:
 
 public:
 	/**
+	 * Validates the presence of the sound driver files.
+	 */
+	static void validate();
+
+public:
+	/**
 	 * Constructor
 	 * @param mixer			Mixer
 	 * @param filename		Specifies the Roland sound player file to use
