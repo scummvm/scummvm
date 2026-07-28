@@ -145,6 +145,14 @@
   media iteration snapshots the current timer tick rather than catching up on
   elapsed toolbar time. ScummVM pauses the decoder clock across the same input
   ownership interval and continues presenting toolbar animation and tooltips.
+- Retail `RunMediaSequence` advances frames against its timer callback slot;
+  nested presentation work explicitly suspends that slot and resumes it on
+  return. ScummVM global dialogs instead enter `Engine::pauseEngine()` while the
+  RIPPER media loop remains blocked on the stack, so the engine pause hook
+  recursively pauses every active Smacker clock along with the mixer. Space
+  likewise applies one balanced decoder and mixer pause level, covering named
+  scene-audio slots as well as packetized audio. Pause/resume traces record the
+  media frame, decoder clock, external-audio clock, and scene-audio state.
 - `ExecuteSceneFrameAndInteractions` enters that input loop when the frame has
   either registered interactions or an idle callback. Opcode `0x17` dialogue
   choosers created by an idle callback therefore hold their type-1 presentation

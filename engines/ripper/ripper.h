@@ -72,6 +72,7 @@ public:
 	WorldMap *getWorldMap() const { return _worldMap.get(); }
 
 private:
+	void pauseEngineIntern(bool pause) override;
 	void registerSearchPaths();
 	void pumpEvents();
 

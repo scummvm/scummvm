@@ -163,6 +163,45 @@ MediaPlayer::MediaPlayer(RipperEngine *engine, InputManager *input, Audio::Mixer
 MediaPlayer::~MediaPlayer() {
 }
 
+MediaPlayer::ActivePlaybackGuard::ActivePlaybackGuard(MediaPlayer *player,
+		Video::SmackerDecoder *decoder, const Common::String &name,
+		Audio::SoundHandle *externalAudio) : _player(player) {
+	_player->_activePlaybacks.push_back(ActivePlayback(decoder, name, externalAudio));
+}
+
+MediaPlayer::ActivePlaybackGuard::~ActivePlaybackGuard() {
+	assert(!_player->_activePlaybacks.empty());
+	_player->_activePlaybacks.pop_back();
+}
+
+void MediaPlayer::logPlaybackPause(const char *source, bool pause,
+		Video::SmackerDecoder &decoder, const Common::String &name,
+		Audio::SoundHandle *externalAudio) const {
+	const bool externalActive = externalAudio &&
+		_mixer->isSoundHandleActive(*externalAudio);
+	const uint32 externalElapsed = externalActive ?
+		_mixer->getSoundElapsedTime(*externalAudio) : 0;
+	debugC(1, kDebugVideo,
+		"Ripper: %s %s media='%s' frame=%d decoderMs=%u "
+		"decoderPaused=%d externalAudio=%d externalElapsedMs=%u sceneAudio=%d",
+		source, pause ? "paused" : "resumed", name.c_str(), decoder.getCurFrame(),
+		decoder.getTime(), decoder.isPaused(), externalActive, externalElapsed,
+		_sceneAudio->isActive());
+}
+
+void MediaPlayer::pauseActiveMedia(bool pause) {
+	for (uint i = 0; i < _activePlaybacks.size(); ++i) {
+		ActivePlayback &playback = _activePlaybacks[i];
+		playback.decoder->pauseVideo(pause);
+		logPlaybackPause("ScummVM", pause, *playback.decoder, playback.name,
+			playback.externalAudio);
+	}
+	if (_activePlaybacks.empty()) {
+		debugC(2, kDebugVideo, "Ripper: ScummVM %s without active media",
+			pause ? "paused" : "resumed");
+	}
+}
+
 void MediaPlayer::fadePalette(bool fadeIn, uint stepCount) {
 	if (stepCount == 0)
 		return;
@@ -226,9 +265,10 @@ bool MediaPlayer::syncGame(Common::Serializer &serializer) {
 }
 
 bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
-		bool allowSegmentAdvance, bool &paused, bool toolbarPaused, bool &skipToEnd,
+		bool allowSegmentAdvance, bool &paused, bool &skipToEnd,
 		bool &advanceSegment,
-		Audio::SoundHandle *externalAudio, bool suppressSceneMouseStop, bool allowSceneHelp) {
+		Audio::SoundHandle *externalAudio, bool suppressSceneMouseStop, bool allowSceneHelp,
+		const Common::String &name) {
 	skipToEnd = false;
 	advanceSegment = false;
 	if (_input->pollEvents()) {
@@ -238,13 +278,12 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 	if (allowSceneHelp && _input->peekKey() == kHelpCommand) {
 		_input->consumeKey();
 		decoder.pauseVideo(true);
-		if (externalAudio)
-			_mixer->pauseHandle(*externalAudio, true);
+		_mixer->pauseAll(true);
+		logPlaybackPause("Help", true, decoder, name, externalAudio);
 		const bool helpDisplayed = _engine->getScripts()->showHelp("interactive-media");
-		const bool effectivePause = paused || toolbarPaused;
-		decoder.pauseVideo(effectivePause);
-		if (externalAudio)
-			_mixer->pauseHandle(*externalAudio, effectivePause);
+		_mixer->pauseAll(false);
+		decoder.pauseVideo(false);
+		logPlaybackPause("Help", false, decoder, name, externalAudio);
 		return helpDisplayed;
 	}
 	if (!allowEscSpace || !_input->hasPendingKey())
@@ -259,11 +298,9 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 	}
 	if (command == 0x20) {
 		paused = !paused;
-		const bool effectivePause = paused || toolbarPaused;
-		decoder.pauseVideo(effectivePause);
-		if (externalAudio)
-			_mixer->pauseHandle(*externalAudio, effectivePause);
-		debugC(2, kDebugVideo, "Ripper: Space %s presentation", paused ? "paused" : "resumed");
+		decoder.pauseVideo(paused);
+		_mixer->pauseAll(paused);
+		logPlaybackPause("Space", paused, decoder, name, externalAudio);
 	}
 	if (command == 0x4d00 && allowSegmentAdvance) {
 		advanceSegment = true;
@@ -487,6 +524,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	// scene-frame callback path keeps cursor, toolbar, and dialogue controls live.
 	if (!serviceSceneUi)
 		_engine->getCursor()->setVisible(false);
+	ActivePlaybackGuard playbackGuard(this, &decoder, name, externalAudio);
 	decoder.start();
 	bool sequencePaletteRefresh = false;
 	bool callbackOwnedInput = false;
@@ -631,10 +669,9 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		}
 		if (toolbarOwnsInput != toolbarPaused) {
 			toolbarPaused = toolbarOwnsInput;
-			const bool effectivePause = paused || toolbarPaused;
-			decoder.pauseVideo(effectivePause);
+			decoder.pauseVideo(toolbarPaused);
 			if (externalAudio)
-				_mixer->pauseHandle(*externalAudio, effectivePause);
+				_mixer->pauseHandle(*externalAudio, toolbarPaused);
 			debugC(2, kDebugVideo,
 				"Ripper: interactive scene media '%s' toolbarPause=%d keyboardPause=%d",
 				name.c_str(), toolbarPaused, paused);
@@ -644,8 +681,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		bool advanceToNextSegment = false;
 		if (!servicePlaybackInput(decoder, allowEscSpace && !callbackOwnsInput,
 				advanceSegment != nullptr,
-				paused, toolbarPaused, skipToEnd, advanceToNextSegment,
-				externalAudio, toolbarOwnsInput, serviceSceneUi)) {
+				paused, skipToEnd, advanceToNextSegment,
+				externalAudio, toolbarOwnsInput, serviceSceneUi, name)) {
 			completed = false;
 			if (advanceToNextSegment) {
 				if (advanceSegment)
@@ -751,6 +788,16 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		} else {
 			g_system->delayMillis(MIN<uint32>(decoder.getTimeToNextFrame(), 10));
 		}
+	}
+	if (toolbarPaused) {
+		if (externalAudio)
+			_mixer->pauseHandle(*externalAudio, false);
+		decoder.pauseVideo(false);
+	}
+	if (paused) {
+		_mixer->pauseAll(false);
+		decoder.pauseVideo(false);
+		logPlaybackPause("Space cleanup", false, decoder, name, externalAudio);
 	}
 	if (synchronizeToTimeline && completed) {
 		const uint32 elapsedMs = externalAudio && _mixer->isSoundHandleActive(*externalAudio) ?
