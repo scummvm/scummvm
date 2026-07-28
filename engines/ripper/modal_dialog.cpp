@@ -72,8 +72,7 @@ static const byte kWacModalTextColor = 251;
 static const uint kPrimaryScrollSkinFrameCount = 4;
 static const int kPrimaryRowHeight = 9;
 static const int kPrimaryScrollGap = 5;
-static const byte kPrimaryBackgroundColor = 4;
-static const byte kPrimaryTextColor = 251;
+static const byte kPrimaryTextColor = 4;
 static const uint kModalCursor = 16;
 static const int kTextEntryLeft = 228;
 static const int kTextEntryTop = 312;
@@ -467,12 +466,10 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 		(wacStyle ? kWacModalTextColor : kModalTextColor);
 	if (primaryStyle) {
 		// RunCircuitChipPlacementPuzzleScene at 0x28aa4 constructs resource
-		// 0xb6 with g_primaryChooserPresentationTemplate at 0x8a284. That
-		// template has no frame or padding, uses nine-pixel rows, and paints
-		// its client with palette index 4 over the ED_WAC backing.
-		for (int y = bounds.top; y < bounds.bottom; ++y)
-			memset(screen->getBasePtr(bounds.left, y),
-				kPrimaryBackgroundColor, bounds.width());
+		// 0xb6 with g_primaryChooserPresentationTemplate at 0x8a284. The
+		// wrapped control has no frame or client fill: ED_WAC.SMK supplies
+		// the backing, while DrawCenteredTextPanelLabel at 0x4c795 selects
+		// palette index 4 for its normal text path.
 	} else if (wacStyle) {
 		// ServiceWacSceneInputAction at 0x21eef uses the tertiary WACMNU
 		// chooser template. Its bitmap tiles retain the textured heading and
@@ -658,12 +655,15 @@ bool ModalDialogManager::drawRetainedTextPanelLine(
 		bounds.bottom - bottomPadding);
 	const int clientLeft = bounds.left + leftPadding;
 	const int clientWidth = bounds.width() - leftPadding - rightPadding;
-	const byte backgroundColor = primaryStyle ? kPrimaryBackgroundColor :
-		(wacStyle ? kWacModalBackgroundColor : kModalBackgroundColor);
 	const byte textColor = primaryStyle ? kPrimaryTextColor :
 		(wacStyle ? kWacModalTextColor : kModalTextColor);
-	for (int y = rowTop; y < rowBottom; ++y)
-		memset(screen->getBasePtr(clientLeft, y), backgroundColor, clientWidth);
+	if (!primaryStyle) {
+		const byte backgroundColor = wacStyle ?
+			kWacModalBackgroundColor : kModalBackgroundColor;
+		for (int y = rowTop; y < rowBottom; ++y)
+			memset(screen->getBasePtr(clientLeft, y),
+				backgroundColor, clientWidth);
+	}
 	drawText((byte *)screen->getPixels(), screen->pitch,
 		clientLeft + horizontalInset,
 		rowTop + (rowHeight - fontHeight) / 2,

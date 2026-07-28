@@ -715,9 +715,13 @@
   normalizes them to physical X/Y coordinates for the full 640-by-400
   presentation.
 - Selecting a source chip or an occupied target attaches that chip to a
-  cursor-centered transient overlay. A subsequent selection returns it to
-  any empty source position or places it in an empty target whose connector
-  type matches. The target solution stored one based at `0x25db1` is
+  cursor-centered transient overlay. The source-selection path restores the
+  selected control rectangle from `EMPTY.PCX`, stores `-1` in the source array
+  at `0x2941e`, and initializes the transient overlay at `0x29482`; source
+  chips must therefore not be retained in the static redraw backing. A
+  subsequent selection returns the held chip to any empty source position or
+  places it in an empty target whose connector type matches. The target
+  solution stored one based at `0x25db1` is
   `[14, 4, 11, 6, 15, 16, 5, 1, 7, 12, 9, 2, 13, 8, 3, 10]`.
   The meter groups at `0x25dd1` are
   `[0, 14, 7, 15]`, `[1, 11, 8, 2]`, `[3, 6, 13, 12]`, and
@@ -739,10 +743,11 @@
   275-by-50 control at `(114,350)` using
   `g_primaryChooserPresentationTemplate` at `0x8a284`, not the tertiary WAC
   template used by the database's standalone circuit-manual entry. The primary
-  template uses `7PT_FONT.FNT`, palette index 4 for its client, index 251 for
-  text, zero padding, and 9-pixel rows. Its two `MNARROW0.BBM` through
-  `MNARROW3.BBM` scroll controls begin five pixels beyond the panel's right
-  edge and align with its top and bottom.
+  template uses `7PT_FONT.FNT`, zero padding, and 9-pixel rows. The wrapped
+  control preserves the `ED_WAC.SMK` client backing, and its normal
+  `DrawCenteredTextPanelLabel` path at `0x4c795` selects palette index 4 for
+  text. Its two `MNARROW0.BBM` through `MNARROW3.BBM` scroll controls begin
+  five pixels beyond the panel's right edge and align with its top and bottom.
 - Scene action 10 calls `RunTableGateLeverPuzzleScene` at `0x38eb8` with the
   caller-supplied completion flag. `GB1.RUN` callback `0x74d` supplies milestone
   223 (`solved wofford table puzzle`), tests it after the puzzle returns, and
