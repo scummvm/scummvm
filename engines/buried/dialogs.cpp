@@ -36,7 +36,7 @@ BuriedOptionsWidget::BuriedOptionsWidget(GuiObject *boss, const Common::String &
 	_fontSizeDesc = new GUI::StaticTextWidget(
 		widgetsBoss(),
 		/* name= */"BuriedGameOptionsDialog.FontSizeDesc",
-		/* text= */ _("Subtitle font size:"));
+		/* text= */ _("Subtitles font size:"));
 	_fontSizeDesc->setAlign(Graphics::kTextAlignRight);
 
 	// Dropdown populated with named presets
@@ -44,7 +44,7 @@ BuriedOptionsWidget::BuriedOptionsWidget(GuiObject *boss, const Common::String &
 	_fontSizePopUp->appendEntry(_("Small"), kFontSizeSmall);
 	_fontSizePopUp->appendEntry(_("Medium"), kFontSizeMedium);
 	_fontSizePopUp->appendEntry(_("Large"), kFontSizeLarge);
-	_fontSizePopUp->appendEntry(_("Extra Large"), kFontSizeXLarge);
+	_fontSizePopUp->appendEntry(_("Extra large"), kFontSizeXLarge);
 }
 
 static void defineFontSizeRowLayout(GUI::ThemeEval &layouts) {
