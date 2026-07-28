@@ -1402,9 +1402,10 @@ void CastleEngine::loadAssetsAmigaDemo() {
 		}
 	}
 
-	// Sound effect command table at file offset 0x1469E (memory 0x14682). This
-	// version takes its extra sample slot from the music module.
-	_sound = loadSoundsAmiga(&file, 0x1469E, 36, 0x3D5A6);
+	// Sound effect command table at file offset 0x1469E (memory 0x14682). The
+	// demo disk ships no sample bank, so only the extra slot taken from the
+	// music module is available and the sampled effects are square waves.
+	_sound = loadSoundsAmiga(&file, 0x1469E, 36, Common::Path(), 0x3D5A6);
 
 	// Load embedded ProTracker module for background music
 	// Module is at file offset 0x3D5A6 (memory 0x3D58A), ~86260 bytes
@@ -1725,7 +1726,7 @@ void CastleEngine::loadAssetsAmigaFullGame() {
 	}
 
 	// Sound effect command table at file offset 0x13cf2 (memory 0x13cd6)
-	_sound = loadSoundsAmiga(&file, 0x13cf2, 36, -1);
+	_sound = loadSoundsAmiga(&file, 0x13cf2, 36, "cmsnds2", -1);
 
 	// Embedded ProTracker module for background music.
 	static const int kModOffset = 0x3cbfa;

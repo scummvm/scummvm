@@ -531,8 +531,9 @@ public:
 	Sound *loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxTable, int sfxData, int numberSounds);
 	Sound *loadSpeakerFxDrillerZX();
 	Sound *loadSoundsCPC(Common::SeekableReadStream *file, int offsetTone, int sizeTone, int offsetEnvelope, int sizeEnvelope, int offsetSoundDef, int sizeSoundDef);
-	// modOffset points at the embedded module used for one extra sample, or -1
-	Sound *loadSoundsAmiga(Common::SeekableReadStream *file, int offset, int numSounds, int modOffset);
+	// sampleBank names the external PCM bank, modOffset points at the embedded
+	// module used for one extra sample; both are optional (empty path, -1)
+	Sound *loadSoundsAmiga(Common::SeekableReadStream *file, int offset, int numSounds, const Common::Path &sampleBank, int modOffset);
 
 	int _soundIndexShoot;
 	int _soundIndexCollide;

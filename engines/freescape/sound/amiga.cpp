@@ -416,7 +416,7 @@ class SoundAmigaDemo final : public Sound {
 public:
 	SoundAmigaDemo(Audio::Mixer *mixer) : _priority(new AmigaSfxPriority()), _mixer(mixer) {}
 
-	void loadSounds(Common::SeekableReadStream *file, int offset, int numSounds, int modOffset);
+	void loadSounds(Common::SeekableReadStream *file, int offset, int numSounds, const Common::Path &sampleBank, int modOffset);
 
 	void playSound(int index, Type type) override;
 
@@ -435,7 +435,7 @@ public:
 	}
 
 private:
-	void loadDmaSamples(Common::SeekableReadStream *file, int modOffset);
+	void loadDmaSamples(Common::SeekableReadStream *file, const Common::Path &sampleBank, int modOffset);
 
 	Common::Array<AmigaSfxEntry> _amigaSfxTable;
 	Common::Array<AmigaDmaSample> _amigaDmaSamples;
@@ -445,7 +445,7 @@ private:
 	Audio::SoundHandle _soundFxHandle;
 };
 
-void SoundAmigaDemo::loadSounds(Common::SeekableReadStream *file, int offset, int numSounds, int modOffset) {
+void SoundAmigaDemo::loadSounds(Common::SeekableReadStream *file, int offset, int numSounds, const Common::Path &sampleBank, int modOffset) {
 	file->seek(offset);
 	_amigaSfxTable.clear();
 	for (int i = 0; i < numSounds; i++) {
@@ -461,20 +461,22 @@ void SoundAmigaDemo::loadSounds(Common::SeekableReadStream *file, int offset, in
 	}
 	debugC(1, kFreescapeDebugParser, "Loaded %d Amiga sound effects", numSounds);
 
-	loadDmaSamples(file, modOffset);
+	loadDmaSamples(file, sampleBank, modOffset);
 }
 
-// The samples played by 0x5NNN come from the `cmsnds2` bank, which the original
-// loads over the memory holding the ProTracker module (hence music and sound
-// effects being mutually exclusive there). Each of its 10 entries is a 4-byte
-// big endian length, a 2-byte sample rate and that many signed 8-bit samples.
-void SoundAmigaDemo::loadDmaSamples(Common::SeekableReadStream *file, int modOffset) {
+// The samples played by 0x5NNN come from an external bank, which the original
+// loads over the memory holding the ProTracker module: that is why music and
+// sound effects are mutually exclusive there, and why the rolling demo, whose
+// disk carries no bank at all, is music only. Each of the 10 entries is a
+// 4-byte big endian length, a 2-byte sample rate and that many signed 8-bit
+// samples.
+void SoundAmigaDemo::loadDmaSamples(Common::SeekableReadStream *file, const Common::Path &sampleBank, int modOffset) {
 	// Parameter N uses index N, so index 0 stays empty; 11 is the extra slot
 	_amigaDmaSamples.clear();
 	_amigaDmaSamples.resize(12);
 
 	Common::File bank;
-	if (bank.open("cmsnds2")) {
+	if (!sampleBank.empty() && bank.open(sampleBank)) {
 		int index = 1;
 		while (index <= 10 && bank.pos() + 6 <= bank.size()) {
 			uint32 length = bank.readUint32BE();
@@ -488,9 +490,9 @@ void SoundAmigaDemo::loadDmaSamples(Common::SeekableReadStream *file, int modOff
 			index++;
 		}
 		bank.close();
-	} else {
-		warning("Freescape: 'cmsnds2' is missing from the game data, so the sampled "
-				"part of the Amiga sound effects will not play");
+	} else if (!sampleBank.empty()) {
+		warning("Freescape: '%s' is missing from the game data, so the sampled part "
+				"of the Amiga sound effects will not play", sampleBank.toString().c_str());
 	}
 
 	if (modOffset < 0)
@@ -557,9 +559,9 @@ void SoundAmigaDemo::playSound(int index, Type type) {
 		Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
 }
 
-Sound *FreescapeEngine::loadSoundsAmiga(Common::SeekableReadStream *file, int offset, int numSounds, int modOffset) {
+Sound *FreescapeEngine::loadSoundsAmiga(Common::SeekableReadStream *file, int offset, int numSounds, const Common::Path &sampleBank, int modOffset) {
 	SoundAmigaDemo *sound = new SoundAmigaDemo(_mixer);
-	sound->loadSounds(file, offset, numSounds, modOffset);
+	sound->loadSounds(file, offset, numSounds, sampleBank, modOffset);
 	return sound;
 }
 
