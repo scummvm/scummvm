@@ -406,9 +406,6 @@ void RSound::sendPatchInitSequence() {
 }
 
 void RSound::sendReverbSysEx(int mode, int time, int level) {
-	// INFERRED by structural analogy to Phantom's confirmed
-	// sendReverbSysEx() - see rsound.h class comment: not independently
-	// confirmed against rsound.dr1's literal offset-0x67 sysex template.
 	byte buffer[7] = { 0x10, 0x00, 0x01, (byte)(mode & 3), (byte)(time & 7), (byte)(level & 7), 0xFF };
 	sendSysExData(buffer);
 }
