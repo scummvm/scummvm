@@ -81,6 +81,7 @@ enum ScriptOpcode : byte {
 };
 
 enum SceneAction {
+	kSceneActionCircuitChipPuzzle = 1,
 	kSceneActionWorldMap = 2,
 	kSceneActionInventory = 3,
 	kSceneActionCalculatorPuzzle = 4,
