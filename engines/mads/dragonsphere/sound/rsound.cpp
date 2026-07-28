@@ -19,7 +19,8 @@
  *
  */
 
-#include "common/util.h"
+#include "common/file.h"
+#include "common/md5.h"
 #include "mads/dragonsphere/sound/rsound.h"
 
 namespace MADS {
@@ -119,6 +120,35 @@ RSound::RSound(Audio::Mixer *mixer, const Common::Path &filename,
 		_scriptVariables[i] = 0;
 
 	command0();
+}
+
+void RSound::validate() {
+	Common::File f;
+	static const char *const MD5[] = {
+		"a34a4c5ee91d1ad0b007e3f6d791725e",
+		"af04277f9b6d7206a683383ee8fa4a13",
+		"9b5ff2c3ec2265771e440cbc0f60b3ff",
+		"2ae7ec33e79d326653925ff8ddc7550c",
+		"504d445acd33487aa1653c3f476b1199",
+		"e342cfa5c8e968d132e525f1ed9c975c",
+		nullptr,
+		nullptr,
+		"94a28abdbb536f87f5d470c72734d8e3"
+	};
+
+	for (int i = 1; i <= 9; ++i) {
+		if (i == 7 || i == 8)
+			continue;
+
+		Common::Path filename(Common::String::format("rsound.dr%d", i));
+		if (!f.open(filename))
+			error("Could not process - %s", filename.toString().c_str());
+		Common::String md5str = Common::computeStreamMD5AsString(f, 8192);
+		f.close();
+
+		if (md5str != MD5[i - 1])
+			error("Invalid sound file - %s", filename.toString().c_str());
+	}
 }
 
 int RSound::stop() {

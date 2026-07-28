@@ -28,21 +28,17 @@ namespace Dragonsphere {
 namespace Sound {
 
 void DragonSoundManager::validate() {
-	switch (_driverType) {
-	case SOUND_MT32:
-		error("MT32 is not yet supported");
-		break;
-	default:
+	if (_driverType == SOUND_MT32 && !_isDemo) {
+		RSound::validate();
+	} else {
 		ASound::validate(_isDemo);
-		break;
 	}
 }
 
 void DragonSoundManager::loadDriver(int sectionNumber) {
 	removeDriver();
 
-	switch (_driverType) {
-	case SOUND_MT32:
+	if (_driverType == SOUND_MT32 && !_isDemo) {
 		// Roland MT32 drivers
 		switch (sectionNumber) {
 		case 1:
@@ -57,13 +53,20 @@ void DragonSoundManager::loadDriver(int sectionNumber) {
 		case 4:
 			_driver = new RSound4(_mixer);
 			break;
+		case 5:
+			_driver = new RSound5(_mixer);
+			break;
+		case 6:
+			_driver = new RSound6(_mixer);
+			break;
+		case 9:
+			_driver = new RSound9(_mixer);
+			break;
 		default:
-			// TODO
+			_driver = nullptr;
 			break;
 		}
-		break;
-
-	default:
+	} else {
 		// Adlib drivers
 		switch (sectionNumber) {
 		case 1:
@@ -95,7 +98,7 @@ void DragonSoundManager::loadDriver(int sectionNumber) {
 			break;
 		default:
 			_driver = nullptr;
-			return;
+			break;
 		}
 	}
 }

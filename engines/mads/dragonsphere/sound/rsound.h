@@ -506,6 +506,12 @@ public:
 
 public:
 	/**
+	 * Validate the sound driver files needed for data
+	 */
+	static void validate();
+
+public:
+	/**
 	 * Constructor
 	 * @param mixer			Mixer
 	 * @param filename		Specifies the Roland sound player file to use

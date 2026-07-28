@@ -195,7 +195,7 @@ protected:
 	typedef void (ASound::*CallbackFunction)();
 
 private:
-	OPL::OPL *_opl = OPL::Config::create();
+	OPL::OPL *_opl;
 
 	// ---- callback / tick state ------------------------------------------
 	uint16 _callbackCounter = 0;  // per-tick countdown
@@ -624,9 +624,7 @@ public:
 	ASound(Audio::Mixer *mixer, const Common::Path &filename,
 		int dataOffset, int dataSize);
 
-	~ASound() override {
-		delete _opl;
-	}
+	~ASound() override;
 
 	/** Stop all currently playing sounds (wraps command0). */
 	virtual int stop() override;
