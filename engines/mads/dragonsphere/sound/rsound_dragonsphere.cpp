@@ -1264,9 +1264,9 @@ int RSound4::command1() {
 	if (isSoundActive(loadData(0x1F4F)))
 		return 0;
 	_fadeCheckPeriod = 1; // armFadeCheck
-	disableChannelTo(5, 0xFF, 0x1F8B); // channel 6 (redundant re-disable if command3's own gate already did it - harmless)
-	disableChannelTo(6, 0xFF, 0x1F8B); // channel 7
-	disableChannelTo(7, 0xFF, 0x1F8B); // channel 8
+	disableChannelTo(5, 0xFF); // channel 6 (redundant re-disable if command3's own gate already did it - harmless)
+	disableChannelTo(6, 0xFF); // channel 7
+	disableChannelTo(7, 0xFF); // channel 8
 	return 0;
 }
 
@@ -1281,15 +1281,15 @@ int RSound4::command3() {
 	// familiar "lower" group), then conditionally disables channel 6 too -
 	// only if loadData(0x1F4F) isn't already playing.
 	_fadeCheckPeriod = 1; // armFadeCheck
-	disableChannelTo(0, 0xFF, 0x1F8B); // ch1
-	disableChannelTo(1, 0xFF, 0x1F8B); // ch2
-	disableChannelTo(2, 0xFF, 0x1F8B); // ch3
-	disableChannelTo(3, 0xFF, 0x1F8B); // ch4
-	disableChannelTo(4, 0xFF, 0x1F8B); // ch5
-	disableChannelTo(8, 0xFF, 0x1F8B); // ch9
+	disableChannelTo(0, 0xFF); // ch1
+	disableChannelTo(1, 0xFF); // ch2
+	disableChannelTo(2, 0xFF); // ch3
+	disableChannelTo(3, 0xFF); // ch4
+	disableChannelTo(4, 0xFF); // ch5
+	disableChannelTo(8, 0xFF); // ch9
 	if (isSoundActive(loadData(0x1F4F)))
 		return 0;
-	disableChannelTo(5, 0xFF, 0x1F8B); // ch6 (conditional)
+	disableChannelTo(5, 0xFF); // ch6 (conditional)
 	return 0;
 }
 
@@ -1710,11 +1710,11 @@ int RSound5::command1() {
 
 int RSound5::command5() {
 	// Matches sub_10854: same disableChannelTo mechanic as RSound4's
-	// sub_1092A, but targeting loadData(0x20C9) - for channels 6,7,8.
+	// sub_1092A, for channels 6,7,8.
 	_fadeCheckPeriod = 1; // armFadeCheck
-	disableChannelTo(5, 0xFF, 0x20C9);
-	disableChannelTo(6, 0xFF, 0x20C9);
-	disableChannelTo(7, 0xFF, 0x20C9);
+	disableChannelTo(5, 0xFF);
+	disableChannelTo(6, 0xFF);
+	disableChannelTo(7, 0xFF);
 	return 0;
 }
 

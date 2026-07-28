@@ -66,7 +66,7 @@ void Channel::reset(byte *startPtr) {
 void Channel::enable(int flag) {
 	if (_activeCount) {
 		_pendingStop = flag;
-		_soundData = nullptr;
+		_soundData = RSound::_silenceStream;
 	}
 }
 
@@ -77,6 +77,8 @@ void Channel::load(byte *pData) {
 }
 
 /*-----------------------------------------------------------------------*/
+
+byte RSound::_silenceStream[2] = { 0, 0 };
 
 RSound::RSound(Audio::Mixer *mixer, const Common::Path &filename,
 		int dataOffset, int dataSize, int sysExOffset) : SoundDriver(mixer, filename, dataOffset, dataSize) {
@@ -432,11 +434,9 @@ void RSound::Channel_checkFade(Channel *channel, int midiChannel) {
 		return;
 
 	if (channel->_volume == 0) {
-		// enable_channel_data: 2 zero bytes - a generic silence/no-op
-		// stream, not driver-specific sound data (2 bytes here, unlike
-		// Phantom's 3 - confirmed directly from this disassembly).
-		static byte silenceStream[2] = { 0, 0 };
-		channel->_pSrc = silenceStream;
+		// null_sound_data: a fixed 2-byte (0,0) silence marker - the
+		// same block Channel::enable() redirects _soundData to.
+		channel->_pSrc = _silenceStream;
 		channel->_pendingStop = 0;
 		return;
 	}
@@ -467,14 +467,14 @@ void RSound::resetChannelRange(int first, int last) {
 	}
 }
 
-void RSound::disableChannelTo(int channelIndex, byte flag, int offset) {
+void RSound::disableChannelTo(int channelIndex, byte flag) {
 	Channel &ch = _channels[channelIndex];
 	if (!ch._activeCount)
 		return;
 	if (ch._activeCount == 1)
-		ch._pSrc = loadData(offset);
+		ch._pSrc = _silenceStream;
 	ch._pendingStop = flag;
-	ch._soundData = loadData(offset);
+	ch._soundData = _silenceStream;
 }
 
 void RSound::resetHeldNotes() {

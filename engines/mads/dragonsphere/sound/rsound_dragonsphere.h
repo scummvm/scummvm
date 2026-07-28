@@ -329,7 +329,7 @@ public:
  * command1/command2/command3/command4 are all genuinely different from
  * the base class, in two ways:
  *   - They use the base class's disableChannelTo() (matching sub_1092A)
- *     instead of Channel::enable(), targeting loadData(0x1F8B).
+ *     instead of Channel::enable().
  *   - Channel 6 (the boundary between the "lower" 1-5,9 group and
  *     "upper" 6,7,8 group) is conditionally included/excluded based on
  *     isSoundActive(loadData(0x1F4F)) in command1/command3, and based on
@@ -439,9 +439,9 @@ public:
  * enable exactly).
  *
  * command5 uses the base class's disableChannelTo() (matching
- * sub_10854) instead of Channel::enable(), targeting loadData(0x20C9) -
- * for channels 6,7,8 (three channels, matching the base's default upper
- * group range, just via a different mechanic).
+ * sub_10854) instead of Channel::enable(), for channels 6,7,8 (three
+ * channels, matching the base's default upper group range, just via a
+ * different mechanic).
  *
  * command1/2/3 are not virtual in the base class, so this driver's own
  * command1() must be overridden too (calling THIS class's command5()) -

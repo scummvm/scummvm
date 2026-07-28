@@ -157,8 +157,11 @@ public:
  *    masking, same "mutate 3 bytes then sendSysEx" shape found at
  *    sub_108A1) - NOT independently confirmed by inspecting the literal
  *    bytes at rsound.dr1's offset 0x67 sysex template.
- *  - The silence/no-op stream used by Channel_checkFade is 2 zero bytes
- *    here (enable_channel_data), not Phantom's 3.
+ *  - null_sound_data (see _silenceStream) is a fixed 2-byte (0, 0)
+ *    silence marker referenced by BOTH Channel::enable() and
+ *    Channel_checkFade() - same intent as Phantom's fixed 3-byte
+ *    silence stream (2 bytes here, unlike Phantom's 3 - confirmed
+ *    directly from this disassembly).
  *
  * NOTE: The actual MIDI transmission (sendMidiByte()) currently just logs
  * via warning() - it isn't hooked up to a real ScummVM MIDI/MT-32 output
@@ -205,6 +208,24 @@ private:
 	 * resource file. Confirmed 0x9C for rsound.dr1.
 	 */
 	int _sysExOffset;
+
+	/**
+	 * "null_sound_data" - a fixed 2-byte (0,0) silence marker,
+	 * referenced by BOTH Channel::enable() (Channel_enable, written to
+	 * _soundData) and Channel_checkFade() (written to _pSrc once a
+	 * pending-stop channel's volume has fully decayed) - the same single
+	 * symbol in the disassembly, confirmed at a different address in
+	 * each driver's own resource file, but always the same (0,0)
+	 * content, same intent as Phantom's fixed 3-byte silence stream.
+	 * pollActiveChannel() processing a (note=0, duration=0) pair sets
+	 * _activeCount to 0, and its own top-of-function guard (checked
+	 * before any decrement) then short-circuits every later call before
+	 * _pSrc is ever read again - so only these 2 bytes are ever actually
+	 * consumed. A shared static array (rather than reading via
+	 * loadData()) is therefore sufficient and avoids needing a
+	 * per-driver offset for content that never varies.
+	 */
+	static byte _silenceStream[2];
 
 	/**
 	 * General-purpose script variable table (matches the equivalent
@@ -286,14 +307,11 @@ protected:
 
 	/**
 	 * A driver-specific variant of Channel::enable() confirmed across
-	 * multiple drivers so far (RSound4's sub_1092A targeting 0x1F8B,
-	 * RSound5's sub_10854 targeting 0x20C9) - redirects _soundData (and,
-	 * if the channel is about to expire this tick, _pSrc too) to
-	 * loadData(offset) instead of nullptr. The specific offset is always
-	 * driver-specific "silence"/placeholder sound data, passed explicitly
-	 * rather than hardcoded here.
+	 * multiple drivers so far (RSound4's sub_1092A, RSound5's sub_10854)
+	 * - redirects _soundData (and, if the channel is about to expire this
+	 * tick, _pSrc too) to _silenceStream instead of nullptr.
 	 */
-	void disableChannelTo(int channelIndex, byte flag, int offset);
+	void disableChannelTo(int channelIndex, byte flag);
 
 	/**
 	 * Resets the _heldNotes table (see its field comment). Protected so

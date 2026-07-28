@@ -343,11 +343,14 @@ void RSound::Channel_checkFade(Channel *channel) {
 		--channel->_volume;
 		sendVolume(channel->_midiChannel, channel->_volume);
 	} else {
-		// Fully silent - recycle the channel to the fixed "silence" stream
-		// (unk_14566 in the disassembly, at offset 0x3246 relative to
-		// seg001's load address - matches sub_1029F exactly)
-		// FIXME This reads out of bounds
-		//channel->_pSrc = loadData(0x3246);
+		// Fully silent - recycle the channel to a fixed 2-byte (0,0)
+		// silence stream. pollActiveChannel() processing a (note=0,
+		// duration=0) pair sets _activeCount to 0, and its own
+		// top-of-function guard (checked before any decrement) then
+		// short-circuits every later call before _pSrc is ever read
+		// again - so only these first 2 bytes are ever consumed.
+		static byte silenceStream[2] = { 0, 0 };
+		channel->_pSrc = silenceStream;
 		channel->_pendingStop = 0;
 	}
 }
