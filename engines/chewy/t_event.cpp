@@ -1737,6 +1737,8 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 	case 398:
 	case 400:
 	case 402:
+	case 609:  // R46: bodo()
+	case 610:  // R46: bodo()
 	case R42_BEAMTER2_DIA:
 	case R42_BEAMTER3_DIA:
 	case R56_SEEMAN_DIA:
