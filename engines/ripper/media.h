@@ -143,8 +143,29 @@ public:
 	void clearSceneAudio(bool includePreserved);
 	bool isSceneAudioActive() const;
 	bool syncGame(Common::Serializer &serializer);
+	void pauseActiveMedia(bool pause);
 
 private:
+	struct ActivePlayback {
+		Video::SmackerDecoder *decoder;
+		Common::String name;
+		Audio::SoundHandle *externalAudio;
+
+		ActivePlayback(Video::SmackerDecoder *decoder_, const Common::String &name_,
+			Audio::SoundHandle *externalAudio_) : decoder(decoder_), name(name_),
+			externalAudio(externalAudio_) {}
+	};
+
+	class ActivePlaybackGuard {
+	public:
+		ActivePlaybackGuard(MediaPlayer *player, Video::SmackerDecoder *decoder,
+			const Common::String &name, Audio::SoundHandle *externalAudio);
+		~ActivePlaybackGuard();
+
+	private:
+		MediaPlayer *_player;
+	};
+
 	bool playAudioClip(const Common::String &path, Audio::SoundHandle &handle,
 		Audio::Mixer::SoundType soundType, uint volumePercent, bool loop,
 		const char *description);
@@ -157,14 +178,18 @@ private:
 		bool allowEscSpace, int overrideX = -1, int overrideY = -1,
 		int overrideOriginY = 0, bool serviceSceneUi = false);
 	bool servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
-		bool allowSegmentAdvance, bool &paused, bool toolbarPaused, bool &skipToEnd,
+		bool allowSegmentAdvance, bool &paused, bool &skipToEnd,
 		bool &advanceSegment,
-		Audio::SoundHandle *externalAudio, bool suppressSceneMouseStop, bool allowSceneHelp);
+		Audio::SoundHandle *externalAudio, bool suppressSceneMouseStop, bool allowSceneHelp,
+		const Common::String &name);
+	void logPlaybackPause(const char *source, bool pause, Video::SmackerDecoder &decoder,
+		const Common::String &name, Audio::SoundHandle *externalAudio) const;
 
 	RipperEngine *_engine;
 	InputManager *_input;
 	Audio::Mixer *_mixer;
 	Common::ScopedPtr<SceneAudioManager> _sceneAudio;
+	Common::Array<ActivePlayback> _activePlaybacks;
 	bool _stopSceneOnMouse;
 };
 
