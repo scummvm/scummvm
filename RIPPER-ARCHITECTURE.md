@@ -733,6 +733,16 @@
 - If flag `0x55` is set, the circuit puzzle also presents `ED_WAC.SMK`,
   resource `0xb6`, and the `CIRCTMPL.PCX` backing; otherwise it selects
   `CIRCTMP2.PCX`. `CIRC5.WAV` accompanies the optional manual branch.
+  The `RunMediaSequence` call at `0x28ed2` supplies physical Y=`0x144` in EBX
+  and X=`0x5c` in ECX, placing the 320-by-76 `ED_WAC.SMK` patch at
+  screen `(92,324)`. The wrapped text call at `0x28f04` places a
+  275-by-50 control at `(114,350)` using
+  `g_primaryChooserPresentationTemplate` at `0x8a284`, not the tertiary WAC
+  template used by the database's standalone circuit-manual entry. The primary
+  template uses `7PT_FONT.FNT`, palette index 4 for its client, index 251 for
+  text, zero padding, and 9-pixel rows. Its two `MNARROW0.BBM` through
+  `MNARROW3.BBM` scroll controls begin five pixels beyond the panel's right
+  edge and align with its top and bottom.
 - Scene action 10 calls `RunTableGateLeverPuzzleScene` at `0x38eb8` with the
   caller-supplied completion flag. `GB1.RUN` callback `0x74d` supplies milestone
   223 (`solved wofford table puzzle`), tests it after the puzzle returns, and

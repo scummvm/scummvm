@@ -37,7 +37,8 @@ class ModalDialogManager {
 public:
 	enum PresentationStyle {
 		kMenubPresentation,
-		kWacPresentation
+		kWacPresentation,
+		kPrimaryPresentation
 	};
 
 	enum PaletteBehavior {
@@ -103,10 +104,13 @@ private:
 	void applyModalPalette();
 	void restoreDisplay();
 	void wrapText(const Common::String &text, uint maxWidth,
-		Common::Array<Common::String> &lines) const;
-	uint measureText(const Common::String &text) const;
+		Common::Array<Common::String> &lines,
+		PresentationStyle style = kMenubPresentation) const;
+	uint measureText(const Common::String &text,
+		PresentationStyle style = kMenubPresentation) const;
 	void drawText(byte *screen, uint pitch, int x, int y,
-		const Common::String &text, byte color) const;
+		const Common::String &text, byte color,
+		PresentationStyle style = kMenubPresentation) const;
 	void drawBitmap(byte *screen, uint pitch, const BitmapAssetFrame &bitmap,
 		int x, int y) const;
 	void drawFrame(byte *screen, uint pitch, const Common::Rect &bounds,
@@ -137,8 +141,10 @@ private:
 
 	RipperEngine *_engine;
 	BitmapFontAsset _font;
+	BitmapFontAsset _primaryFont;
 	Common::Array<BitmapAssetFrame> _skin;
 	Common::Array<BitmapAssetFrame> _wacSkin;
+	Common::Array<BitmapAssetFrame> _primaryScrollSkin;
 	Common::Array<byte> _modalPalette;
 	Common::Array<Common::String> _gameText;
 	IndexedDisplaySnapshot _savedDisplay;

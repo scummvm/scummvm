@@ -231,6 +231,35 @@ bool CircuitChipPuzzle::loadAssets() {
 	return true;
 }
 
+bool CircuitChipPuzzle::captureBackground() {
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen || screen->format.bytesPerPixel != 1 ||
+			screen->w != kRipperScreenWidth ||
+			screen->h != kRipperScreenHeight) {
+		if (screen)
+			g_system->unlockScreen();
+		return false;
+	}
+
+	_background.width = screen->w;
+	_background.height = screen->h;
+	_background.transparentColor = 0;
+	_background.pixels.resize(screen->w * screen->h);
+	for (int y = 0; y < screen->h; ++y)
+		memcpy(_background.pixels.data() + y * screen->w,
+			screen->getBasePtr(0, y), screen->w);
+	g_system->unlockScreen();
+
+	_background.palette.resize(256 * 3);
+	g_system->getPaletteManager()->grabPalette(
+		_background.palette.data(), 0, 256);
+	debugC(2, kDebugPuzzles,
+		"Ripper: captured circuit puzzle media backing "
+		"bounds=0,0,%ux%u paletteEntries=256",
+		_background.width, _background.height);
+	return true;
+}
+
 void CircuitChipPuzzle::drawFrame(byte *screen, uint pitch,
 		const BitmapAssetFrame &frame, int x, int y) const {
 	for (uint sourceY = 0; sourceY < frame.height; ++sourceY) {
@@ -287,18 +316,18 @@ void CircuitChipPuzzle::render() {
 	}
 	g_system->unlockScreen();
 
+	if (_background.palette.size() == 256 * 3)
+		g_system->getPaletteManager()->setPalette(
+			_background.palette.data(), 0, 256);
 	if (_manualAvailable &&
 			!_engine->getModalDialog()->drawRetainedTextPanel(
 				kCircuitManualResource, circuitManualBounds(),
 				_manualFirstVisible, _manualMaximumFirstVisible,
 				_manualVisibleRows,
-				ModalDialogManager::kWacPresentation,
+				ModalDialogManager::kPrimaryPresentation,
 				static_cast<ModalDialogManager::TextPanelScrollControl>(
 					_manualHoveredControl)))
 		warning("Ripper: circuit puzzle manual panel failed");
-	if (_background.palette.size() == 256 * 3)
-		g_system->getPaletteManager()->setPalette(
-			_background.palette.data(), 0, 256);
 	g_system->updateScreen();
 }
 
@@ -370,7 +399,7 @@ bool CircuitChipPuzzle::handleManualClick(const Common::Point &point) {
 		_engine->getModalDialog()->findTextPanelScrollControl(
 			circuitManualBounds(), point, _manualFirstVisible,
 			_manualMaximumFirstVisible,
-			ModalDialogManager::kWacPresentation);
+			ModalDialogManager::kPrimaryPresentation);
 	if (control == ModalDialogManager::kTextPanelScrollUp &&
 			_manualFirstVisible > 0) {
 		--_manualFirstVisible;
@@ -567,7 +596,7 @@ bool CircuitChipPuzzle::updateCursor(const Common::Point &point) {
 			_engine->getModalDialog()->findTextPanelScrollControl(
 				circuitManualBounds(), point, _manualFirstVisible,
 				_manualMaximumFirstVisible,
-				ModalDialogManager::kWacPresentation);
+				ModalDialogManager::kPrimaryPresentation);
 	}
 	const int sourceSlot = findSourceSlot(point);
 	const int targetSlot = findTargetSlot(point);
@@ -654,8 +683,17 @@ CircuitChipPuzzle::Result CircuitChipPuzzle::run(uint completionFlag) {
 	if (_manualAvailable) {
 		_engine->getMedia()->playSoundEffect(kAudioNames[5],
 			_audioHandles[5]);
-		if (!_engine->getMedia()->play("ed_wac.smk", false, 324, 92))
+		// RunCircuitChipPlacementPuzzleScene passes physical Y=0x144 in
+		// EBX and X=0x5c in ECX to RunMediaSequence.
+		if (!_engine->getMedia()->play("ed_wac.smk", false, 92, 324))
 			warning("Ripper: circuit puzzle WAC presentation failed");
+		else if (!captureBackground()) {
+			_incomingDisplay.restore();
+			cursor->setSelectionIndex(savedSelectionIndex);
+			cursor->dispatchSelectionIndexChange(savedSelectionIndex);
+			cursor->setVisible(savedCursorVisible);
+			return kLoadFailed;
+		}
 	}
 	if (!_engine->getMedia()->playSoundEffect(kAudioNames[1],
 			_audioHandles[1], 100, true))
@@ -742,7 +780,8 @@ CircuitChipPuzzle::Result CircuitChipPuzzle::run(uint completionFlag) {
 						_correctGroupCount == kGroupCount ?
 							"SOLVED" : "NOT_SOLVED",
 						placementString().c_str());
-					render();
+					if (previousCount != _correctGroupCount)
+						render();
 					animateMeter(previousCount, _correctGroupCount);
 					render();
 					if (_correctGroupCount == kGroupCount) {
@@ -750,7 +789,9 @@ CircuitChipPuzzle::Result CircuitChipPuzzle::run(uint completionFlag) {
 							kSolved : kLoadFailed;
 						active = false;
 					}
-					redraw = true;
+					// The placed chip and the post-animation meter have
+					// already been presented above.
+					redraw = false;
 				}
 			}
 		}
