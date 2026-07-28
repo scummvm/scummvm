@@ -437,7 +437,6 @@ void SubtitleManager::renderSubtitle(Graphics::Surface *destSurface, const Commo
 	_vm->_gfx->invalidateRect(boxRect, /* erase= */ false);
 }
 
-
 int SubtitleManager::getFontHeight() const {
 	return _font->getFontHeight();
 }

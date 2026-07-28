@@ -74,6 +74,9 @@ static constexpr int kSubtitleBorderWidth = 1;
 // Vertical spacing in pixels between consecutive lines of wrapped text.
 static constexpr int kSubtitleInterlineSpacing = 2;
 
+// Latest version of the subtitles .dat file.
+static constexpr uint16 kSubtitleDataVersion = 1;
+
 struct ColorRGB {
 	// The red component of a color in [0,255].
 	byte r;
@@ -98,8 +101,6 @@ public:
 	// Forces the subtitle region of the target window to re-draw immediately. This is necessary for synchronous flows
 	// where UI control is "yielded" to play a synchronous effect e.g. some of Arthur's dialog at the Farnstein lab.
 	void forceRepaintSubtitles(Window *targetWindow = nullptr);
-
-	static constexpr uint16 kSubtitleDataVersion = 1;
 
 	// Loads subtitles track and timing file and returns whether subtitles loaded successfully.
 	bool loadSubtitlesData();
