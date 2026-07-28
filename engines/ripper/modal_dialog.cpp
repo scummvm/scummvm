@@ -72,7 +72,7 @@ static const byte kWacModalTextColor = 251;
 static const uint kPrimaryScrollSkinFrameCount = 4;
 static const int kPrimaryRowHeight = 9;
 static const int kPrimaryScrollGap = 5;
-static const byte kPrimaryTextColor = 4;
+static const byte kPrimaryTextColor = 254;
 static const uint kModalCursor = 16;
 static const int kTextEntryLeft = 228;
 static const int kTextEntryTop = 312;
@@ -468,8 +468,9 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 		// RunCircuitChipPlacementPuzzleScene at 0x28aa4 constructs resource
 		// 0xb6 with g_primaryChooserPresentationTemplate at 0x8a284. The
 		// wrapped control has no frame or client fill: ED_WAC.SMK supplies
-		// the backing, while DrawCenteredTextPanelLabel at 0x4c795 selects
-		// palette index 4 for its normal text path.
+		// the backing, while RenderChooserTextRow at 0x58651 selects the
+		// active-row style at template offset +0xc. Startup points that style
+		// at palette index 254, the shared interface red.
 	} else if (wacStyle) {
 		// ServiceWacSceneInputAction at 0x21eef uses the tertiary WACMNU
 		// chooser template. Its bitmap tiles retain the textured heading and
