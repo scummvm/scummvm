@@ -139,6 +139,12 @@ static Common::Rect circuitManualBounds() {
 	return Common::Rect(114, 350, 389, 400);
 }
 
+static Common::Rect circuitManualMediaBounds() {
+	// The RunMediaSequence call at 0x28ed2 presents the 320-by-76
+	// ED_WAC.SMK patch at physical X=0x5c, Y=0x144.
+	return Common::Rect(92, 324, 412, 400);
+}
+
 } // End of anonymous namespace
 
 CircuitChipPuzzle::CircuitChipPuzzle(RipperEngine *engine) :
@@ -231,32 +237,32 @@ bool CircuitChipPuzzle::loadAssets() {
 	return true;
 }
 
-bool CircuitChipPuzzle::captureBackground() {
+bool CircuitChipPuzzle::captureManualBacking() {
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1 ||
 			screen->w != kRipperScreenWidth ||
-			screen->h != kRipperScreenHeight) {
+			screen->h != kRipperScreenHeight ||
+			_background.width != kRipperScreenWidth ||
+			_background.height != kRipperScreenHeight) {
 		if (screen)
 			g_system->unlockScreen();
 		return false;
 	}
 
-	_background.width = screen->w;
-	_background.height = screen->h;
-	_background.transparentColor = 0;
-	_background.pixels.resize(screen->w * screen->h);
-	for (int y = 0; y < screen->h; ++y)
-		memcpy(_background.pixels.data() + y * screen->w,
-			screen->getBasePtr(0, y), screen->w);
+	const Common::Rect bounds = circuitManualMediaBounds();
+	for (int y = bounds.top; y < bounds.bottom; ++y)
+		memcpy(_background.pixels.data() + y * _background.width +
+				bounds.left,
+			screen->getBasePtr(bounds.left, y), bounds.width());
 	g_system->unlockScreen();
 
 	_background.palette.resize(256 * 3);
 	g_system->getPaletteManager()->grabPalette(
 		_background.palette.data(), 0, 256);
 	debugC(2, kDebugPuzzles,
-		"Ripper: captured circuit puzzle media backing "
-		"bounds=0,0,%ux%u paletteEntries=256",
-		_background.width, _background.height);
+		"Ripper: captured circuit puzzle manual backing "
+		"bounds=%d,%d,%dx%d paletteEntries=256",
+		bounds.left, bounds.top, bounds.width(), bounds.height());
 	return true;
 }
 
@@ -687,7 +693,7 @@ CircuitChipPuzzle::Result CircuitChipPuzzle::run(uint completionFlag) {
 		// EBX and X=0x5c in ECX to RunMediaSequence.
 		if (!_engine->getMedia()->play("ed_wac.smk", false, 92, 324))
 			warning("Ripper: circuit puzzle WAC presentation failed");
-		else if (!captureBackground()) {
+		else if (!captureManualBacking()) {
 			_incomingDisplay.restore();
 			cursor->setSelectionIndex(savedSelectionIndex);
 			cursor->dispatchSelectionIndexChange(savedSelectionIndex);
