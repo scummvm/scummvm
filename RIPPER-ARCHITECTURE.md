@@ -38,6 +38,10 @@
 - Packetized presentations optionally use
   `PollPresentationEscOrSpaceCommand` at `0x49039`: Escape stops playback and
   Space toggles its control/pause state. The callback does not poll the mouse.
+- ScummVM's optional Escape fast-forward is an engine extension. Since Smacker
+  pixels and palette packets are stateful, it reconstructs the terminal frame
+  sequentially from a cleared decoder surface, applies that frame's decoder
+  palette, and submits one final redraw. Retail Escape stops playback instead.
 
 ## Resources
 
