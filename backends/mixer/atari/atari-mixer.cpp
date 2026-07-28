@@ -27,7 +27,10 @@
 #include <mint/falcon.h>
 #include <mint/osbind.h>
 #include <mint/ostruct.h>
-#include <usound.h>	// https://github.com/mikrosk/usound
+// https://github.com/mikrosk/usound
+// Use usound_compat.h until SDL 1.2 + uSound have been upgraded in the build image.
+// Replace with #include <usound.h> once ihe image ships usound.h >= 2; it will #error in such case.
+#include "usound_compat.h"
 
 #include "common/config-manager.h"
 #include "common/debug.h"
@@ -42,9 +45,11 @@
 #define DEFAULT_OUTPUT_CHANNELS 2
 #define DEFAULT_SAMPLES 2048	// 83ms
 
+static USoundContext usoundContext;
+
 void AtariAudioShutdown() {
 	Jdisint(MFP_TIMERA);
-	AtariSoundSetupDeinitXbios();
+	USoundDeinitXbios(&usoundContext);
 }
 
 static volatile bool muted;
@@ -99,18 +104,18 @@ AtariMixerManager::~AtariMixerManager() {
 }
 
 void AtariMixerManager::init() {
-	AudioSpec desired, obtained;
+	USoundSpec desired, obtained;
 
 	desired.frequency = _outputRate;
 	desired.channels = _outputChannels;
-	desired.format = AudioFormatSigned16MSB;
+	desired.format = USoundFormatSigned16MSB;
 	desired.samples = _samples;
 
-	if (!AtariSoundSetupInitXbios(&desired, &obtained)) {
+	if (!USoundInitXbios(&desired, &obtained, &usoundContext)) {
 		error("Sound system is not available");
 	}
 
-	if (obtained.format != AudioFormatSigned8 && obtained.format != AudioFormatSigned16MSB) {
+	if (obtained.format != USoundFormatSigned8 && obtained.format != USoundFormatSigned16MSB) {
 		error("Sound system currently supports only 8/16-bit signed big endian samples");
 	}
 
@@ -121,14 +126,14 @@ void AtariMixerManager::init() {
 	_outputRate = obtained.frequency;
 	_outputChannels = obtained.channels;
 	_samples = obtained.samples;
-	_downsample = (obtained.format == AudioFormatSigned8);
+	_downsample = (obtained.format == USoundFormatSigned8);
 
 	ConfMan.setInt("output_rate", _outputRate, Common::ConfigManager::kApplicationDomain);
 	ConfMan.setInt("output_channels", _outputChannels, Common::ConfigManager::kApplicationDomain);
 	ConfMan.setInt("audio_buffer_size", _samples, Common::ConfigManager::kApplicationDomain);
 
 	debug("setting %d Hz mixing frequency (%d-bit, %s)",
-		  _outputRate, obtained.format == AudioFormatSigned8 ? 8 : 16, _outputChannels == 1 ? "mono" : "stereo");
+		  _outputRate, obtained.format == USoundFormatSigned8 ? 8 : 16, _outputChannels == 1 ? "mono" : "stereo");
 	debug("sample buffer size: %d", _samples);
 
 	ConfMan.flushToDisk();
