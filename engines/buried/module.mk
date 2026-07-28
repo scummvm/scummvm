@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	console.o \
 	credits.o \
 	death.o \
+	dialogs.o \
 	frame_window.o \
 	gameui.o \
 	graphics.o \
