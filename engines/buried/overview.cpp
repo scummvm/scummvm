@@ -36,7 +36,7 @@
 namespace Buried {
 
 enum OverviewState {
-	kOverviewStateUnstarted = -1,
+	kOverviewStateNotStarted = -1,
 	kOverviewStateNavigation = 0,
 	kOverviewStateInventory = 1,
 	kOverviewStateBiochip = 2,
@@ -47,7 +47,7 @@ enum OverviewState {
 
 OverviewWindow::OverviewWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent) {
 	_currentImage = nullptr;
-	_currentStatus = kOverviewStateUnstarted;
+	_currentStatus = kOverviewStateNotStarted;
 	_timer = 0xFFFFFFFF;
 
 	Common::Rect parentRect = _parent->getClientRect();
@@ -140,7 +140,7 @@ void OverviewWindow::onTimer(uint timer) {
 	_vm->_sound->timerCallback();
 
 	// Is audio still playing or should we advance to the next state?
-	if (_currentStatus > kOverviewStateUnstarted && _vm->_sound->isInterfaceSoundPlaying()) {
+	if (_currentStatus > kOverviewStateNotStarted && _vm->_sound->isInterfaceSoundPlaying()) {
 		// Audio is still playing for the current state. Ensure subtitles are fresh.
 		_vm->_subtitles->markSubtitlesDirty(this);
 		return;
@@ -154,7 +154,7 @@ void OverviewWindow::onTimer(uint timer) {
 
 	// Switch on the current status in order to determine which action to take next
 	switch (_currentStatus) {
-	case kOverviewStateUnstarted: // Starting value - kick things off
+	case kOverviewStateNotStarted: // Starting value - kick things off
 		_currentStatus = kOverviewStateNavigation;
 		_currentImage = _vm->_gfx->getBitmap(_vm->getFilePath(IDS_IF_OV_NAV_ARROWS_DIB));
 		invalidateRect(Common::Rect(498, 274, 640, 433), false);
