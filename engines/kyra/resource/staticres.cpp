@@ -183,7 +183,9 @@ bool StaticResource::loadStaticResourceFile() {
 				}
 				break;
 			}
-		} else if ((setLanguage(_vm->gameFlags().lang) && prefetchId(-1))) {
+		}
+
+		if ((setLanguage(_vm->gameFlags().lang) && prefetchId(-1))) {
 			foundWorkingKyraDat = true;
 			break;
 		}
