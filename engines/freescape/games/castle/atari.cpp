@@ -22,6 +22,7 @@
 #include "common/memstream.h"
 #include "common/endian.h"
 
+#include "freescape/copylock.h"
 #include "freescape/freescape.h"
 #include "freescape/games/castle/castle.h"
 #include "freescape/language/8bitDetokeniser.h"
@@ -50,8 +51,7 @@ static void emitByteAtari(Common::MemoryWriteStreamDynamic &out, int &rep, int &
 
 // Decompress a Castle Master (Atari ST) self-extracting GEMDOS executable.
 //
-// The player is expected to provide the Copylock-decrypted file (named
-// "M.PRG"): a GEMDOS executable (magic 0x601A) whose DATA segment holds a
+// M.PRG is a GEMDOS executable (magic 0x601A) whose DATA segment holds a
 // Huffman-tree + RLE packed stream that, when expanded, yields the actual
 // Castle Master game executable (also a GEMDOS PRG).
 //
@@ -71,14 +71,20 @@ Common::SeekableReadStream *CastleEngine::decompressAtari(const Common::Path &fi
 	if (!file.open(filename))
 		error("Failed to open '%s'", filename.toString().c_str());
 
-	int fileSize = file.size();
+	// The original file is wrapped in a Copylock protection, which is removed
+	// here; a file that was already decrypted by hand is taken as it is
+	Common::SeekableReadStream *unwrapped = Copylock::unwrap(&file);
+	Common::SeekableReadStream *source = unwrapped ? unwrapped : (Common::SeekableReadStream *)&file;
+
+	int fileSize = source->size();
 	byte *buffer = (byte *)malloc(fileSize);
-	file.read(buffer, fileSize);
+	source->read(buffer, fileSize);
+	delete unwrapped;
 	file.close();
 
 	if (READ_BE_UINT16(buffer) != 0x601a) {
 		free(buffer);
-		error("'%s' is not a GEMDOS executable (expected Copylock-decrypted M.PRG)", filename.toString().c_str());
+		error("'%s' is not a GEMDOS executable", filename.toString().c_str());
 	}
 
 	uint32 textSize = READ_BE_UINT32(buffer + 2);

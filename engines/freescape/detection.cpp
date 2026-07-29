@@ -899,10 +899,41 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERAMIGA, GAMEOPTION_WASD_CONTROLS)
 	},
-	// Full Castle Master, Atari ST.
-	// The player must provide the Copylock-decrypted game executable as "M.PRG"
-	// and the intro program as "J.PRG" (both Huffman-packed; the engine
-	// decompresses them at load time).
+	// Full Castle Master, Atari ST, as found on the original disk: "M.PRG" is
+	// wrapped in a Copylock protection, which the engine removes at load time,
+	// and both it and the intro program "J.PRG" are Huffman-packed.
+	{
+		"castlemaster",
+		"",
+		{
+			{"M.PRG", 0, "6e6e1b68b311a60e7885377fc67b1a93", 269432},
+			{"J.PRG", 0, "4934cf2f304b8ae5327e92b773acd35c", 58514},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_UNSTABLE,
+		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERATARIST, GAMEOPTION_WASD_CONTROLS)
+	},
+	// Full Castle Master, Atari ST, from the "Castle Master & The Crypt"
+	// release by Incentive. Same game program, wrapped with another Copylock
+	// key and cipher.
+	{
+		"castlemaster",
+		"",
+		{
+			{"M.PRG", 0, "ced428ad4c59ebdeb778fcd4bed4be08", 269478},
+			{"J.PRG", 0, "fd61e4eed3b1a965fa53f5560eb066c0", 58430},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_UNSTABLE,
+		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERATARIST, GAMEOPTION_WASD_CONTROLS)
+	},
+	// The same, with "M.PRG" already decrypted by hand (dec0de and a real or
+	// emulated Atari ST), as was required before the protection was removable
+	// from the engine.
 	{
 		"castlemaster",
 		"",
