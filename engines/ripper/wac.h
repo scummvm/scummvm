@@ -49,7 +49,8 @@ public:
 	bool initialize(ResourceManager &resources);
 	void run();
 	void serviceIdleEffects();
-	uint16 serviceFrontEndControls(const MouseState &mouse, uint fallbackCursor);
+	uint16 serviceFrontEndControls(const MouseState &mouse, uint fallbackCursor,
+		bool updateCursor = true);
 	uint16 dispatchSubsceneAction(uint16 action, uint helpResourceId,
 		bool databaseActive);
 
@@ -81,7 +82,8 @@ private:
 	void scrollDatabaseStillImage(int delta);
 	uint16 serviceDatabaseMediaInput(byte activeEntryIndex,
 		uint *textFirstVisible = nullptr, uint textMaximumFirstVisible = 0,
-		uint textPageRows = 0, MouseState *publishedMouse = nullptr);
+		uint textPageRows = 0, MouseState *publishedMouse = nullptr,
+		bool deferCursorUpdate = false);
 	bool drawDatabaseTextPanel(uint bodyResourceId, const Common::Rect &bounds,
 		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows);
 	void wrapJournalText(const Common::String &text, uint maximumWidth,

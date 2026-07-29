@@ -567,7 +567,7 @@ int WacManager::findControl(const Common::Point &point) const {
 }
 
 uint16 WacManager::serviceFrontEndControls(const MouseState &mouse,
-		uint fallbackCursor) {
+		uint fallbackCursor, bool updateCursor) {
 	// RunWacFrontEndLoop at 0x21865 leaves these four UiControlState records in
 	// the shared list. ServiceWacSceneInputAction at 0x21eef therefore services
 	// them from every WAC subscene, not only from the front page.
@@ -579,8 +579,10 @@ uint16 WacManager::serviceFrontEndControls(const MouseState &mouse,
 			_hoveredControl, _hoveredControl < 0 ? 0 : _controls[_hoveredControl].action,
 			mouse.position.x, mouse.position.y);
 	}
-	_engine->getCursor()->update(
-		_hoveredControl < 0 ? fallbackCursor : kWacControlCursor);
+	if (updateCursor) {
+		_engine->getCursor()->update(
+			_hoveredControl < 0 ? fallbackCursor : kWacControlCursor);
+	}
 
 	if ((mouse.pressed & kMouseButtonLeft) != 0)
 		_pressedControl = _hoveredControl;
@@ -897,7 +899,7 @@ void WacManager::scrollDatabaseStillImage(int delta) {
 
 uint16 WacManager::serviceDatabaseMediaInput(byte activeEntryIndex,
 		uint *textFirstVisible, uint textMaximumFirstVisible, uint textPageRows,
-		MouseState *publishedMouse) {
+		MouseState *publishedMouse, bool deferCursorUpdate) {
 	if (_engine->getInput()->pollEvents()) {
 		_engine->quitGame();
 		return kExitAction;
@@ -1085,7 +1087,7 @@ uint16 WacManager::serviceDatabaseMediaInput(byte activeEntryIndex,
 		(Common::Rect(kWacDatabaseLeft, kWacDatabaseTop,
 			kWacDatabaseRight, kWacDatabaseBottom).contains(mouse.position) ||
 			(textFirstVisible && mediaBounds.contains(mouse.position))) ?
-			kWacControlCursor : kWacDefaultCursor);
+			kWacControlCursor : kWacDefaultCursor, !deferCursorUpdate);
 	if (controlAction != kNoAction) {
 		const uint16 result = dispatchSubsceneAction(controlAction,
 			kWacDatabaseHelpResource, true);
@@ -1564,7 +1566,7 @@ uint16 WacManager::runVoiceLockPuzzle(DatabaseEntry &entry) {
 	while (!_engine->shouldQuit()) {
 		MouseState mouse;
 		const uint16 command = serviceDatabaseMediaInput(entry.originalIndex,
-			nullptr, 0, 0, &mouse);
+			nullptr, 0, 0, &mouse, true);
 		if (command == kWacDatabaseSelectionChanged || command == kExitAction ||
 				command == 0x1b) {
 			result = command;
@@ -1592,9 +1594,12 @@ uint16 WacManager::runVoiceLockPuzzle(DatabaseEntry &entry) {
 
 		const bool waveformHover = editorAvailable &&
 			sourceWaveform.contains(mouse.position);
+		const Common::Rect databaseBounds(kWacDatabaseLeft, kWacDatabaseTop,
+			kWacDatabaseRight, kWacDatabaseBottom);
 		_engine->getCursor()->update(
-			waveformHover || hoveredButton >= 0 ? kWacControlCursor :
-				kWacDefaultCursor);
+			databaseBounds.contains(mouse.position) || _hoveredControl >= 0 ||
+				waveformHover || hoveredButton >= 0 ?
+				kWacControlCursor : kWacDefaultCursor);
 		if ((mouse.pressed & kMouseButtonLeft) != 0) {
 			pressedButton = hoveredButton;
 			if (waveformHover) {

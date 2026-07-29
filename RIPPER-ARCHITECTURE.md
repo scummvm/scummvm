@@ -1251,7 +1251,9 @@
   quantized spans solve only from scene label `eez1`, after which
   `ACCESED.AVI` plays, milestone 29 opens the Secret Animal Lab, and WAC exits.
   `DrawAudioDescriptorWaveform` at `0x25b73` supplies the source and assembled
-  waveform presentation.
+  waveform presentation. The scene's input tick publishes one mouse state,
+  services the persistent WAC controls and database chooser, then presents one
+  cursor after also testing the waveform and audio-editor buttons.
 - Entries 10 and 11 dispatch `wacinv10.pcx` and `wacinv11.pcx` through
   `RunWacStillImageScreenWithOptionalAudio` at `0x22f1f`. These 300-by-393
   documents retain the database chooser, show a 282-row slice in the left WAC
