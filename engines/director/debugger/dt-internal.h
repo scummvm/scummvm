@@ -383,6 +383,7 @@ void showCast();		// dt-cast.cpp
 void showImageViewer();	// dt-castdetails.cpp
 void showCastDetails();	// dt-castdetails.cpp
 void showControlPanel();// dt-controlpanel.cpp
+void handleDebuggerShortcuts();	// dt-controlpanel.cpp
 
 // dt-lists.cpp
 void showVars();

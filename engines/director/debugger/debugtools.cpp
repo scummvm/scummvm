@@ -1029,6 +1029,8 @@ void onImGuiRender() {
 
 	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 
+	handleDebuggerShortcuts();
+
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_2, ImGuiInputFlags_RouteGlobal | ImGuiInputFlags_RouteOverFocused))
 			_state->_w.controlPanel = !_state->_w.controlPanel;
