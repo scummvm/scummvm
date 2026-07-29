@@ -469,22 +469,14 @@ static void climb_stairs_right() {
 }
 
 static void decend_stairs_right() {
-	int stairs_reset_frame;
-
 	if (kernel_anim[aa[4]].frame != local->stairs_frame) {
 		local->stairs_frame = kernel_anim[aa[4]].frame;
-		stairs_reset_frame  = -1;
 
 		if (local->stairs_frame == 2) {
 			kernel_seq_delete(seq[fx_steps]);
 			seq[fx_steps] = kernel_seq_stamp(ss[fx_steps], false, 1);
 			kernel_seq_depth(seq[fx_steps], 4);
 			kernel_seq_loc(seq[fx_steps], PROMPT_RIGHT_X, PROMPT_RIGHT_Y);
-		}
-
-		if (stairs_reset_frame >= 0) {
-			kernel_reset_animation(aa[4], stairs_reset_frame);
-			local->stairs_frame = stairs_reset_frame;
 		}
 	}
 }
@@ -517,22 +509,14 @@ static void climb_stairs_left() {
 }
 
 static void decend_stairs_left() {
-	int stairs_reset_frame;
-
 	if (kernel_anim[aa[6]].frame != local->stairs_frame) {
 		local->stairs_frame = kernel_anim[aa[6]].frame;
-		stairs_reset_frame  = -1;
 
 		if (local->stairs_frame == 2) {
 			kernel_seq_delete(seq[fx_steps]);
 			seq[fx_steps] = kernel_seq_stamp(ss[fx_steps], false, 1);
 			kernel_seq_depth(seq[fx_steps], 4);
 			kernel_seq_loc(seq[fx_steps], PROMPT_LEFT_X, PROMPT_LEFT_Y);
-		}
-
-		if (stairs_reset_frame >= 0) {
-			kernel_reset_animation(aa[6], stairs_reset_frame);
-			local->stairs_frame = stairs_reset_frame;
 		}
 	}
 }

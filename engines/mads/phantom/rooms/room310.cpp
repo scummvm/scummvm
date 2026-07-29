@@ -123,12 +123,10 @@ void set_multiplane_positions_310(int x_new) {
 }
 
 static void handle_animation_lake() {
-	int lake_reset_frame;
 	int id;
 
 	if (kernel_anim[aa[0]].frame != local->lake_frame) {
 		local->lake_frame = kernel_anim[aa[0]].frame;
-		lake_reset_frame = -1;
 
 		switch (local->lake_frame) {
 		case 60:
@@ -217,11 +215,6 @@ static void handle_animation_lake() {
 		case 510:
 			kernel_message_purge();
 			break;
-		}
-
-		if (lake_reset_frame >= 0) {
-			kernel_reset_animation(aa[0], lake_reset_frame);
-			local->lake_frame = lake_reset_frame;
 		}
 	}
 }
