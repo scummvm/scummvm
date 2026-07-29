@@ -39,6 +39,11 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Freescape:
    - Unterstützung für das Laden von ZX Spectrum-Spielen von TAP/TZX-Tape-Images hinzugefügt.
 
+ Kyra:
+   - Unterstützung für die koreanische Fan-Übersetzung in Kyra1 hinzugefügt (in ScummVM 2026.3.0).
+   - Fehlerhafte nicht-koreanische kyra1-Spiele (Fehlermeldung "You're missing the 'KYRA.DAT'
+     engine data file or it got corrupted...) wiederhergestellt.
+
  Lure:
    - Charakter-Wegfindung optimiert.
    - Fehler korrigiert, durch den Charaktere nach einer einseitigen Konversation nicht mehr angesprochen werden konnten.
