@@ -55,12 +55,11 @@ struct CopyProt {
 
 
 static void copy_mangle(byte copy_prot[CopyProt::SIZE]) {
-	int count;
 	byte *dog;
 
 	dog = (byte *)copy_prot;
 
-	for (count = 0; count < CopyProt::SIZE; count++) {
+	for (uint count = 0; count < CopyProt::SIZE; count++) {
 		*dog ^= 0xff;
 		dog++;
 	}
