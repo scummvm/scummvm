@@ -28,7 +28,7 @@ namespace MADS {
 namespace RexNebular {
 namespace Sound {
 
-class ASound1 : public RexASound {
+class ASound1 : public ASound {
 private:
 	typedef int (ASound1:: *CommandPtr)();
 	static const CommandPtr _commandList[42];
@@ -76,7 +76,7 @@ public:
 	int command(int commandId, int param) override;
 };
 
-class ASound2 : public RexASound {
+class ASound2 : public ASound {
 private:
 	byte _command12Param;
 private:
@@ -128,7 +128,7 @@ public:
 	int command(int commandId, int param) override;
 };
 
-class ASound3 : public RexASound {
+class ASound3 : public ASound {
 private:
 	bool _command39Flag;
 
@@ -188,7 +188,7 @@ public:
 	int command(int commandId, int param) override;
 };
 
-class ASound4 : public RexASound {
+class ASound4 : public ASound {
 private:
 	typedef int (ASound4:: *CommandPtr)();
 	static const CommandPtr _commandList[61];
@@ -226,7 +226,7 @@ public:
 	int command(int commandId, int param) override;
 };
 
-class ASound5 : public RexASound {
+class ASound5 : public ASound {
 private:
 	typedef int (ASound5:: *CommandPtr)();
 	static const CommandPtr _commandList[42];
@@ -272,7 +272,7 @@ public:
 	int command(int commandId, int param) override;
 };
 
-class ASound6 : public RexASound {
+class ASound6 : public ASound {
 private:
 	typedef int (ASound6:: *CommandPtr)();
 	static const CommandPtr _commandList[30];
@@ -301,7 +301,7 @@ public:
 	int command(int commandId, int param) override;
 };
 
-class ASound7 : public RexASound {
+class ASound7 : public ASound {
 private:
 	typedef int (ASound7:: *CommandPtr)();
 	static const CommandPtr _commandList[38];
@@ -333,7 +333,7 @@ public:
 	int command(int commandId, int param) override;
 };
 
-class ASound8 : public RexASound {
+class ASound8 : public ASound {
 private:
 	typedef int (ASound8:: *CommandPtr)();
 	static const CommandPtr _commandList[38];
@@ -376,7 +376,7 @@ public:
 	int command(int commandId, int param) override;
 };
 
-class ASound9 : public RexASound {
+class ASound9 : public ASound {
 private:
 	/**
 	 * Deferred sound-loader callback state (word_1949E/word_194A0/_soundPtr

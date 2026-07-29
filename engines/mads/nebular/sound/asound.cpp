@@ -29,6 +29,8 @@ namespace MADS {
 namespace RexNebular {
 namespace Sound {
 
+constexpr int CHAN_COMMAND_COUNT = 15;
+
 bool AdlibChannel::_channelsEnabled;
 
 void AdlibChannel::reset() {
@@ -124,7 +126,6 @@ ASound::ASound(Audio::Mixer *mixer, const Common::Path &filename, int dataOffset
 	_activeChannelPtr = nullptr;
 	_samplePtr = nullptr;
 	_frameCounter = 0;
-	_chanCommandCount = 15;
 	_isDisabled = false;
 	_masterVolume = 255;
 	_noiseTicks1 = 0;
@@ -378,7 +379,7 @@ void ASound::pollActiveChannel() {
 					break;
 				}
 
-				if (!(*pSrc & 0x80) || (*pSrc <= (0xff - _chanCommandCount))) {
+				if (!(*pSrc & 0x80) || (*pSrc <= (0xff - CHAN_COMMAND_COUNT))) {
 					if (updateFlag)
 						updateActiveChannel();
 
@@ -694,14 +695,7 @@ int ASound::command8() {
 	return result;
 }
 
-/*-----------------------------------------------------------------------*/
-
-RexASound::RexASound(Audio::Mixer *mixer,  const Common::Path &filename, int dataOffset, int dataSize) :
-		ASound(mixer, filename, dataOffset, dataSize) {
-	_chanCommandCount = 15;
-}
-
-void RexASound::channelCommand(byte *&pSrc, bool &updateFlag) {
+void ASound::channelCommand(byte *&pSrc, bool &updateFlag) {
 	AdlibChannel *chan = _activeChannelPtr;
 	int cmdNum = 255 - *pSrc;
 

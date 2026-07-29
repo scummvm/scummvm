@@ -184,11 +184,10 @@ private:
 	 */
 	void onTimer();
 
-protected:
-	int _chanCommandCount;
-	int _commandParam;
+	void channelCommand(byte *&pSrc, bool &updateFlag);
 
-	virtual void channelCommand(byte *&pSrc, bool &updateFlag) = 0;
+protected:
+	int _commandParam;
 
 	/**
 	 * Hook called once per update() frame, immediately after the disabled
@@ -372,15 +371,6 @@ public:
 	 * Set the volume
 	 */
 	void setVolume(int volume) override;
-};
-
-// TODO: Merge RexASound into ASound
-class RexASound : public ASound {
-protected:
-	void channelCommand(byte *&pSrc, bool &updateFlag) override;
-
-public:
-	RexASound(Audio::Mixer *mixer,  const Common::Path &filename, int dataOffset, int dataSize);
 };
 
 } // namespace Sound
