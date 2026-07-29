@@ -337,7 +337,7 @@ static void room_202_daemon() {
 		}
 	}
 
-	if ((kernel_anim[0].anim == nullptr))
+	if (kernel_anim[0].anim == nullptr)
 		return;
 
 	if (local._waitingMeteoFl) {
@@ -628,7 +628,7 @@ static void room_202_parser() {
 				}
 				break;
 			case 2:
-				if ((kernel_anim[0].anim == nullptr))
+				if (kernel_anim[0].anim == nullptr)
 					text_show(20222);
 				local._meteorologistSpecial = false;
 				kernel_seq_delete(g_sequence_ids[10]);
