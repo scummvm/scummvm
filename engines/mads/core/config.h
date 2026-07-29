@@ -71,47 +71,47 @@ enum Difficulty {
 #define MOUSE_NOT_MICROSOFT     1
 
 struct ConfigFile {
-	int sound_card_type;          /* Sound card configuration  */
-	int sound_card_address;
+	int sound_card_type = 0;          /* Sound card configuration  */
+	int sound_card_address = 0x220;
 
-	int speech_card_type;         /* Speech card configuration */
-	int speech_card_address;
-	int speech_card_irq;
-	int speech_card_drq;
+	int speech_card_type = 0;         /* Speech card configuration */
+	int speech_card_address = 0x220;
+	int speech_card_irq = 7;
+	int speech_card_drq = 1;
 
-	int music_flag;               /* Music on/off              */
-	int sound_flag;               /* Sound on/off              */
-	int interface_hotspots;       /* Easy / Standard           */
+	int music_flag = 1;               /* Music on/off              */
+	int sound_flag = 1;               /* Sound on/off              */
+	int interface_hotspots = 1;       /* Easy / Standard           */
 
-	int inventory_mode;           /* Spinning / Still          */
-	int animated_interface;       /* On / Off                  */
-	int naughtiness;              /* NAUGHTY / NICE            */
-	int quotes_enabled;           /* Quotes option enabled     */
+	int inventory_mode = INVENTORY_SPINNING;           /* Spinning / Still          */
+	int animated_interface = INTERFACE_ANIMATED;       /* On / Off                  */
+	int naughtiness = NAUGHTY;              /* NAUGHTY / NICE            */
+	int quotes_enabled = 1;           /* Quotes option enabled     */
 
-	int high_memory_mode;         /* High memory mode          */
+	int high_memory_mode = MEMORY_ALL;         /* High memory mode          */
 
-	int screen_fade;              /* Screen fade               */
+	int screen_fade = SCREEN_FADE_SMOOTH;              /* Screen fade               */
 
-	int speech_flag;              /* Speech on/off             */
+	int speech_flag = 1;              /* Speech on/off             */
 
-	int panning_speed;            /* Panning speed flag        */
+	int panning_speed = PANNING_SMOOTH;            /* Panning speed flag        */
 
-	int mouse_cursor_fix;         /* Mouse halfway problem     */
+	int mouse_cursor_fix = MOUSE_MICROSOFT;         /* Mouse halfway problem     */
 
-	int cd_version_installed;     /* CD version installed      */
-	int cd_drive;                 /* CD drive letter           */
+	int cd_version_installed = 0;     /* CD version installed      */
+	int cd_drive = 'D';                 /* CD drive letter           */
 
-	int speech_version_installed; /* Version with speech installed */
+	int speech_version_installed = 0; /* Version with speech installed */
 
-	int show_speech_boxes;        /* Show text during speech       */
+	int show_speech_boxes = 1;        /* Show text during speech       */
 
-	int sound_card_irq;
-	int misc2;
-	int misc3;
-	int misc4;
-	int misc5;
+	int sound_card_irq = 7;
+	int misc2 = 0;
+	int misc3 = 0;
+	int misc4 = 0;
+	int misc5 = 0;
 
-	bool original_save_load;
+	bool original_save_load = false;  /* Use original save/load menus */
 };
 
 extern ConfigFile config_file;

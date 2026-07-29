@@ -28,20 +28,7 @@
 
 namespace MADS {
 
-ConfigFile config_file = {
-	0, 0x220,
-	0, 0x220, 7, 1,
-	true, true, 1,
-	0, 0,
-	0, 0,
-	0, true,
-	0, 0,
-	false, 'D',
-	false,
-	false,
-	7, 0, 0, 0, 0,
-	false
-};
+ConfigFile config_file;
 
 void read_config_file() {
 	ConfMan.registerDefault("music_mute", false);
