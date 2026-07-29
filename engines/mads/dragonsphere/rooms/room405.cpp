@@ -127,7 +127,6 @@ static void handle_animation_guard() {
 		guard_reset_frame = -1;
 
 		switch (local->guard_frame) {
-
 		case 31:
 			local->king_tent_action = ENTER_TENT;
 			local->pid_tent_action  = ENTER_TENT;
@@ -259,7 +258,6 @@ static void handle_animation_pid_tent() {
 		pid_tent_reset_frame = -1;
 
 		switch (local->pid_tent_frame) {
-
 		case 14:
 			local->guard_action = SHUT_UP;
 			break;
@@ -551,7 +549,6 @@ static void handle_animation_king_sit() {
 		case 33:
 		case 27:
 			switch (local->king_sit_action) {
-
 			case SHUT_UP:
 				king_sit_reset_frame = 14;
 				break;
@@ -649,7 +646,6 @@ static void handle_animation_pid_sit() {
 		case 27:
 		case 42:
 			switch (local->pid_sit_action) {
-
 			case SHUT_UP:
 				pid_sit_reset_frame = 16;
 				break;

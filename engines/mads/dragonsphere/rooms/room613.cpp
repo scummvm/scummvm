@@ -221,7 +221,6 @@ static void handle_animation_water() {
 		water_reset_frame = -1;
 
 		switch (local->water_frame) {
-
 		case 39:  /* end of steam at left screen */
 			camera_pan_to(&camera_x, 320);
 			break;

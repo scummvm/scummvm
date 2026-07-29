@@ -401,7 +401,6 @@ static void do_a_round() {
 
 static void after_round_me() {
 	switch (local->final_choice) {
-
 	case words_red_stone:
 		switch (local->last_spin) {
 		case 4:
@@ -465,7 +464,6 @@ static void after_round_me() {
 
 static void after_round_him() {
 	switch (local->final_choice) {
-
 	case words_red_stone:
 		switch (local->last_spin) {
 		case 4:

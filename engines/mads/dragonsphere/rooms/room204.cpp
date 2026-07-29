@@ -94,7 +94,6 @@ static void handle_anim_king_dream() {
 		king_reset_frame = -1;
 
 		switch (local->king_frame) {
-
 			case 64: /* just before doll sequence */
 				if (global[doll_given]) {
 					king_reset_frame      = 86;

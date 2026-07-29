@@ -78,7 +78,6 @@ static void room_511_daemon() {
 		death_reset_frame = -1;
 
 		switch (local->death_frame) {
-
 		case 19:
 			if (speech_system_active && speech_on) {
 				global_speech_go(5);

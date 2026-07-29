@@ -121,7 +121,6 @@ void room_404_init() {
 	if (previous_room != KERNEL_RESTORING_GAME) {
 
 		switch (global[catacombs_from]) {
-
 		case NORTH:
 			player.x = NORTH_X;
 			player.y = NORTH_Y;

@@ -285,7 +285,6 @@ static void handle_animation_phantom() {
 		phantom_reset_frame = -1;
 
 		switch (local->phantom_frame) {
-
 		case 25:
 			conv_release();
 			break;

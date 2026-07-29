@@ -106,7 +106,6 @@ static void handle_animation_bird_1() {
 		bird_1_reset_frame = -1;
 
 		switch (local->bird_1_frame) {
-
 		case 6:
 			kernel_seq_delete(seq[fx_grapes]);
 			kernel_flip_hotspot(words_magic_grapes, false);

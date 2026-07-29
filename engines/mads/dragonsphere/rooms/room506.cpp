@@ -110,7 +110,6 @@ static void handle_animation_pid() {
 		pid_reset_frame  = -1;
 
 		switch (local->pid_frame) {
-
 		case 206:
 			kernel_seq_delete(seq[fx_feather_1]);
 			kernel_flip_hotspot_loc(words_feathers, false, FEATHER_X, FEATHER_Y);
@@ -140,7 +139,6 @@ static void handle_animation_pid() {
 		case 224:
 
 			switch (local->pid_action) {
-
 			case PID_FREEZE:
 				++local->pid_freeze_count;
 				if (local->pid_freeze_count > imath_random(30, 45)) {
@@ -174,7 +172,6 @@ static void handle_animation_pid() {
 		case 239:
 
 			switch (local->pid_action) {
-
 			case PID_FREEZE:
 				++local->pid_freeze_count;
 				if (local->pid_freeze_count > imath_random(30, 45)) {
@@ -206,7 +203,6 @@ static void handle_animation_pid() {
 		case 232:
 
 			switch (local->pid_action) {
-
 			case PID_FREEZE:
 				++local->pid_freeze_count;
 				if (local->pid_freeze_count > imath_random(30, 45)) {

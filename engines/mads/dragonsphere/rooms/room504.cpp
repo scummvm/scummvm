@@ -746,7 +746,6 @@ static void handle_animation_tom_talk() {
 		tom_talk_reset_frame  = -1;
 
 		switch (local->tom_talk_frame) {
-
 		case 25:
 		case 38:
 		case 39:

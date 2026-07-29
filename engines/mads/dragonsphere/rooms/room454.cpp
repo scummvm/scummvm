@@ -212,7 +212,6 @@ static void handle_animation_king() {
 		king_reset_frame = -1;
 
 		switch (local->king_frame) {
-
 		case 210:
 			camera_pan_to(&camera_x, 0);
 			break;

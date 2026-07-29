@@ -222,7 +222,6 @@ static void handle_animation_king() {
 		king_reset_frame = -1;
 
 		switch (local->king_frame) {
-
 		case 132:
 			king_reset_frame = 463;
 			break;

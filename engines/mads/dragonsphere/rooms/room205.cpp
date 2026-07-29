@@ -131,12 +131,10 @@ static void handle_anim_top_slime() {
 		top_slime_reset_frame = -1;
 
 		switch (local->top_slime_frame) {
-
 			case 15:
 			case 26:
 
 				switch (local->top_slime_action) {
-
 					case SHIFT:
 						if (imath_random(1, 4) == 1) {
 							top_slime_reset_frame = 17;
@@ -175,7 +173,6 @@ static void handle_anim_face() {
 		face_reset_frame = -1;
 
 		switch (local->face_frame) {
-
 			case 10:  /* almost end of hide face */
 				player.commands_allowed = true;
 				break;
@@ -184,7 +181,6 @@ static void handle_anim_face() {
 			case 11: /* end of hide face */
 
 				switch (local->face_action) {
-
 					case INVIS:
 						face_reset_frame = 0;
 						break;
@@ -206,7 +202,6 @@ static void handle_anim_face() {
 				}
 
 				switch (local->face_action) {
-
 					case FREEZE:
 						face_reset_frame = 4;
 						break;
@@ -244,12 +239,10 @@ static void handle_anim_eye() {
 		eye_reset_frame = -1;
 
 		switch (local->eye_frame) {
-
 			case 1:  /* end of invis */
 			case 3:  /* end of blink */
 
 				switch (local->eye_action) {
-
 					case BLINK:
 						if (imath_random(1, 30) == 1) {
 							eye_reset_frame = 1;

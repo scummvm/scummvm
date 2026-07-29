@@ -837,7 +837,6 @@ static void handle_anim_guard_left() {
 		guard_left_reset_frame = -1;
 
 		switch (local->guard_left_frame) {
-
 		case 18:  /* end of talk frame */
 		case 19:  /* end of talk frame */
 		case 20:  /* end of talk frame */
@@ -911,7 +910,6 @@ static void handle_anim_guard_left() {
 		case 109: /* end of take bottle          */
 
 			switch (local->guard_left_action) {
-
 			case FREEZE:
 				guard_left_reset_frame = 0;
 				break;
@@ -1043,7 +1041,6 @@ static void handle_anim_guard_right() {
 		case 80:  /* end of stand up   */
 
 			switch (local->guard_right_action) {
-
 			case HALT:
 				guard_right_reset_frame = 1;
 				local->guard_right_action = HALT_FREEZE;
@@ -1160,7 +1157,6 @@ static void handle_anim_guard_right_pid() {
 		case 82:  /* end of stand up   */
 
 			switch (local->guard_right_action) {
-
 			case HALT:
 				guard_right_reset_frame = 1;
 				local->guard_right_action = HALT_FREEZE;
@@ -1216,7 +1212,6 @@ static void handle_anim_death() {
 		death_reset_frame = -1;
 
 		switch (local->death_frame) {
-
 		case 38:
 		case 43:
 			if (speech_system_active && speech_on) {
@@ -1250,7 +1245,6 @@ static void handle_anim_pid() {
 		pid_reset_frame = -1;
 
 		switch (local->pid_frame) {
-
 		case 43:  /* almost end of take a swig (pid) */
 			conv_release();
 			break;
@@ -1284,7 +1278,6 @@ static void handle_anim_pid() {
 		case 64:  /* end of give to right   */
 
 			switch (local->pid_action) {
-
 			case FREEZE:
 				pid_reset_frame = 0;
 				break;
@@ -1368,7 +1361,6 @@ static void handle_anim_pid() {
 		case 79:  /* end of take from right */
 
 			switch (local->pid_action) {
-
 			case FREEZE:
 				pid_reset_frame = 32;
 				break;

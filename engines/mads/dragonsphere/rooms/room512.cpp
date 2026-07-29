@@ -89,7 +89,6 @@ static void handle_animation_pid() {
 		pid_reset_frame = -1;
 
 		switch (local->pid_frame) {
-
 		case 15:
 			sound_play(N_TakeObjectSnd);
 			inter_give_to_player(magic_belt);
@@ -111,7 +110,6 @@ static void handle_animation_pid() {
 		case 38:
 
 			switch (local->pid_action) {
-
 			case PID_TALK:
 				pid_reset_frame = 38;
 				local->pid_action = PID_SHUT_UP;
@@ -149,7 +147,6 @@ static void handle_animation_shak() {
 		shak_reset_frame = -1;
 
 		switch (local->shak_frame) {
-
 		case 21:
 			conv_run(CONV_33_SHAK);
 			break;
@@ -193,7 +190,6 @@ static void handle_animation_shak() {
 		case 30:
 
 			switch (local->shak_action) {
-
 			case SHAK_TALK:
 				shak_reset_frame = imath_random(27, 29);
 				++local->shak_talk_count;

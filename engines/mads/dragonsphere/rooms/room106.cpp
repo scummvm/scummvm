@@ -590,7 +590,6 @@ static void handle_animation_a_macmorn() {
 		a_mac_reset_frame = -1;
 
 		switch (local->a_mac_frame) {
-
 		case 114:
 			/* just when MacMorn and queen leave bottom of screen */
 			new_room = 614;

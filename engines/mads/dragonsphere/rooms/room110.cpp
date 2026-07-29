@@ -864,7 +864,6 @@ static void room_110_random_times(int index) {
 
 	random = imath_random(RANDOM_LOWEST_NUMBER, RANDOM_HIGHEST_NUMBER);
 	switch (random) {
-
 	case RANDOM_LOWEST_NUMBER:
 		local->switch_direction[index] = TIME_TO_MOVE_1;
 		break;
@@ -1840,7 +1839,6 @@ static void handle_conv_guard_heal() {
 
 static void room_110_check_score() {
 	switch (global[talked_to_status]) {
-
 	case TALKED_TO_NONE:
 		if (local->talking_to == FAERIE) {
 			global[talked_to_status] = TALKED_FAERIE;

@@ -780,7 +780,6 @@ static void handle_anim_frog_2() {
 		case 9:
 
 			switch (local->frog_2_action) {
-
 				case FREEZE:
 					it = imath_random(1, 3);
 					switch (it) {

@@ -320,7 +320,6 @@ static int inter_get_spot(int class_, int id, int *x1, int *y1, int *xs, int *ys
 	valid_flag = false;
 
 	switch (class_) {
-
 	case STROKE_COMMAND:
 		row = id % inter_columns;
 		col = id / inter_columns;
@@ -1583,11 +1582,9 @@ static void inter_analyze_stroke() {
 	}
 
 	switch (inter_awaiting) {
-
 	case AWAITING_COMMAND:
 		inter_prep = PREP_NONE;
 		switch (stroke_type) {
-
 		case STROKE_COMMAND:
 			inter_command_source = STROKE_COMMAND;
 			inter_command = picked_word;
@@ -1698,10 +1695,8 @@ static void inter_complete_stroke() {
 	}
 
 	switch (inter_awaiting) {
-
 	case AWAITING_COMMAND:
 		switch (stroke_type) {
-
 		case STROKE_COMMAND:
 			if (inter_command >= 0) {
 				if (inter_verb_type == VERB_ONLY) {
@@ -1762,7 +1757,6 @@ static void inter_complete_stroke() {
 
 	case AWAITING_THIS:
 		switch (stroke_type) {
-
 		case STROKE_INVEN:
 		case STROKE_INTERFACE:
 		case STROKE_SPECIAL_INVEN:

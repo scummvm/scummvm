@@ -246,7 +246,6 @@ static void handle_animation_pid() {
 			}
 
 			switch (local->pid_action) {
-
 			case PID_NOTHING:
 				pid_reset_frame = 46; /* freeze */
 				break;
@@ -291,7 +290,6 @@ static void handle_animation_king() {
 		king_reset_frame = -1;
 
 		switch (local->king_frame) {
-
 		case 8:
 			/* king looking up staircase at Pid */
 			if (local->king_action == KING_FACE_UP_STAIRS) {
@@ -327,7 +325,6 @@ static void room_119_daemon() {
 		(global[books_status] == BOOKS_PULLED2)) {
 
 		switch (kernel.trigger) {
-
 		case ROOM_119_WOOD_DOOR:
 			player.commands_allowed = false;
 			seq[fx_door_room] = kernel_seq_forward(ss[fx_door_room], false, 6, 0, 0, 1);
@@ -495,7 +492,6 @@ static void room_119_parser() {
 			text_show(11913);
 
 		} else switch (kernel.trigger) {
-
 		case 0:
 			sound_play(N_InvokeCrystalBall);
 			player.commands_allowed = false;

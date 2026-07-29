@@ -217,7 +217,6 @@ void room_111_daemon() {
 
 
 	switch (kernel.trigger) {
-
 	case ROOM_111_MADE_IT_OUT_DOOR:
 		kernel_seq_delete(seq[fx_door]);
 		seq[fx_door] = kernel_seq_backward(ss[fx_door], false, 7, 0, 0, 1);

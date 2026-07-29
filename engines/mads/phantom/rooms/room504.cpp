@@ -1056,7 +1056,6 @@ static void handle_animation_phantom_1() {
 		phan_reset_frame = -1;
 
 		switch (local->phan_frame) {
-
 		case 52: /* end of just as phantom comes into room (same for next 3) */
 		case 53: /* Here, we'll wait for a few lines to be exchanged         */
 		case 54:
@@ -1181,7 +1180,6 @@ static void handle_animation_phantom_2() {
 		phan_reset_frame = -1;
 
 		switch (local->phan_frame) {
-
 		case 78:
 			global_speech(speech_phantom_cackle);
 			break;
@@ -1248,7 +1246,6 @@ static void handle_animation_phantom_3() {
 		phan_reset_frame = -1;
 
 		switch (local->phan_frame) {
-
 		case 58:
 			player.commands_allowed = true;
 			break;
@@ -1300,7 +1297,6 @@ static void handle_animation_chair() {
 		chair_reset_frame = -1;
 
 		switch (local->chair_frame) {
-
 		case 24:
 			player.commands_allowed = true;
 			break;

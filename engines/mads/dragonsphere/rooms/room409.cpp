@@ -708,7 +708,6 @@ static void room_409_parser() {
 		if (seq[fx_death_n] == -1 && seq[fx_death_s] == -1 && seq[fx_death_ew] == -1) {
 
 			switch (local->facing) {
-
 			case FACING_NORTH:
 				temp      = seq[fx_n];
 				seq[fx_n] = kernel_seq_stamp(ss[fx_n], false, 13);
@@ -793,7 +792,6 @@ static void room_409_parser() {
 
 	case ROOM_409_TURN:
 		switch (local->old_facing) {
-
 		case FACING_NORTH:
 			kernel_seq_delete(seq[fx_n]);
 			switch (local->facing) {

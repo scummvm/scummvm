@@ -246,7 +246,6 @@ static void handle_anim_wise() {
 		wise_reset_frame  = -1;
 
 		switch (local->wise_frame) {
-
 		case 57:
 			player.commands_allowed = false;
 			player.walker_visible   = false;

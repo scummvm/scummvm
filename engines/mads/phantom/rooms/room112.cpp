@@ -91,7 +91,6 @@ static void handle_animation_julie_practice() {
 		case 107:  /* end of turning left (facing camera) */
 
 			switch (local->julie_action) {
-
 			case CONV3_JULIE_PRACTICE:
 				random = imath_random(1, 3);
 				while (local->just_did_option == random) {

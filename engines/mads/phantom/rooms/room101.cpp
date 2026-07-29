@@ -160,7 +160,6 @@ static void handle_animation_000() {
 		local->brie_calling_frame = kernel_anim[aa[0]].frame;
 		reset_frame = -1;
 		switch (local->brie_calling_frame) {
-
 			/* Choices while Brie has his hand up */
 
 		case 1:   /* end of arms at side */
@@ -250,7 +249,6 @@ static void handle_animation_001() {
 		local->brie_chandelier_frame = kernel_anim[aa[1]].frame;
 		reset_frame = -1;
 		switch (local->brie_chandelier_frame) {
-
 			/* Choices while Brie is sitting on armrest */
 
 		case 1:     /* end of freezing in standing position */
@@ -290,7 +288,6 @@ static void handle_animation_001() {
 			}
 
 			switch (local->brie_chandelier_position) {
-
 			case CONV1_BRIE_SHOULD_TALK:
 				random = imath_random(1, 3); /* between 4 talking movements */
 				++local->talk_count;         /* run through so many talk cycles  */

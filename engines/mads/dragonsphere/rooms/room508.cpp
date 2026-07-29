@@ -132,7 +132,6 @@ static void handle_animation_lani() {
 		lani_reset_frame = -1;
 
 		switch (local->lani_frame) {
-
 		case 25:
 			lani_reset_frame = 24;
 			break;
@@ -146,7 +145,6 @@ static void handle_animation_lani() {
 				lani_reset_frame = 0;
 
 			} else switch (local->lani_action) {
-
 			case LANI_TALK:
 				random = imath_random(1, 2);
 				if (random == 1) {
@@ -180,7 +178,6 @@ static void handle_animation_lani() {
 				lani_reset_frame = 19;
 
 			} else switch (local->lani_action) {
-
 			case LANI_TALK:
 				lani_reset_frame = 19;
 				break;
@@ -218,7 +215,6 @@ static void handle_animation_beast() {
 		beast_reset_frame = -1;
 
 		switch (local->beast_frame) {
-
 		case 40:
 			if (local->beast_action == BEAST_INVISIBLE) {
 				beast_reset_frame = 39;
@@ -289,7 +285,6 @@ static void handle_animation_king_choice() {
 		king_reset_frame = -1;
 
 		switch (local->king_frame) {
-
 		case 21:
 			if (local->king_action == KING_INVISIBLE) {
 				king_reset_frame = 20;

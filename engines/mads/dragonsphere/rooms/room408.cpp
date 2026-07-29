@@ -189,7 +189,6 @@ static void handle_animation_shaman_1() {
 		shaman_1_reset_frame = -1;
 
 		switch (local->shaman_1_frame) {
-
 		case 40: /* end of invisible */
 			shaman_1_reset_frame = 39;
 			break;

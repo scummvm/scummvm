@@ -1045,7 +1045,6 @@ dispatch:
 			pSrc++;   /* skip command byte */
 
 			switch (di) {
-
 			case 0x0: /* set sampleIndex, call loadSample */
 				ch->_sampleIndex = *pSrc;
 				loadSample();
@@ -1182,7 +1181,6 @@ op2_set_vol:
 			 * themselves are responsible for updating _pSrc).
 			 * ============================================================ */
 			switch (di) {
-
 			case 0x0: /* inner loop */
 			{
 				ch = _activeChannelPtr;
@@ -1323,7 +1321,6 @@ op2_set_vol:
 			 * incremented pSrc; each case increments pSrc itself as needed.
 			 * ============================================================ */
 			switch (di) {
-
 			case 0x0: /* random pick from packed table -> write to stream */
 			{
 				/* Format: [cmd] [tblSize] [entry0..N-1] [targetSlot]
@@ -1458,7 +1455,6 @@ op2_set_vol:
 			 * Switch on di (0-4); di >= 5 falls through to return.
 			 * ============================================================ */
 			switch (di) {
-
 			case 0x0: /* var[dst] = imm */
 			{
 				pSrc++;

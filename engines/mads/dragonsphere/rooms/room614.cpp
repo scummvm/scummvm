@@ -353,7 +353,6 @@ static void handle_animation_king_enter() {
 		king_enter_reset_frame = -1;
 
 		switch (local->king_enter_frame) {
-
 		case 25:  /* almost end of king coming into room */
 			local->wiz_float_action = TALK;
 			break;

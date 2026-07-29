@@ -999,7 +999,6 @@ dispatch:
 			if ((uint16)ax > 65) goto dispatch;  /* unknown - skip */
 
 			switch (ax) {
-
 				/* ---- opcode -1  (0xFF): inner loop ---- */
 			case 65:
 			{

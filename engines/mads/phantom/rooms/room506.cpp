@@ -395,7 +395,6 @@ done:
 
 void room_506_daemon() {
 	switch (kernel.trigger) {
-
 	case ROOM_506_DONE_GOING_DOWN:
 		player.walker_visible = true;
 		player.commands_allowed = true;

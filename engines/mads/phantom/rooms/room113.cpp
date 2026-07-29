@@ -321,7 +321,6 @@ static void handle_animation_4_raoul() {
 		raoul_reset_frame  = -1;
 
 		switch (local->raoul_frame) {
-
 		case 9:    /* end of first open mouth  and freeze */
 		case 10:   /* end of second open mouth */
 		case 11:   /* end of third open mouth  */
@@ -333,7 +332,6 @@ static void handle_animation_4_raoul() {
 			}
 
 			switch (local->raoul_action) {
-
 			case CONV4_RAOUL_TAKE_NOTE:
 				raoul_reset_frame   = 20;
 				local->raoul_action = CONV4_RAOUL_SHUT_UP;
@@ -372,7 +370,6 @@ static void handle_animation_4_raoul() {
 		case 42:   /* end of getting up */
 
 			switch (local->raoul_action) {
-
 			case CONV4_RAOUL_GET_UP:
 				if (!local->prevent_2) {
 					conv_release();
@@ -474,7 +471,6 @@ static void handle_animation_6_julie() {
 		julie_reset_frame  = -1;
 
 		switch (local->julie_frame) {
-
 		case 1:    /* end of talk 1 */
 		case 2:    /* end of talk 2 */
 		case 3:    /* end of talk 3 */
@@ -955,7 +951,6 @@ void room_113_daemon() {
 
 static void process_conversation_dead() {
 	switch (kernel.trigger) {
-
 	/* =================== Process talking triggers ================ */
 
 	case ROOM_113_JULIE_START_TALKING:

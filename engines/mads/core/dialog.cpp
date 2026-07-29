@@ -867,7 +867,6 @@ static void dialog_compute_window(DialogPtr dialog) {
 		}
 
 		switch (item->type) {
-
 		case DD_I_LIST:
 		case DD_I_FILELIST:
 		case DD_I_DIRSLIST:
@@ -2837,7 +2836,6 @@ ItemPtr dialog_execute(DialogPtr dialog, ItemPtr active_item, ItemPtr default_bu
 							dialog_update_active(dialog, count - dialog->active_item, false, false);
 							item = &dialog->item[dialog->active_item];
 							switch (item->type) {
-
 							case DD_I_BUTTON:
 								dialog->status |= DD_EXITFLAG;
 								break;
@@ -2955,7 +2953,6 @@ ItemPtr dialog_execute(DialogPtr dialog, ItemPtr active_item, ItemPtr default_bu
 							dialog_update_active(dialog, count - dialog->active_item, false, false);
 							item = &dialog->item[dialog->active_item];
 							switch (item->type) {
-
 							case DD_I_BUTTON:
 								dialog->status |= DD_EXITFLAG;
 								break;

@@ -1431,7 +1431,6 @@ void conv_update(bool flag) {
 	ConvData *my_conv_data = conv_data[slot];
 
 	switch (conv_control.status) {
-
 	// ------------------------------------------------------------------
 	// Mode 0 — NEXT_NODE
 	// ------------------------------------------------------------------

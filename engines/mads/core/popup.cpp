@@ -3282,7 +3282,6 @@ PopupItem *popup_execute() {
 
 			if (!popup->key_handled) {
 				switch (popup->key) {
-
 				case alt_x_key:
 				case alt_q_key:
 				case ctrl_q_key:

@@ -267,7 +267,6 @@ static void handle_animation_queen() {
 		case 45:  /* end of talk frame          */
 
 			switch (local->queen_action) {
-
 			case QUEEN_TALK:
 				queen_reset_frame = imath_random(42, 44);   /* random talk frames */
 				++local->queen_talk_count;
