@@ -55,7 +55,6 @@ void section_4_init() {
 
 void section_4_walker() {
 	char temp_buf[80];
-	int dark_background = false;
 	int no_walker = false;
 
 	sound_queue(N_NoiseFade);
@@ -68,10 +67,6 @@ void section_4_walker() {
 		global[perform_displacements] = true;
 	}
 
-	if (new_room == 603) {
-		dark_background = false;
-	}
-
 	if (no_walker || global[no_load_walker]) {
 		player.series_name[0] = 0;
 	} else if (!player.force_series) {
@@ -80,11 +75,10 @@ void section_4_walker() {
 		} else {
 			Common::strcpy_s(player.series_name, "PD");
 		}
-		if (dark_background)
-			Common::strcat_s(player.series_name, "D");
 	}
 
-	if (strcmp(temp_buf, player.series_name) != 0) player.walker_must_reload = true;
+	if (strcmp(temp_buf, player.series_name) != 0)
+		player.walker_must_reload = true;
 
 	player.scaling_velocity = true;
 }

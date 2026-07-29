@@ -338,14 +338,10 @@ static void handle_animation_king_choice() {
 }
 
 static void handle_animation_king_aside() {
-	int king_reset_frame;
-
 	if (kernel_anim[aa[3]].frame != local->king_frame_aside) {
 		local->king_frame_aside = kernel_anim[aa[3]].frame;
-		king_reset_frame = -1;
 
 		switch (local->king_frame_aside) {
-
 		case 20:
 			kernel_reset_animation(aa[0], 24);
 			kernel_synch(KERNEL_ANIM, aa[0], KERNEL_ANIM, aa[3]);
@@ -357,23 +353,14 @@ static void handle_animation_king_aside() {
 			kernel_synch(KERNEL_ANIM, aa[2], KERNEL_ANIM, aa[3]);
 			break;
 		}
-
-		if (king_reset_frame >= 0) {
-			kernel_reset_animation(aa[3], king_reset_frame);
-			local->king_frame_aside = king_reset_frame;
-		}
 	}
 }
 
 static void handle_animation_king_cliff() {
-	int king_reset_frame;
-
 	if (kernel_anim[aa[4]].frame != local->king_frame_cliff) {
 		local->king_frame_cliff = kernel_anim[aa[4]].frame;
-		king_reset_frame = -1;
 
 		switch (local->king_frame_cliff) {
-
 		case 35:
 			global_speech_go(3);
 			break;
@@ -399,11 +386,6 @@ static void handle_animation_king_cliff() {
 			local->king_action = KING_INVISIBLE;
 			kernel_synch(KERNEL_ANIM, aa[2], KERNEL_ANIM, aa[4]);
 			break;
-		}
-
-		if (king_reset_frame >= 0) {
-			kernel_reset_animation(aa[4], king_reset_frame);
-			local->king_frame_cliff = king_reset_frame;
 		}
 	}
 }

@@ -239,14 +239,10 @@ static void set_stone_position() {
 }
 
 static void handle_anim_up() {
-	int up_reset_frame;
-
 	if (kernel_anim[aa[0]].frame != local->up_frame) {
 		local->up_frame = kernel_anim[aa[0]].frame;
-		up_reset_frame = -1;
 
 		switch (local->up_frame) {
-
 		case 290:
 			camera_pan_to(&camera_y, picture_view_y - 155);
 			break;
@@ -274,8 +270,8 @@ static void handle_anim_up() {
 			kernel_abort_animation(aa[0]);
 			local->on_floor         = 3;
 			local->anim_0_running   = false;
+
 			player.walker_visible   = true;
-			up_reset_frame          = -1;
 			player_demand_location(KING_TOP_ELEV_X, KING_TOP_ELEV_Y);
 			player_demand_facing(FACING_SOUTH);
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
@@ -302,7 +298,7 @@ static void handle_anim_up() {
 			local->anim_0_running   = false;
 			player.walker_visible   = true;
 			player.commands_allowed = true;
-			up_reset_frame          = -1;
+
 			player_demand_location(KING_MIDDLE_ELEV_X, KING_MIDDLE_ELEV_Y);
 			player_demand_facing(FACING_SOUTH);
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
@@ -316,23 +312,14 @@ static void handle_anim_up() {
 			kernel_timing_trigger(TENTH_SECOND, ROOM_606_LOAD_VARIANT);
 			break;
 		}
-
-		if (up_reset_frame >= 0) {
-			kernel_reset_animation(aa[0], up_reset_frame);
-			local->up_frame = up_reset_frame;
-		}
 	}
 }
 
 static void handle_anim_down() {
-	int down_reset_frame;
-
 	if (kernel_anim[aa[1]].frame != local->down_frame) {
 		local->down_frame = kernel_anim[aa[1]].frame;
-		down_reset_frame = -1;
 
 		switch (local->down_frame) {
-
 		case 21:
 			camera_pan_to(&camera_y, picture_view_y + 100);
 			break;
@@ -362,7 +349,7 @@ static void handle_anim_down() {
 			local->anim_1_running   = false;
 			player.walker_visible   = true;
 			player.commands_allowed = true;
-			down_reset_frame        = -1;
+
 			player_demand_location(KING_MIDDLE_ELEV_X, KING_MIDDLE_ELEV_Y);
 			player_demand_facing(FACING_SOUTH);
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
@@ -383,7 +370,7 @@ static void handle_anim_down() {
 			local->anim_1_running   = false;
 			player.walker_visible   = true;
 			player.commands_allowed = true;
-			down_reset_frame        = -1;
+
 			player_demand_location(KING_BOTTOM_ELEV_X, KING_BOTTOM_ELEV_Y);
 			player_demand_facing(FACING_SOUTH);
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
@@ -397,20 +384,12 @@ static void handle_anim_down() {
 			kernel_timing_trigger(TENTH_SECOND, ROOM_606_LOAD_VARIANT);
 			break;
 		}
-
-		if (down_reset_frame >= 0) {
-			kernel_reset_animation(aa[1], down_reset_frame);
-			local->down_frame = down_reset_frame;
-		}
 	}
 }
 
 static void handle_anim_suction() {
-	int suction_reset_frame;
-
 	if (kernel_anim[aa[3]].frame != local->suction_frame) {
 		local->suction_frame = kernel_anim[aa[3]].frame;
-		suction_reset_frame = -1;
 
 		switch (local->suction_frame) {
 		case 11:
@@ -425,17 +404,12 @@ static void handle_anim_suction() {
 			object_examine(teleport_door, 60629, 0);
 			kernel_abort_animation(aa[3]);
 			global[player_score]    += 1;
-			suction_reset_frame     = -1;
+
 			player.commands_allowed = true;
 			player.walker_visible   = true;
 			local->anim_3_running   = false;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			break;
-		}
-
-		if (suction_reset_frame >= 0) {
-			kernel_reset_animation(aa[3], suction_reset_frame);
-			local->suction_frame = suction_reset_frame;
 		}
 	}
 }

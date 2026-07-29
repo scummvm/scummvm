@@ -191,14 +191,10 @@ static void handle_animation_rope() {
 }
 
 static void handle_animation_rat() {
-	int rat_reset_frame;
-
 	if (kernel_anim[aa[1]].frame != local->rat_frame) {
 		local->rat_frame = kernel_anim[aa[1]].frame;
-		rat_reset_frame = -1;
 
 		switch (local->rat_frame) {
-
 		case 1:
 			kernel_seq_delete(seq[fx_lid_closed]);
 			break;
@@ -211,17 +207,11 @@ static void handle_animation_rat() {
 
 		case 50:
 			local->anim_1_running = false;
-			rat_reset_frame       = -1;
 			seq[fx_lid_open]      = kernel_seq_stamp(ss[fx_lid_open], false, KERNEL_FIRST);
 			kernel_seq_depth(seq[fx_lid_open], 2);
 			text_show(60569);
 			kernel_flip_hotspot(words_dead_rat, true);
 			break;
-		}
-
-		if (rat_reset_frame >= 0) {
-			kernel_reset_animation(aa[1], rat_reset_frame);
-			local->rat_frame = rat_reset_frame;
 		}
 	}
 }

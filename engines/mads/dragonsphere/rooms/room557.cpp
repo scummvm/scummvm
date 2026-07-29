@@ -75,15 +75,12 @@ static void room_557_init() {
 }
 
 static void room_557_daemon() {
-	int king_reset_frame;
-
 	if (kernel.trigger == ROOM_557_ROCK_SOUND) {
 		sound_play(N_RockClatter);
 	}
 
 	if (kernel_anim[aa[0]].frame != local->king_frame) {
 		local->king_frame = kernel_anim[aa[0]].frame;
-		king_reset_frame = -1;
 
 		switch (local->king_frame) {
 		case 153:
@@ -103,11 +100,6 @@ static void room_557_daemon() {
 		case 254:
 			new_room = 508;
 			break;
-		}
-
-		if (king_reset_frame >= 0) {
-			kernel_reset_animation(aa[0], king_reset_frame);
-			local->king_frame = king_reset_frame;
 		}
 	}
 }

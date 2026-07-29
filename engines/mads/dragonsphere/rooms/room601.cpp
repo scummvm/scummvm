@@ -207,11 +207,8 @@ static void clear_all() {
 }
 
 static void handle_animation_king_0() {
-	int16 king_0_reset_frame;
-
 	if (kernel_anim[aa[0]].frame != local->king_0_frame) {
 		local->king_0_frame = kernel_anim[aa[0]].frame;
-		king_0_reset_frame = -1;
 
 		switch (local->king_0_frame) {
 		case 71:
@@ -237,16 +234,11 @@ static void handle_animation_king_0() {
 			aa[1]                 = kernel_run_animation(kernel_name('v', 2), 0);
 			local->anim_1_running = true;
 			local->king_1_action  = STRUGGLE;
-			king_0_reset_frame    = -1;
+
 			kernel_synch(KERNEL_ANIM, aa[1], KERNEL_NOW, 0);
 			kernel_reset_animation(aa[1], 71);
 			kernel_timing_trigger(ONE_SECOND, 1);
 			break;
-		}
-
-		if (king_0_reset_frame >= 0) {
-			kernel_reset_animation(aa[0], king_0_reset_frame);
-			local->king_0_frame = king_0_reset_frame;
 		}
 	}
 }
@@ -324,11 +316,8 @@ static void handle_animation_king_1() {
 }
 
 static void handle_animation_king_2() {
-	int16 king_2_reset_frame;
-
 	if (kernel_anim[aa[6]].frame != local->king_2_frame) {
 		local->king_2_frame = kernel_anim[aa[6]].frame;
-		king_2_reset_frame = -1;
 
 		switch (local->king_2_frame) {
 		case 10:
@@ -361,11 +350,6 @@ static void handle_animation_king_2() {
 			kernel_seq_range(seq[fx_door], KERNEL_FIRST, KERNEL_LAST);
 			kernel_seq_trigger(seq[fx_door], KERNEL_TRIGGER_EXPIRE, 0, ROOM_601_DOOR_OPENS);
 			break;
-		}
-
-		if (king_2_reset_frame >= 0) {
-			kernel_reset_animation(aa[6], king_2_reset_frame);
-			local->king_2_frame = king_2_reset_frame;
 		}
 	}
 }

@@ -179,11 +179,8 @@ static void room_607_init() {
 }
 
 static void handle_animation_pour() {
-	int pour_reset_frame;
-
 	if (kernel_anim[aa[0]].frame != local->pour_frame) {
 		local->pour_frame = kernel_anim[aa[0]].frame;
-		pour_reset_frame = -1;
 
 		switch (local->pour_frame) {
 		case 10:
@@ -203,11 +200,6 @@ static void handle_animation_pour() {
 			player.walker_visible = true;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_ANIM, aa[0]);
 			break;
-		}
-
-		if (pour_reset_frame >= 0) {
-			kernel_reset_animation(aa[0], pour_reset_frame);
-			local->pour_frame = pour_reset_frame;
 		}
 	}
 }

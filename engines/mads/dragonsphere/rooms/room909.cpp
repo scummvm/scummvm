@@ -176,7 +176,7 @@ static void room_909_daemon() {
 	// text can substitute the values via [INDEX N] commands.
 	// text_index[0] = current score 
 	// text_index[1] = maximum score
-	// text_index[2] = rank tier 1-9
+	// text_index[2] = rank tier 1-8
 	text_index[1] = 250;
 	text_index[0] = score;
 
@@ -189,8 +189,7 @@ static void room_909_daemon() {
 	else if (score <= 150) tier = 5;
 	else if (score <= 200) tier = 6;
 	else if (score <= 249) tier = 7;
-	else if (score <= 250) tier = 8;  // exactly 250
-	else                   tier = 9;  // unreachable in normal play
+	else tier = 8;  // exactly 250
 
 	text_index[2] = tier;
 

@@ -167,49 +167,29 @@ static void room_609_init() {
 }
 
 static void handle_animation_king() {
-	int king_reset_frame;
-
 	if (kernel_anim[aa[0]].frame != local->king_frame) {
 		local->king_frame = kernel_anim[aa[0]].frame;
-		king_reset_frame = -1;
 
-		switch (local->king_frame) {
-		case 21:
+		if (local->king_frame == 21) {
 			seq[fx_torch] = kernel_seq_forward(ss[fx_torch], false, 6, 0, 0, 0);
 			kernel_seq_depth(seq[fx_torch], 2);
 			kernel_seq_range(seq[fx_torch], KERNEL_FIRST, KERNEL_LAST);
 			inter_move_object(torch, 509);
-			break;
-		}
-
-		if (king_reset_frame >= 0) {
-			kernel_reset_animation(aa[0], king_reset_frame);
-			local->king_frame = king_reset_frame;
 		}
 	}
 }
 
 static void handle_animation_down() {
-	int down_reset_frame;
-
 	if (kernel_anim[aa[1]].frame != local->down_frame) {
 		local->down_frame = kernel_anim[aa[1]].frame;
-		down_reset_frame = -1;
 
-		switch (local->down_frame) {
-		case 45:
+		if (local->down_frame == 45) {
 			kernel_seq_delete(seq[fx_stone_gone]);
 			kernel_flip_hotspot(words_powerstone, false);
 			global[player_score] += 5;
 			sound_play(N_TakeObjectSnd);
 			inter_give_to_player(blue_powerstone);
 			object_examine(blue_powerstone, 60922, 0);
-			break;
-		}
-
-		if (down_reset_frame >= 0) {
-			kernel_reset_animation(aa[1], down_reset_frame);
-			local->down_frame = down_reset_frame;
 		}
 	}
 }

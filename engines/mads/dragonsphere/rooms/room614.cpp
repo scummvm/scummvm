@@ -907,11 +907,8 @@ static void handle_animation_wiz_ice() {
 }
 
 static void handle_animation_wiz_end() {
-	int wiz_end_reset_frame;
-
 	if (kernel_anim[aa[7]].frame != local->wiz_end_frame) {
 		local->wiz_end_frame = kernel_anim[aa[7]].frame;
-		wiz_end_reset_frame = -1;
 
 		switch (local->wiz_end_frame) {
 		case 10: /* just threw stone */
@@ -965,11 +962,6 @@ static void handle_animation_wiz_end() {
 			text_show(61437);
 			/* go to cut scene */
 			break;
-		}
-
-		if (wiz_end_reset_frame >= 0) {
-			kernel_reset_animation(aa[7], wiz_end_reset_frame);
-			local->wiz_end_frame = wiz_end_reset_frame;
 		}
 	}
 }
