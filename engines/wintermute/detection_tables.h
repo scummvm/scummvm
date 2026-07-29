@@ -1813,15 +1813,20 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("german.dcp", "606c048426dfbe94442b59fd34a5c76e", 14339496,
 					"data.dcp", "7074bcd7bc7ad7eb04c271aafb964c32", 13815660), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
-	// Looky (English)
-	WME_WINENTRY("looky", "",
-		WME_ENTRY2s("english.dcp", "71ed521b7a1d1a23c3805c26f16de2b9", 245968038,
-					"data.dcp", "d0f2bb73425db45fcff6690637c430dd", 1342439), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
-
-	// Looky (German)
-	WME_WINENTRY("looky", "",
+	// Looky (German) (2007)
+	WME_WINENTRY("looky", "Original Release",
 		WME_ENTRY2s("german.dcp", "bf4c2b8c26342342441a6d64934ab832", 107027865,
 					"data.dcp", "50de0beaa5ad621aa9f020df901d1e74", 1342214), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Looky (German) (2019)
+	WME_WINENTRY("looky", "2019 Release",
+		WME_ENTRY2s("german.dcp", "607c07e94a05c5eef3ea8d699292da1c", 351431200,
+					"data.dcp", "d0f2bb73425db45fcff6690637c430dd", 1342439), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Looky (English) (2019)
+	WME_WINENTRY("looky", "2019 Release",
+		WME_ENTRY2s("english.dcp", "71ed521b7a1d1a23c3805c26f16de2b9", 245968038,
+					"data.dcp", "d0f2bb73425db45fcff6690637c430dd", 1342439), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Limbo of the Lost (English)
 	WME_WINENTRY("lotl", "",
