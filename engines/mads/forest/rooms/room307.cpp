@@ -177,11 +177,12 @@ static void room_307_anim2() {
 }
 
 static void room_307_anim3() {
-	int16 var_4 = -1;
 	int16 cur = kernel_anim[aa[2]].frame;
 	if (cur == aainfo[2]._frame)
 		return;
+
 	aainfo[2]._frame = cur;
+
 	if (scratch._ac != 0) {
 		if (cur == 31) {
 			digi_play_build(307, '_', 2, 2);
@@ -228,10 +229,6 @@ static void room_307_anim3() {
 		default:
 			break;
 		}
-	}
-	if (var_4 >= 0) {
-		kernel_reset_animation(aa[2], var_4);
-		aainfo[2]._frame = var_4;
 	}
 }
 
@@ -386,7 +383,7 @@ static void room_307_anim5() {
 }
 
 static void room_307_anim7() {
-	int16 result = -1;
+	int16 newFrame = -1;
 	int16 var_2;
 	int16 cur = kernel_anim[aa[6]].frame;
 	if (cur == aainfo[6]._frame)
@@ -394,82 +391,77 @@ static void room_307_anim7() {
 	aainfo[6]._frame = cur;
 
 	bool dispatch = (cur == 1) || (cur >= 3 && cur <= 12) || (cur == 15);
-	if (!dispatch) {
-		if (result >= 0) {
-			kernel_reset_animation(aa[6], result);
-			aainfo[6]._frame = result;
-		}
-		return;
-	}
 
-	switch (aainfo[6]._val3) {
-	case 0:
-	case 3:
-	case 4:
-		if (cur >= 8 && cur <= 12) {
-			aainfo[6]._val4++;
-			if (imath_random(1, 6) < aainfo[6]._val4) {
-				digi_play_build(307, '_', 4, 2);
-				result = 0;
-				aainfo[6]._val4 = 0;
-				if (scratch._b0 != 0) {
-					player.commands_allowed = true;
-					scratch._b0 = 0;
+	if (dispatch) {
+		switch (aainfo[6]._val3) {
+		case 0:
+		case 3:
+		case 4:
+			if (cur >= 8 && cur <= 12) {
+				aainfo[6]._val4++;
+				if (imath_random(1, 6) < aainfo[6]._val4) {
+					digi_play_build(307, '_', 4, 2);
+					newFrame = 0;
+					aainfo[6]._val4 = 0;
+					if (scratch._b0 != 0) {
+						player.commands_allowed = true;
+						scratch._b0 = 0;
+					}
+					if (aainfo[6]._val3 == 4) {
+						aainfo[6]._val3 = 0;
+						scratch._aa++;
+						kernel_timing_trigger(1, 28);
+					}
+				} else {
+					do {
+						newFrame = imath_random(7, 11);
+					} while (aainfo[6]._frame == newFrame + 1);
+				}
+			} else {
+				aainfo[6]._val4++;
+				if (imath_random(10, 20) < aainfo[6]._val4) {
+					aainfo[6]._val4 = 0;
+					var_2 = imath_random(2, 4);
+				} else {
+					var_2 = 3;
+				}
+				if (aainfo[6]._val3 == 3) {
+					var_2 = 1;
+					aainfo[6]._val3 = 0;
+					aainfo[6]._val4 = 0;
 				}
 				if (aainfo[6]._val3 == 4) {
-					aainfo[6]._val3 = 0;
-					scratch._aa++;
-					kernel_timing_trigger(1, 28);
+					var_2 = 1;
+					aainfo[6]._val4 = 0;
 				}
-			} else {
-				do {
-					result = imath_random(7, 11);
-				} while (aainfo[6]._frame == result + 1);
+				switch (var_2) {
+				case 1:
+					newFrame = imath_random(7, 11);
+					digi_play_build(307, '_', 1, 2);
+					break;
+				case 2:
+					newFrame = 1;
+					break;
+				default:
+					newFrame = 0;
+					break;
+				}
 			}
-		} else {
-			aainfo[6]._val4++;
-			if (imath_random(10, 20) < aainfo[6]._val4) {
-				aainfo[6]._val4 = 0;
-				var_2 = imath_random(2, 4);
-			} else {
-				var_2 = 3;
-			}
-			if (aainfo[6]._val3 == 3) {
-				var_2 = 1;
-				aainfo[6]._val3 = 0;
-				aainfo[6]._val4 = 0;
-			}
-			if (aainfo[6]._val3 == 4) {
-				var_2 = 1;
-				aainfo[6]._val4 = 0;
-			}
-			switch (var_2) {
-			case 1:
-				result = imath_random(7, 11);
-				digi_play_build(307, '_', 1, 2);
-				break;
-			case 2:
-				result = 1;
-				break;
-			default:
-				result = 0;
-				break;
-			}
+			break;
+		case 1:
+			newFrame = imath_random(3, 6);
+			break;
+		case 2:
+			newFrame = 14;
+			break;
+		default:
+			break;
 		}
-		break;
-	case 1:
-		result = imath_random(3, 6);
-		break;
-	case 2:
-		result = 14;
-		break;
-	default:
-		break;
 	}
 
-	if (result >= 0) {
-		kernel_reset_animation(aa[6], result);
-		aainfo[6]._frame = result;
+	if (newFrame >= 0) {
+		kernel_reset_animation(aa[6], newFrame);
+		aainfo[6]._frame = newFrame;
 	}
 }
 
@@ -487,10 +479,10 @@ static void room_307_anim9() {
 }
 
 static void room_307_anim10() {
-	int16 result = -1;
 	int16 cur = kernel_anim[aa[9]].frame;
 	if (cur == aainfo[9]._frame)
 		return;
+
 	aainfo[9]._frame = cur;
 	switch (cur) {
 	case 3:
@@ -509,10 +501,6 @@ static void room_307_anim10() {
 	}
 	default:
 		break;
-	}
-	if (result >= 0) {
-		kernel_reset_animation(aa[9], result);
-		aainfo[9]._frame = result;
 	}
 }
 

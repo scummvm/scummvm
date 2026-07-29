@@ -138,8 +138,6 @@ static void room_220_anim1() {
 }
 
 static void room_220_anim2() {
-	int16 result = -1;
-
 	if (kernel_anim[aa[1]].frame == aainfo[1]._frame)
 		return;
 	aainfo[1]._frame = kernel_anim[aa[1]].frame;
@@ -171,11 +169,6 @@ static void room_220_anim2() {
 		break;
 	default:
 		break;
-	}
-
-	if (result >= 0) {
-		aainfo[1]._frame = result;
-		kernel_reset_animation(aa[1], result);
 	}
 }
 

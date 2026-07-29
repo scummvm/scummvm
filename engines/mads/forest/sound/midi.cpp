@@ -51,18 +51,12 @@ MidiPlayer::~MidiPlayer() {
 
 	Common::StackLock lock(_mutex);
 
-	if (_parser) {
-		delete _parser;
-		_parser = nullptr;
-	}
-	if (_data) {
-		delete[] _data;
-		_data = nullptr;
-	}
-	if (_driver) {
-		delete _driver;
-		_driver = nullptr;
-	}
+	delete _parser;
+	_parser = nullptr;
+	delete[] _data;
+	_data = nullptr;
+	delete _driver;
+	_driver = nullptr;
 }
 
 int MidiPlayer::open() {

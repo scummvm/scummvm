@@ -153,7 +153,6 @@ static void room_322_init1() {
 }
 
 static void room_322_anim2() {
-	int16 result = -1;
 	int16 seq_handle;
 
 	int16 cur = kernel_anim[aa[2]].frame;
@@ -209,11 +208,6 @@ static void room_322_anim2() {
 			scratch._b4 = -1;
 		}
 	}
-
-	if (result >= 0) {
-		kernel_reset_animation(aa[2], result);
-		aainfo[2]._val3 = result;
-	}
 }
 
 static void room_322_anim3() {
@@ -232,7 +226,6 @@ static void room_322_anim3() {
 }
 
 static void room_322_anim4() {
-	int16 result = -1;
 	int16 var_2;
 
 	int16 cur = kernel_anim[aa[9]].frame;
@@ -253,11 +246,6 @@ static void room_322_anim4() {
 			digi_play_build(307, 'r', 2, 1);
 			scratch._b4 = -1;
 		}
-	}
-
-	if (result >= 0) {
-		kernel_reset_animation(aa[9], result);
-		aainfo[9]._val3 = result;
 	}
 }
 
@@ -305,8 +293,6 @@ static void room_322_anim6() {
 }
 
 static void room_322_anim7() {
-	int16 result = -1;
-
 	int16 cur = kernel_anim[aa[4]].frame;
 	if (cur == aainfo[4]._val3)
 		return;
@@ -317,16 +303,9 @@ static void room_322_anim7() {
 		digi_play_build(322, 'b', 1, 1);
 		scratch._b4 = -1;
 	}
-
-	if (result >= 0) {
-		kernel_reset_animation(aa[4], result);
-		aainfo[4]._val3 = result;
-	}
 }
 
 static void room_322_anim8() {
-	int16 result = -1;
-
 	int16 cur = kernel_anim[aainfo[0]._active].frame;
 	if (cur == aainfo[10]._val3)
 		return;
@@ -338,11 +317,6 @@ static void room_322_anim8() {
 	} else if (cur == 27) {
 		global[g009] = 0;
 		global_midi_play(4);
-	}
-
-	if (result >= 0) {
-		kernel_reset_animation(aainfo[0]._active, result);
-		aainfo[10]._val3 = result;
 	}
 }
 

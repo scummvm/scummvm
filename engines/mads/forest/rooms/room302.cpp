@@ -447,7 +447,6 @@ static void room_302_anim6() {
 }
 
 static void room_302_anim7() {
-	int16 result = -1;
 	int16 frame = (int16)kernel_anim[aa[6]].frame;
 
 	if (frame != aainfo[6]._frame) {
@@ -491,11 +490,6 @@ static void room_302_anim7() {
 				}
 			}
 		}
-	}
-
-	if (result >= 0) {
-		aainfo[6]._frame = result;
-		kernel_reset_animation(aa[6], result);
 	}
 
 	if (kernel.trigger != 7 && kernel.trigger != 28)

@@ -348,8 +348,10 @@ void global_game_menu() {
 			}
 			break;
 		case GAME_OPTIONS_MENU:
-			if (section_id != 9)
+			if (section_id != 9) {
 				global_menu_options();
+				music = config_file.music_flag != 0;
+			}
 			break;
 		default:
 			kernel.activate_menu = GAME_NO_MENU;

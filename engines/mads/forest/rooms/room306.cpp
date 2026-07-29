@@ -654,11 +654,12 @@ static void room_306_anim6() {
 }
 
 static void room_306_anim10() {
-	int16 result = -1;
 	int16 cur = kernel_anim[aa[9]].frame;
 	if (cur == aainfo[9]._frame)
 		return;
+
 	aainfo[9]._frame = cur;
+
 	if (cur == 28) {
 		kernel_abort_animation(aa[9]);
 		aainfo[9]._active = 0;
@@ -671,10 +672,6 @@ static void room_306_anim10() {
 		digi_val2 = -1;
 	} else if (cur == 20) {
 		digi_play_build(203, '_', 1, 2);
-	}
-	if (result >= 0) {
-		kernel_reset_animation(aa[9], result);
-		aainfo[9]._frame = result;
 	}
 }
 
