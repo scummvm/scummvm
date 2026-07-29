@@ -1504,7 +1504,9 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 			markScenePlayed(label);
 			if (frame.interactionCount != 0)
 				beginBa0InteractionWait(label, frame.interactionCount);
-			if (frame.idleCallbackOffset != 0 && _dialogue->hasChoices()) {
+			const bool dialogueIdleCallback =
+				frame.idleCallbackOffset != 0 && _dialogue->hasChoices();
+			if (dialogueIdleCallback) {
 				int idleResult = 0;
 				if (!executeCallback(_runtime.activeScript, frame.idleCallbackOffset, idleResult))
 					return false;
@@ -1585,6 +1587,36 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 					label.c_str(), result, callbackFrame, idleCommand);
 				if (acceptCyberRuntimeExit(result, _runtime.activeScript, "media idle"))
 					return true;
+				if (result == -2) {
+					_runtime.awaitingInteraction = false;
+					_engine->getMedia()->resetSceneAudioTriggers();
+					nextFrame = callbackFrame;
+					continue;
+				}
+				if (result != 0)
+					return false;
+			}
+			if (frame.idleCallbackOffset != 0 && !dialogueIdleCallback &&
+					!idleTextRequest) {
+				// PollInteractionAndResolveSelection at 0x13c8d calls
+				// StepFrameIdleCallbackCommandStream at 0x143af before reading
+				// chooser input. Type-0 frames reach that poll after their media
+				// completes. EE2.RUN frame EEZ1 relies on this ordering to play
+				// Q2_V5.WAV once before its unzoom hotspot becomes interactive.
+				result = 0;
+				callbackFrame = _runtime.activeFrame;
+				if (!executeCallback(_runtime.activeScript,
+						frame.idleCallbackOffset, result, &callbackFrame))
+					return false;
+				debugC(2, kDebugScene,
+					"Ripper: serviced frame idle callback before interaction "
+					"frame='%s' idle=0x%x result=%d nextFrame=%u",
+					label.c_str(), frame.idleCallbackOffset, result, callbackFrame);
+				if (acceptCyberRuntimeExit(result, _runtime.activeScript,
+						"interaction idle"))
+					return true;
+				if (result == -3 && !_runtime.pendingSceneMember.empty())
+					return performPendingSceneTransition();
 				if (result == -2) {
 					_runtime.awaitingInteraction = false;
 					_engine->getMedia()->resetSceneAudioTriggers();
