@@ -567,6 +567,26 @@ bool ModalDialogManager::drawRetainedTextPanelText(const Common::String &body,
 		maximumFirstVisible, visibleRows, style, hoveredScrollControl);
 }
 
+bool ModalDialogManager::drawRetainedTitlePanelText(
+		const Common::String &title, const Common::Rect &bounds,
+		PresentationStyle style) {
+	if (!_initialized || title.empty())
+		return false;
+	if (style == kMenubPresentation)
+		applyModalPalette();
+
+	Common::Array<Common::String> lines;
+	drawDialog(title, lines, 0, 0, bounds, style,
+		kTextPanelScrollNone);
+	debugC(3, kDebugScene,
+		"Ripper: drew retained title panel style=%s title='%s' bounds=%d,%d,%d,%d",
+		style == kWacPresentation ? "wacmnu" :
+			(style == kPrimaryPresentation ? "primary" : "menub"),
+		title.c_str(), bounds.left, bounds.top, bounds.width(),
+		bounds.height());
+	return true;
+}
+
 bool ModalDialogManager::drawRetainedTextPanelLines(
 		const Common::Array<Common::String> &lines,
 		const Common::Rect &bounds, uint firstVisible,

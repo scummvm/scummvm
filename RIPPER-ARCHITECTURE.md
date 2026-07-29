@@ -1240,6 +1240,10 @@
 - Entry 6 dispatches `RunWacVoiceLockPuzzleScene` at `0x24ba4`. It always
   presents `VOXLOK.WAV` in a 340-by-116 source panel at physical screen
   position 50,50, with the read-only `WACWAV0` Play control at 50,167.
+  The resource-`0xb1` and resource-`0xb2` strings are centered control titles,
+  not client-area text rows. `DrawAudioDescriptorWaveform` at `0x25b73`
+  renders palette-255 samples directly in the unbordered black client area
+  below each title.
   Milestone 84, the audio-editor software, enables a second panel at 50,176
   and moves Play beside the `WACWAV1` Clear and `WACWAV2` Quantize controls
   beginning at 50,293. Quantize plays `WACJRNL.WAV`, replaces
@@ -1250,8 +1254,9 @@
   but both ends must be within three pixels of a unique pair. Exactly five
   quantized spans solve only from scene label `eez1`, after which
   `ACCESED.AVI` plays, milestone 29 opens the Secret Animal Lab, and WAC exits.
-  `DrawAudioDescriptorWaveform` at `0x25b73` supplies the source and assembled
-  waveform presentation. The scene's input tick publishes one mouse state,
+  While Play is active, `GetManagedAudioTriggerPlaybackPosition` at `0x60795`
+  advances a vertical marker across the source or assembled waveform selected
+  for playback. The scene's input tick publishes one mouse state,
   services the persistent WAC controls and database chooser, then presents one
   cursor after also testing the waveform and audio-editor buttons.
 - Entries 10 and 11 dispatch `wacinv10.pcx` and `wacinv11.pcx` through

@@ -1366,6 +1366,11 @@ bool MediaPlayer::isSoundEffectActive(const Audio::SoundHandle &handle) const {
 	return _mixer->isSoundHandleActive(handle);
 }
 
+uint32 MediaPlayer::getSoundEffectElapsedTime(
+		const Audio::SoundHandle &handle) const {
+	return _mixer->getSoundElapsedTime(handle);
+}
+
 bool MediaPlayer::playPuzzleSequence(const Common::String &path, uint loopStartFrame,
 		MediaSequenceCallback *callback, uint16 *command) {
 	Common::File *file = new Common::File();
