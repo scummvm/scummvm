@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-29 15:13+0000\n"
+"POT-Creation-Date: 2026-07-29 19:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3212,8 +3212,8 @@ msgstr ""
 #: backends/events/default/default-events.cpp:231
 #: backends/events/default/default-events.cpp:372
 #: engines/adl/metaengine.cpp:352 engines/buried/metaengine.cpp:154
-#: engines/chamber/metaengine.cpp:88 engines/colony/intro.cpp:156
-#: engines/colony/intro.cpp:1243 engines/drascula/metaengine.cpp:304
+#: engines/chamber/metaengine.cpp:88 engines/colony/intro.cpp:146
+#: engines/colony/intro.cpp:1233 engines/drascula/metaengine.cpp:304
 #: engines/hdb/metaengine.cpp:275 engines/hypno/metaengine.cpp:308
 #: engines/lab/metaengine.cpp:172 engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
@@ -4134,7 +4134,7 @@ msgstr ""
 msgid "Windowed mode"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:495 engines/colony/metaengine.cpp:173
+#: backends/graphics/sdl/sdl-graphics.cpp:495 engines/colony/metaengine.cpp:184
 #: engines/scumm/help.cpp:88
 msgid "Toggle fullscreen"
 msgstr ""
@@ -7148,15 +7148,15 @@ msgstr ""
 msgid "Look down"
 msgstr ""
 
-#: engines/buried/metaengine.cpp:204 engines/colony/metaengine.cpp:137
+#: engines/buried/metaengine.cpp:204 engines/colony/metaengine.cpp:148
 msgid "Look left"
 msgstr ""
 
-#: engines/buried/metaengine.cpp:211 engines/colony/metaengine.cpp:142
+#: engines/buried/metaengine.cpp:211 engines/colony/metaengine.cpp:153
 msgid "Look right"
 msgstr ""
 
-#: engines/buried/metaengine.cpp:218 engines/colony/metaengine.cpp:99
+#: engines/buried/metaengine.cpp:218 engines/colony/metaengine.cpp:110
 #: engines/dm/metaengine.cpp:142 engines/kyra/engine/eobcommon.cpp:371
 #: engines/kyra/engine/lol.cpp:513 engines/mohawk/riven.cpp:881
 #: engines/titanic/metaengine.cpp:336 engines/titanic/metaengine.cpp:378
@@ -7455,15 +7455,15 @@ msgid ""
 "beginning using new savegames."
 msgstr ""
 
-#: engines/colony/intro.cpp:154 engines/colony/intro.cpp:1244
+#: engines/colony/intro.cpp:144 engines/colony/intro.cpp:1234
 msgid "New Game"
 msgstr ""
 
-#: engines/colony/intro.cpp:155 engines/colony/intro.cpp:1242
+#: engines/colony/intro.cpp:145 engines/colony/intro.cpp:1232
 msgid "Load Game"
 msgstr ""
 
-#: engines/colony/intro.cpp:1219 engines/colony/intro.cpp:1244
+#: engines/colony/intro.cpp:1209 engines/colony/intro.cpp:1234
 msgid "You have been terminated."
 msgstr ""
 
@@ -7475,23 +7475,31 @@ msgstr ""
 msgid "Enable widescreen rendering in fullscreen mode."
 msgstr ""
 
-#: engines/colony/metaengine.cpp:106
+#: engines/colony/metaengine.cpp:56 engines/freescape/metaengine.cpp:107
+msgid "Invert Y-axis on mouse"
+msgstr ""
+
+#: engines/colony/metaengine.cpp:57 engines/freescape/metaengine.cpp:108
+msgid "Use alternative camera controls"
+msgstr ""
+
+#: engines/colony/metaengine.cpp:117
 msgid "Move backward"
 msgstr ""
 
-#: engines/colony/metaengine.cpp:113 engines/dm/metaengine.cpp:162
+#: engines/colony/metaengine.cpp:124 engines/dm/metaengine.cpp:162
 #: engines/freescape/movement.cpp:53 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:104
 msgid "Strafe left"
 msgstr ""
 
-#: engines/colony/metaengine.cpp:120 engines/dm/metaengine.cpp:182
+#: engines/colony/metaengine.cpp:131 engines/dm/metaengine.cpp:182
 #: engines/freescape/movement.cpp:61 engines/hpl1/metaengine.cpp:79
 #: engines/mm/mm1/metaengine.cpp:105
 msgid "Strafe right"
 msgstr ""
 
-#: engines/colony/metaengine.cpp:127
+#: engines/colony/metaengine.cpp:138
 #: engines/freescape/games/castle/castle.cpp:561
 #: engines/freescape/games/dark/dark.cpp:257
 #: engines/freescape/games/driller/driller.cpp:144
@@ -7499,7 +7507,7 @@ msgstr ""
 msgid "Rotate left"
 msgstr ""
 
-#: engines/colony/metaengine.cpp:132
+#: engines/colony/metaengine.cpp:143
 #: engines/freescape/games/castle/castle.cpp:566
 #: engines/freescape/games/dark/dark.cpp:262
 #: engines/freescape/games/driller/driller.cpp:149
@@ -7507,33 +7515,33 @@ msgstr ""
 msgid "Rotate right"
 msgstr ""
 
-#: engines/colony/metaengine.cpp:147
+#: engines/colony/metaengine.cpp:158
 msgid "Look behind"
 msgstr ""
 
-#: engines/colony/metaengine.cpp:152
+#: engines/colony/metaengine.cpp:163
 #: engines/freescape/games/castle/castle.cpp:588
 #: engines/freescape/games/eclipse/eclipse.cpp:403
 msgid "Face forward"
 msgstr ""
 
-#: engines/colony/metaengine.cpp:157
+#: engines/colony/metaengine.cpp:168
 msgid "Toggle mouselook"
 msgstr ""
 
-#: engines/colony/metaengine.cpp:163
+#: engines/colony/metaengine.cpp:174
 msgid "Toggle dashboard"
 msgstr ""
 
-#: engines/colony/metaengine.cpp:168
+#: engines/colony/metaengine.cpp:179
 msgid "Toggle wireframe"
 msgstr ""
 
-#: engines/colony/metaengine.cpp:178
+#: engines/colony/metaengine.cpp:189
 msgid "Menu / Skip intro"
 msgstr ""
 
-#: engines/colony/metaengine.cpp:184 engines/ultima/ultima8/metaengine.cpp:89
+#: engines/colony/metaengine.cpp:195 engines/ultima/ultima8/metaengine.cpp:89
 msgid "Fire weapon"
 msgstr ""
 
@@ -8310,14 +8318,6 @@ msgstr ""
 
 #: engines/freescape/metaengine.cpp:97
 msgid "Player cannot fall over edges"
-msgstr ""
-
-#: engines/freescape/metaengine.cpp:107
-msgid "Invert Y-axis on mouse"
-msgstr ""
-
-#: engines/freescape/metaengine.cpp:108
-msgid "Use alternative camera controls"
 msgstr ""
 
 #: engines/freescape/metaengine.cpp:118
