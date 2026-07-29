@@ -543,7 +543,7 @@ static void room_201_init() {
 		local->anim_4_running = false;
 		local->anim_5_running = false;
 		local->anim_6_running = false;
-		local->activate_timer = false;
+		local->activate_timer = 0;
 		local->left_ready_to_fall = false;
 		local->right_ready_to_fall = false;
 		local->crossed_line = false;
@@ -1567,13 +1567,13 @@ static void room_201_daemon() {
 			} else {
 				if (local->activate_timer == 1) {
 					text_show(20157);
-					local->activate_timer = false;
+					local->activate_timer = 0;
 					local->pid_action = FALL;
 					player.commands_allowed = false;
 					kernel_set_interface_mode(INTER_LIMITED_SENTENCES);
 
 				} else {
-					local->activate_timer = false;
+					local->activate_timer = 0;
 					conv_run(CONV_54_PID);
 					conv_export_value(0);
 					conv_export_value(0);
@@ -1813,7 +1813,7 @@ static void process_conv_king_guards() {
 	if (player_verb == conv047_give_b_b) { /* first time around */
 		*conv_my_next_start = conv047_postbribe;
 		you_trig_flag = true;
-		local->activate_timer = true;
+		local->activate_timer = -1;
 		conv_abort();
 	}
 
@@ -2441,7 +2441,7 @@ static void room_201_parser() {
 		player_said_1(walk_down) ||
 		player_said_1(put) ||
 		player_said_1(throw)) {
-		if (local->activate_timer) {
+		if (local->activate_timer == -1) {
 			text_show(20113);
 			goto handled;
 
