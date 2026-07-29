@@ -28,6 +28,7 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 #include "engines/util.h"
 #include "graphics/renderer.h"
 
@@ -38,6 +39,24 @@ namespace Colony {
 
 // Forward declaration for the fixed-function OpenGL renderer factory.
 Renderer *createOpenGLRenderer(OSystem *system, int width, int height);
+
+Common::Point windowToCanvas(const Common::Rect &viewport, const Common::Point &p, int canvasW, int canvasH) {
+	if (viewport.isEmpty() || canvasW <= 0 || canvasH <= 0)
+		return p;
+
+	const int x = CLIP<int>(p.x, viewport.left, viewport.right - 1) - viewport.left;
+	const int y = CLIP<int>(p.y, viewport.top, viewport.bottom - 1) - viewport.top;
+	return Common::Point((int)((int64)x * canvasW / viewport.width()),
+		(int)((int64)y * canvasH / viewport.height()));
+}
+
+Common::Point canvasToWindow(const Common::Rect &viewport, const Common::Point &p, int canvasW, int canvasH) {
+	if (viewport.isEmpty() || canvasW <= 0 || canvasH <= 0)
+		return p;
+
+	return Common::Point(viewport.left + (int)((int64)p.x * viewport.width() / canvasW),
+		viewport.top + (int)((int64)p.y * viewport.height() / canvasH));
+}
 
 // Pick the renderer type. Honors --renderer=<code> on the command line /
 // ConfMan key, restricted to what was compiled in.

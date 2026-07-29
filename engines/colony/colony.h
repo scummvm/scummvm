@@ -676,19 +676,10 @@ private:
 	int occupiedObjectAt(int xnew, int ynew, int x, int y, const Locate *pobject);
 	void interactWithObject(int objNum);
 
-	// Convert a mouse coord delivered by the event manager into engine
-	// logical coords. With kSupportsArbitraryResolutions declared, the
-	// framework rewrites _currentState.gameWidth to the overlay (window)
-	// pixel size in recalculateDisplayAreas() — so g_system->getWidth()
-	// no longer matches our _width, and mouse events arrive in window
-	// pixels. The engine's hit-test math (whichSprite, _screenR) is in
-	// logical coords, so we have to scale back. Same pattern Freescape
-	// uses in mousePosToCrossairPos (freescape.cpp:593-597).
+	// Mouse events (and warpMouse) speak window pixels, because we declare
+	// kSupportsArbitraryResolutions; the hit-test math (whichSprite, _screenR)
+	// is in logical coords. Convert both ways.
 	Common::Point eventMouseToLogical(const Common::Point &p) const;
-	// Inverse of eventMouseToLogical: warp the mouse to a position
-	// expressed in engine-logical coords. _system->warpMouse expects
-	// virtual-screen coords, which with kSupportsArbitraryResolutions
-	// is window pixels.
 	void warpMouseLogical(int x, int y);
 
 	// shoot.c: shooting and power management

@@ -119,7 +119,6 @@ private:
 	int _width = 0;
 	int _height = 0;
 	byte _palette[256 * 3] = {};
-	Common::Rect _screenViewport;
 
 	OpenGL::Shader *_solidShader = nullptr;
 	OpenGL::Shader *_bitmapShader = nullptr;

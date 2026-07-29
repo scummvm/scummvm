@@ -304,23 +304,18 @@ ColonyEngine::~ColonyEngine() {
 }
 
 Common::Point ColonyEngine::eventMouseToLogical(const Common::Point &p) const {
-	const int sysW = _system->getWidth();
-	const int sysH = _system->getHeight();
-	if (sysW <= 0 || sysH <= 0 || (sysW == _width && sysH == _height))
+	if (!_gfx)
 		return p;
-	return Common::Point((int)((int64)p.x * _width / sysW),
-		(int)((int64)p.y * _height / sysH));
+	return windowToCanvas(_gfx->screenViewport(), p, _width, _height);
 }
 
 void ColonyEngine::warpMouseLogical(int x, int y) {
-	const int sysW = _system->getWidth();
-	const int sysH = _system->getHeight();
-	if (sysW <= 0 || sysH <= 0 || (sysW == _width && sysH == _height)) {
+	if (!_gfx) {
 		_system->warpMouse(x, y);
 		return;
 	}
-	_system->warpMouse((int)((int64)x * sysW / _width),
-		(int)((int64)y * sysH / _height));
+	const Common::Point p = canvasToWindow(_gfx->screenViewport(), Common::Point(x, y), _width, _height);
+	_system->warpMouse(p.x, p.y);
 }
 
 void ColonyEngine::pauseEngineIntern(bool pause) {
@@ -790,7 +785,10 @@ Common::Error ColonyEngine::run() {
 	}
 
 	if (_widescreen) {
-		_width = _height * 16 / 9;
+		// (16/9)/(4/3) = 4/3: widen the canvas rather than stretch it. Holds
+		// for the Mac's square pixels and for DOS EGA's 0.73-wide ones, since
+		// there the shorter canvas cancels out. Both land on 853.
+		_width = _width * 4 / 3;
 	}
 
 	_gfx = createRenderer(_system, _width, _height);

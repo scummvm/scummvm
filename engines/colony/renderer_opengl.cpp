@@ -118,7 +118,6 @@ private:
 	const byte *_stippleData = nullptr; // GL_POLYGON_STIPPLE pattern (128 bytes), null = disabled
 	uint32 _stippleFgColor = 0;
 	uint32 _stippleBgColor = 0;
-	Common::Rect _screenViewport;
 };
 
 OpenGLRenderer::OpenGLRenderer(OSystem *system, int width, int height) : _system(system), _width(width), _height(height) {

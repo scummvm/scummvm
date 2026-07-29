@@ -71,40 +71,30 @@ public:
 				if (processEvent(event))
 					continue;
 
-				// MacDialog button rects are in _screen coordinates (engine
-				// logical, e.g. 853×480). With kSupportsArbitraryResolutions
-				// the framework rewrites g_system->getWidth/Height to window
-				// pixel size, so event.mouse arrives in window pixels —
-				// convert back to _screen coords before hit-testing.
-				auto toLocal = [this](const Common::Point &p) -> Common::Point {
-					const int sysW = g_system->getWidth();
-					const int sysH = g_system->getHeight();
-					if (sysW <= 0 || sysH <= 0 || (sysW == _screen->w && sysH == _screen->h))
-						return p;
-					return Common::Point((int)((int64)p.x * _screen->w / sysW),
-						(int)((int64)p.y * _screen->h / sysH));
-				};
+				// event.mouse is in window pixels; the button rects are in
+				// _screen coords.
+				const Common::Point m = windowToCanvas(gfx->screenViewport(), event.mouse,
+					_screen->w, _screen->h);
 
 				switch (event.type) {
 				case Common::EVENT_QUIT:
 					shouldQuitEngine = true;
 					shouldQuit = true;
 					break;
-				case Common::EVENT_MOUSEMOVE: {
-					const Common::Point p = toLocal(event.mouse);
-					mouseMove(p.x, p.y);
+				case Common::EVENT_SCREEN_CHANGED:
+					// Nothing else refreshes the viewport while a dialog is up.
+					gfx->computeScreenViewport();
+					_needsRedraw = true;
 					break;
-				}
-				case Common::EVENT_LBUTTONDOWN: {
-					const Common::Point p = toLocal(event.mouse);
-					mouseClick(p.x, p.y);
+				case Common::EVENT_MOUSEMOVE:
+					mouseMove(m.x, m.y);
 					break;
-				}
-				case Common::EVENT_LBUTTONUP: {
-					const Common::Point p = toLocal(event.mouse);
-					shouldQuit = mouseRaise(p.x, p.y);
+				case Common::EVENT_LBUTTONDOWN:
+					mouseClick(m.x, m.y);
 					break;
-				}
+				case Common::EVENT_LBUTTONUP:
+					shouldQuit = mouseRaise(m.x, m.y);
+					break;
 				case Common::EVENT_KEYDOWN:
 					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 						_pressedButton = -1;

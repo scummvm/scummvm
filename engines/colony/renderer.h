@@ -72,6 +72,10 @@ public:
 	virtual void setDepthRange(float nearVal, float farVal) {}
 	virtual void computeScreenViewport() = 0;
 
+	// Window-pixel rect the logical canvas is drawn into: the whole window
+	// with the widescreen mod on, pillar/letterboxed otherwise.
+	const Common::Rect &screenViewport() const { return _screenViewport; }
+
 	// Overlay a RGBA software surface onto the GL framebuffer (for Mac menu bar).
 	virtual void drawSurface(const Graphics::Surface *surf, int x, int y) {}
 	virtual Graphics::Surface *getScreenshot() { return nullptr; }
@@ -80,7 +84,17 @@ public:
 	// Convenience color accessors
 	uint32 white() const { return 255; }
 	uint32 black() const { return 0; }
+
+protected:
+	Common::Rect _screenViewport;
 };
+
+// Window pixels (what the event manager delivers) to logical canvas coords and
+// back, through screenViewport(). Scaling by the plain window/canvas ratio
+// instead lands every hit test half a black bar off. Points inside the bars
+// clamp to the nearest canvas edge.
+Common::Point windowToCanvas(const Common::Rect &viewport, const Common::Point &p, int canvasW, int canvasH);
+Common::Point canvasToWindow(const Common::Rect &viewport, const Common::Point &p, int canvasW, int canvasH);
 
 // Factory function (follows Freescape pattern: picks best available renderer)
 Renderer *createRenderer(OSystem *system, int width, int height);
