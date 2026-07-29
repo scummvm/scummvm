@@ -1746,10 +1746,7 @@ void global_menu_system_shutdown() {
 }
 
 void global_game_menu() {
-
-
-	while (keys_any())
-		keys_get();
+	g_engine->flushKeys();
 
 	game_menu_setup();
 
