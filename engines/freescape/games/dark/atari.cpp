@@ -48,6 +48,7 @@ void DarkEngine::loadAssetsAtariFullGame() {
 
 	file.close();
 
+	// same array, ending at program address $132E, i.e. 0x134A in the file
 	Common::SeekableReadStream *stream = decryptFileAmigaAtari("1.drk", "0.drk", 840);
 	parseAmigaAtariHeader(stream);
 

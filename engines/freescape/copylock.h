@@ -44,8 +44,11 @@ namespace Freescape {
  *
  * Everything but the key is read from the file: the protection is located by
  * its signature, its own code is decoded (the Trace Vector Decoder used for
- * the loops is static), and the decoding routine found in there gives the
- * offset and the length of the wrapped program.
+ * the loops is static), and the decoding routine found in there tells which
+ * cipher wraps the program, and where it is.
+ *
+ * Both the GEMDOS programs of the Atari ST releases and the hunk executables
+ * of the Amiga ones are handled.
  */
 class Copylock {
 public:

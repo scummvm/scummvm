@@ -62,16 +62,33 @@ static const CopylockKey kCopylockKeys[] = {
 	// Castle Master, Atari ST (Castle Master & The Crypt, Incentive), M.PRG
 	{ "f580b8658e622588298d1d6ad87437fb", kCipherShift,
 	  { 0x4ed7a43c, 0x0010c85c, 0x400b051c, 0x5bd5a219, 0x0900ff04, 0x00000000, 0x00000000 } },
+	// Dark Side, Amiga (Stampede cover disk, issue 1), DARKSIDE
+	{ "87310b48b108374a45709885e45a7c2a", kCipherShift,
+	  { 0x00000000, 0x3688589d, 0x003ffe40, 0x1fffc015, 0x735067a3, 0x4281be60, 0x00000000 } },
 	{ nullptr, kCipherRotate, { 0, 0, 0, 0, 0, 0, 0 } }
+};
+
+// The executable the wrapper sits in: a GEMDOS program on the Atari ST, a hunk
+// one on the Amiga.
+enum CopylockContainer {
+	kContainerGemdos = 0,
+	kContainerHunk = 1
 };
 
 // Layout of the protection, recovered from the file itself.
 struct CopylockLayout {
+	CopylockContainer container;
+	uint32 textOffset; // the segment the protection lives in
+	uint32 textSize;
 	uint32 magic;      // key of the Trace Vector Decoder
 	uint32 progOffset; // start of the wrapped program, from the TEXT segment
 	uint32 progSize;   // number of encrypted bytes
 	CopylockCipher cipher;
 };
+
+const uint32 kHunkHeader = 0x000003f3;
+const uint32 kHunkCode = 0x000003e9;
+const uint32 kHunkHeaderSize = 6 * 4; // one hunk, no resident libraries
 
 static uint32 readUint32(const byte *buf, uint32 offset) {
 	return READ_BE_UINT32(buf + offset);
@@ -241,6 +258,29 @@ static const CopylockKey *findKey(Common::SeekableReadStream *file) {
 	return nullptr;
 }
 
+// The TEXT of a GEMDOS program, or the single code hunk of an Amiga executable.
+bool findTextSegment(const Common::Array<byte> &data, CopylockLayout &layout) {
+	if (data.size() >= 0x1c && READ_BE_UINT16(data.data()) == 0x601a) {
+		layout.container = kContainerGemdos;
+		layout.textOffset = 0x1c;
+		layout.textSize = readUint32(data.data(), 2);
+		return layout.textSize >= 0x100 && layout.textOffset + layout.textSize <= data.size();
+	}
+
+	// A hunk header of one code hunk, then that hunk: 0x3E9 and its length in
+	// longwords, this one without the memory flags the header carries.
+	if (data.size() >= kHunkHeaderSize + 8 && readUint32(data.data(), 0) == kHunkHeader &&
+			readUint32(data.data(), 4) == 0 && readUint32(data.data(), 8) == 1 &&
+			readUint32(data.data(), kHunkHeaderSize) == kHunkCode) {
+		layout.container = kContainerHunk;
+		layout.textOffset = kHunkHeaderSize + 8;
+		layout.textSize = 4 * readUint32(data.data(), kHunkHeaderSize + 4);
+		return layout.textSize >= 0x100 && layout.textOffset + layout.textSize <= data.size();
+	}
+
+	return false;
+}
+
 static bool readLayout(Common::SeekableReadStream *file, Common::Array<byte> &data, CopylockLayout &layout) {
 	file->seek(0);
 	data.resize(file->size());
@@ -248,16 +288,12 @@ static bool readLayout(Common::SeekableReadStream *file, Common::Array<byte> &da
 		return false;
 	file->seek(0);
 
-	if (data.size() < 0x1c || READ_BE_UINT16(data.data()) != 0x601a)
+	if (!findTextSegment(data, layout))
 		return false;
 
-	uint32 textSize = readUint32(data.data(), 2);
-	if (textSize < 0x100 || 0x1c + textSize > data.size())
-		return false;
-
-	const byte *text = data.data() + 0x1c;
+	const byte *text = data.data() + layout.textOffset;
 	uint32 start;
-	if (!findProtection(text, textSize, start, layout.magic))
+	if (!findProtection(text, layout.textSize, start, layout.magic))
 		return false;
 
 	return findDecoder(text, start, layout.magic, layout);
@@ -267,6 +303,78 @@ bool Copylock::isProtected(Common::SeekableReadStream *file) {
 	Common::Array<byte> data;
 	CopylockLayout layout;
 	return readLayout(file, data, layout);
+}
+
+Common::SeekableReadStream *unwrapGemdos(const Common::Array<byte> &data,
+		const CopylockLayout &layout, const CopylockKey &key) {
+	uint32 progOffset = layout.textOffset + layout.progOffset;
+	if (progOffset + layout.progSize > data.size()) {
+		warning("Copylock: the wrapped program does not fit in the file");
+		return nullptr;
+	}
+
+	debugC(1, kFreescapeDebugParser, "Copylock: program at 0x%x, %d bytes encrypted",
+		progOffset, layout.progSize);
+
+	uint32 available = data.size() - progOffset;
+	byte *prog = (byte *)malloc(available);
+	memcpy(prog, data.data() + progOffset, available);
+	decodeProgram(prog, layout.progSize, key);
+
+	uint32 size = READ_BE_UINT16(prog) == 0x601a ? programSize(prog, available) : 0;
+	if (!size) {
+		warning("Copylock: decryption did not yield a GEMDOS program");
+		free(prog);
+		return nullptr;
+	}
+
+	return new Common::MemoryReadStream(prog, size, DisposeAfterUse::YES);
+}
+
+// Here the displacement of the decoding loop is relative to where the protection
+// runs, not to the file, so it cannot locate the program. The key stream is a
+// ring anchored at the start of the code hunk though, so the hunk is decoded as
+// a whole and the program found by the hunk header it carries.
+Common::SeekableReadStream *unwrapHunk(const Common::Array<byte> &data,
+		const CopylockLayout &layout, const CopylockKey &key) {
+	byte *code = (byte *)malloc(layout.textSize);
+	memcpy(code, data.data() + layout.textOffset, layout.textSize);
+	decodeProgram(code, layout.textSize, key);
+
+	uint32 offset = 0;
+	uint32 hunkSize = 0;
+	for (; offset + 8 <= layout.textSize; offset += 4) {
+		if (readUint32(code, offset) != kHunkCode)
+			continue;
+		hunkSize = 4 * readUint32(code, offset + 4);
+		if (hunkSize && offset + 8 + hunkSize <= layout.textSize)
+			break;
+		hunkSize = 0;
+	}
+
+	if (!hunkSize) {
+		warning("Copylock: decryption did not yield a hunk executable");
+		free(code);
+		return nullptr;
+	}
+
+	debugC(1, kFreescapeDebugParser, "Copylock: program at 0x%x, %d bytes of code",
+		layout.textOffset + offset, hunkSize);
+
+	// The wrapper holds the hunks but not the header of the executable they came
+	// from, which is rebuilt so the result reads like the unprotected release.
+	uint32 imageSize = layout.textSize - offset;
+	byte *prog = (byte *)malloc(kHunkHeaderSize + imageSize);
+	WRITE_BE_UINT32(prog, kHunkHeader);
+	WRITE_BE_UINT32(prog + 4, 0);  // no resident library
+	WRITE_BE_UINT32(prog + 8, 1);  // one hunk, first and last
+	WRITE_BE_UINT32(prog + 12, 0);
+	WRITE_BE_UINT32(prog + 16, 0);
+	WRITE_BE_UINT32(prog + 20, hunkSize / 4);
+	memcpy(prog + kHunkHeaderSize, code + offset, imageSize);
+	free(code);
+
+	return new Common::MemoryReadStream(prog, kHunkHeaderSize + imageSize, DisposeAfterUse::YES);
 }
 
 Common::SeekableReadStream *Copylock::unwrap(Common::SeekableReadStream *file) {
@@ -285,28 +393,10 @@ Common::SeekableReadStream *Copylock::unwrap(Common::SeekableReadStream *file) {
 		return nullptr;
 	}
 
-	uint32 progOffset = 0x1c + layout.progOffset;
-	if (progOffset + layout.progSize > data.size()) {
-		warning("Copylock: the wrapped program does not fit in the file");
-		return nullptr;
-	}
+	if (layout.container == kContainerHunk)
+		return unwrapHunk(data, layout, *key);
 
-	debugC(1, kFreescapeDebugParser, "Copylock: program at 0x%x, %d bytes encrypted",
-		progOffset, layout.progSize);
-
-	uint32 available = data.size() - progOffset;
-	byte *prog = (byte *)malloc(available);
-	memcpy(prog, data.data() + progOffset, available);
-	decodeProgram(prog, layout.progSize, *key);
-
-	uint32 size = READ_BE_UINT16(prog) == 0x601a ? programSize(prog, available) : 0;
-	if (!size) {
-		warning("Copylock: decryption did not yield a GEMDOS program");
-		free(prog);
-		return nullptr;
-	}
-
-	return new Common::MemoryReadStream(prog, size, DisposeAfterUse::YES);
+	return unwrapGemdos(data, layout, *key);
 }
 
 } // End of namespace Freescape

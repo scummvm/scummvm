@@ -81,6 +81,7 @@ public:
 	void loadAssetsDOSDemo() override;
 	void loadAssetsC64FullGame() override;
 	void loadAssetsAmigaFullGame() override;
+	Common::SeekableReadStream *openAmigaExecutable();
 	void loadAssetsAtariFullGame() override;
 
 	void loadAssetsCPCFullGame() override;

@@ -1189,6 +1189,44 @@ void FreescapeEngine::parseAmigaAtariHeader(Common::SeekableReadStream *stream) 
 }
 
 Common::SeekableReadStream *FreescapeEngine::decryptFileAmigaAtari(const Common::Path &packed, const Common::Path &unpacker, uint32 unpackArrayOffset) {
+	Common::File executable;
+	if (!executable.open(unpacker))
+		error("Failed to open %s", unpacker.toString().c_str());
+
+	return decryptFileAmigaAtari(packed, &executable, unpackArrayOffset);
+}
+
+// moveq #0,d1 ; move.w -(a5),d1 ; move.w -(a5),d0 ; add.l d1,d1 ;
+// move.w d0,(a6,d1.l) ; dbra d7,...
+const byte kUnpackLoop[] = {
+	0x72, 0x00, 0x32, 0x25, 0x30, 0x25, 0xd2, 0x81,
+	0x3d, 0x80, 0x18, 0x00, 0x51, 0xcf, 0xff, 0xf2
+};
+
+// The unpack array is a table of 1024 (word offset, value) pairs holding the
+// words the encryption took out of the data file. It lives in the executable,
+// which walks it back to front, so the lea that precedes that loop gives its
+// end, as an offset within the code segment. Every release is laid out
+// differently, hence the search; the value the caller passes is only used when
+// the loop cannot be found.
+uint32 findUnpackArrayOffset(const byte *data, uint32 size, uint32 fallback) {
+	// the code follows the header of the executable, hunk or GEMDOS
+	uint32 header = (size >= 4 && READ_BE_UINT32(data) == 0x000003f3) ? 0x20 : 0x1c;
+
+	for (uint32 i = 6; i + sizeof(kUnpackLoop) <= size; i += 2) {
+		if (READ_BE_UINT16(data + i - 6) != 0x4bf9) // lea $xxxxxxxx.l,a5
+			continue;
+		if (memcmp(data + i, kUnpackLoop, sizeof(kUnpackLoop)))
+			continue;
+
+		return READ_BE_UINT32(data + i - 4) + header - 0x1002; // 0x1000 long, read from its last word
+	}
+
+	debugC(1, kFreescapeDebugParser, "Unpack array not found, using offset %d", fallback);
+	return fallback;
+}
+
+Common::SeekableReadStream *FreescapeEngine::decryptFileAmigaAtari(const Common::Path &packed, Common::SeekableReadStream *unpacker, uint32 unpackArrayOffset) {
 	Common::File file;
 	file.open(packed);
 	if (!file.isOpen())
@@ -1230,23 +1268,21 @@ Common::SeekableReadStream *FreescapeEngine::decryptFileAmigaAtari(const Common:
 		a6 += 4;
 	}
 
-	file.open(unpacker);
-	if (!file.isOpen())
-		error("Failed to open %s", unpacker.toString().c_str());
-
 	int originalSize = size;
-	size = file.size();
+	size = unpacker->size();
 	byte *unpackArray = (byte *)malloc(size);
-	file.read(unpackArray, size);
-	file.close();
+	unpacker->seek(0);
+	unpacker->read(unpackArray, size);
 
-	byte *unpackArrayPtr = unpackArray + unpackArrayOffset;
+	uint32 offset = findUnpackArrayOffset(unpackArray, size, unpackArrayOffset);
+	if (offset + 4098 > uint32(size))
+		error("The unpack array of the executable used to decrypt %s is out of bounds", packed.toString().c_str());
+
+	byte *unpackArrayPtr = unpackArray + offset;
 	uint32 i = 2 * 1024;
 	do {
 		uint8 ptr0 = unpackArrayPtr[2 * i];
-		//debug("%x -> %x", unpackArrayOffset + 2 * i, ptr0);
 		uint8 ptr1 = unpackArrayPtr[2 * i + 1];
-		//debug("%x -> %x", unpackArrayOffset + 2 * i + 1, ptr1);
 		uint8 val0 = unpackArrayPtr[2 * (i - 1)];
 		uint8 val1 = unpackArrayPtr[2 * (i - 1) + 1];
 
@@ -1256,6 +1292,7 @@ Common::SeekableReadStream *FreescapeEngine::decryptFileAmigaAtari(const Common:
 		i = i - 2;
 	} while (i > 0);
 
+	free(unpackArray);
 	return (new Common::MemoryReadStream(encryptedBuffer, originalSize));
 }
 

@@ -23,6 +23,7 @@
 
 #include "graphics/palette.h"
 
+#include "freescape/copylock.h"
 #include "freescape/freescape.h"
 #include "freescape/games/dark/dark.h"
 #include "freescape/language/8bitDetokeniser.h"
@@ -107,16 +108,33 @@ void decodeMaskedAmigaSprite(Common::SeekableReadStream *file, Graphics::Managed
 	}
 }
 
+// The executable is 0.drk in every release but the Stampede cover disk, where it
+// is DARKSIDE and Copylock protected. Unwrapped it is the very same executable.
+Common::SeekableReadStream *DarkEngine::openAmigaExecutable() {
+	Common::File *file = new Common::File();
+	if (file->open("0.drk"))
+		return file;
+
+	if (!file->open("DARKSIDE"))
+		error("Failed to open 0.drk or DARKSIDE");
+
+	Common::SeekableReadStream *unwrapped = Copylock::unwrap(file);
+	delete file;
+	if (!unwrapped)
+		error("Failed to remove the Copylock protection of DARKSIDE");
+
+	return unwrapped;
+}
+
 void DarkEngine::loadAssetsAmigaFullGame() {
-	Common::File file;
-	file.open("0.drk");
+	Common::SeekableReadStream *executable = openAmigaExecutable();
 	// Load title image: Amiga non-interleaved bitplanes with Atari ST palette
 	// Palette: 16 words at file offset 0x9934, Atari ST 3-bit $0RGB format
-	file.seek(0x9934);
+	executable->seek(0x9934);
 	Graphics::Palette pal(16);
 	for (int i = 0; i < 16; i++) {
-		byte v1 = file.readByte();
-		byte v2 = file.readByte();
+		byte v1 = executable->readByte();
+		byte v2 = executable->readByte();
 		byte r = floor((v1 & 0x07) * 255.0 / 7.0);
 		byte g = floor((v2 & 0x70) * 255.0 / 7.0 / 16.0);
 		byte b = floor((v2 & 0x07) * 255.0 / 7.0);
@@ -124,14 +142,14 @@ void DarkEngine::loadAssetsAmigaFullGame() {
 	}
 
 	// Bitplanes: 4 planes x 8000 bytes at file offset 0x99B0, non-interleaved
-	file.seek(0x99B0);
+	executable->seek(0x99B0);
 	Graphics::ManagedSurface *titleSurface = new Graphics::ManagedSurface();
 	titleSurface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	titleSurface->fillRect(Common::Rect(0, 0, 320, 200), 0);
 	for (int plane = 0; plane < 4; plane++) {
 		for (int y = 0; y < 200; y++) {
 			for (int x = 0; x < 40; x++) {
-				byte b = file.readByte();
+				byte b = executable->readByte();
 				for (int n = 0; n < 8; n++) {
 					int px = x * 8 + (7 - n);
 					int bit = ((b >> n) & 0x01) << plane;
@@ -160,9 +178,9 @@ void DarkEngine::loadAssetsAmigaFullGame() {
 	_gfx->_colorCyclingSpeed = 1;
 	_gfx->_colorCyclingTimer = 0; // always active
 
-	file.close();
-
-	Common::SeekableReadStream *stream = decryptFileAmigaAtari("1.drk", "0.drk", 798);
+	// the unpack array ends at program address $1320, i.e. 0x1340 in the file
+	Common::SeekableReadStream *stream = decryptFileAmigaAtari("1.drk", executable, 830);
+	delete executable;
 	parseAmigaAtariHeader(stream);
 
 	_border = loadAndConvertNeoImage(stream, 0x1b762);
