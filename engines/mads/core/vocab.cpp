@@ -434,6 +434,7 @@ void vocab_sort() {
 	}
 }
 
+/*
 static bool check_for_caps(const char *string) {
 	bool any_caps = false;
 	const char *mark;
@@ -444,6 +445,7 @@ static bool check_for_caps(const char *string) {
 
 	return any_caps;
 }
+*/
 
 void vocab_unload_active() {
 	vocab_size = 0;
