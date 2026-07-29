@@ -21,6 +21,7 @@
 
 #include "common/random.h"
 #include "common/system.h"
+#include "common/config-manager.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
@@ -164,6 +165,7 @@ void OneBuildPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
 	_animSound1.readNormal(stream);         // 0x16d
 	_animSound2.readNormal(stream);         // 0x19e
 	_hasFinalAnim = !_animRectA.isEmpty();
+	_hasCrank = !_animRectB.isEmpty();
 
 	_solveScene.readData(stream);           // 0x1cf
 	_cancelScene.readData(stream);          // 0x1e8 (ends the 513-byte blob)
@@ -301,7 +303,11 @@ void OneBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	}
 
 	if (isNancy10) {
-		stream.skip(32); // TODO: 32 post-piece bytes, layout undecoded.
+		// The 32-byte post-piece block holds two rects. The first is a
+		// bad-placement check region (unused here); the second is the region
+		// forks may be dragged onto and released in.
+		stream.skip(16);
+		readRect(stream, _placementZone);
 		readFilename(stream, _extraSoundName);
 		readRect(stream, _animRectA);
 		readRect(stream, _animRectB);
@@ -310,6 +316,7 @@ void OneBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 		_animSound1.readNormal(stream);
 		_animSound2.readNormal(stream);
 		_hasFinalAnim = !_animRectA.isEmpty();
+		_hasCrank = !_animRectB.isEmpty();
 	}
 
 	_pickupSound.readNormal(stream);
@@ -337,7 +344,10 @@ void OneBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	_solveScene.readData(stream);
 	_completionSound.readNormal(stream);
 
-	// Completion caption: AUTOTEXT key if known, else inline text.
+	// Completion caption. Only an AUTOTEXT key produces a textbox caption; the
+	// trailing inline string is a sound subtitle (e.g. "High pitched sound" for
+	// the tuning-fork puzzle), which the original never writes to the textbox.
+	// It is still read to keep the stream aligned.
 	Common::String completionKey;
 	char textBuf[200];
 	readFilename(stream, completionKey);
@@ -345,8 +355,6 @@ void OneBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	_completionText.clear();
 	if (!completionKey.empty() && autotext->texts.contains(completionKey))
 		_completionText = autotext->texts[completionKey];
-	else
-		assembleTextLine(textBuf, _completionText, 200);
 
 	_cancelScene.readData(stream);
 	readRect(stream, _exitHotspot);
@@ -378,7 +386,10 @@ void OneBuildPuzzle::execute() {
 					// Pickup/rotate sound finished; return to idle (piece still dragging)
 					_solveState = kIdle;
 				} else if (_correctlyPlaced) {
-					checkAllPlaced();
+					// Crank puzzles never solve by placement alone; the player
+					// must turn the crank to finish (see finishCrankTurn()).
+					if (!_hasCrank)
+						checkAllPlaced();
 					if (!_isSolved)
 						playGoodPlacementSound();
 				} else {
@@ -405,7 +416,7 @@ void OneBuildPuzzle::execute() {
 			// Play completion sound/text, then wait for it to finish
 			g_nancy->_sound->loadSound(_completionSound);
 			g_nancy->_sound->playSound(_completionSound);
-			if (!_completionText.empty()) {
+			if (!_completionText.empty() && ConfMan.getBool("subtitles")) {
 				NancySceneState.getTextbox().clear();
 				NancySceneState.getTextbox().addTextLine(_completionText);
 			}
@@ -443,23 +454,16 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 	Common::Point mouseVP(input.mousePos.x - vpScreen.left,
 						  input.mousePos.y - vpScreen.top);
 
-	// Post-placement final-animation stage: once all pieces are placed on a
-	// puzzle that defines _animRectA, the puzzle waits here until the user
-	// clicks the hotspot (e.g. winding a music-box crank, throwing a lever).
-	if (_waitingForFinalAnim && _solveState == kIdle) {
-		if (_animRectA.contains(mouseVP)) {
-			g_nancy->_cursor->setCursorType(CursorManager::kPuzzleArrow);
-			if (input.input & NancyInput::kLeftMouseButtonUp)
-				startFinalAnimation();
-			return;
-		}
-		// Fall through so the exit hotspot still works while waiting.
-	}
-
 	if (_isDragging) {
 		// Always update drag position while carrying a piece
 		updateDragPosition(mouseVP);
-		setPieceCursor();
+
+		// The held fork shows the hotspot hand cursor while over the placement
+		// region, and the plain magnifying glass everywhere else.
+		if (_placementZone.isEmpty() || _placementZone.contains(mouseVP))
+			setPieceCursor();
+		else
+			g_nancy->_cursor->setCursorType(CursorManager::kNormal);
 
 		if (_solveState != kIdle)
 			return;
@@ -476,6 +480,11 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 
 		// Left click while dragging: attempt to place
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
+			// A fork can only be released inside the contraption region; a
+			// click outside it is ignored and the piece stays on the cursor.
+			if (!_placementZone.isEmpty() && !_placementZone.contains(mouseVP))
+				return;
+
 			Piece &piece = _pieces[_pickedUpPiece];
 
 			Common::Rect slot = piece.slotRect;
@@ -526,6 +535,17 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 			_pickedUpPiece = -1;
 			playDropSound();
 		}
+		return;
+	}
+
+	// Crank hotspot: on puzzles solved by a crank it can be turned at any time
+	// before the puzzle is solved. Turning it plays the winding animation, then
+	// either solves the puzzle or (if the forks aren't all correctly placed)
+	// makes a bad noise so the player can try again. See finishCrankTurn().
+	if (_hasCrank && _solveState == kIdle && _animRectB.contains(mouseVP)) {
+		g_nancy->_cursor->setCursorType(CursorManager::kPuzzleArrow);
+		if (input.input & NancyInput::kLeftMouseButtonUp)
+			startFinalAnimation();
 		return;
 	}
 
@@ -616,7 +636,8 @@ void OneBuildPuzzle::readPlacementTexts(Common::SeekableReadStream &stream, Comm
 
 void OneBuildPuzzle::setPieceCursor() {
 	if (g_nancy->getGameType() >= kGameTypeNancy10)
-		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_pieceCursorType, true, false);
+		// The piece hand uses the hotspot variant (blue hand with an outline).
+		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_pieceCursorType, true, true);
 	else
 		g_nancy->_cursor->setCursorType(CursorManager::kCustom1);
 }
@@ -751,13 +772,6 @@ void OneBuildPuzzle::checkAllPlaced() {
 		return;
 	}
 
-	// Puzzles with a post-placement animation (e.g. scene 3637's music-box
-	// crank) require the player to click _animRectA before the puzzle solves.
-	if (_hasFinalAnim && !_finalAnimDone) {
-		_waitingForFinalAnim = true;
-		return;
-	}
-
 	_isSolved = true;
 	_solveState = kTriggerCompletion;
 }
@@ -804,7 +818,7 @@ void OneBuildPuzzle::playGoodPlacementSound() {
 		idx = 0;
 	g_nancy->_sound->loadSound(_currentSound);
 	g_nancy->_sound->playSound(_currentSound);
-	if (!_goodTexts[idx].empty()) {
+	if (!_goodTexts[idx].empty() && ConfMan.getBool("subtitles")) {
 		NancySceneState.getTextbox().clear();
 		NancySceneState.getTextbox().addTextLine(_goodTexts[idx]);
 	}
@@ -823,7 +837,7 @@ void OneBuildPuzzle::playBadPlacementSound() {
 		idx = 0;
 	g_nancy->_sound->loadSound(_currentSound);
 	g_nancy->_sound->playSound(_currentSound);
-	if (!_badTexts[idx].empty()) {
+	if (!_badTexts[idx].empty() && ConfMan.getBool("subtitles")) {
 		NancySceneState.getTextbox().clear();
 		NancySceneState.getTextbox().addTextLine(_badTexts[idx]);
 	}
@@ -832,19 +846,17 @@ void OneBuildPuzzle::playBadPlacementSound() {
 }
 
 void OneBuildPuzzle::startFinalAnimation() {
-	_finalAnimDone = true;       // one-shot guard
-	_waitingForFinalAnim = false;
+	_finalAnimDone = true;
 	_animFrameCounter = 0;
 	_animRowCounter = 0;
 
-	// Without an animation image to step through, fall straight into completion.
+	// Without an animation image to step through, resolve the crank turn now.
 	if (_animImage.w == 0) {
 		if (_animSound1.name != "NO SOUND" && !_animSound1.name.empty()) {
 			g_nancy->_sound->loadSound(_animSound1);
 			g_nancy->_sound->playSound(_animSound1);
 		}
-		_isSolved = true;
-		_solveState = kTriggerCompletion;
+		finishCrankTurn();
 		return;
 	}
 
@@ -901,10 +913,31 @@ void OneBuildPuzzle::stepFinalAnimation() {
 		return;
 	}
 
-	// Animation finished: hide overlay and run the standard completion flow.
+	// Animation finished: solve the puzzle or make the bad noise.
+	finishCrankTurn();
+}
+
+void OneBuildPuzzle::finishCrankTurn() {
 	_finalAnimOverlay.setVisible(false);
-	_isSolved = true;
-	_solveState = kTriggerCompletion;
+
+	// checkAllPlaced() sets _isSolved and moves to kTriggerCompletion once every
+	// required fork is in place.
+	checkAllPlaced();
+	if (_isSolved)
+		return;
+
+	// The forks aren't all correctly placed yet: the contraption makes a bad
+	// noise and the player can turn the crank again.
+	if (_animSound2.name != "NO SOUND" && !_animSound2.name.empty()) {
+		g_nancy->_sound->loadSound(_animSound2);
+		g_nancy->_sound->playSound(_animSound2);
+		_currentSound = _animSound2;
+		_timerEnd = g_system->getMillis() + 800;
+		_solveState = kWaitPlaceSound;
+	} else {
+		_solveState = kIdle;
+	}
+	_finalAnimDone = false;
 }
 
 // static

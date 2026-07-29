@@ -109,8 +109,14 @@ protected:
 	Common::Rect _animRectB;
 	int16 _animLayout[6] = {}; // cols, framesPerStep, baseX, baseY, spacing, totalRows
 	SoundDescription _animSound1;
-	SoundDescription _animSound2;
-	bool _hasFinalAnim = false;   // true when _animRectA is non-empty
+	SoundDescription _animSound2;  // "bad" noise played when the crank is turned before the puzzle is solved
+	bool _hasFinalAnim = false;   // true when _animRectA is non-empty (the animation atlas region)
+	bool _hasCrank = false;       // true when _animRectB is non-empty; the puzzle is solved by turning the crank
+
+	// Forks can only be dragged onto / released inside this region (the
+	// contraption area), not the whole viewport. Empty when the puzzle has no
+	// such constraint.
+	Common::Rect _placementZone;
 
 	// Nancy12: pieces with an empty home rect start scattered inside this zone.
 	Common::Rect _scatterZone;
@@ -172,10 +178,6 @@ protected:
 	uint16 _piecesPlaced = 0;    // Number of pieces correctly placed so far
 	uint32 _timerEnd = 0;        // Millisecond timestamp when the current timer expires
 
-	// Final-animation gating: after all pieces are placed on a puzzle that
-	// has _animRectA defined, _waitingForFinalAnim is set and the puzzle
-	// stalls in kIdle until the user clicks _animRectA.
-	bool _waitingForFinalAnim = false;
 	bool _finalAnimDone = false;
 
 	// Final-animation runtime state (matches original `+0xc35`/`+0xc33` per-tick counters).
@@ -225,6 +227,9 @@ protected:
 	// Final-animation helpers.
 	void startFinalAnimation();
 	void stepFinalAnimation();
+	// After a crank turn finishes: solve if every fork is placed, otherwise
+	// play the "bad" noise and let the player try again.
+	void finishCrankTurn();
 };
 
 } // End of namespace Action
