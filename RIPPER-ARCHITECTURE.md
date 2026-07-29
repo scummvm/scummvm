@@ -560,6 +560,10 @@
   select rows 11 and 6. `LIBRARY0.WAV` through `LIBRARY3.WAV` and
   `DECK10.WAV` provide the presentation cues, while the first and repeated talk
   actions select `LI1_1_V1.WAV` and one of `LI1_1_Z1.WAV`/`LI1_1_Z3.WAV`.
+  Starting either a talk or choice voice applies and stores cursor row 19,
+  disables the fixed and chooser controls, and leaves Escape as the only
+  meaningful input until the managed voice completes. Completion restores
+  cursor row 14 before rebuilding the available choices.
   Its scene-action argument is copied to a local but otherwise unused by the
   retail function.
   Escape stops an active managed voice first; when no voice is active it exits
@@ -569,7 +573,12 @@
   the 640x300 loop is installed at physical y=50. This clears the full logical
   page so the top and bottom bands contain palette index zero rather than stale
   pixels from the preceding 640x400 deck presentation.
-- The Ka chooser sources game-text entries `0xaa` through `0xad`. Consuming a
+- The Ka chooser sources the one-based `GAMETEXT.TF` resource IDs `0xaa`
+  through `0xad` through `ResolveStartupResourceString` at `0x1f7a2`.
+  ScummVM's decoded string array is zero-based, so each resource ID is
+  decremented only at lookup; resource `0xad` is therefore “Ask to sign out an
+  audio editor,” not the following `0xae` “Decryption Completed:” string.
+  Consuming a
   choice sets flags `0x14a` through `0x14d` and starts, respectively,
   `LI1_1_VA.WAV`, `LI1_1_VB.WAV`, `LI1_1_VD.WAV`, or `LI1_1_VC.WAV`.
   Each available item retains the retail choice ID 0 through 3 even when
