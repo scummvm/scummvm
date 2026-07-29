@@ -34,7 +34,7 @@ struct Scratch {
 
 };
 
-static Scratch local;
+//static Scratch local;
 
 static void room_354_init() {
 	global[kAfterHavoc] = true;

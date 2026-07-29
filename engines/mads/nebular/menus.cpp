@@ -151,7 +151,7 @@ static void game_menu_setup() {
 		21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
 		41, 42, 43, 44, 45, 46, 47, 48, 0);
 
-	
+
 	cursor_id = MAX(CURSOR_WAIT, cursor->num_sprites);
 	if (cursor_id != cursor_last) {
 		mouse_cursor_sprite(cursor, cursor_id);
@@ -849,13 +849,13 @@ static int game_menu_sprite(int sprite, int depth) {
 static void game_menu_main() {
 	int going = true;
 	int first_time = true;
-	int frame_id;
+	//int frame_id;
 	long menu_clock = 0;
 	long now_clock;
 
 	game_menu_first_init();
 
-	frame_id = game_menu_sprite(1, 2);
+	//frame_id = game_menu_sprite(1, 2);
 
 	while (kernel.activate_menu == GAME_MAIN_MENU) {
 
@@ -940,7 +940,7 @@ static void game_menu_main() {
 static void game_menu_options() {
 	int going = true;
 	int first_time = true;
-	int frame_id;
+	//int frame_id;
 	long menu_clock = 0;
 	long now_clock;
 	ConfigFile save_config;
@@ -949,7 +949,7 @@ static void game_menu_options() {
 
 	game_menu_first_init();
 
-	frame_id = game_menu_sprite(2, 2);
+	//frame_id = game_menu_sprite(2, 2);
 
 	while (kernel.activate_menu == GAME_OPTIONS_MENU) {
 		going = true;
@@ -1212,7 +1212,7 @@ static int game_menu_save_keyboard(int going) {
 static void game_menu_save() {
 	int going = true;
 	int first_time = true;
-	int frame_id;
+	//int frame_id;
 	int id;
 	int special_sprite;
 	int let_scroll_continue;
@@ -1233,7 +1233,7 @@ static void game_menu_save() {
 
 	game_menu_first_init();
 
-	frame_id = game_menu_sprite(3, 2);
+	//frame_id = game_menu_sprite(3, 2);
 
 	game_menu_save_dirty = false;
 
@@ -1410,7 +1410,7 @@ static int game_menu_restore_keyboard(int going) {
 static void game_menu_restore() {
 	int going = true;
 	int first_time = true;
-	int frame_id;
+	//int frame_id;
 	int id;
 	int special_sprite;
 	int let_scroll_continue;
@@ -1429,7 +1429,7 @@ static void game_menu_restore() {
 
 	game_menu_first_init();
 
-	frame_id = game_menu_sprite(3, 2);
+	//frame_id = game_menu_sprite(3, 2);
 
 	while (kernel.activate_menu == GAME_RESTORE_MENU) {
 
@@ -1574,13 +1574,13 @@ static void game_menu_restore() {
 static void game_menu_difficulty() {
 	int going = true;
 	int first_time = true;
-	int frame_id;
+	//int frame_id;
 	long menu_clock = 0;
 	long now_clock;
 
 	game_menu_first_init();
 
-	frame_id = game_menu_sprite(8, 2);
+	//frame_id = game_menu_sprite(8, 2);
 
 	while (kernel.activate_menu == GAME_DIFFICULTY_MENU) {
 
@@ -1663,13 +1663,13 @@ static void game_menu_difficulty() {
 static void game_menu_alert() {
 	int going = true;
 	int first_time = true;
-	int frame_id;
+	//int frame_id;
 	long menu_clock = 0;
 	long now_clock;
 
 	game_menu_first_init();
 
-	frame_id = game_menu_sprite(9, 2);
+	//frame_id = game_menu_sprite(9, 2);
 
 	while (kernel.activate_menu == GAME_ALERT_MENU) {
 

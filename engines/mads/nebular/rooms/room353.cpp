@@ -34,7 +34,7 @@ struct Scratch {
 
 };
 
-static Scratch local;
+//static Scratch local;
 
 
 static void room_353_init() {

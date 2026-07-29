@@ -319,7 +319,7 @@ RoomPtr room_load(int id, int variant, const char *base_path, Buffer *picture,
 	char base[80];
 	char block_name[20];
 	bool sceneFlag = id >= 0;
-	int width, height, picSize;
+	int width, height;
 	SeriesPtr sprites[10] = { nullptr };
 	int16 spritesHandles[10] = { -1 };
 
@@ -380,7 +380,7 @@ RoomPtr room_load(int id, int variant, const char *base_path, Buffer *picture,
 
 	width = roomfile.xs;
 	height = roomfile.ys;
-	picSize = width * height;
+	//picSize = width * height;
 
 	if (!picture->data)
 		buffer_init(picture, width, height);

@@ -1125,6 +1125,8 @@ row_finish:
 		}
 
 	} /* end while(1) row_loop */
+
+	(void)pixel_ptr;  /* suppress unused variable warning */
 }
 
 all_done:;

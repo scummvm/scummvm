@@ -907,7 +907,7 @@ char *dialog_read_filename(DialogPtr dialog, ItemPtr item) {
  * Updates the status of a dialog box based on its status flag
  *
  * @param dialog	Dialog
- * @param item	
+ * @param item
  */
 static void dialog_update_checkbox(DialogPtr dialog, ItemPtr item) {
 	char temp1[2];
@@ -3182,6 +3182,8 @@ int dialog_alert(int x, int y, int buttons, const char *string1,
 	} else {
 		returnval = dialog_error;
 	}
+
+	(void)num_strings;
 
 	return returnval;
 }

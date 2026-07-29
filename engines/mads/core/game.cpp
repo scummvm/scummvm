@@ -309,6 +309,7 @@ void flag_parse(const char **myscan) {
 	case 'M':
 		if (scan_past(myscan, ':')) {
 			mem_max = atol(*myscan);
+			(void)mem_max;
 			scan_past(myscan, 0);
 		}
 		break;

@@ -71,9 +71,9 @@ int concat_mode;
 bool stop_music_at_end;
 bool wait_for_music_at_end;
 
-static const byte FX_TIMES[16] = {
-	0, 110, 110, 64, 64, 64, 64, 64, 64, 64, 64, 0, 0, 0
-};
+//static const byte FX_TIMES[16] = {
+//	0, 110, 110, 64, 64, 64, 64, 64, 64, 64, 64, 0, 0, 0
+//};
 
 static bool has_sound_file;
 static char sound_file_name[80];

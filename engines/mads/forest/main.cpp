@@ -44,8 +44,8 @@
 namespace MADS {
 namespace Forest {
 
-constexpr bool SHOW_LINES = true;
-constexpr byte LINE_COLOR = 2;
+//constexpr bool SHOW_LINES = true;
+//constexpr byte LINE_COLOR = 2;
 
 char *quotes;
 
