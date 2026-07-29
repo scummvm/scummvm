@@ -167,9 +167,15 @@
 - `ExecuteSceneFrameAndInteractions` enters that input loop when the frame has
   either registered interactions or an idle callback. Opcode `0x17` dialogue
   choosers created by an idle callback therefore hold their type-1 presentation
-  until a response is selected. `HandleSceneChooserSpecialCommand` at `0x17c5a`
-  resolves Escape before hotspot lookup and returns `-4` for the normal nested
-  Cyber-runtime exit.
+  until a response is selected. `PollInteractionAndResolveSelection` calls
+  `StepFrameIdleCallbackCommandStream` at `0x143af` before reading chooser
+  input. For a controlled type-0 presentation this occurs after the media has
+  completed but before its hotspots become interactive. `EE2.RUN` frame 12
+  (`EEZ1`) uses that path to test the played state of `q2_v5` and play
+  `Q2_V5.WAV` once after `EEZ1.SMK`; the normal blocking-audio presentation
+  supplies cursor 19 while the clip is active. `HandleSceneChooserSpecialCommand`
+  at `0x17c5a` resolves Escape before hotspot lookup and returns `-4` for the
+  normal nested Cyber-runtime exit.
 - If an action in that toolbar returns `-3`, `RunFrontEndActionMenu` at
   `0x18b3a` returns the same control code to `PollInteractionAndResolveSelection`
   at `0x13c8d`. `RunMediaSequence` stops its frame loop on the nonzero callback
