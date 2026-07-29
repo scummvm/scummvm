@@ -80,6 +80,8 @@ public:
 		const Common::Rect &bounds, uint firstVisible,
 		uint &maximumFirstVisible, uint &visibleRows, PresentationStyle style,
 		TextPanelScrollControl hoveredScrollControl = kTextPanelScrollNone);
+	bool drawRetainedTitlePanelText(const Common::String &title,
+		const Common::Rect &bounds, PresentationStyle style);
 	bool drawRetainedTextPanelLines(const Common::Array<Common::String> &lines,
 		const Common::Rect &bounds, uint firstVisible,
 		uint &maximumFirstVisible, uint &visibleRows, PresentationStyle style,

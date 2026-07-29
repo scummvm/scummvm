@@ -120,6 +120,8 @@ static const uint kWacVoiceLockFileResource = 0xb1;
 static const uint kWacVoiceLockEditorResource = 0xb2;
 static const uint kWacVoiceLockSelectionCount = 5;
 static const uint kWacVoiceLockSelectionTolerance = 3;
+static const byte kWacVoiceLockWaveformColor = 255;
+static const byte kWacVoiceLockMarkerColor = 196;
 
 struct WacVoiceLockPcm {
 	Common::Array<byte> data;
@@ -205,26 +207,13 @@ static void drawWacVoiceLockWaveform(Graphics::Surface &screen,
 	for (int y = bounds.top; y < bounds.bottom; ++y)
 		memset(screen.getBasePtr(bounds.left, y), kWacDatabaseBackground,
 			bounds.width());
-	for (int x = bounds.left; x < bounds.right; ++x) {
-		*((byte *)screen.getBasePtr(x, bounds.top)) = kWacDatabaseNormalText;
-		*((byte *)screen.getBasePtr(x, bounds.bottom - 1)) =
-			kWacDatabaseNormalText;
-	}
-	for (int y = bounds.top; y < bounds.bottom; ++y) {
-		*((byte *)screen.getBasePtr(bounds.left, y)) = kWacDatabaseNormalText;
-		*((byte *)screen.getBasePtr(bounds.right - 1, y)) =
-			kWacDatabaseNormalText;
-	}
-
-	const int center = (bounds.top + bounds.bottom) / 2;
-	for (int x = bounds.left + 1; x < bounds.right - 1; ++x)
-		*((byte *)screen.getBasePtr(x, center)) = kWacDatabaseTitleText;
 	if (pcm.data.empty() || pcm.bytesPerSample == 0)
 		return;
 
+	const int center = (bounds.top + bounds.bottom) / 2;
 	const uint sampleCount = pcm.data.size() / pcm.bytesPerSample;
-	const int plotWidth = bounds.width() - 2;
-	const int amplitude = MAX<int>(1, bounds.height() / 2 - 3);
+	const int plotWidth = bounds.width();
+	const int amplitude = MAX<int>(1, bounds.height() / 2);
 	for (int column = 0; column < plotWidth; ++column) {
 		const uint firstSample = (uint64)column * sampleCount / plotWidth;
 		const uint lastSample = MAX<uint>(firstSample + 1,
@@ -237,25 +226,37 @@ static void drawWacVoiceLockWaveform(Graphics::Surface &screen,
 			minimum = MIN(minimum, value);
 			maximum = MAX(maximum, value);
 		}
-		const int top = center - maximum * amplitude / 32768;
-		const int bottom = center - minimum * amplitude / 32768;
+		const int top = CLIP<int>(center - maximum * amplitude / 32768,
+			bounds.top, bounds.bottom - 1);
+		const int bottom = CLIP<int>(center - minimum * amplitude / 32768,
+			bounds.top, bounds.bottom - 1);
 		for (int y = top; y <= bottom; ++y)
-			*((byte *)screen.getBasePtr(bounds.left + 1 + column, y)) =
-				kWacDatabaseNormalText;
+			*((byte *)screen.getBasePtr(bounds.left + column, y)) =
+				kWacVoiceLockWaveformColor;
 	}
 
 	if (!selections)
 		return;
 	for (uint selection = 0; selection < selections->size(); ++selection) {
-		const int start = CLIP((*selections)[selection].start,
-			bounds.left + 1, bounds.right - 2);
-		const int end = CLIP((*selections)[selection].end,
-			bounds.left + 1, bounds.right - 2);
-		for (int y = bounds.top + 1; y < bounds.bottom - 1; ++y) {
-			*((byte *)screen.getBasePtr(start, y)) = kWacDatabaseSelectedText;
-			*((byte *)screen.getBasePtr(end, y)) = kWacDatabaseSelectedText;
+		const int start = CLIP<int>((*selections)[selection].start,
+			bounds.left, bounds.right - 1);
+		const int end = CLIP<int>((*selections)[selection].end,
+			bounds.left, bounds.right - 1);
+		for (int y = bounds.top; y < bounds.bottom; ++y) {
+			*((byte *)screen.getBasePtr(start, y)) =
+				kWacVoiceLockMarkerColor;
+			*((byte *)screen.getBasePtr(end, y)) =
+				kWacVoiceLockMarkerColor;
 		}
 	}
+}
+
+static uint32 getWacVoiceLockDuration(uint byteCount,
+		const WacVoiceLockPcm &pcm) {
+	if (pcm.sampleRate == 0 || pcm.bytesPerSample == 0)
+		return 0;
+	return MAX<uint32>(1, (uint64)byteCount * 1000 /
+		(pcm.sampleRate * pcm.bytesPerSample));
 }
 
 static void appendWacVoiceLockSelectionAudio(
@@ -1451,8 +1452,11 @@ uint16 WacManager::runVoiceLockPuzzle(DatabaseEntry &entry) {
 	ResourceManager *resources = _engine->getResources();
 	const Common::Rect sourcePanel(50, 50, 390, 166);
 	const Common::Rect editorPanel(50, 176, 390, 292);
-	const Common::Rect sourceWaveform(55, 82, 385, 151);
-	const Common::Rect editorWaveform(55, 208, 385, 277);
+	// CreateWrappedTextPanelControl at 0x58fb6 stores the client rectangle
+	// separately from the 340-by-116 outer control. The title-only WAC layout
+	// leaves a 20-pixel heading, 5-pixel side insets and a 6-pixel bottom inset.
+	const Common::Rect sourceWaveform(55, 70, 385, 160);
+	const Common::Rect editorWaveform(55, 196, 385, 286);
 	Common::Array<BitmapAssetFrame> buttonAssets;
 	WacVoiceLockPcm sourcePcm;
 	if (!resources->loadInterfaceBitmapSet("wacwav", buttonAssets) ||
@@ -1474,6 +1478,10 @@ uint16 WacManager::runVoiceLockPuzzle(DatabaseEntry &entry) {
 	int hoveredButton = -1;
 	int pressedButton = -1;
 	bool validateAfterPlayback = false;
+	bool playbackProgressActive = false;
+	Common::Rect playbackProgressBounds;
+	uint32 playbackDuration = 0;
+	int playbackProgressColumn = -1;
 	const uint savedCursor = _engine->getCursor()->getSelectionIndex();
 	Audio::SoundHandle audioHandle;
 
@@ -1489,23 +1497,14 @@ uint16 WacManager::runVoiceLockPuzzle(DatabaseEntry &entry) {
 	}
 
 	auto drawPresentation = [&]() -> bool {
-		uint firstVisible = 0;
-		uint maximumFirstVisible = 0;
-		uint visibleRows = 0;
-		if (!_engine->getModalDialog()->drawRetainedTextPanelText(
+		if (!_engine->getModalDialog()->drawRetainedTitlePanelText(
 				resourceString(kWacVoiceLockFileResource),
-				sourcePanel, firstVisible, maximumFirstVisible,
-				visibleRows, ModalDialogManager::kWacPresentation))
+				sourcePanel, ModalDialogManager::kWacPresentation))
 			return false;
 		if (editorAvailable) {
-			firstVisible = 0;
-			maximumFirstVisible = 0;
-			visibleRows = 0;
-			if (!_engine->getModalDialog()->drawRetainedTextPanelText(
+			if (!_engine->getModalDialog()->drawRetainedTitlePanelText(
 					resourceString(kWacVoiceLockEditorResource),
-					editorPanel, firstVisible,
-					maximumFirstVisible, visibleRows,
-					ModalDialogManager::kWacPresentation))
+					editorPanel, ModalDialogManager::kWacPresentation))
 				return false;
 		}
 
@@ -1530,12 +1529,22 @@ uint16 WacManager::runVoiceLockPuzzle(DatabaseEntry &entry) {
 			drawWacVoiceLockWaveform(*screen, assembledPcm,
 				editorWaveform, nullptr);
 		}
+		if (playbackProgressActive && playbackProgressColumn >= 0 &&
+				!playbackProgressBounds.isEmpty()) {
+			const int x = playbackProgressBounds.left +
+				MIN<int>(playbackProgressColumn,
+					playbackProgressBounds.width() - 1);
+			for (int y = playbackProgressBounds.top;
+					y < playbackProgressBounds.bottom; ++y)
+				*((byte *)screen->getBasePtr(x, y)) =
+					kWacVoiceLockMarkerColor;
+		}
 		g_system->unlockScreen();
 
 		const uint buttonCount = editorAvailable ? 3 : 1;
 		for (uint button = 0; button < buttonCount; ++button) {
 			const uint frame = button * 2 +
-				((int)button == hoveredButton || (int)button == pressedButton ? 1 : 0);
+				((int)button == pressedButton ? 1 : 0);
 			drawBitmap(buttonAssets[frame], buttonBounds[button].left,
 				buttonBounds[button].top);
 		}
@@ -1602,6 +1611,8 @@ uint16 WacManager::runVoiceLockPuzzle(DatabaseEntry &entry) {
 				kWacControlCursor : kWacDefaultCursor);
 		if ((mouse.pressed & kMouseButtonLeft) != 0) {
 			pressedButton = hoveredButton;
+			if (pressedButton >= 0)
+				redraw = true;
 			if (waveformHover) {
 				dragging = true;
 				dragStart = CLIP<int>(mouse.position.x,
@@ -1644,9 +1655,13 @@ uint16 WacManager::runVoiceLockPuzzle(DatabaseEntry &entry) {
 			switch (pressedButton) {
 			case 0: {
 				bool started = false;
+				uint playbackBytes = sourcePcm.data.size();
+				playbackProgressBounds = sourceWaveform;
 				if (editorAvailable && !assembledAudio.empty()) {
 					started = _engine->getMedia()->playRawSoundEffect(assembledAudio,
 						sourcePcm.sampleRate, sourcePcm.flags, audioHandle);
+					playbackBytes = assembledAudio.size();
+					playbackProgressBounds = editorWaveform;
 					debugC(2, kDebugWac,
 						"Ripper: WAC voice-lock played assembled audio bytes=%u selections=%u started=%d",
 						assembledAudio.size(), selections.size(), started);
@@ -1659,11 +1674,19 @@ uint16 WacManager::runVoiceLockPuzzle(DatabaseEntry &entry) {
 						quantized, started);
 				}
 				validateAfterPlayback = started;
+				playbackDuration = getWacVoiceLockDuration(playbackBytes,
+					sourcePcm);
+				playbackProgressActive = started && playbackDuration != 0;
+				playbackProgressColumn =
+					playbackProgressActive ? 0 : -1;
+				redraw = true;
 				break;
 			}
 			case 1:
 				_engine->getMedia()->stopSoundEffect(audioHandle);
 				validateAfterPlayback = false;
+				playbackProgressActive = false;
+				playbackProgressColumn = -1;
 				selections.clear();
 				assembledAudio.clear();
 				debugC(2, kDebugWac,
@@ -1671,6 +1694,8 @@ uint16 WacManager::runVoiceLockPuzzle(DatabaseEntry &entry) {
 				redraw = true;
 				break;
 			case 2: {
+				playbackProgressActive = false;
+				playbackProgressColumn = -1;
 				WacVoiceLockPcm quantizedPcm;
 				if (loadWacVoiceLockPcm(resources, "voxlok1.wav",
 						quantizedPcm)) {
@@ -1693,13 +1718,35 @@ uint16 WacManager::runVoiceLockPuzzle(DatabaseEntry &entry) {
 				break;
 			}
 			pressedButton = -1;
+			redraw = true;
 		} else if ((mouse.released & kMouseButtonLeft) != 0) {
 			pressedButton = -1;
+			redraw = true;
 		}
 
-		if (validateAfterPlayback &&
-				!_engine->getMedia()->isSoundEffectActive(audioHandle)) {
+		const bool playbackActive =
+			_engine->getMedia()->isSoundEffectActive(audioHandle);
+		if (playbackProgressActive && playbackActive) {
+			const uint32 elapsed =
+				_engine->getMedia()->getSoundEffectElapsedTime(audioHandle);
+			const int nextProgressColumn = MIN<int>(
+				playbackProgressBounds.width() - 1,
+				(uint64)elapsed * playbackProgressBounds.width() /
+					playbackDuration);
+			if (nextProgressColumn != playbackProgressColumn) {
+				playbackProgressColumn = nextProgressColumn;
+				redraw = true;
+				debugC(3, kDebugWac,
+					"Ripper: WAC voice-lock playback progress elapsedMs=%u durationMs=%u column=%d",
+					elapsed, playbackDuration, playbackProgressColumn);
+			}
+		}
+
+		if (validateAfterPlayback && !playbackActive) {
 			validateAfterPlayback = false;
+			playbackProgressActive = false;
+			playbackProgressColumn = -1;
+			redraw = true;
 			Common::String sceneLabel;
 			ScriptManager *scripts = _engine->getScripts();
 			const uint activeFrame = scripts->getActiveFrame();
