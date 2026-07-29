@@ -364,7 +364,7 @@ public:
 
 		ImGui::Text(".");
 		ImGui::SameLine();
-		ImGui::Text(node.name.c_str());
+		ImGui::Text("%s", node.name.c_str());
 		ImGui::SameLine();
 		ImGui::Text("(");
 		ImGui::SameLine();
@@ -462,7 +462,7 @@ public:
 
 	virtual void visit(const LingoDec::MemberExprNode &node) override {
 		bool hasCastID = node.castID && !(node.castID->type == LingoDec::kLiteralNode && node.castID->getValue()->type == LingoDec::kDatumInt && node.castID->getValue()->i == 0);
-		ImGui::Text(node.type.c_str());
+		ImGui::Text("%s", node.type.c_str());
 		ImGui::SameLine();
 		ImGui::Text(" ");
 		ImGui::SameLine();
@@ -543,7 +543,7 @@ public:
 	virtual void visit(const LingoDec::ThePropExprNode &node) override {
 		ImGui::TextColored(ImColor(_state->theme->keyword_color), "the ");
 		ImGui::SameLine();
-		ImGui::Text(node.prop.c_str());
+		ImGui::Text("%s", node.prop.c_str());
 		ImGui::SameLine();
 		ImGui::TextColored(ImColor(_state->theme->keyword_color), " of ");
 		ImGui::SameLine();
@@ -579,7 +579,7 @@ public:
 	virtual void visit(const LingoDec::SoundCmdStmtNode &node) override {
 		write(node._startOffset, "sound ", _state->theme->keyword_color);
 		ImGui::SameLine();
-		ImGui::Text(node.cmd.c_str());
+		ImGui::Text("%s", node.cmd.c_str());
 		ImGui::SameLine();
 		ImGui::Text(" ");
 		ImGui::SameLine();
@@ -721,7 +721,7 @@ public:
 
 		ImGui::Text(".");
 		ImGui::SameLine();
-		ImGui::Text(node.prop.c_str());
+		ImGui::Text("%s", node.prop.c_str());
 		ImGui::SameLine();
 		ImGui::Text("[");
 		ImGui::SameLine();
@@ -870,7 +870,7 @@ private:
 			ImGui::SameLine();
 			return;
 		case LingoDec::kDatumVarRef:
-			ImGui::TextColored(_state->theme->var_color, datum.s.c_str());
+			ImGui::TextColored(_state->theme->var_color, "%s", datum.s.c_str());
 			ImGui::SameLine();
 			return;
 		case LingoDec::kDatumString:
