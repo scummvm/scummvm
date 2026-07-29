@@ -243,20 +243,15 @@ static void handle_animation_pid() {
 
 
 static void handle_animation_climbing_lower() {
-	int king_reset_frame;
-
 	if (kernel_anim[aa[1]].frame != local->king_frame) {
 		local->king_frame = kernel_anim[aa[1]].frame;
-		king_reset_frame  = -1;
 
 		switch (local->king_frame) {
-
 		case 105:
 			kernel_abort_animation(aa[1]);
 			aa[3] = kernel_run_animation(kernel_name('k', 3), 0);
 			kernel_synch(KERNEL_ANIM, aa[3], KERNEL_NOW, 0);
 			player.commands_allowed = true;
-			king_reset_frame        = -1;
 			local->anim_1_running   = false;
 			local->anim_3_running   = true;
 			local->king_action      = KING_FREEZE;
@@ -267,30 +262,20 @@ static void handle_animation_climbing_lower() {
 			new_room = 502;
 			break;
 		}
-
-		if (king_reset_frame >= 0) {
-			kernel_reset_animation(aa[1], king_reset_frame);
-			local->king_frame = king_reset_frame;
-		}
 	}
 }
 
 
 static void handle_animation_climbing_upper() {
-	int king_reset_frame;
-
 	if (kernel_anim[aa[2]].frame != local->king_frame) {
 		local->king_frame = kernel_anim[aa[2]].frame;
-		king_reset_frame  = -1;
 
 		switch (local->king_frame) {
-
 		case 200:
 			kernel_abort_animation(aa[2]);
 			aa[3] = kernel_run_animation(kernel_name('k', 3), 0);
 			kernel_synch(KERNEL_ANIM, aa[3], KERNEL_NOW, 0);
 			player.commands_allowed = true;
-			king_reset_frame        = -1;
 			local->anim_2_running   = false;
 			local->anim_3_running   = true;
 			local->king_action      = KING_FREEZE;
@@ -304,11 +289,6 @@ static void handle_animation_climbing_upper() {
 				new_room = 508;
 			}
 			break;
-		}
-
-		if (king_reset_frame >= 0) {
-			kernel_reset_animation(aa[2], king_reset_frame);
-			local->king_frame = king_reset_frame;
 		}
 	}
 }

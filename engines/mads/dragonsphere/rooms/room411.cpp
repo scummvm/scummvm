@@ -170,11 +170,8 @@ static void handle_animation_bird_1() {
 }
 
 static void handle_animation_bird_2() {
-	int bird_2_reset_frame;
-
 	if (kernel_anim[aa[1]].frame != local->bird_2_frame) {
 		local->bird_2_frame = kernel_anim[aa[1]].frame;
-		bird_2_reset_frame = -1;
 
 		switch (local->bird_2_frame) {
 		case 5:
@@ -197,11 +194,6 @@ static void handle_animation_bird_2() {
 			local->bird_1_action    = FREEZE;
 			kernel_synch(KERNEL_ANIM, aa[0], KERNEL_NOW, 0);
 			break;
-		}
-
-		if (bird_2_reset_frame >= 0) {
-			kernel_reset_animation(aa[1], bird_2_reset_frame);
-			local->bird_2_frame = bird_2_reset_frame;
 		}
 	}
 }
@@ -263,11 +255,8 @@ static void handle_animation_bird_3() {
 }
 
 static void handle_animation_bird_death() {
-	int bird_death_reset_frame;
-
 	if (kernel_anim[aa[3]].frame != local->bird_death_frame) {
 		local->bird_death_frame = kernel_anim[aa[3]].frame;
-		bird_death_reset_frame = -1;
 
 		switch (local->bird_death_frame) {
 		case 27:
@@ -298,20 +287,12 @@ static void handle_animation_bird_death() {
 			kernel.force_restart  = true;
 			break;
 		}
-
-		if (bird_death_reset_frame >= 0) {
-			kernel_reset_animation(aa[3], bird_death_reset_frame);
-			local->bird_death_frame = bird_death_reset_frame;
-		}
 	}
 }
 
 static void handle_animation_zap() {
-	int zap_reset_frame;
-
 	if (kernel_anim[aa[4]].frame != local->zap_frame) {
 		local->zap_frame = kernel_anim[aa[4]].frame;
-		zap_reset_frame = -1;
 
 		switch (local->zap_frame) {
 		case 30:
@@ -330,11 +311,6 @@ static void handle_animation_zap() {
 				global[grapes_are_dead] = true;
 			}
 			break;
-		}
-
-		if (zap_reset_frame >= 0) {
-			kernel_reset_animation(aa[4], zap_reset_frame);
-			local->zap_frame = zap_reset_frame;
 		}
 	}
 }

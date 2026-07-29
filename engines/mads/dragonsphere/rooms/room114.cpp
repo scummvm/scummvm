@@ -155,11 +155,8 @@ static void room_114_init() {
 }
 
 static void handle_animation_stairway_1() {
-	int stairway_reset_frame;
-
 	if (kernel_anim[aa[1]].frame != local->stairway_frame) {
 		local->stairway_frame = kernel_anim[aa[1]].frame;
-		stairway_reset_frame = -1;
 
 		switch (local->stairway_frame) {
 		case 103:
@@ -170,11 +167,6 @@ static void handle_animation_stairway_1() {
 			}
 			new_room = 113;
 			break;
-		}
-
-		if (stairway_reset_frame >= 0) {
-			kernel_reset_animation(aa[1], stairway_reset_frame);
-			local->stairway_frame = stairway_reset_frame;
 		}
 	}
 }

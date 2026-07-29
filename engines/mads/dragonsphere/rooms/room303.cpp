@@ -1048,11 +1048,8 @@ static void handle_anim_frog_6() {
 }
 
 static void handle_anim_fli() {
-	int fli_reset_frame;
-
 	if (kernel_anim[aa[8]].frame != local->fli_frame) {
 		local->fli_frame = kernel_anim[aa[8]].frame;
-		fli_reset_frame = -1;
 
 		switch (local->fli_frame) {
 		case 15:
@@ -1093,20 +1090,12 @@ static void handle_anim_fli() {
 			++global[player_score];
 			break;
 		}
-
-		if (fli_reset_frame >= 0) {
-			kernel_reset_animation(aa[8], fli_reset_frame);
-			local->fli_frame = fli_reset_frame;
-		}
 	}
 }
 
 static void handle_anim_death() {
-	int death_reset_frame;
-
 	if (kernel_anim[aa[3]].frame != local->death_frame) {
 		local->death_frame = kernel_anim[aa[3]].frame;
-		death_reset_frame = -1;
 
 		switch (local->death_frame) {
 		case 11:
@@ -1124,11 +1113,6 @@ static void handle_anim_death() {
 				sound_play(N_ToadEatsPlayer);
 			}
 			break;
-		}
-
-		if (death_reset_frame >= 0) {
-			kernel_reset_animation(aa[3], death_reset_frame);
-			local->death_frame = death_reset_frame;
 		}
 	}
 }

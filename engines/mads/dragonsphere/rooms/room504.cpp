@@ -684,12 +684,10 @@ static void handle_animation_tom_poking() {
 }
 
 static void handle_animation_reveal() {
-	int reveal_reset_frame;
 	int id;
 
 	if (kernel_anim[aa[3]].frame != local->reveal_frame) {
 		local->reveal_frame = kernel_anim[aa[3]].frame;
-		reveal_reset_frame  = -1;
 
 		switch (local->reveal_frame) {
 		case 7:
@@ -705,7 +703,6 @@ static void handle_animation_reveal() {
 			local->poking_action  = TOM_SHUT_UP;
 			local->anim_4_running = true;
 			local->anim_3_running = false;
-			reveal_reset_frame    = -1;
 
 			conv_run(CONV_27_PID_HEAL);
 			conv_export_value(player_has(amulet));
@@ -720,7 +717,6 @@ static void handle_animation_reveal() {
 			local->poking_action    = TOM_SHUT_UP;
 			local->anim_1_running   = true;
 			local->anim_3_running   = false;
-			reveal_reset_frame      = -1;
 			player.commands_allowed = true;
 
 			id = kernel_add_dynamic(words_Ner_Tom, words_walk_to, SYNTAX_SINGULAR_MASC, KERNEL_NONE,
@@ -737,11 +733,6 @@ static void handle_animation_reveal() {
 				conv_export_value(player_has(shifter_ring));
 			}
 			break;
-		}
-
-		if (reveal_reset_frame >= 0) {
-			kernel_reset_animation(aa[3], reveal_reset_frame);
-			local->reveal_frame = reveal_reset_frame;
 		}
 	}
 }

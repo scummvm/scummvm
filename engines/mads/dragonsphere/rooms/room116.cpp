@@ -225,11 +225,8 @@ static void room_116_init() {
 }
 
 static void handle_animation_lift() {
-	int lift_reset_frame;
-
 	if (kernel_anim[aa[2]].frame != local->lift_frame) {
 		local->lift_frame = kernel_anim[aa[2]].frame;
-		lift_reset_frame = -1;
 
 		switch (local->lift_frame) {
 		case 9:
@@ -256,17 +253,10 @@ static void handle_animation_lift() {
 			local->just_melted = true;
 			local->animation_running = KING_OFF_ICE;
 			local->anim_2_running = false;
-			lift_reset_frame = -1;
 			break;
-		}
-
-		if (lift_reset_frame >= 0) {
-			kernel_reset_animation(aa[2], lift_reset_frame);
-			local->lift_frame = lift_reset_frame;
 		}
 	}
 }
-
 
 static void handle_animation_king() {
 	int king_reset_frame;
@@ -303,8 +293,6 @@ static void handle_animation_king() {
 }
 
 static void room_116_daemon() {
-	int reset_frame;
-
 	if (local->anim_1_running) {
 		handle_animation_king();
 	}
@@ -316,7 +304,6 @@ static void room_116_daemon() {
 	if (local->animation_running == KING_OFF_ICE) {
 		if (kernel_anim[aa[0]].frame != local->current_frame) {
 			local->current_frame = kernel_anim[aa[0]].frame;
-			reset_frame = -1;
 
 			switch (local->current_frame) {
 			case 34:
@@ -344,7 +331,6 @@ static void room_116_daemon() {
 					player.commands_allowed = true;
 
 					kernel_abort_animation(aa[0]);
-					reset_frame = -1;
 					local->animation_running = 0;
 					aa[1] = kernel_run_animation(kernel_name('c', -1), 0);
 					local->king_action = KING_SHUT_UP;
@@ -354,13 +340,6 @@ static void room_116_daemon() {
 					conv_export_value(0);
 				}
 				break;
-			}
-
-			if (reset_frame >= 0) {
-				if (reset_frame != kernel_anim[aa[0]].frame) {
-					kernel_reset_animation(aa[0], reset_frame);
-					local->current_frame = reset_frame;
-				}
 			}
 		}
 	}

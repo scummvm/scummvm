@@ -144,13 +144,10 @@ static void room_102_pre_parser() {
 }
 
 static void room_102_daemon() {
-	int16 reset_frame;
-
 	// --- Diary 1 reading sequence ---
 	if (local->animation_running == DIARY1 && kernel_anim[aa[0]].anim != 0) {
 		if (kernel_anim[aa[0]].frame != local->diary_frame) {
 			local->diary_frame = kernel_anim[aa[0]].frame;
-			reset_frame = -1;
 
 			switch (local->diary_frame) {
 			case 6:
@@ -166,11 +163,6 @@ static void room_102_daemon() {
 				text_show(10212);
 				break;
 			}
-
-			if (reset_frame >= 0 && kernel_anim[aa[0]].frame != reset_frame) {
-				kernel_reset_animation(aa[0], reset_frame);
-				local->diary_frame = reset_frame;
-			}
 		}
 	}
 
@@ -178,7 +170,6 @@ static void room_102_daemon() {
 	if (local->animation_running == DIARY2 && kernel_anim[aa[0]].anim != 0) {
 		if (kernel_anim[aa[0]].frame != local->diary_frame) {
 			local->diary_frame = kernel_anim[aa[0]].frame;
-			reset_frame = -1;
 
 			switch (local->diary_frame) {
 			case 6:
@@ -189,11 +180,6 @@ static void room_102_daemon() {
 				text_show(10213);
 				text_show(10214);
 				break;
-			}
-
-			if (reset_frame >= 0 && kernel_anim[aa[0]].frame != reset_frame) {
-				kernel_reset_animation(aa[0], reset_frame);
-				local->diary_frame = reset_frame;
 			}
 		}
 	}

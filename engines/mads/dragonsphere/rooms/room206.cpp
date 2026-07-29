@@ -550,10 +550,8 @@ static void room_206_daemon() {
 			text_index[2] = 6;
 		} else if (score <= 249) {
 			text_index[2] = 7;
-		} else if (score <= 250) {
-			text_index[2] = 8;
 		} else {
-			text_index[2] = 9;
+			text_index[2] = 8;
 		}
 
 		text_show(99);

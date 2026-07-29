@@ -806,11 +806,8 @@ static void handle_animation_cal() {
 }
 
 static void handle_animation_king_walk() {
-	int king_walk_reset_frame;
-
 	if (kernel_anim[aa[3]].frame != local->king_walk_frame) {
 		local->king_walk_frame = kernel_anim[aa[3]].frame;
-		king_walk_reset_frame = -1;
 
 		switch (local->king_walk_frame) {
 		case 60:
@@ -831,20 +828,12 @@ static void handle_animation_king_walk() {
 			new_room          = 405;
 			break;
 		}
-
-		if (king_walk_reset_frame >= 0) {
-			kernel_reset_animation(aa[3], king_walk_reset_frame);
-			local->king_walk_frame = king_walk_reset_frame;
-		}
 	}
 }
 
 static void handle_animation_pid_walk() {
-	int pid_walk_reset_frame;
-
 	if (kernel_anim[aa[4]].frame != local->pid_walk_frame) {
 		local->pid_walk_frame = kernel_anim[aa[4]].frame;
-		pid_walk_reset_frame = -1;
 
 		switch (local->pid_walk_frame) {
 		case 60:
@@ -864,11 +853,6 @@ static void handle_animation_pid_walk() {
 			camera_x.pan_mode = CAMERA_PLAYER;
 			new_room          = 405;
 			break;
-		}
-
-		if (pid_walk_reset_frame >= 0) {
-			kernel_reset_animation(aa[4], pid_walk_reset_frame);
-			local->pid_walk_frame = pid_walk_reset_frame;
 		}
 	}
 }

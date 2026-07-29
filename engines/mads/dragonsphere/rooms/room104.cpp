@@ -1102,25 +1102,17 @@ static void handle_animation_twinkles() {
 }
 
 static void handle_animation_death() {
-	int death_reset_frame;
-
 	if (kernel_anim[aa[4]].frame != local->death_frame) {
 		local->death_frame = kernel_anim[aa[4]].frame;
-		death_reset_frame = -1;
 
 		switch (local->death_frame) {
 		case 11:
-			global_speech_go(7); /* hurl */
+			global_speech_go(7);	// Hurl
 			break;
 
 		case 17:
-			global_speech_go(6); /* stab */
+			global_speech_go(6);	// Stab
 			break;
-		}
-
-		if (death_reset_frame >= 0) {
-			kernel_reset_animation(aa[4], death_reset_frame);
-			local->death_frame = death_reset_frame;
 		}
 	}
 }
@@ -1286,7 +1278,6 @@ static void handle_animation_pid() {
 }
 
 static void room_104_daemon() {
-	int reset_frame;
 	int temp;  /* for synching purposes */
 	long dif;  /* for timer stuff       */
 
@@ -1321,7 +1312,6 @@ static void room_104_daemon() {
 	if ((local->animation_running == OPEN_TAPESTRY) && (kernel_anim[aa[0]].anim != NULL)) {
 		if (kernel_anim[aa[0]].frame != local->tapestry_frame) {
 			local->tapestry_frame = kernel_anim[aa[0]].frame;
-			reset_frame = -1;
 
 			switch (local->tapestry_frame) {
 				/* make player appear */
@@ -1329,13 +1319,6 @@ static void room_104_daemon() {
 				player.walker_visible = true;
 				kernel_synch(KERNEL_PLAYER, 0, KERNEL_ANIM, aa[0]);
 				break;
-			}
-
-			if (reset_frame >= 0) {
-				if (reset_frame != kernel_anim[aa[0]].frame) {
-					kernel_reset_animation(aa[0], reset_frame);
-					local->tapestry_frame = reset_frame;
-				}
 			}
 		}
 	}
