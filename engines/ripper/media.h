@@ -110,6 +110,8 @@ public:
 	bool playBlockingAudio(const Common::String &path);
 	bool playSoundEffect(const Common::String &path, Audio::SoundHandle &handle,
 		uint volumePercent = 100, bool loop = false);
+	bool playRawSoundEffect(const Common::Array<byte> &data, uint sampleRate,
+		byte flags, Audio::SoundHandle &handle, uint volumePercent = 100);
 	bool playVoiceClip(const Common::String &path, Audio::SoundHandle &handle,
 		uint volumePercent = 100);
 	bool isSoundEffectActive(const Audio::SoundHandle &handle) const;

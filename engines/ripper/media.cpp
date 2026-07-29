@@ -1219,7 +1219,11 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path) {
 	} else {
 		delete file;
 		ResourceManager *resources = _engine->getResources();
-		if (resources && resources->sound().hasMember(path)) {
+		if (resources)
+			audioStream = resources->createReadStreamForPath(path);
+		if (audioStream) {
+			source = "search-path";
+		} else if (resources && resources->sound().hasMember(path)) {
 			audioStream = resources->sound().createReadStreamForMember(path);
 			source = "sound-library";
 		}
@@ -1273,6 +1277,33 @@ bool MediaPlayer::playSoundEffect(const Common::String &path, Audio::SoundHandle
 		uint volumePercent, bool loop) {
 	return playAudioClip(path, handle, Audio::Mixer::kSFXSoundType,
 		volumePercent, loop, "sound effect");
+}
+
+bool MediaPlayer::playRawSoundEffect(const Common::Array<byte> &data,
+		uint sampleRate, byte flags, Audio::SoundHandle &handle,
+		uint volumePercent) {
+	if (data.empty() || sampleRate == 0)
+		return false;
+
+	byte *copy = (byte *)malloc(data.size());
+	if (!copy)
+		return false;
+	memcpy(copy, data.data(), data.size());
+	Audio::SeekableAudioStream *stream = Audio::makeRawStream(copy,
+		data.size(), sampleRate, flags, DisposeAfterUse::YES);
+	if (!stream) {
+		free(copy);
+		return false;
+	}
+
+	stopSoundEffect(handle);
+	const byte volume = (byte)(MIN<uint>(volumePercent, 100) *
+		Audio::Mixer::kMaxChannelVolume / 100);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, stream, -1, volume);
+	debugC(2, kDebugAudio,
+		"Ripper: started raw sound effect bytes=%u rate=%u flags=0x%x volume=%u",
+		data.size(), sampleRate, flags, volumePercent);
+	return true;
 }
 
 bool MediaPlayer::playVoiceClip(const Common::String &path, Audio::SoundHandle &handle,
