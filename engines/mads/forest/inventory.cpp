@@ -145,7 +145,7 @@ void display_inventory() {
 	int var_6  = 0;
 	int var_E  = 0;
 	int var_20 = 0;
-	int var_4  = 0;
+	int itemNum  = 0;
 	int var_1E = 0;
 	long var_1C_1A = 0;
 	int var_8  = 0;
@@ -224,11 +224,11 @@ void display_inventory() {
 		if (!player.commands_allowed)
 			continue;
 
-		var_4 = inventory_get_item(var_20);
-		if (var_4 == 0)
+		itemNum = inventory_get_item(var_20);
+		if (itemNum == 0)
 			continue;
 
-		if (var_4 == -1) {
+		if (itemNum == -1) {
 			kernel_force_refresh();
 			goto cancel_inventory;
 		}
@@ -239,7 +239,7 @@ void display_inventory() {
 		while (object_num < 16) {
 			if (object[object_num].location == 2) {
 				var_E++;
-				if (var_E == var_4) {
+				if (var_E == itemNum) {
 					object_id = object_num;
 					break;
 				}
@@ -248,7 +248,6 @@ void display_inventory() {
 		}
 		if (object_num >= 16) {
 			var_E = 0;
-			var_4 = 0;
 			continue;
 		}
 
@@ -319,9 +318,8 @@ void display_inventory() {
 			}
 		}
 
-		if (object_id == -1 || var_4 == -1 || var_22 != 0) {
+		if (object_id == -1 || itemNum == -1 || var_22 != 0) {
 			var_E = 0;
-			var_4 = 0;
 			continue;
 		}
 
@@ -369,7 +367,6 @@ void display_inventory() {
 
 		if (var_22 != 0) {
 			var_E = 0;
-			var_4 = 0;
 			continue;
 		}
 
