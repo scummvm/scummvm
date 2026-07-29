@@ -1967,6 +1967,11 @@ void chain_execute() {
 	error("TODO: chain_execute");
 }
 
+
+char *game_menu_save_string(int id) {
+	return game_save_directory + (id * (GAME_MAX_SAVE_LENGTH + 1));
+}
+
 /**
  * Reads the list of save files.
  */
@@ -1976,7 +1981,7 @@ static void game_read_save_directory() {
 
 	for (auto it = list.begin(); it != list.end(); ++it) {
 		if (it->getSaveSlot() > 0) {
-			char *slot = game_save_directory + (it->getSaveSlot() - 1) * (GAME_MAX_SAVE_LENGTH + 1);
+			char *slot = game_menu_save_string(it->getSaveSlot() - 1);
 			Common::strcpy_s(slot, GAME_MAX_SAVE_LENGTH + 1, it->getDescription().c_str());
 		}
 	}

@@ -74,7 +74,6 @@ struct MenuMessage {
 #define MAX_MENU_MESSAGE 20
 
 static MenuMessage *menu = NULL;
-static byte *save_menu = NULL;
 static byte *trash_bag = NULL;
 static int game_menu_num_items;
 static int game_menu_scan_items;
@@ -261,6 +260,7 @@ static int global_save(int id, const char *save_game_name) {
 	else
 		status = SAVE_FAILED;
 
+	game_save_status = status;
 	return status;
 }
 
@@ -272,17 +272,10 @@ static int global_restore(int id) {
 	else
 		status = RESTORE_FAILED;
 
+	game_save_status = status;
 	WRITE_LE_UINT32(&global[walker_timing], 0);
 
 	return status;
-}
-
-static char *game_menu_save_string(int id) {
-	char *string;
-
-	string = (char *)save_menu + (id * (GAME_MAX_SAVE_LENGTH + 1));
-
-	return string;
 }
 
 static void game_menu_write_message(FontPtr font, char *string,

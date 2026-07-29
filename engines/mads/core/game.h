@@ -281,6 +281,11 @@ extern void show_version();
 
 extern void init_game();
 
+/**
+ * Returns a pointer to a savegame slot in the savegame directory list
+ */
+extern char *game_menu_save_string(int id);
+
 } // namespace MADS
 
 #endif
