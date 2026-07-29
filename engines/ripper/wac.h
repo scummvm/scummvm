@@ -81,7 +81,7 @@ private:
 	void scrollDatabaseStillImage(int delta);
 	uint16 serviceDatabaseMediaInput(byte activeEntryIndex,
 		uint *textFirstVisible = nullptr, uint textMaximumFirstVisible = 0,
-		uint textPageRows = 0);
+		uint textPageRows = 0, MouseState *publishedMouse = nullptr);
 	bool drawDatabaseTextPanel(uint bodyResourceId, const Common::Rect &bounds,
 		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows);
 	void wrapJournalText(const Common::String &text, uint maximumWidth,
@@ -91,6 +91,7 @@ private:
 	bool drawJournalTextPanelLine(const Common::Array<Common::String> &lines,
 		uint firstVisible, uint visibleRows, uint lineIndex);
 	uint16 runJournalRevealScene(DatabaseEntry &entry);
+	uint16 runVoiceLockPuzzle(DatabaseEntry &entry);
 	uint16 runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceId);
 	uint16 dispatchDatabaseEntry(DatabaseEntry &entry);
 	const Common::String &resourceString(uint resourceId) const;

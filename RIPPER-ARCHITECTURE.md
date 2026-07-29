@@ -1228,6 +1228,21 @@
   `RunWacStillImageScreenWithOptionalAudio` path with no audio. The Document
   retains the database chooser and shares the still-image palette and vertical
   scrolling behavior.
+- Entry 6 dispatches `RunWacVoiceLockPuzzleScene` at `0x24ba4`. It always
+  presents `VOXLOK.WAV` in a 340-by-116 source panel at physical screen
+  position 50,50, with the read-only `WACWAV0` Play control at 50,167.
+  Milestone 84, the audio-editor software, enables a second panel at 50,176
+  and moves Play beside the `WACWAV1` Clear and `WACWAV2` Quantize controls
+  beginning at 50,293. Quantize plays `WACJRNL.WAV`, replaces
+  the source descriptor with `VOXLOK1.WAV`, and enables the completion test.
+  Each horizontal waveform drag appends that PCM span and its physical
+  start/end X coordinates to the editor. The five pairs at table `0x215d1`
+  are 240..252, 70..82, 87..99, 171..184, and 190..199; order is irrelevant,
+  but both ends must be within three pixels of a unique pair. Exactly five
+  quantized spans solve only from scene label `eez1`, after which
+  `ACCESED.AVI` plays, milestone 29 opens the Secret Animal Lab, and WAC exits.
+  `DrawAudioDescriptorWaveform` at `0x25b73` supplies the source and assembled
+  waveform presentation.
 - Entries 10 and 11 dispatch `wacinv10.pcx` and `wacinv11.pcx` through
   `RunWacStillImageScreenWithOptionalAudio` at `0x22f1f`. These 300-by-393
   documents retain the database chooser, show a 282-row slice in the left WAC
