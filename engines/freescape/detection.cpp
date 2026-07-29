@@ -899,6 +899,38 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERAMIGA, GAMEOPTION_WASD_CONTROLS)
 	},
+	// Full Castle Master, Amiga, by Domark: another build of the same game, with
+	// its data at different offsets
+	{
+		"castlemaster",
+		"",
+		{
+			{"cm", 0, "cbfc54c0e79c30dd64a0b2d72236d56c", 1184},
+			{"w", 0, "63c770f1008a641c5fd5d0b9df2bcbb6", 32000},
+			{"x", 0, "bdf95c6c97dfc35f3d7b07d7f66fc417", 353774},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_UNSTABLE,
+		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERAMIGA, GAMEOPTION_WASD_CONTROLS)
+	},
+	// Full Castle Master, Amiga, from "Castle Master & The Crypt" by Incentive,
+	// where the game is packed into "cmstr.com"
+	{
+		"castlemaster",
+		"",
+		{
+			{"cm", 0, "07d6cabd9d2acdc762956eb3e189cde3", 1188},
+			{"w", 0, "63c770f1008a641c5fd5d0b9df2bcbb6", 32000},
+			{"cmstr.com", 0, "ad4cf87a37561b8f08d888b7a82d6c82", 216950},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_UNSTABLE,
+		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERAMIGA, GAMEOPTION_WASD_CONTROLS)
+	},
 	// Full Castle Master, Atari ST, as found on the original disk: "M.PRG" is
 	// wrapped in a Copylock protection, which the engine removes at load time,
 	// and both it and the intro program "J.PRG" are Huffman-packed.

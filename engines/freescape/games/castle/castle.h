@@ -21,6 +21,14 @@
 
 namespace Freescape {
 
+// Offsets of the assets inside a Castle Master Amiga game image
+struct CastleAmigaLayout {
+	int messages, riddles, colorCycling, fonts, palettes, soundTable, areaDB;
+	int area255, border, mountains, menu, menuButtons, spiritMeterBg, spiritMeter;
+	int indicators, thunder, weights, bar, eyeIcons, flag, riddleMask, riddleTop;
+	int gatePixels, gateMask, mod;
+};
+
 class MusicPlayer;
 
 struct RiddleText {
@@ -141,6 +149,8 @@ public:
 	Graphics::ManagedSurface *loadFrameFromPlanesVertical(Common::SeekableReadStream *file, int widthInBytes, int height);
 	Graphics::ManagedSurface *loadFrameFromPlanesInternalVertical(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int width, int height, int plane);
 	Graphics::ManagedSurface *loadFrameFromPlanesInterleaved(Common::SeekableReadStream *file, int widthInWords, int height);
+	Common::SeekableReadStream *openAmigaGameFile(const struct CastleAmigaLayout *&layout);
+	Common::SeekableReadStream *decompressCastle(Common::SeekableReadStream *file, uint32 packedOffset);
 	void loadThunderFramesAmiga(Common::SeekableReadStream *file, int offset);
 	void updateThunderFramesPalette();
 
