@@ -115,6 +115,7 @@ public:
 	bool playVoiceClip(const Common::String &path, Audio::SoundHandle &handle,
 		uint volumePercent = 100);
 	bool isSoundEffectActive(const Audio::SoundHandle &handle) const;
+	uint32 getSoundEffectElapsedTime(const Audio::SoundHandle &handle) const;
 	bool stopSoundEffect(Audio::SoundHandle &handle);
 	void setSoundEffectVolume(Audio::SoundHandle &handle, uint volumePercent);
 	bool playPuzzleSequence(const Common::String &path, uint loopStartFrame,
