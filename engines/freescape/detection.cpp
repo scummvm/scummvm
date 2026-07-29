@@ -418,7 +418,7 @@ const ADGameDescription gameDescriptions[] = {
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERATARIST)
 	},
 	{
-		// Stampede AtariST, Issue 1
+		// Stampede AtariST, Issue 1, where 0.DRK ships packed
 		"darkside",
 		"",
 		{

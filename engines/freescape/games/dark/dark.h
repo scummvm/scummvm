@@ -83,6 +83,7 @@ public:
 	void loadAssetsAmigaFullGame() override;
 	Common::SeekableReadStream *openAmigaExecutable();
 	void loadAssetsAtariFullGame() override;
+	Common::SeekableReadStream *openAtariExecutable();
 
 	void loadAssetsCPCFullGame() override;
 
