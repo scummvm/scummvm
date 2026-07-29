@@ -51,6 +51,7 @@ static const uint kDefaultCursor = 14;
 static const uint kStartCursor = 11;
 static const uint kCardCursor = 6;
 static const uint kChoiceCursor = 16;
+static const uint kVoiceCursor = 19;
 static const uint16 kEscapeCommand = 0x1b;
 static const uint16 kStartCommand = 0x672;
 static const uint16 kCardCommand = 0x673;
@@ -96,7 +97,7 @@ bool LibrarianScene::initialize() {
 		warning("Ripper: could not load Ka dialogue game text");
 		return false;
 	}
-	if (_gameText.size() <= kFirstChoiceText + 3) {
+	if (_gameText.size() < kFirstChoiceText + 3) {
 		warning("Ripper: Ka dialogue text table has only %u entries", _gameText.size());
 		return false;
 	}
@@ -131,8 +132,12 @@ void LibrarianScene::rebuildChoices() {
 			_engine->getScripts()->hasPlayedScene(kCdGateScene))
 		_choices.push_back(&choices[3]);
 	if (_conversationStarted && !_choices.empty()) {
-		for (uint i = 0; i < _choices.size(); ++i)
-			_chooser.appendChoice(_gameText[_choices[i]->textResource], _choices[i]->id);
+		for (uint i = 0; i < _choices.size(); ++i) {
+			const uint textResource = _choices[i]->textResource;
+			// ResolveStartupResourceString at 0x1f7a2 treats GAMETEXT.TF
+			// resource IDs as one-based offsets.
+			_chooser.appendChoice(_gameText[textResource - 1], _choices[i]->id);
+		}
 		_chooser.activateChoices("ka-dialogue");
 	}
 	debugC(2, kDebugDialogue,
@@ -161,8 +166,13 @@ bool LibrarianScene::startVoice(const char *path, const char *source) {
 		_chooser.dismissForSceneTransition("ka-voice-start");
 	_choices.clear();
 	_hoveredControl = -1;
+	// RunKaDialogueScene selects and stores row 0x13 at 0x2b31c/0x2b326
+	// for choice voices and at 0x2b4bf/0x2b4c9 for the talk control.
+	_engine->getCursor()->setSelectionIndex(kVoiceCursor);
+	_engine->getCursor()->dispatchSelectionIndexChange(kVoiceCursor);
 	debugC(2, kDebugDialogue,
-		"Ripper: started Ka dialogue voice media='%s' source=%s", path, source);
+		"Ripper: started Ka dialogue voice media='%s' source=%s cursor=%u input=escape-only",
+		path, source, kVoiceCursor);
 	return true;
 }
 
@@ -221,6 +231,11 @@ void LibrarianScene::presentDialogueOverlay(uint frame) {
 void LibrarianScene::updateCursor(const Common::Point &point) {
 	int hovered = -1;
 	uint cursor = kDefaultCursor;
+	if (_voicePending) {
+		_engine->getCursor()->update(kVoiceCursor);
+		_engine->getCursor()->setVisible(true);
+		return;
+	}
 	_chooser.updateHover(point);
 	const bool startEnabled = !_voicePending &&
 		(!_conversationStarted || _choices.empty());
@@ -255,6 +270,8 @@ uint16 LibrarianScene::serviceInput() {
 			if (_voicePending) {
 				_engine->getMedia()->stopSoundEffect(_voiceHandle);
 				_voicePending = false;
+				_engine->getCursor()->setSelectionIndex(kDefaultCursor);
+				_engine->getCursor()->dispatchSelectionIndexChange(kDefaultCursor);
 				rebuildChoices();
 				debugC(2, kDebugDialogue,
 					"Ripper: Escape stopped active Ka dialogue voice");
@@ -285,6 +302,8 @@ uint16 LibrarianScene::service(uint frame) {
 	serviceLoopAudio(frame);
 	if (_voicePending && !_engine->getMedia()->isSoundEffectActive(_voiceHandle)) {
 		_voicePending = false;
+		_engine->getCursor()->setSelectionIndex(kDefaultCursor);
+		_engine->getCursor()->dispatchSelectionIndexChange(kDefaultCursor);
 		debugC(2, kDebugDialogue,
 			"Ripper: Ka dialogue voice completed frame=%u", frame);
 		if (!serviceVoiceCompletion())
