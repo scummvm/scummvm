@@ -124,6 +124,7 @@ ASound::ASound(Audio::Mixer *mixer, const Common::Path &filename, int dataOffset
 	_activeChannelPtr = nullptr;
 	_samplePtr = nullptr;
 	_frameCounter = 0;
+	_chanCommandCount = 15;
 	_isDisabled = false;
 	_masterVolume = 255;
 	_noiseTicks1 = 0;

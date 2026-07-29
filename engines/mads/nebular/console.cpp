@@ -64,7 +64,7 @@ bool Console::cmdLoad(int argc, const char **argv) {
 	// Skip the remainder of the header
 	(void)sf->readString();
 	Graphics::Surface *dummy;
-	Graphics::loadThumbnail(*sf, dummy, true);
+	(void)Graphics::loadThumbnail(*sf, dummy, true);
 	sf->skip(14);
 
 	// Read the actual savegame content

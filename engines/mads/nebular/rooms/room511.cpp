@@ -245,30 +245,28 @@ static void room_511_parser() {
 	} else 	if (player_said_2(take, fishing_line)) {
 		if (!global[kBoatRaised]) {
 			if (global[kLineStatus] == 2) {
-				if (global[kLineStatus] != 3) {
-					if (kernel.trigger == 0) {
-						player.commands_allowed = false;
-						player.walker_visible = false;
-						player_set_image();
-						local._lineAnimationMode = 1;
-						local._lineAnimationPosition = 1;
-						local._lineMoving = true;
-						kernel_run_animation(kernel_name('R', -1), 0);
+				if (kernel.trigger == 0) {
+					player.commands_allowed = false;
+					player.walker_visible = false;
+					player_set_image();
+					local._lineAnimationMode = 1;
+					local._lineAnimationPosition = 1;
+					local._lineMoving = true;
+					kernel_run_animation(kernel_name('R', -1), 0);
+					kernel_timing_trigger(1, 1);
+				} else if (kernel.trigger == 1) {
+					if (local._lineMoving) {
 						kernel_timing_trigger(1, 1);
-					} else if (kernel.trigger == 1) {
-						if (local._lineMoving) {
-							kernel_timing_trigger(1, 1);
-						} else {
-							inter_give_to_player(OBJ_FISHING_LINE);
-							local._lineMoving = true;
-							local._handingLine = true;
-							player.commands_allowed = true;
-						}
+					} else {
+						inter_give_to_player(OBJ_FISHING_LINE);
+						local._lineMoving = true;
+						local._handingLine = true;
+						player.commands_allowed = true;
 					}
-				} else
-					text_show(51129);
-			} else
+				}
+			} else {
 				return;
+			}
 		} else {
 			text_show(51130);
 		}
