@@ -39,6 +39,7 @@ enum ColonyDebugChannels {
 extern const ADGameDescription gameDescriptions[];
 
 #define GAMEOPTION_WIDESCREEN GUIO_GAMEOPTIONS1
+#define GAMEOPTION_INVERT_Y   GUIO_GAMEOPTIONS2
 
 } // End of namespace Colony
 

@@ -148,6 +148,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_unlocked = false;
 	_weapons = 0;
 	_widescreen = ConfMan.getBool("widescreen_mod");
+	_invertY = ConfMan.getBool("invert_y");
 
 	// Render mode: EGA (DOS wireframe default) or Macintosh (filled polygons)
 	if (!ConfMan.hasKey("render_mode") || ConfMan.get("render_mode").empty())
@@ -331,6 +332,11 @@ void ColonyEngine::pauseEngineIntern(bool pause) {
 
 	if (_frameLimiter)
 		_frameLimiter->pause(pause);
+}
+
+void ColonyEngine::applyGameSettings() {
+	// Not _widescreen: the canvas size is fixed at renderer creation.
+	_invertY = ConfMan.getBool("invert_y");
 }
 
 void ColonyEngine::loadMacColors() {
@@ -1084,7 +1090,7 @@ Common::Error ColonyEngine::run() {
 					// relMouse stays in window-pixel deltas regardless of
 					// resolution mode — keep raw for mouselook feel.
 					mouseDX += event.relMouse.x;
-					mouseDY += event.relMouse.y;
+					mouseDY += _invertY ? -event.relMouse.y : event.relMouse.y;
 					mouseMoved = true;
 				}
 			}

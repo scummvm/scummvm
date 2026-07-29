@@ -448,6 +448,7 @@ public:
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	void pauseEngineIntern(bool pause) override;
+	void applyGameSettings() override;
 	Common::Platform getPlatform() const { return _gameDescription->platform; }
 	bool isSoundEnabled() const { return _soundOn; }
 	const Graphics::Surface *getSavedScreen() const { return _savedScreen; }
@@ -516,6 +517,7 @@ private:
 	int _width, _height;
 	float _mouseSensitivity;
 	bool _mouseLocked;
+	bool _invertY;
 	bool _soundOn = true;
 	bool _showDashBoard;
 	bool _crosshair;
