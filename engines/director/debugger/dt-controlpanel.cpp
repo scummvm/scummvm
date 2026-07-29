@@ -119,6 +119,44 @@ static void dbgStepOut() {
 	_state->_dbg._isScriptDirty = true;
 }
 
+// Global debugger step keys. Lives here to reach the static step helpers;
+// called each frame so it works regardless of the focused window.
+void handleDebuggerShortcuts() {
+	Movie *movie = g_director->getCurrentMovie();
+	if (!movie)
+		return;
+	Score *score = movie->getScore();
+
+	const ImGuiInputFlags route = ImGuiInputFlags_RouteGlobal | ImGuiInputFlags_RouteOverFocused;
+	const bool running = (g_lingo->_exec._state == kRunning);
+
+	if (ImGui::Shortcut(ImGuiKey_F5, route)) {
+		if (running) {
+			score->_playState = kPlayPaused;
+			dgbStop();
+			g_system->displayMessageOnOSD(Common::U32String("Paused"));
+		} else {
+			score->_playState = (score->_playState == kPlayPausedAfterLoading) ? kPlayLoaded : kPlayStarted;
+			g_lingo->_exec._state = kRunning;
+			g_lingo->_exec._shouldPause = nullptr;
+		}
+		return;
+	}
+
+	// Match the step buttons: pause when running, step when paused.
+	// Shift+F11 must be tested before F11.
+	if (ImGui::Shortcut(ImGuiMod_Shift | ImGuiKey_F11, route)) {
+		score->_playState = kPlayStarted;
+		running ? dgbStop() : dbgStepOut();
+	} else if (ImGui::Shortcut(ImGuiKey_F11, route)) {
+		score->_playState = kPlayStarted;
+		running ? dgbStop() : dbgStepInto();
+	} else if (ImGui::Shortcut(ImGuiKey_F10, route)) {
+		score->_playState = kPlayStarted;
+		running ? dgbStop() : dbgStepOver();
+	}
+}
+
 void showControlPanel() {
 	if (!_state->_w.controlPanel)
 		return;
@@ -218,7 +256,7 @@ void showControlPanel() {
 			ImU32 stopColor = (score->_playState == kPlayPaused || score->_playState == kPlayPausedAfterLoading) ? active_color : color;
 			dl->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + 16, p.y + 16), stopColor);
 
-			ImGui::SetItemTooltip("Stop");
+			ImGui::SetItemTooltip("Pause (F5)");
 			ImGui::SameLine();
 		}
 
@@ -269,7 +307,7 @@ void showControlPanel() {
 
 			dl->AddTriangleFilled(ImVec2(p.x, p.y), ImVec2(p.x, p.y + 16), ImVec2(p.x + 14, p.y + 8), color);
 
-			ImGui::SetItemTooltip("Play");
+			ImGui::SetItemTooltip("Play / Continue (F5)");
 			ImGui::SameLine();
 		}
 
@@ -326,7 +364,7 @@ void showControlPanel() {
 			dl->AddLine(ImVec2(p.x + 14, p.y + 10), ImVec2(p.x + 18, p.y + 10), color_red, 2);
 			dl->AddCircleFilled(ImVec2(p.x + 9, p.y + 15), 2.0f, color);
 
-			ImGui::SetItemTooltip("Step Over");
+			ImGui::SetItemTooltip("Step Over (F10)");
 			ImGui::SameLine();
 		}
 
@@ -351,7 +389,7 @@ void showControlPanel() {
 			dl->AddLine(ImVec2(p.x + 12, p.y + 6), ImVec2(p.x + 8.5f, p.y + 9), color_red, 2);
 			dl->AddCircleFilled(ImVec2(p.x + 9, p.y + 15), 2.0f, color);
 
-			ImGui::SetItemTooltip("Step Into");
+			ImGui::SetItemTooltip("Step Into (F11)");
 			ImGui::SameLine();
 		}
 
@@ -376,7 +414,7 @@ void showControlPanel() {
 			dl->AddLine(ImVec2(p.x + 12, p.y + 5), ImVec2(p.x + 8.5f, p.y + 1), color_red, 2);
 			dl->AddCircleFilled(ImVec2(p.x + 9, p.y + 15), 2.0f, color);
 
-			ImGui::SetItemTooltip("Step Out");
+			ImGui::SetItemTooltip("Step Out (Shift+F11)");
 		}
 	}
 	ImGui::End();
