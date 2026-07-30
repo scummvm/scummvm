@@ -837,7 +837,7 @@ bool XModel::setMaterialTheora(const char *materialName, const char *theoraFilen
 	}
 
 	VideoTheoraPlayer *theora = new VideoTheoraPlayer(_game);
-	if (!theora || theora->initialize(theoraFilename)) {
+	if (!theora || DID_FAIL(theora->initialize(theoraFilename))) {
 		SAFE_DELETE(theora);
 		return false;
 	}
