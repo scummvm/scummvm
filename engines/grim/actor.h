@@ -534,6 +534,7 @@ public:
 
 	bool isAttached() const { return _attachedActor != 0; }
 	Math::Vector3d getWorldPos() const;
+	Grim::Joint *getAttachedJoint(Actor *parent) const;
 	void attachToActor(Actor *other, const char *joint);
 	void detach();
 	Math::Quaternion getRotationQuat() const;

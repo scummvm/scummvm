@@ -2459,6 +2459,16 @@ void Actor::activateShadow(bool active, SetShadow *setShadow) {
 	}
 }
 
+Joint *Actor::getAttachedJoint(Actor *parent) const {
+	EMICostume *cost = static_cast<EMICostume *>(parent->getCurrentCostume());
+
+	if (!cost || !cost->_emiSkel || !cost->_emiSkel->_obj)
+		return nullptr;
+
+	assert(cost->_emiSkel->_obj->hasJoint(_attachedJoint));
+	return cost->_emiSkel->_obj->getJointNamed(_attachedJoint);
+}
+
 void Actor::attachToActor(Actor *parent, const char *joint) {
 	assert(parent != nullptr);
 	// No need to attach if we're already attached to this parent
@@ -2468,39 +2478,43 @@ void Actor::attachToActor(Actor *parent, const char *joint) {
 	if (_attachedActor != 0)
 		detach();
 
-	// Find the new rotation relative to the parent actor's rotation
-	// Note: Any joint rotation is a part of the parent actor's rotation Quat
-	Math::Quaternion newRot = getRotationQuat().inverse() * parent->getRotationQuat();
-
 	// Find the new position coordinates
 	Math::Matrix4 parentMatrix = parent->getFinalMatrix();
 
-	// If the parent has a skeleton, check if it has the requested joint
-	// Some models (pile o' boulders) don't have a skeleton
+	// If the parent has a skeleton and the requested joint exists, use the joint transform.
+	// Some models (pile o' boulders) don't have a skeleton.
 	Common::String jointStr = joint ? joint : "";
-	EMICostume *cost = static_cast<EMICostume *>(parent->getCurrentCostume());
-	if (cost && cost->_emiSkel && cost->_emiSkel->_obj) {
-		assert(cost->_emiSkel->_obj->hasJoint(jointStr));
+	const Joint *attachedJoint = getAttachedJoint(parent);
 
-		// Add the rotation from the attached actor's joint
-		Joint *j = cost->_emiSkel->_obj->getJointNamed(_attachedJoint);
-		newRot = newRot.inverse() * j->_finalQuat;
+	Math::Quaternion newRot;
 
-		// Get the final position coordinates
-		_pos = _pos - j->_finalMatrix.getPosition();
-		j->_finalMatrix.transpose();
-		j->_finalMatrix.transform(&_pos, true);
+	// A joint attachment already provides the final joint orientation calculated by
+	// Skeleton::commitAnim(). Use it directly instead of applying an additional
+	// quaternion adjustment, which can introduce an incorrect rotation.
+	if (attachedJoint) {
+		// Use the joint's final calculated orientation as the attached object's starting rotation.
+		newRot = attachedJoint->_finalQuat;
+
+		// Convert position into the joint's local space.
+		_pos = _pos - attachedJoint->_finalMatrix.getPosition();
+
+		Math::Matrix4 jointMatrix = attachedJoint->_finalMatrix;
+		jointMatrix.transpose();
+		jointMatrix.transform(&_pos, true);
+	} else {
+		// Otherwise, use the actor's rotation relative to its parent.
+		newRot = getRotationQuat().inverse() * parent->getRotationQuat();
 	}
 
-	// Get the final rotation euler coordinates
+	// Get the final rotation Euler coordinates
 	newRot.getEuler(&_roll, &_yaw, &_pitch, Math::EO_ZYX);
 
-	// Get the final position coordinates
+	// Convert position into the parent actor's local space.
 	_pos = _pos - parentMatrix.getPosition();
 	parentMatrix.transpose();
 	parentMatrix.transform(&_pos, true);
 
-	// Save the attachement info
+	// Save the attachment info
 	_attachedActor = parent->getId();
 	_attachedJoint = jointStr;
 
