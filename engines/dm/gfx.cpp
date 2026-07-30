@@ -468,6 +468,8 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 
 	_inscriptionThing = _vm->_thingNone;
 	_useByteBoxCoordinates = false;
+	memcpy(_negativeBitmaps, g_defaultNegativeBitmaps, sizeof(_negativeBitmaps));
+	_dosLayoutData = nullptr;
 
 	_bitmapWallSetD2L2 = nullptr;
 	_bitmapWallSetD2R2 = nullptr;
@@ -1022,6 +1024,10 @@ DisplayMan::~DisplayMan() {
 
 	delete[] _bitmapCeiling;
 	delete[] _bitmapFloor;
+	for (uint i = 0; i < _dosLayoutRangeAllocs.size(); i++) {
+		delete[] _dosLayoutRangeAllocs[i]->_records;
+		delete _dosLayoutRangeAllocs[i];
+	}
 	delete[] _bitmapWallSetD2L2;
 	delete[] _bitmapWallSetD2R2;
 	delete[] _bitmapWallSetD3L2;
@@ -1308,6 +1314,10 @@ void DisplayMan::loadGraphics() {
 
 	f.close();
 	unpackGraphics();
+
+	if (_vm->getPlatform() == Common::kPlatformDOS) {
+		loadLayoutData(696); // C696_GRAPHIC_LAYOUT
+	}
 }
 
 void DisplayMan::unpackGraphics() {
@@ -2299,7 +2309,10 @@ void DisplayMan::drawSquareD3L(Direction dir, int16 posX, int16 posY) {
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], kDMViewFloorD3L);
 		break;
 	case kDMElementTypeWall:
-		drawWallSetBitmap(_vm->getPlatform() == Common::kPlatformDOS ? _bitmapWallSetD3L : _bitmapWallSetD3LCR, _frameWalls163[kDMViewSquareD3L]);
+		if (_vm->getPlatform() == Common::kPlatformDOS)
+			drawWallSetBitmapDOS(kDMZoneWallD3L, kDMNegGraphicWallD3L, kDMNegGraphicWallD3R);
+		else
+			drawWallSetBitmap(_bitmapWallSetD3LCR, _frameWalls163[kDMViewSquareD3L]);
 		isDrawnWallOrnAnAlcove(squareAspect[kDMSquareAspectRightWallOrnOrd], kDMViewWallD3LRight);
 		if (isDrawnWallOrnAnAlcove(squareAspect[kDMSquareFrontWallOrnOrd], kDMViewWallD3LFront))
 			order = kDMCellOrderAlcove;
@@ -2378,7 +2391,10 @@ void DisplayMan::drawSquareD3R(Direction dir, int16 posX, int16 posY) {
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], kDMViewFloorD3R);
 		break;
 	case kDMElementTypeWall:
-		drawWallSetBitmap(_vm->getPlatform() == Common::kPlatformDOS ? _bitmapWallSetD3R : _bitmapWallSetD3LCR, _frameWalls163[kDMViewSquareD3R]);
+		if (_vm->getPlatform() == Common::kPlatformDOS)
+			drawWallSetBitmapDOS(kDMZoneWallD3R, kDMNegGraphicWallD3R, kDMNegGraphicWallD3L);
+		else
+			drawWallSetBitmap(_bitmapWallSetD3LCR, _frameWalls163[kDMViewSquareD3R]);
 		isDrawnWallOrnAnAlcove(squareAspect[kDMSquareAspectLeftWallOrnOrd], kDMViewWallD3RLeft);
 		if (isDrawnWallOrnAnAlcove(squareAspect[kDMSquareFrontWallOrnOrd], kDMViewWallD3RFront))
 			order = kDMCellOrderAlcove;
@@ -2463,7 +2479,10 @@ void DisplayMan::drawSquareD3C(Direction dir, int16 posX, int16 posY) {
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], kDMViewFloorD3C); /* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
 		break;
 	case kDMElementTypeWall:
-		drawWallSetBitmapWithoutTransparency(_bitmapWallSetD3LCR, _frameWalls163[kDMViewSquareD3C]);
+		if (_vm->getPlatform() == Common::kPlatformDOS)
+			drawWallSetBitmapDOS(kDMZoneWallD3C, kDMNegGraphicWallD3C, kDMNegGraphicWallD3C, true);
+		else
+			drawWallSetBitmapWithoutTransparency(_bitmapWallSetD3LCR, _frameWalls163[kDMViewSquareD3C]);
 		if (isDrawnWallOrnAnAlcove(squareAspect[kDMSquareFrontWallOrnOrd], kDMViewWallD3CFront))
 			order = kDMCellOrderAlcove;
 		else
@@ -2541,7 +2560,10 @@ void DisplayMan::drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], kDMViewFloorD2L); /* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
 		break;
 	case kDMElementTypeWall:
-		drawWallSetBitmap(_vm->getPlatform() == Common::kPlatformDOS ? _bitmapWallSetD2L : _bitmapWallSetD2LCR, _frameWalls163[kDMViewSquareD2L]);
+		if (_vm->getPlatform() == Common::kPlatformDOS)
+			drawWallSetBitmapDOS(kDMZoneWallD2L, kDMNegGraphicWallD2L, kDMNegGraphicWallD2R);
+		else
+			drawWallSetBitmap(_bitmapWallSetD2LCR, _frameWalls163[kDMViewSquareD2L]);
 		isDrawnWallOrnAnAlcove(squareAspect[kDMSquareAspectRightWallOrnOrd], kDMViewWallD2LRight);
 		if (isDrawnWallOrnAnAlcove(squareAspect[kDMSquareFrontWallOrnOrd], kDMViewWallD2LFront))
 			order = kDMCellOrderAlcove;
@@ -2587,9 +2609,90 @@ void DisplayMan::drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 		drawField(&_fieldAspects188[kDMViewSquareD2L], _frameWalls163[kDMViewSquareD2L]._box);
 }
 
+void DisplayMan::loadLayoutData(uint16 graphicIndex) {
+	if (graphicIndex >= _grapItemCount)
+		return;
+
+	uint8 *rawData = _packedBitmaps + _packedItemPos[graphicIndex];
+	uint32 dataSize = _bitmapDecompressedByteCount[graphicIndex];
+	uint8 *data = rawData;
+	uint32 remaining = dataSize;
+
+	if (remaining < 4)
+		return;
+	uint16 magic = READ_LE_UINT16(data);
+	data += 2;
+	if (magic != 0xFC0D) {
+		warning("DisplayMan::loadLayoutData: bad magic 0x%04X (expected 0xFC0D)", magic);
+		return;
+	}
+	uint16 rangeCount = READ_LE_UINT16(data); data += 2;
+
+	// Read range index pairs
+	uint16 *firstIndices = new uint16[rangeCount];
+	uint16 *lastIndices = new uint16[rangeCount];
+	for (uint16 i = 0; i < rangeCount; i++) {
+		firstIndices[i] = READ_LE_UINT16(data); data += 2;
+		lastIndices[i] = READ_LE_UINT16(data); data += 2;
+	}
+
+	if (!_dosLayoutData) {
+		_dosLayoutData = new DynLayoutRange();
+		_dosLayoutData->_nextRange = nullptr;
+		_dosLayoutData->_firstIndex = 0;
+		_dosLayoutData->_lastIndex = -1;
+		_dosLayoutData->_records = nullptr;
+		_dosLayoutRangeAllocs.push_back(_dosLayoutData);
+	}
+
+	DynLayoutRange *tail = _dosLayoutData;
+	while (tail->_nextRange)
+		tail = tail->_nextRange;
+
+	for (uint16 r = 0; r < rangeCount; r++) {
+		int16 firstIdx = (int16)firstIndices[r];
+		int16 lastIdx = (int16)lastIndices[r];
+		int recordCount = lastIdx - firstIdx + 1;
+		if (recordCount <= 0)
+			continue;
+
+		DynLayoutRange *range = new DynLayoutRange();
+		range->_nextRange = nullptr;
+		range->_firstIndex = firstIdx;
+		range->_lastIndex = lastIdx;
+		range->_records = new LayoutRecord[recordCount];
+
+		for (int i = 0; i < recordCount; i++) {
+			range->_records[i]._recordType = (uint16)READ_LE_INT16(data); data += 2;
+			range->_records[i]._parentRecordIndex = READ_LE_INT16(data); data += 2;
+			range->_records[i]._data1 = READ_LE_INT16(data); data += 2;
+			range->_records[i]._data2 = READ_LE_INT16(data); data += 2;
+		}
+
+		tail->_nextRange = range;
+		tail = range;
+		_dosLayoutRangeAllocs.push_back(range);
+	}
+
+	delete[] firstIndices;
+	delete[] lastIndices;
+}
+
 const LayoutRecord *DisplayMan::getLayoutRecord(int16 layoutRecordIndex) {
 	if (!layoutRecordIndex)
 		return nullptr;
+
+	if (_vm->getPlatform() == Common::kPlatformDOS) {
+		if (!_dosLayoutData)
+			return nullptr;
+		DynLayoutRange *range = _dosLayoutData;
+		while (range) {
+			if (range->_firstIndex <= layoutRecordIndex && range->_lastIndex >= layoutRecordIndex)
+				return &range->_records[layoutRecordIndex - range->_firstIndex];
+			range = range->_nextRange;
+		}
+		return nullptr;
+	}
 
 	const LayoutRange *range = &g_layoutData01;
 	while (range) {
@@ -2638,6 +2741,9 @@ int16 *DisplayMan::getCoord(byte *bitmap, int16 *outXYZ, int16 zoneIndex, int16 
 	if (zoneIndex == -1 || !outXYZ)
 		return nullptr;
 
+	bool shiftObjectsAndCreatures = (zoneIndex & 0x8000) != 0;
+	zoneIndex &= ~0x8000;
+
 	const LayoutRecord *rec = getLayoutRecord(zoneIndex);
 	if (!rec)
 		return nullptr;
@@ -2657,7 +2763,7 @@ int16 *DisplayMan::getCoord(byte *bitmap, int16 *outXYZ, int16 zoneIndex, int16 
 		yOffset = 0;
 	}
 
-	if (inOutX && inOutY && (*inOutX || *inOutY)) {
+	if (shiftObjectsAndCreatures && inOutX && inOutY) {
 		xOffset += *inOutX;
 		yOffset += *inOutY;
 		*inOutX = 0;
@@ -2710,12 +2816,12 @@ int16 *DisplayMan::getCoord(byte *bitmap, int16 *outXYZ, int16 zoneIndex, int16 
 
 			if ((parentXYZ[0] += data1) < data1)
 				parentXYZ[0] = data1;
-			if (parentXYZ[0] + parentXYZ[2] >= grandParent->_data1 + data1)
+			if (parentXYZ[0] + parentXYZ[2] > grandParent->_data1 + data1)
 				parentXYZ[2] = grandParent->_data1 - parentXYZ[0] + data1;
 
 			if ((parentXYZ[1] += data2) < data2)
 				parentXYZ[1] = data2;
-			if (parentXYZ[1] + parentXYZ[3] >= grandParent->_data2 + data2)
+			if (parentXYZ[1] + parentXYZ[3] > grandParent->_data2 + data2)
 				parentXYZ[3] = grandParent->_data2 - parentXYZ[1] + data2;
 
 			switch (currentRec->_recordType) {
@@ -2808,12 +2914,12 @@ int16 *DisplayMan::getCoord(byte *bitmap, int16 *outXYZ, int16 zoneIndex, int16 
 				}
 				if (parentXYZ[0] < data1)
 					parentXYZ[0] = data1;
-				if (parentXYZ[0] + parentXYZ[2] >= parentRec->_data1 + data1)
+				if (parentXYZ[0] + parentXYZ[2] > parentRec->_data1 + data1)
 					parentXYZ[2] = parentRec->_data1 - parentXYZ[0] + data1;
 
 				if (parentXYZ[1] < data2)
 					parentXYZ[1] = data2;
-				if (parentXYZ[1] + parentXYZ[3] >= parentRec->_data2 + data2)
+				if (parentXYZ[1] + parentXYZ[3] > parentRec->_data2 + data2)
 					parentXYZ[3] = parentRec->_data2 - parentXYZ[1] + data2;
 			} else {
 				if (parentRec->_recordType <= 8)
@@ -2914,6 +3020,41 @@ bool DisplayMan::getZoneBox(int16 zoneIndex, int16 graphicIndex, Box &outBox) {
 	return true;
 }
 
+void DisplayMan::drawWallSetBitmapDOS(int16 zoneIndex, int16 normalNegIndex, int16 oppositeNegIndex, bool withoutTransparency) {
+	int16 negIndex = _useFlippedWallAndFootprintsBitmap ? oppositeNegIndex : normalNegIndex;
+	Struct2 s2;
+	byte *bmp = initBitmapStruct2(negIndex, &s2);
+	if (!bmp)
+		return;
+
+	uint16 bmpPixelWidth = 0, bmpPixelHeight = 0;
+	if (getBitmapDimensions(bmp, bmpPixelWidth, bmpPixelHeight)) {
+		s2._width = bmpPixelWidth;
+		s2._height = bmpPixelHeight;
+	}
+
+	int16 xyz[4] = { 0, 0, 0, 0 };
+	int16 inOutX = s2._width;
+	int16 inOutY = s2._height;
+
+	if (!getCoord(bmp, xyz, zoneIndex, &inOutX, &inOutY))
+		return;
+
+	Box destBox(xyz[0], xyz[0] + xyz[2] - 1, xyz[1], xyz[1] + xyz[3] - 1);
+	uint16 srcX = s2._x + inOutX;
+	uint16 srcY = s2._y + inOutY;
+	uint16 byteWidth = bmpPixelWidth / 2;
+	Color transp = withoutTransparency ? kDMColorNoTransparency : kDMColorFlesh;
+
+	if (_useFlippedWallAndFootprintsBitmap) {
+		copyBitmapAndFlipHorizontal(bmp, _tmpBitmap, byteWidth, bmpPixelHeight);
+		uint16 flippedSrcX = bmpPixelWidth - srcX - xyz[2];
+		blitToBitmap(_tmpBitmap, _bitmapViewport, destBox, flippedSrcX, srcY, byteWidth, k112_byteWidthViewport, transp, bmpPixelHeight, k136_heightViewport);
+	} else {
+		blitToBitmap(bmp, _bitmapViewport, destBox, srcX, srcY, byteWidth, k112_byteWidthViewport, transp, bmpPixelHeight, k136_heightViewport);
+	}
+}
+
 void DisplayMan::drawSquareD2R(Direction dir, int16 posX, int16 posY) {
 	static Frame doorFrameTopD2R = Frame(164, 223, 22, 24, 48, 3, 16, 0); // @ G0175_s_Graphic558_Frame_DoorFrameTop_D2R
 	static Frame frameStairsUpFrontD2R = Frame(160, 223, 22, 83, 32, 62, 0, 0); // @ G0115_s_Graphic558_Frame_StairsUpFront_D2R
@@ -2953,7 +3094,10 @@ void DisplayMan::drawSquareD2R(Direction dir, int16 posX, int16 posY) {
 		drawCeilingPit(kDMGraphicIdxCeilingPitD2L, &frameCeilingPitD2R, posX, posY, true);
 		break;
 	case kDMElementTypeWall:
-		drawWallSetBitmap(_vm->getPlatform() == Common::kPlatformDOS ? _bitmapWallSetD2R : _bitmapWallSetD2LCR, _frameWalls163[kDMViewSquareD2R]);
+		if (_vm->getPlatform() == Common::kPlatformDOS)
+			drawWallSetBitmapDOS(kDMZoneWallD2R, kDMNegGraphicWallD2R, kDMNegGraphicWallD2L);
+		else
+			drawWallSetBitmap(_bitmapWallSetD2LCR, _frameWalls163[kDMViewSquareD2R]);
 		isDrawnWallOrnAnAlcove(squareAspect[kDMSquareAspectLeftWallOrnOrd], kDMViewWallD2RLeft);
 		if (isDrawnWallOrnAnAlcove(squareAspect[kDMSquareFrontWallOrnOrd], kDMViewWallD2RFront))
 			order = kDMCellOrderAlcove;
@@ -3041,7 +3185,10 @@ void DisplayMan::drawSquareD2C(Direction dir, int16 posX, int16 posY) {
 		drawCeilingPit(kDMGraphicIdxCeilingPitD2C, &frameCeilingPitD2C, posX, posY, false);
 		break;
 	case kDMElementTypeWall:
-		drawWallSetBitmapWithoutTransparency(_bitmapWallSetD2LCR, _frameWalls163[kDMViewSquareD2C]);
+		if (_vm->getPlatform() == Common::kPlatformDOS)
+			drawWallSetBitmapDOS(kDMZoneWallD2C, kDMNegGraphicWallD2C, kDMNegGraphicWallD2C, true);
+		else
+			drawWallSetBitmapWithoutTransparency(_bitmapWallSetD2LCR, _frameWalls163[kDMViewSquareD2C]);
 		if (isDrawnWallOrnAnAlcove(squareAspect[kDMSquareFrontWallOrnOrd], kDMViewWallD2CFront))
 			order = kDMCellOrderAlcove;
 		else
@@ -3123,7 +3270,10 @@ void DisplayMan::drawSquareD1L(Direction dir, int16 posX, int16 posY) {
 		drawCeilingPit(kDMGraphicIdxCeilingPitD1L, &frameCeilingPitD1L, posX, posY, false);
 		break;
 	case kDMElementTypeWall:
-		drawWallSetBitmap(_vm->getPlatform() == Common::kPlatformDOS ? _bitmapWallSetD1L : _bitmapWallSetD1LCR, _frameWalls163[kDMViewSquareD1L]);
+		if (_vm->getPlatform() == Common::kPlatformDOS)
+			drawWallSetBitmapDOS(kDMZoneWallD1L, kDMNegGraphicWallD1L, kDMNegGraphicWallD1R);
+		else
+			drawWallSetBitmap(_bitmapWallSetD1LCR, _frameWalls163[kDMViewSquareD1L]);
 		isDrawnWallOrnAnAlcove(squareAspect[kDMSquareAspectRightWallOrnOrd], kDMViewWallD1LRight);
 		return;
 	case kDMElementTypeStairsSide:
@@ -3202,7 +3352,10 @@ void DisplayMan::drawSquareD1R(Direction dir, int16 posX, int16 posY) {
 		drawCeilingPit(kDMGraphicIdxCeilingPitD1L, &frameCeilingPitD1R, posX, posY, true);
 		break;
 	case kDMElementTypeWall:
-		drawWallSetBitmap(_vm->getPlatform() == Common::kPlatformDOS ? _bitmapWallSetD1R : _bitmapWallSetD1LCR, _frameWalls163[kDMViewSquareD1R]);
+		if (_vm->getPlatform() == Common::kPlatformDOS)
+			drawWallSetBitmapDOS(kDMZoneWallD1R, kDMNegGraphicWallD1R, kDMNegGraphicWallD1L);
+		else
+			drawWallSetBitmap(_bitmapWallSetD1LCR, _frameWalls163[kDMViewSquareD1R]);
 		isDrawnWallOrnAnAlcove(squareAspect[kDMSquareAspectLeftWallOrnOrd], kDMViewWallD1RLeft);
 		return;
 	case kDMElementTypeStairsSide:
@@ -3285,7 +3438,10 @@ void DisplayMan::drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 			blitToBitmap(bitmap, getDerivedBitmap(kDMDerivedBitmapThievesEyeVisibleArea),
 							  boxThievesEyeVisibleArea, 0, 0, 48, 48, kDMColorFlesh, 95, 95);
 		}
-		drawWallSetBitmapWithoutTransparency(_bitmapWallSetD1LCR, _frameWalls163[kDMViewSquareD1C]);
+		if (_vm->getPlatform() == Common::kPlatformDOS)
+			drawWallSetBitmapDOS(kDMZoneWallD1C, kDMNegGraphicWallD1C, kDMNegGraphicWallD1C, true);
+		else
+			drawWallSetBitmapWithoutTransparency(_bitmapWallSetD1LCR, _frameWalls163[kDMViewSquareD1C]);
 		if (isDrawnWallOrnAnAlcove(squareAspect[kDMSquareFrontWallOrnOrd], kDMViewWallD1CFront))
 			drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD1C, kDMCellOrderAlcove);
 
@@ -3352,7 +3508,10 @@ void DisplayMan::drawSquareD0L(Direction dir, int16 posX, int16 posY) {
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD0L, kDMCellOrderBackRight);
 		break;
 	case kDMElementTypeWall:
-		drawWallSetBitmap(_bitmapWallSetWallD0L, _frameWalls163[kDMViewSquareD0L]);
+		if (_vm->getPlatform() == Common::kPlatformDOS)
+			drawWallSetBitmapDOS(kDMZoneWallD0L, kDMNegGraphicWallD0L, kDMNegGraphicWallD0R);
+		else
+			drawWallSetBitmap(_bitmapWallSetWallD0L, _frameWalls163[kDMViewSquareD0L]);
 		return;
 	default:
 		break;
@@ -3386,7 +3545,10 @@ void DisplayMan::drawSquareD0R(Direction dir, int16 posX, int16 posY) {
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD0R, kDMCellOrderBackLeft);
 		break;
 	case kDMElementTypeWall:
-		drawWallSetBitmap(_bitmapWallSetWallD0R, _frameWalls163[kDMViewSquareD0R]);
+		if (_vm->getPlatform() == Common::kPlatformDOS)
+			drawWallSetBitmapDOS(kDMZoneWallD0R, kDMNegGraphicWallD0R, kDMNegGraphicWallD0L);
+		else
+			drawWallSetBitmap(_bitmapWallSetWallD0R, _frameWalls163[kDMViewSquareD0R]);
 		return;
 	default:
 		break;
@@ -3465,22 +3627,32 @@ void DisplayMan::drawDungeon(Direction dir, int16 posX, int16 posY) {
 		copyBitmapAndFlipHorizontal(_bitmapFloor, _tmpBitmap, k112_byteWidthViewport, 70);
 		drawWallSetBitmap(_tmpBitmap, floorFrame);
 
-		_bitmapWallSetD3LCR = _bitmapWallD3LCRFlipped;
-		_bitmapWallSetD2LCR = _bitmapWallD2LCRFlipped;
-		_bitmapWallSetD1LCR = _bitmapWallD1LCRFlipped;
-		_bitmapWallSetWallD0L = _bitmapWallD0LFlipped;
-		_bitmapWallSetWallD0R = _bitmapWallD0RFlipped;
+		if (_vm->getPlatform() != Common::kPlatformDOS) {
+			_bitmapWallSetD3LCR = _bitmapWallD3LCRFlipped;
+			_bitmapWallSetD2LCR = _bitmapWallD2LCRFlipped;
+			_bitmapWallSetD1LCR = _bitmapWallD1LCRFlipped;
+			_bitmapWallSetWallD0L = _bitmapWallD0LFlipped;
+			_bitmapWallSetWallD0R = _bitmapWallD0RFlipped;
+		}
 	} else {
 		copyBitmapAndFlipHorizontal(_bitmapCeiling, _tmpBitmap, k112_byteWidthViewport, 29);
 		drawWallSetBitmap(_tmpBitmap, ceilingFrame);
 		drawWallSetBitmap(_bitmapFloor, floorFrame);
 	}
 
-	if (dungeon.getRelSquareType(dir, 3, -2, posX, posY) == kDMElementTypeWall)
-		drawWallSetBitmap(_bitmapWallSetD3L2, frameWallD3L2);
+	if (dungeon.getRelSquareType(dir, 3, -2, posX, posY) == kDMElementTypeWall) {
+		if (_vm->getPlatform() == Common::kPlatformDOS)
+			drawWallSetBitmapDOS(kDMZoneWallD3L2, kDMNegGraphicWallD3L2, kDMNegGraphicWallD3R2);
+		else
+			drawWallSetBitmap(_bitmapWallSetD3L2, frameWallD3L2);
+	}
 
-	if (dungeon.getRelSquareType(dir, 3, 2, posX, posY) == kDMElementTypeWall)
-		drawWallSetBitmap(_bitmapWallSetD3R2, _frameWallD3R2);
+	if (dungeon.getRelSquareType(dir, 3, 2, posX, posY) == kDMElementTypeWall) {
+		if (_vm->getPlatform() == Common::kPlatformDOS)
+			drawWallSetBitmapDOS(kDMZoneWallD3R2, kDMNegGraphicWallD3R2, kDMNegGraphicWallD3L2);
+		else
+			drawWallSetBitmap(_bitmapWallSetD3R2, _frameWallD3R2);
+	}
 
 	int16 tmpPosX = posX;
 	int16 tmpPosY = posY;
@@ -3506,6 +3678,23 @@ void DisplayMan::drawDungeon(Direction dir, int16 posX, int16 posY) {
 	tmpPosY = posY;
 	dungeon.mapCoordsAfterRelMovement(dir, 3, 0, tmpPosX, tmpPosY);
 	drawSquareD3C(dir, tmpPosX, tmpPosY);
+
+	if (_vm->getPlatform() == Common::kPlatformDOS) {
+		uint16 sqAspect[5];
+		tmpPosX = posX;
+		tmpPosY = posY;
+		dungeon.mapCoordsAfterRelMovement(dir, 2, -2, tmpPosX, tmpPosY);
+		dungeon.setSquareAspect(sqAspect, dir, tmpPosX, tmpPosY);
+		if (sqAspect[kDMSquareAspectElement] == kDMElementTypeWall)
+			drawWallSetBitmapDOS(kDMZoneWallD2L2, kDMNegGraphicWallD2L2, kDMNegGraphicWallD2R2);
+
+		tmpPosX = posX;
+		tmpPosY = posY;
+		dungeon.mapCoordsAfterRelMovement(dir, 2, 2, tmpPosX, tmpPosY);
+		dungeon.setSquareAspect(sqAspect, dir, tmpPosX, tmpPosY);
+		if (sqAspect[kDMSquareAspectElement] == kDMElementTypeWall)
+			drawWallSetBitmapDOS(kDMZoneWallD2R2, kDMNegGraphicWallD2R2, kDMNegGraphicWallD2L2);
+	}
 	tmpPosX = posX;
 	tmpPosY = posY;
 	dungeon.mapCoordsAfterRelMovement(dir, 2, -1, tmpPosX, tmpPosY);
@@ -3541,11 +3730,13 @@ void DisplayMan::drawDungeon(Direction dir, int16 posX, int16 posY) {
 	drawSquareD0C(dir, posX, posY);
 
 	if (_useFlippedWallAndFootprintsBitmap) {
-		_bitmapWallSetD3LCR = _bitmapWallD3LCRNative;
-		_bitmapWallSetD2LCR = _bitmapWallD2LCRNative;
-		_bitmapWallSetD1LCR = _bitmapWallD1LCRNative;
-		_bitmapWallSetWallD0L = _bitmapWallD0LNative;
-		_bitmapWallSetWallD0R = _bitmapWallD0RNative;
+		if (_vm->getPlatform() != Common::kPlatformDOS) {
+			_bitmapWallSetD3LCR = _bitmapWallD3LCRNative;
+			_bitmapWallSetD2LCR = _bitmapWallD2LCRNative;
+			_bitmapWallSetD1LCR = _bitmapWallD1LCRNative;
+			_bitmapWallSetWallD0L = _bitmapWallD0LNative;
+			_bitmapWallSetWallD0R = _bitmapWallD0RNative;
+		}
 	}
 
 	drawViewport((dungeon._partyMapIndex != kDMMapIndexEntrance) ? 1 : 0);
@@ -3577,6 +3768,11 @@ void DisplayMan::loadFloorSet(FloorSet set) {
 	int16 index = (set * k2_FloorSetGraphicCount) + firstFloorSet;
 	loadIntoBitmap(index, _bitmapFloor);
 	loadIntoBitmap(index + 1, _bitmapCeiling);
+
+	if (_vm->getPlatform() == Common::kPlatformDOS) {
+		_negativeBitmaps[0]._s3u._bitmap = _bitmapFloor;   // -1
+		_negativeBitmaps[1]._s3u._bitmap = _bitmapCeiling; // -2
+	}
 }
 
 void DisplayMan::loadWallSet(WallSet set) {
@@ -3608,6 +3804,22 @@ void DisplayMan::loadWallSet(WallSet set) {
 		loadIntoBitmap(graphicIndice + 19, _bitmapWallSetD3R);      // C12_WALL_D3R (105)
 		loadIntoBitmap(graphicIndice + 20, _bitmapWallSetD3L);      // C13_WALL_D3L (106)
 		loadIntoBitmap(graphicIndice + 21, _bitmapWallSetD3LCR);    // C14_WALL_D3C (107)
+
+		_negativeBitmaps[2]._s3u._bitmap = _bitmapWallSetD3L2;       // -3
+		_negativeBitmaps[3]._s3u._bitmap = _bitmapWallSetD3R2;       // -4
+		_negativeBitmaps[4]._s3u._bitmap = _bitmapWallSetD3LCR;      // -5
+		_negativeBitmaps[5]._s3u._bitmap = _bitmapWallSetD3L;        // -6
+		_negativeBitmaps[6]._s3u._bitmap = _bitmapWallSetD3R;        // -7
+		_negativeBitmaps[7]._s3u._bitmap = _bitmapWallSetD2L2;       // -8
+		_negativeBitmaps[8]._s3u._bitmap = _bitmapWallSetD2R2;       // -9
+		_negativeBitmaps[9]._s3u._bitmap = _bitmapWallSetD2LCR;      // -10
+		_negativeBitmaps[10]._s3u._bitmap = _bitmapWallSetD2L;       // -11
+		_negativeBitmaps[11]._s3u._bitmap = _bitmapWallSetD2R;       // -12
+		_negativeBitmaps[12]._s3u._bitmap = _bitmapWallSetD1LCR;     // -13
+		_negativeBitmaps[13]._s3u._bitmap = _bitmapWallSetD1L;       // -14
+		_negativeBitmaps[14]._s3u._bitmap = _bitmapWallSetD1R;       // -15
+		_negativeBitmaps[15]._s3u._bitmap = _bitmapWallSetWallD0L;   // -16
+		_negativeBitmaps[16]._s3u._bitmap = _bitmapWallSetWallD0R;   // -17
 	} else {
 		int16 graphicIndice = (set * k13_WallSetGraphicCount) + k77_FirstWallSet;
 		loadIntoBitmap(graphicIndice++, _bitmapWallSetDoorFrameFront);
@@ -3623,16 +3835,14 @@ void DisplayMan::loadWallSet(WallSet set) {
 		loadIntoBitmap(graphicIndice++, _bitmapWallSetD2LCR);
 		loadIntoBitmap(graphicIndice++, _bitmapWallSetD3LCR);
 		loadIntoBitmap(graphicIndice++, _bitmapWallSetD3L2);
+
+		int16 firstWallSet = k77_FirstWallSet;
+		int16 doorFrameLeftD1CIdx = firstWallSet + 1;
+		copyBitmapAndFlipHorizontal(_bitmapWallSetDoorFrameLeftD1C, _bitmapWallSetDoorFrameRightD1C,
+										getPixelWidth(doorFrameLeftD1CIdx) / 2, getPixelHeight(doorFrameLeftD1CIdx));
+		copyBitmapAndFlipHorizontal(_bitmapWallSetD3L2, _bitmapWallSetD3R2,
+										getPixelWidth(firstWallSet + 12) / 2, getPixelHeight(firstWallSet + 12));
 	}
-
-	int16 firstWallSet = (_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet;
-	int16 doorFrameLeftD1CIdx = firstWallSet + 1;
-	int16 d3R2Idx = (_vm->getPlatform() == Common::kPlatformDOS) ? (firstWallSet + 18) : (firstWallSet + 12);
-
-	copyBitmapAndFlipHorizontal(_bitmapWallSetDoorFrameLeftD1C, _bitmapWallSetDoorFrameRightD1C,
-									getPixelWidth(doorFrameLeftD1CIdx) / 2, getPixelHeight(doorFrameLeftD1CIdx));
-	copyBitmapAndFlipHorizontal(_bitmapWallSetD3L2, _bitmapWallSetD3R2,
-									getPixelWidth(d3R2Idx) / 2, getPixelHeight(d3R2Idx));
 }
 
 void DisplayMan::loadCurrentMapGraphics() {
