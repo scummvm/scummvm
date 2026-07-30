@@ -1309,6 +1309,9 @@ begin_credits("Credits");
 		add_paragraph(
 			"Ron Davis for releasing the sources and generously giving away the three chapters of God of Thunder.");
 
+		add_paragraph(
+			"David A. Smith for releasing the source code of The Colony, which our engine is based on.");
+
 	end_section();
 
 end_credits();
