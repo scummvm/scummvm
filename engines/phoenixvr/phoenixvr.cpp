@@ -1499,8 +1499,8 @@ void PhoenixVREngine::renderLensflare() {
 	if (!_lensflareActive)
 		return;
 
-	const float viewX = kPi2 - _angleY.angle();
-	const float viewY = _angleX.angle();
+	const float viewY = -_angleY.angle();
+	const float viewX = _angleX.angle();
 	const float lensX = _lensflareX;
 	const float lensY = _lensflareY;
 	const float deltaX = lensX - viewX;
