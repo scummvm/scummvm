@@ -159,6 +159,9 @@ enum GameFeatures {
 	/** Games with the AKOS costume system (ScummEngine_v7 and subclasses, HE games). */
 	GF_NEW_COSTUMES = 1 << 2,
 
+	/** Games which are not even ready for public testing yet. */
+	GF_UNSTABLE = 1 << 3,
+
 	/** Games using XOR encrypted data files. */
 	GF_USE_KEY = 1 << 4,
 
