@@ -825,7 +825,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 
 bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::String &name,
 		bool allowEscSpace, int overrideX, int overrideY, int overrideOriginY,
-		bool serviceSceneUi) {
+		bool serviceSceneUi, bool rememberVideoPalette) {
 	IavfMovie movie;
 	if (!parseIavf(stream, name, movie)) {
 		warning("Ripper: invalid IAVF presentation '%s'", name.c_str());
@@ -913,6 +913,7 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		request.patchInterfacePalette = false;
 		request.originY = segmentOriginY;
 		request.serviceSceneUi = serviceSceneUi;
+		request.rememberVideoPalette = rememberVideoPalette;
 		request.advanceSegment = &advanceSegment;
 		if (!smacker || !playSmacker(smacker,
 				Common::String::format("%s#%u", name.c_str(), i), request)) {
@@ -1039,11 +1040,12 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 	const bool restoreIavfDisplay = isIavf && allowEscSpace;
 	SavedDisplayContext displayContext;
 	const bool displayContextCaptured = restoreIavfDisplay && captureDisplayContext(displayContext);
+	const bool rememberIavfPalette = !displayContextCaptured;
 	if (isIavf) {
 		debugC(2, kDebugVideo,
-			"Ripper: IAVF display policy media='%s' keyboardControls=%d restore=%d captured=%d size=%ux%u",
+			"Ripper: IAVF display policy media='%s' keyboardControls=%d restore=%d captured=%d rememberPalette=%d size=%ux%u",
 			path.c_str(), allowEscSpace, restoreIavfDisplay, displayContextCaptured,
-			displayContext.width, displayContext.height);
+			rememberIavfPalette, displayContext.width, displayContext.height);
 	}
 
 	bool result = false;
@@ -1061,7 +1063,12 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 		result = playSmacker(file, path, request);
 	} else if (isIavf) {
 		const int originY = sceneViewport ? kScenePresentationTop : 0;
-		result = playIavf(*file, path, allowEscSpace, x, y, originY);
+		// RunWacVoiceLockPuzzleScene at 0x24ba4 fades ACCESED.AVI out before
+		// returning to the restored WAC page. A presentation whose indexed page
+		// and palette will be restored must not replace the source palette later
+		// used to rebuild the surrounding scene and interface bands.
+		result = playIavf(*file, path, allowEscSpace, x, y, originY, false,
+			rememberIavfPalette);
 		delete file;
 	} else {
 		warning("Ripper: unsupported media magic for '%s'", path.c_str());
@@ -1599,7 +1606,7 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 			break;
 		}
 		result = playIavf(*file, path, allowEscSpace, x, y,
-			kScenePresentationTop, true);
+			kScenePresentationTop, true, true);
 		delete file;
 	} else {
 		warning("Ripper: unsupported scene media mode for '%s'", path.c_str());
