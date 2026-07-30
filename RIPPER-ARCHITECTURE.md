@@ -1166,9 +1166,12 @@
   That template uses `WACMNU0` through `WACMNU15`, a 20-pixel heading, 6-pixel
   bottom inset, 5-pixel left inset, 20-pixel right inset, and 14-pixel rows.
   Its client background is palette index 4, the centered title is index 248,
-  and normal body text is index 251. It keeps the active WAC palette rather than
-  applying the generic MENUB palette patch; `WAC.PCX` and the WACMNU assets
-  share those indexed colors.
+  and normal body text is index 251. `DrawPromptChooserTemplateLabelCallback`
+  at `0x16d0f` places the title one pixel below the control's top edge using
+  template byte `+0x19`, rather than vertically centering `SMALL.FNT` within
+  the full heading. It keeps the active WAC palette rather than applying the
+  generic MENUB palette patch; `WAC.PCX` and the WACMNU assets share those
+  indexed colors.
 - The `0x3100` control calls `RunRipperTextFileViewer` at `0x223ef`. It loads at
   most `0x27c0` bytes from `ripper.txt` through
   `LoadResolvedRipperTextFileBuffer` at `0x22252` and presents the text with
@@ -1194,6 +1197,8 @@
   applies a 20-pixel heading inset, 6-pixel bottom inset, 5-pixel left inset,
   20-pixel right inset, and 14-pixel rows. The heading, normal rows, and active
   row use indexed glyph colors 248, 251, and 254 over chooser background 4.
+  Its centered `Object Database` title uses the template's one-pixel top inset,
+  matching the shared label callback.
   `AnimateWacMenuChooserBlinkCallback` at `0x215e5` alternates the bitmap at
   the chooser origin between `wacmnu0` and `wacmnu15` every five extended DOS
   ticks. `SetWacMenuChooserBlinkActiveStateCallback` at `0x21775` selects the

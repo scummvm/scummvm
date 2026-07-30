@@ -55,6 +55,7 @@ static const int kWacDatabaseTop = 50;
 static const int kWacDatabaseRight = 590;
 static const int kWacDatabaseBottom = 332;
 static const int kWacDatabaseHeadingInset = 20;
+static const int kWacDatabaseTitleTopInset = 1;
 static const int kWacDatabaseBottomInset = 6;
 static const int kWacDatabaseLeftInset = 5;
 static const int kWacDatabaseRightInset = 20;
@@ -245,7 +246,7 @@ void WacDatabaseSession::drawDatabase() const {
 	const Common::String &title = _wac->resourceString(0x4e);
 	const int titleX = client.left + (client.width() - _wac->measureText(title)) / 2;
 	_wac->drawText((byte *)screen->getPixels(), screen->pitch, titleX,
-		bounds.top + (kWacDatabaseHeadingInset - _wac->_font.lineHeight) / 2,
+		bounds.top + kWacDatabaseTitleTopInset,
 		title, kWacDatabaseTitleText);
 
 	if (_databaseEntries.empty()) {
