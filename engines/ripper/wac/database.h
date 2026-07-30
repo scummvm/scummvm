@@ -29,7 +29,9 @@
 namespace Ripper {
 
 class WacDatabaseMediaCallback;
+class WacJournalPuzzle;
 class WacManager;
+class RipperEngine;
 struct MouseState;
 
 class WacDatabaseSession {
@@ -40,6 +42,7 @@ public:
 
 private:
 	friend class WacDatabaseMediaCallback;
+	friend class WacJournalPuzzle;
 
 	struct DatabaseEntry {
 		Common::String label;
@@ -61,16 +64,17 @@ private:
 		bool deferCursorUpdate = false);
 	bool drawDatabaseTextPanel(uint bodyResourceId, const Common::Rect &bounds,
 		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows);
-	void wrapJournalText(const Common::String &text, uint maximumWidth,
-		Common::Array<Common::String> &lines) const;
-	bool drawJournalTextPanel(const Common::Array<Common::String> &lines, uint progress,
-		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows);
-	bool drawJournalTextPanelLine(const Common::Array<Common::String> &lines,
-		uint firstVisible, uint visibleRows, uint lineIndex);
-	uint16 runJournalRevealScene(DatabaseEntry &entry);
 	uint16 runVoiceLockPuzzle(DatabaseEntry &entry);
 	uint16 runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceId);
 	uint16 dispatchDatabaseEntry(DatabaseEntry &entry);
+	RipperEngine *engine() const;
+	const Common::String &resourceString(uint resourceId) const;
+	uint measureText(const Common::String &text) const;
+	void drawText(byte *screen, uint pitch, int x, int y,
+		const Common::String &text, byte color) const;
+	void drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const;
+	void drawAnimatedCorner(int x, int y) const;
+	void serviceIdleEffects();
 
 	WacManager *_wac;
 	BitmapAssetFrame _databaseStillImage;

@@ -1213,7 +1213,8 @@
   `0x22c91` independently includes every set flag on a later menu rebuild, so
   the two underlying database records remain distinct even though the row used
   to solve the puzzle is replaced in place for the current chooser session.
-- Entry 3 dispatches `RunWacJournalRevealScene` at `0x24261`. It wraps game-text
+- Entry 3 dispatches `RunWacJournalRevealScene` at `0x24261`, implemented by
+  `WacJournalPuzzle`. It wraps game-text
   resource `0xaf` once into control `0x7b2`, marks reveal-source flag `0xfa`,
   and uses named flag `0xd8` as the decryption gate. While locked, text-entry
   control `0x7b3` prompts with resource `0xb5`; its expected answer is resource
