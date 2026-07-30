@@ -1140,8 +1140,9 @@
 - The reimplementation keeps the long-lived WAC front-end resources and
   persistent controls in `WacManager`, while each object-database invocation
   creates a `WacDatabaseSession` that owns the chooser rows, selection,
-  scrolling, media viewport, and entry dispatch state. This mirrors
-  `RunWacFrontEndLoop` retaining the shared controls while
+  shared media viewport, text-panel scrolling, and entry dispatch state.
+  Dedicated WAC subscene classes own their presentation-specific state. This
+  mirrors `RunWacFrontEndLoop` retaining the shared controls while
   `RunWacInventorySelectionLoop` builds and owns the database chooser.
 - `DispatchFrontEndAction` at `0x190b7` routes toolbar action `0x517` to the
   modal `RunWacFrontEndLoop` at `0x21865`. The loop snapshots the active scene
@@ -1242,7 +1243,8 @@
   chooser, scrollbar, persistent WAC controls, and help context 407 remain
   active while this scene owns the left media viewport.
 - Entry 0 dispatches `WACINV0.PCX` through
-  `RunWacStillImageScreenWithOptionalAudio` at `0x22f1f` with no audio. The
+  `RunWacStillImageScreenWithOptionalAudio` at `0x22f1f`, implemented by
+  `WacStillImageViewer`, with no audio. The
   Prescription Pad uses the shared WAC still-image viewport, palette patch,
   and scroll controls while the database chooser remains active.
 - Entry 4 dispatches `WACINV4.PCX` through the same
