@@ -70,7 +70,7 @@ void read_config_file() {
 	config_file.naughtiness = ConfMan.getBool("naughtiness") ? NAUGHTY : NICE;
 
 	config_file.quotes_enabled = ConfMan.getBool("quotes_enabled");
-	config_file.screen_fade = ConfMan.getBool("screen_fade");
+	config_file.screen_fade = ConfMan.getInt("screen_fade");
 	config_file.panning_speed = ConfMan.getInt("panning_speed");
 
 	config_file.show_speech_boxes = ConfMan.getBool("show_speech_boxes");
@@ -90,7 +90,7 @@ void write_config_file() {
 	ConfMan.setBool("animated_interface", config_file.animated_interface);
 
 	ConfMan.setBool("quotes_enabled", config_file.quotes_enabled);
-	ConfMan.setBool("screen_fade", config_file.screen_fade);
+	ConfMan.setInt("screen_fade", config_file.screen_fade);
 	ConfMan.setInt("panning_speed", config_file.panning_speed);
 
 	ConfMan.setBool("show_speech_boxes", config_file.show_speech_boxes);
