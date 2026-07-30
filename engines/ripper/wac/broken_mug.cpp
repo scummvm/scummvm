@@ -18,7 +18,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ripper/puzzles/broken_mug.h"
+#include "ripper/wac/broken_mug.h"
 
 #include "common/archive.h"
 #include "common/debug.h"

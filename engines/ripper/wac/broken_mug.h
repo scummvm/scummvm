@@ -18,8 +18,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef RIPPER_PUZZLES_BROKEN_MUG_H
-#define RIPPER_PUZZLES_BROKEN_MUG_H
+#ifndef RIPPER_WAC_BROKEN_MUG_H
+#define RIPPER_WAC_BROKEN_MUG_H
 
 #include "common/array.h"
 #include "common/rect.h"
@@ -90,4 +90,4 @@ private:
 
 } // End of namespace Ripper
 
-#endif // RIPPER_PUZZLES_BROKEN_MUG_H
+#endif // RIPPER_WAC_BROKEN_MUG_H

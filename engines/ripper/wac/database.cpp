@@ -35,8 +35,8 @@
 #include "ripper/media.h"
 #include "ripper/milestones.h"
 #include "ripper/modal_dialog.h"
-#include "ripper/puzzles/broken_mug.h"
 #include "ripper/ripper.h"
+#include "ripper/wac/broken_mug.h"
 #include "ripper/wac/journal.h"
 #include "ripper/wac/voice_lock.h"
 
