@@ -33,10 +33,6 @@
 namespace Nancy {
 namespace Action {
 
-// Nancy 10 TODOs:
-//  - completion-animation playback (data read, never rendered)
-//  - _retainState save/restore via a PuzzleData entry
-//  - 4th cursor id, 7 × 33-byte string slots
 void MultiBuildPuzzle::init() {
 	g_nancy->_resource->loadImage(_primaryImageName, _primaryImage);
 	_primaryImage.setTransparentColor(_drawSurface.getTransparentColor());
@@ -133,7 +129,8 @@ void MultiBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	readRect(stream, _targetZone);
 
-	_allowAltZoneSnap = stream.readByte() != 0;
+	_altZoneSnapMode = stream.readByte();
+	_allowAltZoneSnap = _altZoneSnapMode != 0;
 	_checkOverlapOnDrop = stream.readByte() != 0;
 
 	if (isNancy10) {
@@ -188,9 +185,14 @@ void MultiBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	_dropSound.readNormal(stream);
 
 	if (isNancy10) {
-		_animSound.readNormal(stream);
-		stream.skip(7 * 33);	// TODO: 7 unknown strings
-		stream.skip(2); // TODO: 4th cursor id at the front of the block; role TBD.
+		// "Missed" feedback when an ingredient is thrown away: a sound plus a
+		// caption laid out exactly like the solve caption (33-byte CONVO key +
+		// 200-byte raw fallback).
+		_missedSound.readNormal(stream);
+		readFilename(stream, _missedTextKey);
+		char missedBuf[200];
+		stream.read(missedBuf, 200);
+		assembleTextLine(missedBuf, _missedText, 200);
 	}
 
 	_dragCursorID  = stream.readSint16LE();
@@ -220,6 +222,7 @@ void MultiBuildPuzzle::execute() {
 		g_nancy->_sound->loadSound(_pickupSound);
 		g_nancy->_sound->loadSound(_dropSound);
 		g_nancy->_sound->loadSound(_solveSound);
+		g_nancy->_sound->loadSound(_missedSound);
 		_state = kRun;
 		// fall through
 	case kRun:
@@ -303,6 +306,7 @@ void MultiBuildPuzzle::execute() {
 		g_nancy->_sound->stopSound(_pickupSound);
 		g_nancy->_sound->stopSound(_dropSound);
 		g_nancy->_sound->stopSound(_solveSound);
+		g_nancy->_sound->stopSound(_missedSound);
 		if (_isCancelled) {
 			NancySceneState.changeScene(_cancelScene._sceneChange);
 			// Cancel flag is only set if at least one piece was placed (or
@@ -481,8 +485,10 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 		return;
 	Common::Rect vpScreen = viewData->screenPosition;
 
-	// Exit hotspots can sit below the viewport (cake mixing).
-	if (!_isDragging && _selectedPiece == -1 && !vpScreen.contains(input.mousePos)) {
+	// Exit hotspots can sit below the viewport (cake mixing). They remain
+	// reachable while an ingredient closeup is showing, so the player can back
+	// away at the bottom of the screen to cancel adding it.
+	if (!_isDragging && !vpScreen.contains(input.mousePos)) {
 		if (!checkExitHotspot(_exitHotspot, _exitCursorID1, input))
 			checkExitHotspot(_exitHotspot2, _exitCursorID2, input);
 		return;
@@ -528,25 +534,44 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 			int placedIdx = _pickedUpPiece;
 			_pickedUpPiece = -1;
 
-			if (validDrop) {
-				pp.isPlaced = true;
-				const bool isNancy10 = g_nancy->getGameType() >= kGameTypeNancy10;
-				if (isNancy10) {
-					// Clone placements bump the source piece's counter.
-					int srcIdx = (pp.typeIdx >= 0) ? pp.typeIdx : placedIdx;
-					if (_pieces[srcIdx].placeCount < 255)
-						_pieces[srcIdx].placeCount++;
-				}
-				g_nancy->_sound->playSound(_dropSound);
+			const bool isNancy10 = g_nancy->getGameType() >= kGameTypeNancy10;
+			// "Add ingredient" mode (cake mixing): a valid drop just bumps the
+			// ingredient's placement count and returns the piece to the shelf;
+			// there is a single piece per ingredient (no counter-spawn), so the
+			// count is tracked purely by placeCount.
+			const bool addMode = isNancy10 && _altZoneSnapMode == 2;
 
-				// Counter pieces respawn at home for unlimited supply.
-				if (pp.counterByte != 0)
-					spawnCounterPiece(placedIdx);
+			if (validDrop) {
+				int srcIdx = (pp.typeIdx >= 0) ? pp.typeIdx : placedIdx;
+				if (isNancy10 && _pieces[srcIdx].placeCount < 255)
+					_pieces[srcIdx].placeCount++;
+
+				if (addMode) {
+					// Ingredient goes back to its shelf slot, still pickable.
+					pp.isPlaced = false;
+					pp.gameRect = pp.homeRect;
+				} else {
+					pp.isPlaced = true;
+					g_nancy->_sound->playSound(_dropSound);
+					// Counter pieces respawn at home for unlimited supply.
+					if (pp.counterByte != 0)
+						spawnCounterPiece(placedIdx);
+				}
 
 				if (isNancy10)
 					updateSolveFlags();
 			} else {
+				// Missed: the ingredient was thrown away. Return it to the shelf
+				// and play the "Missed." feedback (sound + caption).
+				pp.isPlaced = false;
 				pp.gameRect = pp.homeRect;
+				if (isNancy10 && _missedSound.name != "NO SOUND") {
+					g_nancy->_sound->playSound(_missedSound);
+					if (_solveState == kIdle) {
+						_solveState = kWaitTimer;
+						_timerEnd = g_system->getMillis() + 200;
+					}
+				}
 			}
 
 			updatePieceRender(placedIdx);
@@ -570,12 +595,22 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (_selectedPiece != -1) {
+		Piece &pp = _pieces[_selectedPiece];
+
+		// Only the closeup itself is interactive: clicking it picks it up to
+		// drag. Anywhere else the exit hotspots stay live, so the player can back
+		// away at the bottom of the screen to cancel adding the ingredient.
+		if (!pp.gameRect.contains(mouseVP)) {
+			if (!checkExitHotspot(_exitHotspot, _exitCursorID1, input))
+				checkExitHotspot(_exitHotspot2, _exitCursorID2, input);
+			return;
+		}
+
 		g_nancy->_cursor->setCursorType(dragCursor, true);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			int sel = _selectedPiece;
 			_selectedPiece = -1;
-			Piece &pp = _pieces[sel];
 			_pickedUpPiece = sel;
 			_isDragging = true;
 			pp.curRotation = 0;
@@ -650,18 +685,26 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 			pp.registerGraphics();
 
 			if (_hasCloseupImage && !pp.cuSrcRect.isEmpty()) {
-				// First click shows the closeup view centred on the piece.
+				// First click shows the closeup view. When the piece carries a
+				// fixed closeup destination (cake mixing), the closeup appears at
+				// that absolute, screen-centred position; otherwise it is centred
+				// on the piece (plant potting).
 				_selectedPiece = topmost;
 				const int cuW = pp.cuSrcRect.width();
 				const int cuH = pp.cuSrcRect.height();
-				const int pieceW = pp.rotateSurfaces[pp.curRotation].w;
-				const int pieceH = pp.rotateSurfaces[pp.curRotation].h;
-				const int centerX = pp.gameRect.left + pieceW / 2;
-				const int centerY = pp.gameRect.top  + pieceH / 2;
-				int cuLeft = centerX - cuW / 2;
-				int cuTop  = centerY - cuH / 2;
-				cuLeft = CLIP<int>(cuLeft, 0, MAX(0, vpScreen.width()  - cuW));
-				cuTop  = CLIP<int>(cuTop,  0, MAX(0, vpScreen.height() - cuH));
+				int cuLeft;
+				int cuTop;
+				if (!pp.placedDstRect.isEmpty()) {
+					cuLeft = pp.placedDstRect.left;
+					cuTop  = pp.placedDstRect.top;
+				} else {
+					const int pieceW = pp.rotateSurfaces[pp.curRotation].w;
+					const int pieceH = pp.rotateSurfaces[pp.curRotation].h;
+					cuLeft = pp.gameRect.left + pieceW / 2 - cuW / 2;
+					cuTop  = pp.gameRect.top  + pieceH / 2 - cuH / 2;
+					cuLeft = CLIP<int>(cuLeft, 0, MAX(0, vpScreen.width()  - cuW));
+					cuTop  = CLIP<int>(cuTop,  0, MAX(0, vpScreen.height() - cuH));
+				}
 				pp.gameRect = Common::Rect(cuLeft, cuTop, cuLeft + cuW, cuTop + cuH);
 			} else {
 				// Direct drag on first click.
@@ -710,24 +753,54 @@ bool MultiBuildPuzzle::updateSolveFlags() {
 	}
 	total += (uint16)(_pieces.size() - _numPieces);
 
+	// The cancel scene's flag is the "enough ingredients" flag that enables the
+	// BAKE option in the neighbouring scene. It is raised at/above the threshold.
+	// Below the threshold, Nancy 10 leaves it latched (so backing away from the
+	// counter and stepping back up keeps BAKE available), while Nancy 11+ clears
+	// it. Written only on a value change (see member comment).
+	if (_cancelScene._flag.label != kFlagNoLabel) {
+		const bool enough = total >= _requiredPieces;
+		if (enough || g_nancy->getGameType() >= kGameTypeNancy11) {
+			byte want = enough ? _cancelScene._flag.flag
+				: (_cancelScene._flag.flag == g_nancy->_false ? g_nancy->_true : g_nancy->_false);
+			if ((int)want != _minCountFlagLastValue) {
+				NancySceneState.setEventFlag(_cancelScene._flag.label, want);
+				_minCountFlagLastValue = want;
+			}
+		}
+	}
+
 	if (total < _requiredPieces)
 		return false;
 
+	// The solve scene's flag marks an exact recipe match. It is cleared until
+	// every ingredient count matches; only then is it raised to its true value.
+	bool exact = true;
 	for (uint i = 0; i < _numPieces; ++i) {
-		if (_pieces[i].placeCount > 0 && _pieces[i].mustNotPlace > 0)
-			return false;
+		if (_pieces[i].placeCount > 0 && _pieces[i].mustNotPlace > 0) {
+			exact = false;
+			break;
+		}
 		// mustPlace is an exact required count only when non-zero. A zero
 		// mustPlace means the piece has no count requirement (e.g. cake
 		// cooking, where the win rule is just "place enough good ingredients
 		// and no bad ones"); placing it must not fail the check.
-		if (_pieces[i].mustPlace > 0 && _pieces[i].placeCount != _pieces[i].mustPlace)
-			return false;
+		if (_pieces[i].mustPlace > 0 && _pieces[i].placeCount != _pieces[i].mustPlace) {
+			exact = false;
+			break;
+		}
 	}
 
-	// Cancel flag is owned by kActionTrigger so it doesn't retrigger per drop
-	NancySceneState.setEventFlag(_solveScene._flag);
+	if (_solveScene._flag.label != kFlagNoLabel) {
+		byte want = exact ? _solveScene._flag.flag
+			: (_solveScene._flag.flag == g_nancy->_false ? g_nancy->_true : g_nancy->_false);
+		if ((int)want != _solveFlagLastValue) {
+			NancySceneState.setEventFlag(_solveScene._flag.label, want);
+			_solveFlagLastValue = want;
+		}
+	}
 
-	return true;
+	return exact;
 }
 
 void MultiBuildPuzzle::checkIfSolved() {

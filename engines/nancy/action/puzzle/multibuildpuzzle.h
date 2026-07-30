@@ -88,12 +88,21 @@ protected:
 	bool _hasCloseupImage = false;
 
 	// Nancy 10 additions
-	bool _retainState = false;      // TODO: state-persistence not yet wired up
+	// Parsed for correct chunk alignment but not acted upon: no shipping N10/N11
+	// MultiBuild puzzle sets it (cake mixing and cake cooking both have it clear),
+	// so the save/restore of placement counts is deliberately not implemented.
+	bool _retainState = false;
 	Common::Path _animImageName;    // Completion animation sprite sheet
 	bool _hasAnimImage = false;
 	Common::Rect _animRect;
 	int16 _animLayout[4] = {};      // cols / framesPerStep / spacing / totalRows
-	SoundDescription _animSound;    // Sound played during the animation
+
+	// Played when an ingredient is dropped outside a valid area (thrown away).
+	// The caption uses the CONVO lookup of _missedTextKey, falling back to the
+	// raw _missedText.
+	SoundDescription _missedSound;
+	Common::String _missedTextKey;
+	Common::String _missedText;
 
 	uint16 _numPieces = 0;
 	uint16 _requiredPieces = 0;        // Minimum placed pieces (counterByte==0) for solve check
@@ -103,6 +112,7 @@ protected:
 	int16 _rotHotspotHeight = 0;
 	int16 _rotHotspotWidth = 0;
 	bool _allowAltZoneSnap = false;    // Allow drop outside target zone if stacking on a moved piece
+	uint8 _altZoneSnapMode = 0;        // Raw value: 2 = "add ingredient" mode (cake), count via placeCount, no counter-spawn
 	bool _checkOverlapOnDrop = false;  // Reject drop if it overlaps an already-placed piece
 
 	Common::Array<Piece> _pieces;
@@ -133,6 +143,12 @@ protected:
 	bool _isDragging = false;
 	bool _isSolved = false;
 	bool _isCancelled = false;
+
+	// Event-flag write tracking: the original re-writes the solve flags on every
+	// drop, but re-writing an unchanged flag can re-trigger scene voice lines, so
+	// we only write on an actual value change.
+	int _minCountFlagLastValue = -1;  // last value written to the cancel-scene "enough ingredients" flag
+	int _solveFlagLastValue = -1;     // last value written to the solve-scene flag (-1 = never)
 
 	enum SolveState {
 		kIdle           = 0,
