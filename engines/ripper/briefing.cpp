@@ -42,7 +42,7 @@ static const uint32 kBriefingFrameInterval = 3 * kDosTickMillis;
 static const uint kBriefingAlertVolume = 35;
 
 static bool isImplementedBriefingSelector(uint selector) {
-	return selector == 1 || selector == 2 || selector == 4;
+	return selector == 1 || selector == 2 || selector == 3 || selector == 4;
 }
 
 BriefingManager::BriefingManager(RipperEngine *engine) : _engine(engine),
@@ -235,6 +235,15 @@ bool BriefingManager::activate() {
 		// presenting media or changing milestone state.
 		debugC(1, kDebugScene,
 			"Ripper: completed briefing selector=2 without media or state changes");
+		break;
+	case 3:
+		// The selector jump-table entry at 0x19624 presents RIP_WAC2.AVI
+		// without changing milestone state.
+		result = _engine->getMedia()->play("rip_wac2.avi", true, 0, 0);
+		if (result) {
+			debugC(1, kDebugScene,
+				"Ripper: completed briefing selector=3 media='rip_wac2.avi' without state changes");
+		}
 		break;
 	case 4:
 		result = _engine->getMedia()->play("sj_wacm.avi", true, 0, 0);
