@@ -1308,6 +1308,13 @@
   spans independently matches the same five-pair table. Exactly five quantized
   spans solve only from scene label `eez1`, after which `ACCESED.AVI` plays,
   milestone 29 opens the Secret Animal Lab, and WAC exits.
+  `RunWacVoiceLockPuzzleScene` clears the logical page before that completion
+  movie and calls display command `0x1e` afterward. `RunMediaPresentation` at
+  `0x168af` likewise treats the movie palette as presentation-local before it
+  restores the surrounding display state. The reimplementation captures and
+  restores the indexed WAC page for this controlled IAVF path and does not let
+  the temporary movie overwrite the remembered scene palette used by later
+  toolbar-band redraws.
   The ScummVM-only debugger command `PUZZLE_HELP` toggles diagnostic puzzle
   overlays without changing retail validation. In the voice-lock source
   waveform it draws palette-254 red guides at those five targets, numbered in
