@@ -25,7 +25,6 @@
 #include "common/debug.h"
 #include "common/system.h"
 #include "common/util.h"
-#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 #include "ripper/cursor.h"
@@ -38,6 +37,7 @@
 #include "ripper/ripper.h"
 #include "ripper/wac/broken_mug.h"
 #include "ripper/wac/journal.h"
+#include "ripper/wac/still_image.h"
 #include "ripper/wac/voice_lock.h"
 
 namespace Ripper {
@@ -73,14 +73,8 @@ static const int kWacMediaLeft = 50;
 static const int kWacMediaTop = 50;
 static const int kWacMediaWidth = 350;
 static const int kWacMediaHeight = 282;
-static const int kWacMediaScrollX = 355;
-static const int kWacMediaScrollUpY = 60;
-static const int kWacMediaScrollDownY = 90;
-static const int kWacMediaScrollStep = 10;
 static const int kWacTextPanelWidth = 330;
 static const int kWacTextPanelHeight = 222;
-static const uint kWacMediaPaletteFirst = 10;
-static const uint kWacMediaPaletteCount = 140;
 static const uint kWacDatabaseHelpResource = 406;
 static const uint kWacCircuitManualResource = 0xb6;
 static const uint16 kWacDatabaseSelectionChanged = 0xfffe;
@@ -119,7 +113,6 @@ static void blitBitmap(Graphics::Surface *screen, const BitmapAssetFrame &bitmap
 
 WacDatabaseSession::WacDatabaseSession(WacManager *wac) : _wac(wac),
 		_databaseSelection(0), _databaseFirstVisible(0),
-		_databaseStillImageScroll(0), _databaseScrollControl(0),
 		_databaseTextScrollControl(0), _databaseTextScrollDragOffset(0),
 		_databaseCornerLastMillis(0), _databaseCornerAlternate(false),
 		_databaseTextScrollDragging(false) {
@@ -159,6 +152,11 @@ void WacDatabaseSession::serviceIdleEffects() {
 
 bool WacDatabaseSession::persistentControlHovered() const {
 	return _wac->_hoveredControl >= 0;
+}
+
+const Common::Array<BitmapAssetFrame> &
+WacDatabaseSession::databaseScrollArrows() const {
+	return _wac->_databaseScrollArrows;
 }
 
 void WacDatabaseSession::serviceDatabaseCornerAnimation(bool textPanelActive) {
@@ -284,112 +282,6 @@ void WacDatabaseSession::clearDatabaseMediaViewport() {
 		memset(screen->getBasePtr(kWacMediaLeft, y), kWacDatabaseBackground,
 			kWacMediaWidth);
 	g_system->unlockScreen();
-	_databaseStillImage = BitmapAssetFrame();
-	_databaseStillImageScroll = 0;
-	_databaseScrollControl = 0;
-}
-
-bool WacDatabaseSession::loadDatabaseStillImage(const Common::String &path) {
-	BitmapAssetFrame image;
-	if (!_wac->_engine->getResources()->loadInterfacePcx(path, image))
-		return false;
-	if (image.palette.size() < (kWacMediaPaletteFirst + kWacMediaPaletteCount) * 3)
-		return false;
-
-	_databaseStillImage = Common::move(image);
-	_databaseStillImageScroll = 0;
-	_databaseScrollControl = 0;
-	g_system->getPaletteManager()->setPalette(
-		_databaseStillImage.palette.data() + kWacMediaPaletteFirst * 3,
-		kWacMediaPaletteFirst, kWacMediaPaletteCount);
-	drawDatabaseStillImage();
-	debugC(1, kDebugWac,
-		"Ripper: loaded WAC database still image='%s' size=%ux%u viewport=%d,%d,%d,%d scrollLimit=%u",
-		path.c_str(), _databaseStillImage.width, _databaseStillImage.height,
-		kWacMediaLeft, kWacMediaTop, kWacMediaWidth, kWacMediaHeight,
-		_databaseStillImage.height > kWacMediaHeight ?
-			_databaseStillImage.height - kWacMediaHeight : 0);
-	return true;
-}
-
-void WacDatabaseSession::drawDatabaseStillImage() const {
-	if (_databaseStillImage.pixels.empty())
-		return;
-	Graphics::Surface *screen = g_system->lockScreen();
-	if (!screen || screen->format.bytesPerPixel != 1) {
-		if (screen)
-			g_system->unlockScreen();
-		return;
-	}
-
-	for (int y = kWacMediaTop; y < kWacMediaTop + kWacMediaHeight; ++y)
-		memset(screen->getBasePtr(kWacMediaLeft, y), kWacDatabaseBackground,
-			kWacMediaWidth);
-	const uint copyWidth = MIN<uint>(_databaseStillImage.width, kWacMediaWidth);
-	const uint copyHeight = MIN<uint>(
-		_databaseStillImage.height - _databaseStillImageScroll, kWacMediaHeight);
-	const int x = _databaseStillImage.height > kWacMediaHeight ? kWacMediaLeft :
-		kWacMediaLeft + (kWacMediaWidth - copyWidth) / 2;
-	const int y = _databaseStillImage.height > kWacMediaHeight ? kWacMediaTop :
-		kWacMediaTop + (kWacMediaHeight - copyHeight) / 2;
-	for (uint row = 0; row < copyHeight; ++row) {
-		memcpy(screen->getBasePtr(x, y + row),
-			_databaseStillImage.pixels.data() +
-				(_databaseStillImageScroll + row) * _databaseStillImage.width,
-			copyWidth);
-	}
-	g_system->unlockScreen();
-	drawDatabaseScrollControls();
-	_wac->_engine->getCursor()->refresh();
-	g_system->updateScreen();
-}
-
-void WacDatabaseSession::drawDatabaseScrollControls() const {
-	if (_databaseStillImage.height <= kWacMediaHeight ||
-		_wac->_databaseScrollArrows.size() < 4)
-		return;
-	const uint maximumScroll = _databaseStillImage.height - kWacMediaHeight;
-	_wac->drawBitmap(_wac->_databaseScrollArrows[
-		_databaseScrollControl == 1 && _databaseStillImageScroll > 0 ? 1 : 0],
-		kWacMediaScrollX, kWacMediaScrollUpY);
-	_wac->drawBitmap(_wac->_databaseScrollArrows[
-		_databaseScrollControl == 2 && _databaseStillImageScroll < maximumScroll ? 3 : 2],
-		kWacMediaScrollX, kWacMediaScrollDownY);
-}
-
-int WacDatabaseSession::findDatabaseScrollControl(const Common::Point &point) const {
-	if (_databaseStillImage.height <= kWacMediaHeight ||
-		_wac->_databaseScrollArrows.size() < 4)
-		return 0;
-	const Common::Rect up(kWacMediaScrollX, kWacMediaScrollUpY,
-		kWacMediaScrollX + _wac->_databaseScrollArrows[0].width,
-		kWacMediaScrollUpY + _wac->_databaseScrollArrows[0].height);
-	const Common::Rect down(kWacMediaScrollX, kWacMediaScrollDownY,
-		kWacMediaScrollX + _wac->_databaseScrollArrows[2].width,
-		kWacMediaScrollDownY + _wac->_databaseScrollArrows[2].height);
-	if (up.contains(point))
-		return 1;
-	if (down.contains(point))
-		return 2;
-	return 0;
-}
-
-void WacDatabaseSession::scrollDatabaseStillImage(int delta) {
-	if (_databaseStillImage.height <= kWacMediaHeight)
-		return;
-	const uint maximumScroll = _databaseStillImage.height - kWacMediaHeight;
-	int nextScroll = (int)_databaseStillImageScroll + delta;
-	if (nextScroll < 0)
-		nextScroll = 0;
-	else if ((uint)nextScroll > maximumScroll)
-		nextScroll = maximumScroll;
-	if ((uint)nextScroll == _databaseStillImageScroll)
-		return;
-	_databaseStillImageScroll = nextScroll;
-	debugC(2, kDebugWac,
-		"Ripper: scrolled WAC database still image offset=%u limit=%u delta=%d",
-		_databaseStillImageScroll, maximumScroll, delta);
-	drawDatabaseStillImage();
 }
 
 uint16 WacDatabaseSession::serviceDatabaseMediaInput(byte activeEntryIndex,
@@ -754,11 +646,8 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 			entry.originalIndex == 10 || entry.originalIndex == 11) {
 		const Common::String path = Common::String::format(
 			"wacinv%u.pcx", entry.originalIndex);
-		const bool loaded = loadDatabaseStillImage(path);
-		debugC(1, kDebugWac,
-			"Ripper: WAC database entry=%u label='%s' stillImage='%s' loaded=%d",
-			entry.originalIndex, entry.label.c_str(), path.c_str(), loaded);
-		return kNoAction;
+		WacStillImageViewer viewer(this);
+		return viewer.run(entry.originalIndex, entry.label, path);
 	}
 	if (entry.originalIndex == 13 || entry.originalIndex == 14) {
 		// RunWacInventorySelectionLoop at 0x2252a cases 0x0d and 0x0e resolve
@@ -807,9 +696,6 @@ uint16 WacDatabaseSession::run() {
 	buildDatabaseEntries();
 	_databaseSelection = 0;
 	_databaseFirstVisible = 0;
-	_databaseStillImage = BitmapAssetFrame();
-	_databaseStillImageScroll = 0;
-	_databaseScrollControl = 0;
 	_databaseCornerAlternate = true;
 	_databaseCornerLastMillis = g_system->getMillis(true);
 	_wac->_engine->getInput()->discardMouseTransitions();
@@ -864,15 +750,7 @@ uint16 WacDatabaseSession::run() {
 		const MouseState mouse = _wac->_engine->getInput()->publishMouseState();
 		_wac->serviceIdleWindowAnimations();
 		serviceDatabaseCornerAnimation();
-		const int scrollControl = findDatabaseScrollControl(mouse.position);
-		if (scrollControl != _databaseScrollControl) {
-			_databaseScrollControl = scrollControl;
-			drawDatabaseScrollControls();
-			debugC(2, kDebugWac,
-				"Ripper: WAC database still-image scroll hover control=%d point=%d,%d",
-				_databaseScrollControl, mouse.position.x, mouse.position.y);
-		}
-		const uint fallbackCursor = (bounds.contains(mouse.position) || scrollControl != 0) ?
+		const uint fallbackCursor = bounds.contains(mouse.position) ?
 			kWacControlCursor : kWacDefaultCursor;
 		const uint16 controlAction = _wac->serviceFrontEndControls(mouse, fallbackCursor);
 		if (controlAction != kNoAction) {
@@ -883,12 +761,6 @@ uint16 WacDatabaseSession::run() {
 		}
 		if (!active)
 			break;
-		if ((mouse.released & kMouseButtonLeft) != 0) {
-			if (scrollControl == 1)
-				scrollDatabaseStillImage(-kWacMediaScrollStep);
-			else if (scrollControl == 2)
-				scrollDatabaseStillImage(kWacMediaScrollStep);
-		}
 		if (!_databaseEntries.empty() && bounds.contains(mouse.position)) {
 			const int relativeY = mouse.position.y - bounds.top -
 				kWacDatabaseHeadingInset - kWacDatabaseRowInset;

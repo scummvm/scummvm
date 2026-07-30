@@ -52,6 +52,7 @@ MODULE_OBJS := \
 	wac/broken_mug.o \
 	wac/database.o \
 	wac/journal.o \
+	wac/still_image.o \
 	wac/voice_lock.o \
 	wac/wac.o \
 	world_map.o
