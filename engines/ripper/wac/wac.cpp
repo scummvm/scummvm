@@ -18,7 +18,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ripper/wac.h"
+#include "ripper/wac/wac.h"
 
 #include "audio/decoders/raw.h"
 #include "common/debug.h"
