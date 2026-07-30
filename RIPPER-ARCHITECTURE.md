@@ -1293,9 +1293,11 @@
   descriptor or assembled editor descriptor, and a retained source highlight
   limits source playback to that span. The five pairs at table `0x215d1` are
   240..252, 70..82, 87..99, 171..184, and 190..199; order is irrelevant, but
-  both ends must be within three pixels of a unique pair. Exactly five
-  quantized spans solve only from scene label `eez1`, after which `ACCESED.AVI`
-  plays, milestone 29 opens the Secret Animal Lab, and WAC exits.
+  both ends must be within three pixels of one pair. The nested comparison at
+  `0x25972` does not mark a pair as consumed, so each of the five submitted
+  spans independently matches the same five-pair table. Exactly five quantized
+  spans solve only from scene label `eez1`, after which `ACCESED.AVI` plays,
+  milestone 29 opens the Secret Animal Lab, and WAC exits.
   While Play is active, `GetManagedAudioTriggerPlaybackPosition` at `0x60795`
   advances a vertical marker across the source or assembled waveform selected
   for playback. The scene's input tick publishes one mouse state,
