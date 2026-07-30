@@ -61,6 +61,10 @@ static const byte kWacVoiceLockSelectionColor = 255;
 static const byte kWacVoiceLockWaveformColor = 255;
 static const byte kWacVoiceLockMarkerColor = 196;
 static const byte kWacVoiceLockPuzzleHelpColor = 254;
+static const int kWacVoiceLockClientLeftInset = 5;
+static const int kWacVoiceLockClientTopInset = 20;
+static const int kWacVoiceLockClientRightInset = 20;
+static const int kWacVoiceLockClientBottomInset = 6;
 static const int kWacVoiceLockSolution[kWacVoiceLockSelectionCount][2] = {
 	{ 240, 252 },
 	{ 70, 82 },
@@ -433,10 +437,22 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 	const Common::Rect sourcePanel(50, 50, 390, 166);
 	const Common::Rect editorPanel(50, 176, 390, 292);
 	// CreateWrappedTextPanelControl at 0x58fb6 stores the client rectangle
-	// separately from the 340-by-116 outer control. The title-only WAC layout
-	// leaves a 20-pixel heading, 5-pixel side insets and a 6-pixel bottom inset.
-	const Common::Rect sourceWaveform(55, 70, 385, 160);
-	const Common::Rect editorWaveform(55, 196, 385, 286);
+	// separately from the 340-by-116 outer control. The tertiary WAC template
+	// metrics installed at 0x11b38 leave a 20-pixel heading, 5-pixel left
+	// inset, 20-pixel right inset and 6-pixel bottom inset. The original
+	// control record stores axes in the opposite order from Common::Rect;
+	// DrawAudioDescriptorWaveform at 0x25b73 confirms that +0x0a/+0x0e are
+	// the horizontal origin and width consumed by the waveform.
+	const Common::Rect sourceWaveform(
+		sourcePanel.left + kWacVoiceLockClientLeftInset,
+		sourcePanel.top + kWacVoiceLockClientTopInset,
+		sourcePanel.right - kWacVoiceLockClientRightInset,
+		sourcePanel.bottom - kWacVoiceLockClientBottomInset);
+	const Common::Rect editorWaveform(
+		editorPanel.left + kWacVoiceLockClientLeftInset,
+		editorPanel.top + kWacVoiceLockClientTopInset,
+		editorPanel.right - kWacVoiceLockClientRightInset,
+		editorPanel.bottom - kWacVoiceLockClientBottomInset);
 	Common::Array<BitmapAssetFrame> buttonAssets;
 	WacVoiceLockPcm sourcePcm;
 	if (!resources->loadInterfaceBitmapSet("wacwav", buttonAssets) ||
@@ -711,9 +727,13 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 		sourcePanel.left, sourcePanel.top, sourcePanel.width(), sourcePanel.height(),
 		editorPanel.left, editorPanel.top, editorPanel.width(), editorPanel.height());
 	debugC(2, kDebugWac,
-		"Ripper: loaded WAC voice-lock source='voxlok.wav' bytes=%u rate=%u flags=0x%x buttons=%u solutionTable=0x215d1 tolerance=%u",
+		"Ripper: loaded WAC voice-lock source='voxlok.wav' bytes=%u rate=%u flags=0x%x buttons=%u sourceClient=%d,%d,%dx%d insets=%d,%d,%d,%d solutionTable=0x215d1 tolerance=%u",
 		sourcePcm.data.size(), sourcePcm.sampleRate, sourcePcm.flags,
-		buttonAssets.size(), kWacVoiceLockSelectionTolerance);
+		buttonAssets.size(), sourceWaveform.left, sourceWaveform.top,
+		sourceWaveform.width(), sourceWaveform.height(),
+		kWacVoiceLockClientLeftInset, kWacVoiceLockClientTopInset,
+		kWacVoiceLockClientRightInset, kWacVoiceLockClientBottomInset,
+		kWacVoiceLockSelectionTolerance);
 
 	uint16 result = kNoAction;
 	bool redraw = false;
