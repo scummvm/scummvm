@@ -1260,7 +1260,15 @@
   The resource-`0xb1` and resource-`0xb2` strings are centered control titles,
   not client-area text rows. `DrawAudioDescriptorWaveform` at `0x25b73`
   renders palette-255 samples directly in the unbordered black client area
-  below each title.
+  below each title. `SetChooserPresentationTemplateLayoutMetrics` at
+  `0x542ba`, called for the tertiary WAC template at `0x11b38`, installs a
+  20-pixel heading, 6-pixel bottom inset, 5-pixel left inset, and 20-pixel
+  right inset. The resulting source waveform client is 315 by 90 at 55,70,
+  not 330 by 90. The original chooser record orders its coordinate axes
+  differently from `Common::Rect`: `DrawAudioDescriptorWaveform` consumes
+  fields `+0x0a/+0x0e` as the horizontal origin and width. Preserving that
+  distinction keeps the quantized PCM features aligned with the validator's
+  fixed physical-screen coordinates.
   Milestone 84, the audio-editor software, enables a second panel at 50,176
   and moves Play beside the `WACWAV1` Clear and `WACWAV2` Quantize controls
   beginning at 50,293. Quantize plays `WACJRNL.WAV`, replaces
