@@ -22,7 +22,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Buried in Time\n"
 "Report-Msgid-Bugs-To: https://bugs.scummvm.org/\n"
-"POT-Creation-Date: 2026-07-28 17:26\n"
+"POT-Creation-Date: 2026-07-30 12:41\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
@@ -341,7 +341,7 @@ msgstr ""
 #. Location: AI voiceover comments (Arthur or station computers)
 #. Track ID: AIHW_H02
 #. Speaker: Arthur
-msgid "Look, if you've run out of cheese, girl, just go back and buy some more. It's a tasty, fun treat for the whole family."
+msgid "Look, if you've run out of Cheese Girl, just go back and buy some more. It's a tasty, fun treat for the whole family."
 msgstr ""
 
 #. Location: AI voiceover comments (Arthur or station computers)
@@ -659,7 +659,7 @@ msgstr ""
 #. Location: AI voiceover comments (Arthur or station computers)
 #. Track ID: AISCVID3
 #. Speaker: Arthur
-msgid "Sorry, you'll have to excuse the scanner, my eyes and ears for the moment. Most of the station monitors are dead. Here! All right, let's see what we've got. \"Temporal security?\" You're from the future?! Well, I'm pleased to meet you, Gage. Wow ... quite the hero! I guess this is my lucky day. But ... that's you...? I don't get it. Whoa ... I'm starting to get a headache here. Plot's getting a little hard to follow. I'm starting to get the picture here. Hey, this is about me! This is better than palm readi- ...\"perished?\" Then ... you can't help me, or you'll change history."
+msgid "Sorry, you'll have to excuse the scanner, my eyes and ears for the moment. Most of the station monitors are dead. Here! All right, let's see what we've got. \"Temporal security?\" You're from the future! Well, I'm pleased to meet you, Gage. Wow ... quite the hero! I guess this is my lucky day. But ... that's you...? I don't get it. Whoa ... I'm starting to get a headache here. Plot's getting a little hard to follow. I'm starting to get the picture here. Hey, this is about me! This is better than palm readi- ...\"perished?\" Then ... you can't help me, or you'll change history."
 msgstr ""
 
 #. Location: AI voiceover comments (Arthur or station computers)
@@ -774,6 +774,12 @@ msgstr ""
 #. Track ID: AI_SCST3
 #. Speaker: Scary Voice
 msgid "GO AWAY!"
+msgstr ""
+
+#. Location: AI voiceover comments (Arthur or station computers)
+#. Track ID: AI_SCST5
+#. Speaker: Scary Voice
+msgid "LEAVE ... ME ... ALONE!"
 msgstr ""
 
 #. Location: AI voiceover comments (Arthur or station computers)
@@ -2615,13 +2621,13 @@ msgstr ""
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNAD5_1
 #. Speaker: Reporter
-msgid "The opinion originally held by the majority of races represented at the talks is that time travel technology is an invaluable tool for self-discovery and, as such, should not be denied to any race. However, the Laxonie abandoned this position last week in favor of destroying the technology. Presumably, this sudden change of opinion was due in large part to the arrest of Agent 5, an unfortunate illustration of the danger of time travel."
+msgid "The opinion originally held by the majority of races represented at the talks is that time travel technology is an invaluable tool for self-discovery and, as such, should not be denied to any race. However, the Loxoni abandoned this position last week in favor of destroying the technology. Presumably, this sudden change of opinion was due in large part to the arrest of Agent 5, an unfortunate illustration of the danger of time travel."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNAD5_2
 #. Speaker: Reporter
-msgid "The Dorlün and Zâng-traqar on the other hand, have continued to cling tightly to their convictions. They're of the opinion that this technology is far too important to be buried because of paranoia. Time travel, the Zangtrakar argue, is like any other powerful tool. It represents a danger only if the user doesn't have the insight to take the proper precautions. And, if care is taken, there should be no reason whatsoever to fear what should be the greatest advance the Symbiotry has ever known."
+msgid "The Dorlun and Zang-traqar on the other hand, have continued to cling tightly to their convictions. They're of the opinion that this technology is far too important to be buried because of paranoia. Time travel, the Zang-traqar argue, is like any other powerful tool. It represents a danger only if the user doesn't have the insight to take the proper precautions. And, if care is taken, there should be no reason whatsoever to fear what should be the greatest advance the Symbiotry has ever known."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
@@ -2633,12 +2639,12 @@ msgstr ""
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNAD6_1
 #. Speaker: Reporter
-msgid "The third viewpoint, which was originally held only by the Unwá, is that the existence of time travel technology represents a threat to the history of every race in the Symbiotry. For this reason, these races feel that all existing time machines should be completely dismantled. Following the arrest of Agent 5, the Lôxôni changed their allegiance from petitioning for the release of time travel technology to requesting its destruction."
+msgid "The third viewpoint, which was originally held only by the Unwa, is that the existence of time travel technology represents a threat to the history of every race in the Symbiotry. For this reason, these races feel that all existing time machines should be completely dismantled. Following the arrest of Agent 5, the Loxoni changed their allegiance from petitioning for the release of time travel technology to requesting its destruction."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNAD6_2
-#. Speaker: Arthur
+#. Speaker: Reporter
 msgid "They were joined by the Krynn, for whom this represents a break in their long-standing tradition of fervently supporting every race's right to sovereignty over its own technologies. The Lôxôni now proclaim that if not destroyed, the technology must at the very least be put in the safe keeping of an elder race of the Symbiotry. They cite security as their main concern."
 msgstr ""
 
@@ -2693,7 +2699,7 @@ msgstr ""
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNVD2_1
 #. Speaker: News Anchor
-msgid "The ongoing saga of Gage Blackwood took a frightening twist this morning when the agent of the Deep Time Unit broke house arrest to jump nine years back in time. Fortunately, the illicit time jump was detected and he was immediately apprehended by Agent Eight of the Temporal Protectorate. Although it's still not clear how and why Blackwood obtained the TSA jumpsuit, Temporal Security Agency officials did say that no distortion ripples have yet been detected, and that there is no reason whatsoever to believe that Blackwood has altered history in any way. Our Lisa Long has a report from TSA administrative headquarters."
+msgid "The ongoing saga of Gage Blackwood took a frightening twist this morning when the agent of the Deep Time Unit broke house arrest to jump nine years back in time. Fortunately, the illicit time jump was detected and he was immediately apprehended by Agent 8 of the Temporal Protectorate. Although it's still not clear how and why Blackwood obtained the TSA jumpsuit, Temporal Security Agency officials did say that no distortion ripples have yet been detected, and that there is no reason whatsoever to believe that Blackwood has altered history in any way. Our Lisa Long has a report from TSA administrative headquarters."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
@@ -2777,7 +2783,7 @@ msgstr ""
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNVD2_4
 #. Speaker: Chief Technician Daughton
-msgid "Absolutely not. The thought that he could be guilty never even crossed my mind. I mean, friend or no, here you've got someone who's dedicated his whole life to protecting history and now stands accused of violating it. That's ridiculous! And if you don't believe me, look at his record. The man's a decorated hero. You can't overlook that fact just because it doesn't fit neatly into the story the prosecution's is trying to sell."
+msgid "Absolutely not! The thought that he could be guilty never even crossed my mind. I mean, friend or no, here you've got someone who's dedicated his whole life to protecting history and now stands accused of violating it. That's ridiculous! And if you don't believe me, look at his record. The man's a decorated hero. You can't overlook that fact just because it doesn't fit neatly into the story the prosecution's is trying to sell."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
@@ -2860,8 +2866,8 @@ msgstr ""
 
 #. Location: Interactive News Network Broadcasts
 #. Track ID: INNVD5_1
-#. Speaker: Arthur
-msgid "The events surrounding the arrest of Agent 5 bring back, for most, memories of the Elliott Sinclair incident. That historic day 10 years ago could have turned out much differently if it weren't for Agent 5 of the Temporal Protectorate. After building the first-ever functional time machine, only to have the government shelve the project because it was considered too dangerous, Sinclair decided to sidestep the politicians and build his own temporal transporter. Years later, when the Cyrollans made contact with Earth to offer us a place in the Symbiotry of Peaceful Beings, the xenophobic scientist suddenly found himself with a new purpose. Fearing an alien invasion, he tried to convince the public that the Cyrollans were not what they appeared to be, but this endeavor met with little success. Frustrated, exasperated, and on the verge of insanity, Sinclair formulated a plan to make Earth a more difficult target for the Cyrollans. On the day of the Cyrollan ambassador's arrival, he sent each of his three robot minions back in time to change the course of history. The first, he sent to create a nuclear scare that would prevent world unification and prolong the Cold War. The second was to destroy the Morimoto Mars colony and make it look like the work of an alien race. And the third, Sinclair sent to kill Dr. Enrique Castillo, the individual who was most influential in convincing humanity of the benefits of joining the Symbiotry. His backup plan, should his robots have failed, was to assassinate the Cyrollan delegate. It was our good fortune that Agent 5 was on duty at the Temporal Security Annex that day. He detected the temporal distortions, stopped each of the androids, and then apprehended Sinclair himself. That fateful morning made a hero of Agent 5 and spawned the blockbuster holoflick, The Journeyman Project. Elliott Sinclair was put on trial and found guilty of all charges. He was sentenced to life imprisonment on Vega Thalon and hasn't been heard from since."
+#. Speaker: News Anchor
+msgid "The events surrounding the arrest of Agent 5 bring back, for most, memories of the Elliott Sinclair incident. That historic day 10 years ago could have turned out much differently if it weren't for Agent 5 of the Temporal Protectorate. After building the first-ever functional time machine, only to have the government shelve the project because it was considered too dangerous, Sinclair decided to sidestep the politicians and build his own temporal transporter. Years later, when the Cyrollans made contact with Earth to offer us a place in the Symbiotry of Peaceful Beings, the xenophobic scientist suddenly found himself with a new purpose. Fearing an alien invasion, he tried to convince the public that the Cyrollans were not what they appeared to be, but this endeavor met with little success. Frustrated, exasperated, and on the verge of insanity, Sinclair formulated a plan to make Earth a more difficult target for the Cyrollans. On the day of the Cyrollan ambassador's arrival, he sent each of his three robot minions back in time to change the course of history. The first, he sent to create a nuclear scare that would prevent world unification and prolong the Cold War. The second was to destroy the Morimoto Mars Colony and make it look like the work of an alien race. And the third, Sinclair sent to kill Dr. Enrique Castillo, the individual who was most influential in convincing humanity of the benefits of joining the Symbiotry. His backup plan, should his robots have failed, was to assassinate the Cyrollan delegate. It was our good fortune that Agent 5 was on duty at the Temporal Security Annex that day. He detected the temporal distortions, stopped each of the androids, and then apprehended Sinclair himself. That fateful morning made a hero of Agent 5 and spawned the blockbuster holoflick, The Journeyman Project. Elliott Sinclair was put on trial and found guilty of all charges. He was sentenced to life imprisonment on Vega Thalon and hasn't been heard from since."
 msgstr ""
 
 #. Location: Interactive News Network Broadcasts
