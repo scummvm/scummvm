@@ -51,7 +51,7 @@ namespace Scumm {
 class Insane {
 public:
 	// Used by the Rebel Assault subclasses; _player is only set later, by setSmushPlayer().
-	Insane() : _vm(nullptr), _player(nullptr), _speed(0), _insaneIsRunning(false) {}
+	Insane();
 	Insane(ScummEngine_v7 *scumm);
 	virtual ~Insane();
 

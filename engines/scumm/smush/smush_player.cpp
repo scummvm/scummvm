@@ -663,11 +663,11 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 			return;
 		}
 		str = _strings->get(string_id);
-		if (str) {
-			debugC(DEBUG_SMUSH, "SmushPlayer::handleTextResource: Found string: \"%s\"", str);
-		} else {
+		if (!str) {
 			debugC(DEBUG_SMUSH, "SmushPlayer::handleTextResource: String ID %d not found", string_id);
+			return;
 		}
+		debugC(DEBUG_SMUSH, "SmushPlayer::handleTextResource: Found string: \"%s\"", str);
 	}
 
 	// if subtitles disabled and bit 3 is set, then do not draw
@@ -867,7 +867,9 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 		int bufSize = 242 * 384;
 		if (_specialBuffer == nullptr || bufSize > _specialBufferSize) {
 			free(_specialBuffer);
-			_specialBuffer = (byte *)malloc(bufSize);
+			// Cleared: an unhandled codec leaves the buffer untouched, and it is
+			// still copied out below when _storeFrame is set.
+			_specialBuffer = (byte *)calloc(bufSize, 1);
 			_specialBufferSize = bufSize;
 		}
 		_dst = _specialBuffer;

@@ -48,6 +48,31 @@ static const int actorAnimationData[21] = {20, 21, 22, 23, 24, 25, 26, 13, 14, 1
 	18, 19, 6, 7, 8, 9, 10, 11, 12};
 
 
+// The Rebel Assault subclasses don't use any of the Full Throttle state, but it
+// still has to be initialized: ~Insane() releases the resource pointers below
+// unconditionally, and initvars() covers every other member.
+Insane::Insane() {
+	_vm = nullptr;
+	_player = nullptr;
+
+	initvars();
+	_speed = 0;
+
+	_smush_roadrashRip = nullptr;
+	_smush_roadrsh2Rip = nullptr;
+	_smush_roadrsh3Rip = nullptr;
+	_smush_goglpaltRip = nullptr;
+	_smush_tovista1Flu = nullptr;
+	_smush_tovista2Flu = nullptr;
+	_smush_toranchFlu = nullptr;
+	_smush_minedrivFlu = nullptr;
+	_smush_minefiteFlu = nullptr;
+	_smush_bencutNut = nullptr;
+	_smush_bensgoggNut = nullptr;
+	_smush_iconsNut = nullptr;
+	_smush_icons2Nut = nullptr;
+}
+
 Insane::Insane(ScummEngine_v7 *scumm) {
 	_vm = scumm;
 
@@ -188,7 +213,8 @@ void Insane::initvars() {
 		_iactBits[i] = 0;
 
 
-	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
+	// _vm is null when initvars() runs for the Rebel Assault subclasses.
+	if (_vm && (_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 		init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 60, 0, INV_MACE, 63, "endcrshr.san",
 						 25, 15, 16, 26, 13, 3);
 	} else {
@@ -371,7 +397,7 @@ void Insane::initvars() {
 	init_scenePropStruct(138, 57, 0, 59, 134, 0xFF, 0xFF, 0xFF, 0, 30, 0);
 
 	_actor[0].damage = 0;
-	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
+	if (_vm && (_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 		_actor[0].maxdamage = 60;
 	else
 		_actor[0].maxdamage = 80;

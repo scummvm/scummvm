@@ -269,9 +269,11 @@ void NutRenderer::loadFontFromData(const byte *data, int32 dataSize) {
 		if (nextOffset + 18 > length)
 			break;
 		offset = (uint32)nextOffset;
-		int width = READ_LE_UINT16(dataSrc + offset + 14);
+		// Unsigned: the dimensions come straight from the file, and uint16 * uint16
+		// would otherwise be multiplied as int and sign-extended when used as a size.
+		const uint32 width = READ_LE_UINT16(dataSrc + offset + 14);
 		_fontHeight = READ_LE_UINT16(dataSrc + offset + 16);
-		decodedLength += width * _fontHeight;
+		decodedLength += width * (uint32)_fontHeight;
 	}
 
 	debug(1, "NutRenderer::loadFontFromData() - numChars=%d decodedLength=%d", _numChars, decodedLength);
@@ -308,13 +310,14 @@ void NutRenderer::loadFontFromData(const byte *data, int32 dataSize) {
 		_chars[l].height = READ_LE_UINT16(dataSrc + offset + 16);
 		_chars[l].src = decodedPtr;
 
-		decodedPtr += (_chars[l].width * _chars[l].height);
+		const uint32 charSize = (uint32)_chars[l].width * _chars[l].height;
+		decodedPtr += charSize;
 
 		if (codec == 44) {
-			memset(_chars[l].src, kSmush44TransparentColor, _chars[l].width * _chars[l].height);
+			memset(_chars[l].src, kSmush44TransparentColor, charSize);
 			_chars[l].transparency = kSmush44TransparentColor;
 		} else {
-			memset(_chars[l].src, kDefaultTransparentColor, _chars[l].width * _chars[l].height);
+			memset(_chars[l].src, kDefaultTransparentColor, charSize);
 			_chars[l].transparency = kDefaultTransparentColor;
 		}
 
