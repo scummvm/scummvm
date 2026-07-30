@@ -51,6 +51,7 @@ MODULE_OBJS := \
 	settings.o \
 	toolbar.o \
 	wac/database.o \
+	wac/journal.o \
 	wac/wac.o \
 	world_map.o
 
