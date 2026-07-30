@@ -52,6 +52,7 @@ MODULE_OBJS := \
 	toolbar.o \
 	wac/database.o \
 	wac/journal.o \
+	wac/voice_lock.o \
 	wac/wac.o \
 	world_map.o
 
