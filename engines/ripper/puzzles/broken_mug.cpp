@@ -34,7 +34,7 @@
 #include "ripper/media.h"
 #include "ripper/milestones.h"
 #include "ripper/ripper.h"
-#include "ripper/wac.h"
+#include "ripper/wac/wac.h"
 
 namespace Ripper {
 

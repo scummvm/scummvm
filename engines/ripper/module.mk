@@ -50,7 +50,7 @@ MODULE_OBJS := \
 	script.o \
 	settings.o \
 	toolbar.o \
-	wac.o \
+	wac/wac.o \
 	world_map.o
 
 # This module can be built as a plugin

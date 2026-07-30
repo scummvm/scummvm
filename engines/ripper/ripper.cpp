@@ -43,7 +43,7 @@
 #include "ripper/script.h"
 #include "ripper/settings.h"
 #include "ripper/toolbar.h"
-#include "ripper/wac.h"
+#include "ripper/wac/wac.h"
 #include "ripper/world_map.h"
 
 namespace Ripper {

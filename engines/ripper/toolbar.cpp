@@ -33,7 +33,7 @@
 #include "ripper/remote_control.h"
 #include "ripper/ripper.h"
 #include "ripper/script.h"
-#include "ripper/wac.h"
+#include "ripper/wac/wac.h"
 
 namespace Ripper {
 
