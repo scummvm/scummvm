@@ -18,8 +18,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef RIPPER_WAC_H
-#define RIPPER_WAC_H
+#ifndef RIPPER_WAC_WAC_H
+#define RIPPER_WAC_WAC_H
 
 #include "common/array.h"
 #include "common/rect.h"
@@ -31,7 +31,7 @@ namespace Ripper {
 
 class ResourceManager;
 class RipperEngine;
-class WacDatabaseMediaCallback;
+class WacDatabaseSession;
 struct MouseState;
 
 class WacManager {
@@ -55,47 +55,16 @@ public:
 		bool databaseActive);
 
 private:
-	friend class WacDatabaseMediaCallback;
-
-	struct DatabaseEntry {
-		Common::String label;
-		byte originalIndex;
-	};
+	friend class WacDatabaseSession;
 
 	bool captureDisplay();
 	void restoreDisplay();
 	void drawFrontEnd() const;
 	void drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const;
 	void serviceIdleWindowAnimations();
-	void serviceDatabaseCornerAnimation(bool textPanelActive = false);
 	int findControl(const Common::Point &point) const;
 	bool dispatchAction(uint16 action);
 	bool runNotebook();
-	void buildDatabaseEntries();
-	uint16 runDatabase();
-	void drawDatabase() const;
-	void clearDatabaseMediaViewport();
-	bool loadDatabaseStillImage(const Common::String &path);
-	void drawDatabaseStillImage() const;
-	void drawDatabaseScrollControls() const;
-	int findDatabaseScrollControl(const Common::Point &point) const;
-	void scrollDatabaseStillImage(int delta);
-	uint16 serviceDatabaseMediaInput(byte activeEntryIndex,
-		uint *textFirstVisible = nullptr, uint textMaximumFirstVisible = 0,
-		uint textPageRows = 0, MouseState *publishedMouse = nullptr,
-		bool deferCursorUpdate = false);
-	bool drawDatabaseTextPanel(uint bodyResourceId, const Common::Rect &bounds,
-		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows);
-	void wrapJournalText(const Common::String &text, uint maximumWidth,
-		Common::Array<Common::String> &lines) const;
-	bool drawJournalTextPanel(const Common::Array<Common::String> &lines, uint progress,
-		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows);
-	bool drawJournalTextPanelLine(const Common::Array<Common::String> &lines,
-		uint firstVisible, uint visibleRows, uint lineIndex);
-	uint16 runJournalRevealScene(DatabaseEntry &entry);
-	uint16 runVoiceLockPuzzle(DatabaseEntry &entry);
-	uint16 runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceId);
-	uint16 dispatchDatabaseEntry(DatabaseEntry &entry);
 	const Common::String &resourceString(uint resourceId) const;
 	uint measureText(const Common::String &text) const;
 	void drawText(byte *screen, uint pitch, int x, int y, const Common::String &text,
@@ -110,26 +79,15 @@ private:
 	uint32 _idleWindowLastMillis;
 	Common::Array<BitmapAssetFrame> _databaseSkin;
 	Common::Array<BitmapAssetFrame> _databaseScrollArrows;
-	BitmapAssetFrame _databaseStillImage;
-	Common::Array<DatabaseEntry> _databaseEntries;
 	Common::Array<Common::String> _gameText;
 	BitmapFontAsset _font;
 	Common::Array<byte> _savedPixels;
 	Common::Array<byte> _savedPalette;
 	int _hoveredControl;
 	int _pressedControl;
-	uint _databaseSelection;
-	uint _databaseFirstVisible;
-	uint _databaseStillImageScroll;
-	int _databaseScrollControl;
-	int _databaseTextScrollControl;
-	int _databaseTextScrollDragOffset;
-	uint32 _databaseCornerLastMillis;
-	bool _databaseCornerAlternate;
-	bool _databaseTextScrollDragging;
 	bool _initialized;
 };
 
 } // End of namespace Ripper
 
-#endif // RIPPER_WAC_H
+#endif // RIPPER_WAC_WAC_H

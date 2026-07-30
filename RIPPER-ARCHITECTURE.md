@@ -1137,6 +1137,12 @@
 
 ## WAC
 
+- The reimplementation keeps the long-lived WAC front-end resources and
+  persistent controls in `WacManager`, while each object-database invocation
+  creates a `WacDatabaseSession` that owns the chooser rows, selection,
+  scrolling, media viewport, and entry dispatch state. This mirrors
+  `RunWacFrontEndLoop` retaining the shared controls while
+  `RunWacInventorySelectionLoop` builds and owns the database chooser.
 - `DispatchFrontEndAction` at `0x190b7` routes toolbar action `0x517` to the
   modal `RunWacFrontEndLoop` at `0x21865`. The loop snapshots the active scene
   presentation and chooser state, sets the default cursor to 14, loads the

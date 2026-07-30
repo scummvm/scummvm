@@ -50,6 +50,7 @@ MODULE_OBJS := \
 	script.o \
 	settings.o \
 	toolbar.o \
+	wac/database.o \
 	wac/wac.o \
 	world_map.o
 
