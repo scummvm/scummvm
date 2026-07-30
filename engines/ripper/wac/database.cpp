@@ -1,0 +1,1809 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include "ripper/wac/database.h"
+
+#include "ripper/wac/wac.h"
+
+#include "audio/decoders/raw.h"
+#include "common/debug.h"
+#include "common/endian.h"
+#include "common/file.h"
+#include "common/ptr.h"
+#include "common/random.h"
+#include "common/system.h"
+#include "common/util.h"
+#include "graphics/paletteman.h"
+#include "graphics/surface.h"
+
+#include "ripper/cursor.h"
+#include "ripper/detection.h"
+#include "ripper/display.h"
+#include "ripper/input.h"
+#include "ripper/media.h"
+#include "ripper/milestones.h"
+#include "ripper/modal_dialog.h"
+#include "ripper/puzzles/broken_mug.h"
+#include "ripper/ripper.h"
+#include "ripper/script.h"
+#include "ripper/settings.h"
+
+namespace Ripper {
+
+static const uint kWacDefaultCursor = 14;
+static const uint kWacControlCursor = 16;
+static const uint32 kDosTickMillis = 55;
+static const uint32 kWacDatabaseCornerInterval = 5 * kDosTickMillis;
+static const uint16 kDosF10Command = 0x4400;
+static const uint kWacDatabaseEntryCount = 30;
+static const uint kWacDatabaseTextBase = 0xdc;
+static const uint kWacDatabaseControlId = 0x73a;
+static const int kWacDatabaseLeft = 400;
+static const int kWacDatabaseTop = 50;
+static const int kWacDatabaseRight = 590;
+static const int kWacDatabaseBottom = 332;
+static const int kWacDatabaseHeadingInset = 20;
+static const int kWacDatabaseBottomInset = 6;
+static const int kWacDatabaseLeftInset = 5;
+static const int kWacDatabaseRightInset = 20;
+static const int kWacDatabaseRowInset = 1;
+static const int kWacDatabaseTextInset = 2;
+static const int kWacDatabaseRowHeight = 14;
+static const uint kWacDatabaseVisibleRows = 18;
+static const uint kWacDatabaseFrameTileCount = 9;
+static const uint kWacDatabaseSkinFrameCount = 16;
+static const byte kWacDatabaseBackground = 4;
+static const byte kWacDatabaseTitleText = 248;
+static const byte kWacDatabaseNormalText = 251;
+static const byte kWacDatabaseSelectedText = 254;
+static const int kWacMediaLeft = 50;
+static const int kWacMediaTop = 50;
+static const int kWacMediaWidth = 350;
+static const int kWacMediaHeight = 282;
+static const int kWacMediaScrollX = 355;
+static const int kWacMediaScrollUpY = 60;
+static const int kWacMediaScrollDownY = 90;
+static const int kWacMediaScrollStep = 10;
+static const int kWacTextPanelWidth = 330;
+static const int kWacTextPanelHeight = 222;
+static const uint kWacMediaPaletteFirst = 10;
+static const uint kWacMediaPaletteCount = 140;
+static const uint kWacDatabaseHelpResource = 406;
+static const uint kWacCircuitManualResource = 0xb6;
+static const uint kWacJournalProgressResource = 0xae;
+static const uint kWacJournalTextResource = 0xaf;
+static const uint kWacJournalPromptResource = 0xb5;
+static const uint kWacJournalPasswordBaseResource = 0xb6;
+static const uint kWacJournalHelpResource = 407;
+static const uint kWacJournalUnlockedFlag = 0xd8;
+static const uint kWacJournalRevealFlagBase = 0xfa;
+static const uint kWacJournalCompletionFlagBase = 0x104;
+static const uint kWacJournalSectionCount = 8;
+static const uint kWacJournalPasswordMaximumLength = 20;
+static const uint32 kWacJournalRevealInterval = 36 * kDosTickMillis;
+static const uint32 kWacJournalShuffleInterval = kDosTickMillis;
+static const int kWacJournalProgressLeft = kWacMediaLeft + 50;
+static const int kWacJournalProgressTop = kWacMediaTop + 1;
+static const int kWacJournalTextEntryWidth = 200;
+static const int kWacJournalTextEntryHeight = 42;
+static const int kWacJournalTextEntryTop =
+	kWacMediaTop + kWacTextPanelHeight + 5;
+static const uint16 kWacDatabaseSelectionChanged = 0xfffe;
+static const uint16 kWacDatabaseTextScrolled = 0xfffd;
+static const uint kWacVoiceLockFileResource = 0xb1;
+static const uint kWacVoiceLockEditorResource = 0xb2;
+static const uint kWacVoiceLockSelectionCount = 5;
+static const uint kWacVoiceLockSelectionTolerance = 3;
+static const byte kWacVoiceLockWaveformColor = 255;
+static const byte kWacVoiceLockMarkerColor = 196;
+static const uint16 kNoAction = WacManager::kNoAction;
+static const uint16 kExitAction = WacManager::kExitAction;
+static const uint16 kTextViewerAction = WacManager::kTextViewerAction;
+static const uint16 kHelpAction = WacManager::kHelpAction;
+
+struct WacVoiceLockPcm {
+	Common::Array<byte> data;
+	uint sampleRate;
+	byte flags;
+	uint bytesPerSample;
+
+	WacVoiceLockPcm() : sampleRate(0), flags(0), bytesPerSample(0) {}
+};
+
+struct WacVoiceLockSelection {
+	int start;
+	int end;
+
+	WacVoiceLockSelection() : start(0), end(0) {}
+	WacVoiceLockSelection(int start_, int end_) : start(start_), end(end_) {}
+};
+
+static bool loadWacVoiceLockPcm(ResourceManager *resources,
+		const Common::String &path, WacVoiceLockPcm &pcm) {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		resources->createReadStreamForPath(path));
+	if (!stream || stream->size() < 12)
+		return false;
+
+	const uint32 riff = stream->readUint32BE();
+	stream->readUint32LE();
+	const uint32 wave = stream->readUint32BE();
+	if (riff != MKTAG('R', 'I', 'F', 'F') ||
+			wave != MKTAG('W', 'A', 'V', 'E'))
+		return false;
+
+	uint16 format = 0;
+	uint16 channels = 0;
+	uint16 bitsPerSample = 0;
+	uint sampleRate = 0;
+	Common::Array<byte> data;
+	while (stream->pos() + 8 <= stream->size()) {
+		const uint32 tag = stream->readUint32BE();
+		const uint32 size = stream->readUint32LE();
+		const int64 chunkStart = stream->pos();
+		if (chunkStart + size > stream->size())
+			return false;
+		if (tag == MKTAG('f', 'm', 't', ' ') && size >= 16) {
+			format = stream->readUint16LE();
+			channels = stream->readUint16LE();
+			sampleRate = stream->readUint32LE();
+			stream->skip(6);
+			bitsPerSample = stream->readUint16LE();
+		} else if (tag == MKTAG('d', 'a', 't', 'a')) {
+			data.resize(size);
+			if (size != 0 && stream->read(data.data(), size) != size)
+				return false;
+		}
+		stream->seek(chunkStart + size + (size & 1));
+	}
+
+	if (format != 1 || channels != 1 || sampleRate == 0 ||
+			(bitsPerSample != 8 && bitsPerSample != 16) || data.empty())
+		return false;
+	pcm.data = Common::move(data);
+	pcm.sampleRate = sampleRate;
+	pcm.bytesPerSample = bitsPerSample / 8;
+	pcm.flags = bitsPerSample == 8 ? Audio::FLAG_UNSIGNED :
+		Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+	return true;
+}
+
+static int wacVoiceLockSample(const WacVoiceLockPcm &pcm, uint sample) {
+	const uint offset = sample * pcm.bytesPerSample;
+	if (offset + pcm.bytesPerSample > pcm.data.size())
+		return 0;
+	if (pcm.bytesPerSample == 1)
+		return ((int)pcm.data[offset] - 128) << 8;
+	return (int16)READ_LE_UINT16(pcm.data.data() + offset);
+}
+
+static void drawWacVoiceLockWaveform(Graphics::Surface &screen,
+		const WacVoiceLockPcm &pcm, const Common::Rect &bounds,
+		const Common::Array<WacVoiceLockSelection> *selections) {
+	if (bounds.isEmpty())
+		return;
+	for (int y = bounds.top; y < bounds.bottom; ++y)
+		memset(screen.getBasePtr(bounds.left, y), kWacDatabaseBackground,
+			bounds.width());
+	if (pcm.data.empty() || pcm.bytesPerSample == 0)
+		return;
+
+	const int center = (bounds.top + bounds.bottom) / 2;
+	const uint sampleCount = pcm.data.size() / pcm.bytesPerSample;
+	const int plotWidth = bounds.width();
+	const int amplitude = MAX<int>(1, bounds.height() / 2);
+	for (int column = 0; column < plotWidth; ++column) {
+		const uint firstSample = (uint64)column * sampleCount / plotWidth;
+		const uint lastSample = MAX<uint>(firstSample + 1,
+			(uint64)(column + 1) * sampleCount / plotWidth);
+		int minimum = 0;
+		int maximum = 0;
+		for (uint sample = firstSample;
+				sample < MIN<uint>(lastSample, sampleCount); ++sample) {
+			const int value = wacVoiceLockSample(pcm, sample);
+			minimum = MIN(minimum, value);
+			maximum = MAX(maximum, value);
+		}
+		const int top = CLIP<int>(center - maximum * amplitude / 32768,
+			bounds.top, bounds.bottom - 1);
+		const int bottom = CLIP<int>(center - minimum * amplitude / 32768,
+			bounds.top, bounds.bottom - 1);
+		for (int y = top; y <= bottom; ++y)
+			*((byte *)screen.getBasePtr(bounds.left + column, y)) =
+				kWacVoiceLockWaveformColor;
+	}
+
+	if (!selections)
+		return;
+	for (uint selection = 0; selection < selections->size(); ++selection) {
+		const int start = CLIP<int>((*selections)[selection].start,
+			bounds.left, bounds.right - 1);
+		const int end = CLIP<int>((*selections)[selection].end,
+			bounds.left, bounds.right - 1);
+		for (int y = bounds.top; y < bounds.bottom; ++y) {
+			*((byte *)screen.getBasePtr(start, y)) =
+				kWacVoiceLockMarkerColor;
+			*((byte *)screen.getBasePtr(end, y)) =
+				kWacVoiceLockMarkerColor;
+		}
+	}
+}
+
+static uint32 getWacVoiceLockDuration(uint byteCount,
+		const WacVoiceLockPcm &pcm) {
+	if (pcm.sampleRate == 0 || pcm.bytesPerSample == 0)
+		return 0;
+	return MAX<uint32>(1, (uint64)byteCount * 1000 /
+		(pcm.sampleRate * pcm.bytesPerSample));
+}
+
+static void appendWacVoiceLockSelectionAudio(
+		const WacVoiceLockPcm &source,
+		const WacVoiceLockSelection &selection,
+		const Common::Rect &waveform, Common::Array<byte> &assembled) {
+	if (source.data.empty() || source.bytesPerSample == 0)
+		return;
+	const int startX = CLIP<int>(MIN(selection.start, selection.end),
+		waveform.left, waveform.right - 1);
+	const int endX = CLIP<int>(MAX(selection.start, selection.end),
+		waveform.left + 1, waveform.right);
+	uint start = (uint64)(startX - waveform.left) * source.data.size() /
+		waveform.width();
+	uint end = (uint64)(endX - waveform.left) * source.data.size() /
+		waveform.width();
+	start -= start % source.bytesPerSample;
+	end -= end % source.bytesPerSample;
+	end = MIN<uint>(end, source.data.size());
+	if (end <= start)
+		return;
+	const uint oldSize = assembled.size();
+	assembled.resize(oldSize + end - start);
+	memcpy(assembled.data() + oldSize, source.data.data() + start, end - start);
+}
+
+static bool validateWacVoiceLockSelections(
+		const Common::Array<WacVoiceLockSelection> &selections) {
+	static const WacVoiceLockSelection solution[kWacVoiceLockSelectionCount] = {
+		WacVoiceLockSelection(240, 252),
+		WacVoiceLockSelection(70, 82),
+		WacVoiceLockSelection(87, 99),
+		WacVoiceLockSelection(171, 184),
+		WacVoiceLockSelection(190, 199)
+	};
+	if (selections.size() != kWacVoiceLockSelectionCount)
+		return false;
+
+	bool matched[kWacVoiceLockSelectionCount] = { false, false, false, false, false };
+	for (uint selection = 0; selection < selections.size(); ++selection) {
+		bool found = false;
+		for (uint candidate = 0; candidate < kWacVoiceLockSelectionCount;
+				++candidate) {
+			if (matched[candidate])
+				continue;
+			if (ABS(selections[selection].start - solution[candidate].start) <=
+					(int)kWacVoiceLockSelectionTolerance &&
+					ABS(selections[selection].end - solution[candidate].end) <=
+					(int)kWacVoiceLockSelectionTolerance) {
+				matched[candidate] = true;
+				found = true;
+				break;
+			}
+		}
+		if (!found)
+			return false;
+	}
+	return true;
+}
+
+static bool wacJournalAnswersMatch(const Common::String &entered,
+		const Common::String &expected) {
+	uint enteredIndex = 0;
+	uint expectedIndex = 0;
+	while (true) {
+		while (enteredIndex < entered.size() &&
+				!Common::isAlnum((byte)entered[enteredIndex]))
+			++enteredIndex;
+		while (expectedIndex < expected.size() &&
+				!Common::isAlnum((byte)expected[expectedIndex]))
+			++expectedIndex;
+		if (enteredIndex == entered.size() || expectedIndex == expected.size())
+			break;
+		byte enteredCharacter = (byte)entered[enteredIndex++];
+		byte expectedCharacter = (byte)expected[expectedIndex++];
+		if (enteredCharacter >= 'A' && enteredCharacter <= 'Z')
+			enteredCharacter += 'a' - 'A';
+		if (expectedCharacter >= 'A' && expectedCharacter <= 'Z')
+			expectedCharacter += 'a' - 'A';
+		if (enteredCharacter != expectedCharacter)
+			return false;
+	}
+	while (enteredIndex < entered.size() &&
+			!Common::isAlnum((byte)entered[enteredIndex]))
+		++enteredIndex;
+	while (expectedIndex < expected.size() &&
+			!Common::isAlnum((byte)expected[expectedIndex]))
+		++expectedIndex;
+	return enteredIndex == entered.size() && expectedIndex == expected.size();
+}
+
+static void shuffleJournalLine(Common::String &line,
+		Common::RandomSource &randomSource) {
+	if (line.size() < 2)
+		return;
+	// RunWacJournalRevealScene performs twenty random byte swaps per wrapped
+	// line on entry and again while each unrevealed row remains visible.
+	for (uint iteration = 0; iteration < 20; ++iteration) {
+		const uint first = randomSource.getRandomNumber(line.size() - 1);
+		const uint second = randomSource.getRandomNumber(line.size() - 1);
+		const char temporary = line[first];
+		line.setChar(line[second], first);
+		line.setChar(temporary, second);
+	}
+}
+
+class WacDatabaseMediaCallback : public MediaSequenceCallback {
+public:
+	WacDatabaseMediaCallback(WacDatabaseSession *database, byte activeEntryIndex) :
+			_database(database), _activeEntryIndex(activeEntryIndex) {
+	}
+
+	uint16 service(uint) override {
+		return _database->serviceDatabaseMediaInput(_activeEntryIndex);
+	}
+
+private:
+	WacDatabaseSession *_database;
+	byte _activeEntryIndex;
+};
+
+static void blitBitmap(Graphics::Surface *screen, const BitmapAssetFrame &bitmap,
+		int x, int y) {
+	for (uint row = 0; row < bitmap.height; ++row) {
+		byte *destination = (byte *)screen->getBasePtr(x, y + row);
+		const byte *source = bitmap.pixels.data() + row * bitmap.width;
+		for (uint column = 0; column < bitmap.width; ++column) {
+			if (source[column] != bitmap.transparentColor)
+				destination[column] = source[column];
+		}
+	}
+}
+
+WacDatabaseSession::WacDatabaseSession(WacManager *wac) : _wac(wac),
+		_databaseSelection(0), _databaseFirstVisible(0),
+		_databaseStillImageScroll(0), _databaseScrollControl(0),
+		_databaseTextScrollControl(0), _databaseTextScrollDragOffset(0),
+		_databaseCornerLastMillis(0), _databaseCornerAlternate(false),
+		_databaseTextScrollDragging(false) {
+}
+
+void WacDatabaseSession::serviceDatabaseCornerAnimation(bool textPanelActive) {
+	const uint32 now = g_system->getMillis(true);
+	if (now - _databaseCornerLastMillis < kWacDatabaseCornerInterval ||
+			_wac->_databaseSkin.size() < kWacDatabaseSkinFrameCount)
+		return;
+
+	_wac->drawBitmap(_wac->_databaseSkin[_databaseCornerAlternate ? 15 : 0],
+		kWacDatabaseLeft, kWacDatabaseTop);
+	if (textPanelActive)
+		_wac->drawBitmap(_wac->_databaseSkin[_databaseCornerAlternate ? 15 : 0],
+			kWacMediaLeft, kWacMediaTop);
+	debugC(11, kDebugWac,
+		"Ripper: WAC chooser corners frame=%u database=%d,%d textPanel=%d",
+		_databaseCornerAlternate ? 15 : 0, kWacDatabaseLeft, kWacDatabaseTop,
+		textPanelActive);
+	_databaseCornerAlternate = !_databaseCornerAlternate;
+	_databaseCornerLastMillis = now;
+	_wac->_engine->getCursor()->refresh();
+}
+
+void WacDatabaseSession::buildDatabaseEntries() {
+	_databaseEntries.clear();
+	for (uint index = 0; index < kWacDatabaseEntryCount; ++index) {
+		const uint flag = kMilestoneFirstWacDatabaseEntry + index;
+		if (!_wac->_engine->getMilestones()->isSet(flag))
+			continue;
+		DatabaseEntry entry;
+		entry.originalIndex = index;
+		entry.label = _wac->resourceString(kWacDatabaseTextBase + index);
+		_databaseEntries.push_back(entry);
+		debugC(2, kDebugWac,
+			"Ripper: WAC database visibleRow=%u entry=%u flag=0x%x textId=0x%x label='%s'",
+			_databaseEntries.size() - 1, index, flag, kWacDatabaseTextBase + index,
+			entry.label.c_str());
+	}
+	debugC(1, kDebugWac, "Ripper: built WAC database visibleEntries=%u scannedFlags=%u",
+		_databaseEntries.size(), kWacDatabaseEntryCount);
+}
+
+void WacDatabaseSession::drawDatabase() const {
+	const Common::Rect bounds(kWacDatabaseLeft, kWacDatabaseTop,
+		kWacDatabaseRight, kWacDatabaseBottom);
+	const Common::Rect client(bounds.left + kWacDatabaseLeftInset,
+		bounds.top + kWacDatabaseHeadingInset,
+		bounds.right - kWacDatabaseRightInset,
+		bounds.bottom - kWacDatabaseBottomInset);
+	const int rowTop = client.top + kWacDatabaseRowInset;
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen || screen->format.bytesPerPixel != 1) {
+		if (screen)
+			g_system->unlockScreen();
+		return;
+	}
+
+	for (int y = bounds.top; y < bounds.bottom; ++y)
+		memset(screen->getBasePtr(bounds.left, y), kWacDatabaseBackground,
+			bounds.width());
+	// TileChooserControlFrame at 0x54fbe walks the original presentation's
+	// transposed coordinate pair. In screen coordinates WACMNU0..8 are the
+	// row-major top, middle, and bottom frame tiles.
+	if (_wac->_databaseSkin.size() >= kWacDatabaseFrameTileCount) {
+		const int tileWidth = _wac->_databaseSkin[0].width;
+		const int tileHeight = _wac->_databaseSkin[0].height;
+		const int columns = (bounds.width() + tileWidth - 1) / tileWidth;
+		const int rows = (bounds.height() + tileHeight - 1) / tileHeight;
+		for (int column = 0; column < columns; ++column) {
+			for (int row = 0; row < rows; ++row) {
+				const uint columnBand = column == 0 ? 0 :
+					(column == columns - 1 ? 2 : 1);
+				const uint rowBand = row == 0 ? 0 : (row == rows - 1 ? 2 : 1);
+				const BitmapAssetFrame &tile = _wac->_databaseSkin[rowBand * 3 + columnBand];
+				const int x = column == columns - 1 ? bounds.right - tile.width :
+					bounds.left + column * tileWidth;
+				const int y = row == rows - 1 ? bounds.bottom - tile.height :
+					bounds.top + row * tileHeight;
+				blitBitmap(screen, tile, x, y);
+			}
+		}
+	}
+	if (_wac->_databaseSkin.size() >= kWacDatabaseSkinFrameCount)
+		blitBitmap(screen, _wac->_databaseSkin[_databaseCornerAlternate ? 15 : 0],
+			bounds.left, bounds.top);
+	const Common::String &title = _wac->resourceString(0x4e);
+	const int titleX = client.left + (client.width() - _wac->measureText(title)) / 2;
+	_wac->drawText((byte *)screen->getPixels(), screen->pitch, titleX,
+		bounds.top + (kWacDatabaseHeadingInset - _wac->_font.lineHeight) / 2,
+		title, kWacDatabaseTitleText);
+
+	if (_databaseEntries.empty()) {
+		_wac->drawText((byte *)screen->getPixels(), screen->pitch,
+			client.left + kWacDatabaseTextInset,
+			rowTop + (kWacDatabaseRowHeight - _wac->_font.lineHeight) / 2,
+			_wac->resourceString(0x46), kWacDatabaseNormalText);
+	} else {
+		for (uint row = 0; row < kWacDatabaseVisibleRows; ++row) {
+			const uint entryIndex = _databaseFirstVisible + row;
+			if (entryIndex >= _databaseEntries.size())
+				break;
+			const int top = rowTop + row * kWacDatabaseRowHeight;
+			const bool selected = entryIndex == _databaseSelection;
+			_wac->drawText((byte *)screen->getPixels(), screen->pitch,
+				client.left + kWacDatabaseTextInset,
+				top + (kWacDatabaseRowHeight - _wac->_font.lineHeight) / 2,
+				_databaseEntries[entryIndex].label,
+				selected ? kWacDatabaseSelectedText : kWacDatabaseNormalText);
+		}
+	}
+	g_system->unlockScreen();
+	_wac->_engine->getCursor()->refresh();
+	g_system->updateScreen();
+}
+
+void WacDatabaseSession::clearDatabaseMediaViewport() {
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen || screen->format.bytesPerPixel != 1) {
+		if (screen)
+			g_system->unlockScreen();
+		return;
+	}
+	for (int y = kWacMediaTop; y < kWacMediaTop + kWacMediaHeight; ++y)
+		memset(screen->getBasePtr(kWacMediaLeft, y), kWacDatabaseBackground,
+			kWacMediaWidth);
+	g_system->unlockScreen();
+	_databaseStillImage = BitmapAssetFrame();
+	_databaseStillImageScroll = 0;
+	_databaseScrollControl = 0;
+}
+
+bool WacDatabaseSession::loadDatabaseStillImage(const Common::String &path) {
+	BitmapAssetFrame image;
+	if (!_wac->_engine->getResources()->loadInterfacePcx(path, image))
+		return false;
+	if (image.palette.size() < (kWacMediaPaletteFirst + kWacMediaPaletteCount) * 3)
+		return false;
+
+	_databaseStillImage = Common::move(image);
+	_databaseStillImageScroll = 0;
+	_databaseScrollControl = 0;
+	g_system->getPaletteManager()->setPalette(
+		_databaseStillImage.palette.data() + kWacMediaPaletteFirst * 3,
+		kWacMediaPaletteFirst, kWacMediaPaletteCount);
+	drawDatabaseStillImage();
+	debugC(1, kDebugWac,
+		"Ripper: loaded WAC database still image='%s' size=%ux%u viewport=%d,%d,%d,%d scrollLimit=%u",
+		path.c_str(), _databaseStillImage.width, _databaseStillImage.height,
+		kWacMediaLeft, kWacMediaTop, kWacMediaWidth, kWacMediaHeight,
+		_databaseStillImage.height > kWacMediaHeight ?
+			_databaseStillImage.height - kWacMediaHeight : 0);
+	return true;
+}
+
+void WacDatabaseSession::drawDatabaseStillImage() const {
+	if (_databaseStillImage.pixels.empty())
+		return;
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen || screen->format.bytesPerPixel != 1) {
+		if (screen)
+			g_system->unlockScreen();
+		return;
+	}
+
+	for (int y = kWacMediaTop; y < kWacMediaTop + kWacMediaHeight; ++y)
+		memset(screen->getBasePtr(kWacMediaLeft, y), kWacDatabaseBackground,
+			kWacMediaWidth);
+	const uint copyWidth = MIN<uint>(_databaseStillImage.width, kWacMediaWidth);
+	const uint copyHeight = MIN<uint>(
+		_databaseStillImage.height - _databaseStillImageScroll, kWacMediaHeight);
+	const int x = _databaseStillImage.height > kWacMediaHeight ? kWacMediaLeft :
+		kWacMediaLeft + (kWacMediaWidth - copyWidth) / 2;
+	const int y = _databaseStillImage.height > kWacMediaHeight ? kWacMediaTop :
+		kWacMediaTop + (kWacMediaHeight - copyHeight) / 2;
+	for (uint row = 0; row < copyHeight; ++row) {
+		memcpy(screen->getBasePtr(x, y + row),
+			_databaseStillImage.pixels.data() +
+				(_databaseStillImageScroll + row) * _databaseStillImage.width,
+			copyWidth);
+	}
+	g_system->unlockScreen();
+	drawDatabaseScrollControls();
+	_wac->_engine->getCursor()->refresh();
+	g_system->updateScreen();
+}
+
+void WacDatabaseSession::drawDatabaseScrollControls() const {
+	if (_databaseStillImage.height <= kWacMediaHeight ||
+		_wac->_databaseScrollArrows.size() < 4)
+		return;
+	const uint maximumScroll = _databaseStillImage.height - kWacMediaHeight;
+	_wac->drawBitmap(_wac->_databaseScrollArrows[
+		_databaseScrollControl == 1 && _databaseStillImageScroll > 0 ? 1 : 0],
+		kWacMediaScrollX, kWacMediaScrollUpY);
+	_wac->drawBitmap(_wac->_databaseScrollArrows[
+		_databaseScrollControl == 2 && _databaseStillImageScroll < maximumScroll ? 3 : 2],
+		kWacMediaScrollX, kWacMediaScrollDownY);
+}
+
+int WacDatabaseSession::findDatabaseScrollControl(const Common::Point &point) const {
+	if (_databaseStillImage.height <= kWacMediaHeight ||
+		_wac->_databaseScrollArrows.size() < 4)
+		return 0;
+	const Common::Rect up(kWacMediaScrollX, kWacMediaScrollUpY,
+		kWacMediaScrollX + _wac->_databaseScrollArrows[0].width,
+		kWacMediaScrollUpY + _wac->_databaseScrollArrows[0].height);
+	const Common::Rect down(kWacMediaScrollX, kWacMediaScrollDownY,
+		kWacMediaScrollX + _wac->_databaseScrollArrows[2].width,
+		kWacMediaScrollDownY + _wac->_databaseScrollArrows[2].height);
+	if (up.contains(point))
+		return 1;
+	if (down.contains(point))
+		return 2;
+	return 0;
+}
+
+void WacDatabaseSession::scrollDatabaseStillImage(int delta) {
+	if (_databaseStillImage.height <= kWacMediaHeight)
+		return;
+	const uint maximumScroll = _databaseStillImage.height - kWacMediaHeight;
+	int nextScroll = (int)_databaseStillImageScroll + delta;
+	if (nextScroll < 0)
+		nextScroll = 0;
+	else if ((uint)nextScroll > maximumScroll)
+		nextScroll = maximumScroll;
+	if ((uint)nextScroll == _databaseStillImageScroll)
+		return;
+	_databaseStillImageScroll = nextScroll;
+	debugC(2, kDebugWac,
+		"Ripper: scrolled WAC database still image offset=%u limit=%u delta=%d",
+		_databaseStillImageScroll, maximumScroll, delta);
+	drawDatabaseStillImage();
+}
+
+uint16 WacDatabaseSession::serviceDatabaseMediaInput(byte activeEntryIndex,
+		uint *textFirstVisible, uint textMaximumFirstVisible, uint textPageRows,
+		MouseState *publishedMouse, bool deferCursorUpdate) {
+	if (_wac->_engine->getInput()->pollEvents()) {
+		_wac->_engine->quitGame();
+		return kExitAction;
+	}
+
+	bool refreshPalette = false;
+	bool redrawDatabase = false;
+	bool redrawText = false;
+	while (_wac->_engine->getInput()->hasPendingKey()) {
+		const uint16 command = _wac->_engine->getInput()->consumeKey();
+		if (command == 0x1b)
+			return command;
+		if (command == kExitAction || command == kDosF10Command)
+			return kExitAction;
+		if (command == kHelpAction || command == kTextViewerAction) {
+			const uint16 result = _wac->dispatchSubsceneAction(command,
+				kWacDatabaseHelpResource, true);
+			if (result != kNoAction)
+				return result;
+			refreshPalette = true;
+			continue;
+		}
+		if (_databaseEntries.empty())
+			continue;
+		if (textFirstVisible) {
+			uint nextFirstVisible = *textFirstVisible;
+			switch (command) {
+			case 0x4700:
+				nextFirstVisible = 0;
+				break;
+			case 0x4800:
+				nextFirstVisible = *textFirstVisible > 0 ? *textFirstVisible - 1 : 0;
+				break;
+			case 0x4900:
+				nextFirstVisible = *textFirstVisible > textPageRows ?
+					*textFirstVisible - textPageRows : 0;
+				break;
+			case 0x4f00:
+				nextFirstVisible = textMaximumFirstVisible;
+				break;
+			case 0x5000:
+				nextFirstVisible = MIN(*textFirstVisible + 1, textMaximumFirstVisible);
+				break;
+			case 0x5100:
+				nextFirstVisible = MIN(*textFirstVisible + textPageRows,
+					textMaximumFirstVisible);
+				break;
+			default:
+				break;
+			}
+			if (nextFirstVisible != *textFirstVisible) {
+				*textFirstVisible = nextFirstVisible;
+				redrawText = true;
+				debugC(2, kDebugWac,
+					"Ripper: scrolled WAC database text panel firstLine=%u limit=%u command=0x%x",
+					*textFirstVisible, textMaximumFirstVisible, command);
+			}
+			if (command == 0x4700 || command == 0x4800 || command == 0x4900 ||
+					command == 0x4f00 || command == 0x5000 || command == 0x5100)
+				continue;
+		}
+		if ((command == 0x4800 || command == 0x0f00) && _databaseSelection > 0) {
+			--_databaseSelection;
+			redrawDatabase = true;
+		} else if ((command == 0x5000 || command == 0x09) &&
+				_databaseSelection + 1 < _databaseEntries.size()) {
+			++_databaseSelection;
+			redrawDatabase = true;
+		} else if (command == 0x0d &&
+				_databaseEntries[_databaseSelection].originalIndex != activeEntryIndex) {
+			return kWacDatabaseSelectionChanged;
+		}
+	}
+
+	if (_databaseSelection < _databaseFirstVisible)
+		_databaseFirstVisible = _databaseSelection;
+	else if (_databaseSelection >= _databaseFirstVisible + kWacDatabaseVisibleRows)
+		_databaseFirstVisible = _databaseSelection - kWacDatabaseVisibleRows + 1;
+	if (redrawDatabase)
+		drawDatabase();
+
+	const MouseState mouse = _wac->_engine->getInput()->publishMouseState();
+	if (publishedMouse)
+		*publishedMouse = mouse;
+	const Common::Rect mediaBounds(kWacMediaLeft, kWacMediaTop,
+		kWacMediaLeft + kWacMediaWidth, kWacMediaTop + kWacMediaHeight);
+	if (textFirstVisible && mediaBounds.contains(mouse.position) && mouse.wheel != 0) {
+		int nextFirstVisible = (int)*textFirstVisible - mouse.wheel;
+		if (nextFirstVisible < 0)
+			nextFirstVisible = 0;
+		else if ((uint)nextFirstVisible > textMaximumFirstVisible)
+			nextFirstVisible = textMaximumFirstVisible;
+		if ((uint)nextFirstVisible != *textFirstVisible) {
+			*textFirstVisible = nextFirstVisible;
+			redrawText = true;
+			debugC(3, kDebugWac,
+				"Ripper: mouse-wheel scrolled WAC database text panel delta=%d firstLine=%u limit=%u",
+				mouse.wheel, *textFirstVisible, textMaximumFirstVisible);
+		}
+	}
+	if (textFirstVisible) {
+		const Common::Rect textBounds(kWacMediaLeft, kWacMediaTop,
+			kWacMediaLeft + kWacTextPanelWidth,
+			kWacMediaTop + kWacTextPanelHeight);
+		ModalDialogManager *modal = _wac->_engine->getModalDialog();
+		const ModalDialogManager::TextPanelScrollControl scrollControl =
+			modal->findTextPanelScrollControl(textBounds, mouse.position,
+				*textFirstVisible, textMaximumFirstVisible,
+				ModalDialogManager::kWacPresentation);
+		if ((int)scrollControl != _databaseTextScrollControl) {
+			_databaseTextScrollControl = scrollControl;
+			redrawText = true;
+			debugC(3, kDebugWac,
+				"Ripper: WAC database text scroll hover control=%d point=%d,%d",
+				_databaseTextScrollControl, mouse.position.x, mouse.position.y);
+		}
+
+		const Common::Rect thumbBounds = modal->textPanelScrollControlBounds(
+			textBounds, ModalDialogManager::kTextPanelScrollThumb,
+			*textFirstVisible, textMaximumFirstVisible,
+			ModalDialogManager::kWacPresentation);
+		const Common::Rect trackBounds = modal->textPanelScrollControlBounds(
+			textBounds, ModalDialogManager::kTextPanelScrollTrack,
+			*textFirstVisible, textMaximumFirstVisible,
+			ModalDialogManager::kWacPresentation);
+		if ((mouse.pressed & kMouseButtonLeft) != 0 &&
+				(scrollControl == ModalDialogManager::kTextPanelScrollThumb ||
+				scrollControl == ModalDialogManager::kTextPanelScrollTrack)) {
+			_databaseTextScrollDragging = true;
+			_databaseTextScrollDragOffset =
+				scrollControl == ModalDialogManager::kTextPanelScrollThumb ?
+					mouse.position.y - thumbBounds.top : thumbBounds.height() / 2;
+			debugC(2, kDebugWac,
+				"Ripper: began WAC database text scrollbar drag firstLine=%u point=%d,%d",
+				*textFirstVisible, mouse.position.x, mouse.position.y);
+		}
+		if (_databaseTextScrollDragging && !trackBounds.isEmpty() &&
+				!thumbBounds.isEmpty() && ((mouse.buttons & kMouseButtonLeft) != 0 ||
+				(mouse.released & kMouseButtonLeft) != 0)) {
+			const int travel = trackBounds.height() - thumbBounds.height();
+			if (travel > 0) {
+				const int thumbTop = CLIP<int>(
+					mouse.position.y - _databaseTextScrollDragOffset,
+					trackBounds.top, trackBounds.bottom - thumbBounds.height());
+				const uint nextFirstVisible =
+					((thumbTop - trackBounds.top) * textMaximumFirstVisible +
+						travel / 2) / travel;
+				if (nextFirstVisible != *textFirstVisible) {
+					*textFirstVisible = nextFirstVisible;
+					redrawText = true;
+					debugC(3, kDebugWac,
+						"Ripper: dragged WAC database text scrollbar firstLine=%u limit=%u point=%d,%d",
+						*textFirstVisible, textMaximumFirstVisible,
+						mouse.position.x, mouse.position.y);
+				}
+			}
+		}
+		const bool endedDrag = _databaseTextScrollDragging &&
+			(mouse.released & kMouseButtonLeft) != 0;
+		if (endedDrag) {
+			_databaseTextScrollDragging = false;
+			debugC(2, kDebugWac,
+				"Ripper: ended WAC database text scrollbar drag firstLine=%u",
+				*textFirstVisible);
+		} else if ((mouse.released & kMouseButtonLeft) != 0) {
+			uint nextFirstVisible = *textFirstVisible;
+			if (scrollControl == ModalDialogManager::kTextPanelScrollUp &&
+					nextFirstVisible > 0)
+				--nextFirstVisible;
+			else if (scrollControl == ModalDialogManager::kTextPanelScrollDown)
+				nextFirstVisible = MIN(nextFirstVisible + 1,
+					textMaximumFirstVisible);
+			if (nextFirstVisible != *textFirstVisible) {
+				*textFirstVisible = nextFirstVisible;
+				redrawText = true;
+				debugC(2, kDebugWac,
+					"Ripper: clicked WAC database text scroll control=%d firstLine=%u limit=%u",
+					scrollControl, *textFirstVisible, textMaximumFirstVisible);
+			}
+		}
+	}
+	_wac->serviceIdleWindowAnimations();
+	serviceDatabaseCornerAnimation(textFirstVisible != nullptr);
+	const uint16 controlAction = _wac->serviceFrontEndControls(mouse,
+		(Common::Rect(kWacDatabaseLeft, kWacDatabaseTop,
+			kWacDatabaseRight, kWacDatabaseBottom).contains(mouse.position) ||
+			(textFirstVisible && mediaBounds.contains(mouse.position))) ?
+			kWacControlCursor : kWacDefaultCursor, !deferCursorUpdate);
+	if (controlAction != kNoAction) {
+		const uint16 result = _wac->dispatchSubsceneAction(controlAction,
+			kWacDatabaseHelpResource, true);
+		if (result != kNoAction)
+			return result;
+		if (controlAction == kHelpAction || controlAction == kTextViewerAction)
+			refreshPalette = true;
+	}
+
+	if (!_databaseEntries.empty()) {
+		const Common::Rect bounds(kWacDatabaseLeft, kWacDatabaseTop,
+			kWacDatabaseRight, kWacDatabaseBottom);
+		if (bounds.contains(mouse.position)) {
+			const int relativeY = mouse.position.y - bounds.top -
+				kWacDatabaseHeadingInset - kWacDatabaseRowInset;
+			if (relativeY >= 0) {
+				const uint row = relativeY / kWacDatabaseRowHeight;
+				const uint entryIndex = _databaseFirstVisible + row;
+				if (row < kWacDatabaseVisibleRows && entryIndex < _databaseEntries.size()) {
+					if (entryIndex != _databaseSelection) {
+						_databaseSelection = entryIndex;
+						drawDatabase();
+						debugC(2, kDebugWac,
+							"Ripper: WAC database media hover visibleRow=%u entry=%u activeEntry=%u point=%d,%d",
+							entryIndex, _databaseEntries[entryIndex].originalIndex,
+							activeEntryIndex, mouse.position.x, mouse.position.y);
+					}
+					if ((mouse.released & kMouseButtonLeft) != 0 &&
+							_databaseEntries[entryIndex].originalIndex != activeEntryIndex)
+						return kWacDatabaseSelectionChanged;
+				}
+			}
+		}
+	}
+
+	if (refreshPalette)
+		return MediaSequenceCallback::kContinueRefreshPalette;
+	return redrawText ? kWacDatabaseTextScrolled : kNoAction;
+}
+
+bool WacDatabaseSession::drawDatabaseTextPanel(uint bodyResourceId,
+		const Common::Rect &bounds, uint firstVisible,
+		uint &maximumFirstVisible, uint &visibleRows) {
+	if (!_wac->_engine->getModalDialog()->drawRetainedTextPanel(bodyResourceId,
+			bounds, firstVisible, maximumFirstVisible, visibleRows,
+			ModalDialogManager::kWacPresentation,
+			static_cast<ModalDialogManager::TextPanelScrollControl>(
+				_databaseTextScrollControl)))
+		return false;
+	if (_wac->_databaseSkin.size() >= kWacDatabaseSkinFrameCount)
+		_wac->drawBitmap(_wac->_databaseSkin[_databaseCornerAlternate ? 15 : 0],
+			bounds.left, bounds.top);
+	_wac->_engine->getCursor()->refresh();
+	g_system->updateScreen();
+	return true;
+}
+
+void WacDatabaseSession::wrapJournalText(const Common::String &text, uint maximumWidth,
+		Common::Array<Common::String> &lines) const {
+	lines.clear();
+	Common::String line;
+	Common::String word;
+	for (uint index = 0; index <= text.size(); ++index) {
+		const char character = index < text.size() ? text[index] : '\n';
+		if (character == '\r')
+			continue;
+		if (character != ' ' && character != '\n') {
+			word += character;
+			continue;
+		}
+
+		if (!word.empty()) {
+			const Common::String candidate = line.empty() ? word : line + " " + word;
+			if (!line.empty() && _wac->measureText(candidate) > maximumWidth) {
+				lines.push_back(line);
+				line = word;
+			} else {
+				line = candidate;
+			}
+			word.clear();
+		}
+		if (character == '\n') {
+			lines.push_back(line);
+			line.clear();
+		}
+	}
+	if (lines.empty())
+		lines.push_back(Common::String());
+}
+
+bool WacDatabaseSession::drawJournalTextPanel(
+		const Common::Array<Common::String> &lines, uint progress,
+		uint firstVisible, uint &maximumFirstVisible, uint &visibleRows) {
+	const Common::Rect bounds(kWacMediaLeft, kWacMediaTop,
+		kWacMediaLeft + kWacTextPanelWidth, kWacMediaTop + kWacTextPanelHeight);
+	if (!_wac->_engine->getModalDialog()->drawRetainedTextPanelLines(lines, bounds,
+			firstVisible, maximumFirstVisible, visibleRows,
+			ModalDialogManager::kWacPresentation,
+			static_cast<ModalDialogManager::TextPanelScrollControl>(
+				_databaseTextScrollControl)))
+		return false;
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen || screen->format.bytesPerPixel != 1) {
+		if (screen)
+			g_system->unlockScreen();
+		return false;
+	}
+	for (int y = bounds.bottom; y < kWacMediaTop + kWacMediaHeight; ++y)
+		memset(screen->getBasePtr(kWacMediaLeft, y), kWacDatabaseBackground,
+			kWacMediaWidth);
+	const Common::String progressText = Common::String::format("%s %u%%",
+		_wac->resourceString(kWacJournalProgressResource).c_str(), progress);
+	_wac->drawText((byte *)screen->getPixels(), screen->pitch,
+		kWacJournalProgressLeft, kWacJournalProgressTop, progressText,
+		kWacDatabaseNormalText);
+	g_system->unlockScreen();
+	if (_wac->_databaseSkin.size() >= kWacDatabaseSkinFrameCount)
+		_wac->drawBitmap(_wac->_databaseSkin[_databaseCornerAlternate ? 15 : 0],
+			bounds.left, bounds.top);
+	_wac->_engine->getCursor()->refresh();
+	g_system->updateScreen();
+	return true;
+}
+
+bool WacDatabaseSession::drawJournalTextPanelLine(
+		const Common::Array<Common::String> &lines,
+		uint firstVisible, uint visibleRows, uint lineIndex) {
+	const Common::Rect bounds(kWacMediaLeft, kWacMediaTop,
+		kWacMediaLeft + kWacTextPanelWidth, kWacMediaTop + kWacTextPanelHeight);
+	return _wac->_engine->getModalDialog()->drawRetainedTextPanelLine(lines, bounds,
+		firstVisible, visibleRows, lineIndex,
+		ModalDialogManager::kWacPresentation);
+}
+
+uint16 WacDatabaseSession::runJournalRevealScene(DatabaseEntry &entry) {
+	// RunWacJournalRevealScene at 0x24261 owns control 0x7b2. It wraps resource
+	// 0xaf once, scrambles those row buffers in place, and restores one original
+	// row after the current section's 36-tick delay while flags 0xfa+n permit it.
+	const Common::String &journalText = _wac->resourceString(kWacJournalTextResource);
+	const Common::String &prompt = _wac->resourceString(kWacJournalPromptResource);
+	const uint puzzleLevel = CLIP<uint>(_wac->_engine->getSettings()->getPuzzleLevel(), 1, 3);
+	const uint passwordResource = kWacJournalPasswordBaseResource + puzzleLevel;
+	const Common::String &expectedPassword = _wac->resourceString(passwordResource);
+	if (journalText.empty() || prompt.empty() || expectedPassword.empty()) {
+		warning("Ripper: WAC journal resources are incomplete text=0x%x prompt=0x%x password=0x%x",
+			kWacJournalTextResource, kWacJournalPromptResource, passwordResource);
+		return kNoAction;
+	}
+
+	Common::Array<Common::String> sourceLines;
+	// The tertiary WAC text panel reserves five pixels on the left, twenty on
+	// the right, and two more on either side of the actual text rows.
+	wrapJournalText(journalText,
+		kWacTextPanelWidth - kWacDatabaseLeftInset -
+			kWacDatabaseRightInset - kWacDatabaseTextInset * 2,
+		sourceLines);
+	Common::Array<Common::String> displayLines = sourceLines;
+	Milestones *milestones = _wac->_engine->getMilestones();
+	milestones->set(kWacJournalRevealFlagBase, true, "wac-journal-entry");
+
+	uint revealFlagIndex = 0;
+	uint revealedLines = 0;
+	bool unlocked = milestones->isSet(kWacJournalUnlockedFlag);
+	if (unlocked) {
+		while (revealedLines < sourceLines.size() &&
+				revealFlagIndex < kWacJournalSectionCount &&
+				milestones->isSet(kWacJournalRevealFlagBase + revealFlagIndex)) {
+			milestones->set(kWacJournalCompletionFlagBase + revealFlagIndex,
+				true, "wac-journal-resume");
+			++revealedLines;
+			if (revealedLines < sourceLines.size() &&
+					sourceLines[revealedLines].empty())
+				++revealFlagIndex;
+		}
+	}
+	bool revealComplete = revealedLines >= sourceLines.size();
+
+	Common::RandomSource randomSource("ripper-wac-journal");
+	if (!revealComplete) {
+		for (uint lineIndex = revealedLines; lineIndex < displayLines.size(); ++lineIndex)
+			shuffleJournalLine(displayLines[lineIndex], randomSource);
+	}
+
+	uint firstVisible = 0;
+	uint maximumFirstVisible = 0;
+	uint visibleRows = 0;
+	_databaseTextScrollControl = ModalDialogManager::kTextPanelScrollNone;
+	_databaseTextScrollDragging = false;
+	_databaseTextScrollDragOffset = 0;
+	uint progress = sourceLines.empty() ? 100 :
+		revealedLines * 100 / sourceLines.size();
+	if (!drawJournalTextPanel(displayLines, progress, firstVisible,
+			maximumFirstVisible, visibleRows))
+		return kNoAction;
+
+	_wac->_engine->getInput()->discardMouseTransitions();
+	debugC(1, kDebugWac,
+		"Ripper: entered WAC journal scene entry=%u label='%s' function=RunWacJournalRevealScene@0x24261 lines=%u unlocked=%d revealed=%u section=%u passwordResource=0x%x",
+		entry.originalIndex, entry.label.c_str(), sourceLines.size(), unlocked,
+		revealedLines, revealFlagIndex, passwordResource);
+	debugC(2, kDebugWac,
+		"Ripper: WAC journal chooser geometry panel=%d,%d,%d,%d progress=%d,%d password=%d,%d,%d,%d source=RunWacJournalRevealScene@0x24538",
+		kWacMediaLeft, kWacMediaTop, kWacTextPanelWidth, kWacTextPanelHeight,
+		kWacJournalProgressLeft, kWacJournalProgressTop,
+		kWacMediaLeft, kWacJournalTextEntryTop,
+		kWacJournalTextEntryWidth, kWacJournalTextEntryHeight);
+
+	bool cancelled = false;
+	while (!unlocked && !_wac->_engine->shouldQuit()) {
+		// RunWacJournalRevealScene at 0x24538 places the password control five
+		// pixels below the journal panel. Its -1 size request produces one
+		// 14-pixel row plus the WAC heading, bottom, and frame insets.
+		const Common::Rect entryBounds(kWacMediaLeft, kWacJournalTextEntryTop,
+			kWacMediaLeft + kWacJournalTextEntryWidth,
+			kWacJournalTextEntryTop + kWacJournalTextEntryHeight);
+		if (!_wac->_engine->getModalDialog()->beginTextEntry(prompt,
+				kWacJournalPasswordMaximumLength, kWacJournalHelpResource,
+				"wac-journal-password", ModalDialogManager::kWacPresentation,
+				entryBounds)) {
+			cancelled = true;
+			break;
+		}
+
+		Common::String enteredPassword;
+		ModalDialogManager::TextEntryResult textResult =
+			ModalDialogManager::kTextEntryPending;
+		while (textResult == ModalDialogManager::kTextEntryPending &&
+				!_wac->_engine->shouldQuit()) {
+			textResult = _wac->_engine->getModalDialog()->serviceTextEntry(enteredPassword);
+			_wac->serviceIdleWindowAnimations();
+			g_system->updateScreen();
+			g_system->delayMillis(10);
+		}
+		if (textResult == ModalDialogManager::kTextEntryCancelled ||
+				textResult == ModalDialogManager::kTextEntryFailed) {
+			cancelled = true;
+			break;
+		}
+		if (!wacJournalAnswersMatch(enteredPassword, expectedPassword)) {
+			debugC(2, kDebugWac,
+				"Ripper: WAC journal rejected decryption key resource=0x%x enteredLength=%u",
+				passwordResource, enteredPassword.size());
+			continue;
+		}
+
+		milestones->set(kWacJournalUnlockedFlag, true, "wac-journal-password");
+		unlocked = true;
+		revealedLines = 0;
+		revealFlagIndex = 0;
+		revealComplete = false;
+		progress = 0;
+		debugC(1, kDebugWac,
+			"Ripper: WAC journal accepted decryption key resource=0x%x flag=0x%x",
+			passwordResource, kWacJournalUnlockedFlag);
+	}
+
+	Audio::SoundHandle journalAudio;
+	bool audioStarted = false;
+	if (unlocked && !revealComplete && !cancelled) {
+		audioStarted = _wac->_engine->getMedia()->playVoiceClip("wacjrnl.wav", journalAudio);
+		if (!drawJournalTextPanel(displayLines, progress, firstVisible,
+				maximumFirstVisible, visibleRows))
+			cancelled = true;
+	}
+
+	uint16 result = cancelled ? 0x1b : kNoAction;
+	uint32 revealStartMillis = g_system->getMillis(true);
+	uint32 lastShuffleMillis = revealStartMillis;
+	uint visibleShuffleLine = MAX<uint>(revealedLines, firstVisible);
+	while (!cancelled && !_wac->_engine->shouldQuit()) {
+		const uint16 command = serviceDatabaseMediaInput(entry.originalIndex,
+			&firstVisible, maximumFirstVisible, visibleRows);
+		bool redraw = false;
+		int redrawLine = -1;
+		if (command == kWacDatabaseTextScrolled ||
+				command == MediaSequenceCallback::kContinueRefreshPalette) {
+			visibleShuffleLine = MAX<uint>(revealedLines, firstVisible);
+			redraw = true;
+		} else if (command == kWacDatabaseSelectionChanged ||
+				command == kExitAction || command == 0x1b) {
+			result = command;
+			break;
+		}
+
+		const uint32 now = g_system->getMillis(true);
+		if (unlocked && !revealComplete &&
+				now - revealStartMillis >= kWacJournalRevealInterval) {
+			displayLines[revealedLines] = sourceLines[revealedLines];
+			const bool sectionEnabled =
+				revealFlagIndex < kWacJournalSectionCount &&
+				milestones->isSet(kWacJournalRevealFlagBase + revealFlagIndex);
+			if (sectionEnabled) {
+				milestones->set(kWacJournalCompletionFlagBase + revealFlagIndex,
+					true, "wac-journal-reveal");
+				++revealedLines;
+				if (revealedLines < sourceLines.size() &&
+						sourceLines[revealedLines].empty())
+					++revealFlagIndex;
+			}
+			revealComplete = revealedLines >= sourceLines.size();
+			progress = sourceLines.empty() ? 100 :
+				revealedLines * 100 / sourceLines.size();
+			revealStartMillis = now;
+			visibleShuffleLine = MAX<uint>(revealedLines, firstVisible);
+			redraw = true;
+			debugC(2, kDebugWac,
+				"Ripper: WAC journal reveal line=%u/%u section=%u enabled=%d progress=%u complete=%d delayTicks=36",
+				revealedLines, sourceLines.size(), revealFlagIndex,
+				sectionEnabled, progress, revealComplete);
+		}
+
+		if (unlocked && !revealComplete &&
+				now - lastShuffleMillis >= kWacJournalShuffleInterval) {
+			const uint firstShuffleLine = MAX<uint>(revealedLines, firstVisible);
+			const uint shuffleLimit = MIN<uint>(displayLines.size(),
+				firstVisible + visibleRows);
+			if (visibleShuffleLine < firstShuffleLine ||
+					visibleShuffleLine >= shuffleLimit)
+				visibleShuffleLine = firstShuffleLine;
+			if (visibleShuffleLine < shuffleLimit) {
+				const uint shuffledLine = visibleShuffleLine;
+				shuffleJournalLine(displayLines[shuffledLine], randomSource);
+				++visibleShuffleLine;
+				redrawLine = shuffledLine;
+			}
+			lastShuffleMillis = now;
+		}
+
+		if (redraw && !drawJournalTextPanel(displayLines, progress, firstVisible,
+				maximumFirstVisible, visibleRows))
+			break;
+		if (!redraw && redrawLine >= 0 &&
+				!drawJournalTextPanelLine(displayLines, firstVisible,
+					visibleRows, redrawLine))
+			break;
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+
+	if (audioStarted)
+		_wac->_engine->getMedia()->stopSoundEffect(journalAudio);
+	clearDatabaseMediaViewport();
+	_databaseTextScrollControl = ModalDialogManager::kTextPanelScrollNone;
+	_databaseTextScrollDragging = false;
+	drawDatabase();
+	debugC(1, kDebugWac,
+		"Ripper: left WAC journal scene entry=%u result=0x%x unlocked=%d revealed=%u/%u section=%u audioStarted=%d",
+		entry.originalIndex, result, unlocked, revealedLines, sourceLines.size(),
+		revealFlagIndex, audioStarted);
+	if (result == kWacDatabaseSelectionChanged &&
+			_databaseSelection < _databaseEntries.size())
+		return dispatchDatabaseEntry(_databaseEntries[_databaseSelection]);
+	return result == kExitAction ? kExitAction : kNoAction;
+}
+
+uint16 WacDatabaseSession::runVoiceLockPuzzle(DatabaseEntry &entry) {
+	// RunWacVoiceLockPuzzleScene at 0x24ba4 creates a 340-by-116 source
+	// waveform panel at physical 50,50. Flag 0x54 adds the equally sized
+	// editor panel at 50,176 and Play/Clear/Quantize controls at y=293.
+	ResourceManager *resources = _wac->_engine->getResources();
+	const Common::Rect sourcePanel(50, 50, 390, 166);
+	const Common::Rect editorPanel(50, 176, 390, 292);
+	// CreateWrappedTextPanelControl at 0x58fb6 stores the client rectangle
+	// separately from the 340-by-116 outer control. The title-only WAC layout
+	// leaves a 20-pixel heading, 5-pixel side insets and a 6-pixel bottom inset.
+	const Common::Rect sourceWaveform(55, 70, 385, 160);
+	const Common::Rect editorWaveform(55, 196, 385, 286);
+	Common::Array<BitmapAssetFrame> buttonAssets;
+	WacVoiceLockPcm sourcePcm;
+	if (!resources->loadInterfaceBitmapSet("wacwav", buttonAssets) ||
+			buttonAssets.size() < 6 ||
+			!loadWacVoiceLockPcm(resources, "voxlok.wav", sourcePcm)) {
+		warning("Ripper: could not load WAC voice-lock assets buttons=%u sourceBytes=%u",
+			buttonAssets.size(), sourcePcm.data.size());
+		return kNoAction;
+	}
+
+	const bool editorAvailable =
+		_wac->_engine->getMilestones()->isSet(kMilestoneWacAudioEditorAvailable);
+	Common::Array<WacVoiceLockSelection> selections;
+	Common::Array<byte> assembledAudio;
+	bool quantized = false;
+	bool dragging = false;
+	int dragStart = 0;
+	int dragEnd = 0;
+	int hoveredButton = -1;
+	int pressedButton = -1;
+	bool validateAfterPlayback = false;
+	bool playbackProgressActive = false;
+	Common::Rect playbackProgressBounds;
+	uint32 playbackDuration = 0;
+	int playbackProgressColumn = -1;
+	const uint savedCursor = _wac->_engine->getCursor()->getSelectionIndex();
+	Audio::SoundHandle audioHandle;
+
+	Common::Rect buttonBounds[3];
+	int buttonLeft = sourcePanel.left;
+	const int buttonTop = editorAvailable ? editorPanel.bottom + 1 :
+		sourcePanel.bottom + 1;
+	for (uint button = 0; button < 3; ++button) {
+		const BitmapAssetFrame &bitmap = buttonAssets[button * 2];
+		buttonBounds[button] = Common::Rect(buttonLeft, buttonTop,
+			buttonLeft + bitmap.width, buttonTop + bitmap.height);
+		buttonLeft += bitmap.width;
+	}
+
+	auto drawPresentation = [&]() -> bool {
+		if (!_wac->_engine->getModalDialog()->drawRetainedTitlePanelText(
+				_wac->resourceString(kWacVoiceLockFileResource),
+				sourcePanel, ModalDialogManager::kWacPresentation))
+			return false;
+		if (editorAvailable) {
+			if (!_wac->_engine->getModalDialog()->drawRetainedTitlePanelText(
+					_wac->resourceString(kWacVoiceLockEditorResource),
+					editorPanel, ModalDialogManager::kWacPresentation))
+				return false;
+		}
+
+		Common::Array<WacVoiceLockSelection> displayedSelections = selections;
+		if (dragging)
+			displayedSelections.push_back(WacVoiceLockSelection(
+				MIN(dragStart, dragEnd), MAX(dragStart, dragEnd)));
+		Graphics::Surface *screen = g_system->lockScreen();
+		if (!screen || screen->format.bytesPerPixel != 1) {
+			if (screen)
+				g_system->unlockScreen();
+			return false;
+		}
+		drawWacVoiceLockWaveform(*screen, sourcePcm,
+			sourceWaveform, &displayedSelections);
+		if (editorAvailable) {
+			WacVoiceLockPcm assembledPcm;
+			assembledPcm.data = assembledAudio;
+			assembledPcm.sampleRate = sourcePcm.sampleRate;
+			assembledPcm.flags = sourcePcm.flags;
+			assembledPcm.bytesPerSample = sourcePcm.bytesPerSample;
+			drawWacVoiceLockWaveform(*screen, assembledPcm,
+				editorWaveform, nullptr);
+		}
+		if (playbackProgressActive && playbackProgressColumn >= 0 &&
+				!playbackProgressBounds.isEmpty()) {
+			const int x = playbackProgressBounds.left +
+				MIN<int>(playbackProgressColumn,
+					playbackProgressBounds.width() - 1);
+			for (int y = playbackProgressBounds.top;
+					y < playbackProgressBounds.bottom; ++y)
+				*((byte *)screen->getBasePtr(x, y)) =
+					kWacVoiceLockMarkerColor;
+		}
+		g_system->unlockScreen();
+
+		const uint buttonCount = editorAvailable ? 3 : 1;
+		for (uint button = 0; button < buttonCount; ++button) {
+			const uint frame = button * 2 +
+				((int)button == pressedButton ? 1 : 0);
+			_wac->drawBitmap(buttonAssets[frame], buttonBounds[button].left,
+				buttonBounds[button].top);
+		}
+		_wac->_engine->getCursor()->refresh();
+		g_system->updateScreen();
+		return true;
+	};
+
+	if (!drawPresentation())
+		return kNoAction;
+	_wac->_engine->getInput()->discardMouseTransitions();
+	_wac->_engine->getCursor()->setSelectionIndex(kWacDefaultCursor);
+	_wac->_engine->getCursor()->dispatchSelectionIndexChange(kWacDefaultCursor);
+	debugC(1, kDebugWac,
+		"Ripper: entered WAC voice-lock puzzle entry=%u label='%s' function=RunWacVoiceLockPuzzleScene@0x24ba4 editor=%d flag=0x%x sourcePanel=%d,%d,%d,%d editorPanel=%d,%d,%d,%d",
+		entry.originalIndex, entry.label.c_str(), editorAvailable,
+		kMilestoneWacAudioEditorAvailable,
+		sourcePanel.left, sourcePanel.top, sourcePanel.width(), sourcePanel.height(),
+		editorPanel.left, editorPanel.top, editorPanel.width(), editorPanel.height());
+	debugC(2, kDebugWac,
+		"Ripper: loaded WAC voice-lock source='voxlok.wav' bytes=%u rate=%u flags=0x%x buttons=%u solutionTable=0x215d1 tolerance=%u",
+		sourcePcm.data.size(), sourcePcm.sampleRate, sourcePcm.flags,
+		buttonAssets.size(), kWacVoiceLockSelectionTolerance);
+
+	uint16 result = kNoAction;
+	bool redraw = false;
+	bool solved = false;
+	while (!_wac->_engine->shouldQuit()) {
+		MouseState mouse;
+		const uint16 command = serviceDatabaseMediaInput(entry.originalIndex,
+			nullptr, 0, 0, &mouse, true);
+		if (command == kWacDatabaseSelectionChanged || command == kExitAction ||
+				command == 0x1b) {
+			result = command;
+			break;
+		}
+		if (command == MediaSequenceCallback::kContinueRefreshPalette)
+			redraw = true;
+
+		int nextHoveredButton = -1;
+		const uint buttonCount = editorAvailable ? 3 : 1;
+		for (uint button = 0; button < buttonCount; ++button) {
+			if (buttonBounds[button].contains(mouse.position)) {
+				nextHoveredButton = button;
+				break;
+			}
+		}
+		if (nextHoveredButton != hoveredButton) {
+			debugC(3, kDebugWac,
+				"Ripper: WAC voice-lock button hover=%d previous=%d point=%d,%d",
+				nextHoveredButton, hoveredButton, mouse.position.x,
+				mouse.position.y);
+			hoveredButton = nextHoveredButton;
+			redraw = true;
+		}
+
+		const bool waveformHover = editorAvailable &&
+			sourceWaveform.contains(mouse.position);
+		const Common::Rect databaseBounds(kWacDatabaseLeft, kWacDatabaseTop,
+			kWacDatabaseRight, kWacDatabaseBottom);
+		_wac->_engine->getCursor()->update(
+			databaseBounds.contains(mouse.position) || _wac->_hoveredControl >= 0 ||
+				waveformHover || hoveredButton >= 0 ?
+				kWacControlCursor : kWacDefaultCursor);
+		if ((mouse.pressed & kMouseButtonLeft) != 0) {
+			pressedButton = hoveredButton;
+			if (pressedButton >= 0)
+				redraw = true;
+			if (waveformHover) {
+				dragging = true;
+				dragStart = CLIP<int>(mouse.position.x,
+					sourceWaveform.left, sourceWaveform.right - 1);
+				dragEnd = dragStart;
+				pressedButton = -1;
+				redraw = true;
+				debugC(3, kDebugWac,
+					"Ripper: WAC voice-lock selection began x=%d point=%d,%d",
+					dragStart, mouse.position.x, mouse.position.y);
+			}
+		}
+		if (dragging && (mouse.buttons & kMouseButtonLeft) != 0) {
+			const int nextDragEnd = CLIP<int>(mouse.position.x,
+				sourceWaveform.left, sourceWaveform.right - 1);
+			if (nextDragEnd != dragEnd) {
+				dragEnd = nextDragEnd;
+				redraw = true;
+			}
+		}
+
+		if (dragging && (mouse.released & kMouseButtonLeft) != 0) {
+			dragEnd = CLIP<int>(mouse.position.x,
+				sourceWaveform.left, sourceWaveform.right - 1);
+			dragging = false;
+			const WacVoiceLockSelection selection(
+				MIN(dragStart, dragEnd), MAX(dragStart, dragEnd));
+			if (selection.end - selection.start >= 2) {
+				selections.push_back(selection);
+				appendWacVoiceLockSelectionAudio(sourcePcm, selection,
+					sourceWaveform, assembledAudio);
+				debugC(2, kDebugWac,
+					"Ripper: WAC voice-lock appended selection=%u range=%d..%d assembledBytes=%u quantized=%d",
+					selections.size() - 1, selection.start, selection.end,
+					assembledAudio.size(), quantized);
+			}
+			redraw = true;
+		} else if (!dragging && (mouse.released & kMouseButtonLeft) != 0 &&
+				pressedButton >= 0 && pressedButton == hoveredButton) {
+			switch (pressedButton) {
+			case 0: {
+				bool started = false;
+				uint playbackBytes = sourcePcm.data.size();
+				playbackProgressBounds = sourceWaveform;
+				if (editorAvailable && !assembledAudio.empty()) {
+					started = _wac->_engine->getMedia()->playRawSoundEffect(assembledAudio,
+						sourcePcm.sampleRate, sourcePcm.flags, audioHandle);
+					playbackBytes = assembledAudio.size();
+					playbackProgressBounds = editorWaveform;
+					debugC(2, kDebugWac,
+						"Ripper: WAC voice-lock played assembled audio bytes=%u selections=%u started=%d",
+						assembledAudio.size(), selections.size(), started);
+				} else {
+					started = _wac->_engine->getMedia()->playSoundEffect(
+						quantized ? "voxlok1.wav" : "voxlok.wav",
+						audioHandle);
+					debugC(2, kDebugWac,
+						"Ripper: WAC voice-lock played source audio quantized=%d started=%d",
+						quantized, started);
+				}
+				validateAfterPlayback = started;
+				playbackDuration = getWacVoiceLockDuration(playbackBytes,
+					sourcePcm);
+				playbackProgressActive = started && playbackDuration != 0;
+				playbackProgressColumn =
+					playbackProgressActive ? 0 : -1;
+				redraw = true;
+				break;
+			}
+			case 1:
+				_wac->_engine->getMedia()->stopSoundEffect(audioHandle);
+				validateAfterPlayback = false;
+				playbackProgressActive = false;
+				playbackProgressColumn = -1;
+				selections.clear();
+				assembledAudio.clear();
+				debugC(2, kDebugWac,
+					"Ripper: WAC voice-lock cleared assembled audio");
+				redraw = true;
+				break;
+			case 2: {
+				playbackProgressActive = false;
+				playbackProgressColumn = -1;
+				WacVoiceLockPcm quantizedPcm;
+				if (loadWacVoiceLockPcm(resources, "voxlok1.wav",
+						quantizedPcm)) {
+					sourcePcm = Common::move(quantizedPcm);
+					quantized = true;
+					validateAfterPlayback = false;
+					_wac->_engine->getMedia()->playSoundEffect("wacjrnl.wav",
+						audioHandle);
+					debugC(2, kDebugWac,
+						"Ripper: WAC voice-lock quantized source='voxlok1.wav' bytes=%u rate=%u retainedSelections=%u assembledBytes=%u",
+						sourcePcm.data.size(), sourcePcm.sampleRate,
+						selections.size(), assembledAudio.size());
+					redraw = true;
+				} else {
+					warning("Ripper: could not load WAC voice-lock quantized source 'voxlok1.wav'");
+				}
+				break;
+			}
+			default:
+				break;
+			}
+			pressedButton = -1;
+			redraw = true;
+		} else if ((mouse.released & kMouseButtonLeft) != 0) {
+			pressedButton = -1;
+			redraw = true;
+		}
+
+		const bool playbackActive =
+			_wac->_engine->getMedia()->isSoundEffectActive(audioHandle);
+		if (playbackProgressActive && playbackActive) {
+			const uint32 elapsed =
+				_wac->_engine->getMedia()->getSoundEffectElapsedTime(audioHandle);
+			const int nextProgressColumn = MIN<int>(
+				playbackProgressBounds.width() - 1,
+				(uint64)elapsed * playbackProgressBounds.width() /
+					playbackDuration);
+			if (nextProgressColumn != playbackProgressColumn) {
+				playbackProgressColumn = nextProgressColumn;
+				redraw = true;
+				debugC(3, kDebugWac,
+					"Ripper: WAC voice-lock playback progress elapsedMs=%u durationMs=%u column=%d",
+					elapsed, playbackDuration, playbackProgressColumn);
+			}
+		}
+
+		if (validateAfterPlayback && !playbackActive) {
+			validateAfterPlayback = false;
+			playbackProgressActive = false;
+			playbackProgressColumn = -1;
+			redraw = true;
+			Common::String sceneLabel;
+			ScriptManager *scripts = _wac->_engine->getScripts();
+			const uint activeFrame = scripts->getActiveFrame();
+			if (activeFrame < scripts->ba0().getFrames().size())
+				sceneLabel = scripts->ba0().getString(
+					scripts->ba0().getFrames()[activeFrame].labelOffset);
+			const bool rangesMatch =
+				validateWacVoiceLockSelections(selections);
+			debugC(2, kDebugWac,
+				"Ripper: WAC voice-lock validation selections=%u rangesMatch=%d scene='%s' expectedScene='eez1'",
+				selections.size(), rangesMatch, sceneLabel.c_str());
+			if (editorAvailable && quantized && rangesMatch &&
+					sceneLabel.equalsIgnoreCase("eez1")) {
+				solved = true;
+				break;
+			}
+		}
+
+		if (redraw) {
+			if (!drawPresentation())
+				break;
+			redraw = false;
+		}
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+
+	_wac->_engine->getMedia()->stopSoundEffect(audioHandle);
+	if (solved) {
+		_wac->_engine->getCursor()->setVisible(false);
+		const bool played = _wac->_engine->getMedia()->play("accesed.avi", true);
+		_wac->_engine->getMilestones()->set(kMilestoneSecretAnimalLabOpen, true,
+			"wac-voice-lock");
+		result = kExitAction;
+		debugC(1, kDebugWac,
+			"Ripper: solved WAC voice-lock puzzle media='accesed.avi' played=%d milestone=%u selections=%u",
+			played, kMilestoneSecretAnimalLabOpen, selections.size());
+	}
+
+	clearDatabaseMediaViewport();
+	drawDatabase();
+	_wac->_engine->getCursor()->setSelectionIndex(savedCursor);
+	_wac->_engine->getCursor()->dispatchSelectionIndexChange(savedCursor);
+	_wac->_engine->getInput()->discardMouseTransitions();
+	debugC(1, kDebugWac,
+		"Ripper: left WAC voice-lock puzzle entry=%u result=0x%x editor=%d quantized=%d selections=%u solved=%d",
+		entry.originalIndex, result, editorAvailable, quantized,
+		selections.size(), solved);
+	if (result == kWacDatabaseSelectionChanged &&
+			_databaseSelection < _databaseEntries.size())
+		return dispatchDatabaseEntry(_databaseEntries[_databaseSelection]);
+	return result == kExitAction ? kExitAction : kNoAction;
+}
+
+uint16 WacDatabaseSession::runDatabaseTextPanel(DatabaseEntry &entry, uint bodyResourceId) {
+	// RunCenteredTextPanelUntilExitAction at 0x2330c creates the untitled
+	// 330-by-222 panel from the same tertiary WACMNU chooser template used by
+	// contextual WAC help, then leaves the database chooser plus persistent WAC
+	// controls active around its input loop.
+	const Common::Rect bounds(kWacMediaLeft, kWacMediaTop,
+		kWacMediaLeft + kWacTextPanelWidth, kWacMediaTop + kWacTextPanelHeight);
+	uint firstVisible = 0;
+	uint maximumFirstVisible = 0;
+	uint visibleRows = 0;
+	_databaseTextScrollControl = ModalDialogManager::kTextPanelScrollNone;
+	_databaseTextScrollDragging = false;
+	_databaseTextScrollDragOffset = 0;
+	if (!drawDatabaseTextPanel(bodyResourceId, bounds, firstVisible,
+			maximumFirstVisible, visibleRows))
+		return kNoAction;
+
+	_wac->_engine->getInput()->discardMouseTransitions();
+	debugC(1, kDebugWac,
+		"Ripper: entered WAC database text panel entry=%u label='%s' resource=0x%x bounds=%d,%d,%d,%d scrollLimit=%u",
+		entry.originalIndex, entry.label.c_str(), bodyResourceId,
+		bounds.left, bounds.top, bounds.width(), bounds.height(), maximumFirstVisible);
+	uint16 result = kNoAction;
+	while (!_wac->_engine->shouldQuit()) {
+		const uint16 command = serviceDatabaseMediaInput(entry.originalIndex,
+			&firstVisible, maximumFirstVisible, visibleRows);
+		if (command == kWacDatabaseTextScrolled ||
+				command == MediaSequenceCallback::kContinueRefreshPalette) {
+			if (!drawDatabaseTextPanel(bodyResourceId, bounds, firstVisible,
+					maximumFirstVisible, visibleRows))
+				break;
+		} else if (command == kWacDatabaseSelectionChanged ||
+				command == kExitAction || command == 0x1b) {
+			result = command;
+			break;
+		}
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+
+	clearDatabaseMediaViewport();
+	_databaseTextScrollControl = ModalDialogManager::kTextPanelScrollNone;
+	_databaseTextScrollDragging = false;
+	drawDatabase();
+	debugC(1, kDebugWac,
+		"Ripper: left WAC database text panel entry=%u resource=0x%x result=0x%x firstLine=%u",
+		entry.originalIndex, bodyResourceId, result, firstVisible);
+	if (result == kWacDatabaseSelectionChanged &&
+			_databaseSelection < _databaseEntries.size()) {
+		debugC(2, kDebugWac,
+			"Ripper: WAC database text panel switching entry=%u to entry=%u label='%s'",
+			entry.originalIndex, _databaseEntries[_databaseSelection].originalIndex,
+			_databaseEntries[_databaseSelection].label.c_str());
+		return dispatchDatabaseEntry(_databaseEntries[_databaseSelection]);
+	}
+	return result == kExitAction ? kExitAction : kNoAction;
+}
+
+uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
+	// RunWacInventorySelectionLoop at 0x2252a clears the left media viewport
+	// before dispatching every selected database row.
+	clearDatabaseMediaViewport();
+	if (entry.originalIndex == 1) {
+		debugC(2, kDebugWac,
+			"Ripper: WAC database retaining chooser while entering Broken Mug viewport=50,50,282,350");
+		BrokenMugPuzzle::Result result;
+		if (_wac->_engine->getMilestones()->isSet(kMilestoneCompletedMug)) {
+			result = BrokenMugPuzzle::playCompletionMedia(_wac->_engine) ?
+				BrokenMugPuzzle::kSolved : BrokenMugPuzzle::kLoadFailed;
+		} else {
+			BrokenMugPuzzle puzzle(_wac->_engine);
+			result = puzzle.run();
+		}
+		debugC(1, kDebugWac,
+			"Ripper: WAC database entry=1 label='%s' RunWacMugSelectionScene result=%d",
+			entry.label.c_str(), result);
+		if (result == BrokenMugPuzzle::kSolved) {
+			// RunWacMugSelectionScene at 0x236b9 replaces the active row's text
+			// pointer with resource 0xde after setting flags 0x47 and 0x48. The
+			// visible row keeps original dispatch entry 1 for this chooser session.
+			const Common::String &completedLabel =
+				_wac->resourceString(kWacDatabaseTextBase + 2);
+			debugC(1, kDebugWac,
+				"Ripper: WAC database replaced completed cup row entry=1 oldLabel='%s' textId=0x%x newLabel='%s'",
+				entry.label.c_str(), kWacDatabaseTextBase + 2, completedLabel.c_str());
+			entry.label = completedLabel;
+		}
+		_wac->drawFrontEnd();
+		drawDatabase();
+		return result == BrokenMugPuzzle::kExitWac ? kExitAction : kNoAction;
+	}
+	if (entry.originalIndex == 2) {
+		debugC(2, kDebugWac,
+			"Ripper: WAC database retaining chooser while presenting completed Broken Mug");
+		const bool played = BrokenMugPuzzle::playCompletionMedia(_wac->_engine);
+		debugC(1, kDebugWac,
+			"Ripper: WAC database entry=2 label='%s' PlayMugSelectionCompletionMedia success=%d",
+			entry.label.c_str(), played);
+		_wac->drawFrontEnd();
+		drawDatabase();
+		return kNoAction;
+	}
+	if (entry.originalIndex == 3)
+		return runJournalRevealScene(entry);
+	if (entry.originalIndex == 6)
+		return runVoiceLockPuzzle(entry);
+	if (entry.originalIndex == 0 || entry.originalIndex == 4 ||
+			entry.originalIndex == 10 || entry.originalIndex == 11) {
+		const Common::String path = Common::String::format(
+			"wacinv%u.pcx", entry.originalIndex);
+		const bool loaded = loadDatabaseStillImage(path);
+		debugC(1, kDebugWac,
+			"Ripper: WAC database entry=%u label='%s' stillImage='%s' loaded=%d",
+			entry.originalIndex, entry.label.c_str(), path.c_str(), loaded);
+		return kNoAction;
+	}
+	if (entry.originalIndex == 13 || entry.originalIndex == 14) {
+		// RunWacInventorySelectionLoop at 0x2252a cases 0x0d and 0x0e resolve
+		// WACINV13.SMK and WACINV14.SMK from INTERFAC.PL and enter
+		// RunStaticMediaScreenWithOptionalVoiceover at 0x2339d without audio.
+		// Both 320x200 sequences are centered in the 350x282 WAC viewport and
+		// loop from frame one while the persistent WAC controls stay active.
+		const Common::String path = Common::String::format(
+			"wacinv%u.smk", entry.originalIndex);
+		WacDatabaseMediaCallback callback(this, entry.originalIndex);
+		uint16 command = kNoAction;
+		_wac->_engine->getInput()->discardMouseTransitions();
+		const bool played = _wac->_engine->getMedia()->playWacInterfaceSequence(
+			path, 65, 91, 1, &callback, &command);
+		clearDatabaseMediaViewport();
+		drawDatabase();
+		debugC(1, kDebugWac,
+			"Ripper: WAC database entry=%u label='%s' media='%s' position=65,91 loopStartFrame=1 voiceover=none played=%d command=0x%x",
+			entry.originalIndex, entry.label.c_str(), path.c_str(), played,
+			command);
+		if (command == kExitAction)
+			return kExitAction;
+		if (command == kWacDatabaseSelectionChanged &&
+				_databaseSelection < _databaseEntries.size()) {
+			debugC(2, kDebugWac,
+				"Ripper: WAC database media switching entry=%u to entry=%u label='%s'",
+				entry.originalIndex,
+				_databaseEntries[_databaseSelection].originalIndex,
+				_databaseEntries[_databaseSelection].label.c_str());
+			return dispatchDatabaseEntry(_databaseEntries[_databaseSelection]);
+		}
+		return kNoAction;
+	}
+	if (entry.originalIndex == 15) {
+		return runDatabaseTextPanel(entry, kWacCircuitManualResource);
+	}
+	debugC(1, kDebugWac,
+		"Ripper: WAC database entry=%u label='%s' handler is stubbed",
+		entry.originalIndex, entry.label.c_str());
+	return kNoAction;
+}
+
+uint16 WacDatabaseSession::run() {
+	const Common::Rect bounds(kWacDatabaseLeft, kWacDatabaseTop,
+		kWacDatabaseRight, kWacDatabaseBottom);
+	buildDatabaseEntries();
+	_databaseSelection = 0;
+	_databaseFirstVisible = 0;
+	_databaseStillImage = BitmapAssetFrame();
+	_databaseStillImageScroll = 0;
+	_databaseScrollControl = 0;
+	_databaseCornerAlternate = true;
+	_databaseCornerLastMillis = g_system->getMillis(true);
+	_wac->_engine->getInput()->discardMouseTransitions();
+	drawDatabase();
+	debugC(1, kDebugWac,
+		"Ripper: entered WAC database chooser control=0x%x bounds=%d,%d,%d,%d client=%d,%d,%d,%d rows=%u",
+		kWacDatabaseControlId, bounds.left, bounds.top, bounds.width(), bounds.height(),
+		bounds.left + kWacDatabaseLeftInset, bounds.top + kWacDatabaseHeadingInset,
+		bounds.width() - kWacDatabaseLeftInset - kWacDatabaseRightInset,
+		bounds.height() - kWacDatabaseHeadingInset - kWacDatabaseBottomInset,
+		kWacDatabaseVisibleRows);
+
+	uint16 returnAction = kNoAction;
+	bool active = true;
+	while (active && !_wac->_engine->shouldQuit()) {
+		if (_wac->_engine->getInput()->pollEvents()) {
+			_wac->_engine->quitGame();
+			break;
+		}
+		while (_wac->_engine->getInput()->hasPendingKey()) {
+			const uint16 command = _wac->_engine->getInput()->consumeKey();
+			if (command == 0x1b) {
+				active = false;
+			} else if (command == kExitAction || command == kDosF10Command) {
+				returnAction = kExitAction;
+				active = false;
+			} else if (command == kHelpAction || command == kTextViewerAction) {
+				returnAction = _wac->dispatchSubsceneAction(command,
+					kWacDatabaseHelpResource, true);
+				if (returnAction == kExitAction)
+					active = false;
+			} else if (!_databaseEntries.empty() && command == 0x4800) {
+				if (_databaseSelection > 0)
+					--_databaseSelection;
+			} else if (!_databaseEntries.empty() && command == 0x5000) {
+				if (_databaseSelection + 1 < _databaseEntries.size())
+					++_databaseSelection;
+			} else if (!_databaseEntries.empty() && command == 0x0d) {
+				returnAction = dispatchDatabaseEntry(_databaseEntries[_databaseSelection]);
+				if (returnAction == kExitAction)
+					active = false;
+			}
+			if (_databaseSelection < _databaseFirstVisible)
+				_databaseFirstVisible = _databaseSelection;
+			else if (_databaseSelection >= _databaseFirstVisible + kWacDatabaseVisibleRows)
+				_databaseFirstVisible = _databaseSelection - kWacDatabaseVisibleRows + 1;
+			drawDatabase();
+		}
+		if (!active)
+			break;
+
+		const MouseState mouse = _wac->_engine->getInput()->publishMouseState();
+		_wac->serviceIdleWindowAnimations();
+		serviceDatabaseCornerAnimation();
+		const int scrollControl = findDatabaseScrollControl(mouse.position);
+		if (scrollControl != _databaseScrollControl) {
+			_databaseScrollControl = scrollControl;
+			drawDatabaseScrollControls();
+			debugC(2, kDebugWac,
+				"Ripper: WAC database still-image scroll hover control=%d point=%d,%d",
+				_databaseScrollControl, mouse.position.x, mouse.position.y);
+		}
+		const uint fallbackCursor = (bounds.contains(mouse.position) || scrollControl != 0) ?
+			kWacControlCursor : kWacDefaultCursor;
+		const uint16 controlAction = _wac->serviceFrontEndControls(mouse, fallbackCursor);
+		if (controlAction != kNoAction) {
+			returnAction = _wac->dispatchSubsceneAction(controlAction,
+				kWacDatabaseHelpResource, true);
+			if (returnAction == kExitAction)
+				active = false;
+		}
+		if (!active)
+			break;
+		if ((mouse.released & kMouseButtonLeft) != 0) {
+			if (scrollControl == 1)
+				scrollDatabaseStillImage(-kWacMediaScrollStep);
+			else if (scrollControl == 2)
+				scrollDatabaseStillImage(kWacMediaScrollStep);
+		}
+		if (!_databaseEntries.empty() && bounds.contains(mouse.position)) {
+			const int relativeY = mouse.position.y - bounds.top -
+				kWacDatabaseHeadingInset - kWacDatabaseRowInset;
+			if (relativeY >= 0) {
+				const uint row = relativeY / kWacDatabaseRowHeight;
+				const uint entryIndex = _databaseFirstVisible + row;
+				if (row < kWacDatabaseVisibleRows && entryIndex < _databaseEntries.size() &&
+					entryIndex != _databaseSelection) {
+					_databaseSelection = entryIndex;
+					debugC(2, kDebugWac,
+						"Ripper: WAC database hover visibleRow=%u entry=%u label='%s' point=%d,%d",
+						entryIndex, _databaseEntries[entryIndex].originalIndex,
+						_databaseEntries[entryIndex].label.c_str(), mouse.position.x, mouse.position.y);
+					drawDatabase();
+				}
+				if ((mouse.released & kMouseButtonLeft) != 0 && row < kWacDatabaseVisibleRows &&
+					entryIndex < _databaseEntries.size()) {
+					returnAction = dispatchDatabaseEntry(_databaseEntries[entryIndex]);
+					if (returnAction == kExitAction)
+						active = false;
+				}
+			}
+		}
+		// RunWacSceneInputLoopUntilExitAction at 0x221e3 services the software
+		// selection presentation every tick while the inventory chooser is active.
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+	debugC(1, kDebugWac,
+		"Ripper: left WAC database chooser returnAction=0x%x", returnAction);
+	return returnAction;
+}
+
+
+} // End of namespace Ripper
