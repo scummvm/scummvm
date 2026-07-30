@@ -56,7 +56,8 @@ RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescrip
 		_modalDialog(new ModalDialogManager(this)), _resources(new ResourceManager()),
 		_scripts(new ScriptManager(this)), _settings(new RipperSettings(_mixer)),
 		_toolbar(new ToolbarManager(this)),
-		_wac(new WacManager(this)), _worldMap(new WorldMap(this)), _gameplayStarted(false) {
+		_wac(new WacManager(this)), _worldMap(new WorldMap(this)),
+		_gameplayStarted(false), _puzzleHelpEnabled(false) {
 	setDebugger(new Console(this));
 }
 
