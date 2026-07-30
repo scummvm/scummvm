@@ -354,7 +354,8 @@ static void appendWacVoiceLockSelectionAudio(
 }
 
 static bool validateWacVoiceLockSelections(
-		const Common::Array<WacVoiceLockSelection> &selections) {
+		const Common::Array<WacVoiceLockSelection> &selections,
+		Common::String &diagnostics) {
 	static const WacVoiceLockSelection solution[kWacVoiceLockSelectionCount] = {
 		WacVoiceLockSelection(240, 252),
 		WacVoiceLockSelection(70, 82),
@@ -362,29 +363,57 @@ static bool validateWacVoiceLockSelections(
 		WacVoiceLockSelection(171, 184),
 		WacVoiceLockSelection(190, 199)
 	};
-	if (selections.size() != kWacVoiceLockSelectionCount)
+	diagnostics.clear();
+	if (selections.size() != kWacVoiceLockSelectionCount) {
+		diagnostics = Common::String::format("count=%u expected=%u",
+			selections.size(), kWacVoiceLockSelectionCount);
 		return false;
+	}
 
-	bool matched[kWacVoiceLockSelectionCount] = { false, false, false, false, false };
+	bool allMatched = true;
 	for (uint selection = 0; selection < selections.size(); ++selection) {
 		bool found = false;
+		uint diagnosticCandidate = 0;
+		int diagnosticStartDelta =
+			selections[selection].start - solution[0].start;
+		int diagnosticEndDelta =
+			selections[selection].end - solution[0].end;
+		int closestDistance = MAX(ABS(diagnosticStartDelta),
+			ABS(diagnosticEndDelta));
 		for (uint candidate = 0; candidate < kWacVoiceLockSelectionCount;
 				++candidate) {
-			if (matched[candidate])
-				continue;
-			if (ABS(selections[selection].start - solution[candidate].start) <=
-					(int)kWacVoiceLockSelectionTolerance &&
-					ABS(selections[selection].end - solution[candidate].end) <=
-					(int)kWacVoiceLockSelectionTolerance) {
-				matched[candidate] = true;
+			const int startDelta =
+				selections[selection].start - solution[candidate].start;
+			const int endDelta =
+				selections[selection].end - solution[candidate].end;
+			const int distance = MAX(ABS(startDelta), ABS(endDelta));
+			if (distance < closestDistance) {
+				diagnosticCandidate = candidate;
+				diagnosticStartDelta = startDelta;
+				diagnosticEndDelta = endDelta;
+				closestDistance = distance;
+			}
+			if (ABS(startDelta) <= (int)kWacVoiceLockSelectionTolerance &&
+					ABS(endDelta) <=
+						(int)kWacVoiceLockSelectionTolerance) {
+				diagnosticCandidate = candidate;
+				diagnosticStartDelta = startDelta;
+				diagnosticEndDelta = endDelta;
 				found = true;
 				break;
 			}
 		}
-		if (!found)
-			return false;
+		if (!diagnostics.empty())
+			diagnostics += " ";
+		diagnostics += Common::String::format(
+			"#%u=%d..%d target%u=%d..%d delta=%+d,%+d match=%d",
+			selection, selections[selection].start, selections[selection].end,
+			diagnosticCandidate, solution[diagnosticCandidate].start,
+			solution[diagnosticCandidate].end, diagnosticStartDelta,
+			diagnosticEndDelta, found);
+		allMatched &= found;
 	}
-	return true;
+	return allMatched;
 }
 
 WacVoiceLockPuzzle::WacVoiceLockPuzzle(WacDatabaseSession *database) :
@@ -940,8 +969,9 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 			if (activeFrame < scripts->ba0().getFrames().size())
 				sceneLabel = scripts->ba0().getString(
 					scripts->ba0().getFrames()[activeFrame].labelOffset);
-			const bool rangesMatch =
-				validateWacVoiceLockSelections(selections);
+			Common::String rangeDiagnostics;
+			const bool rangesMatch = validateWacVoiceLockSelections(
+				selections, rangeDiagnostics);
 			const bool sceneMatches =
 				sceneLabel.equalsIgnoreCase("eez1");
 			Common::String selectionSummary;
@@ -953,10 +983,11 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 					selections[selection].start, selections[selection].end);
 			}
 			debugC(2, kDebugWac,
-				"Ripper: WAC voice-lock validation gates editor=%d quantized=%d ranges=%d sceneMatch=%d scene='%s' expectedScene='eez1' selections=%u spans=[%s]",
+				"Ripper: WAC voice-lock validation gates editor=%d quantized=%d ranges=%d sceneMatch=%d scene='%s' expectedScene='eez1' selections=%u spans=[%s] tolerance=%u diagnostics=[%s]",
 				editorAvailable, quantized, rangesMatch, sceneMatches,
 				sceneLabel.c_str(), selections.size(),
-				selectionSummary.c_str());
+				selectionSummary.c_str(), kWacVoiceLockSelectionTolerance,
+				rangeDiagnostics.c_str());
 			if (editorAvailable && quantized && rangesMatch &&
 					sceneMatches) {
 				debugC(1, kDebugWac,
