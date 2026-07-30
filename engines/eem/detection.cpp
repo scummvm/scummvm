@@ -56,7 +56,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "PICS.DBD",  "cc05ec256cd5a04df9019e9aebfb7c32", 994057),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_TESTING,
 		GUI_OPTIONS_EEM_CD
 	},
 	{
@@ -66,7 +66,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "PICS.DBD",  "26b97e8586f798ea90440e88d3d527cd", 959160),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_TESTING,
 		GUI_OPTIONS_EEM_FLOPPY
 	},
 	{
@@ -77,7 +77,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "PICS.DBD",  "199150e7d612f87477814bc5f4a1967a", 955332),
 		Common::ES_ESP,
 		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_TESTING,
 		GUI_OPTIONS_EEM_FLOPPY
 	},
 	{
@@ -87,7 +87,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "PICS.DBD",   "fc6be43a0391a79263535760a8bfaecd", 322194),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_DEMO,
+		ADGF_TESTING | ADGF_DEMO,
 		GUI_OPTIONS_EEM_DEMO
 	},
 	{
@@ -97,7 +97,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "PICS.DBD",    "8905041070ff1352666d98cd78d5501c", 3800445),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUI_OPTIONS_EEM_MAC
 	},
 	{
@@ -111,7 +111,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "EEM Install Data 2",  "aebccc677e149b37285f291f6ac72f57", 1446428),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUI_OPTIONS_EEM_MAC
 	},
 	{
@@ -122,7 +122,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "PICS.DBD",   "da0b13a117bc3a207aec907c05769cd8", 2972988),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO3(GAMEOPTION_FIT_DIALOG_BALLOONS, GUIO_MIDIADLIB, GUIO_MIDIMT32)
 	},
 	{
