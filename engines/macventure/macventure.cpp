@@ -171,6 +171,10 @@ Common::Error MacVentureEngine::run() {
 			if (_prepared) {
 				_prepared = false;
 
+				bool busy = _cmdReady || _halted;
+				if (busy)
+					_gui->setWaitCursor(true);
+
 				if (!_halted)
 					updateState(false);
 
@@ -190,6 +194,9 @@ Common::Error MacVentureEngine::run() {
 				if (_gameState == kGameStateLosing) {
 					endGame();
 				}
+
+				if (busy)
+					_gui->setWaitCursor(false);
 			}
 		}
 		refreshScreen();

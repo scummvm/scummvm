@@ -163,6 +163,8 @@ public:
 
 	void printText(const Common::String &text);
 
+	void setWaitCursor(bool wait);
+
 	//Dialog interactions
 	void showPrebuiltDialog(PrebuiltDialogs type, const Common::String &title = "");
 	bool isDialogOpen();
