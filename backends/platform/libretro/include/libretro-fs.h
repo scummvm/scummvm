@@ -61,7 +61,7 @@ public:
 	LibRetroFilesystemNode(const Common::String &path);
 
 	virtual bool exists() const {
-		return access(_path.c_str(), F_OK) == 0;
+		return _isValid;
 	}
 	virtual Common::U32String getDisplayName() const {
 		return _displayName;

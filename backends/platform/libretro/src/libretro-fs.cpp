@@ -27,30 +27,270 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_getenv
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcat
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
+#define FORBIDDEN_SYMBOL_EXCEPTION_strstr
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit // Needed for IRIX's unistd.h
 
+#include <libretro.h>
 #include <file/file_path.h>
 #include <retro_dirent.h>
-#include <retro_stat.h>
+#include <streams/file_stream.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "backends/platform/libretro/include/libretro-fs.h"
-#include "backends/fs/stdiostream.h"
 #include "common/algorithm.h"
+#include "common/stream.h"
+
+static bool libretroFsHasUriScheme(const Common::String &path) {
+	return strstr(path.c_str(), "://") != nullptr;
+}
+
+static Common::String libretroFsUriDisplayName(const Common::String &path) {
+	Common::String trimmed(path);
+
+	while (trimmed.size() > 1 && trimmed.lastChar() == '/')
+		trimmed.erase(trimmed.size() - 1);
+
+	Common::String name = Common::lastPathComponent(trimmed, '/');
+	return name.empty() ? trimmed : name;
+}
+
+static int libretroFsWhenceToVfs(int whence) {
+	switch (whence) {
+	case SEEK_SET:
+		return RETRO_VFS_SEEK_POSITION_START;
+	case SEEK_CUR:
+		return RETRO_VFS_SEEK_POSITION_CURRENT;
+	case SEEK_END:
+		return RETRO_VFS_SEEK_POSITION_END;
+	default:
+		return whence;
+	}
+}
+
+class LibRetroFileReadStream final : public Common::SeekableReadStream {
+public:
+	explicit LibRetroFileReadStream(RFILE *file)
+		: _file(file), _size(file ? filestream_get_size(file) : -1),
+		  _eos(false), _err(false) {
+	}
+
+	~LibRetroFileReadStream() override {
+		close();
+	}
+
+	uint32 read(void *dataPtr, uint32 dataSize) override {
+		if (!_file || !dataPtr) {
+			_err = true;
+			return 0;
+		}
+
+		if (dataSize == 0)
+			return 0;
+
+		int64_t ret = filestream_read(_file, dataPtr, dataSize);
+
+		if (ret < 0) {
+			_err = true;
+			return 0;
+		}
+
+		// Emulate fread()/feof() behaviour closely enough for ScummVM:
+		// EOF becomes observable after a read cannot satisfy the requested size.
+		if ((uint32)ret < dataSize)
+			_eos = true;
+
+		return (uint32)ret;
+	}
+
+	bool eos() const override {
+		return _eos;
+	}
+
+	bool err() const override {
+		return _err;
+	}
+
+	void clearErr() override {
+		_eos = false;
+		_err = false;
+	}
+
+	int64 pos() const override {
+		if (!_file)
+			return -1;
+
+		int64_t ret = filestream_tell(_file);
+		return ret < 0 ? -1 : ret;
+	}
+
+	int64 size() const override {
+		if (!_file)
+			return -1;
+
+		return _size >= 0 ? _size : filestream_get_size(_file);
+	}
+
+	bool seek(int64 offs, int whence = SEEK_SET) override {
+		if (!_file) {
+			_err = true;
+			return false;
+		}
+
+		int64_t ret = filestream_seek(_file, offs, libretroFsWhenceToVfs(whence));
+
+		if (ret < 0) {
+			_err = true;
+			return false;
+		}
+
+		// ScummVM's stream contract says a successful seek clears EOF.
+		_eos = false;
+		return true;
+	}
+
+private:
+	void close() {
+		if (_file) {
+			filestream_close(_file);
+			_file = nullptr;
+		}
+	}
+
+	RFILE *_file;
+	int64 _size;
+	bool _eos;
+	bool _err;
+};
+
+class LibRetroFileWriteStream final : public Common::SeekableWriteStream {
+public:
+	explicit LibRetroFileWriteStream(RFILE *file) : _file(file), _err(false) {
+	}
+
+	~LibRetroFileWriteStream() override {
+		close();
+	}
+
+	uint32 write(const void *dataPtr, uint32 dataSize) override {
+		if (!_file || !dataPtr) {
+			_err = true;
+			return 0;
+		}
+
+		if (dataSize == 0)
+			return 0;
+
+		int64_t ret = filestream_write(_file, dataPtr, dataSize);
+
+		if (ret < 0) {
+			_err = true;
+			return 0;
+		}
+
+		if ((uint32)ret < dataSize)
+			_err = true;
+
+		return (uint32)ret;
+	}
+
+	bool flush() override {
+		if (!_file) {
+			_err = true;
+			return false;
+		}
+
+		if (filestream_flush(_file) != 0) {
+			_err = true;
+			return false;
+		}
+
+		return true;
+	}
+
+	bool err() const override {
+		return _err;
+	}
+
+	void clearErr() override {
+		_err = false;
+	}
+
+	void finalize() override {
+		flush();
+	}
+
+	int64 pos() const override {
+		if (!_file)
+			return -1;
+
+		int64_t ret = filestream_tell(_file);
+		return ret < 0 ? -1 : ret;
+	}
+
+	int64 size() const override {
+		if (!_file)
+			return -1;
+
+		return filestream_get_size(_file);
+	}
+
+	bool seek(int64 offs, int whence = SEEK_SET) override {
+		if (!_file) {
+			_err = true;
+			return false;
+		}
+
+		if (filestream_seek(_file, offs, libretroFsWhenceToVfs(whence)) < 0) {
+			_err = true;
+			return false;
+		}
+
+		return true;
+	}
+
+private:
+	void close() {
+		if (_file) {
+			flush();
+			filestream_close(_file);
+			_file = nullptr;
+		}
+	}
+
+	RFILE *_file;
+	bool _err;
+};
 
 void LibRetroFilesystemNode::setFlags() {
 	const char *fspath = _path.c_str();
 
+	// Keep all filesystem state queries on libretro-common VFS.
+	// This is important on Android/SAF and also keeps POSIX paths consistent
+	// with the same VFS path used later by filestream_open().
 	_isValid = path_is_valid(fspath);
 	_isDirectory = path_is_directory(fspath);
-	_isReadable = access(fspath, R_OK) == 0;
-	_isWritable = access(_path.c_str(), W_OK) == 0;
+
+	// libretro-common exposes stat-style validity/directory queries here, but
+	// no portable readability/writability probes. Treat valid paths as readable
+	// for ScummVM's FSNode purposes and let createReadStream()/createWriteStream()
+	// be the definitive open check.
+	_isReadable = _isValid;
+	_isWritable = _isValid;
 }
 
 LibRetroFilesystemNode::LibRetroFilesystemNode(const Common::String &p) {
 	assert(p.size() > 0);
+
+	if (libretroFsHasUriScheme(p)) {
+		_path = p;
+		_displayName = libretroFsUriDisplayName(_path);
+		setFlags();
+		return;
+	}
 
 	// Expand "~/" to the value of the HOME env variable
 	if (p.hasPrefix("~/") || p.hasPrefix("~\\")) {
@@ -72,7 +312,6 @@ LibRetroFilesystemNode::LibRetroFilesystemNode(const Common::String &p) {
 	// Normalize the path (that is, remove unneeded slashes etc.)
 	_path = Common::normalizePath(Common::String(portable_path), '/');
 	_displayName = Common::lastPathComponent(_path, '/');
-
 	setFlags();
 }
 
@@ -123,7 +362,6 @@ bool LibRetroFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, 
 
 		entry._isValid = true;
 		entry._isDirectory = retro_dirent_is_dir(dirp, entry._path.c_str());
-
 		// Skip files that are invalid for some reason (e.g. because we couldn't
 		// properly stat them).
 		if (!entry._isValid)
@@ -144,6 +382,50 @@ AbstractFSNode *LibRetroFilesystemNode::getParent() const {
 	if (_path == "/")
 		return 0; // The filesystem root has no parent
 
+	Common::String parentPath(_path);
+
+	if (libretroFsHasUriScheme(parentPath)) {
+		const char *pathStr = parentPath.c_str();
+		const char *scheme = strstr(pathStr, "://");
+		const uint schemeRootLen = scheme ? (uint)(scheme - pathStr) + 3 : 0;
+
+		// For hierarchical URI paths, keep the authority root intact.
+		// Example:
+		//   smb://server/share/game -> smb://server/share/
+		//   smb://server/share/     -> smb://server/
+		//   smb://server/           -> /
+		uint uriRootLen = schemeRootLen;
+		if (schemeRootLen > 0) {
+			const char *authorityEnd = strchr(pathStr + schemeRootLen, '/');
+			if (authorityEnd)
+				uriRootLen = (uint)(authorityEnd - pathStr) + 1;
+			else
+				uriRootLen = parentPath.size();
+		}
+
+		while (parentPath.size() > uriRootLen && parentPath.lastChar() == '/')
+			parentPath.erase(parentPath.size() - 1);
+
+		if (parentPath.size() <= uriRootLen) {
+			return makeNode("/");
+		}
+
+		size_t pos = parentPath.findLastOf('/');
+		if (pos == Common::String::npos || pos + 1 <= uriRootLen)
+			parentPath = parentPath.substr(0, uriRootLen);
+		else
+			parentPath = parentPath.substr(0, pos + 1);
+
+		AbstractFSNode *parent = makeNode(parentPath);
+
+		if (parent && parent->isDirectory() == false) {
+			delete parent;
+			return 0;
+		}
+
+		return parent;
+	}
+
 	const char *start = _path.c_str();
 	const char *end = start + _path.size();
 
@@ -156,20 +438,34 @@ AbstractFSNode *LibRetroFilesystemNode::getParent() const {
 		return 0;
 	}
 
-	AbstractFSNode *parent = makeNode(Common::String(start, end));
+	Common::String posixParentPath(start, end);
 
-	if (parent->isDirectory() == false)
+	AbstractFSNode *parent = makeNode(posixParentPath);
+
+	if (parent->isDirectory() == false) {
+		delete parent;
 		return 0;
+	}
 
 	return parent;
 }
 
 Common::SeekableReadStream *LibRetroFilesystemNode::createReadStream() {
-	return StdioStream::makeFromPath(getPath(), StdioStream::WriteMode_Read);
+	RFILE *file = filestream_open(getPath().c_str(), RETRO_VFS_FILE_ACCESS_READ, RETRO_VFS_FILE_ACCESS_HINT_NONE);
+
+	if (!file)
+		return nullptr;
+	return new LibRetroFileReadStream(file);
 }
 
 Common::SeekableWriteStream *LibRetroFilesystemNode::createWriteStream(bool atomic) {
-	return StdioStream::makeFromPath(getPath(), atomic ? StdioStream::WriteMode_WriteAtomic : StdioStream::WriteMode_Write);
+	(void)atomic;
+	RFILE *file = filestream_open(getPath().c_str(), RETRO_VFS_FILE_ACCESS_WRITE, RETRO_VFS_FILE_ACCESS_HINT_NONE);
+
+	if (!file)
+		return nullptr;
+
+	return new LibRetroFileWriteStream(file);
 }
 
 bool LibRetroFilesystemNode::createDirectory() {

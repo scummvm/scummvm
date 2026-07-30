@@ -24,6 +24,8 @@
 #include "common/fs.h"
 #include "common/error.h"
 #include "streams/file_stream.h"
+#include <file/file_path.h>
+#include <retro_dirent.h>
 #include "graphics/surface.h"
 #ifdef _WIN32
 #include <direct.h>
@@ -794,6 +796,7 @@ void retro_set_input_state(retro_input_state_t cb) {
 
 void retro_set_environment(retro_environment_t cb) {
 	environ_cb = cb;
+
 	bool tmp = true;
 	bool has_categories;
 	environ_cb(RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME, &tmp);
@@ -921,6 +924,18 @@ void retro_init(void) {
 		retro_log_cb = log.log;
 	else
 		retro_log_cb = NULL;
+
+	struct retro_vfs_interface_info vfs_iface;
+	vfs_iface.required_interface_version = STAT64_REQUIRED_VFS_VERSION;
+	vfs_iface.iface = nullptr;
+
+	bool vfs_ok = environ_cb(RETRO_ENVIRONMENT_GET_VFS_INTERFACE, &vfs_iface);
+
+	if (vfs_ok) {
+		filestream_vfs_init(&vfs_iface);
+		path_vfs_init(&vfs_iface);
+		dirent_vfs_init(&vfs_iface);
+	}
 
 	if (retro_log_cb)
 		retro_log_cb(RETRO_LOG_DEBUG, "ScummVM core version: %s\n", __GIT_VERSION);
