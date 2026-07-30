@@ -33,6 +33,7 @@ public:
 		TS_ASSERT_EQUALS(request.displayScale, 1U);
 		TS_ASSERT(request.patchInterfacePalette);
 		TS_ASSERT(request.rememberVideoPalette);
+		TS_ASSERT(!request.loopFromStart);
 		TS_ASSERT_EQUALS(request.lastFrame, 0xffffffffU);
 		TS_ASSERT_EQUALS(request.boundedLoopStartFrame, 0xffffffffU);
 		TS_ASSERT(!request.transparentFirstPixel);
