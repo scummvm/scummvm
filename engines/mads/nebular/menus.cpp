@@ -101,8 +101,6 @@ static int  game_menu_save_dirty;
 static char *game_menu_save_buffer;
 static char *game_menu_save_pointer;
 static int menu_room_id;
-static int menu_series_handle;
-
 
 
 void global_emergency_save() {
@@ -188,7 +186,7 @@ static void game_menu_setup() {
 		return;
 	}
 
-	menu_series_handle = matte_allocate_series(menuSprites, 0);
+	game_menu_series_id = matte_allocate_series(menuSprites, 0);
 
 	Common::fill(magic_color_flags, magic_color_flags + 3, 0);
 	Common::fill(magic_color_values, magic_color_values + 3, 0);
@@ -235,7 +233,7 @@ static void game_menu_shutdown() {
 
 	viewing_at_y = 0;
 
-	matte_deallocate_series(menu_series_handle, true);
+	matte_deallocate_series(game_menu_series_id, true);
 	kernel_room_shutdown();
 
 	mem_free(kernel.quotes);
