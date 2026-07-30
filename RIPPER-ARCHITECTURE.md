@@ -1316,7 +1316,7 @@
   left click drops the piece after that button is released. A right click while
   the piece is selected advances eight frames and rotates it to the next of
   four orientation states. The puzzle implementation is isolated under
-  `engines/ripper/puzzles/`.
+  `engines/ripper/wac/`, beside the database session that directly dispatches it.
 - `RunWacInventorySelectionLoop` keeps the database chooser alive while it
   dispatches `RunWacMugSelectionScene`. The mug scene redraws only the left
   media viewport, so the Object Database panel and its selected Broken Mug row
