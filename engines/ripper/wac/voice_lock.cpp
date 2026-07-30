@@ -57,6 +57,7 @@ static const uint kWacVoiceLockFileResource = 0xb1;
 static const uint kWacVoiceLockEditorResource = 0xb2;
 static const uint kWacVoiceLockSelectionCount = 5;
 static const uint kWacVoiceLockSelectionTolerance = 3;
+static const byte kWacVoiceLockSelectionColor = 255;
 static const byte kWacVoiceLockWaveformColor = 255;
 static const byte kWacVoiceLockMarkerColor = 196;
 static const uint16 kNoAction = WacManager::kNoAction;
@@ -223,6 +224,28 @@ static void captureWacVoiceLockRect(const Graphics::Surface &screen,
 	}
 }
 
+static void captureWacVoiceLockPixels(const Graphics::Surface &screen,
+		Common::Array<byte> &pixels, int width, int height,
+		int sourceLeft, int sourceTop) {
+	if (width <= 0 || height <= 0) {
+		pixels.clear();
+		return;
+	}
+	pixels.resize(width * height);
+	memset(pixels.data(), 0, pixels.size());
+	const int firstColumn = MAX<int>(0, -sourceLeft);
+	const int firstRow = MAX<int>(0, -sourceTop);
+	const int lastColumn = MIN<int>(width, screen.w - sourceLeft);
+	const int lastRow = MIN<int>(height, screen.h - sourceTop);
+	if (firstColumn >= lastColumn || firstRow >= lastRow)
+		return;
+	for (int row = firstRow; row < lastRow; ++row) {
+		memcpy(pixels.data() + row * width + firstColumn,
+			screen.getBasePtr(sourceLeft + firstColumn, sourceTop + row),
+			lastColumn - firstColumn);
+	}
+}
+
 static void blitWacVoiceLockPixels(Graphics::Surface &screen,
 		const Common::Array<byte> &pixels, int sourceWidth, int sourceHeight,
 		int destinationLeft, int destinationTop) {
@@ -260,9 +283,12 @@ static void drawWacVoiceLockWaveform(Graphics::Surface &screen,
 	// before filling the span with 0xff. Reapplying the old span at 0x25265
 	// restores its pixels before the changed span is drawn, identifying the
 	// operation as an XOR highlight rather than an opaque fill.
+	// The retained ScummVM WAC panel uses palette index 4 for black. Normalize
+	// the XOR operand so that black toggles to retail's logical selection
+	// color 0xff instead of the light-gray palette index 251.
 	xorWacVoiceLockRect(screen,
 		Common::Rect(start, bounds.top, end, bounds.bottom),
-		kWacVoiceLockWaveformColor);
+		kWacDatabaseBackground ^ kWacVoiceLockSelectionColor);
 }
 
 static void drawWacVoiceLockEditorWaveform(Graphics::Surface &screen,
@@ -405,6 +431,10 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 	Common::Point sourceSelectionDragPosition;
 	int sourceSelectionDragOffsetX = 0;
 	int sourceSelectionDragOffsetY = 0;
+	Common::Array<byte> sourceSelectionDragBackingPixels;
+	int sourceSelectionDragBackingWidth = 0;
+	int sourceSelectionDragBackingHeight = 0;
+	Common::Point sourceSelectionDragBackingPosition;
 	bool sourcePanelActive = true;
 	int hoveredButton = -1;
 	int pressedButton = -1;
@@ -428,7 +458,41 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 		buttonLeft += bitmap.width;
 	}
 
+	auto restoreSourceSelectionDragBacking = [&]() -> bool {
+		if (sourceSelectionDragBackingPixels.empty())
+			return true;
+		Graphics::Surface *screen = g_system->lockScreen();
+		if (!screen || screen->format.bytesPerPixel != 1) {
+			if (screen)
+				g_system->unlockScreen();
+			return false;
+		}
+		blitWacVoiceLockPixels(*screen,
+			sourceSelectionDragBackingPixels,
+			sourceSelectionDragBackingWidth,
+			sourceSelectionDragBackingHeight,
+			sourceSelectionDragBackingPosition.x,
+			sourceSelectionDragBackingPosition.y);
+		g_system->unlockScreen();
+		debugC(3, kDebugWac,
+			"Ripper: WAC voice-lock restored transient drag backing position=%d,%d size=%dx%d function=UpdateTransientPresentationOverlay@0x2a1ff",
+			sourceSelectionDragBackingPosition.x,
+			sourceSelectionDragBackingPosition.y,
+			sourceSelectionDragBackingWidth,
+			sourceSelectionDragBackingHeight);
+		sourceSelectionDragBackingPixels.clear();
+		sourceSelectionDragBackingWidth = 0;
+		sourceSelectionDragBackingHeight = 0;
+		return true;
+	};
+
 	auto drawPresentation = [&]() -> bool {
+		// UpdateTransientPresentationOverlay at 0x2a1ff restores the saved
+		// display rectangle before capturing and drawing at the new position.
+		// DestroyTransientPresentationOverlay at 0x2a7fa performs the same
+		// restoration when the drag ends.
+		if (!restoreSourceSelectionDragBacking())
+			return false;
 		// Playback and selection redraws replace both title controls and their
 		// client waveforms as one presentation. Do not expose the empty framed
 		// controls before the waveform pixels and buttons have been restored.
@@ -512,11 +576,28 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 					g_system->unlockScreen();
 				return false;
 			}
+			const int destinationLeft =
+				sourceSelectionDragPosition.x - sourceSelectionDragOffsetX;
+			const int destinationTop =
+				sourceSelectionDragPosition.y - sourceSelectionDragOffsetY;
+			sourceSelectionDragBackingWidth = sourceSelectionDragWidth;
+			sourceSelectionDragBackingHeight = sourceSelectionDragHeight;
+			sourceSelectionDragBackingPosition =
+				Common::Point(destinationLeft, destinationTop);
+			captureWacVoiceLockPixels(*screen,
+				sourceSelectionDragBackingPixels,
+				sourceSelectionDragBackingWidth,
+				sourceSelectionDragBackingHeight,
+				destinationLeft, destinationTop);
 			blitWacVoiceLockPixels(*screen, sourceSelectionDragPixels,
 				sourceSelectionDragWidth, sourceSelectionDragHeight,
-				sourceSelectionDragPosition.x - sourceSelectionDragOffsetX,
-				sourceSelectionDragPosition.y - sourceSelectionDragOffsetY);
+				destinationLeft, destinationTop);
 			g_system->unlockScreen();
+			debugC(3, kDebugWac,
+				"Ripper: WAC voice-lock captured transient drag backing position=%d,%d size=%dx%d function=UpdateTransientPresentationOverlay@0x2a1ff",
+				destinationLeft, destinationTop,
+				sourceSelectionDragBackingWidth,
+				sourceSelectionDragBackingHeight);
 		}
 		_database->engine()->getCursor()->refresh();
 		g_system->updateScreen();
@@ -897,6 +978,8 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 	}
 
 	_database->engine()->getMedia()->stopSoundEffect(audioHandle);
+	if (!restoreSourceSelectionDragBacking())
+		warning("Ripper: could not restore WAC voice-lock transient drag backing");
 	if (solved) {
 		_database->engine()->getCursor()->setVisible(false);
 		const bool played =

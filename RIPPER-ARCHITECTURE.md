@@ -1270,11 +1270,17 @@
   highlighted endpoints. It sets display write mode 3 at `0x25006` and fills
   the span with color `0xff`; the update path applies the same operation to the
   old span at `0x25265` before drawing the new span at `0x25290`, confirming an
-  XOR highlight that leaves the waveform visible in inverse colors. A plain
+  XOR highlight that leaves the waveform visible in inverse colors. The
+  reimplementation normalizes that logical `0xff` selection against the
+  retained WAC panel's palette-index-4 black client so the selected background
+  is palette index 255 (yellow), while a second pass still restores the exact
+  original indices. A plain
   press on the retained highlight captures the composed source rectangle with
   display operation `0x18` at `0x250de`, then creates an overlay through
   `InitializeTransientPresentationOverlay` at `0x29caf`; the loop updates it
-  with `UpdateTransientPresentationOverlay` at `0x2a1ff`.
+  with `UpdateTransientPresentationOverlay` at `0x2a1ff`. Each update restores
+  the overlay's saved backing before capturing the new destination and drawing
+  the selected pixels there.
   Release destroys the overlay through `DestroyTransientPresentationOverlay`
   at `0x2a7fa`. The display operation at `0x25403` copies the selected
   source-screen rectangle to the next editor position without horizontally
