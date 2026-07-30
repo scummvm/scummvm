@@ -47,6 +47,7 @@ class Cursor;
 class Font;
 class FrameLimiter;
 class MacMenu;
+struct MacMenuItem;
 class MacWindowManager;
 class ManagedSurface;
 }
@@ -303,6 +304,14 @@ enum MenuAction {
 	kMenuActionCursorShoot
 };
 
+// Menu bar order, matching inits.c:43-48 (myMenus[0..3]).
+enum MenuIndex {
+	kMenuApple = 0,
+	kMenuFile,
+	kMenuEdit,
+	kMenuOptions
+};
+
 static const int kBaseObject = 20;
 static const int kMeNum = 101;
 
@@ -473,6 +482,7 @@ public:
 	void cCommand(int xnew, int ynew, bool allowInteraction);
 	bool scrollInfo(const Graphics::Font *macFont = nullptr);
 	bool checkSkipRequested();
+	bool checkClickRequested();
 	bool waitForInput();
 	void checkCenter();
 	void fallThroughHole();
@@ -483,6 +493,8 @@ public:
 	void printMessage(const char *text[], bool hold);
 	void makeMessageRect(Common::Rect &r);
 	int runMacEndgameDialog(const Common::String &message);
+	int runMacSaveQuery();
+	void runMacAbout();
 
 private:
 	const ADGameDescription *_gameDescription;
@@ -611,6 +623,9 @@ private:
 	void loadMacCursorResources();
 	void handleMenuAction(int action);
 	static void menuCommandsCallback(int action, Common::String &text, void *data);
+	// getSubMenuItem() indexes a submenu; our ids are actions. Look up by action.
+	Graphics::MacMenuItem *macMenuItemForAction(int menuIndex, int action);
+	bool showSaveDialog();
 
 	int _frntxWall = 0, _frntyWall = 0;
 	int _sidexWall = 0, _sideyWall = 0;

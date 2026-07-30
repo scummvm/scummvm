@@ -129,6 +129,107 @@ public:
 	}
 };
 
+void ColonyEngine::runMacAbout() {
+	// gmain.c About(): a black full-screen window with three click-through
+	// starfield stages — empty, the title PICT, then the credits. about0[]
+	// ("The Colony" / "By David A. Smith" / "Copyright \xA9 1989") is declared
+	// alongside but never drawn; PICT -32564 carries that text.
+	if (!isMacRenderMode() || !_gfx)
+		return;
+
+	if (_macMenu && _wm && _wm->isMenuActive())
+		_macMenu->closeMenu();
+
+	const char *credits[] = {
+		"Special thanks to",
+		"Mike Kahl & THINK'S LightspeedC\xA9",
+		"Symantec Corporation"
+	};
+
+	const Common::Rect r(_width, _height);
+	_system->lockMouse(false);
+	CursorMan.showMouse(false);
+
+	_gfx->clear(_gfx->black());
+	_gfx->copyToScreen();
+	makeStars(r, 1);
+
+	_gfx->clear(_gfx->black());
+	if (!drawPict(-32564))   // Color Colony
+		drawPict(-32750);    // B&W Colony
+	makeStars(r, 1);
+
+	_gfx->clear(_gfx->black());
+	Graphics::MacFont systemFont(Graphics::kMacFontSystem, 12);
+	const Graphics::Font *font = _wm && _wm->_fontMan ? _wm->_fontMan->getFont(systemFont) : nullptr;
+	if (font) {
+		for (int i = 0; i < ARRAYSIZE(credits); i++)
+			_gfx->drawString(font, credits[i], _width / 2, (_height / 2 - 20) + 20 * i,
+				_gfx->white(), Graphics::kTextAlignCenter);
+	}
+	_gfx->copyToScreen();
+	makeStars(r, 1);
+
+	_gfx->clear(_gfx->black());
+	_gfx->copyToScreen();
+	updateMouseCapture(true);
+}
+
+int ColonyEngine::runMacSaveQuery() {
+	// gmain.c QSave(2002): DLOG/DITL 2002, "Save this game?" Yes/No/Cancel.
+	// Returns 1 = save then proceed, 2 = proceed, 0 = cancel (QSave maps
+	// Cancel to 0, which matches none of the caller's cases).
+	if (!isMacRenderMode() || !_wm || !_menuSurface || !_gfx)
+		return 2;
+
+	if (_macMenu && _wm->isMenuActive())
+		_macMenu->closeMenu();
+
+	// Unlike the endgame dialog we keep the game frame behind the prompt, so
+	// clear to transparent rather than black and put the menu bar back.
+	_menuSurface->fillRect(Common::Rect(0, 0, _menuSurface->w, _menuSurface->h),
+		_menuSurface->format.ARGBToColor(0, 0, 0, 0));
+	if (_macMenu)
+		_macMenu->draw(_menuSurface, true);
+
+	const Common::String yesLabel = _("Yes");
+	const Common::String noLabel = _("No");
+	const Common::String cancelLabel = _("Cancel");
+	Graphics::MacFont systemFont(Graphics::kMacFontSystem, 12);
+	const Graphics::Font *dialogFont = (_wm->_fontMan) ? _wm->_fontMan->getFont(systemFont) : nullptr;
+
+	const int buttonGap = 12;
+	const int buttonH = 28;
+	const int buttonPad = 26;
+	const int minButtonW = 68;
+	const int buttonW1 = MAX<int>(minButtonW, dialogFont ? dialogFont->getStringWidth(yesLabel) + buttonPad : 80);
+	const int buttonW2 = MAX<int>(minButtonW, dialogFont ? dialogFont->getStringWidth(noLabel) + buttonPad : 80);
+	const int buttonW3 = MAX<int>(minButtonW, dialogFont ? dialogFont->getStringWidth(cancelLabel) + buttonPad : 80);
+	const int totalButtonsW = buttonW1 + buttonW2 + buttonW3 + buttonGap * 2;
+	const int maxTextWidth = CLIP<int>(_width - 48, 180, 280);
+
+	Graphics::MacText prompt(Common::U32String(_("Save this game?")), _wm, &systemFont,
+		_wm->_colorBlack, _wm->_colorWhite, maxTextWidth, Graphics::kTextAlignCenter);
+
+	const int dialogW = MAX<int>(MAX<int>(220, totalButtonsW + 20), maxTextWidth + 20);
+	const int buttonY = prompt.getTextHeight() + 30;
+	const int startX = (dialogW - totalButtonsW) / 2;
+	Graphics::MacDialogButtonArray buttons;
+	buttons.push_back(new Graphics::MacDialogButton(yesLabel.c_str(), startX, buttonY, buttonW1, buttonH));
+	buttons.push_back(new Graphics::MacDialogButton(noLabel.c_str(), startX + buttonW1 + buttonGap, buttonY, buttonW2, buttonH));
+	buttons.push_back(new Graphics::MacDialogButton(cancelLabel.c_str(), startX + buttonW1 + buttonGap + buttonW2 + buttonGap, buttonY, buttonW3, buttonH));
+
+	ColonyMacDialog dialog(_menuSurface, _wm, dialogW, &prompt, maxTextWidth, &buttons, 0);
+	switch (dialog.runWithRenderer(_gfx)) {
+	case 0:
+		return 1;
+	case 1:
+		return 2;
+	default:   // Cancel, ESC or quit
+		return 0;
+	}
+}
+
 int ColonyEngine::runMacEndgameDialog(const Common::String &message) {
 	if (!isMacRenderMode() || !_wm || !_menuSurface || !_gfx)
 		return Graphics::kMacDialogQuitRequested;
@@ -638,9 +739,14 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 	}
 	_gfx->copyToScreen();
 
-	// Animate: original loops ~200 frames or until Mars sound repeats 2x
-	for (int k = 0; k < 120; k++) {
-		if (checkSkipRequested()) {
+	// Animate: original loops ~200 frames or until Mars sound repeats 2x.
+	// With btn set (About) it streaks on until the user clicks, and unlike the
+	// skip path that click still falls through to the fade-out below.
+	for (int k = 0; btn || k < 120; k++) {
+		if (btn) {
+			if (checkClickRequested())
+				break;
+		} else if (checkSkipRequested()) {
 			_gfx->setXorMode(false);
 			return true;
 		}

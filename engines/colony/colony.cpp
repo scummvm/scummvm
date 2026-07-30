@@ -470,21 +470,37 @@ void ColonyEngine::menuCommandsCallback(int action, Common::String &text, void *
 	engine->handleMenuAction(action);
 }
 
+bool ColonyEngine::showSaveDialog() {
+	_system->lockMouse(false);
+	CursorMan.setDefaultArrowCursor();
+	CursorMan.showMouse(true);
+	const bool saved = saveGameDialog();
+	updateMouseCapture(true);
+	return saved;
+}
+
+Graphics::MacMenuItem *ColonyEngine::macMenuItemForAction(int menuIndex, int action) {
+	Graphics::MacMenuItem *menu = _macMenu ? _macMenu->getMenuItem(menuIndex) : nullptr;
+	if (!menu)
+		return nullptr;
+
+	for (int i = 0; i < _macMenu->numberOfMenuItems(menu); i++) {
+		Graphics::MacMenuItem *item = _macMenu->getSubMenuItem(menu, i);
+		if (item && _macMenu->getAction(item) == action)
+			return item;
+	}
+	return nullptr;
+}
+
 void ColonyEngine::syncMacMenuChecks() {
-	if (!_macMenu)
-		return;
-
-	Graphics::MacMenuItem *optionsMenu = _macMenu->getMenuItem(3);
-	if (!optionsMenu)
-		return;
-
-	if (Graphics::MacMenuItem *item = _macMenu->getSubMenuItem(optionsMenu, kMenuActionSound))
+	// inits.c:50-53. "Faster" is checked when polygon fill is OFF.
+	if (Graphics::MacMenuItem *item = macMenuItemForAction(kMenuOptions, kMenuActionSound))
 		_macMenu->setCheckMark(item, _soundOn);
-	if (Graphics::MacMenuItem *item = _macMenu->getSubMenuItem(optionsMenu, kMenuActionCrosshair))
+	if (Graphics::MacMenuItem *item = macMenuItemForAction(kMenuOptions, kMenuActionCrosshair))
 		_macMenu->setCheckMark(item, _crosshair);
-	if (Graphics::MacMenuItem *item = _macMenu->getSubMenuItem(optionsMenu, kMenuActionPolyFill))
-		_macMenu->setCheckMark(item, !_wireframe);
-	if (Graphics::MacMenuItem *item = _macMenu->getSubMenuItem(optionsMenu, kMenuActionCursorShoot))
+	if (Graphics::MacMenuItem *item = macMenuItemForAction(kMenuOptions, kMenuActionPolyFill))
+		_macMenu->setCheckMark(item, _wireframe);
+	if (Graphics::MacMenuItem *item = macMenuItemForAction(kMenuOptions, kMenuActionCursorShoot))
 		_macMenu->setCheckMark(item, _cursorShoot);
 }
 
@@ -541,29 +557,43 @@ Common::Point ColonyEngine::getAimPoint() const {
 void ColonyEngine::handleMenuAction(int action) {
 	switch (action) {
 	case kMenuActionAbout:
-		inform("The Colony\nCopyright 1988\nDavid A. Smith", true);
+		runMacAbout();
 		break;
-	case kMenuActionNew:
-		startNewGame();
+	// gmain.c DoCommand: New, Open and Quit all go through QSave() first, so
+	// an unsaved game is never dropped on the floor. Yes saves and falls
+	// through to the action, No goes straight to it, Cancel does nothing.
+	case kMenuActionNew: {
+		const int answer = runMacSaveQuery();
+		if (answer == 1)
+			showSaveDialog();
+		if (answer)
+			startNewGame();
 		break;
-	case kMenuActionOpen:
-		_system->lockMouse(false);
-		CursorMan.setDefaultArrowCursor();
-		CursorMan.showMouse(true);
-		loadGameDialog();
-		updateMouseCapture(true);
+	}
+	case kMenuActionOpen: {
+		const int answer = runMacSaveQuery();
+		if (answer == 1)
+			showSaveDialog();
+		if (answer) {
+			_system->lockMouse(false);
+			CursorMan.setDefaultArrowCursor();
+			CursorMan.showMouse(true);
+			loadGameDialog();
+			updateMouseCapture(true);
+		}
 		break;
+	}
 	case kMenuActionSave:
 	case kMenuActionSaveAs:
-		_system->lockMouse(false);
-		CursorMan.setDefaultArrowCursor();
-		CursorMan.showMouse(true);
-		saveGameDialog();
-		updateMouseCapture(true);
+		showSaveDialog();
 		break;
-	case kMenuActionQuit:
-		quitGame();
+	case kMenuActionQuit: {
+		const int answer = runMacSaveQuery();
+		// Quit only if the save went through, matching "if(saved)notDone=FALSE".
+		if (answer == 2 || (answer == 1 && showSaveDialog()))
+			quitGame();
 		break;
+	}
 	case kMenuActionSound:
 		_soundOn = !_soundOn;
 		if (!_soundOn)
@@ -618,41 +648,41 @@ void ColonyEngine::initMacMenus() {
 	_macMenu = _wm->addMenu();
 	_macMenu->setCommandsCallback(menuCommandsCallback, this);
 
-	// Build menus matching original Mac Colony (inits.c lines 43-53, gmain.c DoCommand).
-	// addStaticMenus() auto-adds the Apple menu at index 0, so:
-	//   index 0 = Apple, 1 = File, 2 = Edit, 3 = Options
-	// NOTE: menunum=0 is the loop terminator, so Apple submenu items
-	// must be added manually after addStaticMenus() (see WAGE pattern).
+	// Item text, order and shortcuts come from the Colony resource fork:
+	// MENU 1 (Apple), 256 (File), 257 (Edit), 258 (Options). The Color Colony
+	// fork renames these ("New Game", ...) and adds Color Palette / Load Color
+	// / Save Color for the unported Colorize() editor, so we follow the B&W
+	// fork, which is the app this engine actually is.
+	// addStaticMenus() auto-adds the Apple menu at index 0, and menunum=0 is
+	// its loop terminator, so Apple items are added by hand afterwards.
 	const Graphics::MacMenuData menuItems[] = {
 		{-1, "File",            0, 0, true},
 		{-1, "Edit",            0, 0, true},
 		{-1, "Options",         0, 0, true},
-		// File submenu (index 1)
-		{1, "New Game",                     kMenuActionNew, 'N', true},
-		{1, "Open Game...",                 kMenuActionOpen, 'O', true},
-		{1, "Save Game",                    kMenuActionSave, 'S', true},
-		{1, "Save As...",                   kMenuActionSaveAs, 0, true},
-		{1, nullptr,                        0, 0, false},   // separator
-		{1, "Quit",                         kMenuActionQuit, 'Q', true},
-		// Edit submenu (index 2, disabled  original Mac had these but non-functional)
-		{2, "Undo",                         0, 'Z', false},
-		{2, nullptr,                        0, 0, false},
-		{2, "Cut",                          0, 'X', false},
-		{2, "Copy",                         0, 'C', false},
-		{2, "Paste",                        0, 'V', false},
-		// Options submenu (index 3)
-		{3, "Sound",                        kMenuActionSound, 0, true},
-		{3, "Crosshair",                    kMenuActionCrosshair, 0, true},
-		{3, "Polygon Fill",                 kMenuActionPolyFill, 0, true},
-		{3, "Cursor Shoot",                 kMenuActionCursorShoot, 0, true},
-		// Terminator
+		{kMenuFile, "New",                  kMenuActionNew, 'N', true},
+		{kMenuFile, "Open",                 kMenuActionOpen, 'O', true},
+		{kMenuFile, "Save",                 kMenuActionSave, 'S', true},
+		{kMenuFile, "Save as ...",          kMenuActionSaveAs, 0, true},
+		{kMenuFile, nullptr,                0, 0, false},   // separator
+		{kMenuFile, "Quit",                 kMenuActionQuit, 'Q', true},
+		// MENU 257 has these enabled, but DoCommand routes them to SystemEdit()
+		// and gmain.c flags it "This does'nt seem to work..." — keep them dead.
+		{kMenuEdit, "Undo",                 0, 'Z', false},
+		{kMenuEdit, nullptr,                0, 0, false},
+		{kMenuEdit, "Cut",                  0, 'X', false},
+		{kMenuEdit, "Copy",                 0, 'C', false},
+		{kMenuEdit, "Paste",                0, 'V', false},
+		{kMenuOptions, "Sound",             kMenuActionSound, 0, true},
+		{kMenuOptions, "Crosshair",         kMenuActionCrosshair, 0, true},
+		{kMenuOptions, "Faster",            kMenuActionPolyFill, 'F', true},
+		{kMenuOptions, "Manual Targetting", kMenuActionCursorShoot, 0, true},
 		{0, nullptr,                        0, 0, false}
 	};
 	_macMenu->addStaticMenus(menuItems);
 
-	// Add Apple submenu item manually (menunum=0 can't go through addStaticMenus)
-	_macMenu->addSubMenu(nullptr, 0);
-	_macMenu->addMenuItem(_macMenu->getSubmenu(nullptr, 0), "About The Colony", kMenuActionAbout);
+	Graphics::MacMenuSubMenu *appleMenu = _macMenu->addSubMenu(nullptr, kMenuApple);
+	_macMenu->addMenuItem(appleMenu, Common::String("About..."), kMenuActionAbout);
+	_macMenu->addMenuItem(appleMenu, Common::String(), 0, 0, 0, false); // separator
 
 	_macMenu->calcDimensions();
 	syncMacMenuChecks();
@@ -1243,6 +1273,31 @@ bool ColonyEngine::checkSkipRequested() {
 			return true;
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 			if (event.customType == kActionEscape)
+				return true;
+			break;
+		case Common::EVENT_SCREEN_CHANGED:
+			_gfx->computeScreenViewport();
+			break;
+		default:
+			break;
+		}
+	}
+	return shouldQuit();
+}
+
+bool ColonyEngine::checkClickRequested() {
+	// stars.c: with btn set, makestars() runs until Button(). Same event
+	// draining as checkSkipRequested(), but a plain click ends it.
+	Common::Event event;
+	while (_system->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
+			return true;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			if (event.customType == kActionEscape || event.customType == kActionFire)
 				return true;
 			break;
 		case Common::EVENT_SCREEN_CHANGED:
