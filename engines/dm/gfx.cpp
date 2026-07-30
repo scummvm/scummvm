@@ -42,6 +42,356 @@
 
 namespace DM {
 
+namespace {
+
+// @ G3038_s_LayoutData23
+static const LayoutRecord g_layoutRecords23[] = {
+	{ 9, 2, 39, 29 }, { 2, 110, 319, 0 }, { 9, 111, 19, 14 }, { 1, 112, 0, 0 },
+	{ 1, 112, 20, 0 }, { 1, 112, 20, 15 }, { 1, 112, 0, 15 }
+};
+static const LayoutRange g_layoutData23 = { nullptr, 110, 116, g_layoutRecords23 };
+
+// @ G3037_s_LayoutData22
+static const LayoutRecord g_layoutRecords22[] = {
+	{ 9, 9, 28, 19 }, { 9, 9, 27, 19 }, { 9, 9, 28, 19 }, { 1, 65, 1, 1 },
+	{ 1, 67, 58, 1 }, { 1, 66, 30, 1 }, { 1, 67, 58, 21 }, { 1, 66, 30, 21 },
+	{ 1, 65, 1, 21 }
+};
+static const LayoutRange g_layoutData22 = { &g_layoutData23, 65, 73, g_layoutRecords22 };
+
+// @ G3036_s_LayoutData21
+static const LayoutRecord g_layoutRecords21[] = {
+	{ 10, 11, 0, 0 }, { 9, 11, 87, 51 }, { 2, 76, 86, 0 }, { 9, 11, 87, 30 },
+	{ 2, 78, 86, 0 }, { 1, 11, 2, 2 }, { 9, 11, 85, 20 }, { 1, 81, 1, 9 },
+	{ 1, 81, 1, 30 }, { 1, 81, 1, 51 }, { 10, 82, 0, 0 }, { 10, 83, 0, 0 },
+	{ 10, 84, 0, 0 }, { 9, 11, 20, 62 }, { 1, 88, 0, 9 }, { 1, 88, 22, 9 },
+	{ 1, 88, 44, 9 }, { 1, 88, 66, 9 }, { 10, 89, 0, 0 }, { 10, 90, 0, 0 },
+	{ 10, 91, 0, 0 }, { 10, 92, 0, 0 }, { 9, 11, 25, 7 }, { 2, 97, 86, 0 }
+};
+static const LayoutRange g_layoutData21 = { &g_layoutData22, 75, 98, g_layoutRecords21 };
+
+// @ G3035_s_LayoutData20
+static const LayoutRecord g_layoutRecords20[] = {
+	{ 9, 13, 87, 8 }, { 1, 220, 0, 0 }, { 9, 221, 45, 8 }, { 9, 221, 12, 7 },
+	{ 1, 222, 0, 0 }, { 1, 223, 47, 0 }, { 1, 223, 61, 0 }, { 1, 223, 75, 0 },
+	{ 18, 224, 2, 1 }, { 1, 223, 0, 0 }, { 1, 222, 14, 0 }, { 1, 223, 61, 0 },
+	{ 1, 223, 75, 0 }, { 18, 230, 2, 1 }, { 1, 223, 0, 0 }, { 1, 223, 14, 0 },
+	{ 1, 222, 28, 0 }, { 1, 223, 75, 0 }, { 18, 236, 2, 1 }, { 1, 223, 0, 0 },
+	{ 1, 223, 14, 0 }, { 1, 223, 28, 0 }, { 1, 222, 42, 0 }, { 18, 242, 2, 1 },
+	{ 9, 13, 13, 11 }, { 1, 244, 2, 9 }, { 1, 244, 16, 9 }, { 1, 244, 30, 9 },
+	{ 1, 244, 44, 9 }, { 1, 244, 58, 9 }, { 1, 244, 72, 9 }, { 9, 13, 70, 11 },
+	{ 1, 251, 1, 21 }, { 9, 13, 14, 11 }, { 1, 253, 72, 21 }, { 10, 245, 0, 0 },
+	{ 10, 246, 0, 0 }, { 10, 247, 0, 0 }, { 10, 248, 0, 0 }, { 10, 249, 0, 0 },
+	{ 10, 250, 0, 0 }, { 18, 252, 8, 0 }, { 18, 252, 17, 0 }, { 18, 252, 26, 0 },
+	{ 18, 252, 35, 0 }
+};
+static const LayoutRange g_layoutData20 = { &g_layoutData21, 220, 264, g_layoutRecords20 };
+
+// @ G3034_s_LayoutData19
+static const LayoutRecord g_layoutRecords19[] = {
+	{ 9, 0, 67, 29 }, { 1, 150, 0, 0 }, { 1, 150, 69, 0 }, { 1, 150, 138, 0 },
+	{ 1, 150, 207, 0 }, { 9, 151, 43, 7 }, { 9, 152, 43, 7 }, { 9, 153, 43, 7 },
+	{ 9, 154, 43, 7 }, { 1, 155, 0, 0 }, { 1, 156, 0, 0 }, { 1, 157, 0, 0 },
+	{ 1, 158, 0, 0 }, { 18, 159, 1, 0 }, { 18, 160, 1, 0 }, { 18, 161, 1, 0 },
+	{ 18, 162, 1, 0 }, { 10, 159, 0, 0 }, { 10, 160, 0, 0 }, { 10, 161, 0, 0 },
+	{ 10, 162, 0, 0 }, { 9, 151, 32, 29 }, { 9, 152, 32, 29 }, { 9, 153, 32, 29 },
+	{ 9, 154, 32, 29 }, { 1, 171, 7, 0 }, { 1, 172, 7, 0 }, { 1, 173, 7, 0 },
+	{ 1, 174, 7, 0 }, { 10, 175, 0, 0 }, { 10, 176, 0, 0 }, { 10, 177, 0, 0 },
+	{ 10, 178, 0, 0 }, { 9, 151, 24, 29 }, { 9, 152, 24, 29 }, { 9, 153, 24, 29 },
+	{ 9, 154, 24, 29 }, { 1, 183, 43, 0 }, { 1, 184, 43, 0 }, { 1, 185, 43, 0 },
+	{ 1, 186, 43, 0 }, { 9, 187, 4, 25 }, { 9, 188, 4, 25 }, { 9, 189, 4, 25 },
+	{ 9, 190, 4, 25 }, { 7, 191, 5, 26 }, { 7, 192, 5, 26 }, { 7, 193, 5, 26 },
+	{ 7, 194, 5, 26 }, { 7, 191, 12, 26 }, { 7, 192, 12, 26 }, { 7, 193, 12, 26 },
+	{ 7, 194, 12, 26 }, { 7, 191, 19, 26 }, { 7, 192, 19, 26 }, { 7, 193, 19, 26 },
+	{ 7, 194, 19, 26 }, { 9, 151, 16, 16 }, { 9, 152, 16, 16 }, { 9, 153, 16, 16 },
+	{ 9, 154, 16, 16 }, { 1, 207, 4, 0 }, { 1, 208, 4, 0 }, { 1, 209, 4, 0 },
+	{ 1, 210, 4, 0 }, { 10, 211, 0, 0 }, { 10, 212, 0, 0 }, { 10, 213, 0, 0 },
+	{ 10, 214, 0, 0 }
+};
+static const LayoutRange g_layoutData19 = { &g_layoutData20, 150, 218, g_layoutRecords19 };
+
+// @ G3033_s_LayoutData18
+static const LayoutRecord g_layoutRecords18[] = {
+	{ 1, 584, 7, 41 }, { 1, 584, 17, 41 }, { 1, 584, 27, 41 }, { 1, 584, 37, 41 },
+	{ 1, 584, 47, 41 }, { 1, 584, 57, 41 }, { 1, 584, 67, 41 }, { 1, 584, 77, 41 },
+	{ 1, 584, 87, 41 }, { 1, 584, 97, 41 }, { 1, 584, 107, 41 }, { 1, 584, 117, 41 },
+	{ 1, 584, 27, 51 }, { 1, 584, 37, 51 }, { 1, 584, 47, 51 }, { 1, 584, 57, 51 },
+	{ 1, 584, 67, 51 }, { 1, 584, 77, 51 }, { 1, 584, 87, 51 }, { 1, 584, 97, 51 },
+	{ 1, 584, 107, 51 }, { 1, 584, 117, 51 }
+};
+static const LayoutRange g_layoutData18 = { &g_layoutData19, 585, 606, g_layoutRecords18 };
+
+// @ G3032_s_LayoutData17
+static const LayoutRecord g_layoutRecords17[] = {
+	{ 9, 4, 144, 73 }, { 0, 100, 152, 89 }, { 9, 101, 95, 5 }, { 8, 102, 33, 25 },
+	{ 8, 102, 33, 50 }, { 9, 4, 16, 16 }, { 9, 101, 16, 16 }
+};
+static const LayoutRange g_layoutData17 = { &g_layoutData18, 100, 106, g_layoutRecords17 };
+
+// @ G3031_s_LayoutData16
+static const LayoutRecord g_layoutRecords16[] = {
+	{ 4, 4, 192, 7 }, { 1, 4, 0, 51 }, { 1, 4, 102, 89 }, { 1, 4, 102, 62 },
+	{ 9, 4, 192, 17 }, { 9, 4, 86, 17 }, { 1, 454, 16, 104 }, { 1, 454, 16, 67 },
+	{ 1, 455, 16, 67 }, { 1, 455, 123, 67 }, { 1, 455, 16, 104 }, { 1, 455, 123, 104 },
+	{ 10, 456, 0, 0 }, { 10, 457, 0, 0 }, { 10, 458, 0, 0 }, { 10, 459, 0, 0 },
+	{ 10, 460, 0, 0 }, { 10, 461, 0, 0 }, { 9, 4, 188, 73 }, { 0, 468, 112, 49 },
+	{ 9, 4, 188, 36 }, { 0, 470, 112, 32 }
+};
+static const LayoutRange g_layoutData16 = { &g_layoutData17, 450, 471, g_layoutRecords16 };
+
+// @ G3030_s_LayoutData15
+static const LayoutRecord g_layoutRecords15[] = {
+	{ 0, 4, 202, 43 }, { 0, 4, 141, 43 }, { 0, 4, 154, 45 }, { 0, 4, 171, 48 }
+};
+static const LayoutRange g_layoutData15 = { &g_layoutData16, 1950, 1953, g_layoutRecords15 };
+
+// @ G3029_s_LayoutData14
+static const LayoutRecord g_layoutRecords14[] = {
+	{ 1, 129, 0, 0 }, { 4, 129, 0, 10 }, { 4, 129, 0, 20 }, { 4, 129, 0, 30 },
+	{ 2, 129, 6, 0 }, { 2, 129, 12, 0 }, { 2, 129, 18, 0 }, { 1, 129, 42, 0 },
+	{ 1, 129, 36, 0 }, { 1, 129, 30, 0 }, { 1, 130, 0, 0 }, { 4, 130, 0, 10 },
+	{ 4, 130, 0, 20 }, { 4, 130, 0, 30 }, { 2, 130, 6, 0 }, { 2, 130, 12, 0 },
+	{ 2, 130, 18, 0 }, { 1, 130, 42, 0 }, { 1, 130, 36, 0 }, { 1, 130, 30, 0 },
+	{ 1, 131, 0, 0 }, { 4, 131, 0, 10 }, { 4, 131, 0, 20 }, { 4, 131, 0, 30 },
+	{ 2, 131, 6, 0 }, { 2, 131, 12, 0 }, { 2, 131, 18, 0 }, { 1, 131, 42, 0 },
+	{ 1, 131, 36, 0 }, { 1, 131, 30, 0 }, { 1, 132, 0, 0 }, { 4, 132, 0, 16 },
+	{ 4, 132, 0, 31 }, { 4, 132, 0, 46 }, { 2, 132, 8, 0 }, { 2, 132, 16, 0 },
+	{ 2, 132, 24, 0 }, { 1, 132, 56, 0 }, { 1, 132, 48, 0 }, { 1, 132, 40, 0 },
+	{ 1, 133, 0, 0 }, { 4, 133, 0, 16 }, { 4, 133, 0, 31 }, { 4, 133, 0, 46 },
+	{ 2, 133, 8, 0 }, { 2, 133, 16, 0 }, { 2, 133, 24, 0 }, { 1, 133, 56, 0 },
+	{ 1, 133, 48, 0 }, { 1, 133, 40, 0 }, { 1, 134, 0, 0 }, { 4, 134, 0, 16 },
+	{ 4, 134, 0, 31 }, { 4, 134, 0, 46 }, { 2, 134, 8, 0 }, { 2, 134, 16, 0 },
+	{ 2, 134, 24, 0 }, { 1, 134, 56, 0 }, { 1, 134, 48, 0 }, { 1, 134, 40, 0 },
+	{ 1, 135, 0, 0 }, { 4, 135, 0, 22 }, { 4, 135, 0, 44 }, { 4, 135, 0, 66 },
+	{ 2, 135, 12, 0 }, { 2, 135, 24, 0 }, { 2, 135, 36, 0 }, { 1, 135, 84, 0 },
+	{ 1, 135, 72, 0 }, { 1, 135, 60, 0 }, { 1, 136, 0, 0 }, { 4, 136, 0, 22 },
+	{ 4, 136, 0, 44 }, { 4, 136, 0, 66 }, { 2, 136, 12, 0 }, { 2, 136, 24, 0 },
+	{ 2, 136, 36, 0 }, { 1, 136, 84, 0 }, { 1, 136, 72, 0 }, { 1, 136, 60, 0 },
+	{ 1, 137, 0, 0 }, { 4, 137, 0, 22 }, { 4, 137, 0, 44 }, { 4, 137, 0, 66 },
+	{ 2, 137, 12, 0 }, { 2, 137, 24, 0 }, { 2, 137, 36, 0 }, { 1, 137, 84, 0 },
+	{ 1, 137, 72, 0 }, { 1, 137, 60, 0 }
+};
+static const LayoutRange g_layoutData14 = { &g_layoutData15, 3700, 3789, g_layoutRecords14 };
+
+// @ G3028_s_LayoutData13
+static const LayoutRecord g_layoutRecords13[] = {
+	{ 15, 123, 0, 13 }, { 15, 124, 0, 17 }, { 15, 125, 0, 22 }, { 10, 123, 0, 0 },
+	{ 10, 124, 0, -2 }, { 10, 125, 0, 0 }, { 17, 123, 6, -1 }, { 17, 124, 8, -8 },
+	{ 17, 125, 12, -8 }
+};
+static const LayoutRange g_layoutData13 = { &g_layoutData14, 2000, 2008, g_layoutRecords13 };
+
+// @ G3027_s_LayoutData12
+static const LayoutRecord g_layoutRecords12[] = {
+	{ 0, 4, 41, 69 }, { 0, 4, 112, 69 }, { 0, 4, 183, 69 }, { 0, 4, 21, 83 },
+	{ 0, 4, 112, 83 }, { 0, 4, 203, 83 }, { 8, 4, -13, 105 }, { 0, 4, 112, 105 },
+	{ 6, 4, 238, 105 }
+};
+static const LayoutRange g_layoutData12 = { &g_layoutData13, 1500, 1508, g_layoutRecords12 };
+
+// @ G3026_s_LayoutData11
+static const LayoutRecord g_layoutRecords11[] = {
+	{ 7, 4, 112, 54 }, { 7, 4, 112, 72 }, { 7, 4, 112, 89 }, { 7, 4, 112, 106 },
+	{ 0, 4, 82, 43 }, { 0, 4, 142, 43 }, { 0, 4, 23, 45 }, { 0, 4, 112, 45 },
+	{ 0, 4, 194, 45 }, { 0, 4, 72, 45 }, { 0, 4, 151, 45 }, { 0, 4, 6, 46 },
+	{ 0, 4, 112, 46 }, { 0, 4, 217, 46 }, { 0, 4, 56, 46 }, { 0, 4, 168, 46 },
+	{ 0, 4, 112, 50 }, { 0, 4, 78, 51 }, { 0, 4, 145, 51 }, { 0, 4, 24, 51 },
+	{ 0, 4, 112, 51 }, { 0, 4, 194, 51 }, { 0, 4, 69, 53 }, { 0, 4, 155, 53 },
+	{ 0, 4, 11, 56 }, { 0, 4, 112, 56 }, { 0, 4, 212, 56 }, { 0, 4, 48, 60 },
+	{ 0, 4, 176, 60 }, { 0, 4, 112, 64 }, { 7, 4, 82, 70 }, { 7, 4, 142, 70 },
+	{ 7, 4, 23, 75 }, { 7, 4, 112, 75 }, { 7, 4, 194, 75 }, { 7, 4, 72, 83 },
+	{ 7, 4, 151, 83 }, { 7, 4, 6, 90 }, { 7, 4, 112, 90 }, { 7, 4, 217, 90 },
+	{ 7, 4, 56, 102 }, { 7, 4, 168, 102 }, { 7, 4, 112, 119 }, { 0, 4, 82, 51 },
+	{ 0, 4, 142, 51 }, { 0, 4, 23, 56 }, { 0, 4, 112, 56 }, { 0, 4, 194, 56 },
+	{ 0, 4, 72, 58 }, { 0, 4, 151, 58 }, { 0, 4, 6, 64 }, { 0, 4, 112, 64 },
+	{ 0, 4, 217, 64 }, { 0, 4, 56, 67 }, { 0, 4, 168, 67 }, { 0, 4, 112, 78 },
+	{ 0, 4, 83, 42 }, { 0, 4, 141, 42 }, { 0, 4, 25, 47 }, { 0, 4, 112, 47 },
+	{ 0, 4, 195, 47 }, { 0, 4, 69, 44 }, { 0, 4, 155, 44 }, { 0, 4, 3, 47 },
+	{ 0, 4, 112, 47 }, { 0, 4, 216, 47 }, { 0, 4, 48, 58 }, { 0, 4, 176, 58 },
+	{ 0, 4, 112, 58 }, { 0, 4, 82, 44 }, { 0, 4, 142, 44 }, { 0, 4, 26, 44 },
+	{ 0, 4, 112, 44 }, { 0, 4, 195, 44 }, { 0, 4, 71, 46 }, { 0, 4, 153, 46 },
+	{ 0, 4, 5, 48 }, { 0, 4, 112, 48 }, { 0, 4, 215, 48 }, { 0, 4, 49, 49 },
+	{ 0, 4, 175, 49 }, { 0, 4, 112, 51 }, { 7, 4, 79, 75 }, { 7, 4, 146, 75 },
+	{ 7, 4, 36, 75 }, { 7, 4, 112, 75 }, { 7, 4, 187, 75 }, { 7, 4, 69, 90 },
+	{ 7, 4, 155, 90 }, { 7, 4, 8, 90 }, { 7, 4, 112, 90 }, { 7, 4, 214, 90 },
+	{ 7, 4, 49, 119 }, { 7, 4, 177, 119 }, { 7, 4, 112, 119 }, { 5, 4, 78, 38 },
+	{ 5, 4, 145, 38 }, { 5, 4, 24, 33 }, { 5, 4, 112, 33 }, { 5, 4, 194, 33 },
+	{ 5, 4, 67, 36 }, { 5, 4, 157, 36 }, { 5, 4, 11, 35 }, { 5, 4, 112, 35 },
+	{ 5, 4, 212, 35 }, { 5, 4, 49, 34 }, { 5, 4, 176, 34 }, { 5, 4, 112, 31 }
+};
+static const LayoutRange g_layoutData11 = { &g_layoutData12, 1000, 1107, g_layoutRecords11 };
+
+// @ G3025_s_LayoutData10
+static const LayoutRecord g_layoutRecords10[] = {
+	{ 0, 4, 112, 53 }, { 0, 4, 24, 53 }, { 0, 4, 194, 53 }, { 0, 4, 112, 59 },
+	{ 0, 4, 15, 59 }, { 0, 4, 208, 59 }, { 0, 4, 112, 70 }, { 0, 4, 112, 57 },
+	{ 0, 4, 24, 57 }, { 0, 4, 194, 57 }, { 0, 4, 112, 63 }, { 0, 4, 12, 63 },
+	{ 0, 4, 213, 63 }, { 0, 4, 112, 76 }, { 0, 4, 112, 47 }, { 0, 4, 57, 47 },
+	{ 0, 4, 167, 47 }, { 0, 4, 112, 50 }, { 0, 4, 45, 50 }, { 0, 4, 179, 50 },
+	{ 0, 4, 112, 53 }, { 0, 4, 20, 53 }, { 0, 4, 205, 53 }, { 0, 4, 112, 57 },
+	{ 0, 4, -30, 57 }, { 0, 4, 253, 57 }, { 0, 4, 112, 60 }, { 0, 4, -53, 60 },
+	{ 0, 4, 276, 60 }, { 0, 4, 100, 47 }, { 0, 4, 122, 47 }, { 0, 4, 52, 47 },
+	{ 0, 4, 76, 47 }, { 0, 4, 148, 47 }, { 0, 4, 172, 47 }, { 0, 4, 95, 50 },
+	{ 0, 4, 127, 50 }, { 0, 4, 42, 50 }, { 0, 4, 73, 50 }, { 0, 4, 150, 50 },
+	{ 0, 4, 181, 50 }, { 0, 4, 88, 53 }, { 0, 4, 134, 53 }, { 0, 4, 30, 53 },
+	{ 0, 4, 69, 53 }, { 0, 4, 154, 53 }, { 0, 4, 193, 53 }, { 0, 4, 77, 57 },
+	{ 0, 4, 145, 57 }, { 0, 4, 13, 57 }, { 0, 4, 62, 57 }, { 0, 4, 161, 57 },
+	{ 0, 4, 210, 57 }, { 0, 4, 66, 60 }, { 0, 4, 156, 60 }, { 0, 4, -6, 60 },
+	{ 0, 4, 54, 60 }, { 0, 4, 169, 60 }, { 0, 4, 229, 60 }
+};
+static const LayoutRange g_layoutData10 = { &g_layoutData11, 3000, 3058, g_layoutRecords10 };
+
+// @ G3024_s_LayoutData09
+static const LayoutRecord g_layoutRecords09[] = {
+	{ 1, 4, 105, 73 }, { 1, 4, 105, 90 }, { 1, 4, 70, 73 }, { 1, 4, 140, 73 },
+	{ 1, 4, 54, 90 }, { 1, 4, 156, 90 }, { 1, 4, 35, 107 }, { 1, 4, 175, 107 },
+	{ 1, 4, 6, 33 }, { 1, 4, 6, 73 }, { 1, 4, 62, 73 }, { 1, 4, 79, 73 },
+	{ 1, 4, 62, 90 }, { 1, 4, 79, 90 }, { 1, 4, 6, 33 }, { 1, 4, 6, 73 },
+	{ 1, 4, 62, 73 }, { 1, 4, 66, 33 }, { 1, 4, 83, 16 }, { 1, 4, 100, 16 },
+	{ 1, 4, 117, 16 }, { 1, 4, 134, 16 }, { 1, 4, 151, 16 }, { 1, 4, 168, 16 },
+	{ 1, 4, 185, 16 }, { 1, 4, 202, 16 }, { 1, 4, 83, 33 }, { 1, 4, 100, 33 },
+	{ 1, 4, 117, 33 }, { 1, 4, 134, 33 }, { 1, 4, 151, 33 }, { 1, 4, 168, 33 },
+	{ 1, 4, 185, 33 }, { 1, 4, 202, 33 }, { 1, 4, 37, 7 }, { 1, 4, 26, 24 },
+	{ 1, 4, 31, 41 }, { 1, 4, 48, 46 }, { 1, 4, 65, 49 }, { 1, 4, 82, 51 },
+	{ 1, 4, 99, 52 }, { 1, 4, 116, 53 }, { 1, 4, 56, 13 }, { 1, 4, 12, 13 },
+	{ 4, 4, 5, 116 }, { 4, 4, 5, 124 }, { 4, 4, 5, 132 }, { 3, 4, 95, 114 },
+	{ 3, 4, 95, 123 }, { 3, 4, 95, 132 }, { 4, 4, 3, 7 }, { 4, 4, 104, 132 },
+	{ 3, 4, 218, 132 }, { 4, 101, 28, 7 }, { 4, 101, 28, 6 }, { 4, 101, 28, 34 },
+	{ 4, 101, 94, 34 }, { 0, 101, 84, 35 }, { 9, 4, 11, 11 }, { 1, 561, 179, 2 },
+	{ 9, 4, 19, 11 }, { 1, 563, 190, 2 }, { 9, 4, 11, 11 }, { 1, 565, 209, 2 },
+	{ 9, 4, 114, 24 }, { 1, 569, 24, 29 }, { 9, 101, 114, 15 }, { 1, 572, 24, 57 },
+	{ 4, 101, 97, 6 }, { 4, 101, 25, 25 }, { 9, 101, 69, 9 }, { 1, 576, 27, 62 },
+	{ 9, 101, 19, 9 }, { 1, 578, 117, 62 }, { 9, 101, 9, 19 }, { 1, 580, 127, 41 },
+	{ 9, 101, 9, 9 }, { 1, 582, 27, 31 }, { 1, 582, 37, 31 }, { 1, 582, 47, 31 },
+	{ 1, 582, 57, 31 }, { 1, 582, 67, 31 }, { 1, 582, 77, 31 }, { 1, 582, 87, 31 },
+	{ 1, 582, 97, 31 }, { 1, 582, 107, 31 }, { 1, 582, 117, 31 }, { 1, 584, 7, 41 },
+	{ 1, 584, 17, 41 }, { 1, 584, 27, 41 }, { 1, 584, 37, 41 }, { 1, 584, 47, 41 },
+	{ 1, 584, 57, 41 }, { 1, 584, 67, 41 }, { 1, 584, 77, 41 }, { 1, 584, 87, 41 },
+	{ 1, 584, 97, 41 }, { 1, 584, 107, 41 }, { 1, 584, 117, 41 }, { 1, 584, 27, 51 },
+	{ 1, 584, 37, 51 }, { 1, 584, 47, 51 }, { 1, 584, 57, 51 }, { 1, 584, 67, 51 },
+	{ 1, 584, 77, 51 }, { 1, 584, 87, 51 }, { 1, 584, 97, 51 }, { 1, 584, 107, 51 },
+	{ 1, 584, 117, 51 }
+};
+static const LayoutRange g_layoutData09 = { &g_layoutData10, 500, 606, g_layoutRecords09 };
+
+// @ G3023_s_LayoutData08
+static const LayoutRecord g_layoutRecords08[] = {
+	{ 0, 4, 112, 107 }, { 0, 4, 54, 107 }, { 0, 4, 170, 107 }, { 0, 4, 112, 119 },
+	{ 0, 4, 32, 119 }, { 0, 4, 192, 119 }, { 0, 4, 112, 136 }, { 0, 4, 112, 110 },
+	{ 0, 4, 54, 110 }, { 0, 4, 170, 110 }, { 0, 4, 112, 122 }, { 0, 4, 28, 122 },
+	{ 0, 4, 196, 122 }, { 0, 4, 112, 136 }
+};
+static const LayoutRange g_layoutData08 = { &g_layoutData09, 850, 863, g_layoutRecords08 };
+
+// @ G3022_s_LayoutData07
+static const LayoutRecord g_layoutRecords07[] = {
+	{ 1, 4, 0, 0 }, { 1, 4, 112, 0 }, { 1, 4, 224, 0 }
+};
+static const LayoutRange g_layoutData07 = { &g_layoutData08, 900, 902, g_layoutRecords07 };
+
+// @ G3021_s_LayoutData06
+static const LayoutRecord g_layoutRecords06[] = {
+	{ 1, 4, 0, 0 }, { 1, 4, 224, 0 }, { 1, 4, 224, 136 }, { 1, 4, 0, 136 },
+	{ 1, 4, 112, 0 }, { 1, 4, 224, 68 }, { 1, 4, 112, 136 }, { 1, 4, 0, 68 }
+};
+static const LayoutRange g_layoutData06 = { &g_layoutData07, 950, 957, g_layoutRecords06 };
+
+// @ G3020_s_LayoutData05
+static const LayoutRecord g_layoutRecords05[] = {
+	{ 1, 4, 0, 0 }, { 1, 4, 0, 136 }
+};
+static const LayoutRange g_layoutData05 = { &g_layoutData06, 960, 961, g_layoutRecords05 };
+
+// @ G3019_s_LayoutData04
+static const LayoutRecord g_layoutRecords04[] = {
+	{ 11, 4, 0, 0 }, { 14, 4, 0, 0 }, { 11, 4, 0, 25 }, { 12, 4, 0, 25 },
+	{ 15, 4, 0, 25 }, { 11, 4, 0, 25 }, { 12, 4, 0, 25 }, { 15, 4, 0, 20 },
+	{ 11, 4, 0, 20 }, { 12, 4, 0, 20 }, { 15, 4, 0, 9 }, { 11, 4, 0, 9 },
+	{ 12, 4, 0, 9 }, { 1, 3, 0, 0 }, { 11, 4, 0, 0 }, { 12, 4, 0, 0 },
+	{ 11, 4, 12, 28 }, { 12, 4, -12, 28 }, { 15, 4, 0, 25 }, { 11, 4, 0, 25 },
+	{ 12, 4, 0, 25 }, { 15, 4, 0, 20 }, { 11, 4, 0, 20 }, { 12, 4, 0, 20 },
+	{ 15, 4, 0, 9 }, { 11, 4, 0, 9 }, { 12, 4, 0, 9 }, { 1, 3, 0, 0 },
+	{ 11, 4, 0, 0 }, { 12, 4, 0, 0 }, { 11, 4, 12, 28 }, { 12, 4, -12, 28 },
+	{ 1, 4, 0, 0 }, { 1, 4, 0, 0 }, { 1, 4, 0, 0 }, { 1, 4, 0, 0 },
+	{ 1, 4, 0, 0 }, { 1, 4, 0, 0 }, { 1, 4, 0, 0 }, { 1, 4, 0, 0 },
+	{ 1, 4, 0, 0 }, { 1, 4, 0, 0 }, { 1, 4, 0, 0 }, { 1, 4, 0, 0 },
+	{ 1, 4, 0, 0 }, { 1, 4, 0, 0 }
+};
+static const LayoutRange g_layoutData04 = { &g_layoutData05, 700, 745, g_layoutRecords04 };
+
+// @ G3018_s_LayoutData03
+static const LayoutRecord g_layoutRecords03[] = {
+	{ 0, 4, 112, 41 }, { 0, 4, 43, 41 }, { 0, 4, 181, 41 }, { 0, 4, 112, 46 },
+	{ 0, 4, 21, 46 }, { 0, 4, 203, 46 }, { 0, 4, 112, 53 }, { 0, 4, 112, 44 },
+	{ 0, 4, 43, 44 }, { 0, 4, 181, 44 }, { 0, 4, 112, 48 }, { 0, 4, 18, 48 },
+	{ 0, 4, 206, 48 }, { 0, 4, 112, 56 }
+};
+static const LayoutRange g_layoutData03 = { &g_layoutData04, 800, 813, g_layoutRecords03 };
+
+// @ G3017_s_LayoutData02
+static const LayoutRecord g_layoutRecords02[] = {
+	{ 0, 4, 112, 67 }, { 0, 4, 79, 67 }, { 0, 4, 145, 67 }, { 0, 4, 112, 70 },
+	{ 0, 4, 60, 70 }, { 0, 4, 164, 70 }, { 0, 4, 112, 74 }, { 0, 4, 30, 74 },
+	{ 0, 4, 194, 74 }, { 0, 4, 112, 80 }, { 0, 4, 112, 69 }, { 0, 4, 78, 69 },
+	{ 0, 4, 146, 69 }, { 0, 4, 112, 71 }, { 0, 4, 59, 71 }, { 0, 4, 165, 71 },
+	{ 0, 4, 112, 75 }, { 0, 4, 27, 75 }, { 0, 4, 197, 75 }, { 0, 4, 112, 83 },
+	{ 0, 4, -13, 105 }, { 0, 4, 112, 105 }, { 0, 4, 238, 105 }, { 0, 4, -20, 105 },
+	{ 0, 4, 112, 105 }, { 0, 4, 244, 105 }, { 0, 4, 112, 105 }, { 0, 4, -13, 105 },
+	{ 0, 4, 238, 105 }, { 0, 4, -20, 105 }, { 0, 4, 112, 105 }, { 0, 4, 244, 105 },
+	{ 0, 4, 112, 105 }, { 0, 4, -13, 105 }, { 0, 4, 238, 105 }, { 0, 4, -20, 105 },
+	{ 0, 4, 112, 105 }, { 0, 4, 244, 105 }, { 0, 4, 112, 105 }, { 0, 4, 112, 67 },
+	{ 0, 4, 79, 67 }, { 0, 4, 145, 67 }, { 0, 4, 112, 70 }, { 0, 4, 60, 70 },
+	{ 0, 4, 164, 70 }, { 0, 4, 112, 74 }, { 0, 4, 30, 74 }, { 0, 4, 194, 74 },
+	{ 0, 4, 112, 80 }, { 0, 4, 112, 69 }, { 0, 4, 78, 69 }, { 0, 4, 146, 69 },
+	{ 0, 4, 112, 71 }, { 0, 4, 59, 71 }, { 0, 4, 165, 71 }, { 0, 4, 112, 75 },
+	{ 0, 4, 27, 75 }, { 0, 4, 197, 75 }, { 0, 4, 112, 83 }, { 0, 4, -13, 105 },
+	{ 0, 4, 112, 105 }, { 0, 4, 238, 105 }, { 0, 4, -20, 105 }, { 0, 4, 112, 105 },
+	{ 0, 4, 244, 105 }, { 0, 4, 112, 105 }, { 0, 4, -13, 105 }, { 0, 4, 238, 105 },
+	{ 0, 4, -20, 105 }, { 0, 4, 112, 105 }, { 0, 4, 244, 105 }, { 0, 4, 112, 105 },
+	{ 0, 4, -13, 105 }, { 0, 4, 238, 105 }, { 0, 4, -20, 105 }, { 0, 4, 112, 105 },
+	{ 0, 4, 244, 105 }, { 0, 4, 112, 105 }
+};
+static const LayoutRange g_layoutData02 = { &g_layoutData03, 850, 927, g_layoutRecords02 };
+
+// @ G3016_s_LayoutData01
+static const LayoutRecord g_layoutRecords01[] = {
+	{ 1, 0, 0, 0 }, { 1, 0, 0, 0 }, { 9, 0, 224, 136 }, { 1, 3, 0, 0 },
+	{ 1, 0, 0, 0 }, { 1, 0, 0, 0 }, { 1, 0, 0, 0 }, { 1, 0, 0, 0 },
+	{ 1, 0, 0, 0 }, { 1, 0, 0, 0 }, { 1, 0, 0, 0 }, { 1, 0, 0, 0 },
+	{ 1, 0, 0, 0 }, { 1, 0, 0, 0 }, { 1, 0, 0, 0 }, { 1, 0, 0, 0 },
+	{ 1, 0, 0, 0 }
+};
+static const LayoutRange g_layoutData01 = { &g_layoutData02, 1, 17, g_layoutRecords01 };
+
+// @ G2002_NegativeBitmaps
+static const Struct3 g_defaultNegativeBitmaps[45] = {
+	{ 2, 0, 0, 0, 0, 0, { 0 } }, { 2, 0, 0, 0, 0, 0, { 0 } },
+	{ 2, 0, 0, 0, 0, 0, { 0 } }, { 2, 0, 0, 0, 0, 0, { 0 } },
+	{ 2, 0, 0, 0, 0, 0, { 0 } }, { 2, 0, 0, 0, 0, 0, { 0 } },
+	{ 2, 0, 0, 0, 0, 0, { 0 } }, { 2, 0, 0, 0, 0, 0, { 0 } },
+	{ 2, 0, 0, 0, 0, 0, { 0 } }, { 2, 0, 0, 0, 0, 0, { 0 } },
+	{ 2, 0, 0, 0, 0, 0, { 0 } }, { 2, 0, 0, 0, 0, 0, { 0 } },
+	{ 2, 0, 0, 0, 0, 0, { 0 } }, { 2, 0, 0, 0, 0, 0, { 0 } },
+	{ 2, 0, 0, 0, 0, 0, { 0 } }, { 2, 0, 0, 0, 0, 0, { 0 } },
+	{ 2, 0, 0, 0, 0, 0, { 0 } }, { 1, 0, 50, 0, 7, 0, { 0 } },
+	{ 1, 0, 6, 0, 7, 0, { 0 } }, { 1, 0, 62, 0, 7, 0, { 0 } },
+	{ 1, 0, 6, 0, 7, 0, { 0 } }, { 2, 0, 7, 0, 4, 0, { 0 } },
+	{ 2, 0, 6, 0, 4, 0, { 0 } }, { 2, 0, 0, 0, 0, 0, { 0 } },
+	{ 2, 0, 0, 0, 0, 0, { 0 } }, { 2, 0, 0, 0, 0, 0, { 0 } },
+	{ 2, 0, 0, 0, 0, 0, { 0 } }, { 2, 0, 0, 0, 0, 0, { 0 } },
+	{ 2, 0, 0, 0, 0, 0, { 0 } }, { 2, 0, 16, 0, 60, 0, { 0 } },
+	{ 2, 0, 0, 0, 0, 0, { 0 } }, { 2, 0, 16, 0, 60, 0, { 0 } },
+	{ 2, 0, 16, 0, 32, 0, { 0 } }, { 2, 0, 0, 0, 0, 0, { 0 } },
+	{ 2, 0, 16, 0, 32, 0, { 0 } }, { 2, 0, 90, 28, 4, 26, { 0 } },
+	{ 1, 0, 32, 0, 32, 0, { kDMGraphicIdxHoleInWall } },
+	{ 2, 0, 64, 19, 96, 95, { 0 } }, { 2, 0, 0, 14, 0, 75, { 0 } },
+	{ 2, 0, 102, 52, 21, 37, { 0 } }, { 2, 0, 102, 99, 21, 36, { 0 } },
+	{ 1, 0, 168, 3, 9, 9, { kDMGraphicIdxInventory } },
+	{ 2, 0, 0, 137, 0, 16, { 0 } }, { 2, 0, 0, 0, 0, 80, { 0 } },
+	{ 2, 0, 0, 80, 0, 57, { 0 } }
+};
+}
+
 FieldAspect::FieldAspect(uint16 native, uint16 base, uint16 transparent, byte mask, uint16 byteWidth, uint16 height, uint16 xPos, uint16 bitplane)
 	: _nativeBitmapRelativeIndex(native), _baseStartUnitIndex(base), _transparentColor(transparent), _mask(mask),
 	_byteWidth(byteWidth), _height(height), _xPos(xPos), _bitplaneWordCount(bitplane) {}
@@ -83,6 +433,7 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_championPortraitOrdinal = 0;
 	_currMapViAltarIndex = 0;
 	_drawFloorAndCeilingRequested = true;
+	memcpy(_negativeBitmaps, g_defaultNegativeBitmaps, sizeof(_negativeBitmaps));
 
 	for (int i = 0; i < 4; i++)
 		_palChangesProjectile[i] = nullptr;
@@ -2234,6 +2585,333 @@ void DisplayMan::drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 
 	if ((squareAspect[kDMSquareAspectElement] == kDMElementTypeTeleporter) && squareAspect[kDMSquareAspectTeleporterVisible])
 		drawField(&_fieldAspects188[kDMViewSquareD2L], _frameWalls163[kDMViewSquareD2L]._box);
+}
+
+const LayoutRecord *DisplayMan::getLayoutRecord(int16 layoutRecordIndex) {
+	if (!layoutRecordIndex)
+		return nullptr;
+
+	const LayoutRange *range = &g_layoutData01;
+	while (range) {
+		if (range->_firstIndex <= layoutRecordIndex && range->_lastIndex >= layoutRecordIndex)
+			return &range->_records[layoutRecordIndex - range->_firstIndex];
+		range = range->_nextRange;
+	}
+	return nullptr;
+}
+
+byte *DisplayMan::initBitmapStruct2(int16 graphicIndex, Struct2 *outStruct) {
+	byte *bitmap = nullptr;
+	if (graphicIndex < 0) {
+		int16 idx = -1 - graphicIndex;
+		if (idx >= 0 && idx < 45) {
+			const Struct3 &s3 = _negativeBitmaps[idx];
+			outStruct->_x = s3._x;
+			outStruct->_y = s3._y;
+			if (s3._s3m1 == 1)
+				bitmap = getNativeBitmapOrGraphic(s3._s3u._graphicIndex);
+			else
+				bitmap = s3._s3u._bitmap;
+
+			uint16 w = 0, h = 0;
+			if (bitmap)
+				getBitmapDimensions(bitmap, w, h);
+
+			outStruct->_width = s3._width ? s3._width : w;
+			outStruct->_height = s3._height ? s3._height : h;
+		}
+	} else {
+		outStruct->_x = 0;
+		outStruct->_y = 0;
+		bitmap = getNativeBitmapOrGraphic(graphicIndex);
+		uint16 w = 0, h = 0;
+		if (bitmap)
+			getBitmapDimensions(bitmap, w, h);
+		outStruct->_width = w;
+		outStruct->_height = h;
+	}
+	outStruct->_s2m1 = bitmap;
+	return bitmap;
+}
+
+int16 *DisplayMan::getCoord(byte *bitmap, int16 *outXYZ, int16 zoneIndex, int16 *inOutX, int16 *inOutY) {
+	if (zoneIndex == -1 || !outXYZ)
+		return nullptr;
+
+	const LayoutRecord *rec = getLayoutRecord(zoneIndex);
+	if (!rec)
+		return nullptr;
+
+	int16 parentXYZ[4] = { 0, 0, 20000, 20000 };
+	int16 recType = rec->_recordType;
+	int16 xOffset = 0, yOffset = 0;
+
+	if (recType <= 8) {
+		xOffset = rec->_data1;
+		yOffset = rec->_data2;
+	} else {
+		if (recType == 9)
+			return nullptr;
+		recType -= 10;
+		xOffset = 0;
+		yOffset = 0;
+	}
+
+	if (inOutX && inOutY && (*inOutX || *inOutY)) {
+		xOffset += *inOutX;
+		yOffset += *inOutY;
+		*inOutX = 0;
+		*inOutY = 0;
+	}
+
+	bool flag = false;
+	const LayoutRecord *currentRec = rec;
+
+	while (currentRec->_parentRecordIndex) {
+		const LayoutRecord *parentRec = getLayoutRecord(currentRec->_parentRecordIndex);
+		if (!parentRec)
+			break;
+
+		if (currentRec->_recordType >= 10 && currentRec->_recordType <= 18) {
+			int16 data1 = parentRec->_data1;
+			int16 data2 = parentRec->_data2;
+			int16 parentRecType = parentRec->_recordType;
+
+			const LayoutRecord *grandParent = getLayoutRecord(parentRec->_parentRecordIndex);
+			if (!grandParent)
+				break;
+
+			switch (parentRecType) {
+			case 0:
+				data2 -= ((grandParent->_data2 + 1) >> 1);
+			case 5:
+				data1 -= ((grandParent->_data1 + 1) >> 1);
+				break;
+			case 3:
+				data2 -= (grandParent->_data2 - 1);
+			case 2:
+				data1 -= (grandParent->_data1 - 1);
+				break;
+			case 6:
+				data1 -= (grandParent->_data1 - 1);
+			case 8:
+				data2 -= ((grandParent->_data2 + 1) >> 1);
+				break;
+			case 7:
+				data1 -= ((grandParent->_data1 + 1) >> 1);
+			case 4:
+				data2 -= (grandParent->_data2 - 1);
+				break;
+			case 1:
+				break;
+			default:
+				return nullptr;
+			}
+
+			if ((parentXYZ[0] += data1) < data1)
+				parentXYZ[0] = data1;
+			if (parentXYZ[0] + parentXYZ[2] >= grandParent->_data1 + data1)
+				parentXYZ[2] = grandParent->_data1 - parentXYZ[0] + data1;
+
+			if ((parentXYZ[1] += data2) < data2)
+				parentXYZ[1] = data2;
+			if (parentXYZ[1] + parentXYZ[3] >= grandParent->_data2 + data2)
+				parentXYZ[3] = grandParent->_data2 - parentXYZ[1] + data2;
+
+			switch (currentRec->_recordType) {
+			case 10:
+				data2 += ((grandParent->_data2 + 1) >> 1);
+			case 15:
+				data1 += ((grandParent->_data1 + 1) >> 1);
+				break;
+			case 13:
+				data2 += (grandParent->_data2 - 1);
+			case 12:
+				data1 += (grandParent->_data1 - 1);
+				break;
+			case 16:
+				data1 += (grandParent->_data1 - 1);
+			case 18:
+				data2 += ((grandParent->_data2 + 1) >> 1);
+				break;
+			case 17:
+				data1 += ((grandParent->_data1 + 1) >> 1);
+			case 14:
+				data2 += (grandParent->_data2 - 1);
+				break;
+			case 11:
+				break;
+			default:
+				return nullptr;
+			}
+
+			xOffset += data1 + currentRec->_data1;
+			yOffset += data2 + currentRec->_data2;
+			currentRec = grandParent;
+		} else {
+			int16 data1 = parentRec->_data1;
+			int16 data2 = parentRec->_data2;
+
+			if (parentRec->_recordType == 1) {
+				xOffset += data1;
+				yOffset += data2;
+				parentXYZ[0] += data1;
+				parentXYZ[1] += data2;
+			} else if (parentRec->_recordType == 9) {
+				switch (currentRec->_recordType) {
+				case 0:
+					data1 = currentRec->_data1 - ((data1 + 1) >> 1);
+					data2 = currentRec->_data2 - ((data2 + 1) >> 1);
+					break;
+				case 1:
+					data1 = currentRec->_data1;
+					data2 = currentRec->_data2;
+					break;
+				case 2:
+					data1 = currentRec->_data1 - (data1 - 1);
+					data2 = currentRec->_data2;
+					break;
+				case 3:
+					data1 = currentRec->_data1 - (data1 - 1);
+					data2 = currentRec->_data2 - (data2 - 1);
+					break;
+				case 4:
+					data1 = currentRec->_data1;
+					data2 = currentRec->_data2 - (data2 - 1);
+					break;
+				case 5:
+					data1 = currentRec->_data1 - ((data1 + 1) >> 1);
+					data2 = currentRec->_data2;
+					break;
+				case 6:
+					data1 = currentRec->_data1 - (data1 - 1);
+					data2 = currentRec->_data2 - ((data2 + 1) >> 1);
+					break;
+				case 7:
+					data1 = currentRec->_data1 - ((data1 + 1) >> 1);
+					data2 = currentRec->_data2 - (data2 - 1);
+					break;
+				case 8:
+					data1 = currentRec->_data1;
+					data2 = currentRec->_data2 - ((data2 + 1) >> 1);
+					break;
+				default:
+					break;
+				}
+
+				if (flag) {
+					flag = false;
+					xOffset += data1;
+					yOffset += data2;
+					parentXYZ[0] += data1;
+					parentXYZ[1] += data2;
+				}
+				if (parentXYZ[0] < data1)
+					parentXYZ[0] = data1;
+				if (parentXYZ[0] + parentXYZ[2] >= parentRec->_data1 + data1)
+					parentXYZ[2] = parentRec->_data1 - parentXYZ[0] + data1;
+
+				if (parentXYZ[1] < data2)
+					parentXYZ[1] = data2;
+				if (parentXYZ[1] + parentXYZ[3] >= parentRec->_data2 + data2)
+					parentXYZ[3] = parentRec->_data2 - parentXYZ[1] + data2;
+			} else {
+				if (parentRec->_recordType <= 8)
+					flag = true;
+			}
+			currentRec = parentRec;
+		}
+	}
+
+	uint16 headerW = 0, headerH = 0;
+	if (bitmap)
+		getBitmapDimensions(bitmap, headerW, headerH);
+
+	int16 bmpWidth = (inOutX && *inOutX) ? *inOutX : (int16)headerW;
+	int16 bmpHeight = (inOutY && *inOutY) ? *inOutY : (int16)headerH;
+
+	switch (recType) {
+	case 0:
+		outXYZ[0] = xOffset - ((bmpWidth + 1) >> 1);
+		outXYZ[1] = yOffset - ((bmpHeight + 1) >> 1);
+		break;
+	case 1:
+		outXYZ[0] = xOffset;
+		outXYZ[1] = yOffset;
+		break;
+	case 2:
+		outXYZ[0] = xOffset - (bmpWidth - 1);
+		outXYZ[1] = yOffset;
+		break;
+	case 3:
+		outXYZ[0] = xOffset - (bmpWidth - 1);
+		outXYZ[1] = yOffset - (bmpHeight - 1);
+		break;
+	case 4:
+		outXYZ[0] = xOffset;
+		outXYZ[1] = yOffset - (bmpHeight - 1);
+		break;
+	case 5:
+		outXYZ[0] = xOffset - ((bmpWidth + 1) >> 1);
+		outXYZ[1] = yOffset;
+		break;
+	case 6:
+		outXYZ[0] = xOffset - (bmpWidth - 1);
+		outXYZ[1] = yOffset - ((bmpHeight + 1) >> 1);
+		break;
+	case 7:
+		outXYZ[0] = xOffset - ((bmpWidth + 1) >> 1);
+		outXYZ[1] = yOffset - (bmpHeight - 1);
+		break;
+	case 8:
+		outXYZ[0] = xOffset;
+		outXYZ[1] = yOffset - ((bmpHeight + 1) >> 1);
+		break;
+	default:
+		return nullptr;
+	}
+
+	int16 clipX = parentXYZ[0] - outXYZ[0];
+	int16 clipY = parentXYZ[1] - outXYZ[1];
+
+	if (clipX <= 0) {
+		if (inOutX)
+			*inOutX = 0;
+		outXYZ[2] = MIN((int16)bmpWidth, (int16)(parentXYZ[2] + clipX));
+	} else {
+		if (inOutX)
+			*inOutX = clipX;
+		outXYZ[0] = parentXYZ[0];
+		outXYZ[2] = MIN((int16)(bmpWidth - clipX), parentXYZ[2]);
+	}
+
+	if (clipY <= 0) {
+		if (inOutY)
+			*inOutY = 0;
+		outXYZ[3] = MIN((int16)bmpHeight, (int16)(parentXYZ[3] + clipY));
+	} else {
+		if (inOutY)
+			*inOutY = clipY;
+		outXYZ[1] = parentXYZ[1];
+		outXYZ[3] = MIN((int16)(bmpHeight - clipY), parentXYZ[3]);
+	}
+
+	if (outXYZ[2] <= 0 || outXYZ[3] <= 0)
+		return nullptr;
+
+	return outXYZ;
+}
+
+bool DisplayMan::getZoneBox(int16 zoneIndex, int16 graphicIndex, Box &outBox) {
+	Struct2 s2;
+	byte *bmp = initBitmapStruct2(graphicIndex, &s2);
+	int16 xyz[4] = { 0, 0, 0, 0 };
+
+	if (!getCoord(bmp, xyz, zoneIndex, &s2._width, &s2._height))
+		return false;
+
+	outBox = Box(xyz[0], xyz[0] + xyz[2] - 1, xyz[1], xyz[1] + xyz[3] - 1);
+	return true;
 }
 
 void DisplayMan::drawSquareD2R(Direction dir, int16 posX, int16 posY) {

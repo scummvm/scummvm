@@ -57,6 +57,41 @@ enum DoorState {
 	kDMDoorStateDestroyed = 5    // @ C5_DOOR_STATE_DESTROYED
 };
 
+struct LayoutRecord {
+	uint16 _recordType;
+	int16 _parentRecordIndex;
+	int16 _data1;
+	int16 _data2;
+};
+
+struct LayoutRange {
+	const LayoutRange *_nextRange;
+	int16 _firstIndex;
+	int16 _lastIndex;
+	const LayoutRecord *_records;
+};
+
+struct Struct3 {
+	uint8 _s3m1; // Type: 1: graphic index, 2: bitmap pointer
+	int8 _s3m2;
+	int16 _x;
+	int16 _y;
+	int16 _width;
+	int16 _height;
+	union {
+		int16 _graphicIndex;
+		byte *_bitmap;
+	} _s3u;
+};
+
+struct Struct2 {
+	byte *_s2m1; // Bitmap pointer
+	int16 _x;
+	int16 _y;
+	int16 _width;
+	int16 _height;
+};
+
 enum DoorOrnament {
 	kDMDoorOrnamentD3LCR = 0, // @ C0_VIEW_DOOR_ORNAMENT_D3LCR
 	kDMDoorOrnamentD2LCR = 1, // @ C1_VIEW_DOOR_ORNAMENT_D2LCR
@@ -618,6 +653,12 @@ class DisplayMan {
 	void drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &frame); // @ F0104_DUNGEONVIEW_DrawFloorPitOrStairsBitmap
 	void drawWallSetBitmap(byte *bitmap, Frame &f); // @ F0100_DUNGEONVIEW_DrawWallSetBitmap
 	void drawWallSetBitmapWithoutTransparency(byte *bitmap, Frame &f); // @ F0101_DUNGEONVIEW_DrawWallSetBitmapWithoutTransparency
+
+	// DOS Layout Tree Engine (GET_COORD)
+	const LayoutRecord *getLayoutRecord(int16 layoutRecordIndex); // @ F0634_GetLayoutRecord
+	byte *initBitmapStruct2(int16 graphicIndex, Struct2 *outStruct); // @ F0630_InitBitmapStruct2
+	int16 *getCoord(byte *bitmap, int16 *outXYZ, int16 zoneIndex, int16 *inOutX, int16 *inOutY); // @ F0635_
+	bool getZoneBox(int16 zoneIndex, int16 graphicIndex, Box &outBox);
 	void drawSquareD3L(Direction dir, int16 posX, int16 posY); // @ F0116_DUNGEONVIEW_DrawSquareD3L
 	void drawSquareD3R(Direction dir, int16 posX, int16 posY); // @ F0117_DUNGEONVIEW_DrawSquareD3R
 	void drawSquareD3C(Direction dir, int16 posX, int16 posY); // @ F0118_DUNGEONVIEW_DrawSquareD3C_CPSF
@@ -635,6 +676,7 @@ class DisplayMan {
 
 	bool isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex); // @ F0107_DUNGEONVIEW_IsDrawnWallOrnamentAnAlcove_CPSF
 
+	Struct3 _negativeBitmaps[45]; // @ G2002_NegativeBitmaps
 	uint16 *_derivedBitmapByteCount; // @ G0639_pui_DerivedBitmapByteCount
 	byte **_derivedBitmaps; // @ G0638_pui_DerivedBitmapBlockIndices
 
