@@ -71,7 +71,7 @@ struct SmackerPlaybackRequest {
 	int originY;
 	bool patchWacMediaPalette;
 	bool serviceSceneUi;
-	bool repeatedLoopPass;
+	bool loopFromStart;
 	bool *advanceSegment;
 	uint loopStartFrame;
 	MediaSequenceCallback *sequenceCallback;
@@ -87,7 +87,7 @@ struct SmackerPlaybackRequest {
 		externalAudio(nullptr), stoppedByUser(nullptr), frameAudioOffsets(nullptr),
 		audioByteRate(0), timelineStartMillis(0), displayScale(1),
 		patchInterfacePalette(true), frameLimit(0), originY(0),
-		patchWacMediaPalette(false), serviceSceneUi(false), repeatedLoopPass(false),
+		patchWacMediaPalette(false), serviceSceneUi(false), loopFromStart(false),
 		advanceSegment(nullptr), loopStartFrame(0), sequenceCallback(nullptr),
 		sequenceCommand(nullptr), sourcePalette(nullptr), rememberVideoPalette(true),
 		firstFrame(0), lastFrame(0xffffffff), boundedLoopStartFrame(0xffffffff),

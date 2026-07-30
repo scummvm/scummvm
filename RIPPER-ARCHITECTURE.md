@@ -156,6 +156,11 @@
   media iteration snapshots the current timer tick rather than catching up on
   elapsed toolbar time. ScummVM pauses the decoder clock across the same input
   ownership interval and continues presenting toolbar animation and tooltips.
+  When the sequence loop flag is set with a zero loop-start frame,
+  `RunMediaSequence` retains the loaded Smacker state and resets its one-based
+  frame counters to one without calling `SeekSmackerPlaybackFrame`. ScummVM
+  likewise rewinds the same decoder without clearing its surface, preserving
+  the wrapped framebuffer required by skipped blocks in the first packet.
 - Retail `RunMediaSequence` advances frames against its timer callback slot;
   nested presentation work explicitly suspends that slot and resumes it on
   return. ScummVM global dialogs instead enter `Engine::pauseEngine()` while the
