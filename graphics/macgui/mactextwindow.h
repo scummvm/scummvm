@@ -50,6 +50,8 @@ public:
 	void clearText();
 	void setMarkdownText(const Common::U32String &str);
 
+	void scrollToBottom() { _mactext->_scrollPos = MAX<int>(0, _mactext->getTextHeight() - getInnerDimensions().height()); }
+
 	void setEditable(bool editable) { _editable = editable; _mactext->setEditable(editable); }
 	void setActive(bool active) override { MacWindow::setActive(active); if (_editable) _mactext->setActive(active); }
 	void setSelectable(bool selectable) { _selectable = selectable; }
