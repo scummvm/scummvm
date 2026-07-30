@@ -1302,12 +1302,15 @@
   milestone 29 opens the Secret Animal Lab, and WAC exits.
   The ScummVM-only debugger command `PUZZLE_HELP` toggles diagnostic puzzle
   overlays without changing retail validation. In the voice-lock source
-  waveform it draws palette-254 red brackets at those exact five target
-  spans, numbered in table order, only after Quantize has replaced the source
-  descriptor with `VOXLOK1.WAV`. This keeps the fixed answer coordinates from
-  being presented against the unquantized samples. `PUZZLE_HELP ON` and
-  `PUZZLE_HELP OFF` select the state explicitly; the no-argument form toggles
-  it.
+  waveform it draws palette-254 red guides at those five targets, numbered in
+  table order, only after Quantize has replaced the source descriptor with
+  `VOXLOK1.WAV`. Each guide thickens the accepted `start ± 3` and `end ± 3`
+  endpoint bands while taller ticks retain the nominal table pair; alternating
+  baselines keep neighboring tolerance bands distinct. This keeps the fixed
+  answer coordinates from being presented against the unquantized samples and
+  exposes the exact retail grace instead of implying pixel-perfect input.
+  `PUZZLE_HELP ON` and `PUZZLE_HELP OFF` select the state explicitly; the
+  no-argument form toggles it.
   While Play is active, `GetManagedAudioTriggerPlaybackPosition` at `0x60795`
   advances a vertical marker across the source or assembled waveform selected
   for playback. The scene's input tick publishes one mouse state,
