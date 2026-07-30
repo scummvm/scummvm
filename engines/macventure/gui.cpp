@@ -1123,6 +1123,7 @@ void Gui::printText(const Common::String &text) {
 	_outConsoleWindow->setEditable(true);
 	_outConsoleWindow->appendText(text + '\n');
 	_outConsoleWindow->setEditable(false);
+	_outConsoleWindow->scrollToBottom();
 }
 
 void Gui::showPrebuiltDialog(PrebuiltDialogs type, const Common::String &title) {
