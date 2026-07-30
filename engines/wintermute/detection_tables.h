@@ -1809,14 +1809,14 @@ static const WMEGameDescription gameDescriptions[] = {
 					"data.dcp", "7074bcd7bc7ad7eb04c271aafb964c32", 13815660), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
 	// Looky Demo (German)
-	WME_WINENTRY("looky", "Demo",
+	WME_WINENTRY("looky", "Missing DivX 5.0 support",
 		WME_ENTRY2s("german.dcp", "606c048426dfbe94442b59fd34a5c76e", 14339496,
-					"data.dcp", "7074bcd7bc7ad7eb04c271aafb964c32", 13815660), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
+					"data.dcp", "7074bcd7bc7ad7eb04c271aafb964c32", 13815660), Common::DE_DEU, ADGF_UNSUPPORTED | ADGF_DEMO, WME_1_9_1),
 
 	// Looky (German) (2007)
-	WME_WINENTRY("looky", "Original Release",
+	WME_WINENTRY("looky", "Missing DivX 5.0 support",
 		WME_ENTRY2s("german.dcp", "bf4c2b8c26342342441a6d64934ab832", 107027865,
-					"data.dcp", "50de0beaa5ad621aa9f020df901d1e74", 1342214), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_1),
+					"data.dcp", "50de0beaa5ad621aa9f020df901d1e74", 1342214), Common::DE_DEU, ADGF_UNSUPPORTED, WME_1_9_1),
 
 	// Looky (German) (2019)
 	WME_WINENTRY("looky", "2019 Release",
