@@ -1244,7 +1244,8 @@
   `RunWacStillImageScreenWithOptionalAudio` path with no audio. The Document
   retains the database chooser and shares the still-image palette and vertical
   scrolling behavior.
-- Entry 6 dispatches `RunWacVoiceLockPuzzleScene` at `0x24ba4`. It always
+- Entry 6 dispatches `RunWacVoiceLockPuzzleScene` at `0x24ba4`, implemented by
+  `WacVoiceLockPuzzle`. It always
   presents `VOXLOK.WAV` in a 340-by-116 source panel at physical screen
   position 50,50, with the read-only `WACWAV0` Play control at 50,167.
   The resource-`0xb1` and resource-`0xb2` strings are centered control titles,
