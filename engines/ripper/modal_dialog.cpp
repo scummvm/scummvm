@@ -434,7 +434,7 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 		const Common::Array<Common::String> &lines, uint firstVisible,
 		uint visibleRows, const Common::Rect &bounds,
 		PresentationStyle style,
-		TextPanelScrollControl hoveredScrollControl) const {
+		TextPanelScrollControl hoveredScrollControl, bool present) const {
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
 		if (screen)
@@ -525,8 +525,10 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 		drawOverflowBar(pixels, screen->pitch, bounds, firstVisible,
 			lines.size() - visibleRows, hoveredScrollControl, style);
 	g_system->unlockScreen();
-	_engine->getCursor()->refresh();
-	g_system->updateScreen();
+	if (present) {
+		_engine->getCursor()->refresh();
+		g_system->updateScreen();
+	}
 }
 
 bool ModalDialogManager::drawRetainedTextPanel(uint bodyResourceId,
@@ -576,7 +578,7 @@ bool ModalDialogManager::drawRetainedTextPanelText(const Common::String &body,
 
 bool ModalDialogManager::drawRetainedTitlePanelText(
 		const Common::String &title, const Common::Rect &bounds,
-		PresentationStyle style) {
+		PresentationStyle style, bool present) {
 	if (!_initialized || title.empty())
 		return false;
 	if (style == kMenubPresentation)
@@ -584,7 +586,7 @@ bool ModalDialogManager::drawRetainedTitlePanelText(
 
 	Common::Array<Common::String> lines;
 	drawDialog(title, lines, 0, 0, bounds, style,
-		kTextPanelScrollNone);
+		kTextPanelScrollNone, present);
 	debugC(3, kDebugScene,
 		"Ripper: drew retained title panel style=%s title='%s' bounds=%d,%d,%d,%d",
 		style == kWacPresentation ? "wacmnu" :

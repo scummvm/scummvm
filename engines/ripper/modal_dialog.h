@@ -81,7 +81,8 @@ public:
 		uint &maximumFirstVisible, uint &visibleRows, PresentationStyle style,
 		TextPanelScrollControl hoveredScrollControl = kTextPanelScrollNone);
 	bool drawRetainedTitlePanelText(const Common::String &title,
-		const Common::Rect &bounds, PresentationStyle style);
+		const Common::Rect &bounds, PresentationStyle style,
+		bool present = true);
 	bool drawRetainedTextPanelLines(const Common::Array<Common::String> &lines,
 		const Common::Rect &bounds, uint firstVisible,
 		uint &maximumFirstVisible, uint &visibleRows, PresentationStyle style,
@@ -125,7 +126,8 @@ private:
 		const Common::Array<Common::String> &lines, uint firstVisible,
 		uint visibleRows, const Common::Rect &bounds,
 		PresentationStyle style,
-		TextPanelScrollControl hoveredScrollControl = kTextPanelScrollNone) const;
+		TextPanelScrollControl hoveredScrollControl = kTextPanelScrollNone,
+		bool present = true) const;
 	void drawTextEntry(const Common::String &prompt, const Common::String &text,
 		uint firstVisible, uint cursorPosition, bool caretVisible,
 		const Common::Rect &bounds, PresentationStyle style) const;
