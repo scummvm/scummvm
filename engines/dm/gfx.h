@@ -98,6 +98,45 @@ enum DoorOrnament {
 	kDMDoorOrnamentD1LCR = 2  // @ C2_VIEW_DOOR_ORNAMENT_D1LCR
 };
 
+enum ZoneIndex {
+	kDMZoneWallD3L2 = 702, // @ C702_ZONE_WALL_D3L2
+	kDMZoneWallD3R2 = 703, // @ C703_ZONE_WALL_D3R2
+	kDMZoneWallD3C  = 704, // @ C704_ZONE_WALL_D3C
+	kDMZoneWallD3L  = 705, // @ C705_ZONE_WALL_D3L
+	kDMZoneWallD3R  = 706, // @ C706_ZONE_WALL_D3R
+	kDMZoneWallD2L2 = 707, // @ C707_ZONE_WALL_D2L2
+	kDMZoneWallD2R2 = 708, // @ C708_ZONE_WALL_D2R2
+	kDMZoneWallD2C  = 709, // @ C709_ZONE_WALL_D2C
+	kDMZoneWallD2L  = 710, // @ C710_ZONE_WALL_D2L
+	kDMZoneWallD2R  = 711, // @ C711_ZONE_WALL_D2R
+	kDMZoneWallD1C  = 712, // @ C712_ZONE_WALL_D1C
+	kDMZoneWallD1L  = 713, // @ C713_ZONE_WALL_D1L
+	kDMZoneWallD1R  = 714, // @ C714_ZONE_WALL_D1R
+	kDMZoneWallD0C  = 715, // @ C715_ZONE_WALL_D0C
+	kDMZoneWallD0L  = 716, // @ C716_ZONE_WALL_D0L
+	kDMZoneWallD0R  = 717  // @ C717_ZONE_WALL_D0R
+};
+
+enum NegGraphicIndex {
+	kDMNegGraphicFloor     = -1,
+	kDMNegGraphicCeiling   = -2,
+	kDMNegGraphicWallD3L2  = -3,
+	kDMNegGraphicWallD3R2  = -4,
+	kDMNegGraphicWallD3C   = -5,
+	kDMNegGraphicWallD3L   = -6,
+	kDMNegGraphicWallD3R   = -7,
+	kDMNegGraphicWallD2L2  = -8,
+	kDMNegGraphicWallD2R2  = -9,
+	kDMNegGraphicWallD2C   = -10,
+	kDMNegGraphicWallD2L   = -11,
+	kDMNegGraphicWallD2R   = -12,
+	kDMNegGraphicWallD1C   = -13,
+	kDMNegGraphicWallD1L   = -14,
+	kDMNegGraphicWallD1R   = -15,
+	kDMNegGraphicWallD0L   = -16,
+	kDMNegGraphicWallD0R   = -17
+};
+
 enum DoorButton {
 	kDMDoorButtonD3R = 0, // @ C0_VIEW_DOOR_BUTTON_D3R
 	kDMDoorButtonD3C = 1, // @ C1_VIEW_DOOR_BUTTON_D3C
@@ -659,6 +698,18 @@ class DisplayMan {
 	byte *initBitmapStruct2(int16 graphicIndex, Struct2 *outStruct); // @ F0630_InitBitmapStruct2
 	int16 *getCoord(byte *bitmap, int16 *outXYZ, int16 zoneIndex, int16 *inOutX, int16 *inOutY); // @ F0635_
 	bool getZoneBox(int16 zoneIndex, int16 graphicIndex, Box &outBox);
+	void drawWallSetBitmapDOS(int16 zoneIndex, int16 normalNegIndex, int16 oppositeNegIndex, bool withoutTransparency = false);
+	void loadLayoutData(uint16 graphicIndex); // @ F0640_LoadLayoutData
+
+	struct DynLayoutRange {
+		DynLayoutRange *_nextRange;
+		int16 _firstIndex;
+		int16 _lastIndex;
+		LayoutRecord *_records;
+	};
+	DynLayoutRange *_dosLayoutData;
+	Common::Array<DynLayoutRange *> _dosLayoutRangeAllocs;
+
 	void drawSquareD3L(Direction dir, int16 posX, int16 posY); // @ F0116_DUNGEONVIEW_DrawSquareD3L
 	void drawSquareD3R(Direction dir, int16 posX, int16 posY); // @ F0117_DUNGEONVIEW_DrawSquareD3R
 	void drawSquareD3C(Direction dir, int16 posX, int16 posY); // @ F0118_DUNGEONVIEW_DrawSquareD3C_CPSF
