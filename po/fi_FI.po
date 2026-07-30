@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-07-13 11:35+0000\n"
-"PO-Revision-Date: 2026-02-07 15:22+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"PO-Revision-Date: 2026-07-30 23:22+0000\n"
+"Last-Translator: Linus Väinämö Virtanen <linus.virtanen@protonmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.15.1\n"
+"X-Generator: Weblate 2026.7.1\n"
 "X-Language-name: Suomi\n"
 
 #: audio/mac_plugin.cpp:30
@@ -762,14 +762,16 @@ msgstr "Lyhyet siirtymät"
 #: gui/editgamedialog.cpp:334
 msgid "Enable visual markers and labels for interactive objects"
 msgstr ""
+"Ota käyttöön interaktiivisten kohteiden visuaaliset merkinnät ja "
+"päällysselitteet"
 
 #: gui/editgamedialog.cpp:339
 msgid "Hotspot marker:"
-msgstr ""
+msgstr "Kohokohtamerkkaaja:"
 
 #: gui/editgamedialog.cpp:341
 msgid "Point"
-msgstr ""
+msgstr "Osoita"
 
 #. I18N: Hardware key on controller
 #: gui/editgamedialog.cpp:342 backends/platform/sdl/ps3/ps3.cpp:46
@@ -791,7 +793,7 @@ msgstr "Näytä kohdealueet"
 
 #: gui/editgamedialog.cpp:353
 msgid "Display text labels next to hotspot markers"
-msgstr ""
+msgstr "Näytä tekstiselventeet merkintöjen vieressä"
 
 #: gui/editgamedialog.cpp:367 engines/dialogs.cpp:385
 msgid "Achievements"
@@ -2918,7 +2920,7 @@ msgstr "* Abc"
 
 #: gui/printing-dialog.cpp:54
 msgid "Print"
-msgstr ""
+msgstr "Tulosta"
 
 #: gui/printing-dialog.cpp:56
 #, fuzzy
@@ -3595,7 +3597,7 @@ msgstr "Sulje ponnahdusikkuna"
 #: dists/android.strings.xml.cpp:50
 msgid ""
 "Local network access permission was denied: Web server won't be reachable"
-msgstr ""
+msgstr "Paikallisverkon käyttöoikeus evättiin: Web-palvelin ei tavoitettavissa"
 
 #: dists/android.strings.xml.cpp:51
 #, fuzzy
@@ -3931,6 +3933,9 @@ msgid ""
 "testing mode.\n"
 "If you encounter any bugs or oddities, please report them to our bugtracker."
 msgstr ""
+"VAROITUS: Peli, jonka olet käynnistämässä on vasta äskettäin tuettu ja "
+"testaustilassa.\n"
+"Jos kohtaat vikoja tai kummallisuuksia, ilmoita niistä virheenseurantaamme."
 
 #: engines/engine.cpp:933
 #, c-format
@@ -4187,43 +4192,43 @@ msgstr "RetroWave OPL3"
 
 #: audio/fmopl.cpp:133
 msgid "[nFM] NokturnFM2 (OPL2)"
-msgstr ""
+msgstr "[nFM] NokturnFM2 (OPL2)"
 
 #: audio/fmopl.cpp:134
 msgid "[nFM] NokturnFM3 (OPL3)"
-msgstr ""
+msgstr "[nFM] NokturnFM3 (OPL3)"
 
 #: audio/fmopl.cpp:135
 msgid "[nFM] RetroWave USB OPL3 Express (OPL3)"
-msgstr ""
+msgstr "[nFM] RetroWave USB OPL3 Express (OPL3)"
 
 #: audio/fmopl.cpp:136
 msgid "[nFM] Serdaco OPL2LPT (OPL2)"
-msgstr ""
+msgstr "[nFM] Serdaco OPL2LPT (OPL2)"
 
 #: audio/fmopl.cpp:137
 msgid "[nFM] Serdaco OPL3LPT (OPL3)"
-msgstr ""
+msgstr "[nFM] Serdaco OPL3LPT (OPL3)"
 
 #: audio/fmopl.cpp:138
 msgid "[nFM] Cheerful Electronics OPL2 Audio Board (OPL2)"
-msgstr ""
+msgstr "[nFM] Cheerful Electronics OPL2 Audio Board (OPL2)"
 
 #: audio/fmopl.cpp:139
 msgid "[nFM] Cheerful Electronics OPL3 Duo! (2xOPL3)"
-msgstr ""
+msgstr "[nFM] Cheerful Electronics OPL3 Duo! (2xOPL3)"
 
 #: audio/fmopl.cpp:140
 msgid "[nFM] ST Bus ISA / VME SoundBlaster"
-msgstr ""
+msgstr "[nFM] ST Bus ISA / VME SoundBlaster"
 
 #: audio/fmopl.cpp:141
 msgid "[nFM] NatFeats / NULL"
-msgstr ""
+msgstr "[nFM] NatFeats / NOLLA"
 
 #: audio/fmopl.cpp:142
 msgid "[nFM] Nuked-OPL3 softsynth (OPL3)"
-msgstr ""
+msgstr "[nFM] Nuked-OPL3 softsynth (OPL3)"
 
 #: audio/mididrv.cpp:232
 #, c-format
@@ -6548,7 +6553,7 @@ msgstr "Tarkista päivitykset..."
 
 #: engines/access/metaengine.cpp:82
 msgid "Use 'high definition' OGG music"
-msgstr ""
+msgstr "Käytä 'korkealaatuista' OGG-musiikkia"
 
 #: engines/access/metaengine.cpp:83
 msgid "Use the OGG audio from the re-release instead of original MIDI tracks"
