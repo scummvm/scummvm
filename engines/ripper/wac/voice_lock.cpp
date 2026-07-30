@@ -578,28 +578,54 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 			// but appear only after the retail Quantize action has moved the
 			// samples beneath those fixed coordinates. They do not alter the
 			// three-pixel tolerance or acceptance rules.
-			const int lineY = sourceWaveform.bottom - 3;
 			for (uint range = 0; range < kWacVoiceLockSelectionCount;
 					++range) {
-				const int left = CLIP<int>(
+				const int nominalStart = CLIP<int>(
 					kWacVoiceLockSolution[range][0],
 					sourceWaveform.left, sourceWaveform.right - 1);
-				const int right = CLIP<int>(
+				const int nominalEnd = CLIP<int>(
 					kWacVoiceLockSolution[range][1],
-					left + 1, sourceWaveform.right);
-				for (int x = left; x < right; ++x)
+					nominalStart + 1, sourceWaveform.right - 1);
+				const int acceptedStartMinimum = CLIP<int>(
+					nominalStart - (int)kWacVoiceLockSelectionTolerance,
+					sourceWaveform.left, sourceWaveform.right - 1);
+				const int acceptedStartMaximum = CLIP<int>(
+					nominalStart + (int)kWacVoiceLockSelectionTolerance,
+					sourceWaveform.left, sourceWaveform.right - 1);
+				const int acceptedEndMinimum = CLIP<int>(
+					nominalEnd - (int)kWacVoiceLockSelectionTolerance,
+					sourceWaveform.left, sourceWaveform.right - 1);
+				const int acceptedEndMaximum = CLIP<int>(
+					nominalEnd + (int)kWacVoiceLockSelectionTolerance,
+					sourceWaveform.left, sourceWaveform.right - 1);
+				// Alternate the baseline so neighboring accepted endpoint
+				// bands remain distinguishable when their tolerance overlaps.
+				const int lineY =
+					sourceWaveform.bottom - 3 - (range % 2) * 4;
+				for (int x = nominalStart; x <= nominalEnd; ++x)
 					*((byte *)screen->getBasePtr(x, lineY)) =
 						kWacVoiceLockPuzzleHelpColor;
-				for (int y = lineY - 2; y <= lineY + 1; ++y) {
-					*((byte *)screen->getBasePtr(left, y)) =
+				for (int y = lineY - 1; y <= lineY + 1; ++y) {
+					for (int x = acceptedStartMinimum;
+							x <= acceptedStartMaximum; ++x)
+						*((byte *)screen->getBasePtr(x, y)) =
+							kWacVoiceLockPuzzleHelpColor;
+					for (int x = acceptedEndMinimum;
+							x <= acceptedEndMaximum; ++x)
+						*((byte *)screen->getBasePtr(x, y)) =
+							kWacVoiceLockPuzzleHelpColor;
+				}
+				for (int y = lineY - 4; y <= lineY + 2; ++y) {
+					*((byte *)screen->getBasePtr(nominalStart, y)) =
 						kWacVoiceLockPuzzleHelpColor;
-					*((byte *)screen->getBasePtr(right - 1, y)) =
+					*((byte *)screen->getBasePtr(nominalEnd, y)) =
 						kWacVoiceLockPuzzleHelpColor;
 				}
 				const Common::String label =
 					Common::String::format("%u", range + 1);
-				const int labelLeft = left +
-					(right - left - _database->measureText(label)) / 2;
+				const int labelLeft = nominalStart +
+					(nominalEnd - nominalStart -
+						_database->measureText(label)) / 2;
 				_database->drawText((byte *)screen->getPixels(),
 					screen->pitch, labelLeft, lineY - 12, label,
 					kWacVoiceLockPuzzleHelpColor);
@@ -708,9 +734,10 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 		if (nextPuzzleHelpEnabled != puzzleHelpEnabled) {
 			puzzleHelpEnabled = nextPuzzleHelpEnabled;
 			debugC(2, kDebugWac,
-				"Ripper: WAC voice-lock puzzle-help overlay enabled=%d visible=%d quantized=%d ranges=%u command=PUZZLE_HELP",
+				"Ripper: WAC voice-lock puzzle-help overlay enabled=%d visible=%d quantized=%d ranges=%u endpointTolerance=%u command=PUZZLE_HELP",
 				puzzleHelpEnabled, puzzleHelpEnabled && quantized, quantized,
-				kWacVoiceLockSelectionCount);
+				kWacVoiceLockSelectionCount,
+				kWacVoiceLockSelectionTolerance);
 			redraw = true;
 		}
 
@@ -969,10 +996,11 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 					_database->engine()->getMedia()->playSoundEffect(
 						"wacjrnl.wav", audioHandle);
 					debugC(2, kDebugWac,
-						"Ripper: WAC voice-lock quantized source='voxlok1.wav' bytes=%u rate=%u retainedDrops=%u assembledBytes=%u puzzleHelpVisible=%d",
+						"Ripper: WAC voice-lock quantized source='voxlok1.wav' bytes=%u rate=%u retainedDrops=%u assembledBytes=%u puzzleHelpVisible=%d endpointTolerance=%u",
 						sourcePcm.data.size(), sourcePcm.sampleRate,
 						selections.size(), assembledAudio.size(),
-						puzzleHelpEnabled);
+						puzzleHelpEnabled,
+						kWacVoiceLockSelectionTolerance);
 					redraw = true;
 				} else {
 					warning("Ripper: could not load WAC voice-lock quantized source 'voxlok1.wav'");
