@@ -572,10 +572,12 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 				sourceSelection.start, sourceSelection.end,
 				sourceSelectionDragWidth, sourceSelectionDragHeight);
 		}
-		if (puzzleHelpEnabled) {
+		if (puzzleHelpEnabled && quantized) {
 			// PUZZLE_HELP is a ScummVM-only debugger aid. The numbered
 			// brackets share the table used by the retail-backed validator,
-			// but do not alter its three-pixel tolerance or acceptance rules.
+			// but appear only after the retail Quantize action has moved the
+			// samples beneath those fixed coordinates. They do not alter the
+			// three-pixel tolerance or acceptance rules.
 			const int lineY = sourceWaveform.bottom - 3;
 			for (uint range = 0; range < kWacVoiceLockSelectionCount;
 					++range) {
@@ -706,8 +708,9 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 		if (nextPuzzleHelpEnabled != puzzleHelpEnabled) {
 			puzzleHelpEnabled = nextPuzzleHelpEnabled;
 			debugC(2, kDebugWac,
-				"Ripper: WAC voice-lock puzzle-help overlay enabled=%d ranges=%u command=PUZZLE_HELP",
-				puzzleHelpEnabled, kWacVoiceLockSelectionCount);
+				"Ripper: WAC voice-lock puzzle-help overlay enabled=%d visible=%d quantized=%d ranges=%u command=PUZZLE_HELP",
+				puzzleHelpEnabled, puzzleHelpEnabled && quantized, quantized,
+				kWacVoiceLockSelectionCount);
 			redraw = true;
 		}
 
@@ -966,9 +969,10 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 					_database->engine()->getMedia()->playSoundEffect(
 						"wacjrnl.wav", audioHandle);
 					debugC(2, kDebugWac,
-						"Ripper: WAC voice-lock quantized source='voxlok1.wav' bytes=%u rate=%u retainedDrops=%u assembledBytes=%u",
+						"Ripper: WAC voice-lock quantized source='voxlok1.wav' bytes=%u rate=%u retainedDrops=%u assembledBytes=%u puzzleHelpVisible=%d",
 						sourcePcm.data.size(), sourcePcm.sampleRate,
-						selections.size(), assembledAudio.size());
+						selections.size(), assembledAudio.size(),
+						puzzleHelpEnabled);
 					redraw = true;
 				} else {
 					warning("Ripper: could not load WAC voice-lock quantized source 'voxlok1.wav'");
