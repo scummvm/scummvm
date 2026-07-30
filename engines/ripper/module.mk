@@ -21,7 +21,6 @@ MODULE_OBJS := \
 	modal_dialog.o \
 	options_panel.o \
 	puzzles/board_arrangement.o \
-	puzzles/broken_mug.o \
 	puzzles/calculator.o \
 	puzzles/cd_in_book.o \
 	puzzles/circuit_chip.o \
@@ -50,6 +49,7 @@ MODULE_OBJS := \
 	script.o \
 	settings.o \
 	toolbar.o \
+	wac/broken_mug.o \
 	wac/database.o \
 	wac/journal.o \
 	wac/voice_lock.o \
