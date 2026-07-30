@@ -326,7 +326,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	const int originY = request.originY;
 	const bool patchWacMediaPalette = request.patchWacMediaPalette;
 	const bool serviceSceneUi = request.serviceSceneUi;
-	const bool repeatedLoopPass = request.repeatedLoopPass;
+	const bool loopFromStart = request.loopFromStart;
 	bool *advanceSegment = request.advanceSegment;
 	const uint loopStartFrame = request.loopStartFrame;
 	MediaSequenceCallback *sequenceCallback = request.sequenceCallback;
@@ -402,11 +402,11 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		decoder.close();
 		return false;
 	}
-	debugC(repeatedLoopPass ? 3 : 1, kDebugVideo,
+	debugC(1, kDebugVideo,
 		"Ripper: playing Smacker '%s' frames=%u source=%ux%u output=%ux%u at %d,%d controls=%d sceneUi=%d frameLimit=%u",
 		name.c_str(), decoder.getFrameCount(), decoder.getWidth(), decoder.getHeight(),
 		outputWidth, outputHeight, x, y, allowEscSpace, serviceSceneUi, frameLimit);
-	debugC(repeatedLoopPass ? 3 : 2, kDebugVideo, "Ripper: Smacker '%s' interfacePalettePatch=%d",
+	debugC(2, kDebugVideo, "Ripper: Smacker '%s' interfacePalettePatch=%d",
 		name.c_str(), patchInterfacePalette);
 	if (patchWacMediaPalette)
 		debugC(2, kDebugVideo, "Ripper: Smacker '%s' WAC palette patch=10..149", name.c_str());
@@ -603,6 +603,23 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	}
 	while (!_engine->shouldQuit()) {
 		if (decoder.endOfVideo()) {
+			if (loopFromStart) {
+				// RunMediaSequence at 0x1e516 resets its one-based frame counters
+				// to one when the loop flag is set with a zero loop-start. It does
+				// not reload or seek the Smacker state, so skipped blocks in the
+				// first packet continue from the decoder's wrapped framebuffer.
+				if (!decoder.rewind()) {
+					warning("Ripper: could not rewind looping scene Smacker '%s'",
+						name.c_str());
+					completed = false;
+					break;
+				}
+				presentedFrames = 0;
+				debugC(3, kDebugVideo,
+					"Ripper: rewound looping scene Smacker '%s' with retained decode surface",
+					name.c_str());
+				continue;
+			}
 			if (sequenceCallback && sequenceCallback->continueAfterEnd()) {
 				// Async scene choosers keep servicing input over the final decoded
 				// frame. HandleSceneEntryAsyncTextRequest at 0x157a1 does not stop
@@ -1565,6 +1582,9 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 	// MediaSequenceCounterEqualsTarget at 0x15ac8. RunMediaSequence at 0x1e516
 	// calls it after presenting the frame, so this path retains frame one onscreen.
 	const uint frameLimit = firstFrameOnly ? 1 : 0;
+	const bool isSmacker =
+		memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0;
+	const bool isIavf = memcmp(magic, "IAVF2.00", 8) == 0;
 	debugC(2, kDebugVideo,
 		"Ripper: scene media '%s' mode=%s scriptPosition=%d,%d originY=%d controls=%d",
 		path.c_str(), firstFrameOnly ? "first-frame-preview" : "sequence", x, y,
@@ -1580,7 +1600,7 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 			if (!file)
 				return false;
 		}
-	if (memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0) {
+	if (isSmacker) {
 		SmackerPlaybackRequest request;
 		request.allowEscSpace = allowEscSpace;
 		request.x = x;
@@ -1588,7 +1608,7 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 		request.frameLimit = frameLimit;
 		request.originY = kScenePresentationTop;
 		request.serviceSceneUi = true;
-		request.repeatedLoopPass = repeatedLoopPass;
+		request.loopFromStart = loop;
 		request.sequenceCallback = callback;
 		request.sequenceCommand = command;
 		result = playSmacker(file, path, request);
@@ -1597,7 +1617,7 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 			debugC(1, kDebugVideo,
 				"Ripper: interactive scene media stopped by mouse; returning to hotspot polling");
 		}
-	} else if (memcmp(magic, "IAVF2.00", 8) == 0 && !firstFrameOnly) {
+	} else if (isIavf && !firstFrameOnly) {
 		if (callback) {
 			warning("Ripper: scene callback is unsupported for packetized media '%s'",
 				path.c_str());
@@ -1612,7 +1632,8 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 		warning("Ripper: unsupported scene media mode for '%s'", path.c_str());
 		delete file;
 	}
-	} while (loop && !_input->peekMouseState().pressed && !_engine->shouldQuit() && result &&
+	} while (loop && isIavf && !_input->peekMouseState().pressed &&
+		!_engine->shouldQuit() && result &&
 		!_engine->getScripts()->hasPendingSceneTransition());
 	_input->drainKeys();
 	_stopSceneOnMouse = false;
