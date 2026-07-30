@@ -1263,12 +1263,24 @@
   and moves Play beside the `WACWAV1` Clear and `WACWAV2` Quantize controls
   beginning at 50,293. Quantize plays `WACJRNL.WAV`, replaces
   the source descriptor with `VOXLOK1.WAV`, and enables the completion test.
-  Each horizontal waveform drag appends that PCM span and its physical
-  start/end X coordinates to the editor. The five pairs at table `0x215d1`
-  are 240..252, 70..82, 87..99, 171..184, and 190..199; order is irrelevant,
-  but both ends must be within three pixels of a unique pair. Exactly five
-  quantized spans solve only from scene label `eez1`, after which
-  `ACCESED.AVI` plays, milestone 29 opens the Secret Animal Lab, and WAC exits.
+  Game-text resource 407 describes two distinct source gestures: a horizontal
+  drag highlights a PCM span, then a second drag carries that retained
+  highlight from the source into the editor. The retail source-press path at
+  `0x2505c` reads `GetBiosKeyboardShiftFlags` at `0x4d2ca` when adjusting the
+  highlighted endpoints. A plain press on the retained highlight creates an
+  overlay through `InitializeTransientPresentationOverlay` at `0x29caf`; the
+  loop updates it with `UpdateTransientPresentationOverlay` at `0x2a1ff`.
+  Release destroys the overlay through `DestroyTransientPresentationOverlay`
+  at `0x2a7fa`, then appends the span and its physical start/end X coordinates
+  only when the release point passes the editor-control bounds check at
+  `0x25307`. Clicking either waveform makes that control active.
+  `GetActiveChooserControlId` at `0x52d94` selects whether Play uses the source
+  descriptor or assembled editor descriptor, and a retained source highlight
+  limits source playback to that span. The five pairs at table `0x215d1` are
+  240..252, 70..82, 87..99, 171..184, and 190..199; order is irrelevant, but
+  both ends must be within three pixels of a unique pair. Exactly five
+  quantized spans solve only from scene label `eez1`, after which `ACCESED.AVI`
+  plays, milestone 29 opens the Secret Animal Lab, and WAC exits.
   While Play is active, `GetManagedAudioTriggerPlaybackPosition` at `0x60795`
   advances a vertical marker across the source or assembled waveform selected
   for playback. The scene's input tick publishes one mouse state,
