@@ -45,7 +45,7 @@ struct Scratch {
 	bool _internWalkingFl;
 	bool _internVisibleFl;
 	bool _explosionFl;
-	int32 _lastFrameCounter = 0;
+	int32 _lastFrameCounter;
 	Dialog _dialog1;
 };
 

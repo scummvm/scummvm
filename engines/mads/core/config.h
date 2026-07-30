@@ -71,47 +71,29 @@ enum Difficulty {
 #define MOUSE_NOT_MICROSOFT     1
 
 struct ConfigFile {
-	int sound_card_type = 0;          /* Sound card configuration  */
-	int sound_card_address = 0x220;
+	bool music_flag;				/* Music on/off              */
+	bool sound_flag;				/* Sound on/off              */
+	int interface_hotspots;			/* Easy / Standard           */
 
-	int speech_card_type = 0;         /* Speech card configuration */
-	int speech_card_address = 0x220;
-	int speech_card_irq = 7;
-	int speech_card_drq = 1;
+	int inventory_mode;				/* Spinning / Still          */
+	int animated_interface;			/* On / Off                  */
+	int naughtiness;				/* NAUGHTY / NICE            */
+	bool quotes_enabled;			/* Quotes option enabled     */
 
-	int music_flag = 1;               /* Music on/off              */
-	int sound_flag = 1;               /* Sound on/off              */
-	int interface_hotspots = 1;       /* Easy / Standard           */
+	bool high_memory_mode;			/* High memory mode          */
+	int screen_fade;				/* Screen fade               */
+	bool speech_flag;				/* Speech on/off             */
+	int panning_speed;				/* Panning speed flag        */
+	int mouse_cursor_fix;			/* Mouse halfway problem     */
+	bool cd_version_installed;		/* CD version installed      */
+	bool speech_version_installed;	/* Version with speech installed */
+	bool show_speech_boxes;			/* Show text during speech   */
+	bool original_save_load;		/* Original vs ScummVM dialogs */
 
-	int inventory_mode = INVENTORY_SPINNING;           /* Spinning / Still          */
-	int animated_interface = INTERFACE_ANIMATED;       /* On / Off                  */
-	int naughtiness = NAUGHTY;              /* NAUGHTY / NICE            */
-	int quotes_enabled = 1;           /* Quotes option enabled     */
-
-	int high_memory_mode = MEMORY_ALL;         /* High memory mode          */
-
-	int screen_fade = SCREEN_FADE_SMOOTH;              /* Screen fade               */
-
-	int speech_flag = 1;              /* Speech on/off             */
-
-	int panning_speed = PANNING_SMOOTH;            /* Panning speed flag        */
-
-	int mouse_cursor_fix = MOUSE_MICROSOFT;         /* Mouse halfway problem     */
-
-	int cd_version_installed = 0;     /* CD version installed      */
-	int cd_drive = 'D';                 /* CD drive letter           */
-
-	int speech_version_installed = 0; /* Version with speech installed */
-
-	int show_speech_boxes = 1;        /* Show text during speech       */
-
-	int sound_card_irq = 7;
-	int misc2 = 0;
-	int misc3 = 0;
-	int misc4 = 0;
-	int misc5 = 0;
-
-	bool original_save_load = false;  /* Use original save/load menus */
+	int misc2;
+	int misc3;
+	int misc4;
+	int misc5;
 };
 
 extern ConfigFile config_file;
@@ -119,10 +101,9 @@ extern ConfigFile config_file;
 #define music_off               (!config_file.music_flag)
 #define sound_off               (!config_file.sound_flag)
 
+extern void init_config();
 extern void read_config_file();
 extern void write_config_file();
-//extern void global_load_config_parameters();
-//extern void global_unload_config_parameters();
 
 } // namespace MADS
 

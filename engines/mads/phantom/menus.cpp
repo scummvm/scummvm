@@ -343,8 +343,8 @@ static void global_menu_save_restore(int save) {
 static void global_menu_options() {
 	int initial_1, initial_2, initial_3;
 	int initial_4, initial_5, initial_6;
-	int former_music;
-	int former_sound;
+	bool former_music;
+	bool former_sound;
 	PopupItem *music_item;
 	PopupItem *sound_item;
 	PopupItem *interface_item;

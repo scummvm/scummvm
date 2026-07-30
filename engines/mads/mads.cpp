@@ -99,6 +99,7 @@ void MADSEngine::initGlobals() {
 	init_anim();
 	init_attr();
 	init_camera();
+	init_config();
 	init_conv();
 	init_cursor();
 	init_cycle();

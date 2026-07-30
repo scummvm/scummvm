@@ -30,6 +30,24 @@ namespace MADS {
 
 ConfigFile config_file;
 
+void init_config() {
+	// Initial setup for config_file. Probably not all necessary, since read_config_file sets up defaults anyway,
+	// but it doesn't hurt to have the config_file in a good state on startup
+	memset(&config_file, 0, sizeof(ConfigFile));
+	config_file.music_flag = config_file.sound_flag = true;
+	config_file.speech_flag = true;
+	config_file.interface_hotspots = 1;
+
+	config_file.inventory_mode = INVENTORY_SPINNING;
+	config_file.animated_interface = INTERFACE_ANIMATED;
+	config_file.naughtiness = NAUGHTY;
+	config_file.quotes_enabled = false;
+	config_file.high_memory_mode = MEMORY_ALL;
+	config_file.screen_fade = SCREEN_FADE_SMOOTH;
+	config_file.panning_speed = PANNING_SMOOTH;
+	config_file.mouse_cursor_fix = MOUSE_MICROSOFT;
+}
+
 void read_config_file() {
 	ConfMan.registerDefault("music_mute", false);
 	ConfMan.registerDefault("sfx_mute", false);
@@ -53,7 +71,7 @@ void read_config_file() {
 
 	config_file.quotes_enabled = ConfMan.getBool("quotes_enabled");
 	config_file.screen_fade = ConfMan.getBool("screen_fade");
-	config_file.panning_speed = ConfMan.getBool("panning_speed");
+	config_file.panning_speed = ConfMan.getInt("panning_speed");
 
 	config_file.show_speech_boxes = ConfMan.getBool("show_speech_boxes");
 	config_file.original_save_load = ConfMan.getBool("original_menus");
@@ -73,7 +91,7 @@ void write_config_file() {
 
 	ConfMan.setBool("quotes_enabled", config_file.quotes_enabled);
 	ConfMan.setBool("screen_fade", config_file.screen_fade);
-	ConfMan.setBool("panning_speed", config_file.panning_speed);
+	ConfMan.setInt("panning_speed", config_file.panning_speed);
 
 	ConfMan.setBool("show_speech_boxes", config_file.show_speech_boxes);
 	if (g_engine->getGameID() == GType_RexNebular)
@@ -90,10 +108,8 @@ void global_load_config_parameters() {
 	kernel_panning_speed = config_file.panning_speed;
 	kernel_screen_fade = config_file.screen_fade;
 
-	if (config_file.cd_version_installed) {
+	if (config_file.cd_version_installed)
 		env_search_cd = true;
-		env_cd_drive = (char)config_file.cd_drive;
-	}
 }
 
 void global_unload_config_parameters() {
