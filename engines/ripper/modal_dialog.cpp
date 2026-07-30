@@ -66,6 +66,7 @@ static const int kWacModalHeadingTopPadding = 20;
 static const int kWacModalBottomPadding = 6;
 static const int kWacModalLeftPadding = 5;
 static const int kWacModalRightPadding = 20;
+static const int kWacModalTitleTopInset = 1;
 static const byte kWacModalBackgroundColor = 4;
 static const byte kWacModalTitleColor = 248;
 static const byte kWacModalTextColor = 251;
@@ -494,12 +495,18 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 	}
 	if (!title.empty()) {
 		const int contentWidth = bounds.width() - leftPadding - rightPadding;
+		const int fontHeight = primaryStyle ?
+			_primaryFont.lineHeight : _font.lineHeight;
 		const int titleX = bounds.left + leftPadding +
 			(contentWidth - measureText(title)) / 2;
+		// DrawPromptChooserTemplateLabelCallback at 0x16def reads the
+		// WAC template's +0x19 byte as an absolute top inset rather than
+		// vertically centering the label in its 20-pixel heading.
+		const int titleY = wacStyle ?
+			bounds.top + kWacModalTitleTopInset :
+			bounds.top + (headingHeight - fontHeight) / 2;
 		drawText(pixels, screen->pitch, titleX,
-			bounds.top + (headingHeight -
-				(primaryStyle ? _primaryFont.lineHeight :
-					_font.lineHeight)) / 2,
+			titleY,
 			title, titleColor, style);
 	}
 	for (uint row = 0; row < visibleRows; ++row) {
