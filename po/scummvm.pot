@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-29 19:24+0000\n"
+"POT-Creation-Date: 2026-07-30 10:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -128,7 +128,7 @@ msgstr ""
 #: backends/platform/android/options.cpp:293
 #: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:204
 #: engines/buried/saveload.cpp:83 engines/cine/saveload.cpp:857
-#: engines/director/lingo/xlibs/j/jitdraw3.cpp:123
+#: engines/colony/intro.cpp:197 engines/director/lingo/xlibs/j/jitdraw3.cpp:123
 #: engines/drascula/saveload.cpp:51 engines/grim/inputdialog.cpp:84
 #: engines/hypno/metaengine.cpp:282 engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/myst_stacks/menu.cpp:300
@@ -323,7 +323,8 @@ msgstr ""
 #: gui/launcher.cpp:534 gui/launcher.cpp:1970 gui/options.cpp:3498
 #: gui/options.cpp:3872 base/main.cpp:608
 #: backends/events/default/default-events.cpp:207 engines/buried/buried.cpp:598
-#: engines/chamber/metaengine.cpp:95 engines/director/events.cpp:122
+#: engines/chamber/metaengine.cpp:95 engines/colony/intro.cpp:195
+#: engines/director/events.cpp:122
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:139
 #: engines/efh/metaengine.cpp:362 engines/grim/grim.cpp:366
 #: engines/hypno/metaengine.cpp:249 engines/kyra/gui/saveload_eob.cpp:611
@@ -342,7 +343,8 @@ msgstr ""
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:428 gui/launcher.cpp:457
 #: gui/launcher.cpp:534 gui/launcher.cpp:1971 gui/options.cpp:3498
 #: gui/options.cpp:3872 engines/buried/buried.cpp:598
-#: engines/chamber/metaengine.cpp:101 engines/director/events.cpp:122
+#: engines/chamber/metaengine.cpp:101 engines/colony/intro.cpp:196
+#: engines/director/events.cpp:122
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:139
 #: engines/efh/metaengine.cpp:368 engines/grim/grim.cpp:366
 #: engines/hypno/metaengine.cpp:255 engines/kyra/gui/saveload_eob.cpp:611
@@ -3212,8 +3214,8 @@ msgstr ""
 #: backends/events/default/default-events.cpp:231
 #: backends/events/default/default-events.cpp:372
 #: engines/adl/metaengine.cpp:352 engines/buried/metaengine.cpp:154
-#: engines/chamber/metaengine.cpp:88 engines/colony/intro.cpp:146
-#: engines/colony/intro.cpp:1233 engines/drascula/metaengine.cpp:304
+#: engines/chamber/metaengine.cpp:88 engines/colony/intro.cpp:247
+#: engines/colony/intro.cpp:1339 engines/drascula/metaengine.cpp:304
 #: engines/hdb/metaengine.cpp:275 engines/hypno/metaengine.cpp:308
 #: engines/lab/metaengine.cpp:172 engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
@@ -7455,15 +7457,19 @@ msgid ""
 "beginning using new savegames."
 msgstr ""
 
-#: engines/colony/intro.cpp:144 engines/colony/intro.cpp:1234
+#: engines/colony/intro.cpp:211
+msgid "Save this game?"
+msgstr ""
+
+#: engines/colony/intro.cpp:245 engines/colony/intro.cpp:1340
 msgid "New Game"
 msgstr ""
 
-#: engines/colony/intro.cpp:145 engines/colony/intro.cpp:1232
+#: engines/colony/intro.cpp:246 engines/colony/intro.cpp:1338
 msgid "Load Game"
 msgstr ""
 
-#: engines/colony/intro.cpp:1209 engines/colony/intro.cpp:1234
+#: engines/colony/intro.cpp:1315 engines/colony/intro.cpp:1340
 msgid "You have been terminated."
 msgstr ""
 
