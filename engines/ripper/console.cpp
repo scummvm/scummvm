@@ -50,8 +50,9 @@ bool parseMilestoneId(const Common::String &text, uint &flag) {
 Console::Console(RipperEngine *engine) : GUI::Debugger(), _engine(engine) {
 	assert(_engine);
 	registerCmd("MILESTONES", WRAP_METHOD(Console, cmdMilestones));
-	debugC(1, kDebugMilestones,
-		"Ripper: initialized debug console commands=1 firstCommand=MILESTONES");
+	registerCmd("PUZZLE_HELP", WRAP_METHOD(Console, cmdPuzzleHelp));
+	debugC(1, kDebugGeneral,
+		"Ripper: initialized debug console commands=2 commands=MILESTONES,PUZZLE_HELP");
 }
 
 void Console::printMilestone(uint flag) {
@@ -98,6 +99,31 @@ bool Console::cmdMilestones(int argc, const char **argv) {
 
 	debugPrintf("Usage: MILESTONES [ACTIVE|<ID>]\n");
 	debugPrintf("ID must be between 0 and %u\n", Milestones::kFlagCount - 1);
+	return true;
+}
+
+bool Console::cmdPuzzleHelp(int argc, const char **argv) {
+	bool enabled = !_engine->isPuzzleHelpEnabled();
+	if (argc == 2) {
+		const Common::String argument(argv[1]);
+		if (argument.equalsIgnoreCase("ON")) {
+			enabled = true;
+		} else if (argument.equalsIgnoreCase("OFF")) {
+			enabled = false;
+		} else {
+			debugPrintf("Usage: PUZZLE_HELP [ON|OFF]\n");
+			return true;
+		}
+	} else if (argc != 1) {
+		debugPrintf("Usage: PUZZLE_HELP [ON|OFF]\n");
+		return true;
+	}
+
+	_engine->setPuzzleHelpEnabled(enabled);
+	debugPrintf("Puzzle help overlays %s\n", enabled ? "enabled" : "disabled");
+	debugC(1, kDebugPuzzles,
+		"Ripper: debugger puzzle-help overlays enabled=%d command=PUZZLE_HELP",
+		enabled);
 	return true;
 }
 

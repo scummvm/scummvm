@@ -33,6 +33,7 @@ public:
 
 private:
 	bool cmdMilestones(int argc, const char **argv);
+	bool cmdPuzzleHelp(int argc, const char **argv);
 	void printMilestone(uint flag);
 
 	RipperEngine *_engine;

@@ -70,6 +70,8 @@ public:
 	ToolbarManager *getToolbar() const { return _toolbar.get(); }
 	WacManager *getWac() const { return _wac.get(); }
 	WorldMap *getWorldMap() const { return _worldMap.get(); }
+	bool isPuzzleHelpEnabled() const { return _puzzleHelpEnabled; }
+	void setPuzzleHelpEnabled(bool enabled) { _puzzleHelpEnabled = enabled; }
 
 private:
 	void pauseEngineIntern(bool pause) override;
@@ -91,6 +93,7 @@ private:
 	Common::ScopedPtr<WacManager> _wac;
 	Common::ScopedPtr<WorldMap> _worldMap;
 	bool _gameplayStarted;
+	bool _puzzleHelpEnabled;
 };
 
 } // End of namespace Ripper

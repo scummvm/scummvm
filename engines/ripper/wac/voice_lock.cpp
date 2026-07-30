@@ -60,6 +60,14 @@ static const uint kWacVoiceLockSelectionTolerance = 3;
 static const byte kWacVoiceLockSelectionColor = 255;
 static const byte kWacVoiceLockWaveformColor = 255;
 static const byte kWacVoiceLockMarkerColor = 196;
+static const byte kWacVoiceLockPuzzleHelpColor = 254;
+static const int kWacVoiceLockSolution[kWacVoiceLockSelectionCount][2] = {
+	{ 240, 252 },
+	{ 70, 82 },
+	{ 87, 99 },
+	{ 171, 184 },
+	{ 190, 199 }
+};
 static const uint16 kNoAction = WacManager::kNoAction;
 static const uint16 kExitAction = WacManager::kExitAction;
 
@@ -356,13 +364,6 @@ static void appendWacVoiceLockSelectionAudio(
 static bool validateWacVoiceLockSelections(
 		const Common::Array<WacVoiceLockSelection> &selections,
 		Common::String &diagnostics) {
-	static const WacVoiceLockSelection solution[kWacVoiceLockSelectionCount] = {
-		WacVoiceLockSelection(240, 252),
-		WacVoiceLockSelection(70, 82),
-		WacVoiceLockSelection(87, 99),
-		WacVoiceLockSelection(171, 184),
-		WacVoiceLockSelection(190, 199)
-	};
 	diagnostics.clear();
 	if (selections.size() != kWacVoiceLockSelectionCount) {
 		diagnostics = Common::String::format("count=%u expected=%u",
@@ -375,17 +376,19 @@ static bool validateWacVoiceLockSelections(
 		bool found = false;
 		uint diagnosticCandidate = 0;
 		int diagnosticStartDelta =
-			selections[selection].start - solution[0].start;
+			selections[selection].start - kWacVoiceLockSolution[0][0];
 		int diagnosticEndDelta =
-			selections[selection].end - solution[0].end;
+			selections[selection].end - kWacVoiceLockSolution[0][1];
 		int closestDistance = MAX(ABS(diagnosticStartDelta),
 			ABS(diagnosticEndDelta));
 		for (uint candidate = 0; candidate < kWacVoiceLockSelectionCount;
 				++candidate) {
 			const int startDelta =
-				selections[selection].start - solution[candidate].start;
+				selections[selection].start -
+					kWacVoiceLockSolution[candidate][0];
 			const int endDelta =
-				selections[selection].end - solution[candidate].end;
+				selections[selection].end -
+					kWacVoiceLockSolution[candidate][1];
 			const int distance = MAX(ABS(startDelta), ABS(endDelta));
 			if (distance < closestDistance) {
 				diagnosticCandidate = candidate;
@@ -408,8 +411,9 @@ static bool validateWacVoiceLockSelections(
 		diagnostics += Common::String::format(
 			"#%u=%d..%d target%u=%d..%d delta=%+d,%+d match=%d",
 			selection, selections[selection].start, selections[selection].end,
-			diagnosticCandidate, solution[diagnosticCandidate].start,
-			solution[diagnosticCandidate].end, diagnosticStartDelta,
+			diagnosticCandidate,
+			kWacVoiceLockSolution[diagnosticCandidate][0],
+			kWacVoiceLockSolution[diagnosticCandidate][1], diagnosticStartDelta,
 			diagnosticEndDelta, found);
 		allMatched &= found;
 	}
@@ -472,6 +476,8 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 	Common::Rect playbackProgressBounds;
 	uint32 playbackDuration = 0;
 	int playbackProgressColumn = -1;
+	bool puzzleHelpEnabled =
+		_database->engine()->isPuzzleHelpEnabled();
 	const uint savedCursor =
 		_database->engine()->getCursor()->getSelectionIndex();
 	Audio::SoundHandle audioHandle;
@@ -565,6 +571,37 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 				"Ripper: WAC voice-lock captured XOR-highlighted drag pixels range=%d..%d size=%dx%d opcode=0x18",
 				sourceSelection.start, sourceSelection.end,
 				sourceSelectionDragWidth, sourceSelectionDragHeight);
+		}
+		if (puzzleHelpEnabled) {
+			// PUZZLE_HELP is a ScummVM-only debugger aid. The numbered
+			// brackets share the table used by the retail-backed validator,
+			// but do not alter its three-pixel tolerance or acceptance rules.
+			const int lineY = sourceWaveform.bottom - 3;
+			for (uint range = 0; range < kWacVoiceLockSelectionCount;
+					++range) {
+				const int left = CLIP<int>(
+					kWacVoiceLockSolution[range][0],
+					sourceWaveform.left, sourceWaveform.right - 1);
+				const int right = CLIP<int>(
+					kWacVoiceLockSolution[range][1],
+					left + 1, sourceWaveform.right);
+				for (int x = left; x < right; ++x)
+					*((byte *)screen->getBasePtr(x, lineY)) =
+						kWacVoiceLockPuzzleHelpColor;
+				for (int y = lineY - 2; y <= lineY + 1; ++y) {
+					*((byte *)screen->getBasePtr(left, y)) =
+						kWacVoiceLockPuzzleHelpColor;
+					*((byte *)screen->getBasePtr(right - 1, y)) =
+						kWacVoiceLockPuzzleHelpColor;
+				}
+				const Common::String label =
+					Common::String::format("%u", range + 1);
+				const int labelLeft = left +
+					(right - left - _database->measureText(label)) / 2;
+				_database->drawText((byte *)screen->getPixels(),
+					screen->pitch, labelLeft, lineY - 12, label,
+					kWacVoiceLockPuzzleHelpColor);
+			}
 		}
 		if (editorAvailable) {
 			WacVoiceLockPcm assembledPcm;
@@ -664,6 +701,15 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 		}
 		if (command == MediaSequenceCallback::kContinueRefreshPalette)
 			redraw = true;
+		const bool nextPuzzleHelpEnabled =
+			_database->engine()->isPuzzleHelpEnabled();
+		if (nextPuzzleHelpEnabled != puzzleHelpEnabled) {
+			puzzleHelpEnabled = nextPuzzleHelpEnabled;
+			debugC(2, kDebugWac,
+				"Ripper: WAC voice-lock puzzle-help overlay enabled=%d ranges=%u command=PUZZLE_HELP",
+				puzzleHelpEnabled, kWacVoiceLockSelectionCount);
+			redraw = true;
+		}
 
 		int nextHoveredButton = -1;
 		const uint buttonCount = editorAvailable ? 3 : 1;
