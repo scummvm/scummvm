@@ -57,10 +57,89 @@ constexpr byte LINE_COLOR = 2;
 char *quotes;
 static Palette black_palette;
 
+static void show_exit_advert(Palette &palette) {
+	int screenId;
+	int soundId;
+	int soundSection;
+
+	buffer_free(&scr_depth);
+	buffer_free(&scr_orig);
+	buffer_free(&scr_work);
+
+	if (imath_random(1, 1000) > 500) {
+		screenId = 996;
+		soundSection = 7;
+		soundId = 9;
+	} else {
+		screenId = 995;
+		soundSection = 4;
+		soundId = 12;
+	}
+
+	pal_init(1, 8);
+
+	room = room_load(screenId, 0, nullptr, &scr_orig, &scr_depth, &scr_walk,
+		&scr_special, &picture_map, &depth_map, &picture_resource,
+		&depth_resource, -1, -1, 0);
+	assert(room);
+
+	mouse_hide();
+	video_update(&scr_orig, 0, 0, 0, 0, 320, 200);
+
+	g_engine->_soundManager->init(soundSection);
+	sound_queue(soundId);
+
+	magic_fade_from_grey(palette, master_palette, 0, 256, 0, 1, 1, 16);
+
+	mouse_init_cycle();
+	bool flag1 = true;
+	bool flag2 = false;
+	long time = timer_read();
+
+	while (!g_engine->shouldQuit() && flag1) {
+		mouse_begin_cycle(false);
+
+		if (keys_any()) {
+			keys_get();
+			flag1 = false;
+			flag2 = true;
+		}
+
+		long elapsed = timer_read() - time;
+		if (elapsed > 900)
+			flag1 = false;
+
+		if (mouse_stop_stroke) {
+			flag1 = false;
+			flag2 = true;
+		}
+
+		mouse_end_cycle(false, true);
+	}
+
+	sound_queue(1);
+
+	if (flag2) {
+		memset(&master_palette, 0, sizeof(master_palette));
+		mcga_setpal(&master_palette);
+	} else {
+		magic_fade_to_grey(master_palette, nullptr, 0, 256, 0, 1, 1, 16);
+	}
+
+	kernel_unload_sound_driver();
+
+	keys_remove();
+	timer_remove();
+	mouse_hide();
+
+	mouse_init(0, 3);
+	video_init(3, -1);
+	mcga_reset();
+}
+
 static void main_menu_main() {
 	auto &scr_screen = *g_engine->getScreen();
 	Palette palette;
-	int screenId, soundId;
 
 	mcga_compute_retrace_parameters();
 	memset(&black_palette, 0, sizeof(black_palette));
@@ -116,90 +195,17 @@ static void main_menu_main() {
 
 	kernel_unload_sound_driver();
 
-	if (selected_item == 5) {
-		buffer_free(&scr_depth);
-		buffer_free(&scr_orig);
-		buffer_free(&scr_work);
+	if (selected_item == 5)
+		show_exit_advert(palette);
 
-		int sectionNum = 7;
-		if (imath_random(1, 1000) > 500) {
-			screenId = 996;
-			soundId = 9;
-		} else {
-			screenId = 995;
-			sectionNum = 4;
-			soundId = 12;
-		}
+	keys_remove();
+	timer_remove();
+	mouse_hide();
 
-		pal_init(1, 8);
-
-		room = room_load(screenId, 0, nullptr, &scr_orig, &scr_depth, &scr_walk,
-			&scr_special, &picture_map, &depth_map, &picture_resource,
-			&depth_resource, -1, -1, 0);
-
-		if (room) {
-			mouse_hide();
-			video_update(&scr_orig, 0, 0, 0, 0, 320, 200);
-
-			g_engine->_soundManager->init(sectionNum);
-			sound_queue(soundId);
-
-			magic_fade_to_grey(master_palette, (byte *)&palette, 0, 256, 0, 1, 1, 16);
-
-			mouse_init_cycle();
-			bool flag1 = true;
-			bool flag2 = false;
-			long time = timer_read();
-
-			while (!g_engine->shouldQuit() && flag1) {
-				mouse_begin_cycle(false);
-
-				if (keys_any()) {
-					keys_get();
-					flag1 = false;
-					flag2 = true;
-				}
-
-				long elapsed = timer_read() - time;
-				if (elapsed > 900)
-					flag1 = false;
-
-				if (mouse_stop_stroke) {
-					flag1 = false;
-					flag2 = true;
-				}
-
-				mouse_end_cycle(false, true);
-			}
-
-			sound_queue(1);
-
-			if (flag2) {
-				memset(&master_palette, 0, sizeof(master_palette));
-				mcga_setpal(&master_palette);
-			} else {
-				magic_fade_to_grey(master_palette, nullptr, 0, 256, 0, 1, 1, 16);
-			}
-
-			kernel_unload_sound_driver();
-
-			keys_remove();
-			timer_remove();
-			mouse_hide();
-
-			mouse_init(0, 3);
-			video_init(3, -1);
-			mcga_reset();
-		}
-	} else {
-		keys_remove();
-		timer_remove();
-		mouse_hide();
-
-		mouse_init(0, 3);
-		video_init(3, -1);
-		mcga_reset();
-	}
+	mouse_init(0, 3);
+	video_init(3, -1);
+	mcga_reset();
+	mcga_setpal(&black_palette);
 
 	buffer_free(&scr_depth);
 	buffer_free(&scr_orig);
