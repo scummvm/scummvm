@@ -179,7 +179,8 @@ private:
 		const SmackerPlaybackRequest &request);
 	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name,
 		bool allowEscSpace, int overrideX = -1, int overrideY = -1,
-		int overrideOriginY = 0, bool serviceSceneUi = false);
+		int overrideOriginY = 0, bool serviceSceneUi = false,
+		bool rememberVideoPalette = true);
 	bool servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
 		bool allowSegmentAdvance, bool &paused, bool &skipToEnd,
 		bool &advanceSegment,
