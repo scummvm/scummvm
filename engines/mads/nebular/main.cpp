@@ -255,7 +255,6 @@ static void game_main(int argc, const char **argv) {
 
 	game_cold_data_init();
 	main_cold_data_init();
-	g_engine->readConfigFile();
 	global_load_config_parameters();
 
 	if (argc >= 2) {
@@ -316,6 +315,8 @@ void nebular_main() {
 	pack_enable_pfab_explode();
 	if (!env_verify())
 		env_search_mode = ENV_SEARCH_CONCAT_FILES;
+
+	g_engine->readConfigFile();
 
 	if (ConfMan.getBool("start_game") || ConfMan.hasKey("save_slot"))
 		selected_item = 0;
