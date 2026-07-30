@@ -101,30 +101,12 @@ void SewingMachinePuzzle::playSoundBlock(const RandomSoundBlock &block) {
 	g_nancy->_sound->loadSound(desc);
 	g_nancy->_sound->playSound(desc);
 
-	showSubtitle(name);
-}
-
-void SewingMachinePuzzle::showSubtitle(const Common::String &soundName) {
 	// The mistake lines carry no inline caption; look the subtitle up by sound name,
 	// first in the Autotext table, then in the conversation table.
-	Common::String text;
-
-	const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
-	if (autotext) {
-		text = autotext->texts.getValOrDefault(soundName, "");
-	}
-
-	if (text.empty()) {
-		const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
-		if (convo) {
-			text = convo->texts.getValOrDefault(soundName, "");
-		}
-	}
-
-	if (!text.empty()) {
-		NancySceneState.getTextbox().clear();
-		NancySceneState.getTextbox().addTextLine(text);
-	}
+	Common::String text = resolveSubtitleText(name);
+	if (text.empty())
+		text = resolveSubtitleText(name, Common::String(), "CONVO");
+	showSubtitle(text);
 }
 
 Common::Point SewingMachinePuzzle::needleInStrip() const {

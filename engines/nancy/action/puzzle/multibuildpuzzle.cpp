@@ -567,6 +567,7 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 				pp.gameRect = pp.homeRect;
 				if (isNancy10 && _missedSound.name != "NO SOUND") {
 					g_nancy->_sound->playSound(_missedSound);
+					showSubtitle(resolveSubtitleText(_missedTextKey, _missedText, "CONVO"));
 					if (_solveState == kIdle) {
 						_solveState = kWaitTimer;
 						_timerEnd = g_system->getMillis() + 200;
@@ -834,26 +835,9 @@ void MultiBuildPuzzle::checkIfSolved() {
 
 	_isSolved = true;
 	g_nancy->_sound->playSound(_solveSound);
-
-	// Caption: prefer the CONVO lookup of the text key. An empty lookup
-	// result means audio-only — keep the textbox empty. Only fall back to
-	// the raw _solveText when the key isn't in CONVO.
-	Common::String textToShow;
-	bool useLookup = false;
-	if (!_solveTextKey.empty()) {
-		const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
-		if (convo && convo->texts.contains(_solveTextKey)) {
-			textToShow = convo->texts[_solveTextKey];
-			useLookup = true;
-		}
-	}
-	if (!useLookup)
-		textToShow = _solveText;
-	if (!textToShow.empty()) {
-		NancySceneState.getTextbox().clear();
-		NancySceneState.getTextbox().addTextLine(textToShow);
-	}
-
+	// A CONVO key that resolves to an empty string means audio-only; otherwise fall
+	// back to the raw caption when the key isn't in CONVO.
+	showSubtitle(resolveSubtitleText(_solveTextKey, _solveText, "CONVO"));
 	_solveState = kWaitSolveSound;
 }
 

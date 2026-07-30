@@ -81,7 +81,6 @@ protected:
 	// Compare side 1's grid against a pre-move snapshot and start sliding the changed cards.
 	void startMoveAnimation(const bool beforeGrid[kMaxRows][kMaxCols]);
 	void playVoice(const Common::String &name); // play a voiced line / SFX on the card-game channel
-	void showSubtitle(const Common::String &soundName); // push the line's AUTOTEXT caption to the textbox
 
 	Common::Path _imageName;
 

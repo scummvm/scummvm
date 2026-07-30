@@ -56,9 +56,6 @@ protected:
 	void classifyZones();
 	// Plays one entry of a random-sound block (needle/stitch cues).
 	void playSoundBlock(const RandomSoundBlock &block);
-	// Shows a played voice line's subtitle, looked up by sound name in the CVTX text
-	// chunks (Autotext, then Convo).
-	void showSubtitle(const Common::String &soundName);
 	// Draws the visible part of the cloth strip plus the stitches sewn so far.
 	void drawCloth();
 

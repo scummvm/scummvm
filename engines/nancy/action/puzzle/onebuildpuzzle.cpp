@@ -21,7 +21,6 @@
 
 #include "common/random.h"
 #include "common/system.h"
-#include "common/config-manager.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
@@ -325,9 +324,6 @@ void OneBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _dropAlt1Filename);
 	readFilename(stream, _dropAlt2Filename);
 
-	const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
-	assert(autotext);
-
 	_goodPlacementSound.readNormal(stream);
 	readFilename(stream, _goodAlt1Filename);
 	readFilename(stream, _goodAlt2Filename);
@@ -352,9 +348,7 @@ void OneBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	char textBuf[200];
 	readFilename(stream, completionKey);
 	stream.read(textBuf, 200);
-	_completionText.clear();
-	if (!completionKey.empty() && autotext->texts.contains(completionKey))
-		_completionText = autotext->texts[completionKey];
+	_completionText = resolveSubtitleText(completionKey);
 
 	_cancelScene.readData(stream);
 	readRect(stream, _exitHotspot);
@@ -416,10 +410,7 @@ void OneBuildPuzzle::execute() {
 			// Play completion sound/text, then wait for it to finish
 			g_nancy->_sound->loadSound(_completionSound);
 			g_nancy->_sound->playSound(_completionSound);
-			if (!_completionText.empty() && ConfMan.getBool("subtitles")) {
-				NancySceneState.getTextbox().clear();
-				NancySceneState.getTextbox().addTextLine(_completionText);
-			}
+			showSubtitle(_completionText);
 			_solveState = kWaitCompletion;
 			break;
 		case kAnimateFinal:
@@ -616,9 +607,6 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 // --- Internal helpers ---
 
 void OneBuildPuzzle::readPlacementTexts(Common::SeekableReadStream &stream, Common::Array<Common::String> &out) {
-	const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
-	assert(autotext);
-
 	Common::String keys[3];
 	for (uint i = 0; i < 3; ++i)
 		readFilename(stream, keys[i]);
@@ -627,10 +615,9 @@ void OneBuildPuzzle::readPlacementTexts(Common::SeekableReadStream &stream, Comm
 	out.resize(3);
 	for (uint i = 0; i < 3; ++i) {
 		stream.read(textBuf, 200);
-		if (!keys[i].empty() && autotext->texts.contains(keys[i]))
-			out[i] = autotext->texts[keys[i]];
-		else
-			assembleTextLine(textBuf, out[i], 200);
+		Common::String literal;
+		assembleTextLine(textBuf, literal, 200);
+		out[i] = resolveSubtitleText(keys[i], literal);
 	}
 }
 
@@ -818,10 +805,7 @@ void OneBuildPuzzle::playGoodPlacementSound() {
 		idx = 0;
 	g_nancy->_sound->loadSound(_currentSound);
 	g_nancy->_sound->playSound(_currentSound);
-	if (!_goodTexts[idx].empty() && ConfMan.getBool("subtitles")) {
-		NancySceneState.getTextbox().clear();
-		NancySceneState.getTextbox().addTextLine(_goodTexts[idx]);
-	}
+	showSubtitle(_goodTexts[idx]);
 	_solveState = kWaitPlaceSound;
 	_timerEnd = g_system->getMillis() + 1000;
 }
@@ -837,10 +821,7 @@ void OneBuildPuzzle::playBadPlacementSound() {
 		idx = 0;
 	g_nancy->_sound->loadSound(_currentSound);
 	g_nancy->_sound->playSound(_currentSound);
-	if (!_badTexts[idx].empty() && ConfMan.getBool("subtitles")) {
-		NancySceneState.getTextbox().clear();
-		NancySceneState.getTextbox().addTextLine(_badTexts[idx]);
-	}
+	showSubtitle(_badTexts[idx]);
 	_solveState = kWaitPlaceSound;
 	_timerEnd = g_system->getMillis() + 1000;
 }

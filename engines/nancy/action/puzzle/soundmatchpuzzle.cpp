@@ -217,9 +217,7 @@ void SoundMatchPuzzle::handleInput(NancyInput &input) {
 					g_nancy->_sound->playSound(_soundButtons[i].sound);
 				}
 
-				NancySceneState.getTextbox().clear();
-				if (!_soundButtons[i].text.empty())
-					NancySceneState.getTextbox().addTextLine(_soundButtons[i].text);
+				showSubtitle(_soundButtons[i].text);
 
 				_solveSubState = kSoundPlaying;
 				redraw();

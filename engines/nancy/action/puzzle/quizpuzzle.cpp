@@ -55,30 +55,6 @@ void QuizPuzzle::init() {
 	RenderActionRecord::init();
 }
 
-Common::String QuizPuzzle::readSubtitle(Common::SeekableReadStream &stream) {
-	const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
-	assert(autotext);
-
-	Common::String result;
-	char textBuf[30];
-
-	stream.read(textBuf, 30);
-	textBuf[29] = '\0';
-	result = textBuf;
-
-	if (!result.empty() && autotext->texts.contains(result))
-		result = autotext->texts[result];
-
-	return result;
-}
-
-void QuizPuzzle::showSubtitle(const Common::String &text) {
-	if (!text.empty()) {
-		NancySceneState.getTextbox().clear();
-		NancySceneState.getTextbox().addTextLine(text);
-	}
-}
-
 // ---- Nancy 8 data format ----
 // Offset  Size  Field
 // 0x000   2     fontID
@@ -114,14 +90,14 @@ void QuizPuzzle::readDataOld(Common::SeekableReadStream &stream) {
 	}
 
 	_correctSound.readNormal(stream);
-	_correctText = readSubtitle(stream);
+	_correctText = readSubtitleText(stream);
 
 	_wrongSound.readNormal(stream);
-	_wrongText = readSubtitle(stream);
+	_wrongText = readSubtitleText(stream);
 
 	_solveScene.readData(stream);
 	_doneSound.readNormal(stream);
-	_doneText = readSubtitle(stream);
+	_doneText = readSubtitleText(stream);
 
 	_cancelScene.readData(stream);
 }
@@ -153,9 +129,6 @@ void QuizPuzzle::readDataOld(Common::SeekableReadStream &stream) {
 // +0xB0  2   wrong sound volume
 // +0xB2  30  wrong subtitle (skip)
 void QuizPuzzle::readDataNew(Common::SeekableReadStream &stream) {
-	const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
-	assert(autotext);
-
 	_fontID            = stream.readUint16LE();
 	_cursorBlinkInterval = stream.readUint16LE();
 	_cursorChar        = stream.readByte();
@@ -167,7 +140,7 @@ void QuizPuzzle::readDataNew(Common::SeekableReadStream &stream) {
 
 	_solveScene.readData(stream);
 	_doneSound.readNormal(stream);
-	_doneText = readSubtitle(stream);
+	_doneText = readSubtitleText(stream);
 
 	_cancelScene.readData(stream);
 	readRect(stream, _exitHotspot);
@@ -200,13 +173,13 @@ void QuizPuzzle::readDataNew(Common::SeekableReadStream &stream) {
 		soundNameBuf[32] = '\0';
 		_boxCorrectSoundName[i] = soundNameBuf;
 		_boxCorrectSoundVolume[i] = stream.readUint16LE();
-		_boxCorrectText[i] = readSubtitle(stream);
+		_boxCorrectText[i] = readSubtitleText(stream);
 
 		stream.read(soundNameBuf, 33);
 		soundNameBuf[32] = '\0';
 		_boxWrongSoundName[i] = soundNameBuf;
 		_boxWrongSoundVolume[i] = stream.readUint16LE();
-		_boxWrongText[i] = readSubtitle(stream);
+		_boxWrongText[i] = readSubtitleText(stream);
 
 		// Precompute max answer length for auto-check mode
 		_boxMaxLen[i] = 0;

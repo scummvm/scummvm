@@ -21,6 +21,11 @@
 #include "engines/nancy/enginedata.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/util.h"
+
+#include "engines/nancy/state/scene.h"
+#include "engines/nancy/ui/textbox.h"
+
+#include "common/config-manager.h"
 #include "common/system.h"
 
 namespace Nancy {
@@ -341,6 +346,42 @@ void assembleTextLine(char *rawCaption, Common::String &output, uint size) {
 	uint pos = Common::String::npos;
 	while (pos = output.find(">>"), pos != Common::String::npos) {
 		output.replace(pos, 2, ">");
+	}
+}
+
+Common::String resolveSubtitleText(const Common::String &keyOrText, const Common::String &fallback, const char *tableID) {
+	if (!keyOrText.empty()) {
+		const CVTX *table = (const CVTX *)g_nancy->getEngineData(tableID);
+		if (table && table->texts.contains(keyOrText)) {
+			return table->texts[keyOrText];
+		}
+	}
+
+	return fallback;
+}
+
+Common::String readSubtitleText(Common::SeekableReadStream &stream) {
+	char buf[30];
+	stream.read(buf, sizeof(buf));
+	buf[sizeof(buf) - 1] = '\0';
+	Common::String text(buf);
+
+	return resolveSubtitleText(text, text);
+}
+
+void showSubtitle(const Common::String &text, bool forceRedraw, int overrideFontID) {
+	if (text.empty() || !ConfMan.getBool("subtitles")) {
+		return;
+	}
+
+	UI::Textbox &textbox = NancySceneState.getTextbox();
+	textbox.clear();
+	if (overrideFontID >= 0) {
+		textbox.setOverrideFont(overrideFontID);
+	}
+	textbox.addTextLine(text);
+	if (forceRedraw) {
+		textbox.drawTextbox();
 	}
 }
 

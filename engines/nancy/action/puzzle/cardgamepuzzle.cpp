@@ -498,21 +498,8 @@ void CardGamePuzzle::playVoice(const Common::String &name) {
 	g_nancy->_sound->loadSound(_voiceSound);
 	g_nancy->_sound->playSound(_voiceSound);
 
-	showSubtitle(name);
-}
-
-// The card-game lines carry no inline caption; look the subtitle up by sound name in the Autotext table.
-void CardGamePuzzle::showSubtitle(const Common::String &soundName) {
-	const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
-	if (!autotext) {
-		return;
-	}
-
-	Common::String text = autotext->texts.getValOrDefault(soundName, "");
-	if (!text.empty()) {
-		NancySceneState.getTextbox().clear();
-		NancySceneState.getTextbox().addTextLine(text);
-	}
+	// The card-game lines carry no inline caption; look the subtitle up by sound name.
+	showSubtitle(resolveSubtitleText(name));
 }
 
 void CardGamePuzzle::init() {

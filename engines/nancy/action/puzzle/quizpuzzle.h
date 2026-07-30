@@ -61,9 +61,6 @@ private:
 	bool checkAllSolved() const;
 	bool checkAnswerForCurrentBox(); // checks, marks correct, sets event flag
 
-	Common::String readSubtitle(Common::SeekableReadStream &stream);
-	void showSubtitle(const Common::String &text);
-
 	// ---- Data (Nancy 8) ----
 	uint16 _fontID = 0;
 	uint16 _cursorBlinkInterval = 500;

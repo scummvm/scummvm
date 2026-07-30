@@ -60,6 +60,22 @@ void readFilenameArray(Common::Serializer &stream, Common::Array<Common::Path> &
 
 void assembleTextLine(char *rawCaption, Common::String &output, uint size);
 
+// Resolves a subtitle/caption string that may be a key into an engine-data CVTX text
+// table (AUTOTEXT by default, CONVO for some puzzles). Returns the table's entry for
+// `keyOrText` when the table exists and contains that key, otherwise returns `fallback`.
+Common::String resolveSubtitleText(const Common::String &keyOrText, const Common::String &fallback = Common::String(), const char *tableID = "AUTOTEXT");
+
+// Reads a 30-byte, NUL-terminated subtitle string from `stream` and resolves it as an
+// AUTOTEXT key, falling back to the literal text when the key is not present in the table.
+Common::String readSubtitleText(Common::SeekableReadStream &stream);
+
+// Shows `text` as a single line in the game textbox, replacing its current contents.
+// Does nothing when `text` is empty or when the player has subtitles disabled. A
+// non-negative `overrideFontID` selects a font other than the textbox default. When
+// `forceRedraw` is true, the textbox is redrawn immediately instead of on the next
+// render pass.
+void showSubtitle(const Common::String &text, bool forceRedraw = false, int overrideFontID = -1);
+
 void readUIButton(Common::SeekableReadStream &stream, UIButtonRecord &dst);
 void readUISlider(Common::SeekableReadStream &stream, UISliderRecord &dst);
 void readUIPopupHeader(Common::SeekableReadStream &stream, UIPopupHeader &dst);

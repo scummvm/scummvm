@@ -174,11 +174,7 @@ void HamRadioPuzzle::CCSound::loadAndPlay() {
 	g_nancy->_sound->loadSound(sound);
 	g_nancy->_sound->playSound(sound);
 
-	if (text.size() && ConfMan.getBool("subtitles")) {
-		NancySceneState.getTextbox().clear();
-		NancySceneState.getTextbox().addTextLine(text);
-		NancySceneState.getTextbox().drawTextbox();
-	}
+	showSubtitle(text, true);
 }
 
 void HamRadioPuzzle::Frequency::readData(Common::SeekableReadStream &stream, uint16 numDigits) {
@@ -285,12 +281,7 @@ void HamRadioPuzzle::execute() {
 					_curMorseString.clear();
 					_badLetterSound.loadAndPlay();
 				} else {
-					if (ConfMan.getBool("subtitles")) {
-						NancySceneState.getTextbox().clear();
-						NancySceneState.getTextbox().addTextLine(_curMorseString);
-						NancySceneState.getTextbox().setOverrideFont(3); // Original engine pushes <f3> tag instead
-						NancySceneState.getTextbox().drawTextbox();
-					}
+					showSubtitle(_curMorseString, true, 3); // Original engine pushes <f3> tag instead
 				}
 
 				break;
