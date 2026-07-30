@@ -220,6 +220,13 @@ public:
 
 	void updatePilotProgress(int levelIndex, int32 score, int32 lives, int32 damage, int32 rating);
 
+	// Activates a pilot and derives its unlocked chapters, as the pilot menu does.
+	bool selectPilot(int index);
+
+	// Loading a pilot drops straight into the chapter selection.
+	Common::Error loadGameState(int slot, bool startupLoad = false);
+	bool _pilotLoadRequested;
+
 	enum LevelSelectResult {
 		kLevelSelectBack = 0,
 		kLevelSelectPlay = 1,

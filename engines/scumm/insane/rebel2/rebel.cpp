@@ -28,6 +28,7 @@
 #include "common/savefile.h"
 #include "common/util.h"
 #include "graphics/paletteman.h"
+#include "graphics/thumbnail.h"
 
 #include "audio/mixer.h"
 
@@ -513,6 +514,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 
 	_numPilots = 0;
 	_activePilot = 0;
+	_pilotLoadRequested = false;
 	for (i = 0; i < kMaxPilots; i++) {
 		_pilots[i].init();
 	}
@@ -1373,6 +1375,51 @@ void InsaneRebel2::renderScoreHUD(byte *renderBitmap, int pitch, int width, int 
 const uint32 kPilotSaveMagic = MKTAG('R', 'A', '2', 'P');
 const uint16 kPilotSaveVersion = 2;
 
+// Pilots occupy the regular ScummVM save slots, so they need the standard SCUMM
+// header too: without it every slot reads as an invalid savegame.
+const uint32 kPilotScummSaveVersion = 124;
+
+bool writeRebel2SavegameHeader(Common::WriteStream *out, const Common::String &desc) {
+	char name[32];
+	memset(name, 0, sizeof(name));
+	Common::strlcpy(name, desc.c_str(), sizeof(name));
+
+	out->writeUint32BE(MKTAG('S', 'C', 'V', 'M'));
+	out->writeUint32LE(0);
+	out->writeUint32LE(kPilotScummSaveVersion);
+	out->write(name, sizeof(name));
+	return !out->err();
+}
+
+// A stream starting with the pilot magic is a pre-header file; rewind it.
+bool readRebel2SavegameHeader(Common::SeekableReadStream *in, uint32 *version) {
+	const uint32 tag = in->readUint32BE();
+	if (tag == kPilotSaveMagic) {
+		in->seek(0);
+		if (version)
+			*version = 0;
+		return true;
+	}
+	if (tag != MKTAG('S', 'C', 'V', 'M'))
+		return false;
+
+	in->readUint32LE(); // size, unused
+	uint32 hdrVersion = in->readUint32LE();
+	if (hdrVersion > 0xFFFFFF)
+		hdrVersion = SWAP_BYTES_32(hdrVersion);
+	if (hdrVersion < VER(52) || hdrVersion > kPilotScummSaveVersion)
+		return false;
+
+	char name[32];
+	in->read(name, sizeof(name));
+	if (in->err())
+		return false;
+
+	if (version)
+		*version = hdrVersion;
+	return true;
+}
+
 bool InsaneRebel2::loadPilots() {
 	_numPilots = 0;
 
@@ -1381,6 +1428,25 @@ bool InsaneRebel2::loadPilots() {
 		Common::InSaveFile *sf = _vm->_saveFileMan->openForLoading(filename);
 		if (!sf)
 			break; // Slots are contiguous
+
+		uint32 scummVersion = 0;
+		if (!readRebel2SavegameHeader(sf, &scummVersion)) {
+			delete sf;
+			break;
+		}
+
+		// Only present once the slot carries a SCUMM header.
+		if (scummVersion >= VER(52) && !Graphics::skipThumbnail(*sf)) {
+			delete sf;
+			break;
+		}
+		if (scummVersion >= VER(56)) {
+			SaveStateMetaInfos infos;
+			if (!_vm->loadInfos(sf, &infos)) {
+				delete sf;
+				break;
+			}
+		}
 
 		uint32 magic = sf->readUint32BE();
 		if (magic != kPilotSaveMagic) {
@@ -1424,6 +1490,14 @@ bool InsaneRebel2::savePilots() {
 			ok = false;
 			continue;
 		}
+
+		// The pilot name doubles as the save description in the load screen.
+		Common::String desc(_pilots[i].name);
+		if (desc.empty())
+			desc = Common::String::format("Pilot %d", i + 1);
+		writeRebel2SavegameHeader(sf, desc);
+		Graphics::saveThumbnail(*sf);
+		_vm->saveInfos(sf);
 
 		sf->writeUint32BE(kPilotSaveMagic);
 		sf->writeUint16LE(kPilotSaveVersion);
@@ -1500,12 +1574,57 @@ void InsaneRebel2::updatePilotProgress(int levelIndex, int32 score, int32 lives,
 		return;
 
 	PilotData &pilot = _pilots[_activePilot];
+
+	// Entry `levelIndex` holds the state the next level starts from; damage
+	// below 0xFF means it was already reached, so a replay has nothing to add.
+	if (pilot.damage[levelIndex] < 0xFF) {
+		debugC(DEBUG_INSANE, "RA2: level %d replayed, keeping score %d/lives %d over %d/%d",
+			levelIndex, pilot.score[levelIndex], pilot.lives[levelIndex], score, lives);
+		return;
+	}
+
 	pilot.score[levelIndex] = score;
 	pilot.lives[levelIndex] = lives;
 	pilot.damage[levelIndex] = damage;
 	pilot.rating[levelIndex] = rating;
 
 	savePilots();
+}
+
+bool InsaneRebel2::selectPilot(int index) {
+	if (index < 0 || index >= _numPilots)
+		return false;
+
+	_activePilot = index;
+	_difficulty = _pilots[_activePilot].difficulty;
+
+	// 0xFF is PilotData::init()'s "never played" marker.
+	for (int i = 0; i < 16; i++)
+		_chapterUnlocked[i] = _debugUnlockAll || (_pilots[_activePilot].damage[i] < 0xFF);
+
+	return true;
+}
+
+Common::Error InsaneRebel2::loadGameState(int slot, bool startupLoad) {
+	// Re-read so a slot written by another session is picked up.
+	loadPilots();
+
+	if (!selectPilot(slot)) {
+		warning("RA2: slot %d does not hold a pilot", slot);
+		return Common::kReadingFailed;
+	}
+
+	_pilotLoadRequested = true;
+
+	// Unwind the running menu video so runGame() reaches the chapter selection.
+	if (!startupLoad) {
+		_menuSelectionConfirmed = false;
+		_vm->_smushVideoShouldFinish = true;
+	}
+
+	debugC(DEBUG_INSANE, "RA2: loaded pilot '%s' from slot %d (difficulty %d)",
+		_pilots[_activePilot].name, slot, _difficulty);
+	return Common::kNoError;
 }
 
 int32 InsaneRebel2::processMouse() {

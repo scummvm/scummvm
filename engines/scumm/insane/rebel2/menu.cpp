@@ -1038,12 +1038,7 @@ int InsaneRebel2::runLevelSelect() {
 		debugC(DEBUG_INSANE, "Pilot selection: %d (numPilots=%d)", _levelSelection, _numPilots);
 
 		if (_levelSelection < _numPilots) {
-			_activePilot = _levelSelection;
-			_difficulty = _pilots[_activePilot].difficulty;
-
-			for (int i = 0; i < 16; i++) {
-				_chapterUnlocked[i] = _debugUnlockAll || (_pilots[_activePilot].damage[i] < 0xFF);
-			}
+			selectPilot(_levelSelection);
 
 			debugC(DEBUG_INSANE, "Pilot '%s' selected (slot %d, difficulty %d)",
 			      _pilots[_activePilot].name, _activePilot, _difficulty);

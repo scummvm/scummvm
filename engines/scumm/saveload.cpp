@@ -44,6 +44,7 @@
 
 #ifdef ENABLE_SCUMM_7_8
 #include "scumm/insane/rebel1/rebel.h"
+#include "scumm/insane/rebel2/rebel.h"
 #endif
 
 #include "backends/audiocd/audiocd.h"
@@ -86,6 +87,12 @@ Common::Error ScummEngine::loadGameState(int slot) {
 		if (rebel)
 			return rebel->loadGameState(slot);
 	}
+
+	if (_game.id == GID_REBEL2) {
+		InsaneRebel2 *rebel = (InsaneRebel2 *)((ScummEngine_v7 *)this)->getInsane();
+		if (rebel)
+			return rebel->loadGameState(slot);
+	}
 #endif
 
 	requestLoad(slot);
@@ -97,7 +104,7 @@ bool ScummEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 		return false;
 
 #ifdef ENABLE_SCUMM_7_8
-	if (_game.id == GID_REBEL1)
+	if (_game.id == GID_REBEL1 || _game.id == GID_REBEL2)
 		return true;
 #endif
 
@@ -162,6 +169,10 @@ Common::Error ScummEngine::saveGameState(int slot, const Common::String &desc, b
 		if (rebel)
 			return rebel->saveGameState(slot, desc, isAutosave);
 	}
+
+	// RA2 writes the active pilot itself, and pilot slots must stay contiguous.
+	if (_game.id == GID_REBEL2)
+		return Common::kNoError;
 #endif
 
 	requestSave(slot, desc);
@@ -175,6 +186,14 @@ bool ScummEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 #ifdef ENABLE_SCUMM_7_8
 	if (_game.id == GID_REBEL1)
 		return true;
+
+	// No save interface: progress is written as levels are completed.
+	if (_game.id == GID_REBEL2) {
+		if (msg)
+			*msg = _("This game does not support saving from the menu. Progress is saved automatically when a level is completed");
+
+		return false;
+	}
 #endif
 
 	// Disallow saving in v0-v3 games when a 'prequel' to a cutscene is shown.

@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "common/util.h"
@@ -90,30 +91,48 @@ void InsaneRebel2::runGame() {
 		return;
 	}
 
-	playIntroSequence();
+	// Launching straight into a pilot from the launcher skips the intro.
+	if (ConfMan.hasKey("save_slot"))
+		loadGameState(ConfMan.getInt("save_slot"), true);
+
+	if (!_pilotLoadRequested)
+		playIntroSequence();
 
 	while (!_vm->shouldQuit()) {
-		int menuResult = runMainMenu();
+		int menuResult = kMenuNewGame;
 
-		if (menuResult == kMenuQuit || _vm->shouldQuit())
-			break;
+		// A loaded pilot goes straight to the chapter selection.
+		if (_pilotLoadRequested) {
+			_pilotLoadRequested = false;
+		} else {
+			menuResult = runMainMenu();
 
-		if (menuResult == kMenuResumeDemo) {
-			playIntroSequence();
-			if (!_vm->shouldQuit())
-				showTopPilots();
-			continue;
+			if (menuResult == kMenuQuit || _vm->shouldQuit())
+				break;
+
+			if (menuResult == kMenuResumeDemo) {
+				playIntroSequence();
+				if (!_vm->shouldQuit())
+					showTopPilots();
+				continue;
+			}
+
+			if (menuResult == kMenuNewGame) {
+				int pilotResult = runLevelSelect();
+
+				if (pilotResult == kLevelSelectQuit || _vm->shouldQuit())
+					break;
+
+				// A load during the pilot menu already picked the pilot.
+				if (pilotResult == kLevelSelectBack && !_pilotLoadRequested)
+					continue;
+
+				if (_pilotLoadRequested)
+					_pilotLoadRequested = false;
+			}
 		}
 
 		if (menuResult == kMenuNewGame) {
-			int pilotResult = runLevelSelect();
-
-			if (pilotResult == kLevelSelectQuit || _vm->shouldQuit())
-				break;
-
-			if (pilotResult == kLevelSelectBack)
-				continue;
-
 			int chapterResult = runChapterSelect();
 
 			if (chapterResult == kChapterSelectQuit || _vm->shouldQuit())
