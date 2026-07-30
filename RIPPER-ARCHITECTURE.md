@@ -1267,13 +1267,22 @@
   drag highlights a PCM span, then a second drag carries that retained
   highlight from the source into the editor. The retail source-press path at
   `0x2505c` reads `GetBiosKeyboardShiftFlags` at `0x4d2ca` when adjusting the
-  highlighted endpoints. A plain press on the retained highlight creates an
-  overlay through `InitializeTransientPresentationOverlay` at `0x29caf`; the
-  loop updates it with `UpdateTransientPresentationOverlay` at `0x2a1ff`.
+  highlighted endpoints. It sets display write mode 3 at `0x25006` and fills
+  the span with color `0xff`; the update path applies the same operation to the
+  old span at `0x25265` before drawing the new span at `0x25290`, confirming an
+  XOR highlight that leaves the waveform visible in inverse colors. A plain
+  press on the retained highlight captures the composed source rectangle with
+  display operation `0x18` at `0x250de`, then creates an overlay through
+  `InitializeTransientPresentationOverlay` at `0x29caf`; the loop updates it
+  with `UpdateTransientPresentationOverlay` at `0x2a1ff`.
   Release destroys the overlay through `DestroyTransientPresentationOverlay`
-  at `0x2a7fa`, then appends the span and its physical start/end X coordinates
-  only when the release point passes the editor-control bounds check at
-  `0x25307`. Clicking either waveform makes that control active.
+  at `0x2a7fa`. The display operation at `0x25403` copies the selected
+  source-screen rectangle to the next editor position without horizontally
+  rescaling it; the separate `MemCopy` call at `0x254ae` appends the
+  corresponding PCM bytes. Both occur only when the release point passes the
+  editor-control bounds check at `0x25307`, and later selections are
+  concatenated at that original source scale. Clicking either waveform makes
+  that control active.
   `GetActiveChooserControlId` at `0x52d94` selects whether Play uses the source
   descriptor or assembled editor descriptor, and a retained source highlight
   limits source playback to that span. The five pairs at table `0x215d1` are
