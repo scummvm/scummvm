@@ -31,6 +31,7 @@ namespace Ripper {
 class WacDatabaseMediaCallback;
 class WacJournalPuzzle;
 class WacManager;
+class WacStillImageViewer;
 class WacVoiceLockPuzzle;
 class RipperEngine;
 struct MouseState;
@@ -44,6 +45,7 @@ public:
 private:
 	friend class WacDatabaseMediaCallback;
 	friend class WacJournalPuzzle;
+	friend class WacStillImageViewer;
 	friend class WacVoiceLockPuzzle;
 
 	struct DatabaseEntry {
@@ -55,11 +57,6 @@ private:
 	void buildDatabaseEntries();
 	void drawDatabase() const;
 	void clearDatabaseMediaViewport();
-	bool loadDatabaseStillImage(const Common::String &path);
-	void drawDatabaseStillImage() const;
-	void drawDatabaseScrollControls() const;
-	int findDatabaseScrollControl(const Common::Point &point) const;
-	void scrollDatabaseStillImage(int delta);
 	uint16 serviceDatabaseMediaInput(byte activeEntryIndex,
 		uint *textFirstVisible = nullptr, uint textMaximumFirstVisible = 0,
 		uint textPageRows = 0, MouseState *publishedMouse = nullptr,
@@ -77,14 +74,12 @@ private:
 	void drawAnimatedCorner(int x, int y) const;
 	void serviceIdleEffects();
 	bool persistentControlHovered() const;
+	const Common::Array<BitmapAssetFrame> &databaseScrollArrows() const;
 
 	WacManager *_wac;
-	BitmapAssetFrame _databaseStillImage;
 	Common::Array<DatabaseEntry> _databaseEntries;
 	uint _databaseSelection;
 	uint _databaseFirstVisible;
-	uint _databaseStillImageScroll;
-	int _databaseScrollControl;
 	int _databaseTextScrollControl;
 	int _databaseTextScrollDragOffset;
 	uint32 _databaseCornerLastMillis;
