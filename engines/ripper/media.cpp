@@ -37,6 +37,7 @@
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
+#include "ripper/display.h"
 #include "ripper/iavf.h"
 #include "ripper/input.h"
 #include "ripper/resources.h"
@@ -144,54 +145,8 @@ protected:
 	}
 };
 
-struct SavedDisplayContext {
-	Common::Array<byte> pixels;
-	Common::Array<byte> palette;
-	uint width;
-	uint height;
-
-	SavedDisplayContext() : width(0), height(0) {}
-};
-
 static bool readExact(Common::SeekableReadStream &stream, void *data, uint32 size) {
 	return stream.read(data, size) == size;
-}
-
-static bool captureDisplayContext(SavedDisplayContext &context) {
-	Graphics::Surface *screen = g_system->lockScreen();
-	if (!screen || screen->format.bytesPerPixel != 1) {
-		if (screen)
-			g_system->unlockScreen();
-		return false;
-	}
-
-	context.width = screen->w;
-	context.height = screen->h;
-	context.pixels.resize(context.width * context.height);
-	for (uint y = 0; y < context.height; ++y)
-		memcpy(context.pixels.data() + y * context.width, screen->getBasePtr(0, y), context.width);
-	g_system->unlockScreen();
-
-	context.palette.resize(256 * 3);
-	g_system->getPaletteManager()->grabPalette(context.palette.data(), 0, 256);
-	return true;
-}
-
-static bool restoreDisplayContext(const SavedDisplayContext &context) {
-	Graphics::Surface *screen = g_system->lockScreen();
-	if (!screen || screen->format.bytesPerPixel != 1 ||
-		(uint)screen->w != context.width || (uint)screen->h != context.height) {
-		if (screen)
-			g_system->unlockScreen();
-		return false;
-	}
-
-	for (uint y = 0; y < context.height; ++y)
-		memcpy(screen->getBasePtr(0, y), context.pixels.data() + y * context.width, context.width);
-	g_system->unlockScreen();
-	g_system->getPaletteManager()->setPalette(context.palette.data(), 0, 256);
-	g_system->updateScreen();
-	return true;
 }
 
 } // End of anonymous namespace
@@ -1100,14 +1055,15 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 	const bool isSmacker = memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0;
 	const bool isIavf = memcmp(magic, "IAVF2.00", 8) == 0;
 	const bool restoreIavfDisplay = isIavf && allowEscSpace;
-	SavedDisplayContext displayContext;
-	const bool displayContextCaptured = restoreIavfDisplay && captureDisplayContext(displayContext);
+	IndexedDisplaySnapshot displayContext;
+	const bool displayContextCaptured = restoreIavfDisplay && displayContext.capture();
 	const bool rememberIavfPalette = !displayContextCaptured;
 	if (isIavf) {
 		debugC(2, kDebugVideo,
-			"Ripper: IAVF display policy media='%s' keyboardControls=%d restore=%d captured=%d rememberPalette=%d size=%ux%u",
+			"Ripper: IAVF display policy media='%s' keyboardControls=%d restore=%d captured=%d rememberPalette=%d size=%dx%d",
 			path.c_str(), allowEscSpace, restoreIavfDisplay, displayContextCaptured,
-			rememberIavfPalette, displayContext.width, displayContext.height);
+			rememberIavfPalette, displayContext.bounds().width(),
+			displayContext.bounds().height());
 	}
 
 	bool result = false;
@@ -1137,10 +1093,11 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 		delete file;
 	}
 	if (displayContextCaptured && !_engine->shouldQuit()) {
-		const bool restored = restoreDisplayContext(displayContext);
+		const bool restored = displayContext.restore();
 		debugC(restored ? 2 : 1, kDebugVideo,
-			"Ripper: restored script media display context media='%s' success=%d size=%ux%u",
-			path.c_str(), restored, displayContext.width, displayContext.height);
+			"Ripper: restored script media display context media='%s' success=%d size=%dx%d",
+			path.c_str(), restored, displayContext.bounds().width(),
+			displayContext.bounds().height());
 		if (!restored)
 			result = false;
 	} else if (isIavf && !restoreIavfDisplay && result && !_engine->shouldQuit()) {
@@ -1544,18 +1501,18 @@ bool MediaPlayer::playSceneStream(Common::SeekableReadStream *stream,
 		// RunShockLeverPuzzleScene at 0x3affb passes each archived outcome
 		// member through RunMediaPresentation at 0x168af. Its controlled IAVF
 		// path restores the puzzle page after the presentation completes.
-		SavedDisplayContext displayContext;
-		const bool captured = captureDisplayContext(displayContext);
+		IndexedDisplaySnapshot displayContext;
+		const bool captured = displayContext.capture();
 		result = playIavf(*stream, name, allowEscSpace, x, y,
 			kScenePresentationTop, false, !captured);
 		delete stream;
 		if (captured && !_engine->shouldQuit()) {
-			const bool restored = restoreDisplayContext(displayContext);
+			const bool restored = displayContext.restore();
 			debugC(restored ? 2 : 1, kDebugVideo,
 				"Ripper: restored archived scene display media='%s' "
-				"success=%d size=%ux%u",
-				name.c_str(), restored, displayContext.width,
-				displayContext.height);
+				"success=%d size=%dx%d",
+				name.c_str(), restored, displayContext.bounds().width(),
+				displayContext.bounds().height());
 			if (!restored)
 				result = false;
 		}
