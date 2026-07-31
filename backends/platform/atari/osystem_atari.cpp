@@ -39,6 +39,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
+#define FORBIDDEN_SYMBOL_EXCEPTION_getchar
 
 #include "backends/platform/atari/osystem_atari.h"
 
@@ -78,6 +79,8 @@ extern void nf_print(const char* msg);
 
 static int s_app_id = -1;
 static void (*s_old_procterm)(void) = nullptr;
+
+static char s_lastErrorMessage[1024+1];
 
 static volatile uint32 counter_200hz;
 
@@ -438,7 +441,16 @@ void OSystem_Atari::fatalError() {
 	if (!s_dtor_already_called)
 		destroy();
 
-	// let exit_restore() and critical_restore() handle the recovery
+	// unlike the crash path via VEC_PROCTERM, give the user a chance to read
+	// the error message on the restored screen (keyboard vectors are restored
+	// by now, too)
+	if (s_lastErrorMessage[0] != '\0') {
+		fprintf(stderr, "%s", s_lastErrorMessage);
+		fprintf(stderr, "Press Enter to exit.\n");
+		fflush(stderr);
+		getchar();
+	}
+
 	exit(1);
 }
 
@@ -447,6 +459,14 @@ void OSystem_Atari::logMessage(LogMessageType::Type type, const char *message) {
 
 	static char str[1024+1];
 	snprintf(str, sizeof(str), "[%08d] %s", getMillis(), message);
+
+	if (type == LogMessageType::kError && !nf_stderr_id) {
+		// remember the message for fatalError(): at this point the screen is
+		// usually still in a game video mode, so it has to be reprinted after
+		// the VDI/GEM state is restored (with nf_stderr it is already visible
+		// on the host console)
+		snprintf(s_lastErrorMessage, sizeof(s_lastErrorMessage), "%s", message);
+	}
 
 	if (nf_stderr_id) {
 		nf_print(str);
