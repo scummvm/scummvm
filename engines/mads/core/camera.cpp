@@ -128,10 +128,8 @@ static int camera_pan(Camera *camera, int *picture_view, int *player_loc,
 				high_edge = *picture_view - camera->pan_on_tolerance + display_size - 1;
 
 				if (*player_loc < low_edge) {
-					if (picture_view) {
-						camera->panning = true;
-						camera->pan_direction = -1;
-					}
+					camera->panning = true;
+					camera->pan_direction = -1;
 				}
 
 				if (*player_loc > high_edge) {

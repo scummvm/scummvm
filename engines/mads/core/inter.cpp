@@ -1072,7 +1072,7 @@ static void inter_select_word() {
 	int mode;
 	int limit = 0;
 	int strict, delta;
-	int tight_boxes;
+	int tight_boxes = false;
 	int difference = 0;
 	int *selection;
 	int base_spot, this_spot;

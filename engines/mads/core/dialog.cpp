@@ -3159,7 +3159,7 @@ int dialog_alert(int x, int y, int buttons, const char *string1,
 		}
 
 		dialog_add_blank(dialog);
-		if (string1 != NULL) dialog_add_message(dialog, DD_IX_CENTER, DD_IY_AUTOFILL, string1);
+		dialog_add_message(dialog, DD_IX_CENTER, DD_IY_AUTOFILL, string1);
 		if (string2 != NULL) dialog_add_message(dialog, DD_IX_CENTER, DD_IY_AUTOFILL, string2);
 		if (string3 != NULL) dialog_add_message(dialog, DD_IX_CENTER, DD_IY_AUTOFILL, string3);
 		if (string4 != NULL) dialog_add_message(dialog, DD_IX_CENTER, DD_IY_AUTOFILL, string4);
@@ -3197,11 +3197,6 @@ int dialog_alert_center(int buttons,
 int dialog_alert_ok(const char *string1, const char *string2,
 		const char *string3, const char *string4) {
 	return dialog_alert(DD_CENTER, DD_CENTER, DD_OK_BUTTON, string1, string2, string3, string4);
-}
-
-void dialog_newsay(int x, int y) {
-	dialog_set_string_space(say_dialog, &say_dialog_work[0], SAY_DIALOG_SIZE);
-	dialog_create(say_dialog, x, y, DD_AUTO, DD_DEFAULT, DD_DEFAULT, DD_DEFAULT);
 }
 
 void dialog_say(const char *message, int x) {

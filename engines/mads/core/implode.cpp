@@ -354,7 +354,7 @@ word explode(
 					// buffers.  In the flat C model this is a no-op.
 					continue;
 				} else {
-					cx = (int)aux + 1;
+					cx = (uint)aux + 1;
 					while (cx-- > 0) {
 						byte b = s.flat[s.di + bx];
 						exp_put_byte(&s, b);

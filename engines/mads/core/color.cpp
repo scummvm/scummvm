@@ -106,7 +106,7 @@ int color_list_update(ColorListPtr list, Buffer *scan_buf, Palette *scan_pal, by
 	byte r, g, b;
 	word cycle_value;
 	word value[256];
-	byte reverse_map[256];
+	byte reverse_map[256] = { 0 };
 	ColorList temp_list;
 
 	result = 0;
