@@ -41,6 +41,7 @@
 #include "ripper/puzzles/kj_blob_shooter.h"
 #include "ripper/puzzles/rolodex.h"
 #include "ripper/puzzles/shock_lever.h"
+#include "ripper/puzzles/stained_glass.h"
 #include "ripper/puzzles/table_gate.h"
 #include "ripper/puzzles/web_grid_shift.h"
 #include "ripper/ripper.h"
@@ -86,7 +87,7 @@ const char *SceneActionDispatcher::actionName(uint action) {
 	case 30: return "set chooser template mode";
 	case 31: return "no-op";
 	case 32: return "clear active display";
-	case 33: return "stained glass puzzle";
+	case kSceneActionStainedGlassPuzzle: return "stained glass puzzle";
 	case kSceneActionKeypadSequencePuzzle: return "keypad sequence puzzle";
 	case 35: return "set UI selection index";
 	case 36: return "update UI selection";
@@ -304,6 +305,15 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		g_system->updateScreen();
 		debugC(2, kDebugScene, "Ripper: cleared active scene display from scene action 32");
 		return true;
+	}
+	if (action == kSceneActionStainedGlassPuzzle) {
+		StainedGlassPuzzle puzzle(engine);
+		const StainedGlassPuzzle::Result result = puzzle.run(argument);
+		debugC(1, kDebugPuzzles,
+			"Ripper: stained glass puzzle scene action completed "
+			"result=%d milestone=%u",
+			result, argument);
+		return result != StainedGlassPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionKeypadSequencePuzzle) {
 		KeypadSequencePuzzle puzzle(engine);
