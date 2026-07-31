@@ -218,6 +218,7 @@ ScriptValue FunctionManager::call(uint functionId, Common::Array<ScriptValue> &a
 		break;
 
 	case kSetRegistryFunction:
+		FUNCARGCHECK(3);
 		script_SetRegistry(args, returnValue);
 		break;
 
@@ -589,16 +590,28 @@ void FunctionManager::script_SystemLanguagePreference(Common::Array<ScriptValue>
 }
 
 void FunctionManager::script_SetRegistry(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
-	warning("STUB: %s", __func__);
+	Common::String registryName = args[0].asString();
+	Common::String registryKey = args[1].asString();
+	ScriptValue registryValue = args[2];
+
+	// TODO: Allow serializing these values to disk instead of just keeping them in memory.
+	if (!_registry.contains(registryName)) {
+		_registry[registryName] = Common::HashMap<Common::String, ScriptValue>();
+	}
+
+	_registry[registryName][registryKey] = registryValue;
 }
 
 void FunctionManager::script_GetRegistry(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
-	// Even though this is basically still stubbed out, we need to set a return value or we will get errors.
-	returnValue = args[2];
 	Common::String registryName = args[0].asString();
-	if (registryName.size() != 0) {
-		// TODO: Get the registry (saved game content) with this name.
-		warning("STUB: %s: %s", __func__, registryName.c_str());
+	Common::String registryKey = args[1].asString();
+	ScriptValue defaultValue = args[2];
+
+	// TODO: Allow reading these values from disk.
+	if (_registry.contains(registryName) && _registry[registryName].contains(registryKey)) {
+		returnValue = _registry[registryName][registryKey];
+	} else {
+		returnValue = defaultValue;
 	}
 }
 

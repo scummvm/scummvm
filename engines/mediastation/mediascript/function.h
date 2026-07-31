@@ -82,6 +82,7 @@ public:
 private:
 	Common::HashMap<uint, ScriptFunction *> _functions;
 	uint32 _timedIntervalStartInMs = 0.0;
+	Common::HashMap<Common::String, Common::HashMap<Common::String, ScriptValue>> _registry;
 
 	void script_GetPlatform(Common::Array<ScriptValue> &args, ScriptValue &returnValue);
 	void script_Random(Common::Array<ScriptValue> &args, ScriptValue &returnValue);
