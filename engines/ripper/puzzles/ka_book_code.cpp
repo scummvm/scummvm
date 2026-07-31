@@ -20,7 +20,6 @@
 #include "common/system.h"
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
-#include "image/pcx.h"
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
@@ -59,27 +58,15 @@ bool KaBookCodePuzzle::loadAssets() {
 	}
 
 	Common::File file;
-	Image::PCXDecoder decoder;
-	if (!file.open(Common::Path(kBackgroundMedia)) || !decoder.loadStream(file)) {
+	if (!file.open(Common::Path(kBackgroundMedia)) ||
+			!decodePcxAsset(file, _background)) {
 		warning("Ripper: could not decode Ka book-code background '%s'", kBackgroundMedia);
 		return false;
 	}
-	const Graphics::Surface *surface = decoder.getSurface();
-	if (!surface || surface->format.bytesPerPixel != 1 || surface->w <= 0 || surface->h <= 0)
-		return false;
-	_background.width = surface->w;
-	_background.height = surface->h;
-	_background.pixels.resize((uint32)surface->w * surface->h);
-	for (int y = 0; y < surface->h; ++y)
-		memcpy(_background.pixels.data() + y * surface->w,
-			surface->getBasePtr(0, y), surface->w);
-	const Graphics::Palette &palette = decoder.getPalette();
-	_background.palette.resize(palette.size() * 3);
-	if (!_background.palette.empty())
-		memcpy(_background.palette.data(), palette.data(), _background.palette.size());
 	debugC(1, kDebugPuzzles,
 		"Ripper: loaded Ka book-code puzzle background='%s' size=%ux%u colors=%u glyphs=%u",
-		kBackgroundMedia, _background.width, _background.height, palette.size(),
+		kBackgroundMedia, _background.width, _background.height,
+		_background.palette.size() / 3,
 		_font.glyphs.size());
 	return true;
 }

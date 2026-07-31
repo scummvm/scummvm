@@ -110,6 +110,7 @@ struct BitmapFontAsset {
 bool decodeBitmapAsset(Common::SeekableReadStream &stream, BitmapAssetFrame &frame);
 bool decodeBitmapAssetSequence(Common::SeekableReadStream &stream,
 	BitmapAssetSequence &sequence);
+bool decodePcxAsset(Common::SeekableReadStream &stream, BitmapAssetFrame &frame);
 bool decodePresentationFrameRegionTable(Common::SeekableReadStream &stream,
 	PresentationFrameRegionTable &table);
 bool decodePresentationFrameAudioMap(Common::SeekableReadStream &stream,

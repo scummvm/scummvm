@@ -107,6 +107,40 @@ public:
 		TS_ASSERT(frame.palette.empty());
 	}
 
+	void testPcxAssetUsesIndexedPixelsAndVgaPalette() {
+		Common::Array<byte> data;
+		data.resize(128 + 2 + 1 + 256 * 3);
+		memset(data.data(), 0, data.size());
+		data[0] = 0x0a;
+		data[1] = 5;
+		data[2] = 0;
+		data[3] = 8;
+		WRITE_LE_UINT16(data.data() + 8, 1);
+		data[65] = 1;
+		WRITE_LE_UINT16(data.data() + 66, 2);
+		data[128] = 42;
+		data[129] = 43;
+		data[130] = 12;
+		data[131 + 42 * 3] = 1;
+		data[131 + 42 * 3 + 1] = 2;
+		data[131 + 42 * 3 + 2] = 3;
+		Common::MemoryReadStream stream(
+			data.data(), data.size(), DisposeAfterUse::NO);
+		Ripper::BitmapAssetFrame frame;
+
+		TS_ASSERT(Ripper::decodePcxAsset(stream, frame));
+		TS_ASSERT_EQUALS(frame.width, 2);
+		TS_ASSERT_EQUALS(frame.height, 1);
+		TS_ASSERT_EQUALS(frame.transparentColor, 0);
+		TS_ASSERT_EQUALS(frame.pixels.size(), 2U);
+		TS_ASSERT_EQUALS(frame.pixels[0], 42);
+		TS_ASSERT_EQUALS(frame.pixels[1], 43);
+		TS_ASSERT_EQUALS(frame.palette.size(), 256U * 3);
+		TS_ASSERT_EQUALS(frame.palette[42 * 3], 1);
+		TS_ASSERT_EQUALS(frame.palette[42 * 3 + 1], 2);
+		TS_ASSERT_EQUALS(frame.palette[42 * 3 + 2], 3);
+	}
+
 	void testPresentationFrameRegionTable() {
 		byte data[0x68 + 12 + 18];
 		memset(data, 0, sizeof(data));
