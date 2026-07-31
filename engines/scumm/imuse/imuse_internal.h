@@ -363,7 +363,7 @@ struct Part : public Common::Serializable {
 	void init(bool useNativeMT32);
 	void setup(Player *player);
 	void uninit();
-	void off();
+	void off(bool releaseChannel);
 	void set_instrument(uint b);
 	void set_instrument(byte *data);
 	void load_global_instrument(byte b);

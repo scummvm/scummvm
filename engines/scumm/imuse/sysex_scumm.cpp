@@ -80,7 +80,7 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 			part->pitchBendFactor(buf[7]);
 			if (part->_percussion) {
 				if (part->_mc)
-					part->off();
+					part->off(true);
 			} else {
 				if (player->_isMIDI) {
 					// Even in cases where a program does not seem to be specified,

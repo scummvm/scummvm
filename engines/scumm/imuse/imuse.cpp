@@ -1643,7 +1643,7 @@ MidiChannel *IMuseInternal::allocateChannel(MidiDriver *midi, byte prio) {
 	}
 
 	if (best) {
-		best->off();
+		best->off(true);
 		suspendPart(best);
 		mc = midi->allocateChannel();
 	}
@@ -1725,7 +1725,7 @@ void IMuseInternal::reallocateMidiChannels(MidiDriver *midi) {
 
 			if (lopart == nullptr || lopri >= hipri)
 				return;
-			lopart->off();
+			lopart->off(true);
 
 			if ((hipart->_mc = midi->allocateChannel()) == nullptr)
 				return;

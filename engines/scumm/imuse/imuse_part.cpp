@@ -216,16 +216,8 @@ void Part::pitchBendFactor(byte value) {
 void Part::set_onoff(bool on) {
 	if (_on != on) {
 		_on = on;
-		if (!on) {
-			if (!_se->_dynamicChanAllocation) {
-				if (_mc) {
-					_mc->sustain(false);
-					_mc->allNotesOff();
-				}
-			} else {
-				off();
-			}
-		}
+		if (!on)
+			off(_se->_dynamicChanAllocation);
 		if (!_percussion)
 			_player->_se->reallocateMidiChannels(_player->getMidiDriver());
 	}
@@ -341,18 +333,22 @@ void Part::setup(Player *player) {
 void Part::uninit() {
 	if (!_player)
 		return;
-	off();
+	off(false);
+	if (_mc && !_se->reassignChannelAndResumePart(_mc))
+		_mc->release();
+	_mc = nullptr;
 	_player->removePart(this);
 	_se->removeSuspendedPart(this);
 	_player = nullptr;
 }
 
-void Part::off() {
+void Part::off(bool releaseChannel) {
 	if (_mc) {
 		_mc->sustain(false);
 		_mc->allNotesOff();
-		if (!_se->reassignChannelAndResumePart(_mc))
-			_mc->release();
+		if (!releaseChannel)
+			return;
+		_mc->release();
 		_mc = nullptr;
 	}
 }
