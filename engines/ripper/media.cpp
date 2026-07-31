@@ -1510,13 +1510,16 @@ bool MediaPlayer::playSceneStream(Common::SeekableReadStream *stream,
 	if (!stream)
 		return false;
 
-	byte magic[4];
+	byte magic[8];
 	if (!readExact(*stream, magic, sizeof(magic))) {
 		delete stream;
 		return false;
 	}
 	stream->seek(0);
-	if (memcmp(magic, "SMK2", 4) != 0 && memcmp(magic, "SMK4", 4) != 0) {
+	const bool isSmacker =
+		memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0;
+	const bool isIavf = memcmp(magic, "IAVF2.00", 8) == 0;
+	if (!isSmacker && !isIavf) {
 		warning("Ripper: unsupported archived scene media '%s'", name.c_str());
 		delete stream;
 		return false;
@@ -1524,14 +1527,38 @@ bool MediaPlayer::playSceneStream(Common::SeekableReadStream *stream,
 
 	debugC(1, kDebugVideo,
 		"Ripper: entering archived scene presentation media='%s' "
-		"position=%d,%d controls=%d",
-		name.c_str(), x, y, allowEscSpace);
-	SmackerPlaybackRequest request;
-	request.allowEscSpace = allowEscSpace;
-	request.x = x;
-	request.y = y;
-	request.originY = kScenePresentationTop;
-	return playSmacker(stream, name, request);
+		"mode=%s position=%d,%d controls=%d",
+		name.c_str(), isIavf ? "IAVF" : "Smacker", x, y, allowEscSpace);
+	bool result = false;
+	if (isSmacker) {
+		SmackerPlaybackRequest request;
+		request.allowEscSpace = allowEscSpace;
+		request.x = x;
+		request.y = y;
+		request.originY = kScenePresentationTop;
+		result = playSmacker(stream, name, request);
+	} else {
+		// RunShockLeverPuzzleScene at 0x3affb passes each archived outcome
+		// member through RunMediaPresentation at 0x168af. Its controlled IAVF
+		// path restores the puzzle page after the presentation completes.
+		SavedDisplayContext displayContext;
+		const bool captured = captureDisplayContext(displayContext);
+		result = playIavf(*stream, name, allowEscSpace, x, y,
+			kScenePresentationTop, false, !captured);
+		delete stream;
+		if (captured && !_engine->shouldQuit()) {
+			const bool restored = restoreDisplayContext(displayContext);
+			debugC(restored ? 2 : 1, kDebugVideo,
+				"Ripper: restored archived scene display media='%s' "
+				"success=%d size=%ux%u",
+				name.c_str(), restored, displayContext.width,
+				displayContext.height);
+			if (!restored)
+				result = false;
+		}
+	}
+	_input->drainKeys();
+	return result;
 }
 
 bool MediaPlayer::playPuzzleSequenceSegment(const Common::String &path, uint firstFrame,

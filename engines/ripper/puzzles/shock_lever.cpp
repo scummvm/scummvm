@@ -78,7 +78,10 @@ static const char *const kOutcomeMediaNames[4] = {
 };
 
 static const Common::Point kSubmitPosition(222, 252 + kSceneOriginY);
-static const Common::Point kScreenMediaPosition(3, 276);
+// ServiceShockPuzzleScreenPlayback at 0x3ad26 posts SCREENN's dirty region at
+// logical x=0x114, y=3. The shared scene presentation adds the physical
+// 50-pixel toolbar origin to y.
+static const Common::Point kScreenMediaPosition(276, 3);
 
 static bool isExitPoint(const Common::Point &point) {
 	return point.y >= kSceneOriginY &&
@@ -223,6 +226,31 @@ bool ShockLeverPuzzle::drawBackground() {
 	return true;
 }
 
+void ShockLeverPuzzle::restoreLeverBackings(byte *screen, uint pitch) const {
+	// AnimateShockLeverToFrame at 0x3ad98 opens a scoped display backing before
+	// copying each transparent lever frame, then posts that complete dirty
+	// region. Restore the corresponding SCREEN pixels before compositing the
+	// replacement frame so transparent pixels cannot retain the prior pose.
+	for (uint lever = 0; lever < kLeverCount; ++lever) {
+		if (_leverFrames[lever].empty())
+			continue;
+		const BitmapAssetFrame &frame = _leverFrames[lever].front();
+		const int sourceX = kLeverPositions[lever].x;
+		const int sourceY = kLeverPositions[lever].y - kSceneOriginY;
+		if (sourceX < 0 || sourceY < 0 ||
+				sourceX + frame.width > _background.width ||
+				sourceY + frame.height > _background.height)
+			continue;
+		for (uint y = 0; y < frame.height; ++y) {
+			memcpy(screen + (kLeverPositions[lever].y + y) * pitch +
+					kLeverPositions[lever].x,
+				_background.pixels.data() +
+					(sourceY + y) * _background.width + sourceX,
+				frame.width);
+		}
+	}
+}
+
 void ShockLeverPuzzle::drawOverlays() {
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
@@ -232,6 +260,7 @@ void ShockLeverPuzzle::drawOverlays() {
 	}
 
 	byte *pixels = (byte *)screen->getPixels();
+	restoreLeverBackings(pixels, screen->pitch);
 	drawFrame(pixels, screen->pitch, _submit,
 		kSubmitPosition.x, kSubmitPosition.y, true);
 	for (uint lever = 0; lever < kLeverCount; ++lever) {
