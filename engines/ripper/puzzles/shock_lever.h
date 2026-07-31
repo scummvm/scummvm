@@ -58,7 +58,10 @@ private:
 	bool loadLever(uint lever);
 	bool drawBackground();
 	void drawOverlays();
+	void drawPuzzleHelpOverlay(byte *screen, uint pitch) const;
 	void restoreLeverBackings(byte *screen, uint pitch) const;
+	void restorePuzzleHelpBackings(byte *screen, uint pitch) const;
+	Common::Point puzzleHelpLabelPosition(uint lever) const;
 	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
 		int x, int y, bool transparent) const;
 	int findLever(const Common::Point &point) const;
@@ -76,6 +79,7 @@ private:
 	AssetLibrary _library;
 	BitmapAssetFrame _background;
 	BitmapAssetFrame _submit;
+	BitmapFontAsset _puzzleHelpFont;
 	Common::Array<BitmapAssetFrame> _leverFrames[3];
 	IndexedDisplaySnapshot _incomingDisplay;
 	Audio::SoundHandle _audioHandles[5];
@@ -85,6 +89,8 @@ private:
 	HoverControl _hoveredControl;
 	uint _keywordIndex;
 	uint32 _lastLeverStepMillis;
+	bool _puzzleHelpFontLoadAttempted;
+	bool _puzzleHelpEnabled;
 	bool _solved;
 	bool _completionRecorded;
 };
