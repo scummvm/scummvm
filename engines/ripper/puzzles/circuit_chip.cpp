@@ -24,7 +24,6 @@
 #include "common/system.h"
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
-#include "image/pcx.h"
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
@@ -164,29 +163,11 @@ bool CircuitChipPuzzle::loadPcx(const Common::String &path,
 		BitmapAssetFrame &frame) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
 		_engine->getResources()->createReadStreamForPath(path));
-	Image::PCXDecoder decoder;
-	if (!stream || !decoder.loadStream(*stream)) {
+	if (!stream || !decodePcxAsset(*stream, frame)) {
 		warning("Ripper: could not decode circuit puzzle PCX '%s'",
 			path.c_str());
 		return false;
 	}
-
-	const Graphics::Surface *surface = decoder.getSurface();
-	if (!surface || surface->format.bytesPerPixel != 1 ||
-			surface->w <= 0 || surface->h <= 0)
-		return false;
-	frame.width = surface->w;
-	frame.height = surface->h;
-	frame.transparentColor = 0;
-	frame.pixels.resize((uint32)frame.width * frame.height);
-	for (uint y = 0; y < frame.height; ++y)
-		memcpy(frame.pixels.data() + y * frame.width,
-			surface->getBasePtr(0, y), frame.width);
-
-	const Graphics::Palette &palette = decoder.getPalette();
-	frame.palette.resize(palette.size() * 3);
-	if (!frame.palette.empty())
-		memcpy(frame.palette.data(), palette.data(), frame.palette.size());
 	return true;
 }
 

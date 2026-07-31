@@ -210,6 +210,12 @@ static bool copyIndexedSurface(const Graphics::Surface *surface,
 	return true;
 }
 
+bool decodePcxAsset(Common::SeekableReadStream &stream, BitmapAssetFrame &frame) {
+	Image::PCXDecoder decoder;
+	return decoder.loadStream(stream) &&
+		copyIndexedSurface(decoder.getSurface(), decoder.getPalette(), 0, frame);
+}
+
 static bool decodeIffBitmap(Common::SeekableReadStream &stream, BitmapAssetFrame &frame) {
 	IFFDecoder decoder;
 	if (!decoder.loadStream(stream))
@@ -780,18 +786,15 @@ static bool loadPcxFromLibrary(const AssetLibrary &library,
 		BitmapAssetFrame &frame) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
 		library.createReadStreamForMember(memberName));
-	Image::PCXDecoder decoder;
-	if (!stream || !decoder.loadStream(*stream)) {
+	if (!stream || !decodePcxAsset(*stream, frame)) {
 		warning("Ripper: could not decode %s PCX '%s'", libraryName, memberName.c_str());
 		return false;
 	}
 
-	if (!copyIndexedSurface(decoder.getSurface(), decoder.getPalette(), 0, frame))
-		return false;
 	debugC(2, kDebugResources,
 		"Ripper: decoded %s PCX '%s' width=%u height=%u colors=%u",
 		libraryName, memberName.c_str(), frame.width, frame.height,
-		decoder.getPalette().size());
+		frame.palette.size() / 3);
 	return true;
 }
 

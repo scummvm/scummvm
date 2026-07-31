@@ -28,7 +28,6 @@
 #include "common/system.h"
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
-#include "image/pcx.h"
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
@@ -102,31 +101,20 @@ CdInBookPuzzle::CdInBookPuzzle(RipperEngine *engine) : _engine(engine),
 bool CdInBookPuzzle::loadBackground() {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
 		_library.createReadStreamForMember(kBackgroundName));
-	Image::PCXDecoder decoder;
-	if (!stream || !decoder.loadStream(*stream)) {
+	if (!stream || !decodePcxAsset(*stream, _background)) {
 		warning("Ripper: could not decode CD-in-book background '%s'", kBackgroundName);
 		return false;
 	}
 
-	const Graphics::Surface *surface = decoder.getSurface();
-	const Graphics::Palette &palette = decoder.getPalette();
-	if (!surface || surface->format.bytesPerPixel != 1 ||
-			surface->w != 640 || surface->h != kSceneHeight || palette.size() < 256) {
+	const uint paletteColors = _background.palette.size() / 3;
+	if (_background.width != 640 || _background.height != kSceneHeight ||
+			paletteColors < 256) {
 		warning("Ripper: invalid CD-in-book background '%s' size=%dx%d colors=%u",
-			kBackgroundName, surface ? surface->w : 0, surface ? surface->h : 0,
-			palette.size());
+			kBackgroundName, _background.width, _background.height, paletteColors);
 		return false;
 	}
 
-	_background.width = surface->w;
-	_background.height = surface->h;
-	_background.transparentColor = 0;
-	_background.pixels.resize((uint32)surface->w * surface->h);
-	for (int y = 0; y < surface->h; ++y)
-		memcpy(_background.pixels.data() + y * surface->w,
-			surface->getBasePtr(0, y), surface->w);
 	_background.palette.resize(256 * 3);
-	memcpy(_background.palette.data(), palette.data(), _background.palette.size());
 	return true;
 }
 
