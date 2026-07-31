@@ -763,6 +763,13 @@ ADDetectedGames AdvancedMetaEngineDetectionBase::detectGame(const Common::FSNode
 			anyFileFound = true;
 			break;
 		}
+
+		bool isMacDecoratedName = false;
+		Common::Path undecorated = Common::MacResManager::disassembleName(it->_key, &isMacDecoratedName);
+		if (isMacDecoratedName && _fileNamesMap.contains(undecorated)) {
+			anyFileFound = true;
+			break;
+		}
 	}
 	if (!anyFileFound) {
 		debugC(3, kDebugGlobalDetection, "Skipping engine '%s': no matching file names in directory", getName());
