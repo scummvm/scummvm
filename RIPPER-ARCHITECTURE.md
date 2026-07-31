@@ -935,7 +935,10 @@
   the 640-by-400 `GLASS.PCX` background with its palette, and loads sixteen
   99-by-99 stained-glass tiles from `P01.BBM` through `P16.BBM`. `P17.BBM` is
   the blank tile backing restored under moving pieces, while `FRAME3.PCX` is
-  attached to the retail transition update as its full-screen frame mask.
+  attached to the retail transition update as a full-screen stencil. Its
+  color-zero openings expose moving tiles; the remaining area preserves the
+  existing `GLASS.PCX` backdrop and lattice instead of replacing it with the
+  frame bitmap's palette indices.
 - `RunStainedGlassPuzzleScene` reads `STGLASS1.INI` through `STGLASS3.INI`
   according to the configured puzzle level. Sixteen `Piece n` sections map
   destination slots to one-based source slots for each selectable control;
