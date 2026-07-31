@@ -132,6 +132,7 @@ private:
 		const char *key, int fallback = 0) const;
 	static Common::String basenameFromPath(const Common::String &path);
 	static Common::String normalizeCueName(const Common::String &path);
+	static const char *meterName(uint meter);
 
 	void startEncounterAudio();
 	void stopEncounterAudio();
