@@ -55,7 +55,6 @@ static const uint16 kUpCommand = 0x4800;
 static const uint16 kDownCommand = 0x5000;
 static const uint kInventoryBitmapCount = 9;
 static const uint kMenuSkinFrameCount = 16;
-static const uint kFrameTileCount = 9;
 static const uint kMaximumVisibleEntries = 5;
 static const int kMenuWidth = 320;
 static const int kHeadingHeight = 30;
@@ -232,50 +231,6 @@ void Inventory::drawText(byte *screen, uint pitch, int x, int y,
 	BitmapFontRenderer::drawText(screen, pitch, _font, x, y, text, color);
 }
 
-void Inventory::drawBitmap(byte *screen, uint pitch,
-		const BitmapAssetFrame &bitmap, int x, int y) const {
-	for (uint row = 0; row < bitmap.height; ++row) {
-		for (uint column = 0; column < bitmap.width; ++column) {
-			const byte pixel = bitmap.pixels[row * bitmap.width + column];
-			if (pixel != bitmap.transparentColor)
-				screen[(y + row) * pitch + x + column] = pixel;
-		}
-	}
-}
-
-void Inventory::drawFrame(byte *screen, uint pitch,
-		const Common::Rect &bounds) const {
-	if (_skin.size() < kFrameTileCount)
-		return;
-	const int tileWidth = _skin[0].width;
-	const int tileHeight = _skin[0].height;
-	const int columns = (bounds.width() + tileWidth - 1) / tileWidth;
-	const int rows = (bounds.height() + tileHeight - 1) / tileHeight;
-	int y = bounds.top;
-	for (int row = 0; row < rows; ++row) {
-		int x = bounds.left;
-		const BitmapAssetFrame *lastTile = nullptr;
-		for (int column = 0; column < columns; ++column) {
-			const uint columnBand = column == 0 ? 0 :
-				(column == columns - 1 ? 2 : 1);
-			const uint rowBand = row == 0 ? 0 : (row == rows - 1 ? 2 : 1);
-			const BitmapAssetFrame &tile = _skin[rowBand * 3 + columnBand];
-			drawBitmap(screen, pitch, tile, x, y);
-			lastTile = &tile;
-			if (column == columns - 2)
-				x = bounds.right - tile.width;
-			else
-				x += tile.width;
-		}
-		if (lastTile) {
-			if (row == rows - 2)
-				y = bounds.bottom - lastTile->height;
-			else
-				y += lastTile->height;
-		}
-	}
-}
-
 void Inventory::drawButton(byte *screen, uint pitch,
 		const Common::Rect &bounds, const Common::String &label,
 		bool pressed) const {
@@ -312,7 +267,7 @@ void Inventory::draw(bool usePressed, bool donePressed) const {
 		return;
 	}
 	byte *pixels = (byte *)screen->getPixels();
-	drawFrame(pixels, screen->pitch, _menuBounds);
+	IndexedBitmapRenderer::drawNineSlice(pixels, screen->pitch, _skin, _menuBounds);
 	// DrawPromptChooserTemplateLabelCallback at 0x16d0f confines its title
 	// pass to the label strip over the tiled MNU frame. Preserve those frame
 	// pixels here instead of replacing the full heading interior.
@@ -335,7 +290,7 @@ void Inventory::draw(bool usePressed, bool donePressed) const {
 		const Common::Rect bounds = rowBounds(visibleRow);
 		if (entry.bitmapIndex < _itemBitmaps.size()) {
 			const BitmapAssetFrame &bitmap = _itemBitmaps[entry.bitmapIndex];
-			drawBitmap(pixels, screen->pitch, bitmap,
+			IndexedBitmapRenderer::drawBitmap(pixels, screen->pitch, bitmap,
 				bounds.left + kItemImageInset,
 				bounds.top + (bounds.height() - bitmap.height) / 2);
 		}

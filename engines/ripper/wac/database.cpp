@@ -99,18 +99,6 @@ private:
 	byte _activeEntryIndex;
 };
 
-static void blitBitmap(Graphics::Surface *screen, const BitmapAssetFrame &bitmap,
-		int x, int y) {
-	for (uint row = 0; row < bitmap.height; ++row) {
-		byte *destination = (byte *)screen->getBasePtr(x, y + row);
-		const byte *source = bitmap.pixels.data() + row * bitmap.width;
-		for (uint column = 0; column < bitmap.width; ++column) {
-			if (source[column] != bitmap.transparentColor)
-				destination[column] = source[column];
-		}
-	}
-}
-
 WacDatabaseSession::WacDatabaseSession(WacManager *wac) : _wac(wac),
 		_databaseSelection(0), _databaseFirstVisible(0),
 		_databaseTextScrollControl(0), _databaseTextScrollDragOffset(0),
@@ -234,12 +222,15 @@ void WacDatabaseSession::drawDatabase() const {
 					bounds.left + column * tileWidth;
 				const int y = row == rows - 1 ? bounds.bottom - tile.height :
 					bounds.top + row * tileHeight;
-				blitBitmap(screen, tile, x, y);
+				IndexedBitmapRenderer::drawBitmap(
+					(byte *)screen->getPixels(), screen->pitch, tile, x, y);
 			}
 		}
 	}
 	if (_wac->_databaseSkin.size() >= kWacDatabaseSkinFrameCount)
-		blitBitmap(screen, _wac->_databaseSkin[_databaseCornerAlternate ? 15 : 0],
+		IndexedBitmapRenderer::drawBitmap((byte *)screen->getPixels(),
+			screen->pitch,
+			_wac->_databaseSkin[_databaseCornerAlternate ? 15 : 0],
 			bounds.left, bounds.top);
 	const Common::String &title = _wac->resourceString(0x4e);
 	const int titleX = client.left + (client.width() - _wac->measureText(title)) / 2;

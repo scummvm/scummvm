@@ -69,9 +69,6 @@ private:
 	void applyPalette();
 	void updateLayout();
 	void draw(bool usePressed = false, bool donePressed = false) const;
-	void drawBitmap(byte *screen, uint pitch, const BitmapAssetFrame &bitmap,
-		int x, int y) const;
-	void drawFrame(byte *screen, uint pitch, const Common::Rect &bounds) const;
 	void drawText(byte *screen, uint pitch, int x, int y,
 		const Common::String &text, byte color) const;
 	void drawButton(byte *screen, uint pitch, const Common::Rect &bounds,

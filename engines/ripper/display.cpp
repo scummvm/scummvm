@@ -108,6 +108,54 @@ void IndexedDisplaySnapshot::clear() {
 	_palette.clear();
 }
 
+void IndexedBitmapRenderer::drawBitmap(byte *pixels, uint pitch,
+		const BitmapAssetFrame &bitmap, int x, int y) {
+	for (uint row = 0; row < bitmap.height; ++row) {
+		for (uint column = 0; column < bitmap.width; ++column) {
+			const byte pixel = bitmap.pixels[row * bitmap.width + column];
+			if (pixel != bitmap.transparentColor)
+				pixels[(y + row) * pitch + x + column] = pixel;
+		}
+	}
+}
+
+bool IndexedBitmapRenderer::drawNineSlice(byte *pixels, uint pitch,
+		const Common::Array<BitmapAssetFrame> &skin,
+		const Common::Rect &bounds) {
+	if (skin.size() < 9 || skin[0].width == 0 || skin[0].height == 0)
+		return false;
+
+	const int columns = (bounds.width() + skin[0].width - 1) / skin[0].width;
+	const int rows = (bounds.height() + skin[0].height - 1) / skin[0].height;
+	int y = bounds.top;
+	for (int row = 0; row < rows; ++row) {
+		int x = bounds.left;
+		const BitmapAssetFrame *lastTile = nullptr;
+		for (int column = 0; column < columns; ++column) {
+			const uint columnBand = column == 0 ? 0 :
+				(column == columns - 1 ? 2 : 1);
+			const uint rowBand = row == 0 ? 0 :
+				(row == rows - 1 ? 2 : 1);
+			const BitmapAssetFrame &tile = skin[rowBand * 3 + columnBand];
+			drawBitmap(pixels, pitch, tile, x, y);
+			lastTile = &tile;
+			// TileChooserControlFrame at 0x54fbe snaps the final column and
+			// row after rendering their penultimate tiles.
+			if (column == columns - 2)
+				x = bounds.right - tile.width;
+			else
+				x += tile.width;
+		}
+		if (!lastTile)
+			continue;
+		if (row == rows - 2)
+			y = bounds.bottom - lastTile->height;
+		else
+			y += lastTile->height;
+	}
+	return true;
+}
+
 uint BitmapFontRenderer::measureText(const BitmapFontAsset &font,
 		const Common::String &text) {
 	uint width = 0;
