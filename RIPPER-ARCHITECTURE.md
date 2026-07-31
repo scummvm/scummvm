@@ -929,6 +929,30 @@
   exits, F1 opens help table `0x1af`, and the case-insensitive hidden keyword
   `sparky` presents `M_2`, sets success, and exits. `SHOCK0` through `SHOCK4`
   supply the outcome, ambient, submit, and lever-motion audio cues.
+- Scene action 33 calls `RunStainedGlassPuzzleScene` at `0x2e366` with the
+  caller-supplied completion flag. `KG.RUN` callback `0x263` supplies milestone
+  217 after retaining `KG_GLASS.AVI`. The puzzle opens `STGLASS.PL`, presents
+  the 640-by-400 `GLASS.PCX` background with its palette, and loads sixteen
+  99-by-99 stained-glass tiles from `P01.BBM` through `P16.BBM`. `P17.BBM` is
+  the blank tile backing restored under moving pieces, while `FRAME3.PCX` is
+  attached to the retail transition update as its full-screen frame mask.
+- `RunStainedGlassPuzzleScene` reads `STGLASS1.INI` through `STGLASS3.INI`
+  according to the configured puzzle level. Sixteen `Piece n` sections map
+  destination slots to one-based source slots for each selectable control;
+  the `Initial Positions` section supplies the starting permutation. The
+  sixteen control origins at `0x843f0` are ordinary physical X/Y pairs. The
+  routine cancels an active 50-pixel scene origin before registering them, so
+  ScummVM does not add the toolbar band to their Y coordinates.
+- Entry starts from solved order `1..16`, holds that preview for 125 timer ticks,
+  then animates to the configured initial order. Each move advances all changed
+  tiles to their destination over sixteen line steps paced five 100-Hz ticks
+  apart. Space repeats the solved-to-initial preview; Alt+H temporarily shows
+  solved order for 250 ticks and restores the saved order; F1 opens help table
+  `0x1b1`; Escape exits; and the case-insensitive hidden keyword `headache`
+  sets the supplied flag. A normal solve sets the flag only when every slot
+  contains its matching one-based tile. `G-PUZZLE.WAV` loops under the scene,
+  while `GLAS0.WAV` through `GLAS4.WAV` accompany transitions. Shared cleanup
+  fades the palette and clears the display before `KG.RUN` resumes.
 - Scene action 34 calls `RunKeypadSequencePuzzleScene` at `0x3bd30` with
   the caller-supplied completion flag. `JB2.RUN` callback `0x2da` supplies
   milestone 220 after presenting `JB_DOOR.SMK`. The initial `KPEXTRA2.BBM`
