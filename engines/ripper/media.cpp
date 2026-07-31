@@ -58,6 +58,15 @@ static const uint kPaletteFadeStepDelayMs = 16;
 
 class RipperSmackerDecoder : public Video::SmackerDecoder {
 public:
+	bool loadStreamWithDataFixes(Common::SeekableReadStream *stream,
+			const Common::String &name) {
+		if (!Video::SmackerDecoder::loadStream(stream))
+			return false;
+
+		repairEfw4FrameTable(name);
+		return true;
+	}
+
 	const Graphics::Surface *restartAtFrame(uint frame) {
 		if (!isVideoLoaded() || frame >= getFrameCount() || !rewind())
 			return nullptr;
@@ -84,6 +93,39 @@ public:
 	}
 
 protected:
+	void repairEfw4FrameTable(const Common::String &name) {
+		// LoadSmackerPlaybackState at 0x4f140 and
+		// AdvanceSmackerPlaybackFrame at 0x4ffe8 consume each frame-table
+		// DWORD as an ordinary byte count. The extracted EFW4.SMK has one
+		// damaged entry: frame 62 says 0x2000a070, while 0x8070 makes the
+		// declared payload end exactly at EOF and matches its neighboring
+		// frame sizes. Restrict the repair to the complete known signature.
+		const uint kFrame = 62;
+		const uint32 kDamagedSize = 0x2000a070;
+		const uint32 kRepairedSize = 0x8070;
+		const uint32 kFrameCount = 110;
+		const uint32 kFileSize = 0x2ce97c;
+		if (!name.hasSuffixIgnoreCase("efw4.smk") ||
+				getFrameCount() != kFrameCount || !_frameSizes ||
+				_frameSizes[kFrame] != kDamagedSize ||
+				_fileStream->size() != kFileSize)
+			return;
+
+		uint64 repairedEnd = _fileStream->pos();
+		for (uint i = 0; i < kFrameCount; ++i)
+			repairedEnd += (i == kFrame ? kRepairedSize : _frameSizes[i]) & ~3U;
+		if (repairedEnd != kFileSize) {
+			warning("Ripper: EFW4 Smacker frame-table repair rejected repairedEnd=%u fileSize=%u",
+				(uint)repairedEnd, kFileSize);
+			return;
+		}
+
+		_frameSizes[kFrame] = kRepairedSize;
+		debugC(1, kDebugVideo,
+			"Ripper: repaired EFW4 Smacker frame table frame=%u raw=0x%08x size=0x%04x fileSize=%u",
+			kFrame, kDamagedSize, kRepairedSize, kFileSize);
+	}
+
 	class RipperSmackerVideoTrack : public SmackerVideoTrack {
 	public:
 		RipperSmackerVideoTrack(uint32 width, uint32 height, uint32 frameCount,
@@ -344,7 +386,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	if (sequenceCommand)
 		*sequenceCommand = 0;
 	RipperSmackerDecoder decoder;
-	if (!decoder.loadStream(stream)) {
+	if (!decoder.loadStreamWithDataFixes(stream, name)) {
 		warning("Ripper: invalid Smacker stream '%s'", name.c_str());
 		return false;
 	}
