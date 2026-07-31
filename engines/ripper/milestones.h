@@ -49,7 +49,8 @@ enum MilestoneFlag {
 	kMilestoneWacAudioEditorAvailable = 84,
 	kMilestonePlayedFinalPrologueScene = 300,
 	kMilestonePlayedFirstWacMessage = 301,
-	kMilestoneReceivedJordanWacMessage = 305
+	kMilestoneReceivedJordanWacMessage = 305,
+	kMilestonePlayedThirdRipperWacMessage = 314
 };
 
 class Milestones {

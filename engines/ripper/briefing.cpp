@@ -42,7 +42,8 @@ static const uint32 kBriefingFrameInterval = 3 * kDosTickMillis;
 static const uint kBriefingAlertVolume = 35;
 
 static bool isImplementedBriefingSelector(uint selector) {
-	return selector == 1 || selector == 2 || selector == 3 || selector == 4;
+	return selector == 1 || selector == 2 || selector == 3 || selector == 4 ||
+		selector == 6;
 }
 
 BriefingManager::BriefingManager(RipperEngine *engine) : _engine(engine),
@@ -259,6 +260,19 @@ bool BriefingManager::activate() {
 				"messageFlag=%u travelFlag=%u",
 				(uint)kMilestoneReceivedJordanWacMessage,
 				(uint)kMilestoneWebRunnersLoftOpen);
+		}
+		break;
+	case 6:
+		// ServiceBriefingMediaTrigger at 0x1945b presents RIP_WAC3.AVI
+		// and records milestone 0x13a after the presentation returns.
+		result = _engine->getMedia()->play("rip_wac3.avi", true, 0, 0);
+		if (result)
+			result = _engine->getMilestones()->set(
+				kMilestonePlayedThirdRipperWacMessage, true, "briefing selector 6");
+		if (result) {
+			debugC(1, kDebugScene,
+				"Ripper: completed briefing selector=6 media='rip_wac3.avi' messageFlag=%u",
+				(uint)kMilestonePlayedThirdRipperWacMessage);
 		}
 		break;
 	default:
