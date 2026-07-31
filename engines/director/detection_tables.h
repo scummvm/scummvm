@@ -1043,6 +1043,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "kgbdinosaur",		"Die große Kinder Gamebox - Die Welt der Dinosaurier + 6 lustige Spiele" },
 	{ "kommissar1",			"Kommissar Kugelblitz: Vermisst am Mississippi" },
 	{ "kommissar2",			"Kommissar Kugelblitz: Geheimnis von Spooky Hill" },
+	{ "kommissar3",			"Kommissar Kugelblitz: Der Fall Wüstenkönig" },
 	{ "kaiser",				"Des Kaisers neue Kleider" },
 	{ "loewe1",				"Löwenzahn 1" },
 	{ "loewe2",				"Löwenzahn 2" },
@@ -10267,6 +10268,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME2_l("kommissar2", "", "Start",				"r:90d18be50181ca3217e8c35a46585fff", 1227771,
 								 "kk2data/abspann.dxr", "d:d1816e1a326d36afb31c472fb128200d", 2956508, Common::DE_DEU, 800),
 	WINGAME1_l("kommissar2", "", "kk2pc.exe",			"t:5065e02c4c020f9d61f9cbdacc716ca6", 1852216, Common::DE_DEU, 800),
+
+	WINGAME1_l("kommissar3", "", "Setup/WinRoot/Terzio/Kommissar Kugelblitz/Kommissar Kugelblitz 3/Kk3.exe",
+				"t:a11dd54509fde0062f84af56c4dafc80", 1669332, Common::DE_DEU, 800),
 
 	// Developed by CircumStance Design
 	MACGAME1("kothhoot", "v2.0", "Hoot", "90597a84a08b06e07af8bc5ab427676b", 5909, 800),
