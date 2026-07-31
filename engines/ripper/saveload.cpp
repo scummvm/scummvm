@@ -28,7 +28,7 @@
 
 #include "ripper/detection.h"
 #include "ripper/input.h"
-#include "ripper/media.h"
+#include "ripper/scene_audio.h"
 #include "ripper/script.h"
 
 namespace Ripper {
@@ -84,7 +84,7 @@ Common::Error RipperEngine::saveGameStream(Common::WriteStream *stream, bool isA
 	Common::Serializer serializer(nullptr, stream);
 	if (!serializer.matchBytes(kRipperSaveMagic, sizeof(kRipperSaveMagic)) ||
 			!serializer.syncVersion(kRipperSaveVersion) ||
-			!_scripts->syncGame(serializer) || !_media->syncGame(serializer))
+			!_scripts->syncGame(serializer) || !_sceneAudio->syncGame(serializer))
 		return Common::kWritingFailed;
 
 	uint16 width = kScreenWidth;
@@ -126,7 +126,7 @@ Common::Error RipperEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		warning("Ripper: unsupported or invalid save-state header");
 		return Common::kReadingFailed;
 	}
-	if (!_scripts->syncGame(serializer) || !_media->syncGame(serializer))
+	if (!_scripts->syncGame(serializer) || !_sceneAudio->syncGame(serializer))
 		return Common::kReadingFailed;
 
 	uint16 width = 0;

@@ -33,6 +33,7 @@
 #include "ripper/media.h"
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
+#include "ripper/scene_audio.h"
 #include "ripper/toolbar.h"
 
 namespace Ripper {
@@ -69,7 +70,7 @@ bool CyberManager::captureAudio(Common::Array<byte> &state) const {
 	Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::NO);
 	Common::Serializer serializer(nullptr, &stream);
 	serializer.setVersion(kAudioSnapshotVersion);
-	if (!_engine->getMedia()->syncGame(serializer) || serializer.err())
+	if (!_engine->getSceneAudio()->syncGame(serializer) || serializer.err())
 		return false;
 	state.resize(stream.size());
 	if (!state.empty())
@@ -85,7 +86,7 @@ bool CyberManager::restoreAudio(const Common::Array<byte> &state) const {
 	Common::MemoryReadStream stream(state.data(), state.size(), DisposeAfterUse::NO);
 	Common::Serializer serializer(&stream, nullptr);
 	serializer.setVersion(kAudioSnapshotVersion);
-	const bool restored = _engine->getMedia()->syncGame(serializer) && !serializer.err();
+	const bool restored = _engine->getSceneAudio()->syncGame(serializer) && !serializer.err();
 	debugC(restored ? 2 : 1, kDebugCyber,
 		"Ripper: restored suspended Cyber audio state bytes=%u success=%d",
 		state.size(), restored);
@@ -124,7 +125,7 @@ CyberManager::Result CyberManager::run() {
 	cursor->setVisible(false);
 	input->drainKeys();
 	input->discardMouseTransitions();
-	_engine->getMedia()->clearSceneAudio(true);
+	_engine->getSceneAudio()->clearAll(true);
 	g_system->fillScreen(0);
 	g_system->updateScreen();
 	debugC(1, kDebugCyber,
@@ -165,7 +166,7 @@ CyberManager::Result CyberManager::run() {
 	debugC(result == kExited ? 1 : 2, kDebugCyber,
 		"Ripper: leaving Cyber nested runtime result=%d exitRequested=%d quit=%d",
 		result, scripts->isCyberExitRequested(), _engine->shouldQuit());
-	_engine->getMedia()->clearSceneAudio(true);
+	_engine->getSceneAudio()->clearAll(true);
 	const bool audioRestored = restoreAudio(audioState);
 	restoreRuntime(runtime);
 	restoreDisplay(display);
@@ -210,7 +211,7 @@ CyberManager::Result CyberManager::runProgram(uint action,
 	cursor->setVisible(false);
 	input->drainKeys();
 	input->discardMouseTransitions();
-	_engine->getMedia()->clearSceneAudio(true);
+	_engine->getSceneAudio()->clearAll(true);
 	g_system->fillScreen(0);
 	g_system->updateScreen();
 	debugC(1, kDebugCyber,
@@ -271,7 +272,7 @@ CyberManager::Result CyberManager::runProgram(uint action,
 		"Ripper: leaving Cyber program action=%u program='%s' result=%d exitRequested=%d quit=%d",
 		action, programName.c_str(), result, scripts->isCyberExitRequested(),
 		_engine->shouldQuit());
-	_engine->getMedia()->clearSceneAudio(true);
+	_engine->getSceneAudio()->clearAll(true);
 	const bool audioRestored = restoreAudio(audioState);
 	restoreRuntime(runtime);
 	restoreDisplay(display);

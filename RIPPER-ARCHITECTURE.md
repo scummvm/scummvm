@@ -10,6 +10,10 @@
 - `RipperEngine` owns the engine-lifetime managers through scoped pointers;
   nested presentation owners use the same model, while their engine, input,
   mixer, and resource links remain non-owning dependencies.
+- `SceneAudioManager` is an engine-lifetime service alongside `MediaPlayer`.
+  Script execution, save-state serialization, and Cyber suspension address the
+  scene trigger table directly; media presentation only services that table at
+  the retail frame boundaries.
 - The game coordinator defaults to `ripper.run`, initializes resources, and
   plays `LOGO.AVI` with `PollPresentationEscOrSpaceCommand` at `0x49039`, so
   Escape skips the presentation and Space pauses it. The ScummVM game option
@@ -1663,8 +1667,9 @@
   than a single current resource: its entry callback loads eight WAVs before
   configuring `POLICE1` and `ELDOR_O`, and later scenes configure preserved
   door sounds without loading them again. `SceneAudioManager` owns this table,
-  its mixer handles, trigger/ramp service, and serialization; `MediaPlayer`
-  delegates the script-facing audio operations to it.
+  its mixer handles, trigger/ramp service, and serialization. `MediaPlayer`
+  owns only transient clips and video presentation, and calls the engine-owned
+  scene-audio service when a presented frame reaches the retail service point.
 - Opcode `0x20` scans all occupied slots by case-insensitive basename through
   `HandleSceneEntryConfigureOrStartNamedAudioTrigger` at `0x15eea`. A missing
   name is a no-op rather than a script error. A zero trigger starts immediately;
@@ -1859,9 +1864,10 @@
 - Engine-local media code should remain an adapter or demultiplexer wherever
   packet payloads can be handed to existing ScummVM codecs.
 - Media implementation units live under `engines/ripper/media/`: `video.cpp`
-  owns Smacker and IAVF presentation timing, `audio.cpp` owns scene and
-  transient audio playback, `display.cpp` owns palette fades and static PCX
-  presentation, and `source.cpp` owns stream resolution and validation.
+  owns Smacker and IAVF presentation timing, `audio.cpp` owns transient audio
+  playback, `display.cpp` owns palette fades and static PCX presentation, and
+  `source.cpp` owns stream resolution and validation. Long-lived named scene
+  audio remains in the engine-level `SceneAudioManager`.
 - Every Smacker entry point emits one stable level-2 playback-plan trace before
   loading the decoder. The trace names the retail route and records placement,
   palette, frame-range, loop, input, callback, and timeline policy so structural
