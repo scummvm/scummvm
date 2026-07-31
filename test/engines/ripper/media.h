@@ -26,20 +26,20 @@
 
 class RipperMediaTestSuite : public CxxTest::TestSuite {
 public:
-	void testSmackerPlaybackRequestDefaults() {
-		const Ripper::SmackerPlaybackRequest request;
+	void testSmackerPlaybackPlanDefaults() {
+		const Ripper::SmackerPlaybackPlan plan;
 
-		TS_ASSERT(!request.allowEscSpace);
-		TS_ASSERT_EQUALS(request.x, -1);
-		TS_ASSERT_EQUALS(request.y, -1);
-		TS_ASSERT_EQUALS(request.displayScale, 1U);
-		TS_ASSERT(request.patchInterfacePalette);
-		TS_ASSERT(request.rememberVideoPalette);
-		TS_ASSERT(!request.loopFromStart);
-		TS_ASSERT_EQUALS(request.lastFrame, 0xffffffffU);
-		TS_ASSERT_EQUALS(request.boundedLoopStartFrame, 0xffffffffU);
-		TS_ASSERT(!request.transparentFirstPixel);
-		TS_ASSERT_EQUALS(Common::String(request.retailRoute),
+		TS_ASSERT(!plan.input.allowEscSpace);
+		TS_ASSERT_EQUALS(plan.placement.x, -1);
+		TS_ASSERT_EQUALS(plan.placement.y, -1);
+		TS_ASSERT_EQUALS(plan.placement.displayScale, 1U);
+		TS_ASSERT(plan.palette.patchInterfacePalette);
+		TS_ASSERT(plan.palette.rememberVideoPalette);
+		TS_ASSERT(!plan.loop.loopFromStart);
+		TS_ASSERT_EQUALS(plan.frames.lastFrame, 0xffffffffU);
+		TS_ASSERT_EQUALS(plan.loop.boundedLoopStartFrame, 0xffffffffU);
+		TS_ASSERT(!plan.rendering.transparentFirstPixel);
+		TS_ASSERT_EQUALS(Common::String(plan.retailRoute),
 			"RunMediaSequence@0x1e516");
 	}
 
@@ -64,17 +64,17 @@ public:
 		TS_ASSERT_EQUALS(iavfStream.pos(), 0);
 	}
 
-	void testSmackerPlaybackRequestDescription() {
-		Ripper::SmackerPlaybackRequest request;
-		request.x = 12;
-		request.y = 34;
-		request.originY = 50;
-		request.frameLimit = 1;
-		request.patchWacMediaPalette = true;
-		request.patchInterfacePalette = false;
-		request.transparentFirstPixel = true;
+	void testSmackerPlaybackPlanDescription() {
+		Ripper::SmackerPlaybackPlan plan;
+		plan.placement.x = 12;
+		plan.placement.y = 34;
+		plan.placement.originY = 50;
+		plan.frames.frameLimit = 1;
+		plan.palette.patchWacMediaPalette = true;
+		plan.palette.patchInterfacePalette = false;
+		plan.rendering.transparentFirstPixel = true;
 
-		TS_ASSERT_EQUALS(Ripper::describeSmackerPlaybackRequest(request),
+		TS_ASSERT_EQUALS(Ripper::describeSmackerPlaybackPlan(plan),
 			"route=RunMediaSequence@0x1e516 position=12,34 originY=50 scale=1 "
 			"controls=0 sceneUi=0 palette=interface:0,wac:1,remember:1 "
 			"frames=0..4294967295 previewLimit=1 "
