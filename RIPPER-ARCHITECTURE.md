@@ -880,20 +880,25 @@
 - Scene action 22 calls `RunShockLeverPuzzleScene` at `0x3affb` with the
   caller-supplied completion flag. `EF2.RUN` callback `0x5d2` supplies
   milestone 208. The scene opens `EF_MONK.PL`, uses `SCREEN` and `DOWN` for
-  the base presentation and submit control, services the archived `SCREENN`
-  Smacker at scene-space `(3, 276)`, and loads seventeen frames for each lever
-  from the nested `LEVER1N` through `LEVER3N` libraries. The levers begin at
-  frame 3 at physical positions `(258, 146)`, `(305, 146)`, and `(342, 150)`.
+  the base presentation and submit control, and services the archived
+  `SCREENN` Smacker at logical `(276, 3)`, physical `(276, 53)`.
+  `ServiceShockPuzzleScreenPlayback` at `0x3ad26` posts that same X/Y dirty
+  region. The scene loads seventeen frames for each lever from the nested
+  `LEVER1N` through `LEVER3N` libraries. The levers begin at frame 3 at
+  physical positions `(258, 146)`, `(305, 146)`, and `(342, 150)`.
 - Dragging a lever maps the pointer's vertical position into frame `0..16` and
-  advances toward it one frame per three DOS timer ticks. Submitting compares
-  the three current frames against `[7, 14, 9]`, accepting the target or either
-  adjacent frame. `M_SCREAM`, `M_NORMAL`, `M_1`, and `M_2` correspond to zero
-  through three correct levers. A three-lever match records success but leaves
-  the puzzle active; cleanup sets the supplied milestone when the player
-  exits. Escape or either side control exits, F1 opens help table `0x1af`, and
-  the case-insensitive hidden keyword `sparky` presents `M_2`, sets success,
-  and exits. `SHOCK0` through `SHOCK4` supply the outcome, ambient, submit, and
-  lever-motion audio cues.
+  advances toward it one frame per three DOS timer ticks.
+  `AnimateShockLeverToFrame` at `0x3ad98` restores a scoped backing for the
+  lever's dirty rectangle before copying its next transparent frame. Submitting
+  compares the three current frames against `[7, 14, 9]`, accepting the target
+  or either adjacent frame. `M_SCREAM`, `M_NORMAL`, `M_1`, and `M_2` correspond
+  to zero through three correct levers and are archived `IAVF2.00`
+  presentations dispatched through `RunMediaPresentation` at `0x168af`. A
+  three-lever match records success but leaves the puzzle active; cleanup sets
+  the supplied milestone when the player exits. Escape or either side control
+  exits, F1 opens help table `0x1af`, and the case-insensitive hidden keyword
+  `sparky` presents `M_2`, sets success, and exits. `SHOCK0` through `SHOCK4`
+  supply the outcome, ambient, submit, and lever-motion audio cues.
 - Scene action 34 calls `RunKeypadSequencePuzzleScene` at `0x3bd30` with
   the caller-supplied completion flag. `JB2.RUN` callback `0x2da` supplies
   milestone 220 after presenting `JB_DOOR.SMK`. The initial `KPEXTRA2.BBM`
