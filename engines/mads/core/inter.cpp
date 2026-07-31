@@ -673,12 +673,6 @@ static void inter_update(int x1, int y1, int xs, int ys) {
 		x1 + inter_base_x, y1a,
 		xs, ys);
 
-#ifdef sixteen_colors
-	if (video_mode == ega_mode) {
-		video_flush_ega(y1a, (y1a + ys - 1));
-	}
-#endif
-
 	if (refresh_flag) mouse_refresh_done();
 	mouse_thaw();
 }

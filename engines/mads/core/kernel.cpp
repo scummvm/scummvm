@@ -170,10 +170,6 @@ int kernel_load_vocab() {
 	int error_flag;
 	int count;
 	int count2;
-#ifdef log_vocab
-	FILE *handle;
-	long before, after;
-#endif
 
 	// Load all main command verbs
 	for (count = 0; count < INTER_COMMANDS; count++) {
@@ -197,21 +193,7 @@ int kernel_load_vocab() {
 		}
 	}
 
-#ifdef log_vocab
-	before = mem_get_avail();
-#endif
-
 	error_flag = vocab_load_active();
-
-#ifdef log_vocab
-	after = mem_get_avail();
-	if (fileio_exist("vocab.log")) {
-		handle = fopen("vocab.log", "wt");
-		fprintf(handle, "Room %d   Vocab words: %d    Memory: %ld\n",
-			room_id, vocab_active, before - after);
-		fclose(handle);
-	}
-#endif
 
 	return error_flag;
 }
