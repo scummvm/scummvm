@@ -79,17 +79,21 @@ void ActionZone::readSubtype(Common::SeekableReadStream &stream, bool isNancy13)
 	case 0x0f:
 		stream.skip(4);		// int16 + int16
 		break;
-	case 3:
-		stream.skip(8);		// double
+	case 3:					// terrain (sand): extra deceleration while the ball is inside
+		terrainDecel = stream.readDoubleLE();
 		break;
 	case 0x17:				// Flat Tire (min/max) - Nancy12 only
 		stream.skip(8);		// int32 + int32
 		break;
-	case 4:
-		stream.skip(10);	// double + int16
+	case 4:					// slope: a velocity kick of slopeForce along slopeAngle
+		slopeForce = stream.readDoubleLE();
+		slopeAngle = stream.readSint16LE();
 		break;
-	case 2:
-		stream.skip(24);	// Rect + int32 + int16 + int16
+	case 2:					// teleport / pipe: exit rect + hold time + exit angle/speed
+		readRect(stream, exitRect);
+		teleportDelay = stream.readSint32LE();
+		exitAngle = stream.readSint16LE();
+		exitSpeed = stream.readSint16LE();
 		break;
 	case 0x0c:				// trigger zone: special effect + target scene id + flag
 		readSpecialEffect(stream);

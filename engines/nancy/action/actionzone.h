@@ -71,6 +71,23 @@ struct ActionZone {
 	int16 tailId = 0;
 	byte tailFlag = 0;
 
+	// Teleport / pipe subtype (0x02): the ball entering this zone is held for
+	// teleportDelay ms, then re-emerges at exitRect travelling at exitSpeed along
+	// exitAngle (degrees).
+	Common::Rect exitRect;
+	int32 teleportDelay = 0;
+	int16 exitAngle = 0;
+	int16 exitSpeed = 0;
+
+	// Terrain subtype (0x03, e.g. a sand trap): extra deceleration added to the
+	// ball's friction while it is inside this zone.
+	double terrainDecel = 0.0;
+
+	// Slope subtype (0x04, e.g. a sloped green): a velocity kick of slopeForce along
+	// slopeAngle (degrees) applied on entering the zone and removed on leaving.
+	double slopeForce = 0.0;
+	int16 slopeAngle = 0;
+
 	// OverlayZone subtypes (0x0d / 0x16)
 	Common::String overlayName;
 	Common::Array<Common::Rect> overlaySrcRects;

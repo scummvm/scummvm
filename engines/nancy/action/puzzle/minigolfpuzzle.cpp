@@ -28,6 +28,7 @@
 #include "engines/nancy/input.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/util.h"
+#include "engines/nancy/puzzledata.h"
 
 #include "engines/nancy/state/scene.h"
 #include "engines/nancy/action/puzzle/minigolfpuzzle.h"
@@ -36,19 +37,36 @@ namespace Nancy {
 namespace Action {
 
 // TODO - open items:
-//  - Physics constants (power scaling, restitution) are approximations.
-//  - No abandon/exit path (quitting an unsolved hole) is identified.
+//  - Wall restitution and the sink-speed threshold (kSinkSpeed) are approximations.
+//  - Leaving an unsolved hole is a scene-level hotspot (not part of this record);
+//    input is gated to the viewport so that hotspot still works, but it isn't
+//    driven from here.
 
-static const double kMaxDrag = 250.0;		// aim distance (mask px) for a full-power shot
+// Struck speed = clamp(dragLen, maxSpeed) * kPowerScale * maxSpeed, in mask px per
+// fixed step; the ball then decelerates linearly by _decel each step, so travel
+// distance scales with drag^2. The physics advance in fixed 30Hz steps to stay
+// frame-rate independent. At this kPowerScale a full-course shot is a small,
+// precise ~24px drag (the three preview balls guide the aim).
+static const double kPowerScale = 0.005;
+static const double kFixedStep = 1.0 / 30.0;
+static const double kRestSpeed = 0.5;		// stop the ball below this per-step speed
+static const double kSinkSpeed = 50.0;		// ball sinks only if it reaches the cup at or below this speed; faster rolls over
 static const double kRestitution = 0.8;		// wall-bounce energy retained
+static const double kDefaultAimDrag = 24.0;	// default aim-cursor distance from the ball (mask px)
+static const byte kZoneTeleport = 2;		// ActionZone subtype for a pipe (enter one hole, exit another)
+static const byte kZoneTerrain = 3;			// ActionZone subtype for terrain (a sand trap that adds friction)
+static const byte kZoneSlope = 4;			// ActionZone subtype for a slope (a velocity kick toward its angle)
+static const byte kZoneOverlay = 0xd;		// ActionZone subtype for a cosmetic overlay sprite
 
 // Isometric projection (mask space -> screen): rotate 45 degrees, foreshorten Y by
 // half. cos45 == sin45; the Y component is additionally scaled by kIsoYScale.
 static const double kIsoCos = 0.70710678118654752;	// cos(pi/4) == sin(pi/4)
 static const double kIsoYScale = 0.5;
 
+static const int kGhostAlpha = 110;			// opacity (0-255) of the preview "virtual balls"
+
 void MinigolfPuzzle::readData(Common::SeekableReadStream &stream) {
-	// 106-byte PuzzleBase header (bulk-copied by the original into the puzzle object).
+	// 106-byte PuzzleBase header.
 	readFilename(stream, _ballImageName);		// 0x00
 	readFilename(stream, _holeBoundaryName);	// 0x21
 	_maxSpeed = stream.readSint32LE();			// 0x42
@@ -57,7 +75,7 @@ void MinigolfPuzzle::readData(Common::SeekableReadStream &stream) {
 	readRect(stream, _teeRect);					// 0x4f - the tee / ball-start square
 	_initialPower = stream.readSint16LE();		// 0x5f
 	_initialAngle = stream.readSint16LE();		// 0x61
-	_winEventFlag = stream.readSint16LE();		// 0x63
+	_strokeCountIndex = stream.readSint16LE();	// 0x63
 	stream.skip(4);								// 0x65
 	_mirrorFlag = stream.readByte();			// 0x69
 
@@ -101,29 +119,38 @@ void MinigolfPuzzle::init() {
 		_maskCenterY = _boundaryMask.h / 2.0;
 	}
 
-	// The hole is the zone that plays the sink sounds (GOL_Sink*). (_teeRect comes
-	// from the header.) All coordinates are in mask/course space. That zone's
-	// "special effect" is really the win transition: its leading id is the scene to
-	// change to when the ball is potted (with the effect being the fade).
-	for (const ActionZone &z : _zones) {
-		bool isHole = false;
+	// The cups are the zones that play the sink sounds (GOL_Sink*), in mask/course
+	// space. A hole can have several (each with its own target scene/flag in its
+	// special effect + tail). A separate zone over each cup carries Nancy's reaction
+	// voice line. The scene/flag/fade are resolved from the cup the ball drops in.
+	_inSlope.resize(_zones.size(), false);
+	for (uint i = 0; i < _zones.size(); ++i) {
+		const ActionZone &z = _zones[i];
+		bool isSink = false;
 		for (const Common::String &n : z._sound.names) {
 			if (n.contains("Sink") || n.contains("sink")) {
-				isHole = true;
+				isSink = true;
 				break;
 			}
 		}
-		if (isHole) {
-			_holeRect = z.rect;
-			_sinkSound = z._sound;
-			_winScene.sceneID = z.specialEffectId;
-			if (z.hasSpecialEffect) {
-				_winHasFade = true;
-				_winFadeType = z.seType;
-				_winFadeTotalTime = z.seTotalTime;
-				_winFadeToBlackTime = z.seFadeToBlackTime;
-				_winFadeRect = z.seRect;
+		if (isSink) {
+			_sinkZones.push_back(i);
+			if (_sinkSound.names.empty()) {
+				_sinkSound = z._sound;
 			}
+		} else if (_reactionSound.names.empty() && !z._sound.names.empty()) {
+			_reactionSound = z._sound;
+		}
+	}
+
+	// A cosmetic overlay sprite (e.g. hole 6a's broken wall), drawn at its dest rect.
+	for (const ActionZone &z : _zones) {
+		if (z.type == kZoneOverlay && !z.overlayName.empty() &&
+				!z.overlaySrcRects.empty() && !z.overlayDestRect.isEmpty()) {
+			g_nancy->_resource->loadImage(Common::Path(z.overlayName), _overlayImage);
+			_overlayImage.setTransparentColor(_drawSurface.getTransparentColor());
+			_overlaySrc = z.overlaySrcRects[0];
+			_overlayDest = z.overlayDestRect;
 			break;
 		}
 	}
@@ -146,14 +173,24 @@ void MinigolfPuzzle::init() {
 		_openColor = _boundaryMask.getPixel((int)_ballX, (int)_ballY);
 	}
 
+	// Seed the slope enter/leave state from the ball's start, so a tee that sits in
+	// a slope doesn't fire a spurious kick on the first step.
+	for (uint i = 0; i < _zones.size(); ++i) {
+		_inSlope[i] = _zones[i].type == kZoneSlope &&
+			_zones[i].rect.contains(Common::Point((int16)_ballX, (int16)_ballY));
+	}
+
 	// A default aim in the level's preset direction, so the preview shows at once.
 	// The cursor sits behind the ball (opposite the launch direction).
 	double a = (double)_initialAngle * (M_PI / 180.0);
-	_aimCursor = Common::Point((int16)(_ballX - cos(a) * kMaxDrag), (int16)(_ballY + sin(a) * kMaxDrag));
+	_aimCursor = Common::Point((int16)(_ballX - cos(a) * kDefaultAimDrag), (int16)(_ballY + sin(a) * kDefaultAimDrag));
 
-	// Every hole starts with the player placing the ball on the tee.
+	// Every hole starts with the player placing the ball on the tee, and its stroke
+	// count reset to zero.
 	_mgState = kPlacing;
 	_lastUpdate = g_nancy->getTotalPlayTime();
+	_strokes = 0;
+	writeStrokeCount();
 
 	redraw();
 }
@@ -199,40 +236,91 @@ void MinigolfPuzzle::drawBall() {
 
 void MinigolfPuzzle::drawAimPreview() {
 	// Velocity the current aim would produce (mirrors launchBall: away from cursor).
-	double aimX = _ballX - _aimCursor.x;
-	double aimY = _ballY - _aimCursor.y;
-	double len = sqrt(aimX * aimX + aimY * aimY);
-	if (len < 3.0) {
+	double vx, vy;
+	aimToVelocity(_ballX - _aimCursor.x, _ballY - _aimCursor.y, vx, vy);
+	if (vx == 0.0 && vy == 0.0) {
 		return;
 	}
-	double power = MIN(len / kMaxDrag, 1.0) * (double)_maxSpeed;
-	double x = _ballX, y = _ballY;
-	double vx = (aimX / len) * power;
-	double vy = (aimY / len) * power;
-
-	// March the shot forward and drop a ghost ball (the ball sprite itself) at
-	// intervals along the predicted path, stopping at the hole or when it stalls.
 	const Common::Rect ghostSrc = _ballFrames.empty() ? Common::Rect() : _ballFrames[0];
+	if (ghostSrc.isEmpty()) {
+		return;
+	}
+
+	// March the shot forward and collect the predicted path.
+	Common::Array<Common::Point> path;
+	double x = _ballX, y = _ballY;
 	const int kSteps = 240;
 	for (int i = 0; i < kSteps; ++i) {
-		bool reachedHole = stepBall(x, y, vx, vy, 1.0 / 30.0, false);
-		if (i % 12 == 0 && !ghostSrc.isEmpty()) {
-			Common::Point gc = projectToScreen(x, y);
-			Common::Point gp(gc.x - ghostSrc.width() / 2, gc.y - ghostSrc.height() / 2);
-			_drawSurface.blitFrom(_image, ghostSrc, gp);
-		}
-		if (reachedHole || sqrt(vx * vx + vy * vy) < 5.0) {
+		bool reachedHole = stepBall(x, y, vx, vy, false);
+		path.push_back(Common::Point((int16)(x + 0.5), (int16)(y + 0.5)));
+		if (reachedHole || sqrt(vx * vx + vy * vy) < kRestSpeed) {
 			break;
+		}
+	}
+
+	// Show exactly 3 "virtual balls" spaced evenly along the path: bunched near the
+	// ball for a soft hit, spread out for a hard one.
+	for (int k = 1; k <= 3; ++k) {
+		uint idx = (path.size() * k) / 3;
+		if (idx > 0) {
+			--idx;
+		}
+		Common::Point gc = projectToScreen(path[idx].x, path[idx].y);
+		Common::Point gp(gc.x - ghostSrc.width() / 2, gc.y - ghostSrc.height() / 2);
+		drawGhostBall(ghostSrc, gp);
+	}
+}
+
+void MinigolfPuzzle::drawGhostBall(const Common::Rect &src, const Common::Point &dest) {
+	// The preview balls are translucent: blend the ball sprite with the course
+	// background so they read as fainter than the real ball.
+	const Graphics::ManagedSurface &bg = NancySceneState.getViewport().getBackground();
+	const Graphics::PixelFormat &fmt = _drawSurface.format;
+	uint32 transColor = _image.getTransparentColor();
+
+	for (int sy = 0; sy < src.height(); ++sy) {
+		int dy = dest.y + sy;
+		if (dy < 0 || dy >= _drawSurface.h) {
+			continue;
+		}
+		for (int sx = 0; sx < src.width(); ++sx) {
+			int dx = dest.x + sx;
+			if (dx < 0 || dx >= _drawSurface.w) {
+				continue;
+			}
+
+			uint32 px = _image.getPixel(src.left + sx, src.top + sy);
+			if (px == transColor) {
+				continue;	// transparent part of the sprite
+			}
+
+			byte ballR, ballG, ballB;
+			_image.format.colorToRGB(px, ballR, ballG, ballB);
+
+			byte bgR = 0, bgG = 0, bgB = 0;
+			if (dx < (int)bg.w && dy < (int)bg.h) {
+				bg.format.colorToRGB(bg.getPixel(dx, dy), bgR, bgG, bgB);
+			}
+
+			byte r = (byte)((ballR * kGhostAlpha + bgR * (255 - kGhostAlpha)) / 255);
+			byte g = (byte)((ballG * kGhostAlpha + bgG * (255 - kGhostAlpha)) / 255);
+			byte b = (byte)((ballB * kGhostAlpha + bgB * (255 - kGhostAlpha)) / 255);
+			_drawSurface.setPixel(dx, dy, fmt.RGBToColor(r, g, b));
 		}
 	}
 }
 
 void MinigolfPuzzle::redraw() {
 	_drawSurface.clear(g_nancy->_graphics->getTransColor());
+	if (!_overlayImage.empty() && !_overlayDest.isEmpty()) {
+		_drawSurface.blitFrom(_overlayImage, _overlaySrc, Common::Point(_overlayDest.left, _overlayDest.top));
+	}
 	if (_mgState == kAiming) {
 		drawAimPreview();
 	}
-	drawBall();
+	if (!_ballHidden) {
+		drawBall();
+	}
 	_needsRedraw = true;
 }
 
@@ -257,32 +345,76 @@ void MinigolfPuzzle::playSoundBlock(const RandomSoundBlock &block) {
 	g_nancy->_sound->playSound(desc);
 }
 
+void MinigolfPuzzle::aimToVelocity(double aimX, double aimY, double &vx, double &vy) const {
+	// Struck speed is proportional to the drag length (clamped to maxSpeed), aimed
+	// along the drag vector: speed = drag * kPowerScale * maxSpeed.
+	double len = sqrt(aimX * aimX + aimY * aimY);
+	if (len < 1.0) {
+		vx = vy = 0.0;
+		return;
+	}
+	double drag = MIN(len, (double)_maxSpeed);
+	double speed = drag * kPowerScale * (double)_maxSpeed;
+	vx = (aimX / len) * speed;
+	vy = (aimY / len) * speed;
+}
+
+void MinigolfPuzzle::pipeExitVelocity(const ActionZone &zone, double inVx, double inVy, double &outVx, double &outVy) const {
+	// A negative exitSpeed/exitAngle means "keep the ball's incoming value".
+	double inSpeed = sqrt(inVx * inVx + inVy * inVy);
+	double speed = zone.exitSpeed < 0 ? inSpeed : (double)zone.exitSpeed;
+	double angle = zone.exitAngle < 0 ? atan2(-inVy, inVx) : (double)zone.exitAngle * (M_PI / 180.0);
+	outVx = speed * cos(angle);
+	outVy = -speed * sin(angle);
+}
+
 void MinigolfPuzzle::launchBall(const Common::Point &maskCursor) {
 	// The club is pulled back behind the ball: the shot travels away from the
 	// cursor (ball - cursor), golf-backswing style, not toward it.
-	double aimX = _ballX - maskCursor.x;
-	double aimY = _ballY - maskCursor.y;
-	double len = sqrt(aimX * aimX + aimY * aimY);
-	if (len < 3.0) {
+	aimToVelocity(_ballX - maskCursor.x, _ballY - maskCursor.y, _velX, _velY);
+	if (_velX == 0.0 && _velY == 0.0) {
 		return;
 	}
 
-	double power = MIN(len / kMaxDrag, 1.0) * (double)_maxSpeed;
-	_velX = (aimX / len) * power;
-	_velY = (aimY / len) * power;
+	// Count the stroke - the scorecard scores the hole by this value.
+	++_strokes;
+	writeStrokeCount();
 
 	playSoundBlock(_puttSound);
 	_mgState = kMoving;
 	_lastUpdate = g_nancy->getTotalPlayTime();
+	_stepAccum = 0.0;
 }
 
-bool MinigolfPuzzle::stepBall(double &x, double &y, double &vx, double &vy, double dt, bool playSounds) {
-	double dispX = vx * dt;
-	double dispY = vy * dt;
+void MinigolfPuzzle::writeStrokeCount() {
+	if (_strokeCountIndex < 0) {
+		return;
+	}
 
-	// Walk the displacement in ~1px sub-steps so a fast ball can't tunnel through
-	// a thin wall (the original halves the step recursively for the same reason),
-	// reflecting off each axis independently so it can slide along an angled wall.
+	TableData *table = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
+	if (!table) {
+		return;
+	}
+
+	// The stroke-count slot is a combined table index (single values first, then
+	// combos); the scorecard's text overlays read it back the same way.
+	uint boundary = table->getNumSingleValues();
+	uint index = (uint)_strokeCountIndex;
+	if (index < boundary) {
+		table->setSingleValue(index, _strokes);
+	} else {
+		table->setComboValue(index - boundary, (float)_strokes);
+	}
+}
+
+bool MinigolfPuzzle::stepBall(double &x, double &y, double &vx, double &vy, bool playSounds) {
+	// One fixed physics step: the velocity is already in mask px per step.
+	double dispX = vx;
+	double dispY = vy;
+
+	// Walk the displacement in ~1px sub-steps so a fast ball can't tunnel through a
+	// thin wall, reflecting off each axis independently so it can slide along an
+	// angled wall.
 	int steps = (int)ceil(MAX(ABS(dispX), ABS(dispY)));
 	if (steps < 1) {
 		steps = 1;
@@ -295,13 +427,66 @@ bool MinigolfPuzzle::stepBall(double &x, double &y, double &vx, double &vy, doub
 		double nx = x + sx;
 		double ny = y + sy;
 
-		// Potting takes priority over wall reflection: the cup reads as non-fairway
-		// in the mask, so a sub-step that reaches the hole zone sinks the ball rather
-		// than bouncing off it. Checked per sub-step so a fast ball can't skip it.
-		if (!_holeRect.isEmpty() && _holeRect.contains(Common::Point((int16)(nx + 0.5), (int16)(ny + 0.5)))) {
+		// The cups: a ball slow enough drops into whichever cup it's over (potting),
+		// a faster one rolls over it and Nancy reacts. A cup reads as non-fairway in
+		// the mask, so an overshooting ball must skip the wall reflection here (via
+		// continue) or it would bounce off the hole. Checked per sub-step so a fast
+		// ball can't skip it.
+		Common::Point ballPt((int16)(nx + 0.5), (int16)(ny + 0.5));
+		bool overCup = false;
+		for (uint si = 0; si < _sinkZones.size(); ++si) {
+			if (!_zones[_sinkZones[si]].rect.contains(ballPt)) {
+				continue;
+			}
+			if (sqrt(vx * vx + vy * vy) <= kSinkSpeed) {
+				_sunkZone = (int)_sinkZones[si];
+				x = nx;
+				y = ny;
+				return true;
+			}
+			overCup = true;
+			break;
+		}
+		if (overCup) {
+			if (playSounds) {
+				if (!_wasOverHole) {
+					playSoundBlock(_reactionSound);
+				}
+				_wasOverHole = true;
+			}
 			x = nx;
 			y = ny;
-			return true;
+			continue;
+		}
+		if (playSounds) {
+			_wasOverHole = false;
+		}
+
+		// Teleport / pipe zones: entering one whisks the ball to its exit instead of
+		// bouncing off the wall-hole.
+		for (uint zi = 0; zi < _zones.size(); ++zi) {
+			const ActionZone &z = _zones[zi];
+			if (z.type != kZoneTeleport || z.exitRect.isEmpty() ||
+					!z.rect.contains(Common::Point((int16)(nx + 0.5), (int16)(ny + 0.5)))) {
+				continue;
+			}
+
+			if (playSounds) {
+				// Real ball: enter the pipe. updateBall plays the warp sound, holds
+				// the ball out of sight, then emerges it at the exit.
+				_pipeZone = (int)zi;
+				_pipeInVx = vx;
+				_pipeInVy = vy;
+				x = nx;
+				y = ny;
+				vx = vy = 0.0;
+			} else {
+				// Preview: emerge at once so the ghost path continues through the pipe.
+				x = (z.exitRect.left + z.exitRect.right) / 2.0;
+				y = (z.exitRect.top + z.exitRect.bottom) / 2.0;
+				pipeExitVelocity(z, vx, vy, vx, vy);
+			}
+			return false;
 		}
 
 		if (isWall((int)(nx + 0.5), (int)(y + 0.5))) {
@@ -330,12 +515,27 @@ bool MinigolfPuzzle::stepBall(double &x, double &y, double &vx, double &vy, doub
 		y = ny;
 	}
 
-	double f = 1.0 - _decel * dt;
-	if (f < 0.0) {
-		f = 0.0;
+	// Linear friction: shave a fixed amount off the speed each step, keeping the
+	// direction, so the ball decelerates to a stop. A sand trap (terrain zone) the
+	// ball is currently inside adds extra deceleration.
+	double decel = _decel;
+	for (uint zi = 0; zi < _zones.size(); ++zi) {
+		const ActionZone &z = _zones[zi];
+		if (z.type == kZoneTerrain && z.terrainDecel != 0.0 &&
+				z.rect.contains(Common::Point((int16)(x + 0.5), (int16)(y + 0.5)))) {
+			decel += z.terrainDecel;
+		}
 	}
-	vx *= f;
-	vy *= f;
+
+	double speed = sqrt(vx * vx + vy * vy);
+	if (speed > 0.0) {
+		double newSpeed = speed - decel;
+		if (newSpeed < 0.0) {
+			newSpeed = 0.0;
+		}
+		vx = vx / speed * newSpeed;
+		vy = vy / speed * newSpeed;
+	}
 
 	if (playSounds && bounced) {
 		playSoundBlock(_wallSound);
@@ -345,40 +545,107 @@ bool MinigolfPuzzle::stepBall(double &x, double &y, double &vx, double &vy, doub
 
 void MinigolfPuzzle::updateBall() {
 	uint32 now = g_nancy->getTotalPlayTime();
-	double dt = (now - _lastUpdate) / 1000.0;
+	double elapsed = (now - _lastUpdate) / 1000.0;
 	_lastUpdate = now;
-	if (dt <= 0.0) {
+	if (elapsed <= 0.0) {
 		return;
 	}
-	if (dt > 0.1) {
-		dt = 0.1;
+	if (elapsed > 0.25) {
+		elapsed = 0.25;	// don't try to catch up huge gaps (e.g. after a pause)
 	}
 
-	bool reachedHole = stepBall(_ballX, _ballY, _velX, _velY, dt, true);
+	// Advance the physics in fixed 30Hz steps so travel distance is frame-rate
+	// independent.
+	_stepAccum += elapsed;
+	while (_stepAccum >= kFixedStep) {
+		_stepAccum -= kFixedStep;
 
-	if (!_ballFrames.empty()) {
-		_ballFrame = (_ballFrame + 1) % _ballFrames.size();
-	}
+		// Held inside a pipe: play the warp sound, keep the ball out of sight, then
+		// emerge it at the exit once the hold time (or the sound) is done.
+		if (_pipeZone != -1) {
+			const ActionZone &z = _zones[_pipeZone];
+			if (!_ballHidden) {
+				playSoundBlock(z._sound);
+				_ballHidden = true;
+				_needsRedraw = true;
+				_pipeReleaseTime = z.teleportDelay > 0 ? now + (uint32)z.teleportDelay : 0;
+			}
 
-	// Potting the ball wins.
-	if (reachedHole) {
-		_velX = _velY = 0.0;
-		_ballX = (_holeRect.left + _holeRect.right) / 2.0;
-		_ballY = (_holeRect.top + _holeRect.bottom) / 2.0;
-		_mgState = kSunk;
-		_solved = true;
-		_sunkTime = now;
-		playSoundBlock(_sinkSound);
-		if (_winEventFlag != -1) {
-			NancySceneState.setEventFlag(_winEventFlag, g_nancy->_true);
+			bool release = z.teleportDelay > 0 ? now >= _pipeReleaseTime
+				: !g_nancy->_sound->isSoundPlaying((uint16)z._sound.channel);
+			if (release) {
+				_ballX = (z.exitRect.left + z.exitRect.right) / 2.0;
+				_ballY = (z.exitRect.top + z.exitRect.bottom) / 2.0;
+				pipeExitVelocity(z, _pipeInVx, _pipeInVy, _velX, _velY);
+				_pipeZone = -1;
+				_ballHidden = false;
+				_needsRedraw = true;
+			}
+			continue;
 		}
-		return;
-	}
 
-	// Coming to rest without sinking readies the next stroke from where it stopped.
-	if (sqrt(_velX * _velX + _velY * _velY) < 5.0) {
-		_velX = _velY = 0.0;
-		_mgState = kAiming;
+		bool reachedHole = stepBall(_ballX, _ballY, _velX, _velY, true);
+
+		if (_pipeZone != -1) {
+			continue;	// ball just entered a pipe - handle the hold next step
+		}
+
+		// Slopes: kick the ball's velocity toward the slope's angle on entering the
+		// zone, and undo the kick on leaving, so it drifts downhill while inside.
+		for (uint zi = 0; zi < _zones.size(); ++zi) {
+			const ActionZone &z = _zones[zi];
+			if (z.type != kZoneSlope) {
+				continue;
+			}
+			bool inside = z.rect.contains(Common::Point((int16)(_ballX + 0.5), (int16)(_ballY + 0.5)));
+			if (inside == _inSlope[zi]) {
+				continue;
+			}
+			double a = (double)z.slopeAngle * (M_PI / 180.0);
+			double fx = z.slopeForce * cos(a);
+			double fy = -z.slopeForce * sin(a);
+			_velX += inside ? fx : -fx;
+			_velY += inside ? fy : -fy;
+			_inSlope[zi] = inside;
+		}
+
+		if (!_ballFrames.empty()) {
+			_ballFrame = (_ballFrame + 1) % _ballFrames.size();
+		}
+
+		// Potting the ball wins. Resolve the target scene / flag / fade from the cup
+		// the ball actually dropped into (a hole can have several with different
+		// outcomes, e.g. hole 4a's middle cup plays a cutscene).
+		if (reachedHole && _sunkZone >= 0 && _sunkZone < (int)_zones.size()) {
+			const ActionZone &cup = _zones[_sunkZone];
+			_velX = _velY = 0.0;
+			_ballX = (cup.rect.left + cup.rect.right) / 2.0;
+			_ballY = (cup.rect.top + cup.rect.bottom) / 2.0;
+			_mgState = kSunk;
+			_solved = true;
+			_sunkTime = now;
+			playSoundBlock(_sinkSound);
+
+			_winScene.sceneID = cup.specialEffectId;
+			if (cup.type == 0x0c && cup.tailId != -1) {
+				NancySceneState.setEventFlag(cup.tailId, cup.tailFlag ? g_nancy->_true : g_nancy->_false);
+			}
+			if (cup.hasSpecialEffect) {
+				_winHasFade = true;
+				_winFadeType = cup.seType;
+				_winFadeTotalTime = cup.seTotalTime;
+				_winFadeToBlackTime = cup.seFadeToBlackTime;
+				_winFadeRect = cup.seRect;
+			}
+			return;
+		}
+
+		// Coming to rest without sinking readies the next stroke from where it stopped.
+		if (sqrt(_velX * _velX + _velY * _velY) < kRestSpeed) {
+			_velX = _velY = 0.0;
+			_mgState = kAiming;
+			return;
+		}
 	}
 }
 
@@ -424,6 +691,13 @@ void MinigolfPuzzle::handleInput(NancyInput &input) {
 	// Keep the golf-club cursor while the ball is rolling / sunk (no input taken).
 	if (_mgState == kMoving || _mgState == kSunk) {
 		g_nancy->_cursor->setCursorType((CursorManager::CursorType)34, true);
+		return;
+	}
+
+	// Only take input over the play area. Clicks outside the viewport (e.g. a
+	// leave / give-up hotspot in the game frame) are left for other records, so we
+	// don't strike the ball when the player is trying to quit the hole.
+	if (!NancySceneState.getViewport().getScreenPosition().contains(input.mousePos)) {
 		return;
 	}
 

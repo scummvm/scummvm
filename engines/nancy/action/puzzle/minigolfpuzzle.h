@@ -52,10 +52,14 @@ protected:
 
 	void redraw();
 	void drawBall();
+	void drawGhostBall(const Common::Rect &src, const Common::Point &dest);
 	void drawAimPreview();
 	void playSoundBlock(const RandomSoundBlock &block);
 	void launchBall(const Common::Point &maskCursor);
-	bool stepBall(double &x, double &y, double &vx, double &vy, double dt, bool playSounds);
+	void writeStrokeCount();			// mirror _strokes into the scorecard's TableData slot
+	void aimToVelocity(double aimX, double aimY, double &vx, double &vy) const;
+	void pipeExitVelocity(const ActionZone &zone, double inVx, double inVy, double &outVx, double &outVy) const;
+	bool stepBall(double &x, double &y, double &vx, double &vy, bool playSounds);
 	void updateBall();
 	bool isWall(int px, int py) const;
 
@@ -71,18 +75,18 @@ protected:
 	Common::Path _ballImageName;		// GOL_Ball_OVL - the ball sprite sheet
 	Common::Path _holeBoundaryName;		// GOL_Hole05B_BNDRY - course collision boundary OVL
 
-	int32 _maxSpeed = 0;				// base+0x42, ball speed cap
-	double _decel = 0.0;				// base+0x46, per-second deceleration
+	int32 _maxSpeed = 0;				// base+0x42, drag/speed scale
+	double _decel = 0.0;				// base+0x46, per-frame linear deceleration (speed units/step)
 	byte _launchMode = 0;				// base+0x4e, ==2 the ball starts pre-placed on the tee
 	int16 _initialPower = 0;			// base+0x5f
 	int16 _initialAngle = 0;			// base+0x61, degrees - the default aim direction
-	int16 _winEventFlag = 0;			// base+0x63, set on sinking the ball
+	int16 _strokeCountIndex = 0;			// base+0x63, TableData slot holding the stroke count for the scorecard
 	byte _mirrorFlag = 0;				// base+0x69
 
-	// Derived: scene shown when the ball is potted, taken from the sink zone's
-	// "special effect" (its leading id is the target scene, the effect is the fade).
+	// A hole can have several cups, each with its own target scene/flag (e.g. hole
+	// 4a's middle cup plays a cutscene). Set from the cup the ball actually drops in.
 	SceneChangeDescription _winScene;
-	bool _winHasFade = false;			// the sink zone's fade, played over the win scene change
+	bool _winHasFade = false;			// the cup's fade, played over the scene change
 	byte _winFadeType = 0;
 	uint16 _winFadeTotalTime = 0;
 	uint16 _winFadeToBlackTime = 0;
@@ -94,7 +98,11 @@ protected:
 	RandomSoundBlock _wallSound;		// played on a wall bounce
 
 	Common::Array<ActionZone> _zones;	// hole/sink/overlay zones
+	Common::Array<bool> _inSlope;		// per-zone: ball currently inside a slope zone (for enter/leave kicks)
+	Common::Array<uint> _sinkZones;		// derived: indices of the cup (sink) zones
+	int _sunkZone = -1;					// zone index of the cup the ball dropped into
 	RandomSoundBlock _sinkSound;		// derived: the hole zone's sound
+	RandomSoundBlock _reactionSound;	// derived: Nancy's voice line when the ball rolls over the cup
 
 	// Runtime state
 	enum State { kPlacing, kAiming, kMoving, kSunk };
@@ -107,21 +115,35 @@ protected:
 	double _vpCenterY = 0.0;			// viewport height / 2
 
 	Common::Rect _teeRect;				// derived: the tee square (course space)
-	Common::Rect _holeRect;				// derived: the sink zone's rect (course space)
 	uint32 _openColor = 0;				// boundary-mask colour that counts as open fairway
 
 	double _ballX = 0.0;
 	double _ballY = 0.0;
 	double _velX = 0.0;
 	double _velY = 0.0;
+	byte _strokes = 0;					// strokes taken this hole; mirrored into _strokeCountIndex
 	uint _ballFrame = 0;
 	Common::Point _aimCursor;			// current cursor position while aiming
 	uint32 _lastUpdate = 0;
+	double _stepAccum = 0.0;			// leftover real time, integrated in fixed 30Hz steps
 	uint32 _sunkTime = 0;
 	bool _solved = false;
+	bool _wasOverHole = false;			// ball was over the cup last step (to fire the reaction once per pass)
+
+	// Pipe / teleport transit
+	int _pipeZone = -1;					// zone holding the ball mid-transit, or -1
+	uint32 _pipeReleaseTime = 0;		// when to emerge (for a timed hold)
+	double _pipeInVx = 0.0;				// velocity on entry (for the "keep incoming" exit sentinels)
+	double _pipeInVy = 0.0;
+	bool _ballHidden = false;			// ball is inside a pipe (not drawn)
 
 	Graphics::ManagedSurface _image;
 	Graphics::ManagedSurface _boundaryMask;
+
+	// Cosmetic overlay sprite (ActionZone type 0xd), e.g. hole 6a's broken wall.
+	Graphics::ManagedSurface _overlayImage;
+	Common::Rect _overlaySrc;
+	Common::Rect _overlayDest;
 };
 
 } // End of namespace Action
