@@ -888,6 +888,10 @@
   region. The scene loads seventeen frames for each lever from the nested
   `LEVER1N` through `LEVER3N` libraries. The levers begin at frame 3 at
   physical positions `(258, 146)`, `(305, 146)`, and `(342, 150)`.
+  When the ScummVM-only `PUZZLE_HELP` console toggle is active, palette-254
+  red labels `1`, `2`, and `3` appear beside the exact target positions for
+  those respective levers. The diagnostic overlay shares the target-frame
+  table used by validation and does not change the retail one-frame tolerance.
 - Dragging a lever maps the pointer's vertical position into frame `0..16` and
   advances toward it one frame per three DOS timer ticks.
   `AnimateShockLeverToFrame` at `0x3ad98` restores a scoped backing for the
@@ -1839,3 +1843,9 @@
   loading the decoder. The trace names the retail route and records placement,
   palette, frame-range, loop, input, callback, and timeline policy so structural
   refactors can be compared without relying on C++ call layout.
+- Media source resolution uses explicit caller policies for direct files,
+  configured resource paths, `INTERFAC.PL`, ordinary `SOUND.PL` effects, and
+  blocking-audio fallback. Those policies share opening and ownership mechanics
+  without merging their different retail search orders. All Smacker entry
+  points pass through one format-validation gateway before `RunMediaSequence`
+  presentation begins.
