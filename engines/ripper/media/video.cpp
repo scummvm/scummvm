@@ -140,9 +140,7 @@ protected:
 } // End of anonymous namespace
 
 MediaPlayer::MediaPlayer(RipperEngine *engine, InputManager *input, Audio::Mixer *mixer) :
-		_engine(engine), _input(input), _mixer(mixer),
-		_sceneAudio(new SceneAudioManager(engine, mixer)),
-		_stopSceneOnMouse(false) {
+		_engine(engine), _input(input), _mixer(mixer), _stopSceneOnMouse(false) {
 }
 
 MediaPlayer::~MediaPlayer() {
@@ -171,7 +169,7 @@ void MediaPlayer::logPlaybackPause(const char *source, bool pause,
 		"decoderPaused=%d externalAudio=%d externalElapsedMs=%u sceneAudio=%d",
 		source, pause ? "paused" : "resumed", name.c_str(), decoder.getCurFrame(),
 		decoder.getTime(), decoder.isPaused(), externalActive, externalElapsed,
-		_sceneAudio->isActive());
+		_engine->getSceneAudio()->isActive());
 }
 
 void MediaPlayer::pauseActiveMedia(bool pause) {
@@ -642,7 +640,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 					if (sequenceCallback)
 						g_system->updateScreen();
 					if (serviceSceneUi)
-						serviceSceneAudio(finalFrame + 1);
+						_engine->getSceneAudio()->service(finalFrame + 1);
 					completed = true;
 					debugC(2, kDebugVideo,
 						"Ripper: Escape reconstructed and presented final Smacker frame '%s' frame=%u; completing presentation",
@@ -671,7 +669,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				presentFrame(frame, false);
 				++presentedFrames;
 				if (serviceSceneUi)
-					serviceSceneAudio(presentedFrames);
+					_engine->getSceneAudio()->service(presentedFrames);
 				if (sequenceCallback &&
 						finishSequenceFramePresentation(decoder.getCurFrame() + 1))
 					break;

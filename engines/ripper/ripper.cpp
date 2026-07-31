@@ -40,6 +40,7 @@
 #include "ripper/milestones.h"
 #include "ripper/modal_dialog.h"
 #include "ripper/resources.h"
+#include "ripper/scene_audio.h"
 #include "ripper/script.h"
 #include "ripper/settings.h"
 #include "ripper/toolbar.h"
@@ -52,7 +53,9 @@ RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescrip
 		Engine(system), _gameDescription(gameDescription), _cursor(new CursorManager()),
 		_cyber(new CyberManager(this)), _input(new InputManager(_eventMan)),
 		_inventory(new Inventory(this)),
-		_media(new MediaPlayer(this, _input.get(), _mixer)), _milestones(new Milestones()),
+		_sceneAudio(new SceneAudioManager(this, _mixer)),
+		_media(new MediaPlayer(this, _input.get(), _mixer)),
+		_milestones(new Milestones()),
 		_modalDialog(new ModalDialogManager(this)), _resources(new ResourceManager()),
 		_scripts(new ScriptManager(this)), _settings(new RipperSettings(_mixer)),
 		_toolbar(new ToolbarManager(this)),
