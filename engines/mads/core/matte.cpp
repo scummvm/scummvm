@@ -42,8 +42,6 @@
 
 namespace MADS {
 
-#define word_align_mattes
-
 /* Global data structures */
 
 SeriesPtr series_list[SERIES_LIST_SIZE + SERIES_BONUS_SIZE];
@@ -288,7 +286,6 @@ void matte_clear_message(int handle) {
 void bound_matte(MattePtr matte, int xs, int ys, int maxx, int maxy) {
 	int x2, y2;
 
-#if defined(word_align_mattes)
 	if (matte->x & 1) {
 		matte->x -= 1;
 		xs++;
@@ -296,7 +293,6 @@ void bound_matte(MattePtr matte, int xs, int ys, int maxx, int maxy) {
 	if (xs & 1) {
 		xs++;
 	}
-#endif
 
 	x2 = matte->x + xs - 1;  // Determine right most point
 	matte->x = MAX(0, matte->x);  // Scale coordinates to work
