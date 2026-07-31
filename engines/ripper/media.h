@@ -41,6 +41,15 @@ class InputManager;
 class RipperEngine;
 class SceneAudioManager;
 
+enum MediaFormat {
+	kMediaFormatUnknown,
+	kMediaFormatSmacker,
+	kMediaFormatIavf
+};
+
+MediaFormat detectMediaFormat(Common::SeekableReadStream &stream);
+const char *mediaFormatName(MediaFormat format);
+
 class MediaSequenceCallback {
 public:
 	// A nested presentation may replace the active VGA palette while the outer
@@ -82,6 +91,7 @@ struct SmackerPlaybackRequest {
 	uint lastFrame;
 	uint boundedLoopStartFrame;
 	bool transparentFirstPixel;
+	const char *retailRoute;
 
 	SmackerPlaybackRequest() : allowEscSpace(false), x(-1), y(-1),
 		externalAudio(nullptr), stoppedByUser(nullptr), frameAudioOffsets(nullptr),
@@ -91,8 +101,10 @@ struct SmackerPlaybackRequest {
 		advanceSegment(nullptr), loopStartFrame(0), sequenceCallback(nullptr),
 		sequenceCommand(nullptr), sourcePalette(nullptr), rememberVideoPalette(true),
 		firstFrame(0), lastFrame(0xffffffff), boundedLoopStartFrame(0xffffffff),
-		transparentFirstPixel(false) {}
+		transparentFirstPixel(false), retailRoute("RunMediaSequence@0x1e516") {}
 };
+
+Common::String describeSmackerPlaybackRequest(const SmackerPlaybackRequest &request);
 
 class MediaPlayer {
 public:
