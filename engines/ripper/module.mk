@@ -32,6 +32,7 @@ MODULE_OBJS := \
 	puzzles/keypad_sequence.o \
 	puzzles/kj_blob_shooter.o \
 	puzzles/rolodex.o \
+	puzzles/shock_lever.o \
 	puzzles/table_gate.o \
 	puzzles/web_grid_shift.o \
 	remote_control.o \

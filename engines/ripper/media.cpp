@@ -1471,6 +1471,69 @@ bool MediaPlayer::playPuzzleSequence(const Common::String &path, uint loopStartF
 	return playSmacker(file, path, request);
 }
 
+bool MediaPlayer::playPuzzleSequenceStream(Common::SeekableReadStream *stream,
+		const Common::String &name, int x, int y, uint loopStartFrame,
+		MediaSequenceCallback *callback, uint16 *command) {
+	if (!stream)
+		return false;
+
+	byte magic[4];
+	if (!readExact(*stream, magic, sizeof(magic))) {
+		delete stream;
+		return false;
+	}
+	stream->seek(0);
+	if (memcmp(magic, "SMK2", 4) != 0 && memcmp(magic, "SMK4", 4) != 0) {
+		warning("Ripper: unsupported archived puzzle media sequence '%s'",
+			name.c_str());
+		delete stream;
+		return false;
+	}
+
+	debugC(1, kDebugVideo,
+		"Ripper: entering archived puzzle Smacker sequence media='%s' "
+		"position=%d,%d loopStartFrame=%u callback=%d",
+		name.c_str(), x, y, loopStartFrame, callback != nullptr);
+	SmackerPlaybackRequest request;
+	request.x = x;
+	request.y = y;
+	request.originY = kScenePresentationTop;
+	request.serviceSceneUi = true;
+	request.loopStartFrame = loopStartFrame;
+	request.sequenceCallback = callback;
+	request.sequenceCommand = command;
+	return playSmacker(stream, name, request);
+}
+
+bool MediaPlayer::playSceneStream(Common::SeekableReadStream *stream,
+		const Common::String &name, int x, int y, bool allowEscSpace) {
+	if (!stream)
+		return false;
+
+	byte magic[4];
+	if (!readExact(*stream, magic, sizeof(magic))) {
+		delete stream;
+		return false;
+	}
+	stream->seek(0);
+	if (memcmp(magic, "SMK2", 4) != 0 && memcmp(magic, "SMK4", 4) != 0) {
+		warning("Ripper: unsupported archived scene media '%s'", name.c_str());
+		delete stream;
+		return false;
+	}
+
+	debugC(1, kDebugVideo,
+		"Ripper: entering archived scene presentation media='%s' "
+		"position=%d,%d controls=%d",
+		name.c_str(), x, y, allowEscSpace);
+	SmackerPlaybackRequest request;
+	request.allowEscSpace = allowEscSpace;
+	request.x = x;
+	request.y = y;
+	request.originY = kScenePresentationTop;
+	return playSmacker(stream, name, request);
+}
+
 bool MediaPlayer::playPuzzleSequenceSegment(const Common::String &path, uint firstFrame,
 		uint lastFrame, int x, int y, MediaSequenceCallback *callback, uint16 *command,
 		uint boundedLoopStartFrame) {

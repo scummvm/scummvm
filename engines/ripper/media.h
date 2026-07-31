@@ -120,6 +120,11 @@ public:
 	void setSoundEffectVolume(Audio::SoundHandle &handle, uint volumePercent);
 	bool playPuzzleSequence(const Common::String &path, uint loopStartFrame,
 		MediaSequenceCallback *callback, uint16 *command = nullptr);
+	bool playPuzzleSequenceStream(Common::SeekableReadStream *stream,
+		const Common::String &name, int x, int y, uint loopStartFrame,
+		MediaSequenceCallback *callback, uint16 *command = nullptr);
+	bool playSceneStream(Common::SeekableReadStream *stream,
+		const Common::String &name, int x, int y, bool allowEscSpace);
 	bool playPuzzleSequenceSegment(const Common::String &path, uint firstFrame,
 		uint lastFrame, int x, int y, MediaSequenceCallback *callback,
 		uint16 *command = nullptr, uint boundedLoopStartFrame = 0xffffffff);
