@@ -58,6 +58,10 @@
   `AssetLibrary` retains directory order for member ranges and prefix
   enumeration, while a normalized-name index provides exact lookup and rejects
   duplicate names during parsing.
+- Interface and nested options assets pass through the same indexed-surface
+  extraction and bitmap-sequence decode paths after their owning
+  `AssetLibrary` has selected the member. The two entry points retain distinct
+  source labels in diagnostics and do not merge container search order.
 - `SCRIPT.PL` contains compiled `.RUN` scene scripts. The default entry is
   `RIPPER.RUN`, which leads to the initial `BA0.RUN` scene. Binary header,
   frame/interaction table, argument-layout, and callback decoding live in
