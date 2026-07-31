@@ -79,20 +79,6 @@ public:
 	}
 };
 
-
-/* Debug tracking variables */
-#ifndef disable_statistics
-extern long loader_found_in_ems;
-extern long loader_found_in_xms;
-extern long loader_found_on_disk;
-extern long loader_timing_ems;
-extern long loader_timing_xms;
-extern long loader_timing_disk;
-extern long loader_size_ems;
-extern long loader_size_xms;
-extern long loader_size_disk;
-#endif
-
 extern int  loader_ems_search_disabled;
 extern char loader_last[14];
 

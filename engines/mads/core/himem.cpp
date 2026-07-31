@@ -330,14 +330,6 @@ int himem_preload(char *filename, int level) {
 
 	preload_handle = new_handle;
 
-#ifndef disable_statistics
-	if (memory_type == MEM_EMS) {
-		himem_ems_preloaded++;
-	} else {
-		himem_xms_preloaded++;
-	}
-#endif
-
 done:
 	if (load_buf != NULL) mem_free(load_buf);
 	if (handle.open) loader_close(&handle);
@@ -615,14 +607,6 @@ int himem_preload_series(const char *fname, int level) {
 	mads_strlwr(himem_directory_entry->list);
 
 	preload_handle = new_handle;
-
-#ifndef disable_statistics
-	if (memory_type == MEM_EMS) {
-		himem_ems_preloaded++;
-	} else {
-		himem_xms_preloaded++;
-	}
-#endif
 
 done:
 	if (decompress_buffer != NULL) mem_free(decompress_buffer);

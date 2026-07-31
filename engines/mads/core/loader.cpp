@@ -37,20 +37,6 @@
 
 namespace MADS {
 
-
-/* debug stuff */
-#ifndef disable_statistics
-long loader_found_in_ems = 0;
-long loader_found_in_xms = 0;
-long loader_found_on_disk = 0;
-long loader_timing_ems = 0;
-long loader_timing_xms = 0;
-long loader_timing_disk = 0;
-long loader_size_ems = 0;
-long loader_size_xms = 0;
-long loader_size_disk = 0;
-#endif
-
 int loader_ems_search_disabled = false;
 
 char loader_last[14] = "";
@@ -119,20 +105,11 @@ int loader_open(LoadHandle handle, const char *filename, const char *options, in
 		handle->pack_list_marker = 0;
 		handle->reading = true;
 
-		// printf ("Opened %d with xms handle %d\n", found_himem, himem_directory_entry->xms_handle);
 		for (count = 0; count < (int)handle->pack.num_records; count++) {
 			handle->pack.strategy[count].type = PACK_NONE;
 			handle->pack.strategy[count].size = himem_directory_entry->packet_size[count];
 			handle->pack.strategy[count].compressed_size = himem_directory_entry->packet_size[count];
 		}
-
-#ifndef disable_statistics
-		if (himem_directory_entry->memory_type == MEM_EMS) {
-			loader_found_in_ems++;
-		} else {
-			loader_found_in_xms++;
-		}
-#endif
 	} else {
 		handle->mode = LOADER_DISK;
 		handle->ems_handle = -1;
@@ -153,10 +130,6 @@ int loader_open(LoadHandle handle, const char *filename, const char *options, in
 		} else {
 			error("Open for writing not supported in ScummVM");
 		}
-
-#ifndef disable_statistics
-		loader_found_on_disk++;
-#endif
 	}
 
 	handle->open = true;
@@ -207,14 +180,6 @@ long loader_read(void *target, long record_size, long record_count, LoadHandle h
 	int packing_flag;
 	int marker;
 	int already_unpacked = false;
-
-#ifndef disable_statistics
-	long start_timing;
-	long finish_timing;
-	long total_timing;
-
-	start_timing = timer_read_600();
-#endif
 
 	if (!record_size)
 		return 0;
@@ -275,22 +240,6 @@ long loader_read(void *target, long record_size, long record_count, LoadHandle h
 				handle->handle->seek(file_position + compressed_size);
 		}
 	}
-
-#ifndef disable_statistics
-	finish_timing = timer_read_600();
-	total_timing = finish_timing - start_timing;
-
-	if (handle->mode == LOADER_EMS) {
-		loader_timing_ems += total_timing;
-		loader_size_ems += total_size;
-	} else if (handle->mode == LOADER_XMS) {
-		loader_timing_xms += total_timing;
-		loader_size_xms += total_size;
-	} else {
-		loader_timing_disk += total_timing;
-		loader_size_disk += total_size;
-	}
-#endif
 
 done:
 	if (decompress_buffer != NULL)
