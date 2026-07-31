@@ -660,7 +660,7 @@ uint16 retro_setting_get_audio_samples_buffer_size(void) {
 	for (uint16 v : allowed) {
 		if (pow2 <= v) return v;
 	}
-	return allowed[sizeof(allowed)/sizeof(allowed[0])];
+	return allowed[ARRAYSIZE(allowed) - 1];
 }
 
 void init_command_params(void) {
