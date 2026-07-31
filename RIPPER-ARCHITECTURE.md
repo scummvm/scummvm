@@ -471,10 +471,12 @@
   `ServiceBriefingMediaTrigger` at `0x1945b`: selecting its armed control
   clears the trigger but presents no media and changes no milestone state.
   Selector 3 is armed directly by `EF2.RUN`; jump-table entry `0x19624`
-  presents `RIP_WAC2.AVI` and likewise changes no milestone state. ScummVM
-  treats selectors beyond the implemented 1 through 4 as runtime failures when
-  scripts arm them or saves attempt to restore them, rather than leaving an
-  unsupported trigger active.
+  presents `RIP_WAC2.AVI` and likewise changes no milestone state. Selector 6
+  is armed by `ACT2_CHK.RUN` after its later Act II checklist passes; the retail
+  dispatch presents `RIP_WAC3.AVI` and then sets flag 314 (`got 3'rd ripper wac
+  message (act 2)`). ScummVM treats selectors without an implemented retail
+  branch as runtime failures when scripts arm them or saves attempt to restore
+  them, rather than leaving an unsupported trigger active.
 - `HandleSceneSelectionAction` at `0x191e2` records the selected destination
   before `RunFrontEndActionMenu` at `0x18b3a` runs the chapter-specific
   `WMAP*.RUN` checkpoint. ScummVM preserves that boundary after the map UI and
