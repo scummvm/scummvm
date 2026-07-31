@@ -1170,6 +1170,9 @@ Path MacResManager::disassembleAppleDoubleName(const Path &name, bool *isAppleDo
 	if (name.isSeparatorTerminated()) {
 		ret.appendInPlace("/");
 	}
+	if (isAppleDouble) {
+		*isAppleDouble = true;
+	}
 	return ret;
 }
 
