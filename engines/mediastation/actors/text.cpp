@@ -78,15 +78,15 @@ void TextActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 		break;
 
 	case kActorHeaderTextCursorIsVisible:
-		_cursorIsVisible = static_cast<bool>(chunk.readTypedUint16());
+		_cursorIsVisible = true;
 		break;
 
 	case kActorHeaderTextConstrainToWidth:
-		_constrainToWidth = static_cast<bool>(chunk.readTypedByte());
+		_constrainToWidth = true;
 		break;
 
 	case kActorHeaderTextOverwriteMode:
-		_overwriteMode = static_cast<bool>(chunk.readTypedByte());
+		_overwriteMode = true;
 		break;
 
 	default:

@@ -34,13 +34,12 @@ class FontCharacter : public PixMapImage {
 public:
 	FontCharacter(Chunk &chunk, uint charCode, int horizontalSpacing, int baselineOffset, const ImageInfo &header);
 
-	// Returns the ascent (baseline position). Falls back to full height if baseline offset is not specified.
 	int16 ascent() const { return (_baselineOffset != 0) ? _baselineOffset : height(); }
 	uint _charCode = 0;
 	int16 _horizontalSpacing = 0; // Additional horizontal spacing added after the glyph width to get total advance
 
 private:
-	int16 _baselineOffset = 0;    // Baseline position within the glyph bitmap (ascent - distance from top edge to baseline)
+	int16 _baselineOffset = 0;
 };
 
 class FontActor : public Actor, public ChannelClient {
