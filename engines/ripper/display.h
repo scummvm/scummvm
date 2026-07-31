@@ -28,6 +28,7 @@
 namespace Ripper {
 
 struct BitmapFontAsset;
+struct BitmapAssetFrame;
 
 enum {
 	kRipperScreenWidth = 640,
@@ -56,6 +57,15 @@ private:
 	Common::Rect _bounds;
 	Common::Array<byte> _pixels;
 	Common::Array<byte> _palette;
+};
+
+class IndexedBitmapRenderer {
+public:
+	static void drawBitmap(byte *pixels, uint pitch,
+		const BitmapAssetFrame &bitmap, int x, int y);
+	static bool drawNineSlice(byte *pixels, uint pitch,
+		const Common::Array<BitmapAssetFrame> &skin,
+		const Common::Rect &bounds);
 };
 
 class BitmapFontRenderer {

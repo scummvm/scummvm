@@ -57,6 +57,45 @@ public:
 		TS_ASSERT_EQUALS(pixels[2 * 5 + 1], 9);
 	}
 
+	void testIndexedBitmapRenderingPreservesTransparentPixels() {
+		Ripper::BitmapAssetFrame bitmap;
+		bitmap.width = 2;
+		bitmap.height = 1;
+		bitmap.transparentColor = 0;
+		bitmap.pixels.push_back(0);
+		bitmap.pixels.push_back(7);
+		byte pixels[9];
+		memset(pixels, 3, sizeof(pixels));
+
+		Ripper::IndexedBitmapRenderer::drawBitmap(pixels, 3, bitmap, 1, 1);
+
+		TS_ASSERT_EQUALS(pixels[1 * 3 + 1], 3);
+		TS_ASSERT_EQUALS(pixels[1 * 3 + 2], 7);
+	}
+
+	void testIndexedBitmapNineSliceUsesRowMajorFrameTiles() {
+		Common::Array<Ripper::BitmapAssetFrame> skin;
+		for (uint index = 0; index < 9; ++index) {
+			Ripper::BitmapAssetFrame frame;
+			frame.width = 1;
+			frame.height = 1;
+			frame.transparentColor = 0;
+			frame.pixels.push_back(index + 1);
+			skin.push_back(frame);
+		}
+		byte pixels[25];
+		memset(pixels, 0, sizeof(pixels));
+
+		TS_ASSERT(Ripper::IndexedBitmapRenderer::drawNineSlice(
+			pixels, 5, skin, Common::Rect(1, 1, 4, 4)));
+
+		for (uint row = 0; row < 3; ++row) {
+			for (uint column = 0; column < 3; ++column)
+				TS_ASSERT_EQUALS(pixels[(row + 1) * 5 + column + 1],
+					row * 3 + column + 1);
+		}
+	}
+
 private:
 	Ripper::BitmapFontAsset makeFont() const {
 		Ripper::BitmapFontAsset font;

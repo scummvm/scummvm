@@ -37,7 +37,6 @@ namespace {
 
 static const uint kModalSkinFrameCount = 15;
 static const uint kWacModalSkinFrameCount = 16;
-static const uint kModalFrameTileCount = 9;
 static const uint kModalScrollStartFrame = 9;
 static const uint kModalScrollEndFrame = 10;
 static const uint kModalScrollTrackFrame = 14;
@@ -232,58 +231,16 @@ void ModalDialogManager::drawText(byte *screen, uint pitch, int x, int y,
 		x, y, text, color);
 }
 
-void ModalDialogManager::drawBitmap(byte *screen, uint pitch,
-		const BitmapAssetFrame &bitmap, int x, int y) const {
-	for (uint row = 0; row < bitmap.height; ++row) {
-		for (uint column = 0; column < bitmap.width; ++column) {
-			const byte pixel = bitmap.pixels[row * bitmap.width + column];
-			if (pixel != bitmap.transparentColor)
-				screen[(y + row) * pitch + x + column] = pixel;
-		}
-	}
-}
-
 void ModalDialogManager::drawFrame(byte *screen, uint pitch,
 		const Common::Rect &bounds, PresentationStyle style) const {
 	if (style == kPrimaryPresentation)
 		return;
 	const Common::Array<BitmapAssetFrame> &skin =
 		style == kWacPresentation ? _wacSkin : _skin;
-	if (skin.size() < kModalFrameTileCount)
-		return;
-	const int tileWidth = skin[0].width;
-	const int tileHeight = skin[0].height;
-	const int columns = (bounds.width() + tileWidth - 1) / tileWidth;
-	const int rows = (bounds.height() + tileHeight - 1) / tileHeight;
-	int y = bounds.top;
-	for (int row = 0; row < rows; ++row) {
-		int x = bounds.left;
-		const BitmapAssetFrame *lastTile = nullptr;
-		for (int column = 0; column < columns; ++column) {
-			const uint columnBand = column == 0 ? 0 : (column == columns - 1 ? 2 : 1);
-			const uint rowBand = row == 0 ? 0 : (row == rows - 1 ? 2 : 1);
-			// RIPPER stores bitmap dimensions and presentation coordinates in
-			// vertical/horizontal order. Translating ResolveChooserFrameTileIndex
-			// at 0x55250 to screen x/y makes MENUB0..8 row-major.
-			const BitmapAssetFrame &tile = skin[rowBand * 3 + columnBand];
-			drawBitmap(screen, pitch, tile, x, y);
-			lastTile = &tile;
-			// TileChooserControlFrame at 0x54fbe uses the selected tile's
-			// dimensions and snaps the last column to the control's right edge.
-			if (column == columns - 2)
-				x = bounds.right - tile.width;
-			else
-				x += tile.width;
-		}
-		if (!lastTile)
-			continue;
-		// The original performs the matching bottom-edge snap after the
-		// penultimate row has been tiled.
-		if (row == rows - 2)
-			y = bounds.bottom - lastTile->height;
-		else
-			y += lastTile->height;
-	}
+	// RIPPER stores bitmap dimensions and presentation coordinates in
+	// vertical/horizontal order. Translating ResolveChooserFrameTileIndex at
+	// 0x55250 to screen x/y makes MENUB0..8 row-major.
+	IndexedBitmapRenderer::drawNineSlice(screen, pitch, skin, bounds);
 }
 
 void ModalDialogManager::drawOverflowBar(byte *screen, uint pitch,
@@ -303,8 +260,10 @@ void ModalDialogManager::drawOverflowBar(byte *screen, uint pitch,
 			kTextPanelScrollUp, firstVisible, maximumFirstVisible, style);
 		const Common::Rect downBounds = textPanelScrollControlBounds(bounds,
 			kTextPanelScrollDown, firstVisible, maximumFirstVisible, style);
-		drawBitmap(screen, pitch, up, upBounds.left, upBounds.top);
-		drawBitmap(screen, pitch, down, downBounds.left, downBounds.top);
+		IndexedBitmapRenderer::drawBitmap(screen, pitch, up,
+			upBounds.left, upBounds.top);
+		IndexedBitmapRenderer::drawBitmap(screen, pitch, down,
+			downBounds.left, downBounds.top);
 		return;
 	}
 	const Common::Array<BitmapAssetFrame> &skin =
@@ -340,9 +299,12 @@ void ModalDialogManager::drawOverflowBar(byte *screen, uint pitch,
 			}
 		}
 	}
-	drawBitmap(screen, pitch, thumb, thumbBounds.left, thumbBounds.top);
-	drawBitmap(screen, pitch, up, upBounds.left, upBounds.top);
-	drawBitmap(screen, pitch, down, downBounds.left, downBounds.top);
+	IndexedBitmapRenderer::drawBitmap(screen, pitch, thumb,
+		thumbBounds.left, thumbBounds.top);
+	IndexedBitmapRenderer::drawBitmap(screen, pitch, up,
+		upBounds.left, upBounds.top);
+	IndexedBitmapRenderer::drawBitmap(screen, pitch, down,
+		downBounds.left, downBounds.top);
 }
 
 Common::Rect ModalDialogManager::textPanelScrollControlBounds(

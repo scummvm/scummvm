@@ -97,6 +97,11 @@
   `InitializeSharedPresentationTemplates` prepare startup indexed assets; the
   reimplementation uses the first `MNU0` bitmap palette as that startup
   palette and applies only the reserved bands to later Smacker presentations.
+- `IndexedBitmapRenderer` owns transparent indexed-bitmap blits and the
+  row-major 3x3 frame walk translated from `ResolveChooserFrameTileIndex` at
+  `0x55250` and `TileChooserControlFrame` at `0x54fbe`. MENUB and inventory
+  frames share that exact walk; the WAC database retains its distinct tiling
+  order while using the same transparent-pixel blitter.
 - Indexed presentation suspension is represented by `IndexedDisplaySnapshot`,
   which captures an indexed screen rectangle together with all 256 palette
   entries. Cyber scene suspension uses a full 640x400 snapshot and restores
