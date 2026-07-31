@@ -2538,6 +2538,14 @@ bool AdGame::displayDebugInfo() {
 Wintermute::TShadowType AdGame::getMaxShadowType(Wintermute::BaseObject *object) {
 	TShadowType ret = BaseGame::getMaxShadowType(object);
 
+	// W/A for 'The Lost Crown - A Ghost-Hunting Adventure'.
+	// Disable flat shadows for the map on table scene in day 4.
+	if (BaseEngine::instance().getGameId() == "thelostcrowngha" &&
+	    _scene && _scene->_filename &&
+		scumm_stricmp(_scene->_filename, "scenes\\maptable\\maptableday4\\maptableday4.scene") == 0) {
+		return SHADOW_NONE;
+	}
+
 	return MIN(ret, _scene->_maxShadowType);
 }
 #endif
