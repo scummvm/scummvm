@@ -20,18 +20,14 @@
 
 #include "ripper/media.h"
 
-#include "audio/decoders/raw.h"
-#include "audio/decoders/wave.h"
 #include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 #include "common/array.h"
 #include "common/debug.h"
-#include "common/ptr.h"
-#include "common/serializer.h"
 #include "common/system.h"
 #include "graphics/blit.h"
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
-#include "image/pcx.h"
 #include "video/smk_decoder.h"
 
 #include "ripper/cursor.h"
@@ -50,10 +46,8 @@ namespace Ripper {
 namespace {
 
 static const int kScenePresentationTop = 50;
-static const uint kBlockingAudioCursor = 0x13;
 static const uint16 kHelpCommand = 0x3b00;
 static const uint kAutoPacketizedDisplayScale = 0;
-static const uint kPaletteFadeStepDelayMs = 16;
 
 class RipperSmackerDecoder : public Video::SmackerDecoder {
 public:
@@ -191,68 +185,6 @@ void MediaPlayer::pauseActiveMedia(bool pause) {
 		debugC(2, kDebugVideo, "Ripper: ScummVM %s without active media",
 			pause ? "paused" : "resumed");
 	}
-}
-
-void MediaPlayer::fadePalette(bool fadeIn, uint stepCount) {
-	if (stepCount == 0)
-		return;
-
-	byte targetPalette[Graphics::PALETTE_SIZE];
-	byte fadePalette[Graphics::PALETTE_SIZE];
-	PaletteManager *paletteManager = g_system->getPaletteManager();
-	paletteManager->grabPalette(targetPalette, 0, Graphics::PALETTE_COUNT);
-
-	for (uint step = 1; step <= stepCount; ++step) {
-		const uint scale = fadeIn ? step : stepCount - step;
-		for (uint component = 0; component < Graphics::PALETTE_SIZE; ++component)
-			fadePalette[component] = (byte)((uint64)targetPalette[component] * scale / stepCount);
-		paletteManager->setPalette(fadePalette, 0, Graphics::PALETTE_COUNT);
-		g_system->updateScreen();
-		if (step != stepCount)
-			g_system->delayMillis(kPaletteFadeStepDelayMs);
-	}
-}
-
-bool MediaPlayer::loadAudio(const Common::String &path, bool preserve) {
-	return _sceneAudio->load(path, preserve);
-}
-
-bool MediaPlayer::configureAudio(const Common::String &key, uint volumePercent,
-		uint triggerFrame, byte control) {
-	return _sceneAudio->configure(key, volumePercent, triggerFrame, control);
-}
-
-void MediaPlayer::clearAudio(const Common::String &key) {
-	_sceneAudio->clear(key);
-}
-
-void MediaPlayer::stopAudio(const Common::String &key) {
-	_sceneAudio->stop(key);
-}
-
-void MediaPlayer::setAudioVolume(const Common::String &key, uint targetVolumePercent,
-		uint startFrame, uint timing) {
-	_sceneAudio->setVolume(key, targetVolumePercent, startFrame, timing);
-}
-
-void MediaPlayer::serviceSceneAudio(uint frame) {
-	_sceneAudio->service(frame);
-}
-
-void MediaPlayer::resetSceneAudioTriggers() {
-	_sceneAudio->resetTriggers();
-}
-
-void MediaPlayer::clearSceneAudio(bool includePreserved) {
-	_sceneAudio->clearAll(includePreserved);
-}
-
-bool MediaPlayer::isSceneAudioActive() const {
-	return _sceneAudio->isActive();
-}
-
-bool MediaPlayer::syncGame(Common::Serializer &serializer) {
-	return _sceneAudio->syncGame(serializer);
 }
 
 bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
@@ -1148,192 +1080,6 @@ bool MediaPlayer::playInterfaceSequence(const Common::String &path, int x, int y
 	return playValidatedSmacker(
 		openSource(path, kSourceInterfaceLibrary, source), path,
 		"interface sequence", plan);
-}
-
-bool MediaPlayer::displayScenePcx(const Common::String &path) {
-	Common::String source;
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		openSource(path, kSourceConfiguredPath, source));
-	Image::PCXDecoder decoder;
-	if (!stream || !decoder.loadStream(*stream)) {
-		warning("Ripper: could not decode scene PCX '%s'", path.c_str());
-		return false;
-	}
-
-	const Graphics::Surface *surface = decoder.getSurface();
-	const Graphics::Palette &sourcePalette = decoder.getPalette();
-	if (!surface || surface->format.bytesPerPixel != 1 ||
-			surface->w <= 0 || surface->w > 640 ||
-			surface->h <= 0 || surface->h > 300 ||
-			sourcePalette.size() < 256) {
-		warning("Ripper: invalid scene PCX '%s' size=%dx%d colors=%u",
-			path.c_str(), surface ? surface->w : 0, surface ? surface->h : 0,
-			sourcePalette.size());
-		return false;
-	}
-
-	Graphics::Surface *screen = g_system->lockScreen();
-	if (!screen || screen->format.bytesPerPixel != 1 ||
-			screen->w < 640 || screen->h < 400) {
-		if (screen)
-			g_system->unlockScreen();
-		return false;
-	}
-	for (int y = kScenePresentationTop; y < kScenePresentationTop + 300; ++y)
-		memset(screen->getBasePtr(0, y), 0, 640);
-	const int x = (640 - surface->w) / 2;
-	for (int y = 0; y < surface->h; ++y)
-		memcpy(screen->getBasePtr(x, kScenePresentationTop + y),
-			surface->getBasePtr(0, y), surface->w);
-	g_system->unlockScreen();
-
-	byte palette[256 * 3];
-	memcpy(palette, sourcePalette.data(), sizeof(palette));
-	_engine->getToolbar()->applySharedPalettePatch(palette, 256);
-	_engine->getSettings()->applyVideoPalette(palette, 256, true);
-	g_system->getPaletteManager()->setPalette(palette, 0, 256);
-	_engine->getCursor()->refresh();
-	g_system->updateScreen();
-	debugC(1, kDebugVideo,
-		"Ripper: displayed scene PCX '%s' source=%ux%u destination=%d,%d interfacePalettePatch=1",
-		path.c_str(), surface->w, surface->h, x, kScenePresentationTop);
-	return true;
-}
-
-bool MediaPlayer::playBlockingAudio(const Common::String &path) {
-	Common::String source;
-	Common::SeekableReadStream *audioStream =
-		openSource(path, kSourceBlockingAudio, source);
-	if (!audioStream) {
-		warning("Ripper: could not open blocking audio '%s' from the filesystem or sound library",
-			path.c_str());
-		return false;
-	}
-	Audio::SeekableAudioStream *stream = Audio::makeWAVStream(audioStream, DisposeAfterUse::YES);
-	if (!stream)
-		return false;
-
-	Audio::SoundHandle handle;
-	// PlayBlockingAudioClip at 0x1f0ea is part of the same presentation path as
-	// packetized dialogue/video audio, which the Remote Control names VIDEO VOL.
-	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &handle, stream);
-	_engine->getCursor()->update(kBlockingAudioCursor);
-	g_system->updateScreen();
-	debugC(2, kDebugAudio,
-		"Ripper: started blocking audio '%s' source=%s cursor=%u input=keyboard-only presentation=serviced",
-		path.c_str(), source.c_str(), kBlockingAudioCursor);
-	bool stoppedByEscape = false;
-	while (!_engine->shouldQuit() && _mixer->isSoundHandleActive(handle)) {
-		_engine->getCursor()->update(kBlockingAudioCursor);
-		if (_input->pollEvents()) {
-			_engine->quitGame();
-			break;
-		}
-		while (_input->hasPendingKey()) {
-			const uint16 command = _input->consumeKey();
-			if (command == 0x1b) {
-				stoppedByEscape = true;
-				break;
-			}
-		}
-		if (stoppedByEscape)
-			break;
-		g_system->updateScreen();
-		g_system->delayMillis(10);
-	}
-	_mixer->stopHandle(handle);
-	_input->discardMouseTransitions();
-	debugC(2, kDebugAudio,
-		"Ripper: completed blocking audio '%s' source=%s stoppedByEscape=%d",
-		path.c_str(), source.c_str(), stoppedByEscape);
-	return !_engine->shouldQuit();
-}
-
-bool MediaPlayer::playSoundEffect(const Common::String &path, Audio::SoundHandle &handle,
-		uint volumePercent, bool loop) {
-	return playAudioClip(path, handle, Audio::Mixer::kSFXSoundType,
-		volumePercent, loop, "sound effect");
-}
-
-bool MediaPlayer::playRawSoundEffect(const Common::Array<byte> &data,
-		uint sampleRate, byte flags, Audio::SoundHandle &handle,
-		uint volumePercent) {
-	if (data.empty() || sampleRate == 0)
-		return false;
-
-	byte *copy = (byte *)malloc(data.size());
-	if (!copy)
-		return false;
-	memcpy(copy, data.data(), data.size());
-	Audio::SeekableAudioStream *stream = Audio::makeRawStream(copy,
-		data.size(), sampleRate, flags, DisposeAfterUse::YES);
-	if (!stream) {
-		free(copy);
-		return false;
-	}
-
-	stopSoundEffect(handle);
-	const byte volume = (byte)(MIN<uint>(volumePercent, 100) *
-		Audio::Mixer::kMaxChannelVolume / 100);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, stream, -1, volume);
-	debugC(2, kDebugAudio,
-		"Ripper: started raw sound effect bytes=%u rate=%u flags=0x%x volume=%u",
-		data.size(), sampleRate, flags, volumePercent);
-	return true;
-}
-
-bool MediaPlayer::playVoiceClip(const Common::String &path, Audio::SoundHandle &handle,
-		uint volumePercent) {
-	return playAudioClip(path, handle, Audio::Mixer::kSpeechSoundType,
-		volumePercent, false, "voice clip");
-}
-
-bool MediaPlayer::playAudioClip(const Common::String &path, Audio::SoundHandle &handle,
-		Audio::Mixer::SoundType soundType, uint volumePercent, bool loop,
-		const char *description) {
-	Common::String source;
-	Common::SeekableReadStream *audioStream =
-		openSource(path, kSourceSoundEffect, source);
-	if (!audioStream) {
-		warning("Ripper: could not open %s '%s' from the filesystem or sound library",
-			description, path.c_str());
-		return false;
-	}
-
-	Audio::SeekableAudioStream *stream = Audio::makeWAVStream(audioStream, DisposeAfterUse::YES);
-	if (!stream)
-		return false;
-	stopSoundEffect(handle);
-	const byte volume = (byte)(MIN<uint>(volumePercent, 100) * Audio::Mixer::kMaxChannelVolume / 100);
-	Audio::AudioStream *playbackStream = stream;
-	if (loop)
-		playbackStream = Audio::makeLoopingAudioStream(stream, 0);
-	_mixer->playStream(soundType, &handle, playbackStream, -1, volume);
-	debugC(2, kDebugAudio,
-		"Ripper: started %s '%s' source=%s volume=%u loop=%d mixerType=%d",
-		description, path.c_str(), source.c_str(), volumePercent, loop, soundType);
-	return true;
-}
-
-bool MediaPlayer::stopSoundEffect(Audio::SoundHandle &handle) {
-	const bool active = _mixer->isSoundHandleActive(handle);
-	if (active)
-		_mixer->stopHandle(handle);
-	return active;
-}
-
-void MediaPlayer::setSoundEffectVolume(Audio::SoundHandle &handle, uint volumePercent) {
-	_mixer->setChannelVolume(handle,
-		(byte)(MIN<uint>(volumePercent, 100) * Audio::Mixer::kMaxChannelVolume / 100));
-}
-
-bool MediaPlayer::isSoundEffectActive(const Audio::SoundHandle &handle) const {
-	return _mixer->isSoundHandleActive(handle);
-}
-
-uint32 MediaPlayer::getSoundEffectElapsedTime(
-		const Audio::SoundHandle &handle) const {
-	return _mixer->getSoundElapsedTime(handle);
 }
 
 bool MediaPlayer::playPuzzleSequence(const Common::String &path, uint loopStartFrame,
