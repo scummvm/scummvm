@@ -14,9 +14,11 @@ MODULE_OBJS := \
 	iff.o \
 	input.o \
 	inventory.o \
-	media.o \
+	media/audio.o \
+	media/display.o \
 	media/plan.o \
 	media/source.o \
+	media/video.o \
 	menu.o \
 	metaengine.o \
 	milestones.o \
