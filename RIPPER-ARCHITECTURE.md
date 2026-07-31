@@ -1705,6 +1705,14 @@
   frame decoding to `Video::SmackerDecoder`; PCM is delegated to the ScummVM
   mixer. `PROINT.AVI` contains 16 Smacker segments and `PROLOG1.AVI` contains
   two.
+- Retail `LoadSmackerPlaybackState` at `0x4f140` and
+  `AdvanceSmackerPlaybackFrame` at `0x4ffe8` consume Smacker frame-table DWORDs
+  directly as byte counts. The extracted `EFW4.SMK` differs from that contract
+  at zero-based frame 62: its `0x2000a070` entry overruns the file, while
+  `0x8070` makes all 110 declared payloads end exactly at EOF and is consistent
+  with the adjacent frame sizes. The engine repairs only that complete
+  filename, frame-count, file-size, frame-index, and damaged-value signature
+  before handing playback to the shared decoder.
 - `RenderCustomPacketFrameAndOverlays` at `0x6c486` installs an IAVF packet's
   active palette directly through display service `0x1d`. It does not call
   `ApplySharedDisplayPalettePatch`; that patch belongs to the separate
