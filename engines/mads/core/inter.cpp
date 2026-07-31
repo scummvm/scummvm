@@ -52,8 +52,6 @@
 
 namespace MADS {
 
-#define disable_error_check
-
 int stroke_type = STROKE_NONE;          /* Current stroke type           */
 
 int inter_auxiliary_click;              /* Clicks during downtime        */
@@ -692,11 +690,6 @@ static void inter_image(int x1, int y1, int xs, int ys) {
 		image_inter_list[image_inter_marker].series_id = (byte)ys;
 		image_inter_marker++;
 	}
-#ifndef disable_error_check
-	else {
-		error_report(ERROR_IMAGE_INTER_LIST_FULL, WARNING, MODULE_INTER, IMAGE_INTER_LIST_SIZE, 1);
-	}
-#endif
 }
 
 static void inter_scrollbar_refresh() {
@@ -809,11 +802,6 @@ void inter_set_active_inven(int new_active) {
 						image_inter_list[image_inter_marker].series_id = (byte)ys;
 						image_inter_marker++;
 					}
-#ifndef disable_error_check
-					else {
-						error_report(ERROR_IMAGE_INTER_LIST_FULL, WARNING, MODULE_INTER, IMAGE_INTER_LIST_SIZE, 2);
-					}
-#endif
 
 					matte_inter_frame(false, false);
 
@@ -1868,11 +1856,6 @@ static void inter_background_animation() {
 				image_inter_list[image_inter_marker].flags = IMAGE_UPDATE;
 				image_inter_marker++;
 			}
-#ifndef disable_error_check
-			else {
-				error_report(ERROR_IMAGE_INTER_LIST_FULL, WARNING, MODULE_INTER, IMAGE_INTER_LIST_SIZE, 3);
-			}
-#endif
 		}
 	}
 
@@ -1905,11 +1888,6 @@ void inter_spinning_object() {
 			image_inter_list[image_inter_marker].y = inter_object_base_y;
 			image_inter_marker++;
 		}
-#ifndef disable_error_check
-		else {
-			error_report(ERROR_IMAGE_INTER_LIST_FULL, WARNING, MODULE_INTER, IMAGE_INTER_LIST_SIZE, 3);
-		}
-#endif
 	}
 
 done:

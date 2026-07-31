@@ -39,9 +39,6 @@
 #include "mads/core/video.h"
 #include "mads/core/anim.h"
 #include "mads/core/matte.h"
-#ifndef disable_error_check
-#include "mads/core/error.h"
-#endif
 
 namespace MADS {
 
@@ -139,11 +136,6 @@ int matte_allocate_series(SeriesPtr series, int bonus_series_number) {
 			series_list[handle] = series;
 		}
 	}
-#ifndef disable_error_check
-	if (handle < 0) {
-		error_report(ERROR_SERIES_LIST_FULL, ERROR, MODULE_MATTE, SERIES_LIST_SIZE, 0);
-	}
-#endif
 
 	return handle;
 }
@@ -221,13 +213,8 @@ void matte_deallocate_series(int id, int free_memory) {
 
 	// Protect against memory fragmentation
 	if (id < SERIES_LIST_SIZE) {
-		if (id == series_list_marker - 1) {
+		if (id == series_list_marker - 1)
 			series_list_marker--;
-		} else {
-#ifndef disable_error_check
-			error_report(ERROR_WRONG_SERIES_UNLOAD_ORDER, WARNING, MODULE_MATTE, id, series_list_marker);
-#endif
-		}
 	}
 
 done:
@@ -254,9 +241,6 @@ int matte_allocate_image() {
 	int result;
 
 	if (image_marker >= IMAGE_LIST_SIZE) {
-#if !defined(disable_error_check)
-		error_report(ERROR_IMAGE_LIST_FULL, ERROR, MODULE_MATTE, IMAGE_LIST_SIZE, image_marker);
-#endif
 		result = -1;
 	} else {
 		result = image_marker++;
@@ -293,13 +277,7 @@ int matte_add_message(FontPtr font, char *text, int x, int y, int message_color,
 			message_list[message_handle].active = true;
 		}
 	}
-#ifndef disable_error_check
-#ifndef disable_minor_error
-	if (message_handle < 0) {
-		error_report(ERROR_MESSAGE_LIST_FULL, ERROR, MODULE_MATTE, MESSAGE_LIST_SIZE, 0);
-	}
-#endif
-#endif
+
 	return message_handle;
 }
 
@@ -983,9 +961,6 @@ int matte_allocate_inter_image() {
 	int result;
 
 	if (image_inter_marker >= IMAGE_INTER_LIST_SIZE) {
-#if !defined(disable_error_check)
-		error_report(ERROR_IMAGE_INTER_LIST_FULL, ERROR, MODULE_MATTE, IMAGE_INTER_LIST_SIZE, image_inter_marker);
-#endif
 		result = -1;
 	} else {
 		result = image_inter_marker++;
