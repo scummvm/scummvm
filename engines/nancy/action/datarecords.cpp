@@ -127,8 +127,7 @@ void SetValue::execute() {
 	TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
 	assert(playerTable);
 
-	// nancy8 has 20 single & 20 combo values, later games have 30/10
-	uint numSingleValues = g_nancy->getGameType() <= kGameTypeNancy8 ? 20 : 30;
+	uint numSingleValues = playerTable->getNumSingleValues();
 
 	if (_index < numSingleValues) {
 		// Single values
@@ -166,8 +165,7 @@ void SetValueCombo::execute() {
 	TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
 	assert(playerTable);
 
-	// nancy8 has 20 single & 20 combo values, later games have 30/10
-	uint numSingleValues = g_nancy->getGameType() <= kGameTypeNancy8 ? 20 : 30;
+	uint numSingleValues = playerTable->getNumSingleValues();
 
 	playerTable->setComboValue(_valueIndex - numSingleValues, 0);
 
@@ -231,8 +229,7 @@ void ValueTest::execute() {
 	TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
 	assert(playerTable);
 
-	// nancy8 has 20 single & 20 combo values, later games have 30/10
-	uint numSingleValues = g_nancy->getGameType() <= kGameTypeNancy8 ? 20 : 30;
+	uint numSingleValues = playerTable->getNumSingleValues();
 
 	float testedValue;
 	if (_valueIndex < numSingleValues) {

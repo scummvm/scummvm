@@ -33,6 +33,8 @@
 
 #include "common/serializer.h"
 
+#include "graphics/font.h"
+
 namespace Nancy {
 namespace Action {
 
@@ -469,6 +471,65 @@ void TableIndexOverlay::execute() {
 	if (_state != kBegin) {
 		Overlay::execute();
 	}
+}
+
+void TextLineOverlay::readData(Common::SeekableReadStream &stream) {
+	_fontID = stream.readUint16LE();
+	_textColor = stream.readUint16LE();
+	_position.x = stream.readSint16LE();
+	stream.skip(2);
+	_position.y = stream.readSint16LE();
+	stream.skip(2);
+	readFilename(stream, _textKey);
+	_tableIndex = stream.readSint16LE();
+}
+
+void TextLineOverlay::execute() {
+	if (_isDone) {
+		return;
+	}
+
+	const Graphics::Font *font = g_nancy->_graphics->getFont(_fontID);
+	if (!font) {
+		return;
+	}
+
+	Common::String text;
+	if (!_textKey.empty()) {
+		text = _textKey;
+	} else {
+		TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
+		assert(playerTable);
+
+		int16 value = playerTable->getValue(_tableIndex);
+
+		// An unset value is displayed as zero
+		if (value == kNoTableValue) {
+			value = 0;
+		}
+
+		text = Common::String::format("%d", value);
+	}
+
+	uint width = font->getStringWidth(text);
+	uint height = font->getFontHeight();
+	if (!width || !height) {
+		_isDone = true;
+		return;
+	}
+
+	_drawSurface.create(width, height, g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
+	font->drawString(&_drawSurface, text, 0, 0, width, _textColor);
+
+	// The stored y is the baseline (bottom) of the text, so anchor the surface's
+	// bottom edge there rather than its top
+	moveTo(Common::Rect(_position.x, _position.y - (int16)height, _position.x + (int16)width, _position.y));
+	setTransparent(true);
+	setVisible(true);
+	registerGraphics();
+
+	_isDone = true;
 }
 
 } // End of namespace Action

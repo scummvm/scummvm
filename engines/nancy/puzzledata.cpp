@@ -302,6 +302,21 @@ float TableData::getComboValue(uint16 index) const {
 	return index < comboValues.size() ? comboValues[index] : kNoTableValue;
 }
 
+uint TableData::getNumSingleValues() const {
+	// nancy8 has 20 single & 20 combo values, later games have 30/10
+	return g_nancy->getGameType() <= kGameTypeNancy8 ? 20 : 30;
+}
+
+int16 TableData::getValue(uint16 index) const {
+	uint numSingleValues = getNumSingleValues();
+	if (index < numSingleValues) {
+		return getSingleValue(index);
+	}
+
+	float value = getComboValue(index - numSingleValues);
+	return (int16)(value + (value < 0 ? -0.5f : 0.5f));
+}
+
 void CellPhoneData::synchronize(Common::Serializer &ser) {
 	ser.syncAsByte(noSignal);
 	ser.syncAsByte(batteryLow);

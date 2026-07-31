@@ -133,6 +133,29 @@ protected:
 	int16 _lastIndexVal = -1;
 };
 
+// Draws a single line of text on top of the scene background. The text is a
+// value looked up from the player-data table (used by the nancy12 minigolf
+// scorecard, where each hole's score is a separate record).
+class TextLineOverlay : public RenderActionRecord {
+public:
+	TextLineOverlay() : RenderActionRecord(8) {}
+	virtual ~TextLineOverlay() {}
+
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	bool isViewportRelative() const override { return true; }
+
+protected:
+	Common::String getRecordTypeName() const override { return "TextLineOverlay"; }
+
+	uint16 _fontID = 0;
+	uint16 _textColor = 0;
+	Common::Point _position;
+	Common::String _textKey;
+	int16 _tableIndex = 0;
+};
+
 } // End of namespace Action
 } // End of namespace Nancy
 
