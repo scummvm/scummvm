@@ -100,7 +100,9 @@
 - Indexed presentation suspension is represented by `IndexedDisplaySnapshot`,
   which captures an indexed screen rectangle together with all 256 palette
   entries. Cyber scene suspension uses a full 640x400 snapshot and restores
-  its pixels and palette before resuming the scene runtime.
+  its pixels and palette before resuming the scene runtime. Controlled IAVF
+  presentations use the same snapshot service around `RunMediaPresentation`
+  rather than maintaining a second framebuffer and palette representation.
 
 ## Scene Toolbar
 
