@@ -374,10 +374,18 @@ void StainedGlassPuzzle::renderTransition(const uint *previousOrder,
 		drawFrame(pixels, screen->pitch, _tiles[tile], x, y);
 	}
 	// AnimateStainedGlassPuzzleTileTransition at 0x2dc23 attaches the
-	// FRAME3.PCX descriptor after composing the moving tiles in its scratch
-	// surface. Its color-zero openings preserve the pieces while the opaque
-	// pixels restore the lattice and surrounding frame above them.
-	drawFrame(pixels, screen->pitch, _transitionMask, 0, 0);
+	// FRAME3.PCX descriptor to the scratch update after composing the moving
+	// tiles. It acts as a stencil rather than a color source: color-zero
+	// openings expose the moving pieces, while all other pixels retain the
+	// existing GLASS.PCX backdrop and lattice.
+	for (uint y = 0; y < _transitionMask.height; ++y) {
+		for (uint x = 0; x < _transitionMask.width; ++x) {
+			const uint offset = y * _transitionMask.width + x;
+			if (_transitionMask.pixels[offset] !=
+					_transitionMask.transparentColor)
+				pixels[y * screen->pitch + x] = _puzzleBacking[offset];
+		}
+	}
 	g_system->unlockScreen();
 	applyPalette();
 	g_system->updateScreen();
@@ -462,7 +470,7 @@ bool StainedGlassPuzzle::animateTo(const uint *targetOrder,
 	_engine->getCursor()->setVisible(false);
 	debugC(2, kDebugPuzzles,
 		"Ripper: stained glass transition began reason='%s' steps=%u "
-		"from=[%s] to=[%s] movementCue=%u",
+		"from=[%s] to=[%s] movementCue=%u frameMask=stencil",
 		reason, kTransitionSteps, orderString(previousOrder).c_str(),
 		orderString(targetOrder).c_str(), movementCue);
 
