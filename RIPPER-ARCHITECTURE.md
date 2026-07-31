@@ -1841,6 +1841,10 @@
   scene chooser. The later BA0 frame presentation plays the full sequence.
 - Engine-local media code should remain an adapter or demultiplexer wherever
   packet payloads can be handed to existing ScummVM codecs.
+- Media implementation units live under `engines/ripper/media/`: `video.cpp`
+  owns Smacker and IAVF presentation timing, `audio.cpp` owns scene and
+  transient audio playback, `display.cpp` owns palette fades and static PCX
+  presentation, and `source.cpp` owns stream resolution and validation.
 - Every Smacker entry point emits one stable level-2 playback-plan trace before
   loading the decoder. The trace names the retail route and records placement,
   palette, frame-range, loop, input, callback, and timeline policy so structural
