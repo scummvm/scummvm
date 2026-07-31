@@ -33,6 +33,7 @@ class WacJournalPuzzle;
 class WacManager;
 class WacStillImageViewer;
 class WacVoiceLockPuzzle;
+class WacVoiceLockRenderer;
 class RipperEngine;
 struct MouseState;
 
@@ -47,6 +48,7 @@ private:
 	friend class WacJournalPuzzle;
 	friend class WacStillImageViewer;
 	friend class WacVoiceLockPuzzle;
+	friend class WacVoiceLockRenderer;
 
 	struct DatabaseEntry {
 		Common::String label;

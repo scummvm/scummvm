@@ -59,6 +59,8 @@ MODULE_OBJS := \
 	wac/journal.o \
 	wac/still_image.o \
 	wac/voice_lock.o \
+	wac/voice_lock_model.o \
+	wac/voice_lock_renderer.o \
 	wac/wac.o \
 	world_map.o
 

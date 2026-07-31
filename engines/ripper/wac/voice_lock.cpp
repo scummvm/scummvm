@@ -23,25 +23,24 @@
 #include "audio/decoders/raw.h"
 #include "audio/mixer.h"
 #include "common/debug.h"
-#include "common/endian.h"
 #include "common/events.h"
 #include "common/ptr.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/util.h"
-#include "graphics/surface.h"
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
 #include "ripper/input.h"
 #include "ripper/media.h"
 #include "ripper/milestones.h"
-#include "ripper/modal_dialog.h"
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
 #include "ripper/script.h"
 #include "ripper/wac/database.h"
 #include "ripper/wac/wac.h"
+#include "ripper/wac/voice_lock_model.h"
+#include "ripper/wac/voice_lock_renderer.h"
 
 namespace Ripper {
 
@@ -51,55 +50,13 @@ static const int kWacDatabaseLeft = 400;
 static const int kWacDatabaseTop = 50;
 static const int kWacDatabaseRight = 590;
 static const int kWacDatabaseBottom = 332;
-static const byte kWacDatabaseBackground = 4;
 static const uint16 kWacDatabaseSelectionChanged = 0xfffe;
-static const uint kWacVoiceLockFileResource = 0xb1;
-static const uint kWacVoiceLockEditorResource = 0xb2;
-static const uint kWacVoiceLockSelectionCount = 5;
-static const uint kWacVoiceLockSelectionTolerance = 3;
-static const byte kWacVoiceLockSelectionColor = 255;
-static const byte kWacVoiceLockWaveformColor = 255;
-static const byte kWacVoiceLockMarkerColor = 196;
-static const byte kWacVoiceLockPuzzleHelpColor = 254;
 static const int kWacVoiceLockClientLeftInset = 5;
 static const int kWacVoiceLockClientTopInset = 20;
 static const int kWacVoiceLockClientRightInset = 20;
 static const int kWacVoiceLockClientBottomInset = 6;
-static const int kWacVoiceLockSolution[kWacVoiceLockSelectionCount][2] = {
-	{ 240, 252 },
-	{ 70, 82 },
-	{ 87, 99 },
-	{ 171, 184 },
-	{ 190, 199 }
-};
 static const uint16 kNoAction = WacManager::kNoAction;
 static const uint16 kExitAction = WacManager::kExitAction;
-
-struct WacVoiceLockPcm {
-	Common::Array<byte> data;
-	uint sampleRate;
-	byte flags;
-	uint bytesPerSample;
-
-	WacVoiceLockPcm() : sampleRate(0), flags(0), bytesPerSample(0) {}
-};
-
-struct WacVoiceLockSelection {
-	int start;
-	int end;
-
-	WacVoiceLockSelection() : start(0), end(0) {}
-	WacVoiceLockSelection(int start_, int end_) : start(start_), end(end_) {}
-};
-
-struct WacVoiceLockEditorSegment {
-	uint offset;
-	uint size;
-	uint width;
-
-	WacVoiceLockEditorSegment(uint offset_, uint size_, uint width_) :
-			offset(offset_), size(size_), width(width_) {}
-};
 
 static bool loadWacVoiceLockPcm(ResourceManager *resources,
 		const Common::String &path, WacVoiceLockPcm &pcm) {
@@ -151,279 +108,6 @@ static bool loadWacVoiceLockPcm(ResourceManager *resources,
 	return true;
 }
 
-static int wacVoiceLockSample(const WacVoiceLockPcm &pcm, uint sample) {
-	const uint offset = sample * pcm.bytesPerSample;
-	if (offset + pcm.bytesPerSample > pcm.data.size())
-		return 0;
-	if (pcm.bytesPerSample == 1)
-		return ((int)pcm.data[offset] - 128) << 8;
-	return (int16)READ_LE_UINT16(pcm.data.data() + offset);
-}
-
-static void clearWacVoiceLockWaveform(Graphics::Surface &screen,
-		const Common::Rect &bounds) {
-	if (bounds.isEmpty())
-		return;
-	for (int y = bounds.top; y < bounds.bottom; ++y)
-		memset(screen.getBasePtr(bounds.left, y), kWacDatabaseBackground,
-			bounds.width());
-}
-
-static void drawWacVoiceLockWaveformSpan(Graphics::Surface &screen,
-		const WacVoiceLockPcm &pcm, const Common::Rect &bounds,
-		uint byteOffset, uint byteCount) {
-	if (bounds.isEmpty() || pcm.data.empty() || pcm.bytesPerSample == 0 ||
-			byteOffset >= pcm.data.size())
-		return;
-
-	byteOffset -= byteOffset % pcm.bytesPerSample;
-	byteCount = MIN<uint>(byteCount - byteCount % pcm.bytesPerSample,
-		pcm.data.size() - byteOffset);
-	if (byteCount == 0)
-		return;
-	const int center = (bounds.top + bounds.bottom) / 2;
-	const uint firstSourceSample = byteOffset / pcm.bytesPerSample;
-	const uint sampleCount = byteCount / pcm.bytesPerSample;
-	const int plotWidth = bounds.width();
-	const int amplitude = MAX<int>(1, bounds.height() / 2);
-	for (int column = 0; column < plotWidth; ++column) {
-		const uint firstSample = firstSourceSample +
-			(uint64)column * sampleCount / plotWidth;
-		const uint lastSample = firstSourceSample + MAX<uint>(
-			(uint64)column * sampleCount / plotWidth + 1,
-			(uint64)(column + 1) * sampleCount / plotWidth);
-		int minimum = 0;
-		int maximum = 0;
-		for (uint sample = firstSample;
-				sample < MIN<uint>(lastSample,
-					firstSourceSample + sampleCount); ++sample) {
-			const int value = wacVoiceLockSample(pcm, sample);
-			minimum = MIN(minimum, value);
-			maximum = MAX(maximum, value);
-		}
-		const int top = CLIP<int>(center - maximum * amplitude / 32768,
-			bounds.top, bounds.bottom - 1);
-		const int bottom = CLIP<int>(center - minimum * amplitude / 32768,
-			bounds.top, bounds.bottom - 1);
-		for (int y = top; y <= bottom; ++y)
-			*((byte *)screen.getBasePtr(bounds.left + column, y)) =
-				kWacVoiceLockWaveformColor;
-	}
-}
-
-static void xorWacVoiceLockRect(Graphics::Surface &screen,
-		const Common::Rect &bounds, byte color) {
-	const int left = CLIP<int>(bounds.left, 0, screen.w);
-	const int top = CLIP<int>(bounds.top, 0, screen.h);
-	const int right = CLIP<int>(bounds.right, 0, screen.w);
-	const int bottom = CLIP<int>(bounds.bottom, 0, screen.h);
-	if (left >= right || top >= bottom)
-		return;
-	for (int y = top; y < bottom; ++y) {
-		byte *pixel = (byte *)screen.getBasePtr(left, y);
-		for (int x = left; x < right; ++x)
-			*pixel++ ^= color;
-	}
-}
-
-static void captureWacVoiceLockRect(const Graphics::Surface &screen,
-		const Common::Rect &bounds, Common::Array<byte> &pixels) {
-	pixels.resize(bounds.width() * bounds.height());
-	for (int row = 0; row < bounds.height(); ++row) {
-		memcpy(pixels.data() + row * bounds.width(),
-			screen.getBasePtr(bounds.left, bounds.top + row),
-			bounds.width());
-	}
-}
-
-static void captureWacVoiceLockPixels(const Graphics::Surface &screen,
-		Common::Array<byte> &pixels, int width, int height,
-		int sourceLeft, int sourceTop) {
-	if (width <= 0 || height <= 0) {
-		pixels.clear();
-		return;
-	}
-	pixels.resize(width * height);
-	memset(pixels.data(), 0, pixels.size());
-	const int firstColumn = MAX<int>(0, -sourceLeft);
-	const int firstRow = MAX<int>(0, -sourceTop);
-	const int lastColumn = MIN<int>(width, screen.w - sourceLeft);
-	const int lastRow = MIN<int>(height, screen.h - sourceTop);
-	if (firstColumn >= lastColumn || firstRow >= lastRow)
-		return;
-	for (int row = firstRow; row < lastRow; ++row) {
-		memcpy(pixels.data() + row * width + firstColumn,
-			screen.getBasePtr(sourceLeft + firstColumn, sourceTop + row),
-			lastColumn - firstColumn);
-	}
-}
-
-static void blitWacVoiceLockPixels(Graphics::Surface &screen,
-		const Common::Array<byte> &pixels, int sourceWidth, int sourceHeight,
-		int destinationLeft, int destinationTop) {
-	if (pixels.size() != (uint)(sourceWidth * sourceHeight))
-		return;
-	const int sourceLeft = MAX<int>(0, -destinationLeft);
-	const int sourceTop = MAX<int>(0, -destinationTop);
-	const int sourceRight = MIN<int>(sourceWidth,
-		screen.w - destinationLeft);
-	const int sourceBottom = MIN<int>(sourceHeight,
-		screen.h - destinationTop);
-	if (sourceLeft >= sourceRight || sourceTop >= sourceBottom)
-		return;
-	for (int sourceY = sourceTop; sourceY < sourceBottom; ++sourceY) {
-		memcpy(screen.getBasePtr(destinationLeft + sourceLeft,
-				destinationTop + sourceY),
-			pixels.data() + sourceY * sourceWidth + sourceLeft,
-			sourceRight - sourceLeft);
-	}
-}
-
-static void drawWacVoiceLockWaveform(Graphics::Surface &screen,
-		const WacVoiceLockPcm &pcm, const Common::Rect &bounds,
-		const WacVoiceLockSelection *selection) {
-	clearWacVoiceLockWaveform(screen, bounds);
-	drawWacVoiceLockWaveformSpan(screen, pcm, bounds, 0, pcm.data.size());
-
-	if (!selection)
-		return;
-	const int start = CLIP<int>(selection->start,
-		bounds.left, bounds.right - 1);
-	const int end = CLIP<int>(selection->end,
-		start + 1, bounds.right);
-	// RunWacVoiceLockPuzzleScene selects display write mode 3 at 0x25006
-	// before filling the span with 0xff. Reapplying the old span at 0x25265
-	// restores its pixels before the changed span is drawn, identifying the
-	// operation as an XOR highlight rather than an opaque fill.
-	// The retained ScummVM WAC panel uses palette index 4 for black. Normalize
-	// the XOR operand so that black toggles to retail's logical selection
-	// color 0xff instead of the light-gray palette index 251.
-	xorWacVoiceLockRect(screen,
-		Common::Rect(start, bounds.top, end, bounds.bottom),
-		kWacDatabaseBackground ^ kWacVoiceLockSelectionColor);
-}
-
-static void drawWacVoiceLockEditorWaveform(Graphics::Surface &screen,
-		const WacVoiceLockPcm &pcm, const Common::Rect &bounds,
-		const Common::Array<WacVoiceLockEditorSegment> &segments) {
-	// RunWacVoiceLockPuzzleScene at 0x25403 copies each selected source
-	// rectangle to the next editor column. Preserve those pixel widths rather
-	// than scaling the growing PCM assembly across the complete panel.
-	clearWacVoiceLockWaveform(screen, bounds);
-	int left = bounds.left;
-	for (uint segmentIndex = 0; segmentIndex < segments.size() &&
-			left < bounds.right; ++segmentIndex) {
-		const WacVoiceLockEditorSegment &segment = segments[segmentIndex];
-		const int width = MIN<int>(segment.width, bounds.right - left);
-		if (width <= 0)
-			continue;
-		drawWacVoiceLockWaveformSpan(screen, pcm,
-			Common::Rect(left, bounds.top, left + width, bounds.bottom),
-			segment.offset, segment.size);
-		left += width;
-	}
-}
-
-static int getWacVoiceLockEditorWaveformWidth(
-		const Common::Array<WacVoiceLockEditorSegment> &segments,
-		const Common::Rect &bounds) {
-	uint width = 0;
-	for (uint segment = 0; segment < segments.size(); ++segment)
-		width += segments[segment].width;
-	return MIN<int>(width, bounds.width());
-}
-
-static uint32 getWacVoiceLockDuration(uint byteCount,
-		const WacVoiceLockPcm &pcm) {
-	if (pcm.sampleRate == 0 || pcm.bytesPerSample == 0)
-		return 0;
-	return MAX<uint32>(1, (uint64)byteCount * 1000 /
-		(pcm.sampleRate * pcm.bytesPerSample));
-}
-
-static void appendWacVoiceLockSelectionAudio(
-		const WacVoiceLockPcm &source,
-		const WacVoiceLockSelection &selection,
-		const Common::Rect &waveform, Common::Array<byte> &assembled) {
-	if (source.data.empty() || source.bytesPerSample == 0)
-		return;
-	const int startX = CLIP<int>(MIN(selection.start, selection.end),
-		waveform.left, waveform.right - 1);
-	const int endX = CLIP<int>(MAX(selection.start, selection.end),
-		waveform.left + 1, waveform.right);
-	uint start = (uint64)(startX - waveform.left) * source.data.size() /
-		waveform.width();
-	uint end = (uint64)(endX - waveform.left) * source.data.size() /
-		waveform.width();
-	start -= start % source.bytesPerSample;
-	end -= end % source.bytesPerSample;
-	end = MIN<uint>(end, source.data.size());
-	if (end <= start)
-		return;
-	const uint oldSize = assembled.size();
-	assembled.resize(oldSize + end - start);
-	memcpy(assembled.data() + oldSize, source.data.data() + start, end - start);
-}
-
-static bool validateWacVoiceLockSelections(
-		const Common::Array<WacVoiceLockSelection> &selections,
-		Common::String &diagnostics) {
-	diagnostics.clear();
-	if (selections.size() != kWacVoiceLockSelectionCount) {
-		diagnostics = Common::String::format("count=%u expected=%u",
-			selections.size(), kWacVoiceLockSelectionCount);
-		return false;
-	}
-
-	bool allMatched = true;
-	for (uint selection = 0; selection < selections.size(); ++selection) {
-		bool found = false;
-		uint diagnosticCandidate = 0;
-		int diagnosticStartDelta =
-			selections[selection].start - kWacVoiceLockSolution[0][0];
-		int diagnosticEndDelta =
-			selections[selection].end - kWacVoiceLockSolution[0][1];
-		int closestDistance = MAX(ABS(diagnosticStartDelta),
-			ABS(diagnosticEndDelta));
-		for (uint candidate = 0; candidate < kWacVoiceLockSelectionCount;
-				++candidate) {
-			const int startDelta =
-				selections[selection].start -
-					kWacVoiceLockSolution[candidate][0];
-			const int endDelta =
-				selections[selection].end -
-					kWacVoiceLockSolution[candidate][1];
-			const int distance = MAX(ABS(startDelta), ABS(endDelta));
-			if (distance < closestDistance) {
-				diagnosticCandidate = candidate;
-				diagnosticStartDelta = startDelta;
-				diagnosticEndDelta = endDelta;
-				closestDistance = distance;
-			}
-			if (ABS(startDelta) <= (int)kWacVoiceLockSelectionTolerance &&
-					ABS(endDelta) <=
-						(int)kWacVoiceLockSelectionTolerance) {
-				diagnosticCandidate = candidate;
-				diagnosticStartDelta = startDelta;
-				diagnosticEndDelta = endDelta;
-				found = true;
-				break;
-			}
-		}
-		if (!diagnostics.empty())
-			diagnostics += " ";
-		diagnostics += Common::String::format(
-			"#%u=%d..%d target%u=%d..%d delta=%+d,%+d match=%d",
-			selection, selections[selection].start, selections[selection].end,
-			diagnosticCandidate,
-			kWacVoiceLockSolution[diagnosticCandidate][0],
-			kWacVoiceLockSolution[diagnosticCandidate][1], diagnosticStartDelta,
-			diagnosticEndDelta, found);
-		allMatched &= found;
-	}
-	return allMatched;
-}
-
 WacVoiceLockPuzzle::WacVoiceLockPuzzle(WacDatabaseSession *database) :
 		_database(database) {
 }
@@ -465,35 +149,37 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 
 	const bool editorAvailable = _database->engine()->getMilestones()->isSet(
 		kMilestoneWacAudioEditorAvailable);
-	Common::Array<WacVoiceLockSelection> selections;
-	Common::Array<WacVoiceLockEditorSegment> editorSegments;
-	Common::Array<byte> assembledAudio;
-	WacVoiceLockSelection sourceSelection;
-	bool quantized = false;
-	bool sourceSelectionActive = false;
-	bool selectingSource = false;
-	bool adjustingSelectionStart = false;
-	bool draggingSourceSelection = false;
-	Common::Array<byte> sourceSelectionDragPixels;
-	int sourceSelectionDragWidth = 0;
-	int sourceSelectionDragHeight = 0;
-	Common::Point sourceSelectionDragPosition;
-	int sourceSelectionDragOffsetX = 0;
-	int sourceSelectionDragOffsetY = 0;
-	Common::Array<byte> sourceSelectionDragBackingPixels;
-	int sourceSelectionDragBackingWidth = 0;
-	int sourceSelectionDragBackingHeight = 0;
-	Common::Point sourceSelectionDragBackingPosition;
-	bool sourcePanelActive = true;
-	int hoveredButton = -1;
-	int pressedButton = -1;
-	bool validateAfterPlayback = false;
-	bool playbackProgressActive = false;
-	Common::Rect playbackProgressBounds;
-	uint32 playbackDuration = 0;
-	int playbackProgressColumn = -1;
-	bool puzzleHelpEnabled =
-		_database->engine()->isPuzzleHelpEnabled();
+	WacVoiceLockEditorState state;
+	state.puzzleHelpEnabled = _database->engine()->isPuzzleHelpEnabled();
+	// Keep local names aligned with RunWacVoiceLockPuzzleScene while placing
+	// every mutable editor value in one state object shared with the renderer.
+	Common::Array<WacVoiceLockSelection> &selections = state.selections;
+	Common::Array<WacVoiceLockEditorSegment> &editorSegments =
+		state.editorSegments;
+	Common::Array<byte> &assembledAudio = state.assembledAudio;
+	WacVoiceLockSelection &sourceSelection = state.sourceSelection;
+	bool &quantized = state.quantized;
+	bool &sourceSelectionActive = state.sourceSelectionActive;
+	bool &selectingSource = state.selectingSource;
+	bool &adjustingSelectionStart = state.adjustingSelectionStart;
+	bool &draggingSourceSelection = state.draggingSourceSelection;
+	Common::Array<byte> &sourceSelectionDragPixels =
+		state.sourceSelectionDragPixels;
+	int &sourceSelectionDragWidth = state.sourceSelectionDragWidth;
+	int &sourceSelectionDragHeight = state.sourceSelectionDragHeight;
+	Common::Point &sourceSelectionDragPosition =
+		state.sourceSelectionDragPosition;
+	int &sourceSelectionDragOffsetX = state.sourceSelectionDragOffsetX;
+	int &sourceSelectionDragOffsetY = state.sourceSelectionDragOffsetY;
+	bool &sourcePanelActive = state.sourcePanelActive;
+	int &hoveredButton = state.hoveredButton;
+	int &pressedButton = state.pressedButton;
+	bool &validateAfterPlayback = state.validateAfterPlayback;
+	bool &playbackProgressActive = state.playbackProgressActive;
+	Common::Rect &playbackProgressBounds = state.playbackProgressBounds;
+	uint32 &playbackDuration = state.playbackDuration;
+	int &playbackProgressColumn = state.playbackProgressColumn;
+	bool &puzzleHelpEnabled = state.puzzleHelpEnabled;
 	const uint savedCursor =
 		_database->engine()->getCursor()->getSelectionIndex();
 	Audio::SoundHandle audioHandle;
@@ -509,212 +195,11 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 		buttonLeft += bitmap.width;
 	}
 
-	auto restoreSourceSelectionDragBacking = [&]() -> bool {
-		if (sourceSelectionDragBackingPixels.empty())
-			return true;
-		Graphics::Surface *screen = g_system->lockScreen();
-		if (!screen || screen->format.bytesPerPixel != 1) {
-			if (screen)
-				g_system->unlockScreen();
-			return false;
-		}
-		blitWacVoiceLockPixels(*screen,
-			sourceSelectionDragBackingPixels,
-			sourceSelectionDragBackingWidth,
-			sourceSelectionDragBackingHeight,
-			sourceSelectionDragBackingPosition.x,
-			sourceSelectionDragBackingPosition.y);
-		g_system->unlockScreen();
-		debugC(3, kDebugWac,
-			"Ripper: WAC voice-lock restored transient drag backing position=%d,%d size=%dx%d function=UpdateTransientPresentationOverlay@0x2a1ff",
-			sourceSelectionDragBackingPosition.x,
-			sourceSelectionDragBackingPosition.y,
-			sourceSelectionDragBackingWidth,
-			sourceSelectionDragBackingHeight);
-		sourceSelectionDragBackingPixels.clear();
-		sourceSelectionDragBackingWidth = 0;
-		sourceSelectionDragBackingHeight = 0;
-		return true;
-	};
+	WacVoiceLockRenderer renderer(_database, buttonAssets, buttonBounds,
+		sourcePanel, editorPanel, sourceWaveform, editorWaveform,
+		editorAvailable);
 
-	auto drawPresentation = [&]() -> bool {
-		// UpdateTransientPresentationOverlay at 0x2a1ff restores the saved
-		// display rectangle before capturing and drawing at the new position.
-		// DestroyTransientPresentationOverlay at 0x2a7fa performs the same
-		// restoration when the drag ends.
-		if (!restoreSourceSelectionDragBacking())
-			return false;
-		// Playback and selection redraws replace both title controls and their
-		// client waveforms as one presentation. Do not expose the empty framed
-		// controls before the waveform pixels and buttons have been restored.
-		if (!_database->engine()->getModalDialog()->drawRetainedTitlePanelText(
-				_database->resourceString(kWacVoiceLockFileResource),
-				sourcePanel, ModalDialogManager::kWacPresentation, false))
-			return false;
-		if (editorAvailable) {
-			if (!_database->engine()->getModalDialog()->drawRetainedTitlePanelText(
-					_database->resourceString(kWacVoiceLockEditorResource),
-					editorPanel, ModalDialogManager::kWacPresentation, false))
-				return false;
-		}
-
-		WacVoiceLockSelection displayedSelection;
-		const WacVoiceLockSelection *displayedSelectionPtr = nullptr;
-		if (sourceSelectionActive || selectingSource) {
-			displayedSelection = WacVoiceLockSelection(
-				MIN(sourceSelection.start, sourceSelection.end),
-				MAX(sourceSelection.start, sourceSelection.end));
-			displayedSelectionPtr = &displayedSelection;
-		}
-		Graphics::Surface *screen = g_system->lockScreen();
-		if (!screen || screen->format.bytesPerPixel != 1) {
-			if (screen)
-				g_system->unlockScreen();
-			return false;
-		}
-		drawWacVoiceLockWaveform(*screen, sourcePcm,
-			sourceWaveform, displayedSelectionPtr);
-		if (draggingSourceSelection && sourceSelectionActive &&
-				sourceSelectionDragPixels.empty()) {
-			const Common::Rect capturedSelection(sourceSelection.start,
-				sourceWaveform.top, sourceSelection.end,
-				sourceWaveform.bottom);
-			sourceSelectionDragWidth = capturedSelection.width();
-			sourceSelectionDragHeight = capturedSelection.height();
-			captureWacVoiceLockRect(*screen, capturedSelection,
-				sourceSelectionDragPixels);
-			debugC(3, kDebugWac,
-				"Ripper: WAC voice-lock captured XOR-highlighted drag pixels range=%d..%d size=%dx%d opcode=0x18",
-				sourceSelection.start, sourceSelection.end,
-				sourceSelectionDragWidth, sourceSelectionDragHeight);
-		}
-		if (puzzleHelpEnabled && quantized) {
-			// PUZZLE_HELP is a ScummVM-only debugger aid. The numbered
-			// brackets share the table used by the retail-backed validator,
-			// but appear only after the retail Quantize action has moved the
-			// samples beneath those fixed coordinates. They do not alter the
-			// three-pixel tolerance or acceptance rules.
-			for (uint range = 0; range < kWacVoiceLockSelectionCount;
-					++range) {
-				const int nominalStart = CLIP<int>(
-					kWacVoiceLockSolution[range][0],
-					sourceWaveform.left, sourceWaveform.right - 1);
-				const int nominalEnd = CLIP<int>(
-					kWacVoiceLockSolution[range][1],
-					nominalStart + 1, sourceWaveform.right - 1);
-				const int acceptedStartMinimum = CLIP<int>(
-					nominalStart - (int)kWacVoiceLockSelectionTolerance,
-					sourceWaveform.left, sourceWaveform.right - 1);
-				const int acceptedStartMaximum = CLIP<int>(
-					nominalStart + (int)kWacVoiceLockSelectionTolerance,
-					sourceWaveform.left, sourceWaveform.right - 1);
-				const int acceptedEndMinimum = CLIP<int>(
-					nominalEnd - (int)kWacVoiceLockSelectionTolerance,
-					sourceWaveform.left, sourceWaveform.right - 1);
-				const int acceptedEndMaximum = CLIP<int>(
-					nominalEnd + (int)kWacVoiceLockSelectionTolerance,
-					sourceWaveform.left, sourceWaveform.right - 1);
-				// Alternate the baseline so neighboring accepted endpoint
-				// bands remain distinguishable when their tolerance overlaps.
-				const int lineY =
-					sourceWaveform.bottom - 3 - (range % 2) * 4;
-				for (int x = nominalStart; x <= nominalEnd; ++x)
-					*((byte *)screen->getBasePtr(x, lineY)) =
-						kWacVoiceLockPuzzleHelpColor;
-				for (int y = lineY - 1; y <= lineY + 1; ++y) {
-					for (int x = acceptedStartMinimum;
-							x <= acceptedStartMaximum; ++x)
-						*((byte *)screen->getBasePtr(x, y)) =
-							kWacVoiceLockPuzzleHelpColor;
-					for (int x = acceptedEndMinimum;
-							x <= acceptedEndMaximum; ++x)
-						*((byte *)screen->getBasePtr(x, y)) =
-							kWacVoiceLockPuzzleHelpColor;
-				}
-				for (int y = lineY - 4; y <= lineY + 2; ++y) {
-					*((byte *)screen->getBasePtr(nominalStart, y)) =
-						kWacVoiceLockPuzzleHelpColor;
-					*((byte *)screen->getBasePtr(nominalEnd, y)) =
-						kWacVoiceLockPuzzleHelpColor;
-				}
-				const Common::String label =
-					Common::String::format("%u", range + 1);
-				const int labelLeft = nominalStart +
-					(nominalEnd - nominalStart -
-						_database->measureText(label)) / 2;
-				_database->drawText((byte *)screen->getPixels(),
-					screen->pitch, labelLeft, lineY - 12, label,
-					kWacVoiceLockPuzzleHelpColor);
-			}
-		}
-		if (editorAvailable) {
-			WacVoiceLockPcm assembledPcm;
-			assembledPcm.data = assembledAudio;
-			assembledPcm.sampleRate = sourcePcm.sampleRate;
-			assembledPcm.flags = sourcePcm.flags;
-			assembledPcm.bytesPerSample = sourcePcm.bytesPerSample;
-			drawWacVoiceLockEditorWaveform(*screen, assembledPcm,
-				editorWaveform, editorSegments);
-		}
-		if (playbackProgressActive && playbackProgressColumn >= 0 &&
-				!playbackProgressBounds.isEmpty()) {
-			const int x = playbackProgressBounds.left +
-				MIN<int>(playbackProgressColumn,
-					playbackProgressBounds.width() - 1);
-			for (int y = playbackProgressBounds.top;
-					y < playbackProgressBounds.bottom; ++y)
-				*((byte *)screen->getBasePtr(x, y)) =
-					kWacVoiceLockMarkerColor;
-		}
-		g_system->unlockScreen();
-
-		const uint buttonCount = editorAvailable ? 3 : 1;
-		for (uint button = 0; button < buttonCount; ++button) {
-			const uint frame = button * 2 +
-				((int)button == pressedButton ? 1 : 0);
-			_database->drawBitmap(buttonAssets[frame], buttonBounds[button].left,
-				buttonBounds[button].top);
-		}
-		if (draggingSourceSelection && sourceSelectionActive) {
-			// InitializeTransientPresentationOverlay at 0x29caf retains the
-			// selected source pixels captured by display opcode 0x18 as a
-			// top-level drag presentation. Draw the captured pixels after the
-			// controls so it remains visible while crossing them.
-			screen = g_system->lockScreen();
-			if (!screen || screen->format.bytesPerPixel != 1) {
-				if (screen)
-					g_system->unlockScreen();
-				return false;
-			}
-			const int destinationLeft =
-				sourceSelectionDragPosition.x - sourceSelectionDragOffsetX;
-			const int destinationTop =
-				sourceSelectionDragPosition.y - sourceSelectionDragOffsetY;
-			sourceSelectionDragBackingWidth = sourceSelectionDragWidth;
-			sourceSelectionDragBackingHeight = sourceSelectionDragHeight;
-			sourceSelectionDragBackingPosition =
-				Common::Point(destinationLeft, destinationTop);
-			captureWacVoiceLockPixels(*screen,
-				sourceSelectionDragBackingPixels,
-				sourceSelectionDragBackingWidth,
-				sourceSelectionDragBackingHeight,
-				destinationLeft, destinationTop);
-			blitWacVoiceLockPixels(*screen, sourceSelectionDragPixels,
-				sourceSelectionDragWidth, sourceSelectionDragHeight,
-				destinationLeft, destinationTop);
-			g_system->unlockScreen();
-			debugC(3, kDebugWac,
-				"Ripper: WAC voice-lock captured transient drag backing position=%d,%d size=%dx%d function=UpdateTransientPresentationOverlay@0x2a1ff",
-				destinationLeft, destinationTop,
-				sourceSelectionDragBackingWidth,
-				sourceSelectionDragBackingHeight);
-		}
-		_database->engine()->getCursor()->refresh();
-		g_system->updateScreen();
-		return true;
-	};
-
-	if (!drawPresentation())
+	if (!renderer.drawPresentation(sourcePcm, state))
 		return kNoAction;
 	_database->engine()->getInput()->discardMouseTransitions();
 	_database->engine()->getCursor()->setSelectionIndex(kWacDefaultCursor);
@@ -891,10 +376,7 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 			redraw = true;
 		} else if (draggingSourceSelection &&
 				(mouse.released & kMouseButtonLeft) != 0) {
-			draggingSourceSelection = false;
-			sourceSelectionDragPixels.clear();
-			sourceSelectionDragWidth = 0;
-			sourceSelectionDragHeight = 0;
+			state.resetSourceDrag();
 			// The retail transient overlay is destroyed at 0x252d6 and its
 			// audio span is appended only after the editor-control bounds
 			// check at 0x25307 succeeds.
@@ -984,15 +466,9 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 				redraw = true;
 				break;
 			}
-			case 1:
-				_database->engine()->getMedia()->stopSoundEffect(audioHandle);
-				validateAfterPlayback = false;
-				playbackProgressActive = false;
-				playbackProgressColumn = -1;
-				selections.clear();
-				editorSegments.clear();
-				assembledAudio.clear();
-				sourcePanelActive = false;
+		case 1:
+			_database->engine()->getMedia()->stopSoundEffect(audioHandle);
+			state.clearEditor();
 				debugC(2, kDebugWac,
 					"Ripper: WAC voice-lock cleared assembled audio");
 				redraw = true;
@@ -1007,10 +483,7 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 					quantized = true;
 					sourceSelectionActive = false;
 					selectingSource = false;
-					draggingSourceSelection = false;
-					sourceSelectionDragPixels.clear();
-					sourceSelectionDragWidth = 0;
-					sourceSelectionDragHeight = 0;
+					state.resetSourceDrag();
 					sourcePanelActive = true;
 					validateAfterPlayback = false;
 					_database->engine()->getMedia()->playSoundEffect(
@@ -1098,7 +571,7 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 		}
 
 		if (redraw) {
-			if (!drawPresentation())
+			if (!renderer.drawPresentation(sourcePcm, state))
 				break;
 			redraw = false;
 		}
@@ -1107,7 +580,7 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 	}
 
 	_database->engine()->getMedia()->stopSoundEffect(audioHandle);
-	if (!restoreSourceSelectionDragBacking())
+	if (!renderer.restoreSourceSelectionDragBacking(state))
 		warning("Ripper: could not restore WAC voice-lock transient drag backing");
 	if (solved) {
 		_database->engine()->getCursor()->setVisible(false);
