@@ -25,6 +25,7 @@
 #include "common/rect.h"
 
 #include "ripper/resources.h"
+#include "ripper/wac/database_catalog.h"
 
 namespace Ripper {
 
@@ -52,7 +53,9 @@ private:
 
 	struct DatabaseEntry {
 		Common::String label;
-		byte originalIndex;
+		const WacDatabaseCatalogEntry *catalog;
+
+		byte originalIndex() const { return catalog->originalIndex; }
 	};
 
 	void serviceDatabaseCornerAnimation(bool textPanelActive = false);

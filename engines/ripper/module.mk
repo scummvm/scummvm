@@ -58,6 +58,7 @@ MODULE_OBJS := \
 	toolbar.o \
 	wac/broken_mug.o \
 	wac/database.o \
+	wac/database_catalog.o \
 	wac/journal.o \
 	wac/still_image.o \
 	wac/voice_lock.o \
