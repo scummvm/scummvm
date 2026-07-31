@@ -49,20 +49,22 @@ const char *mediaFormatName(MediaFormat format) {
 	}
 }
 
-Common::String describeSmackerPlaybackRequest(const SmackerPlaybackRequest &request) {
+Common::String describeSmackerPlaybackPlan(const SmackerPlaybackPlan &plan) {
 	return Common::String::format(
 		"route=%s position=%d,%d originY=%d scale=%u controls=%d "
 		"sceneUi=%d palette=interface:%d,wac:%d,remember:%d "
 		"frames=%u..%u previewLimit=%u loop=start:%u,fromStart:%d,bounded:%u "
 		"timeline=%d callback=%d transparent=%d",
-		request.retailRoute, request.x, request.y, request.originY,
-		request.displayScale, request.allowEscSpace, request.serviceSceneUi,
-		request.patchInterfacePalette, request.patchWacMediaPalette,
-		request.rememberVideoPalette, request.firstFrame, request.lastFrame,
-		request.frameLimit, request.loopStartFrame, request.loopFromStart,
-		request.boundedLoopStartFrame,
-		request.frameAudioOffsets != nullptr && request.audioByteRate != 0,
-		request.sequenceCallback != nullptr, request.transparentFirstPixel);
+		plan.retailRoute, plan.placement.x, plan.placement.y,
+		plan.placement.originY, plan.placement.displayScale,
+		plan.input.allowEscSpace, plan.input.serviceSceneUi,
+		plan.palette.patchInterfacePalette, plan.palette.patchWacMediaPalette,
+		plan.palette.rememberVideoPalette, plan.frames.firstFrame,
+		plan.frames.lastFrame, plan.frames.frameLimit, plan.loop.loopStartFrame,
+		plan.loop.loopFromStart, plan.loop.boundedLoopStartFrame,
+		plan.timeline.frameAudioOffsets != nullptr && plan.timeline.audioByteRate != 0,
+		plan.callback.sequenceCallback != nullptr,
+		plan.rendering.transparentFirstPixel);
 }
 
 } // End of namespace Ripper

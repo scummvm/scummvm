@@ -1717,7 +1717,9 @@
 - Direct `SMK2` assets use the game's Smacker path. The ScummVM engine should
   delegate these streams to `Video::SmackerDecoder`. Presentation entry points
   describe palette, placement, timeline, looping, callback, and segment policy
-  through `SmackerPlaybackRequest` before entering the shared decoder loop.
+  through a `SmackerPlaybackPlan` before entering the shared decoder loop. The
+  plan groups placement, input, timeline, palette, frame, loop, callback, and
+  rendering policy so a call site exposes which retail behavior it overrides.
 - Files such as `PROINT.AVI` and `PROLOG1.AVI` are `IAVF2.00` packetized media,
   not RIFF AVI. `RunPacketizedMediaPlaybackCore` at `0x5b592` demultiplexes
   descriptor records containing mono signed 16-bit PCM and segmented Smacker
