@@ -584,6 +584,15 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 		warning("Ripper: could not restore WAC voice-lock transient drag backing");
 	if (solved) {
 		_database->engine()->getCursor()->setVisible(false);
+		// RunWacVoiceLockPuzzleScene at 0x24ba4 dispatches display command
+		// 0x14 to ClearGenericVideoLogicalPage at 0x45ed8 immediately before
+		// ACCESED.AVI. The movie owns only the middle 640x300 viewport, so clear
+		// the retained 640x400 page first instead of leaving WAC pixels in the
+		// uncovered top and bottom bands.
+		g_system->fillScreen(0);
+		g_system->updateScreen();
+		debugC(2, kDebugWac,
+			"Ripper: cleared WAC voice-lock completion display before media='accesed.avi' bounds=0,0,640,400 command=0x14 function=ClearGenericVideoLogicalPage@0x45ed8");
 		const bool played =
 			_database->engine()->getMedia()->play("accesed.avi", true);
 		_database->engine()->getMilestones()->set(
