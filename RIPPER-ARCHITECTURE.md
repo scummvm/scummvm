@@ -687,6 +687,11 @@
   level byte at `0x8a177`. This is a reusable combat controller rather than
   three unrelated scene handlers; ScummVM keeps it under `combat/`, with the
   concrete Mechini encounter binding action 15 to the shared controller.
+  `combat/resources.cpp` owns INI, DAT, PRJ, and bitmap-set loading for that
+  controller; `combat.cpp` owns the active encounter, input, timing, audio,
+  meter, hit, effect, and rendering loop. Both remain methods of the same
+  `CombatEncounter`, so this source split does not add a runtime abstraction
+  between the retail resource tables and their consumers.
 - `RunCombatEncounterScene` reads the combat level once at `0x31563` and uses
   its value `1`, `2`, or `3` only to format the numbered encounter INI. There
   is no separate difficulty multiplier. `LoadCombatEncounterResourceSet` at

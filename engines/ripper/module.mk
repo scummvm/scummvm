@@ -3,6 +3,7 @@ MODULE := engines/ripper
 MODULE_OBJS := \
 	briefing.o \
 	combat/combat.o \
+	combat/resources.o \
 	combat/mechini.o \
 	console.o \
 	controls.o \
