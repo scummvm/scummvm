@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	input.o \
 	inventory.o \
 	media.o \
+	media/plan.o \
 	menu.o \
 	metaengine.o \
 	milestones.o \

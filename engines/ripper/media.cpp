@@ -354,6 +354,8 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 
 bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::String &name,
 		const SmackerPlaybackRequest &request) {
+	debugC(2, kDebugVideo, "Ripper: Smacker playback plan media='%s' %s",
+		name.c_str(), describeSmackerPlaybackRequest(request).c_str());
 	const bool allowEscSpace = request.allowEscSpace;
 	int x = request.x;
 	int y = request.y;
@@ -960,6 +962,7 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 			frameAudioOffsets = &relativeAudioOffsets;
 		}
 		SmackerPlaybackRequest request;
+		request.retailRoute = "RunPacketizedMediaPlaybackCore@0x5b592";
 		request.allowEscSpace = allowEscSpace;
 		request.x = segmentX;
 		request.y = segmentY;
