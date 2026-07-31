@@ -57,11 +57,28 @@ char loader_last[14] = "";
 
 
 LoaderReadStream::LoaderReadStream(LoadHandle load, long size) {
-	if (size < 0)
-		size = load->decompress_size;
+	byte *data;
 
-	byte *data = (byte *)malloc(size);
-	(void)loader_read(data, 1, size, load);
+	if (size < 0) {
+		// No explicit size was given, so the caller wants the whole file. The
+		// pack list may hold multiple index entries (e.g. header/data split into
+		// separate compressed sections), and loader_read() only ever decompresses
+		// one entry per call. Read each remaining entry in turn using its own
+		// declared uncompressed size, advancing the destination pointer, instead
+		// of asking for the full decompressed size in a single call.
+		size = load->decompress_size;
+		data = (byte *)malloc(size);
+		byte *dest = data;
+
+		while (load->pack_list_marker < (int)load->pack.num_records) {
+			long entrySize = load->pack.strategy[load->pack_list_marker].size;
+			(void)loader_read(dest, 1, entrySize, load);
+			dest += entrySize;
+		}
+	} else {
+		data = (byte *)malloc(size);
+		(void)loader_read(data, 1, size, load);
+	}
 
 	_data = new Common::MemoryReadStream(data, size, DisposeAfterUse::YES);
 }
