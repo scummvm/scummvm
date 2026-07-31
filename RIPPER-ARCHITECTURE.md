@@ -62,6 +62,9 @@
   extraction and bitmap-sequence decode paths after their owning
   `AssetLibrary` has selected the member. The two entry points retain distinct
   source labels in diagnostics and do not merge container search order.
+  Standalone puzzle PCX streams use that same indexed PCX codec only after
+  their puzzle-specific path or nested-library lookup; each puzzle retains its
+  own required dimensions and palette-size checks.
 - `SCRIPT.PL` contains compiled `.RUN` scene scripts. The default entry is
   `RIPPER.RUN`, which leads to the initial `BA0.RUN` scene. Binary header,
   frame/interaction table, argument-layout, and callback decoding live in
