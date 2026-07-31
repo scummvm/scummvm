@@ -36,6 +36,7 @@ class MediaPlayer;
 class Milestones;
 class ModalDialogManager;
 class ResourceManager;
+class SceneAudioManager;
 class ScriptManager;
 class RipperSettings;
 class ToolbarManager;
@@ -65,6 +66,7 @@ public:
 	Milestones *getMilestones() const { return _milestones.get(); }
 	ModalDialogManager *getModalDialog() const { return _modalDialog.get(); }
 	ResourceManager *getResources() const { return _resources.get(); }
+	SceneAudioManager *getSceneAudio() const { return _sceneAudio.get(); }
 	ScriptManager *getScripts() const { return _scripts.get(); }
 	RipperSettings *getSettings() const { return _settings.get(); }
 	ToolbarManager *getToolbar() const { return _toolbar.get(); }
@@ -83,6 +85,7 @@ private:
 	Common::ScopedPtr<CyberManager> _cyber;
 	Common::ScopedPtr<InputManager> _input;
 	Common::ScopedPtr<Inventory> _inventory;
+	Common::ScopedPtr<SceneAudioManager> _sceneAudio;
 	Common::ScopedPtr<MediaPlayer> _media;
 	Common::ScopedPtr<Milestones> _milestones;
 	Common::ScopedPtr<ModalDialogManager> _modalDialog;

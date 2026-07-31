@@ -23,12 +23,10 @@
 
 #include "audio/mixer.h"
 #include "common/array.h"
-#include "common/ptr.h"
 #include "common/str.h"
 
 namespace Common {
 class SeekableReadStream;
-class Serializer;
 }
 
 namespace Video {
@@ -39,7 +37,6 @@ namespace Ripper {
 
 class InputManager;
 class RipperEngine;
-class SceneAudioManager;
 
 enum MediaFormat {
 	kMediaFormatUnknown,
@@ -196,18 +193,6 @@ public:
 	bool playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
 		bool loopUntilInput = false, bool allowEscSpace = false,
 		MediaSequenceCallback *callback = nullptr, uint16 *command = nullptr);
-	bool loadAudio(const Common::String &path, bool preserve);
-	bool configureAudio(const Common::String &key, uint volumePercent, uint triggerFrame,
-		byte control);
-	void clearAudio(const Common::String &key);
-	void stopAudio(const Common::String &key);
-	void setAudioVolume(const Common::String &key, uint targetVolumePercent,
-		uint startFrame, uint timing);
-	void serviceSceneAudio(uint frame);
-	void resetSceneAudioTriggers();
-	void clearSceneAudio(bool includePreserved);
-	bool isSceneAudioActive() const;
-	bool syncGame(Common::Serializer &serializer);
 	void pauseActiveMedia(bool pause);
 
 private:
@@ -267,7 +252,6 @@ private:
 	RipperEngine *_engine;
 	InputManager *_input;
 	Audio::Mixer *_mixer;
-	Common::ScopedPtr<SceneAudioManager> _sceneAudio;
 	Common::Array<ActivePlayback> _activePlaybacks;
 	bool _stopSceneOnMouse;
 };

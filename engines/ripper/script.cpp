@@ -39,6 +39,7 @@
 #include "ripper/modal_dialog.h"
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
+#include "ripper/scene_audio.h"
 #include "ripper/scene_dispatcher.h"
 #include "ripper/toolbar.h"
 #include "ripper/world_map.h"
@@ -851,7 +852,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			if (command.opcode == kStartDialogue)
 				debugC(2, kDebugAudio,
 					"Ripper: dialogue chooser retained scene audio active=%d",
-					_engine->getMedia()->isSceneAudioActive());
+					_engine->getSceneAudio()->isActive());
 			break;
 		}
 
@@ -908,7 +909,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				return false;
 			const Common::String audioPath = script.getString(command.arguments[0].value);
 			const bool preserve = (command.arguments[1].value & 1) != 0;
-			if (!_engine->getMedia()->loadAudio(audioPath, preserve))
+			if (!_engine->getSceneAudio()->load(audioPath, preserve))
 				return false;
 			break;
 		}
@@ -920,7 +921,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			const uint volume = command.arguments[1].value == 0 ? 100 : command.arguments[1].value & 0xff;
 			const uint trigger = command.arguments[2].value & 0xffff;
 			const uint control = command.arguments[3].value & 0xff;
-			if (!_engine->getMedia()->configureAudio(key, volume, trigger, control))
+			if (!_engine->getSceneAudio()->configure(key, volume, trigger, control))
 				return false;
 			break;
 		}
@@ -931,9 +932,9 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				return false;
 			const Common::String key = argumentString(command.arguments[0]);
 			if (command.opcode == kClearAudio)
-				_engine->getMedia()->clearAudio(key);
+				_engine->getSceneAudio()->clear(key);
 			else
-				_engine->getMedia()->stopAudio(key);
+				_engine->getSceneAudio()->stop(key);
 			break;
 		}
 
@@ -941,7 +942,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			if (command.arguments.size() < 4)
 				return false;
 			const Common::String key = argumentString(command.arguments[0]);
-			_engine->getMedia()->setAudioVolume(key,
+			_engine->getSceneAudio()->setVolume(key,
 				command.arguments[1].value & 0xff,
 				command.arguments[2].value & 0xffff,
 				command.arguments[3].value & 0xffff);
@@ -1168,7 +1169,7 @@ bool ScriptManager::performPendingSceneTransition() {
 		_runtime.clearPreservedAudioOnTransition);
 	// RunSceneScriptLoop at 0x124e9 retires non-preserved slots at every scene
 	// handoff. Concurrent and world-map handoffs clear preserve bits first.
-	_engine->getMedia()->clearSceneAudio(_runtime.clearPreservedAudioOnTransition);
+	_engine->getSceneAudio()->clearAll(_runtime.clearPreservedAudioOnTransition);
 	_runtime.clearPreservedAudioOnTransition = false;
 	_engine->getToolbar()->leave();
 	_dialogue->dismissForSceneTransition("scene-runtime-transition");
@@ -1223,7 +1224,7 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 		if (result == -3 && !_runtime.pendingSceneMember.empty())
 			return performPendingSceneTransition();
 		if (result == -2) {
-			_engine->getMedia()->resetSceneAudioTriggers();
+			_engine->getSceneAudio()->resetTriggers();
 			nextFrame = callbackFrame;
 			continue;
 		}
@@ -1323,7 +1324,7 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 					return true;
 				if (result == -2) {
 					_runtime.awaitingInteraction = false;
-					_engine->getMedia()->resetSceneAudioTriggers();
+					_engine->getSceneAudio()->resetTriggers();
 					nextFrame = callbackFrame;
 					continue;
 				}
@@ -1353,7 +1354,7 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 					return performPendingSceneTransition();
 				if (result == -2) {
 					_runtime.awaitingInteraction = false;
-					_engine->getMedia()->resetSceneAudioTriggers();
+					_engine->getSceneAudio()->resetTriggers();
 					nextFrame = callbackFrame;
 					continue;
 				}
@@ -1389,7 +1390,7 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 				_runtime.activeScript.getMemberName().c_str(), label.c_str(), result);
 			return false;
 		}
-		_engine->getMedia()->resetSceneAudioTriggers();
+		_engine->getSceneAudio()->resetTriggers();
 		nextFrame = callbackFrame;
 		if (nextFrame == _runtime.activeFrame) {
 			debugC(2, kDebugScene,
@@ -1467,7 +1468,7 @@ bool ScriptManager::serviceCyberKeyboardCommand() {
 			interactionIndex, result);
 		return false;
 	}
-	_engine->getMedia()->resetSceneAudioTriggers();
+	_engine->getSceneAudio()->resetTriggers();
 	return advanceBa0ToFrame(nextFrame);
 }
 
@@ -1516,7 +1517,7 @@ bool ScriptManager::serviceScene() {
 				debugC(1, kDebugDialogue,
 					"Ripper: dialogue keyboard chooser returned control=-2 nextFrame=%u",
 					dialogueFrame);
-				_engine->getMedia()->resetSceneAudioTriggers();
+				_engine->getSceneAudio()->resetTriggers();
 				return advanceBa0ToFrame(dialogueFrame);
 			}
 		}
@@ -1533,7 +1534,7 @@ bool ScriptManager::serviceScene() {
 			_engine->getCursor()->setVisible(false);
 			debugC(1, kDebugDialogue,
 				"Ripper: dialogue chooser returned control=-2 nextFrame=%u", dialogueFrame);
-			_engine->getMedia()->resetSceneAudioTriggers();
+			_engine->getSceneAudio()->resetTriggers();
 			return advanceBa0ToFrame(dialogueFrame);
 		}
 		_dialogue->draw();
@@ -1644,7 +1645,7 @@ bool ScriptManager::serviceScene() {
 			"Ripper: active scene script='%s' yielded to concurrent script='%s' entry='%s' nextFrame=%u",
 			_runtime.activeScript.getMemberName().c_str(), _runtime.concurrentScript.getMemberName().c_str(),
 			_runtime.concurrentEntryLabel.c_str(), nextFrame);
-		_engine->getMedia()->resetSceneAudioTriggers();
+		_engine->getSceneAudio()->resetTriggers();
 		return advanceBa0ToFrame(nextFrame);
 	}
 

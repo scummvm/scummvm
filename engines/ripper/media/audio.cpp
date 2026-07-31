@@ -24,14 +24,12 @@
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
 #include "common/debug.h"
-#include "common/serializer.h"
 #include "common/system.h"
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
 #include "ripper/input.h"
 #include "ripper/ripper.h"
-#include "ripper/scene_audio.h"
 
 namespace Ripper {
 
@@ -40,48 +38,6 @@ namespace {
 static const uint kBlockingAudioCursor = 0x13;
 
 } // End of anonymous namespace
-
-bool MediaPlayer::loadAudio(const Common::String &path, bool preserve) {
-	return _sceneAudio->load(path, preserve);
-}
-
-bool MediaPlayer::configureAudio(const Common::String &key, uint volumePercent,
-		uint triggerFrame, byte control) {
-	return _sceneAudio->configure(key, volumePercent, triggerFrame, control);
-}
-
-void MediaPlayer::clearAudio(const Common::String &key) {
-	_sceneAudio->clear(key);
-}
-
-void MediaPlayer::stopAudio(const Common::String &key) {
-	_sceneAudio->stop(key);
-}
-
-void MediaPlayer::setAudioVolume(const Common::String &key, uint targetVolumePercent,
-		uint startFrame, uint timing) {
-	_sceneAudio->setVolume(key, targetVolumePercent, startFrame, timing);
-}
-
-void MediaPlayer::serviceSceneAudio(uint frame) {
-	_sceneAudio->service(frame);
-}
-
-void MediaPlayer::resetSceneAudioTriggers() {
-	_sceneAudio->resetTriggers();
-}
-
-void MediaPlayer::clearSceneAudio(bool includePreserved) {
-	_sceneAudio->clearAll(includePreserved);
-}
-
-bool MediaPlayer::isSceneAudioActive() const {
-	return _sceneAudio->isActive();
-}
-
-bool MediaPlayer::syncGame(Common::Serializer &serializer) {
-	return _sceneAudio->syncGame(serializer);
-}
 
 bool MediaPlayer::playBlockingAudio(const Common::String &path) {
 	Common::String source;
