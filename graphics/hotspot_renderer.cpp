@@ -113,6 +113,15 @@ void HotspotRenderer::drawHotspotLabel(Surface *surface, int overlayX, int overl
 		(int16)MAX(1, (int)(baseTextHeight * _sizeScale)));
 	textRect.moveTo(overlayX + _markerSize / 2 + gap, overlayY - textRect.height() / 2);
 
+	// swap to left side if the text would go off the right edge of the overlay
+	if (textRect.right + padX > overlayBounds.right)
+		textRect.moveTo(overlayX - _markerSize / 2 - gap - textRect.width(), textRect.top);
+
+	if (textRect.bottom + padY > overlayBounds.bottom)
+		textRect.moveTo(textRect.left, overlayBounds.bottom - textRect.height() - padY);
+	if (textRect.top - padY < overlayBounds.top)
+		textRect.moveTo(textRect.left, overlayBounds.top + padY);
+
 	Common::Rect boxRect((int16)(textRect.left - padX), (int16)(textRect.top - padY),
 		(int16)(textRect.right + padX), (int16)(textRect.bottom + padY));
 
