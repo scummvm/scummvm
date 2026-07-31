@@ -538,26 +538,30 @@ static void inter_show_all_inven() {
  * work buffer.
  */
 static void inter_show_all_actions() {
-	int count;
+	int count, id;
 
 	if (active_inven >= 0) {
 		for (count = 0; count < (int)object[inven[active_inven]].num_verbs; count++) {
-			inter_show_word(STROKE_ACTION, count);
-#if 0
-			int id = object[inven[active_inven]].vocab_id;
-			id = object_named(id);
-			// id = object[inven[active_inven]].verb[count].count;
-			if (id == 8) {  // pid doll
-				if (global[86]) {  // heal_verbs_visible
-					inter_show_word(STROKE_ACTION, count);
-				} else if (count == 0) {
+			if (g_engine->getGameID() == GType_Dragonsphere) {
+				// Special handling for Pid Doll
+				id = object[inven[active_inven]].vocab_id;
+				id = object_named(id);
+
+				if (id == Dragonsphere::pid_doll) {
+					if (global[Dragonsphere::heal_verbs_visible]) {
+						// heal_verbs_visible
+						inter_show_word(STROKE_ACTION, count);
+					} else if (count == 0) {
+						inter_show_word(STROKE_ACTION, count);
+					}
+
+				} else {
 					inter_show_word(STROKE_ACTION, count);
 				}
-
 			} else {
+				// All other games
 				inter_show_word(STROKE_ACTION, count);
 			}
-#endif
 		}
 	}
 }
