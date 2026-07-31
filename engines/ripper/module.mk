@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	menu.o \
 	metaengine.o \
 	milestones.o \
+	modal/presentation.o \
 	modal_dialog.o \
 	options_panel.o \
 	puzzles/board_arrangement.o \
@@ -45,6 +46,7 @@ MODULE_OBJS := \
 	saveload.o \
 	scene_dispatcher.o \
 	scene_audio.o \
+	script/compiled_script.o \
 	scenes/ebz2s_scene.o \
 	scenes/gym_scene.o \
 	scenes/librarian_scene.o \

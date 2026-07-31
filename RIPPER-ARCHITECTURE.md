@@ -55,7 +55,10 @@
   enumeration, while a normalized-name index provides exact lookup and rejects
   duplicate names during parsing.
 - `SCRIPT.PL` contains compiled `.RUN` scene scripts. The default entry is
-  `RIPPER.RUN`, which leads to the initial `BA0.RUN` scene.
+  `RIPPER.RUN`, which leads to the initial `BA0.RUN` scene. Binary header,
+  frame/interaction table, argument-layout, and callback decoding live in
+  `script/compiled_script.cpp`; `script.cpp` owns runtime state and command
+  execution. This keeps parser validation separate from scene-loop mutation.
 - Cursor `.PL` members are nested legacy asset libraries whose entries contain
   the game's custom compressed bitmap format. `DecodeCustomBitmapAsset` at
   `0x53f60` reads the 0x1c-byte bitmap header and
@@ -1127,6 +1130,10 @@
   Enter before restoring the underlying indexed framebuffer. The general help
   wrapper supplies the `MENUB0` through `MENUB14` template and a 300-pixel
   width.
+  Retained panel measurement, wrapping, frame/scroll rendering, and WAC panel
+  variants live in `modal/presentation.cpp`; `modal_dialog.cpp` owns resource
+  initialization, text-entry state, and modal input loops. Both use the single
+  retail layout constant set in `modal/constants.h`.
   RIPPER's bitmap descriptors and presentation coordinates use
   vertical/horizontal order. After translation to screen x/y,
   `ResolveChooserFrameTileIndex` at `0x55250` selects `MENUB0` through `MENUB8`
