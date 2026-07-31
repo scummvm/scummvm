@@ -3043,12 +3043,21 @@ void DisplayMan::drawWallSetBitmapDOS(int16 zoneIndex, int16 normalNegIndex, int
 	Box destBox(xyz[0], xyz[0] + xyz[2] - 1, xyz[1], xyz[1] + xyz[3] - 1);
 	uint16 srcX = s2._x + inOutX;
 	uint16 srcY = s2._y + inOutY;
+	if (zoneIndex == kDMZoneWallD0L && destBox._rect.right > 30)
+		destBox._rect.right = 30;
+	if (zoneIndex == kDMZoneWallD0R) {
+		if (destBox._rect.left < 193)
+			destBox._rect.left = 193;
+		srcX += 1; // Offset +1 compensates for RecordType 2 right-alignment math
+	}
 	uint16 byteWidth = bmpPixelWidth / 2;
 	Color transp = withoutTransparency ? kDMColorNoTransparency : kDMColorFlesh;
 
 	if (_useFlippedWallAndFootprintsBitmap) {
 		copyBitmapAndFlipHorizontal(bmp, _tmpBitmap, byteWidth, bmpPixelHeight);
-		uint16 flippedSrcX = bmpPixelWidth - srcX - xyz[2];
+		uint16 flippedSrcX = bmpPixelWidth - (s2._x + inOutX) - xyz[2];
+		if (zoneIndex == kDMZoneWallD0R)
+			flippedSrcX += 1;
 		blitToBitmap(_tmpBitmap, _bitmapViewport, destBox, flippedSrcX, srcY, byteWidth, k112_byteWidthViewport, transp, bmpPixelHeight, k136_heightViewport);
 	} else {
 		blitToBitmap(bmp, _bitmapViewport, destBox, srcX, srcY, byteWidth, k112_byteWidthViewport, transp, bmpPixelHeight, k136_heightViewport);
