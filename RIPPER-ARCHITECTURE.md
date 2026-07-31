@@ -1246,6 +1246,10 @@
   named/milestone flags `0x46 + entry` as availability bits and game-text IDs
   `0xdc + entry` as labels. It stores the original entry byte separately from
   the visible chooser row, so locked entries do not change dispatch IDs. The
+  reimplementation records those three columns and the recovered implemented
+  handler mapping in `wac/database_catalog.cpp`; `WacDatabaseSession` owns
+  filtering, presentation state, and handler execution rather than duplicating
+  entry-ID tests throughout those responsibilities. The
   chooser control ID is `0x73a`; the call site supplies x=400, y=50, width=190,
   and height=282. `InitializeSharedPresentationTemplates` at `0x1196f` gives
   this chooser its own `wacmnu0` through `wacmnu15` skin and `small.fnt`.
