@@ -166,6 +166,14 @@ public:
 	void pauseActiveMedia(bool pause);
 
 private:
+	enum SourcePolicy {
+		kSourceDirectFile,
+		kSourceConfiguredPath,
+		kSourceInterfaceLibrary,
+		kSourceSoundEffect,
+		kSourceBlockingAudio
+	};
+
 	struct ActivePlayback {
 		Video::SmackerDecoder *decoder;
 		Common::String name;
@@ -189,6 +197,11 @@ private:
 	bool playAudioClip(const Common::String &path, Audio::SoundHandle &handle,
 		Audio::Mixer::SoundType soundType, uint volumePercent, bool loop,
 		const char *description);
+	Common::SeekableReadStream *openSource(const Common::String &path,
+		SourcePolicy policy, Common::String &source) const;
+	bool playValidatedSmacker(Common::SeekableReadStream *stream,
+		const Common::String &name, const char *description,
+		const SmackerPlaybackRequest &request);
 	bool playScaledInteractiveSequence(const Common::String &path,
 		const char *description, MediaSequenceCallback *callback, uint16 *command,
 		uint loopStartFrame = 0);
