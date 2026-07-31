@@ -23,6 +23,7 @@ namespace Comfy {
 
 const PlainGameDescriptor comfyGames[] = {
 	{ "comfyland", "ComfyLand" },
+	{ "christmas", "Christmas in ComfyLand" },
 	{ "boo", "Comfy Touch-n-See: Didi and Boo" },
 	{ "first", "Comfy Touch-n-See: The First Step" },
 	{ "match", "Comfy Max: A Purrfect Match" },
@@ -70,6 +71,24 @@ const ComfyGameDescription gameDescriptions[] = {
 		3,
 		0,
 		0x100
+	},
+
+	{
+		{
+		"christmas",
+		nullptr,
+		AD_ENTRY3s("CHRISTMS/ENGLISH/COMFY.OBJ",    "14d538b948297ddafc14d7a5977de223", 71680,
+				   "CHRISTMS/ENGLISH/MIDIFILE.DAT", "3920eede90b15a36ffb57f7c634d50e7", 155719,
+				   "INTRO/COMFY.OBJ",               "b8fb0c9d325ec4db8ce37ef0d08da130", 4096),
+		Common::UNK_LANG,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO3(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO,
+			GAMEOPTION_USE_IMGUI_KEYBOARD)
+		},
+		1,
+		0,
+		0
 	},
 
 	{

@@ -79,6 +79,9 @@ void ComfyEngine::gameConfigInit() {
 	if (!strcmp(_game->desc.gameId, "comfyland")) {
 		_gameDirectory = Common::Path("COMFY1");
 		_introDirectory = Common::Path("INTRO");
+	} else if (!strcmp(_game->desc.gameId, "christmas")) {
+		_gameDirectory = Common::Path("CHRISTMS");
+		_introDirectory = Common::Path("INTRO");
 	} else if (!strcmp(_game->desc.gameId, "boo")) {
 		_gameDirectory = Common::Path("BOO");
 		_introDirectory = Common::Path("FINTRO");
