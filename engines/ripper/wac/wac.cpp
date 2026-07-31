@@ -29,6 +29,7 @@
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
+#include "ripper/display.h"
 #include "ripper/input.h"
 #include "ripper/modal_dialog.h"
 #include "ripper/ripper.h"
@@ -52,18 +53,6 @@ static const uint kWacDatabaseSkinFrameCount = 16;
 static const uint kWacFrontEndHelpResource = 404;
 static const uint kWacNotebookTitleResource = 0x49;
 static const uint kWacNotebookMaximumBytes = 0x27c0;
-
-static void blitBitmap(Graphics::Surface *screen, const BitmapAssetFrame &bitmap,
-		int x, int y) {
-	for (uint row = 0; row < bitmap.height; ++row) {
-		byte *destination = (byte *)screen->getBasePtr(x, y + row);
-		const byte *source = bitmap.pixels.data() + row * bitmap.width;
-		for (uint column = 0; column < bitmap.width; ++column) {
-			if (source[column] != bitmap.transparentColor)
-				destination[column] = source[column];
-		}
-	}
-}
 
 WacManager::WacManager(RipperEngine *engine) : _engine(engine),
 		_idleWindowLastMillis(0), _hoveredControl(-1), _pressedControl(-1),
@@ -177,7 +166,8 @@ void WacManager::drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const 
 			g_system->unlockScreen();
 		return;
 	}
-	blitBitmap(screen, bitmap, x, y);
+	IndexedBitmapRenderer::drawBitmap((byte *)screen->getPixels(),
+		screen->pitch, bitmap, x, y);
 	g_system->unlockScreen();
 }
 

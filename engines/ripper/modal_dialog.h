@@ -114,8 +114,6 @@ private:
 	void drawText(byte *screen, uint pitch, int x, int y,
 		const Common::String &text, byte color,
 		PresentationStyle style = kMenubPresentation) const;
-	void drawBitmap(byte *screen, uint pitch, const BitmapAssetFrame &bitmap,
-		int x, int y) const;
 	void drawFrame(byte *screen, uint pitch, const Common::Rect &bounds,
 		PresentationStyle style) const;
 	void drawOverflowBar(byte *screen, uint pitch, const Common::Rect &bounds,
