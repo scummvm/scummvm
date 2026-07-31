@@ -1833,3 +1833,7 @@
   scene chooser. The later BA0 frame presentation plays the full sequence.
 - Engine-local media code should remain an adapter or demultiplexer wherever
   packet payloads can be handed to existing ScummVM codecs.
+- Every Smacker entry point emits one stable level-2 playback-plan trace before
+  loading the decoder. The trace names the retail route and records placement,
+  palette, frame-range, loop, input, callback, and timeline policy so structural
+  refactors can be compared without relying on C++ call layout.
