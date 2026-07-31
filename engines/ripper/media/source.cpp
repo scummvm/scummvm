@@ -77,7 +77,7 @@ Common::SeekableReadStream *MediaPlayer::openSource(const Common::String &path,
 
 bool MediaPlayer::playValidatedSmacker(Common::SeekableReadStream *stream,
 		const Common::String &name, const char *description,
-		const SmackerPlaybackRequest &request) {
+		const SmackerPlaybackPlan &plan) {
 	if (!stream) {
 		warning("Ripper: could not open %s Smacker '%s'", description, name.c_str());
 		return false;
@@ -93,8 +93,8 @@ bool MediaPlayer::playValidatedSmacker(Common::SeekableReadStream *stream,
 
 	debugC(3, kDebugVideo,
 		"Ripper: validated %s Smacker media='%s' route=%s",
-		description, name.c_str(), request.retailRoute);
-	return playSmacker(stream, name, request);
+		description, name.c_str(), plan.retailRoute);
+	return playSmacker(stream, name, plan);
 }
 
 } // End of namespace Ripper

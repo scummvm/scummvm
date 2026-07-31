@@ -65,46 +65,91 @@ public:
 	virtual void transformPalette(byte *palette, uint colorCount) const {}
 };
 
-struct SmackerPlaybackRequest {
-	bool allowEscSpace;
+struct SmackerPlacementPolicy {
 	int x;
 	int y;
-	Audio::SoundHandle *externalAudio;
+	int originY;
+	uint displayScale;
+
+	SmackerPlacementPolicy() : x(-1), y(-1), originY(0), displayScale(1) {}
+};
+
+struct SmackerInputPolicy {
+	bool allowEscSpace;
+	bool serviceSceneUi;
 	bool *stoppedByUser;
+	bool *advanceSegment;
+
+	SmackerInputPolicy() : allowEscSpace(false), serviceSceneUi(false),
+		stoppedByUser(nullptr), advanceSegment(nullptr) {}
+};
+
+struct SmackerTimelinePolicy {
+	Audio::SoundHandle *externalAudio;
 	const Common::Array<uint32> *frameAudioOffsets;
 	uint32 audioByteRate;
 	uint32 timelineStartMillis;
-	uint displayScale;
-	bool patchInterfacePalette;
-	uint frameLimit;
-	int originY;
-	bool patchWacMediaPalette;
-	bool serviceSceneUi;
-	bool loopFromStart;
-	bool *advanceSegment;
-	uint loopStartFrame;
-	MediaSequenceCallback *sequenceCallback;
-	uint16 *sequenceCommand;
-	Common::Array<byte> *sourcePalette;
-	bool rememberVideoPalette;
-	uint firstFrame;
-	uint lastFrame;
-	uint boundedLoopStartFrame;
-	bool transparentFirstPixel;
-	const char *retailRoute;
 
-	SmackerPlaybackRequest() : allowEscSpace(false), x(-1), y(-1),
-		externalAudio(nullptr), stoppedByUser(nullptr), frameAudioOffsets(nullptr),
-		audioByteRate(0), timelineStartMillis(0), displayScale(1),
-		patchInterfacePalette(true), frameLimit(0), originY(0),
-		patchWacMediaPalette(false), serviceSceneUi(false), loopFromStart(false),
-		advanceSegment(nullptr), loopStartFrame(0), sequenceCallback(nullptr),
-		sequenceCommand(nullptr), sourcePalette(nullptr), rememberVideoPalette(true),
-		firstFrame(0), lastFrame(0xffffffff), boundedLoopStartFrame(0xffffffff),
-		transparentFirstPixel(false), retailRoute("RunMediaSequence@0x1e516") {}
+	SmackerTimelinePolicy() : externalAudio(nullptr), frameAudioOffsets(nullptr),
+		audioByteRate(0), timelineStartMillis(0) {}
 };
 
-Common::String describeSmackerPlaybackRequest(const SmackerPlaybackRequest &request);
+struct SmackerPalettePolicy {
+	bool patchInterfacePalette;
+	bool patchWacMediaPalette;
+	Common::Array<byte> *sourcePalette;
+	bool rememberVideoPalette;
+
+	SmackerPalettePolicy() : patchInterfacePalette(true),
+		patchWacMediaPalette(false), sourcePalette(nullptr),
+		rememberVideoPalette(true) {}
+};
+
+struct SmackerFramePolicy {
+	uint frameLimit;
+	uint firstFrame;
+	uint lastFrame;
+
+	SmackerFramePolicy() : frameLimit(0), firstFrame(0), lastFrame(0xffffffff) {}
+};
+
+struct SmackerLoopPolicy {
+	bool loopFromStart;
+	uint loopStartFrame;
+	uint boundedLoopStartFrame;
+
+	SmackerLoopPolicy() : loopFromStart(false), loopStartFrame(0),
+		boundedLoopStartFrame(0xffffffff) {}
+};
+
+struct SmackerCallbackPolicy {
+	MediaSequenceCallback *sequenceCallback;
+	uint16 *sequenceCommand;
+
+	SmackerCallbackPolicy() : sequenceCallback(nullptr), sequenceCommand(nullptr) {}
+};
+
+struct SmackerRenderingPolicy {
+	bool transparentFirstPixel;
+
+	SmackerRenderingPolicy() : transparentFirstPixel(false) {}
+};
+
+struct SmackerPlaybackPlan {
+	SmackerPlacementPolicy placement;
+	SmackerInputPolicy input;
+	SmackerTimelinePolicy timeline;
+	SmackerPalettePolicy palette;
+	SmackerFramePolicy frames;
+	SmackerLoopPolicy loop;
+	SmackerCallbackPolicy callback;
+	SmackerRenderingPolicy rendering;
+	const char *retailRoute;
+
+	SmackerPlaybackPlan() : retailRoute("RunMediaSequence@0x1e516") {}
+};
+
+Common::String describeSmackerPlaybackPlan(const SmackerPlaybackPlan &plan);
 
 class MediaPlayer {
 public:
@@ -201,12 +246,12 @@ private:
 		SourcePolicy policy, Common::String &source) const;
 	bool playValidatedSmacker(Common::SeekableReadStream *stream,
 		const Common::String &name, const char *description,
-		const SmackerPlaybackRequest &request);
+		const SmackerPlaybackPlan &plan);
 	bool playScaledInteractiveSequence(const Common::String &path,
 		const char *description, MediaSequenceCallback *callback, uint16 *command,
 		uint loopStartFrame = 0);
 	bool playSmacker(Common::SeekableReadStream *stream, const Common::String &name,
-		const SmackerPlaybackRequest &request);
+		const SmackerPlaybackPlan &plan);
 	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name,
 		bool allowEscSpace, int overrideX = -1, int overrideY = -1,
 		int overrideOriginY = 0, bool serviceSceneUi = false,
