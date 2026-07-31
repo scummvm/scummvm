@@ -40,6 +40,7 @@
 #include "ripper/puzzles/keypad_sequence.h"
 #include "ripper/puzzles/kj_blob_shooter.h"
 #include "ripper/puzzles/rolodex.h"
+#include "ripper/puzzles/shock_lever.h"
 #include "ripper/puzzles/table_gate.h"
 #include "ripper/puzzles/web_grid_shift.h"
 #include "ripper/ripper.h"
@@ -74,7 +75,7 @@ const char *SceneActionDispatcher::actionName(uint action) {
 	case kSceneActionWebGridShiftPuzzle: return "web grid shift puzzle";
 	case 20: return "Horus word puzzle";
 	case 21: return "six-digit code puzzle";
-	case 22: return "shock lever puzzle";
+	case kSceneActionShockLeverPuzzle: return "shock lever puzzle";
 	case 23: return "tarot card puzzle";
 	case 24: return "tube switch scene";
 	case 25: return "KK tile match puzzle";
@@ -253,6 +254,15 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 			"result=%d milestone=%u",
 			result, argument);
 		return result != WebGridShiftPuzzle::kLoadFailed;
+	}
+	if (action == kSceneActionShockLeverPuzzle) {
+		ShockLeverPuzzle puzzle(engine);
+		const ShockLeverPuzzle::Result result = puzzle.run(argument);
+		debugC(1, kDebugPuzzles,
+			"Ripper: shock lever puzzle scene action completed "
+			"result=%d milestone=%u",
+			result, argument);
+		return result != ShockLeverPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionTubeSwitchScene) {
 		TubeScene scene(engine);
