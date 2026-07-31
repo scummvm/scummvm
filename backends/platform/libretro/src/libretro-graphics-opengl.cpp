@@ -55,11 +55,8 @@ void LibretroOpenGLGraphics::overrideCursorScaling() {
 	OpenGL::OpenGLGraphicsManager::recalculateCursorScaling();
 
 	if (_cursor) {
-		const float screenScaleFactorX = (_cursorScaleX == 0 || ! _overlayVisible) ? 1.0f : (float)getWindowHeight() / 200; /* hard coded as base resolution 320x200 is hard coded upstream */
-		const float screenScaleFactorY = (_cursorScaleY == 0 || ! _overlayVisible) ? 1.0f : (float)getWindowHeight() / 200; /* hard coded as base resolution 320x200 is hard coded upstream */
-
-		const float cursorScaleFactorX = screenScaleFactorX * _cursorScaleX;
-		const float cursorScaleFactorY = screenScaleFactorY * _cursorScaleY;
+		const float cursorScaleFactorX = (_cursorScaleX == 0 || ! _overlayVisible) ? 1.0f : (float)getWindowHeight() / 200 * _cursorScaleX; /* hard coded as base resolution 320x200 is hard coded upstream */
+		const float cursorScaleFactorY = (_cursorScaleY == 0 || ! _overlayVisible) ? 1.0f : (float)getWindowHeight() / 200 * _cursorScaleY; /* hard coded as base resolution 320x200 is hard coded upstream */
 
 		_cursorHotspotXScaled = _cursorHotspotX * cursorScaleFactorX;
 		_cursorWidthScaled    = _cursor->getWidth() * cursorScaleFactorX;
