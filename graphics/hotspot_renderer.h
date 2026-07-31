@@ -112,9 +112,9 @@ private:
 	void drawPointMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format);
 	void drawHotspotLabel(Surface *surface, int overlayX, int overlayY, const Common::U32String &label,
 		int overlayWidth, int overlayHeight, const PixelFormat &format, const Font *font);
-	void drawLabelBox(Surface *surface, int x, int y, int w, int h,
+	void drawLabelBox(Surface *surface, const Common::Rect &rect,
 		int overlayWidth, int overlayHeight, const PixelFormat &format);
-	void drawRect(Surface *surface, int x, int y, int w, int h,
+	void drawRect(Surface *surface, const Common::Rect &rect,
 		int overlayWidth, int overlayHeight, const PixelFormat &format);
 
 	void drawLine(Surface *surface, int x1, int y1, int x2, int y2,
