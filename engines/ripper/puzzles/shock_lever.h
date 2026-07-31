@@ -58,6 +58,7 @@ private:
 	bool loadLever(uint lever);
 	bool drawBackground();
 	void drawOverlays();
+	void restoreLeverBackings(byte *screen, uint pitch) const;
 	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
 		int x, int y, bool transparent) const;
 	int findLever(const Common::Point &point) const;
