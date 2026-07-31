@@ -10262,7 +10262,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("kjoeties", "", "Kjoeties.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 2281118, Common::NL_NLD, 800),
 
 	MACGAME1_l("kommissar1", "", "Kommissar Kugelblitz",	   "r:4ea5fc09f79eee6dded94dc40f303779", 196015, Common::DE_DEU, 800),
-	WINGAME1_l("kommissar1", "", "Kommissar Kugelblitz 1.exe", "t:42c26431198fcba313e08d8b62c08094", 2921146, Common::DE_DEU, 800),
+	WINGAME1_l("kommissar1", "", "Setup/Kommissar Kugelblitz 1.exe", "t:42c26431198fcba313e08d8b62c08094", 2921146, Common::DE_DEU, 800),
 
 	MACGAME2_l("kommissar2", "", "Start",				"r:90d18be50181ca3217e8c35a46585fff", 1227771,
 								 "kk2data/abspann.dxr", "d:d1816e1a326d36afb31c472fb128200d", 2956508, Common::DE_DEU, 800),
@@ -10317,7 +10317,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 									  "rock.cdq", "d:f1925162f13a34f8445e71374dd87914", 10430, 800),
 
 	// Original Win executable name is Löwenzahn5.exe
-	WINGAME1t_l("loewe5", "", "xn--lwenzahn5.exe-imb", "9c59833b332f0b9f8ecc97f0aa47ec99", 2386566, Common::DE_DEU, 800),
+	WINGAME1t_l("loewe5", "", "Setup/WinRoot/Terzio/xn--Lwenzahn 5-ecb/xn--lwenzahn5.exe-imb", "9c59833b332f0b9f8ecc97f0aa47ec99", 2386566, Common::DE_DEU, 800),
 
 	// Original filenames contain Löwenzahn 7
 	MACGAME1_l("loewe7", "Classic", "xn--Lwenzahn 7 (classic)-39b", "rt:19e9fb7b215165e975ab6c6fcedc07cd", 195151, Common::DE_DEU, 800),
@@ -10345,7 +10345,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1_l("mathica", "", "Mathica.exe", "t:9b226694c9f0727b6e2d5025ecdb2187", 2240795, Common::RU_RUS, 851),
 
-	WINGAME1t_l("maus2", "", "Maus2.exe", "7b470c720b74aba9d7ac5d0706141a33", 1779882, Common::DE_DEU, 800),
+	WINGAME1t_l("maus2", "", "InData/Maus2.exe", "7b470c720b74aba9d7ac5d0706141a33", 1779882, Common::DE_DEU, 800),
 
 	// Actual game is D7
 	WINGAME2_l("miareading1", "Autorun", "Autorun.exe", "t:62bc020a3b36022da9d53b562acb2e7c", 56594,
@@ -10400,8 +10400,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2t("oscarworkshop", "Windows 95",  "InData/Oscar.exe", "t:7b687a3aca980622d7add3bcdd8bbb37", 2253862,
 									 	    "Data/oscarP&P.dxr", "f:d1907801ae871f98837db8520ec61ff5", 774806, 800),
 
-	WINGAME1t_l("janoschpanama", "", "panama.exe", "25d1a9fb6c8067953888719e07dc29bd", 2384444, Common::DE_DEU, 800),
-	WINGAME1t_l("janoschverkehr", "", "verkehr.exe", "fa749c7798f69f4aa615d35b2b991348", 2294886, Common::DE_DEU, 851),
+	WINGAME1t_l("janoschpanama", "", "Setup/WinRoot/JanoschPanama/panama.exe", "25d1a9fb6c8067953888719e07dc29bd", 2384444, Common::DE_DEU, 800),
+	WINGAME1t_l("janoschverkehr", "", "Setup/WinRoot/JanoschVerkehr/verkehr.exe", "fa749c7798f69f4aa615d35b2b991348", 2294886, Common::DE_DEU, 851),
 
 	WINGAME1("pcformat", "PCF132 CD 02/02", "PCF132.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 4722596, 800),
 
@@ -10804,10 +10804,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("heuther", "", "Huether.exe", "c612aa43e7ef55aa4fd2e1085fb1ef7a", 3353374, 900),
 
 	// Re-releases, released as part of the "Jubiläums-Paket" 25th anniversary bundle
-	WINGAME1t_l("loewe2", "Jubiläums-Paket", "Loewenzahn 2.exe", "861c0ac98a672fc3e537a26b8cc543be", 95970, Common::DE_DEU, 900),
-	WINGAME1t_l("loewe3", "Jubiläums-Paket", "Loewenzahn 3.exe", "46243628b1d79872340993bdc4a156d8", 87791, Common::DE_DEU, 900),
-	WINGAME1t_l("loewe4", "Jubiläums-Paket", "Loewenzahn 4.exe", "fcd7e3e7b9b1080f848c518b6e66d860", 87795, Common::DE_DEU, 900),
-	WINGAME1t_l("loewe6", "Jubiläums-Paket", "Loewenzahn 6.exe", "c4135f262abdbf3f2dc660e341b8a192", 87820, Common::DE_DEU, 900),
+	WINGAME1t_l("loewe2", "Jubiläums-Paket", "Setup/WinRoot/Terzio/Loewenzahn 2/Loewenzahn 2.exe", "861c0ac98a672fc3e537a26b8cc543be", 95970, Common::DE_DEU, 900),
+	WINGAME1t_l("loewe3", "Jubiläums-Paket", "Setup/WinRoot/Terzio/Loewenzahn 3/Loewenzahn 3.exe", "46243628b1d79872340993bdc4a156d8", 87791, Common::DE_DEU, 900),
+	WINGAME1t_l("loewe4", "Jubiläums-Paket", "Setup/WinRoot/Terzio/Loewenzahn 4/Loewenzahn 4.exe", "fcd7e3e7b9b1080f848c518b6e66d860", 87795, Common::DE_DEU, 900),
+	WINGAME1t_l("loewe6", "Jubiläums-Paket", "Setup/WinRoot/Terzio/Loewenzahn 6/Loewenzahn 6.exe", "c4135f262abdbf3f2dc660e341b8a192", 87820, Common::DE_DEU, 900),
 
 	// Mac versions are D8
 	WINGAME1_l("loewespielebox", "",			"Setup/WinRoot/Terzio/LZ_Spielebox/LZ_Spielebox.exe", "t:2e0749bd71f312abdf445e958f6fd737", 95544, Common::DE_DEU, 900),
@@ -11042,7 +11042,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("limit0", "", "Limit 0.exe", "827e5af88f4c096652a1523dc28c9bf4", 4664824, 1000),
 
 	// Re-release, released as part of the "Jubiläums-Paket" 25th anniversary bundle
-	WINGAME1t_l("loewe1", "Jubiläums-Paket", "Loewe1.exe", "854989b2e1f7b9d55988ca1387859da2", 96316, Common::DE_DEU, 1010),
+	WINGAME1t_l("loewe1", "Jubiläums-Paket", "Setup/WinRoot/Terzio/Loewenzahn 1/Loewe1.exe", "854989b2e1f7b9d55988ca1387859da2", 96316, Common::DE_DEU, 1010),
 
 	MACGAME1_l("mathica", "Classic", "Mathica.classic",	"r:afc5296d3ffc3a638d32ccbe867e7465", 219361, Common::DE_DEU, 1010),
 	MACGAME1_l("mathica", "OS X", 	 "Mathica.osx",		"r:dd763caab8c8e5b61fafd6306f7c4f1f", 270277, Common::DE_DEU, 1010),
