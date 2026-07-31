@@ -55,6 +55,7 @@ static const uint16 kCheatCommand = 0x7ffe;
 static const uint kHelpSelectionTable = 0x1af;
 static const uint kDosTickMillis = 55;
 static const uint kLeverStepTicks = 3;
+static const byte kPuzzleHelpColor = 254;
 
 static const char *const kLibraryName = "ef_monk.pl";
 static const char *const kScreenMediaName = "screenn";
@@ -94,7 +95,8 @@ static bool isExitPoint(const Common::Point &point) {
 ShockLeverPuzzle::ShockLeverPuzzle(RipperEngine *engine) :
 		_engine(engine), _draggedLever(-1), _hoveredLever(-1),
 		_hoveredControl(kHoverNone), _keywordIndex(0),
-		_lastLeverStepMillis(0), _solved(false),
+		_lastLeverStepMillis(0), _puzzleHelpFontLoadAttempted(false),
+		_puzzleHelpEnabled(false), _solved(false),
 		_completionRecorded(false) {
 	for (uint lever = 0; lever < kLeverCount; ++lever)
 		_leverFrame[lever] = 3;
@@ -251,7 +253,83 @@ void ShockLeverPuzzle::restoreLeverBackings(byte *screen, uint pitch) const {
 	}
 }
 
+Common::Point ShockLeverPuzzle::puzzleHelpLabelPosition(uint lever) const {
+	if (lever >= kLeverCount || _leverFrames[lever].empty())
+		return Common::Point();
+
+	const BitmapAssetFrame &frame = _leverFrames[lever].front();
+	const uint frameHeight = MAX<uint>(frame.height / kLeverFrameCount, 1);
+	const int targetY = kLeverPositions[lever].y - 5 +
+		kTargetFrames[lever] * frameHeight + frameHeight / 2;
+	const Common::String label = Common::String::format("%u", lever + 1);
+	const int labelWidth = BitmapFontRenderer::measureText(
+		_puzzleHelpFont, label);
+	// The first two controls have room on their left; the third has room on
+	// its right. Keeping the labels outside the lever art makes the exact
+	// target position visible while the player drags through it.
+	const int labelX = lever + 1 == kLeverCount ?
+		kLeverPositions[lever].x + frame.width + 3 :
+		kLeverPositions[lever].x - labelWidth - 3;
+	return Common::Point(labelX,
+		targetY - _puzzleHelpFont.lineHeight / 2);
+}
+
+void ShockLeverPuzzle::restorePuzzleHelpBackings(byte *screen,
+		uint pitch) const {
+	if (_puzzleHelpFont.glyphs.empty())
+		return;
+
+	for (uint lever = 0; lever < kLeverCount; ++lever) {
+		const Common::String label = Common::String::format("%u", lever + 1);
+		const Common::Point position = puzzleHelpLabelPosition(lever);
+		const int labelWidth = BitmapFontRenderer::measureText(
+			_puzzleHelpFont, label);
+		const int left = MAX<int>(position.x - 2, 0);
+		const int top = MAX<int>(position.y - 2, kSceneOriginY);
+		const int right = MIN<int>(position.x + labelWidth + 2,
+			_background.width);
+		const int bottom = MIN<int>(position.y +
+			_puzzleHelpFont.lineHeight + 2,
+			kSceneOriginY + _background.height);
+		if (left >= right || top >= bottom)
+			continue;
+		for (int y = top; y < bottom; ++y) {
+			memcpy(screen + y * pitch + left,
+				_background.pixels.data() +
+					(y - kSceneOriginY) * _background.width + left,
+				right - left);
+		}
+	}
+}
+
+void ShockLeverPuzzle::drawPuzzleHelpOverlay(byte *screen, uint pitch) const {
+	if (!_puzzleHelpEnabled || _puzzleHelpFont.glyphs.empty())
+		return;
+
+	const Common::Rect clip(0, kSceneOriginY, kRipperScreenWidth,
+		kSceneOriginY + kSceneHeight);
+	for (uint lever = 0; lever < kLeverCount; ++lever) {
+		const Common::String label = Common::String::format("%u", lever + 1);
+		const Common::Point position = puzzleHelpLabelPosition(lever);
+		BitmapFontRenderer::drawTextClipped(screen, pitch,
+			_puzzleHelpFont, position.x, position.y, label,
+			kPuzzleHelpColor, clip);
+	}
+}
+
 void ShockLeverPuzzle::drawOverlays() {
+	if (_puzzleHelpEnabled && !_puzzleHelpFontLoadAttempted) {
+		_puzzleHelpFontLoadAttempted = true;
+		if (!_engine->getResources()->loadInterfaceBitmapFont(
+				"small.fnt", _puzzleHelpFont)) {
+			warning("Ripper: could not load shock lever puzzle-help font");
+		} else {
+			debugC(2, kDebugPuzzles,
+				"Ripper: loaded shock lever puzzle-help font='small.fnt' glyphs=%u color=%u",
+				_puzzleHelpFont.glyphs.size(), kPuzzleHelpColor);
+		}
+	}
+
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
 		if (screen)
@@ -261,6 +339,7 @@ void ShockLeverPuzzle::drawOverlays() {
 
 	byte *pixels = (byte *)screen->getPixels();
 	restoreLeverBackings(pixels, screen->pitch);
+	restorePuzzleHelpBackings(pixels, screen->pitch);
 	drawFrame(pixels, screen->pitch, _submit,
 		kSubmitPosition.x, kSubmitPosition.y, true);
 	for (uint lever = 0; lever < kLeverCount; ++lever) {
@@ -270,6 +349,7 @@ void ShockLeverPuzzle::drawOverlays() {
 			_leverFrames[lever][_leverFrame[lever]],
 			kLeverPositions[lever].x, kLeverPositions[lever].y, true);
 	}
+	drawPuzzleHelpOverlay(pixels, screen->pitch);
 	g_system->unlockScreen();
 	_engine->getCursor()->setVisible(true);
 	g_system->updateScreen();
@@ -476,6 +556,14 @@ uint16 ShockLeverPuzzle::service(uint frame) {
 		return keyboardCommand;
 
 	const MouseState mouse = _engine->getInput()->publishMouseState();
+	const bool puzzleHelpEnabled = _engine->isPuzzleHelpEnabled();
+	if (puzzleHelpEnabled != _puzzleHelpEnabled) {
+		_puzzleHelpEnabled = puzzleHelpEnabled;
+		debugC(2, kDebugPuzzles,
+			"Ripper: shock lever puzzle-help overlay enabled=%d targets=[1:%u,2:%u,3:%u] tolerance=1 command=PUZZLE_HELP",
+			_puzzleHelpEnabled, kTargetFrames[0], kTargetFrames[1],
+			kTargetFrames[2]);
+	}
 	updateCursor(mouse.position);
 	if ((mouse.pressed & kMouseButtonLeft) != 0) {
 		int lever = -1;
@@ -523,6 +611,7 @@ uint16 ShockLeverPuzzle::service(uint frame) {
 }
 
 ShockLeverPuzzle::Result ShockLeverPuzzle::run(uint completionFlag) {
+	_puzzleHelpEnabled = _engine->isPuzzleHelpEnabled();
 	if (!_incomingDisplay.capture() || !loadAssets() || !drawBackground()) {
 		_incomingDisplay.restore();
 		return kLoadFailed;
@@ -545,10 +634,10 @@ ShockLeverPuzzle::Result ShockLeverPuzzle::run(uint completionFlag) {
 	debugC(1, kDebugPuzzles,
 		"Ripper: entered shock lever puzzle completionFlag=%u "
 		"initialFrames=[%u,%u,%u] targets=[%u,%u,%u] tolerance=1 "
-		"helpTable=0x%x",
+		"helpTable=0x%x puzzleHelp=%d",
 		completionFlag, _leverFrame[0], _leverFrame[1], _leverFrame[2],
 		kTargetFrames[0], kTargetFrames[1], kTargetFrames[2],
-		kHelpSelectionTable);
+		kHelpSelectionTable, _puzzleHelpEnabled);
 
 	Result result = kExited;
 	bool active = true;
