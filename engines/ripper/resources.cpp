@@ -191,30 +191,37 @@ static bool decodeCustomBitmap(Common::SeekableReadStream &stream, BitmapAssetFr
 		colorMap, frame.pixels);
 }
 
+static bool copyIndexedSurface(const Graphics::Surface *surface,
+		const Graphics::Palette &palette, byte transparentColor,
+		BitmapAssetFrame &frame) {
+	if (!surface || surface->format.bytesPerPixel != 1 || surface->w <= 0 || surface->h <= 0)
+		return false;
+
+	frame.width = surface->w;
+	frame.height = surface->h;
+	frame.transparentColor = transparentColor;
+	frame.pixels.resize((uint32)frame.width * frame.height);
+	for (uint y = 0; y < frame.height; ++y)
+		memcpy(frame.pixels.data() + y * frame.width, surface->getBasePtr(0, y), frame.width);
+
+	frame.palette.resize(palette.size() * 3);
+	if (!frame.palette.empty())
+		memcpy(frame.palette.data(), palette.data(), frame.palette.size());
+	return true;
+}
+
 static bool decodeIffBitmap(Common::SeekableReadStream &stream, BitmapAssetFrame &frame) {
 	IFFDecoder decoder;
 	if (!decoder.loadStream(stream))
 		return false;
 
-	const Graphics::Surface *surface = decoder.getSurface();
-	if (!surface || surface->format.bytesPerPixel != 1 || surface->w <= 0 || surface->h <= 0)
-		return false;
-
 	// DecodeIffBitmapAssetToDescriptor at 0x6aca4 maps IFF height/width to the same descriptor order.
-	frame.width = surface->w;
-	frame.height = surface->h;
-	frame.transparentColor = decoder.getHeader()->transparentColor & 0xff;
-	frame.pixels.resize((uint32)frame.width * frame.height);
-	for (uint y = 0; y < frame.height; ++y)
-		memcpy(frame.pixels.data() + y * frame.width, surface->getBasePtr(0, y), frame.width);
-
-	const Graphics::Palette &palette = decoder.getPalette();
-	frame.palette.resize(palette.size() * 3);
-	if (!frame.palette.empty())
-		memcpy(frame.palette.data(), palette.data(), frame.palette.size());
+	if (!copyIndexedSurface(decoder.getSurface(), decoder.getPalette(),
+			decoder.getHeader()->transparentColor & 0xff, frame))
+		return false;
 	debugC(3, kDebugResources,
 		"Ripper: decoded IFF bitmap width=%u height=%u transparent=%u colors=%u",
-		frame.width, frame.height, frame.transparentColor, palette.size());
+		frame.width, frame.height, frame.transparentColor, decoder.getPalette().size());
 	return true;
 }
 
@@ -653,32 +660,34 @@ Common::SeekableReadStream *ResourceManager::createReadStreamForPath(
 	return nullptr;
 }
 
-bool ResourceManager::loadInterfaceBitmapSequence(const Common::String &memberName,
-		BitmapAssetSequence &sequence) const {
+static bool loadBitmapSequenceFromLibrary(const AssetLibrary &library,
+		const char *libraryName, const Common::String &memberName,
+		BitmapAssetSequence &sequence) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_interface.createReadStreamForMember(memberName));
+		library.createReadStreamForMember(memberName));
 	if (!stream || !decodeBitmapAssetSequence(*stream, sequence)) {
-		warning("Ripper: could not decode interface bitmap sequence '%s'", memberName.c_str());
+		warning("Ripper: could not decode %s bitmap sequence '%s'",
+			libraryName, memberName.c_str());
 		return false;
 	}
 
-	debugC(2, kDebugResources, "Ripper: decoded interface bitmap sequence '%s' frames=%u",
-		memberName.c_str(), sequence.frames.size());
+	debugC(2, kDebugResources, "Ripper: decoded %s bitmap sequence '%s' frames=%u",
+		libraryName, memberName.c_str(), sequence.frames.size());
 	return true;
+}
+
+static bool loadPcxFromLibrary(const AssetLibrary &library,
+		const char *libraryName, const Common::String &memberName,
+		BitmapAssetFrame &frame);
+
+bool ResourceManager::loadInterfaceBitmapSequence(const Common::String &memberName,
+		BitmapAssetSequence &sequence) const {
+	return loadBitmapSequenceFromLibrary(_interface, "interface", memberName, sequence);
 }
 
 bool ResourceManager::loadOptionsBitmapSequence(const Common::String &memberName,
 		BitmapAssetSequence &sequence) const {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_options.createReadStreamForMember(memberName));
-	if (!stream || !decodeBitmapAssetSequence(*stream, sequence)) {
-		warning("Ripper: could not decode options bitmap sequence '%s'", memberName.c_str());
-		return false;
-	}
-
-	debugC(2, kDebugResources, "Ripper: decoded options bitmap sequence '%s' frames=%u",
-		memberName.c_str(), sequence.frames.size());
-	return true;
+	return loadBitmapSequenceFromLibrary(_options, "options", memberName, sequence);
 }
 
 bool ResourceManager::loadBitmap(const Common::String &memberName,
@@ -758,61 +767,31 @@ bool ResourceManager::loadInterfaceBitmapSet(const Common::String &prefix,
 
 bool ResourceManager::loadInterfacePcx(const Common::String &memberName,
 		BitmapAssetFrame &frame) const {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_interface.createReadStreamForMember(memberName));
-	Image::PCXDecoder decoder;
-	if (!stream || !decoder.loadStream(*stream)) {
-		warning("Ripper: could not decode interface PCX '%s'", memberName.c_str());
-		return false;
-	}
-
-	const Graphics::Surface *surface = decoder.getSurface();
-	if (!surface || surface->format.bytesPerPixel != 1 || surface->w <= 0 || surface->h <= 0)
-		return false;
-
-	frame.width = surface->w;
-	frame.height = surface->h;
-	frame.transparentColor = 0;
-	frame.pixels.resize((uint32)frame.width * frame.height);
-	for (uint y = 0; y < frame.height; ++y)
-		memcpy(frame.pixels.data() + y * frame.width, surface->getBasePtr(0, y), frame.width);
-
-	const Graphics::Palette &palette = decoder.getPalette();
-	frame.palette.resize(palette.size() * 3);
-	if (!frame.palette.empty())
-		memcpy(frame.palette.data(), palette.data(), frame.palette.size());
-	debugC(2, kDebugResources,
-		"Ripper: decoded interface PCX '%s' width=%u height=%u colors=%u",
-		memberName.c_str(), frame.width, frame.height, palette.size());
-	return true;
+	return loadPcxFromLibrary(_interface, "interface", memberName, frame);
 }
 
 bool ResourceManager::loadOptionsPcx(const Common::String &memberName,
 		BitmapAssetFrame &frame) const {
+	return loadPcxFromLibrary(_options, "options", memberName, frame);
+}
+
+static bool loadPcxFromLibrary(const AssetLibrary &library,
+		const char *libraryName, const Common::String &memberName,
+		BitmapAssetFrame &frame) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_options.createReadStreamForMember(memberName));
+		library.createReadStreamForMember(memberName));
 	Image::PCXDecoder decoder;
 	if (!stream || !decoder.loadStream(*stream)) {
-		warning("Ripper: could not decode options PCX '%s'", memberName.c_str());
+		warning("Ripper: could not decode %s PCX '%s'", libraryName, memberName.c_str());
 		return false;
 	}
 
-	const Graphics::Surface *surface = decoder.getSurface();
-	if (!surface || surface->format.bytesPerPixel != 1 || surface->w <= 0 || surface->h <= 0)
+	if (!copyIndexedSurface(decoder.getSurface(), decoder.getPalette(), 0, frame))
 		return false;
-	frame.width = surface->w;
-	frame.height = surface->h;
-	frame.transparentColor = 0;
-	frame.pixels.resize((uint32)frame.width * frame.height);
-	for (uint y = 0; y < frame.height; ++y)
-		memcpy(frame.pixels.data() + y * frame.width, surface->getBasePtr(0, y), frame.width);
-	const Graphics::Palette &palette = decoder.getPalette();
-	frame.palette.resize(palette.size() * 3);
-	if (!frame.palette.empty())
-		memcpy(frame.palette.data(), palette.data(), frame.palette.size());
 	debugC(2, kDebugResources,
-		"Ripper: decoded options PCX '%s' width=%u height=%u colors=%u",
-		memberName.c_str(), frame.width, frame.height, palette.size());
+		"Ripper: decoded %s PCX '%s' width=%u height=%u colors=%u",
+		libraryName, memberName.c_str(), frame.width, frame.height,
+		decoder.getPalette().size());
 	return true;
 }
 
