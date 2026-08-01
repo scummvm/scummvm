@@ -29,6 +29,9 @@ namespace RexNebular {
 namespace Sound {
 
 void RexSoundManager::validate() {
+	if (_isDemo)
+		_driverType = SOUND_ADLIB;
+
 	switch (_driverType) {
 	case SOUND_MT32:
 		RSound::validate();
@@ -39,13 +42,22 @@ void RexSoundManager::validate() {
 		break;
 
 	default:
-		ASound::validate();
+		ASound::validate(_isDemo);
 		break;
 	}
 }
 
 void RexSoundManager::loadDriver(int sectionNumber) {
 	removeDriver();
+
+	if (_isDemo) {
+		assert(sectionNumber == 1 || sectionNumber == 9);
+		if (sectionNumber == 1)
+			_driver = new ASoundDemo1(_mixer);
+		else
+			_driver = new ASoundDemo9(_mixer);
+		return;
+	}
 
 	switch (_driverType) {
 	case SOUND_MT32:

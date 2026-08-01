@@ -328,7 +328,7 @@ public:
 	/**
 	 * Validates the Adlib sound files
 	 */
-	static void validate();
+	static void validate(bool isDemo);
 
 public:
 	/**

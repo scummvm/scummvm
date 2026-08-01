@@ -177,7 +177,7 @@ ASound::~ASound() {
 	delete _opl;
 }
 
-void ASound::validate() {
+void ASound::validate(bool isDemo) {
 	Common::File f;
 	static const char *const MD5[] = {
 		"205398468de2c8873b7d4d73d5be8ddc",
@@ -191,14 +191,23 @@ void ASound::validate() {
 		"a31e4783e098f633cbb6689adb41dd4f"
 	};
 
+	static const char *const MD5_DEMO[] = {
+		"11aa27a511abdfa905fd290b4d96e9d3",
+		"057c16af3b84b019bf088cb0ef8e6c4f"
+	};
+
 	for (int i = 1; i <= 9; ++i) {
+		if (isDemo && i != 1 && i != 9)
+			continue;
+		const char *const EXPECTED = isDemo ? MD5_DEMO[i == 1 ? 0 : 1] : MD5[i - 1];
+
 		Common::Path filename(Common::String::format("ASOUND.00%d", i));
 		if (!f.open(filename))
 			error("Could not process - %s", filename.toString().c_str());
 		Common::String md5str = Common::computeStreamMD5AsString(f, 8192);
 		f.close();
 
-		if (md5str != MD5[i - 1])
+		if (md5str != EXPECTED)
 			error("Invalid sound file - %s", filename.toString().c_str());
 	}
 }

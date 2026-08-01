@@ -328,6 +328,270 @@ int ASound1::command2627293032() {
 
 /*-----------------------------------------------------------------------*/
 
+const ASoundDemo1::CommandPtr ASoundDemo1::_commandList[41] = {
+	&ASoundDemo1::command0, &ASoundDemo1::command1, &ASoundDemo1::command2, &ASoundDemo1::command3,
+	&ASoundDemo1::command4, &ASoundDemo1::command5, &ASoundDemo1::command6, &ASoundDemo1::command7,
+	&ASoundDemo1::command8, &ASoundDemo1::command9, &ASoundDemo1::command10, &ASoundDemo1::command11,
+	&ASoundDemo1::command12, &ASoundDemo1::command13, &ASoundDemo1::command14, &ASoundDemo1::command15,
+	&ASoundDemo1::command16, &ASoundDemo1::command17, &ASoundDemo1::command18, &ASoundDemo1::command19,
+	&ASoundDemo1::command20, &ASoundDemo1::command21, &ASoundDemo1::command22, &ASoundDemo1::command23,
+	&ASoundDemo1::command24, &ASoundDemo1::command25, &ASoundDemo1::command26, &ASoundDemo1::command27,
+	&ASoundDemo1::command28, &ASoundDemo1::command29, &ASoundDemo1::command30, &ASoundDemo1::command31,
+	&ASoundDemo1::command32, &ASoundDemo1::command33, &ASoundDemo1::command34, &ASoundDemo1::command35,
+	&ASoundDemo1::command36, &ASoundDemo1::command37, &ASoundDemo1::command38, &ASoundDemo1::command39,
+	&ASoundDemo1::command40
+};
+
+ASoundDemo1::ASoundDemo1(Audio::Mixer *mixer) : ASound(mixer, "asound.001", 0x1540, 0x24b0) {
+	_cmd23Toggle = false;
+
+	// Load sound samples
+	auto samplesStream = getDataStream(0x50);
+	for (int i = 0; i < 96; ++i)
+		_samples.push_back(AdlibSample(samplesStream));
+}
+
+int ASoundDemo1::command(int commandId, int param) {
+	if (commandId > 40)
+		return 0;
+
+	_commandParam = param;
+	_frameCounter = 0;
+	return (this->*_commandList[commandId])();
+}
+
+int ASoundDemo1::command9() {
+	playSoundAny(0x2220);
+	return 0;
+}
+
+int ASoundDemo1::command10() {
+	byte *pData1 = loadData(0x1C8C);
+	isSoundActive(pData1); // result unused, matches disassembly quirk
+	command1();
+	_channels[4].load(pData1);
+	_channels[5].load(loadData(0x1CBC));
+	_channels[6].load(loadData(0x1E3E));
+	_channels[7].load(loadData(0x1E6C));
+	return 0;
+}
+
+int ASoundDemo1::command11() {
+	command111213();
+	_channels[0]._volumeOffset = 0;
+	_channels[1]._volumeOffset = 0;
+	return 0;
+}
+
+int ASoundDemo1::command12() {
+	command111213();
+	_channels[0]._volumeOffset = 40;
+	_channels[1]._volumeOffset = 0;
+	return 0;
+}
+
+int ASoundDemo1::command13() {
+	command111213();
+	_channels[0]._volumeOffset = 40;
+	_channels[1]._volumeOffset = 50;
+	return 0;
+}
+
+int ASoundDemo1::command14() {
+	playSoundAny(0x1C08);
+	return 0;
+}
+
+int ASoundDemo1::command15() {
+	byte *pData1 = loadData(0x1E9C);
+	isSoundActive(pData1); // result unused, matches disassembly quirk
+	command1();
+	_channels[4].load(pData1);
+	_channels[5].load(loadData(0x1F3A));
+	_channels[6].load(loadData(0x1F92));
+	_channels[7].load(loadData(0x1FEA));
+	_channels[8].load(loadData(0x2014));
+	return 0;
+}
+
+int ASoundDemo1::command16() {
+	playSoundAny(0x222A);
+	return 0;
+}
+
+int ASoundDemo1::command17() {
+	playSoundAny(0x244C);
+	return 0;
+}
+
+int ASoundDemo1::command18() {
+	command1();
+	playSoundAny(0x225A);
+	return 0;
+}
+
+int ASoundDemo1::command19() {
+	command1();
+	playSoundAny(0x226A);
+	return 0;
+}
+
+int ASoundDemo1::command20() {
+	playSoundAny(0x22C6);
+	return 0;
+}
+
+int ASoundDemo1::command21() {
+	playSoundAny(0x22B6);
+	return 0;
+}
+
+int ASoundDemo1::command22() {
+	byte *pData = loadData(0x22E2);
+	pData[6] = (byte)((getRandomNumber() & 7) + 85);
+	playSoundAny(0x22E2);
+	return 0;
+}
+
+int ASoundDemo1::command23() {
+	_cmd23Toggle = !_cmd23Toggle;
+	playSoundAny(_cmd23Toggle ? 0x22EC : 0x22F4);
+	return 0;
+}
+
+int ASoundDemo1::command24() {
+	playSoundAny(0x22FC);
+	playSoundAny(0x230C);
+	playSoundAny(0x231E);
+	return 0;
+}
+
+int ASoundDemo1::command25() {
+	playSoundAny(0x232A);
+	return 0;
+}
+
+int ASoundDemo1::command26() {
+	byte *pData = loadData(0x249E);
+	pData[5] = (byte)((command2627293032() >> 1) + 60);
+	_channels[8].load(pData);
+	return 0;
+}
+
+int ASoundDemo1::command27() {
+	byte *pData = loadData(0x2494);
+	pData[5] = (byte)((command2627293032() >> 1) + 78);
+	_channels[7].load(pData);
+	return 0;
+}
+
+int ASoundDemo1::command28() {
+	playSoundAny(0x233A);
+	return 0;
+}
+
+int ASoundDemo1::command29() {
+	byte *pData = loadData(0x2236);
+	byte v = (byte)((command2627293032() >> 1) + 76);
+	pData[7] = pData[13] = pData[21] = pData[27] = v;
+	isSoundActive(pData); // result unused, matches disassembly quirk
+	playSoundAny(0x2236);
+	return 0;
+}
+
+int ASoundDemo1::command30() {
+	byte *pData = loadData(0x2456);
+	pData[7] = (byte)((command2627293032() >> 1) + 72);
+	isSoundActive(pData); // result unused, matches disassembly quirk
+	playSoundAny(0x2456);
+	return 0;
+}
+
+int ASoundDemo1::command31() {
+	_channels[6].load(loadData(0x23B8));
+	_channels[7].load(loadData(0x2354));
+	return 0;
+}
+
+int ASoundDemo1::command32() {
+	byte *pData = loadData(0x2466);
+	byte base = (byte)command2627293032() >> 1;
+	byte v1 = base + 20;
+	byte v2 = base + 40;
+	pData[9] = pData[17] = pData[25] = pData[33] = v1;
+	pData[11] = pData[19] = pData[27] = pData[35] = v2;
+	isSoundActive(pData); // result unused, matches disassembly quirk
+	playSoundAny(0x2466);
+	return 0;
+}
+
+int ASoundDemo1::command33() {
+	playSoundAny(0x2362);
+	playSoundAny(0x236C);
+	return 0;
+}
+
+int ASoundDemo1::command34() {
+	byte *pData = loadData(0x2376);
+	byte v = (byte)((getRandomNumber() & 12) + 45);
+	pData[9] = v;
+	pData[16] = v + 36;
+	playSoundAny(0x2376);
+	return 0;
+}
+
+int ASoundDemo1::command35() {
+	playSoundAny(0x238A);
+	return 0;
+}
+
+int ASoundDemo1::command36() {
+	playSoundAny(0x23AE);
+	return 0;
+}
+
+int ASoundDemo1::command37() {
+	playSoundAny(0x23C6);
+	return 0;
+}
+
+int ASoundDemo1::command38() {
+	playSoundAny(0x23DA);
+	return 0;
+}
+
+int ASoundDemo1::command39() {
+	byte *pData1 = loadData(0x203E);
+	isSoundActive(pData1); // result unused, matches disassembly quirk
+	_channels[5].load(pData1);
+	_channels[6].load(loadData(0x20C0));
+	_channels[7].load(loadData(0x20DE));
+	_channels[8].load(loadData(0x2106));
+	return 0;
+}
+
+int ASoundDemo1::command40() {
+	playSoundAny(0x2396);
+	return 0;
+}
+
+void ASoundDemo1::command111213() {
+	byte *pData1 = loadData(0x18E8);
+	isSoundActive(pData1); // result unused, matches disassembly quirk
+	command1();
+	_channels[0].load(pData1);
+	_channels[1].load(loadData(0x1A80));
+	_channels[2].load(loadData(0x1B8A));
+	_channels[3].load(loadData(0x1BCC));
+}
+
+int ASoundDemo1::command2627293032() {
+	return (_commandParam > 0x40) ? _commandParam - 0x40 : _commandParam & 0xff00;
+}
+
+
+/*-----------------------------------------------------------------------*/
+
 const ASound2::CommandPtr ASound2::_commandList[44] = {
 	&ASound2::command0, &ASound2::command1, &ASound2::command2, &ASound2::command3,
 	&ASound2::command4, &ASound2::command5, &ASound2::command6, &ASound2::command7,
@@ -2212,6 +2476,147 @@ int ASound8::command37() {
 	playSound(0x15DC);
 	playSound(0X15FA);
 
+	return 0;
+}
+
+/*-----------------------------------------------------------------------*/
+
+const ASoundDemo9::CommandPtr ASoundDemo9::_commandList[39] = {
+	&ASoundDemo9::command0, &ASoundDemo9::command1, &ASoundDemo9::command2, &ASoundDemo9::command3,
+	&ASoundDemo9::command4, &ASoundDemo9::command5, &ASoundDemo9::command6, &ASoundDemo9::command7,
+	&ASoundDemo9::command8, &ASoundDemo9::nullCommand, &ASoundDemo9::nullCommand, &ASoundDemo9::command11,
+	&ASoundDemo9::nullCommand, &ASoundDemo9::nullCommand, &ASoundDemo9::command14, &ASoundDemo9::nullCommand,
+	&ASoundDemo9::nullCommand, &ASoundDemo9::command17, &ASoundDemo9::nullCommand, &ASoundDemo9::nullCommand,
+	&ASoundDemo9::command20, &ASoundDemo9::command21, &ASoundDemo9::command22, &ASoundDemo9::command23,
+	&ASoundDemo9::nullCommand, &ASoundDemo9::nullCommand, &ASoundDemo9::command26, &ASoundDemo9::command27,
+	&ASoundDemo9::command28, &ASoundDemo9::command29, &ASoundDemo9::command30, &ASoundDemo9::command31,
+	&ASoundDemo9::nullCommand, &ASoundDemo9::nullCommand, &ASoundDemo9::command34, &ASoundDemo9::command35,
+	&ASoundDemo9::command36, &ASoundDemo9::nullCommand, &ASoundDemo9::command38
+};
+
+ASoundDemo9::ASoundDemo9(Audio::Mixer *mixer) : ASound(mixer, "asound.009", 0x13f0, 0x3610) {
+	// Load sound samples
+	auto samplesStream = getDataStream(0x50);
+	for (int i = 0; i < 94; ++i)
+		_samples.push_back(AdlibSample(samplesStream));
+}
+
+int ASoundDemo9::command(int commandId, int param) {
+	if (commandId > 38)
+		return 0;
+
+	_commandParam = param;
+	_frameCounter = 0;
+	return (this->*_commandList[commandId])();
+}
+
+int ASoundDemo9::command11() {
+	playSoundAny(0x320E);
+	playSoundAny(0x32A2);
+	return 0;
+}
+
+int ASoundDemo9::command14() {
+	playSoundAny(0x31D2);
+	return 0;
+}
+
+int ASoundDemo9::command17() {
+	command29();
+	playSoundAny(0x3540);
+	return 0;
+}
+
+int ASoundDemo9::command20() {
+	byte *pData = loadData(0x315E);
+	int v = getRandomNumber();
+	v = (v & 0x10) | 0x4D;
+	pData[4] = (byte)(v & 0x7F);
+	playSoundAny(0x315E);
+	return 0;
+}
+
+int ASoundDemo9::command21() {
+	playSoundAny(0x3176);
+	return 0;
+}
+
+int ASoundDemo9::command22() {
+	playSoundAny(0x3186);
+	return 0;
+}
+
+int ASoundDemo9::command23() {
+	playSoundAny(0x3166);
+	return 0;
+}
+
+int ASoundDemo9::command26() {
+	_channels[6].load(loadData(0x3338));
+	_channels[7].load(loadData(0x33D4));
+	return 0;
+}
+
+int ASoundDemo9::command27() {
+	playSoundAny(0x3474);
+	return 0;
+}
+
+int ASoundDemo9::command28() {
+	_channels[8].load(loadData(0x31A6));
+	return 0;
+}
+
+int ASoundDemo9::command29() {
+	_channels[8].load(loadData(0x31B0));
+	return 0;
+}
+
+int ASoundDemo9::command30() {
+	playSoundAny(0x3196);
+	return 0;
+}
+
+int ASoundDemo9::command31() {
+	playSoundAny(0x31E8);
+	playSoundAny(0x31F6);
+	return 0;
+}
+
+int ASoundDemo9::command34() {
+	byte *pData1 = loadData(0x18FE);
+	isSoundActive(pData1); // result unused, matches disassembly quirk
+	command1();
+	_channels[0].load(pData1);
+	_channels[1].load(loadData(0x1B10));
+	_channels[2].load(loadData(0x1E4E));
+	_channels[3].load(loadData(0x21EE));
+	_channels[4].load(loadData(0x2804));
+	_channels[5].load(loadData(0x2C72));
+	return 0;
+}
+
+int ASoundDemo9::command35() {
+	playSoundAny(0x3500);
+	return 0;
+}
+
+int ASoundDemo9::command36() {
+	playSoundAny(0x31BA);
+	playSoundAny(0x31C4);
+	return 0;
+}
+
+int ASoundDemo9::command38() {
+	byte *pData1 = loadData(0x307A);
+	isSoundActive(pData1); // result unused, matches disassembly quirk
+	command1();
+	_channels[0].load(pData1);
+	_channels[1].load(loadData(0x3090));
+	_channels[2].load(loadData(0x30C8));
+	_channels[3].load(loadData(0x3102));
+	_channels[4].load(loadData(0x313A));
+	_channels[5].load(loadData(0x314A));
 	return 0;
 }
 

@@ -140,6 +140,11 @@ void flag_parse(const char *param) {
 		do_not_clear_screen = true;
 		break;
 
+	case 'z':
+		// Show stats
+		// Not implemented in ScummVM
+		break;
+
 	default:
 		error("Unsupported animview flag - %c", c);
 		break;

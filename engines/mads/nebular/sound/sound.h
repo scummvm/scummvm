@@ -29,6 +29,9 @@ namespace RexNebular {
 namespace Sound {
 
 class RexSoundManager : public SoundManager {
+private:
+	bool _isDemo;
+
 protected:
 	/**
 	 * Load the particular section sound handler
@@ -37,7 +40,8 @@ protected:
 	void loadDriver(int sectionNum) override;
 
 public:
-	RexSoundManager(Audio::Mixer *mixer, bool &soundFlag) : SoundManager(mixer, soundFlag) {
+	RexSoundManager(Audio::Mixer *mixer, bool &soundFlag, bool isDemo) :
+		SoundManager(mixer, soundFlag), _isDemo(isDemo) {
 	}
 	~RexSoundManager() override {
 	}

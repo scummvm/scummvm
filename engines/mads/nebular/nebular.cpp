@@ -79,7 +79,7 @@ Common::Error RexNebularEngine::run() {
 	}
 
 	// Set up sound manager
-	_soundManager = new Sound::RexSoundManager(_mixer, _soundFlag);
+	_soundManager = new Sound::RexSoundManager(_mixer, _soundFlag, isDemo());
 	_soundManager->validate();
 
 	// Run the game
