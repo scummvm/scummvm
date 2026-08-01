@@ -78,8 +78,15 @@ struct ExpState {
 	word(*read_buff) (char *buf, word *size);
 	word(*write_buff)(char *buf, word *size);
 
-	/* Read buffer: rb[0]=guard, rb[1..EXP_RBLEN]=data */
-	byte   rb[EXP_RBLEN + 1];
+	/* Read buffer: rb[0]=guard, rb[1..EXP_RBLEN]=data.
+	 * One extra trailing byte (rb[EXP_RBLEN+1]) is reserved beyond the data
+	 * region: explode_RBin() reads rb[si] *before* resetting si, and si can
+	 * be EXP_RBLEN+1 (one past the last data byte) both on the very first
+	 * refill and whenever exp_get_byte()'s si > EXP_RBLEN check fires. The
+	 * original assembly's equivalent read safely spilled into the adjacent
+	 * Lempel region of the same WORK segment; here we reserve the byte
+	 * explicitly instead of relying on undefined behaviour. */
+	byte   rb[EXP_RBLEN + 2];
 	int    si;          /* current read index into rb[], range [1..EXP_RBLEN] */
 	/* si <= EXP_RBLEN  => valid byte at rb[si]  (mirrors si <= RBend) */
 
