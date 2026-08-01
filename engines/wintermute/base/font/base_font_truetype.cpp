@@ -680,7 +680,8 @@ bool BaseFontTT::initFont() {
 		_font = _fallbackFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 		warning("BaseFontTT::InitFont - Couldn't load font: %s", _fontFile);
 	}
-	_lineHeight = _font->getFontHeight();
+	auto box = _font->getBoundingBox("Ay");
+	_lineHeight = box.bottom - box.top;
 #ifdef ENABLE_FOXTAIL
 	if (BaseEngine::instance().isFoxTail(FOXTAIL_1_2_896, FOXTAIL_LATEST_VERSION)) {
 		_lineHeight -= 1;
@@ -764,10 +765,8 @@ int32 BaseFontTT::wrapText(const WideString &text, int32 maxWidth, int32 maxHeig
 			/* max. height exceeded --> "discard" this line and all following text
 			 * i.e. do not add it to the text line list, return immediately
 			 */
-			if (maxHeight >= 0 && (lines.size() + 1) * getLineHeight() > maxHeight) {
-				// FIXME: font height can be bigger, do not exit if one line
-				if (lines.size() != 0)
-					break;
+			if (maxHeight >= 0 && ((int32)lines.size() + 1) * getLineHeight() > maxHeight) {
+				break;
 			}
 
 			WideString line = text.substr(lineStartIndex, breakPoint - lineStartIndex);
