@@ -727,6 +727,12 @@ void Lingo::processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent) {
 		// fetch the sprite ID, script ID to call, etc if not present.
 		movie->resolveScriptEvent(el);
 
+		// if this is the first event in the handler chain,
+		// ignore _passEvent for the first time
+		if (el.eventHandlerSourceType == kPrimaryHandler) {
+			_passEvent = true;
+		}
+
 		if (el.scriptType == kNoneScript) {
 			debugC(9, kDebugEvents, "Lingo::processEvents: no matching script for event (%s, %s, %s, %d), continuing",
 				_eventHandlerTypes[el.event], scriptType2str(el.scriptType), el.scriptId.asString().c_str(), el.channelId
