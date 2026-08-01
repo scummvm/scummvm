@@ -456,6 +456,23 @@ public:
 		kFeatureVirtualKeyboard,
 
 		/**
+		 * Control native text input and IME composition processing.
+		 *
+		 * IME composition support is required for CJK languages,
+		 * as its characters cannot be entered directly from a keyboard.
+		 *
+		 * Client code must call @ref OSystem::acquireImeCompositionControl()
+		 * before changing this feature state.
+		 * It should enable the feature only while an editable text field owns keyboard input.
+		 * A supporting backend can then emit @ref Common::EVENT_IME_COMPOSITION
+		 * for composition updates, completion, and cancellation.
+		 * Disabling the feature restores direct key-event processing and cancels
+		 * native composition owned by the backend.
+		 * Its IME-specific behavior is a no-op on systems without native IME support.
+		 */
+		kFeatureImeComposition,
+
+		/**
 		 * Backends supporting this feature allow specifying a custom palette
 		 * for the cursor. The custom palette is used if the feature state
 		 * is set to true by the client code using setFeatureState().
@@ -665,6 +682,26 @@ public:
 	 * For example, test whether fullscreen mode is active or not.
 	 */
 	virtual bool getFeatureState(Feature f) { return false; }
+
+	/**
+	 * Acquire explicit engine-side control of native IME composition.
+	 *
+	 * This opt-in is separate from the enabled state of
+	 * @ref OSystem::kFeatureImeComposition. Control starts with composition disabled,
+	 * after which @ref OSystem::setFeatureState() can enable or disable it for
+	 * the current input owner. This is a no-op on unsupported backends.
+	 */
+	virtual void acquireImeCompositionControl() {}
+
+	/**
+	 * Release explicit engine-side control of native IME composition.
+	 *
+	 * This restores the native text input state captured by
+	 * @ref OSystem::acquireImeCompositionControl(). Backends may call this
+	 * automatically when the engine finishes. This is a no-op when control was
+	 * not acquired or the backend does not support native IME composition.
+	 */
+	virtual void releaseImeCompositionControl() {}
 
 	/** @} */
 
