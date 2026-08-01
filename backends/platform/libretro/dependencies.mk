@@ -7,7 +7,7 @@ DEPS_SUBMODULES             := libretro-deps libretro-common
 
 DEPS_FOLDER_libretro-deps   := libretro-deps
 DEPS_URL_libretro-deps      := https://github.com/libretro/libretro-deps
-DEPS_COMMIT_libretro-deps   := 7e6e34f0319f4c7448d72f0e949e76265ccf55a1
+DEPS_COMMIT_libretro-deps   := bab7d258c451c0e7cba4b6a79f1b062c13efff38
 
 DEPS_FOLDER_libretro-common := libretro-common
 DEPS_URL_libretro-common    := https://github.com/libretro/libretro-common
@@ -214,16 +214,16 @@ this_lib_header := zlib.h
 this_lib_flags := -lz
 include $(ROOT_PATH)/sharedlib_test.mk
 ifneq ($(this_lib_available), yes)
+INCLUDES += -I$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libz
 OBJS_DEPS += $(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libz/deflate.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libz/gzlib.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libz/uncompr.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libz/zutil.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libz/inffast.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libz/gzread.o \
-	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libz/crc32.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libz/libz-crc32.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libz/gzwrite.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libz/inflate.o \
-	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libz/infback.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libz/inftrees.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libz/trees.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libz/gzclose.o \
