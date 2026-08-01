@@ -60,14 +60,17 @@ int8 decodeOrderTranspose(byte cmd) {
 	return (int8)((cmd + 0x20) & 0xFF);
 }
 
+// Both engines mask the command byte and store it verbatim; zero is a legal
+// value because the counters they feed are reloaded with N and expire one tick
+// (respectively one sequencer step) after reaching zero, so N always means
+// N + 1 units. Asm ref: HDSMUSIC.AM $0256, TEMUSIC.ST $0266 (speed) and
+// HDSMUSIC.AM $02B4, TEMUSIC.ST $02A2 (duration).
 byte decodeTickSpeed(byte cmd) {
-	byte speed = cmd & 0x0F;
-	return speed == 0 ? 1 : speed;
+	return cmd & 0x0F;
 }
 
 byte decodeDuration(byte cmd) {
-	byte duration = cmd & 0x3F;
-	return duration == 0 ? 1 : duration;
+	return cmd & 0x3F;
 }
 
 byte buildArpeggioTable(const byte intervals[8], byte mask, byte *outTable, byte maxLen, bool includeBase) {
@@ -982,15 +985,17 @@ void WallyBebenStream::interrupt() {
 			if (_channels[ch].pendingNoteOn)
 				continue;
 
-			if (_channels[ch].durationCounter > 0) {
-				_channels[ch].durationCounter--;
-			}
+			// Asm ref: TEXT+$0152 — the counter is decremented unconditionally,
+			// the note is gated off on the step it reaches 0, and the next
+			// commands are only parsed on the following step, when it goes
+			// negative. A note of duration N therefore lasts N + 1 steps.
+			_channels[ch].durationCounter--;
 
 			if (_channels[ch].durationCounter == 0) {
 				// Note-off: enter release phase
 				if (_channels[ch].envelopePhase < 3)
 					_channels[ch].envelopePhase = 3;
-
+			} else if (_channels[ch].durationCounter < 0) {
 				// Read next commands
 				readPatternCommands(ch);
 			}
@@ -1042,9 +1047,11 @@ void WallyBebenStream::interrupt() {
 		setChannelVolume(ch, _channels[ch].volume);
 	}
 
-	// Advance tick counter
+	// Advance tick counter. Asm ref: TEXT+$0794 — the counter is decremented
+	// every tick and only reloaded with the speed value once it goes negative,
+	// so a speed of N puts N + 1 ticks between sequencer steps.
 	_tickCounter++;
-	if (_tickCounter >= _tickSpeed) {
+	if (_tickCounter > _tickSpeed) {
 		_tickCounter = 0;
 	}
 }

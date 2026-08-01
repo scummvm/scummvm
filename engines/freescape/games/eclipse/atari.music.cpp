@@ -128,7 +128,6 @@ private:
 		byte envelopeFlags; // Instrument byte 4
 		byte envelopeToggle; // Bit7 envelope direction toggle
 		bool envelopeDone; // Mirrors original per-note envelope completion flag
-		bool useHardwareEnvelope;
 
 		// Effects
 		byte effectMode;   // 0=none, 1=pattern FX ($7D), 2=instrument FX ($7C)
@@ -180,9 +179,6 @@ private:
 	bool _musicActive;
 	byte _tickSpeed;
 	byte _tickCounter;
-	bool _hwEnvelopeDirty;
-	uint16 _hwEnvelopePeriod;
-	byte _hwEnvelopeShape;
 	int _songNum;
 
 	// --- Methods ---
@@ -232,7 +228,6 @@ EclipseAtariMusicPlayer::EclipseAtariMusicPlayer(const byte *data, uint32 dataSi
                                                    int songNum)
 	: _data(data), _dataSize(dataSize),
 	  _musicActive(false), _tickSpeed(6), _tickCounter(0),
-	  _hwEnvelopeDirty(false), _hwEnvelopePeriod(0), _hwEnvelopeShape(0),
 	  _numPatterns(0), _songNum(songNum) {
 
 	memset(_periods, 0, sizeof(_periods));
@@ -359,9 +354,6 @@ void EclipseAtariMusicPlayer::startSong(int songNum) {
 	int songIdx = songNum - 1;
 	_tickSpeed = 6;
 	_tickCounter = 0;
-	_hwEnvelopeDirty = false;
-	_hwEnvelopePeriod = 0;
-	_hwEnvelopeShape = 0;
 
 	// Silence all YM channels
 	for (int r = 0; r < 14; r++)
@@ -394,7 +386,6 @@ void EclipseAtariMusicPlayer::initChannel(int ch) {
 	c.decayTarget = 0x36;
 	c.toneEnabled = true;
 	c.envelopeDone = true;
-	c.useHardwareEnvelope = false;
 }
 
 // ---------------------------------------------------------------------------
@@ -585,8 +576,16 @@ void EclipseAtariMusicPlayer::readPatternCommands(int ch) {
 		}
 
 		if (cmd == 0x7C) {
-			// Pattern effect 2: switch mode only (no parameter byte consumed).
+			// Pattern effect 2: identical to $7D except that the mode is 2,
+			// which survives the step boundary. Asm ref: TEXT+$031A, which
+			// loads mode 2 and jumps into the middle of the $7D handler, so
+			// the parameter byte is consumed here as well.
+			byte param = readDataByte(c.patternOffset + c.patternPos);
+			c.patternPos++;
 			c.effectMode = 2;
+			c.arpeggioMask = param;
+			c.arpeggioPos = 0;
+			buildArpeggioTable(c, param);
 			continue;
 		}
 
@@ -658,7 +657,6 @@ void EclipseAtariMusicPlayer::triggerNote(int ch) {
 
 	c.basePeriod = isRest ? 0 : getPeriod(note);
 	c.outputPeriod = c.basePeriod;
-	c.useHardwareEnvelope = false;
 
 	if (!isRest && c.basePeriod == 0) {
 		warning("TE-Atari: ch%d note %d has period 0", ch, note);
@@ -702,18 +700,6 @@ void EclipseAtariMusicPlayer::triggerNote(int ch) {
 			depth--;
 		}
 		c.modStep = periodDelta;
-	}
-
-	// TEMUSIC instrument byte 4 bit7 selects YM hardware envelope mode.
-	if (!isRest && (c.envelopeFlags & 0x80)) {
-		c.useHardwareEnvelope = true;
-		c.envelopeDone = true;
-
-		// Envelope style comes from low nibble; period follows note pitch scale.
-		_hwEnvelopeShape = c.envelopeFlags & 0x0F;
-		uint16 envPeriod = (c.basePeriod > 0) ? (uint16)MAX(1, c.basePeriod >> 4) : 1;
-		_hwEnvelopePeriod = envPeriod;
-		_hwEnvelopeDirty = true;
 	}
 
 	debugC(3, kFreescapeDebugParser, "TE-Atari: ch%d NOTE note=%d(+%d) period=%d inst=%d vol=%d",
@@ -864,12 +850,12 @@ void EclipseAtariMusicPlayer::processEnvelope(int ch) {
 	// Noise-only instruments may validly run with zero tone period.
 	if (c.outputPeriod == 0 && !c.noiseEnabled)
 		return;
-	if (c.useHardwareEnvelope)
-		return;
 
 	byte env = c.envelopeFlags;
 
 	// Instrument env byte bit7: oscillating level between attackLevel and target.
+	// The YM hardware envelope is never used: the register write loop at
+	// TEXT+$0AD2 only ever pushes registers 0-10 to the chip.
 	if (env & 0x80) {
 		byte step = env & 0x0F;
 		if (c.envelopeToggle == 0) {
@@ -937,8 +923,16 @@ void EclipseAtariMusicPlayer::processEnvelope(int ch) {
 // ---------------------------------------------------------------------------
 
 void EclipseAtariMusicPlayer::buildArpeggioTable(ChannelState &c, byte mask) {
-	c.arpeggioTableLen = WBCommon::buildArpeggioTable(_arpeggioIntervals, mask, c.arpeggioTable, 16, false);
+	// Asm ref: TEXT+$0846 — the selected intervals are written starting at
+	// slot 1 of the channel's region in the shared buffer at $CAA and are
+	// terminated by $FF; slot 0 is never written and holds 0. Playback starts
+	// at slot 1 and wraps back to slot 0, so the base note closes the cycle.
+	byte len = WBCommon::buildArpeggioTable(_arpeggioIntervals, mask, c.arpeggioTable, 15, false);
+	if (len > 0)
+		c.arpeggioTable[len++] = 0;
+	c.arpeggioTableLen = len;
 	c.arpeggioPos = 0;
+	c.effect7BActive = false; // Asm ref: TEXT+$08A2 clears the $7B state here
 }
 
 // ---------------------------------------------------------------------------
@@ -947,12 +941,6 @@ void EclipseAtariMusicPlayer::buildArpeggioTable(ChannelState &c, byte mask) {
 
 void EclipseAtariMusicPlayer::writeYMRegisters() {
 	byte mixer = 0x3F; // Start with all disabled (bits 0-2=tone, bits 3-5=noise)
-	if (_hwEnvelopeDirty) {
-		setReg(11, _hwEnvelopePeriod & 0xFF);
-		setReg(12, (_hwEnvelopePeriod >> 8) & 0xFF);
-		setReg(13, _hwEnvelopeShape & 0x0F);
-		_hwEnvelopeDirty = false;
-	}
 
 	// TEMUSIC channel loop runs 2 -> 0; keep that order so global noise register ownership matches.
 	for (int ch = kTENumChannels - 1; ch >= 0; ch--) {
@@ -960,8 +948,7 @@ void EclipseAtariMusicPlayer::writeYMRegisters() {
 
 		bool hasTone = c.toneEnabled && (c.outputPeriod > 0);
 		bool hasNoise = c.noiseEnabled;
-		bool usesHwEnvelope = c.useHardwareEnvelope;
-		if (!c.active || (!usesHwEnvelope && c.volume == 0) || (!hasTone && !hasNoise)) {
+		if (!c.active || c.volume == 0 || (!hasTone && !hasNoise)) {
 			// Channel silent
 			setReg(8 + ch, 0); // Volume = 0
 			continue;
@@ -989,14 +976,10 @@ void EclipseAtariMusicPlayer::writeYMRegisters() {
 			setReg(ch * 2 + 1, (period >> 8) & 0x0F); // Coarse tune
 		}
 
-		// Set volume (internal 0-63 → YM 0-15)
-		if (usesHwEnvelope) {
-			setReg(8 + ch, 0x10); // Enable YM hardware envelope on this channel
-		} else {
-			byte ymVol = c.volume >> 2;
-			if (ymVol > 15) ymVol = 15;
-			setReg(8 + ch, ymVol);
-		}
+		// Set volume (internal 0-63 → YM 0-15). Asm ref: TEXT+$0748.
+		byte ymVol = c.volume >> 2;
+		if (ymVol > 15) ymVol = 15;
+		setReg(8 + ch, ymVol);
 	}
 
 	setReg(7, mixer);
@@ -1010,8 +993,9 @@ void EclipseAtariMusicPlayer::tickUpdate() {
 	if (!_musicActive)
 		return;
 
-	// Sequencer step occurs when tick counter is zero, then the counter advances.
-	// This matches the original TEMUSIC update loop and wb.cpp behavior.
+	// Sequencer step occurs when the tick counter is zero, then it advances.
+	// Asm ref: TEXT+$015C tests the speed counter before touching the per
+	// channel duration counter.
 	bool sequencerTick = (_tickCounter == 0);
 
 	if (sequencerTick) {
@@ -1037,7 +1021,6 @@ void EclipseAtariMusicPlayer::tickUpdate() {
 				c.noiseEnabled = false;
 				c.freqSweep = false;
 				c.envelopeDone = false;
-				c.useHardwareEnvelope = false;
 				readPatternCommands(ch);
 			}
 		}
@@ -1052,8 +1035,11 @@ void EclipseAtariMusicPlayer::tickUpdate() {
 		processEnvelope(ch);
 	}
 
+	// Asm ref: TEXT+$0808 — the speed counter is decremented every tick and
+	// only reloaded from the speed value ($C54) once it goes negative, so a
+	// speed of N leaves N + 1 ticks between sequencer steps.
 	_tickCounter++;
-	if (_tickCounter >= _tickSpeed)
+	if (_tickCounter > _tickSpeed)
 		_tickCounter = 0;
 
 	writeYMRegisters();
