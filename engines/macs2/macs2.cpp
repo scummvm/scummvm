@@ -296,6 +296,14 @@ void Macs2Engine::readExecutable() {
 	inventoryIconIndices.resize(6);
 	containerInventoryIconIndices.resize(6);
 
+	if (isAmiga()) {
+		for (uint i = 0; i < 6; i++) {
+			inventoryIconIndices[i] = (uint16)(i + 1);
+			containerInventoryIconIndices[i] = (uint16)(i + 1);
+		}
+		return;
+	}
+
 	Common::ScopedPtr<Common::MemoryReadStream> exeFileStream;
 	{
 		// Extra scope in order to make sure no code tries to read from the file directly.
