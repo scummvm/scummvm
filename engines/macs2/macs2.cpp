@@ -1556,7 +1556,8 @@ int Macs2Engine::computeStringIndex(Common::MemoryReadStream *stream, int target
 	stream->seek(0);
 	int index = 0;
 	while (stream->pos() < targetOffset && !stream->eos()) {
-		uint16 len = stream->readUint16LE();
+		// DOS: u16LE + XOR ciphertext. Amiga: u16BE + plaintext.
+		const uint16 len = isAmiga() ? stream->readUint16BE() : stream->readUint16LE();
 		if (len == 0)
 			break;
 		stream->skip(len);
@@ -1681,22 +1682,28 @@ Common::StringArray Macs2Engine::decodeStrings(Common::MemoryReadStream *stream,
 	Common::StringArray result(numStrings);
 	stream->seek(offset);
 
-	byte x;
-	byte y;
-	byte r;
-
-	for (int i = 0; i < numStrings; i++) {
-		Common::String currentLine;
-		uint16 length = stream->readUint16LE();
-		byte currentByte;
-		for (int index = 1; index < length + 1; index++) {
-			currentByte = stream->readByte();
-			x = (byte)(index * index * 0x0c);
-			y = (byte)(currentByte ^ index);
-			r = (byte)(x ^ y);
-			currentLine += (char)r;
+	if (isAmiga()) {
+		// Amiga strings: u16BE length + plaintext (Latin-1), no XOR cipher.
+		for (int i = 0; i < numStrings; i++) {
+			Common::String currentLine;
+			const uint16 length = stream->readUint16BE();
+			for (uint16 index = 0; index < length; index++)
+				currentLine += (char)stream->readByte();
+			result[i] = currentLine;
 		}
-		result[i] = currentLine;
+	} else {
+		for (int i = 0; i < numStrings; i++) {
+			Common::String currentLine;
+			uint16 length = stream->readUint16LE();
+			for (int index = 1; index < length + 1; index++) {
+				const byte currentByte = stream->readByte();
+				const byte x = (byte)(index * index * 0x0c);
+				const byte y = (byte)(currentByte ^ index);
+				const byte r = (byte)(x ^ y);
+				currentLine += (char)r;
+			}
+			result[i] = currentLine;
+		}
 	}
 
 	// Apply translation if available

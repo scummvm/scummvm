@@ -93,6 +93,17 @@ const ADGameDescription gameDescriptions[] = {
 	 ADGF_DEMO | ADGF_UNSTABLE,
 	 GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS, GAMEOPTION_ENHANCEMENTS)},
 
+	// Amiga demo - English fan translation
+	{"sis",
+	 "Demo/w/translation",
+	 AD_ENTRY3s("DataA", "30ce5b1b30f7ef60f412c0475a25b0cb", 736670,
+	            "Mdir", "269f4c31a50395e3ec6ae69b86e426bd", 598,
+	            "macs2_translation.dat", nullptr, AD_NO_SIZE),
+	 Common::EN_ANY,
+	 Common::kPlatformAmiga,
+	 GF_TRANSLATED | ADGF_DEMO | ADGF_UNSTABLE,
+	 GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS, GAMEOPTION_ENHANCEMENTS)},
+
 	AD_TABLE_END_MARKER};
 
 } // End of namespace Macs2
