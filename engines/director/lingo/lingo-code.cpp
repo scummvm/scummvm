@@ -408,7 +408,10 @@ void Lingo::freezePlayState() {
 
 void Lingo::requeuePlayState() {
 	Window *window = _vm->getCurrentWindow();
-	window->requeueLingoPlayState();
+	if (window->requeueLingoPlayState()) {
+		window->thawLingoState();
+		switchStateFromWindow();
+	}
 }
 
 
@@ -1833,7 +1836,7 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 			g_lingo->_state->me = retMe;
 		} else {
 			// sendSprite/sendAllSprites/call/send can be used both as a command and
-			// as a function (returning the handler's result). 
+			// as a function (returning the handler's result).
 			if (funcSym.name && (funcSym.name->equalsIgnoreCase("sendSprite") ||
 					funcSym.name->equalsIgnoreCase("sendAllSprites") ||
 					funcSym.name->equalsIgnoreCase("call") ||

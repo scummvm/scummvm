@@ -717,6 +717,19 @@ bool Lingo::execute(int targetFrame) {
 			warning("Lingo::execute(): Bad PC (%d)", _state->pc);
 			break;
 		}
+
+		if (_playDone) {
+			// Returning from a script with "play done" does not freeze the state. Instead it obliterates it,
+			// replacing it with the script context from the entry "play" statement.
+			// To be clear, if "play movie B" was invoked in movie A, and "play done" was invoked in movie B,
+			// the script from movie A will be resumed in movie B -before- the normal movie switch procedure.
+			while (_state->callstack.size()) {
+				popContext(true);
+			}
+
+			_playDone = false;
+			requeuePlayState();
+		}
 	}
 
 	bool result = !_freezeState;
@@ -726,20 +739,16 @@ bool Lingo::execute(int targetFrame) {
 	} else if (_freezeState) {
 		debugC(5, kDebugLingoExec, "Lingo::execute(): Context is frozen, pausing execution");
 		freezeState();
-	// Returning from a script with "play done" does not freeze the state. Instead it obliterates it.
-	} else if (_abort || _playDone || _vm->getCurrentMovie()->getScore()->_playState == kPlayStopped) {
+	} else if (_abort || _vm->getCurrentMovie()->getScore()->_playState == kPlayStopped) {
 		// Clean up call stack
 		while (_state->callstack.size()) {
 			popContext(true);
-		}
-		if (_playDone) {
-			_playDone = false;
-			requeuePlayState();
 		}
 	}
 	_abort = false;
 	_freezeState = false;
 	_freezePlay = false;
+	_playDone = false;
 
 	g_debugger->stepHook();
 	// return true if execution finished, false if the context froze for later
