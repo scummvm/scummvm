@@ -85,6 +85,8 @@ private:
 	Common::Rect getInvItemRect(int index) const;
 	Common::Rect getInvScrollLeftRect() const;
 	Common::Rect getInvScrollRightRect() const;
+	/** True if pos hits the inventory scroll/item area of the strip. */
+	bool isPointInInventoryStrip(const Common::Point &pos) const;
 
 	View1 *_view;
 	int _activeVerbIndex;

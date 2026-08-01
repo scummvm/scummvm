@@ -285,6 +285,26 @@ bool ScummUI::handleClick(const Common::Point &pos, bool scriptsRunning) {
 	if (scriptsRunning)
 		return true;
 
+	const Script::MouseMode mode = g_engine->_scriptExecutor->_cursorMode;
+	const bool takingFromContainer =
+		mode == Script::MouseMode::UseInventory &&
+		_view->_activeInventoryItem != nullptr &&
+		_view->_uiPanelState == View1::kUiPanelContainerInventory;
+
+	// Drop a held container item onto the protagonist strip (classic Take/Drop).
+	if (takingFromContainer && isPointInInventoryStrip(pos)) {
+		_view->transferInventoryItem(_view->_activeInventoryItem,
+									 GameObjects::instance().getProtagonistObject());
+		_view->_activeInventoryItem = nullptr;
+		g_engine->_scriptExecutor->_inventoryActionFlag = true;
+		g_engine->setCursorMode(Script::MouseMode::Use);
+		_view->updateCursor();
+		_view->setInventorySource(_view->_inventorySource);
+		syncInventory();
+		_view->redraw();
+		return true;
+	}
+
 	const Common::Array<GameObject *> items = getProtagonistItems();
 	const int maxVisible = kInvCols * kInvRows;
 	for (int i = 0; i < maxVisible; i++) {
@@ -296,7 +316,6 @@ bool ScummUI::handleClick(const Common::Point &pos, bool scriptsRunning) {
 			continue;
 
 		GameObject *item = items[itemIdx];
-		const Script::MouseMode mode = g_engine->_scriptExecutor->_cursorMode;
 
 		if (mode == Script::MouseMode::Look) {
 			g_engine->_scriptExecutor->_interactedObjectID = 0x400 + item->_index;
@@ -403,6 +422,13 @@ Common::Rect ScummUI::getInvItemRect(int index) const {
 Common::Rect ScummUI::getInvScrollLeftRect() const {
 	const int scrollW = getScrollButtonWidth();
 	return Common::Rect(getInvArrowX(), kVerbY, getInvArrowX() + scrollW, kVerbY + kVerbH * kVerbRows);
+}
+
+bool ScummUI::isPointInInventoryStrip(const Common::Point &pos) const {
+	const Common::Rect left = getInvScrollLeftRect();
+	const Common::Rect right = getInvScrollRightRect();
+	const Common::Rect strip(left.left, left.top, right.right, left.bottom);
+	return strip.contains(pos);
 }
 
 Common::Rect ScummUI::getInvScrollRightRect() const {

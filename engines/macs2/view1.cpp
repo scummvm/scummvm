@@ -171,7 +171,9 @@ bool View1::shouldShowScummVerbUI() const {
 		return false;
 	if (_isShowingTextBox || _isShowingDialoguePanel)
 		return false;
-	if (_uiPanelState == kUiPanelContainerInventory || _uiPanelState == kUiPanelSaveLoad)
+	// Keep the strip visible during container inventory so items can be taken
+	// into the protagonist inventory (Drop/Take is suppressed on that panel).
+	if (_uiPanelState == kUiPanelSaveLoad)
 		return false;
 	if (g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::Disabled)
 		return false;
