@@ -41,6 +41,7 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "gui/debugger.h"
+#include "macs2/amiga_decode.h"
 #include "macs2/debugtools.h"
 #include "macs2/detection.h"
 #include "macs2/hotspot_names.h"
@@ -331,6 +332,13 @@ void Macs2Engine::readExecutable() {
 	exeFileStream->read(containerInventoryIconIndices.data(), 12);
 }
 
+void Macs2Engine::loadBootstrapResources() {
+	if (isAmiga())
+		readAmigaResources();
+	else
+		readResourceFile();
+}
+
 void Macs2Engine::readBackgroundAnimations(Common::MemoryReadStream *stream) {
 	// changeScene (1008:2574): background animation loading at scene+0x50F5.
 	// Per-entry runtime struct (0x10 bytes stride):
@@ -427,6 +435,11 @@ Macs2Engine::~Macs2Engine() {
 	clearCurrentSoundData();
 	_music->deinit();
 	delete _music;
+	if (_amigaArchive) {
+		SearchMan.remove("macs2amiga");
+		delete _amigaArchive;
+		_amigaArchive = nullptr;
+	}
 	delete _fileStream;
 	_fileStream = nullptr;
 	delete _scriptExecutor;
@@ -476,6 +489,32 @@ uint16 Macs2Engine::scaledMusicVolume(uint16 gameAttenuation) const {
 }
 
 bool Macs2Engine::loadSceneGraphics(uint32 sceneIndex) {
+	if (isAmiga()) {
+		uint32 sceneResourceId = 0;
+		if (sceneIndex > 0)
+			sceneResourceId = sceneIndex - 1;
+
+		if (sceneResourceId != 0 && loadAmigaSceneBackground(sceneResourceId))
+			return true;
+
+		_sceneBackground.fillRect(Common::Rect(0, 0, kScreenWidth, kGameHeight), 0);
+		_depthMap.fillRect(Common::Rect(0, 0, kScreenWidth, kGameHeight), 0);
+		_pathfindingMap.fillRect(Common::Rect(0, 0, kScreenWidth, kGameHeight), 0);
+		_shadowMap.fillRect(Common::Rect(0, 0, kScreenWidth, kGameHeight), 0);
+		_hotspotMap.fillRect(Common::Rect(0, 0, kScreenWidth, kGameHeight), 0);
+		_numHotspots = 0;
+		_numPathfindingPoints = 0;
+		_walkDepthThresholdY = 100;
+		_walkDepthScaleFactor = 100;
+		_walkBaseSpeedPct = 100;
+		_scenePaletteMode = 1;
+		_paletteDarkenPercent = 0;
+		applyAmigaUiPalette();
+		warning("Amiga: no MM_%04u in DataA (script scene %u)",
+				(uint)sceneResourceId, (uint)sceneIndex);
+		return true;
+	}
+
 	const uint32 newSceneIndex = sceneIndex;
 
 	// Background image
@@ -652,6 +691,134 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	_backgroundAnimationsBlobs.clear();
 	memset(_areaOverrides, 0, sizeof(_areaOverrides));
 
+	if (isAmiga()) {
+		// Amiga scripts use scene ids = MM_resource_id + 1 (Ghidra FUN_002215fa
+		// subtracts 1 before load_scene_mxmm; load_scene sets curScene = mmId+1).
+		_amigaPendingSceneScript.clear();
+		_amigaPendingSceneStrings.clear();
+
+		if (!loadSceneGraphics(newSceneIndex))
+			error("changeScene(): Failed to load scene graphics for scene %u", newSceneIndex);
+
+		View1 *currentView = (View1 *)findView("View1");
+		if (currentView != nullptr) {
+			// Do not push _pal here: scriptChangeScene fades the previous
+			// palette to black, then fades the new scene in.
+			for (auto currentCharacter : currentView->_characters) {
+				if (currentCharacter->_gameObject != nullptr)
+					_scriptExecutor->saveWalkRuntime(currentCharacter, currentCharacter->_gameObject);
+				delete currentCharacter;
+			}
+			currentView->_characters.clear();
+			currentView->flushPendingCharacterDeletes();
+
+			GameObject *actorObject = GameObjects::getObjectByIndex(Scenes::instance()._currentActorIndex);
+			if (actorObject != nullptr && actorObject->_sceneIndex == newSceneIndex) {
+				Character *actorChar = new Character();
+				actorChar->_gameObject = actorObject;
+				currentView->_characters.push_back(actorChar);
+				_scriptExecutor->restoreWalkRuntime(actorChar, actorObject);
+				resetCharacterWalkPath(actorChar);
+				_scriptExecutor->saveWalkRuntime(actorChar, actorObject);
+			}
+			for (auto currentObject : GameObjects::instance()._objects) {
+				if (currentObject == nullptr)
+					continue;
+				if (currentObject->_sceneIndex == newSceneIndex &&
+					currentObject->_index != Scenes::instance()._currentActorIndex &&
+					currentObject->_dataOffset != 0) {
+					Character *c = new Character();
+					c->_gameObject = currentObject;
+					currentView->_characters.push_back(c);
+					_scriptExecutor->restoreWalkRuntime(c, currentObject);
+					resetCharacterWalkPath(c);
+					_scriptExecutor->saveWalkRuntime(c, currentObject);
+				}
+			}
+			currentView->rebuildCharacterLookupTable();
+			currentView->_backgroundSurface.copyFrom(_sceneBackground);
+			if (executeScript)
+				currentView->_paletteDirty = true;
+		}
+
+		Scenes::instance()._lastSceneIndex = Scenes::instance()._currentSceneIndex;
+		Scenes::instance()._currentSceneIndex = newSceneIndex;
+		_scriptExecutor->releaseObjectStream();
+		delete Scenes::instance()._currentSceneScript;
+		delete Scenes::instance()._currentSceneStrings;
+
+		byte *scriptCopy = nullptr;
+		uint32 scriptSize = 0;
+		byte *stringCopy = nullptr;
+		uint32 stringSize = 0;
+
+		if (!_amigaPendingSceneScript.empty()) {
+			scriptSize = _amigaPendingSceneScript.size();
+			scriptCopy = (byte *)malloc(scriptSize);
+			if (scriptCopy)
+				memcpy(scriptCopy, _amigaPendingSceneScript.data(), scriptSize);
+			else
+				scriptSize = 0;
+		}
+		if (!_amigaPendingSceneStrings.empty()) {
+			stringSize = _amigaPendingSceneStrings.size();
+			stringCopy = (byte *)malloc(stringSize);
+			if (stringCopy)
+				memcpy(stringCopy, _amigaPendingSceneStrings.data(), stringSize);
+			else
+				stringSize = 0;
+		}
+		_amigaPendingSceneScript.clear();
+		_amigaPendingSceneStrings.clear();
+
+		// Fallback: global scene_table MXOO stub (usually just opcode 0x18 in the demo).
+		if (scriptSize == 0 && _fileStream != nullptr) {
+			AmigaMxooInfo sceneInfo;
+			const uint32 tableSize = (uint32)_fileStream->size();
+			Common::Array<byte> table;
+			table.resize(tableSize);
+			_fileStream->seek(0);
+			if (_fileStream->read(table.data(), tableSize) == tableSize &&
+				parseAmigaMxoo(table.data(), tableSize, sceneInfo)) {
+				Common::Array<byte> script;
+				Common::Array<byte> strings;
+				if (extractAmigaScript(table.data(), tableSize, script) && !script.empty()) {
+					scriptSize = script.size();
+					scriptCopy = (byte *)malloc(scriptSize);
+					if (scriptCopy)
+						memcpy(scriptCopy, script.data(), scriptSize);
+					else
+						scriptSize = 0;
+				}
+				if (stringSize == 0 && extractAmigaStringBlock(table.data(), tableSize, strings)) {
+					stringSize = strings.size();
+					stringCopy = (byte *)malloc(stringSize);
+					if (stringCopy && stringSize)
+						memcpy(stringCopy, strings.data(), stringSize);
+					else
+						stringSize = 0;
+				}
+			}
+		}
+
+		Scenes::instance()._currentSceneScript = new Common::MemoryReadStream(scriptCopy, scriptSize, DisposeAfterUse::YES);
+		Scenes::instance()._currentSceneStrings = new Common::MemoryReadStream(stringCopy, stringSize, DisposeAfterUse::YES);
+		Scenes::instance()._currentSceneSpecialAnimOffsets.clear();
+		_scriptExecutor->setScript(Scenes::instance()._currentSceneScript);
+
+		_pathfindingOverrides.clear();
+		for (uint i = 0; i < _hotspotOverrides.size(); i++)
+			_hotspotOverrides[i] = 0xFFFF;
+
+		// Match DOS changeScene: when View1 is not up yet (first call from
+		// readAmigaResources), only load scene data. Entry init/repeat — including
+		// intro frameWait/changeScene — must run from View1::tick so waits can
+		// complete in the game loop.
+		if (executeScript && currentView != nullptr)
+			_scriptExecutor->runSceneEntryScriptPasses();
+		return;
+	}
+
 	if (!loadSceneGraphics(newSceneIndex))
 		error("changeScene(): Failed to load scene graphics for scene %u", newSceneIndex);
 
@@ -744,6 +911,9 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 }
 
 bool Macs2Engine::loadOverlayFont(uint8 resourceIndex, uint16 executingObjectID) {
+	if (isAmiga())
+		return loadAmigaOverlayFont(resourceIndex);
+
 	// Original (1008:d749): looks up file offset from scene/object resource table
 	// at scene+0x5209+index*4 (same table as loadIndexedResource/_sceneResourceOffsets),
 	// seeks to offset+0x10, then calls loadFontData.
@@ -776,7 +946,7 @@ bool Macs2Engine::loadOverlayFont(uint8 resourceIndex, uint16 executingObjectID)
 
 	// Seek to address + 0x10 (original skips 16-byte resource header)
 	_fileStream->seek(address + 0x10, SEEK_SET);
-	uint16 glyphCount = _fileStream->readUint16LE();
+	const uint16 glyphCount = _fileStream->readUint16LE();
 	if (glyphCount == 0 || glyphCount > 256) {
 		_fileStream->seek(oldPos, SEEK_SET);
 		return false;
@@ -1861,6 +2031,17 @@ bool Macs2Engine::loadObjectData(GameObject *obj) {
 		_scriptExecutor->setScriptError(0x19);
 		return false;
 	}
+	// Amiga: OO_* animation/script payloads stay resident after readAmigaResources().
+	// _dataOffset is a non-zero sentinel (not an MCS file offset). Opcode 0x0b
+	// (moveObject) and checkObjectData call this when an object enters the scene;
+	// seeking into RESOURCE.MCS would set script error 0x01.
+	if (isAmiga()) {
+		if (obj->_dataOffset == 0) {
+			_scriptExecutor->setScriptError(0x19);
+			return false;
+		}
+		return true;
+	}
 	if (obj->_dataOffset == 0) {
 		_scriptExecutor->setScriptError(0x19);
 		return false;
@@ -1988,14 +2169,18 @@ bool Macs2Engine::loadObjectData(GameObject *obj) {
 	return true;
 }
 
-void Macs2Engine::setCurrentSoundData(const Common::Array<uint8> &data) {
+void Macs2Engine::setCurrentSoundData(const Common::Array<uint8> &data, int rateHz, int headerSkip) {
 	stopSample();
 	_currentSoundData = data;
+	_currentSoundRate = rateHz > 0 ? rateHz : 0x1F40;
+	_currentSoundHeaderSkip = headerSkip >= 0 ? headerSkip : 0;
 }
 
 void Macs2Engine::clearCurrentSoundData() {
 	stopSample();
 	_currentSoundData.clear();
+	_currentSoundRate = 0x1F40;
+	_currentSoundHeaderSkip = 2;
 }
 
 void Macs2Engine::playSample() {
@@ -2004,7 +2189,11 @@ void Macs2Engine::playSample() {
 
 	stopSample();
 	MacsAudioStream *audioStream = new MacsAudioStream();
-	audioStream->_pos = 2; // Skip 2-byte header (original: size = stored_size - 2)
+	audioStream->_rate = _currentSoundRate;
+	// DOS: skip 2-byte size header. Amiga MXOS extract is raw PCM (skip 0).
+	audioStream->_pos = _currentSoundHeaderSkip;
+	if (audioStream->_pos > (int64)_currentSoundData.size())
+		audioStream->_pos = (int64)_currentSoundData.size();
 	audioStream->_data = _currentSoundData;
 	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_currentSoundHandle, audioStream);
 }
@@ -2357,7 +2546,7 @@ bool MacsAudioStream::isStereo() const {
 }
 
 int MacsAudioStream::getRate() const {
-	return 0x1F40;
+	return _rate > 0 ? _rate : 0x1F40;
 }
 
 bool MacsAudioStream::endOfData() const {

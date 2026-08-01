@@ -385,6 +385,17 @@ Macs2::GameObject *Macs2::GameObjects::getObjectByIndex(uint16 index) {
 }
 
 Common::MemoryReadStream *Macs2::GameObjects::readGameObjectStrings(uint16 index, Common::SeekableReadStream *fileStream) {
+	// Amiga: strings live on the GameObject itself (plaintext, u16BE lengths).
+	if (g_engine->isAmiga()) {
+		GameObject *obj = getObjectByIndex(index);
+		if (obj == nullptr)
+			return new Common::MemoryReadStream(nullptr, 0);
+		byte *copy = (byte *)malloc(obj->_stringData.size());
+		if (!obj->_stringData.empty())
+			memcpy(copy, obj->_stringData.data(), obj->_stringData.size());
+		return new Common::MemoryReadStream(copy, obj->_stringData.size(), DisposeAfterUse::YES);
+	}
+
 	const uint32 directoryOffset = g_engine->getMcsDirectoryOffset();
 	// Object string table pointer at directory + index*0xC + 0x17FC.
 	fileStream->seek(directoryOffset + index * 0xC + 0x17FC);

@@ -176,6 +176,10 @@ public:
 	// The object-specific script
 	Common::Array<uint8> _script;
 
+	// Amiga: plaintext string entries for this object (script offsets are relative to this).
+	// Empty on DOS; DOS strings are read from RESOURCE.MCS via the scene/object tables.
+	Common::Array<uint8> _stringData;
+
 	// Per-object resource offset table (runtime +0x18D, 128 bytes = 32 dword file offsets).
 	// Loaded from file during loadObjectData. Used by scriptLoadObjectAnim/scriptLoadSpecialAnim
 	// to look up animation resource file addresses for this object.

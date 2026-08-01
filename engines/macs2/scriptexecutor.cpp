@@ -22,6 +22,8 @@
 #include "macs2/scriptexecutor.h"
 #include "common/debug.h"
 #include "common/memstream.h"
+#include "macs2/amiga_archive.h"
+#include "macs2/amiga_decode.h"
 #include "macs2/debugtools.h"
 #include "macs2/detection.h"
 #include "macs2/gameobjects.h"
@@ -59,7 +61,7 @@ ScriptExecutor::ScriptExecutor() {
 		_variables[i].b = 0;
 	}
 
-	setOpcodeTable(ScriptExecutor::kDosOpcodeTable, ScriptExecutor::kDosOpcodeTableSize);
+	setOpcodeTable(ScriptExecutor::kV1OpcodeTable, ScriptExecutor::kV1OpcodeTableSize);
 }
 
 ScriptExecutor::~ScriptExecutor() {
@@ -356,11 +358,53 @@ bool ScriptExecutor::loadIndexedResource(Common::Array<uint8> &outData, uint8 re
 	return !outData.empty();
 }
 
-bool ScriptExecutor::loadSoundResource(Common::Array<uint8> &outData, uint8 resourceIndex) {
+bool ScriptExecutor::loadSoundResource(Common::Array<uint8> &outData, uint8 resourceIndex,
+									   int &rateHz, int &headerSkip) {
+	rateHz = 0x1F40;
+	headerSkip = 2;
+
+	if (_engine != nullptr && _engine->isAmiga()) {
+		outData.clear();
+		headerSkip = 0;
+		if (resourceIndex == 0 || _engine->getAmigaArchive() == nullptr)
+			return false;
+
+		Macs2AmigaArchive *archive = _engine->getAmigaArchive();
+		// Scripts index OS_* by the same 1-based resource id used in Mdir.
+		uint16 osId = resourceIndex;
+		if (!archive->hasResource(kAmigaResOS, osId)) {
+			if (resourceIndex > 0 && archive->hasResource(kAmigaResOS, (uint16)(resourceIndex - 1)))
+				osId = (uint16)(resourceIndex - 1);
+			else
+				return false;
+		}
+
+		Common::ScopedPtr<Common::SeekableReadStream> stream(
+			archive->createReadStreamForResource(kAmigaResOS, osId));
+		if (!stream)
+			return false;
+		const uint32 size = (uint32)stream->size();
+		Common::Array<byte> mxos;
+		mxos.resize(size);
+		if (stream->read(mxos.data(), size) != size)
+			return false;
+
+		uint16 rate = 8000;
+		if (!extractAmigaMxosPcm(mxos.data(), size, outData, rate) || outData.empty())
+			return false;
+		rateHz = (int)rate;
+		return true;
+	}
+
 	return loadIndexedResource(outData, resourceIndex);
 }
 
 bool ScriptExecutor::loadMusicResource(Common::Array<uint8> &outData, uint8 resourceIndex) {
+	// Amiga DataA has no AdLib/Protracker song blobs (MM_* are scene packages).
+	if (_engine != nullptr && _engine->isAmiga()) {
+		outData.clear();
+		return true;
+	}
 	return loadIndexedResource(outData, resourceIndex);
 }
 
@@ -2647,13 +2691,15 @@ void Script::ScriptExecutor::scriptFadeFromBlack() {
 void Script::ScriptExecutor::scriptLoadPcmSound() {
 	const uint8 resourceIndex = readByte();
 	Common::Array<uint8> soundData;
-	if (!loadSoundResource(soundData, resourceIndex)) {
+	int rateHz = 0x1F40;
+	int headerSkip = 2;
+	if (!loadSoundResource(soundData, resourceIndex, rateHz, headerSkip)) {
 		warning("Opcode 0x3E: failed to load PCM sound resource %u", resourceIndex);
 		return;
 	}
 
 	// Opcode 0x3E only installs the buffer; playback is opcode 0x40.
-	_engine->setCurrentSoundData(soundData);
+	_engine->setCurrentSoundData(soundData, rateHz, headerSkip);
 }
 
 void Script::ScriptExecutor::scriptPlayPcmSound() {
@@ -3367,9 +3413,9 @@ OpcodeResult ScriptExecutor::opWaitForAdlib() {
 	return OpcodeResult::Continue;
 }
 
-// DOS script opcode table (indexed by primary opcode byte).
-// Platforms can install an alternate table via setOpcodeTable().
-const ScriptExecutor::OpcodeEntry ScriptExecutor::kDosOpcodeTable[] = {
+// Script dialect v1 opcode table (indexed by primary opcode byte).
+// Later dialects can install an alternate table via setOpcodeTable().
+const ScriptExecutor::OpcodeEntry ScriptExecutor::kV1OpcodeTable[] = {
 	{nullptr, nullptr},
 	{"setVar", &ScriptExecutor::opSetVar},
 	{"setVarOr", &ScriptExecutor::opSetVarOr},
@@ -3450,7 +3496,7 @@ const ScriptExecutor::OpcodeEntry ScriptExecutor::kDosOpcodeTable[] = {
 	{"setPathfindingRemap", &ScriptExecutor::opSetPathfindingRemap},
 	{"waitForAdlib", &ScriptExecutor::opWaitForAdlib}
 };
-const uint ScriptExecutor::kDosOpcodeTableSize = ARRAYSIZE(ScriptExecutor::kDosOpcodeTable);
+const uint ScriptExecutor::kV1OpcodeTableSize = ARRAYSIZE(ScriptExecutor::kV1OpcodeTable);
 
 ExecutionResult Script::ScriptExecutor::executeOpcodes() {
 	debugC(kDebugScript, "----- Scripting function entered - scene: %.2x 1014: %.2x 1012: %.2x", Scenes::instance()._currentSceneIndex, _isSceneInitRun, _repeatRunFlag);

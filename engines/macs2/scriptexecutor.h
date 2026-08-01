@@ -120,14 +120,14 @@ public:
 		OpcodeHandler handler;
 	};
 
-	/** Install the active opcode table (DOS today; other platforms later). */
+	/** Install the active opcode table (use when a platform/version remaps opcodes). */
 	void setOpcodeTable(const OpcodeEntry *table, uint size);
 	/** Name for opcode, or "?" if unset/out of range. */
 	const char *opcodeName(uint8 opcode) const;
 
-	/** Default DOS opcode table (class member so private handlers are accessible). */
-	static const OpcodeEntry kDosOpcodeTable[];
-	static const uint kDosOpcodeTableSize;
+	/** Script dialect v1 opcode table (MCS / Amiga demo bytecode). */
+	static const OpcodeEntry kV1OpcodeTable[];
+	static const uint kV1OpcodeTableSize;
 
 private:
 #ifdef DEMACS2
@@ -369,7 +369,13 @@ private:
 	void scriptSkipAlternate();
 
 	bool loadIndexedResource(Common::Array<uint8> &outData, uint8 resourceIndex, uint16 objectTableOffset = 0x189);
-	bool loadSoundResource(Common::Array<uint8> &outData, uint8 resourceIndex);
+	/**
+	 * Load PCM for opcode 0x3E.
+	 * DOS: indexed MCS resource (2-byte header). Amiga: OS_/MXOS from DataA (raw PCM).
+	 * On success, rateHz/headerSkip describe how playSample should consume the buffer.
+	 */
+	bool loadSoundResource(Common::Array<uint8> &outData, uint8 resourceIndex,
+						   int &rateHz, int &headerSkip);
 	bool loadMusicResource(Common::Array<uint8> &outData, uint8 resourceIndex);
 
 	// scriptReadValue: reads a typed value from the script stream
