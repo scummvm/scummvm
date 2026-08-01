@@ -318,7 +318,7 @@ void InsaneRebel1::loadLocalizedUiStrings() {
 	}
 	delete[] data;
 
-	auto find = [&strs](const Common::String &needle, int from = 0) -> int {
+	auto find = [&strs](const Common::String &needle, int from) -> int {
 		for (uint i = (uint)MAX(from, 0); i < strs.size(); i++)
 			if (strs[i] == needle)
 				return (int)i;
@@ -349,7 +349,7 @@ void InsaneRebel1::loadLocalizedUiStrings() {
 	};
 
 	// Main menu: title and the five original items follow OPEN\O1OPTION.ANM.
-	int idx = find("OPEN\\O1OPTION.ANM");
+	int idx = find("OPEN\\O1OPTION.ANM", 0);
 	if (idx >= 0) {
 		assign(kR1StrMainMenuTitle, idx + 1);
 		for (int i = 0; i < 5; i++)
@@ -357,13 +357,13 @@ void InsaneRebel1::loadLocalizedUiStrings() {
 	}
 
 	// High score table title follows OPEN\O1SCORE.ANM.
-	idx = find("OPEN\\O1SCORE.ANM");
+	idx = find("OPEN\\O1SCORE.ANM", 0);
 	if (idx >= 0)
 		assign(kR1StrTopPilots, idx + 1);
 
 	// The joystick calibration coordinate format "(%d,%d)" sits between the
 	// passcode/calibration strings and the options menu block.
-	const int calib = find("OPEN\\O1CALIB.ANM");
+	const int calib = find("OPEN\\O1CALIB.ANM", 0);
 	int paren = (calib >= 0) ? find("(%d,%d)", calib) : -1;
 	if (paren >= 0 && paren > calib + 40)
 		paren = -1;
@@ -409,7 +409,7 @@ void InsaneRebel1::loadLocalizedUiStrings() {
 	}
 
 	// Level result strings, each anchored on the video played before them.
-	idx = find("LVL1\\L1END.ANM");
+	idx = find("LVL1\\L1END.ANM", 0);
 	if (idx >= 0) {
 		assign(kR1StrPathHard, idx + 1);
 		assign(kR1StrPathEasy, idx + 2);
@@ -418,20 +418,20 @@ void InsaneRebel1::loadLocalizedUiStrings() {
 		assign(kR1StrPartII, idx + 5);
 		assign(kR1StrPartI, idx + 6);
 	}
-	idx = find("LVL4\\L4END2.ANM");
+	idx = find("LVL4\\L4END2.ANM", 0);
 	if (idx >= 0) {
 		assign(kR1StrTorpedoHit, idx + 1);
 		assign(kR1StrTorpedoMissed, idx + 2);
 	}
-	idx = find("LVL5\\L5PLAY2.ANM");
+	idx = find("LVL5\\L5PLAY2.ANM", 0);
 	if (idx >= 0)
 		assign(kR1StrShootTargets, idx + 1);
-	idx = find("LVL8\\L8PLAY.ANM");
+	idx = find("LVL8\\L8PLAY.ANM", 0);
 	if (idx >= 0) {
 		assign(kR1StrWalkerFmt, idx + 1);
 		assign(kR1StrTimeFmt, idx + 2);
 	}
-	idx = find("LVL15\\L15END1.ANM");
+	idx = find("LVL15\\L15END1.ANM", 0);
 	if (idx >= 0)
 		assign(kR1StrTorpedoOnMark, idx + 1);
 
@@ -440,7 +440,7 @@ void InsaneRebel1::loadLocalizedUiStrings() {
 	for (int n = 1; n <= 15; n++) {
 		Common::String anchor = (n == 1) ? Common::String("LVL1\\L1HANGAR.ANM")
 			: Common::String::format("LVL%d\\L%dINTRO.ANM", n, n);
-		idx = find(anchor);
+		idx = find(anchor, 0);
 		if (idx < 0 || idx + 2 >= (int)strs.size())
 			continue;
 		const Common::String &title = strs[idx + 1];
