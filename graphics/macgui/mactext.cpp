@@ -21,6 +21,7 @@
 
 #include "common/file.h"
 #include "common/timer.h"
+#include "graphics/font.h"
 #include "graphics/macgui/macwindowborder.h"
 
 #include "graphics/macgui/mactext.h"
@@ -236,6 +237,7 @@ void MacText::init(uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textA
 	_selStart = -1;
 
 	_defaultFormatting.wm = _wm;
+	_defaultFormatting.fgcolor = fgcolor;
 
 	_canvas.splitString(_str, -1, _defaultFormatting);
 	recalcDims();
@@ -701,6 +703,20 @@ void MacText::recalcDims() {
 			}
 			_fullRefresh = true;
 			_contentIsDirty = true;
+
+			if (_charBoxMaskSurface) {
+				_charBoxMaskSurface->free();
+				delete _charBoxMaskSurface;
+				_charBoxMaskSurface = new ManagedSurface(_dims.width(), _dims.height(), Graphics::PixelFormat::createFormatCLUT8());
+				_charBoxMaskSurface->clear(0);
+			}
+
+			if (_glyphMaskSurface) {
+				_glyphMaskSurface->free();
+				delete _glyphMaskSurface;
+				_glyphMaskSurface = new ManagedSurface(_dims.width(), _dims.height(), Graphics::PixelFormat::createFormatCLUT8());
+				_glyphMaskSurface->clear(0);
+			}
 		}
 	}
 }
@@ -943,6 +959,9 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 
 	drawStep(g, _canvas._surface, &_borderSurface, x, y, w, h, xoff, yoff, _canvas._tbgcolor, _wm->_pixelformat.isCLUT8() ? _wm->_colorGreen : 0);
 
+	//_canvas._surface->rawSurface().debugPrint(0, 0, 0, 0, 0, 1, 320);
+	//_canvas._glyphMask->rawSurface().debugPrint(0, 0, 0, 0, 0, 1, 320);
+	//_canvas._charBoxMask->rawSurface().debugPrint(0, 0, 0, 0, 0, 1, 320);
 	drawStep(_glyphMaskSurface, _canvas._glyphMask, &_borderMaskSurface, x, y, w, h, xoff, yoff, 0, 0);
 	drawStep(_charBoxMaskSurface, _canvas._charBoxMask, &_borderMaskSurface, x, y, w, h, xoff, yoff, 0, 0);
 
@@ -1216,12 +1235,12 @@ void MacText::drawSelection(int xoff, int yoff) {
 		numLines--;
 
 		byte *ptr = (byte *)_composeSurface->getBasePtr(x1, MIN<int>(y + yoff, maxSelectionHeight - 1));
+		byte *maskPtr = (byte *)_glyphMaskSurface->getBasePtr(x1, MIN<int>(y + yoff, maxSelectionHeight - 1));
 
-		for (int x = x1; x < x2; x++, ptr++)
-			if (*ptr == _canvas._tfgcolor)
-				*ptr = _canvas._tbgcolor;
-			else
-				*ptr = _canvas._tfgcolor;
+		for (int x = x1; x < x2; x++, ptr++, maskPtr++) {
+			*ptr = (*ptr == _canvas._tfgcolor) ? _canvas._tbgcolor : _canvas._tfgcolor;
+			*maskPtr = (*maskPtr == 0xff) ? 0x00 : 0xff;
+		}
 	}
 }
 
@@ -2047,7 +2066,10 @@ void MacText::insertChar(byte c, int *row, int *col) {
 
 	(*col)++;
 
-	if (_canvas.getLineWidth(*row) - oldw + chunkw > _canvas._maxWidth) { // Needs reshuffle
+	bool needsReshuffle = _canvas.getLineWidth(*row) - oldw + chunkw > _canvas._maxWidth;
+	needsReshuffle |= (_canvas._textAlignment != kTextAlignLeft);
+
+	if (needsReshuffle) {
 		_canvas.reshuffleParagraph(row, col, _defaultFormatting);
 		_fullRefresh = true;
 		recalcDims();
