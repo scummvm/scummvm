@@ -1967,44 +1967,34 @@ bool Macs2Engine::loadObjectData(GameObject *obj) {
 	return true;
 }
 
-void Macs2Engine::loadSongFromSceneData(uint8 dataIndex) {
-	uint32 address = _sceneResourceOffsets[dataIndex - 1];
-	_fileStream->seek(address);
-	uint32 size = _fileStream->readUint32LE();
-	Common::Array<uint8> data;
-	data.resize(size);
-	_fileStream->read(data.data(), size);
-	_music->playSongData(data);
-}
-
 void Macs2Engine::setCurrentSoundData(const Common::Array<uint8> &data) {
-	stopCurrentSound();
+	stopSample();
 	_currentSoundData = data;
 }
 
 void Macs2Engine::clearCurrentSoundData() {
-	stopCurrentSound();
+	stopSample();
 	_currentSoundData.clear();
 }
 
-void Macs2Engine::playCurrentSound() {
+void Macs2Engine::playSample() {
 	if (_currentSoundData.empty())
 		return;
 
-	stopCurrentSound();
+	stopSample();
 	MacsAudioStream *audioStream = new MacsAudioStream();
 	audioStream->_pos = 2; // Skip 2-byte header (original: size = stored_size - 2)
 	audioStream->_data = _currentSoundData;
 	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_currentSoundHandle, audioStream);
 }
 
-void Macs2Engine::stopCurrentSound() {
+void Macs2Engine::stopSample() {
 	Audio::Mixer *mixer = g_system->getMixer();
 	if (mixer->isSoundHandleActive(_currentSoundHandle))
 		mixer->stopHandle(_currentSoundHandle);
 }
 
-bool Macs2Engine::isCurrentSoundPlaying() const {
+bool Macs2Engine::isSamplePlaying() const {
 	return g_system->getMixer()->isSoundHandleActive(_currentSoundHandle);
 }
 

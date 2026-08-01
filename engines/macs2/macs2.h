@@ -414,16 +414,15 @@ public:
 	// sortObjectsByDepth @ 1008:0d79 - inventory cursor reset + free object runtime blobs.
 	void sortObjectsByDepth(uint16 objectIndex);
 
-	void loadSongFromSceneData(uint8 dataIndex);
 	Music *getMusic() const { return _music; }
 	// Returns the Music volume (0-63) scaled by the user's music_volume setting
 	uint16 scaledMusicVolume(uint16 gameAttenuation) const;
 	void setCurrentSoundData(const Common::Array<uint8> &data);
 	void clearCurrentSoundData();
-	void playCurrentSound();
-	void stopCurrentSound();
-	bool hasCurrentSound() const { return !_currentSoundData.empty(); }
-	bool isCurrentSoundPlaying() const;
+	bool hasCurrentSoundData() const { return !_currentSoundData.empty(); }
+	void playSample();
+	void stopSample();
+	bool isSamplePlaying() const;
 
 	// Offset 50D3h - This is used in 0037:10C4 to terminate the loop
 	uint16 _numHotspots;

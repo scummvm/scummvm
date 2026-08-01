@@ -2651,11 +2651,11 @@ void Script::ScriptExecutor::scriptPlayPcmSound() {
 	// Binary (1000:0c7f): no error path; no-op when Sound Blaster disabled.
 	// Buffer was installed by opcode 0x3E; only start playback here.
 	if (_soundEnabled) {
-		if (!_engine->hasCurrentSound()) {
+		if (!_engine->hasCurrentSoundData()) {
 			warning("Opcode 0x40: playPcmSound with no loaded sound data");
 			return;
 		}
-		_engine->playCurrentSound();
+		_engine->playSample();
 	}
 }
 
@@ -2665,7 +2665,7 @@ bool Script::ScriptExecutor::scriptWaitForSound() {
 		endTimer();
 		endBuffering(_lastOpcodeTriggeredSkip);
 		debugC(kDebugScript, "SCRIPT::waitForSound start (soundPlaying=%d hasSound=%d)",
-			   g_engine->isCurrentSoundPlaying() ? 1 : 0, g_engine->hasCurrentSound() ? 1 : 0);
+			   g_engine->isSamplePlaying() ? 1 : 0, g_engine->hasCurrentSoundData() ? 1 : 0);
 		debugLogActorWalkState("waitForSound start");
 		enterBlockingWaitCursor();
 		return true;
@@ -2677,7 +2677,7 @@ bool Script::ScriptExecutor::scriptWaitForSound() {
 
 void Script::ScriptExecutor::scriptStopPcmSound() {
 	if (_soundEnabled) {
-		_engine->stopCurrentSound();
+		_engine->stopSample();
 	}
 }
 
@@ -2923,7 +2923,7 @@ bool Script::ScriptExecutor::scriptWaitForAdlib() {
 void Script::ScriptExecutor::scriptFreePcmSound() {
 	debugC(kDebugScript, "SCRIPT::freePcmSound()");
 	if (_soundEnabled)
-		_engine->stopCurrentSound();
+		_engine->stopSample();
 	_engine->clearCurrentSoundData();
 }
 

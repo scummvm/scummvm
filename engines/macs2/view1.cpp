@@ -2438,7 +2438,7 @@ bool View1::tick() {
 				}
 			} else if (executor->_waitForPcmSound) {
 				drawSceneUpdate();
-				if (!g_engine->isCurrentSoundPlaying()) {
+				if (!g_engine->isSamplePlaying()) {
 					debugC(kDebugScript, "waitForSound complete");
 					executor->debugLogActorWalkState("waitForSound complete");
 					executor->_waitForPcmSound = false;
