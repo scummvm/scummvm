@@ -651,6 +651,13 @@ bool ScriptExecutor::loadNextScript() {
 	// Confirmed from runScriptExecutor (1008:e3e7): after the scene script finishes,
 	// iterate executingObjectId from 1 to 0x200, skipping objects with no runtime data.
 	// Load each object's script from runtime+0x187/+0x189/+0x18B.
+	//
+	// Binary: when g_wExecutingScriptObjectId > 0x200 (e.g. opcode 0x29 sentinel),
+	// the outer loop stops without loading further object scripts. Check before the
+	// scene→object transition so a scene-script sentinel is not wiped by resetting
+	// _executingObjectIndex to 0.
+	if (_executingScriptObjectId > 0x200)
+		return false;
 
 	if (_scriptExecutionState == ScriptExecutionState::ExecutingSceneScript) {
 		// If we are finished with executing the scene, we need to go over all relevant objects
@@ -695,7 +702,6 @@ bool ScriptExecutor::loadNextScript() {
 			if (_terminateOuterScriptBeforeRepeat) {
 				if (_stream)
 					_stream->seek(_stream->size(), SEEK_SET);
-				_executingScriptObjectId = 0x201;
 				_terminateOuterScriptBeforeRepeat = false;
 			}
 			_repeatRunFlag = true;
@@ -708,6 +714,9 @@ bool ScriptExecutor::loadNextScript() {
 				return false;
 			}
 			_stream->seek(0, SEEK_SET);
+			// Fresh scene-script pass (same as runSceneScriptPass): clear any prior
+			// >0x200 sentinel so the early guard above does not skip object scripts.
+			_executingScriptObjectId = 0;
 			_scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 			debugC(kDebugScript, "----- Deferred repeat pass for scene: %.4x", _executingObjectIndex);
 			return true;
@@ -3156,7 +3165,13 @@ OpcodeResult ScriptExecutor::opStopAnimation() {
 }
 
 OpcodeResult ScriptExecutor::opOpenInventory() {
-	// Binary (1008:e0f9): always terminates script + sets executingObjectId sentinel.
+	// Binary executeOpcodes @ 1008:e0f9 (full + demo):
+	//   scriptOpenInventory();
+	//   g_wScriptPosition = g_wScriptEndPosition;
+	//   g_wExecutingScriptObjectId = 0x201;
+	//   goto LAB_1008_e3bd;
+	// loadNextScript() honors ScriptObjectId > 0x200 and will not start/continue
+	// the object-script walk (including when 0x29 ran from the scene script).
 	scriptOpenInventory();
 	_stream->seek(_stream->size(), SEEK_SET);
 	_executingObjectIndex = 0x201;
