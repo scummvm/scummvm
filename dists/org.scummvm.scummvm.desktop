@@ -7,6 +7,7 @@ Comment[he]=פרשן למספר משחקי הרפתקאות
 Comment[de]=Interpreter für zahlreiche Abenteuerspiele und RPGs
 Comment[es]=Intérprete para varias aventuras gráficas
 Comment[ca]=Intèrpret per diverses aventures gràfiques
+Comment[ru]=Интерпретатор множества приключенческих и ролевых игр
 Exec=scummvm
 Icon=org.scummvm.scummvm
 Terminal=false
