@@ -332,6 +332,8 @@ public:
 	int computeMinCostToReachable(int nodeIndex, int prevNode, uint16 actorIndex, const bool *reachable, int nodeCount, const Common::Point &finalDest);
 
 	// This is the override list living at [5BD1]
+	// Savegames sync 16 words into indices 1..16 (array size 0x11 during sync).
+	// Runtime capacity is 0x21 for later growth after load.
 	Common::Array<uint16> _hotspotOverrides;
 
 	Common::Array<Macs2::AnimFrame> _imageResources;
@@ -505,6 +507,13 @@ public:
 	uint32 getFeatures() const;
 
 	bool isDemo() const { return getFeatures() & ADGF_DEMO; }
+
+	/** MCS directory base; DOS resource layout uses 0x10. */
+	uint32 getMcsDirectoryOffset() const { return 0x10; }
+	int screenWidth() const { return kScreenWidth; }
+	int screenWidthLast() const { return screenWidth() - 1; }
+	int gameHeight() const { return kGameHeight; }
+	int gameHeightLast() const { return gameHeight() - 1; }
 
 	/**
 	 * Returns the game Id

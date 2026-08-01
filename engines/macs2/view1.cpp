@@ -4387,8 +4387,8 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 				if (g_engine->_scriptExecutor->_musicEnabled &&
 					g_engine->_scriptExecutor->_soundSystemActive) {
 					uint16 slot = g_engine->_scriptExecutor->_activeMusicSlot;
-					if (slot != 0 && !g_engine->_scriptExecutor->_musicSlots[slot - 1].empty()) {
-						g_engine->getMusic()->playSongData(g_engine->_scriptExecutor->_musicSlots[slot - 1]);
+					if (slot != 0 && !g_engine->_scriptExecutor->_musicSlots[slot - 1].empty() &&
+						g_engine->getMusic()->playSongData(g_engine->_scriptExecutor->_musicSlots[slot - 1])) {
 						// Original's adlibTickHandler resets g_bAdlibMasterVolume=0 (full volume).
 						// ScummVM layers user volume on top via scaledMusicVolume, so re-apply it.
 						g_engine->_scriptExecutor->_musicControlMode = 0;

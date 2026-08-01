@@ -2717,7 +2717,14 @@ void Script::ScriptExecutor::scriptPlayMusicSlot() {
 		return;
 	}
 
-	_engine->getMusic()->playSongData(_musicSlots[slotID - 1]);
+	if (!_engine->getMusic()->playSongData(_musicSlots[slotID - 1])) {
+		_musicControlMode = 0;
+		_musicControlStep = 0;
+		_musicControlVolume = 0;
+		_activeMusicSlot = slotID;
+		return;
+	}
+
 	if (startMuted == 0) {
 		_musicControlMode = 1;
 		_musicControlStep = fadeParam;

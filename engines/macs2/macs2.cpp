@@ -398,8 +398,7 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_scriptExecutor->_engine = this;
 	_music = new Music();
 
-	// We have a fixed 0x10 number of entries
-	_hotspotOverrides.resize(0x11);
+	_hotspotOverrides.resize(0x21);
 	for (uint i = 0; i < _hotspotOverrides.size(); i++) {
 		_hotspotOverrides[i] = 0xFFFF;
 	}
@@ -1167,7 +1166,7 @@ void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
 	cursorHalfSize(oldMode, oldHalfW, oldHalfH);
 
 	Common::Point mouse = g_system->getEventManager()->getMousePos();
-	const bool mouseInUiPanel = scummVerbUI && mouse.y >= kGameHeight;
+	const bool mouseInUiPanel = scummVerbUI && mouse.y >= gameHeight();
 
 	_scriptExecutor->_cursorMode = newMode;
 
@@ -1182,8 +1181,8 @@ void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
 		mouse.y -= newHalfH;
 
 		const int maxY = scummVerbUI ? (kScreenHeightLast - (int)newHalfH)
-									: (kGameHeightLast - (int)newHalfH);
-		mouse.x = CLIP<int>(mouse.x, (int)newHalfW, kScreenWidthLast - (int)newHalfW);
+									: (gameHeightLast() - (int)newHalfH);
+		mouse.x = CLIP<int>(mouse.x, (int)newHalfW, screenWidthLast() - (int)newHalfW);
 		mouse.y = CLIP<int>(mouse.y, (int)newHalfH, maxY);
 		g_system->warpMouse(mouse.x, mouse.y);
 	}
@@ -1209,8 +1208,7 @@ void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
 
 uint16 Macs2Engine::getHotspotAtPoint(const Common::Point &p) {
 	uint16 result = 0;
-	// TODO: Abstract the screen sizes
-	if (p.x < 0 || p.x >= kScreenWidth || p.y < 0 || p.y >= kGameHeight || _hotspotMap.w == 0) {
+	if (p.x < 0 || p.x >= screenWidth() || p.y < 0 || p.y >= gameHeight() || _hotspotMap.w == 0) {
 		return result;
 	}
 

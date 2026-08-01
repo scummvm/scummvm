@@ -47,6 +47,8 @@ Music::~Music() {
 
 void Music::init() {
 	_opl = OPL::Config::create();
+	if (_opl == nullptr)
+		return;
 	_opl->init();
 	_opl->start(new Common::Functor0Mem<void, Music>(this, &Music::onTimer), CALLBACKS_PER_SECOND);
 }
@@ -91,8 +93,11 @@ void Music::silenceAll() {
 	}
 }
 
-void Music::playSongData(const Common::Array<uint8> &data) {
+bool Music::playSongData(const Common::Array<uint8> &data) {
 	stopMusic();
+
+	if (_opl == nullptr)
+		return false;
 
 	_songData = data;
 
@@ -122,11 +127,12 @@ void Music::playSongData(const Common::Array<uint8> &data) {
 	if (!_parser->loadMusic(_songData.data(), _songData.size())) {
 		delete _parser;
 		_parser = nullptr;
-		return;
+		return false;
 	}
 
 	_playing = true;
 	_adlibPlaybackReady = false;
+	return true;
 }
 
 void Music::stopMusic() {
@@ -137,12 +143,15 @@ void Music::stopMusic() {
 		delete _parser;
 		_parser = nullptr;
 	}
-	silenceAll();
+	if (_opl != nullptr)
+		silenceAll();
 	_songData.clear();
 	_masterVolume = 0;
 }
 
 void Music::setVolume(uint16 volume) {
+	if (_opl == nullptr)
+		return;
 	_masterVolume = volume & 0x3F;
 }
 

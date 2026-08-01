@@ -29,6 +29,7 @@
 namespace Common {
 class MemoryReadStream;
 class MemoryReadStreamEndian;
+class SeekableReadStream;
 } // namespace Common
 
 namespace Macs2 {
@@ -60,10 +61,10 @@ public:
 	class Common::MemoryReadStream *_currentSceneStrings;
 	Common::Array<uint32> _currentSceneSpecialAnimOffsets;
 
-	class Common::MemoryReadStream *readSceneScript(uint16 sceneIndex, Common::MemoryReadStream *fileStream);
-	Common::Array<uint32> readSpecialAnimsOffsets(uint16 sceneIndex, Common::MemoryReadStream *fileStream);
-	class Common::MemoryReadStream *readSceneStrings(uint16 sceneIndex, Common::MemoryReadStream *fileStream);
-	Common::Array<uint8> readSpecialAnimBlob(uint16 index, Common::MemoryReadStream *fileStream);
+	class Common::MemoryReadStream *readSceneScript(uint16 sceneIndex, Common::SeekableReadStream *fileStream);
+	Common::Array<uint32> readSpecialAnimsOffsets(uint16 sceneIndex, Common::SeekableReadStream *fileStream);
+	class Common::MemoryReadStream *readSceneStrings(uint16 sceneIndex, Common::SeekableReadStream *fileStream);
+	Common::Array<uint8> readSpecialAnimBlob(uint16 index, Common::SeekableReadStream *fileStream);
 };
 
 class AnimationReader {
@@ -230,7 +231,7 @@ public:
 
 	static GameObject *getObjectByIndex(uint16 index);
 
-	static class Common::MemoryReadStream *readGameObjectStrings(uint16 index, Common::MemoryReadStream *fileStream);
+	static class Common::MemoryReadStream *readGameObjectStrings(uint16 index, Common::SeekableReadStream *fileStream);
 };
 
 } // namespace Macs2

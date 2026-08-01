@@ -357,7 +357,8 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 
 	// --- Scene data: hotspot overrides [+0x5BD3]: 32 bytes (16 x uint16) ---
 	// Binary table is at scene+i*2+0x5BD1, accessed with 1-based index (1..16).
-	// C++ array needs 17 entries (index 0 unused, indices 1-16 used).
+	// Save format is fixed at 16 words (AHFFMSGM0100). Runtime capacity may be
+	// larger; expand only after the DOS fields are restored.
 	if (s.isLoading()) {
 		_hotspotOverrides.clear();
 		_hotspotOverrides.resize(0x11, 0xFFFF);
@@ -371,6 +372,8 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 			_hotspotOverrides[i + 1] = val;
 		}
 	}
+	if (s.isLoading() && _hotspotOverrides.size() < 0x21)
+		_hotspotOverrides.resize(0x21, 0xFFFF);
 
 	for (int i = 0; i < 4; i++) {
 		s.syncAsUint32LE(_sceneTimerParams[i]);

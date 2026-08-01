@@ -39,11 +39,12 @@ class OPL;
 namespace Macs2 {
 
 /**
- * Music player for the macs2 engine.
+ * Music facade for the macs2 engine.
  *
- * Uses MidiParser_Macs2 for event parsing and drives OPL hardware directly,
- * preserving the original game's register-write behavior for authentic sound.
- * Implements MidiDriver_BASE to receive events from the MidiParser.
+ * Callers always use these methods; backend selection belongs here so additional
+ * drivers can be wired later without scattering checks across the engine.
+ *
+ * Current backend: MidiParser_Macs2 + direct OPL register writes (MidiDriver_BASE).
  */
 class Music : public MidiDriver_BASE {
 public:
@@ -53,10 +54,12 @@ public:
 	void init();
 	void deinit();
 
-	void playSongData(const Common::Array<uint8> &data);
+	/** Start song data on the active backend. Returns false if unavailable or load failed. */
+	bool playSongData(const Common::Array<uint8> &data);
 	void stopMusic();
 	void setVolume(uint16 volume);
 	bool isPlaybackReady() const { return _adlibPlaybackReady; }
+	bool hasAdlibBackend() const { return _opl != nullptr; }
 
 	void readDataFromExecutable(Common::MemoryReadStream *fileStream);
 

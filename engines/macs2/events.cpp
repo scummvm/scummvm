@@ -49,13 +49,12 @@ void Events::runGame() {
 	if (saveSlot != -1)
 		g_engine->loadGameState(saveSlot);
 
-	// DOS timer ISR fires at ~21.6Hz (PIT divisor 0xD7B0 = 55216, 1193182/55216).
-	// Main loop processes a game frame when g_wTimerTickCounter > 1 (every ~2 ticks).
-	// Effective game frame rate: ~10.8fps (every ~92ms).
-	// We use wall-clock timing to match the original rate precisely.
+	// DOS: PIT ISR ~21.6Hz (divisor 0xD7B0). Main loop runs a game frame when the
+	// ISR counter exceeds 1 (every 2 ticks) -> ~10.8fps / ~92.6ms.
+	// Tick period and ticks-per-frame are locals so other platforms can retune later.
 	uint32 lastTickTime = g_system->getMillis();
-	// One timer tick = 1000/21.6 ≈ 46.3ms. Game ticks every 2 timer ticks = ~92.6ms.
-	static constexpr uint32 kTimerTickMs = 46;
+	const uint32 kTimerTickMs = 46;
+	const uint16 kNormalTicksPerGameFrame = 2;
 	uint16 timerTickCounter = 0;
 
 	Common::Event e;
@@ -91,8 +90,8 @@ void Events::runGame() {
 		case 2: // slow mode: tick when counter >= 0x12
 			doTick = (timerTickCounter >= 0x12); // TODO: this is running at different speed compared to running this in dosbox
 			break;
-		default: // normal: tick when counter > 1
-			doTick = (timerTickCounter > 1);
+		default: // normal: every kNormalTicksPerGameFrame timer ticks
+			doTick = (timerTickCounter >= kNormalTicksPerGameFrame);
 			break;
 		}
 

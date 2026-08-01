@@ -138,7 +138,7 @@ public:
 	// 2=advance sequence after returning current frame. Hit testing uses 0; drawing uses 2.
 	bool fillCurrentAnimationFrame(uint16 advanceMode, Macs2::AnimFrame &out);
 	Macs2::AnimFrame *getCurrentAnimationFrame(uint16 advanceMode);
-	Macs2::AnimFrame *getCurrentPortrait(bool onRightSide = false, uint16 frameIndex = 2);
+	Macs2::AnimFrame *getCurrentPortrait(bool onRightSide = false, uint16 frameIndex = 0);
 
 	void update();
 };
