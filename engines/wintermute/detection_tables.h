@@ -4362,6 +4362,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("ritter", "Demo",
 		WME_ENTRY1s("data.dcp", "7fadb30dbe987528489f50bd85cc0c12", 99975952), Common::DE_DEU, ADGF_DEMO, WME_1_8_6),
 
+	// The Road to Santiago (English demo)
+	WME_WINENTRY("roadsantiago", "Demo",
+				 WME_ENTRY2s("data.dcp", "14107f414c1689759d917507aca11361", 144081093,
+							 "language.dcp", "a95b157c5654a4a06caa805f4e4fe5d4", 13042650), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_6),
+
 	// The Road to Santiago (English)
 	WME_WINENTRY("roadsantiago", "",
 		WME_ENTRY2s("data.dcp", "7501579c6a455c25cd0bbedef7c4d9eb", 64363410,
