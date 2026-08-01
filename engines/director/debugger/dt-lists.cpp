@@ -77,6 +77,11 @@ void showVars() {
 				displayVariable(i, changed);
 				ImGui::SameLine();
 				ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
+				if (ImGui::BeginPopupContextItem("v")) {
+					if (ImGui::MenuItem("Copy value"))
+						ImGui::SetClipboardText(val.asString(true).c_str());
+					ImGui::EndPopup();
+				}
 				ImGui::PopID();
 				id += 1;
 			}
@@ -97,6 +102,11 @@ void showVars() {
 					displayVariable(i, changed);
 					ImGui::SameLine();
 					ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
+					if (ImGui::BeginPopupContextItem("v")) {
+						if (ImGui::MenuItem("Copy value"))
+							ImGui::SetClipboardText(val.asString(true).c_str());
+						ImGui::EndPopup();
+					}
 					ImGui::PopID();
 					id += 1;
 				}
@@ -120,6 +130,11 @@ void showVars() {
 					displayVariable(i, false);
 					ImGui::SameLine();
 					ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
+					if (ImGui::BeginPopupContextItem("v")) {
+						if (ImGui::MenuItem("Copy value"))
+							ImGui::SetClipboardText(val.asString(true).c_str());
+						ImGui::EndPopup();
+					}
 					ImGui::PopID();
 					id += 1;
 				}
@@ -152,10 +167,15 @@ void showWatchedVars() {
 			id += 1;
 			ImGui::PushID(id);
 			displayVariable(v._key, false, outOfScope);
-			ImGui::PopID();
 
 			ImGui::SameLine();
 			ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
+			if (ImGui::BeginPopupContextItem("v")) {
+				if (ImGui::MenuItem("Copy value"))
+					ImGui::SetClipboardText(val.asString(true).c_str());
+				ImGui::EndPopup();
+			}
+			ImGui::PopID();
 		}
 
 		if (_state->_variables.empty())
