@@ -399,11 +399,14 @@ Common::MemoryReadStream *Macs2::GameObjects::readGameObjectStrings(uint16 index
 }
 
 Common::Array<uint8> *Macs2::GameObject::getAnimSlotBlob(uint16 slot) {
-	if (slot < 1 || slot > 0x15)
+	const uint16 maxSlots = g_engine->maxAnimSlots();
+	const uint16 overloadSlot = g_engine->overloadAnimSlot();
+	if (slot < 1 || slot > maxSlots)
 		return nullptr;
-	if (slot == 0x15) {
-		if (_blobs.size() > 20 && !_blobs[20].empty())
-			return &_blobs[20];
+	if (slot == overloadSlot) {
+		const uint overloadIndex = overloadSlot - 1;
+		if (_blobs.size() > overloadIndex && !_blobs[overloadIndex].empty())
+			return &_blobs[overloadIndex];
 		return &_overloadAnimation;
 	}
 	const uint index = slot - 1;
@@ -417,17 +420,19 @@ const Common::Array<uint8> *Macs2::GameObject::getAnimSlotBlob(uint16 slot) cons
 }
 
 bool Macs2::GameObject::isAnimSlotLoaded(uint16 orient) const {
+	const uint16 overloadSlot = g_engine->overloadAnimSlot();
+	const uint16 maxOrient = g_engine->maxOrientations();
 	if (_overloadAnimTriggerDirection != 0x7FFF &&
 		(int16)_overloadAnimTriggerDirection >= 0 &&
 		_overloadAnimTriggerDirection == orient) {
-		const Common::Array<uint8> *blob = getAnimSlotBlob(0x15);
+		const Common::Array<uint8> *blob = getAnimSlotBlob(overloadSlot);
 		return blob != nullptr && !blob->empty();
 	}
-	if (orient == 0x15) {
-		const Common::Array<uint8> *blob = getAnimSlotBlob(0x15);
+	if (orient == overloadSlot) {
+		const Common::Array<uint8> *blob = getAnimSlotBlob(overloadSlot);
 		return blob != nullptr && !blob->empty();
 	}
-	if (orient < 1 || orient > 0x14)
+	if (orient < 1 || orient > maxOrient)
 		return false;
 	const uint slot = orient - 1;
 	if (slot < _blobs.size() && !_blobs[slot].empty())

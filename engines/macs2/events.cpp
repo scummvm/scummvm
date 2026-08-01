@@ -51,10 +51,10 @@ void Events::runGame() {
 
 	// DOS: PIT ISR ~21.6Hz (divisor 0xD7B0). Main loop runs a game frame when the
 	// ISR counter exceeds 1 (every 2 ticks) -> ~10.8fps / ~92.6ms.
-	// Tick period and ticks-per-frame are locals so other platforms can retune later.
+	// Tick period / ticks-per-frame come from engine facades for later platforms.
 	uint32 lastTickTime = g_system->getMillis();
-	const uint32 kTimerTickMs = 46;
-	const uint16 kNormalTicksPerGameFrame = 2;
+	const uint32 kTimerTickMs = g_engine->timerTickMs();
+	const uint16 kNormalTicksPerGameFrame = g_engine->ticksPerGameFrame();
 	uint16 timerTickCounter = 0;
 
 	Common::Event e;

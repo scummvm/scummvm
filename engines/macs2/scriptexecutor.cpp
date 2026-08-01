@@ -186,10 +186,13 @@ void ScriptExecutor::scriptReadValuePair(uint16 &out1, uint16 &out2) {
 
 	byte type = readByte();
 	uint16 value = readUint16();
+	uint16 high = 0;
+	if (_engine->scriptValuesHaveHighWord())
+		high = readUint16();
 
 	if (type == 0x00) {
 		out1 = value;
-		out2 = 0;
+		out2 = high;
 		return;
 	}
 
@@ -226,6 +229,15 @@ uint16 ScriptExecutor::scriptReadValue16() {
 	return out1;
 }
 
+int16 ScriptExecutor::scriptReadCoord16() {
+	return _engine->scaleScriptCoord((int16)scriptReadValue16());
+}
+
+void ScriptExecutor::skipOptionalVarIndexPadding() {
+	if (_engine->scriptVarIndexHasPaddingWord())
+		(void)readUint16();
+}
+
 void ScriptExecutor::scriptSaveVariableHelper(uint32 value) {
 	uint8 subOpcode = readByte();
 	if (subOpcode == 0x00 || subOpcode == 0xFF) {
@@ -234,6 +246,7 @@ void ScriptExecutor::scriptSaveVariableHelper(uint32 value) {
 	}
 
 	uint16 variableID = readUint16();
+	skipOptionalVarIndexPadding();
 	debugC(kDebugScript, "SCRIPT::saveVariable(subOpcode=0x%02x, variableID=%u, value=%u)", subOpcode, variableID, value);
 	setVariableValue(variableID, value);
 }
@@ -316,8 +329,8 @@ bool ScriptExecutor::loadIndexedResource(Common::Array<uint8> &outData, uint8 re
 			return false;
 		}
 		// Binary reads from runtime+0x18D table (loaded during loadObjectData).
-		// Table is 32 dword file offsets, indexed by (resourceIndex - 1).
-		if (resourceIndex - 1 >= 32) {
+		// Table is maxObjectResources() dword file offsets, indexed by (resourceIndex - 1).
+		if ((uint)(resourceIndex - 1) >= _engine->maxObjectResources()) {
 			warning("Ignoring resource load for out-of-range index %u on object %u", resourceIndex, _executingScriptObjectId);
 			return false;
 		}
@@ -381,7 +394,7 @@ void ScriptExecutor::scriptPrintString(bool alignRight) {
 	int stringBoxX = x;
 	const int stringBoxY = y;
 	if (alignRight) {
-		const int totalWidth = g_engine->measureStrings(strings) + 0x12;
+		const int totalWidth = g_engine->measureStrings(strings) + g_engine->dialogPadW();
 		stringBoxX -= totalWidth;
 	}
 
@@ -732,6 +745,7 @@ void Script::ScriptExecutor::scriptSetVar() {
 	// This writes to a script variable.
 	(void)readByte();
 	uint16 variableIndex = readUint16();
+	skipOptionalVarIndexPadding();
 	ScriptVariable var;
 	scriptReadValuePair(var.a, var.b);
 	debugC(kDebugScript, "SCRIPT::setVar(variableIndex=%u, value1=%u, value2=%u)", variableIndex, var.a, var.b);
@@ -742,6 +756,7 @@ void Script::ScriptExecutor::scriptSetVarOr() {
 	// Padding/type byte (same as opcode 0x01) - read and discarded
 	(void)readByte();
 	uint16 variableIndex = readUint16();
+	skipOptionalVarIndexPadding();
 	// We skip the left shift and just read the first value directly
 	uint16 throwaway;
 	uint16 value1;
@@ -884,8 +899,8 @@ void Script::ScriptExecutor::scriptMoveObject() {
 	// Handles render list updates for both source and destination scenes.
 	const uint32 objectID = scriptReadValue32() - 0x400;
 	const uint16 sceneID = scriptReadValue16();
-	const int16 x = (int16)scriptReadValue16();
-	const int16 y = (int16)scriptReadValue16();
+	const int16 x = scriptReadCoord16();
+	const int16 y = scriptReadCoord16();
 	debugC(kDebugScript, "SCRIPT::moveObject(objectID=%u, sceneID=%u, x=%d, y=%d)", objectID, sceneID, x, y);
 
 	if (objectID < 1 || objectID > 0x200) {
@@ -1287,8 +1302,8 @@ void Script::ScriptExecutor::scriptWalkToPosition() {
 	// Sets up runtime movement state. Does NOT block - walkAlongPath handles
 	// actual movement per-frame from the game tick.
 	const uint32 objectID = scriptReadValue32() - 0x400;
-	const int16 x = (int16)scriptReadValue16();
-	const int16 y = (int16)scriptReadValue16();
+	const int16 x = scriptReadCoord16();
+	const int16 y = scriptReadCoord16();
 	debugC(kDebugScript, "SCRIPT::walkToPosition(objectID=%u, x=%d, y=%d)", objectID, x, y);
 
 	clearScriptError();
@@ -1618,12 +1633,10 @@ void Script::ScriptExecutor::scriptSetupObject() {
 		return;
 	}
 
-	if (slotID < 1 || slotID > 0x15) {
+	if (slotID < 1 || slotID > _engine->maxAnimSlots()) {
 		setScriptError(0x10);
 		return;
 	}
-
-	// Binary: runtime+slot*0x10+0x33 (bSlotLoaded) must be set.
 	if (!object->isAnimSlotLoaded(slotID)) {
 		setScriptError(0x10);
 		return;
@@ -1668,7 +1681,7 @@ void Script::ScriptExecutor::scriptPlayAnimation() {
 		setScriptError(2);
 		return;
 	}
-	if (slotID < 1 || slotID > 0x15) {
+	if (slotID < 1 || slotID > _engine->maxAnimSlots()) {
 		setScriptError(0x10);
 		return;
 	}
@@ -1952,9 +1965,9 @@ void Script::ScriptExecutor::scriptMoveToPosition() {
 	// Opcode 0x23 scriptMoveToPosition (1008:bafc): seeds runtime walk state directly;
 	// does not pathfind or use time-based lerp.
 	const int32 objectID = (int32)scriptReadValue32() - 0x400;
-	const int16 x = (int16)scriptReadValue16();
-	const int16 y = (int16)scriptReadValue16();
-	const uint16 targetVerticalOffset = scriptReadValue16();
+	const int16 x = scriptReadCoord16();
+	const int16 y = scriptReadCoord16();
+	const uint16 targetVerticalOffset = (uint16)_engine->scaleScriptCoord((int16)scriptReadValue16());
 	debugC(kDebugScript, "SCRIPT::moveToPosition(objectID=%d, target=(%d,%d), targetVerticalOffset=%u)", objectID, x, y, targetVerticalOffset);
 
 	clearScriptError();
@@ -2148,7 +2161,7 @@ void Script::ScriptExecutor::scriptLoadObjectAnim() {
 		setScriptError(2);
 		return;
 	}
-	if (slotID < 1 || slotID > 0x15) {
+	if (slotID < 1 || slotID > _engine->maxAnimSlots()) {
 		setScriptError(0x13);
 		return;
 	}
@@ -2277,7 +2290,7 @@ void Script::ScriptExecutor::scriptTestObjectAnimFrame() {
 		setScriptError(2);
 		return;
 	}
-	if (slotID < 1 || slotID > 0x15) {
+	if (slotID < 1 || slotID > _engine->maxAnimSlots()) {
 		setScriptError(0x10);
 		return;
 	}
@@ -2374,7 +2387,8 @@ void Script::ScriptExecutor::scriptSetHotspotOverride() {
 	debugC(kDebugScript, "SCRIPT::setHotspotOverride(hotspot=%u, override=%u)", v1, v2);
 
 	clearScriptError();
-	if (v1 < 1 || v1 > 0x10 || v2 < 1 || v2 > 0x10) {
+	const uint16 maxHotspot = _engine->maxHotspots();
+	if (v1 < 1 || v1 > maxHotspot || v2 < 1 || v2 > maxHotspot) {
 		setScriptError(0x1e);
 		return;
 	}
@@ -2629,14 +2643,13 @@ void Script::ScriptExecutor::scriptLoadPcmSound() {
 		return;
 	}
 
-	if (_engine->hasCurrentSound() && _soundEnabled) {
-		_engine->stopCurrentSound();
-	}
+	// Opcode 0x3E only installs the buffer; playback is opcode 0x40.
 	_engine->setCurrentSoundData(soundData);
 }
 
 void Script::ScriptExecutor::scriptPlayPcmSound() {
 	// Binary (1000:0c7f): no error path; no-op when Sound Blaster disabled.
+	// Buffer was installed by opcode 0x3E; only start playback here.
 	if (_soundEnabled) {
 		if (!_engine->hasCurrentSound()) {
 			warning("Opcode 0x40: playPcmSound with no loaded sound data");

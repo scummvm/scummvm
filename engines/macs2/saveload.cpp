@@ -704,15 +704,16 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 
 		// Script resource table [+0x18D]: 0x80 bytes (128 bytes = 32 dword offsets)
 		// Stored in GameObject::_resourceOffsets, loaded from file during readResourceFile.
-		byte scriptResourceTable[128] = {0};
+		const uint maxObjRes = maxObjectResources();
+		byte scriptResourceTable[128] = {0}; // DOS save table is always 0x80 bytes
 		if (s.isSaving()) {
-			for (int r = 0; r < 32; r++) {
+			for (uint r = 0; r < maxObjRes; r++) {
 				WRITE_LE_UINT32(&scriptResourceTable[r * 4], obj->_resourceOffsets[r]);
 			}
 		}
 		s.syncBytes(scriptResourceTable, 128);
 		if (s.isLoading()) {
-			for (int r = 0; r < 32; r++) {
+			for (uint r = 0; r < maxObjRes; r++) {
 				obj->_resourceOffsets[r] = READ_LE_UINT32(&scriptResourceTable[r * 4]);
 			}
 		}
@@ -729,9 +730,11 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		//   +0x00: 2 bytes (frame cursor X), +0x02: 2 bytes (frame cursor Y),
 		//   +0x0C: 2 bytes (source key), +0x0E: 2 bytes (speed),
 		//   +0x04: 2 bytes (data size), then data_size bytes of pixel data.
-		for (int blobIdx = 0; blobIdx < 0x15; blobIdx++) {
-			// Slot 0x15 (blobIdx 20) is the overload animation, stored separately
-			bool isOverloadSlot = (blobIdx == 20);
+		const int animSlotCount = (int)maxAnimSlots();
+		const int overloadBlobIdx = (int)overloadAnimSlot() - 1;
+		for (int blobIdx = 0; blobIdx < animSlotCount; blobIdx++) {
+			// Overload slot is stored separately from normal orientation blobs.
+			bool isOverloadSlot = (blobIdx == overloadBlobIdx);
 
 			// Active flag (2 bytes, but only low byte matters)
 			uint16 blobActive = 0;

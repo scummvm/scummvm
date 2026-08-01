@@ -265,6 +265,12 @@ private:
 	// Returns only the first of the two 16 bit values
 	uint16 scriptReadValue16();
 
+	/** Read a script value and convert to screen/runtime coordinates. */
+	int16 scriptReadCoord16();
+
+	/** Skip optional padding word after a script variable index when required. */
+	void skipOptionalVarIndexPadding();
+
 	// Saves the given value in a script variable
 	void scriptSaveVariableHelper(uint32 value);
 

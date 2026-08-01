@@ -515,6 +515,53 @@ public:
 	int gameHeight() const { return kGameHeight; }
 	int gameHeightLast() const { return gameHeight() - 1; }
 
+	// --- Layout / dialect facades (DOS defaults; other platforms override later) ---
+
+	/** Game-loop timer quantum in milliseconds. */
+	uint32 timerTickMs() const { return 46; }
+	/** Normal-speed: game frames per that many timer ticks. */
+	uint16 ticksPerGameFrame() const { return 2; }
+
+	/** ReadyObject anim slots (1-based inclusive max). */
+	uint16 maxAnimSlots() const { return 0x15; }
+	/** Orientations that map to anim slots 1..N (inclusive). */
+	uint16 maxOrientations() const { return 0x14; }
+	/** Overload / special-anim slot index (DOS ReadyObject slot 0x15). */
+	uint16 overloadAnimSlot() const { return 0x15; }
+	/** Scene hotspot override table entries (1-based inclusive max). */
+	uint16 maxHotspots() const { return 0x10; }
+	/** Per-object resource offset table entries. */
+	uint maxObjectResources() const { return 32; }
+	/** Anim slot used for the current orientation (DOS overload-direction rule). */
+	uint16 resolveAnimSlotIndex(const GameObject *obj) const;
+
+	/** Script stream: literals carry an extra high word after the value word. */
+	bool scriptValuesHaveHighWord() const { return false; }
+	/** Script stream: variable index is followed by a padding word. */
+	bool scriptVarIndexHasPaddingWord() const { return false; }
+	/** Script coordinates → screen/runtime coordinates (identity on DOS). */
+	int16 scaleScriptCoord(int16 coord) const { return coord; }
+
+	/** Dialogue / text-box chrome (DOS l0037_B368 / B462). */
+	int dialogPadW() const { return 0x12; }
+	int dialogPadH() const { return 0x10; }
+	int dialogTextInset() const { return 0x09; }
+	int dialogLineGap() const { return 2; }
+	int portraitBorderPad() const { return 0x0D; }
+	int portraitContentInset() const { return 7; }
+	int portraitTextGap() const { return 0x12; }
+
+	/** Depth-map compare Y for sprite occlusion (full Y on DOS). */
+	uint8 depthThresholdForY(int16 charY) const { return (uint8)charY; }
+
+	/** Resource bootstrap (MCS fonts/cursors/shading + first scene). */
+	void loadBootstrapResources() { readResourceFile(); }
+	/**
+	 * Load scene background, maps, pathfinding, and related scene tables.
+	 * Called from changeScene; platforms can replace this body later.
+	 */
+	bool loadSceneGraphics(uint32 sceneIndex);
+
 	/**
 	 * Returns the game Id
 	 */

@@ -44,15 +44,6 @@ constexpr int kNumLoadedCursors = 33;
 // Binary: local_4 = 1..7, each iteration reads *(local_4 * 2 + 0x26) as index into cursor array
 const uint16 kLookupTable[8] = {9, 15, 14, 27, 29, 16, 17, 9}; // index 0 unused
 
-// drawAllCharacters (1008:90a2) local_14: animation slot for current orientation.
-uint16 resolveAnimSlotIndex(const GameObject *obj) {
-	if ((int16)obj->_overloadAnimTriggerDirection < 0 ||
-		obj->_overloadAnimTriggerDirection != obj->_orientation) {
-		return obj->_orientation;
-	}
-	return 0x15;
-}
-
 Common::String joinDebugStrings(const Common::StringArray &strings) {
 	Common::String result;
 	for (uint i = 0; i < strings.size(); ++i) {
@@ -583,11 +574,13 @@ void View1::drawCurrentSpeaker(Graphics::ManagedSurface &s) {
 	// Draw the border
 	const int portraitWidth = MAX<int>(leftPortrait ? leftPortrait->_width : 0, rightPortrait ? rightPortrait->_width : 0);
 	const int portraitHeight = MAX<int>(leftPortrait ? leftPortrait->_height : 0, rightPortrait ? rightPortrait->_height : 0);
-	const Common::Point borderSize(portraitWidth + 0xD, portraitHeight + 0xD);
+	const int borderPad = g_engine->portraitBorderPad();
+	const int contentInset = g_engine->portraitContentInset();
+	const Common::Point borderSize(portraitWidth + borderPad, portraitHeight + borderPad);
 	drawBorder(currentSpeechActData.position, borderSize, s);
 
 	// Draw the portrait over the border
-	Common::Point pos = currentSpeechActData.position + Common::Point(7, 7);
+	Common::Point pos = currentSpeechActData.position + Common::Point(contentInset, contentInset);
 	drawSprite(pos, frame->_width, frame->_height, frame->_data.data(), s, false);
 	delete frame;
 	delete leftPortrait;
@@ -739,8 +732,12 @@ void View1::showStringBox(const Common::StringArray &sa) {
 	// This calculation can be found at l0037_B368:
 	// int borderWidth = 10;
 	// int padding = 3;
-	int totalWidth = g_engine->measureStrings(sa) + 0x12;
-	int totalHeight = g_engine->measureStringsVertically(sa) + 0x10;
+	const int padW = g_engine->dialogPadW();
+	const int padH = g_engine->dialogPadH();
+	const int textInset = g_engine->dialogTextInset();
+	const int lineGap = g_engine->dialogLineGap();
+	int totalWidth = g_engine->measureStrings(sa) + padW;
+	int totalHeight = g_engine->measureStringsVertically(sa) + padH;
 	g_engine->_textLog.push_back(Common::String::format(
 									 "Render text box: lines=%u pos=(%d,%d) size=(%d,%d) text=\"", sa.size(),
 									 _stringBoxPosition.x, _stringBoxPosition.y, totalWidth, totalHeight) +
@@ -749,11 +746,11 @@ void View1::showStringBox(const Common::StringArray &sa) {
 	Graphics::ManagedSurface s = getSurface();
 	drawBorder(_stringBoxPosition, Common::Point(totalWidth, totalHeight), s);
 	// TODO range based
-	int lineOffset = _stringBoxPosition.y + 0x9;
+	int lineOffset = _stringBoxPosition.y + textInset;
 	for (auto iter = sa.begin(); iter < sa.end(); iter++) {
-		logRenderedText("TextBox", _stringBoxPosition.x + 0x9, lineOffset, *iter);
-		renderString(_stringBoxPosition.x + 0x9, lineOffset, *iter);
-		lineOffset += g_engine->maxGlyphHeight + 2;
+		logRenderedText("TextBox", _stringBoxPosition.x + textInset, lineOffset, *iter);
+		renderString(_stringBoxPosition.x + textInset, lineOffset, *iter);
+		lineOffset += g_engine->maxGlyphHeight + lineGap;
 	}
 }
 
@@ -940,15 +937,18 @@ bool View1::handleDialogueChoiceClick(int clickY, int clickX) {
 	// Checks if click is within text box bounds (X+9..X+W-9, Y+9..Y+H-9).
 	// Iterates choice entries to find which line was clicked.
 	// Stores script index at scene+0x53B7 and clears scene+0x53B9.
-	const int boxW = g_engine->measureStrings(_drawnStringBox) + 0x12;
-	const int boxH = g_engine->measureStringsVertically(_drawnStringBox) + 0x10;
-	if (clickX < _stringBoxPosition.x + 9 || clickY < _stringBoxPosition.y + 9 ||
-		clickX > _stringBoxPosition.x + boxW - 9 || clickY > _stringBoxPosition.y + boxH - 9) {
+	const int padW = g_engine->dialogPadW();
+	const int padH = g_engine->dialogPadH();
+	const int textInset = g_engine->dialogTextInset();
+	const int boxW = g_engine->measureStrings(_drawnStringBox) + padW;
+	const int boxH = g_engine->measureStringsVertically(_drawnStringBox) + padH;
+	if (clickX < _stringBoxPosition.x + textInset || clickY < _stringBoxPosition.y + textInset ||
+		clickX > _stringBoxPosition.x + boxW - textInset || clickY > _stringBoxPosition.y + boxH - textInset) {
 		return false;
 	}
 
-	int lineHeight = g_engine->maxGlyphHeight + 2;
-	int firstLineY = _stringBoxPosition.y + 9;
+	int lineHeight = g_engine->maxGlyphHeight + g_engine->dialogLineGap();
+	int firstLineY = _stringBoxPosition.y + textInset;
 	int relY = clickY - firstLineY;
 	debug("handleDialogueChoiceClick: clickY=%d firstLineY=%d relY=%d lineHeight=%d clickedLine=%d",
 		  clickY, firstLineY, relY, lineHeight, relY >= 0 ? relY / lineHeight : -1);
@@ -2571,7 +2571,7 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 				}
 			}
 
-			const uint16 animSlot = resolveAnimSlotIndex(obj);
+			const uint16 animSlot = g_engine->resolveAnimSlotIndex(obj);
 
 			if (!obj->isAnimSlotLoaded(animSlot)) {
 				executor->setScriptError(10);
@@ -2647,7 +2647,7 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 
 			const int16 drawX = charX - (frameWidth >> 1) + frame._offsetX;
 			const int16 drawY = (charY - frameHeight) - walkabilityOffset + frame._offsetY;
-			const uint8 depthThreshold = (uint8)charY;
+			const uint8 depthThreshold = g_engine->depthThresholdForY(charY);
 			const byte *pixelData = frame._data.data();
 
 			// drawAllCharacters @ 1008:9573-9754: drawAnimFrame / drawAnimFrameShaded / drawAnimFrameDepth
@@ -3087,8 +3087,11 @@ void View1::showSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 	currentSpeechActData.position = position;
 	currentSpeechActData.onRightSide = onRightSide;
 
-	const int totalWidth = g_engine->measureStrings(strings) + 0x12;
-	const int totalHeight = g_engine->measureStringsVertically(strings) + 0x10;
+	const int padW = g_engine->dialogPadW();
+	const int padH = g_engine->dialogPadH();
+	const int portraitGap = g_engine->portraitTextGap();
+	const int totalWidth = g_engine->measureStrings(strings) + padW;
+	const int totalHeight = g_engine->measureStringsVertically(strings) + padH;
 	int stringBoxX = position.x;
 	int stringBoxY = position.y;
 	Common::Point portraitBoxPosition = position;
@@ -3099,10 +3102,10 @@ void View1::showSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 		const int portraitWidth = MAX<int>(leftPortrait ? leftPortrait->_width : 0, rightPortrait ? rightPortrait->_width : 0);
 		if (portraitWidth > 0) {
 			if (onRightSide) {
-				stringBoxX = position.x - portraitWidth - 0x12 - totalWidth;
+				stringBoxX = position.x - portraitWidth - portraitGap - totalWidth;
 				portraitBoxPosition.x = stringBoxX + totalWidth + 4;
 			} else {
-				stringBoxX = position.x + portraitWidth + 0x12;
+				stringBoxX = position.x + portraitWidth + portraitGap;
 			}
 		}
 		delete leftPortrait;
@@ -3653,7 +3656,7 @@ uint8 Character::getMirroredAnimation(uint8 original) const {
 }
 
 bool Character::fillCurrentAnimationFrame(uint16 advanceMode, Macs2::AnimFrame &out) {
-	const uint16 animSlot = resolveAnimSlotIndex(_gameObject);
+	const uint16 animSlot = g_engine->resolveAnimSlotIndex(_gameObject);
 
 	_shouldMirrorCurrentAnimation = false;
 
@@ -3822,7 +3825,7 @@ void Character::update() {
 	// = AnimSlot.wAnimSpeed (slot+0x0C). Stored in _blobWalkSpeeds.
 	uint16 animSpeed = 2; // default fallback
 	uint8 orient = _gameObject->_orientation;
-	if (orient >= 1 && orient <= 0x15 && (uint)(orient - 1) < _gameObject->_blobWalkSpeeds.size()) {
+	if (orient >= 1 && orient <= g_engine->maxAnimSlots() && (uint)(orient - 1) < _gameObject->_blobWalkSpeeds.size()) {
 		animSpeed = _gameObject->_blobWalkSpeeds[orient - 1];
 		if (animSpeed == 0)
 			animSpeed = 2;

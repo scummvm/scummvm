@@ -209,7 +209,8 @@ void Macs2Engine::readResourceFile() {
 		gameObject->_orientation = _fileStream->readUint16LE();
 		gameObject->_verticalOffsetScale = _fileStream->readUint16LE();
 
-		for (int j = 1; j <= 0x15; j++) {
+		const uint16 animSlotCount = maxAnimSlots();
+		for (int j = 1; j <= (int)animSlotCount; j++) {
 			// Per-slot data in file: 2 bytes animID, 2 bytes sourceKey, 4 bytes dataSize, data, 2 bytes speed, 1 byte mirrorFlag, 1 byte (discarded)
 			_fileStream->readUint16LE(); // runtime+0x24: animation slot ID (not used at runtime, editor metadata)
 			uint16 blobSourceKey = _fileStream->readUint16LE();
@@ -266,7 +267,8 @@ void Macs2Engine::readResourceFile() {
 		_fileStream->seek(objectOffset, SEEK_SET);
 		// Resource offset table at +0x18D equivalent in file (128 bytes = 32 dword offsets).
 		// Binary loadObjectData reads this into runtime+0x18D.
-		for (int r = 0; r < 32; r++) {
+		const uint maxObjRes = maxObjectResources();
+		for (uint r = 0; r < maxObjRes; r++) {
 			gameObject->_resourceOffsets[r] = _fileStream->readUint32LE();
 		}
 		uint16 scriptLength = _fileStream->readUint16LE();
@@ -459,11 +461,8 @@ uint16 Macs2Engine::scaledMusicVolume(uint16 gameAttenuation) const {
 	return (total > 0x3F) ? 0x3F : total;
 }
 
-void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
-	// Release old scene resources
-	_backgroundAnimations.clear();
-	_backgroundAnimationsBlobs.clear();
-	memset(_areaOverrides, 0, sizeof(_areaOverrides));
+bool Macs2Engine::loadSceneGraphics(uint32 sceneIndex) {
+	const uint32 newSceneIndex = sceneIndex;
 
 	// Background image
 	// [0752h] is pointing to 3000h bytes data starting at Ch + 4h in the file
@@ -496,11 +495,11 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 
 	uint8 data[0x320];
 
-	for (int y = 0; y < kGameHeight; y++) {
+	for (int y = 0; y < gameHeight(); y++) {
 		// TODO: Use the proper read function, it seems to be available
 		uint16 length = _fileStream->readUint16LE();
 		_fileStream->read(data, length);
-		int16 remainingPixels = kScreenWidth; // signed: see readRLEImage (matches decodeRLERows 1008:0666)
+		int16 remainingPixels = screenWidth(); // signed: see readRLEImage (matches decodeRLERows 1008:0666)
 		uint8 *dataPointer = data;
 		uint16 x = 0;
 		while (remainingPixels > 0) {
@@ -516,7 +515,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 				dataPointer++;
 				const uint8 &encodedValue = dataPointer[0];
 				dataPointer++;
-				for (int i = 0; i < runlength && x < kScreenWidth; i++) {
+				for (int i = 0; i < runlength && x < screenWidth(); i++) {
 					_sceneBackground.setPixel(x++, y, encodedValue);
 				}
 				remainingPixels -= runlength;
@@ -629,6 +628,18 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 
 	// Apply palette darkening if this scene has it (binary: sceneData+0x5203 != 1)
 	applyPaletteDarkening();
+
+	return true;
+}
+
+void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
+	// Release old scene resources
+	_backgroundAnimations.clear();
+	_backgroundAnimationsBlobs.clear();
+	memset(_areaOverrides, 0, sizeof(_areaOverrides));
+
+	if (!loadSceneGraphics(newSceneIndex))
+		error("changeScene(): Failed to load scene graphics for scene %u", newSceneIndex);
 
 	// Refresh characters
 	View1 *currentView = (View1 *)findView("View1");
@@ -1729,7 +1740,7 @@ bool Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotInde
 		address = _sceneResourceOffsets[arrayIndex - 1];
 	} else {
 		GameObject *execObj = GameObjects::getObjectByIndex(executingScriptObjectId);
-		if (execObj == nullptr || arrayIndex == 0 || arrayIndex > 32) {
+		if (execObj == nullptr || arrayIndex == 0 || arrayIndex > maxObjectResources()) {
 			_scriptExecutor->setScriptError(1);
 			return false;
 		}
@@ -1747,18 +1758,20 @@ bool Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotInde
 	data.resize(size);
 	_fileStream->read(data.data(), size);
 
-	while (go->_blobs.size() < 0x15)
+	const uint16 minSlots = maxAnimSlots();
+	const uint16 overloadSlot = overloadAnimSlot();
+	while (go->_blobs.size() < minSlots)
 		go->_blobs.push_back(Common::Array<uint8>());
-	while (go->_blobSourceKeys.size() < 0x15)
+	while (go->_blobSourceKeys.size() < minSlots)
 		go->_blobSourceKeys.push_back(0);
-	while (go->_blobMirrorFlags.size() < 0x15)
+	while (go->_blobMirrorFlags.size() < minSlots)
 		go->_blobMirrorFlags.push_back(false);
 
 	Common::Array<uint8> *targetBlob = nullptr;
-	if (slotIndex == 0x15) {
-		while (go->_blobs.size() <= 20)
+	if (slotIndex == overloadSlot) {
+		while (go->_blobs.size() <= (uint)(overloadSlot - 1))
 			go->_blobs.push_back(Common::Array<uint8>());
-		targetBlob = &go->_blobs[20];
+		targetBlob = &go->_blobs[overloadSlot - 1];
 		go->_overloadAnimationSourceKey = static_cast<uint16>(address >> 16);
 		go->_overloadAnimationMirrored = shouldMirror;
 	} else {
@@ -1770,7 +1783,7 @@ bool Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotInde
 
 	// Binary: memFree old blob if bSlotLoaded, then alloc + read; sets slot+0x33 = 1.
 	*targetBlob = data;
-	if (slotIndex == 0x15)
+	if (slotIndex == overloadSlot)
 		go->_overloadAnimation = data;
 	if (shouldMirror) {
 		BackgroundAnimationBlob::mirrorAnimBlob(*targetBlob);
@@ -1851,7 +1864,8 @@ bool Macs2Engine::loadObjectData(GameObject *obj) {
 		obj->_blobMirrorFlags = mirrorsBackup;
 	};
 
-	for (int j = 0; j < 0x15; j++) {
+	const uint16 animSlotCount = maxAnimSlots();
+	for (int j = 0; j < (int)animSlotCount; j++) {
 		_fileStream->readUint16LE(); // animID (editor metadata, unused at runtime)
 		uint16 blobSourceKey = _fileStream->readUint16LE();
 		uint32 dataSize = _fileStream->readUint32LE();
@@ -1940,7 +1954,8 @@ bool Macs2Engine::loadObjectData(GameObject *obj) {
 	const uint32 scriptOffset = _fileStream->readUint32LE();
 	if (scriptOffset != 0) {
 		_fileStream->seek(scriptOffset, SEEK_SET);
-		for (int r = 0; r < 32; r++) {
+		const uint maxObjRes = maxObjectResources();
+		for (uint r = 0; r < maxObjRes; r++) {
 			obj->_resourceOffsets[r] = _fileStream->readUint32LE();
 		}
 		const uint16 scriptLength = _fileStream->readUint16LE();
@@ -1997,6 +2012,16 @@ Common::String Macs2Engine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+uint16 Macs2Engine::resolveAnimSlotIndex(const GameObject *obj) const {
+	if (obj == nullptr)
+		return 0;
+	if ((int16)obj->_overloadAnimTriggerDirection < 0 ||
+		obj->_overloadAnimTriggerDirection != obj->_orientation) {
+		return obj->_orientation;
+	}
+	return overloadAnimSlot();
+}
+
 void Macs2Engine::setGameSpeedMode(uint16 mode) {
 	_gameSpeedMode = mode % 3;
 	ConfMan.setInt(kGameSpeedModeConfigKey, _gameSpeedMode);
@@ -2005,7 +2030,7 @@ void Macs2Engine::setGameSpeedMode(uint16 mode) {
 Common::Error Macs2Engine::run() {
 	GameObjects::instance().init();
 	setGameSpeedMode(ConfMan.getInt(kGameSpeedModeConfigKey));
-	readResourceFile();
+	loadBootstrapResources();
 	readExecutable();
 
 	// Load translation data if available

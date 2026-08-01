@@ -202,8 +202,8 @@ public:
 
 	Common::MemoryReadStream *getScriptStream();
 
-	// Binary pAnimSlots[1..0x15] at runtime+slot*0x10. Slot 0x15 may be in _blobs[20]
-	// (loadObjectData) or overloadAnimation (script load / savegame).
+	// Binary pAnimSlots[1..maxAnimSlots] at runtime+slot*0x10. Overload slot may be in
+	// _blobs[overload-1] (loadObjectData) or _overloadAnimation (script load / savegame).
 	Common::Array<uint8> *getAnimSlotBlob(uint16 slot);
 	const Common::Array<uint8> *getAnimSlotBlob(uint16 slot) const;
 
