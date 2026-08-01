@@ -61,11 +61,52 @@ public:
 	/** Sets whether a game is currently running */
 	void setEngineRunning(bool value);
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	/**
+	 * Acquire explicit engine-side control of native IME composition.
+	 *
+	 * This captures the current native text input state and starts with
+	 * composition disabled so the engine can continue using direct key events.
+	 * Its IME-specific behavior is a no-op on systems without native IME support.
+	 */
+	void acquireImeCompositionControl();
+
+	/**
+	 * Release explicit engine-side control of IME composition.
+	 *
+	 * This ends the engine-side override and restores the native text input state
+	 * captured by @ref SdlEventSource::acquireImeCompositionControl().
+	 */
+	void releaseImeCompositionControl();
+
+	/**
+	 * Enable or disable native IME composition processing after acquisition.
+	 *
+	 * This has no effect until @ref SdlEventSource::acquireImeCompositionControl()
+	 * has acquired explicit engine-side control.
+	 */
+	void setImeCompositionEnabled(bool enable);
+
+	/** Return whether native IME composition processing is enabled. */
+	bool isImeCompositionEnabled() const { return _imeCompositionEnabled; }
+#endif
+
 protected:
 	/** Scroll lock state - since SDL doesn't track it */
 	bool _scrollLock;
 
 	bool _engineRunning;
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	bool _textInputEnabled = false;
+	bool _legacyTextInputEnabled = false;
+	bool _imeCompositionControlActive = false;
+	bool _imeCompositionEnabled = false;
+	/** Return whether committed SDL text input should enter the ScummVM event queue. */
+	bool shouldDispatchTextInput() const { return !_imeCompositionControlActive || _textInputEnabled; }
+	/** Apply the desired native SDL text input session state. */
+	void applyNativeTextInputState();
+#endif
 
 	int _mouseX;
 	int _mouseY;
