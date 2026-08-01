@@ -293,6 +293,9 @@ void Macs2Engine::readResourceFile() {
 }
 
 void Macs2Engine::readExecutable() {
+	inventoryIconIndices.resize(6);
+	containerInventoryIconIndices.resize(6);
+
 	Common::ScopedPtr<Common::MemoryReadStream> exeFileStream;
 	{
 		// Extra scope in order to make sure no code tries to read from the file directly.
@@ -310,11 +313,9 @@ void Macs2Engine::readExecutable() {
 	_music->readDataFromExecutable(exeFileStream.get());
 
 	exeFileStream->seek(0x0001B610, SEEK_SET);
-	inventoryIconIndices.resize(6);
 	exeFileStream->read(inventoryIconIndices.data(), 12);
 
 	exeFileStream->seek(0x0001B61C, SEEK_SET);
-	containerInventoryIconIndices.resize(6);
 	exeFileStream->read(containerInventoryIconIndices.data(), 12);
 }
 
