@@ -506,6 +506,8 @@ private:
 
 	const ComfyGameDescription *_game;
 	byte _engineVersion;
+	byte _scriptFeatures;
+	uint16 _dirtyRectMergeThreshold;
 	bool _isPanther = false;
 	bool _backgroundBufferEnabled = false;
 	uint16 _vocQueueCapacity = COMFY_VOC_QUEUE_CAPACITY;

@@ -813,9 +813,9 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 	case O_MOUSE_SET_ACTOR:
 	case O_HOST_MEDIA_CONTROL:
 		if (!((_engineVersion == 3) ||
-			(opcode == O_SET_LAST_VOC_ARGUMENTS && (_game->scriptFeatures & COMFY_SCRIPT_OPCODE_31)) ||
-			(opcode == O_UNUSED_32 && (_game->scriptFeatures & COMFY_SCRIPT_OPCODE_32)) ||
-			(opcode == O_SKIP_TABLE_BLOCK && (_game->scriptFeatures & COMFY_SCRIPT_OPCODE_33))))
+			(opcode == O_SET_LAST_VOC_ARGUMENTS && (_scriptFeatures & COMFY_SCRIPT_OPCODE_31)) ||
+			(opcode == O_UNUSED_32 && (_scriptFeatures & COMFY_SCRIPT_OPCODE_32)) ||
+			(opcode == O_SKIP_TABLE_BLOCK && (_scriptFeatures & COMFY_SCRIPT_OPCODE_33))))
 			error("Unknown script opcode 0x%02X at script PC 0x%08X", opcode, pc - 1);
 	{
 		switch (opcode) {

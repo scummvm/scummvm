@@ -118,6 +118,20 @@ ComfyEngine::ComfyEngine(OSystem *syst, const ComfyGameDescription *gameDesc) : 
 		_isPanther = true;
 		_backgroundBufferEnabled = true;
 		_vocQueueCapacity = COMFY_PANTHER_VOC_QUEUE_CAPACITY;
+		_scriptFeatures = COMFY_SCRIPT_OPCODE_31 | COMFY_SCRIPT_OPCODE_32;
+		_dirtyRectMergeThreshold = 0x40;
+	} else if (!strcmp(gameDesc->desc.gameId, "boo")) {
+		_scriptFeatures = COMFY_SCRIPT_OPCODE_31;
+		_dirtyRectMergeThreshold = 0x100;
+	} else if (!strcmp(gameDesc->desc.gameId, "first") && gameDesc->version == 2) {
+		_scriptFeatures = COMFY_SCRIPT_OPCODE_31 | COMFY_SCRIPT_OPCODE_33;
+		_dirtyRectMergeThreshold = 0x100;
+	} else if (!strcmp(gameDesc->desc.gameId, "match")) {
+		_scriptFeatures = 0;
+		_dirtyRectMergeThreshold = 0x40;
+	} else {
+		_scriptFeatures = 0;
+		_dirtyRectMergeThreshold = gameDesc->version >= 2 ? 0x100 : 0;
 	}
 
 	g_engine = this;

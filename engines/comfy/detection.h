@@ -45,8 +45,6 @@ struct ComfyGameDescription {
 
 	ADGameDescription desc;
 	byte version;
-	byte scriptFeatures;
-	uint16 dirtyRectMergeThreshold;
 };
 
 #define COMFY_SCRIPT_OPCODE_31 (1 << 0)

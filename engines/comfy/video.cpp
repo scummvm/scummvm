@@ -107,7 +107,7 @@ void ComfyEngine::renderInvalidateFullFrame() {
 
 void ComfyEngine::renderAddDirtyRectMerged(ComfyRect record) {
 	int16 alignment = _isPanther ? 4 : 2;
-	uint32 mergeThreshold = _game->dirtyRectMergeThreshold;
+	uint32 mergeThreshold = _dirtyRectMergeThreshold;
 
 	record.left = CLIP<int16>(record.left, 0, _logicalScreenWidth);
 	record.left = record.left / alignment * alignment;
