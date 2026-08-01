@@ -110,7 +110,6 @@ int BaseFontTT::getTextWidth(const byte *text, int maxLength) {
 	if (maxLength >= 0 && (int)textStr.size() > maxLength) {
 		textStr = textStr.substr(0, (uint32)maxLength);
 	}
-	//text = text.substr(0, MaxLength); // TODO: Remove
 
 	int textWidth, textHeight;
 	measureText(textStr, -1, -1, textWidth, textHeight);
@@ -144,9 +143,6 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 
 	WideString textStr;
 
-	// TODO: Why do we still insist on Widestrings everywhere?
-	// HACK: J.U.L.I.A. uses CP1252, we need to fix that,
-	// And we still don't have any UTF8-support.
 	if (_game->_textEncoding == TEXT_UTF8) {
 		textStr = StringUtil::utf8ToWide((const char *)text);
 	} else {
@@ -156,7 +152,6 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 	if (maxLength >= 0 && textStr.size() > (uint32)maxLength) {
 		textStr = textStr.substr(0, (uint32)maxLength);
 	}
-	//text = text.substr(0, MaxLength); // TODO: Remove
 
 	BaseRenderer *renderer = _game->_renderer;
 
@@ -232,18 +227,37 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 
 //////////////////////////////////////////////////////////////////////////
 BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, TTextAlign align, int maxHeight, int &textOffset) {
-	//TextLineList lines;
-	// TODO: Use WideString-conversion here.
-	//WrapText(text, width, maxHeight, lines);
-	Common::Array<WideString> lines;
-	_font->wordWrapText(text, width, lines);
+	TextLineList lines;
+	int32 heightAfterWrapping;
 
-	while (maxHeight > 0 && lines.size() * _lineHeight > maxHeight) {
-		lines.pop_back();
+	/* The text will be wrapped to fit into the width and height as specified.
+	 * In case there was too much text, it is truncated as soon as maxHeight is exceeded.
+	 * Here, the distance between two lines is taken from the _lineHeight value (coming from the font definition).
+	 */
+	heightAfterWrapping = wrapText(text, width, maxHeight, lines);
+
+	TextLineList::iterator it;
+
+	/* The surface to render the text onto is equal in width, but the height is computed differently.
+	 * _maxCharHeight is the Y size of the bounding box of all characters.
+	 *
+	 * There could be fonts that have incorrect parameters set. The freetype doc says that the value used
+	 * for _lineHeight does not assure that all glyphs will "fit" into this.
+	 *
+	 * It won't be possible to "fix" everything, but at least try our best with obvious failures.
+	 * So if the resulting text height from the computation of "WrapText" is bigger than the
+	 * size computed below, adjust it appropriately. Later when drawing the glyphs, the _lineHeight
+	 * is used anyway as line distance, so checking the "textHeight" for sanity is not a bad idea.
+	 *
+	 */
+	int32 textHeight = lines.size() * (_lineHeight + _font->getFontAscent());
+	if (heightAfterWrapping > textHeight) {
+		_game->LOG(0, "Strange font definitions. Text height %d smaller than line height %d.", textHeight, heightAfterWrapping);
+		textHeight = heightAfterWrapping;
 	}
-	if (lines.size() == 0) {
-		return nullptr;
-	}
+
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create((uint16)width, (uint16)(_lineHeight * lines.size()), _game->_renderer->getPixelFormat());
 
 	Graphics::TextAlign alignment = Graphics::kTextAlignInvalid;
 	if (align == TAL_LEFT) {
@@ -254,20 +268,17 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 		alignment = Graphics::kTextAlignRight;
 	}
 
-	// TODO: This debug call does not work with WideString because text.c_str() returns an uint32 array.
-	//debugC(kWintermuteDebugFont, "%s %d %d %d %d", text.c_str(), RGBCOLGetR(_layers[0]->_color), RGBCOLGetG(_layers[0]->_color), RGBCOLGetB(_layers[0]->_color), RGBCOLGetA(_layers[0]->_color));
-//	void drawAlphaString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
-	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create((uint16)width, (uint16)(_lineHeight * lines.size()), _game->_renderer->getPixelFormat());
+	// TODO: _isUnderline, _isBold, _isItalic, _isStriked
+
 	uint32 useColor = 0xffffffff;
-	Common::Array<WideString>::iterator it;
 	int heightOffset = 0;
 	for (it = lines.begin(); it != lines.end(); ++it) {
-		WideString str;
+		TextLine *line = (*it);
+		WideString str, lineStr = line->getText();
 		if (_game->_textRTL) {
-			str = Common::convertBiDiU32String(*it, Common::BIDI_PAR_RTL);
+			str = Common::convertBiDiU32String(lineStr, Common::BIDI_PAR_RTL);
 		} else {
-			str = Common::convertBiDiU32String(*it, Common::BIDI_PAR_LTR);
+			str = Common::convertBiDiU32String(lineStr, Common::BIDI_PAR_LTR);
 		}
 		_font->drawAlphaString(surface, str, 0, heightOffset, width, useColor, alignment);
 		heightOffset += (int)_lineHeight;
@@ -279,7 +290,6 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 	surface->free();
 	delete surface;
 	return retSurface;
-	// TODO: _isUnderline, _isBold, _isItalic, _isStriked
 }
 
 
@@ -680,35 +690,130 @@ bool BaseFontTT::initFont() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void BaseFontTT::measureText(const WideString &text, int maxWidth, int maxHeight, int &textWidth, int &textHeight) {
-	//TextLineList lines;
+int32 BaseFontTT::wrapText(const WideString &text, int32 maxWidth, int32 maxHeight, TextLineList &lines) {
+	int32 currWidth = 0;
+	wchar_t prevChar = L'\0';
+	int32 prevSpaceIndex = -1;
+	int32 prevSpaceWidth = 0;
+	int32 lineStartIndex = 0;
 
-	if (maxWidth >= 0) {
-		Common::Array<WideString> lines;
-		_font->wordWrapText(text, maxWidth, lines);
-		Common::Array<WideString>::iterator it;
-		textWidth = 0;
-		for (it = lines.begin(); it != lines.end(); ++it) {
-			if (!it)
-				continue;
-			textWidth = MAX(textWidth, _font->getStringWidth(*it));
+	for (size_t i = 0; i < text.size(); i++) {
+		wchar_t ch = text[i];
+
+		/* remember the last space character in the string
+		 * for wrapping the line later if necessary
+		 */
+		if (ch == L' ') {
+			prevSpaceIndex = i;
+			prevSpaceWidth = currWidth;
 		}
 
-		//WrapText(text, maxWidth, maxHeight, lines);
+		int32 charWidth = 0;
 
-		textHeight = (int)(lines.size() * _lineHeight);
-	} else {
-		textWidth = _font->getStringWidth(text);
-		textHeight = _fontHeight;
+		/* measure width of this char
+		 * (advanceX + kerning)
+		 */
+		if (ch != L'\n') {
+			float kerning = 0;
+			if (prevChar != L'\0') {
+				kerning = getKerning(prevChar, ch);
+			}
+			prevChar = ch;
+
+			/* Small, but important difference! The computation of width must
+			 * match the one from the rendering EXACTLY, including precision
+			 * loss from casting. Otherwise, the bounds of the surface will
+			 * be exceeded.
+			 *
+			 */
+			charWidth = (((int32)_font->getCharWidth(ch)) + ((int32)kerning));
+		}
+
+		bool lineTooLong = maxWidth >= 0 && currWidth + charWidth > maxWidth;
+		bool breakOnSpace = false;
+
+		// we can't fit even a single character
+		if (lineTooLong && currWidth == 0) {
+			break;
+		}
+
+		/* check if the text shall be wrapped
+		 */
+		if (ch == L'\n' || i == text.size() - 1 || lineTooLong) {
+			int32 breakPoint, breakWidth;
+
+			if (prevSpaceIndex >= 0 && lineTooLong) {
+				/* we have a previous space character that we can wrap the text at */
+				breakPoint = prevSpaceIndex;
+				breakWidth = prevSpaceWidth;
+				breakOnSpace = true;
+			} else {
+				/* need to break at the current position */
+				breakPoint = i;
+				breakWidth = currWidth;
+
+				breakOnSpace = (ch == L'\n');
+
+				// we're at the end, so "consume" the last character as well
+				if (i == text.size() - 1) {
+					breakPoint++;
+					breakWidth += charWidth;
+				}
+			}
+
+			/* max. height exceeded --> "discard" this line and all following text
+			 * i.e. do not add it to the text line list, return immediately
+			 */
+			if (maxHeight >= 0 && (lines.size() + 1) * getLineHeight() > maxHeight) {
+				break;
+			}
+
+			WideString line = text.substr(lineStartIndex, breakPoint - lineStartIndex);
+			lines.push_back(new TextLine(line, breakWidth));
+
+			/* reset all values for the next line */
+			currWidth = 0;
+			prevChar = L'\0';
+			prevSpaceIndex = -1;
+
+			/* swallow (discard) spaces when breaking line */
+			if (breakOnSpace) {
+				breakPoint++;
+			}
+
+			lineStartIndex = breakPoint;
+			i = breakPoint - 1;
+
+			continue;
+		}
+
+		// if (ch == L' ' && currLine.empty()) continue;
+		currWidth += charWidth;
 	}
-	/*
-	    TextLineList::iterator it;
-	    for (it = lines.begin(); it != lines.end(); ++it) {
-	        TextLine *line = (*it);
-	        textWidth = MAX(textWidth, line->GetWidth());
-	        delete line;
-	        line = nullptr;
-	    }*/
+
+	// return the height of the "accepted" text
+	return (lines.size() * getLineHeight());
+}
+
+//////////////////////////////////////////////////////////////////////////
+void BaseFontTT::measureText(const WideString &text, int32 maxWidth, int32 maxHeight, int32 &textWidth, int32 &textHeight) {
+	TextLineList lines;
+	wrapText(text, maxWidth, maxHeight, lines);
+
+	textHeight = (int32)(lines.size() * getLineHeight());
+	textWidth = 0;
+
+	TextLineList::iterator it;
+	for (it = lines.begin(); it != lines.end(); ++it) {
+		TextLine *line = (*it);
+		textWidth = MAX(textWidth, line->getWidth());
+		SAFE_DELETE(line);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+float BaseFontTT::getKerning(wchar_t leftChar, wchar_t rightChar) {
+	return _font->getKerningOffset(leftChar, rightChar);
 }
 
 } // End of namespace Wintermute

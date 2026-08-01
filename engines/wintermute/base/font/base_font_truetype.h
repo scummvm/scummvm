@@ -94,6 +94,27 @@ public:
 		uint32 _color;
 	};
 
+	//////////////////////////////////////////////////////////////////////////
+	class TextLine {
+	public:
+		TextLine(const WideString &text, int32 width) {
+			_text = text;
+			_width = width;
+		}
+
+		const WideString &getText() const {
+			return _text;
+		}
+		int32 getWidth() const {
+			return _width;
+		}
+
+	private:
+		WideString _text;
+		int32 _width;
+	};
+	typedef Common::List<TextLine *> TextLineList;
+
 public:
 	DECLARE_PERSISTENT(BaseFontTT, BaseFont)
 	BaseFontTT(BaseGame *inGame);
@@ -107,13 +128,19 @@ public:
 	bool loadBuffer(char *buffer);
 	bool loadFile(const char *filename);
 
+	float getLineHeight() const {
+		return _lineHeight;
+	}
+
 	void afterLoad() override;
 	void initLoop() override;
 
 private:
 	bool parseLayer(BaseTTFontLayer *layer, char *buffer);
 
+	int32 wrapText(const WideString &text, int32 maxWidth, int32 maxHeight, TextLineList &lines);
 	void measureText(const WideString &text, int maxWidth, int maxHeight, int &textWidth, int &textHeight);
+	float getKerning(wchar_t leftChar, wchar_t rightChar);
 
 	BaseSurface *renderTextToTexture(const WideString &text, int width, TTextAlign align, int maxHeight, int &textOffset);
 
