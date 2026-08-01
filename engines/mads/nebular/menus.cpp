@@ -143,6 +143,8 @@ static void game_menu_setup() {
 
 	menu = (MenuMessage *)malloc(MAX_MENU_MESSAGE * sizeof(MenuMessage));
 
+	trash_bag = (byte *)mem_get((GAME_MENU_MAX_ITEMS + 1) * 80);
+
 	choose_menu_background();
 
 	kernel.quotes = quote_load(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
@@ -239,6 +241,7 @@ static void game_menu_shutdown() {
 	mem_free(kernel.quotes);
 	kernel.quotes = nullptr;
 
+	free(trash_bag);
 	free(menu);
 	menu = nullptr;
 
@@ -1377,7 +1380,7 @@ static void game_menu_save() {
 	if (game_menu_selected_item == 15) {
 		id = game_menu_save_select;
 		game.last_save = id;
-		global_save(id, game_menu_save_buffer);
+		global_save(id, game_menu_save_pointer);
 		kernel.activate_menu = GAME_ALERT_MENU;
 	}
 }

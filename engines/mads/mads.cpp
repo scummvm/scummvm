@@ -331,7 +331,8 @@ void MADSEngine::updateScreen() {
 
 bool MADSEngine::isSpecialKey(Common::KeyCode key) const {
 	static const Common::KeyCode KEYS[] = {
-		Common::KEYCODE_LCTRL, Common::KEYCODE_LALT, Common::KEYCODE_RSHIFT, Common::KEYCODE_RALT,
+		Common::KEYCODE_LCTRL, Common::KEYCODE_LALT, Common::KEYCODE_LSHIFT,
+		Common::KEYCODE_RCTRL, Common::KEYCODE_RALT, Common::KEYCODE_RSHIFT
 	};
 
 	for (const Common::KeyCode &kc : KEYS) {
@@ -369,7 +370,7 @@ int MADSEngine::getKey() {
 
 	if (!_keyEvents.empty()) {
 		Common::KeyState ks = _keyEvents.pop();
-		return ks.ascii && (ks.flags == 0) ? ks.ascii : (ks.flags << 16) | ks.keycode;
+		return ks.ascii && ((ks.flags & (Common::KBD_CTRL | Common::KBD_ALT)) == 0) ? ks.ascii : (ks.flags << 16) | ks.keycode;
 	}
 
 	return 0;
