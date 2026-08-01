@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-07-13 11:35+0000\n"
-"PO-Revision-Date: 2026-07-15 04:22+0000\n"
+"PO-Revision-Date: 2026-08-01 22:22+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -8651,7 +8651,7 @@ msgstr "Sons pregravats"
 #: engines/freescape/metaengine.cpp:42
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
-"Usa sons pregravats d'alta qualitat en lloc de l'emulació de l'altaveu del PC"
+"Usa sons pregravats d'alta qualitat en lloc de l'emulació de l'altaveu del pc"
 
 #: engines/freescape/metaengine.cpp:52
 msgid "Extended timer"
