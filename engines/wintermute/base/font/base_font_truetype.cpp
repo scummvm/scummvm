@@ -250,7 +250,7 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 	 * is used anyway as line distance, so checking the "textHeight" for sanity is not a bad idea.
 	 *
 	 */
-	int32 textHeight = lines.size() * (_font->getFontHeight() + _font->getFontAscent());
+	int32 textHeight = lines.size() * (_lineHeight + _font->getFontAscent());
 	if (heightAfterWrapping > textHeight) {
 		_game->LOG(0, "Strange font definitions. Text height %d smaller than line height %d.", textHeight, heightAfterWrapping);
 		textHeight = heightAfterWrapping;
@@ -765,7 +765,9 @@ int32 BaseFontTT::wrapText(const WideString &text, int32 maxWidth, int32 maxHeig
 			 * i.e. do not add it to the text line list, return immediately
 			 */
 			if (maxHeight >= 0 && (lines.size() + 1) * getLineHeight() > maxHeight) {
-				break;
+				// FIXME: font height can be bigger, do not exit if one line
+				if (lines.size() != 0)
+					break;
 			}
 
 			WideString line = text.substr(lineStartIndex, breakPoint - lineStartIndex);
