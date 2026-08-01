@@ -20,6 +20,7 @@
  */
 
 #include "common/stream.h"
+#include "common/util.h"
 
 #include "engines/nancy/util.h"
 #include "engines/nancy/action/actionzone.h"
@@ -27,10 +28,13 @@
 namespace Nancy {
 namespace Action {
 
+// Terminator in place of a special effect's type byte, meaning "no effect follows"
+static const byte kNoSpecialEffect = 0xff;
+
 void ActionZone::readData(Common::SeekableReadStream &stream, bool isNancy13) {
 	// Base ActionZone fields, shared by every subtype.
 	typeField = stream.readSint32LE();
-	type = typeField & 0xFF;
+	type = (ActionZoneType)(typeField & 0xFF);
 
 	readRect(stream, rect);
 	readFilename(stream, ovlName);
@@ -55,53 +59,54 @@ void ActionZone::readData(Common::SeekableReadStream &stream, bool isNancy13) {
 
 // Subtype-specific trailing data. Fields not yet needed are skipped to keep the stream
 // aligned. The Nancy12 and Nancy13 layouts are identical apart from three subtypes
-// (0x0d / 0x15 / 0x16), which branch on isNancy13.
+// (overlay, unknown 0x15 and bumper), which branch on isNancy13.
 void ActionZone::readSubtype(Common::SeekableReadStream &stream, bool isNancy13) {
 	switch (type) {
-	case 1:		// base only
-	case 5:
-	case 0x10:
-	case 0x14:	// Boundary
-		break;
-	case 0:		// Special Effect (and movement variants) - peeked terminator
-	case 0x11:
-	case 0x12:
-	case 0x13:
+	case kZoneSpecialEffect:
+	case kZoneDestination:
+	case kZoneUnknown12:
+	case kZoneUnknown13:
 		readSpecialEffect(stream);
 		break;
-	case 0x0b:				// collision zone: event-flag id + on/off
-		tailId = stream.readSint16LE();
-		tailFlag = stream.readByte();
+	case kZoneBaseOnly:
+	case kZoneUnknown05:
+	case kZoneUnknown10:
+	case kZoneBoundary:
+		// No trailing data.
 		break;
-	case 0x0e:
-		stream.skip(2);		// int16
-		break;
-	case 0x0f:
-		stream.skip(4);		// int16 + int16
-		break;
-	case 3:					// terrain (sand): extra deceleration while the ball is inside
-		terrainDecel = stream.readDoubleLE();
-		break;
-	case 0x17:				// Flat Tire (min/max) - Nancy12 only
-		stream.skip(8);		// int32 + int32
-		break;
-	case 4:					// slope: a velocity kick of slopeForce along slopeAngle
-		slopeForce = stream.readDoubleLE();
-		slopeAngle = stream.readSint16LE();
-		break;
-	case 2:					// teleport / pipe: exit rect + hold time + exit angle/speed
+	case kZoneTeleport:
 		readRect(stream, exitRect);
 		teleportDelay = stream.readSint32LE();
 		exitAngle = stream.readSint16LE();
 		exitSpeed = stream.readSint16LE();
 		break;
-	case 0x0c:				// trigger zone: special effect + target scene id + flag
+	case kZoneTerrain:
+		terrainDecel = stream.readDoubleLE();
+		break;
+	case kZoneSlope:
+		slopeForce = stream.readDoubleLE();
+		slopeAngle = stream.readSint16LE();
+		break;
+	case kZoneEventFlag:
+		tailId = stream.readSint16LE();
+		tailFlag = stream.readByte();
+		break;
+	case kZoneSceneChange:
 		readSpecialEffect(stream);
 		tailId = stream.readSint16LE();
 		tailFlag = stream.readByte();
 		break;
-	case 0x15:
-		// Nancy12: special effect + a trailing int32. Nancy13: the flat-tire zone
+	case kZoneOverlay:
+		readOverlayZone(stream, isNancy13);
+		break;
+	case kZoneUnknown0E:
+		stream.skip(2);		// int16
+		break;
+	case kZoneUnknown0F:
+		stream.skip(4);		// int16 + int16
+		break;
+	case kZoneUnknown15:
+		// Nancy12: special effect + a trailing int32. Nancy13: a damage range
 		// (min/max int32), with no special effect.
 		if (isNancy13) {
 			stream.skip(8);
@@ -110,16 +115,20 @@ void ActionZone::readSubtype(Common::SeekableReadStream &stream, bool isNancy13)
 			stream.skip(4);
 		}
 		break;
-	case 0x0d:				// OverlayZone (Nancy13 carries one extra int32)
-		readOverlayZone(stream, isNancy13);
-		break;
-	case 0x16:
-		// Nancy12: OverlayZone + int32. Nancy13: a short bumper record (two bytes + int16).
+	case kZoneBumper:
+		// Nancy12: an OverlayZone + int32. Nancy13: a short record (two bytes + int16).
 		if (isNancy13) {
 			stream.skip(4);
 		} else {
 			readOverlayZone(stream, false);
 			stream.skip(4);
+		}
+		break;
+	case kZoneFlatTire:		// Nancy12 only
+		flatTireMin = stream.readSint32LE();
+		flatTireMax = stream.readSint32LE();
+		if (flatTireMax < flatTireMin) {
+			SWAP(flatTireMin, flatTireMax);
 		}
 		break;
 	default:
@@ -129,13 +138,13 @@ void ActionZone::readSubtype(Common::SeekableReadStream &stream, bool isNancy13)
 }
 
 // Special Effect block: an int16 id (a target scene on transition zones), then the
-// effect type byte. If the type is the 0xff terminator the effect is absent;
-// otherwise a 21-byte SpecialEffect record follows (type + totalTime +
-// fadeToBlackTime + Rect), matching the standalone SpecialEffect action record.
+// effect type byte. If the type is the terminator the effect is absent; otherwise a
+// 21-byte SpecialEffect record follows (type + totalTime + fadeToBlackTime + Rect),
+// matching the standalone SpecialEffect action record.
 void ActionZone::readSpecialEffect(Common::SeekableReadStream &stream) {
 	specialEffectId = stream.readUint16LE();
 	seType = stream.readByte();
-	if (seType == 0xff) {
+	if (seType == kNoSpecialEffect) {
 		seType = 0;
 		return;
 	}

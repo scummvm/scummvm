@@ -66,13 +66,13 @@ void SewingMachinePuzzle::classifyZones() {
 	for (uint i = 0; i < _zones.size(); ++i) {
 		const ActionZone &z = _zones[i];
 		switch (z.type) {
-		case 0x0b:	// seam mask + mistake lines
+		case kZoneEventFlag:	// seam mask + mistake lines
 			_collisionZone = i;
 			break;
-		case 0x0c:	// bottom completion trigger
+		case kZoneSceneChange:	// bottom completion trigger
 			_triggerZones.push_back(i);
 			break;
-		case 0x14:	// play-area boundary
+		case kZoneBoundary:	// play-area boundary
 			_boundaryZone = i;
 			break;
 		default:

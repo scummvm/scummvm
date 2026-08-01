@@ -53,10 +53,6 @@ static const double kRestSpeed = 0.5;		// stop the ball below this per-step spee
 static const double kSinkSpeed = 50.0;		// ball sinks only if it reaches the cup at or below this speed; faster rolls over
 static const double kRestitution = 0.8;		// wall-bounce energy retained
 static const double kDefaultAimDrag = 24.0;	// default aim-cursor distance from the ball (mask px)
-static const byte kZoneTeleport = 2;		// ActionZone subtype for a pipe (enter one hole, exit another)
-static const byte kZoneTerrain = 3;			// ActionZone subtype for terrain (a sand trap that adds friction)
-static const byte kZoneSlope = 4;			// ActionZone subtype for a slope (a velocity kick toward its angle)
-static const byte kZoneOverlay = 0xd;		// ActionZone subtype for a cosmetic overlay sprite
 
 // Isometric projection (mask space -> screen): rotate 45 degrees, foreshorten Y by
 // half. cos45 == sin45; the Y component is additionally scaled by kIsoYScale.
@@ -627,7 +623,7 @@ void MinigolfPuzzle::updateBall() {
 			playSoundBlock(_sinkSound);
 
 			_winScene.sceneID = cup.specialEffectId;
-			if (cup.type == 0x0c && cup.tailId != -1) {
+			if (cup.type == kZoneSceneChange && cup.tailId != -1) {
 				NancySceneState.setEventFlag(cup.tailId, cup.tailFlag ? g_nancy->_true : g_nancy->_false);
 			}
 			if (cup.hasSpecialEffect) {
