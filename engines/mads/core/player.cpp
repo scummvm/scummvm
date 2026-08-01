@@ -809,6 +809,7 @@ int player_parse(int vocab_item, ...) {
 
 		my_word = va_arg(marker, int);
 	}
+	va_end(marker);
 
 done:
 	return result;

@@ -395,8 +395,8 @@ void magic_screen_change_corner(Buffer *new_screen, Palette pal,
 	int delta_x, delta_y;
 	int size_x, size_y;
 	int at_x, at_y;
-	int *vx = NULL;
-	int *hy = NULL;
+	int *vx;
+	int *hy;
 	int accum;
 	int loop, count;
 	int loop_start;
@@ -425,6 +425,7 @@ void magic_screen_change_corner(Buffer *new_screen, Palette pal,
 		vx = &x2;
 		break;
 	case MAGIC_UPPER_RIGHT:
+	default:
 		start_x = x - 1;
 		hy = &y2;
 		vx = &x1;

@@ -117,8 +117,7 @@ Common::SharedArchiveContents MpsInstaller::readContentsForPath(const Common::Pa
 
 		rem -= actual;
 		outptr += actual;
-		if (actual == 0)
-			break;
+
 		vol++;
 		off = 0;
 	}
