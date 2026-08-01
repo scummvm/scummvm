@@ -1123,7 +1123,7 @@ void matte_inter_frame(int update_live, int clear_chaff) {
 					x = image->x - (series->index[which - 1].xs >> 1);
 					y = image->y - (series->index[which - 1].ys - 1);
 					sprite_draw_interface(series,
-						which | mirror,
+						static_cast<int16>(which | mirror),
 						&scr_inter,
 						x, y);
 				}

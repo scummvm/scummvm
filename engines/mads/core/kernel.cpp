@@ -481,7 +481,6 @@ void kernel_room_shutdown() {
 	if (inter_anim) {
 		anim_unload((AnimPtr)inter_anim);
 		buffer_free(&scr_inter_orig);
-		mem_free(inter_anim);
 		inter_anim = nullptr;
 	} else if (scr_inter_orig.data) {
 		buffer_free(&scr_inter_orig);
@@ -618,7 +617,7 @@ int kernel_room_startup(int newRoom, int initial_variant, const char *interface,
 
 		pal_activate_shadow(&kernel_shadow_main);
 
-		if (!inter_anim->font) {
+		if (g_engine->getGameID() == GType_Phantom && !inter_anim->font) {
 			mem_free(inter_anim);
 			inter_anim = nullptr;
 		}

@@ -1802,7 +1802,8 @@ static void inter_background_animation() {
 	int image_scan;
 	int myprob;
 
-	if (inter_anim == NULL) goto done;
+	if (inter_anim == NULL)
+		goto done;
 
 	inter_no_segments_active = !inter_some_segments_active;
 	inter_some_segments_active = false;
