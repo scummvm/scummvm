@@ -812,14 +812,9 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 	case O_CONFIG_STRING_COMMAND:
 	case O_MOUSE_SET_ACTOR:
 	case O_HOST_MEDIA_CONTROL:
-		if (!((_engineVersion == 3) ||
-			(opcode == O_SET_LAST_VOC_ARGUMENTS && (_scriptFeatures & COMFY_SCRIPT_OPCODE_31)) ||
-			(opcode == O_UNUSED_32 && (_scriptFeatures & COMFY_SCRIPT_OPCODE_32)) ||
-			(opcode == O_SKIP_TABLE_BLOCK && (_scriptFeatures & COMFY_SCRIPT_OPCODE_33))))
-			error("Unknown script opcode 0x%02X at script PC 0x%08X", opcode, pc - 1);
 	{
 		switch (opcode) {
-		case O_SET_LAST_VOC_ARGUMENTS: {
+		case O_SET_LAST_VOC_ARGUMENTS: { // Added in version 2
 			uint16 count = scriptReadStringIndex(pc);
 			pc += 2;
 			if (_animUsesWaveVocCounter) {
@@ -841,12 +836,12 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 
 			break;
 		}
-		case O_UNUSED_32:
+		case O_UNUSED_32: // Added in version 2 (Panther only)
 			scriptReadStringIndex(pc);
 			scriptReadStringIndex(pc + 2);
 			pc += 4;
 			break;
-		case O_SKIP_TABLE_BLOCK: {
+		case O_SKIP_TABLE_BLOCK: { // Added in version 2 (First Step 1997 only)
 			pc += 4;
 			byte inlineBytes = scriptReadByte(pc++);
 			byte tripleCount = scriptReadByte(pc++);
