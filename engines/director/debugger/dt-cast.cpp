@@ -24,6 +24,7 @@
 #include "director/director.h"
 #include "director/debugger/dt-internal.h"
 
+#include "director/archive.h"
 #include "director/cast.h"
 #include "director/castmember/bitmap.h"
 #include "director/castmember/text.h"
@@ -318,16 +319,28 @@ void showCast() {
 		}
 		_state->_cast._nameFilter.Draw();
 
-		Common::Array<CastRowEntry> rows;
+		// Gathering rows (load, name formatting, filtering) is costly for big
+		// casts, so cache them and rebuild only when movie/filters/size change.
+		static Common::Array<CastRowEntry> rows;
+		static Common::String rowsKey;
+
 		int total = 0;
-		for (auto it : *movie->getCasts()) {
-			gatherCastMembers(it._value, rows);
+		for (auto it : *movie->getCasts())
 			if (it._value->_loadedCast)
 				total += it._value->_loadedCast->size();
-		}
-		gatherCastMembers(movie->getSharedCast(), rows);
 		if (movie->getSharedCast() && movie->getSharedCast()->_loadedCast)
 			total += movie->getSharedCast()->_loadedCast->size();
+
+		Common::String moviePath = movie->getArchive() ? movie->getArchive()->getPathName().toString() : movie->getMacName();
+		Common::String key = Common::String::format("%s|%s|%d|%d", moviePath.c_str(),
+			_state->_cast._nameFilter.InputBuf, _state->_cast._typeFilter, total);
+		if (key != rowsKey) {
+			rowsKey = key;
+			rows.clear();
+			for (auto it : *movie->getCasts())
+				gatherCastMembers(it._value, rows);
+			gatherCastMembers(movie->getSharedCast(), rows);
+		}
 
 		ImGui::SameLine();
 		if ((int)rows.size() == total)
