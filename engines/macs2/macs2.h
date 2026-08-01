@@ -255,7 +255,16 @@ protected:
 public:
 	Graphics::ManagedSurface readRLEImage(int64 offs, Common::MemoryReadStream *stream);
 
+	/** Open RESOURCE.MCS, check magic, dispatch to loadResourceFileV1. */
 	void readResourceFile();
+	/** MCS dialect from the 12-byte file magic. */
+	enum class McsFileVersion {
+		Unknown = 0,
+		V1 // AHFFMACS0100
+	};
+	McsFileVersion detectMcsFileVersion(Common::SeekableReadStream &stream) const;
+	/** Load AHFFMACS0100 layout (loadResourceFile @ 1008:2e8d). */
+	void loadResourceFileV1();
 	/** Amiga: open DataA/Mdir, load OO objects as GameObjects, cursors, and scene stubs. */
 	void readAmigaResources();
 	void applyAmigaUiPalette();
@@ -401,6 +410,7 @@ public:
 	Common::Array<BackgroundAnimationBlob> _backgroundAnimationsBlobs;
 
 	Common::MemoryReadStream *_fileStream = nullptr;
+	McsFileVersion _mcsFileVersion = McsFileVersion::Unknown;
 
 	/** Amiga MXFF line pitch: measureTextWidth @ 00224420 uses (font[+8] - 1). */
 	uint16 amigaTextLinePitch = 0;
@@ -560,8 +570,9 @@ public:
 
 	bool isDemo() const { return getFeatures() & ADGF_DEMO; }
 
-	/** MCS directory base; DOS resource layout uses 0x10. */
-	uint32 getMcsDirectoryOffset() const { return 0x10; }
+	/** MCS directory base (v1: file+0x10 after magic + actor/scene words). */
+	uint32 getMcsDirectoryOffset() const { return kMcsV1DirectoryOffset; }
+	McsFileVersion getMcsFileVersion() const { return _mcsFileVersion; }
 	int screenWidth() const { return kScreenWidth; }
 	int screenWidthLast() const { return screenWidth() - 1; }
 	int gameHeight() const { return kGameHeight; }
@@ -591,7 +602,7 @@ public:
 	bool scriptValuesHaveHighWord() const { return false; }
 	/** Script stream: variable index is followed by a padding word. */
 	bool scriptVarIndexHasPaddingWord() const { return false; }
-	/** Script coordinates → screen/runtime coordinates (identity on DOS). */
+	/** Script coordinates -> screen/runtime coordinates (identity on DOS). */
 	int16 scaleScriptCoord(int16 coord) const { return coord; }
 
 	/** Dialogue / text-box chrome (DOS l0037_B368 / B462). */

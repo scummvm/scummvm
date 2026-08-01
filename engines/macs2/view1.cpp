@@ -3994,7 +3994,7 @@ void Character::update() {
 			}
 			// Revert position
 			pos = savedPos;
-			// Wall-sliding: build push vector from ±1 and ±2 samples
+			// Wall-sliding: build push vector from +/-1 and +/-2 samples
 			int pushX = 0, pushY = 0;
 			if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x + 1, pos.y))))
 				pushX--;

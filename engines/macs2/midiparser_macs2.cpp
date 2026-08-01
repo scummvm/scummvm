@@ -52,8 +52,8 @@ bool MidiParser_Macs2::loadMusic(const byte *data, uint32 size) {
 
 	// The original decrements _nextEventTimer on EVERY timer callback (120 Hz),
 	// not just on subdivision ticks. So delta=1 means 1/120th of a second.
-	// MidiParser: µs per tick = tempo / ppqn. With ppqn=1, tempo = µs per tick.
-	// At 120 callbacks/sec: µs per tick = 1000000/120 = 8333.
+	// MidiParser: us per tick = tempo / ppqn. With ppqn=1, tempo = us per tick.
+	// At 120 callbacks/sec: us per tick = 1000000/120 = 8333.
 	// Since our timer rate is also set to 1000000/120, setting tempo=8333 with
 	// ppqn=1 means exactly 1 tick per callback, matching the original behavior.
 	_ppqn = 1;

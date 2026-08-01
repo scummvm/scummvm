@@ -113,6 +113,24 @@ Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::MemoryRea
 	return result;
 }
 
+Macs2Engine::McsFileVersion Macs2Engine::detectMcsFileVersion(Common::SeekableReadStream &stream) const {
+	if (stream.size() < (int64)kMcsMagicSize)
+		return McsFileVersion::Unknown;
+
+	const int64 pos = stream.pos();
+	byte magic[kMcsMagicSize];
+	stream.seek(0, SEEK_SET);
+	if (stream.read(magic, kMcsMagicSize) != kMcsMagicSize) {
+		stream.seek(pos, SEEK_SET);
+		return McsFileVersion::Unknown;
+	}
+	stream.seek(pos, SEEK_SET);
+
+	if (memcmp(magic, kMcsMagicV1, kMcsMagicSize) == 0)
+		return McsFileVersion::V1;
+	return McsFileVersion::Unknown;
+}
+
 void Macs2Engine::readResourceFile() {
 	{
 		// Extra scope in order to make sure no code tries to read from the file directly.
@@ -127,23 +145,25 @@ void Macs2Engine::readResourceFile() {
 		_fileStream = new Common::MemoryReadStream(fileData, size, DisposeAfterUse::YES);
 	}
 
-	// Full implementation here
+	_mcsFileVersion = detectMcsFileVersion(*_fileStream);
+	if (_mcsFileVersion != McsFileVersion::V1)
+		error("readResourceFile(): unrecognized MCS magic (expected %s)", kMcsMagicV1);
 
-	// File layout (from loadResourceFile at 1008:2e8d):
-	//   0x00: 12-byte magic header "AHFFMCSR0100"
-	//   0x0C: 2 bytes actor index + 2 bytes initial scene index (loaded below)
-	//   0x10: 0x3000 bytes scene table (512 entries * 12 bytes, accessed via seek per scene)
-	//   0x3010: 0x300 bytes vanilla palette (global default, overwritten per-scene by changeScene)
-	//   0x3310: 0x800 bytes shading table -> sceneData+0x53D3 (64 palette entries x 32 levels)
-	//   0x3B10: 33 cursor/icon image entries (4-byte size + blob data each)
-	//   Then: Font 1 (4-byte size + glyph data)
-	//   Then: Font 2 (4-byte size + glyph data)
-	//   Then: 0x400 bytes map scene offsets -> sceneData+0x5DDB
-	// We skip to the cursor images; palette/shading are loaded per-scene in changeScene.
-	_fileStream->seek(0xC + 0x4 + 0x3000 + 0x300);
-	_shadingTable.resize(0x800);
-	_fileStream->read(_shadingTable.data(), 0x800);
-	_fileStream->seek(0xC + 0x4 + 0x3000 + 0x300 + 0x800);
+	loadResourceFileV1();
+}
+
+void Macs2Engine::loadResourceFileV1() {
+	// File layout (loadResourceFile @ 1008:2e8d, magic AHFFMACS0100):
+	//   +0x00  12-byte magic
+	//   +0x0C  actor index, +0x0E initial scene index
+	//   +0x10  directory 0x3000 (512 x 12); object DATA/SCRIPT ptrs at +0x17F4/+0x17F8
+	//   +0x3010 vanilla palette 0x300
+	//   +0x3310 shading table 0x800 -> scene+0x53D3
+	//   then 0x21 cursor/icon images, Font1, Font2, 0x400 map scene offsets -> scene+0x5DDB
+	// Global vanilla palette is overwritten per-scene in changeScene; skip to shading.
+	_fileStream->seek(kMcsV1ShadingTableOffset, SEEK_SET);
+	_shadingTable.resize(kMcsV1ShadingTableSize);
+	_fileStream->read(_shadingTable.data(), kMcsV1ShadingTableSize);
 	readImageResources(_fileStream);
 	// Font 1 follows immediately after the 33 image resource entries.
 	// Original: 4-byte size field (skipped) + 2-byte glyph count + glyph data.
@@ -168,13 +188,12 @@ void Macs2Engine::readResourceFile() {
 	}
 	numPanelGlyphs = font2GlyphCount;
 
-	// Map scene offsets: 0x400 bytes (256 entries x 4 bytes) -> scene+0x5DDB
-	// First entry is the help screen image offset.
-	for (int i = 0; i < 256; i++) {
+	// Map scene offsets -> scene+0x5DDB. First entry is the help screen image offset.
+	for (uint i = 0; i < kMcsV1MapSceneOffsetCount; i++) {
 		_mapSceneOffsets[i] = _fileStream->readUint32LE();
 	}
 
-	_fileStream->seek(0xC, SEEK_SET);
+	_fileStream->seek(kMcsV1ActorIndexOffset, SEEK_SET);
 	Scenes::instance()._currentActorIndex = _fileStream->readUint16LE();
 	uint16 firstSceneIndex = _fileStream->readUint16LE();
 	Scenes::instance()._currentSceneIndex = firstSceneIndex;
@@ -187,10 +206,8 @@ void Macs2Engine::readResourceFile() {
 	// Original allocates all 512 slots, then frees unused ones. We pre-fill with nullptr.
 	GameObjects::instance()._objects.resize(0x200, nullptr);
 	for (int i = 1; i <= 0x200; i++) {
-		// The formula for the seek lives at l0037_0936
-		// The global [0752h] is loaded with 3000h bytes read from offset Ch + 4h in the file
-		// Regarding the 4h offset: Before the 3000h bytes, we have the values of the two globals 0776 and 077C
-		uint32 addressOffset = 0x17F4 + (0xC + 0x04) + i * 0xC;
+		// Directory object DATA dword: file+kMcsV1DirectoryOffset+kMcsV1ObjectDataPtrRel+i*12
+		const uint32 addressOffset = kMcsV1DirectoryOffset + kMcsV1ObjectDataPtrRel + (uint32)i * 0xC;
 		_fileStream->seek(addressOffset, SEEK_SET);
 		uint32 objectOffset = _fileStream->readUint32LE();
 		if (objectOffset == 0) {
@@ -202,7 +219,7 @@ void Macs2Engine::readResourceFile() {
 		gameObject->_index = i;
 		gameObject->_dataOffset = objectOffset;
 
-		// This loading happens around the l0037_082D: mark
+		// Object header (ReadyObject / initGameObject): x, y, scene, orientation, vertical scale
 		uint16 x = _fileStream->readUint16LE();
 		uint16 y = _fileStream->readUint16LE();
 		gameObject->_position = Common::Point(x, y);
@@ -212,8 +229,8 @@ void Macs2Engine::readResourceFile() {
 
 		const uint16 animSlotCount = maxAnimSlots();
 		for (int j = 1; j <= (int)animSlotCount; j++) {
-			// Per-slot data in file: 2 bytes animID, 2 bytes sourceKey, 4 bytes dataSize, data, 2 bytes speed, 1 byte mirrorFlag, 1 byte (discarded)
-			_fileStream->readUint16LE(); // runtime+0x24: animation slot ID (not used at runtime, editor metadata)
+			// Per-slot: animID, sourceKey, dataSize, data, speed, mirrorFlag, discarded byte
+			_fileStream->readUint16LE(); // runtime+0x24: animation slot ID (editor metadata)
 			uint16 blobSourceKey = _fileStream->readUint16LE();
 			uint32 dataSize = _fileStream->readUint32LE();
 			uint8 *data = new uint8[dataSize];
@@ -221,19 +238,12 @@ void Macs2Engine::readResourceFile() {
 			gameObject->_blobs.push_back(Common::Array<uint8>(data, dataSize));
 			delete[] data;
 			gameObject->_blobSourceKeys.push_back(blobSourceKey);
-			// Per-slot wAnimSpeed (slot+0x0C in runtime, walk speed used by walkAlongPath)
 			uint16 blobSpeed = _fileStream->readUint16LE();
 			gameObject->_blobWalkSpeeds.push_back(blobSpeed);
-			// Mirror flag (+0x32 in runtime)
 			uint16 blobMirrorFlag = _fileStream->readByte();
 			_fileStream->readByte(); // slot loaded flag (runtime-only, discarded from file)
 			gameObject->_blobMirrorFlags.push_back(blobMirrorFlag != 0);
 
-			// In order to get to l0037_0BBA: where the blob will be mirrored,
-			// the bytes at +Eh and +Fh must be != 0
-			// +Fh is set related to the inner loop - I think it means that
-			// the blob is empty
-			// +Eh is read here
 			if (blobMirrorFlag != 0) {
 				debugC(kDebugScript, "Object %.4x need to mirror blob %4.x", i, j);
 				if (dataSize > 0) {
@@ -241,16 +251,14 @@ void Macs2Engine::readResourceFile() {
 				}
 			}
 		}
-		// Per-object rendering flags (after all 21 animation slots):
-		// Binary loadObjectData reads these into runtime+0x184, +0x185, +0x186
-		_fileStream->readByte();                                // runtime+0x184: hasInventoryIcon (container flag) - derived dynamically from _blobs[0x13] presence
-		gameObject->_hasShading = _fileStream->readByte() != 0; // runtime+0x185: shading enabled
-		gameObject->_hasScaling = _fileStream->readByte() != 0; // runtime+0x186: scaling enabled
+		// Per-object flags after anim slots (loadObjectData -> runtime+0x184..+0x186)
+		_fileStream->readByte();                                // hasInventoryIcon (derived from slot 0x13)
+		gameObject->_hasShading = _fileStream->readByte() != 0; // runtime+0x185
+		gameObject->_hasScaling = _fileStream->readByte() != 0; // runtime+0x186
 
-		// Read the object script (resource offset table + script bytecode)
-		// Binary: scene table at +0x17F8 holds the script data file offset for each object
-		addressOffset = 0x17F8 + (0xC + 0x04) + i * 0xC;
-		_fileStream->seek(addressOffset, SEEK_SET);
+		// Object SCRIPT ptr in directory (+0x17F8). Zero SCRIPT keeps the object (no script table).
+		const uint32 scriptPtrOffset = kMcsV1DirectoryOffset + kMcsV1ObjectScriptPtrRel + (uint32)i * 0xC;
+		_fileStream->seek(scriptPtrOffset, SEEK_SET);
 
 		objectOffset = _fileStream->readUint32LE();
 		// Binary loadResourceFile prunes an object slot ONLY when its DATA offset
@@ -266,8 +274,7 @@ void Macs2Engine::readResourceFile() {
 			continue;
 		}
 		_fileStream->seek(objectOffset, SEEK_SET);
-		// Resource offset table at +0x18D equivalent in file (128 bytes = 32 dword offsets).
-		// Binary loadObjectData reads this into runtime+0x18D.
+		// Resource offset table (32 dwords).
 		const uint maxObjRes = maxObjectResources();
 		for (uint r = 0; r < maxObjRes; r++) {
 			gameObject->_resourceOffsets[r] = _fileStream->readUint32LE();
@@ -811,8 +818,8 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 			_hotspotOverrides[i] = 0xFFFF;
 
 		// Match DOS changeScene: when View1 is not up yet (first call from
-		// readAmigaResources), only load scene data. Entry init/repeat — including
-		// intro frameWait/changeScene — must run from View1::tick so waits can
+		// readAmigaResources), only load scene data. Entry init/repeat - including
+		// intro frameWait/changeScene - must run from View1::tick so waits can
 		// complete in the game loop.
 		if (executeScript && currentView != nullptr)
 			_scriptExecutor->runSceneEntryScriptPasses();
@@ -1215,7 +1222,7 @@ int Macs2Engine::walkableDistance(int nodeA, int nodeB) {
 	const Common::Point &b = pathfindingPoints[nodeB - 1]._position;
 	if (!isPathWalkable(a.y, a.x, b.y, b.x))
 		return 0x500;
-	// Binary search for integer sqrt(dx² + dy²), matching binary at 1008:1293
+	// Binary search for integer sqrt(dx^2 + dy^2), matching binary at 1008:1293
 	int32 dx = abs((int)(b.x - a.x));
 	int32 dy = abs((int)(b.y - a.y));
 	int32 distSq = dx * dx + dy * dy;

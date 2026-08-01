@@ -66,7 +66,7 @@ Common::Array<uint32> Macs2::Scenes::readSpecialAnimsOffsets(uint16 sceneIndex, 
 
 Common::MemoryReadStream *Macs2::Scenes::readSceneStrings(uint16 sceneIndex, Common::SeekableReadStream *fileStream) {
 	const uint32 directoryOffset = g_engine->getMcsDirectoryOffset();
-	// Third dword of entry (sceneIndex-1) / strings blob — DOS formula directory+scene*0xC-4.
+	// Third dword of entry (sceneIndex-1) / strings blob - DOS formula directory+scene*0xC-4.
 	fileStream->seek(directoryOffset + sceneIndex * 0xC - 0x4);
 	uint32 sceneDataOffset2 = fileStream->readUint32LE();
 	fileStream->seek(sceneDataOffset2, SEEK_SET);

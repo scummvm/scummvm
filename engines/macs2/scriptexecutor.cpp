@@ -698,7 +698,7 @@ bool ScriptExecutor::loadNextScript() {
 	//
 	// Binary: when g_wExecutingScriptObjectId > 0x200 (e.g. opcode 0x29 sentinel),
 	// the outer loop stops without loading further object scripts. Check before the
-	// scene→object transition so a scene-script sentinel is not wiped by resetting
+	// scene->object transition so a scene-script sentinel is not wiped by resetting
 	// _executingObjectIndex to 0.
 	if (_executingScriptObjectId > 0x200)
 		return false;
