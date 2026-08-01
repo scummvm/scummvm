@@ -37,6 +37,84 @@ SdlEventSource::~SdlEventSource() {
 	closeJoystick();
 }
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+void SdlEventSource::acquireImeCompositionControl() {
+	if (_imeCompositionControlActive)
+		return;
+
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_Window *window = _graphicsManager ? _graphicsManager->getWindow()->getSDLWindow() : nullptr;
+	_legacyTextInputEnabled = window && SDL_TextInputActive(window);
+#else
+	_legacyTextInputEnabled = SDL_IsTextInputActive() == SDL_TRUE;
+#endif
+	_imeCompositionControlActive = true;
+	_imeCompositionEnabled = false;
+	_textInputEnabled = false;
+	applyNativeTextInputState();
+}
+
+void SdlEventSource::setImeCompositionEnabled(bool enable) {
+	if (!_imeCompositionControlActive)
+		return;
+
+	_imeCompositionEnabled = enable;
+	_textInputEnabled = enable;
+	applyNativeTextInputState();
+}
+
+void SdlEventSource::releaseImeCompositionControl() {
+	if (!_imeCompositionControlActive)
+		return;
+
+	_imeCompositionEnabled = false;
+	_textInputEnabled = _legacyTextInputEnabled;
+	_imeCompositionControlActive = false;
+	applyNativeTextInputState();
+}
+
+void SdlEventSource::applyNativeTextInputState() {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_Window *window = _graphicsManager ? _graphicsManager->getWindow()->getSDLWindow() : nullptr;
+	if (!window)
+		return;
+
+	if (_textInputEnabled) {
+		if (!SDL_TextInputActive(window) && !SDL_StartTextInput(window)) {
+			warning("Could not start SDL text input: %s", SDL_GetError());
+			_textInputEnabled = false;
+			_imeCompositionEnabled = false;
+		}
+	} else {
+		if (SDL_TextInputActive(window) && !SDL_StopTextInput(window))
+			warning("Could not stop SDL text input: %s", SDL_GetError());
+		SDL_FlushEvent(SDL_EVENT_TEXT_INPUT);
+		SDL_FlushEvent(SDL_EVENT_TEXT_EDITING);
+	}
+#else
+	if (_textInputEnabled) {
+		if (!SDL_IsTextInputActive()) {
+			SDL_StartTextInput();
+			if (!SDL_IsTextInputActive()) {
+				warning("Could not start SDL text input: %s", SDL_GetError());
+				_textInputEnabled = false;
+				_imeCompositionEnabled = false;
+			}
+		}
+	} else {
+		if (SDL_IsTextInputActive())
+			SDL_StopTextInput();
+		SDL_FlushEvent(SDL_TEXTINPUT);
+		SDL_FlushEvent(SDL_TEXTEDITING);
+#if SDL_VERSION_ATLEAST(2, 0, 22)
+		SDL_FlushEvent(SDL_TEXTEDITING_EXT);
+#endif
+	}
+#endif
+}
+
+#endif
+
 bool SdlEventSource::processMouseEvent(Common::Event &event, int x, int y, int relx, int rely) {
 	_mouseX = x;
 	_mouseY = y;
