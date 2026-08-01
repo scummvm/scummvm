@@ -294,7 +294,7 @@ void sprite_draw_3d_scaled_mono(SeriesPtr series, int id,
 void WalkerInfo::load(Load &load_handle) {
 	// Load in the needed data
 	byte buffer[SIZE];
-	loader_read(buffer, SIZE, 1, &load_handle);
+	(void)loader_read(buffer, SIZE, 1, &load_handle);
 
 	Common::MemoryReadStream src(buffer, SIZE);
 	load(&src);
@@ -617,14 +617,14 @@ SeriesPtr sprite_series_load(const char *filename, int load_flags) {
 		}
 
 		if (!(load_flags & SPRITE_LOAD_HEADER_ONLY)) {
-			if (color_list != NULL) mem_free(color_list);
+			mem_free(color_list);
 			color_list = NULL;
-
-			if (sprite != NULL) mem_free(sprite);
+			mem_free(sprite);
 			sprite = NULL;
 
 			target->arena = (byte *)mem_get_name(largest_block, "$arena$");
-			if (target->arena == NULL) goto done;
+			if (target->arena == NULL)
+				goto done;
 
 			memcpy(&target->misc_largest_block, &largest_block, sizeof(long));
 

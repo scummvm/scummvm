@@ -1190,6 +1190,7 @@ int popup_alert(int width, const char *message_line, ...) {
 		my_message = va_arg(marker, char *);
 		first_time = false;
 	}
+	va_end(marker);
 
 	error_flag = popup_and_wait(true);
 
@@ -1389,6 +1390,12 @@ Popup *popup_dialog_create(void *memory, long heap_size, int max_items) {
 
 	if ((heap_size == 0) && (memory == NULL)) heap_size = 2048;
 	if (!max_items) max_items = 10;
+
+	// heap_size must cover at least the Popup header itself, or the
+	// heap_declare() call below would underflow (heap_size - sizeof(Popup))
+	// into a negative heap size, leading heap_get() to always fail and its
+	// unchecked NULL result to be dereferenced further down.
+	if (heap_size < (long)sizeof(Popup)) goto done;
 
 	if (memory == NULL) {
 		status |= POPUP_STATUS_DYNAMIC;

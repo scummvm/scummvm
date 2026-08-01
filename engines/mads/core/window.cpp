@@ -98,14 +98,10 @@ void window_shadow(WindowPtr window) {
 	short x_count, y_count, max_x, max_y;
 	short my_color;
 
-	if (screen == nullptr /*mono_text_video*/) {
-		my_color = colorbyte(black, black);
-	} else {
-		my_color = window_shadow_color;
-	}
+	assert(screen);
+	my_color = window_shadow_color;
 
 	if ((window->lr_x <= (screen_max_x - 2)) || (window->lr_y <= (screen_max_y - 1))) {
-
 		if (window->lr_x <= (screen_max_x - 2)) {
 			max_y = MIN(window->lr_y + 1, screen_max_y);
 			for (x_count = window->lr_x + 1; x_count <= window->lr_x + 2; x_count++) {
@@ -705,6 +701,7 @@ void window_trap_output(WindowPtr window,
 
 		next_trap_string = va_arg(marker, char *);
 	}
+	va_end(marker);
 
 	window_server_installed = true;
 }
