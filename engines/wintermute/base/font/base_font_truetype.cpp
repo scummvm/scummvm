@@ -547,32 +547,117 @@ bool BaseFontTT::initFont() {
 		return STATUS_FAILED;
 	}
 #ifdef USE_FREETYPE2
-	const char *fallbackFilename;
-	// Handle Bold atleast for the fallback-case.
-	// TODO: Handle italic. (Needs a test-case)
-	if (_isBold) {
-		fallbackFilename = "LiberationSans-Bold.ttf";
+	Common::SeekableReadStream *file;
+	if (BaseEngine::instance().getGameId() == "alimardan1" &&
+		Common::String(_fontFile).contains("Children.ttf")) {
+		// In the game 'Alimardan's Mischief', file 'Asap-Regular.font'
+		// points to "Children.ttf", however there is 'Asap-Regular.ttf'
+		// in game data directory.
+		file = BaseFileManager::getEngineInstance()->openFile("fonts\\Asap-Regular.ttf", true, false);
+	} else if (BaseEngine::instance().getGameId() == "nosebound1" &&
+		   Common::String(_fontFile).hasPrefix("fonts\\")) {
+		// The game 'Nose Bound Episode 1' is points to 'fonts' directory,
+		// however fonts located are in game root data directory.
+		Common::String font = Common::String(_fontFile);
+		font = font.substr(sizeof("fonts\\") - 1);
+		file = BaseFileManager::getEngineInstance()->openFile(font, true, false);
+	} else if (BaseEngine::instance().getGameId() == "nosebound1" &&
+		   Common::String(_fontFile).contains("bettynoir.ttf")) {
+		// The game 'Nose Bound Episode 1' is points to 'fonts\Andes.ttf',
+		// however there is in game root data directory.
+		file = BaseFileManager::getEngineInstance()->openFile("bettynoir.ttf", true, false);
 	} else {
-		fallbackFilename = "LiberationSans-Regular.ttf";
+		// Load a file, but avoid having the File-manager handle the disposal of it.
+		file = BaseFileManager::getEngineInstance()->openFile(_fontFile, true, false);
 	}
-
-	// Load a file, but avoid having the File-manager handle the disposal of it.
-	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(_fontFile, true, false);
-	if (!file) {
-		if (Common::String(_fontFile) != "arial.ttf") {
-			warning("%s has no replacement font yet, using %s for now (if available)", _fontFile, fallbackFilename);
-		}
-		// Fallback1: Try to find the LiberationSans font
-		file = SearchMan.createReadStreamForMember(fallbackFilename);
-	}
-
 	if (file) {
 		_deletableFont = Graphics::loadTTFFont(file, DisposeAfterUse::YES, _fontHeight, Graphics::kTTFSizeModeCharacter, 96); // Use the same dpi as WME (96 vs 72).
 		_font = _deletableFont;
 	}
 
-	// Fallback2: Try load the font from the common fonts archive:
+	// Fallback1: Try load the font from the common fonts archive:
 	if (!_font) {
+		const char *fallbackFilename;
+		if (Common::String(_fontFile).contains("cyberbit.ttf")) {
+			if (_isBold) {
+				fallbackFilename = "LiberationSerif-Bold.ttf";
+			} else {
+				fallbackFilename = "LiberationSerif-Regular.ttf";
+			}
+		} else if (Common::String(_fontFile).contains("arial.ttf")) {
+			if (_isBold) {
+				fallbackFilename = "LiberationSans-Bold.ttf";
+			} else {
+				fallbackFilename = "LiberationSans-Regular.ttf";
+			}
+		} else if (Common::String(_fontFile).contains("Oceania-begular.ttf")) {
+			if (_isBold) {
+				fallbackFilename = "LiberationSans-Bold.ttf";
+			} else {
+				fallbackFilename = "LiberationSans-Regular.ttf";
+			}
+		} else {
+			if (BaseEngine::instance().getGameId() == "alphapolaris" &&
+			    BaseEngine::instance().getLanguage() == Common::Language::PL_POL &&
+			    Common::String(_fontFile).contains("Oceania")) {
+				// Polish version of 'Alpha Polaris' has missing 'Oceania' fonts.
+				if (_isBold) {
+					fallbackFilename = "LiberationSans-Bold.ttf";
+				} else {
+					fallbackFilename = "LiberationSans-Regular.ttf";
+				}
+			} else if (Common::String(_fontFile).contains("framd.ttf")) {
+				// Several 'Carol Reed' games has missing 'framd.ttf' fonts
+				if (_isBold) {
+					fallbackFilename = "LiberationSans-Bold.ttf";
+				} else {
+					fallbackFilename = "LiberationSans-Regular.ttf";
+				}
+			} else if (Common::String(_fontFile).contains("BDAVAT.TTF")) {
+				// 'Forgotten Sound 1 - Revelation' game has missing 'BDAVAT.TTF' font
+				if (_isBold) {
+					fallbackFilename = "LiberationSans-Bold.ttf";
+				} else {
+					fallbackFilename = "LiberationSans-Regular.ttf";
+				}
+			} else if (Common::String(_fontFile).contains("verdana.ttf")) {
+				// 'Nose Bound Episode 1' game has missing 'verdana.ttf' font
+				if (_isBold) {
+					fallbackFilename = "LiberationSans-Bold.ttf";
+				} else {
+					fallbackFilename = "LiberationSans-Regular.ttf";
+				}
+			} else if (Common::String(_fontFile).contains("Sansation")) {
+				// 'Shadow Of Nebula' game has missing 'Sansation' fonts
+				if (_isBold) {
+					fallbackFilename = "LiberationSans-Bold.ttf";
+				} else {
+					fallbackFilename = "LiberationSans-Regular.ttf";
+				}
+			} else if (Common::String(_fontFile).contains("comic.ttf")) {
+				// 'The Trader of Stories' game has missing 'Comic' font
+				if (_isBold) {
+					fallbackFilename = "LiberationSans-Bold.ttf";
+				} else {
+					fallbackFilename = "LiberationSans-Regular.ttf";
+				}
+			} else if (Common::String(_fontFile).contains("ITCBLKAD.ttf")) {
+				// 'The Trader of Stories' game has missing 'ITCBLKAD' font
+				fallbackFilename = "NotoSerif-Italic.ttf";
+			} else if (Common::String(_fontFile).contains("phalls_khodkar.font")) {
+				// 'The Way Of Love Sub Zero' game ask for wrong resource font.
+				// falback to default
+				fallbackFilename = "LiberationSans-Regular.ttf";
+			} else {
+				if (_isBold) {
+					fallbackFilename = "LiberationSans-Bold.ttf";
+				} else {
+					fallbackFilename = "LiberationSans-Regular.ttf";
+				}
+				warning("%s has no replacement font yet, using %s for now (if available)", _fontFile, fallbackFilename);
+			}
+		}
+
 		_deletableFont = Graphics::loadTTFFontFromArchive(fallbackFilename, _fontHeight, Graphics::kTTFSizeModeCharacter, 96); // Use the same dpi as WME (96 vs 72).
 		_font = _deletableFont;
 	}
@@ -580,7 +665,7 @@ bool BaseFontTT::initFont() {
 	warning("BaseFontTT::InitFont - FreeType2-support not compiled in, TTF-fonts will not be loaded");
 #endif // USE_FREETYPE2
 
-	// Fallback3: Just use the Big GUI-font. (REALLY undesirable)
+	// Fallback2: Just use the Big GUI-font. (REALLY undesirable)
 	if (!_font) {
 		_font = _fallbackFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 		warning("BaseFontTT::InitFont - Couldn't load font: %s", _fontFile);
