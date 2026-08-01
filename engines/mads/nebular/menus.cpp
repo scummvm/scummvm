@@ -793,7 +793,7 @@ static void game_menu_generate_messages() {
 	}
 }
 
-static int game_menu_standard_keyboard(int mykey, int going) {
+static int game_menu_standard_keyboard(int mykey, bool going) {
 	switch (mykey) {
 	case esc_key:
 		going = false;
@@ -817,10 +817,10 @@ static int game_menu_standard_keyboard(int mykey, int going) {
 		break;
 	}
 
-	return going;
+	return going && game.going;
 }
 
-static bool game_menu_keyboard(int going) {
+static bool game_menu_keyboard(bool going) {
 	int mykey;
 
 	if (keys_any()) {
@@ -828,7 +828,7 @@ static bool game_menu_keyboard(int going) {
 		going = game_menu_standard_keyboard(mykey, going);
 	}
 
-	return going;
+	return going && game.going;
 }
 
 static void game_menu_sprite(int sprite, int depth) {
@@ -846,7 +846,7 @@ static void game_menu_sprite(int sprite, int depth) {
 }
 
 static void game_menu_main() {
-	int going = true;
+	bool going = true;
 	int first_time = true;
 	long menu_clock = 0;
 	long now_clock;
@@ -856,7 +856,6 @@ static void game_menu_main() {
 	game_menu_sprite(1, 2);
 
 	while (kernel.activate_menu == GAME_MAIN_MENU) {
-
 		going = true;
 
 		game_menu_main_init();
@@ -867,8 +866,7 @@ static void game_menu_main() {
 		game_menu_changed = true;
 
 		while (going && (game_menu_selected_item < 1)) {
-
-			going = game_menu_keyboard(going) && !g_engine->shouldQuit();
+			going = game_menu_keyboard(going) && game.going;
 
 			now_clock = timer_read();
 
@@ -936,7 +934,7 @@ static void game_menu_main() {
 }
 
 static void game_menu_options() {
-	int going = true;
+	bool going = true;
 	int first_time = true;
 	long menu_clock = 0;
 	long now_clock;
@@ -959,8 +957,7 @@ static void game_menu_options() {
 		game_menu_changed = true;
 
 		while (going && (game_menu_selected_item < 1)) {
-
-			going = game_menu_keyboard(going) && !g_engine->shouldQuit();
+			going = game_menu_keyboard(going) && game.going;
 
 			now_clock = timer_read();
 
@@ -1053,7 +1050,10 @@ static void game_menu_options() {
 			break;
 		}
 
-		kernel.activate_menu = (game_menu_selected_item > 7) ? GAME_MAIN_MENU : GAME_OPTIONS_MENU;
+		if (!game.going)
+			kernel.activate_menu = GAME_NO_MENU;
+		else
+			kernel.activate_menu = (game_menu_selected_item > 7) ? GAME_MAIN_MENU : GAME_OPTIONS_MENU;
 	}
 
 	if (game_menu_selected_item == 9) {
@@ -1123,7 +1123,7 @@ static void game_menu_select_last() {
 	}
 }
 
-static int game_menu_save_keyboard(int going) {
+static int game_menu_save_keyboard(bool going) {
 	int mykey;
 	int width;
 	char teeny[2];
@@ -1132,7 +1132,7 @@ static int game_menu_save_keyboard(int going) {
 
 	if (keys_any()) {
 		mykey = keys_get();
-		going = game_menu_standard_keyboard(mykey, going);
+		going = game_menu_standard_keyboard(mykey, going) && game.going;
 
 		if (going || game_menu_return_key) {
 
@@ -1203,11 +1203,11 @@ static int game_menu_save_keyboard(int going) {
 		}
 	}
 
-	return going;
+	return going && game.going;
 }
 
 static void game_menu_save() {
-	int going = true;
+	bool going = true;
 	int first_time = true;
 	int id;
 	int special_sprite;
@@ -1234,7 +1234,6 @@ static void game_menu_save() {
 	game_menu_save_dirty = false;
 
 	while (kernel.activate_menu == GAME_SAVE_MENU) {
-
 		going = true;
 
 		game_menu_save_select = MAX(game_menu_save_select, game_menu_save_top);
@@ -1258,8 +1257,7 @@ static void game_menu_save() {
 		game_menu_changed = true;
 
 		while (going && (game_menu_selected_item < 1)) {
-
-			going = game_menu_save_keyboard(going);
+			going = game_menu_save_keyboard(going) && game.going;
 
 			now_clock = timer_read();
 
@@ -1365,8 +1363,11 @@ static void game_menu_save() {
 			break;
 		}
 
-		kernel.activate_menu = ((game_menu_selected_item == 15) ||
-			(game_menu_selected_item == 17)) ? GAME_MAIN_MENU : GAME_SAVE_MENU;
+		if (!game.going)
+			kernel.activate_menu = GAME_NO_MENU;
+		else
+			kernel.activate_menu = ((game_menu_selected_item == 15) ||
+				(game_menu_selected_item == 17)) ? GAME_MAIN_MENU : GAME_SAVE_MENU;
 
 		if (game_menu_save_dirty) {
 			if ((kernel.activate_menu != GAME_SAVE_MENU) ||
@@ -1385,7 +1386,7 @@ static void game_menu_save() {
 	}
 }
 
-static int game_menu_restore_keyboard(int going) {
+static int game_menu_restore_keyboard(bool going) {
 	int mykey;
 
 	if (keys_any()) {
@@ -1400,11 +1401,11 @@ static int game_menu_restore_keyboard(int going) {
 		}
 	}
 
-	return going;
+	return going && game.going;
 }
 
 static void game_menu_restore() {
-	int going = true;
+	bool going = true;
 	int first_time = true;
 	int id;
 	int special_sprite;
@@ -1427,7 +1428,6 @@ static void game_menu_restore() {
 	game_menu_sprite(3, 2);
 
 	while (kernel.activate_menu == GAME_RESTORE_MENU) {
-
 		going = true;
 
 		game_menu_save_select = MAX(game_menu_save_select, game_menu_save_top);
@@ -1451,8 +1451,7 @@ static void game_menu_restore() {
 		game_menu_changed = true;
 
 		while (going && (game_menu_selected_item < 1)) {
-
-			going = game_menu_restore_keyboard(going) && !g_engine->shouldQuit();
+			going = game_menu_restore_keyboard(going) && game.going;
 
 			now_clock = timer_read();
 
@@ -1554,8 +1553,11 @@ static void game_menu_restore() {
 			break;
 		}
 
-		kernel.activate_menu = ((game_menu_selected_item == 15) ||
-			(game_menu_selected_item == 17)) ? GAME_MAIN_MENU : GAME_RESTORE_MENU;
+		if (!game.going)
+			kernel.activate_menu = GAME_NO_MENU;
+		else
+			kernel.activate_menu = ((game_menu_selected_item == 15) ||
+				(game_menu_selected_item == 17)) ? GAME_MAIN_MENU : GAME_RESTORE_MENU;
 	}
 
 	if (game_menu_selected_item == 15) {
@@ -1567,7 +1569,7 @@ static void game_menu_restore() {
 }
 
 static void game_menu_difficulty() {
-	int going = true;
+	bool going = true;
 	int first_time = true;
 	long menu_clock = 0;
 	long now_clock;
@@ -1577,7 +1579,6 @@ static void game_menu_difficulty() {
 	game_menu_sprite(8, 2);
 
 	while (kernel.activate_menu == GAME_DIFFICULTY_MENU) {
-
 		going = true;
 
 		game_menu_difficulty_init();
@@ -1588,7 +1589,7 @@ static void game_menu_difficulty() {
 		game_menu_changed = true;
 
 		while (going && (game_menu_selected_item < 1)) {
-			going = game_menu_keyboard(going) && !g_engine->shouldQuit();
+			going = game_menu_keyboard(going) && game.going;
 
 			now_clock = timer_read();
 
@@ -1655,7 +1656,7 @@ static void game_menu_difficulty() {
 }
 
 static void game_menu_alert() {
-	int going = true;
+	bool going = true;
 	int first_time = true;
 	long menu_clock = 0;
 	long now_clock;
@@ -1665,7 +1666,6 @@ static void game_menu_alert() {
 	game_menu_sprite(9, 2);
 
 	while (kernel.activate_menu == GAME_ALERT_MENU) {
-
 		going = true;
 
 		game_menu_alert_init();
@@ -1676,8 +1676,7 @@ static void game_menu_alert() {
 		game_menu_changed = true;
 
 		while (going && (game_menu_selected_item < 1)) {
-
-			going = game_menu_keyboard(going) && !g_engine->shouldQuit();
+			going = game_menu_keyboard(going) && game.going;
 
 			now_clock = timer_read();
 
