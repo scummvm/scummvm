@@ -250,14 +250,14 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 	 * is used anyway as line distance, so checking the "textHeight" for sanity is not a bad idea.
 	 *
 	 */
-	int32 textHeight = lines.size() * (_lineHeight + _font->getFontAscent());
+	int32 textHeight = lines.size() * (_font->getFontHeight() + _font->getFontAscent());
 	if (heightAfterWrapping > textHeight) {
 		_game->LOG(0, "Strange font definitions. Text height %d smaller than line height %d.", textHeight, heightAfterWrapping);
 		textHeight = heightAfterWrapping;
 	}
 
 	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create((uint16)width, (uint16)(_lineHeight * lines.size()), _game->_renderer->getPixelFormat());
+	surface->create((uint16)width, (uint16)(textHeight), _game->_renderer->getPixelFormat());
 
 	Graphics::TextAlign alignment = Graphics::kTextAlignInvalid;
 	if (align == TAL_LEFT) {
