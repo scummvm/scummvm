@@ -95,7 +95,7 @@ void write_config_file() {
 
 	ConfMan.setBool("show_speech_boxes", config_file.show_speech_boxes);
 	if (g_engine->getGameID() == GType_RexNebular)
-	ConfMan.setInt("naughtiness", config_file.naughtiness);
+		ConfMan.setBool("naughtiness", config_file.naughtiness == NAUGHTY);
 
 	ConfMan.flushToDisk();
 }
