@@ -506,7 +506,6 @@ private:
 
 	const ComfyGameDescription *_game;
 	byte _engineVersion;
-	byte _scriptFeatures;
 	uint16 _dirtyRectMergeThreshold;
 	bool _isPanther = false;
 	bool _backgroundBufferEnabled = false;

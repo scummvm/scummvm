@@ -47,9 +47,6 @@ struct ComfyGameDescription {
 	byte version;
 };
 
-#define COMFY_SCRIPT_OPCODE_31 (1 << 0)
-#define COMFY_SCRIPT_OPCODE_32 (1 << 1)
-#define COMFY_SCRIPT_OPCODE_33 (1 << 2)
 
 extern const PlainGameDescriptor comfyGames[];
 
