@@ -368,7 +368,10 @@ public:
 	Common::Array<BackgroundAnimation> _backgroundAnimations;
 	Common::Array<BackgroundAnimationBlob> _backgroundAnimationsBlobs;
 
-	Common::MemoryReadStream *_fileStream;
+	Common::MemoryReadStream *_fileStream = nullptr;
+
+	/** Amiga MXFF line pitch: measureTextWidth @ 00224420 uses (font[+8] - 1). */
+	uint16 amigaTextLinePitch = 0;
 
 	void setCursorMode(Script::MouseMode newMode);
 	void nextCursorMode();
@@ -504,6 +507,8 @@ public:
 	int computeStringIndex(Common::MemoryReadStream *stream, int targetOffset);
 
 	uint32 getFeatures() const;
+	Common::Platform getPlatform() const { return _gameDescription->platform; }
+	bool isAmiga() const { return getPlatform() == Common::kPlatformAmiga; }
 
 	bool isDemo() const { return getFeatures() & ADGF_DEMO; }
 
@@ -542,13 +547,23 @@ public:
 	int16 scaleScriptCoord(int16 coord) const { return coord; }
 
 	/** Dialogue / text-box chrome (DOS l0037_B368 / B462). */
-	int dialogPadW() const { return 0x12; }
-	int dialogPadH() const { return 0x10; }
-	int dialogTextInset() const { return 0x09; }
+	int dialogPadW() const { return isAmiga() ? 0x08 : 0x12; }
+	int dialogPadH() const { return isAmiga() ? 0x08 : 0x10; }
+	int dialogTextInset() const { return isAmiga() ? 0x04 : 0x09; }
 	int dialogLineGap() const { return 2; }
-	int portraitBorderPad() const { return 0x0D; }
-	int portraitContentInset() const { return 7; }
-	int portraitTextGap() const { return 0x12; }
+	int portraitBorderPad() const { return isAmiga() ? 2 : 0x0D; }
+	int portraitContentInset() const { return isAmiga() ? 1 : 7; }
+	int portraitTextGap() const { return isAmiga() ? 0x0A : 0x12; }
+	/**
+	 * Per-line step for dialogue layout.
+	 * DOS: maxGlyphHeight + dialogLineGap(). Amiga: absolute MXFF pitch
+	 * (amigaTextLinePitch) or maxGlyphHeight when pitch is unset.
+	 */
+	int dialogLineHeight() const {
+		if (isAmiga())
+			return amigaTextLinePitch ? (int)amigaTextLinePitch : (int)maxGlyphHeight;
+		return (int)maxGlyphHeight + dialogLineGap();
+	}
 
 	/** Depth-map compare Y for sprite occlusion (full Y on DOS). */
 	uint8 depthThresholdForY(int16 charY) const { return (uint8)charY; }

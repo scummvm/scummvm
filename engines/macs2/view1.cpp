@@ -735,7 +735,7 @@ void View1::showStringBox(const Common::StringArray &sa) {
 	const int padW = g_engine->dialogPadW();
 	const int padH = g_engine->dialogPadH();
 	const int textInset = g_engine->dialogTextInset();
-	const int lineGap = g_engine->dialogLineGap();
+	const int lineHeight = g_engine->dialogLineHeight();
 	int totalWidth = g_engine->measureStrings(sa) + padW;
 	int totalHeight = g_engine->measureStringsVertically(sa) + padH;
 	g_engine->_textLog.push_back(Common::String::format(
@@ -750,7 +750,7 @@ void View1::showStringBox(const Common::StringArray &sa) {
 	for (auto iter = sa.begin(); iter < sa.end(); iter++) {
 		logRenderedText("TextBox", _stringBoxPosition.x + textInset, lineOffset, *iter);
 		renderString(_stringBoxPosition.x + textInset, lineOffset, *iter);
-		lineOffset += g_engine->maxGlyphHeight + lineGap;
+		lineOffset += lineHeight;
 	}
 }
 
@@ -947,7 +947,7 @@ bool View1::handleDialogueChoiceClick(int clickY, int clickX) {
 		return false;
 	}
 
-	int lineHeight = g_engine->maxGlyphHeight + g_engine->dialogLineGap();
+	int lineHeight = g_engine->dialogLineHeight();
 	int firstLineY = _stringBoxPosition.y + textInset;
 	int relY = clickY - firstLineY;
 	debug("handleDialogueChoiceClick: clickY=%d firstLineY=%d relY=%d lineHeight=%d clickedLine=%d",
@@ -2146,8 +2146,8 @@ void View1::draw() {
 	if (_isShowingTextBox || _isShowingDialoguePanel) {
 		showStringBox(_drawnStringBox);
 		if (_isDialogueChoiceInputActive && g_engine->enhancementEnabled(kEnhUIUX)) {
-			int lineHeight = g_engine->maxGlyphHeight + 2;
-			int firstLineY = _stringBoxPosition.y + 9;
+			int lineHeight = g_engine->dialogLineHeight();
+			int firstLineY = _stringBoxPosition.y + g_engine->dialogTextInset();
 			int relY = mousePos.y - firstLineY;
 			if (relY >= 0) {
 				int hoveredLine = relY / lineHeight;

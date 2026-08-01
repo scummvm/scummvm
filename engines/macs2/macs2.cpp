@@ -415,6 +415,7 @@ Macs2Engine::~Macs2Engine() {
 	_music->deinit();
 	delete _music;
 	delete _fileStream;
+	_fileStream = nullptr;
 	delete _scriptExecutor;
 	for (uint i = 0; i < GameObjects::instance()._objects.size(); i++) {
 		delete GameObjects::instance()._objects[i];
@@ -1539,8 +1540,8 @@ int Macs2Engine::measureString(const Common::String &s) {
 }
 
 int Macs2Engine::measureStringsVertically(const Common::StringArray &sa) {
-	// This is implemented around l0037_B318:
-	return sa.size() * (maxGlyphHeight + 2);
+	// DOS l0037_B318: maxGlyphHeight + 2. Amiga uses absolute MXFF line pitch.
+	return (int)sa.size() * dialogLineHeight();
 }
 
 int Macs2Engine::measureStrings(const Common::StringArray &sa) {
