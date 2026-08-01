@@ -339,6 +339,20 @@ Director::Breakpoint *getBreakpoint(const Common::String &handlerName, uint16 sc
 	return nullptr;
 }
 
+// Return the member's cached texture, dropping it first if the member changed
+// (isModified) so the caller regenerates it. Keeps thumbnails in sync with edits.
+static bool tryGetCachedTexture(CastMember *key, ImGuiImage &out) {
+	if (!_state->_cast._textures.contains(key))
+		return false;
+	if (key->isModified()) {
+		g_system->freeImGuiTexture((void *)(intptr_t)_state->_cast._textures[key].id);
+		_state->_cast._textures.erase(key);
+		return false;
+	}
+	out = _state->_cast._textures[key];
+	return true;
+}
+
 ImGuiImage getImageID(CastMember *castMember) {
 	if (castMember->_type != CastType::kCastBitmap) {
 		return {};
@@ -346,9 +360,9 @@ ImGuiImage getImageID(CastMember *castMember) {
 
 	BitmapCastMember *bmpMember = (BitmapCastMember *)castMember;
 
-	if (_state->_cast._textures.contains(bmpMember)) {
-		return _state->_cast._textures[bmpMember];
-	}
+	ImGuiImage cached;
+	if (tryGetCachedTexture(bmpMember, cached))
+		return cached;
 
 	bmpMember->load();
 	Picture *pic = bmpMember->_picture;
@@ -419,9 +433,9 @@ ImGuiImage getShapeID(CastMember *castMember) {
 		return {};
 	}
 
-	if (_state->_cast._textures.contains(castMember)) {
-		return _state->_cast._textures[castMember];
-	}
+	ImGuiImage cached;
+	if (tryGetCachedTexture(castMember, cached))
+		return cached;
 
 	ShapeCastMember *shapeMember = (ShapeCastMember *)castMember;
 
@@ -477,9 +491,9 @@ ImGuiImage getTextID(CastMember *castMember) {
 		return {};
 	}
 
-	if (_state->_cast._textures.contains(castMember)) {
-		return _state->_cast._textures[castMember];
-	}
+	ImGuiImage cached;
+	if (tryGetCachedTexture(castMember, cached))
+		return cached;
 
 	Common::Rect bbox(castMember->getBbox());
 
