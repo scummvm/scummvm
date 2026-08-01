@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-# This script generates dists/org.scummvm.scummvm.metainfo.xml file with multilanguage support.
+# This script generates the dists/org.scummvm.scummvm.metainfo.xml and
+# dists/org.scummvm.scummvm.desktop files with multilanguage support.
 # The multilanguage data is extracted from po/*.po files
 
 import re
@@ -100,6 +101,20 @@ METAINFO_XML_TEMPLATE = '''<?xml version="1.0" encoding="UTF-8"?>
 </component>
 '''
 
+DESKTOP_OUTPUT_FILE = 'dists/org.scummvm.scummvm.desktop'
+DESKTOP_TEMPLATE = '''[Desktop Entry]
+Name=ScummVM
+Comment=Interpreter for numerous adventure games and RPGs
+Comment[xy]=I18N: One line summary as shown in *nix distributions
+Exec=scummvm
+Icon=org.scummvm.scummvm
+Terminal=false
+Type=Application
+Categories=Game;AdventureGame;RolePlaying;
+StartupNotify=false
+StartupWMClass=scummvm
+'''
+
 SUMMARY_TAG = 'dists/org.scummvm.scummvm.metainfo.xml.cpp:32'
 SUMMARY_PAT = r'  <summary xml:lang="xy">I18N: One line summary as shown in *nix distributions</summary>'
 PAR_TAGS = [
@@ -112,6 +127,15 @@ PAR_PATS = [
     r'    <p xml:lang="xy">I18N: 2 of 3 paragraph of ScummVM description in *nix distributions</p>',
     r'    <p xml:lang="xy">I18N: 3 of 3 paragraph of ScummVM description in *nix distributions</p>',
 ]
+COMMENT_PAT = r'Comment[xy]=I18N: One line summary as shown in *nix distributions'
+
+# The desktop entry specification uses POSIX locale names, which have no
+# notion of a script subtag. Map the scripts we ship to the region which is
+# conventionally used for them in desktop files.
+SCRIPT_REGIONS = {
+    'Hans': 'CN',
+    'Hant': 'TW',
+}
 
 BASE_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -168,6 +192,7 @@ def po_to_lang(po_file_name):
     assert(region_subtag is None or len(region_subtag) == 2)
     assert(variant_subtag is None or 6 <= len(variant_subtag) <= 8)
 
+    # BCP 47 language tag, as used by the AppStream metainfo file
     lang = primary_subtag.lower()
     if script_subtag:
         lang += '-' + script_subtag.title()
@@ -176,13 +201,22 @@ def po_to_lang(po_file_name):
     if variant_subtag:
         lang += '-' + variant_subtag.lower()
 
-    return primary_subtag, lang
+    # POSIX locale name, as used by the desktop entry file
+    locale = primary_subtag.lower()
+    if script_subtag:
+        locale += '_' + SCRIPT_REGIONS[script_subtag.title()]
+    if region_subtag:
+        locale += '_' + region_subtag.upper()
+    if variant_subtag:
+        locale += '@' + variant_subtag.lower()
+
+    return primary_subtag, lang, locale
 
 
 def get_summary_translations(po_file_names):
     summary_translations = []
 
-    for file, lang in po_file_names.items():
+    for file, (lang, locale) in po_file_names.items():
         summary = extract_po_line(file, SUMMARY_TAG)
         if summary is None:
             continue
@@ -203,7 +237,7 @@ def substitute_summary_translations(po_file_names, xml):
 def get_parx_translations(po_file_names, tag):
     parx_translations = []
 
-    for file, lang in po_file_names.items():
+    for file, (lang, locale) in po_file_names.items():
         parx = extract_po_par(file, tag)
 
         if parx is None:
@@ -226,6 +260,24 @@ def substitute_parx_translations(po_file_names, xml):
     return xml
 
 
+def get_comment_translations(po_file_names):
+    comment_translations = []
+
+    for file, (lang, locale) in po_file_names.items():
+        summary = extract_po_line(file, SUMMARY_TAG)
+        if summary is None:
+            continue
+
+        comment_translations.append('Comment[{0}]={1}'.format(locale, summary))
+
+    return '\n'.join(comment_translations)
+
+
+def substitute_comment_translations(po_file_names, desktop):
+    comment_translations = get_comment_translations(po_file_names)
+    return desktop.replace(COMMENT_PAT, comment_translations)
+
+
 def get_po_files():
     po_file_names = []
     for filename in os.listdir(os.path.join(BASE_PATH, 'po')):
@@ -238,20 +290,20 @@ def get_po_files():
     last_primary = None
     last_file = None
     for file in po_file_names:
-        primary_subtag, lang = po_to_lang(file)
+        primary_subtag, lang, locale = po_to_lang(file)
         if last_primary != primary_subtag:
             # We are sorted so it's a new primary group
             last_primary = primary_subtag
             did_dedup = False
             # Try with primary subtag first
-            po_langs[file] = primary_subtag
+            po_langs[file] = (primary_subtag, primary_subtag)
         else:
             if not did_dedup:
                 # Fix last file name because we have duplicate
-                po_langs[last_file] = po_to_lang(last_file)[1]
+                po_langs[last_file] = po_to_lang(last_file)[1:]
                 did_dedup = True
             # We got a duplicate lang code: deduplicate
-            po_langs[file] = lang
+            po_langs[file] = (lang, locale)
         last_file = file
 
     return po_langs
@@ -267,6 +319,12 @@ def main():
 
     with open(os.path.join(BASE_PATH, METAINFO_OUTPUT_FILE), 'w') as f:
         f.write(xml)
+
+    desktop = substitute_comment_translations(
+        po_file_names, DESKTOP_TEMPLATE)
+
+    with open(os.path.join(BASE_PATH, DESKTOP_OUTPUT_FILE), 'w') as f:
+        f.write(desktop)
 
 
 if __name__ == '__main__':
