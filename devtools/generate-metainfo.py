@@ -145,6 +145,7 @@ def po_to_lang(po_file_name):
     # Remove .po extension
     lang = po_file_name[:-3]
 
+    script_subtag = None
     region_subtag = None
     variant_subtag = None
     # we use - for locale modifier (tarask)
@@ -152,15 +153,24 @@ def po_to_lang(po_file_name):
         lang, variant_subtag = lang.split('-', maxsplit=1)
 
     if '_' in lang:
-        lang, region_subtag = lang.split('_', maxsplit=1)
+        # A four letter subtag is a script (zh_Hans), a two letter one is a
+        # region (pt_BR)
+        lang, subtag = lang.split('_', maxsplit=1)
+        if len(subtag) == 4:
+            script_subtag = subtag
+        else:
+            region_subtag = subtag
 
     primary_subtag = lang
 
     assert(len(primary_subtag) == 2)
+    assert(script_subtag is None or len(script_subtag) == 4)
     assert(region_subtag is None or len(region_subtag) == 2)
     assert(variant_subtag is None or 6 <= len(variant_subtag) <= 8)
 
     lang = primary_subtag.lower()
+    if script_subtag:
+        lang += '-' + script_subtag.title()
     if region_subtag:
         lang += '-' + region_subtag.upper()
     if variant_subtag:
