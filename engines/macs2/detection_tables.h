@@ -83,6 +83,16 @@ const ADGameDescription gameDescriptions[] = {
 	 GF_TRANSLATED | ADGF_DEMO | ADGF_UNSTABLE,
 	 GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS, GAMEOPTION_ENHANCEMENTS)},
 
+	// Amiga demo - DataA (MXMF) + Mdir (MXDR). GMACS II / LINEL.
+	{"sis",
+	 "Demo",
+	 AD_ENTRY2s("DataA", "30ce5b1b30f7ef60f412c0475a25b0cb", 736670,
+	            "Mdir", "269f4c31a50395e3ec6ae69b86e426bd", 598),
+	 Common::DE_DEU,
+	 Common::kPlatformAmiga,
+	 ADGF_DEMO | ADGF_UNSTABLE,
+	 GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS, GAMEOPTION_ENHANCEMENTS)},
+
 	AD_TABLE_END_MARKER};
 
 } // End of namespace Macs2
