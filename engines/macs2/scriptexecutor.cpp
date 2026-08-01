@@ -1974,7 +1974,8 @@ void Script::ScriptExecutor::scriptMoveToPosition() {
 	}
 
 	const Common::Point target(x, y);
-	if (!_engine->isPathWalkable(object->_position.y, object->_position.x, y, x) &&
+	// Binary scriptMoveToPosition (1008:bafc): isPathWalkable(targetY, targetX, objY, objX).
+	if (!_engine->isPathWalkable(y, x, object->_position.y, object->_position.x) &&
 		Macs2Engine::isWalkabilityWalkable(_engine->getWalkabilityAt(target))) {
 		setScriptError(0x15);
 		return;
