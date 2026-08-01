@@ -75,6 +75,21 @@ enum class ExecutionResult {
 	WaitingForCallback
 };
 
+/** Per-opcode handler result for table-driven dispatch in executeOpcodes(). */
+enum class OpcodeResult {
+	/** Continue with the next opcode in the current script. */
+	Continue,
+	/** Break the opcode loop, then return ScriptFinished (clears running flag). */
+	FinishScript,
+	/** Return WaitingForCallback immediately (leaves running flag set). */
+	WaitForCallback,
+	/**
+	 * Return ScriptFinished immediately (leaves running flag set).
+	 * Matches legacy `return scriptXxx()` paths such as changeScene / waitForWalk.
+	 */
+	ReturnFinished
+};
+
 enum class ScriptExecutionState {
 	// We are executing the scene script
 	ExecutingSceneScript,
@@ -97,6 +112,23 @@ enum class ScriptExecutionState {
  *
  */
 class ScriptExecutor {
+public:
+	typedef OpcodeResult (ScriptExecutor::*OpcodeHandler)();
+
+	struct OpcodeEntry {
+		const char *name;
+		OpcodeHandler handler;
+	};
+
+	/** Install the active opcode table (DOS today; other platforms later). */
+	void setOpcodeTable(const OpcodeEntry *table, uint size);
+	/** Name for opcode, or "?" if unset/out of range. */
+	const char *opcodeName(uint8 opcode) const;
+
+	/** Default DOS opcode table (class member so private handlers are accessible). */
+	static const OpcodeEntry kDosOpcodeTable[];
+	static const uint kDosOpcodeTableSize;
+
 private:
 #ifdef DEMACS2
 public:
@@ -180,12 +212,96 @@ public:
 	void scriptFadeFromBlack();
 	void scriptFreePcmSound();
 
+	// Table-driven opcode wrappers (return OpcodeResult for executeOpcodes).
+	OpcodeResult opSetVar();
+	OpcodeResult opSetVarOr();
+	OpcodeResult opIfFalse();
+	OpcodeResult opIfTrue();
+	OpcodeResult opCompare();
+	OpcodeResult opIfInteraction();
+	OpcodeResult opEndIf();
+	OpcodeResult opElse();
+	OpcodeResult opNop09();
+	OpcodeResult opPrintStringLeft();
+	OpcodeResult opMoveObject();
+	OpcodeResult opChangeScene();
+	OpcodeResult opShowDialogue();
+	OpcodeResult opChangeAnimation();
+	OpcodeResult opFrameWait();
+	OpcodeResult opWalkToPosition();
+	OpcodeResult opWaitForWalk();
+	OpcodeResult opSetPathfinding();
+	OpcodeResult opSkipUntil14();
+	OpcodeResult opSkipWord();
+	OpcodeResult opClearDialogueChoices();
+	OpcodeResult opAddDialogueChoice();
+	OpcodeResult opShowDialogueChoice();
+	OpcodeResult opDismissPanel();
+	OpcodeResult opWalkToAndPickup();
+	OpcodeResult opSetPickupFrames();
+	OpcodeResult opSetupObject();
+	OpcodeResult opSetSkippable();
+	OpcodeResult opClearSkippable();
+	OpcodeResult opPlayAnimation();
+	OpcodeResult opTestPathfinding();
+	OpcodeResult opSetYOffset();
+	OpcodeResult opSetMotion();
+	OpcodeResult opSetOrientation();
+	OpcodeResult opMoveToPosition();
+	OpcodeResult opAddValues();
+	OpcodeResult opSubValues();
+	OpcodeResult opLoadSpecialAnim();
+	OpcodeResult opSetDirection();
+	OpcodeResult opStopAnimation();
+	OpcodeResult opOpenInventory();
+	OpcodeResult opLoadObjectAnim();
+	OpcodeResult opCheckObjectData();
+	OpcodeResult opCheckInventory();
+	OpcodeResult opSetSnapToTarget();
+	OpcodeResult opTestSceneAnimFrame();
+	OpcodeResult opTestObjectAnimFrame();
+	OpcodeResult opPrintStringRight();
+	OpcodeResult opSetPaletteDarkness();
+	OpcodeResult opSetObjectShading();
+	OpcodeResult opSetObjectScaling();
+	OpcodeResult opSetHotspotOverride();
+	OpcodeResult opSetObjectBounds();
+	OpcodeResult opDismissAllPanels();
+	OpcodeResult opResetToSceneScript();
+	OpcodeResult opLoadOverlayFont();
+	OpcodeResult opEndOverlayText();
+	OpcodeResult opAddOverlayTextEntry();
+	OpcodeResult opClearOverlayText();
+	OpcodeResult opFadeToBlack();
+	OpcodeResult opFadeFromBlack();
+	OpcodeResult opLoadPcmSound();
+	OpcodeResult opFreePcmSound();
+	OpcodeResult opPlayPcmSound();
+	OpcodeResult opWaitForSound();
+	OpcodeResult opStopPcmSound();
+	OpcodeResult opLoadMusicSlot();
+	OpcodeResult opPlayMusicSlot();
+	OpcodeResult opStopMusicSlot();
+	OpcodeResult opFreeMusicSlot();
+	OpcodeResult opWaitForMusic();
+	OpcodeResult opGetObjectX();
+	OpcodeResult opGetObjectY();
+	OpcodeResult opGetObjectField8();
+	OpcodeResult opGetObjectOrientation();
+	OpcodeResult opClearActorInventory();
+	OpcodeResult opSetPathfindingRemap();
+	OpcodeResult opWaitForAdlib();
+
 	inline void scriptUnimplementedOpcode(const char *source, uint16 opcode) {
 		debug("Unimplemented opcode (%s): %.2x.", source, opcode);
 	}
 #ifdef DEMACS2
 private:
 #endif
+
+	// Active opcode table
+	const OpcodeEntry *_opcodeTable = nullptr;
+	uint _opcodeTableSize = 0;
 
 	// State variables from here
 

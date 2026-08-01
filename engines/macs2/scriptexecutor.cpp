@@ -58,6 +58,8 @@ ScriptExecutor::ScriptExecutor() {
 		_variables[i].a = 0;
 		_variables[i].b = 0;
 	}
+
+	setOpcodeTable(ScriptExecutor::kDosOpcodeTable, ScriptExecutor::kDosOpcodeTableSize);
 }
 
 ScriptExecutor::~ScriptExecutor() {
@@ -67,10 +69,8 @@ ScriptExecutor::~ScriptExecutor() {
 }
 
 Common::String ScriptExecutor::identifyScriptOpcode(uint8 opcode, uint8 opcode2) {
-	if (opcode == 0x5)
-		return Common::String::format("(%.2x)", opcode);
-
-	return Common::String::format("(%.2x %.2x)", opcode, opcode2);
+	(void)opcode2;
+	return Common::String::format("%s (%.2x)", opcodeName(opcode), opcode);
 }
 
 Common::String ScriptExecutor::identifyHelperOpcode(uint8 opcode, uint16 value) {
@@ -2927,6 +2927,516 @@ void Script::ScriptExecutor::scriptFreePcmSound() {
 	_engine->clearCurrentSoundData();
 }
 
+void ScriptExecutor::setOpcodeTable(const OpcodeEntry *table, uint size) {
+	_opcodeTable = table;
+	_opcodeTableSize = size;
+}
+
+const char *ScriptExecutor::opcodeName(uint8 opcode) const {
+	if (_opcodeTable == nullptr || opcode >= _opcodeTableSize)
+		return "?";
+	const char *name = _opcodeTable[opcode].name;
+	return name ? name : "?";
+}
+
+OpcodeResult ScriptExecutor::opSetVar() {
+	scriptSetVar();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opSetVarOr() {
+	scriptSetVarOr();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opIfFalse() {
+	scriptIfFalse();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opIfTrue() {
+	scriptIfTrue();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opCompare() {
+	if (!scriptCompare())
+		return OpcodeResult::FinishScript;
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opIfInteraction() {
+	scriptIfInteraction();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opEndIf() {
+	scriptEndIf();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opElse() {
+	scriptElse();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opNop09() {
+	scriptNop09();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opPrintStringLeft() {
+	scriptPrintStringLeft();
+	return OpcodeResult::WaitForCallback;
+}
+
+OpcodeResult ScriptExecutor::opMoveObject() {
+	scriptMoveObject();
+	if (hasScriptError())
+		return OpcodeResult::FinishScript;
+	// Binary: after scriptMoveObject(), exits if position >= end.
+	if (_stream->pos() >= _stream->size())
+		return OpcodeResult::FinishScript;
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opChangeScene() {
+	const ExecutionResult result = scriptChangeScene();
+	if (result == ExecutionResult::WaitingForCallback)
+		return OpcodeResult::WaitForCallback;
+	return OpcodeResult::ReturnFinished;
+}
+
+OpcodeResult ScriptExecutor::opShowDialogue() {
+	const ExecutionResult dialogueResult = scriptShowDialogue();
+	if (dialogueResult == ExecutionResult::WaitingForCallback)
+		return OpcodeResult::WaitForCallback;
+	return OpcodeResult::FinishScript;
+}
+
+OpcodeResult ScriptExecutor::opChangeAnimation() {
+	scriptChangeAnimation();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opFrameWait() {
+	scriptFrameWait();
+	return OpcodeResult::WaitForCallback;
+}
+
+OpcodeResult ScriptExecutor::opWalkToPosition() {
+	scriptWalkToPosition();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opWaitForWalk() {
+	const ExecutionResult result = scriptWaitForWalk();
+	if (result == ExecutionResult::WaitingForCallback)
+		return OpcodeResult::WaitForCallback;
+	return OpcodeResult::ReturnFinished;
+}
+
+OpcodeResult ScriptExecutor::opSetPathfinding() {
+	scriptSetPathfinding();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opSkipUntil14() {
+	scriptSkipUntil14();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opSkipWord() {
+	scriptSkipWord();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opClearDialogueChoices() {
+	scriptClearDialogueChoices();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opAddDialogueChoice() {
+	scriptAddDialogueChoice();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opShowDialogueChoice() {
+	const ExecutionResult result = scriptShowDialogueChoice();
+	if (result == ExecutionResult::WaitingForCallback)
+		return OpcodeResult::WaitForCallback;
+	return OpcodeResult::ReturnFinished;
+}
+
+OpcodeResult ScriptExecutor::opDismissPanel() {
+	const ExecutionResult result = scriptDismissPanel();
+	if (result == ExecutionResult::WaitingForCallback)
+		return OpcodeResult::WaitForCallback;
+	return OpcodeResult::ReturnFinished;
+}
+
+OpcodeResult ScriptExecutor::opWalkToAndPickup() {
+	scriptWalkToAndPickup();
+	return OpcodeResult::FinishScript;
+}
+
+OpcodeResult ScriptExecutor::opSetPickupFrames() {
+	scriptSetPickupFrames();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opSetupObject() {
+	scriptSetupObject();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opSetSkippable() {
+	scriptSetSkippable();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opClearSkippable() {
+	scriptClearSkippable();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opPlayAnimation() {
+	scriptPlayAnimation();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opTestPathfinding() {
+	scriptTestPathfinding();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opSetYOffset() {
+	scriptSetYOffset();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opSetMotion() {
+	scriptSetMotion();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opSetOrientation() {
+	scriptSetOrientation();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opMoveToPosition() {
+	scriptMoveToPosition();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opAddValues() {
+	scriptAddValues();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opSubValues() {
+	scriptSubValues();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opLoadSpecialAnim() {
+	scriptLoadSpecialAnim();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opSetDirection() {
+	scriptSetDirection();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opStopAnimation() {
+	scriptStopAnimation();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opOpenInventory() {
+	// Binary (1008:e0f9): always terminates script + sets executingObjectId sentinel.
+	scriptOpenInventory();
+	_stream->seek(_stream->size(), SEEK_SET);
+	_executingObjectIndex = 0x201;
+	_executingScriptObjectId = 0x201;
+	return OpcodeResult::FinishScript;
+}
+
+OpcodeResult ScriptExecutor::opLoadObjectAnim() {
+	scriptLoadObjectAnim();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opCheckObjectData() {
+	scriptCheckObjectData();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opCheckInventory() {
+	scriptCheckInventory();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opSetSnapToTarget() {
+	scriptSetSnapToTarget();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opTestSceneAnimFrame() {
+	scriptTestSceneAnimFrame();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opTestObjectAnimFrame() {
+	scriptTestObjectAnimFrame();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opPrintStringRight() {
+	scriptPrintStringRight();
+	return OpcodeResult::WaitForCallback;
+}
+
+OpcodeResult ScriptExecutor::opSetPaletteDarkness() {
+	scriptSetPaletteDarkness();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opSetObjectShading() {
+	scriptSetObjectShading();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opSetObjectScaling() {
+	scriptSetObjectScaling();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opSetHotspotOverride() {
+	scriptSetHotspotOverride();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opSetObjectBounds() {
+	scriptSetObjectBounds();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opDismissAllPanels() {
+	scriptDismissAllPanels();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opResetToSceneScript() {
+	scriptResetToSceneScript();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opLoadOverlayFont() {
+	scriptLoadOverlayFont();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opEndOverlayText() {
+	scriptEndOverlayText();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opAddOverlayTextEntry() {
+	scriptAddOverlayTextEntry();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opClearOverlayText() {
+	scriptClearOverlayText();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opFadeToBlack() {
+	scriptFadeToBlack();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opFadeFromBlack() {
+	scriptFadeFromBlack();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opLoadPcmSound() {
+	scriptLoadPcmSound();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opFreePcmSound() {
+	scriptFreePcmSound();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opPlayPcmSound() {
+	scriptPlayPcmSound();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opWaitForSound() {
+	if (scriptWaitForSound())
+		return OpcodeResult::WaitForCallback;
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opStopPcmSound() {
+	scriptStopPcmSound();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opLoadMusicSlot() {
+	scriptLoadMusicSlot();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opPlayMusicSlot() {
+	scriptPlayMusicSlot();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opStopMusicSlot() {
+	scriptStopMusicSlot();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opFreeMusicSlot() {
+	scriptFreeMusicSlot();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opWaitForMusic() {
+	if (scriptWaitForMusic())
+		return OpcodeResult::WaitForCallback;
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opGetObjectX() {
+	scriptGetObjectX();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opGetObjectY() {
+	scriptGetObjectY();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opGetObjectField8() {
+	scriptGetObjectField8();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opGetObjectOrientation() {
+	scriptGetObjectOrientation();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opClearActorInventory() {
+	scriptClearActorInventory();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opSetPathfindingRemap() {
+	scriptSetPathfindingRemap();
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::opWaitForAdlib() {
+	if (scriptWaitForAdlib())
+		return OpcodeResult::WaitForCallback;
+	return OpcodeResult::Continue;
+}
+
+// DOS script opcode table (indexed by primary opcode byte).
+// Platforms can install an alternate table via setOpcodeTable().
+const ScriptExecutor::OpcodeEntry ScriptExecutor::kDosOpcodeTable[] = {
+	{nullptr, nullptr},
+	{"setVar", &ScriptExecutor::opSetVar},
+	{"setVarOr", &ScriptExecutor::opSetVarOr},
+	{"ifFalse", &ScriptExecutor::opIfFalse},
+	{"ifTrue", &ScriptExecutor::opIfTrue},
+	{"compare", &ScriptExecutor::opCompare},
+	{"ifInteraction", &ScriptExecutor::opIfInteraction},
+	{"endIf", &ScriptExecutor::opEndIf},
+	{"else", &ScriptExecutor::opElse},
+	{"nop09", &ScriptExecutor::opNop09},
+	{"printStringLeft", &ScriptExecutor::opPrintStringLeft},
+	{"moveObject", &ScriptExecutor::opMoveObject},
+	{"changeScene", &ScriptExecutor::opChangeScene},
+	{"showDialogue", &ScriptExecutor::opShowDialogue},
+	{"changeAnimation", &ScriptExecutor::opChangeAnimation},
+	{"frameWait", &ScriptExecutor::opFrameWait},
+	{"walkToPosition", &ScriptExecutor::opWalkToPosition},
+	{"waitForWalk", &ScriptExecutor::opWaitForWalk},
+	{"setPathfinding", &ScriptExecutor::opSetPathfinding},
+	{"skipUntil14", &ScriptExecutor::opSkipUntil14},
+	{"skipWord", &ScriptExecutor::opSkipWord},
+	{"clearDialogueChoices", &ScriptExecutor::opClearDialogueChoices},
+	{"addDialogueChoice", &ScriptExecutor::opAddDialogueChoice},
+	{"showDialogueChoice", &ScriptExecutor::opShowDialogueChoice},
+	{"dismissPanel", &ScriptExecutor::opDismissPanel},
+	{"walkToAndPickup", &ScriptExecutor::opWalkToAndPickup},
+	{"setPickupFrames", &ScriptExecutor::opSetPickupFrames},
+	{"setupObject", &ScriptExecutor::opSetupObject},
+	{"setSkippable", &ScriptExecutor::opSetSkippable},
+	{"clearSkippable", &ScriptExecutor::opClearSkippable},
+	{"playAnimation", &ScriptExecutor::opPlayAnimation},
+	{"testPathfinding", &ScriptExecutor::opTestPathfinding},
+	{"setYOffset", &ScriptExecutor::opSetYOffset},
+	{"setMotion", &ScriptExecutor::opSetMotion},
+	{"setOrientation", &ScriptExecutor::opSetOrientation},
+	{"moveToPosition", &ScriptExecutor::opMoveToPosition},
+	{"addValues", &ScriptExecutor::opAddValues},
+	{"subValues", &ScriptExecutor::opSubValues},
+	{"loadSpecialAnim", &ScriptExecutor::opLoadSpecialAnim},
+	{"setDirection", &ScriptExecutor::opSetDirection},
+	{"stopAnimation", &ScriptExecutor::opStopAnimation},
+	{"openInventory", &ScriptExecutor::opOpenInventory},
+	{"loadObjectAnim", &ScriptExecutor::opLoadObjectAnim},
+	{"checkObjectData", &ScriptExecutor::opCheckObjectData},
+	{"checkInventory", &ScriptExecutor::opCheckInventory},
+	{"setSnapToTarget", &ScriptExecutor::opSetSnapToTarget},
+	{"testSceneAnimFrame", &ScriptExecutor::opTestSceneAnimFrame},
+	{"testObjectAnimFrame", &ScriptExecutor::opTestObjectAnimFrame},
+	{"printStringRight", &ScriptExecutor::opPrintStringRight},
+	{"setPaletteDarkness", &ScriptExecutor::opSetPaletteDarkness},
+	{"setObjectShading", &ScriptExecutor::opSetObjectShading},
+	{"setObjectScaling", &ScriptExecutor::opSetObjectScaling},
+	{"setHotspotOverride", &ScriptExecutor::opSetHotspotOverride},
+	{"setObjectBounds", &ScriptExecutor::opSetObjectBounds},
+	{"dismissAllPanels", &ScriptExecutor::opDismissAllPanels},
+	{"resetToSceneScript", &ScriptExecutor::opResetToSceneScript},
+	{"loadOverlayFont", &ScriptExecutor::opLoadOverlayFont},
+	{"endOverlayText", &ScriptExecutor::opEndOverlayText},
+	{"addOverlayTextEntry", &ScriptExecutor::opAddOverlayTextEntry},
+	{"clearOverlayText", &ScriptExecutor::opClearOverlayText},
+	{"fadeToBlack", &ScriptExecutor::opFadeToBlack},
+	{"fadeFromBlack", &ScriptExecutor::opFadeFromBlack},
+	{"loadPcmSound", &ScriptExecutor::opLoadPcmSound},
+	{"freePcmSound", &ScriptExecutor::opFreePcmSound},
+	{"playPcmSound", &ScriptExecutor::opPlayPcmSound},
+	{"waitForSound", &ScriptExecutor::opWaitForSound},
+	{"stopPcmSound", &ScriptExecutor::opStopPcmSound},
+	{"loadMusicSlot", &ScriptExecutor::opLoadMusicSlot},
+	{"playMusicSlot", &ScriptExecutor::opPlayMusicSlot},
+	{"stopMusicSlot", &ScriptExecutor::opStopMusicSlot},
+	{"freeMusicSlot", &ScriptExecutor::opFreeMusicSlot},
+	{"waitForMusic", &ScriptExecutor::opWaitForMusic},
+	{"getObjectX", &ScriptExecutor::opGetObjectX},
+	{"getObjectY", &ScriptExecutor::opGetObjectY},
+	{"getObjectField8", &ScriptExecutor::opGetObjectField8},
+	{"getObjectOrientation", &ScriptExecutor::opGetObjectOrientation},
+	{"clearActorInventory", &ScriptExecutor::opClearActorInventory},
+	{"setPathfindingRemap", &ScriptExecutor::opSetPathfindingRemap},
+	{"waitForAdlib", &ScriptExecutor::opWaitForAdlib}
+};
+const uint ScriptExecutor::kDosOpcodeTableSize = ARRAYSIZE(ScriptExecutor::kDosOpcodeTable);
+
 ExecutionResult Script::ScriptExecutor::executeOpcodes() {
 	debugC(kDebugScript, "----- Scripting function entered - scene: %.2x 1014: %.2x 1012: %.2x", Scenes::instance()._currentSceneIndex, _isSceneInitRun, _repeatRunFlag);
 	_isRunningScript = true;
@@ -2984,206 +3494,25 @@ ExecutionResult Script::ScriptExecutor::executeOpcodes() {
 		_lastOpcodeStreamPos = _stream->pos() - 2;
 		_expectedEndLocation += length + 2;
 
-		// TODO: convert this into a function lookup table and extract all opcode handling into separate functions, this is just for easier reading
-		if (opcode1 == 0x01) {
-			scriptSetVar();
-		} else if (opcode1 == 0x02) {
-			scriptSetVarOr();
-		} else if (opcode1 == 0x03) {
-			scriptIfFalse();
-		} else if (opcode1 == 0x04) {
-			scriptIfTrue();
-		} else if (opcode1 == 0x5) {
-			if (!scriptCompare()) {
-				endBuffering(_lastOpcodeTriggeredSkip);
-				break;
-			}
-		} else if (opcode1 == 0x06) {
-			scriptIfInteraction();
-		} else if (opcode1 == 0x07) {
-			scriptEndIf();
-		} else if (opcode1 == 0x08) {
-			scriptElse();
-		} else if (opcode1 == 0x09) {
-			scriptNop09();
-		} else if (opcode1 == 0x10) {
-			scriptWalkToPosition();
-		} else if (opcode1 == 0x11) {
-			return scriptWaitForWalk();
-		} else if (opcode1 == 0x13) {
-			scriptSkipUntil14();
-		} else if (opcode1 == 0x14) {
-			scriptSkipWord();
-		} else if (opcode1 == 0x0a) {
-			scriptPrintStringLeft();
-			return ExecutionResult::WaitingForCallback;
-		} else if (opcode1 == 0x15) {
-			scriptClearDialogueChoices();
-		} else if (opcode1 == 0x16) {
-			scriptAddDialogueChoice();
-		} else if (opcode1 == 0x17) {
-			return scriptShowDialogueChoice();
-		} else if (opcode1 == 0x18) {
-			return scriptDismissPanel();
-		} else if (opcode1 == 0x19) {
-			scriptWalkToAndPickup();
-			endBuffering(_lastOpcodeTriggeredSkip);
-			break;
-		} else if (opcode1 == 0x1a) {
-			scriptSetPickupFrames();
-		} else if (opcode1 == 0x1b) {
-			scriptSetupObject();
-		} else if (opcode1 == 0x1c) {
-			scriptSetSkippable();
-		} else if (opcode1 == 0x1d) {
-			scriptClearSkippable();
-		} else if (opcode1 == 0x1e) {
-			scriptPlayAnimation();
-		} else if (opcode1 == 0x1f) {
-			scriptTestPathfinding();
-		} else if (opcode1 == 0x20) {
-			scriptSetYOffset();
-		} else if (opcode1 == 0x21) {
-			scriptSetMotion();
-		} else if (opcode1 == 0x22) {
-			scriptSetOrientation();
-		} else if (opcode1 == 0x23) {
-			scriptMoveToPosition();
-		} else if (opcode1 == 0x24) {
-			scriptAddValues();
-		} else if (opcode1 == 0x25) {
-			scriptSubValues();
-		} else if (opcode1 == 0x26) {
-			scriptLoadSpecialAnim();
-		} else if (opcode1 == 0x27) {
-			scriptSetDirection();
-		} else if (opcode1 == 0x28) {
-			scriptStopAnimation();
-		} else if (opcode1 == 0x29) {
-			// Binary (1008:e0f9): always terminates script + sets executingObjectId sentinel.
-			scriptOpenInventory();
-			_stream->seek(_stream->size(), SEEK_SET);
-			_executingObjectIndex = 0x201;
-			_executingScriptObjectId = 0x201;
-			endBuffering(_lastOpcodeTriggeredSkip);
-			break;
-		} else if (opcode1 == 0x0b) {
-			scriptMoveObject();
-			if (hasScriptError()) {
-				endBuffering(_lastOpcodeTriggeredSkip);
-				break;
-			}
-			// Binary: after scriptMoveObject(), exits if position >= end.
-			// scriptMoveObject can advance the stream to end (e.g. if the moved
-			// object is the one whose script is executing).
-			if (_stream->pos() >= _stream->size()) {
-				endBuffering(_lastOpcodeTriggeredSkip);
-				break;
-			}
-		} else if (opcode1 == 0x0c) {
-			// Binary: scriptChangeScene (1008:ad6e) runs init+repeat synchronously and
-			// returns void; only pause the outer opcode loop when a wait is still active.
-			return scriptChangeScene();
-		} else if (opcode1 == 0x0d) {
-			const ExecutionResult dialogueResult = scriptShowDialogue();
-			if (dialogueResult == ExecutionResult::WaitingForCallback)
-				return dialogueResult;
-			break;
-		} else if (opcode1 == 0x0E) {
-			scriptChangeAnimation();
-		} else if (opcode1 == 0x0F) {
-			scriptFrameWait();
-			return ExecutionResult::WaitingForCallback;
-		} else if (opcode1 == 0x12) {
-			scriptSetPathfinding();
-		} else if (opcode1 == 0x2A) {
-			scriptLoadObjectAnim();
-		} else if (opcode1 == 0x2B) {
-			scriptCheckObjectData();
-		} else if (opcode1 == 0x2C) {
-			scriptCheckInventory();
-		} else if (opcode1 == 0x2D) {
-			scriptSetSnapToTarget();
-		} else if (opcode1 == 0x2E) {
-			scriptTestSceneAnimFrame();
-		} else if (opcode1 == 0x2F) {
-			scriptTestObjectAnimFrame();
-		} else if (opcode1 == 0x30) {
-			scriptPrintStringRight();
-			return ExecutionResult::WaitingForCallback;
-		} else if (opcode1 == 0x31) {
-			scriptSetPaletteDarkness();
-		} else if (opcode1 == 0x32) {
-			scriptSetObjectShading();
-		} else if (opcode1 == 0x33) {
-			scriptSetObjectScaling();
-		} else if (opcode1 == 0x34) {
-			scriptSetHotspotOverride();
-		} else if (opcode1 == 0x35) {
-			scriptSetObjectBounds();
-		} else if (opcode1 == 0x36) {
-			scriptDismissAllPanels();
-		} else if (opcode1 == 0x37) {
-			scriptResetToSceneScript();
-		} else if (opcode1 == 0x38) {
-			scriptLoadOverlayFont();
-		} else if (opcode1 == 0x39) {
-			// scriptEndOverlayText (1008:d80f). Clears the overlay text stage.
-			scriptEndOverlayText();
-		} else if (opcode1 == 0x3A) {
-			scriptAddOverlayTextEntry();
-		} else if (opcode1 == 0x3B) {
-			scriptClearOverlayText();
-		} else if (opcode1 == 0x3C) {
-			scriptFadeToBlack();
-		} else if (opcode1 == 0x3D) {
-			scriptFadeFromBlack();
-		} else if (opcode1 == 0x3E) {
-			scriptLoadPcmSound();
-		} else if (opcode1 == 0x3F) {
-			scriptFreePcmSound();
-		} else if (opcode1 == 0x40) {
-			scriptPlayPcmSound();
-		} else if (opcode1 == 0x41) {
-			if (scriptWaitForSound()) {
-				return ExecutionResult::WaitingForCallback;
-			}
-		} else if (opcode1 == 0x42) {
-			scriptStopPcmSound();
-		} else if (opcode1 == 0x43) {
-			scriptLoadMusicSlot();
-		} else if (opcode1 == 0x44) {
-			scriptPlayMusicSlot();
-		} else if (opcode1 == 0x45) {
-			scriptStopMusicSlot();
-		} else if (opcode1 == 0x47) {
-			if (scriptWaitForMusic()) {
-				return ExecutionResult::WaitingForCallback;
-			}
-		} else if (opcode1 == 0x46) {
-			scriptFreeMusicSlot();
-		} else if (opcode1 == 0x48) {
-			scriptGetObjectX();
-		} else if (opcode1 == 0x49) {
-			scriptGetObjectY();
-		} else if (opcode1 == 0x4A) {
-			scriptGetObjectField8();
-		} else if (opcode1 == 0x4B) {
-			scriptGetObjectOrientation();
-		} else if (opcode1 == 0x4C) {
-			scriptClearActorInventory();
-		} else if (opcode1 == 0x4D) {
-			scriptSetPathfindingRemap();
-		} else if (opcode1 == 0x4E) {
-			if (scriptWaitForAdlib()) {
-				return ExecutionResult::WaitingForCallback;
-			}
-		} else {
+		const OpcodeEntry *entry = nullptr;
+		if (_opcodeTable != nullptr && opcode1 < _opcodeTableSize)
+			entry = &_opcodeTable[opcode1];
+
+		if (entry == nullptr || entry->handler == nullptr) {
 			setScriptError(7);
 			endBuffering(_lastOpcodeTriggeredSkip);
 			break;
 		}
+
+		const OpcodeResult opcodeResult = (this->*(entry->handler))();
+		if (opcodeResult == OpcodeResult::WaitForCallback)
+			return ExecutionResult::WaitingForCallback;
+		if (opcodeResult == OpcodeResult::ReturnFinished)
+			return ExecutionResult::ScriptFinished;
+
 		endBuffering(_lastOpcodeTriggeredSkip);
+		if (opcodeResult == OpcodeResult::FinishScript)
+			break;
 	}
 	_isRunningScript = false;
 	if (hasScriptError())
