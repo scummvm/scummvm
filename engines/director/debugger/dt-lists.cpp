@@ -62,6 +62,7 @@ void showVars() {
 	ImGui::SetNextWindowSize(ImVec2(300, 250), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Vars", &_state->_w.vars)) {
 		Common::Array<Common::String> keyBuffer;
+		_state->_vars._nameFilter.Draw("Filter");
 
 		if (ImGui::CollapsingHeader("Global vars:", ImGuiTreeNodeFlags_DefaultOpen)) {
 			for (auto &it : _state->_vars._globals) {
@@ -71,6 +72,8 @@ void showVars() {
 
 			uint32 id = 0;
 			for (auto &i : keyBuffer) {
+				if (!_state->_vars._nameFilter.PassFilter(i.c_str()))
+					continue;
 				ImGui::PushID(id);
 				Datum &val = _state->_vars._globals.getVal(i);
 				bool changed = !_state->_vars._prevGlobals.contains(i) || !(_state->_vars._globals.getVal(i) == _state->_vars._prevGlobals.getVal(i));
@@ -96,6 +99,8 @@ void showVars() {
 
 				uint32 id = 0;
 				for (auto &i : keyBuffer) {
+					if (!_state->_vars._nameFilter.PassFilter(i.c_str()))
+						continue;
 					ImGui::PushID(id);
 					Datum &val = _state->_vars._locals.getVal(i);
 					bool changed = !_state->_vars._prevLocals.contains(i) || !(_state->_vars._locals.getVal(i) == _state->_vars._prevLocals.getVal(i));
@@ -125,6 +130,8 @@ void showVars() {
 
 				uint32 id = 0;
 				for (auto &i : keyBuffer) {
+					if (!_state->_vars._nameFilter.PassFilter(i.c_str()))
+						continue;
 					ImGui::PushID(id);
 					Datum val = script->getProp(i);
 					displayVariable(i, false);

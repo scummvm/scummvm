@@ -263,6 +263,7 @@ typedef struct ImGuiState {
 		DatumHash _prevGlobals;
 
 		uint32 _lastTimeRefreshed = 0;
+		ImGuiTextFilter _nameFilter;
 	} _vars;
 
 	struct {
