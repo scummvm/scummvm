@@ -272,10 +272,15 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 
 	uint32 useColor = 0xffffffff;
 	int heightOffset = 0;
+	// W/A for 'Shadows on the Vatican - Act I: Greed'
+	if (BaseEngine::instance().getGameId() == "sotv1" &&
+		Common::String(_fontFile).equals("fonts\\Laffayette_Comic_Pro.ttf")) {
+		heightOffset = 2;
+	}
 	// W/A for 'Shadows on the Vatican - Act II: Wrath'
 	if (BaseEngine::instance().getGameId() == "sotv2" &&
 		Common::String(_fontFile).equals("fonts\\Laffayette_Comic_Pro.ttf")) {
-		heightOffset += 2;
+		heightOffset = 2;
 	}
 
 	for (it = lines.begin(); it != lines.end(); ++it) {
