@@ -2050,11 +2050,8 @@ Common::Error Macs2Engine::run() {
 
 	CursorMan.showMouse(false);
 
-	// Initialize Adlib
 	_music->init();
 	syncSoundSettings();
-
-	// Set the engine's debugger console
 	setDebugger(new GUI::Debugger());
 
 #ifdef USE_IMGUI
