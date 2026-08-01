@@ -236,7 +236,7 @@ class Macs2Engine : public Engine, public Events {
 private:
 	const ADGameDescription *_gameDescription;
 
-	Music *_adlib = nullptr;
+	Music *_music = nullptr;
 
 protected:
 	// Engine APIs
@@ -413,7 +413,7 @@ public:
 	void sortObjectsByDepth(uint16 objectIndex);
 
 	void loadSongFromSceneData(uint8 dataIndex);
-	Music *getAdlib() const { return _adlib; }
+	Music *getMusic() const { return _music; }
 	// Returns the Music volume (0-63) scaled by the user's music_volume setting
 	uint16 scaledMusicVolume(uint16 gameAttenuation) const;
 	void setCurrentSoundData(const Common::Array<uint8> &data);

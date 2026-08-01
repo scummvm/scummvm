@@ -2278,17 +2278,17 @@ bool View1::tick() {
 			} else {
 				se->_musicControlVolume = vol;
 			}
-			g_engine->getAdlib()->setVolume(g_engine->scaledMusicVolume(se->_musicControlVolume));
+			g_engine->getMusic()->setVolume(g_engine->scaledMusicVolume(se->_musicControlVolume));
 		} else {
 			// Fade in: volume += step. When >= 63: stop music.
 			int vol = (int)se->_musicControlVolume + (int)musicStep;
 			if (vol >= 0x3F) {
 				se->_musicControlMode = 0;
 				se->_activeMusicSlot = 0;
-				g_engine->getAdlib()->stopMusic();
+				g_engine->getMusic()->stopMusic();
 			} else {
 				se->_musicControlVolume = vol;
-				g_engine->getAdlib()->setVolume(g_engine->scaledMusicVolume(se->_musicControlVolume));
+				g_engine->getMusic()->setVolume(g_engine->scaledMusicVolume(se->_musicControlVolume));
 			}
 		}
 	}
@@ -2452,7 +2452,7 @@ bool View1::tick() {
 				}
 			} else if (executor->_waitForAdlibReady) {
 				drawSceneUpdate();
-				if (g_engine->getAdlib()->isPlaybackReady()) {
+				if (g_engine->getMusic()->isPlaybackReady()) {
 					executor->_waitForAdlibReady = false;
 					g_engine->runScriptExecutor();
 				}
@@ -4088,7 +4088,7 @@ void View1::openOriginalSaveLoadPanel() {
 	// if (g_wMusicEnabled && sceneData[g_wActiveMusicSlot] != 0) adlibStopMusic()
 	if (g_engine->_scriptExecutor->_musicEnabled &&
 		g_engine->_scriptExecutor->_activeMusicSlot != 0) {
-		g_engine->getAdlib()->stopMusic();
+		g_engine->getMusic()->stopMusic();
 	}
 
 	// First loop: calculate max icon width/height from the 7 button images
@@ -4388,12 +4388,12 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 					g_engine->_scriptExecutor->_soundSystemActive) {
 					uint16 slot = g_engine->_scriptExecutor->_activeMusicSlot;
 					if (slot != 0 && !g_engine->_scriptExecutor->_musicSlots[slot - 1].empty()) {
-						g_engine->getAdlib()->playSongData(g_engine->_scriptExecutor->_musicSlots[slot - 1]);
+						g_engine->getMusic()->playSongData(g_engine->_scriptExecutor->_musicSlots[slot - 1]);
 						// Original's adlibTickHandler resets g_bAdlibMasterVolume=0 (full volume).
 						// ScummVM layers user volume on top via scaledMusicVolume, so re-apply it.
 						g_engine->_scriptExecutor->_musicControlMode = 0;
 						g_engine->_scriptExecutor->_musicControlVolume = 0;
-						g_engine->getAdlib()->setVolume(g_engine->scaledMusicVolume(0));
+						g_engine->getMusic()->setVolume(g_engine->scaledMusicVolume(0));
 					}
 				}
 			}

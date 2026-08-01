@@ -305,7 +305,7 @@ void Macs2Engine::readExecutable() {
 		exeFileStream.reset(new Common::MemoryReadStream(fileData, size, DisposeAfterUse::YES));
 	}
 
-	_adlib->readDataFromExecutable(exeFileStream.get());
+	_music->readDataFromExecutable(exeFileStream.get());
 
 	exeFileStream->seek(0x0001B610, SEEK_SET);
 	inventoryIconIndices.resize(6);
@@ -396,7 +396,7 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	g_engine = this;
 	_scriptExecutor = new Script::ScriptExecutor();
 	_scriptExecutor->_engine = this;
-	_adlib = new Music();
+	_music = new Music();
 
 	// We have a fixed 0x10 number of entries
 	_hotspotOverrides.resize(0x11);
@@ -411,8 +411,8 @@ Macs2Engine::~Macs2Engine() {
 #endif
 	stopInputRecording();
 	clearCurrentSoundData();
-	_adlib->deinit();
-	delete _adlib;
+	_music->deinit();
+	delete _music;
 	delete _fileStream;
 	delete _scriptExecutor;
 	for (uint i = 0; i < GameObjects::instance()._objects.size(); i++) {
@@ -437,13 +437,13 @@ void Macs2Engine::sayText(const Common::String &text, Common::TextToSpeechManage
 void Macs2Engine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
-	if (_adlib && _scriptExecutor) {
+	if (_music && _scriptExecutor) {
 		int musicVolume = ConfMan.getInt("music_volume");
 		// OPL emulator is registered as kPlainSoundType; mute it at mixer level
 		// when user sets music volume to 0 (OPL attenuation 0x3F is not true silence).
 		_mixer->muteSoundType(Audio::Mixer::kPlainSoundType,
 							  (musicVolume == 0) || (ConfMan.hasKey("mute") && ConfMan.getBool("mute")));
-		_adlib->setVolume(scaledMusicVolume(_scriptExecutor->_musicControlVolume));
+		_music->setVolume(scaledMusicVolume(_scriptExecutor->_musicControlVolume));
 	}
 }
 
@@ -1961,7 +1961,7 @@ void Macs2Engine::loadSongFromSceneData(uint8 dataIndex) {
 	Common::Array<uint8> data;
 	data.resize(size);
 	_fileStream->read(data.data(), size);
-	_adlib->playSongData(data);
+	_music->playSongData(data);
 }
 
 void Macs2Engine::setCurrentSoundData(const Common::Array<uint8> &data) {
@@ -2021,7 +2021,7 @@ Common::Error Macs2Engine::run() {
 	CursorMan.showMouse(false);
 
 	// Initialize Adlib
-	_adlib->init();
+	_music->init();
 	syncSoundSettings();
 
 	// Set the engine's debugger console

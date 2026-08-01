@@ -2707,7 +2707,7 @@ void Script::ScriptExecutor::scriptPlayMusicSlot() {
 	}
 
 	if (_activeMusicSlot != 0) {
-		_engine->getAdlib()->stopMusic();
+		_engine->getMusic()->stopMusic();
 		_activeMusicSlot = 0;
 	}
 
@@ -2717,17 +2717,17 @@ void Script::ScriptExecutor::scriptPlayMusicSlot() {
 		return;
 	}
 
-	_engine->getAdlib()->playSongData(_musicSlots[slotID - 1]);
+	_engine->getMusic()->playSongData(_musicSlots[slotID - 1]);
 	if (startMuted == 0) {
 		_musicControlMode = 1;
 		_musicControlStep = fadeParam;
 		_musicControlVolume = 0x3F;
-		_engine->getAdlib()->setVolume(_engine->scaledMusicVolume(_musicControlVolume));
+		_engine->getMusic()->setVolume(_engine->scaledMusicVolume(_musicControlVolume));
 	} else {
 		_musicControlMode = 0;
 		_musicControlStep = 0;
 		_musicControlVolume = 0;
-		_engine->getAdlib()->setVolume(_engine->scaledMusicVolume(0));
+		_engine->getMusic()->setVolume(_engine->scaledMusicVolume(0));
 	}
 
 	_activeMusicSlot = slotID;
@@ -2755,7 +2755,7 @@ void Script::ScriptExecutor::scriptStopMusicSlot() {
 			_musicControlStep = fadeParam;
 			_musicControlVolume = 0;
 		} else {
-			_engine->getAdlib()->stopMusic();
+			_engine->getMusic()->stopMusic();
 			_activeMusicSlot = 0;
 		}
 	}
@@ -2783,7 +2783,7 @@ void Script::ScriptExecutor::scriptFreeMusicSlot() {
 
 	if (_activeMusicSlot == slotID) {
 		if (_musicEnabled && _soundSystemActive) {
-			_engine->getAdlib()->stopMusic();
+			_engine->getMusic()->stopMusic();
 		}
 		_activeMusicSlot = 0;
 	}

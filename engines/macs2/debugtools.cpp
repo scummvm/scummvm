@@ -2197,7 +2197,7 @@ static void showSoundWindow() {
 		return;
 	}
 
-	Music *adlib = g_engine->getAdlib();
+	Music *adlib = g_engine->getMusic();
 	const Music::DebugState &ds = adlib->_debug;
 
 	ImGui::Text("Master Volume: %u/63", ds.masterVolume);
