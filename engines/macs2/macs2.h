@@ -828,6 +828,8 @@ public:
 	 * Called from changeScene; Amiga uses native MXMM from DataA.
 	 */
 	bool loadSceneGraphics(uint32 sceneIndex);
+	/** AHFFMACS0100 scene package (RLE maps). */
+	bool loadSceneGraphicsV1(uint32 sceneIndex);
 
 	/**
 	 * Returns the game Id

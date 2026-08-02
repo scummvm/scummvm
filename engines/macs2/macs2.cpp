@@ -611,6 +611,10 @@ bool Macs2Engine::loadSceneGraphics(uint32 sceneIndex) {
 		return true;
 	}
 
+	return loadSceneGraphicsV1(sceneIndex);
+}
+
+bool Macs2Engine::loadSceneGraphicsV1(uint32 sceneIndex) {
 	const uint32 newSceneIndex = sceneIndex;
 
 	// Background image
