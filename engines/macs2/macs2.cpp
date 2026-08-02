@@ -158,17 +158,12 @@ void Macs2Engine::readResourceFile() {
 			file->read(fileData, size);
 			delete file;
 			_fileStream = new Common::MemoryReadStream(fileData, (uint32)size, DisposeAfterUse::YES);
+			loadResourceFileV1();
 		} else {
 			delete file;
 			error("readResourceFile(): unrecognized MCS magic in %s", mcsName);
 		}
 	}
-
-	_mcsFileVersion = detectMcsFileVersion(*_fileStream);
-	if (_mcsFileVersion != McsFileVersion::V1)
-		error("readResourceFile(): unrecognized MCS magic (expected %s)", kMcsMagicV1);
-
-	loadResourceFileV1();
 }
 
 void Macs2Engine::loadResourceFileV1() {
