@@ -673,9 +673,9 @@ void Movie::queueInputEvent(LEvent event, int targetId, Common::Point pos) {
 
 
 bool Movie::processInputEvent(LEvent event, int targetId, Common::Point pos) {
-	// Route a click on a movie cast member into its linked movie so that
+	// Route a mouse event on a movie cast member into its linked movie so that
 	// movie's own scripts (mouseUp, the clickOn) handle it.
-	if (event == kEventMouseUp || event == kEventMouseDown) {
+	if (event >= kEventMouseUp && event <= kEventMouseWithin) {
 		uint16 spriteId = _score->getMouseSpriteIDFromPos(pos);
 		if (spriteId) {
 			Channel *ch = _score->getChannelById(spriteId);
