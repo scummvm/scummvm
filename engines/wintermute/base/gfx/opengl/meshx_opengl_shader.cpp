@@ -148,16 +148,23 @@ bool XMeshOpenGLShader::render(XModel *model) {
 			glDisable(GL_TEXTURE_2D);
 		}
 
-		if (mat->getEffect()) {
-			renderEffect(mat);
-		} else {
-			Math::Vector4d diffuse(mat->_material._diffuse._data);
-			_shader->setUniform("diffuse", diffuse);
-			_shader->setUniform("ambient", diffuse);
-		}
+		Math::Vector4d diffuse(mat->_material._diffuse._data);
+		_shader->setUniform("diffuse", diffuse);
+		_shader->setUniform("ambient", diffuse);
+		_shader->setUniform("effectId", 0);
 
+		setupEffect(mat, false);
 		size_t offsetFace = 4 * attrsTable->_ptr[i]._faceStart * 3;
 		glDrawElements(GL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, GL_UNSIGNED_INT, (void *)offsetFace);
+		if (setupEffect(mat, true)) {
+			GLboolean stateCullFace;
+			glGetBooleanv(GL_CULL_FACE, &stateCullFace);
+			glDrawElements(GL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, GL_UNSIGNED_INT, (void *)offsetFace);
+			if (stateCullFace)
+				glEnable(GL_CULL_FACE);
+			else
+				glDisable(GL_CULL_FACE);
+		}
 	}
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -278,10 +285,49 @@ bool XMeshOpenGLShader::update(FrameNode *parentFrame) {
 	return true;
 }
 
-void XMeshOpenGLShader::renderEffect(Material *material) {
-	Math::Vector4d diffuse(material->_material._diffuse._data);
-	_shader->setUniform("diffuse", diffuse);
-	_shader->setUniform("ambient", diffuse);
+bool XMeshOpenGLShader::setupEffect(Material *material, bool secondPassNeeded) {
+	auto effect = material->getEffect();
+	if (!effect)
+		return false;
+	auto effectId = effect->getEffectHash();
+	switch (effectId) {
+	case 0x589E1D5C: // "actors\\abbey\\MyBorderGlow.fx"
+	case 0x699AF321: // "actors\\watcher\\MyBorderGlow.fx"
+	case 0x1255105D: // "actors\\Jackie\\MyBorderGlow.fx"
+	{
+		_shader->setUniform("effectId", 1);
+		auto params = material->getEffectParams();
+		auto param = params->getParamByName("SceneAmbientLight");
+		DXVector4 ambientColor;
+		param->getValue(ambientColor);
+		Math::Vector4d ambient(ambientColor);
+		float borderWidth;
+		if (effectId == 0x589E1D5C) {
+			borderWidth = 6.0f;
+			ambient = { 1.0, 1.0, 1.0, 1.0 };
+		}
+		if (effectId == 0x699AF321)
+			borderWidth = 10.0f;
+		if (effectId == 0x1255105D)
+			borderWidth = 8.0f;
+		_shader->setUniform("ambient", ambient);
+		_shader->setUniform1f("borderWidth", borderWidth);
+		_shader->setUniform("effectSecondPass", secondPassNeeded);
+		if (secondPassNeeded) {
+			glCullFace(GL_BACK);
+			glDisable(GL_CULL_FACE);
+			glDepthMask(GL_TRUE);
+		} else {
+			glCullFace(GL_FRONT);
+			glEnable(GL_CULL_FACE);
+			glDepthMask(GL_FALSE);
+		}
+		return true;
+	}
+	default:
+		warning("Unknown effect hash: %x", effectId);
+		return false;
+	}
 }
 
 } // namespace Wintermute

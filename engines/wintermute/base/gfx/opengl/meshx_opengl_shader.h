@@ -50,7 +50,7 @@ public:
 	bool update(FrameNode *parentFrame) override;
 
 private:
-	void renderEffect(Material *material);
+	bool setupEffect(Material *material, bool secondPassNeeded);
 
 protected:
 	GLuint _vertexBuffer;

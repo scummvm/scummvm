@@ -60,6 +60,12 @@ public:
 		void setValue(DXVector4 val);
 
 		const char *getParamName() const { return _paramName; }
+		const ParamType getParamType();
+		const char *getValue() const { return _valString; }
+		void getValue(int &val) { val = _valInt; }
+		void getValue(float &val) { val = _valFloat; }
+		void getValue(bool &val) { val = _valBool; }
+		void getValue(DXVector4 &val) { val = _valVector; }
 
 		bool persist(BasePersistenceManager *persistMgr);
 
@@ -85,9 +91,9 @@ public:
 	void clear();
 	void setParam(const char *paramName, ScValue *val);
 	void setParam(const char *paramName, DXVector4 Val);
+	Effect3DParam *getParamByName(const char *paramName);
 
 private:
-	Effect3DParam *getParamByName(const char *paramName);
 	BaseArray<Effect3DParam *> _params;
 };
 
