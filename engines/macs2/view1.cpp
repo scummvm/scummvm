@@ -444,8 +444,9 @@ void View1::updateCursor(const byte *palette) {
 	// The array has 33 entries (indices 0-32). Cursor modes 0x13-0x1A map to entries 18-25.
 	int mode = (int)g_engine->_scriptExecutor->_cursorMode - 1;
 
-	// SCUMM-style UI: gameplay verbs share the walk cursor; the sentence line shows the active verb.
-	if (hasPersistentActionBar()) {
+	// SCUMM-style enhancement only: gameplay verbs share the walk cursor; the sentence
+	// line shows the active verb. Native V2 HUD must keep per-MouseNr graphics.
+	if (g_engine->enhancementEnabled(kEnhUIUX) && !g_engine->hasNativeHudAssets()) {
 		const Script::MouseMode cursorMode = g_engine->_scriptExecutor->_cursorMode;
 		switch (cursorMode) {
 		case Script::MouseMode::Talk:
