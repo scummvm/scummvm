@@ -45,6 +45,7 @@ MODULE_OBJS := \
 	core/mps_installer.o \
 	core/object.o \
 	core/pack.o \
+	core/pack_dcl.o \
 	core/pal.o \
 	core/pfab.o \
 	core/player.o \

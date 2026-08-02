@@ -38,6 +38,7 @@
 #include "mads/core/object.h"
 #include "mads/core/text.h"
 #include "mads/core/global.h"
+#include "mads/core/pack_dcl.h"
 #include "mads/mads.h"
 
 namespace MADS {
@@ -134,12 +135,23 @@ TextPtr text_load(long id) {
 
 	fileio_setpos(handle, target_offset);
 
-	pack_strategy = PACK_PFAB;
-	if (pack_data(PACK_EXPLODE, dir.length,
-		FROM_DISK, handle,
-		TO_MEMORY, &result->text[0]) != (int)dir.length) {
-		mem_free(result);
-		result = NULL;
+	// The Rex Nebular demo's messages.dat predates MADSPACK 2.0's switch to
+	// the pFAB compressor and still uses genuine PKWare DCL compression
+	// (MADSPACK 1.0). Route it to a dedicated decoder rather than risking
+	// the shared pack_data() path used by every other game.
+	if (g_engine->getGameID() == GType_RexNebular && g_engine->isDemo()) {
+		if (!pack_dcl_explode(handle, (byte *)&result->text[0], dir.length)) {
+			mem_free(result);
+			result = NULL;
+		}
+	} else {
+		pack_strategy = PACK_PFAB;
+		if (pack_data(PACK_EXPLODE, dir.length,
+			FROM_DISK, handle,
+			TO_MEMORY, &result->text[0]) != (int)dir.length) {
+			mem_free(result);
+			result = NULL;
+		}
 	}
 
 done:
