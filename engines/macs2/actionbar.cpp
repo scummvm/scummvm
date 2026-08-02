@@ -139,7 +139,7 @@ bool ActionBar::useNativeSkin() const {
 int ActionBar::gameAreaBottomY() const {
 	if (useNativeSkin())
 		return (int)g_engine->_panelTopY;
-	return kGameHeight;
+	return g_engine->gameHeight();
 }
 
 void ActionBar::draw(Graphics::ManagedSurface &s) {
@@ -666,14 +666,14 @@ void ActionBar::drawNative(Graphics::ManagedSurface &s) {
 		if (fontCount != 0) {
 			Common::String sentence = buildNativeSentenceLine();
 			if (!sentence.empty()) {
-				const uint16 maxW = (uint16)(kScreenWidth - 16);
+				const uint16 maxW = (uint16)(g_engine->screenWidth() - 16);
 				while (sentence.size() > 1) {
 					if ((uint16)_view->measureStringWithFont(sentence, font, fontCount) <= maxW)
 						break;
 					sentence.deleteLastChar();
 				}
 				const int textW = _view->measureStringWithFont(sentence, font, fontCount);
-				const int textX = MAX(0, (kScreenWidth - textW) / 2);
+				const int textX = MAX(0, (g_engine->screenWidth() - textW) / 2);
 				const int glyphH = g_engine->maxGlyphHeight ? (int)g_engine->maxGlyphHeight : 12;
 				const int textY = MAX(0, (int)panelTop - glyphH - 2);
 				_view->renderStringWithFontTo((uint16)textX, (uint16)textY, sentence, font, fontCount, s);
