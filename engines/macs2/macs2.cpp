@@ -599,7 +599,7 @@ void Macs2Engine::readExecutable() {
 	inventoryIconIndices.resize(6);
 	containerInventoryIconIndices.resize(6);
 
-	if (isAmiga()) {
+	if (isAmiga() || isV2()) {
 		for (uint i = 0; i < 6; i++) {
 			inventoryIconIndices[i] = (uint16)(i + 1);
 			containerInventoryIconIndices[i] = (uint16)(i + 1);
