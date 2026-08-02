@@ -1423,6 +1423,8 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// Binary changeScene (1008:2574): loadObjectData for scene objects except current actor.
 	GameObject *actorObject = GameObjects::getObjectByIndex(Scenes::instance()._currentActorIndex);
 	if (actorObject != nullptr && actorObject->_sceneIndex == newSceneIndex) {
+		if (isV2())
+			loadObjectData(actorObject);
 		Character *actorChar = new Character();
 		actorChar->_gameObject = actorObject;
 		currentView->_characters.push_back(actorChar);
@@ -3056,6 +3058,8 @@ bool Macs2Engine::loadObjectData(GameObject *obj) {
 	}
 
 	obj->_overloadAnimTriggerDirection = 0x7FFF;
+	for (uint i = 0; i < ARRAYSIZE(obj->_specialAnimTriggers); i++)
+		obj->_specialAnimTriggers[i] = 0x7FFF;
 	obj->_useOverloadAnimation = false;
 	obj->_overloadAnimation.clear();
 	obj->_snapToTarget = false;
@@ -3171,7 +3175,7 @@ uint16 Macs2Engine::resolveAnimSlotIndex(const GameObject *obj) const {
 	if (obj == nullptr)
 		return 0;
 	if (isV2()) {
-		for (uint i = 0; i < 5; i++) {
+		for (uint i = 0; i < ARRAYSIZE(obj->_specialAnimTriggers); i++) {
 			const uint16 trig = obj->_specialAnimTriggers[i];
 			if ((int16)trig >= 0 && trig == obj->_orientation)
 				return specialAnimSlotToAnimSlot(i + 1);

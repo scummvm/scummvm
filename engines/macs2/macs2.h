@@ -789,7 +789,8 @@ public:
 	uint16 overloadAnimSlot() const { return maxAnimSlots(); }
 	static uint16 specialAnimSlotToAnimSlot(uint16 specialSlot);
 	/** Scene hotspot override table entries (1-based inclusive max). */
-	uint16 maxHotspots() const { return 0x10; }
+	/** Hotspot remap table indices (1-based). DOS scene+0x5BD1: 16; V2 ActModule+0x6161: 32. */
+	uint16 maxHotspots() const { return isV2() ? 0x20 : 0x10; }
 	/** Per-object resource offset table entries. */
 	uint maxObjectResources() const { return 32; }
 	/** Anim slot used for the current orientation (overload-direction rule). */

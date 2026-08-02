@@ -27,6 +27,7 @@
 #include "common/memstream.h"
 #include "common/path.h"
 #include "common/system.h"
+#include "common/util.h"
 #include "engines/enhancements.h"
 #include "macs2/amiga_archive.h"
 #include "macs2/amiga_decode.h"
@@ -2185,19 +2186,19 @@ OpcodeResult Script::ScriptExecutor::scriptSetDirection() {
 		return OpcodeResult::Continue;
 	}
 	if (_engine->isV2()) {
-		if (specialSlot < 1 || specialSlot > 5) {
+		if (specialSlot < 1 || specialSlot > ARRAYSIZE(object->_specialAnimTriggers)) {
 			setScriptError(0x2e);
 			return OpcodeResult::Continue;
 		}
-		// Binary: clear any other special slot that already uses this direction.
-		for (uint i = 0; i < 5; i++) {
+		// clear any other slot that already uses this direction to 0.
+		for (uint i = 0; i < ARRAYSIZE(object->_specialAnimTriggers); i++) {
 			if (object->_specialAnimTriggers[i] == value)
 				object->_specialAnimTriggers[i] = 0;
 		}
 		object->_specialAnimTriggers[specialSlot - 1] = value;
-		return OpcodeResult::Continue;
+	} else {
+		object->_overloadAnimTriggerDirection = value;
 	}
-	object->_overloadAnimTriggerDirection = value;
 	return OpcodeResult::Continue;
 }
 
@@ -2237,13 +2238,13 @@ OpcodeResult Script::ScriptExecutor::scriptStopAnimation() {
 			obj->_useOverloadAnimation = false;
 			obj->_overloadAnimation.clear();
 		}
-		return OpcodeResult::Continue;
+	} else {
+		obj->_overloadAnimTriggerDirection = 0x7FFF;
+		obj->_useOverloadAnimation = false;
+		obj->_overloadAnimation.clear();
+		if (obj->_blobs.size() > 20)
+			obj->_blobs[20].clear();
 	}
-	obj->_overloadAnimTriggerDirection = 0x7FFF;
-	obj->_useOverloadAnimation = false;
-	obj->_overloadAnimation.clear();
-	if (obj->_blobs.size() > 20)
-		obj->_blobs[20].clear();
 	return OpcodeResult::Continue;
 }
 
@@ -2541,7 +2542,8 @@ OpcodeResult Script::ScriptExecutor::scriptSetHotspotOverride() {
 
 	clearScriptError();
 	const uint16 maxHotspot = _engine->maxHotspots();
-	if (v1 < 1 || v1 > maxHotspot || v2 < 1 || v2 > maxHotspot) {
+	// v1 validates both ids; v2 only rejects an out-of-range source
+	if (v1 < 1 || v1 > maxHotspot || (!_engine->isV2() && (v2 < 1 || v2 > maxHotspot))) {
 		setScriptError(0x1e);
 		return OpcodeResult::Continue;
 	}
