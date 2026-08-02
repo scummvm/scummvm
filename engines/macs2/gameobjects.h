@@ -141,6 +141,8 @@ public:
 	// Runtime +0x186: per-object flag loaded from file. When set, character sprites
 	// are scaled based on Y position (perspective depth scaling).
 	bool _hasScaling = false;
+	// V2: half-res anim data drawn at 2x
+	bool _hasDoubleResAnim = false;
 	// Runtime field +0x231: "frozen/attached" flag. Set by scriptSetObjectBounds (opcode 0x35).
 	// When set, the object cannot be walked (opcode 0x11 returns error 0x1F)
 	// and walkAlongPath skips movement for this object.

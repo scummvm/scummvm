@@ -70,7 +70,7 @@ void resetCharacterWalkPath(Character *character) {
 
 Macs2Engine *g_engine;
 
-Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::MemoryReadStream *stream) {
+Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::SeekableReadStream *stream) {
 	stream->seek(offs);
 
 	Graphics::ManagedSurface result;
@@ -159,10 +159,33 @@ void Macs2Engine::readResourceFile() {
 			delete file;
 			_fileStream = new Common::MemoryReadStream(fileData, (uint32)size, DisposeAfterUse::YES);
 			loadResourceFileV1();
+		} else if (_mcsFileVersion == McsFileVersion::V2) {
+			_mcsDirectoryOffset = kMcsV2DirectoryOffset;
+			debugC(1, kDebugFilePath, "MCS %s: AHFFMACS0200, directory @ 0x%x", mcsName, _mcsDirectoryOffset);
+			file->seek(0, SEEK_SET);
+			_fileStream = file; // large archives stay file-backed
+			loadResourceFileV2();
+			_scriptExecutor->setOpcodeTable(Script::ScriptExecutor::kV2OpcodeTable,
+											Script::ScriptExecutor::kV2OpcodeTableSize);
 		} else {
 			delete file;
 			error("readResourceFile(): unrecognized MCS magic in %s", mcsName);
 		}
+
+		// Initialize border sprites from cursor image array entries at fixed indices.
+		// Original loadResourceFile (1008:2e8d) calls changeScene(g_wCurrentSceneIndex) before
+		// returning, ensuring all scene data (pathfinding maps, depth map, palette, background)
+		// is loaded before the game loop processes any input.
+		// The original allocates the 0x75E0-byte scene data buffer (which includes space for
+		// all RLE-decoded maps) before calling changeScene. Create the surfaces here.
+		const int sw = screenWidth();
+		const int gh = gameHeight();
+		_sceneBackground.create(sw, gh, Graphics::PixelFormat::createFormatCLUT8());
+		_depthMap.create(sw, gh, Graphics::PixelFormat::createFormatCLUT8());
+		_pathfindingMap.create(sw, gh, Graphics::PixelFormat::createFormatCLUT8());
+		_shadowMap.create(sw, gh, Graphics::PixelFormat::createFormatCLUT8());
+		_hotspotMap.create(sw, gh, Graphics::PixelFormat::createFormatCLUT8());
+		changeScene(Scenes::instance()._currentSceneIndex);
 	}
 }
 
@@ -208,13 +231,259 @@ void Macs2Engine::loadResourceFileV1() {
 	}
 
 	_fileStream->seek(kMcsV1ActorIndexOffset, SEEK_SET);
-	Scenes::instance()._currentActorIndex = _fileStream->readUint16LE();
+	bootstrapMcsActorsObjectsAndScene();
+}
+
+void Macs2Engine::loadResourceFileV2() {
+	// File layout after Directory:
+	//   0x300 sprite palette
+	//   4 words -> ShowText recolor colors
+	//   panelTopY + panelHeight
+	//   6 megapics (flag word; if nonzero, panelH rows of RLE)
+	//   button count + per-button metadata + inline anim blobs
+	//   inventory grid + text layout words
+	//   TalkVol + Font1 + SysFont + 0x400 map offsets
+	_shadingTable.clear();
+	_shadingTable.resize(0x800, 0);
+	numGlyphs = 0;
+	numPanelGlyphs = 0;
+	memset(_mapSceneOffsets, 0, sizeof(_mapSceneOffsets));
+	_imageResources.clear();
+	_imageResources.resize(33);
+	for (int i = 0; i < 33; i++)
+		_cursorHotspots[i] = Common::Point(0, 0);
+	_hudButtons.clear();
+	for (int i = 0; i < 6; i++) {
+		_hudMegapicLoaded[i] = false;
+		_hudMegapics[i].free();
+	}
+	_panelTopY = 0;
+	_panelHeight = 0;
+	_menuMode = 1;
+	_optionsSubMode = 0;
+	_savedMenuCursorMode = Script::MouseMode::Walk;
+	_inventScroll = 1;
+	memset(_hudTextLayout, 0, sizeof(_hudTextLayout));
+	memset(_hudTextRecolor, 0, sizeof(_hudTextRecolor));
+	_talkVol = 0;
+
+	if (_fileStream == nullptr)
+		return;
+
+	_fileStream->seek(_mcsDirectoryOffset + 0x3000, SEEK_SET);
+	_fileStream->read(_palVanilla, 0x300);
+	memcpy(_pal, _palVanilla, 0x300);
+
+	for (int i = 0; i < 4; i++)
+		_hudTextRecolor[i] = _fileStream->readUint16LE();
+
+	_panelTopY = _fileStream->readUint16LE();
+	_panelHeight = _fileStream->readUint16LE();
+	if (_panelTopY == 0 || _panelHeight == 0) {
+		warning("readGlobalAssetsV2: invalid panel geometry %u+%u", _panelTopY, _panelHeight);
+		_panelTopY = 280;
+		_panelHeight = 146;
+	}
+
+	for (int i = 0; i < 6; i++) {
+		const uint16 flag = _fileStream->readUint16LE();
+		if (flag == 0)
+			continue;
+		if (!readMegaPicImage(_fileStream, kWinScreenWidth, _panelHeight, _hudMegapics[i])) {
+			warning("readGlobalAssetsV2: failed loading UI megapic %d", i);
+			return;
+		}
+		_hudMegapicLoaded[i] = true;
+	}
+
+	const uint16 buttonCount = _fileStream->readUint16LE();
+	struct CursorMap {
+		uint16 cid;
+		uint16 mouseNr;
+		bool active;
+	};
+	static const CursorMap kCursorMap[] = {
+		{0x6E, 0x16, true},
+		{0x6F, 0x16, false},
+		{0x69, 0x13, true},
+		{0x6A, 0x13, false},
+		{0x64, 0x14, true},
+		{0x65, 0x14, false},
+		{0x6B, 0x15, true},
+		{0x6C, 0x15, false},
+		{0x66, 0x17, true},
+		{0x67, 0x17, false},
+		{0x68, 0x19, true},
+		{0x6D, 0x1A, true},
+	};
+
+	auto extractAnimStepFrame = [](Common::Array<uint8> blob, uint16 step, AnimFrame &out) -> bool {
+		if (blob.empty() || step == 0)
+			return false;
+		const uint32 offset = BackgroundAnimationBlob::advanceAnimFrame(blob, true, (uint16)(step + 0x64));
+		if (offset == 0 || offset + 10 > blob.size())
+			return false;
+		const uint32 frameOff = offset + 6;
+		out._width = READ_LE_UINT16(&blob[frameOff]);
+		out._height = READ_LE_UINT16(&blob[frameOff + 2]);
+		if (out._width == 0 || out._width > 640 || out._height == 0 || out._height > 400)
+			return false;
+		const uint32 pix = (uint32)out._width * (uint32)out._height;
+		if (frameOff + 4 + pix > blob.size())
+			return false;
+		out._data.resize(pix);
+		memcpy(out._data.data(), &blob[frameOff + 4], pix);
+		return true;
+	};
+
+	auto loadBigAnimFirstFrame = [&](int64 animStart, AnimFrame &out) -> bool {
+		_fileStream->seek(animStart + 10, SEEK_SET);
+		const uint16 local8 = _fileStream->readUint16LE();
+		_fileStream->seek(animStart + local8 + 0x0E, SEEK_SET);
+		_fileStream->skip(6);
+		out._width = _fileStream->readUint16LE();
+		out._height = _fileStream->readUint16LE();
+		if (out._width == 0 || out._width > 640 || out._height == 0 || out._height > 400)
+			return false;
+		out._data.resize((uint)out._width * (uint)out._height);
+		return _fileStream->read(out._data.data(), out._data.size()) == out._data.size();
+	};
+
+	for (uint16 b = 1; b <= buttonCount && !_fileStream->eos(); b++) {
+		HudButton button;
+		button.x = (int16)_fileStream->readUint16LE();
+		button.y = (int16)_fileStream->readUint16LE();
+		button.inactiveStep = _fileStream->readUint16LE();
+		button.activeStep = _fileStream->readUint16LE();
+		button.hoverStep = _fileStream->readUint16LE();
+		button.buttonId = _fileStream->readUint16LE();
+		button.menuId = _fileStream->readUint16LE();
+		const uint32 animSize = _fileStream->readUint32LE();
+		if (animSize == 0 || animSize > 0x1000000 || _fileStream->eos())
+			break;
+
+		const int64 animStart = _fileStream->pos();
+		Common::Array<uint8> animBlob;
+		animBlob.resize(animSize);
+		if (_fileStream->read(animBlob.data(), animSize) != animSize)
+			break;
+
+		AnimFrame frame;
+		bool gotFrame = extractAnimStepFrame(animBlob, button.inactiveStep ? button.inactiveStep : 1, frame);
+		if (!gotFrame)
+			gotFrame = loadBigAnimFirstFrame(animStart, frame);
+
+		AnimFrame activeFrame;
+		const bool gotActive = (button.activeStep != 0 && button.activeStep != button.inactiveStep) && extractAnimStepFrame(animBlob, button.activeStep, activeFrame);
+		AnimFrame hoverFrame;
+		const bool gotHover = (button.hoverStep != 0 && button.hoverStep != button.inactiveStep) && extractAnimStepFrame(animBlob, button.hoverStep, hoverFrame);
+
+		if (button.menuId == 7 && gotFrame) {
+			uint16 mouseNr = 0;
+			bool prefer = false;
+			for (const CursorMap &entry : kCursorMap) {
+				if (entry.cid == button.buttonId) {
+					mouseNr = entry.mouseNr;
+					prefer = entry.active;
+					break;
+				}
+			}
+			const int slot = (int)mouseNr - 1;
+			if (mouseNr != 0 && slot >= 0 && slot < 33) {
+				const bool empty = _imageResources[slot]._data.empty();
+				if (empty || prefer) {
+					_imageResources[slot] = prefer && gotActive ? activeFrame : frame;
+					_cursorHotspots[slot] = Common::Point(button.x, button.y);
+				}
+			}
+		} else if (gotFrame) {
+			button.animBlob = Common::move(animBlob);
+			button.frame = Common::move(frame);
+			if (gotActive)
+				button.activeFrame = Common::move(activeFrame);
+			if (gotHover)
+				button.hoverFrame = Common::move(hoverFrame);
+			_hudButtons.push_back(Common::move(button));
+		}
+
+		_fileStream->seek(animStart + (int64)animSize, SEEK_SET);
+	}
+
+	_inventOriginX = _fileStream->readUint16LE();
+	_inventOriginY = _fileStream->readUint16LE();
+	_inventCols = _fileStream->readUint16LE();
+	_inventRows = _fileStream->readUint16LE();
+	_inventSlotW = _fileStream->readUint16LE();
+	_inventSlotH = _fileStream->readUint16LE();
+	_inventLayoutMode = _fileStream->readUint16LE();
+	for (int i = 0; i < 7; i++)
+		_hudTextLayout[i] = _fileStream->readUint16LE();
+
+	if (_inventCols == 0)
+		_inventCols = 4;
+	if (_inventRows == 0)
+		_inventRows = 2;
+
+	_talkVol = _fileStream->readUint16LE();
+	auto loadSizedFont = [&](GlyphData *out, uint16 &outCount, uint16 &outMaxH) -> bool {
+		outCount = 0;
+		outMaxH = 0;
+		const uint32 fontSize = _fileStream->readUint32LE();
+		if (fontSize == 0 || fontSize > 0x100000)
+			return false;
+		const int64 fontStart = _fileStream->pos();
+		const uint16 glyphCount = _fileStream->readUint16LE();
+		if (glyphCount == 0 || glyphCount > 256) {
+			_fileStream->seek(fontStart + (int64)fontSize, SEEK_SET);
+			return false;
+		}
+		for (uint16 i = 0; i < glyphCount; i++) {
+			out[i].readFromMemory(_fileStream);
+			outMaxH = MAX(outMaxH, out[i]._height);
+		}
+		outCount = glyphCount;
+		_fileStream->seek(fontStart + (int64)fontSize, SEEK_SET);
+		return true;
+	};
+	if (!loadSizedFont(_glyphs, numGlyphs, maxGlyphHeight))
+		warning("readGlobalAssetsV2: failed loading Font1");
+	if (!loadSizedFont(_panelGlyphs, numPanelGlyphs, maxPanelGlyphHeight))
+		warning("readGlobalAssetsV2: failed loading SysFont");
+
+	for (int i = 0; i < 256; i++)
+		_mapSceneOffsets[i] = _fileStream->readUint32LE();
+
+	_saveListScroll = 1;
+	_saveSlotNames.clear();
+
+	uint installed = 0;
+	for (uint i = 0; i < _imageResources.size(); i++) {
+		if (!_imageResources[i]._data.empty())
+			installed++;
+	}
+	uint megas = 0;
+	for (int i = 0; i < 6; i++) {
+		if (_hudMegapicLoaded[i])
+			megas++;
+	}
+	debugC(1, kDebugFilePath,
+		   "readGlobalAssetsV2: panel=%u+%u megapics=%u buttons=%u cursors=%u invent=%ux%u @(%u,%u) fonts=%u/%u",
+		   _panelTopY, _panelHeight, megas, (uint)_hudButtons.size(), installed,
+		   _inventCols, _inventRows, _inventOriginX, _inventOriginY,
+		   numGlyphs, numPanelGlyphs);
+	_fileStream->seek(kMcsV2ActorIndexOffset, SEEK_SET);
+	bootstrapMcsActorsObjectsAndScene();
+}
+
+void Macs2Engine::bootstrapMcsActorsObjectsAndScene() {
+	Scenes &scenes = Scenes::instance();
+	scenes._currentActorIndex = _fileStream->readUint16LE();
 	uint16 firstSceneIndex = _fileStream->readUint16LE();
-	Scenes::instance()._currentSceneIndex = firstSceneIndex;
-	Scenes::instance()._currentSceneScript = Scenes::instance().readSceneScript(firstSceneIndex, _fileStream);
-	Scenes::instance()._currentSceneStrings = Scenes::instance().readSceneStrings(firstSceneIndex, _fileStream);
-	Scenes::instance()._currentSceneSpecialAnimOffsets = Scenes::instance().readSpecialAnimsOffsets(firstSceneIndex, _fileStream);
-	_scriptExecutor->setScript(Scenes::instance()._currentSceneScript);
+	scenes._currentSceneIndex = firstSceneIndex;
+	scenes._currentSceneScript = scenes.readSceneScript(firstSceneIndex, _fileStream);
+	scenes._currentSceneStrings = scenes.readSceneStrings(firstSceneIndex, _fileStream);
+	scenes._currentSceneSpecialAnimOffsets = scenes.readSpecialAnimsOffsets(firstSceneIndex, _fileStream);
+	_scriptExecutor->setScript(scenes._currentSceneScript);
 
 	// Load object data (512 entries max, matching original loadResourceFile)
 	// Original allocates all 512 slots, then frees unused ones. We pre-fill with nullptr.
@@ -235,44 +504,63 @@ void Macs2Engine::loadResourceFileV1() {
 		gameObject->_dataOffset = objectOffset;
 
 		// Object header (ReadyObject / initGameObject): x, y, scene, orientation, vertical scale
-		uint16 x = _fileStream->readUint16LE();
+		uint16 x = _fileStream->readUint16LE(); // TODO: use _engine->scaleScriptCoord
 		uint16 y = _fileStream->readUint16LE();
+		if (isV2()) {
+			x = (uint16)(x << 1);
+			y = (uint16)(y << 1);
+		}
 		gameObject->_position = Common::Point(x, y);
 		gameObject->_sceneIndex = _fileStream->readUint16LE();
 		gameObject->_orientation = _fileStream->readUint16LE();
 		gameObject->_verticalOffsetScale = _fileStream->readUint16LE();
 
 		const uint16 animSlotCount = maxAnimSlots();
-		for (int j = 1; j <= (int)animSlotCount; j++) {
-			// Per-slot: animID, sourceKey, dataSize, data, speed, mirrorFlag, discarded byte
-			_fileStream->readUint16LE(); // runtime+0x24: animation slot ID (editor metadata)
-			uint16 blobSourceKey = _fileStream->readUint16LE();
-			uint32 dataSize = _fileStream->readUint32LE();
-			uint8 *data = new uint8[dataSize];
-			_fileStream->read(data, dataSize);
-			gameObject->_blobs.push_back(Common::Array<uint8>(data, dataSize));
-			delete[] data;
-			gameObject->_blobSourceKeys.push_back(blobSourceKey);
-			uint16 blobSpeed = _fileStream->readUint16LE();
-			gameObject->_blobWalkSpeeds.push_back(blobSpeed);
-			uint16 blobMirrorFlag = _fileStream->readByte();
-			_fileStream->readByte(); // slot loaded flag (runtime-only, discarded from file)
-			gameObject->_blobMirrorFlags.push_back(blobMirrorFlag != 0);
-
-			if (blobMirrorFlag != 0) {
-				debugC(kDebugScript, "Object %.4x need to mirror blob %4.x", i, j);
-				if (dataSize > 0) {
-					BackgroundAnimationBlob::mirrorAnimBlob(gameObject->_blobs.back());
-				}
+		if (isV2()) {
+			// ReadyObject: lead word, then slots; payload filled later by loadObjectData.
+			_fileStream->readUint16LE();
+			for (int j = 0; j < (int)animSlotCount; j++) {
+				_fileStream->readUint16LE(); // animID
+				_fileStream->readUint16LE(); // sourceKey
+				uint32 dataSize = _fileStream->readUint32LE();
+				if (dataSize > 0)
+					_fileStream->skip(dataSize);
+				_fileStream->readUint16LE(); // speed
+				_fileStream->readByte();     // mirror
+				_fileStream->readByte();     // pad
+				gameObject->_blobs.push_back(Common::Array<uint8>());
+				gameObject->_blobSourceKeys.push_back(0);
+				gameObject->_blobWalkSpeeds.push_back(0);
+				gameObject->_blobMirrorFlags.push_back(false);
 			}
+			_fileStream->readByte();
+			gameObject->_hasShading = _fileStream->readByte() != 0;
+			gameObject->_hasScaling = _fileStream->readByte() != 0;
+			gameObject->_hasDoubleResAnim = _fileStream->readByte() != 0;
+		} else {
+			for (int j = 1; j <= (int)animSlotCount; j++) {
+				_fileStream->readUint16LE(); // animID
+				uint16 blobSourceKey = _fileStream->readUint16LE();
+				uint32 dataSize = _fileStream->readUint32LE();
+				uint8 *data = new uint8[dataSize];
+				_fileStream->read(data, dataSize);
+				gameObject->_blobs.push_back(Common::Array<uint8>(data, dataSize));
+				delete[] data;
+				gameObject->_blobSourceKeys.push_back(blobSourceKey);
+				uint16 blobSpeed = _fileStream->readUint16LE();
+				gameObject->_blobWalkSpeeds.push_back(blobSpeed);
+				uint16 blobMirrorFlag = _fileStream->readByte();
+				_fileStream->readByte();
+				gameObject->_blobMirrorFlags.push_back(blobMirrorFlag != 0);
+				if (blobMirrorFlag != 0 && dataSize > 0)
+					BackgroundAnimationBlob::mirrorAnimBlob(gameObject->_blobs.back());
+			}
+			_fileStream->readByte();
+			gameObject->_hasShading = _fileStream->readByte() != 0;
+			gameObject->_hasScaling = _fileStream->readByte() != 0;
 		}
-		// Per-object flags after anim slots (loadObjectData -> runtime+0x184..+0x186)
-		_fileStream->readByte();                                // hasInventoryIcon (derived from slot 0x13)
-		gameObject->_hasShading = _fileStream->readByte() != 0; // runtime+0x185
-		gameObject->_hasScaling = _fileStream->readByte() != 0; // runtime+0x186
 
-		// Object SCRIPT ptr in directory (+0x17F8). Zero SCRIPT keeps the object (no script table).
-		const uint32 scriptPtrOffset = kMcsV1DirectoryOffset + kMcsV1ObjectScriptPtrRel + (uint32)i * 0xC;
+		const uint32 scriptPtrOffset = dir + kMcsV1ObjectScriptPtrRel + (uint32)i * 0xC;
 		_fileStream->seek(scriptPtrOffset, SEEK_SET);
 
 		objectOffset = _fileStream->readUint32LE();
@@ -294,27 +582,17 @@ void Macs2Engine::loadResourceFileV1() {
 		for (uint r = 0; r < maxObjRes; r++) {
 			gameObject->_resourceOffsets[r] = _fileStream->readUint32LE();
 		}
+		if (isV2()) {
+			_fileStream->skip(0x200 - maxObjRes * 4);
+			_fileStream->readUint16LE();
+			_fileStream->readUint16LE();
+		}
 		uint16 scriptLength = _fileStream->readUint16LE();
 		gameObject->_script.resize(scriptLength);
 		_fileStream->read(gameObject->_script.data(), scriptLength);
 
 		GameObjects::instance()._objects[i - 1] = gameObject;
 	}
-
-	// Initialize border sprites from cursor image array entries at fixed indices.
-	// Original loadResourceFile (1008:2e8d) calls changeScene(g_wCurrentSceneIndex) before
-	// returning, ensuring all scene data (pathfinding maps, depth map, palette, background)
-	// is loaded before the game loop processes any input.
-	// The original allocates the 0x75E0-byte scene data buffer (which includes space for
-	// all RLE-decoded maps) before calling changeScene. Create the surfaces here.
-	const int sw = screenWidth();
-	const int gh = gameHeight();
-	_sceneBackground.create(sw, gh, Graphics::PixelFormat::createFormatCLUT8());
-	_depthMap.create(sw, gh, Graphics::PixelFormat::createFormatCLUT8());
-	_pathfindingMap.create(sw, gh, Graphics::PixelFormat::createFormatCLUT8());
-	_shadowMap.create(sw, gh, Graphics::PixelFormat::createFormatCLUT8());
-	_hotspotMap.create(sw, gh, Graphics::PixelFormat::createFormatCLUT8());
-	changeScene(Scenes::instance()._currentSceneIndex);
 }
 
 void Macs2Engine::readExecutable() {
@@ -428,7 +706,7 @@ void Macs2Engine::loadBootstrapResources() {
 		readResourceFile();
 }
 
-void Macs2Engine::readBackgroundAnimations(Common::MemoryReadStream *stream) {
+void Macs2Engine::readBackgroundAnimations(Common::SeekableReadStream *stream) {
 	// changeScene (1008:2574): background animation loading at scene+0x50F5.
 	// Per-entry runtime struct (0x10 bytes stride):
 	//   +0x00: X position (word)
@@ -485,7 +763,7 @@ void Macs2Engine::readBackgroundAnimations(Common::MemoryReadStream *stream) {
 	}
 }
 
-void Macs2Engine::readImageResources(Common::MemoryReadStream *stream) {
+void Macs2Engine::readImageResources(Common::SeekableReadStream *stream) {
 	// l0037_3355: Read 33 entries, preserving index alignment (zero-length = empty placeholder).
 	// Binary uses g_pCursorImageArray[index] directly; indices must match.
 	for (int i = 0; i < 0x21; i++) {
@@ -2750,6 +3028,10 @@ bool Macs2Engine::loadObjectData(GameObject *obj) {
 	_fileStream->readByte(); // runtime+0x184 hasInventoryIcon (derived from slot 0x13 in C++)
 	obj->_hasShading = _fileStream->readByte() != 0;
 	obj->_hasScaling = _fileStream->readByte() != 0;
+	if (isV2())
+		obj->_hasDoubleResAnim = _fileStream->readByte() != 0;
+	else
+		obj->_hasDoubleResAnim = false;
 
 	if (obj->_blobs.size() > 0x11 && !obj->_blobs[0x11].empty()) {
 		const uint16 frameCount = BackgroundAnimationBlob::getAnimFrameCount(obj->_blobs[0x11]);
@@ -2988,7 +3270,7 @@ void GlyphData::readFromeFile(Common::File &file) {
 	file.read(_data.data(), _width * _height);
 }
 
-void GlyphData::readFromMemory(Common::MemoryReadStream *stream) {
+void GlyphData::readFromMemory(Common::SeekableReadStream *stream) {
 	_ascii = stream->readByte();
 	_width = stream->readUint16LE();
 	_height = stream->readUint16LE();
@@ -3003,7 +3285,7 @@ void AnimFrame::readFromeFile(Common::File &file) {
 	file.read(_data.data(), _width * _height);
 }
 
-void AnimFrame::readFromStream(Common::MemoryReadStream *stream) {
+void AnimFrame::readFromStream(Common::SeekableReadStream *stream) {
 	_width = stream->readUint16LE();
 	_height = stream->readUint16LE();
 	_data.resize(_width * _height);

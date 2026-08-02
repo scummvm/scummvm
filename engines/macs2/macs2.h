@@ -109,7 +109,7 @@ struct GlyphData : public Sprite {
 	char _ascii = 0;
 
 	void readFromeFile(Common::File &file);
-	void readFromMemory(Common::MemoryReadStream *stream);
+	void readFromMemory(Common::SeekableReadStream *stream);
 };
 
 struct AnimFrame : public Sprite {
@@ -117,7 +117,7 @@ struct AnimFrame : public Sprite {
 	int16 _offsetY = 0;
 
 	void readFromeFile(Common::File &file);
-	void readFromStream(Common::MemoryReadStream *stream);
+	void readFromStream(Common::SeekableReadStream *stream);
 	bool pixelHit(const Common::Point &point) const;
 	Common::Point getBottomMiddleOffset(uint16 scale = 100) const;
 };
@@ -281,7 +281,7 @@ protected:
 	}
 
 public:
-	Graphics::ManagedSurface readRLEImage(int64 offs, Common::MemoryReadStream *stream);
+	Graphics::ManagedSurface readRLEImage(int64 offs, Common::SeekableReadStream *stream);
 
 	/** Open primary MCS archive, check magic, load v1 or v2 layout. */
 	void readResourceFile();
@@ -294,6 +294,10 @@ public:
 	McsFileVersion detectMcsFileVersion(Common::SeekableReadStream &stream) const;
 	/** Load AHFFMACS0100 layout (loadResourceFile @ 1008:2e8d). */
 	void loadResourceFileV1();
+	/** Load AHFFMACS0200 layout */
+	void loadResourceFileV2();
+	/** Shared actor/scene/object directory load after dialect-specific globals */
+	void bootstrapMcsActorsObjectsAndScene();
 	/** Soft restart (options button 0x20 / Macs2PretReInit). */
 	void softRestart();
 	const char *getResourceMcsFilename() const;
@@ -332,10 +336,10 @@ public:
 	void readExecutable();
 
 	// Assumes that the stream is at the location of the number of background animations
-	void readBackgroundAnimations(Common::MemoryReadStream *stream);
+	void readBackgroundAnimations(Common::SeekableReadStream *stream);
 
 	// Assumes that the stream is at the start of the right section
-	void readImageResources(Common::MemoryReadStream *stream);
+	void readImageResources(Common::SeekableReadStream *stream);
 
 public:
 	Macs2Engine(OSystem *osystem, const ADGameDescription *gameDesc);
@@ -410,6 +414,8 @@ public:
 	Common::Array<uint16> _hotspotOverrides;
 
 	Common::Array<Macs2::AnimFrame> _imageResources;
+	/** Per-cursor hotspot from native HUD button metadata (v2); (0,0) = use center. */
+	Common::Point _cursorHotspots[33];
 
 	GlyphData _glyphs[256];
 	GlyphData _panelGlyphs[256]; // Font 2: clean sans-serif font used by save/load panel
@@ -513,7 +519,7 @@ public:
 	Common::Array<BackgroundAnimation> _backgroundAnimations;
 	Common::Array<BackgroundAnimationBlob> _backgroundAnimationsBlobs;
 
-	Common::MemoryReadStream *_fileStream = nullptr;
+	Common::SeekableReadStream *_fileStream = nullptr;
 	McsFileVersion _mcsFileVersion = McsFileVersion::Unknown;
 	/** Absolute file offset of the 0x3000-byte scene/object directory. */
 	uint32 _mcsDirectoryOffset = kMcsV1DirectoryOffset;
