@@ -688,15 +688,29 @@ ImColor brightenColor(const ImColor& color, float factor) {
 	return ImColor(col);
 }
 
+// Identity for a window's movie: the archive path, which is stable even when
+// two movies share a Mac name. Falls back to the Mac name if there's no archive.
+Common::String movieId(const Movie *m) {
+	if (!m)
+		return Common::String();
+	return m->getArchive() ? m->getArchive()->getPathName().toString() : m->getMacName();
+}
+
+// Human-readable label for the window selector (the movie's Mac name).
+static Common::String movieLabel(Window *w) {
+	Movie *m = w ? w->getCurrentMovie() : nullptr;
+	return m ? m->getMacName() : Common::String("(no movie)");
+}
+
 Window *findWindowByName(const Common::String &name) {
 	if (name.empty())
 		return nullptr;
 	Movie *stageMovie = g_director->getStage()->getCurrentMovie();
-	if (stageMovie && stageMovie->getMacName() == name)
+	if (stageMovie && movieId(stageMovie) == name)
 		return g_director->getStage();
 	for (auto window : *g_director->getWindowList()) {
 		Movie *movie = window->getCurrentMovie();
-		if (movie && movie->getMacName() == name)
+		if (movie && movieId(movie) == name)
 			return window;
 	}
 	return nullptr;
@@ -704,18 +718,16 @@ Window *findWindowByName(const Common::String &name) {
 
 Window *windowListCombo(Common::String *target) {
 	const Common::Array<Window *> *windowList = g_director->getWindowList();
-	const Common::String selWin = *target;
 	Window *res = nullptr;
 
-	// windows may not have a movie loaded yet
-	Movie *stageMovie = g_director->getStage()->getCurrentMovie();
-	Common::String stage = stageMovie ? stageMovie->getMacName() : Common::String();
+	Window *stage = g_director->getStage();
+	Common::String stageId = movieId(stage->getCurrentMovie());
 
 	// Check if the relevant window is gone
 	bool found = false;
 	for (auto window : (*windowList)) {
-		if (window->getCurrentMovie() && window->getCurrentMovie()->getMacName() == selWin) {
-			// Found the selected window
+		Movie *m = window->getCurrentMovie();
+		if (m && movieId(m) == *target) {
 			found = true;
 			res = window;
 			break;
@@ -723,39 +735,41 @@ Window *windowListCombo(Common::String *target) {
 	}
 
 	// Our default is Stage
-	if (selWin.empty() || windowList->empty() || !found) {
-		*target = stage;
-		res = g_director->getStage();
+	if (target->empty() || windowList->empty() || !found) {
+		*target = stageId;
+		res = stage;
 	}
 
 	ImGui::Text("Window:");
 	ImGui::SameLine();
 
-	if (ImGui::BeginCombo("##window", selWin.c_str())) {
-		bool selected = (*target == stage);
-		if (ImGui::Selectable(stage.c_str(), selected))
-			*target = stage;
-
-		if (selected) {
-			ImGui::SetItemDefaultFocus();
-			res = g_director->getStage();
+	if (ImGui::BeginCombo("##window", movieLabel(res).c_str())) {
+		bool selected = (*target == stageId);
+		if (ImGui::Selectable(movieLabel(stage).c_str(), selected)) {
+			*target = stageId;
+			res = stage;
 		}
+		if (selected)
+			ImGui::SetItemDefaultFocus();
 
 		for (auto window : (*windowList)) {
-			if (!window->getCurrentMovie())
+			Movie *m = window->getCurrentMovie();
+			if (!m)
 				continue;
-			Common::String winName = window->getCurrentMovie()->getMacName();
-			selected = (*target == winName);
-			if (ImGui::Selectable(winName.c_str(), selected)) {
-				*target = winName;
+			Common::String id = movieId(m);
+			// scope the ID by the (unique) path so windows that share a Mac
+			// name are still selectable independently
+			ImGui::PushID(id.c_str());
+			selected = (*target == id);
+			if (ImGui::Selectable(m->getMacName().c_str(), selected)) {
+				*target = id;
 				res = window;
 			}
-
 			if (selected) {
 				ImGui::SetItemDefaultFocus();
 				res = window;
 			}
-
+			ImGui::PopID();
 		}
 		ImGui::EndCombo();
 	}

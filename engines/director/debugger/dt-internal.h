@@ -366,6 +366,7 @@ ImVec4 convertColor(uint32 color);
 void displayVariable(const Common::String &name, bool changed, bool outOfScope = false);
 ImColor brightenColor(const ImColor &color, float factor);
 Window *windowListCombo(Common::String *target);
+Common::String movieId(const Movie *m);
 Window *findWindowByName(const Common::String &name);
 bool selectableViewButton(const char *label, bool selected);
 Common::String formatHandlerName(int scriptId, int castId, Common::String handlerName, ScriptType scriptType, bool childScript);
