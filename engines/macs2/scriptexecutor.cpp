@@ -1252,8 +1252,12 @@ OpcodeResult Script::ScriptExecutor::scriptChangeScene() {
 		currentView->startFadingWithSpeed(transitionSpeed);
 	}
 
-	// Binary step 8: set cursor to Walk (0x16) after scene change
-	_engine->setCursorMode(Script::MouseMode::Walk);
+	// V1 scriptChangeScene (1008:ad6e) forces Walk (0x16) after init
+	// V2 does not: it leaves it at the value scripts left it (typically via opcode 0x67 setCursorType)
+	// Overview/world-map init sets Use (0x15) so hotspot special 0x01 matches; forcing Walk here would
+	// send left-clicks through the walk path instead
+	if (!_engine->isV2())
+		_engine->setCursorMode(Script::MouseMode::Walk);
 	_interactedObjectID = 0;
 	_interactedInventoryItemId = 0;
 	// Binary: after init completes synchronously, terminate outer script context and
