@@ -29,6 +29,7 @@ MODULE_OBJS := \
 	games/dark/cpc.o \
 	games/dark/dark.o \
 	games/dark/dos.o \
+	games/dark/opl.music.o \
 	games/dark/zx.o \
 	games/driller/amiga.o \
 	games/driller/atari.o \

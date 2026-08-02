@@ -19,10 +19,12 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/file.h"
 
 #include "freescape/freescape.h"
 #include "freescape/games/dark/dark.h"
+#include "freescape/games/dark/opl.music.h"
 #include "freescape/language/8bitDetokeniser.h"
 
 namespace Freescape {
@@ -228,6 +230,11 @@ void DarkEngine::loadAssetsDOSFullGame() {
 		updateIndicatorsDOS((byte *)&kHerculesPaletteGreen);
 	} else
 		error("Invalid or unsupported render mode %s for Dark Side", Common::getRenderModeDescription(_renderMode));
+
+	if (ConfMan.getBool("opl_music")) {
+		delete _playerMusic;
+		_playerMusic = new DarkSideOPLMusicPlayer();
+	}
 }
 
 void DarkEngine::drawDOSUI(Graphics::Surface *surface) {

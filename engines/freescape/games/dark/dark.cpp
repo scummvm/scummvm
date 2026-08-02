@@ -353,7 +353,7 @@ void DarkEngine::initGameState() {
 		}
 	}
 
-	if ((isC64() || isAtariST()) && _playerMusic)
+	if ((isC64() || isAtariST() || isDOS()) && _playerMusic)
 		_playerMusic->startMusic();
 }
 
