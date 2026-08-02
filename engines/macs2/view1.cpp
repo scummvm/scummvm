@@ -555,16 +555,32 @@ void View1::drawBackgroundAnimations(Graphics::ManagedSurface &s) {
 		}
 		// Binary drawAllCharacters (1008:929c): drawAnimFrame(2, y, x+1, blob) - one
 		// advanceAnimFrame(save=1, mode=2) per frame, not a separate tick advance.
-		uint16 frameStart = BackgroundAnimationBlob::advanceAnimFrame(blob, true, 2);
-		int16 frameOffsetX = (int16)READ_LE_UINT16(&blob[frameStart]);
-		int16 frameOffsetY = (int16)READ_LE_UINT16(&blob[frameStart + 2]);
+		const uint32 frameStart = BackgroundAnimationBlob::advanceAnimFrame(blob, true, 2);
+		if (frameStart == 0 || frameStart + 10 > blob.size())
+			continue;
+		const int16 frameOffsetX = (int16)READ_LE_UINT16(&blob[frameStart]);
+		const int16 frameOffsetY = (int16)READ_LE_UINT16(&blob[frameStart + 2]);
 		AnimFrame currentFrame;
 		currentFrame._width = READ_LE_UINT16(&blob[frameStart + 6]);
 		currentFrame._height = READ_LE_UINT16(&blob[frameStart + 8]);
-		currentFrame._data.resize(currentFrame._width * currentFrame._height);
-		memcpy(currentFrame._data.data(), &blob[frameStart + 10],
-			   currentFrame._width * currentFrame._height);
-		drawSprite(current._x + 1 + frameOffsetX, current._y + frameOffsetY, currentFrame, s, false);
+		const uint32 pix = (uint32)currentFrame._width * (uint32)currentFrame._height;
+		// V2 blobs can be >64KB; reject corrupt/oversized frame headers.
+		if (currentFrame._width == 0 || currentFrame._height == 0 ||
+			currentFrame._width > 640 || currentFrame._height > 400 ||
+			frameStart + 10 + pix > blob.size()) {
+			continue;
+		}
+		currentFrame._data.resize(pix);
+		memcpy(currentFrame._data.data(), &blob[frameStart + 10], pix);
+		if (g_engine->isV2()) {
+			const int16 ox = (int16)(frameOffsetX << 1);
+			const int16 oy = (int16)(frameOffsetY << 1);
+			drawSpriteTransparent(0, 0, 200, current._x + 1 + ox, current._y + oy,
+								  currentFrame._width, currentFrame._height,
+								  currentFrame._data.data(), s);
+		} else {
+			drawSprite(current._x + 1 + frameOffsetX, current._y + frameOffsetY, currentFrame, s, false);
+		}
 	}
 }
 
@@ -915,6 +931,7 @@ void View1::closeScriptActionBar(Script::MouseMode &outSavedCursorMode) {
 void View1::enterMapMode() {
 	// Binary handleInput end-block when scene+0x61db != 0 (1008:e8bf): fade, load map
 	// from scene+0x5DDB (_mapSceneOffsets[0]), set cursor 0x18 (PanelUse).
+	// this path is the DOS help-map overlay
 	uint32 helpOffset = g_engine->_mapSceneOffsets[0];
 	if (helpOffset == 0 || helpOffset >= (uint32)g_engine->_fileStream->size()) {
 		return;
@@ -1885,11 +1902,12 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 			return true;
 		}
 		if (hasPersistentActionBar()) {
-			if (shouldShowActionBar()) {
+			const bool canCycleVerbs = shouldShowActionBar() || g_engine->hasNativeHudAssets();
+			if (canCycleVerbs) {
 				g_engine->nextCursorMode();
 				_activeInventoryItem = nullptr;
 				g_engine->_scriptExecutor->_interactedInventoryItemId = 0;
-				if (_actionBar)
+				if (_actionBar && shouldShowActionBar())
 					_actionBar->syncActiveVerbFromCursorMode();
 				updateCursor();
 				presentFrame();
@@ -2293,6 +2311,9 @@ void View1::draw() {
 			Graphics::ManagedSurface fullScreen(*g_events->getScreen(), Common::Rect(0, 0, sw, sh));
 			if (shouldShowActionBar()) {
 				_actionBar->draw(fullScreen);
+			} else if (g_engine->hasNativeHudAssets() && g_engine->_menuMode == 0) {
+				// hideActionBar / overview map: leave playfield pixels alone so
+				// scene art (and hotspots) remain visible in the former panel band.
 			} else {
 				const int top = actionBarTopY();
 				if (top >= 0 && top < sh)
@@ -2735,7 +2756,9 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 			// drawAllCharacters @ 1008:93f8-9440 (inlined; not a separate EXE function)
 			int32 depthOffset = ((int32)charY - (int32)g_engine->_walkDepthThresholdY) *
 								(int32)g_engine->_walkDepthScaleFactor / 100;
-			const uint16 scalingFactor = (uint16)((int32)g_engine->_walkBaseSpeedPct + depthOffset);
+			uint16 scalingFactor = (uint16)((int32)g_engine->_walkBaseSpeedPct + depthOffset);
+			if (obj->_hasDoubleResAnim)
+				scalingFactor = (uint16)(scalingFactor * 2);
 			if (obj->_index == 1) {
 				_scalingValues.characterY = (uint16)charY;
 				_scalingValues.scalingFactor = scalingFactor;
@@ -2747,6 +2770,8 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 				if (Macs2Engine::isWalkabilityBlocking((uint16)walkabilityOffset))
 					walkabilityOffset = 0;
 			}
+			if (g_engine->isV2())
+				walkabilityOffset = (int16)(walkabilityOffset << 1);
 			if (obj->_verticalOffsetScale != 0)
 				walkabilityOffset = (scalingFactor * obj->_verticalOffsetScale) / 100;
 
@@ -2759,16 +2784,27 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 
 			uint16 frameWidth;
 			uint16 frameHeight;
+			int16 offsetX = frame._offsetX;
+			int16 offsetY = frame._offsetY;
+			// Frame header offsets are authored in half-res when +0x2e3 is set.
+			if (obj->_hasDoubleResAnim) {
+				offsetX = (int16)(offsetX << 1);
+				offsetY = (int16)(offsetY << 1);
+			}
 			if (obj->_hasScaling) {
 				frameWidth = (frame._width * scalingFactor) / 100;
 				frameHeight = (frame._height * scalingFactor) / 100;
+			} else if (obj->_hasDoubleResAnim) {
+				// exact 2x blit of half-res anim data.
+				frameWidth = (uint16)(frame._width << 1);
+				frameHeight = (uint16)(frame._height << 1);
 			} else {
 				frameWidth = frame._width;
 				frameHeight = frame._height;
 			}
 
-			const int16 drawX = charX - (frameWidth >> 1) + frame._offsetX;
-			const int16 drawY = (charY - frameHeight) - walkabilityOffset + frame._offsetY;
+			const int16 drawX = charX - (frameWidth >> 1) + offsetX + (int16)obj->_objectAdjust1;
+			const int16 drawY = (charY - frameHeight) - walkabilityOffset + offsetY + (int16)obj->_objectAdjust2;
 			const uint8 depthThreshold = g_engine->depthThresholdForY(charY);
 			const byte *pixelData = frame._data.data();
 

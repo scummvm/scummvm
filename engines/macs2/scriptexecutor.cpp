@@ -3895,6 +3895,7 @@ OpcodeResult ScriptExecutor::scriptLoadDistanceMask() {
 	debugC(kDebugScript, "SCRIPT::loadDistanceMask(index=%u)", resourceIndex);
 	clearScriptError();
 	scriptSkipOpcodeRemainder(0x69);
+	// Depth mask is full playfield resolution on both dialects.
 	if (!_engine->loadMaskFromResource(resourceIndex, _executingScriptObjectId, _engine->_depthMap,
 									   _engine->screenWidth(), _engine->gameHeight(), false))
 		warning("loadDistanceMask: failed resource %u", resourceIndex);
@@ -3906,8 +3907,13 @@ OpcodeResult ScriptExecutor::scriptLoadAreaMask() {
 	debugC(kDebugScript, "SCRIPT::loadAreaMask(index=%u)", resourceIndex);
 	clearScriptError();
 	scriptSkipOpcodeRemainder(0x6A);
+	// V2 stores hotspot/path/shadow masks at half res (320x200) and upscales
+	// depth above is already full 640x400
+	const bool halfRes = _engine->isV2();
+	const int w = halfRes ? kScreenWidth : _engine->screenWidth();
+	const int h = halfRes ? kGameHeight : _engine->gameHeight();
 	if (!_engine->loadMaskFromResource(resourceIndex, _executingScriptObjectId, _engine->_hotspotMap,
-									   _engine->screenWidth(), _engine->gameHeight(), false))
+									   w, h, halfRes))
 		warning("loadAreaMask: failed resource %u", resourceIndex);
 	return OpcodeResult::Continue;
 }
@@ -3917,8 +3923,11 @@ OpcodeResult ScriptExecutor::scriptLoadWalkMask() {
 	debugC(kDebugScript, "SCRIPT::loadWalkMask(index=%u)", resourceIndex);
 	clearScriptError();
 	scriptSkipOpcodeRemainder(0x6B);
+	const bool halfRes = _engine->isV2();
+	const int w = halfRes ? kScreenWidth : _engine->screenWidth();
+	const int h = halfRes ? kGameHeight : _engine->gameHeight();
 	if (!_engine->loadMaskFromResource(resourceIndex, _executingScriptObjectId, _engine->_pathfindingMap,
-									   _engine->screenWidth(), _engine->gameHeight(), false))
+									   w, h, halfRes))
 		warning("loadWalkMask: failed resource %u", resourceIndex);
 	return OpcodeResult::Continue;
 }
@@ -3928,8 +3937,11 @@ OpcodeResult ScriptExecutor::scriptLoadShadowMask() {
 	debugC(kDebugScript, "SCRIPT::loadShadowMask(index=%u)", resourceIndex);
 	clearScriptError();
 	scriptSkipOpcodeRemainder(0x6C);
+	const bool halfRes = _engine->isV2();
+	const int w = halfRes ? kScreenWidth : _engine->screenWidth();
+	const int h = halfRes ? kGameHeight : _engine->gameHeight();
 	if (!_engine->loadMaskFromResource(resourceIndex, _executingScriptObjectId, _engine->_shadowMap,
-									   _engine->screenWidth(), _engine->gameHeight(), false))
+									   w, h, halfRes))
 		warning("loadShadowMask: failed resource %u", resourceIndex);
 	return OpcodeResult::Continue;
 }

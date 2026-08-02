@@ -1374,6 +1374,14 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	if (!loadSceneGraphics(newSceneIndex))
 		error("changeScene(): Failed to load scene graphics for scene %u", newSceneIndex);
 
+	// V2 starts with the main DisplayMenu bar visible; scene
+	// scripts (e.g. world map / overview map) may hideActionBar during isSceneInit
+	if (isV2()) {
+		_menuMode = 1;
+		_optionsSubMode = 0;
+		_bottomHudVisible = true;
+	}
+
 	// Refresh characters
 	View1 *currentView = (View1 *)findView("View1");
 	if (!currentView) {
