@@ -30,6 +30,7 @@
 #include "buried/graphics.h"
 #include "buried/inventory_window.h"
 #include "buried/livetext.h"
+#include "buried/message.h"
 #include "buried/navarrow.h"
 #include "buried/resources.h"
 #include "buried/scene_view.h"
@@ -672,6 +673,9 @@ bool SceneViewWindow::moveToDestination(const DestinationScene &destinationData)
 	// Hardcoded demo ambient
 	if (_vm->isDemo() && newSceneStaticData.location.environment != oldLocation.environment)
 		startDemoAmbientSound();
+
+	// Ensure cursor icon matches interaction points at the destination node.
+	resetCursor();
 
 	return true;
 }
@@ -2500,8 +2504,9 @@ bool SceneViewWindow::changeSpriteStatus(bool status) {
 }
 
 bool SceneViewWindow::resetCursor() {
-	_vm->_gfx->setCursor((Cursor)_curCursor);
-	return true;
+	// Ensure the pointer icon is appropriate for the current scene by simulating
+	// a mouse move to its existing position.
+	return onSetCursor(kMessageTypeMouseMove);
 }
 
 bool SceneViewWindow::displayLiveText(const Common::String &text, bool notifyUser) {
