@@ -2752,9 +2752,9 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 
 			int shadingTableOffset = 0;
 			if (g_engine->_shadowMap.w > 0) {
-				const int sx = CLIP<int>(charX, 0, kScreenWidthLast);
-				const int sy = CLIP<int>(charY, 0, kGameHeightLast);
-				shadingTableOffset = MIN<int>(g_engine->_shadowMap.getPixel(sx, sy), 0x20);
+				const int sx = CLIP<int>(charX, 0, g_engine->screenWidth() - 1);
+				const int sy = CLIP<int>(charY, 0, g_engine->gameHeight() - 1);
+				shadingTableOffset = MIN<int>(g_engine->_shadowMap.getPixel(sx, sy), 0x1f);
 			}
 
 			uint16 frameWidth;
