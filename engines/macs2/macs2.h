@@ -294,6 +294,8 @@ public:
 	McsFileVersion detectMcsFileVersion(Common::SeekableReadStream &stream) const;
 	/** Load AHFFMACS0100 layout (loadResourceFile @ 1008:2e8d). */
 	void loadResourceFileV1();
+	/** Soft restart (options button 0x20 / Macs2PretReInit). */
+	void softRestart();
 	const char *getResourceMcsFilename() const;
 	/** Amiga: open DataA/Mdir, load OO objects as GameObjects, cursors, and scene stubs. */
 	void readAmigaResources();

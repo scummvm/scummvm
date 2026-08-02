@@ -361,6 +361,71 @@ void Macs2Engine::readExecutable() {
 	exeFileStream->read(containerInventoryIconIndices.data(), 12);
 }
 
+void Macs2Engine::softRestart() {
+	getMusic()->stopMusic();
+	stopSample();
+	stopSpeech();
+	clearDeltaAnim();
+	_skipSpeed = 1;
+	_menuMode = 1;
+	_optionsSubMode = 0;
+	_inventScroll = 1;
+	_saveListScroll = 1;
+
+	if (_scriptExecutor != nullptr) {
+		_scriptExecutor->_waitForDeltaAnim = false;
+		_scriptExecutor->_waitForDeltaSpeed = false;
+		_scriptExecutor->_waitForPcmSound = false;
+		_scriptExecutor->_waitForMusicControl = false;
+		_scriptExecutor->_waitForAdlibReady = false;
+		_scriptExecutor->_waitForObjectAnimStep = false;
+		_scriptExecutor->_waitForSpecialAnimStep = false;
+		_scriptExecutor->_waitingForUiClick = false;
+		_scriptExecutor->endFrameWait();
+		_scriptExecutor->releaseObjectStream();
+	}
+
+	View1 *currentView = (View1 *)findView("View1");
+	if (currentView != nullptr) {
+		for (Character *c : currentView->_characters)
+			delete c;
+		currentView->_characters.clear();
+		currentView->flushPendingCharacterDeletes();
+		currentView->_inventoryItems.clear();
+		currentView->_activeInventoryItem = nullptr;
+		currentView->_isShowingDialoguePanel = false;
+		currentView->_isDialogueChoiceInputActive = false;
+		currentView->_isShowingTextBox = false;
+		currentView->currentSpeechActData = SpeechActData();
+	}
+
+	for (uint i = 0; i < GameObjects::instance()._objects.size(); i++)
+		delete GameObjects::instance()._objects[i];
+	GameObjects::instance()._objects.clear();
+
+	delete Scenes::instance()._currentSceneScript;
+	delete Scenes::instance()._currentSceneStrings;
+	Scenes::instance()._currentSceneScript = nullptr;
+	Scenes::instance()._currentSceneStrings = nullptr;
+	Scenes::instance()._currentSceneSpecialAnimOffsets.clear();
+
+	_backgroundAnimations.clear();
+	_backgroundAnimationsBlobs.clear();
+	clearDeltaAnim();
+
+	delete _fileStream;
+	_fileStream = nullptr;
+
+	readResourceFile();
+
+	if (currentView != nullptr) {
+		currentView->_backgroundSurface.copyFrom(_sceneBackground);
+		currentView->_paletteDirty = true;
+		currentView->redraw();
+	}
+	runScriptExecutor();
+}
+
 void Macs2Engine::loadBootstrapResources() {
 	if (isAmiga())
 		readAmigaResources();

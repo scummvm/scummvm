@@ -845,11 +845,8 @@ bool ActionBar::handleClickNative(const Common::Point &pos) {
 		g_engine->_optionsSubMode = 2;
 		refreshSaveSlotNames();
 	} else if (id == 0x20) {
-		// Soft restart requires dialect-v2 reinit; not available until that loader lands.
-		debugC(1, kDebugScript, "ActionBar: restart button ignored (no soft-restart yet)");
-		g_engine->_menuMode = 1;
-		g_engine->_optionsSubMode = 0;
-		g_engine->setCursorMode(Script::MouseMode::PanelCursor);
+		g_engine->softRestart();
+		return true;
 	} else if (id == 0x21) {
 		::GUI::MessageDialog quitDialog(
 			Common::U32String("Quit the game?"),
