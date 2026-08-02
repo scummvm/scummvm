@@ -266,6 +266,143 @@ static void updateCurrentScript() {
 	setScriptToDisplay(script);
 }
 
+// Quick open (command palette)
+
+struct QuickOpenItem {
+	Common::String label;
+	bool isHandler = false;
+	CastMemberID id;
+	ScriptType scriptType = kScoreScript;
+	Common::String handlerId;
+	Common::String handlerName;
+};
+
+static bool qoMatch(const Common::String &label, const char *q) {
+	if (!q || !q[0])
+		return true;
+	Common::String l = label;
+	l.toLowercase();
+	Common::String s(q);
+	s.toLowercase();
+	return l.contains(s);
+}
+
+static void gatherQuickOpen(Movie *movie, Common::Array<QuickOpenItem> &out) {
+	out.clear();
+	if (!movie)
+		return;
+
+	for (auto it : *movie->getCasts()) {
+		Cast *cast = it._value;
+		if (!cast || !cast->_loadedCast)
+			continue;
+		for (auto &m : *cast->_loadedCast) {
+			if (!m._value)
+				continue;
+			QuickOpenItem qi;
+			qi.id = CastMemberID(m._key, cast->_castLibID);
+			qi.label = getDisplayName(m._value) + "   [cast]";
+			out.push_back(qi);
+		}
+	}
+
+	for (auto it : *movie->getCasts()) {
+		Cast *cast = it._value;
+		if (!cast || !cast->_lingoArchive)
+			continue;
+		for (int i = 0; i <= kMaxScriptType; i++) {
+			for (auto &sc : cast->_lingoArchive->scriptContexts[i]) {
+				if (!sc._value)
+					continue;
+				for (auto &fh : sc._value->_functionHandlers) {
+					QuickOpenItem qi;
+					qi.isHandler = true;
+					qi.id = CastMemberID(sc._key, it._key);
+					qi.scriptType = sc._value->_scriptType;
+					qi.handlerId = fh._key;
+					qi.handlerName = getHandlerName(fh._value);
+					qi.label = qi.handlerName + Common::String::format("   [handler, script %d]", sc._key);
+					out.push_back(qi);
+				}
+			}
+		}
+	}
+}
+
+static void openQuickOpen(const QuickOpenItem &qi, Movie *movie) {
+	if (!qi.isHandler) {
+		_state->_castDetails._castMemberID = qi.id;
+		_state->_castDetails._window = movieId(movie);
+		_state->_w.castDetails = true;
+		return;
+	}
+	ScriptContext *ctx = getScriptContext(qi.id);
+	if (!ctx)
+		return;
+	ImGuiScript script = toImGuiScript(qi.scriptType, qi.id, qi.handlerId);
+	script.byteOffsets = ctx->_functionByteOffsets[script.handlerId];
+	if (movie->getArchive())
+		script.moviePath = movie->getArchive()->getPathName().toString();
+	script.handlerName = qi.handlerName;
+	addToOpenHandlers(script);
+}
+
+void showQuickOpen() {
+	static Common::Array<QuickOpenItem> items;
+	static bool gathered = false;
+
+	if (!_state->_quickOpen) {
+		gathered = false;
+		return;
+	}
+
+	Movie *movie = g_director->getCurrentMovie();
+
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+	ImGui::SetNextWindowSize(ImVec2(560, 420), ImGuiCond_Appearing);
+	if (!gathered)
+		ImGui::SetNextWindowFocus();
+
+	if (ImGui::Begin("Quick Open", &_state->_quickOpen)) {
+		bool justOpened = !gathered;
+		if (!gathered) {
+			gatherQuickOpen(movie, items);
+			gathered = true;
+		}
+		if (justOpened)
+			ImGui::SetKeyboardFocusHere();
+
+		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+		bool enter = ImGui::InputText("##qoInput", _state->_quickOpenInput, sizeof(_state->_quickOpenInput),
+			ImGuiInputTextFlags_EnterReturnsTrue);
+		ImGui::Separator();
+
+		ImGui::BeginChild("##qoList");
+		int shown = 0, firstIdx = -1;
+		for (uint i = 0; i < items.size(); i++) {
+			if (!qoMatch(items[i].label, _state->_quickOpenInput))
+				continue;
+			if (firstIdx < 0)
+				firstIdx = (int)i;
+			bool pick = ImGui::Selectable(items[i].label.c_str());
+			if (pick || (enter && (int)i == firstIdx)) {
+				openQuickOpen(items[i], movie);
+				_state->_quickOpen = false;
+			}
+			if (++shown >= 300)
+				break;
+		}
+		if (shown == 0)
+			ImGui::TextDisabled("No matches");
+		ImGui::EndChild();
+
+		if (ImGui::IsKeyPressed(ImGuiKey_Escape))
+			_state->_quickOpen = false;
+	}
+	ImGui::End();
+}
+
 void showFuncList() {
 	if (!_state->_w.funcList)
 		return;

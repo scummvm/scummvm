@@ -1059,6 +1059,11 @@ void onImGuiRender() {
 
 	handleDebuggerShortcuts();
 
+	if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_P, ImGuiInputFlags_RouteGlobal | ImGuiInputFlags_RouteOverFocused)) {
+		_state->_quickOpen = true;
+		_state->_quickOpenInput[0] = '\0';
+	}
+
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_2, ImGuiInputFlags_RouteGlobal | ImGuiInputFlags_RouteOverFocused))
 			_state->_w.controlPanel = !_state->_w.controlPanel;
@@ -1117,6 +1122,7 @@ void onImGuiRender() {
 
 	showExecutionContext();
 	showScriptsWindow();
+	showQuickOpen();
 
 	showControlPanel();
 	showVars();
