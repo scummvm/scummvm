@@ -129,11 +129,11 @@ void ActionBar::syncActiveVerbFromCursorMode() {
 }
 
 bool ActionBar::useScummSkin() const {
-	return g_engine->enhancementEnabled(kEnhUIUX);
+	return !useNativeSkin() && g_engine->enhancementEnabled(kEnhUIUX);
 }
 
 bool ActionBar::useNativeSkin() const {
-	return !useScummSkin() && g_engine->hasNativeHudAssets();
+	return g_engine->hasNativeHudAssets();
 }
 
 int ActionBar::gameAreaBottomY() const {

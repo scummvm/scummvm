@@ -489,7 +489,16 @@ void View1::updateCursor(const byte *palette) {
 		rgbaCursor[i] = rgbaCursorFormat.RGBToColor(paletteEntry[0], paletteEntry[1], paletteEntry[2]);
 	}
 
-	CursorMan.replaceCursor(rgbaCursor.data(), width, height, width >> 1, height >> 1, 0, &rgbaCursorFormat);
+	int hotX = width >> 1;
+	int hotY = height >> 1;
+	if (mode >= 0 && mode < ARRAYSIZE(g_engine->_cursorHotspots)) {
+		const Common::Point &hot = g_engine->_cursorHotspots[mode];
+		if (hot.x != 0 || hot.y != 0) {
+			hotX = hot.x;
+			hotY = hot.y;
+		}
+	}
+	CursorMan.replaceCursor(rgbaCursor.data(), width, height, hotX, hotY, 0, &rgbaCursorFormat);
 	// Enable a cursor palette so the backend won't re-blit the cursor on
 	// every screen palette change. The macs2 engine uses RGBA cursors with
 	// baked-in palette colors, so the cursor palette content is irrelevant -
