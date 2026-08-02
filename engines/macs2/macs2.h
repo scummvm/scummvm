@@ -148,7 +148,7 @@ struct BackgroundAnimationBlob {
 	uint16 _x = 0;
 	uint16 _y = 0;
 	Common::Array<uint8> _blob;
-	/** Dialect-v2 LoadSpecAnimAnim extra slots (1..8); primary remains _blob. */
+	/** Dialect-v2 special-anim extra slots (1..8); primary remains _blob. */
 	Common::Array<uint8> _extraBlobs[8];
 	uint16 _activeExtraSlot = 0; // 0 = primary _blob; 1..8 = _extraBlobs[slot-1]
 	uint16 _unknown0C = 0; // +0x50F3: purpose unknown (word, read from file, not used at runtime)
@@ -415,6 +415,78 @@ public:
 	uint16 numPanelGlyphs = 0;
 	uint16 maxPanelGlyphHeight = 0;
 	bool loadOverlayFont(uint8 resourceIndex, uint16 executingObjectID);
+	/**
+	 * Resolve scene/object resource table entry to an absolute MCS file offset.
+	 * Shared by sized-resource loads, AHFFANIM, AHFFDLTA, and MegaPic masks.
+	 */
+	bool resolveResourceFileOffset(uint8 resourceIndex, uint16 executingObjectId, uint32 &outOffset) const;
+	/** Read size-prefixed resource payload (size dword excluded from outPayload). */
+	bool loadSizedResourcePayload(uint8 resourceIndex, uint16 executingObjectId, Common::Array<uint8> &outPayload);
+	/** Decode AHFFANIM0100 body into a runtime anim blob. */
+	bool loadAhffAnimResource(uint8 resourceIndex, uint16 executingObjectId, Common::Array<uint8> &outBlob);
+	/** Decode MegaPic row-RLE into dest (width x height). */
+	bool readMegaPicImage(Common::SeekableReadStream *stream, int width, int height, Graphics::ManagedSurface &out);
+	/**
+	 * Load a MegaPic mask resource into dest.
+	 * If upscaleHalfRes, decode at (width x height) then nearest-neighbor 2x into dest
+	 * sized (width*2 x height*2). Otherwise dest is created at width x height.
+	 */
+	bool loadMaskFromResource(uint8 resourceIndex, uint16 executingObjectId, Graphics::ManagedSurface &dest,
+							  int megapicW, int megapicH, bool upscaleHalfRes = false);
+
+	/** Dialect-v2 AHFFDLTA cutscene state (load/play delta opcodes). */
+	struct DeltaStrip {
+		uint16 y = 0;
+		Common::Array<uint8> rle;
+	};
+	struct DeltaFrame {
+		Common::Array<DeltaStrip> strips;
+	};
+	struct DeltaSfxEvent {
+		uint16 frameIndex = 0;
+		Common::String fileName;
+		bool duckMusic = false;
+	};
+	struct DeltaAnimState {
+		bool loaded = false;
+		bool playing = false;
+		uint16 frameCount = 0;
+		uint16 startFrame = 0;
+		uint16 endFrame = 0;
+		uint16 speedTicks = 1;
+		uint16 tickCounter = 0;
+		uint16 currentFrame = 0;
+		uint16 clipMiX = 0;
+		uint16 clipMiY = 0;
+		uint16 clipMaX = 0;
+		uint16 clipMaY = 0;
+		byte palette[0x300] = {};
+		bool applyPaletteOnStart = false;
+		Common::Array<DeltaFrame> frames;
+		Common::Array<DeltaSfxEvent> sfxEvents;
+		void clear(int screenW, int screenH) {
+			loaded = false;
+			playing = false;
+			frameCount = 0;
+			startFrame = endFrame = currentFrame = 0;
+			speedTicks = 1;
+			tickCounter = 0;
+			applyPaletteOnStart = false;
+			frames.clear();
+			sfxEvents.clear();
+			clipMiX = clipMiY = 0;
+			clipMaX = (uint16)MAX(0, screenW - 1);
+			clipMaY = (uint16)MAX(0, screenH - 1);
+			memset(palette, 0, sizeof(palette));
+		}
+	};
+	DeltaAnimState _deltaAnim;
+	bool loadDeltaAnimResource(uint8 resourceIndex, uint16 executingObjectId, bool forceSkipSpeed1 = false);
+	void clearDeltaAnim();
+	bool startDeltaPlayback(uint16 startFrame, uint16 endFrame, uint16 speedTicks, bool applyPalette);
+	bool tickDeltaPlayback();
+	void applyDeltaFrameToBackground(const DeltaFrame &frame);
+	void playDeltaFrameSfx(uint16 displayFrame);
 	// Font glyph count (79 glyphs in the resource file's font data)
 	uint16 numGlyphs = 79;
 	uint16 maxGlyphHeight;

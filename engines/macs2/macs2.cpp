@@ -926,41 +926,371 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	}
 }
 
-bool Macs2Engine::loadOverlayFont(uint8 resourceIndex, uint16 executingObjectID) {
-	if (isAmiga())
-		return loadAmigaOverlayFont(resourceIndex);
+bool Macs2Engine::resolveResourceFileOffset(uint8 resourceIndex, uint16 executingObjectId, uint32 &outOffset) const {
+	outOffset = 0;
+	if (resourceIndex == 0 || _fileStream == nullptr)
+		return false;
 
-	// Original (1008:d749): looks up file offset from scene/object resource table
-	// at scene+0x5209+index*4 (same table as loadIndexedResource/_sceneResourceOffsets),
-	// seeks to offset+0x10, then calls loadFontData.
-	if (resourceIndex == 0)
+	if (executingObjectId == 0) {
+		if (resourceIndex > _sceneResourceOffsets.size())
+			return false;
+		outOffset = _sceneResourceOffsets[resourceIndex - 1];
+	} else {
+		GameObject *object = GameObjects::getObjectByIndex(executingObjectId);
+		if (object == nullptr || object->_dataOffset == 0)
+			return false;
+		if ((uint)(resourceIndex - 1) >= maxObjectResources())
+			return false;
+		outOffset = object->_resourceOffsets[resourceIndex - 1];
+	}
+	return outOffset != 0 && outOffset < (uint32)_fileStream->size();
+}
+
+bool Macs2Engine::loadSizedResourcePayload(uint8 resourceIndex, uint16 executingObjectId,
+										   Common::Array<uint8> &outPayload) {
+	outPayload.clear();
+	uint32 address = 0;
+	if (!resolveResourceFileOffset(resourceIndex, executingObjectId, address))
 		return false;
 
 	const int64 oldPos = _fileStream->pos();
-	uint32 address = 0;
-
-	if (executingObjectID == 0) {
-		if (resourceIndex > _sceneResourceOffsets.size()) {
-			_fileStream->seek(oldPos, SEEK_SET);
-			return false;
-		}
-		address = _sceneResourceOffsets[resourceIndex - 1];
-	} else {
-		GameObject *object = GameObjects::getObjectByIndex(executingObjectID);
-		if (object == nullptr || object->_dataOffset == 0) {
-			_fileStream->seek(oldPos, SEEK_SET);
-			return false;
-		}
-		_fileStream->seek(object->_dataOffset + 0x189 + (resourceIndex - 1) * 4, SEEK_SET);
-		address = _fileStream->readUint32LE();
+	_fileStream->seek(address, SEEK_SET);
+	const uint32 size = _fileStream->readUint32LE();
+	if (size == 0 || size > 0x1000000) {
+		_fileStream->seek(oldPos, SEEK_SET);
+		return false;
 	}
+	outPayload.resize(size);
+	if (_fileStream->read(outPayload.data(), size) != size) {
+		outPayload.clear();
+		_fileStream->seek(oldPos, SEEK_SET);
+		return false;
+	}
+	_fileStream->seek(oldPos, SEEK_SET);
+	return !outPayload.empty();
+}
 
-	if (address == 0) {
+bool Macs2Engine::loadAhffAnimResource(uint8 resourceIndex, uint16 executingObjectId,
+									   Common::Array<uint8> &outBlob) {
+	Common::Array<uint8> payload;
+	if (!loadSizedResourcePayload(resourceIndex, executingObjectId, payload))
+		return false;
+	if (payload.size() < 12 || memcmp(payload.data(), "AHFFANIM0100", 12) != 0)
+		return false;
+	outBlob.clear();
+	outBlob.resize(payload.size() - 12);
+	if (!outBlob.empty())
+		memcpy(outBlob.data(), payload.data() + 12, outBlob.size());
+	return !outBlob.empty();
+}
+
+bool Macs2Engine::readMegaPicImage(Common::SeekableReadStream *stream, int width, int height,
+								   Graphics::ManagedSurface &out) {
+	if (stream == nullptr || width <= 0 || height <= 0)
+		return false;
+
+	out.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	Common::Array<byte> rowBuf;
+	rowBuf.resize(3000);
+
+	for (int y = 0; y < height; y++) {
+		uint16 packedLen = stream->readUint16LE();
+		if (packedLen == 0 || packedLen > 2999)
+			return false;
+		if (stream->read(rowBuf.data(), packedLen) != packedLen)
+			return false;
+
+		int x = 0;
+		uint i = 0;
+		while (x < width && i < packedLen) {
+			const byte code = rowBuf[i++];
+			if (code < 0x80) {
+				const uint run = code;
+				for (uint n = 0; n < run && x < width; n++) {
+					if (i >= packedLen)
+						return false;
+					out.setPixel(x++, y, rowBuf[i++]);
+				}
+			} else {
+				if (i >= packedLen)
+					return false;
+				const byte value = rowBuf[i++];
+				const uint run = code & 0x7F;
+				for (uint n = 0; n < run && x < width; n++)
+					out.setPixel(x++, y, value);
+			}
+		}
+	}
+	return true;
+}
+
+bool Macs2Engine::loadMaskFromResource(uint8 resourceIndex, uint16 executingObjectId,
+									   Graphics::ManagedSurface &dest, int megapicW, int megapicH,
+									   bool upscaleHalfRes) {
+	uint32 address = 0;
+	if (!resolveResourceFileOffset(resourceIndex, executingObjectId, address))
+		return false;
+
+	const int64 oldPos = _fileStream->pos();
+	_fileStream->seek(address, SEEK_SET);
+	(void)_fileStream->readUint32LE(); // size header skipped by Load*Mask
+	Graphics::ManagedSurface half;
+	Graphics::ManagedSurface &target = upscaleHalfRes ? half : dest;
+	if (!readMegaPicImage(_fileStream, megapicW, megapicH, target)) {
+		_fileStream->seek(oldPos, SEEK_SET);
+		return false;
+	}
+	if (upscaleHalfRes) {
+		dest.create(megapicW * 2, megapicH * 2, Graphics::PixelFormat::createFormatCLUT8());
+		for (int y = 0; y < half.h; y++) {
+			for (int x = 0; x < half.w; x++) {
+				const byte p = half.getPixel(x, y);
+				const int dx = x * 2;
+				const int dy = y * 2;
+				dest.setPixel(dx, dy, p);
+				dest.setPixel(dx + 1, dy, p);
+				dest.setPixel(dx, dy + 1, p);
+				dest.setPixel(dx + 1, dy + 1, p);
+			}
+		}
+	}
+	_fileStream->seek(oldPos, SEEK_SET);
+	return true;
+}
+
+void Macs2Engine::clearDeltaAnim() {
+	_deltaAnim.clear(screenWidth(), gameHeight());
+}
+
+bool Macs2Engine::loadDeltaAnimResource(uint8 resourceIndex, uint16 executingObjectId, bool forceSkipSpeed1) {
+	uint32 address = 0;
+	if (!resolveResourceFileOffset(resourceIndex, executingObjectId, address))
+		return false;
+
+	const int64 oldPos = _fileStream->pos();
+	_fileStream->seek(address, SEEK_SET);
+	const uint32 size = _fileStream->readUint32LE();
+	char magic[8];
+	if (_fileStream->read(magic, 8) != 8 || memcmp(magic, "AHFFDLTA", 8) != 0) {
+		_fileStream->seek(oldPos, SEEK_SET);
+		return false;
+	}
+	_fileStream->skip(4); // remainder of 16-byte header after size
+
+	// LoadDeltaAnim SkipSpeed layouts:
+	//   1: frameCount, 0x1000 offset table, skip 0x2000, palette, frames
+	//   2: frameCount, skip 0x1000, 0x1000 table, skip 0x1000; frame counts halved
+	//   else: frameCount, skip 0x2000, 0x1000 table; frame counts / 3
+	// CheckDeltaSpeed always uses layout 1 regardless of SkipSpeed.
+	uint16 frameCount = _fileStream->readUint16LE();
+	if (frameCount == 0 || frameCount > 512) {
 		_fileStream->seek(oldPos, SEEK_SET);
 		return false;
 	}
 
-	// Seek to address + 0x10 (original skips 16-byte resource header)
+	uint16 skipSpeed = (_skipSpeed >= 1 && _skipSpeed <= 4) ? _skipSpeed : 1;
+	if (forceSkipSpeed1)
+		skipSpeed = 1;
+	Common::Array<uint32> relOffsets;
+	relOffsets.resize(512);
+	// FBlockRead(0x1000): 512 uint32 offsets (0x800) plus 0x800 trailing bytes.
+	auto readOffsetTable1000 = [&]() {
+		for (uint i = 0; i < 512; i++)
+			relOffsets[i] = _fileStream->readUint32LE();
+		_fileStream->skip(0x800);
+	};
+	if (skipSpeed == 1) {
+		readOffsetTable1000();
+		_fileStream->skip(0x2000);
+	} else if (skipSpeed == 2) {
+		_fileStream->skip(0x1000);
+		readOffsetTable1000();
+		_fileStream->skip(0x1000);
+		frameCount = (uint16)(((uint32)frameCount + 1) >> 1);
+		if (frameCount > 0)
+			frameCount--;
+	} else {
+		_fileStream->skip(0x2000);
+		readOffsetTable1000();
+		frameCount = (uint16)(((uint32)frameCount + 1) / 3);
+		if (frameCount > 0)
+			frameCount--;
+	}
+	if (frameCount == 0 || frameCount > 512) {
+		_fileStream->seek(oldPos, SEEK_SET);
+		return false;
+	}
+
+	// Scripts call addDeltaSfx before playDiskDelta; keep the pending SFX list.
+	Common::Array<DeltaSfxEvent> savedSfx = Common::move(_deltaAnim.sfxEvents);
+	clearDeltaAnim();
+	_deltaAnim.sfxEvents = Common::move(savedSfx);
+	_fileStream->read(_deltaAnim.palette, 0x300);
+	_deltaAnim.frames.resize(frameCount);
+	_deltaAnim.frameCount = frameCount;
+	_deltaAnim.loaded = true;
+
+	const uint32 base = address + 4;
+	for (uint16 fi = 0; fi < frameCount; fi++) {
+		const uint32 absOff = relOffsets[fi] + base;
+		if (absOff >= (uint32)_fileStream->size())
+			continue;
+		_fileStream->seek(absOff, SEEK_SET);
+		const uint16 stripCount = _fileStream->readUint16LE();
+		DeltaFrame &frame = _deltaAnim.frames[fi];
+		frame.strips.clear();
+		if (stripCount == 0 || stripCount > 400)
+			continue;
+		frame.strips.resize(stripCount);
+		for (uint16 si = 0; si < stripCount; si++) {
+			frame.strips[si].y = _fileStream->readUint16LE();
+			const uint16 rleSize = _fileStream->readUint16LE();
+			if (rleSize == 0 || rleSize > 0x8000)
+				break;
+			frame.strips[si].rle.resize(rleSize);
+			if (_fileStream->read(frame.strips[si].rle.data(), rleSize) != rleSize) {
+				frame.strips[si].rle.clear();
+				break;
+			}
+		}
+	}
+
+	(void)size;
+	_fileStream->seek(oldPos, SEEK_SET);
+	return _deltaAnim.loaded;
+}
+
+void Macs2Engine::applyDeltaFrameToBackground(const DeltaFrame &frame) {
+	if (_sceneBackground.w <= 0 || _sceneBackground.h <= 0)
+		return;
+
+	for (const DeltaStrip &strip : frame.strips) {
+		const int y = (int)strip.y;
+		if (y < (int)_deltaAnim.clipMiY || y > (int)_deltaAnim.clipMaY)
+			continue;
+		if (y < 0 || y >= _sceneBackground.h)
+			continue;
+		if (strip.rle.empty())
+			continue;
+
+		const uint8 *p = strip.rle.data();
+		const uint8 *end = p + strip.rle.size();
+		int x = 0;
+		while (p + 4 <= end) {
+			const int16 skip = (int16)READ_LE_UINT16(p);
+			p += 2;
+			uint16 runLen = READ_LE_UINT16(p);
+			p += 2;
+			x += skip;
+			if (runLen == 0)
+				break;
+			while (runLen != 0 && p < end) {
+				uint8 code = *p++;
+				if (code < 0x80) {
+					uint16 n = code;
+					if (n > runLen)
+						n = runLen;
+					for (uint16 i = 0; i < n && p < end; i++, x++) {
+						if (x >= (int)_deltaAnim.clipMiX && x <= (int)_deltaAnim.clipMaX &&
+							x >= 0 && x < _sceneBackground.w)
+							_sceneBackground.setPixel(x, y, *p);
+						p++;
+					}
+					runLen = (uint16)(runLen - n);
+				} else {
+					uint16 n = (uint16)(code - 0x80);
+					if (n > runLen)
+						n = runLen;
+					if (p >= end)
+						break;
+					const uint8 val = *p++;
+					for (uint16 i = 0; i < n; i++, x++) {
+						if (x >= (int)_deltaAnim.clipMiX && x <= (int)_deltaAnim.clipMaX &&
+							x >= 0 && x < _sceneBackground.w)
+							_sceneBackground.setPixel(x, y, val);
+					}
+					runLen = (uint16)(runLen - n);
+				}
+			}
+		}
+	}
+}
+
+void Macs2Engine::playDeltaFrameSfx(uint16 displayFrame) {
+	for (const DeltaSfxEvent &ev : _deltaAnim.sfxEvents) {
+		if (ev.frameIndex != displayFrame || ev.fileName.empty())
+			continue;
+		if (ev.duckMusic)
+			getMusic()->setSmfDucked(true, _talkVol);
+		const Common::String base = Script::ScriptExecutor::stripAudioExtension(ev.fileName);
+		playDigitalAudioFile(Common::Path("SOUNDFX").join(base), false);
+	}
+}
+
+bool Macs2Engine::startDeltaPlayback(uint16 startFrame, uint16 endFrame, uint16 speedTicks, bool applyPalette) {
+	if (!_deltaAnim.loaded || _deltaAnim.frameCount == 0)
+		return false;
+	uint16 start = startFrame ? startFrame : 1;
+	uint16 end = endFrame;
+	if (end == 0 || end > _deltaAnim.frameCount)
+		end = _deltaAnim.frameCount;
+	if (start > end)
+		start = end;
+	_deltaAnim.startFrame = (uint16)(start - 1);
+	_deltaAnim.endFrame = (uint16)(end - 1);
+	_deltaAnim.currentFrame = _deltaAnim.startFrame;
+	_deltaAnim.speedTicks = speedTicks ? speedTicks : 1;
+	_deltaAnim.tickCounter = 0;
+	_deltaAnim.playing = true;
+	_deltaAnim.applyPaletteOnStart = applyPalette;
+	if (applyPalette || _deltaAnim.currentFrame == 0) {
+		memcpy(_palVanilla, _deltaAnim.palette, 0x300);
+		memcpy(_pal, _deltaAnim.palette, 0x300);
+		for (int i = 0; i < 256 * 3; i++)
+			_pal[i] = (_pal[i] * 259 + 33) >> 6;
+		g_system->getPaletteManager()->setPalette(_pal, 0, 256);
+	}
+	const uint16 displayFrame = _deltaAnim.currentFrame;
+	playDeltaFrameSfx(displayFrame);
+	if (displayFrame < _deltaAnim.frames.size())
+		applyDeltaFrameToBackground(_deltaAnim.frames[displayFrame]);
+	_deltaAnim.currentFrame++;
+	if (_deltaAnim.currentFrame > _deltaAnim.endFrame)
+		_deltaAnim.playing = false;
+	return true;
+}
+
+bool Macs2Engine::tickDeltaPlayback() {
+	if (!_deltaAnim.playing)
+		return false;
+	_deltaAnim.tickCounter++;
+	if (_deltaAnim.tickCounter < _deltaAnim.speedTicks)
+		return true;
+	_deltaAnim.tickCounter = 0;
+
+	const uint16 displayFrame = _deltaAnim.currentFrame;
+	playDeltaFrameSfx(displayFrame);
+	if (displayFrame < _deltaAnim.frames.size())
+		applyDeltaFrameToBackground(_deltaAnim.frames[displayFrame]);
+	_deltaAnim.currentFrame++;
+	if (_deltaAnim.currentFrame > _deltaAnim.endFrame) {
+		_deltaAnim.playing = false;
+		getMusic()->setSmfDucked(false);
+		return false;
+	}
+	return true;
+}
+
+bool Macs2Engine::loadOverlayFont(uint8 resourceIndex, uint16 executingObjectID) {
+	if (isAmiga())
+		return loadAmigaOverlayFont(resourceIndex);
+
+	// Original (1008:d749): resource table offset, then seek address+0x10 and loadFontData.
+	uint32 address = 0;
+	if (!resolveResourceFileOffset(resourceIndex, executingObjectID, address))
+		return false;
+
+	const int64 oldPos = _fileStream->pos();
 	_fileStream->seek(address + 0x10, SEEK_SET);
 	const uint16 glyphCount = _fileStream->readUint16LE();
 	if (glyphCount == 0 || glyphCount > 256) {

@@ -227,8 +227,6 @@ public:
 	Common::Path resolveAudioFilePath(const Common::String &fileName, bool preferSpeech) const;
 	/** Resolve MUSICGS then MUSICOPL; empty if neither exists. */
 	Common::Path resolveMidiFilePath(const Common::String &fileName) const;
-	/** Strip a trailing audio extension (.wav/.ogg/...) if present. */
-	static Common::String stripAudioExtension(const Common::String &fileName);
 	/**
 	 * Optional generated dialogue audio (kEnhAudioChanges):
 	 * scene -> SPEECH/sSS_OOOO.*, object -> SPEECH/oOOO_OOOO.*.
@@ -252,9 +250,9 @@ public:
 	OpcodeResult scriptSetDiskCache();
 	OpcodeResult scriptSetMidiVolume();
 	OpcodeResult scriptSetWaveVolume();
-	OpcodeResult scriptLoadSpecAnimAnim();
-	OpcodeResult scriptSetSpecAnimAnim();
-	OpcodeResult scriptClearSpecAnimAnim();
+	OpcodeResult scriptLoadSpecialAnimSlot();
+	OpcodeResult scriptSetSpecialAnimSlot();
+	OpcodeResult scriptClearSpecialAnimSlot();
 	OpcodeResult scriptSetDeltaRange();
 	OpcodeResult scriptClearDeltaRange();
 	OpcodeResult scriptAddDeltaSfx();
@@ -391,6 +389,9 @@ public:
 	ScriptExecutor(Macs2::Macs2Engine *engine);
 	~ScriptExecutor();
 
+	/** Strip a trailing audio extension (.wav/.ogg/...) if present. */
+	static Common::String stripAudioExtension(const Common::String &fileName);
+
 	void setIdle() { _state = ExecutorState::Idle; }
 
 	Common::Array<uint16> _dialogueChoiceScriptIndices;
@@ -480,6 +481,8 @@ public:
 	bool _waitForSpecialAnimStep = false;
 	uint16 _waitSpecialAnimIndex = 0;
 	uint16 _waitSpecialAnimTargetStep = 0;
+	bool _waitForDeltaAnim = false;
+	bool _waitForDeltaSpeed = false;
 	bool _debugPaused = false;
 	bool _pickupInProgress = false;
 	uint16 _pickupActorObjectID = 0;
@@ -528,7 +531,8 @@ public:
 		return _state == ExecutorState::WaitingForCallback ||
 			   _frameWaitTicksRemaining != 0 || _walkTargetObjectIndex != 0 ||
 			   _waitForPcmSound || _waitForMusicControl || _waitForAdlibReady ||
-			   _waitForObjectAnimStep || _waitForSpecialAnimStep;
+			   _waitForObjectAnimStep || _waitForSpecialAnimStep ||
+			   _waitForDeltaAnim || _waitForDeltaSpeed;
 	}
 
 	bool isExecuting() const {

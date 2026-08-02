@@ -1852,6 +1852,8 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 				!g_engine->_scriptExecutor->_waitForAdlibReady &&
 				!g_engine->_scriptExecutor->_waitForObjectAnimStep &&
 				!g_engine->_scriptExecutor->_waitForSpecialAnimStep &&
+				!g_engine->_scriptExecutor->_waitForDeltaAnim &&
+				!g_engine->_scriptExecutor->_waitForDeltaSpeed &&
 				g_engine->_scriptExecutor->canOpenSaveMenu()) {
 				if (ConfMan.getBool("original_menus")) {
 					// Binary handleInput (1008:f2af): saves cursor mode before opening panel
@@ -2541,6 +2543,28 @@ bool View1::tick() {
 						   executor->_waitSpecialAnimIndex, executor->_waitSpecialAnimTargetStep);
 					executor->_waitForSpecialAnimStep = false;
 					g_engine->runScriptExecutor();
+				}
+			} else if (executor->_waitForDeltaAnim) {
+				drawSceneUpdate();
+				if (!g_engine->tickDeltaPlayback()) {
+					debugC(kDebugScript, "waitForDeltaAnim complete");
+					executor->_waitForDeltaAnim = false;
+					_backgroundSurface.copyFrom(g_engine->_sceneBackground);
+					g_engine->runScriptExecutor();
+				} else {
+					_backgroundSurface.copyFrom(g_engine->_sceneBackground);
+					redraw();
+				}
+			} else if (executor->_waitForDeltaSpeed) {
+				drawSceneUpdate();
+				if (!g_engine->_deltaAnim.playing || !g_engine->tickDeltaPlayback()) {
+					debugC(kDebugScript, "waitForDeltaSpeed complete");
+					executor->_waitForDeltaSpeed = false;
+					_backgroundSurface.copyFrom(g_engine->_sceneBackground);
+					g_engine->runScriptExecutor();
+				} else {
+					_backgroundSurface.copyFrom(g_engine->_sceneBackground);
+					redraw();
 				}
 			}
 		} else {

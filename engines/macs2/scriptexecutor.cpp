@@ -323,47 +323,13 @@ bool ScriptExecutor::loadIndexedResource(Common::Array<uint8> &outData, uint8 re
 		return false;
 	}
 
-	const int64 oldPos = g_engine->_fileStream->pos();
-	uint32 address = 0;
-
-	if (_executingScriptObjectId == 0) {
-		if (resourceIndex > _engine->_sceneResourceOffsets.size()) {
-			warning("Ignoring resource load for missing scene resource %u", resourceIndex);
-			return false;
-		}
-		address = _engine->_sceneResourceOffsets[resourceIndex - 1];
-	} else {
-		GameObject *object = GameObjects::getObjectByIndex(_executingScriptObjectId);
-		if (object == nullptr || object->_dataOffset == 0) {
-			warning("Ignoring resource load for missing object %u resource %u", _executingScriptObjectId, resourceIndex);
-			return false;
-		}
-		// Binary reads from runtime+0x18D table (loaded during loadObjectData).
-		// Table is maxObjectResources() dword file offsets, indexed by (resourceIndex - 1).
-		if ((uint)(resourceIndex - 1) >= _engine->maxObjectResources()) {
-			warning("Ignoring resource load for out-of-range index %u on object %u", resourceIndex, _executingScriptObjectId);
-			return false;
-		}
-		address = object->_resourceOffsets[resourceIndex - 1];
-	}
-
-	if (address == 0) {
-		warning("Ignoring resource load for empty resource %u", resourceIndex);
-		g_engine->_fileStream->seek(oldPos, SEEK_SET);
+	if (!_engine->loadSizedResourcePayload(resourceIndex, _executingScriptObjectId, outData)) {
+		warning("Ignoring resource load for missing/empty resource %u (object %u)",
+				resourceIndex, _executingScriptObjectId);
+		outData.clear();
 		return false;
 	}
-
-	g_engine->_fileStream->seek(address, SEEK_SET);
-	const uint32 size = g_engine->_fileStream->readUint32LE();
-	if (size == 0) {
-		warning("Ignoring resource load for zero-sized resource %u", resourceIndex);
-		g_engine->_fileStream->seek(oldPos, SEEK_SET);
-		return false;
-	}
-	outData.resize(size);
-	g_engine->_fileStream->read(outData.data(), size);
-	g_engine->_fileStream->seek(oldPos, SEEK_SET);
-	return !outData.empty();
+	return true;
 }
 
 bool ScriptExecutor::loadSoundResource(Common::Array<uint8> &outData, uint8 resourceIndex,
@@ -3351,20 +3317,46 @@ OpcodeResult ScriptExecutor::scriptSetMainActor() {
 }
 
 OpcodeResult ScriptExecutor::scriptLoadDeltaAnim() {
-	debugC(kDebugScript, "SCRIPT::loadDeltaAnim() [stub]");
+	const uint8 resourceIndex = readByte();
+	debugC(kDebugScript, "SCRIPT::loadDeltaAnim(index=%u)", resourceIndex);
+	clearScriptError();
 	scriptSkipOpcodeRemainder(0x50);
+	if (!_engine->loadDeltaAnimResource(resourceIndex, _executingScriptObjectId)) {
+		warning("loadDeltaAnim: failed resource %u", resourceIndex);
+		setScriptError(1);
+	}
 	return OpcodeResult::Continue;
 }
 
 OpcodeResult ScriptExecutor::scriptPlayDeltaAnim() {
-	debugC(kDebugScript, "SCRIPT::playDeltaAnim() [stub]");
+	const uint16 startFrame = scriptReadValue16();
+	const uint16 endFrame = scriptReadValue16();
+	const uint16 speedTicks = scriptReadValue16();
+	(void)scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::playDeltaAnim(start=%u end=%u speed=%u)", startFrame, endFrame, speedTicks);
+	clearScriptError();
 	scriptSkipOpcodeRemainder(0x51);
-	return OpcodeResult::Continue;
+	if (!_engine->startDeltaPlayback(startFrame, endFrame, speedTicks, startFrame <= 1)) {
+		debugC(kDebugScript, "SCRIPT::playDeltaAnim() [no delta loaded - skip wait]");
+		endTimer();
+		endBuffering(_lastOpcodeTriggeredSkip);
+		return OpcodeResult::Continue;
+	}
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	if (currentView != nullptr)
+		currentView->_backgroundSurface.copyFrom(_engine->_sceneBackground);
+	_waitForDeltaAnim = true;
+	endTimer();
+	endBuffering(_lastOpcodeTriggeredSkip);
+	enterBlockingWaitCursor();
+	return OpcodeResult::WaitForCallback;
 }
 
 OpcodeResult ScriptExecutor::scriptRemoveDeltaAnim() {
-	debugC(kDebugScript, "SCRIPT::removeDeltaAnim() [stub]");
+	debugC(kDebugScript, "SCRIPT::removeDeltaAnim()");
 	scriptSkipOpcodeRemainder(0x52);
+	_engine->clearDeltaAnim();
+	_waitForDeltaAnim = false;
 	return OpcodeResult::Continue;
 }
 
@@ -3532,17 +3524,43 @@ OpcodeResult ScriptExecutor::scriptReloadSpecialAnim() {
 		setScriptError(8);
 		return OpcodeResult::Continue;
 	}
-	// Needs AHFFANIM resource loader (dialect-v2 / Windows MCS).
-	warning("reloadSpecialAnim: AHFFANIM loader not implemented (anim=%u res=%u)",
-			sceneAnimIndex, resourceIndex);
-	setScriptError(1);
+	BackgroundAnimationBlob &blob = _engine->_backgroundAnimationsBlobs[sceneAnimIndex - 1];
+	if (!_engine->loadAhffAnimResource(resourceIndex, _executingScriptObjectId, blob._blob)) {
+		warning("reloadSpecialAnim: failed anim=%u res=%u", sceneAnimIndex, resourceIndex);
+		setScriptError(1);
+		return OpcodeResult::Continue;
+	}
+	blob._activeExtraSlot = 0;
 	return OpcodeResult::Continue;
 }
 
 OpcodeResult ScriptExecutor::scriptPlayDiskDelta() {
-	debugC(kDebugScript, "SCRIPT::playDiskDelta() [stub]");
+	const uint8 resourceIndex = readByte();
+	const uint16 startFrame = scriptReadValue16();
+	const uint16 endFrame = scriptReadValue16();
+	const uint16 speedTicks = scriptReadValue16();
+	(void)scriptReadValue16();
+	const uint16 cacheHint = scriptReadValue16();
+	const uint16 applyPal = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::playDiskDelta(res=%u start=%u end=%u speed=%u cache=%u pal=%u)",
+		   resourceIndex, startFrame, endFrame, speedTicks, cacheHint, applyPal);
+	clearScriptError();
 	scriptSkipOpcodeRemainder(0x5A);
-	return OpcodeResult::Continue;
+	if (!_engine->loadDeltaAnimResource(resourceIndex, _executingScriptObjectId) ||
+		!_engine->startDeltaPlayback(startFrame, endFrame, speedTicks, applyPal != 0)) {
+		warning("playDiskDelta: failed resource %u", resourceIndex);
+		endTimer();
+		endBuffering(_lastOpcodeTriggeredSkip);
+		return OpcodeResult::Continue;
+	}
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	if (currentView != nullptr)
+		currentView->_backgroundSurface.copyFrom(_engine->_sceneBackground);
+	_waitForDeltaSpeed = true;
+	endTimer();
+	endBuffering(_lastOpcodeTriggeredSkip);
+	enterBlockingWaitCursor();
+	return OpcodeResult::WaitForCallback;
 }
 
 OpcodeResult ScriptExecutor::scriptSetDiskCache() {
@@ -3585,11 +3603,11 @@ OpcodeResult ScriptExecutor::scriptSetWaveVolume() {
 	return OpcodeResult::Continue;
 }
 
-OpcodeResult ScriptExecutor::scriptLoadSpecAnimAnim() {
+OpcodeResult ScriptExecutor::scriptLoadSpecialAnimSlot() {
 	const uint32 sceneAnimIndex = scriptReadValue32() - 0x1000;
 	const uint16 slot = scriptReadValue16();
 	const uint8 resourceIndex = readByte();
-	debugC(kDebugScript, "SCRIPT::loadSpecAnimAnim(anim=%u slot=%u res=%u)",
+	debugC(kDebugScript, "SCRIPT::loadSpecialAnimSlot(anim=%u slot=%u res=%u)",
 		   sceneAnimIndex, slot, resourceIndex);
 	clearScriptError();
 	scriptSkipOpcodeRemainder(0x5E);
@@ -3601,17 +3619,18 @@ OpcodeResult ScriptExecutor::scriptLoadSpecAnimAnim() {
 		setScriptError(8);
 		return OpcodeResult::Continue;
 	}
-	// Needs AHFFANIM resource loader (dialect-v2 / Windows MCS).
-	warning("loadSpecAnimAnim: AHFFANIM loader not implemented (anim=%u slot=%u res=%u)",
-			sceneAnimIndex, slot, resourceIndex);
-	setScriptError(1);
+	BackgroundAnimationBlob &blob = _engine->_backgroundAnimationsBlobs[sceneAnimIndex - 1];
+	if (!_engine->loadAhffAnimResource(resourceIndex, _executingScriptObjectId, blob._extraBlobs[slot - 1])) {
+		warning("loadSpecialAnimSlot: failed anim=%u slot=%u res=%u", sceneAnimIndex, slot, resourceIndex);
+		setScriptError(1);
+	}
 	return OpcodeResult::Continue;
 }
 
-OpcodeResult ScriptExecutor::scriptSetSpecAnimAnim() {
+OpcodeResult ScriptExecutor::scriptSetSpecialAnimSlot() {
 	const uint32 sceneAnimIndex = scriptReadValue32() - 0x1000;
 	const uint16 slot = scriptReadValue16();
-	debugC(kDebugScript, "SCRIPT::setSpecAnimAnim(anim=%u slot=%u)", sceneAnimIndex, slot);
+	debugC(kDebugScript, "SCRIPT::setSpecialAnimSlot(anim=%u slot=%u)", sceneAnimIndex, slot);
 	clearScriptError();
 	scriptSkipOpcodeRemainder(0x5F);
 	if (slot > 8) {
@@ -3631,10 +3650,10 @@ OpcodeResult ScriptExecutor::scriptSetSpecAnimAnim() {
 	return OpcodeResult::Continue;
 }
 
-OpcodeResult ScriptExecutor::scriptClearSpecAnimAnim() {
+OpcodeResult ScriptExecutor::scriptClearSpecialAnimSlot() {
 	const uint32 sceneAnimIndex = scriptReadValue32() - 0x1000;
 	const uint16 slot = scriptReadValue16();
-	debugC(kDebugScript, "SCRIPT::clearSpecAnimAnim(anim=%u slot=%u)", sceneAnimIndex, slot);
+	debugC(kDebugScript, "SCRIPT::clearSpecialAnimSlot(anim=%u slot=%u)", sceneAnimIndex, slot);
 	clearScriptError();
 	scriptSkipOpcodeRemainder(0x60);
 	if (slot > 8) {
@@ -3654,26 +3673,49 @@ OpcodeResult ScriptExecutor::scriptClearSpecAnimAnim() {
 }
 
 OpcodeResult ScriptExecutor::scriptSetDeltaRange() {
-	debugC(kDebugScript, "SCRIPT::setDeltaRange() [stub]");
+	_engine->_deltaAnim.clipMiX = scriptReadValue16();
+	_engine->_deltaAnim.clipMiY = scriptReadValue16();
+	_engine->_deltaAnim.clipMaX = scriptReadValue16();
+	_engine->_deltaAnim.clipMaY = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::setDeltaRange(%u,%u)-(%u,%u)",
+		   _engine->_deltaAnim.clipMiX, _engine->_deltaAnim.clipMiY,
+		   _engine->_deltaAnim.clipMaX, _engine->_deltaAnim.clipMaY);
 	scriptSkipOpcodeRemainder(0x61);
 	return OpcodeResult::Continue;
 }
 
 OpcodeResult ScriptExecutor::scriptClearDeltaRange() {
-	debugC(kDebugScript, "SCRIPT::clearDeltaRange() [stub]");
+	debugC(kDebugScript, "SCRIPT::clearDeltaRange()");
+	_engine->_deltaAnim.clipMiX = 0;
+	_engine->_deltaAnim.clipMiY = 0;
+	_engine->_deltaAnim.clipMaX = (uint16)_engine->screenWidthLast();
+	_engine->_deltaAnim.clipMaY = (uint16)_engine->gameHeightLast();
 	scriptSkipOpcodeRemainder(0x62);
 	return OpcodeResult::Continue;
 }
 
 OpcodeResult ScriptExecutor::scriptAddDeltaSfx() {
-	debugC(kDebugScript, "SCRIPT::addDeltaSfx() [stub]");
+	const uint16 frameIndex = scriptReadValue16();
+	const Common::String fileName = scriptParsePascalFileName(scriptReadFixedFileName());
+	const uint16 duckFlag = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::addDeltaSfx(frame=%u file=%s duck=%u)", frameIndex, fileName.c_str(), duckFlag);
 	scriptSkipOpcodeRemainder(0x63);
+	if (_engine->_deltaAnim.sfxEvents.size() >= 0x20) {
+		setScriptError(0x33);
+		return OpcodeResult::Continue;
+	}
+	Macs2Engine::DeltaSfxEvent ev;
+	ev.frameIndex = frameIndex;
+	ev.fileName = fileName;
+	ev.duckMusic = duckFlag != 0;
+	_engine->_deltaAnim.sfxEvents.push_back(ev);
 	return OpcodeResult::Continue;
 }
 
 OpcodeResult ScriptExecutor::scriptClearDeltaSfxList() {
-	debugC(kDebugScript, "SCRIPT::clearDeltaSfxList() [nop]");
+	debugC(kDebugScript, "SCRIPT::clearDeltaSfxList()");
 	scriptSkipOpcodeRemainder(0x64);
+	_engine->_deltaAnim.sfxEvents.clear();
 	return OpcodeResult::Continue;
 }
 
@@ -3746,32 +3788,75 @@ OpcodeResult ScriptExecutor::scriptSetCursorType() {
 }
 
 OpcodeResult ScriptExecutor::scriptCheckDeltaSpeed() {
-	debugC(kDebugScript, "SCRIPT::checkDeltaSpeed() [stub]");
+	const uint8 resourceIndex = readByte();
+	const uint16 startFrame = scriptReadValue16();
+	const uint16 endFrame = scriptReadValue16();
+	const uint16 speedTicks = scriptReadValue16();
+	(void)scriptReadValue16();
+	const uint16 cacheHint = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::checkDeltaSpeed(res=%u start=%u end=%u speed=%u cache=%u)",
+		   resourceIndex, startFrame, endFrame, speedTicks, cacheHint);
+	clearScriptError();
 	scriptSkipOpcodeRemainder(0x68);
-	return OpcodeResult::Continue;
+	// CheckDeltaSpeed always uses the SkipSpeed==1 AHFFDLTA layout and applies palette.
+	if (!_engine->loadDeltaAnimResource(resourceIndex, _executingScriptObjectId, true) ||
+		!_engine->startDeltaPlayback(startFrame, endFrame, speedTicks, true)) {
+		warning("checkDeltaSpeed: failed resource %u", resourceIndex);
+		endTimer();
+		endBuffering(_lastOpcodeTriggeredSkip);
+		return OpcodeResult::Continue;
+	}
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	if (currentView != nullptr)
+		currentView->_backgroundSurface.copyFrom(_engine->_sceneBackground);
+	_waitForDeltaSpeed = true;
+	endTimer();
+	endBuffering(_lastOpcodeTriggeredSkip);
+	enterBlockingWaitCursor();
+	return OpcodeResult::WaitForCallback;
 }
 
 OpcodeResult ScriptExecutor::scriptLoadDistanceMask() {
-	debugC(kDebugScript, "SCRIPT::loadDistanceMask() [stub]");
+	const uint8 resourceIndex = readByte();
+	debugC(kDebugScript, "SCRIPT::loadDistanceMask(index=%u)", resourceIndex);
+	clearScriptError();
 	scriptSkipOpcodeRemainder(0x69);
+	if (!_engine->loadMaskFromResource(resourceIndex, _executingScriptObjectId, _engine->_depthMap,
+									   _engine->screenWidth(), _engine->gameHeight(), false))
+		warning("loadDistanceMask: failed resource %u", resourceIndex);
 	return OpcodeResult::Continue;
 }
 
 OpcodeResult ScriptExecutor::scriptLoadAreaMask() {
-	debugC(kDebugScript, "SCRIPT::loadAreaMask() [stub]");
+	const uint8 resourceIndex = readByte();
+	debugC(kDebugScript, "SCRIPT::loadAreaMask(index=%u)", resourceIndex);
+	clearScriptError();
 	scriptSkipOpcodeRemainder(0x6A);
+	if (!_engine->loadMaskFromResource(resourceIndex, _executingScriptObjectId, _engine->_hotspotMap,
+									   _engine->screenWidth(), _engine->gameHeight(), false))
+		warning("loadAreaMask: failed resource %u", resourceIndex);
 	return OpcodeResult::Continue;
 }
 
 OpcodeResult ScriptExecutor::scriptLoadWalkMask() {
-	debugC(kDebugScript, "SCRIPT::loadWalkMask() [stub]");
+	const uint8 resourceIndex = readByte();
+	debugC(kDebugScript, "SCRIPT::loadWalkMask(index=%u)", resourceIndex);
+	clearScriptError();
 	scriptSkipOpcodeRemainder(0x6B);
+	if (!_engine->loadMaskFromResource(resourceIndex, _executingScriptObjectId, _engine->_pathfindingMap,
+									   _engine->screenWidth(), _engine->gameHeight(), false))
+		warning("loadWalkMask: failed resource %u", resourceIndex);
 	return OpcodeResult::Continue;
 }
 
 OpcodeResult ScriptExecutor::scriptLoadShadowMask() {
-	debugC(kDebugScript, "SCRIPT::loadShadowMask() [stub]");
+	const uint8 resourceIndex = readByte();
+	debugC(kDebugScript, "SCRIPT::loadShadowMask(index=%u)", resourceIndex);
+	clearScriptError();
 	scriptSkipOpcodeRemainder(0x6C);
+	if (!_engine->loadMaskFromResource(resourceIndex, _executingScriptObjectId, _engine->_shadowMap,
+									   _engine->screenWidth(), _engine->gameHeight(), false))
+		warning("loadShadowMask: failed resource %u", resourceIndex);
 	return OpcodeResult::Continue;
 }
 
@@ -3966,9 +4051,9 @@ const ScriptExecutor::OpcodeEntry ScriptExecutor::kV2OpcodeTable[] = {
 	{"setDiskCache", &ScriptExecutor::scriptSetDiskCache},
 	{"setMidiVolume", &ScriptExecutor::scriptSetMidiVolume},
 	{"setWaveVolume", &ScriptExecutor::scriptSetWaveVolume},
-	{"loadSpecAnimAnim", &ScriptExecutor::scriptLoadSpecAnimAnim},
-	{"setSpecAnimAnim", &ScriptExecutor::scriptSetSpecAnimAnim},
-	{"clearSpecAnimAnim", &ScriptExecutor::scriptClearSpecAnimAnim},
+	{"loadSpecialAnimSlot", &ScriptExecutor::scriptLoadSpecialAnimSlot},
+	{"setSpecialAnimSlot", &ScriptExecutor::scriptSetSpecialAnimSlot},
+	{"clearSpecialAnimSlot", &ScriptExecutor::scriptClearSpecialAnimSlot},
 	{"setDeltaRange", &ScriptExecutor::scriptSetDeltaRange},
 	{"clearDeltaRange", &ScriptExecutor::scriptClearDeltaRange},
 	{"addDeltaSfx", &ScriptExecutor::scriptAddDeltaSfx},
@@ -4074,12 +4159,14 @@ void ScriptExecutor::run(bool firstRun) {
 	// Returns immediately if ANY wait condition is active.
 	if (_frameWaitTicksRemaining != 0 || _walkTargetObjectIndex != 0 ||
 		_waitForPcmSound || _waitForMusicControl || _waitForAdlibReady ||
-		_waitForObjectAnimStep || _waitForSpecialAnimStep) {
-		debugC(kDebugScript, "run() blocked by entry guard: frameWait=%d walkTarget=%d sound=%d music=%d adlib=%d objAnim=%d specAnim=%d",
+		_waitForObjectAnimStep || _waitForSpecialAnimStep ||
+		_waitForDeltaAnim || _waitForDeltaSpeed) {
+		debugC(kDebugScript, "run() blocked by entry guard: frameWait=%d walkTarget=%d sound=%d music=%d adlib=%d objAnim=%d specAnim=%d delta=%d/%d",
 			   _frameWaitTicksRemaining, _walkTargetObjectIndex,
 			   _waitForPcmSound ? 1 : 0, _waitForMusicControl ? 1 : 0,
 			   _waitForAdlibReady ? 1 : 0,
-			   _waitForObjectAnimStep ? 1 : 0, _waitForSpecialAnimStep ? 1 : 0);
+			   _waitForObjectAnimStep ? 1 : 0, _waitForSpecialAnimStep ? 1 : 0,
+			   _waitForDeltaAnim ? 1 : 0, _waitForDeltaSpeed ? 1 : 0);
 		return;
 	}
 
