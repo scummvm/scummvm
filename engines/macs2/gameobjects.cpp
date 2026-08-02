@@ -438,9 +438,8 @@ const Common::Array<uint8> *Macs2::GameObject::getAnimSlotBlob(uint16 slot) cons
 
 bool Macs2::GameObject::isAnimSlotLoaded(uint16 orient) const {
 	const uint16 overloadSlot = g_engine->overloadAnimSlot();
-	const uint16 maxOrient = g_engine->maxOrientations();
 	if (g_engine->isV2()) {
-		for (uint i = 0; i < 5; i++) {
+		for (uint i = 0; i < ARRAYSIZE(_specialAnimTriggers); i++) {
 			const uint16 trig = _specialAnimTriggers[i];
 			if ((int16)trig >= 0 && trig == orient) {
 				const uint16 animSlot = Macs2Engine::specialAnimSlotToAnimSlot(i + 1);
@@ -458,6 +457,7 @@ bool Macs2::GameObject::isAnimSlotLoaded(uint16 orient) const {
 		const Common::Array<uint8> *blob = getAnimSlotBlob(overloadSlot);
 		return blob != nullptr && !blob->empty();
 	}
+	const uint16 maxOrient = g_engine->maxOrientations();
 	if (orient < 1 || orient > maxOrient)
 		return false;
 	const uint slot = orient - 1;
