@@ -33,8 +33,8 @@ namespace Freescape {
  * Ports the Wally Beben C64 SID music to the OPL2 FM chip by:
  * - Reusing the same sequencer (order lists, patterns, instruments)
  * - Converting SID note numbers to OPL F-number/block pairs
- * - Mapping SID waveforms to OPL FM instrument patches
- * - Rebuilding the SID envelope and pulse-width motion on top of AdLib timbres
+ * - Mapping SID waveforms to OPL FM patches, and noise to rhythm mode
+ * - Driving the OPL envelope generator from the SID ADSR
  */
 class EclipseOPLMusicPlayer : public MusicPlayer {
 public:
@@ -49,14 +49,6 @@ private:
 	enum {
 		kChannelCount = 3,
 		kMaxNote = 94
-	};
-
-	enum ADSRPhase {
-		kPhaseOff,
-		kPhaseAttack,
-		kPhaseDecay,
-		kPhaseSustain,
-		kPhaseRelease
 	};
 
 	struct ChannelState {
@@ -103,12 +95,7 @@ private:
 		byte carBaseLevel;
 		byte modLevel;
 		byte carLevel;
-		ADSRPhase adsrPhase;
-		uint16 adsrVolume;
-		uint16 attackRate;
-		uint16 decayRate;
-		byte sustainLevel;
-		uint16 releaseRate;
+		bool rhythmVoice; // routed to the rhythm-mode hi-hat instead of an FM channel
 
 		void reset();
 	};
@@ -117,6 +104,7 @@ private:
 	bool _musicActive;
 	byte _speedDivider;
 	byte _speedCounter;
+	byte _rhythmReg; // shadow of register 0xBD
 	ChannelState _channels[kChannelCount];
 	byte _arpeggioIntervals[8];
 
@@ -134,9 +122,7 @@ private:
 	bool applyInstrumentVibrato(int channel);
 	void applyEffectArpeggio(int channel);
 	void applyTimedSlide(int channel);
-	void triggerADSR(int channel, byte ad, byte sr);
-	void releaseADSR(int channel);
-	void updateADSR(int channel);
+	void programEnvelope(byte op, byte attack, byte decay, byte sustain, byte release);
 	void updatePulseWidth(int channel, bool advance);
 	void applyOperatorLevels(int channel);
 
