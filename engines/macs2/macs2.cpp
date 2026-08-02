@@ -130,6 +130,8 @@ Macs2Engine::McsFileVersion Macs2Engine::detectMcsFileVersion(Common::SeekableRe
 
 	if (memcmp(magic, kMcsMagicV1, kMcsMagicSize) == 0)
 		return McsFileVersion::V1;
+	if (memcmp(magic, kMcsMagicV2, kMcsMagicSize) == 0)
+		return McsFileVersion::V2;
 	return McsFileVersion::Unknown;
 }
 
@@ -294,11 +296,13 @@ void Macs2Engine::loadResourceFileV1() {
 	// is loaded before the game loop processes any input.
 	// The original allocates the 0x75E0-byte scene data buffer (which includes space for
 	// all RLE-decoded maps) before calling changeScene. Create the surfaces here.
-	_sceneBackground.create(kScreenWidth, kGameHeight, Graphics::PixelFormat::createFormatCLUT8());
-	_depthMap.create(kScreenWidth, kGameHeight, Graphics::PixelFormat::createFormatCLUT8());
-	_pathfindingMap.create(kScreenWidth, kGameHeight, Graphics::PixelFormat::createFormatCLUT8());
-	_shadowMap.create(kScreenWidth, kGameHeight, Graphics::PixelFormat::createFormatCLUT8());
-	_hotspotMap.create(kScreenWidth, kGameHeight, Graphics::PixelFormat::createFormatCLUT8());
+	const int sw = screenWidth();
+	const int gh = gameHeight();
+	_sceneBackground.create(sw, gh, Graphics::PixelFormat::createFormatCLUT8());
+	_depthMap.create(sw, gh, Graphics::PixelFormat::createFormatCLUT8());
+	_pathfindingMap.create(sw, gh, Graphics::PixelFormat::createFormatCLUT8());
+	_shadowMap.create(sw, gh, Graphics::PixelFormat::createFormatCLUT8());
+	_hotspotMap.create(sw, gh, Graphics::PixelFormat::createFormatCLUT8());
 	changeScene(Scenes::instance()._currentSceneIndex);
 }
 
@@ -1320,13 +1324,13 @@ bool Macs2Engine::findGlyph(char c, GlyphData &out) const {
 
 // getWalkabilityAt (1008:0e8c)
 // Params: (param_1=y, param_2=x)
-// Bounds: x<0 || x>=kScreenWidth || y<0 || y>=kGameHeight -> return 0
+// Bounds: x<0 || x>=screenWidth || y<0 || y>=gameHeight -> return 0
 // Lookup: scene[y*4 + 0x2017] -> row pointer, then byte at [rowPtr + x]
 // Values 0xC8..0xEF: override range - checks scene[value*5 + 0x4EA5]:
 //   If override disabled (flag==0): returns 0xFF
 //   If override enabled (flag!=0): returns scene[value*5 + 0x4EA6]
 uint16 Macs2Engine::getWalkabilityAt(int16 y, int16 x) {
-	if (x < 0 || x >= kScreenWidth || y < 0 || y >= kGameHeight || _pathfindingMap.w == 0) {
+	if (x < 0 || x >= screenWidth() || y < 0 || y >= gameHeight() || _pathfindingMap.w == 0) {
 		return 0;
 	}
 	uint16 value = _pathfindingMap.getPixel(x, y);
@@ -1346,6 +1350,8 @@ uint16 Macs2Engine::getWalkabilityAt(int16 y, int16 x) {
 void Macs2Engine::snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16 charY, int16 charX) {
 	int16 savedX = *pTargetX;
 	int16 savedY = *pTargetY;
+	const int16 maxY = (int16)gameHeightLast();
+	const int16 maxX = (int16)screenWidthLast();
 
 	// Phase 1: Scan downward with depth constraint
 	// Condition: walkability >= 200 OR (targetY - walkability) < savedY
@@ -1354,7 +1360,7 @@ void Macs2Engine::snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16
 		if (isWalkabilityWalkable(w) && (*pTargetY - (int16)w >= savedY)) {
 			break;
 		}
-		if (*pTargetY >= kGameHeightLast) {
+		if (*pTargetY >= maxY) {
 			break;
 		}
 		*pTargetY = *pTargetY + 1;
@@ -1362,19 +1368,19 @@ void Macs2Engine::snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16
 
 	// Phase 2: Continue scanning to bottom for best depth match
 	int16 scanY = *pTargetY;
-	while (scanY <= kGameHeightLast) {
+	while (scanY <= maxY) {
 		uint16 w = getWalkabilityAt(scanY, *pTargetX);
 		if (scanY - (int16)w == savedY) {
 			*pTargetY = scanY;
 		}
-		if (scanY == kGameHeightLast) {
+		if (scanY == maxY) {
 			break;
 		}
 		scanY++;
 	}
 
 	// Phase 3: If at screen bottom and still non-walkable, scan upward
-	if (*pTargetY == kGameHeightLast) {
+	if (*pTargetY == maxY) {
 		uint16 w = getWalkabilityAt(*pTargetY, *pTargetX);
 		if (isWalkabilityBlocking(w)) {
 			while (isWalkabilityBlocking(w) && *pTargetY > 0) {
@@ -1402,7 +1408,7 @@ void Macs2Engine::snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16
 				uint16 w2 = getWalkabilityAt(*pTargetY, *pTargetX);
 				if (isWalkabilityWalkable(w2))
 					break;
-				if (*pTargetX >= kScreenWidthLast)
+				if (*pTargetX >= maxX)
 					break;
 				*pTargetX = *pTargetX + 1;
 			}
@@ -1947,7 +1953,7 @@ void Macs2Engine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hots
 			continue;
 
 		const Common::Point &center = entry.center;
-		if (center.x < 0 || center.x >= kScreenWidth || center.y < 0 || center.y >= kGameHeight)
+		if (center.x < 0 || center.x >= screenWidth() || center.y < 0 || center.y >= gameHeight())
 			continue;
 
 		const uint16 sceneIndex = (uint16)Scenes::instance()._currentSceneIndex;
@@ -1963,7 +1969,7 @@ void Macs2Engine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hots
 			continue;
 
 		const Common::Point &screenPos = entry.position;
-		if (screenPos.x < 0 || screenPos.x >= kScreenWidth || screenPos.y < 0 || screenPos.y >= kGameHeight)
+		if (screenPos.x < 0 || screenPos.x >= screenWidth() || screenPos.y < 0 || screenPos.y >= gameHeight())
 			continue;
 
 		Character *character = view ? view->getCharacterByIndex(entry.index) : nullptr;
@@ -2624,8 +2630,9 @@ Common::Error Macs2Engine::run() {
 		loadTranslation();
 	}
 
-	// Initialize graphics mode (taller framebuffer when SCUMM verb UI is enabled)
-	initGraphics(kScreenWidth, enhancementEnabled(kEnhUIUX) ? kScreenHeight : kGameHeight);
+	// Initialize graphics mode (taller framebuffer when action bar verb UI is enabled)
+	int gfxH = screenHeight();
+	initGraphics(screenWidth(), gfxH);
 
 	CursorMan.showMouse(false);
 

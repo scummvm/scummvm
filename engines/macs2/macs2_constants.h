@@ -24,24 +24,31 @@
 
 namespace Macs2 {
 
-// Original game viewport dimensions (all scene maps and buffers use these).
+// V1 (AHFFMACS0100) viewport - default engine dimensions.
 static constexpr int kScreenWidth     = 320;
 static constexpr int kScreenWidthLast = kScreenWidth - 1;
 static constexpr int kGameHeight      = 200;
 static constexpr int kGameHeightLast  = kGameHeight - 1;
 
+// V2 dimensions.
+static constexpr int kWinScreenWidth     = 640;
+static constexpr int kWinScreenWidthLast = kWinScreenWidth - 1;
+static constexpr int kWinGameHeight      = 400;
+static constexpr int kWinGameHeightLast  = kWinGameHeight - 1;
+
 // SCUMM-style verb/inventory strip (kEnhUIUX enhancement only).
-static constexpr int kUIHeight       = 64;
-static constexpr int kScreenHeight   = kGameHeight + kUIHeight;
+static constexpr int kUIHeight         = 64;
+static constexpr int kScreenHeight     = kGameHeight + kUIHeight;
 static constexpr int kScreenHeightLast = kScreenHeight - 1;
+static constexpr int kWinScreenHeight  = kWinGameHeight + kUIHeight;
 
 /**
- * RESOURCE.MCS header / layout (loadResourceFile @ 1008:2e8d).
- * Magic is 12 ASCII bytes "AHFFMACS0100".
- * (Input-recording uses a different 12-byte tag; do not confuse with MCS.)
+ * MCS file layout.
+ * Magic is 12 ASCII bytes "AHFFMACS0100" (v1) or "AHFFMACS0200" (v2).
  */
 static constexpr uint kMcsMagicSize = 12;
 static constexpr const char *kMcsMagicV1 = "AHFFMACS0100";
+static constexpr const char *kMcsMagicV2 = "AHFFMACS0200";
 
 /** MCS v1 absolute file offsets (after validating AHFFMACS0100). */
 static constexpr uint32 kMcsV1ActorIndexOffset = 0x0C;
@@ -58,6 +65,9 @@ static constexpr uint32 kMcsV1ShadingTableSize = 0x800;
 static constexpr uint kMcsV1CursorImageCount = 0x21;
 static constexpr uint kMcsV1MapSceneOffsetCount = 256;
 static constexpr uint32 kMcsV1MapSceneOffsetsSize = kMcsV1MapSceneOffsetCount * 4; // 0x400
+
+static constexpr uint32 kMcsV2ActorIndexOffset = 0x20E;
+static constexpr uint32 kMcsV2DirectoryOffset = 0x212;
 
 } // namespace Macs2
 

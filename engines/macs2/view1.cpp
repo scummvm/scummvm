@@ -127,6 +127,11 @@ View1::View1() : UIElement("View1") {
 	_paletteDirty = false;
 	CursorMan.showMouse(true);
 
+	const int sw = g_engine->screenWidth();
+	const int sh = g_engine->screenHeight();
+	_bounds = Common::Rect(0, 0, sw, sh);
+	_innerBounds = _bounds;
+
 	// TODO: Check if this works like this
 	Character *protagonist = new Character();
 	// TODO: Need to properly handle the offset
@@ -139,8 +144,6 @@ View1::View1() : UIElement("View1") {
 
 	if (hasPersistentActionBar()) {
 		_actionBar = new ActionBar(this);
-		_bounds = Common::Rect(0, 0, kScreenWidth, kScreenHeight);
-		_innerBounds = _bounds;
 		setInventorySource(_inventorySource);
 	}
 }
@@ -153,10 +156,12 @@ void View1::ensureActionBar() {
 		if (_inventorySource)
 			setInventorySource(_inventorySource);
 	}
-	if (_bounds.height() != kScreenHeight) {
-		_bounds = Common::Rect(0, 0, kScreenWidth, kScreenHeight);
+	const int sw = g_engine->screenWidth();
+	const int sh = g_engine->screenHeight();
+	if (_innerBounds.width() != sw || _innerBounds.height() != sh) {
+		_bounds = Common::Rect(0, 0, sw, sh);
 		_innerBounds = _bounds;
-		::initGraphics(kScreenWidth, kScreenHeight);
+		::initGraphics(sw, sh);
 	}
 }
 
@@ -169,7 +174,7 @@ int View1::actionBarTopY() const {
 		return _actionBar->gameAreaBottomY();
 	if (g_engine->hasNativeHudAssets() && g_engine->isBottomHudVisible() && g_engine->_menuMode != 0)
 		return (int)g_engine->_panelTopY;
-	return kGameHeight;
+	return g_engine->gameHeight();
 }
 
 bool View1::shouldShowActionBar() const {
@@ -526,7 +531,7 @@ void View1::drawDarkRectangle(uint16 x, uint16 y, uint16 width, uint16 height) {
 			const uint16 currentY = y + yOffset;
 			const uint8 currentValue = (uint8)s.getPixel(currentX, currentY);
 			const uint8 newValue = g_engine->_panelRemapTable[currentValue];
-			if (currentX < kScreenWidth && currentY < kGameHeight)
+			if (currentX < (uint16)g_engine->screenWidth() && currentY < (uint16)g_engine->gameHeight())
 				s.setPixel(currentX, currentY, newValue);
 		}
 	}
@@ -798,9 +803,11 @@ void View1::drawPathfindingPoints(Graphics::ManagedSurface &s) {
 		return;
 	}
 	const Common::Array<uint8> &overlay = c->_pathfindingOverlay;
-	for (int y = 0; y < kGameHeight; y++) {
-		for (int x = 0; x < kScreenWidth; x++) {
-			const uint8 currentValue = overlay[y * kScreenWidth + x];
+	const int sw = g_engine->screenWidth();
+	const int gh = g_engine->gameHeight();
+	for (int y = 0; y < gh; y++) {
+		for (int x = 0; x < sw; x++) {
+			const uint8 currentValue = overlay[y * sw + x];
 			if (currentValue != 0) {
 				s.setPixel(x, y, currentValue);
 			}
@@ -872,11 +879,13 @@ void View1::openMainMenu(Common::Point clickedPosition) {
 		upperLeft.y = 0;
 	}
 	// Binary openActionBarAtPosition (1008:3fba): clamp to screen bounds.
-	if ((int)(upperLeft.x + panelSize.x) >= kScreenWidth) {
-		upperLeft.x = kScreenWidth - panelSize.x - 1;
+	const int sw = g_engine->screenWidth();
+	const int gh = g_engine->gameHeight();
+	if ((int)(upperLeft.x + panelSize.x) >= sw) {
+		upperLeft.x = sw - panelSize.x - 1;
 	}
-	if ((int)(upperLeft.y + panelSize.y) >= kGameHeight) {
-		upperLeft.y = kGameHeight - panelSize.y - 1;
+	if ((int)(upperLeft.y + panelSize.y) >= gh) {
+		upperLeft.y = gh - panelSize.y - 1;
 	}
 
 	_mainMenuRect = Common::Rect(upperLeft, upperLeft + panelSize);
@@ -1622,7 +1631,7 @@ bool View1::handleActionBarClick(const MouseDownMessage &msg) {
 }
 
 bool View1::handleHelpClick(const MouseDownMessage &msg) {
-	Common::Rect screenRect(kScreenWidth, kGameHeight);
+	Common::Rect screenRect(g_engine->screenWidth(), g_engine->gameHeight());
 	if (screenRect.contains(msg._pos)) {
 		uint8 depth = g_engine->_depthMap.getPixel(msg._pos.x, msg._pos.y);
 		if (depth > 0 && depth < 0xFA) {
@@ -2279,12 +2288,15 @@ void View1::draw() {
 	if (hasPersistentActionBar()) {
 		ensureActionBar();
 		if (_actionBar && !_isShowingTextBox && !_isShowingDialoguePanel) {
-			Graphics::ManagedSurface fullScreen(*g_events->getScreen(), Common::Rect(0, 0, kScreenWidth, kScreenHeight));
+			const int sw = g_engine->screenWidth();
+			const int sh = g_engine->screenHeight();
+			Graphics::ManagedSurface fullScreen(*g_events->getScreen(), Common::Rect(0, 0, sw, sh));
 			if (shouldShowActionBar()) {
 				_actionBar->draw(fullScreen);
 			} else {
 				const int top = actionBarTopY();
-				fullScreen.fillRect(Common::Rect(0, top, kScreenWidth, kScreenHeight), 0);
+				if (top >= 0 && top < sh)
+					fullScreen.fillRect(Common::Rect(0, top, sw, sh), 0);
 			}
 		}
 	}
@@ -2802,7 +2814,7 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 			if (current != nullptr && DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
 				Common::String number = Common::String::format("%u", obj->_orientation);
 				renderString(current->getPosition(), number.c_str());
-				Common::Rect screenRect(0, 0, kScreenWidth, kGameHeight);
+				Common::Rect screenRect(0, 0, g_engine->screenWidth(), g_engine->gameHeight());
 				if (screenRect.contains(current->getPosition()))
 					surface->setPixel(current->getPosition().x, current->getPosition().y, 0xFF);
 			}
@@ -3082,7 +3094,11 @@ static byte applyShadingTable(byte color, int shadingTableOffset) {
 	if (shadingTableOffset == 0)
 		return color;
 	// drawSpriteTransparent @ 1010:0fba: (color - 0xC0) * 0x20 + shadingTableOffset + scene+0x53D3
+	if (color < 0xC0)
+		return color;
 	const uint idx = (uint)(color - 0xC0) * 0x20 + (uint)shadingTableOffset;
+	if (idx >= g_engine->_shadingTable.size())
+		return color;
 	return g_engine->_shadingTable[idx];
 }
 
@@ -3450,7 +3466,7 @@ uint16 View1::getHitObjectID(const Common::Point &pos) const {
 			continue;
 
 		const uint8 characterDepth = currentCharacter->getPosition().y;
-		if (pos.x >= 0 && pos.x < kScreenWidth && pos.y >= 0 && pos.y < kGameHeight) {
+		if (pos.x >= 0 && pos.x < g_engine->screenWidth() && pos.y >= 0 && pos.y < g_engine->gameHeight()) {
 			const uint8 bgDepth = g_engine->_depthMap.getPixel(pos.x, pos.y);
 			if (bgDepth >= characterDepth)
 				continue;
@@ -3540,7 +3556,7 @@ bool Character::isWalkable(const Common::Point &p) const {
 	return Macs2Engine::isWalkabilityWalkable(lookupWalkability(p));
 }
 
-Character::Character() : _pathfindingOverlay(kScreenWidth * kGameHeight, 0) {
+Character::Character() : _pathfindingOverlay(g_engine->screenWidth() * g_engine->gameHeight(), 0) {
 }
 
 bool Character::calculatePath(Common::Point target) {

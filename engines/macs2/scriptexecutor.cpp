@@ -304,7 +304,8 @@ OpcodeResult ScriptExecutor::scriptChangeAnimation() {
 uint16 ScriptExecutor::getAreaAtPoint(uint16 x, uint16 y) {
 	// getAreaAtPoint (1008:101d). Reads the pathfinding map pixel and applies
 	// the area override table at sceneData + value*5 + 0x4EA8.
-	if (x >= kScreenWidth || y >= kGameHeight || _engine->_pathfindingMap.w == 0) {
+	if (x >= (uint16)_engine->screenWidth() || y >= (uint16)_engine->gameHeight() ||
+		_engine->_pathfindingMap.w == 0) {
 		return 0;
 	}
 	uint16 result = _engine->_pathfindingMap.getPixel(x, y);
@@ -4327,11 +4328,15 @@ uint32 ScriptExecutor::getSpecialValue(uint16 value) {
 	case 0x24: {
 		const GameObject *actor = GameObjects::instance().getObjectByIndex(Scenes::instance()._currentActorIndex);
 		out1 = actor ? actor->_position.x : 0;
+		if (_engine->isV2())
+			out1 /= 2;
 		break;
 	}
 	case 0x25: {
 		const GameObject *actor = GameObjects::instance().getObjectByIndex(Scenes::instance()._currentActorIndex);
 		out1 = actor ? actor->_position.y : 0;
+		if (_engine->isV2())
+			out1 /= 2;
 		break;
 	}
 	case 0x26:
@@ -4382,9 +4387,14 @@ uint32 ScriptExecutor::getSpecialValue(uint16 value) {
 	case 0x31:
 		out1 = (_soundEnabled && _soundSystemActive) ? 1 : 0;
 		break;
+	case 0x32:
+		out1 = Scenes::instance()._currentActorIndex + 0x400;
+		break;
 	default:
 		if (value >= 0x0E && value <= 0x22) {
 			out1 = value - 0x0D;
+		} else if (value >= 0x33 && value <= 0x43) {
+			out1 = value - 0x1D;
 		} else {
 			warning("getSpecialValue: unknown special value 0x%02x", value);
 		}

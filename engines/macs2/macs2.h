@@ -283,12 +283,13 @@ protected:
 public:
 	Graphics::ManagedSurface readRLEImage(int64 offs, Common::MemoryReadStream *stream);
 
-	/** Open RESOURCE.MCS, check magic, dispatch to loadResourceFileV1. */
+	/** Open primary MCS archive, check magic, load v1 or v2 layout. */
 	void readResourceFile();
 	/** MCS dialect from the 12-byte file magic. */
 	enum class McsFileVersion {
 		Unknown = 0,
-		V1 // AHFFMACS0100
+		V1, // AHFFMACS0100
+		V2  // AHFFMACS0200
 	};
 	McsFileVersion detectMcsFileVersion(Common::SeekableReadStream &stream) const;
 	/** Load AHFFMACS0100 layout (loadResourceFile @ 1008:2e8d). */
@@ -726,11 +727,29 @@ public:
 
 	/** MCS directory base (v1: file+0x10 after magic + actor/scene words). */
 	uint32 getMcsDirectoryOffset() const { return kMcsV1DirectoryOffset; }
+
+	/** AHFFMACS0200 dialect (directory at 0x212) vs AHFFMACS0100 (0x10). */
+	bool isV2() const { return _mcsFileVersion == McsFileVersion::V2; }
 	McsFileVersion getMcsFileVersion() const { return _mcsFileVersion; }
-	int screenWidth() const { return kScreenWidth; }
+	int screenWidth() const { return isV2() ? kWinScreenWidth : kScreenWidth; }
 	int screenWidthLast() const { return screenWidth() - 1; }
-	int gameHeight() const { return kGameHeight; }
+	int gameHeight() const { return isV2() ? kWinGameHeight : kGameHeight; }
 	int gameHeightLast() const { return gameHeight() - 1; }
+	/**
+	 * Full framebuffer height (playfield + bottom HUD / Scumm strip).
+	 * Matches initGraphics height used at startup.
+	 */
+	int screenHeight() {
+		if (isV2()) {
+			if (_panelTopY == 0 || _panelHeight == 0)
+				return kWinGameHeight;
+			return (int)_panelTopY + (int)_panelHeight;
+		}
+		if (enhancementEnabled(kEnhUIUX))
+			return gameHeight() + kUIHeight;
+		return gameHeight();
+	}
+	int screenHeightLast() { return screenHeight() - 1; }
 
 	/**
 	 * Bottom HUD / action-bar visibility (dialect-neutral).
@@ -745,32 +764,32 @@ public:
 		return _panelTopY != 0 && _panelHeight != 0;
 	}
 
-	// --- Layout / dialect facades (DOS defaults; other platforms override later) ---
+	// --- Layout / dialect facades ---
 
 	/** Game-loop timer quantum in milliseconds. */
-	uint32 timerTickMs() const { return 46; }
+	uint32 timerTickMs() const { return isV2() ? 55 : 46; }
 	/** Normal-speed: game frames per that many timer ticks. */
-	uint16 ticksPerGameFrame() const { return 2; }
+	uint16 ticksPerGameFrame() const { return isV2() ? 1 : 2; }
 
 	/** ReadyObject anim slots (1-based inclusive max). */
-	uint16 maxAnimSlots() const { return 0x15; }
+	uint16 maxAnimSlots() const { return isV2() ? 0x26 : 0x15; }
 	/** Orientations that map to anim slots 1..N (inclusive). */
-	uint16 maxOrientations() const { return 0x14; }
-	/** Overload / special-anim slot index (DOS ReadyObject slot 0x15). */
-	uint16 overloadAnimSlot() const { return 0x15; }
+	uint16 maxOrientations() const { return isV2() ? 0x25 : 0x14; }
+	/** Overload / special-anim slot index. */
+	uint16 overloadAnimSlot() const { return maxAnimSlots(); }
 	/** Scene hotspot override table entries (1-based inclusive max). */
 	uint16 maxHotspots() const { return 0x10; }
 	/** Per-object resource offset table entries. */
 	uint maxObjectResources() const { return 32; }
-	/** Anim slot used for the current orientation (DOS overload-direction rule). */
+	/** Anim slot used for the current orientation (overload-direction rule). */
 	uint16 resolveAnimSlotIndex(const GameObject *obj) const;
 
 	/** Script stream: literals carry an extra high word after the value word. */
-	bool scriptValuesHaveHighWord() const { return false; }
+	bool scriptValuesHaveHighWord() const { return isV2(); }
 	/** Script stream: variable index is followed by a padding word. */
-	bool scriptVarIndexHasPaddingWord() const { return false; }
-	/** Script coordinates -> screen/runtime coordinates (identity on DOS). */
-	int16 scaleScriptCoord(int16 coord) const { return coord; }
+	bool scriptVarIndexHasPaddingWord() const { return isV2(); }
+	/** Script coordinates -> screen/runtime coordinates (x2 on v2). */
+	int16 scaleScriptCoord(int16 coord) const { return isV2() ? (int16)(coord * 2) : coord; }
 
 	/** Dialogue / text-box chrome (DOS l0037_B368 / B462). */
 	int dialogPadW() const { return isAmiga() ? 0x08 : 0x12; }
@@ -791,10 +810,12 @@ public:
 		return (int)maxGlyphHeight + dialogLineGap();
 	}
 
-	/** Depth-map compare Y for sprite occlusion (full Y on DOS). */
-	uint8 depthThresholdForY(int16 charY) const { return (uint8)charY; }
+	/** Depth-map compare Y for sprite occlusion (halved on v2 full-res depth). */
+	uint8 depthThresholdForY(int16 charY) const {
+		return isV2() ? (uint8)((uint16)charY >> 1) : (uint8)charY;
+	}
 
-	/** Resource bootstrap (DOS MCS or Amiga DataA/Mdir). */
+	/** Resource bootstrap (MCS or Amiga DataA/Mdir). */
 	void loadBootstrapResources();
 	/**
 	 * Load scene background, maps, pathfinding, and related scene tables.
