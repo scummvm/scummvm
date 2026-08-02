@@ -158,7 +158,7 @@ public:
 
 	void toggleC64Sound();
 
-	Common::Array<byte> _musicData; // HDSMUSIC.AM TEXT segment (Amiga)
+	Common::Array<byte> _musicData; // DSMUSIC.AM (Amiga) or DSMUSIC2.ST (Atari ST)
 
 	void drawString(const DarkFontSize size, const Common::String &str, int x, int y, uint32 primaryColor, uint32 secondaryColor, uint32 backColor, Graphics::Surface *surface);
 	void drawInfoMenu() override;

@@ -42,7 +42,6 @@ MODULE_OBJS := \
 	games/driller/zx.o \
 	games/eclipse/amiga.o \
 	games/eclipse/atari.o \
-	games/eclipse/atari.music.o \
 	games/eclipse/c64.o \
 	games/eclipse/c64.music.o \
 	games/eclipse/ay.music.o \
@@ -75,6 +74,7 @@ MODULE_OBJS := \
 	ui.o \
 	unpack.o \
 	wb.o \
+	wb_atari.o \
 	zx_tape.o
 
 ifdef USE_TINYGL

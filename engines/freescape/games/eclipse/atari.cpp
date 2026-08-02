@@ -25,14 +25,11 @@
 
 #include "freescape/freescape.h"
 #include "freescape/games/eclipse/eclipse.h"
+#include "freescape/wb.h"
 #include "freescape/language/8bitDetokeniser.h"
 
 namespace Freescape {
 
-
-// Forward declaration (defined in atari.music.cpp)
-MusicPlayer *makeEclipseAtariMusicPlayer(const byte *data, uint32 dataSize,
-                                                  int songNum = 1);
 
 extern const int kAtariCompassPhaseCount = 72;
 extern const int kAtariCompassBaseFrames = 19;
@@ -855,7 +852,8 @@ void EclipseEngine::loadAssetsAtariFullGame() {
 	stream->seek(kTEMusicOffset + kGemdosHeaderSize);
 	_musicData.resize(kTEMusicTextSize);
 	stream->read(_musicData.data(), kTEMusicTextSize);
-	_playerMusic = makeEclipseAtariMusicPlayer(_musicData.data(), _musicData.size());
+	_playerMusic = makeWallyBebenAtariPlayer(_musicData.data(), _musicData.size(),
+		kEclipseAtariOffsets);
 	debug(3, "TE-Atari: Loaded TEMUSIC.ST TEXT segment (%d bytes)", kTEMusicTextSize);
 
 	// UI font (Font A): 4-plane 16-color bordered font at prog $24C3E (file offset $24C5A)

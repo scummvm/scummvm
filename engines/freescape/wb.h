@@ -25,24 +25,19 @@
 #include "audio/audiostream.h"
 #include "common/types.h"
 
+#include "freescape/music.h"
+
 namespace Freescape {
 
 namespace WBCommon {
 
-/**
- * Decode order-list transpose command ($C1-$FE).
- * Formula used by Wally Beben engines: (cmd + $20) & $FF.
- */
+/** Decode order-list transpose command ($C1-$FE): (cmd + $20) & $FF. */
 int8 decodeOrderTranspose(byte cmd);
 
-/**
- * Decode speed command ($F0-$FD): low nibble, with 0 coerced to 1.
- */
+/** Decode speed command ($F0-$FD): low nibble. Zero is legal, see wb.cpp. */
 byte decodeTickSpeed(byte cmd);
 
-/**
- * Decode duration command ($80-$BF): low 6 bits, with 0 coerced to 1.
- */
+/** Decode duration command ($80-$BF): low 6 bits. Zero is legal. */
 byte decodeDuration(byte cmd);
 
 /**
@@ -89,6 +84,41 @@ Audio::AudioStream *makeWallyBebenStream(const byte *data, uint32 dataSize,
                                          int songNum = 1, int rate = 44100,
                                          bool stereo = true,
                                          const WBTableOffsets *offsets = nullptr);
+
+/** Table offsets and per-release constants for the Atari ST flavour, which
+ *  drives the YM2149 over three channels instead of Paula. */
+struct WBAtariTableOffsets {
+	uint32 periodTable;       // 96 x uint16 BE
+	uint32 arpeggioIntervals; // 8 bytes
+	uint32 instrumentTable;   // numInstruments x 8 bytes
+	uint32 songTable;         // 2 songs x 3 channels x uint32 BE
+	uint32 patternPtrTable;   // up to 32 x uint32 BE
+	int numInstruments;
+
+	byte noiseSeed;           // noise period loaded by instrument flag bit 0
+	bool noiseFollowsInstrument; // flag bit 1 takes the noise period from byte 5
+	byte noiseDrift;          // subtracted while the noise counter runs
+
+	// Frequency sweep, instrument flag bit 2
+	int16 sweepStep;
+	uint16 sweepMask;         // period wrap, 0 for none
+	int8 sweepNoiseDelta;
+};
+
+extern const WBAtariTableOffsets kEclipseAtariOffsets;
+extern const WBAtariTableOffsets kDarkSideAtariOffsets;
+
+/**
+ * Create a player for the Atari ST music engine used by Total Eclipse
+ * (TEMUSIC.ST) and Dark Side (DSMUSIC2.ST).
+ *
+ * @param data     Raw TEXT segment data, after the 0x1C GEMDOS header
+ * @param offsets  Table offsets for this release
+ * @param songNum  Song number to play (1 or 2)
+ */
+MusicPlayer *makeWallyBebenAtariPlayer(const byte *data, uint32 dataSize,
+                                       const WBAtariTableOffsets &offsets,
+                                       int songNum = 1);
 
 } // End of namespace Freescape
 

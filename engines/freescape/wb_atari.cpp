@@ -20,19 +20,12 @@
  */
 
 /**
- * Total Eclipse Atari ST music player (YM2149 PSG).
+ * Atari ST player for the Wally Beben music engine (YM2149 PSG).
  *
- * Plays background music from the TEMUSIC.ST embedded GEMDOS executable.
- * Uses the same Wally Beben byte-stream pattern format as the Amiga
- * Dark Side engine (wb.cpp), but outputs to the YM2149/AY-3-8912 PSG
- * instead of Amiga Paula.
- *
- * TEMUSIC.ST data table offsets (TEXT-relative):
- *   $0B24  Period table (96 x uint16 BE)
- *   $0CC8  Arpeggio interval lookup (8 bytes)
- *   $0D60  Instrument table (12 x 8 bytes)
- *   $0DC0  Song table (2 songs x 3 channels x uint32 BE order-list pointers)
- *   $0DCC  Pattern pointer table (up to 31 x uint32 BE)
+ * Drives TEMUSIC.ST (Total Eclipse) and DSMUSIC2.ST (Dark Side), which are the
+ * same engine at the same code addresses with their data tables at different
+ * offsets. It shares the byte-stream pattern format with the Amiga flavour in
+ * wb.cpp, but writes YM2149 registers instead of feeding Paula.
  */
 
 #include "audio/ym2149.h"
@@ -47,22 +40,45 @@
 
 namespace Freescape {
 
-// TEXT-relative offsets for data tables within TEMUSIC.ST
-const uint32 kTEPeriodTableOffset      = 0x0B24; // 96 x uint16 BE
-const uint32 kTEArpeggioIntervalsOffset = 0x0CC8; // 8 bytes
-const uint32 kTEInstrumentTableOffset   = 0x0D60; // 12 x 8 bytes
-const uint32 kTESongTableOffset         = 0x0DC0; // 2 songs x 3 ch x uint32 BE
-const uint32 kTEPatternPtrTableOffset   = 0x0DCC; // up to 31 x uint32 BE
+const WBAtariTableOffsets kEclipseAtariOffsets = {
+	0x0B24, // periodTable
+	0x0CC8, // arpeggioIntervals
+	0x0D60, // instrumentTable
+	0x0DC0, // songTable
+	0x0DCC, // patternPtrTable
+	12,     // numInstruments
+	0x20,   // noiseSeed, asm ref TEMUSIC.ST $09CC
+	true,   // noiseFollowsInstrument, asm ref TEMUSIC.ST $0A02
+	0,      // noiseDrift: the value lives in a corrupt word of the only dump
+	0x64, 0x0FFF, 1 // sweep, asm ref TEMUSIC.ST $042A
+};
+
+const WBAtariTableOffsets kDarkSideAtariOffsets = {
+	0x0AFA, // periodTable
+	0x0C9E, // arpeggioIntervals
+	0x0CA6, // instrumentTable
+	0x0D46, // songTable
+	0x0D52, // patternPtrTable
+	20,     // numInstruments
+	0x3C,   // noiseSeed, asm ref DSMUSIC2.ST $09B4
+	false,  // noiseFollowsInstrument, asm ref DSMUSIC2.ST $09D8
+	6,      // noiseDrift, asm ref DSMUSIC2.ST $0462
+	0x96, 0, -8 // sweep, asm ref DSMUSIC2.ST $042A
+};
 
 const int kTENumChannels    = 3;
 const int kTENumPeriods     = 96;
-const int kTENumInstruments = 12;
-const int kTEMaxPatterns    = 31;
+const int kTEMaxInstruments = 32; // the instrument command carries a 5-bit index
+// Total Eclipse has 31 pattern pointers and Dark Side 32; both tables end where
+// the first order list begins, and loadTables() drops entries that do not point
+// into the module.
+const int kTEMaxPatterns    = 32;
 
-class EclipseAtariMusicPlayer : public MusicPlayer {
+class WallyBebenAtariPlayer : public MusicPlayer {
 public:
-	EclipseAtariMusicPlayer(const byte *data, uint32 dataSize, int songNum);
-	~EclipseAtariMusicPlayer();
+	WallyBebenAtariPlayer(const byte *data, uint32 dataSize,
+	                      const WBAtariTableOffsets &offsets, int songNum);
+	~WallyBebenAtariPlayer();
 
 	void startMusic() override;
 	void stopMusic() override;
@@ -74,20 +90,21 @@ private:
 	// --- Data tables ---
 	const byte *_data;
 	uint32 _dataSize;
+	WBAtariTableOffsets _offsets;
 
 	uint16 _periods[kTENumPeriods];
 
 	struct InstrumentDesc {
-		byte volume;       // Initial volume (0-$3F)
-		byte targetVol;    // Sustain/target volume
-		byte attackRate;   // Volume increment per tick
-		byte releaseRate;  // Volume decrement per tick
-		byte envFlags;     // Bit 7: hardware envelope
-		byte effectType;   // Effect configuration
-		byte arpeggioData; // Arpeggio bit pattern
-		byte flags;        // Additional flags
+		byte volume;
+		byte targetVol;
+		byte attackRate;
+		byte releaseRate;
+		byte envFlags;     // Bit 7 selects the oscillating volume mode
+		byte effectType;
+		byte arpeggioData;
+		byte flags;
 	};
-	InstrumentDesc _instruments[kTENumInstruments];
+	InstrumentDesc _instruments[kTEMaxInstruments];
 
 	// Song order list pointers (TEXT-relative)
 	uint32 _songOrderPtrs[2][kTENumChannels];
@@ -112,7 +129,6 @@ private:
 
 		// Note state
 		byte note;
-		byte prevNote;
 		byte duration;
 		int durationCounter;
 
@@ -120,21 +136,20 @@ private:
 		byte instrumentIdx;
 
 		// Volume envelope
-		byte volume;       // Current volume (0-63 internal scale)
-		byte attackLevel;  // Initial volume on note-on
-		byte decayTarget;  // Target volume to hold
-		byte attackRate;   // Increment per tick
-		byte releaseRate;  // Decrement per tick
-		byte envelopeFlags; // Instrument byte 4
-		byte envelopeToggle; // Bit7 envelope direction toggle
-		bool envelopeDone; // Mirrors original per-note envelope completion flag
+		byte volume;       // 0-63 internal, written to the YM as >>2
+		byte attackLevel;
+		byte decayTarget;
+		byte attackRate;
+		byte releaseRate;
+		byte envelopeFlags;
+		byte envelopeToggle;
+		bool envelopeDone;
 
 		// Effects
 		byte effectMode;   // 0=none, 1=pattern FX ($7D), 2=instrument FX ($7C)
 		bool portaUp;
 		bool portaDown;
-		int16 portaStep;
-		int16 portaTarget;
+		bool skipEffects;   // porta steps bypass the rest of the effects
 		byte arpeggioMask;
 		byte arpeggioPos;
 		byte arpeggioTable[16];
@@ -146,26 +161,20 @@ private:
 		byte delay;
 		byte delayCounter;
 
-		// Vibrato
-		byte vibratoSpeed;  // Phase increment per tick
-		byte vibratoDepth;  // Amplitude in period units
-		int8 vibratoPos;    // Current phase position (oscillates)
-		int8 vibratoDir;    // +1 or -1
-
 		// Noise
-		bool noiseEnabled;  // Instrument flags bit 0/1: noise mode
-		bool toneEnabled;   // If false, channel uses noise-only mode
-		bool skipTranspose; // Noise-only mode bypasses order-list transpose
-		bool freqSweep;     // Instrument flags bit 2: frequency sweep
-		byte noisePeriod;   // YM noise period source from instrument byte 5
-		byte noiseCounter;  // Instrument flags high nibble countdown ($54)
+		bool noiseEnabled;
+		bool toneEnabled;
+		bool skipTranspose; // Noise-only mode bypasses the order-list transpose
+		bool freqSweep;
+		byte noisePeriod;
+		byte noiseCounter;  // Countdown from the instrument flags high nibble
 
-		// Instrument byte-5 period modulation ($04A2..$05C8 path)
-		byte modParam;      // Raw instrument byte 5
-		byte modSpan;       // High nibble
-		byte modPos;        // Running position (mirrors +$30)
-		int8 modDir;        // -1/1 (mirrors sign of +$2D)
-		int16 modStep;      // Derived note-step delta (mirrors $C9A)
+		// Instrument byte-5 period modulation. Asm ref: $048A
+		byte modParam;
+		byte modSpan;
+		byte modPos;
+		int8 modDir;
+		int16 modStep;
 
 		// Period
 		int16 basePeriod;
@@ -187,6 +196,7 @@ private:
 	void initChannel(int ch);
 	void readOrderList(int ch);
 	void readPatternCommands(int ch);
+	void loadInstrument(int ch);
 	void triggerNote(int ch);
 	void processEffects(int ch);
 	void processEnvelope(int ch);
@@ -224,9 +234,10 @@ private:
 // Construction / data loading
 // ---------------------------------------------------------------------------
 
-EclipseAtariMusicPlayer::EclipseAtariMusicPlayer(const byte *data, uint32 dataSize,
-                                                   int songNum)
-	: _data(data), _dataSize(dataSize),
+WallyBebenAtariPlayer::WallyBebenAtariPlayer(const byte *data, uint32 dataSize,
+                                             const WBAtariTableOffsets &offsets,
+                                             int songNum)
+	: _data(data), _dataSize(dataSize), _offsets(offsets),
 	  _musicActive(false), _tickSpeed(6), _tickCounter(0),
 	  _numPatterns(0), _songNum(songNum) {
 
@@ -239,7 +250,7 @@ EclipseAtariMusicPlayer::EclipseAtariMusicPlayer(const byte *data, uint32 dataSi
 
 	_ym2149 = YM2149::Config::create();
 	if (!_ym2149 || !_ym2149->init()) {
-		warning("EclipseAtariMusicPlayer: Failed to create YM2149 emulator");
+		warning("WallyBebenAtariPlayer: Failed to create YM2149 emulator");
 		delete _ym2149;
 		_ym2149 = nullptr;
 	}
@@ -247,7 +258,7 @@ EclipseAtariMusicPlayer::EclipseAtariMusicPlayer(const byte *data, uint32 dataSi
 	loadTables();
 }
 
-EclipseAtariMusicPlayer::~EclipseAtariMusicPlayer() {
+WallyBebenAtariPlayer::~WallyBebenAtariPlayer() {
 	stopMusic();
 	delete _ym2149;
 }
@@ -257,47 +268,37 @@ EclipseAtariMusicPlayer::~EclipseAtariMusicPlayer() {
 // Public interface
 // ============================================================================
 
-void EclipseAtariMusicPlayer::startMusic() {
+void WallyBebenAtariPlayer::startMusic() {
 	if (!_ym2149)
 		return;
 	stopMusic();
-	_ym2149->start(new Common::Functor0Mem<void, EclipseAtariMusicPlayer>(
-		this, &EclipseAtariMusicPlayer::tickUpdate), 50);
+	_ym2149->start(new Common::Functor0Mem<void, WallyBebenAtariPlayer>(
+		this, &WallyBebenAtariPlayer::tickUpdate), 50);
 	startSong(_songNum);
 }
 
-void EclipseAtariMusicPlayer::stopMusic() {
+void WallyBebenAtariPlayer::stopMusic() {
 	_musicActive = false;
 	if (_ym2149) {
 		_ym2149->stop();
 	}
 }
 
-bool EclipseAtariMusicPlayer::isPlaying() const {
+bool WallyBebenAtariPlayer::isPlaying() const {
 	return _musicActive;
 }
 
-void EclipseAtariMusicPlayer::loadTables() {
-	// Period table: 96 x uint16 BE at TEXT+$0B24
+void WallyBebenAtariPlayer::loadTables() {
 	for (int i = 0; i < kTENumPeriods; i++) {
-		_periods[i] = readDataWord(kTEPeriodTableOffset + i * 2);
+		_periods[i] = readDataWord(_offsets.periodTable + i * 2);
 	}
 
-	// Fix note 46: corrupted by data artifact ($3095 instead of $010D).
-	// Correct value interpolated from surrounding notes (45=$011D, 47=$00FE).
-	if (_periods[46] == 0x3095) {
-		_periods[46] = 0x010D;
-		debug(3, "TE-Atari: Fixed corrupted period for note 46 ($3095 -> $010D)");
-	}
-
-	// Arpeggio interval table: 8 bytes at TEXT+$0CC8
 	for (int i = 0; i < 8; i++) {
-		_arpeggioIntervals[i] = readDataByte(kTEArpeggioIntervalsOffset + i);
+		_arpeggioIntervals[i] = readDataByte(_offsets.arpeggioIntervals + i);
 	}
 
-	// Instrument table: 12 x 8 bytes at TEXT+$0D60
-	for (int i = 0; i < kTENumInstruments; i++) {
-		uint32 off = kTEInstrumentTableOffset + i * 8;
+	for (int i = 0; i < _offsets.numInstruments && i < kTEMaxInstruments; i++) {
+		uint32 off = _offsets.instrumentTable + i * 8;
 		_instruments[i].volume      = readDataByte(off + 0);
 		_instruments[i].targetVol   = readDataByte(off + 1);
 		_instruments[i].attackRate  = readDataByte(off + 2);
@@ -311,31 +312,31 @@ void EclipseAtariMusicPlayer::loadTables() {
 	// Song table: 2 songs x 3 channels x uint32 BE at TEXT+$0DC0
 	for (int s = 0; s < 2; s++) {
 		for (int ch = 0; ch < kTENumChannels; ch++) {
-			_songOrderPtrs[s][ch] = readDataLong(kTESongTableOffset + s * 12 + ch * 4);
+			_songOrderPtrs[s][ch] = readDataLong(_offsets.songTable + s * 12 + ch * 4);
 		}
 	}
 
 	// Pattern pointer table at TEXT+$0DCC
 	_numPatterns = 0;
 	for (uint32 i = 0; i < kTEMaxPatterns; i++) {
-		uint32 ptr = readDataLong(kTEPatternPtrTableOffset + i * 4);
+		uint32 ptr = readDataLong(_offsets.patternPtrTable + i * 4);
 		_patternPtrs[i] = ptr;
 		if (ptr > 0 && ptr < _dataSize)
 			_numPatterns = i + 1;
 	}
 
-	debug(3, "TE-Atari: Loaded music data (%u bytes)", _dataSize);
-	debug(3, "TE-Atari: %d valid patterns", _numPatterns);
+	debug(3, "WB-Atari: Loaded music data (%u bytes)", _dataSize);
+	debug(3, "WB-Atari: %d valid patterns", _numPatterns);
 
 	for (int s = 0; s < 2; s++) {
-		debug(3, "TE-Atari: Song %d order ptrs: $%X $%X $%X",
+		debug(3, "WB-Atari: Song %d order ptrs: $%X $%X $%X",
 			s + 1, _songOrderPtrs[s][0], _songOrderPtrs[s][1], _songOrderPtrs[s][2]);
 	}
 
-	for (int i = 0; i < kTENumInstruments; i++) {
+	for (int i = 0; i < _offsets.numInstruments; i++) {
 		const InstrumentDesc &inst = _instruments[i];
 		if (inst.volume > 0 || inst.targetVol > 0)
-			debug(3, "TE-Atari: Inst %d: vol=%d target=%d atk=%d rel=%d envFlags=$%02X effect=$%02X arp=$%02X flags=$%02X",
+			debug(3, "WB-Atari: Inst %d: vol=%d target=%d atk=%d rel=%d envFlags=$%02X effect=$%02X arp=$%02X flags=$%02X",
 				i, inst.volume, inst.targetVol, inst.attackRate, inst.releaseRate,
 				inst.envFlags, inst.effectType, inst.arpeggioData, inst.flags);
 	}
@@ -345,7 +346,7 @@ void EclipseAtariMusicPlayer::loadTables() {
 // Song init
 // ---------------------------------------------------------------------------
 
-void EclipseAtariMusicPlayer::startSong(int songNum) {
+void WallyBebenAtariPlayer::startSong(int songNum) {
 	_musicActive = false;
 
 	if (songNum < 1 || songNum > 2)
@@ -370,30 +371,27 @@ void EclipseAtariMusicPlayer::startSong(int songNum) {
 
 	_musicActive = true;
 
-	debug(3, "TE-Atari: Song %d started, tickSpeed=%d", songNum, _tickSpeed);
+	debug(3, "WB-Atari: Song %d started, tickSpeed=%d", songNum, _tickSpeed);
 	for (int ch = 0; ch < kTENumChannels; ch++) {
-		debug(3, "TE-Atari: ch%d orderList=$%X pattern=$%X",
+		debug(3, "WB-Atari: ch%d orderList=$%X pattern=$%X",
 			ch, _channels[ch].orderListOffset, _channels[ch].patternOffset);
 	}
 }
 
-void EclipseAtariMusicPlayer::initChannel(int ch) {
+void WallyBebenAtariPlayer::initChannel(int ch) {
 	ChannelState &c = _channels[ch];
 	memset(&c, 0, sizeof(ChannelState));
 	c.duration = 1;
 	c.durationCounter = 0;
-	c.attackLevel = 0x36; // Default from instrument 1
-	c.decayTarget = 0x36;
 	c.toneEnabled = true;
 	c.envelopeDone = true;
 }
 
 // ---------------------------------------------------------------------------
-// Order list reader
-// Same format as wb.cpp: $00-$C0=pattern#, $C1-$FE=transpose, $FF=loop
+// Order list reader: $00-$C0 pattern, $C1-$FE transpose, $FF loop
 // ---------------------------------------------------------------------------
 
-void EclipseAtariMusicPlayer::readOrderList(int ch) {
+void WallyBebenAtariPlayer::readOrderList(int ch) {
 	ChannelState &c = _channels[ch];
 
 	for (int safety = 0; safety < 256; safety++) {
@@ -416,16 +414,16 @@ void EclipseAtariMusicPlayer::readOrderList(int ch) {
 		if (cmd < _numPatterns && _patternPtrs[cmd] > 0 && _patternPtrs[cmd] < _dataSize) {
 			c.patternOffset = _patternPtrs[cmd];
 			c.patternPos = 0;
-			debugC(3, kFreescapeDebugParser, "TE-Atari: ch%d order -> pattern %d (offset $%04X)", ch, cmd, c.patternOffset);
+			debugC(3, kFreescapeDebugMedia, "WB-Atari: ch%d order -> pattern %d (offset $%04X)", ch, cmd, c.patternOffset);
 		} else {
 			// Invalid pattern index — skip it and try next order entry
-			debugC(3, kFreescapeDebugParser, "TE-Atari: ch%d skipping invalid pattern index %d", ch, cmd);
+			debugC(3, kFreescapeDebugMedia, "WB-Atari: ch%d skipping invalid pattern index %d", ch, cmd);
 			continue;
 		}
 		return;
 	}
 
-	warning("TE-Atari: ch%d order list safety limit hit", ch);
+	warning("WB-Atari: ch%d order list safety limit hit", ch);
 }
 
 // ---------------------------------------------------------------------------
@@ -435,7 +433,7 @@ void EclipseAtariMusicPlayer::readOrderList(int ch) {
 //   $7D/$7C=vibrato/arpeggio, $00-$5F=note
 // ---------------------------------------------------------------------------
 
-void EclipseAtariMusicPlayer::readPatternCommands(int ch) {
+void WallyBebenAtariPlayer::readPatternCommands(int ch) {
 	ChannelState &c = _channels[ch];
 
 	for (int safety = 0; safety < 256; safety++) {
@@ -456,7 +454,7 @@ void EclipseAtariMusicPlayer::readPatternCommands(int ch) {
 		}
 
 		if (cmd == 0xFC) {
-			// Song jump command: mirror TEMUSIC mailbox semantics.
+			// Song jump, via the mailbox.
 			byte command = readDataByte(c.patternOffset + c.patternPos);
 			c.patternPos++;
 			if (command == 0) {
@@ -476,56 +474,11 @@ void EclipseAtariMusicPlayer::readPatternCommands(int ch) {
 		}
 
 		if (cmd >= 0xC0) {
-			// Instrument select: (cmd & $1F) = instrument index
+			// Asm ref: $027C only records the table offset. The parameters are
+			// copied into the channel at note-on, by loadInstrument().
 			byte instIdx = cmd & 0x1F;
-			if (instIdx < kTENumInstruments) {
+			if (instIdx < _offsets.numInstruments)
 				c.instrumentIdx = instIdx;
-				const InstrumentDesc &inst = _instruments[instIdx];
-				c.attackLevel = inst.volume;
-				c.decayTarget = inst.targetVol;
-				c.attackRate = inst.attackRate;
-				c.releaseRate = inst.releaseRate;
-				c.envelopeFlags = inst.envFlags;
-
-				// Instrument byte 5 is used as a PSG/noise control parameter.
-				c.modParam = inst.effectType;
-				c.modSpan = (inst.effectType >> 4) & 0x0F;
-				c.modPos = 0;
-				c.modDir = 1;
-				c.noisePeriod = inst.effectType & 0x3F;
-				c.toneEnabled = true;
-				c.noiseEnabled = false;
-				c.skipTranspose = false;
-				c.freqSweep = false;
-				c.noiseCounter = inst.flags >> 4;
-
-				// Instrument byte 6 preloads the channel interval table and forces mode $7C.
-				if (inst.arpeggioData != 0) {
-					c.effectMode = 2;
-					c.arpeggioMask = inst.arpeggioData;
-					c.arpeggioPos = 0;
-					buildArpeggioTable(c, inst.arpeggioData);
-				}
-
-				// Instrument byte 7 flags:
-				// bit0/1 noise modes, bit2 frequency sweep, bit3 retrigger.
-				if (inst.flags & 0x01) {
-					// Bit 0: tone + noise with fixed noise seed period.
-					c.noiseEnabled = true;
-					c.noisePeriod = 0x20;
-				} else if (inst.flags & 0x02) {
-					// Bit 1: note-relative noise-only mode.
-					c.noiseEnabled = true;
-					c.toneEnabled = false;
-					c.skipTranspose = true;
-					if (c.noisePeriod == 0)
-						c.noisePeriod = 1;
-				} else if (inst.flags & 0x04) {
-					// Bit 2: tone + noise mode with frequency sweep.
-					c.noiseEnabled = true;
-					c.freqSweep = true;
-				}
-			}
 			continue;
 		}
 
@@ -538,10 +491,8 @@ void EclipseAtariMusicPlayer::readPatternCommands(int ch) {
 			c.portaUp = true;
 			c.portaDown = false;
 			c.effectMode = 1;
-			// Original parser consumes the next byte and uses it as the immediate note.
 			if (c.patternOffset + c.patternPos >= _dataSize)
 				return;
-			c.prevNote = c.note;
 			c.note = readDataByte(c.patternOffset + c.patternPos);
 			c.patternPos++;
 			c.durationCounter = c.duration;
@@ -553,10 +504,8 @@ void EclipseAtariMusicPlayer::readPatternCommands(int ch) {
 			c.portaDown = true;
 			c.portaUp = false;
 			c.effectMode = 1;
-			// Original parser consumes the next byte and uses it as the immediate note.
 			if (c.patternOffset + c.patternPos >= _dataSize)
 				return;
-			c.prevNote = c.note;
 			c.note = readDataByte(c.patternOffset + c.patternPos);
 			c.patternPos++;
 			c.durationCounter = c.duration;
@@ -576,10 +525,8 @@ void EclipseAtariMusicPlayer::readPatternCommands(int ch) {
 		}
 
 		if (cmd == 0x7C) {
-			// Pattern effect 2: identical to $7D except that the mode is 2,
-			// which survives the step boundary. Asm ref: TEXT+$031A, which
-			// loads mode 2 and jumps into the middle of the $7D handler, so
-			// the parameter byte is consumed here as well.
+			// Asm ref: $031A loads mode 2 and jumps into the $7D handler, so
+			// this consumes a parameter too. Mode 2 survives a step boundary.
 			byte param = readDataByte(c.patternOffset + c.patternPos);
 			c.patternPos++;
 			c.effectMode = 2;
@@ -590,8 +537,8 @@ void EclipseAtariMusicPlayer::readPatternCommands(int ch) {
 		}
 
 		if (cmd == 0x7B) {
-			// TEMUSIC delayed slide command:
-			//   byte1 = base note (+transpose), byte2 low nibble = delay window.
+			// Slide: byte 1 is the base note, byte 2 packs the start offset
+			// and window length. Asm ref: $061A
 			c.arpeggioTableLen = 0;
 			c.arpeggioPos = 0;
 			c.effectMode = 1;
@@ -626,22 +573,75 @@ void EclipseAtariMusicPlayer::readPatternCommands(int ch) {
 		}
 
 		// Note value ($00-$5F)
-		c.prevNote = c.note;
 		c.note = cmd;
 		c.durationCounter = c.duration;
 		triggerNote(ch);
 		return;
 	}
 
-	warning("TE-Atari: ch%d pattern read safety limit hit", ch);
+	warning("WB-Atari: ch%d pattern read safety limit hit", ch);
 }
 
 // ---------------------------------------------------------------------------
-// Note trigger — set YM period, reset envelope
+// Note trigger
 // ---------------------------------------------------------------------------
 
-void EclipseAtariMusicPlayer::triggerNote(int ch) {
+// Asm ref: $0938, which note-on calls before it decides whether to transpose.
+void WallyBebenAtariPlayer::loadInstrument(int ch) {
 	ChannelState &c = _channels[ch];
+	const InstrumentDesc &inst = _instruments[c.instrumentIdx];
+
+	c.volume = inst.volume;
+	c.attackLevel = inst.volume;
+	c.decayTarget = inst.targetVol;
+	c.attackRate = inst.attackRate;
+	c.releaseRate = inst.releaseRate;
+	c.envelopeFlags = inst.envFlags;
+
+	c.modParam = inst.effectType;
+	c.modSpan = (inst.effectType >> 4) & 0x0F;
+	c.noisePeriod = inst.effectType & 0x3F;
+	c.toneEnabled = true;
+	c.noiseEnabled = false;
+	c.skipTranspose = false;
+	c.freqSweep = false;
+	c.noiseCounter = inst.flags >> 4;
+
+	// Byte 6 preloads the interval table. Its mode is $7C, not 2, so unlike a
+	// pattern $7C it dies at the step boundary and is reapplied by each note.
+	if (inst.arpeggioData != 0) {
+		c.effectMode = 0x7C;
+		c.arpeggioMask = inst.arpeggioData;
+		buildArpeggioTable(c, inst.arpeggioData);
+	}
+
+	debugC(2, kFreescapeDebugMedia,
+		"WB-Atari: ch%d inst %-2d vol=%d target=%d atk=%d rel=%d env=$%02X mod=$%02X arp=$%02X flags=$%02X",
+		ch, c.instrumentIdx, inst.volume, inst.targetVol, inst.attackRate,
+		inst.releaseRate, inst.envFlags, inst.effectType, inst.arpeggioData, inst.flags);
+
+	// Byte 7: bit0/1 noise modes, bit2 frequency sweep, bit3 retrigger.
+	if (inst.flags & 0x01) {
+		c.noiseEnabled = true;
+		c.noisePeriod = _offsets.noiseSeed;
+	} else if (inst.flags & 0x02) {
+		c.noiseEnabled = true;
+		c.toneEnabled = false;
+		c.skipTranspose = true;
+		if (!_offsets.noiseFollowsInstrument)
+			c.noisePeriod = _offsets.noiseSeed;
+		if (c.noisePeriod == 0)
+			c.noisePeriod = 1;
+	} else if (inst.flags & 0x04) {
+		c.noiseEnabled = true;
+		c.freqSweep = true;
+	}
+}
+
+void WallyBebenAtariPlayer::triggerNote(int ch) {
+	ChannelState &c = _channels[ch];
+
+	loadInstrument(ch);
 
 	// Apply transpose and clamp
 	int note = c.note;
@@ -659,38 +659,18 @@ void EclipseAtariMusicPlayer::triggerNote(int ch) {
 	c.outputPeriod = c.basePeriod;
 
 	if (!isRest && c.basePeriod == 0) {
-		warning("TE-Atari: ch%d note %d has period 0", ch, note);
+		warning("WB-Atari: ch%d note %d has period 0", ch, note);
 		return;
 	}
 
 	// Reset envelope
 	c.envelopeToggle = 0;
 	c.envelopeDone = false;
-	c.volume = c.attackLevel;
 	c.delayCounter = c.delay;
 	c.arpeggioPos = 0;
+	c.modPos = 0;
+	c.modDir = 1;
 	c.modStep = 0;
-	const InstrumentDesc &inst = _instruments[c.instrumentIdx];
-	c.noiseCounter = inst.flags >> 4;
-
-	// Reapply byte-7 mixer mode on every note trigger.
-	c.toneEnabled = true;
-	c.noiseEnabled = false;
-	c.skipTranspose = false;
-	c.freqSweep = false;
-	if (inst.flags & 0x01) {
-		c.noiseEnabled = true;
-		c.noisePeriod = 0x20;
-	} else if (inst.flags & 0x02) {
-		c.noiseEnabled = true;
-		c.toneEnabled = false;
-		c.skipTranspose = true;
-		if (c.noisePeriod == 0)
-			c.noisePeriod = 1;
-	} else if (inst.flags & 0x04) {
-		c.noiseEnabled = true;
-		c.freqSweep = true;
-	}
 
 	if (!isRest && c.modParam != 0 && note + 1 < kTENumPeriods) {
 		int16 periodDelta = ABS((int16)getPeriod(note) - (int16)getPeriod(note + 1));
@@ -702,74 +682,50 @@ void EclipseAtariMusicPlayer::triggerNote(int ch) {
 		c.modStep = periodDelta;
 	}
 
-	debugC(3, kFreescapeDebugParser, "TE-Atari: ch%d NOTE note=%d(+%d) period=%d inst=%d vol=%d",
-		ch, c.note, c.transpose, c.basePeriod, c.instrumentIdx, c.volume);
+	debugC(1, kFreescapeDebugMedia,
+		"WB-Atari: ch%d %s %3d (%d%+d) %5dHz inst=%-2d dur=%d vol=%d%s%s%s",
+		ch, isRest ? "rest" : "NOTE", note, c.note, c.transpose,
+		c.basePeriod > 0 ? 125000 / c.basePeriod : 0,
+		c.instrumentIdx, c.duration, c.volume,
+		c.noiseEnabled ? (c.toneEnabled ? " [tone+noise]" : " [noise]") : "",
+		c.arpeggioTableLen > 0 ? " [arpeggio]" : "",
+		c.effect7BActive ? " [slide]" : "");
 
-	// Set up portamento if active
-	if (!isRest && (c.portaUp || c.portaDown)) {
-		int prevNote = c.prevNote;
-		if (!c.skipTranspose)
-			prevNote += c.transpose;
-		if (prevNote < 1) prevNote = 1;
-		if (prevNote >= kTENumPeriods) prevNote = kTENumPeriods - 1;
-
-		int16 prevPeriod = (c.prevNote > 0) ? getPeriod(prevNote) : c.basePeriod;
-		int16 delta = ABS(c.basePeriod - prevPeriod);
-		int steps = (_tickSpeed > 0) ? _tickSpeed : 1;
-		c.portaStep = delta / steps;
-		if (c.portaStep == 0)
-			c.portaStep = 1;
-		c.portaTarget = c.basePeriod;
-		c.basePeriod = prevPeriod;
-		c.outputPeriod = prevPeriod;
-	}
 }
 
 // ---------------------------------------------------------------------------
-// Effects processing — runs every tick (50 Hz)
+// Effects — run every tick
 // ---------------------------------------------------------------------------
 
-void EclipseAtariMusicPlayer::processEffects(int ch) {
+void WallyBebenAtariPlayer::processEffects(int ch) {
 	ChannelState &c = _channels[ch];
 
-	// Noise gate: in TEMUSIC, instrument high nibble is a countdown that
-	// can auto-disable channel noise after N ticks.
+	// The instrument flags high nibble counts down to a noise cut-off.
 	if (c.noiseEnabled) {
 		if (c.noiseCounter > 0) {
 			c.noiseCounter--;
+			// Asm ref: $0436 — the period walks down while the counter runs.
 			if (c.noiseCounter == 0)
 				c.noiseEnabled = false;
+			else if (_offsets.noiseDrift != 0)
+				c.noisePeriod = (byte)((c.noisePeriod - _offsets.noiseDrift) & 0x3F);
 		}
 	}
 
 	int16 period = c.basePeriod;
 
-	// Instrument flag bit2 enables the original per-tick sweep path (+$64, 12-bit wrap),
-	// and advances the shared noise period source.
+	// Flag bit 2 walks the period and drags the noise period with it.
 	if (c.freqSweep) {
-		c.basePeriod = (c.basePeriod + 0x64) & 0x0FFF;
+		c.basePeriod += _offsets.sweepStep;
+		if (_offsets.sweepMask != 0)
+			c.basePeriod &= _offsets.sweepMask;
 		if (c.basePeriod == 0)
 			c.basePeriod = 1;
-		c.noisePeriod = (c.noisePeriod + 1) & 0x1F;
+		c.noisePeriod = (byte)((c.noisePeriod + _offsets.sweepNoiseDelta) & 0x3F);
 		period = c.basePeriod;
 	}
 
-	// Portamento takes priority (active during porta regardless of effectMode)
-	if (c.portaUp) {
-		c.basePeriod -= c.portaStep;
-		if (c.basePeriod <= c.portaTarget) {
-			c.basePeriod = c.portaTarget;
-			c.portaUp = false;
-		}
-		period = c.basePeriod;
-	} else if (c.portaDown) {
-		c.basePeriod += c.portaStep;
-		if (c.basePeriod >= c.portaTarget) {
-			c.basePeriod = c.portaTarget;
-			c.portaDown = false;
-		}
-		period = c.basePeriod;
-	} else if (c.effectMode != 0 && c.arpeggioTableLen > 0) {
+	if (c.effectMode != 0 && c.arpeggioTableLen > 0) {
 		// Channel-local interval cycling (used by $7D/$7C paths).
 		int note = c.note;
 		if (!c.skipTranspose)
@@ -783,29 +739,31 @@ void EclipseAtariMusicPlayer::processEffects(int ch) {
 		if (c.arpeggioPos >= c.arpeggioTableLen)
 			c.arpeggioPos = 0;
 	} else if (c.effect7BActive) {
-		// $7B path: delayed slide from a base note period toward current note period.
-		byte window = c.effect7BParam & 0x0F;
-		if ((int)c.durationCounter + (int)window <= (int)c.duration) {
-			int16 target = c.basePeriod;
-			int steps = (_tickSpeed > 0) ? _tickSpeed : 1;
-			int16 delta = ABS(target - c.effect7BPeriod) / steps;
-			if (delta == 0)
-				delta = 1;
+		// Asm ref: $061A — hold for `start` steps, slide to the base note over
+		// `window` steps, then settle on it.
+		int start = c.effect7BParam >> 4;
+		int window = c.effect7BParam & 0x0F;
+		int elapsed = (int)c.durationCounter + start;
 
-			if (c.effect7BPeriod < target) {
-				c.effect7BPeriod += delta;
-				if (c.effect7BPeriod > target)
-					c.effect7BPeriod = target;
-			} else if (c.effect7BPeriod > target) {
-				c.effect7BPeriod -= delta;
+		if (elapsed <= (int)c.duration) {
+			int16 target = getPeriod(c.effect7BBaseNote);
+			if (elapsed + window <= (int)c.duration) {
+				c.effect7BPeriod = target;
+			} else if (window > 0) {
+				int divisor = window * ((int)_tickSpeed + 1);
+				int16 step = (int16)(ABS(target - c.basePeriod) / divisor);
+				if (step == 0)
+					step = 1;
 				if (c.effect7BPeriod < target)
-					c.effect7BPeriod = target;
+					c.effect7BPeriod = MIN<int16>(c.effect7BPeriod + step, target);
+				else
+					c.effect7BPeriod = MAX<int16>(c.effect7BPeriod - step, target);
 			}
 			period = c.effect7BPeriod;
 		}
 	}
 
-	// TEMUSIC enters byte-5 modulation only while mode is clear.
+	// Byte-5 modulation only runs while the mode is clear.
 	if (c.effectMode == 0 && c.modParam != 0 && c.modStep > 0 && c.modSpan > 0) {
 		// $7A delay applies to this modulation path, not to all effects.
 		if (c.delayCounter > 0) {
@@ -841,11 +799,10 @@ void EclipseAtariMusicPlayer::processEffects(int ch) {
 }
 
 // ---------------------------------------------------------------------------
-// Volume envelope — runs every tick (50 Hz)
-// Volume range: 0-63 internal, written to YM as >>2 (0-15)
+// Volume envelope — runs every tick
 // ---------------------------------------------------------------------------
 
-void EclipseAtariMusicPlayer::processEnvelope(int ch) {
+void WallyBebenAtariPlayer::processEnvelope(int ch) {
 	ChannelState &c = _channels[ch];
 	// Noise-only instruments may validly run with zero tone period.
 	if (c.outputPeriod == 0 && !c.noiseEnabled)
@@ -854,8 +811,8 @@ void EclipseAtariMusicPlayer::processEnvelope(int ch) {
 	byte env = c.envelopeFlags;
 
 	// Instrument env byte bit7: oscillating level between attackLevel and target.
-	// The YM hardware envelope is never used: the register write loop at
-	// TEXT+$0AD2 only ever pushes registers 0-10 to the chip.
+	// The YM hardware envelope is never used: the write loop at $0AD2 only
+	// ever pushes registers 0-10.
 	if (env & 0x80) {
 		byte step = env & 0x0F;
 		if (c.envelopeToggle == 0) {
@@ -879,7 +836,7 @@ void EclipseAtariMusicPlayer::processEnvelope(int ch) {
 		}
 	} else {
 		c.envelopeToggle = 0;
-		// Original routine skips non-bit7 envelope work only when duration counter is exactly zero.
+		// The original only skips this when the counter is exactly zero.
 		if (c.durationCounter == 0)
 			return;
 
@@ -922,11 +879,9 @@ void EclipseAtariMusicPlayer::processEnvelope(int ch) {
 // Arpeggio table builder
 // ---------------------------------------------------------------------------
 
-void EclipseAtariMusicPlayer::buildArpeggioTable(ChannelState &c, byte mask) {
-	// Asm ref: TEXT+$0846 — the selected intervals are written starting at
-	// slot 1 of the channel's region in the shared buffer at $CAA and are
-	// terminated by $FF; slot 0 is never written and holds 0. Playback starts
-	// at slot 1 and wraps back to slot 0, so the base note closes the cycle.
+void WallyBebenAtariPlayer::buildArpeggioTable(ChannelState &c, byte mask) {
+	// Asm ref: $0846 — intervals are written from slot 1 and playback wraps
+	// back to slot 0, so the base note closes the cycle.
 	byte len = WBCommon::buildArpeggioTable(_arpeggioIntervals, mask, c.arpeggioTable, 15, false);
 	if (len > 0)
 		c.arpeggioTable[len++] = 0;
@@ -939,10 +894,10 @@ void EclipseAtariMusicPlayer::buildArpeggioTable(ChannelState &c, byte mask) {
 // Write channel state to YM2149 registers
 // ---------------------------------------------------------------------------
 
-void EclipseAtariMusicPlayer::writeYMRegisters() {
+void WallyBebenAtariPlayer::writeYMRegisters() {
 	byte mixer = 0x3F; // Start with all disabled (bits 0-2=tone, bits 3-5=noise)
 
-	// TEMUSIC channel loop runs 2 -> 0; keep that order so global noise register ownership matches.
+	// The channel loop runs 2 -> 0, so the last writer owns the noise register.
 	for (int ch = kTENumChannels - 1; ch >= 0; ch--) {
 		ChannelState &c = _channels[ch];
 
@@ -989,13 +944,12 @@ void EclipseAtariMusicPlayer::writeYMRegisters() {
 // Main tick update — called at 50 Hz
 // ---------------------------------------------------------------------------
 
-void EclipseAtariMusicPlayer::tickUpdate() {
+void WallyBebenAtariPlayer::tickUpdate() {
 	if (!_musicActive)
 		return;
 
 	// Sequencer step occurs when the tick counter is zero, then it advances.
-	// Asm ref: TEXT+$015C tests the speed counter before touching the per
-	// channel duration counter.
+	// Asm ref: $015C tests the speed counter first.
 	bool sequencerTick = (_tickCounter == 0);
 
 	if (sequencerTick) {
@@ -1003,12 +957,12 @@ void EclipseAtariMusicPlayer::tickUpdate() {
 			if (!_channels[ch].active)
 				continue;
 
-			_channels[ch].durationCounter--;
+			ChannelState &c = _channels[ch];
+			c.durationCounter--;
 
-			if (_channels[ch].durationCounter < 0) {
+			if (c.durationCounter < 0) {
 				// Original step boundary reset: clear transient note/effect flags
 				// before parsing the next command stream, except mode 2 persistence.
-				ChannelState &c = _channels[ch];
 				if (c.effectMode != 2) {
 					c.effectMode = 0;
 					c.arpeggioMask = 0;
@@ -1022,6 +976,24 @@ void EclipseAtariMusicPlayer::tickUpdate() {
 				c.freqSweep = false;
 				c.envelopeDone = false;
 				readPatternCommands(ch);
+			} else if (c.portaUp || c.portaDown) {
+				// Asm ref: $0172 — a chromatic walk of one semitone per step
+				// for the whole note, skipping the other effects.
+				if (c.portaUp)
+					c.note--;
+				else
+					c.note++;
+
+				int n = c.note;
+				if (!c.skipTranspose)
+					n += c.transpose;
+				if (n < 1)
+					n = 1;
+				if (n >= kTENumPeriods)
+					n = kTENumPeriods - 1;
+				c.basePeriod = getPeriod(n);
+				c.outputPeriod = c.basePeriod;
+				c.skipEffects = true;
 			}
 		}
 	}
@@ -1031,12 +1003,14 @@ void EclipseAtariMusicPlayer::tickUpdate() {
 		if (!_channels[ch].active)
 			continue;
 
-		processEffects(ch);
+		if (_channels[ch].skipEffects)
+			_channels[ch].skipEffects = false;
+		else
+			processEffects(ch);
 		processEnvelope(ch);
 	}
 
-	// Asm ref: TEXT+$0808 — the speed counter is decremented every tick and
-	// only reloaded from the speed value ($C54) once it goes negative, so a
+	// Asm ref: $0808 — the counter only reloads once it goes negative, so a
 	// speed of N leaves N + 1 ticks between sequencer steps.
 	_tickCounter++;
 	if (_tickCounter > _tickSpeed)
@@ -1049,14 +1023,15 @@ void EclipseAtariMusicPlayer::tickUpdate() {
 // Factory function
 // ---------------------------------------------------------------------------
 
-MusicPlayer *makeEclipseAtariMusicPlayer(const byte *data, uint32 dataSize,
-                                                  int songNum) {
+MusicPlayer *makeWallyBebenAtariPlayer(const byte *data, uint32 dataSize,
+                                       const WBAtariTableOffsets &offsets,
+                                       int songNum) {
 	if (!data || dataSize < 0x1000) {
-		warning("TE-Atari music: invalid data (size %u)", dataSize);
+		warning("WB-Atari music: invalid data (size %u)", dataSize);
 		return nullptr;
 	}
 
-	return new EclipseAtariMusicPlayer(data, dataSize, songNum);
+	return new WallyBebenAtariPlayer(data, dataSize, offsets, songNum);
 }
 
 } // End of namespace Freescape

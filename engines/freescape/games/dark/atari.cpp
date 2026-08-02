@@ -25,6 +25,7 @@
 #include "freescape/freescape.h"
 #include "freescape/games/dark/dark.h"
 #include "freescape/language/8bitDetokeniser.h"
+#include "freescape/wb.h"
 
 namespace Freescape {
 
@@ -220,6 +221,22 @@ void DarkEngine::loadAssetsAtariFullGame() {
 	loadPalettes(stream, 0x204d6);
 	loadGlobalObjects(stream, 0x32f6, 24);
 	_sound = loadSoundsFx(stream, 0x266e8, 11);
+
+	// DSMUSIC2.ST is an embedded GEMDOS executable, listed in the file table
+	// at stream offset $60.
+	{
+		const uint32 kDsMusicOffset = 0xBCA2;
+		const uint32 kGemdosHeaderSize = 0x1C;
+		const uint32 kDsMusicTextSize = 0x1246;
+
+		stream->seek(kDsMusicOffset + kGemdosHeaderSize);
+		_musicData.resize(kDsMusicTextSize);
+		stream->read(_musicData.data(), kDsMusicTextSize);
+
+		delete _playerMusic;
+		_playerMusic = makeWallyBebenAtariPlayer(_musicData.data(), _musicData.size(),
+			kDarkSideAtariOffsets);
+	}
 
 	for (auto &area : _areaMap) {
 		// Center and pad each area name so we do not have to do it at each frame
