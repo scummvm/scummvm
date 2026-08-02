@@ -120,6 +120,13 @@ public:
 	/** Script dialect v1 opcode table (MCS / Amiga demo bytecode). */
 	static const OpcodeEntry kV1OpcodeTable[];
 	static const uint kV1OpcodeTableSize;
+	/**
+	 * Script dialect v2 opcode table (extends v1 through 0x6D).
+	 * Remaps a few audio slots and adds 0x4F..0x6D; new handlers are stubs
+	 * that consume the length-prefixed payload via scriptSkipOpcodeRemainder().
+	 */
+	static const OpcodeEntry kV2OpcodeTable[];
+	static const uint kV2OpcodeTableSize;
 
 private:
 #ifdef DEMACS2
@@ -203,6 +210,48 @@ public:
 	OpcodeResult scriptEndOverlayText();
 	OpcodeResult scriptFadeFromBlack();
 	OpcodeResult scriptFreePcmSound();
+
+	/** Seek to the length-prefixed end of the current opcode payload. */
+	void scriptSkipOpcodeRemainder(uint8 opcode);
+
+	// Dialect v2: remapped audio slots (v1 PCM/music-slot opcodes are NOPs here).
+	OpcodeResult scriptNopSkipRemainder();
+	OpcodeResult scriptPlaySfx();
+	OpcodeResult scriptPlaySong();
+	OpcodeResult scriptStopSong();
+
+	// Dialect v2: extended opcodes 0x4F..0x6D (stubs until backends exist).
+	OpcodeResult scriptSetMainActor();
+	OpcodeResult scriptLoadDeltaAnim();
+	OpcodeResult scriptPlayDeltaAnim();
+	OpcodeResult scriptRemoveDeltaAnim();
+	OpcodeResult scriptSetButtonStep();
+	OpcodeResult scriptTestButtonAnimFrame();
+	OpcodeResult scriptScreenShot();
+	OpcodeResult scriptWaitObjectAnimStep();
+	OpcodeResult scriptWaitSpecialAnimStep();
+	OpcodeResult scriptSetObjectAdjust();
+	OpcodeResult scriptReloadSpecialAnim();
+	OpcodeResult scriptPlayDiskDelta();
+	OpcodeResult scriptSetDiskCache();
+	OpcodeResult scriptSetMidiVolume();
+	OpcodeResult scriptSetWaveVolume();
+	OpcodeResult scriptLoadSpecAnimAnim();
+	OpcodeResult scriptSetSpecAnimAnim();
+	OpcodeResult scriptClearSpecAnimAnim();
+	OpcodeResult scriptSetDeltaRange();
+	OpcodeResult scriptClearDeltaRange();
+	OpcodeResult scriptAddDeltaSfx();
+	OpcodeResult scriptClearDeltaSfxList();
+	OpcodeResult scriptShowActionBar();
+	OpcodeResult scriptHideActionBar();
+	OpcodeResult scriptSetCursorType();
+	OpcodeResult scriptCheckDeltaSpeed();
+	OpcodeResult scriptLoadDistanceMask();
+	OpcodeResult scriptLoadAreaMask();
+	OpcodeResult scriptLoadWalkMask();
+	OpcodeResult scriptLoadShadowMask();
+	OpcodeResult scriptTalkTo();
 
 	inline void scriptUnimplementedOpcode(const char *source, uint16 opcode) {
 		debug("Unimplemented opcode (%s): %.2x.", source, opcode);

@@ -3158,6 +3158,339 @@ const ScriptExecutor::OpcodeEntry ScriptExecutor::kV1OpcodeTable[] = {
 };
 const uint ScriptExecutor::kV1OpcodeTableSize = ARRAYSIZE(ScriptExecutor::kV1OpcodeTable);
 
+void ScriptExecutor::scriptSkipOpcodeRemainder(uint8 opcode) {
+	if (_stream != nullptr && (uint32)_stream->pos() < _expectedEndLocation) {
+		debugC(kDebugScript, "SCRIPT::%s() [skip remainder 0x%02x]", opcodeName(opcode), opcode);
+		_stream->seek(_expectedEndLocation, SEEK_SET);
+	}
+}
+
+OpcodeResult ScriptExecutor::scriptNopSkipRemainder() {
+	debugC(kDebugScript, "SCRIPT::%s() [v2 nop]", opcodeName(_lastOpcode));
+	scriptSkipOpcodeRemainder(_lastOpcode);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptPlaySfx() {
+	debugC(kDebugScript, "SCRIPT::playSfx() [stub]");
+	scriptSkipOpcodeRemainder(0x40);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptPlaySong() {
+	debugC(kDebugScript, "SCRIPT::playSong() [stub]");
+	scriptSkipOpcodeRemainder(0x44);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptStopSong() {
+	debugC(kDebugScript, "SCRIPT::stopSong() [stub]");
+	scriptSkipOpcodeRemainder(0x45);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptSetMainActor() {
+	debugC(kDebugScript, "SCRIPT::setMainActor() [stub]");
+	scriptSkipOpcodeRemainder(0x4F);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptLoadDeltaAnim() {
+	debugC(kDebugScript, "SCRIPT::loadDeltaAnim() [stub]");
+	scriptSkipOpcodeRemainder(0x50);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptPlayDeltaAnim() {
+	debugC(kDebugScript, "SCRIPT::playDeltaAnim() [stub]");
+	scriptSkipOpcodeRemainder(0x51);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptRemoveDeltaAnim() {
+	debugC(kDebugScript, "SCRIPT::removeDeltaAnim() [stub]");
+	scriptSkipOpcodeRemainder(0x52);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptSetButtonStep() {
+	debugC(kDebugScript, "SCRIPT::setButtonStep() [stub]");
+	scriptSkipOpcodeRemainder(0x53);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptTestButtonAnimFrame() {
+	debugC(kDebugScript, "SCRIPT::testButtonAnimFrame() [stub]");
+	scriptSkipOpcodeRemainder(0x54);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptScreenShot() {
+	debugC(kDebugScript, "SCRIPT::screenShot() [stub]");
+	scriptSkipOpcodeRemainder(0x55);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptWaitObjectAnimStep() {
+	debugC(kDebugScript, "SCRIPT::waitObjectAnimStep() [stub]");
+	scriptSkipOpcodeRemainder(0x56);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptWaitSpecialAnimStep() {
+	debugC(kDebugScript, "SCRIPT::waitSpecialAnimStep() [stub]");
+	scriptSkipOpcodeRemainder(0x57);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptSetObjectAdjust() {
+	debugC(kDebugScript, "SCRIPT::setObjectAdjust() [stub]");
+	scriptSkipOpcodeRemainder(0x58);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptReloadSpecialAnim() {
+	debugC(kDebugScript, "SCRIPT::reloadSpecialAnim() [stub]");
+	scriptSkipOpcodeRemainder(0x59);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptPlayDiskDelta() {
+	debugC(kDebugScript, "SCRIPT::playDiskDelta() [stub]");
+	scriptSkipOpcodeRemainder(0x5A);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptSetDiskCache() {
+	debugC(kDebugScript, "SCRIPT::setDiskCache() [stub]");
+	scriptSkipOpcodeRemainder(0x5B);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptSetMidiVolume() {
+	debugC(kDebugScript, "SCRIPT::setMidiVolume() [stub]");
+	scriptSkipOpcodeRemainder(0x5C);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptSetWaveVolume() {
+	debugC(kDebugScript, "SCRIPT::setWaveVolume() [stub]");
+	scriptSkipOpcodeRemainder(0x5D);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptLoadSpecAnimAnim() {
+	debugC(kDebugScript, "SCRIPT::loadSpecAnimAnim() [stub]");
+	scriptSkipOpcodeRemainder(0x5E);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptSetSpecAnimAnim() {
+	debugC(kDebugScript, "SCRIPT::setSpecAnimAnim() [stub]");
+	scriptSkipOpcodeRemainder(0x5F);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptClearSpecAnimAnim() {
+	debugC(kDebugScript, "SCRIPT::clearSpecAnimAnim() [stub]");
+	scriptSkipOpcodeRemainder(0x60);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptSetDeltaRange() {
+	debugC(kDebugScript, "SCRIPT::setDeltaRange() [stub]");
+	scriptSkipOpcodeRemainder(0x61);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptClearDeltaRange() {
+	debugC(kDebugScript, "SCRIPT::clearDeltaRange() [stub]");
+	scriptSkipOpcodeRemainder(0x62);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptAddDeltaSfx() {
+	debugC(kDebugScript, "SCRIPT::addDeltaSfx() [stub]");
+	scriptSkipOpcodeRemainder(0x63);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptClearDeltaSfxList() {
+	debugC(kDebugScript, "SCRIPT::clearDeltaSfxList() [stub]");
+	scriptSkipOpcodeRemainder(0x64);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptShowActionBar() {
+	debugC(kDebugScript, "SCRIPT::showActionBar() [stub]");
+	scriptSkipOpcodeRemainder(0x65);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptHideActionBar() {
+	debugC(kDebugScript, "SCRIPT::hideActionBar() [stub]");
+	scriptSkipOpcodeRemainder(0x66);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptSetCursorType() {
+	debugC(kDebugScript, "SCRIPT::setCursorType() [stub]");
+	scriptSkipOpcodeRemainder(0x67);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptCheckDeltaSpeed() {
+	debugC(kDebugScript, "SCRIPT::checkDeltaSpeed() [stub]");
+	scriptSkipOpcodeRemainder(0x68);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptLoadDistanceMask() {
+	debugC(kDebugScript, "SCRIPT::loadDistanceMask() [stub]");
+	scriptSkipOpcodeRemainder(0x69);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptLoadAreaMask() {
+	debugC(kDebugScript, "SCRIPT::loadAreaMask() [stub]");
+	scriptSkipOpcodeRemainder(0x6A);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptLoadWalkMask() {
+	debugC(kDebugScript, "SCRIPT::loadWalkMask() [stub]");
+	scriptSkipOpcodeRemainder(0x6B);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptLoadShadowMask() {
+	debugC(kDebugScript, "SCRIPT::loadShadowMask() [stub]");
+	scriptSkipOpcodeRemainder(0x6C);
+	return OpcodeResult::Continue;
+}
+
+OpcodeResult ScriptExecutor::scriptTalkTo() {
+	debugC(kDebugScript, "SCRIPT::talkTo() [stub]");
+	scriptSkipOpcodeRemainder(0x6D);
+	return OpcodeResult::Continue;
+}
+
+// Script dialect v2: v1 handlers for 0x01..0x4E with audio remaps, plus 0x4F..0x6D stubs.
+const ScriptExecutor::OpcodeEntry ScriptExecutor::kV2OpcodeTable[] = {
+	{nullptr, nullptr},
+	{"setVar", &ScriptExecutor::scriptSetVar},
+	{"setVarOr", &ScriptExecutor::scriptSetVarOr},
+	{"ifFalse", &ScriptExecutor::scriptIfFalse},
+	{"ifTrue", &ScriptExecutor::scriptIfTrue},
+	{"compare", &ScriptExecutor::scriptCompare},
+	{"ifInteraction", &ScriptExecutor::scriptIfInteraction},
+	{"endIf", &ScriptExecutor::scriptEndIf},
+	{"else", &ScriptExecutor::scriptElse},
+	{"nop09", &ScriptExecutor::scriptNop09},
+	{"printStringLeft", &ScriptExecutor::scriptPrintStringLeft},
+	{"moveObject", &ScriptExecutor::scriptMoveObject},
+	{"changeScene", &ScriptExecutor::scriptChangeScene},
+	{"showDialogue", &ScriptExecutor::scriptShowDialogue},
+	{"changeAnimation", &ScriptExecutor::scriptChangeAnimation},
+	{"frameWait", &ScriptExecutor::scriptFrameWait},
+	{"walkToPosition", &ScriptExecutor::scriptWalkToPosition},
+	{"waitForWalk", &ScriptExecutor::scriptWaitForWalk},
+	{"setPathfinding", &ScriptExecutor::scriptSetPathfinding},
+	{"skipUntil14", &ScriptExecutor::scriptSkipUntil14},
+	{"skipWord", &ScriptExecutor::scriptSkipWord},
+	{"clearDialogueChoices", &ScriptExecutor::scriptClearDialogueChoices},
+	{"addDialogueChoice", &ScriptExecutor::scriptAddDialogueChoice},
+	{"showDialogueChoice", &ScriptExecutor::scriptShowDialogueChoice},
+	{"dismissPanel", &ScriptExecutor::scriptDismissPanel},
+	{"walkToAndPickup", &ScriptExecutor::scriptWalkToAndPickup},
+	{"setPickupFrames", &ScriptExecutor::scriptSetPickupFrames},
+	{"setupObject", &ScriptExecutor::scriptSetupObject},
+	{"setSkippable", &ScriptExecutor::scriptSetSkippable},
+	{"clearSkippable", &ScriptExecutor::scriptClearSkippable},
+	{"playAnimation", &ScriptExecutor::scriptPlayAnimation},
+	{"testPathfinding", &ScriptExecutor::scriptTestPathfinding},
+	{"setYOffset", &ScriptExecutor::scriptSetYOffset},
+	{"setMotion", &ScriptExecutor::scriptSetMotion},
+	{"setOrientation", &ScriptExecutor::scriptSetOrientation},
+	{"moveToPosition", &ScriptExecutor::scriptMoveToPosition},
+	{"addValues", &ScriptExecutor::scriptAddValues},
+	{"subValues", &ScriptExecutor::scriptSubValues},
+	{"loadSpecialAnim", &ScriptExecutor::scriptLoadSpecialAnim},
+	{"setDirection", &ScriptExecutor::scriptSetDirection},
+	{"stopAnimation", &ScriptExecutor::scriptStopAnimation},
+	{"openInventory", &ScriptExecutor::scriptOpenInventory},
+	{"loadObjectAnim", &ScriptExecutor::scriptLoadObjectAnim},
+	{"checkObjectData", &ScriptExecutor::scriptCheckObjectData},
+	{"checkInventory", &ScriptExecutor::scriptCheckInventory},
+	{"setSnapToTarget", &ScriptExecutor::scriptSetSnapToTarget},
+	{"testSceneAnimFrame", &ScriptExecutor::scriptTestSceneAnimFrame},
+	{"testObjectAnimFrame", &ScriptExecutor::scriptTestObjectAnimFrame},
+	{"printStringRight", &ScriptExecutor::scriptPrintStringRight},
+	{"setPaletteDarkness", &ScriptExecutor::scriptSetPaletteDarkness},
+	{"setObjectShading", &ScriptExecutor::scriptSetObjectShading},
+	{"setObjectScaling", &ScriptExecutor::scriptSetObjectScaling},
+	{"setHotspotOverride", &ScriptExecutor::scriptSetHotspotOverride},
+	{"setObjectBounds", &ScriptExecutor::scriptSetObjectBounds},
+	{"dismissAllPanels", &ScriptExecutor::scriptDismissAllPanels},
+	{"resetToSceneScript", &ScriptExecutor::scriptResetToSceneScript},
+	{"loadOverlayFont", &ScriptExecutor::scriptLoadOverlayFont},
+	{"endOverlayText", &ScriptExecutor::scriptEndOverlayText},
+	{"addOverlayTextEntry", &ScriptExecutor::scriptAddOverlayTextEntry},
+	{"clearOverlayText", &ScriptExecutor::scriptClearOverlayText},
+	{"fadeToBlack", &ScriptExecutor::scriptFadeToBlack},
+	{"fadeFromBlack", &ScriptExecutor::scriptFadeFromBlack},
+	// v2: DOS PCM/music-slot opcodes become no-ops; file-based audio uses 0x40/0x44/0x45.
+	{"nop3E", &ScriptExecutor::scriptNopSkipRemainder},
+	{"nop3F", &ScriptExecutor::scriptNopSkipRemainder},
+	{"playSfx", &ScriptExecutor::scriptPlaySfx},
+	{"waitForSound", &ScriptExecutor::scriptWaitForSound},
+	{"stopPcmSound", &ScriptExecutor::scriptStopPcmSound},
+	{"nop43", &ScriptExecutor::scriptNopSkipRemainder},
+	{"playSong", &ScriptExecutor::scriptPlaySong},
+	{"stopSong", &ScriptExecutor::scriptStopSong},
+	{"nop46", &ScriptExecutor::scriptNopSkipRemainder},
+	{"nop47", &ScriptExecutor::scriptNopSkipRemainder},
+	{"getObjectX", &ScriptExecutor::scriptGetObjectX},
+	{"getObjectY", &ScriptExecutor::scriptGetObjectY},
+	{"getObjectField8", &ScriptExecutor::scriptGetObjectField8},
+	{"getObjectOrientation", &ScriptExecutor::scriptGetObjectOrientation},
+	{"clearActorInventory", &ScriptExecutor::scriptClearActorInventory},
+	{"setPathfindingRemap", &ScriptExecutor::scriptSetPathfindingRemap},
+	{"waitForAdlib", &ScriptExecutor::scriptWaitForAdlib},
+	{"setMainActor", &ScriptExecutor::scriptSetMainActor},
+	{"loadDeltaAnim", &ScriptExecutor::scriptLoadDeltaAnim},
+	{"playDeltaAnim", &ScriptExecutor::scriptPlayDeltaAnim},
+	{"removeDeltaAnim", &ScriptExecutor::scriptRemoveDeltaAnim},
+	{"setButtonStep", &ScriptExecutor::scriptSetButtonStep},
+	{"testButtonAnimFrame", &ScriptExecutor::scriptTestButtonAnimFrame},
+	{"screenShot", &ScriptExecutor::scriptScreenShot},
+	{"waitObjectAnimStep", &ScriptExecutor::scriptWaitObjectAnimStep},
+	{"waitSpecialAnimStep", &ScriptExecutor::scriptWaitSpecialAnimStep},
+	{"setObjectAdjust", &ScriptExecutor::scriptSetObjectAdjust},
+	{"reloadSpecialAnim", &ScriptExecutor::scriptReloadSpecialAnim},
+	{"playDiskDelta", &ScriptExecutor::scriptPlayDiskDelta},
+	{"setDiskCache", &ScriptExecutor::scriptSetDiskCache},
+	{"setMidiVolume", &ScriptExecutor::scriptSetMidiVolume},
+	{"setWaveVolume", &ScriptExecutor::scriptSetWaveVolume},
+	{"loadSpecAnimAnim", &ScriptExecutor::scriptLoadSpecAnimAnim},
+	{"setSpecAnimAnim", &ScriptExecutor::scriptSetSpecAnimAnim},
+	{"clearSpecAnimAnim", &ScriptExecutor::scriptClearSpecAnimAnim},
+	{"setDeltaRange", &ScriptExecutor::scriptSetDeltaRange},
+	{"clearDeltaRange", &ScriptExecutor::scriptClearDeltaRange},
+	{"addDeltaSfx", &ScriptExecutor::scriptAddDeltaSfx},
+	{"clearDeltaSfxList", &ScriptExecutor::scriptClearDeltaSfxList},
+	{"showActionBar", &ScriptExecutor::scriptShowActionBar},
+	{"hideActionBar", &ScriptExecutor::scriptHideActionBar},
+	{"setCursorType", &ScriptExecutor::scriptSetCursorType},
+	{"checkDeltaSpeed", &ScriptExecutor::scriptCheckDeltaSpeed},
+	{"loadDistanceMask", &ScriptExecutor::scriptLoadDistanceMask},
+	{"loadAreaMask", &ScriptExecutor::scriptLoadAreaMask},
+	{"loadWalkMask", &ScriptExecutor::scriptLoadWalkMask},
+	{"loadShadowMask", &ScriptExecutor::scriptLoadShadowMask},
+	{"talkTo", &ScriptExecutor::scriptTalkTo}
+};
+const uint ScriptExecutor::kV2OpcodeTableSize = ARRAYSIZE(ScriptExecutor::kV2OpcodeTable);
+
 OpcodeResult Script::ScriptExecutor::executeOpcodes() {
 	debugC(kDebugScript, "----- Scripting function entered - scene: %.2x 1014: %.2x 1012: %.2x", Scenes::instance()._currentSceneIndex, _isSceneInitRun, _repeatRunFlag);
 	_isRunningScript = true;
