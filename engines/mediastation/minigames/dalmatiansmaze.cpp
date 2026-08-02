@@ -24,51 +24,9 @@
 
 #include "mediastation/mediascript/function.h"
 #include "mediastation/mediastation.h"
-#include "mediastation/minigames/maze.h"
+#include "mediastation/minigames/dalmatiansmaze.h"
 
 namespace MediaStation {
-
-// Interestingly, the titles that have these maze functions don't seem to have
-// scripts that actually call them. Thus, for now only the maze functionality that
-// is known to be actually used is reimplemented, namely the overloaded script_MazeSolve
-// method and the methods it calls.
-void FunctionManager::script_MazeGenerate(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
-	// Doesn't seem to be actually called by scripts.
-	warning("STUB: %s", __func__);
-}
-
-void FunctionManager::script_MazeApplyMoveMask(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
-	// Doesn't seem to be actually called by scripts.
-	warning("STUB: %s", __func__);
-}
-
-void FunctionManager::script_MazeSolve(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
-	if (args.size() == 0) {
-		// newMaze_clear
-		delete _maze;
-		_maze = nullptr;
-
-	} else if (args.size() == 2) {
-		// newMaze_init
-		delete _maze;
-		_maze = new MazeMinigame::Maze(args);
-
-	} else if (args.size() == 4) {
-		// newMaze_solve
-		if (_maze != nullptr) {
-			_maze->solve(args, returnValue);
-		} else {
-			error("%s: Maze has not been initialized", __func__);
-		}
-
-	} else if (args.size() == 5) {
-		// Doesn't seem to be actually called by scripts.
-		error("%s: This pathfinding code has not been implemented due to no known titles that use it", __func__);
-
-	} else {
-		error("%s: Got invalid number of args", __func__);
-	}
-}
 
 MazeMinigame::Maze::Maze(const Common::Array<ScriptValue> &args) {
 	Collection *gridDataCollection = args[0].asCollection();

@@ -25,7 +25,8 @@
 #include "mediastation/mediascript/function.h"
 #include "mediastation/debugchannels.h"
 #include "mediastation/mediastation.h"
-#include "mediastation/minigames/maze.h"
+#include "mediastation/minigames/dalmatiansmaze.h"
+#include "mediastation/minigames/barbiemaze.h"
 #include "mediastation/minigames/checkers.h"
 
 namespace MediaStation {
@@ -232,14 +233,17 @@ ScriptValue FunctionManager::call(uint functionId, Common::Array<ScriptValue> &a
 		break;
 
 	case kMazeGenerateFunction:
+		// Barbie only.
 		script_MazeGenerate(args, returnValue);
 		break;
 
 	case kMazeApplyMoveMaskFunction:
+		// Barbie only.
 		script_MazeApplyMoveMask(args, returnValue);
 		break;
 
 	case kMazeSolveFunction:
+		// Barbie and Dalmatians.
 		script_MazeSolve(args, returnValue);
 		break;
 
@@ -653,6 +657,34 @@ void FunctionManager::script_EndTimedInterval(Common::Array<ScriptValue> &args, 
 
 void FunctionManager::script_Drawing(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
 	warning("STUB: %s", __func__);
+}
+
+void FunctionManager::script_MazeSolve(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	if (args.size() == 0) {
+		// newMaze_clear (Dalmatians only).
+		delete _maze;
+		_maze = nullptr;
+
+	} else if (args.size() == 2) {
+		// newMaze_init (Dalmatians only).
+		delete _maze;
+		_maze = new MazeMinigame::Maze(args);
+
+	} else if (args.size() == 4) {
+		// newMaze_solve (Dalmatians only).
+		if (_maze != nullptr) {
+			_maze->solve(args, returnValue);
+		} else {
+			error("%s: Maze has not been initialized", __func__);
+		}
+
+	} else if (args.size() == 5) {
+		// Barbie only.
+		BarbieMazeMinigame::solve(args, returnValue);
+
+	} else {
+		error("%s: Got invalid number of args", __func__);
+	}
 }
 
 void FunctionManager::deleteFunctionsForContext(uint contextId) {

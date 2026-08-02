@@ -102,10 +102,10 @@ private:
 	void script_DebugPrint(Common::Array<ScriptValue> &args, ScriptValue &returnValue);
 	void script_EffectTransition(Common::Array<ScriptValue> &args, ScriptValue &returnValue);
 
-	// 101 Dalmatians.
+	// Barbie.
 	void script_MazeGenerate(Common::Array<ScriptValue> &args, ScriptValue &returnValue);
 	void script_MazeApplyMoveMask(Common::Array<ScriptValue> &args, ScriptValue &returnValue);
-	void script_MazeSolve(Common::Array<ScriptValue> &args, ScriptValue &returnValue);
+	void script_MazeSolve(Common::Array<ScriptValue> &args, ScriptValue &returnValue); // Shared with Dalmatians.
 	void script_BeginTimedInterval(Common::Array<ScriptValue> &args, ScriptValue &returnValue);
 	void script_EndTimedInterval(Common::Array<ScriptValue> &args, ScriptValue &returnValue);
 
