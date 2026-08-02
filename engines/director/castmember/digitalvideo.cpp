@@ -468,6 +468,9 @@ void DigitalVideoCastMember::rewindVideo() {
 }
 
 bool DigitalVideoCastMember::endOfVideo() {
+	// No decoder or channel means nothing is playing; avoid a null deref.
+	if (!_video || !_channel)
+		return false;
 	return (_video->endOfVideo() ||
 			(getMovieCurrentTimeMillis() >= (uint)(_channel->_stopTime*1000/getTimeScale())));
 }
