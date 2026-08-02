@@ -587,9 +587,7 @@ bool BaseFontTT::initFont() {
 		// The game 'Nose Bound Episode 1' is points to 'fonts\Andes.ttf',
 		// however there is in game root data directory.
 		file = BaseFileManager::getEngineInstance()->openFile("bettynoir.ttf", true, false);
-	} else if (BaseEngine::instance().getGameId() == "todaymama" &&
-		  (Common::String(_fontFile).contains("PRN55__C.TTF") ||
-		   Common::String(_fontFile).contains("BREEZE.TTF"))) {
+	} else if (BaseEngine::instance().getGameId() == "todaymama") {
 		// Fonts from the game 'Today, Mama!' are not working. Using fallback.
 		file = nullptr;
 	} else {
