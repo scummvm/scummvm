@@ -611,6 +611,9 @@ bool Macs2Engine::loadSceneGraphics(uint32 sceneIndex) {
 		return true;
 	}
 
+	if (isV2())
+		return loadSceneGraphicsV2(sceneIndex);
+
 	return loadSceneGraphicsV1(sceneIndex);
 }
 
@@ -784,6 +787,177 @@ bool Macs2Engine::loadSceneGraphicsV1(uint32 sceneIndex) {
 
 	return true;
 }
+
+bool Macs2Engine::loadSceneGraphicsV2(uint32 sceneIndex) {
+	if (_fileStream == nullptr)
+		return false;
+
+	Common::SeekableReadStream *stream = _fileStream;
+	stream->seek(_mcsDirectoryOffset + 0xC * sceneIndex - 0xC, SEEK_SET);
+	const uint32 bgImageOffset = stream->readUint32LE();
+	(void)stream->readUint32LE();
+	(void)stream->readUint32LE();
+
+	if (bgImageOffset == 0 || bgImageOffset >= (uint32)stream->size())
+		return false;
+
+	stream->seek(bgImageOffset, SEEK_SET);
+	if (!readMegaPicImage(stream, kWinScreenWidth, kWinGameHeight, _sceneBackground))
+		return false;
+
+	stream->read(_palVanilla, 0x300);
+	memcpy(_pal, _palVanilla, 0x300);
+	for (int i = 0; i < 256 * 3; i++)
+		_pal[i] = (_pal[i] * 259 + 33) >> 6;
+
+	if (_panelRemapTable.size() != 0x100)
+		_panelRemapTable.resize(0x100);
+	stream->read(_panelRemapTable.data(), 0x100);
+	stream->readByte();
+	stream->readByte();
+	stream->readByte();
+	_shadingTable.clear();
+	_shadingTable.resize(0x2000, 0);
+	if (stream->read(_shadingTable.data(), 0x2000) != 0x2000)
+		return false;
+
+	Graphics::ManagedSurface depthFull;
+	if (!readMegaPicImage(stream, kWinScreenWidth, kWinGameHeight, depthFull))
+		return false;
+	_depthMap.copyFrom(depthFull);
+
+	auto upscaleHalfRes = [](const Graphics::ManagedSurface &half, Graphics::ManagedSurface &full) {
+		full.create(kWinScreenWidth, kWinGameHeight, Graphics::PixelFormat::createFormatCLUT8());
+		for (int y = 0; y < half.h; y++) {
+			for (int x = 0; x < half.w; x++) {
+				const byte p = half.getPixel(x, y);
+				const int dx = x * 2;
+				const int dy = y * 2;
+				full.setPixel(dx, dy, p);
+				full.setPixel(dx + 1, dy, p);
+				full.setPixel(dx, dy + 1, p);
+				full.setPixel(dx + 1, dy + 1, p);
+			}
+		}
+	};
+
+	Graphics::ManagedSurface half;
+	if (!readMegaPicImage(stream, kScreenWidth, kGameHeight, half))
+		return false;
+	upscaleHalfRes(half, _pathfindingMap);
+
+	if (!readMegaPicImage(stream, kScreenWidth, kGameHeight, half))
+		return false;
+	upscaleHalfRes(half, _shadowMap);
+
+	if (!readMegaPicImage(stream, kScreenWidth, kGameHeight, half))
+		return false;
+	upscaleHalfRes(half, _hotspotMap);
+
+	pathfindingPoints.clear();
+	for (int i = 0; i < 16; i++) {
+		PathfindingPoint current;
+		current._index = i;
+		current._position.x = (int16)(stream->readUint16LE() << 1);
+		current._position.y = (int16)(stream->readUint16LE() << 1);
+		uint8 adj[8];
+		stream->read(adj, 8);
+		stream->skip(8);
+		const uint16 numConnections = stream->readUint16LE();
+		current._adjacentPoints.clear();
+		for (uint16 j = 0; j < numConnections && j < 4; j++)
+			current._adjacentPoints.push_back(adj[j]);
+		pathfindingPoints.push_back(current);
+	}
+	stream->skip(0x2c0 - 0x160);
+
+	_numHotspots = stream->readUint16LE();
+	_hotspotColorTable.clear();
+	_hotspotColorTable.resize(0x40 / sizeof(uint16));
+	stream->read(_hotspotColorTable.data(), 0x40);
+
+	const uint16 numBackgroundAnimations = stream->readUint16LE();
+	_backgroundAnimations.clear();
+	_backgroundAnimationsBlobs.clear();
+	_backgroundAnimations.resize(numBackgroundAnimations);
+	_backgroundAnimationsBlobs.resize(numBackgroundAnimations);
+	for (uint16 i = 0; i < numBackgroundAnimations; i++) {
+		BackgroundAnimationBlob &currentBlob = _backgroundAnimationsBlobs[i];
+		BackgroundAnimation &current = _backgroundAnimations[i];
+		const uint16 halfX = stream->readUint16LE();
+		const uint16 halfY = stream->readUint16LE();
+		const uint32 animSize = stream->readUint32LE();
+		currentBlob._blob.clear();
+		if (animSize > 0 && animSize < 0x1000000) {
+			currentBlob._blob.resize(animSize);
+			if (stream->read(currentBlob._blob.data(), animSize) != animSize)
+				return false;
+		}
+		currentBlob._unknown0C = stream->readUint16LE();
+		(void)stream->readByte();
+		const uint8 flagX = stream->readByte();
+		const uint8 flagY = stream->readByte();
+		currentBlob._unknown0E = stream->readByte();
+		(void)stream->readByte();
+
+		uint16 x = (uint16)(halfX << 1);
+		uint16 y = (uint16)(halfY << 1);
+		if (flagX)
+			x = (uint16)(x + 1);
+		if (flagY)
+			y = (uint16)(y + 1);
+		current._x = x;
+		current._y = y;
+		currentBlob._x = x;
+		currentBlob._y = y;
+
+		AnimBlobView blobView(currentBlob._blob);
+		const uint16 numFrames = blobView.isValid() ? blobView.sequenceLength() : 0;
+		current._frameIndex = 0;
+		current._frames.resize(numFrames);
+		const uint16 actualFrameCount = blobView.isValid() ? blobView.frameCount() : 0;
+		for (uint16 j = 0; j < actualFrameCount && j < numFrames; j++) {
+			AnimBlobView::FrameInfo fi;
+			if (!blobView.getFrameInfo(j, fi))
+				break;
+			current._frames[j]._width = fi.width;
+			current._frames[j]._height = fi.height;
+			current._frames[j]._data.resize((uint)fi.width * (uint)fi.height);
+			memcpy(current._frames[j]._data.data(), fi.pixels, (uint)fi.width * (uint)fi.height);
+		}
+	}
+
+	_numPathfindingPoints = stream->readUint16LE();
+	if (_numPathfindingPoints == 0 || _numPathfindingPoints > 16)
+		_numPathfindingPoints = 16;
+	(void)stream->readUint16LE();
+	(void)stream->readUint16LE();
+	_walkDepthThresholdY = (uint16)(stream->readUint16LE() << 1);
+	_walkDepthScaleFactor = stream->readUint16LE();
+	_walkBaseSpeedPct = stream->readUint16LE();
+	_scenePaletteMode = stream->readUint16LE();
+	_paletteDarkenPercent = stream->readUint16LE();
+
+	_mapImageFileOffset = 0;
+	_mapSubSceneTableFilePos = 0;
+
+	stream->seek(_mcsDirectoryOffset + 0xC * sceneIndex - 0x8, SEEK_SET);
+	const uint32 scriptBlobOffset = stream->readUint32LE();
+	_sceneResourceOffsets.clear();
+	clearDeltaAnim();
+	if (scriptBlobOffset != 0 && scriptBlobOffset < (uint32)stream->size()) {
+		const int64 saved = stream->pos();
+		stream->seek(scriptBlobOffset, SEEK_SET);
+		_sceneResourceOffsets.resize(0x200 / 4);
+		if (stream->read(_sceneResourceOffsets.data(), 0x200) != 0x200)
+			_sceneResourceOffsets.clear();
+		stream->seek(saved, SEEK_SET);
+	}
+
+	applyPaletteDarkening();
+	return true;
+}
+
 
 void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// Release old scene resources

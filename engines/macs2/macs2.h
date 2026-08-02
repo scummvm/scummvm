@@ -830,6 +830,8 @@ public:
 	bool loadSceneGraphics(uint32 sceneIndex);
 	/** AHFFMACS0100 scene package (RLE maps). */
 	bool loadSceneGraphicsV1(uint32 sceneIndex);
+	/** AHFFMACS0200 ReadyModule scene package (MegaPic + half-res masks). */
+	bool loadSceneGraphicsV2(uint32 sceneIndex);
 
 	/**
 	 * Returns the game Id
