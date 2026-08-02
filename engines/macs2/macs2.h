@@ -294,6 +294,7 @@ public:
 	McsFileVersion detectMcsFileVersion(Common::SeekableReadStream &stream) const;
 	/** Load AHFFMACS0100 layout (loadResourceFile @ 1008:2e8d). */
 	void loadResourceFileV1();
+	const char *getResourceMcsFilename() const;
 	/** Amiga: open DataA/Mdir, load OO objects as GameObjects, cursors, and scene stubs. */
 	void readAmigaResources();
 	void applyAmigaUiPalette();
@@ -512,6 +513,8 @@ public:
 
 	Common::MemoryReadStream *_fileStream = nullptr;
 	McsFileVersion _mcsFileVersion = McsFileVersion::Unknown;
+	/** Absolute file offset of the 0x3000-byte scene/object directory. */
+	uint32 _mcsDirectoryOffset = kMcsV1DirectoryOffset;
 
 	/** Amiga MXFF line pitch: measureTextWidth @ 00224420 uses (font[+8] - 1). */
 	uint16 amigaTextLinePitch = 0;
@@ -725,11 +728,11 @@ public:
 
 	bool isDemo() const { return getFeatures() & ADGF_DEMO; }
 
-	/** MCS directory base (v1: file+0x10 after magic + actor/scene words). */
-	uint32 getMcsDirectoryOffset() const { return kMcsV1DirectoryOffset; }
-
 	/** AHFFMACS0200 dialect (directory at 0x212) vs AHFFMACS0100 (0x10). */
 	bool isV2() const { return _mcsFileVersion == McsFileVersion::V2; }
+
+	/** MCS directory base. */
+	uint32 getMcsDirectoryOffset() const { return _mcsDirectoryOffset; }
 	McsFileVersion getMcsFileVersion() const { return _mcsFileVersion; }
 	int screenWidth() const { return isV2() ? kWinScreenWidth : kScreenWidth; }
 	int screenWidthLast() const { return screenWidth() - 1; }
@@ -777,6 +780,7 @@ public:
 	uint16 maxOrientations() const { return isV2() ? 0x25 : 0x14; }
 	/** Overload / special-anim slot index. */
 	uint16 overloadAnimSlot() const { return maxAnimSlots(); }
+	static uint16 specialAnimSlotToAnimSlot(uint16 specialSlot);
 	/** Scene hotspot override table entries (1-based inclusive max). */
 	uint16 maxHotspots() const { return 0x10; }
 	/** Per-object resource offset table entries. */

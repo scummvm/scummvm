@@ -1175,8 +1175,12 @@ OpcodeResult Script::ScriptExecutor::scriptChangeScene() {
 	_repeatRunFlag = false;
 	_isSceneInitRun = false;
 	const uint32 newSceneID = scriptReadValue32();
-	const uint16 transitionMode = scriptReadValue16();
-	const uint16 transitionSpeed = scriptReadValue16();
+	uint16 transitionMode = 1;
+	uint16 transitionSpeed = 1;
+	if (!_engine->isV2()) {
+		transitionMode = scriptReadValue16();
+		transitionSpeed = scriptReadValue16();
+	}
 	debugC(kDebugScript, "SCRIPT::changeScene(newSceneID=%u, transitionMode=%u, transitionSpeed=%u)", newSceneID, transitionMode, transitionSpeed);
 
 	if (newSceneID == 0 || newSceneID > 0x200) {
@@ -1186,25 +1190,29 @@ OpcodeResult Script::ScriptExecutor::scriptChangeScene() {
 		endBuffering(_lastOpcodeTriggeredSkip);
 		return OpcodeResult::ReturnFinished;
 	}
-	if (transitionMode == 0 && (transitionSpeed == 0 || transitionSpeed > 0x40)) {
-		setScriptError(0x26);
-		endTimer();
-		endFrameWait();
-		endBuffering(_lastOpcodeTriggeredSkip);
-		return OpcodeResult::ReturnFinished;
-	}
-	if (transitionMode > 1) {
-		setScriptError(4);
-		endTimer();
-		endFrameWait();
-		endBuffering(_lastOpcodeTriggeredSkip);
-		return OpcodeResult::ReturnFinished;
+	if (!_engine->isV2()) {
+		if (transitionMode == 0 && (transitionSpeed == 0 || transitionSpeed > 0x40)) {
+			setScriptError(0x26);
+			endTimer();
+			endFrameWait();
+			endBuffering(_lastOpcodeTriggeredSkip);
+			return OpcodeResult::ReturnFinished;
+		}
+		if (transitionMode > 1) {
+			setScriptError(4);
+			endTimer();
+			endFrameWait();
+			endBuffering(_lastOpcodeTriggeredSkip);
+			return OpcodeResult::ReturnFinished;
+		}
 	}
 
 	// Binary scriptChangeScene (1008:ad6e): beginFrame, hourglass cursor, flipScreen
 	// before loading the new scene. Also drop stale text/dialogue flags from the
 	// previous scene so blocking waits are not misclassified as UI-click waits.
 	clearScriptUiWaitState();
+	if (_cursorMode != MouseMode::Disabled)
+		_cursorModeBeforeWait = _cursorMode;
 	_engine->setCursorMode(MouseMode::Disabled);
 
 	View1 *currentView = (View1 *)_engine->findView("View1");
@@ -2092,9 +2100,17 @@ OpcodeResult Script::ScriptExecutor::scriptSubValues() {
 OpcodeResult Script::ScriptExecutor::scriptLoadSpecialAnim() {
 	// This one loads a special animation set into the overload slot (1008:c991).
 	const uint32 id = scriptReadValue32() - 0x400;
-	const uint16 shouldMirror = scriptReadValue16();
+	uint16 specialSlot = 1;
+	uint16 shouldMirror = 0;
+	if (_engine->isV2()) {
+		specialSlot = scriptReadValue16();
+		shouldMirror = scriptReadValue16();
+	} else {
+		shouldMirror = scriptReadValue16();
+	}
 	const uint8 animationID = readByte();
-	debugC(kDebugScript, "SCRIPT::loadSpecialAnim(objectID=%u, animationID=%u, shouldMirror=%u)", id, animationID, shouldMirror);
+	debugC(kDebugScript, "SCRIPT::loadSpecialAnim(objectID=%u, specialSlot=%u, animationID=%u, shouldMirror=%u)",
+		   id, specialSlot, animationID, shouldMirror);
 
 	clearScriptError();
 	if (id < 1 || id > 0x200) {
@@ -2110,24 +2126,49 @@ OpcodeResult Script::ScriptExecutor::scriptLoadSpecialAnim() {
 		setScriptError(2);
 		return OpcodeResult::Continue;
 	}
+	if (_engine->isV2() && (specialSlot < 1 || specialSlot > 5)) {
+		setScriptError(0x2e);
+		return OpcodeResult::Continue;
+	}
 
 	const Common::Array<uint8> &blob = Scenes::instance().readSpecialAnimBlob(animationID, g_engine->_fileStream);
-	object->_overloadAnimation = blob;
-	object->_overloadAnimationMirrored = (shouldMirror != 0);
-	if (shouldMirror != 0) {
-		BackgroundAnimationBlob::mirrorAnimBlob(object->_overloadAnimation);
+	Common::Array<uint8> animData = blob;
+	if (shouldMirror != 0)
+		BackgroundAnimationBlob::mirrorAnimBlob(animData);
+
+	const uint16 animSlot = _engine->isV2()
+								? Macs2Engine::specialAnimSlotToAnimSlot(specialSlot)
+								: _engine->overloadAnimSlot();
+	if (animSlot < 1) {
+		setScriptError(0x2e);
+		return OpcodeResult::Continue;
 	}
-	while (object->_blobs.size() <= 20)
+
+	while (object->_blobs.size() < animSlot)
 		object->_blobs.push_back(Common::Array<uint8>());
-	object->_blobs[20] = object->_overloadAnimation;
+	object->_blobs[animSlot - 1] = animData;
+
+	// Keep V1 overload mirror fields in sync when targeting the classic overload slot.
+	if (animSlot == 0x15 || animSlot == _engine->overloadAnimSlot()) {
+		object->_overloadAnimation = animData;
+		object->_overloadAnimationMirrored = (shouldMirror != 0);
+	}
 	return OpcodeResult::Continue;
 }
 
 OpcodeResult Script::ScriptExecutor::scriptSetDirection() {
 	// scriptSetDirection (1008:c858). Writes to runtime field +0x22D.
 	const uint32 characterID = scriptReadValue32() - 0x400;
-	const uint16 value = scriptReadValue16();
-	debugC(kDebugScript, "SCRIPT::setDirection(characterID=%u, value=%u)", characterID, value);
+	uint16 specialSlot = 1;
+	uint16 value = 0;
+	if (_engine->isV2()) {
+		specialSlot = scriptReadValue16();
+		value = scriptReadValue16();
+	} else {
+		value = scriptReadValue16();
+	}
+	debugC(kDebugScript, "SCRIPT::setDirection/setSpecialAnim(characterID=%u, specialSlot=%u, value=%u)",
+		   characterID, specialSlot, value);
 
 	clearScriptError();
 	if (characterID < 1 || characterID > 0x200) {
@@ -2143,6 +2184,19 @@ OpcodeResult Script::ScriptExecutor::scriptSetDirection() {
 		setScriptError(2);
 		return OpcodeResult::Continue;
 	}
+	if (_engine->isV2()) {
+		if (specialSlot < 1 || specialSlot > 5) {
+			setScriptError(0x2e);
+			return OpcodeResult::Continue;
+		}
+		// Binary: clear any other special slot that already uses this direction.
+		for (uint i = 0; i < 5; i++) {
+			if (object->_specialAnimTriggers[i] == value)
+				object->_specialAnimTriggers[i] = 0;
+		}
+		object->_specialAnimTriggers[specialSlot - 1] = value;
+		return OpcodeResult::Continue;
+	}
 	object->_overloadAnimTriggerDirection = value;
 	return OpcodeResult::Continue;
 }
@@ -2150,7 +2204,11 @@ OpcodeResult Script::ScriptExecutor::scriptSetDirection() {
 OpcodeResult Script::ScriptExecutor::scriptStopAnimation() {
 	// scriptStopAnimation (1008:c8e4).
 	const uint32 characterID = scriptReadValue32() - 0x400;
-	debugC(kDebugScript, "SCRIPT::stopAnimation(characterID=%u)", characterID);
+	uint16 specialSlot = 1;
+	if (_engine->isV2())
+		specialSlot = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::stopAnimation/clearSpecialAnim(characterID=%u, specialSlot=%u)",
+		   characterID, specialSlot);
 
 	clearScriptError();
 	if (characterID < 1 || characterID > 0x200) {
@@ -2164,6 +2222,21 @@ OpcodeResult Script::ScriptExecutor::scriptStopAnimation() {
 	}
 	if (obj->_dataOffset == 0) {
 		setScriptError(2);
+		return OpcodeResult::Continue;
+	}
+	if (_engine->isV2()) {
+		if (specialSlot < 1 || specialSlot > 5) {
+			setScriptError(0x2e);
+			return OpcodeResult::Continue;
+		}
+		obj->_specialAnimTriggers[specialSlot - 1] = 0x7FFF;
+		const uint16 animSlot = Macs2Engine::specialAnimSlotToAnimSlot(specialSlot);
+		if (animSlot >= 1 && obj->_blobs.size() >= animSlot)
+			obj->_blobs[animSlot - 1].clear();
+		if (animSlot == 0x15) {
+			obj->_useOverloadAnimation = false;
+			obj->_overloadAnimation.clear();
+		}
 		return OpcodeResult::Continue;
 	}
 	obj->_overloadAnimTriggerDirection = 0x7FFF;

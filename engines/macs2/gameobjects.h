@@ -96,8 +96,11 @@ public:
 	bool _useOverloadAnimation = false;
 	// Runtime field +0x22D: when the character's orientation matches this value,
 	// the renderer uses animation slot 0x15 (overload) instead of the normal slot.
-	// Initialized to 0x7FFF (never match). Set by opcode 0x27.
+	// Initialized to 0x7FFF (never match). Set by opcode 0x27 (V1).
 	uint16 _overloadAnimTriggerDirection = 0x7FFF;
+	// V2: five trigger words at runtime+0x50e.
+	// 0x7FFF = inactive. When orientation matches entry i, play specialAnimSlotToAnimSlot(i+1).
+	uint16 _specialAnimTriggers[5] = {0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF};
 
 	// These are the values read by the code around l0037_082D:
 	Common::Point _position;

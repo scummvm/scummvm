@@ -38,8 +38,14 @@ Common::MemoryReadStream *Macs2::Scenes::readSceneScript(uint16 sceneIndex, Comm
 	uint32 sceneDataOffset2 = fileStream->readUint32LE();
 	fileStream->seek(sceneDataOffset2, SEEK_SET);
 
-	// DOS: skip 0x80 resource offsets, then script size + bytecode.
-	fileStream->seek(0x80, SEEK_CUR);
+	if (g_engine->isV2()) {
+		fileStream->skip(0x200);
+		fileStream->readUint16LE();
+		fileStream->readUint16LE();
+	} else {
+		// V1: skip 0x80 resource offsets, then script size + bytecode.
+		fileStream->seek(0x80, SEEK_CUR);
+	}
 	uint16 scriptSize = fileStream->readUint16LE();
 	if (scriptSize == 0) {
 		warning("Macs2::Scenes::ReadSceneScript: scene %u has empty script", sceneIndex);
@@ -433,9 +439,18 @@ const Common::Array<uint8> *Macs2::GameObject::getAnimSlotBlob(uint16 slot) cons
 bool Macs2::GameObject::isAnimSlotLoaded(uint16 orient) const {
 	const uint16 overloadSlot = g_engine->overloadAnimSlot();
 	const uint16 maxOrient = g_engine->maxOrientations();
-	if (_overloadAnimTriggerDirection != 0x7FFF &&
-		(int16)_overloadAnimTriggerDirection >= 0 &&
-		_overloadAnimTriggerDirection == orient) {
+	if (g_engine->isV2()) {
+		for (uint i = 0; i < 5; i++) {
+			const uint16 trig = _specialAnimTriggers[i];
+			if ((int16)trig >= 0 && trig == orient) {
+				const uint16 animSlot = Macs2Engine::specialAnimSlotToAnimSlot(i + 1);
+				const Common::Array<uint8> *blob = getAnimSlotBlob(animSlot);
+				return blob != nullptr && !blob->empty();
+			}
+		}
+	} else if (_overloadAnimTriggerDirection != 0x7FFF &&
+			   (int16)_overloadAnimTriggerDirection >= 0 &&
+			   _overloadAnimTriggerDirection == orient) {
 		const Common::Array<uint8> *blob = getAnimSlotBlob(overloadSlot);
 		return blob != nullptr && !blob->empty();
 	}

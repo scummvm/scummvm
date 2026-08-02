@@ -135,18 +135,33 @@ Macs2Engine::McsFileVersion Macs2Engine::detectMcsFileVersion(Common::SeekableRe
 	return McsFileVersion::Unknown;
 }
 
+const char *Macs2Engine::getResourceMcsFilename() const {
+	return "RESOURCE.MCS";
+}
+
 void Macs2Engine::readResourceFile() {
+	const char *mcsName = getResourceMcsFilename();
 	{
-		// Extra scope in order to make sure no code tries to read from the file directly.
-		Common::File file;
-		if (!file.open("RESOURCE.MCS"))
-			error("readResourceFile(): Error reading MCS file");
+		Common::File *file = new Common::File();
+		if (!file->open(mcsName)) {
+			delete file;
+			error("readResourceFile(): Error reading MCS file %s", mcsName);
+		}
 
-		int64 size = file.size();
-		byte *fileData = (byte *)malloc(size);
-		file.read(fileData, size);
-
-		_fileStream = new Common::MemoryReadStream(fileData, size, DisposeAfterUse::YES);
+		_mcsFileVersion = detectMcsFileVersion(*file);
+		if (_mcsFileVersion == McsFileVersion::V1) {
+			_mcsDirectoryOffset = kMcsV1DirectoryOffset;
+			debugC(1, kDebugFilePath, "MCS %s: AHFFMACS0100, directory @ 0x%x", mcsName, _mcsDirectoryOffset);
+			const int64 size = file->size();
+			byte *fileData = (byte *)malloc((size_t)size);
+			file->seek(0, SEEK_SET);
+			file->read(fileData, size);
+			delete file;
+			_fileStream = new Common::MemoryReadStream(fileData, (uint32)size, DisposeAfterUse::YES);
+		} else {
+			delete file;
+			error("readResourceFile(): unrecognized MCS magic in %s", mcsName);
+		}
 	}
 
 	_mcsFileVersion = detectMcsFileVersion(*_fileStream);
@@ -208,10 +223,11 @@ void Macs2Engine::loadResourceFileV1() {
 
 	// Load object data (512 entries max, matching original loadResourceFile)
 	// Original allocates all 512 slots, then frees unused ones. We pre-fill with nullptr.
+	const uint32 dir = getMcsDirectoryOffset();
 	GameObjects::instance()._objects.resize(0x200, nullptr);
 	for (int i = 1; i <= 0x200; i++) {
 		// Directory object DATA dword: file+kMcsV1DirectoryOffset+kMcsV1ObjectDataPtrRel+i*12
-		const uint32 addressOffset = kMcsV1DirectoryOffset + kMcsV1ObjectDataPtrRel + (uint32)i * 0xC;
+		const uint32 addressOffset = dir + kMcsV1ObjectDataPtrRel + (uint32)i * 0xC;
 		_fileStream->seek(addressOffset, SEEK_SET);
 		uint32 objectOffset = _fileStream->readUint32LE();
 		if (objectOffset == 0) {
@@ -2432,6 +2448,8 @@ bool Macs2Engine::loadObjectData(GameObject *obj) {
 	};
 
 	const uint16 animSlotCount = maxAnimSlots();
+	if (isV2())
+		_fileStream->readUint16LE(); // ReadyObject lead word before anim slots
 	for (int j = 0; j < (int)animSlotCount; j++) {
 		_fileStream->readUint16LE(); // animID (editor metadata, unused at runtime)
 		uint16 blobSourceKey = _fileStream->readUint16LE();
@@ -2516,7 +2534,7 @@ bool Macs2Engine::loadObjectData(GameObject *obj) {
 	// Binary loadObjectData (1008:08ec): runtime+0x21D = object vertical offset.
 	obj->_storedWalkRuntime.motionTargetVerticalOffset = obj->_verticalOffsetScale;
 
-	const uint32 scriptTableOffset = 0x17F8 + (0xC + 0x04) + obj->_index * 0xC;
+	const uint32 scriptTableOffset = getMcsDirectoryOffset() + kMcsV1ObjectScriptPtrRel + obj->_index * 0xC;
 	_fileStream->seek(scriptTableOffset, SEEK_SET);
 	const uint32 scriptOffset = _fileStream->readUint32LE();
 	if (scriptOffset != 0) {
@@ -2524,6 +2542,11 @@ bool Macs2Engine::loadObjectData(GameObject *obj) {
 		const uint maxObjRes = maxObjectResources();
 		for (uint r = 0; r < maxObjRes; r++) {
 			obj->_resourceOffsets[r] = _fileStream->readUint32LE();
+		}
+		if (isV2()) {
+			_fileStream->skip(0x200 - maxObjRes * 4);
+			_fileStream->readUint16LE();
+			_fileStream->readUint16LE();
 		}
 		const uint16 scriptLength = _fileStream->readUint16LE();
 		obj->_script.resize(scriptLength);
@@ -2604,9 +2627,24 @@ Common::String Macs2Engine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+uint16 Macs2Engine::specialAnimSlotToAnimSlot(uint16 specialSlot) {
+	static const uint16 kMap[5] = {0x15, 0x11, 0x16, 0x17, 0x18};
+	if (specialSlot < 1 || specialSlot > 5)
+		return 0;
+	return kMap[specialSlot - 1];
+}
+
 uint16 Macs2Engine::resolveAnimSlotIndex(const GameObject *obj) const {
 	if (obj == nullptr)
 		return 0;
+	if (isV2()) {
+		for (uint i = 0; i < 5; i++) {
+			const uint16 trig = obj->_specialAnimTriggers[i];
+			if ((int16)trig >= 0 && trig == obj->_orientation)
+				return specialAnimSlotToAnimSlot(i + 1);
+		}
+		return obj->_orientation;
+	}
 	if ((int16)obj->_overloadAnimTriggerDirection < 0 ||
 		obj->_overloadAnimTriggerDirection != obj->_orientation) {
 		return obj->_orientation;
