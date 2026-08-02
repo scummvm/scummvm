@@ -123,6 +123,10 @@ public:
 	// 4-plane bitplane data. The executable drives those frames through a tiny
 	// fixed color ramp, so the renderer keeps the raw planes and applies a
 	// hardcoded palette at draw time.
+	// The Atari ST release carries byte-identical sprite data, $E052 below the
+	// Amiga addresses, so one set of loaders serves both.
+	static const int kAtariSpriteDelta = 0xE052;
+
 	Common::Array<Common::Array<byte>> _jetpackTransitionFrames;
 	Common::Array<byte> _jetpackCrouchFrame;
 	Common::Array<Graphics::ManagedSurface *> _amigaCompassYawFrames;
@@ -138,9 +142,9 @@ public:
 	int _jetpackIndicatorTransitionFrame;
 	int _jetpackIndicatorTransitionDirection;
 	uint32 _jetpackIndicatorNextFrameMillis;
-	void loadJetpackRawFrames(Common::SeekableReadStream *file);
-	void loadAmigaIndicatorSprites(Common::SeekableReadStream *file, byte *palette);
-	void loadAmigaCompass(Common::SeekableReadStream *file, byte *palette);
+	void loadJetpackRawFrames(Common::SeekableReadStream *file, int delta);
+	void loadAmigaIndicatorSprites(Common::SeekableReadStream *file, byte *palette, int delta);
+	void loadAmigaCompass(Common::SeekableReadStream *file, byte *palette, int delta);
 	void drawAmigaCompass(Graphics::Surface *surface);
 	void drawAmigaAmbientIndicators(Graphics::Surface *surface);
 	void drawJetpackIndicator(Graphics::Surface *surface);

@@ -238,6 +238,12 @@ void DarkEngine::loadAssetsAtariFullGame() {
 			kDarkSideAtariOffsets);
 	}
 
+	byte *palette = getPaletteFromNeoImage(stream, 0xd710);
+	loadAmigaCompass(stream, palette, kAtariSpriteDelta);
+	loadAmigaIndicatorSprites(stream, palette, kAtariSpriteDelta);
+	loadJetpackRawFrames(stream, kAtariSpriteDelta);
+	free(palette);
+
 	for (auto &area : _areaMap) {
 		// Center and pad each area name so we do not have to do it at each frame
 		area._value->_name = centerAndPadString(area._value->_name, 26);
