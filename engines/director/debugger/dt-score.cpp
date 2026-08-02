@@ -140,7 +140,7 @@ static Common::String clipText(const Common::String &text, float availWidth) {
 }
 
 static void buildContinuationData(Window *window) {
-	if (_state->_loadedContinuationData == window->getCurrentMovie()->getMacName()) {
+	if (_state->_loadedContinuationData == movieId(window->getCurrentMovie())) {
 		return;
 	}
 
@@ -227,7 +227,7 @@ static void buildContinuationData(Window *window) {
 		}
 	}
 
-	_state->_loadedContinuationData = window->getCurrentMovie()->getMacName();
+	_state->_loadedContinuationData = movieId(window->getCurrentMovie());
 }
 
 static void drawSliderY(ImVec2 pos, int numChannels) {
