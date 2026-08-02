@@ -20,12 +20,14 @@
  */
 
 #include "macs2/scriptexecutor.h"
+#include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/path.h"
 #include "common/system.h"
+#include "engines/enhancements.h"
 #include "macs2/amiga_archive.h"
 #include "macs2/amiga_decode.h"
 #include "macs2/debugtools.h"
@@ -51,7 +53,8 @@ static Common::String joinDebugStrings(const Common::StringArray &strings) {
 #define ScriptNoEntry debugC(kDebugScript, "Unhandled case in script handling.");
 #define STR_HELPER(x) #x
 
-ScriptExecutor::ScriptExecutor() {
+ScriptExecutor::ScriptExecutor(Macs2::Macs2Engine *engine) : _engine(engine) {
+	assert(_engine != nullptr);
 	// Binary: script variable block is 0x2000 bytes = 2048 entries of {uint16 a,
 	// uint16 b}. scriptReadValue (1008:9f4d) accepts indices 1..0x800 and reads
 	// at _g_pScriptVariables + value*4 - 4, so there are exactly 0x800 (2048)
@@ -368,7 +371,7 @@ bool ScriptExecutor::loadSoundResource(Common::Array<uint8> &outData, uint8 reso
 	rateHz = 0x1F40;
 	headerSkip = 2;
 
-	if (_engine != nullptr && _engine->isAmiga()) {
+	if (_engine->isAmiga()) {
 		outData.clear();
 		headerSkip = 0;
 		if (resourceIndex == 0 || _engine->getAmigaArchive() == nullptr)
@@ -406,7 +409,7 @@ bool ScriptExecutor::loadSoundResource(Common::Array<uint8> &outData, uint8 reso
 
 bool ScriptExecutor::loadMusicResource(Common::Array<uint8> &outData, uint8 resourceIndex) {
 	// Amiga DataA has no AdLib/Protracker song blobs (MM_* are scene packages).
-	if (_engine != nullptr && _engine->isAmiga()) {
+	if (_engine->isAmiga()) {
 		outData.clear();
 		return true;
 	}
@@ -1354,6 +1357,7 @@ OpcodeResult Script::ScriptExecutor::scriptShowDialogue() {
 
 	_dialogueSpeakerObjectID = objectID;
 	currentView->showSpeechAct(objectID, strings, Common::Point(x, y), side);
+	tryPlayGeneratedDialogueSpeech((uint16)offset);
 
 	_waitingForUiClick = true;
 
@@ -3188,19 +3192,59 @@ Common::String ScriptExecutor::scriptParsePascalFileName(const Common::String &r
 	return raw;
 }
 
+Common::String ScriptExecutor::stripAudioExtension(const Common::String &fileName) {
+	static const char *const kExts[] = {
+		".wav", ".ogg", ".mp3", ".flac", ".fla", ".m4a"
+	};
+	for (const char *ext : kExts) {
+		if (fileName.hasSuffixIgnoreCase(ext))
+			return Common::String(fileName.c_str(), fileName.size() - strlen(ext));
+	}
+	return fileName;
+}
+
 Common::Path ScriptExecutor::resolveAudioFilePath(const Common::String &fileName, bool preferSpeech) const {
 	if (fileName.empty())
 		return Common::Path();
 
+	const Common::String base = stripAudioExtension(fileName);
 	const char *first = preferSpeech ? "SPEECH" : "SOUNDFX";
 	const char *second = preferSpeech ? "SOUNDFX" : "SPEECH";
-	Common::Path path = Common::Path(first).join(fileName);
-	if (Common::File::exists(path))
-		return path;
-	path = Common::Path(second).join(fileName);
-	if (Common::File::exists(path))
-		return path;
+
+	// Probe via openStreamFile so flac/ogg/mp3/wav all count as present.
+	for (const char *dir : {first, second}) {
+		const Common::Path basename = Common::Path(dir).join(base);
+		Audio::SeekableAudioStream *probe = Audio::SeekableAudioStream::openStreamFile(basename);
+		if (probe != nullptr) {
+			delete probe;
+			return basename;
+		}
+	}
 	return Common::Path();
+}
+
+void ScriptExecutor::tryPlayGeneratedDialogueSpeech(uint16 stringOffset) {
+	const bool enhOn = _engine->enhancementEnabled(kEnhAudioChanges);
+	Common::String baseName;
+	if (_executingScriptObjectId == 0) {
+		baseName = Common::String::format("s%02x_%04x",
+										  Scenes::instance()._currentSceneIndex, stringOffset);
+	} else {
+		baseName = Common::String::format("o%03x_%04x",
+										  _executingScriptObjectId, stringOffset);
+	}
+	const Common::Path basename = Common::Path("SPEECH").join(baseName);
+
+	debugC(kDebugScript,
+		   "tryPlayGeneratedDialogueSpeech: looking for '%s'.* (enhAudio=%d soundEnabled=%d "
+		   "scriptObject=%u scene=%u offset=%u)",
+		   basename.toString().c_str(), enhOn ? 1 : 0, _soundEnabled ? 1 : 0,
+		   _executingScriptObjectId, Scenes::instance()._currentSceneIndex, stringOffset);
+
+	if (!_soundEnabled || !enhOn)
+		return;
+
+	_engine->playDigitalAudioFile(basename, true);
 }
 
 OpcodeResult ScriptExecutor::scriptNopSkipRemainder() {
@@ -3222,7 +3266,8 @@ OpcodeResult ScriptExecutor::scriptPlaySfx() {
 		warning("playSfx: missing %s (looked in SOUNDFX/SPEECH)", fileName.c_str());
 		return OpcodeResult::Continue;
 	}
-	_engine->playWaveFile(path);
+	const bool speechBus = path.toString('/').hasPrefixIgnoreCase("SPEECH/");
+	_engine->playDigitalAudioFile(path, speechBus);
 	return OpcodeResult::Continue;
 }
 
@@ -3307,7 +3352,7 @@ OpcodeResult ScriptExecutor::scriptRemoveDeltaAnim() {
 }
 
 OpcodeResult ScriptExecutor::scriptSetButtonStep() {
-	const uint16 buttonIndex = (uint16)(scriptReadValue16() + 0xe000); // 0x2000-based → 1-based
+	const uint16 buttonIndex = (uint16)(scriptReadValue16() + 0xe000); // 0x2000-based -> 1-based
 	const uint16 step = scriptReadValue16();
 	debugC(kDebugScript, "SCRIPT::setButtonStep(button=%u step=%u)", buttonIndex, step);
 	clearScriptError();
@@ -3512,7 +3557,7 @@ OpcodeResult ScriptExecutor::scriptShowActionBar() {
 		return OpcodeResult::Continue;
 
 	if (_engine->hasNativeHudAssets()) {
-		// Dialect-v2: if MenuMode==0 → MenuMode=1, restore saved cursor, redraw.
+		// Dialect-v2: if MenuMode==0 -> MenuMode=1, restore saved cursor, redraw.
 		if (_engine->_menuMode == 0) {
 			_engine->setBottomHudVisible(true);
 			_engine->setCursorMode(_engine->_savedMenuCursorMode);
@@ -3669,8 +3714,8 @@ OpcodeResult ScriptExecutor::scriptTalkTo() {
 	if (_soundEnabled && !voiceFile.empty()) {
 		const Common::Path path = resolveAudioFilePath(voiceFile, true);
 		if (!path.empty()) {
-			_engine->playWaveFile(path);
-			playingVoice = _engine->isSamplePlaying();
+			_engine->playDigitalAudioFile(path, true);
+			playingVoice = _engine->isSpeechPlaying();
 		} else {
 			warning("talkTo: missing voice %s (looked in SPEECH/SOUNDFX)", voiceFile.c_str());
 		}

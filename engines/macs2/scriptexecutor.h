@@ -223,8 +223,16 @@ public:
 	/** Fixed 13-byte Pascal-style filename field from the script stream. */
 	Common::String scriptReadFixedFileName();
 	Common::String scriptParsePascalFileName(const Common::String &raw);
-	/** Resolve SPEECH/SOUNDFX path; empty if missing. preferSpeech picks search order. */
+	/** Resolve SPEECH/SOUNDFX basename (no extension) for openStreamFile; empty if none. */
 	Common::Path resolveAudioFilePath(const Common::String &fileName, bool preferSpeech) const;
+	/** Strip a trailing audio extension (.wav/.ogg/...) if present. */
+	static Common::String stripAudioExtension(const Common::String &fileName);
+	/**
+	 * Optional generated dialogue audio (kEnhAudioChanges):
+	 * scene -> SPEECH/sSS_OOOO.*, object -> SPEECH/oOOO_OOOO.*.
+	 * Missing files are ignored.
+	 */
+	void tryPlayGeneratedDialogueSpeech(uint16 stringOffset);
 
 	// Dialect v2: extended opcodes 0x4F..0x6D (stubs until backends exist).
 	OpcodeResult scriptSetMainActor();
@@ -378,7 +386,7 @@ private:
 	uint16 _executingScriptObjectId = 0;
 
 public:
-	ScriptExecutor();
+	ScriptExecutor(Macs2::Macs2Engine *engine);
 	~ScriptExecutor();
 
 	void setIdle() { _state = ExecutorState::Idle; }
@@ -471,7 +479,7 @@ public:
 	// Mutex indicating if the A3D2 function is active
 	bool _isSkipping = false;
 
-	Macs2::Macs2Engine *_engine = nullptr;
+	Macs2::Macs2Engine *_engine;
 
 	// Button 8 skip from handleInput (1008:e8bf)
 	bool skipToEndOfSkippableSection();

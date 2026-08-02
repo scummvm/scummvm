@@ -20,7 +20,7 @@
  */
 
 #include "macs2/macs2.h"
-#include "audio/decoders/wave.h"
+#include "audio/audiostream.h"
 #include "audio/fmopl.h"
 #include "audio/mixer.h"
 #include "common/archive.h"
@@ -426,8 +426,7 @@ void Macs2Engine::readImageResources(Common::MemoryReadStream *stream) {
 Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 																			 _gameDescription(gameDesc) {
 	g_engine = this;
-	_scriptExecutor = new Script::ScriptExecutor();
-	_scriptExecutor->_engine = this;
+	_scriptExecutor = new Script::ScriptExecutor(this);
 	_music = new Music();
 
 	_hotspotOverrides.resize(0x21);
@@ -2230,27 +2229,31 @@ bool Macs2Engine::isSamplePlaying() const {
 	return g_system->getMixer()->isSoundHandleActive(_currentSoundHandle);
 }
 
-void Macs2Engine::playWaveFile(const Common::Path &path) {
-	Common::File *file = new Common::File();
-	if (!file->open(path)) {
-		warning("playWaveFile: cannot open %s", path.toString().c_str());
-		delete file;
-		return;
-	}
+void Macs2Engine::stopSpeech() {
+	Audio::Mixer *mixer = g_system->getMixer();
+	if (mixer->isSoundHandleActive(_speechSoundHandle))
+		mixer->stopHandle(_speechSoundHandle);
+}
 
-	Audio::SeekableAudioStream *stream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
+bool Macs2Engine::isSpeechPlaying() const {
+	return g_system->getMixer()->isSoundHandleActive(_speechSoundHandle);
+}
+
+void Macs2Engine::playDigitalAudioFile(const Common::Path &basename, bool speechBus) {
+	Audio::SeekableAudioStream *stream = Audio::SeekableAudioStream::openStreamFile(basename);
 	if (stream == nullptr) {
-		warning("playWaveFile: not a WAV: %s", path.toString().c_str());
+		debugC(kDebugScript, "playDigitalAudioFile: no audio for %s",
+			   basename.toString().c_str());
 		return;
 	}
 
-	stopSample();
-	const Common::String pathStr = path.toString('/');
-	const bool isSpeech = pathStr.hasPrefixIgnoreCase("SPEECH/") ||
-						  pathStr.contains("/SPEECH/");
-	const Audio::Mixer::SoundType type =
-		isSpeech ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
-	g_system->getMixer()->playStream(type, &_currentSoundHandle, stream);
+	if (speechBus) {
+		stopSpeech();
+		g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_speechSoundHandle, stream);
+	} else {
+		stopSample();
+		g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_currentSoundHandle, stream);
+	}
 }
 
 Common::String Macs2Engine::getGameId() const {

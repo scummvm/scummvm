@@ -129,8 +129,8 @@ struct HudButton {
 	uint16 inactiveStep = 0;
 	uint16 activeStep = 0;
 	uint16 hoverStep = 0;
-	uint16 buttonId = 0; // 1=Walk, 2=Look, 3=Talk, 4=Use, 0x33=Options, …
-	uint16 menuId = 0;   // 1=main bar, 2=options, …
+	uint16 buttonId = 0; // 1=Walk, 2=Look, 3=Talk, 4=Use, 0x33=Options, ...
+	uint16 menuId = 0;   // 1=main bar, 2=options, ...
 	AnimFrame frame;
 	AnimFrame activeFrame;
 	AnimFrame hoverFrame;
@@ -535,10 +535,13 @@ public:
 	void stopSample();
 	bool isSamplePlaying() const;
 	/**
-	 * Play a WAV from disk (SPEECH/SOUNDFX). Missing/invalid files are ignored
-	 * after a warning. Uses the same mixer handle as playSample.
+	 * Play digital audio by basename (no extension). Tries flac/ogg/mp3/m4a/wav
+	 * via SeekableAudioStream::openStreamFile (codec #ifdefs live in audio/).
+	 * SPEECH paths use the speech mixer handle; others use the SFX handle.
 	 */
-	void playWaveFile(const Common::Path &path);
+	void playDigitalAudioFile(const Common::Path &basename, bool speechBus);
+	void stopSpeech();
+	bool isSpeechPlaying() const;
 
 	// Offset 50D3h - This is used in 0037:10C4 to terminate the loop
 	uint16 _numHotspots;
@@ -595,7 +598,10 @@ public:
 	Common::Array<uint8> _currentSoundData;
 	int _currentSoundRate = 0x1F40;
 	int _currentSoundHeaderSkip = 2;
+	/** One-shot PCM / SOUNDFX WAV (script SFX). */
 	Audio::SoundHandle _currentSoundHandle;
+	/** Optional SPEECH WAV dialogue (independent of environment SFX). */
+	Audio::SoundHandle _speechSoundHandle;
 
 	// Schedules a run of the script the next time the executor is ticked
 	void scheduleRun(bool initScene = false);
@@ -639,7 +645,7 @@ public:
 	/**
 	 * Bottom HUD / action-bar visibility (dialect-neutral).
 	 * Driven by showActionBar / hideActionBar; Scumm verb strip and native
-	 * HUDs both respect this flag. Native skin also maps visible ↔ menuMode.
+	 * HUDs both respect this flag. Native skin also maps visible <-> menuMode.
 	 */
 	bool isBottomHudVisible() const { return _bottomHudVisible; }
 	void setBottomHudVisible(bool visible);

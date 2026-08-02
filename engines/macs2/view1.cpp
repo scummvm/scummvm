@@ -951,6 +951,10 @@ void View1::handleTextBoxInput() {
 	// then sets g_wIsShowingTextBox = 0. Nothing else.
 	_isShowingTextBox = false;
 	g_engine->_scriptExecutor->_waitingForUiClick = false;
+	// Stop dialogue speech only - leave environment PCM/SFX on _currentSoundHandle.
+	g_engine->stopSpeech();
+	if (!g_engine->isSamplePlaying() && !g_engine->isSpeechPlaying())
+		g_engine->_scriptExecutor->_waitForPcmSound = false;
 	redraw();
 }
 
@@ -959,6 +963,9 @@ void View1::dismissDialoguePanel() {
 	// then sets g_wIsShowingDialoguePanel = 0. Does NOT touch scene+0x53B9.
 	_isShowingDialoguePanel = false;
 	g_engine->_scriptExecutor->_waitingForUiClick = false;
+	g_engine->stopSpeech();
+	if (!g_engine->isSamplePlaying() && !g_engine->isSpeechPlaying())
+		g_engine->_scriptExecutor->_waitForPcmSound = false;
 	redraw();
 }
 
@@ -2469,7 +2476,7 @@ bool View1::tick() {
 				}
 			} else if (executor->_waitForPcmSound) {
 				drawSceneUpdate();
-				if (!g_engine->isSamplePlaying()) {
+				if (!g_engine->isSamplePlaying() && !g_engine->isSpeechPlaying()) {
 					debugC(kDebugScript, "waitForSound complete");
 					executor->debugLogActorWalkState("waitForSound complete");
 					executor->_waitForPcmSound = false;
