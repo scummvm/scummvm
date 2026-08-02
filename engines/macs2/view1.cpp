@@ -874,6 +874,24 @@ void View1::openMainMenu(Common::Point clickedPosition) {
 	redraw();
 }
 
+void View1::openScriptActionBar(const Common::Point &position, Script::MouseMode restoreCursorMode) {
+	if (_uiPanelState != kUiPanelNone || hasScummVerbUI())
+		return;
+	openMainMenu(position);
+	g_engine->setCursorMode(restoreCursorMode);
+	updateCursor();
+}
+
+void View1::closeScriptActionBar(Script::MouseMode &outSavedCursorMode) {
+	if (_uiPanelState != kUiPanelActionBar)
+		return;
+	outSavedCursorMode = g_engine->_scriptExecutor->_cursorMode;
+	_uiPanelState = kUiPanelNone;
+	_clickedButtonIndex = 0;
+	_uiBackgroundRestorePending = false;
+	redraw();
+}
+
 void View1::enterMapMode() {
 	// Binary handleInput end-block when scene+0x61db != 0 (1008:e8bf): fade, load map
 	// from scene+0x5DDB (_mapSceneOffsets[0]), set cursor 0x18 (PanelUse).

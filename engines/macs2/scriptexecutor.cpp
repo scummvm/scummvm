@@ -20,8 +20,10 @@
  */
 
 #include "macs2/scriptexecutor.h"
+#include "audio/mixer.h"
 #include "common/debug.h"
 #include "common/memstream.h"
+#include "common/system.h"
 #include "macs2/amiga_archive.h"
 #include "macs2/amiga_decode.h"
 #include "macs2/debugtools.h"
@@ -3190,8 +3192,31 @@ OpcodeResult ScriptExecutor::scriptStopSong() {
 }
 
 OpcodeResult ScriptExecutor::scriptSetMainActor() {
-	debugC(kDebugScript, "SCRIPT::setMainActor() [stub]");
-	scriptSkipOpcodeRemainder(0x4F);
+	const uint32 objectID = scriptReadValue32() - 0x400;
+	debugC(kDebugScript, "SCRIPT::setMainActor(objectID=%u)", objectID);
+
+	clearScriptError();
+	if (objectID < 1 || objectID > 0x200) {
+		setScriptError(2);
+		return OpcodeResult::Continue;
+	}
+	GameObject *object = GameObjects::getObjectByIndex(objectID);
+	if (object == nullptr) {
+		setScriptError(0x19);
+		return OpcodeResult::Continue;
+	}
+	if (object->_dataOffset == 0) {
+		setScriptError(2);
+		return OpcodeResult::Continue;
+	}
+
+	Scenes::instance()._currentActorIndex = objectID;
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	if (currentView != nullptr) {
+		currentView->refreshProtagonistInventoryAfterLoad((uint16)objectID);
+		if (currentView->_inventorySource != nullptr)
+			currentView->setInventorySource(currentView->_inventorySource);
+	}
 	return OpcodeResult::Continue;
 }
 
@@ -3226,7 +3251,7 @@ OpcodeResult ScriptExecutor::scriptTestButtonAnimFrame() {
 }
 
 OpcodeResult ScriptExecutor::scriptScreenShot() {
-	debugC(kDebugScript, "SCRIPT::screenShot() [stub]");
+	debugC(kDebugScript, "SCRIPT::screenShot() [nop]");
 	scriptSkipOpcodeRemainder(0x55);
 	return OpcodeResult::Continue;
 }
@@ -3244,8 +3269,28 @@ OpcodeResult ScriptExecutor::scriptWaitSpecialAnimStep() {
 }
 
 OpcodeResult ScriptExecutor::scriptSetObjectAdjust() {
-	debugC(kDebugScript, "SCRIPT::setObjectAdjust() [stub]");
-	scriptSkipOpcodeRemainder(0x58);
+	const uint32 objectID = scriptReadValue32() - 0x400;
+	const uint16 adjust1 = scriptReadValue16();
+	const uint16 adjust2 = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::setObjectAdjust(objectID=%u, adjust1=%u, adjust2=%u)",
+		   objectID, adjust1, adjust2);
+
+	clearScriptError();
+	if (objectID < 1 || objectID > 0x200) {
+		setScriptError(2);
+		return OpcodeResult::Continue;
+	}
+	GameObject *object = GameObjects::getObjectByIndex(objectID);
+	if (object == nullptr) {
+		setScriptError(0x19);
+		return OpcodeResult::Continue;
+	}
+	if (object->_dataOffset == 0) {
+		setScriptError(2);
+		return OpcodeResult::Continue;
+	}
+	object->_objectAdjust1 = adjust1;
+	object->_objectAdjust2 = adjust2;
 	return OpcodeResult::Continue;
 }
 
@@ -3262,20 +3307,40 @@ OpcodeResult ScriptExecutor::scriptPlayDiskDelta() {
 }
 
 OpcodeResult ScriptExecutor::scriptSetDiskCache() {
-	debugC(kDebugScript, "SCRIPT::setDiskCache() [stub]");
+	const uint16 cacheSetting = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::setDiskCache(setting=%u) [nop]", cacheSetting);
 	scriptSkipOpcodeRemainder(0x5B);
 	return OpcodeResult::Continue;
 }
 
 OpcodeResult ScriptExecutor::scriptSetMidiVolume() {
-	debugC(kDebugScript, "SCRIPT::setMidiVolume() [stub]");
-	scriptSkipOpcodeRemainder(0x5C);
+	const uint16 volumePercent = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::setMidiVolume(volume=%u)", volumePercent);
+
+	clearScriptError();
+	if (volumePercent > 100) {
+		setScriptError(0x30);
+		return OpcodeResult::Continue;
+	}
+	// Maps 0=loud..100=silent to OPL attenuation (0..0x3F).
+	_musicControlVolume = (uint16)((100 - volumePercent) * 0x3F / 100);
+	if (_engine->getMusic() != nullptr)
+		_engine->getMusic()->setVolume(_engine->scaledMusicVolume(_musicControlVolume));
 	return OpcodeResult::Continue;
 }
 
 OpcodeResult ScriptExecutor::scriptSetWaveVolume() {
-	debugC(kDebugScript, "SCRIPT::setWaveVolume() [stub]");
-	scriptSkipOpcodeRemainder(0x5D);
+	const uint16 volumePercent = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::setWaveVolume(volume=%u)", volumePercent);
+
+	clearScriptError();
+	if (volumePercent > 100) {
+		setScriptError(0x30);
+		return OpcodeResult::Continue;
+	}
+	const int mixerVolume = volumePercent * 255 / 100;
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, mixerVolume);
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, mixerVolume);
 	return OpcodeResult::Continue;
 }
 
@@ -3316,26 +3381,42 @@ OpcodeResult ScriptExecutor::scriptAddDeltaSfx() {
 }
 
 OpcodeResult ScriptExecutor::scriptClearDeltaSfxList() {
-	debugC(kDebugScript, "SCRIPT::clearDeltaSfxList() [stub]");
+	debugC(kDebugScript, "SCRIPT::clearDeltaSfxList() [nop]");
 	scriptSkipOpcodeRemainder(0x64);
 	return OpcodeResult::Continue;
 }
 
 OpcodeResult ScriptExecutor::scriptShowActionBar() {
-	debugC(kDebugScript, "SCRIPT::showActionBar() [stub]");
-	scriptSkipOpcodeRemainder(0x65);
+	debugC(kDebugScript, "SCRIPT::showActionBar()");
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	if (currentView != nullptr) {
+		currentView->openScriptActionBar(
+			Common::Point(_engine->screenWidth() / 2, _engine->gameHeight() / 2), _cursorMode);
+	}
 	return OpcodeResult::Continue;
 }
 
 OpcodeResult ScriptExecutor::scriptHideActionBar() {
-	debugC(kDebugScript, "SCRIPT::hideActionBar() [stub]");
-	scriptSkipOpcodeRemainder(0x66);
+	debugC(kDebugScript, "SCRIPT::hideActionBar()");
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	if (currentView != nullptr) {
+		MouseMode savedMode = _cursorMode;
+		currentView->closeScriptActionBar(savedMode);
+		_cursorMode = savedMode;
+	}
 	return OpcodeResult::Continue;
 }
 
 OpcodeResult ScriptExecutor::scriptSetCursorType() {
-	debugC(kDebugScript, "SCRIPT::setCursorType() [stub]");
-	scriptSkipOpcodeRemainder(0x67);
+	const uint16 cursorType = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::setCursorType(type=0x%x)", cursorType);
+
+	if (cursorType > 0x12 && cursorType < 0x17) {
+		_engine->setCursorMode((MouseMode)cursorType);
+		View1 *currentView = (View1 *)_engine->findView("View1");
+		if (currentView != nullptr)
+			currentView->updateCursor();
+	}
 	return OpcodeResult::Continue;
 }
 

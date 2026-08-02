@@ -123,6 +123,9 @@ public:
 	// this factor scales how much that height displaces the object upward
 	// when drawn. 0 = no vertical offset. 100 = full elevation offset.
 	uint16 _verticalOffsetScale = 0;
+	// Dialect v2 setObjectAdjust: runtime object adjust pair.
+	uint16 _objectAdjust1 = 0;
+	uint16 _objectAdjust2 = 0;
 	// Runtime +0x217: frame index during pickup animation at which the item is grabbed
 	uint16 _pickupFrameStart = 0;
 	// Runtime +0x219: frame index at which pickup animation completes

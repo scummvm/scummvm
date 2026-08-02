@@ -516,6 +516,10 @@ public:
 	GameObject *getClickedInventoryItem(const Common::Point &p);
 
 	void openMainMenu(Common::Point clickedPosition);
+	/** Script-driven action bar open; restores the given cursor after opening. */
+	void openScriptActionBar(const Common::Point &position, Script::MouseMode restoreCursorMode);
+	/** Script-driven action bar close; writes the cursor mode that was active. */
+	void closeScriptActionBar(Script::MouseMode &outSavedCursorMode);
 	void enterMapMode();
 
 	// Binary openActionBarAtPosition (1008:3fba): stores button hit rects at panel+4+col*(btnW+4).
