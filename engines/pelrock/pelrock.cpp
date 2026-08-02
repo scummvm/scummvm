@@ -2091,7 +2091,7 @@ void PelrockEngine::pyramidCollapse() {
 	pyramidHotspot->index = 7;
 	_room->disableHotspot(21, pyramidHotspot, PERSIST_BOTH);
 
-	free(pyramidHotspot);
+	delete pyramidHotspot;
 	_dialog->say(_res->_ingameTexts[kTextTaLuegoLucas]);
 
 	// Walk Alfred to right edge exit -> room 21
