@@ -22,7 +22,9 @@
 #include "macs2/scriptexecutor.h"
 #include "audio/mixer.h"
 #include "common/debug.h"
+#include "common/file.h"
 #include "common/memstream.h"
+#include "common/path.h"
 #include "common/system.h"
 #include "macs2/amiga_archive.h"
 #include "macs2/amiga_decode.h"
@@ -3167,6 +3169,40 @@ void ScriptExecutor::scriptSkipOpcodeRemainder(uint8 opcode) {
 	}
 }
 
+Common::String ScriptExecutor::scriptReadFixedFileName() {
+	Common::String name;
+	for (int i = 0; i < 13 && _stream != nullptr && (uint32)_stream->pos() < _expectedEndLocation; ++i) {
+		const byte c = readByte();
+		if (c != 0)
+			name += (char)c;
+	}
+	return name;
+}
+
+Common::String ScriptExecutor::scriptParsePascalFileName(const Common::String &raw) {
+	if (raw.empty())
+		return Common::String();
+	const uint8 len = (uint8)raw[0];
+	if (len > 0 && len < raw.size())
+		return Common::String(raw.c_str() + 1, len);
+	return raw;
+}
+
+Common::Path ScriptExecutor::resolveAudioFilePath(const Common::String &fileName, bool preferSpeech) const {
+	if (fileName.empty())
+		return Common::Path();
+
+	const char *first = preferSpeech ? "SPEECH" : "SOUNDFX";
+	const char *second = preferSpeech ? "SOUNDFX" : "SPEECH";
+	Common::Path path = Common::Path(first).join(fileName);
+	if (Common::File::exists(path))
+		return path;
+	path = Common::Path(second).join(fileName);
+	if (Common::File::exists(path))
+		return path;
+	return Common::Path();
+}
+
 OpcodeResult ScriptExecutor::scriptNopSkipRemainder() {
 	debugC(kDebugScript, "SCRIPT::%s() [v2 nop]", opcodeName(_lastOpcode));
 	scriptSkipOpcodeRemainder(_lastOpcode);
@@ -3174,20 +3210,52 @@ OpcodeResult ScriptExecutor::scriptNopSkipRemainder() {
 }
 
 OpcodeResult ScriptExecutor::scriptPlaySfx() {
-	debugC(kDebugScript, "SCRIPT::playSfx() [stub]");
+	const Common::String fileName = scriptParsePascalFileName(scriptReadFixedFileName());
+	debugC(kDebugScript, "SCRIPT::playSfx(%s)", fileName.c_str());
 	scriptSkipOpcodeRemainder(0x40);
+
+	if (fileName.empty() || !_soundEnabled)
+		return OpcodeResult::Continue;
+
+	const Common::Path path = resolveAudioFilePath(fileName, false);
+	if (path.empty()) {
+		warning("playSfx: missing %s (looked in SOUNDFX/SPEECH)", fileName.c_str());
+		return OpcodeResult::Continue;
+	}
+	_engine->playWaveFile(path);
 	return OpcodeResult::Continue;
 }
 
 OpcodeResult ScriptExecutor::scriptPlaySong() {
-	debugC(kDebugScript, "SCRIPT::playSong() [stub]");
+	// Dialect-v2 file music (MUSICGS/MUSICOPL). SMF playback is not wired yet;
+	// consume the filename so scripts stay in sync when assets are absent.
+	const Common::String fileName = scriptParsePascalFileName(scriptReadFixedFileName());
+	debugC(kDebugScript, "SCRIPT::playSong(%s)", fileName.c_str());
 	scriptSkipOpcodeRemainder(0x44);
+
+	if (fileName.empty() || !_musicEnabled)
+		return OpcodeResult::Continue;
+
+	Common::Path path = Common::Path("MUSICGS").join(fileName);
+	if (!Common::File::exists(path))
+		path = Common::Path("MUSICOPL").join(fileName);
+	if (!Common::File::exists(path)) {
+		warning("playSong: missing %s (looked in MUSICGS/MUSICOPL)", fileName.c_str());
+		return OpcodeResult::Continue;
+	}
+
+	warning("playSong: MIDI file present but playback not implemented yet (%s)",
+			path.toString().c_str());
 	return OpcodeResult::Continue;
 }
 
 OpcodeResult ScriptExecutor::scriptStopSong() {
-	debugC(kDebugScript, "SCRIPT::stopSong() [stub]");
+	debugC(kDebugScript, "SCRIPT::stopSong()");
 	scriptSkipOpcodeRemainder(0x45);
+	_activeMusicSlot = 0;
+	_waitForAdlibReady = false;
+	if (_engine->getMusic() != nullptr)
+		_engine->getMusic()->stopMusic();
 	return OpcodeResult::Continue;
 }
 
@@ -3536,9 +3604,96 @@ OpcodeResult ScriptExecutor::scriptLoadShadowMask() {
 }
 
 OpcodeResult ScriptExecutor::scriptTalkTo() {
-	debugC(kDebugScript, "SCRIPT::talkTo() [stub]");
+	(void)scriptReadValue32();
+	const int16 x = scriptReadCoord16();
+	const int16 y = scriptReadCoord16();
+	const Common::String voiceFile = scriptParsePascalFileName(scriptReadFixedFileName());
+	const uint16 strOffset = readUint16();
+	const uint16 numLines = readUint16();
+	const uint16 talkTime = scriptReadValue16();
+	debugC(kDebugScript,
+		   "SCRIPT::talkTo(x=%d, y=%d, voice=\"%s\", strOffset=%u, numLines=%u, talkTime=%u)",
+		   x, y, voiceFile.c_str(), strOffset, numLines, talkTime);
 	scriptSkipOpcodeRemainder(0x6D);
-	return OpcodeResult::Continue;
+
+	const uint32 actorIndex = Scenes::instance()._currentActorIndex;
+	clearScriptError();
+	if (actorIndex < 1 || actorIndex > 0x200) {
+		setScriptError(2);
+		endBuffering(_lastOpcodeTriggeredSkip);
+		return OpcodeResult::FinishScript;
+	}
+	GameObject *speaker = GameObjects::getObjectByIndex(actorIndex);
+	if (speaker == nullptr) {
+		setScriptError(0x19);
+		endBuffering(_lastOpcodeTriggeredSkip);
+		return OpcodeResult::FinishScript;
+	}
+	if (speaker->_dataOffset == 0) {
+		setScriptError(2);
+		endBuffering(_lastOpcodeTriggeredSkip);
+		return OpcodeResult::FinishScript;
+	}
+	if (speaker->_blobs.size() < 19 || speaker->_blobs[17].empty() || speaker->_blobs[18].empty()) {
+		setScriptError(6);
+		endBuffering(_lastOpcodeTriggeredSkip);
+		return OpcodeResult::FinishScript;
+	}
+
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	Common::Array<Common::String> strings;
+	if (_executingScriptObjectId == 0) {
+		strings = g_engine->decodeStrings(Scenes::instance()._currentSceneStrings, strOffset, numLines,
+										  Scenes::instance()._currentSceneIndex, 0);
+	} else {
+		Common::MemoryReadStream *s = GameObjects::readGameObjectStrings(_executingScriptObjectId, g_engine->_fileStream);
+		strings = g_engine->decodeStrings(s, strOffset, numLines, 0, _executingScriptObjectId);
+		delete s;
+	}
+
+	_dialogueSpeakerObjectID = (uint16)actorIndex;
+	if (currentView != nullptr) {
+		if (_textEnabled)
+			currentView->showSpeechAct((uint16)actorIndex, strings, Common::Point(x, y), false);
+		else
+			currentView->showSpeechAct((uint16)actorIndex, Common::Array<Common::String>(), Common::Point(x, y), false);
+	}
+
+	if (_cursorMode == MouseMode::Disabled) {
+		_engine->setCursorMode(MouseMode::Walk);
+		if (currentView != nullptr)
+			currentView->updateCursor();
+	}
+
+	bool playingVoice = false;
+	if (_soundEnabled && !voiceFile.empty()) {
+		const Common::Path path = resolveAudioFilePath(voiceFile, true);
+		if (!path.empty()) {
+			_engine->playWaveFile(path);
+			playingVoice = _engine->isSamplePlaying();
+		} else {
+			warning("talkTo: missing voice %s (looked in SPEECH/SOUNDFX)", voiceFile.c_str());
+		}
+	}
+
+	endTimer();
+	endBuffering(_lastOpcodeTriggeredSkip);
+	enterBlockingWaitCursor();
+
+	if (playingVoice) {
+		_waitForPcmSound = true;
+		endFrameWait();
+		return OpcodeResult::WaitForCallback;
+	}
+
+	uint16 waitFrames = talkTime;
+	if (waitFrames == 0) {
+		waitFrames = 0x12;
+		for (const Common::String &line : strings)
+			waitFrames = (uint16)(waitFrames + line.size());
+	}
+	startFrameWait(waitFrames);
+	return OpcodeResult::WaitForCallback;
 }
 
 // Script dialect v2: v1 handlers for 0x01..0x4E with audio remaps, plus 0x4F..0x6D stubs.

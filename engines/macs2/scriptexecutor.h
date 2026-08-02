@@ -23,6 +23,7 @@
 #define MACS2_SCRIPTEXECUTOR_H
 
 #include "common/array.h"
+#include "common/path.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
 #include "common/str-array.h"
@@ -219,6 +220,11 @@ public:
 	OpcodeResult scriptPlaySfx();
 	OpcodeResult scriptPlaySong();
 	OpcodeResult scriptStopSong();
+	/** Fixed 13-byte Pascal-style filename field from the script stream. */
+	Common::String scriptReadFixedFileName();
+	Common::String scriptParsePascalFileName(const Common::String &raw);
+	/** Resolve SPEECH/SOUNDFX path; empty if missing. preferSpeech picks search order. */
+	Common::Path resolveAudioFilePath(const Common::String &fileName, bool preferSpeech) const;
 
 	// Dialect v2: extended opcodes 0x4F..0x6D (stubs until backends exist).
 	OpcodeResult scriptSetMainActor();

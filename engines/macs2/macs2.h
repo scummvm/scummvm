@@ -534,6 +534,11 @@ public:
 	void playSample();
 	void stopSample();
 	bool isSamplePlaying() const;
+	/**
+	 * Play a WAV from disk (SPEECH/SOUNDFX). Missing/invalid files are ignored
+	 * after a warning. Uses the same mixer handle as playSample.
+	 */
+	void playWaveFile(const Common::Path &path);
 
 	// Offset 50D3h - This is used in 0037:10C4 to terminate the loop
 	uint16 _numHotspots;

@@ -20,11 +20,13 @@
  */
 
 #include "macs2/macs2.h"
+#include "audio/decoders/wave.h"
 #include "audio/fmopl.h"
 #include "audio/mixer.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
+#include "common/file.h"
 #include "common/ptr.h"
 #include "common/savefile.h"
 #include "common/scummsys.h"
@@ -2226,6 +2228,29 @@ void Macs2Engine::stopSample() {
 
 bool Macs2Engine::isSamplePlaying() const {
 	return g_system->getMixer()->isSoundHandleActive(_currentSoundHandle);
+}
+
+void Macs2Engine::playWaveFile(const Common::Path &path) {
+	Common::File *file = new Common::File();
+	if (!file->open(path)) {
+		warning("playWaveFile: cannot open %s", path.toString().c_str());
+		delete file;
+		return;
+	}
+
+	Audio::SeekableAudioStream *stream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
+	if (stream == nullptr) {
+		warning("playWaveFile: not a WAV: %s", path.toString().c_str());
+		return;
+	}
+
+	stopSample();
+	const Common::String pathStr = path.toString('/');
+	const bool isSpeech = pathStr.hasPrefixIgnoreCase("SPEECH/") ||
+						  pathStr.contains("/SPEECH/");
+	const Audio::Mixer::SoundType type =
+		isSpeech ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
+	g_system->getMixer()->playStream(type, &_currentSoundHandle, stream);
 }
 
 Common::String Macs2Engine::getGameId() const {
