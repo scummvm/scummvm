@@ -712,6 +712,8 @@ bool NancyConsole::Cmd_actionRecordExport(int argc, const char **argv) {
 		Common::String desc(descBuf);
 		desc.replace('/', '-');
 		desc.replace('\\', '-');
+		desc.replace('>', '_');
+		desc.replace('<', '_');
 		byte ARType = chunk->readByte();
 		chunk->skip(1); // execType
 
