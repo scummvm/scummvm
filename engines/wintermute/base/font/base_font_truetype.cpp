@@ -691,13 +691,19 @@ bool BaseFontTT::initFont() {
 		_font = _fallbackFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 		warning("BaseFontTT::InitFont - Couldn't load font: %s", _fontFile);
 	}
+
 	auto box = _font->getBoundingBox("Ay");
 	_lineHeight = box.bottom - box.top;
+
+	// based on WME lite code:
+	_lineHeight += 2;
+
 #ifdef ENABLE_FOXTAIL
 	if (BaseEngine::instance().isFoxTail(FOXTAIL_1_2_896, FOXTAIL_LATEST_VERSION)) {
 		_lineHeight -= 1;
 	}
 #endif
+
 	return STATUS_OK;
 }
 
