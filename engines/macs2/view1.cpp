@@ -34,7 +34,7 @@
 #include "macs2/gameobjects.h"
 #include "macs2/macs2.h"
 #include "macs2/music.h"
-#include "macs2/scummui.h"
+#include "macs2/actionbar.h"
 
 namespace Macs2 {
 namespace {
@@ -137,19 +137,19 @@ View1::View1() : UIElement("View1") {
 	_inventorySource = protagonist->_gameObject;
 	_inventoryButtonLocations.resize(6);
 
-	if (hasScummVerbUI()) {
-		_scummUI = new ScummUI(this);
+	if (hasPersistentActionBar()) {
+		_actionBar = new ActionBar(this);
 		_bounds = Common::Rect(0, 0, kScreenWidth, kScreenHeight);
 		_innerBounds = _bounds;
 		setInventorySource(_inventorySource);
 	}
 }
 
-void View1::ensureScummVerbUI() {
-	if (!hasScummVerbUI())
+void View1::ensureActionBar() {
+	if (!hasPersistentActionBar())
 		return;
-	if (!_scummUI) {
-		_scummUI = new ScummUI(this);
+	if (!_actionBar) {
+		_actionBar = new ActionBar(this);
 		if (_inventorySource)
 			setInventorySource(_inventorySource);
 	}
@@ -160,12 +160,22 @@ void View1::ensureScummVerbUI() {
 	}
 }
 
-bool View1::hasScummVerbUI() const {
-	return g_engine->enhancementEnabled(kEnhUIUX);
+bool View1::hasPersistentActionBar() const {
+	return g_engine->enhancementEnabled(kEnhUIUX) || g_engine->hasNativeHudAssets();
 }
 
-bool View1::shouldShowScummVerbUI() const {
-	if (!hasScummVerbUI())
+int View1::actionBarTopY() const {
+	if (_actionBar && shouldShowActionBar())
+		return _actionBar->gameAreaBottomY();
+	if (g_engine->hasNativeHudAssets() && g_engine->isBottomHudVisible() && g_engine->_menuMode != 0)
+		return (int)g_engine->_panelTopY;
+	return kGameHeight;
+}
+
+bool View1::shouldShowActionBar() const {
+	if (!hasPersistentActionBar())
+		return false;
+	if (!g_engine->isBottomHudVisible())
 		return false;
 	if (_currentMode == ViewMode::VM_HELP)
 		return false;
@@ -188,7 +198,7 @@ bool View1::shouldShowScummVerbUI() const {
 }
 
 View1::~View1() {
-	delete _scummUI;
+	delete _actionBar;
 	for (Character *c : _characters) {
 		delete c;
 	}
@@ -231,9 +241,9 @@ void View1::openInventory(GameObject *newInventorySource) {
 	_pendingPanelRequest = kPanelRequestNone; // Binary: g_wPendingPanelRequest = 0
 
 	// SCUMM verb UI: protagonist inventory is always visible in the strip.
-	if (hasScummVerbUI() && newInventorySource->_index == Scenes::instance()._currentActorIndex) {
-		if (_scummUI)
-			_scummUI->syncInventory();
+	if (hasPersistentActionBar() && newInventorySource->_index == Scenes::instance()._currentActorIndex) {
+		if (_actionBar)
+			_actionBar->syncInventory();
 		return;
 	}
 
@@ -302,8 +312,8 @@ void View1::setInventorySource(GameObject *newInventorySource) {
 			_inventoryItems.push_back(currentObject);
 		}
 	}
-	if (hasScummVerbUI() && _scummUI)
-		_scummUI->syncInventory();
+	if (hasPersistentActionBar() && _actionBar)
+		_actionBar->syncInventory();
 }
 
 void View1::refreshProtagonistInventoryAfterLoad(uint16 actorIndex) {
@@ -333,8 +343,8 @@ void View1::refreshProtagonistInventoryAfterLoad(uint16 actorIndex) {
 
 	_inventoryItems = validated;
 
-	if (hasScummVerbUI() && _scummUI)
-		_scummUI->resetInventoryAfterLoad();
+	if (hasPersistentActionBar() && _actionBar)
+		_actionBar->resetInventoryAfterLoad();
 }
 
 bool View1::isInventorySourceProtagonist() const {
@@ -345,8 +355,8 @@ void View1::transferInventoryItem(GameObject *item, GameObject *targetContainer)
 	int index = findInventoryItem(item);
 	_inventoryItems.remove_at(index);
 	item->_sceneIndex = targetContainer->_index + 0x400;
-	if (hasScummVerbUI() && _scummUI)
-		_scummUI->syncInventory();
+	if (hasPersistentActionBar() && _actionBar)
+		_actionBar->syncInventory();
 }
 
 int View1::findInventoryItem(const GameObject *item) {
@@ -430,7 +440,7 @@ void View1::updateCursor(const byte *palette) {
 	int mode = (int)g_engine->_scriptExecutor->_cursorMode - 1;
 
 	// SCUMM-style UI: gameplay verbs share the walk cursor; the sentence line shows the active verb.
-	if (hasScummVerbUI()) {
+	if (hasPersistentActionBar()) {
 		const Script::MouseMode cursorMode = g_engine->_scriptExecutor->_cursorMode;
 		switch (cursorMode) {
 		case Script::MouseMode::Talk:
@@ -836,7 +846,7 @@ void View1::layoutActionBarButtons() {
 }
 
 void View1::openMainMenu(Common::Point clickedPosition) {
-	if (hasScummVerbUI())
+	if (hasPersistentActionBar())
 		return;
 
 	// Binary handleInput: save cursor and set to PanelCursor (0x19)
@@ -875,7 +885,7 @@ void View1::openMainMenu(Common::Point clickedPosition) {
 }
 
 void View1::openScriptActionBar(const Common::Point &position, Script::MouseMode restoreCursorMode) {
-	if (_uiPanelState != kUiPanelNone || hasScummVerbUI())
+	if (_uiPanelState != kUiPanelNone || hasPersistentActionBar())
 		return;
 	openMainMenu(position);
 	g_engine->setCursorMode(restoreCursorMode);
@@ -1080,8 +1090,8 @@ void View1::transferPickupTarget(GameObject *targetObject) {
 		}
 	}
 
-	if (hasScummVerbUI() && _scummUI)
-		_scummUI->syncInventory();
+	if (hasPersistentActionBar() && _actionBar)
+		_actionBar->syncInventory();
 
 	// Binary sets g_wNeedsRedraw and restores scene background over the panel area.
 	redraw();
@@ -1475,8 +1485,8 @@ bool View1::handleContainerInventoryClick(const MouseDownMessage &msg) {
 				updateCursor();
 				g_engine->_scriptExecutor->_inventoryActionFlag = true;
 				setInventorySource(_inventorySource);
-				if (hasScummVerbUI() && _scummUI)
-					_scummUI->syncInventory();
+				if (hasPersistentActionBar() && _actionBar)
+					_actionBar->syncInventory();
 			}
 			break;
 		}
@@ -1516,8 +1526,8 @@ bool View1::handleContainerInventoryClick(const MouseDownMessage &msg) {
 		}
 		g_engine->setCursorMode(Script::MouseMode::UseInventory);
 		updateCursor();
-		if (hasScummVerbUI() && _scummUI)
-			_scummUI->syncInventory();
+		if (hasPersistentActionBar() && _actionBar)
+			_actionBar->syncInventory();
 		return true;
 	}
 
@@ -1644,9 +1654,9 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 			return handleHelpClick(msg);
 		}
 
-		if (shouldShowScummVerbUI() && _scummUI && _scummUI->isPointInUI(msg._pos)) {
+		if (shouldShowActionBar() && _actionBar && _actionBar->isPointInUI(msg._pos)) {
 			if (g_engine->_scriptExecutor->_cursorMode != Script::MouseMode::Disabled) {
-				_scummUI->handleClick(msg._pos, g_engine->_scriptExecutor->isExecuting());
+				_actionBar->handleClick(msg._pos, g_engine->_scriptExecutor->isExecuting());
 				presentFrame();
 			}
 			return true;
@@ -1727,7 +1737,7 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 		}
 
 		if (g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::Walk) {
-			if (shouldShowScummVerbUI() && msg._pos.y >= kGameHeight)
+			if (shouldShowActionBar() && msg._pos.y >= actionBarTopY())
 				return true;
 
 			Character *protagonist = getCharacterByIndex(Scenes::instance()._currentActorIndex);
@@ -1770,7 +1780,7 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 		}
 
 		// Check if we hit something
-		if (shouldShowScummVerbUI() && msg._pos.y >= kGameHeight)
+		if (shouldShowActionBar() && msg._pos.y >= actionBarTopY())
 			return true;
 
 		// Original order: getHotspotAtPoint first, then drawCharactersAndHitTest overrides.
@@ -1849,13 +1859,13 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 		if (g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::Disabled) {
 			return true;
 		}
-		if (hasScummVerbUI()) {
-			if (shouldShowScummVerbUI()) {
+		if (hasPersistentActionBar()) {
+			if (shouldShowActionBar()) {
 				g_engine->nextCursorMode();
 				_activeInventoryItem = nullptr;
 				g_engine->_scriptExecutor->_interactedInventoryItemId = 0;
-				if (_scummUI)
-					_scummUI->syncActiveVerbFromCursorMode();
+				if (_actionBar)
+					_actionBar->syncActiveVerbFromCursorMode();
 				updateCursor();
 				presentFrame();
 			}
@@ -1996,11 +2006,11 @@ bool View1::msgMouseMove(const MouseMoveMessage &msg) {
 	_hoverAreaId = g_engine->_scriptExecutor->getAreaAtPoint(msg._pos.x, msg._pos.y);
 	_hoverHotspotId = g_engine->getHotspotAtPoint(msg._pos);
 
-	if (shouldShowScummVerbUI() && _scummUI) {
-		if (_scummUI->isPointInUI(msg._pos)) {
-			_scummUI->handleMouseMove(msg._pos);
-		} else if (msg._pos.y < kGameHeight) {
-			_scummUI->clearSentenceObject();
+	if (shouldShowActionBar() && _actionBar) {
+		if (_actionBar->isPointInUI(msg._pos)) {
+			_actionBar->handleMouseMove(msg._pos);
+		} else if (msg._pos.y < actionBarTopY()) {
+			_actionBar->clearSentenceObject();
 			uint16 index = getHitObjectID(msg._pos);
 			if (index == 0)
 				index = g_engine->getHotspotAtPoint(msg._pos);
@@ -2009,7 +2019,7 @@ bool View1::msgMouseMove(const MouseMoveMessage &msg) {
 				if (objIndex < GameObjects::instance()._objectNames.size()) {
 					const Common::String &name = GameObjects::instance()._objectNames[objIndex];
 					if (!name.empty())
-						_scummUI->updateSentenceLine(name);
+						_actionBar->updateSentenceLine(name);
 				}
 			}
 		}
@@ -2087,7 +2097,7 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 	// Binary (handleInput 1008:edff): UI panels only open when not executing and cursor != Disabled.
 	if (!g_engine->_scriptExecutor->isExecuting() && g_engine->_scriptExecutor->_cursorMode != Script::MouseMode::Disabled) {
 		if (msg.ascii == (uint16)'i') {
-			if (hasScummVerbUI()) {
+			if (hasPersistentActionBar()) {
 				if (_uiPanelState == kUiPanelContainerInventory)
 					closeInventory();
 			} else if (_uiPanelState != kUiPanelInventory) {
@@ -2096,13 +2106,13 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 				closeInventory();
 			}
 		} else if (msg.ascii == 'n') {
-			if (hasScummVerbUI()) {
-				if (shouldShowScummVerbUI()) {
+			if (hasPersistentActionBar()) {
+				if (shouldShowActionBar()) {
 					g_engine->nextCursorMode();
 					_activeInventoryItem = nullptr;
 					g_engine->_scriptExecutor->_interactedInventoryItemId = 0;
-					if (_scummUI)
-						_scummUI->syncActiveVerbFromCursorMode();
+					if (_actionBar)
+						_actionBar->syncActiveVerbFromCursorMode();
 					updateCursor();
 					presentFrame();
 				}
@@ -2189,7 +2199,7 @@ void View1::draw() {
 
 	// We keep the inventory on but don't draw it in case we display a string
 	// i.e. a description of an item
-	const bool showProtagonistInventory = _uiPanelState == kUiPanelInventory && !hasScummVerbUI();
+	const bool showProtagonistInventory = _uiPanelState == kUiPanelInventory && !hasPersistentActionBar();
 	if ((showProtagonistInventory || _uiPanelState == kUiPanelContainerInventory) && !_isShowingTextBox && !_isShowingDialoguePanel) {
 		drawInventory(s);
 	}
@@ -2250,14 +2260,15 @@ void View1::draw() {
 		}
 	}
 
-	if (hasScummVerbUI()) {
-		ensureScummVerbUI();
-		if (_scummUI && !_isShowingTextBox && !_isShowingDialoguePanel) {
+	if (hasPersistentActionBar()) {
+		ensureActionBar();
+		if (_actionBar && !_isShowingTextBox && !_isShowingDialoguePanel) {
 			Graphics::ManagedSurface fullScreen(*g_events->getScreen(), Common::Rect(0, 0, kScreenWidth, kScreenHeight));
-			if (shouldShowScummVerbUI()) {
-				_scummUI->draw(fullScreen);
+			if (shouldShowActionBar()) {
+				_actionBar->draw(fullScreen);
 			} else {
-				fullScreen.fillRect(Common::Rect(0, kGameHeight, kScreenWidth, kScreenHeight), 0);
+				const int top = actionBarTopY();
+				fullScreen.fillRect(Common::Rect(0, top, kScreenWidth, kScreenHeight), 0);
 			}
 		}
 	}
@@ -2671,7 +2682,7 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 			const byte *pixelData = frame._data.data();
 
 			// drawAllCharacters @ 1008:9573-9754: drawAnimFrame / drawAnimFrameShaded / drawAnimFrameDepth
-			const bool clipGameArea = hasScummVerbUI();
+			const bool clipGameArea = hasPersistentActionBar();
 			if (obj->_hasScaling) {
 				drawSpriteTransparent(shadingTableOffset, depthThreshold, scalingFactor,
 									  drawX, drawY, frame._width, frame._height, pixelData, *surface);
@@ -2808,7 +2819,7 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 
 	// Draw the buttons at the bottom
 	for (int i = 0; i < 6; i++) {
-		if (hasScummVerbUI() && !isInventorySourceProtagonist() && i == (int)InventoryButtonIndex::Drop)
+		if (hasPersistentActionBar() && !isInventorySourceProtagonist() && i == (int)InventoryButtonIndex::Drop)
 			continue;
 
 		uint16 index = iconIndices[i];
@@ -2904,7 +2915,7 @@ void View1::drawSprite(int16 x, int16 y, uint16 width, uint16 height, byte *data
 				int finalX = x + actualX;
 				int finalY = y + currentY;
 				if (finalX >= 0 && finalX < s.w && finalY >= 0 && finalY < s.h) {
-					if (clipToGameArea && finalY >= kGameHeight)
+					if (clipToGameArea && finalY >= actionBarTopY())
 						continue;
 					// Check for depth
 					uint8 bgDepth = g_engine->_depthMap.getPixel(finalX, finalY);
@@ -3004,7 +3015,7 @@ void View1::drawSpriteScaled(int shadingTableOffset, uint8 depthThreshold, int16
 	int srcRow = 0;
 	int remainingRows = srcHeight;
 	while (remainingRows > 0) {
-		if (screenY >= 0 && screenY < s.h && !(hasScummVerbUI() && screenY >= kGameHeight)) {
+		if (screenY >= 0 && screenY < s.h && !(hasPersistentActionBar() && screenY >= actionBarTopY())) {
 			int screenX = drawX;
 			for (uint16 srcX = 0; srcX < srcWidth; srcX++) {
 				if (screenX >= 0 && screenX < s.w) {
@@ -3034,7 +3045,7 @@ void View1::drawSpriteTransparent(int shadingTableOffset, uint8 depthThreshold, 
 	uint16 yScaleAccum = 0;
 
 	while (remainingRows > 0) {
-		if (screenY >= 0 && screenY < s.h && !(hasScummVerbUI() && screenY >= kGameHeight)) {
+		if (screenY >= 0 && screenY < s.h && !(hasPersistentActionBar() && screenY >= actionBarTopY())) {
 			int screenX = drawX;
 			const byte *srcPtr = srcPixels + srcRowOffset;
 			int remainingSrcPixels = (int)srcWidth;

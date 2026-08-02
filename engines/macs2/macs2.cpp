@@ -1340,6 +1340,18 @@ void Macs2Engine::nextCursorMode() {
 	}
 }
 
+void Macs2Engine::setBottomHudVisible(bool visible) {
+	_bottomHudVisible = visible;
+	if (hasNativeHudAssets()) {
+		if (visible) {
+			if (_menuMode == 0)
+				_menuMode = 1;
+		} else {
+			_menuMode = 0;
+		}
+	}
+}
+
 void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
 	// setCursorMode (1008:3ea5): when the cursor image changes, keep the hotspot
 	// fixed on screen by compensating for the old/new image half-extents, clamp,
@@ -1362,19 +1374,20 @@ void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
 	};
 
 	View1 *view = (View1 *)findView("View1");
-	const bool scummVerbUI = view && view->hasScummVerbUI();
+	const bool persistentBar = view && view->hasPersistentActionBar();
+	const int barTopY = view ? view->actionBarTopY() : gameHeight();
 
 	uint16 oldHalfW = 0, oldHalfH = 0, newHalfW = 0, newHalfH = 0;
 	cursorHalfSize(oldMode, oldHalfW, oldHalfH);
 
 	Common::Point mouse = g_system->getEventManager()->getMousePos();
-	const bool mouseInUiPanel = scummVerbUI && mouse.y >= gameHeight();
+	const bool mouseInUiPanel = persistentBar && mouse.y >= barTopY;
 
 	_scriptExecutor->_cursorMode = newMode;
 
 	// Keep the pointer on the verb/inventory panel when selecting verbs there, and
 	// skip hotspot compensation when the SCUMM UI shows the same walk cursor for all verbs.
-	if (!mouseInUiPanel && !(scummVerbUI && isGameplayVerb(oldMode) && isGameplayVerb(newMode))) {
+	if (!mouseInUiPanel && !(persistentBar && isGameplayVerb(oldMode) && isGameplayVerb(newMode))) {
 		mouse.x += oldHalfW;
 		mouse.y += oldHalfH;
 
@@ -1382,7 +1395,7 @@ void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
 		mouse.x -= newHalfW;
 		mouse.y -= newHalfH;
 
-		const int maxY = scummVerbUI ? (kScreenHeightLast - (int)newHalfH)
+		const int maxY = persistentBar ? (kScreenHeightLast - (int)newHalfH)
 									: (gameHeightLast() - (int)newHalfH);
 		mouse.x = CLIP<int>(mouse.x, (int)newHalfW, screenWidthLast() - (int)newHalfW);
 		mouse.y = CLIP<int>(mouse.y, (int)newHalfH, maxY);

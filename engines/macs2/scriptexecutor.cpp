@@ -3389,6 +3389,11 @@ OpcodeResult ScriptExecutor::scriptClearDeltaSfxList() {
 OpcodeResult ScriptExecutor::scriptShowActionBar() {
 	debugC(kDebugScript, "SCRIPT::showActionBar()");
 	View1 *currentView = (View1 *)_engine->findView("View1");
+	if (currentView != nullptr && currentView->hasPersistentActionBar()) {
+		_engine->setBottomHudVisible(true);
+		currentView->redraw();
+		return OpcodeResult::Continue;
+	}
 	if (currentView != nullptr) {
 		currentView->openScriptActionBar(
 			Common::Point(_engine->screenWidth() / 2, _engine->gameHeight() / 2), _cursorMode);
@@ -3399,6 +3404,11 @@ OpcodeResult ScriptExecutor::scriptShowActionBar() {
 OpcodeResult ScriptExecutor::scriptHideActionBar() {
 	debugC(kDebugScript, "SCRIPT::hideActionBar()");
 	View1 *currentView = (View1 *)_engine->findView("View1");
+	if (currentView != nullptr && currentView->hasPersistentActionBar()) {
+		_engine->setBottomHudVisible(false);
+		currentView->redraw();
+		return OpcodeResult::Continue;
+	}
 	if (currentView != nullptr) {
 		MouseMode savedMode = _cursorMode;
 		currentView->closeScriptActionBar(savedMode);

@@ -27,7 +27,7 @@
 
 namespace Macs2 {
 
-class ScummUI;
+class ActionBar;
 class GameObject;
 
 enum class ViewMode {
@@ -186,7 +186,7 @@ struct ScalingValues {
 };
 
 class View1 : public UIElement {
-	friend class ScummUI;
+	friend class ActionBar;
 
 private:
 	// drawSpriteTransparent @ 1010:0ed1 (drawAnimFrameDepth @ 1010:172c)
@@ -201,7 +201,7 @@ private:
 	// Set by action bar map button on press; enterMapMode() runs on panel release.
 	bool _pendingMapOpen = false;
 
-	ScummUI *_scummUI = nullptr;
+	ActionBar *_actionBar = nullptr;
 
 	// Saved scene visuals for help screen restore (avoids changeScene on exit)
 	byte _savedPalVanilla[256 * 3] = {0};
@@ -351,9 +351,11 @@ public:
 	View1();
 	virtual ~View1();
 
-	bool hasScummVerbUI() const;
-	bool shouldShowScummVerbUI() const;
-	void ensureScummVerbUI();
+	bool hasPersistentActionBar() const;
+	bool shouldShowActionBar() const;
+	void ensureActionBar();
+	/** Top Y of the persistent action bar (game area ends here when shown). */
+	int actionBarTopY() const;
 
 	// g_wHelpButtonDisabled (1020:23B4): when non-zero, help/map button is disabled
 	// and script scene changes use applyScenePaletteEffect instead of palette fades.

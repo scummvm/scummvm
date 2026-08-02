@@ -439,6 +439,8 @@ public:
 	bool _scriptSkippable = false;
 	bool _musicEnabled = true;
 	bool _soundSystemActive = true;
+	/** Dialogue/subtitle text display toggle (native options HUD). */
+	bool _textEnabled = true;
 	bool _overlayTextStageActive = false;
 	bool _inventoryActionFlag = false;
 	bool _inventoryCombineFlag = false;

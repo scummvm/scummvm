@@ -122,6 +122,21 @@ struct AnimFrame : public Sprite {
 	Common::Point getBottomMiddleOffset(uint16 scale = 100) const;
 };
 
+/** Persistent native HUD button (megapic panel skin). */
+struct HudButton {
+	int16 x = 0;
+	int16 y = 0;
+	uint16 inactiveStep = 0;
+	uint16 activeStep = 0;
+	uint16 hoverStep = 0;
+	uint16 buttonId = 0; // 1=Walk, 2=Look, 3=Talk, 4=Use, 0x33=Options, …
+	uint16 menuId = 0;   // 1=main bar, 2=options, …
+	AnimFrame frame;
+	AnimFrame activeFrame;
+	AnimFrame hoverFrame;
+	Common::Array<uint8> animBlob;
+};
+
 struct BackgroundAnimation {
 	uint16 _x = 0;
 	uint16 _y = 0;
@@ -422,6 +437,44 @@ public:
 	Common::Array<byte> _amigaPendingSceneScript;
 	Common::Array<byte> _amigaPendingSceneStrings;
 
+	/** Bottom HUD visible (showActionBar/hideActionBar); default shown. */
+	bool _bottomHudVisible = true;
+
+	/**
+	 * Native persistent HUD button table and megapic panels.
+	 * Populated when dialect-v2 panel assets are loaded.
+	 */
+	Graphics::ManagedSurface _hudMegapics[6];
+	bool _hudMegapicLoaded[6] = {};
+	Common::Array<HudButton> _hudButtons;
+	/** Y where the bottom HUD starts; scene above this is interactive. */
+	uint16 _panelTopY = 0;
+	uint16 _panelHeight = 0;
+	/** 0=hidden, 1=main verbs/invent, 2=options, 4=dialogue list. */
+	uint16 _menuMode = 1;
+	/** 0=none, 1=save, 2=load (options submenu). */
+	uint16 _optionsSubMode = 0;
+	Script::MouseMode _savedMenuCursorMode = Script::MouseMode::Walk;
+	uint16 _inventScroll = 1;
+	uint16 _inventOriginX = 0;
+	uint16 _inventOriginY = 0;
+	uint16 _inventCols = 4;
+	uint16 _inventRows = 2;
+	uint16 _inventSlotW = 64;
+	uint16 _inventSlotH = 52;
+	uint16 _inventLayoutMode = 0;
+	/**
+	 * Text layout after invent grid:
+	 * [0..4] = options list X/Y/maxW/rows/pitch
+	 * [5..6] = dialogue list X/Y
+	 */
+	uint16 _hudTextLayout[7] = {};
+	uint16 _hudTextRecolor[4] = {};
+	uint16 _saveListScroll = 1;
+	Common::Array<Common::String> _saveSlotNames;
+	/** Cutscene skip-speed preference (1..4) from options HUD. */
+	uint16 _skipSpeed = 1;
+
 	void setCursorMode(Script::MouseMode newMode);
 	void nextCursorMode();
 
@@ -577,6 +630,19 @@ public:
 	int screenWidthLast() const { return screenWidth() - 1; }
 	int gameHeight() const { return kGameHeight; }
 	int gameHeightLast() const { return gameHeight() - 1; }
+
+	/**
+	 * Bottom HUD / action-bar visibility (dialect-neutral).
+	 * Driven by showActionBar / hideActionBar; Scumm verb strip and native
+	 * HUDs both respect this flag. Native skin also maps visible ↔ menuMode.
+	 */
+	bool isBottomHudVisible() const { return _bottomHudVisible; }
+	void setBottomHudVisible(bool visible);
+
+	/** True when dialect-v2 panel geometry/assets are available for native HUD. */
+	bool hasNativeHudAssets() const {
+		return _panelTopY != 0 && _panelHeight != 0;
+	}
 
 	// --- Layout / dialect facades (DOS defaults; other platforms override later) ---
 

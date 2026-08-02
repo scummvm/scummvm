@@ -848,7 +848,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		view1->rebuildCharacterLookupTable();
 		view1->refreshProtagonistInventoryAfterLoad(actorIndex);
 		view1->_uiPanelState = View1::kUiPanelNone;
-		view1->ensureScummVerbUI();
+		view1->ensureActionBar();
 
 		// Restore UseInventory cursor image after load.
 		// The cursor slot is only populated when clicking an inventory item in the panel;
