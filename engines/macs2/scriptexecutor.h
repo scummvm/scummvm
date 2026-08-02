@@ -225,6 +225,8 @@ public:
 	Common::String scriptParsePascalFileName(const Common::String &raw);
 	/** Resolve SPEECH/SOUNDFX basename (no extension) for openStreamFile; empty if none. */
 	Common::Path resolveAudioFilePath(const Common::String &fileName, bool preferSpeech) const;
+	/** Resolve MUSICGS then MUSICOPL; empty if neither exists. */
+	Common::Path resolveMidiFilePath(const Common::String &fileName) const;
 	/** Strip a trailing audio extension (.wav/.ogg/...) if present. */
 	static Common::String stripAudioExtension(const Common::String &fileName);
 	/**

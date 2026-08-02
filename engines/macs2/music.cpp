@@ -22,8 +22,11 @@
 #include "engines/macs2/music.h"
 #include "audio/fmopl.h"
 #include "audio/midiparser.h"
+#include "common/config-manager.h"
 #include "common/endian.h"
+#include "common/file.h"
 #include "common/memstream.h"
+#include "common/util.h"
 #include "engines/macs2/midiparser_macs2.h"
 
 #define CALLBACKS_PER_SECOND 120
@@ -31,7 +34,8 @@
 namespace Macs2 {
 
 Music::Music() : _opl(nullptr), _parser(nullptr), _playing(false),
-				 _masterVolume(0), _numOplChannels(9), _instrumentDataOffset(0) {
+				 _masterVolume(0), _numOplChannels(9), _instrumentDataOffset(0),
+				 _smf(nullptr), _smfDucked(false), _smfVolumeBeforeDuck(192) {
 	memset(_regShadow, 0, sizeof(_regShadow));
 	memset(_voiceAge, 1, sizeof(_voiceAge));
 	memset(_voiceMidiChannel, 0xFF, sizeof(_voiceMidiChannel));
@@ -55,6 +59,8 @@ void Music::init() {
 
 void Music::deinit() {
 	stopMusic();
+	delete _smf;
+	_smf = nullptr;
 	if (_opl) {
 		_opl->stop();
 		delete _opl;
@@ -94,7 +100,8 @@ void Music::silenceAll() {
 }
 
 bool Music::playSongData(const Common::Array<uint8> &data) {
-	stopMusic();
+	stopSmfPlayback();
+	stopAdlibPlayback();
 
 	if (_opl == nullptr)
 		return false;
@@ -135,7 +142,22 @@ bool Music::playSongData(const Common::Array<uint8> &data) {
 	return true;
 }
 
-void Music::stopMusic() {
+bool Music::ensureSmfPlayer() {
+	if (_smf != nullptr)
+		return true;
+	_smf = new SmfMidiPlayer();
+	return _smf != nullptr;
+}
+
+bool Music::playMidiFile(const Common::Path &path, bool loop) {
+	stopAdlibPlayback();
+	if (!ensureSmfPlayer())
+		return false;
+	_smf->playFile(path, loop);
+	return _smf->isPlaying();
+}
+
+void Music::stopAdlibPlayback() {
 	_playing = false;
 	_adlibPlaybackReady = true;
 	if (_parser) {
@@ -147,6 +169,58 @@ void Music::stopMusic() {
 		silenceAll();
 	_songData.clear();
 	_masterVolume = 0;
+}
+
+void Music::stopSmfPlayback() {
+	if (_smf != nullptr)
+		_smf->stop();
+	_smfDucked = false;
+}
+
+void Music::stopMusic() {
+	stopAdlibPlayback();
+	stopSmfPlayback();
+}
+
+bool Music::isMidiFilePlaying() const {
+	return _smf != nullptr && _smf->isPlaying();
+}
+
+void Music::setSmfVolumeFromAttenuation(uint16 gameAttenuation) {
+	if (_smf == nullptr || _smfDucked)
+		return;
+	if (ConfMan.hasKey("mute") && ConfMan.getBool("mute")) {
+		_smf->setVolume(0);
+		return;
+	}
+	const int musicVolume = ConfMan.getInt("music_volume");
+	const uint16 atten = (gameAttenuation > 0x3F) ? 0x3F : gameAttenuation;
+	const int vol = musicVolume * (0x3F - atten) / 0x3F;
+	_smf->setVolume(vol);
+}
+
+void Music::syncSmfVolume() {
+	if (_smf == nullptr || _smfDucked)
+		return;
+	_smf->syncVolume();
+}
+
+void Music::setSmfDucked(bool ducked, uint16 talkVolPercent) {
+	if (_smf == nullptr)
+		return;
+	if (ducked) {
+		if (!_smfDucked) {
+			_smfVolumeBeforeDuck = ConfMan.getInt("music_volume");
+			_smfDucked = true;
+		}
+		const int talk = (talkVolPercent > 0 && talkVolPercent <= 100) ? (int)talkVolPercent : 50;
+		const int duckedVol = CLIP((_smfVolumeBeforeDuck * (100 - talk)) / 100, 0, 255);
+		_smf->setVolume(duckedVol);
+	} else if (_smfDucked) {
+		_smfDucked = false;
+		_smf->setVolume(_smfVolumeBeforeDuck);
+		_smf->syncVolume();
+	}
 }
 
 void Music::setVolume(uint16 volume) {
@@ -453,6 +527,71 @@ void Music::readDataFromExecutable(Common::MemoryReadStream *fileStream) {
 void Music::loadData(Common::MemoryReadStream *fileStream, int64 pos, uint16 size, void *target) {
 	fileStream->seek(pos, SEEK_SET);
 	fileStream->read(target, size);
+}
+
+SmfMidiPlayer::SmfMidiPlayer() {
+	createDriver();
+	if (_driver == nullptr)
+		return;
+
+	if (_driver->open() != 0) {
+		warning("SmfMidiPlayer: failed to open MIDI driver");
+		delete _driver;
+		_driver = nullptr;
+		return;
+	}
+
+	if (_nativeMT32)
+		_driver->sendMT32Reset();
+	else
+		_driver->sendGMReset();
+
+	_driver->setTimerCallback(this, &timerCallback);
+}
+
+void SmfMidiPlayer::playFile(const Common::Path &path, bool loop) {
+	if (_driver == nullptr)
+		return;
+
+	Common::File file;
+	if (!file.open(path)) {
+		warning("SmfMidiPlayer: cannot open %s", path.toString().c_str());
+		return;
+	}
+
+	const uint32 size = (uint32)file.size();
+	if (size == 0)
+		return;
+
+	byte *data = (byte *)malloc(size);
+	if (data == nullptr)
+		return;
+	if (file.read(data, size) != size) {
+		free(data);
+		return;
+	}
+
+	// stop() takes the mutex; do not hold it across syncVolume().
+	stop();
+
+	_midiData = data;
+	MidiParser *parser = MidiParser::createParser_SMF();
+	if (!parser->loadMusic(_midiData, size)) {
+		warning("SmfMidiPlayer: not SMF: %s", path.toString().c_str());
+		delete parser;
+		free(_midiData);
+		_midiData = nullptr;
+		return;
+	}
+
+	parser->setTrack(0);
+	parser->setMidiDriver(this);
+	parser->setTimerRate(_driver->getBaseTempo());
+	parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+	_parser = parser;
+	_isLooping = loop;
+	syncVolume();
+	_isPlaying = true;
 }
 
 } // End of namespace Macs2

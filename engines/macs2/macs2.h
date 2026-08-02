@@ -523,6 +523,11 @@ public:
 	// Returns the Music volume (0-63) scaled by the user's music_volume setting
 	uint16 scaledMusicVolume(uint16 gameAttenuation) const;
 	/**
+	 * TalkVol / setWaveVolume percent (0..100). Used to duck SMF while speech plays.
+	 * 0 means unset (duck uses a 50% default).
+	 */
+	uint16 _talkVol = 0;
+	/**
 	 * Install PCM for opcode 0x3E / playSample.
 	 * @param rateHz sample rate (DOS Sound Blaster path uses 8000)
 	 * @param headerSkip bytes to skip at start of buffer (DOS resources have a 2-byte size header;

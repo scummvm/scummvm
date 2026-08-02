@@ -953,8 +953,10 @@ void View1::handleTextBoxInput() {
 	g_engine->_scriptExecutor->_waitingForUiClick = false;
 	// Stop dialogue speech only - leave environment PCM/SFX on _currentSoundHandle.
 	g_engine->stopSpeech();
-	if (!g_engine->isSamplePlaying() && !g_engine->isSpeechPlaying())
+	if (!g_engine->isSamplePlaying() && !g_engine->isSpeechPlaying()) {
 		g_engine->_scriptExecutor->_waitForPcmSound = false;
+		g_engine->getMusic()->setSmfDucked(false);
+	}
 	redraw();
 }
 
@@ -964,8 +966,10 @@ void View1::dismissDialoguePanel() {
 	_isShowingDialoguePanel = false;
 	g_engine->_scriptExecutor->_waitingForUiClick = false;
 	g_engine->stopSpeech();
-	if (!g_engine->isSamplePlaying() && !g_engine->isSpeechPlaying())
+	if (!g_engine->isSamplePlaying() && !g_engine->isSpeechPlaying()) {
 		g_engine->_scriptExecutor->_waitForPcmSound = false;
+		g_engine->getMusic()->setSmfDucked(false);
+	}
 	redraw();
 }
 
@@ -2480,6 +2484,7 @@ bool View1::tick() {
 					debugC(kDebugScript, "waitForSound complete");
 					executor->debugLogActorWalkState("waitForSound complete");
 					executor->_waitForPcmSound = false;
+					g_engine->getMusic()->setSmfDucked(false);
 					g_engine->runScriptExecutor();
 				}
 			} else if (executor->_waitForMusicControl) {
@@ -2490,7 +2495,9 @@ bool View1::tick() {
 				}
 			} else if (executor->_waitForAdlibReady) {
 				drawSceneUpdate();
-				if (g_engine->getMusic()->isPlaybackReady()) {
+				Music *music = g_engine->getMusic();
+				const bool ready = music->isMidiFilePlaying() ? false : music->isPlaybackReady();
+				if (ready) {
 					executor->_waitForAdlibReady = false;
 					g_engine->runScriptExecutor();
 				}

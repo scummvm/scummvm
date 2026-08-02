@@ -23,7 +23,9 @@
 #define MACS2_MUSIC_H
 
 #include "audio/mididrv.h"
+#include "audio/midiplayer.h"
 #include "common/array.h"
+#include "common/path.h"
 #include "common/scummsys.h"
 
 class MidiParser;
@@ -39,12 +41,26 @@ class OPL;
 namespace Macs2 {
 
 /**
+ * Standard MIDI File player (MUSICGS / MUSICOPL .MID) via host MIDI/AdLib driver
+ * Used by dialect-v2 playSong / stopSong
+ */
+class SmfMidiPlayer : public Audio::MidiPlayer {
+public:
+	SmfMidiPlayer();
+	~SmfMidiPlayer() override = default;
+
+	void playFile(const Common::Path &path, bool loop = false);
+};
+
+/**
  * Music facade for the macs2 engine.
  *
  * Callers always use these methods; backend selection belongs here so additional
  * drivers can be wired later without scattering checks across the engine.
  *
- * Current backend: MidiParser_Macs2 + direct OPL register writes (MidiDriver_BASE).
+ * Backends:
+ * - MidiParser_Macs2 + direct OPL register writes (DOS music slots)
+ * - SmfMidiPlayer for SMF files (dialect-v2 / Windows MUSICGS|MUSICOPL)
  */
 class Music : public MidiDriver_BASE {
 public:
@@ -54,11 +70,28 @@ public:
 	void init();
 	void deinit();
 
-	/** Start song data on the active backend. Returns false if unavailable or load failed. */
+	/** Start DOS AdLib song data. Returns false if unavailable or load failed. */
 	bool playSongData(const Common::Array<uint8> &data);
+	/** Start an SMF .MID from path (lazy-inits SmfMidiPlayer). Stops AdLib playback. */
+	bool playMidiFile(const Common::Path &path, bool loop = false);
+	/** Stop AdLib and SMF playback. */
 	void stopMusic();
+	/** OPL attenuation volume (0 = loud, 0x3F = silent). */
 	void setVolume(uint16 volume);
+	/**
+	 * Apply game music attenuation to the SMF player (0 = loud, 0x3F = silent),
+	 * scaled by ConfMan music_volume. No-op if SMF backend is not open.
+	 */
+	void setSmfVolumeFromAttenuation(uint16 gameAttenuation);
+	/** Re-read ConfMan music_volume into the SMF player (unless ducked). */
+	void syncSmfVolume();
+	/**
+	 * Duck/restore SMF volume while speech plays (TalkVol / ReduceVol path).
+	 * talkVolPercent: 0..100 speech loudness; higher values duck music more.
+	 */
+	void setSmfDucked(bool ducked, uint16 talkVolPercent = 50);
 	bool isPlaybackReady() const { return _adlibPlaybackReady; }
+	bool isMidiFilePlaying() const;
 	bool hasAdlibBackend() const { return _opl != nullptr; }
 
 	void readDataFromExecutable(Common::MemoryReadStream *fileStream);
@@ -128,6 +161,14 @@ private:
 	// Instrument data from EXE (16 bytes per instrument, 11 used)
 	Common::Array<uint8> _instrumentData;
 	uint16 _instrumentDataOffset;
+
+	SmfMidiPlayer *_smf;
+	bool _smfDucked;
+	int _smfVolumeBeforeDuck;
+
+	void stopAdlibPlayback();
+	void stopSmfPlayback();
+	bool ensureSmfPlayer();
 
 	// Lookup tables from EXE
 	Common::Array<uint8> _opSlotTable;

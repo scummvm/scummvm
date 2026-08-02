@@ -480,6 +480,14 @@ void Macs2Engine::syncSoundSettings() {
 		_mixer->muteSoundType(Audio::Mixer::kPlainSoundType,
 							  (musicVolume == 0) || (ConfMan.hasKey("mute") && ConfMan.getBool("mute")));
 		_music->setVolume(scaledMusicVolume(_scriptExecutor->_musicControlVolume));
+		_music->setSmfVolumeFromAttenuation(_scriptExecutor->_musicControlVolume);
+	}
+
+	// TalkVol (setWaveVolume): percent of speech loudness when set.
+	if (_talkVol > 0 && _talkVol <= 100) {
+		const int speechVolume = ConfMan.getInt("speech_volume");
+		const int combined = MIN(255, (speechVolume * (int)_talkVol) / 100);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, combined);
 	}
 }
 

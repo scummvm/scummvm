@@ -3223,6 +3223,19 @@ Common::Path ScriptExecutor::resolveAudioFilePath(const Common::String &fileName
 	return Common::Path();
 }
 
+Common::Path ScriptExecutor::resolveMidiFilePath(const Common::String &fileName) const {
+	if (fileName.empty())
+		return Common::Path();
+
+	Common::Path path = Common::Path("MUSICGS").join(fileName);
+	if (Common::File::exists(path))
+		return path;
+	path = Common::Path("MUSICOPL").join(fileName);
+	if (Common::File::exists(path))
+		return path;
+	return Common::Path();
+}
+
 void ScriptExecutor::tryPlayGeneratedDialogueSpeech(uint16 stringOffset) {
 	const bool enhOn = _engine->enhancementEnabled(kEnhAudioChanges);
 	Common::String baseName;
@@ -3272,8 +3285,6 @@ OpcodeResult ScriptExecutor::scriptPlaySfx() {
 }
 
 OpcodeResult ScriptExecutor::scriptPlaySong() {
-	// Dialect-v2 file music (MUSICGS/MUSICOPL). SMF playback is not wired yet;
-	// consume the filename so scripts stay in sync when assets are absent.
 	const Common::String fileName = scriptParsePascalFileName(scriptReadFixedFileName());
 	debugC(kDebugScript, "SCRIPT::playSong(%s)", fileName.c_str());
 	scriptSkipOpcodeRemainder(0x44);
@@ -3281,16 +3292,21 @@ OpcodeResult ScriptExecutor::scriptPlaySong() {
 	if (fileName.empty() || !_musicEnabled)
 		return OpcodeResult::Continue;
 
-	Common::Path path = Common::Path("MUSICGS").join(fileName);
-	if (!Common::File::exists(path))
-		path = Common::Path("MUSICOPL").join(fileName);
-	if (!Common::File::exists(path)) {
+	const Common::Path path = resolveMidiFilePath(fileName);
+	if (path.empty()) {
 		warning("playSong: missing %s (looked in MUSICGS/MUSICOPL)", fileName.c_str());
 		return OpcodeResult::Continue;
 	}
 
-	warning("playSong: MIDI file present but playback not implemented yet (%s)",
-			path.toString().c_str());
+	if (!_engine->getMusic()->playMidiFile(path, false)) {
+		warning("playSong: failed to play %s", path.toString().c_str());
+		return OpcodeResult::Continue;
+	}
+
+	_activeMusicSlot = 1;
+	_musicControlMode = 0;
+	_musicControlVolume = 0;
+	_engine->getMusic()->setSmfVolumeFromAttenuation(_musicControlVolume);
 	return OpcodeResult::Continue;
 }
 
@@ -3298,9 +3314,9 @@ OpcodeResult ScriptExecutor::scriptStopSong() {
 	debugC(kDebugScript, "SCRIPT::stopSong()");
 	scriptSkipOpcodeRemainder(0x45);
 	_activeMusicSlot = 0;
+	_musicControlMode = 0;
 	_waitForAdlibReady = false;
-	if (_engine->getMusic() != nullptr)
-		_engine->getMusic()->stopMusic();
+	_engine->getMusic()->stopMusic();
 	return OpcodeResult::Continue;
 }
 
@@ -3486,10 +3502,10 @@ OpcodeResult ScriptExecutor::scriptSetMidiVolume() {
 		setScriptError(0x30);
 		return OpcodeResult::Continue;
 	}
-	// Maps 0=loud..100=silent to OPL attenuation (0..0x3F).
+	// Maps percent (0=silent..100=loud) to OPL attenuation (0x3F..0).
 	_musicControlVolume = (uint16)((100 - volumePercent) * 0x3F / 100);
-	if (_engine->getMusic() != nullptr)
-		_engine->getMusic()->setVolume(_engine->scaledMusicVolume(_musicControlVolume));
+	_engine->getMusic()->setVolume(_engine->scaledMusicVolume(_musicControlVolume));
+	_engine->getMusic()->setSmfVolumeFromAttenuation(_musicControlVolume);
 	return OpcodeResult::Continue;
 }
 
@@ -3502,6 +3518,8 @@ OpcodeResult ScriptExecutor::scriptSetWaveVolume() {
 		setScriptError(0x30);
 		return OpcodeResult::Continue;
 	}
+	// TalkVol / wave volume percent (also used while talking to duck SMF).
+	_engine->_talkVol = volumePercent;
 	const int mixerVolume = volumePercent * 255 / 100;
 	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, mixerVolume);
 	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, mixerVolume);
@@ -3726,6 +3744,7 @@ OpcodeResult ScriptExecutor::scriptTalkTo() {
 	enterBlockingWaitCursor();
 
 	if (playingVoice) {
+		_engine->getMusic()->setSmfDucked(true, _engine->_talkVol);
 		_waitForPcmSound = true;
 		endFrameWait();
 		return OpcodeResult::WaitForCallback;

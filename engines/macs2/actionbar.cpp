@@ -897,8 +897,7 @@ bool ActionBar::handleClickNative(const Common::Point &pos) {
 		g_engine->_scriptExecutor->_musicEnabled = true;
 	} else if (id == 0x3d) {
 		g_engine->_scriptExecutor->_musicEnabled = false;
-		if (g_engine->getMusic())
-			g_engine->getMusic()->stopMusic();
+		g_engine->getMusic()->stopMusic();
 	} else if (id == 0x3e) {
 		g_engine->_scriptExecutor->_soundEnabled = true;
 	} else if (id == 0x3f) {
