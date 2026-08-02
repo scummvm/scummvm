@@ -235,7 +235,7 @@ void Engine::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.addDirectory(gamePath, 0, 4);
 }
 
-bool Engine::enhancementEnabled(int32 cls) {
+bool Engine::enhancementEnabled(int32 cls) const {
 	return _activeEnhancements & cls;
 }
 
