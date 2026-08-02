@@ -3239,14 +3239,65 @@ OpcodeResult ScriptExecutor::scriptRemoveDeltaAnim() {
 }
 
 OpcodeResult ScriptExecutor::scriptSetButtonStep() {
-	debugC(kDebugScript, "SCRIPT::setButtonStep() [stub]");
+	const uint16 buttonIndex = (uint16)(scriptReadValue16() + 0xe000); // 0x2000-based → 1-based
+	const uint16 step = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::setButtonStep(button=%u step=%u)", buttonIndex, step);
+	clearScriptError();
 	scriptSkipOpcodeRemainder(0x53);
+
+	if (!_engine->hasNativeHudAssets() || buttonIndex == 0 || buttonIndex > _engine->_hudButtons.size()) {
+		setScriptError(0x2b);
+		return OpcodeResult::Continue;
+	}
+	HudButton &btn = _engine->_hudButtons[buttonIndex - 1];
+	if (btn.animBlob.empty()) {
+		setScriptError(0x2b);
+		return OpcodeResult::Continue;
+	}
+
+	// Extract frame step+100 into the inactive display slot (VESA_AnimStep).
+	Common::Array<uint8> blob = btn.animBlob;
+	const uint32 offset = BackgroundAnimationBlob::advanceAnimFrame(blob, true, (uint16)(step + 0x64));
+	if (offset == 0 || offset + 10 > blob.size()) {
+		setScriptError(0x2c);
+		return OpcodeResult::Continue;
+	}
+	btn.frame._width = READ_LE_UINT16(&blob[offset + 6]);
+	btn.frame._height = READ_LE_UINT16(&blob[offset + 8]);
+	const uint32 pix = (uint32)btn.frame._width * (uint32)btn.frame._height;
+	if (btn.frame._width == 0 || btn.frame._height == 0 ||
+		btn.frame._width > 640 || btn.frame._height > 400 ||
+		offset + 10 + pix > blob.size()) {
+		setScriptError(0x2c);
+		return OpcodeResult::Continue;
+	}
+	btn.frame._data.resize(pix);
+	memcpy(btn.frame._data.data(), &blob[offset + 10], pix);
+	btn.inactiveStep = step;
 	return OpcodeResult::Continue;
 }
 
 OpcodeResult ScriptExecutor::scriptTestButtonAnimFrame() {
-	debugC(kDebugScript, "SCRIPT::testButtonAnimFrame() [stub]");
+	// buttonId is 0x2000-based; compare inactiveStep to [lo,hi].
+	const uint16 buttonIndex = (uint16)(scriptReadValue16() + 0xe000);
+	const uint16 lo = scriptReadValue16();
+	const uint16 hi = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::testButtonAnimFrame(button=%u lo=%u hi=%u)", buttonIndex, lo, hi);
+	clearScriptError();
 	scriptSkipOpcodeRemainder(0x54);
+
+	_animBlobRangeTestResult = false;
+	if (!_engine->hasNativeHudAssets() || buttonIndex == 0 || buttonIndex > _engine->_hudButtons.size()) {
+		setScriptError(0x2b);
+		return OpcodeResult::Continue;
+	}
+	const HudButton &btn = _engine->_hudButtons[buttonIndex - 1];
+	if (btn.animBlob.empty()) {
+		setScriptError(0x2b);
+		return OpcodeResult::Continue;
+	}
+	const uint16 step = btn.inactiveStep;
+	_animBlobRangeTestResult = (step >= lo && step <= hi);
 	return OpcodeResult::Continue;
 }
 
@@ -3389,31 +3440,55 @@ OpcodeResult ScriptExecutor::scriptClearDeltaSfxList() {
 OpcodeResult ScriptExecutor::scriptShowActionBar() {
 	debugC(kDebugScript, "SCRIPT::showActionBar()");
 	View1 *currentView = (View1 *)_engine->findView("View1");
-	if (currentView != nullptr && currentView->hasPersistentActionBar()) {
+	if (currentView == nullptr)
+		return OpcodeResult::Continue;
+
+	if (_engine->hasNativeHudAssets()) {
+		// Dialect-v2: if MenuMode==0 → MenuMode=1, restore saved cursor, redraw.
+		if (_engine->_menuMode == 0) {
+			_engine->setBottomHudVisible(true);
+			_engine->setCursorMode(_engine->_savedMenuCursorMode);
+			currentView->updateCursor();
+			currentView->redraw();
+		}
+		return OpcodeResult::Continue;
+	}
+
+	if (currentView->hasPersistentActionBar()) {
 		_engine->setBottomHudVisible(true);
 		currentView->redraw();
 		return OpcodeResult::Continue;
 	}
-	if (currentView != nullptr) {
-		currentView->openScriptActionBar(
-			Common::Point(_engine->screenWidth() / 2, _engine->gameHeight() / 2), _cursorMode);
-	}
+
+	currentView->openScriptActionBar(
+		Common::Point(_engine->screenWidth() / 2, _engine->gameHeight() / 2), _cursorMode);
 	return OpcodeResult::Continue;
 }
 
 OpcodeResult ScriptExecutor::scriptHideActionBar() {
 	debugC(kDebugScript, "SCRIPT::hideActionBar()");
 	View1 *currentView = (View1 *)_engine->findView("View1");
-	if (currentView != nullptr && currentView->hasPersistentActionBar()) {
+	if (currentView == nullptr)
+		return OpcodeResult::Continue;
+
+	if (_engine->hasNativeHudAssets()) {
+		// Dialect-v2: save cursor when leaving main HUD, set MenuMode=0.
+		if (_engine->_menuMode == 1)
+			_engine->_savedMenuCursorMode = _cursorMode;
 		_engine->setBottomHudVisible(false);
 		currentView->redraw();
 		return OpcodeResult::Continue;
 	}
-	if (currentView != nullptr) {
-		MouseMode savedMode = _cursorMode;
-		currentView->closeScriptActionBar(savedMode);
-		_cursorMode = savedMode;
+
+	if (currentView->hasPersistentActionBar()) {
+		_engine->setBottomHudVisible(false);
+		currentView->redraw();
+		return OpcodeResult::Continue;
 	}
+
+	MouseMode savedMode = _cursorMode;
+	currentView->closeScriptActionBar(savedMode);
+	_cursorMode = savedMode;
 	return OpcodeResult::Continue;
 }
 
