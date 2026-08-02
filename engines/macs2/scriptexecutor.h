@@ -123,8 +123,7 @@ public:
 	static const uint kV1OpcodeTableSize;
 	/**
 	 * Script dialect v2 opcode table (extends v1 through 0x6D).
-	 * Remaps a few audio slots and adds 0x4F..0x6D; new handlers are stubs
-	 * that consume the length-prefixed payload via scriptSkipOpcodeRemainder().
+	 * Remaps a few audio slots and adds 0x4F..0x6D
 	 */
 	static const OpcodeEntry kV2OpcodeTable[];
 	static const uint kV2OpcodeTableSize;
