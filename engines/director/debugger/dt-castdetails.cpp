@@ -33,7 +33,9 @@
 #include "director/castmember/bitmap.h"
 #include "director/sprite.h"
 #include "director/castmember/filmloop.h"
+#include "director/castmember/movie.h"
 #include "director/castmember/sound.h"
+#include "director/channel.h"
 #include "director/frame.h"
 #include "director/score.h"
 #include "director/sound.h"
@@ -955,6 +957,262 @@ void drawFilmLoopCMprops(FilmLoopCastMember *member) {
 	}
 }
 
+static const char *moviePlayStateStr(PlayState s) {
+	switch (s) {
+	case kPlayNotStarted:         return "not started";
+	case kPlayStarted:            return "playing";
+	case kPlayStopped:            return "stopped";
+	case kPlayPaused:             return "paused";
+	case kPlayPausedAfterLoading: return "paused (loading)";
+	default:                      return "?";
+	}
+}
+
+// Shared score view (frame nav + preview + grid) for Score-backed members.
+// `resolve` maps a sub-sprite castId to a member for the thumbnails.
+static void drawSubScorePreview(Score *score, CastMemberID memberID, Movie *resolve) {
+	if (!score || score->_scoreCache.empty()) {
+		ImGui::TextDisabled("No frames loaded");
+		return;
+	}
+
+	int numFrames = (int)score->_scoreCache.size();
+
+	int maxChannel = 0;
+	for (int f = 0; f < numFrames; f++) {
+		Frame *frame = score->_scoreCache[f];
+		if (!frame)
+			continue;
+		for (int ch = 1; ch < (int)frame->_sprites.size(); ch++) {
+			if (frame->_sprites[ch] && frame->_sprites[ch]->_castId.member != 0)
+				maxChannel = MAX(maxChannel, ch);
+		}
+	}
+
+	if (maxChannel == 0) {
+		ImGui::TextDisabled("No sprite data");
+		return;
+	}
+
+	auto &frames = _state->_castDetails._filmLoopCurrentFrame;
+	if (!frames.contains(memberID))
+		frames[memberID] = 0;
+	int &currentFrame = frames[memberID];
+	if (currentFrame >= numFrames)
+		currentFrame = 0;
+
+	const float cellW = 30.0f;
+	const float cellH = 18.0f;
+	const float labelW = 24.0f;
+	const float rulerH = 16.0f;
+	float gridW = labelW + numFrames * cellW;
+	float gridH = rulerH + maxChannel * cellH;
+
+	ImGui::Spacing();
+	ImGui::Text("Score");
+	ImGui::Separator();
+
+	if (ImGui::Button("|<")) currentFrame = 0;
+	ImGui::SameLine();
+	if (ImGui::Button("<") && currentFrame > 0) currentFrame--;
+	ImGui::SameLine();
+	ImGui::Text("Frame %d / %d", currentFrame + 1, numFrames);
+	ImGui::SameLine();
+	if (ImGui::Button(">") && currentFrame < numFrames - 1) currentFrame++;
+	ImGui::SameLine();
+	if (ImGui::Button(">|")) currentFrame = numFrames - 1;
+
+	// Frame preview: thumbnails of the active sprites in the current frame.
+	Frame *previewFrame = score->_scoreCache[currentFrame];
+	if (previewFrame && resolve) {
+		const float thumbSize = 48.0f;
+		bool anySprite = false;
+		for (int ch = 1; ch <= maxChannel; ch++) {
+			if (ch >= (int)previewFrame->_sprites.size())
+				break;
+			Sprite *sp = previewFrame->_sprites[ch];
+			if (!sp || sp->_castId.member == 0)
+				continue;
+			CastMember *cm = resolve->getCastMember(sp->_castId);
+			if (!cm)
+				continue;
+			if (!anySprite) {
+				ImGui::Separator();
+				ImGui::Text("Frame preview");
+				anySprite = true;
+			}
+			ImGuiImage imgID = getImageID(cm);
+			ImGui::BeginGroup();
+			if (imgID.id) {
+				showImage(imgID, cm->getName().c_str(), thumbSize);
+			} else {
+				ImVec2 pos = ImGui::GetCursorScreenPos();
+				ImGui::GetWindowDrawList()->AddRect(pos, ImVec2(pos.x + thumbSize, pos.y + thumbSize), _state->theme->borderColor);
+				ImGui::Dummy(ImVec2(thumbSize, thumbSize));
+			}
+			ImGui::Text("ch%d", ch);
+			ImGui::EndGroup();
+			ImGui::SameLine();
+		}
+		if (anySprite)
+			ImGui::NewLine();
+	}
+	ImGui::Separator();
+
+	float scrollbarH = ImGui::GetStyle().ScrollbarSize;
+	ImGui::BeginChild("##SubScoreChild", ImVec2(0, MIN(gridH + scrollbarH + 4.0f, 200.0f)), false, ImGuiWindowFlags_HorizontalScrollbar);
+
+	ImDrawList *dl = ImGui::GetWindowDrawList();
+	ImVec2 origin = ImGui::GetCursorScreenPos();
+
+	// Ruler
+	for (int f = 0; f < numFrames; f++) {
+		float x = origin.x + labelW + f * cellW;
+		float y = origin.y;
+		ImVec2 rMin = ImVec2(x, y);
+		ImVec2 rMax = ImVec2(x + cellW, y + rulerH);
+		ImU32 rulerCol = ((f + 1) % 5 == 0) ? _state->theme->tableDarkColor : _state->theme->tableLightColor;
+		dl->AddRectFilled(rMin, rMax, rulerCol);
+		addThinRect(dl, rMin, rMax, _state->theme->borderColor);
+		Common::String label = Common::String::format("%d", f + 1);
+		ImVec2 textSz = ImGui::CalcTextSize(label.c_str());
+		dl->AddText(ImVec2(x + (cellW - textSz.x) * 0.5f, y + (rulerH - textSz.y) * 0.5f), _state->theme->gridTextColor, label.c_str());
+	}
+
+	// Playhead
+	{
+		float px = origin.x + labelW + currentFrame * cellW;
+		dl->AddLine(ImVec2(px, origin.y), ImVec2(px, origin.y + gridH), _state->theme->playhead_color, 2.0f);
+		dl->AddTriangleFilled(
+			ImVec2(px - 5.0f, origin.y),
+			ImVec2(px + 5.0f, origin.y),
+			ImVec2(px, origin.y + 8.0f),
+			_state->theme->playhead_color);
+	}
+
+	// Channel rows
+	for (int ch = 1; ch <= maxChannel; ch++) {
+		float y = origin.y + rulerH + (ch - 1) * cellH;
+
+		ImVec2 lblMin = ImVec2(origin.x, y);
+		ImVec2 lblMax = ImVec2(origin.x + labelW, y + cellH);
+		dl->AddRectFilled(lblMin, lblMax, _state->theme->tableDarkColor);
+		addThinRect(dl, lblMin, lblMax, _state->theme->borderColor);
+		Common::String chLabel = Common::String::format("%d", ch);
+		ImVec2 chSz = ImGui::CalcTextSize(chLabel.c_str());
+		dl->AddText(ImVec2(origin.x + (labelW - chSz.x) * 0.5f, y + (cellH - chSz.y) * 0.5f), _state->theme->gridTextColor, chLabel.c_str());
+
+		for (int f = 0; f < numFrames; f++) {
+			float x = origin.x + labelW + f * cellW;
+			ImVec2 cMin = ImVec2(x, y);
+			ImVec2 cMax = ImVec2(x + cellW, y + cellH);
+			ImU32 col = ((f + 1) % 5 == 0) ? _state->theme->tableDarkColor : _state->theme->tableLightColor;
+			dl->AddRectFilled(cMin, cMax, col);
+			addThinRect(dl, cMin, cMax, _state->theme->borderColor);
+		}
+
+		int f = 0;
+		while (f < numFrames) {
+			Frame *frame = score->_scoreCache[f];
+			if (!frame || ch >= (int)frame->_sprites.size() || !frame->_sprites[ch] || frame->_sprites[ch]->_castId.member == 0) {
+				f++;
+				continue;
+			}
+
+			int spanStart = f;
+			int memberNum = frame->_sprites[ch]->_castId.member;
+			int spanEnd = f;
+			while (spanEnd + 1 < numFrames) {
+				Frame *nf = score->_scoreCache[spanEnd + 1];
+				if (nf && ch < (int)nf->_sprites.size() && nf->_sprites[ch] && nf->_sprites[ch]->_castId.member == memberNum)
+					spanEnd++;
+				else
+					break;
+			}
+
+			float x1 = origin.x + labelW + spanStart * cellW;
+			float x2 = origin.x + labelW + (spanEnd + 1) * cellW;
+			float cy = y + cellH * 0.5f;
+			float pad = 1.0f;
+
+			int colorIdx = memberNum % 6;
+			ImU32 barColor = _state->theme->contColors[colorIdx];
+
+			dl->AddRectFilled(ImVec2(x1, y + pad), ImVec2(x2 - 1.0f, y + cellH - pad), barColor);
+			dl->AddLine(ImVec2(x1 + 6.0f, cy), ImVec2(x2 - 6.0f, cy), _state->theme->gridTextColor, 1.0f);
+			dl->AddCircle(ImVec2(x1 + 4.0f, cy), 3.0f, _state->theme->gridTextColor, 0, 1.5f);
+			dl->AddRect(ImVec2(x2 - 7.0f, cy - 3.0f), ImVec2(x2 - 1.0f, cy + 3.0f), _state->theme->gridTextColor, 0.0f, 0, 1.5f);
+
+			float spanW = x2 - x1 - 8.0f;
+			Common::String label = Common::String::format("%d", memberNum);
+			if (spanW > 4.0f) {
+				float textY = y + (cellH - ImGui::GetTextLineHeight()) * 0.5f;
+				Common::String clipped = label;
+				if (ImGui::CalcTextSize(clipped.c_str()).x > spanW)
+					clipped = "";
+				if (!clipped.empty())
+					dl->AddText(ImVec2(x1 + 4.0f, textY), _state->theme->gridTextColor, clipped.c_str());
+			}
+
+			ImGui::SetCursorScreenPos(ImVec2(x1, y));
+			ImGui::InvisibleButton(Common::String::format("##ss_%d_%d", ch, spanStart).c_str(), ImVec2(x2 - x1, cellH));
+			if (ImGui::IsItemHovered()) {
+				ImGui::BeginTooltip();
+				ImGui::Text("Channel %d | Frames %d-%d | Cast member %d", ch, spanStart + 1, spanEnd + 1, memberNum);
+				ImGui::EndTooltip();
+			}
+
+			f = spanEnd + 1;
+		}
+	}
+
+	ImGui::SetCursorScreenPos(ImVec2(origin.x, origin.y + gridH));
+	ImGui::Dummy(ImVec2(gridW, 0));
+
+	ImGui::EndChild();
+}
+
+// A movie cast member links an external movie whose score runs live.
+// Show its metadata plus the embedded score, like the film-loop viewer.
+void drawMovieCMprops(MovieCastMember *member) {
+	assert(member != nullptr);
+	if (ImGui::BeginTabItem("Movie")) {
+		Movie *linked = member->_linkedMovie;
+		Score *score = member->_score;
+
+		if (ImGui::CollapsingHeader("Properties", ImGuiTreeNodeFlags_DefaultOpen)) {
+			if (ImGui::BeginTable("##MovieProps", 2, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
+				Common::String path;
+				if (linked && linked->getArchive())
+					path = linked->getArchive()->getPathName().toString();
+				else
+					path = member->getCast()->getLinkedPath(member->getID());
+				showProperty("linkedMovie", "%s", path.empty() ? "(none)" : path.c_str());
+				showPropertyBool("scriptsEnabled", member->_enableScripts);
+				showPropertyBool("enableSound", member->_enableSound);
+				showPropertyBool("looping", member->_looping);
+				showPropertyBool("crop", member->_crop);
+				showPropertyBool("center", member->_center);
+				if (score) {
+					showProperty("frameCount", "%d", (int)score->_scoreCache.size());
+					showProperty("currentFrame", "%d", (int)score->getCurrentFrameNum());
+					showProperty("playState", "%s", moviePlayStateStr(score->_playState));
+					showProperty("channels", "%d", (int)score->_channels.size());
+				}
+				ImGui::EndTable();
+			}
+		}
+
+		if (!linked || !score) {
+			ImGui::TextDisabled("Linked movie not loaded (put the member on stage to load it)");
+		} else {
+			drawSubScorePreview(score, CastMemberID(member->getID(), member->getCast()->_castLibID), linked);
+		}
+
+		ImGui::EndTabItem();
+	}
+}
+
 // Channel used exclusively for sound previews in the debugger.
 // Chosen high enough to avoid collision with normal score sound channels (1, 2).
 static const int kDebugSoundChannel = 8;
@@ -1059,6 +1317,9 @@ void drawCMTypeProps(CastMember *member) {
 	case kCastFilmLoop:
 		drawFilmLoopCMprops(static_cast<FilmLoopCastMember *>(member));
 		break;
+	case kCastMovie:
+		drawMovieCMprops(static_cast<MovieCastMember *>(member));
+		break;
 	case kCastSound:
 		drawSoundCMprops(static_cast<SoundCastMember *>(member));
 		break;
@@ -1066,7 +1327,6 @@ void drawCMTypeProps(CastMember *member) {
 	case kCastTypeNull:
 	case kCastPalette:
 	case kCastPicture:
-	case kCastMovie:
 	case kCastDigitalVideo:
 	case kCastLingoScript:
 	case kCastOLE:
