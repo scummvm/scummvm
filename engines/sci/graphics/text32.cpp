@@ -863,9 +863,10 @@ void GfxText32::scrollLine(const Common::String &lineText, int numLines, uint8 c
 	_text = lineText;
 	int16 textWidth = getTextWidth(0, lineText.size());
 
+	const TextAlign farEdge = !g_sci->isLanguageRTL() ? kTextAlignRight : kTextAlignLeft;
 	if (_alignment == kTextAlignCenter) {
 		_drawPosition.x += (_textRect.width() - textWidth) / 2;
-	} else if (_alignment == kTextAlignRight) {
+	} else if (_alignment == farEdge) {
 		_drawPosition.x += _textRect.width() - textWidth;
 	}
 
