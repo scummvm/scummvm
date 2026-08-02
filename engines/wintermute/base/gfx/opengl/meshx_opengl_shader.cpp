@@ -301,7 +301,7 @@ bool XMeshOpenGLShader::setupEffect(Material *material, bool secondPassNeeded) {
 		DXVector4 ambientColor;
 		param->getValue(ambientColor);
 		Math::Vector4d ambient(ambientColor);
-		float borderWidth;
+		float borderWidth = 0.0f;
 		if (effectId == 0x589E1D5C) {
 			borderWidth = 6.0f;
 			ambient = { 1.0, 1.0, 1.0, 1.0 };
