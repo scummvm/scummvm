@@ -288,6 +288,10 @@ typedef struct ImGuiState {
 	ScriptData _openScripts;
 	bool _showCompleteScript = true;
 
+	// Quick-open (command palette): jump to a cast member or handler by name.
+	bool _quickOpen = false;
+	char _quickOpenInput[256] = {};
+
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
 	int _prevFrame = -1;
 	struct {
@@ -405,6 +409,7 @@ void renderScriptAST(ImGuiScript &script, bool showByteCode, bool scrollTo);	   
 void showFuncList();
 void showExecutionContext();
 void showScriptsWindow();
+void showQuickOpen();
 
 // dt-save-state.cpp
 void saveCurrentState();
