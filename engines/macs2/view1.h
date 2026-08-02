@@ -192,11 +192,11 @@ private:
 	// drawSpriteTransparent @ 1010:0ed1 (drawAnimFrameDepth @ 1010:172c)
 	void drawSpriteTransparent(int shadingTableOffset, uint8 depthThreshold, uint16 scalingFactor,
 							   int16 drawX, int16 drawY, uint16 srcWidth, uint16 srcHeight,
-							   const byte *srcPixels, Graphics::ManagedSurface &s);
+							   const byte *srcPixels, Graphics::ManagedSurface &s, bool useMaskedShading = false);
 	// drawSpriteScaled @ 1010:102b (drawAnimFrameShaded @ 1010:1785)
 	void drawSpriteScaled(int shadingTableOffset, uint8 depthThreshold, int16 drawX, int16 drawY,
 						  uint16 srcWidth, uint16 srcHeight, const byte *srcPixels,
-						  Graphics::ManagedSurface &s);
+						  Graphics::ManagedSurface &s, bool useMaskedShading = false);
 
 	// Set by action bar map button on press; enterMapMode() runs on panel release.
 	bool _pendingMapOpen = false;

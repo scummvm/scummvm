@@ -2810,12 +2810,18 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 
 			// drawAllCharacters @ 1008:9573-9754: drawAnimFrame / drawAnimFrameShaded / drawAnimFrameDepth
 			const bool clipGameArea = hasPersistentActionBar();
+			const bool useMaskedShading = g_engine->isV2() && (obj->_hasScaling || obj->_hasShading);
 			if (obj->_hasScaling) {
 				drawSpriteTransparent(shadingTableOffset, depthThreshold, scalingFactor,
-									  drawX, drawY, frame._width, frame._height, pixelData, *surface);
+									  drawX, drawY, frame._width, frame._height, pixelData, *surface,
+									  useMaskedShading);
+			} else if (obj->_hasDoubleResAnim) {
+				drawSpriteTransparent(obj->_hasShading ? shadingTableOffset : 0, depthThreshold, 200,
+									  drawX, drawY, frame._width, frame._height, pixelData, *surface,
+									  useMaskedShading);
 			} else if (obj->_hasShading) {
 				drawSpriteScaled(shadingTableOffset, depthThreshold, drawX, drawY,
-								 frame._width, frame._height, pixelData, *surface);
+								 frame._width, frame._height, pixelData, *surface, useMaskedShading);
 			} else {
 				drawSprite(drawX, drawY, frame._width, frame._height,
 						   const_cast<byte *>(pixelData), *surface, false, false, 0, clipGameArea);
@@ -3126,7 +3132,26 @@ void View1::drawSpriteFitted(const Common::Rect &bounds, const Sprite &sprite, G
 	}
 }
 
-static byte applyShadingTable(byte color, int shadingTableOffset) {
+static byte applyShadingTable(byte color, int shadingTableOffset, byte bgColor, bool useMaskedShading) {
+	if (g_engine->_shadingTable.empty())
+		return color;
+
+	if (useMaskedShading) {
+		const uint intensity = (uint)CLIP(shadingTableOffset, 0, 0x1f);
+		if (color == 1) {
+			const uint idx = (uint)bgColor * 0x20u + intensity;
+			if (idx < g_engine->_shadingTable.size())
+				return g_engine->_shadingTable[idx];
+			return color;
+		}
+		if (intensity == 0)
+			return color;
+		const uint idx = (uint)color * 0x20u + intensity;
+		if (idx >= g_engine->_shadingTable.size())
+			return color;
+		return g_engine->_shadingTable[idx];
+	}
+
 	if (shadingTableOffset == 0)
 		return color;
 	// drawSpriteTransparent @ 1010:0fba: (color - 0xC0) * 0x20 + shadingTableOffset + scene+0x53D3
@@ -3141,7 +3166,7 @@ static byte applyShadingTable(byte color, int shadingTableOffset) {
 // drawSpriteScaled @ 1010:102b
 void View1::drawSpriteScaled(int shadingTableOffset, uint8 depthThreshold, int16 drawX, int16 drawY,
 							 uint16 srcWidth, uint16 srcHeight, const byte *srcPixels,
-							 Graphics::ManagedSurface &s) {
+							 Graphics::ManagedSurface &s, bool useMaskedShading) {
 	int screenY = drawY;
 	int srcRow = 0;
 	int remainingRows = srcHeight;
@@ -3153,8 +3178,11 @@ void View1::drawSpriteScaled(int shadingTableOffset, uint8 depthThreshold, int16
 					const uint8 bgDepth = g_engine->_depthMap.getPixel(screenX, screenY);
 					if (bgDepth < depthThreshold) {
 						const uint8 color = srcPixels[srcRow + srcX];
-						if (color != 0)
-							s.setPixel(screenX, screenY, applyShadingTable(color, shadingTableOffset));
+						if (color != 0) {
+							const byte bg = s.getPixel(screenX, screenY);
+							s.setPixel(screenX, screenY,
+									   applyShadingTable(color, shadingTableOffset, bg, useMaskedShading));
+						}
 					}
 				}
 				screenX++;
@@ -3169,7 +3197,7 @@ void View1::drawSpriteScaled(int shadingTableOffset, uint8 depthThreshold, int16
 // drawSpriteTransparent @ 1010:0ed1
 void View1::drawSpriteTransparent(int shadingTableOffset, uint8 depthThreshold, uint16 scalingFactor,
 								  int16 drawX, int16 drawY, uint16 srcWidth, uint16 srcHeight,
-								  const byte *srcPixels, Graphics::ManagedSurface &s) {
+								  const byte *srcPixels, Graphics::ManagedSurface &s, bool useMaskedShading) {
 	int screenY = drawY;
 	int srcRowOffset = 0;
 	int remainingRows = (int)srcHeight;
@@ -3187,7 +3215,9 @@ void View1::drawSpriteTransparent(int shadingTableOffset, uint8 depthThreshold, 
 				const uint8 color = *srcPtr;
 				if (color != 0 && screenX >= 0 && screenX < s.w &&
 					g_engine->_depthMap.getPixel(screenX, screenY) < depthThreshold) {
-					s.setPixel(screenX, screenY, applyShadingTable(color, shadingTableOffset));
+					const byte bg = s.getPixel(screenX, screenY);
+					s.setPixel(screenX, screenY,
+							   applyShadingTable(color, shadingTableOffset, bg, useMaskedShading));
 				}
 
 				screenX++;
