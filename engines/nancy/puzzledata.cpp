@@ -478,8 +478,19 @@ void WordFindPuzzleData::synchronize(Common::Serializer &ser) {
 	ser.syncAsSint16LE(currentWord);
 }
 
+void DrivingData::synchronize(Common::Serializer &ser) {
+	ser.syncAsByte(valid);
+	ser.syncAsSint32LE(carX);
+	ser.syncAsSint32LE(carY);
+	ser.syncAsDoubleLE(heading);
+	ser.syncAsSint32LE(tireDamage);
+	ser.syncAsByte(flatTire);
+}
+
 PuzzleData *makePuzzleData(const uint32 tag) {
 	switch(tag) {
+	case DrivingData::getTag():
+		return new DrivingData();
 	case WordFindPuzzleData::getTag():
 		return new WordFindPuzzleData();
 	case SliderPuzzleData::getTag():

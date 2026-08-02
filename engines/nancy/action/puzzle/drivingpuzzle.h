@@ -34,27 +34,36 @@ namespace Action {
 // action records share the same engine:
 //   160 - kDriving  (drive Nancy's car around the Titusville town map, entering
 //                    locations by driving into them)
-//   167 - kChase    (kDriving plus a second, chaser car, a second zone array and
-//                    two path-point arrays that steer the chaser)
+//   167 - kChase    (kDriving plus a chaser car - Jane - that plays back a recorded path
+//                    in real time; Nancy has to keep her in view. An event-flag-gated
+//                    state machine drives the outcome: the win is the chaser completing
+//                    its second path once Jane is caught; letting her drive off-view, or
+//                    driving into a trigger zone, ends it otherwise)
 //
 // The map scrolls under a car-centered camera; the car is drawn as a rotation-atlas
 // sprite whose frame is chosen from its heading. The map is populated with an
 // ActionZone array: type 0x11 zones are location entrances (each carries the
-// destination scene id and the transition effect), type 0x14 zones are boundaries,
-// and the remaining subtypes are decorations and driving hazards.
+// destination scene id and the transition effect), type 0x0d zones are cosmetic
+// decorations (buildings, parked cars, potholes and animated cows/flags/fountains),
+// and the rest are the driving hazards.
 //
-// Controls: the car steers to face the cursor (distance is irrelevant); the left mouse
-// button drives forward (accelerating while held) and the right button reverses.
+// Controls: the car steers to face the cursor; the left mouse button drives forward
+// (the further from the car the cursor is, the faster) and the right button reverses.
+// Fuel is a UI resource (index _frictionIndex) drained with the distance driven; potholes
+// damage the tires; at 100 damage a tire blows and the car leaves for the flat-tire scene
+// (blob+0x80). Mud slows the car; a location is entered by parking in its zone and pressing
+// space. The car position, heading and accumulated tire damage persist across visits
+// (DrivingData), like the original's retainState. The dashboard gas/tire gauges are not
+// part of this record: they are the scene's own OverlayStaticTerse records gated by
+// DT_RESOURCE dependencies on the fuel and tire UI resources.
 //
-// TODO (need runtime tuning):
-//  - Fuel: burn the gas-gauge UI resource (index _frictionIndex) while driving; it
-//    currently stays at its seeded value. The DT_RESOURCE dependency that reads it is
-//    handled in ActionManager::processDependency.
-//  - Hazards: potholes (type 0x17) should damage the car (more the faster it is hit,
-//    building to a flat tire) and mud puddles should be penalised; both are ignored.
-//  - Collision: only the type 0x14 boundary rects block the car (no per-pixel mask).
-//  - kChase: no second-path switch or "chaser left the viewport" loss branch.
-//  - The decorative overlay zone subtypes (0x0d and friends) are ignored.
+// Collision uses the "...Collision" mask, whose white streets are drivable and dark
+// areas are off-road; the type 0x14 boundary rects are only a fallback if it fails to load.
+//
+// TODO:
+//  - kChase: the "caught Jane" transition (state 1 -> 2, the win) is gated on an event
+//    flag the chase scene is expected to set (nothing in this record sets it); confirm
+//    what triggers it so a missed catch can't still win.
 class DrivingPuzzle : public RenderActionRecord {
 public:
 	enum Variant { kDriving = 0, kChase };
@@ -75,9 +84,11 @@ protected:
 		return _variant == kChase ? "ChasePuzzle" : "DrivingPuzzle";
 	}
 
-	// A destination the car can drive into: a location entrance (type 0x11) or the
-	// chase's finish line (type 0x0c). Entering its map-space rect optionally sets an
-	// event flag and transitions to the destination scene through a fade.
+	// A destination the car can drive into: a location entrance (type 0x11) or a drive-in
+	// scene trigger (type 0x0c, used in the chase). Entering its map-space rect optionally
+	// sets an event flag and transitions to the scene through a fade. Location entrances
+	// need a spacebar press to enter (you park first); the drive-in trigger (autoTrigger)
+	// fires the moment the car drives into it.
 	struct DestinationZone {
 		Common::Rect rect;
 		SceneChangeDescription scene;
@@ -88,7 +99,18 @@ protected:
 		Common::Rect fadeRect;
 		int16 eventFlag = -1;
 		byte eventFlagValue = 0;
+		bool autoTrigger = false;	// true for the chase finish (drive-in), false for parking
 		bool carInside = false;		// the car was inside this zone last frame
+	};
+
+	// Index into _chaseParams (167). The five values are the chase's outcome scenes and
+	// the event flags that gate its state machine.
+	enum ChaseParam {
+		kChaseGate01Flag = 0,		// state 0 -> 1 once this flag is clear
+		kChaseOffViewScene = 1,		// scene entered when the chaser leaves the viewport
+		kChaseOffViewFlag = 2,		// flag set (to 1) on the off-viewport outcome
+		kChaseGate12Flag = 3,		// state 1 -> 2 (switch to the second path) once this flag is set
+		kChasePathEndScene = 4		// scene entered when the chaser finishes its route
 	};
 
 	// A checkpoint (type 0x0b): driving over it sets an event flag once.
@@ -98,6 +120,32 @@ protected:
 		byte flagValue = 0;
 		bool triggered = false;
 		bool carInside = false;		// the car was inside this zone last frame
+	};
+
+	// A mud puddle (type 0x03): slows the car (adds to its velocity decay) while inside.
+	struct MudZone {
+		Common::Rect rect;
+		double decel = 0.0;
+	};
+
+	// A pothole (type 0x17): driving into it damages the tires by a random amount in
+	// [minDamage, maxDamage].
+	struct Pothole {
+		Common::Rect rect;
+		int32 minDamage = 0;
+		int32 maxDamage = 0;
+		bool carInside = false;		// the car was inside this zone last frame
+	};
+
+	// A cosmetic map decoration (type 0x0d): a sprite drawn onto the map at destRect.
+	// A single source rect is static; several are animation frames cycled over time.
+	// It is only visible while its event-flag condition holds (condFlag == -1 = always).
+	struct Overlay {
+		int imageIndex = -1;
+		Common::Array<Common::Rect> srcRects;
+		Common::Rect destRect;			// map space
+		int16 condFlag = -1;			// base zone val49: event flag gating visibility
+		byte condValue = 0;				// base zone val4b: the flag value that shows it
 	};
 
 	// A recorded chaser-path waypoint (kChase): the pursuer plays these back in real
@@ -126,12 +174,29 @@ protected:
 	// Plays one (randomly chosen) entry of a random-sound block.
 	void playSoundBlock(const RandomSoundBlock &block);
 
+	// Arms a pending exit (applied in kActionTrigger): from a destination zone (keeping
+	// its fade), or from a raw scene id plus an optional event flag to set.
+	void armExit(const DestinationZone &dest);
+	void armExitScene(uint16 sceneID, int16 flag, byte flagValue);
+
 	// Advances the car's velocity/position for one frame. Throttle is +1 forward, -1
-	// reverse, 0 coast; the heading is set separately (steering toward the cursor).
-	void updatePhysics(int throttle);
+	// reverse, 0 coast; cursorDist (how far the cursor is from the car) sets the forward
+	// speed. The heading is set separately (steering toward the cursor).
+	void updatePhysics(int throttle, double cursorDist);
 
 	// Top-left of the car-centered camera window into the map, clamped to its bounds.
 	Common::Point cameraOffset() const;
+
+	// Persists the car's position/heading and tire state so it survives leaving the map
+	// (and saving). Only does anything when the header's retainState flag is set.
+	void saveState() const;
+
+	// Whether a map-space point is off the road: off the map, or a non-white (dark)
+	// pixel in the collision mask (its white marks the drivable streets).
+	bool isWall(int px, int py) const;
+
+	// Whether the car may not drive at this map-space point (off the road).
+	bool isBlocked(const Common::Point &p) const;
 
 	// Advances the chaser along its recorded path (kChase) and slows the player's
 	// speed cap the closer the chaser gets.
@@ -139,6 +204,14 @@ protected:
 
 	// Chooses a rotation-atlas frame from a heading.
 	uint frameIndexForHeading(double heading, uint frameCount) const;
+
+	// Loads (and caches) a decoration sprite by name, returning its index into
+	// _overlayImages, or -1 on failure.
+	int overlayImageIndex(const Common::String &name);
+
+	// Draws the map's cosmetic decorations (animated frames cycled over time), offset by
+	// the camera and clipped to the visible window.
+	void drawOverlays(const Common::Point &cam);
 
 	// Redraws the scrolling map (car-centered camera) and the car sprite(s) on top.
 	void drawScene();
@@ -159,6 +232,7 @@ protected:
 	int16 _frictionIndex = 0;	// blob+0x77: index into the shared friction table
 	int32 _distanceDivisor = 0;	// blob+0x7b
 	bool _retainState = false;	// blob+0x7f: resume from the saved position
+	uint16 _finishScene = kNoScene;	// blob+0x80: the scene entered when a tire goes flat
 
 	// Three random-sound blocks (tire blowout, horn, engine) and a rotation-frame
 	// rect table precede the ActionZone array.
@@ -177,17 +251,46 @@ protected:
 	Common::Array<Waypoint> _chaserPathB;
 
 	// ActionZone gameplay roles.
-	Common::Array<DestinationZone> _destinations;	// types 0x11 / 0x0c
+	Common::Array<DestinationZone> _destinations;	// types 0x11 / 0x0c (parking spaces)
 	Common::Array<Checkpoint> _checkpoints;			// type 0x0b
-	Common::Array<Common::Rect> _boundaries;		// type 0x14
+	Common::Array<MudZone> _mudZones;				// type 0x03
+	Common::Array<Pothole> _potholes;				// type 0x17
+	Common::Array<Overlay> _overlays;				// type 0x0d (map decorations)
+	Common::Array<Graphics::ManagedSurface> _overlayImages;
+	Common::Array<Common::String> _overlayImageNames;
 
 	// Runtime state
 	double _carX = 0.0;			// current car position (map space)
 	double _carY = 0.0;
 	double _carHeading = 0.0;	// radians
-	double _carVelocity = 0.0;
+	double _carVelocity = 0.0;	// pixels per second
 	double _speedCap = 0.0;		// current forward speed cap (lowered as the chaser closes in)
-	int _triggeredDest = -1;	// destination zone the car has entered (-1 == none)
+	uint32 _lastPhysicsMs = 0;	// real time of the last physics step (frame-rate independence)
+	int _parkedDest = -1;		// destination zone the car is currently parked in (-1 == none)
+
+	// A pending exit to another scene (a location, the chase finish, or a chase outcome).
+	// Armed via armExit()/armExitScene(); applied and finished in the kActionTrigger state.
+	SceneChangeDescription _exitScene;
+	bool _exitHasFade = false;
+	byte _exitFadeType = 0;
+	uint16 _exitFadeTotalTime = 0;
+	uint16 _exitFadeToBlackTime = 0;
+	Common::Rect _exitFadeRect;
+	int16 _exitFlag = -1;
+	byte _exitFlagValue = 0;
+
+	// Chase (167) state machine: 0 = following the first path, 1 = waiting to switch,
+	// 2 = following the second path.
+	int _chaseState = 0;
+	bool _chaserOnPathB = false;
+
+	// Fuel + tire hazards. Fuel is the gas-gauge UI resource (index _frictionIndex),
+	// drained as the car drives; the fractional part is accumulated here. Tire damage
+	// builds up from potholes; once it blows a tire the car leaves for the flat-tire
+	// scene while _flatTirePending waits for the blowout sound to finish.
+	double _fuelBurnAccum = 0.0;
+	int _tireDamage = 0;
+	bool _flatTirePending = false;
 
 	// Chaser (kChase) runtime state.
 	bool _chaseStarted = false;
@@ -200,6 +303,7 @@ protected:
 	Graphics::ManagedSurface _image;			// the town map
 	Graphics::ManagedSurface _carImage;			// the player car rotation atlas
 	Graphics::ManagedSurface _chaseCarImage;	// the chaser car rotation atlas
+	Graphics::ManagedSurface _collisionMask;	// road/off-road mask ("MAP_TitusvilleCollision")
 };
 
 } // End of namespace Action

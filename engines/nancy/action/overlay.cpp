@@ -76,6 +76,14 @@ void Overlay::handleInput(NancyInput &input) {
 }
 
 void Overlay::updateGraphics() {
+	// A static overlay gated by a dynamic dependency - e.g. a Nancy12 gas/tire gauge,
+	// which is one of a set of sprites each shown for a different resource range - must be
+	// visible only while its dependency currently holds. (With the usual set-once event
+	// flags _isActive never drops back to false, so this is a no-op there.)
+	if (g_nancy->getGameType() >= kGameTypeNancy12 && _state == kRun && _overlayType == kPlayOverlayStatic) {
+		setVisible(_isActive);
+	}
+
 	// Update inactive animated overlays
 	if (!_isActive && _state == kRun && !_blitDescriptions.empty() && _overlayType == kPlayOverlayAnimated) {
 		uint16 newFrame = NancySceneState.getSceneInfo().frameID;

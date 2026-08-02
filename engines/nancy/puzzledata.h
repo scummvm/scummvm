@@ -379,6 +379,26 @@ struct WordFindPuzzleData : public PuzzleData {
 	int16 currentWord = 0;
 };
 
+// Nancy12 DrivingPuzzle (AR 160). The car's position, heading and tire state persist
+// across visits to the driving map (driving into a location, then coming back), matching
+// the original's retainState mechanism, which saves the car to globals every frame and
+// restores it on setup. `valid` is false until the car has been driven, so the first
+// visit starts from the header's start position.
+struct DrivingData : public PuzzleData {
+	DrivingData() {}
+	virtual ~DrivingData() {}
+
+	static constexpr uint32 getTag() { return MKTAG('D', 'R', 'V', 'G'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	bool valid = false;
+	int32 carX = 0;
+	int32 carY = 0;
+	double heading = 0.0;
+	int32 tireDamage = 0;
+	bool flatTire = false;
+};
+
 PuzzleData *makePuzzleData(const uint32 tag);
 
 } // End of namespace Nancy
