@@ -2415,14 +2415,15 @@ Common::Point AnimFrame::getBottomMiddleOffset(uint16 scale) const {
 
 AnimFrame BackgroundAnimationBlob::getCurrentFrame() {
 	// Mode 0: read current frame without advancing (draw path uses mode 2 in drawBackgroundAnimations)
-	uint16 offset = advanceAnimFrame(_blob, false, 0x0);
+	Common::Array<uint8> &blob = activeBlob();
+	uint16 offset = advanceAnimFrame(blob, false, 0x0);
 	// offset points to per-frame header: offsetX(2), offsetY(2), unknown(2), width(2), height(2), pixels
 	offset += 6; // skip offsetX, offsetY, unknown
 	AnimFrame result;
-	result._width = READ_LE_UINT16(&_blob[offset]);
-	result._height = READ_LE_UINT16(&_blob[offset + 2]);
+	result._width = READ_LE_UINT16(&blob[offset]);
+	result._height = READ_LE_UINT16(&blob[offset + 2]);
 	result._data.resize(result._width * result._height);
-	memcpy(result._data.data(), &_blob[offset + 4], result._width * result._height);
+	memcpy(result._data.data(), &blob[offset + 4], result._width * result._height);
 	return result;
 }
 

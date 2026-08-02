@@ -536,27 +536,28 @@ void View1::drawBackgroundAnimations(Graphics::ManagedSurface &s) {
 	for (int i = 0; i < (int)g_engine->_backgroundAnimations.size(); i++) {
 		BackgroundAnimation &current = g_engine->_backgroundAnimations[i];
 		BackgroundAnimationBlob &currentBlob = g_engine->_backgroundAnimationsBlobs[i];
+		Common::Array<uint8> &blob = currentBlob.activeBlob();
 		// Binary drawAllCharacters (1008:90a2): null bg-anim blob -> error 0x08;
 		// zero frame count -> error 0x0B; aborts entire draw pass.
-		if (currentBlob._blob.empty()) {
+		if (blob.empty()) {
 			g_engine->_scriptExecutor->setScriptError(8);
 			return;
 		}
-		AnimBlobView view(currentBlob._blob);
+		AnimBlobView view(blob);
 		if (!view.isValid() || view.frameCount() == 0) {
 			g_engine->_scriptExecutor->setScriptError(view.frameCount() == 0 ? 0x0B : 8);
 			return;
 		}
 		// Binary drawAllCharacters (1008:929c): drawAnimFrame(2, y, x+1, blob) - one
 		// advanceAnimFrame(save=1, mode=2) per frame, not a separate tick advance.
-		uint16 frameStart = BackgroundAnimationBlob::advanceAnimFrame(currentBlob._blob, true, 2);
-		int16 frameOffsetX = (int16)READ_LE_UINT16(&currentBlob._blob[frameStart]);
-		int16 frameOffsetY = (int16)READ_LE_UINT16(&currentBlob._blob[frameStart + 2]);
+		uint16 frameStart = BackgroundAnimationBlob::advanceAnimFrame(blob, true, 2);
+		int16 frameOffsetX = (int16)READ_LE_UINT16(&blob[frameStart]);
+		int16 frameOffsetY = (int16)READ_LE_UINT16(&blob[frameStart + 2]);
 		AnimFrame currentFrame;
-		currentFrame._width = READ_LE_UINT16(&currentBlob._blob[frameStart + 6]);
-		currentFrame._height = READ_LE_UINT16(&currentBlob._blob[frameStart + 8]);
+		currentFrame._width = READ_LE_UINT16(&blob[frameStart + 6]);
+		currentFrame._height = READ_LE_UINT16(&blob[frameStart + 8]);
 		currentFrame._data.resize(currentFrame._width * currentFrame._height);
-		memcpy(currentFrame._data.data(), &currentBlob._blob[frameStart + 10],
+		memcpy(currentFrame._data.data(), &blob[frameStart + 10],
 			   currentFrame._width * currentFrame._height);
 		drawSprite(current._x + 1 + frameOffsetX, current._y + frameOffsetY, currentFrame, s, false);
 	}
@@ -1849,6 +1850,8 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 				!g_engine->_scriptExecutor->_waitForPcmSound &&
 				!g_engine->_scriptExecutor->_waitForMusicControl &&
 				!g_engine->_scriptExecutor->_waitForAdlibReady &&
+				!g_engine->_scriptExecutor->_waitForObjectAnimStep &&
+				!g_engine->_scriptExecutor->_waitForSpecialAnimStep &&
 				g_engine->_scriptExecutor->canOpenSaveMenu()) {
 				if (ConfMan.getBool("original_menus")) {
 					// Binary handleInput (1008:f2af): saves cursor mode before opening panel
@@ -2499,6 +2502,44 @@ bool View1::tick() {
 				const bool ready = music->isMidiFilePlaying() ? false : music->isPlaybackReady();
 				if (ready) {
 					executor->_waitForAdlibReady = false;
+					g_engine->runScriptExecutor();
+				}
+			} else if (executor->_waitForObjectAnimStep) {
+				drawSceneUpdate();
+				bool animStepReached = false;
+				GameObject *waitObject = GameObjects::getObjectByIndex(executor->_waitObjectAnimObjectId);
+				if (waitObject != nullptr && waitObject->_dataOffset != 0) {
+					const Common::Array<uint8> *blob = waitObject->getAnimSlotBlob(executor->_waitObjectAnimSlot);
+					if (blob != nullptr && !blob->empty()) {
+						AnimBlobView view(*blob);
+						if (view.isValid())
+							animStepReached = view.sequencePosition() >= executor->_waitObjectAnimTargetStep;
+					}
+				}
+				if (animStepReached) {
+					debugC(kDebugScript, "waitObjectAnimStep complete obj=%u slot=%u step=%u",
+						   executor->_waitObjectAnimObjectId, executor->_waitObjectAnimSlot,
+						   executor->_waitObjectAnimTargetStep);
+					executor->_waitForObjectAnimStep = false;
+					g_engine->runScriptExecutor();
+				}
+			} else if (executor->_waitForSpecialAnimStep) {
+				drawSceneUpdate();
+				bool animStepReached = false;
+				const uint16 animIndex = executor->_waitSpecialAnimIndex;
+				if (animIndex > 0 && animIndex <= g_engine->_backgroundAnimationsBlobs.size()) {
+					const BackgroundAnimationBlob &blob = g_engine->_backgroundAnimationsBlobs[animIndex - 1];
+					const Common::Array<uint8> &active = blob.activeBlob();
+					if (!active.empty()) {
+						AnimBlobView view(active);
+						if (view.isValid())
+							animStepReached = view.sequencePosition() >= executor->_waitSpecialAnimTargetStep;
+					}
+				}
+				if (animStepReached) {
+					debugC(kDebugScript, "waitSpecialAnimStep complete anim=%u step=%u",
+						   executor->_waitSpecialAnimIndex, executor->_waitSpecialAnimTargetStep);
+					executor->_waitForSpecialAnimStep = false;
 					g_engine->runScriptExecutor();
 				}
 			}

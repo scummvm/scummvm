@@ -2726,11 +2726,12 @@ OpcodeResult Script::ScriptExecutor::scriptTestSceneAnimFrame() {
 		return OpcodeResult::Continue;
 	}
 	const BackgroundAnimationBlob &blob = _engine->_backgroundAnimationsBlobs[sceneAnimIndex - 1];
-	if (blob._blob.empty()) {
+	const Common::Array<uint8> &active = blob.activeBlob();
+	if (active.empty()) {
 		setScriptError(8);
 		return OpcodeResult::Continue;
 	}
-	AnimBlobView view(blob._blob);
+	AnimBlobView view(active);
 	if (!view.isValid()) {
 		setScriptError(8);
 		return OpcodeResult::Continue;
@@ -3437,15 +3438,62 @@ OpcodeResult ScriptExecutor::scriptScreenShot() {
 }
 
 OpcodeResult ScriptExecutor::scriptWaitObjectAnimStep() {
-	debugC(kDebugScript, "SCRIPT::waitObjectAnimStep() [stub]");
+	const uint32 objectID = scriptReadValue32() - 0x400;
+	const uint16 animNr = scriptReadValue16();
+	const uint16 animStep = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::waitObjectAnimStep(objectID=%u, animNr=%u, animStep=%u)",
+		   objectID, animNr, animStep);
 	scriptSkipOpcodeRemainder(0x56);
-	return OpcodeResult::Continue;
+
+	clearScriptError();
+	if (objectID < 1 || objectID > 0x200) {
+		setScriptError(2);
+		return OpcodeResult::Continue;
+	}
+	GameObject *object = GameObjects::getObjectByIndex(objectID);
+	if (object == nullptr) {
+		setScriptError(0x19);
+		return OpcodeResult::Continue;
+	}
+	if (object->_dataOffset == 0) {
+		setScriptError(2);
+		return OpcodeResult::Continue;
+	}
+	if (animNr < 1 || animNr > 0x26) {
+		setScriptError(0x10);
+		return OpcodeResult::Continue;
+	}
+
+	_waitObjectAnimObjectId = (uint16)objectID;
+	_waitObjectAnimSlot = animNr;
+	_waitObjectAnimTargetStep = animStep;
+	_waitForObjectAnimStep = true;
+	endTimer();
+	endBuffering(_lastOpcodeTriggeredSkip);
+	enterBlockingWaitCursor();
+	return OpcodeResult::WaitForCallback;
 }
 
 OpcodeResult ScriptExecutor::scriptWaitSpecialAnimStep() {
-	debugC(kDebugScript, "SCRIPT::waitSpecialAnimStep() [stub]");
+	const uint32 sceneAnimIndex = scriptReadValue32() - 0x1000;
+	const uint16 animStep = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::waitSpecialAnimStep(sceneAnimIndex=%u, animStep=%u)",
+		   sceneAnimIndex, animStep);
 	scriptSkipOpcodeRemainder(0x57);
-	return OpcodeResult::Continue;
+
+	clearScriptError();
+	if (sceneAnimIndex == 0 || sceneAnimIndex > _engine->_backgroundAnimationsBlobs.size()) {
+		setScriptError(8);
+		return OpcodeResult::Continue;
+	}
+
+	_waitSpecialAnimIndex = (uint16)sceneAnimIndex;
+	_waitSpecialAnimTargetStep = animStep;
+	_waitForSpecialAnimStep = true;
+	endTimer();
+	endBuffering(_lastOpcodeTriggeredSkip);
+	enterBlockingWaitCursor();
+	return OpcodeResult::WaitForCallback;
 }
 
 OpcodeResult ScriptExecutor::scriptSetObjectAdjust() {
@@ -3475,8 +3523,19 @@ OpcodeResult ScriptExecutor::scriptSetObjectAdjust() {
 }
 
 OpcodeResult ScriptExecutor::scriptReloadSpecialAnim() {
-	debugC(kDebugScript, "SCRIPT::reloadSpecialAnim() [stub]");
+	const uint32 sceneAnimIndex = scriptReadValue32() - 0x1000;
+	const uint8 resourceIndex = readByte();
+	debugC(kDebugScript, "SCRIPT::reloadSpecialAnim(anim=%u res=%u)", sceneAnimIndex, resourceIndex);
+	clearScriptError();
 	scriptSkipOpcodeRemainder(0x59);
+	if (sceneAnimIndex == 0 || sceneAnimIndex > _engine->_backgroundAnimationsBlobs.size()) {
+		setScriptError(8);
+		return OpcodeResult::Continue;
+	}
+	// Needs AHFFANIM resource loader (dialect-v2 / Windows MCS).
+	warning("reloadSpecialAnim: AHFFANIM loader not implemented (anim=%u res=%u)",
+			sceneAnimIndex, resourceIndex);
+	setScriptError(1);
 	return OpcodeResult::Continue;
 }
 
@@ -3527,20 +3586,70 @@ OpcodeResult ScriptExecutor::scriptSetWaveVolume() {
 }
 
 OpcodeResult ScriptExecutor::scriptLoadSpecAnimAnim() {
-	debugC(kDebugScript, "SCRIPT::loadSpecAnimAnim() [stub]");
+	const uint32 sceneAnimIndex = scriptReadValue32() - 0x1000;
+	const uint16 slot = scriptReadValue16();
+	const uint8 resourceIndex = readByte();
+	debugC(kDebugScript, "SCRIPT::loadSpecAnimAnim(anim=%u slot=%u res=%u)",
+		   sceneAnimIndex, slot, resourceIndex);
+	clearScriptError();
 	scriptSkipOpcodeRemainder(0x5E);
+	if (slot == 0 || slot > 8) {
+		setScriptError(0x31);
+		return OpcodeResult::Continue;
+	}
+	if (sceneAnimIndex == 0 || sceneAnimIndex > _engine->_backgroundAnimationsBlobs.size()) {
+		setScriptError(8);
+		return OpcodeResult::Continue;
+	}
+	// Needs AHFFANIM resource loader (dialect-v2 / Windows MCS).
+	warning("loadSpecAnimAnim: AHFFANIM loader not implemented (anim=%u slot=%u res=%u)",
+			sceneAnimIndex, slot, resourceIndex);
+	setScriptError(1);
 	return OpcodeResult::Continue;
 }
 
 OpcodeResult ScriptExecutor::scriptSetSpecAnimAnim() {
-	debugC(kDebugScript, "SCRIPT::setSpecAnimAnim() [stub]");
+	const uint32 sceneAnimIndex = scriptReadValue32() - 0x1000;
+	const uint16 slot = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::setSpecAnimAnim(anim=%u slot=%u)", sceneAnimIndex, slot);
+	clearScriptError();
 	scriptSkipOpcodeRemainder(0x5F);
+	if (slot > 8) {
+		setScriptError(0x31);
+		return OpcodeResult::Continue;
+	}
+	if (sceneAnimIndex == 0 || sceneAnimIndex > _engine->_backgroundAnimationsBlobs.size()) {
+		setScriptError(8);
+		return OpcodeResult::Continue;
+	}
+	BackgroundAnimationBlob &blob = _engine->_backgroundAnimationsBlobs[sceneAnimIndex - 1];
+	if (slot != 0 && blob._extraBlobs[slot - 1].empty()) {
+		setScriptError(0x32);
+		return OpcodeResult::Continue;
+	}
+	blob._activeExtraSlot = slot;
 	return OpcodeResult::Continue;
 }
 
 OpcodeResult ScriptExecutor::scriptClearSpecAnimAnim() {
-	debugC(kDebugScript, "SCRIPT::clearSpecAnimAnim() [stub]");
+	const uint32 sceneAnimIndex = scriptReadValue32() - 0x1000;
+	const uint16 slot = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::clearSpecAnimAnim(anim=%u slot=%u)", sceneAnimIndex, slot);
+	clearScriptError();
 	scriptSkipOpcodeRemainder(0x60);
+	if (slot > 8) {
+		setScriptError(0x31);
+		return OpcodeResult::Continue;
+	}
+	if (sceneAnimIndex == 0 || sceneAnimIndex > _engine->_backgroundAnimationsBlobs.size()) {
+		setScriptError(8);
+		return OpcodeResult::Continue;
+	}
+	BackgroundAnimationBlob &blob = _engine->_backgroundAnimationsBlobs[sceneAnimIndex - 1];
+	if (slot >= 1 && slot <= 8)
+		blob._extraBlobs[slot - 1].clear();
+	if (blob._activeExtraSlot == slot)
+		blob._activeExtraSlot = 0;
 	return OpcodeResult::Continue;
 }
 
@@ -3964,11 +4073,13 @@ void ScriptExecutor::run(bool firstRun) {
 	// Binary runScriptExecutor (1008:e50c) entry guard:
 	// Returns immediately if ANY wait condition is active.
 	if (_frameWaitTicksRemaining != 0 || _walkTargetObjectIndex != 0 ||
-		_waitForPcmSound || _waitForMusicControl || _waitForAdlibReady) {
-		debugC(kDebugScript, "run() blocked by entry guard: frameWait=%d walkTarget=%d sound=%d music=%d adlib=%d",
+		_waitForPcmSound || _waitForMusicControl || _waitForAdlibReady ||
+		_waitForObjectAnimStep || _waitForSpecialAnimStep) {
+		debugC(kDebugScript, "run() blocked by entry guard: frameWait=%d walkTarget=%d sound=%d music=%d adlib=%d objAnim=%d specAnim=%d",
 			   _frameWaitTicksRemaining, _walkTargetObjectIndex,
 			   _waitForPcmSound ? 1 : 0, _waitForMusicControl ? 1 : 0,
-			   _waitForAdlibReady ? 1 : 0);
+			   _waitForAdlibReady ? 1 : 0,
+			   _waitForObjectAnimStep ? 1 : 0, _waitForSpecialAnimStep ? 1 : 0);
 		return;
 	}
 

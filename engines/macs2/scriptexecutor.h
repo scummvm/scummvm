@@ -472,6 +472,14 @@ public:
 	bool _waitForPcmSound = false;
 	bool _waitForMusicControl = false;
 	bool _waitForAdlibReady = false;
+	// Dialect-v2: wait until an object/scene anim sequencePosition reaches a target.
+	bool _waitForObjectAnimStep = false;
+	uint16 _waitObjectAnimObjectId = 0;
+	uint16 _waitObjectAnimSlot = 0;
+	uint16 _waitObjectAnimTargetStep = 0;
+	bool _waitForSpecialAnimStep = false;
+	uint16 _waitSpecialAnimIndex = 0;
+	uint16 _waitSpecialAnimTargetStep = 0;
 	bool _debugPaused = false;
 	bool _pickupInProgress = false;
 	uint16 _pickupActorObjectID = 0;
@@ -519,7 +527,8 @@ public:
 	bool isScriptWaitDeferred() const {
 		return _state == ExecutorState::WaitingForCallback ||
 			   _frameWaitTicksRemaining != 0 || _walkTargetObjectIndex != 0 ||
-			   _waitForPcmSound || _waitForMusicControl || _waitForAdlibReady;
+			   _waitForPcmSound || _waitForMusicControl || _waitForAdlibReady ||
+			   _waitForObjectAnimStep || _waitForSpecialAnimStep;
 	}
 
 	bool isExecuting() const {
