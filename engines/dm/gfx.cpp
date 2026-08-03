@@ -4306,7 +4306,8 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 		ornCoordSet[4], k112_byteWidthViewport, kDMColorFlesh, ornCoordSet[5], k136_heightViewport);
 
 	if ((viewWallIndex == kDMViewWallD1CFront) && _championPortraitOrdinal--) {
-		blitToBitmap(getNativeBitmapOrGraphic(kDMGraphicIdxChampionPortraits), _bitmapViewport, boxChampionPortraitOnWall,
+		Box portraitBox = (_vm->getPlatform() == Common::kPlatformDOS) ? Box(88, 119, 35, 63) : boxChampionPortraitOnWall;
+		blitToBitmap(getNativeBitmapOrGraphic(kDMGraphicIdxChampionPortraits), _bitmapViewport, portraitBox,
 			(_championPortraitOrdinal & 0x0007) << 5, (_championPortraitOrdinal >> 3) * 29,
 			k128_byteWidth, k112_byteWidthViewport, kDMColorDarkGary, 87, k136_heightViewport); /* A portrait is 32x29 pixels */
 	}
