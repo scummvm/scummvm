@@ -2413,7 +2413,7 @@ void DisplayMan::drawSquareD3R(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypeDoorFront:
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], kDMViewFloorD3R);
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD3R, kDMCellOrderDoorPass1BackRightBackLeft);
-		memmove(_tmpBitmap, _bitmapWallSetDoorFrameLeftD3L, 32 * 44);
+		memmove(_tmpBitmap, _bitmapWallSetDoorFrameLeftD3L, getPixelWidth(((_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet) + 4) * getPixelHeight(((_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet) + 4));
 		drawDoorFrameBitmapFlippedHorizontally(_tmpBitmap, &doorFrameRightD3R);
 		if (_vm->_dungeonMan->getDoor(squareAspect[kDMSquareAspectDoorThingIndex])->hasButton())
 			drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), kDMDoorButtonD3R);
@@ -2496,7 +2496,7 @@ void DisplayMan::drawSquareD3C(Direction dir, int16 posX, int16 posY) {
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], kDMViewFloorD3C);
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD3C, kDMCellOrderDoorPass1BackLeftBackRight);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameLeftD3C, doorFrameLeftD3C);
-		memmove(_tmpBitmap, _bitmapWallSetDoorFrameLeftD3C, 32 * 44);
+		memmove(_tmpBitmap, _bitmapWallSetDoorFrameLeftD3C, getPixelWidth(((_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet) + 3) * getPixelHeight(((_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet) + 3));
 		drawDoorFrameBitmapFlippedHorizontally(_tmpBitmap, &doorFrameRightD3C);
 		if (dungeon.getDoor(squareAspect[kDMSquareAspectDoorThingIndex])->hasButton())
 			drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), kDMDoorButtonD3C);
@@ -3213,7 +3213,7 @@ void DisplayMan::drawSquareD2C(Direction dir, int16 posX, int16 posY) {
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD2C, kDMCellOrderDoorPass1BackLeftBackRight);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD2LCR, doorFrameTopD2C);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameLeftD2C, doorFrameLeftD2C);
-		memcpy(_tmpBitmap, _bitmapWallSetDoorFrameLeftD2C, 48 * 65);
+		memcpy(_tmpBitmap, _bitmapWallSetDoorFrameLeftD2C, getPixelWidth(((_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet) + 2) * getPixelHeight(((_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet) + 2));
 		drawDoorFrameBitmapFlippedHorizontally(_tmpBitmap, &doorFrameRightD2C);
 		if (dungeon.getDoor(squareAspect[kDMSquareAspectDoorThingIndex])->hasButton())
 			drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), kDMDoorButtonD2C);
@@ -3589,7 +3589,7 @@ void DisplayMan::drawSquareD0C(Direction dir, int16 posX, int16 posY) {
 	switch (squareAspect[kDMSquareAspectElement]) {
 	case kDMElementTypeDoorSide:
 		if (championMan._party._event73Count_ThievesEye) {
-			memmove(_tmpBitmap, _bitmapWallSetDoorFrameFront, 32 * 123);
+			memmove(_tmpBitmap, _bitmapWallSetDoorFrameFront, getPixelWidth(((_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet) + 0) * getPixelHeight(((_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet) + 0));
 			blitToBitmap(getNativeBitmapOrGraphic(kDMGraphicIdxHoleInWall),
 							  _tmpBitmap, boxThievesEyeHoleInDoorFrame, doorFrameD0C._box._rect.left - _boxThievesEyeViewPortVisibleArea._rect.left,
 							  0, 48, 16, kDMColorGold, 95, 123);
