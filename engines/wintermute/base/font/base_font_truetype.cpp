@@ -824,17 +824,17 @@ int32 BaseFontTT::wrapText(const WideString &text, int32 maxWidth, int32 maxHeig
 }
 
 //////////////////////////////////////////////////////////////////////////
-void BaseFontTT::measureText(const WideString &text, int32 maxWidth, int32 maxHeight, int32 &textWidth, int32 &textHeight) {
+void BaseFontTT::measureText(const WideString &text, int maxWidth, int maxHeight, int &textWidth, int &textHeight) {
 	TextLineList lines;
 	wrapText(text, maxWidth, maxHeight, lines);
 
-	textHeight = (int32)(lines.size() * getLineHeight());
+	textHeight = lines.size() * getLineHeight();
 	textWidth = 0;
 
 	TextLineList::iterator it;
 	for (it = lines.begin(); it != lines.end(); ++it) {
 		TextLine *line = (*it);
-		textWidth = MAX(textWidth, line->getWidth());
+		textWidth = MAX<int>(textWidth, line->getWidth());
 		SAFE_DELETE(line);
 	}
 }
