@@ -366,16 +366,16 @@ void TurningPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_turnSound.readNormal(stream);
 
+	if (g_nancy->getGameType() >= kGameTypeNancy12) {
+		// Nancy 12 inserts 3 bytes before the correct order; purpose unknown.
+		stream.skip(3);
+	}
+
 	_correctOrder.resize(numSpindles);
 	for (uint i = 0; i < numSpindles; ++i) {
 		_correctOrder[i] = stream.readUint16LE();
 	}
 	stream.skip((16 - numSpindles) * 2);
-
-	if (g_nancy->getGameType() >= kGameTypeNancy12) {
-		// Nancy 12 inserts 3 bytes here (zero in the samples seen); purpose unknown.
-		stream.skip(3);
-	}
 
 	_solveScene.readData(stream);
 	_solveSoundDelay = stream.readUint16LE();
