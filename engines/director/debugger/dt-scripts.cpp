@@ -268,15 +268,6 @@ static void updateCurrentScript() {
 
 // Quick open (command palette)
 
-struct QuickOpenItem {
-	Common::String label;
-	bool isHandler = false;
-	CastMemberID id;
-	ScriptType scriptType = kScoreScript;
-	Common::String handlerId;
-	Common::String handlerName;
-};
-
 static bool qoMatch(const Common::String &label, const char *q) {
 	if (!q || !q[0])
 		return true;
@@ -348,8 +339,8 @@ static void openQuickOpen(const QuickOpenItem &qi, Movie *movie) {
 }
 
 void showQuickOpen() {
-	static Common::Array<QuickOpenItem> items;
-	static bool gathered = false;
+	Common::Array<QuickOpenItem> &items = _state->_quickOpenItems;
+	bool &gathered = _state->_quickOpenGathered;
 
 	if (!_state->_quickOpen) {
 		gathered = false;

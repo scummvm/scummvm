@@ -127,10 +127,9 @@ void handleDebuggerShortcuts() {
 		return;
 	Score *score = movie->getScore();
 
-	const ImGuiInputFlags route = ImGuiInputFlags_RouteGlobal | ImGuiInputFlags_RouteOverFocused;
 	const bool running = (g_lingo->_exec._state == kRunning);
 
-	if (ImGui::Shortcut(ImGuiKey_F5, route)) {
+	if (actionTriggered(kActContinue)) {
 		if (running) {
 			score->_playState = kPlayPaused;
 			dgbStop();
@@ -144,14 +143,14 @@ void handleDebuggerShortcuts() {
 	}
 
 	// Match the step buttons: pause when running, step when paused.
-	// Shift+F11 must be tested before F11.
-	if (ImGui::Shortcut(ImGuiMod_Shift | ImGuiKey_F11, route)) {
+	// Step Out is tested before Step Into so a shared chord resolves to Out.
+	if (actionTriggered(kActStepOut)) {
 		score->_playState = kPlayStarted;
 		running ? dgbStop() : dbgStepOut();
-	} else if (ImGui::Shortcut(ImGuiKey_F11, route)) {
+	} else if (actionTriggered(kActStepInto)) {
 		score->_playState = kPlayStarted;
 		running ? dgbStop() : dbgStepInto();
-	} else if (ImGui::Shortcut(ImGuiKey_F10, route)) {
+	} else if (actionTriggered(kActStepOver)) {
 		score->_playState = kPlayStarted;
 		running ? dgbStop() : dbgStepOver();
 	}

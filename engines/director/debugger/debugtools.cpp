@@ -1006,6 +1006,7 @@ void onImGuiInit() {
 	_state->_logger = new ImGuiEx::ImGuiLogger;
 
 	setTheme(_state->_activeThemeID);
+	initShortcuts();
 
 	Common::setLogWatcher(onLog);
 }
@@ -1088,7 +1089,8 @@ void onImGuiRender() {
 	ImGuiIO &io = ImGui::GetIO();
 	io.ConfigFlags &= ~(ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse);
 
-	if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_F1)) {
+	if (_state->_shortcutCapture < 0 && _state->_shortcuts[kActToggleMouseIgnore] != ImGuiKey_None
+			&& ImGui::IsKeyChordPressed(_state->_shortcuts[kActToggleMouseIgnore])) {
 		_state->_ignoreMouse = !_state->_ignoreMouse;
 
 		Common::String msg = Common::String::format("Debug Mouse Ignore: %s", _state->_ignoreMouse ? "ON" : "OFF");
@@ -1099,19 +1101,25 @@ void onImGuiRender() {
 
 	handleDebuggerShortcuts();
 
-	if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_P, ImGuiInputFlags_RouteGlobal | ImGuiInputFlags_RouteOverFocused)) {
+	if (actionTriggered(kActQuickOpen)) {
 		_state->_quickOpen = true;
 		_state->_quickOpenInput[0] = '\0';
+	}
+
+	if (actionTriggered(kActPickFromStage)) {
+		_state->_pickMode = !_state->_pickMode;
+		if (_state->_pickMode)
+			g_system->displayMessageOnOSD(Common::U32String("Pick: click a sprite on the stage"));
 	}
 
 	handlePickFromStage();
 
 	if (ImGui::BeginMainMenuBar()) {
-		if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_2, ImGuiInputFlags_RouteGlobal | ImGuiInputFlags_RouteOverFocused))
+		if (actionTriggered(kActToggleControlPanel))
 			_state->_w.controlPanel = !_state->_w.controlPanel;
-		if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_3, ImGuiInputFlags_RouteGlobal | ImGuiInputFlags_RouteOverFocused))
+		if (actionTriggered(kActToggleCast))
 			_state->_w.cast = !_state->_w.cast;
-		if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_4, ImGuiInputFlags_RouteGlobal | ImGuiInputFlags_RouteOverFocused))
+		if (actionTriggered(kActToggleScore))
 			_state->_w.score = !_state->_w.score;
 		if (ImGui::BeginMenu("View")) {
 			ImGui::SeparatorText("Windows");
@@ -1166,12 +1174,17 @@ void onImGuiRender() {
 
 			ImGui::EndMenu();
 		}
+		if (ImGui::BeginMenu("Help")) {
+			ImGui::MenuItem("Shortcuts & Tips", NULL, &_state->_w.help);
+			ImGui::EndMenu();
+		}
 		ImGui::EndMainMenuBar();
 	}
 
 	showExecutionContext();
 	showScriptsWindow();
 	showQuickOpen();
+	showHelp();
 
 	showControlPanel();
 	showVars();
@@ -1229,7 +1242,15 @@ void setSelectedChannel(int channel) {
 }
 
 bool isMouseInputIgnored() {
-	if (!_state || !_state->_ignoreMouse)
+	if (!_state)
+		return false;
+
+	// While arming a stage pick, keep the selecting click out of the game so it
+	// only selects the sprite and does not fire its mouseDown/mouseUp handlers.
+	if (_state->_pickMode)
+		return true;
+
+	if (!_state->_ignoreMouse)
 		return false;
 
 	// Holding Shift temporarily allows mouse events to pass to the engine

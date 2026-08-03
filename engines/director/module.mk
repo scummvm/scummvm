@@ -233,6 +233,7 @@ MODULE_OBJS += \
 	debugger/dt-cast.o \
 	debugger/dt-castdetails.o \
 	debugger/dt-controlpanel.o \
+	debugger/dt-help.o \
 	debugger/dt-lists.o \
 	debugger/dt-save-state.o \
 	debugger/dt-score.o \
