@@ -87,8 +87,7 @@ void main() {
 		vec4 viewCoords = viewMatrix * modelMatrix * vec4(position, 1.0);
 		vec4 pos = projMatrix * viewCoords;
 
-		if (UBOOL_TEST(effectSecondPass)) {
-		} else {
+		if (!UBOOL_TEST(effectSecondPass)) {
 			vec3 nrm = (viewMatrix * modelMatrix * vec4(normal, 0.0)).xyz;
 			pos.xy += nrm.xy * pos.w * borderWidth * 0.001;
 		}

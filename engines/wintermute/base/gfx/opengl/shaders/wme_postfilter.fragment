@@ -7,7 +7,7 @@ OUTPUT
 
 void main() {
 	vec4 color = texture2D(tex, texPos);
-	if (sepiaMode) {
+	if (UBOOL_TEST(sepiaMode)) {
 		float r = color.r;
 		float g = color.g;
 		float b = color.b;
