@@ -49,6 +49,9 @@ protected:
 
 	void drawDialFrame(uint frame);
 	void pushSequence(uint id);
+	uint numDialPositions() const { return _dialSrcs.size() / (1 + _numInbetweens); }
+	bool canTurnDial(bool forwards) const;
+	void turnDial(bool forwards);
 
 	Common::Path _imageName1;
 	Common::Path _imageName2;
@@ -75,6 +78,7 @@ protected:
 	Common::Rect _cwHotspot;
 
 	bool _useMoveArrows = false;
+	bool _ccwTurnsForwards = false;
 
 	SoundDescription _spinSound;
 	SoundDescription _selectSound;

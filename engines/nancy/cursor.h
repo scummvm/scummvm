@@ -59,6 +59,8 @@ public:
 		kDragHand				= 23,	// Hand cursor used when dragging an item (Nancy 10+)
 		kDropHand				= 24,	// Drop-hand cursor used while a piece is held over a target (Nancy 10+)
 		kPuzzleArrow			= 25,	// Puzzle arrow cursor shown when hovering a clickable puzzle hotspot (Nancy 10+)
+		kDialCW					= 26,	// Dial turn cursors used by SafeDialPuzzle (Nancy 10+); the older
+		kDialCCW				= 27,	// games use kRotateCW / kRotateCCW instead
 
 		// Cursors in Nancy10 and newer games. The CURS chunk holds 37 system
 		// cursor types in pairs; type T's idle slot is (T*2) and its hotspot
@@ -90,6 +92,8 @@ public:
 		kNewInvertedRotateLeft	= 34,	// Type 17 — Inverted 360 rotation
 		kNewUseHand				= 36,	// Type 18 — Hand used while using items
 		kNewDragHand			= 38,	// Type 19 — Hand used while dragging puzzle pieces (e.g. SortPuzzle pickup action sets this)
+		kNewDialCW				= 41,	// Type 20 hotspot — Dial turn cursors, used by SafeDialPuzzle
+		kNewDialCCW				= 43,	// Type 21 hotspot
 		kNewPuzzleArrow			= 45,	// Type 22 hotspot — Arrow cursor shown when hovering a clickable puzzle hotspot
 		kNewPuzzleSlideUp		= 47,	// Type 23 hotspot — Slide-arrow shown over a movable tile in CollisionPuzzle/TileMovePuzzle
 		kNewPuzzleSlideDown		= 49,	// Type 24 hotspot
