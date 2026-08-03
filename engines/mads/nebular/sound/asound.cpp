@@ -250,11 +250,11 @@ void ASound::noise() {
 	}
 }
 
-void ASound::write(int reg, int val) {
+void ASound::write(uint8 reg, uint8 val) {
 	_opl->writeReg(reg, val);
 }
 
-int ASound::write2(int state, int reg, int val) {
+int ASound::write2(int state, uint8 reg, uint8 val) {
 	_ports[reg] = val;
 	write(reg, val);
 	return state;
@@ -782,7 +782,7 @@ void ASound::channelCommand(byte *&pSrc, bool &updateFlag) {
 		break;
 
 	case 5:
-		chan->_pitchBend = *++pSrc;
+		chan->_pitchBend = (int8)*++pSrc;
 		chan->_pSrc += 2;
 		break;
 

@@ -218,12 +218,12 @@ protected:
 	/**
 	 * Queue a byte for an Adlib register
 	 */
-	void write(int reg, int val);
+	void write(uint8 reg, uint8 val);
 
 	/**
 	 * Queue a byte for an Adlib register, and store it in the _ports array
 	 */
-	int write2(int state, int reg, int val);
+	int write2(int state, uint8 reg, uint8 val);
 
 	/**
 	 * Turn a channel on
@@ -318,7 +318,7 @@ public:
 	int _pollResult;
 	int _resultFlag;
 	byte _nullData[2];
-	int _ports[256];
+	uint8 _ports[256];
 	bool _stateFlag;
 	int _activeChannelReg;
 	int _outputReg;         // scratch OPL operator register offset used within loadSample()
