@@ -66,6 +66,7 @@ MovieCastMember::~MovieCastMember() {
 	delete _embeddedLingoState;
 	for (auto &it : _embeddedFrozenStates)
 		delete it;
+	_score = nullptr;	// Prevent use-after-free in Filmloop
 }
 
 Common::Array<Channel> *MovieCastMember::getSubChannels(Common::Rect &bbox, uint frame) {
