@@ -145,7 +145,7 @@ public:
 	~Conversation();
 
 	void unloadData();
-	void runScript();
+	void runScript(bool exclusive);
 	void loadData(uint16 num, uint16 num2, int16 sub, bool haveHeadData);
 	bool isForDlg(const Dialog *dlg) const;
 	bool isFinished() const { return _finished; }
@@ -164,7 +164,7 @@ private:
 	uint32 _nextExecMs;
 
 	bool runScriptFrame(int16 frameNum);
-	void checkAndRunScript();
+	void checkAndRunScript(bool updateDelay);
 	void incrementFrame();
 	bool isScriptRunning();
 	void pumpMessages();

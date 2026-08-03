@@ -252,6 +252,7 @@ const char *TTMInterpreter::ttmOpName(uint16 op) {
 	case 0xc0e0: return "FADE SONG";
 	case 0xc0f0: return "SONG CONTROLLER??";
 	case 0xc100: return "SAMPLE VOL";
+	case 0xc200: return "UNKNOWN 0xC200 RAW SFX ??";
 	case 0xc210: return "LOAD RAW SFX";
 	case 0xc220: return "PLAY RAW SFX";
 	case 0xc240: return "STOP RAW SFX";

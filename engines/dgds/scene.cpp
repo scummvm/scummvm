@@ -891,8 +891,10 @@ void SDSScene::drawAndUpdateHeads(Graphics::ManagedSurface &dst) {
 		tds.drawAndUpdateVisibleHeads(dst);
 	}
 
-	if (_conversation.isForDlg(getVisibleDialog())) {
-		_conversation.runScript();
+	const Dialog *visibleDlg = getVisibleDialog();
+	if (_conversation.isForDlg(visibleDlg)) {
+		bool exclusive = visibleDlg->hasFlag(kDlgFlagLo8);
+		_conversation.runScript(exclusive);
 	}
 }
 
@@ -1063,7 +1065,7 @@ bool SDSScene::checkDialogActive() {
 				if (action) {
 					// Play the response voice acting script.
 					_conversation.loadData(dlg._fileNum, dlg._num, action->num, haveHeadData);
-					_conversation.runScript();
+					_conversation.runScript(false);
 
 					// Take a copy of the dialog because the actions might change the scene
 					Dialog dlgCopy = dlg;

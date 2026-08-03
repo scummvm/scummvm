@@ -209,7 +209,7 @@ void CDSTTMInterpreter::handleOperation(TTMEnviro &env_, TTMSeq &seq, uint16 op,
 		// TODO: Probably should do this accounting (as well as timeCut and dialogs)
 		// 		 in game frames, not millis.
 		int16 delayMillis = (int16)round(ivals[0] * MS_PER_FRAME);
-		env._cdsDelay = MAX(env._cdsDelay, delayMillis);
+		env._cdsDelay = delayMillis;
 		break;
 	}
 	case 0x1050: // SELECT BMP:  id:int [0]
@@ -229,7 +229,7 @@ void CDSTTMInterpreter::handleOperation(TTMEnviro &env_, TTMSeq &seq, uint16 op,
 		seq._gotoFrame = findGOTOTarget(env, seq, ivals[0]);
 		break;
 	case 0x3300: // CDS GOSUB - first 2 args are ignored by original
-			if (!env._cdsJumped && seq._gotoFrame + ivals[2] != seq._currentFrame && seq._gotoFrame >= 0) {
+		if (!env._cdsJumped && seq._gotoFrame + ivals[2] != seq._currentFrame && seq._gotoFrame >= 0) {
 			env._cdsJumped = true;
 			int64 prevPos = env.scr->pos();
 			int16 currentFrame = seq._currentFrame;
@@ -432,7 +432,7 @@ bool Conversation::runScriptFrame(int16 frameNum) {
 	return _ttmScript->run(_ttmEnv, *seq);
 }
 
-void Conversation::checkAndRunScript() {
+void Conversation::checkAndRunScript(bool updateDelay) {
 	if (!_ttmScript || _finished)
 		return;
 
@@ -445,9 +445,13 @@ void Conversation::checkAndRunScript() {
 		runScriptFrame(_tempFrameNum);
 	}
 	runScriptFrame(_ttmEnv._cdsFrame);
+
+	if (!updateDelay)
+		return;
+
 	if (_ttmEnv._cdsDelay > 0) {
 		_nextExecMs = _thisFrameMs + _ttmEnv._cdsDelay;
-		debug(10, "CDS: This fame %d. Next frame will be on or after %d", _thisFrameMs, _nextExecMs);
+		debug(10, "CDS: This frame ms %d. Next frame will be on or after %d. ", _thisFrameMs, _nextExecMs);
 		_ttmEnv._cdsDelay = -1;
 	} else {
 		_nextExecMs = 0;
@@ -504,7 +508,7 @@ void Conversation::pumpMessages() {
 	}
 }
 
-void Conversation::runScript() {
+void Conversation::runScript(bool exclusive) {
 	if (!_ttmScript)
 		return;
 
@@ -515,7 +519,7 @@ void Conversation::runScript() {
 	// If not, just run the script at the same time as it's supposed to animate over
 	// the top of the other game movements.
 	//
-	if (_haveHeadData)
+	if (_haveHeadData || exclusive)
 		runScriptExclusive();
 	else
 		runScriptStep();
@@ -527,13 +531,18 @@ void Conversation::runScriptStep() {
 	if (_runTempFrame == -1)
 		_runTempFrame = 2;
 
-	if (!isScriptRunning())
+	if (!isScriptRunning()) {
+		if (_ttmScript && _ttmEnv._cdsFrame >= _ttmEnv._totalFrames)
+			_finished = true;
 		return;
+	}
 
 	_thisFrameMs = engine->getThisFrameMs();
 	if (!_nextExecMs || _nextExecMs <= _thisFrameMs) {
 		incrementFrame();
-		checkAndRunScript();
+		checkAndRunScript(true);
+	} else {
+		checkAndRunScript(false);
 	}
 }
 
@@ -587,7 +596,7 @@ void Conversation::runScriptExclusive() {
 		if (!_nextExecMs || _nextExecMs <= _thisFrameMs) {
 			incrementFrame();
 
-			checkAndRunScript();
+			checkAndRunScript(true);
 
 			// Redraw active dialogs eg to make sure thought bubble dots are
 			// over the moving heads
