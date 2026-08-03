@@ -32,10 +32,6 @@ void onImGuiRender();
 void onImGuiCleanup();
 #endif
 
-enum LastExpressDebugChannels {
-	kDebugImGui = 1
-};
-
 class LastExpressEngine;
 
 class Debugger : public GUI::Debugger {
