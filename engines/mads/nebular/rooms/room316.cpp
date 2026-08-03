@@ -306,7 +306,7 @@ static void room_316_init() {
 	}
 
 	section_3_music();
-	kernel.quotes = quote_load(0xFD, 0);
+	kernel.quotes = quote_load(253, 0);
 }
 
 static void room_316_daemon() {

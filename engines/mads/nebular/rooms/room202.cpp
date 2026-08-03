@@ -109,7 +109,7 @@ static void room_202_init() {
 		kernel_dynamic_walk(idx, 246, 124, FACING_NORTH);
 	}
 
-	kernel.quotes = quote_load(0x5C, 0x5D, 0x5E, 0x5F, 0x60, 0x62, 0x63, 0x64, 0x65, 0x66, 0x61, 0);
+	kernel.quotes = quote_load(92, 93, 94, 95, 96, 98, 99, 100, 101, 102, 97, 0);
 	local._activeMsgFl = false;
 
 	if (previous_room == KERNEL_RESTORING_GAME) {

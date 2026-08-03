@@ -91,7 +91,7 @@ static void room_508_init() {
 	}
 
 	section_5_music();
-	kernel.quotes = quote_load(0x273, 0);
+	kernel.quotes = quote_load(627, 0);
 
 	if (kernel.teleported_in) {
 		inter_give_to_player(OBJ_COMPACT_CASE);

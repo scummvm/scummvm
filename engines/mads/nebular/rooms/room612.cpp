@@ -130,7 +130,7 @@ static void room_612_init() {
 	if (kernel.teleported_in)
 		inter_give_to_player(OBJ_PADLOCK_KEY);
 
-	kernel.quotes = quote_load(0x2F5, 0x2F4, 0);
+	kernel.quotes = quote_load(757, 756, 0);
 }
 
 static void room_612_daemon() {

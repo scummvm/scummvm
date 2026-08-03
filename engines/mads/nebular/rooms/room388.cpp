@@ -44,7 +44,7 @@ static void room_388_init() {
 	player.walker_visible = false;
 	pal_change_color(252, 63, 30, 20);
 	pal_change_color(253, 45, 15, 12);
-	kernel.quotes = quote_load(0x154, 0x155, 0x156, 0x157, 0x158, 0);
+	kernel.quotes = quote_load(340, 341, 342, 343, 344, 0);
 
 	section_3_music();
 }

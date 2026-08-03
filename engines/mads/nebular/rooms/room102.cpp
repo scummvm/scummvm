@@ -130,7 +130,7 @@ static void room_102_init() {
 	local._chairDescrFl = false;
 	local._activeMsgFl = false;
 
-	kernel.quotes = quote_load(0x3B, 0x3C, 0x3D, 0x3E, 0x3F, 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0);
+	kernel.quotes = quote_load(59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 0);
 
 	if (previous_room == 101)
 		g_engine->_soundManager->command(20, 0);

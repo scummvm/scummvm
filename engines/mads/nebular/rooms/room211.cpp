@@ -79,7 +79,7 @@ static void room_211_init() {
 
 	pal_change_color(252, 63, 44, 30);
 	pal_change_color(253, 63, 20, 22);
-	kernel.quotes = quote_load(0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0x97, 0x98, 0x99, 0x9A, 0x9B, 0x9C, 0x9D, 0x9E, 1, 0);
+	kernel.quotes = quote_load(161, 162, 163, 164, 165, 166, 167, 168, 151, 152, 153, 154, 155, 156, 157, 158, 1, 0);
 
 	if (global[kMonkeyStatus] == MONKEY_AMBUSH_READY)
 		kernel_random_messages_init(2, 0, 54, 0, 30, 13, 2, 0xFDFC, 60, 151, 152, 153, 154, 0);

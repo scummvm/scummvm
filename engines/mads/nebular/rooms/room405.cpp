@@ -67,7 +67,7 @@ static void room_405_init() {
 		inter_give_to_player(OBJ_SECURITY_CARD);
 	}
 
-	kernel.quotes = quote_load(0x24F, 0);
+	kernel.quotes = quote_load(591, 0);
 	section_4_music();
 }
 

@@ -301,7 +301,7 @@ static void room_608_init() {
 	if (kernel.teleported_in)
 		inter_give_to_player(OBJ_BONES);
 
-	kernel.quotes = quote_load(0x2FB, 0x2FC, 0x2FE, 0x2FD, 0x2FF, 0x300, 0x301, 0x302, 0x303, 0x304, 0);
+	kernel.quotes = quote_load(763, 764, 766, 765, 767, 768, 769, 770, 771, 772, 0);
 }
 
 static void room_608_daemon() {

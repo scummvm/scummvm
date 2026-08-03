@@ -82,7 +82,7 @@ static void room_309_init() {
 
 	section_3_music();
 
-	kernel.quotes = quote_load(0xF7, 0xF8, 0xF9, 0x15C, 0x15D, 0x15E, 0);
+	kernel.quotes = quote_load(247, 248, 249, 348, 349, 350, 0);
 }
 
 static void room_309_daemon() {

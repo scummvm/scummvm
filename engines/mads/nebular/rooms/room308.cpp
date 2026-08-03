@@ -64,7 +64,7 @@ static void room_308_init() {
 	kernel_run_animation(kernel_name('a', -1), 60);
 
 	section_3_music();
-	kernel.quotes = quote_load(0xF4, 0xF5, 0xF6, 0);
+	kernel.quotes = quote_load(244, 245, 246, 0);
 }
 
 static void room_308_daemon() {

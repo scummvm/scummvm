@@ -97,7 +97,7 @@ static void room_751_init() {
 	}
 
 	section_7_music();
-	kernel.quotes = quote_load(0x30A, 0x30B, 0x30C, 0x30D, 0x30E, 0);
+	kernel.quotes = quote_load(778, 779, 780, 781, 782, 0);
 
 	if (global[kTimebombTimer] > 0)
 		global[kTimebombTimer] = 10200;

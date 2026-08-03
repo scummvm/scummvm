@@ -980,8 +980,8 @@ static void room_209_init() {
 	g_sprite_ids[6] = kernel_load_series(kernel_name('m', 6), 0);
 	g_sprite_ids[7] = kernel_load_series(kernel_name('m', 8), 0);
 
-	kernel.quotes = quote_load(0x82, 0x83, 0x84, 0x9C, 0x97, 0x95, 0x99, 0x9E, 0x98, 0x9B, 0xA0, 0x96, 0x9F,
-		0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x91, 0x92, 0x93, 0x94, 0x89, 0x85, 0x8A, 0x86, 0x87, 0x88, 0);
+	kernel.quotes = quote_load(130, 131, 132, 156, 151, 149, 153, 158, 152, 155, 160, 150, 159,
+		139, 140, 141, 142, 143, 145, 146, 147, 148, 137, 133, 138, 134, 135, 136, 0);
 
 	pal_change_color(252, 63, 44, 30);
 	pal_change_color(253, 63, 20, 22);

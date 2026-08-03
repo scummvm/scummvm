@@ -64,7 +64,7 @@ static void room_108_init() {
 		player.y = 98;
 	}
 
-	kernel.quotes = quote_load(0x4A, 0x4B, 0x4C, 0x35, 0x34, 0);
+	kernel.quotes = quote_load(74, 75, 76, 53, 52, 0);
 	section_1_music();
 }
 

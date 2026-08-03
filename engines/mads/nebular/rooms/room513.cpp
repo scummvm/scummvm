@@ -66,7 +66,7 @@ static void room_513_init() {
 	if (kernel.teleported_in)
 		inter_give_to_player(OBJ_SECURITY_CARD);
 
-	kernel.quotes = quote_load(0x278, 0);
+	kernel.quotes = quote_load(632, 0);
 }
 
 static void room_513_daemon() {

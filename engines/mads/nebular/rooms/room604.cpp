@@ -82,7 +82,7 @@ static void room_604_init() {
 	local._monsterActive = false;
 
 	section_6_music();
-	kernel.quotes = quote_load(0x2E7, 0x2E8, 0x2E9, 0x2EA, 0x2EB, 0x2EC, 0x2ED, 0x2EE, 0x2EF, 0x2F0, 0);
+	kernel.quotes = quote_load(743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 0);
 }
 
 static void room_604_daemon() {

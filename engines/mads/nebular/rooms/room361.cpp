@@ -265,7 +265,7 @@ static void room_361_init() {
 		player.y = 145;
 	}
 
-	kernel.quotes = quote_load(0xFB, 0xFC, 0);
+	kernel.quotes = quote_load(251, 252, 0);
 
 	if (previous_room == 320)
 		kernel_message_teletype(kernel_message_player(0xFB, 0x78, 0), 4, true);

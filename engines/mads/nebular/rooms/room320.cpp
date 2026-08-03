@@ -295,7 +295,7 @@ static void room_320_parser() {
 					g_sprite_ids[9] = kernel_load_series(kernel_name('m', 9), 0);
 					local._blinkFl = false;
 					setLeftView(2);
-					kernel.quotes = quote_load(0xFE, 0);
+					kernel.quotes = quote_load(254, 0);
 					kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 					kernel_run_animation(kernel_name('a', -1), 70);
 					g_engine->_soundManager->command(17, 0);

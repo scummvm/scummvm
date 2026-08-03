@@ -57,7 +57,7 @@ static void room_389_init() {
 	pal_change_color(252, 63, 37, 26);
 	pal_change_color(253, 45, 24, 17);
 	player.walker_visible = false;
-	kernel.quotes = quote_load(0xF7, 0xF8, 0xF9, 0x159, 0x15A, 0x15B, 0);
+	kernel.quotes = quote_load(247, 248, 249, 345, 346, 347, 0);
 
 	section_3_music();
 }

@@ -138,7 +138,7 @@ static void room_705_init() {
 	if (kernel.teleported_in)
 		inter_give_to_player(OBJ_BOTTLE);
 
-	kernel.quotes = quote_load(0x311, 0x312, 0x313, 0x314, 0x315, 0);
+	kernel.quotes = quote_load(785, 786, 787, 788, 789, 0);
 	local._dialog1.setup(0x98, 0x311, 0x312, 0x313, 0x314, 0x315, 0);
 	section_7_music();
 }

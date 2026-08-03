@@ -107,7 +107,7 @@ static void room_208_init() {
 		player.facing = FACING_NORTH;
 	}
 
-	kernel.quotes = quote_load(0x81, 0x46, 0);
+	kernel.quotes = quote_load(129, 70, 0);
 
 	if ((previous_room == 207) && (global[kMonkeyStatus] == MONKEY_HAS_BINOCULARS)) {
 		int msgIndex = kernel_message_add(quote_string(kernel.quotes, 129), 0, 0, 0x1110, 120, 0, 34);

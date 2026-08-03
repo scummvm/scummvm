@@ -101,7 +101,7 @@ static void room_602_init() {
 	}
 
 	section_6_music();
-	kernel.quotes = quote_load(0x2F1, 0x2F2, 0x2F3, 0);
+	kernel.quotes = quote_load(753, 754, 755, 0);
 
 	if (kernel.teleported_in) {
 		inter_give_to_player(OBJ_NOTE);

@@ -53,7 +53,7 @@ static void room_104_init() {
 	}
 
 	local._loseFl = false;
-	kernel.quotes = quote_load(0x35, 0x34, 0);
+	kernel.quotes = quote_load(53, 52, 0);
 	local._kargShootingFl = false;
 
 	if (g_engine->getRandomNumber(1, 3) == 1) {

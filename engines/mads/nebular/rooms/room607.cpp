@@ -104,7 +104,7 @@ static void room_607_init() {
 
 	pal_change_color(252, 63, 44, 30);
 	pal_change_color(253, 63, 20, 22);
-	kernel.quotes = quote_load(0x2F8, 0x2F7, 0x2F6, 0x2F9, 0x2FA, 0);
+	kernel.quotes = quote_load(760, 759, 758, 761, 762, 0);
 }
 
 static void room_607_daemon() {

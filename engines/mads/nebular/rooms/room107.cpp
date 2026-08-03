@@ -80,7 +80,7 @@ static void room_107_init() {
 		kernel_add_dynamic(words_manta_ray, words_swim_to, 0, g_sequence_ids[0], 0, 0, 0, 0);
 	}
 
-	kernel.quotes = quote_load(0x4A, 0x4B, 0x4C, 0x35, 0x34, 0);
+	kernel.quotes = quote_load(74, 75, 76, 53, 52, 0);
 	local._shootingFl = false;
 
 	if (g_engine->getRandomNumber(1, 3) == 1) {

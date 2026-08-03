@@ -90,7 +90,7 @@ static void room_106_init() {
 	local._shadowFl = false;
 	local._firstEmergingFl = false;
 
-	kernel.quotes = quote_load(0x31, 0x32, 0x34, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0);
+	kernel.quotes = quote_load(49, 50, 52, 77, 78, 79, 80, 81, 0);
 	section_1_music();
 }
 

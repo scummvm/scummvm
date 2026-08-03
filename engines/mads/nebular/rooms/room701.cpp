@@ -136,7 +136,7 @@ static void room_701_init() {
 		kernel_timing_trigger(60, 70);
 	}
 
-	kernel.quotes = quote_load(0x310, 0x30F, 0);
+	kernel.quotes = quote_load(784, 783, 0);
 	section_7_music();
 }
 

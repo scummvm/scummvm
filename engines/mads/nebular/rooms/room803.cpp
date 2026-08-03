@@ -38,7 +38,7 @@ static void room_803_init() {
 	g_sprite_ids[9] = kernel_load_series("*RXMBD_2", 0);
 	g_sprite_ids[6] = kernel_load_series(kernel_name('d', 1), 0);
 
-	kernel.quotes = quote_load(0x31B, 0x31C, 0x31D, 0x31E, 0x31F, 0x320, 0x321, 0x322, 0);
+	kernel.quotes = quote_load(795, 796, 797, 798, 799, 800, 801, 802, 0);
 
 	if (global[kHoppyDead]) {
 		g_sprite_ids[7] = kernel_load_series(kernel_name('e', 1), 0);

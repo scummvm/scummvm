@@ -83,7 +83,7 @@ static void room_406_init() {
 		g_engine->_soundManager->command(19, 0);
 	}
 
-	kernel.quotes = quote_load(0x24F, 0);
+	kernel.quotes = quote_load(591, 0);
 	local._hitStorageDoor = false;
 	section_4_music();
 }

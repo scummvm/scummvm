@@ -57,7 +57,7 @@ static void room_215_init() {
 		player.facing = FACING_NORTH;
 	}
 
-	kernel.quotes = quote_load(0xA9, 0xAA, 0);
+	kernel.quotes = quote_load(169, 170, 0);
 	section_2_music();
 }
 

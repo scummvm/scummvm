@@ -183,7 +183,7 @@ static void room_352_init() {
 
 	section_3_music();
 
-	kernel.quotes = quote_load(0xFF, 0x100, 0x101, 0x102, 0x103, 0);
+	kernel.quotes = quote_load(255, 256, 257, 258, 259, 0);
 }
 
 static void room_352_pre_parser() {

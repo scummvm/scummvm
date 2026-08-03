@@ -129,7 +129,7 @@ static void room_101_init() {
 		kernel_seq_depth(g_sequence_ids[12], 4);
 	}
 
-	kernel.quotes = quote_load(0x31, 0x32, 0x39, 0x36, 0x37, 0x38, 0);
+	kernel.quotes = quote_load(49, 50, 57, 54, 55, 56, 0);
 
 	if (global[kNeedToStandUp]) {
 		kernel_run_animation(kernel_full_name(101, 'S', -1, "", KERNEL_AA), 71);

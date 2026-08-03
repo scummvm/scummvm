@@ -47,7 +47,7 @@ static void room_311_init() {
 	kernel_seq_depth(g_sequence_ids[1], 15);
 
 	local._checkGuardFl = false;
-	kernel.quotes = quote_load(0xFA, 0);
+	kernel.quotes = quote_load(250, 0);
 
 	if (previous_room == 391) {
 		global[kSexOfRex] = REX_MALE;
