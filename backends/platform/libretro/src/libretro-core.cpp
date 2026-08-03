@@ -1145,7 +1145,9 @@ void retro_run(void) {
 
 	/* Setting RA's video or audio driver to null will disable video/audio bits */
 	int audio_video_enable = 0;
-	environ_cb(RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE, &audio_video_enable);
+	if (!environ_cb(RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE, &audio_video_enable))
+		/* If this flag is not supported, the core assumes that the frontend will not skip any steps, as per API contract */
+		audio_video_enable = RETRO_AV_ENABLE_VIDEO | RETRO_AV_ENABLE_AUDIO;
 
 	if (g_system) {
 		/* Switch to ScummVM thread */
