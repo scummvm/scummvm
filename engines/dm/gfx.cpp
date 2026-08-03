@@ -3012,8 +3012,10 @@ bool DisplayMan::getZoneBox(int16 zoneIndex, int16 graphicIndex, Box &outBox) {
 	Struct2 s2;
 	byte *bmp = initBitmapStruct2(graphicIndex, &s2);
 	int16 xyz[4] = { 0, 0, 0, 0 };
+	int16 inOutX = (graphicIndex < 0) ? s2._width : 0;
+	int16 inOutY = (graphicIndex < 0) ? s2._height : 0;
 
-	if (!getCoord(bmp, xyz, zoneIndex, &s2._width, &s2._height))
+	if (!getCoord(bmp, xyz, zoneIndex, &inOutX, &inOutY))
 		return false;
 
 	outBox = Box(xyz[0], xyz[0] + xyz[2] - 1, xyz[1], xyz[1] + xyz[3] - 1);

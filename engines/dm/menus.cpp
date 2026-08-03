@@ -370,7 +370,8 @@ void MenuMan::drawSpellAreaControls(ChampionIndex champIndex) {
 	int16 champHP2 = championMan._champions[2]._currHealth;
 	int16 champHP3 = championMan._champions[3]._currHealth;
 	_vm->_eventMan->showMouse();
-	_vm->_displayMan->fillScreenBox(boxSpellAreaControls, kDMColorBlack);
+	if (_vm->getPlatform() != Common::kPlatformDOS)
+		_vm->_displayMan->fillScreenBox(boxSpellAreaControls, kDMColorBlack);
 
 	switch (champIndex) {
 	case 0:
@@ -478,6 +479,8 @@ void MenuMan::setMagicCasterAndDrawSpellArea(ChampionIndex champIndex) {
 
 	if (championMan._magicCasterChampionIndex == kDMChampionNone) {
 		_vm->_eventMan->showMouse();
+		if (_vm->getPlatform() == Common::kPlatformDOS)
+			_vm->_displayMan->getZoneBox(kDMZoneSpellArea, kDMGraphicIdxMenuSpellAreaBackground, _boxSpellArea);
 		_vm->_displayMan->blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxMenuSpellAreaBackground), &_boxSpellArea, k48_byteWidth, kDMColorNoTransparency, 33);
 		_vm->_eventMan->hideMouse();
 	}
@@ -490,6 +493,18 @@ void MenuMan::setMagicCasterAndDrawSpellArea(ChampionIndex champIndex) {
 		return;
 	}
 	championMan._magicCasterChampionIndex = champIndex;
+	if (_vm->getPlatform() == Common::kPlatformDOS) {
+		Champion *champ = &championMan._champions[champIndex];
+		_vm->_displayMan->getZoneBox(kDMZoneSpellArea, kDMGraphicIdxMenuSpellAreaBackground, _boxSpellArea);
+		_vm->_displayMan->blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxMenuSpellAreaBackground), &_boxSpellArea, k48_byteWidth, kDMColorNoTransparency, 33);
+		_vm->_eventMan->showMouse();
+		drawSpellAreaControls(champIndex);
+		drawAvailableSymbols(champ->_symbolStep);
+		drawChampionSymbols(champ);
+		_vm->_eventMan->hideMouse();
+		return;
+	}
+
 	buildSpellAreaLine(kDMSpellAreaAvailableSymbols);
 	_vm->_eventMan->showMouse();
 	drawSpellAreaControls(champIndex);
@@ -895,10 +910,11 @@ void MenuMan::drawAvailableSymbols(uint16 symbolStep) {
 	displayBuffer[1] = '\0';
 	char curCharacter = 96 + 6 * symbolStep;
 	int16 textPosX = 225;
+	Color bgColor = (_vm->getPlatform() == Common::kPlatformDOS) ? kDMColorNoTransparency : kDMColorBlack;
 	for (uint16 L1214_ui_Counter = 0; L1214_ui_Counter < 6; L1214_ui_Counter++) {
 		displayBuffer[0] = curCharacter++;
 		textPosX += 14;
-		_vm->_textMan->printToLogicalScreen(textPosX, 58, kDMColorCyan, kDMColorBlack, displayBuffer);
+		_vm->_textMan->printToLogicalScreen(textPosX, 58, kDMColorCyan, bgColor, displayBuffer);
 	}
 }
 
@@ -907,6 +923,7 @@ void MenuMan::drawChampionSymbols(Champion *champ) {
 	int16 textPosX = 232;
 	char displayBuffer[2];
 	displayBuffer[1] = '\0';
+	Color bgColor = (_vm->getPlatform() == Common::kPlatformDOS) ? kDMColorNoTransparency : kDMColorBlack;
 
 	for (uint16 symbolIndex = 0; symbolIndex < 4; symbolIndex++) {
 		if (symbolIndex >= symbolCount)
@@ -915,7 +932,7 @@ void MenuMan::drawChampionSymbols(Champion *champ) {
 			displayBuffer[0] = champ->_symbols[symbolIndex];
 
 		textPosX += 9;
-		_vm->_textMan->printToLogicalScreen(textPosX, 70, kDMColorCyan, kDMColorBlack, displayBuffer);
+		_vm->_textMan->printToLogicalScreen(textPosX, 70, kDMColorCyan, bgColor, displayBuffer);
 	}
 }
 
