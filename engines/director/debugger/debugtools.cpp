@@ -1034,6 +1034,46 @@ static void invalidateStaleCaches() {
 	_state->_castDetails._filmLoopCurrentFrame.clear();
 }
 
+// Pick-from-stage: when armed, the next click on the stage (outside any DT
+// window) selects the sprite under the cursor and opens it in Cast Details.
+static void handlePickFromStage() {
+	if (!_state->_pickMode)
+		return;
+
+	ImGui::SetTooltip("Pick: click a sprite on the stage  (Esc to cancel)");
+
+	if (ImGui::IsKeyPressed(ImGuiKey_Escape)) {
+		_state->_pickMode = false;
+		return;
+	}
+
+	// Select on button-down but stay armed until release, so isMouseInputIgnored()
+	// swallows both mouseDown and mouseUp instead of leaking the release to the game.
+	bool released = ImGui::IsMouseReleased(ImGuiMouseButton_Left);
+
+	if (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+		Window *stage = g_director->getStage();
+		Movie *movie = stage ? stage->getCurrentMovie() : nullptr;
+		if (movie) {
+			Score *score = movie->getScore();
+			uint16 id = score->getSpriteIDFromPos(stage->getMousePos());
+			Channel *ch = id ? score->getChannelById(id) : nullptr;
+			if (ch && ch->_sprite && !ch->_sprite->_castId.isNull()) {
+				_state->_castDetails._castMemberID = ch->_sprite->_castId;
+				_state->_castDetails._window = movieId(movie);
+				_state->_w.castDetails = true;
+				_state->_scoreWindow = movieId(movie);
+				_state->_selectedScoreCast.frame = MAX(0, (int)score->getCurrentFrameNum() - 1);
+				_state->_selectedScoreCast.channel = id;
+				_state->_scrollToChannel = true;
+			}
+		}
+	}
+
+	if (released)
+		_state->_pickMode = false;
+}
+
 void onImGuiRender() {
 	if (!debugChannelSet(-1, kDebugImGui)) {
 		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse;
@@ -1063,6 +1103,8 @@ void onImGuiRender() {
 		_state->_quickOpen = true;
 		_state->_quickOpenInput[0] = '\0';
 	}
+
+	handlePickFromStage();
 
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_2, ImGuiInputFlags_RouteGlobal | ImGuiInputFlags_RouteOverFocused))
@@ -1104,6 +1146,13 @@ void onImGuiRender() {
 			ImGui::MenuItem("Archive", NULL, &_state->_w.archive);
 			ImGui::MenuItem("Windows", NULL, &_state->_w.windows);
 			ImGui::MenuItem("Execution Context", NULL, &_state->_w.executionContext);
+
+			ImGui::Separator();
+			if (ImGui::MenuItem("Pick from stage", NULL, _state->_pickMode)) {
+				_state->_pickMode = !_state->_pickMode;
+				if (_state->_pickMode)
+					g_system->displayMessageOnOSD(Common::U32String("Pick: click a sprite on the stage"));
+			}
 
 			ImGui::SeparatorText("Misc");
 			if (ImGui::MenuItem("Save state")) {

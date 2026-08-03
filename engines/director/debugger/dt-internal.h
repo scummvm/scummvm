@@ -292,6 +292,9 @@ typedef struct ImGuiState {
 	bool _quickOpen = false;
 	char _quickOpenInput[256] = {};
 
+	// Pick-from-stage: next stage click selects the sprite under the cursor.
+	bool _pickMode = false;
+
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
 	int _prevFrame = -1;
 	struct {
