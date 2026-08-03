@@ -1147,7 +1147,8 @@ void ScriptEngine::opd8WIN(EngineState *state, EngineFrame *frame) {
 
 void ScriptEngine::opd9SLEEP(EngineState *state, EngineFrame *frame) {
 	int16 ticks = state->pop();
-	g_system->delayMillis((ticks / 60) * 1000);
+	if (ticks > 0)
+		g_system->delayMillis((ticks * 1000) / 60);
 	_engine->preparedToRun();
 }
 
@@ -1174,7 +1175,8 @@ void ScriptEngine::opdeUPSC(EngineState *state, EngineFrame *frame) {
 
 void ScriptEngine::opdfFMAI(EngineState *state, EngineFrame *frame) {
 	int16 ticks = state->pop();
-	g_system->delayMillis((ticks / 60) * 1000);
+	if (ticks > 0)
+		g_system->delayMillis((ticks * 1000) / 60);
 	_engine->revert();
 }
 
