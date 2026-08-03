@@ -4268,7 +4268,9 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 			byte *blitBitmap = getNativeBitmapOrGraphic(ornNativeBitmapIndex);
 			int16 srcWidth = (_vm->getPlatform() == Common::kPlatformDOS) ? getPixelWidth(ornNativeBitmapIndex) : (ornBlitBitmap[4] << 1);
 			int16 srcHeight = (_vm->getPlatform() == Common::kPlatformDOS) ? getPixelHeight(ornNativeBitmapIndex) : ornBlitBitmap[5];
-			blitToBitmapShrinkWithPalChange(blitBitmap, getDerivedBitmap(wallOrnamentIndex), srcWidth, srcHeight, ornCoordSet[4] << 1, ornCoordSet[5], (viewWallIndex <= kDMViewWallD3RFront) ? _palChangesDoorButtonAndWallOrnD3 : _palChangesDoorButtonAndWallOrnD2);
+			int16 destWidth = (_vm->getPlatform() == Common::kPlatformDOS) ? (coords[1] - coords[0] + 1) : (ornCoordSet[4] << 1);
+			int16 destHeight = (_vm->getPlatform() == Common::kPlatformDOS) ? coords[5] : ornCoordSet[5];
+			blitToBitmapShrinkWithPalChange(blitBitmap, getDerivedBitmap(wallOrnamentIndex), srcWidth, srcHeight, destWidth, destHeight, (viewWallIndex <= kDMViewWallD3RFront) ? _palChangesDoorButtonAndWallOrnD3 : _palChangesDoorButtonAndWallOrnD2);
 			addDerivedBitmap(wallOrnamentIndex);
 		}
 		ornBlitBitmap = getDerivedBitmap(wallOrnamentIndex);
