@@ -31,6 +31,8 @@ namespace MADS {
 namespace RexNebular {
 namespace Rooms {
 
+#define QUOTE_ID(INDEX) ((g_engine->isDemo() ? 11 : 59) + INDEX)
+
 struct Scratch {
 	byte _fridgeOpenedFl;
 	byte _fridgeOpenedDescr;
@@ -47,7 +49,7 @@ static Scratch local;
 static void addRandomMessage() {
 	kernel_message_purge();
 	kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
-	int quoteId = g_engine->getRandomNumber(65, 69);
+	int quoteId = g_engine->getRandomNumber(QUOTE_ID(6), QUOTE_ID(10));
 	kernel_message_add(quote_string(kernel.quotes, quoteId), 0, 0, 0x1110, 120, 73, 34);
 	local._activeMsgFl = true;
 }
@@ -130,7 +132,10 @@ static void room_102_init() {
 	local._chairDescrFl = false;
 	local._activeMsgFl = false;
 
-	kernel.quotes = quote_load(59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 0);
+	int quote = QUOTE_ID(0);
+	kernel.quotes = quote_load(
+		quote + 0, quote + 1, quote + 2, quote + 3, quote + 4, quote + 5,
+		quote + 6, quote + 7, quote + 8, quote + 9, quote + 10, 0);
 
 	if (previous_room == 101)
 		g_engine->_soundManager->command(20, 0);
@@ -282,13 +287,13 @@ static void room_102_parser() {
 
 	if (player_said_2(walkto, refrigerator) && justOpenedFl) {
 		local._fridgeFirstOpenFl = false;
-		int quoteId = g_engine->getRandomNumber(59, 63);
+		int quoteId = g_engine->getRandomNumber(QUOTE_ID(0), QUOTE_ID(4));
 		char *curQuote = quote_string(kernel.quotes, quoteId);
 		int width = font_string_width(kernel_message_font, curQuote, -1);
 		kernel_message_purge();
 		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_message_add(curQuote, 210, 60, 0x1110, 120, 73, 0);
-		kernel_message_add(quote_string(kernel.quotes, 64), 214 + width, 60, 0x1110, 120, 73, 0);
+		kernel_message_add(quote_string(kernel.quotes, QUOTE_ID(5)), 214 + width, 60, 0x1110, 120, 73, 0);
 		local._activeMsgFl = true;
 		goto handled;
 	}
