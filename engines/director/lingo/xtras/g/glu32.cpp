@@ -167,6 +167,10 @@ void GLU32Xtra::m_GLUCall(int nargs) {
 			g_lingo->push(Datum((int)16988788)); // TODO: Check with the game
 			return;
 		}
+		if (gameId == "maus2") {
+			g_lingo->push(Datum((int)16455855));
+			return;
+		}
 		if (gameId == "komissar1") {
 			g_lingo->push(Datum(Common::String("37211457"))); // TODO: Check with the game
 			return;
