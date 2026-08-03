@@ -1422,9 +1422,10 @@ void DisplayMan::drawDoorButton(int16 doorButtonOrdinal, DoorButton doorButton) 
 			if (!isDerivedBitmapInCache(doorButtonOrdinal)) {
 				uint16 *coordSetBlueGoat = _doorButtonCoordSets[coordSet][kDMDoorButtonD1C];
 				byte *bitmapNative = getNativeBitmapOrGraphic(nativeBitmapIndex);
+				int16 srcWidth = (_vm->getPlatform() == Common::kPlatformDOS) ? getPixelWidth(nativeBitmapIndex) : (coordSetBlueGoat[4] << 1);
+				int16 srcHeight = (_vm->getPlatform() == Common::kPlatformDOS) ? getPixelHeight(nativeBitmapIndex) : coordSetBlueGoat[5];
 				blitToBitmapShrinkWithPalChange(bitmapNative, getDerivedBitmap(doorButtonOrdinal),
-													 coordSetBlueGoat[4] << 1, coordSetBlueGoat[5],
-													 // modified code line
+													 srcWidth, srcHeight,
 													 coordSetRedEagle[4] << 1,
 													 coordSetRedEagle[5],
 													 (doorButton == kDMDoorButtonD2C) ? _palChangesDoorButtonAndWallOrnD2 : _palChangesDoorButtonAndWallOrnD3);
@@ -2206,7 +2207,9 @@ void DisplayMan::drawDoorOrnament(int16 doorOrnOrdinal, DoorOrnament doorOrnamen
 		if (!isDerivedBitmapInCache(height)) {
 			uint16 *coordSetRedEagle = &_doorOrnCoordSets[coordSetGreenToad][kDMDoorOrnamentD1LCR][0];
 			byte *nativeBitmap = getNativeBitmapOrGraphic(nativeBitmapIndex);
-			blitToBitmapShrinkWithPalChange(nativeBitmap, getDerivedBitmap(height), coordSetRedEagle[4] << 1, coordSetRedEagle[5], coordSetOrangeElk[1] - coordSetOrangeElk[0] + 1, coordSetOrangeElk[5], (doorOrnament == kDMDoorOrnamentD3LCR) ? palChangesDoorOrnD3 : palChangesDoorOrnd2);
+			int16 srcWidth = (_vm->getPlatform() == Common::kPlatformDOS) ? getPixelWidth(nativeBitmapIndex) : (coordSetRedEagle[4] << 1);
+			int16 srcHeight = (_vm->getPlatform() == Common::kPlatformDOS) ? getPixelHeight(nativeBitmapIndex) : coordSetRedEagle[5];
+			blitToBitmapShrinkWithPalChange(nativeBitmap, getDerivedBitmap(height), srcWidth, srcHeight, coordSetOrangeElk[1] - coordSetOrangeElk[0] + 1, coordSetOrangeElk[5], (doorOrnament == kDMDoorOrnamentD3LCR) ? palChangesDoorOrnD3 : palChangesDoorOrnd2);
 			addDerivedBitmap(height);
 		}
 		blitBitmap = getDerivedBitmap(height);
@@ -4263,7 +4266,9 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 		wallOrnamentIndex = kDMDerivedBitmapFirstWallOrnament + (wallOrnamentIndex << 2) + wallOrnDerivedBitmapIndexIncrement[viewWallIndex];
 		if (!isDerivedBitmapInCache(wallOrnamentIndex)) {
 			byte *blitBitmap = getNativeBitmapOrGraphic(ornNativeBitmapIndex);
-			blitToBitmapShrinkWithPalChange(blitBitmap, getDerivedBitmap(wallOrnamentIndex), ornBlitBitmap[4] << 1, ornBlitBitmap[5], ornCoordSet[4] << 1, ornCoordSet[5], (viewWallIndex <= kDMViewWallD3RFront) ? _palChangesDoorButtonAndWallOrnD3 : _palChangesDoorButtonAndWallOrnD2);
+			int16 srcWidth = (_vm->getPlatform() == Common::kPlatformDOS) ? getPixelWidth(ornNativeBitmapIndex) : (ornBlitBitmap[4] << 1);
+			int16 srcHeight = (_vm->getPlatform() == Common::kPlatformDOS) ? getPixelHeight(ornNativeBitmapIndex) : ornBlitBitmap[5];
+			blitToBitmapShrinkWithPalChange(blitBitmap, getDerivedBitmap(wallOrnamentIndex), srcWidth, srcHeight, ornCoordSet[4] << 1, ornCoordSet[5], (viewWallIndex <= kDMViewWallD3RFront) ? _palChangesDoorButtonAndWallOrnD3 : _palChangesDoorButtonAndWallOrnD2);
 			addDerivedBitmap(wallOrnamentIndex);
 		}
 		ornBlitBitmap = getDerivedBitmap(wallOrnamentIndex);
