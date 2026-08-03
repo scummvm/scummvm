@@ -704,10 +704,7 @@ bool BaseFontTT::initFont() {
 	}
 
 	auto box = _font->getBoundingBox("Ay");
-	_lineHeight = box.bottom - box.top;
-
-	// based on WME lite code:
-	_lineHeight += 2;
+	_lineHeight = MAX(box.bottom - box.top, _font->getFontHeight());
 
 #ifdef ENABLE_FOXTAIL
 	if (BaseEngine::instance().isFoxTail(FOXTAIL_1_2_896, FOXTAIL_LATEST_VERSION)) {
