@@ -91,6 +91,7 @@ public:
 	virtual bool createDirectory();
 
 	static Common::String getHomeDir(void);
+	static Common::String getDefaultDir(void);
 private:
 	/**
 	 * Tests and sets the _isValid and _isDirectory flags, using the stat() function.

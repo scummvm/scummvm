@@ -41,6 +41,7 @@
 #include <string.h>
 
 #include "backends/platform/libretro/include/libretro-fs.h"
+#include "backends/platform/libretro/include/libretro-core.h"
 #include "common/algorithm.h"
 #include "common/stream.h"
 
@@ -556,4 +557,27 @@ Common::String LibRetroFilesystemNode::getHomeDir(void) {
 		path = home;
 
 	return path;
+}
+
+Common::String LibRetroFilesystemNode::getDefaultDir(void) {
+	Common::String homeDir(getHomeDir());
+
+	if (!homeDir.empty() && LibRetroFilesystemNode(homeDir).isDirectory())
+		return homeDir;
+
+	const char *systemDir = retro_get_system_dir();
+	if (systemDir && *systemDir) {
+		Common::String path(systemDir);
+		if (LibRetroFilesystemNode(path).isDirectory())
+			return path;
+	}
+
+	const char *saveDir = retro_get_save_dir();
+	if (saveDir && *saveDir) {
+		Common::String path(saveDir);
+		if (LibRetroFilesystemNode(path).isDirectory())
+			return path;
+	}
+
+	return Common::String("/");
 }

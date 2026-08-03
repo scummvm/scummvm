@@ -190,7 +190,7 @@ void OSystem_libretro::setLibretroDir(const char *path, Common::String &var) {
 
 void OSystem_libretro::applyBackendSettings() {
 	/* ScummVM paths checks at startup and on settings applied */
-	Common::String s_homeDir(LibRetroFilesystemNode::getHomeDir());
+	Common::String s_homeDir(LibRetroFilesystemNode::getDefaultDir());
 	Common::String s_themeDir(s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_THEME_SUBDIR);
 	Common::String s_extraDir(s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_EXTRA_SUBDIR);
 	Common::String s_soundfontPath(s_extraDir + "/" + DEFAULT_SOUNDFONT_FILENAME);
@@ -201,8 +201,6 @@ void OSystem_libretro::applyBackendSettings() {
 		s_extraDir.clear();
 	if (! LibRetroFilesystemNode(s_soundfontPath).exists())
 		s_soundfontPath.clear();
-	if (s_homeDir.empty() || ! LibRetroFilesystemNode(s_homeDir).isDirectory())
-		s_homeDir = s_systemDir;
 
 	//Register default paths
 	if (! s_homeDir.empty()) {
