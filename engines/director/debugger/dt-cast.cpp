@@ -113,13 +113,6 @@ Common::String getDisplayName(CastMember *castMember) {
 	return Common::String::format("%u", castMember->getID());
 }
 
-struct CastRowEntry {
-	const Cast *cast = nullptr;
-	CastMember *member = nullptr;
-	int id = 0;
-	Common::String name;
-};
-
 // Collects the cast's members that pass the filters, sorted by member number.
 static void gatherCastMembers(const Cast *cast, Common::Array<CastRowEntry> &rows) {
 	if (!cast || !cast->_loadedCast)
@@ -337,8 +330,8 @@ void showCast() {
 
 		// Gathering rows (load, name formatting, filtering) is costly for big
 		// casts, so cache them and rebuild only when movie/filters/size change.
-		static Common::Array<CastRowEntry> rows;
-		static Common::String rowsKey;
+		Common::Array<CastRowEntry> &rows = _state->_castRows;
+		Common::String &rowsKey = _state->_castRowsKey;
 
 		int total = 0;
 		for (auto it : *movie->getCasts())

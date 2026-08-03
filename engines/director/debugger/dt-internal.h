@@ -103,7 +103,30 @@ typedef struct ImGuiWindows {
 	bool search = false;
 	bool imageViewer = false;
 	bool windows = false;
+	bool help = false;
 } ImGuiWindows;
+
+// Rebindable debugger actions. Keep in sync with kShortcutDefs (dt-help.cpp).
+enum DebuggerAction {
+	kActContinue = 0,
+	kActStepOver,
+	kActStepInto,
+	kActStepOut,
+	kActQuickOpen,
+	kActPickFromStage,
+	kActToggleControlPanel,
+	kActToggleCast,
+	kActToggleScore,
+	kActToggleMouseIgnore,
+	kActCount
+};
+
+typedef struct ShortcutDef {
+	const char *id;    // stable key for save/load
+	const char *label; // display name
+	const char *help;  // what it does
+	ImGuiKeyChord defaultChord;
+} ShortcutDef;
 
 
 enum SearchMode {
@@ -186,6 +209,22 @@ struct DebuggerTheme {
 	ImVec4 logger_warning;
 	ImVec4 logger_info;
 	ImVec4 logger_debug;
+};
+
+struct QuickOpenItem {
+	Common::String label;
+	bool isHandler = false;
+	CastMemberID id;
+	ScriptType scriptType = kScoreScript;
+	Common::String handlerId;
+	Common::String handlerName;
+};
+
+struct CastRowEntry {
+	const Cast *cast = nullptr;
+	CastMember *member = nullptr;
+	int id = 0;
+	Common::String name;
 };
 
 typedef struct ImGuiState {
@@ -295,6 +334,11 @@ typedef struct ImGuiState {
 	// Pick-from-stage: next stage click selects the sprite under the cursor.
 	bool _pickMode = false;
 
+	// Rebindable shortcut chords, indexed by DebuggerAction; -1 = not capturing.
+	ImGuiKeyChord _shortcuts[kActCount] = {};
+	int _shortcutCapture = -1;
+	ImGuiKeyChord _shortcutPending = ImGuiKey_None; // chord being held during a rebind
+
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
 	int _prevFrame = -1;
 	struct {
@@ -348,6 +392,13 @@ typedef struct ImGuiState {
 	bool _enableMultiViewport = true;
 
 	Window *_windowToRedraw = nullptr;
+
+	// Cached UI lists. Kept in the state (not file-static) so their Common::Strings
+	// free in onImGuiCleanup while g_system is alive, not at process exit.
+	Common::Array<CastRowEntry> _castRows;
+	Common::String _castRowsKey;
+	Common::Array<QuickOpenItem> _quickOpenItems;
+	bool _quickOpenGathered = false;
 } ImGuiState;
 
 // debugtools.cpp
@@ -393,6 +444,13 @@ void showImageViewer();	// dt-castdetails.cpp
 void showCastDetails();	// dt-castdetails.cpp
 void showControlPanel();// dt-controlpanel.cpp
 void handleDebuggerShortcuts();	// dt-controlpanel.cpp
+
+// dt-help.cpp
+extern const ShortcutDef kShortcutDefs[kActCount];
+void initShortcuts();       // load defaults into _state->_shortcuts
+void resetShortcuts();      // restore defaults
+void showHelp();            // the Help window (shortcuts + tips)
+bool actionTriggered(DebuggerAction act);   // Shortcut() honouring the current binding
 
 // dt-lists.cpp
 void showVars();
