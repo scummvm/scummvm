@@ -59,6 +59,9 @@ struct Breakpoint {
 	bool varRead = false;
 	bool varWrite = false;
 
+	// Optional Lingo expression; the breakpoint only fires when it is true.
+	Common::String condition;
+
 	Common::String format() const;
 };
 
@@ -133,6 +136,7 @@ private:
 
 	bool lingoCommandProcessor(const char *inputOrig);
 	bool lingoEval(const char *inputOrig);
+	bool evalCondition(const Common::String &cond);
 
 
 	Common::DumpFile _out;

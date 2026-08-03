@@ -233,9 +233,9 @@ void showBreakpointList() {
 	ImGui::SetNextWindowSize(ImVec2(480, 240), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Breakpoints", &_state->_w.bpList)) {
 		auto &bps = g_lingo->getBreakpoints();
-		if (ImGui::BeginTable("BreakpointsTable", 5, ImGuiTableFlags_SizingFixedFit)) {
-			for (uint i = 0; i < 5; i++)
-				ImGui::TableSetupColumn(NULL, i == 2 ? ImGuiTableColumnFlags_WidthStretch : ImGuiTableColumnFlags_NoHeaderWidth);
+		if (ImGui::BeginTable("BreakpointsTable", 6, ImGuiTableFlags_SizingFixedFit)) {
+			for (uint i = 0; i < 6; i++)
+				ImGui::TableSetupColumn(NULL, (i == 2 || i == 5) ? ImGuiTableColumnFlags_WidthStretch : ImGuiTableColumnFlags_NoHeaderWidth);
 
 			for (uint i = 0; i < bps.size(); i++) {
 				if (bps[i].type != kBreakpointFunction)
@@ -303,6 +303,15 @@ void showBreakpointList() {
 				// offset
 				ImGui::TableNextColumn();
 				ImGui::Text("%d", bps[i].funcOffset);
+
+				// condition: fires only when this Lingo expression is true
+				ImGui::TableNextColumn();
+				char cond[128];
+				Common::strlcpy(cond, bps[i].condition.c_str(), sizeof(cond));
+				ImGui::SetNextItemWidth(-FLT_MIN);
+				if (ImGui::InputTextWithHint("##cond", "condition", cond, sizeof(cond)))
+					bps[i].condition = cond;
+
 				ImGui::PopID();
 
 				if (del) {

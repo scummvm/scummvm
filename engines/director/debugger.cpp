@@ -1182,8 +1182,17 @@ void Debugger::bpTest(bool forceCheck) {
 	uint funcOffset = g_lingo->_state->pc;
 	Score *score = g_director->getCurrentMovie()->getScore();
 	uint frameOffset = score->getCurrentFrameNum();
-	if (_bpCheckFunc) {
-		stop |= _bpMatchFuncOffsets.contains(funcOffset);
+	if (_bpCheckFunc && _bpMatchFuncOffsets.contains(funcOffset)) {
+		// Fire only if a matching, enabled breakpoint's condition holds.
+		for (auto &it : g_lingo->getBreakpoints()) {
+			if (!it.enabled || it.type != kBreakpointFunction)
+				continue;
+			if (it.funcName.equalsIgnoreCase(_bpMatchFuncName) && it.scriptId == _bpMatchScriptId
+					&& it.funcOffset == funcOffset && evalCondition(it.condition)) {
+				stop = true;
+				break;
+			}
+		}
 	}
 	if (_bpCheckMoviePath) {
 		stop |= _bpMatchFrameOffsets.contains(frameOffset);
@@ -1247,6 +1256,32 @@ bool Debugger::lingoEval(const char *inputOrig) {
 
 	debugPrintf("\n");
 	return true;
+}
+
+bool Debugger::evalCondition(const Common::String &cond) {
+	// No condition, or we are already inside an eval: fire the breakpoint.
+	if (cond.empty() || _lingoEval)
+		return true;
+
+	// Compile the expression to an anonymous handler that returns its value.
+	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(Common::String("return (") + cond + ")");
+	if (!sc)
+		return true; // unparseable: don't silently swallow the breakpoint
+
+	Symbol sym = sc->_eventHandlers[kEventGeneric];
+	uint depth = g_lingo->_state->stack.size();
+	int targetFrame = (int)g_lingo->_state->callstack.size();
+	_lingoEval = true;
+	LC::call(sym, 0, true);
+	// Stop as soon as the condition handler returns. Without a target frame,
+	// execute() would keep running the game's own frames still on the callstack.
+	g_lingo->execute(targetFrame);
+	_lingoEval = false;
+
+	bool result = true;
+	if (g_lingo->_state->stack.size() > depth)
+		result = g_lingo->pop().asInt() != 0;
+	return result;
 }
 
 void Debugger::stepHook() {
