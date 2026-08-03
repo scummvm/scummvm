@@ -60,7 +60,7 @@ public:
 		void setValue(DXVector4 val);
 
 		const char *getParamName() const { return _paramName; }
-		const ParamType getParamType();
+		ParamType getParamType() { return _type; }
 		const char *getValue() const { return _valString; }
 		void getValue(int &val) { val = _valInt; }
 		void getValue(float &val) { val = _valFloat; }
