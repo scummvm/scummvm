@@ -18,6 +18,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Nancy Drew: The Secret of Shadow Ranch.
    - Added support for Nancy Drew: Curse of Blackmoor Manor.
    - Added support for Chamber of the Sci-Mutant Priestess.
+   - Added support for Star Wars: Rebel Assault.
+   - Added support for Star Wars: Rebel Assault II: The Hidden Empire.
 
  General:
    - Optimised mixing and rate converters, for better performance.
