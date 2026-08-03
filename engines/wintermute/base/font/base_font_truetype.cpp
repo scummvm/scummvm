@@ -791,7 +791,9 @@ int32 BaseFontTT::wrapText(const WideString &text, int32 maxWidth, int32 maxHeig
 			 * i.e. do not add it to the text line list, return immediately
 			 */
 			if (maxHeight >= 0 && ((int32)lines.size() + 1) * getLineHeight() > maxHeight) {
-				break;
+				// W/A,FIXME: font height can be bigger, do not exit if one line
+				if (lines.size() != 0)
+					break;
 			}
 
 			WideString line = text.substr(lineStartIndex, breakPoint - lineStartIndex);
