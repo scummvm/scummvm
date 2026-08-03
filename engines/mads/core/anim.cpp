@@ -126,6 +126,8 @@ int anim_load_background(AnimFile *anim_in, Buffer *this_orig,
 		if (my_room == NULL) {
 			error_flag = true;
 		} else {
+			matte_guard_depth_0 = my_room->format == 2 ? 1 : 0;
+
 			if (cycle_list != NULL) {
 				memcpy(cycle_list, &my_room->cycle_list, sizeof(CycleList));
 			}
