@@ -99,22 +99,31 @@ enum DoorOrnament {
 };
 
 enum ZoneIndex {
-	kDMZoneWallD3L2 = 702, // @ C702_ZONE_WALL_D3L2
-	kDMZoneWallD3R2 = 703, // @ C703_ZONE_WALL_D3R2
-	kDMZoneWallD3C  = 704, // @ C704_ZONE_WALL_D3C
-	kDMZoneWallD3L  = 705, // @ C705_ZONE_WALL_D3L
-	kDMZoneWallD3R  = 706, // @ C706_ZONE_WALL_D3R
-	kDMZoneWallD2L2 = 707, // @ C707_ZONE_WALL_D2L2
-	kDMZoneWallD2R2 = 708, // @ C708_ZONE_WALL_D2R2
-	kDMZoneWallD2C  = 709, // @ C709_ZONE_WALL_D2C
-	kDMZoneWallD2L  = 710, // @ C710_ZONE_WALL_D2L
-	kDMZoneWallD2R  = 711, // @ C711_ZONE_WALL_D2R
-	kDMZoneWallD1C  = 712, // @ C712_ZONE_WALL_D1C
-	kDMZoneWallD1L  = 713, // @ C713_ZONE_WALL_D1L
-	kDMZoneWallD1R  = 714, // @ C714_ZONE_WALL_D1R
-	kDMZoneWallD0C  = 715, // @ C715_ZONE_WALL_D0C
-	kDMZoneWallD0L  = 716, // @ C716_ZONE_WALL_D0L
-	kDMZoneWallD0R  = 717  // @ C717_ZONE_WALL_D0R
+	kDMZoneScreen               = 2,   // @ C002_ZONE_SCREEN
+	kDMZoneViewport             = 7,   // @ C007_ZONE_VIEWPORT
+	kDMZoneMovementArrows       = 9,   // @ C009_ZONE_MOVEMENT_ARROWS
+	kDMZoneActionArea           = 11,  // @ C011_ZONE_ACTION_AREA
+	kDMZoneSpellArea            = 13,  // @ C013_ZONE_SPELL_AREA
+	kDMZoneMessageArea          = 15,  // @ C015_ZONE_MESSAGE_AREA
+	kDMZoneViewportCeiling      = 700, // @ C700_ZONE_VIEWPORT_CEILING_AREA
+	kDMZoneViewportFloor        = 701, // @ C701_ZONE_VIEWPORT_FLOOR_AREA
+	kDMZoneWallD3L2             = 702, // @ C702_ZONE_WALL_D3L2
+	kDMZoneWallD3R2             = 703, // @ C703_ZONE_WALL_D3R2
+	kDMZoneWallD3C              = 704, // @ C704_ZONE_WALL_D3C
+	kDMZoneWallD3L              = 705, // @ C705_ZONE_WALL_D3L
+	kDMZoneWallD3R              = 706, // @ C706_ZONE_WALL_D3R
+	kDMZoneWallD2L2             = 707, // @ C707_ZONE_WALL_D2L2
+	kDMZoneWallD2R2             = 708, // @ C708_ZONE_WALL_D2R2
+	kDMZoneWallD2C              = 709, // @ C709_ZONE_WALL_D2C
+	kDMZoneWallD2L              = 710, // @ C710_ZONE_WALL_D2L
+	kDMZoneWallD2R              = 711, // @ C711_ZONE_WALL_D2R
+	kDMZoneWallD1C              = 712, // @ C712_ZONE_WALL_D1C
+	kDMZoneWallD1L              = 713, // @ C713_ZONE_WALL_D1L
+	kDMZoneWallD1R              = 714, // @ C714_ZONE_WALL_D1R
+	kDMZoneWallD0C              = 715, // @ C715_ZONE_WALL_D0C
+	kDMZoneWallD0L              = 716, // @ C716_ZONE_WALL_D0L
+	kDMZoneWallD0R              = 717, // @ C717_ZONE_WALL_D0R
+	kDMZonePortraitOnWall       = 737  // @ M635_ZONE_PORTRAIT_ON_WALL
 };
 
 enum NegGraphicIndex {
@@ -697,7 +706,9 @@ class DisplayMan {
 	const LayoutRecord *getLayoutRecord(int16 layoutRecordIndex); // @ F0634_GetLayoutRecord
 	byte *initBitmapStruct2(int16 graphicIndex, Struct2 *outStruct); // @ F0630_InitBitmapStruct2
 	int16 *getCoord(byte *bitmap, int16 *outXYZ, int16 zoneIndex, int16 *inOutX, int16 *inOutY); // @ F0635_
+public:
 	bool getZoneBox(int16 zoneIndex, int16 graphicIndex, Box &outBox);
+private:
 	void drawWallSetBitmapDOS(int16 zoneIndex, int16 normalNegIndex, int16 oppositeNegIndex, bool withoutTransparency = false);
 	void loadLayoutData(uint16 graphicIndex); // @ F0640_LoadLayoutData
 
