@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-07-13 11:35+0000\n"
-"PO-Revision-Date: 2026-06-04 07:22+0000\n"
+"PO-Revision-Date: 2026-08-03 18:22+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.15.1\n"
+"X-Generator: Weblate 2026.7.1\n"
 "X-Language-name: Japanese\n"
 
 #: audio/mac_plugin.cpp:30
@@ -7576,10 +7576,8 @@ msgstr "ダイアログをスキップ"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. GAME OPTIONS
 #: engines/bladerunner/metaengine.cpp:253
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game options"
-msgstr "ゲーム設定"
+msgstr "設定を開く"
 
 #. I18N: This keymap opens the KIA database on one of the investigation tabs,
 #. CRIME SCENE DATABASE, SUSPECT DATABASE and CLUES DATABASE.
@@ -7587,16 +7585,12 @@ msgstr "ゲーム設定"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ACTIVATE KIA CLUE DATABASE SYSTEM
 #: engines/bladerunner/metaengine.cpp:264
-#, fuzzy
-#| msgid "Open KIA Database"
 msgid "Open KIA database"
-msgstr "KIAのDBを開く"
+msgstr "KIA DBを開く"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows submitting a selected existing save game for deletion.
 #: engines/bladerunner/metaengine.cpp:282
-#, fuzzy
-#| msgid "Delete Selected Saved Game"
 msgid "Delete selected saved game"
 msgstr "選択したセーブを削除"
 
@@ -7643,8 +7637,6 @@ msgstr "下にスクロール"
 #. I18N: This keymap allows (in KIA only) for a clue to be set as private or public
 #. (only when the KIA is upgraded).
 #: engines/bladerunner/metaengine.cpp:311
-#, fuzzy
-#| msgid "Toggle Clue Privacy"
 msgid "Toggle clue privacy"
 msgstr "手がかり表示の切替"
 
@@ -7708,8 +7700,6 @@ msgstr "ゲームをロード"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. CRIME SCENE DATABASE
 #: engines/bladerunner/metaengine.cpp:348
-#, fuzzy
-#| msgid "Crime Scene Database"
 msgid "Crime scene database"
 msgstr "犯罪現場データベース"
 
@@ -7718,8 +7708,6 @@ msgstr "犯罪現場データベース"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SUSPECT DATABASE
 #: engines/bladerunner/metaengine.cpp:357
-#, fuzzy
-#| msgid "Suspect Database"
 msgid "Suspect database"
 msgstr "容疑者データベース"
 
@@ -7728,8 +7716,6 @@ msgstr "容疑者データベース"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. CLUE DATABASE
 #: engines/bladerunner/metaengine.cpp:366
-#, fuzzy
-#| msgid "Clue Database"
 msgid "Clue database"
 msgstr "手がかりデータベース"
 
@@ -7754,16 +7740,16 @@ msgid "Quit game"
 msgstr "ゲーム終了"
 
 #: engines/bolt/metaengine.cpp:37
-#, fuzzy
-#| msgid "Enable high resolution"
 msgid "Extended game resolution"
-msgstr "ハイレゾを有効化"
+msgstr "解像度を拡大"
 
 #: engines/bolt/metaengine.cpp:38
 msgid ""
 "This option allows the game to play at a slightly extended resolution. This "
 "is what the Mac and CDi versions are supposed to play like."
 msgstr ""
+"このオプションを選択すると、解像度がわずかに上がります。これは、Mac/CD-i版で"
+"の本来の表示状態を想定したものです。"
 
 #: engines/buried/buried.cpp:598
 msgid "Are you sure you want to quit?"
@@ -7785,45 +7771,33 @@ msgstr "ムービーのスキップを許可"
 
 #: engines/buried/metaengine.cpp:134 engines/hypno/metaengine.cpp:130
 #: engines/supernova/metaengine.cpp:219 engines/voyeur/metaengine.cpp:185
-#, fuzzy
-#| msgid "Exit screen keymappings"
 msgid "Cutscene keymappings"
-msgstr "終了画面のキーマッピング"
+msgstr "ムービーのキーマップ"
 
 #: engines/buried/metaengine.cpp:135
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Main menu keymappings"
-msgstr "ゲームのキーマップ"
+msgstr "メニューのキーマップ"
 
 #: engines/buried/metaengine.cpp:137 engines/lab/metaengine.cpp:153
 #: engines/sherlock/metaengine.cpp:336 engines/sherlock/metaengine.cpp:787
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Inventory keymappings"
-msgstr "ゲームのキーマップ"
+msgstr "倉庫のキーマップ"
 
 #: engines/buried/metaengine.cpp:141 engines/chamber/metaengine.cpp:69
 #: engines/chamber/metaengine.cpp:75 engines/chamber/metaengine.cpp:81
 #: engines/dm/metaengine.cpp:76 engines/private/metaengine.cpp:141
 #: engines/sherlock/metaengine.cpp:1187
-#, fuzzy
-#| msgid "Interact Mode"
 msgid "Select / Interact"
-msgstr "作用モード"
+msgstr "選択/操作"
 
 #. I18N: This action refers to the control key on the keyboard.
 #: engines/buried/metaengine.cpp:148
-#, fuzzy
-#| msgid "Control"
 msgid "Control key"
-msgstr "操作"
+msgstr "Ctrlキー"
 
 #: engines/buried/metaengine.cpp:173 engines/buried/metaengine.cpp:224
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit to main menu"
-msgstr "ゲームを終了する"
+msgstr "メニューを終了"
 
 #: engines/buried/metaengine.cpp:190 engines/mohawk/riven.cpp:913
 #: engines/zvision/metaengine.cpp:217
@@ -7836,16 +7810,12 @@ msgid "Look down"
 msgstr "下を見る"
 
 #: engines/buried/metaengine.cpp:204 engines/colony/metaengine.cpp:137
-#, fuzzy
-#| msgid "Look at"
 msgid "Look left"
-msgstr "見る"
+msgstr "左を見る"
 
 #: engines/buried/metaengine.cpp:211 engines/colony/metaengine.cpp:142
-#, fuzzy
-#| msgid "Look at"
 msgid "Look right"
-msgstr "見る"
+msgstr "右を見る"
 
 #: engines/buried/metaengine.cpp:218 engines/colony/metaengine.cpp:99
 #: engines/dm/metaengine.cpp:142 engines/kyra/engine/eobcommon.cpp:371
