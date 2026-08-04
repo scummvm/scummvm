@@ -695,8 +695,11 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 		_gfx->_colorPair[_currentArea->_paperColor] = _currentArea->_extraColor[2];
 		_gfx->_colorPair[_currentArea->_inkColor] = _currentArea->_extraColor[3];
 	} else if (isAmiga() || isAtariST()) {
-		// Unclear why these colors are always overwritten (the Atari ST build
-		// shares the Amiga rendering and needs the same 3D-world greys).
+		// The 3D world always draws its structural greys from a fixed ramp of
+		// 0x44, 0x66, 0x88, 0xaa and 0xcc, whatever the area palette holds. 126
+		// of the 128 area palettes already store 0xaaa at index 4, so writing it
+		// only matters where one does not: the Wizard's Hut leaves 0 through 5
+		// unset, and its door and cabinet came out black.
 		byte (*palette)[16][3] = (byte (*)[16][3])_gfx->_palette;
 
 		(*palette)[1][0] = 0x44;
@@ -710,6 +713,10 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 		(*palette)[3][0] = 0x88;
 		(*palette)[3][1] = 0x88;
 		(*palette)[3][2] = 0x88;
+
+		(*palette)[4][0] = 0xaa;
+		(*palette)[4][1] = 0xaa;
+		(*palette)[4][2] = 0xaa;
 
 		(*palette)[5][0] = 0xcc;
 		(*palette)[5][1] = 0xcc;
