@@ -74,7 +74,7 @@ private:
 	void syncGame(Common::Serializer &s);
 	bool isSpecialKey(Common::KeyCode key) const;
 	void updateScreen();
-	
+
 protected:
 	const MADSGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
@@ -86,6 +86,10 @@ protected:
 	Audio::SoundHandle _speechHandle;
 	TimerFunction _timerFunction = nullptr;
 	uint32 _nextTimerTime = 0;
+
+	virtual Common::Point screenToGame(const Common::Point &point) const;
+	virtual Common::Point gameToScreen(const Common::Point &point) const;
+	virtual void presentScreen(int shakeOffset);
 
 	bool hasFeature(EngineFeature f) const override;
 
@@ -111,6 +115,7 @@ public:
 	uint32 getGameFeatures() const;
 	bool isDemo() const;
 	bool isCDROM() const;
+	virtual bool usesScummVMMenu() const { return false; }
 
 	void readConfigFile();
 	int getRandomNumber(int maxNumber);
@@ -125,6 +130,8 @@ public:
 	void flushKeys();
 
 	int getMouseState(int &x, int &y);
+	void warpMouse(int x, int y);
+	void updateDisplay();
 
 	/**
 	 * Get the elapsed time in milliseconds

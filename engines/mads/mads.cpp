@@ -295,7 +295,7 @@ void MADSEngine::pollEvents() {
 		}
 
 		if (isMouse)
-			_mousePos = e.mouse;
+			_mousePos = screenToGame(e.mouse);
 
 		if (e.type == Common::EVENT_KEYDOWN && !isSpecialKey(e.kbd.keycode))
 			_keyEvents.push(e.kbd);
@@ -306,24 +306,37 @@ void MADSEngine::pollEvents() {
 }
 
 void MADSEngine::updateScreen() {
+	int offset = 0;
+
 	// Handle any screen shaking
 	if (mcga_shakes) {
 		_shakeRandom = _shakeRandom * 5 + 1;
-		int offset = (_shakeRandom >> 8) & 3;
+		offset = (_shakeRandom >> 8) & 3;
 		if (--mcga_shakes == 0)
 			offset = 0;
+	}
 
-		// Manually copy the screen with the left hand hide side of the screen of a given offset width shown
-		// at the very right. The offset changes to give an effect of shaking the screen
-		offset *= 4;
-		const byte *buf = (const byte *)_screen->getBasePtr(offset, 0);
-		g_system->copyRectToScreen(buf, 320, 0, 0, 320 - offset, 200);
-		if (offset > 0)
-			g_system->copyRectToScreen(_screen->getPixels(), 320, 320 - offset, 0, offset, 200);
+	presentScreen(offset * 4);
+}
+
+Common::Point MADSEngine::screenToGame(const Common::Point &point) const {
+	return point;
+}
+
+Common::Point MADSEngine::gameToScreen(const Common::Point &point) const {
+	return point;
+}
+
+void MADSEngine::presentScreen(int shakeOffset) {
+	if (shakeOffset > 0) {
+		// Copy the hidden strip at the left back to the right edge.
+		const byte *buf = (const byte *)_screen->getBasePtr(shakeOffset, 0);
+		g_system->copyRectToScreen(buf, 320, 0, 0, 320 - shakeOffset, 200);
+		g_system->copyRectToScreen(_screen->getPixels(), 320,
+			320 - shakeOffset, 0, shakeOffset, 200);
 		g_system->updateScreen();
-
 	} else {
-		// Because the screen is accessed directly via Buffer objects, we need to do a full screen update each frame
+		// Buffer objects access the surface directly, so every frame is dirty.
 		_screen->markAllDirty();
 		_screen->update();
 	}
@@ -389,6 +402,15 @@ int MADSEngine::getMouseState(int &x, int &y) {
 	x = _mousePos.x;
 	y = _mousePos.y;
 	return _mouseButtons;
+}
+
+void MADSEngine::warpMouse(int x, int y) {
+	const Common::Point point = gameToScreen(Common::Point(x, y));
+	g_system->warpMouse(point.x, point.y);
+}
+
+void MADSEngine::updateDisplay() {
+	presentScreen(0);
 }
 
 uint32 MADSEngine::getMillis() {

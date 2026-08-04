@@ -69,7 +69,7 @@ void mouse_hide() {
 }
 
 void mouse_force(int x, int y) {
-	g_system->warpMouse(x, y);
+	g_engine->warpMouse(x, y);
 }
 
 int mouse_in_box(int ul_x, int ul_y, int lr_x, int lr_y) {

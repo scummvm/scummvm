@@ -29,8 +29,7 @@ void video_init(int mode, int set_mode) {
 }
 
 void video_update() {
-	auto &screen = *g_engine->getScreen();
-	screen.update();
+	g_engine->updateDisplay();
 }
 
 void video_update(Buffer *from, int from_x, int from_y,

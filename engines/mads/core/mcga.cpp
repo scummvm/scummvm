@@ -133,7 +133,7 @@ void mcga_cls(byte inp) {
 }
 
 void mcga_retrace() {
-	g_engine->getScreen()->update();
+	g_engine->updateDisplay();
 }
 
 void mcga_compute_retrace_parameters() {

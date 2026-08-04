@@ -947,6 +947,30 @@ int game_parse_keystroke(int mykey) {
 
 	mykey = main_normal_key(mykey);
 
+	// FIXME: The Macintosh release uses the Mac platform's menu instead of 
+	// MADS' DOS menu rooms. Until a native Macintosh menu bar is exposed
+	// through ScummVM, route its menu shortcuts to the Global Menu and avoid
+	// loading game-specific rooms 921-924.
+	if (g_engine->usesScummVMMenu()) {
+		switch (mykey) {
+		case esc_key:
+		case f1_key:
+		case f2_key:
+		case alt_s_key:
+		case f3_key:
+		case alt_r_key:
+		case f4_key:
+		case f5_key:
+		case f6_key:
+		case f7_key:
+			g_engine->openMainMenuDialog();
+			mykey = 0;
+			break;
+		default:
+			break;
+		}
+	}
+
 	switch (mykey) {
 	case space_key:
 		global[player_hyperwalked] = true;
