@@ -562,7 +562,16 @@ void Sprite::step(int nr) {
 			seq = _ext->_seq + _seqPtr;
 			if (seq) {
 				if (seq->_dz == 127 && seq->_dx != 0) {
-					_vm->_commandHandlerTurbo->addCommand(kCmdSound, -1, 256 * seq->_dy + seq->_dx, this);
+					const int ref = 256 * seq->_dy + seq->_dx;
+
+					// 23MAGIK emits text 23:02 as a sound event embedded in an
+					// animation sequence row. Route it through kCmdSay so its text
+					// is shown. See bug #14678.
+					if (Common::String(_file).equalsIgnoreCase("23MAGIK") &&
+							ref == ((23 << 8) | 2))
+						_vm->_commandHandlerTurbo->addCommand(kCmdSay, -1, ref, this);
+					else
+						_vm->_commandHandlerTurbo->addCommand(kCmdSound, -1, ref, this);
 				} else {
 					p._x += seq->_dx;
 					p._y += seq->_dy;
