@@ -51,6 +51,11 @@ public:
 protected:
 	Common::String getRecordTypeName() const override { return "OneBuildPuzzle"; }
 
+	// Nancy 12 repurposed the piece's trailing flag byte into the rotation the
+	// piece must be in to be accepted, with this value standing in for the
+	// pre-placed flag it used to be.
+	static const uint8 kPrePlacedRotation = 10;
+
 	struct Piece : RenderObject {
 		Piece() : RenderObject(0) {}
 
@@ -60,6 +65,9 @@ protected:
 		Common::Rect slotRect;
 		Common::Rect homeRect;
 		uint8 defaultRotation = 0;
+		// Rotation the piece must be in to be accepted into its slot. Always 0
+		// before Nancy 12, which is why older games only accept upright pieces.
+		uint8 requiredRotation = 0;
 		bool isPreRotated = false;
 
 		// Runtime
@@ -67,7 +75,7 @@ protected:
 		int curRotation = 0;
 		bool placed = false;
 
-		// Rotations 1-3 only built when canRotateAll or isPreRotated
+		// Rotations 1-3 only built when canRotateAll or the piece starts rotated
 		Graphics::ManagedSurface rotateSurfaces[4];
 		bool hasSurface[4] = {};
 
@@ -89,11 +97,11 @@ protected:
 	bool _orderedPlacement = false; // Pieces must be placed in a specific order
 	Common::Array<int16> _placementOrder; // 1-indexed piece IDs in required placement order
 
-	// --- Nancy 10 additions ---
+	// Stacking order of the pieces that start out already placed, 1-indexed.
+	// TODO: not applied yet; pre-placed pieces keep their array order.
+	Common::Array<int16> _preplacedZOrder;
 
-	// TODO: runtime role unknown; parsed for round-trip but not consumed.
-	bool _legacyOrderedFlag = false;
-	Common::Array<int16> _legacyPlacementOrder;
+	// --- Nancy 10 additions ---
 
 	// Filename only (no SoundDescription metadata).
 	Common::String _extraSoundName;

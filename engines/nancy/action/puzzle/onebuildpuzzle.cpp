@@ -73,8 +73,9 @@ void OneBuildPuzzle::init() {
 		p.rotateSurfaces[0].blitFrom(_image, p.srcRect, Common::Point(0, 0));
 		p.hasSurface[0] = true;
 
-		// Rotations 1-3: only needed if pieces can rotate
-		if (_canRotateAll || p.isPreRotated) {
+		// Rotations 1-3: only needed if pieces can rotate, or if this one doesn't
+		// start upright. Pre-placed pieces never rotate and stay at rotation 0.
+		if ((_canRotateAll || p.defaultRotation != 0) && !p.isPreRotated) {
 			for (int r = 1; r < 4; ++r) {
 				rotateSurface90CW(p.rotateSurfaces[r - 1], p.rotateSurfaces[r]);
 				p.rotateSurfaces[r].setTransparentColor(_drawSurface.getTransparentColor());
@@ -222,8 +223,8 @@ void OneBuildPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
 		readRect(stream, p.slotRect);
 		readRect(stream, p.homeRect);
 		p.defaultRotation = stream.readByte();
-		// A piece is pre-placed only when this marker is exactly 10.
-		p.isPreRotated = stream.readByte() == 10;
+		p.requiredRotation = stream.readByte();
+		p.isPreRotated = p.requiredRotation == kPrePlacedRotation;
 	}
 
 	// Optional placement-order arrays, each present only when its flag is set.
@@ -235,9 +236,9 @@ void OneBuildPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
 	}
 
 	if (stream.readByte() != 0) {
-		_legacyPlacementOrder.resize(_numPieces);
+		_preplacedZOrder.resize(_numPieces);
 		for (uint i = 0; i < _numPieces; ++i)
-			_legacyPlacementOrder[i] = stream.readSint16LE();
+			_preplacedZOrder[i] = stream.readSint16LE();
 	}
 }
 
@@ -257,19 +258,18 @@ void OneBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	stream.skip(6); // rotationMode, zoneHeight, zoneWidth, mouse-clamping flag
 	_slotTolerance = stream.readSint16LE();
 
-	if (isNancy10) {
-		// TODO: purpose of this duplicate placement-order block is unknown.
-		_legacyOrderedFlag = stream.readByte() != 0;
-		_legacyPlacementOrder.resize(20);
-		for (uint i = 0; i < 20; ++i)
-			_legacyPlacementOrder[i] = stream.readSint16LE();
-	}
-
-	_orderedPlacement = stream.readByte();
+	_orderedPlacement = stream.readByte() != 0;
 
 	_placementOrder.resize(20);
 	for (uint i = 0; i < 20; ++i)
 		_placementOrder[i] = stream.readSint16LE();
+
+	if (isNancy10) {
+		stream.readByte(); // Set when the puzzle stacks its pre-placed pieces
+		_preplacedZOrder.resize(20);
+		for (uint i = 0; i < 20; ++i)
+			_preplacedZOrder[i] = stream.readSint16LE();
+	}
 
 	// Nancy 10 piece records add an alternative source rect at the front.
 	const uint pieceSize = isNancy10 ? 66 : 50;
@@ -298,7 +298,9 @@ void OneBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 		readRect(stream, p.slotRect);
 		readRect(stream, p.homeRect);
 		p.defaultRotation = stream.readByte();
-		p.isPreRotated = stream.readByte();
+		// Up to Nancy 11 this byte is a plain pre-placed flag, and a piece only
+		// ever fits its slot upright; requiredRotation stays at 0.
+		p.isPreRotated = stream.readByte() != 0;
 	}
 
 	if (isNancy10) {
@@ -486,10 +488,10 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 							 piece.gameRect.right  <= slot.right  + _slotTolerance &&
 							 piece.gameRect.bottom <= slot.bottom + _slotTolerance);
 
-			// A piece only fits at its correct (unrotated) orientation; a
+			// A piece only fits at the orientation its slot calls for; a
 			// 180-degree flip keeps the same bounding box, so proximity alone
 			// would accept an upside-down piece.
-			bool rotationOk = (piece.curRotation == 0);
+			bool rotationOk = (piece.curRotation == piece.requiredRotation);
 
 			bool orderOk = !_orderedPlacement ||
 				(_piecesPlaced < (uint16)_placementOrder.size() &&
@@ -648,7 +650,7 @@ void OneBuildPuzzle::updatePieceRender(int pieceIdx) {
 void OneBuildPuzzle::rotatePiece(int pieceIdx) {
 	Piece &p = _pieces[pieceIdx];
 
-	if (!_canRotateAll && !p.isPreRotated)
+	if (p.isPreRotated || (!_canRotateAll && p.defaultRotation == 0))
 		return;
 
 	int oldRot = p.curRotation;
