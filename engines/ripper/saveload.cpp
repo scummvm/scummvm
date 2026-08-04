@@ -28,6 +28,7 @@
 
 #include "ripper/detection.h"
 #include "ripper/input.h"
+#include "ripper/milestones.h"
 #include "ripper/scene_audio.h"
 #include "ripper/script.h"
 
@@ -36,7 +37,7 @@ namespace Ripper {
 namespace {
 
 static const char kRipperSaveMagic[] = { 'R', 'S', 'A', 'V' };
-static const uint32 kRipperSaveVersion = 4;
+static const uint32 kRipperSaveVersion = 5;
 static const uint32 kRipperMinimumSaveVersion = 2;
 static const uint16 kScreenWidth = 640;
 static const uint16 kScreenHeight = 400;
@@ -126,8 +127,16 @@ Common::Error RipperEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		warning("Ripper: unsupported or invalid save-state header");
 		return Common::kReadingFailed;
 	}
+	const uint32 saveVersion = serializer.getVersion();
 	if (!_scripts->syncGame(serializer) || !_sceneAudio->syncGame(serializer))
 		return Common::kReadingFailed;
+	if (saveVersion < kRipperSaveVersion && !_milestones->hasRipperIdentity()) {
+		debugC(1, kDebugSaveLoad,
+			"Ripper: repairing legacy save version=%u without a Ripper identity",
+			saveVersion);
+		if (!selectRandomRipperIdentity("legacy-save-migration"))
+			return Common::kReadingFailed;
+	}
 
 	uint16 width = 0;
 	uint16 height = 0;

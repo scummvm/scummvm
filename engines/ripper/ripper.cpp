@@ -50,7 +50,8 @@
 namespace Ripper {
 
 RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescription) :
-		Engine(system), _gameDescription(gameDescription), _cursor(new CursorManager()),
+		Engine(system), _gameDescription(gameDescription), _randomSource("ripper"),
+		_cursor(new CursorManager()),
 		_cyber(new CyberManager(this)), _input(new InputManager(_eventMan)),
 		_inventory(new Inventory(this)),
 		_sceneAudio(new SceneAudioManager(this, _mixer)),
@@ -106,6 +107,13 @@ void RipperEngine::pumpEvents() {
 	}
 }
 
+bool RipperEngine::selectRandomRipperIdentity(const char *source) {
+	const uint candidateCount =
+		kMilestoneLastRipperIdentity - kMilestoneFirstRipperIdentity + 1;
+	return _milestones->selectRipperIdentity(
+		_randomSource.getRandomNumber(candidateCount - 1), source);
+}
+
 Common::Error RipperEngine::run() {
 	debugC(1, kDebugGeneral, "Ripper: starting skeletal engine runtime for '%s'", _gameDescription->gameId);
 
@@ -116,6 +124,10 @@ Common::Error RipperEngine::run() {
 		return Common::kReadingFailed;
 	if (!_milestones->initialize(*_resources))
 		return Common::kReadingFailed;
+	// Retail initializes a provisional identity before the front end; restoring
+	// a save later replaces it with the identity serialized in that game.
+	if (!selectRandomRipperIdentity("startup-initialization"))
+		return Common::kUnknownError;
 	if (!_modalDialog->initialize(*_resources))
 		return Common::kReadingFailed;
 	if (!_cursor->initialize(*_resources))
@@ -159,6 +171,8 @@ Common::Error RipperEngine::run() {
 		switch (menu.run()) {
 		case kMainMenuNewGame:
 			debugC(1, kDebugGeneral, "Ripper: startup menu begins a new game");
+			if (!selectRandomRipperIdentity("new-game-initialization"))
+				return Common::kUnknownError;
 			startGameplay = true;
 			break;
 		case kMainMenuContinue:
