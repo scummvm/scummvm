@@ -780,6 +780,10 @@ void popup_destroy() {
 	int x, y;
 	int xs, ys;
 
+	if (g_engine->getGameID() == GType_RexNebular &&
+			g_engine->getPlatform() == Common::kPlatformMacintosh)
+		RexNebular::popup_close();
+
 	if (box->active && box->screen_saved) {
 		// Always restore the screen from scr_main — it spans both the game
 		// area and the interface strip, so no buffer split is required.
