@@ -58,6 +58,7 @@ class Cast;
 class Debugger;
 class DirectorSound;
 class Lingo;
+class LingoProfiler;
 class Movie;
 class Window;
 struct Picture;
@@ -313,6 +314,8 @@ public:
 	uint16 _key;
 	int _keyCode;
 	byte _keyFlags;
+
+	LingoProfiler *_lingoProfiler = nullptr;
 
 private:
 	byte _currentPalette[768];

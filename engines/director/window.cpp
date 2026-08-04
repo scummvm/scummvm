@@ -31,6 +31,7 @@
 #include "director/cast.h"
 #include "director/debugger.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-profiler.h"
 #include "director/movie.h"
 #include "director/window.h"
 #include "director/score.h"
@@ -820,6 +821,8 @@ Common::Path Window::getSharedCastPath() {
 }
 
 void Window::freezeLingoState() {
+	if (g_director->_lingoProfiler)
+		g_director->_lingoProfiler->onFreeze();
 	_frozenLingoStates.push_back(_lingoState);
 	_lingoState = new LingoState;
 	debugC(3, kDebugLingoExec, "Freezing Lingo state, depth %d", _frozenLingoStates.size());
@@ -834,6 +837,8 @@ void Window::thawLingoState() {
 		warning("Can't thaw a Lingo state in mid-execution, ignoring");
 		return;
 	}
+	if (g_director->_lingoProfiler)
+		g_director->_lingoProfiler->onThaw();
 	delete _lingoState;
 	debugC(3, kDebugLingoExec, "Thawing Lingo state, depth %d", _frozenLingoStates.size());
 	_lingoState = _frozenLingoStates.back();
