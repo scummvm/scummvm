@@ -644,22 +644,26 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 		return viewer.run(entry.originalIndex(), entry.label, path);
 	}
 	if (entry.catalog->handler == kWacDatabaseHandlerLoopingMedia) {
-		// RunWacInventorySelectionLoop at 0x2252a cases 0x0d and 0x0e resolve
-		// WACINV13.SMK and WACINV14.SMK from INTERFAC.PL and enter
+		// RunWacInventorySelectionLoop at 0x2252a cases 9, 0x0d, and 0x0e
+		// resolve WACINV9.SMK, WACINV13.SMK, and WACINV14.SMK from
+		// INTERFAC.PL and enter
 		// RunStaticMediaScreenWithOptionalVoiceover at 0x2339d without audio.
-		// Both 320x200 sequences are centered in the 350x282 WAC viewport and
-		// loop from frame one while the persistent WAC controls stay active.
+		// The retail viewer centers each decoded sequence in the 350x282 WAC
+		// viewport and loops from frame one while the persistent controls stay
+		// active.
 		const Common::String path = Common::String::format(
 			"wacinv%u.smk", entry.originalIndex());
 		WacDatabaseMediaCallback callback(this, entry.originalIndex());
 		uint16 command = kNoAction;
+		const Common::Rect viewport(kWacMediaLeft, kWacMediaTop,
+			kWacMediaLeft + kWacMediaWidth, kWacMediaTop + kWacMediaHeight);
 		_wac->_engine->getInput()->discardMouseTransitions();
 		const bool played = _wac->_engine->getMedia()->playWacInterfaceSequence(
-			path, 65, 91, 1, &callback, &command);
+			path, viewport, 1, &callback, &command);
 		clearDatabaseMediaViewport();
 		drawDatabase();
 		debugC(1, kDebugWac,
-			"Ripper: WAC database entry=%u label='%s' media='%s' position=65,91 loopStartFrame=1 voiceover=none played=%d command=0x%x",
+			"Ripper: WAC database entry=%u label='%s' media='%s' viewport=50,50,350,282 placement=centered loopStartFrame=1 voiceover=none played=%d command=0x%x",
 			entry.originalIndex(), entry.label.c_str(), path.c_str(), played,
 			command);
 		if (command == kExitAction)

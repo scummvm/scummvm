@@ -238,6 +238,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	const bool allowEscSpace = plan.input.allowEscSpace;
 	int x = plan.placement.x;
 	int y = plan.placement.y;
+	const Common::Rect &centerBounds = plan.placement.centerBounds;
 	Audio::SoundHandle *externalAudio = plan.timeline.externalAudio;
 	bool *stoppedByUser = plan.input.stoppedByUser;
 	const Common::Array<uint32> *frameAudioOffsets = plan.timeline.frameAudioOffsets;
@@ -294,27 +295,40 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	const uint outputHeight = decoder.getHeight() * displayScale;
 	const int displayWidth = g_system->getWidth();
 	const int displayHeight = g_system->getHeight();
-	if (x < 0)
-		x = (displayWidth - outputWidth) / 2;
-	else
-		x *= displayScale;
-	if (y < 0)
-		y = (displayHeight - outputHeight) / 2;
-	else {
-		y *= displayScale;
-		if (originY != 0 && y + originY + (int)outputHeight > displayHeight &&
-				y + (int)outputHeight <= displayHeight) {
-			// InitializeMediaPresentationDisplayModeCallback at 0x163a8
-			// switches a full-size packetized branch from the scene viewport
-			// to the full display context. Do not retain the viewport origin
-			// when the scaled branch already fills that display.
-			debugC(2, kDebugVideo,
-				"Ripper: suppressed Smacker scene origin media='%s' originY=%d "
-				"output=%ux%u display=%dx%d",
-				name.c_str(), originY, outputWidth, outputHeight,
-				displayWidth, displayHeight);
-		} else {
-			y += originY;
+	if (!centerBounds.isEmpty()) {
+		if (centerBounds.width() < (int)outputWidth ||
+				centerBounds.height() < (int)outputHeight) {
+			warning("Ripper: Smacker '%s' output=%ux%u exceeds centering bounds=%d,%d,%d,%d",
+				name.c_str(), outputWidth, outputHeight, centerBounds.left,
+				centerBounds.top, centerBounds.right, centerBounds.bottom);
+			decoder.close();
+			return false;
+		}
+		x = centerBounds.left + (centerBounds.width() - (int)outputWidth) / 2;
+		y = centerBounds.top + (centerBounds.height() - (int)outputHeight) / 2;
+	} else {
+		if (x < 0)
+			x = (displayWidth - outputWidth) / 2;
+		else
+			x *= displayScale;
+		if (y < 0)
+			y = (displayHeight - outputHeight) / 2;
+		else {
+			y *= displayScale;
+			if (originY != 0 && y + originY + (int)outputHeight > displayHeight &&
+					y + (int)outputHeight <= displayHeight) {
+				// InitializeMediaPresentationDisplayModeCallback at 0x163a8
+				// switches a full-size packetized branch from the scene viewport
+				// to the full display context. Do not retain the viewport origin
+				// when the scaled branch already fills that display.
+				debugC(2, kDebugVideo,
+					"Ripper: suppressed Smacker scene origin media='%s' originY=%d "
+					"output=%ux%u display=%dx%d",
+					name.c_str(), originY, outputWidth, outputHeight,
+					displayWidth, displayHeight);
+			} else {
+				y += originY;
+			}
 		}
 	}
 	if (x < 0 || y < 0 || x + (int)outputWidth > displayWidth ||
@@ -1045,14 +1059,15 @@ bool MediaPlayer::playWacMedia(const Common::String &path, int x, int y) {
 	return result;
 }
 
-bool MediaPlayer::playWacInterfaceSequence(const Common::String &path, int x, int y,
+bool MediaPlayer::playWacInterfaceSequence(const Common::String &path,
+		const Common::Rect &centerBounds,
 		uint loopStartFrame, MediaSequenceCallback *callback, uint16 *command) {
 	debugC(1, kDebugVideo,
-		"Ripper: entering WAC interface sequence media='%s' position=%d,%d palette=10..149 loopStartFrame=%u callback=%d",
-		path.c_str(), x, y, loopStartFrame, callback != nullptr);
+		"Ripper: entering WAC interface sequence media='%s' centerBounds=%d,%d,%d,%d palette=10..149 loopStartFrame=%u callback=%d",
+		path.c_str(), centerBounds.left, centerBounds.top, centerBounds.right,
+		centerBounds.bottom, loopStartFrame, callback != nullptr);
 	SmackerPlaybackPlan plan;
-	plan.placement.x = x;
-	plan.placement.y = y;
+	plan.placement.centerBounds = centerBounds;
 	plan.palette.patchInterfacePalette = false;
 	plan.palette.patchWacMediaPalette = true;
 	plan.loop.loopStartFrame = loopStartFrame;
