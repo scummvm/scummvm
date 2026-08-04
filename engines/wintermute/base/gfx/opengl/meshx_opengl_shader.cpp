@@ -154,12 +154,12 @@ bool XMeshOpenGLShader::render(XModel *model) {
 		_shader->setUniform("effectId", 0);
 
 		setupEffect(mat, false);
-		size_t offsetFace = 4 * attrsTable->_ptr[i]._faceStart * 3;
-		glDrawElements(GL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, GL_UNSIGNED_INT, (void *)offsetFace);
+		size_t offsetFace = 4 * attrs[i]._faceStart * 3;
+		glDrawElements(GL_TRIANGLES, attrs[i]._faceCount * 3, GL_UNSIGNED_INT, (void *)offsetFace);
 		if (setupEffect(mat, true)) {
 			GLboolean stateCullFace;
 			glGetBooleanv(GL_CULL_FACE, &stateCullFace);
-			glDrawElements(GL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, GL_UNSIGNED_INT, (void *)offsetFace);
+			glDrawElements(GL_TRIANGLES, attrs[i]._faceCount * 3, GL_UNSIGNED_INT, (void *)offsetFace);
 			if (stateCullFace)
 				glEnable(GL_CULL_FACE);
 			else
@@ -240,8 +240,8 @@ bool XMeshOpenGLShader::renderFlatShadowModel(uint32 shadowColor) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
 
 	for (uint32 i = 0; i < numAttrs; i++) {
-		size_t offsetFace = 4 * attrsTable->_ptr[i]._faceStart * 3;
-		glDrawElements(GL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, GL_UNSIGNED_INT, (void *)offsetFace);
+		size_t offsetFace = 4 * attrs[i]._faceStart * 3;
+		glDrawElements(GL_TRIANGLES, attrs[i]._faceCount * 3, GL_UNSIGNED_INT, (void *)offsetFace);
 	}
 
 	glStencilFunc(GL_EQUAL, 1, (GLuint)~0);
@@ -255,8 +255,8 @@ bool XMeshOpenGLShader::renderFlatShadowModel(uint32 shadowColor) {
 	glDepthMask(GL_TRUE);
 
 	for (uint32 i = 0; i < numAttrs; i++) {
-		size_t offsetFace = 4 * attrsTable->_ptr[i]._faceStart * 3;
-		glDrawElements(GL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, GL_UNSIGNED_INT, (void *)offsetFace);
+		size_t offsetFace = 4 * attrs[i]._faceStart * 3;
+		glDrawElements(GL_TRIANGLES, attrs[i]._faceCount * 3, GL_UNSIGNED_INT, (void *)offsetFace);
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

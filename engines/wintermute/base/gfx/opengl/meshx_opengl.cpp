@@ -136,7 +136,7 @@ bool XMeshOpenGL::render(XModel *model) {
 		if (textureEnable)
 			glTexCoordPointer(2, GL_FLOAT, vertexSize * sizeof(float), vertexData + textureOffset);
 
-		glDrawElements(GL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, GL_UNSIGNED_INT, indexData + attrsTable->_ptr[i]._faceStart * 3);
+		glDrawElements(GL_TRIANGLES, attrs[i]._faceCount * 3, GL_UNSIGNED_INT, indexData + attrs[i]._faceStart * 3);
 
 		glDisableClientState(GL_VERTEX_ARRAY);
 		glDisableClientState(GL_NORMAL_ARRAY);
@@ -213,7 +213,7 @@ bool XMeshOpenGL::renderFlatShadowModel(uint32 shadowColor) {
 
 		glVertexPointer(3, GL_FLOAT, vertexSize * sizeof(float), vertexData);
 
-		glDrawElements(GL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, GL_UNSIGNED_INT, indexData + attrsTable->_ptr[i]._faceStart * 3);
+		glDrawElements(GL_TRIANGLES, attrs[i]._faceCount * 3, GL_UNSIGNED_INT, indexData + attrs[i]._faceStart * 3);
 
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
@@ -234,7 +234,7 @@ bool XMeshOpenGL::renderFlatShadowModel(uint32 shadowColor) {
 
 		glVertexPointer(3, GL_FLOAT, vertexSize * sizeof(float), vertexData);
 
-		glDrawElements(GL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, GL_UNSIGNED_INT, indexData + attrsTable->_ptr[i]._faceStart * 3);
+		glDrawElements(GL_TRIANGLES, attrs[i]._faceCount * 3, GL_UNSIGNED_INT, indexData + attrs[i]._faceStart * 3);
 
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}

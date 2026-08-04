@@ -133,7 +133,7 @@ bool XMeshTinyGL::render(XModel *model) {
 		if (textureEnable)
 			tglTexCoordPointer(2, TGL_FLOAT, vertexSize * sizeof(float), vertexData + textureOffset);
 
-		tglDrawElements(TGL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, TGL_UNSIGNED_INT, indexData + attrsTable->_ptr[i]._faceStart * 3);
+		tglDrawElements(TGL_TRIANGLES, attrs[i]._faceCount * 3, TGL_UNSIGNED_INT, indexData + attrs[i]._faceStart * 3);
 
 		tglDisableClientState(TGL_VERTEX_ARRAY);
 		tglDisableClientState(TGL_NORMAL_ARRAY);
@@ -210,7 +210,7 @@ bool XMeshTinyGL::renderFlatShadowModel(uint32 shadowColor) {
 
 		tglVertexPointer(3, TGL_FLOAT, vertexSize * sizeof(float), vertexData);
 
-		tglDrawElements(TGL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, TGL_UNSIGNED_INT, indexData + attrsTable->_ptr[i]._faceStart * 3);
+		tglDrawElements(TGL_TRIANGLES, attrs[i]._faceCount * 3, TGL_UNSIGNED_INT, indexData + attrs[i]._faceStart * 3);
 
 		tglDisableClientState(TGL_VERTEX_ARRAY);
 	}
@@ -231,7 +231,7 @@ bool XMeshTinyGL::renderFlatShadowModel(uint32 shadowColor) {
 
 		tglVertexPointer(3, TGL_FLOAT, vertexSize * sizeof(float), vertexData);
 
-		tglDrawElements(TGL_TRIANGLES, attrsTable->_ptr[i]._faceCount * 3, TGL_UNSIGNED_INT, indexData + attrsTable->_ptr[i]._faceStart * 3);
+		tglDrawElements(TGL_TRIANGLES, attrs[i]._faceCount * 3, TGL_UNSIGNED_INT, indexData + attrs[i]._faceStart * 3);
 
 		tglDisableClientState(TGL_VERTEX_ARRAY);
 	}
