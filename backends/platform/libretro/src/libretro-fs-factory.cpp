@@ -32,6 +32,9 @@
 #include "backends/platform/libretro/include/libretro-fs.h"
 
 AbstractFSNode *LibRetroFilesystemFactory::makeRootFileNode() const {
+	if (LibRetroFilesystemNode::hasAuthorizedLocations())
+		return new LibRetroFilesystemNode(LibRetroFilesystemNode::getAuthorizedRootPath());
+
 	return new LibRetroFilesystemNode("/");
 }
 

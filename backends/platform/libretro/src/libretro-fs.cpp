@@ -43,7 +43,56 @@
 #include "backends/platform/libretro/include/libretro-fs.h"
 #include "backends/platform/libretro/include/libretro-core.h"
 #include "common/algorithm.h"
+#include "common/array.h"
 #include "common/stream.h"
+
+static const char *kLibRetroAuthorizedRootPath = "libretro-authorized:///";
+static const char *kLibRetroAuthorizedRootLabel = "RetroArch authorized locations";
+
+struct LibRetroAuthorizedLocation {
+	Common::String path;
+	Common::String label;
+};
+
+static Common::Array<LibRetroAuthorizedLocation> s_libretroAuthorizedLocations;
+
+static Common::String libretroFsStripTrailingSlash(Common::String path) {
+	while (path.size() > 1 && path.lastChar() == '/')
+		path.erase(path.size() - 1);
+
+	return path;
+}
+
+static bool libretroFsSamePath(const Common::String &a, const Common::String &b) {
+	return libretroFsStripTrailingSlash(a).equals(libretroFsStripTrailingSlash(b));
+}
+
+static bool libretroFsIsAuthorizedRoot(const Common::String &path) {
+	Common::String normalizedPath = libretroFsStripTrailingSlash(path);
+
+	for (uint i = 0; i < s_libretroAuthorizedLocations.size(); ++i) {
+		if (normalizedPath.equals(libretroFsStripTrailingSlash(s_libretroAuthorizedLocations[i].path)))
+			return true;
+	}
+
+	return false;
+}
+
+static bool libretroFsIsInsideAuthorizedLocation(const Common::String &path) {
+	Common::String normalizedPath = libretroFsStripTrailingSlash(path);
+
+	for (uint i = 0; i < s_libretroAuthorizedLocations.size(); ++i) {
+		Common::String root = libretroFsStripTrailingSlash(s_libretroAuthorizedLocations[i].path);
+
+		if (normalizedPath.equals(root))
+			return true;
+
+		if (normalizedPath.hasPrefix(root) && normalizedPath.size() > root.size() && normalizedPath[root.size()] == '/')
+			return true;
+	}
+
+	return false;
+}
 
 static bool libretroFsHasUriScheme(const Common::String &path) {
 	return strstr(path.c_str(), "://") != nullptr;
@@ -286,6 +335,16 @@ void LibRetroFilesystemNode::setFlags() {
 LibRetroFilesystemNode::LibRetroFilesystemNode(const Common::String &p) {
 	assert(p.size() > 0);
 
+	if (p.equals(kLibRetroAuthorizedRootPath)) {
+		_path = p;
+		_displayName = kLibRetroAuthorizedRootLabel;
+		_isValid = true;
+		_isDirectory = true;
+		_isReadable = true;
+		_isWritable = false;
+		return;
+	}
+
 	if (libretroFsHasUriScheme(p)) {
 		_path = p;
 		_displayName = libretroFsUriDisplayName(_path);
@@ -336,6 +395,27 @@ AbstractFSNode *LibRetroFilesystemNode::getChild(const Common::String &n) const 
 bool LibRetroFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
 	assert(_isDirectory);
 
+	if (_path.equals(kLibRetroAuthorizedRootPath)) {
+		if (mode == Common::FSNode::kListFilesOnly)
+			return true;
+
+		for (uint i = 0; i < s_libretroAuthorizedLocations.size(); ++i) {
+			LibRetroFilesystemNode *node = new LibRetroFilesystemNode(s_libretroAuthorizedLocations[i].path);
+
+			if (!node->isDirectory()) {
+				delete node;
+				continue;
+			}
+
+			if (!s_libretroAuthorizedLocations[i].label.empty())
+				node->_displayName = s_libretroAuthorizedLocations[i].label;
+
+			myList.push_back(node);
+		}
+
+		return true;
+	}
+
 	struct RDIR *dirp = retro_opendir(_path.c_str());
 
 	if (dirp == NULL)
@@ -380,8 +460,11 @@ bool LibRetroFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, 
 }
 
 AbstractFSNode *LibRetroFilesystemNode::getParent() const {
-	if (_path == "/")
+	if (_path == "/" || _path.equals(kLibRetroAuthorizedRootPath))
 		return 0; // The filesystem root has no parent
+
+	if (hasAuthorizedLocations() && libretroFsIsAuthorizedRoot(_path))
+		return makeNode(kLibRetroAuthorizedRootPath);
 
 	Common::String parentPath(_path);
 
@@ -408,6 +491,9 @@ AbstractFSNode *LibRetroFilesystemNode::getParent() const {
 			parentPath.erase(parentPath.size() - 1);
 
 		if (parentPath.size() <= uriRootLen) {
+			if (hasAuthorizedLocations() && (parentPath.hasPrefix("saf://") || libretroFsIsInsideAuthorizedLocation(_path)))
+				return makeNode(kLibRetroAuthorizedRootPath);
+
 			return makeNode("/");
 		}
 
@@ -559,7 +645,46 @@ Common::String LibRetroFilesystemNode::getHomeDir(void) {
 	return path;
 }
 
+Common::String LibRetroFilesystemNode::getAuthorizedRootPath(void) {
+	return Common::String(kLibRetroAuthorizedRootPath);
+}
+
+void LibRetroFilesystemNode::clearAuthorizedLocations(void) {
+	s_libretroAuthorizedLocations.clear();
+}
+
+void LibRetroFilesystemNode::addAuthorizedLocation(const Common::String &path, const Common::String &label) {
+	if (path.empty())
+		return;
+
+	for (uint i = 0; i < s_libretroAuthorizedLocations.size(); ++i) {
+		if (libretroFsSamePath(s_libretroAuthorizedLocations[i].path, path))
+			return;
+	}
+
+	LibRetroFilesystemNode node(path);
+	if (!node.isDirectory())
+		return;
+
+	LibRetroAuthorizedLocation location;
+	location.path = path;
+
+	if (!label.empty())
+		location.label = label;
+	else
+		location.label = libretroFsUriDisplayName(path);
+
+	s_libretroAuthorizedLocations.push_back(location);
+}
+
+bool LibRetroFilesystemNode::hasAuthorizedLocations(void) {
+	return !s_libretroAuthorizedLocations.empty();
+}
+
 Common::String LibRetroFilesystemNode::getDefaultDir(void) {
+	if (hasAuthorizedLocations())
+		return s_libretroAuthorizedLocations[0].path;
+
 	Common::String homeDir(getHomeDir());
 
 	if (!homeDir.empty() && LibRetroFilesystemNode(homeDir).isDirectory())

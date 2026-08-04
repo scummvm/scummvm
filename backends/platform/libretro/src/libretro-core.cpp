@@ -56,7 +56,24 @@
 #include "backends/platform/libretro/include/libretro-threads.h"
 #include "backends/platform/libretro/include/libretro-core-options.h"
 #include "backends/platform/libretro/include/libretro-os.h"
+#include "backends/platform/libretro/include/libretro-fs.h"
 #include "backends/platform/libretro/include/libretro-mapper.h"
+
+#ifndef RETRO_ENVIRONMENT_GET_VFS_AUTHORIZED_LOCATIONS
+#define RETRO_ENVIRONMENT_GET_VFS_AUTHORIZED_LOCATIONS (93 | RETRO_ENVIRONMENT_EXPERIMENTAL)
+
+struct retro_vfs_authorized_location {
+	const char *path;
+	const char *label;
+	unsigned flags;
+};
+
+struct retro_vfs_authorized_locations {
+	const struct retro_vfs_authorized_location *locations;
+	size_t count;
+};
+#endif
+
 
 static struct retro_game_info game_buf;
 static struct retro_game_info *game_buf_ptr;
@@ -935,6 +952,26 @@ void retro_init(void) {
 		filestream_vfs_init(&vfs_iface);
 		path_vfs_init(&vfs_iface);
 		dirent_vfs_init(&vfs_iface);
+	}
+
+	LibRetroFilesystemNode::clearAuthorizedLocations();
+
+	{
+		struct retro_vfs_authorized_locations locations;
+		memset(&locations, 0, sizeof(locations));
+
+		if (environ_cb && environ_cb(RETRO_ENVIRONMENT_GET_VFS_AUTHORIZED_LOCATIONS, &locations) &&
+				locations.locations) {
+			for (size_t i = 0; i < locations.count; ++i) {
+				const char *path = locations.locations[i].path;
+				const char *label = locations.locations[i].label;
+
+				if (path && *path)
+					LibRetroFilesystemNode::addAuthorizedLocation(
+							Common::String(path),
+							label ? Common::String(label) : Common::String());
+			}
+		}
 	}
 
 	if (retro_log_cb)

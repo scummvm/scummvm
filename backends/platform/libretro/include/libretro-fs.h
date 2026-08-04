@@ -92,6 +92,10 @@ public:
 
 	static Common::String getHomeDir(void);
 	static Common::String getDefaultDir(void);
+	static Common::String getAuthorizedRootPath(void);
+	static void clearAuthorizedLocations(void);
+	static void addAuthorizedLocation(const Common::String &path, const Common::String &label);
+	static bool hasAuthorizedLocations(void);
 private:
 	/**
 	 * Tests and sets the _isValid and _isDirectory flags, using the stat() function.
