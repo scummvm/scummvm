@@ -48,6 +48,8 @@ protected:
 		return Common::MemoryReadStream(&_soundData[offset], _soundData.size() - offset);
 	}
 
+	explicit SoundDriver(Audio::Mixer *mixer) : _mixer(mixer) {}
+
 public:
 	SoundDriver(Audio::Mixer *mixer, const Common::Path &filename,
 		int dataOffset, int dataSize);
