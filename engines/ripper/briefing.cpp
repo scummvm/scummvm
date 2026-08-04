@@ -26,6 +26,7 @@
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
+#include "ripper/display.h"
 #include "ripper/input.h"
 #include "ripper/media.h"
 #include "ripper/milestones.h"
@@ -43,7 +44,7 @@ static const uint kBriefingAlertVolume = 35;
 
 static bool isImplementedBriefingSelector(uint selector) {
 	return selector == 1 || selector == 2 || selector == 3 || selector == 4 ||
-		selector == 5 || selector == 6;
+		selector == 5 || selector == 6 || selector == 8;
 }
 
 BriefingManager::BriefingManager(RipperEngine *engine) : _engine(engine),
@@ -293,6 +294,42 @@ bool BriefingManager::activate() {
 				(uint)kMilestonePlayedThirdRipperWacMessage);
 		}
 		break;
+	case 8: {
+		// ServiceBriefingMediaTrigger at 0x1945b saves the current palette,
+		// presents WACGAMBI.AVI with both presentation-control flags clear,
+		// sets flags 0x196 and 0x135, waits for any keyboard command or a
+		// left-button transition, and then rebuilds the prior display.
+		IndexedDisplaySnapshot displayContext;
+		if (!displayContext.capture()) {
+			warning("Ripper: could not capture display for briefing selector 8");
+			result = false;
+			break;
+		}
+
+		result = _engine->getMedia()->play("wacgambi.avi", false, 0, 0);
+		if (result)
+			result = _engine->getMilestones()->set(
+				kMilestoneFalconettisWell, true, "briefing selector 8");
+		if (result)
+			result = _engine->getMilestones()->set(
+				kMilestonePlayedGambitEmail, true, "briefing selector 8");
+		if (result)
+			result = waitForAcknowledgement(selector);
+
+		const bool displayRestored = displayContext.restore();
+		if (!displayRestored) {
+			warning("Ripper: could not restore display after briefing selector 8");
+			result = false;
+		}
+		if (result) {
+			debugC(1, kDebugScene,
+				"Ripper: completed briefing selector=8 media='wacgambi.avi' "
+				"wellFlag=%u emailFlag=%u acknowledged=1",
+				(uint)kMilestoneFalconettisWell,
+				(uint)kMilestonePlayedGambitEmail);
+		}
+		break;
+	}
 	default:
 		warning("Ripper: unsupported briefing selector %u", selector);
 		result = false;
@@ -300,6 +337,39 @@ bool BriefingManager::activate() {
 	}
 	_engine->getInput()->discardMouseTransitions();
 	return result;
+}
+
+bool BriefingManager::waitForAcknowledgement(uint selector) {
+	InputManager *input = _engine->getInput();
+	input->drainKeys();
+	input->discardMouseTransitions();
+	debugC(2, kDebugScene,
+		"Ripper: briefing selector=%u waiting for keyboard or left-click acknowledgement",
+		selector);
+
+	while (!_engine->shouldQuit()) {
+		if (input->pollEvents()) {
+			_engine->quitGame();
+			break;
+		}
+		if (input->hasPendingKey()) {
+			const uint16 command = input->consumeKey();
+			debugC(2, kDebugInput,
+				"Ripper: briefing selector=%u acknowledged by keyboard command=0x%04x",
+				selector, command);
+			return true;
+		}
+
+		const MouseState mouse = input->publishMouseState();
+		if ((mouse.pressed & kMouseButtonLeft) != 0) {
+			debugC(2, kDebugInput,
+				"Ripper: briefing selector=%u acknowledged by left click point=%d,%d",
+				selector, mouse.position.x, mouse.position.y);
+			return true;
+		}
+		g_system->delayMillis(10);
+	}
+	return false;
 }
 
 void BriefingManager::advanceAnimation(uint32 now) {
