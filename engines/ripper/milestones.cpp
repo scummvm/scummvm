@@ -107,6 +107,15 @@ bool Milestones::set(uint flag, bool value, const char *source) {
 	return true;
 }
 
+bool Milestones::toggle(uint flag, const char *source) {
+	if (flag >= kFlagCount) {
+		warning("Ripper: milestone flag %u is outside the %u-flag store", flag, kFlagCount);
+		return false;
+	}
+
+	return set(flag, !isSet(flag), source);
+}
+
 bool Milestones::hasRipperIdentity() const {
 	for (uint flag = kMilestoneFirstRipperIdentity;
 			flag <= kMilestoneLastRipperIdentity; ++flag) {

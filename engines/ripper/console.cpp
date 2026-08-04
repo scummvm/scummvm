@@ -49,10 +49,11 @@ bool parseMilestoneId(const Common::String &text, uint &flag) {
 
 Console::Console(RipperEngine *engine) : GUI::Debugger(), _engine(engine) {
 	assert(_engine);
+	registerCmd("MILESTONE", WRAP_METHOD(Console, cmdMilestones));
 	registerCmd("MILESTONES", WRAP_METHOD(Console, cmdMilestones));
 	registerCmd("PUZZLE_HELP", WRAP_METHOD(Console, cmdPuzzleHelp));
 	debugC(1, kDebugGeneral,
-		"Ripper: initialized debug console commands=2 commands=MILESTONES,PUZZLE_HELP");
+		"Ripper: initialized debug console commands=3 commands=MILESTONE,MILESTONES,PUZZLE_HELP");
 }
 
 void Console::printMilestone(uint flag) {
@@ -97,7 +98,22 @@ bool Console::cmdMilestones(int argc, const char **argv) {
 		}
 	}
 
-	debugPrintf("Usage: MILESTONES [ACTIVE|<ID>]\n");
+	if (argc == 3 && Common::String(argv[1]).equalsIgnoreCase("TOGGLE")) {
+		uint flag = 0;
+		if (parseMilestoneId(argv[2], flag)) {
+			const bool oldValue = milestones->isSet(flag);
+			if (milestones->toggle(flag, "debugger-toggle")) {
+				printMilestone(flag);
+				debugC(1, kDebugMilestones,
+					"Ripper: debugger toggled milestone flag=%u label='%s' oldValue=%d newValue=%d",
+					flag, milestones->label(flag).c_str(), oldValue,
+					milestones->isSet(flag));
+				return true;
+			}
+		}
+	}
+
+	debugPrintf("Usage: MILESTONES [ACTIVE|<ID>|TOGGLE <ID>]\n");
 	debugPrintf("ID must be between 0 and %u\n", Milestones::kFlagCount - 1);
 	return true;
 }
