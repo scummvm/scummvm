@@ -27,6 +27,21 @@
 
 namespace MADS {
 
+class EnvResourceProvider {
+public:
+	virtual ~EnvResourceProvider() {}
+
+	virtual Common::SeekableReadStream *open(const char *filename) = 0;
+	virtual bool exists(const char *filename) = 0;
+	virtual bool allowsFallback(const char *) const { return true; }
+	virtual Common::SeekableReadStream *openText(int32, uint16 &) {
+		return nullptr;
+	}
+	virtual int getCursorCount() const { return 0; }
+	virtual bool setCursor(int) { return false; }
+	virtual void updateCursor() {}
+};
+
 #define MADS_ENV        "MADS"
 #define MADS_PRIV_ENV   "MADSPRIV"
 #define MADS_SOUND_ENV  "MADSOUND"
@@ -72,6 +87,11 @@ extern int env_sound_override;
 extern long env_concat_file_size; /* Size of last concat file opened */
 extern char env_null[7];
 
+extern void env_set_resource_provider(EnvResourceProvider *provider);
+extern Common::SeekableReadStream *env_open_text(int32 id, uint16 &unpacked_size);
+extern int env_get_cursor_count();
+extern bool env_set_cursor(int id);
+extern void env_update_cursor();
 
 extern int env_verify();
 extern Common::SeekableReadStream *env_open(const char *file_path, const char *options = "rb");

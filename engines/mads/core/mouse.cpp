@@ -23,6 +23,7 @@
 #include "graphics/cursorman.h"
 #include "mads/core/general.h"
 #include "mads/core/buffer.h"
+#include "mads/core/env.h"
 #include "mads/core/matte.h"
 #include "mads/core/mouse.h"
 #include "mads/core/timer.h"
@@ -86,6 +87,8 @@ void mouse_init_cycle() {
 }
 
 void mouse_begin_cycle(int double_flag) {
+	env_update_cursor();
+
 	if (double_flag) mouse_check_double();
 
 	mouse_old_x = mouse_x;
@@ -124,6 +127,9 @@ void mouse_end_cycle(int double_flag, int timing_flag) {
 }
 
 void mouse_cursor_sprite(SeriesPtr series, int id) {
+	if (env_set_cursor(id))
+		return;
+
 	byte work_area[17][17];
 	Buffer load_buffer = { 17, 17, &work_area[0][0] };
 	int hot_x = 0, hot_y = 0, count;
@@ -251,6 +257,3 @@ void mouse_hard_cursor_mode(int mode, Palette mypal) {
 }
 
 } // namespace MADS
-
-
-

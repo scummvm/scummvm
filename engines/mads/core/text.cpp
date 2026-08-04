@@ -95,6 +95,28 @@ char text_command_demonstrative[14] = TEXT_COMMAND_DEMONSTRATIVE;
 
 extern int16 global[GLOBAL_LIST_SIZE];
 
+static TextPtr unpackText(Common::SeekableReadStream *handle, uint16 length, bool dcl) {
+	TextPtr result = (TextPtr)mem_get_name(length + sizeof(word), "$text$");
+	if (!result)
+		return nullptr;
+
+	result->length = length;
+	if (dcl) {
+		if (!pack_dcl_explode(handle, (byte *)&result->text[0], length)) {
+			mem_free(result);
+			return nullptr;
+		}
+	} else {
+		pack_strategy = PACK_PFAB;
+		if (pack_data(PACK_EXPLODE, length, FROM_DISK, handle,
+				TO_MEMORY, &result->text[0]) != length) {
+			mem_free(result);
+			return nullptr;
+		}
+	}
+
+	return result;
+}
 
 TextPtr text_load(long id) {
 	TextPtr result = NULL;
@@ -109,6 +131,12 @@ TextPtr text_load(long id) {
 
 	dir.id = dir.file_offset = dir.length = 0;
 	mem_last_alloc_loader = MODULE_TEXT_LOADER;
+
+	handle = env_open_text(id, dir.length);
+	if (handle) {
+		result = unpackText(handle, dir.length, false);
+		goto done;
+	}
 
 	Common::strcpy_s(temp_buf, text_filename);
 	Common::strcat_s(temp_buf, TEXT_COMPILED);
@@ -128,11 +156,6 @@ TextPtr text_load(long id) {
 
 	target_offset = file_offset + dir.file_offset;
 
-	result = (TextPtr)mem_get_name(dir.length + sizeof(word), "$text$");
-	if (result == NULL) goto done;
-
-	result->length = dir.length;
-
 	fileio_setpos(handle, target_offset);
 
 	// The Rex Nebular demo's messages.dat predates MADSPACK 2.0's switch to
@@ -140,18 +163,9 @@ TextPtr text_load(long id) {
 	// (MADSPACK 1.0). Route it to a dedicated decoder rather than risking
 	// the shared pack_data() path used by every other game.
 	if (g_engine->getGameID() == GType_RexNebular && g_engine->isDemo()) {
-		if (!pack_dcl_explode(handle, (byte *)&result->text[0], dir.length)) {
-			mem_free(result);
-			result = NULL;
-		}
+		result = unpackText(handle, dir.length, true);
 	} else {
-		pack_strategy = PACK_PFAB;
-		if (pack_data(PACK_EXPLODE, dir.length,
-			FROM_DISK, handle,
-			TO_MEMORY, &result->text[0]) != (int)dir.length) {
-			mem_free(result);
-			result = NULL;
-		}
+		result = unpackText(handle, dir.length, false);
 	}
 
 done:

@@ -423,8 +423,19 @@ int kernel_game_startup(int game_video_mode, int load_flag,
 			mcga_setpal_range(&master_palette, 0, 4);
 		}
 
-		// Load cursor sprite series
-		cursor = sprite_series_load("*CURSOR.SS", PAL_MAP_RESERVED);
+		// The Macintosh release exposes native system cursors without a MADS
+		// sprite series. Keep a lightweight header so the shared cursor-selection
+		// logic can retain its existing range checks.
+		const int nativeCursorCount = env_get_cursor_count();
+		if (nativeCursorCount > 0) {
+			cursor = (SeriesPtr)mem_get_name(sizeof(Series), "CURSOR");
+			if (cursor) {
+				memset(cursor, 0, sizeof(Series));
+				cursor->num_sprites = nativeCursorCount;
+			}
+		} else {
+			cursor = sprite_series_load("*CURSOR.SS", PAL_MAP_RESERVED);
+		}
 		if (cursor == NULL) {
 			goto done;
 		}
