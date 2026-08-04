@@ -884,6 +884,15 @@ const char *retro_get_system_dir(void) {
 	return sysdir;
 }
 
+const char *retro_get_file_browser_start_dir(void) {
+	const char *startdir = NULL;
+
+	if (!environ_cb || !environ_cb(RETRO_ENVIRONMENT_GET_FILE_BROWSER_START_DIRECTORY, &startdir))
+		return NULL;
+
+	return startdir;
+}
+
 const char *retro_get_save_dir(void) {
 	const char *savedir = NULL;
 

@@ -685,6 +685,13 @@ Common::String LibRetroFilesystemNode::getDefaultDir(void) {
 	if (hasAuthorizedLocations())
 		return s_libretroAuthorizedLocations[0].path;
 
+	const char *browserStartDir = retro_get_file_browser_start_dir();
+	if (browserStartDir && *browserStartDir) {
+		Common::String path(browserStartDir);
+		if (LibRetroFilesystemNode(path).isDirectory())
+			return path;
+	}
+
 	Common::String homeDir(getHomeDir());
 
 	if (!homeDir.empty() && LibRetroFilesystemNode(homeDir).isDirectory())
