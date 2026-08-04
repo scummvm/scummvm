@@ -379,6 +379,20 @@ struct WordFindPuzzleData : public PuzzleData {
 	int16 currentWord = 0;
 };
 
+// Nancy14+ HangmanPuzzle (AR 177). Remembers which words have already been used
+// so a fresh visit picks a new one; once every word has been used the set is
+// cleared and words become available again (matching the original's word-reuse
+// bitmap). Persisted so progress survives leaving the scene and saving.
+struct HangmanData : public PuzzleData {
+	HangmanData() {}
+	virtual ~HangmanData() {}
+
+	static constexpr uint32 getTag() { return MKTAG('H', 'A', 'N', 'G'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::Array<Common::String> usedWords;
+};
+
 // Nancy12 DrivingPuzzle (AR 160). The car's position, heading and tire state persist
 // across visits to the driving map (driving into a location, then coming back), matching
 // the original's retainState mechanism, which saves the car to globals every frame and

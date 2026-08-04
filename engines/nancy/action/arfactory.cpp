@@ -51,6 +51,7 @@
 #include "engines/nancy/action/puzzle/gridmappuzzle.h"
 #include "engines/nancy/action/puzzle/matchpuzzle.h"
 #include "engines/nancy/action/puzzle/hamradiopuzzle.h"
+#include "engines/nancy/action/puzzle/hangmanpuzzle.h"
 #include "engines/nancy/action/puzzle/leverpuzzle.h"
 #include "engines/nancy/action/puzzle/magnetmazepuzzle.h"
 #include "engines/nancy/action/puzzle/mazechasepuzzle.h"
@@ -505,9 +506,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 176:
 		return new DropSortPuzzle();	// conveyor-belt candy sorting
 	// -- Nancy14 new puzzles (types 177-182) --
-	case 177:	// HangmanPuzzle
-		// TODO: not yet implemented
-		return nullptr;
+	case 177:
+		return new HangmanPuzzle();
 	case 178:	// AdjustPuzzle
 		// TODO: not yet implemented
 		return nullptr;

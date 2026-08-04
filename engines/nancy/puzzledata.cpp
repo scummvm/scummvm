@@ -478,6 +478,17 @@ void WordFindPuzzleData::synchronize(Common::Serializer &ser) {
 	ser.syncAsSint16LE(currentWord);
 }
 
+void HangmanData::synchronize(Common::Serializer &ser) {
+	uint16 count = usedWords.size();
+	ser.syncAsUint16LE(count);
+	if (ser.isLoading()) {
+		usedWords.resize(count);
+	}
+	for (uint i = 0; i < count; ++i) {
+		ser.syncString(usedWords[i]);
+	}
+}
+
 void DrivingData::synchronize(Common::Serializer &ser) {
 	ser.syncAsByte(valid);
 	ser.syncAsSint32LE(carX);
@@ -493,6 +504,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new DrivingData();
 	case WordFindPuzzleData::getTag():
 		return new WordFindPuzzleData();
+	case HangmanData::getTag():
+		return new HangmanData();
 	case SliderPuzzleData::getTag():
 		return new SliderPuzzleData();
 	case RippedLetterPuzzleData::getTag():
