@@ -115,8 +115,6 @@ bool RipperEngine::selectRandomRipperIdentity(const char *source) {
 }
 
 Common::Error RipperEngine::run() {
-	debugC(1, kDebugGeneral, "Ripper: starting skeletal engine runtime for '%s'", _gameDescription->gameId);
-
 	registerSearchPaths();
 	initGraphics(640, 400);
 	_settings->load();
@@ -242,7 +240,6 @@ Common::Error RipperEngine::run() {
 			warning("Ripper: unable to write emergency Continue save");
 	}
 
-	debugC(1, kDebugGeneral, "Ripper: skeletal engine runtime stopped");
 	return Common::kNoError;
 }
 
