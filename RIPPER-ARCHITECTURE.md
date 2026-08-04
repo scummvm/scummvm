@@ -477,9 +477,15 @@
   Cafe Duchamp by setting travel flag 20. Selector 6 is armed by
   `ACT2_CHK.RUN` after its later Act II checklist passes; the retail dispatch
   presents `RIP_WAC3.AVI` and then sets flag 314 (`got 3'rd ripper wac message
-  (act 2)`). ScummVM treats selectors without an implemented retail branch as
-  runtime failures when scripts arm them or saves attempt to restore them,
-  rather than leaving an unsupported trigger active.
+  (act 2)`). Selector 8 is armed by `DA3.RUN`; it saves the current palette,
+  presents `WACGAMBI.AVI` with both presentation controls disabled, sets flag
+  406 (`Falconetti's WELL`) followed by flag 309 (`played gambit e-mail`), and
+  leaves the final presentation visible until any keyboard command or a left
+  mouse-button transition acknowledges it. The retail cleanup then rebuilds
+  the prior display and restores its saved palette. ScummVM treats selectors
+  without an implemented retail branch as runtime failures when scripts arm
+  them or saves attempt to restore them, rather than leaving an unsupported
+  trigger active.
 - `HandleSceneSelectionAction` at `0x191e2` records the selected destination
   before `RunFrontEndActionMenu` at `0x18b3a` runs the chapter-specific
   `WMAP*.RUN` checkpoint. ScummVM preserves that boundary after the map UI and
