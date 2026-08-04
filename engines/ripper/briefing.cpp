@@ -43,7 +43,7 @@ static const uint kBriefingAlertVolume = 35;
 
 static bool isImplementedBriefingSelector(uint selector) {
 	return selector == 1 || selector == 2 || selector == 3 || selector == 4 ||
-		selector == 6;
+		selector == 5 || selector == 6;
 }
 
 BriefingManager::BriefingManager(RipperEngine *engine) : _engine(engine),
@@ -260,6 +260,24 @@ bool BriefingManager::activate() {
 				"messageFlag=%u travelFlag=%u",
 				(uint)kMilestoneReceivedJordanWacMessage,
 				(uint)kMilestoneWebRunnersLoftOpen);
+		}
+		break;
+	case 5:
+		// ServiceBriefingMediaTrigger at 0x1945b presents VF2_2_P1.AVI,
+		// records milestone 0x133, and opens travel location 0x14.
+		result = _engine->getMedia()->play("vf2_2_p1.avi", true, 0, 0);
+		if (result)
+			result = _engine->getMilestones()->set(
+				kMilestoneGotFarleyWacMessage, true, "briefing selector 5");
+		if (result)
+			result = _engine->getMilestones()->set(
+				kMilestoneFirstTravelLocation, true, "briefing selector 5");
+		if (result) {
+			debugC(1, kDebugScene,
+				"Ripper: completed briefing selector=5 media='vf2_2_p1.avi' "
+				"messageFlag=%u travelFlag=%u",
+				(uint)kMilestoneGotFarleyWacMessage,
+				(uint)kMilestoneFirstTravelLocation);
 		}
 		break;
 	case 6:

@@ -50,6 +50,7 @@ enum MilestoneFlag {
 	kMilestonePlayedFinalPrologueScene = 300,
 	kMilestonePlayedFirstWacMessage = 301,
 	kMilestoneReceivedJordanWacMessage = 305,
+	kMilestoneGotFarleyWacMessage = 307,
 	kMilestonePlayedThirdRipperWacMessage = 314
 };
 
