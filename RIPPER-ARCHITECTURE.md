@@ -1001,6 +1001,22 @@
   supplied completion flag. `KPEXTRA0.BBM` through `KPEXTRA3.BBM` provide the
   entry-slot and blinking-prompt feedback, while `JB_LOC0.WAV` through
   `JB_LOC5.WAV` supply control and result cues.
+- Scene action 61 calls `RunEightButtonSequencePuzzleScene` at `0x4043d`
+  with the caller-supplied completion flag. `FA3.RUN` callback `0x402`
+  supplies flag 31. The routine advances `XARMED.SMK` at physical position
+  `(248, 254)`, installs eight `XKP0.BBM` through `XKP7.BBM` controls at the
+  scene-space Y/X positions stored at `0x84e31`, and records six one-based
+  button selections. F1 opens help table `0x1b2`, while the 100-by-300
+  left-edge control or Escape exits.
+- The fixed sequence at `0x84e25` is `2,2,6,4,8,1`. Each accepted press adds
+  the corresponding positional `DKP1.BBM` through `DKP5.BBM` or `DKPO.BBM`
+  marker using the Y/X table at `0x84e51`. A mismatch clears the captured
+  marker row and plays `BNKWAV3.WAV`; a match plays `BNKWAV2.WAV`, draws
+  `XDARK.BBM` at physical position `(276, 291)`, flashes the completed row
+  five times at five DOS ticks per phase, and sets the supplied flag.
+  `BNKWAV0.WAV` and `BNKWAV1.WAV` are the active/inactive control cues;
+  retail loads `BNKWAV4.WAV` with the same descriptor set but does not queue
+  it in this routine.
 - Scene action 19 calls `RunWebGridShiftPuzzleScene` at `0x2cdce` with the
   caller-supplied completion flag. `KF.RUN` callback `0x2b6` supplies flag 221
   after retaining the final `SPIDER.AVI` presentation. The routine captures

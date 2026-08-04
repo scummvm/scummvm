@@ -35,6 +35,7 @@
 #include "ripper/puzzles/circuit_chip.h"
 #include "ripper/puzzles/clock.h"
 #include "ripper/puzzles/crystal.h"
+#include "ripper/puzzles/eight_button_sequence.h"
 #include "ripper/puzzles/gc_csh.h"
 #include "ripper/puzzles/kd_shooting_gallery.h"
 #include "ripper/puzzles/keypad_sequence.h"
@@ -115,7 +116,7 @@ const char *SceneActionDispatcher::actionName(uint action) {
 	case 58:
 	case 59: return "no-op";
 	case 60: return "key group puzzle";
-	case 61: return "eight-button sequence puzzle";
+	case kSceneActionEightButtonSequencePuzzle: return "eight-button sequence puzzle";
 	case 62: return "Cain dialogue scene";
 	case 63: return "append resource string to RIPPER.TXT";
 	case 300: return "arm briefing media trigger";
@@ -413,6 +414,15 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 	if (action == 44) {
 		debugC(3, kDebugCyber, "Ripper: Cyber scene action 44 completed as original no-op");
 		return true;
+	}
+	if (action == kSceneActionEightButtonSequencePuzzle) {
+		EightButtonSequencePuzzle puzzle(engine);
+		const EightButtonSequencePuzzle::Result result = puzzle.run(argument);
+		debugC(1, kDebugPuzzles,
+			"Ripper: eight-button sequence puzzle scene action completed "
+			"result=%d milestone=%u",
+			result, argument);
+		return result != EightButtonSequencePuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionTerminateRuntime) {
 		if (!manager._runtime.cyberActive)
