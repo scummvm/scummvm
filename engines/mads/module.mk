@@ -204,6 +204,7 @@ MODULE_OBJS := \
 	nebular/sound/asound_nebular.o \
 	nebular/sound/isound.o \
 	nebular/sound/isound_nebular.o \
+	nebular/sound/mac_sound.o \
 	nebular/sound/rsound.o \
 	nebular/sound/rsound_nebular.o \
 	nebular/sound/sound.o \
