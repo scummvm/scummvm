@@ -104,6 +104,7 @@ typedef struct ImGuiWindows {
 	bool imageViewer = false;
 	bool windows = false;
 	bool help = false;
+	bool profiler = false;
 } ImGuiWindows;
 
 // Rebindable debugger actions. Keep in sync with kShortcutDefs (dt-help.cpp).
@@ -444,6 +445,7 @@ void showImageViewer();	// dt-castdetails.cpp
 void showCastDetails();	// dt-castdetails.cpp
 void showControlPanel();// dt-controlpanel.cpp
 void handleDebuggerShortcuts();	// dt-controlpanel.cpp
+void showProfiler();	// dt-profiler.cpp
 
 // dt-help.cpp
 extern const ShortcutDef kShortcutDefs[kActCount];
