@@ -23,6 +23,7 @@
 
 #include "audio/mixer.h"
 #include "common/array.h"
+#include "common/rect.h"
 #include "common/str.h"
 
 namespace Common {
@@ -67,8 +68,10 @@ struct SmackerPlacementPolicy {
 	int y;
 	int originY;
 	uint displayScale;
+	Common::Rect centerBounds;
 
-	SmackerPlacementPolicy() : x(-1), y(-1), originY(0), displayScale(1) {}
+	SmackerPlacementPolicy() : x(-1), y(-1), originY(0), displayScale(1),
+		centerBounds() {}
 };
 
 struct SmackerInputPolicy {
@@ -156,7 +159,8 @@ public:
 	bool play(const Common::String &path, bool allowEscSpace, int x = -1, int y = -1,
 		bool sceneViewport = false);
 	bool playWacMedia(const Common::String &path, int x, int y);
-	bool playWacInterfaceSequence(const Common::String &path, int x, int y,
+	bool playWacInterfaceSequence(const Common::String &path,
+		const Common::Rect &centerBounds,
 		uint loopStartFrame, MediaSequenceCallback *callback, uint16 *command);
 	bool playInterfaceSequence(const Common::String &path, int x, int y,
 		Common::Array<byte> &sourcePalette);

@@ -49,6 +49,8 @@ public:
 			Ripper::kWacDatabaseHandlerJournal);
 		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(6)->handler,
 			Ripper::kWacDatabaseHandlerVoiceLock);
+		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(9)->handler,
+			Ripper::kWacDatabaseHandlerLoopingMedia);
 		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(13)->handler,
 			Ripper::kWacDatabaseHandlerLoopingMedia);
 		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(14)->handler,

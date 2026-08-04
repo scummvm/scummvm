@@ -1457,6 +1457,11 @@
   for playback. The scene's input tick publishes one mouse state,
   services the persistent WAC controls and database chooser, then presents one
   cursor after also testing the waveform and audio-editor buttons.
+- Entry 9 dispatches the silent `wacinv9.smk` member from `INTERFAC.PL`
+  through `RunStaticMediaScreenWithOptionalVoiceover` at `0x2339d`. The
+  152-by-140, 15-frame Scanned Knife sequence is centered at screen (149,121)
+  in the 350-by-282 media viewport and loops from frame one while the WAC
+  controls remain active. It writes no milestone or completion state.
 - Entries 10 and 11 dispatch `wacinv10.pcx` and `wacinv11.pcx` through
   `RunWacStillImageScreenWithOptionalAudio` at `0x22f1f`. These 300-by-393
   documents retain the database chooser, show a 282-row slice in the left WAC
