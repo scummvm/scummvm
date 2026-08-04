@@ -487,11 +487,9 @@ byte Scene::hasItem(int16 id) const {
 	} else if (id >= 0 && (uint)id < _flags.items.size()) {
 		return _flags.items[id];
 	} else {
-		// TODO: Happens in Nancy10+. Gets called for item IDs
-		// 1824, 1825, 1826, 1827, when adding tasks to the
-		// notebook, for an array of 70 items in total. Looks
-		// like a case where a flag is contained for the held
-		// item ID to be checked.
+		// Some scripts check for item IDs past the end of the inventory. The
+		// original reads those out of bounds and gets a zero, so reporting the
+		// item as missing matches it.
 		debug(2, "Scene::hasItem: out-of-range id %d (items.size=%u)", id,
 			  (uint)_flags.items.size());
 		return g_nancy->_false;
@@ -954,7 +952,14 @@ void Scene::synchronize(Common::Serializer &ser) {
 
 	g_nancy->setTotalPlayTime((uint32)_timers.lastTotalTime);
 
-	ser.syncArray(_flags.eventFlags.data(), g_nancy->getStaticData().numEventFlags, Common::Serializer::Byte);
+	uint numSavedEventFlags = g_nancy->getStaticData().numEventFlags;
+	if (ser.getVersion() < 7 && g_nancy->getGameType() == kGameTypeNancy10) {
+		// Nancy10 saves made before version 7 were written with an event flag
+		// count of 816, before the correct count of 888 was established.
+		numSavedEventFlags = 816;
+	}
+
+	ser.syncArray(_flags.eventFlags.data(), numSavedEventFlags, Common::Serializer::Byte);
 
 	if (!ser.isSaving()) {
 		// Clear generic flags
