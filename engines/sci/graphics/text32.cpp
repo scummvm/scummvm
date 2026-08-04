@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/array.h"
 #include "common/util.h"
 #include "common/stack.h"
 #include "common/unicode-bidi.h"
@@ -428,15 +429,10 @@ void GfxText32::drawText(const uint index, uint length) {
 	// implementation in SSCI, but is accurate. Primarily the changes revolve
 	// around eliminating some extra temporaries and fixing the logic to match.
 
-	Common::String textString;
-	const char *text;
-	if (!g_sci->isLanguageRTL()) {
-		text = _text.c_str() + index;
-	} else {
-		const char *textOrig = _text.c_str() + index;
-		Common::String textLogical = Common::String(textOrig, (uint32)length);
-		textString = Common::convertBiDiString(textLogical, g_sci->getLanguage(), Common::BiDiParagraph::BIDI_PAR_RTL);
-		text = textString.c_str();
+	const char *text = _text.c_str() + index;
+	if (g_sci->isLanguageRTL()) {
+		drawTextRTL(text, length);
+		return;
 	}
 
 	while (length-- > 0) {
@@ -463,6 +459,70 @@ void GfxText32::drawText(const uint index, uint length) {
 			drawChar(currentChar);
 		}
 	}
+}
+
+// The styles that the inline control codes give to a character
+struct TextStyle {
+	GuiResourceId fontId;
+	uint8 foreColor;
+};
+
+void GfxText32::drawTextRTL(const char *text, uint length) {
+	Common::String textLogical;
+	// The style each printable character is drawn in
+	Common::Array<TextStyle> styles;
+
+	TextStyle currentStyle;
+	currentStyle.fontId = _fontId;
+	currentStyle.foreColor = _foreColor;
+	// Alignment positions the line as a whole, so only its final value is used
+	TextAlign alignment = _alignment;
+
+	while (length-- > 0) {
+		const char currentChar = *text++;
+
+		if (currentChar == '|') {
+			char controlChar;
+			uint16 value;
+			// Leaves the loop rather than the function, so that the characters
+			// collected so far are still drawn below
+			if (!readStyleControl(text, length, controlChar, value)) {
+				break;
+			}
+
+			if (controlChar == 'a') {
+				alignment = (TextAlign)value;
+			} else if (controlChar == 'c') {
+				currentStyle.foreColor = value;
+			} else if (controlChar == 'f') {
+				currentStyle.fontId = value;
+			}
+		} else {
+			textLogical += currentChar;
+			styles.push_back(currentStyle);
+		}
+	}
+
+	// The only right-to-left language in SCI is Hebrew, see isLanguageRTL
+	assert(g_sci->getLanguage() == Common::HE_ISR);
+	const Common::CodePage codePage = Common::kWindows1255;
+	const Common::UnicodeBiDiText bidi(textLogical.decode(codePage), Common::BIDI_PAR_RTL);
+	const Common::String textVisual = bidi.visual.encode(codePage);
+
+	// Reordering separates the characters from the controls that styled them,
+	// so each one is drawn in the style its logical position gave it
+	for (uint i = 0; i < textVisual.size(); ++i) {
+		const TextStyle &style = styles[bidi.getLogicalPosition(i)];
+		setFont(style.fontId);
+		_foreColor = style.foreColor;
+		drawChar((byte)textVisual[i]);
+	}
+
+	// Leave behind the styles that were in effect at the logical end of the
+	// line, because that is where the next line carries on from
+	setFont(currentStyle.fontId);
+	_foreColor = currentStyle.foreColor;
+	_alignment = alignment;
 }
 
 void GfxText32::invertRect(const reg_t bitmapId, int16 bitmapStride, const Common::Rect &rect, const uint8 foreColor, const uint8 backColor, const bool doScaling) {
