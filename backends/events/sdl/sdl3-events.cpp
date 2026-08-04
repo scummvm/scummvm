@@ -1040,6 +1040,15 @@ bool SdlEventSource::isJoystickConnected() const {
 uint32 SdlEventSource::obtainUnicode(const SDL_KeyboardEvent &key) {
 	SDL_Event events[2];
 
+#if defined(USE_IMGUI)
+	// When ImGui is capturing text input, leave the SDL_EVENT_TEXT_INPUT event
+	// in the queue so its InputText widgets receive the character. We normally
+	// consume it here to fold the ASCII into ScummVM's own key event, but
+	// ScummVM's GUI is not the input target while an ImGui text field is active.
+	if (ImGui_ImplSDL3_Ready() && ImGui::GetIO().WantTextInput)
+		return 0;
+#endif
+
 	// Update the event queue here to give SDL a chance to insert TEXTINPUT
 	// events for KEYDOWN events. Otherwise we have a high chance that on
 	// Windows the TEXTINPUT event is not in the event queue at this point.
