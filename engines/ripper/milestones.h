@@ -51,7 +51,9 @@ enum MilestoneFlag {
 	kMilestonePlayedFirstWacMessage = 301,
 	kMilestoneReceivedJordanWacMessage = 305,
 	kMilestoneGotFarleyWacMessage = 307,
-	kMilestonePlayedThirdRipperWacMessage = 314
+	kMilestonePlayedGambitEmail = 309,
+	kMilestonePlayedThirdRipperWacMessage = 314,
+	kMilestoneFalconettisWell = 406
 };
 
 class Milestones {

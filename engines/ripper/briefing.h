@@ -59,6 +59,7 @@ private:
 	void captureBacking();
 	void restoreBacking();
 	bool activate();
+	bool waitForAcknowledgement(uint selector);
 
 	RipperEngine *_engine;
 	BitmapAssetSequence _frames;
