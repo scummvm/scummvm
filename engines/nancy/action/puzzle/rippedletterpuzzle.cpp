@@ -325,6 +325,13 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
+	// Nancy10+ uses the dedicated puzzle rotate/hand cursors; earlier games
+	// reuse the generic rotate and hotspot cursors.
+	const bool useNewCursors = g_nancy->getGameType() >= kGameTypeNancy10;
+	const CursorManager::CursorType rotateCursor = useNewCursors ? CursorManager::kNewRotatePiece : CursorManager::kRotateCW;
+	const CursorManager::CursorType takeCursor = useNewCursors ? CursorManager::kNewUseHandHotspot : CursorManager::kHotspot;
+	const CursorManager::CursorType dropCursor = useNewCursors ? CursorManager::kNewUseHand : CursorManager::kHotspot;
+
 	for (uint i = 0; i < _puzzleState->order.size(); ++i) {
 		Common::Rect screenHotspot = NancySceneState.getViewport().convertViewportToScreen(_destRects[i]);
 		if (screenHotspot.contains(input.mousePos)) {
@@ -337,7 +344,7 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 				insideRect.translate(screenHotspot.left, screenHotspot.top);
 
 				if (_rotationType != kRotationNone && insideRect.contains(input.mousePos)) {
-					g_nancy->_cursor->setCursorType(CursorManager::kRotateCW);
+					g_nancy->_cursor->setCursorType(rotateCursor);
 
 					if (input.input & NancyInput::kLeftMouseButtonUp) {
 						// Player has clicked, rotate the piece
@@ -358,7 +365,7 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 				insideRect.translate(screenHotspot.left, screenHotspot.top);
 
 				if (insideRect.contains(input.mousePos)) {
-					g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+					g_nancy->_cursor->setCursorType(takeCursor);
 
 					if (input.input & NancyInput::kLeftMouseButtonUp) {
 						// Player has clicked, take the piece
@@ -395,7 +402,7 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 				insideRect.translate(screenHotspot.left, screenHotspot.top);
 
 				if (insideRect.contains(input.mousePos)) {
-					g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+					g_nancy->_cursor->setCursorType(dropCursor);
 
 					if (input.input & NancyInput::kLeftMouseButtonUp) {
 						// Player has clicked, drop the piece and pick up a new one

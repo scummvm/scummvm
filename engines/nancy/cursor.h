@@ -90,8 +90,10 @@ public:
 		kNewRotateLeft			= 30,	// Type 15 — 360 scenes
 		kNewInvertedRotateRight = 32,	// Type 16 — Inverted 360 rotation
 		kNewInvertedRotateLeft	= 34,	// Type 17 — Inverted 360 rotation
-		kNewUseHand				= 36,	// Type 18 — Hand used while using items
+		kNewUseHand				= 36,	// Type 18 — Hand used while using items, and while carrying a puzzle piece
+		kNewUseHandHotspot		= 37,	// Type 18 hotspot — Hand shown when hovering a piece that can be picked up
 		kNewDragHand			= 38,	// Type 19 — Hand used while dragging puzzle pieces (e.g. SortPuzzle pickup action sets this)
+		kNewRotatePiece			= 40,	// Type 20 — Rotate arrows shown over a rotatable puzzle piece
 		kNewDialCW				= 41,	// Type 20 hotspot — Dial turn cursors, used by SafeDialPuzzle
 		kNewDialCCW				= 43,	// Type 21 hotspot
 		kNewPuzzleArrow			= 45,	// Type 22 hotspot — Arrow cursor shown when hovering a clickable puzzle hotspot
