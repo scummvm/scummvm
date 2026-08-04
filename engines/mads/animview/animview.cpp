@@ -250,7 +250,7 @@ static void run_animation(int animIndex) {
 			bool flag1 = false;
 
 			if (!seriesFlag1) {
-				if ((largeBufferEnd - largeBuffer2) <= pageMemNeeded) {
+				if ((largeBufferEnd - largeBuffer2) >= pageMemNeeded) {
 					flag1 = true;
 				} else {
 					seriesFlag1 = true;
@@ -258,7 +258,7 @@ static void run_animation(int animIndex) {
 				}
 			}
 			if (seriesFlag1) {
-				if ((largeBuffer2 - largeBuffer1) <= pageMemNeeded)
+				if ((largeBuffer2 - largeBuffer1) > pageMemNeeded)
 					flag1 = true;
 			}
 
@@ -530,6 +530,7 @@ static void animate() {
 			}
 		}
 
+		// Handling for sprite series that have individually packed frames
 		if (current_anim->misc_any_packed) {
 			largeBufferSize = 0xfffff;	// Aribitrarily large value
 			largeBuffer = (byte *)mem_get(largeBufferSize);
@@ -557,7 +558,7 @@ static void animate() {
 				Image &img = current_anim->image[imageIndex];
 				imageFrame1 = imageFrame2 = img.flags;
 				seriesMinFrame = img.flags - 1;
-				seriesMaxFrame = img.flags + img.sprite_id - 1;
+				seriesMaxFrame = img.flags + animSeries->num_sprites - 1;
 			}
 		}
 
