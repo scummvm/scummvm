@@ -30,6 +30,7 @@ namespace RexNebular {
 
 extern void popup_init();
 extern void popup_draw();
+extern void popup_close();
 extern void popup_setup_cycle();
 extern void popup_update_ask(const char *string, int maxlen);
 

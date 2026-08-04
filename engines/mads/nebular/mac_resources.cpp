@@ -203,10 +203,10 @@ const Graphics::Font *MacResourceProvider::getInterfaceFont() {
 	if (!_fontManager)
 		return nullptr;
 
-	// CODE 7 selects bold Geneva at 10 points for the native interface.
+	// CODE 7 selects plain Geneva at 10 points for the native interface.
 	// Use it directly instead of enlarging text from the compatibility surface.
 	return _fontManager->getFont(Graphics::MacFont(
-		Graphics::kMacFontGeneva, 10, Graphics::kMacFontBold));
+		Graphics::kMacFontGeneva, 10, Graphics::kMacFontRegular));
 }
 
 MacResourceProvider::ResourceID MacResourceProvider::mapResource(const Common::String &filename) {

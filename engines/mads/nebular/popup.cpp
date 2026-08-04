@@ -30,6 +30,7 @@
 #include "mads/core/mouse.h"
 #include "mads/core/pal.h"
 #include "mads/core/video.h"
+#include "mads/nebular/nebular.h"
 #include "mads/nebular/popup.h"
 
 namespace MADS {
@@ -93,6 +94,11 @@ static int popup_draw_content(int x, int y, int xs, int ys, int unknown, byte co
 }
 
 void popup_draw() {
+	if (g_engine->getPlatform() == Common::kPlatformMacintosh) {
+		static_cast<RexNebularEngine *>(g_engine)->showMacPopup();
+		return;
+	}
+
 	int askY;
 
 	int y2 = box->y + box->ys;
@@ -148,6 +154,11 @@ void popup_draw() {
 	mouse_hide();
 	video_update(&scr_main, box->x, box->y, box->x, box->y, box->xs, box->ys);
 	mouse_show();
+}
+
+void popup_close() {
+	if (g_engine->getPlatform() == Common::kPlatformMacintosh)
+		static_cast<RexNebularEngine *>(g_engine)->hideMacPopup();
 }
 
 void popup_setup_cycle() {

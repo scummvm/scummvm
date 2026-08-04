@@ -146,6 +146,29 @@ static const MADSGameDescription gameDescriptions[] = {
 		GType_RexNebular,
 		0
 	},
+
+	{
+		// Rex Nebular and the Cosmic Gender Bender Macintosh English
+		{
+			"nebular",
+			0,
+			AD_ENTRY4s("Rex Nebular", "r:e70957f9448af272e27990524b8a3f1a", 509575,
+					   "Rex Global Data", "r:ff13f7f2e6d6bb85a990015f44c19f2e", 1297502,
+					   "Rex Section I Data", "r:63cad9da79cc235a4021128bfb9f2063", 924486,
+					   "Rex Sound Data", "r:36dcb243224b489c38f1289fa61ca874", 2064349),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_UNSTABLE,
+#ifdef USE_TTS
+			GUIO9(GUIO_NOMIDI, GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_EASY_MOUSE, GAMEOPTION_ANIMATED_INVENTORY, GAMEOPTION_ANIMATED_INTERFACE, GAMEOPTION_NAUGHTY_MODE, GAMEOPTION_TTS_NARRATOR, GAMEOPTION_COPY_PROTECTION)
+#else
+			GUIO8(GUIO_NOMIDI, GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_EASY_MOUSE, GAMEOPTION_ANIMATED_INVENTORY, GAMEOPTION_ANIMATED_INTERFACE, GAMEOPTION_NAUGHTY_MODE, GAMEOPTION_COPY_PROTECTION)
+#endif
+		},
+		GType_RexNebular,
+		0
+	},
+
 	{
 		// Return of the Phantom DOS English
 		{

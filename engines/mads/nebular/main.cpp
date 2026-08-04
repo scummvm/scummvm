@@ -20,10 +20,13 @@
  */
 
 #include "common/config-manager.h"
+#include "common/translation.h"
+#include "gui/chooser.h"
 #include "gui/saveload.h"
 #include "mads/nebular/main.h"
 #include "mads/animview/animview.h"
 #include "mads/textview/textview.h"
+#include "mads/core/config.h"
 #include "mads/core/env.h"
 #include "mads/core/error.h"
 #include "mads/core/fileio.h"
@@ -237,6 +240,38 @@ static void main_cold_data_init() {
 	kernel.cheating = gDebugLevel == 9 ? kernel_cheating_allowed : 0;
 }
 
+static void selectMacintoshDifficulty() {
+	const int configuredDifficulty = ConfMan.getInt("difficulty");
+	if (configuredDifficulty >= DIFFICULTY_HARD && configuredDifficulty <= DIFFICULTY_EASY) {
+		game.difficulty = configuredDifficulty;
+		return;
+	}
+
+	Common::U32StringArray choices;
+	choices.push_back(_("Novice - Easy"));
+	choices.push_back(_("Advanced - Difficult"));
+	choices.push_back(_("Expert - Very Difficult"));
+	// The generic browser layout is tied to the launcher's game-list widget.
+	// Use its screen-based counterpart because this chooser runs in-engine.
+	GUI::ChooserDialog dialog(_("Select a Difficulty Level:"), "FileBrowser");
+	dialog.setList(choices);
+
+	switch (dialog.runModal()) {
+	case 0:
+		game.difficulty = DIFFICULTY_EASY;
+		break;
+	case 1:
+		game.difficulty = DIFFICULTY_MEDIUM;
+		break;
+	case 2:
+		game.difficulty = DIFFICULTY_HARD;
+		break;
+	default:
+		game.difficulty = DIFFICULTY_MEDIUM;
+		break;
+	}
+}
+
 static void game_main(int argc, const char **argv) {
 	int count;
 	int mads_mode;
@@ -255,6 +290,9 @@ static void game_main(int argc, const char **argv) {
 
 	game_cold_data_init();
 	main_cold_data_init();
+	if (g_engine->getPlatform() == Common::kPlatformMacintosh &&
+			!ConfMan.hasKey("save_slot"))
+		selectMacintoshDifficulty();
 	global_load_config_parameters();
 
 	if (argc >= 2) {
@@ -318,7 +356,12 @@ void nebular_main() {
 
 	g_engine->readConfigFile();
 
-	if (ConfMan.getBool("start_game") || ConfMan.hasKey("save_slot"))
+	if (g_engine->getPlatform() == Common::kPlatformMacintosh)
+		// FIXME: The Macintosh application has a native resource-based
+		// outer menu, not the DOS MADS menu and playlist files used below.
+		// The ScummVM launcher provides that outer-menu boundary.
+		selected_item = 0;
+	else if (ConfMan.getBool("start_game") || ConfMan.hasKey("save_slot"))
 		selected_item = 0;
 	else if (g_engine->isDemo())
 		selected_item = 9;

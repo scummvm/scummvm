@@ -22,10 +22,15 @@
 #ifndef MADS_NEBULAR_H
 #define MADS_NEBULAR_H
 
+#include "common/array.h"
+#include "common/rect.h"
+#include "graphics/managed_surface.h"
 #include "mads/mads.h"
 
 namespace MADS {
 namespace RexNebular {
+
+class MacResourceProvider;
 
 struct MADSSavegameHeader {
 	uint8 _version;
@@ -41,14 +46,32 @@ struct MADSSavegameHeader {
 
 class RexNebularEngine : public MADSEngine {
 private:
+	MacResourceProvider *_macResources = nullptr;
+	Common::Array<byte> _macOutput;
+	Graphics::ManagedSurface _macPopup;
+	Common::Rect _macPopupRect;
+	bool _macPopupActive = false;
+	bool _macLayoutLogged = false;
+
 	void showRecipe();
+
+protected:
+	void applyGameSettings() override;
+	Common::Point screenToGame(const Common::Point &point) const override;
+	Common::Point gameToScreen(const Common::Point &point) const override;
+	void presentScreen(int shakeOffset) override;
 
 public:
 	RexNebularEngine(OSystem *syst, const MADSGameDescription *gameDesc);
-	~RexNebularEngine() override {}
+	~RexNebularEngine() override;
 
 	Common::Error run() override;
+	bool usesScummVMMenu() const override {
+		return getPlatform() == Common::kPlatformMacintosh;
+	}
 	void syncRoom(Common::Serializer &s) override;
+	void showMacPopup();
+	void hideMacPopup();
 
 	int main_copy_verify() override;
 	void global_init_code() override;
