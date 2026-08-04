@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-07-13 11:35+0000\n"
-"PO-Revision-Date: 2026-02-07 15:22+0000\n"
-"Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
+"PO-Revision-Date: 2026-08-05 01:22+0000\n"
+"Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
 "Language: nb_NO\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.15.1\n"
+"X-Generator: Weblate 2026.7.1\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "X-Language-name: Norsk (bokmål)\n"
 
@@ -763,15 +763,16 @@ msgstr "Bruk korte overganger"
 
 #: gui/editgamedialog.cpp:334
 msgid "Enable visual markers and labels for interactive objects"
-msgstr ""
+msgstr "Aktiver visuelle markører og merker for interaktive objekter"
 
 #: gui/editgamedialog.cpp:339
 msgid "Hotspot marker:"
-msgstr ""
+msgstr "Interaktivitetsmarkør:"
 
 #: gui/editgamedialog.cpp:341
+#, fuzzy
 msgid "Point"
-msgstr ""
+msgstr "Punkt"
 
 #. I18N: Hardware key on controller
 #: gui/editgamedialog.cpp:342 backends/platform/sdl/ps3/ps3.cpp:46
@@ -793,7 +794,7 @@ msgstr "Vis hint"
 
 #: gui/editgamedialog.cpp:353
 msgid "Display text labels next to hotspot markers"
-msgstr ""
+msgstr "Vis tekstmerker ved siden av interaktivitetsmarkører"
 
 #: gui/editgamedialog.cpp:367 engines/dialogs.cpp:385
 msgid "Achievements"
@@ -932,6 +933,8 @@ msgstr "Start e-postklient"
 #: gui/integrity-dialog.cpp:152
 msgid "This game includes add-ons, pick the part you want to be checked:"
 msgstr ""
+"Dette spillet inneholder tilleggspakker. Velg den delen du ønsker at skal "
+"sjekkes:"
 
 #: gui/integrity-dialog.cpp:258
 msgid "Calculation complete"
@@ -2918,7 +2921,7 @@ msgstr "* Abc"
 
 #: gui/printing-dialog.cpp:54
 msgid "Print"
-msgstr ""
+msgstr "Skriv ut"
 
 #: gui/printing-dialog.cpp:56
 #, fuzzy
@@ -3603,7 +3606,7 @@ msgstr "Lukk popup"
 #: dists/android.strings.xml.cpp:50
 msgid ""
 "Local network access permission was denied: Web server won't be reachable"
-msgstr ""
+msgstr "Tilgang til lokalt nettverk avvist: Web-serveren vil være utilgjengelig"
 
 #: dists/android.strings.xml.cpp:51
 #, fuzzy
@@ -3948,6 +3951,10 @@ msgid ""
 "testing mode.\n"
 "If you encounter any bugs or oddities, please report them to our bugtracker."
 msgstr ""
+"ADVARSEL: Spillet du skal til å starte er nylig lagt til og er under "
+"testing.\n"
+"Hvis du opplever feil eller uvanlige hendelser, kan du rapportere dem i "
+"feilrapporteringsverktøyet vårt."
 
 #: engines/engine.cpp:933
 #, c-format
@@ -3956,6 +3963,9 @@ msgid ""
 "run independently. Please copy the add-on contents into a subdirectory of "
 "the base game, and start the base game itself."
 msgstr ""
+"Spillet (%s) du prøver å legge til er en tilleggspakke for %s som ikke kan "
+"brukes frittstående. Kopier tilleggspakkens innhold inn i undermappen til "
+"grunnspillet og start selve grunnspillet."
 
 #: engines/engine.cpp:950
 msgid "This game is not supported."
@@ -3983,11 +3993,13 @@ msgid ""
 "The directory '%s' looks like an add-on for the game '%s', but ScummVM could "
 "not find any matching add-on in it."
 msgstr ""
+"Mappen \"%s\" ser ut til å være en tilleggspakke til %s, men ScummVM finner "
+"ingen samsvarende tilleggspakke i den."
 
 #: engines/engine.cpp:1322
 #, c-format
 msgid "Directory '%s' matches several add-ons, please pick one."
-msgstr ""
+msgstr "Mappen \"%s\" samsvarer med flere tilleggspakker. Du må velge én."
 
 #: engines/game.cpp:199
 #, c-format
@@ -4205,44 +4217,54 @@ msgid "RetroWave OPL3"
 msgstr "RetroWave OPL3"
 
 #: audio/fmopl.cpp:133
+#, fuzzy
 msgid "[nFM] NokturnFM2 (OPL2)"
-msgstr ""
+msgstr "[nFM] NokturnFM2 (OPL2)"
 
 #: audio/fmopl.cpp:134
+#, fuzzy
 msgid "[nFM] NokturnFM3 (OPL3)"
-msgstr ""
+msgstr "[nFM] NokturnFM3 (OPL3)"
 
 #: audio/fmopl.cpp:135
+#, fuzzy
 msgid "[nFM] RetroWave USB OPL3 Express (OPL3)"
-msgstr ""
+msgstr "[nFM] RetroWave USB OPL3 Express (OPL3)"
 
 #: audio/fmopl.cpp:136
+#, fuzzy
 msgid "[nFM] Serdaco OPL2LPT (OPL2)"
-msgstr ""
+msgstr "[nFM] Serdaco OPL2LPT (OPL2)"
 
 #: audio/fmopl.cpp:137
+#, fuzzy
 msgid "[nFM] Serdaco OPL3LPT (OPL3)"
-msgstr ""
+msgstr "[nFM] Serdaco OPL3LPT (OPL3)"
 
 #: audio/fmopl.cpp:138
+#, fuzzy
 msgid "[nFM] Cheerful Electronics OPL2 Audio Board (OPL2)"
-msgstr ""
+msgstr "[nFM] Cheerful Electronics OPL2 Audio Board (OPL2)"
 
 #: audio/fmopl.cpp:139
+#, fuzzy
 msgid "[nFM] Cheerful Electronics OPL3 Duo! (2xOPL3)"
-msgstr ""
+msgstr "[nFM] Cheerful Electronics OPL3 Duo! (2xOPL3)"
 
 #: audio/fmopl.cpp:140
+#, fuzzy
 msgid "[nFM] ST Bus ISA / VME SoundBlaster"
-msgstr ""
+msgstr "[nFM] ST Bus ISA / VME SoundBlaster"
 
 #: audio/fmopl.cpp:141
+#, fuzzy
 msgid "[nFM] NatFeats / NULL"
-msgstr ""
+msgstr "[nFM] NatFeats / NULL"
 
 #: audio/fmopl.cpp:142
+#, fuzzy
 msgid "[nFM] Nuked-OPL3 softsynth (OPL3)"
-msgstr ""
+msgstr "[nFM] Nuked-OPL3 softsynth (OPL3)"
 
 #: audio/mididrv.cpp:232
 #, c-format
@@ -4555,7 +4577,7 @@ msgstr "Veksle muslåsing"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:507
 msgid "Toggle resizable window"
-msgstr ""
+msgstr "Tillat endring av vindusstørrelse"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:512 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
@@ -5673,7 +5695,7 @@ msgstr "Eksporter sikkerhetskopi"
 
 #: backends/platform/android/options.cpp:195
 msgid "Export a backup of the configuration and save files"
-msgstr ""
+msgstr "Eksporter en sikkerhetskopi av konfigurasjons- og lagringsfiler"
 
 #: backends/platform/android/options.cpp:196
 msgid "Import backup"
@@ -5718,6 +5740,8 @@ msgid ""
 "Restoring a backup will erase the current configuration and overwrite "
 "existing saves. Do you want to proceed?"
 msgstr ""
+"Hvis du gjenoppretter en sikkerhetskopi blir gjeldende konfigurasjon bli "
+"slettet og eksisterende lagringsfiler overskrevet. Ønsker du å fortsette?"
 
 #: backends/platform/android/options.cpp:298
 #, fuzzy
@@ -6699,11 +6723,11 @@ msgstr "Sjekk for oppdateringer..."
 
 #: engines/access/metaengine.cpp:82
 msgid "Use 'high definition' OGG music"
-msgstr ""
+msgstr "Bruk OGG-musikk med høy definisjon"
 
 #: engines/access/metaengine.cpp:83
 msgid "Use the OGG audio from the re-release instead of original MIDI tracks"
-msgstr ""
+msgstr "Bruk OGG-lyden fra relanseringen fremfor den opprinnelige MIDI-musikken"
 
 #: engines/access/metaengine.cpp:236 engines/alcachofa/metaengine.cpp:94
 #: engines/bbvs/metaengine.cpp:92 engines/buried/metaengine.cpp:133
@@ -7152,7 +7176,7 @@ msgstr "Bruk kopisperrer som til vanlig ville vært forbigått."
 
 #: engines/agi/metaengine.cpp:207
 msgid "Use PCjr's sound chip in 16-bit shift mode"
-msgstr ""
+msgstr "Bruk PCjr-lydchip i 16-bits skiftmodus"
 
 #: engines/agi/metaengine.cpp:208
 msgid ""
@@ -7161,6 +7185,10 @@ msgid ""
 "especially in fanmade games, but original Sierra music designed strictly for "
 "PCjr may sound wrong."
 msgstr ""
+"I PCjr-lydmodus emuleres en ikke-standard SN76496-lydchip, tilsvarende den "
+"som brukes i SEGA Master System-konsoller. Dette gir tilgang til enkelte "
+"musikkeffekter, særskilt i fanlagde spill, men original Sierra-musikk "
+"designet spesifikt for PCjr høres kanskje feilaktig ut."
 
 #: engines/agi/metaengine.cpp:447 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
@@ -7231,7 +7259,7 @@ msgstr "Bruk originale lagre/laste-skjermer"
 
 #: engines/agos/dialogs.cpp:94
 msgid "Toggle between the system cursor and the default cursor."
-msgstr ""
+msgstr "Veksle mellom systempekeren og standardpekeren."
 
 #: engines/agos/dialogs.cpp:107 engines/sci/detection_options.h:261
 msgid "MIDI mode:"
@@ -7756,7 +7784,7 @@ msgstr "Last inn allikevel"
 
 #: engines/awe/metaengine.cpp:35
 msgid "Enable title and copy protection screens (if present)"
-msgstr ""
+msgstr "Bruk tittel- og kopisperreskjermer (hvis tilgjengelig)"
 
 #: engines/awe/metaengine.cpp:36
 #, fuzzy
@@ -7823,14 +7851,12 @@ msgid "Page Down"
 msgstr "Rotere nedover"
 
 #: engines/bagel/metaengine.cpp:72
-#, fuzzy
-#| msgid "Boss key"
 msgid "Home"
-msgstr "Sjefen-tast"
+msgstr "Home"
 
 #: engines/bagel/metaengine.cpp:73
 msgid "End"
-msgstr ""
+msgstr "End"
 
 #: engines/bagel/metaengine.cpp:180
 msgid "General Keys"
@@ -8228,6 +8254,8 @@ msgid ""
 "This option allows the game to play at a slightly extended resolution. This "
 "is what the Mac and CDi versions are supposed to play like."
 msgstr ""
+"Dette gjør det mulig for spillet å kjøre i en noe utvidet skjermoppløsning. "
+"Det er slik Mac- og CDi-versjonen er designet for å være."
 
 #: engines/buried/buried.cpp:598
 msgid "Are you sure you want to quit?"
@@ -8327,27 +8355,27 @@ msgstr "Gå fremover"
 #. I18N: AI is Artificial Intelligence
 #: engines/buried/metaengine.cpp:230
 msgid "Replay last AI comment"
-msgstr ""
+msgstr "Spill av forrige KI-kommentar"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the Artificial Intelligence biochip.
 #: engines/buried/metaengine.cpp:237
 msgid "Biochip AI"
-msgstr ""
+msgstr "Biochip KI"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the blank biochip.
 #: engines/buried/metaengine.cpp:243
 msgid "Biochip blank"
-msgstr ""
+msgstr "Biochip blank"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the cloak biochip.
 #: engines/buried/metaengine.cpp:249
 msgid "Biochip cloak"
-msgstr ""
+msgstr "Biochip skalkeskjul"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the evidence biochip.
 #: engines/buried/metaengine.cpp:255
 msgid "Biochip evidence"
-msgstr ""
+msgstr "Biochip bevis"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the files biochip.
 #: engines/buried/metaengine.cpp:261
@@ -8359,17 +8387,17 @@ msgstr "Vis skjulte filer"
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the interface biochip.
 #: engines/buried/metaengine.cpp:267
 msgid "Biochip interface"
-msgstr ""
+msgstr "Biochip grensesnitt"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the jump biochip.
 #: engines/buried/metaengine.cpp:273
 msgid "Biochip jump"
-msgstr ""
+msgstr "Biochip hopp"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the translate biochip.
 #: engines/buried/metaengine.cpp:279
 msgid "Biochip translate"
-msgstr ""
+msgstr "Biochip oversett"
 
 #. I18N: Shows a summary of collected points in the game.
 #: engines/buried/metaengine.cpp:285
@@ -8782,11 +8810,11 @@ msgstr "Neste handling"
 
 #: engines/colony/savegame.cpp:291
 msgid "Saving is only available in first-person view."
-msgstr ""
+msgstr "Lagring er kun tilgjengelig i førstepersonsvisning."
 
 #: engines/colony/savegame.cpp:300
 msgid "Loading is only available in first-person view."
-msgstr ""
+msgstr "Innlasting er kun tilgjengelig i førepersonsvisning."
 
 #: engines/crab/input/input.cpp:119
 #, fuzzy
@@ -8924,6 +8952,8 @@ msgid ""
 "Use the music from the floppy version. The floppy version's music files must "
 "be copied to the SOUND directory."
 msgstr ""
+"Bruk musikken fra diskettutgaven. Du må kopiere diskettversjonens "
+"musikkfiler til SOUND-mappen."
 
 #: engines/darkseed/dialogs.cpp:121
 #, fuzzy
@@ -8937,18 +8967,21 @@ msgid ""
 "additional floppy SFX, or floppy SFX only. Floppy SFX are only available if "
 "floppy music is used."
 msgstr ""
+"Avgjør om spillet skal kun bruke CD-versjonens lydeffekter, CD-versjonens "
+"lydeffekter og diskettlydeffekter, eller kun diskettlydeffekter. "
+"Diskettlydeffekter er kun tilgjengelig hvis du bruker diskettmusikk."
 
 #: engines/darkseed/dialogs.cpp:127
 msgid "CD version SFX only"
-msgstr ""
+msgstr "Kun lydeffekter fra CD-versjon"
 
 #: engines/darkseed/dialogs.cpp:131
 msgid "CD + extra floppy SFX"
-msgstr ""
+msgstr "CD + ekstra diskettlyder"
 
 #: engines/darkseed/dialogs.cpp:135
 msgid "Floppy version SFX only"
-msgstr ""
+msgstr "Kun diskettversjonens lyder"
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:42 engines/dragons/metaengine.cpp:135
@@ -9018,11 +9051,11 @@ msgstr "Bildeformatskorrigering aktivert"
 
 #: engines/director/metaengine.cpp:71
 msgid "Brighten the graphics to simulate a Macintosh monitor"
-msgstr ""
+msgstr "Gjør grafikken lysere for å simulere en Macintosh-skjerm"
 
 #: engines/director/metaengine.cpp:81
 msgid "Force true color (32bpp) mode"
-msgstr ""
+msgstr "Tvungen ekte farger (32bpp)-modus"
 
 #: engines/director/metaengine.cpp:82
 #, fuzzy
@@ -9049,7 +9082,7 @@ msgstr "Skru visning av utstyrsliste/IQ-poeng av/på"
 #. I18N: (Game name: Dungeon Master) The game has multi-choice dialogs. If there is only one choice, then this action can be used to select it.
 #: engines/dm/metaengine.cpp:90
 msgid "Select dialog choice (only works if there is a single choice)"
-msgstr ""
+msgstr "Velg dialogvalg (fungerer kun når det er ett alternativ tilgjengelig)"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 1.
 #: engines/dm/metaengine.cpp:97
@@ -9287,17 +9320,19 @@ msgstr "Merk neste dialog"
 
 #: engines/eem/metaengine.cpp:39
 msgid "Hide the boxes that highlight searchable clue locations."
-msgstr ""
+msgstr "Skjul boksene som fremhever søkbare ledetrådsplasseringer."
 
 #: engines/eem/metaengine.cpp:49
 msgid "Better fit for dialog balloons"
-msgstr ""
+msgstr "Bedre plass til snakkebobler"
 
 #: engines/eem/metaengine.cpp:50
 msgid ""
 "Pick a smaller speech-bubble graphic when the wrapped text doesn't need the "
 "original size."
 msgstr ""
+"Bruk en mindre snakkeboble når justert tekst ikke trenger den opprinnelige "
+"størrelsen."
 
 #: engines/eem/metaengine.cpp:61
 #, fuzzy
@@ -9307,7 +9342,7 @@ msgstr "Tale"
 
 #: engines/eem/metaengine.cpp:62
 msgid "Skip all Book 2 cases and jump to Book 3 once Book 1 is complete."
-msgstr ""
+msgstr "Hopp over alle Bok 2-saker og gå rett til Bok 3 når Bok 1 er fullført."
 
 #: engines/eem/metaengine.cpp:72 engines/hypno/metaengine.cpp:81
 msgid "Enable restored content"
@@ -9318,6 +9353,8 @@ msgid ""
 "Restore floppy release extras in the CD version, including pre-scrapbook "
 "conversations and first-try badges."
 msgstr ""
+"Gjenopprett diskettversjonens ekstrainnhold i CD-versjonen, inkludert før-"
+"utklippsbokssamtaler og første forsøk-merker."
 
 #: engines/efh/metaengine.cpp:235
 #, fuzzy
@@ -9773,11 +9810,11 @@ msgstr "Tillat reising ved å hjelp av steinskyting på starten"
 
 #: engines/freescape/metaengine.cpp:140
 msgid "Smoother movement"
-msgstr ""
+msgstr "Jevnere bevegelse"
 
 #: engines/freescape/metaengine.cpp:141
 msgid "Use smoother movements instead of discrete steps"
-msgstr ""
+msgstr "Bruk jevnere bevegelse fremfor diskret steg"
 
 #. I18N: Use modern FPS-style controls: WASD for movement, Shift to run
 #: engines/freescape/metaengine.cpp:152
@@ -9788,26 +9825,28 @@ msgstr "Berøringskontroller"
 
 #: engines/freescape/metaengine.cpp:153
 msgid "Use WASD keys for movement and Shift to run"
-msgstr ""
+msgstr "Bruk WASD-tastene til bevegelse og Shift for å løpe"
 
 #. I18N: Enable background music using AdLib/OPL2 FM synthesis
 #: engines/freescape/metaengine.cpp:164
 msgid "Backported music from C64 releases (AdLib)"
-msgstr ""
+msgstr "Tilbakekonvertert musikk fra C64-utgivelsen (AdLib)"
 
 #: engines/freescape/metaengine.cpp:165
 msgid ""
 "Enable background music ported from the C64 version using AdLib FM synthesis"
 msgstr ""
+"Bruk bakgrunnsmusikk konvertert fra C64-versjonen ved hjelp av AdLib FM "
+"synthesis"
 
 #. I18N: Enable background music using AY chip emulation
 #: engines/freescape/metaengine.cpp:176
 msgid "Backported music from C64 releases"
-msgstr ""
+msgstr "Tilbakekonvertert musikk fra C64-utgivelser"
 
 #: engines/freescape/metaengine.cpp:177
 msgid "Enable background music ported from the C64 version"
-msgstr ""
+msgstr "Bruk bakgrunnsmusikk konvertert fra C64-versjonen"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:69 engines/mm/mm1/metaengine.cpp:84
@@ -9872,7 +9911,7 @@ msgstr "Krype"
 
 #: engines/freescape/games/castle/castle.cpp:534
 msgid "Run (hold)"
-msgstr ""
+msgstr "Løp (Hold inne)"
 
 #: engines/freescape/games/dark/dark.cpp:263
 #: engines/freescape/games/driller/driller.cpp:183
@@ -9967,7 +10006,7 @@ msgstr "Endre stetstørrelse"
 
 #: engines/freescape/games/eclipse/eclipse.cpp:381
 msgid "Sprint (hold)"
-msgstr ""
+msgstr "Sprint (hold inne)"
 
 #: engines/freescape/games/eclipse/eclipse.cpp:389
 #, fuzzy
@@ -10056,11 +10095,11 @@ msgstr "Byttet til bildevindu\n"
 
 #: engines/glk/dialogs.cpp:141
 msgid "white"
-msgstr ""
+msgstr "hvit"
 
 #: engines/glk/dialogs.cpp:142
 msgid "green"
-msgstr ""
+msgstr "grønn"
 
 #: engines/glk/dialogs.cpp:143
 #, fuzzy
@@ -10070,47 +10109,54 @@ msgstr "Fortsett"
 
 #: engines/glk/dialogs.cpp:144
 msgid "blue"
-msgstr ""
+msgstr "blå"
 
 #: engines/glk/dialogs.cpp:145
 msgid "black"
-msgstr ""
+msgstr "sort"
 
 #: engines/glk/dialogs.cpp:146
 msgid "grey"
-msgstr ""
+msgstr "grå"
 
 #: engines/glk/dialogs.cpp:195
 msgid "Monospace Regular"
-msgstr ""
+msgstr "Monospace Regular"
 
 #: engines/glk/dialogs.cpp:196
+#, fuzzy
 msgid "Monospace Bold"
-msgstr ""
+msgstr "Monospace Bold"
 
 #: engines/glk/dialogs.cpp:197
+#, fuzzy
 msgid "Monospace Italic"
-msgstr ""
+msgstr "Monospace Italic"
 
 #: engines/glk/dialogs.cpp:198
+#, fuzzy
 msgid "Monospace Bold Italic"
-msgstr ""
+msgstr "Monospace Bold Italic"
 
 #: engines/glk/dialogs.cpp:199
+#, fuzzy
 msgid "Proportional Regular"
-msgstr ""
+msgstr "Proportional Regular"
 
 #: engines/glk/dialogs.cpp:200
+#, fuzzy
 msgid "Proportional Bold"
-msgstr ""
+msgstr "Proportional Bold"
 
 #: engines/glk/dialogs.cpp:201
+#, fuzzy
 msgid "Proportional Italic"
-msgstr ""
+msgstr "Proportional Italic"
 
 #: engines/glk/dialogs.cpp:202
+#, fuzzy
 msgid "Proportional Bold Italic"
-msgstr ""
+msgstr "Proportional Bold Italic"
 
 #: engines/glk/dialogs.cpp:210
 #, fuzzy
@@ -10126,19 +10172,19 @@ msgstr "ProText"
 
 #: engines/glk/dialogs.cpp:212
 msgid "Font for the text"
-msgstr ""
+msgstr "Tekstfont"
 
 #: engines/glk/dialogs.cpp:216 engines/glk/dialogs.cpp:227
 msgid "Grid:"
-msgstr ""
+msgstr "Rutenett:"
 
 #: engines/glk/dialogs.cpp:216
 msgid "Font for drawn graphics like maps, diagrams, puzzles, etc"
-msgstr ""
+msgstr "Font for tegnet grafikk som kart, diagrammer, gåter, osv."
 
 #: engines/glk/dialogs.cpp:220
 msgid "Color"
-msgstr ""
+msgstr "Farge"
 
 #: engines/glk/dialogs.cpp:222
 #, fuzzy
@@ -10151,11 +10197,11 @@ msgstr "Gå til konfigurasjonsmeny"
 #: engines/glk/dialogs.cpp:254 engines/glk/dialogs.cpp:260
 #: engines/glk/dialogs.cpp:269
 msgid "<custom>"
-msgstr ""
+msgstr "<tilpasset>"
 
 #: engines/glk/dialogs.cpp:227
 msgid "Color for drawn graphics such as maps, diagrams, puzzles, etc"
-msgstr ""
+msgstr "Farge for tegnet grafikk som kart, diagrammer, gåter, osv."
 
 #: engines/glk/dialogs.cpp:232
 #, fuzzy
@@ -10216,7 +10262,7 @@ msgstr "Vertikal underscan:"
 
 #: engines/glk/dialogs.cpp:250
 msgid "Caret:"
-msgstr ""
+msgstr "Møne:"
 
 #: engines/glk/dialogs.cpp:250
 #, fuzzy
@@ -10226,20 +10272,20 @@ msgstr "Vanlig muspeker"
 
 #: engines/glk/dialogs.cpp:256
 msgid "Link:"
-msgstr ""
+msgstr "Lenke:"
 
 #: engines/glk/dialogs.cpp:256
 msgid "Color for URLs if they appear in-game"
-msgstr ""
+msgstr "Farge for URL-er hvis de vises i spill"
 
 #. I18N: "More..." is a prompt in text windows, which appears when the text exceeds the window size
 #: engines/glk/dialogs.cpp:264
 msgid "More:"
-msgstr ""
+msgstr "Mer:"
 
 #: engines/glk/dialogs.cpp:265
 msgid "Color for the \"More...\" markers in the text"
-msgstr ""
+msgstr "Farge for \"Mer …\"-markører i teksten"
 
 #: engines/glk/dialogs.cpp:272
 #, fuzzy
@@ -10249,11 +10295,11 @@ msgstr "Grafikkmodus:"
 
 #: engines/glk/dialogs.cpp:274
 msgid "Link style:"
-msgstr ""
+msgstr "Lenkestil:"
 
 #: engines/glk/dialogs.cpp:274
 msgid "Style for URLs if they appear in-game"
-msgstr ""
+msgstr "Stilen til URL-er hvis de vises i spill"
 
 #: engines/glk/dialogs.cpp:279
 #, fuzzy
@@ -10278,6 +10324,8 @@ msgid ""
 "Custom marker in place of the \"More...\" marker for eg. \"continue\". Leave "
 "it blank to use the game's default"
 msgstr ""
+"Tilpasset markør for \"Mer …\"-markører som f.eks. \"Fortsett\". La dette "
+"være blankt for å bruke spillets standardmarkør"
 
 #: engines/glk/dialogs.cpp:288
 #, fuzzy
@@ -10287,7 +10335,7 @@ msgstr "Skjul hint"
 
 #: engines/glk/dialogs.cpp:288
 msgid "Let the game suggest text styling options"
-msgstr ""
+msgstr "La spillet foreslå tekststiliseringsalternativer"
 
 #: engines/glk/dialogs.cpp:289
 #, fuzzy
@@ -10297,7 +10345,7 @@ msgstr "Venstreklikk"
 
 #: engines/glk/dialogs.cpp:289
 msgid "Safely apply clicks while input is pending"
-msgstr ""
+msgstr "Trygt klikk mens inndata venter"
 
 #. I18N: This is setting for number of text columns
 #: engines/glk/dialogs.cpp:292
@@ -10308,24 +10356,24 @@ msgstr "Berøringskontroller"
 
 #: engines/glk/dialogs.cpp:292
 msgid "Number of columns"
-msgstr ""
+msgstr "Antall kolonner"
 
 #. I18N: This is setting for number of text rows
 #: engines/glk/dialogs.cpp:294
 msgid "Rows count:"
-msgstr ""
+msgstr "Antall rader:"
 
 #: engines/glk/dialogs.cpp:294
 msgid "Number of rows"
-msgstr ""
+msgstr "Antallet rader"
 
 #: engines/glk/dialogs.cpp:296
 msgid "Lock columns:"
-msgstr ""
+msgstr "Lås kolonner:"
 
 #: engines/glk/dialogs.cpp:296
 msgid "Check it to manually change the column count"
-msgstr ""
+msgstr "Marker for manuell endring av antallet kolonner"
 
 #: engines/glk/dialogs.cpp:297
 #, fuzzy
@@ -10335,12 +10383,12 @@ msgstr "Lav blokk"
 
 #: engines/glk/dialogs.cpp:297
 msgid "Check it to manually change the row count"
-msgstr ""
+msgstr "Marker for manuell endring av antallet rader"
 
 #. I18N: This is a setting for enabling text justification
 #: engines/glk/dialogs.cpp:301
 msgid "Justify:"
-msgstr ""
+msgstr "Forsvar:"
 
 #: engines/glk/dialogs.cpp:302
 #, fuzzy
@@ -10356,62 +10404,58 @@ msgid "Typographic quotes:"
 msgstr "Grafikkmodus:"
 
 #: engines/glk/dialogs.cpp:306
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Choose typographic quotes"
-msgstr "Fargegrafikk"
+msgstr "Velg typografiske anførselstegn"
 
 #: engines/glk/dialogs.cpp:307
 msgctxt "quotes"
 msgid "Off"
-msgstr ""
+msgstr "Av"
 
 #. I18N: This is a setting for using normal typographic quotes, which are like in most books, with the opening quote higher than the closing one
 #: engines/glk/dialogs.cpp:309
-#, fuzzy
-#| msgid "Normal"
 msgctxt "quotes"
 msgid "Normal"
-msgstr "Normal"
+msgstr "Normale"
 
 #. I18N: This is a setting for using "rabid" quotes, which are like normal typographic quotes but with the opening quote lower than the closing one, like in some comic books
 #: engines/glk/dialogs.cpp:311
 msgctxt "quotes"
 msgid "Rabid"
-msgstr ""
+msgstr "Alternative"
 
 #. I18N: This is a setting for forcing all input to be in uppercase
 #: engines/glk/dialogs.cpp:314
 msgid "Caps:"
-msgstr ""
+msgstr "Store bokstaver:"
 
 #: engines/glk/dialogs.cpp:314
 msgid "Force uppercase input"
-msgstr ""
+msgstr "Fremtving store bokstaver"
 
 #. I18N: This is a setting for type of text dash symbols
 #: engines/glk/dialogs.cpp:317
 msgid "Dashes:"
-msgstr ""
+msgstr "Tankestreker:"
 
 #. I18N: This is a setting for type of text dash symbols
 #: engines/glk/dialogs.cpp:319
 msgid "Types of dashes"
-msgstr ""
+msgstr "Tankestrekvarianter"
 
 #: engines/glk/dialogs.cpp:320 engines/glk/dialogs.cpp:332
 msgid "Off"
-msgstr ""
+msgstr "Av"
 
 #. I18N: This is a setting for using normal typographic dashes, which are like in most books, with the em dash being the longest and the en dash being half of it
 #: engines/glk/dialogs.cpp:322
 msgid "Em dashes"
-msgstr ""
+msgstr "Lange"
 
 #. I18N: This is a setting for using "en+em" dashes, which are like normal typographic dashes but with the en dash being the same length as the em dash, like in some comic books
 #: engines/glk/dialogs.cpp:324
 msgid "En+Em dashes"
-msgstr ""
+msgstr "Korte og lange"
 
 #: engines/glk/dialogs.cpp:326
 #, fuzzy
@@ -10429,17 +10473,17 @@ msgstr "Space"
 #. I18N: This is a setting for type of spaces in the text
 #: engines/glk/dialogs.cpp:331
 msgid "Types of spaces"
-msgstr ""
+msgstr "Mellomromstyper"
 
 #. I18N: This is a setting for compressing double spaces into single ones in text
 #: engines/glk/dialogs.cpp:334
 msgid "Compress double spaces"
-msgstr ""
+msgstr "Komprimer doble mellomrom"
 
 #. I18N: This is a setting for expanding single spaces into double ones in text
 #: engines/glk/dialogs.cpp:336
 msgid "Expand single spaces"
-msgstr ""
+msgstr "Utvid enkelt mellomrom"
 
 #: engines/glk/dialogs.cpp:338
 #, fuzzy
@@ -10449,7 +10493,7 @@ msgstr "Grafikk"
 
 #: engines/glk/dialogs.cpp:338
 msgid "Turn graphics on/off"
-msgstr ""
+msgstr "Skru grafikk på/av"
 
 #: engines/glk/dialogs.cpp:340
 #, fuzzy
@@ -10459,11 +10503,11 @@ msgstr "Vindu"
 
 #: engines/glk/dialogs.cpp:341
 msgid "Horizontal margin for window"
-msgstr ""
+msgstr "Horisontal vindusmargin"
 
 #: engines/glk/dialogs.cpp:342
 msgid "Vertical margin for window"
-msgstr ""
+msgstr "Vertikal vindusmargin"
 
 #: engines/glk/dialogs.cpp:344
 #, fuzzy
@@ -10473,11 +10517,11 @@ msgstr "Vindu"
 
 #: engines/glk/dialogs.cpp:345
 msgid "Horizontal padding for window"
-msgstr ""
+msgstr "Horisontal vindusutfylling"
 
 #: engines/glk/dialogs.cpp:346
 msgid "Vertical padding for window"
-msgstr ""
+msgstr "Vertikal vindusutfylling"
 
 #: engines/glk/dialogs.cpp:348
 #, fuzzy
@@ -10487,11 +10531,11 @@ msgstr "Neste handling"
 
 #: engines/glk/dialogs.cpp:349
 msgid "Horizontal margin for text"
-msgstr ""
+msgstr "Horisontal tekstmargin"
 
 #: engines/glk/dialogs.cpp:350
 msgid "Vertical margin for text"
-msgstr ""
+msgstr "Vertikal tekstmargin"
 
 #. I18N: This is a setting for leading, which is the vertical distance between text rows
 #: engines/glk/dialogs.cpp:353
@@ -10501,50 +10545,52 @@ msgstr "Laster spill..."
 
 #: engines/glk/dialogs.cpp:354
 msgid "Vertical distance between text rows. Valid inputs - 12, 16, 22 etc."
-msgstr ""
+msgstr "Vertikal avstand mellom tekstrater. Gyldige verdier: 12, 16, 22 osv."
 
 #. I18N: This is a setting for baseline, which is the invisible horizontal line on which text sits
 #: engines/glk/dialogs.cpp:356
 msgid "Baseline:"
-msgstr ""
+msgstr "Bunnlinje:"
 
 #: engines/glk/dialogs.cpp:357
 msgid ""
 "Invisible horizontal line on which text sits. Valid inputs - 8, 16 etc. as "
 "per your font size"
 msgstr ""
+"Usynlig horisontal linje som teksten står på. Gyldige verdier: 8, 16, osv. "
+"iht. til fontstørrelsen"
 
 #. I18N: Font size scaling for the monospace text font
 #: engines/glk/dialogs.cpp:360
 msgid "Monosize:"
-msgstr ""
+msgstr "Monostørrelse:"
 
 #: engines/glk/dialogs.cpp:361
 msgid "Font size scaling for the monospace text font"
-msgstr ""
+msgstr "Skalering av fontstørrelse for monospace-tekstfonten"
 
 #. I18N: Font size scaling for the proportional text font
 #: engines/glk/dialogs.cpp:363
 msgid "Propsize:"
-msgstr ""
+msgstr "Propstørrelse:"
 
 #: engines/glk/dialogs.cpp:364
 msgid "Font size scaling for the proportional text font"
-msgstr ""
+msgstr "Skalering av fontstørrelse for proportional-tekstfonten"
 
 #. I18N: This is a section for settings related to the "More..." prompt in text windows
 #: engines/glk/dialogs.cpp:367
 msgid "More"
-msgstr ""
+msgstr "Mer"
 
 #. I18N: This is a setting for alignment of the "More..." prompt in text windows
 #: engines/glk/dialogs.cpp:369
 msgid "Align:"
-msgstr ""
+msgstr "Juster:"
 
 #: engines/glk/dialogs.cpp:370
 msgid "Alignment of the \"More...\" marker on the window"
-msgstr ""
+msgstr "Plasseringen av \"Mer …\"-markøren på vinduet"
 
 #: engines/glk/dialogs.cpp:375
 #, fuzzy
@@ -10554,7 +10600,7 @@ msgstr "SoundFont:"
 
 #: engines/glk/dialogs.cpp:375
 msgid "Font for the \"More...\" marker"
-msgstr ""
+msgstr "Fonten som brukes på \"Mer …\"-markøren"
 
 #: engines/glk/glulx/glulx.cpp:81
 msgid "This is too short to be a valid Glulx file."
@@ -10889,16 +10935,16 @@ msgid "The Troy minigame is not supported yet. Skipping"
 msgstr "Troja-minispillet støttes ikke ennå. Hopper over minispillet."
 
 #: engines/harvester/metaengine.cpp:33
-#, fuzzy
-#| msgid "Enable storage"
 msgid "Enable gore"
-msgstr "Aktiver lagring"
+msgstr "Vis innvoller"
 
 #: engines/harvester/metaengine.cpp:34
 msgid ""
 "When disabled, the startup movie player follows the original GORE=NO "
 "censorship path."
 msgstr ""
+"Skru av for å bruke den opprinnelige GORE=NO-sensurbanen for "
+"oppstartsfilmspilleren."
 
 #: engines/harvester/metaengine.cpp:44
 #, fuzzy
@@ -10911,6 +10957,8 @@ msgid ""
 "Display the original CD swap image and wait for a left click when the script "
 "requests disc 2 or 3."
 msgstr ""
+"Viser det opprinnelige \"Bytt CD\"-bildet og venter på et venstreklikk når "
+"programmet ber om Disk 2 eller 3."
 
 #: engines/hdb/metaengine.cpp:44 engines/illusions/metaengine.cpp:153
 msgid "Enable cheat mode"
@@ -11011,7 +11059,7 @@ msgstr "Enkelt grensesnitt for mus"
 
 #: engines/hugo/metaengine.cpp:46
 msgid "Use mouse and toolbar from Windows version"
-msgstr ""
+msgstr "Bruk musepeker og verktøylinje fra Windows-versjonen"
 
 #: engines/hugo/metaengine.cpp:148
 msgid "User help"
@@ -11135,78 +11183,58 @@ msgstr "Indeks-tasteoppsett"
 
 #: engines/hypno/metaengine.cpp:134 engines/hypno/metaengine.cpp:144
 msgid "Primary shoot"
-msgstr ""
+msgstr "Primærskudd"
 
 #: engines/hypno/metaengine.cpp:139
-#, fuzzy
-#| msgid "Seconds"
 msgid "Secondary shoot"
-msgstr "Sekunder"
+msgstr "Sekunderskudd"
 
 #: engines/hypno/metaengine.cpp:149
-#, fuzzy
-#| msgid "Map hide toolbar action"
 msgid "Rapid fire / secondary action"
-msgstr "Koble skjul-verktøylinje-handlingen"
+msgstr "Hurtigild / Sekundærhandling"
 
 #: engines/hypno/metaengine.cpp:155
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Aim left"
-msgstr "Skli mot Venstre"
+msgstr "Sikt mot venstre"
 
 #: engines/hypno/metaengine.cpp:160
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Aim down"
-msgstr "Bla ned"
+msgstr "Sikt nedover"
 
 #: engines/hypno/metaengine.cpp:165
-#, fuzzy
-#| msgid "Up Right"
 msgid "Aim right"
-msgstr "Opp til høyre"
+msgstr "Sikt mot høyre"
 
 #: engines/hypno/metaengine.cpp:170
 msgid "Aim up"
-msgstr ""
+msgstr "Sikt oppover"
 
 #: engines/hypno/metaengine.cpp:175 engines/scumm/metaengine.cpp:1202
 #: engines/scumm/metaengine.cpp:1279
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Stick left"
-msgstr "Skli mot Venstre"
+msgstr "Styrespak mot venstre"
 
 #: engines/hypno/metaengine.cpp:182 engines/scumm/metaengine.cpp:1195
 #: engines/scumm/metaengine.cpp:1272
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Stick down"
-msgstr "Bla ned"
+msgstr "Styrespak nedover"
 
 #: engines/hypno/metaengine.cpp:189 engines/scumm/metaengine.cpp:1209
 #: engines/scumm/metaengine.cpp:1286
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Stick right"
-msgstr "Skli mot Høyre"
+msgstr "Styrespak mot høyre"
 
 #: engines/hypno/metaengine.cpp:196 engines/scumm/metaengine.cpp:1188
 #: engines/scumm/metaengine.cpp:1265
-#, fuzzy
-#| msgid "Pick up"
 msgid "Stick up"
-msgstr "Plukk opp"
+msgstr "Styrespak oppover"
 
 #: engines/hypno/metaengine.cpp:203 engines/lab/metaengine.cpp:209
 #: engines/ngi/metaengine.cpp:168 engines/sherlock/metaengine.cpp:872
 #: engines/teenagent/metaengine.cpp:232 engines/toon/metaengine.cpp:98
 #: engines/voyeur/metaengine.cpp:235
-#, fuzzy
-#| msgid "Skip line"
 msgid "Skip intro"
-msgstr "Hopp over linje"
+msgstr "Hopp over intro"
 
 #: engines/hypno/metaengine.cpp:226
 #, fuzzy
@@ -11244,17 +11272,17 @@ msgstr "Drep spiller"
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Chump is the easy mode.
 #: engines/hypno/metaengine.cpp:262
 msgid "Chump"
-msgstr ""
+msgstr "Pingle"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Punk is the medium mode.
 #: engines/hypno/metaengine.cpp:269
 msgid "Punk"
-msgstr ""
+msgstr "Pøbel"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Badass is the hard mode.
 #: engines/hypno/metaengine.cpp:276
 msgid "Badass"
-msgstr "Tøffing"
+msgstr "Råtass"
 
 #. I18N: (Game name: Soldier Boyz) This makes the player restart from the last checkpoint.
 #: engines/hypno/metaengine.cpp:289
