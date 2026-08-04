@@ -29,6 +29,16 @@ struct CastleAmigaLayout {
 	int gatePixels, gateMask, mod;
 };
 
+// The same, for a decompressed Atari ST game program. Castle Master and its
+// sequel share the layout; riddles, extraAreas and area255 are zero when the
+// release has no such block.
+struct CastleAtariLayout {
+	int messages, messageCount, riddles, colorCycling, fonts, palettes, areaDB;
+	int extraAreas, area255, border, mountains, spiritMeterBg, spiritMeter;
+	int thunder, weights, bar, gatePixels, gateMask, eyeIcons, flag;
+	int riddleMask, riddleTop, mod;
+};
+
 class MusicPlayer;
 
 struct RiddleText {
@@ -219,6 +229,7 @@ public:
 private:
 	Common::SeekableReadStream *decryptFile(const Common::Path &filename);
 	Common::SeekableReadStream *decompressAtari(const Common::Path &filename);
+	void loadAtariLoadingScreen();
 	void loadRiddles(Common::SeekableReadStream *file, int offset, int number);
 	void loadMessagesC64(Common::SeekableReadStream *file, int offset, int number);
 	void loadRiddlesC64(Common::SeekableReadStream *file, int offset, int number);

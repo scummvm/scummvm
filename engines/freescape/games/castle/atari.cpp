@@ -174,21 +174,67 @@ static uint32 getProTrackerModuleSize(Common::SeekableReadStream *file, uint32 o
 extern byte kAmigaCastlePalette[16][3];
 extern byte kAmigaCastleRiddlePalette[16][3];
 
+// Castle Master, located by matching the shared asset bytes against the Amiga
+// "x" file.
+const CastleAtariLayout kAtariCastleLayout = {
+	0x27946, 178, 0x28410, 0x27928, 0x2f32a, 0x32594, 0x33694,
+	3, 0x49284, 0x4a364, 0x04f24, 0x55d40, 0x55ed0,
+	0x55f20, 0x569d0, 0x56bb0, 0x56ed0, 0x57ef0, 0x594a0, 0x5974a,
+	0x59ae4, 0x59b04, 0x10fb6
+};
+
+// "The Crypt", the second disc of "Castle Master & The Crypt". It carries the
+// interface artwork and the music module byte for byte, 0xf512 lower in the
+// image; what differs is the world, and it has no riddles (the one left in the
+// data is Castle Master's).
+const CastleAtariLayout kAtariCryptLayout = {
+	0x273ec, 165, 0, 0x2731a, 0x2e366, 0x315d0, 0x326d0,
+	0, 0, 0x3ae52, 0x04914, 0x4682e, 0x469be,
+	0x46a0e, 0x474be, 0x4769e, 0x479be, 0x489de, 0x49f8e, 0x4a238,
+	0x4a5d2, 0x4a5f2, 0x109a6
+};
+
+// L.PRG, the loader program that launches The Crypt, copies a palette and then
+// 1000 * 32 bytes straight to the screen, from program $6f4 and $770.
+void CastleEngine::loadAtariLoadingScreen() {
+	Common::File file;
+	if (!file.open("L.PRG"))
+		return;
+
+	byte palette[16][3];
+	file.seek(0x710);
+	for (int i = 0; i < 16; i++) {
+		uint16 color = file.readUint16BE();
+		for (int c = 0; c < 3; c++) {
+			byte v = (color >> (8 - 4 * c)) & 7;
+			palette[i][c] = v * 255 / 7;
+		}
+	}
+
+	file.seek(0x78c);
+	_title = loadFrameFromPlanesInterleaved(&file, 20, 200);
+	_title->convertToInPlace(_gfx->_texturePixelFormat, (byte *)palette, 16);
+}
+
 void CastleEngine::loadAssetsAtariFullGame() {
-	// The player provides the Copylock-decrypted executable as "M.PRG"; it is
-	// still Huffman-packed, so decompress it to obtain the real game binary.
-	// The Atari ST build shares the Amiga data *format* (68000, big-endian) but
-	// lays everything out at different offsets. These offsets were located by
-	// matching the shared world/asset bytes against the Amiga "x" file.
-	Common::SeekableReadStream *file = decompressAtari("M.PRG");
+	// The player provides the Copylock-decrypted executable as "M.PRG" ("C.PRG"
+	// for The Crypt, which carries no Copylock); it is still Huffman-packed, so
+	// decompress it to obtain the real game binary. The Atari ST build shares
+	// the Amiga data *format* (68000, big-endian) at different offsets.
+	const CastleAtariLayout *layout = isCastleMaster2() ? &kAtariCryptLayout : &kAtariCastleLayout;
+	Common::SeekableReadStream *file = decompressAtari(isCastleMaster2() ? "C.PRG" : "M.PRG");
+
+	if (isCastleMaster2())
+		loadAtariLoadingScreen();
 
 	_viewArea = Common::Rect(40, 29, 280, 154);
-	loadMessagesVariableSize(file, 0x27946, 178);
-	loadRiddles(file, 0x28410, 19);
+	loadMessagesVariableSize(file, layout->messages, layout->messageCount);
+	if (layout->riddles)
+		loadRiddles(file, layout->riddles, 19);
 
 	// Font: 90 characters, 8x8, 4 interleaved bitplanes (identical bytes to the
 	// Amiga build, so the Amiga 16-colour palette applies).
-	file->seek(0x2f32a);
+	file->seek(layout->fonts);
 	Common::Array<Graphics::ManagedSurface *> chars;
 	Common::Array<Graphics::ManagedSurface *> charsRiddle;
 	for (int i = 0; i < 90; i++) {
@@ -207,10 +253,10 @@ void CastleEngine::loadAssetsAtariFullGame() {
 	_fontRiddle = Font(charsRiddle);
 	_fontRiddle.setCharWidth(9);
 
-	// Area database: 87 rooms followed by 3 trailing areas, then the global
-	// area 255.
-	load8bitBinary(file, 0x33694, 16);
-	for (int i = 0; i < 3; i++) {
+	// Castle Master has 87 rooms followed by 3 trailing areas and then the
+	// global area 255; The Crypt lists all 49 of its areas, 255 included.
+	load8bitBinary(file, layout->areaDB, 16);
+	for (int i = 0; i < layout->extraAreas; i++) {
 		Area *newArea = load8bitArea(file, 16);
 		if (newArea) {
 			if (!_areaMap.contains(newArea->getAreaID()))
@@ -221,10 +267,10 @@ void CastleEngine::loadAssetsAtariFullGame() {
 			error("Invalid area %d?", i);
 	}
 
-	loadPalettes(file, 0x32594);
+	loadPalettes(file, layout->palettes);
 
 	// COLOR15 cycling table, terminated by 0xFFFF.
-	file->seek(0x27928);
+	file->seek(layout->colorCycling);
 	while (true) {
 		uint16 val = file->readUint16BE();
 		if (val == 0xFFFF)
@@ -232,49 +278,51 @@ void CastleEngine::loadAssetsAtariFullGame() {
 		_gfx->_colorCyclingTable.push_back(val);
 	}
 
-	file->seek(0x49284); // Global area 255
-	_areaMap[255] = load8bitArea(file, 16);
+	if (layout->area255) {
+		file->seek(layout->area255);
+		_areaMap[255] = load8bitArea(file, 16);
+	}
 
-	// In-game border frame (the "Castle Master" title + castle walls + bottom
-	// UI bar surrounding the 3D viewport). 320x200, stored as Atari ST
+	// In-game border frame (the game title + castle walls + bottom UI bar
+	// surrounding the 3D viewport). 320x200, stored as Atari ST
 	// word-interleaved bitplanes; identical artwork to the Amiga build (which
 	// keeps it in vertical-planar form), so the Amiga palette applies.
-	file->seek(0x4a364);
+	file->seek(layout->border);
 	_border = loadFrameFromPlanesInterleaved(file, 20, 200);
 	_border->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 
 	// Mountains panorama (63 words x 22 rows, interleaved) - same bytes/format
 	// as the Amiga build.
-	file->seek(0x4f24);
+	file->seek(layout->mountains);
 	_background = loadFrameFromPlanesInterleaved(file, 63, 22);
 	_background->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 
 	// Spirit meter, strength-weight and key/eye sprites (shared with the Amiga
 	// build, relocated in the Atari binary).
-	file->seek(0x55d40);
+	file->seek(layout->spiritMeterBg);
 	_spiritsMeterIndicatorBackgroundFrame = loadFrameFromPlanesInterleaved(file, 5, 10);
 	_spiritsMeterIndicatorBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 
-	file->seek(0x55ed0);
+	file->seek(layout->spiritMeter);
 	_spiritsMeterIndicatorFrame = loadFrameFromPlanesInterleaved(file, 1, 10);
 	_spiritsMeterIndicatorFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 
 	// Weight discs of the strength barbell: 4 frames of 1 word x 15 rows,
 	// followed by the 5 word x 3 row shaft.
-	file->seek(0x569d0);
+	file->seek(layout->weights);
 	for (int i = 0; i < 4; i++) {
 		Graphics::ManagedSurface *frame = loadFrameFromPlanesInterleaved(file, 1, 15);
 		frame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 		_strenghtWeightsFrames.push_back(frame);
 	}
 
-	file->seek(0x56bb0);
+	file->seek(layout->bar);
 	_strenghtBarFrame = loadFrameFromPlanesInterleaved(file, 5, 3);
 	_strenghtBarFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 
-	loadThunderFramesAmiga(file, 0x55f20);
+	loadThunderFramesAmiga(file, layout->thunder);
 
-	file->seek(0x594a0);
+	file->seek(layout->eyeIcons);
 	for (int i = 0; i < 12; i++) {
 		Graphics::ManagedSurface *frame = loadFrameFromPlanesInterleaved(file, 1, 7);
 		frame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
@@ -282,7 +330,7 @@ void CastleEngine::loadAssetsAtariFullGame() {
 	}
 
 	// Flag animation: 5 frames x 2 words x 11 rows.
-	file->seek(0x5974a);
+	file->seek(layout->flag);
 	for (int i = 0; i < 5; i++) {
 		Graphics::ManagedSurface *frame = loadFrameFromPlanesInterleaved(file, 2, 11);
 		frame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
@@ -291,12 +339,12 @@ void CastleEngine::loadAssetsAtariFullGame() {
 
 	// Riddle frames: a 16-word transparency mask followed by the top/background/
 	// bottom frames, masked and drawn with the riddle palette.
-	file->seek(0x59ae4);
+	file->seek(layout->riddleMask);
 	uint16 riddleMask[16];
 	for (int i = 0; i < 16; i++)
 		riddleMask[i] = file->readUint16BE();
 
-	file->seek(0x59b04);
+	file->seek(layout->riddleTop);
 	_riddleTopFrame = loadFrameFromPlanesInterleaved(file, 16, 20);
 	_riddleBackgroundFrame = loadFrameFromPlanesInterleaved(file, 16, 1);
 	_riddleBottomFrame = loadFrameFromPlanesInterleaved(file, 16, 8);
@@ -332,9 +380,9 @@ void CastleEngine::loadAssetsAtariFullGame() {
 
 		byte pixelData[kTotalSrcRows * kPixelBytesPerRow];
 		byte maskData[kTotalSrcRows * kMaskBytesPerRow];
-		file->seek(0x56ed0);
+		file->seek(layout->gatePixels);
 		file->read(pixelData, sizeof(pixelData));
-		file->seek(0x57ef0);
+		file->seek(layout->gateMask);
 		file->read(maskData, sizeof(maskData));
 
 		uint32 keyColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x24, 0xA5);
@@ -408,12 +456,11 @@ void CastleEngine::loadAssetsAtariFullGame() {
 	// sprites also still need to be located.
 
 	// The full Atari ST binary embeds the same ProTracker module used by the
-	// Amiga full game. It starts at TEXT $10F9A / stream offset $10FB6.
-	static const uint32 kAtariMusicDataOffset = 0x10fb6;
-	uint32 modSize = getProTrackerModuleSize(file, kAtariMusicDataOffset);
+	// Amiga full game; The Crypt ships that module again, unchanged.
+	uint32 modSize = getProTrackerModuleSize(file, layout->mod);
 	if (modSize > 0) {
 		_modData.resize(modSize);
-		file->seek(kAtariMusicDataOffset);
+		file->seek(layout->mod);
 		file->read(_modData.data(), modSize);
 	}
 

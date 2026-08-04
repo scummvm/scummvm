@@ -757,7 +757,8 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 			// The room structure is not an area, the byte above is unrelated data
 			name = "GLOBAL";
 		} else if (isAmiga() || isAtariST())
-			name = _messagesList[idx + 51];
+			// The Crypt's area names sit where the DOS ones do
+			name = _messagesList[idx + (isCastleMaster2() ? 41 : 51)];
 		else if (isSpectrum() || isCPC() || isC64())
 			name = _messagesList[idx + (isCastleMaster2() ? 41 : 16)];
 		else
@@ -875,7 +876,8 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	// The Castle Master Amiga/Atari ST binaries store the count as 0x68 (104)
 	// but the area pointer table only has 87 valid entries; the demo and the
 	// full game share the same asset section so the same override applies.
-	if ((isAmiga() || isAtariST()) && isCastle())
+	// The Crypt stores its real count (49), so it must not be overridden.
+	if ((isAmiga() || isAtariST()) && isCastle() && !isCastleMaster2())
 		numberOfAreas = 87;
 	debugC(1, kFreescapeDebugParser, "Number of areas: %d", numberOfAreas);
 

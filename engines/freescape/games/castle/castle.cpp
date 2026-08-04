@@ -737,14 +737,15 @@ void CastleEngine::initGameState() {
 	_playerHeightNumber = 1;
 
 	// Platform-specific message strings (indices differ between DOS and Amiga)
-	if (isAmiga() || isAtariST()) {
+	if ((isAmiga() || isAtariST()) && !isCastleMaster2()) {
 		_notEnoughRoomMessage = _messagesList[21];
 		_tooWeakMessage = _messagesList[22];
 		_crawlSelectedMessage = _messagesList[23];
 		_walkSelectedMessage = _messagesList[24];
 		_runSelectedMessage = _messagesList[25];
 		_ghostInAreaMessage = _messagesList[126];
-	} else if (isDOS()) {
+	} else if (isDOS() || isAtariST()) {
+		// The Crypt's Atari ST entries 0 to 124 are the DOS ones, in order
 		_notEnoughRoomMessage = _messagesList[11];
 		_tooWeakMessage = _messagesList[12];
 		_crawlSelectedMessage = _messagesList[13];
@@ -844,7 +845,7 @@ void CastleEngine::endGame() {
 	_endGamePlayerEndArea = true;
 
 	if (hasEscaped()) {
-		insertTemporaryMessage(_messagesList[(isAmiga() || isAtariST()) ? 15 : 5], INT_MIN);
+		insertTemporaryMessage(_messagesList[((isAmiga() || isAtariST()) && !isCastleMaster2()) ? 15 : 5], INT_MIN);
 
 		if (isDOS() && !isCastleMaster2()) {
 			drawFullscreenEndGameAndWait();
@@ -1085,14 +1086,22 @@ void CastleEngine::drawInfoMenu() {
 		// Score at (167, 71): move.w #$a7,d0; move.w #$47,d1
 		drawStringInSurface(Common::String::format("%07d", score), 167, 71, front, black, surface);
 
+		// The Crypt dropped Castle Master's ten key names from the front of the
+		// string table, so every index below moves. Its entries were read off the
+		// data, not shifted: Castle Master's own constants sit two entries above
+		// the strings they name.
+		const bool crypt = isCastleMaster2();
+
 		// Shield at (154, 102): move.w #$9a,d0; move.w #$66,d1
 		// Index = (shield - 1) / 4 (from: subq #1,d0; lsr #2,d0; muls #$c,d0)
-		// Amiga shield text at message indices 171-177 (skipping 174 which is empty)
+		// Shield text at message indices 171-177 (skipping 174 which is empty)
 		{
 			static const int kAmigaShieldMsgIdx[] = {171, 172, 173, 175, 176, 177};
+			static const int kCryptShieldMsgIdx[] = {158, 159, 160, 162, 163, 164};
 			int shieldIdx = (shield > 0) ? (shield - 1) / 4 : 0;
 			if (shieldIdx > 5) shieldIdx = 5;
-			drawStringInSurface(centerAndPadString(_messagesList[kAmigaShieldMsgIdx[shieldIdx]], 10), 154, 102, front, black, surface);
+			int idx = crypt ? kCryptShieldMsgIdx[shieldIdx] : kAmigaShieldMsgIdx[shieldIdx];
+			drawStringInSurface(centerAndPadString(_messagesList[idx], 10), 154, 102, front, black, surface);
 		}
 
 		// Keys collected at (104, 41): move.w #$68,d0; move.w #$29,d1 (from FUN_22CC)
@@ -1101,11 +1110,11 @@ void CastleEngine::drawInfoMenu() {
 			Common::String keysText;
 			int numKeys = _keysCollected.size();
 			if (numKeys == 0)
-				keysText = _messagesList[162];
+				keysText = _messagesList[crypt ? 149 : 162];
 			else if (numKeys == 1)
-				keysText = _messagesList[164];
+				keysText = _messagesList[crypt ? 151 : 164];
 			else {
-				keysText = _messagesList[163];
+				keysText = _messagesList[crypt ? 150 : 163];
 				Common::replace(keysText, "XX", Common::String::format("%2d", numKeys));
 			}
 			drawStringInSurface(keysText, 104, 41, front, black, surface);
@@ -1116,9 +1125,9 @@ void CastleEngine::drawInfoMenu() {
 		{
 			Common::String spiritsText;
 			if (spiritsDestroyed == 0)
-				spiritsText = _messagesList[156];
+				spiritsText = _messagesList[crypt ? 143 : 156];
 			else {
-				spiritsText = _messagesList[157];
+				spiritsText = _messagesList[crypt ? 144 : 157];
 				Common::replace(spiritsText, "XX", Common::String::format("%2d", spiritsDestroyed));
 			}
 			drawStringInSurface(spiritsText, 145, 133, front, black, surface);
@@ -1505,7 +1514,7 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 	}
 
 	if (!isDOS() && hasEscaped()) {
-		insertTemporaryMessage(_messagesList[(isAmiga() || isAtariST()) ? 15 : 5], _countdown - 1);
+		insertTemporaryMessage(_messagesList[((isAmiga() || isAtariST()) && !isCastleMaster2()) ? 15 : 5], _countdown - 1);
 	}
 
 	while (!shouldQuit() && cont) {
@@ -1514,7 +1523,7 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 			insertTemporaryMessage(spiritsDestroyedString, _countdown - 4);
 			insertTemporaryMessage(keysCollectedString, _countdown - 6);
 			if (!isDOS() && hasEscaped()) {
-				insertTemporaryMessage(_messagesList[(isAmiga() || isAtariST()) ? 15 : 5], _countdown - 8);
+				insertTemporaryMessage(_messagesList[((isAmiga() || isAtariST()) && !isCastleMaster2()) ? 15 : 5], _countdown - 8);
 			}
 		}
 
@@ -2164,7 +2173,9 @@ void CastleEngine::updateTimeVariables() {
 void CastleEngine::borderScreen() {
 	if (isAmiga() && isDemo())
 		return; // Skip character selection
-	if (isAtariST()) {
+	// The Crypt ships no intro program, so it drops through to the plain
+	// configuration menu as it does on DOS
+	if (isAtariST() && !isCastleMaster2()) {
 		playAtariIntro();
 		return;
 	}
