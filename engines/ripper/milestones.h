@@ -68,6 +68,7 @@ public:
 	bool initialize(ResourceManager &resources);
 	bool isSet(uint flag) const;
 	bool set(uint flag, bool value, const char *source);
+	bool toggle(uint flag, const char *source);
 	bool hasRipperIdentity() const;
 	bool selectRipperIdentity(uint candidate, const char *source);
 	bool syncGame(Common::Serializer &serializer);
