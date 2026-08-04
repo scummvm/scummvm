@@ -44,7 +44,7 @@ static const uint kBriefingAlertVolume = 35;
 
 static bool isImplementedBriefingSelector(uint selector) {
 	return selector == 1 || selector == 2 || selector == 3 || selector == 4 ||
-		selector == 5 || selector == 6 || selector == 8;
+		selector == 5 || selector == 6 || selector == 7 || selector == 8;
 }
 
 BriefingManager::BriefingManager(RipperEngine *engine) : _engine(engine),
@@ -292,6 +292,15 @@ bool BriefingManager::activate() {
 			debugC(1, kDebugScene,
 				"Ripper: completed briefing selector=6 media='rip_wac3.avi' messageFlag=%u",
 				(uint)kMilestonePlayedThirdRipperWacMessage);
+		}
+		break;
+	case 7:
+		// The selector branch at 0x19739 presents RIPWAC31.AVI
+		// without changing milestone state.
+		result = _engine->getMedia()->play("ripwac31.avi", true, 0, 0);
+		if (result) {
+			debugC(1, kDebugScene,
+				"Ripper: completed briefing selector=7 media='ripwac31.avi' without state changes");
 		}
 		break;
 	case 8: {
