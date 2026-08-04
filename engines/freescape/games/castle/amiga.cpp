@@ -162,10 +162,42 @@ const CastleAmigaLayout kAmigaIncentiveLayout = {
 	0x3d684
 };
 
+// "The Crypt", the other game on the Incentive disc, packed the same way into
+// "crypt.com". It carries the Castle Master interface artwork and the music
+// module byte for byte, 0xf740 lower in the image; it has no riddles, and the
+// global area 255 is listed in the area table rather than sitting on its own.
+const CastleAmigaLayout kAmigaCryptLayout = {
+	0x09d1c, 0, 0x09c4a, 0x10dd8, 0x14092, 0x1358a, 0x15192,
+	0, 0x1d914, 0x04086, 0x25a84, 0x27554, 0x292f0, 0x29480,
+	0x28d44, 0x294d0, 0x29f80, 0x2a160, 0x2ca50, 0x2ccfa, 0x2d094, 0x2d0b4,
+	0x2a480, 0x2b4a0, 0x2df44
+};
+
+// "thecrypt.neo" ships without a palette; the intro program that displays it
+// holds this one at offset 0x20ca.
+byte kAmigaCryptTitlePalette[16][3] = {
+	{0x00, 0x00, 0x00}, {0x22, 0x44, 0x66}, {0x66, 0x11, 0xaa}, {0x22, 0x22, 0x44},
+	{0x44, 0x44, 0x88}, {0x66, 0x66, 0xaa}, {0x22, 0x22, 0x44}, {0x22, 0x22, 0x66},
+	{0x66, 0x44, 0x88}, {0x88, 0x88, 0xcc}, {0x22, 0x22, 0x66}, {0x44, 0x22, 0x88},
+	{0x44, 0x22, 0x88}, {0x44, 0x66, 0x88}, {0xff, 0xff, 0xff}, {0x00, 0x00, 0x22}
+};
+
 // The game image, either read as is or unpacked, with the matching layout
 Common::SeekableReadStream *CastleEngine::openAmigaGameFile(const CastleAmigaLayout *&layout) {
 	Common::File file;
 	Common::SeekableReadStream *stream = nullptr;
+
+	if (isCastleMaster2()) {
+		if (!file.open("crypt.com"))
+			error("Failed to open 'crypt.com'");
+		stream = decompressCastle(&file, 0);
+		if (stream->size() != 290098) {
+			delete stream;
+			error("Unknown Castle Master 2 (Amiga) build");
+		}
+		layout = &kAmigaCryptLayout;
+		return stream;
+	}
 
 	if (file.open("x"))
 		stream = file.readStream(file.size());
@@ -1588,8 +1620,9 @@ void CastleEngine::loadAssetsAmigaFullGame() {
 	Common::SeekableReadStream &file = *stream;
 
 	_viewArea = Common::Rect(40, 29, 280, 154);
-	loadMessagesVariableSize(&file, layout->messages, 178);
-	loadRiddles(&file, layout->riddles, 19);
+	loadMessagesVariableSize(&file, layout->messages, isCastleMaster2() ? 165 : 178);
+	if (layout->riddles)
+		loadRiddles(&file, layout->riddles, 19);
 
 	file.seek(layout->fonts);
 	Common::Array<Graphics::ManagedSurface *> chars;
@@ -1612,8 +1645,10 @@ void CastleEngine::loadAssetsAmigaFullGame() {
 	_fontRiddle = Font(charsRiddle);
 	_fontRiddle.setCharWidth(9);
 
+	// Castle Master has 3 areas trailing the pointer table; The Crypt lists all
+	// of its 49, the global 255 included.
 	load8bitBinary(&file, layout->areaDB, 16);
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < (isCastleMaster2() ? 0 : 3); i++) {
 		debugC(1, kFreescapeDebugParser, "Continue to parse area index %d at offset %x", _areaMap.size() + i + 1, (int)file.pos());
 		Area *newArea = load8bitArea(&file, 16);
 		if (newArea) {
@@ -1636,19 +1671,29 @@ void CastleEngine::loadAssetsAmigaFullGame() {
 		_gfx->_colorCyclingTable.push_back(val);
 	}
 
-	file.seek(layout->area255);
-	_areaMap[255] = load8bitArea(&file, 16);
+	if (layout->area255) {
+		file.seek(layout->area255);
+		_areaMap[255] = load8bitArea(&file, 16);
+	}
 
 	// Border NEO image (demo loaded at 0x2cf28 + 0x28 - 0x2 + 0x28 = 0x2cf76)
 	file.seek(layout->border);
 	_border = loadFrameFromPlanesVertical(&file, 160, 200);
 	_border->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 
+	// The Crypt's loading screen, shown by the intro program before the game.
+	Common::File titleFile;
+	if (isCastleMaster2() && titleFile.open("thecrypt.neo")) {
+		_title = loadFrameFromPlanesVertical(&titleFile, 160, 200);
+		_title->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCryptTitlePalette, 16);
+		titleFile.close();
+	}
+
 	// End-game throne picture. The original executable opens "W" during the
 	// escaped ending and displays the first 114 rows as a 16-word-wide
 	// interleaved Amiga bitplane image.
 	Common::File endGameFile;
-	if (endGameFile.open("w")) {
+	if (!isCastleMaster2() && endGameFile.open("w")) {
 		_endGameBackgroundFrame = loadFrameFromPlanesInterleaved(&endGameFile, 16, 114);
 		_endGameBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 		endGameFile.close();

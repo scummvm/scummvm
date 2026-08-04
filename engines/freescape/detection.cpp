@@ -1109,6 +1109,21 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDERZX, GAMEOPTION_WASD_CONTROLS)
 	},
+	// Castle Master 2, Amiga, the other game on the "Castle Master & The Crypt"
+	// disc by Incentive, packed into "crypt.com" like its companion.
+	{
+		"castlemaster2",
+		"",
+		{
+			{"crypt.com", 0, "6b56e849a9487a3c46e2ff9bbaf1f351", 177218},
+			{"thecrypt.neo", 0, "358873947261352242c75788066dfbc9", 32000},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_UNSTABLE,
+		GUIO3(GUIO_NOMIDI, GUIO_RENDERAMIGA, GAMEOPTION_WASD_CONTROLS)
+	},
 	// Castle Master 2, Atari ST, the second disc of "Castle Master & The Crypt"
 	// by Incentive. C.PRG carries no Copylock, unlike the Castle Master disc.
 	{

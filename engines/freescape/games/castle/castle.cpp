@@ -744,8 +744,8 @@ void CastleEngine::initGameState() {
 		_walkSelectedMessage = _messagesList[24];
 		_runSelectedMessage = _messagesList[25];
 		_ghostInAreaMessage = _messagesList[126];
-	} else if (isDOS() || isAtariST()) {
-		// The Crypt's Atari ST entries 0 to 124 are the DOS ones, in order
+	} else if (isDOS() || isAtariST() || isAmiga()) {
+		// The Crypt's Amiga and Atari ST entries 0 to 124 are the DOS ones
 		_notEnoughRoomMessage = _messagesList[11];
 		_tooWeakMessage = _messagesList[12];
 		_crawlSelectedMessage = _messagesList[13];
@@ -2173,13 +2173,13 @@ void CastleEngine::updateTimeVariables() {
 void CastleEngine::borderScreen() {
 	if (isAmiga() && isDemo())
 		return; // Skip character selection
-	// The Crypt ships no intro program, so it drops through to the plain
+	// The Crypt has no intro of its own, so it drops through to the plain
 	// configuration menu as it does on DOS
 	if (isAtariST() && !isCastleMaster2()) {
 		playAtariIntro();
 		return;
 	}
-	if (isAmiga()) {
+	if (isAmiga() && !isCastleMaster2()) {
 		if (playAmigaIntro())
 			return;
 		selectCharacterScreen();
