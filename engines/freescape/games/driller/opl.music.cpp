@@ -64,20 +64,36 @@ const uint16 kDrillerOPLFreqs[] = {
 const byte kOPLModOffset[] = { 0x00, 0x01, 0x02 };
 const byte kOPLCarOffset[] = { 0x03, 0x04, 0x05 };
 
+// Fitted against the analytic SID spectra: triangle is odd harmonics at 1/n^2,
+// sawtooth every harmonic at 1/n, pulse of duty d is |sin(pi*n*d)|/n.
+//
+// The modulator envelope is flat (AR 15, no decay or release) on purpose. The FM
+// index follows the modulator's absolute output and a SID oscillator keeps its
+// waveform as the note decays, so enveloping it collapses the index within
+// milliseconds and leaves low notes as near-pure sines.
 const DrillerOPLBasePatch kDrillerOPLBasePatches[] = {
-	{ 0x21, 0x21, 0x22, 0x04, 0xF2, 0xF3, 0x74, 0x45, 0x00, 0x00, 0x04 }, // triangle
-	{ 0x02, 0x01, 0x1C, 0x00, 0xE3, 0xF2, 0x63, 0x35, 0x00, 0x01, 0x06 }, // pulse
-	{ 0x31, 0x21, 0x25, 0x03, 0xD3, 0xE3, 0x64, 0x46, 0x00, 0x00, 0x02 }, // saw
-	{ 0x01, 0x01, 0x2A, 0x08, 0xF4, 0xF2, 0x42, 0x31, 0x00, 0x00, 0x0E }, // noise/percussion
-	{ 0x22, 0x21, 0x18, 0x00, 0xF4, 0xF2, 0x55, 0x36, 0x00, 0x00, 0x08 }  // default lead
+	{ 0x22, 0x21, 0x28, 0x04, 0xF0, 0xF3, 0x00, 0x45, 0x00, 0x00, 0x08 }, // triangle, 2:1
+	{ 0x21, 0x21, 0x1D, 0x00, 0xF0, 0xF2, 0x00, 0x35, 0x00, 0x00, 0x08 }, // pulse, 1:1
+	{ 0x21, 0x21, 0x19, 0x03, 0xF0, 0xE3, 0x00, 0x46, 0x00, 0x00, 0x0A }, // saw, 1:1
+	{ 0x21, 0x21, 0x2A, 0x08, 0xF0, 0xF2, 0x00, 0x31, 0x00, 0x00, 0x0E }, // noise/percussion
+	{ 0x22, 0x21, 0x1D, 0x00, 0xF0, 0xF2, 0x00, 0x36, 0x00, 0x00, 0x08 }  // default lead
 };
 
 const byte kDrillerMusicAttenuation = 4;
 const byte kDrillerNoiseAttenuation = 0;
-const byte kDrillerNarrowPulseAttenuation = 2;
-const uint16 kDrillerNarrowPulseEdgeDistance = 0x0300;
-const byte kDrillerPulseBrightnessBoostMax = 24;
 const int kDrillerArpeggioSize = 3;
+
+// Modulator attenuation per pulse duty, indexed by the top nibble of the 12-bit
+// pulse width, so the FM spectral centroid tracks the pulse's own: 1.9 at a
+// square wave up to 3.3 at a hairline, against the SID's 1.8 to 3.4.
+//
+// The band is the point. In a 1:1 pair the fundamental is |J0 - J2| of the index,
+// which nulls at 1.84 and 5.31; instrument 1 sweeps its pulse width every 1.7 s,
+// so a range straddling a null drops the fundamental 29 dB twice a cycle. These
+// levels keep the sweep inside 3.1 to 4.9, between the nulls.
+const byte kDrillerPulseModLevel[17] = {
+	11, 11, 12, 12, 13, 14, 15, 16, 16, 16, 15, 14, 13, 12, 12, 11, 11
+};
 
 byte attenuateDrillerOPLLevel(byte level, byte attenuation) {
 	return MIN<byte>((level & 0x3F) + attenuation, 0x3F) | (level & 0xC0);
@@ -122,31 +138,39 @@ const byte kDrillerSidSustainToOPL[16] = {
 	15, 8, 6, 5, 4, 3, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0
 };
 
-// SID rate (0=fast..15=slow) -> OPL rate (15=fast..0=never), inverted and
-// compressed into [5,15] so even the slowest SID rate stays audible.
-byte sidRateToOPL(byte sidRate) {
-	return 15 - (sidRate * 10) / 15;
-}
+// SID rate nibbles to OPL2 rates, matched in log space against dbopl's own attack
+// table (2265 ms at AR 1 down to 0.18 ms at AR 15, halving per step) and
+// 1.27 * 2^(15-rate) ms for decay/release.
+//
+// The tail is one step off that fit on purpose. SID attacks 13-15 are 3, 5 and 8
+// seconds and OPL2 bottoms out at 2265 ms, so the shape is unreachable anyway;
+// the OPL ramp is also exponential where the SID's is linear, leaving AR 1 some
+// 18 dB below the SID over the first half second. That is audible at the very
+// first bar, which instrument 1 (attack 15) carries alone.
+const byte kSidAttackToOPL[16] = {
+	11, 9, 8, 7, 7, 6, 6, 5, 5, 4, 3, 2, 2, 2, 2, 2
+};
 
-// Convert a SID instrument's AD/SR bytes to OPL2 carrier envelope registers.
+const byte kSidDecayToOPL[16] = {
+	13, 11, 10, 9, 9, 8, 8, 7, 7, 6, 5, 4, 4, 2, 1, 1
+};
+
 void deriveDrillerOPLEnvelope(byte sidAD, byte sidSR, byte &oplAD, byte &oplSR, bool &sustaining) {
 	byte sidAttack = sidAD >> 4;
 	byte sidSustain = sidSR >> 4;
-	byte attack = sidRateToOPL(sidAttack);
-	byte decay = sidRateToOPL(sidAD & 0x0F);
-	byte release = sidRateToOPL(sidSR & 0x0F);
+	byte attack = kSidAttackToOPL[sidAttack];
+	byte decay = kSidDecayToOPL[sidAD & 0x0F];
+	byte release = kSidDecayToOPL[sidSR & 0x0F];
 
 	byte sustainLevel;
 	if (sidSustain != 0) {
 		sustaining = true;
 		sustainLevel = kDrillerSidSustainToOPL[sidSustain];
 	} else if (sidAttack >= 10) {
-		// Slow-attack swell, no SID sustain: hold it so the note does not
-		// collapse into a short puff (instruments 1, 2, 14).
+		// A slow swell has to hold, or it decays while still rising.
 		sustaining = true;
 		sustainLevel = 0;
 	} else {
-		// Fast attack, no sustain: plucked voice that decays away.
 		sustaining = false;
 		sustainLevel = 15;
 	}
@@ -501,9 +525,15 @@ void DrillerOPLMusicPlayer::applyNote(int channel, VoiceState &v, const uint8_t 
 	v.stuff_freq_base = v.stuff_freq_porta_vib;
 	v.baseSIDFrequency = v.stuff_freq_base;
 	v.currentControl = getDrillerInstrumentControl(instA0, instA1, false);
+	byte carAD, carSR;
+	bool sustaining;
+	deriveDrillerOPLEnvelope(instA0[2], instA0[3], carAD, carSR, sustaining);
 	debugC(1, kFreescapeDebugMedia,
-		"Driller OPL note tick=%u ch=%d inst=%u note=%u ctrl=%02x track=%u pat=%u",
-		_tick, channel, v.instrumentIndex / 8, note, v.currentControl, v.trackIndex, v.patternIndex);
+		"Driller OPL note tick=%u ch=%d inst=%u note=%u ctrl=%02x dur=%u pw=%03x "
+		"sid_ad=%02x sid_sr=%02x opl_ad=%02x opl_sr=%02x sus=%d track=%u pat=%u",
+		_tick, channel, v.instrumentIndex / 8, note, v.currentControl, v.noteDuration,
+		(v.something_else[0] | (v.something_else[2] << 8)) & 0x0FFF,
+		instA0[2], instA0[3], carAD, carSR, sustaining ? 1 : 0, v.trackIndex, v.patternIndex);
 	setOPLInstrument(channel, v);
 	noteOn(channel, v, note);
 }
@@ -688,8 +718,8 @@ void DrillerOPLMusicPlayer::setOPLInstrument(int channel, VoiceState &v) {
 	byte mod = kOPLModOffset[channel];
 	byte car = kOPLCarOffset[channel];
 
-	// Give the carrier the instrument's own envelope (from its SID AD/SR) so the
-	// 22 instruments stay distinct and sustained voices hold instead of fading.
+	// The carrier takes the instrument's own SID envelope, so the 22 instruments
+	// stay distinct and sustained voices hold instead of fading.
 	int instBase = v.instrumentIndex;
 	if (instBase < 0 || instBase >= NUM_INSTRUMENTS * 8)
 		instBase = 0;
@@ -717,28 +747,21 @@ void DrillerOPLMusicPlayer::applyPulseWidth(int channel, const VoiceState &v) {
 	const DrillerOPLBasePatch &patch = kDrillerOPLBasePatches[getDrillerWaveformFamily(v.currentControl)];
 	byte modLevel = patch.modLevel;
 	byte carLevel = patch.carLevel;
-	byte feedbackConnection = patch.feedbackConnection;
 	byte attenuation = getDrillerOPLAttenuation(v.currentControl);
 
 	if (v.currentControl & 0x40) {
+		// Interpolated across the low byte: the sweep moves as little as one unit
+		// per tick, and bare table steps would turn a glide into a staircase.
 		uint16 pulseWidth = (v.something_else[0] | (v.something_else[2] << 8)) & 0x0FFF;
-		uint16 edgeDistance = MIN<uint16>(pulseWidth, 0x1000 - pulseWidth);
-		uint16 centerDistance = pulseWidth < 0x0800 ? 0x0800 - pulseWidth : pulseWidth - 0x0800;
-		byte brightnessBoost = MIN<byte>(centerDistance >> 5, kDrillerPulseBrightnessBoostMax);
-
-		modLevel = patch.modLevel > brightnessBoost ? patch.modLevel - brightnessBoost : 0;
-
-		byte feedback = (patch.feedbackConnection >> 1) & 0x07;
-		// Only a little feedback; near the max (7) the FM tone turns to noise.
-		feedback = MIN<byte>(4, feedback + (centerDistance >> 9));
-		feedbackConnection = (patch.feedbackConnection & 0x01) | (feedback << 1);
-		if (edgeDistance <= kDrillerNarrowPulseEdgeDistance)
-			attenuation = kDrillerNarrowPulseAttenuation;
+		int bucket = pulseWidth >> 8;
+		int frac = pulseWidth & 0xFF;
+		int level = kDrillerPulseModLevel[bucket] +
+			(((int)kDrillerPulseModLevel[bucket + 1] - (int)kDrillerPulseModLevel[bucket]) * frac >> 8);
+		modLevel = (byte)level;
 	}
 
 	byte mod = kOPLModOffset[channel];
 	byte car = kOPLCarOffset[channel];
-	_opl->writeReg(0xC0 + channel, feedbackConnection);
 	_opl->writeReg(0x40 + mod, attenuateDrillerOPLLevel(modLevel, attenuation));
 	_opl->writeReg(0x40 + car, attenuateDrillerOPLLevel(carLevel, attenuation));
 }
