@@ -22,6 +22,7 @@
 #define RIPPER_RIPPER_H
 
 #include "common/ptr.h"
+#include "common/random.h"
 #include "engines/engine.h"
 
 struct ADGameDescription;
@@ -79,8 +80,10 @@ private:
 	void pauseEngineIntern(bool pause) override;
 	void registerSearchPaths();
 	void pumpEvents();
+	bool selectRandomRipperIdentity(const char *source);
 
 	const ADGameDescription *const _gameDescription;
+	Common::RandomSource _randomSource;
 	Common::ScopedPtr<CursorManager> _cursor;
 	Common::ScopedPtr<CyberManager> _cyber;
 	Common::ScopedPtr<InputManager> _input;

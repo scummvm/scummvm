@@ -38,6 +38,8 @@ enum MilestoneFlag {
 	kMilestoneCompletedAct1 = 2,
 	kMilestoneCompletedAct2 = 3,
 	kMilestoneCompletedAct3 = 4,
+	kMilestoneFirstRipperIdentity = 6,
+	kMilestoneLastRipperIdentity = 9,
 	kMilestoneFirstTravelLocation = 20,
 	kMilestoneSecretAnimalLabOpen = 29,
 	kMilestoneMagnottaApartmentInteriorOpen = 31,
@@ -66,6 +68,8 @@ public:
 	bool initialize(ResourceManager &resources);
 	bool isSet(uint flag) const;
 	bool set(uint flag, bool value, const char *source);
+	bool hasRipperIdentity() const;
+	bool selectRipperIdentity(uint candidate, const char *source);
 	bool syncGame(Common::Serializer &serializer);
 
 	const Common::String &label(uint flag) const;

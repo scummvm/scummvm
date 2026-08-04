@@ -359,8 +359,11 @@
   script state, all 20 named scene-audio slots and their trigger/ramp state, and
   the indexed 640x400 framebuffer and palette so static scene presentations
   resume at the same visible boundary without serializing DOS pointers from the
-  original fixed block. Format version 3 added the complete audio table while
-  retaining version 2 load compatibility.
+  original fixed block. Format version 3 added the complete audio table and
+  version 4 added the scene toolbar mask. Version 5 marks saves produced after
+  startup Ripper-identity selection was implemented; older ScummVM saves with
+  none of flags 6 through 9 set are assigned one identity when loaded. Existing
+  identities are preserved, and version 2 load compatibility remains.
 - `WriteConfiguredSaveCheckpointAndCleanupRuntime` at `0x1b274` writes the
   emergency save when the scene-script loop returns to the front end, then
   clears active audio triggers and the concurrent scene runtime. The
@@ -379,7 +382,7 @@
   WAC inventory, puzzles, dialogue, briefing media, and the startup milestone
   selection menu all read or update this same store.
 - `MILESTON.DEF` supplies 222 distinct keyed labels for the indexed flags.
-  `LoadStartupConfigAndInitializeResources` at `0x10e6d` loads the table and
+  `LoadStartupConfigAndInitializeResources` at `0x10d83` loads the table and
   `LoadStartupKeyedTextTable` at `0x1f169` enumerates each numeric key and its
   text. The ScummVM milestone service preserves that data-driven enumeration;
   level-three `milestones` debugging reports every defined key with its label
@@ -392,6 +395,18 @@
   case-insensitive `MILESTONES` command lists every `MILESTON.DEF` entry and
   current value, `MILESTONES ACTIVE` lists every set bit in the 1,000-flag
   store, and `MILESTONES <ID>` reports one store entry.
+  Flags 6 through 9 identify Magnotta, Falconetti, Burton, or Powell as the
+  Ripper. `SeedRandomFreePersistentFlag6To9` at `0x106c0` counts zero-valued
+  candidate bytes at persistent-settings offsets `+0x38` through `+0x3b`,
+  seeds the retail random generator from the extended DOS tick count, selects
+  a free candidate by remainder, and sets the corresponding indexed flag.
+  Default settings zero all four candidate bytes. The routine runs once from
+  `LoadStartupConfigAndInitializeResources` at call site `0x111fe`, before the
+  front end, and again at `0x10679` after the new-game state reset. A save
+  restore subsequently overwrites the provisional bitset, so every ordinary
+  new game has exactly one identity from its beginning while a restored game
+  keeps its prior selection. ScummVM uses its event-recorder-aware random
+  source to choose among the same four default candidates.
   Opcode
   `0x1e` named flags are different: `HandleSceneEntrySetOrClearNamedFlag` at
   `0x15dfe` updates the string-keyed startup asset catalog rather than this

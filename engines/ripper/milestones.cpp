@@ -107,6 +107,43 @@ bool Milestones::set(uint flag, bool value, const char *source) {
 	return true;
 }
 
+bool Milestones::hasRipperIdentity() const {
+	for (uint flag = kMilestoneFirstRipperIdentity;
+			flag <= kMilestoneLastRipperIdentity; ++flag) {
+		if (isSet(flag))
+			return true;
+	}
+	return false;
+}
+
+bool Milestones::selectRipperIdentity(uint candidate, const char *source) {
+	// SeedRandomFreePersistentFlag6To9 at 0x106c0 chooses among candidate
+	// bytes 0x38..0x3b in the persistent settings blob. Retail defaults all
+	// four bytes to zero, making flags 6 through 9 equally eligible.
+	const uint candidateCount =
+		kMilestoneLastRipperIdentity - kMilestoneFirstRipperIdentity + 1;
+	if (candidate >= candidateCount) {
+		warning("Ripper: Ripper identity candidate %u is outside the %u-candidate set",
+			candidate, candidateCount);
+		return false;
+	}
+
+	for (uint flag = kMilestoneFirstRipperIdentity;
+			flag <= kMilestoneLastRipperIdentity; ++flag)
+		setBit(flag, false);
+
+	const uint selectedFlag = kMilestoneFirstRipperIdentity + candidate;
+	if (!set(selectedFlag, true, source))
+		return false;
+
+	debugC(2, kDebugMilestones,
+		"Ripper: selected Ripper identity flag=%u label='%s' candidates=%u-%u "
+		"retail=SeedRandomFreePersistentFlag6To9@0x106c0 source=%s",
+		selectedFlag, label(selectedFlag).c_str(), kMilestoneFirstRipperIdentity,
+		kMilestoneLastRipperIdentity, source ? source : "unknown");
+	return true;
+}
+
 bool Milestones::syncGame(Common::Serializer &serializer) {
 	if (serializer.isLoading())
 		memset(_flags, 0, sizeof(_flags));
