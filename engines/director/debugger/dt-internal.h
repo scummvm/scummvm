@@ -103,6 +103,7 @@ typedef struct ImGuiWindows {
 	bool search = false;
 	bool imageViewer = false;
 	bool windows = false;
+	bool profiler = false;
 } ImGuiWindows;
 
 
@@ -383,6 +384,7 @@ void showCast();		// dt-cast.cpp
 void showImageViewer();	// dt-castdetails.cpp
 void showCastDetails();	// dt-castdetails.cpp
 void showControlPanel();// dt-controlpanel.cpp
+void showProfiler();
 
 // dt-lists.cpp
 void showVars();

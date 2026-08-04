@@ -33,6 +33,7 @@
 #include "director/util.h"
 #include "director/window.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-profiler.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-codegen.h"
 #include "director/lingo/lingo-object.h"
@@ -1315,6 +1316,8 @@ void Debugger::eventHook(LEvent eventId) {
 }
 
 void Debugger::pushContextHook() {
+	if (g_director->_lingoProfiler)
+		g_director->_lingoProfiler->onPushContext();
 	if (_next)
 		_nextCounter++;
 	if (_finish)
@@ -1323,6 +1326,8 @@ void Debugger::pushContextHook() {
 }
 
 void Debugger::popContextHook() {
+	if (g_director->_lingoProfiler)
+		g_director->_lingoProfiler->onPopContext();
 	if (_next && _nextCounter > 0)
 		_nextCounter--;
 	if (_finish)
