@@ -97,6 +97,11 @@ SeekableAudioStream *makeMacSndStream(Common::SeekableReadStream *stream,
 	}
 
 	stream->skip(soundDataOffset);
+	const uint32 availableSize = stream->pos() < stream->size() ? stream->size() - stream->pos() : 0;
+	if (size > availableSize) {
+		warning("makeMacSndStream(): Sample size %u exceeds available resource data %u", size, availableSize);
+		size = availableSize;
+	}
 
 	Common::SeekableReadStream *dataStream = new Common::SeekableSubReadStream(stream, stream->pos(), stream->pos() + size, disposeAfterUse);
 
