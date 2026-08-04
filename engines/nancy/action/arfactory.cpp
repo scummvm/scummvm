@@ -65,6 +65,7 @@
 #include "engines/nancy/action/puzzle/orderingpuzzle.h"
 #include "engines/nancy/action/puzzle/overridelockpuzzle.h"
 #include "engines/nancy/action/puzzle/pachinkopuzzle.h"
+#include "engines/nancy/action/puzzle/paintpuzzle.h"
 #include "engines/nancy/action/puzzle/passwordpuzzle.h"
 #include "engines/nancy/action/puzzle/peepholepuzzle.h"
 #include "engines/nancy/action/puzzle/pegspuzzle.h"
@@ -517,9 +518,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 180:	// BlockingPuzzle
 		// TODO: not yet implemented
 		return nullptr;
-	case 181:	// PaintPuzzle
-		// TODO: not yet implemented
-		return nullptr;
+	case 181:
+		return new PaintPuzzle();
 	case 182:	// DecoderPuzzle
 		// TODO: not yet implemented
 		return nullptr;
