@@ -32,6 +32,7 @@ MODULE_OBJS := \
 	puzzles/circuit_chip.o \
 	puzzles/clock.o \
 	puzzles/crystal.o \
+	puzzles/eight_button_sequence.o \
 	puzzles/gc_csh.o \
 	puzzles/ka_book_code.o \
 	puzzles/kd_shooting_gallery.o \
