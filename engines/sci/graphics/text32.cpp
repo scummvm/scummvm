@@ -378,6 +378,49 @@ void GfxText32::drawTextBox(const Common::String &text) {
 	drawTextBox();
 }
 
+// This internal function gets called as soon as a '|' is found in a text. It
+// will read the encountered code and its value, and forward the text past the
+// whole control code.
+// Returns false when the control code runs off the end of the text, in which
+// case the caller stops reading it.
+static bool readStyleControl(const char *&text, uint &length, char &controlChar, uint16 &value) {
+	controlChar = *text++;
+	--length;
+
+	if (length == 0) {
+		return false;
+	}
+
+	value = 0;
+	if (controlChar == 'a' || controlChar == 'c' || controlChar == 'f') {
+		while (length > 0) {
+			const char valueChar = *text;
+			if (valueChar < '0' || valueChar > '9') {
+				break;
+			}
+
+			++text;
+			--length;
+			value = 10 * value + (valueChar - '0');
+		}
+
+		if (length == 0) {
+			return false;
+		}
+	}
+
+	while (length > 0 && *text != '|') {
+		++text;
+		--length;
+	}
+	if (length > 0) {
+		++text;
+		--length;
+	}
+
+	return true;
+}
+
 void GfxText32::drawText(const uint index, uint length) {
 	assert(index + length <= _text.size());
 
@@ -403,47 +446,18 @@ void GfxText32::drawText(const uint index, uint length) {
 		}
 
 		if (currentChar == '|') {
-			const char controlChar = *text++;
-			--length;
-
-			if (length == 0) {
+			char controlChar;
+			uint16 value;
+			if (!readStyleControl(text, length, controlChar, value)) {
 				return;
 			}
 
-			if (controlChar == 'a' || controlChar == 'c' || controlChar == 'f') {
-				uint16 value = 0;
-
-				while (length > 0) {
-					const char valueChar = *text;
-					if (valueChar < '0' || valueChar > '9') {
-						break;
-					}
-
-					++text;
-					--length;
-					value = 10 * value + (valueChar - '0');
-				}
-
-				if (length == 0) {
-					return;
-				}
-
-				if (controlChar == 'a') {
-					_alignment = (TextAlign)value;
-				} else if (controlChar == 'c') {
-					_foreColor = value;
-				} else if (controlChar == 'f') {
-					setFont(value);
-				}
-			}
-
-			while (length > 0 && *text != '|') {
-				++text;
-				--length;
-			}
-			if (length > 0) {
-				++text;
-				--length;
+			if (controlChar == 'a') {
+				_alignment = (TextAlign)value;
+			} else if (controlChar == 'c') {
+				_foreColor = value;
+			} else if (controlChar == 'f') {
+				setFont(value);
 			}
 		} else {
 			drawChar(currentChar);
