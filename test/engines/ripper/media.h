@@ -33,6 +33,7 @@ public:
 		TS_ASSERT_EQUALS(plan.placement.x, -1);
 		TS_ASSERT_EQUALS(plan.placement.y, -1);
 		TS_ASSERT_EQUALS(plan.placement.displayScale, 1U);
+		TS_ASSERT(plan.placement.centerBounds.isEmpty());
 		TS_ASSERT(plan.palette.patchInterfacePalette);
 		TS_ASSERT(plan.palette.rememberVideoPalette);
 		TS_ASSERT(!plan.loop.loopFromStart);
