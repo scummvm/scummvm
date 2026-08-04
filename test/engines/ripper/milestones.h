@@ -24,6 +24,16 @@
 
 class RipperMilestonesTestSuite : public CxxTest::TestSuite {
 public:
+	void testToggleFlipsMilestoneState() {
+		Ripper::Milestones milestones;
+
+		TS_ASSERT(!milestones.isSet(6));
+		TS_ASSERT(milestones.toggle(6, "unit-test"));
+		TS_ASSERT(milestones.isSet(6));
+		TS_ASSERT(milestones.toggle(6, "unit-test"));
+		TS_ASSERT(!milestones.isSet(6));
+	}
+
 	void testRipperSelectionSetsExactlyOneIdentity() {
 		Ripper::Milestones milestones;
 

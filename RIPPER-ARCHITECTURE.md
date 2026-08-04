@@ -394,7 +394,8 @@
   ScummVM's engine-local debug console reads this same service. Its
   case-insensitive `MILESTONES` command lists every `MILESTON.DEF` entry and
   current value, `MILESTONES ACTIVE` lists every set bit in the 1,000-flag
-  store, and `MILESTONES <ID>` reports one store entry.
+  store, `MILESTONES <ID>` reports one store entry, and `MILESTONES TOGGLE
+  <ID>` flips and reports one store entry. `MILESTONE` is a singular alias.
   Flags 6 through 9 identify Magnotta, Falconetti, Burton, or Powell as the
   Ripper. `SeedRandomFreePersistentFlag6To9` at `0x106c0` counts zero-valued
   candidate bytes at persistent-settings offsets `+0x38` through `+0x3b`,
