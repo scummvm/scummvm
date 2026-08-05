@@ -957,6 +957,15 @@
   `0x42195` uses those bytes only to switch the pointer between cursor rows 14
   and 16. `RenderBoardState` at `0x418c8` draws the background and pieces, so
   selecting a piece adds no board-space outlines.
+- `LoadBoardPuzzleAssetsAndLayout` loads the 0x1300-byte `BOARDPAL` shading
+  block through `LoadShadingInfoBlock` at `0x4d160`. It consists of a
+  0x300-byte palette followed by sixteen shade entries for each of the 256
+  indexed colors. When the cell passed to `RenderBoardPieceVisual` at
+  `0x4160d` matches the selected-source global at `0x84f68`, the renderer
+  attaches `BOARDPAL` with strength `0xa0`, selecting shade 10 and making the
+  chosen piece visibly translucent. `HandleBoardPlayerTurnInput` at `0x42c1a`
+  clears that selected source before interpreting the second click; clicking
+  the source again skips the move and reaches the common opaque redraw.
 - `ApplyBoardMoveAndUpdateState` at `0x428c9` removes the source from the live
   board and calls `AnimateBoardMove` at `0x42644` for both player and AI moves.
   That routine inserts the moving piece into the fixed depth traversal by
