@@ -24,6 +24,7 @@
 #include "audio/mixer.h"
 #include "common/array.h"
 #include "common/random.h"
+#include "common/rect.h"
 
 #include "ripper/display.h"
 #include "ripper/puzzles/board_game_model.h"
@@ -51,36 +52,44 @@ private:
 	void applyPalette();
 	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
 		int x, int y) const;
+	void drawPiece(byte *screen, uint pitch, int piece,
+		const Common::Point &anchor) const;
 	void render();
 	int hitCodeAt(const Common::Point &point) const;
 	void updateCursor(const Common::Point &point);
 	bool serviceKeyword(uint16 command);
 	bool applyPlayerMove(int destination);
 	bool runAiTurn();
+	bool animateMove(const BoardGameModel::Move &move, int movingPiece,
+		int capturedPiece, bool thinkingCursor);
 	Result finishResult(uint completionFlag);
 	BoardGameModel::Move chooseAiMove();
 	int evaluatePosition(const BoardGameModel &model, int depth,
 		int alpha, int beta) const;
 	int staticScore(const BoardGameModel &model) const;
 	bool playCue(uint cue);
+	void stopCue(uint cue);
 
 	RipperEngine *_engine;
 	AssetLibrary _library;
 	BitmapAssetFrame _background;
 	BitmapAssetFrame _hitMap;
-	BitmapAssetFrame _highlight;
 	BitmapAssetFrame _pieces[2][5];
 	IndexedDisplaySnapshot _incomingDisplay;
 	BoardGameModel _model;
 	Common::RandomSource _random;
-	Audio::SoundHandle _audioHandle;
+	Audio::SoundHandle _audioHandles[5];
 	Common::Array<int> _legalDestinations;
+	Common::Point _movingAnchor;
 	int _selectedCell;
 	int _hoveredCode;
+	int _movingSource;
+	int _movingPiece;
 	uint _keywordIndex;
 	uint _searchDepth;
 	uint _savedSelectionIndex;
 	bool _savedCursorVisible;
+	bool _movingActive;
 };
 
 } // End of namespace Ripper
