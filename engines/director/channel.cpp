@@ -304,7 +304,8 @@ bool Channel::isDirty(Sprite *nextSprite) {
 		isDirtyFlag |= _sprite->_castId != nextSprite->_castId ||
 			_sprite->_ink != nextSprite->_ink || _sprite->_backColor != nextSprite->_backColor ||
 			_sprite->_foreColor != nextSprite->_foreColor ||
-			_sprite->_blendAmount != nextSprite->_blendAmount || _sprite->_thickness != nextSprite->_thickness;
+			_sprite->_blendAmount != nextSprite->_blendAmount ||
+			(_sprite->_thickness & kTThickness) != (nextSprite->_thickness & kTThickness);
 		if (!_sprite->_moveable)
 			isDirtyFlag |= _sprite->getPosition() != nextSprite->getPosition();
 		if (isStretched() && !hasTextCastMember(_sprite))
