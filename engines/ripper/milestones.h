@@ -49,6 +49,7 @@ enum MilestoneFlag {
 	kMilestoneScannedMug = 71,
 	kMilestoneCompletedMug = 72,
 	kMilestoneWacAudioEditorAvailable = 84,
+	kMilestoneReadJournalEntry7 = 266,
 	kMilestonePlayedFinalPrologueScene = 300,
 	kMilestonePlayedFirstWacMessage = 301,
 	kMilestoneReceivedJordanWacMessage = 305,
