@@ -122,11 +122,12 @@ void BoardGameModel::legalDestinations(int source,
 		if (row < 0 || row >= kRowCount || column < 0 ||
 				column >= kColumnCount) {
 			// TryGetLegalBoardMoveDestination at 0x41c1e maps a runner
-			// crossing the far row to the shared off-board destination 42.
-			if ((type == 2 || type == 3) && column >= 0 &&
-					column < kColumnCount &&
-					((piece < 0 && row >= kRowCount && sourceRow >= 4) ||
-					 (piece > 0 && row < 0 && sourceRow <= 2)))
+			// crossing a side edge inside its far three rows to the shared
+			// off-board destination 42. Vertical exits are never legal.
+			if ((type == 2 || type == 3) && row == sourceRow &&
+					(column < 0 || column >= kColumnCount) &&
+					((piece < 0 && sourceRow >= 4) ||
+					 (piece > 0 && sourceRow <= 2)))
 				appendDestination(destinations, kOffBoardDestination);
 			continue;
 		}
