@@ -94,6 +94,14 @@ bool MediaPlayer::playSoundEffect(const Common::String &path, Audio::SoundHandle
 		volumePercent, loop, "sound effect");
 }
 
+bool MediaPlayer::playSoundEffectStream(Common::SeekableReadStream *audioStream,
+		const Common::String &name, Audio::SoundHandle &handle,
+		uint volumePercent, bool loop) {
+	return playAudioStream(audioStream, name, "asset library", handle,
+		Audio::Mixer::kSFXSoundType, volumePercent, loop,
+		"archived sound effect");
+}
+
 bool MediaPlayer::playRawSoundEffect(const Common::Array<byte> &data,
 		uint sampleRate, byte flags, Audio::SoundHandle &handle,
 		uint volumePercent) {
@@ -139,7 +147,18 @@ bool MediaPlayer::playAudioClip(const Common::String &path, Audio::SoundHandle &
 		return false;
 	}
 
-	Audio::SeekableAudioStream *stream = Audio::makeWAVStream(audioStream, DisposeAfterUse::YES);
+	return playAudioStream(audioStream, path, source, handle, soundType,
+		volumePercent, loop, description);
+}
+
+bool MediaPlayer::playAudioStream(Common::SeekableReadStream *audioStream,
+		const Common::String &name, const Common::String &source,
+		Audio::SoundHandle &handle, Audio::Mixer::SoundType soundType,
+		uint volumePercent, bool loop, const char *description) {
+	if (!audioStream)
+		return false;
+	Audio::SeekableAudioStream *stream = Audio::makeWAVStream(
+		audioStream, DisposeAfterUse::YES);
 	if (!stream)
 		return false;
 	stopSoundEffect(handle);
@@ -150,7 +169,7 @@ bool MediaPlayer::playAudioClip(const Common::String &path, Audio::SoundHandle &
 	_mixer->playStream(soundType, &handle, playbackStream, -1, volume);
 	debugC(2, kDebugAudio,
 		"Ripper: started %s '%s' source=%s volume=%u loop=%d mixerType=%d",
-		description, path.c_str(), source.c_str(), volumePercent, loop, soundType);
+		description, name.c_str(), source.c_str(), volumePercent, loop, soundType);
 	return true;
 }
 
