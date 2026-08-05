@@ -700,6 +700,10 @@ void MacNebular::hidePopup() {
 	presentScreen(0);
 }
 
+// -------------------------------------------------------------------------
+// RexNebularEngine Macintosh presentation hooks
+// -------------------------------------------------------------------------
+
 void RexNebularEngine::applyGameSettings() {
 	Engine::applyGameSettings();
 	if (_macNebular)
@@ -723,14 +727,26 @@ void RexNebularEngine::presentScreen(int shakeOffset) {
 		MADSEngine::presentScreen(shakeOffset);
 }
 
-void RexNebularEngine::showMacPopup() {
-	if (_macNebular)
-		_macNebular->showPopup();
+bool RexNebularEngine::drawPopup() {
+	if (!_macNebular)
+		return false;
+
+	_macNebular->showPopup();
+	return true;
 }
 
-void RexNebularEngine::hideMacPopup() {
+void RexNebularEngine::onPopupDestroyed() {
 	if (_macNebular)
 		_macNebular->hidePopup();
+}
+
+bool RexNebularEngine::getInterfaceSentenceColors(byte &foreground, byte &shadow) const {
+	if (!_macNebular)
+		return false;
+
+	foreground = kMacNormalTextColor;
+	shadow = kMacBlackColor;
+	return true;
 }
 
 bool RexNebularEngine::hasInterfaceAnimations() const {
@@ -739,6 +755,10 @@ bool RexNebularEngine::hasInterfaceAnimations() const {
 	// controllers and InBx backgrounds, but not those subordinate series.
 	return _macNebular == nullptr;
 }
+
+// -------------------------------------------------------------------------
+// End RexNebularEngine Macintosh presentation hooks
+// -------------------------------------------------------------------------
 
 } // namespace RexNebular
 } // namespace MADS
