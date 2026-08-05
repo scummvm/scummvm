@@ -56,7 +56,9 @@ private:
 	Common::Rect _downArrowBounds;
 	Common::Rect _backingBounds;
 	Common::Array<byte> _backingPixels;
+	Common::Array<byte> _renderedChoicePixels;
 	bool _pending = false;
+	bool _visualDirty = false;
 	ChooserModel _chooser;
 	int _hoveredArrow = 0;
 	BitmapFontAsset _font;

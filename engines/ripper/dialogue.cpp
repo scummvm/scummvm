@@ -51,6 +51,8 @@ bool DialogueChooser::initialize(ResourceManager &resources) {
 void DialogueChooser::draw(bool captureBacking) {
 	if (!_pending || _choices.empty())
 		return;
+	if (!captureBacking && !_visualDirty)
+		return;
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
 		if (screen)
@@ -80,39 +82,58 @@ void DialogueChooser::draw(bool captureBacking) {
 			_backingBounds.left, _backingBounds.top,
 			_backingBounds.width(), _backingBounds.height());
 	}
-	for (uint visibleRow = 0; visibleRow < kVisibleChoiceCount; ++visibleRow) {
-		uint choiceIndex = 0;
-		const bool hasChoice = _chooser.resolveVisibleRow(visibleRow, choiceIndex);
-		const int row = _chooserBounds.top + visibleRow * kChoiceRowHeight;
-		const bool selected = hasChoice && choiceIndex == _chooser.selectedIndex();
-		for (int y = row; y < row + kChoiceRowHeight; ++y)
-			memset(screen->getBasePtr(_chooserBounds.left, y),
-				selected ? kSelectedBackgroundColor : kNormalBackgroundColor,
-				_chooserBounds.width());
-		if (!hasChoice)
-			continue;
-		int x = _chooserBounds.left + kChoiceHorizontalPadding;
-		const int textY = row + (kChoiceRowHeight - _font.lineHeight) / 2;
-		for (uint c = 0; c < _choices[choiceIndex].text.size() &&
-				x < _chooserBounds.right - kChoiceHorizontalPadding; ++c) {
-			const byte ch = (byte)_choices[choiceIndex].text[c];
-			if (ch == ' ') {
-				x += _font.spaceWidth;
+	const uint renderedPixelCount = _chooserBounds.width() * _chooserBounds.height();
+	const bool rebuildVisual = _visualDirty || _renderedChoicePixels.size() != renderedPixelCount;
+	if (rebuildVisual) {
+		for (uint visibleRow = 0; visibleRow < kVisibleChoiceCount; ++visibleRow) {
+			uint choiceIndex = 0;
+			const bool hasChoice = _chooser.resolveVisibleRow(visibleRow, choiceIndex);
+			const int row = _chooserBounds.top + visibleRow * kChoiceRowHeight;
+			const bool selected = hasChoice && choiceIndex == _chooser.selectedIndex();
+			for (int y = row; y < row + kChoiceRowHeight; ++y)
+				memset(screen->getBasePtr(_chooserBounds.left, y),
+					selected ? kSelectedBackgroundColor : kNormalBackgroundColor,
+					_chooserBounds.width());
+			if (!hasChoice)
 				continue;
-			}
-			if (ch < _font.firstCharacter || ch >= _font.firstCharacter + _font.glyphs.size())
-				continue;
-			const BitmapFontGlyph &glyph = _font.glyphs[ch - _font.firstCharacter];
-			for (int gy = 0; gy < glyph.height; ++gy) {
-				for (int gx = 0; gx < glyph.width; ++gx) {
-					const byte pixel = _font.pixels[glyph.pixelOffset + gy * glyph.width + gx];
-					if (pixel != _font.transparentColor)
-						*(byte *)screen->getBasePtr(x + glyph.xOffset + gx,
-							textY + glyph.yOffset + gy) =
-								selected ? kSelectedTextColor : kNormalTextColor;
+			int x = _chooserBounds.left + kChoiceHorizontalPadding;
+			const int textY = row + (kChoiceRowHeight - _font.lineHeight) / 2;
+			for (uint c = 0; c < _choices[choiceIndex].text.size() &&
+					x < _chooserBounds.right - kChoiceHorizontalPadding; ++c) {
+				const byte ch = (byte)_choices[choiceIndex].text[c];
+				if (ch == ' ') {
+					x += _font.spaceWidth;
+					continue;
 				}
+				if (ch < _font.firstCharacter || ch >= _font.firstCharacter + _font.glyphs.size())
+					continue;
+				const BitmapFontGlyph &glyph = _font.glyphs[ch - _font.firstCharacter];
+				for (int gy = 0; gy < glyph.height; ++gy) {
+					for (int gx = 0; gx < glyph.width; ++gx) {
+						const byte pixel = _font.pixels[glyph.pixelOffset + gy * glyph.width + gx];
+						if (pixel != _font.transparentColor)
+							*(byte *)screen->getBasePtr(x + glyph.xOffset + gx,
+								textY + glyph.yOffset + gy) =
+									selected ? kSelectedTextColor : kNormalTextColor;
+					}
+				}
+				x += glyph.xOffset + glyph.width + _font.characterSpacing;
 			}
-			x += glyph.xOffset + glyph.width + _font.characterSpacing;
+		}
+		_renderedChoicePixels.resize(renderedPixelCount);
+		for (int y = 0; y < _chooserBounds.height(); ++y) {
+			memcpy(_renderedChoicePixels.data() + y * _chooserBounds.width(),
+				screen->getBasePtr(_chooserBounds.left, _chooserBounds.top + y),
+				_chooserBounds.width());
+		}
+		debugC(3, kDebugDialogue,
+			"Ripper: rebuilt dialogue chooser visual cache selected=%u firstVisible=%u pixels=%u",
+			_chooser.selectedIndex(), _chooser.firstVisibleIndex(), renderedPixelCount);
+	} else {
+		for (int y = 0; y < _chooserBounds.height(); ++y) {
+			memcpy(screen->getBasePtr(_chooserBounds.left, _chooserBounds.top + y),
+				_renderedChoicePixels.data() + y * _chooserBounds.width(),
+				_chooserBounds.width());
 		}
 	}
 	g_system->unlockScreen();
@@ -126,6 +147,7 @@ void DialogueChooser::draw(bool captureBacking) {
 					_choices.size() ? 3 : 2],
 			_downArrowBounds.left, _downArrowBounds.top);
 	}
+	_visualDirty = false;
 }
 
 bool DialogueChooser::execute(const CompiledScript &script, const ScriptCommand &command,
@@ -197,10 +219,12 @@ bool DialogueChooser::activateChoices(const char *source) {
 		return true;
 	}
 	_pending = true;
+	_visualDirty = true;
 	_chooser.reset(_choices.size(), kVisibleChoiceCount);
 	_hoveredArrow = 0;
 	_backingBounds = Common::Rect();
 	_backingPixels.clear();
+	_renderedChoicePixels.clear();
 	updateLayout();
 	rebuildPresentationBands("chooser-activation");
 	debugC(1, kDebugDialogue,
@@ -218,6 +242,7 @@ bool DialogueChooser::service(const MouseState &mouse, uint &result) {
 		return false;
 	if (_choices.size() > kVisibleChoiceCount && _upArrowBounds.contains(mouse.position)) {
 		if (_chooser.scrollWindow(-1)) {
+			_visualDirty = true;
 			debugC(1, kDebugDialogue,
 				"Ripper: dialogue scrolled up firstVisible=%u selected=%u",
 				_chooser.firstVisibleIndex(), _chooser.selectedIndex());
@@ -226,6 +251,7 @@ bool DialogueChooser::service(const MouseState &mouse, uint &result) {
 	}
 	if (_choices.size() > kVisibleChoiceCount && _downArrowBounds.contains(mouse.position)) {
 		if (_chooser.scrollWindow(1)) {
+			_visualDirty = true;
 			debugC(1, kDebugDialogue,
 				"Ripper: dialogue scrolled down firstVisible=%u selected=%u",
 				_chooser.firstVisibleIndex(), _chooser.selectedIndex());
@@ -255,6 +281,7 @@ bool DialogueChooser::serviceKeyboard(uint16 command, uint &result) {
 	} else {
 		return false;
 	}
+	_visualDirty = true;
 	debugC(2, kDebugDialogue,
 		"Ripper: dialogue keyboard selection command=0x%04x index=%u result=%u text='%s'",
 		command, _chooser.selectedIndex(),
@@ -266,8 +293,12 @@ bool DialogueChooser::serviceKeyboard(uint16 command, uint &result) {
 void DialogueChooser::updateHover(const Common::Point &point) {
 	if (!_pending || _choices.empty())
 		return;
-	_hoveredArrow = _upArrowBounds.contains(point) ? 1 :
+	const int hoveredArrow = _upArrowBounds.contains(point) ? 1 :
 		(_downArrowBounds.contains(point) ? 2 : 0);
+	if (hoveredArrow != _hoveredArrow) {
+		_hoveredArrow = hoveredArrow;
+		_visualDirty = true;
+	}
 	if (!_chooserBounds.contains(point))
 		return;
 	const uint visibleRow = (point.y - _chooserBounds.top) / kChoiceRowHeight;
@@ -275,6 +306,7 @@ void DialogueChooser::updateHover(const Common::Point &point) {
 	if (!_chooser.resolveVisibleRow(visibleRow, choiceIndex) ||
 			!_chooser.select(choiceIndex, false))
 		return;
+	_visualDirty = true;
 	debugC(2, kDebugDialogue,
 		"Ripper: dialogue hover index=%u result=%u text='%s' point=%d,%d",
 		_chooser.selectedIndex(), _choices[_chooser.selectedIndex()].result,
@@ -289,11 +321,13 @@ bool DialogueChooser::contains(const Common::Point &point) const {
 
 void DialogueChooser::clearPending() {
 	_pending = false;
+	_visualDirty = false;
 	_choices.clear();
 	_chooser.clear();
 	_hoveredArrow = 0;
 	_backingBounds = Common::Rect();
 	_backingPixels.clear();
+	_renderedChoicePixels.clear();
 }
 
 void DialogueChooser::dismissForSceneTransition(const char *reason) {
@@ -320,6 +354,7 @@ bool DialogueChooser::syncGame(Common::Serializer &serializer) {
 			return false;
 		_backingBounds = Common::Rect();
 		_backingPixels.clear();
+		_renderedChoicePixels.clear();
 		_choices.clear();
 		_choices.resize(choiceCount);
 	}
@@ -336,6 +371,7 @@ bool DialogueChooser::syncGame(Common::Serializer &serializer) {
 	serializer.syncAsUint32LE(firstVisibleChoice);
 	if (serializer.isLoading()) {
 		_pending = pending != 0;
+		_visualDirty = _pending;
 		_hoveredArrow = 0;
 		if (_choices.empty()) {
 			_pending = false;

@@ -227,6 +227,11 @@ bool ScriptManager::canSaveGame() const {
 void ScriptManager::requestCyberExit(const char *source) {
 	if (!_runtime.cyberActive)
 		return;
+	// CleanupCurrentSceneFrameInteractions at 0x13832 dispatches phase 3 to
+	// HandleSceneEntryChoiceListLifecycle at 0x1523d before any nested-runtime
+	// exit is returned. Retire the shared chooser here for Escape, toolbar, and
+	// script exits alike so its saved display region cannot survive the unwind.
+	_dialogue->dismissForSceneTransition("cyber-runtime-exit");
 	_runtime.cyberExitRequested = true;
 	debugC(1, kDebugCyber, "Ripper: Cyber nested runtime exit requested source=%s", source);
 }
