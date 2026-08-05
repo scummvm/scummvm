@@ -1889,7 +1889,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Mukhtar and his Team
 	WME_WINENTRY("mukhtar", "",
-		WME_ENTRY1s("data.dcp", "ed1deb8e6b2ce0a50ba26e035bdb7006", 1086177292), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "ed1deb8e6b2ce0a50ba26e035bdb7006", 1086177292), Common::RU_RUS, GF_3D, WME_1_9_1),
 
 	// Mukhtar and his Team (Spanish fanmade)
 	WME_WINENTRY("mukhtar", "Fanmade",
@@ -1906,7 +1906,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Night in the Fog (Demo, 0.4.0212a)
 	WME_WINENTRY("nightinthefog", "Demo 0.4.0212a",
-		WME_ENTRY1s("game.exe", "73c88cb17e380ff72c2f1d156b4545e9", 128294595), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
+		WME_ENTRY1s("game.exe", "73c88cb17e380ff72c2f1d156b4545e9", 128294595), Common::EN_ANY, ADGF_DEMO, WME_1_9_1),
 
 	// Night Train Demo
 	WME_WINENTRY("nighttrain", "Demo",
