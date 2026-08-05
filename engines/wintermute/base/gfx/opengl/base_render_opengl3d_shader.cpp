@@ -374,6 +374,9 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 	_shadowVolumeShader->setUniform("viewMatrix", viewMatrix);
 	_shadowVolumeShader->setUniform("projMatrix", projectionMatrix);
 
+	projectionMatrix.setData(_projectionMatrix);
+	_xmodelShader->setUniform("d3dProjMatrix", projectionMatrix);
+
 	return true;
 }
 

@@ -6,10 +6,12 @@ uniform highp mat4 modelMatrix;
 uniform highp mat4 viewMatrix;
 uniform highp mat4 projMatrix;
 uniform highp mat4 normalMatrix;
+uniform highp mat4 d3dProjMatrix;
 
 uniform vec4 ambientLight;
 uniform vec4 diffuse;
 uniform vec4 ambient;
+uniform vec4 shadowLightPos;
 
 uniform int effectId;
 uniform UBOOL effectSecondPass;
@@ -93,5 +95,14 @@ void main() {
 		}
 
 		gl_Position = pos;
+	} else if (effectId == 2) {
+		Texcoord = texcoord;
+
+		vec4 viewCoords = viewMatrix * modelMatrix * vec4(position, 1.0);
+		gl_Position = projMatrix * viewCoords;
+
+		vec4 lightDir = vec4((viewMatrix * shadowLightPos).xyz, 0.0) - d3dProjMatrix * viewCoords;
+		lightDir /= length(lightDir);
+		Color = vec4(dot(normal, lightDir.xyz));
 	}
 }

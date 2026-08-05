@@ -153,6 +153,12 @@ bool XMeshOpenGLShader::render(XModel *model) {
 		_shader->setUniform("ambient", diffuse);
 		_shader->setUniform("effectId", 0);
 
+		Math::Vector4d shadowLightPos;
+		shadowLightPos.x() = model->_shadowLightPos._x;
+		shadowLightPos.y() = model->_shadowLightPos._y;
+		shadowLightPos.z() = model->_shadowLightPos._z;
+		shadowLightPos.w() = 0.0f;
+		_shader->setUniform("shadowLightPos", shadowLightPos);
 		setupEffect(mat, false);
 		size_t offsetFace = 4 * attrs[i]._faceStart * 3;
 		glDrawElements(GL_TRIANGLES, attrs[i]._faceCount * 3, GL_UNSIGNED_INT, (void *)offsetFace);
@@ -323,6 +329,11 @@ bool XMeshOpenGLShader::setupEffect(Material *material, bool secondPassNeeded) {
 			glDepthMask(GL_FALSE);
 		}
 		return true;
+	}
+	case 0x2AD31E3B: // "effects\\outer_glow.fx"
+	{
+		_shader->setUniform("effectId", 2);
+		return false;
 	}
 	default:
 		warning("Unknown effect hash: %x", effectId);
