@@ -1000,6 +1000,15 @@
   the case-insensitive hidden keyword `aspirin` produces result 1. Negative
   turns are selected by `RunBoardAiTurn` at `0x43535`, whose recursive search
   depth follows the configured puzzle difficulty and randomizes equal scores.
+- The ScummVM-only `PUZZLE_HELP` board overlay is isolated in
+  `BoardGamePuzzle::DebugHelper`; it does not change the retail move model or
+  AI turn. Once a player piece is selected, the helper uses `BOARDTML` regions
+  to tint every legal destination blue-cyan beneath the normal piece layer and
+  the best destination green. The recommendation evaluates only that selected
+  piece's legal moves with the existing minimax score at fixed maximum retail
+  depth 3. Since the score favors the negative AI side, the positive player
+  recommendation selects the lowest score and resolves ties by retaining the
+  first legal destination, keeping the diagnostic stable between redraws.
 - Scene action 22 calls `RunShockLeverPuzzleScene` at `0x3affb` with the
   caller-supplied completion flag. `EF2.RUN` callback `0x5d2` supplies
   milestone 208. The scene opens `EF_MONK.PL`, uses `SCREEN` and `DOWN` for
