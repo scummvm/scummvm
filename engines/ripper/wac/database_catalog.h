@@ -33,15 +33,31 @@ enum WacDatabaseHandlerKind {
 	kWacDatabaseHandlerJournal,
 	kWacDatabaseHandlerVoiceLock,
 	kWacDatabaseHandlerLoopingMedia,
+	kWacDatabaseHandlerOptionalPresentation,
 	kWacDatabaseHandlerText
 };
 
 struct WacDatabaseCatalogEntry {
+	constexpr WacDatabaseCatalogEntry(byte originalIndex_, uint16 milestoneFlag_,
+		uint16 textResourceId_, WacDatabaseHandlerKind handler_,
+		uint16 contentResourceId_, const char *imagePath_ = nullptr,
+		const char *mediaPath_ = nullptr, uint16 presentationFlag_ = 0,
+		uint16 completionFlag_ = 0) : originalIndex(originalIndex_),
+		milestoneFlag(milestoneFlag_), textResourceId(textResourceId_),
+		handler(handler_), contentResourceId(contentResourceId_),
+		imagePath(imagePath_), mediaPath(mediaPath_),
+		presentationFlag(presentationFlag_), completionFlag(completionFlag_) {
+	}
+
 	byte originalIndex;
 	uint16 milestoneFlag;
 	uint16 textResourceId;
 	WacDatabaseHandlerKind handler;
 	uint16 contentResourceId;
+	const char *imagePath;
+	const char *mediaPath;
+	uint16 presentationFlag;
+	uint16 completionFlag;
 };
 
 uint getWacDatabaseCatalogEntryCount();

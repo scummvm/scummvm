@@ -1402,6 +1402,14 @@
   `RunWacStillImageScreenWithOptionalAudio` path with no audio. The Document
   retains the database chooser and shares the still-image palette and vertical
   scrolling behavior.
+- Entries 7 and 16 dispatch `MAG_WAC.PCX`/`MAG_WAC.AVI` and
+  `ED_WAC.PCX`/`ED_WAC.AVI` through
+  `RunWacStillImageScreenWithOptionalPresentation` at `0x22a32`. Both always
+  show their 300-by-200 still image. Flag 87 adds the 70-by-14 `WACVID1A` and
+  `WACVID1B` presentation control immediately below it; activating the control
+  temporarily selects retail video mode 1, presents the paired AVI, restores
+  the prior mode and WAC display, and sets flag 213 for Magnotta or 212 for
+  Eddie.
 - Entry 6 dispatches `RunWacVoiceLockPuzzleScene` at `0x24ba4`, implemented by
   `WacVoiceLockPuzzle`. Its input controller retains the retail event order,
   while `WacVoiceLockEditorState` owns mutable selection/playback state,
