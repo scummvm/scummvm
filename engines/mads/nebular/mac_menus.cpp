@@ -24,6 +24,8 @@
 #include "gui/chooser.h"
 #include "mads/core/config.h"
 #include "mads/core/game.h"
+#include "mads/core/kernel.h"
+#include "mads/mads.h"
 #include "mads/nebular/mac_menus.h"
 
 namespace MADS {
@@ -59,6 +61,17 @@ void selectMacintoshDifficulty() {
 		game.difficulty = DIFFICULTY_MEDIUM;
 		break;
 	}
+}
+
+void macintoshGameMenu() {
+	g_engine->flushKeys();
+
+	if (kernel.activate_menu == GAME_DIFFICULTY_MENU)
+		selectMacintoshDifficulty();
+	else if (kernel.activate_menu != GAME_NO_MENU)
+		g_engine->openMainMenuDialog();
+
+	kernel.activate_menu = GAME_NO_MENU;
 }
 
 } // namespace RexNebular

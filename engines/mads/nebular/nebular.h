@@ -59,9 +59,6 @@ public:
 	~RexNebularEngine() override;
 
 	Common::Error run() override;
-	bool usesScummVMMenu() const override {
-		return getPlatform() == Common::kPlatformMacintosh;
-	}
 	void syncRoom(Common::Serializer &s) override;
 	void showMacPopup();
 	void hideMacPopup();

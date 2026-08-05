@@ -217,7 +217,8 @@ static void main_cold_data_init() {
 	debugger_reset = game_debugger_reset;
 	debugger_update = game_debugger;
 
-	game_menu_routine = global_game_menu;
+	game_menu_routine = g_engine->getPlatform() == Common::kPlatformMacintosh ?
+		macintoshGameMenu : global_game_menu;
 	game_menu_init = global_menu_system_init;
 	game_menu_exit = global_menu_system_shutdown;
 	game_emergency_save = global_emergency_save;

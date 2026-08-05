@@ -26,6 +26,7 @@ namespace MADS {
 namespace RexNebular {
 
 void selectMacintoshDifficulty();
+void macintoshGameMenu();
 
 } // namespace RexNebular
 } // namespace MADS
