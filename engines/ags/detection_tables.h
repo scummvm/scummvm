@@ -1400,6 +1400,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "explorationa", "Exploration A" },
 	{ "exposedreality", "Exposed Reality" },
 	{ "everythingm", "Everything that Begins with an M" },
+	{ "eyetempest", "Eye of the Tempest" },
 	{ "fadingshades", "Fading Shades" },
 	{ "fakethemoonlanding", "Fake the moon landing" },
 	{ "falcolightning", "Falco - Lightning strike in town festival" },
@@ -4957,6 +4958,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("englishhaunting", "An English Haunting.exe", "de2b4205a56fce1b199a692a8b65e161", 987492292, 0),
 	DETECTION_ENTRY_GUIO("excavationhb", "TEOHB.exe", "f176b46bc89e227f745dae9878171676", 566323169, Common::EN_ANY, "Steam", GUIO3(GUIO_NOLANG, GUIO_NOLAUNCHLOAD, GAMEOPTION_NO_AUTOSAVE), ADGF_NO_FLAGS, 0), // Win
 	DETECTION_ENTRY_GUIO("excavationhb", "TEOHB.exe", "58e50b15d39bd15dc6eaf3dfff3936ab", 431438957, Common::EN_ANY, "Steam", GUIO3(GUIO_NOLANG, GUIO_NOLAUNCHLOAD, GAMEOPTION_NO_AUTOSAVE), ADGF_NO_FLAGS, 0), // Win
+	DETECTION_ENTRY_GUIO("excavationhb", "TEOHB.exe", "58e50b15d39bd15dc6eaf3dfff3936ab", 431439093, Common::EN_ANY, "Steam", GUIO3(GUIO_NOLANG, GUIO_NOLAUNCHLOAD, GAMEOPTION_NO_AUTOSAVE), ADGF_NO_FLAGS, 0), // Win
 	DETECTION_ENTRY_GUIO("excavationhb", "ac2game.dat", "e5553f7c45d26d5fbc8b376a859bb87c", 563281442, Common::EN_ANY, "Steam", GUIO3(GUIO_NOLANG, GUIO_NOLAUNCHLOAD, GAMEOPTION_NO_AUTOSAVE), ADGF_NO_FLAGS, GAMEFLAG_PLUGINS_AGSSPRITEFONT_CLIFFTOP), // Mac
 	DETECTION_ENTRY_GUIO("excavationhb", "ac2game.dat", "e5553f7c45d26d5fbc8b376a859bb87c", 563283917, Common::EN_ANY, "Steam", GUIO3(GUIO_NOLANG, GUIO_NOLAUNCHLOAD, GAMEOPTION_NO_AUTOSAVE), ADGF_NO_FLAGS, GAMEFLAG_PLUGINS_AGSSPRITEFONT_CLIFFTOP), // Mac
 	DETECTION_ENTRY_GUIO("excavationhb", "TEOHB.exe", "f176b46bc89e227f745dae9878171676", 566320586, Common::EN_ANY, "GOG.com", GUIO3(GUIO_NOLANG, GUIO_NOLAUNCHLOAD, GAMEOPTION_NO_AUTOSAVE), ADGF_NO_FLAGS, GAMEFLAG_PLUGINS_AGSSPRITEFONT_CLIFFTOP),
@@ -5889,6 +5891,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("forge", "Theforge.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 11424539),
 	DEMO_ENTRY_LANG("forgettendeath", "ForgettenDeath.exe", "06a03fe35791b0578068ab1873455463", 19427130, Common::TR_TUR),  // Turkish
 	DETECTION_ENTRY("fountainofyouth", "FOY.exe", "06a03fe35791b0578068ab1873455463", 4137644, Common::EN_ANY, "Intro 2003", ADGF_DEMO, 0),
+	DETECTION_ENTRY("fountainofyouth", "FountainOfYouth.ags", "06a03fe35791b0578068ab1873455463", 5451260, Common::EN_ANY, "Unreleased demo?", ADGF_DEMO, 0), // TRAC #16987
 	DEMO_ENTRY_EN("fountainofyouth", "foydemo.exe", "f120690b506dd63cd7d1112ea6af2f77", 14372003),  // v1.0
 	DEMO_ENTRY_EN("fountainofyouth", "foydemo1.1.exe", "f120690b506dd63cd7d1112ea6af2f77", 14372003),  // v1.0 (misnamed file)
 	DEMO_ENTRY_EN("fountainofyouth", "foydemo.exe", "f120690b506dd63cd7d1112ea6af2f77", 14371419),  // v1.1
@@ -5899,6 +5902,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_LANG("fountainofyouth", "FOYDemoDutch.exe", "f25752043e2a77ec07bca0c6818af701", 20666760, Common::NL_NLD),  // v1.2 r1
 	DEMO_ENTRY_LANG("fountainofyouth", "FOYDemoDutch.exe", "f25752043e2a77ec07bca0c6818af701", 20737160, Common::NL_NLD),  // v1.2 r2-r3
 	DEMO_ENTRY_EN("foyfighter", "Arcade_Fighting_Demo.exe", "6a55492a65c52cf323dd5324749e46de", 14647406),
+	DEMO_ENTRY_EN("foyfighter", "Arcade_Fighting_Demo.exe", "491ec87fc7272093106309725626bc79", 14648475),  // TRAC #16988
 	DEMO_ENTRY_EN("frankmalone", "Malone.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 4237095),
 	DEMO_ENTRY_EN("franticfranko", "steelh1.exe", "2cb9c81a20282b55f69343ef95cbb63d", 37086267),
 	DEMO_ENTRY_EN("funnyboneyard", "the_funny_boneyard.exe", "78dd4ca028ee0156b6a093d6d780aa65", 63460160),
@@ -7506,6 +7510,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("exmachina", "machina.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 5545266),  //v1.2
 	GAME_ENTRY_EN("explorationa", "ExplorationA.exe", "615e73fc1874e92d60a1996c2330ea36", 8536746),
 	GAME_ENTRY_EN("exposedreality", "HORON.exe", "bb59de174d70797d774dec76a171352d", 4847902),
+	GAME_ENTRY_EN("eyetempest", "Tempest.ags", "510be04e5eec2aa92bb78b060f138d64", 37752575),
 	GAME_ENTRY_EN("fadingshades", "FadingShades.exe", "f120690b506dd63cd7d1112ea6af2f77", 20166198),
 	GAME_ENTRY_EN("fakethemoonlanding", "OperationStarman.exe", "495d45fb8adfd49690ae3b97921feec6", 56805472),
 	GAME_ENTRY("falcolightning", "falcoLightningStrike.exe", "438ff7d3ddf7a9727024229cfb1d0274", 82035336),  // Eng-Ita
