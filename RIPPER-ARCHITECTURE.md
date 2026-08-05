@@ -959,13 +959,17 @@
   selecting a piece adds no board-space outlines.
 - `LoadBoardPuzzleAssetsAndLayout` loads the 0x1300-byte `BOARDPAL` shading
   block through `LoadShadingInfoBlock` at `0x4d160`. It consists of a
-  0x300-byte palette followed by sixteen shade entries for each of the 256
-  indexed colors. When the cell passed to `RenderBoardPieceVisual` at
-  `0x4160d` matches the selected-source global at `0x84f68`, the renderer
-  attaches `BOARDPAL` with strength `0xa0`, selecting shade 10 and making the
-  chosen piece visibly translucent. `HandleBoardPlayerTurnInput` at `0x42c1a`
-  clears that selected source before interpreting the second click; clicking
-  the source again skips the move and reaches the common opaque redraw.
+  0x300-byte VGA palette followed by a 0x1000-byte lookup cube that maps
+  12-bit RGB (`rrrrggggbbbb`) back to an indexed palette color. When the cell
+  passed to `RenderBoardPieceVisual` at `0x4160d` matches the selected-source
+  global at `0x84f68`, the renderer attaches `BOARDPAL` with source opacity
+  `0xa0`, blends the piece with the already-rendered board, and quantizes the
+  result through that cube. `AnimateBoardIntroFadeIn` at `0x4365c` confirms
+  the argument semantics by increasing the same effect value from zero toward
+  `0xff` before the final opaque render. `HandleBoardPlayerTurnInput` at
+  `0x42c1a` clears that selected source before interpreting the second click;
+  clicking the source again skips the move and reaches the common opaque
+  redraw.
 - `ApplyBoardMoveAndUpdateState` at `0x428c9` removes the source from the live
   board and calls `AnimateBoardMove` at `0x42644` for both player and AI moves.
   That routine inserts the moving piece into the fixed depth traversal by
