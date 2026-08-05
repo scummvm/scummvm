@@ -2142,7 +2142,7 @@ void DisplayMan::drawFloorOrnament(uint16 floorOrnOrdinal, ViewFloor viewFloorIn
 		drawFloorOrnament(_vm->indexToOrdinal(k15_FloorOrnFootprints), viewFloorIndex);
 }
 
-void DisplayMan::drawDoor(uint16 doorThingIndex, DoorState doorState, int16 *doorNativeBitmapIndices, int16 byteCount, DoorOrnament doorOrnament, DoorFrames *doorFrames) {
+void DisplayMan::drawDoor(uint16 doorThingIndex, DoorState doorState, int16 *doorNativeBitmapIndices, int16 byteCount, DoorOrnament doorOrnament, DoorFrames *doorFrames, int16 zoneIndexDOS) {
 	if (doorState == kDMDoorStateOpen)
 		return;
 
@@ -2152,7 +2152,15 @@ void DisplayMan::drawDoor(uint16 doorThingIndex, DoorState doorState, int16 *doo
 	DoorFrames *doorFramesTemp = doorFrames;
 	Door *door = dungeon.getDoor(doorThingIndex);
 	uint16 doorType = door->getType();
-	memmove(_tmpBitmap, getNativeBitmapOrGraphic(doorNativeBitmapIndices[doorType]), byteCount * 2);
+
+	byte *nativeBmp = getNativeBitmapOrGraphic(doorNativeBitmapIndices[doorType]);
+	uint16 copyBytes = byteCount * 2;
+	uint16 doorPixelW = 0, doorPixelH = 0;
+	if (_vm->getPlatform() == Common::kPlatformDOS) {
+		if (getBitmapDimensions(nativeBmp, doorPixelW, doorPixelH))
+			copyBytes = doorPixelW * doorPixelH;
+	}
+	memmove(_tmpBitmap, nativeBmp, copyBytes);
 	drawDoorOrnament(door->getOrnOrdinal(), doorOrnament);
 	if (getFlag(dungeon._currMapDoorInfo[doorType]._attributes, kDMMaskDoorInfoAnimated)) {
 		if (_vm->getRandomNumber(2))
@@ -2164,6 +2172,15 @@ void DisplayMan::drawDoor(uint16 doorThingIndex, DoorState doorState, int16 *doo
 
 	if ((doorFramesTemp == _doorFrameD1C) && championMan._party._event73Count_ThievesEye)
 		drawDoorOrnament(_vm->indexToOrdinal(k16_DoorOrnThivesEyeMask), kDMDoorOrnamentD1LCR);
+
+	if (_vm->getPlatform() == Common::kPlatformDOS && zoneIndexDOS >= 0) {
+		if (doorState == kDMDoorStateDestroyed)
+			drawDoorOrnament(_vm->indexToOrdinal(k15_DoorOrnDestroyedMask), doorOrnament);
+		else if (doorState != kDMDoorStateClosed)
+			zoneIndexDOS += doorState;
+		drawBitmapDOS(_tmpBitmap, zoneIndexDOS, false, kDMColorFlesh, doorPixelW, doorPixelH);
+		return;
+	}
 
 	if (doorState == kDMDoorStateClosed)
 		drawDoorBitmap(&doorFramesTemp->_closedOrDestroyed);
@@ -2270,9 +2287,7 @@ void DisplayMan::drawWallSetBitmap(byte *bitmap, Frame &f) {
 	if (!bitmap || !f._srcByteWidth)
 		return;
 
-	uint16 srcX = (_vm->getPlatform() == Common::kPlatformDOS) ? 0 : f._srcX;
-	uint16 srcY = (_vm->getPlatform() == Common::kPlatformDOS) ? 0 : f._srcY;
-	blitToBitmap(bitmap, _bitmapViewport, f._box, srcX, srcY, f._srcByteWidth, k112_byteWidthViewport, kDMColorFlesh, f._srcHeight, k136_heightViewport);
+	blitToBitmap(bitmap, _bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth, k112_byteWidthViewport, kDMColorFlesh, f._srcHeight, k136_heightViewport);
 }
 
 
@@ -2331,9 +2346,14 @@ void DisplayMan::drawSquareD3L(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypeDoorFront:
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], kDMViewFloorD3L);
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD3L, kDMCellOrderDoorPass1BackLeftBackRight);
-		drawWallSetBitmap(_bitmapWallSetDoorFrameLeftD3L, doorFrameLeftD3L);
+		if (_vm->getPlatform() == Common::kPlatformDOS) {
+			drawBitmapDOS(_bitmapWallSetDoorFrameLeftD3L, kDMZoneDoorFrameLeftD3L);
+			drawBitmapDOS(_bitmapWallSetDoorFrameLeftD3L, kDMZoneDoorFrameRightD3L, true);
+		} else {
+			drawWallSetBitmap(_bitmapWallSetDoorFrameLeftD3L, doorFrameLeftD3L);
+		}
 		drawDoor(squareAspect[kDMSquareAspectDoorThingIndex], (DoorState)squareAspect[kDMSquareAspectDoorState],
-					  _doorNativeBitmapIndexFrontD3LCR, getBitmapByteCount(48, 41), kDMDoorOrnamentD3LCR, &doorFrameD3L);
+					  _doorNativeBitmapIndexFrontD3LCR, getBitmapByteCount(48, 41), kDMDoorOrnamentD3LCR, &doorFrameD3L, kDMZoneDoorD3L);
 		order = kDMCellOrderDoorPass2FrontLeftFrontRight;
 		break;
 	case kDMElementTypePit:
@@ -2413,14 +2433,19 @@ void DisplayMan::drawSquareD3R(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypeDoorFront:
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], kDMViewFloorD3R);
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD3R, kDMCellOrderDoorPass1BackRightBackLeft);
-		memmove(_tmpBitmap, _bitmapWallSetDoorFrameLeftD3L, getPixelWidth(((_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet) + 4) * getPixelHeight(((_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet) + 4));
-		drawDoorFrameBitmapFlippedHorizontally(_tmpBitmap, &doorFrameRightD3R);
+		if (_vm->getPlatform() == Common::kPlatformDOS) {
+			drawBitmapDOS(_bitmapWallSetDoorFrameLeftD3L, kDMZoneDoorFrameLeftD3R);
+			drawBitmapDOS(_bitmapWallSetDoorFrameLeftD3L, kDMZoneDoorFrameRightD3R, true);
+		} else {
+			memmove(_tmpBitmap, _bitmapWallSetDoorFrameLeftD3L, getPixelWidth(((_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet) + 4) * getPixelHeight(((_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet) + 4));
+			drawDoorFrameBitmapFlippedHorizontally(_tmpBitmap, &doorFrameRightD3R);
+		}
 		if (_vm->_dungeonMan->getDoor(squareAspect[kDMSquareAspectDoorThingIndex])->hasButton())
 			drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), kDMDoorButtonD3R);
 
 		drawDoor(squareAspect[kDMSquareAspectDoorThingIndex],
 					  (DoorState)squareAspect[kDMSquareAspectDoorState], _doorNativeBitmapIndexFrontD3LCR,
-					  getBitmapByteCount(48, 41), kDMDoorOrnamentD3LCR, &doorFrameD3R);
+					  getBitmapByteCount(48, 41), kDMDoorOrnamentD3LCR, &doorFrameD3R, kDMZoneDoorD3R);
 		break;
 	case kDMElementTypePit:
 		if (!squareAspect[kDMSquareAspectPitInvisible])
@@ -2495,14 +2520,19 @@ void DisplayMan::drawSquareD3C(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypeDoorFront:
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], kDMViewFloorD3C);
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD3C, kDMCellOrderDoorPass1BackLeftBackRight);
-		drawWallSetBitmap(_bitmapWallSetDoorFrameLeftD3C, doorFrameLeftD3C);
-		memmove(_tmpBitmap, _bitmapWallSetDoorFrameLeftD3C, getPixelWidth(((_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet) + 3) * getPixelHeight(((_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet) + 3));
-		drawDoorFrameBitmapFlippedHorizontally(_tmpBitmap, &doorFrameRightD3C);
+		if (_vm->getPlatform() == Common::kPlatformDOS) {
+			drawBitmapDOS(_bitmapWallSetDoorFrameLeftD3C, kDMZoneDoorFrameLeftD3C);
+			drawBitmapDOS(_bitmapWallSetDoorFrameLeftD3C, kDMZoneDoorFrameRightD3C, true);
+		} else {
+			drawWallSetBitmap(_bitmapWallSetDoorFrameLeftD3C, doorFrameLeftD3C);
+			memmove(_tmpBitmap, _bitmapWallSetDoorFrameLeftD3C, getPixelWidth(((_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet) + 3) * getPixelHeight(((_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet) + 3));
+			drawDoorFrameBitmapFlippedHorizontally(_tmpBitmap, &doorFrameRightD3C);
+		}
 		if (dungeon.getDoor(squareAspect[kDMSquareAspectDoorThingIndex])->hasButton())
 			drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), kDMDoorButtonD3C);
 
 		drawDoor(squareAspect[kDMSquareAspectDoorThingIndex], (DoorState)squareAspect[kDMSquareAspectDoorState],
-					  _doorNativeBitmapIndexFrontD3LCR, getBitmapByteCount(48, 41), kDMDoorOrnamentD3LCR, &doorFrameD3C);
+					  _doorNativeBitmapIndexFrontD3LCR, getBitmapByteCount(48, 41), kDMDoorOrnamentD3LCR, &doorFrameD3C, kDMZoneDoorD3C);
 		order = kDMCellOrderDoorPass2FrontLeftFrontRight;
 		break;
 	case kDMElementTypePit:
@@ -2583,9 +2613,12 @@ void DisplayMan::drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypeDoorFront:
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], kDMViewFloorD2L);
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD2L, kDMCellOrderDoorPass1BackLeftBackRight);
-		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD2LCR, doorFrameTopD2L);
+		if (_vm->getPlatform() == Common::kPlatformDOS)
+			drawBitmapDOS(_bitmapWallSetDoorFrameTopD2LCR, kDMZoneDoorFrameTopD2L);
+		else
+			drawWallSetBitmap(_bitmapWallSetDoorFrameTopD2LCR, doorFrameTopD2L);
 		drawDoor(squareAspect[kDMSquareAspectDoorThingIndex], (DoorState)squareAspect[kDMSquareAspectDoorState], _doorNativeBitmapIndexFrontD2LCR,
-					  getBitmapByteCount(64, 61), kDMDoorOrnamentD2LCR, &doorFrameD2L);
+					  getBitmapByteCount(64, 61), kDMDoorOrnamentD2LCR, &doorFrameD2L, kDMZoneDoorD2L);
 		order = kDMCellOrderDoorPass2FrontLeftFrontRight;
 		break;
 	case kDMElementTypePit:
@@ -3130,9 +3163,12 @@ void DisplayMan::drawSquareD2R(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypeDoorFront:
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], kDMViewFloorD2R);
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD2R, kDMCellOrderDoorPass1BackRightBackLeft);
-		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD2LCR, doorFrameTopD2R);
+		if (_vm->getPlatform() == Common::kPlatformDOS)
+			drawBitmapDOS(_bitmapWallSetDoorFrameTopD2LCR, kDMZoneDoorFrameTopD2R);
+		else
+			drawWallSetBitmap(_bitmapWallSetDoorFrameTopD2LCR, doorFrameTopD2R);
 		drawDoor(squareAspect[kDMSquareAspectDoorThingIndex], (DoorState)squareAspect[kDMSquareAspectDoorState],
-					  _doorNativeBitmapIndexFrontD2LCR, getBitmapByteCount(64, 61), kDMDoorOrnamentD2LCR, &doorFrameD2R);
+					  _doorNativeBitmapIndexFrontD2LCR, getBitmapByteCount(64, 61), kDMDoorOrnamentD2LCR, &doorFrameD2R, kDMZoneDoorD2R);
 		order = kDMCellOrderDoorPass2FrontRightFrontLeft;
 		break;
 	case kDMElementTypePit:
@@ -3211,15 +3247,21 @@ void DisplayMan::drawSquareD2C(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypeDoorFront:
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], kDMViewFloorD2C);
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD2C, kDMCellOrderDoorPass1BackLeftBackRight);
-		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD2LCR, doorFrameTopD2C);
-		drawWallSetBitmap(_bitmapWallSetDoorFrameLeftD2C, doorFrameLeftD2C);
-		memcpy(_tmpBitmap, _bitmapWallSetDoorFrameLeftD2C, getPixelWidth(((_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet) + 2) * getPixelHeight(((_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet) + 2));
-		drawDoorFrameBitmapFlippedHorizontally(_tmpBitmap, &doorFrameRightD2C);
+		if (_vm->getPlatform() == Common::kPlatformDOS) {
+			drawBitmapDOS(_bitmapWallSetDoorFrameTopD2LCR, kDMZoneDoorFrameTopD2C);
+			drawBitmapDOS(_bitmapWallSetDoorFrameLeftD2C, kDMZoneDoorFrameLeftD2C);
+			drawBitmapDOS(_bitmapWallSetDoorFrameLeftD2C, kDMZoneDoorFrameRightD2C);
+		} else {
+			drawWallSetBitmap(_bitmapWallSetDoorFrameTopD2LCR, doorFrameTopD2C);
+			drawWallSetBitmap(_bitmapWallSetDoorFrameLeftD2C, doorFrameLeftD2C);
+			memcpy(_tmpBitmap, _bitmapWallSetDoorFrameLeftD2C, getPixelWidth(((_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet) + 2) * getPixelHeight(((_vm->getPlatform() == Common::kPlatformDOS) ? k86_FirstWallSetDOS : k77_FirstWallSet) + 2));
+			drawDoorFrameBitmapFlippedHorizontally(_tmpBitmap, &doorFrameRightD2C);
+		}
 		if (dungeon.getDoor(squareAspect[kDMSquareAspectDoorThingIndex])->hasButton())
 			drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), kDMDoorButtonD2C);
 
 		drawDoor(squareAspect[kDMSquareAspectDoorThingIndex], (DoorState)squareAspect[kDMSquareAspectDoorState],
-					  _doorNativeBitmapIndexFrontD2LCR, getBitmapByteCount(64, 61), kDMDoorOrnamentD2LCR, &doorFrameD2C);
+					  _doorNativeBitmapIndexFrontD2LCR, getBitmapByteCount(64, 61), kDMDoorOrnamentD2LCR, &doorFrameD2C, kDMZoneDoorD2C);
 		order = kDMCellOrderDoorPass2FrontLeftFrontRight;
 		break;
 	case kDMElementTypePit:
@@ -3307,9 +3349,12 @@ void DisplayMan::drawSquareD1L(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypeDoorFront:
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], kDMViewFloorD1L);
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD1L, kDMCellOrderDoorPass1BackRight);
-		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD1LCR, doorFrameTopD1L);
+		if (_vm->getPlatform() == Common::kPlatformDOS)
+			drawBitmapDOS(_bitmapWallSetDoorFrameTopD1LCR, kDMZoneDoorFrameTopD1L);
+		else
+			drawWallSetBitmap(_bitmapWallSetDoorFrameTopD1LCR, doorFrameTopD1L);
 		drawDoor(squareAspect[kDMSquareAspectDoorThingIndex], (DoorState)squareAspect[kDMSquareAspectDoorState],
-					  _doorNativeBitmapIndexFrontD1LCR, getBitmapByteCount(96, 88), kDMDoorOrnamentD1LCR, &doorFrameD1L);
+					  _doorNativeBitmapIndexFrontD1LCR, getBitmapByteCount(96, 88), kDMDoorOrnamentD1LCR, &doorFrameD1L, kDMZoneDoorD1L);
 		order = kDMCellOrderDoorPass2FrontRight;
 		break;
 	case kDMElementTypePit:
@@ -3389,9 +3434,12 @@ void DisplayMan::drawSquareD1R(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypeDoorFront:
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], kDMViewFloorD1R);
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD1R, kDMCellOrderDoorPass1BackLeft);
-		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD1LCR, doorFrameTopD1R);
+		if (_vm->getPlatform() == Common::kPlatformDOS)
+			drawBitmapDOS(_bitmapWallSetDoorFrameTopD1LCR, kDMZoneDoorFrameTopD1R);
+		else
+			drawWallSetBitmap(_bitmapWallSetDoorFrameTopD1LCR, doorFrameTopD1R);
 		drawDoor(squareAspect[kDMSquareAspectDoorThingIndex], (DoorState)squareAspect[kDMSquareAspectDoorState],
-					  _doorNativeBitmapIndexFrontD1LCR, getBitmapByteCount(96, 88), kDMDoorOrnamentD1LCR, &doorFrameD1R);
+					  _doorNativeBitmapIndexFrontD1LCR, getBitmapByteCount(96, 88), kDMDoorOrnamentD1LCR, &doorFrameD1R, kDMZoneDoorD1R);
 		order = kDMCellOrderDoorPass2FrontLeft;
 		break;
 	case kDMElementTypePit:
@@ -3470,14 +3518,20 @@ void DisplayMan::drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypeDoorFront:
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], kDMViewFloorD1C);
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD1C, kDMCellOrderDoorPass1BackLeftBackRight);
-		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD1LCR, doorFrameTopD1C);
-		drawWallSetBitmap(_bitmapWallSetDoorFrameLeftD1C, _doorFrameLeftD1C);
-		drawWallSetBitmap(_bitmapWallSetDoorFrameRightD1C, _doorFrameRightD1C);
+		if (_vm->getPlatform() == Common::kPlatformDOS) {
+			drawBitmapDOS(_bitmapWallSetDoorFrameTopD1LCR, kDMZoneDoorFrameTopD1C);
+			drawBitmapDOS(_bitmapWallSetDoorFrameLeftD1C, kDMZoneDoorFrameLeftD1C);
+			drawBitmapDOS(_bitmapWallSetDoorFrameLeftD1C, kDMZoneDoorFrameRightD1C, true);
+		} else {
+			drawWallSetBitmap(_bitmapWallSetDoorFrameTopD1LCR, doorFrameTopD1C);
+			drawWallSetBitmap(_bitmapWallSetDoorFrameLeftD1C, _doorFrameLeftD1C);
+			drawWallSetBitmap(_bitmapWallSetDoorFrameRightD1C, _doorFrameRightD1C);
+		}
 		if (dungeon.getDoor(squareAspect[kDMSquareAspectDoorThingIndex])->hasButton())
 			drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), kDMDoorButtonD1C);
 
 		drawDoor(squareAspect[kDMSquareAspectDoorThingIndex], (DoorState)squareAspect[kDMSquareAspectDoorState],
-					  _doorNativeBitmapIndexFrontD1LCR, getBitmapByteCount(96, 88), kDMDoorOrnamentD1LCR, _doorFrameD1C);
+					  _doorNativeBitmapIndexFrontD1LCR, getBitmapByteCount(96, 88), kDMDoorOrnamentD1LCR, _doorFrameD1C, kDMZoneDoorD1C);
 		order = kDMCellOrderDoorPass2FrontLeftFrontRight;
 		break;
 	case kDMElementTypePit:
@@ -4130,6 +4184,33 @@ void DisplayMan::applyCreatureReplColors(int replacedColor, int replacementColor
 
 	if (_vm->getPlatform() == Common::kPlatformDOS)
 		_lastVgaViewportPaletteIndex = -1;
+}
+
+void DisplayMan::drawBitmapDOS(byte *srcBitmap, int16 zoneIndex, bool flipHorizontal, Color transparentColor, uint16 explicitWidth, uint16 explicitHeight) {
+	if (!srcBitmap || zoneIndex < 0)
+		return;
+	uint16 w = explicitWidth, h = explicitHeight;
+	if (w == 0 || h == 0) {
+		if (!getBitmapDimensions(srcBitmap, w, h))
+			return;
+	}
+
+	byte *drawSrc = srcBitmap;
+	if (flipHorizontal) {
+		copyBitmapAndFlipHorizontal(srcBitmap, _tmpBitmap, w / 2, h);
+		drawSrc = _tmpBitmap;
+	}
+
+	int16 xyz[4] = { 0, 0, 0, 0 };
+	int16 inOutX = (int16)w;
+	int16 inOutY = (int16)h;
+	if (!getCoord(drawSrc, xyz, zoneIndex, &inOutX, &inOutY))
+		return;
+
+	Box destBox(xyz[0], xyz[0] + xyz[2] - 1, xyz[1], xyz[1] + xyz[3] - 1);
+	uint16 srcX = flipHorizontal ? (w - inOutX - xyz[2]) : (uint16)inOutX;
+	blitToBitmap(drawSrc, _bitmapViewport, destBox, srcX, inOutY,
+		w / 2, k112_byteWidthViewport, transparentColor, h, k136_heightViewport);
 }
 
 void DisplayMan::drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &f) {
