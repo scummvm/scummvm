@@ -117,9 +117,13 @@ void anim_timer() {
 		speech->display_condition != 0x800 &&
 		speech->resource_id >= 0;
 
-	if (speech->sound /*&& (!flag || sound_var1 == '1')*/) {
-		g_engine->_soundManager->command(speech->sound);
-		flag = false;
+	if (g_engine->getGameID() != GType_RexNebular) {
+		// In Phantom sound_dma is one of the sound card params which can be configurable via flags.
+		// But since it's default is already '1', hence we can disable that part of the if check
+		if (speech->sound /*&& (!flag || sound_dma == '1')*/) {
+			g_engine->_soundManager->command(speech->sound);
+			flag = false;
+		}
 	}
 
 	if (flag) {
