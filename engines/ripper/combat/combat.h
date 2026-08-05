@@ -32,6 +32,7 @@ namespace Ripper {
 struct CombatEncounterDefinition {
 	const char *name;
 	const char *iniPattern;
+	const char *fallbackIni;
 	const char *ambientSound;
 	const char *creatureSound;
 	const char *weaponSound;
@@ -119,7 +120,8 @@ private:
 		Effect() : active(false), group(0), frame(0), x(0), y(0) {}
 	};
 
-	bool loadResources(uint difficulty);
+	Common::String selectConfigName(uint difficulty) const;
+	bool loadResources(const Common::String &configName, uint difficulty);
 	bool loadConfig(const Common::String &name, Common::INIFile &ini);
 	bool loadSceneData(SceneData &scene);
 	bool loadFrameRegions(const Common::String &name, SceneData &scene);

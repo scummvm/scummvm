@@ -551,8 +551,7 @@ Scene::Result CombatEncounter::run(uint completionFlag) {
 	// RunCombatEncounterScene at 0x31563 reads g_combatLevelSetting once and
 	// formats the encounter's numbered INI before loading any combat resources.
 	const uint difficulty = _engine->getSettings()->getCombatLevel();
-	const Common::String configName = Common::String::format(
-		_definition.iniPattern, difficulty);
+	const Common::String configName = selectConfigName(difficulty);
 	debugC(1, kDebugCombat,
 		"Ripper: initiating combat encounter type='%s' difficulty=%u config='%s' completionFlag=%u",
 		_definition.name, difficulty, configName.c_str(), completionFlag);
@@ -576,7 +575,7 @@ Scene::Result CombatEncounter::run(uint completionFlag) {
 	for (uint i = 0; i < kEffectCapacity; ++i)
 		_effects[i] = Effect();
 
-	if (!loadResources(difficulty)) {
+	if (!loadResources(configName, difficulty)) {
 		_encounterResult = kLoadFailed;
 	} else {
 		startEncounterAudio();

@@ -201,8 +201,27 @@ bool CombatEncounter::loadBitmapAssets() {
 	return true;
 }
 
-bool CombatEncounter::loadResources(uint difficulty) {
-	const Common::String configName = Common::String::format(_definition.iniPattern, difficulty);
+Common::String CombatEncounter::selectConfigName(uint difficulty) const {
+	const Common::String requested = Common::String::format(
+		_definition.iniPattern, difficulty);
+	if (!_definition.fallbackIni || Common::File::exists(Common::Path(requested)))
+		return requested;
+
+	const Common::String fallback(_definition.fallbackIni);
+	if (!Common::File::exists(Common::Path(fallback)))
+		return requested;
+
+	// RunCombatEncounterScene at 0x31563 always formats the configured level.
+	// Some retail data layouts only contain ATKINI1.INI, so retain the original
+	// lookup first and use that packaged definition when its numbered peer is
+	// absent.
+	debugC(2, kDebugCombat,
+		"Ripper: combat configuration fallback type='%s' requested='%s' selected='%s' reason=missing-numbered-config",
+		_definition.name, requested.c_str(), fallback.c_str());
+	return fallback;
+}
+
+bool CombatEncounter::loadResources(const Common::String &configName, uint difficulty) {
 	Common::INIFile ini;
 	if (!loadConfig(configName, ini))
 		return false;
