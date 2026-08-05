@@ -47,6 +47,10 @@ public:
 			Ripper::kWacDatabaseHandlerBrokenMugCompletion);
 		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(3)->handler,
 			Ripper::kWacDatabaseHandlerJournal);
+		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(5)->handler,
+			Ripper::kWacDatabaseHandlerText);
+		TS_ASSERT_EQUALS(
+			Ripper::getWacDatabaseCatalogEntry(5)->contentResourceId, 0xb3);
 		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(6)->handler,
 			Ripper::kWacDatabaseHandlerVoiceLock);
 		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(9)->handler,

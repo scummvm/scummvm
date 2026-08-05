@@ -1488,6 +1488,13 @@
   for playback. The scene's input tick publishes one mouse state,
   services the persistent WAC controls and database chooser, then presents one
   cursor after also testing the waveform and audio-editor buttons.
+- Entry 5, the second database row labeled Electronic Journal, dispatches
+  game-text resource `0xb3` through `RunCenteredTextPanelUntilExitAction` at
+  `0x2330c`. It uses the same retained 330-by-222 WAC text panel as entry 15.
+  When the viewer returns, `RunWacInventorySelectionLoop` at `0x2252a` sets
+  journal read flag `0x10a` before processing another database selection. This
+  is separate from entry 3's `RunWacJournalRevealScene` password puzzle even
+  though `GAMETEXT.TF` gives both rows the Electronic Journal label.
 - Entry 9 dispatches the silent `wacinv9.smk` member from `INTERFAC.PL`
   through `RunStaticMediaScreenWithOptionalVoiceover` at `0x2339d`. The
   152-by-140, 15-frame Scanned Knife sequence is centered at screen (149,121)
