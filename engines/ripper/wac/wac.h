@@ -47,6 +47,8 @@ public:
 	explicit WacManager(RipperEngine *engine);
 
 	bool initialize(ResourceManager &resources);
+	bool appendNotebookResourceString(uint resourceId);
+	bool resetNotebook();
 	void run();
 	void serviceIdleEffects();
 	uint16 serviceFrontEndControls(const MouseState &mouse, uint fallbackCursor,
@@ -65,6 +67,9 @@ private:
 	int findControl(const Common::Point &point) const;
 	bool dispatchAction(uint16 action);
 	bool runNotebook();
+	bool loadNotebookText(Common::String &body) const;
+	bool saveNotebookText(const Common::String &body) const;
+	Common::String notebookFileName() const;
 	const Common::String &resourceString(uint resourceId) const;
 	uint measureText(const Common::String &text) const;
 	void drawText(byte *screen, uint pitch, int x, int y, const Common::String &text,
@@ -85,6 +90,7 @@ private:
 	Common::Array<byte> _savedPalette;
 	int _hoveredControl;
 	int _pressedControl;
+	bool _notebookUpdatePending;
 	bool _initialized;
 };
 
