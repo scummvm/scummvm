@@ -114,7 +114,8 @@ public:
 		return (f == kSupportsLoadingDuringRuntime) ||
 			   (f == kSupportsSavingDuringRuntime) ||
 			   (f == kSupportsReturnToLauncher) ||
-			   (f == kSupportsChangingOptionsDuringRuntime);
+			   (f == kSupportsChangingOptionsDuringRuntime) ||
+			   (f == kSupportsSubtitleOptions);
 	}
 
 	void updateSettingVars();
