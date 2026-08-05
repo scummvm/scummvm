@@ -34,7 +34,7 @@ static const WacDatabaseCatalogEntry kWacDatabaseCatalog[] = {
 	{  2, 0x48, 0xde, kWacDatabaseHandlerBrokenMugCompletion, 0 },
 	{  3, 0x49, 0xdf, kWacDatabaseHandlerJournal,             0 },
 	{  4, 0x4a, 0xe0, kWacDatabaseHandlerStillImage,          0 },
-	{  5, 0x4b, 0xe1, kWacDatabaseHandlerUnavailable,         0 },
+	{  5, 0x4b, 0xe1, kWacDatabaseHandlerText,                0xb3 },
 	{  6, 0x4c, 0xe2, kWacDatabaseHandlerVoiceLock,           0 },
 	{  7, 0x4d, 0xe3, kWacDatabaseHandlerUnavailable,         0 },
 	{  8, 0x4e, 0xe4, kWacDatabaseHandlerUnavailable,         0 },

@@ -571,6 +571,17 @@ uint16 WacDatabaseSession::runDatabaseTextPanel(DatabaseEntry &entry, uint bodyR
 	debugC(1, kDebugWac,
 		"Ripper: left WAC database text panel entry=%u resource=0x%x result=0x%x firstLine=%u",
 		entry.originalIndex(), bodyResourceId, result, firstVisible);
+	if (entry.originalIndex() == 5) {
+		// RunWacInventorySelectionLoop at 0x2252a sets flag 0x10a after the
+		// entry 5 centered-text viewer returns and before dispatching another
+		// selected row.
+		_wac->_engine->getMilestones()->set(kMilestoneReadJournalEntry7,
+			true, "wac-database-text");
+		debugC(2, kDebugWac,
+			"Ripper: completed WAC database text entry=%u resource=0x%x milestone=0x%x",
+			entry.originalIndex(), bodyResourceId,
+			kMilestoneReadJournalEntry7);
+	}
 	if (result == kWacDatabaseSelectionChanged &&
 			_databaseSelection < _databaseEntries.size()) {
 		debugC(2, kDebugWac,
