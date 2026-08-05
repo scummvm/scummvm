@@ -72,10 +72,10 @@ static const uint kShadingInfoBytes =
 static const uint kSelectedPieceEffectStrength = 0xa0;
 static const uint kEffectStrengthRange = 0x100;
 static const uint kPuzzleHelpSearchDepth = 3;
-static const byte kPuzzleHelpLegalTint[3] = {0, 32, 63};
-static const byte kPuzzleHelpOptimalTint[3] = {0, 63, 0};
-static const uint kPuzzleHelpLegalOpacity = 0x60;
-static const uint kPuzzleHelpOptimalOpacity = 0xa0;
+static const byte kPuzzleHelpLegalColor = 254;
+static const byte kPuzzleHelpOptimalColor = 255;
+static const uint kPuzzleHelpLegalDitherMask = 3;
+static const uint kPuzzleHelpOptimalDitherMask = 1;
 
 // The table at 0x40ab8 stores scene Y followed by X. These normalized
 // physical points are the piece anchors used by RenderBoardState at 0x418c8.
@@ -173,9 +173,10 @@ void BoardGamePuzzle::DebugHelper::selectionChanged(
 
 	_optimalDestination = chooseOptimalDestination(puzzle);
 	debugC(2, kDebugPuzzles,
-		"Ripper: board-game puzzle help analyzed source=%d legalDestinations=%u optimalDestination=%d depth=%u",
+		"Ripper: board-game puzzle help analyzed source=%d legalDestinations=%u optimalDestination=%d depth=%u legalColor=%u optimalColor=%u",
 		puzzle._selectedCell, puzzle._legalDestinations.size(),
-		_optimalDestination, kPuzzleHelpSearchDepth);
+		_optimalDestination, kPuzzleHelpSearchDepth,
+		kPuzzleHelpLegalColor, kPuzzleHelpOptimalColor);
 }
 
 int BoardGamePuzzle::DebugHelper::chooseOptimalDestination(
@@ -206,23 +207,6 @@ int BoardGamePuzzle::DebugHelper::chooseOptimalDestination(
 	return bestDestination;
 }
 
-byte BoardGamePuzzle::DebugHelper::blendTintPixel(
-		const BoardGamePuzzle &puzzle, byte destination, const byte *tint,
-		uint opacity) const {
-	const byte *palette = puzzle._selectionShading.data();
-	const byte *colorCube = palette + kShadingPaletteBytes;
-	const uint inverseOpacity = kEffectStrengthRange - opacity;
-	uint components[3];
-	for (uint component = 0; component < ARRAYSIZE(components); ++component) {
-		components[component] =
-			(tint[component] * opacity +
-			 palette[destination * 3 + component] * inverseOpacity) >> 8;
-	}
-	const uint colorCubeIndex = ((components[0] >> 2) << 8) |
-		((components[1] >> 2) << 4) | (components[2] >> 2);
-	return colorCube[colorCubeIndex];
-}
-
 void BoardGamePuzzle::DebugHelper::draw(const BoardGamePuzzle &puzzle,
 		byte *screen, uint pitch) const {
 	if (!_enabled || puzzle._selectedCell < 0)
@@ -247,11 +231,16 @@ void BoardGamePuzzle::DebugHelper::draw(const BoardGamePuzzle &puzzle,
 					!highlighted[code])
 				continue;
 			const bool optimal = code == _optimalDestination;
-			byte &pixel = screen[y * pitch + x];
-			pixel = blendTintPixel(puzzle, pixel,
-				optimal ? kPuzzleHelpOptimalTint : kPuzzleHelpLegalTint,
-				optimal ? kPuzzleHelpOptimalOpacity :
-					kPuzzleHelpLegalOpacity);
+			const uint ditherMask = optimal ? kPuzzleHelpOptimalDitherMask :
+				kPuzzleHelpLegalDitherMask;
+			if (((x + y) & ditherMask) != 0)
+				continue;
+			// ApplySharedDisplayPalettePatch at 0x205d0 guarantees the
+			// interface red and yellow entries in every presentation palette.
+			// Spatial dithering preserves the board without relying on
+			// BOARDPAL, whose limited colors collapse arbitrary RGB tints.
+			screen[y * pitch + x] = optimal ? kPuzzleHelpOptimalColor :
+				kPuzzleHelpLegalColor;
 		}
 	}
 }
