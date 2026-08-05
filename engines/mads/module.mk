@@ -73,6 +73,7 @@ MODULE_OBJS := \
 	nebular/global.o \
 	nebular/main.o \
 	nebular/main_menu.o \
+	nebular/mac_menus.o \
 	nebular/mac_resources.o \
 	nebular/menus.o \
 	nebular/popup.o \
