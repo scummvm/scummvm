@@ -52,7 +52,8 @@ private:
 	bool loadSelectionShading();
 	void applyPalette();
 	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y, const byte *shading = nullptr) const;
+		int x, int y, bool translucent = false) const;
+	byte blendSelectionPixel(byte source, byte destination) const;
 	void drawPiece(byte *screen, uint pitch, int piece,
 		const Common::Point &anchor, bool selected = false) const;
 	void render();

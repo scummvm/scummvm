@@ -66,12 +66,11 @@ static const uint kShortMoveTicks = 100;
 static const uint kLongMoveTicks = 200;
 static const uint kRemovalLeadTicks = 50;
 static const uint kShadingPaletteBytes = 0x300;
-static const uint kShadingLevels = 16;
-static const uint kShadingColorCount = 256;
-static const uint kShadingInfoBytes = kShadingPaletteBytes +
-		kShadingLevels * kShadingColorCount;
+static const uint kShadingColorCubeBytes = 0x1000;
+static const uint kShadingInfoBytes =
+		kShadingPaletteBytes + kShadingColorCubeBytes;
 static const uint kSelectedPieceEffectStrength = 0xa0;
-static const uint kSelectedPieceShade = kSelectedPieceEffectStrength >> 4;
+static const uint kEffectStrengthRange = 0x100;
 
 // The table at 0x40ab8 stores scene Y followed by X. These normalized
 // physical points are the piece anchors used by RenderBoardState at 0x418c8.
@@ -208,10 +207,10 @@ bool BoardGamePuzzle::loadAssets() {
 
 	debugC(1, kDebugPuzzles,
 		"Ripper: loaded board-game assets library='%s' entries=%u board=%ux%u "
-		"hitMap=%ux%u shading='%s' shade=%u pieces=10 audio=CHESS0..CHESS4",
+		"hitMap=%ux%u effect='%s' opacity=0x%x pieces=10 audio=CHESS0..CHESS4",
 		kLibraryName, _library.getEntryCount(), _background.width,
 		_background.height, _hitMap.width, _hitMap.height,
-		kSelectionShadingName, kSelectedPieceShade);
+		kSelectionShadingName, kSelectedPieceEffectStrength);
 	return true;
 }
 
@@ -227,7 +226,7 @@ void BoardGamePuzzle::applyPalette() {
 
 void BoardGamePuzzle::drawFrame(byte *screen, uint pitch,
 		const BitmapAssetFrame &frame, int x, int y,
-		const byte *shading) const {
+		bool translucent) const {
 	for (uint sourceY = 0; sourceY < frame.height; ++sourceY) {
 		const int destinationY = y + sourceY;
 		if (destinationY < 0 || destinationY >= kRipperScreenHeight)
@@ -237,11 +236,34 @@ void BoardGamePuzzle::drawFrame(byte *screen, uint pitch,
 			if (destinationX < 0 || destinationX >= kRipperScreenWidth)
 				continue;
 			const byte pixel = frame.pixels[sourceY * frame.width + sourceX];
-			if (pixel != frame.transparentColor)
-				screen[destinationY * pitch + destinationX] = shading ?
-					shading[pixel * kShadingLevels + kSelectedPieceShade] : pixel;
+			if (pixel != frame.transparentColor) {
+				byte &destination = screen[destinationY * pitch + destinationX];
+				destination = translucent ?
+					blendSelectionPixel(pixel, destination) : pixel;
+			}
 		}
 	}
+}
+
+byte BoardGamePuzzle::blendSelectionPixel(byte source,
+		byte destination) const {
+	// BOARDPAL's 0x1000-byte tail maps 12-bit RGB (rrrrggggbbbb) back
+	// into its 256-color palette. The strength passed at 0x41876 grows
+	// from 0 toward 0xff during AnimateBoardIntroFadeIn at 0x4365c, so
+	// it is source opacity rather than a shade-table index.
+	const byte *palette = _selectionShading.data();
+	const byte *colorCube = palette + kShadingPaletteBytes;
+	const uint inverseStrength =
+		kEffectStrengthRange - kSelectedPieceEffectStrength;
+	uint components[3];
+	for (uint component = 0; component < ARRAYSIZE(components); ++component) {
+		components[component] =
+			(palette[source * 3 + component] * kSelectedPieceEffectStrength +
+			 palette[destination * 3 + component] * inverseStrength) >> 8;
+	}
+	const uint colorCubeIndex = ((components[0] >> 2) << 8) |
+		((components[1] >> 2) << 4) | (components[2] >> 2);
+	return colorCube[colorCubeIndex];
 }
 
 void BoardGamePuzzle::drawPiece(byte *screen, uint pitch, int piece,
@@ -253,11 +275,10 @@ void BoardGamePuzzle::drawPiece(byte *screen, uint pitch, int piece,
 	const Common::Point position = anchor - kPieceOrigins[side][type];
 	// RenderBoardPieceVisual at 0x4186c attaches BOARDPAL with strength 0xa0
 	// when the cell matches the selected-source global at 0x84f68. The asset
-	// stores a 0x300-byte palette followed by sixteen shades for each color.
-	const byte *shading = selected ?
-		_selectionShading.data() + kShadingPaletteBytes : nullptr;
+	// stores a 0x300-byte palette followed by a 12-bit RGB color cube used
+	// to quantize the source/background blend back into the board palette.
 	drawFrame(screen, pitch, _pieces[side][type], position.x, position.y,
-		shading);
+		selected);
 }
 
 void BoardGamePuzzle::render() {
@@ -741,9 +762,8 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 						_selectedCell, _model.pieceAt(_selectedCell),
 						_legalDestinations.size());
 					debugC(3, kDebugPuzzles,
-						"Ripper: board-game selected-piece effect resource='%s' strength=0x%x shade=%u",
-						kSelectionShadingName, kSelectedPieceEffectStrength,
-						kSelectedPieceShade);
+						"Ripper: board-game selected-piece effect resource='%s' opacity=0x%x quantization=12-bit-rgb",
+						kSelectionShadingName, kSelectedPieceEffectStrength);
 					render();
 				}
 			}
