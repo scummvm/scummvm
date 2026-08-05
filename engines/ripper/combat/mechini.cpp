@@ -19,6 +19,7 @@ namespace {
 static const CombatEncounterDefinition kMechiniDefinition = {
 	"mechini",
 	"mechini%u.ini",
+	nullptr,
 	"mechwav0.wav",
 	"mechwav1.wav",
 	"mechwav3.wav",
