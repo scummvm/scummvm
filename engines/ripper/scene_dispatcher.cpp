@@ -30,6 +30,7 @@
 #include "ripper/detection.h"
 #include "ripper/milestones.h"
 #include "ripper/puzzles/board_arrangement.h"
+#include "ripper/puzzles/board_game.h"
 #include "ripper/puzzles/calculator.h"
 #include "ripper/puzzles/cd_in_book.h"
 #include "ripper/puzzles/circuit_chip.h"
@@ -94,7 +95,7 @@ const char *SceneActionDispatcher::actionName(uint action) {
 	case 35: return "set UI selection index";
 	case 36: return "update UI selection";
 	case kSceneActionSetFrontEndActionMask: return "set front-end action mask";
-	case 38: return "board game";
+	case kSceneActionBoardGame: return "board game";
 	case 39: return "no-op";
 	case 40: return "KA dialogue scene";
 	case 41: return "KB scene script";
@@ -348,6 +349,15 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 			"Ripper: scene action 37 set front-end action mask=0x%04x script='%s' offset=0x%x",
 			manager._runtime.frontEndActionMask, script.getMemberName().c_str(), command.offset);
 		return true;
+	}
+	if (action == kSceneActionBoardGame) {
+		BoardGamePuzzle puzzle(engine);
+		const BoardGamePuzzle::Result result = puzzle.run(argument);
+		debugC(1, kDebugPuzzles,
+			"Ripper: board-game puzzle scene action completed "
+			"result=%d milestone=%u",
+			result, argument);
+		return result != BoardGamePuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionKaDialogue) {
 		debugC(1, kDebugCyber,

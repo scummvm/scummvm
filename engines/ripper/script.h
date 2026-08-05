@@ -109,6 +109,7 @@ enum SceneAction {
 	kSceneActionSetUiSelectionIndex = 35,
 	kSceneActionDispatchUiSelection = 36,
 	kSceneActionSetFrontEndActionMask = 37,
+	kSceneActionBoardGame = 38,
 	kSceneActionKaDialogue = 40,
 	kSceneActionKbProgram = 41,
 	kSceneActionKcOrWoffordProgram = 42,

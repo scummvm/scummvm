@@ -941,6 +941,30 @@
   presents `Q_P_16.WAV`, but leaves the puzzle active. Escape or either
   80-pixel side control exits, F1 opens help table `0x1ab`, and `BB1.WAV`
   accompanies selection of a card that was not already frontmost.
+- Scene action 38 calls `RunBoardGameScene` at `0x436c0` with the
+  caller-supplied completion flag. `KL.RUN` supplies milestone 89 after
+  presenting `KL_IN.AVI`. The puzzle opens `PUZZLE/CHESS.GL`; `BOARD` is its
+  640-by-400 presentation, `BOARDTML` maps pointer positions directly to cells
+  0 through 42 and exit control `0x81`, `PART_A00` through `PART_A04` and
+  `PART_B00` through `PART_B04` are the two signed piece sets, and `CHESS0`
+  through `CHESS4` are its archived audio cues. The board contains seven rows
+  of six cells, plus shared destination 42 for a runner leaving the far edge.
+  Its initial signed layout is copied from `0x40c32`; positive pieces move
+  first.
+- `TryGetLegalBoardMoveDestination` at `0x41c1e` selects movement offsets by
+  absolute piece type. Type 1 moves orthogonally inside its two home rows;
+  types 2 and 3 move to adjacent cells and can leave the far edge; type 2
+  cannot capture types 4 or 5; type 4 makes capture-only two-cell leaps; and
+  type 5 combines the adjacent and leap tables. `ApplyBoardMoveAndUpdateState`
+  at `0x428c9` promotes a type-2 runner at the opposite edge or after it
+  captures type 2 or 3. When a side has no type-2 or type-3 runners left, its
+  type-4 pieces become type 5. Capturing type 1 ends the game with the moving
+  side's signed result, and only positive result 1 sets the supplied milestone.
+  The player may cancel a selected source with right click or a pending key;
+  Escape and control `0x81` leave unsolved, F1 opens help table `0x1b4`, and
+  the case-insensitive hidden keyword `aspirin` produces result 1. Negative
+  turns are selected by `RunBoardAiTurn` at `0x43535`, whose recursive search
+  depth follows the configured puzzle difficulty and randomizes equal scores.
 - Scene action 22 calls `RunShockLeverPuzzleScene` at `0x3affb` with the
   caller-supplied completion flag. `EF2.RUN` callback `0x5d2` supplies
   milestone 208. The scene opens `EF_MONK.PL`, uses `SCREEN` and `DOWN` for
