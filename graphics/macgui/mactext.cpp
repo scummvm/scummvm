@@ -938,8 +938,14 @@ void MacText::removeLastLine() {
 }
 
 void MacText::drawStep(ManagedSurface *g, ManagedSurface *src, ManagedSurface *border, int x, int y, int w, int h, int xoff, int yoff, uint32 tcolor, uint32 btcolor) {
-	if (x + w < src->w || y + h < src->h)
-		g->fillRect(Common::Rect(x + xoff, y + yoff, x + w + xoff, y + h + yoff), tcolor);
+	// The fill covers the destination area the blits below write to, so it has
+	// to be expressed in destination coordinates and clipped to the surface:
+	// Common::Rect is 16 bit and asserts in its constructor, before any clipping
+	int fillRight = MIN<int>(xoff + w, g->w);
+	int fillBottom = MIN<int>(yoff + h, g->h);
+
+	if ((x + w < src->w || y + h < src->h) && xoff < fillRight && yoff < fillBottom)
+		g->fillRect(Common::Rect(xoff, yoff, fillRight, fillBottom), tcolor);
 
 	// blit shadow surface first
 	if (_canvas._textShadow)
@@ -1061,7 +1067,7 @@ bool MacText::draw(bool forceRedraw) {
 	if (!(_contentIsDirty || forceRedraw))
 		return true;
 
-	draw(_composeSurface, 0, _scrollPos, _canvas._surface->w, _scrollPos + _canvas._surface->h, offset.x, offset.y);
+	draw(_composeSurface, 0, _scrollPos, _canvas._surface->w, _canvas._surface->h, offset.x, offset.y);
 
 	for (int bb = 0; bb < _shadow; bb++) {
 		_composeSurface->hLine(_shadow, _composeSurface->h - _shadow + bb, _composeSurface->w, 0);
