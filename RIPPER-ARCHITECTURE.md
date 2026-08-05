@@ -1695,10 +1695,14 @@
   `0x18740`, which selects the unskinned primary template at `0x8a2de` and
   fixes the control at logical `(228, 262)` with size `194x20`. Scene playback
   contributes the 50-pixel presentation origin, placing it at screen y=312.
-  The template's five-pixel insets place a 14-pixel black edit row over the
-  surround already present in the active movie; text and the caret use the
-  normal `small.fnt` palette index `0xfb`. The generic MENUB frame and palette
-  are not applied to this control.
+  The zero stored in the layout record at `+0x14` is the chooser flags word,
+  not a background palette index. `BuildChooserControlVisuals` at `0x54413`
+  snapshots the movie pixels beneath the unskinned control, and
+  `RedrawTextEntryChooserTextSpan` at `0x5aecb` restores that backing before
+  drawing text and caret updates. `ReleaseChooserControlVisualState` at
+  `0x5489f` restores it again when the control is destroyed. Text and the caret
+  use the normal `small.fnt` palette index `0xfb`; the generic MENUB frame and
+  palette are not applied to this control.
 - `InitializeUiChoiceControlEntryRows` at `0x4c0b3` binds three visible row
   controls to a list chooser. `ProcessChooserControlInput` at `0x57372` keeps
   a separate first-visible index and moves it one row for the chooser's up and

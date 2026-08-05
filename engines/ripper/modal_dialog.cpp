@@ -139,6 +139,15 @@ void ModalDialogManager::restoreDisplay() {
 void ModalDialogManager::drawTextEntry(const Common::String &prompt,
 		const Common::String &text, uint firstVisible, uint cursorPosition,
 		bool caretVisible, const Common::Rect &bounds, PresentationStyle style) const {
+	const bool wacStyle = style == kWacPresentation;
+	const bool sceneEntryStyle = style == kSceneEntryPresentation;
+	if (sceneEntryStyle) {
+		// BuildChooserControlVisuals at 0x54413 captures the pixels beneath
+		// an unskinned chooser. RedrawTextEntryChooserTextSpan at 0x5aecb
+		// restores that backing before drawing each text or caret update.
+		_textEntryBacking.restorePixels();
+	}
+
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
 		if (screen)
@@ -147,10 +156,8 @@ void ModalDialogManager::drawTextEntry(const Common::String &prompt,
 	}
 
 	byte *pixels = (byte *)screen->getPixels();
-	const bool wacStyle = style == kWacPresentation;
-	const bool sceneEntryStyle = style == kSceneEntryPresentation;
 	const byte backgroundColor = wacStyle ? kWacModalBackgroundColor :
-		(sceneEntryStyle ? kSceneEntryBackgroundColor : kModalBackgroundColor);
+		kModalBackgroundColor;
 	const byte textColor = wacStyle ? kWacModalTextColor :
 		(sceneEntryStyle ? kSceneEntryTextColor : kModalTextColor);
 	if (wacStyle) {
@@ -158,17 +165,7 @@ void ModalDialogManager::drawTextEntry(const Common::String &prompt,
 			memset(screen->getBasePtr(bounds.left, y), backgroundColor,
 				bounds.width());
 		drawFrame(pixels, screen->pitch, bounds, style);
-	} else if (sceneEntryStyle) {
-		// ConfigureSceneEntryChooserLayout at 0x18740 selects the unskinned
-		// primary template at 0x8a2de for layout variant 2. Its five-pixel
-		// inset places the editable row over the recess already rendered by
-		// the scene movie; redraws restore that row with palette index 0.
-		const int rowBottom = MIN(bounds.top + kTextEntryPadding +
-			kModalRowHeight, (int)bounds.bottom);
-		for (int y = bounds.top + kTextEntryPadding; y < rowBottom; ++y)
-			memset(screen->getBasePtr(bounds.left + kTextEntryPadding, y),
-				backgroundColor, bounds.width() - kTextEntryPadding * 2);
-	} else {
+	} else if (!sceneEntryStyle) {
 		drawFrame(pixels, screen->pitch, bounds, style);
 		for (int y = bounds.top + 2; y < bounds.bottom - 2; ++y)
 			memset(screen->getBasePtr(bounds.left + kTextEntryPadding, y),
@@ -341,6 +338,18 @@ bool ModalDialogManager::beginTextEntry(const Common::String &prompt,
 	_textEntryBounds = bounds.isEmpty() ? Common::Rect(kTextEntryLeft,
 		kTextEntryTop, kTextEntryLeft + kTextEntryWidth,
 		kTextEntryTop + kTextEntryHeight) : bounds;
+	_textEntryBacking.clear();
+	if (_textEntryStyle == kSceneEntryPresentation &&
+			!_textEntryBacking.capture(_textEntryBounds)) {
+		warning("Ripper: could not capture scene text request backing source='%s'",
+			source);
+		return false;
+	}
+	if (_textEntryBacking.isValid())
+		debugC(2, kDebugScene,
+			"Ripper: captured scene text request backing source='%s' bounds=%d,%d,%d,%d",
+			source, _textEntryBounds.left, _textEntryBounds.top,
+			_textEntryBounds.width(), _textEntryBounds.height());
 	_textEntryMaximumLength = maximumLength;
 	_textEntryHelpResourceId = helpResourceId;
 	_textEntryFirstVisible = 0;
@@ -373,6 +382,14 @@ void ModalDialogManager::finishTextEntry(Common::String &text) {
 	_textEntryActive = false;
 	_engine->getInput()->discardMouseTransitions();
 	_engine->getCursor()->setVisible(_textEntryRestoreCursor);
+	if (_textEntryBacking.isValid()) {
+		// ReleaseChooserControlVisualState at 0x5489f restores the original
+		// chooser backing before freeing its display snapshots.
+		_textEntryBacking.restorePixels();
+		_textEntryBacking.clear();
+		_engine->getCursor()->refresh();
+		g_system->updateScreen();
+	}
 }
 
 ModalDialogManager::TextEntryResult ModalDialogManager::serviceTextEntry(
