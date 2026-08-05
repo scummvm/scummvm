@@ -733,5 +733,12 @@ void RexNebularEngine::hideMacPopup() {
 		_macNebular->hidePopup();
 }
 
+bool RexNebularEngine::hasInterfaceAnimations() const {
+	// Macintosh CODE 7 stops loading an AA_INTERFACE controller before its
+	// DOS sprite-series list. The Mac resource set accordingly contains the
+	// controllers and InBx backgrounds, but not those subordinate series.
+	return _macNebular == nullptr;
+}
+
 } // namespace RexNebular
 } // namespace MADS
