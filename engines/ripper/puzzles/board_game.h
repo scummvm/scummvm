@@ -49,11 +49,12 @@ public:
 private:
 	bool loadAssets();
 	bool loadBitmap(const Common::String &name, BitmapAssetFrame &frame);
+	bool loadSelectionShading();
 	void applyPalette();
 	void drawFrame(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y) const;
+		int x, int y, const byte *shading = nullptr) const;
 	void drawPiece(byte *screen, uint pitch, int piece,
-		const Common::Point &anchor) const;
+		const Common::Point &anchor, bool selected = false) const;
 	void render();
 	int hitCodeAt(const Common::Point &point) const;
 	void updateCursor(const Common::Point &point);
@@ -75,6 +76,7 @@ private:
 	BitmapAssetFrame _background;
 	BitmapAssetFrame _hitMap;
 	BitmapAssetFrame _pieces[2][5];
+	Common::Array<byte> _selectionShading;
 	IndexedDisplaySnapshot _incomingDisplay;
 	BoardGameModel _model;
 	Common::RandomSource _random;
