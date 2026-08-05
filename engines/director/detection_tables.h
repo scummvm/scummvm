@@ -8352,6 +8352,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Cherry Coke Presents a Myst clone
 	MACGAME1("alanna", "", "Lost Island of Alanna/Alanna", "r:05c94e6fcb102f9fa795e354c956b28e",   1029001,	600),
 	WINGAME1("alanna", "", "LOSTISLE/ALANNA.EXE",		   "t:b61ca497bf705c9371d973af08e04968", 109893253, 601),
+	// From TRAC report #16921
+	WINGAME1("alanna", "", "ALANNA.EXE",				   "t:91ab95679b8f81179e4ba96c2c7f07b6",  16897055, 601),
 
 	// Both versions require installation
 	MACGAME1("amertailmb", "", "An American Tail MB", "rt:f76fd08228d417309952dc815fba1b61", 115391, 600),
