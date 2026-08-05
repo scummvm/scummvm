@@ -60,8 +60,6 @@ public:
 
 	Common::Error run() override;
 	void syncRoom(Common::Serializer &s) override;
-	void showMacPopup();
-	void hideMacPopup();
 
 	int main_copy_verify() override;
 	void global_init_code() override;
@@ -75,6 +73,9 @@ public:
 	void global_room_init() override {}
 	void global_sound_driver() override;
 	bool hasInterfaceAnimations() const override;
+	bool drawPopup() override;
+	void onPopupDestroyed() override;
+	bool getInterfaceSentenceColors(byte &foreground, byte &shadow) const override;
 };
 
 } // namespace RexNebular

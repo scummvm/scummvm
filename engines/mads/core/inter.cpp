@@ -140,11 +140,6 @@ int  inter_sentence_handle = -1;       /* Sentence message handle (for matte) */
 static int inter_sentence_shadow_handle = -1;
 int  inter_sentence_changed = false;    /* Mark if sentence contents changed   */
 
-enum {
-	kMacSentenceColor = 15,
-	kMacSentenceShadowColor = 8
-};
-
 int  inter_look_around;                 /* "Look around" command            */
 
 int  inter_command;                     /* Vocab # of sentence's verb       */
@@ -2166,18 +2161,16 @@ void inter_main_loop(int allow_input) {
 			x = (video_x >> 1) - (width >> 1);
 			y = (viewing_at_y + scr_work.y - 1) - 12;
 
-			const bool isMacRex = g_engine->getGameID() == GType_RexNebular &&
-				g_engine->getPlatform() == Common::kPlatformMacintosh;
-			if (isMacRex) {
-				// Native large-window captions use a light face with a dark
-				// one-pixel offset, rather than the DOS interface cyan.
+			byte sentenceColor = g_engine->getGameID() == GType_RexNebular ?
+				INTER_MESSAGE_COLOR_REX : INTER_MESSAGE_COLOR;
+			byte shadowColor = 0;
+			if (g_engine->getInterfaceSentenceColors(sentenceColor, shadowColor)) {
 				inter_sentence_shadow_handle = matte_add_message(use_font,
-					inter_sentence, x + 1, y + 1, kMacSentenceShadowColor,
+					inter_sentence, x + 1, y + 1, shadowColor,
 					use_spacing);
 			}
 			inter_sentence_handle = matte_add_message(use_font, inter_sentence, x, y,
-				isMacRex ? kMacSentenceColor :
-					(g_engine->getGameID() == GType_RexNebular ? INTER_MESSAGE_COLOR_REX : INTER_MESSAGE_COLOR),
+				sentenceColor,
 				use_spacing);
 		}
 		inter_sentence_changed = false;
