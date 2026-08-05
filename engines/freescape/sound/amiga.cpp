@@ -436,6 +436,7 @@ public:
 
 private:
 	void loadDmaSamples(Common::SeekableReadStream *file, const Common::Path &sampleBank, int modOffset);
+	void dropSoundsWithoutSamples();
 
 	Common::Array<AmigaSfxEntry> _amigaSfxTable;
 	Common::Array<AmigaDmaSample> _amigaDmaSamples;
@@ -462,6 +463,41 @@ void SoundAmigaDemo::loadSounds(Common::SeekableReadStream *file, int offset, in
 	debugC(1, kFreescapeDebugParser, "Loaded %d Amiga sound effects", numSounds);
 
 	loadDmaSamples(file, sampleBank, modOffset);
+	dropSoundsWithoutSamples();
+}
+
+// A missing sample leaves AUD0 on the shared square wave, so the volume command
+// that follows turns a sampled effect into a bare tone. The demo disc ships no
+// bank, so drop those entries instead of beeping.
+void SoundAmigaDemo::dropSoundsWithoutSamples() {
+	int dropped = 0;
+	for (uint i = 0; i < _amigaSfxTable.size(); i++) {
+		AmigaSfxEntry &entry = _amigaSfxTable[i];
+		bool missing = false;
+
+		for (uint j = 0; j < entry.commands.size(); j++) {
+			uint16 command = entry.commands[j];
+			if ((command >> 12) != 5)
+				continue;
+
+			// 0x5NNN carries three parameter words of its own
+			uint16 slot = command & 0x0fff;
+			j += 3;
+			if (slot == 0 || slot >= _amigaDmaSamples.size() || _amigaDmaSamples[slot].data.empty()) {
+				missing = true;
+				break;
+			}
+		}
+
+		if (missing) {
+			entry.commands.clear();
+			dropped++;
+			debugC(1, kFreescapeDebugParser, "Amiga SFX %d needs a sample that is not present, dropped", i);
+		}
+	}
+
+	if (dropped > 0)
+		debugC(1, kFreescapeDebugParser, "Dropped %d Amiga sound effects with no sample data", dropped);
 }
 
 // The samples played by 0x5NNN come from an external bank, which the original
