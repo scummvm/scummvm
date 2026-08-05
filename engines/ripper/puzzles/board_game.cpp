@@ -44,7 +44,6 @@ namespace {
 static const char *const kLibraryName = "chess.gl";
 static const char *const kBackgroundName = "board";
 static const char *const kHitMapName = "boardtml";
-static const char *const kHighlightName = "hilite";
 static const uint kDefaultSelectionIndex = 0x13;
 static const uint kDefaultCursor = 14;
 static const uint kSelectionCursor = 16;
@@ -55,6 +54,16 @@ static const uint16 kHelpCommand = 0x3b00;
 static const uint16 kScreenshotCommand = 0x4400;
 static const byte kExitHitCode = 0x81;
 static const char kCompletionKeyword[] = "aspirin";
+static const uint kAudioCueCount = 5;
+static const uint kTransformCue = 0;
+static const uint kRemovalCue = 1;
+static const uint kLongMoveCue = 2;
+static const uint kShortMoveCue = 3;
+static const uint kSelectionCue = 4;
+static const uint kAnimationTickMillis = 10;
+static const uint kShortMoveTicks = 100;
+static const uint kLongMoveTicks = 200;
+static const uint kRemovalLeadTicks = 50;
 
 // The table at 0x40ab8 stores scene Y followed by X. These normalized
 // physical points are the piece anchors used by RenderBoardState at 0x418c8.
@@ -121,9 +130,10 @@ static Common::String moveString(const BoardGameModel::Move &move) {
 } // End of anonymous namespace
 
 BoardGamePuzzle::BoardGamePuzzle(RipperEngine *engine) :
-		_engine(engine), _random("ripper-board-game"), _selectedCell(-1),
-		_hoveredCode(-1), _keywordIndex(0), _searchDepth(1),
-		_savedSelectionIndex(0), _savedCursorVisible(true) {
+		_engine(engine), _random("ripper-board-game"), _movingAnchor(0, 0),
+		_selectedCell(-1), _hoveredCode(-1), _movingSource(-1), _movingPiece(0),
+		_keywordIndex(0), _searchDepth(1), _savedSelectionIndex(0),
+		_savedCursorVisible(true), _movingActive(false) {
 }
 
 bool BoardGamePuzzle::loadBitmap(const Common::String &name,
@@ -145,8 +155,7 @@ bool BoardGamePuzzle::loadAssets() {
 		return false;
 	}
 	if (!loadBitmap(kBackgroundName, _background) ||
-			!loadBitmap(kHitMapName, _hitMap) ||
-			!loadBitmap(kHighlightName, _highlight))
+			!loadBitmap(kHitMapName, _hitMap))
 		return false;
 	if (_background.width != kRipperScreenWidth ||
 			_background.height != kRipperScreenHeight ||
@@ -169,10 +178,9 @@ bool BoardGamePuzzle::loadAssets() {
 
 	debugC(1, kDebugPuzzles,
 		"Ripper: loaded board-game assets library='%s' entries=%u board=%ux%u "
-		"hitMap=%ux%u highlight=%ux%u pieces=10 audio=CHESS0..CHESS4",
+		"hitMap=%ux%u pieces=10 audio=CHESS0..CHESS4",
 		kLibraryName, _library.getEntryCount(), _background.width,
-		_background.height, _hitMap.width, _hitMap.height,
-		_highlight.width, _highlight.height);
+		_background.height, _hitMap.width, _hitMap.height);
 	return true;
 }
 
@@ -203,6 +211,16 @@ void BoardGamePuzzle::drawFrame(byte *screen, uint pitch,
 	}
 }
 
+void BoardGamePuzzle::drawPiece(byte *screen, uint pitch, int piece,
+		const Common::Point &anchor) const {
+	if (piece == 0)
+		return;
+	const uint side = piece > 0 ? 0 : 1;
+	const uint type = ABS(piece) - 1;
+	const Common::Point position = anchor - kPieceOrigins[side][type];
+	drawFrame(screen, pitch, _pieces[side][type], position.x, position.y);
+}
+
 void BoardGamePuzzle::render() {
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1 ||
@@ -217,33 +235,23 @@ void BoardGamePuzzle::render() {
 			kRipperScreenWidth);
 	}
 	byte *pixels = (byte *)screen->getPixels();
-	if (_selectedCell >= 0) {
-		drawFrame(pixels, screen->pitch, _highlight,
-			kCellAnchors[_selectedCell].x - _highlight.width / 2,
-			kCellAnchors[_selectedCell].y - _highlight.height / 2);
-		for (uint destination = 0; destination < _legalDestinations.size();
-				++destination) {
-			const int cell = _legalDestinations[destination];
-			if (cell == BoardGameModel::kOffBoardDestination)
-				continue;
-			drawFrame(pixels, screen->pitch, _highlight,
-				kCellAnchors[cell].x - _highlight.width / 2,
-				kCellAnchors[cell].y - _highlight.height / 2);
-		}
-	}
-
+	bool movingPiecePending = _movingActive;
 	for (uint order = 0; order < ARRAYSIZE(kRenderOrder); ++order) {
 		const int cell = kRenderOrder[order];
-		const int piece = _model.pieceAt(cell);
-		if (piece == 0)
+		const Common::Point &anchor = kCellAnchors[cell];
+		if (movingPiecePending &&
+				(_movingAnchor.x < anchor.x ||
+				 (_movingAnchor.x == anchor.x && _movingAnchor.y < anchor.y))) {
+			drawPiece(pixels, screen->pitch, _movingPiece, _movingAnchor);
+			movingPiecePending = false;
+		}
+		if (_movingActive && cell == _movingSource)
 			continue;
-		const uint side = piece > 0 ? 0 : 1;
-		const uint type = ABS(piece) - 1;
-		const Common::Point position = kCellAnchors[cell] -
-			kPieceOrigins[side][type];
-		drawFrame(pixels, screen->pitch, _pieces[side][type],
-			position.x, position.y);
+		const int piece = _model.pieceAt(cell);
+		drawPiece(pixels, screen->pitch, piece, anchor);
 	}
+	if (movingPiecePending)
+		drawPiece(pixels, screen->pitch, _movingPiece, _movingAnchor);
 	g_system->unlockScreen();
 	applyPalette();
 	_engine->getCursor()->setVisible(true);
@@ -300,15 +308,90 @@ bool BoardGamePuzzle::serviceKeyword(uint16 command) {
 }
 
 bool BoardGamePuzzle::playCue(uint cue) {
+	if (cue >= kAudioCueCount)
+		return false;
 	const Common::String name = Common::String::format("chess%u", cue);
 	Common::SeekableReadStream *stream =
 		_library.createReadStreamForMember(name);
 	if (!stream || !_engine->getMedia()->playSoundEffectStream(
-			stream, name, _audioHandle)) {
+			stream, name, _audioHandles[cue])) {
 		warning("Ripper: could not play board-game cue '%s'", name.c_str());
 		return false;
 	}
 	return true;
+}
+
+void BoardGamePuzzle::stopCue(uint cue) {
+	if (cue < kAudioCueCount)
+		_engine->getMedia()->stopSoundEffect(_audioHandles[cue]);
+}
+
+bool BoardGamePuzzle::animateMove(const BoardGameModel::Move &move,
+		int movingPiece, int capturedPiece, bool thinkingCursor) {
+	const Common::Point start = kCellAnchors[move.source];
+	Common::Point destination;
+	uint durationTicks = kShortMoveTicks;
+	if (move.destination == BoardGameModel::kOffBoardDestination) {
+		const int row = move.source / BoardGameModel::kColumnCount;
+		const int column = move.source % BoardGameModel::kColumnCount;
+		const int referenceColumn = column == 0 ? 1 : column - 1;
+		const Common::Point &reference =
+			kCellAnchors[row * BoardGameModel::kColumnCount + referenceColumn];
+		destination = start + (start - reference);
+	} else {
+		destination = kCellAnchors[move.destination];
+		const int cellDistance = ABS(move.source - move.destination);
+		if (cellDistance == 2 || cellDistance > 7)
+			durationTicks = kLongMoveTicks;
+	}
+
+	const uint moveCue = durationTicks == kShortMoveTicks ?
+		kShortMoveCue : kLongMoveCue;
+	playCue(moveCue);
+	_movingActive = true;
+	_movingSource = move.source;
+	_movingPiece = movingPiece;
+	_movingAnchor = start;
+	bool removalCueStarted = false;
+	const uint32 startMillis = g_system->getMillis(true);
+	const uint durationMillis = durationTicks * kAnimationTickMillis;
+	debugC(2, kDebugPuzzles,
+		"Ripper: board-game move animation started move=%s piece=%d "
+		"ticks=%u cue=%u thinkingCursor=%d from=%d,%d to=%d,%d",
+		moveString(move).c_str(), movingPiece, durationTicks, moveCue,
+		thinkingCursor, start.x, start.y, destination.x, destination.y);
+
+	while (!_engine->shouldQuit()) {
+		if (_engine->getInput()->pollEvents()) {
+			_engine->quitGame();
+			break;
+		}
+		const uint elapsedMillis = MIN<uint32>(
+			g_system->getMillis(true) - startMillis, durationMillis);
+		_movingAnchor.x = start.x +
+			(destination.x - start.x) * (int)elapsedMillis / (int)durationMillis;
+		_movingAnchor.y = start.y +
+			(destination.y - start.y) * (int)elapsedMillis / (int)durationMillis;
+		if (capturedPiece != 0 && !removalCueStarted &&
+				elapsedMillis + kRemovalLeadTicks * kAnimationTickMillis >= durationMillis) {
+			playCue(kRemovalCue);
+			removalCueStarted = true;
+		}
+		if (thinkingCursor)
+			_engine->getCursor()->update(kDefaultSelectionIndex);
+		render();
+		if (elapsedMillis >= durationMillis)
+			break;
+		g_system->delayMillis(kAnimationTickMillis);
+	}
+
+	_movingActive = false;
+	_movingSource = -1;
+	_movingPiece = 0;
+	debugC(2, kDebugPuzzles,
+		"Ripper: board-game move animation completed move=%s quit=%d",
+		moveString(move).c_str(), _engine->shouldQuit());
+	return !_engine->shouldQuit();
 }
 
 bool BoardGamePuzzle::applyPlayerMove(int destination) {
@@ -316,15 +399,16 @@ bool BoardGamePuzzle::applyPlayerMove(int destination) {
 	const int movingPiece = _model.pieceAt(move.source);
 	const int capturedPiece = destination < BoardGameModel::kCellCount ?
 		_model.pieceAt(destination) : 0;
-	if (!_model.applyMove(move))
-		return false;
+	stopCue(kSelectionCue);
 	_selectedCell = -1;
 	_legalDestinations.clear();
-	if (capturedPiece != 0)
-		playCue(3); // AnimateBoardPieceRemoval at 0x4251a.
-	else if (ABS(movingPiece) == 2 && destination < BoardGameModel::kCellCount &&
+	if (!animateMove(move, movingPiece, capturedPiece, false))
+		return false;
+	if (!_model.applyMove(move))
+		return false;
+	if (ABS(movingPiece) == 2 && destination < BoardGameModel::kCellCount &&
 			ABS(_model.pieceAt(destination)) == 3)
-		playCue(2); // AnimateBoardPieceUpgrade at 0x4240a.
+		playCue(kTransformCue);
 	debugC(2, kDebugPuzzles,
 		"Ripper: board-game player move=%s piece=%d captured=%d nextSide=%d result=%d",
 		moveString(move).c_str(), movingPiece, capturedPiece,
@@ -422,6 +506,8 @@ BoardGameModel::Move BoardGamePuzzle::chooseAiMove() {
 }
 
 bool BoardGamePuzzle::runAiTurn() {
+	_engine->getCursor()->dispatchSelectionIndexChange(kDefaultSelectionIndex);
+	g_system->updateScreen();
 	const BoardGameModel::Move move = chooseAiMove();
 	if (move.source < 0) {
 		_model.passTurn();
@@ -433,14 +519,14 @@ bool BoardGamePuzzle::runAiTurn() {
 	const int movingPiece = _model.pieceAt(move.source);
 	const int capturedPiece = move.destination < BoardGameModel::kCellCount ?
 		_model.pieceAt(move.destination) : 0;
+	if (!animateMove(move, movingPiece, capturedPiece, true))
+		return false;
 	if (!_model.applyMove(move))
 		return false;
-	if (capturedPiece != 0)
-		playCue(3);
-	else if (ABS(movingPiece) == 2 &&
+	if (ABS(movingPiece) == 2 &&
 			move.destination < BoardGameModel::kCellCount &&
 			ABS(_model.pieceAt(move.destination)) == 3)
-		playCue(2);
+		playCue(kTransformCue);
 	debugC(2, kDebugPuzzles,
 		"Ripper: board-game AI move=%s piece=%d captured=%d nextSide=%d result=%d",
 		moveString(move).c_str(), movingPiece, capturedPiece,
@@ -474,6 +560,9 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 	_model.reset();
 	_selectedCell = -1;
 	_hoveredCode = -1;
+	_movingSource = -1;
+	_movingPiece = 0;
+	_movingActive = false;
 	_keywordIndex = 0;
 	_engine->getToolbar()->leave();
 	_engine->getInput()->drainKeys();
@@ -508,6 +597,7 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 					_selectedCell, command);
 				_selectedCell = -1;
 				_legalDestinations.clear();
+				stopCue(kSelectionCue);
 				render();
 			}
 			if (command == kEscapeCommand) {
@@ -544,7 +634,6 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 		}
 
 		if (_model.sideToMove() < 0) {
-			_engine->getCursor()->update(kDefaultSelectionIndex);
 			if (!runAiTurn()) {
 				result = kLoadFailed;
 				break;
@@ -561,6 +650,7 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 					_selectedCell);
 				_selectedCell = -1;
 				_legalDestinations.clear();
+				stopCue(kSelectionCue);
 				render();
 			} else if ((mouse.pressed & kMouseButtonLeft) != 0) {
 				const int hitCode = hitCodeAt(mouse.position);
@@ -574,6 +664,7 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 					_selectedCell = hitCode;
 					_model.legalDestinations(_selectedCell,
 						_legalDestinations);
+					playCue(kSelectionCue);
 					debugC(2, kDebugPuzzles,
 						"Ripper: board-game selected source=%d piece=%d legalDestinations=%u",
 						_selectedCell, _model.pieceAt(_selectedCell),
@@ -599,7 +690,8 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 		g_system->delayMillis(10);
 	}
 
-	_engine->getMedia()->stopSoundEffect(_audioHandle);
+	for (uint cue = 0; cue < kAudioCueCount; ++cue)
+		stopCue(cue);
 	_incomingDisplay.restore();
 	_engine->getCursor()->setSelectionIndex(_savedSelectionIndex);
 	_engine->getCursor()->dispatchSelectionIndexChange(_savedSelectionIndex);

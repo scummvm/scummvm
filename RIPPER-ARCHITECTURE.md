@@ -951,6 +951,23 @@
   of six cells, plus shared destination 42 for a runner leaving the far edge.
   Its initial signed layout is copied from `0x40c32`; positive pieces move
   first.
+- `LoadBoardPuzzleAssetsAndLayout` at `0x4129e` does not load a destination
+  highlight bitmap. `MarkLegalBoardMoveChoices` at `0x41dca` writes marker 8
+  into the control-state array, and `UpdateBoardMoveHoverControlMode` at
+  `0x42195` uses those bytes only to switch the pointer between cursor rows 14
+  and 16. `RenderBoardState` at `0x418c8` draws the background and pieces, so
+  selecting a piece adds no board-space outlines.
+- `ApplyBoardMoveAndUpdateState` at `0x428c9` removes the source from the live
+  board and calls `AnimateBoardMove` at `0x42644` for both player and AI moves.
+  That routine inserts the moving piece into the fixed depth traversal and
+  interpolates its anchor at 100 Hz. Adjacent paths take 100 ticks; paths whose
+  cell delta is 2 or greater than 7 take 200 ticks. Short and long moves start
+  `CHESS3` and `CHESS2`, respectively; `CHESS1` accompanies captured-piece
+  removal, `CHESS0` accompanies a piece transform, and `CHESS4` starts when the
+  player begins choosing a marked destination and stops on cancel or confirm.
+  Before `RunBoardAiTurn` at `0x43535`, `RunBoardGameScene` dispatches cursor
+  row `0x13`, leaving the animated thinking cursor active through the AI move
+  presentation.
 - `TryGetLegalBoardMoveDestination` at `0x41c1e` selects movement offsets by
   absolute piece type. Type 1 moves orthogonally inside its two home rows;
   types 2 and 3 move to adjacent cells and can leave the far edge; type 2
