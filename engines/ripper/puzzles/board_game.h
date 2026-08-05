@@ -58,8 +58,6 @@ private:
 
 	private:
 		int chooseOptimalDestination(const BoardGamePuzzle &puzzle) const;
-		byte blendTintPixel(const BoardGamePuzzle &puzzle, byte destination,
-			const byte *tint, uint opacity) const;
 
 		bool _enabled;
 		int _optimalDestination;
