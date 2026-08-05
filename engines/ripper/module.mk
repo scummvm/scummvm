@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	combat/combat.o \
 	combat/resources.o \
 	combat/mechini.o \
+	combat/ratini.o \
 	console.o \
 	controls.o \
 	cursor.o \

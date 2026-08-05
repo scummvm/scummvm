@@ -34,6 +34,7 @@ struct CombatEncounterDefinition {
 	const char *iniPattern;
 	const char *fallbackIni;
 	const char *ambientSound;
+	const char *ambientAlternates[2];
 	const char *creatureSound;
 	const char *weaponSound;
 	const char *shieldSound;
@@ -138,6 +139,7 @@ private:
 	static const char *meterName(uint meter);
 
 	void startEncounterAudio();
+	void queueAlternateAmbient();
 	void stopEncounterAudio();
 	void queueCue(const Common::String &path, uint volumePercent = 100);
 	void updateContinuousAudio(const FrameState &frame);

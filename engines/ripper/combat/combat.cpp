@@ -96,10 +96,29 @@ void CombatEncounter::queueCue(const Common::String &path, uint volumePercent) {
 }
 
 void CombatEncounter::startEncounterAudio() {
-	if (!_ambientSound.empty())
+	if (_definition.ambientAlternates[0])
+		queueAlternateAmbient();
+	else if (!_ambientSound.empty())
 		_engine->getMedia()->playSoundEffect(_ambientSound, _ambientHandle, 100, true);
 	if (!_creatureSound.empty())
 		_engine->getMedia()->playSoundEffect(_creatureSound, _creatureHandle, 0, true);
+}
+
+void CombatEncounter::queueAlternateAmbient() {
+	if (!_definition.ambientAlternates[0] ||
+			_engine->getMedia()->isSoundEffectActive(_ambientHandle))
+		return;
+	const uint index = _random.getRandomNumber(1);
+	const char *path = _definition.ambientAlternates[index];
+	if (!path || !*path)
+		return;
+	if (_engine->getMedia()->playSoundEffect(path, _ambientHandle, 100, false)) {
+		// QueueRandomAudioTriggerPairEntry at 0x313ec installs itself as the
+		// completion callback for the randomly selected Ratini loop descriptor.
+		debugC(3, kDebugCombat,
+			"Ripper: combat alternate ambient queued type='%s' index=%u path='%s'",
+			_definition.name, index, path);
+	}
 }
 
 void CombatEncounter::stopEncounterAudio() {
@@ -111,6 +130,7 @@ void CombatEncounter::stopEncounterAudio() {
 }
 
 void CombatEncounter::updateContinuousAudio(const FrameState &frame) {
+	queueAlternateAmbient();
 	_engine->getMedia()->setSoundEffectVolume(_creatureHandle, frame.creatureVolume);
 	const uint mixVolume = _shieldHeld ? 50 : 100;
 	_engine->getMedia()->setSoundEffectVolume(_ambientHandle, mixVolume);

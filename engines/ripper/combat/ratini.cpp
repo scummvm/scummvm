@@ -10,31 +10,31 @@
  * (at your option) any later version.
  */
 
-#include "ripper/combat/atkini.h"
+#include "ripper/combat/ratini.h"
 
 namespace Ripper {
 
 namespace {
 
-static const CombatEncounterDefinition kAtkiniDefinition = {
-	"atkini",
-	"atkini%u.ini",
-	"atkini1.ini",
-	"weap2c1.wav",
-	{ nullptr, nullptr },
-	"mechwav1.wav",
+static const CombatEncounterDefinition kRatiniDefinition = {
+	"ratini",
+	"ratini%u.ini",
+	"ratini1.ini",
+	"",
+	{ "loop3.wav", "loop4.wav" },
+	"",
 	"mechwav3.wav",
 	"mechwav2.wav",
-	{ "atkexp0.pl", "atkexp1.pl" },
-	"atkcr",
+	{ "ratexp0.pl", "ratexp1.pl" },
+	"ratcr",
 	0x1ba,
-	true
+	false
 };
 
 } // End of anonymous namespace
 
-AtkiniEncounter::AtkiniEncounter(RipperEngine *engine) :
-		CombatEncounter(engine, kAtkiniDefinition) {
+RatiniEncounter::RatiniEncounter(RipperEngine *engine) :
+		CombatEncounter(engine, kRatiniDefinition) {
 }
 
 } // End of namespace Ripper
