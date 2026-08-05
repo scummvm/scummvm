@@ -66,6 +66,7 @@ MODULE_OBJS := \
 	objects/sensor.o \
 	sweepAABB.o \
 	sound/amiga.o \
+	sound/atari.o \
 	sound/common.o \
 	sound/cpc.o \
 	sound/dos.o \

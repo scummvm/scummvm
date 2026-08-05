@@ -36,7 +36,7 @@ struct CastleAtariLayout {
 	int messages, messageCount, riddles, colorCycling, fonts, palettes, areaDB;
 	int extraAreas, area255, border, mountains, spiritMeterBg, spiritMeter;
 	int thunder, weights, bar, gatePixels, gateMask, eyeIcons, flag;
-	int riddleMask, riddleTop, mod;
+	int riddleMask, riddleTop, mod, soundTable, soundBank;
 };
 
 class MusicPlayer;

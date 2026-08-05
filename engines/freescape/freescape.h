@@ -535,6 +535,7 @@ public:
 	// sampleBank names the external PCM bank, modOffset points at the embedded
 	// module used for one extra sample; both are optional (empty path, -1)
 	Sound *loadSoundsAmiga(Common::SeekableReadStream *file, int offset, int numSounds, const Common::Path &sampleBank, int modOffset);
+	Sound *loadSoundsAtariCastle(Common::SeekableReadStream *file, int offset, int numSounds, int bankOffset);
 
 	int _soundIndexShoot;
 	int _soundIndexCollide;

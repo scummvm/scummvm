@@ -180,7 +180,7 @@ const CastleAtariLayout kAtariCastleLayout = {
 	0x27946, 178, 0x28410, 0x27928, 0x2f32a, 0x32594, 0x33694,
 	3, 0x49284, 0x4a364, 0x04f24, 0x55d40, 0x55ed0,
 	0x55f20, 0x569d0, 0x56bb0, 0x56ed0, 0x57ef0, 0x594a0, 0x5974a,
-	0x59ae4, 0x59b04, 0x10fb6
+	0x59ae4, 0x59b04, 0x10fb6, 0x31adc, 0x5a994
 };
 
 // "The Crypt", the second disc of "Castle Master & The Crypt". It carries the
@@ -191,7 +191,7 @@ const CastleAtariLayout kAtariCryptLayout = {
 	0x273ec, 165, 0, 0x2731a, 0x2e366, 0x315d0, 0x326d0,
 	0, 0, 0x3ae52, 0x04914, 0x4682e, 0x469be,
 	0x46a0e, 0x474be, 0x4769e, 0x479be, 0x489de, 0x49f8e, 0x4a238,
-	0x4a5d2, 0x4a5f2, 0x109a6
+	0x4a5d2, 0x4a5f2, 0x109a6, 0x30b18, 0x4b482
 };
 
 // L.PRG, the loader program that launches The Crypt, copies a palette and then
@@ -454,6 +454,10 @@ void CastleEngine::loadAssetsAtariFullGame() {
 	// the Amiga bytes in any plane format, so they are not loaded yet; the info
 	// menu is guarded against the missing surfaces. The mouse cursor / crosshair
 	// sprites also still need to be located.
+
+	// Same command table as the Amiga, and the bank the Amiga ships as the
+	// external "cmsnds2" is embedded here instead
+	_sound = loadSoundsAtariCastle(file, layout->soundTable, 36, layout->soundBank);
 
 	// The full Atari ST binary embeds the same ProTracker module used by the
 	// Amiga full game; The Crypt ships that module again, unchanged.
