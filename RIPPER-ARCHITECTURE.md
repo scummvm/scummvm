@@ -724,10 +724,12 @@
   `RATINI%d.INI`, or `ATKINI%d.INI`. The `%d` value is the configured combat
   level byte at `0x8a177`. This is a reusable combat controller rather than
   three unrelated scene handlers; ScummVM keeps it under `combat/`, with the
-  concrete Mechini and Atkini encounters binding actions 15 and 27 to the
-  shared controller. Atkini preserves the retail six-scene routing tables at
-  `0x3134c` and `0x31358`: scenes 3/4 choose among `{0,4,5}`, while scene 5
-  chooses among `{1,2,3}`.
+  concrete Mechini, Ratini, and Atkini encounters binding actions 15, 26, and
+  27 to the shared controller. Atkini preserves the retail six-scene routing
+  tables at `0x3134c` and `0x31358`: scenes 3/4 choose among `{0,4,5}`, while
+  scene 5 chooses among `{1,2,3}`. Ratini loads `LOOP3.WAV` and `LOOP4.WAV`
+  and uses the self-reinstalling callback `QueueRandomAudioTriggerPairEntry`
+  at `0x313ec` to select another one whenever the current ambient loop ends.
   `combat/resources.cpp` owns INI, DAT, PRJ, and bitmap-set loading for that
   controller; `combat.cpp` owns the active encounter, input, timing, audio,
   meter, hit, effect, and rendering loop. Both remain methods of the same
@@ -741,15 +743,18 @@
   tick interval. ScummVM snapshots the current Options Panel combat level on
   encounter entry, selects the same numbered INI, and reports both values in
   the combat lifecycle log. Some retail data layouts contain only
-  `ATKINI1.INI` even though `RIPPER.INI` defaults combat level to 2. ScummVM
-  therefore attempts the executable's numbered Atkini name first, then uses
-  the packaged level-1 Atkini definition only when that requested file is
+  `ATKINI1.INI` and `RATINI1.INI` even though `RIPPER.INI` defaults combat
+  level to 2. ScummVM therefore attempts the executable's numbered name first,
+  then uses the packaged level-1 definition only when that requested file is
   absent; this compatibility fallback does not affect Mechini's complete
   three-file difficulty set.
 - `LoadCombatEncounterResourceSet` at `0x34d6e` reads numbered `sceneN` entries,
-  loads each `<scene>.SMK`, `<scene>DAT.DAT`, and `<scene>PRJ.PRJ`, and loads the
-  configured crosshair, explosion, shading, and audio resources. A DAT file has
-  a 100-byte header, a 32-bit frame count, one six-byte state record per frame,
+  loads each `<scene>.SMK`, `<scene>DAT.DAT`, and optional `<scene>PRJ.PRJ`, and
+  loads the configured crosshair, explosion, shading, and audio resources.
+  `LoadPresentationFrameAudioCueMap` at `0x3574a` leaves its zero-filled frame
+  cue array in place when a PRJ is absent, as it is for Ratini scene `RAT0`.
+  A DAT file has a 100-byte header, a 32-bit frame count, one six-byte state
+  record per frame,
   then nine-byte hit regions. Each hit region stores its one-byte damage/effect
   type followed by signed 16-bit `y`, `x`, `height`, and `width` values;
   `RunCombatEncounterScene` compares those pairs with the logical 320-by-200
