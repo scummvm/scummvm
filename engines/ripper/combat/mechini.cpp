@@ -25,7 +25,8 @@ static const CombatEncounterDefinition kMechiniDefinition = {
 	"mechwav2.wav",
 	{ "mechexp0.pl", "mechexp1.pl" },
 	"crshr",
-	0x1a5
+	0x1a5,
+	false
 };
 
 } // End of anonymous namespace

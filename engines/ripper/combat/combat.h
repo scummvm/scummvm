@@ -39,6 +39,7 @@ struct CombatEncounterDefinition {
 	const char *effectLibraries[2];
 	const char *crosshairPrefix;
 	uint helpResource;
+	bool atkiniSceneRouting;
 };
 
 class CombatEncounter : public Scene, public MediaSequenceCallback {
