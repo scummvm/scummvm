@@ -126,7 +126,8 @@ public:
 		_entered.clear();
 		_textPending = _manager->_engine->getModalDialog()->beginTextEntry(prompt,
 			kSceneTextEntryMaximumLength, kCyberHelpResource,
-			"scene-script-password");
+			"scene-script-password",
+			ModalDialogManager::kSceneEntryPresentation);
 		return _textPending;
 	}
 
@@ -989,8 +990,9 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			}
 
 			// DispatchSceneEntryAction 30 captures the active presentation as the
-			// following chooser's one-shot template. The original Cyber scripts
-			// pass zero, which maps to drawing over ScummVM's active framebuffer.
+			// following chooser's one-shot template. ConfigureSceneEntryChooserLayout
+			// at 0x18740 maps layout 2 to the unskinned primary chooser template at
+			// 0x8a2de, retaining the edit-field surround from the active movie.
 			const byte templateMode = _chooserTemplateMode;
 			_chooserTemplateMode = 0;
 			if (!_activeIdleMediaCallback->beginTextRequest(prompt, expected,

@@ -38,7 +38,8 @@ public:
 	enum PresentationStyle {
 		kMenubPresentation,
 		kWacPresentation,
-		kPrimaryPresentation
+		kPrimaryPresentation,
+		kSceneEntryPresentation
 	};
 
 	enum PaletteBehavior {
