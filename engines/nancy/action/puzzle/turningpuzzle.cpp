@@ -482,6 +482,8 @@ void TurningPuzzle::handleInput(NancyInput &input) {
 
 		if (isNancy13)
 			g_nancy->_cursor->setCursorType((CursorManager::CursorType)_hoverCursorType, true);
+		else if (g_nancy->getGameType() >= kGameTypeNancy10)
+			g_nancy->_cursor->setCursorType(CursorManager::kNewUseHandHotspot);
 		else
 			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
@@ -506,6 +508,11 @@ void TurningPuzzle::handleInput(NancyInput &input) {
 				_turnFrameID = 0;
 				_nextTurnTime = 0;
 			} else {
+				// A click is ignored for as long as the previous turn's sound keeps playing.
+				if (g_nancy->_sound->isSoundPlaying(_turnSound)) {
+					break;
+				}
+
 				g_nancy->_sound->playSound(_turnSound);
 			}
 
