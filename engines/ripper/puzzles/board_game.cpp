@@ -240,8 +240,8 @@ void BoardGamePuzzle::render() {
 		const int cell = kRenderOrder[order];
 		const Common::Point &anchor = kCellAnchors[cell];
 		if (movingPiecePending &&
-				(_movingAnchor.x < anchor.x ||
-				 (_movingAnchor.x == anchor.x && _movingAnchor.y < anchor.y))) {
+				(_movingAnchor.y < anchor.y ||
+				 (_movingAnchor.y == anchor.y && _movingAnchor.x < anchor.x))) {
 			drawPiece(pixels, screen->pitch, _movingPiece, _movingAnchor);
 			movingPiecePending = false;
 		}
@@ -338,6 +338,11 @@ bool BoardGamePuzzle::animateMove(const BoardGameModel::Move &move,
 		const Common::Point &reference =
 			kCellAnchors[row * BoardGameModel::kColumnCount + referenceColumn];
 		destination = start + (start - reference);
+		debugC(3, kDebugPuzzles,
+			"Ripper: board-game legal side exit source=%d piece=%d "
+			"row=%d column=%d referenceColumn=%d delta=%d,%d",
+			move.source, movingPiece, row, column, referenceColumn,
+			destination.x - start.x, destination.y - start.y);
 	} else {
 		destination = kCellAnchors[move.destination];
 		const int cellDistance = ABS(move.source - move.destination);
@@ -360,6 +365,10 @@ bool BoardGamePuzzle::animateMove(const BoardGameModel::Move &move,
 		"ticks=%u cue=%u thinkingCursor=%d from=%d,%d to=%d,%d",
 		moveString(move).c_str(), movingPiece, durationTicks, moveCue,
 		thinkingCursor, start.x, start.y, destination.x, destination.y);
+	debugC(3, kDebugPuzzles,
+		"Ripper: board-game moving overlay depth order=y-then-x "
+		"startY=%d startX=%d endY=%d endX=%d",
+		start.y, start.x, destination.y, destination.x);
 
 	while (!_engine->shouldQuit()) {
 		if (_engine->getInput()->pollEvents()) {

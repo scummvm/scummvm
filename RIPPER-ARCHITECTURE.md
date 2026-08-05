@@ -948,9 +948,9 @@
   0 through 42 and exit control `0x81`, `PART_A00` through `PART_A04` and
   `PART_B00` through `PART_B04` are the two signed piece sets, and `CHESS0`
   through `CHESS4` are its archived audio cues. The board contains seven rows
-  of six cells, plus shared destination 42 for a runner leaving the far edge.
-  Its initial signed layout is copied from `0x40c32`; positive pieces move
-  first.
+  of six cells, plus shared destination 42 for a runner leaving a side edge
+  inside its far three rows. Its initial signed layout is copied from `0x40c32`;
+  positive pieces move first.
 - `LoadBoardPuzzleAssetsAndLayout` at `0x4129e` does not load a destination
   highlight bitmap. `MarkLegalBoardMoveChoices` at `0x41dca` writes marker 8
   into the control-state array, and `UpdateBoardMoveHoverControlMode` at
@@ -959,9 +959,10 @@
   selecting a piece adds no board-space outlines.
 - `ApplyBoardMoveAndUpdateState` at `0x428c9` removes the source from the live
   board and calls `AnimateBoardMove` at `0x42644` for both player and AI moves.
-  That routine inserts the moving piece into the fixed depth traversal and
-  interpolates its anchor at 100 Hz. Adjacent paths take 100 ticks; paths whose
-  cell delta is 2 or greater than 7 take 200 ticks. Short and long moves start
+  That routine inserts the moving piece into the fixed depth traversal by
+  comparing screen Y first and X second, then interpolates its anchor at 100 Hz.
+  Adjacent paths take 100 ticks; paths whose cell delta is 2 or greater than 7
+  take 200 ticks. Short and long moves start
   `CHESS3` and `CHESS2`, respectively; `CHESS1` accompanies captured-piece
   removal, `CHESS0` accompanies a piece transform, and `CHESS4` starts when the
   player begins choosing a marked destination and stops on cancel or confirm.
@@ -970,7 +971,8 @@
   presentation.
 - `TryGetLegalBoardMoveDestination` at `0x41c1e` selects movement offsets by
   absolute piece type. Type 1 moves orthogonally inside its two home rows;
-  types 2 and 3 move to adjacent cells and can leave the far edge; type 2
+  types 2 and 3 move to adjacent cells and can leave through a horizontal side
+  edge only when they occupy one of their far three rows; type 2
   cannot capture types 4 or 5; type 4 makes capture-only two-cell leaps; and
   type 5 combines the adjacent and leap tables. `ApplyBoardMoveAndUpdateState`
   at `0x428c9` promotes a type-2 runner at the opposite edge or after it
