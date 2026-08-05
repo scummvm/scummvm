@@ -171,6 +171,8 @@ Common::Error RipperEngine::run() {
 			debugC(1, kDebugGeneral, "Ripper: startup menu begins a new game");
 			if (!selectRandomRipperIdentity("new-game-initialization"))
 				return Common::kUnknownError;
+			if (!_wac->resetNotebook())
+				warning("Ripper: could not reset the WAC notebook for a new game");
 			startGameplay = true;
 			break;
 		case kMainMenuContinue:

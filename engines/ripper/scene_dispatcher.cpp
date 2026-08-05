@@ -50,6 +50,7 @@
 #include "ripper/scenes/gym_scene.h"
 #include "ripper/scenes/tube_scene.h"
 #include "ripper/script.h"
+#include "ripper/wac/wac.h"
 
 namespace Ripper {
 
@@ -118,7 +119,7 @@ const char *SceneActionDispatcher::actionName(uint action) {
 	case 60: return "key group puzzle";
 	case kSceneActionEightButtonSequencePuzzle: return "eight-button sequence puzzle";
 	case 62: return "Cain dialogue scene";
-	case 63: return "append resource string to RIPPER.TXT";
+	case kSceneActionAppendNotebookText: return "append resource string to RIPPER.TXT";
 	case 300: return "arm briefing media trigger";
 	case 9999: return "terminate scene runtime";
 	default: return "unknown";
@@ -424,6 +425,8 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 			result, argument);
 		return result != EightButtonSequencePuzzle::kLoadFailed;
 	}
+	if (action == kSceneActionAppendNotebookText)
+		return engine->getWac()->appendNotebookResourceString(argument);
 	if (action == kSceneActionTerminateRuntime) {
 		if (!manager._runtime.cyberActive)
 			return false;

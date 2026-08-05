@@ -20,8 +20,11 @@
 
 #include "ripper/wac/wac.h"
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/ptr.h"
+#include "common/savefile.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "graphics/paletteman.h"
@@ -31,6 +34,7 @@
 #include "ripper/detection.h"
 #include "ripper/display.h"
 #include "ripper/input.h"
+#include "ripper/media.h"
 #include "ripper/modal_dialog.h"
 #include "ripper/ripper.h"
 #include "ripper/wac/database.h"
@@ -53,10 +57,12 @@ static const uint kWacDatabaseSkinFrameCount = 16;
 static const uint kWacFrontEndHelpResource = 404;
 static const uint kWacNotebookTitleResource = 0x49;
 static const uint kWacNotebookMaximumBytes = 0x27c0;
+static const char *const kWacNotebookFileName = "ripper.txt";
+static const char *const kWacNotebookUpdateAudio = "wacnote.wav";
 
 WacManager::WacManager(RipperEngine *engine) : _engine(engine),
 		_idleWindowLastMillis(0), _hoveredControl(-1), _pressedControl(-1),
-		_initialized(false) {
+		_notebookUpdatePending(false), _initialized(false) {
 	_idleWindowFrame[0] = 0;
 	_idleWindowFrame[1] = 0;
 }
@@ -242,24 +248,105 @@ uint16 WacManager::serviceFrontEndControls(const MouseState &mouse,
 	return _controls[pressedControl].action;
 }
 
+Common::String WacManager::notebookFileName() const {
+	return ConfMan.getActiveDomainName() + "-" + kWacNotebookFileName;
+}
+
+bool WacManager::loadNotebookText(Common::String &body) const {
+	body.clear();
+	Common::ScopedPtr<Common::InSaveFile> savedFile(
+		_engine->getSaveFileManager()->openForLoading(notebookFileName()));
+	Common::File resourceFile;
+	Common::SeekableReadStream *stream = savedFile.get();
+	const char *source = "save-directory";
+	if (!stream && resourceFile.open(kWacNotebookFileName)) {
+		stream = &resourceFile;
+		source = "game-data";
+	}
+	if (!stream) {
+		debugC(2, kDebugWac,
+			"Ripper: WAC notebook source='%s' is absent; using empty text",
+			notebookFileName().c_str());
+		return true;
+	}
+
+	const uint32 byteCount = MIN<uint32>(stream->size(), kWacNotebookMaximumBytes);
+	Common::Array<char> buffer;
+	buffer.resize(byteCount);
+	const uint32 bytesRead = byteCount == 0 ? 0 : stream->read(buffer.data(), byteCount);
+	if (stream->err()) {
+		warning("Ripper: could not read WAC notebook from %s", source);
+		return false;
+	}
+	if (bytesRead != 0)
+		body = Common::String(buffer.data(), buffer.data() + bytesRead);
+	debugC(2, kDebugWac,
+		"Ripper: loaded WAC notebook source=%s bytes=%u", source, body.size());
+	return true;
+}
+
+bool WacManager::saveNotebookText(const Common::String &body) const {
+	Common::ScopedPtr<Common::OutSaveFile> file(
+		_engine->getSaveFileManager()->openForSaving(notebookFileName(), false));
+	if (!file) {
+		warning("Ripper: could not open WAC notebook '%s' for writing",
+			notebookFileName().c_str());
+		return false;
+	}
+	if (!body.empty())
+		file->write(body.c_str(), body.size());
+	file->finalize();
+	if (file->err()) {
+		warning("Ripper: could not save WAC notebook '%s'",
+			notebookFileName().c_str());
+		return false;
+	}
+	return true;
+}
+
+bool WacManager::appendNotebookResourceString(uint resourceId) {
+	if (resourceId == 0 || resourceId > _gameText.size()) {
+		warning("Ripper: WAC notebook resource string %u is unavailable", resourceId);
+		return false;
+	}
+
+	Common::String body;
+	if (!loadNotebookText(body))
+		return false;
+	body += "\n\n";
+	body += resourceString(resourceId);
+	body += '\n';
+	if (!saveNotebookText(body))
+		return false;
+	_notebookUpdatePending = true;
+	debugC(1, kDebugWac,
+		"Ripper: appended resource string=%u to WAC notebook bytes=%u updatePending=1",
+		resourceId, body.size());
+	return true;
+}
+
+bool WacManager::resetNotebook() {
+	if (!saveNotebookText(Common::String()))
+		return false;
+	_notebookUpdatePending = false;
+	debugC(1, kDebugWac,
+		"Ripper: reset WAC notebook for new game file='%s'",
+		notebookFileName().c_str());
+	return true;
+}
+
 bool WacManager::runNotebook() {
 	Common::String body;
-	Common::File file;
-	if (file.open("ripper.txt")) {
-		const uint32 byteCount = MIN<uint32>(file.size(), kWacNotebookMaximumBytes);
-		Common::Array<char> buffer;
-		buffer.resize(byteCount);
-		const uint32 bytesRead = byteCount == 0 ? 0 : file.read(buffer.data(), byteCount);
-		if (bytesRead != 0)
-			body = Common::String(buffer.data(), buffer.data() + bytesRead);
-	}
+	if (!loadNotebookText(body))
+		return false;
 
 	const Common::String &title = resourceString(kWacNotebookTitleResource);
 	debugC(1, kDebugWac,
-		"Ripper: opening WAC notebook action=0x3100 source='ripper.txt' bytes=%u",
-		body.size());
+		"Ripper: opening WAC notebook action=0x3100 source='%s' bytes=%u",
+		notebookFileName().c_str(), body.size());
 	_engine->getCursor()->setVisible(true);
-	return _engine->getModalDialog()->runText(title, body, "ripper.txt");
+	return _engine->getModalDialog()->runText(
+		title, body, kWacNotebookFileName);
 }
 
 uint16 WacManager::dispatchSubsceneAction(uint16 action, uint helpResourceId,
@@ -346,6 +433,15 @@ void WacManager::run() {
 	_idleWindowFrame[1] = 0;
 	_idleWindowLastMillis = g_system->getMillis(true);
 	_engine->getCursor()->update(kWacDefaultCursor);
+	if (_notebookUpdatePending) {
+		Audio::SoundHandle updateHandle;
+		const bool played = _engine->getMedia()->playSoundEffect(
+			kWacNotebookUpdateAudio, updateHandle);
+		debugC(played ? 1 : 2, kDebugWac,
+			"Ripper: consumed WAC notebook update notification audio='%s' played=%d",
+			kWacNotebookUpdateAudio, played);
+		_notebookUpdatePending = false;
+	}
 
 	bool active = true;
 	while (active && !_engine->shouldQuit()) {
