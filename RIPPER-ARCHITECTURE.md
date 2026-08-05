@@ -1667,6 +1667,14 @@
   `0xf8` at template offset `+0x44`. `RenderChooserTextRow` at `0x58651`
   selects between those templates from the row state, producing white-on-black
   normal rows and black-on-white selected rows.
+- Opcode `0x19` layout variant 2 reaches `ConfigureSceneEntryChooserLayout` at
+  `0x18740`, which selects the unskinned primary template at `0x8a2de` and
+  fixes the control at logical `(228, 262)` with size `194x20`. Scene playback
+  contributes the 50-pixel presentation origin, placing it at screen y=312.
+  The template's five-pixel insets place a 14-pixel black edit row over the
+  surround already present in the active movie; text and the caret use the
+  normal `small.fnt` palette index `0xfb`. The generic MENUB frame and palette
+  are not applied to this control.
 - `InitializeUiChoiceControlEntryRows` at `0x4c0b3` binds three visible row
   controls to a list chooser. `ProcessChooserControlInput` at `0x57372` keeps
   a separate first-visible index and moves it one row for the chooser's up and
