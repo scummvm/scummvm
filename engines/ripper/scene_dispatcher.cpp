@@ -24,6 +24,7 @@
 #include "common/system.h"
 
 #include "ripper/briefing.h"
+#include "ripper/combat/atkini.h"
 #include "ripper/combat/mechini.h"
 #include "ripper/cursor.h"
 #include "ripper/cyber.h"
@@ -84,7 +85,7 @@ const char *SceneActionDispatcher::actionName(uint action) {
 	case 24: return "tube switch scene";
 	case 25: return "KK tile match puzzle";
 	case 26: return "ratini combat encounter";
-	case 27: return "atkini combat encounter";
+	case kSceneActionAtkiniCombat: return "atkini combat encounter";
 	case 28: return "gym selector";
 	case 29: return "crystal piece placement puzzle";
 	case 30: return "set chooser template mode";
@@ -249,6 +250,16 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		debugC(1, kDebugCombat,
 			"Ripper: Mechini combat scene action completed result=%d milestone=%u", result, argument);
 		return result != MechiniEncounter::kLoadFailed;
+	}
+	if (action == kSceneActionAtkiniCombat) {
+		// DispatchSceneEntryAction at 0x36cd8 forwards the completion flag and
+		// ATKINI%d.INI template to RunCombatEncounterScene at 0x31436.
+		AtkiniEncounter encounter(engine);
+		const AtkiniEncounter::Result result = encounter.run(argument);
+		debugC(1, kDebugCombat,
+			"Ripper: Atkini combat scene action completed result=%d milestone=%u",
+			result, argument);
+		return result != AtkiniEncounter::kLoadFailed;
 	}
 	if (action == kSceneActionWebGridShiftPuzzle) {
 		WebGridShiftPuzzle puzzle(engine);

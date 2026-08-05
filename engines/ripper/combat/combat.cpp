@@ -532,6 +532,16 @@ void CombatEncounter::transformPalette(byte *palette, uint colorCount) const {
 uint CombatEncounter::chooseNextScene() {
 	if (_scenes.size() <= 1)
 		return 0;
+	if (_definition.atkiniSceneRouting && _scenes.size() >= 6) {
+		// RunCombatEncounterScene at 0x324a7 uses the tables at 0x3134c
+		// and 0x31358 to keep the six ATKINI scenes moving between groups.
+		static const uint sceneGroupOne[] = { 0, 4, 5 };
+		static const uint sceneGroupTwo[] = { 1, 2, 3 };
+		if (_activeSceneIndex == 3 || _activeSceneIndex == 4)
+			return sceneGroupOne[_random.getRandomNumber(2)];
+		if (_activeSceneIndex == 5)
+			return sceneGroupTwo[_random.getRandomNumber(2)];
+	}
 	return _random.getRandomNumber(_scenes.size() - 2) + 1;
 }
 

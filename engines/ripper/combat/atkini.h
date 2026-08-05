@@ -10,29 +10,18 @@
  * (at your option) any later version.
  */
 
-#include "ripper/combat/mechini.h"
+#ifndef RIPPER_COMBAT_ATKINI_H
+#define RIPPER_COMBAT_ATKINI_H
+
+#include "ripper/combat/combat.h"
 
 namespace Ripper {
 
-namespace {
-
-static const CombatEncounterDefinition kMechiniDefinition = {
-	"mechini",
-	"mechini%u.ini",
-	"mechwav0.wav",
-	"mechwav1.wav",
-	"mechwav3.wav",
-	"mechwav2.wav",
-	{ "mechexp0.pl", "mechexp1.pl" },
-	"crshr",
-	0x1a5,
-	false
+class AtkiniEncounter : public CombatEncounter {
+public:
+	explicit AtkiniEncounter(RipperEngine *engine);
 };
 
-} // End of anonymous namespace
-
-MechiniEncounter::MechiniEncounter(RipperEngine *engine) :
-		CombatEncounter(engine, kMechiniDefinition) {
-}
-
 } // End of namespace Ripper
+
+#endif // RIPPER_COMBAT_ATKINI_H
