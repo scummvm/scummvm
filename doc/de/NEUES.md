@@ -18,6 +18,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Nancy Drew: The Secret of Shadow Ranch hinzugefügt.
    - Unterstützung für Nancy Drew: Curse of Blackmoor Manor hinzugefügt.
    - Unterstützung für Chamber of the Sci-Mutant Priestess hinzugefügt.
+   - Unterstützung für Star Wars: Rebel Assault hinzugefügt.
+   - Unterstützung für Star Wars: Rebel Assault II: The Hidden Empire hinzugefügt.
 
  Allgemein:
    - Zur Verbesserung der Perforamcen wurden die Audio-Mixer und -Konverter optimiert.
