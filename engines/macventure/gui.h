@@ -58,6 +58,7 @@ class ConsoleText;
 class CommandButton;
 class ImageAsset;
 class Dialog;
+struct InventoryCallbackStruct;
 
 BorderBounds borderBounds(MVWindowType type);
 Graphics::BorderOffsets borderOffsets(MVWindowType type);
@@ -209,6 +210,7 @@ private: // Attributes
 	struct InventoryWindowData {
 		Graphics::MacWindow *win;
 		WindowReference ref;
+		InventoryCallbackStruct *callbackData;
 	};
 	Common::Array<InventoryWindowData> _inventoryWindows;
 	Common::HashMap<ObjID, WindowReference> _objToInvRef;
