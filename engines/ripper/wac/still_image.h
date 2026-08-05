@@ -36,9 +36,17 @@ public:
 
 	uint16 run(byte entryIndex, const Common::String &entryLabel,
 		const Common::String &path);
+	uint16 runWithOptionalPresentation(byte entryIndex,
+		const Common::String &entryLabel, const Common::String &imagePath,
+		const Common::String &mediaPath, uint presentationFlag,
+		uint completionFlag);
 
 private:
 	bool load(const Common::String &path);
+	uint16 runInternal(byte entryIndex, const Common::String &entryLabel,
+		const Common::String &imagePath, const Common::String &mediaPath,
+		uint presentationFlag, uint completionFlag);
+	Common::Point imageOrigin() const;
 	void draw() const;
 	void drawScrollControls() const;
 	int findScrollControl(const Common::Point &point) const;
@@ -48,6 +56,7 @@ private:
 	BitmapAssetFrame _image;
 	uint _scrollOffset;
 	int _scrollControl;
+	bool _alignImageOrigin;
 };
 
 } // End of namespace Ripper

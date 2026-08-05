@@ -654,6 +654,12 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 		WacStillImageViewer viewer(this);
 		return viewer.run(entry.originalIndex(), entry.label, path);
 	}
+	if (entry.catalog->handler == kWacDatabaseHandlerOptionalPresentation) {
+		WacStillImageViewer viewer(this);
+		return viewer.runWithOptionalPresentation(entry.originalIndex(),
+			entry.label, entry.catalog->imagePath, entry.catalog->mediaPath,
+			entry.catalog->presentationFlag, entry.catalog->completionFlag);
+	}
 	if (entry.catalog->handler == kWacDatabaseHandlerLoopingMedia) {
 		// RunWacInventorySelectionLoop at 0x2252a cases 9, 0x0d, and 0x0e
 		// resolve WACINV9.SMK, WACINV13.SMK, and WACINV14.SMK from

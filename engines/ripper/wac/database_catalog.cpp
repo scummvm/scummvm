@@ -20,6 +20,8 @@
 
 #include "ripper/wac/database_catalog.h"
 
+#include "ripper/milestones.h"
+
 #include "common/util.h"
 
 namespace Ripper {
@@ -36,7 +38,9 @@ static const WacDatabaseCatalogEntry kWacDatabaseCatalog[] = {
 	{  4, 0x4a, 0xe0, kWacDatabaseHandlerStillImage,          0 },
 	{  5, 0x4b, 0xe1, kWacDatabaseHandlerText,                0xb3 },
 	{  6, 0x4c, 0xe2, kWacDatabaseHandlerVoiceLock,           0 },
-	{  7, 0x4d, 0xe3, kWacDatabaseHandlerUnavailable,         0 },
+	{  7, 0x4d, 0xe3, kWacDatabaseHandlerOptionalPresentation, 0,
+		"mag_wac.pcx", "mag_wac.avi", kMilestoneWacVideoEditorAvailable,
+		kMilestoneRevealedMagnottaPhotoAsFake },
 	{  8, 0x4e, 0xe4, kWacDatabaseHandlerUnavailable,         0 },
 	{  9, 0x4f, 0xe5, kWacDatabaseHandlerLoopingMedia,        0 },
 	{ 10, 0x50, 0xe6, kWacDatabaseHandlerStillImage,          0 },
@@ -45,7 +49,9 @@ static const WacDatabaseCatalogEntry kWacDatabaseCatalog[] = {
 	{ 13, 0x53, 0xe9, kWacDatabaseHandlerLoopingMedia,        0 },
 	{ 14, 0x54, 0xea, kWacDatabaseHandlerLoopingMedia,        0 },
 	{ 15, 0x55, 0xeb, kWacDatabaseHandlerText,                0xb6 },
-	{ 16, 0x56, 0xec, kWacDatabaseHandlerUnavailable,         0 },
+	{ 16, 0x56, 0xec, kWacDatabaseHandlerOptionalPresentation, 0,
+		"ed_wac.pcx", "ed_wac.avi", kMilestoneWacVideoEditorAvailable,
+		kMilestoneRevealedEddiePhotoAsFake },
 	{ 17, 0x57, 0xed, kWacDatabaseHandlerUnavailable,         0 },
 	{ 18, 0x58, 0xee, kWacDatabaseHandlerUnavailable,         0 },
 	{ 19, 0x59, 0xef, kWacDatabaseHandlerUnavailable,         0 },
