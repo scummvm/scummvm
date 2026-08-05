@@ -123,7 +123,35 @@ enum ZoneIndex {
 	kDMZoneWallD0C              = 715, // @ C715_ZONE_WALL_D0C
 	kDMZoneWallD0L              = 716, // @ C716_ZONE_WALL_D0L
 	kDMZoneWallD0R              = 717, // @ C717_ZONE_WALL_D0R
-	kDMZonePortraitOnWall       = 737  // @ M635_ZONE_PORTRAIT_ON_WALL
+	kDMZoneDoorFrameLeftD3L     = 718, // @ C718_ZONE_DOOR_FRAME_LEFT_D3L
+	kDMZoneDoorFrameRightD3L    = 719, // @ C719_ZONE_DOOR_FRAME_RIGHT_D3L
+	kDMZoneDoorFrameLeftD3R     = 720, // @ C720_ZONE_DOOR_FRAME_LEFT_D3R
+	kDMZoneDoorFrameRightD3R    = 721, // @ C721_ZONE_DOOR_FRAME_RIGHT_D3R
+	kDMZoneDoorFrameLeftD3C     = 722, // @ C722_ZONE_DOOR_FRAME_LEFT_D3C
+	kDMZoneDoorFrameRightD3C    = 723, // @ C723_ZONE_DOOR_FRAME_RIGHT_D3C
+	kDMZoneDoorFrameLeftD2C     = 724, // @ C724_ZONE_DOOR_FRAME_LEFT_D2C
+	kDMZoneDoorFrameRightD2C    = 725, // @ C725_ZONE_DOOR_FRAME_RIGHT_D2C
+	kDMZoneDoorFrameLeftD1C     = 726, // @ C726_ZONE_DOOR_FRAME_LEFT_D1C
+	kDMZoneDoorFrameRightD1C    = 727, // @ C727_ZONE_DOOR_FRAME_RIGHT_D1C
+	kDMZoneDoorFrameD0C         = 728, // @ C728_ZONE_DOOR_FRAME_D0C
+	kDMZoneDoorFrameTopD2L      = 729, // @ C729_ZONE_DOOR_FRAME_TOP_D2L
+	kDMZoneDoorFrameTopD2C      = 730, // @ C730_ZONE_DOOR_FRAME_TOP_D2C
+	kDMZoneDoorFrameTopD2R      = 731, // @ C731_ZONE_DOOR_FRAME_TOP_D2R
+	kDMZoneDoorFrameTopD1L      = 732, // @ C732_ZONE_DOOR_FRAME_TOP_D1L
+	kDMZoneDoorFrameTopD1C      = 733, // @ C733_ZONE_DOOR_FRAME_TOP_D1C
+	kDMZoneDoorFrameTopD1R      = 734, // @ C734_ZONE_DOOR_FRAME_TOP_D1R
+	kDMZonePortraitOnWall       = 737, // @ M635_ZONE_PORTRAIT_ON_WALL
+	kDMZoneDoorD3L2             = 3700,
+	kDMZoneDoorD3R2             = 3710,
+	kDMZoneDoorD3L              = 3720,
+	kDMZoneDoorD3C              = 3730,
+	kDMZoneDoorD3R              = 3740,
+	kDMZoneDoorD2L              = 3750,
+	kDMZoneDoorD2C              = 3760,
+	kDMZoneDoorD2R              = 3770,
+	kDMZoneDoorD1L              = 3780,
+	kDMZoneDoorD1C              = 3790,
+	kDMZoneDoorD1R              = 3800
 };
 
 enum NegGraphicIndex {
@@ -697,6 +725,7 @@ class DisplayMan {
 	void viewportSetPalette(uint16 *middleScreenPalette, uint16 *topAndBottomScreen); // @ F0565_VIEWPORT_SetPalette
 	void viewportBlitToScreen(); // @ F0566_VIEWPORT_BlitToScreen
 
+	void drawBitmapDOS(byte *srcBitmap, int16 zoneIndex, bool flipHorizontal = false, Color transparentColor = kDMColorFlesh, uint16 explicitWidth = 0, uint16 explicitHeight = 0); // @ F0791_DUNGEONVIEW_DrawBitmapXX
 	void drawFloorPitOrStairsBitmapFlippedHorizontally(uint16 nativeIndex, Frame &frame); // @ F0105_DUNGEONVIEW_DrawFloorPitOrStairsBitmapFlippedHorizontally
 	void drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &frame); // @ F0104_DUNGEONVIEW_DrawFloorPitOrStairsBitmap
 	void drawWallSetBitmap(byte *bitmap, Frame &f); // @ F0100_DUNGEONVIEW_DrawWallSetBitmap
@@ -875,7 +904,7 @@ public:
 	void copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height); // @ F0099_DUNGEONVIEW_CopyBitmapAndFlipHorizontal
 	void drawFloorOrnament(uint16 floorOrnOrdinal, ViewFloor viewFloorIndex); // @ F0108_DUNGEONVIEW_DrawFloorOrnament
 	void drawDoor(uint16 doorThingIndex, DoorState doorState, int16 *doorNativeBitmapIndices, int16 byteCount,
-					   DoorOrnament doorOrnament, DoorFrames *doorFrames); // @ F0111_DUNGEONVIEW_DrawDoor
+					   DoorOrnament doorOrnament, DoorFrames *doorFrames, int16 zoneIndexDOS = -1);
 	void drawDoorOrnament(int16 doorOrnOdinal, DoorOrnament doorOrnament); // @ F0109_DUNGEONVIEW_DrawDoorOrnament
 	void drawCeilingPit(int16 nativeBitmapIndex, Frame *frame, int16 mapX, int16 mapY, bool flipHorizontal); // @ F0112_DUNGEONVIEW_DrawCeilingPit
 
