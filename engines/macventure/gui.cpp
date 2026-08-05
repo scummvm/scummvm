@@ -490,11 +490,21 @@ WindowReference Gui::createInventoryWindow(ObjID objRef) {
 	WindowData newData;
 	GlobalSettings settings = _engine->getGlobalSettings();
 	if (!_objToInvRef.contains(objRef)) {
-		_objToInvRef[objRef] = (WindowReference)(_inventoryWindows.size() + kInventoryStart); // This is a HACK
-		newData.refcon = _objToInvRef[objRef];
-	} else {
-		newData.refcon = _objToInvRef[objRef];
+		WindowReference newRef = kInventoryStart;
+		bool taken = true;
+		while (taken) {
+			taken = false;
+			for (auto &invWindowData : _inventoryWindows) {
+				if (invWindowData.ref == newRef) {
+					taken = true;
+					newRef = (WindowReference)(newRef + 1);
+					break;
+				}
+			}
+		}
+		_objToInvRef[objRef] = newRef;
 	}
+	newData.refcon = _objToInvRef[objRef];
 
 	if (_windowData->back().refcon < 0x80) { // There is already another inventory window
 		newData.bounds = _windowData->back().bounds; // Inventory windows are always last
@@ -1231,11 +1241,11 @@ WindowData &Gui::findWindowData(WindowReference reference) {
 	assert(_windowData);
 
 	Common::List<WindowData>::iterator iter = _windowData->begin();
-	while (iter->refcon != reference && iter != _windowData->end()) {
+	while (iter != _windowData->end() && iter->refcon != reference) {
 		iter++;
 	}
 
-	if (iter->refcon == reference)
+	if (iter != _windowData->end())
 		return *iter;
 
 	error("GUI: Could not locate the desired window data");
@@ -1295,8 +1305,8 @@ WindowReference Gui::findObjWindow(ObjID objID) {
 		}
 	}
 
-	for (uint i = kInventoryStart; i < _inventoryWindows.size() + kInventoryStart; i++) {
-		const WindowData &data = getWindowData((WindowReference)i);
+	for (auto &invWindowData : _inventoryWindows) {
+		const WindowData &data = getWindowData(invWindowData.ref);
 		if (data.objRef == objID) {
 			return data.refcon;
 		}
@@ -1441,6 +1451,14 @@ void Gui::removeInventoryWindow(WindowReference ref) {
 	for (it = _windowData->begin(); it != _windowData->end(); it++) {
 		if (it->refcon == ref) {
 			_windowData->erase(it);
+			break;
+		}
+	}
+
+	Common::HashMap<ObjID, WindowReference>::iterator objIt;
+	for (objIt = _objToInvRef.begin(); objIt != _objToInvRef.end(); ++objIt) {
+		if (objIt->_value == ref) {
+			_objToInvRef.erase(objIt);
 			break;
 		}
 	}
