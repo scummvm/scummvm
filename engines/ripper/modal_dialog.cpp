@@ -148,14 +148,26 @@ void ModalDialogManager::drawTextEntry(const Common::String &prompt,
 
 	byte *pixels = (byte *)screen->getPixels();
 	const bool wacStyle = style == kWacPresentation;
+	const bool sceneEntryStyle = style == kSceneEntryPresentation;
 	const byte backgroundColor = wacStyle ? kWacModalBackgroundColor :
-		kModalBackgroundColor;
-	const byte textColor = wacStyle ? kWacModalTextColor : kModalTextColor;
+		(sceneEntryStyle ? kSceneEntryBackgroundColor : kModalBackgroundColor);
+	const byte textColor = wacStyle ? kWacModalTextColor :
+		(sceneEntryStyle ? kSceneEntryTextColor : kModalTextColor);
 	if (wacStyle) {
 		for (int y = bounds.top; y < bounds.bottom; ++y)
 			memset(screen->getBasePtr(bounds.left, y), backgroundColor,
 				bounds.width());
 		drawFrame(pixels, screen->pitch, bounds, style);
+	} else if (sceneEntryStyle) {
+		// ConfigureSceneEntryChooserLayout at 0x18740 selects the unskinned
+		// primary template at 0x8a2de for layout variant 2. Its five-pixel
+		// inset places the editable row over the recess already rendered by
+		// the scene movie; redraws restore that row with palette index 0.
+		const int rowBottom = MIN(bounds.top + kTextEntryPadding +
+			kModalRowHeight, (int)bounds.bottom);
+		for (int y = bounds.top + kTextEntryPadding; y < rowBottom; ++y)
+			memset(screen->getBasePtr(bounds.left + kTextEntryPadding, y),
+				backgroundColor, bounds.width() - kTextEntryPadding * 2);
 	} else {
 		drawFrame(pixels, screen->pitch, bounds, style);
 		for (int y = bounds.top + 2; y < bounds.bottom - 2; ++y)
@@ -349,7 +361,8 @@ bool ModalDialogManager::beginTextEntry(const Common::String &prompt,
 		_textEntryStyle);
 	debugC(1, kDebugScene,
 		"Ripper: entered scene text request source='%s' control=0x4e2 style=%s bounds=%d,%d,%d,%d maximumLength=%u helpResource=%u",
-		source, _textEntryStyle == kWacPresentation ? "wacmnu" : "menub",
+		source, _textEntryStyle == kWacPresentation ? "wacmnu" :
+			(_textEntryStyle == kSceneEntryPresentation ? "scene-entry" : "menub"),
 		_textEntryBounds.left, _textEntryBounds.top, _textEntryBounds.width(),
 		_textEntryBounds.height(), maximumLength, helpResourceId);
 	return true;
@@ -390,8 +403,12 @@ ModalDialogManager::TextEntryResult ModalDialogManager::serviceTextEntry(
 				break;
 			}
 			if (command == 0x3b00) {
+				const bool sceneEntryStyle =
+					_textEntryStyle == kSceneEntryPresentation;
+				const PresentationStyle helpStyle = sceneEntryStyle ?
+					kMenubPresentation : _textEntryStyle;
 				if (!_engine->getModalDialog()->run(_textEntryHelpResourceId, true,
-						_textEntryStyle, _textEntryStyle == kWacPresentation ?
+						helpStyle, _textEntryStyle == kWacPresentation ?
 						kPreserveActivePalette : kApplyModalPalette)) {
 					result = kTextEntryFailed;
 					break;
