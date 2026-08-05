@@ -53,6 +53,9 @@ private:
 	bool _macPopupActive = false;
 	bool _macLayoutLogged = false;
 
+	void initMacintoshGraphics();
+	bool initMacintoshResources();
+	void shutdownMacintoshResources();
 	void showRecipe();
 
 protected:
