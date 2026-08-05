@@ -47,6 +47,24 @@ public:
 	Result run(uint completionFlag);
 
 private:
+	class DebugHelper {
+	public:
+		DebugHelper();
+
+		void reset(bool enabled);
+		bool sync(const BoardGamePuzzle &puzzle);
+		void selectionChanged(const BoardGamePuzzle &puzzle);
+		void draw(const BoardGamePuzzle &puzzle, byte *screen, uint pitch) const;
+
+	private:
+		int chooseOptimalDestination(const BoardGamePuzzle &puzzle) const;
+		byte blendTintPixel(const BoardGamePuzzle &puzzle, byte destination,
+			const byte *tint, uint opacity) const;
+
+		bool _enabled;
+		int _optimalDestination;
+	};
+
 	bool loadAssets();
 	bool loadBitmap(const Common::String &name, BitmapAssetFrame &frame);
 	bool loadSelectionShading();
@@ -57,6 +75,7 @@ private:
 	void drawPiece(byte *screen, uint pitch, int piece,
 		const Common::Point &anchor, bool selected = false) const;
 	void render();
+	void clearSelectedPiece();
 	int hitCodeAt(const Common::Point &point) const;
 	void updateCursor(const Common::Point &point);
 	bool serviceKeyword(uint16 command);
@@ -83,6 +102,7 @@ private:
 	Common::RandomSource _random;
 	Audio::SoundHandle _audioHandles[5];
 	Common::Array<int> _legalDestinations;
+	DebugHelper _debugHelper;
 	Common::Point _movingAnchor;
 	int _selectedCell;
 	int _hoveredCode;

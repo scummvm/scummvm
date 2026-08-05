@@ -71,6 +71,11 @@ static const uint kShadingInfoBytes =
 		kShadingPaletteBytes + kShadingColorCubeBytes;
 static const uint kSelectedPieceEffectStrength = 0xa0;
 static const uint kEffectStrengthRange = 0x100;
+static const uint kPuzzleHelpSearchDepth = 3;
+static const byte kPuzzleHelpLegalTint[3] = {0, 32, 63};
+static const byte kPuzzleHelpOptimalTint[3] = {0, 63, 0};
+static const uint kPuzzleHelpLegalOpacity = 0x60;
+static const uint kPuzzleHelpOptimalOpacity = 0xa0;
 
 // The table at 0x40ab8 stores scene Y followed by X. These normalized
 // physical points are the piece anchors used by RenderBoardState at 0x418c8.
@@ -135,6 +140,121 @@ static Common::String moveString(const BoardGameModel::Move &move) {
 }
 
 } // End of anonymous namespace
+
+BoardGamePuzzle::DebugHelper::DebugHelper() :
+		_enabled(false), _optimalDestination(-1) {
+}
+
+void BoardGamePuzzle::DebugHelper::reset(bool enabled) {
+	_enabled = enabled;
+	_optimalDestination = -1;
+}
+
+bool BoardGamePuzzle::DebugHelper::sync(const BoardGamePuzzle &puzzle) {
+	const bool enabled = puzzle._engine->isPuzzleHelpEnabled();
+	if (enabled == _enabled)
+		return false;
+
+	_enabled = enabled;
+	selectionChanged(puzzle);
+	debugC(2, kDebugPuzzles,
+		"Ripper: board-game puzzle help enabled=%d source=%d legalDestinations=%u optimalDestination=%d depth=%u",
+		_enabled, puzzle._selectedCell, puzzle._legalDestinations.size(),
+		_optimalDestination, kPuzzleHelpSearchDepth);
+	return true;
+}
+
+void BoardGamePuzzle::DebugHelper::selectionChanged(
+		const BoardGamePuzzle &puzzle) {
+	_optimalDestination = -1;
+	if (!_enabled || puzzle._selectedCell < 0 ||
+			puzzle._legalDestinations.empty())
+		return;
+
+	_optimalDestination = chooseOptimalDestination(puzzle);
+	debugC(2, kDebugPuzzles,
+		"Ripper: board-game puzzle help analyzed source=%d legalDestinations=%u optimalDestination=%d depth=%u",
+		puzzle._selectedCell, puzzle._legalDestinations.size(),
+		_optimalDestination, kPuzzleHelpSearchDepth);
+}
+
+int BoardGamePuzzle::DebugHelper::chooseOptimalDestination(
+		const BoardGamePuzzle &puzzle) const {
+	int bestDestination = -1;
+	int bestScore = 0x7fffffff;
+	for (uint destinationIndex = 0;
+			destinationIndex < puzzle._legalDestinations.size();
+			++destinationIndex) {
+		const int destination =
+			puzzle._legalDestinations[destinationIndex];
+		BoardGameModel next = puzzle._model;
+		const BoardGameModel::Move move(puzzle._selectedCell, destination);
+		if (!next.applyMove(move))
+			continue;
+		const int score = puzzle.evaluatePosition(next,
+			kPuzzleHelpSearchDepth - 1, -0x7fffffff, 0x7fffffff);
+		debugC(3, kDebugPuzzles,
+			"Ripper: board-game puzzle help candidate move=%s score=%d depth=%u",
+			moveString(move).c_str(), score, kPuzzleHelpSearchDepth);
+		// Positive pieces are the player side. The shared evaluator scores
+		// negative positions positively, so the best player move minimizes.
+		if (bestDestination < 0 || score < bestScore) {
+			bestDestination = destination;
+			bestScore = score;
+		}
+	}
+	return bestDestination;
+}
+
+byte BoardGamePuzzle::DebugHelper::blendTintPixel(
+		const BoardGamePuzzle &puzzle, byte destination, const byte *tint,
+		uint opacity) const {
+	const byte *palette = puzzle._selectionShading.data();
+	const byte *colorCube = palette + kShadingPaletteBytes;
+	const uint inverseOpacity = kEffectStrengthRange - opacity;
+	uint components[3];
+	for (uint component = 0; component < ARRAYSIZE(components); ++component) {
+		components[component] =
+			(tint[component] * opacity +
+			 palette[destination * 3 + component] * inverseOpacity) >> 8;
+	}
+	const uint colorCubeIndex = ((components[0] >> 2) << 8) |
+		((components[1] >> 2) << 4) | (components[2] >> 2);
+	return colorCube[colorCubeIndex];
+}
+
+void BoardGamePuzzle::DebugHelper::draw(const BoardGamePuzzle &puzzle,
+		byte *screen, uint pitch) const {
+	if (!_enabled || puzzle._selectedCell < 0)
+		return;
+
+	bool highlighted[BoardGameModel::kOffBoardDestination + 1] = { false };
+	for (uint destinationIndex = 0;
+			destinationIndex < puzzle._legalDestinations.size();
+			++destinationIndex) {
+		const int destination =
+			puzzle._legalDestinations[destinationIndex];
+		if (destination >= 0 &&
+				destination <= BoardGameModel::kOffBoardDestination)
+			highlighted[destination] = true;
+	}
+
+	for (uint y = 0; y < puzzle._hitMap.height; ++y) {
+		for (uint x = 0; x < puzzle._hitMap.width; ++x) {
+			const byte code =
+				puzzle._hitMap.pixels[y * puzzle._hitMap.width + x];
+			if (code > BoardGameModel::kOffBoardDestination ||
+					!highlighted[code])
+				continue;
+			const bool optimal = code == _optimalDestination;
+			byte &pixel = screen[y * pitch + x];
+			pixel = blendTintPixel(puzzle, pixel,
+				optimal ? kPuzzleHelpOptimalTint : kPuzzleHelpLegalTint,
+				optimal ? kPuzzleHelpOptimalOpacity :
+					kPuzzleHelpLegalOpacity);
+		}
+	}
+}
 
 BoardGamePuzzle::BoardGamePuzzle(RipperEngine *engine) :
 		_engine(engine), _random("ripper-board-game"), _movingAnchor(0, 0),
@@ -295,6 +415,7 @@ void BoardGamePuzzle::render() {
 			kRipperScreenWidth);
 	}
 	byte *pixels = (byte *)screen->getPixels();
+	_debugHelper.draw(*this, pixels, screen->pitch);
 	bool movingPiecePending = _movingActive;
 	for (uint order = 0; order < ARRAYSIZE(kRenderOrder); ++order) {
 		const int cell = kRenderOrder[order];
@@ -317,6 +438,12 @@ void BoardGamePuzzle::render() {
 	applyPalette();
 	_engine->getCursor()->setVisible(true);
 	g_system->updateScreen();
+}
+
+void BoardGamePuzzle::clearSelectedPiece() {
+	_selectedCell = -1;
+	_legalDestinations.clear();
+	_debugHelper.selectionChanged(*this);
 }
 
 int BoardGamePuzzle::hitCodeAt(const Common::Point &point) const {
@@ -471,8 +598,7 @@ bool BoardGamePuzzle::applyPlayerMove(int destination) {
 	const int capturedPiece = destination < BoardGameModel::kCellCount ?
 		_model.pieceAt(destination) : 0;
 	stopCue(kSelectionCue);
-	_selectedCell = -1;
-	_legalDestinations.clear();
+	clearSelectedPiece();
 	if (!animateMove(move, movingPiece, capturedPiece, false))
 		return false;
 	if (!_model.applyMove(move))
@@ -629,7 +755,8 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 	_savedCursorVisible = _engine->getCursor()->isVisible();
 	_searchDepth = CLIP<uint>(_engine->getSettings()->getPuzzleLevel(), 1, 3);
 	_model.reset();
-	_selectedCell = -1;
+	_debugHelper.reset(_engine->isPuzzleHelpEnabled());
+	clearSelectedPiece();
 	_hoveredCode = -1;
 	_movingSource = -1;
 	_movingPiece = 0;
@@ -644,10 +771,10 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 	render();
 	debugC(1, kDebugPuzzles,
 		"Ripper: entered board-game puzzle function=RunBoardGameScene@0x436c0 "
-		"milestone=%u library='%s' cells=%u side=%d difficulty=%u help=0x%x keyword='%s'",
+		"milestone=%u library='%s' cells=%u side=%d difficulty=%u help=0x%x keyword='%s' puzzleHelp=%d",
 		completionFlag, kLibraryName, BoardGameModel::kCellCount,
 		_model.sideToMove(), _searchDepth, kHelpSelectionTable,
-		kCompletionKeyword);
+		kCompletionKeyword, _engine->isPuzzleHelpEnabled());
 
 	Result result = kExited;
 	bool active = true;
@@ -656,6 +783,8 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 			_engine->quitGame();
 			break;
 		}
+		if (_debugHelper.sync(*this))
+			render();
 
 		while (_engine->getInput()->hasPendingKey()) {
 			const uint16 command = _engine->getInput()->consumeKey();
@@ -666,8 +795,7 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 				debugC(2, kDebugPuzzles,
 					"Ripper: board-game selection cancelled by keyboard source=%d command=0x%04x",
 					_selectedCell, command);
-				_selectedCell = -1;
-				_legalDestinations.clear();
+				clearSelectedPiece();
 				stopCue(kSelectionCue);
 				render();
 			}
@@ -719,8 +847,7 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 				debugC(2, kDebugPuzzles,
 					"Ripper: board-game selection cancelled source=%d",
 					_selectedCell);
-				_selectedCell = -1;
-				_legalDestinations.clear();
+				clearSelectedPiece();
 				stopCue(kSelectionCue);
 				render();
 			} else if ((mouse.pressed & kMouseButtonLeft) != 0) {
@@ -738,8 +865,7 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 					debugC(2, kDebugPuzzles,
 						"Ripper: board-game deselected source=%d piece=%d",
 						_selectedCell, _model.pieceAt(_selectedCell));
-					_selectedCell = -1;
-					_legalDestinations.clear();
+					clearSelectedPiece();
 					stopCue(kSelectionCue);
 					render();
 				} else if (_selectedCell >= 0 &&
@@ -756,6 +882,7 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 					_selectedCell = hitCode;
 					_model.legalDestinations(_selectedCell,
 						_legalDestinations);
+					_debugHelper.selectionChanged(*this);
 					playCue(kSelectionCue);
 					debugC(2, kDebugPuzzles,
 						"Ripper: board-game selected source=%d piece=%d legalDestinations=%u",
