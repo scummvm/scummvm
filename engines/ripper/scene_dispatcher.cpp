@@ -26,6 +26,7 @@
 #include "ripper/briefing.h"
 #include "ripper/combat/atkini.h"
 #include "ripper/combat/mechini.h"
+#include "ripper/combat/ratini.h"
 #include "ripper/cursor.h"
 #include "ripper/cyber.h"
 #include "ripper/detection.h"
@@ -84,7 +85,7 @@ const char *SceneActionDispatcher::actionName(uint action) {
 	case 23: return "tarot card puzzle";
 	case 24: return "tube switch scene";
 	case 25: return "KK tile match puzzle";
-	case 26: return "ratini combat encounter";
+	case kSceneActionRatiniCombat: return "ratini combat encounter";
 	case kSceneActionAtkiniCombat: return "atkini combat encounter";
 	case 28: return "gym selector";
 	case 29: return "crystal piece placement puzzle";
@@ -250,6 +251,16 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		debugC(1, kDebugCombat,
 			"Ripper: Mechini combat scene action completed result=%d milestone=%u", result, argument);
 		return result != MechiniEncounter::kLoadFailed;
+	}
+	if (action == kSceneActionRatiniCombat) {
+		// DispatchSceneEntryAction at 0x36cc6 forwards the completion flag and
+		// RATINI%d.INI template to RunCombatEncounterScene at 0x31436.
+		RatiniEncounter encounter(engine);
+		const RatiniEncounter::Result result = encounter.run(argument);
+		debugC(1, kDebugCombat,
+			"Ripper: Ratini combat scene action completed result=%d milestone=%u",
+			result, argument);
+		return result != RatiniEncounter::kLoadFailed;
 	}
 	if (action == kSceneActionAtkiniCombat) {
 		// DispatchSceneEntryAction at 0x36cd8 forwards the completion flag and

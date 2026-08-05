@@ -99,6 +99,7 @@ enum SceneAction {
 	kSceneActionWebGridShiftPuzzle = 19,
 	kSceneActionShockLeverPuzzle = 22,
 	kSceneActionTubeSwitchScene = 24,
+	kSceneActionRatiniCombat = 26,
 	kSceneActionAtkiniCombat = 27,
 	kSceneActionGymSelector = 28,
 	kSceneActionCrystalPuzzle = 29,

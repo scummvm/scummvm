@@ -142,8 +142,13 @@ bool CombatEncounter::loadFrameRegions(const Common::String &name, SceneData &sc
 bool CombatEncounter::loadFrameCues(const Common::String &name, SceneData &scene) {
 	Common::File file;
 	if (!file.open(Common::Path(name))) {
-		warning("Ripper: could not open combat frame-audio map '%s'", name.c_str());
-		return false;
+		// LoadPresentationFrameAudioCueMap at 0x3574a returns its zero-filled
+		// two-byte-per-frame allocation when the optional PRJ cannot be opened.
+		scene.frameCues.resize(scene.frames.size());
+		debugC(2, kDebugCombat,
+			"Ripper: combat frame-audio map absent file='%s' frames=%u cues=0",
+			name.c_str(), scene.frames.size());
+		return true;
 	}
 
 	PresentationFrameAudioMap map;
@@ -212,9 +217,9 @@ Common::String CombatEncounter::selectConfigName(uint difficulty) const {
 		return requested;
 
 	// RunCombatEncounterScene at 0x31563 always formats the configured level.
-	// Some retail data layouts only contain ATKINI1.INI, so retain the original
-	// lookup first and use that packaged definition when its numbered peer is
-	// absent.
+	// Some retail data layouts only contain ATKINI1.INI and RATINI1.INI, so
+	// retain the original lookup first and use the packaged definition when its
+	// numbered peer is absent.
 	debugC(2, kDebugCombat,
 		"Ripper: combat configuration fallback type='%s' requested='%s' selected='%s' reason=missing-numbered-config",
 		_definition.name, requested.c_str(), fallback.c_str());

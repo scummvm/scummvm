@@ -21,6 +21,7 @@ static const CombatEncounterDefinition kAtkiniDefinition = {
 	"atkini%u.ini",
 	"atkini1.ini",
 	"weap2c1.wav",
+	{ nullptr, nullptr },
 	"mechwav1.wav",
 	"mechwav3.wav",
 	"mechwav2.wav",

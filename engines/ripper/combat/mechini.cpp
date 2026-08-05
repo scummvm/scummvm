@@ -21,6 +21,7 @@ static const CombatEncounterDefinition kMechiniDefinition = {
 	"mechini%u.ini",
 	nullptr,
 	"mechwav0.wav",
+	{ nullptr, nullptr },
 	"mechwav1.wav",
 	"mechwav3.wav",
 	"mechwav2.wav",
