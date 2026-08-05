@@ -115,7 +115,6 @@ public:
 	uint32 getGameFeatures() const;
 	bool isDemo() const;
 	bool isCDROM() const;
-	virtual bool usesScummVMMenu() const { return false; }
 
 	void readConfigFile();
 	int getRandomNumber(int maxNumber);
