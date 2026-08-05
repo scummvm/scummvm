@@ -30,6 +30,7 @@
 #include "mads/core/object.h"
 #include "mads/core/pal.h"
 #include "mads/core/screen.h"
+#include "mads/nebular/mac_nebular.h"
 #include "mads/nebular/mac_resources.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/popup.h"
@@ -403,39 +404,42 @@ static bool isMacInterfaceSemanticPixel(int x, int y) {
 	return false;
 }
 
-void RexNebularEngine::initMacintoshGraphics() {
-	initGraphics(kMacScreenWidth, kMacScreenHeight);
+MacNebular::MacNebular(RexNebularEngine &engine) : _engine(engine) {
 }
 
-bool RexNebularEngine::initMacintoshResources() {
-	_macResources = new MacResourceProvider();
-	if (!_macResources->load())
-		return false;
+MacNebular::~MacNebular() {
+	if (!_resources)
+		return;
 
-	env_set_resource_provider(_macResources);
-	_soundManager = new Sound::MacSoundManager(_mixer, _soundFlag, _macResources);
+	delete _engine._soundManager;
+	_engine._soundManager = nullptr;
+	env_set_resource_provider(nullptr);
+	delete _resources;
+}
+
+void MacNebular::initGraphics() {
+	::initGraphics(kMacScreenWidth, kMacScreenHeight);
+}
+
+bool MacNebular::initResources() {
+	_resources = new MacResourceProvider();
+	if (!_resources->load()) {
+		delete _resources;
+		_resources = nullptr;
+		return false;
+	}
+
+	env_set_resource_provider(_resources);
+	_engine._soundManager = new Sound::MacSoundManager(
+		_engine._mixer, _engine._soundFlag, _resources);
 	return true;
 }
 
-void RexNebularEngine::shutdownMacintoshResources() {
-	if (!_macResources)
-		return;
-
-	delete _soundManager;
-	_soundManager = nullptr;
-	env_set_resource_provider(nullptr);
-	delete _macResources;
-	_macResources = nullptr;
-}
-
-void RexNebularEngine::applyGameSettings() {
-	Engine::applyGameSettings();
-
+void MacNebular::applyGameSettings() {
 	// The Macintosh port's 640x400 large-window mode uses square pixels.
 	// DOS-style 320x200 aspect correction would stretch its scene and native
 	// interface vertically.
-	if (getPlatform() == Common::kPlatformMacintosh &&
-			g_system->hasFeature(OSystem::kFeatureAspectRatioCorrection) &&
+	if (g_system->hasFeature(OSystem::kFeatureAspectRatioCorrection) &&
 			g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection)) {
 		g_system->beginGFXTransaction();
 		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, false);
@@ -443,10 +447,7 @@ void RexNebularEngine::applyGameSettings() {
 	}
 }
 
-Common::Point RexNebularEngine::screenToGame(const Common::Point &point) const {
-	if (getPlatform() != Common::kPlatformMacintosh)
-		return MADSEngine::screenToGame(point);
-
+Common::Point MacNebular::screenToGame(const Common::Point &point) const {
 	if (point.y >= 0 && point.y < kMacSceneHeight)
 		return Common::Point(CLIP<int>(point.x / 2, 0, 319), point.y / 2);
 
@@ -463,10 +464,7 @@ Common::Point RexNebularEngine::screenToGame(const Common::Point &point) const {
 	return Common::Point(-1, -1);
 }
 
-Common::Point RexNebularEngine::gameToScreen(const Common::Point &point) const {
-	if (getPlatform() != Common::kPlatformMacintosh)
-		return MADSEngine::gameToScreen(point);
-
+Common::Point MacNebular::gameToScreen(const Common::Point &point) const {
 	if (point.y < 156)
 		return Common::Point(point.x * 2, point.y * 2);
 
@@ -474,19 +472,14 @@ Common::Point RexNebularEngine::gameToScreen(const Common::Point &point) const {
 		kMacSceneHeight + (point.y - 156) * 2);
 }
 
-void RexNebularEngine::presentScreen(int shakeOffset) {
-	if (getPlatform() != Common::kPlatformMacintosh) {
-		MADSEngine::presentScreen(shakeOffset);
-		return;
-	}
-
-	_macOutput.resize(kMacScreenWidth * kMacScreenHeight);
-	memset(_macOutput.data(), kMacBlackColor, _macOutput.size());
+void MacNebular::presentScreen(int shakeOffset) {
+	_output.resize(kMacScreenWidth * kMacScreenHeight);
+	memset(_output.data(), kMacBlackColor, _output.size());
 
 	// Native large-window mode doubles the 320x156 scene in both axes.
 	for (int y = 0; y < 156; ++y) {
-		const byte *source = (const byte *)_screen->getBasePtr(0, y);
-		byte *line1 = _macOutput.data() + (y * 2) * kMacScreenWidth;
+		const byte *source = (const byte *)_engine._screen->getBasePtr(0, y);
+		byte *line1 = _output.data() + (y * 2) * kMacScreenWidth;
 		byte *line2 = line1 + kMacScreenWidth;
 		for (int x = 0; x < 320; ++x) {
 			const byte color = source[(x + shakeOffset) % 320];
@@ -497,9 +490,9 @@ void RexNebularEngine::presentScreen(int shakeOffset) {
 	}
 
 	const Graphics::Surface *nativeInterface =
-		_macResources ? _macResources->getNativeInterface() : nullptr;
+		_resources ? _resources->getNativeInterface() : nullptr;
 	const Graphics::Surface *logicalInterface =
-		_macResources ? _macResources->getLogicalInterface() : nullptr;
+		_resources ? _resources->getLogicalInterface() : nullptr;
 	if (nativeInterface && nativeInterface->w == kMacInterfaceWidth &&
 			nativeInterface->h == kMacInterfaceHeight &&
 			nativeInterface->format.bytesPerPixel == 1) {
@@ -511,7 +504,7 @@ void RexNebularEngine::presentScreen(int shakeOffset) {
 				kMacInterfaceWidth);
 
 		const Graphics::Font *interfaceFont =
-			_macResources ? _macResources->getInterfaceFont() : nullptr;
+			_resources ? _resources->getInterfaceFont() : nullptr;
 
 		// Keep live inventory artwork and other non-text changes produced by
 		// the shared interface state machine. Semantic regions are redrawn
@@ -524,7 +517,7 @@ void RexNebularEngine::presentScreen(int shakeOffset) {
 				byte *target = (byte *)panel.getBasePtr(0, y);
 				const int logicalY = y / 2;
 				const byte *current =
-					(const byte *)_screen->getBasePtr(0, 156 + logicalY);
+					(const byte *)_engine._screen->getBasePtr(0, 156 + logicalY);
 				const byte *baseline =
 					(const byte *)logicalInterface->getBasePtr(0, logicalY);
 				for (int x = 0; x < kMacInterfaceWidth; ++x) {
@@ -543,7 +536,7 @@ void RexNebularEngine::presentScreen(int shakeOffset) {
 		// Apply the blue layer after composing artwork, live state, controls,
 		// and text so the whole native panel receives one uniform treatment.
 		byte washLUT[256];
-		buildMacPanelWashLUT(_macResources->getNativeInterfacePalette(), washLUT);
+		buildMacPanelWashLUT(_resources->getNativeInterfacePalette(), washLUT);
 		for (int y = 0; y < kMacInterfaceHeight; ++y) {
 			byte *target = (byte *)panel.getBasePtr(0, y);
 			for (int x = 0; x < kMacInterfaceWidth; ++x)
@@ -551,7 +544,7 @@ void RexNebularEngine::presentScreen(int shakeOffset) {
 		}
 
 		for (int y = 0; y < kMacInterfaceHeight; ++y) {
-			memcpy(_macOutput.data() +
+			memcpy(_output.data() +
 				(kMacSceneHeight + y) * kMacScreenWidth + kMacInterfaceX,
 				panel.getBasePtr(0, y), kMacInterfaceWidth);
 		}
@@ -559,46 +552,46 @@ void RexNebularEngine::presentScreen(int shakeOffset) {
 		// Before the native panel is loaded, retain a structurally equivalent
 		// fallback by scaling the shared 320x44 interface into its Mac bounds.
 		for (int y = 0; y < kMacInterfaceHeight; ++y) {
-			const byte *source = (const byte *)_screen->getBasePtr(0, 156 + y / 2);
-			byte *target = _macOutput.data() +
+			const byte *source = (const byte *)_engine._screen->getBasePtr(0, 156 + y / 2);
+			byte *target = _output.data() +
 				(kMacSceneHeight + y) * kMacScreenWidth + kMacInterfaceX;
 			for (int x = 0; x < kMacInterfaceWidth; ++x)
 				target[x] = source[x * 320 / kMacInterfaceWidth];
 		}
 	}
 
-	if (_macPopupActive && !_macPopup.empty()) {
-		for (int y = 0; y < _macPopup.h; ++y) {
-			const int targetY = _macPopupRect.top + y;
+	if (_popupActive && !_popup.empty()) {
+		for (int y = 0; y < _popup.h; ++y) {
+			const int targetY = _popupRect.top + y;
 			if (targetY < 0 || targetY >= kMacScreenHeight)
 				continue;
 
-			const int targetX = MAX<int>(0, _macPopupRect.left);
-			const int sourceX = targetX - _macPopupRect.left;
-			const int width = MIN<int>(_macPopup.w - sourceX,
+			const int targetX = MAX<int>(0, _popupRect.left);
+			const int sourceX = targetX - _popupRect.left;
+			const int width = MIN<int>(_popup.w - sourceX,
 				kMacScreenWidth - targetX);
 			if (width > 0)
-				memcpy(_macOutput.data() + targetY * kMacScreenWidth + targetX,
-					_macPopup.getBasePtr(sourceX, y), width);
+				memcpy(_output.data() + targetY * kMacScreenWidth + targetX,
+					_popup.getBasePtr(sourceX, y), width);
 		}
 	}
 
-	if (!_macLayoutLogged) {
+	if (!_layoutLogged) {
 		debug(2, "Presenting Macintosh Rex as 640x312 scene plus centered 512x88 interface");
-		_macLayoutLogged = true;
+		_layoutLogged = true;
 	}
 
-	g_system->copyRectToScreen(_macOutput.data(), kMacScreenWidth,
+	g_system->copyRectToScreen(_output.data(), kMacScreenWidth,
 		0, 0, kMacScreenWidth, kMacScreenHeight);
 	g_system->updateScreen();
-	_screen->clearDirtyRects();
+	_engine._screen->clearDirtyRects();
 }
 
-void RexNebularEngine::showMacPopup() {
-	if (getPlatform() != Common::kPlatformMacintosh || !_macResources || !box)
+void MacNebular::showPopup() {
+	if (!_resources || !box)
 		return;
 
-	const Graphics::Font *font = _macResources->getDialogFont();
+	const Graphics::Font *font = _resources->getDialogFont();
 	if (!font)
 		return;
 
@@ -641,9 +634,9 @@ void RexNebularEngine::showMacPopup() {
 
 	const int height = CLIP<int>((int)lines.size() * 12 + 20, 20,
 		kMacScreenHeight - 2);
-	_macPopup.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	_macPopup.fillRect(Common::Rect(width, height), kMacPopupColor);
-	_macPopup.frameRect(Common::Rect(width, height), kMacBlackColor);
+	_popup.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	_popup.fillRect(Common::Rect(width, height), kMacPopupColor);
+	_popup.frameRect(Common::Rect(width, height), kMacBlackColor);
 
 	const int ascent = font->getFontAscent() >= 0 ?
 		font->getFontAscent() : font->getFontHeight();
@@ -654,7 +647,7 @@ void RexNebularEngine::showMacPopup() {
 			break;
 
 		if (lines[line].tab == POPUP_BAR) {
-			_macPopup.fillRect(Common::Rect(2, baseline - 5,
+			_popup.fillRect(Common::Rect(2, baseline - 5,
 				width - 2, baseline - 4), kMacBlackColor);
 			continue;
 		}
@@ -664,31 +657,64 @@ void RexNebularEngine::showMacPopup() {
 			(width - textWidth) / 2 :
 			10 + (lines[line].tab &
 				~(POPUP_UNDERLINE | POPUP_DOWNPIXEL)) * 3 / 4;
-		font->drawString(&_macPopup, lines[line].text, x, baseline - ascent,
+		font->drawString(&_popup, lines[line].text, x, baseline - ascent,
 			MAX(0, width - x - 2), kMacBlackColor);
 		if (lines[line].tab & POPUP_UNDERLINE) {
-			_macPopup.fillRect(Common::Rect(x, baseline + 1,
+			_popup.fillRect(Common::Rect(x, baseline + 1,
 				MIN(width - 2, x + textWidth), baseline + 2),
 				kMacBlackColor);
 		}
 	}
 
-	_macPopupRect = Common::Rect(
+	_popupRect = Common::Rect(
 		(kMacScreenWidth - width) / 2,
 		(kMacScreenHeight - height) / 2,
 		(kMacScreenWidth + width) / 2,
 		(kMacScreenHeight + height) / 2);
-	_macPopupActive = true;
+	_popupActive = true;
 	presentScreen(0);
 }
 
-void RexNebularEngine::hideMacPopup() {
-	if (!_macPopupActive)
+void MacNebular::hidePopup() {
+	if (!_popupActive)
 		return;
 
-	_macPopupActive = false;
-	_macPopup.free();
+	_popupActive = false;
+	_popup.free();
 	presentScreen(0);
+}
+
+void RexNebularEngine::applyGameSettings() {
+	Engine::applyGameSettings();
+	if (_macNebular)
+		_macNebular->applyGameSettings();
+}
+
+Common::Point RexNebularEngine::screenToGame(const Common::Point &point) const {
+	return _macNebular ? _macNebular->screenToGame(point) :
+		MADSEngine::screenToGame(point);
+}
+
+Common::Point RexNebularEngine::gameToScreen(const Common::Point &point) const {
+	return _macNebular ? _macNebular->gameToScreen(point) :
+		MADSEngine::gameToScreen(point);
+}
+
+void RexNebularEngine::presentScreen(int shakeOffset) {
+	if (_macNebular)
+		_macNebular->presentScreen(shakeOffset);
+	else
+		MADSEngine::presentScreen(shakeOffset);
+}
+
+void RexNebularEngine::showMacPopup() {
+	if (_macNebular)
+		_macNebular->showPopup();
+}
+
+void RexNebularEngine::hideMacPopup() {
+	if (_macNebular)
+		_macNebular->hidePopup();
 }
 
 } // namespace RexNebular

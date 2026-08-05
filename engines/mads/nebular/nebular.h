@@ -22,15 +22,12 @@
 #ifndef MADS_NEBULAR_H
 #define MADS_NEBULAR_H
 
-#include "common/array.h"
-#include "common/rect.h"
-#include "graphics/managed_surface.h"
 #include "mads/mads.h"
 
 namespace MADS {
 namespace RexNebular {
 
-class MacResourceProvider;
+class MacNebular;
 
 struct MADSSavegameHeader {
 	uint8 _version;
@@ -46,16 +43,9 @@ struct MADSSavegameHeader {
 
 class RexNebularEngine : public MADSEngine {
 private:
-	MacResourceProvider *_macResources = nullptr;
-	Common::Array<byte> _macOutput;
-	Graphics::ManagedSurface _macPopup;
-	Common::Rect _macPopupRect;
-	bool _macPopupActive = false;
-	bool _macLayoutLogged = false;
+	friend class MacNebular;
+	MacNebular *_macNebular = nullptr;
 
-	void initMacintoshGraphics();
-	bool initMacintoshResources();
-	void shutdownMacintoshResources();
 	void showRecipe();
 
 protected:
