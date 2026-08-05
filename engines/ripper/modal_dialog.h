@@ -151,6 +151,7 @@ private:
 	Common::Array<byte> _modalPalette;
 	Common::Array<Common::String> _gameText;
 	IndexedDisplaySnapshot _savedDisplay;
+	IndexedDisplaySnapshot _textEntryBacking;
 	Common::String _textEntryPrompt;
 	Common::String _textEntryText;
 	Common::String _textEntrySource;
