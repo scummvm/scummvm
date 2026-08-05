@@ -20,9 +20,6 @@
  */
 
 #include "common/config-manager.h"
-#include "common/translation.h"
-#include "gui/chooser.h"
-#include "gui/saveload.h"
 #include "mads/nebular/main.h"
 #include "mads/animview/animview.h"
 #include "mads/textview/textview.h"
@@ -48,6 +45,7 @@
 #include "mads/core/timer.h"
 #include "mads/core/video.h"
 #include "mads/nebular/main_menu.h"
+#include "mads/nebular/mac_menus.h"
 #include "mads/nebular/menus.h"
 #include "mads/mads.h"
 
@@ -238,38 +236,6 @@ static void main_cold_data_init() {
 	kernel_cheating_allowed = strlen(kernel_cheating_password);
 
 	kernel.cheating = gDebugLevel == 9 ? kernel_cheating_allowed : 0;
-}
-
-static void selectMacintoshDifficulty() {
-	const int configuredDifficulty = ConfMan.getInt("difficulty");
-	if (configuredDifficulty >= DIFFICULTY_HARD && configuredDifficulty <= DIFFICULTY_EASY) {
-		game.difficulty = configuredDifficulty;
-		return;
-	}
-
-	Common::U32StringArray choices;
-	choices.push_back(_("Novice - Easy"));
-	choices.push_back(_("Advanced - Difficult"));
-	choices.push_back(_("Expert - Very Difficult"));
-	// The generic browser layout is tied to the launcher's game-list widget.
-	// Use its screen-based counterpart because this chooser runs in-engine.
-	GUI::ChooserDialog dialog(_("Select a Difficulty Level:"), "FileBrowser");
-	dialog.setList(choices);
-
-	switch (dialog.runModal()) {
-	case 0:
-		game.difficulty = DIFFICULTY_EASY;
-		break;
-	case 1:
-		game.difficulty = DIFFICULTY_MEDIUM;
-		break;
-	case 2:
-		game.difficulty = DIFFICULTY_HARD;
-		break;
-	default:
-		game.difficulty = DIFFICULTY_MEDIUM;
-		break;
-	}
 }
 
 static void game_main(int argc, const char **argv) {
