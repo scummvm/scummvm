@@ -2193,8 +2193,10 @@ void inter_main_loop(int allow_input) {
 				image_inter_list[count].flags = IMAGE_ERASE;
 			}
 		}
-		inter_background_animation();
-		inter_spinning_object();
+		if (g_engine->hasInterfaceAnimations()) {
+			inter_background_animation();
+			inter_spinning_object();
+		}
 		inter_base_time = now_time + 6;
 	}
 }

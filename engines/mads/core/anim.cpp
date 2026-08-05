@@ -35,6 +35,7 @@
 #include "mads/core/mads.h"
 #include "mads/core/tile.h"
 #include "mads/core/error.h"
+#include "mads/mads.h"
 
 namespace MADS {
 
@@ -202,10 +203,13 @@ void anim_unload(AnimPtr anim) {
 
 	if (anim != NULL) {
 		if (anim->misc_any_packed) {
-			matte_deallocate_series(anim->series_id[anim->misc_packed_series], true);
+			const int seriesId = anim->series_id[anim->misc_packed_series];
+			if (seriesId >= 0)
+				matte_deallocate_series(seriesId, true);
 		}
 		for (count = anim->num_series - 1; count >= 0; count--) {
-			if (!anim->misc_any_packed || (count != anim->misc_packed_series)) {
+			if ((!anim->misc_any_packed || (count != anim->misc_packed_series)) &&
+					anim->series_id[count] >= 0) {
 				matte_deallocate_series(anim->series_id[count], true);
 			}
 		}
@@ -406,6 +410,15 @@ AnimPtr anim_load(const char *file_name, Buffer *orig, Buffer *depth,
 	}
 
 	loader_close(&load_handle);
+
+	// The Macintosh AA_INTERFACE loader returns here. Its native resource
+	// forks retain the controllers and backgrounds, but deliberately omit the
+	// DOS-only sprite series named in the controller headers.
+	if (anim_in.background_type == AA_INTERFACE && !g_engine->hasInterfaceAnimations()) {
+		error_flag = false;
+		anim_error = 0;
+		goto done;
+	}
 
 	if (anim->load_flags & AA_LOAD_FONT) {
 		temp_buf[0] = 0;

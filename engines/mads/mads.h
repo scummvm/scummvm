@@ -168,6 +168,7 @@ public:
 	virtual void global_sound_driver() = 0;
 	virtual void global_game_main_loop() {}
 	virtual void global_verb_filter() {}
+	virtual bool hasInterfaceAnimations() const { return true; }
 	virtual void player_keep_walking();
 
 	void playSpeech(Audio::AudioStream *stream);
