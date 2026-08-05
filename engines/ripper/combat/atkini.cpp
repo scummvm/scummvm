@@ -19,6 +19,7 @@ namespace {
 static const CombatEncounterDefinition kAtkiniDefinition = {
 	"atkini",
 	"atkini%u.ini",
+	"atkini1.ini",
 	"weap2c1.wav",
 	"mechwav1.wav",
 	"mechwav3.wav",

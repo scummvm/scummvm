@@ -740,7 +740,12 @@
   every health, creature, weapon, and shield damage, recharge, drain, and DOS
   tick interval. ScummVM snapshots the current Options Panel combat level on
   encounter entry, selects the same numbered INI, and reports both values in
-  the combat lifecycle log.
+  the combat lifecycle log. Some retail data layouts contain only
+  `ATKINI1.INI` even though `RIPPER.INI` defaults combat level to 2. ScummVM
+  therefore attempts the executable's numbered Atkini name first, then uses
+  the packaged level-1 Atkini definition only when that requested file is
+  absent; this compatibility fallback does not affect Mechini's complete
+  three-file difficulty set.
 - `LoadCombatEncounterResourceSet` at `0x34d6e` reads numbered `sceneN` entries,
   loads each `<scene>.SMK`, `<scene>DAT.DAT`, and `<scene>PRJ.PRJ`, and loads the
   configured crosshair, explosion, shading, and audio resources. A DAT file has
