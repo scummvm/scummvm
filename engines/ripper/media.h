@@ -168,6 +168,9 @@ public:
 	bool playBlockingAudio(const Common::String &path);
 	bool playSoundEffect(const Common::String &path, Audio::SoundHandle &handle,
 		uint volumePercent = 100, bool loop = false);
+	bool playSoundEffectStream(Common::SeekableReadStream *stream,
+		const Common::String &name, Audio::SoundHandle &handle,
+		uint volumePercent = 100, bool loop = false);
 	bool playRawSoundEffect(const Common::Array<byte> &data, uint sampleRate,
 		byte flags, Audio::SoundHandle &handle, uint volumePercent = 100);
 	bool playVoiceClip(const Common::String &path, Audio::SoundHandle &handle,
@@ -231,6 +234,10 @@ private:
 	bool playAudioClip(const Common::String &path, Audio::SoundHandle &handle,
 		Audio::Mixer::SoundType soundType, uint volumePercent, bool loop,
 		const char *description);
+	bool playAudioStream(Common::SeekableReadStream *audioStream,
+		const Common::String &name, const Common::String &source,
+		Audio::SoundHandle &handle, Audio::Mixer::SoundType soundType,
+		uint volumePercent, bool loop, const char *description);
 	Common::SeekableReadStream *openSource(const Common::String &path,
 		SourcePolicy policy, Common::String &source) const;
 	bool playValidatedSmacker(Common::SeekableReadStream *stream,

@@ -27,6 +27,8 @@ MODULE_OBJS := \
 	modal_dialog.o \
 	options_panel.o \
 	puzzles/board_arrangement.o \
+	puzzles/board_game.o \
+	puzzles/board_game_model.o \
 	puzzles/calculator.o \
 	puzzles/cd_in_book.o \
 	puzzles/circuit_chip.o \

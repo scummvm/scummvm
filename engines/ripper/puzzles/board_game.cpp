@@ -1,0 +1,618 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include "ripper/puzzles/board_game.h"
+
+#include "common/debug.h"
+#include "common/ptr.h"
+#include "common/stream.h"
+#include "common/system.h"
+#include "graphics/paletteman.h"
+#include "graphics/surface.h"
+
+#include "ripper/cursor.h"
+#include "ripper/detection.h"
+#include "ripper/input.h"
+#include "ripper/media.h"
+#include "ripper/milestones.h"
+#include "ripper/modal_dialog.h"
+#include "ripper/ripper.h"
+#include "ripper/settings.h"
+#include "ripper/toolbar.h"
+
+namespace Ripper {
+
+namespace {
+
+static const char *const kLibraryName = "chess.gl";
+static const char *const kBackgroundName = "board";
+static const char *const kHitMapName = "boardtml";
+static const char *const kHighlightName = "hilite";
+static const uint kDefaultSelectionIndex = 0x13;
+static const uint kDefaultCursor = 14;
+static const uint kSelectionCursor = 16;
+static const uint kExitCursor = 7;
+static const uint kHelpSelectionTable = 0x1b4;
+static const uint16 kEscapeCommand = 0x1b;
+static const uint16 kHelpCommand = 0x3b00;
+static const uint16 kScreenshotCommand = 0x4400;
+static const byte kExitHitCode = 0x81;
+static const char kCompletionKeyword[] = "aspirin";
+
+// The table at 0x40ab8 stores scene Y followed by X. These normalized
+// physical points are the piece anchors used by RenderBoardState at 0x418c8.
+static const Common::Point kCellAnchors[BoardGameModel::kCellCount] = {
+	Common::Point(41, 220), Common::Point(95, 200),
+	Common::Point(148, 181), Common::Point(199, 164),
+	Common::Point(247, 145), Common::Point(294, 129),
+	Common::Point(83, 240), Common::Point(140, 221),
+	Common::Point(191, 200), Common::Point(243, 181),
+	Common::Point(292, 164), Common::Point(338, 146),
+	Common::Point(130, 261), Common::Point(184, 242),
+	Common::Point(239, 221), Common::Point(294, 201),
+	Common::Point(339, 183), Common::Point(386, 165),
+	Common::Point(178, 286), Common::Point(234, 264),
+	Common::Point(287, 242), Common::Point(338, 223),
+	Common::Point(386, 203), Common::Point(437, 183),
+	Common::Point(231, 312), Common::Point(287, 288),
+	Common::Point(339, 266), Common::Point(389, 244),
+	Common::Point(439, 223), Common::Point(485, 202),
+	Common::Point(280, 334), Common::Point(337, 311),
+	Common::Point(391, 288), Common::Point(441, 266),
+	Common::Point(490, 244), Common::Point(537, 224),
+	Common::Point(336, 361), Common::Point(393, 335),
+	Common::Point(446, 312), Common::Point(495, 288),
+	Common::Point(545, 266), Common::Point(591, 245)
+};
+
+// The piece-origin records at 0x84f14 are also stored Y/X. The first row is
+// PART_A (positive), followed by PART_B (negative), with types one through
+// five in each row.
+static const Common::Point kPieceOrigins[2][5] = {
+	{
+		Common::Point(55, 123), Common::Point(76, 132),
+		Common::Point(34, 109), Common::Point(35, 130),
+		Common::Point(72, 186)
+	},
+	{
+		Common::Point(30, 135), Common::Point(33, 98),
+		Common::Point(85, 134), Common::Point(26, 121),
+		Common::Point(39, 134)
+	}
+};
+
+// RenderBoardState at 0x418c8 uses this fixed depth order from 0x40c08.
+static const byte kRenderOrder[BoardGameModel::kCellCount] = {
+	5, 4, 11, 3, 10, 17, 2, 9, 16, 23, 1, 8, 15, 22,
+	29, 0, 7, 14, 21, 28, 35, 6, 13, 20, 27, 34, 41, 12,
+	19, 26, 33, 40, 18, 25, 32, 39, 24, 31, 38, 30, 37, 36
+};
+
+static bool containsDestination(const Common::Array<int> &destinations,
+		int destination) {
+	for (uint i = 0; i < destinations.size(); ++i) {
+		if (destinations[i] == destination)
+			return true;
+	}
+	return false;
+}
+
+static Common::String moveString(const BoardGameModel::Move &move) {
+	return Common::String::format("%d..%d", move.source, move.destination);
+}
+
+} // End of anonymous namespace
+
+BoardGamePuzzle::BoardGamePuzzle(RipperEngine *engine) :
+		_engine(engine), _random("ripper-board-game"), _selectedCell(-1),
+		_hoveredCode(-1), _keywordIndex(0), _searchDepth(1),
+		_savedSelectionIndex(0), _savedCursorVisible(true) {
+}
+
+bool BoardGamePuzzle::loadBitmap(const Common::String &name,
+		BitmapAssetFrame &frame) {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		_library.createReadStreamForMember(name));
+	if (!stream || !decodeBitmapAsset(*stream, frame)) {
+		warning("Ripper: could not decode board-game bitmap '%s'", name.c_str());
+		return false;
+	}
+	return true;
+}
+
+bool BoardGamePuzzle::loadAssets() {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		_engine->getResources()->createReadStreamForPath(kLibraryName));
+	if (!stream || !_library.open(*stream, Common::Path(kLibraryName))) {
+		warning("Ripper: could not open board-game library '%s'", kLibraryName);
+		return false;
+	}
+	if (!loadBitmap(kBackgroundName, _background) ||
+			!loadBitmap(kHitMapName, _hitMap) ||
+			!loadBitmap(kHighlightName, _highlight))
+		return false;
+	if (_background.width != kRipperScreenWidth ||
+			_background.height != kRipperScreenHeight ||
+			_hitMap.width != kRipperScreenWidth ||
+			_hitMap.height != kRipperScreenHeight ||
+			_background.palette.size() < kRipperPaletteByteCount) {
+		warning("Ripper: board-game assets have invalid geometry board=%ux%u hitMap=%ux%u colors=%u",
+			_background.width, _background.height, _hitMap.width, _hitMap.height,
+			_background.palette.size() / 3);
+		return false;
+	}
+	for (uint side = 0; side < 2; ++side) {
+		for (uint type = 0; type < 5; ++type) {
+			const Common::String name = Common::String::format(
+				"part_%c%02u", side == 0 ? 'a' : 'b', type);
+			if (!loadBitmap(name, _pieces[side][type]))
+				return false;
+		}
+	}
+
+	debugC(1, kDebugPuzzles,
+		"Ripper: loaded board-game assets library='%s' entries=%u board=%ux%u "
+		"hitMap=%ux%u highlight=%ux%u pieces=10 audio=CHESS0..CHESS4",
+		kLibraryName, _library.getEntryCount(), _background.width,
+		_background.height, _hitMap.width, _hitMap.height,
+		_highlight.width, _highlight.height);
+	return true;
+}
+
+void BoardGamePuzzle::applyPalette() {
+	Common::Array<byte> palette = _background.palette;
+	_engine->getToolbar()->applySharedPalettePatch(palette.data(),
+		kRipperPaletteColorCount);
+	_engine->getSettings()->applyVideoPalette(palette.data(),
+		kRipperPaletteColorCount, true);
+	g_system->getPaletteManager()->setPalette(palette.data(), 0,
+		kRipperPaletteColorCount);
+}
+
+void BoardGamePuzzle::drawFrame(byte *screen, uint pitch,
+		const BitmapAssetFrame &frame, int x, int y) const {
+	for (uint sourceY = 0; sourceY < frame.height; ++sourceY) {
+		const int destinationY = y + sourceY;
+		if (destinationY < 0 || destinationY >= kRipperScreenHeight)
+			continue;
+		for (uint sourceX = 0; sourceX < frame.width; ++sourceX) {
+			const int destinationX = x + sourceX;
+			if (destinationX < 0 || destinationX >= kRipperScreenWidth)
+				continue;
+			const byte pixel = frame.pixels[sourceY * frame.width + sourceX];
+			if (pixel != frame.transparentColor)
+				screen[destinationY * pitch + destinationX] = pixel;
+		}
+	}
+}
+
+void BoardGamePuzzle::render() {
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen || screen->format.bytesPerPixel != 1 ||
+			screen->w != kRipperScreenWidth || screen->h != kRipperScreenHeight) {
+		if (screen)
+			g_system->unlockScreen();
+		return;
+	}
+	for (int y = 0; y < kRipperScreenHeight; ++y) {
+		memcpy(screen->getBasePtr(0, y),
+			_background.pixels.data() + y * kRipperScreenWidth,
+			kRipperScreenWidth);
+	}
+	byte *pixels = (byte *)screen->getPixels();
+	if (_selectedCell >= 0) {
+		drawFrame(pixels, screen->pitch, _highlight,
+			kCellAnchors[_selectedCell].x - _highlight.width / 2,
+			kCellAnchors[_selectedCell].y - _highlight.height / 2);
+		for (uint destination = 0; destination < _legalDestinations.size();
+				++destination) {
+			const int cell = _legalDestinations[destination];
+			if (cell == BoardGameModel::kOffBoardDestination)
+				continue;
+			drawFrame(pixels, screen->pitch, _highlight,
+				kCellAnchors[cell].x - _highlight.width / 2,
+				kCellAnchors[cell].y - _highlight.height / 2);
+		}
+	}
+
+	for (uint order = 0; order < ARRAYSIZE(kRenderOrder); ++order) {
+		const int cell = kRenderOrder[order];
+		const int piece = _model.pieceAt(cell);
+		if (piece == 0)
+			continue;
+		const uint side = piece > 0 ? 0 : 1;
+		const uint type = ABS(piece) - 1;
+		const Common::Point position = kCellAnchors[cell] -
+			kPieceOrigins[side][type];
+		drawFrame(pixels, screen->pitch, _pieces[side][type],
+			position.x, position.y);
+	}
+	g_system->unlockScreen();
+	applyPalette();
+	_engine->getCursor()->setVisible(true);
+	g_system->updateScreen();
+}
+
+int BoardGamePuzzle::hitCodeAt(const Common::Point &point) const {
+	if (point.x < 0 || point.x >= _hitMap.width || point.y < 0 ||
+			point.y >= _hitMap.height)
+		return -1;
+	return _hitMap.pixels[point.y * _hitMap.width + point.x];
+}
+
+void BoardGamePuzzle::updateCursor(const Common::Point &point) {
+	const int hitCode = hitCodeAt(point);
+	uint cursor = kDefaultCursor;
+	if (hitCode == kExitHitCode) {
+		cursor = kExitCursor;
+	} else if (hitCode >= 0 && hitCode <= BoardGameModel::kOffBoardDestination) {
+		if ((_selectedCell >= 0 &&
+				containsDestination(_legalDestinations, hitCode)) ||
+				(hitCode < BoardGameModel::kCellCount &&
+				 _model.pieceAt(hitCode) > 0))
+			cursor = kSelectionCursor;
+	}
+	if (hitCode != _hoveredCode) {
+		debugC(3, kDebugInput,
+			"Ripper: board-game hover code=%d previous=%d point=%d,%d selected=%d cursor=%u",
+			hitCode, _hoveredCode, point.x, point.y, _selectedCell, cursor);
+		_hoveredCode = hitCode;
+	}
+	_engine->getCursor()->update(cursor);
+	_engine->getCursor()->setVisible(true);
+}
+
+bool BoardGamePuzzle::serviceKeyword(uint16 command) {
+	if (command > 0xff)
+		return false;
+	char character = (char)command;
+	if (character >= 'A' && character <= 'Z')
+		character += 'a' - 'A';
+	if (character == kCompletionKeyword[_keywordIndex])
+		++_keywordIndex;
+	else
+		_keywordIndex = character == kCompletionKeyword[0] ? 1 : 0;
+	if (_keywordIndex + 1 == ARRAYSIZE(kCompletionKeyword)) {
+		_keywordIndex = 0;
+		debugC(1, kDebugPuzzles,
+			"Ripper: board-game completion keyword matched keyword='%s'",
+			kCompletionKeyword);
+		return true;
+	}
+	return false;
+}
+
+bool BoardGamePuzzle::playCue(uint cue) {
+	const Common::String name = Common::String::format("chess%u", cue);
+	Common::SeekableReadStream *stream =
+		_library.createReadStreamForMember(name);
+	if (!stream || !_engine->getMedia()->playSoundEffectStream(
+			stream, name, _audioHandle)) {
+		warning("Ripper: could not play board-game cue '%s'", name.c_str());
+		return false;
+	}
+	return true;
+}
+
+bool BoardGamePuzzle::applyPlayerMove(int destination) {
+	const BoardGameModel::Move move(_selectedCell, destination);
+	const int movingPiece = _model.pieceAt(move.source);
+	const int capturedPiece = destination < BoardGameModel::kCellCount ?
+		_model.pieceAt(destination) : 0;
+	if (!_model.applyMove(move))
+		return false;
+	_selectedCell = -1;
+	_legalDestinations.clear();
+	if (capturedPiece != 0)
+		playCue(3); // AnimateBoardPieceRemoval at 0x4251a.
+	else if (ABS(movingPiece) == 2 && destination < BoardGameModel::kCellCount &&
+			ABS(_model.pieceAt(destination)) == 3)
+		playCue(2); // AnimateBoardPieceUpgrade at 0x4240a.
+	debugC(2, kDebugPuzzles,
+		"Ripper: board-game player move=%s piece=%d captured=%d nextSide=%d result=%d",
+		moveString(move).c_str(), movingPiece, capturedPiece,
+		_model.sideToMove(), _model.result());
+	return true;
+}
+
+int BoardGamePuzzle::staticScore(const BoardGameModel &model) const {
+	static const int kPieceValues[] = {0, 100000, 42, 84, 168, 210};
+	int score = 0;
+	for (int cell = 0; cell < BoardGameModel::kCellCount; ++cell) {
+		const int piece = model.pieceAt(cell);
+		if (piece == 0)
+			continue;
+		const int type = ABS(piece);
+		const int row = cell / BoardGameModel::kColumnCount;
+		const int progress = piece < 0 ? row : BoardGameModel::kRowCount - row - 1;
+		const int value = kPieceValues[type] +
+			((type == 2 || type == 3) ? progress * 5 : 0);
+		score += piece < 0 ? value : -value;
+	}
+	return score;
+}
+
+int BoardGamePuzzle::evaluatePosition(const BoardGameModel &model, int depth,
+		int alpha, int beta) const {
+	if (model.result() < 0)
+		return 1000000 + depth;
+	if (model.result() > 0)
+		return -1000000 - depth;
+	if (depth == 0)
+		return staticScore(model);
+
+	Common::Array<BoardGameModel::Move> moves;
+	model.legalMoves(moves, model.sideToMove() < 0);
+	if (moves.empty()) {
+		BoardGameModel passed = model;
+		passed.passTurn();
+		return evaluatePosition(passed, depth - 1, alpha, beta);
+	}
+	if (model.sideToMove() < 0) {
+		int best = -0x7fffffff;
+		for (uint move = 0; move < moves.size(); ++move) {
+			BoardGameModel next = model;
+			next.applyMove(moves[move]);
+			best = MAX(best, evaluatePosition(next, depth - 1, alpha, beta));
+			alpha = MAX(alpha, best);
+			if (beta <= alpha)
+				break;
+		}
+		return best;
+	}
+
+	int best = 0x7fffffff;
+	for (uint move = 0; move < moves.size(); ++move) {
+		BoardGameModel next = model;
+		next.applyMove(moves[move]);
+		best = MIN(best, evaluatePosition(next, depth - 1, alpha, beta));
+		beta = MIN(beta, best);
+		if (beta <= alpha)
+			break;
+	}
+	return best;
+}
+
+BoardGameModel::Move BoardGamePuzzle::chooseAiMove() {
+	Common::Array<BoardGameModel::Move> moves;
+	_model.legalMoves(moves, true);
+	if (moves.empty())
+		return BoardGameModel::Move();
+
+	Common::Array<BoardGameModel::Move> bestMoves;
+	int bestScore = -0x7fffffff;
+	for (uint move = 0; move < moves.size(); ++move) {
+		BoardGameModel next = _model;
+		next.applyMove(moves[move]);
+		const int score = evaluatePosition(next,
+			_searchDepth > 0 ? _searchDepth - 1 : 0,
+			-0x7fffffff, 0x7fffffff);
+		if (score > bestScore) {
+			bestScore = score;
+			bestMoves.clear();
+			bestMoves.push_back(moves[move]);
+		} else if (score == bestScore) {
+			bestMoves.push_back(moves[move]);
+		}
+	}
+	const uint choice = bestMoves.size() > 1 ?
+		_random.getRandomNumber(bestMoves.size() - 1) : 0;
+	debugC(2, kDebugPuzzles,
+		"Ripper: board-game AI evaluated moves=%u bestScore=%d ties=%u depth=%u selected=%s",
+		moves.size(), bestScore, bestMoves.size(), _searchDepth,
+		moveString(bestMoves[choice]).c_str());
+	return bestMoves[choice];
+}
+
+bool BoardGamePuzzle::runAiTurn() {
+	const BoardGameModel::Move move = chooseAiMove();
+	if (move.source < 0) {
+		_model.passTurn();
+		debugC(2, kDebugPuzzles,
+			"Ripper: board-game AI passed no legal moves nextSide=%d",
+			_model.sideToMove());
+		return true;
+	}
+	const int movingPiece = _model.pieceAt(move.source);
+	const int capturedPiece = move.destination < BoardGameModel::kCellCount ?
+		_model.pieceAt(move.destination) : 0;
+	if (!_model.applyMove(move))
+		return false;
+	if (capturedPiece != 0)
+		playCue(3);
+	else if (ABS(movingPiece) == 2 &&
+			move.destination < BoardGameModel::kCellCount &&
+			ABS(_model.pieceAt(move.destination)) == 3)
+		playCue(2);
+	debugC(2, kDebugPuzzles,
+		"Ripper: board-game AI move=%s piece=%d captured=%d nextSide=%d result=%d",
+		moveString(move).c_str(), movingPiece, capturedPiece,
+		_model.sideToMove(), _model.result());
+	return true;
+}
+
+BoardGamePuzzle::Result BoardGamePuzzle::finishResult(uint completionFlag) {
+	Result result = kExited;
+	if (_model.result() > 0) {
+		if (!_engine->getMilestones()->set(
+				completionFlag, true, "board-game-puzzle"))
+			result = kLoadFailed;
+		else
+			result = kSolved;
+	}
+	debugC(1, kDebugPuzzles,
+		"Ripper: board-game terminal resultCode=%d milestone=%u milestoneSet=%d",
+		_model.result(), completionFlag,
+		_engine->getMilestones()->isSet(completionFlag));
+	return result;
+}
+
+BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
+	if (!_incomingDisplay.capture() || !loadAssets())
+		return kLoadFailed;
+
+	_savedSelectionIndex = _engine->getCursor()->getSelectionIndex();
+	_savedCursorVisible = _engine->getCursor()->isVisible();
+	_searchDepth = CLIP<uint>(_engine->getSettings()->getPuzzleLevel(), 1, 3);
+	_model.reset();
+	_selectedCell = -1;
+	_hoveredCode = -1;
+	_keywordIndex = 0;
+	_engine->getToolbar()->leave();
+	_engine->getInput()->drainKeys();
+	_engine->getInput()->discardMouseTransitions();
+	_engine->getCursor()->setSelectionIndex(kDefaultSelectionIndex);
+	_engine->getCursor()->dispatchSelectionIndexChange(kDefaultSelectionIndex);
+	_engine->getCursor()->setVisible(true);
+	render();
+	debugC(1, kDebugPuzzles,
+		"Ripper: entered board-game puzzle function=RunBoardGameScene@0x436c0 "
+		"milestone=%u library='%s' cells=%u side=%d difficulty=%u help=0x%x keyword='%s'",
+		completionFlag, kLibraryName, BoardGameModel::kCellCount,
+		_model.sideToMove(), _searchDepth, kHelpSelectionTable,
+		kCompletionKeyword);
+
+	Result result = kExited;
+	bool active = true;
+	while (active && !_engine->shouldQuit()) {
+		if (_engine->getInput()->pollEvents()) {
+			_engine->quitGame();
+			break;
+		}
+
+		while (_engine->getInput()->hasPendingKey()) {
+			const uint16 command = _engine->getInput()->consumeKey();
+			// HandleBoardPlayerTurnInput at 0x42c1a first cancels an
+			// active source choice when any keyboard command is pending;
+			// the outer loop then interprets that same command.
+			if (_selectedCell >= 0) {
+				debugC(2, kDebugPuzzles,
+					"Ripper: board-game selection cancelled by keyboard source=%d command=0x%04x",
+					_selectedCell, command);
+				_selectedCell = -1;
+				_legalDestinations.clear();
+				render();
+			}
+			if (command == kEscapeCommand) {
+				debugC(1, kDebugPuzzles,
+					"Ripper: board-game puzzle exited by Escape resultCode=7");
+				active = false;
+				break;
+			}
+			if (command == kHelpCommand) {
+				debugC(1, kDebugPuzzles,
+					"Ripper: board-game puzzle opening modal help table=0x%x",
+					kHelpSelectionTable);
+				if (!_engine->getModalDialog()->run(kHelpSelectionTable))
+					warning("Ripper: board-game modal help failed");
+				render();
+				continue;
+			}
+			if (command == kScreenshotCommand || command == 0x10) {
+				g_system->saveScreenshot();
+				continue;
+			}
+			if (serviceKeyword(command)) {
+				// RunBoardGameScene at 0x437bb stores result code 1;
+				// its common cleanup path records the supplied milestone.
+				_model.setResult(1);
+				break;
+			}
+		}
+		if (!active)
+			break;
+		if (_model.result() != 0) {
+			result = finishResult(completionFlag);
+			break;
+		}
+
+		if (_model.sideToMove() < 0) {
+			_engine->getCursor()->update(kDefaultSelectionIndex);
+			if (!runAiTurn()) {
+				result = kLoadFailed;
+				break;
+			}
+			render();
+			g_system->delayMillis(10);
+		} else {
+			const MouseState mouse = _engine->getInput()->publishMouseState();
+			updateCursor(mouse.position);
+			if ((mouse.pressed & kMouseButtonRight) != 0 &&
+					_selectedCell >= 0) {
+				debugC(2, kDebugPuzzles,
+					"Ripper: board-game selection cancelled source=%d",
+					_selectedCell);
+				_selectedCell = -1;
+				_legalDestinations.clear();
+				render();
+			} else if ((mouse.pressed & kMouseButtonLeft) != 0) {
+				const int hitCode = hitCodeAt(mouse.position);
+				if (hitCode == kExitHitCode) {
+					debugC(1, kDebugPuzzles,
+						"Ripper: board-game puzzle exited through control=0x81 resultCode=10");
+					active = false;
+				} else if (hitCode >= 0 &&
+						hitCode < BoardGameModel::kCellCount &&
+						_model.pieceAt(hitCode) > 0) {
+					_selectedCell = hitCode;
+					_model.legalDestinations(_selectedCell,
+						_legalDestinations);
+					debugC(2, kDebugPuzzles,
+						"Ripper: board-game selected source=%d piece=%d legalDestinations=%u",
+						_selectedCell, _model.pieceAt(_selectedCell),
+						_legalDestinations.size());
+					render();
+				} else if (_selectedCell >= 0 &&
+						containsDestination(_legalDestinations, hitCode)) {
+					if (!applyPlayerMove(hitCode)) {
+						result = kLoadFailed;
+						active = false;
+					} else {
+						render();
+					}
+				}
+			}
+		}
+
+		if (_model.result() != 0) {
+			result = finishResult(completionFlag);
+			active = false;
+		}
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+
+	_engine->getMedia()->stopSoundEffect(_audioHandle);
+	_incomingDisplay.restore();
+	_engine->getCursor()->setSelectionIndex(_savedSelectionIndex);
+	_engine->getCursor()->dispatchSelectionIndexChange(_savedSelectionIndex);
+	_engine->getCursor()->refresh();
+	_engine->getCursor()->setVisible(_savedCursorVisible);
+	_engine->getInput()->drainKeys();
+	_engine->getInput()->discardMouseTransitions();
+	debugC(result == kLoadFailed ? 2 : 1, kDebugPuzzles,
+		"Ripper: left board-game puzzle result=%d boardResult=%d milestone=%u milestoneSet=%d quit=%d",
+		result, _model.result(), completionFlag,
+		_engine->getMilestones()->isSet(completionFlag),
+		_engine->shouldQuit());
+	return result;
+}
+
+} // End of namespace Ripper
