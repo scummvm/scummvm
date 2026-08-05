@@ -724,7 +724,10 @@
   `RATINI%d.INI`, or `ATKINI%d.INI`. The `%d` value is the configured combat
   level byte at `0x8a177`. This is a reusable combat controller rather than
   three unrelated scene handlers; ScummVM keeps it under `combat/`, with the
-  concrete Mechini encounter binding action 15 to the shared controller.
+  concrete Mechini and Atkini encounters binding actions 15 and 27 to the
+  shared controller. Atkini preserves the retail six-scene routing tables at
+  `0x3134c` and `0x31358`: scenes 3/4 choose among `{0,4,5}`, while scene 5
+  chooses among `{1,2,3}`.
   `combat/resources.cpp` owns INI, DAT, PRJ, and bitmap-set loading for that
   controller; `combat.cpp` owns the active encounter, input, timing, audio,
   meter, hit, effect, and rendering loop. Both remain methods of the same
