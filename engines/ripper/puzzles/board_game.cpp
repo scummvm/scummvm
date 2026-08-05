@@ -44,6 +44,7 @@ namespace {
 static const char *const kLibraryName = "chess.gl";
 static const char *const kBackgroundName = "board";
 static const char *const kHitMapName = "boardtml";
+static const char *const kSelectionShadingName = "boardpal";
 static const uint kDefaultSelectionIndex = 0x13;
 static const uint kDefaultCursor = 14;
 static const uint kSelectionCursor = 16;
@@ -64,6 +65,13 @@ static const uint kAnimationTickMillis = 10;
 static const uint kShortMoveTicks = 100;
 static const uint kLongMoveTicks = 200;
 static const uint kRemovalLeadTicks = 50;
+static const uint kShadingPaletteBytes = 0x300;
+static const uint kShadingLevels = 16;
+static const uint kShadingColorCount = 256;
+static const uint kShadingInfoBytes = kShadingPaletteBytes +
+		kShadingLevels * kShadingColorCount;
+static const uint kSelectedPieceEffectStrength = 0xa0;
+static const uint kSelectedPieceShade = kSelectedPieceEffectStrength >> 4;
 
 // The table at 0x40ab8 stores scene Y followed by X. These normalized
 // physical points are the piece anchors used by RenderBoardState at 0x418c8.
@@ -147,6 +155,27 @@ bool BoardGamePuzzle::loadBitmap(const Common::String &name,
 	return true;
 }
 
+bool BoardGamePuzzle::loadSelectionShading() {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		_library.createReadStreamForMember(kSelectionShadingName));
+	if (!stream || stream->size() != kShadingInfoBytes) {
+		warning("Ripper: board-game shading '%s' has invalid size expected=%u actual=%lld",
+			kSelectionShadingName, kShadingInfoBytes,
+			stream ? (long long)stream->size() : -1LL);
+		return false;
+	}
+
+	_selectionShading.resize(kShadingInfoBytes);
+	if (stream->read(_selectionShading.data(), kShadingInfoBytes) !=
+			kShadingInfoBytes) {
+		warning("Ripper: could not read board-game shading '%s'",
+			kSelectionShadingName);
+		_selectionShading.clear();
+		return false;
+	}
+	return true;
+}
+
 bool BoardGamePuzzle::loadAssets() {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
 		_engine->getResources()->createReadStreamForPath(kLibraryName));
@@ -155,7 +184,8 @@ bool BoardGamePuzzle::loadAssets() {
 		return false;
 	}
 	if (!loadBitmap(kBackgroundName, _background) ||
-			!loadBitmap(kHitMapName, _hitMap))
+			!loadBitmap(kHitMapName, _hitMap) ||
+			!loadSelectionShading())
 		return false;
 	if (_background.width != kRipperScreenWidth ||
 			_background.height != kRipperScreenHeight ||
@@ -178,9 +208,10 @@ bool BoardGamePuzzle::loadAssets() {
 
 	debugC(1, kDebugPuzzles,
 		"Ripper: loaded board-game assets library='%s' entries=%u board=%ux%u "
-		"hitMap=%ux%u pieces=10 audio=CHESS0..CHESS4",
+		"hitMap=%ux%u shading='%s' shade=%u pieces=10 audio=CHESS0..CHESS4",
 		kLibraryName, _library.getEntryCount(), _background.width,
-		_background.height, _hitMap.width, _hitMap.height);
+		_background.height, _hitMap.width, _hitMap.height,
+		kSelectionShadingName, kSelectedPieceShade);
 	return true;
 }
 
@@ -195,7 +226,8 @@ void BoardGamePuzzle::applyPalette() {
 }
 
 void BoardGamePuzzle::drawFrame(byte *screen, uint pitch,
-		const BitmapAssetFrame &frame, int x, int y) const {
+		const BitmapAssetFrame &frame, int x, int y,
+		const byte *shading) const {
 	for (uint sourceY = 0; sourceY < frame.height; ++sourceY) {
 		const int destinationY = y + sourceY;
 		if (destinationY < 0 || destinationY >= kRipperScreenHeight)
@@ -206,19 +238,26 @@ void BoardGamePuzzle::drawFrame(byte *screen, uint pitch,
 				continue;
 			const byte pixel = frame.pixels[sourceY * frame.width + sourceX];
 			if (pixel != frame.transparentColor)
-				screen[destinationY * pitch + destinationX] = pixel;
+				screen[destinationY * pitch + destinationX] = shading ?
+					shading[pixel * kShadingLevels + kSelectedPieceShade] : pixel;
 		}
 	}
 }
 
 void BoardGamePuzzle::drawPiece(byte *screen, uint pitch, int piece,
-		const Common::Point &anchor) const {
+		const Common::Point &anchor, bool selected) const {
 	if (piece == 0)
 		return;
 	const uint side = piece > 0 ? 0 : 1;
 	const uint type = ABS(piece) - 1;
 	const Common::Point position = anchor - kPieceOrigins[side][type];
-	drawFrame(screen, pitch, _pieces[side][type], position.x, position.y);
+	// RenderBoardPieceVisual at 0x4186c attaches BOARDPAL with strength 0xa0
+	// when the cell matches the selected-source global at 0x84f68. The asset
+	// stores a 0x300-byte palette followed by sixteen shades for each color.
+	const byte *shading = selected ?
+		_selectionShading.data() + kShadingPaletteBytes : nullptr;
+	drawFrame(screen, pitch, _pieces[side][type], position.x, position.y,
+		shading);
 }
 
 void BoardGamePuzzle::render() {
@@ -248,7 +287,8 @@ void BoardGamePuzzle::render() {
 		if (_movingActive && cell == _movingSource)
 			continue;
 		const int piece = _model.pieceAt(cell);
-		drawPiece(pixels, screen->pitch, piece, anchor);
+		drawPiece(pixels, screen->pitch, piece, anchor,
+			cell == _selectedCell);
 	}
 	if (movingPiecePending)
 		drawPiece(pixels, screen->pitch, _movingPiece, _movingAnchor);
@@ -271,8 +311,9 @@ void BoardGamePuzzle::updateCursor(const Common::Point &point) {
 	if (hitCode == kExitHitCode) {
 		cursor = kExitCursor;
 	} else if (hitCode >= 0 && hitCode <= BoardGameModel::kOffBoardDestination) {
-		if ((_selectedCell >= 0 &&
-				containsDestination(_legalDestinations, hitCode)) ||
+		if (_selectedCell >= 0 ?
+				(hitCode == _selectedCell ||
+				 containsDestination(_legalDestinations, hitCode)) :
 				(hitCode < BoardGameModel::kCellCount &&
 				 _model.pieceAt(hitCode) > 0))
 			cursor = kSelectionCursor;
@@ -667,7 +708,28 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 					debugC(1, kDebugPuzzles,
 						"Ripper: board-game puzzle exited through control=0x81 resultCode=10");
 					active = false;
-				} else if (hitCode >= 0 &&
+				} else if (_selectedCell >= 0 &&
+						hitCode == _selectedCell) {
+					// HandleBoardPlayerTurnInput at 0x42c1a clears the
+					// selected-source global before resolving the second
+					// click. A click on the source skips the move call and
+					// reaches the common opaque redraw.
+					debugC(2, kDebugPuzzles,
+						"Ripper: board-game deselected source=%d piece=%d",
+						_selectedCell, _model.pieceAt(_selectedCell));
+					_selectedCell = -1;
+					_legalDestinations.clear();
+					stopCue(kSelectionCue);
+					render();
+				} else if (_selectedCell >= 0 &&
+						containsDestination(_legalDestinations, hitCode)) {
+					if (!applyPlayerMove(hitCode)) {
+						result = kLoadFailed;
+						active = false;
+					} else {
+						render();
+					}
+				} else if (_selectedCell < 0 && hitCode >= 0 &&
 						hitCode < BoardGameModel::kCellCount &&
 						_model.pieceAt(hitCode) > 0) {
 					_selectedCell = hitCode;
@@ -678,15 +740,11 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 						"Ripper: board-game selected source=%d piece=%d legalDestinations=%u",
 						_selectedCell, _model.pieceAt(_selectedCell),
 						_legalDestinations.size());
+					debugC(3, kDebugPuzzles,
+						"Ripper: board-game selected-piece effect resource='%s' strength=0x%x shade=%u",
+						kSelectionShadingName, kSelectedPieceEffectStrength,
+						kSelectedPieceShade);
 					render();
-				} else if (_selectedCell >= 0 &&
-						containsDestination(_legalDestinations, hitCode)) {
-					if (!applyPlayerMove(hitCode)) {
-						result = kLoadFailed;
-						active = false;
-					} else {
-						render();
-					}
 				}
 			}
 		}
