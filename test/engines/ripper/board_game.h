@@ -102,17 +102,45 @@ public:
 		TS_ASSERT_EQUALS(model.pieceAt(0), -5);
 	}
 
-	void testRunnerCanLeaveFarEdgeThroughDestination42() {
+	void testRunnerCanLeaveSideEdgeInFarRowsThroughDestination42() {
+		int8 cells[Ripper::BoardGameModel::kCellCount] = {};
+		cells[6] = 2;
+		Ripper::BoardGameModel model;
+		model.setPosition(cells, 1);
+
+		TS_ASSERT(model.isLegalMove(Ripper::BoardGameModel::Move(
+			6, Ripper::BoardGameModel::kOffBoardDestination)));
+		TS_ASSERT(model.applyMove(Ripper::BoardGameModel::Move(
+			6, Ripper::BoardGameModel::kOffBoardDestination)));
+		TS_ASSERT_EQUALS(model.pieceAt(6), 0);
+
+		int8 negativeCells[Ripper::BoardGameModel::kCellCount] = {};
+		negativeCells[35] = -2;
+		model.setPosition(negativeCells, -1);
+		TS_ASSERT(model.isLegalMove(Ripper::BoardGameModel::Move(
+			35, Ripper::BoardGameModel::kOffBoardDestination)));
+	}
+
+	void testRunnerCannotLeaveThroughRowEdgeOrNearSideEdge() {
 		int8 cells[Ripper::BoardGameModel::kCellCount] = {};
 		cells[1] = 2;
 		Ripper::BoardGameModel model;
 		model.setPosition(cells, 1);
 
-		TS_ASSERT(model.isLegalMove(Ripper::BoardGameModel::Move(
+		TS_ASSERT(!model.isLegalMove(Ripper::BoardGameModel::Move(
 			1, Ripper::BoardGameModel::kOffBoardDestination)));
-		TS_ASSERT(model.applyMove(Ripper::BoardGameModel::Move(
-			1, Ripper::BoardGameModel::kOffBoardDestination)));
-		TS_ASSERT_EQUALS(model.pieceAt(1), 0);
+
+		int8 interiorCells[Ripper::BoardGameModel::kCellCount] = {};
+		interiorCells[40] = -2;
+		model.setPosition(interiorCells, -1);
+		TS_ASSERT(!model.isLegalMove(Ripper::BoardGameModel::Move(
+			40, Ripper::BoardGameModel::kOffBoardDestination)));
+
+		int8 nearEdgeCells[Ripper::BoardGameModel::kCellCount] = {};
+		nearEdgeCells[18] = -2;
+		model.setPosition(nearEdgeCells, -1);
+		TS_ASSERT(!model.isLegalMove(Ripper::BoardGameModel::Move(
+			18, Ripper::BoardGameModel::kOffBoardDestination)));
 	}
 
 	void testKingCaptureSetsMovingSideResult() {
