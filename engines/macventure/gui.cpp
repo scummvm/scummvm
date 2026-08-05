@@ -529,10 +529,11 @@ WindowReference Gui::createInventoryWindow(ObjID objRef) {
 	loadBorders(newWindow, newData.type);
 	newWindow->resizeInner(newData.bounds.width(), newData.bounds.height() - bbs.bottomScrollbarHeight);
 	newWindow->move(newData.bounds.left - bbs.leftOffset, newData.bounds.top - bbs.topOffset);
-	newWindow->setCallback(inventoryWindowCallback, new InventoryCallbackStruct{this, newData.refcon});
+	InventoryCallbackStruct *callbackData = new InventoryCallbackStruct{this, newData.refcon};
+	newWindow->setCallback(inventoryWindowCallback, callbackData);
 	//newWindow->setCloseable(true);
 
-	_inventoryWindows.push_back(InventoryWindowData{newWindow, newData.refcon});
+	_inventoryWindows.push_back(InventoryWindowData{newWindow, newData.refcon, callbackData});
 
 	debugC(1, kMVDebugGUI, "Create new inventory window. Reference: %d", newData.refcon);
 	return newData.refcon;
@@ -1442,6 +1443,8 @@ Common::Point Gui::localizeTravelledDistance(Common::Point point, WindowReferenc
 void Gui::removeInventoryWindow(WindowReference ref) {
 	for (auto &invWinData: _inventoryWindows) {
 		if (invWinData.ref == ref) {
+			invWinData.win->setCallback(nullptr, nullptr);
+			delete invWinData.callbackData;
 			_inventoryWindows.erase(&invWinData);
 			break;
 		}
@@ -1552,12 +1555,8 @@ bool diplomaWindowCallback(Graphics::WindowClick click, Common::Event &event, vo
 
 bool inventoryWindowCallback(Graphics::WindowClick click, Common::Event &event, void *data) {
 	InventoryCallbackStruct *g = (InventoryCallbackStruct *)data;
-	bool res = g->gui->processInventoryEvents(g->ref, click, event);
 
-	if (event.type == Common::EVENT_LBUTTONUP && click == Graphics::kBorderCloseButton)
-		delete g;
-
-	return res;
+	return g->gui->processInventoryEvents(g->ref, click, event);
 }
 
 void menuCommandsCallback(int action, Common::String &text, void *data) {
