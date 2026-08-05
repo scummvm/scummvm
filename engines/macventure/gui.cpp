@@ -967,15 +967,19 @@ void Gui::drawDraggedObjects() {
 			ImageAsset *asset = _assets[_draggedObjects[i].id];
 
 			// In case of overflow from the right/top
-			uint w = asset->getWidth() + MIN((int16)0, _draggedObjects[i].pos.x);
-			uint h = asset->getHeight() + MIN((int16)0, _draggedObjects[i].pos.y);
+			int w = asset->getWidth() + MIN((int16)0, _draggedObjects[i].pos.x);
+			int h = asset->getHeight() + MIN((int16)0, _draggedObjects[i].pos.y);
 
 			// In case of overflow from the bottom/left
 			if (_draggedObjects[i].pos.x > 0 && _draggedObjects[i].pos.x + w > kScreenWidth) {
-				w = kScreenWidth - _draggedObjects[i].pos.x;
+				w = MAX(0, kScreenWidth - _draggedObjects[i].pos.x);
 			}
 			if (_draggedObjects[i].pos.y > 0 && _draggedObjects[i].pos.y + h > kScreenHeight) {
-				h = kScreenHeight - _draggedObjects[i].pos.y;
+				h = MAX(0, kScreenHeight - _draggedObjects[i].pos.y);
+			}
+
+			if (w <= 0 || h <= 0) {
+				continue;
 			}
 
 			Common::Point target = _draggedObjects[i].pos;
