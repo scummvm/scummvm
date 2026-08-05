@@ -19,6 +19,9 @@
  */
 
 #include "ripper/wac/database_catalog.h"
+#include "ripper/milestones.h"
+
+#include "common/str.h"
 
 #include <cxxtest/TestSuite.h>
 
@@ -53,6 +56,16 @@ public:
 			Ripper::getWacDatabaseCatalogEntry(5)->contentResourceId, 0xb3);
 		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(6)->handler,
 			Ripper::kWacDatabaseHandlerVoiceLock);
+		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(7)->handler,
+			Ripper::kWacDatabaseHandlerOptionalPresentation);
+		TS_ASSERT_EQUALS(Common::String(
+			Ripper::getWacDatabaseCatalogEntry(7)->imagePath), "mag_wac.pcx");
+		TS_ASSERT_EQUALS(Common::String(
+			Ripper::getWacDatabaseCatalogEntry(7)->mediaPath), "mag_wac.avi");
+		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(7)->presentationFlag,
+			Ripper::kMilestoneWacVideoEditorAvailable);
+		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(7)->completionFlag,
+			Ripper::kMilestoneRevealedMagnottaPhotoAsFake);
 		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(9)->handler,
 			Ripper::kWacDatabaseHandlerLoopingMedia);
 		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(13)->handler,
@@ -63,5 +76,13 @@ public:
 			Ripper::kWacDatabaseHandlerText);
 		TS_ASSERT_EQUALS(
 			Ripper::getWacDatabaseCatalogEntry(15)->contentResourceId, 0xb6);
+		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(16)->handler,
+			Ripper::kWacDatabaseHandlerOptionalPresentation);
+		TS_ASSERT_EQUALS(Common::String(
+			Ripper::getWacDatabaseCatalogEntry(16)->imagePath), "ed_wac.pcx");
+		TS_ASSERT_EQUALS(Common::String(
+			Ripper::getWacDatabaseCatalogEntry(16)->mediaPath), "ed_wac.avi");
+		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(16)->completionFlag,
+			Ripper::kMilestoneRevealedEddiePhotoAsFake);
 	}
 };
