@@ -104,11 +104,25 @@ static void buildMacPanelWashLUT(const byte *nativePalette, byte washLUT[256]) {
 	displayPalette[kMacBlackColor].b = 0;
 	mcga_setpal_range(&displayPalette, 0, kMacBlackColor + 1);
 
-	// Keep the action caption face independent of room palette changes.
+	// CODE 7 draws normal and selected interface words with palette indexes
+	// 15, 13, and 14 respectively. Keep those roles independent of room
+	// palette changes and outside the panel wash below.
+	displayPalette[kMacLeftSelectColor].r =
+		(nativePalette[1 * 3 + 0] * 63 + 127) / 255;
+	displayPalette[kMacLeftSelectColor].g =
+		(nativePalette[1 * 3 + 1] * 63 + 127) / 255;
+	displayPalette[kMacLeftSelectColor].b =
+		(nativePalette[1 * 3 + 2] * 63 + 127) / 255;
+	displayPalette[kMacRightSelectColor].r =
+		(nativePalette[2 * 3 + 0] * 63 + 127) / 255;
+	displayPalette[kMacRightSelectColor].g =
+		(nativePalette[2 * 3 + 1] * 63 + 127) / 255;
+	displayPalette[kMacRightSelectColor].b =
+		(nativePalette[2 * 3 + 2] * 63 + 127) / 255;
 	displayPalette[kMacNormalTextColor].r = 63;
 	displayPalette[kMacNormalTextColor].g = 63;
 	displayPalette[kMacNormalTextColor].b = 63;
-	mcga_setpal_range(&displayPalette, kMacNormalTextColor, 1);
+	mcga_setpal_range(&displayPalette, kMacLeftSelectColor, 3);
 
 	for (int sourceColor = 0; sourceColor < 256; ++sourceColor) {
 		int sourceR, sourceG, sourceB;
@@ -530,11 +544,10 @@ void MacNebular::presentScreen(int shakeOffset) {
 			}
 		}
 
-		if (interfaceFont)
-			drawMacInterfaceState(panel, *interfaceFont);
-
-		// Apply the blue layer after composing artwork, live state, controls,
-		// and text so the whole native panel receives one uniform treatment.
+		// Apply the native blue layer to the panel artwork and non-semantic live
+		// state. CODE 7 draws the interface words afterward with distinct
+		// normal and selection colors, so they must not be quantized into the
+		// eight washed background colors.
 		byte washLUT[256];
 		buildMacPanelWashLUT(_resources->getNativeInterfacePalette(), washLUT);
 		for (int y = 0; y < kMacInterfaceHeight; ++y) {
@@ -542,6 +555,9 @@ void MacNebular::presentScreen(int shakeOffset) {
 			for (int x = 0; x < kMacInterfaceWidth; ++x)
 				target[x] = washLUT[target[x]];
 		}
+
+		if (interfaceFont)
+			drawMacInterfaceState(panel, *interfaceFont);
 
 		for (int y = 0; y < kMacInterfaceHeight; ++y) {
 			memcpy(_output.data() +
