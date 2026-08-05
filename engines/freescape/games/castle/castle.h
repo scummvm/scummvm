@@ -26,7 +26,7 @@ struct CastleAmigaLayout {
 	int messages, riddles, colorCycling, fonts, palettes, soundTable, areaDB;
 	int area255, border, mountains, menu, menuButtons, spiritMeterBg, spiritMeter;
 	int indicators, thunder, weights, bar, eyeIcons, flag, riddleMask, riddleTop;
-	int gatePixels, gateMask, mod;
+	int gatePixels, gateMask, mod, keys;
 };
 
 // The same, for a decompressed Atari ST game program. Castle Master and its
@@ -36,7 +36,7 @@ struct CastleAtariLayout {
 	int messages, messageCount, riddles, colorCycling, fonts, palettes, areaDB;
 	int extraAreas, area255, border, mountains, spiritMeterBg, spiritMeter;
 	int thunder, weights, bar, gatePixels, gateMask, eyeIcons, flag;
-	int riddleMask, riddleTop, mod, soundTable, soundBank;
+	int riddleMask, riddleTop, mod, soundTable, soundBank, keys;
 };
 
 class MusicPlayer;
