@@ -1017,6 +1017,18 @@
   `BNKWAV0.WAV` and `BNKWAV1.WAV` are the active/inactive control cues;
   retail loads `BNKWAV4.WAV` with the same descriptor set but does not queue
   it in this routine.
+- Scene action 63 calls `AppendResourceStringToRipperTextFile` at `0x22392`.
+  It loads up to `0x27c0` bytes of the current `ripper.txt` through
+  `LoadResolvedRipperTextFileBuffer` at `0x22252`, appends two newlines, the
+  one-based `GAMETEXT.TF` resource supplied by the script, and one trailing
+  newline, then rewrites the file through `SaveAndFreeResolvedRipperTextFileBuffer`
+  at `0x222fd`. The routine sets `g_ripperTextUpdatePending` at `0x84151`;
+  `RunWacFrontEndLoop` at `0x21865` consumes it by queuing `WACNOTE.WAV` once.
+  ScummVM keeps the writable notebook as target-scoped `<target>-ripper.txt`
+  data in the save directory, falls back to the installed `ripper.txt` when
+  importing an existing playthrough, and truncates the writable copy when a
+  new game begins. This preserves retail's external notebook lifecycle without
+  writing into the game installation.
 - Scene action 19 calls `RunWebGridShiftPuzzleScene` at `0x2cdce` with the
   caller-supplied completion flag. `KF.RUN` callback `0x2b6` supplies flag 221
   after retaining the final `SPIDER.AVI` presentation. The routine captures
