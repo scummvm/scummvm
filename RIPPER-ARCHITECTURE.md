@@ -202,6 +202,15 @@
   supplies cursor 19 while the clip is active. `HandleSceneChooserSpecialCommand`
   at `0x17c5a` resolves Escape before hotspot lookup and returns `-4` for the
   normal nested Cyber-runtime exit.
+- Retail chooser input rerenders its row surface only when selection or window
+  state changes: `ProcessChooserControlInput` at `0x57372` calls
+  `RenderChooserControlRows` at `0x582de` from its dirty path. ScummVM caches
+  those rendered rows and composites the cache over each scene-movie frame,
+  avoiding font and row reconstruction on every pointer poll or video tick.
+  `CleanupCurrentSceneFrameInteractions` at `0x13832` also dispatches phase 3
+  to `HandleSceneEntryChoiceListLifecycle` at `0x1523d` before every chooser
+  exit; the shared chooser therefore restores and releases its backing before
+  a nested Cyber runtime unwinds, including Escape and toolbar exits.
 - If an action in that toolbar returns `-3`, `RunFrontEndActionMenu` at
   `0x18b3a` returns the same control code to `PollInteractionAndResolveSelection`
   at `0x13c8d`. `RunMediaSequence` stops its frame loop on the nonzero callback
