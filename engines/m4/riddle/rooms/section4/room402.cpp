@@ -53,6 +53,7 @@ void Room402::init() {
 		_currentNode = -1;
 		_dialogMode = 0;
 		_dialogShould = 0;
+		_dialogChainIdle = false;
 		_wolfMode = 0;
 		_wolfShould = 0;
 		_wolfChainIdle = false;
@@ -396,23 +397,35 @@ void Room402::daemon() {
 		break;
 
 	case 101:
+		// The conversation has finished. conv_unload() has already restored
+		// the commands to the value saved by conv_load(), which is false here,
+		// so the teardown states 1105 / 1112 are the only thing that gives
+		// control back. They have to be dispatched, not just requested.
 		switch (_dialogMode) {
 		case 1000:
 			_dialogShould = 1105;
+			kickDialogChain();
 			break;
 		case 1001:
-			if (_G(flags)[V132])
+			if (_G(flags)[V132]) {
 				_trigger1 = 300;
-			else
+				// _trigger1 is consumed by the Wolf chain
+				kickWolfChain();
+			} else {
 				_dialogShould = 1112;
+				kickDialogChain();
+			}
 			break;
 
 		default:
+			warning("Room402: conversation finished in _dialogMode %d", _dialogMode);
 			break;
 		}
 		break;
 
 	case 102:
+		_dialogChainIdle = false;
+
 		if (_val2 == -1) {
 			kernel_timing_trigger(1, 103);
 		} else {
@@ -422,6 +435,9 @@ void Room402::daemon() {
 		break;
 
 	case 103:
+		// The chain is running again, so it doesn't need to be kicked
+		_dialogChainIdle = false;
+
 		switch (_dialogMode) {
 		case 1000:
 			switch (_dialogShould) {
@@ -478,6 +494,7 @@ void Room402::daemon() {
 			case 1104:
 				sendWSMessage_10000(1, _ripEnterLeave, _ripTalker, 1, 1, -1,
 					_ripTalker, 1, 1, 0);
+				_dialogChainIdle = true;
 				break;
 
 			case 1105:
@@ -504,6 +521,9 @@ void Room402::daemon() {
 				}
 
 				player_set_commands_allowed(true);
+				_dialogChainIdle = true;
+				// The Wolf state assigned above still needs dispatching
+				kickWolfChain();
 				break;
 
 			case 1120:
@@ -517,17 +537,19 @@ void Room402::daemon() {
 				break;
 
 			case 1122:
+				// Nothing here re-arms the chain - the 777 handler picks it up
+				_dialogChainIdle = true;
+
 				if (!_sound1.empty()) {
 					_G(kernel).trigger_mode = KT_PARSE;
 					digi_play(_sound1.c_str(), 1, 255, 777);
 					_G(kernel).trigger_mode = KT_DAEMON;
 					_sound1.clear();
 				} else {
-					// Without the speech nothing would drive the Rip chain
-					// on. Behave as if the line had just finished playing,
-					// like the 777 handler in conv402a777() does.
+					// Without the speech there is no 777 either, so behave as
+					// if the line had just finished playing
 					_dialogShould = 1103;
-					kernel_timing_trigger(1, 102);
+					kickDialogChain();
 					conv_resume();
 				}
 				break;
@@ -556,6 +578,7 @@ void Room402::daemon() {
 			default:
 				warning("Room402: unhandled _dialogShould %d in mode %d",
 					_dialogShould, _dialogMode);
+				_dialogChainIdle = true;
 				break;
 			}
 			break;
@@ -612,6 +635,8 @@ void Room402::daemon() {
 				_G(flags)[V114] = 0;
 				_G(flags)[V112] = 0;
 
+				_dialogChainIdle = true;
+
 				if (_currentNode == 19 || _currentNode == 22 || _currentNode == 23) {
 					_wolfMode = 2002;
 					_wolfShould = 2190;
@@ -620,23 +645,23 @@ void Room402::daemon() {
 					_wolfMode = 2001;
 					_wolfShould = 2300;
 					player_set_commands_allowed(true);
+					kickWolfChain();
 				} else {
 					_val6 = 1;
-					_wolfShould = (_wolfMode == 2002) ? 2142 : 2101;
-					_dialogShould = 1113;
 
 					if (!_sound2.empty()) {
+						_wolfShould = (_wolfMode == 2002) ? 2142 : 2101;
+						_dialogShould = 1113;
 						digi_play(_sound2.c_str(), 1, 255, 103);
 						_sound2.clear();
-					} else {
-						// Without the speech nothing would trigger 103
-						kernel_timing_trigger(1, 103);
 					}
 				}
 				break;
 
 			case 1113:
 				_wolfShould = 2150;
+				_dialogChainIdle = true;
+				kickWolfChain();
 				break;
 
 			case 1114:
@@ -653,12 +678,14 @@ void Room402::daemon() {
 			default:
 				warning("Room402: unhandled _dialogShould %d in mode %d",
 					_dialogShould, _dialogMode);
+				_dialogChainIdle = true;
 				break;
 			}
 			break;
 
 		default:
 			warning("Room402: unhandled _dialogMode %d", _dialogMode);
+			_dialogChainIdle = true;
 			break;
 		}
 		break;
@@ -706,6 +733,11 @@ void Room402::daemon() {
 		break;
 
 	case 111:
+		// The chain is running again, so it doesn't need to be kicked. Many
+		// sub-chains loop through 111 only and never pass through 110, so
+		// clearing it there alone would leave a stale value behind.
+		_wolfChainIdle = false;
+
 		switch (_wolfMode) {
 		case 2000:
 			switch (_wolfShould) {
@@ -1637,6 +1669,23 @@ void Room402::kickWolfChain() {
 	_G(kernel).trigger_mode = oldMode;
 }
 
+void Room402::kickDialogChain() {
+	// Same problem on Rip's side: state 1122 plays its line and waits for the
+	// 777 trigger without sending an animation message, so the 102/103 chain
+	// is parked. Trigger 101 then requests the teardown state 1105 / 1112 -
+	// the only thing that unhides the walker and re-enables the commands -
+	// and nothing would ever dispatch it.
+	if (!_dialogChainIdle)
+		return;
+
+	_dialogChainIdle = false;
+
+	const KernelTriggerType oldMode = _G(kernel).trigger_mode;
+	_G(kernel).trigger_mode = KT_DAEMON;
+	kernel_timing_trigger(1, 102);
+	_G(kernel).trigger_mode = oldMode;
+}
+
 void Room402::conv402a() {
 	const char *sound = conv_sound_to_play();
 	const int who = conv_whos_talking();
@@ -1807,6 +1856,8 @@ void Room402::conv402a() {
 		if (_wolfShould != prevWolfShould)
 			kickWolfChain();
 	} else if (who == 1) {
+		const int prevDialogShould = _dialogShould;
+
 		switch (node) {
 		case 1:
 			if (entry == 3) {
@@ -1870,6 +1921,10 @@ void Room402::conv402a() {
 			digi_play(sound, 1, 255, 777);
 			break;
 		}
+
+		// A new Rip state was requested - make sure something dispatches it
+		if (_dialogShould != prevDialogShould)
+			kickDialogChain();
 	}
 }
 
@@ -1892,6 +1947,7 @@ void Room402::conv402a777() {
 		}
 	} else if (who == 1) {
 		_dialogShould = (_dialogMode == 1001) ? 1115 : 1103;
+		kickDialogChain();
 		conv_resume();
 	}
 }
