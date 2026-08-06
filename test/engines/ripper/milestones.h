@@ -24,6 +24,21 @@
 
 class RipperMilestonesTestSuite : public CxxTest::TestSuite {
 public:
+	class RecordingObserver : public Ripper::MilestoneObserver {
+	public:
+		RecordingObserver() : count(0), flag(0), value(false) {}
+
+		void onMilestoneChanged(uint changedFlag, bool changedValue) override {
+			++count;
+			flag = changedFlag;
+			value = changedValue;
+		}
+
+		uint count;
+		uint flag;
+		bool value;
+	};
+
 	void testToggleFlipsMilestoneState() {
 		Ripper::Milestones milestones;
 
@@ -32,6 +47,24 @@ public:
 		TS_ASSERT(milestones.isSet(6));
 		TS_ASSERT(milestones.toggle(6, "unit-test"));
 		TS_ASSERT(!milestones.isSet(6));
+	}
+
+	void testObserverReceivesOnlyValueChanges() {
+		Ripper::Milestones milestones;
+		RecordingObserver observer;
+		milestones.setChangeObserver(&observer);
+
+		TS_ASSERT(milestones.set(84, false, "unit-test"));
+		TS_ASSERT_EQUALS(observer.count, 0U);
+		TS_ASSERT(milestones.set(84, true, "unit-test"));
+		TS_ASSERT_EQUALS(observer.count, 1U);
+		TS_ASSERT_EQUALS(observer.flag, 84U);
+		TS_ASSERT(observer.value);
+		TS_ASSERT(milestones.set(84, true, "unit-test"));
+		TS_ASSERT_EQUALS(observer.count, 1U);
+		TS_ASSERT(milestones.toggle(84, "unit-test"));
+		TS_ASSERT_EQUALS(observer.count, 2U);
+		TS_ASSERT(!observer.value);
 	}
 
 	void testRipperSelectionSetsExactlyOneIdentity() {

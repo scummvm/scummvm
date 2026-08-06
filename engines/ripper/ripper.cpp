@@ -33,6 +33,7 @@
 #include "ripper/console.h"
 #include "ripper/cursor.h"
 #include "ripper/cyber.h"
+#include "ripper/diagnostics/milestone_overlay.h"
 #include "ripper/input.h"
 #include "ripper/inventory.h"
 #include "ripper/media.h"
@@ -57,6 +58,7 @@ RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescrip
 		_sceneAudio(new SceneAudioManager(this, _mixer)),
 		_media(new MediaPlayer(this, _input.get(), _mixer)),
 		_milestones(new Milestones()),
+		_milestoneOverlay(new MilestoneOverlay(*_milestones)),
 		_modalDialog(new ModalDialogManager(this)), _resources(new ResourceManager()),
 		_scripts(new ScriptManager(this)), _settings(new RipperSettings(_mixer)),
 		_toolbar(new ToolbarManager(this)),
@@ -224,11 +226,13 @@ Common::Error RipperEngine::run() {
 	}
 
 	while (!shouldQuit()) {
+		_milestoneOverlay->prepareFrame();
 		pumpEvents();
 		if (!_scripts->serviceScene()) {
 			_scripts->logRuntimeFailure("scene service failed");
 			return Common::kUnknownError;
 		}
+		_milestoneOverlay->drawFrame();
 		_system->updateScreen();
 		_system->delayMillis(10);
 	}

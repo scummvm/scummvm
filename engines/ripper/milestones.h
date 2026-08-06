@@ -33,6 +33,12 @@ namespace Ripper {
 
 class ResourceManager;
 
+class MilestoneObserver {
+public:
+	virtual ~MilestoneObserver() {}
+	virtual void onMilestoneChanged(uint flag, bool value) = 0;
+};
+
 enum MilestoneFlag {
 	kMilestoneCompletedPrologue = 1,
 	kMilestoneCompletedAct1 = 2,
@@ -77,6 +83,7 @@ public:
 	bool hasRipperIdentity() const;
 	bool selectRipperIdentity(uint candidate, const char *source);
 	bool syncGame(Common::Serializer &serializer);
+	void setChangeObserver(MilestoneObserver *observer) { _observer = observer; }
 
 	const Common::String &label(uint flag) const;
 	static const char *domain(uint flag);
@@ -87,6 +94,7 @@ private:
 
 	byte _flags[kStorageByteCount];
 	Common::Array<Common::String> _labels;
+	MilestoneObserver *_observer;
 };
 
 } // End of namespace Ripper
