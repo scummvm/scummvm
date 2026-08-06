@@ -496,6 +496,9 @@ void DrivingData::synchronize(Common::Serializer &ser) {
 	ser.syncAsDoubleLE(heading);
 	ser.syncAsSint32LE(tireDamage);
 	ser.syncAsByte(flatTire);
+	// Added in savegame version 8; older saves default these to 0/false.
+	ser.syncAsDoubleLE(fuelBurnAccum, 8);
+	ser.syncAsByte(infiniteFuel, 8);
 }
 
 PuzzleData *makePuzzleData(const uint32 tag) {

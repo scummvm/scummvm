@@ -23,6 +23,7 @@
 #include "common/random.h"
 
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/enginedata.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/sound.h"
@@ -181,9 +182,18 @@ void DrivingPuzzle::classifyZones(const Common::Array<ActionZone> &zones) {
 			ov.destRect = z.overlayDestRect;
 			ov.condFlag = z.val49;
 			ov.condValue = z.val4b;
+			ov.aboveCar = z.overlayLayer != 0;
 			if (ov.imageIndex >= 0) {
 				_overlays.push_back(ov);
 			}
+			break;
+		}
+		case kZoneBoundary: {	// flag-gated road obstacle (a cow blocking the road, etc.)
+			Obstacle obs;
+			obs.rect = z.rect;
+			obs.condFlag = z.val49;
+			obs.condValue = z.val4b;
+			_obstacles.push_back(obs);
 			break;
 		}
 		default:
@@ -275,6 +285,8 @@ void DrivingPuzzle::init() {
 			_carY = data->carY;
 			_carHeading = data->heading;
 			_tireDamage = data->tireDamage;
+			_fuelBurnAccum = data->fuelBurnAccum;
+			_infiniteFuel = data->infiniteFuel;
 		}
 	}
 
@@ -329,7 +341,7 @@ int DrivingPuzzle::overlayImageIndex(const Common::String &name) {
 	return (int)_overlayImages.size() - 1;
 }
 
-void DrivingPuzzle::drawOverlays(const Common::Point &cam) {
+void DrivingPuzzle::drawOverlays(const Common::Point &cam, bool aboveCar) {
 	if (_overlays.empty()) {
 		return;
 	}
@@ -340,6 +352,9 @@ void DrivingPuzzle::drawOverlays(const Common::Point &cam) {
 
 	for (uint i = 0; i < _overlays.size(); ++i) {
 		const Overlay &ov = _overlays[i];
+		if (ov.aboveCar != aboveCar) {
+			continue;
+		}
 		if (ov.imageIndex < 0 || !view.intersects(ov.destRect)) {
 			continue;
 		}
@@ -368,6 +383,24 @@ void DrivingPuzzle::saveState() const {
 		data->carY = (int32)(_carY + 0.5);
 		data->heading = _carHeading;
 		data->tireDamage = _tireDamage;
+		data->fuelBurnAccum = _fuelBurnAccum;
+		data->infiniteFuel = _infiniteFuel;
+	}
+}
+
+void DrivingPuzzle::refillFuel() {
+	const UIRC *uirc = GetEngineData(UIRC)
+	if (uirc && _frictionIndex >= 0 && (uint)_frictionIndex < uirc->items.size()) {
+		NancySceneState.setUIResource(_frictionIndex, uirc->items[_frictionIndex].id);
+		_fuelBurnAccum = 0.0;
+	}
+}
+
+void DrivingPuzzle::repairTire() {
+	_tireDamage = 0;
+	const UIRC *uirc = GetEngineData(UIRC)
+	if (uirc && kTireResourceIndex < uirc->items.size()) {
+		NancySceneState.setUIResource(kTireResourceIndex, uirc->items[kTireResourceIndex].id);
 	}
 }
 
@@ -383,7 +416,20 @@ bool DrivingPuzzle::isWall(int px, int py) const {
 }
 
 bool DrivingPuzzle::isBlocked(const Common::Point &p) const {
-	return isWall(p.x, p.y);
+	if (isWall(p.x, p.y)) {
+		return true;
+	}
+
+	// A cow (or similar) is blocking the road while its story flag is set.
+	for (uint i = 0; i < _obstacles.size(); ++i) {
+		const Obstacle &obs = _obstacles[i];
+		if (obs.rect.contains(p) &&
+			(obs.condFlag == -1 || NancySceneState.getEventFlag(obs.condFlag, obs.condValue))) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void DrivingPuzzle::drawScene() {
@@ -393,9 +439,9 @@ void DrivingPuzzle::drawScene() {
 
 	_drawSurface.blitFrom(_image, Common::Rect(camX, camY, camX + _drawSurface.w, camY + _drawSurface.h), Common::Point(0, 0));
 
-	// Map decorations (buildings, cars, potholes, animated cows/flags) sit on the map,
+	// Ground-level decorations (potholes, parked cars, cows, fountain) lie on the road,
 	// under the cars.
-	drawOverlays(cam);
+	drawOverlays(cam, false);
 
 	// The chaser car (kChase), drawn under the player car.
 	if (_variant == kChase && !_frameRects2.empty() && _chaseCarImage.w > 0) {
@@ -412,6 +458,10 @@ void DrivingPuzzle::drawScene() {
 		int sy = (int)(_carY + 0.5) - camY - src.height() / 2;
 		_drawSurface.blitFrom(_carImage, src, Common::Point(sx, sy));
 	}
+
+	// Tall decorations (buildings, trees, power-line poles, flags) draw over the cars,
+	// so the car passes behind them.
+	drawOverlays(cam, true);
 
 	_needsRedraw = true;
 }
@@ -580,7 +630,7 @@ void DrivingPuzzle::updatePhysics(int throttle, double cursorDist) {
 	// The gas tank empties by the distance the car actually travels this frame divided by
 	// the header's distance divisor. The DT_RESOURCE scene dependency reads the same
 	// resource to warn Nancy when it runs low.
-	if (_distanceDivisor > 0) {
+	if (_distanceDivisor > 0 && !_infiniteFuel) {
 		double moved = sqrt((_carX - preX) * (_carX - preX) + (_carY - preY) * (_carY - preY));
 		_fuelBurnAccum += moved / (double)_distanceDivisor;
 		if (_fuelBurnAccum >= 1.0) {
@@ -677,6 +727,27 @@ void DrivingPuzzle::execute() {
 void DrivingPuzzle::handleInput(NancyInput &input) {
 	if (_state != kRun) {
 		return;
+	}
+
+	// Cheats: Ctrl+Shift+G toggles infinite fuel (tops the tank off and stops the drain);
+	// Ctrl+Shift+T repairs the spare tire (clears pothole wear and restores it to good).
+	for (uint i = 0; i < input.otherKbdInput.size(); ++i) {
+		const Common::KeyState &key = input.otherKbdInput[i];
+		if ((key.flags & Common::KBD_CTRL) == 0 || (key.flags & Common::KBD_SHIFT) == 0) {
+			continue;
+		}
+		if (key.keycode == Common::KEYCODE_g) {
+			_infiniteFuel = !_infiniteFuel;
+			if (_infiniteFuel) {
+				refillFuel();
+			}
+			saveState();
+			debug("Gas cheat: infinite fuel %s", _infiniteFuel ? "ON" : "OFF");
+		} else if (key.keycode == Common::KEYCODE_t) {
+			repairTire();
+			saveState();
+			debug("Tire cheat: spare tire repaired");
+		}
 	}
 
 	// A tire has blown: hold the car still until the blowout sound finishes, then leave

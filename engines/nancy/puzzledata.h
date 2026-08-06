@@ -411,6 +411,8 @@ struct DrivingData : public PuzzleData {
 	double heading = 0.0;
 	int32 tireDamage = 0;
 	bool flatTire = false;
+	double fuelBurnAccum = 0.0;	// fractional fuel drained but not yet a whole unit
+	bool infiniteFuel = false;	// cheat toggle, kept across building visits
 };
 
 PuzzleData *makePuzzleData(const uint32 tag);

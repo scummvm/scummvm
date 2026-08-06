@@ -121,6 +121,7 @@ struct ActionZone {
 	Common::String overlayName;
 	Common::Array<Common::Rect> overlaySrcRects;
 	Common::Rect overlayDestRect;
+	int32 overlayLayer = 0;	// draw pass: 0 renders under the car, 1 over it
 
 	// The Nancy13 pinball layout (AR 175) differs from the Nancy12 one: the base carries an
 	// extra int32 before the sound block, and the overlay/unknown-0x15/bumper subtypes have
