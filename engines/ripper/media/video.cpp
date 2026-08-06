@@ -1085,14 +1085,18 @@ bool MediaPlayer::playWacInterfaceSequence(const Common::String &path,
 bool MediaPlayer::playInterfaceSequence(const Common::String &path, int x, int y,
 		Common::Array<byte> &sourcePalette) {
 	debugC(1, kDebugVideo,
-		"Ripper: entering interface media presentation media='%s' position=%d,%d",
+		"Ripper: entering interface media presentation media='%s' position=%d,%d transparent=first-pixel",
 		path.c_str(), x, y);
 	SmackerPlaybackPlan plan;
 	plan.placement.x = x;
 	plan.placement.y = y;
-	// RunTake2IniSliderSetupMenu at 0x1989b presents REMOTE.SMK over the
-	// active scene with the shared palette bands installed by RunMediaSequence
-	// at 0x1e8e9. The movie's chroma-key palette is not display state.
+	// RunTake2IniSliderSetupMenu at 0x1989b enables RunMediaSequence's captured
+	// backing path. RunMediaSequence snapshots decoded pixel zero at 0x1e996 and
+	// its flagged blit at 0x1e9d3 uses that value as the transparent color.
+	plan.rendering.transparentFirstPixel = true;
+	// The active scene keeps the shared palette bands installed by
+	// RunMediaSequence at 0x1e8e9. The movie's chroma-key palette is not display
+	// state.
 	plan.palette.patchInterfacePalette = false;
 	plan.palette.preserveDisplayPalette = true;
 	plan.palette.sourcePalette = &sourcePalette;
