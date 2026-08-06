@@ -59,7 +59,7 @@ public:
 	~MoviePlayer();
 
 	// Load <name> + ".avf"/".bik", auto-detecting the format from which file
-	// exists (AVF preferred if both do) and creating the matching decoder.
+	// exists (Bink preferred if both do) and creating the matching decoder.
 	// bidirectionalCache enables fast bidirectional scrubbing; pass it only for
 	// scrubbed panorama scenes.
 	bool loadFile(const Common::Path &name, bool bidirectionalCache = false);

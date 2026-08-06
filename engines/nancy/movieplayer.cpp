@@ -54,13 +54,13 @@ bool MoviePlayer::loadFile(const Common::Path &name, bool bidirectionalCache) {
 	const Common::Path avfPath = name.append(".avf");
 	const Common::Path bikPath = name.append(".bik");
 
-	// Detect the format from which file exists (AVF wins if both do).
-	if (Common::File::exists(avfPath)) {
-		_videoType = kVideoPlaytypeAVF;
-		_decoder.reset(new AVFDecoder(bidirectionalCache ? AVFDecoder::kLoadBidirectional : AVFDecoder::kLoadForward));
-	} else if (Common::File::exists(bikPath)) {
+	// Detect the format from which file exists. Bink wins if both do.
+	if (Common::File::exists(bikPath)) {
 		_videoType = kVideoPlaytypeBink;
 		_decoder.reset(new Video::BinkDecoder());
+	} else if (Common::File::exists(avfPath)) {
+		_videoType = kVideoPlaytypeAVF;
+		_decoder.reset(new AVFDecoder(bidirectionalCache ? AVFDecoder::kLoadBidirectional : AVFDecoder::kLoadForward));
 	} else {
 		_decoder.reset();
 		return false;
