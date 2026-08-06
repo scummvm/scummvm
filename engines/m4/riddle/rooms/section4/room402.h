@@ -39,6 +39,9 @@ private:
 	int _currentNode = 0;
 	int _dialogMode = 0;
 	int _dialogShould = 0;
+	// Set when the 102/103 animation chain has been parked, so that a Rip
+	// state assigned from outside the chain can restart it.
+	bool _dialogChainIdle = false;
 	int _wolfMode = 0;
 	int _wolfShould = 0;
 	// Set when the 110/111 animation chain has been parked, so that a Wolf
@@ -77,6 +80,7 @@ private:
 	Common::String _sound2;
 
 	void kickWolfChain();
+	void kickDialogChain();
 	void conv402a();
 	void conv402a777();
 	void useTopiary();
