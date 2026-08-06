@@ -163,6 +163,8 @@ public:
 	void setConsoleText(const Common::String &text);
 
 	void printText(const Common::String &text);
+	uint getConsoleRowCount();
+	uint getConsoleVisibleRows();
 
 	void setWaitCursor(bool wait);
 

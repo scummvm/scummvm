@@ -239,6 +239,7 @@ void MacVentureEngine::setInitialFlags(GameState gameState) {
 	_destObject = 0;
 	_prepared = true;
 	_enginePaused = false;
+	_consoleRowsSincePause = 0;
 }
 
 void MacVentureEngine::setNewGameState() {
@@ -281,12 +282,14 @@ void MacVentureEngine::requestUnpause() {
 void MacVentureEngine::selectControl(ControlAction id) {
 	debugC(2, kMVDebugMain, "Select control %x", id);
 	if (id == kClickToContinue) {
+		_consoleRowsSincePause = 0;
 		_clickToContinue = false;
 		_enginePaused = false;
 		_paused = true;
 		return;
 	}
 
+	_consoleRowsSincePause = 0;
 	_selectedControl = id;
 	refreshReady();
 }
@@ -631,7 +634,11 @@ void MacVentureEngine::runObjQueue() {
 }
 
 void MacVentureEngine::printTexts() {
-	for (uint i = 0; i < _textQueue.size(); i++) {
+	while (!_textQueue.empty()) {
+		if (_consoleRowsSincePause >= _gui->getConsoleVisibleRows()) {
+			clickToContinue();
+			return;
+		}
 		QueuedText text = _textQueue.front();
 		_textQueue.remove_at(0);
 		switch (text.id) {
@@ -639,11 +646,14 @@ void MacVentureEngine::printTexts() {
 			_currentConsoleText += Common::String::format("%d", text.asset);
 			gameChanged();
 			break;
-		case kTextNewLine:
+		case kTextNewLine: {
+			uint rows = _gui->getConsoleRowCount();
 			_gui->printText(_currentConsoleText);
+			_consoleRowsSincePause += _gui->getConsoleRowCount() - rows;
 			_currentConsoleText.clear();
 			gameChanged();
 			break;
+		}
 		case kTextPlain:
 			_currentConsoleText += _world->getText(text.asset, text.source, text.destination);
 			gameChanged();

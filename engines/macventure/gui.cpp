@@ -1137,6 +1137,18 @@ void Gui::printText(const Common::String &text) {
 	_outConsoleWindow->scrollToBottom();
 }
 
+uint Gui::getConsoleRowCount() {
+	return _outConsoleWindow->getRowCount();
+}
+
+uint Gui::getConsoleVisibleRows() {
+	int lineHeight = _outConsoleWindow->getLineHeight(0) + _outConsoleWindow->getLineSpacing();
+	if (lineHeight <= 0) {
+		return 1;
+	}
+	return MAX(1, _outConsoleWindow->getInnerDimensions().height() / lineHeight);
+}
+
 void Gui::setWaitCursor(bool wait) {
 	_wm.replaceCursor(wait ? Graphics::kMacCursorWatch : Graphics::kMacCursorArrow);
 	g_system->updateScreen();
