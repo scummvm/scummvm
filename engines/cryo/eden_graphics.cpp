@@ -952,6 +952,13 @@ void EdenGraphics::displayEffect2() {
 		displayEffect4();
 		return;
 	}
+	// Transition 16 stipples one picture away and the next one in. The DOS
+	// driver orders its dots from a table built as it loads, so these follow
+	// the engine's own order instead
+	if (_game->_globals->_var103 == 16) {
+		effetpix();
+		return;
+	}
 	switch (++_eff2pat) {
 	case 1:
 		colimacon(pattern1);
