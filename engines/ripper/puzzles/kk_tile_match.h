@@ -23,6 +23,7 @@
 
 #include "audio/mixer.h"
 #include "common/array.h"
+#include "common/hashmap.h"
 #include "common/random.h"
 #include "common/rect.h"
 
@@ -69,6 +70,49 @@ private:
 		Slot() : state(0), frame(0), active(false) {}
 	};
 
+	class DebugHelper {
+	public:
+		DebugHelper();
+
+		void reset(bool enabled);
+		bool sync(const KkTileMatchPuzzle &puzzle);
+		void stateChanging();
+		void stateChanged(const KkTileMatchPuzzle &puzzle);
+		void draw(const KkTileMatchPuzzle &puzzle,
+			byte *screen, uint pitch) const;
+
+	private:
+		struct SearchState {
+			byte states[16];
+			uint16 activeMask;
+		};
+
+		struct SearchNode {
+			SearchState state;
+			uint depth;
+			int firstTile;
+		};
+
+		struct SearchStateHash {
+			uint operator()(const SearchState &state) const;
+		};
+
+		struct SearchStateEqual {
+			bool operator()(const SearchState &left,
+				const SearchState &right) const;
+		};
+
+		SearchState capture(const KkTileMatchPuzzle &puzzle) const;
+		SearchState simulateClick(const KkTileMatchPuzzle &puzzle,
+			const SearchState &state, uint tile, bool &solved) const;
+		int findRecommendedTile(const KkTileMatchPuzzle &puzzle,
+			uint &solutionDepth, uint &visitedStates) const;
+
+		bool _enabled;
+		int _recommendedTile;
+		uint _solutionDepth;
+	};
+
 	bool loadConfiguration();
 	bool loadAssets();
 	bool loadBitmap(const Common::String &name, BitmapAssetFrame &frame);
@@ -107,6 +151,7 @@ private:
 	Common::RandomSource _random;
 	int _moveTable[16][16];
 	Slot _slots[16];
+	DebugHelper _debugHelper;
 	bool _visibleTiles[16];
 	int _hoveredTile;
 	uint _keywordIndex;
