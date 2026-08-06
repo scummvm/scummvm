@@ -30,6 +30,12 @@
 
 #include <gif_lib.h>
 
+#if GIFLIB_MAJOR > 5 || (GIFLIB_MAJOR == 5 && GIFLIB_MINOR >= 1)
+#  define DGIF_CLOSE_FILE_COMPAT(f) DGifCloseFile((f), nullptr)
+#else
+#  define DGIF_CLOSE_FILE_COMPAT(f) DGifCloseFile((f))
+#endif
+
 namespace Image {
 
 GIFDecoder::GIFDecoder() : _outputSurface(nullptr), _palette(0) {
@@ -57,13 +63,13 @@ bool GIFDecoder::loadStream(Common::SeekableReadStream &stream) {
 	const int errcode = DGifSlurp(gif);
 	if (errcode != GIF_OK) {
 		warning("GIF failed to load");
-		DGifCloseFile(gif, 0);
+		DGIF_CLOSE_FILE_COMPAT(gif);
 		return false;
 	}
 
 	if (gif->ImageCount <= 0) {
 		warning("GIF doesn't contain valid image data");
-		DGifCloseFile(gif, 0);
+		DGIF_CLOSE_FILE_COMPAT(gif);
 		return false;
 	}
 
@@ -124,7 +130,7 @@ bool GIFDecoder::loadStream(Common::SeekableReadStream &stream) {
 		memcpy(pixelPtr, in, width * height);
 	}
 
-	DGifCloseFile(gif, 0);
+	DGIF_CLOSE_FILE_COMPAT(gif);
 	return true;
 }
 
