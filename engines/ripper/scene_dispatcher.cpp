@@ -38,6 +38,7 @@
 #include "ripper/puzzles/circuit_chip.h"
 #include "ripper/puzzles/clock.h"
 #include "ripper/puzzles/crystal.h"
+#include "ripper/puzzles/date_selection.h"
 #include "ripper/puzzles/eight_button_sequence.h"
 #include "ripper/puzzles/gc_csh.h"
 #include "ripper/puzzles/kd_shooting_gallery.h"
@@ -77,7 +78,7 @@ const char *SceneActionDispatcher::actionName(uint action) {
 	case 14: return "EBZ2S unlock-gated action menu";
 	case 15: return "mechini combat encounter";
 	case kSceneActionKeyGroupPuzzle: return "key group puzzle";
-	case 17: return "date selection puzzle";
+	case kSceneActionDateSelectionPuzzle: return "date selection puzzle";
 	case 18: return "KI skull maze puzzle";
 	case kSceneActionWebGridShiftPuzzle: return "web grid shift puzzle";
 	case 20: return "Horus word puzzle";
@@ -262,6 +263,15 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 			"action=%u result=%d milestone=%u",
 			action, result, argument);
 		return result != KeyGroupPuzzle::kLoadFailed;
+	}
+	if (action == kSceneActionDateSelectionPuzzle) {
+		DateSelectionPuzzle puzzle(engine);
+		const DateSelectionPuzzle::Result result = puzzle.run(argument);
+		debugC(1, kDebugPuzzles,
+			"Ripper: date-selection puzzle scene action completed "
+			"result=%d milestone=%u",
+			result, argument);
+		return result != DateSelectionPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionRatiniCombat) {
 		// DispatchSceneEntryAction at 0x36cc6 forwards the completion flag and

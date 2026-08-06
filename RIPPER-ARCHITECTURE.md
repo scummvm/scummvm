@@ -824,6 +824,25 @@
 
 ## Puzzles
 
+- Scene action 17 calls `RunDateSelectionPuzzleScene` at `0x3d5ed` with the
+  caller-supplied completion flag. It loops `EH_EEG0.SMK` or `EH_EEG1.SMK`
+  from frame 10 while `ServiceDateSelectionTextEntryChooserCallback` at
+  `0x3d464` owns a primary-style text control with a 22-character limit and
+  help table `0x1b6`. Escape exits the puzzle; a submitted token reaches
+  `ProcessDateSelectionTokenMatch` at `0x3d8f0`.
+- That matcher accepts five case-insensitive spellings for each date from
+  November 18 through November 23: numeric forms with `-` or `/`, abbreviated
+  `nov` with or without a period, and the full month name. November 19 sets
+  flag 339, November 20 sets flag 340, and any of the other four accepted
+  dates sets flag 341. These three progress flags persist across visits. The
+  supplied completion flag is set only during puzzle cleanup when all three
+  are present; partial or invalid input does not set it.
+- `EH_WAIT.BBM` is drawn at physical `(186,275)` while the token matcher runs
+  its 17-DOS-tick progress sweep. `EH_EEG0.WAV` and low-volume
+  `EH_EEG2.WAV` start with the puzzle; `EH_EEG1.WAV` accompanies the two
+  individually tracked dates, while `EH_EEG4.WAV` is the rejection cue.
+  ScummVM maps the retail chooser callback to its scene-entry text control and
+  keeps the movie callback responsible for all keyboard input while active.
 - Opcode `0x18` passes its first argument to `DispatchSceneEntryAction` at
   `0x36892` and its second argument through the original EBX argument channel.
   Scene action 4 calls `RunCalculatorPuzzleScene` at `0x269a5`; scene action 29

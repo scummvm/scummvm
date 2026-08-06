@@ -37,6 +37,7 @@ MODULE_OBJS := \
 	puzzles/circuit_chip.o \
 	puzzles/clock.o \
 	puzzles/crystal.o \
+	puzzles/date_selection.o \
 	puzzles/eight_button_sequence.o \
 	puzzles/gc_csh.o \
 	puzzles/ka_book_code.o \
