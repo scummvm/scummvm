@@ -815,7 +815,7 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 						continue;
 
 					// Strangerke: 20 is a hardcoded version of the game. later version uses 21. Not present in the original dungeons anyway.
-					triggerSensor = (curSensorData <= 20);
+					triggerSensor = (curSensorData <= 21);
 					break;
 				default:
 					continue;
@@ -885,14 +885,19 @@ bool MovesensMan::isObjectInPartyPossession(int16 objectType) {
 				}
 
 				int16 curObjectType = _vm->_objectMan->getObjectType(curThing);
-				if (curObjectType == objectType)
+				if ((curObjectType == objectType) ||
+					((objectType == kDMIconIndiceWeaponTheFirestaff || objectType == kDMIconIndiceWeaponTheFirestaffComplete) &&
+					(curObjectType == kDMIconIndiceWeaponTheFirestaff || curObjectType == kDMIconIndiceWeaponTheFirestaffComplete)))
 					return true;
 
 				if (curObjectType == kDMIconIndiceContainerChestClosed) {
 					Container *container = dungeon.getContainer(curThing);
 					curThing = container->getSlot();
 					while (curThing != _vm->_thingEndOfList) {
-						if (_vm->_objectMan->getObjectType(curThing) == objectType)
+						int16 chestObjectType = _vm->_objectMan->getObjectType(curThing);
+						if ((chestObjectType == objectType) ||
+							((objectType == kDMIconIndiceWeaponTheFirestaff || objectType == kDMIconIndiceWeaponTheFirestaffComplete) &&
+							(chestObjectType == kDMIconIndiceWeaponTheFirestaff || chestObjectType == kDMIconIndiceWeaponTheFirestaffComplete)))
 							return true;
 
 						curThing = dungeon.getNextThing(curThing);
