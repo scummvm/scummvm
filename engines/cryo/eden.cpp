@@ -6293,7 +6293,7 @@ void EdenGame::bigphase1() {
 		&EdenGame::phase560
 	};
 
-	int16 phase = (_globals->_phaseNum & ~3) + 0x10;   //TODO: check me
+	int16 phase = (_globals->_phaseNum & ~0xF) + 0x10;
 	debugC(1, kDebugScript, "Phase set to 0x%X in room 0x%X", phase, _globals->_roomNum);
 	_globals->_phaseActionsCount = 0;
 	_globals->_phaseNum = phase;
