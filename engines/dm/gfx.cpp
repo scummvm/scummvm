@@ -2050,6 +2050,10 @@ uint16 DisplayMan::getGraphicIndex(uint16 index) const {
 		return k498_FirstObjectDOS;
 	case kDMGraphicIdxFirstCreature:
 		return k584_FirstCreatureDOS;
+	case kDMGraphicIdxFieldMaskD3R:
+		return 70;
+	case kDMGraphicIdxFieldTeleporter:
+		return 76;
 	case kDMGraphicIdxMenuSpellAreLines:
 		return k9_MenuSpellAreaLinesDOS;
 	case kDMGraphicIdxFont:
@@ -4454,7 +4458,7 @@ void DisplayMan::drawField(FieldAspect *fieldAspect, Box& box) {
 
 	if (fieldAspect->_mask != kMaskFieldAspectNoMask) {
 		bitmapMask = _tmpBitmap;
-		memmove(bitmapMask, getNativeBitmapOrGraphic(kDMGraphicIdxFieldMaskD3R + getFlag(fieldAspect->_mask, kMaskFieldAspectIndex)),
+		memmove(bitmapMask, getNativeBitmapOrGraphic(getGraphicIndex(kDMGraphicIdxFieldMaskD3R) + getFlag(fieldAspect->_mask, kMaskFieldAspectIndex)),
 				fieldAspect->_height * fieldAspect->_byteWidth * 2);
 		if (getFlag(fieldAspect->_mask, kMaskFieldAspectFlipMask)) {
 			flipBitmapHorizontal(bitmapMask, fieldAspect->_byteWidth, fieldAspect->_height);
@@ -4462,7 +4466,7 @@ void DisplayMan::drawField(FieldAspect *fieldAspect, Box& box) {
 	}
 
 	isDerivedBitmapInCache(kDMDerivedBitmapViewport);
-	byte *bitmap = getNativeBitmapOrGraphic(kDMGraphicIdxFieldTeleporter + fieldAspect->_nativeBitmapRelativeIndex);
+	byte *bitmap = getNativeBitmapOrGraphic(getGraphicIndex(kDMGraphicIdxFieldTeleporter) + fieldAspect->_nativeBitmapRelativeIndex);
 	blitBoxFilledWithMaskedBitmap(bitmap, _bitmapViewport, bitmapMask, getDerivedBitmap(kDMDerivedBitmapViewport), box,
 									   _vm->getRandomNumber(2) + fieldAspect->_baseStartUnitIndex, _vm->getRandomNumber(32), k112_byteWidthViewport,
 									   fieldAspect->_transparentColor, fieldAspect->_xPos, 0, 136, fieldAspect->_bitplaneWordCount);
