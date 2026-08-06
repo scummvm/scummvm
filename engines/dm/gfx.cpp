@@ -1493,6 +1493,7 @@ void DisplayMan::loadIntoBitmap(uint16 index, byte *destBitmap) {
 			localPalette[i] = getNibble();
 		}
 
+		memset(destBitmap, kDMColorFlesh, totalPixels);
 		int32 destPos = 0;
 
 		if (width != evenWidth) {
@@ -2126,18 +2127,21 @@ void DisplayMan::drawFloorOrnament(uint16 floorOrnOrdinal, ViewFloor viewFloorIn
 		int16 nativeBitmapIndex = _currMapFloorOrnInfo[floorOrnIndex].nativeIndice
 			+ g191_floorOrnNativeBitmapndexInc[viewFloorIndex];
 		uint16 *coordSets = g206_floorOrnCoordSets[_currMapFloorOrnInfo[floorOrnIndex].coordinateSet][viewFloorIndex];
+		uint16 floorByteWidth = (_vm->getPlatform() == Common::kPlatformDOS) ? (getPixelWidth(nativeBitmapIndex) / 2) : coordSets[4];
+		uint16 floorHeight = (_vm->getPlatform() == Common::kPlatformDOS) ? getPixelHeight(nativeBitmapIndex) : coordSets[5];
+
 		byte *bitmap;
 		if ((viewFloorIndex == kDMViewFloorD1R) || (viewFloorIndex == kDMViewFloorD2R)
 			|| (viewFloorIndex == kDMViewFloorD3R)
 			|| ((floorOrnIndex == k15_FloorOrnFootprints) && _useFlippedWallAndFootprintsBitmap &&
 			((viewFloorIndex == kDMViewFloorD1C) || (viewFloorIndex == kDMViewFloorD2C) || (viewFloorIndex == kDMViewFloorD3C)))) {
 			bitmap = _tmpBitmap;
-			copyBitmapAndFlipHorizontal(getNativeBitmapOrGraphic(nativeBitmapIndex), bitmap, coordSets[4], coordSets[5]);
+			copyBitmapAndFlipHorizontal(getNativeBitmapOrGraphic(nativeBitmapIndex), bitmap, floorByteWidth, floorHeight);
 		} else
 			bitmap = getNativeBitmapOrGraphic(nativeBitmapIndex);
 
 		Box blitBox(coordSets[0], coordSets[1], coordSets[2], coordSets[3]);
-		blitToBitmap(bitmap, _bitmapViewport, blitBox, 0, 0, coordSets[4], k112_byteWidthViewport, kDMColorFlesh, coordSets[5], k136_heightViewport);
+		blitToBitmap(bitmap, _bitmapViewport, blitBox, 0, 0, floorByteWidth, k112_byteWidthViewport, kDMColorFlesh, floorHeight, k136_heightViewport);
 	}
 
 	if (drawFootprints)
@@ -4216,16 +4220,21 @@ void DisplayMan::drawBitmapDOS(byte *srcBitmap, int16 zoneIndex, bool flipHorizo
 }
 
 void DisplayMan::drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &f) {
-	if (f._srcByteWidth)
+	if (f._srcByteWidth) {
+		uint16 byteWidth = (_vm->getPlatform() == Common::kPlatformDOS) ? (getPixelWidth(nativeIndex) / 2) : f._srcByteWidth;
+		uint16 height = (_vm->getPlatform() == Common::kPlatformDOS) ? getPixelHeight(nativeIndex) : f._srcHeight;
 		blitToBitmap(getNativeBitmapOrGraphic(nativeIndex), _bitmapViewport, f._box, f._srcX, f._srcY,
-						f._srcByteWidth, k112_byteWidthViewport, kDMColorFlesh, f._srcHeight, k136_heightViewport);
+						byteWidth, k112_byteWidthViewport, kDMColorFlesh, height, k136_heightViewport);
+	}
 }
 
 void DisplayMan::drawFloorPitOrStairsBitmapFlippedHorizontally(uint16 nativeIndex, Frame &f) {
 	if (f._srcByteWidth) {
-		copyBitmapAndFlipHorizontal(getNativeBitmapOrGraphic(nativeIndex), _tmpBitmap, f._srcByteWidth, f._srcHeight);
-		blitToBitmap(_tmpBitmap, _bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth,
-						k112_byteWidthViewport, kDMColorFlesh, f._srcHeight, k136_heightViewport);
+		uint16 byteWidth = (_vm->getPlatform() == Common::kPlatformDOS) ? (getPixelWidth(nativeIndex) / 2) : f._srcByteWidth;
+		uint16 height = (_vm->getPlatform() == Common::kPlatformDOS) ? getPixelHeight(nativeIndex) : f._srcHeight;
+		copyBitmapAndFlipHorizontal(getNativeBitmapOrGraphic(nativeIndex), _tmpBitmap, byteWidth, height);
+		blitToBitmap(_tmpBitmap, _bitmapViewport, f._box, f._srcX, f._srcY, byteWidth,
+						k112_byteWidthViewport, kDMColorFlesh, height, k136_heightViewport);
 	}
 }
 
@@ -4324,8 +4333,11 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 			}
 		}
 		ornBlitBitmap = getNativeBitmapOrGraphic(ornNativeBitmapIndex);
+		uint16 ornByteWidth = (_vm->getPlatform() == Common::kPlatformDOS) ? (getPixelWidth(ornNativeBitmapIndex) / 2) : ornCoordSet[4];
+		uint16 ornHeight = (_vm->getPlatform() == Common::kPlatformDOS) ? getPixelHeight(ornNativeBitmapIndex) : ornCoordSet[5];
+
 		if (viewWallIndex == kDMViewWallD1RLeft) {
-			copyBitmapAndFlipHorizontal(ornBlitBitmap, _tmpBitmap, ornCoordSet[4], ornCoordSet[5]);
+			copyBitmapAndFlipHorizontal(ornBlitBitmap, _tmpBitmap, ornByteWidth, ornHeight);
 			ornBlitBitmap = _tmpBitmap;
 		}
 		blitPosX = 0;
@@ -4385,8 +4397,10 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 	}
 
 	Box tmpBox(ornCoordSet[0], ornCoordSet[1], ornCoordSet[2], ornCoordSet[3]);
+	uint16 blitByteWidth = (viewWallIndex >= kDMViewWallD1LRight && _vm->getPlatform() == Common::kPlatformDOS) ? (getPixelWidth(ornNativeBitmapIndex) / 2) : ornCoordSet[4];
+	uint16 blitHeight = (viewWallIndex >= kDMViewWallD1LRight && _vm->getPlatform() == Common::kPlatformDOS) ? getPixelHeight(ornNativeBitmapIndex) : ornCoordSet[5];
 	blitToBitmap(ornBlitBitmap, _bitmapViewport, tmpBox, blitPosX, 0,
-		ornCoordSet[4], k112_byteWidthViewport, kDMColorFlesh, ornCoordSet[5], k136_heightViewport);
+		blitByteWidth, k112_byteWidthViewport, kDMColorFlesh, blitHeight, k136_heightViewport);
 
 	if ((viewWallIndex == kDMViewWallD1CFront) && _championPortraitOrdinal--) {
 		Box portraitBox = (_vm->getPlatform() == Common::kPlatformDOS) ? Box(88, 119, 35, 63) : boxChampionPortraitOnWall;
@@ -4803,8 +4817,8 @@ T0115015_DrawProjectileAsObject:
 					drawingGrabbableObject = ((viewLane == kDMViewLaneCenter) && !drawProjectileAsObject); /* If object is in the center lane (only D0C or D1C with condition above) and is not a projectile */
 					AL_8_shiftSetIndex = k0_ShiftSet_D0BackD1Front;
 					bitmapRedBanana = getNativeBitmapOrGraphic(AL_4_nativeBitmapIndex); /* Use base graphic, no resizing */
-					byteWidth = objectAspect->_byteWidth;
-					heightRedEagle = objectAspect->_height;
+					byteWidth = (_vm->getPlatform() == Common::kPlatformDOS) ? (getPixelWidth(AL_4_nativeBitmapIndex) / 2) : objectAspect->_byteWidth;
+					heightRedEagle = (_vm->getPlatform() == Common::kPlatformDOS) ? getPixelHeight(AL_4_nativeBitmapIndex) : objectAspect->_height;
 					if (flipHorizontal) {
 						copyBitmapAndFlipHorizontal(bitmapRedBanana, _tmpBitmap, byteWidth, heightRedEagle);
 						bitmapRedBanana = _tmpBitmap;
@@ -4836,7 +4850,9 @@ T0115015_DrawProjectileAsObject:
 					else {
 						bitmapGreenAnt = getNativeBitmapOrGraphic(AL_4_nativeBitmapIndex);
 						bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex);
-						blitToBitmapShrinkWithPalChange(bitmapGreenAnt, bitmapRedBanana, objectAspect->_byteWidth << 1, objectAspect->_height, byteWidth << 1, heightRedEagle, paletteChanges);
+						int16 srcWidth = (_vm->getPlatform() == Common::kPlatformDOS) ? getPixelWidth(AL_4_nativeBitmapIndex) : (objectAspect->_byteWidth << 1);
+						int16 srcHeight = (_vm->getPlatform() == Common::kPlatformDOS) ? getPixelHeight(AL_4_nativeBitmapIndex) : objectAspect->_height;
+						blitToBitmapShrinkWithPalChange(bitmapGreenAnt, bitmapRedBanana, srcWidth, srcHeight, byteWidth << 1, heightRedEagle, paletteChanges);
 						if (flipHorizontal)
 							flipBitmapHorizontal(bitmapRedBanana, getNormalizedByteWidth(byteWidth), heightRedEagle);
 
