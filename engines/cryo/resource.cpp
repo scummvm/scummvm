@@ -72,7 +72,8 @@ void EdenGame::verifh(byte *ptr) {
 }
 
 void EdenGame::openbigfile() {
-	_bigfile.open("EDEN.DAT");
+	if (!_bigfile.open("EDEN.DAT"))
+		error("Could not open EDEN.DAT");
 
 	char buf[16];
 	int count = _bigfile.readUint16LE();
