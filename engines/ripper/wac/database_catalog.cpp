@@ -28,7 +28,7 @@ namespace Ripper {
 
 // BuildWacInventorySelectionMenu at 0x22c91 scans this 30-entry range.
 // The milestone and text-resource columns are sequential in the retail table;
-// the handler column records only dispatch branches implemented from
+// the handler column records the complete retail dispatch recovered from
 // RunWacInventorySelectionLoop at 0x2252a.
 static const WacDatabaseCatalogEntry kWacDatabaseCatalog[] = {
 	{  0, 0x46, 0xdc, kWacDatabaseHandlerStillImage,          0 },
@@ -41,30 +41,32 @@ static const WacDatabaseCatalogEntry kWacDatabaseCatalog[] = {
 	{  7, 0x4d, 0xe3, kWacDatabaseHandlerOptionalPresentation, 0,
 		"mag_wac.pcx", "mag_wac.avi", kMilestoneWacVideoEditorAvailable,
 		kMilestoneRevealedMagnottaPhotoAsFake },
-	{  8, 0x4e, 0xe4, kWacDatabaseHandlerUnavailable,         0 },
+	{  8, 0x4e, 0xe4, kWacDatabaseHandlerConditionalStillImage, 0,
+		"wacinv8a.pcx", "wacinv8b.pcx", kMilestoneFirstRipperIdentity + 2 },
 	{  9, 0x4f, 0xe5, kWacDatabaseHandlerLoopingMedia,        0 },
 	{ 10, 0x50, 0xe6, kWacDatabaseHandlerStillImage,          0 },
 	{ 11, 0x51, 0xe7, kWacDatabaseHandlerStillImage,          0 },
-	{ 12, 0x52, 0xe8, kWacDatabaseHandlerUnavailable,         0 },
+	{ 12, 0x52, 0xe8, kWacDatabaseHandlerStillImage,          0 },
 	{ 13, 0x53, 0xe9, kWacDatabaseHandlerLoopingMedia,        0 },
 	{ 14, 0x54, 0xea, kWacDatabaseHandlerLoopingMedia,        0 },
 	{ 15, 0x55, 0xeb, kWacDatabaseHandlerText,                0xb6 },
 	{ 16, 0x56, 0xec, kWacDatabaseHandlerOptionalPresentation, 0,
 		"ed_wac.pcx", "ed_wac.avi", kMilestoneWacVideoEditorAvailable,
 		kMilestoneRevealedEddiePhotoAsFake },
-	{ 17, 0x57, 0xed, kWacDatabaseHandlerUnavailable,         0 },
-	{ 18, 0x58, 0xee, kWacDatabaseHandlerUnavailable,         0 },
-	{ 19, 0x59, 0xef, kWacDatabaseHandlerUnavailable,         0 },
-	{ 20, 0x5a, 0xf0, kWacDatabaseHandlerUnavailable,         0 },
-	{ 21, 0x5b, 0xf1, kWacDatabaseHandlerUnavailable,         0 },
-	{ 22, 0x5c, 0xf2, kWacDatabaseHandlerUnavailable,         0 },
-	{ 23, 0x5d, 0xf3, kWacDatabaseHandlerUnavailable,         0 },
-	{ 24, 0x5e, 0xf4, kWacDatabaseHandlerUnavailable,         0 },
-	{ 25, 0x5f, 0xf5, kWacDatabaseHandlerUnavailable,         0 },
-	{ 26, 0x60, 0xf6, kWacDatabaseHandlerUnavailable,         0 },
-	{ 27, 0x61, 0xf7, kWacDatabaseHandlerUnavailable,         0 },
-	{ 28, 0x62, 0xf8, kWacDatabaseHandlerUnavailable,         0 },
-	{ 29, 0x63, 0xf9, kWacDatabaseHandlerUnavailable,         0 }
+	{ 17, 0x57, 0xed, kWacDatabaseHandlerLoopingMedia,        0 },
+	{ 18, 0x58, 0xee, kWacDatabaseHandlerRetailNoOp,          0 },
+	{ 19, 0x59, 0xef, kWacDatabaseHandlerLoopingMedia,        0 },
+	{ 20, 0x5a, 0xf0, kWacDatabaseHandlerLoopingMedia,        0 },
+	{ 21, 0x5b, 0xf1, kWacDatabaseHandlerLoopingMedia,        0 },
+	{ 22, 0x5c, 0xf2, kWacDatabaseHandlerLoopingMedia,        0 },
+	{ 23, 0x5d, 0xf3, kWacDatabaseHandlerLoopingMedia,        0 },
+	{ 24, 0x5e, 0xf4, kWacDatabaseHandlerStillImage,          0 },
+	{ 25, 0x5f, 0xf5, kWacDatabaseHandlerScriptMediaWithVoiceover, 0,
+		"rip_game.smk", "rip_game.wav", 0, kMilestonePlayedRipperGame },
+	{ 26, 0x60, 0xf6, kWacDatabaseHandlerLoopingMedia,        0 },
+	{ 27, 0x61, 0xf7, kWacDatabaseHandlerRetailNoOp,          0 },
+	{ 28, 0x62, 0xf8, kWacDatabaseHandlerRetailNoOp,          0 },
+	{ 29, 0x63, 0xf9, kWacDatabaseHandlerRetailNoOp,          0 }
 };
 
 uint getWacDatabaseCatalogEntryCount() {

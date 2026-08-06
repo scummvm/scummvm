@@ -66,6 +66,14 @@ public:
 			Ripper::kMilestoneWacVideoEditorAvailable);
 		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(7)->completionFlag,
 			Ripper::kMilestoneRevealedMagnottaPhotoAsFake);
+		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(8)->handler,
+			Ripper::kWacDatabaseHandlerConditionalStillImage);
+		TS_ASSERT_EQUALS(Common::String(
+			Ripper::getWacDatabaseCatalogEntry(8)->imagePath), "wacinv8a.pcx");
+		TS_ASSERT_EQUALS(Common::String(
+			Ripper::getWacDatabaseCatalogEntry(8)->mediaPath), "wacinv8b.pcx");
+		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(8)->presentationFlag,
+			Ripper::kMilestoneFirstRipperIdentity + 2);
 		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(9)->handler,
 			Ripper::kWacDatabaseHandlerLoopingMedia);
 		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(13)->handler,
@@ -84,5 +92,27 @@ public:
 			Ripper::getWacDatabaseCatalogEntry(16)->mediaPath), "ed_wac.avi");
 		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(16)->completionFlag,
 			Ripper::kMilestoneRevealedEddiePhotoAsFake);
+		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(17)->handler,
+			Ripper::kWacDatabaseHandlerLoopingMedia);
+		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(18)->handler,
+			Ripper::kWacDatabaseHandlerRetailNoOp);
+		for (uint index = 19; index <= 23; ++index)
+			TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(index)->handler,
+				Ripper::kWacDatabaseHandlerLoopingMedia);
+		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(24)->handler,
+			Ripper::kWacDatabaseHandlerStillImage);
+		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(25)->handler,
+			Ripper::kWacDatabaseHandlerScriptMediaWithVoiceover);
+		TS_ASSERT_EQUALS(Common::String(
+			Ripper::getWacDatabaseCatalogEntry(25)->imagePath), "rip_game.smk");
+		TS_ASSERT_EQUALS(Common::String(
+			Ripper::getWacDatabaseCatalogEntry(25)->mediaPath), "rip_game.wav");
+		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(25)->completionFlag,
+			Ripper::kMilestonePlayedRipperGame);
+		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(26)->handler,
+			Ripper::kWacDatabaseHandlerLoopingMedia);
+		for (uint index = 27; index <= 29; ++index)
+			TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(index)->handler,
+				Ripper::kWacDatabaseHandlerRetailNoOp);
 	}
 };

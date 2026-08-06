@@ -26,13 +26,15 @@
 namespace Ripper {
 
 enum WacDatabaseHandlerKind {
-	kWacDatabaseHandlerUnavailable,
+	kWacDatabaseHandlerRetailNoOp,
 	kWacDatabaseHandlerStillImage,
+	kWacDatabaseHandlerConditionalStillImage,
 	kWacDatabaseHandlerBrokenMug,
 	kWacDatabaseHandlerBrokenMugCompletion,
 	kWacDatabaseHandlerJournal,
 	kWacDatabaseHandlerVoiceLock,
 	kWacDatabaseHandlerLoopingMedia,
+	kWacDatabaseHandlerScriptMediaWithVoiceover,
 	kWacDatabaseHandlerOptionalPresentation,
 	kWacDatabaseHandlerText
 };
