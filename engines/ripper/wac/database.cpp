@@ -23,6 +23,8 @@
 #include "ripper/wac/wac.h"
 
 #include "common/debug.h"
+#include "common/ptr.h"
+#include "common/stream.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "graphics/surface.h"
@@ -76,6 +78,7 @@ static const int kWacTextPanelHeight = 222;
 static const uint kWacDatabaseHelpResource = 406;
 static const uint16 kWacDatabaseSelectionChanged = 0xfffe;
 static const uint16 kWacDatabaseTextScrolled = 0xfffd;
+static const uint16 kWacDatabaseVoiceoverComplete = 0xfffc;
 static const uint16 kNoAction = WacManager::kNoAction;
 static const uint16 kExitAction = WacManager::kExitAction;
 static const uint16 kTextViewerAction = WacManager::kTextViewerAction;
@@ -83,17 +86,58 @@ static const uint16 kHelpAction = WacManager::kHelpAction;
 
 class WacDatabaseMediaCallback : public MediaSequenceCallback {
 public:
-	WacDatabaseMediaCallback(WacDatabaseSession *database, byte activeEntryIndex) :
-			_database(database), _activeEntryIndex(activeEntryIndex) {
+	WacDatabaseMediaCallback(WacDatabaseSession *database, byte activeEntryIndex,
+			Common::SeekableReadStream *voiceoverStream = nullptr,
+			const Common::String &voiceoverName = Common::String()) :
+			_database(database), _activeEntryIndex(activeEntryIndex),
+			_voiceoverStream(voiceoverStream), _voiceoverName(voiceoverName),
+			_voiceoverRequested(!voiceoverName.empty()), _voiceoverStarted(false) {
+	}
+
+	~WacDatabaseMediaCallback() override {
+		if (_voiceoverStarted)
+			_database->engine()->getMedia()->stopSoundEffect(_voiceoverHandle);
 	}
 
 	uint16 service(uint) override {
-		return _database->serviceDatabaseMediaInput(_activeEntryIndex);
+		const uint16 command =
+			_database->serviceDatabaseMediaInput(_activeEntryIndex);
+		if (command != kNoAction)
+			return command;
+		if (!_voiceoverRequested)
+			return kNoAction;
+		if (!_voiceoverStarted) {
+			_voiceoverStarted = true;
+			if (!_database->engine()->getMedia()->playVoiceClipStream(
+					_voiceoverStream.release(), _voiceoverName,
+					_voiceoverHandle)) {
+				warning("Ripper: could not start WAC database voiceover '%s'",
+					_voiceoverName.c_str());
+				return kWacDatabaseVoiceoverComplete;
+			}
+			debugC(2, kDebugWac,
+				"Ripper: started WAC database voiceover entry=%u media='%s' after first video frame",
+				_activeEntryIndex, _voiceoverName.c_str());
+			return kNoAction;
+		}
+		if (!_database->engine()->getMedia()->isSoundEffectActive(
+				_voiceoverHandle)) {
+			debugC(2, kDebugWac,
+				"Ripper: completed WAC database voiceover entry=%u media='%s'; closing media viewer",
+				_activeEntryIndex, _voiceoverName.c_str());
+			return kWacDatabaseVoiceoverComplete;
+		}
+		return kNoAction;
 	}
 
 private:
 	WacDatabaseSession *_database;
 	byte _activeEntryIndex;
+	Common::ScopedPtr<Common::SeekableReadStream> _voiceoverStream;
+	Common::String _voiceoverName;
+	Audio::SoundHandle _voiceoverHandle;
+	bool _voiceoverRequested;
+	bool _voiceoverStarted;
 };
 
 WacDatabaseSession::WacDatabaseSession(WacManager *wac) : _wac(wac),
@@ -654,6 +698,20 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 		WacStillImageViewer viewer(this);
 		return viewer.run(entry.originalIndex(), entry.label, path);
 	}
+	if (entry.catalog->handler == kWacDatabaseHandlerConditionalStillImage) {
+		// RunWacInventorySelectionLoop at 0x2252a case 8 selects WACINV8A
+		// when shared flag 8 is set and WACINV8B otherwise.
+		const bool alternate = _wac->_engine->getMilestones()->isSet(
+			entry.catalog->presentationFlag);
+		const Common::String path = alternate ? entry.catalog->imagePath :
+			entry.catalog->mediaPath;
+		debugC(2, kDebugWac,
+			"Ripper: WAC database conditional still entry=%u flag=%u value=%d media='%s'",
+			entry.originalIndex(), entry.catalog->presentationFlag, alternate,
+			path.c_str());
+		WacStillImageViewer viewer(this);
+		return viewer.run(entry.originalIndex(), entry.label, path);
+	}
 	if (entry.catalog->handler == kWacDatabaseHandlerOptionalPresentation) {
 		WacStillImageViewer viewer(this);
 		return viewer.runWithOptionalPresentation(entry.originalIndex(),
@@ -661,8 +719,8 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 			entry.catalog->presentationFlag, entry.catalog->completionFlag);
 	}
 	if (entry.catalog->handler == kWacDatabaseHandlerLoopingMedia) {
-		// RunWacInventorySelectionLoop at 0x2252a cases 9, 0x0d, and 0x0e
-		// resolve WACINV9.SMK, WACINV13.SMK, and WACINV14.SMK from
+		// RunWacInventorySelectionLoop at 0x2252a cases 9, 13, 14, 17,
+		// 19 through 23, and 26 resolve their WACINV*.SMK members from
 		// INTERFAC.PL and enter
 		// RunStaticMediaScreenWithOptionalVoiceover at 0x2339d without audio.
 		// The retail viewer centers each decoded sequence in the 350x282 WAC
@@ -696,12 +754,56 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 		}
 		return kNoAction;
 	}
+	if (entry.catalog->handler == kWacDatabaseHandlerScriptMediaWithVoiceover) {
+		// Retail case 25 resolves both RIP_GAME members through startup asset
+		// library handle 5 (SCRIPT.PL). RunStaticMediaScreenWithOptionalVoiceover
+		// at 0x2339d starts the WAV after presenting frame one and returns when
+		// managed audio ends.
+		ResourceManager *resources = _wac->_engine->getResources();
+		Common::SeekableReadStream *mediaStream = resources ?
+			resources->scripts().createReadStreamForMember(
+				entry.catalog->imagePath) : nullptr;
+		Common::SeekableReadStream *voiceoverStream = resources ?
+			resources->scripts().createReadStreamForMember(
+				entry.catalog->mediaPath) : nullptr;
+		WacDatabaseMediaCallback callback(this, entry.originalIndex(),
+			voiceoverStream, entry.catalog->mediaPath);
+		uint16 command = kNoAction;
+		const Common::Rect viewport(kWacMediaLeft, kWacMediaTop,
+			kWacMediaLeft + kWacMediaWidth, kWacMediaTop + kWacMediaHeight);
+		_wac->_engine->getInput()->discardMouseTransitions();
+		const bool played = _wac->_engine->getMedia()->
+			playWacInterfaceSequenceStream(mediaStream,
+				entry.catalog->imagePath, viewport, 1, &callback, &command);
+		_wac->_engine->getMilestones()->set(entry.catalog->completionFlag,
+			true, "wac-database-media");
+		clearDatabaseMediaViewport();
+		drawDatabase();
+		debugC(1, kDebugWac,
+			"Ripper: WAC database entry=%u label='%s' media='%s' voiceover='%s' source=SCRIPT.PL played=%d command=0x%x milestone=0x%x",
+			entry.originalIndex(), entry.label.c_str(), entry.catalog->imagePath,
+			entry.catalog->mediaPath, played, command,
+			entry.catalog->completionFlag);
+		if (command == kExitAction)
+			return kExitAction;
+		if (command == kWacDatabaseSelectionChanged &&
+				_databaseSelection < _databaseEntries.size())
+			return dispatchDatabaseEntry(_databaseEntries[_databaseSelection]);
+		return kNoAction;
+	}
 	if (entry.catalog->handler == kWacDatabaseHandlerText) {
 		return runDatabaseTextPanel(entry, entry.catalog->contentResourceId);
 	}
-	debugC(1, kDebugWac,
-		"Ripper: WAC database entry=%u label='%s' handler is stubbed",
-		entry.originalIndex(), entry.label.c_str());
+	if (entry.catalog->handler == kWacDatabaseHandlerRetailNoOp) {
+		// The retail switch has no cases for entries 18 and 27 through 29;
+		// only the shared viewport clear above is observable.
+		debugC(2, kDebugWac,
+			"Ripper: WAC database entry=%u label='%s' completed retail no-op",
+			entry.originalIndex(), entry.label.c_str());
+		return kNoAction;
+	}
+	warning("Ripper: WAC database entry=%u label='%s' has invalid handler=%d",
+		entry.originalIndex(), entry.label.c_str(), entry.catalog->handler);
 	return kNoAction;
 }
 

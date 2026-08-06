@@ -59,6 +59,7 @@ enum MilestoneFlag {
 	kMilestoneGotFarleyWacMessage = 307,
 	kMilestonePlayedGambitEmail = 309,
 	kMilestonePlayedThirdRipperWacMessage = 314,
+	kMilestonePlayedRipperGame = 335,
 	kMilestoneFalconettisWell = 406
 };
 

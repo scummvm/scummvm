@@ -164,6 +164,9 @@ public:
 	bool playWacInterfaceSequence(const Common::String &path,
 		const Common::Rect &centerBounds,
 		uint loopStartFrame, MediaSequenceCallback *callback, uint16 *command);
+	bool playWacInterfaceSequenceStream(Common::SeekableReadStream *stream,
+		const Common::String &name, const Common::Rect &centerBounds,
+		uint loopStartFrame, MediaSequenceCallback *callback, uint16 *command);
 	bool playInterfaceSequence(const Common::String &path, int x, int y,
 		Common::Array<byte> &sourcePalette);
 	bool displayScenePcx(const Common::String &path);
@@ -176,6 +179,9 @@ public:
 	bool playRawSoundEffect(const Common::Array<byte> &data, uint sampleRate,
 		byte flags, Audio::SoundHandle &handle, uint volumePercent = 100);
 	bool playVoiceClip(const Common::String &path, Audio::SoundHandle &handle,
+		uint volumePercent = 100);
+	bool playVoiceClipStream(Common::SeekableReadStream *stream,
+		const Common::String &name, Audio::SoundHandle &handle,
 		uint volumePercent = 100);
 	bool isSoundEffectActive(const Audio::SoundHandle &handle) const;
 	uint32 getSoundEffectElapsedTime(const Audio::SoundHandle &handle) const;
