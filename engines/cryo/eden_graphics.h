@@ -155,6 +155,12 @@ public:
 private:
 	EdenGame *_game;
 
+	/** The last sprite spoken of, so that redrawing it is not spoken of again */
+	int16 _tracedSpriteIndex;
+	int16 _tracedSpriteBank;
+	int16 _tracedSpriteX;
+	int16 _tracedSpriteY;
+
 	int16 _glowX;
 	int16 _glowY;
 	int16 _glowW;
