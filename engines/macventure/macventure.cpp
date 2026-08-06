@@ -546,6 +546,9 @@ bool MacVenture::MacVentureEngine::runScriptEngine() {
 	while (!_currentSelection.empty()) {
 		ObjID obj = _currentSelection.front();
 		_currentSelection.remove_at(0);
+		if (getInvolvedObjects() > 1 && obj == _destObject) {
+			continue;
+		}
 		if (isGameRunning() && _world->isObjActive(obj)) {
 			if (_scriptEngine->runControl(_selectedControl, obj, _destObject, _deltaPoint)) {
 				_haltedInSelection = true;
