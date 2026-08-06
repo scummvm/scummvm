@@ -40,6 +40,7 @@
 #include "cryo/eden.h"
 #include "cryo/sound.h"
 #include "cryo/eden_graphics.h"
+#include "cryo/detection.h"
 
 namespace Cryo {
 
@@ -552,7 +553,7 @@ void EdenGame::deplaval(uint16 roomNum) {
 void EdenGame::move(Direction dir) {
 	Room *room = _globals->_roomPtr;
 	int16 roomNum = _globals->_roomNum;
-	debug("move: from room %4X", roomNum);
+	debugC(1, kDebugScript, "Moving out of room 0x%X", roomNum);
 	char newLoc = 0;
 	_graphics->rundcurs();
 	display();
@@ -923,7 +924,7 @@ void EdenGame::actionLookLake() {
 		_globals->_curAreaFlags |= AreaFlags::afFlag8;
 		room->_id = 3;
 	}
-	debug("sea monster: room = %X, d0 = %X\n", _globals->_roomNum, _globals->_roomImgBank);
+	debugC(1, kDebugScript, "Sea monster in room 0x%X, bank %d", _globals->_roomNum, _globals->_roomImgBank);
 	_graphics->hideBars();
 	_graphics->playHNM(vid);
 	updateRoom(_globals->_roomNum);           //TODO: getting memory trashed here?
@@ -1088,6 +1089,7 @@ void EdenGame::useBank(int16 bank) {
 
 	_bankData = _bankDataBuf;
 	if (_curBankNum != bank) {
+		debugC(2, kDebugGraphics, "Bank %d becomes the one in hand", bank);
 		loadRawFile(bank, _bankDataBuf);
 		verifh(_bankDataBuf);
 		_curBankNum = bank;
@@ -1980,7 +1982,9 @@ void EdenGame::loadCharacter(perso_t *perso) {
 		ptr += READ_LE_UINT16(ptr) - 2;
 		_globals->_persoSpritePtr = baseptr;
 		_globals->_persoSpritePtr2 = baseptr + READ_LE_UINT16(ptr);
-		debug("load perso: b6 len is %d", (int)(_globals->_persoSpritePtr2 - _globals->_persoSpritePtr));
+		debugC(2, kDebugResource, "Character %d loaded, %d bytes of sprite",
+	      _globals->_characterPtr ? (int)(_globals->_characterPtr - _persons) : -1,
+	      (int)(_globals->_persoSpritePtr2 - _globals->_persoSpritePtr));
 	} else {
 		useBank(_globals->_characterImageBank);
 		_characterBankData = _bankData;
@@ -2761,9 +2765,9 @@ void EdenGame::actionDino() {
 	_globals->_roomCharacterPowers = perso->_powers;
 	_globals->_characterPtr = perso;
 	initCharacterPointers(perso);
-	debug("beg dino talk");
+	debugC(1, kDebugScript, "Dinosaur %d begins to talk", _globals->_characterPtr ? (int)(_globals->_characterPtr - _persons) : -1);
 	parle_moi();
-	debug("end dino talk");
+	debugC(1, kDebugScript, "Dinosaur %d has finished talking", _globals->_characterPtr ? (int)(_globals->_characterPtr - _persons) : -1);
 	if (_globals->_areaNum == Areas::arWhiteArch)
 		return;
 	if (_globals->_var60)
@@ -3141,7 +3145,7 @@ void EdenGame::dialautooff() {
 
 void EdenGame::follow() {
 	if (_globals->_roomCharacterType == PersonFlags::pfType12) {
-		debug("follow: hiding person %d", (int)(_globals->_roomCharacterPtr - _persons));
+		debugC(1, kDebugScript, "Hiding character %d, who is following", (int)(_globals->_roomCharacterPtr - _persons));
 		_globals->_roomCharacterPtr->_flags |= PersonFlags::pf80;
 		_globals->_roomCharacterPtr->_roomNum = 0;
 		_globals->_gameFlags |= GameFlags::gfFlag8;
@@ -3915,7 +3919,7 @@ void EdenGame::getdino(Room *room) {
 
 // Original name: getsalle
 Room *EdenGame::getRoom(int16 loc) { //TODO: byte?
-	debug("get room for %X, starting from %d, looking for %X", loc, _globals->_areaPtr->_firstRoomIdx, _globals->_partyOutside);
+	debugC(2, kDebugScript, "Looking for location 0x%X from room %d, party outside 0x%X", loc, _globals->_areaPtr->_firstRoomIdx, _globals->_partyOutside);
 	Room *room = &_gameRooms[_globals->_areaPtr->_firstRoomIdx];
 	loc &= 0xFF;
 	for (;; room++) {
@@ -3926,7 +3930,7 @@ Room *EdenGame::getRoom(int16 loc) { //TODO: byte?
 		if (_globals->_partyOutside == room->_party || room->_party == 0xFFFF)
 			break;
 	}
-	debug("found room: party = %X, bank = %X", room->_party, room->_bank);
+	debugC(2, kDebugScript, "Found room %d: party 0x%X, bank %d, background %d", (int)(room - _gameRooms), room->_party, room->_bank, room->_backgroundBankNum);
 	_globals->_roomImgBank = room->_bank;
 	_globals->_labyrinthRoom = 0;
 	if (_globals->_roomImgBank > 104 && _globals->_roomImgBank <= 112)
@@ -4013,7 +4017,7 @@ void EdenGame::maj2() {
 void EdenGame::updateRoom1(int16 roomNum) {
 	Room *room = getRoom(roomNum & 0xFF);
 	_globals->_roomPtr = room;
-	debug("DrawRoom: room 0x%X, arg = 0x%X", _globals->_roomNum, roomNum);
+	debugC(1, kDebugGraphics, "Updating to room 0x%X, asked for 0x%X", _globals->_roomNum, roomNum);
 	_globals->_curRoomFlags = room->_flags;
 	_globals->_varF1 = room->_flags;
 	animpiece();
@@ -4684,7 +4688,7 @@ void EdenGame::mouse() {
 	                                    _cursorPosY + _cursCenter, _globals->_iconsIndex)))
 		return;
 	_curSpot2 = _currSpot;
-	debug("invoking mouse action %d", _currSpot->_actionId);
+	debugC(1, kDebugScript, "Mouse action %d in room 0x%X", _currSpot->_actionId, _globals->_roomNum);
 	if (mouse_actions[_currSpot->_actionId])
 		(this->*mouse_actions[_currSpot->_actionId])();
 }
@@ -5201,7 +5205,7 @@ void EdenGame::noclicpanel() {
 	}
 	byte num;
 	if (_curSpot2 >= &_gameIcons[119]) {
-		debug("noclic: objid = %p, glob3,2 = %2X %2X", (void *)_curSpot2, _globals->_menuItemIdHi, _globals->_menuItemIdLo);
+		debugC(2, kDebugScript, "Panel: spot %p, menu item %02X %02X", (void *)_curSpot2, _globals->_menuItemIdHi, _globals->_menuItemIdLo);
 		if (_curSpot2->_objectId == (uint16)((_globals->_menuItemIdLo + _globals->_menuItemIdHi) << 8)) //TODO: check me
 			return;
 	} else {
@@ -5223,7 +5227,7 @@ void EdenGame::noclicpanel() {
 skip:
 	;
 	_globals->_menuItemIdHi = (_curSpot2->_objectId & 0xFF00) >> 8;
-	debug("noclic: new glob3,2 = %2X %2X", _globals->_menuItemIdHi, _globals->_menuItemIdLo);
+	debugC(2, kDebugScript, "Panel: menu item now %02X %02X", _globals->_menuItemIdHi, _globals->_menuItemIdLo);
 	displayResult();
 	num &= 0xF0;
 	if (num != 0x30)
@@ -5883,7 +5887,7 @@ void EdenGame::perso_ici(int16 action) {
 
 // Original name: setpersohere
 void EdenGame::setCharacterHere() {
-	debug("setCharacterHere, perso is %d", (int)(_globals->_characterPtr - _persons));
+	debugC(2, kDebugScript, "Character %d is now in room 0x%X", (int)(_globals->_characterPtr - _persons), _globals->_roomNum);
 	_globals->_partyOutside = 0;
 	_globals->_party = 0;
 	_globals->_roomCharacterPtr = nullptr;
@@ -5909,7 +5913,7 @@ void EdenGame::faire_suivre(int16 roomNum) {
 
 // Original name: suis_moi5
 void EdenGame::AddCharacterToParty() {
-	debug("adding person %d to party", (int)(_globals->_characterPtr - _persons));
+	debugC(1, kDebugScript, "Character %d joins the party", (int)(_globals->_characterPtr - _persons));
 	_globals->_characterPtr->_flags |= PersonFlags::pfInParty;
 	_globals->_characterPtr->_roomNum = _globals->_roomNum;
 	_globals->_party |= _globals->_characterPtr->_partyMask;
@@ -5926,7 +5930,7 @@ void EdenGame::addToParty(int16 index) {
 
 // Original name: reste_ici5
 void EdenGame::removeCharacterFromParty() {
-	debug("removing person %d from party", (int)(_globals->_characterPtr - _persons));
+	debugC(1, kDebugScript, "Character %d leaves the party", (int)(_globals->_characterPtr - _persons));
 	_globals->_characterPtr->_flags &= ~PersonFlags::pfInParty;
 	_globals->_partyOutside |= _globals->_characterPtr->_partyMask;
 	_globals->_party &= ~_globals->_characterPtr->_partyMask;
@@ -6007,7 +6011,7 @@ void EdenGame::incPhase() {
 	};
 
 	_globals->_phaseNum++;
-	debug("!!! next phase - %4X , room %4X", _globals->_phaseNum, _globals->_roomNum);
+	debugC(1, kDebugScript, "Phase advances to 0x%X in room 0x%X", _globals->_phaseNum, _globals->_roomNum);
 	_globals->_phaseActionsCount = 0;
 	for (const phase_t *phase = phases; phase->_id != -1; phase++) {
 		if (_globals->_phaseNum == phase->_id) {
@@ -6178,7 +6182,7 @@ void EdenGame::bigphase1() {
 	};
 
 	int16 phase = (_globals->_phaseNum & ~3) + 0x10;   //TODO: check me
-	debug("!!! big phase - %4X", phase);
+	debugC(1, kDebugScript, "Phase set to 0x%X in room 0x%X", phase, _globals->_roomNum);
 	_globals->_phaseActionsCount = 0;
 	_globals->_phaseNum = phase;
 	if (phase > 560)
@@ -6896,7 +6900,7 @@ char EdenGame::testCondition(int16 index) {
 		} while (sp2 != sp);
 	}
 //	if (value)
-	debug("cond %d(-1) returns %s", index, value ? "TRUE" : "false");
+	debugC(3, kDebugScript, "Condition %d is %s", index, value ? "TRUE" : "false");
 //	if (index == 402) debug("(glob_61.b == %X) & (glob_12.w == %X) & (glob_4C.b == %X) & (glob_4E.b == %X)", p_global->eventType, p_global->phaseNum, p_global->worldTyrannSighted, p_global->ff_4E);
 	return value != 0;
 }

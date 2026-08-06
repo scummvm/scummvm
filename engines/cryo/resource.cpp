@@ -21,6 +21,7 @@
 
 #include "cryo/defs.h"
 #include "cryo/cryo.h"
+#include "cryo/detection.h"
 #include "cryo/cryolib.h"
 #include "cryo/eden.h"
 
@@ -53,12 +54,12 @@ void EdenGame::verifh(byte *ptr) {
 	if (sum != 0xAB)
 		return;
 
-	debug("* Begin unpacking resource");
 	head -= 6;
 	uint16 h0 = READ_LE_UINT16(head);
 	// 3 = 2 bytes for the uint16 and 1 byte for an unused char
 	head += 3;
 	uint16 h3 = READ_LE_UINT16(head);
+	debugC(2, kDebugResource, "Unpacking %d bytes into %d", h3, h0);
 	head += 2;
 	byte *data = h0 + head + 26;
 	h3 -= 6;
@@ -113,6 +114,7 @@ void EdenGame::loadRawFile(uint16 num, byte *buffer) {
 	PakHeaderItem *file = &_bigfileHeader->_files[num];
 	int32 size = file->_size;
 	int32 offs = file->_offs;
+	debugC(2, kDebugResource, "Loading resource %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), (uint)offs, size);
 
 	_bigfile.seek(offs, SEEK_SET);
 	_bigfile.read(buffer, size);
@@ -128,7 +130,7 @@ void EdenGame::loadIconFile(uint16 num, Icon *buffer) {
 	PakHeaderItem *file = &_bigfileHeader->_files[num];
 	int32 size = file->_size;
 	int32 offs = file->_offs;
-	debug("* Loading icon - Resource %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), offs, size);
+	debugC(2, kDebugResource, "Loading icons %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), (uint)offs, size);
 	_bigfile.seek(offs, SEEK_SET);
 
 	int count = size / 18;	// sizeof(Icon)
@@ -164,7 +166,7 @@ void EdenGame::loadRoomFile(uint16 num, Room *buffer) {
 	PakHeaderItem *file = &_bigfileHeader->_files[num];
 	int32 size = file->_size;
 	int32 offs = file->_offs;
-	debug("* Loading room - Resource %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), offs, size);
+	debugC(2, kDebugResource, "Loading rooms %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), (uint)offs, size);
 	_bigfile.seek(offs, SEEK_SET);
 
 	int count = size / 14;	// sizeof(Room)
@@ -193,7 +195,7 @@ Common::SeekableReadStream *EdenGame::loadSubStream(uint16 resNum) {
 	PakHeaderItem *file = &_bigfileHeader->_files[resNum];
 	int size = file->_size;
 	int offs = file->_offs;
-	debug("* Loading file %s at 0x%X, %d bytes", file->_name.c_str(), (uint)offs, size);
+	debugC(2, kDebugResource, "Loading stream %d (%s) at 0x%X, %d bytes", resNum, file->_name.c_str(), (uint)offs, size);
 	return new Common::SafeSeekableSubReadStream(&_bigfile, offs, offs + size, DisposeAfterUse::NO);
 }
 
@@ -204,7 +206,7 @@ int EdenGame::loadSound(uint16 num) {
 	PakHeaderItem *file = &_bigfileHeader->_files[resNum];
 	int32 size = file->_size;
 	int32 offs = file->_offs;
-	debug("* Loading sound %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), (uint)offs, size);
+	debugC(2, kDebugResource, "Loading sound %d as resource %d (%s) at 0x%X, %d bytes", num, resNum, file->_name.c_str(), (uint)offs, size);
 	if (_soundAllocated) {
 		free(_voiceSamplesBuffer);
 		_voiceSamplesBuffer = nullptr;
@@ -492,7 +494,7 @@ void EdenGame::loadpartoffile(uint16 num, void *buffer, int32 pos, int32 len) {
 	assert(num < _bigfileHeader->_count);
 	PakHeaderItem *file = &_bigfileHeader->_files[num];
 	int32 offs = READ_LE_UINT32(&file->_offs);
-	debug("* Loading partial resource %d (%s) at 0x%X(+0x%X), %d bytes", num, file->_name.c_str(), offs, pos, len);
+	debugC(2, kDebugResource, "Loading resource %d (%s) at 0x%X(+0x%X), %d of %d bytes", num, file->_name.c_str(), (uint)offs, pos, len, file->_size);
 	_bigfile.seek(offs + pos, SEEK_SET);
 	_bigfile.read(buffer, len);
 }
