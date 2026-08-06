@@ -221,7 +221,6 @@ void ModalDialogManager::drawTextEntry(const Common::String &prompt,
 	}
 
 	g_system->unlockScreen();
-	_engine->getCursor()->refresh();
 	g_system->updateScreen();
 }
 
