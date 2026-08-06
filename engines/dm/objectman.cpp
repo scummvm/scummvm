@@ -115,29 +115,17 @@ void ObjectMan::loadObjectNames() {
 
 	_objectIconForMousePointer = new byte[16 * 16];
 
-	char *objectNames = new char[dispMan.getCompressedDataSize(kDMObjectNamesGraphicIndice) + kDMObjectNameCount];
-	Common::MemoryReadStream stream = dispMan.getCompressedData(kDMObjectNamesGraphicIndice);
+	uint16 graphicIdx = dispMan.getGraphicIndex(kDMObjectNamesGraphicIndice);
+	char *objectNames = new char[dispMan.getCompressedDataSize(graphicIdx) + kDMObjectNameCount];
+	Common::MemoryReadStream stream = dispMan.getCompressedData(graphicIdx);
 
-	if (_vm->getPlatform() == Common::kPlatformDOS) {
-		for (uint16 objNameIndex = 0; objNameIndex < kDMObjectNameCount; ++objNameIndex) {
-			_objectNames[objNameIndex] = objectNames;
-			byte tmpByte;
-			while ((tmpByte = stream.readByte()) != '\0') {
-				*objectNames++ = tmpByte;
-			}
-			*objectNames++ = '\0';
-		}
-	} else {
-		for (uint16 objNameIndex = 0; objNameIndex < kDMObjectNameCount; ++objNameIndex) {
-			_objectNames[objNameIndex] = objectNames;
-
-			byte tmpByte;
-			for (tmpByte = stream.readByte(); !(tmpByte & 0x80); tmpByte = stream.readByte()) // last char of object name has 7th bit on
-				*objectNames++ = tmpByte; // write while not last char
-
-			*objectNames++ = tmpByte & 0x7F; // write without the 7th bit
-			*objectNames++ = '\0'; // terminate string
-		}
+	for (uint16 objNameIndex = 0; objNameIndex < kDMObjectNameCount; ++objNameIndex) {
+		_objectNames[objNameIndex] = objectNames;
+		byte tmpByte;
+		for (tmpByte = stream.readByte(); !(tmpByte & 0x80); tmpByte = stream.readByte())
+			*objectNames++ = tmpByte;
+		*objectNames++ = tmpByte & 0x7F;
+		*objectNames++ = '\0';
 	}
 }
 
