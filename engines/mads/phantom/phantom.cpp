@@ -162,13 +162,6 @@ void PhantomEngine::global_init_code() {
 	himem_preload_series("*RTK_6", GLOBAL);
 	himem_preload_series("*RTK_9", GLOBAL);
 	himem_preload_series("*RALRH_9", GLOBAL);
-
-	if (g_engine->isDemo()) {
-		inter_move_object(key, PLAYER);
-		inter_move_object(lantern, PLAYER);
-		inter_move_object(small_note, PLAYER);
-		inter_move_object(rope, PLAYER);
-	}
 }
 
 void PhantomEngine::section_music(int section_num) {
