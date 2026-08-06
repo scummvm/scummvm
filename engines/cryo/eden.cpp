@@ -4408,12 +4408,15 @@ void EdenGame::FRDevents() {
 	if (_globals->_displayFlags & DisplayFlags::dfFrescoes) {
 		if (_frescoTalk)
 			_graphics->restoreUnderSubtitles();
-		if (_currCursor == 9 && !_torchCursor) {
+		// The torch is cursor 9 on the Macintosh but 15 on DOS, where 15 is also
+		// where the flute's icon sits in the main bank
+		const int16 torchCursor = (_vm->getPlatform() == Common::kPlatformMacintosh) ? 9 : 15;
+		if (_currCursor == torchCursor && !_torchCursor) {
 			_graphics->rundcurs();
 			_torchCursor = true;
 			_graphics->setGlowX(-1);
 		}
-		if (_currCursor != 9 && _torchCursor) {
+		if (_currCursor != torchCursor && _torchCursor) {
 			_graphics->unglow();
 			_torchCursor = false;
 			_cursorSaved = false;
@@ -7727,7 +7730,7 @@ void EdenGame::displayMappingLine(int16 r3, int16 r4, byte *target, byte *textur
 }
 
 // PC cursor
-CubeCursor _cursorsPC[9] = {
+CubeCursor _cursorsPC[10] = {
 		{ { 0, 0, 0, 0, 0, 0 }, 3, 2 },
 		{ { 1, 1, 0, 1, 1, 0 }, 2, -2 },
 		{ { 2, 2, 2, 2, 2, 2 }, 1, 2 },
@@ -7737,7 +7740,10 @@ CubeCursor _cursorsPC[9] = {
 		{ { 6, 6, 6, 6, 6, 6 }, 1, 2 },
 		{ { 7, 7, 7, 7, 7, 7 }, 1, -2 },
 //		{ { 0, 8, 0, 0, 8, 8 }, 2, 2 },
-		{ { 0, 8, 0, 0, 8, 8 }, 2, 2 }
+		{ { 0, 8, 0, 0, 8, 8 }, 2, 2 },
+		// The face drDrawFlag20 asks for, which the table stopped short of. Its
+		// texture is pale stone, and it turns at the rate cursor 0 does
+		{ { 9, 9, 9, 9, 9, 9 }, 3, 2 }
 };
 
 XYZ _cubePC[6][3] = {
@@ -8012,6 +8018,7 @@ void EdenGame::initCubePC() {
 }
 
 void EdenGame::selectPCMap(int16 num) {
+	num = CLIP<int16>(num, 0, ARRAYSIZE(_cursorsPC) - 1);
 	if (num != _cursCurPCMap) {
 		_pcCursor = &_cursorsPC[num];
 		unsigned char *bank = _mainBankBuf + READ_LE_UINT16(_mainBankBuf);
