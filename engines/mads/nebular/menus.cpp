@@ -1733,6 +1733,25 @@ void global_menu_system_shutdown() {
 void global_game_menu() {
 	g_engine->flushKeys();
 
+	// Special handling for direct save/load dialogs when not using the original dialogs. We do it here
+	// before the original code screws up the active screen
+	if (!config_file.original_save_load) {
+		switch (kernel.activate_menu) {
+		case GAME_SAVE_MENU:
+			kernel.activate_menu = GAME_NO_MENU;
+			g_engine->saveGameDialog();
+			return;
+		case GAME_RESTORE_MENU:
+			kernel.activate_menu = GAME_NO_MENU;
+			if (g_engine->loadGameDialog())
+				// Dummy name to flag that load was successful
+				Common::strcpy_s(save_game_buf, "OK");
+			return;
+		default:
+			break;
+		}
+	}
+
 	game_menu_setup();
 
 	game_menu_direct_jump = (kernel.activate_menu != GAME_MAIN_MENU);
