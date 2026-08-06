@@ -27,8 +27,13 @@ namespace Riddle {
 namespace Rooms {
 
 void Section9Room::escapePressed(void *, void *) {
+	// This runs from the event handler, outside of the daemon/parser dispatch,
+	// so the trigger mode has to be put back or the next trigger the parser
+	// issues would be delivered to the daemon instead
+	const KernelTriggerType oldMode = _G(kernel).trigger_mode;
 	_G(kernel).trigger_mode = KT_DAEMON;
 	disable_player_commands_and_fade_init(56);
+	_G(kernel).trigger_mode = oldMode;
 }
 
 } // namespace Rooms
