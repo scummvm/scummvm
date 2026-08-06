@@ -23,6 +23,7 @@
 #include "common/debug.h"
 
 #include "ripper/detection.h"
+#include "ripper/diagnostics/milestone_overlay.h"
 #include "ripper/milestones.h"
 #include "ripper/ripper.h"
 
@@ -49,11 +50,12 @@ bool parseMilestoneId(const Common::String &text, uint &flag) {
 
 Console::Console(RipperEngine *engine) : GUI::Debugger(), _engine(engine) {
 	assert(_engine);
-	registerCmd("MILESTONE", WRAP_METHOD(Console, cmdMilestones));
 	registerCmd("MILESTONES", WRAP_METHOD(Console, cmdMilestones));
+	registerCmd("OVERLAY_MILESTONES", WRAP_METHOD(Console, cmdOverlayMilestones));
 	registerCmd("PUZZLE_HELP", WRAP_METHOD(Console, cmdPuzzleHelp));
 	debugC(1, kDebugGeneral,
-		"Ripper: initialized debug console commands=3 commands=MILESTONE,MILESTONES,PUZZLE_HELP");
+		"Ripper: initialized debug console commands=3 "
+		"commands=MILESTONES,OVERLAY_MILESTONES,PUZZLE_HELP");
 }
 
 void Console::printMilestone(uint flag) {
@@ -115,6 +117,29 @@ bool Console::cmdMilestones(int argc, const char **argv) {
 
 	debugPrintf("Usage: MILESTONES [ACTIVE|<ID>|TOGGLE <ID>]\n");
 	debugPrintf("ID must be between 0 and %u\n", Milestones::kFlagCount - 1);
+	return true;
+}
+
+bool Console::cmdOverlayMilestones(int argc, const char **argv) {
+	MilestoneOverlay *overlay = _engine->getMilestoneOverlay();
+	bool enabled = !overlay->isEnabled();
+	if (argc == 2) {
+		const Common::String argument(argv[1]);
+		if (argument.equalsIgnoreCase("ON")) {
+			enabled = true;
+		} else if (argument.equalsIgnoreCase("OFF")) {
+			enabled = false;
+		} else {
+			debugPrintf("Usage: OVERLAY_MILESTONES [ON|OFF]\n");
+			return true;
+		}
+	} else if (argc != 1) {
+		debugPrintf("Usage: OVERLAY_MILESTONES [ON|OFF]\n");
+		return true;
+	}
+
+	overlay->setEnabled(enabled);
+	debugPrintf("Milestone change overlay %s\n", enabled ? "enabled" : "disabled");
 	return true;
 }
 

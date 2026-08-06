@@ -34,6 +34,7 @@ class CyberManager;
 class InputManager;
 class Inventory;
 class MediaPlayer;
+class MilestoneOverlay;
 class Milestones;
 class ModalDialogManager;
 class ResourceManager;
@@ -64,6 +65,7 @@ public:
 	InputManager *getInput() const { return _input.get(); }
 	Inventory *getInventory() const { return _inventory.get(); }
 	MediaPlayer *getMedia() const { return _media.get(); }
+	MilestoneOverlay *getMilestoneOverlay() const { return _milestoneOverlay.get(); }
 	Milestones *getMilestones() const { return _milestones.get(); }
 	ModalDialogManager *getModalDialog() const { return _modalDialog.get(); }
 	ResourceManager *getResources() const { return _resources.get(); }
@@ -91,6 +93,7 @@ private:
 	Common::ScopedPtr<SceneAudioManager> _sceneAudio;
 	Common::ScopedPtr<MediaPlayer> _media;
 	Common::ScopedPtr<Milestones> _milestones;
+	Common::ScopedPtr<MilestoneOverlay> _milestoneOverlay;
 	Common::ScopedPtr<ModalDialogManager> _modalDialog;
 	Common::ScopedPtr<ResourceManager> _resources;
 	Common::ScopedPtr<ScriptManager> _scripts;
