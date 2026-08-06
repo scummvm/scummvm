@@ -41,6 +41,7 @@
 #include "ripper/puzzles/eight_button_sequence.h"
 #include "ripper/puzzles/gc_csh.h"
 #include "ripper/puzzles/kd_shooting_gallery.h"
+#include "ripper/puzzles/key_group.h"
 #include "ripper/puzzles/keypad_sequence.h"
 #include "ripper/puzzles/kj_blob_shooter.h"
 #include "ripper/puzzles/rolodex.h"
@@ -75,7 +76,7 @@ const char *SceneActionDispatcher::actionName(uint action) {
 	case 13: return "blob shooter";
 	case 14: return "EBZ2S unlock-gated action menu";
 	case 15: return "mechini combat encounter";
-	case 16: return "key group puzzle";
+	case kSceneActionKeyGroupPuzzle: return "key group puzzle";
 	case 17: return "date selection puzzle";
 	case 18: return "KI skull maze puzzle";
 	case kSceneActionWebGridShiftPuzzle: return "web grid shift puzzle";
@@ -119,7 +120,7 @@ const char *SceneActionDispatcher::actionName(uint action) {
 	case 57:
 	case 58:
 	case 59: return "no-op";
-	case 60: return "key group puzzle";
+	case kSceneActionKeyGroupPuzzleAlias: return "key group puzzle";
 	case kSceneActionEightButtonSequencePuzzle: return "eight-button sequence puzzle";
 	case 62: return "Cain dialogue scene";
 	case kSceneActionAppendNotebookText: return "append resource string to RIPPER.TXT";
@@ -251,6 +252,16 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		debugC(1, kDebugCombat,
 			"Ripper: Mechini combat scene action completed result=%d milestone=%u", result, argument);
 		return result != MechiniEncounter::kLoadFailed;
+	}
+	if (action == kSceneActionKeyGroupPuzzle ||
+			action == kSceneActionKeyGroupPuzzleAlias) {
+		KeyGroupPuzzle puzzle(engine);
+		const KeyGroupPuzzle::Result result = puzzle.run(argument);
+		debugC(1, kDebugPuzzles,
+			"Ripper: key group puzzle scene action completed "
+			"action=%u result=%d milestone=%u",
+			action, result, argument);
+		return result != KeyGroupPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionRatiniCombat) {
 		// DispatchSceneEntryAction at 0x36cc6 forwards the completion flag and

@@ -842,6 +842,23 @@
   puzzle. `CIRC1.WAV` is the looping ambient cue, `CIRC0.WAV` accompanies
   the idle meter cycle, `CIRC2.WAV` and `CIRC3.WAV` accompany regression
   and progress, and `CIRC4.WAV` accompanies a valid drop.
+- Scene actions 16 and 60 both pass their flag argument to
+  `RunKeyGroupPuzzleScene` at `0x3ca1f`. The full-screen `KGP_2.PCX` backing
+  presents twenty `KG_P0.BBM` through `KG_P19.BBM` book-index entries in the
+  left column and fourteen empty key-title rows in the right column. The
+  source control Y table at `0x84c9a` uses fixed X=14; the target Y table at
+  `0x84cc2` uses fixed X=330. A selected entry is removed from its current
+  row and follows the pointer with the original click offset until the player
+  selects an empty row in either column. Both slot arrays persist across
+  re-entry for the lifetime of the process.
+- The exact right-column solution at `0x84cfa` is
+  `[0, 4, 10, 15, 1, 13, 16, 5, 9, 7, 18, 19, 14, 11]`. A match or the
+  case-insensitive hidden keyword `sponge` sets the caller's completion flag
+  and exits. F1 opens help table `0x1b5`. Escape clears navigation flags 342
+  and 343 and sets cancel flag 344; the left and right 50-pixel edge controls
+  respectively set only flag 342 or flag 343 before returning to the script.
+  Those edge controls are disabled while an entry is attached to the pointer,
+  while the keyboard Left and Right commands remain active.
 - If flag `0x55` is set, the circuit puzzle also presents `ED_WAC.SMK`,
   resource `0xb6`, and the `CIRCTMPL.PCX` backing; otherwise it selects
   `CIRCTMP2.PCX`. `CIRC5.WAV` accompanies the optional manual branch.
