@@ -358,7 +358,8 @@ void EdenGame::loadpermfiles() {
 		convertMacToPC();
 
 		// Skip the icons and rooms of the DOS version
-		f.skip(kNumIcons * 14 + kNumRooms * 11);
+		f.skip(kNumIcons * 18 +		// sizeof(Icon)
+		       kNumRooms * 14);		// sizeof(Room)
 		break;
 	default:
 		error("Unsupported platform");
