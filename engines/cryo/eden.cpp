@@ -1967,8 +1967,9 @@ void EdenGame::loadCharacter(perso_t *perso) {
 		return;
 
 	if (perso->_spriteBank != _globals->_characterImageBank) {
-		_graphics->setCurCharRect(&_characterRects[perso->_id]); //TODO: array of int16?
-		dword_30728 = _characterArray[perso->_id];
+		// Both tables only cover the speaking characters, ids 0 to 18
+		_graphics->setCurCharRect(&_characterRects[MIN<int>(perso->_id, ARRAYSIZE(_characterRects) - 1)]);
+		dword_30728 = _characterArray[MIN<int>(perso->_id, ARRAYSIZE(_characterArray) - 1)];
 		ef_perso();
 		_globals->_characterImageBank = perso->_spriteBank;
 		useBank(_globals->_characterImageBank);
@@ -2253,8 +2254,11 @@ void EdenGame::getDataSync() {
 // Original name: ReadNombreFrames
 int16 EdenGame::readFrameNumber() {
 	int16 num = 0;
-	_animationTable = _gameLipsync + 7260 + 2;    //TODO: fix me
-	while (*_animationTable++ != 0xFF)
+	// Stop one byte short of the end: animCharacter() indexes the table with
+	// frame numbers up to and including the returned count
+	byte *end = _gameLipsync + LIPSYNC_BUFFER_SIZE - 1;
+	_animationTable = _gameLipsync + LIPSYNC_ANIM_TABLE_SIZE + 2;
+	while (_animationTable < end && *_animationTable++ != 0xFF)
 		num++;
 	return num;
 }
@@ -3423,13 +3427,19 @@ bool EdenGame::dial_scan(Dialog *dial) {
 	}
 
 	if (!skipFl) {
-		perso_t *perso;
-		for (perso = _persons; !(perso->_partyMask == mask && perso->_roomNum == _globals->_roomNum); perso++)
-			; //Find matching
+		perso_t *perso = _persons;
+		perso_t *lastPerso = &_persons[ARRAYSIZE(_persons)];
+		while (perso != lastPerso && !(perso->_partyMask == mask && perso->_roomNum == _globals->_roomNum))
+			perso++; //Find matching
 
-		_globals->_characterPtr = perso;
-		initCharacterPointers(perso);
-		no_perso();
+		// Leave the character in place rather than acting on what follows the
+		// array; the line still has to run, it may carry a phase change
+		if (perso != lastPerso) {
+			_globals->_characterPtr = perso;
+			initCharacterPointers(perso);
+			no_perso();
+		} else
+			warning("dial_scan: no person with mask %04X in room %04X", mask, _globals->_roomNum);
 	}
 
 	hidx = _globals->_dialogPtr->_textCondHiMask;
@@ -4950,7 +4960,6 @@ object_t *EdenGame::getObjectPtr(int16 id) {
 
 void EdenGame::countObjects() {
 	int16 index = 0;
-	byte total = 0;
 	for (int i = 0; i < MAX_OBJECTS; i++) {
 		int16 count = _objects[i]._count;
 		if (count == 0)
@@ -4959,13 +4968,10 @@ void EdenGame::countObjects() {
 		if (_objects[i]._flags & ObjectFlags::ofInHands)
 			count--;
 
-		if (count) {
-			total += count;
-			while (count--)
-				_ownObjects[index++] = _objects[i]._id;
-		}
+		while (count-- > 0 && index < ARRAYSIZE(_ownObjects))
+			_ownObjects[index++] = _objects[i]._id;
 	}
-	_globals->_objCount = total;
+	_globals->_objCount = (byte)index;
 }
 
 void EdenGame::showObjects() {
@@ -5956,7 +5962,7 @@ void EdenGame::perso_ici(int16 action) {
 
 // Original name: setpersohere
 void EdenGame::setCharacterHere() {
-	debugC(2, kDebugScript, "Character %d is now in room 0x%X", (int)(_globals->_characterPtr - _persons), _globals->_roomNum);
+	debugC(2, kDebugScript, "Character %d is now in room 0x%X", _globals->_characterPtr ? (int)(_globals->_characterPtr - _persons) : -1, _globals->_roomNum);
 	_globals->_partyOutside = 0;
 	_globals->_party = 0;
 	_globals->_roomCharacterPtr = nullptr;

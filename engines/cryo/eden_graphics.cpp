@@ -807,7 +807,8 @@ void EdenGraphics::displayRoom() {
 			drawSprite(0, 320, 16, true);
 			displaySingleRoom(room);
 			_game->_globals->_roomBaseX = 320;
-			displaySingleRoom(room + 1);
+			if ((room + 1)->_bank != 65535)
+				displaySingleRoom(room + 1);
 		}
 		else
 			displaySingleRoom(room);
