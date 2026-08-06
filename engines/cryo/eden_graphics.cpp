@@ -26,6 +26,8 @@
 #include "cryo/eden_graphics.h"
 #include "cryo/detection.h"
 
+#include "common/file.h"
+
 #include "graphics/blit.h"
 #include "video/hnm_decoder.h"
 
@@ -1309,6 +1311,84 @@ void EdenGraphics::showMovie(int16 num, char arg1) {
 
 	delete _hnmView;
 	delete decoder;
+}
+
+// Play a movie loose on the disc rather than inside the resource file. False
+// when the file isn't there or holds nothing we can decode
+bool EdenGraphics::playMovieFile(const Common::String &fileName) {
+	Common::File *stream = new Common::File();
+	if (!stream->open(Common::Path(fileName))) {
+		delete stream;
+		return false;
+	}
+
+	Video::VideoDecoder *decoder = new Video::HNMDecoder(g_system->getScreenFormat());
+	if (!decoder->loadStream(stream)) {
+		// The older, untagged variant. loadStream() takes the stream over
+		// either way, so the second attempt needs one of its own
+		delete decoder;
+		stream = new Common::File();
+		if (!stream->open(Common::Path(fileName))) {
+			delete stream;
+			return false;
+		}
+		decoder = new HNM1Decoder();
+		if (!decoder->loadStream(stream)) {
+			delete decoder;
+			return false;
+		}
+	}
+
+	decoder->start();
+
+	View *view = new View(decoder->getWidth(), decoder->getHeight());
+	view->setSrcZoomValues(0, 0);
+	view->setDisplayZoomValues(decoder->getWidth() * 2, decoder->getHeight() * 2);
+	view->centerIn(_game->_vm->_screenView);
+
+	// These movies differ in height, so blank the screen or the previous one
+	// shows around the edges of a shorter one
+	CLBlitter_FillScreenView(0);
+
+	color_t palette[256];
+	bool canceled = false;
+	do {
+		bool newFrame = false;
+		if (decoder->needsUpdate()) {
+			const Graphics::Surface *frame = decoder->decodeNextFrame();
+			if (frame) {
+				Graphics::copyBlit(view->_bufferPtr, (const byte *)frame->getPixels(),
+				                   view->_pitch, frame->pitch, frame->w, frame->h, 1);
+			}
+			if (decoder->hasDirtyPalette()) {
+				const byte *framePalette = decoder->getPalette();
+				for (int i = 0; i < 256; i++) {
+					palette[i].r = framePalette[(i * 3) + 0] << 8;
+					palette[i].g = framePalette[(i * 3) + 1] << 8;
+					palette[i].b = framePalette[(i * 3) + 2] << 8;
+				}
+				CLBlitter_Send2ScreenNextCopy(palette, 0, 256);
+			}
+			newFrame = true;
+		}
+
+		if (newFrame)
+			CLBlitter_CopyView2Screen(view);
+
+		// A click moves on to the next movie, as pressing a key did with the
+		// viewer the demo's batch file called
+		if (_game->_vm->isMouseButtonDown(CLIP<uint32>(decoder->getTimeToNextFrame(), 1, 10))) {
+			if (!_game->isMouseHeld()) {
+				_game->setMouseHeld();
+				canceled = true;
+			}
+		} else
+			_game->setMouseNotHeld();
+	} while (!_game->_vm->shouldQuit() && !decoder->endOfVideo() && !canceled);
+
+	delete view;
+	delete decoder;
+	return true;
 }
 
 bool EdenGraphics::getShowBlackBars() {

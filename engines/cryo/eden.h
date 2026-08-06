@@ -51,6 +51,7 @@ public:
 	~EdenGame();
 
 	void run();
+	void playMovieReel();
 	void debugPlayVideo(int16 num);
 	object_t *getObjectPtr(int16 id);
 	void showObjects();

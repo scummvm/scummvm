@@ -63,6 +63,8 @@ public:
 	const char *getGameId() const;
 	Common::Platform getPlatform() const;
 	bool isDemo() const;
+	/** True for a release that is only a reel of movies, with no game data. */
+	bool isMovieReel() const;
 
 	// We need random numbers
 	Common::RandomSource *_rnd;

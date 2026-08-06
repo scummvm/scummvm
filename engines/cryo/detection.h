@@ -33,6 +33,11 @@ enum CryoDebugChannels {
 	kDebugMovie			///< Movies and the subtitles which caption them
 };
 
+enum CryoGameFlags {
+	/** A release with no game data, only loose movies and a list to walk */
+	GF_MOVIE_REEL = (1 << 0)
+};
+
 } // End of namespace Cryo
 
 #endif
