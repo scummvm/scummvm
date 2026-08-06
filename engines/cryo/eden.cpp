@@ -2394,27 +2394,32 @@ void EdenGame::my_bulle() {
 			lineWidth += width;
 			int16 overrun = lineWidth - _globals->_textWidthLimit;
 			if (overrun > 0) {
-				_numTextLines++;
-				if (c != ' ') {
-					*linesp++ = wordsOnLine;
-					*linesp++ = wordWidth + _spaceWidth - overrun;
+				if (_numTextLines < MAX_SUBTITLE_LINES) {
+					_numTextLines++;
+					if (c != ' ') {
+						*linesp++ = wordsOnLine;
+						*linesp++ = wordWidth + _spaceWidth - overrun;
+						lineWidth = wordWidth;
+					} else {
+						*linesp++ = wordsOnLine + 1;
+						*linesp++ = _spaceWidth - overrun;
+						lineWidth = 0;
+					}
+				} else if (c != ' ')
 					lineWidth = wordWidth;
-				} else {
-					*linesp++ = wordsOnLine + 1;
-					*linesp++ = _spaceWidth - overrun;   //TODO: checkme
+				else
 					lineWidth = 0;
-				}
 				wordWidth = 0;
 				wordsOnLine = 0;
-			} else {
-				if (c == ' ') {
-					wordsOnLine++;
-					wordWidth = 0;
-				}
+			} else if (c == ' ') {
+				wordsOnLine++;
+				wordWidth = 0;
 			}
 		}
 	}
 	_numTextLines++;
+	if (_numTextLines > MAX_SUBTITLE_LINES)
+		_numTextLines = MAX_SUBTITLE_LINES;
 	*linesp++ = wordsOnLine + 1;
 	*linesp++ = wordWidth;
 	*sentencePtr = c;
@@ -2458,7 +2463,7 @@ void EdenGame::my_pr_bulle() {
 	textout = _graphics->getSubtitlesViewBuf();
 	byte *textPtr = _sentenceBuffer;
 	int16 lines = 1;
-	while (!done) {
+	while (!done && lines <= MAX_SUBTITLE_LINES) {
 		int16 numWords = *coo++;       // num words on line
 		int16 padSize = *coo++;        // amount of extra spacing
 		byte *currOut = textout;

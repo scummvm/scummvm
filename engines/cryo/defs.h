@@ -32,6 +32,8 @@ namespace Cryo {
 ///////////////// Game defs
 
 #define FONT_HEIGHT 9
+// The subtitle view is 60 rows tall, so at most 6 lines fit in it
+#define MAX_SUBTITLE_LINES 6
 
 // _gameLipsync holds the animation table followed by the lipsync data area
 #define LIPSYNC_ANIM_TABLE_SIZE 7260
