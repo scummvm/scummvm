@@ -43,7 +43,6 @@ public:
 
 	Result run(uint completionFlag);
 	uint16 service(uint frame) override;
-	bool continueAfterEnd() const override { return true; }
 	bool ownsInput() const override { return true; }
 
 private:
