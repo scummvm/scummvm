@@ -315,7 +315,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Alavi Detective - Murder of Miss Rojan (Hayoola) (Persian)
 	WME_WINENTRY("alavi", "",
-		WME_ENTRY1s("data.dcp", "bffb07282d27b6c5351ed4fce92db4da", 516186290), Common::FA_IRN, ADGF_UNSTABLE | GF_3D, WME_ANDISHE_VARAN),
+		WME_ENTRY1s("data.dcp", "bffb07282d27b6c5351ed4fce92db4da", 516186290), Common::FA_IRN, GF_3D, WME_ANDISHE_VARAN),
 
 	// Alimardan's Mischief (Retail) (Persian)
 	WME_WINENTRY("alimardan1", "",
