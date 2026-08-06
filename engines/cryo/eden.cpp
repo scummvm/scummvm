@@ -1821,7 +1821,7 @@ void EdenGame::animCharacter() {
 	}
 	if (_animateTalking) {
 		if (!_animationTable) {
-			_animationTable = _gameLipsync + 7262;    //TODO: fix me
+			_animationTable = _gameLipsync + LIPSYNC_ANIM_TABLE_SIZE + 2;
 			if (!_backgroundSaved) {
 				_graphics->saveMouthBackground();
 				_backgroundSaved = true;
@@ -4087,7 +4087,7 @@ void EdenGame::allocateBuffers() {
 	ALLOC(_mainBankBuf, 0x9400, byte);
 	ALLOC(_glowBuffer, 0x2800, byte);
 	ALLOC(_gameFont, 0x900, byte);
-	ALLOC(_gameLipsync, 0x205C, byte);
+	ALLOC(_gameLipsync, LIPSYNC_BUFFER_SIZE, byte);
 	ALLOC(_musicBuf, kMaxMusicSize, byte);
 #undef ALLOC
 }
@@ -4837,7 +4837,10 @@ void EdenGame::persovox() {
 	volumeLeft = _globals->_prefVoiceVol[0];
 	volumeRight = _globals->_prefVoiceVol[1];
 	_voiceChannel->setVolume(volumeLeft, volumeRight);
-	_voiceChannel->queueBuffer(_voiceSamplesBuffer, _voiceSamplesSize, true);
+	// A release which doesn't carry this line leaves nothing to play, but the
+	// line is still on screen to be read and clicked away
+	if (_voiceSamplesSize > 0)
+		_voiceChannel->queueBuffer(_voiceSamplesBuffer, _voiceSamplesSize, true);
 	_personTalking = true;
 	_musicFadeFlag = 0;
 	_lastAnimTicks = _vm->_timerTicks;
