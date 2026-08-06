@@ -722,6 +722,8 @@ private:
 	byte  _cubeTexture[0x4000];
 	int   _cubeFaces;
 	uint32 _cursorOldTick, _cursorNewTick;
+	// How many turns of the cursor cube have been let go by, see enginePC()
+	int _cubeStepDelay;
 	byte *_codePtr;
 
 	uint8 tab_2CB1E[8][4];
