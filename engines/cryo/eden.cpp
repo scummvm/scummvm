@@ -2078,6 +2078,9 @@ void EdenGame::displayBackgroundFollower() {
 				bank = 327;
 			useBank(bank + _globals->_roomBackgroundBankNum);
 			_graphics->drawSprite(0, 0, 16, true);
+			// One background stands behind several characters, each against a
+			// corner of its own, blown up to fill the picture
+			_graphics->zoomBackground(follower->_zoomX, follower->_zoomY);
 			break;
 		}
 	}
@@ -6668,8 +6671,8 @@ void EdenGame::syncGame(Common::Serializer s) {
 	s.syncAsSint16LE(_followerList[13].ex);
 	s.syncAsSint16LE(_followerList[13].ey);
 	s.syncAsSint16LE(_followerList[13]._spriteBank);
-	s.syncAsSint16LE(_followerList[13].ff_C);
-	s.syncAsSint16LE(_followerList[13].ff_E);
+	s.syncAsSint16LE(_followerList[13]._zoomX);
+	s.syncAsSint16LE(_followerList[13]._zoomY);
 
 	// _persons
 	for (int i = 0; i < 58; i++) {

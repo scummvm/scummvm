@@ -375,8 +375,8 @@ void EdenGame::loadpermfiles() {
 		_followerList[i].ex = f.readSint16LE();
 		_followerList[i].ey = f.readSint16LE();
 		_followerList[i]._spriteBank = f.readSint16LE();
-		_followerList[i].ff_C = f.readSint16LE();
-		_followerList[i].ff_E = f.readSint16LE();
+		_followerList[i]._zoomX = f.readSint16LE();
+		_followerList[i]._zoomY = f.readSint16LE();
 	}
 
 	f.read(_labyrinthPath, kNumLabyrinthPath);

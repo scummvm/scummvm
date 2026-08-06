@@ -693,6 +693,37 @@ void EdenGraphics::displaySubtitles() {
 	}
 }
 
+/**
+ * Blow up a corner of the background just drawn until it fills the picture.
+ * A character is framed against a corner of its own that way, so the one
+ * background stands behind several of them, and it is only the background
+ * which grows: whoever is drawn over it afterwards keeps their own size.
+ */
+void EdenGraphics::zoomBackground(int16 srcX, int16 srcY) {
+	// What fills the picture at twice the size
+	const int16 srcWidth = 320 / 2;
+	const int16 srcHeight = 160 / 2;
+
+	debugC(1, kDebugGraphics, "Blowing up the background from %d,%d (room 0x%X, display flags 0x%02X)",
+	       srcX, srcY, _game->_globals->_roomNum, _game->_globals->_displayFlags);
+
+	srcX = CLIP<int16>(srcX, 0, 320 - srcWidth);
+	srcY = CLIP<int16>(srcY, 0, 160 - srcHeight);
+
+	byte *corner = new byte[srcWidth * srcHeight];
+	for (int16 y = 0; y < srcHeight; y++)
+		memcpy(corner + y * srcWidth, _mainViewBuf + (16 + srcY + y) * 640 + srcX, srcWidth);
+
+	for (int16 y = 0; y < srcHeight * 2; y++) {
+		byte *dst = _mainViewBuf + (16 + y) * 640;
+		const byte *src = corner + (y / 2) * srcWidth;
+		for (int16 x = 0; x < srcWidth * 2; x++)
+			dst[x] = src[x / 2];
+	}
+
+	delete[] corner;
+}
+
 // Original name afsalle1
 void EdenGraphics::displaySingleRoom(Room *room) {
 	byte *ptr = (byte *)getElem(_game->getPlaceRawBuf(), room->_id - 1);
