@@ -91,8 +91,17 @@ bool KkTileMatchPuzzle::loadConfiguration() {
 		_engine->getSettings()->getPuzzleLevel(), 1, 3);
 	const Common::String name = Common::String::format(
 		"kk%u.ini", puzzleLevel);
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_engine->getResources()->createReadStreamForPath(name));
+	Common::SeekableReadStream *configStream =
+		_engine->getResources()->createReadStreamForPath(name);
+	if (!configStream) {
+		configStream = _engine->getResources()->scripts().createReadStreamForMember(name);
+		if (configStream) {
+			debugC(2, kDebugResources,
+				"Ripper: resolved KK tile-match configuration '%s' through SCRIPT.PL",
+				name.c_str());
+		}
+	}
+	Common::ScopedPtr<Common::SeekableReadStream> stream(configStream);
 	Common::INIFile ini;
 	if (!stream || !ini.loadFromStream(*stream)) {
 		warning("Ripper: could not load KK tile-match configuration '%s'",
