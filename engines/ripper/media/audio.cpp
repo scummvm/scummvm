@@ -138,7 +138,7 @@ bool MediaPlayer::playVoiceClip(const Common::String &path, Audio::SoundHandle &
 bool MediaPlayer::playVoiceClipStream(Common::SeekableReadStream *audioStream,
 		const Common::String &name, Audio::SoundHandle &handle,
 		uint volumePercent) {
-	return playAudioStream(audioStream, name, "asset library", handle,
+	return playAudioStream(audioStream, name, "provided stream", handle,
 		Audio::Mixer::kSpeechSoundType, volumePercent, false,
 		"archived voice clip");
 }

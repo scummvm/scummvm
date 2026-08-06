@@ -61,7 +61,7 @@ static const WacDatabaseCatalogEntry kWacDatabaseCatalog[] = {
 	{ 22, 0x5c, 0xf2, kWacDatabaseHandlerLoopingMedia,        0 },
 	{ 23, 0x5d, 0xf3, kWacDatabaseHandlerLoopingMedia,        0 },
 	{ 24, 0x5e, 0xf4, kWacDatabaseHandlerStillImage,          0 },
-	{ 25, 0x5f, 0xf5, kWacDatabaseHandlerScriptMediaWithVoiceover, 0,
+	{ 25, 0x5f, 0xf5, kWacDatabaseHandlerConfiguredMediaWithVoiceover, 0,
 		"rip_game.smk", "rip_game.wav", 0, kMilestonePlayedRipperGame },
 	{ 26, 0x60, 0xf6, kWacDatabaseHandlerLoopingMedia,        0 },
 	{ 27, 0x61, 0xf7, kWacDatabaseHandlerRetailNoOp,          0 },
