@@ -432,6 +432,11 @@ bool KkTileMatchPuzzle::applyMove(uint selectedTile) {
 	for (uint tile = 0; tile < kTileCount; ++tile) {
 		snapshot[tile] = _slots[tile];
 		target[tile] = _slots[tile];
+	}
+	// ApplyKkPuzzleMoveTableAndAnimateSlots at 0x2ef09 snapshots all 16
+	// records before it walks the selected row. Keep this as a separate pass
+	// so a destination can safely name a later source slot.
+	for (uint tile = 0; tile < kTileCount; ++tile) {
 		const int source = _moveTable[selectedTile][tile];
 		if (source >= 0) {
 			target[tile] = snapshot[source];
@@ -734,6 +739,10 @@ KkTileMatchPuzzle::Result KkTileMatchPuzzle::run(uint completionFlag) {
 				}
 			}
 		}
+		// RunKkTileMatchPuzzleScene at 0x2fa31 services the active UI selection
+		// presentation on every idle pass. Submit unchanged frames too so
+		// ScummVM's software cursor remains visible and follows mouse motion.
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 
