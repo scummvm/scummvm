@@ -202,6 +202,10 @@ bool CombatEncounter::loadBitmapAssets() {
 	for (uint i = 0; i < kEffectGroupCount; ++i) {
 		if (!resources->loadBitmapLibrary(_definition.effectLibraries[i], _effectFrames[i]))
 			return false;
+		debugC(2, kDebugCombat,
+			"Ripper: loaded combat effect group=%u library='%s' frames=%u transparent=%u",
+			i, _definition.effectLibraries[i], _effectFrames[i].size(),
+			_effectFrames[i][0].transparentColor);
 	}
 	return true;
 }
