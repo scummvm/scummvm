@@ -78,6 +78,8 @@ public:
 	void setShowBlackBars(bool value);
 
 	bool getShowBlackBars();
+	/** Play a movie straight off the disc, outside the game's resource file. */
+	bool playMovieFile(const Common::String &fileName);
 
 	void paneltobuf();
 

@@ -30,6 +30,9 @@
 #include "engines/util.h"
 
 #include "cryo/cryo.h"
+#include "engines/advancedDetector.h"
+
+#include "cryo/detection.h"
 #include "cryo/eden.h"
 
 namespace Cryo {
@@ -71,6 +74,10 @@ Common::Error CryoEngine::run() {
 	_game->run();
 
 	return Common::kNoError;
+}
+
+bool CryoEngine::isMovieReel() const {
+	return (_gameDescription->flags & GF_MOVIE_REEL) != 0;
 }
 
 bool CryoEngine::hasFeature(EngineFeature f) const {
