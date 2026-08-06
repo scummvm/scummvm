@@ -529,26 +529,28 @@ void Scene::installInventorySoundOverride(byte command, const SoundDescription &
 // Nancy9 and newer no longer store the "can't" caption alongside the sound.
 // Instead, the caption is looked up in the CVTX text chunks by the played
 // sound's name: the narration/observations (AUTOTEXT) chunk is searched first,
-// then the conversation (CONVO) chunk.
-static Common::String getSoundSubtitle(const Common::String &soundName) {
-	if (soundName.empty() || soundName.equalsIgnoreCase("NO SOUND")) {
-		return Common::String();
-	}
+// then the conversation (CONVO) chunk. Games that predate the change have no
+// text chunks, so they always end up with the caption stored in the data.
+static Common::String getSoundSubtitle(const Common::String &soundName, const Common::String &fallback) {
+	if (!soundName.empty() && !soundName.equalsIgnoreCase("NO SOUND")) {
+		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
+		if (autotext) {
+			Common::String text = autotext->texts.getValOrDefault(soundName, "");
+			if (!text.empty()) {
+				return text;
+			}
+		}
 
-	const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
-	if (autotext) {
-		Common::String text = autotext->texts.getValOrDefault(soundName, "");
-		if (!text.empty()) {
-			return text;
+		const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
+		if (convo) {
+			Common::String text = convo->texts.getValOrDefault(soundName, "");
+			if (!text.empty()) {
+				return text;
+			}
 		}
 	}
 
-	const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
-	if (convo) {
-		return convo->texts.getValOrDefault(soundName, "");
-	}
-
-	return Common::String();
+	return fallback;
 }
 
 void Scene::playItemCantSound(int16 itemID, bool notHoldingSound) {
@@ -575,7 +577,8 @@ void Scene::playItemCantSound(int16 itemID, bool notHoldingSound) {
 			g_nancy->_sound->playSound(inventoryData->cantSound);
 
 			if (ConfMan.getBool("subtitles")) {
-				_textbox.addTextLine(inventoryData->cantText, inventoryData->captionAutoClearTime);
+				_textbox.addTextLine(getSoundSubtitle(inventoryData->cantSound.name, inventoryData->cantText),
+					inventoryData->captionAutoClearTime);
 			}
 		} else {
 			// TVD and nancy1 contain no sound data in INV, and have no captions
@@ -591,7 +594,10 @@ void Scene::playItemCantSound(int16 itemID, bool notHoldingSound) {
 				g_nancy->_sound->playSound(override.sound);
 
 				if (ConfMan.getBool("subtitles")) {
-					_textbox.addTextLine(override.caption, inventoryData->captionAutoClearTime);
+					// The caption is looked up in the CVTX text chunks by the
+					// override's sound name; the stored caption is the fallback
+					_textbox.addTextLine(getSoundSubtitle(override.sound.name, override.caption),
+						inventoryData->captionAutoClearTime);
 				}
 				return;
 			} else {
@@ -611,12 +617,15 @@ void Scene::playItemCantSound(int16 itemID, bool notHoldingSound) {
 					g_nancy->_sound->playSound(inventoryData->cantSound);
 
 					if (ConfMan.getBool("subtitles")) {
-						_textbox.addTextLine(inventoryData->cantText, inventoryData->captionAutoClearTime);
+						_textbox.addTextLine(getSoundSubtitle(inventoryData->cantSound.name, inventoryData->cantText),
+							inventoryData->captionAutoClearTime);
 					}
 				} else {
 					// Should be unreachable
 					g_nancy->_sound->playSound("CANT");
 				}
+
+				return;
 			}
 		}
 
@@ -650,10 +659,7 @@ void Scene::playItemCantSound(int16 itemID, bool notHoldingSound) {
 
 				// The caption is looked up in the CVTX text chunks by the sound's
 				// name; the item's own caption field is only a fallback
-				cantText = getSoundSubtitle(cantSound.name);
-				if (cantText.empty()) {
-					cantText = item.cantTexts[soundIndex];
-				}
+				cantText = getSoundSubtitle(cantSound.name, item.cantTexts[soundIndex]);
 			}
 
 			g_nancy->_sound->loadSound(cantSound);
@@ -668,7 +674,8 @@ void Scene::playItemCantSound(int16 itemID, bool notHoldingSound) {
 			g_nancy->_sound->playSound(inventoryData->cantSound);
 
 			if (ConfMan.getBool("subtitles")) {
-				_textbox.addTextLine(inventoryData->cantText, inventoryData->captionAutoClearTime);
+				_textbox.addTextLine(getSoundSubtitle(inventoryData->cantSound.name, inventoryData->cantText),
+					inventoryData->captionAutoClearTime);
 			}
 		} else {
 			// TVD and nancy1 contain no sound data in INV, and have no captions
