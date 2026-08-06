@@ -35,6 +35,7 @@ public:
 		TS_ASSERT_EQUALS(plan.placement.displayScale, 1U);
 		TS_ASSERT(plan.placement.centerBounds.isEmpty());
 		TS_ASSERT(plan.palette.patchInterfacePalette);
+		TS_ASSERT(!plan.palette.preserveDisplayPalette);
 		TS_ASSERT(plan.palette.rememberVideoPalette);
 		TS_ASSERT(!plan.loop.loopFromStart);
 		TS_ASSERT_EQUALS(plan.frames.lastFrame, 0xffffffffU);
@@ -73,11 +74,12 @@ public:
 		plan.frames.frameLimit = 1;
 		plan.palette.patchWacMediaPalette = true;
 		plan.palette.patchInterfacePalette = false;
+		plan.palette.preserveDisplayPalette = true;
 		plan.rendering.transparentFirstPixel = true;
 
 		TS_ASSERT_EQUALS(Ripper::describeSmackerPlaybackPlan(plan),
 			"route=RunMediaSequence@0x1e516 position=12,34 originY=50 scale=1 "
-			"controls=0 sceneUi=0 palette=interface:0,wac:1,remember:1 "
+			"controls=0 sceneUi=0 palette=interface:0,wac:1,preserve:1,remember:1 "
 			"frames=0..4294967295 previewLimit=1 "
 			"loop=start:0,fromStart:0,bounded:4294967295 "
 			"timeline=0 callback=0 transparent=1");
