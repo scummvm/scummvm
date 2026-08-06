@@ -668,6 +668,9 @@ private:
 
 	bool  _specialTextMode;
 	int   _voiceSamplesSize;   //TODO: perso vox sample data len
+	/** The rate the voice now in the buffer was taken at, which is not the same
+	    for every one of them */
+	int   _voiceSampleRate;
 	int16 _musicRightVol;
 	int16 _musicLeftVol;
 
