@@ -1156,7 +1156,7 @@ next4:
 	} else if (LOOK("INCENSE BURNER")) {
 		digi_play("305r50", 1);
 	} else if (LOOK("CRYSTAL SKULL")) {
-		digi_play("3055r51", 1);
+		digi_play("305r51", 1);
 	} else if (LOOK("ROMANOV EMERALD")) {
 		digi_play("305r29a", 1);
 	} else if (LOOK("WHALE BONE HORN")) {
