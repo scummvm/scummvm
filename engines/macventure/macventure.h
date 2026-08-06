@@ -397,6 +397,7 @@ private: // Attributes
 	bool _clickToContinue;
 	bool _enginePaused;
 	uint32 _nextFrameTime;
+	uint _consoleRowsSincePause;
 
 	Common::Array<QueuedObject> _objQueue;
 	Common::Array<QueuedObject> _inQueue;
