@@ -207,16 +207,15 @@ int EdenGame::loadSound(uint16 num) {
 	PakHeaderItem *file = &_bigfileHeader->_files[resNum];
 	int32 size = file->_size;
 	int32 offs = file->_offs;
+	// The demo leaves an empty entry for a line it does not carry
+	if (size <= 0) {
+		warning("Sound %d is not in this release of the game", num);
+		return 0;
+	}
 	debugC(2, kDebugResource, "Loading sound %d as resource %d (%s) at 0x%X, %d bytes", num, resNum, file->_name.c_str(), (uint)offs, size);
-	if (_soundAllocated) {
-		free(_voiceSamplesBuffer);
-		_voiceSamplesBuffer = nullptr;
-		_soundAllocated = false; //TODO: bug??? no alloc
-	}
-	else {
-		_voiceSamplesBuffer = (byte *)malloc(size);
-		_soundAllocated = true;
-	}
+	free(_voiceSamplesBuffer);
+	_voiceSamplesBuffer = (byte *)malloc(size);
+	_soundAllocated = true;
 
 	_bigfile.seek(offs, SEEK_SET);
 	//For PC loaded data is a VOC file, on Mac version this is a raw samples
@@ -235,7 +234,12 @@ int EdenGame::loadSound(uint16 num) {
 		unsigned int chunkLen = FROM_LE_32(val);
 
 		if (chunkType == 5) {
-			_bigfile.read(_gameLipsync + 7260, chunkLen);
+			if (chunkLen > LIPSYNC_DATA_SIZE) {
+				warning("Lipsync chunk too large (%u bytes), truncating to %d", chunkLen, LIPSYNC_DATA_SIZE);
+				_bigfile.read(_gameLipsync + LIPSYNC_ANIM_TABLE_SIZE, LIPSYNC_DATA_SIZE);
+				_bigfile.skip(chunkLen - LIPSYNC_DATA_SIZE);
+			} else
+				_bigfile.read(_gameLipsync + LIPSYNC_ANIM_TABLE_SIZE, chunkLen);
 			chunkType = _bigfile.readByte();
 			_bigfile.read(&val, 3);
 			chunkLen = FROM_LE_32(val);
@@ -471,7 +475,11 @@ bool EdenGame::ReadDataSyncVOC(unsigned int num) {
 		loadpartoffile(resNum, &chunkLen, filePos, 3);
 		filePos += 3;
 		chunkLen = FROM_LE_32(chunkLen);
-		loadpartoffile(resNum, _gameLipsync + 7260, filePos, chunkLen);
+		if (chunkLen > LIPSYNC_DATA_SIZE) {
+			warning("Lipsync chunk too large (%u bytes), truncating to %d", chunkLen, LIPSYNC_DATA_SIZE);
+			chunkLen = LIPSYNC_DATA_SIZE;
+		}
+		loadpartoffile(resNum, _gameLipsync + LIPSYNC_ANIM_TABLE_SIZE, filePos, chunkLen);
 		return true;
 	}
 	return false;
@@ -481,8 +489,8 @@ bool EdenGame::ReadDataSync(uint16 num) {
 	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 		long pos = READ_LE_UINT32(_gameLipsync + num * 4);
 		if (pos != -1) {
-			long len = 1024;
-			loadpartoffile(1936, _gameLipsync + 7260, pos, len);
+			long len = LIPSYNC_DATA_SIZE;
+			loadpartoffile(1936, _gameLipsync + LIPSYNC_ANIM_TABLE_SIZE, pos, len);
 			return true;
 		}
 	}
@@ -495,6 +503,13 @@ void EdenGame::loadpartoffile(uint16 num, void *buffer, int32 pos, int32 len) {
 	assert(num < _bigfileHeader->_count);
 	PakHeaderItem *file = &_bigfileHeader->_files[num];
 	int32 offs = READ_LE_UINT32(&file->_offs);
+	// Entries the demo does not ship have neither length nor offset, so a read
+	// used to hand back the head of the resource file itself
+	if (file->_size <= 0 || pos + len > file->_size) {
+		warning("Resource %d holds no %d bytes at %d", num, len, pos);
+		memset(buffer, 0, len);
+		return;
+	}
 	debugC(2, kDebugResource, "Loading resource %d (%s) at 0x%X(+0x%X), %d of %d bytes", num, file->_name.c_str(), (uint)offs, pos, len, file->_size);
 	_bigfile.seek(offs + pos, SEEK_SET);
 	_bigfile.read(buffer, len);
