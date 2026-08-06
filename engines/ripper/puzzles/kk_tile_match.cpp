@@ -54,6 +54,11 @@ static const uint16 kHelpCommand = 0x3b00;
 static const uint kMoveSteps = 25;
 static const uint kPlaybackStepMillis = 50;
 static const uint kMismatchDelayMillis = 2500;
+static const uint kPuzzleHelpSearchDepth = 6;
+static const uint kPuzzleHelpSearchNodeLimit = 100000;
+static const byte kPuzzleHelpRecommendedColor = 255;
+static const uint kPuzzleHelpDitherMask = 3;
+static const int kPuzzleHelpBorderWidth = 2;
 static const byte kAnimationTransparentColor = 0xff;
 static const char *const kLibraryName = "kk.pl";
 static const char *const kBackgroundName = "base";
@@ -75,6 +80,201 @@ static const Common::Point kTilePositions[kTileCount] = {
 };
 
 } // End of anonymous namespace
+
+KkTileMatchPuzzle::DebugHelper::DebugHelper() :
+		_enabled(false), _recommendedTile(-1), _solutionDepth(0) {
+}
+
+void KkTileMatchPuzzle::DebugHelper::reset(bool enabled) {
+	_enabled = enabled;
+	_recommendedTile = -1;
+	_solutionDepth = 0;
+}
+
+bool KkTileMatchPuzzle::DebugHelper::sync(
+		const KkTileMatchPuzzle &puzzle) {
+	const bool enabled = puzzle._engine->isPuzzleHelpEnabled();
+	if (enabled == _enabled)
+		return false;
+
+	_enabled = enabled;
+	stateChanged(puzzle);
+	debugC(2, kDebugPuzzles,
+		"Ripper: KK tile-match puzzle help enabled=%d recommendedTile=%d solutionDepth=%u",
+		_enabled, _recommendedTile < 0 ? -1 : _recommendedTile + 1,
+		_solutionDepth);
+	return true;
+}
+
+void KkTileMatchPuzzle::DebugHelper::stateChanging() {
+	_recommendedTile = -1;
+	_solutionDepth = 0;
+}
+
+void KkTileMatchPuzzle::DebugHelper::stateChanged(
+		const KkTileMatchPuzzle &puzzle) {
+	stateChanging();
+	if (!_enabled)
+		return;
+
+	uint visitedStates = 0;
+	_recommendedTile = findRecommendedTile(puzzle, _solutionDepth,
+		visitedStates);
+	debugC(2, kDebugPuzzles,
+		"Ripper: KK tile-match puzzle help analyzed recommendedTile=%d "
+		"solutionDepth=%u visitedStates=%u maxDepth=%u nodeLimit=%u color=%u",
+		_recommendedTile < 0 ? -1 : _recommendedTile + 1,
+		_solutionDepth, visitedStates, kPuzzleHelpSearchDepth,
+		kPuzzleHelpSearchNodeLimit, kPuzzleHelpRecommendedColor);
+}
+
+uint KkTileMatchPuzzle::DebugHelper::SearchStateHash::operator()(
+		const SearchState &state) const {
+	uint hash = 2166136261U;
+	for (uint tile = 0; tile < kTileCount; ++tile) {
+		hash ^= state.states[tile];
+		hash *= 16777619U;
+	}
+	hash ^= state.activeMask & 0xff;
+	hash *= 16777619U;
+	hash ^= state.activeMask >> 8;
+	hash *= 16777619U;
+	return hash;
+}
+
+bool KkTileMatchPuzzle::DebugHelper::SearchStateEqual::operator()(
+		const SearchState &left, const SearchState &right) const {
+	if (left.activeMask != right.activeMask)
+		return false;
+	for (uint tile = 0; tile < kTileCount; ++tile) {
+		if (left.states[tile] != right.states[tile])
+			return false;
+	}
+	return true;
+}
+
+KkTileMatchPuzzle::DebugHelper::SearchState
+KkTileMatchPuzzle::DebugHelper::capture(
+		const KkTileMatchPuzzle &puzzle) const {
+	SearchState state;
+	state.activeMask = 0;
+	for (uint tile = 0; tile < kTileCount; ++tile) {
+		state.states[tile] = puzzle._slots[tile].state;
+		if (puzzle._slots[tile].active)
+			state.activeMask |= 1U << tile;
+	}
+	return state;
+}
+
+KkTileMatchPuzzle::DebugHelper::SearchState
+KkTileMatchPuzzle::DebugHelper::simulateClick(
+		const KkTileMatchPuzzle &puzzle, const SearchState &state,
+		uint selectedTile, bool &solved) const {
+	SearchState result = state;
+	solved = false;
+	for (uint destination = 0; destination < kTileCount; ++destination) {
+		const int source = puzzle._moveTable[selectedTile][destination];
+		if (source < 0)
+			continue;
+		result.states[destination] = state.states[source];
+		result.activeMask &= ~(1U << destination);
+		if ((state.activeMask & (1U << source)) != 0)
+			result.activeMask |= 1U << destination;
+	}
+	result.activeMask |= 1U << selectedTile;
+
+	uint activeCount = 0;
+	uint matchingCount = 0;
+	byte referenceState = 0;
+	bool haveReference = false;
+	for (uint tile = 0; tile < kTileCount; ++tile) {
+		if ((result.activeMask & (1U << tile)) == 0)
+			continue;
+		++activeCount;
+		if (!haveReference) {
+			referenceState = result.states[tile];
+			haveReference = true;
+		}
+		if (result.states[tile] == referenceState)
+			++matchingCount;
+	}
+	if (activeCount >= 3) {
+		if (matchingCount == 3)
+			solved = true;
+		else
+			result.activeMask = 0;
+	}
+	return result;
+}
+
+int KkTileMatchPuzzle::DebugHelper::findRecommendedTile(
+		const KkTileMatchPuzzle &puzzle, uint &solutionDepth,
+		uint &visitedStates) const {
+	typedef Common::HashMap<SearchState, bool,
+		SearchStateHash, SearchStateEqual> VisitedStateMap;
+	Common::Array<SearchNode> nodes;
+	VisitedStateMap visited;
+	SearchNode root;
+	root.state = capture(puzzle);
+	root.depth = 0;
+	root.firstTile = -1;
+	nodes.push_back(root);
+	visited.setVal(root.state, true);
+
+	for (uint nodeIndex = 0; nodeIndex < nodes.size(); ++nodeIndex) {
+		const SearchNode node = nodes[nodeIndex];
+		if (node.depth >= kPuzzleHelpSearchDepth)
+			continue;
+		for (uint tile = 0; tile < kTileCount; ++tile) {
+			bool solved = false;
+			SearchNode next;
+			next.state = simulateClick(puzzle, node.state, tile, solved);
+			next.depth = node.depth + 1;
+			next.firstTile = node.depth == 0 ? tile : node.firstTile;
+			if (solved) {
+				solutionDepth = next.depth;
+				visitedStates = nodes.size();
+				return next.firstTile;
+			}
+			if (visited.contains(next.state))
+				continue;
+			visited.setVal(next.state, true);
+			if (nodes.size() >= kPuzzleHelpSearchNodeLimit) {
+				visitedStates = nodes.size();
+				return -1;
+			}
+			nodes.push_back(next);
+		}
+	}
+
+	visitedStates = nodes.size();
+	return -1;
+}
+
+void KkTileMatchPuzzle::DebugHelper::draw(
+		const KkTileMatchPuzzle &puzzle, byte *screen, uint pitch) const {
+	if (!_enabled || _recommendedTile < 0 ||
+			(uint)_recommendedTile >= kTileCount)
+		return;
+
+	const Common::Point &position = kTilePositions[_recommendedTile];
+	const int left = MAX<int>(position.x, 0);
+	const int top = MAX<int>(position.y, 0);
+	const int right = MIN<int>(position.x + puzzle._closedTile.width,
+		kRipperScreenWidth);
+	const int bottom = MIN<int>(position.y + puzzle._closedTile.height,
+		kRipperScreenHeight);
+	for (int y = top; y < bottom; ++y) {
+		for (int x = left; x < right; ++x) {
+			const bool border = x - left < kPuzzleHelpBorderWidth ||
+				right - x <= kPuzzleHelpBorderWidth ||
+				y - top < kPuzzleHelpBorderWidth ||
+				bottom - y <= kPuzzleHelpBorderWidth;
+			if (border || ((x + y) & kPuzzleHelpDitherMask) == 0)
+				screen[y * pitch + x] = kPuzzleHelpRecommendedColor;
+		}
+	}
+}
 
 KkTileMatchPuzzle::KkTileMatchPuzzle(RipperEngine *engine) :
 		_engine(engine), _random("ripper-kk-tile-match-puzzle"),
@@ -336,6 +536,7 @@ void KkTileMatchPuzzle::renderBoard() const {
 		if (_visibleTiles[tile])
 			drawSlot(screen, surface->pitch, _slots[tile], kTilePositions[tile]);
 	}
+	_debugHelper.draw(*this, screen, surface->pitch);
 	g_system->unlockScreen();
 	presentScreen();
 }
@@ -651,6 +852,7 @@ KkTileMatchPuzzle::Result KkTileMatchPuzzle::run(uint completionFlag) {
 
 	_hoveredTile = -1;
 	_keywordIndex = 0;
+	_debugHelper.reset(_engine->isPuzzleHelpEnabled());
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
 	_engine->getCursor()->setSelectionIndex(kDefaultCursor);
@@ -659,19 +861,26 @@ KkTileMatchPuzzle::Result KkTileMatchPuzzle::run(uint completionFlag) {
 	applyPalette();
 	debugC(1, kDebugPuzzles,
 		"Ripper: entered KK tile-match puzzle function=RunKkTileMatchPuzzleScene@0x2fa31 "
-		"completionFlag=%u controls=%u help=0x%x keyword='%s' states=[%s]",
+		"completionFlag=%u controls=%u help=0x%x keyword='%s' states=[%s] puzzleHelp=%d",
 		completionFlag, kTileCount, kHelpSelectionTable,
-		kCompletionKeyword, slotStateString().c_str());
+		kCompletionKeyword, slotStateString().c_str(),
+		_engine->isPuzzleHelpEnabled());
 
 	Result result = kExited;
 	bool active = flashTiles();
 	if (!active && !_engine->shouldQuit())
 		result = kLoadFailed;
+	if (active) {
+		_debugHelper.stateChanged(*this);
+		renderBoard();
+	}
 	while (active && !_engine->shouldQuit()) {
 		if (_engine->getInput()->pollEvents()) {
 			_engine->quitGame();
 			break;
 		}
+		if (_debugHelper.sync(*this))
+			renderBoard();
 
 		while (_engine->getInput()->hasPendingKey()) {
 			const uint16 command = _engine->getInput()->consumeKey();
@@ -710,6 +919,7 @@ KkTileMatchPuzzle::Result KkTileMatchPuzzle::run(uint completionFlag) {
 		if ((mouse.pressed & kMouseButtonLeft) != 0) {
 			const int tile = findTile(mouse.position);
 			if (tile >= 0) {
+				_debugHelper.stateChanging();
 				if (!applyMove(tile) || !openTile(tile)) {
 					if (!_engine->shouldQuit())
 						result = kLoadFailed;
@@ -736,6 +946,10 @@ KkTileMatchPuzzle::Result KkTileMatchPuzzle::run(uint completionFlag) {
 							result = kLoadFailed;
 						active = false;
 					}
+				}
+				if (active) {
+					_debugHelper.stateChanged(*this);
+					renderBoard();
 				}
 			}
 		}
