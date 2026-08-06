@@ -5194,18 +5194,21 @@ T0115129_DrawProjectiles:
 					projectileAspectType = getFlag(((ProjectileAspect *)objectAspect)->_graphicInfo, k0x0003_ProjectileAspectTypeMask);
 
 					bool doNotScaleWithKineticEnergy = !getFlag(((ProjectileAspect *)objectAspect)->_graphicInfo, k0x0100_ProjectileScaleWithKineticEnergyMask);
+					uint16 projBaseByteWidth = (_vm->getPlatform() == Common::kPlatformDOS) ? (getPixelWidth(AL_4_nativeBitmapIndex) / 2) : ((ProjectileAspect *)objectAspect)->_byteWidth;
+					uint16 projBaseHeight = (_vm->getPlatform() == Common::kPlatformDOS) ? getPixelHeight(AL_4_nativeBitmapIndex) : ((ProjectileAspect *)objectAspect)->_height;
+
 					if ((doNotScaleWithKineticEnergy || (projectile->_kineticEnergy == 255)) && (viewSquareIndex == kDMViewSquareD0C)) {
 						scale = 0; /* Use native bitmap without resizing */
-						byteWidth = ((ProjectileAspect *)objectAspect)->_byteWidth;
-						heightRedEagle = ((ProjectileAspect *)objectAspect)->_height;
+						byteWidth = projBaseByteWidth;
+						heightRedEagle = projBaseHeight;
 					} else {
 						AL_8_projectileScaleIndex = ((viewSquareIndex / 3) << 1) + (AL_2_viewCell >> 1);
 						scale = _projectileScales[AL_8_projectileScaleIndex];
 						if (!doNotScaleWithKineticEnergy) {
 							scale = (scale * MAX(96, projectile->_kineticEnergy + 1)) >> 8;
 						}
-						byteWidth = getScaledDimension(((ProjectileAspect *)objectAspect)->_byteWidth, scale);
-						heightRedEagle = getScaledDimension(((ProjectileAspect *)objectAspect)->_height, scale);
+						byteWidth = getScaledDimension(projBaseByteWidth, scale);
+						heightRedEagle = getScaledDimension(projBaseHeight, scale);
 					}
 					bool projectileAspectTypeHasBackGraphicAndRotation = (projectileAspectType == k0_ProjectileAspectHasBackGraphicRotation);
 					if (projectileAspectTypeHasBackGraphicAndRotation)
@@ -5258,7 +5261,9 @@ T0115129_DrawProjectiles:
 							else
 								bitmapRedBanana = _tmpBitmap;
 
-							blitToBitmapShrinkWithPalChange(bitmapGreenAnt, bitmapRedBanana, ((ProjectileAspect *)objectAspect)->_byteWidth << 1, ((ProjectileAspect *)objectAspect)->_height, byteWidth << 1, heightRedEagle, _palChangesProjectile[AL_8_projectileScaleIndex >> 1]);
+							int16 projSrcWidth = (_vm->getPlatform() == Common::kPlatformDOS) ? getPixelWidth(AL_4_nativeBitmapIndex) : (((ProjectileAspect *)objectAspect)->_byteWidth << 1);
+							int16 projSrcHeight = (_vm->getPlatform() == Common::kPlatformDOS) ? getPixelHeight(AL_4_nativeBitmapIndex) : ((ProjectileAspect *)objectAspect)->_height;
+							blitToBitmapShrinkWithPalChange(bitmapGreenAnt, bitmapRedBanana, projSrcWidth, projSrcHeight, byteWidth << 1, heightRedEagle, _palChangesProjectile[AL_8_projectileScaleIndex >> 1]);
 							if (doNotScaleWithKineticEnergy) {
 								addDerivedBitmap(derivedBitmapIndex);
 							}
