@@ -1374,7 +1374,9 @@ void EdenGame::newCitadel(char area, int16 level, Room *room) {
 	while (cita->_id < level)
 		cita++;
 
-	uint16 index = ((room->_flags & 0xC0) >> 6);    //TODO: this is very wrong
+	// The two top flag bits choose a pair of entries, of which areas 4 and 6
+	// take the second, so they come down five places and not six
+	uint16 index = ((room->_flags & 0xC0) >> 5);
 	if (area == 4 || area == 6)
 		index++;
 
