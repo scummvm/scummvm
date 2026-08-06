@@ -1639,6 +1639,11 @@
   documents retain the database chooser, show a 282-row slice in the left WAC
   media viewport, and use `MNARROW0` through `MNARROW3` controls at screen
   positions 355,60 and 355,90 to scroll vertically in 10-pixel steps.
+- Entry 8 tests shared flag 8 and dispatches `wacinv8a.pcx` when it is set or
+  `wacinv8b.pcx` when it is clear. Entries 12 and 24 dispatch
+  `wacinv12.pcx` and `wacinv24.pcx`. All three cases use
+  `RunWacStillImageScreenWithOptionalAudio` at `0x22f1f` with no audio and
+  retain the database chooser and shared scroll controls.
 - Entries 13 and 14 dispatch the silent `wacinv13.smk` and `wacinv14.smk`
   members from `INTERFAC.PL`
   through `RunStaticMediaScreenWithOptionalVoiceover` at `0x2339d`. The
@@ -1649,6 +1654,19 @@
   power/F10 exits WAC, and selecting a different visible database row stops
   the sequence and immediately dispatches that row; neither entry writes
   milestone or completion state.
+- Entries 17, 19 through 23, and 26 use that same silent centered Smacker
+  viewer for their matching `wacinvNN.smk` members from `INTERFAC.PL`.
+  Entries 18 and 27 through 29 have no retail switch cases; selecting them
+  clears the shared media viewport and returns to the retained chooser without
+  presenting content or changing state.
+- Entry 25 is the one voiced media exception. `RunWacInventorySelectionLoop`
+  resolves `rip_game.smk` and `rip_game.wav` through startup asset-library
+  handle 5, which `LoadConfiguredAssetLibraryDirectories` at `0x11d91` binds
+  to `SCRIPT.PL`. `RunStaticMediaScreenWithOptionalVoiceover` presents the
+  first video frame before starting the WAV, loops the Smacker from frame one,
+  and returns automatically when managed narration ends. The entry then sets
+  shared flag `0x14f` (335). WAC input can still dismiss or replace the entry;
+  either path stops the narration before the next database action.
 - Entry 15 dispatches game-text resource `0xb6` through
   `RunCenteredTextPanelUntilExitAction` at `0x2330c`. The untitled, wrapped
   330-by-222 panel begins at the WAC media origin (50,50) and uses the same
