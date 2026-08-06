@@ -78,7 +78,7 @@ static const ControlLayout kControlLayouts[] = {
 } // End of anonymous namespace
 
 RemoteControlManager::RemoteControlManager(RipperEngine *engine) :
-		_engine(engine), _initialized(false) {
+		_engine(engine), _initialized(false), _videoPaletteChanged(false) {
 }
 
 bool RemoteControlManager::initialize(ResourceManager &resources) {
@@ -126,14 +126,14 @@ bool RemoteControlManager::initialize(ResourceManager &resources) {
 }
 
 bool RemoteControlManager::captureDisplay() {
+	_videoPaletteChanged = false;
 	return _savedDisplay.capture(Common::Rect(kRemoteX, kRemoteY,
 		kRemoteX + kRemoteWidth, kRemoteY + kRemoteHeight));
 }
 
 void RemoteControlManager::restoreDisplay() {
 	_savedDisplay.restorePixels();
-	if (!_engine->getSettings()->restoreVideoPalette())
-		_savedDisplay.restorePalette();
+	applyPalette();
 	_savedDisplay.clear();
 	g_system->updateScreen();
 }
@@ -142,7 +142,7 @@ void RemoteControlManager::applyPalette() {
 	// REMOTE.SMK draws only with the shared interface bands patched by
 	// ApplySharedDisplayPalettePatch at 0x205d0. Its unused palette entries are
 	// chroma-key green and must not replace the suspended scene palette.
-	if (_engine->getSettings()->restoreVideoPalette())
+	if (_videoPaletteChanged && _engine->getSettings()->restoreVideoPalette())
 		return;
 	_savedDisplay.restorePalette();
 }
@@ -205,8 +205,17 @@ bool RemoteControlManager::handleCommand(uint16 command, uint &selectedSlider) {
 		return true;
 	}
 	if (command == 0x1300) {
+		bool videoPaletteChanged = false;
+		for (uint i = RipperSettings::kBrightness; i <= RipperSettings::kTint; ++i) {
+			const RipperSettings::Slider slider = (RipperSettings::Slider)i;
+			if (settings->getValue(slider) != RipperSettings::getDescriptor(slider).defaultValue)
+				videoPaletteChanged = true;
+		}
 		settings->resetDefaults();
-		applyPalette();
+		if (videoPaletteChanged) {
+			_videoPaletteChanged = true;
+			applyPalette();
+		}
 		return true;
 	}
 	if (command == 0x4b00) {
@@ -227,8 +236,10 @@ bool RemoteControlManager::handleCommand(uint16 command, uint &selectedSlider) {
 	const int oldValue = settings->getValue(slider);
 	settings->setValue(slider, oldValue + descriptor.step * direction);
 	if (selectedSlider >= RipperSettings::kBrightness &&
-		settings->getValue(slider) != oldValue)
+		settings->getValue(slider) != oldValue) {
+		_videoPaletteChanged = true;
 		applyPalette();
+	}
 	return true;
 }
 
@@ -318,7 +329,6 @@ bool RemoteControlManager::run() {
 				command == 0x4800 || command == 0x5000 || command == '+' || command == '-'))
 				redrawSettings();
 		}
-		_engine->getCursor()->refresh();
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}

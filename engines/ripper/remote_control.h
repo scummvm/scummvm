@@ -65,6 +65,7 @@ private:
 	Common::Array<Common::String> _labels;
 	IndexedDisplaySnapshot _savedDisplay;
 	bool _initialized;
+	bool _videoPaletteChanged;
 };
 
 } // End of namespace Ripper

@@ -97,11 +97,12 @@ struct SmackerTimelinePolicy {
 struct SmackerPalettePolicy {
 	bool patchInterfacePalette;
 	bool patchWacMediaPalette;
+	bool preserveDisplayPalette;
 	Common::Array<byte> *sourcePalette;
 	bool rememberVideoPalette;
 
 	SmackerPalettePolicy() : patchInterfacePalette(true),
-		patchWacMediaPalette(false), sourcePalette(nullptr),
+		patchWacMediaPalette(false), preserveDisplayPalette(false), sourcePalette(nullptr),
 		rememberVideoPalette(true) {}
 };
 
