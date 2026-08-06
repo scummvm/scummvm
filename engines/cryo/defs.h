@@ -404,8 +404,12 @@ struct Follower {      // Characters on Mirror screen
 	int16       ex;
 	int16       ey;
 	int16       _spriteBank;
-	int16       ff_C;
-	int16       ff_E;
+	/**
+	 * The corner of the background to magnify when this character is being
+	 * spoken to, so that one background can stand behind several of them.
+	 */
+	int16       _zoomX;
+	int16       _zoomY;
 };
 
 struct Icon {
