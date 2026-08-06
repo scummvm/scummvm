@@ -128,7 +128,7 @@ void WacStillImageViewer::draw() const {
 	g_system->unlockScreen();
 	drawScrollControls();
 	_database->engine()->getCursor()->refresh();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 void WacStillImageViewer::drawScrollControls() const {
@@ -326,7 +326,7 @@ uint16 WacStillImageViewer::runInternal(byte entryIndex,
 				}
 			}
 		}
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 

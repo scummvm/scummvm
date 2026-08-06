@@ -168,7 +168,7 @@ WoffordScene::Result WoffordScene::run(uint completionFlag) {
 
 	prepare("wofford-media-entry", kDefaultCursor, true);
 	g_system->fillScreen(0);
-	g_system->updateScreen();
+	presentScreen();
 	debugC(1, kDebugCyber,
 		"Ripper: entered Wofford media scene flag=%u media='%s' loopStart=%u armFrame=%u controls=[205,203,211,93;16,73,602,262]",
 		completionFlag, kSceneMedia, kLoopStartFrame, kChoiceArmFrame);

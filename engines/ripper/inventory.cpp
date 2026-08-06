@@ -198,7 +198,7 @@ void Inventory::restoreDisplay() {
 	_savedDisplay.clear();
 	_active = false;
 	_engine->getCursor()->refresh();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 void Inventory::applyPalette() {
@@ -303,7 +303,7 @@ void Inventory::draw(bool usePressed, bool donePressed) const {
 	drawButton(pixels, screen->pitch, _doneBounds, _gameText[71], donePressed);
 	g_system->unlockScreen();
 	_engine->getCursor()->refresh();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 int Inventory::findControl(const Common::Point &point) const {
@@ -356,7 +356,7 @@ bool Inventory::runQcsMag2UnlockMediaScreen() {
 	cursor->update(0);
 	cursor->setVisible(false);
 	g_system->fillScreen(0);
-	g_system->updateScreen();
+	presentScreen();
 	debugC(1, kDebugScene,
 		"Ripper: entered inventory item 1 presentation media='%s','%s' audio='%s' exitRect=%d,%d,%d,%d",
 		kQcsEntryMedia, kMagnottaMedia, kMagnottaAudio,
@@ -365,7 +365,7 @@ bool Inventory::runQcsMag2UnlockMediaScreen() {
 	bool result = _engine->getMedia()->play(kQcsEntryMedia, false);
 	if (result && !_engine->shouldQuit()) {
 		g_system->fillScreen(0);
-		g_system->updateScreen();
+		presentScreen();
 		result = _engine->getMedia()->play(kMagnottaMedia, false);
 	}
 	if (result && !_engine->shouldQuit()) {
@@ -403,7 +403,7 @@ bool Inventory::runQcsMag2UnlockMediaScreen() {
 			exitPressed = false;
 		}
 		cursor->refresh();
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 
@@ -606,7 +606,7 @@ Inventory::Result Inventory::run(const Common::String &sceneLabel,
 			draw();
 		}
 		_engine->getCursor()->refresh();
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 	closePresentation("inventory-quit");

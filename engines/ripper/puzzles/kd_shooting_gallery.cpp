@@ -738,7 +738,7 @@ bool KdShootingGallery::drawResults() {
 		}
 	}
 	g_system->unlockScreen();
-	g_system->updateScreen();
+	presentScreen();
 	debugC(2, kDebugPuzzles,
 		"Ripper: KD shooting-gallery results goal=%d score=%d raw=%d,%d distinct=%d,%d completed=%d,%d checks=%u,%u",
 		_config.goal, currentScore(), _rawHits[0], _rawHits[1],
@@ -803,7 +803,7 @@ bool KdShootingGallery::animateResultsUntilInput() {
 			drawBitmapScaled((byte *)screen->getPixels(), screen->pitch,
 				_flameFrames[flameFrame], kFlameX, kFlameY);
 			g_system->unlockScreen();
-			g_system->updateScreen();
+			presentScreen();
 			flameFrame = (flameFrame + 1) % _flameFrames.size();
 			lastFlameMillis = now;
 		}

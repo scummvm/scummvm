@@ -217,7 +217,7 @@ void BoardArrangementPuzzle::render() const {
 	}
 	g_system->unlockScreen();
 	_boardDisplay.restorePalette();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 int BoardArrangementPuzzle::findPiece(const Common::Point &point,
@@ -501,7 +501,7 @@ BoardArrangementPuzzle::Result BoardArrangementPuzzle::run(uint completionFlag) 
 			// ServiceUiControlStateSelection on every idle loop while the
 			// selection presentation is active. Submit unchanged puzzle frames
 			// too so ScummVM's software cursor tracks those input ticks.
-			g_system->updateScreen();
+			presentScreen();
 		}
 		g_system->delayMillis(10);
 	}

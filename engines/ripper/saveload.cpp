@@ -156,7 +156,7 @@ Common::Error RipperEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 	g_system->copyRectToScreen(pixels.data(), kScreenWidth, 0, 0, kScreenWidth, kScreenHeight);
 	g_system->getPaletteManager()->setPalette(palette.data(), 0, 256);
-	g_system->updateScreen();
+	presentScreen();
 	_gameplayStarted = true;
 	_input->discardMouseTransitions();
 	debugC(1, kDebugSaveLoad,

@@ -337,7 +337,7 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 	g_system->unlockScreen();
 	if (present) {
 		_engine->getCursor()->refresh();
-		g_system->updateScreen();
+		presentScreen();
 	}
 }
 
@@ -512,7 +512,7 @@ bool ModalDialogManager::drawRetainedTextPanelLine(
 	if (style == kMenubPresentation)
 		applyModalPalette();
 	_engine->getCursor()->refresh();
-	g_system->updateScreen();
+	presentScreen();
 	debugC(3, kDebugScene,
 		"Ripper: redrew retained text panel line style=%s line=%u "
 		"firstLine=%u visibleRow=%u bounds=%d,%d,%d,%d",

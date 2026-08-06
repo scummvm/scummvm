@@ -158,7 +158,7 @@ void GcCshPuzzle::drawAnimationFrame(uint choice, uint sequenceSlot,
 	drawFrame((byte *)screen->getPixels(), screen->pitch,
 		_choiceFrames[choice][frameIndex], position.x, position.y);
 	g_system->unlockScreen();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 void GcCshPuzzle::drawResetFrame(const int enteredChoices[4],
@@ -178,7 +178,7 @@ void GcCshPuzzle::drawResetFrame(const int enteredChoices[4],
 			_choiceFrames[choice][frameIndex], position.x, position.y);
 	}
 	g_system->unlockScreen();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 void GcCshPuzzle::restoreSequenceBacking() {
@@ -198,7 +198,7 @@ void GcCshPuzzle::restoreSequenceBacking() {
 			kSequenceBackingWidth);
 	}
 	g_system->unlockScreen();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 void GcCshPuzzle::playCue(uint cue) {
@@ -361,7 +361,7 @@ GcCshPuzzle::Result GcCshPuzzle::run(uint completionFlag) {
 		// selection presentation is active, so cursor changes are flushed as part
 		// of each poll. ScummVM's software cursor needs an explicit presentation
 		// from this private puzzle loop.
-		g_system->updateScreen();
+		presentScreen();
 		_engine->getInput()->drainKeys();
 		if (command == kHelpCommand) {
 			debugC(1, kDebugPuzzles,

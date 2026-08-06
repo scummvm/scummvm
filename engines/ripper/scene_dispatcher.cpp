@@ -348,7 +348,7 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 	}
 	if (action == kSceneActionClearDisplay) {
 		g_system->fillScreen(0);
-		g_system->updateScreen();
+		presentScreen();
 		debugC(2, kDebugScene, "Ripper: cleared active scene display from scene action 32");
 		return true;
 	}

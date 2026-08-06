@@ -26,6 +26,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 
+#include "ripper/diagnostics/screen_presenter.h"
 #include "ripper/milestones.h"
 
 namespace Ripper {
@@ -41,6 +42,8 @@ public:
 
 	void setEnabled(bool enabled);
 	bool isEnabled() const { return _enabled; }
+	void pause(uint32 now);
+	void resume(uint32 now);
 	void enqueue(uint flag, const Common::String &label, bool value);
 	bool update(uint32 now);
 	byte opacity(uint32 now) const;
@@ -60,20 +63,22 @@ private:
 
 	bool _enabled;
 	bool _active;
+	bool _paused;
 	uint32 _startedAt;
+	uint32 _pausedAt;
 	Common::Queue<Notification> _pending;
 	Common::String _message;
 };
 
-class MilestoneOverlay : public MilestoneObserver {
+class MilestoneOverlay : public MilestoneObserver, public ScreenPresenter {
 public:
 	explicit MilestoneOverlay(Milestones &milestones);
 	~MilestoneOverlay() override;
 
 	void setEnabled(bool enabled);
 	bool isEnabled() const { return _queue.isEnabled(); }
-	void prepareFrame();
-	void drawFrame();
+	void pause(bool paused);
+	void presentScreen() override;
 
 	void onMilestoneChanged(uint flag, bool value) override;
 
@@ -89,7 +94,6 @@ private:
 	Common::String _renderedMessage;
 	int _messageWidth;
 	int _messageHeight;
-	bool _drawn;
 };
 
 } // End of namespace Ripper

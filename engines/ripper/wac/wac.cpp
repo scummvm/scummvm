@@ -160,7 +160,7 @@ void WacManager::restoreDisplay() {
 		memcpy(screen->getBasePtr(0, y), _savedPixels.data() + y * kWacWidth, kWacWidth);
 	g_system->unlockScreen();
 	g_system->getPaletteManager()->setPalette(_savedPalette.data(), 0, 256);
-	g_system->updateScreen();
+	presentScreen();
 	_savedPixels.clear();
 	_savedPalette.clear();
 }
@@ -183,7 +183,7 @@ void WacManager::drawFrontEnd() const {
 	g_system->getPaletteManager()->setPalette(_background.palette.data(), 0, 256);
 	for (uint i = 0; i < _controls.size(); ++i)
 		drawBitmap(_controlBitmaps[i], _controls[i].bounds.left, _controls[i].bounds.top);
-	g_system->updateScreen();
+	presentScreen();
 }
 
 void WacManager::serviceIdleWindowAnimations() {
@@ -466,7 +466,7 @@ void WacManager::run() {
 		const uint16 controlAction = serviceFrontEndControls(mouse, kWacDefaultCursor);
 		if (controlAction != kNoAction)
 			active = dispatchAction(controlAction);
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 

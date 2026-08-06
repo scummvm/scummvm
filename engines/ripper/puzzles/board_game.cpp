@@ -426,7 +426,7 @@ void BoardGamePuzzle::render() {
 	g_system->unlockScreen();
 	applyPalette();
 	_engine->getCursor()->setVisible(true);
-	g_system->updateScreen();
+	presentScreen();
 }
 
 void BoardGamePuzzle::clearSelectedPiece() {
@@ -693,7 +693,7 @@ BoardGameModel::Move BoardGamePuzzle::chooseAiMove() {
 
 bool BoardGamePuzzle::runAiTurn() {
 	_engine->getCursor()->dispatchSelectionIndexChange(kDefaultSelectionIndex);
-	g_system->updateScreen();
+	presentScreen();
 	const BoardGameModel::Move move = chooseAiMove();
 	if (move.source < 0) {
 		_model.passTurn();
@@ -889,7 +889,7 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 			result = finishResult(completionFlag);
 			active = false;
 		}
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 

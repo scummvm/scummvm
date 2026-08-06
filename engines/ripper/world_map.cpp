@@ -150,7 +150,7 @@ void WorldMap::restoreDisplay() {
 			0, 0, kWorldMapWidth, kWorldMapHeight);
 	if (_savedPalette.size() >= 256 * 3)
 		g_system->getPaletteManager()->setPalette(_savedPalette.data(), 0, 256);
-	g_system->updateScreen();
+	presentScreen();
 	_savedPixels.clear();
 	_savedPalette.clear();
 }
@@ -251,7 +251,7 @@ void WorldMap::draw() const {
 	}
 	drawLocationDetails(pixels, screen->pitch);
 	g_system->unlockScreen();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 int WorldMap::findVisibleLocation(const Common::Point &point) const {
@@ -456,7 +456,7 @@ bool WorldMap::run(Common::String &targetScript, uint &chapter) {
 			draw();
 		}
 
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 
@@ -470,7 +470,7 @@ bool WorldMap::run(Common::String &targetScript, uint &chapter) {
 			locationIndex, _locations[locationIndex].name.c_str(), chapter,
 			targetScript.c_str());
 		g_system->fillScreen(0);
-		g_system->updateScreen();
+		presentScreen();
 		_savedPixels.clear();
 		_savedPalette.clear();
 	} else {

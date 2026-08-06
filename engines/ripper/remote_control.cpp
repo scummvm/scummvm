@@ -135,7 +135,7 @@ void RemoteControlManager::restoreDisplay() {
 	_savedDisplay.restorePixels();
 	applyPalette();
 	_savedDisplay.clear();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 void RemoteControlManager::applyPalette() {
@@ -329,7 +329,7 @@ bool RemoteControlManager::run() {
 				command == 0x4800 || command == 0x5000 || command == '+' || command == '-'))
 				redrawSettings();
 		}
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 
