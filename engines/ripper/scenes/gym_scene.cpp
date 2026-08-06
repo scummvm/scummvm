@@ -164,7 +164,7 @@ bool GymScene::pulseKeyboardControl(uint control) {
 	if (!playControlCue(0))
 		return false;
 	drawPressedControl();
-	g_system->updateScreen();
+	presentScreen();
 	g_system->delayMillis(kKeyboardPulseTicks * kDosTickMillis);
 
 	screen = g_system->lockScreen();
@@ -180,7 +180,7 @@ bool GymScene::pulseKeyboardControl(uint control) {
 	_pressedControl = -1;
 	if (!playControlCue(1))
 		return false;
-	g_system->updateScreen();
+	presentScreen();
 	return true;
 }
 

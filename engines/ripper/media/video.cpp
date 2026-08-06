@@ -458,7 +458,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		// screen submission until the callback completes so an undecorated movie
 		// frame is never visible between the frame blit and overlay composition.
 		if (!sequenceCallback)
-			g_system->updateScreen();
+			presentScreen();
 	};
 	// ExecutePresentationEntry at 0x1652a deactivates the shared selection
 	// presentation before packetized AVI playback. Only RunMediaSequence's
@@ -508,7 +508,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			sequenceCallback->transformPalette(palette, 256);
 			g_system->getPaletteManager()->setPalette(palette, 0, 256);
 		}
-		g_system->updateScreen();
+		presentScreen();
 		debugC(11, kDebugVideo,
 			"Ripper: presented interactive Smacker '%s' after callback frame=%u paletteRefresh=%d stop=%d",
 			name.c_str(), frame, refreshedPalette, stopSequence);
@@ -633,7 +633,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			debugC(2, kDebugVideo,
 				"Ripper: interactive scene media '%s' toolbarPause=%d keyboardPause=%d",
 				name.c_str(), toolbarPaused, paused);
-			g_system->updateScreen();
+			presentScreen();
 		}
 		bool skipToEnd = false;
 		bool advanceToNextSegment = false;
@@ -656,7 +656,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				if (frame) {
 					presentFrame(frame, true);
 					if (sequenceCallback)
-						g_system->updateScreen();
+						presentScreen();
 					if (serviceSceneUi)
 						_engine->getSceneAudio()->service(finalFrame + 1);
 					completed = true;
@@ -739,7 +739,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		if (frameLimit != 0 && presentedFrames >= frameLimit)
 			break;
 		if (toolbarPaused) {
-			g_system->updateScreen();
+			presentScreen();
 			g_system->delayMillis(10);
 		} else if (synchronizeToTimeline) {
 			if (!paused && !toolbarPaused && !frameDue)
@@ -772,7 +772,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		for (uint row = 0; row < outputHeight; ++row)
 			g_system->copyRectToScreen(transparentBacking.data() + row * outputWidth,
 				outputWidth, x, y + row, outputWidth, 1);
-		g_system->updateScreen();
+		presentScreen();
 		debugC(2, kDebugVideo,
 			"Ripper: restored transparent Smacker backing media='%s' rect=%d,%d,%ux%u",
 			name.c_str(), x, y, outputWidth, outputHeight);
@@ -831,7 +831,7 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 			// RunPacketizedMediaPlaybackCore at 0x5b592 handles IAVF opcode 0x68 by
 			// clearing the active logical page through display command 0x14.
 			g_system->fillScreen(0);
-			g_system->updateScreen();
+			presentScreen();
 			debugC(2, kDebugVideo,
 				"Ripper: IAVF '%s' cleared display before segment=%u from opcode 0x68",
 				name.c_str(), i);
@@ -958,7 +958,7 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		_mixer->stopHandle(audioHandle);
 	if (movie.clearDisplayAfter && completedFinalSegment) {
 		g_system->fillScreen(0);
-		g_system->updateScreen();
+		presentScreen();
 		debugC(2, kDebugVideo,
 			"Ripper: IAVF '%s' cleared display after final segment from opcode 0x68",
 			name.c_str());

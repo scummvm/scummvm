@@ -187,7 +187,7 @@ bool WacJournalPuzzle::drawTextPanel(
 	g_system->unlockScreen();
 	_database->drawAnimatedCorner(bounds.left, bounds.top);
 	_database->engine()->getCursor()->refresh();
-	g_system->updateScreen();
+	presentScreen();
 	return true;
 }
 
@@ -305,7 +305,7 @@ uint16 WacJournalPuzzle::run(byte entryIndex,
 				_database->engine()->getModalDialog()->serviceTextEntry(
 					enteredPassword);
 			_database->serviceIdleEffects();
-			g_system->updateScreen();
+			presentScreen();
 			g_system->delayMillis(10);
 		}
 		if (textResult == ModalDialogManager::kTextEntryCancelled ||
@@ -411,7 +411,7 @@ uint16 WacJournalPuzzle::run(byte entryIndex,
 				!drawTextPanelLine(displayLines, firstVisible,
 					visibleRows, redrawLine))
 			break;
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 

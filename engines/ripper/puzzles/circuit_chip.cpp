@@ -315,7 +315,7 @@ void CircuitChipPuzzle::render() {
 				static_cast<ModalDialogManager::TextPanelScrollControl>(
 					_manualHoveredControl)))
 		warning("Ripper: circuit puzzle manual panel failed");
-	g_system->updateScreen();
+	presentScreen();
 }
 
 void CircuitChipPuzzle::captureMeter() {
@@ -785,7 +785,7 @@ CircuitChipPuzzle::Result CircuitChipPuzzle::run(uint completionFlag) {
 		redraw |= advanceIdleMeter(g_system->getMillis());
 		if (redraw)
 			render();
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 
@@ -793,7 +793,7 @@ CircuitChipPuzzle::Result CircuitChipPuzzle::run(uint completionFlag) {
 	cursor->setVisible(false);
 	if (!_engine->shouldQuit()) {
 		g_system->fillScreen(0);
-		g_system->updateScreen();
+		presentScreen();
 	}
 	cursor->setSelectionIndex(savedSelectionIndex);
 	cursor->dispatchSelectionIndexChange(savedSelectionIndex);

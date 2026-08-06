@@ -230,7 +230,7 @@ void KeypadSequencePuzzle::render() const {
 	}
 	g_system->unlockScreen();
 	_baseDisplay.restorePalette();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 int KeypadSequencePuzzle::findKey(const Common::Point &point) const {
@@ -503,7 +503,7 @@ KeypadSequencePuzzle::Result KeypadSequencePuzzle::run(uint completionFlag) {
 		if (!serviceBlink() && redraw)
 			render();
 		else if (!redraw)
-			g_system->updateScreen();
+			presentScreen();
 		g_system->delayMillis(10);
 	}
 

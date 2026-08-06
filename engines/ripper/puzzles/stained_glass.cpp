@@ -334,7 +334,7 @@ void StainedGlassPuzzle::renderOrder(const uint *order) {
 	}
 	g_system->unlockScreen();
 	applyPalette();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 void StainedGlassPuzzle::renderTransition(const uint *previousOrder,
@@ -388,7 +388,7 @@ void StainedGlassPuzzle::renderTransition(const uint *previousOrder,
 	}
 	g_system->unlockScreen();
 	applyPalette();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 bool StainedGlassPuzzle::playCue(uint cue, bool loop) {
@@ -514,7 +514,7 @@ bool StainedGlassPuzzle::waitForPreview(uint32 duration) {
 		const MouseState mouse = _engine->getInput()->publishMouseState();
 		if ((mouse.pressed & kMouseButtonLeft) != 0)
 			break;
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 	_engine->getInput()->discardMouseTransitions();
@@ -625,7 +625,7 @@ bool StainedGlassPuzzle::serviceKeyword(uint16 command) {
 void StainedGlassPuzzle::clearDisplay() {
 	_engine->getMedia()->fadePalette(false, kFadeSteps);
 	g_system->fillScreen(0);
-	g_system->updateScreen();
+	presentScreen();
 }
 
 StainedGlassPuzzle::Result StainedGlassPuzzle::run(uint completionFlag) {
@@ -734,7 +734,7 @@ StainedGlassPuzzle::Result StainedGlassPuzzle::run(uint completionFlag) {
 				}
 			}
 		}
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 

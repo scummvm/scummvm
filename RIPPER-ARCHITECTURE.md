@@ -420,9 +420,14 @@
   notifications; `ON` and `OFF` select the state explicitly. Actual bit
   transitions enter an isolated FIFO, and each red-on-black message has a
   five-second dithered fade lifecycle before the next queued transition. The
-  renderer restores its scoped backing before scene service and redraws over
-  the completed scene frame, leaving milestone storage and retail validation
-  independent of debug presentation.
+  engine-wide `presentScreen` boundary composites the notification with shared
+  interface red index 254 immediately before each backend update, then restores
+  its scoped backing without presenting it. This keeps the logical indexed
+  framebuffer clean across scene, media, and modal buffer changes. Presentation
+  timing is suspended through `RipperEngine::pauseEngineIntern`, so closing the
+  debugger with Escape does not consume a queued notification's lifetime.
+  Milestone storage and retail validation remain independent of this ScummVM-only
+  debug presentation.
   Flags 6 through 9 identify Magnotta, Falconetti, Burton, or Powell as the
   Ripper. `SeedRandomFreePersistentFlag6To9` at `0x106c0` counts zero-valued
   candidate bytes at persistent-settings offsets `+0x38` through `+0x3b`,

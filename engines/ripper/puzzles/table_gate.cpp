@@ -333,7 +333,7 @@ void TableGatePuzzle::render() {
 
 	g_system->unlockScreen();
 	_backgroundDisplay.restorePalette();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 int TableGatePuzzle::findLever(const Common::Point &point) const {
@@ -611,7 +611,7 @@ TableGatePuzzle::Result TableGatePuzzle::run(uint completionFlag) {
 		// ServiceUiControlStateSelection at 0x393f6 runs under the original
 		// active UI-selection presentation. Present each translated cursor tick
 		// explicitly for ScummVM's software cursor.
-		g_system->updateScreen();
+		presentScreen();
 		if ((mouse.pressed & kMouseButtonLeft) != 0) {
 			if (isExitRegion(mouse.position)) {
 				debugC(1, kDebugPuzzles,

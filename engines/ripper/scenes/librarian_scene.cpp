@@ -380,7 +380,7 @@ LibrarianScene::Result LibrarianScene::run(uint sceneArgument) {
 	// KA_DECK.AVI. ClearGenericVideoLogicalPage at 0x45ed8 zeroes the page so
 	// KA_LOOP.SMK's 640x300 palette cannot recolor stale pixels in the bands.
 	g_system->fillScreen(0);
-	g_system->updateScreen();
+	presentScreen();
 	debugC(2, kDebugDialogue,
 		"Ripper: cleared Ka deck display before loop media='%s' source=display-command-0x14",
 		kLoopMedia);

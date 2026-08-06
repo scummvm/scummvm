@@ -207,7 +207,7 @@ void BrokenMugPuzzle::render() {
 			kPalettePatchCount * 3);
 	}
 	g_system->getPaletteManager()->setPalette(palette.data(), 0, 256);
-	g_system->updateScreen();
+	presentScreen();
 }
 
 int BrokenMugPuzzle::findPiece(const Common::Point &point) const {
@@ -309,7 +309,7 @@ bool BrokenMugPuzzle::playCompletionMedia(RipperEngine *engine) {
 		memset(screen->getBasePtr(kViewportLeft, y), kViewportFillColor,
 			kViewportRight - kViewportLeft);
 	g_system->unlockScreen();
-	g_system->updateScreen();
+	presentScreen();
 
 	debugC(1, kDebugWac,
 		"Ripper: playing completed mug presentation media='mug9.smk' audio='q_p_2.wav' position=%d,%d",
@@ -349,7 +349,7 @@ BrokenMugPuzzle::Result BrokenMugPuzzle::run() {
 	if (!_engine->getMedia()->playBlockingAudio("q_p_1.wav"))
 		warning("Ripper: broken mug introduction audio failed; continuing puzzle input");
 	_engine->getCursor()->update(kPuzzleCursor);
-	g_system->updateScreen();
+	presentScreen();
 	debugC(2, kDebugWac,
 		"Ripper: activated broken mug input cursor=%u controls=%u",
 		kPuzzleCursor, kPieceCount);
@@ -434,7 +434,7 @@ BrokenMugPuzzle::Result BrokenMugPuzzle::run() {
 		if (changed)
 			render();
 		_engine->getWac()->serviceIdleEffects();
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 

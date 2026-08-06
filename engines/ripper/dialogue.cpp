@@ -10,6 +10,7 @@
 #include "ripper/detection.h"
 #include "ripper/display.h"
 #include "ripper/input.h"
+#include "ripper/ripper.h"
 #include "ripper/script.h"
 
 namespace Ripper {
@@ -337,7 +338,7 @@ void DialogueChooser::dismissForSceneTransition(const char *reason) {
 	const bool restored = _pending && restoreBacking();
 	clearPending();
 	rebuildPresentationBands(reason);
-	g_system->updateScreen();
+	presentScreen();
 	debugC(1, kDebugDialogue,
 		"Ripper: dismissed dialogue chooser before scene transition reason=%s choices=%u backing=%d",
 		reason, choiceCount, restored);
@@ -449,7 +450,7 @@ bool DialogueChooser::selectChoice(uint choiceIndex, uint &result, const char *s
 		source, _chooser.selectedIndex(), result, text.c_str(), restored);
 	clearPending();
 	rebuildPresentationBands("chooser-selection");
-	g_system->updateScreen();
+	presentScreen();
 	return true;
 }
 

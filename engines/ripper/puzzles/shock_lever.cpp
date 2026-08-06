@@ -352,7 +352,7 @@ void ShockLeverPuzzle::drawOverlays() {
 	drawPuzzleHelpOverlay(pixels, screen->pitch);
 	g_system->unlockScreen();
 	_engine->getCursor()->setVisible(true);
-	g_system->updateScreen();
+	presentScreen();
 }
 
 int ShockLeverPuzzle::findLever(const Common::Point &point) const {

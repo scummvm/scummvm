@@ -102,7 +102,7 @@ void KaBookCodePuzzle::drawPrompt(const Common::String &typedCode) {
 	g_system->unlockScreen();
 	if (_background.palette.size() >= 256 * 3)
 		g_system->getPaletteManager()->setPalette(_background.palette.data(), 0, 256);
-	g_system->updateScreen();
+	presentScreen();
 }
 
 KaBookCodePuzzle::Result KaBookCodePuzzle::run() {

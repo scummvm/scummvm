@@ -62,4 +62,19 @@ public:
 		TS_ASSERT_EQUALS(queue.pendingCount(), 0U);
 		TS_ASSERT(queue.message().empty());
 	}
+
+	void testPauseDoesNotConsumeTheActiveNotificationLifetime() {
+		Ripper::MilestoneOverlayQueue queue;
+		queue.setEnabled(true);
+		queue.enqueue(44, "Prologue Newsroom OPEN", true);
+		queue.update(100);
+		queue.pause(1100);
+		TS_ASSERT(!queue.update(11100));
+		TS_ASSERT(queue.hasActiveNotification());
+		queue.resume(11100);
+		TS_ASSERT(!queue.update(15099));
+		TS_ASSERT(queue.hasActiveNotification());
+		TS_ASSERT(queue.update(15100));
+		TS_ASSERT(!queue.hasActiveNotification());
+	}
 };

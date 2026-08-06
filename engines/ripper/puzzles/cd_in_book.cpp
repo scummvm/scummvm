@@ -180,7 +180,7 @@ bool CdInBookPuzzle::drawBackground() {
 	Common::Array<byte> palette = _background.palette;
 	_engine->getToolbar()->applySharedPalettePatch(palette.data(), 256);
 	g_system->getPaletteManager()->setPalette(palette.data(), 0, 256);
-	g_system->updateScreen();
+	presentScreen();
 	return true;
 }
 
@@ -207,7 +207,7 @@ void CdInBookPuzzle::drawFrame(const BitmapAssetFrame &frame, int x, int y) {
 		}
 	}
 	g_system->unlockScreen();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 bool CdInBookPuzzle::captureControls() {
@@ -411,7 +411,7 @@ CdInBookPuzzle::Result CdInBookPuzzle::run(uint completionFlag) {
 
 		const MouseState mouse = _engine->getInput()->publishMouseState();
 		updateCursor(mouse.position);
-		g_system->updateScreen();
+		presentScreen();
 		if ((mouse.pressed & kMouseButtonLeft) != 0) {
 			const int button = findButton(mouse.position);
 			if (button >= 0) {
