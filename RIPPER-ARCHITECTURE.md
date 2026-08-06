@@ -252,6 +252,13 @@
   physical (278,171), using palette index 254 for filled ticks and 252 for
   empty ticks. Changes take effect immediately and the settings are saved when
   the modal exits, matching `RunTake2IniSliderSetupMenu` at `0x1989b`.
+  The setup routine invokes `RunMediaSequence` at `0x1e516` in captured-backing
+  mode. For every frame, the sequence stores decoded pixel zero as the color
+  key at `0x1e996`, restores the captured 216-by-148 scene region, and issues
+  the flagged blit at `0x1e9d3`; `GenericVideoScaledBlitCopyCallback` at
+  `0x467f8` leaves destination pixels unchanged when they match that key. This
+  keeps the active scene visible around the Remote Control and restores it
+  when the modal closes.
   `REMOTE.SMK` is an overlay sequence whose pixels use only shared palette
   indices 4 through 9 and 246 through 255; its unused chroma-key palette
   entries do not replace the suspended scene palette during playback. The
