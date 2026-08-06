@@ -23,10 +23,19 @@
 
 #include "engines/advancedDetector.h"
 
+#include "cryo/detection.h"
 
 static const PlainGameDescriptor cryoGames[] = {
 	{"losteden", "Lost Eden"},
 	{nullptr, nullptr}
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{Cryo::kDebugResource, "resource", "What is read out of the game's own files"},
+	{Cryo::kDebugGraphics, "graphics", "Rooms, sprites and the pictures behind them"},
+	{Cryo::kDebugScript, "script", "Conditions, dialogs and the turns the game takes"},
+	{Cryo::kDebugMovie, "movie", "Movies and the subtitles which caption them"},
+	DEBUG_CHANNEL_END
 };
 
 namespace Cryo {
@@ -146,6 +155,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Cryo Engine (C) Cryo Interactive";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
