@@ -262,6 +262,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	uint lastFrame = plan.frames.lastFrame;
 	const uint boundedLoopStartFrame = plan.loop.boundedLoopStartFrame;
 	const bool transparentFirstPixel = plan.rendering.transparentFirstPixel;
+	const bool retainFinalTransparentFrame = plan.rendering.retainFinalTransparentFrame;
 	if (stoppedByUser)
 		*stoppedByUser = false;
 	if (advanceSegment)
@@ -767,13 +768,17 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			(uint32)((uint64)frameAudioOffsets->back() * 1000 / audioByteRate),
 			elapsedMs);
 	}
-	if (transparentFirstPixel && !transparentBacking.empty()) {
+	if (transparentFirstPixel && !transparentBacking.empty() && !retainFinalTransparentFrame) {
 		for (uint row = 0; row < outputHeight; ++row)
 			g_system->copyRectToScreen(transparentBacking.data() + row * outputWidth,
 				outputWidth, x, y + row, outputWidth, 1);
 		g_system->updateScreen();
 		debugC(2, kDebugVideo,
 			"Ripper: restored transparent Smacker backing media='%s' rect=%d,%d,%ux%u",
+			name.c_str(), x, y, outputWidth, outputHeight);
+	} else if (transparentFirstPixel && retainFinalTransparentFrame) {
+		debugC(2, kDebugVideo,
+			"Ripper: retained final transparent Smacker frame media='%s' rect=%d,%d,%ux%u",
 			name.c_str(), x, y, outputWidth, outputHeight);
 	}
 	decoder.close();
@@ -1094,6 +1099,9 @@ bool MediaPlayer::playInterfaceSequence(const Common::String &path, int x, int y
 	// backing path. RunMediaSequence snapshots decoded pixel zero at 0x1e996 and
 	// its flagged blit at 0x1e9d3 uses that value as the transparent color.
 	plan.rendering.transparentFirstPixel = true;
+	// Cleanup at 0x1eaf9 releases the temporary page without redrawing the
+	// backing. RunTake2IniSliderSetupMenu restores its outer capture at 0x1a108.
+	plan.rendering.retainFinalTransparentFrame = true;
 	// The active scene keeps the shared palette bands installed by
 	// RunMediaSequence at 0x1e8e9. The movie's chroma-key palette is not display
 	// state.

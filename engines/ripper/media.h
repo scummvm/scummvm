@@ -132,8 +132,9 @@ struct SmackerCallbackPolicy {
 
 struct SmackerRenderingPolicy {
 	bool transparentFirstPixel;
+	bool retainFinalTransparentFrame;
 
-	SmackerRenderingPolicy() : transparentFirstPixel(false) {}
+	SmackerRenderingPolicy() : transparentFirstPixel(false), retainFinalTransparentFrame(false) {}
 };
 
 struct SmackerPlaybackPlan {
