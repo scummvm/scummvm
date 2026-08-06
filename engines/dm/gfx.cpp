@@ -4831,16 +4831,18 @@ T0115015_DrawProjectileAsObject:
 					drawingGrabbableObject = false;
 					derivedBitmapIndex = kDMDerivedBitmapFirstObject + objectAspect->_firstDerivedBitmapRelativeIndex;
 					byte *paletteChanges;
+					uint16 baseByteWidth = (_vm->getPlatform() == Common::kPlatformDOS) ? (getPixelWidth(AL_4_nativeBitmapIndex) / 2) : objectAspect->_byteWidth;
+					uint16 baseHeight = (_vm->getPlatform() == Common::kPlatformDOS) ? getPixelHeight(AL_4_nativeBitmapIndex) : objectAspect->_height;
 					if ((viewSquareIndex >= kDMViewSquareD1C) || ((viewSquareIndex >= kDMViewSquareD2C) && (AL_2_viewCell >= kDMViewCellBackRight))) {
 						derivedBitmapIndex++;
 						AL_8_shiftSetIndex = k1_ShiftSet_D1BackD2Front;
-						byteWidth = getScaledDimension(objectAspect->_byteWidth, k20_Scale_D2);
-						heightRedEagle = getScaledDimension(objectAspect->_height, k20_Scale_D2);
+						byteWidth = getScaledDimension(baseByteWidth, k20_Scale_D2);
+						heightRedEagle = getScaledDimension(baseHeight, k20_Scale_D2);
 						paletteChanges = _palChangesFloorOrnD2;
 					} else {
 						AL_8_shiftSetIndex = k2_ShiftSet_D2BackD3Front;
-						byteWidth = getScaledDimension(objectAspect->_byteWidth, k16_Scale_D3);
-						heightRedEagle = getScaledDimension(objectAspect->_height, k16_Scale_D3);
+						byteWidth = getScaledDimension(baseByteWidth, k16_Scale_D3);
+						heightRedEagle = getScaledDimension(baseHeight, k16_Scale_D3);
 						paletteChanges = _palChangesFloorOrnD3;
 					}
 					if (flipHorizontal) {
