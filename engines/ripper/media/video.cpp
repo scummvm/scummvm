@@ -249,6 +249,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	const uint frameLimit = plan.frames.frameLimit;
 	const int originY = plan.placement.originY;
 	const bool patchWacMediaPalette = plan.palette.patchWacMediaPalette;
+	const bool preserveDisplayPalette = plan.palette.preserveDisplayPalette;
 	const bool serviceSceneUi = plan.input.serviceSceneUi;
 	const bool loopFromStart = plan.loop.loopFromStart;
 	bool *advanceSegment = plan.input.advanceSegment;
@@ -389,6 +390,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				sourcePalette->resize(sizeof(palette));
 				memcpy(sourcePalette->data(), decoder.getPalette(), sizeof(palette));
 			}
+			if (preserveDisplayPalette)
+				return;
 			if (patchWacMediaPalette) {
 				g_system->getPaletteManager()->grabPalette(palette, 0, 256);
 				memcpy(palette + 10 * 3, decoder.getPalette() + 10 * 3, 140 * 3);
@@ -1087,6 +1090,11 @@ bool MediaPlayer::playInterfaceSequence(const Common::String &path, int x, int y
 	SmackerPlaybackPlan plan;
 	plan.placement.x = x;
 	plan.placement.y = y;
+	// RunTake2IniSliderSetupMenu at 0x1989b presents REMOTE.SMK over the
+	// active scene with the shared palette bands installed by RunMediaSequence
+	// at 0x1e8e9. The movie's chroma-key palette is not display state.
+	plan.palette.patchInterfacePalette = false;
+	plan.palette.preserveDisplayPalette = true;
 	plan.palette.sourcePalette = &sourcePalette;
 	plan.palette.rememberVideoPalette = false;
 	Common::String source;

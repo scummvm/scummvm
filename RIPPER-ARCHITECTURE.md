@@ -252,12 +252,13 @@
   physical (278,171), using palette index 254 for filled ticks and 252 for
   empty ticks. Changes take effect immediately and the settings are saved when
   the modal exits, matching `RunTake2IniSliderSetupMenu` at `0x1989b`.
-  `REMOTE.SMK` is a one-frame overlay whose pixels use only shared palette
+  `REMOTE.SMK` is an overlay sequence whose pixels use only shared palette
   indices 4 through 9 and 246 through 255; its unused chroma-key palette
-  entries do not replace the suspended scene palette. The scene's remembered
-  source palette is reapplied after the overlay and whenever a video slider
-  changes, matching the shared-band patch at `ApplySharedDisplayPalettePatch`
-  (`0x205d0`). The increase and decrease controls share the same origin: the
+  entries do not replace the suspended scene palette during playback. The
+  captured scene palette remains active until a video slider changes, matching
+  the shared-band patch in `RunMediaSequence` at `0x1e8e9` and
+  `ApplySharedDisplayPalettePatch` at `0x205d0`. The increase and decrease
+  controls share the same origin: the
   increase control clips the upper 19-by-27 pixels of the full 19-by-54
   decrease rocker. `FindUiControlStateAtPoint` at `0x4aae8` returns the first
   inserted overlapping control, so the clipped increase control owns that
