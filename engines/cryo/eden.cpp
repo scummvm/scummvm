@@ -7007,7 +7007,12 @@ char EdenGame::testCondition(int16 index) {
 				uint16 value2 = fetchValue();
 				value = operation(op, value, value2);
 			} else {
-				assert(sp < stack + 32);
+				// Each pass pushes a value and an operator, and the reduction
+				// below pushes a final value
+				if (sp + 3 > stack + ARRAYSIZE(stack)) {
+					warning("testCondition: condition stack overflow");
+					return false;
+				}
 				*sp++ = value;
 				*sp++ = op;
 				break;
@@ -7164,7 +7169,8 @@ uint8 EdenGame::getByteVar(uint16 offset) {
 		VAR(0x6E, _labyrinthDirections);
 		VAR(0x6F, _labyrinthRoom);
 	default:
-		error("Undefined byte variable access (0x%X)", offset);
+		warning("Undefined byte variable access (0x%X)", offset);
+		break;
 	}
 	return 0;
 }
@@ -7203,7 +7209,8 @@ uint16 EdenGame::getWordVar(uint16 offset) {
 		VAR(0x3E, _morkusSpyVideoNum3); //TODO: pad?
 		VAR(0x40, _morkusSpyVideoNum4); //TODO: pad?
 	default:
-		error("Undefined word variable access (0x%X)", offset);
+		warning("Undefined word variable access (0x%X)", offset);
+		break;
 	}
 	return 0;
 }
