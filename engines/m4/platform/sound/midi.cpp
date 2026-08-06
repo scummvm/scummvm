@@ -34,14 +34,14 @@
 namespace M4 {
 namespace Sound {
 
-int Midi::_midiEndTrigger;
-
 Midi::Midi() {
 	_driver = nullptr;
 	_paused = false;
 	_deviceType = MT_NULL;
 	_midiParser = nullptr;
 	_midiData = nullptr;
+	_midiEndTrigger = -1;
+	_pendingEndTrigger = -1;
 }
 
 Midi::~Midi() {
@@ -261,7 +261,17 @@ void Midi::task() {
 }
 
 void Midi::loop() {
-	// No implementation
+	int trigger;
+
+	{
+		Common::StackLock lock(_mutex);
+		trigger = _pendingEndTrigger;
+		_pendingEndTrigger = -1;
+	}
+
+	// Dispatch a track-finished trigger recorded by onTimer()
+	if (trigger >= 0)
+		kernel_timing_trigger(10, trigger);
 }
 
 void Midi::midi_fade_volume(int targetVolume, int duration) {
@@ -277,10 +287,13 @@ void Midi::onTimer(void* data) {
 
 	if (m->_midiParser != nullptr) {
 		m->_midiParser->onTimer();
-		if (!m->_midiParser->isPlaying() && _midiEndTrigger >= 0) {
-			// FIXME Can this trigger a deadlock on the mutex?
-			kernel_timing_trigger(10, _midiEndTrigger);
-			_midiEndTrigger = -1;
+		if (!m->_midiParser->isPlaying() && m->_midiEndTrigger >= 0) {
+			// This runs on the audio thread, so only record the trigger here.
+			// loop() dispatches it from the main thread - kernel_timing_trigger()
+			// allocates a machine and links it into the WS machine list, which
+			// must not happen underneath the engine.
+			m->_pendingEndTrigger = m->_midiEndTrigger;
+			m->_midiEndTrigger = -1;
 		}
 	}
 }

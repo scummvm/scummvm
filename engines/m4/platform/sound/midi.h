@@ -31,7 +31,10 @@ namespace Sound {
 
 class Midi {
 private:
-	static int _midiEndTrigger;
+	// Trigger to fire once the current track has finished, or -1 for none.
+	// _pendingEndTrigger hands it from the audio thread to the main thread.
+	int _midiEndTrigger;
+	int _pendingEndTrigger;
 
 	Common::Mutex _mutex;
 
