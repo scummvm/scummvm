@@ -97,6 +97,7 @@ enum SceneAction {
 	kSceneActionEbz2sMenu = 14,
 	kSceneActionMechiniCombat = 15,
 	kSceneActionKeyGroupPuzzle = 16,
+	kSceneActionDateSelectionPuzzle = 17,
 	kSceneActionWebGridShiftPuzzle = 19,
 	kSceneActionShockLeverPuzzle = 22,
 	kSceneActionTubeSwitchScene = 24,
