@@ -231,7 +231,7 @@ bool KeyGroupPuzzle::render() const {
 			_heldPosition.x, _heldPosition.y);
 	g_system->unlockScreen();
 	applyPalette();
-	g_system->updateScreen();
+	presentScreen();
 	return true;
 }
 
@@ -528,7 +528,7 @@ KeyGroupPuzzle::Result KeyGroupPuzzle::run(uint completionFlag) {
 			result = kLoadFailed;
 			active = false;
 		} else if (!redraw) {
-			g_system->updateScreen();
+			presentScreen();
 		}
 		g_system->delayMillis(10);
 	}

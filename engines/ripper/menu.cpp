@@ -117,7 +117,7 @@ MainMenuAction MainMenu::run() {
 		ARRAYSIZE(kMenuControlBounds));
 	const int menuY = (g_system->getHeight() - decoder.getHeight()) / 2;
 	g_system->fillScreen(0);
-	g_system->updateScreen();
+	presentScreen();
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->publishMouseState();
 	_engine->getCursor()->update(kDefaultMenuCursor);
@@ -189,7 +189,7 @@ MainMenuAction MainMenu::run() {
 				}
 				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, menuY,
 					frame->w, frame->h);
-				g_system->updateScreen();
+				presentScreen();
 				debugC(11, kDebugVideo, "Ripper: startup menu frame=%d", decoder.getCurFrame());
 			}
 		}

@@ -110,7 +110,7 @@ bool BriefingManager::arm(uint selector, bool playNotification) {
 	_armed = true;
 	_hovered = false;
 	draw();
-	g_system->updateScreen();
+	presentScreen();
 	debugC(1, kDebugScene,
 		"Ripper: armed briefing trigger selector=%u control=0x4e1 frame=%u rect=%d,%d,%d,%d",
 		_selector, _frameIndex, _bounds.left, _bounds.top, _bounds.width(), _bounds.height());
@@ -210,7 +210,7 @@ void BriefingManager::restoreBacking() {
 	}
 	g_system->unlockScreen();
 	_backing.clear();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 bool BriefingManager::activate() {

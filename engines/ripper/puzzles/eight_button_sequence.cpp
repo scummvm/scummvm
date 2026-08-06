@@ -281,7 +281,7 @@ void EightButtonSequencePuzzle::updateHover(const Common::Point &point) {
 				position.x, position.y);
 		}
 		g_system->unlockScreen();
-		g_system->updateScreen();
+		presentScreen();
 	} else if (screen) {
 		g_system->unlockScreen();
 	}
@@ -323,7 +323,7 @@ void EightButtonSequencePuzzle::drawFeedback(bool visible) {
 		}
 	}
 	g_system->unlockScreen();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 void EightButtonSequencePuzzle::drawSuccessDark() {
@@ -336,7 +336,7 @@ void EightButtonSequencePuzzle::drawSuccessDark() {
 	drawFrame((byte *)screen->getPixels(), screen->pitch, _successDark,
 		kSuccessDarkPosition.x, kSuccessDarkPosition.y);
 	g_system->unlockScreen();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 bool EightButtonSequencePuzzle::waitTicks(uint ticks) {

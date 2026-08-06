@@ -1104,7 +1104,7 @@ bool ScriptManager::runStartupPath() {
 	// InitializeSceneDisplayModeAndContext at 0x1e28a switches to a newly cleared scene page.
 	// ScummVM retains one framebuffer across presentations, so clear the previous cinematic here.
 	g_system->fillScreen(0);
-	g_system->updateScreen();
+	presentScreen();
 	debugC(1, kDebugScene, "Ripper: initialized cleared scene display for BA0");
 
 	debugC(1, kDebugScene, "Ripper: entering BA0 frame=%u label='start'", ba0StartFrame);
@@ -1192,7 +1192,7 @@ bool ScriptManager::performPendingSceneTransition() {
 	_runtime.hoveredInteraction = -1;
 	_engine->getCursor()->setVisible(false);
 	g_system->fillScreen(0);
-	g_system->updateScreen();
+	presentScreen();
 	return advanceBa0ToFrame(startFrame);
 }
 

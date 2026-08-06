@@ -197,7 +197,7 @@ void CrystalPuzzle::render() {
 
 	if (_puzzlePalette.size() == 256 * 3)
 		g_system->getPaletteManager()->setPalette(_puzzlePalette.data(), 0, 256);
-	g_system->updateScreen();
+	presentScreen();
 }
 
 int CrystalPuzzle::findTrayPiece(const Common::Point &point) const {
@@ -469,7 +469,7 @@ CrystalPuzzle::Result CrystalPuzzle::run(uint completionFlag) {
 		updateCursor(mouse.position);
 		if (changed && active)
 			render();
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 

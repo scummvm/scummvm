@@ -38,7 +38,7 @@ enum {
 	kOverlayMargin = 8,
 	kOverlayPadding = 4,
 	kOverlayBlack = 0,
-	kOverlayRed = 4
+	kOverlayRed = 254
 };
 
 const byte kFadeDither[16] = {
@@ -51,7 +51,7 @@ const byte kFadeDither[16] = {
 } // End of anonymous namespace
 
 MilestoneOverlayQueue::MilestoneOverlayQueue() :
-		_enabled(false), _active(false), _startedAt(0) {
+		_enabled(false), _active(false), _paused(false), _startedAt(0), _pausedAt(0) {
 }
 
 void MilestoneOverlayQueue::setEnabled(bool enabled) {
@@ -60,9 +60,27 @@ void MilestoneOverlayQueue::setEnabled(bool enabled) {
 
 	_enabled = enabled;
 	_active = false;
+	_paused = false;
 	_startedAt = 0;
+	_pausedAt = 0;
 	_pending.clear();
 	_message.clear();
+}
+
+void MilestoneOverlayQueue::pause(uint32 now) {
+	if (!_enabled || _paused)
+		return;
+	_paused = true;
+	_pausedAt = now;
+}
+
+void MilestoneOverlayQueue::resume(uint32 now) {
+	if (!_paused)
+		return;
+	if (_active)
+		_startedAt += now - _pausedAt;
+	_paused = false;
+	_pausedAt = 0;
 }
 
 void MilestoneOverlayQueue::enqueue(uint flag, const Common::String &label, bool value) {
@@ -85,7 +103,7 @@ void MilestoneOverlayQueue::startNext(uint32 now) {
 }
 
 bool MilestoneOverlayQueue::update(uint32 now) {
-	if (!_enabled)
+	if (!_enabled || _paused)
 		return false;
 
 	bool changed = false;
@@ -105,6 +123,8 @@ byte MilestoneOverlayQueue::opacity(uint32 now) const {
 	if (!_active)
 		return 0;
 
+	if (_paused)
+		now = _pausedAt;
 	const uint32 elapsed = now - _startedAt;
 	if (elapsed >= kLifetimeMs)
 		return 0;
@@ -117,11 +137,13 @@ byte MilestoneOverlayQueue::opacity(uint32 now) const {
 }
 
 MilestoneOverlay::MilestoneOverlay(Milestones &milestones) :
-		_milestones(milestones), _messageWidth(0), _messageHeight(0), _drawn(false) {
+		_milestones(milestones), _messageWidth(0), _messageHeight(0) {
 	_milestones.setChangeObserver(this);
+	registerScreenPresenter(this);
 }
 
 MilestoneOverlay::~MilestoneOverlay() {
+	unregisterScreenPresenter(this);
 	_milestones.setChangeObserver(nullptr);
 }
 
@@ -129,7 +151,6 @@ void MilestoneOverlay::setEnabled(bool enabled) {
 	if (isEnabled() == enabled)
 		return;
 
-	prepareFrame();
 	_queue.setEnabled(enabled);
 	resetMessageSurface();
 	debugC(1, kDebugMilestones,
@@ -147,14 +168,11 @@ void MilestoneOverlay::onMilestoneChanged(uint flag, bool value) {
 		flag, _milestones.label(flag).c_str(), value, _queue.pendingCount());
 }
 
-void MilestoneOverlay::prepareFrame() {
-	if (!_drawn)
-		return;
-
-	g_system->copyRectToScreen(_backing.data(), _bounds.width(), _bounds.left,
-		_bounds.top, _bounds.width(), _bounds.height());
-	_backing.clear();
-	_drawn = false;
+void MilestoneOverlay::pause(bool paused) {
+	if (paused)
+		_queue.pause(g_system->getMillis());
+	else
+		_queue.resume(g_system->getMillis());
 }
 
 void MilestoneOverlay::resetMessageSurface() {
@@ -189,7 +207,7 @@ bool MilestoneOverlay::rebuildMessageSurface() {
 	return true;
 }
 
-void MilestoneOverlay::drawFrame() {
+void MilestoneOverlay::presentScreen() {
 	const uint32 now = g_system->getMillis();
 	const bool notificationChanged = _queue.update(now);
 	if (notificationChanged) {
@@ -203,10 +221,13 @@ void MilestoneOverlay::drawFrame() {
 			debugC(2, kDebugMilestones, "Ripper: milestone overlay queue drained");
 		}
 	}
-	if (!_queue.hasActiveNotification())
+	if (!_queue.hasActiveNotification()) {
+		g_system->updateScreen();
 		return;
+	}
 	if (_renderedMessage != _queue.message() && !rebuildMessageSurface()) {
 		warning("Ripper: could not prepare milestone overlay text");
+		g_system->updateScreen();
 		return;
 	}
 
@@ -216,6 +237,7 @@ void MilestoneOverlay::drawFrame() {
 		if (screen)
 			g_system->unlockScreen();
 		warning("Ripper: milestone overlay requires the 640x400 indexed display");
+		g_system->updateScreen();
 		return;
 	}
 
@@ -235,7 +257,19 @@ void MilestoneOverlay::drawFrame() {
 		}
 	}
 	g_system->unlockScreen();
-	_drawn = true;
+
+	g_system->updateScreen();
+
+	screen = g_system->lockScreen();
+	if (screen && screen->format.bytesPerPixel == 1 &&
+			_bounds.right <= screen->w && _bounds.bottom <= screen->h) {
+		for (int y = 0; y < _messageHeight; ++y) {
+			memcpy(screen->getBasePtr(_bounds.left, _bounds.top + y),
+				_backing.data() + y * _messageWidth, _messageWidth);
+		}
+	}
+	if (screen)
+		g_system->unlockScreen();
 }
 
 } // End of namespace Ripper

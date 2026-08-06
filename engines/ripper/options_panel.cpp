@@ -156,7 +156,7 @@ void OptionsPanelManager::restoreDisplay() {
 	_savedDisplay.restore(true, false);
 	_savedDisplay.clear();
 	_engine->getCursor()->refresh();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 void OptionsPanelManager::applyPalette() {
@@ -456,7 +456,7 @@ bool OptionsPanelManager::run() {
 		if (!serviceBackground(decoder))
 			active = false;
 		_engine->getCursor()->refresh();
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(MIN<uint32>(decoder.getTimeToNextFrame(), 10));
 	}
 

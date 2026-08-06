@@ -304,7 +304,7 @@ void WacDatabaseSession::drawDatabase() const {
 	}
 	g_system->unlockScreen();
 	_wac->_engine->getCursor()->refresh();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 void WacDatabaseSession::clearDatabaseMediaViewport() {
@@ -564,7 +564,7 @@ bool WacDatabaseSession::drawDatabaseTextPanel(uint bodyResourceId,
 		_wac->drawBitmap(_wac->_databaseSkin[_databaseCornerAlternate ? 15 : 0],
 			bounds.left, bounds.top);
 	_wac->_engine->getCursor()->refresh();
-	g_system->updateScreen();
+	presentScreen();
 	return true;
 }
 
@@ -604,7 +604,7 @@ uint16 WacDatabaseSession::runDatabaseTextPanel(DatabaseEntry &entry, uint bodyR
 			result = command;
 			break;
 		}
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 
@@ -901,7 +901,7 @@ uint16 WacDatabaseSession::run() {
 		}
 		// RunWacSceneInputLoopUntilExitAction at 0x221e3 services the software
 		// selection presentation every tick while the inventory chooser is active.
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 	debugC(1, kDebugWac,

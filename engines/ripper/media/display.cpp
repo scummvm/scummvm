@@ -57,7 +57,7 @@ void MediaPlayer::fadePalette(bool fadeIn, uint stepCount) {
 		for (uint component = 0; component < Graphics::PALETTE_SIZE; ++component)
 			fadePalette[component] = (byte)((uint64)targetPalette[component] * scale / stepCount);
 		paletteManager->setPalette(fadePalette, 0, Graphics::PALETTE_COUNT);
-		g_system->updateScreen();
+		presentScreen();
 		if (step != stepCount)
 			g_system->delayMillis(kPaletteFadeStepDelayMs);
 	}
@@ -106,7 +106,7 @@ bool MediaPlayer::displayScenePcx(const Common::String &path) {
 	_engine->getSettings()->applyVideoPalette(palette, 256, true);
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 	_engine->getCursor()->refresh();
-	g_system->updateScreen();
+	presentScreen();
 	debugC(1, kDebugVideo,
 		"Ripper: displayed scene PCX '%s' source=%ux%u destination=%d,%d interfacePalettePatch=1",
 		path.c_str(), surface->w, surface->h, x, kScenePresentationTop);

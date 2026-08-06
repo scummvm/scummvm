@@ -415,7 +415,7 @@ bool WacVoiceLockRenderer::drawPresentation(
 			state.sourceSelectionDragBackingHeight);
 	}
 	_database->engine()->getCursor()->refresh();
-	g_system->updateScreen();
+	presentScreen();
 	return true;
 }
 

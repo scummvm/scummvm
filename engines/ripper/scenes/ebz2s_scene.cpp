@@ -133,7 +133,7 @@ Ebz2sScene::Result Ebz2sScene::run(uint sceneArgument) {
 					_engine->getCursor()->setVisible(true);
 				}
 				_engine->getCursor()->refresh();
-				g_system->updateScreen();
+				presentScreen();
 				g_system->delayMillis(10);
 			}
 			if (result != kLoadFailed &&

@@ -26,6 +26,7 @@
 #include "graphics/surface.h"
 
 #include "ripper/detection.h"
+#include "ripper/ripper.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
@@ -73,7 +74,7 @@ bool IndexedDisplaySnapshot::restore(bool restorePaletteValue, bool updateScreen
 	if (restorePaletteValue && !restorePalette())
 		return false;
 	if (updateScreen)
-		g_system->updateScreen();
+		presentScreen();
 	debugC(2, kDebugVideo,
 		"Ripper: restored indexed display bounds=%d,%d,%d,%d palette=%d update=%d",
 		_bounds.left, _bounds.top, _bounds.right, _bounds.bottom,

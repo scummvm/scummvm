@@ -127,7 +127,7 @@ CyberManager::Result CyberManager::run() {
 	input->discardMouseTransitions();
 	_engine->getSceneAudio()->clearAll(true);
 	g_system->fillScreen(0);
-	g_system->updateScreen();
+	presentScreen();
 	debugC(1, kDebugCyber,
 		"Ripper: entering Cyber transition media='%s' script='%s' helpTable=0x1a4 toolbarMask=0x0000 cursor=%u controls=escape-space",
 		kCyberEntryMedia, kCyberScript, kCyberSelectionIndex);
@@ -138,7 +138,7 @@ CyberManager::Result CyberManager::run() {
 	bool active = _engine->getMedia()->play(kCyberEntryMedia, true);
 	if (active && !_engine->shouldQuit()) {
 		g_system->fillScreen(0);
-		g_system->updateScreen();
+		presentScreen();
 		active = scripts->ba0().load(_engine->getResources()->scripts(), kCyberScript);
 	}
 	if (active && !_engine->shouldQuit()) {
@@ -157,7 +157,7 @@ CyberManager::Result CyberManager::run() {
 			active = false;
 			break;
 		}
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 	if (active || _engine->shouldQuit())
@@ -213,7 +213,7 @@ CyberManager::Result CyberManager::runProgram(uint action,
 	input->discardMouseTransitions();
 	_engine->getSceneAudio()->clearAll(true);
 	g_system->fillScreen(0);
-	g_system->updateScreen();
+	presentScreen();
 	debugC(1, kDebugCyber,
 		"Ripper: entering Cyber program action=%u program='%s' argument=%u suspendedScript='%s' suspendedFrame=%u toolbarMask=0x0000 savedCursor=%u",
 		action, programName.c_str(), argument,
@@ -262,7 +262,7 @@ CyberManager::Result CyberManager::runProgram(uint action,
 			active = false;
 			break;
 		}
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 	if (!isSelfContainedScene && (active || _engine->shouldQuit()))

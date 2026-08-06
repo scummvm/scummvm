@@ -57,7 +57,7 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path) {
 	// packetized dialogue/video audio, which the Remote Control names VIDEO VOL.
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &handle, stream);
 	_engine->getCursor()->update(kBlockingAudioCursor);
-	g_system->updateScreen();
+	presentScreen();
 	debugC(2, kDebugAudio,
 		"Ripper: started blocking audio '%s' source=%s cursor=%u input=keyboard-only presentation=serviced",
 		path.c_str(), source.c_str(), kBlockingAudioCursor);
@@ -77,7 +77,7 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path) {
 		}
 		if (stoppedByEscape)
 			break;
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 	_mixer->stopHandle(handle);

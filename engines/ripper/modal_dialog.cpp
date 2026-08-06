@@ -132,7 +132,7 @@ void ModalDialogManager::restoreDisplay() {
 
 	_savedDisplay.restore(true, false);
 	_engine->getCursor()->refresh();
-	g_system->updateScreen();
+	presentScreen();
 	_savedDisplay.clear();
 }
 
@@ -221,7 +221,7 @@ void ModalDialogManager::drawTextEntry(const Common::String &prompt,
 	}
 
 	g_system->unlockScreen();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 void ModalDialogManager::drawBinaryPrompt(const Common::String &prompt,
@@ -272,7 +272,7 @@ void ModalDialogManager::drawBinaryPrompt(const Common::String &prompt,
 
 	g_system->unlockScreen();
 	_engine->getCursor()->refresh();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 uint ModalDialogManager::textEntryCursorFromPoint(const Common::String &text,
@@ -387,7 +387,7 @@ void ModalDialogManager::finishTextEntry(Common::String &text) {
 		_textEntryBacking.restorePixels();
 		_textEntryBacking.clear();
 		_engine->getCursor()->refresh();
-		g_system->updateScreen();
+		presentScreen();
 	}
 }
 
@@ -692,7 +692,7 @@ bool ModalDialogManager::runBinaryPrompt(uint promptResourceId,
 			drawBinaryPrompt(prompt, options, selectedIndex, bounds);
 			redraw = false;
 		} else {
-			g_system->updateScreen();
+			presentScreen();
 		}
 		g_system->delayMillis(10);
 	}
@@ -857,7 +857,7 @@ bool ModalDialogManager::runTextInternal(const Common::String &title,
 		else
 			// The modal owns the main loop, so it must keep presenting frames
 			// for CursorMan's software cursor to follow mouse-motion events.
-			g_system->updateScreen();
+			presentScreen();
 		g_system->delayMillis(10);
 	}
 

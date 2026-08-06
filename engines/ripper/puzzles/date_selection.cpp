@@ -185,7 +185,7 @@ bool DateSelectionPuzzle::drawFeedback() {
 	IndexedBitmapRenderer::drawBitmap((byte *)screen->getPixels(), screen->pitch,
 		_waitFrame, kWaitPosition.x, kWaitPosition.y);
 	g_system->unlockScreen();
-	g_system->updateScreen();
+	presentScreen();
 
 	for (uint step = 0; step < kFeedbackStepCount; ++step) {
 		screen = g_system->lockScreen();
@@ -199,7 +199,7 @@ bool DateSelectionPuzzle::drawFeedback() {
 			x + kFeedbackWidth, kFeedbackY + kFeedbackHeight),
 			kFeedbackColor);
 		g_system->unlockScreen();
-		g_system->updateScreen();
+		presentScreen();
 		debugC(3, kDebugPuzzles,
 			"Ripper: date-selection feedback step=%u/%u x=%d y=%d",
 			step + 1, kFeedbackStepCount, x, kFeedbackY);

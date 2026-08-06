@@ -238,7 +238,7 @@ void ClockPuzzle::render() const {
 			kControls[i + 5].x, kControls[i + 5].y + kSceneOriginY);
 	g_system->unlockScreen();
 	_backgroundDisplay.restorePalette();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 void ClockPuzzle::playCue(uint cue) {
@@ -496,7 +496,7 @@ ClockPuzzle::Result ClockPuzzle::run(uint completionFlag) {
 				"Ripper: solved clock puzzle milestone=%u state=7,8/14:35/09:35/1",
 				completionFlag);
 		}
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 

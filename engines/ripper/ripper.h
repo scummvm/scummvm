@@ -25,6 +25,8 @@
 #include "common/random.h"
 #include "engines/engine.h"
 
+#include "ripper/diagnostics/screen_presenter.h"
+
 struct ADGameDescription;
 
 namespace Ripper {

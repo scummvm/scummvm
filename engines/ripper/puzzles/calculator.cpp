@@ -193,7 +193,7 @@ void CalculatorPuzzle::render() const {
 	}
 	drawDisplay(pixels, screen->pitch);
 	g_system->unlockScreen();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 void CalculatorPuzzle::showButtonFeedback(uint16 command) const {
@@ -210,7 +210,7 @@ void CalculatorPuzzle::showButtonFeedback(uint16 command) const {
 		drawBitmap((byte *)screen->getPixels(), screen->pitch, _buttons[i],
 			kButtonLayouts[i].x, kButtonLayouts[i].y + kSceneOriginY);
 		g_system->unlockScreen();
-		g_system->updateScreen();
+		presentScreen();
 		debugC(3, kDebugPuzzles,
 			"Ripper: calculator button feedback index=%u command=0x%04x ticks=%u",
 			i, command, kButtonFeedbackTicks);
@@ -528,7 +528,7 @@ CalculatorPuzzle::Result CalculatorPuzzle::run(uint completionFlag) {
 				active = false;
 		}
 
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 

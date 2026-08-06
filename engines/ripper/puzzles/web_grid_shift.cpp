@@ -173,7 +173,7 @@ void WebGridShiftPuzzle::renderOrder(const uint *order) const {
 	}
 	g_system->unlockScreen();
 	_backgroundDisplay.restorePalette();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 void WebGridShiftPuzzle::renderShift(uint targetCell, uint progress) const {
@@ -248,7 +248,7 @@ void WebGridShiftPuzzle::renderShift(uint targetCell, uint progress) const {
 
 	g_system->unlockScreen();
 	_backgroundDisplay.restorePalette();
-	g_system->updateScreen();
+	presentScreen();
 }
 
 bool WebGridShiftPuzzle::animateShift(uint targetCell, bool autoPlay) {
@@ -644,10 +644,10 @@ WebGridShiftPuzzle::Result WebGridShiftPuzzle::run(uint completionFlag) {
 				active = false;
 			}
 		} else if (cursorChanged) {
-			g_system->updateScreen();
+			presentScreen();
 		} else {
 			// ServiceUiControlStateSelection runs every retail input tick.
-			g_system->updateScreen();
+			presentScreen();
 		}
 		g_system->delayMillis(10);
 	}
@@ -657,7 +657,7 @@ WebGridShiftPuzzle::Result WebGridShiftPuzzle::run(uint completionFlag) {
 	if (!_engine->shouldQuit()) {
 		_engine->getMedia()->fadePalette(false, kFadeSteps);
 		g_system->fillScreen(0);
-		g_system->updateScreen();
+		presentScreen();
 	}
 	cursor->setSelectionIndex(savedSelectionIndex);
 	cursor->dispatchSelectionIndexChange(savedSelectionIndex);

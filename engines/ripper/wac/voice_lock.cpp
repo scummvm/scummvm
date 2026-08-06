@@ -575,7 +575,7 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 				break;
 			redraw = false;
 		}
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(10);
 	}
 
@@ -590,7 +590,7 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 		// the retained 640x400 page first instead of leaving WAC pixels in the
 		// uncovered top and bottom bands.
 		g_system->fillScreen(0);
-		g_system->updateScreen();
+		presentScreen();
 		debugC(2, kDebugWac,
 			"Ripper: cleared WAC voice-lock completion display before media='accesed.avi' bounds=0,0,640,400 command=0x14 function=ClearGenericVideoLogicalPage@0x45ed8");
 		const bool played =

@@ -80,11 +80,15 @@ void RipperEngine::pauseEngineIntern(bool pause) {
 	// ScummVM's global dialogs suspend this engine while its blocking media loop
 	// is still on the stack. Freeze the decoder before its wall clock can advance
 	// behind the dialog, then resume audio before releasing that clock.
+	if (pause && _milestoneOverlay)
+		_milestoneOverlay->pause(true);
 	if (pause && _media)
 		_media->pauseActiveMedia(true);
 	Engine::pauseEngineIntern(pause);
 	if (!pause && _media)
 		_media->pauseActiveMedia(false);
+	if (!pause && _milestoneOverlay)
+		_milestoneOverlay->pause(false);
 }
 
 void RipperEngine::registerSearchPaths() {
@@ -226,14 +230,12 @@ Common::Error RipperEngine::run() {
 	}
 
 	while (!shouldQuit()) {
-		_milestoneOverlay->prepareFrame();
 		pumpEvents();
 		if (!_scripts->serviceScene()) {
 			_scripts->logRuntimeFailure("scene service failed");
 			return Common::kUnknownError;
 		}
-		_milestoneOverlay->drawFrame();
-		_system->updateScreen();
+		presentScreen();
 		_system->delayMillis(10);
 	}
 	if (_scripts->canSaveGame()) {

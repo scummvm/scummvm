@@ -137,7 +137,7 @@ void TubeScene::animateSwitch(bool enabled) {
 	for (uint step = 0; step < _switchFrames.size() && !_engine->shouldQuit(); ++step) {
 		const uint frameIndex = enabled ? step : _switchFrames.size() - step - 1;
 		drawSwitchFrame(frameIndex);
-		g_system->updateScreen();
+		presentScreen();
 		g_system->delayMillis(kSwitchAnimationDelay);
 	}
 }
@@ -244,7 +244,7 @@ uint16 TubeScene::service(uint frame) {
 	}
 	const uint16 command = serviceInput();
 	drawSwitch();
-	g_system->updateScreen();
+	presentScreen();
 	return command;
 }
 
@@ -364,7 +364,7 @@ TubeScene::Result TubeScene::run(uint completionFlag) {
 			}
 			command = serviceInput();
 			drawSwitch();
-			g_system->updateScreen();
+			presentScreen();
 			g_system->delayMillis(10);
 		}
 	}
