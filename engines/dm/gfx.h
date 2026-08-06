@@ -143,6 +143,7 @@ enum ZoneIndex {
 	kDMZoneDoorFrameTopD1C      = 733, // @ C733_ZONE_DOOR_FRAME_TOP_D1C
 	kDMZoneDoorFrameTopD1R      = 734, // @ C734_ZONE_DOOR_FRAME_TOP_D1R
 	kDMZonePortraitOnWall       = 737, // @ M635_ZONE_PORTRAIT_ON_WALL
+	kDMZoneDoorButton           = 1950, // @ C1950_ZONE_DOOR_BUTTON
 	kDMZoneDoorD3L2             = 3700,
 	kDMZoneDoorD3R2             = 3710,
 	kDMZoneDoorD3L              = 3720,

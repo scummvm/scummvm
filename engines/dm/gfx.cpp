@@ -1434,9 +1434,13 @@ void DisplayMan::drawDoorButton(int16 doorButtonOrdinal, DoorButton doorButton) 
 			}
 			bitmap = getDerivedBitmap(doorButtonOrdinal);
 		}
-		Box blitBox(coordSetRedEagle[0], coordSetRedEagle[1], coordSetRedEagle[2], coordSetRedEagle[3]);
-		blitToBitmap(bitmap, _bitmapViewport, blitBox, 0, 0,
-						  coordSetRedEagle[4], k112_byteWidthViewport, kDMColorFlesh, coordSetRedEagle[5], k136_heightViewport);
+		if (_vm->getPlatform() == Common::kPlatformDOS) {
+			drawBitmapDOS(bitmap, kDMZoneDoorButton + coordSet + doorButton, false, kDMColorFlesh);
+		} else {
+			Box blitBox(coordSetRedEagle[0], coordSetRedEagle[1], coordSetRedEagle[2], coordSetRedEagle[3]);
+			blitToBitmap(bitmap, _bitmapViewport, blitBox, 0, 0,
+							  coordSetRedEagle[4], k112_byteWidthViewport, kDMColorFlesh, coordSetRedEagle[5], k136_heightViewport);
+		}
 	}
 }
 
