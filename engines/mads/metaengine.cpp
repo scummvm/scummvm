@@ -22,18 +22,16 @@
 
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
-
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
-
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/memstream.h"
 #include "common/system.h"
 #include "common/translation.h"
+#include "graphics/scaler.h"
 #include "graphics/surface.h"
-
 #include "mads/detection.h"
 #include "mads/nebular/nebular.h"
 #include "mads/phantom/phantom.h"
@@ -178,6 +176,7 @@ public:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const MADS::MADSGameDescription *desc) const override;
 	int getMaximumSaveSlot() const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
+	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 };
 
 bool MADSMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -330,6 +329,18 @@ Common::KeymapArray MADSMetaEngine::initKeymaps(const char *target) const {
 	menuKeyMap->setEnabled(false);
 
 	return keymaps;
+}
+
+void MADSMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	const Graphics::Surface &newThumb = MADS::g_engine->getSavegameThumbnail();
+	thumb.free();
+
+	if (newThumb.h == 0)
+		// No provided thumbnail, so just get it from the screen
+		::createThumbnailFromScreen(&thumb);
+	else
+		// Use provided thumbnail
+		thumb.copyFrom(newThumb);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MADS)

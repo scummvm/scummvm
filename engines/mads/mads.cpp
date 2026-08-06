@@ -23,6 +23,7 @@
 #include "common/config-manager.h"
 #include "common/memstream.h"
 #include "engines/util.h"
+#include "graphics/scaler.h"
 #include "mads/mads.h"
 #include "mads/mads.h"
 #include "mads/core/anim.h"
@@ -546,6 +547,14 @@ int MADSEngine::getRandomNumber(int minNumber, int maxNumber) {
 	int range = maxNumber - minNumber;
 
 	return minNumber + _randomSource.getRandomNumber(range);
+}
+
+void MADSEngine::setSavegameThumbnail() {
+	::createThumbnailFromScreen(&_savegameThumbnail);
+}
+
+void MADSEngine::clearSavegameThumbnail() {
+	_savegameThumbnail.free();
 }
 
 } // namespace MADS

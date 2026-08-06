@@ -1745,11 +1745,22 @@ void global_game_menu() {
 			break;
 
 		case GAME_SAVE_MENU:
-			game_menu_save();
+			if (config_file.original_save_load) {
+				game_menu_save();
+			} else {
+				kernel.activate_menu = GAME_NO_MENU;
+				g_engine->saveGameDialog();
+			}
 			break;
-
 		case GAME_RESTORE_MENU:
-			game_menu_restore();
+			if (config_file.original_save_load) {
+				game_menu_restore();
+			} else {
+				kernel.activate_menu = GAME_NO_MENU;
+				if (g_engine->loadGameDialog())
+					// Dummy name to flag that load was successful
+					Common::strcpy_s(save_game_buf, "OK");
+			}
 			break;
 
 		case GAME_OPTIONS_MENU:

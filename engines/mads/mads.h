@@ -86,6 +86,7 @@ protected:
 	Audio::SoundHandle _speechHandle;
 	TimerFunction _timerFunction = nullptr;
 	uint32 _nextTimerTime = 0;
+	Graphics::Surface _savegameThumbnail;
 
 	virtual Common::Point screenToGame(const Common::Point &point) const;
 	virtual Common::Point gameToScreen(const Common::Point &point) const;
@@ -131,6 +132,12 @@ public:
 	int getMouseState(int &x, int &y);
 	void warpMouse(int x, int y);
 	void updateDisplay();
+
+	const Graphics::Surface &getSavegameThumbnail() const {
+		return _savegameThumbnail;
+	}
+	void setSavegameThumbnail();
+	void clearSavegameThumbnail();
 
 	/**
 	 * Get the elapsed time in milliseconds

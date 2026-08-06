@@ -1497,7 +1497,10 @@ void game_control() {
 			if (g_engine->getGameID() == GType_RexNebular && kernel.activate_menu != GAME_NO_MENU &&
 					player.commands_allowed && !global[RexNebular::kCopyProtectFailed]) {
 				player_dump_walker();
+
+				g_engine->setSavegameThumbnail();
 				game_exec_function(game_menu_routine);
+				g_engine->clearSavegameThumbnail();
 				kernel.activate_menu = GAME_NO_MENU;
 			}
 
@@ -1927,7 +1930,6 @@ static void game_control_loop() {
 	if (debugger) game_exec_function(debugger_reset);
 
 	while ((new_room == room_id) && game.going && !kernel.force_restart) {
-
 		game_main_loop();
 
 		if (kernel.activate_menu) {
@@ -1939,7 +1941,9 @@ static void game_control_loop() {
 					kernel.force_restart = true;
 
 				} else {
+					g_engine->setSavegameThumbnail();
 					game_exec_function(game_menu_routine);
+					g_engine->clearSavegameThumbnail();
 
 					if (game_menu_routine == NULL)
 						game.going = false;
