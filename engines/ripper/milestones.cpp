@@ -31,7 +31,7 @@
 
 namespace Ripper {
 
-Milestones::Milestones() {
+Milestones::Milestones() : _observer(nullptr) {
 	memset(_flags, 0, sizeof(_flags));
 }
 
@@ -104,6 +104,8 @@ bool Milestones::set(uint flag, bool value, const char *source) {
 	debugC(changed ? 2 : 3, kDebugMilestones,
 		"Ripper: milestone flag=%u label='%s' domain='%s' value=%d changed=%d source=%s",
 		flag, label(flag).c_str(), domain(flag), value, changed, source ? source : "unknown");
+	if (changed && _observer)
+		_observer->onMilestoneChanged(flag, value);
 	return true;
 }
 

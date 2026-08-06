@@ -415,7 +415,14 @@
   case-insensitive `MILESTONES` command lists every `MILESTON.DEF` entry and
   current value, `MILESTONES ACTIVE` lists every set bit in the 1,000-flag
   store, `MILESTONES <ID>` reports one store entry, and `MILESTONES TOGGLE
-  <ID>` flips and reports one store entry. `MILESTONE` is a singular alias.
+  <ID>` flips and reports one store entry. The ScummVM-only
+  `OVERLAY_MILESTONES` command toggles lower-left milestone-change
+  notifications; `ON` and `OFF` select the state explicitly. Actual bit
+  transitions enter an isolated FIFO, and each red-on-black message has a
+  five-second dithered fade lifecycle before the next queued transition. The
+  renderer restores its scoped backing before scene service and redraws over
+  the completed scene frame, leaving milestone storage and retail validation
+  independent of debug presentation.
   Flags 6 through 9 identify Magnotta, Falconetti, Burton, or Powell as the
   Ripper. `SeedRandomFreePersistentFlag6To9` at `0x106c0` counts zero-valued
   candidate bytes at persistent-settings offsets `+0x38` through `+0x3b`,

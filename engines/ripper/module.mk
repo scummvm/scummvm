@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	controls.o \
 	cursor.o \
 	cyber.o \
+	diagnostics/milestone_overlay.o \
 	dialogue.o \
 	display.o \
 	iavf.o \
