@@ -324,7 +324,7 @@ int DrivingPuzzle::overlayImageIndex(const Common::String &name) {
 	}
 	surf.setTransparentColor(_drawSurface.getTransparentColor());
 
-	_overlayImages.push_back(surf);
+	_overlayImages.push_back(Common::move(surf));
 	_overlayImageNames.push_back(name);
 	return (int)_overlayImages.size() - 1;
 }
