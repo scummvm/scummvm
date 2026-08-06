@@ -82,10 +82,13 @@ private:
 	machine *_safariShadow1Mach = nullptr;
 
 	void debugRoomChanged();
+	void addMazeCheatHotkeys();
+	void removeMazeCheatHotkeys();
 
 	static const Maze709Room _rooms[100];
 
 	static void clearPressed(void *, void *);
+	static void stayPressed(void *, void *);
 };
 
 } // namespace Rooms
