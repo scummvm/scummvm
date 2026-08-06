@@ -855,6 +855,22 @@
   rejected entry empties the cells and queues `BNKWAV3.WAV`. A correct entry
   queues `BNKWAV2.WAV`, alternates the captured blank and filled display five
   times at five DOS ticks per phase, then sets the supplied completion flag.
+- Scene action 25 calls `RunKkTileMatchPuzzleScene` at `0x2fa31`. It loads the
+  difficulty-selected `KK%d.INI` from `SCRIPT.PL`, opens `KK.PL`, and creates
+  controls `0x672` through `0x681` at the 4-by-4 Y/X coordinate table rooted
+  at `0x84474`. `BASE` supplies the 640-by-400 display and palette, `BIG_S`
+  supplies the closed tile, and `FLIP1` through `FLIP13` are the 32-frame
+  barcode reveal animations. Each click first applies that control's partial
+  16-slot copy row from the INI, animating changed slots over 25 five-tick
+  steps, and then opens the selected slot through the midpoint of its current
+  state's `FLIP%d` sequence. `CHIP0` accompanies slot movement, `CHIP2` starts
+  a reveal or reset, and `CHIP1` marks tile presentation and settling.
+- After three slots are open, `CountActivePuzzleTilesMatchingFirstState` at
+  `0x2f3be` succeeds only when all three state values match. A mismatch remains
+  visible for up to 250 timer ticks or until input, then each active animation
+  finishes and returns to `BIG_S`. Escape exits, F1 opens help table `0x1b8`,
+  and the hidden case-insensitive `asparagus` keyword sets the caller-supplied
+  completion flag through the same cleanup path as a three-tile match.
 - `EH_WAIT.BBM` is drawn at physical `(186,275)` while the token matcher runs
   its 17-DOS-tick progress sweep. `EH_EEG0.WAV` and low-volume
   `EH_EEG2.WAV` start with the puzzle; `EH_EEG1.WAV` accompanies the two

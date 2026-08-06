@@ -46,6 +46,7 @@ MODULE_OBJS := \
 	puzzles/key_group.o \
 	puzzles/keypad_sequence.o \
 	puzzles/kj_blob_shooter.o \
+	puzzles/kk_tile_match.o \
 	puzzles/rolodex.o \
 	puzzles/shock_lever.o \
 	puzzles/six_digit_code.o \
