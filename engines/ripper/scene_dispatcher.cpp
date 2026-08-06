@@ -45,6 +45,7 @@
 #include "ripper/puzzles/key_group.h"
 #include "ripper/puzzles/keypad_sequence.h"
 #include "ripper/puzzles/kj_blob_shooter.h"
+#include "ripper/puzzles/kk_tile_match.h"
 #include "ripper/puzzles/rolodex.h"
 #include "ripper/puzzles/shock_lever.h"
 #include "ripper/puzzles/six_digit_code.h"
@@ -87,7 +88,7 @@ const char *SceneActionDispatcher::actionName(uint action) {
 	case kSceneActionShockLeverPuzzle: return "shock lever puzzle";
 	case 23: return "tarot card puzzle";
 	case 24: return "tube switch scene";
-	case 25: return "KK tile match puzzle";
+	case kSceneActionKkTileMatchPuzzle: return "KK tile match puzzle";
 	case kSceneActionRatiniCombat: return "ratini combat encounter";
 	case kSceneActionAtkiniCombat: return "atkini combat encounter";
 	case 28: return "gym selector";
@@ -327,6 +328,15 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		debugC(1, kDebugScene,
 			"Ripper: tube switch scene action completed result=%d milestone=%u", result, argument);
 		return result != TubeScene::kLoadFailed;
+	}
+	if (action == kSceneActionKkTileMatchPuzzle) {
+		KkTileMatchPuzzle puzzle(engine);
+		const KkTileMatchPuzzle::Result result = puzzle.run(argument);
+		debugC(1, kDebugPuzzles,
+			"Ripper: KK tile-match puzzle scene action completed "
+			"result=%d milestone=%u",
+			result, argument);
+		return result != KkTileMatchPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionGymSelector) {
 		GymScene scene(engine);
