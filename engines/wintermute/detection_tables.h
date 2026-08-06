@@ -319,19 +319,19 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Alimardan's Mischief (Retail) (Persian)
 	WME_WINENTRY("alimardan1", "",
-		WME_ENTRY1s("data.dcp", "ab1aa5f3d6d5f10d3f131a78be80bf34", 1747086434), Common::FA_IRN, ADGF_UNSTABLE, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "ab1aa5f3d6d5f10d3f131a78be80bf34", 1747086434), Common::FA_IRN, ADGF_NO_FLAGS, WME_1_9_1),
 
 	// Alimardan's Mischief (English)
 	WME_WINENTRY("alimardan1", "",
-		WME_ENTRY1s("data.dcp", "55c28b8d4f49120f980d237951a6c73f", 1834957694), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "55c28b8d4f49120f980d237951a6c73f", 1834957694), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
 	// Alimardan's Mischief (Steam, August 2017) (English)
 	WME_WINENTRY("alimardan1", "",
-		WME_ENTRY1s("data.dcp", "ef27d8483d6f19d5398fc81ea05e5320", 1258766332), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "ef27d8483d6f19d5398fc81ea05e5320", 1258766332), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_3),
 
 	// Alimardan's Mischief (Steam, October 2017) (English)
 	WME_WINENTRY("alimardan1", "",
-		WME_ENTRY1s("data.dcp", "d74f56d9ce3b7442b921393af7fb6167", 1258761838), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "d74f56d9ce3b7442b921393af7fb6167", 1258761838), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_3),
 
 	// Alimardan Meets Merlin (Hayoola) (Persian)
 	WME_WINENTRY("alimardan2", "",
