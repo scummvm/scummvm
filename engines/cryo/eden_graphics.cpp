@@ -29,6 +29,8 @@
 #include "graphics/blit.h"
 #include "video/hnm_decoder.h"
 
+#include "cryo/hnm1decoder.h"
+
 namespace Cryo {
 
 EdenGraphics::EdenGraphics(EdenGame *game) : _game(game) {
@@ -1224,6 +1226,41 @@ static unsigned char movieRates[] = {
 	0x10, 0x10, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A,
 };
 
+// Both decoders take ownership in loadStream(), including when they reject the movie.
+static Video::VideoDecoder *loadMovie(Common::SeekableReadStream *stream, int16 num, const color_t *initialPalette) {
+	const uint32 tag = stream->readUint32BE();
+	if (!stream->seek(0)) {
+		delete stream;
+		return nullptr;
+	}
+
+	const uint32 regularFrameDelayMs = (uint16)num < ARRAYSIZE(movieRates) ? 5 * movieRates[num] : 0;
+	Video::VideoDecoder *decoder;
+	if (tag == MKTAG('H', 'N', 'M', '4') || tag == MKTAG('U', 'B', 'B', '2') || tag == MKTAG('H', 'N', 'M', '6')) {
+		byte *palette = nullptr;
+		if (initialPalette) {
+			palette = new byte[256 * 3];
+			for (int i = 0; i < 256; i++) {
+				palette[i * 3 + 0] = initialPalette[i].r >> 8;
+				palette[i * 3 + 1] = initialPalette[i].g >> 8;
+				palette[i * 3 + 2] = initialPalette[i].b >> 8;
+			}
+		}
+		Video::HNMDecoder *hnm = new Video::HNMDecoder(g_system->getScreenFormat(), false, palette);
+		if (regularFrameDelayMs)
+			hnm->setRegularFrameDelay(regularFrameDelayMs);
+		decoder = hnm;
+	} else {
+		decoder = new HNM1Decoder(regularFrameDelayMs);
+	}
+
+	if (!decoder->loadStream(stream)) {
+		delete decoder;
+		return nullptr;
+	}
+	return decoder;
+}
+
 // Original name: showfilm
 void EdenGraphics::showMovie(int16 num, char arg1) {
 	Common::SeekableReadStream *stream = _game->loadSubStream(num - 1 + 485);
@@ -1232,25 +1269,11 @@ void EdenGraphics::showMovie(int16 num, char arg1) {
 		return;
 	}
 
-	int16 j = 0;
 	color_t palette16[256];
-	byte *palette = new byte[256 * 3];
 	CLPalette_GetLastPalette(palette16);
-	for (int16 i = 0; i < 256; i++) {
-		palette[j++] = palette16[i].r >> 8;
-		palette[j++] = palette16[i].g >> 8;
-		palette[j++] = palette16[i].b >> 8;
-	}
-
-	Video::HNMDecoder *decoder = new Video::HNMDecoder(g_system->getScreenFormat(), false, palette);
-
-	if ((uint16)num < ARRAYSIZE(movieRates)) {
-		decoder->setRegularFrameDelay(5*movieRates[num]);
-	}
-
-	if (!decoder->loadStream(stream)) {
-		warning("Could not load movie %d", num);
-		delete decoder;
+	Video::VideoDecoder *decoder = loadMovie(stream, num, palette16);
+	if (!decoder) {
+		debugC(1, kDebugMovie, "Movie %d (resource %d) is in no format we decode", num, num - 1 + 485);
 		return;
 	}
 
