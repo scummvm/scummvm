@@ -41,6 +41,7 @@ public:
 		TS_ASSERT_EQUALS(plan.frames.lastFrame, 0xffffffffU);
 		TS_ASSERT_EQUALS(plan.loop.boundedLoopStartFrame, 0xffffffffU);
 		TS_ASSERT(!plan.rendering.transparentFirstPixel);
+		TS_ASSERT(!plan.rendering.retainFinalTransparentFrame);
 		TS_ASSERT_EQUALS(Common::String(plan.retailRoute),
 			"RunMediaSequence@0x1e516");
 	}
@@ -76,12 +77,13 @@ public:
 		plan.palette.patchInterfacePalette = false;
 		plan.palette.preserveDisplayPalette = true;
 		plan.rendering.transparentFirstPixel = true;
+		plan.rendering.retainFinalTransparentFrame = true;
 
 		TS_ASSERT_EQUALS(Ripper::describeSmackerPlaybackPlan(plan),
 			"route=RunMediaSequence@0x1e516 position=12,34 originY=50 scale=1 "
 			"controls=0 sceneUi=0 palette=interface:0,wac:1,preserve:1,remember:1 "
 			"frames=0..4294967295 previewLimit=1 "
 			"loop=start:0,fromStart:0,bounded:4294967295 "
-			"timeline=0 callback=0 transparent=1");
+			"timeline=0 callback=0 transparent=1,retainFinal=1");
 	}
 };

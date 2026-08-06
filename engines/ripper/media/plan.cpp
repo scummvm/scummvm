@@ -54,7 +54,7 @@ Common::String describeSmackerPlaybackPlan(const SmackerPlaybackPlan &plan) {
 		"route=%s position=%d,%d originY=%d scale=%u controls=%d "
 		"sceneUi=%d palette=interface:%d,wac:%d,preserve:%d,remember:%d "
 		"frames=%u..%u previewLimit=%u loop=start:%u,fromStart:%d,bounded:%u "
-		"timeline=%d callback=%d transparent=%d",
+		"timeline=%d callback=%d transparent=%d,retainFinal=%d",
 		plan.retailRoute, plan.placement.x, plan.placement.y,
 		plan.placement.originY, plan.placement.displayScale,
 		plan.input.allowEscSpace, plan.input.serviceSceneUi,
@@ -65,7 +65,8 @@ Common::String describeSmackerPlaybackPlan(const SmackerPlaybackPlan &plan) {
 		plan.loop.loopFromStart, plan.loop.boundedLoopStartFrame,
 		plan.timeline.frameAudioOffsets != nullptr && plan.timeline.audioByteRate != 0,
 		plan.callback.sequenceCallback != nullptr,
-		plan.rendering.transparentFirstPixel);
+		plan.rendering.transparentFirstPixel,
+		plan.rendering.retainFinalTransparentFrame);
 }
 
 } // End of namespace Ripper

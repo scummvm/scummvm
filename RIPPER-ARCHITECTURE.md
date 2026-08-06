@@ -257,8 +257,11 @@
   key at `0x1e996`, restores the captured 216-by-148 scene region, and issues
   the flagged blit at `0x1e9d3`; `GenericVideoScaledBlitCopyCallback` at
   `0x467f8` leaves destination pixels unchanged when they match that key. This
-  keeps the active scene visible around the Remote Control and restores it
-  when the modal closes.
+  keeps the active scene visible around the Remote Control. Sequence cleanup
+  at `0x1eaf9` releases the temporary logical page without redrawing the
+  backing, leaving the final keyed frame visible throughout the control loop.
+  The modal's outer dirty-region update at `0x1a108` restores the pre-modal
+  capture only when the Remote Control closes.
   `REMOTE.SMK` is an overlay sequence whose pixels use only shared palette
   indices 4 through 9 and 246 through 255; its unused chroma-key palette
   entries do not replace the suspended scene palette during playback. The
