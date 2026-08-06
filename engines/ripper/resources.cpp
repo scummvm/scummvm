@@ -179,10 +179,18 @@ static bool decodeCustomBitmap(Common::SeekableReadStream &stream, BitmapAssetFr
 	}
 
 	byte colorMap[256];
-	for (uint i = 0; i < ARRAYSIZE(colorMap); ++i)
-		colorMap[i] = i;
-	if ((flags & 2) != 0 && stream.read(colorMap, colorCount) != colorCount)
-		return false;
+	if ((flags & 2) != 0) {
+		// DecodeCustomBitmapAsset at 0x54106 reads only colorCount bytes into
+		// its zero-initialized remap table. This matters for assets such as the
+		// combat explosions, whose 0xff transparency key lies beyond that range
+		// and therefore resolves to palette index 0.
+		memset(colorMap, 0, sizeof(colorMap));
+		if (stream.read(colorMap, colorCount) != colorCount)
+			return false;
+	} else {
+		for (uint i = 0; i < ARRAYSIZE(colorMap); ++i)
+			colorMap[i] = i;
+	}
 
 	frame.transparentColor = colorMap[transparentColor];
 	frame.pixels.resize(pixelCount);
