@@ -1545,9 +1545,13 @@ bool ScriptManager::serviceScene() {
 			return advanceBa0ToFrame(dialogueFrame);
 		}
 		_dialogue->draw();
-		debugC(3, kDebugDialogue,
-			"Ripper: dialogue chooser pending point=%d,%d buttons=0x%02x",
-			mouse.position.x, mouse.position.y, mouse.buttons);
+		if (mouse.pressed != 0 || mouse.released != 0 || mouse.wheel != 0) {
+			debugC(3, kDebugDialogue,
+				"Ripper: dialogue chooser pending input point=%d,%d buttons=0x%02x "
+				"pressed=0x%02x released=0x%02x wheel=%d",
+				mouse.position.x, mouse.position.y, mouse.buttons, mouse.pressed,
+				mouse.released, mouse.wheel);
+		}
 		if (_dialogue->contains(mouse.position)) {
 			_engine->getCursor()->setVisible(true);
 			_engine->getCursor()->update(kDialogueCursor);
