@@ -479,6 +479,8 @@ public:
 	}
 
 	bool isKnownBadVideo(int32 videoId) override {
+		if (g_engine->gameDescription().desc.language == Language::RU_RUS)
+			return false;
 		// These use DV codec in the steam release
 		return videoId < 2;
 	}

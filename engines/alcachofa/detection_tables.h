@@ -153,6 +153,21 @@ const AlcachofaGameDescription gameDescriptions[] = {
 		},
 		EngineVersion::V2_1
 	},
+	{
+		{
+			"corvino",
+			"Агенты 008: Банда Корвино",
+			AD_ENTRY3s(
+				"Fondos/MUSEO_O.ANI", "69feb5cd9a8d7e1d7f391e6d422579fb", 9556,
+				"Mapas/mapa1.emc", "d0a8eb184e813cf337840bb0e5270ee8", 33515,
+				"Mapas/mapa2.emc", "d0a8eb184e813cf337840bb0e5270ee8", 40452),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_TESTING | ADGF_USEEXTRAASTITLE,
+			GUIO0()
+		},
+		EngineVersion::V2_1
+	},
 
 	//
 	// Balones y Patadones
