@@ -48,6 +48,7 @@ MODULE_OBJS := \
 	puzzles/kj_blob_shooter.o \
 	puzzles/rolodex.o \
 	puzzles/shock_lever.o \
+	puzzles/six_digit_code.o \
 	puzzles/stained_glass.o \
 	puzzles/table_gate.o \
 	puzzles/web_grid_shift.o \

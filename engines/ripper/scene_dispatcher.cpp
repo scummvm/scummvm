@@ -47,6 +47,7 @@
 #include "ripper/puzzles/kj_blob_shooter.h"
 #include "ripper/puzzles/rolodex.h"
 #include "ripper/puzzles/shock_lever.h"
+#include "ripper/puzzles/six_digit_code.h"
 #include "ripper/puzzles/stained_glass.h"
 #include "ripper/puzzles/table_gate.h"
 #include "ripper/puzzles/web_grid_shift.h"
@@ -82,7 +83,7 @@ const char *SceneActionDispatcher::actionName(uint action) {
 	case 18: return "KI skull maze puzzle";
 	case kSceneActionWebGridShiftPuzzle: return "web grid shift puzzle";
 	case 20: return "Horus word puzzle";
-	case 21: return "six-digit code puzzle";
+	case kSceneActionSixDigitCodePuzzle: return "six-digit code puzzle";
 	case kSceneActionShockLeverPuzzle: return "shock lever puzzle";
 	case 23: return "tarot card puzzle";
 	case 24: return "tube switch scene";
@@ -301,6 +302,15 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 			"result=%d milestone=%u",
 			result, argument);
 		return result != WebGridShiftPuzzle::kLoadFailed;
+	}
+	if (action == kSceneActionSixDigitCodePuzzle) {
+		SixDigitCodePuzzle puzzle(engine);
+		const SixDigitCodePuzzle::Result result = puzzle.run(argument);
+		debugC(1, kDebugPuzzles,
+			"Ripper: six-digit code puzzle scene action completed "
+			"result=%d milestone=%u",
+			result, argument);
+		return result != SixDigitCodePuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionShockLeverPuzzle) {
 		ShockLeverPuzzle puzzle(engine);
