@@ -151,6 +151,7 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm), kMaxMusicSize(2200000) {
 	_rotationAngleY = _rotationAngleX = _rotationAngleZ = 0;
 	_translationY = _translationX = 0.0;	//TODO: never changed, make consts?
 	_cursorOldTick = 0;
+	_cubeStepDelay = 0;
 
 	_invIconsBase = 19;
 //	invIconsCount = (_vm->getPlatform() == Common::kPlatformMacintosh) ? 9 : 11;
@@ -8036,10 +8037,16 @@ void EdenGame::enginePC() {
 	if (_normalCursor && (_globals->_drawFlags & DrawFlags::drDrawFlag20))
 		curs = 9;
 	selectPCMap(curs);
-	_cursorNewTick = g_system->getMillis();
-	if (_cursorNewTick - _cursorOldTick < 1)
+
+	// This cube counts 72 angles to the turn taken two at a time, so a step
+	// covers ten degrees where the Macintosh one covers two. Let three passes
+	// go by between steps, still drawing so it does not blink out
+	if (++_cubeStepDelay < 4) {
+		renderCube();
 		return;
-	_cursorOldTick = _cursorNewTick;
+	}
+	_cubeStepDelay = 0;
+
 	int step = _pcCursor->_speed;
 	switch (_pcCursor->_kind) {
 	case 0:
