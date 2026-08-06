@@ -63,8 +63,18 @@ protected:
 	static const int kMaxSourceRows = 8;
 	static const int kMaxSourceCols = 5;
 	static const int kNumCursors    = 10;
-	static const int kNumValueRects = 114; // Nancy 12: per-kind/size source sprites (19 kinds x 6 sizes)
-	static const int kSizesPerKind  = 6;   // Nancy 12: stride between kinds in _valueSrcRects
+
+	// Nancy 12 source sprite table: one sprite per (row, group, value) triple,
+	// followed by kSizesPerKind sprites used for the piece held at the cursor.
+	static const int kSizesPerKind   = 6;
+	static const int kGroupsPerRow   = 3;
+	static const int kSpriteRows     = 6;
+	static const int kNumBoardRects  = kSpriteRows * kGroupsPerRow * kSizesPerKind;
+	static const int kNumValueRects  = kNumBoardRects + kSizesPerKind;
+
+	// Nancy 12 preset board: a fixed-stride grid of values, -1 marking an empty cell
+	static const int kPresetStride = 10;
+	static const int16 kEmptyCell  = -1;
 
 	// File data
 
@@ -77,6 +87,16 @@ protected:
 	uint16 _groupDivisor = 1;
 	uint16 _valueRange   = 1;
 
+	// Which of a cell's three identifying fields the win check compares, and
+	// whether two neighboring cells may be sorted the other way around
+	bool _matchRow          = true;
+	bool _matchGroup        = true;
+	bool _matchValue        = true;
+	bool _allowSwappedPairs = false;
+
+	bool  _usePresetBoard = false;
+	int16 _presetBoard[kPresetStride * kPresetStride] = {};
+
 	Common::Rect _cellSrcRects[kMaxSourceRows][kMaxSourceCols];
 	Common::Rect _cursorSrcRects[kNumCursors];
 	Common::Array<Common::Rect> _valueSrcRects; // Nancy 12: indexed by gem value
@@ -87,6 +107,8 @@ protected:
 	uint16 _spacingY = 0;
 	int16  _cellWidth  = 0;
 	int16  _cellHeight = 0;
+	int16  _hotspotInsetX = 0;
+	int16  _hotspotInsetY = 0;
 
 	SoundDescription _pickupSound;
 	SoundDescription _dropSound;
@@ -127,8 +149,11 @@ protected:
 	void persistState();
 	void redraw();
 	void checkSolved();
+	bool cellsMatch(const Cell &cur, const Cell &sol) const;
 	Common::Rect cellRect(int row, int col) const;
+	Common::Rect cellHotspot(int row, int col) const;
 	Common::Rect cellSprite(const Cell &cell) const;
+	Common::Rect heldSprite(const Cell &cell) const;
 	bool hitTestCell(const Common::Point &p, int &outRow, int &outCol) const;
 };
 

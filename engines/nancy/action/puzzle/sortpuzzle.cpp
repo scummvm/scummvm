@@ -127,23 +127,31 @@ void SortPuzzle::readData(Common::SeekableReadStream &stream) {
 }
 
 // Nancy 12 reworked the record: the board layout is computed from a single cell
-// size plus origin/spacing (rather than a per-position rect grid), gems are drawn
-// from one source sprite per value, and there is an (unused-here) preset board and
-// shuffle flag. The engine reshuffles itself, so those are skipped.
+// size plus origin/spacing (rather than a per-position rect grid), the solved
+// layout is stored as a preset grid of values, and the win check is configurable
+// through a set of flags.
 void SortPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
 	readFilename(stream, _boardImageName);  // 0x000
 	readFilename(stream, _cursorImageName); // 0x021
 	_retainState = (stream.readByte() != 0); // 0x042
 	_rows = stream.readUint16LE();           // 0x043
 	_cols = stream.readUint16LE();           // 0x045
-	stream.skip(4);                          // 0x047 unknown
-	stream.skip(1);                          // 0x04b preset/shuffle flag (engine reshuffles)
-	stream.skip(200);                        // 0x04c preset board values (100 x int16)
+
+	_matchRow          = (stream.readByte() != 0); // 0x047
+	_matchGroup        = (stream.readByte() != 0); // 0x048
+	_matchValue        = (stream.readByte() != 0); // 0x049
+	_allowSwappedPairs = (stream.readByte() != 0); // 0x04a
+	_usePresetBoard    = (stream.readByte() != 0); // 0x04b
+
+	for (uint i = 0; i < (uint)(kPresetStride * kPresetStride); ++i) { // 0x04c
+		_presetBoard[i] = stream.readSint16LE();
+	}
+
 	stream.skip(2);                          // 0x114 unknown
 	_groupDivisor = stream.readUint16LE();   // 0x116
 	_valueRange   = stream.readUint16LE();   // 0x118
 
-	_valueSrcRects.resize(kNumValueRects);   // 0x11a: one source sprite per gem value
+	_valueSrcRects.resize(kNumValueRects);   // 0x11a
 	for (uint i = 0; i < (uint)kNumValueRects; ++i) {
 		readRect(stream, _valueSrcRects[i]);
 	}
@@ -177,17 +185,22 @@ void SortPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
 
 	_cellWidth  = _valueSrcRects[0].width();
 	_cellHeight = _valueSrcRects[0].height();
+
+	// Cells only react to clicks well inside their own bounds, so that the
+	// near-contiguous grid doesn't drop a piece into the neighboring slot
+	_hotspotInsetX = (_cellWidth  - 1) / 4;
+	_hotspotInsetY = (_cellHeight - 1) / 4;
 }
 
 Common::Rect SortPuzzle::cellSprite(const Cell &cell) const {
 	if (g_nancy->getGameType() >= kGameTypeNancy12) {
-		// Each pie has a kind (its group/column, cell.srcCol) and a size
-		// (cell.value, smallest to biggest). The source sprites are laid out as a
-		// grid - kind * kSizesPerKind + size - so the index must combine both,
-		// otherwise every kind would draw the same pie at a given size.
-		if (cell.srcCol >= 0 && cell.value >= 0) {
-			uint idx = (uint)cell.srcCol * kSizesPerKind + (uint)cell.value;
-			if (idx < _valueSrcRects.size()) {
+		// A pie is identified by the row it started in (cell.srcRow), its kind
+		// (the group of columns it started in, cell.srcCol) and its size
+		// (cell.value). The source sprites are laid out as a grid over all three,
+		// so the index has to combine them.
+		if (cell.srcRow >= 0 && cell.srcCol >= 0 && cell.value >= 0) {
+			uint idx = ((uint)cell.srcRow * kGroupsPerRow + (uint)cell.srcCol) * kSizesPerKind + (uint)cell.value;
+			if (idx < (uint)kNumBoardRects) {
 				return _valueSrcRects[idx];
 			}
 		}
@@ -199,6 +212,19 @@ Common::Rect SortPuzzle::cellSprite(const Cell &cell) const {
 		return _cellSrcRects[cell.srcRow][cell.srcCol];
 	}
 	return Common::Rect();
+}
+
+// Nancy 12 keeps a second, smaller set of sprites for the piece being carried
+// around. When a size has no such sprite the board one is drawn instead.
+Common::Rect SortPuzzle::heldSprite(const Cell &cell) const {
+	if (cell.value >= 0 && cell.value < kSizesPerKind) {
+		const Common::Rect &src = _valueSrcRects[kNumBoardRects + cell.value];
+		if (!src.isEmpty()) {
+			return src;
+		}
+	}
+
+	return cellSprite(cell);
 }
 
 void SortPuzzle::initState() {
@@ -216,8 +242,18 @@ void SortPuzzle::initState() {
 			Cell &cell = _solved[r][c];
 			cell.srcRow  = (int16)r;
 			cell.srcCol  = (int16)(c / groupSize);
-			cell.value   = (int16)(g_nancy->_randomSource->getRandomNumber(_valueRange - 1));
 			cell.isEmpty = false;
+
+			if (_usePresetBoard) {
+				cell.value = _presetBoard[r * kPresetStride + c];
+				if (cell.value == kEmptyCell) {
+					cell.srcRow  = kEmptyCell;
+					cell.isEmpty = true;
+				}
+				continue;
+			}
+
+			cell.value = (int16)(g_nancy->_randomSource->getRandomNumber(_valueRange - 1));
 
 			int groupStart = (c / groupSize) * groupSize;
 			int k = c;
@@ -265,8 +301,12 @@ void SortPuzzle::init() {
 
 	g_nancy->_resource->loadImage(_boardImageName, _boardImage);
 	_boardImage.setTransparentColor(_drawSurface.getTransparentColor());
-	g_nancy->_resource->loadImage(_cursorImageName, _cursorImage);
-	_cursorImage.setTransparentColor(_drawSurface.getTransparentColor());
+
+	// Nancy 12 has no separate cursor image and draws the held piece from the board one
+	if (!_cursorImageName.empty() && _cursorImageName.baseName() != "NO_FILE") {
+		g_nancy->_resource->loadImage(_cursorImageName, _cursorImage);
+		_cursorImage.setTransparentColor(_drawSurface.getTransparentColor());
+	}
 
 	initState();
 
@@ -344,10 +384,19 @@ Common::Rect SortPuzzle::cellRect(int row, int col) const {
 	return Common::Rect(x, y, x + _cellWidth, y + _cellHeight);
 }
 
+Common::Rect SortPuzzle::cellHotspot(int row, int col) const {
+	Common::Rect rect = cellRect(row, col);
+	rect.left   += _hotspotInsetX;
+	rect.right  -= _hotspotInsetX;
+	rect.top    += _hotspotInsetY;
+	rect.bottom -= _hotspotInsetY;
+	return rect;
+}
+
 bool SortPuzzle::hitTestCell(const Common::Point &p, int &outRow, int &outCol) const {
 	for (int r = 0; r < (int)_rows; ++r) {
 		for (int c = 0; c < (int)_cols; ++c) {
-			if (cellRect(r, c).contains(p)) {
+			if (cellHotspot(r, c).contains(p)) {
 				outRow = r;
 				outCol = c;
 				return true;
@@ -383,26 +432,42 @@ void SortPuzzle::handleInput(NancyInput &input) {
 		redraw();
 	}
 
+	// Nancy 12 uses the dedicated puzzle hands: a closed one over a piece that can
+	// be picked up, an open one over a slot the carried piece can go into. Off the
+	// grid the cursor goes blank, since the carried piece is drawn at the mouse.
+	const bool useNewCursors = g_nancy->getGameType() >= kGameTypeNancy12;
+
 	int row, col;
 	bool hitCell = hitTestCell(mouseVP, row, col);
+
+	// An empty slot is only a target while carrying a piece
+	if (hitCell && !_hasHeld && _current[row][col].isEmpty) {
+		hitCell = false;
+	}
 
 	if (!hitCell) {
 		if (!_exitHotspot.isEmpty() && _exitHotspot.contains(mouseVP)) {
 			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 			if (input.input & NancyInput::kLeftMouseButtonUp)
 				_subState = kExitToCancel;
+		} else if (_hasHeld && useNewCursors) {
+			g_nancy->_cursor->setCursorType(CursorManager::kNewBlank);
 		}
 		return;
 	}
 
-	g_nancy->_cursor->setCursorType(_hasHeld ? CursorManager::kDropHand
-	                                         : CursorManager::kHotspot);
+	if (useNewCursors) {
+		g_nancy->_cursor->setCursorType(_hasHeld ? CursorManager::kNewUseHandHotspot
+		                                         : CursorManager::kNewDragHandHotspot);
+	} else {
+		g_nancy->_cursor->setCursorType(_hasHeld ? CursorManager::kDropHand
+		                                         : CursorManager::kHotspot);
+	}
+
 	if (!(input.input & NancyInput::kLeftMouseButtonUp))
 		return;
 
 	if (!_hasHeld) {
-		if (_current[row][col].isEmpty)
-			return;
 		_held = _current[row][col];
 		_hasHeld = true;
 		_current[row][col].isEmpty = true;
@@ -431,16 +496,63 @@ void SortPuzzle::handleInput(NancyInput &input) {
 	redraw();
 }
 
+bool SortPuzzle::cellsMatch(const Cell &cur, const Cell &sol) const {
+	if (cur.isEmpty || sol.isEmpty) {
+		return cur.isEmpty && sol.isEmpty;
+	}
+
+	if (_matchRow && cur.srcRow != sol.srcRow) {
+		return false;
+	}
+
+	if (_matchGroup && cur.srcCol != sol.srcCol) {
+		return false;
+	}
+
+	if (_matchValue && cur.value != sol.value) {
+		return false;
+	}
+
+	return true;
+}
+
 void SortPuzzle::checkSolved() {
+	const int groupSize = _groupDivisor ? (int)_cols / (int)_groupDivisor : 0;
+
 	for (int r = 0; r < (int)_rows; ++r) {
-		for (int c = 0; c < (int)_cols; ++c) {
-			const Cell &cur = _current[r][c];
-			const Cell &sol = _solved[r][c];
-			if (cur.isEmpty || cur.srcRow != sol.srcRow ||
-			    cur.srcCol != sol.srcCol || cur.value != sol.value)
+		int c = 0;
+		while (c < (int)_cols) {
+			if (cellsMatch(_current[r][c], _solved[r][c])) {
+				++c;
+				continue;
+			}
+
+			// Puzzles that pair their cells up two at a time accept a pair sorted
+			// the other way around
+			if (!_allowSwappedPairs || groupSize != 2 || c >= (int)_cols - 1) {
 				return;
+			}
+
+			if (!cellsMatch(_current[r][c + 1], _solved[r][c]) ||
+					!cellsMatch(_current[r][c], _solved[r][c + 1])) {
+				return;
+			}
+
+			const Cell &first  = _current[r][c];
+			const Cell &second = _current[r][c + 1];
+			bool firstKeepsGroup  = first.isEmpty  || first.srcCol  == _solved[r][c].srcCol;
+			bool secondKeepsGroup = second.isEmpty || second.srcCol == _solved[r][c + 1].srcCol;
+
+			if (firstKeepsGroup && secondKeepsGroup) {
+				c += 2;
+			} else if (!_matchGroup || firstKeepsGroup) {
+				c += 1;
+			} else {
+				return;
+			}
 		}
 	}
+
 	_isSolved = true;
 	_subState = kPlayWinSound;
 }
@@ -475,10 +587,10 @@ void SortPuzzle::redraw() {
 			}
 		}
 		if (!drawn) {
-			Common::Rect src = cellSprite(_held);
+			Common::Rect src = g_nancy->getGameType() >= kGameTypeNancy12 ? heldSprite(_held) : cellSprite(_held);
 			if (!src.isEmpty()) {
-				int x = _heldDrawPos.x - _cellWidth  / 2;
-				int y = _heldDrawPos.y - _cellHeight / 2;
+				int x = _heldDrawPos.x - src.width()  / 2;
+				int y = _heldDrawPos.y - src.height() / 2;
 				_drawSurface.blitFrom(_boardImage, src, Common::Point(x, y));
 			}
 		}
