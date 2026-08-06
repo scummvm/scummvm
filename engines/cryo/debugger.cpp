@@ -28,6 +28,7 @@ Debugger::Debugger(CryoEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("showHotspots", WRAP_METHOD(Debugger, Cmd_ShowHotspots));
 	registerCmd("fullInventory", WRAP_METHOD(Debugger, Cmd_FullInventory));
 	registerCmd("phase", WRAP_METHOD(Debugger, Cmd_Phase));
+	registerCmd("playVideo", WRAP_METHOD(Debugger, Cmd_PlayVideo));
 }
 
 /**
@@ -79,5 +80,19 @@ bool Debugger::Cmd_Phase(int argc, const char **argv) {
 	            globals->_phaseNum, globals->_roomNum, globals->_roomNum);
 
 	return true;
+}
+
+/**
+ * Play a movie by number, the same way the game itself would.
+ */
+bool Debugger::Cmd_PlayVideo(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s <num>\n", argv[0]);
+		return true;
+	}
+
+	_vm->_game->debugPlayVideo((int16)strtol(argv[1], nullptr, 0));
+
+	return false;
 }
 } // End of namespace Cryo

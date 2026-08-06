@@ -41,6 +41,7 @@ protected:
 	bool Cmd_ShowHotspots(int argc, const char **argv);
 	bool Cmd_FullInventory(int argc, const char **argv);
 	bool Cmd_Phase(int argc, const char **argv);
+	bool Cmd_PlayVideo(int argc, const char **argv);
 };
 
 } // End of namespace Cryo

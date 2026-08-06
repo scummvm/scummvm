@@ -4140,6 +4140,10 @@ void EdenGame::stopMusic() {
 	_musicChannel->stop();
 }
 
+void EdenGame::debugPlayVideo(int16 num) {
+	_graphics->playHNM(num);
+}
+
 void EdenGame::run() {
 	_invIconsCount = (_vm->getPlatform() == Common::kPlatformMacintosh) ? 9 : 11;
 	_roomIconsBase = _invIconsBase + _invIconsCount;

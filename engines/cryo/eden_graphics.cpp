@@ -29,6 +29,8 @@
 #include "graphics/blit.h"
 #include "video/hnm_decoder.h"
 
+#include "cryo/hnm1decoder.h"
+
 namespace Cryo {
 
 EdenGraphics::EdenGraphics(EdenGame *game) : _game(game) {
@@ -1222,9 +1224,19 @@ void EdenGraphics::showMovie(int16 num, char arg1) {
 
 	Video::VideoDecoder *decoder = new Video::HNMDecoder(g_system->getScreenFormat(), false, palette);
 	if (!decoder->loadStream(stream)) {
-		warning("Could not load movie %d", num);
+		// Some movies use an older, untagged HNM variant that HNMDecoder
+		// doesn't recognize. loadStream() always takes ownership of the
+		// stream, even on failure, so a fresh one is needed for this
+		// second attempt.
 		delete decoder;
-		return;
+		stream = _game->loadSubStream(num - 1 + 485);
+		decoder = new HNM1Decoder();
+		if (!stream || !decoder->loadStream(stream)) {
+			// Some numbers in this range are VOC resources rather than movies
+			debugC(1, kDebugMovie, "Movie %d (resource %d) is in no format we decode", num, num - 1 + 485);
+			delete decoder;
+			return;
+		}
 	}
 
 	if (_game->_globals->_curVideoNum == 92) {
