@@ -102,6 +102,7 @@ enum SceneAction {
 	kSceneActionSixDigitCodePuzzle = 21,
 	kSceneActionShockLeverPuzzle = 22,
 	kSceneActionTubeSwitchScene = 24,
+	kSceneActionKkTileMatchPuzzle = 25,
 	kSceneActionRatiniCombat = 26,
 	kSceneActionAtkiniCombat = 27,
 	kSceneActionGymSelector = 28,
