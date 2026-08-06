@@ -62,6 +62,22 @@ void OneBuildPuzzle::init() {
 		_finalAnimOverlay.setVisible(false);
 	}
 
+	// A Nancy 12 puzzle can put more pieces on screen than it describes: every
+	// piece past the described ones is a copy of a randomly picked description,
+	// and always starts scattered (see scatterPiece()).
+	if (!_pieces.empty() && _pieces.size() < _totalPieces) {
+		uint numDescribed = _pieces.size();
+		_pieces.resize(_totalPieces);
+
+		for (uint i = numDescribed; i < _totalPieces; ++i) {
+			Piece &p = _pieces[i];
+			const Piece &copied = _pieces[g_nancy->_randomSource->getRandomNumber(numDescribed - 1)];
+			p.srcRect = copied.srcRect;
+			p.altSrcRect = copied.altSrcRect;
+			p.slotRect = copied.slotRect;
+		}
+	}
+
 	for (uint i = 0; i < _pieces.size(); ++i) {
 		Piece &p = _pieces[i];
 		int w = p.srcRect.width();
@@ -114,11 +130,14 @@ void OneBuildPuzzle::init() {
 				p.gameRect = p.homeRect;
 		}
 
-		updatePieceRender(i);
 		p.setVisible(true);
 		p.setTransparent(true);
 		p.setZ(_z + (uint16)i + 1);
+		updatePieceRender(i);
 	}
+
+	if (_countMode != kCountAllPieces)
+		updateCounter();
 
 	_isInitialized = true;
 }
@@ -132,6 +151,9 @@ void OneBuildPuzzle::registerGraphics() {
 
 	if (_hasFinalAnim)
 		_finalAnimOverlay.registerGraphics();
+
+	if (_countMode != kCountAllPieces)
+		_counterDisplay.registerGraphics();
 }
 
 // Nancy12 (AR 166) reworked OneBuildPuzzle onto the shared PuzzleBase loader:
@@ -143,19 +165,39 @@ void OneBuildPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);       // 0x00
 	_freePlacement = stream.readByte();     // 0x21
 	_canRotateAll = stream.readByte();      // 0x22
-	stream.skip(6);                         // 0x23: rotation/zone config + placement-mode byte
+	stream.skip(6);                         // 0x23: rotation/zone config
 	_slotTolerance = stream.readSint16LE(); // 0x29
 
-	// 0x2b..0xe9: placement-mode byte, final-animation centering rect and filler
-	// count. None are needed by this port.
-	stream.skip(0xea - 0x2b);
+	_placementMode = (PlacementMode)stream.readByte(); // 0x2b
+	_countMode = (CountMode)stream.readByte();         // 0x2c
+	stream.skip(1);                                    // 0x2d: percentage flag
+
+	for (uint i = 0; i < kNumDigits; ++i)   // 0x2e: counter digit sprites
+		readRect(stream, _digitSrcRects[i]);
+
+	_counterPos.x = (int16)stream.readSint32LE(); // 0xce
+	_counterPos.y = (int16)stream.readSint32LE(); // 0xd2
+	_counterSpacing = stream.readSint16LE();      // 0xd6
+
+	stream.skip(0xe8 - 0xd8);                   // 0xd8: final-animation centering rect
+	_requiredPieces = stream.readSint16LE();    // 0xe8
 
 	// 0xea: home-scatter zone. Pieces whose stored home rect is empty are
 	// scattered to a random spot inside this rect at init (see scatterPiece()).
 	readRect(stream, _scatterZone);         // 0xea..0xf9
 
-	// 0xfa..0x11f: misc config, unused by this port.
-	stream.skip(0x120 - 0xfa);
+	readRect(stream, _placementZone);       // 0xfa: a piece may only be released in here
+	readRect(stream, _exitHotspot);         // 0x10a
+
+	// Nancy 13 reuses this record type with a rearranged header, so the bytes
+	// read above aren't rects there. Drop one that can't be a hotspot instead of
+	// handing it to the viewport, which clips (and asserts on) what it is given.
+	if (!_exitHotspot.isValidRect())
+		_exitHotspot = Common::Rect();
+
+	_pieceCursorType = stream.readSint16LE();     // 0x11a
+	_heldPieceCursorType = stream.readSint16LE(); // 0x11c
+	stream.skip(2);                               // 0x11e: exit cursor, always _puzzleExitCursor
 
 	readFilename(stream, _extraSoundName);  // 0x120: final-animation atlas image
 	readRect(stream, _animRectA);           // 0x141
@@ -204,7 +246,7 @@ void OneBuildPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
 	_badTexts.resize(3);
 
 	// --- Piece array (variable count) ---
-	stream.readSint16LE(); // Secondary piece count (matches numPieces in practice)
+	_totalPieces = stream.readUint16LE();
 	_numPieces = stream.readUint16LE();
 
 	_pieces.resize(_numPieces);
@@ -253,6 +295,7 @@ void OneBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);
 
 	_numPieces = stream.readUint16LE();
+	_totalPieces = _numPieces;
 	_freePlacement = stream.readByte();
 	_canRotateAll = stream.readByte();
 	stream.skip(6); // rotationMode, zoneHeight, zoneWidth, mouse-clamping flag
@@ -454,7 +497,7 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 		// The held fork shows the hotspot hand cursor while over the placement
 		// region, and the plain magnifying glass everywhere else.
 		if (_placementZone.isEmpty() || _placementZone.contains(mouseVP))
-			setPieceCursor();
+			setPieceCursor(true);
 		else
 			g_nancy->_cursor->setCursorType(CursorManager::kNormal);
 
@@ -509,13 +552,27 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 						++_piecesPlaced;
 			} else {
 				_correctlyPlaced = false;
-				if (!_freePlacement) {
+
+				// In counter mode a slot swallows whatever is dropped into it, so
+				// landing in one that isn't the piece's own costs a mistake. Once
+				// there are more mistakes than the puzzle allows it is lost.
+				if (_placementMode == kPlacementCounter && findSlotAt(piece.gameRect) != -1) {
+					piece.placed = true;
+					++_mistakes;
+
+					if (_mistakes > _totalPieces - _requiredPieces) {
+						_isCancelled = true;
+						_state = kActionTrigger;
+					}
+				} else if (!_freePlacement) {
 					piece.gameRect = _prevDragGameRect;
 				} else {
 					piece.curRotation = piece.defaultRotation;
 					piece.gameRect = piece.homeRect;
 				}
 			}
+
+			updateCounter();
 
 			// Re-arm at-home art when the piece lands back on homeRect
 			if (!piece.altSurface.empty() && !piece.placed &&
@@ -552,6 +609,13 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 		Piece &p = _pieces[i];
 		if (!p.gameRect.contains(mouseVP))
 			continue;
+
+		// A piece that has dropped into its slot in counter mode is gone for
+		// good, so it doesn't react to the cursor any more. Everywhere else a
+		// placed piece can still be picked back up.
+		if (p.placed && _placementMode == kPlacementCounter)
+			continue;
+
 		if (topmostAny == -1 || p.getZOrder() > _pieces[topmostAny].getZOrder())
 			topmostAny = (int16)i;
 		if (!p.placed) {
@@ -623,16 +687,30 @@ void OneBuildPuzzle::readPlacementTexts(Common::SeekableReadStream &stream, Comm
 	}
 }
 
-void OneBuildPuzzle::setPieceCursor() {
-	if (g_nancy->getGameType() >= kGameTypeNancy10)
+void OneBuildPuzzle::setPieceCursor(bool isHeld) {
+	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+		// Nancy 12 carries a second cursor for a piece that's on the cursor;
+		// the older games use the same one for hovering and carrying.
+		int16 cursorType = (isHeld && _heldPieceCursorType != 0) ? _heldPieceCursorType : _pieceCursorType;
+
 		// The piece hand uses the hotspot variant (blue hand with an outline).
-		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_pieceCursorType, true, true);
-	else
+		g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorType, true, true);
+	} else {
 		g_nancy->_cursor->setCursorType(CursorManager::kCustom1);
+	}
 }
 
 void OneBuildPuzzle::updatePieceRender(int pieceIdx) {
 	Piece &p = _pieces[pieceIdx];
+
+	// In counter mode the slot rect is a container the piece is dropped into
+	// (a drawer, in the Nancy 12 nuts and bolts puzzle) and is much larger than
+	// the piece itself, so a placed piece is hidden instead of drawn in it.
+	if (p.placed && _placementMode == kPlacementCounter) {
+		p.setVisible(false);
+		return;
+	}
+
 	if (p.useAltSurface && !p.altSurface.empty()) {
 		p._drawSurface.create(p.altSurface, p.altSurface.getBounds());
 	} else {
@@ -745,20 +823,94 @@ void OneBuildPuzzle::scatterPiece(Piece &p) {
 	int top  = zone.top  + (int)g_nancy->_randomSource->getRandomNumber(MAX(0, maxTop - zone.top));
 
 	p.gameRect = Common::Rect((int16)left, (int16)top, (int16)(left + w), (int16)(top + h));
+
+	// The scattered spot becomes the piece's home, so a piece dropped away from
+	// its slot returns there instead of to the empty rect it was loaded with.
+	p.homeRect = p.gameRect;
+}
+
+int16 OneBuildPuzzle::findSlotAt(const Common::Rect &rect) const {
+	for (uint i = 0; i < _pieces.size(); ++i) {
+		const Common::Rect &slot = _pieces[i].slotRect;
+		if (slot.isEmpty())
+			continue;
+
+		if (rect.left >= slot.left - _slotTolerance && rect.top >= slot.top - _slotTolerance &&
+				rect.right <= slot.right + _slotTolerance && rect.bottom <= slot.bottom + _slotTolerance)
+			return (int16)i;
+	}
+
+	return -1;
+}
+
+void OneBuildPuzzle::updateCounter() {
+	if (_countMode == kCountAllPieces)
+		return;
+
+	uint16 value;
+	if (_countMode == kCountPlacements)
+		value = _piecesPlaced;
+	else if (_placementMode == kPlacementCounter)
+		value = _mistakes;
+	else
+		value = _totalPieces - _piecesPlaced;
+
+	Common::String digits = Common::String::format("%u", (uint)value);
+
+	int width = 0;
+	int height = 0;
+	for (uint i = 0; i < digits.size(); ++i) {
+		const Common::Rect &digit = _digitSrcRects[digits[i] - '0'];
+		width += digit.width() + (i ? _counterSpacing : 0);
+		height = MAX<int>(height, digit.height());
+	}
+
+	if (width == 0 || height == 0)
+		return;
+
+	_counterDisplay._drawSurface.create(width, height, _image.format);
+	_counterDisplay.setTransparent(true);
+
+	// Clear to the transparent color first so the gaps between the digits stay
+	// see-through.
+	_counterDisplay._drawSurface.clear(g_nancy->_graphics->getTransColor());
+
+	int destX = 0;
+	for (uint i = 0; i < digits.size(); ++i) {
+		const Common::Rect &digit = _digitSrcRects[digits[i] - '0'];
+		_counterDisplay._drawSurface.blitFrom(_image, digit, Common::Point(destX, 0));
+		destX += digit.width() + _counterSpacing;
+	}
+
+	Common::Rect dest(_counterPos.x, _counterPos.y, _counterPos.x + width, _counterPos.y + height);
+	const VIEW *viewData = GetEngineData(VIEW);
+	if (viewData)
+		dest.translate(viewData->screenPosition.left, viewData->screenPosition.top);
+
+	_counterDisplay.moveTo(dest);
+	_counterDisplay.setVisible(true);
+	_counterDisplay.setNeedsRedraw(true);
 }
 
 void OneBuildPuzzle::checkAllPlaced() {
-	for (uint i = 0; i < _pieces.size(); ++i) {
-		if (_pieces[i].placed)
-			continue;
+	if (_countMode != kCountAllPieces) {
+		// Counter puzzles end as soon as enough pieces have gone into the right
+		// slot, even when a few are still lying around.
+		if (_piecesPlaced < _requiredPieces)
+			return;
+	} else {
+		for (uint i = 0; i < _pieces.size(); ++i) {
+			if (_pieces[i].placed)
+				continue;
 
-		// Nancy 10: pieces with an empty slotRect (top == 0 && bottom == 0)
-		// are filler — they don't need to be placed for the puzzle to solve.
-		const Common::Rect &slot = _pieces[i].slotRect;
-		if (slot.top == 0 && slot.bottom == 0)
-			continue;
+			// Nancy 10: pieces with an empty slotRect (top == 0 && bottom == 0)
+			// are filler — they don't need to be placed for the puzzle to solve.
+			const Common::Rect &slot = _pieces[i].slotRect;
+			if (slot.top == 0 && slot.bottom == 0)
+				continue;
 
-		return;
+			return;
+		}
 	}
 
 	_isSolved = true;

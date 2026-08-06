@@ -35,7 +35,7 @@ namespace Action {
 // Otherwise it returns to its previous position (or home in free placement mode).
 class OneBuildPuzzle : public RenderActionRecord {
 public:
-	OneBuildPuzzle() : RenderActionRecord(7), _finalAnimOverlay(99) {}
+	OneBuildPuzzle() : RenderActionRecord(7), _finalAnimOverlay(99), _counterDisplay(99) {}
 	virtual ~OneBuildPuzzle() {}
 
 	void init() override;
@@ -55,6 +55,21 @@ protected:
 	// piece must be in to be accepted, with this value standing in for the
 	// pre-placed flag it used to be.
 	static const uint8 kPrePlacedRotation = 10;
+
+	enum PlacementMode {
+		kPlacementNormal = 1,	// A placed piece stays on screen, drawn in its slot
+		kPlacementCounter = 2	// A placed piece drops out of sight into its slot
+	};
+
+	// What the puzzle counts, both to decide when it is finished and to fill in
+	// the on-screen counter.
+	enum CountMode {
+		kCountAllPieces = 0,	// No counter; the puzzle ends once every piece is in its slot
+		kCountPlacements = 1,	// Correct placements
+		kCountMistakes = 2		// Mistakes, or pieces left to place outside counter placement
+	};
+
+	static const uint kNumDigits = 10;
 
 	struct Piece : RenderObject {
 		Piece() : RenderObject(0) {}
@@ -90,12 +105,24 @@ protected:
 	// --- File data ---
 
 	Common::Path _imageName;
-	uint16 _numPieces = 0;
+	uint16 _numPieces = 0;         // Number of piece descriptions in the puzzle data
+	uint16 _totalPieces = 0;       // Number of pieces on screen; see init() for the extra ones
 	bool _freePlacement = false;   // Wrong drop restores to previous position, not home
 	bool _canRotateAll = false;    // All pieces can be rotated
 	int16 _slotTolerance = 0;      // Proximity for snapping to slot
 	bool _orderedPlacement = false; // Pieces must be placed in a specific order
+	PlacementMode _placementMode = kPlacementNormal; // Nancy 12 only, earlier games are always normal
 	Common::Array<int16> _placementOrder; // 1-indexed piece IDs in required placement order
+
+	// Counter puzzles (Nancy 12): the puzzle is solved once _requiredPieces have
+	// been placed correctly, and lost once the remaining pieces have all been
+	// dropped in the wrong slot. The running count is drawn from digit sprites
+	// found in the puzzle image.
+	CountMode _countMode = kCountAllPieces;
+	int16 _requiredPieces = 0;
+	Common::Rect _digitSrcRects[kNumDigits];
+	Common::Point _counterPos;
+	int16 _counterSpacing = 0;
 
 	// Stacking order of the pieces that start out already placed, 1-indexed.
 	// TODO: not applied yet; pre-placed pieces keep their array order.
@@ -106,8 +133,10 @@ protected:
 	// Filename only (no SoundDescription metadata).
 	Common::String _extraSoundName;
 
-	// Cursor type shown while hovering or carrying a piece (Nancy 10+).
+	// Cursor type shown while hovering a piece (Nancy 10+), and the one shown
+	// while carrying it (Nancy 12+; the older games reuse the hover cursor).
 	int16 _pieceCursorType = 0;
+	int16 _heldPieceCursorType = 0;
 
 	// Post-placement sprite-sheet animation. _animRectA is the on-screen
 	// rect where the animation plays AND the click hotspot the user must
@@ -184,6 +213,7 @@ protected:
 	bool _isDropSound = false;       // True if last sound played was a drop sound
 	bool _correctlyPlaced = false;   // True if the last drop was correctly placed
 	uint16 _piecesPlaced = 0;    // Number of pieces correctly placed so far
+	uint16 _mistakes = 0;        // Number of pieces dropped in the wrong slot
 	uint32 _timerEnd = 0;        // Millisecond timestamp when the current timer expires
 
 	bool _finalAnimDone = false;
@@ -193,6 +223,8 @@ protected:
 	RenderObject _finalAnimOverlay;      // Single-frame overlay rendered at _animRectA, z above pieces.
 	int16 _animFrameCounter = 0;         // 0..framesPerStep-1, the X index within the current row.
 	int16 _animRowCounter = 0;           // 0..totalRows-1, how many cycles have completed.
+
+	RenderObject _counterDisplay;        // Digit sprites showing the running count.
 
 	// Previous drag position (for freePlacement restore on wrong drop)
 	Common::Rect _prevDragGameRect;
@@ -213,7 +245,7 @@ protected:
 	// Read a good/bad caption block: three AUTOTEXT keys then three inline
 	// texts; each caption uses its key if known, else the inline text.
 	void readPlacementTexts(Common::SeekableReadStream &stream, Common::Array<Common::String> &out);
-	void setPieceCursor();
+	void setPieceCursor(bool isHeld = false);
 
 	void playPickupSound();
 	void playRotateSoundAndStartTimer();
@@ -223,6 +255,10 @@ protected:
 	void checkAllPlaced();
 	// Place a piece at a random spot inside _scatterZone (Nancy12 empty-home pieces)
 	void scatterPiece(Piece &p);
+	// Index of the first slot the given rect fits inside, or -1 if it fits none
+	int16 findSlotAt(const Common::Rect &rect) const;
+	// Redraw the counter with the value the puzzle's count mode calls for
+	void updateCounter();
 	void rotatePiece(int pieceIdx);
 	void updateDragPosition(Common::Point mouseVP);
 	// Update the render object for a piece (set _drawSurface and moveTo gameRect)
