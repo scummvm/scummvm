@@ -105,6 +105,8 @@ enum ZoneIndex {
 	kDMZoneActionArea           = 11,  // @ C011_ZONE_ACTION_AREA
 	kDMZoneSpellArea            = 13,  // @ C013_ZONE_SPELL_AREA
 	kDMZoneMessageArea          = 15,  // @ C015_ZONE_MESSAGE_AREA
+	kDMZoneSpellAreaSetMagicCaster = 221, // @ C221_ZONE_SPELL_AREA_SET_MAGIC_CASTER
+	kDMZoneSpellAreaMagicCasterTab = 224, // @ C224_ZONE_SPELL_AREA_MAGIC_CASTER_TAB
 	kDMZoneViewportCeiling      = 700, // @ C700_ZONE_VIEWPORT_CEILING_AREA
 	kDMZoneViewportFloor        = 701, // @ C701_ZONE_VIEWPORT_FLOOR_AREA
 	kDMZoneWallD3L2             = 702, // @ C702_ZONE_WALL_D3L2

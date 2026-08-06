@@ -370,8 +370,27 @@ void MenuMan::drawSpellAreaControls(ChampionIndex champIndex) {
 	int16 champHP2 = championMan._champions[2]._currHealth;
 	int16 champHP3 = championMan._champions[3]._currHealth;
 	_vm->_eventMan->showMouse();
-	if (_vm->getPlatform() != Common::kPlatformDOS)
-		_vm->_displayMan->fillScreenBox(boxSpellAreaControls, kDMColorBlack);
+	if (_vm->getPlatform() == Common::kPlatformDOS) {
+		Box zoneBox;
+		if (_vm->_displayMan->getZoneBox(kDMZoneSpellAreaSetMagicCaster, 0, zoneBox))
+			_vm->_displayMan->fillScreenBox(zoneBox, kDMColorBlack);
+
+		int16 tabZoneIndex = (champIndex * 5) + kDMZoneSpellAreaMagicCasterTab;
+		for (int16 cIdx = 0; cIdx < 4; cIdx++) {
+			if (championMan._champions[cIdx]._currHealth && (championMan._partyChampionCount > cIdx)) {
+				Box highlightBox;
+				if (_vm->_displayMan->getZoneBox(tabZoneIndex + cIdx, 0, highlightBox))
+					_vm->_eventMan->highlightScreenBox(highlightBox._rect.left, highlightBox._rect.right, highlightBox._rect.top, highlightBox._rect.bottom);
+			}
+		}
+
+		Box nameBox;
+		if (_vm->_displayMan->getZoneBox(tabZoneIndex + 4, 0, nameBox))
+			_vm->_textMan->printToLogicalScreen(nameBox._rect.left + 2, nameBox._rect.bottom - 1, kDMColorBlack, kDMColorCyan, champ->_name);
+		_vm->_eventMan->hideMouse();
+		return;
+	}
+	_vm->_displayMan->fillScreenBox(boxSpellAreaControls, kDMColorBlack);
 
 	switch (champIndex) {
 	case 0:
