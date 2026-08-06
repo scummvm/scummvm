@@ -483,6 +483,7 @@ private:
 	void phase544();
 	void phase560();
 	void getSaveStateName(char *dest, int size, int16 slot);
+	bool loadGameFromSlot(int16 slot);
 	byte getSaveAreaNum(int16 slot);
 	void displaySaveSlots();
 	void saveGame(char *name);
@@ -684,6 +685,8 @@ private:
 
 	bool  _noPalette;
 	bool  _gameLoaded;
+	/** The slot --save-slot named, or -1. Taken up once, in place of the intro. */
+	int16 _startupSaveSlot;
 #define MAX_TAPES 16
 	tape_t _tapes[MAX_TAPES];
 	byte   _confirmMode;

@@ -136,6 +136,7 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm), kMaxMusicSize(2200000) {
 	byte_31D64 = false;
 	_noPalette = false;
 	_gameLoaded = false;
+	_startupSaveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 	memset(_tapes, 0, sizeof(_tapes));
 	_confirmMode = 0;
 	_curSliderValuePtr = nullptr;
@@ -4151,6 +4152,13 @@ void EdenGame::run() {
 			_normalCursor = true;
 			_torchCursor = false;
 			_graphics->setCursKeepPos(-1,-1);
+			// Stands in for the intro, and has to be read after initGlobals()
+			// which wipes what it puts in place. Consumed once, so finishing the
+			// game starts the next one from the beginning
+			if (_startupSaveSlot >= 0) {
+				loadGameFromSlot(_startupSaveSlot);
+				_startupSaveSlot = -1;
+			}
 			if (!_gameLoaded)
 				intro();
 			edmain();
@@ -6475,6 +6483,28 @@ void EdenGame::getSaveStateName(char *dest, int size, int16 slot) {
 	// Scoped to the target: the releases number their conditions differently,
 	// so a save read by another release picks its dialog lines by the wrong ones
 	Common::sprintf_s(dest, size, "%s.%03d", ConfMan.getActiveDomainName().c_str(), slot);
+}
+
+/**
+ * Read a saved game in by slot, for --save-slot on the command line. The
+ * panel's load line does a good deal more, but only because it has a game
+ * running to fade out of and back into; here there is none yet, and enterGame()
+ * goes on to start the loaded one.
+ */
+bool EdenGame::loadGameFromSlot(int16 slot) {
+	// Bounded by what is on disc, not by the four slots the panel lists
+	if (slot < 0) {
+		warning("There is no saved game %d", slot);
+		return false;
+	}
+
+	char name[132];
+	getSaveStateName(name, sizeof(name), slot);
+	loadgame(name);
+	if (!_gameLoaded)
+		warning("Could not read saved game %s", name);
+
+	return _gameLoaded;
 }
 
 // The area number is the first thing syncGlobalValues() writes, and
