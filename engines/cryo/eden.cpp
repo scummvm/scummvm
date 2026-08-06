@@ -6472,7 +6472,9 @@ void EdenGame::phase560() {
 }
 
 void EdenGame::getSaveStateName(char *dest, int size, int16 slot) {
-	Common::sprintf_s(dest, size, "edsave1.%03d", slot);
+	// Scoped to the target: the releases number their conditions differently,
+	// so a save read by another release picks its dialog lines by the wrong ones
+	Common::sprintf_s(dest, size, "%s.%03d", ConfMan.getActiveDomainName().c_str(), slot);
 }
 
 // The area number is the first thing syncGlobalValues() writes, and
