@@ -871,6 +871,14 @@
   finishes and returns to `BIG_S`. Escape exits, F1 opens help table `0x1b8`,
   and the hidden case-insensitive `asparagus` keyword sets the caller-supplied
   completion flag through the same cleanup path as a three-tile match.
+- The ScummVM-only `PUZZLE_HELP` overlay is isolated in
+  `KkTileMatchPuzzle::DebugHelper`. It simulates the retail snapshot-copy,
+  selected-slot reveal, three-active-slot test, and mismatch reset without
+  mutating the live puzzle, then breadth-first searches up to six clicks for a
+  winning sequence. A palette-255 yellow border and sparse fill mark only the
+  next recommended control. The helper clears the stale recommendation during
+  retail animations and recomputes after each reveal or reset and whenever the
+  console toggle changes; it does not alter input or completion validation.
 - `EH_WAIT.BBM` is drawn at physical `(186,275)` while the token matcher runs
   its 17-DOS-tick progress sweep. `EH_EEG0.WAV` and low-volume
   `EH_EEG2.WAV` start with the puzzle; `EH_EEG1.WAV` accompanies the two
