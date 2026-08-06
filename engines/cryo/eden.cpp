@@ -126,6 +126,7 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm), kMaxMusicSize(2200000) {
 	_normalCursor = false;
 	_specialTextMode = false;
 	_voiceSamplesSize = 0;
+	_voiceSampleRate = 11025;
 	_animateTalking = false;
 	_personTalking = false;
 	_musicFadeFlag = 0;
@@ -4846,8 +4847,9 @@ void EdenGame::startmusique(byte num) {
 	_musicSamplesPtr = _musicBuf + 32 + 4 + pat_size;
 	int16 freq = READ_LE_UINT16(_musicSamplesPtr - 2);
 
+	// The rate is given as the divisor the DOS driver loaded its timer with
 	delete _musicChannel;
-	_musicChannel = new CSoundChannel(_vm->_mixer, freq == 166 ? 11025 : 22050, false);
+	_musicChannel = new CSoundChannel(_vm->_mixer, 1000000 / (256 - (freq & 0xFF)), false);
 	_musicEnabledFlag = true;
 
 	_musicSequencePos = 0;
@@ -4900,11 +4902,18 @@ void EdenGame::persovox() {
 	} while (_musicChannel->_volumeLeft != volumeLeft || _musicChannel->_volumeRight != volumeRight);
 	volumeLeft = _globals->_prefVoiceVol[0];
 	volumeRight = _globals->_prefVoiceVol[1];
+	debugC(1, kDebugResource, "Voice: phrase %d, %d bytes queued at %d Hz, %d ms",
+	       _globals->_textNum, _voiceSamplesSize, _voiceSampleRate,
+	       _voiceSamplesSize * 1000 / _voiceSampleRate);
 	_voiceChannel->setVolume(volumeLeft, volumeRight);
 	// A release which doesn't carry this line leaves nothing to play, but the
 	// line is still on screen to be read and clicked away
-	if (_voiceSamplesSize > 0)
+	if (_voiceSamplesSize > 0) {
+		// The voices were not all taken at the one rate: most stand at 11111 Hz
+		// but the dinosaurs speak at 10869
+		_voiceChannel->setSampleRate(_voiceSampleRate);
 		_voiceChannel->queueBuffer(_voiceSamplesBuffer, _voiceSamplesSize, true);
+	}
 	_personTalking = true;
 	_musicFadeFlag = 0;
 	_lastAnimTicks = _vm->_timerTicks;
@@ -4943,6 +4952,7 @@ perso_t *EdenGame::personSubtitles() {
 void EdenGame::endCharacterSpeech() {
 	_graphics->restoreUnderSubtitles();
 	if (_personTalking) {
+		debugC(1, kDebugResource, "Voice stopped with %d buffers still queued", _voiceChannel->numQueued());
 		_voiceChannel->stop();
 		_personTalking = false;
 		_musicFadeFlag = 3;
