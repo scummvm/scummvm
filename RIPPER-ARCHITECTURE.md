@@ -846,6 +846,15 @@
   dates sets flag 341. These three progress flags persist across visits. The
   supplied completion flag is set only during puzzle cleanup when all three
   are present; partial or invalid input does not set it.
+- Scene action 21 calls `RunSixDigitCodePuzzleScene` at `0x3e913` with the
+  caller-supplied completion flag. It retains the current scene framebuffer,
+  loads `BNKNUM0.BBM` through `BNKNUM9.BBM` for the six display cells and
+  `BNKS0.BBM` through `BNKS11.BBM` for ten digit, Enter, and clear controls.
+  Escape exits and F1 opens help table `0x1b7`; Enter compares all six cells
+  against the short array at `0x84d50`, whose value is `185621`. Clear or a
+  rejected entry empties the cells and queues `BNKWAV3.WAV`. A correct entry
+  queues `BNKWAV2.WAV`, alternates the captured blank and filled display five
+  times at five DOS ticks per phase, then sets the supplied completion flag.
 - `EH_WAIT.BBM` is drawn at physical `(186,275)` while the token matcher runs
   its 17-DOS-tick progress sweep. `EH_EEG0.WAV` and low-volume
   `EH_EEG2.WAV` start with the puzzle; `EH_EEG1.WAV` accompanies the two
