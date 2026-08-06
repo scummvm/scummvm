@@ -2053,6 +2053,8 @@ uint16 DisplayMan::getGraphicIndex(uint16 index) const {
 		return k9_MenuSpellAreaLinesDOS;
 	case kDMGraphicIdxFont:
 		return k695_FontDOS;
+	case kDMObjectNamesGraphicIndice:
+		return k694_ObjectNamesDOS;
 	default:
 		return index;
 	}

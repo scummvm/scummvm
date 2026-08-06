@@ -388,7 +388,8 @@ enum GraphicIndice {
 	kDMGraphicIdxFirstExplosionPattern = 351, // @ C351_GRAPHIC_FIRST_EXPLOSION_PATTERN
 	kDMGraphicIdxFirstObject = 360, // @ C360_GRAPHIC_FIRST_OBJECT
 	kDMGraphicIdxFirstCreature = 446, // @ C446_GRAPHIC_FIRST_CREATURE
-	kDMGraphicIdxFont = 557 // @ C557_GRAPHIC_FONT
+	kDMGraphicIdxFont = 557, // @ C557_GRAPHIC_FONT
+	kDMObjectNamesGraphicIndice = 556 // @ C556_GRAPHIC_OBJECT_NAMES
 };
 
 #define kDMMaskDoorInfoCreaturesCanSeeThrough 0x0001 // @ MASK0x0001_CREATURES_CAN_SEE_THROUGH
@@ -460,6 +461,7 @@ enum GraphicIndice {
 #define k498_FirstObjectDOS 498 // @ M612_GRAPHIC_FIRST_OBJECT
 #define k584_FirstCreatureDOS 584 // @ M618_GRAPHIC_FIRST_CREATURE
 #define k695_FontDOS 695 // @ M653_GRAPHIC_FONT
+#define k694_ObjectNamesDOS 694 // @ M564_GRAPHIC_OBJECT_NAMES
 #define k730_DerivedBitmapMaximumCount 730 // @ C730_DERIVED_BITMAP_MAXIMUM_COUNT
 
 #define k16_Scale_D3 16 // @ C16_SCALE_D3
