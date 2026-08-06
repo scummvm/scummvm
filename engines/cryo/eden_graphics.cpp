@@ -35,6 +35,9 @@
 
 namespace Cryo {
 
+// Main view rows: 0-15 top bar, 16-175 picture, 176-199 bottom bar
+static const int16 kPictureBottom = 176;
+
 EdenGraphics::EdenGraphics(EdenGame *game) : _game(game) {
 	_glowH = _glowW = _glowY = _glowX = 0;
 	_showVideoSubtitle = false;
@@ -593,6 +596,10 @@ void EdenGraphics::displayImage() {
 		byte mode = *pix++;
 		if (mode != 0xFF && mode != 0xFE)
 			continue;   //TODO: enclosing block?
+		if (y + h > kPictureBottom)
+			h -= (y + h - kPictureBottom);
+		if (h <= 0)
+			continue;
 		if (h1 & 0x80) {
 			// compressed
 			for (; h-- > 0;) {
