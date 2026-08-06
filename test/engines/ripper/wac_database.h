@@ -102,7 +102,7 @@ public:
 		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(24)->handler,
 			Ripper::kWacDatabaseHandlerStillImage);
 		TS_ASSERT_EQUALS(Ripper::getWacDatabaseCatalogEntry(25)->handler,
-			Ripper::kWacDatabaseHandlerScriptMediaWithVoiceover);
+			Ripper::kWacDatabaseHandlerConfiguredMediaWithVoiceover);
 		TS_ASSERT_EQUALS(Common::String(
 			Ripper::getWacDatabaseCatalogEntry(25)->imagePath), "rip_game.smk");
 		TS_ASSERT_EQUALS(Common::String(
