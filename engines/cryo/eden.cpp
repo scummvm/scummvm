@@ -3532,7 +3532,10 @@ void EdenGame::chronoEvent() {
 	addTime(5);
 	if (!(_globals->_chronoFlag & 1))
 		return;
-	_globals->_chrono -= 200;
+	if (_globals->_chrono >= 200)
+		_globals->_chrono -= 200;
+	else
+		_globals->_chrono = 0;
 	if (_globals->_chrono == 0)
 		_globals->_chronoFlag |= 2;
 	if (!(_globals->_chronoFlag & 2))
@@ -7177,7 +7180,8 @@ uint8 EdenGame::getByteVar(uint16 offset) {
 
 uint16 EdenGame::getWordVar(uint16 offset) {
 	switch (offset) {
-		VAR(4, _randomNumber);   //TODO: this is randomized in pc ver and used by some conds. always zero on mac
+	case 4:
+		return _vm->_rnd->getRandomNumber(0xFFFF);
 		VAR(6, _gameTime);
 		VAR(8, _gameDays);
 		VAR(0xA, _chrono);
