@@ -107,6 +107,25 @@ public:
 		TS_ASSERT(frame.palette.empty());
 	}
 
+	void testCustomBitmapUnmappedTransparencyUsesZeroInitializedRemap() {
+		const byte data[] = {
+			0x02, 0x00, 0x00, 0xff, 0x01,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00,
+			0x00, 0x07
+		};
+		Common::MemoryReadStream stream(data, sizeof(data), DisposeAfterUse::NO);
+		Ripper::BitmapAssetFrame frame;
+
+		TS_ASSERT(Ripper::decodeBitmapAsset(stream, frame));
+		TS_ASSERT_EQUALS(frame.width, 1);
+		TS_ASSERT_EQUALS(frame.height, 1);
+		TS_ASSERT_EQUALS(frame.transparentColor, 0);
+		TS_ASSERT_EQUALS(frame.pixels.size(), 1U);
+		TS_ASSERT_EQUALS(frame.pixels[0], 7);
+	}
+
 	void testPcxAssetUsesIndexedPixelsAndVgaPalette() {
 		Common::Array<byte> data;
 		data.resize(128 + 2 + 1 + 256 * 3);

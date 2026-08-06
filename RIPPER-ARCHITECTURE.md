@@ -788,6 +788,14 @@
   composite order. Player depletion shares the Escape cleanup path and leaves
   the supplied completion flag clear. The original keeps ten active hit effects
   and replaces the farthest-advanced effect when that table is full.
+  `LoadBitmapAssetGroupRecord` at `0x35a41` caches negative half-frame extents,
+  `SpawnBitmapAssetGroupEntry` at `0x35b01` starts an effect at the hit point and
+  scale 100, and `AdvanceAndRenderBitmapAssetGroupEntries` at `0x35bf8` centers
+  and advances it through the configured explosion library. The custom bitmap
+  decoder at `0x53f60` maps the asset's transparency key through its
+  zero-initialized color-remap table. The Atkini and Ratini explosion frames
+  use an unmapped `0xff` key, which therefore resolves to palette index 0; the
+  centered explosion is composited with that zero-valued backdrop transparent.
 - Combat palettes are derived from the current Smacker palette. Indices 1-3 and
   10-239 use luminance `(30R + 59G + 11B) / 100`; shield, target-hit, and
   player-hit branches then apply the alternate blue, magenta, or red components
