@@ -40,6 +40,7 @@ MODULE_OBJS := \
 	puzzles/gc_csh.o \
 	puzzles/ka_book_code.o \
 	puzzles/kd_shooting_gallery.o \
+	puzzles/key_group.o \
 	puzzles/keypad_sequence.o \
 	puzzles/kj_blob_shooter.o \
 	puzzles/rolodex.o \
