@@ -37,7 +37,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Probably not worth it
 	{
 		"losteden",
-		nullptr,
+		"Non-Interactive Demo",
 		AD_ENTRY1s("EDEN6.HSQ", "00b43c44cf2ac50b1a45dfad5fa5360d", 17093),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
@@ -48,7 +48,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Lost Eden PC interactive demo version
 	{
 		"losteden",
-		nullptr,
+		"Interactive Demo",
 		AD_ENTRY1s("EDEN.DAT", nullptr, 205473728),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
@@ -56,11 +56,11 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 
-	// Lost Eden PC version
+	// Lost Eden PC version, as sold by GOG
 	{
 		"losteden",
-		nullptr,
-		AD_ENTRY1s("EDEN.DAT", nullptr, 449853776),
+		"GOG release",
+		AD_ENTRY1s("EDEN.DAT", "020b3ad90320721e682445814b2581d3", 449853776),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
