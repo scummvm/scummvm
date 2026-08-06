@@ -729,10 +729,11 @@ next1:
 
 	if (itemFlag || (takeFlag && player_said_any("SHRUNKEN HEAD",
 			"INCENSE BURNER", "CRYSTAL SKULL", "ROMANOV EMERALD",
-			"WHALE BONE HORN"))) {
+			"WHALE BONE HORN", "WHEELED TOY"))) {
 		switch (_G(kernel).trigger) {
 		case -1:
-			if ((itemFlag && inv_player_has(_G(player).verb)) || takeFlag) {
+			if ((itemFlag && inv_player_has(_G(player).verb)) ||
+					(takeFlag && inv_object_is_here(_G(player).noun))) {
 				if (itemFlag) {
 					if (!walkToObject())
 						goto next2;
@@ -742,8 +743,49 @@ next1:
 			}
 			break;
 
-		default:
+		case 1:
+			player_set_commands_allowed(false);
+			setGlobals1(_ripMedHigh, 1, 12, 12, 12);
+			sendWSMessage_110000(3);
 			break;
+
+		case 3:
+			if (itemFlag) {
+				hotspot_set_active(_G(player).verb, true);
+
+#define DROP(FIELD, NAME, CASE) if (player_said(NAME)) { \
+	FIELD = series_show_sprite(CASE, 0, 0xf00); \
+	inv_move_object(NAME, 305); }
+				DROP(_shrunkenHead2, "SHRUNKEN HEAD", "DISPLAY CASE SHRUNKEN HEAD")
+				DROP(_incenseHolder2, "INCENSE BURNER", "DISPLAY CASE INCENSE HOLDER")
+				DROP(_crystalSkull2, "CRYSTAL SKULL", "DISPLAY CASE CRYSTAL SKULL")
+				DROP(_emerald2, "ROMANOV EMERALD", "DISPLAY CASE EMERALD")
+				DROP(_whaleboneHorn2, "WHALE BONE HORN", "DISPLAY CASE WHALE BONE HORN")
+				DROP(_wheeledToy2, "WHEELED TOY", "DISPLAY CASE WHEELED TOY")
+#undef DROP
+			} else {
+				hotspot_set_active(_G(player).noun, false);
+
+#define TAKE(FIELD, NAME) if (player_said(NAME)) { \
+	terminateMachineAndNull(FIELD); inv_give_to_player(NAME); }
+				TAKE(_shrunkenHead2, "SHRUNKEN HEAD")
+				TAKE(_incenseHolder2, "INCENSE BURNER")
+				TAKE(_crystalSkull2, "CRYSTAL SKULL")
+				TAKE(_emerald2, "ROMANOV EMERALD")
+				TAKE(_whaleboneHorn2, "WHALE BONE HORN")
+				TAKE(_wheeledToy2, "WHEELED TOY")
+#undef TAKE
+			}
+
+			sendWSMessage_140000(5);
+			break;
+
+		case 5:
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			goto next2;
 		}
 	} else {
 		goto next2;
@@ -774,7 +816,7 @@ next2:
 
 		case 3:
 			if (chiselFlag) {
-				hotspot_set_active(_G(player).verb, false);
+				hotspot_set_active(_G(player).verb, true);
 
 				if (player_said("CHISEL")) {
 					_knife2 = series_show_sprite("DISPLAY CASE YETI HANDLED KNIFE", 0, 0xf00);
@@ -842,7 +884,7 @@ next3:
 			break;
 
 		case 3:
-			if (useFlag) {
+			if (caseFlag) {
 				hotspot_set_active(_G(player).verb, true);
 
 #define DROP(FIELD, NAME, CASE) if (player_said(NAME)) { \
@@ -853,8 +895,8 @@ next3:
 				DROP(_banknote2, "GERMAN BANKNOTE", "DISPLAY CASE GERMAN BANKNOTE")
 				DROP(_stamp2, "POSTAGE STAMP", "DISPLAY CASE CHEAPEST STAMP")
 				DROP(_map2, "STICK AND SHELL MAP", "DISPLAY CASE QUARRY STICK MAP")
-#undef ITEM
-				sendWSMessage_140000(3);
+#undef DROP
+				sendWSMessage_140000(5);
 
 			} else {
 				hotspot_set_active(_G(player).noun, false);
