@@ -1091,7 +1091,7 @@ bool MediaPlayer::playWacInterfaceSequenceStream(Common::SeekableReadStream *str
 		const Common::String &name, const Common::Rect &centerBounds,
 		uint loopStartFrame, MediaSequenceCallback *callback, uint16 *command) {
 	debugC(1, kDebugVideo,
-		"Ripper: entering archived WAC interface sequence media='%s' centerBounds=%d,%d,%d,%d palette=10..149 loopStartFrame=%u callback=%d",
+		"Ripper: entering streamed WAC interface sequence media='%s' centerBounds=%d,%d,%d,%d palette=10..149 loopStartFrame=%u callback=%d",
 		name.c_str(), centerBounds.left, centerBounds.top, centerBounds.right,
 		centerBounds.bottom, loopStartFrame, callback != nullptr);
 	SmackerPlaybackPlan plan;
@@ -1102,7 +1102,7 @@ bool MediaPlayer::playWacInterfaceSequenceStream(Common::SeekableReadStream *str
 	plan.callback.sequenceCallback = callback;
 	plan.callback.sequenceCommand = command;
 	return playValidatedSmacker(stream, name,
-		"archived WAC interface sequence", plan);
+		"streamed WAC interface sequence", plan);
 }
 
 bool MediaPlayer::playInterfaceSequence(const Common::String &path, int x, int y,

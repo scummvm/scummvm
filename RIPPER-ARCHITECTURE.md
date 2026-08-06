@@ -1660,13 +1660,15 @@
   clears the shared media viewport and returns to the retained chooser without
   presenting content or changing state.
 - Entry 25 is the one voiced media exception. `RunWacInventorySelectionLoop`
-  resolves `rip_game.smk` and `rip_game.wav` through startup asset-library
-  handle 5, which `LoadConfiguredAssetLibraryDirectories` at `0x11d91` binds
-  to `SCRIPT.PL`. `RunStaticMediaScreenWithOptionalVoiceover` presents the
-  first video frame before starting the WAV, loops the Smacker from frame one,
-  and returns automatically when managed narration ends. The entry then sets
-  shared flag `0x14f` (335). WAC input can still dismiss or replace the entry;
-  either path stops the narration before the next database action.
+  combines `rip_game.smk` and `rip_game.wav` with the configured scene path at
+  `0x22971..0x229a5`, then calls `RunStaticMediaScreenWithOptionalVoiceover`
+  with optional scene-library handle 5. The installed layout keeps both files
+  loose under `PATHS/scene`. The viewer presents the first video frame before
+  starting the WAV, loops the Smacker from frame one, and returns automatically
+  when managed narration ends. The entry then unconditionally sets shared flag
+  `0x14f` (335), matching `0x229b9..0x229c8`. WAC input can still dismiss or
+  replace the entry; either path stops the narration before the next database
+  action.
 - Entry 15 dispatches game-text resource `0xb6` through
   `RunCenteredTextPanelUntilExitAction` at `0x2330c`. The untitled, wrapped
   330-by-222 panel begins at the WAC media origin (50,50) and uses the same

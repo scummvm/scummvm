@@ -34,7 +34,7 @@ enum WacDatabaseHandlerKind {
 	kWacDatabaseHandlerJournal,
 	kWacDatabaseHandlerVoiceLock,
 	kWacDatabaseHandlerLoopingMedia,
-	kWacDatabaseHandlerScriptMediaWithVoiceover,
+	kWacDatabaseHandlerConfiguredMediaWithVoiceover,
 	kWacDatabaseHandlerOptionalPresentation,
 	kWacDatabaseHandlerText
 };

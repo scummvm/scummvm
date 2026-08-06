@@ -754,18 +754,16 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 		}
 		return kNoAction;
 	}
-	if (entry.catalog->handler == kWacDatabaseHandlerScriptMediaWithVoiceover) {
-		// Retail case 25 resolves both RIP_GAME members through startup asset
-		// library handle 5 (SCRIPT.PL). RunStaticMediaScreenWithOptionalVoiceover
-		// at 0x2339d starts the WAV after presenting frame one and returns when
-		// managed audio ends.
+	if (entry.catalog->handler == kWacDatabaseHandlerConfiguredMediaWithVoiceover) {
+		// Retail case 25 combines both RIP_GAME names with the configured scene
+		// path at 0x22971..0x229a5, then passes the optional scene-library handle
+		// to RunStaticMediaScreenWithOptionalVoiceover at 0x2339d. The installed
+		// data keeps both files loose under PATHS/scene.
 		ResourceManager *resources = _wac->_engine->getResources();
 		Common::SeekableReadStream *mediaStream = resources ?
-			resources->scripts().createReadStreamForMember(
-				entry.catalog->imagePath) : nullptr;
+			resources->createReadStreamForPath(entry.catalog->imagePath) : nullptr;
 		Common::SeekableReadStream *voiceoverStream = resources ?
-			resources->scripts().createReadStreamForMember(
-				entry.catalog->mediaPath) : nullptr;
+			resources->createReadStreamForPath(entry.catalog->mediaPath) : nullptr;
 		WacDatabaseMediaCallback callback(this, entry.originalIndex(),
 			voiceoverStream, entry.catalog->mediaPath);
 		uint16 command = kNoAction;
@@ -780,7 +778,7 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 		clearDatabaseMediaViewport();
 		drawDatabase();
 		debugC(1, kDebugWac,
-			"Ripper: WAC database entry=%u label='%s' media='%s' voiceover='%s' source=SCRIPT.PL played=%d command=0x%x milestone=0x%x",
+			"Ripper: WAC database entry=%u label='%s' media='%s' voiceover='%s' source=configured-scene-path played=%d command=0x%x milestone=0x%x",
 			entry.originalIndex(), entry.label.c_str(), entry.catalog->imagePath,
 			entry.catalog->mediaPath, played, command,
 			entry.catalog->completionFlag);
