@@ -829,7 +829,11 @@
   from frame 10 while `ServiceDateSelectionTextEntryChooserCallback` at
   `0x3d464` owns a primary-style text control with a 22-character limit and
   help table `0x1b6`. Escape exits the puzzle; a submitted token reaches
-  `ProcessDateSelectionTokenMatch` at `0x3d8f0`.
+  `ProcessDateSelectionTokenMatch` at `0x3d8f0`. The retail call pushes loop
+  start `0x0a`; its callback does not request final-frame retention, so the
+  decoder returns to that frame while the chooser remains active. The callback
+  services the chooser registry but does not explicitly reapply the selected
+  cursor on every media frame.
 - That matcher accepts five case-insensitive spellings for each date from
   November 18 through November 23: numeric forms with `-` or `/`, abbreviated
   `nov` with or without a period, and the full month name. November 19 sets
