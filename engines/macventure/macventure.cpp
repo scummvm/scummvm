@@ -46,6 +46,10 @@ enum {
 	kMaxMenuTitleLength = 30
 };
 
+enum {
+	kFrameDelay = 20
+};
+
 MacVentureEngine::MacVentureEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst) {
 	_gameDescription = gameDesc;
 	_rnd = new Common::RandomSource("macventure");
@@ -65,6 +69,8 @@ MacVentureEngine::MacVentureEngine(OSystem *syst, const ADGameDescription *gameD
 	_soundManager = nullptr;
 
 	_dataBundle = nullptr;
+
+	_nextFrameTime = 0;
 
 	debug("MacVenture::MacVentureEngine()");
 }
@@ -208,7 +214,11 @@ Common::Error MacVentureEngine::run() {
 void MacVentureEngine::refreshScreen() {
 	_gui->draw();
 	g_system->updateScreen();
-	g_system->delayMillis(50);
+
+	uint32 now = g_system->getMillis();
+	if (now < _nextFrameTime)
+		g_system->delayMillis(_nextFrameTime - now);
+	_nextFrameTime = g_system->getMillis() + kFrameDelay;
 }
 
 void MacVentureEngine::newGame() {
