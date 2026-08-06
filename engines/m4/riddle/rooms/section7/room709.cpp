@@ -162,9 +162,33 @@ void Room709::syncGame(Common::Serializer &s) {
 	s.syncAsByte(_pullRightFl);
 }
 
+void Room709::addMazeCheatHotkeys() {
+	// The original registered the DOS ASCII codes 12 (Ctrl+L, form feed) and
+	// 5 (Ctrl+E), so the warp is triggered by Ctrl+L, Ctrl+E, Ctrl+E. The port
+	// turned the 12 into KEYCODE_CLEAR and kept the 5 verbatim, but
+	// Events::util_kbd_check() builds key values as keycode | (flags << 16),
+	// so neither of those could ever be matched.
+	AddSystemHotkey(KEY_CTRL_L, clearPressed);
+	AddSystemHotkey(KEY_CTRL_E, clearPressed);
+
+	// Ctrl+S, Ctrl+T, Ctrl+A, Ctrl+Y additionally takes the two artifacts
+	AddSystemHotkey(KEY_CTRL_S, stayPressed);
+	AddSystemHotkey(KEY_CTRL_T, stayPressed);
+	AddSystemHotkey(KEY_CTRL_A, stayPressed);
+	AddSystemHotkey(KEY_CTRL_Y, stayPressed);
+}
+
+void Room709::removeMazeCheatHotkeys() {
+	RemoveSystemHotkey(KEY_CTRL_L);
+	RemoveSystemHotkey(KEY_CTRL_E);
+	RemoveSystemHotkey(KEY_CTRL_S);
+	RemoveSystemHotkey(KEY_CTRL_T);
+	RemoveSystemHotkey(KEY_CTRL_A);
+	RemoveSystemHotkey(KEY_CTRL_Y);
+}
+
 void Room709::init() {
-	AddSystemHotkey(KEY_CLEAR, clearPressed);
-	AddSystemHotkey(5, clearPressed);
+	addMazeCheatHotkeys();
 	digi_preload("950_s42");
 
 	_pullLeftFl = false;
@@ -550,8 +574,7 @@ void Room709::parser() {
 					break;
 
 				case 3:
-					RemoveSystemHotkey(KEY_CLEAR);
-					RemoveSystemHotkey(5);
+					removeMazeCheatHotkeys();
 					_G(game).setRoom(706);
 					break;
 
@@ -940,8 +963,7 @@ void Room709::daemon() {
 		if (_mazeCurrentIndex == 50) {
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s41", 3, 255, -1, -1);
-			RemoveSystemHotkey(KEY_CLEAR);
-			RemoveSystemHotkey(5);
+			removeMazeCheatHotkeys();
 			_G(game).setRoom(710);
 		}
 
@@ -1013,11 +1035,39 @@ void Room709::daemon() {
 
 	case 504:
 		adv_kill_digi_between_rooms(false);
+		// Case 500 started 304_s05 as a loop on channel 2, and the digi tracks
+		// are deliberately kept across the room change. Room 710 only ever
+		// touches channel 2 by accident, so stop it here.
+		digi_stop(2);
 		digi_play_loop("950_s41", 3, 255, -1, -1);
-		RemoveSystemHotkey(KEY_CLEAR);
-		RemoveSystemHotkey(5);
+		removeMazeCheatHotkeys();
 		_G(game).setRoom(710);
 
+		break;
+
+	case 505:
+		// Take the two artifacts that can be mailed home, then warp out
+		if (inv_object_is_here("CHISEL")) {
+			inv_give_to_player("CHISEL");
+
+			if (_chiselActiveFl) {
+				terminateMachine(_709ChiselMach);
+				_chiselActiveFl = false;
+				hotspot_set_active(_G(currentSceneDef).hotspots, "Chisel", false);
+			}
+		}
+
+		if (inv_object_is_here("INCENSE BURNER")) {
+			inv_give_to_player("INCENSE BURNER");
+
+			if (_incenseBurnerActiveFl) {
+				terminateMachine(_709IncenseHolderMach);
+				_incenseBurnerActiveFl = false;
+				hotspot_set_active(_G(currentSceneDef).hotspots, "Incense Burner", false);
+			}
+		}
+
+		kernel_timing_trigger(1, 500, nullptr);
 		break;
 
 	case 1000:
@@ -1240,11 +1290,42 @@ void Room709::clearPressed(void *, void *) {
 	}
 
 	if (_field84 == 3) {
+		_field84 = 0;
 		digi_preload("304_s05", -1);
 		digi_preload("709_s99", -1);
 		_G(kernel).trigger_mode = KT_DAEMON;
 		disable_player_commands_and_fade_init(500);
 	}
+}
+
+void Room709::stayPressed(void *keyVal, void *) {
+	static const int32 SEQUENCE[4] = { KEY_CTRL_S, KEY_CTRL_T, KEY_CTRL_A, KEY_CTRL_Y };
+	static int32 index = 0;
+	static uint32 lastPress = 0;
+
+	const int32 key = (int32)(intptr)keyVal;
+	const uint32 now = timer_read_60();
+
+	// Same one second window per keystroke as the warp cheat above
+	if (index && now - lastPress >= 60)
+		index = 0;
+
+	lastPress = now;
+
+	if (key != SEQUENCE[index]) {
+		// A wrong key can still be the start of the next attempt
+		index = (key == SEQUENCE[0]) ? 1 : 0;
+		return;
+	}
+
+	if (++index < 4)
+		return;
+
+	index = 0;
+	digi_preload("304_s05", -1);
+	digi_preload("709_s99", -1);
+	_G(kernel).trigger_mode = KT_DAEMON;
+	disable_player_commands_and_fade_init(505);
 }
 
 void Room709::debugRoomChanged() {
