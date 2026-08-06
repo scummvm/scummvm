@@ -27,6 +27,7 @@ namespace Cryo {
 Debugger::Debugger(CryoEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("showHotspots", WRAP_METHOD(Debugger, Cmd_ShowHotspots));
 	registerCmd("fullInventory", WRAP_METHOD(Debugger, Cmd_FullInventory));
+	registerCmd("phase", WRAP_METHOD(Debugger, Cmd_Phase));
 }
 
 /**
@@ -58,5 +59,25 @@ bool Debugger::Cmd_FullInventory(int argc, const char **argv) {
 	_vm->_game->showObjects();
 
 	return false;
+}
+
+/**
+ * Show or set the story phase. Dialog lines are gated on it, so a character
+ * with nothing to say is usually a phase that has not been reached yet.
+ */
+bool Debugger::Cmd_Phase(int argc, const char **argv) {
+	global_t *globals = _vm->_game->_globals;
+
+	if (argc == 2)
+		globals->_phaseNum = (int16)strtol(argv[1], nullptr, 0);
+	else if (argc != 1) {
+		debugPrintf("Usage: %s [phase]\n", argv[0]);
+		return true;
+	}
+
+	debugPrintf("phase %d (0x%X), room %d (0x%X)\n", globals->_phaseNum,
+	            globals->_phaseNum, globals->_roomNum, globals->_roomNum);
+
+	return true;
 }
 } // End of namespace Cryo
