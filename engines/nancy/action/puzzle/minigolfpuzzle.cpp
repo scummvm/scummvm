@@ -42,17 +42,19 @@ namespace Action {
 //    input is gated to the viewport so that hotspot still works, but it isn't
 //    driven from here.
 
-// Struck speed = clamp(dragLen, maxSpeed) * kPowerScale * maxSpeed, in mask px per
-// fixed step; the ball then decelerates linearly by _decel each step, so travel
-// distance scales with drag^2. The physics advance in fixed 30Hz steps to stay
-// frame-rate independent. At this kPowerScale a full-course shot is a small,
-// precise ~24px drag (the three preview balls guide the aim).
+// The struck "speed" = clamp(dragLen, maxSpeed) * kPowerScale * maxSpeed; the ball
+// then decelerates linearly by _decel each step. But the actual per-step movement
+// is that speed times kMoveScale (the original scales the displacement by
+// _DAT_005350a0/_DAT_005352d0 = 1/50), so travel distance = kMoveScale * speed^2 /
+// (2*_decel) - quadratic in drag, but 50x gentler than the raw speed. A full-course
+// shot is thus a comfortable ~170px drag. The physics advance in fixed 30Hz steps.
 static const double kPowerScale = 0.005;
+static const double kMoveScale = 1.0 / 50.0;	// displacement = speed * kMoveScale per step
 static const double kFixedStep = 1.0 / 30.0;
 static const double kRestSpeed = 0.5;		// stop the ball below this per-step speed
-static const double kSinkSpeed = 50.0;		// ball sinks only if it reaches the cup at or below this speed; faster rolls over
+static const double kSinkSpeed = 130.0;		// ball sinks only if it reaches the cup at or below this speed; faster rolls over
 static const double kRestitution = 0.8;		// wall-bounce energy retained
-static const double kDefaultAimDrag = 24.0;	// default aim-cursor distance from the ball (mask px)
+static const double kDefaultAimDrag = 80.0;	// default aim-cursor distance from the ball (mask px)
 
 // Isometric projection (mask space -> screen): rotate 45 degrees, foreshorten Y by
 // half. cos45 == sin45; the Y component is additionally scaled by kIsoYScale.
@@ -394,9 +396,10 @@ void MinigolfPuzzle::writeStrokeCount() {
 }
 
 bool MinigolfPuzzle::stepBall(double &x, double &y, double &vx, double &vy, bool playSounds) {
-	// One fixed physics step: the velocity is already in mask px per step.
-	double dispX = vx;
-	double dispY = vy;
+	// One fixed physics step. The actual displacement is the ball's speed scaled by
+	// kMoveScale (vx/vy carry the raw speed, which the friction below decays).
+	double dispX = vx * kMoveScale;
+	double dispY = vy * kMoveScale;
 
 	// Walk the displacement in ~1px sub-steps so a fast ball can't tunnel through a
 	// thin wall, reflecting off each axis independently so it can slide along an
