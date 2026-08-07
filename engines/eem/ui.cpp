@@ -1413,7 +1413,7 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 		scaleDosRectIfMac(*this, kEndingNextPageRect);
 	uint pageOffsets[8];
 	const uint pageOffsetCap =
-		(uint)(sizeof(pageOffsets) / sizeof(pageOffsets[0]));
+		(uint)ARRAYSIZE(pageOffsets);
 	uint validPages = 0;
 	const bool compactEnding = floppyEnding || (macEnding && !macLooseEnding);
 	const bool cdEnding = !compactEnding;
@@ -1664,8 +1664,7 @@ void EEMEngine::doShowScrapbook(uint stage) {
 	uint tierLo = 0, tierHi = 0;
 	if (stage < 1 || !mysteryTierRange(stage, tierLo, tierHi))
 		return;
-	const int solvedCount =
-		(int)(sizeof(_mysteriesSolved) / sizeof(_mysteriesSolved[0]));
+	const int solvedCount = ARRAYSIZE(_mysteriesSolved);
 	const int lo = (int)tierLo;
 	const int hi = MIN<int>((int)tierHi + 1, solvedCount);
 	if (lo >= hi)

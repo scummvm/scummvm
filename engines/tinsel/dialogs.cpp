@@ -387,7 +387,7 @@ static CONFBOX t2OptionBox[] = {
 
 };
 
-static CONFINIT t2ciOption = {6, 4, 144, 60, false, t2OptionBox, sizeof(t2OptionBox) / sizeof(CONFBOX), NO_HEADING};
+static CONFINIT t2ciOption = {6, 4, 144, 60, false, t2OptionBox, ARRAYSIZE(t2OptionBox), NO_HEADING};
 
 static CONFBOX t3OptionBox[] = {
 	{ARSBUT, OPENLOAD, TM_INDEX, NULL, SS_LOAD_OPTION, T2_OPTX, T2_OPTY, T2_EDIT_BOX1_WIDTH, T2_BOX_HEIGHT, NULL, 0},
@@ -397,7 +397,7 @@ static CONFBOX t3OptionBox[] = {
 	{ARSBUT, OPENQUIT, TM_INDEX, NULL, SS_QUIT_OPTION, T2_OPTX, T2_OPTY + 4 * (T2_BOX_HEIGHT + T2_BOX_V_SEP), T2_EDIT_BOX1_WIDTH, T2_BOX_HEIGHT, NULL, 0}
 };
 
-static CONFINIT t3ciOption = {6, 4, 144, 60, false, t3OptionBox, sizeof(t3OptionBox) / sizeof(CONFBOX), NO_HEADING};
+static CONFINIT t3ciOption = {6, 4, 144, 60, false, t3OptionBox, ARRAYSIZE(t3OptionBox), NO_HEADING};
 
 static CONFINIT* ciOptionLookup[] = {
 	&t1ciOption,
@@ -471,8 +471,8 @@ static CONFBOX t3LoadBox[] = {
 	{AATBUT, CLOSEWIN, TM_NONE, NULL, 0, 460, 100 + 100, BW, BH, NULL, IX2_CROSS1}};
 
 static CONFINIT t1ciLoad = {10, 6, 20, 16, true, t1LoadBox, ARRAYSIZE(t1LoadBox), SIX_LOAD_HEADING};
-static CONFINIT t2ciLoad = {10, 6, 40, 16, true, t2LoadBox, sizeof(t2LoadBox) / sizeof(CONFBOX), SS_LOAD_HEADING};
-static CONFINIT t3ciLoad = {10, 6, 40, 16, true, t3LoadBox, sizeof(t3LoadBox) / sizeof(CONFBOX), SS_LOAD_HEADING};
+static CONFINIT t2ciLoad = {10, 6, 40, 16, true, t2LoadBox, ARRAYSIZE(t2LoadBox), SS_LOAD_HEADING};
+static CONFINIT t3ciLoad = {10, 6, 40, 16, true, t3LoadBox, ARRAYSIZE(t3LoadBox), SS_LOAD_HEADING};
 
 static CONFBOX t1SaveBox[NUM_RGROUP_BOXES + 2] = {
 	{RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28, SY, EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0},
@@ -517,8 +517,8 @@ static CONFBOX t3SaveBox[] = {
 	{AATBUT, CLOSEWIN, TM_NONE, NULL, 0, 460, 100 + 100, BW, BH, NULL, IX2_CROSS1}};
 
 static CONFINIT t1ciSave = {10, 6, 20, 16, true, t1SaveBox, ARRAYSIZE(t1SaveBox), SIX_SAVE_HEADING};
-static CONFINIT t2ciSave = {10, 6, 40, 16, true, t2SaveBox, sizeof(t2SaveBox) / sizeof(CONFBOX), SS_SAVE_HEADING};
-static CONFINIT t3ciSave = {10, 6, 40, 16, true, t3SaveBox, sizeof(t3SaveBox) / sizeof(CONFBOX), SS_SAVE_HEADING};
+static CONFINIT t2ciSave = {10, 6, 40, 16, true, t2SaveBox, ARRAYSIZE(t2SaveBox), SS_SAVE_HEADING};
+static CONFINIT t3ciSave = {10, 6, 40, 16, true, t3SaveBox, ARRAYSIZE(t3SaveBox), SS_SAVE_HEADING};
 
 static CONFINIT* ciLoadLookup[] = {
 	&t1ciLoad,
@@ -585,8 +585,8 @@ static CONFINIT t1ciRestart = {6, 2, 72, 53, false, t1RestartBox, ARRAYSIZE(t1Re
 static CONFINIT t1ciRestart = {4, 2, 98, 53, false, t1RestartBox, ARRAYSIZE(t1RestartBox), SIX_RESTART_HEADING};
 #endif
 static CONFINIT t1ciRestartPSX = {8, 2, 46, 53, false, t1RestartBoxPSX, ARRAYSIZE(t1RestartBoxPSX), SIX_RESTART_HEADING};
-static CONFINIT t2ciRestart = {4, 2, 196, 53, false, t2RestartBox, sizeof(t2RestartBox) / sizeof(CONFBOX), SS_RESTART_HEADING};
-static CONFINIT t3ciRestart = {4, 2, 196, 53, false, t3RestartBox, sizeof(t3RestartBox) / sizeof(CONFBOX), SS_RESTART_HEADING};
+static CONFINIT t2ciRestart = {4, 2, 196, 53, false, t2RestartBox, ARRAYSIZE(t2RestartBox), SS_RESTART_HEADING};
+static CONFINIT t3ciRestart = {4, 2, 196, 53, false, t3RestartBox, ARRAYSIZE(t3RestartBox), SS_RESTART_HEADING};
 
 static CONFINIT* ciRestartLookup[] = {
 	&t1ciRestart,
@@ -626,8 +626,8 @@ static CONFBOX t3SoundBox[] = {
 };
 
 static CONFINIT t1ciSound = {10, 5, 20, 16, false, t1SoundBox, ARRAYSIZE(t1SoundBox), NO_HEADING};
-static CONFINIT t2ciSound = {10, 5, 40, 16, false, t2SoundBox, sizeof(t2SoundBox) / sizeof(CONFBOX), SS_SOUND_HEADING};
-static CONFINIT t3ciSound = {10, 5, 40, 16, false, t3SoundBox, sizeof(t3SoundBox) / sizeof(CONFBOX), SS_SOUND_HEADING};
+static CONFINIT t2ciSound = {10, 5, 40, 16, false, t2SoundBox, ARRAYSIZE(t2SoundBox), SS_SOUND_HEADING};
+static CONFINIT t3ciSound = {10, 5, 40, 16, false, t3SoundBox, ARRAYSIZE(t3SoundBox), SS_SOUND_HEADING};
 
 static CONFINIT* ciSoundLookup[] = {
 	&t1ciSound,
@@ -724,8 +724,8 @@ static CONFBOX t3QuitBox[] = {
 	{AATBUT, CLOSEWIN, TM_NONE, NULL, 0, 60, 64, BW_T3, BH_T3, NULL, IX3_TICK}};
 
 static CONFINIT t1ciQuit = {4, 2, 98, 53, false, t1QuitBox, ARRAYSIZE(t1QuitBox), SIX_QUIT_HEADING};
-static CONFINIT t2ciQuit = {4, 2, 196, 53, false, t2QuitBox, sizeof(t2QuitBox) / sizeof(CONFBOX), SS_QUIT_HEADING};
-static CONFINIT t3ciQuit = {4, 2, 196, 53, false, t3QuitBox, sizeof(t3QuitBox) / sizeof(CONFBOX), SS_QUIT_HEADING};
+static CONFINIT t2ciQuit = {4, 2, 196, 53, false, t2QuitBox, ARRAYSIZE(t2QuitBox), SS_QUIT_HEADING};
+static CONFINIT t3ciQuit = {4, 2, 196, 53, false, t3QuitBox, ARRAYSIZE(t3QuitBox), SS_QUIT_HEADING};
 
 static CONFINIT* ciQuitLookup[] = {
 	&t1ciQuit,
@@ -754,7 +754,7 @@ static CONFBOX hopperBox1[] = {
 	{ARSGBUT, HOPPER2, TM_NONE, NULL, 0, 460, 100, BW, BH, NULL, IX2_TICK1},
 	{AAGBUT, CLOSEWIN, TM_NONE, NULL, 0, 460, 100 + 100, BW, BH, NULL, IX2_CROSS1}};
 
-static CONFINIT ciHopper1 = {10, 6, 40, 16, true, hopperBox1, sizeof(hopperBox1) / sizeof(CONFBOX), SS_HOPPER1};
+static CONFINIT ciHopper1 = {10, 6, 40, 16, true, hopperBox1, ARRAYSIZE(hopperBox1), SS_HOPPER1};
 
 static CONFBOX hopperBox2[] = {
 	{RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY, T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0},
@@ -770,7 +770,7 @@ static CONFBOX hopperBox2[] = {
 	{ARSGBUT, BF_CHANGESCENE, TM_NONE, NULL, 0, 460, 50, BW, BH, NULL, IX2_TICK1},
 	{AAGBUT, CLOSEWIN, TM_NONE, NULL, 0, 460, 200, BW, BH, NULL, IX2_CROSS1}};
 
-static CONFINIT ciHopper2 = {10, 6, 40, 16, true, hopperBox2, sizeof(hopperBox2) / sizeof(CONFBOX), NO_HEADING};
+static CONFINIT ciHopper2 = {10, 6, 40, 16, true, hopperBox2, ARRAYSIZE(hopperBox2), NO_HEADING};
 
 /***************************************************************************\
 |****************************    Top Window    *****************************|

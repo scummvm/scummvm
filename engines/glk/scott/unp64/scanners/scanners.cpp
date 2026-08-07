@@ -20,6 +20,7 @@
  */
 
 #include "glk/scott/unp64/unp64.h"
+#include "common/util.h"
 
 namespace Glk {
 namespace Scott {
@@ -60,7 +61,7 @@ Scnptr g_scanFunc[] = {
 
 void scanners(UnpStr* unp) {
 	int x, y;
-	y = sizeof(g_scanFunc) / sizeof(*g_scanFunc);
+	y = ARRAYSIZE(g_scanFunc);
 	for (x = 0; x < y; x++) {
 		(g_scanFunc[x])(unp);
 		if (unp->_idFlag)

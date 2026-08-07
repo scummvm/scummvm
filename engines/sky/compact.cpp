@@ -118,9 +118,9 @@ static const uint32 turnTableOffsets[] = {
 	MK32_A5(TurnTable, turnTableTalk),
 };
 
-#define COMPACT_SIZE (sizeof(compactOffsets)/sizeof(uint32))
-#define MEGASET_SIZE (sizeof(megaSetOffsets)/sizeof(uint32))
-#define TURNTABLE_SIZE (sizeof(turnTableOffsets)/sizeof(uint32))
+#define COMPACT_SIZE (ARRAYSIZE(compactOffsets))
+#define MEGASET_SIZE (ARRAYSIZE(megaSetOffsets))
+#define TURNTABLE_SIZE (ARRAYSIZE(turnTableOffsets))
 
 SkyCompact::SkyCompact() {
 	_cptFile = new Common::File();

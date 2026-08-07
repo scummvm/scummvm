@@ -169,7 +169,7 @@ TileId Location::getReplacementTile(MapCoords atCoords, const Tile *forTile) {
 	Common::HashMap<TileId, int> validMapTileCount;
 
 	const static int dirs[][2] = {{ -1, 0}, {1, 0}, {0, -1}, {0, 1}};
-	const static int dirs_per_step = sizeof(dirs) / sizeof(*dirs);
+	const static int dirs_per_step = ARRAYSIZE(dirs);
 	int loop_count = 0;
 
 	//std::set<MapCoords> searched;

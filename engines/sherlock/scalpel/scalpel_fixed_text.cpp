@@ -808,7 +808,7 @@ static const char *const fixedTextZH_ActionUse[] = {
 	"\xaa\xf9\xb5\x4c\xaa\x6b\xa9\xe2\xb7\xcf" /* "門無法抽煙"; "Doors don't smoke" */
 };
 
-#define FIXEDTEXT_GETCOUNT(_name_) sizeof(_name_) / sizeof(byte *)
+#define FIXEDTEXT_GETCOUNT(_name_) ARRAYSIZE(_name_)
 #define FIXEDTEXT_ENTRY(_name_)    _name_, FIXEDTEXT_GETCOUNT(_name_)
 
 static const FixedTextActionEntry fixedTextEN_Actions[] = {

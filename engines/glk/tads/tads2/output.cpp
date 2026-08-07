@@ -1651,7 +1651,7 @@ static void outchar_html_stream(out_stream_info *stream,
 	 *   in an external mapping file
 	 */
 	for (ampptr = amp_tbl ;
-		 ampptr < amp_tbl + sizeof(amp_tbl)/sizeof(amp_tbl[0]) ; ++ampptr)
+		 ampptr < amp_tbl + ARRAYSIZE(amp_tbl); ++ampptr)
 	{
 		/* if this is the one, stop looking */
 		if (ampptr->html_cval == htmlchar)
@@ -1663,8 +1663,7 @@ static void outchar_html_stream(out_stream_info *stream,
 	 *   from the external character mapping table file, use the external
 	 *   expansion; otherwise, use the default expansion.
 	 */
-	if (ampptr >= amp_tbl + sizeof(amp_tbl)/sizeof(amp_tbl[0])
-		|| ampptr->expan == nullptr)
+	if (ampptr >= amp_tbl + ARRAYSIZE(amp_tbl) || ampptr->expan == nullptr)
 	{
 		char xlat_buf[50];
 
@@ -2802,13 +2801,13 @@ static char out_parse_entity(char *outbuf, size_t outbuf_size, const char **sp, 
 
 	/* do a binary search for the name */
 	lo = 0;
-	hi = sizeof(amp_tbl)/sizeof(amp_tbl[0]) - 1;
+	hi = ARRAYSIZE(amp_tbl) - 1;
 	for (;;)
 	{
 		int diff;
 
 		/* if we've converged, look no further */
-		if (lo > hi || lo >= sizeof(amp_tbl)/sizeof(amp_tbl[0]))
+		if (lo > hi || lo >= ARRAYSIZE(amp_tbl))
 		{
 			ampptr = nullptr;
 			break;
@@ -2961,7 +2960,7 @@ void tio_set_html_expansion(unsigned int html_char_val,
 
 	/* find the character value */
 	for (p = amp_tbl ;
-		 p < amp_tbl + sizeof(amp_tbl)/sizeof(amp_tbl[0]) ; ++p)
+		 p < amp_tbl + ARRAYSIZE(amp_tbl); ++p)
 	{
 		/* if this is the one, store it */
 		if (p->html_cval == html_char_val)

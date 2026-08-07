@@ -62,7 +62,7 @@ void Test_GfxSpeed(bool enableSimd, size_t blenderModeStart, size_t blenderModeE
 		for (int gfx = 0; gfx < 3; gfx++) {
 			if (dest == 2 && gfx != 2) continue;
 			for (size_t mode = blenderModeStart; mode <= blenderModeEnd; mode++) {
-				for (int runs = 0; (size_t)runs < sizeof(benchRuns)/sizeof(int); runs++) {
+				for (int runs = 0; (size_t)runs < ARRAYSIZE(benchRuns); runs++) {
 					uint32 start, end;
 					_G(_blender_mode) = (AGS3::BlenderMode)blenderModes[mode];
 					//if (runs == 2) debug("Dest: %d bpp, Gfx: %d bpp, Blender: %s, Stretched: false, Iters: %d\n", bpps[dest], bpps[gfx], modeNames[mode], benchRuns[runs]);

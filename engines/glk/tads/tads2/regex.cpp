@@ -689,8 +689,7 @@ static re_status_t re_compile(re_context *ctx,
 			 *   alternate machines onto the group stack, and clear
 			 *   everything out for the new group.
 			 */
-			if (group_stack_level
-				> sizeof(group_stack)/sizeof(group_stack[0]))
+			if (group_stack_level > ARRAYSIZE(group_stack))
 			{
 				/* we cannot proceed - return an error */
 				return RE_STATUS_GROUP_NESTING_TOO_DEEP;
