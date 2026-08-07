@@ -46,6 +46,8 @@ MODULE_OBJS := \
 	puzzles/kd_shooting_gallery.o \
 	puzzles/key_group.o \
 	puzzles/keypad_sequence.o \
+	puzzles/ki_skull_maze.o \
+	puzzles/ki_skull_maze_model.o \
 	puzzles/kj_blob_shooter.o \
 	puzzles/kk_tile_match.o \
 	puzzles/rolodex.o \

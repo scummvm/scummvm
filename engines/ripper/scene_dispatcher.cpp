@@ -45,6 +45,7 @@
 #include "ripper/puzzles/kd_shooting_gallery.h"
 #include "ripper/puzzles/key_group.h"
 #include "ripper/puzzles/keypad_sequence.h"
+#include "ripper/puzzles/ki_skull_maze.h"
 #include "ripper/puzzles/kj_blob_shooter.h"
 #include "ripper/puzzles/kk_tile_match.h"
 #include "ripper/puzzles/rolodex.h"
@@ -83,7 +84,7 @@ const char *SceneActionDispatcher::actionName(uint action) {
 	case 15: return "mechini combat encounter";
 	case kSceneActionKeyGroupPuzzle: return "key group puzzle";
 	case kSceneActionDateSelectionPuzzle: return "date selection puzzle";
-	case 18: return "KI skull maze puzzle";
+	case kSceneActionKiSkullMazePuzzle: return "KI skull maze puzzle";
 	case kSceneActionWebGridShiftPuzzle: return "web grid shift puzzle";
 	case kSceneActionHorusWordPuzzle: return "Horus word puzzle";
 	case kSceneActionSixDigitCodePuzzle: return "six-digit code puzzle";
@@ -276,6 +277,15 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 			"result=%d milestone=%u",
 			result, argument);
 		return result != DateSelectionPuzzle::kLoadFailed;
+	}
+	if (action == kSceneActionKiSkullMazePuzzle) {
+		KiSkullMazePuzzle puzzle(engine);
+		const KiSkullMazePuzzle::Result result = puzzle.run(argument);
+		debugC(1, kDebugPuzzles,
+			"Ripper: KI skull-maze scene action completed "
+			"result=%d milestone=%u",
+			result, argument);
+		return result != KiSkullMazePuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionRatiniCombat) {
 		// DispatchSceneEntryAction at 0x36cc6 forwards the completion flag and
