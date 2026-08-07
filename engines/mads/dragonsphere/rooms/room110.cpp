@@ -2394,7 +2394,7 @@ static void room_110_parser() {
 	}
 
 	if (g_engine->isDemo() && player_said_2(walk_down, road_to_east)) {
-		popup_alert(24, DEMO_MSG, nullptr);
+		text_show(999);
 		goto handled;
 	}
 

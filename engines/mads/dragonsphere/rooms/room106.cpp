@@ -1168,7 +1168,7 @@ static void room_106_parser() {
 	if (player_said_2(walk_through, door_to_meeting_room) || player_said_2(open, door_to_meeting_room) ||
 		player_said_2(pull, door_to_meeting_room)) {
 		if (g_engine->isDemo()) {
-			popup_alert(24, DEMO_MSG, nullptr);
+			text_show(999);
 			goto handled;
 		}
 
@@ -1238,7 +1238,7 @@ static void room_106_parser() {
 	if (player_said_2(walk_through, door_to_ballroom) || player_said_2(open, door_to_ballroom) ||
 		player_said_2(pull, door_to_ballroom)) {
 		if (g_engine->isDemo()) {
-			popup_alert(24, DEMO_MSG, nullptr);
+			text_show(999);
 			goto handled;
 		}
 
@@ -1308,7 +1308,7 @@ static void room_106_parser() {
 	if (player_said_2(walk_through, door_to_council_room) || player_said_2(open, door_to_council_room) ||
 		player_said_2(pull, door_to_council_room)) {
 		if (g_engine->isDemo()) {
-			popup_alert(24, DEMO_MSG, nullptr);
+			text_show(999);
 			goto handled;
 		}
 
