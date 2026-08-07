@@ -45,6 +45,8 @@ public:
 protected:
 	Common::String getRecordTypeName() const override { return "TwoDialPuzzle"; }
 
+	void runNancy12();
+
 	Common::Path _imageName;
 
 	bool _isClockwise[2] = { false, false };
@@ -65,6 +67,14 @@ protected:
 		FlagDescription condition;
 	};
 	Common::Array<DialSolution> _solutions;
+
+	// Nancy 12+ splits the run phase into three steps: the dials must rest on a
+	// matching solution long enough for it to count, then the solve sound plays
+	// out before the record finishes. Turning a dial also drops back into
+	// kWaitForSounds, which suspends the check until the dial stops rattling.
+	enum SolveState { kCheckSolutions, kPlaySolveSound, kWaitForSounds };
+	SolveState _solveState = kCheckSolutions;
+	int16 _lastMatchedSolution = -1;
 
 	SoundDescription _rotateSounds[2];
 
