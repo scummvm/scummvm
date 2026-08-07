@@ -1260,6 +1260,24 @@
   `WEB0.WAV` accompanies autoplay while `WEB1.WAV` and `WEB2.WAV` provide
   randomized shift and preview feedback. Shared cleanup fades the 256-color
   palette to black in nine steps and clears logical page 0.
+- Scene action 20 calls `RunHorusWordPuzzleScene` at `0x3f976` with the
+  caller-supplied completion flag. `KQ.RUN` callback `0x2d9` supplies flag 228.
+  The routine opens `EGYPT.PL`, presents the 640-by-400 `BKGRND` bitmap, and
+  creates controls `0x672` through `0x68b` from the 26 physical X/Y pairs at
+  `0x3e82f`. `BUT1` through `BUT26` are their selection overlays; `A` through
+  `Z` are the selected-letter PCX images. Selecting a letter disables that
+  control, so each five-letter attempt contains distinct characters.
+- The five selected letters occupy the physical anchors (228,347), (264,347),
+  (299,347), (334,347), and (369,347). `EGYPT.RTP` supplies the palette and
+  12-bit color cube used to pulse each letter between effect phases 14 and 25;
+  the strength passed to the display effect is the phase multiplied by 10.
+  After five selections, the routine compares against the uppercase codes at
+  `0x3e8ff`, spelling `HORUS`. A correct word sets the supplied flag after a
+  36-DOS-tick settle interval. An incorrect word fades away and re-enables its
+  letters; selecting a new letter before that timeout starts the next attempt
+  immediately. Escape fades the active letters and exits without setting the
+  flag, while F1 opens help table `0x1b3`. `AZTEC0`, `AZTEC2`, and `AZTEC3`
+  provide the active-word, control, and reset audio cues.
 - Scene action 24 calls `RunTubeSwitchScene` at `0x25e18` with the
   caller-supplied completion flag. `GA1.RUN` callback `0xaf2` supplies flag 215
   (`solved vacuum tube puzzle`). The scene counts consumed inventory flags 102,
