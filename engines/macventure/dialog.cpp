@@ -154,6 +154,9 @@ void Dialog::handleDialogAction(DialogElement *trigger, DialogAction action) {
 		_gui->quitGame();
 		_gui->closeDialog();
 		break;
+	case kDAPrintDiploma:
+		_gui->printDiploma();
+		break;
 	default:
 		break;
 	}

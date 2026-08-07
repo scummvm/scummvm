@@ -131,6 +131,8 @@ public:
 	bool processSelfEvents(WindowClick click, Common::Event &event);
 	bool processExitsEvents(WindowClick click, Common::Event &event);
 	bool processDiplomaEvents(WindowClick click, Common::Event &event);
+	bool processDiplomaKey(Common::Event &event);
+	void printDiploma();
 	bool processInventoryEvents(WindowReference ref, WindowClick click, Common::Event &event);
 
 	const WindowData& getWindowData(WindowReference reference);
@@ -224,6 +226,10 @@ private: // Attributes
 	Container *_graphics;
 	Common::HashMap<ObjID, ImageAsset*> _assets;
 	ImageAsset *_diplomaImage;
+	Common::String _diplomaName;
+	Common::Rect _diplomaNameBounds;
+	uint16 _diplomaFontId;
+	uint16 _diplomaFontSize;
 
 	Common::Array<DraggedObj> _draggedObjects;
 	Common::Array<Graphics::ManagedSurface> _draggedSurfaces;
