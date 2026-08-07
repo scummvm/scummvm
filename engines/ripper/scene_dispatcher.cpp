@@ -53,6 +53,7 @@
 #include "ripper/puzzles/six_digit_code.h"
 #include "ripper/puzzles/stained_glass.h"
 #include "ripper/puzzles/table_gate.h"
+#include "ripper/puzzles/tarot_cards.h"
 #include "ripper/puzzles/web_grid_shift.h"
 #include "ripper/ripper.h"
 #include "ripper/scenes/cain_scene.h"
@@ -89,7 +90,7 @@ const char *SceneActionDispatcher::actionName(uint action) {
 	case kSceneActionHorusWordPuzzle: return "Horus word puzzle";
 	case kSceneActionSixDigitCodePuzzle: return "six-digit code puzzle";
 	case kSceneActionShockLeverPuzzle: return "shock lever puzzle";
-	case 23: return "tarot card puzzle";
+	case kSceneActionTarotCardPuzzle: return "tarot card puzzle";
 	case 24: return "tube switch scene";
 	case kSceneActionKkTileMatchPuzzle: return "KK tile match puzzle";
 	case kSceneActionRatiniCombat: return "ratini combat encounter";
@@ -342,6 +343,15 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 			"result=%d milestone=%u",
 			result, argument);
 		return result != ShockLeverPuzzle::kLoadFailed;
+	}
+	if (action == kSceneActionTarotCardPuzzle) {
+		TarotCardsPuzzle puzzle(engine);
+		const TarotCardsPuzzle::Result result = puzzle.run(argument);
+		debugC(1, kDebugPuzzles,
+			"Ripper: tarot-card puzzle scene action completed "
+			"result=%d milestone=%u",
+			result, argument);
+		return result != TarotCardsPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionTubeSwitchScene) {
 		TubeScene scene(engine);

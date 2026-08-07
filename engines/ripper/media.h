@@ -205,6 +205,8 @@ public:
 	bool playBlobShooterSequence(const Common::String &path,
 		MediaSequenceCallback *callback, uint16 *command = nullptr);
 	bool playTransparentSmackerOverlay(const Common::String &path, int x, int y);
+	bool playInteractiveIavf(const Common::String &path,
+		MediaSequenceCallback *callback, uint16 *command);
 	void fadePalette(bool fadeIn, uint stepCount);
 	bool playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
 		bool loopUntilInput = false, bool allowEscSpace = false,
@@ -260,7 +262,9 @@ private:
 	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name,
 		bool allowEscSpace, int overrideX = -1, int overrideY = -1,
 		int overrideOriginY = 0, bool serviceSceneUi = false,
-		bool rememberVideoPalette = true, uint displayScale = 0);
+		bool rememberVideoPalette = true, uint displayScale = 0,
+		MediaSequenceCallback *callback = nullptr,
+		uint16 *command = nullptr);
 	bool servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
 		bool allowSegmentAdvance, bool &paused, bool &skipToEnd,
 		bool &advanceSegment,

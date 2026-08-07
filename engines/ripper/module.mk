@@ -55,6 +55,8 @@ MODULE_OBJS := \
 	puzzles/six_digit_code.o \
 	puzzles/stained_glass.o \
 	puzzles/table_gate.o \
+	puzzles/tarot_cards.o \
+	puzzles/tarot_cards_model.o \
 	puzzles/web_grid_shift.o \
 	remote_control.o \
 	resources.o \
@@ -65,6 +67,7 @@ MODULE_OBJS := \
 	script/compiled_script.o \
 	scenes/cain_scene.o \
 	scenes/ebz2s_scene.o \
+	scenes/ending_sequence.o \
 	scenes/gym_scene.o \
 	scenes/librarian_scene.o \
 	scenes/scene.o \
