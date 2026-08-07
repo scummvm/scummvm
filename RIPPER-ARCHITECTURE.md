@@ -879,7 +879,10 @@
   `0x84574` and `0x844f4`. `KI_SKULL.SMK` animates at the upper right while
   `KI_MAN0.SMK` through `KI_MAN4.SMK` supply idle, down, up, left, and right
   player motion. The foreground-cell list at `0x2ea22` keeps the ten nearest
-  lids in front of the skull animation.
+  lids in front of the skull animation. The configured start is a zero-based
+  control index: `start pos = 3` selects the fourth lid at `(137,261)`. Retail
+  derives the idle sprite's top-left as `(95,255)` from that lid, the 72-pixel
+  `KI_MAN0.SMK` width, and its local X/Y offset tables.
 - The `[setting]` section of `KI%d.INI` supplies the MSVC-LCG seed, playback
   rate, post-move lid delay, starting cell, initial skull delay, delay decrease
   interval, decrement, and minimum. `GenerateRandomInt15` at `0x49a2f`
@@ -896,6 +899,12 @@
   completion, F1 opens help table `0x1b9`, and the case-insensitive hidden
   keyword `pretzel` completes immediately. Cleanup fades and clears the
   puzzle display before `KI.RUN` selects its win or loss presentation.
+- `PUZZLE_HELP` adds a non-retail KI overlay without entering the retail state
+  machine. A bounded breadth-first search copies the current 64-cell model,
+  simulates only legal jump-and-toggle transitions, and dithers the first cell
+  on a route to row 7. The recommendation is cleared during movement and lid
+  animation and recomputed after a completed toggle sequence or skull spawn;
+  it does not alter live cells, random state, input, hazards, or completion.
 - Scene action 21 calls `RunSixDigitCodePuzzleScene` at `0x3e913` with the
   caller-supplied completion flag. It retains the current scene framebuffer,
   loads `BNKNUM0.BBM` through `BNKNUM9.BBM` for the six display cells and

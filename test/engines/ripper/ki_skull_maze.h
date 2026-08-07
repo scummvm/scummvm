@@ -102,4 +102,15 @@ public:
 		model.setCurrentCell(63);
 		TS_ASSERT(model.reachedExit());
 	}
+
+	void testInitialRetailBoardHasBoundedHelpRoute() {
+		Ripper::KiSkullMazeModel model;
+		model.reset(4, 3);
+		const uint path[] = {2, 10, 9, 17, 25, 24, 32, 33, 41, 49, 57};
+		for (uint step = 0; step < ARRAYSIZE(path); ++step) {
+			TS_ASSERT(model.applyMoveAndToggle(path[step]));
+			TS_ASSERT_EQUALS(model.currentCell(), path[step]);
+		}
+		TS_ASSERT(model.reachedExit());
+	}
 };

@@ -68,6 +68,33 @@ private:
 		Animation() : width(0), height(0) {}
 	};
 
+	class DebugHelper {
+	public:
+		DebugHelper();
+
+		void reset(bool enabled);
+		bool sync(const KiSkullMazePuzzle &puzzle);
+		void stateChanging();
+		void stateChanged(const KiSkullMazePuzzle &puzzle);
+		void draw(const KiSkullMazePuzzle &puzzle,
+			byte *screen, uint pitch) const;
+
+	private:
+		struct SearchNode {
+			KiSkullMazeModel model;
+			uint depth;
+			int firstCell;
+		};
+
+		Common::String searchKey(const KiSkullMazeModel &model) const;
+		int findRecommendedCell(const KiSkullMazePuzzle &puzzle,
+			uint &solutionDepth, uint &visitedStates) const;
+
+		bool _enabled;
+		int _recommendedCell;
+		uint _solutionDepth;
+	};
+
 	bool loadConfiguration();
 	bool loadAssets();
 	bool loadBitmap(const Common::String &path, BitmapAssetFrame &frame,
@@ -100,6 +127,7 @@ private:
 	Animation _skullAnimation;
 	Animation _manAnimations[5];
 	Audio::SoundHandle _audioHandles[3];
+	DebugHelper _debugHelper;
 	uint _keywordIndex;
 	int _hoveredCell;
 	uint _movementDirection;
