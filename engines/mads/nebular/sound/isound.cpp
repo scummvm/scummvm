@@ -31,9 +31,10 @@ namespace Sound {
 
 namespace {
 
+const uint32 kNominalFrequencyTableEntries = 90;
 const uint32 kMinimumDataSegmentSize =
-ISound::kFrequencyTableOffset +
-ISound::kFrequencyTableEntries * 2;
+	ISound::kFrequencyTableOffset +
+	kNominalFrequencyTableEntries * 2;
 
 } // namespace
 
@@ -365,12 +366,12 @@ void ISound::processRandomMutation() {
 
 uint16 ISound::calculateNoteDivisor(byte note) const {
 	const byte tableIndex = (byte)(note + _transpose);
-	if (tableIndex >= kFrequencyTableEntries)
-		error("ISOUND note-table index %u is out of range", tableIndex);
 
-	const uint32 tableOffset =
-		kFrequencyTableOffset + (uint32)tableIndex * 2;
-	const uint16 divisor = READ_LE_UINT16(&_soundData[tableOffset]);
+	// The native driver uses an unrestricted byte index here. Some original
+	// sequences deliberately read words beyond the nominal 90-entry table.
+	const uint16 tableOffset =
+		kFrequencyTableOffset + (uint16)tableIndex * 2;
+	const uint16 divisor = readSequenceUint16(tableOffset);
 	return (uint16)(divisor + _fineOffset);
 }
 
@@ -533,16 +534,8 @@ void ISound::updateAlternation() {
 		_alternationToggle = false;
 	}
 
-	const byte tableIndex = (byte)(
-		_note + _transpose + alternatingOffset);
-	if (tableIndex >= kFrequencyTableEntries)
-		error("ISOUND alternating note-table index %u is out of range",
-			tableIndex);
-
-	const uint32 tableOffset =
-		kFrequencyTableOffset + (uint32)tableIndex * 2;
-	_currentDivisor = (uint16)(
-		READ_LE_UINT16(&_soundData[tableOffset]) + _fineOffset);
+	_currentDivisor = calculateNoteDivisor(
+		(byte)(_note + alternatingOffset));
 }
 
 void ISound::updatePitch() {
