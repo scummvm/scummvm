@@ -1948,9 +1948,12 @@
   separate `DispatchSceneEntryAction` boundary at `0x36892`.
 - Scene action 9999 makes `DispatchSceneEntryAction` return control code `-4`.
   `RunSceneScriptLoop` at `0x124e9` treats that code as a normal runtime exit
-  whether it comes from an interaction or an automatic frame callback. Cyber
-  programs use both forms: their nested snapshot is restored instead of
-  reporting the terminating callback as a script failure.
+  whether it comes from an interaction or an automatic frame callback. A
+  top-level concurrent runtime returning `-4` is destroyed and the active
+  runtime immediately resumes; `ACT3_CHK.RUN` uses this path after setting flag
+  336 and presenting `BC3_1_P3.AVI`. Cyber programs use both callback forms:
+  their nested snapshot is restored instead of reporting the terminating
+  callback as a script failure.
 - The callback handler table at `0x84040` maps opcode `0x15` to
   `HandleSceneEntryPushChoiceRecordAndStepPrompt` at `0x15085`, opcode `0x16`
   to `HandleSceneEntryPushFrameChoiceOnPlayedStateCondition` at `0x150ea`, and
