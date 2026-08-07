@@ -60,6 +60,7 @@ MODULE_OBJS := \
 	scene_dispatcher.o \
 	scene_audio.o \
 	script/compiled_script.o \
+	scenes/cain_scene.o \
 	scenes/ebz2s_scene.o \
 	scenes/gym_scene.o \
 	scenes/librarian_scene.o \
