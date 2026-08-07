@@ -41,6 +41,7 @@
 #include "ripper/puzzles/date_selection.h"
 #include "ripper/puzzles/eight_button_sequence.h"
 #include "ripper/puzzles/gc_csh.h"
+#include "ripper/puzzles/horus_word.h"
 #include "ripper/puzzles/kd_shooting_gallery.h"
 #include "ripper/puzzles/key_group.h"
 #include "ripper/puzzles/keypad_sequence.h"
@@ -84,7 +85,7 @@ const char *SceneActionDispatcher::actionName(uint action) {
 	case kSceneActionDateSelectionPuzzle: return "date selection puzzle";
 	case 18: return "KI skull maze puzzle";
 	case kSceneActionWebGridShiftPuzzle: return "web grid shift puzzle";
-	case 20: return "Horus word puzzle";
+	case kSceneActionHorusWordPuzzle: return "Horus word puzzle";
 	case kSceneActionSixDigitCodePuzzle: return "six-digit code puzzle";
 	case kSceneActionShockLeverPuzzle: return "shock lever puzzle";
 	case 23: return "tarot card puzzle";
@@ -304,6 +305,15 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 			"result=%d milestone=%u",
 			result, argument);
 		return result != WebGridShiftPuzzle::kLoadFailed;
+	}
+	if (action == kSceneActionHorusWordPuzzle) {
+		HorusWordPuzzle puzzle(engine);
+		const HorusWordPuzzle::Result result = puzzle.run(argument);
+		debugC(1, kDebugPuzzles,
+			"Ripper: Horus word puzzle scene action completed "
+			"result=%d milestone=%u",
+			result, argument);
+		return result != HorusWordPuzzle::kLoadFailed;
 	}
 	if (action == kSceneActionSixDigitCodePuzzle) {
 		SixDigitCodePuzzle puzzle(engine);
