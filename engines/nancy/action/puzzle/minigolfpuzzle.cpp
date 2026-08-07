@@ -115,25 +115,15 @@ void MinigolfPuzzle::init() {
 		_maskCenterY = _boundaryMask.h / 2.0;
 	}
 
-	// The cups are the zones that play the sink sounds (GOL_Sink*), in mask/course
-	// space. A hole can have several (each with its own target scene/flag in its
-	// special effect + tail). A separate zone over each cup carries Nancy's reaction
-	// voice line. The scene/flag/fade are resolved from the cup the ball drops in.
+	// The cups are the zones carrying a target scene (their special effect id), in
+	// mask/course space. A hole can have several, each with its own scene/flag/sound
+	// (e.g. hole 6a's special "shot sky high" cup plays Ball_Short, not GOL_Sink). A
+	// separate zone over each cup carries Nancy's reaction voice line.
 	_inSlope.resize(_zones.size(), false);
 	for (uint i = 0; i < _zones.size(); ++i) {
 		const ActionZone &z = _zones[i];
-		bool isSink = false;
-		for (const Common::String &n : z._sound.names) {
-			if (n.contains("Sink") || n.contains("sink")) {
-				isSink = true;
-				break;
-			}
-		}
-		if (isSink) {
+		if (z.specialEffectId >= 1000 && !z.rect.isEmpty()) {
 			_sinkZones.push_back(i);
-			if (_sinkSound.names.empty()) {
-				_sinkSound = z._sound;
-			}
 		} else if (_reactionSound.names.empty() && !z._sound.names.empty()) {
 			_reactionSound = z._sound;
 		}
@@ -620,7 +610,7 @@ void MinigolfPuzzle::updateBall() {
 			_mgState = kSunk;
 			_solved = true;
 			_sunkTime = now;
-			playSoundBlock(_sinkSound);
+			playSoundBlock(cup._sound);
 
 			_winScene.sceneID = cup.specialEffectId;
 			if (cup.type == kZoneSceneChange && cup.tailId != -1) {

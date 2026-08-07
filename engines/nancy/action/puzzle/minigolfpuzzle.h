@@ -101,7 +101,6 @@ protected:
 	Common::Array<bool> _inSlope;		// per-zone: ball currently inside a slope zone (for enter/leave kicks)
 	Common::Array<uint> _sinkZones;		// derived: indices of the cup (sink) zones
 	int _sunkZone = -1;					// zone index of the cup the ball dropped into
-	RandomSoundBlock _sinkSound;		// derived: the hole zone's sound
 	RandomSoundBlock _reactionSound;	// derived: Nancy's voice line when the ball rolls over the cup
 
 	// Runtime state
