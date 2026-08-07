@@ -24,6 +24,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "mads/core/pcspk_pit.h"
 #include "mads/core/sound_manager.h"
 
 namespace MADS {
@@ -59,14 +60,13 @@ protected:
 	};
 
 	Audio::SoundHandle _speakerHandle;
-	bool _speakerGate;
 	bool _noiseEnabled;
 	bool _updatesEnabled;
 	int _masterVolume;
 	int _outputRate;
 	uint32 _sequenceAccumulator;
 	uint32 _noiseAccumulator;
-	uint64 _oscillatorPhase;
+	PCSpeakerPITRenderer _pitRenderer;
 
 	uint16 _frameCounter;
 	uint16 _randomSeed;
@@ -92,10 +92,6 @@ protected:
 
 	uint16 _noiseMask;
 	uint16 _currentDivisor;
-	uint16 _lastOutputDivisor;
-	uint16 _pendingDivisor;
-	bool _hasPendingDivisor;
-	bool _speakerHigh;
 	uint16 _pitchStep;
 	uint16 _directDivisor;
 

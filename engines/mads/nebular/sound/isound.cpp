@@ -103,14 +103,13 @@ ISound::ISound(Audio::Mixer *mixer, const Common::Path &filename) :
 
 ISound::ISound(Audio::Mixer *mixer, const Common::Path &filename, const OverlayLayout &layout) :
 		SoundDriver(mixer, filename, (int)layout.dataOffset, (int)layout.initializedDataSize),
-	_speakerGate(false),
 	_noiseEnabled(false),
 	_updatesEnabled(false),
 	_masterVolume(255),
 	_outputRate(mixer->getOutputRate()),
 	_sequenceAccumulator(0),
 	_noiseAccumulator(0),
-	_oscillatorPhase(0),
+	_pitRenderer(_outputRate, kPitClockHz),
 	_frameCounter(0),
 	_randomSeed(0),
 	_commandParam(0),
@@ -132,10 +131,6 @@ ISound::ISound(Audio::Mixer *mixer, const Common::Path &filename, const OverlayL
 	_fineOffset(0),
 	_noiseMask(0),
 	_currentDivisor(0),
-	_lastOutputDivisor(0),
-	_pendingDivisor(0),
-	_hasPendingDivisor(false),
-	_speakerHigh(true),
 	_pitchStep(0),
 	_directDivisor(0),
 	_alternationReload(0),
@@ -196,8 +191,6 @@ void ISound::resetDriver() {
 	_outerLoopCount = 0;
 	_noiseMask = 0;
 	_currentDivisor = 0;
-	_pendingDivisor = 0;
-	_hasPendingDivisor = false;
 	_pitchStep = 0;
 	_gateOffset = 0;
 	_fineOffset = 0;
@@ -380,20 +373,7 @@ byte ISound::outputVolume() const {
 }
 
 void ISound::outputDivisor(uint16 divisor) {
-	// Reprogramming an 8254 counter in mode 3 does not restart the current
-	// half-cycle. The new count is loaded at the next output transition.
-	// This is especially important while the noise service rewrites the
-	// divisor: restarting the waveform on every write creates false tones.
-	if (_speakerGate && _lastOutputDivisor) {
-		_pendingDivisor = divisor;
-		_hasPendingDivisor = true;
-	} else {
-		_lastOutputDivisor = divisor;
-		_pendingDivisor = 0;
-		_hasPendingDivisor = false;
-		_oscillatorPhase = 0;
-		_speakerHigh = true;
-	}
+	_pitRenderer.writeMode3Count(divisor);
 }
 
 void ISound::startSpeaker() {
@@ -404,15 +384,12 @@ void ISound::startSpeaker() {
 	_sweepInitialized = false;
 	_alternationToggle = false;
 	outputDivisor(_currentDivisor);
-	_speakerGate = true;
+	_pitRenderer.setControl(true, true);
 }
 
 void ISound::stopSpeaker() {
-	_speakerGate = false;
+	_pitRenderer.setControl(false, false);
 	_sweepInitialized = false;
-	_hasPendingDivisor = false;
-	_oscillatorPhase = 0;
-	_speakerHigh = true;
 }
 
 void ISound::processOrdinaryEvent() {
@@ -632,36 +609,7 @@ void ISound::setVolume(int volume) {
 }
 
 int16 ISound::generateSample() {
-	if (!_speakerGate)
-		return 0;
-
-	// A PIT divisor of zero represents 65536.
-	_oscillatorPhase += kPitClockHz;
-
-	for (;;) {
-		const uint32 effectiveDivisor =
-			_lastOutputDivisor ? _lastOutputDivisor : 0x10000;
-		const uint32 halfCount = _speakerHigh ?
-			(effectiveDivisor + 1) / 2 : effectiveDivisor / 2;
-		const uint64 halfPeriod = (uint64)MAX<uint32>(halfCount, 1) *
-			_outputRate;
-		if (_oscillatorPhase < halfPeriod)
-			break;
-
-		_oscillatorPhase -= halfPeriod;
-		_speakerHigh = !_speakerHigh;
-		if (_hasPendingDivisor) {
-			_lastOutputDivisor = _pendingDivisor;
-			_pendingDivisor = 0;
-			_hasPendingDivisor = false;
-		}
-	}
-
-	if (!_masterVolume)
-		return 0;
-
-	const int amplitude = 127 * outputVolume();
-	return _speakerHigh ? amplitude : -amplitude;
+	return _pitRenderer.generateSample(outputVolume());
 }
 
 int ISound::readBuffer(int16 *buffer, int numSamples) {
