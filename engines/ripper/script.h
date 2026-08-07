@@ -134,6 +134,7 @@ enum SceneAction {
 	kSceneActionKrProgram = 56,
 	kSceneActionKeyGroupPuzzleAlias = 60,
 	kSceneActionEightButtonSequencePuzzle = 61,
+	kSceneActionCainDialogue = 62,
 	kSceneActionAppendNotebookText = 63,
 	kSceneActionBriefing = 300,
 	kSceneActionTerminateRuntime = 9999

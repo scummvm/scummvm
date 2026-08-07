@@ -746,6 +746,17 @@
   models the common engine, chooser, indexed-palette, cursor/input, toolbar, and
   sound-handle boundary; media and interaction behavior remains owned by each
   concrete scene.
+- Action 62 enters `RunCainDialogueScene` at `0x2c160`. The handler loops
+  `CAINLOOP.SMK` with `CAINLOOP.WAV`, exposes the talk control at
+  `(244,120)..(524,270)`, and builds chooser `0x4e2` from `GAMETEXT.TF`
+  resources `0xbe..0xc5`. Selecting a branch sets its corresponding bit in
+  `0x159..0x160` before playing `MC3_1_G1/G2`, `MC3_1_V3`, or
+  `MC3_1_VA/VD/VE/VF`; the initial and repeat talk controls use
+  `MC3_1_V1` and `MC3_1_Z1`. Choice `0x15f` gates the one-time
+  `CAIN_ZAP.AVI` presentation through bit `0x60`, while completed branches
+  propagate the verified `0x198`, `0x19e`, and exit-time `0x161` follow-up
+  bits. Escape stops an active managed voice first and exits the handler only
+  when no voice is pending.
 
 ## Combat Encounters
 
