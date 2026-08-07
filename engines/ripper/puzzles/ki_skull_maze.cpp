@@ -102,9 +102,11 @@ static const Common::Point kCellPositions[KiSkullMazeModel::kCellCount] = {
 };
 
 // The first two five-short tables at 0x2ea0e and 0x2ea18 are adjusted by
-// the tile and idle-player widths during retail setup.
-static const int kManSourceXOffsets[5] = {0, -36, -5, -35, -6};
-static const int kManYOffsets[5] = {-6, -7, -32, -21, 3};
+// the tile and idle-player widths during retail setup. The display service
+// takes the destination row in ECX and column in EDX, so the first table is
+// applied to Y even though its adjustment is derived from bitmap widths.
+static const int kManInitialYOffsets[5] = {0, -36, -5, -35, -6};
+static const int kManXOffsets[5] = {-6, -7, -32, -21, 3};
 
 // Cells redrawn in front of the 212-by-236 skull animation. The exact list is
 // g_kiPuzzleTrackedCellRedrawIndexes at 0x2ea22.
@@ -458,13 +460,17 @@ Common::Point KiSkullMazePuzzle::playerPosition(uint direction,
 	if (originCell >= KiSkullMazeModel::kCellCount || direction >= 5)
 		return Common::Point();
 	// RunKiSkullMazePuzzleScene at 0x2ff55 derives the sprite top-left
-	// directly from the lid anchor and these per-direction offsets. This is
-	// intentionally not a conventional feet-centered sprite position.
-	const int centeredX = _lids[0].width / 2 -
+	// directly from the lid anchor and these per-direction offsets. The
+	// display wrappers at 0x5d450 and 0x4e4b0 pass ECX as the destination row
+	// and EDX as its column; BlitScaledGenericVideoRectangle at 0x464f3 then
+	// multiplies the row by the display pitch. Preserve that nonstandard
+	// coordinate order here.
+	const int adjustedY = _lids[0].width / 2 -
 		_manAnimations[0].width + 6;
 	return Common::Point(
-		kCellPositions[originCell].x + centeredX + kManSourceXOffsets[direction],
-		kCellPositions[originCell].y + kManYOffsets[direction]);
+		kCellPositions[originCell].x + kManXOffsets[direction],
+		kCellPositions[originCell].y + adjustedY +
+			kManInitialYOffsets[direction]);
 }
 
 void KiSkullMazePuzzle::render() const {
