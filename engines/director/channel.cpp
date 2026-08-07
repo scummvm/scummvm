@@ -786,14 +786,26 @@ bool Channel::updateWidget() {
 		replaceWidget();
 		return true;
 	}
+
+	if (_sprite->_cast && (_sprite->_cast->_type == kCastText) && _sprite->_editable) {
+		if (_widget && _widget->_active) {
+			// small hack: update the castID/scriptID used for keyDown events.
+			// typing happens at the WM level, and this is one of the few places we can intercept it
+			Movie *movie = g_director->getCurrentMovie();
+			movie->_currentKeyDownCastID = _sprite->_castId;
+			movie->_currentKeyDownSpriteScriptID = _sprite->_scriptId;
+			movie->_currentKeyDownSpriteImmediate = _sprite->_immediate;
+		}
+	}
+
 	if (_widget && _widget->needsRedraw()) {
 		if (_sprite->_cast) {
 			_sprite->_cast->updateFromWidget(_widget, _sprite->_editable);
+
 		}
 		_widget->draw();
 		return true;
 	}
-
 	return false;
 }
 

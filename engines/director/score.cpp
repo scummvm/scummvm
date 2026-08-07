@@ -969,6 +969,10 @@ void Score::updateSprites(RenderMode mode, bool withClean) {
 
 	_movie->_videoPlayback = false;
 
+	_movie->_currentKeyDownCastID = CastMemberID();
+	_movie->_currentKeyDownSpriteScriptID = CastMemberID();
+	_movie->_currentKeyDownSpriteImmediate = false;
+
 	for (uint16 i = 0; i < _channels.size(); i++) {
 		Channel *channel = _channels[i];
 		Sprite *currentSprite = channel->_sprite;
