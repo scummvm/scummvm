@@ -143,6 +143,13 @@ public:
 		data[131 + 42 * 3] = 1;
 		data[131 + 42 * 3 + 1] = 2;
 		data[131 + 42 * 3 + 2] = 3;
+		// Legacy archive keys omit extensions, but PCX members still need the
+		// PCX decoder rather than the custom BBM/GCMS bitmap path.
+		Common::MemoryReadStream customBitmapStream(
+			data.data(), data.size(), DisposeAfterUse::NO);
+		Ripper::BitmapAssetFrame customBitmapFrame;
+		TS_ASSERT(!Ripper::decodeBitmapAsset(
+			customBitmapStream, customBitmapFrame));
 		Common::MemoryReadStream stream(
 			data.data(), data.size(), DisposeAfterUse::NO);
 		Ripper::BitmapAssetFrame frame;
