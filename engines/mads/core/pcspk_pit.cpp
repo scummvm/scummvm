@@ -138,21 +138,7 @@ private:
 
 public:
 	explicit PCSpeakerOutputStage(uint32 sampleRate) :
-		_accumulatorDecay(0) {
-		static Common::Mutex decayCacheMutex;
-		static Common::HashMap<uint32, int32> decayCache;
-		{
-			Common::StackLock lock(decayCacheMutex);
-			if (!decayCache.contains(sampleRate)) {
-				// DOSBox applies 0.999 at its fixed 48-kHz device rate. Preserve
-				// that time constant at the active ScummVM mixer rate.
-				decayCache.setVal(sampleRate, fixedFromDouble(
-					pow(0.999, (double)kReferenceSampleRate / sampleRate),
-					kCoefficientFracBits));
-			}
-			_accumulatorDecay = decayCache.getVal(sampleRate);
-		}
-
+		_accumulatorDecay(fixedFromDouble(0.999, kCoefficientFracBits)) {
 		static Common::Mutex filterCacheMutex;
 		static Common::HashMap<uint32, FilterConfiguration> filterCache;
 		{
@@ -319,6 +305,7 @@ void PCSpeakerPITRenderer::initializeImpulse() {
 
 void PCSpeakerPITRenderer::resetState() {
 	_phase = 0;
+	_samplePhase = 0;
 	_sampleCounter = 0;
 	_count = 0;
 	_pendingCount = 0;
@@ -336,6 +323,17 @@ void PCSpeakerPITRenderer::resetState() {
 	_reconstructedLevel = 0;
 	_targetLevel = -1;
 	_outputStage->reset();
+}
+
+void PCSpeakerPITRenderer::advanceToSampleFraction(uint32 numerator,
+		uint32 denominator) {
+	assert(denominator);
+	assert(numerator <= denominator);
+
+	const uint64 samplePhase = ((uint64)numerator * _pitClock +
+		denominator / 2) / denominator;
+	assert(samplePhase >= _samplePhase);
+	advanceCounter(samplePhase - _samplePhase);
 }
 
 bool PCSpeakerPITRenderer::isUndersampled(uint16 count) const {
@@ -406,7 +404,7 @@ void PCSpeakerPITRenderer::writeMode3Count(uint16 count) {
 		_undersampled = true;
 		_hasUndersampledReload = true;
 		_lastUndersampledReloadSample = _sampleCounter;
-		addTransition(outputLevel());
+		addTransition(outputLevel(), _samplePhase);
 		return;
 	}
 
@@ -426,7 +424,7 @@ void PCSpeakerPITRenderer::writeMode3Count(uint16 count) {
 		_counterLoaded = true;
 		_phase = 0;
 		_high = true;
-		addTransition(outputLevel());
+		addTransition(outputLevel(), _samplePhase);
 	}
 }
 
@@ -451,17 +449,21 @@ void PCSpeakerPITRenderer::setControl(bool timerGate,
 
 	// Evaluate both port-0x61 controls together so a combined write never
 	// exposes an intermediate speaker level.
-	addTransition(outputLevel());
+	addTransition(outputLevel(), _samplePhase);
 }
 
-void PCSpeakerPITRenderer::advanceCounter() {
-	if (!_timerGate || !_counterLoaded || _undersampled)
+void PCSpeakerPITRenderer::advanceCounter(uint64 pitClockUnits) {
+	assert(_samplePhase + pitClockUnits <= _pitClock);
+
+	if (!_timerGate || !_counterLoaded || _undersampled) {
+		_samplePhase += pitClockUnits;
 		return;
+	}
 
 	// Phase is expressed in PIT-clock/output-rate products. This avoids
 	// timer drift and retains every edge's fractional sample position.
-	uint64 phaseToAdvance = _pitClock;
-	uint64 elapsed = 0;
+	uint64 phaseToAdvance = pitClockUnits;
+	uint64 elapsed = _samplePhase;
 
 	while (phaseToAdvance) {
 		// A programmed PIT count of zero represents 65536.
@@ -488,15 +490,18 @@ void PCSpeakerPITRenderer::advanceCounter() {
 			addTransition(outputLevel(), elapsed);
 		}
 	}
+
+	_samplePhase += pitClockUnits;
 }
 
 int16 PCSpeakerPITRenderer::generateSample(byte volume) {
-	advanceCounter();
+	advanceCounter(_pitClock - _samplePhase);
 
 	_reconstructedLevel = saturateInt32((int64)_reconstructedLevel +
 		_impulseBuffer[_impulseHead]);
 	_impulseBuffer[_impulseHead] = 0;
 	_impulseHead = (_impulseHead + 1) % _impulseBuffer.size();
+	_samplePhase = 0;
 	++_sampleCounter;
 
 	// Output coupling and coloration are device state, so they continue while
