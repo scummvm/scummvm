@@ -22,8 +22,51 @@
 #ifndef MADS_NEBULAR_MAC_MENUS_H
 #define MADS_NEBULAR_MAC_MENUS_H
 
+#include "common/scummsys.h"
+
+namespace Common {
+struct Event;
+class String;
+}
+
+namespace Graphics {
+class MacMenu;
+class MacMenuSubMenu;
+class MacWindowManager;
+class ManagedSurface;
+}
+
 namespace MADS {
 namespace RexNebular {
+
+class MacResourceProvider;
+class RexNebularEngine;
+
+class MacNebularMenu {
+private:
+	RexNebularEngine &_engine;
+	MacResourceProvider &_resources;
+	Graphics::ManagedSurface &_screen;
+	Graphics::MacWindowManager *_windowManager = nullptr;
+	Graphics::MacMenu *_menu = nullptr;
+	byte _palette[256 * 3] = {};
+	bool _paletteValid = false;
+
+	static void menuCallback(int command, Common::String &name, void *data);
+	bool loadMenuResource(uint16 resourceID,
+		Graphics::MacMenuSubMenu *parent = nullptr, int parentItem = -1);
+	void disableActions();
+	void syncPalette();
+
+public:
+	MacNebularMenu(RexNebularEngine &engine, MacResourceProvider &resources,
+		Graphics::ManagedSurface &screen);
+	~MacNebularMenu();
+
+	bool initialize();
+	bool processEvent(Common::Event &event);
+	void draw();
+};
 
 void selectMacintoshDifficulty();
 void macintoshGameMenu();
