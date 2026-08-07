@@ -494,7 +494,7 @@ void GameData::parse_string_table(FileBuffer *fb, uint start_addr,
 void GameData::parse_variables(FileBuffer *fb) {
 	uint i;
 
-	for (i = 0; i < ARRAY_SIZE(_variables); i++)
+	for (i = 0; i < ARRAYSIZE(_variables); i++)
 		_variables[i] = fb->readUint16LE();
 }
 
@@ -503,7 +503,7 @@ void GameData::parse_flags(FileBuffer *fb) {
 	int bit;
 	uint8 bitmask;
 
-	for (i = 0; i < ARRAY_SIZE(_flags) / 8; i++) {
+	for (i = 0; i < ARRAYSIZE(_flags) / 8; i++) {
 		bitmask = fb->readByte();
 		for (bit = 7; bit >= 0; bit--) {
 			_flags[flag_index] = !!(bitmask & (1 << bit));
