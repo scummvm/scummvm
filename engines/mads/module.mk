@@ -47,6 +47,7 @@ MODULE_OBJS := \
 	core/pack.o \
 	core/pack_dcl.o \
 	core/pal.o \
+	core/pcspk_pit.o \
 	core/pfab.o \
 	core/player.o \
 	core/popup.o \
