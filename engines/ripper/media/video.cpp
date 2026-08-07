@@ -618,10 +618,11 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			completed = false;
 			break;
 		}
-		if (serviceSceneUi && !callbackOwnsInput &&
-				_engine->getScripts()->hasPendingSceneTransition()) {
+		if (_engine->getScripts()->hasPendingRuntimeRestore() ||
+				(serviceSceneUi && !callbackOwnsInput &&
+				_engine->getScripts()->hasPendingSceneTransition())) {
 			debugC(1, kDebugScene,
-				"Ripper: interactive media '%s' returning queued scene transition",
+				"Ripper: interactive media '%s' returning queued runtime transition",
 				name.c_str());
 			break;
 		}

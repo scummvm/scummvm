@@ -251,9 +251,11 @@ public:
 	bool hasActivePrompt() const;
 	bool showHelp(const char *source);
 	bool hasPendingSceneTransition() const {
-		return !_runtime.pendingSceneMember.empty() || _runtime.cyberExitRequested ||
+		return _runtimeRestorePending || !_runtime.pendingSceneMember.empty() ||
+			_runtime.cyberExitRequested ||
 			_runtime.cyberKeyboardCommand != 0;
 	}
+	bool hasPendingRuntimeRestore() const { return _runtimeRestorePending; }
 	bool isCyberActive() const { return _runtime.cyberActive; }
 	bool isCyberExitRequested() const { return _runtime.cyberExitRequested; }
 	bool isAwaitingInteraction() const { return _runtime.awaitingInteraction; }
@@ -304,6 +306,7 @@ private:
 	RipperEngine *_engine;
 	CompiledScript _startup;
 	SceneRuntimeState _runtime;
+	bool _runtimeRestorePending;
 	Common::Array<Common::String> _playedScenes;
 	uint _sceneCallbackFrame;
 	IdleMediaCallback *_activeIdleMediaCallback;
