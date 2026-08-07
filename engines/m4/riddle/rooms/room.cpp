@@ -159,6 +159,12 @@ bool Room::setItemsPlacedFlags() {
 				(_G(flags)[V006] >= 5 && count < 3)) {
 			if (_G(flags)[V005] == 4)
 				_G(flags)[V005]++;
+
+			// Final warning level reached while Ripley is running out of
+			// money: Marshall Matt will be waiting at the travel agency.
+			// This is cleared again below as soon as enough items have been
+			// mailed home, so the arrest remains avoidable.
+			_G(flags)[V007] = 1;
 			return true;
 		}
 		break;

@@ -696,7 +696,7 @@ void Room301::daemon() {
 		if (_marshallMode <= 0) {
 			if (_marshallShould <= 0) {
 				kernel_timing_trigger(30, 201);
-			} if (_marshallShould == 1) {
+			} else if (_marshallShould == 1) {
 				sendWSMessage_10000(1, _marshallMach, _marshalMatt, 17, 51, 201,
 					_marshalMatt, 51, 51, 0);
 				_marshallMode = 1;
