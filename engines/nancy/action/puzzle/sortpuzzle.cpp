@@ -470,6 +470,10 @@ void SortPuzzle::handleInput(NancyInput &input) {
 	if (!_hasHeld) {
 		_held = _current[row][col];
 		_hasHeld = true;
+		// Anchor the piece to the mouse right away; the move check above only runs
+		// once something is already held, so it would otherwise be drawn for one
+		// frame at the spot where the previous piece was dropped
+		_heldDrawPos = mouseVP;
 		_current[row][col].isEmpty = true;
 		if (_pickupSound.name != "NO SOUND") {
 			g_nancy->_sound->loadSound(_pickupSound);
