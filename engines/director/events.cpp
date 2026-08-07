@@ -138,6 +138,7 @@ bool Window::processSysEvent(Common::Event &event) {
 
 	if (g_lingo) {
 		Window *prev = g_director->getCurrentWindow();
+		prev->incRefCount();
 		g_director->setCurrentWindow(this);
 		g_lingo->switchStateFromWindow();
 
@@ -145,6 +146,7 @@ bool Window::processSysEvent(Common::Event &event) {
 			flag = true;
 
 		g_director->setCurrentWindow(prev);
+		prev->decRefCount();
 		g_lingo->switchStateFromWindow();
 	}
 
