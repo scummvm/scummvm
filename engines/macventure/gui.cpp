@@ -121,6 +121,7 @@ Gui::Gui(MacVentureEngine *engine, Common::MacResManager *resman) {
 	_cursor = new Cursor(this);
 
 	_consoleText = new ConsoleText(this);
+	_needsRedraw = true;
 	_graphics = nullptr;
 	_diplomaImage = nullptr;
 	_diplomaWindow = nullptr;
@@ -192,10 +193,13 @@ void Gui::reloadInternals() {
 }
 
 void Gui::draw() {
-	// Will be performance-improved after the milestone
-	_wm.setFullRefresh(true);
+	if (_needsRedraw) {
+		_wm.setFullRefresh(true);
 
-	drawWindows();
+		drawWindows();
+
+		_needsRedraw = false;
+	}
 
 	_wm.draw();
 
@@ -203,6 +207,10 @@ void Gui::draw() {
 	drawDialog();
 	// TODO: When window titles with custom borders are in MacGui, this should be used.
 	//drawWindowTitle(kMainGameWindow, _mainGameWindow->getWindowSurface());
+}
+
+void Gui::markRedraw() {
+	_needsRedraw = true;
 }
 
 void Gui::drawMenu() {
@@ -1680,6 +1688,9 @@ Common::Point Gui::getObjMeasures(ObjID obj) {
 bool Gui::processEvent(Common::Event &event) {
 	bool processed = false;
 
+	if (event.type != Common::EVENT_MOUSEMOVE)
+		markRedraw();
+
 	processed |= _cursor->processEvent(event);
 
 	if (_dialog && _dialog->processEvent(event)) {
@@ -1689,7 +1700,10 @@ bool Gui::processEvent(Common::Event &event) {
 	if (event.type == Common::EVENT_MOUSEMOVE) {
 		if (_draggedObjects.size() && _draggedObjects[0].id != 0) {
 			moveDraggedObjects(event.mouse);
+			markRedraw();
 		}
+		if (_lassoBeingDrawn)
+			markRedraw();
 		processed = true;
 	} else if (event.type == Common::EVENT_LBUTTONUP) {
 		clearDraggedObjects();

@@ -99,6 +99,7 @@ public:
 	void reloadInternals();
 
 	void draw();
+	void markRedraw();
 	void drawMenu();
 	void drawTitle();
 
@@ -230,6 +231,8 @@ private: // Attributes
 	Cursor *_cursor;
 
 	ConsoleText *_consoleText;
+
+	bool _needsRedraw;
 
 	WindowReference _lassoWinRef;
 	Common::Point _lassoStart;
