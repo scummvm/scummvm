@@ -41,6 +41,7 @@ IMGUI_IMPL_API bool     ImGui_ImplSDL3_InitForOther(SDL_Window* window);
 IMGUI_IMPL_API void     ImGui_ImplSDL3_Shutdown();
 IMGUI_IMPL_API void     ImGui_ImplSDL3_NewFrame();
 IMGUI_IMPL_API bool     ImGui_ImplSDL3_ProcessEvent(const SDL_Event* event);
+IMGUI_IMPL_API bool     ImGui_ImplSDL3_Ready();
 
 // Gamepad selection automatically starts in AutoFirst mode, picking first available SDL_Gamepad. You may override this.
 // When using manual mode, caller is responsible for opening/closing gamepad.
