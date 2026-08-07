@@ -59,6 +59,11 @@ static const uint kShadingBytes =
 static const int kMaximumPhase = 0x19;
 static const int kMinimumPulsePhase = 0x0e;
 static const uint kPhaseOpacityStep = 10;
+static const byte kPuzzleHelpFutureColor = 254;
+static const byte kPuzzleHelpRecommendedColor = 255;
+static const uint kPuzzleHelpFutureDitherMask = 7;
+static const uint kPuzzleHelpRecommendedDitherMask = 3;
+static const int kPuzzleHelpBorderWidth = 2;
 
 static const char *const kLibraryName = "egypt.pl";
 static const char *const kBackgroundName = "bkgrnd";
@@ -98,6 +103,104 @@ static const Common::Point kWordPositions[kWordLength] = {
 };
 
 } // End of anonymous namespace
+
+HorusWordPuzzle::DebugHelper::DebugHelper() :
+		_enabled(false), _recommendedLetter(-1) {
+}
+
+void HorusWordPuzzle::DebugHelper::reset(bool enabled) {
+	_enabled = enabled;
+	_recommendedLetter = -1;
+}
+
+bool HorusWordPuzzle::DebugHelper::sync(
+		const HorusWordPuzzle &puzzle) {
+	const bool enabled = puzzle._engine->isPuzzleHelpEnabled();
+	if (enabled == _enabled)
+		return false;
+
+	_enabled = enabled;
+	stateChanged(puzzle);
+	debugC(2, kDebugPuzzles,
+		"Ripper: Horus word puzzle help enabled=%d recommendedLetter='%c' "
+		"futureColor=%u recommendedColor=%u command=PUZZLE_HELP",
+		_enabled, _recommendedLetter >= 0 ? 'A' + _recommendedLetter : '-',
+		kPuzzleHelpFutureColor, kPuzzleHelpRecommendedColor);
+	return true;
+}
+
+int HorusWordPuzzle::DebugHelper::findRecommendedLetter(
+		const HorusWordPuzzle &puzzle) const {
+	if (!_enabled || puzzle._exitRequested || puzzle._wordSolved)
+		return -1;
+
+	uint slot = puzzle._selectedLetters.size();
+	if (puzzle._wordComplete)
+		slot = 0;
+	if (slot >= kWordLength)
+		return -1;
+	const int letter = kTargetWord[slot] - 'A';
+	if (!puzzle.isLetterSelected(letter))
+		return letter;
+	if (puzzle._wordComplete)
+		return -1;
+	for (uint targetSlot = 0; targetSlot < kWordLength; ++targetSlot) {
+		const int recoveryLetter = kTargetWord[targetSlot] - 'A';
+		if (!puzzle.isLetterSelected(recoveryLetter))
+			return recoveryLetter;
+	}
+	return -1;
+}
+
+void HorusWordPuzzle::DebugHelper::stateChanged(
+		const HorusWordPuzzle &puzzle) {
+	const int recommendedLetter = findRecommendedLetter(puzzle);
+	if (recommendedLetter == _recommendedLetter)
+		return;
+
+	_recommendedLetter = recommendedLetter;
+	debugC(2, kDebugPuzzles,
+		"Ripper: Horus word puzzle help analyzed word='%s' "
+		"recommendedLetter='%c' target='%s'",
+		puzzle.selectedWord().c_str(),
+		_recommendedLetter >= 0 ? 'A' + _recommendedLetter : '-',
+		kTargetWord);
+}
+
+void HorusWordPuzzle::DebugHelper::draw(
+		const HorusWordPuzzle &puzzle, byte *screen, uint pitch) const {
+	if (!_enabled || puzzle._exitRequested || puzzle._wordSolved)
+		return;
+
+	for (uint slot = 0; slot < kWordLength; ++slot) {
+		const int letter = kTargetWord[slot] - 'A';
+		if (puzzle.isLetterSelected(letter))
+			continue;
+		const bool recommended = letter == _recommendedLetter;
+		const byte color = recommended ? kPuzzleHelpRecommendedColor :
+			kPuzzleHelpFutureColor;
+		const uint ditherMask = recommended ?
+			kPuzzleHelpRecommendedDitherMask : kPuzzleHelpFutureDitherMask;
+		const Common::Point &position = kLetterPositions[letter];
+		const BitmapAssetFrame &button = puzzle._buttons[letter];
+		const int left = MAX<int>(position.x, 0);
+		const int top = MAX<int>(position.y, 0);
+		const int right = MIN<int>(position.x + button.width,
+			kRipperScreenWidth);
+		const int bottom = MIN<int>(position.y + button.height,
+			kRipperScreenHeight);
+		for (int y = top; y < bottom; ++y) {
+			for (int x = left; x < right; ++x) {
+				const bool border = x - left < kPuzzleHelpBorderWidth ||
+					right - x <= kPuzzleHelpBorderWidth ||
+					y - top < kPuzzleHelpBorderWidth ||
+					bottom - y <= kPuzzleHelpBorderWidth;
+				if (border || ((x + y) & ditherMask) == 0)
+					screen[y * pitch + x] = color;
+			}
+		}
+	}
+}
 
 HorusWordPuzzle::HorusWordPuzzle(RipperEngine *engine) :
 		_engine(engine), _hoveredLetter(-1), _lastAnimationTick(0),
@@ -271,6 +374,7 @@ void HorusWordPuzzle::render() const {
 			_letters[_selectedLetters[slot]], kWordPositions[slot].x,
 			kWordPositions[slot].y, opacity);
 	}
+	_debugHelper.draw(*this, pixels, screen->pitch);
 
 	g_system->unlockScreen();
 	applyPalette();
@@ -355,6 +459,7 @@ void HorusWordPuzzle::clearWord(const char *reason, bool playResetCue) {
 	_engine->getMedia()->stopSoundEffect(_audioHandles[0]);
 	if (playResetCue)
 		playCue(2);
+	_debugHelper.stateChanged(*this);
 }
 
 void HorusWordPuzzle::beginFade(const char *reason) {
@@ -395,6 +500,7 @@ void HorusWordPuzzle::selectLetter(uint letter) {
 			"settleTicks=%u", selectedWord().c_str(),
 			_wordSolved ? "SOLVED" : "REJECTED", kWordSettleTicks);
 	}
+	_debugHelper.stateChanged(*this);
 	_hoveredLetter = -1;
 	_engine->getCursor()->update(kDefaultCursor);
 	render();
@@ -421,8 +527,10 @@ bool HorusWordPuzzle::stepAnimation(uint32 now) {
 				++phase;
 			} else if (phase > target) {
 				--phase;
-				if (phase < 0)
+				if (phase < 0) {
 					playCue(2);
+					_debugHelper.stateChanged(*this);
+				}
 			} else if (target == kMaximumPhase) {
 				target = kMinimumPulsePhase;
 			} else if (target == kMinimumPulsePhase) {
@@ -486,15 +594,17 @@ HorusWordPuzzle::Result HorusWordPuzzle::run(uint completionFlag) {
 	_wordSolved = false;
 	_exitRequested = false;
 	_lastAnimationTick = g_system->getMillis();
+	_debugHelper.reset(_engine->isPuzzleHelpEnabled());
+	_debugHelper.stateChanged(*this);
 	_engine->getCursor()->setSelectionIndex(kDefaultCursor);
 	_engine->getCursor()->dispatchSelectionIndexChange(kDefaultCursor);
 	render();
 	debugC(1, kDebugPuzzles,
 		"Ripper: entered Horus word puzzle function="
 		"RunHorusWordPuzzleScene@0x3f976 milestone=%u library='%s' "
-		"controls=%u slots=%u help=0x%x",
+		"controls=%u slots=%u help=0x%x puzzleHelp=%d",
 		completionFlag, kLibraryName, kLetterCount, kWordLength,
-		kHelpSelectionTable);
+		kHelpSelectionTable, _engine->isPuzzleHelpEnabled());
 	debugC(3, kDebugPuzzles,
 		"Ripper: Horus word retail target='%s' controls=0x672..0x68b",
 		kTargetWord);
@@ -511,6 +621,7 @@ HorusWordPuzzle::Result HorusWordPuzzle::run(uint completionFlag) {
 			const uint16 command = _engine->getInput()->consumeKey();
 			if (command == kEscapeCommand && !_exitRequested) {
 				_exitRequested = true;
+				_debugHelper.stateChanged(*this);
 				_hoveredLetter = -1;
 				_engine->getCursor()->update(kDefaultCursor);
 				beginFade("escape");
@@ -528,6 +639,8 @@ HorusWordPuzzle::Result HorusWordPuzzle::run(uint completionFlag) {
 				render();
 			}
 		}
+		if (_debugHelper.sync(*this))
+			render();
 
 		const uint32 now = g_system->getMillis();
 		if (stepAnimation(now))
