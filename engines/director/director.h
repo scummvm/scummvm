@@ -252,6 +252,7 @@ public:
 	Common::Array<Common::Event> _injectedEvents;
 
 	// game-quirks.cpp
+	bool lingoOpenWrapper(const char *target, Common::Platform platform, const Common::String &whichApplication, const Common::String &whichDocument);
 	void gameQuirks(const char *target, Common::Platform platform);
 	void loadSlowdownCooloff(uint32 delay = 2000);
 

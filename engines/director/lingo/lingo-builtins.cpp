@@ -1715,8 +1715,13 @@ void LB::b_open(int nargs) {
 
 	Datum ex = g_lingo->pop();
 	Datum d;
+
 	if (nargs == 2)
 		d = g_lingo->pop();
+
+	if (g_director->lingoOpenWrapper(g_director->getTargetName().c_str(), g_director->getPlatform(), ex.asString(), d.asString()))
+		return;
+
 	warning("LB::b_open(): Unsupported command open encountered -> The movie tried to open %s %s", ex.asString().c_str(), d.type != VOID ? d.asString().c_str() : "");
 
 	if (!debugChannelSet(-1, kDebugFewFramesOnly) &&
