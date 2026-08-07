@@ -921,6 +921,35 @@
   rejected entry empties the cells and queues `BNKWAV3.WAV`. A correct entry
   queues `BNKWAV2.WAV`, alternates the captured blank and filled display five
   times at five DOS ticks per phase, then sets the supplied completion flag.
+- Scene action 23 calls `RunTarotCardPuzzleScene` at `0x3eece` with the
+  caller-supplied completion flag. `ACT4.RUN` supplies flag 231. The handler
+  presents `BEGIN.AVI`, opens `TAROT.PL`, reads `CARD%d.INI` for the optional
+  time limit, and creates controls `0x672` through `0x680` from the 15
+  ten-byte X/Y/card records at `0x3e78d`. After the routine removes the
+  retail 90-pixel Y origin, the first six empty target slots lie at y=158 and
+  the nine source cards lie at y=14. `BKGRND2` supplies the 640-by-400 board,
+  `SI1` through `SI9` supply the 68-by-112 slotted cards, and `BI1` through
+  `BI9` supply the 118-by-198 card attached to the pointer.
+- A click swaps the selected slot's card ID with the held card ID. Placing a
+  held card redraws the slot, taking an occupied card installs its large
+  pointer overlay, and every swap compares the first six slots with the short
+  target table `8, 3, 9, 7, 2, 1`. `REAPSONG` is the puzzle loop;
+  `TAROT0`, `TAROT2`, and `SND0` through `SND8` are its placement, cleanup,
+  and card cues. Escape or expiration leaves the completion flag clear and
+  presents `TAROTDEA.AVI`. A match sets the supplied flag, shrinks away cards
+  left in source slots over the retail eleven-step cleanup, and enters
+  `RunEndingSelectionEpiloguesAndCredits` at `0x43adb`.
+- The ending selector maps the randomly selected Ripper flags to retail ending
+  indices as flag 6 to 3, flag 7 to 1, flag 8 to 0, and flag 9 to 2. It uses
+  the 20-frame `END_CURS.PL` pointer while `RIPMID.AVI` plays. Once playback
+  state reaches three, `HandleEndingSelectionThrowTargetCallback` at
+  `0x438cf` starts `SPIN_1.WAV`; primary clicks are accepted only inside one
+  of the eight frame-gated logical 320-by-200 target rectangles at `0x84fe4`
+  and queue `BALLTHRO.WAV`. The one-based target result wraps modulo four to
+  choose `END_DF`, `END_DC`, `END_DM`, or `END_HIM`. A correct choice follows
+  the verified `END_HER`/`QUIN_WIN`, `Q4_V4`, and ending-specific epilogue
+  branch; a wrong choice goes to `RIPFINAL`. No selection goes to `END_DB`.
+  Both paths finish with `CREDITS1.AVI` and `CREDITS2.AVI`.
 - Scene action 25 calls `RunKkTileMatchPuzzleScene` at `0x2fa31`. It loads the
   difficulty-selected `KK%d.INI` from `SCRIPT.PL`, opens `KK.PL`, and creates
   controls `0x672` through `0x681` at the 4-by-4 Y/X coordinate table rooted

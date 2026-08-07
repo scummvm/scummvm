@@ -788,7 +788,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 
 bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::String &name,
 		bool allowEscSpace, int overrideX, int overrideY, int overrideOriginY,
-		bool serviceSceneUi, bool rememberVideoPalette, uint displayScale) {
+		bool serviceSceneUi, bool rememberVideoPalette, uint displayScale,
+		MediaSequenceCallback *callback, uint16 *command) {
 	IavfMovie movie;
 	if (!parseIavf(stream, name, movie)) {
 		warning("Ripper: invalid IAVF presentation '%s'", name.c_str());
@@ -827,6 +828,8 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 	bool result = true;
 	const uint32 audioByteRate = movie.audioByteRate;
 	bool completedFinalSegment = false;
+	if (command)
+		*command = 0;
 	for (uint i = 0; i < movie.segments.size() && !_engine->shouldQuit(); ++i) {
 		if (movie.segments[i].clearDisplayBefore) {
 			// RunPacketizedMediaPlaybackCore at 0x5b592 handles IAVF opcode 0x68 by
@@ -879,12 +882,16 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		plan.input.serviceSceneUi = serviceSceneUi;
 		plan.palette.rememberVideoPalette = rememberVideoPalette;
 		plan.input.advanceSegment = &advanceSegment;
+		plan.callback.sequenceCallback = callback;
+		plan.callback.sequenceCommand = command;
 		if (!smacker || !playSmacker(smacker,
 				Common::String::format("%s#%u", name.c_str(), i), plan)) {
 			result = false;
 			break;
 		}
 		if (stoppedByUser)
+			break;
+		if (command && *command != 0)
 			break;
 		if (_engine->getScripts()->hasPendingSceneTransition())
 			break;
@@ -932,15 +939,15 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 				break;
 			}
 			if (allowEscSpace && _input->hasPendingKey()) {
-				const uint16 command = _input->consumeKey();
-				if (command == 0x1b || command == 0x4d00) {
+				const uint16 inputCommand = _input->consumeKey();
+				if (inputCommand == 0x1b || inputCommand == 0x4d00) {
 					skipped = true;
 					debugC(2, kDebugVideo,
 						"Ripper: %s completed final IAVF managed-audio tail '%s'",
-						command == 0x1b ? "Escape" : "Right Arrow", name.c_str());
+						inputCommand == 0x1b ? "Escape" : "Right Arrow", name.c_str());
 					break;
 				}
-				if (command == 0x20) {
+				if (inputCommand == 0x20) {
 					paused = !paused;
 					_mixer->pauseHandle(audioHandle, paused);
 					debugC(2, kDebugVideo, "Ripper: Space %s IAVF managed-audio tail '%s'",
@@ -1335,6 +1342,30 @@ bool MediaPlayer::playTransparentSmackerOverlay(const Common::String &path, int 
 	return playValidatedSmacker(
 		openSource(path, kSourceDirectFile, source), path,
 		"transparent overlay", plan);
+}
+
+bool MediaPlayer::playInteractiveIavf(const Common::String &path,
+		MediaSequenceCallback *callback, uint16 *command) {
+	Common::String source;
+	Common::SeekableReadStream *stream = openSource(path, kSourceDirectFile, source);
+	if (!stream) {
+		warning("Ripper: could not open interactive IAVF media '%s'", path.c_str());
+		return false;
+	}
+	if (detectMediaFormat(*stream) != kMediaFormatIavf) {
+		warning("Ripper: interactive media '%s' is not IAVF", path.c_str());
+		delete stream;
+		return false;
+	}
+
+	debugC(1, kDebugVideo,
+		"Ripper: entering interactive IAVF presentation media='%s' callback=%d",
+		path.c_str(), callback != nullptr);
+	const bool result = playIavf(*stream, path, false, -1, -1, 0, false,
+		true, kAutoPacketizedDisplayScale, callback, command);
+	delete stream;
+	_input->drainKeys();
+	return result;
 }
 
 bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
