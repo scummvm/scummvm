@@ -44,8 +44,9 @@ class ISound : public SoundDriver, public Audio::AudioStream {
 public:
 	enum {
 		kPitClockHz = 1193182,
-		kSequenceRateHz = 100,
-		kNoiseRateHz = 60,
+		kHostTimerDivisor = 0x07a8,
+		kHostServiceDivider = 2,
+		kSequenceServiceDivider = 5,
 		kDefaultOutputVolume = 20,
 		kFrequencyTableOffset = 0x0114,
 		kInitialNullSequenceOffset = 0x00f0,
@@ -64,8 +65,8 @@ protected:
 	bool _updatesEnabled;
 	int _masterVolume;
 	int _outputRate;
-	uint32 _sequenceAccumulator;
-	uint32 _noiseAccumulator;
+	uint64 _hostTimerAccumulator;
+	byte _sequenceServiceCountdown;
 	PCSpeakerPITRenderer _pitRenderer;
 
 	uint16 _frameCounter;

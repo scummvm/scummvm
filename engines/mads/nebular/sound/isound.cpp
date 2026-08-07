@@ -88,6 +88,9 @@ ISound::OverlayLayout ISound::readOverlayLayout(
 	result.initializedDataSize = (uint32)(fileSize - dataOffset);
 	result.dataSegmentSize = dataSegmentSize;
 
+	// The descriptor's nominal 100 Hz value identifies the expected overlay
+	// ABI. The native host supplies its actual callbacks from a separate PIT
+	// cascade reconstructed in readBuffer().
 	if (result.dataSegmentSize < result.initializedDataSize ||
 		result.dataSegmentSize < kMinimumDataSegmentSize ||
 		timerHz != 100 || exportCount != 11)
@@ -107,8 +110,8 @@ ISound::ISound(Audio::Mixer *mixer, const Common::Path &filename, const OverlayL
 	_updatesEnabled(false),
 	_masterVolume(255),
 	_outputRate(mixer->getOutputRate()),
-	_sequenceAccumulator(0),
-	_noiseAccumulator(0),
+	_hostTimerAccumulator(0),
+	_sequenceServiceCountdown(1),
 	_pitRenderer(_outputRate, kPitClockHz),
 	_frameCounter(0),
 	_randomSeed(0),
@@ -585,7 +588,7 @@ void ISound::noiseTick() {
 }
 
 int ISound::poll() {
-	// Playback advances from the audio stream at the overlay's 100 Hz rate.
+	// Playback advances from the audio stream at the native host cadence.
 	return 0;
 }
 
@@ -615,23 +618,24 @@ int16 ISound::generateSample() {
 int ISound::readBuffer(int16 *buffer, int numSamples) {
 	Common::StackLock lock(_driverMutex);
 
+	const uint64 serviceThreshold = (uint64)_outputRate *
+		kHostTimerDivisor * kHostServiceDivider;
+
 	for (int sample = 0; sample < numSamples; ++sample) {
-		_sequenceAccumulator += kSequenceRateHz;
-		if (_sequenceAccumulator >= (uint32)_outputRate) {
-			_sequenceAccumulator -= _outputRate;
-			timerTick();
-		}
+		_hostTimerAccumulator += kPitClockHz;
+		while (_hostTimerAccumulator >= serviceThreshold) {
+			_hostTimerAccumulator -= serviceThreshold;
 
-		_noiseAccumulator += kNoiseRateHz;
-		if (_noiseAccumulator >= (uint32)_outputRate) {
-			_noiseAccumulator -= _outputRate;
-
-			// The overlay proves that noise is serviced independently from
-			// its 100 Hz sequencer, but not the host interval. The original
-			// capture is consistent with the surviving MADS 60 Hz service
-			// cadence; the 600 Hz counter is a timing clock.
+			// The host calls export 4 before export 3 when both are due.
+			// Consequently, a poll result changes noise on the next service
+			// tick rather than the current one.
 			if (_noiseEnabled)
 				noiseTick();
+
+			if (!--_sequenceServiceCountdown) {
+				_sequenceServiceCountdown = kSequenceServiceDivider;
+				timerTick();
+			}
 		}
 
 		buffer[sample] = generateSample();
