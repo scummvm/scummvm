@@ -48,6 +48,8 @@ static const uint kDefaultCursor = 14;
 static const uint kSelectionCursor = 16;
 static const uint kLoadingCursor = 19;
 static const uint16 kEscapeCommand = 0x1b;
+static const int kSceneOriginY = 50;
+static const int kSceneHeight = 300;
 static const uint kDosTickMillis = 55;
 static const uint kDepartureStepCount = 10;
 static const uint kDepartureStepMillis = kDosTickMillis;
@@ -141,7 +143,7 @@ bool TarotCardsPuzzle::loadAssets() {
 	if (!loadPcx(kBackgroundName, _background))
 		return false;
 	if (_background.width != kRipperScreenWidth ||
-			_background.height != kRipperScreenHeight ||
+			_background.height != kSceneHeight ||
 			_background.palette.size() < kRipperPaletteByteCount) {
 		warning("Ripper: tarot background has invalid geometry=%ux%u colors=%u",
 			_background.width, _background.height,
@@ -251,8 +253,8 @@ void TarotCardsPuzzle::render(const Common::Point &mousePosition) const {
 			g_system->unlockScreen();
 		return;
 	}
-	for (int y = 0; y < kRipperScreenHeight; ++y) {
-		memcpy(screen->getBasePtr(0, y),
+	for (int y = 0; y < kSceneHeight; ++y) {
+		memcpy(screen->getBasePtr(0, y + kSceneOriginY),
 			_background.pixels.data() + y * kRipperScreenWidth,
 			kRipperScreenWidth);
 	}
@@ -262,7 +264,8 @@ void TarotCardsPuzzle::render(const Common::Point &mousePosition) const {
 		if (card == 0 || _departed[slot])
 			continue;
 		drawFrame(pixels, screen->pitch, _smallCards[card - 1],
-			kSlotPositions[slot].x, kSlotPositions[slot].y);
+			kSlotPositions[slot].x,
+			kSlotPositions[slot].y + kSceneOriginY);
 	}
 	if (_model.heldCard() != 0) {
 		const BitmapAssetFrame &held = _largeCards[_model.heldCard() - 1];
@@ -281,8 +284,8 @@ void TarotCardsPuzzle::renderDeparture(uint slot, uint step) const {
 			g_system->unlockScreen();
 		return;
 	}
-	for (int y = 0; y < kRipperScreenHeight; ++y) {
-		memcpy(screen->getBasePtr(0, y),
+	for (int y = 0; y < kSceneHeight; ++y) {
+		memcpy(screen->getBasePtr(0, y + kSceneOriginY),
 			_background.pixels.data() + y * kRipperScreenWidth,
 			kRipperScreenWidth);
 	}
@@ -292,7 +295,8 @@ void TarotCardsPuzzle::renderDeparture(uint slot, uint step) const {
 		if (card == 0 || _departed[other] || other == slot)
 			continue;
 		drawFrame(pixels, screen->pitch, _smallCards[card - 1],
-			kSlotPositions[other].x, kSlotPositions[other].y);
+			kSlotPositions[other].x,
+			kSlotPositions[other].y + kSceneOriginY);
 	}
 	const uint card = _model.cardAt(slot);
 	if (card != 0 && step < kDepartureStepCount) {
@@ -300,7 +304,7 @@ void TarotCardsPuzzle::renderDeparture(uint slot, uint step) const {
 		const uint scale = kDepartureStepCount - step;
 		const int x = kSlotPositions[slot].x +
 			(frame.width * (int)step) / (2 * (int)kDepartureStepCount);
-		const int y = kSlotPositions[slot].y +
+		const int y = kSlotPositions[slot].y + kSceneOriginY +
 			(frame.height * (int)step) / (2 * (int)kDepartureStepCount);
 		drawScaledFrame(pixels, screen->pitch, frame, x, y, scale,
 			kDepartureStepCount);
@@ -334,9 +338,10 @@ bool TarotCardsPuzzle::animateRemainingCards() {
 int TarotCardsPuzzle::findSlot(const Common::Point &point) const {
 	for (uint slot = 0; slot < TarotCardsModel::kSlotCount; ++slot) {
 		const Common::Point &position = kSlotPositions[slot];
-		if (Common::Rect(position.x, position.y,
+		if (Common::Rect(position.x, position.y + kSceneOriginY,
 				position.x + _smallCards[0].width,
-				position.y + _smallCards[0].height).contains(point))
+				position.y + kSceneOriginY +
+					_smallCards[0].height).contains(point))
 			return slot;
 	}
 	return -1;
