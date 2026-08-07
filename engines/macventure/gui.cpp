@@ -34,6 +34,7 @@
 #include "image/bmp.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/mactextwindow.h"
+#include "gui/gui-manager.h"
 
 #include "macventure/gui.h"
 #include "macventure/dialog.h"
@@ -125,6 +126,9 @@ Gui::Gui(MacVentureEngine *engine, Common::MacResManager *resman) {
 	_graphics = nullptr;
 	_diplomaImage = nullptr;
 	_diplomaWindow = nullptr;
+	_diplomaFontId = Graphics::kMacFontSystem;
+	_diplomaFontSize = 12;
+	_diplomaNameBounds = Common::Rect();
 
 	_lassoStart = Common::Point(0, 0);
 	_lassoEnd = Common::Point(0, 0);
@@ -605,6 +609,20 @@ void Gui::loadDiploma() {
 	_dialog = new Dialog(this, _resourceManager, kDialogBoxDiplomaID);
 	DialogElement *quitButton = _dialog->getElement("Quit");
 	quitButton->setAction(kDAQuit);
+	DialogElement *printButton = _dialog->getElement("Print");
+	printButton->setAction(kDAPrintDiploma);
+
+	_diplomaName.clear();
+	Common::SeekableReadStream *geometry = _resourceManager->getResource(MKTAG('G', 'N', 'R', 'L'), kDiplomaGeometryID);
+	if (geometry) {
+		_diplomaFontId = geometry->readUint16BE();
+		_diplomaFontSize = geometry->readUint16BE();
+		_diplomaNameBounds.top = geometry->readUint16BE();
+		_diplomaNameBounds.left = geometry->readUint16BE();
+		_diplomaNameBounds.bottom = geometry->readUint16BE();
+		_diplomaNameBounds.right = geometry->readUint16BE();
+		delete geometry;
+	}
 
 	// Image
 	if (!_diplomaImage) {
@@ -802,6 +820,18 @@ void Gui::drawDiplomaWindow() {
 		0,
 		0,
 		kBlitDirect);
+
+	if (!_diplomaNameBounds.isEmpty()) {
+		const Graphics::Font *font = _wm._fontMan->getFont(Graphics::MacFont(_diplomaFontId, _diplomaFontSize));
+		font->drawString(
+			_diplomaWindow->getWindowSurface(),
+			_diplomaName,
+			_diplomaNameBounds.left,
+			_diplomaNameBounds.top,
+			_diplomaNameBounds.width(),
+			kColorBlack,
+			Graphics::kTextAlignCenter);
+	}
 
 	findWindow(kDiplomaWindow)->setDirty(true);
 }
@@ -1697,6 +1727,10 @@ bool Gui::processEvent(Common::Event &event) {
 		return true;
 	}
 
+	if (event.type == Common::EVENT_KEYDOWN && _diplomaWindow && processDiplomaKey(event)) {
+		return true;
+	}
+
 	if (event.type == Common::EVENT_MOUSEMOVE) {
 		if (_draggedObjects.size() && _draggedObjects[0].id != 0) {
 			moveDraggedObjects(event.mouse);
@@ -1837,6 +1871,42 @@ bool MacVenture::Gui::processDiplomaEvents(WindowClick click, Common::Event &eve
 		return true;
 
 	return getWindowData(kDiplomaWindow).visible;
+}
+
+void Gui::printDiploma() {
+	if (!_diplomaWindow)
+		return;
+
+	Graphics::ManagedSurface diploma;
+	diploma.copyFrom(*_diplomaWindow->getWindowSurface());
+	diploma.setPalette(_wm.getPalette(), 0, _wm.getPaletteSize());
+
+	g_gui.printImage(diploma);
+
+	markRedraw();
+}
+
+bool Gui::processDiplomaKey(Common::Event &event) {
+	if (_diplomaNameBounds.isEmpty())
+		return false;
+
+	if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
+		if (_diplomaName.empty())
+			return false;
+		_diplomaName.deleteLastChar();
+		return true;
+	}
+
+	if (event.kbd.ascii < 0x20 || event.kbd.ascii > 0x7f)
+		return false;
+
+	const Graphics::Font *font = _wm._fontMan->getFont(Graphics::MacFont(_diplomaFontId, _diplomaFontSize));
+	Common::String candidate = _diplomaName + (char)event.kbd.ascii;
+	if (font->getStringWidth(candidate) > _diplomaNameBounds.width())
+		return true;
+
+	_diplomaName = candidate;
+	return true;
 }
 
 bool Gui::processInventoryEvents(WindowReference ref, WindowClick click, Common::Event &event) {

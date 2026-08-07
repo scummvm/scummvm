@@ -41,7 +41,8 @@ enum DialogAction {
 	kDASaveAs,
 	kDALoadGame,
 	kDAQuit,
-	kDANewGame
+	kDANewGame,
+	kDAPrintDiploma
 };
 
 enum PrebuiltDialogs {
