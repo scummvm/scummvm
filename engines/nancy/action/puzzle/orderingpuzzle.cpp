@@ -247,7 +247,9 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 				// codes (the win still uses the sequence read above), then three button
 				// rect arrays - sprite source rects, on-screen dest positions, and tighter
 				// per-button hotspots. The dest rects double as the hotspots here.
-				stream.skip(0x309 - 0x10c); // grid + per-stage codes (not modeled)
+				_buttonCursorID = stream.readUint16LE();
+				_exitCursorID = stream.readUint16LE();
+				stream.skip(0x309 - 0x110); // grid + per-stage codes (not modeled)
 				readRectArray(stream, _down1Rects, numElements, 30); // button sprite source rects
 				readRectArray(stream, _destRects, numElements, 30);  // on-screen button positions
 				stream.skip(30 * 16);       // tighter per-button hotspots (we use _destRects)
@@ -713,7 +715,7 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+		setHoverCursor(_exitCursorID, g_nancy->_cursor->_puzzleExitCursor);
 
 		if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
@@ -722,7 +724,7 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (_needButtonToCheckSuccess && NancySceneState.getViewport().convertViewportToScreen(_checkButtonDest).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+		setHoverCursor(_buttonCursorID, CursorManager::kHotspot);
 
 		if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
 			_checkButtonPressed = true;
@@ -744,7 +746,7 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 			} else if (NancySceneState.getViewport().convertViewportToScreen(_specialCursor2Dest).contains(input.mousePos)) {
 				g_nancy->_cursor->setCursorType((CursorManager::CursorType)_specialCursor2Id, true);
 			} else {
-				g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+				setHoverCursor(_buttonCursorID, CursorManager::kHotspot);
 			}
 
 			if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
@@ -815,6 +817,14 @@ Common::String OrderingPuzzle::getRecordTypeName() const {
 		return "KeypadTersePuzzle";
 	default:
 		return "OrderingPuzzle";
+	}
+}
+
+void OrderingPuzzle::setHoverCursor(int16 cursorID, CursorManager::CursorType defaultCursor) {
+	if (cursorID >= 0) {
+		g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorID, true);
+	} else {
+		g_nancy->_cursor->setCursorType(defaultCursor);
 	}
 }
 

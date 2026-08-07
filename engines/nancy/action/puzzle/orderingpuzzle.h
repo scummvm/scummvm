@@ -54,6 +54,7 @@ public:
 protected:
 	Common::String getRecordTypeName() const override;
 
+	void setHoverCursor(int16 cursorID, CursorManager::CursorType defaultCursor);
 	void pushDown(uint id);
 	void setToSecondState(uint id);
 	void popUp(uint id);
@@ -101,6 +102,12 @@ protected:
 	Common::Array<Common::Array<uint16> > _dangerRecipes;
 	SceneChangeWithFlag _deathScene;
 	bool _stageDeath = false;
+
+	// Nancy 12 keypads pick their hover cursors from the action record data.
+	// Both are raw Nancy 10+ system cursor types; -1 means the puzzle uses the
+	// engine defaults instead.
+	int16 _buttonCursorID = -1;
+	int16 _exitCursorID = -1;
 
 	uint16 _specialCursor1Id = CursorManager::kHotspot;
 	Common::Rect _specialCursor1Dest;
