@@ -47,7 +47,6 @@ public:
 		kNoiseRateHz = 60,
 		kDefaultOutputVolume = 20,
 		kFrequencyTableOffset = 0x0114,
-		kFrequencyTableEntries = 90,
 		kInitialNullSequenceOffset = 0x00f0,
 		kMaxOperationsPerTick = 1024
 	};
