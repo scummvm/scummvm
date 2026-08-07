@@ -211,7 +211,7 @@ void Surface::reset() {
 }
 
 void Surface::setColorTable(uint index) {
-	if (index >= ARRAY_SIZE(COLOR_TABLES)) {
+	if (index >= ARRAYSIZE(COLOR_TABLES)) {
 		warning("Bad color table %d - using default", index);
 		_colorTable = DEFAULT_COLOR_TABLE;
 	}

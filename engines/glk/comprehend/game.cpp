@@ -130,11 +130,11 @@ void ComprehendGame::synchronizeSave(Common::Serializer &s) {
 	s.syncAsUint16LE(_currentRoom);
 
 	// Variables
-	for (i = 0; i < ARRAY_SIZE(_variables); i++)
+	for (i = 0; i < ARRAYSIZE(_variables); i++)
 		s.syncAsUint16LE(_variables[i]);
 
 	// Flags
-	for (i = 0; i < ARRAY_SIZE(_flags); i++)
+	for (i = 0; i < ARRAYSIZE(_flags); i++)
 		s.syncAsByte(_flags[i]);
 
 	// Rooms. Note that index 0 is the player's inventory
@@ -774,7 +774,7 @@ void ComprehendGame::read_sentence(Sentence *sentence) {
 
 		sentence->_nr_words++;
 
-		if (sentence->_nr_words >= ARRAY_SIZE(sentence->_words) ||
+		if (sentence->_nr_words >= ARRAYSIZE(sentence->_words) ||
 		        sentence_end)
 			break;
 	}
