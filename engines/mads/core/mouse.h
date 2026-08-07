@@ -81,7 +81,7 @@ extern void mouse_set_view_port(int dx, int dy);
 extern int mouse_refresh_view_port();
 extern void mouse_refresh_done();
 extern void mouse_disable_scale();
-extern void mouse_hard_cursor_mode(int mode, Palette *mypal);
+extern void mouse_hard_cursor_mode(int mode, Palette &mypal);
 
 /**
  * Returns true if the mouse is in the specified box
@@ -111,7 +111,6 @@ extern void mouse_cursor_surface(const Graphics::Surface &surf, int hot_x, int h
 extern void mouse_video_init();
 extern void mouse_video_update(int from_x, int from_y,
 	int unto_x, int unto_y, int size_x, int size_y);
-extern void mouse_hard_cursor_mode(int mode, Palette mypal);
 
 } // namespace MADS
 

@@ -394,6 +394,7 @@ static void animate() {
 
 	mcga_compute_retrace_parameters();
 	memset(cycling_palette, 0, sizeof(Palette));
+	memset(master_palette, 0, sizeof(Palette));
 	pal_init(1, 8);
 	mouse_hard_cursor_mode(2, master_palette);
 
@@ -474,7 +475,7 @@ static void animate() {
 				mem_free(room);
 			} else {
 				pal_init(1, 8);
-				mouse_hard_cursor_mode(2, &master_palette);
+				mouse_hard_cursor_mode(2, master_palette);
 			}
 		}
 

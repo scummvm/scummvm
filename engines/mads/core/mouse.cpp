@@ -250,10 +250,9 @@ void mouse_refresh_done() {
 void mouse_disable_scale() {
 }
 
-void mouse_hard_cursor_mode(int mode, Palette *mypal) {
-}
-
-void mouse_hard_cursor_mode(int mode, Palette mypal) {
+void mouse_hard_cursor_mode(int mode, Palette &mypal) {
+	static const byte RGB[6] = { 0x2d, 0x2d, 0x2d, 0x3f, 0x3f, 0x3f };
+	Common::copy(RGB, RGB + 6, &mypal[253].r);
 }
 
 } // namespace MADS
