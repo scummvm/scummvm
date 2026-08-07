@@ -19,11 +19,14 @@
  *
  */
 
+#include "common/array.h"
 #include "mads/console.h"
 #include "mads/core/env.h"
 #include "mads/core/imath.h"
 #include "mads/core/kernel.h"
 #include "mads/core/matte.h"
+#include "mads/core/mem.h"
+#include "mads/core/text.h"
 
 namespace MADS {
 
@@ -32,6 +35,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("teleport", WRAP_METHOD(Console, cmdTeleport));
 	registerCmd("walkable", WRAP_METHOD(Console, cmdWalkable));
 	registerCmd("quotes", WRAP_METHOD(Console, cmdQuotes));
+	registerCmd("text", WRAP_METHOD(Console, cmdText));
 }
 
 int strToInt(const char *s) {
@@ -145,6 +149,81 @@ bool Console::cmdQuotes(int argc, const char **argv) {
 
 	if (quoteId != -1 && !found)
 		debugPrintf("Quote %d not found.\n", quoteId);
+
+	return true;
+}
+
+static bool textBufferContains(const char *haystack, uint16 haystackLen, const char *needle) {
+	size_t needleLen = strlen(needle);
+	if (needleLen == 0 || haystackLen < needleLen)
+		return false;
+
+	for (uint16 i = 0; i + needleLen <= haystackLen; ++i) {
+		if (!scumm_strnicmp(haystack + i, needle, needleLen))
+			return true;
+	}
+
+	return false;
+}
+
+bool Console::cmdText(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: %s <search string>\n", argv[0]);
+		return true;
+	}
+
+	Common::String search(argv[1]);
+	for (int i = 2; i < argc; ++i) {
+		search += ' ';
+		search += argv[i];
+	}
+
+	// Enumerate every Id in the compiled text file's directory table so each
+	// one can be individually decompressed via text_load() and searched.
+	// See text_load() in core/text.cpp for the canonical reader of this table.
+	char temp_buf[80];
+	Common::strcpy_s(temp_buf, text_filename);
+	Common::strcat_s(temp_buf, TEXT_COMPILED);
+
+	Common::SeekableReadStream *handle = env_open(temp_buf, "rb");
+	if (!handle) {
+		debugPrintf("Could not open %s\n", temp_buf);
+		return true;
+	}
+
+	word num_entries = handle->readUint16LE();
+	Common::Array<int32> ids;
+	for (int count = 0; count < num_entries; ++count) {
+		TextDirectory dir;
+		dir.load(handle);
+		ids.push_back(dir.id);
+	}
+
+	delete handle;
+
+	bool found = false;
+	for (uint i = 0; i < ids.size(); ++i) {
+		TextPtr text = text_load(ids[i]);
+		if (!text)
+			continue;
+
+		if (textBufferContains(text->text, text->length, search.c_str())) {
+			found = true;
+
+			Common::String display(text->text, text->length);
+			for (uint j = 0; j < display.size(); ++j) {
+				if (display[j] == '\0')
+					display[j] = '\n';
+			}
+
+			debugPrintf("--- %d ---\n%s\n\n", ids[i], display.c_str());
+		}
+
+		mem_free(text);
+	}
+
+	if (!found)
+		debugPrintf("No text entries contain \"%s\"\n", search.c_str());
 
 	return true;
 }

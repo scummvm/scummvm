@@ -34,6 +34,7 @@ private:
 	bool cmdWalkable(int argc, const char **argv);
 	bool cmdDepth(int argc, const char **argv);
 	bool cmdQuotes(int argc, const char **argv);
+	bool cmdText(int argc, const char **argv);
 
 public:
 	Console();

@@ -165,7 +165,7 @@ void room_102_parser() {
 	    (player_said_2(push, orchestra_door)) ||
 	    (player_said_2(open, orchestra_door))) {
 		if (g_engine->isDemo()) {
-			popup_alert(26, DEMO_MSG, nullptr);
+			text_show(99);
 
 		} else if (local->anim_0_running) {
 			kernel_timing_trigger(QUARTER_SECOND, ROOM_102_TRY_AGAIN);

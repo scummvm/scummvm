@@ -809,7 +809,7 @@ void room_202_parser() {
 
 	if (player_said_2(walk_through, left_door) || player_said_2(open, left_door)) {
 		if (g_engine->isDemo()) {
-			popup_alert(26, DEMO_MSG, nullptr);
+			text_show(99);
 			goto handled;
 		}
 
@@ -866,7 +866,7 @@ void room_202_parser() {
 
 	if (player_said_2(walk_through, left_archway)) {
 		if (g_engine->isDemo()) {
-			popup_alert(26, DEMO_MSG, nullptr);
+			text_show(99);
 		} else {
 			new_room = 201;
 		}
@@ -881,7 +881,7 @@ void room_202_parser() {
 
 	if (player_said_2(walk_through, middle_door)) {
 		if (g_engine->isDemo()) {
-			popup_alert(26, DEMO_MSG, nullptr);
+			text_show(99);
 		} else {
 			new_room = 204;
 		}
@@ -890,7 +890,7 @@ void room_202_parser() {
 
 	if (player_said_2(walk_through, right_door)) {
 		if (g_engine->isDemo()) {
-			popup_alert(26, DEMO_MSG, nullptr);
+			text_show(99);
 		} else {
 			new_room = 205;
 		}
