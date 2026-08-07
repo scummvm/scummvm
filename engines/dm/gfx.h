@@ -143,6 +143,57 @@ enum ZoneIndex {
 	kDMZoneDoorFrameTopD1C      = 733, // @ C733_ZONE_DOOR_FRAME_TOP_D1C
 	kDMZoneDoorFrameTopD1R      = 734, // @ C734_ZONE_DOOR_FRAME_TOP_D1R
 	kDMZonePortraitOnWall       = 737, // @ M635_ZONE_PORTRAIT_ON_WALL
+	kDMZoneStairsUpFrontD3L     = 802, // @ C802_ZONE_STAIRS_UP_FRONT_D3L
+	kDMZoneStairsUpFrontD3C     = 803, // @ C803_ZONE_STAIRS_UP_FRONT_D3C
+	kDMZoneStairsUpFrontD3R     = 804, // @ C804_ZONE_STAIRS_UP_FRONT_D3R
+	kDMZoneStairsUpFrontD2L     = 805, // @ C805_ZONE_STAIRS_UP_FRONT_D2L
+	kDMZoneStairsUpFrontD2C     = 806, // @ C806_ZONE_STAIRS_UP_FRONT_D2C
+	kDMZoneStairsUpFrontD2R     = 807, // @ C807_ZONE_STAIRS_UP_FRONT_D2R
+	kDMZoneStairsUpFrontD1L     = 808, // @ C808_ZONE_STAIRS_UP_FRONT_D1L
+	kDMZoneStairsUpFrontD1C     = 809, // @ C809_ZONE_STAIRS_UP_FRONT_D1C
+	kDMZoneStairsUpFrontD1R     = 810, // @ C810_ZONE_STAIRS_UP_FRONT_D1R
+	kDMZoneStairsUpFrontD0L     = 811, // @ C811_ZONE_STAIRS_UP_FRONT_D0L
+	kDMZoneStairsUpFrontD0R     = 812, // @ C812_ZONE_STAIRS_UP_FRONT_D0R
+	kDMZoneStairsDownFrontD3L   = 815, // @ C815_ZONE_STAIRS_DOWN_FRONT_D3L
+	kDMZoneStairsDownFrontD3C   = 816, // @ C816_ZONE_STAIRS_DOWN_FRONT_D3C
+	kDMZoneStairsDownFrontD3R   = 817, // @ C817_ZONE_STAIRS_DOWN_FRONT_D3R
+	kDMZoneStairsDownFrontD2L   = 818, // @ C818_ZONE_STAIRS_DOWN_FRONT_D2L
+	kDMZoneStairsDownFrontD2C   = 819, // @ C819_ZONE_STAIRS_DOWN_FRONT_D2C
+	kDMZoneStairsDownFrontD2R   = 820, // @ C820_ZONE_STAIRS_DOWN_FRONT_D2R
+	kDMZoneStairsDownFrontD1L   = 821, // @ C821_ZONE_STAIRS_DOWN_FRONT_D1L
+	kDMZoneStairsDownFrontD1C   = 822, // @ C822_ZONE_STAIRS_DOWN_FRONT_D1C
+	kDMZoneStairsDownFrontD1R   = 823, // @ C823_ZONE_STAIRS_DOWN_FRONT_D1R
+	kDMZoneStairsDownFrontD0L   = 824, // @ C824_ZONE_STAIRS_DOWN_FRONT_D0L
+	kDMZoneStairsDownFrontD0R   = 825, // @ C825_ZONE_STAIRS_DOWN_FRONT_D0R
+	kDMZoneStairsSideD2L        = 826, // @ C826_ZONE_STAIRS_SIDE_D2L
+	kDMZoneStairsSideD2R        = 827, // @ C827_ZONE_STAIRS_SIDE_D2R
+	kDMZoneStairsUpSideD1L      = 828, // @ C828_ZONE_STAIRS_UP_SIDE_D1L
+	kDMZoneStairsUpSideD1R      = 829, // @ C829_ZONE_STAIRS_UP_SIDE_D1R
+	kDMZoneStairsDownSideD1L    = 830, // @ C830_ZONE_STAIRS_DOWN_SIDE_D1L
+	kDMZoneStairsDownSideD1R    = 831, // @ C831_ZONE_STAIRS_DOWN_SIDE_D1R
+	kDMZoneStairsSideD0L        = 832, // @ C832_ZONE_STAIRS_SIDE_D0L
+	kDMZoneStairsSideD0R        = 833, // @ C833_ZONE_STAIRS_SIDE_D0R
+	kDMZoneFloorPitD3L          = 852, // @ C852_ZONE_FLOORPIT_D3L
+	kDMZoneFloorPitD3C          = 853, // @ C853_ZONE_FLOORPIT_D3C
+	kDMZoneFloorPitD3R          = 854, // @ C854_ZONE_FLOORPIT_D3R
+	kDMZoneFloorPitD2L          = 855, // @ C855_ZONE_FLOORPIT_D2L
+	kDMZoneFloorPitD2C          = 856, // @ C856_ZONE_FLOORPIT_D2C
+	kDMZoneFloorPitD2R          = 857, // @ C857_ZONE_FLOORPIT_D2R
+	kDMZoneFloorPitD1L          = 858, // @ C858_ZONE_FLOORPIT_D1L
+	kDMZoneFloorPitD1C          = 859, // @ C859_ZONE_FLOORPIT_D1C
+	kDMZoneFloorPitD1R          = 860, // @ C860_ZONE_FLOORPIT_D1R
+	kDMZoneFloorPitD0L          = 861, // @ C861_ZONE_FLOORPIT_D0L
+	kDMZoneFloorPitD0C          = 862, // @ C862_ZONE_FLOORPIT_D0C
+	kDMZoneFloorPitD0R          = 863, // @ C863_ZONE_FLOORPIT_D0R
+	kDMZoneCeilingPitD2L        = 864, // @ C864_ZONE_CEILING_PIT_D2L
+	kDMZoneCeilingPitD2C        = 865, // @ C865_ZONE_CEILING_PIT_D2C
+	kDMZoneCeilingPitD2R        = 866, // @ C866_ZONE_CEILING_PIT_D2R
+	kDMZoneCeilingPitD1L        = 867, // @ C867_ZONE_CEILING_PIT_D1L
+	kDMZoneCeilingPitD1C        = 868, // @ C868_ZONE_CEILING_PIT_D1C
+	kDMZoneCeilingPitD1R        = 869, // @ C869_ZONE_CEILING_PIT_D1R
+	kDMZoneCeilingPitD0L        = 870, // @ C870_ZONE_CEILING_PIT_D0L
+	kDMZoneCeilingPitD0C        = 871, // @ C871_ZONE_CEILING_PIT_D0C
+	kDMZoneCeilingPitD0R        = 872, // @ C872_ZONE_CEILING_PIT_D0R
 	kDMZoneDoorButton           = 1950, // @ C1950_ZONE_DOOR_BUTTON
 	kDMZoneDoorD3L2             = 3700,
 	kDMZoneDoorD3R2             = 3710,
@@ -731,8 +782,8 @@ class DisplayMan {
 	void viewportBlitToScreen(); // @ F0566_VIEWPORT_BlitToScreen
 
 	void drawBitmapDOS(byte *srcBitmap, int16 zoneIndex, bool flipHorizontal = false, Color transparentColor = kDMColorFlesh, uint16 explicitWidth = 0, uint16 explicitHeight = 0); // @ F0791_DUNGEONVIEW_DrawBitmapXX
-	void drawFloorPitOrStairsBitmapFlippedHorizontally(uint16 nativeIndex, Frame &frame); // @ F0105_DUNGEONVIEW_DrawFloorPitOrStairsBitmapFlippedHorizontally
-	void drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &frame); // @ F0104_DUNGEONVIEW_DrawFloorPitOrStairsBitmap
+	void drawFloorPitOrStairsBitmapFlippedHorizontally(uint16 nativeIndex, Frame &frame, int16 zoneIndexDOS = -1); // @ F0105_DUNGEONVIEW_DrawFloorPitOrStairsBitmapFlippedHorizontally
+	void drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &frame, int16 zoneIndexDOS = -1); // @ F0104_DUNGEONVIEW_DrawFloorPitOrStairsBitmap
 	void drawWallSetBitmap(byte *bitmap, Frame &f); // @ F0100_DUNGEONVIEW_DrawWallSetBitmap
 	void drawWallSetBitmapWithoutTransparency(byte *bitmap, Frame &f); // @ F0101_DUNGEONVIEW_DrawWallSetBitmapWithoutTransparency
 
@@ -911,7 +962,7 @@ public:
 	void drawDoor(uint16 doorThingIndex, DoorState doorState, int16 *doorNativeBitmapIndices, int16 byteCount,
 					   DoorOrnament doorOrnament, DoorFrames *doorFrames, int16 zoneIndexDOS = -1);
 	void drawDoorOrnament(int16 doorOrnOdinal, DoorOrnament doorOrnament); // @ F0109_DUNGEONVIEW_DrawDoorOrnament
-	void drawCeilingPit(int16 nativeBitmapIndex, Frame *frame, int16 mapX, int16 mapY, bool flipHorizontal); // @ F0112_DUNGEONVIEW_DrawCeilingPit
+	void drawCeilingPit(int16 nativeBitmapIndex, Frame *frame, int16 mapX, int16 mapY, bool flipHorizontal, int16 zoneIndexDOS = -1); // @ F0112_DUNGEONVIEW_DrawCeilingPit
 
 	void blitToViewport(byte *bitmap, Box &box, int16 byteWidth, Color transparent, int16 height); // @ F0020_MAIN_BlitToViewport
 	void blitToViewport(byte *bitmap, int16 *box, int16 byteWidth, Color transparent, int16 height); // @ F0020_MAIN_BlitToViewport
