@@ -203,6 +203,8 @@ Common::Error MacVentureEngine::run() {
 
 				if (busy)
 					_gui->setWaitCursor(false);
+
+				_gui->markRedraw();
 			}
 		}
 		refreshScreen();
@@ -266,6 +268,7 @@ void MacVentureEngine::resetGui() {
 	_gui->reloadInternals();
 	updateControls();
 	updateExits();
+	_gui->markRedraw();
 	refreshScreen();
 }
 
