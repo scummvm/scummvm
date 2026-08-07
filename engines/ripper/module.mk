@@ -41,6 +41,7 @@ MODULE_OBJS := \
 	puzzles/date_selection.o \
 	puzzles/eight_button_sequence.o \
 	puzzles/gc_csh.o \
+	puzzles/horus_word.o \
 	puzzles/ka_book_code.o \
 	puzzles/kd_shooting_gallery.o \
 	puzzles/key_group.o \
