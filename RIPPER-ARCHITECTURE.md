@@ -881,13 +881,15 @@
   player motion. The foreground-cell list at `0x2ea22` keeps the ten nearest
   lids in front of the skull animation. The configured start is a zero-based
   control index: `start pos = 3` selects the fourth lid at `(137,261)`. Retail
-  derives the idle sprite's top-left as `(131,219)` from that lid, the 72-pixel
-  `KI_MAN0.SMK` width, and its local row/column offset tables. The display
+  derives the idle sprite's top-left as `(131,172)` from that lid, the 112-pixel
+  `KI_MAN0.SMK` height, and its local row/column offset tables. The display
   wrappers at `0x5d450` and `0x4e4b0` place the destination row in ECX and the
   column in EDX; `BlitScaledGenericVideoRectangle` at `0x464f3` confirms the
   ordering by multiplying the ECX-derived descriptor field by the display
-  pitch. Consequently, the width-derived large offset applies to Y while the
-  small second-table offset applies to X.
+  pitch. `InitializeSmackerPlaybackBitmapDescriptor` at `0x20684` copies the
+  Smacker height from playback state `+0x08` to descriptor `+0x00` and width
+  from state `+0x04` to descriptor `+0x04`. Consequently, the height-derived
+  large offset applies to Y while the small second-table offset applies to X.
 - The `[setting]` section of `KI%d.INI` supplies the MSVC-LCG seed, playback
   rate, post-move lid delay, starting cell, initial skull delay, delay decrease
   interval, decrement, and minimum. `GenerateRandomInt15` at `0x49a2f`
