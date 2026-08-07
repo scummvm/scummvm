@@ -53,6 +53,7 @@
 #include "ripper/puzzles/table_gate.h"
 #include "ripper/puzzles/web_grid_shift.h"
 #include "ripper/ripper.h"
+#include "ripper/scenes/cain_scene.h"
 #include "ripper/scenes/ebz2s_scene.h"
 #include "ripper/scenes/gym_scene.h"
 #include "ripper/scenes/tube_scene.h"
@@ -125,7 +126,7 @@ const char *SceneActionDispatcher::actionName(uint action) {
 	case 59: return "no-op";
 	case kSceneActionKeyGroupPuzzleAlias: return "key group puzzle";
 	case kSceneActionEightButtonSequencePuzzle: return "eight-button sequence puzzle";
-	case 62: return "Cain dialogue scene";
+	case kSceneActionCainDialogue: return "Cain dialogue scene";
 	case kSceneActionAppendNotebookText: return "append resource string to RIPPER.TXT";
 	case 300: return "arm briefing media trigger";
 	case 9999: return "terminate scene runtime";
@@ -497,6 +498,14 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 			"result=%d milestone=%u",
 			result, argument);
 		return result != EightButtonSequencePuzzle::kLoadFailed;
+	}
+	if (action == kSceneActionCainDialogue) {
+		CainScene scene(engine);
+		const CainScene::Result result = scene.run(argument);
+		debugC(1, kDebugDialogue,
+			"Ripper: Cain dialogue scene action completed result=%d argument=%u",
+			result, argument);
+		return result != CainScene::kLoadFailed;
 	}
 	if (action == kSceneActionAppendNotebookText)
 		return engine->getWac()->appendNotebookResourceString(argument);
