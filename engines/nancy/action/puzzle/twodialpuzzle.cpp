@@ -135,17 +135,8 @@ void TwoDialPuzzle::execute() {
 	case kRun:
 		if (g_nancy->getGameType() >= kGameTypeNancy12) {
 			runNancy12();
-			break;
-		}
-
-		if (g_nancy->_sound->isSoundPlaying(_rotateSounds[0]) || g_nancy->_sound->isSoundPlaying(_rotateSounds[1])) {
-			return;
-		}
-
-		if ((uint)_currentPositions[0] == _correctPositions[0] && (uint)_currentPositions[1] == _correctPositions[1]) {
-			_state = kActionTrigger;
-			_isSolved = true;
-			_solveSoundDelayTime = g_nancy->getTotalPlayTime() + (_solveSoundDelay * 1000);
+		} else {
+			runPreNancy12();
 		}
 
 		break;
@@ -183,6 +174,18 @@ void TwoDialPuzzle::execute() {
 	}
 }
 
+void TwoDialPuzzle::runPreNancy12() {
+	if (g_nancy->_sound->isSoundPlaying(_rotateSounds[0]) || g_nancy->_sound->isSoundPlaying(_rotateSounds[1])) {
+		return;
+	}
+
+	if ((uint)_currentPositions[0] == _correctPositions[0] && (uint)_currentPositions[1] == _correctPositions[1]) {
+		_state = kActionTrigger;
+		_isSolved = true;
+		_solveSoundDelayTime = g_nancy->getTotalPlayTime() + (_solveSoundDelay * 1000);
+	}
+}
+
 void TwoDialPuzzle::runNancy12() {
 	switch (_solveState) {
 	case kCheckSolutions: {
@@ -209,11 +212,11 @@ void TwoDialPuzzle::runNancy12() {
 			// The dials only just landed on this solution; it counts once they
 			// have rested on it for solveSoundDelay milliseconds
 			_lastMatchedSolution = matched;
-			_solveSoundDelayTime = g_nancy->getTotalPlayTime() + _solveSoundDelay;
+			_dwellEndTime = g_nancy->getTotalPlayTime() + _solveSoundDelay;
 			break;
 		}
 
-		if (g_nancy->getTotalPlayTime() > _solveSoundDelayTime) {
+		if (g_nancy->getTotalPlayTime() > _dwellEndTime) {
 			_solveScene._sceneChange.sceneID = _solutions[matched].sceneID;
 			_isSolved = true;
 			_solveState = kPlaySolveSound;

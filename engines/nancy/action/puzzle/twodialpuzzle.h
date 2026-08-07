@@ -45,6 +45,7 @@ public:
 protected:
 	Common::String getRecordTypeName() const override { return "TwoDialPuzzle"; }
 
+	void runPreNancy12();
 	void runNancy12();
 
 	Common::Path _imageName;
@@ -75,6 +76,8 @@ protected:
 	enum SolveState { kCheckSolutions, kPlaySolveSound, kWaitForSounds };
 	SolveState _solveState = kCheckSolutions;
 	int16 _lastMatchedSolution = -1;
+	// The time by which the dials must still rest on _lastMatchedSolution
+	uint32 _dwellEndTime = 0;
 
 	SoundDescription _rotateSounds[2];
 
@@ -90,6 +93,7 @@ protected:
 	int16 _currentPositions[2] = { 0, 0 };
 
 	bool _isSolved = false;
+	// The time at which the solve sound starts, once the puzzle has been solved
 	uint32 _solveSoundDelayTime = 0;
 };
 
