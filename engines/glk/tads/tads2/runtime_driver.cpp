@@ -688,7 +688,7 @@ static void trdmain1(errcxdef *ec, int argc, char *argv[],
 	re_init(&bifctx.bifcxregex, ec);
 
 	/* add the built-in functions, keywords, etc */
-	supbif(&supctx, bif, (int)(sizeof(bif)/sizeof(bif[0])));
+	supbif(&supctx, bif, ARRAYSIZE(bif));
 
 	/* set up status line hack */
 	runistat(&vocctx, &runctx, (tiocxdef *)nullptr);

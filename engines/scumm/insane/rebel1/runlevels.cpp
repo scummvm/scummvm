@@ -1411,7 +1411,7 @@ void InsaneRebel1::runGame() {
 		&InsaneRebel1::runLevel14,
 		&InsaneRebel1::runLevel15
 	};
-	const int numLevels = (int)(sizeof(kLevelRunners) / sizeof(kLevelRunners[0]));
+	const int numLevels = ARRAYSIZE(kLevelRunners);
 	auto runLevelsFrom = [&](int startLevel, bool resetRunState) {
 		int firstLevel = CLIP<int>(startLevel, 1, numLevels);
 

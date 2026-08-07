@@ -224,8 +224,8 @@ void ArthurChip::clickInArthurHotspot(HotSpotID id) {
 	setItemState(newState);
 	switch (id) {
 	case kArthurWisdomSpotID:
-		playArthurMovie(kArthurWisdomMovies[g_vm->getRandomNumber((
-						sizeof(kArthurWisdomMovies) / sizeof(const char *)) - 1)]);
+		playArthurMovie(kArthurWisdomMovies[g_vm->getRandomNumber(
+						ARRAYSIZE(kArthurWisdomMovies) - 1)]);
 		break;
 	case kChattyArthurSpotID:
 		g_vm->setChattyArthur(!g_vm->isChattyArthur());

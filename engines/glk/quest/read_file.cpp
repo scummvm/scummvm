@@ -303,8 +303,7 @@ GeasFile::GeasFile(const Common::Array<String> &v, GeasInterface *_gi) : gi(_gi)
 	reserved_words dir_tag_property("north", "south", "east", "west", "northwest", "northeast", "southeast", "southwest", "up", "down", "out", (char *) nullptr);
 
 	//Common::Array <GeasBlock> outv;
-	for (uint pass = 0; pass < sizeof(pass_names) / sizeof(*pass_names);
-	        pass ++) {
+	for (uint pass = 0; pass < ARRAYSIZE(pass_names); pass ++) {
 		String this_pass = pass_names[pass];
 		bool recursive = recursive_passes[this_pass];
 		//bool is_object = object_passes[this_pass];

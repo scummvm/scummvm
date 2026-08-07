@@ -249,7 +249,7 @@ long Scanner::ScanV1(byte *startFile, uint32 size) {
 	}
 	_l9V1Game = -1;
 	if (dictVal1 != 0xff || dictVal2 != 0xff) {
-		for (i = 0; i < sizeof L9_V1_GAMES / sizeof L9_V1_GAMES[0]; i++) {
+		for (i = 0; i < ARRAYSIZE(L9_V1_GAMES); i++) {
 			if ((L9_V1_GAMES[i].dictVal1 == dictVal1) && (L9_V1_GAMES[i].dictVal2 == dictVal2)) {
 				_l9V1Game = i;
 				if (_dictData)
@@ -541,7 +541,7 @@ gln_game_tableref_t GameDetection::gln_gameid_identify_game() {
 
 	/* Handle v1 games */
 	if (_l9V1Game >= 0) {
-		assert((unsigned)_l9V1Game < sizeof (GLN_V1GAME_TABLE) / sizeof (GLN_V1GAME_TABLE[0]));
+		assert((unsigned)_l9V1Game < ARRAYSIZE(GLN_V1GAME_TABLE));
 		return &GLN_V1GAME_TABLE[_l9V1Game];
 	}
 
