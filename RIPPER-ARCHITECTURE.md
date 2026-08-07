@@ -370,6 +370,13 @@
   only populated slots and displays their descriptions and preview images.
   ScummVM maps those 20 slots to its standard save chooser and reserves a
   separate autosave slot for the original emergency Continue state.
+- A successful restore returns `-5` from `RunSaveRestoreSlotMenu` through
+  `DispatchFrontEndAction`. `PollInteractionAndResolveSelection` at `0x13c8d`
+  then cleans up the current frame interactions, and
+  `ExecuteSceneFrameAndInteractions` at `0x13277` returns before running another
+  frame callback. The reimplementation likewise stops active media and unwinds
+  cached frame references before servicing the runtime installed by the load;
+  its saved interactive presentation resumes on the following scene tick.
 - `WriteEmergencySaveGame` at `0x1ae3c` writes the current scene identity,
   scene-resume state, runtime flags, played media state, audio triggers,
   briefing state, puzzle state, description, and preview. `LoadSavedRunStateBlob`
