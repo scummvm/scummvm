@@ -31,6 +31,7 @@
  *
  * USED IN:
  * gordak
+ * nikolaipharaohs
  *
  **************************************************/
 
@@ -100,7 +101,7 @@ XOBJSTUBNR(PharaohsXObj::m_dispose)
 XOBJSTUB(PharaohsXObj::m_windowsdir, "C:\\WINDOWS")
 XOBJSTUB(PharaohsXObj::m_writestring, 0)
 XOBJSTUB(PharaohsXObj::m_getstring, "")
-XOBJSTUB(PharaohsXObj::m_checkattrib, -1)
+XOBJSTUB(PharaohsXObj::m_checkattrib, 1)
 XOBJSTUB(PharaohsXObj::m_checkDrive, "D")
 
 }
