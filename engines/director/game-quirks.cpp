@@ -24,7 +24,11 @@
 #include "common/memstream.h"
 #include "common/platform.h"
 #include "common/savefile.h"
+#include "common/tokenizer.h"
 #include "director/director.h"
+#include "director/movie.h"
+#include "director/lingo/lingo-object.h"
+#include "director/lingo/xtras/s/smacker.h"
 
 namespace Director {
 
@@ -186,6 +190,33 @@ struct SaveFilePath {
 	{ nullptr, Common::kPlatformUnknown, nullptr },
 };
 
+static void quirkSmacker(const Common::String &whichDocument) {
+	Common::StringTokenizer tok(whichDocument);
+	Common::String videoFile = tok.nextToken();
+	SmackerXtra::playSmacker(videoFile, g_director->getCurrentMovie()->_movieRect, true);
+}
+
+struct LingoOpenWrapper {
+	const char *target;
+	Common::Platform platform;
+	const char *application;
+	void (*quirk)(const Common::String &whichDocument);
+} const lingoOpenWrappers[] = {
+	{"noir", Common::kPlatformWindows, "C:\\SPLAY", quirkSmacker },
+	{ nullptr, Common::kPlatformUnknown, nullptr, nullptr }
+};
+
+bool DirectorEngine::lingoOpenWrapper(const char *target, Common::Platform platform, const Common::String &whichApplication, const Common::String &whichDocument) {
+	for (auto q = lingoOpenWrappers; q->target != nullptr; q++) {
+		if (q->platform == Common::kPlatformUnknown || q->platform == platform)
+			if (!strcmp(q->target, target) && whichApplication.equalsIgnoreCase(q->application)) {
+				q->quirk(whichDocument);
+				return true;
+				break;
+			}
+	}
+	return false;
+}
 
 static void quirkWarlock() {
 	g_director->_loadSlowdownFactor = 150000;  // emulate a 1x CD drive
