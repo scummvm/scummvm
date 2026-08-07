@@ -33,6 +33,7 @@
 #include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/core/kernel.h"
+#include "mads/core/sound_manager.h"
 #include "mads/mads.h"
 #include "mads/nebular/mac_menus.h"
 #include "mads/nebular/mac_resources.h"
@@ -42,6 +43,24 @@ namespace MADS {
 namespace RexNebular {
 
 namespace {
+
+enum {
+	kFileMenu = 1,
+	kOptionsMenu = 3,
+	kWindowMenu = 4,
+
+	kFileOpen = (1001 << 16) | 2,
+	kFileSave = (1001 << 16) | 4,
+	kFileSaveAs = (1001 << 16) | 5,
+	kFileQuit = (1001 << 16) | 9,
+	kOptionNoSound = (2001 << 16),
+	kOptionEasyInterface = (2001 << 16) | 1,
+	kFadeSmooth = (101 << 16),
+	kFadeMedium = (101 << 16) | 1,
+	kFadeFast = (101 << 16) | 2,
+	kStoryNaughty = (102 << 16),
+	kStoryNice = (102 << 16) | 1
+};
 
 struct MenuResourceItem {
 	Common::String text;
@@ -127,7 +146,7 @@ bool MacNebularMenu::initialize() {
 	}
 
 	_menu->calcDimensions();
-	disableActions();
+	updateState();
 	return true;
 }
 
@@ -149,6 +168,10 @@ bool MacNebularMenu::loadMenuResource(uint16 resourceID,
 	if (parent) {
 		if (parentItem < 0 || (uint)parentItem >= parent->items.size())
 			return false;
+		// In a classic MENU resource, the parent item's mark byte carries
+		// the hierarchical submenu ID. Refuse to attach a mismatched resource.
+		if (parent->items[parentItem]->checkSymbol != resource.id)
+			return false;
 		submenu = _menu->addSubMenu(parent, parentItem);
 	} else {
 		const int menuIndex = _menu->addMenuItem(nullptr, resource.title);
@@ -158,20 +181,135 @@ bool MacNebularMenu::loadMenuResource(uint16 resourceID,
 	for (uint index = 0; index < resource.items.size(); ++index) {
 		const MenuResourceItem &item = resource.items[index];
 		const char shortcut = item.key == 0x1b ? 0 : item.key;
-		_menu->addMenuItem(submenu, item.text,
+		const int itemIndex = _menu->addMenuItem(submenu, item.text,
 			(resource.id << 16) | index, item.style, shortcut, item.enabled);
+		submenu->items[itemIndex]->checkSymbol = item.mark;
 	}
 
 	return true;
 }
 
-void MacNebularMenu::disableActions() {
+Graphics::MacMenuItem *MacNebularMenu::getMenuItem(int menu, int item) const {
+	Graphics::MacMenuItem *topLevel = _menu->getMenuItem(menu);
+	if (!topLevel || !topLevel->submenu || item < 0 ||
+			(uint)item >= topLevel->submenu->items.size())
+		return nullptr;
+	return topLevel->submenu->items[item];
+}
+
+Graphics::MacMenuItem *MacNebularMenu::getSubMenuItem(int menu,
+		int parentItem, int item) const {
+	Graphics::MacMenuItem *parent = getMenuItem(menu, parentItem);
+	if (!parent || !parent->submenu || item < 0 ||
+			(uint)item >= parent->submenu->items.size())
+		return nullptr;
+	return parent->submenu->items[item];
+}
+
+void MacNebularMenu::setItemState(Graphics::MacMenuItem *item,
+		bool enabled, bool checked) {
+	if (!item)
+		return;
+	if (item->enabled != enabled)
+		_menu->setEnabled(item, enabled);
+	if (item->checked != checked)
+		_menu->setCheckMark(item, checked);
+}
+
+void MacNebularMenu::updateState() {
+	// Start with every direct action disabled. This preserves separators and
+	// keeps native actions without a safe ScummVM equivalent visible.
 	for (int menuIndex = 0; menuIndex < _menu->numberOfMenus(); ++menuIndex) {
 		Graphics::MacMenuItem *topLevel = _menu->getMenuItem(menuIndex);
 		for (int itemIndex = 0;
 				itemIndex < _menu->numberOfMenuItems(topLevel); ++itemIndex)
-			_menu->setEnabled(_menu->getSubMenuItem(topLevel, itemIndex), false);
+			setItemState(_menu->getSubMenuItem(topLevel, itemIndex), false, false);
 	}
+
+	setItemState(getMenuItem(kFileMenu, 2),
+		_engine.canLoadGameStateCurrently(nullptr), false);
+	const bool canSave = _engine.canSaveGameStateCurrently(nullptr);
+	setItemState(getMenuItem(kFileMenu, 4), canSave, false);
+	setItemState(getMenuItem(kFileMenu, 5), canSave, false);
+	setItemState(getMenuItem(kFileMenu, 9), true, false);
+
+	const bool noSound = !_engine._musicFlag && !_engine._soundFlag;
+	setItemState(getMenuItem(kOptionsMenu, 0), true, noSound);
+	setItemState(getMenuItem(kOptionsMenu, 1), true, inter_report_hotspots);
+	setItemState(getMenuItem(kOptionsMenu, 2), true, false);
+	setItemState(getMenuItem(kOptionsMenu, 3), true, false);
+
+	for (int fade = SCREEN_FADE_SMOOTH; fade <= SCREEN_FADE_FAST; ++fade)
+		setItemState(getSubMenuItem(kOptionsMenu, 2, fade), true,
+			kernel_screen_fade == fade);
+
+	setItemState(getSubMenuItem(kOptionsMenu, 3, 0),
+		config_file.naughtiness != NAUGHTY,
+		config_file.naughtiness == NAUGHTY);
+	setItemState(getSubMenuItem(kOptionsMenu, 3, 1),
+		config_file.naughtiness != NICE,
+		config_file.naughtiness == NICE);
+	setItemState(getSubMenuItem(kOptionsMenu, 3, 2), false,
+		config_file.naughtiness != NAUGHTY && config_file.naughtiness != NICE);
+
+	setItemState(getMenuItem(kWindowMenu, 0), false, false);
+	setItemState(getMenuItem(kWindowMenu, 1), false, false);
+	setItemState(getMenuItem(kWindowMenu, 2), true, true);
+}
+
+void MacNebularMenu::dispatchCommand(int command) {
+	switch (command) {
+	case kFileOpen:
+		if (_engine.canLoadGameStateCurrently(nullptr))
+			_engine.loadGameDialog();
+		break;
+	case kFileSave:
+	case kFileSaveAs:
+		if (_engine.canSaveGameStateCurrently(nullptr))
+			_engine.saveGameDialog();
+		break;
+	case kFileQuit:
+		_engine.quitGame();
+		break;
+	case kOptionNoSound: {
+		const bool enableSound = !_engine._musicFlag && !_engine._soundFlag;
+		_engine._musicFlag = enableSound;
+		_engine._soundFlag = enableSound;
+		config_file.music_flag = enableSound;
+		config_file.sound_flag = enableSound;
+		if (!enableSound && _engine._soundManager)
+			_engine._soundManager->stop();
+		ConfMan.setBool("music_mute", !enableSound);
+		ConfMan.setBool("sfx_mute", !enableSound);
+		ConfMan.flushToDisk();
+		break;
+	}
+	case kOptionEasyInterface:
+		inter_report_hotspots = !inter_report_hotspots;
+		config_file.interface_hotspots = inter_report_hotspots ?
+			INTERFACE_BRAINDEAD : INTERFACE_MACINTOSH;
+		ConfMan.setBool("interface_hotspots", inter_report_hotspots);
+		ConfMan.flushToDisk();
+		break;
+	case kFadeSmooth:
+	case kFadeMedium:
+	case kFadeFast:
+		kernel_screen_fade = command - kFadeSmooth;
+		config_file.screen_fade = kernel_screen_fade;
+		ConfMan.setInt("screen_fade", kernel_screen_fade);
+		ConfMan.flushToDisk();
+		break;
+	case kStoryNaughty:
+	case kStoryNice:
+		config_file.naughtiness = command == kStoryNaughty ? NAUGHTY : NICE;
+		ConfMan.setBool("naughtiness", config_file.naughtiness == NAUGHTY);
+		ConfMan.flushToDisk();
+		break;
+	default:
+		break;
+	}
+
+	updateState();
 }
 
 void MacNebularMenu::syncPalette() {
@@ -186,7 +324,17 @@ void MacNebularMenu::syncPalette() {
 }
 
 bool MacNebularMenu::processEvent(Common::Event &event) {
-	return _windowManager && _windowManager->processEvent(event);
+	if (!_windowManager)
+		return false;
+
+	updateState();
+	const bool handled = _windowManager->processEvent(event);
+	if (_pendingCommand != -1) {
+		const int command = _pendingCommand;
+		_pendingCommand = -1;
+		dispatchCommand(command);
+	}
+	return handled;
 }
 
 void MacNebularMenu::draw() {
@@ -194,11 +342,13 @@ void MacNebularMenu::draw() {
 		return;
 
 	syncPalette();
+	updateState();
 	_menu->draw(&_screen, true);
 }
 
-void MacNebularMenu::menuCallback(int, Common::String &, void *data) {
+void MacNebularMenu::menuCallback(int command, Common::String &, void *data) {
 	MacNebularMenu *menus = (MacNebularMenu *)data;
+	menus->_pendingCommand = command;
 	menus->_menu->closeMenu();
 }
 
