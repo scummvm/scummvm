@@ -47,6 +47,9 @@ public:
 		kHostTimerDivisor = 0x07a8,
 		kHostServiceDivider = 2,
 		kSequenceServiceDivider = 5,
+		// Match the fixed 48-kHz rate used by DOSBox Staging's post-0.82.2
+		// impulse model (b53ac15). Audio::Mixer handles device conversion.
+		kPCSpeakerSampleRate = 48000,
 		kDefaultOutputVolume = 20,
 		kFrequencyTableOffset = 0x0114,
 		kInitialNullSequenceOffset = 0x00f0,
@@ -110,7 +113,7 @@ protected:
 
 	static OverlayLayout readOverlayLayout(const Common::Path &filename);
 
-	ISound(Audio::Mixer *mixer,const Common::Path &filename, const OverlayLayout &layout);
+	ISound(Audio::Mixer *mixer, const Common::Path &filename, const OverlayLayout &layout);
 
 	byte readSequenceByte(uint16 offset) const;
 	uint16 readSequenceUint16(uint16 offset) const;

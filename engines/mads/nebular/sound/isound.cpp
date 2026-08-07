@@ -109,7 +109,7 @@ ISound::ISound(Audio::Mixer *mixer, const Common::Path &filename, const OverlayL
 	_noiseEnabled(false),
 	_updatesEnabled(false),
 	_masterVolume(255),
-	_outputRate(mixer->getOutputRate()),
+	_outputRate(kPCSpeakerSampleRate),
 	_hostTimerAccumulator(0),
 	_sequenceServiceCountdown(1),
 	_pitRenderer(_outputRate, kPitClockHz),
@@ -620,10 +620,20 @@ int ISound::readBuffer(int16 *buffer, int numSamples) {
 
 	const uint64 serviceThreshold = (uint64)_outputRate *
 		kHostTimerDivisor * kHostServiceDivider;
+	assert(serviceThreshold > kPitClockHz);
 
 	for (int sample = 0; sample < numSamples; ++sample) {
+		const uint64 previousHostTimerAccumulator = _hostTimerAccumulator;
 		_hostTimerAccumulator += kPitClockHz;
-		while (_hostTimerAccumulator >= serviceThreshold) {
+		if (_hostTimerAccumulator >= serviceThreshold) {
+			// The accumulator crossing identifies the service interrupt's exact
+			// position inside this output sample. Advance the PIT there before
+			// applying the native count and control writes.
+			const uint64 servicePosition = serviceThreshold -
+				previousHostTimerAccumulator;
+			assert(servicePosition <= kPitClockHz);
+			_pitRenderer.advanceToSampleFraction(
+				(uint32)servicePosition, kPitClockHz);
 			_hostTimerAccumulator -= serviceThreshold;
 
 			// The host calls export 4 before export 3 when both are due.

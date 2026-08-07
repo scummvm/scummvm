@@ -40,6 +40,8 @@ public:
 		uint32 pitClock = 1193182);
 	~PCSpeakerPITRenderer();
 
+	/** Advance the PIT to a fractional position in the current output sample. */
+	void advanceToSampleFraction(uint32 numerator, uint32 denominator);
 	void writeMode3Count(uint16 count);
 	void setControl(bool timerGate, bool speakerEnabled);
 	int16 generateSample(byte volume);
@@ -51,20 +53,20 @@ private:
 		kFractionalPhases = 32,
 		kImpulseDurationUs = 3125,
 		kSampleFracBits = 24,
-		kCoefficientFracBits = 30,
-		kReferenceSampleRate = 48000
+		kCoefficientFracBits = 30
 	};
 
 	void initializeImpulse();
 	void resetState();
 	void addTransition(int level, uint64 elapsedPitClocks = 0);
-	void advanceCounter();
+	void advanceCounter(uint64 pitClockUnits);
 	bool isUndersampled(uint16 count) const;
 	int outputLevel() const;
 
 	uint32 _sampleRate;
 	uint32 _pitClock;
 	uint64 _phase;
+	uint64 _samplePhase;
 	uint64 _sampleCounter;
 	uint16 _count;
 	uint16 _pendingCount;
