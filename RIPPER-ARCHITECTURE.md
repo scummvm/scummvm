@@ -137,8 +137,12 @@
   the maximum input coordinate from the active descriptor height, so y>=400 is
   outside the scene hit-test region.
 - While a control is hovered, `RunFrontEndActionMenu` advances that action's
-  frame index once per extended DOS tick. Each icon is vertically centered in
-  the 50-pixel band. The preview gate uses
+  frame index once per extended DOS tick. Each invocation first constructs a
+  new `UiControlState` from the toolbar resource's base pointer and draws that
+  base bitmap, so every toolbar reveal initially presents frame zero rather
+  than the frame visible when the preceding session ended. ScummVM resets its
+  per-action animation indices at the same entry boundary. Each icon is
+  vertically centered in the 50-pixel band. The preview gate uses
   `front_end_action_preview_enabled` and a default delay of 27 DOS ticks from
   `PersistentSettingsBlob` (offsets 6 and 17). Once enabled,
   `RenderFrontEndActionPreviewSprite` builds a four-pixel-padded tooltip at

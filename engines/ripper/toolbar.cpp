@@ -174,6 +174,13 @@ void ToolbarManager::enter(uint32 now, uint enabledActionMask) {
 		memcpy(_topBacking.data() + y * 640, screen->getBasePtr(0, y), 640);
 	g_system->unlockScreen();
 
+	// RunFrontEndActionMenu at 0x18b3a constructs fresh UiControlState entries
+	// from each toolbar resource's base pointer on every invocation, so the
+	// initial dirty-region update always presents frame zero. Do not carry a
+	// partially advanced hover animation into the next toolbar session.
+	for (uint i = 0; i < _actions.size(); ++i)
+		_actions[i].frameIndex = 0;
+
 	_active = true;
 	_enabledActionMask = enabledActionMask;
 	_previewEnabled = false;
@@ -183,7 +190,7 @@ void ToolbarManager::enter(uint32 now, uint enabledActionMask) {
 	_lastFrameMillis = now;
 	drawIcons();
 	debugC(2, kDebugScene,
-		"Ripper: entered toolbar input band y<%d enabledMask=0x%03x",
+		"Ripper: entered toolbar input band y<%d enabledMask=0x%03x animationFrame=0",
 		kToolbarActivationHeight, _enabledActionMask);
 }
 
