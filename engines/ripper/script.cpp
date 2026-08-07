@@ -1084,6 +1084,23 @@ bool ScriptManager::acceptCyberRuntimeExit(int result, const CompiledScript &scr
 	return true;
 }
 
+bool ScriptManager::acceptConcurrentRuntimeExit(int result,
+		const char *callbackPhase) {
+	if (result != -4 || _runtime.concurrentScript.getFrames().empty())
+		return false;
+
+	// RunSceneScriptLoop at 0x124e9 destroys the top-level concurrent runtime
+	// and resumes the active runtime when ExecuteSceneFrameAndInteractions
+	// returns -4. ACT3_CHK.RUN uses this path after arming the Act IV milestone.
+	debugC(1, kDebugScene,
+		"Ripper: concurrent runtime exited normally script='%s' entry='%s' callback='%s' result=%d",
+		_runtime.concurrentScript.getMemberName().c_str(),
+		_runtime.concurrentEntryLabel.c_str(), callbackPhase, result);
+	_runtime.concurrentScript = CompiledScript();
+	_runtime.concurrentEntryLabel.clear();
+	return true;
+}
+
 bool ScriptManager::runStartupPath() {
 	if (_startup.getFrames().empty() || _runtime.activeScript.getFrames().empty())
 		return false;
@@ -1137,6 +1154,8 @@ bool ScriptManager::executeConcurrentFrame() {
 	uint nextFrame = frameIndex;
 	if (!executeCallback(_runtime.concurrentScript, frame.enterCallbackOffset, result, &nextFrame))
 		return false;
+	if (acceptConcurrentRuntimeExit(result, "enter"))
+		return true;
 	if (result == -3 && !_runtime.pendingSceneMember.empty()) {
 		debugC(1, kDebugScene,
 			"Ripper: concurrent script requested transition target='%s' entry='%s'",
@@ -1149,6 +1168,8 @@ bool ScriptManager::executeConcurrentFrame() {
 		return false;
 	if (!executeCallback(_runtime.concurrentScript, frame.exitCallbackOffset, result, &nextFrame))
 		return false;
+	if (acceptConcurrentRuntimeExit(result, "exit"))
+		return true;
 	if (result == -3 && !_runtime.pendingSceneMember.empty()) {
 		debugC(1, kDebugScene,
 			"Ripper: concurrent script requested transition target='%s' entry='%s'",
