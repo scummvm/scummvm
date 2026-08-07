@@ -286,6 +286,7 @@ private:
 		uint *nextFrame = nullptr, uint commandStart = 0);
 	bool acceptCyberRuntimeExit(int result, const CompiledScript &script,
 		const char *callbackPhase) const;
+	bool acceptConcurrentRuntimeExit(int result, const char *callbackPhase);
 	bool captureCyberKeyboardCommand();
 	bool serviceCyberKeyboardCommand();
 	void bindBa0Frame(uint frameIndex);
