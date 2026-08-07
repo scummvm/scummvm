@@ -164,7 +164,7 @@ void CursorManager::update(uint cursorIndex) {
 void CursorManager::refresh() {
 	applyFrame();
 	setVisible(true);
-	debugC(3, kDebugCursor, "Ripper: refreshed cursor=%u frame=%u", _cursorIndex,
+	debugC(11, kDebugCursor, "Ripper: refreshed cursor=%u frame=%u", _cursorIndex,
 		_frameIndex);
 }
 
