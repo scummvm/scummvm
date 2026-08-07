@@ -259,6 +259,9 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 			if (((event.event == kEventMouseUp) || (event.event == kEventRightMouseUp)) && _vm->getVersion() < 400) {
 				scriptId = _currentMouseDownSpriteScriptID;
 				immediate = _currentMouseDownSpriteImmediate;
+			} else if (((event.event == kEventKeyDown) || (event.event == kEventKeyUp)) && _vm->getVersion() < 400) {
+				scriptId = _currentKeyDownSpriteScriptID;
+				immediate = _currentKeyDownSpriteImmediate;
 			} else {
 				// clickOn must reflect the release sprite so drop-target scripts
 				// can identify the channel
@@ -339,6 +342,8 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 			//
 			// mouseEnter and mouseLeave events should also defer to the value of channelId.
 			CastMemberID targetCast = _currentMouseDownCastID;
+			if ((event.event == kEventKeyUp) || (event.event == kEventKeyDown))
+				targetCast = _currentKeyDownCastID;
 			if ((event.event == kEventMouseDown) || (event.event == kEventRightMouseDown) ||
 				(event.event == kEventMouseEnter) || (event.event == kEventMouseLeave)) {
 				if (!event.channelId)
