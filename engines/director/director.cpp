@@ -237,10 +237,10 @@ bool DirectorEngine::isWindowRegistered(Window *window) const {
 void DirectorEngine::setCurrentWindow(Window *window) {
 	if (_currentWindow == window)
 		return;
+	window->incRefCount();
 	if (_currentWindow)
 		_currentWindow->decRefCount();
 	_currentWindow = window;
-	_currentWindow->incRefCount();
 }
 
 void DirectorEngine::setVersion(uint16 version) {
