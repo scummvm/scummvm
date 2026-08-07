@@ -170,17 +170,28 @@ void SewingMachinePuzzle::feedCloth(const Common::Point &delta) {
 	drawCloth();
 	checkSeam();
 
-	// Reaching any bottom trigger finishes the seam.
+	// Reaching a bottom trigger whose mistake-flag gate is satisfied finishes the seam.
 	if (!_solved) {
 		Common::Point end = needleInStrip();
 		for (uint i = 0; i < _triggerZones.size(); ++i) {
-			if (_zones[_triggerZones[i]].rect.contains(end)) {
+			if (triggerFires(_zones[_triggerZones[i]], end)) {
 				_solved = true;
 				_state = kActionTrigger;
 				break;
 			}
 		}
 	}
+}
+
+bool SewingMachinePuzzle::triggerFires(const ActionZone &z, const Common::Point &needle) const {
+	if (!z.rect.contains(needle)) {
+		return false;
+	}
+
+	// Both triggers gate on the mistake flag (val49): the narrow zone fires only on a
+	// clean run (flag clear, val4b 0 -> EV_Solved_Dress), the wide zone only when a
+	// mistake was made (flag set, val4b 1 -> EV_Tried_Dress), so they are exclusive.
+	return z.val49 == kFlagNoLabel || NancySceneState.getEventFlag(z.val49, z.val4b);
 }
 
 void SewingMachinePuzzle::checkSeam() {
@@ -288,14 +299,14 @@ void SewingMachinePuzzle::execute() {
 	case kRun:
 		break;
 	case kActionTrigger: {
-		// Raise a flag for every bottom trigger the needle finished inside: the wide
-		// zone marks the seam attempted, the narrow (centered) zone marks it solved.
+		// Raise the flag for whichever bottom trigger fires: a clean run finishes in the
+		// narrow zone (EV_Solved_Dress), a mistaken one in the wide zone (EV_Tried_Dress).
 		// They share the win scene, so cross-dissolve to it once.
 		Common::Point end = needleInStrip();
 		const ActionZone *sceneZone = nullptr;
 		for (uint i = 0; i < _triggerZones.size(); ++i) {
 			const ActionZone &tz = _zones[_triggerZones[i]];
-			if (!tz.rect.contains(end)) {
+			if (!triggerFires(tz, end)) {
 				continue;
 			}
 			if (tz.tailId != -1) {
@@ -323,6 +334,19 @@ void SewingMachinePuzzle::execute() {
 void SewingMachinePuzzle::handleInput(NancyInput &input) {
 	if (_state != kRun) {
 		return;
+	}
+
+	// Cheat: Ctrl+Shift+C forgives any mistakes, clearing the collision flag so a
+	// finished seam still counts as a clean solve. The off-seam latch is left as-is so
+	// clearing while still off the line doesn't instantly re-flag; the next fresh stray
+	// does.
+	for (uint i = 0; i < input.otherKbdInput.size(); ++i) {
+		const Common::KeyState &key = input.otherKbdInput[i];
+		if ((key.flags & Common::KBD_CTRL) && (key.flags & Common::KBD_SHIFT) &&
+				key.keycode == Common::KEYCODE_c && _collisionZone >= 0) {
+			NancySceneState.setEventFlag(_zones[_collisionZone].tailId, g_nancy->_false);
+			debug("Sewing cheat: mistakes cleared");
+		}
 	}
 
 	g_nancy->_cursor->setCursorType(CursorManager::kHotspot);

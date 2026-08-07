@@ -64,6 +64,9 @@ protected:
 	// Advances the sewing by a drag delta, marking the puzzle solved once the whole
 	// seam has been fed through.
 	void feedCloth(const Common::Point &delta);
+	// Whether a bottom trigger fires: the needle is inside it and its mistake-flag gate
+	// matches (narrow = clean run, wide = a mistake was made).
+	bool triggerFires(const ActionZone &z, const Common::Point &needle) const;
 
 	// Tests the needle against the seam mask; leaving the marked corridor plays a
 	// mistake line and sets the zone's flag (edge-triggered, once per excursion).
