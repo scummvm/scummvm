@@ -1443,6 +1443,34 @@ bool ScriptManager::captureCyberKeyboardCommand() {
 	if (command != kCyberLeftCommand && command != kCyberRightCommand &&
 			command != kCyberChooseCommand && command != kCyberEscapeCommand)
 		return false;
+	// PollInteractionAndResolveSelection at 0x13c8d consumes chooser input but
+	// only returns when the command matches an enabled frame interaction. This
+	// matters while an IC_P* idle callback is waiting to open its text control:
+	// those frames have no interactions, so Left, Right, and Enter must not stop
+	// the media sequence before HandleSceneEntryAsyncTextRequest at 0x157a1 runs.
+	if (command != kCyberEscapeCommand) {
+		bool hasBoundInteraction = false;
+		if (_runtime.activeFrame < _runtime.activeScript.getFrames().size()) {
+			const ScriptFrame &frame = _runtime.activeScript.getFrames()[_runtime.activeFrame];
+			for (uint relativeIndex = 0; relativeIndex < frame.interactionCount; ++relativeIndex) {
+				const uint candidateIndex = frame.firstInteractionIndex + relativeIndex;
+				if (relativeIndex < _runtime.activeInteractionEnabled.size() &&
+						_runtime.activeInteractionEnabled[relativeIndex] &&
+						candidateIndex < _runtime.activeScript.getInteractions().size() &&
+						_runtime.activeScript.getInteractions()[candidateIndex].keyboardCommand == command) {
+					hasBoundInteraction = true;
+					break;
+				}
+			}
+		}
+		if (!hasBoundInteraction) {
+			_engine->getInput()->consumeKey();
+			debugC(3, kDebugCyber,
+				"Ripper: ignored unbound Cyber keyboard command=0x%04x script='%s' frame=%u",
+				command, _runtime.activeScript.getMemberName().c_str(), _runtime.activeFrame);
+			return false;
+		}
+	}
 	_runtime.cyberKeyboardCommand = _engine->getInput()->consumeKey();
 	debugC(3, kDebugCyber,
 		"Ripper: captured Cyber keyboard command=0x%04x script='%s' frame=%u",
