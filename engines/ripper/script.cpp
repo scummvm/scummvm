@@ -1374,8 +1374,19 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 					_runtime.pendingSceneMember.c_str(), _runtime.pendingSceneEntryLabel.c_str());
 				return performPendingSceneTransition();
 			}
-			if (allowEscSpace)
-				_dialogue->rebuildPresentationBands("controlled-media-complete");
+			// ExecutePresentationEntry at 0x1652a routes .AVI through
+			// RunMediaPresentation at 0x168af, whose controlled path restores
+			// the surrounding display. Other extensions enter RunMediaSequence
+			// at 0x1e516 and retain their final frame, including full-screen
+			// document presentations such as KK_Z12.SMK.
+			if (allowEscSpace && mediaPath.hasSuffixIgnoreCase(".avi")) {
+				_dialogue->rebuildPresentationBands("controlled-avi-complete");
+			} else if (allowEscSpace) {
+				debugC(2, kDebugScene,
+					"Ripper: retained controlled sequence display media='%s' "
+					"route=RunMediaSequence@0x1e516",
+					mediaPath.c_str());
+			}
 			if (waitsForSceneInput)
 				return true;
 		}
