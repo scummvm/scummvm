@@ -215,7 +215,8 @@ SceneRuntimeState::SceneRuntimeState() : activeFrame(0), frontEndActionMask(0xff
 		cyberKeyboardCommand(0) {
 }
 
-ScriptManager::ScriptManager(RipperEngine *engine) : _engine(engine), _sceneCallbackFrame(0),
+ScriptManager::ScriptManager(RipperEngine *engine) : _engine(engine), _runtimeRestorePending(false),
+		_sceneCallbackFrame(0),
 		_activeIdleMediaCallback(nullptr), _chooserTemplateMode(0),
 		_briefing(new BriefingManager(engine)), _dialogue(new DialogueChooser()) {
 }
@@ -347,6 +348,11 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 			!restoredConcurrent.load(_engine->getResources()->scripts(), concurrentMember))
 		return false;
 
+	// RestoreSavedRunState at 0x1b8dd replaces the retail scene runtime only
+	// after RunSaveRestoreSlotMenu's -5 result has unwound the current frame.
+	// ScummVM loads from inside its modal toolbar, so mark the replacement before
+	// invalidating any frame references held by the active presentation stack.
+	_runtimeRestorePending = true;
 	_runtime.activeScript = Common::move(restoredBa0);
 	_runtime.concurrentScript = Common::move(restoredConcurrent);
 	_runtime.concurrentEntryLabel = concurrentEntry;
@@ -1309,6 +1315,15 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 				loopUntilInput, allowEscSpace,
 				idleTextRequest ? &idleCallback : nullptr, &idleCommand))
 				return false;
+			if (_runtimeRestorePending) {
+				// PollInteractionAndResolveSelection at 0x13c8d propagates the
+				// restore result before ExecuteSceneFrameAndInteractions at
+				// 0x13277 reads the old frame or runs another callback.
+				debugC(1, kDebugSaveLoad,
+					"Ripper: unwound replaced active presentation media='%s'",
+					mediaPath.c_str());
+				return true;
+			}
 			if (_runtime.cyberKeyboardCommand == kCyberEscapeCommand) {
 				if (!serviceCyberKeyboardCommand())
 					return false;
@@ -1491,6 +1506,12 @@ bool ScriptManager::serviceCyberKeyboardCommand() {
 }
 
 bool ScriptManager::serviceScene() {
+	if (_runtimeRestorePending) {
+		_runtimeRestorePending = false;
+		debugC(1, kDebugSaveLoad,
+			"Ripper: continuing loaded script runtime member='%s' frame=%u",
+			_runtime.activeScript.getMemberName().c_str(), _runtime.activeFrame);
+	}
 	if (_runtime.resumeLoadedPresentation) {
 		_runtime.resumeLoadedPresentation = false;
 		const ScriptFrame &frame = _runtime.activeScript.getFrames()[_runtime.activeFrame];
@@ -1501,6 +1522,8 @@ bool ScriptManager::serviceScene() {
 			_runtime.activeFrame, label.c_str(), mediaPath.c_str());
 		if (!_engine->getMedia()->playScene(mediaPath, frame.x, frame.y, false, true, false))
 			return false;
+		if (_runtimeRestorePending)
+			return true;
 		if (!_runtime.pendingSceneMember.empty())
 			return performPendingSceneTransition();
 	}
