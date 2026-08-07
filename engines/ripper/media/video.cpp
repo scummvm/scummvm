@@ -788,7 +788,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 
 bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::String &name,
 		bool allowEscSpace, int overrideX, int overrideY, int overrideOriginY,
-		bool serviceSceneUi, bool rememberVideoPalette) {
+		bool serviceSceneUi, bool rememberVideoPalette, uint displayScale) {
 	IavfMovie movie;
 	if (!parseIavf(stream, name, movie)) {
 		warning("Ripper: invalid IAVF presentation '%s'", name.c_str());
@@ -873,7 +873,7 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		plan.timeline.frameAudioOffsets = frameAudioOffsets;
 		plan.timeline.audioByteRate = audioByteRate;
 		plan.timeline.timelineStartMillis = timelineStartMillis;
-		plan.placement.displayScale = kAutoPacketizedDisplayScale;
+		plan.placement.displayScale = displayScale;
 		plan.palette.patchInterfacePalette = false;
 		plan.placement.originY = segmentOriginY;
 		plan.input.serviceSceneUi = serviceSceneUi;
@@ -1064,6 +1064,43 @@ bool MediaPlayer::playWacMedia(const Common::String &path, int x, int y) {
 	Common::String source;
 	const bool result = playValidatedSmacker(
 		openSource(path, kSourceDirectFile, source), path, "WAC", plan);
+	_input->drainKeys();
+	return result;
+}
+
+bool MediaPlayer::playWacPresentation(const Common::String &path, int x, int y) {
+	// RunWacStillImageScreenWithOptionalPresentation at 0x22a32 temporarily
+	// selects video mode 1 before calling RunMediaPresentation at 0x168af with
+	// the centered still-image origin. InitializeMediaPresentationDisplayModeCallback
+	// at 0x163a8 leaves that 300x200 branch unscaled in mode 1.
+	debugC(1, kDebugVideo,
+		"Ripper: entering WAC packetized presentation media='%s' position=%d,%d scale=1",
+		path.c_str(), x, y);
+	Common::String source;
+	Common::SeekableReadStream *stream = openSource(path, kSourceDirectFile, source);
+	if (!stream) {
+		warning("Ripper: could not open WAC packetized presentation '%s'", path.c_str());
+		return false;
+	}
+	if (detectMediaFormat(*stream) != kMediaFormatIavf) {
+		warning("Ripper: unsupported WAC presentation format for '%s'", path.c_str());
+		delete stream;
+		return false;
+	}
+
+	IndexedDisplaySnapshot displayContext;
+	const bool captured = displayContext.capture();
+	bool result = playIavf(*stream, path, true, x, y, 0, false, !captured, 1);
+	delete stream;
+	if (captured && !_engine->shouldQuit()) {
+		const bool restored = displayContext.restore();
+		debugC(restored ? 2 : 1, kDebugVideo,
+			"Ripper: restored WAC packetized presentation display media='%s' success=%d size=%dx%d",
+			path.c_str(), restored, displayContext.bounds().width(),
+			displayContext.bounds().height());
+		if (!restored)
+			result = false;
+	}
 	_input->drainKeys();
 	return result;
 }

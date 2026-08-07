@@ -317,15 +317,16 @@ uint16 WacStillImageViewer::runInternal(byte entryIndex,
 						_database->engine()->getSettings();
 					const uint savedVideoMode = settings->getVideoMode();
 					settings->setVideoMode(1);
-					const bool played = _database->engine()->getMedia()->play(
-						mediaPath, true, 0, 0);
+					const bool played = _database->engine()->getMedia()->playWacPresentation(
+						mediaPath, origin.x, origin.y);
 					settings->setVideoMode(savedVideoMode);
 					_database->engine()->getMilestones()->set(
 						completionFlag, true,
 						"wac-picture-presentation");
 					debugC(1, kDebugWac,
-						"Ripper: WAC picture presentation entry=%u media='%s' played=%d gate=0x%x completion=0x%x value=%d videoMode=%u restoredVideoMode=%u",
+						"Ripper: WAC picture presentation entry=%u media='%s' played=%d position=%d,%d scale=1 gate=0x%x completion=0x%x value=%d videoMode=%u restoredVideoMode=%u",
 						entryIndex, mediaPath.c_str(), played,
+						origin.x, origin.y,
 						presentationFlag, completionFlag,
 						_database->engine()->getMilestones()->isSet(
 							completionFlag), 1U, savedVideoMode);
