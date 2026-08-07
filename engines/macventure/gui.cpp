@@ -846,15 +846,7 @@ void Gui::drawInventories() {
 		drawObjectsInWindow(data, srf);
 
 		if (data.refcon == _lassoWinRef && _lassoBeingDrawn) {
-			Common::Point topLeft(_lassoStart);
-			topLeft.y -= 12;
-			Common::Point bottomRight(_lassoEnd);
-			bottomRight.y -= 12;
-			if (topLeft.x > bottomRight.x)
-				SWAP(topLeft.x, bottomRight.x);
-			if (topLeft.y > bottomRight.y)
-				SWAP(topLeft.y, bottomRight.y);
-			Common::Rect lassoRect(topLeft, bottomRight);
+			Common::Rect lassoRect = calculateLassoRect(win);
 
 			Graphics::MacPlotData plotData(srf, nullptr, &_wm.getBuiltinPatterns(), kPatternCheckers2, 0, 0, {1, 1}, kColorWhite, false);
 			Graphics::Primitives &primitives = _wm.getDrawPrimitives();
@@ -1434,6 +1426,23 @@ void Gui::handleDragRelease(bool shiftPressed, bool isDoubleClick) {
 	}
 }
 
+Common::Rect Gui::calculateLassoRect(Graphics::MacWindow *win) {
+	Common::Point topLeft(_lassoStart);
+	Common::Point bottomRight(_lassoEnd);
+	if (topLeft.x > bottomRight.x)
+		SWAP(topLeft.x, bottomRight.x);
+	if (topLeft.y > bottomRight.y)
+		SWAP(topLeft.y, bottomRight.y);
+
+	Common::Rect lassoRect(topLeft, bottomRight);
+
+	const Common::Rect &innerDims = win->getInnerDimensions();
+	const Common::Rect &outerDims = win->getDimensions();
+	lassoRect.translate(outerDims.left - innerDims.left, outerDims.top - innerDims.top);
+
+	return lassoRect;
+}
+
 Common::Rect Gui::calculateClickRect(Common::Point clickPos, Common::Rect windowBounds) {
 	int left = clickPos.x - windowBounds.left;
 	int top = clickPos.y - windowBounds.top;
@@ -1869,13 +1878,8 @@ bool Gui::processInventoryEvents(WindowReference ref, WindowClick click, Common:
 		if (_lassoBeingDrawn && !_draggedObjects.size()) {
 			WindowData &data = findWindowData((WindowReference)ref);
 
-			Common::Point topLeft(_lassoStart);
-			Common::Point bottomRight(_lassoEnd);
-			if (topLeft.x > bottomRight.x)
-				SWAP(topLeft.x, bottomRight.x);
-			if (topLeft.y > bottomRight.y)
-				SWAP(topLeft.y, bottomRight.y);
-			Common::Rect lassoArea(topLeft, bottomRight);
+			Common::Rect lassoArea = calculateLassoRect(findWindow(ref));
+			lassoArea.translate(data.scrollPos.x, data.scrollPos.y);
 
 			Common::Array<ObjID> &selectedObjects = _engine->getSelectedObjects();
 			bool selectSelfWindow = true;
