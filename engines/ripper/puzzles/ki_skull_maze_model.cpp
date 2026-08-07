@@ -83,6 +83,15 @@ bool KiSkullMazeModel::canMoveTo(uint cell) const {
 	return isAdjacent(cell) && isOpen(cell);
 }
 
+bool KiSkullMazeModel::applyMoveAndToggle(uint cell) {
+	if (!canMoveTo(cell))
+		return false;
+	setCurrentCell(cell);
+	for (uint step = 1; step <= 4; ++step)
+		toggleNeighbor(step);
+	return true;
+}
+
 bool KiSkullMazeModel::reachedExit() const {
 	return _currentCell / kBoardSize == kBoardSize - 1;
 }

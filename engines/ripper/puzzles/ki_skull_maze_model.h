@@ -52,6 +52,7 @@ public:
 	bool isOpen(uint cell) const;
 	bool isAdjacent(uint cell) const;
 	bool canMoveTo(uint cell) const;
+	bool applyMoveAndToggle(uint cell);
 	bool reachedExit() const;
 	bool isTrapped() const;
 	int toggleNeighbor(uint step);

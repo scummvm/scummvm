@@ -23,6 +23,7 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/formats/ini-file.h"
+#include "common/hashmap.h"
 #include "common/ptr.h"
 #include "common/stream.h"
 #include "common/system.h"
@@ -53,6 +54,11 @@ static const uint16 kHelpCommand = 0x3b00;
 static const uint kDosTickMillis = 55;
 static const uint kTerminalDelayTicks = 0x36;
 static const uint kFadeSteps = 9;
+static const uint kPuzzleHelpSearchDepth = 32;
+static const uint kPuzzleHelpSearchNodeLimit = 100000;
+static const byte kPuzzleHelpRecommendedColor = 255;
+static const uint kPuzzleHelpDitherMask = 3;
+static const int kPuzzleHelpBorderWidth = 2;
 static const byte kSkullTransparentColor = 0xff;
 static const byte kManTransparentColor = 0x2f;
 static const char kCompletionKeyword[] = "pretzel";
@@ -127,6 +133,134 @@ static bool readIniUint(const Common::INIFile &ini, const char *key,
 }
 
 } // End of anonymous namespace
+
+KiSkullMazePuzzle::DebugHelper::DebugHelper() :
+		_enabled(false), _recommendedCell(-1), _solutionDepth(0) {
+}
+
+void KiSkullMazePuzzle::DebugHelper::reset(bool enabled) {
+	_enabled = enabled;
+	_recommendedCell = -1;
+	_solutionDepth = 0;
+}
+
+bool KiSkullMazePuzzle::DebugHelper::sync(
+		const KiSkullMazePuzzle &puzzle) {
+	const bool enabled = puzzle._engine->isPuzzleHelpEnabled();
+	if (enabled == _enabled)
+		return false;
+
+	_enabled = enabled;
+	stateChanged(puzzle);
+	debugC(2, kDebugPuzzles,
+		"Ripper: KI skull-maze puzzle help enabled=%d recommendedCell=%d "
+		"solutionDepth=%u command=PUZZLE_HELP",
+		_enabled, _recommendedCell, _solutionDepth);
+	return true;
+}
+
+void KiSkullMazePuzzle::DebugHelper::stateChanging() {
+	_recommendedCell = -1;
+	_solutionDepth = 0;
+}
+
+Common::String KiSkullMazePuzzle::DebugHelper::searchKey(
+		const KiSkullMazeModel &model) const {
+	return model.stateString() + Common::String::format("#%u",
+		model.currentCell());
+}
+
+int KiSkullMazePuzzle::DebugHelper::findRecommendedCell(
+		const KiSkullMazePuzzle &puzzle, uint &solutionDepth,
+		uint &visitedStates) const {
+	typedef Common::HashMap<Common::String, bool> VisitedStateMap;
+	Common::Array<SearchNode> nodes;
+	VisitedStateMap visited;
+	SearchNode root;
+	root.model = puzzle._model;
+	root.depth = 0;
+	root.firstCell = -1;
+	nodes.push_back(root);
+	visited.setVal(searchKey(root.model), true);
+
+	for (uint nodeIndex = 0; nodeIndex < nodes.size(); ++nodeIndex) {
+		const SearchNode node = nodes[nodeIndex];
+		if (node.depth >= kPuzzleHelpSearchDepth)
+			continue;
+		for (uint cell = 0; cell < KiSkullMazeModel::kCellCount; ++cell) {
+			SearchNode next = node;
+			if (!next.model.applyMoveAndToggle(cell))
+				continue;
+			next.depth = node.depth + 1;
+			next.firstCell = node.depth == 0 ? cell : node.firstCell;
+			if (next.model.reachedExit()) {
+				solutionDepth = next.depth;
+				visitedStates = nodes.size();
+				return next.firstCell;
+			}
+
+			const Common::String key = searchKey(next.model);
+			if (visited.contains(key))
+				continue;
+			visited.setVal(key, true);
+			if (nodes.size() >= kPuzzleHelpSearchNodeLimit) {
+				visitedStates = nodes.size();
+				return -1;
+			}
+			nodes.push_back(next);
+		}
+	}
+
+	visitedStates = nodes.size();
+	return -1;
+}
+
+void KiSkullMazePuzzle::DebugHelper::stateChanged(
+		const KiSkullMazePuzzle &puzzle) {
+	stateChanging();
+	if (!_enabled || puzzle._movementDirection != 0 ||
+			puzzle._toggleStep != 0 || puzzle._terminalState != 0 ||
+			puzzle._model.reachedExit())
+		return;
+
+	uint visitedStates = 0;
+	_recommendedCell = findRecommendedCell(puzzle, _solutionDepth,
+		visitedStates);
+	debugC(2, kDebugPuzzles,
+		"Ripper: KI skull-maze puzzle help analyzed current=%u "
+		"recommendedCell=%d solutionDepth=%u visitedStates=%u "
+		"maxDepth=%u nodeLimit=%u color=%u",
+		puzzle._model.currentCell(), _recommendedCell, _solutionDepth,
+		visitedStates, kPuzzleHelpSearchDepth, kPuzzleHelpSearchNodeLimit,
+		kPuzzleHelpRecommendedColor);
+}
+
+void KiSkullMazePuzzle::DebugHelper::draw(
+		const KiSkullMazePuzzle &puzzle, byte *screen, uint pitch) const {
+	if (!_enabled || _recommendedCell < 0 ||
+			(uint)_recommendedCell >= KiSkullMazeModel::kCellCount ||
+			puzzle._movementDirection != 0 || puzzle._toggleStep != 0 ||
+			puzzle._terminalState != 0)
+		return;
+
+	const Common::Point &position = kCellPositions[_recommendedCell];
+	const int left = MAX<int>(position.x, 0);
+	const int top = MAX<int>(position.y, 0);
+	const int right = MIN<int>(position.x + puzzle._lids[0].width,
+		kRipperScreenWidth);
+	const int bottom = MIN<int>(position.y + puzzle._lids[0].height,
+		kRipperScreenHeight);
+	for (int y = top; y < bottom; ++y) {
+		for (int x = left; x < right; ++x) {
+			const bool border = x - left < kPuzzleHelpBorderWidth ||
+				right - x <= kPuzzleHelpBorderWidth ||
+				y - top < kPuzzleHelpBorderWidth ||
+				bottom - y <= kPuzzleHelpBorderWidth;
+			if (border || ((x + y) & kPuzzleHelpDitherMask) == 0)
+				screen[y * pitch + x] = kPuzzleHelpRecommendedColor;
+		}
+	}
+}
 
 KiSkullMazePuzzle::Config::Config() :
 		randomizer(4), frameRate(15), doorDelayTicks(9), startPosition(3),
@@ -323,6 +457,9 @@ Common::Point KiSkullMazePuzzle::playerPosition(uint direction,
 		uint originCell) const {
 	if (originCell >= KiSkullMazeModel::kCellCount || direction >= 5)
 		return Common::Point();
+	// RunKiSkullMazePuzzleScene at 0x2ff55 derives the sprite top-left
+	// directly from the lid anchor and these per-direction offsets. This is
+	// intentionally not a conventional feet-centered sprite position.
 	const int centeredX = _lids[0].width / 2 -
 		_manAnimations[0].width + 6;
 	return Common::Point(
@@ -374,6 +511,7 @@ void KiSkullMazePuzzle::render() const {
 		direction == 0 ? _model.currentCell() : _movementOriginCell);
 	drawFrame(screen, surface->pitch, man.frames[frame], position.x,
 		position.y, kManTransparentColor);
+	_debugHelper.draw(*this, screen, surface->pitch);
 	g_system->unlockScreen();
 	presentScreen();
 }
@@ -418,6 +556,7 @@ void KiSkullMazePuzzle::updateCursor(const Common::Point &point) {
 bool KiSkullMazePuzzle::startMove(uint targetCell, uint32 now) {
 	if (!_model.canMoveTo(targetCell))
 		return false;
+	_debugHelper.stateChanging();
 	const uint current = _model.currentCell();
 	const uint currentRow = current / KiSkullMazeModel::kBoardSize;
 	const uint currentColumn = current % KiSkullMazeModel::kBoardSize;
@@ -502,10 +641,12 @@ bool KiSkullMazePuzzle::advanceToggle(uint32 now) {
 		"Ripper: KI skull-maze toggled neighbor step=%u cell=%d state=%d",
 		step, changedCell,
 		changedCell >= 0 ? _model.cellState(changedCell) : -1);
-	if (step == 4)
+	if (step == 4) {
 		_toggleStep = 0;
-	else
+		_debugHelper.stateChanged(*this);
+	} else {
 		_nextToggleMillis = now + _config.doorDelayTicks * kDosTickMillis;
+	}
 	return true;
 }
 
@@ -535,12 +676,17 @@ bool KiSkullMazePuzzle::spawnHazard(uint32 now) {
 		cell, cell / KiSkullMazeModel::kBoardSize,
 		cell % KiSkullMazeModel::kBoardSize, _model.blockedCellCount(),
 		protectedCell, _hazardDelayTicks);
+	if (_movementDirection == 0 && _toggleStep == 0)
+		_debugHelper.stateChanged(*this);
+	else
+		_debugHelper.stateChanging();
 	return true;
 }
 
 void KiSkullMazePuzzle::beginTerminalState(uint state, uint32 now) {
 	if (_terminalState != 0)
 		return;
+	_debugHelper.stateChanging();
 	_terminalState = state;
 	_terminalDeadlineMillis = now + kTerminalDelayTicks * kDosTickMillis;
 	debugC(1, kDebugPuzzles,
@@ -630,6 +776,8 @@ KiSkullMazePuzzle::Result KiSkullMazePuzzle::run(uint completionFlag) {
 	}
 
 	_model.reset(_config.randomizer, _config.startPosition);
+	_debugHelper.reset(_engine->isPuzzleHelpEnabled());
+	_debugHelper.stateChanged(*this);
 	CursorManager *cursor = _engine->getCursor();
 	const uint savedSelectionIndex = cursor->getSelectionIndex();
 	const bool savedCursorVisible = cursor->isVisible();
@@ -650,9 +798,20 @@ KiSkullMazePuzzle::Result KiSkullMazePuzzle::run(uint completionFlag) {
 		"Ripper: entered KI skull-maze puzzle function="
 		"RunKiSkullMazePuzzleScene@0x2ff55 milestone=%u grid=8x8 "
 		"controls=0x672..0x6b1 help=0x%x start=%u seed=%u "
-		"frameRate=%u hazardDelayTicks=%u",
+		"frameRate=%u hazardDelayTicks=%u puzzleHelp=%d",
 		completionFlag, kHelpSelectionTable, _model.currentCell(),
-		_config.randomizer, _config.frameRate, _hazardDelayTicks);
+		_config.randomizer, _config.frameRate, _hazardDelayTicks,
+		_engine->isPuzzleHelpEnabled());
+	const Common::Point startPlayerPosition = playerPosition(0,
+		_model.currentCell());
+	debugC(2, kDebugPuzzles,
+		"Ripper: KI skull-maze retail start cell=%u ordinal=%u "
+		"lidAnchor=%d,%d playerTopLeft=%d,%d idleSize=%ux%u",
+		_model.currentCell(), _model.currentCell() + 1,
+		kCellPositions[_model.currentCell()].x,
+		kCellPositions[_model.currentCell()].y,
+		startPlayerPosition.x, startPlayerPosition.y,
+		_manAnimations[0].width, _manAnimations[0].height);
 	debugC(3, kDebugPuzzles,
 		"Ripper: KI skull-maze initial cells=[%s] hiddenKeyword='%s'",
 		_model.stateString().c_str(), kCompletionKeyword);
@@ -663,6 +822,8 @@ KiSkullMazePuzzle::Result KiSkullMazePuzzle::run(uint completionFlag) {
 			_engine->quitGame();
 			break;
 		}
+		if (_debugHelper.sync(*this))
+			render();
 
 		uint16 command = 0;
 		if (_engine->getInput()->hasPendingKey())
