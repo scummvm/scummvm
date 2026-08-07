@@ -132,14 +132,14 @@ void popup_draw() {
 					box->xs - 4, 1, DIALOG_BLACK_COLOR);
 			} else {
 				int tab = box->tab[lineCtr];
-				int xp = (tab & 0x7f) + box->x + 5;
+				int xp = (tab & ~(POPUP_UNDERLINE | POPUP_DOWNPIXEL)) + box->x + 5;
 				int yp = askY;
-				if (tab & 0x40)
+				if (tab & POPUP_DOWNPIXEL)
 					yp++;
 
 				font_write(box_param.font, &scr_main, box->text[lineCtr], xp, yp, 1);
 
-				if (tab & 0x80) {
+				if (tab & POPUP_UNDERLINE) {
 					buffer_rect_fill(scr_main, xp, yp + box_param.font->max_y_size,
 						font_string_width(box_param.font, box->text[lineCtr], 1), 1, DIALOG_BLACK_COLOR);
 				}
