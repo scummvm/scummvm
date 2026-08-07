@@ -49,6 +49,8 @@ public:
 	void drawTextbox();
 	void clear() override;
 
+	bool hasBeenDrawn() const;
+
 	void addTextLine(const Common::String &text, uint32 autoClearTime = 0);
 	void setOverrideFont(const uint fontID);
 

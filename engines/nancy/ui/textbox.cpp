@@ -217,6 +217,13 @@ void Textbox::clear() {
 	}
 }
 
+bool Textbox::hasBeenDrawn() const {
+	if (_scrollTextBox)
+		return !_scrollTextBox->needsRedraw();
+
+	return Misc::HypertextParser::hasBeenDrawn();
+}
+
 void Textbox::addTextLine(const Common::String &text, uint32 autoClearTime) {
 	// WORKAROUND: Don't draw debug strings in the textbox. Refer to bug
 	// #16745 for a case in Nancy9, scene 2579 (after making a sandwich).
