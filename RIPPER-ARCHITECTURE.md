@@ -872,6 +872,30 @@
   dates sets flag 341. These three progress flags persist across visits. The
   supplied completion flag is set only during puzzle cleanup when all three
   are present; partial or invalid input does not set it.
+- Scene action 18 calls `RunKiSkullMazePuzzleScene` at `0x2ff55` with the
+  caller-supplied completion flag in EAX. It presents the 640-by-400
+  `KI_1.PCX` backing, loads `KI_LID0.BBM` through `KI_LID4.BBM`, and builds
+  controls `0x672` through `0x6b1` at the 64 physical X/Y points rooted at
+  `0x84574` and `0x844f4`. `KI_SKULL.SMK` animates at the upper right while
+  `KI_MAN0.SMK` through `KI_MAN4.SMK` supply idle, down, up, left, and right
+  player motion. The foreground-cell list at `0x2ea22` keeps the ten nearest
+  lids in front of the skull animation.
+- The `[setting]` section of `KI%d.INI` supplies the MSVC-LCG seed, playback
+  rate, post-move lid delay, starting cell, initial skull delay, delay decrease
+  interval, decrement, and minimum. `GenerateRandomInt15` at `0x49a2f`
+  initializes each cell to state `0..3`; states 1 and 3 are selectable while
+  state 4 is a permanent skull block. After an adjacent move, a state-1 lid
+  toggles its four cardinal neighbors and state 3 toggles its four diagonal
+  neighbors. Timed hazards choose a non-skull cell other than the protected
+  destination, then reduce their spawn delay according to the INI values.
+  `KI_2.WAV` accompanies movement, `KI_0.WAV` accompanies neighbor changes,
+  and `KI_1.WAV` accompanies new skulls.
+- Reaching logical row 7 starts the 54-DOS-tick success delay and then sets the
+  supplied flag. Having no selectable cardinal neighbor starts
+  the same delay but exits without setting the flag. Escape also exits without
+  completion, F1 opens help table `0x1b9`, and the case-insensitive hidden
+  keyword `pretzel` completes immediately. Cleanup fades and clears the
+  puzzle display before `KI.RUN` selects its win or loss presentation.
 - Scene action 21 calls `RunSixDigitCodePuzzleScene` at `0x3e913` with the
   caller-supplied completion flag. It retains the current scene framebuffer,
   loads `BNKNUM0.BBM` through `BNKNUM9.BBM` for the six display cells and
