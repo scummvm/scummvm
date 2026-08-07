@@ -530,9 +530,8 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 	if (action == kSceneActionAppendNotebookText)
 		return engine->getWac()->appendNotebookResourceString(argument);
 	if (action == kSceneActionTerminateRuntime) {
-		if (!manager._runtime.cyberActive)
-			return false;
-		manager.requestCyberExit("scene-action-9999");
+		if (manager._runtime.cyberActive)
+			manager.requestCyberExit("scene-action-9999");
 		callbackResult = -4;
 		stopCallback = true;
 		return true;
