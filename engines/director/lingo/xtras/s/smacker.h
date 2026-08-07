@@ -76,6 +76,8 @@ void m_SmackSetDisplayMode(int nargs);
 void m_SmackGetSummary(int nargs);
 void m_SmackScreenMethod(int nargs);
 
+void playSmacker(const Common::String &videoPath, const Common::Rect &bbox, bool usePalette);
+
 } // End of namespace SmackerXtra
 
 } // End of namespace Director

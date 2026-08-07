@@ -20,8 +20,10 @@
  */
 
 #include "common/system.h"
+#include "video/smk_decoder.h"
 
 #include "director/director.h"
+#include "director/images.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
@@ -168,6 +170,90 @@ void SmackerXtra::m_new(int nargs) {
 	g_lingo->dropStack(nargs);
 	g_lingo->push(g_lingo->_state->me);
 }
+
+void SmackerXtra::playSmacker(const Common::String &videoPath, const Common::Rect &bbox, bool usePalette) {
+	Video::SmackerDecoder *video = new Video::SmackerDecoder();
+	bool result = video->loadFile(findPath(videoPath));
+	if (!result) {
+		warning("playSmacker: Smacker video not loaded: %s", videoPath.c_str());
+		delete video;
+		return;
+	}
+
+	// save the current palette
+	byte origPalette[256 * 3];
+	uint16 origCount = g_director->getPaletteColorCount();
+
+	if (origCount > 256) {
+		warning("playSmacker: too big palette, %d > 256", origCount);
+		origCount = 256;
+	}
+
+	memcpy(origPalette, g_director->getPalette(), origCount * 3);
+	byte videoPalette[256 * 3];
+
+	Graphics::Surface const *frame = nullptr;
+	Graphics::ManagedSurface *dest = new Graphics::ManagedSurface(bbox.width(), bbox.height(), g_director->_pixelformat);
+	Common::Event event;
+	bool keepPlaying = true;
+	video->start();
+	memcpy(videoPalette, origPalette, 256 * 3);
+	while (!video->endOfVideo()) {
+		if (g_director->pollEvent(event)) {
+			switch (event.type) {
+				case Common::EVENT_QUIT:
+					g_director->processEventQUIT();
+					// fallthrough
+				case Common::EVENT_KEYDOWN:
+				case Common::EVENT_RBUTTONDOWN:
+				case Common::EVENT_LBUTTONDOWN:
+					keepPlaying = false;
+					break;
+				default:
+					break;
+			}
+		}
+		if (!keepPlaying)
+			break;
+		if (video->needsUpdate()) {
+			frame = video->decodeNextFrame();
+			// Palette info gets set after the frame is decoded
+			if (video->hasDirtyPalette()) {
+				byte *palette = const_cast<byte *>(video->getPalette());
+				memcpy(videoPalette, palette, 256 * 3);
+				if (usePalette)
+					g_director->setPalette(videoPalette, 256);
+			}
+
+			copyStretchImg(
+				frame,
+				dest->surfacePtr(),
+				frame->getRect(),
+				dest->getBounds(),
+				videoPalette
+			);
+			g_system->copyRectToScreen(dest->getPixels(), dest->pitch, bbox.left, bbox.top, bbox.width(), bbox.height());
+
+			// Video palette order is going to be different to the screen, we need to untangle it
+			/*Graphics::Surface *dither = frame->convertTo(g_director->_wm->_pixelformat, videoPalette, 256,
+					usePalette ? videoPalette : origPalette, usePalette ? 256 : origCount, Graphics::kDitherNaive);
+			int width = MIN(dither->w + posX, (int)g_system->getWidth()) - bbox.left;
+			int height = MIN(dither->h + posY, (int)g_system->getHeight()) - bbox.top;
+			g_system->copyRectToScreen(dither->getPixels(), dither->pitch, bbox.left, bbox.top, width, height);
+			dither->free();
+			delete dither;*/
+		}
+		g_system->updateScreen();
+		g_director->delayMillis(10);
+	}
+
+	video->close();
+	delete video;
+	delete dest;
+	g_director->setPalette(origPalette, 256);
+
+}
+
 
 XOBJSTUB(SmackerXtra::m_SmackQuickPlay, 0)
 XOBJSTUB(SmackerXtra::m_SmackQuickPlayTrans, 0)
