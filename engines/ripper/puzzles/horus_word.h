@@ -45,6 +45,23 @@ public:
 	Result run(uint completionFlag);
 
 private:
+	class DebugHelper {
+	public:
+		DebugHelper();
+
+		void reset(bool enabled);
+		bool sync(const HorusWordPuzzle &puzzle);
+		void stateChanged(const HorusWordPuzzle &puzzle);
+		void draw(const HorusWordPuzzle &puzzle,
+			byte *screen, uint pitch) const;
+
+	private:
+		int findRecommendedLetter(const HorusWordPuzzle &puzzle) const;
+
+		bool _enabled;
+		int _recommendedLetter;
+	};
+
 	bool loadPcx(const Common::String &name, BitmapAssetFrame &frame);
 	bool loadBitmap(const Common::String &name, BitmapAssetFrame &frame);
 	bool loadAssets();
@@ -77,6 +94,7 @@ private:
 	Common::Array<int> _selectedLetters;
 	Common::Array<int> _letterPhases;
 	Common::Array<int> _letterTargets;
+	DebugHelper _debugHelper;
 	int _hoveredLetter;
 	uint32 _lastAnimationTick;
 	uint32 _settleDeadline;

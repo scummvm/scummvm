@@ -1280,6 +1280,14 @@
   immediately. Escape fades the active letters and exits without setting the
   flag, while F1 opens help table `0x1b3`. `AZTEC0`, `AZTEC2`, and `AZTEC3`
   provide the active-word, control, and reset audio cues.
+- The ScummVM-only `PUZZLE_HELP` overlay is isolated in
+  `HorusWordPuzzle::DebugHelper`. It reads the live attempt without modifying
+  input, letter state, validation, or milestone completion. Unselected letters
+  from `HORUS` receive sparse palette-254 guidance, while the next letter for
+  the current slot receives the denser palette-255 recommendation. The helper
+  recomputes after selections, rejected-letter release, and debugger toggle
+  changes; a completed incorrect attempt recommends `H` as soon as that control
+  is available so the retail immediate-retry path starts a fresh attempt.
 - Scene action 24 calls `RunTubeSwitchScene` at `0x25e18` with the
   caller-supplied completion flag. `GA1.RUN` callback `0xaf2` supplies flag 215
   (`solved vacuum tube puzzle`). The scene counts consumed inventory flags 102,
