@@ -28,6 +28,7 @@ namespace MADS {
 namespace RexNebular {
 
 extern int global_copy_verify();
+extern void copy_protection_fail_screen();
 
 } // namespace RexNebular
 } // namespace MADS

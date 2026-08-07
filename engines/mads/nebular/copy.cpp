@@ -20,14 +20,20 @@
  */
 
 #include "common/config-manager.h"
+#include "mads/core/buffer.h"
 #include "mads/core/env.h"
 #include "mads/core/font.h"
 #include "mads/core/game.h"
 #include "mads/core/global.h"
 #include "mads/core/imath.h"
+#include "mads/core/matte.h"
+#include "mads/core/mouse.h"
+#include "mads/core/pal.h"
+#include "mads/core/video.h"
 #include "mads/nebular/copy.h"
 #include "mads/nebular/global.h"
 #include "mads/nebular/popup.h"
+#include "mads/mads.h"
 
 namespace MADS {
 namespace RexNebular {
@@ -226,6 +232,108 @@ int global_copy_verify() {
 	}
 
 	return result;
+}
+
+// Word-wraps text onto scr_main at the given left margin, starting at y, breaking
+// lines so they stay within maxWidth pixels wide. Returns the y position following
+// the last line drawn.
+static int copy_fail_draw_paragraph(const char *text, int x, int y, int maxWidth) {
+	char lineBuf[256];
+	char wordBuf[64];
+	char candidate[256];
+	const char *p = text;
+
+	lineBuf[0] = '\0';
+
+	while (*p) {
+		int len = 0;
+		while (*p && *p != ' ' && len < (int)sizeof(wordBuf) - 1)
+			wordBuf[len++] = *p++;
+		wordBuf[len] = '\0';
+		while (*p == ' ')
+			++p;
+
+		if (lineBuf[0]) {
+			Common::strcpy_s(candidate, lineBuf);
+			Common::strcat_s(candidate, " ");
+			Common::strcat_s(candidate, wordBuf);
+		} else {
+			Common::strcpy_s(candidate, wordBuf);
+		}
+
+		if (lineBuf[0] && font_string_width(font_inter, candidate, 0) > maxWidth) {
+			font_write(font_inter, &scr_main, lineBuf, x, y, 0);
+			y += font_inter->max_y_size;
+			Common::strcpy_s(lineBuf, wordBuf);
+		} else {
+			Common::strcpy_s(lineBuf, candidate);
+		}
+	}
+
+	if (lineBuf[0]) {
+		font_write(font_inter, &scr_main, lineBuf, x, y, 0);
+		y += font_inter->max_y_size;
+	}
+
+	return y;
+}
+
+void copy_protection_fail_screen() {
+	static const char *const TITLE = "COPY PROTECTION FAILURE";
+
+	static const char *const BODY[] = {
+		"You have failed to enter the correct word on the copy protection screen. "
+		"If you are an honest, hard working person who purchased this game legitimately "
+		"and simply failed to type in the correct word, then we bow down humbly before "
+		"you and beg your forgiveness for this heinous inconvenience we have so callously "
+		"inflicted upon you.  We beseech you to run the program again and check your "
+		"manual or logbook very carefully for the correct word.",
+
+		"HOWEVER, if you are a nasty rodent-like person who has copied this program "
+		"illegally from a friend (Yes, we mean YOU, the guilty-looking one in the back "
+		"of the room!  That's right, stand up!), then BE IT KNOWN that SOON your teeth "
+		"will rot and your hair will turn green.  Your lawn will die, your car will break "
+		"down, and warts will grow on the index finger of your firstborn child.  Small "
+		"orange blotches will appear on your left leg, and your long lost Aunt Matilda "
+		"will arrive unexpectedly for a year-long visit.  The only way you can relieve "
+		"yourself of this immense karmic burden is to run down to your local software "
+		"store IMMEDIATELY and purchase a legal copy of this COOL ADVENTURE GAME.  "
+		"That way, none of these horrible things will happen and a whole generation of "
+		"talented designers, programmers, artists, and playtesters can stop wandering "
+		"aimlessly through the land at night."
+	};
+
+	const int LEFT_MARGIN = 10;
+	const int TEXT_WIDTH = 300;
+
+	mouse_hide();
+
+	// Force plain black/white regardless of whatever palette the prior scene left
+	// behind - this screen is shown right before the engine tears everything down.
+	pal_change_color(0, 0, 0, 0);
+	pal_change_color(15, 63, 63, 63);
+	font_set_colors(-1, 15, 15, 15);
+
+	buffer_fill(scr_main, 0);
+
+	int width = font_string_width(font_inter, TITLE, 0);
+	int y = 8;
+	font_write(font_inter, &scr_main, TITLE, (320 - width) / 2, y, 0);
+	y += font_inter->max_y_size + 2;
+	buffer_hline(scr_main, LEFT_MARGIN, 320 - LEFT_MARGIN, y, 15);
+	y += 4;
+
+	for (uint i = 0; i < ARRAYSIZE(BODY); ++i) {
+		y = copy_fail_draw_paragraph(BODY[i], LEFT_MARGIN, y, TEXT_WIDTH);
+		y += font_inter->max_y_size;
+	}
+
+	video_update(&scr_main, 0, 0, 0, 0, 320, 200);
+
+	g_engine->flushKeys();
+	while (!g_engine->hasPendingKey() && !g_engine->shouldQuit())
+		g_system->delayMillis(10);
+	g_engine->flushKeys();
 }
 
 } // namespace RexNebular
