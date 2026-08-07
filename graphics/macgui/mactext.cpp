@@ -2159,10 +2159,14 @@ void MacText::deletePreviousCharInternal(int *row, int *col) {
 		int pos = *col - 1;
 		uint ch = _canvas._text[*row].getChunkNum(&pos);
 
-		if (pos == (int)_canvas._text[*row].chunks[ch].text.size())
-			pos--;
+		int size = (int)_canvas._text[*row].chunks[ch].text.size();
 
-		_canvas._text[*row].chunks[ch].text.deleteChar(pos);
+		if (size > 0) {
+			if (pos == size)
+				pos--;
+
+			_canvas._text[*row].chunks[ch].text.deleteChar(pos);
+		}
 
 		(*col)--;
 	}
