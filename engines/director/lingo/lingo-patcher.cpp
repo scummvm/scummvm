@@ -557,6 +557,16 @@ macro InventoryArrowsClicked\r\
   updateStage\r\
 ";
 
+/*
+ * Noir: A Shadowy Thriller checks a file to determine if CD 1 or 2 is inserted.
+ * We assume all the files are in the same path.
+ */
+const char *const noirCDCheck = "\
+on hCorrectCD lNeedCD 	\r\
+   return 1 \r\
+end \r\
+";
+
 struct ScriptHandlerPatch {
 	const char *gameId;
 	const char *extra;
@@ -603,6 +613,7 @@ struct ScriptHandlerPatch {
 	{"gordak", nullptr, kPlatformWindows, "GORDAKCD.EXE", kMovieScript, 2, DEFAULT_CAST_LIB, &gordakDetectionFix},
 	{"getaheadmath", nullptr, kPlatformWindows, "HDFILES\\CHANNELS\\BASE.CST", kParentScript, 69, 2, &getaheadmathDiskFix},
 	{"jman", "v1.2", kPlatformMacintosh, "Support Files:Mars ESG Upper 03", kMovieScript, 322, DEFAULT_CAST_LIB, &jmanInventory},
+	{"noir", nullptr, kPlatformWindows, "SHARED.CST", kMovieScript, 9, 2, &noirCDCheck},
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, nullptr},
 
 };
