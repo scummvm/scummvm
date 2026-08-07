@@ -44,6 +44,7 @@ private:
 	Graphics::ManagedSurface _output;
 	Graphics::ManagedSurface _popup;
 	Common::Rect _popupRect;
+	bool _useOriginalMenus;
 	bool _popupActive = false;
 	bool _layoutLogged = false;
 
