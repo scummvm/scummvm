@@ -60,6 +60,8 @@ struct MADSGameDescription {
 
 #define GAMEOPTION_ORIGINAL_SAVELOAD   GUIO_GAMEOPTIONS7
 
+#define GAMEOPTION_ORIGINAL_MAC_MENUS  GUIO_GAMEOPTIONS8
+
 } // namespace MADS
 
 #endif
