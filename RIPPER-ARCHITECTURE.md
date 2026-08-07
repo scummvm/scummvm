@@ -927,9 +927,11 @@
   time limit, and creates controls `0x672` through `0x680` from the 15
   ten-byte X/Y/card records at `0x3e78d`. After the routine removes the
   retail 90-pixel Y origin, the first six empty target slots lie at y=158 and
-  the nine source cards lie at y=14. `BKGRND2` supplies the 640-by-400 board,
-  `SI1` through `SI9` supply the 68-by-112 slotted cards, and `BI1` through
-  `BI9` supply the 118-by-198 card attached to the pointer.
+  the nine source cards lie at y=14. Those are logical coordinates in the
+  640-by-300 scene page, which ScummVM places at physical y=50. `BKGRND2`
+  supplies that scene page, `SI1` through `SI9` supply the 68-by-112 slotted
+  cards, and `BI1` through `BI9` supply the 118-by-198 card attached to the
+  pointer.
 - A click swaps the selected slot's card ID with the held card ID. Placing a
   held card redraws the slot, taking an occupied card installs its large
   pointer overlay, and every swap compares the first six slots with the short
