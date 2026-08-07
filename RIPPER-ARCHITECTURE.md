@@ -603,9 +603,13 @@
   `leather apron`; positions 7 and 11 dispatch KA and KR directly.
 - `PollInteractionAndResolveSelection` at `0x13c8d` advances the suspended
   frame-idle callback and services its chooser control before translating the
-  returned command into a scene interaction. While an async text request owns
-  input, Enter and Escape therefore complete that request rather than selecting
-  a Cyber carousel hotspot or terminating its media presentation.
+  returned command into a scene interaction. Navigation commands that do not
+  match an enabled interaction are consumed without ending the interaction
+  poll; in particular, Left, Right, and Enter cannot interrupt an `IC_P*`
+  movie while its frame-idle callback is still waiting to create the password
+  control. While an async text request owns input, Enter and Escape therefore
+  complete that request rather than selecting a Cyber carousel hotspot or
+  terminating its media presentation.
 - `CreateSceneRuntime` at `0x12be7` stores the toolbar action mask supplied by
   `RunSceneScriptLoop` at runtime offset `+0x183`. Both `CYBRMENU.RUN` and
   `KR.RUN` are entered with mask zero, so `RunFrontEndActionMenu` at `0x18b3a`
