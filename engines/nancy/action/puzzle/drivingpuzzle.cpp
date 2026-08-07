@@ -147,12 +147,15 @@ void DrivingPuzzle::classifyZones(const Common::Array<ActionZone> &zones) {
 			_destinations.push_back(dest);
 			break;
 		}
-		case kZoneEventFlag: {	// checkpoint: sets an event flag once driven over
+		case kZoneEventFlag: {	// checkpoint: sets an event flag when driven into while armed
 			Checkpoint cp;
 			cp.rect = z.rect;
 			cp.flagId = z.tailId;
 			cp.flagValue = z.tailFlag;
-			cp.carInside = cp.rect.contains(spawn);
+			cp.condFlag = z.val49;
+			cp.condValue = z.val4b;
+			bool cond = cp.condFlag == -1 || NancySceneState.getEventFlag(cp.condFlag, cp.condValue);
+			cp.wasActive = cond && cp.rect.contains(spawn);
 			_checkpoints.push_back(cp);
 			break;
 		}
@@ -499,12 +502,11 @@ void DrivingPuzzle::updateChaser() {
 	const double slowSlope = 5.0;
 	_speedCap = dist >= slowRadius ? (double)_forwardSpeed : (double)_forwardSpeed - (slowRadius - dist) * slowSlope;
 
-	// While Nancy is still pursuing Jane (states 0 and 1, before Jane is caught and the
-	// crash sequence on the second path begins), letting the chaser leave the visible map
-	// means the player has lost her. The original only tests this in state 0 because its
-	// state stays there through the whole pursuit; here state advances to 1 as soon as its
-	// gate flag is clear, so the check has to cover both.
-	if (_chaseState < 2) {
+	// Losing Jane off the edge of the map is only a loss during the main pursuit, when the
+	// player must stay right behind her. Once a checkpoint clears the pursuit gate, the chase
+	// enters the shortcut phase: Nancy deliberately lets Jane go and races her to the state
+	// line by another road, so the chaser leaving the view is expected.
+	if (_chaseState == kPursuit) {
 		Common::Point cam = cameraOffset();
 		Common::Rect viewport(0, 0, _drawSurface.w, _drawSurface.h);
 		Common::Rect chaserRect(1, 1);
@@ -522,23 +524,23 @@ void DrivingPuzzle::updateChaser() {
 	// Chase state machine (mirrors the original): flags gating it are set by the chase's
 	// own checkpoints (zones2 type 0x0b) and by the scene scripts.
 	switch (_chaseState) {
-	case 0:
+	case kPursuit:
 		if (_chaseParams[kChaseGate01Flag] != -1 &&
 				NancySceneState.getEventFlag(_chaseParams[kChaseGate01Flag], g_nancy->_false)) {
-			_chaseState = 1;
+			_chaseState = kShortcut;
 		}
 		break;
-	case 1:
+	case kShortcut:
 		// Switch onto the second path once Jane is caught.
 		if (_chaseParams[kChaseGate12Flag] != -1 &&
 				NancySceneState.getEventFlag(_chaseParams[kChaseGate12Flag], g_nancy->_true)) {
 			_chaserOnPathB = true;
 			_chaserWaypoint = 0;
 			_chaseStarted = false;
-			_chaseState = 2;
+			_chaseState = kCaught;
 		}
 		break;
-	case 2:
+	case kCaught:
 		// The chaser has completed its route (Jane crashes) - the win.
 		if (_chaserWaypoint + 1 >= path.size()) {
 			armExitScene(_chaseParams[kChasePathEndScene], -1, 0);
@@ -662,15 +664,17 @@ void DrivingPuzzle::updatePhysics(int throttle, double cursorDist) {
 		hole.carInside = nowInside;
 	}
 
-	// Driving over a checkpoint (on entry) sets its event flag once.
+	// Driving into a checkpoint sets its event flag, but only while the checkpoint's own
+	// condition holds (so the chase phases fire in order). Edge-triggered on entering the
+	// armed state.
 	for (uint i = 0; i < _checkpoints.size(); ++i) {
 		Checkpoint &cp = _checkpoints[i];
-		bool nowInside = cp.rect.contains(next);
-		if (nowInside && !cp.carInside && !cp.triggered && cp.flagId != -1) {
-			cp.triggered = true;
+		bool cond = cp.condFlag == -1 || NancySceneState.getEventFlag(cp.condFlag, cp.condValue);
+		bool active = cond && cp.rect.contains(next);
+		if (active && !cp.wasActive && cp.flagId != -1) {
 			NancySceneState.setEventFlag(cp.flagId, cp.flagValue ? g_nancy->_true : g_nancy->_false);
 		}
-		cp.carInside = nowInside;
+		cp.wasActive = active;
 	}
 
 	// A drive-in destination (the chase finish line) fires on entry; a parking
@@ -698,6 +702,12 @@ void DrivingPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		if (_variant == kChase && _chaseParams[kChaseGate01Flag] != -1) {
+			// Arm the main pursuit: with the gate flag set the chase begins in state 0 (Nancy
+			// must keep Jane in sight). A checkpoint later clears it to start the shortcut. The
+			// original relies on the scene to set this; do it here so the phase is never skipped.
+			NancySceneState.setEventFlag(_chaseParams[kChaseGate01Flag], g_nancy->_true);
+		}
 		classifyZones(_zones);
 		if (_variant == kChase) {
 			classifyZones(_zones2);

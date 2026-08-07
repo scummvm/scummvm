@@ -106,20 +106,31 @@ protected:
 	// Index into _chaseParams (167). The five values are the chase's outcome scenes and
 	// the event flags that gate its state machine.
 	enum ChaseParam {
-		kChaseGate01Flag = 0,		// state 0 -> 1 once this flag is clear
+		kChaseGate01Flag = 0,		// clears to advance from kPursuit to kShortcut
 		kChaseOffViewScene = 1,		// scene entered when the chaser leaves the viewport
 		kChaseOffViewFlag = 2,		// flag set (to 1) on the off-viewport outcome
-		kChaseGate12Flag = 3,		// state 1 -> 2 (switch to the second path) once this flag is set
+		kChaseGate12Flag = 3,		// sets to advance from kShortcut to kCaught (second path)
 		kChasePathEndScene = 4		// scene entered when the chaser finishes its route
 	};
 
-	// A checkpoint (type 0x0b): driving over it sets an event flag once.
+	// The chase runs through three phases, driven by checkpoint flags:
+	enum ChaseState {
+		kPursuit = 0,	// Nancy must keep Jane in sight; losing her off-screen is a loss
+		kShortcut = 1,	// Nancy lets Jane go and races her to the state line by another road
+		kCaught = 2		// Jane is caught and plays her crash sequence on the second path
+	};
+
+	// A checkpoint (type 0x0b): driving into it sets an event flag, but only while its own
+	// base condition holds. The chase sequences its phases this way - one checkpoint clears
+	// the pursuit gate (starting the shortcut), a later one (gated on that) sets the caught
+	// flag - so the condition must be honored, not just the rect.
 	struct Checkpoint {
 		Common::Rect rect;
-		int16 flagId = -1;
-		byte flagValue = 0;
-		bool triggered = false;
-		bool carInside = false;		// the car was inside this zone last frame
+		int16 flagId = -1;			// tail: the flag driven over sets
+		byte flagValue = 0;			// tail: the value it sets
+		int16 condFlag = -1;		// base zone val49: flag gating whether it can fire
+		byte condValue = 0;			// base zone val4b: the value that arms it
+		bool wasActive = false;		// (condition held AND car inside) last frame
 	};
 
 	// A mud puddle (type 0x03): slows the car (adds to its velocity decay) while inside.
@@ -299,7 +310,7 @@ protected:
 
 	// Chase (167) state machine: 0 = following the first path, 1 = waiting to switch,
 	// 2 = following the second path.
-	int _chaseState = 0;
+	ChaseState _chaseState = kPursuit;
 	bool _chaserOnPathB = false;
 
 	// Fuel + tire hazards. Fuel is the gas-gauge UI resource (index _frictionIndex),
