@@ -115,6 +115,18 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+	{
+		GAMEOPTION_ORIGINAL_MAC_MENUS,
+		{
+			_s("Use original Macintosh menus (experimental)"),
+			_s("Use the Macintosh menu bar and original desktop framing"),
+			"original_mac_menus",
+			false,
+			0,
+			0
+		}
+	},
+
 #ifdef USE_TTS
 	{
 		GAMEOPTION_TTS_NARRATOR,
