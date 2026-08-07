@@ -137,7 +137,7 @@ bool HorusWordPuzzle::loadAssets() {
 			kLibraryName);
 		return false;
 	}
-	if (!loadPcx(kBackgroundName, _background) ||
+	if (!loadBitmap(kBackgroundName, _background) ||
 			!loadBitmap(kMaskName, _mask))
 		return false;
 	if (_background.width != kRipperScreenWidth ||
