@@ -1729,7 +1729,10 @@
   `wacinv8b.pcx` when it is clear. Entries 12 and 24 dispatch
   `wacinv12.pcx` and `wacinv24.pcx`. All three cases use
   `RunWacStillImageScreenWithOptionalAudio` at `0x22f1f` with no audio and
-  retain the database chooser and shared scroll controls.
+  retain the database chooser and shared scroll controls. Scrollable PCX
+  entries initially show their final 282 rows; the reimplementation translates
+  that retail bitmap-presentation origin to an offset in its top-down decoded
+  surface.
 - Entries 13 and 14 dispatch the silent `wacinv13.smk` and `wacinv14.smk`
   members from `INTERFAC.PL`
   through `RunStaticMediaScreenWithOptionalVoiceover` at `0x2339d`. The

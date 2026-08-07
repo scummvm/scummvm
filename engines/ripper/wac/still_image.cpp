@@ -74,16 +74,22 @@ bool WacStillImageViewer::load(const Common::String &path) {
 		return false;
 
 	_image = Common::move(image);
-	_scrollOffset = 0;
+	// RunWacStillImageScreenWithOptionalAudio at 0x22f1f initializes the
+	// retail scroll registry to zero, whose bitmap-presentation path opens a
+	// tall PCX on its final 0x11a-row slice. BitmapAssetFrame is top-down, so
+	// translate that presentation boundary to its source-row offset here.
+	_scrollOffset = _image.height > kWacMediaHeight ?
+		_image.height - kWacMediaHeight : 0;
 	_scrollControl = 0;
 	g_system->getPaletteManager()->setPalette(
 		_image.palette.data() + kWacMediaPaletteFirst * 3,
 		kWacMediaPaletteFirst, kWacMediaPaletteCount);
 	draw();
 	debugC(1, kDebugWac,
-		"Ripper: loaded WAC database still image='%s' size=%ux%u viewport=%d,%d,%d,%d scrollLimit=%u",
+		"Ripper: loaded WAC database still image='%s' size=%ux%u viewport=%d,%d,%d,%d scrollOffset=%u scrollLimit=%u",
 		path.c_str(), _image.width, _image.height,
 		kWacMediaLeft, kWacMediaTop, kWacMediaWidth, kWacMediaHeight,
+		_scrollOffset,
 		_image.height > kWacMediaHeight ?
 			_image.height - kWacMediaHeight : 0);
 	return true;
