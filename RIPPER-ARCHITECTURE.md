@@ -1903,12 +1903,17 @@
   top and bottom indexed bands before drawing the chooser. This prevents pixels
   retained from the preceding presentation from being reinterpreted by the
   active Smacker palette.
-- `RunMediaPresentation` at `0x168af` performs the corresponding restoration
-  after a controlled response movie: it restores display state, submits a
-  full-display dirty-region update, reapplies the display palette, and then
-  restores selection presentation state. The ScummVM response path therefore
-  rebuilds the same top and bottom bands immediately after type-0 media returns,
-  including the exhausted-dialogue path where no new chooser is installed.
+- `ExecutePresentationEntry` at `0x1652a` distinguishes the controlled response
+  cleanup by filename extension. An `.AVI` enters `RunMediaPresentation` at
+  `0x168af`, which restores display state, submits a full-display dirty-region
+  update, reapplies the display palette, and restores selection presentation
+  state. The ScummVM response path rebuilds the top and bottom scene bands only
+  after that controlled AVI route, including the exhausted-dialogue path where
+  no new chooser is installed. Other video extensions enter `RunMediaSequence`
+  at `0x1e516` and retain their final frame. That sequence player clamps a
+  full-size 640-by-400 movie requested at scene origin y=50 back to y=0; type-0
+  document presentations such as `KK_Z12.SMK` therefore remain visible across
+  the complete display while their unzoom hotspot is active.
 - Opcode `0x0a` maps to `HandleSceneEntryStepPromptCondition` at `0x149b4`.
   In the dialogue entry callback it branches around the exhausted-dialogue
   media path while at least one choice record exists. The frame's persistent
