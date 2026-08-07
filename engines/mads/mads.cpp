@@ -258,6 +258,9 @@ void MADSEngine::pollEvents() {
 	// Poll for events
 	Common::Event e;
 	while (g_system->getEventManager()->pollEvent(e)) {
+		if (handleMacEvent(e))
+			continue;
+
 		bool isMouse = false;
 		switch (e.type) {
 		case Common::EVENT_LBUTTONDOWN:

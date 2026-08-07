@@ -92,6 +92,8 @@ protected:
 	virtual Common::Point gameToScreen(const Common::Point &point) const;
 	virtual void presentScreen(int shakeOffset);
 
+	virtual bool handleMacEvent(Common::Event &event) { return false; }
+
 	bool hasFeature(EngineFeature f) const override;
 
 	void pollEvents();

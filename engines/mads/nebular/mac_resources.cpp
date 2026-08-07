@@ -188,6 +188,12 @@ Common::MacResManager *MacResourceProvider::getContainer(Container container) co
 	return _containers[container];
 }
 
+Common::SeekableReadStream *MacResourceProvider::openResource(
+		Container container, uint32 type, uint16 id) const {
+	Common::MacResManager *resourceContainer = getContainer(container);
+	return resourceContainer ? resourceContainer->getResource(type, id) : nullptr;
+}
+
 const Graphics::Font *MacResourceProvider::getDialogFont() {
 	if (!_fontManager)
 		return nullptr;

@@ -29,6 +29,7 @@
 
 namespace Common {
 class MacResManager;
+class SeekableReadStream;
 }
 
 namespace Graphics {
@@ -65,6 +66,8 @@ public:
 	~MacResourceProvider() override;
 
 	bool load();
+	Common::SeekableReadStream *openResource(Container container, uint32 type,
+		uint16 id) const;
 	Common::SeekableReadStream *open(const char *filename) override;
 	bool exists(const char *filename) override;
 	bool allowsFallback(const char *filename) const override;

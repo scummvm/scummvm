@@ -53,6 +53,7 @@ protected:
 	Common::Point screenToGame(const Common::Point &point) const override;
 	Common::Point gameToScreen(const Common::Point &point) const override;
 	void presentScreen(int shakeOffset) override;
+	bool handleMacEvent(Common::Event &event) override;
 
 public:
 	RexNebularEngine(OSystem *syst, const MADSGameDescription *gameDesc);
