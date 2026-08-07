@@ -1695,9 +1695,12 @@
   `RunWacStillImageScreenWithOptionalPresentation` at `0x22a32`. Both always
   show their 300-by-200 still image. Flag 87 adds the 70-by-14 `WACVID1A` and
   `WACVID1B` presentation control immediately below it; activating the control
-  temporarily selects retail video mode 1, presents the paired AVI, restores
-  the prior mode and WAC display, and sets flag 213 for Magnotta or 212 for
-  Eddie.
+  temporarily selects retail video mode 1 and presents the paired 300-by-200
+  AVI unscaled at the still image's centered, four-byte-aligned origin inside
+  the 350-by-282 database viewport. It then restores the prior mode and WAC
+  display and sets flag 213 for Magnotta or 212 for Eddie. This matches
+  `InitializeMediaPresentationDisplayModeCallback` at `0x163a8`, whose mode-1
+  path does not install the 2:1 small-video display descriptor.
 - Entry 6 dispatches `RunWacVoiceLockPuzzleScene` at `0x24ba4`, implemented by
   `WacVoiceLockPuzzle`. Its input controller retains the retail event order,
   while `WacVoiceLockEditorState` owns mutable selection/playback state,

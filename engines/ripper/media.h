@@ -161,6 +161,7 @@ public:
 	bool play(const Common::String &path, bool allowEscSpace, int x = -1, int y = -1,
 		bool sceneViewport = false);
 	bool playWacMedia(const Common::String &path, int x, int y);
+	bool playWacPresentation(const Common::String &path, int x, int y);
 	bool playWacInterfaceSequence(const Common::String &path,
 		const Common::Rect &centerBounds,
 		uint loopStartFrame, MediaSequenceCallback *callback, uint16 *command);
@@ -259,7 +260,7 @@ private:
 	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name,
 		bool allowEscSpace, int overrideX = -1, int overrideY = -1,
 		int overrideOriginY = 0, bool serviceSceneUi = false,
-		bool rememberVideoPalette = true);
+		bool rememberVideoPalette = true, uint displayScale = 0);
 	bool servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
 		bool allowSegmentAdvance, bool &paused, bool &skipToEnd,
 		bool &advanceSegment,
