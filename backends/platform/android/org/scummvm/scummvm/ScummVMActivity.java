@@ -152,6 +152,8 @@ public class ScummVMActivity extends Activity {
 	private GridLayout _buttonLayout = null;
 	private ImageView _toggleTouchModeKeyboardBtnIcon = null;
 	private ImageView _openMenuBtnIcon = null;
+	private ImageView _toggleSecondScreenBtnIcon = null;
+	private SecondScreenManager _secondScreenManager = null;
 	private LedView _ioLed = null;
 	private int _layoutOrientation;
 
@@ -731,6 +733,22 @@ public class ScummVMActivity extends Activity {
 		}
 	};
 
+	public final View.OnClickListener secondScreenBtnOnClickListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			runOnUiThread(new Runnable() {
+				public void run() {
+					if (_secondScreenManager != null) {
+						boolean enabled = _secondScreenManager.toggle();
+						if (_toggleSecondScreenBtnIcon != null) {
+							_toggleSecondScreenBtnIcon.setAlpha(enabled ? 1.0f : 0.4f);
+						}
+					}
+				}
+			});
+		}
+	};
+
 	private class MyScummVM extends ScummVM {
 
 		public MyScummVM(SurfaceHolder holder, final MyScummVMDestroyedCallback destroyedCallback) {
@@ -1212,6 +1230,21 @@ public class ScummVMActivity extends Activity {
 		_toggleTouchModeKeyboardBtnIcon.setOnLongClickListener(touchModeKeyboardBtnOnLongClickListener);
 		_openMenuBtnIcon.setOnClickListener(menuBtnOnClickListener);
 
+		// Second screen touchpad support (API 17+)
+		_toggleSecondScreenBtnIcon = findViewById(R.id.toggle_second_screen_button);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+			_secondScreenManager = new SecondScreenManager(this, _scummvm);
+			_secondScreenManager.start();
+			if (_secondScreenManager.hasSecondaryDisplay()) {
+				_toggleSecondScreenBtnIcon.setVisibility(View.VISIBLE);
+				_toggleSecondScreenBtnIcon.setOnClickListener(secondScreenBtnOnClickListener);
+			} else {
+				_toggleSecondScreenBtnIcon.setVisibility(View.GONE);
+			}
+		} else {
+			_toggleSecondScreenBtnIcon.setVisibility(View.GONE);
+		}
+
 		// Keyboard visibility listener - mainly to hide system UI if keyboard is shown and we return from Suspend to the Activity
 		setupKeyboardVisibilityListener();
 
@@ -1357,6 +1390,11 @@ public class ScummVMActivity extends Activity {
 
 		if (isScreenKeyboardShown()) {
 			hideScreenKeyboard();
+		}
+
+		if (_secondScreenManager != null) {
+			_secondScreenManager.stop();
+			_secondScreenManager = null;
 		}
 
 		if (_events != null) {
