@@ -453,9 +453,19 @@ void Room402::daemon() {
 					_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x100, false,
 					triggerMachineByHashCallback, "rip talks wolf SHADOW");
 
-				sendWSMessage_10000(1, _ripEnterLeave, _ripTalker, 1, 1, -1,
+				// The return trigger has to ride on Rip's machine, not on the
+				// shadow. sendWSMessage() only delivers to a machine that is
+				// listening for the message, and a machine listens only once
+				// it has finished the sequence it is playing - a send that
+				// arrives earlier is discarded silently, return trigger and
+				// all. Driving the chain off the shadow meant 1103 programmed
+				// Rip two frames later, while his talker was still playing, so
+				// the message was dropped and nothing ever dispatched 102
+				// again. The chain has to be clocked by the machine it is
+				// about to program.
+				sendWSMessage_10000(1, _ripEnterLeave, _ripTalker, 1, 1, 102,
 					_ripTalker, 1, 1, 0);
-				sendWSMessage_10000(1, _safariShadow, _shadow3, 1, 1, 102,
+				sendWSMessage_10000(1, _safariShadow, _shadow3, 1, 1, -1,
 					_shadow3, 1, 1, 0);
 				_dialogShould = 1101;
 				_wolfMode = 2000;
@@ -599,7 +609,10 @@ void Room402::daemon() {
 					_shadow3, 1, 1, 0);
 				ws_hide_walker();
 
-				sendWSMessage_10000(1, _ripEnterLeave, _ripTalker, 1, 1, -1,
+				// Clock the chain off Rip's machine, as in state 1100 - a
+				// timer would fire while the talker is still playing and 1115
+				// would then be programming a machine that is not listening
+				sendWSMessage_10000(1, _ripEnterLeave, _ripTalker, 1, 1, 102,
 					_ripTalker, 1, 1, 0);
 				player_set_commands_allowed(false);
 				_wolfMode = 2002;
@@ -607,7 +620,6 @@ void Room402::daemon() {
 				kernel_timing_trigger(1, 110);
 
 				_dialogShould = 1111;
-				kernel_timing_trigger(1, 102);
 				break;
 
 			case 1111:
