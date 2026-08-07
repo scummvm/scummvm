@@ -102,9 +102,9 @@ static const Common::Point kCellPositions[KiSkullMazeModel::kCellCount] = {
 };
 
 // The first two five-short tables at 0x2ea0e and 0x2ea18 are adjusted by
-// the tile and idle-player widths during retail setup. The display service
+// the tile and idle-player heights during retail setup. The display service
 // takes the destination row in ECX and column in EDX, so the first table is
-// applied to Y even though its adjustment is derived from bitmap widths.
+// applied to Y. Retail bitmap descriptors store height before width.
 static const int kManInitialYOffsets[5] = {0, -36, -5, -35, -6};
 static const int kManXOffsets[5] = {-6, -7, -32, -21, 3};
 
@@ -465,8 +465,8 @@ Common::Point KiSkullMazePuzzle::playerPosition(uint direction,
 	// and EDX as its column; BlitScaledGenericVideoRectangle at 0x464f3 then
 	// multiplies the row by the display pitch. Preserve that nonstandard
 	// coordinate order here.
-	const int adjustedY = _lids[0].width / 2 -
-		_manAnimations[0].width + 6;
+	const int adjustedY = _lids[0].height / 2 -
+		_manAnimations[0].height + 6;
 	return Common::Point(
 		kCellPositions[originCell].x + kManXOffsets[direction],
 		kCellPositions[originCell].y + adjustedY +
