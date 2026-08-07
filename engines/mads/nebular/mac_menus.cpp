@@ -65,13 +65,13 @@ void selectMacintoshDifficulty() {
 
 void macintoshGameMenu() {
 	g_engine->flushKeys();
-
-	if (kernel.activate_menu == GAME_DIFFICULTY_MENU)
-		selectMacintoshDifficulty();
-	else if (kernel.activate_menu != GAME_NO_MENU)
-		g_engine->openMainMenuDialog();
-
+	const int requestedMenu = kernel.activate_menu;
 	kernel.activate_menu = GAME_NO_MENU;
+
+	if (requestedMenu == GAME_DIFFICULTY_MENU)
+		selectMacintoshDifficulty();
+	else if (requestedMenu != GAME_NO_MENU)
+		g_engine->openMainMenuDialog();
 }
 
 } // namespace RexNebular
