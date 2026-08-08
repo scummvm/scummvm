@@ -32,6 +32,7 @@
 #include "mads/core/speech.h"
 #include "mads/core/tile.h"
 #include "mads/core/timer.h"
+#include "mads/core/video.h"
 #include "mads/animview/animview.h"
 #include "mads/animview/anim_timer.h"
 #include "mads/animview/functions.h"
@@ -150,6 +151,19 @@ static void init_globals() {
 	wait_for_music_at_end = false;
 	exit_immediately_at_end = false;
 	imageFrame = 0;
+}
+
+static bool isBonusDiskMode() {
+	return (g_engine->getGameFeatures() & GF_BONUS_DISK) != 0;
+}
+
+static bool bonusDiskAbortRequested() {
+	while (g_engine->hasPendingKey()) {
+		if (g_engine->getKey() == Common::KEYCODE_ESCAPE)
+			return true;
+	}
+
+	return false;
 }
 
 static void anim_inter_timer() {
@@ -292,16 +306,23 @@ static void run_animation(int animIndex) {
 			}
 		}
 
-		if (g_engine->shouldQuit())
-			current_error_code = 1;
-		if (g_engine->hasPendingKey()) {
-			g_engine->flushKeys();
-			error_code = 1;
-			current_error_code = 1;
-		}
-		if (mouse_get_status(&mouse_x, &mouse_y)) {
-			current_error_code = -1;
-			error_code = 3;
+		if (isBonusDiskMode()) {
+			if (g_engine->shouldQuit() || bonusDiskAbortRequested()) {
+				error_code = 1;
+				current_error_code = 1;
+			}
+		} else {
+			if (g_engine->shouldQuit())
+				current_error_code = 1;
+			if (g_engine->hasPendingKey()) {
+				g_engine->flushKeys();
+				error_code = 1;
+				current_error_code = 1;
+			}
+			if (mouse_get_status(&mouse_x, &mouse_y)) {
+				current_error_code = -1;
+				error_code = 3;
+			}
 		}
 
 		// Animation loop delay
@@ -321,15 +342,20 @@ static void run_animation(int animIndex) {
 				// Brief pause
 				g_system->delayMillis(10);
 
-				// Check for any keypress
-				if (g_engine->hasPendingKey()) {
-					g_engine->flushKeys();
-					error_code = 1;
-					current_error_code = 1;
+				if (isBonusDiskMode()) {
+					if (g_engine->shouldQuit() || bonusDiskAbortRequested()) {
+						error_code = 1;
+						current_error_code = 1;
+					}
+				} else {
+					if (g_engine->hasPendingKey()) {
+						g_engine->flushKeys();
+						error_code = 1;
+						current_error_code = 1;
+					}
+					if (g_engine->shouldQuit())
+						current_error_code = 1;
 				}
-
-				if (g_engine->shouldQuit())
-					current_error_code = 1;
 			} while (timer_read() < timer2);
 
 			if (peelFlag) {
@@ -346,19 +372,25 @@ static void run_animation(int animIndex) {
 	if ((animIndex == (anim_count - 1)) &&
 			(wait_for_music_at_end || !exit_immediately_at_end)) {
 		while (current_error_code == 0) {
-			// Check for any keypress or mouse clicks
-			if (g_engine->hasPendingKey()) {
-				g_engine->flushKeys();
-				error_code = 1;
-				current_error_code = 1;
+			if (isBonusDiskMode()) {
+				if (g_engine->shouldQuit() || bonusDiskAbortRequested()) {
+					error_code = 1;
+					current_error_code = 1;
+				}
+			} else {
+				if (g_engine->hasPendingKey()) {
+					g_engine->flushKeys();
+					error_code = 1;
+					current_error_code = 1;
+				}
+
+				int mouseX = 0, mouseY = 0;
+				if (mouse_get_status(&mouseX, &mouseY))
+					current_error_code = 1;
+
+				if (g_engine->shouldQuit())
+					current_error_code = 1;
 			}
-
-			int mouseX = 0, mouseY = 0;
-			if (mouse_get_status(&mouseX, &mouseY))
-				current_error_code = 1;
-
-			if (g_engine->shouldQuit())
-				current_error_code = 1;
 
 			if (!exit_immediately_at_end)
 				continue;
@@ -514,6 +546,18 @@ static void animate() {
 		viewing_at_y2 = viewing_at_y;
 
 		buffer_fill(scr_work, 0);
+		if (isBonusDiskMode() && count == 0) {
+			// AnimView normally relies on its first timer callback for the full
+			// background refresh. The Bonus text renderer uses a separate output
+			// surface, so establish the MADS game surface before any delta frames
+			// can expose the preceding cutscene. Do not present it yet: the first
+			// animation effect still owns the transition from the black screen.
+			buffer_rect_copy_2(scr_orig, scr_work,
+					picture_map.pan_offset_x, picture_map.pan_offset_y,
+					0, 0, scr_work.x, scr_work.y);
+			video_update(&scr_work, 0, 0, 0, viewing_at_y,
+					scr_work.x, scr_work.y);
+		}
 
 		// Speech handling
 		speech_lines_count = 0;
@@ -617,6 +661,16 @@ void animview_main(const char *resName) {
 
 	init_globals();
 
+	if (isBonusDiskMode()) {
+		// The Bonus Disk text UI draws directly to the backend. Clear the MADS
+		// game surface as well so a subsequent AnimView cannot inherit pixels
+		// from an earlier, interrupted presentation.
+		g_engine->getScreen()->fillRect(
+				Common::Rect(0, 0, g_engine->getScreen()->w,
+						g_engine->getScreen()->h), 0);
+		g_engine->updateDisplay();
+	}
+
 	pack_enable_pfab_explode();
 	(void)env_verify();
 	mouse_hide();
@@ -650,6 +704,5 @@ void animview_main(const char *resName) {
 
 	g_engine->flushKeys();
 }
-
 } // namespace AnimView
 } // namespace MADS

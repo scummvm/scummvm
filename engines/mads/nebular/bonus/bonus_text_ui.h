@@ -44,7 +44,8 @@ public:
 	MainChoice runMainMenu(int &selected);
 	int runMusicMenu(int &selected);
 	bool showBonusText(const Common::Path &filename);
-	void showNowPlaying(const Common::String &trackTitle,
+	void prepareNowPlaying(const Common::String &trackTitle);
+	void waitForNowPlaying(const Common::String &trackTitle,
 			Common::Functor0<bool> &isPlaying);
 	void showGoodbye();
 
