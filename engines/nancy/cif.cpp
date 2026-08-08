@@ -97,6 +97,22 @@ enum {
 	kHashMapSize = 1024
 };
 
+// The version number stored inside CifFile and CifTree headers. Nancy12 bumped it
+// to 2, and Nancy16 to 3, without changing the layout of either structure
+static uint16 getCifVersion() {
+	GameType gameType = g_nancy->getGameType();
+
+	if (gameType <= kGameTypeNancy1) {
+		return 0;
+	} else if (gameType <= kGameTypeNancy11) {
+		return 1;
+	} else if (gameType <= kGameTypeNancy15) {
+		return 2;
+	}
+
+	return 3;
+}
+
 CifFile::CifFile(Common::SeekableReadStream *stream, const Common::Path &name) {
 	assert(stream);
 	_stream = stream;
@@ -169,10 +185,10 @@ bool CifFile::sync(Common::Serializer &ser) {
 	uint16 hi = 2;
 	ser.syncAsUint16LE(hi);
 
-	uint32 ver = (g_nancy->getGameType() <= kGameTypeNancy1) ? 0 : 1;
+	uint32 ver = getCifVersion();
 	ser.syncAsUint16LE(ver);
 
-	if (ver != 0 && ver != 1 && ver != 2) {
+	if (ver > 3) {
 		warning("Unsupported version %d found in CifFile '%s'", ver, _info.name.toString().c_str());
 		return false;
 	}
@@ -308,11 +324,10 @@ bool CifTree::sync(Common::Serializer &ser) {
 	uint16 hi = 2;
 	ser.syncAsUint16LE(hi);
 
-	uint32 ver = (g_nancy->getGameType() <= kGameTypeNancy1) ? 0 : 1;
+	uint32 ver = getCifVersion();
 	ser.syncAsUint16LE(ver);
 
-	// TODO: Nancy16 introduced version 3
-	if (ver != 0 && ver != 1 && ver != 2) {
+	if (ver > 3) {
 		warning("Unsupported version %d found in CifTree '%s'", ver, _name.toString().c_str());
 		return false;
 	}
