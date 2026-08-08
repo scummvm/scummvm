@@ -86,16 +86,27 @@ void HangmanPuzzle::readData(Common::SeekableReadStream &stream) {
 		outcome->sound.readData(stream);
 	}
 
-	// Trailing block read by the base record reader (25 bytes).
-	_tailField0 = stream.readSint32LE();
-	_tailField1 = stream.readSint16LE();
-	_tailVector[0] = stream.readSint32LE();
-	_tailVector[1] = stream.readSint32LE();
-	_tailVector[2] = stream.readSint32LE();
-	_tailField2 = stream.readSint16LE();
-	_tailSceneID = stream.readSint16LE();
-	_tailFlag = stream.readSint16LE();
-	_tailByte = stream.readByte();
+	// Trailing count-prefixed array of 23-byte give-up hotspots
+	// {Rect, uint16 cursorType, uint16 sceneID, int16 flagLabel, byte flagValue}.
+	// The exit always jumps to the scene's first frame.
+	int16 numExitZones = stream.readSint16LE();
+	for (int16 i = 0; i < numExitZones; ++i) {
+		Common::Rect r;
+		readRect(stream, r);
+		uint16 cursorType = stream.readUint16LE();
+		uint16 sceneID = stream.readUint16LE();
+		int16 flagLabel = stream.readSint16LE();
+		byte flagValue = stream.readByte();
+
+		if (i == 0) {
+			_exitHotspot = r;
+			_exitCursorType = cursorType;
+			_exitScene.sceneID = sceneID;
+			_exitScene.frameID = 0;
+			_exitFlag.label = flagLabel;
+			_exitFlag.flag = flagValue;
+		}
+	}
 }
 
 HangmanData *HangmanPuzzle::getPuzzleData() const {
@@ -298,6 +309,17 @@ void HangmanPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
+	// Give-up hotspot: leave the puzzle.
+	if (!_exitHotspot.isEmpty() &&
+			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
+		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true);
+		if (input.input & NancyInput::kLeftMouseButtonUp) {
+			_exitRequested = true;
+		}
+		input.eatMouseInput();
+		return;
+	}
+
 	int tile = tileAtCursor(input.mousePos);
 	if (tile >= 0 && !_letters[tile].used) {
 		// Clickable-hotspot cursor for puzzles (the blue pointing hand).
@@ -317,6 +339,11 @@ void HangmanPuzzle::execute() {
 		_state = kRun;
 		break;
 	case kRun:
+		if (_exitRequested) {
+			NancySceneState.setEventFlag(_exitFlag);
+			NancySceneState.changeScene(_exitScene);
+			break;
+		}
 		if ((_solved || _lost) && !_outcomeApplied) {
 			_outcomeApplied = true;
 			applyOutcome(_solved ? _winScene : _loseScene);

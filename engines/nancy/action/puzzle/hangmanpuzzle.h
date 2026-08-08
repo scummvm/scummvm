@@ -107,15 +107,11 @@ protected:
 	SceneOutcome _winScene2;	// 0x2f1
 	SceneOutcome _loseScene;	// 0x352
 
-	// Trailing block read by the base record reader (vtable+0x24): a fixed
-	// 25-byte {int32, int16, 3x int32 vector, 2x int16, int16, byte} structure.
-	int32 _tailField0 = 0;
-	int16 _tailField1 = 0;
-	int32 _tailVector[3] = { 0, 0, 0 };
-	int16 _tailField2 = 0;
-	int16 _tailSceneID = 0;
-	int16 _tailFlag = 0;
-	byte _tailByte = 0;
+	// Give-up hotspot (count-prefixed 23-byte trailer): click to leave the puzzle.
+	Common::Rect _exitHotspot;
+	uint16 _exitCursorType = 0;
+	SceneChangeDescription _exitScene;
+	FlagDescription _exitFlag;
 
 	// -- Runtime state --
 	Graphics::ManagedSurface _puzzleImage;
@@ -129,6 +125,7 @@ protected:
 	bool _solved = false;
 	bool _lost = false;
 	bool _outcomeApplied = false;
+	bool _exitRequested = false;
 };
 
 } // End of namespace Action

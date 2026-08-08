@@ -97,14 +97,11 @@ protected:
 	int16 _field1a6 = 0;		// 0x1a6
 	SceneOutcome _outcome;		// 0x1a8
 
-	// Trailing block read by the base record reader (vtable+0x24), 25 bytes.
-	int32 _tailField0 = 0;
-	int16 _tailField1 = 0;
-	int32 _tailVector[3] = { 0, 0, 0 };
-	int16 _tailField2 = 0;
-	int16 _tailSceneID = 0;
-	int16 _tailFlag = 0;
-	byte _tailByte = 0;
+	// Give-up hotspot (count-prefixed 23-byte trailer): click to leave the puzzle.
+	Common::Rect _exitHotspot;
+	uint16 _exitCursorType = 0;
+	SceneChangeDescription _exitScene;
+	FlagDescription _exitFlag;
 
 	// -- Runtime state --
 	Graphics::ManagedSurface _image;
@@ -114,6 +111,7 @@ protected:
 	int _hoverColor = -1;
 	bool _solved = false;
 	bool _outcomeApplied = false;
+	bool _exitRequested = false;
 };
 
 } // End of namespace Action
