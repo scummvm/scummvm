@@ -191,9 +191,8 @@ static void room_804_daemon() {
 			inter_move_object(OBJ_POLYCEMENT, NOWHERE);
 		}
 
-		// FIXME: Original doesn't have resetFrame check. Check why this has been needed
-		if (local._resetFrame == -1 && kernel_anim[0].frame == 1) {
-			int randomVal = g_engine->getRandomNumber(29) + 1;
+		if (kernel_anim[0].frame == 1) {
+			int randomVal = g_engine->getRandomNumber(1, 30);
 			switch (randomVal) {
 			case 1:
 				local._resetFrame = 25;
