@@ -210,7 +210,7 @@ void anim_setup_cycle(int fx) {
 	cycling_active = false;
 	memcpy(cycling_palette, master_palette, sizeof(Palette));
 
-	if (fx)
+	if (!fx)
 		mcga_setpal(&master_palette);
 
 	cycle_init(&anim_cycle_list, has_cycles && !fx);
