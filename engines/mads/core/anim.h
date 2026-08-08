@@ -432,7 +432,7 @@ int anim_load_background(AnimFile *anim_in,
 	TileMapHeader *depth_map,
 	TileResource *picture_resource,
 	TileResource *depth_resource,
-	RoomPtr *room,
+	RoomPtr *roomPtr,
 	CycleListPtr cycle_list,
 	int load_flags, int star_search);
 
@@ -445,7 +445,7 @@ AnimPtr anim_load(const char *file_name,
 	TileMapHeader *depth_map,
 	TileResource *picture_resource,
 	TileResource *depth_resource,
-	RoomPtr *room, CycleListPtr cycle_list,
+	RoomPtr *roomPtr, CycleListPtr cycle_list,
 	int load_flags);
 
 int anim_get_sound_info(const char *file_name, char *sound_file_buffer,

@@ -103,7 +103,7 @@ void SegmentInter::load(Common::SeekableReadStream *src) {
 int anim_load_background(AnimFile *anim_in, Buffer *this_orig,
 		Buffer *this_depth, TileMapHeader *pictureMap, TileMapHeader *depthMap,
 		TileResource *pictureResource, TileResource *depthResource,
-		RoomPtr *room, CycleListPtr cycle_list, int load_flags, int star_search) {
+		RoomPtr *roomPtr, CycleListPtr cycle_list, int load_flags, int star_search) {
 	int error_flag;
 	char temp_buf[80];
 	RoomPtr my_room = NULL;
@@ -193,7 +193,7 @@ int anim_load_background(AnimFile *anim_in, Buffer *this_orig,
 		if (pictureMap != NULL) tile_map_free(depthMap);
 	}
 
-	if (room != NULL) *room = my_room;
+	if (roomPtr != NULL) *roomPtr = my_room;
 
 	return error_flag;
 }
@@ -224,7 +224,7 @@ void anim_unload(AnimPtr anim) {
 AnimPtr anim_load(const char *file_name, Buffer *orig, Buffer *depth,
 		TileMapHeader *pictureMap, TileMapHeader *depthMap,
 		TileResource *pictureResource, TileResource *depthResource,
-		RoomPtr *room, CycleListPtr cycle_list, int load_flags) {
+		RoomPtr *roomPtr, CycleListPtr cycle_list, int load_flags) {
 	int count;
 	int error_flag = true;
 	int star_search;
@@ -273,7 +273,7 @@ AnimPtr anim_load(const char *file_name, Buffer *orig, Buffer *depth,
 			orig, depth,
 			pictureMap, depthMap,
 			pictureResource, depthResource,
-			room, cycle_list,
+			roomPtr, cycle_list,
 			load_flags, star_search)) {
 			anim_error = 20000 + room_load_error;
 			goto done;
