@@ -43,35 +43,53 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	s.skip(0x17, kGameTypeVampire, kGameTypeVampire);
 	s.skip(0x49, kGameTypeNancy1, kGameTypeNancy1);
 	s.skip(0x43, kGameTypeNancy2, kGameTypeNancy9);
-	s.skip(0x41, kGameTypeNancy10);
+	s.skip(0x41, kGameTypeNancy10, kGameTypeNancy15);
+	s.skip(0x55, kGameTypeNancy16);
 
 	readFilename(s, conversationTextsFilename, kGameTypeNancy6);
 	readFilename(s, autotextFilename, kGameTypeNancy6);
 	readFilename(s, fontFilename, kGameTypeNancy12);
 	readFilename(s, flagsFilename, kGameTypeNancy12);
 
-	s.skip(1, kGameTypeNancy14);
+	// Nancy16 went back to the pre-Nancy14 field order, and dropped both vertical offsets
+	s.syncAsUint16LE(firstScene.sceneID, kGameTypeNancy16);
+	s.syncAsUint16LE(firstScene.frameID, kGameTypeNancy16);
+	s.syncAsUint16LE(startTimeHours, kGameTypeNancy16);
+	s.syncAsUint16LE(startTimeMinutes, kGameTypeNancy16);
+	s.skip(1, kGameTypeNancy16);	// Unknown
+	s.syncAsUint16LE(adScene.sceneID, kGameTypeNancy16);
+	s.syncAsUint16LE(adScene.frameID, kGameTypeNancy16);
+	s.skip(2, kGameTypeNancy16);	// Unknown
+
+	s.skip(1, kGameTypeNancy14, kGameTypeNancy15);
 	s.syncAsUint16LE(firstScene.sceneID, kGameTypeVampire, kGameTypeNancy13);
 	s.skip(0xC, kGameTypeVampire, kGameTypeVampire); // Palette name + unknown 2 bytes
-	s.syncAsUint16LE(firstScene.frameID);
-	s.syncAsUint16LE(firstScene.sceneID, kGameTypeNancy14);
-	s.skip(2, kGameTypeNancy14); // Unknown
-	s.syncAsUint16LE(firstScene.verticalOffset);
+	s.syncAsUint16LE(firstScene.frameID, kGameTypeVampire, kGameTypeNancy15);
+	s.syncAsUint16LE(firstScene.sceneID, kGameTypeNancy14, kGameTypeNancy15);
+	s.skip(2, kGameTypeNancy14, kGameTypeNancy15); // Unknown
+	s.syncAsUint16LE(firstScene.verticalOffset, kGameTypeVampire, kGameTypeNancy15);
 
 	s.syncAsUint16LE(startTimeHours, kGameTypeVampire, kGameTypeNancy13);
 	s.syncAsUint16LE(startTimeMinutes, kGameTypeVampire, kGameTypeNancy13);
 
-	s.skip(1, kGameTypeNancy14);
+	s.skip(1, kGameTypeNancy14, kGameTypeNancy15);
 
-	s.skip(1, kGameTypeNancy14);
+	s.skip(1, kGameTypeNancy14, kGameTypeNancy15);
 	s.syncAsUint16LE(adScene.sceneID, kGameTypeNancy7, kGameTypeNancy13);
-	s.syncAsUint16LE(adScene.frameID, kGameTypeNancy7);
-	s.syncAsUint16LE(adScene.sceneID, kGameTypeNancy14);
-	s.skip(2, kGameTypeNancy14);	// Unknown
-	s.syncAsUint16LE(adScene.verticalOffset, kGameTypeNancy7);
+	s.syncAsUint16LE(adScene.frameID, kGameTypeNancy7, kGameTypeNancy15);
+	s.syncAsUint16LE(adScene.sceneID, kGameTypeNancy14, kGameTypeNancy15);
+	s.skip(2, kGameTypeNancy14, kGameTypeNancy15);	// Unknown
+	s.syncAsUint16LE(adScene.verticalOffset, kGameTypeNancy7, kGameTypeNancy15);
 
 	s.skip(0xA4, kGameTypeVampire, kGameTypeNancy2);
-	s.skip(3); // Number of object, frame, and logo images
+
+	// Nancy15 added the studio URL, preceded by a few unknown values
+	s.skip(4, kGameTypeNancy15, kGameTypeNancy15);	// Unknown
+	s.skip(2, kGameTypeNancy15);					// Unknown
+	s.skip(256, kGameTypeNancy15);					// Studio URL
+
+	// Nancy16 dropped the image counts together with the OB0/FR0/LG0 chunks they describe
+	s.skip(3, kGameTypeVampire, kGameTypeNancy15); // Number of object, frame, and logo images
 	if (g_nancy->getEngineData("PLG0")) {
 		// Partner logos were introduced with nancy4, but at least one nancy3 release
 		// had one as well. For some reason they didn't port over the code from the
@@ -80,16 +98,16 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 		s.skip(1);
 	}
 
-	s.skip(4, kGameTypeNancy11);	// Unknown
+	s.skip(4, kGameTypeNancy11, kGameTypeNancy14);	// Unknown
 
 	s.skip(8, kGameTypeVampire, kGameTypeVampire);
 	readRect(s, extraButtonHotspot, kGameTypeVampire, kGameTypeVampire);
-	readRect(s, extraButtonHotspot, kGameTypeNancy2);
-	readRect(s, extraButtonHighlightDest, kGameTypeNancy1);
+	readRect(s, extraButtonHotspot, kGameTypeNancy2, kGameTypeNancy14);
+	readRect(s, extraButtonHighlightDest, kGameTypeNancy1, kGameTypeNancy15);
 	s.skip(0x10, kGameTypeVampire, kGameTypeVampire);
-	readRect(s, textboxScreenPosition);
-	readRect(s, inventoryBoxScreenPosition);
-	
+	readRect(s, textboxScreenPosition, kGameTypeVampire, kGameTypeNancy15);
+	readRect(s, inventoryBoxScreenPosition, kGameTypeVampire, kGameTypeNancy14);
+
 	readRect(s, menuButtonSrc, kGameTypeVampire, kGameTypeNancy9);
 	readRect(s, helpButtonSrc, kGameTypeVampire, kGameTypeNancy9);
 	readRect(s, menuButtonDest, kGameTypeVampire, kGameTypeNancy9);
@@ -97,24 +115,27 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readRect(s, menuButtonHighlightSrc, kGameTypeNancy2, kGameTypeNancy9);
 	readRect(s, helpButtonHighlightSrc, kGameTypeNancy2, kGameTypeNancy9);
 
-	readRect(s, clockHighlightSrc, kGameTypeNancy2);
+	readRect(s, clockHighlightSrc, kGameTypeNancy2, kGameTypeNancy14);
 
 	s.skip(0x2, kGameTypeVampire, kGameTypeVampire);
 	s.syncAsByte(paletteTrans, kGameTypeVampire, kGameTypeVampire);
 	s.skip(0x2, kGameTypeVampire, kGameTypeVampire);
-	s.syncAsByte(rTrans);
-	s.syncAsByte(gTrans);
-	s.syncAsByte(bTrans);
-	s.skip(6); // Black and white
+	s.syncAsByte(rTrans, kGameTypeVampire, kGameTypeNancy15);
+	s.syncAsByte(gTrans, kGameTypeVampire, kGameTypeNancy15);
+	s.syncAsByte(bTrans, kGameTypeVampire, kGameTypeNancy15);
+	s.skip(6, kGameTypeVampire, kGameTypeNancy15); // Black and white
 
 	s.syncAsUint16LE(horizontalEdgesSize);
 	s.syncAsUint16LE(verticalEdgesSize);
 
-	s.syncAsUint16LE(numFonts);
+	// Nancy16 replaced the bitmap fonts with system fonts, and the font count
+	// is now implied by the number of FONT chunks inside the font IFF
+	s.syncAsUint16LE(numFonts, kGameTypeVampire, kGameTypeNancy15);
 
 	// Skip data for debug features (diagnostics, version...)
 	s.skip(0x18, kGameTypeVampire, kGameTypeVampire);
-	s.skip(0x1A, kGameTypeNancy1);
+	s.skip(0x1A, kGameTypeNancy1, kGameTypeNancy15);
+	s.skip(0x18, kGameTypeNancy16);
 
 	s.syncAsSint16LE(playerTimeMinuteLength);
 	s.syncAsUint16LE(buttonPressTimeDelay);
@@ -1339,6 +1360,11 @@ LVLN::LVLN(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 
 PCUI::PCUI(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	flag = chunkStream->readByte();
+
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		readFilename(*chunkStream, uiName);
+	}
+
 	const uint16 count = chunkStream->readUint16LE();
 	characters.resize(count);
 
@@ -1369,6 +1395,27 @@ PUIH::PUIH(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	flag = chunkStream->readByte();
 	readFilename(*chunkStream, themeName);
 	readFilename(*chunkStream, swatchImageName);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		readFilename(*chunkStream, journalPrepName);
+		readFilename(*chunkStream, tasklistPrepName);
+	}
+}
+
+TSKL::TSKL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	// The chunk holds a fixed pair of banks, with no count in front of them
+	for (uint i = 0; i < 2; ++i) {
+		SoundBank &bank = soundBanks[i];
+		const uint16 numSounds = chunkStream->readUint16LE();
+		bank.soundNames.resize(numSounds);
+		for (uint16 j = 0; j < numSounds; ++j) {
+			readFilename(*chunkStream, bank.soundNames[j]);
+		}
+
+		bank.channelID = chunkStream->readUint16LE();
+		bank.numLoops = chunkStream->readUint32LE();
+		bank.volume = chunkStream->readUint16LE();
+	}
 }
 
 PUIV::PUIV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {

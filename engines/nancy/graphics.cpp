@@ -61,10 +61,10 @@ void GraphicsManager::init() {
 	_screen.setTransparentColor(getTransColor());
 	_screen.clear();
 
+	// OB0 has been dropped in Nancy16+
 	const ImageChunk *ob0 = (const ImageChunk *)g_nancy->getEngineData("OB0");
-	assert(ob0);
-
-	g_nancy->_resource->loadImage(ob0->imageName, _object0);
+	if (ob0)
+		g_nancy->_resource->loadImage(ob0->imageName, _object0);
 }
 
 void GraphicsManager::draw(bool updateScreen) {

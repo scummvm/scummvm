@@ -80,7 +80,8 @@ struct BSUM : public EngineData {
 	uint16 horizontalEdgesSize;
 	uint16 verticalEdgesSize;
 
-	uint16 numFonts;
+	// Nancy16 switched to system fonts, and no longer stores a count here
+	uint16 numFonts = 0;
 
 	uint16 playerTimeMinuteLength;
 	uint16 buttonPressTimeDelay;
@@ -875,6 +876,7 @@ struct PCUI : public EngineData {
 	PCUI(Common::SeekableReadStream *chunkStream);
 
 	byte flag = 0;
+	Common::Path uiName;					// Nancy 16+, e.g. "UI_Main"
 	Common::Array<Character> characters;	// indexed by the on-disk slot byte
 };
 
@@ -897,6 +899,25 @@ struct PUIH : public EngineData {
 	byte flag = 0;
 	Common::String themeName;	// e.g. "Nancy Classic Look (Default)"
 	Common::String swatchImageName;	// e.g. "UI_Swatch_ND"
+
+	// Nancy 16+. Names of the IFFs describing the journal and task list popups
+	Common::Path journalPrepName;	// e.g. "Journal_Prep"
+	Common::Path tasklistPrepName;	// e.g. "Tasklist_Prep"
+};
+
+// Task list sounds. Introduced in Nancy 16 (per-character boot). Holds two
+// banks of interchangeable sound names, sharing a channel, loop count and volume.
+struct TSKL : public EngineData {
+	struct SoundBank {
+		Common::Array<Common::Path> soundNames;
+		uint16 channelID = 0;
+		uint32 numLoops = 0;
+		uint16 volume = 0;
+	};
+
+	TSKL(Common::SeekableReadStream *chunkStream);
+
+	SoundBank soundBanks[2];
 };
 
 // Player-UI random-sound bank. Introduced in Nancy 15 (per-character boot).
