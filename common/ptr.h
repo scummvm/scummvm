@@ -614,6 +614,7 @@ public:
 	 */
 	ScopedPtr &operator=(std::nullptr_t) {
 		reset(nullptr);
+		return *this;
 	}
 
 	/**
