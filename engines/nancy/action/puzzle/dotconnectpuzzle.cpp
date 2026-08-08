@@ -151,15 +151,11 @@ void DotConnectPuzzle::execute() {
 		g_nancy->_sound->stopSound(_allCoveredSound);
 		g_nancy->_sound->stopSound(_winSound);
 		if (_subState == kExitToWin) {
-			if (_winFlag.label != -1)
-				NancySceneState.setEventFlag(_winFlag);
-			if (_winScene.sceneID != kNoScene)
-				NancySceneState.changeScene(_winScene);
+			NancySceneState.setEventFlag(_winFlag);
+			NancySceneState.changeScene(_winScene);
 		} else {
-			if (_exitFlag.label != -1)
-				NancySceneState.setEventFlag(_exitFlag);
-			if (_exitScene.sceneID != kNoScene)
-				NancySceneState.changeScene(_exitScene);
+			NancySceneState.setEventFlag(_exitFlag);
+			NancySceneState.changeScene(_exitScene);
 		}
 		finishExecution();
 		break;

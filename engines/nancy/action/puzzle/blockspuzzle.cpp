@@ -371,15 +371,10 @@ void BlocksPuzzle::execute() {
 	case kActionTrigger:
 		if (_exitRequested) {
 			NancySceneState.setEventFlag(_exitFlag);
-			if (_exitScene.sceneID != kNoScene) {
-				NancySceneState.changeScene(_exitScene);
-			}
+			NancySceneState.changeScene(_exitScene);
 		} else {
-			if (_solveScene.sceneID != kNoScene) {
-				NancySceneState.changeScene(_solveScene);
-			}
-
 			NancySceneState.setEventFlag(_solveFlag);
+			NancySceneState.changeScene(_solveScene);
 		}
 
 		finishExecution();

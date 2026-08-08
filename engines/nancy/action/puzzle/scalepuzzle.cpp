@@ -379,18 +379,13 @@ void ScalePuzzle::execute() {
 	case kActionTrigger:
 		if (_exitRequested) {
 			NancySceneState.setEventFlag(_exitFlag);
-			if (_exitScene.sceneID != kNoScene) {
-				NancySceneState.changeScene(_exitScene);
-			}
+			NancySceneState.changeScene(_exitScene);
 		} else {
 			// Solved: play the latch sound, set the solve flag, change scene (9999 = stay).
 			playSoundBlock(_latchSound);
 			NancySceneState.setEventFlag(_solveFlag);
-			if (_solveScene.sceneID != kNoScene) {
-				NancySceneState.changeScene(_solveScene);
-			}
+			NancySceneState.changeScene(_solveScene);
 		}
-
 		finishExecution();
 		break;
 	}

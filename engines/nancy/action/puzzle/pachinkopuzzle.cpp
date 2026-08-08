@@ -599,9 +599,7 @@ void PachinkoPuzzle::execute() {
 		// The give-up hotspot and the completion path both route to the exit scene; the
 		// win/lose branch is driven downstream by the solved flag and the puzzle event flag.
 		NancySceneState.setEventFlag(_exitFlag);
-		if (_exitScene.sceneID != kNoScene) {
-			NancySceneState.changeScene(_exitScene);
-		}
+		NancySceneState.changeScene(_exitScene);
 		finishExecution();
 		break;
 	}

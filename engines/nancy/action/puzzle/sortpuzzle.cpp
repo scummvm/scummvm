@@ -361,15 +361,11 @@ void SortPuzzle::execute() {
 				spd->currentState.clear();
 				spd->solvedState.clear();
 			}
-			if (_winFlag.label != -1)
-				NancySceneState.setEventFlag(_winFlag);
-			if (_winScene.sceneID != kNoScene)
-				NancySceneState.changeScene(_winScene);
+			NancySceneState.setEventFlag(_winFlag);
+			NancySceneState.changeScene(_winScene);
 		} else {
-			if (_cancelFlag.label != -1)
-				NancySceneState.setEventFlag(_cancelFlag);
-			if (_cancelScene.sceneID != kNoScene)
-				NancySceneState.changeScene(_cancelScene);
+			NancySceneState.setEventFlag(_cancelFlag);
+			NancySceneState.changeScene(_cancelScene);
 		}
 		finishExecution();
 		break;

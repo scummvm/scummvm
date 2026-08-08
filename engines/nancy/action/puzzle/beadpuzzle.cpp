@@ -199,11 +199,7 @@ void BeadPuzzle::execute() {
 		g_nancy->_sound->stopSound(_partialSound);
 		g_nancy->_sound->stopSound(_wrongSound);
 		g_nancy->_sound->stopSound(_perfectSound);
-		{
-			const SceneChangeDescription &dest = (_subState == kExitToSolved) ? _solvedScene : _defaultScene;
-			if (dest.sceneID != kNoScene)
-				NancySceneState.changeScene(dest);
-		}
+		NancySceneState.changeScene(_subState == kExitToSolved ? _solvedScene : _defaultScene);
 		finishExecution();
 		break;
 	}

@@ -720,15 +720,10 @@ void DrivingPuzzle::execute() {
 		break;
 	case kActionTrigger:
 		g_nancy->_sound->stopSound(_soundBlocks[2].channel);	// stop the engine ambience
-		if (_exitFlag != -1) {
-			NancySceneState.setEventFlag(_exitFlag, _exitFlagValue ? g_nancy->_true : g_nancy->_false);
-		}
-		if (_exitHasFade) {
+		NancySceneState.setEventFlag(_exitFlag, _exitFlagValue ? g_nancy->_true : g_nancy->_false);
+		if (_exitHasFade)
 			NancySceneState.specialEffect(_exitFadeType, _exitFadeTotalTime, _exitFadeToBlackTime, _exitFadeRect);
-		}
-		if (_exitScene.sceneID != kNoScene) {
-			NancySceneState.changeScene(_exitScene);
-		}
+		NancySceneState.changeScene(_exitScene);
 		finishExecution();
 		break;
 	}
@@ -765,11 +760,9 @@ void DrivingPuzzle::handleInput(NancyInput &input) {
 	if (_flatTirePending) {
 		if (!g_nancy->_sound->isSoundPlaying(_soundBlocks[0].channel)) {
 			saveState();
-			if (_finishScene != kNoScene) {
-				SceneChangeDescription scene;
-				scene.sceneID = _finishScene;
-				NancySceneState.changeScene(scene);
-			}
+			SceneChangeDescription scene;
+			scene.sceneID = _finishScene;
+			NancySceneState.changeScene(scene);
 			finishExecution();
 		}
 		return;

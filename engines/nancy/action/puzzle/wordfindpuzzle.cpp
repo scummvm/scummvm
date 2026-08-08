@@ -326,10 +326,7 @@ void WordFindPuzzle::execute() {
 		if (!_allFound) {
 			NancySceneState.setEventFlag(_exitFlag);
 		}
-		const SceneChangeDescription &sc = _allFound ? _solveScene : _exitScene;
-		if (sc.sceneID != kNoScene) {
-			NancySceneState.changeScene(sc);
-		}
+		NancySceneState.changeScene(_allFound ? _solveScene : _exitScene);
 
 		finishExecution();
 		break;

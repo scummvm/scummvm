@@ -418,19 +418,13 @@ void DropSortPuzzle::execute() {
 	case kActionTrigger:
 		if (_exitRequested) {
 			NancySceneState.setEventFlag(_exitFlag);
-			if (_exitScene.sceneID != kNoScene) {
-				NancySceneState.changeScene(_exitScene);
-			}
+			NancySceneState.changeScene(_exitScene);
 		} else if (_solved) {
 			NancySceneState.setEventFlag(_winFlag);
-			if (_winScene.sceneID != kNoScene) {
-				NancySceneState.changeScene(_winScene);
-			}
+			NancySceneState.changeScene(_winScene);
 		} else {
 			NancySceneState.setEventFlag(_loseFlag);
-			if (_loseScene.sceneID != kNoScene) {
-				NancySceneState.changeScene(_loseScene);
-			}
+			NancySceneState.changeScene(_loseScene);
 		}
 
 		finishExecution();

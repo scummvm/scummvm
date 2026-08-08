@@ -350,14 +350,9 @@ void PegsPuzzle::execute() {
 	case kActionTrigger: {
 		if (_exitRequested) {
 			NancySceneState.setEventFlag(_exitFlag);
-			if (_exitScene.sceneID != kNoScene) {
-				NancySceneState.changeScene(_exitScene);
-			}
+			NancySceneState.changeScene(_exitScene);
 		} else {
-			const SceneChangeDescription &sc = _solved ? _winScene : _loseScene;
-			if (sc.sceneID != kNoScene) {
-				NancySceneState.changeScene(sc);
-			}
+			NancySceneState.changeScene(_solved ? _winScene : _loseScene);
 		}
 
 		finishExecution();

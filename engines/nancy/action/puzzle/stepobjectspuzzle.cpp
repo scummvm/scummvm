@@ -395,15 +395,10 @@ void StepObjectsPuzzle::execute() {
 	case kActionTrigger:
 		if (_solved) {
 			NancySceneState.setEventFlag(_solveFlag);
-
-			if (_solveScene.sceneID != kNoScene) {
-				NancySceneState.changeScene(_solveScene);
-			}
+			NancySceneState.changeScene(_solveScene);
 		} else {
 			NancySceneState.setEventFlag(_exitFlag);
-			if (_exitScene.sceneID != kNoScene) {
-				NancySceneState.changeScene(_exitScene);
-			}
+			NancySceneState.changeScene(_exitScene);
 		}
 
 		finishExecution();

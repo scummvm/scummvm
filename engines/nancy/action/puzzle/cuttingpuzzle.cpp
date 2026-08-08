@@ -324,8 +324,7 @@ void CuttingPuzzle::execute() {
 			}
 			if (anyGroove)
 				NancySceneState.setEventFlag(_cancelScene._flag);
-			if (_cancelScene._sceneChange.sceneID != kNoScene)
-				NancySceneState.changeScene(_cancelScene._sceneChange);
+			NancySceneState.changeScene(_cancelScene._sceneChange);
 		} else if (_solved) {
 			_puzzleSolvedScene.execute();
 		} else if (_gogglesMissing) {

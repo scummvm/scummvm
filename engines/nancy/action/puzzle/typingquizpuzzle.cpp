@@ -380,16 +380,14 @@ void TypingQuizPuzzle::redraw() {
 
 void TypingQuizPuzzle::triggerSceneChange() {
 	if (_reachedTarget) {
-		if (_winScene.sceneID != kNoScene)
-			NancySceneState.changeScene(_winScene);
-		if (_winFlag != -1)
-			NancySceneState.setEventFlag(_winFlag, g_nancy->_true);
+		NancySceneState.setEventFlag(_winFlag, g_nancy->_true);
+		NancySceneState.changeScene(_winScene);
 	} else {
-		NancySceneState.changeScene(_defaultScene);
 		if (_reachedThreshold && _flagThreshold != -1)
 			NancySceneState.setEventFlag(_flagThreshold, g_nancy->_true);
 		else if (_flagFail != -1)
 			NancySceneState.setEventFlag(_flagFail, g_nancy->_true);
+		NancySceneState.changeScene(_defaultScene);
 	}
 }
 
