@@ -1030,14 +1030,9 @@ static void process_conversation_florent() {
 		global[stop_walker_disabled] = false;
 		break;
 
-#if 0
-	// TODO: This case was mapped to a second "case 80" in the release executable, and can
-	// never be reached. Need to see if the label "ROOM_113_HOLD_HAND", which is 98, is
-	// legitimate, and this case can be re-enabled
 	case ROOM_113_HOLD_HAND:
 		local->florent_action = CONV4_FLORENT_HOLD_HAND;
 		break;
-#endif
 
 	case ROOM_113_MADE_IT_TO_FLORENT:
 		global[stop_walker_disabled]  = true;

@@ -141,9 +141,9 @@ struct Scratch {        /* Room local variables */
 
 /* Process_conversation_florent triggers */
 #define ROOM_113_RAOUL_START_TALKING	 62
-#define ROOM_113_FLORENT_START_TALKING2	 64
+#define ROOM_113_FLORENT_START_TALKING2	 66
 #define ROOM_113_FLORENT_START_TALKING	 66
-#define ROOM_113_MADE_IT_TO_FLORENT		 78
+#define ROOM_113_MADE_IT_TO_FLORENT		 94
 #define ROOM_113_AT_COUCH				 80
 #define ROOM_113_BEFORE_COUCH			 82
 #define ROOM_113_BETWEEN_COUCH			 84
@@ -154,11 +154,11 @@ struct Scratch {        /* Room local variables */
 #define ROOM_113_END_HOLD_HAND			100
 
 /* Process_conversation_love triggers */
-#define ROOM_113_CHECK_FOR_ARMS_OUT		70		//89
-#define ROOM_113_DAY_START_TALKING		66		//91
-#define ROOM_113_WAIT_TO_SIT			78		//93
-#define ROOM_113_CHECK_FOR_AFTER_KISS	72		//95
-#define ROOM_113_HOLD_OPTIONS			76		//97
+#define ROOM_113_CHECK_FOR_ARMS_OUT		70
+#define ROOM_113_DAY_START_TALKING		66
+#define ROOM_113_WAIT_TO_SIT			78
+#define ROOM_113_CHECK_FOR_AFTER_KISS	72
+#define ROOM_113_HOLD_OPTIONS			76
 
 
 /* ========================= Player positions ====================== */
@@ -181,8 +181,8 @@ struct Scratch {        /* Room local variables */
 #define CORPSE_X                   175
 #define CORPSE_Y                   128
 
-#define FLORENT_TOUCH_HAND_X       142
-#define FLORENT_TOUCH_HAND_Y        68
+#define FLORENT_TOUCH_HAND_X        68
+#define FLORENT_TOUCH_HAND_Y       142
 
 
 /* ========================= Florent dynamic hotspot =============== */
