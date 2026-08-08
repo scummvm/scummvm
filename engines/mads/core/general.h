@@ -112,10 +112,6 @@ extern long _timer_clock;
 /* logical defines (boolean etc) */
 #define yes                     true	//(-1)
 #define no                      false	//0
-#if 0
-#define true                  (-1)
-#define false                 0
-#endif
 
 constexpr int none = 0;
 constexpr int stop = 99;
