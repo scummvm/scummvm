@@ -327,7 +327,7 @@ void nebular_main() {
 	else if (g_engine->isDemo())
 		selected_item = 9;
 	else if (ConfMan.getBool("start_intro"))
-		selected_item = 3;
+		selected_item = 2;
 	else
 		selected_item = -1;
 
