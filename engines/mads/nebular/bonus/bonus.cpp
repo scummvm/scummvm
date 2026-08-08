@@ -13,6 +13,7 @@
 #include "mads/nebular/bonus/bonus.h"
 
 #include "common/array.h"
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/func.h"
 #include "common/path.h"
@@ -42,13 +43,17 @@ namespace {
 struct BonusTrack {
 	byte section;
 	byte command;
+	// BONUS uses one cross-driver command table. For ISOUND, false entries
+	// either have no sequence or point directly at the native 00 00 terminator;
+	// do not substitute a nearby gameplay sound without executable evidence.
+	bool pcSpeakerAvailable;
 };
 
 static const BonusTrack kBonusTracks[] = {
-	{ 1, 12 }, { 1, 10 }, { 9, 49 }, { 2, 9 },
-	{ 2, 15 }, { 2, 19 }, { 3, 11 }, { 3, 10 },
-	{ 3, 16 }, { 3, 17 }, { 4, 12 }, { 5, 29 },
-	{ 6, 24 }, { 7, 24 }, { 7, 27 }, { 7, 9 }
+	{ 1, 12, false }, { 1, 10, false }, { 9, 49, false }, { 2, 9, false },
+	{ 2, 15, false }, { 2, 19, true }, { 3, 11, false }, { 3, 10, false },
+	{ 3, 16, false }, { 3, 17, false }, { 4, 12, false }, { 5, 29, false },
+	{ 6, 24, false }, { 7, 24, false }, { 7, 27, true }, { 7, 9, false }
 };
 
 static void showError(const Common::String &message) {
@@ -193,8 +198,20 @@ private:
 	bool _section3ExtraCommand;
 
 	void runMusicMenu() {
+		bool enabled[ARRAYSIZE(kBonusTracks) + 1];
+		const bool pcSpeaker = _soundManager.usesPCSpeaker();
+		for (uint index = 0; index < ARRAYSIZE(kBonusTracks); ++index)
+			enabled[index] = !pcSpeaker || kBonusTracks[index].pcSpeakerAvailable;
+		enabled[ARRAYSIZE(kBonusTracks)] = true;
+
+		if (pcSpeaker)
+			debug(2, "MADS Bonus Disk: PC Speaker music menu enables "
+					"tracks 6 and 15; the remaining ISOUND commands are "
+					"absent or immediate terminators");
+
 		while (!g_engine->shouldQuit()) {
-			const int selected = _ui.runMusicMenu(_musicSelection);
+			const int selected = _ui.runMusicMenu(_musicSelection,
+					pcSpeaker ? enabled : nullptr);
 			if (selected < 0 || selected == (int)ARRAYSIZE(kBonusTracks))
 				return;
 			playTrack(selected);
@@ -206,6 +223,17 @@ private:
 			return;
 
 		const BonusTrack &track = kBonusTracks[index];
+		if (_soundManager.usesPCSpeaker() &&
+				!track.pcSpeakerAvailable) {
+			debug(2, "MADS Bonus Disk: rejected unavailable PC Speaker "
+					"track %d (section %u command %u)", index + 1,
+					track.section, track.command);
+			return;
+		}
+
+		debug(2, "MADS Bonus Disk: starting track %d from section %u, command %u",
+				index + 1, track.section, track.command);
+
 		// Present the card before loading the driver. This keeps the final
 		// AnimView frame from leaking through while a driver is starting.
 		_ui.prepareNowPlaying(_text.musicTitles[index]);
@@ -219,8 +247,14 @@ private:
 				!g_engine->shouldQuit() &&
 				g_system->getMillis() - startupTime < 1000)
 			g_system->delayMillis(1);
+		debug(2, "MADS Bonus Disk: driver startup completed after %u ms; "
+				"active=%d", g_system->getMillis() - startupTime,
+				_soundManager.isDriverActive() ? 1 : 0);
 
 		_soundManager.command(track.command, 127);
+		debug(2, "MADS Bonus Disk: dispatched section %u command %u; active=%d",
+				track.section, track.command,
+				_soundManager.isDriverActive() ? 1 : 0);
 
 		// These follow the control flow surrounding the native track table in
 		// BONUS.EXE; they are player commands, not additional track entries.
@@ -238,6 +272,8 @@ private:
 		Common::Functor0Mem<bool, BonusApplication> isPlaying(
 				this, &BonusApplication::isDriverActive);
 		_ui.waitForNowPlaying(_text.musicTitles[index], isPlaying);
+		debug(2, "MADS Bonus Disk: track %d dismissed or completed; active=%d",
+				index + 1, _soundManager.isDriverActive() ? 1 : 0);
 		if (_soundManager.isLoaded())
 			_soundManager.closeDriver();
 	}

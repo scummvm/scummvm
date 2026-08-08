@@ -133,6 +133,13 @@ public:
 	bool isDriverActive();
 
 	/**
+	 * Returns whether the selected driver family uses PC speaker data.
+	 */
+	bool usesPCSpeaker() const {
+		return _driverType == SOUND_PCSPEAKER;
+	}
+
+	/**
 	 * Stop any currently active sound and remove the driver
 	 */
 	void closeDriver();
