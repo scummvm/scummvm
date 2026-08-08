@@ -996,7 +996,6 @@ dispatch:
 			int16 ax = (int16)(int8)b;   /* sign-extend */
 			var_8 = 0;
 			ax = (int16)(ax - (-66));
-			if ((uint16)ax > 65) goto dispatch;  /* unknown - skip */
 
 			switch (ax) {
 				/* ---- opcode -1  (0xFF): inner loop ---- */
@@ -1223,7 +1222,7 @@ vol_advance:
 				pSrc++;
 				ch->_patchAttenuation = *pSrc;
 				ch->_pSrc += 2;
-				var_8 = 1;
+				//var_8 = 1;
 				goto dispatch;
 			}
 
@@ -1270,7 +1269,7 @@ vol_advance:
 				(void)getRandomNumber();
 				uint16 rnd = _randomSeed & 0x7FFF;
 				uint16 idx = (uint16)((int16)rnd % (int16)var_C);
-				var_6 = idx;
+				//var_6 = idx;
 
 				uint8 chosen = *(base + idx);
 				uint8 target = *(base + var_C);
