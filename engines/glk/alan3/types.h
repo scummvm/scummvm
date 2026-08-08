@@ -52,7 +52,7 @@ namespace Alan3 {
 #define addressOf(x) ((((long)x)-((long)memory))/sizeof(Aword))
 #define stringAt(x) ((char *)pointerTo(x))
 
-#define ASIZE(x) (sizeof(x)/sizeof(Aword))
+#define ASIZE(x) AwordSizeOf(x)
 
 /* The various tables */
 struct VerbEntry {  /* VERB TABLE */
