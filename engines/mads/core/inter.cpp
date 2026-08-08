@@ -1060,7 +1060,7 @@ static void inter_select_word() {
 	int mode;
 	int limit = 0;
 	int strict, delta;
-	int tight_boxes = false;
+	int tight_boxes = 0;
 	int difference = 0;
 	int *selection;
 	int base_spot, this_spot;
@@ -1076,8 +1076,8 @@ static void inter_select_word() {
 		if (mouse_button && (right_action >= 0)) {
 			inter_set_active_word(STROKE_ACTION, &right_action, -1);
 		}
-		// tight_boxes = (end_of_selection && !mouse_button);
-		tight_boxes = true;
+
+		tight_boxes = (g_engine->getGameID() != GType_RexNebular) ? 1 : (end_of_selection && !mouse_button) ? 1 : 0;
 		break;
 
 	case STROKE_INVEN:
@@ -1087,8 +1087,9 @@ static void inter_select_word() {
 		strict = 0;
 		delta = first_inven;
 		selection = &left_inven;
-		// tight_boxes = (end_of_selection && ((!mouse_any_stroke) || !(inter_awaiting == AWAITING_COMMAND)));
-		tight_boxes = true;
+
+		tight_boxes = (g_engine->getGameID() != GType_RexNebular) ? 1 :
+			(end_of_selection && ((!mouse_any_stroke) || !(inter_awaiting == AWAITING_COMMAND))) ? 1 : 0;
 		break;
 
 	case STROKE_ACTION:
@@ -1096,7 +1097,8 @@ static void inter_select_word() {
 			paul_id = object[inven[active_inven]].vocab_id;
 			paul_id = object_named(paul_id);
 
-			if (paul_id == 8 && !global[86]) {  // pid doll / global [heal_verbs_visible]
+			if (g_engine->getGameID() == GType_Dragonsphere && paul_id == Dragonsphere::pid_doll &&
+					!global[Dragonsphere::heal_verbs_visible]) {
 				quantity = 1;
 			} else {
 				quantity = object[inven[active_inven]].num_verbs;
@@ -1107,14 +1109,15 @@ static void inter_select_word() {
 		} else {
 			quantity = 0;
 		}
+
 		strict = 0;
 		delta = 0;
 		selection = mouse_button ? &right_action : &left_action;
 		if (mouse_button && (right_command >= 0)) {
 			inter_set_active_word(STROKE_COMMAND, &right_command, -1);
 		}
-		// tight_boxes = end_of_selection && !mouse_button;
-		tight_boxes = true;
+
+		tight_boxes = (g_engine->getGameID() != GType_RexNebular) ? 1 : end_of_selection && !mouse_button ? 1 : 0;
 		break;
 
 	case STROKE_SPECIAL_INVEN:
@@ -1123,7 +1126,7 @@ static void inter_select_word() {
 		strict = 0;
 		delta = active_inven;
 		selection = &junk;
-		tight_boxes = true;
+		tight_boxes = -1;
 		break;
 
 	case STROKE_DIALOG:
@@ -1137,7 +1140,7 @@ static void inter_select_word() {
 		strict = 0;
 		delta = 0;
 		selection = &left_command;
-		tight_boxes = true;
+		tight_boxes = -1;
 		break;
 
 	case STROKE_INTERFACE:
@@ -1148,7 +1151,7 @@ static void inter_select_word() {
 		strict = 0;
 		delta = 0;
 		selection = &junk;
-		tight_boxes = true;
+		tight_boxes = -1;
 		break;
 	}
 
