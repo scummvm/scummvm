@@ -24,6 +24,10 @@
 
 #include "cryo/defs.h" // Room
 
+namespace Video {
+class VideoDecoder;
+}
+
 namespace Cryo {
 
 class EdenGame;
@@ -36,6 +40,10 @@ public:
 
 	// Original name: noclipax
 	void drawSprite(int16 index, int16 x, int16 y, bool withBlack = false, bool onSubtitle = false);
+	void zoomBackground(int16 srcX, int16 srcY);
+	void playRoomVideo(int16 num);
+	void stepRoomVideo();
+	void closeRoomVideo();
 
 	// Original name: af_subtitle
 	void displaySubtitles();
@@ -78,6 +86,8 @@ public:
 	void setShowBlackBars(bool value);
 
 	bool getShowBlackBars();
+	/** Play a movie straight off the disc, outside the game's resource file. */
+	bool playMovieFile(const Common::String &fileName);
 
 	void paneltobuf();
 
@@ -154,6 +164,19 @@ public:
 
 private:
 	EdenGame *_game;
+
+	bool openRoomVideo(int16 num);
+
+	/** The movie a room which keeps its picture in one is showing, if any */
+	Video::VideoDecoder *_roomVideo;
+	int16 _roomVideoNum;
+	bool _roomVideoIsHNM1;
+
+	/** The last sprite spoken of, so that redrawing it is not spoken of again */
+	int16 _tracedSpriteIndex;
+	int16 _tracedSpriteBank;
+	int16 _tracedSpriteX;
+	int16 _tracedSpriteY;
 
 	int16 _glowX;
 	int16 _glowY;
