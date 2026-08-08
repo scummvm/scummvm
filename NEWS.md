@@ -50,6 +50,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved character pathfinding.
    - Fix being unable to talk to characters after a one-sided conversation.
 
+ M4:
+   - Numerous Riddle of Master Lu fixes for crashes, missing functionality, and game bugs
+   - Fixed original game bug where conversations with Wolf could freeze the game.
+   - Added original game cheat codes for bypassing the maze
+
  MM:
    - Fix multiple M&M1 classic combat crashes.
    - Implement M&M1 classic PC speaker sound.
