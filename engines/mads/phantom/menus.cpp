@@ -221,8 +221,6 @@ static void global_menu_score() {
 		text_index[2] = 7;          /* Star Player */
 	} else if (score <= 250) {
 		text_index[2] = 8;          /* Director */
-	} else {
-		text_index[2] = 9;          /* Bug Finder! */
 	}
 
 	text_show(99);

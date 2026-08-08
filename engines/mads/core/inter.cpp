@@ -1161,11 +1161,6 @@ static void inter_select_word() {
 	for (count = 0; (count < quantity) && (new_ < 0); count++) {
 		if (stroke_type == STROKE_INTERFACE) {
 			this_spot = base_spot + (quantity - (count + 1));
-			// if (count >= difference) {
-			// this_spot = base_spot + (room_num_spots - ((count - difference) + 1));
-			// } else {
-			// this_spot = base_spot + room_num_spots + count;
-			// }
 		} else {
 			this_spot = base_spot + count;
 		}

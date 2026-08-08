@@ -367,7 +367,7 @@ int ASoundDemo1::command9() {
 
 int ASoundDemo1::command10() {
 	byte *pData1 = loadData(0x1C8C);
-	isSoundActive(pData1); // result unused, matches disassembly quirk
+	(void)isSoundActive(pData1); // result unused, matches disassembly quirk
 	command1();
 	_channels[4].load(pData1);
 	_channels[5].load(loadData(0x1CBC));
@@ -404,7 +404,7 @@ int ASoundDemo1::command14() {
 
 int ASoundDemo1::command15() {
 	byte *pData1 = loadData(0x1E9C);
-	isSoundActive(pData1); // result unused, matches disassembly quirk
+	(void)isSoundActive(pData1); // result unused, matches disassembly quirk
 	command1();
 	_channels[4].load(pData1);
 	_channels[5].load(loadData(0x1F3A));
@@ -494,7 +494,7 @@ int ASoundDemo1::command29() {
 	byte *pData = loadData(0x2236);
 	byte v = (byte)((command2627293032() >> 1) + 76);
 	pData[7] = pData[13] = pData[21] = pData[27] = v;
-	isSoundActive(pData); // result unused, matches disassembly quirk
+	(void)isSoundActive(pData); // result unused, matches disassembly quirk
 	playSoundAny(0x2236);
 	return 0;
 }
@@ -502,7 +502,7 @@ int ASoundDemo1::command29() {
 int ASoundDemo1::command30() {
 	byte *pData = loadData(0x2456);
 	pData[7] = (byte)((command2627293032() >> 1) + 72);
-	isSoundActive(pData); // result unused, matches disassembly quirk
+	(void)isSoundActive(pData); // result unused, matches disassembly quirk
 	playSoundAny(0x2456);
 	return 0;
 }
@@ -520,7 +520,7 @@ int ASoundDemo1::command32() {
 	byte v2 = base + 40;
 	pData[9] = pData[17] = pData[25] = pData[33] = v1;
 	pData[11] = pData[19] = pData[27] = pData[35] = v2;
-	isSoundActive(pData); // result unused, matches disassembly quirk
+	(void)isSoundActive(pData); // result unused, matches disassembly quirk
 	playSoundAny(0x2466);
 	return 0;
 }
@@ -562,7 +562,7 @@ int ASoundDemo1::command38() {
 
 int ASoundDemo1::command39() {
 	byte *pData1 = loadData(0x203E);
-	isSoundActive(pData1); // result unused, matches disassembly quirk
+	(void)isSoundActive(pData1); // result unused, matches disassembly quirk
 	_channels[5].load(pData1);
 	_channels[6].load(loadData(0x20C0));
 	_channels[7].load(loadData(0x20DE));
@@ -577,7 +577,7 @@ int ASoundDemo1::command40() {
 
 void ASoundDemo1::command111213() {
 	byte *pData1 = loadData(0x18E8);
-	isSoundActive(pData1); // result unused, matches disassembly quirk
+	(void)isSoundActive(pData1); // result unused, matches disassembly quirk
 	command1();
 	_channels[0].load(pData1);
 	_channels[1].load(loadData(0x1A80));
@@ -1145,7 +1145,7 @@ int ASound3::command23() {
 }
 
 int ASound3::command24() {
-	// WORKAROUND: Original calls isSoundActive without loading data pointer
+	// WORKAROUND: Original calls (void)isSoundActive without loading data pointer
 	byte *pData = loadData(0x4EFC);
 	if (!isSoundActive(pData)) {
 		int v;
@@ -2585,7 +2585,7 @@ int ASoundDemo9::command31() {
 
 int ASoundDemo9::command34() {
 	byte *pData1 = loadData(0x18FE);
-	isSoundActive(pData1); // result unused, matches disassembly quirk
+	(void)isSoundActive(pData1); // result unused, matches disassembly quirk
 	command1();
 	_channels[0].load(pData1);
 	_channels[1].load(loadData(0x1B10));
@@ -2609,7 +2609,7 @@ int ASoundDemo9::command36() {
 
 int ASoundDemo9::command38() {
 	byte *pData1 = loadData(0x307A);
-	isSoundActive(pData1); // result unused, matches disassembly quirk
+	(void)isSoundActive(pData1); // result unused, matches disassembly quirk
 	command1();
 	_channels[0].load(pData1);
 	_channels[1].load(loadData(0x3090));
