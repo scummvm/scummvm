@@ -733,6 +733,7 @@ void PlaySecondaryMovie::execute() {
 		// gets triggered, and teleports the player to the wrong place instead of making them lose the game
 		if (!_decoder.isPlaying() && _isVisible && !_isFinished) {
 			_decoder.start();
+			resolveSentinelFrames();
 
 			if (_playDirection == kPlayMovieReverse) {
 				_decoder.setRate(-_decoder.getRate());
