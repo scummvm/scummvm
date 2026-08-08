@@ -28,14 +28,26 @@
 #include "buried/overview.h"
 #include "buried/resources.h"
 #include "buried/sound.h"
+#include "buried/subtitle_manager.h"
 
+#include "common/config-manager.h"
 #include "graphics/surface.h"
 
 namespace Buried {
 
+enum OverviewState {
+	kOverviewStateNotStarted = -1,
+	kOverviewStateNavigation = 0,
+	kOverviewStateInventory = 1,
+	kOverviewStateBiochip = 2,
+	kOverviewStateMessages = 3,
+	kOverviewStateConclusion = 4,
+	kOverviewStateExit = 5
+};
+
 OverviewWindow::OverviewWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent) {
 	_currentImage = nullptr;
-	_currentStatus = -1;
+	_currentStatus = kOverviewStateNotStarted;
 	_timer = 0xFFFFFFFF;
 
 	Common::Rect parentRect = _parent->getClientRect();
@@ -69,7 +81,10 @@ bool OverviewWindow::startOverview() {
 	invalidateWindow();
 	setFocus();
 
-	_timer = setTimer(1000);
+	// The game originally set this timer to 1000ms. That was fast enough to advance the state of
+	// the interface overview visuals, but was too slow to show subtitle cards that line up with
+	// the audio.
+	_timer = setTimer(250);
 	return true;
 }
 
@@ -78,22 +93,30 @@ void OverviewWindow::onPaint() {
 
 	if (_currentImage) {
 		switch (_currentStatus) {
-		case 0: // Navigational buttons
+		case kOverviewStateNavigation:
+			// Navigational buttons
 			_vm->_gfx->blit(_currentImage, 498, 274);
 			break;
-		case 1: // Inventory buttons
+		case kOverviewStateInventory:
+			// Inventory buttons
 			_vm->_gfx->blit(_currentImage, 163, 352);
 			break;
-		case 2: // BioChip buttons
+		case kOverviewStateBiochip:
+			// BioChip buttons
 			_vm->_gfx->blit(_currentImage, 509, 89);
 			break;
-		case 3: // Message buttons
+		case kOverviewStateMessages:
+			// Message buttons
 			_vm->_gfx->blit(_currentImage, 93, 0);
 			break;
-		case 4: // Final info - no image to render to the screen
+		case kOverviewStateConclusion:
+			// Final info
+			// No image to render to the screen
 			break;
 		}
 	}
+
+	_vm->_subtitles->renderSubtitlesForActiveAudio(_vm->_gfx->getScreen());
 }
 
 bool OverviewWindow::onEraseBackground() {
@@ -116,8 +139,12 @@ void OverviewWindow::onActionEnd(const Common::CustomEventType &action, uint fla
 void OverviewWindow::onTimer(uint timer) {
 	_vm->_sound->timerCallback();
 
-	if (_currentStatus >= 0 && _vm->_sound->isInterfaceSoundPlaying())
+	// Is audio still playing or should we advance to the next state?
+	if (_currentStatus > kOverviewStateNotStarted && _vm->_sound->isInterfaceSoundPlaying()) {
+		// Audio is still playing for the current state. Ensure subtitles are fresh.
+		_vm->_subtitles->markSubtitlesDirty(this);
 		return;
+	}
 
 	if (_currentImage) {
 		_currentImage->free();
@@ -127,8 +154,8 @@ void OverviewWindow::onTimer(uint timer) {
 
 	// Switch on the current status in order to determine which action to take next
 	switch (_currentStatus) {
-	case -1: // Starting value - kick things off
-		_currentStatus = 0;
+	case kOverviewStateNotStarted: // Starting value - kick things off
+		_currentStatus = kOverviewStateNavigation;
 		_currentImage = _vm->_gfx->getBitmap(_vm->getFilePath(IDS_IF_OV_NAV_ARROWS_DIB));
 		invalidateRect(Common::Rect(498, 274, 640, 433), false);
 
@@ -136,8 +163,8 @@ void OverviewWindow::onTimer(uint timer) {
 		_vm->_sound->timerCallback();
 		_vm->_sound->playInterfaceSound(_vm->getFilePath(IDS_IF_OV_NAV_ARROWS_AUDIO));
 		break;
-	case 0: // Played initial stuff
-		_currentStatus = 1;
+	case kOverviewStateNavigation: // Played initial stuff
+		_currentStatus = kOverviewStateInventory;
 		_currentImage = _vm->_gfx->getBitmap(_vm->getFilePath(IDS_IF_OV_INVENTORY_DIB));
 		invalidateRect(Common::Rect(498, 274, 640, 433), false);
 		invalidateRect(Common::Rect(163, 352, 472, 472), false);
@@ -146,8 +173,8 @@ void OverviewWindow::onTimer(uint timer) {
 		_vm->_sound->timerCallback();
 		_vm->_sound->playInterfaceSound(_vm->getFilePath(IDS_IF_OV_INVENTORY_AUDIO));
 		break;
-	case 1:
-		_currentStatus = 2;
+	case kOverviewStateInventory:
+		_currentStatus = kOverviewStateBiochip;
 		_currentImage = _vm->_gfx->getBitmap(_vm->getFilePath(IDS_IF_OV_BIOCHIPS_DIB));
 		invalidateRect(Common::Rect(163, 352, 472, 472), false);
 		invalidateRect(Common::Rect(509, 89, 640, 275), false);
@@ -156,8 +183,8 @@ void OverviewWindow::onTimer(uint timer) {
 		_vm->_sound->timerCallback();
 		_vm->_sound->playInterfaceSound(_vm->getFilePath(IDS_IF_OV_BIOCHIPS_AUDIO));
 		break;
-	case 2:
-		_currentStatus = 3;
+	case kOverviewStateBiochip:
+		_currentStatus = kOverviewStateMessages;
 		_currentImage = _vm->_gfx->getBitmap(_vm->getFilePath(IDS_IF_OV_MESSAGE_BOX_DIB));
 		invalidateRect(Common::Rect(509, 89, 640, 275), false);
 		invalidateRect(Common::Rect(93, 0, 482, 108), false);
@@ -166,16 +193,16 @@ void OverviewWindow::onTimer(uint timer) {
 		_vm->_sound->timerCallback();
 		_vm->_sound->playInterfaceSound(_vm->getFilePath(IDS_IF_OV_MESSAGE_BOX_AUDIO));
 		break;
-	case 3:
-		_currentStatus = 4;
+	case kOverviewStateMessages:
+		_currentStatus = kOverviewStateConclusion;
 		invalidateRect(Common::Rect(93, 0, 482, 108), false);
 
 		_vm->_sound->stopInterfaceSound();
 		_vm->_sound->timerCallback();
 		_vm->_sound->playInterfaceSound(_vm->getFilePath(IDS_IF_OV_FURTHER_INFO_AUDIO));
 		break;
-	case 4:
-		_currentStatus = 5;
+	case kOverviewStateConclusion:
+		_currentStatus = kOverviewStateExit;
 		((FrameWindow *)_parent)->returnToMainMenu();
 		break;
 	}
