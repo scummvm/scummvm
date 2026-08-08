@@ -236,11 +236,7 @@ static void room_510_init() {
 	if (previous_room != KERNEL_RESTORING_GAME) {
 		local->anim_0_running = false;
 		local->standing_on    = 0;
-		if (global[move_direction_510]) {
-			local->move_counter   = 0;
-		} else {
-			local->move_counter   = 0;
-		}
+		local->move_counter   = 0;
 	}
 
 	ss[fx_n]     = kernel_load_series(kernel_name('b', 0), false);

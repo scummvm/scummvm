@@ -176,14 +176,7 @@ static void handle_animation_pid() {
 				++local->pid_freeze_count;
 				if (local->pid_freeze_count > imath_random(30, 45)) {
 					local->pid_freeze_count = 0;
-					random = imath_random(1, 2) == 1;
-					if (random == 1) {
-						pid_reset_frame = 221;
-					} else if (random == 2) {
-						pid_reset_frame = 222;
-					} else {
-						pid_reset_frame = 224;
-					}
+					pid_reset_frame = imath_random(1, 2) == 1 ? 221 : 222;
 				} else {
 					pid_reset_frame = local->pid_frame - 1;
 				}

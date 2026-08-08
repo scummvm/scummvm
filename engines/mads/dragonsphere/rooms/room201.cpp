@@ -1205,11 +1205,8 @@ static void handle_anim_guard_right_pid() {
 }
 
 static void handle_anim_death() {
-	int death_reset_frame;
-
 	if (kernel_anim[aa[6]].frame != local->death_frame) {
 		local->death_frame = kernel_anim[aa[6]].frame;
-		death_reset_frame = -1;
 
 		switch (local->death_frame) {
 		case 38:
@@ -1228,11 +1225,6 @@ static void handle_anim_death() {
 				sound_play(N_PoolMonsterEatsPid);
 			}
 			break;
-		}
-
-		if (death_reset_frame >= 0) {
-			kernel_reset_animation(aa[6], death_reset_frame);
-			local->death_frame = death_reset_frame;
 		}
 	}
 }

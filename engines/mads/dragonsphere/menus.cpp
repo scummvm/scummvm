@@ -150,8 +150,6 @@ static void global_menu_score() {
 		text_index[2] = 7;          /* Noble */
 	} else if (score <= 250) {
 		text_index[2] = 8;          /* King */
-	} else {
-		text_index[2] = 9;          /* King+ */
 	}
 
 	text_show(99);
