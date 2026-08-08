@@ -319,7 +319,7 @@ enum Flag {
 	V282 = 282,
 	V283 = 283,
 	V284 = 284,
-	V285 = 285,
+	V285 = 285,// empty translation table in journal
 	V286 = 286,
 	V287 = 287,
 	V288 = 288,

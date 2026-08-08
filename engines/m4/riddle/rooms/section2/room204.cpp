@@ -991,7 +991,7 @@ void Room204::parser() {
 				_G(flags)[V089] = 1;
 				_G(flags)[kTabletsCartoon] = 1;
 			}
-			warning("Room204 Parser : sendWSMessage_multi(nullptr)");
+			sketchInJournal(nullptr);
 		}
 	} else if (lookFl && !inv_player_has(_G(player).noun) && !player_said("MEI CHEN"))
 		digi_play("204R06", 1, 255, -1, -1);
@@ -2427,8 +2427,9 @@ void Room204::daemon() {
 		sendWSMessage_110000(_G(my_walker), 676);
 		break;
 
-	case 676:
+	case 676: // ripleay adds empty translation table in journal
 		sendWSMessage_120000(_G(my_walker), 677);
+		_G(flags)[V285] = 1;
 		digi_play("950_s34", 2, 200, -1, -1);
 		break;
 
