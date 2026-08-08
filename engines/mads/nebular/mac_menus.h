@@ -32,7 +32,7 @@ class String;
 namespace Graphics {
 class MacMenu;
 struct MacMenuItem;
-class MacMenuSubMenu;
+struct MacMenuSubMenu;
 class MacWindowManager;
 class ManagedSurface;
 }
@@ -54,14 +54,14 @@ private:
 	bool _paletteValid = false;
 	int _pendingCommand = -1;
 
-	static void menuCallback(int command, Common::String &name, void *data);
+	static void menuCallback(int commandId, Common::String &name, void *data);
 	bool loadMenuResource(uint16 resourceID,
 		Graphics::MacMenuSubMenu *parent = nullptr, int parentItem = -1);
 	Graphics::MacMenuItem *getMenuItem(int menu, int item) const;
 	Graphics::MacMenuItem *getSubMenuItem(int menu, int parentItem, int item) const;
 	void setItemState(Graphics::MacMenuItem *item, bool enabled, bool checked);
 	void updateState();
-	void dispatchCommand(int command);
+	void dispatchCommand(int commandId);
 	void syncPalette();
 
 public:

@@ -257,8 +257,8 @@ void MacNebularMenu::updateState() {
 	setItemState(getMenuItem(kWindowMenu, 2), true, true);
 }
 
-void MacNebularMenu::dispatchCommand(int command) {
-	switch (command) {
+void MacNebularMenu::dispatchCommand(int commandId) {
+	switch (commandId) {
 	case kFileOpen:
 		if (_engine.canLoadGameStateCurrently(nullptr))
 			_engine.loadGameDialog();
@@ -294,14 +294,14 @@ void MacNebularMenu::dispatchCommand(int command) {
 	case kFadeSmooth:
 	case kFadeMedium:
 	case kFadeFast:
-		kernel_screen_fade = command - kFadeSmooth;
+		kernel_screen_fade = commandId - kFadeSmooth;
 		config_file.screen_fade = kernel_screen_fade;
 		ConfMan.setInt("screen_fade", kernel_screen_fade);
 		ConfMan.flushToDisk();
 		break;
 	case kStoryNaughty:
 	case kStoryNice:
-		config_file.naughtiness = command == kStoryNaughty ? NAUGHTY : NICE;
+		config_file.naughtiness = commandId == kStoryNaughty ? NAUGHTY : NICE;
 		ConfMan.setBool("naughtiness", config_file.naughtiness == NAUGHTY);
 		ConfMan.flushToDisk();
 		break;
@@ -330,9 +330,9 @@ bool MacNebularMenu::processEvent(Common::Event &event) {
 	updateState();
 	const bool handled = _windowManager->processEvent(event);
 	if (_pendingCommand != -1) {
-		const int command = _pendingCommand;
+		const int commandId = _pendingCommand;
 		_pendingCommand = -1;
-		dispatchCommand(command);
+		dispatchCommand(commandId);
 	}
 	return handled;
 }
@@ -346,9 +346,9 @@ void MacNebularMenu::draw() {
 	_menu->draw(&_screen, true);
 }
 
-void MacNebularMenu::menuCallback(int command, Common::String &, void *data) {
+void MacNebularMenu::menuCallback(int commandId, Common::String &, void *data) {
 	MacNebularMenu *menus = (MacNebularMenu *)data;
-	menus->_pendingCommand = command;
+	menus->_pendingCommand = commandId;
 	menus->_menu->closeMenu();
 }
 
