@@ -299,18 +299,12 @@ static void game_main(int argc, const char **argv) {
 	game_control();
 
 done:
+	// Handle updating config settings
 	global_unload_config_parameters();
 
-	if (fileio_exist("config.for")) {
-		global_write_config_file();
-	}
-	if (chain_flag && (win_status || force_chain) && (key_abort_level < 2)) {
-		warning("TODO: chain_execute");
-	} else {
-		if (win_status) {
-			debug("(Ending: %d)", win_status);
-		}
-	}
+	if (win_status == WIN_ALL_THE_MONEY)
+		config_file.quotes_enabled = true;
+	global_write_config_file();
 }
 
 void nebular_main() {
