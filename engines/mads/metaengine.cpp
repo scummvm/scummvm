@@ -34,6 +34,7 @@
 #include "graphics/surface.h"
 #include "mads/detection.h"
 #include "mads/nebular/nebular.h"
+#include "mads/nebular/bonus/bonus.h"
 #include "mads/phantom/phantom.h"
 #include "mads/dragonsphere/dragonsphere.h"
 #include "mads/forest/forest.h"
@@ -210,9 +211,12 @@ bool MADS::MADSEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error MADSMetaEngine::createInstance(OSystem *syst, Engine **engine, const MADS::MADSGameDescription *desc) const {
-	if (desc->gameID == MADS::GType_RexNebular)
-		*engine = new MADS::RexNebular::RexNebularEngine(syst, desc);
-	else if (desc->gameID == MADS::GType_Phantom)
+	if (desc->gameID == MADS::GType_RexNebular) {
+		if (desc->features & MADS::GF_BONUS_DISK)
+			*engine = new MADS::RexNebular::BonusEngine(syst, desc);
+		else
+			*engine = new MADS::RexNebular::RexNebularEngine(syst, desc);
+	} else if (desc->gameID == MADS::GType_Phantom)
 		*engine = new MADS::Phantom::PhantomEngine(syst, desc);
 	else if (desc->gameID == MADS::GType_Forest)
 		*engine = new MADS::Forest::ForestEngine(syst, desc);

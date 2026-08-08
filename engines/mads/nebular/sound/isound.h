@@ -149,6 +149,8 @@ protected:
 	int16 generateSample();
 
 public:
+	static void validate();
+
 	ISound(Audio::Mixer *mixer, const Common::Path &filename);
 	~ISound() override;
 
