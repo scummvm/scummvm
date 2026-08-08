@@ -38,6 +38,21 @@
 namespace Nancy {
 namespace Action {
 
+// Nancy12 repurposes the kElapsedPlayerDay dependency as a UI-resource check (fuel/tire).
+// An overlay gated by one - a gas/tire gauge - has a visibility that changes at runtime as
+// the resource does, unlike the usual set-once event-flag overlays.
+static bool hasResourceDependency(const DependencyRecord &dep) {
+	if (dep.type == DependencyType::kElapsedPlayerDay) {
+		return true;
+	}
+	for (uint i = 0; i < dep.children.size(); ++i) {
+		if (hasResourceDependency(dep.children[i])) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void Overlay::init() {
 	// Autotext overlays need special handling when blitting
 	if (_imageName.baseName().hasPrefix("USE_")) {
@@ -76,11 +91,14 @@ void Overlay::handleInput(NancyInput &input) {
 }
 
 void Overlay::updateGraphics() {
-	// A static overlay gated by a dynamic dependency - e.g. a Nancy12 gas/tire gauge,
-	// which is one of a set of sprites each shown for a different resource range - must be
-	// visible only while its dependency currently holds. (With the usual set-once event
-	// flags _isActive never drops back to false, so this is a no-op there.)
-	if (g_nancy->getGameType() >= kGameTypeNancy12 && _state == kRun && _overlayType == kPlayOverlayStatic) {
+	// A static overlay gated by a resource dependency - a Nancy12 gas/tire gauge, one of a
+	// set of sprites each shown for a different resource range - must be visible only while
+	// its dependency currently holds, so track _isActive every frame. This is limited to
+	// resource-gated overlays: ordinary static overlays manage their own per-viewport-frame
+	// visibility in execute() (e.g. appearing only on some frames of a 360 panorama), which
+	// forcing setVisible() here would override.
+	if (g_nancy->getGameType() >= kGameTypeNancy12 && _state == kRun &&
+			_overlayType == kPlayOverlayStatic && hasResourceDependency(_dependencies)) {
 		setVisible(_isActive);
 	}
 
