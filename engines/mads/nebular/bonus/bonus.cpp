@@ -13,7 +13,6 @@
 #include "mads/nebular/bonus/bonus.h"
 
 #include "common/array.h"
-#include "common/debug.h"
 #include "common/file.h"
 #include "common/func.h"
 #include "common/path.h"
@@ -204,11 +203,6 @@ private:
 			enabled[index] = !pcSpeaker || kBonusTracks[index].pcSpeakerAvailable;
 		enabled[ARRAYSIZE(kBonusTracks)] = true;
 
-		if (pcSpeaker)
-			debug(2, "MADS Bonus Disk: PC Speaker music menu enables "
-					"tracks 6 and 15; the remaining ISOUND commands are "
-					"absent or immediate terminators");
-
 		while (!g_engine->shouldQuit()) {
 			const int selected = _ui.runMusicMenu(_musicSelection,
 					pcSpeaker ? enabled : nullptr);
@@ -224,15 +218,8 @@ private:
 
 		const BonusTrack &track = kBonusTracks[index];
 		if (_soundManager.usesPCSpeaker() &&
-				!track.pcSpeakerAvailable) {
-			debug(2, "MADS Bonus Disk: rejected unavailable PC Speaker "
-					"track %d (section %u command %u)", index + 1,
-					track.section, track.command);
+				!track.pcSpeakerAvailable)
 			return;
-		}
-
-		debug(2, "MADS Bonus Disk: starting track %d from section %u, command %u",
-				index + 1, track.section, track.command);
 
 		// Present the card before loading the driver. This keeps the final
 		// AnimView frame from leaking through while a driver is starting.
@@ -247,14 +234,8 @@ private:
 				!g_engine->shouldQuit() &&
 				g_system->getMillis() - startupTime < 1000)
 			g_system->delayMillis(1);
-		debug(2, "MADS Bonus Disk: driver startup completed after %u ms; "
-				"active=%d", g_system->getMillis() - startupTime,
-				_soundManager.isDriverActive() ? 1 : 0);
 
 		_soundManager.command(track.command, 127);
-		debug(2, "MADS Bonus Disk: dispatched section %u command %u; active=%d",
-				track.section, track.command,
-				_soundManager.isDriverActive() ? 1 : 0);
 
 		// These follow the control flow surrounding the native track table in
 		// BONUS.EXE; they are player commands, not additional track entries.
@@ -272,8 +253,6 @@ private:
 		Common::Functor0Mem<bool, BonusApplication> isPlaying(
 				this, &BonusApplication::isDriverActive);
 		_ui.waitForNowPlaying(_text.musicTitles[index], isPlaying);
-		debug(2, "MADS Bonus Disk: track %d dismissed or completed; active=%d",
-				index + 1, _soundManager.isDriverActive() ? 1 : 0);
 		if (_soundManager.isLoaded())
 			_soundManager.closeDriver();
 	}
