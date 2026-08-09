@@ -21,6 +21,8 @@
 
 #include "mads/nebular/sound/isound_nebular.h"
 
+#include "common/debug.h"
+
 namespace MADS {
 namespace RexNebular {
 namespace Sound {
@@ -408,19 +410,35 @@ ISoundSection::ISoundSection(Audio::Mixer *mixer, const char *filename,
 
 int ISoundSection::command(int commandId, int param) {
 	Common::StackLock lock(_driverMutex);
-	if (commandId < 0 || (uint)commandId >= _commandCount)
+	if (commandId < 0 || (uint)commandId >= _commandCount) {
+		debug(2, "MADS ISOUND: command %d is outside the section table", commandId);
 		return 0;
+	}
 
 	beginCommand(param);
 	if (commandId <= 8)
 		return executeCommonCommand(commandId);
 
 	const ISoundCommandSequence &entry = _commands[commandId];
-	if (entry.parameterAtLeast120 && _commandParam < 0x78)
+	if (entry.parameterAtLeast120 && _commandParam < 0x78) {
+		debug(2, "MADS ISOUND: command %d ignored because parameter %u "
+				"is below 120", commandId, _commandParam);
 		return 0;
+	}
 
-	if (entry.sequenceOffset)
+	if (entry.sequenceOffset) {
+		const bool immediateTerminator =
+				readSequenceByte(entry.sequenceOffset) == 0 &&
+				readSequenceByte((uint16)(entry.sequenceOffset + 1)) == 0;
+		debug(2, "MADS ISOUND: command %d parameter %u maps to sequence "
+				"0x%04x priority %u%s", commandId, _commandParam,
+				entry.sequenceOffset, entry.priority,
+				immediateTerminator ? " (immediate terminator)" : "");
 		playSequence(entry.sequenceOffset, entry.priority);
+	} else {
+		debug(2, "MADS ISOUND: command %d parameter %u has no sequence",
+				commandId, _commandParam);
+	}
 
 	return 0;
 }

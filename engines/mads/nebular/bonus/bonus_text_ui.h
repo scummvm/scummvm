@@ -42,7 +42,7 @@ public:
 
 	bool init(Common::String &errorMessage);
 	MainChoice runMainMenu(int &selected);
-	int runMusicMenu(int &selected);
+	int runMusicMenu(int &selected, const bool *enabled);
 	bool showBonusText(const Common::Path &filename);
 	void prepareNowPlaying(const Common::String &trackTitle);
 	void waitForNowPlaying(const Common::String &trackTitle,
@@ -66,14 +66,18 @@ private:
 	void drawDesktop();
 	void drawTitlePanel();
 	void drawMenu(const Common::Rect &rect, const Common::String &title,
-			const Common::String *items, int itemCount, int selected);
+			const Common::String *items, int itemCount, int selected,
+			const bool *enabled);
 	void drawMouseCursor();
 	void present(bool forcePalette = false);
 	void restorePresentation();
 	void updateMouseCell(const Common::Point &position);
 
 	int runMenu(const Common::Rect &rect, const Common::String &title,
-			const Common::String *items, int itemCount, int &selected);
+			const Common::String *items, int itemCount, int &selected,
+			const bool *enabled = nullptr, bool showPCSpeakerNotice = false);
+	static int nextEnabled(const bool *enabled, int itemCount,
+			int selected, int direction);
 	static int itemRow(const Common::Rect &rect, int itemCount, int index);
 	static int rowAtMouse(const Common::Rect &rect, int itemCount,
 			int mouseX, int mouseY);
