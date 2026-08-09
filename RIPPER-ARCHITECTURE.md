@@ -949,16 +949,18 @@
   plays. `RunPacketizedMediaPlaybackCore` at `0x5b592` assigns the three media
   branches sequence IDs 1 through 3. `InitializeEndingSelectionPlaybackCallback`
   at `0x43840` installs the borrowed cursor presentation and moves it to logical
-  position (100,160) only for sequence 3; the first two branches remain
-  noninteractive. Once that state is active,
+  position (100,160), physical position (200,320) in the 2:1 ScummVM output,
+  only for sequence 3; the first two branches remain noninteractive. Once that
+  state is active,
   `HandleEndingSelectionThrowTargetCallback` at `0x438cf` starts `SPIN_1.WAV`;
-  primary clicks are accepted only inside one
+  a held primary button is accepted only inside one
   of the eight frame-gated logical 320-by-200 target rectangles at `0x84fe4`
   and queue `BALLTHRO.WAV`. The one-based target result wraps modulo four to
-  choose `END_DF`, `END_DC`, `END_DM`, or `END_HIM`. A correct choice follows
-  the verified `END_HER`/`QUIN_WIN`, `Q4_V4`, and ending-specific epilogue
-  branch; a wrong choice goes to `RIPFINAL`. No selection goes to `END_DB`.
-  Both paths finish with `CREDITS1.AVI` and `CREDITS2.AVI`.
+  choose `END_DB`, `END_DF`, `END_DC`, or `END_DM`. A correct choice conditionally
+  adds `END_HIM` for ending 3 or `END_HER` for endings 0 and 2, always plays
+  `QUIN_WIN`, and then selects `Q4_V4`, `Q4_V3`, `Q4_V6`, or `Q4_V5` by ending
+  index. A wrong choice or no selection goes to `RIPFINAL`. All paths finish
+  with `CREDITS1.AVI` and `CREDITS2.AVI`.
 - Scene action 25 calls `RunKkTileMatchPuzzleScene` at `0x2fa31`. It loads the
   difficulty-selected `KK%d.INI` from `SCRIPT.PL`, opens `KK.PL`, and creates
   controls `0x672` through `0x681` at the 4-by-4 Y/X coordinate table rooted
