@@ -107,7 +107,8 @@ Audio::AudioStream *speech_load(const char *resName, int id, bool) {
 
 	// At this point we have valid data
 	memStream = new Common::MemoryReadStream(load_buf, speechDir.size, DisposeAfterUse::YES);
-	audioStream = Audio::makeRawStream(memStream, 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+	audioStream = Audio::makeRawStream(memStream, g_engine->getGameID() == GType_RexNebular ? 8192 : 11025,
+		Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 
 done:
 	delete handle;
