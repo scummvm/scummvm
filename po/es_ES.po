@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-07-13 11:35+0000\n"
-"PO-Revision-Date: 2026-07-13 22:21+0000\n"
+"PO-Revision-Date: 2026-08-09 17:29+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -258,8 +258,8 @@ msgid ""
 "find it on the Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
-"Cuando de error al enviar código JSON a ScummVM,\n"
-"ve a la sección «Troubleshooting/Resolución de problemas»\n"
+"Cuando dé error al enviar código JSON a ScummVM,\n"
+"ve a la sección \"Troubleshooting/Resolución de problemas\"\n"
 "de la página y sigue el siguiente paso."
 
 #: gui/cloudconnectionwizard.cpp:378
@@ -419,7 +419,7 @@ msgstr "Fallo al cargar el archivo JSON"
 
 #: gui/dlcsdialog.cpp:41
 msgid "Download Freeware Games and Demos"
-msgstr "Descargar juegos «freeware» y demos"
+msgstr "Descargar juegos freeware y demos"
 
 #: gui/dlcsdialog.cpp:52
 msgid "Fetching DLCs..."
@@ -492,7 +492,7 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
-"El directorio «%s» ya existe en la ruta especificada.\n"
+"El directorio \"%s\" ya existe en la ruta especificada.\n"
 "¿Seguro que quieres descargar los archivos en ese directorio?"
 
 #: gui/downloaddialog.cpp:198 gui/downloaddlcsdialog.cpp:70
@@ -916,7 +916,7 @@ msgstr ""
 
 #: gui/integrity-dialog.cpp:111 gui/integrity-dialog.cpp:252
 msgid "Calculating file checksums..."
-msgstr "Calculando «checksums» de archivos..."
+msgstr "Calculando sumas de comprobación de archivos..."
 
 #: gui/integrity-dialog.cpp:124
 msgid "Launch Email Client"
@@ -1298,19 +1298,18 @@ msgstr ""
 "\n"
 "## Cómo obtener juegos\n"
 "\n"
-"Visita [nuestra wiki (en inglés)](https://wiki.scummvm.org/index.php?"
-"title=Where_to_get_the_games) para ver una lista detallada de juegos y dónde "
-"puedes comprarlos.\n"
+"Visita [nuestra wiki (en inglés)](https://wiki.scummvm.org/"
+"index.php?title=Where_to_get_the_games) para ver una lista detallada de "
+"juegos y dónde puedes comprarlos.\n"
 "\n"
-"También puedes descargar una selección de [juegos «freeware»](https://"
+"También puedes descargar una selección de [juegos freeware](https://"
 "scummvm.org/games) y [demos](https://www.scummvm.org/demos/) directamente "
 "desde nuestra página web. \n"
 "\n"
 "El equipo de ScummVM no apoya a ningún proveedor de juegos en concreto. No "
 "obstante, el proyecto se lleva una comisión de todas las compras hechas en "
-"[ZOOM-Platform](https://www.zoom-platform.com/?"
-"affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53) si se utilizan los enlaces "
-"de referencia de afiliados.\n"
+"[ZOOM-Platform](https://www.zoom-platform.com/?affiliate=c049516c-9c4c-42d6-"
+"8649-92ed870e8b53) si se utilizan los enlaces de referencia de afiliados.\n"
 "\n"
 "Por otro lado, los juegos que no se encuentren disponibles en ZOOM-Platform "
 "sí lo podrían estar en otros proveedores, como GOG.com y Steam.\n"
@@ -1559,7 +1558,7 @@ msgstr "Descargar juegos"
 
 #: gui/launcher.cpp:284
 msgid "Download freeware games for ScummVM"
-msgstr "Descargar juegos «freeware» para ScummVM"
+msgstr "Descargar juegos freeware para ScummVM"
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
 #: gui/launcher.cpp:291
@@ -1894,7 +1893,7 @@ msgstr "no se ha podido cambiar el shader"
 
 #: gui/options.cpp:1441
 msgid "Touchpad mouse mode"
-msgstr "Modo «touchpad»"
+msgstr "Modo touchpad"
 
 #: gui/options.cpp:1446
 msgid "Pointer Speed:"
@@ -2794,7 +2793,7 @@ msgstr ""
 
 #: gui/options.cpp:3311
 msgid "Select directory for DLC downloads"
-msgstr "Selecciona el directorio de contenidos descargables («DLC»)"
+msgstr "Selecciona el directorio de contenidos descargables (\"DLC\")"
 
 #: gui/options.cpp:3322
 msgid "Select directory for extra files"
@@ -3177,7 +3176,7 @@ msgstr ""
 "  1. Dentro del iniciador, ve a **Opciones del juego -> Rutas**. Selecciona "
 "las opciones de rutas de **Juego** o **Extra** según corresponda.\n"
 "  2. Dentro del explorador de archivos de ScummVM, selecciona **Arriba** "
-"hasta llegar a la carpeta «root», donde verás la opción **<Añadir una "
+"hasta llegar a la carpeta \"root\", donde verás la opción **<Añadir una "
 "carpeta nueva>**.\n"
 "  3. Toca dos veces en **<Añadir una carpeta nueva>**. Entonces busca en el "
 "explorador de archivos de tu dispositivo la carpeta que contiene las "
@@ -3224,7 +3223,7 @@ msgstr ""
 "\n"
 "  1. Dentro del iniciador, selecciona **Añadir juego...**\n"
 "  2. Dentro del explorador de archivos de ScummVM, selecciona **Arriba** "
-"hasta llegar a la carpeta «root», donde verás la opción **<Añadir una "
+"hasta llegar a la carpeta \"root\", donde verás la opción **<Añadir una "
 "carpeta nueva>**.\n"
 "  3. Toca dos veces en **<Añadir una carpeta nueva>**. Entonces busca en el "
 "explorador de archivos de tu dispositivo la carpeta que contiene las "
@@ -3245,7 +3244,7 @@ msgstr "Error al ejecutar el juego:"
 #: common/engine_data.cpp:277 engines/ultima/shared/engine/data_archive.cpp:88
 #, c-format
 msgid "Could not locate engine data %s"
-msgstr "No se ha podido localizar el archivo de datos del motor «%s»"
+msgstr "No se ha podido localizar el archivo de datos del motor \"%s\""
 
 #: common/engine_data.cpp:295 engines/ultima/shared/engine/data_archive.cpp:106
 #, c-format
@@ -3614,7 +3613,7 @@ msgid ""
 "systems for which they were never designed!"
 msgstr ""
 "ScummVM es un programa que te permite ejecutar una amplia selección de "
-"aventuras gráficas «point-and-click» y RPG clásicos, siempre y cuando ya "
+"aventuras gráficas point-and-click y RPG clásicos, siempre y cuando ya "
 "tengas sus archivos de datos. Lo interesante es que ScummVM se limita a "
 "sustituir los ejecutables de cada juego, ¡lo que permite jugarlos en "
 "sistemas para los que nunca fueron diseñados!"
@@ -3881,9 +3880,9 @@ msgid ""
 "not yet fully supported by ScummVM. As such, it is likely to be unstable, "
 "and any saved game you make might not work in future versions of ScummVM."
 msgstr ""
-"AVISO: El juego que vas a ejecutar contiene la expansión «%s», que aún no es "
-"totalmente compatible con ScummVM. Por lo tanto, puede que sea inestable y "
-"que las partidas que guardes no funcionen en versiones futuras de ScummVM."
+"AVISO: El juego que vas a ejecutar contiene la expansión \"%s\", que aún no "
+"es totalmente compatible con ScummVM. Por lo tanto, puede que sea inestable "
+"y que las partidas que guardes no funcionen en versiones futuras de ScummVM."
 
 #: engines/engine.cpp:917
 msgid ""
@@ -3903,9 +3902,9 @@ msgid ""
 "run independently. Please copy the add-on contents into a subdirectory of "
 "the base game, and start the base game itself."
 msgstr ""
-"El juego que intentas añadir, «%s», es una expansión de «%s» que no puede "
-"ejecutarse de forma independiente. Copia los contenidos de la expansión en "
-"un subdirectorio del juego base y luego ejecuta este último."
+"El juego que intentas añadir, \"%s\", es una expansión de \"%s\" que no "
+"puede ejecutarse de forma independiente. Copia los contenidos de la "
+"expansión en un subdirectorio del juego base y luego ejecuta este último."
 
 #: engines/engine.cpp:950
 msgid "This game is not supported."
@@ -3933,13 +3932,13 @@ msgid ""
 "The directory '%s' looks like an add-on for the game '%s', but ScummVM could "
 "not find any matching add-on in it."
 msgstr ""
-"El directorio «%s» parece contener una expansión para el juego «%s», pero "
-"ScummVM no ha podido encontrar información sobre la misma."
+"El directorio \"%s\" parece contener una expansión para el juego \"%s\", "
+"pero ScummVM no ha podido encontrar información sobre la misma."
 
 #: engines/engine.cpp:1322
 #, c-format
 msgid "Directory '%s' matches several add-ons, please pick one."
-msgstr "El directorio «%s» tiene varias expansiones identificadas, elige una."
+msgstr "El directorio \"%s\" tiene varias expansiones identificadas, elige una."
 
 #: engines/game.cpp:199
 #, c-format
@@ -4193,7 +4192,7 @@ msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
-"No se ha encontrado el dispositivo de sonido «%s» (puede estar apagado o "
+"No se ha encontrado el dispositivo de sonido \"%s\" (puede estar apagado o "
 "desconectado)."
 
 #: audio/mididrv.cpp:233 audio/mididrv.cpp:247 audio/mididrv.cpp:285
@@ -4207,7 +4206,7 @@ msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
-"No se puede utilizar el dispositivo de sonido «%s». Consulta el registro "
+"No se puede utilizar el dispositivo de sonido \"%s\". Consulta el registro "
 "para más información."
 
 #: audio/mididrv.cpp:284
@@ -4216,7 +4215,7 @@ msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
-"No se ha encontrado el dispositivo de sonido preferido «%s» (puede estar "
+"No se ha encontrado el dispositivo de sonido preferido \"%s\" (puede estar "
 "apagado o desconectado)."
 
 #: audio/mididrv.cpp:301
@@ -4225,7 +4224,7 @@ msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
-"No se puede utilizar el dispositivo de sonido preferido «%s». Consulta el "
+"No se puede utilizar el dispositivo de sonido preferido \"%s\". Consulta el "
 "registro para más información."
 
 #: audio/mididrv.cpp:474
@@ -4478,7 +4477,7 @@ msgstr "SDL Surface (modo a 8bpp forzado)"
 #: backends/graphics/sdl/sdl-graphics.cpp:424
 #, c-format
 msgid "Saved screenshot '%s'"
-msgstr "Captura de pantalla «%s» guardada"
+msgstr "Captura de pantalla \"%s\" guardada"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:439
 msgid "Could not save screenshot"
@@ -5241,15 +5240,15 @@ msgstr ""
 "Los controles táctiles son directos. El cursor saltará allá donde tu dedo "
 "toque la pantalla (la opción predeterminada para los menús).\n"
 "\n"
-"  ![Control directo de ratón](mouse.png \"Control directo de ratón\")"
-"{w=10em}\n"
+"  ![Control directo de ratón](mouse.png \"Control directo de ratón\"){w=10em}"
 "\n"
-"### Emulación de pantalla táctil/«touchpad» \n"
+"\n"
+"### Emulación de pantalla táctil/touchpad \n"
 "\n"
 "Los controles táctiles son indirectos. Aunque tu dedo esté lejos del cursor, "
-"todavía podrá moverlo tal y como lo haría el «touchpad» de un portátil.\n"
+"todavía podrá moverlo tal y como lo haría el touchpad de un portátil.\n"
 "\n"
-"  ![Modo «touchpad»](touchpad.png \"Modo «touchpad»\"){w=10em}\n"
+"  ![Modo touchpad](touchpad.png \"Modo touchpad\"){w=10em}\n"
 "\n"
 "### Emulación de mando \n"
 "\n"
@@ -5712,15 +5711,15 @@ msgstr ""
 "Los controles táctiles son directos. El cursor saltará allá donde tu dedo "
 "toque la pantalla (la opción predeterminada para los menús).\n"
 "\n"
-"  ![Control directo de ratón](mouse.png \"Control directo de ratón\")"
-"{w=10em}\n"
+"  ![Control directo de ratón](mouse.png \"Control directo de ratón\"){w=10em}"
 "\n"
-"### Emulación de pantalla táctil/«touchpad» \n"
+"\n"
+"### Emulación de pantalla táctil/touchpad \n"
 "\n"
 "Los controles táctiles son indirectos. Aunque tu dedo esté lejos del cursor, "
-"todavía podrá moverlo tal y como lo haría el «touchpad» de un portátil.\n"
+"todavía podrá moverlo tal y como lo haría el touchpad de un portátil.\n"
 "\n"
-"  ![Modo «touchpad»](touchpad.png \"Modo «touchpad»\"){w=10em}\n"
+"  ![Modo touchpad](touchpad.png \"Modo touchpad\"){w=10em}\n"
 "\n"
 "Para seleccionar el modo táctil que prefieras para menús, juegos 2D y juegos "
 "3D, ve a **Opciones globales > Backend > Selecciona el modo táctil que "
@@ -5954,7 +5953,7 @@ msgstr "GENERADOR DE LISTAS DE REPRODUCCIÓN LIBRETRO"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:47
 msgid "(check '? > Libretro playlist' for detailed info)"
-msgstr "(para más información, ve a «? > Lista de reproducción de libRetro»)"
+msgstr "(para más información, ve a \"? > Lista de reproducción de libRetro\")"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:48
 msgid "Playlists Path"
@@ -6028,7 +6027,7 @@ msgid ""
 "The core also supports dedicated per game **hook** plain text files with **."
 msgstr ""
 "## Listas de reproducción de libRetro para el núcleo de ScummVM\n"
-"Las listas de reproducción que utilizan los «front-ends» de libRetro (por "
+"Las listas de reproducción que utilizan los front-ends de libRetro (por "
 "ejemplo: Retroarch) son listas en texto sin formato que se utilizan para "
 "ejecutar desde la interfaz de usuario un juego directamente con un núcleo "
 "específico. Dichas listas están estructuradas para indicar al núcleo la ruta "
@@ -6040,8 +6039,8 @@ msgstr ""
 "automáticamente el juego a partir de la carpeta raíz del archivo y luego "
 "ejecutar el juego con las opciones predeterminadas de ScummVM.\n"
 "\n"
-"El núcleo también admite archivos de texto sin formato con **«hooks»/"
-"enlaces** dedicados para cada juego utilizando **."
+"El núcleo también admite archivos de texto sin formato con **hooks/enlaces** "
+"dedicados para cada juego utilizando **."
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
@@ -6433,7 +6432,7 @@ msgstr "Buscar actualizaciones..."
 
 #: engines/access/metaengine.cpp:82
 msgid "Use 'high definition' OGG music"
-msgstr "Utilizar música en formato OGG y en «alta definición»"
+msgstr "Utilizar música en formato OGG y en \"alta definición\""
 
 #: engines/access/metaengine.cpp:83
 msgid "Use the OGG audio from the re-release instead of original MIDI tracks"
@@ -6765,7 +6764,7 @@ msgid ""
 "If you have such file in other AGI (Sierra) game, you can copy it to the "
 "game directory"
 msgstr ""
-"No se ha podido abrir o usar el archivo 'hgc_font' para la fuente «hires» de "
+"No se ha podido abrir o usar el archivo \"hgc_font\" para la fuente hires de "
 "Hercules.\n"
 "Si tienes este archivo en otro juego AGI (de Sierra), puedes copiarlo en el "
 "directorio del juego"
@@ -7145,11 +7144,11 @@ msgstr "Activa o desactiva el modo de alta velocidad en Swampy Adventures"
 #: engines/agos/metaengine.cpp:317 engines/lure/metaengine.cpp:295
 #: engines/trecision/metaengine.cpp:181
 msgid "Press \"Yes\" key"
-msgstr "Pulsar tecla «Sí»"
+msgstr "Pulsar tecla \"Sí\""
 
 #: engines/agos/metaengine.cpp:322 engines/lure/metaengine.cpp:310
 msgid "Press \"No\" key"
-msgstr "Pulsar tecla «No»"
+msgstr "Pulsar tecla \"No\""
 
 #: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -7623,7 +7622,7 @@ msgstr ""
 
 #: engines/bladerunner/metaengine.cpp:45
 msgid "Sitcom mode"
-msgstr "Modo «sitcom»"
+msgstr "Modo sitcom"
 
 #: engines/bladerunner/metaengine.cpp:46
 msgid "Game will add laughter after actor's line or narration"
@@ -9636,11 +9635,11 @@ msgstr "El color de los vínculos, en caso de que aparezcan en el juego"
 #. I18N: "More..." is a prompt in text windows, which appears when the text exceeds the window size
 #: engines/glk/dialogs.cpp:264
 msgid "More:"
-msgstr "«Más»:"
+msgstr "\"Más\":"
 
 #: engines/glk/dialogs.cpp:265
 msgid "Color for the \"More...\" markers in the text"
-msgstr "El color de los indicadores de «más (texto)»"
+msgstr "El color de los indicadores de \"más (texto)\""
 
 #: engines/glk/dialogs.cpp:272
 msgid "Typography"
@@ -9671,9 +9670,9 @@ msgid ""
 "Custom marker in place of the \"More...\" marker for eg. \"continue\". Leave "
 "it blank to use the game's default"
 msgstr ""
-"Muestra un indicador personalizado en vez de la señal de «más (texto)», p. "
-"ej.: «Continuar». Deja esta opción en blanco para utilizar la predeterminada "
-"del juego"
+"Muestra un indicador personalizado en vez de la señal de \"más (texto)\", p. "
+"ej.: \"Continuar\". Deja esta opción en blanco para utilizar la "
+"predeterminada del juego"
 
 #: engines/glk/dialogs.cpp:288
 msgid "Style hints:"
@@ -9907,7 +9906,7 @@ msgstr "La escala del tamaño de letra para las fuentes proporcionales"
 #. I18N: This is a section for settings related to the "More..." prompt in text windows
 #: engines/glk/dialogs.cpp:367
 msgid "More"
-msgstr "«Más»"
+msgstr "\"Más\""
 
 #. I18N: This is a setting for alignment of the "More..." prompt in text windows
 #: engines/glk/dialogs.cpp:369
@@ -9916,7 +9915,7 @@ msgstr "Alineación:"
 
 #: engines/glk/dialogs.cpp:370
 msgid "Alignment of the \"More...\" marker on the window"
-msgstr "La alineación del indicador de «más (texto)» en la ventana"
+msgstr "La alineación del indicador de \"más (texto)\" en la ventana"
 
 #: engines/glk/dialogs.cpp:375
 msgid "Font:"
@@ -9924,7 +9923,7 @@ msgstr "Fuente de letra:"
 
 #: engines/glk/dialogs.cpp:375
 msgid "Font for the \"More...\" marker"
-msgstr "La fuente de letra del indicador de «más (texto)»"
+msgstr "La fuente de letra del indicador de \"más (texto)\""
 
 #: engines/glk/glulx/glulx.cpp:81
 msgid "This is too short to be a valid Glulx file."
@@ -10167,8 +10166,8 @@ msgstr ""
 "del archivo FullMonkeyMap.imt, necesitas copiar los dos archivos\n"
 "de ambos CD a la carpeta Textures/ y renombrarlos\n"
 "de la siguiente manera para tener música dentro del juego:\n"
-"CD 1: «FullMonkeyMap.imt» -> «FullMonkeyMap1.imt»\n"
-"CD 2: «FullMonkeyMap.imt» -> «FullMonkeyMap2.imt»\n"
+"CD 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
+"CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
 "\n"
 "Por otro lado, las versiones de Steam o GOG tienen un archivo\n"
 "FullMonkeyMap.imt precombinado."
@@ -10197,7 +10196,7 @@ msgstr "Canción de créditos actualizada"
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr ""
-"Reproduce la canción «The Final Hour» durante los créditos, en vez de "
+"Reproduce la canción The Final Hour durante los créditos, en vez de "
 "reutilizar otras canciones MIDI"
 
 #: engines/groovie/metaengine.cpp:101
@@ -10212,7 +10211,7 @@ msgstr ""
 
 #: engines/groovie/metaengine.cpp:113
 msgid "Speedrun Mode"
-msgstr "Modo «speedrun»"
+msgstr "Modo speedrun"
 
 #: engines/groovie/metaengine.cpp:114
 msgid "Affects the controls for fast forwarding the game"
@@ -10455,8 +10454,8 @@ msgstr "Activar truco de salud infinita"
 #: engines/hypno/metaengine.cpp:49
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr ""
-"La salud del jugador no se reducirá nunca (salvo en las pantallas de «game "
-"over»)."
+"La salud del jugador no se reducirá nunca (salvo en las pantallas de game "
+"over)."
 
 #: engines/hypno/metaengine.cpp:59
 msgid "Enable infinite ammo cheat"
@@ -10934,7 +10933,7 @@ msgid ""
 msgstr ""
 "Se ha importado %d partidas guardadas originales en ScummVM. \n"
 "Para importar partidas de forma manual, tendrás que abrir\n"
-"la consola de depuración y usar el comando «import_savefile».\n"
+"la consola de depuración y usar el comando \"import_savefile\".\n"
 "\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:279
@@ -10958,7 +10957,7 @@ msgstr ""
 "EOBF8/8\n"
 "\n"
 "Si has utilizado el instalador original en la instalación, los\n"
-"archivos deberían estar dentro de la carpeta «Fonts/».\n"
+"archivos deberían estar dentro de la carpeta \"Fonts/\".\n"
 "Cópialos al directorio de datos de juego de EOB.\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:287
@@ -11718,16 +11717,16 @@ msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
 msgstr ""
-"Puedes utilizar el archivo instalador «arcriven.z». También puedes utilizar "
-"el ejecutable «Riven» de Mac."
+"Puedes utilizar el archivo instalador \"arcriven.z\". También puedes "
+"utilizar el ejecutable \"Riven\" de Mac."
 
 #: engines/mohawk/riven.cpp:168
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
 msgstr ""
-"Falta el fichero «extras.mhk». También puedes utilizar el fichero instalador "
-"«arcriven.z»."
+"Falta el fichero \"extras.mhk\". También puedes utilizar el fichero "
+"instalador \"arcriven.z\"."
 
 #: engines/mohawk/riven.cpp:509
 msgid "You are missing the following required Riven data files:\n"
@@ -12635,7 +12634,7 @@ msgstr ""
 
 #: engines/sci/detection_options.h:81
 msgid "Use high-quality \"LarryScale\" cel scaling"
-msgstr "Usar escalado de celdas de alta calidad «LarryScale»"
+msgstr "Usar escalado de celdas de alta calidad \"LarryScale\""
 
 #: engines/sci/detection_options.h:82
 msgid "Use special cartoon scaler for drawing character sprites"
@@ -12849,7 +12848,7 @@ msgid ""
 msgstr ""
 "Has seleccionado General MIDI como dispositivo de sonido. Sierra proporcionó "
 "compatibilidad con General MIDI tras el lanzamiento del juego con su "
-"«General MIDI Utility». Instala este parche para disponer de música MIDI. "
+"\"General MIDI Utility\". Instala este parche para disponer de música MIDI. "
 "Una vez lo tengas, descomprime todos los archivos *.PAT en el directorio "
 "Adicional de ScummVM y el parche se aplicará automáticamente. También puedes "
 "seguir las instrucciones del archivo READ.ME incluido con el parche, que "
@@ -12868,8 +12867,8 @@ msgstr ""
 "Los personajes que se hayan guardado usando ScummVM aparecerán "
 "automáticamente. Si se han guardado usando el intérprete original, es "
 "necesario copiar los archivos al directorio de partidas guardadas de ScummVM "
-"y añadirles un prefijo según el juego: «qfg1-» para Quest for Glory 1 o "
-"«qfg2-» para Quest for Glory 2. Ejemplo: «qfg2-thief.sav»."
+"y añadirles un prefijo según el juego: \"qfg1-\" para Quest for Glory 1 o "
+"\"qfg2-\" para Quest for Glory 2. Ejemplo: \"qfg2-thief.sav\"."
 
 #: engines/sci/sound/music.cpp:173
 msgid ""
@@ -13072,7 +13071,7 @@ msgid ""
 "for a more complete experience."
 msgstr ""
 "Permite al juego utilizar la interfaz gráfica interna y los menús originales "
-"para guardar y cargar. Activar junto con «Confirmar al salir» para una "
+"para guardar y cargar. Activar junto con \"Confirmar al salir\" para una "
 "experiencia más completa."
 
 #: engines/scumm/dialogs.cpp:1213 engines/scumm/metaengine.cpp:793
@@ -13245,7 +13244,7 @@ msgid ""
 "either \"https://\" or \"http://\" schemas."
 msgstr ""
 "La dirección del servidor al que desees conectarte para jugar en red.  Esta "
-"dirección debe empezar por «https://» o «http://»."
+"dirección debe empezar por \"https://\" o \"http://\"."
 
 #: engines/scumm/dialogs.cpp:1871
 msgid "Enable online competitive mods"
@@ -13873,7 +13872,7 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:811
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
-msgstr "Activar la canción «A Pirate I Was Meant To Be»"
+msgstr "Activar la canción \"A Pirate I Was Meant To Be\""
 
 #: engines/scumm/metaengine.cpp:812
 msgid ""
@@ -13881,9 +13880,9 @@ msgid ""
 "Meant To Be\", which was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
 msgstr ""
-"Activa la canción del principio de la Parte 3, «A Pirate I Was Meant To Be», "
-"que fue suprimida en las versiones internacionales. Aviso: los subtítulos "
-"podrían estar sin traducir."
+"Activa la canción del principio de la Parte 3, \"A Pirate I Was Meant To "
+"Be\", que fue suprimida en las versiones internacionales. Aviso: los "
+"subtítulos podrían estar sin traducir."
 
 #: engines/scumm/metaengine.cpp:830
 msgid "Enable demo/kiosk mode"
@@ -14070,7 +14069,7 @@ msgstr ""
 #, c-format
 msgid "This game requires the '%s' Macintosh executable for its fonts."
 msgstr ""
-"Este juego necesita el ejecutable para Macintosh «%s» para poder utilizar "
+"Este juego necesita el ejecutable para Macintosh \"%s\" para poder utilizar "
 "sus tipografías."
 
 #: engines/scumm/scumm.cpp:1374
@@ -14078,8 +14077,8 @@ msgstr ""
 msgid ""
 "This game requires the '%s' Macintosh executable for its music and fonts."
 msgstr ""
-"Este juego necesita el ejecutable para Macintosh «%s» para poder utilizar su "
-"música y tipografías."
+"Este juego necesita el ejecutable para Macintosh \"%s\" para poder utilizar "
+"su música y tipografías."
 
 #: engines/scumm/scumm.cpp:1378
 #, c-format
@@ -14087,7 +14086,7 @@ msgid ""
 "Could not find the '%s' Macintosh executable to read resources from. %s will "
 "be disabled."
 msgstr ""
-"No se ha encontrado el ejecutable de Macintosh de «%s»\n"
+"No se ha encontrado el ejecutable de Macintosh de \"%s\"\n"
 "para obtener recursos. Se desactivará lo siguiente:\n"
 "%s"
 
@@ -14119,10 +14118,10 @@ msgid ""
 "dialog definitions. Look for a 'The Dig f' folder on your CD. Any one from "
 "its sub-folders should be what you need."
 msgstr ""
-"«%s» no parece ser un ejecutable correcto de The Dig. Podría ser el "
+"\"%s\" no parece ser un ejecutable correcto de The Dig. Podría ser el "
 "iniciador que hay en la raíz del CD y que no contiene las definiciones de "
-"menús y ventanas necesarias. Busca una carpeta llamada «The Dig f» en tu CD. "
-"Cualquiera de los ejecutables que haya en las subcarpetas valdrá."
+"menús y ventanas necesarias. Busca una carpeta llamada \"The Dig f\" en tu "
+"CD. Cualquiera de los ejecutables que haya en las subcarpetas valdrá."
 
 #: engines/scumm/scumm.cpp:1584
 msgid ""
@@ -14174,7 +14173,7 @@ msgid ""
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
 "Maniac Mansion debería arrancar en este momento, pero para que esto sea "
-"posible debes mover los archivos de Maniac Mansion al directorio «Maniac», "
+"posible debes mover los archivos de Maniac Mansion al directorio \"Maniac\", "
 "dentro del directorio de DOTT, y añadir el juego a ScummVM."
 
 #: engines/scumm/scumm.cpp:4496
@@ -14619,7 +14618,7 @@ msgstr "Opción de conversación anterior"
 
 #: engines/sky/compact.cpp:140
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
-msgstr "El archivo de datos del motor «sky.cpt» tiene un tamaño incorrecto."
+msgstr "El archivo de datos del motor \"sky.cpt\" tiene un tamaño incorrecto."
 
 #: engines/sky/metaengine.cpp:89
 msgid "Walk / Look / Talk"
@@ -14872,8 +14871,8 @@ msgstr ""
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
 msgstr ""
-"Se ha encontrado una versión incorrecta del archivo de datos del motor «%s». "
-"Se esperaba %d pero se encontró %d."
+"Se ha encontrado una versión incorrecta del archivo de datos del motor "
+"\"%s\". Se esperaba %d pero se encontró %d."
 
 #: engines/supernova/supernova.cpp:489
 #, c-format
@@ -14883,7 +14882,8 @@ msgstr "No se encuentra el bloque de la parte %d"
 #: engines/supernova/supernova.cpp:532
 #, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
-msgstr "No se puede localizar «%s» en el archivo de datos del motor del juego."
+msgstr ""
+"No se puede localizar \"%s\" en el archivo de datos del motor del juego."
 
 #: engines/supernova/supernova.cpp:852
 msgid ""
@@ -14966,7 +14966,7 @@ msgstr ""
 #: engines/sword1/animation.cpp:573 engines/sword2/animation.cpp:468
 #, c-format
 msgid "Cutscene '%s' not found"
-msgstr "No se ha encontrado el vídeo «%s»"
+msgstr "No se ha encontrado el vídeo \"%s\""
 
 #: engines/sword1/control.cpp:2814
 msgid ""
@@ -15265,7 +15265,8 @@ msgstr "Omitir atracción"
 #: engines/tony/tony.cpp:248
 #, c-format
 msgid "Font variant not present in '%s' engine data file."
-msgstr "Variación de fuente no presente en el archivo de datos del motor «%s»."
+msgstr ""
+"Variación de fuente no presente en el archivo de datos del motor \"%s\"."
 
 #. I18N: Skips current line being spoken by a character
 #: engines/toon/metaengine.cpp:105
@@ -15311,7 +15312,7 @@ msgstr "¿Seguro que quieres salir?"
 #: engines/toon/toon.cpp:1960
 #, c-format
 msgid "Unable to locate the '%s' data file."
-msgstr "No se puede localizar el archivo de datos «%s»."
+msgstr "No se puede localizar el archivo de datos \"%s\"."
 
 #: engines/tot/metaengine.cpp:36
 msgid "Copy protection"
@@ -15365,7 +15366,7 @@ msgstr "Alternar entre voces/textos/textos con voces"
 
 #: engines/touche/metaengine.cpp:188
 msgid "Press \"Yes\" Key"
-msgstr "Pulsar tecla «Sí»"
+msgstr "Pulsar tecla \"Sí\""
 
 #. I18N: Toggles walking speed of actor
 #: engines/trecision/metaengine.cpp:144
@@ -15612,7 +15613,7 @@ msgid ""
 "The toilet paper in some toilets will be shown \"over\".\n"
 "It's a joke option that has no effects on the gameplay."
 msgstr ""
-"El papel higiénico de algunos baños se mostrará «agotado».\n"
+"El papel higiénico de algunos baños se mostrará \"agotado\".\n"
 "Es una opción humorística que no afecta a la jugabilidad."
 
 #. I18N: Setting to enable or disable additional jokes in the game.
@@ -16718,7 +16719,7 @@ msgstr "Mover a lados/Avanzar/Retroceder"
 
 #: engines/ultima/ultima8/metaengine.cpp:105
 msgid "Toggle clipping"
-msgstr "Alternar «clipping»"
+msgstr "Alternar clipping"
 
 #: engines/ultima/ultima8/metaengine.cpp:106
 msgid "Ascend"
