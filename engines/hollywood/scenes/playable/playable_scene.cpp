@@ -69,12 +69,6 @@ const uint16 kViewportScrollRightThreshold = 0x144;
 const uint16 kViewportScrollLeftThreshold = 0x13c;
 const uint16 kViewportScrollStep = 2;
 
-PlayableScene::PlayableScene(HollywoodEngine *vm, const char *randomName, int defaultActorX, int defaultActorY,
-		byte defaultActorFacing, byte secondarySpeechTextColor, byte primarySpeechTextColor) :
-		PlayableScene(vm, PlayableSceneConfig(), randomName, defaultActorX, defaultActorY, defaultActorFacing,
-			secondarySpeechTextColor, primarySpeechTextColor) {
-}
-
 PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &config, const char *randomName,
 		int defaultActorX, int defaultActorY,
 		byte defaultActorFacing, byte secondarySpeechTextColor, byte primarySpeechTextColor) :
