@@ -41,6 +41,9 @@ namespace {
 static const uint kEndingCursorCount = 20;
 static const uint32 kEndingCursorFrameDurationMillis = 100;
 static const uint kEndingSelectionSequenceId = 3;
+static const int kEndingSelectionCursorX = 100;
+static const int kEndingSelectionCursorY = 160;
+static const int kEndingSelectionDisplayScale = 2;
 static const uint kThrowTargetCount = 8;
 static const uint16 kCancelCommand = 0xfffe;
 static const char *const kCursorLibraryName = "end_curs.pl";
@@ -69,11 +72,11 @@ static const ThrowTarget kThrowTargets[kThrowTargetCount] = {
 };
 
 static const char *const kChosenEndingMedia[4] = {
-	"end_df.avi", "end_dc.avi", "end_dm.avi", "end_him.avi"
+	"end_db.avi", "end_df.avi", "end_dc.avi", "end_dm.avi"
 };
 
 static const char *const kCorrectEpilogueMedia[4] = {
-	"q4_v3.avi", "q4_v6.avi", "q4_v5.avi", "ripfinal.avi"
+	"q4_v4.avi", "q4_v3.avi", "q4_v6.avi", "q4_v5.avi"
 };
 
 class EndingSelectionCallback : public MediaSequenceCallback {
@@ -115,11 +118,20 @@ public:
 	void beginIavfSegment(uint sequenceId) override {
 		_sequenceId = sequenceId;
 		_selectionActive = sequenceId == kEndingSelectionSequenceId;
-		if (_selectionActive)
+		if (_selectionActive) {
+			// InitializeEndingSelectionPlaybackCallback at 0x43840 installs
+			// the 2:1 display descriptor and moves the retail selection point
+			// to logical (100,160) as branch sequence 3 begins.
+			_engine->getInput()->warpMousePosition(Common::Point(
+				kEndingSelectionCursorX * kEndingSelectionDisplayScale,
+				kEndingSelectionCursorY * kEndingSelectionDisplayScale));
 			activateCursor();
+		}
 		debugC(2, kDebugScene,
-			"Ripper: ending-selection packetized branch sequence=%u active=%d cursor=%d",
-			_sequenceId, _selectionActive, _cursorActive);
+			"Ripper: ending-selection packetized branch sequence=%u active=%d cursor=%d position=%d,%d",
+			_sequenceId, _selectionActive, _cursorActive,
+			_engine->getInput()->peekMouseState().position.x,
+			_engine->getInput()->peekMouseState().position.y);
 	}
 
 	uint16 service(uint frame) override {
@@ -151,11 +163,15 @@ public:
 
 		serviceCursor();
 
-		if ((mouse.pressed & kMouseButtonLeft) == 0)
+		// HandleEndingSelectionThrowTargetCallback tests the published current
+		// button flags, so a held primary button remains eligible until a target
+		// window accepts it.
+		if ((mouse.buttons & kMouseButtonLeft) == 0)
 			return 0;
 
-		const Common::Point logicalPoint(mouse.position.x / 2,
-			mouse.position.y / 2);
+		const Common::Point logicalPoint(
+			mouse.position.x / kEndingSelectionDisplayScale,
+			mouse.position.y / kEndingSelectionDisplayScale);
 		for (uint target = 0; target < kThrowTargetCount; ++target) {
 			const ThrowTarget &region = kThrowTargets[target];
 			if (frame < region.firstFrame || frame > region.lastFrame ||
@@ -201,7 +217,8 @@ private:
 		const BitmapAssetFrame &cursor = _cursorFrames[_cursorFrame];
 		if (!cursor.pixels.empty()) {
 			_engine->getCursor()->applyCustomCursor(cursor,
-				cursor.width / 2, cursor.height / 2, 2);
+				cursor.width / 2, cursor.height / 2,
+				kEndingSelectionDisplayScale);
 		}
 	}
 
@@ -277,7 +294,7 @@ bool EndingSequence::run() {
 		_engine->getMedia()->stopSoundEffect(windHandle);
 		_engine->getMedia()->stopSoundEffect(spinHandle);
 		if (!_engine->shouldQuit())
-			result = _engine->getMedia()->play("end_db.avi", true) && result;
+			result = _engine->getMedia()->play("ripfinal.avi", true) && result;
 		debugC(1, kDebugScene,
 			"Ripper: ending selection produced no target command=0x%04x",
 			command);
@@ -289,11 +306,11 @@ bool EndingSequence::run() {
 		if (selectedEnding == (uint)storyEnding) {
 			if (storyEnding != 1) {
 				result = _engine->getMedia()->play(
-					storyEnding == 3 ? "end_her.avi" : "quin_win.avi",
+					storyEnding == 3 ? "end_him.avi" : "end_her.avi",
 					true) && result;
 			}
 			_engine->getMedia()->stopSoundEffect(windHandle);
-			result = _engine->getMedia()->play("q4_v4.avi", true) && result;
+			result = _engine->getMedia()->play("quin_win.avi", true) && result;
 			result = _engine->getMedia()->play(
 				kCorrectEpilogueMedia[selectedEnding], true) && result;
 		} else {
