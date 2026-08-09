@@ -415,10 +415,27 @@ bool BonusTextUI::showBonusText(const Common::Path &filename) {
 	return false;
 }
 
-void BonusTextUI::showNowPlaying(const Common::String &trackTitle,
-		Common::Functor0<bool> &isPlaying) {
+void BonusTextUI::prepareNowPlaying(const Common::String &trackTitle) {
 	restorePresentation();
-	bool dirty = true;
+	drawDesktop();
+	drawTitlePanel();
+	_cells.drawShadow(_nowPlayingRect, kShadowAttribute);
+	_cells.fill(Common::Rect(_nowPlayingRect.left + 1,
+			_nowPlayingRect.top + 1, _nowPlayingRect.right - 1,
+			_nowPlayingRect.bottom - 1), 0x20, kNormalAttribute);
+	_cells.drawBox(_nowPlayingRect, kNormalAttribute, true);
+	_cells.drawTitle(_nowPlayingRect, _text.nowPlaying,
+			kNormalAttribute, kHotkeyAttribute);
+	_cells.drawCenteredText(_nowPlayingRect.top + 2,
+			_nowPlayingRect.left + 1, _nowPlayingRect.right - 1,
+			trackTitle, kNormalAttribute, kHotkeyAttribute, false);
+	drawMouseCursor();
+	present(true);
+}
+
+void BonusTextUI::waitForNowPlaying(const Common::String &trackTitle,
+		Common::Functor0<bool> &isPlaying) {
+	bool dirty = false;
 	bool completed = false;
 	long completionTime = 0;
 	while (!g_engine->shouldQuit()) {
@@ -452,20 +469,7 @@ void BonusTextUI::showNowPlaying(const Common::String &trackTitle,
 			return;
 
 		if (dirty) {
-			drawDesktop();
-			drawTitlePanel();
-			_cells.drawShadow(_nowPlayingRect, kShadowAttribute);
-			_cells.fill(Common::Rect(_nowPlayingRect.left + 1,
-					_nowPlayingRect.top + 1, _nowPlayingRect.right - 1,
-					_nowPlayingRect.bottom - 1), 0x20, kNormalAttribute);
-			_cells.drawBox(_nowPlayingRect, kNormalAttribute, true);
-			_cells.drawTitle(_nowPlayingRect, _text.nowPlaying,
-					kNormalAttribute, kHotkeyAttribute);
-			_cells.drawCenteredText(_nowPlayingRect.top + 2,
-					_nowPlayingRect.left + 1, _nowPlayingRect.right - 1,
-					trackTitle, kNormalAttribute, kHotkeyAttribute, false);
-			drawMouseCursor();
-			present(true);
+			prepareNowPlaying(trackTitle);
 			dirty = false;
 		}
 		g_system->delayMillis(10);
