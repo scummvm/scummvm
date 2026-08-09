@@ -71,6 +71,7 @@
 #include "backends/mixer/mixer.h"
 #include "backends/mutex/pthread/pthread-mutex.h"
 #include "backends/saves/default/default-saves.h"
+#include "backends/text-to-speech/android/android-text-to-speech.h"
 #include "backends/timer/default/default-timer.h"
 
 #include "backends/keymapper/keymapper.h"
@@ -255,6 +256,9 @@ OSystem_Android::~OSystem_Android() {
 	delete _savefileManager;
 	_savefileManager = 0;
 
+	delete _textToSpeechManager;
+	_textToSpeechManager = 0;
+
 	// Uninitialize graphics manager now to avoid it to be done later when touch controls are destroyed
 	delete _graphicsManager;
 	_graphicsManager = 0;
@@ -435,6 +439,16 @@ void OSystem_Android::initBackend() {
 	_touchControls.init(dpi[2]);
 
 	_graphicsManager = new AndroidGraphicsManager();
+
+#ifdef USE_TTS
+	// Initialize Text to Speech manager
+	_textToSpeechManager = new AndroidTextToSpeechManager();
+#ifdef USE_TRANSLATION
+	_textToSpeechManager->setLanguage(TransMan.getCurrentLanguage());
+#else
+	_textToSpeechManager->setLanguage("en");
+#endif
+#endif
 
 	// renice this thread to boost the audio thread
 	if (setpriority(PRIO_PROCESS, 0, 19) < 0)

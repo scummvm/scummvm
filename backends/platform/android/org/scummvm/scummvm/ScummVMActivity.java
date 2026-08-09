@@ -165,6 +165,8 @@ public class ScummVMActivity extends Activity {
 	private static final int MY_PERMISSION_LOCAL_NETWORK = 200;
 	private NsdManager.RegistrationListener nsdRegistrationListener = null;
 
+	private TextToSpeechManager _tts = null;
+
 	// Set to true in onDestroy
 	// This avoids that when C++ terminates we call finish() a second time
 	// This second finish causes termination when we are launched again
@@ -967,6 +969,11 @@ public class ScummVMActivity extends Activity {
 		}
 
 		@Override
+		protected TextToSpeechManager getTTSManager() {
+			return _tts;
+		}
+
+		@Override
 		protected String[] getSysArchives() {
 			File assetsDir = new File(_actualScummVMDataDir, "assets");
 			Log.d(ScummVM.LOG_TAG, "Adding to Search Archive: " + assetsDir.getPath());
@@ -1127,6 +1134,8 @@ public class ScummVMActivity extends Activity {
 		takeKeyEvents(true);
 
 		_clipboardManager = (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+
+		_tts = TextToSpeechManager.make(this);
 
 		// REMOVED: Since getFilesDir() is guaranteed to exist, getFilesDir().mkdirs() might be related to crashes in Android version 9+ (Pie or above, API 28+)!
 
