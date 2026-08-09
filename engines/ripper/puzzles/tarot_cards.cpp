@@ -207,7 +207,12 @@ void TarotCardsPuzzle::drawFrame(byte *screen, uint pitch,
 		const BitmapAssetFrame &frame, int x, int y) const {
 	for (uint sourceY = 0; sourceY < frame.height; ++sourceY) {
 		const int destinationY = y + sourceY;
-		if (destinationY < 0 || destinationY >= kRipperScreenHeight)
+		// InitializeTransientPresentationOverlay in
+		// RunTarotCardPuzzleScene at 0x3eece clips the held card to logical
+		// y=0..299. Keep every tarot bitmap inside the corresponding physical
+		// scene page so dragging cannot dirty the retained interface bands.
+		if (destinationY < kSceneOriginY ||
+				destinationY >= kSceneOriginY + kSceneHeight)
 			continue;
 		for (uint sourceX = 0; sourceX < frame.width; ++sourceX) {
 			const int destinationX = x + sourceX;
@@ -229,7 +234,8 @@ void TarotCardsPuzzle::drawScaledFrame(byte *screen, uint pitch,
 	const uint height = frame.height * scaleNumerator / scaleDenominator;
 	for (uint destinationY = 0; destinationY < height; ++destinationY) {
 		const int screenY = y + destinationY;
-		if (screenY < 0 || screenY >= kRipperScreenHeight)
+		if (screenY < kSceneOriginY ||
+				screenY >= kSceneOriginY + kSceneHeight)
 			continue;
 		const uint sourceY = destinationY * scaleDenominator / scaleNumerator;
 		for (uint destinationX = 0; destinationX < width; ++destinationX) {
