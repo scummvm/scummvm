@@ -964,6 +964,13 @@
   `QUIN_WIN`, and then selects `Q4_V4`, `Q4_V3`, `Q4_V6`, or `Q4_V5` by ending
   index. A wrong choice or no selection goes to `RIPFINAL`. All paths finish
   with `CREDITS1.AVI` and `CREDITS2.AVI`.
+- `PUZZLE_HELP` adds a non-retail ending-selector visualization after each
+  decoded frame without changing the retail input callback. It dithers and
+  borders only the currently frame-gated click rectangle, using green when
+  that rectangle's modulo-four ending index matches the Ripper flag and red
+  otherwise. The helper derives its display state from the immutable retail
+  target table and current frame; it never supplies a command or modifies the
+  ending selection, milestone, or media route.
 - Scene action 25 calls `RunKkTileMatchPuzzleScene` at `0x2fa31`. It loads the
   difficulty-selected `KK%d.INI` from `SCRIPT.PL`, opens `KK.PL`, and creates
   controls `0x672` through `0x681` at the 4-by-4 Y/X coordinate table rooted
