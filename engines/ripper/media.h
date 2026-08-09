@@ -59,6 +59,7 @@ public:
 	virtual uint16 service(uint frame) = 0;
 	virtual bool continueAfterEnd() const { return false; }
 	virtual bool ownsInput() const { return false; }
+	virtual bool keepsCursorVisible() const { return false; }
 	virtual bool managesPalette() const { return false; }
 	virtual void transformPalette(byte *palette, uint colorCount) const {}
 };

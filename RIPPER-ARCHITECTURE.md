@@ -946,7 +946,9 @@
 - The ending selector maps the randomly selected Ripper flags to retail ending
   indices as flag 6 to 3, flag 7 to 1, flag 8 to 0, and flag 9 to 2. It uses
   the 20-frame `END_CURS.PL` pointer while `RIPMID.AVI` plays. Once playback
-  state reaches three, `HandleEndingSelectionThrowTargetCallback` at
+  begins, `ApplyUiSelectionTableEntry` keeps that cursor installed across the
+  packetized movie branches; the callback does not recreate it per movie frame.
+  Once playback state reaches three, `HandleEndingSelectionThrowTargetCallback` at
   `0x438cf` starts `SPIN_1.WAV`; primary clicks are accepted only inside one
   of the eight frame-gated logical 320-by-200 target rectangles at `0x84fe4`
   and queue `BALLTHRO.WAV`. The one-based target result wraps modulo four to
