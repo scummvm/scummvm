@@ -72,7 +72,7 @@ public:
 	bool exists(const char *filename) override;
 	bool allowsFallback(const char *filename) const override;
 	Common::SeekableReadStream *openText(int32 id, uint16 &unpackedSize) override;
-	Common::SeekableReadStream *openSound(int section, int command);
+	Common::SeekableReadStream *openSound(int section, int commandId);
 	int getCursorCount() const override { return 6; }
 	bool setCursor(int id) override;
 	void updateCursor() override;

@@ -636,11 +636,11 @@ Common::SeekableReadStream *MacResourceProvider::openText(int32 id, uint16 &unpa
 	return stream;
 }
 
-Common::SeekableReadStream *MacResourceProvider::openSound(int section, int command) {
-	if (section < 1 || section > 9 || command < 0 || command >= 1000)
+Common::SeekableReadStream *MacResourceProvider::openSound(int section, int commandId) {
+	if (section < 1 || section > 9 || commandId < 0 || commandId >= 1000)
 		return nullptr;
 	return _containers[kSoundContainer]->getResource(MKTAG('s', 'n', 'd', ' '),
-		section * 1000 + command);
+		section * 1000 + commandId);
 }
 
 } // namespace RexNebular
