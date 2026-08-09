@@ -68,6 +68,10 @@ void SoundManager::init(int sectionNumber) {
 	_driver->setVolume(_masterVolume);
 }
 
+bool SoundManager::isDriverActive() {
+	return _driver && _soundFlag && _driver->command(8, 0) != 0;
+}
+
 void SoundManager::closeDriver() {
 	if (_driver) {
 		command(0);

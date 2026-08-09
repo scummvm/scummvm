@@ -170,6 +170,21 @@ static const MADSGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Rex Nebular and the Cosmic Gender Bender Bonus Disk
+		{
+			"nebularbonus",
+			0,
+			AD_ENTRY1s("section0.hag", "6aee8cef63774def1f9b33fef6262a47", 50710),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO2(GUIO_NOSPEECH, GUIO_NOLAUNCHLOAD)
+		},
+		GType_RexNebular,
+		GF_BONUS_DISK
+	},
+
+	{
 		// Return of the Phantom DOS English
 		{
 			"phantom",
