@@ -26,6 +26,7 @@
 #include "m4/graphics/gr_series.h"
 #include "m4/wscript/wst_regs.h"
 #include "m4/vars.h"
+#include "m4/m4.h"
 
 namespace M4 {
 
@@ -446,8 +447,29 @@ void adv_hyperwalk_to_final_destination(void *, void *) {
 	DisposePath(_G(my_walker)->walkPath);
 	_G(my_walker)->walkPath = nullptr;
 
-	// This will make player goto x,y,facing. when that happens, trigger will return
-	ws_demand_location_and_facing(_G(my_walker), x, y, facing);
+	if (IS_RIDDLE) {
+		// WORKAROUND: Riddle's walker script has a dedicated hyperwalk
+		// handler (message 747), registered in all of its walking states.
+		// It moves the walker to x, y, s, sets the final facing, and ends
+		// with the "walk finished" callback, which dispatches the trigger
+		// registered when the walk started. The DEMAND_LOCATION path below
+		// never issues that callback, so a scripted walk (e.g. a room exit
+		// waiting on a walk-completion trigger) would soft-lock when
+		// fast-forwarded.
+		const int8 directions[14] = { 0, 0, 1, 2, 3, 4, 4, 5, 6, 7, 8, 9, 9 };
+		const frac16 s = _G(globals)[GLB_MIN_SCALE] + FixedMul((y << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
+
+		_G(globals)[GLB_TEMP_1] = x << 16;
+		_G(globals)[GLB_TEMP_2] = y << 16;
+		_G(globals)[GLB_TEMP_3] = s;
+		_G(globals)[GLB_TEMP_4] = (facing > 0 && facing < 13) ? directions[facing] << 16 : 0;
+
+		sendWSMessage(HYPERWALK << 16, 0, _G(my_walker), 0, nullptr, 1);
+		_G(player).waiting_for_walk = false;
+	} else {
+		// This will make player goto x,y,facing. when that happens, trigger will return
+		ws_demand_location_and_facing(_G(my_walker), x, y, facing);
+	}
 }
 
 } // End of namespace M4
