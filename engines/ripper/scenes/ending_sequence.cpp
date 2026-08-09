@@ -79,13 +79,29 @@ static const char *const kCorrectEpilogueMedia[4] = {
 	"q4_v4.avi", "q4_v3.avi", "q4_v6.avi", "q4_v5.avi"
 };
 
+// RunEndingSelectionEpiloguesAndCredits at 0x43adb maps the story flags to
+// these ending indices. The names preserve the retail diagnostic strings.
+static const char *const kEndingNames[4] = {
+	"Burton", "Eddie", "Powel", "Magnotta"
+};
+
+static const uint kEndingMilestoneFlags[4] = { 8, 7, 9, 6 };
+
+static const char *const kCorrectOutcomeRoutes[4] = {
+	"end_her.avi -> quin_win.avi -> q4_v4.avi",
+	"quin_win.avi -> q4_v3.avi",
+	"end_her.avi -> quin_win.avi -> q4_v6.avi",
+	"end_him.avi -> quin_win.avi -> q4_v5.avi"
+};
+
 class EndingSelectionCallback : public MediaSequenceCallback {
 public:
 	EndingSelectionCallback(RipperEngine *engine, Audio::SoundHandle &spinHandle,
-			Audio::SoundHandle &throwHandle) :
+			Audio::SoundHandle &throwHandle, uint storyEnding) :
 		_engine(engine), _spinHandle(spinHandle), _throwHandle(throwHandle),
 		_spinStarted(false), _cursorFrame(0), _nextCursorFrameMillis(0),
-		_cursorActive(false), _selectionActive(false), _sequenceId(0) {
+		_cursorActive(false), _selectionActive(false), _reportedHeldMiss(false),
+		_sequenceId(0), _storyEnding(storyEnding) {
 	}
 
 	bool loadCursors() {
@@ -126,6 +142,13 @@ public:
 				kEndingSelectionCursorX * kEndingSelectionDisplayScale,
 				kEndingSelectionCursorY * kEndingSelectionDisplayScale));
 			activateCursor();
+			debugC(1, kDebugScene,
+				"Ripper: ending selection armed expectedEnding=%u expected='%s' milestone=%u cursorLogical=%d,%d cursorPhysical=%d,%d",
+				_storyEnding, kEndingNames[_storyEnding],
+				kEndingMilestoneFlags[_storyEnding], kEndingSelectionCursorX,
+				kEndingSelectionCursorY,
+				kEndingSelectionCursorX * kEndingSelectionDisplayScale,
+				kEndingSelectionCursorY * kEndingSelectionDisplayScale);
 		}
 		debugC(2, kDebugScene,
 			"Ripper: ending-selection packetized branch sequence=%u active=%d cursor=%d position=%d,%d",
@@ -166,32 +189,63 @@ public:
 		// HandleEndingSelectionThrowTargetCallback tests the published current
 		// button flags, so a held primary button remains eligible until a target
 		// window accepts it.
-		if ((mouse.buttons & kMouseButtonLeft) == 0)
+		if ((mouse.buttons & kMouseButtonLeft) == 0) {
+			_reportedHeldMiss = false;
 			return 0;
+		}
 
 		const Common::Point logicalPoint(
 			mouse.position.x / kEndingSelectionDisplayScale,
 			mouse.position.y / kEndingSelectionDisplayScale);
+		int activeTarget = -1;
 		for (uint target = 0; target < kThrowTargetCount; ++target) {
 			const ThrowTarget &region = kThrowTargets[target];
-			if (frame < region.firstFrame || frame > region.lastFrame ||
-					logicalPoint.x <= region.left ||
+			if (frame < region.firstFrame || frame > region.lastFrame)
+				continue;
+			activeTarget = target;
+			if (logicalPoint.x <= region.left ||
 					logicalPoint.x >= region.right ||
 					logicalPoint.y <= region.top ||
 					logicalPoint.y >= region.bottom)
-				continue;
+				break;
+
+			const uint selectedEnding = target % 4;
+			const bool correct = selectedEnding == _storyEnding;
 			_engine->getMedia()->playSoundEffect(
 				"ballthro.wav", _throwHandle, 100, false);
 			debugC(1, kDebugScene,
-				"Ripper: ending selection hit target=%u sequence=%u frame=%u point=%d,%d logical=%d,%d result=%u",
-				target, _sequenceId, frame, mouse.position.x, mouse.position.y,
-				logicalPoint.x, logicalPoint.y, target + 1);
+				"Ripper: ending selection queued throw command=0x%04x target=%u candidateEnding=%u candidate='%s' expectedEnding=%u expected='%s' correct=%d sound='ballthro.wav' initialMedia='%s' followupRoute='%s' sequence=%u frame=%u point=%d,%d logical=%d,%d",
+				target + 1, target, selectedEnding,
+				kEndingNames[selectedEnding], _storyEnding,
+				kEndingNames[_storyEnding], correct,
+				kChosenEndingMedia[selectedEnding],
+				correct ? kCorrectOutcomeRoutes[selectedEnding] : "ripfinal.avi",
+				_sequenceId, frame, mouse.position.x, mouse.position.y,
+				logicalPoint.x, logicalPoint.y);
 			return target + 1;
 		}
-		debugC(3, kDebugScene,
-			"Ripper: ending selection missed sequence=%u frame=%u point=%d,%d logical=%d,%d",
-			_sequenceId, frame, mouse.position.x, mouse.position.y,
-			logicalPoint.x, logicalPoint.y);
+
+		if (!_reportedHeldMiss) {
+			if (activeTarget >= 0) {
+				const ThrowTarget &region = kThrowTargets[activeTarget];
+				const uint selectedEnding = activeTarget % 4;
+				debugC(1, kDebugScene,
+					"Ripper: ending selection rejected press reason='outside active target' queuedCommand=0x0000 activeTarget=%d candidateEnding=%u candidate='%s' expectedEnding=%u expected='%s' wouldBeCorrect=%d sequence=%u frame=%u point=%d,%d logical=%d,%d targetLogical=%d,%d..%d,%d exclusive=1",
+					activeTarget, selectedEnding, kEndingNames[selectedEnding],
+					_storyEnding, kEndingNames[_storyEnding],
+					selectedEnding == _storyEnding, _sequenceId, frame,
+					mouse.position.x, mouse.position.y, logicalPoint.x,
+					logicalPoint.y, region.left, region.top, region.right,
+					region.bottom);
+			} else {
+				debugC(1, kDebugScene,
+					"Ripper: ending selection rejected press reason='no active target at frame' queuedCommand=0x0000 expectedEnding=%u expected='%s' sequence=%u frame=%u point=%d,%d logical=%d,%d",
+					_storyEnding, kEndingNames[_storyEnding], _sequenceId,
+					frame, mouse.position.x, mouse.position.y,
+					logicalPoint.x, logicalPoint.y);
+			}
+			_reportedHeldMiss = true;
+		}
 		return 0;
 	}
 
@@ -246,7 +300,9 @@ private:
 	uint32 _nextCursorFrameMillis;
 	bool _cursorActive;
 	bool _selectionActive;
+	bool _reportedHeldMiss;
 	uint _sequenceId;
+	uint _storyEnding;
 };
 
 } // End of anonymous namespace
@@ -275,7 +331,8 @@ bool EndingSequence::run() {
 	Audio::SoundHandle windHandle;
 	Audio::SoundHandle spinHandle;
 	Audio::SoundHandle throwHandle;
-	EndingSelectionCallback callback(_engine, spinHandle, throwHandle);
+	EndingSelectionCallback callback(
+		_engine, spinHandle, throwHandle, storyEnding);
 	if (!callback.loadCursors())
 		return false;
 
@@ -285,8 +342,9 @@ bool EndingSequence::run() {
 		"windfin.wav", windHandle, 100, true);
 	uint16 command = 0;
 	debugC(1, kDebugScene,
-		"Ripper: entered ending selection function=RunEndingSelectionEpiloguesAndCredits@0x43adb storyEnding=%d wind=%d",
-		storyEnding, windStarted);
+		"Ripper: entered ending selection function=RunEndingSelectionEpiloguesAndCredits@0x43adb storyEnding=%d expected='%s' milestone=%u wind=%d",
+		storyEnding, kEndingNames[storyEnding],
+		kEndingMilestoneFlags[storyEnding], windStarted);
 	bool result = _engine->getMedia()->playInteractiveIavf(
 		"ripmid.avi", &callback, &command);
 
@@ -296,14 +354,22 @@ bool EndingSequence::run() {
 		if (!_engine->shouldQuit())
 			result = _engine->getMedia()->play("ripfinal.avi", true) && result;
 		debugC(1, kDebugScene,
-			"Ripper: ending selection produced no target command=0x%04x",
-			command);
+			"Ripper: ending selection resolved action='no throw queued' command=0x%04x expectedEnding=%d expected='%s' nextMedia='ripfinal.avi'",
+			command, storyEnding, kEndingNames[storyEnding]);
 	} else {
 		const uint selectedEnding = (command - 1) % 4;
+		const bool correct = selectedEnding == (uint)storyEnding;
+		debugC(1, kDebugScene,
+			"Ripper: ending selection resolving queued throw command=0x%04x target=%u selectedEnding=%u selected='%s' expectedEnding=%d expected='%s' correct=%d initialMedia='%s' followupRoute='%s'",
+			command, command - 1, selectedEnding,
+			kEndingNames[selectedEnding], storyEnding,
+			kEndingNames[storyEnding], correct,
+			kChosenEndingMedia[selectedEnding],
+			correct ? kCorrectOutcomeRoutes[selectedEnding] : "ripfinal.avi");
 		result = _engine->getMedia()->play(
 			kChosenEndingMedia[selectedEnding], true) && result;
 		_engine->getMedia()->stopSoundEffect(spinHandle);
-		if (selectedEnding == (uint)storyEnding) {
+		if (correct) {
 			if (storyEnding != 1) {
 				result = _engine->getMedia()->play(
 					storyEnding == 3 ? "end_him.avi" : "end_her.avi",
@@ -318,9 +384,10 @@ bool EndingSequence::run() {
 			result = _engine->getMedia()->play("ripfinal.avi", true) && result;
 		}
 		debugC(1, kDebugScene,
-			"Ripper: ending selection completed target=%u selectedEnding=%u storyEnding=%d correct=%d",
-			command - 1, selectedEnding, storyEnding,
-			selectedEnding == (uint)storyEnding);
+			"Ripper: ending selection completed command=0x%04x target=%u selectedEnding=%u selected='%s' storyEnding=%d expected='%s' correct=%d",
+			command, command - 1, selectedEnding,
+			kEndingNames[selectedEnding], storyEnding,
+			kEndingNames[storyEnding], correct);
 	}
 
 	_engine->getMedia()->stopSoundEffect(windHandle);
