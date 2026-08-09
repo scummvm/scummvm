@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/debug.h"
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/textconsole.h"
@@ -248,14 +247,9 @@ void ISound::playSequence(uint16 sequenceOffset, byte priority) {
 	// Native code uses CMP followed by JS. Preserve the sign bit of the
 	// wrapped eight-bit subtraction rather than using a wider comparison.
 	if ((int8)(byte)(priority - _priority) < 0) {
-		debug(2, "MADS ISOUND: rejected sequence 0x%04x priority %u "
-				"while priority %u is active", sequenceOffset, priority,
-				_priority);
 		_updatesEnabled = wasEnabled;
 		return;
 	}
-	debug(2, "MADS ISOUND: starting sequence 0x%04x priority %u "
-			"(replacing priority %u)", sequenceOffset, priority, _priority);
 
 	_priority = priority;
 	_sequenceStart = sequenceOffset;
@@ -418,8 +412,6 @@ void ISound::processOrdinaryEvent() {
 		stopSpeaker();
 
 	if (!_activeTicks) {
-		debug(2, "MADS ISOUND: sequence 0x%04x completed at 0x%04x",
-				_sequenceStart, (uint16)(_position - 2));
 		_priority = 0;
 		_pitchStep = 0;
 		_sweepInitialized = false;
