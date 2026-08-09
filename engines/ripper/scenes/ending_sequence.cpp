@@ -25,6 +25,8 @@
 #include "common/stream.h"
 #include "common/system.h"
 
+#include "graphics/surface.h"
+
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
 #include "ripper/diagnostics/screen_presenter.h"
@@ -45,6 +47,8 @@ static const int kEndingSelectionCursorX = 100;
 static const int kEndingSelectionCursorY = 160;
 static const int kEndingSelectionDisplayScale = 2;
 static const uint kThrowTargetCount = 8;
+static const uint kPuzzleHelpBorderWidth = 3;
+static const uint kPuzzleHelpDitherMask = 3;
 static const uint16 kCancelCommand = 0xfffe;
 static const char *const kCursorLibraryName = "end_curs.pl";
 
@@ -94,11 +98,151 @@ static const char *const kCorrectOutcomeRoutes[4] = {
 	"end_him.avi -> quin_win.avi -> q4_v5.avi"
 };
 
+static int findActiveThrowTarget(uint frame) {
+	for (uint target = 0; target < kThrowTargetCount; ++target) {
+		const ThrowTarget &region = kThrowTargets[target];
+		if (frame >= region.firstFrame && frame <= region.lastFrame)
+			return target;
+	}
+	return -1;
+}
+
+class EndingSelectionDebugHelper {
+public:
+	EndingSelectionDebugHelper(RipperEngine *engine, uint storyEnding) :
+		_engine(engine), _storyEnding(storyEnding), _lastTarget(-1),
+		_overlayPaletteIndex(0), _enabled(false), _overlayActive(false),
+		_overlayCorrect(false), _warningIssued(false) {
+	}
+
+	bool update(bool selectionActive, uint frame) {
+		const bool hadOverlay = _overlayActive;
+		_overlayActive = false;
+		const bool enabled = _engine->isPuzzleHelpEnabled();
+		if (enabled != _enabled) {
+			_enabled = enabled;
+			_lastTarget = -1;
+			debugC(2, kDebugPuzzles,
+				"Ripper: ending-selection puzzle-help overlay enabled=%d expectedEnding=%u expected='%s' correctColor=green incorrectColor=red command=PUZZLE_HELP",
+				_enabled, _storyEnding, kEndingNames[_storyEnding]);
+		}
+		if (!_enabled || !selectionActive) {
+			_lastTarget = -1;
+			return hadOverlay;
+		}
+
+		const int target = findActiveThrowTarget(frame);
+		if (target < 0) {
+			_lastTarget = -1;
+			return hadOverlay;
+		}
+
+		const uint selectedEnding = target % 4;
+		_overlayCorrect = selectedEnding == _storyEnding;
+		if (!draw(kThrowTargets[target]))
+			return hadOverlay;
+		_overlayActive = true;
+		if (target != _lastTarget) {
+			const ThrowTarget &region = kThrowTargets[target];
+			debugC(2, kDebugPuzzles,
+				"Ripper: ending-selection puzzle-help target=%d candidateEnding=%u candidate='%s' expectedEnding=%u expected='%s' correct=%d color=%s paletteIndex=%u frames=%u..%u logical=%d,%d..%d,%d physical=%d,%d..%d,%d",
+				target, selectedEnding, kEndingNames[selectedEnding],
+				_storyEnding, kEndingNames[_storyEnding], _overlayCorrect,
+				_overlayCorrect ? "green" : "red", _overlayPaletteIndex,
+				region.firstFrame, region.lastFrame, region.left + 1, region.top + 1,
+				region.right - 1, region.bottom - 1,
+				(region.left + 1) * kEndingSelectionDisplayScale,
+				(region.top + 1) * kEndingSelectionDisplayScale,
+				region.right * kEndingSelectionDisplayScale - 1,
+				region.bottom * kEndingSelectionDisplayScale - 1);
+		}
+		_lastTarget = target;
+		return false;
+	}
+
+	bool managesPalette() const { return _overlayActive; }
+
+	void transformPalette(byte *palette, uint colorCount) const {
+		if (!_overlayActive || _overlayPaletteIndex >= colorCount)
+			return;
+		byte *color = palette + _overlayPaletteIndex * 3;
+		if (_overlayCorrect) {
+			color[0] = 0;
+			color[1] = 255;
+			color[2] = 0;
+		} else {
+			color[0] = 255;
+			color[1] = 0;
+			color[2] = 0;
+		}
+	}
+
+private:
+	bool draw(const ThrowTarget &region) {
+		Graphics::Surface *screen = g_system->lockScreen();
+		if (!screen || screen->format.bytesPerPixel != 1) {
+			if (screen)
+				g_system->unlockScreen();
+			if (!_warningIssued) {
+				warning("Ripper: ending-selection puzzle-help overlay requires the indexed display");
+				_warningIssued = true;
+			}
+			return false;
+		}
+
+		uint32 paletteUse[256] = { 0 };
+		for (int y = 0; y < screen->h; ++y) {
+			const byte *row = (const byte *)screen->getBasePtr(0, y);
+			for (int x = 0; x < screen->w; ++x)
+				++paletteUse[row[x]];
+		}
+		_overlayPaletteIndex = 1;
+		// Keep indices 0, 254, and 255 available to the engine's other
+		// diagnostic overlays, which use those established interface colors.
+		for (uint index = 2; index < 254; ++index) {
+			if (paletteUse[index] < paletteUse[_overlayPaletteIndex])
+				_overlayPaletteIndex = index;
+		}
+
+		// The retail comparison is strict at every edge. Draw only pixels whose
+		// logical mouse coordinates can actually satisfy that comparison.
+		const Common::Rect bounds(
+			(region.left + 1) * kEndingSelectionDisplayScale,
+			(region.top + 1) * kEndingSelectionDisplayScale,
+			region.right * kEndingSelectionDisplayScale,
+			region.bottom * kEndingSelectionDisplayScale);
+		for (int y = bounds.top; y < bounds.bottom; ++y) {
+			byte *row = (byte *)screen->getBasePtr(0, y);
+			for (int x = bounds.left; x < bounds.right; ++x) {
+				const bool border =
+					x - bounds.left < (int)kPuzzleHelpBorderWidth ||
+					bounds.right - x <= (int)kPuzzleHelpBorderWidth ||
+					y - bounds.top < (int)kPuzzleHelpBorderWidth ||
+					bounds.bottom - y <= (int)kPuzzleHelpBorderWidth;
+				if (border || ((x + y) & kPuzzleHelpDitherMask) == 0)
+					row[x] = _overlayPaletteIndex;
+			}
+		}
+		g_system->unlockScreen();
+		return true;
+	}
+
+	RipperEngine *_engine;
+	uint _storyEnding;
+	int _lastTarget;
+	byte _overlayPaletteIndex;
+	bool _enabled;
+	bool _overlayActive;
+	bool _overlayCorrect;
+	bool _warningIssued;
+};
+
 class EndingSelectionCallback : public MediaSequenceCallback {
 public:
 	EndingSelectionCallback(RipperEngine *engine, Audio::SoundHandle &spinHandle,
 			Audio::SoundHandle &throwHandle, uint storyEnding) :
 		_engine(engine), _spinHandle(spinHandle), _throwHandle(throwHandle),
+		_debugHelper(engine, storyEnding),
 		_spinStarted(false), _cursorFrame(0), _nextCursorFrameMillis(0),
 		_cursorActive(false), _selectionActive(false), _reportedHeldMiss(false),
 		_sequenceId(0), _storyEnding(storyEnding) {
@@ -185,44 +329,43 @@ public:
 		}
 
 		serviceCursor();
+		const bool refreshPalette =
+			_debugHelper.update(_selectionActive, frame);
 
 		// HandleEndingSelectionThrowTargetCallback tests the published current
 		// button flags, so a held primary button remains eligible until a target
 		// window accepts it.
 		if ((mouse.buttons & kMouseButtonLeft) == 0) {
 			_reportedHeldMiss = false;
-			return 0;
+			return refreshPalette ? kContinueRefreshPalette : 0;
 		}
 
 		const Common::Point logicalPoint(
 			mouse.position.x / kEndingSelectionDisplayScale,
 			mouse.position.y / kEndingSelectionDisplayScale);
-		int activeTarget = -1;
-		for (uint target = 0; target < kThrowTargetCount; ++target) {
-			const ThrowTarget &region = kThrowTargets[target];
-			if (frame < region.firstFrame || frame > region.lastFrame)
-				continue;
-			activeTarget = target;
-			if (logicalPoint.x <= region.left ||
-					logicalPoint.x >= region.right ||
-					logicalPoint.y <= region.top ||
-					logicalPoint.y >= region.bottom)
-				break;
-
-			const uint selectedEnding = target % 4;
-			const bool correct = selectedEnding == _storyEnding;
-			_engine->getMedia()->playSoundEffect(
-				"ballthro.wav", _throwHandle, 100, false);
-			debugC(1, kDebugScene,
-				"Ripper: ending selection queued throw command=0x%04x target=%u candidateEnding=%u candidate='%s' expectedEnding=%u expected='%s' correct=%d sound='ballthro.wav' initialMedia='%s' followupRoute='%s' sequence=%u frame=%u point=%d,%d logical=%d,%d",
-				target + 1, target, selectedEnding,
-				kEndingNames[selectedEnding], _storyEnding,
-				kEndingNames[_storyEnding], correct,
-				kChosenEndingMedia[selectedEnding],
-				correct ? kCorrectOutcomeRoutes[selectedEnding] : "ripfinal.avi",
-				_sequenceId, frame, mouse.position.x, mouse.position.y,
-				logicalPoint.x, logicalPoint.y);
-			return target + 1;
+		const int activeTarget = findActiveThrowTarget(frame);
+		if (activeTarget >= 0) {
+			const ThrowTarget &region = kThrowTargets[activeTarget];
+			const bool inside = logicalPoint.x > region.left &&
+				logicalPoint.x < region.right &&
+				logicalPoint.y > region.top &&
+				logicalPoint.y < region.bottom;
+			if (inside) {
+				const uint selectedEnding = activeTarget % 4;
+				const bool correct = selectedEnding == _storyEnding;
+				_engine->getMedia()->playSoundEffect(
+					"ballthro.wav", _throwHandle, 100, false);
+				debugC(1, kDebugScene,
+					"Ripper: ending selection queued throw command=0x%04x target=%u candidateEnding=%u candidate='%s' expectedEnding=%u expected='%s' correct=%d sound='ballthro.wav' initialMedia='%s' followupRoute='%s' sequence=%u frame=%u point=%d,%d logical=%d,%d",
+					activeTarget + 1, (uint)activeTarget, selectedEnding,
+					kEndingNames[selectedEnding], _storyEnding,
+					kEndingNames[_storyEnding], correct,
+					kChosenEndingMedia[selectedEnding], correct ?
+						kCorrectOutcomeRoutes[selectedEnding] : "ripfinal.avi",
+					_sequenceId, frame, mouse.position.x, mouse.position.y,
+					logicalPoint.x, logicalPoint.y);
+				return activeTarget + 1;
+			}
 		}
 
 		if (!_reportedHeldMiss) {
@@ -246,11 +389,15 @@ public:
 			}
 			_reportedHeldMiss = true;
 		}
-		return 0;
+		return refreshPalette ? kContinueRefreshPalette : 0;
 	}
 
 	bool ownsInput() const override { return true; }
 	bool keepsCursorVisible() const override { return _selectionActive; }
+	bool managesPalette() const override { return _debugHelper.managesPalette(); }
+	void transformPalette(byte *palette, uint colorCount) const override {
+		_debugHelper.transformPalette(palette, colorCount);
+	}
 
 private:
 	void activateCursor() {
@@ -293,6 +440,7 @@ private:
 	RipperEngine *_engine;
 	Audio::SoundHandle &_spinHandle;
 	Audio::SoundHandle &_throwHandle;
+	EndingSelectionDebugHelper _debugHelper;
 	AssetLibrary _cursorLibrary;
 	BitmapAssetFrame _cursorFrames[kEndingCursorCount];
 	bool _spinStarted;
