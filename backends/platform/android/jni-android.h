@@ -122,6 +122,8 @@ public:
 	static int exportBackup(const Common::U32String &prompt);
 	static int importBackup(const Common::U32String &prompt, const Common::String &path);
 
+	static jstring convertToJString(JNIEnv *env, const Common::U32String &str);
+	static Common::U32String convertFromJString(JNIEnv *env, const jstring &jstr);
 private:
 	static pthread_key_t _env_tls;
 
@@ -197,8 +199,6 @@ private:
 	static void notifyAudioDisconnect(JNIEnv *env, jclass clazz);
 
 	static jstring getNativeVersionInfo(JNIEnv *env, jobject self);
-	static jstring convertToJString(JNIEnv *env, const Common::U32String &str);
-	static Common::U32String convertFromJString(JNIEnv *env, const jstring &jstr);
 
 	static JNIEnv *fetchEnv();
 	static int fetchEGLVersion();
