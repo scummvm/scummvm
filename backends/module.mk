@@ -367,6 +367,11 @@ MODULE_OBJS += \
 	networking/http/android/networkreadstream-android.o
 endif
 
+ifdef USE_TTS
+MODULE_OBJS += \
+	text-to-speech/android/android-text-to-speech.o
+endif
+
 # Oboe headers need C++14...
 $(MODULE)/mixer/android/android-mixer.o: CXXFLAGS += "-std=c++14"
 
