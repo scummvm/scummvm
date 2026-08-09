@@ -20,7 +20,6 @@
  */
 
 #include "audio/audiostream.h"
-#include "common/debug.h"
 #include "common/file.h"
 #include "mads/core/env.h"
 #include "mads/core/himem.h"
@@ -153,10 +152,8 @@ static bool isBonusDiskMode() {
 
 static bool bonusDiskAbortRequested() {
 	while (g_engine->hasPendingKey()) {
-		if (g_engine->getKey() == Common::KEYCODE_ESCAPE) {
-			debug(2, "MADS Bonus Disk AnimView: Escape requested early exit");
+		if (g_engine->getKey() == Common::KEYCODE_ESCAPE)
 			return true;
-		}
 	}
 
 	return false;
@@ -166,9 +163,6 @@ static void unloadRoom() {
 	if (!room)
 		return;
 
-	if (isBonusDiskMode())
-		debug(2, "MADS Bonus Disk AnimView: releasing room palette handle %d",
-				room->color_handle);
 	pal_deallocate(room->color_handle);
 	mem_free(room);
 	room = nullptr;
