@@ -279,6 +279,8 @@ void OptionsMenu::destroyOptionsMenu() {
 void OptionsMenu::cbGameMenu(void *, void *) {
 	destroyOptionsMenu();
 
+	_GM(buttonClosesDialog) = true;
+
 	GameMenu::show(nullptr);
 }
 
