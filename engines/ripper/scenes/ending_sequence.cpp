@@ -39,6 +39,7 @@ namespace Ripper {
 namespace {
 
 static const uint kEndingCursorCount = 20;
+static const uint32 kEndingCursorFrameDurationMillis = 100;
 static const uint kThrowTargetCount = 8;
 static const uint16 kCancelCommand = 0xfffe;
 static const char *const kCursorLibraryName = "end_curs.pl";
@@ -79,7 +80,8 @@ public:
 	EndingSelectionCallback(RipperEngine *engine, Audio::SoundHandle &spinHandle,
 			Audio::SoundHandle &throwHandle) :
 		_engine(engine), _spinHandle(spinHandle), _throwHandle(throwHandle),
-		_spinStarted(false), _cursorFrame(0) {
+		_spinStarted(false), _cursorFrame(0), _nextCursorFrameMillis(0),
+		_cursorActive(false) {
 	}
 
 	bool loadCursors() {
@@ -109,6 +111,20 @@ public:
 		return true;
 	}
 
+	void activateCursor() {
+		if (_cursorActive)
+			return;
+		_cursorActive = true;
+		_cursorFrame = 0;
+		applyCursorFrame();
+		_nextCursorFrameMillis =
+			g_system->getMillis(true) + kEndingCursorFrameDurationMillis;
+		_engine->getCursor()->setVisible(true);
+		debugC(2, kDebugCursor,
+			"Ripper: activated ending-selection cursor frames=%u durationMs=%u",
+			kEndingCursorCount, kEndingCursorFrameDurationMillis);
+	}
+
 	uint16 service(uint frame) override {
 		if (_engine->getInput()->pollEvents()) {
 			_engine->quitGame();
@@ -131,13 +147,7 @@ public:
 				frame, _spinStarted);
 		}
 
-		if (!_cursorFrames[_cursorFrame].pixels.empty()) {
-			const BitmapAssetFrame &cursor = _cursorFrames[_cursorFrame];
-			_engine->getCursor()->applyCustomCursor(cursor,
-				cursor.width / 2, cursor.height / 2, 2);
-			_engine->getCursor()->setVisible(true);
-			_cursorFrame = (_cursorFrame + 1) % kEndingCursorCount;
-		}
+		serviceCursor();
 
 		const MouseState mouse = _engine->getInput()->publishMouseState();
 		if (frame < 3 || (mouse.pressed & kMouseButtonLeft) == 0)
@@ -169,8 +179,33 @@ public:
 	}
 
 	bool ownsInput() const override { return true; }
+	bool keepsCursorVisible() const override { return true; }
 
 private:
+	void applyCursorFrame() {
+		const BitmapAssetFrame &cursor = _cursorFrames[_cursorFrame];
+		if (!cursor.pixels.empty()) {
+			_engine->getCursor()->applyCustomCursor(cursor,
+				cursor.width / 2, cursor.height / 2, 2);
+		}
+	}
+
+	void serviceCursor() {
+		if (!_cursorActive)
+			activateCursor();
+		const uint32 now = g_system->getMillis(true);
+		if (now >= _nextCursorFrameMillis) {
+			const uint elapsedFrames = 1 +
+				(now - _nextCursorFrameMillis) /
+					kEndingCursorFrameDurationMillis;
+			_cursorFrame = (_cursorFrame + elapsedFrames) % kEndingCursorCount;
+			_nextCursorFrameMillis +=
+				elapsedFrames * kEndingCursorFrameDurationMillis;
+			applyCursorFrame();
+		}
+		_engine->getCursor()->setVisible(true);
+	}
+
 	RipperEngine *_engine;
 	Audio::SoundHandle &_spinHandle;
 	Audio::SoundHandle &_throwHandle;
@@ -178,6 +213,8 @@ private:
 	BitmapAssetFrame _cursorFrames[kEndingCursorCount];
 	bool _spinStarted;
 	uint _cursorFrame;
+	uint32 _nextCursorFrameMillis;
+	bool _cursorActive;
 };
 
 } // End of anonymous namespace
@@ -212,6 +249,7 @@ bool EndingSequence::run() {
 
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
+	callback.activateCursor();
 	const bool windStarted = _engine->getMedia()->playSoundEffect(
 		"windfin.wav", windHandle, 100, true);
 	uint16 command = 0;

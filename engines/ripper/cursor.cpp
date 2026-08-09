@@ -100,7 +100,7 @@ void CursorManager::applyCustomCursor(const BitmapAssetFrame &frame,
 	CursorMan.replaceCursor(frame.pixels.data(), frame.width, frame.height,
 		hotspotX, hotspotY, frame.transparentColor, nullptr, nullptr,
 		cursorScale, cursorScale);
-	debugC(2, kDebugCursor,
+	debugC(11, kDebugCursor,
 		"Ripper: applied custom cursor size=%ux%u hotspot=%d,%d scale=%u transparent=%u",
 		frame.width, frame.height, hotspotX, hotspotY, scale,
 		frame.transparentColor);

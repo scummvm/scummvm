@@ -460,10 +460,12 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		if (!sequenceCallback)
 			presentScreen();
 	};
-	// ExecutePresentationEntry at 0x1652a deactivates the shared selection
-	// presentation before packetized AVI playback. Only RunMediaSequence's
-	// scene-frame callback path keeps cursor, toolbar, and dialogue controls live.
-	if (!serviceSceneUi)
+	// ExecutePresentationEntry at 0x1652a normally deactivates the shared
+	// selection presentation before packetized AVI playback. The ending selector
+	// installs END_CURS.PL before RIPMID.AVI and retains it across all packetized
+	// branches, so callbacks may explicitly preserve their cursor presentation.
+	if (!serviceSceneUi &&
+			(!sequenceCallback || !sequenceCallback->keepsCursorVisible()))
 		_engine->getCursor()->setVisible(false);
 	ActivePlaybackGuard playbackGuard(this, &decoder, name, externalAudio);
 	decoder.start();
