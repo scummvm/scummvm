@@ -204,7 +204,20 @@ private:
 			return;
 
 		const BonusTrack &track = kBonusTracks[index];
+		// Present the card before loading the driver. This keeps the final
+		// AnimView frame from leaking through while a driver is starting.
+		_ui.prepareNowPlaying(_text.musicTitles[index]);
 		_soundManager.init(track.section);
+
+		// ISOUND initializes with a one-tick null sequence. The original host
+		// services that sequence before dispatching a menu selection; wait on
+		// the driver's own completion status instead of racing its priority.
+		const uint32 startupTime = g_system->getMillis();
+		while (_soundManager.isDriverActive() &&
+				!g_engine->shouldQuit() &&
+				g_system->getMillis() - startupTime < 1000)
+			g_system->delayMillis(1);
+
 		_soundManager.command(track.command, 127);
 
 		// These follow the control flow surrounding the native track table in
@@ -222,7 +235,7 @@ private:
 
 		Common::Functor0Mem<bool, BonusApplication> isPlaying(
 				this, &BonusApplication::isDriverActive);
-		_ui.showNowPlaying(_text.musicTitles[index], isPlaying);
+		_ui.waitForNowPlaying(_text.musicTitles[index], isPlaying);
 		if (_soundManager.isLoaded())
 			_soundManager.closeDriver();
 	}
