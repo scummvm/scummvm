@@ -31,6 +31,7 @@ static const byte kDesktopAttribute = 0x17;
 static const byte kDesktopCharacter = 0xB1;
 static const byte kShadowAttribute = 0x08;
 static const byte kNormalAttribute = 0x47;
+static const byte kDisabledAttribute = 0x48;
 static const byte kSelectedAttribute = 0x74;
 static const byte kHotkeyAttribute = 0x4F;
 static const byte kSelectedHotkeyAttribute = 0x7F;
@@ -88,7 +89,8 @@ int BonusTextUI::itemRow(const Common::Rect &rect, int itemCount, int index) {
 }
 
 void BonusTextUI::drawMenu(const Common::Rect &rect, const Common::String &title,
-		const Common::String *items, int itemCount, int selected) {
+		const Common::String *items, int itemCount, int selected,
+		const bool *enabled) {
 	_cells.drawShadow(rect, kShadowAttribute);
 	_cells.fill(Common::Rect(rect.left + 1, rect.top + 1,
 			rect.right - 1, rect.bottom - 1), 0x20, kNormalAttribute);
@@ -101,16 +103,30 @@ void BonusTextUI::drawMenu(const Common::Rect &rect, const Common::String &title
 
 	for (int index = 0; index < itemCount; ++index) {
 		const int y = itemRow(rect, itemCount, index);
-		const byte attribute = index == selected ?
-				kSelectedAttribute : kNormalAttribute;
-		const byte hotkeyAttribute = index == selected ?
-				kSelectedHotkeyAttribute : kHotkeyAttribute;
+		const bool itemEnabled = !enabled || enabled[index];
+		const byte attribute = !itemEnabled ? kDisabledAttribute :
+				(index == selected ? kSelectedAttribute : kNormalAttribute);
+		const byte hotkeyAttribute = !itemEnabled ? kDisabledAttribute :
+				(index == selected ? kSelectedHotkeyAttribute : kHotkeyAttribute);
 
 		_cells.fill(Common::Rect(rect.left + 1, y, rect.right - 1, y + 1),
 				0x20, attribute);
 		_cells.drawText(rect.left + 2, y, items[index], attribute,
 				hotkeyAttribute, true, rect.width() - 4);
 	}
+}
+
+int BonusTextUI::nextEnabled(const bool *enabled, int itemCount,
+		int selected, int direction) {
+	if (!enabled)
+		return (selected + itemCount + direction) % itemCount;
+
+	for (int count = 0; count < itemCount; ++count) {
+		selected = (selected + itemCount + direction) % itemCount;
+		if (enabled[selected])
+			return selected;
+	}
+	return selected;
 }
 
 void BonusTextUI::drawMouseCursor() {
@@ -194,9 +210,12 @@ bool BonusTextUI::processGameMenuEvent(const Common::Event &event) {
 }
 
 int BonusTextUI::runMenu(const Common::Rect &rect, const Common::String &title,
-		const Common::String *items, int itemCount, int &selected) {
+		const Common::String *items, int itemCount, int &selected,
+		const bool *enabled, bool showPCSpeakerNotice) {
 	restorePresentation();
 	selected = CLIP<int>(selected, 0, itemCount - 1);
+	if (enabled && !enabled[selected])
+		selected = nextEnabled(enabled, itemCount, selected - 1, 1);
 	bool dirty = true;
 
 	while (!g_engine->shouldQuit()) {
@@ -214,7 +233,7 @@ int BonusTextUI::runMenu(const Common::Rect &rect, const Common::String &title,
 				updateMouseCell(event.mouse);
 				const int hit = rowAtMouse(rect, itemCount,
 						event.mouse.x, event.mouse.y);
-				if (hit >= 0)
+				if (hit >= 0 && (!enabled || enabled[hit]))
 					selected = hit;
 				dirty = true;
 				break;
@@ -223,7 +242,7 @@ int BonusTextUI::runMenu(const Common::Rect &rect, const Common::String &title,
 				updateMouseCell(event.mouse);
 				const int hit = rowAtMouse(rect, itemCount,
 						event.mouse.x, event.mouse.y);
-				if (hit >= 0) {
+				if (hit >= 0 && (!enabled || enabled[hit])) {
 					selected = hit;
 					return selected;
 				}
@@ -233,16 +252,16 @@ int BonusTextUI::runMenu(const Common::Rect &rect, const Common::String &title,
 			case Common::EVENT_KEYDOWN: {
 				const Common::KeyCode key = event.kbd.keycode;
 				if (key == Common::KEYCODE_UP) {
-					selected = (selected + itemCount - 1) % itemCount;
+					selected = nextEnabled(enabled, itemCount, selected, -1);
 					dirty = true;
 				} else if (key == Common::KEYCODE_DOWN) {
-					selected = (selected + 1) % itemCount;
+					selected = nextEnabled(enabled, itemCount, selected, 1);
 					dirty = true;
 				} else if (key == Common::KEYCODE_HOME) {
-					selected = 0;
+					selected = nextEnabled(enabled, itemCount, -1, 1);
 					dirty = true;
 				} else if (key == Common::KEYCODE_END) {
-					selected = itemCount - 1;
+					selected = nextEnabled(enabled, itemCount, 0, -1);
 					dirty = true;
 				} else if (key == Common::KEYCODE_RETURN ||
 						key == Common::KEYCODE_KP_ENTER) {
@@ -253,7 +272,7 @@ int BonusTextUI::runMenu(const Common::Rect &rect, const Common::String &title,
 				} else {
 					const int hit = acceleratorChoice(items, itemCount,
 							event.kbd.ascii);
-					if (hit >= 0) {
+					if (hit >= 0 && (!enabled || enabled[hit])) {
 						selected = hit;
 						return selected;
 					}
@@ -274,7 +293,15 @@ int BonusTextUI::runMenu(const Common::Rect &rect, const Common::String &title,
 		if (dirty) {
 			drawDesktop();
 			drawTitlePanel();
-			drawMenu(rect, title, items, itemCount, selected);
+			if (showPCSpeakerNotice) {
+				_cells.drawCenteredText(11, 1, 39,
+						"Some Musical Options do not", kTitleAttribute,
+						kTitleAttribute, false);
+				_cells.drawCenteredText(12, 1, 39,
+						"work with PC Speaker.", kTitleAttribute,
+						kTitleAttribute, false);
+			}
+			drawMenu(rect, title, items, itemCount, selected, enabled);
 			drawMouseCursor();
 			present(true);
 			dirty = false;
@@ -291,14 +318,14 @@ BonusTextUI::MainChoice BonusTextUI::runMainMenu(int &selected) {
 	return result < 0 ? kAbort : (MainChoice)result;
 }
 
-int BonusTextUI::runMusicMenu(int &selected) {
+int BonusTextUI::runMusicMenu(int &selected, const bool *enabled) {
 	Common::String items[17];
 	for (uint index = 0; index < ARRAYSIZE(_text.musicTitles); ++index)
 		items[index] = _text.musicTitles[index];
 	items[16] = _text.musicExit;
 
 	return runMenu(_musicRect, _text.musicMenuTitle,
-			items, ARRAYSIZE(items), selected);
+			items, ARRAYSIZE(items), selected, enabled, enabled != nullptr);
 }
 
 void BonusTextUI::appendWrappedLine(const Common::String &source, int width,
