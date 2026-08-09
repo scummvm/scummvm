@@ -64,7 +64,7 @@ void anim_timer() {
 	Frame *frame;
 	int sound, count;
 
-	if (current_error_code || speechStream)
+	if (current_error_code || speechResourceId != -1)
 		goto done;
 	if (currentFrame < 0 || currentFrame >= maxFrame)
 		goto done;
@@ -113,7 +113,7 @@ void anim_timer() {
 		goto block2;
 
 	speech = &current_anim->speech[speechIndex];
-	if (speech_lines_count > 0) {
+	if (hasSpeechAudio) {
 		flag = speech->display_condition != 0x4000 &&
 			speech->display_condition != 0x800 &&
 			speech->resource_id >= 0;
@@ -129,7 +129,7 @@ void anim_timer() {
 	}
 
 	if (flag) {
-		speechStream = speech->speech;
+		speechResourceId = speech->resource_id;
 		speechFlags = speech->flags;
 		goto done;
 	}

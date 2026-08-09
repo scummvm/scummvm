@@ -64,7 +64,6 @@ void Speech::load(Common::SeekableReadStream *src) {
 	src->read(misc, 3);
 	src->readMultipleLE(sound);
 
-	speech = nullptr;
 	src->skip(4);
 
 	src->readMultipleLE(x, y, display_condition);
