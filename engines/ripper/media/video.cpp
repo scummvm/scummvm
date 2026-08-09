@@ -461,9 +461,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			presentScreen();
 	};
 	// ExecutePresentationEntry at 0x1652a normally deactivates the shared
-	// selection presentation before packetized AVI playback. The ending selector
-	// installs END_CURS.PL before RIPMID.AVI and retains it across all packetized
-	// branches, so callbacks may explicitly preserve their cursor presentation.
+	// selection presentation before packetized AVI playback. Packetized branch
+	// callbacks may explicitly preserve a cursor for the active branch.
 	if (!serviceSceneUi &&
 			(!sequenceCallback || !sequenceCallback->keepsCursorVisible()))
 		_engine->getCursor()->setVisible(false);
@@ -842,6 +841,15 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 				"Ripper: IAVF '%s' cleared display before segment=%u from opcode 0x68",
 				name.c_str(), i);
 		}
+		// RunPacketizedMediaPlaybackCore initializes sequence id zero from the
+		// IAVF header, then PreparePacketizedMediaPlaybackBranchSetup at 0x5b237
+		// assigns ids one and above to the actual media branches.
+		const uint sequenceId = i + 1;
+		if (callback)
+			callback->beginIavfSegment(sequenceId);
+		debugC(2, kDebugVideo,
+			"Ripper: IAVF '%s' entered packetized branch segment=%u sequence=%u callback=%d",
+			name.c_str(), i, sequenceId, callback != nullptr);
 		Common::SeekableReadStream *smacker = rebuildSmackerStream(movie.segments[i]);
 		const int segmentX = overrideX != -1 ? overrideX : movie.segments[i].x;
 		const int segmentY = overrideY != -1 ? overrideY : movie.segments[i].y;
