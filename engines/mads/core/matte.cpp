@@ -840,7 +840,7 @@ void matte_frame(int special_effect, int full_screen) {
 					image_list[id2].sprite_id,
 					&scr_work, &scr_depth,
 					x, y,
-					image_list[id2].depth,
+					(int8)image_list[id2].depth,
 					picture_map.pan_offset_x,
 					picture_map.pan_offset_y);
 			}
@@ -850,7 +850,7 @@ void matte_frame(int special_effect, int full_screen) {
 				&scr_work, &scr_depth,
 				image_list[id2].x - picture_map.pan_x,
 				image_list[id2].y - picture_map.pan_y,
-				image_list[id2].depth,
+				(int8)image_list[id2].depth,
 				image_list[id2].scale,
 				picture_map.pan_offset_x,
 				picture_map.pan_offset_y);
