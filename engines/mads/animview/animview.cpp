@@ -20,6 +20,7 @@
  */
 
 #include "audio/audiostream.h"
+#include "common/debug.h"
 #include "common/file.h"
 #include "mads/core/env.h"
 #include "mads/core/himem.h"
@@ -152,11 +153,25 @@ static bool isBonusDiskMode() {
 
 static bool bonusDiskAbortRequested() {
 	while (g_engine->hasPendingKey()) {
-		if (g_engine->getKey() == Common::KEYCODE_ESCAPE)
+		if (g_engine->getKey() == Common::KEYCODE_ESCAPE) {
+			debug(2, "MADS Bonus Disk AnimView: Escape requested early exit");
 			return true;
+		}
 	}
 
 	return false;
+}
+
+static void unloadRoom() {
+	if (!room)
+		return;
+
+	if (isBonusDiskMode())
+		debug(2, "MADS Bonus Disk AnimView: releasing room palette handle %d",
+				room->color_handle);
+	pal_deallocate(room->color_handle);
+	mem_free(room);
+	room = nullptr;
 }
 
 static void anim_inter_timer() {
@@ -496,8 +511,7 @@ static void animate() {
 			tile_map_free(&depth_map);
 
 			if (room) {
-				pal_deallocate(room->color_handle);
-				mem_free(room);
+				unloadRoom();
 			} else {
 				pal_init(1, 8);
 				mouse_hard_cursor_mode(2, master_palette);
@@ -626,6 +640,7 @@ static void animate() {
 	}
 done:
 	timer_activate_low_priority(nullptr);
+	anim_timer_shutdown();
 	buffer_free(&scr_work);
 	anim_unload(current_anim);
 	buffer_free(&scr_depth);
@@ -633,8 +648,7 @@ done:
 	tile_map_free(&picture_map);
 	tile_map_free(&depth_map);
 
-	if (room)
-		mem_free(room);
+	unloadRoom();
 	timer_set_sound_flag(false);
 
 	if (g_engine->_soundManager->isLoaded())

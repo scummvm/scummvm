@@ -47,6 +47,20 @@ static int normalTimer1, imageCount;
 static int messageCount;
 static int16 panningX, panningY;
 
+static void clearSpeechMessages() {
+	if (runVal8) {
+		matte_clear_message(matteId);
+		pal_deallocate(paletteHandle);
+		runVal8 = 0;
+	}
+
+	for (int count = 0; count < messageCount; ++count)
+		matte_clear_message(messageHandle[count]);
+	messageCount = 0;
+	paletteHandle = 0;
+	matteId = 0;
+}
+
 void anim_timer_init() {
 	paletteHandle = 0;
 	palIndex1 = palIndex2 = 0;
@@ -55,6 +69,10 @@ void anim_timer_init() {
 	currentViewX = currentViewY = 0;
 	panningX = panningY = 0;
 	normalTimer1 = imageCount = 0;
+}
+
+void anim_timer_shutdown() {
+	clearSpeechMessages();
 }
 
 void anim_timer() {
@@ -299,16 +317,7 @@ block3:
 		imageFrame = speech->first_image;
 	} else {
 		speechIndex = -1;
-
-		if (runVal8) {
-			matte_clear_message(matteId);
-			pal_deallocate(paletteHandle);
-			runVal8 = 0;
-
-			for (count = 0; count < messageCount; ++count)
-				matte_clear_message(messageHandle[count]);
-			messageCount = 0;
-		}
+		clearSpeechMessages();
 	}
 
 done:
