@@ -422,6 +422,8 @@ bool OptionsPanelManager::run() {
 		if (captureSlot < 0 && (mouse.released & kMouseButtonLeft) != 0) {
 			if (pressedControl >= 0 && pressedControl == hoveredControl) {
 				const uint selected = pressedControl;
+				const uint previousCombatLevel = state.combatLevel;
+				const uint previousPuzzleLevel = state.puzzleLevel;
 				playControlSound(selected);
 				debugC(1, kDebugInput,
 					"Ripper: Options Panel selected control=%u id=%u point=%d,%d",
@@ -447,6 +449,16 @@ bool OptionsPanelManager::run() {
 				} else {
 					active = false;
 				}
+				if (selected == 6)
+					debugC(2, kDebugGeneral,
+						"Ripper: Options Panel staged combat difficulty previous=%u new=%u changed=%d commit=on-exit",
+						previousCombatLevel, state.combatLevel,
+						previousCombatLevel != state.combatLevel);
+				else if (selected >= 7 && selected <= 9)
+					debugC(2, kDebugGeneral,
+						"Ripper: Options Panel staged puzzle difficulty control=%u previous=%u new=%u changed=%d commit=on-exit",
+						selected, previousPuzzleLevel, state.puzzleLevel,
+						previousPuzzleLevel != state.puzzleLevel);
 				if (selected <= 9)
 					drawState(state);
 			}

@@ -288,6 +288,12 @@
   `PDIFF0..25`. `RenderOptionsStateStripSelections` at `0x1d935` selects
   anchor frames 0/8 for the buffered-video toggle, 0/8/16/24 for the video
   mode, 0/6/12 for combat levels 1/2/3, and 0/8/16 for puzzle levels 1/3/2.
+  Control 1006 calls `AnimateThreeStateOptionsStripSweep` at `0x1d468` to
+  cycle combat level 1 to 2 to 3 to 1. Controls 1007, 1008, and 1009 select
+  puzzle levels 1, 3, and 2 respectively. Leaving the panel copies these
+  staged bytes into the persistent settings blob before `SavePersistentSettings`
+  at `0x1dd82` writes the puzzle and combat values; ScummVM stores the same
+  values as `ripper_puzzle_level` and `ripper_combat_level`.
   Controls 1010 through 1017 invoke `RunOptionsKeyCaptureLoop` at `0x1d753`
   for action slots 0 through 6 and 8; slot 7 retains F1 help. Escape cancels an
   active key capture but exits and commits when the panel itself owns input.
