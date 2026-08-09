@@ -285,8 +285,8 @@ private:
 
 	bool executeCallback(CompiledScript &script, uint32 callbackOffset, int &result,
 		uint *nextFrame = nullptr, uint commandStart = 0);
-	bool acceptCyberRuntimeExit(int result, const CompiledScript &script,
-		const char *callbackPhase) const;
+	bool handleActiveRuntimeExit(int result, const CompiledScript &script,
+		const char *callbackPhase);
 	bool acceptConcurrentRuntimeExit(int result, const char *callbackPhase);
 	bool captureCyberKeyboardCommand();
 	bool serviceCyberKeyboardCommand();

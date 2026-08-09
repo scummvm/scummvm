@@ -1989,7 +1989,9 @@
   336 and presenting `BC3_1_P3.AVI`. Cyber programs use both callback forms:
   action 9999 still returns `-4`, while the dispatcher additionally requests
   their nested snapshot restoration instead of reporting the terminating
-  callback as a script failure.
+  callback as a script failure. A non-Cyber active runtime propagates the same
+  clean exit to the outer front end; ScummVM maps that handoff to a return to
+  its launcher.
 - The callback handler table at `0x84040` maps opcode `0x15` to
   `HandleSceneEntryPushChoiceRecordAndStepPrompt` at `0x15085`, opcode `0x16`
   to `HandleSceneEntryPushFrameChoiceOnPlayedStateCondition` at `0x150ea`, and
