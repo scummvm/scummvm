@@ -931,7 +931,9 @@
   640-by-300 scene page, which ScummVM places at physical y=50. `BKGRND2`
   supplies that scene page, `SI1` through `SI9` supply the 68-by-112 slotted
   cards, and `BI1` through `BI9` supply the 118-by-198 card attached to the
-  pointer.
+  pointer. `InitializeTransientPresentationOverlay` clips that held-card image
+  to logical x=0..639 and y=0..299, preventing it from modifying the retained
+  display bands above and below the scene page.
 - A click swaps the selected slot's card ID with the held card ID. Placing a
   held card redraws the slot, taking an occupied card installs its large
   pointer overlay, and every swap compares the first six slots with the short
