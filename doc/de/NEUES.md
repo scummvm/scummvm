@@ -50,6 +50,11 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Charakter-Wegfindung optimiert.
    - Fehler korrigiert, durch den Charaktere nach einer einseitigen Konversation nicht mehr angesprochen werden konnten.
 
+ M4:
+   - Mehrere Fehlerkorrekturen für Riddle of Master Lu, einschließlich Abstürzen, fehlender Funktionen und Spiel-Fehler.
+   - Fehler im Originalspiel korrigiert, der dafür sorgt, dass bei einer Unterhaltung mit Wolf das Spiel einfriert.
+   - Unterstützung für originale Cheat-Codes hinzugefügt.
+
  MM:
    - Mehrere Abstürze in Kämpfen in M&M1 korrigiert.
    - Unterstützung für PC-Speaker in M&M1 implementiert.
