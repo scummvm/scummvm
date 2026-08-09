@@ -103,7 +103,6 @@ static Scratch scratch;
 
 static void handle_animation_pid() {
 	int pid_reset_frame;
-	int random;
 
 	if (kernel_anim[aa[0]].frame != local->pid_frame) {
 		local->pid_frame = kernel_anim[aa[0]].frame;
