@@ -129,6 +129,8 @@ public abstract class ScummVM implements SurfaceHolder.Callback,
 	/** @noinspection unused */ @Keep
 	abstract protected void notifyHTTPService(int localPort, boolean minimal);
 	/** @noinspection unused */ @Keep
+	abstract protected TextToSpeechManager getTTSManager();
+	/** @noinspection unused */ @Keep
 	abstract protected String[] getSysArchives();
 	/** @noinspection unused */ @Keep
 	abstract protected String[] getAllStorageLocations();

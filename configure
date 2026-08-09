@@ -5464,6 +5464,9 @@ echocheck "TTS libraries"
 if test "$_tts" = auto ; then
 	_tts=no
 	case $_host_os in
+		android)
+			_tts=yes
+			;;
 		mingw*)
 			cat > $TMPC << EOF
 #include <windows.h>
@@ -7436,6 +7439,10 @@ if test "$_tts" = "no"; then
 	echo "no"
 else
 	case $_host_os in
+	android)
+		echo "android"
+		_tts=yes
+		;;
 	linux* | freebsd* | openbsd*)
 		echo "speech dispatcher"
 		_tts=yes
