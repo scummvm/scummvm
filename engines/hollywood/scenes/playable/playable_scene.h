@@ -145,9 +145,6 @@ public:
 	bool play();
 
 protected:
-	// Creates a playable scene with default actor placement and speech colors.
-	PlayableScene(HollywoodEngine *vm, const char *randomName, int defaultActorX, int defaultActorY,
-		byte defaultActorFacing, byte secondarySpeechTextColor, byte primarySpeechTextColor);
 	// Creates a playable scene whose common metadata comes from a config struct.
 	PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &config, const char *randomName,
 		int defaultActorX, int defaultActorY, byte defaultActorFacing,
@@ -187,58 +184,67 @@ protected:
 	};
 
 	// Scene Resource Configuration
+	// These read the PlayableSceneConfig every scene fills in its constructor.
+	// They are deliberately not virtual: scenes configure, they do not override.
 	// Names the scene resource archive, such as RESOURCE.G04.
-	virtual const char *resourceArchiveName() const;
+	const char *resourceArchiveName() const;
 	// Number of low-index chunks required before optional scene data.
-	virtual uint sceneInitialRequiredChunkCount() const;
+	uint sceneInitialRequiredChunkCount() const;
 	// First chunk copied into the scene resource arena.
-	virtual uint sceneArenaFirstChunk() const;
+	uint sceneArenaFirstChunk() const;
 	// Last chunk copied into the scene resource arena.
-	virtual uint sceneArenaLastChunk() const;
+	uint sceneArenaLastChunk() const;
 	// RESOURCE.003 stage number used for scene text and metadata.
-	virtual uint sceneStageIndex() const;
+	uint sceneStageIndex() const;
 	// Human-readable scene label for warnings and debug output.
-	virtual const char *sceneDebugName() const;
+	const char *sceneDebugName() const;
 	// Default horizontal viewport offset for the scene.
-	virtual uint16 sceneViewportXOffset() const;
+	uint16 sceneViewportXOffset() const;
 	// Minimum horizontal viewport offset allowed while scrolling.
-	virtual uint16 sceneViewportMinXOffset() const;
+	uint16 sceneViewportMinXOffset() const;
 	// Maximum horizontal viewport offset allowed while scrolling.
-	virtual uint16 sceneViewportMaxXOffset() const;
+	uint16 sceneViewportMaxXOffset() const;
 	// Inventory owner/character index used by this scene.
-	virtual byte inventoryOwnerIndex() const;
+	byte inventoryOwnerIndex() const;
 	// Initializes character-specific inventory tables and defaults.
-	virtual void initializeInventoryOwnerState();
+	void initializeInventoryOwnerState();
+	// Number of RESOURCE.000 actor bank segments to load.
+	uint resource000ActorBankSegmentCount() const;
+	// RESOURCE.000 offset-table entry for actor palette colors.
+	uint resource000ActorPaletteTableEntry() const;
+	// Extra byte offset into RESOURCE.000 inventory action tables.
+	uint32 inventoryActionTableExtraOffset() const;
+	// RESOURCE.003 owner text table index for inventory item names.
+	uint resource003InventoryRowsOffsetIndex() const;
+	// RESOURCE.003 offset for fixed speech cue descriptors.
+	uint32 speechCueDescriptorTableOffset() const;
+	// Highest palette-region id treated as walkable by default.
+	byte walkablePaletteMaxRegion() const;
+	// Music archive used by the scene.
+	const char *musicArchiveName() const;
+	// Sound bank 0 archive used by the scene.
+	const char *soundBank0ArchiveName() const;
+	// Whether RESOURCE.000 inventory action tables should be loaded.
+	bool shouldLoadInventoryActionTables() const;
+	// Whether actor depth tables are available in chunk 4.
+	bool shouldLoadActorDepthTables() const;
+	// Enables per-pixel actor depth clipping while drawing actors.
+	bool usesActorDepthTest() const;
+	// Checks if a main-flow state belongs to this scene.
+	bool isMainFlowStateInScene(uint16 stateId) const;
+
+	// Scene Resource Overrides
+	// Resource behavior that individual scenes genuinely replace.
 	// RESOURCE.000 offset-table entry for the active actor bank.
 	virtual uint resource000ActorBankTableEntry() const;
-	// Number of RESOURCE.000 actor bank segments to load.
-	virtual uint resource000ActorBankSegmentCount() const;
-	// RESOURCE.000 offset-table entry for actor palette colors.
-	virtual uint resource000ActorPaletteTableEntry() const;
-	// Extra byte offset into RESOURCE.000 inventory action tables.
-	virtual uint32 inventoryActionTableExtraOffset() const;
-	// RESOURCE.003 owner text table index for inventory item names.
-	virtual uint resource003InventoryRowsOffsetIndex() const;
-	// RESOURCE.003 offset for fixed speech cue descriptors.
-	virtual uint32 speechCueDescriptorTableOffset() const;
 	// Actor path step table used to advance cels while walking.
 	virtual const byte *actorPathStepDeltaTable() const;
 	// Byte count for the actor path step table.
 	virtual uint actorPathStepDeltaTableSize() const;
-	// Highest palette-region id treated as walkable by default.
-	virtual byte walkablePaletteMaxRegion() const;
-	// Music archive used by the scene.
-	virtual const char *musicArchiveName() const;
-	// Sound bank 0 archive used by the scene.
-	virtual const char *soundBank0ArchiveName() const;
 	// Optional palette chunk replacing chunk 1 for scene state.
 	virtual int alternatePaletteResourceChunkIndex() const;
 	// Whether the optional alternate palette chunk is active.
 	virtual bool isAlternatePaletteResourceActive() const;
-	// Whether RESOURCE.000 inventory action tables should be loaded.
-	virtual bool shouldLoadInventoryActionTables() const;
-	// Whether actor depth tables are available in chunk 4.
-	virtual bool shouldLoadActorDepthTables() const;
 	// Whether 0xff fill pixels need conversion after fill expansion.
 	virtual bool shouldConvertSavedFramebufferFF() const;
 	// Allows scenes to skip individual arena chunks.
@@ -247,10 +253,6 @@ protected:
 	virtual bool shouldRunExitSideEffectsAfterLoop() const;
 	// Runs scene-specific side effects after loop exit.
 	virtual void runExitSideEffectsAfterLoop();
-	// Enables per-pixel actor depth clipping while drawing actors.
-	virtual bool usesActorDepthTest() const;
-	// Checks if a main-flow state belongs to this scene.
-	virtual bool isMainFlowStateInScene(uint16 stateId) const;
 
 	// Scene Hooks
 	// Whether the scene replaces default preview initialization.
