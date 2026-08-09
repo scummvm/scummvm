@@ -506,7 +506,7 @@ void BonusTextUI::waitForNowPlaying(const Common::String &trackTitle,
 void BonusTextUI::showGoodbye() {
 	restorePresentation();
 	_cells.clear(0x20, 0x07);
-	_cells.drawText(0, 0, _text.goodbye, 0x07, 0x07, false,
+	_cells.drawText(0, 2, _text.goodbye, 0x07, 0x07, false,
 			DOSTextScreen::kColumns);
 	present(true);
 
