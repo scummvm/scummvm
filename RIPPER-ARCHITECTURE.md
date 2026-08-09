@@ -955,7 +955,10 @@
   `HandleEndingSelectionThrowTargetCallback` at `0x438cf` starts `SPIN_1.WAV`;
   a held primary button is accepted only inside one
   of the eight frame-gated logical 320-by-200 target rectangles at `0x84fe4`
-  and queue `BALLTHRO.WAV`. The one-based target result wraps modulo four to
+  and queues `BALLTHRO.WAV`. These rectangles cover the lower-body aiming
+  region rather than each character's full silhouette, and the forced
+  logical (100,160) cursor position starts inside that region. The one-based
+  target result wraps modulo four to
   choose `END_DB`, `END_DF`, `END_DC`, or `END_DM`. A correct choice conditionally
   adds `END_HIM` for ending 3 or `END_HER` for endings 0 and 2, always plays
   `QUIN_WIN`, and then selects `Q4_V4`, `Q4_V3`, `Q4_V6`, or `Q4_V5` by ending
