@@ -32,6 +32,13 @@
   startup state, Restore Game opens the saved-game path, View Intro plays
   `PROINT.AVI`, and Exit shuts down.
 
+## Detection
+
+- The detector distinguishes the retail release and demo without requiring
+  either original executable. It fingerprints the first 5,000 bytes and sizes
+  of `INTERFAC.PL` and `SOUND.PL`, two runtime data archives present in both
+  distributions; the demo entry carries `ADGF_DEMO`.
+
 ## Input
 
 - Keyboard commands are polled through `PollKeyboardCommand` at `0x4d364`.
