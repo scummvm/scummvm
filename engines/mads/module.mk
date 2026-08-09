@@ -67,6 +67,10 @@ MODULE_OBJS := \
 	core/vocab.o \
 	core/window.o \
 	core/xms.o \
+	nebular/bonus/bonus.o \
+	nebular/bonus/bonus_exe_data.o \
+	nebular/bonus/bonus_text_ui.o \
+	nebular/bonus/dos_text_screen.o \
 	nebular/nebular.o \
 	nebular/console.o \
 	nebular/copy.o \

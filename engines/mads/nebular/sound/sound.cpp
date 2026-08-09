@@ -38,7 +38,7 @@ void RexSoundManager::validate() {
 		break;
 
 	case SOUND_PCSPEAKER:
-		// No validation needed
+		ISound::validate();
 		break;
 
 	default:

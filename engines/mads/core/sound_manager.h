@@ -128,6 +128,11 @@ public:
 	}
 
 	/**
+	 * Returns whether the current driver reports an active sound.
+	 */
+	bool isDriverActive();
+
+	/**
 	 * Stop any currently active sound and remove the driver
 	 */
 	void closeDriver();

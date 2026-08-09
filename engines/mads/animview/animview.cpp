@@ -355,7 +355,7 @@ static void run_animation(int animIndex) {
 
 			if (!exit_immediately_at_end)
 				continue;
-			if (g_engine->_soundManager->command(8))
+			if (g_engine->_soundManager->isDriverActive())
 				continue;
 			current_error_code = 1;
 		}
