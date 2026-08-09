@@ -56,6 +56,10 @@ public:
 
 	virtual ~MediaSequenceCallback() {}
 
+	// RunPacketizedMediaPlaybackCore at 0x5b592 invokes its branch setup
+	// callback with sequence ids starting at one for the first IAVF segment.
+	// Most sequence callbacks only need the per-segment frame counter.
+	virtual void beginIavfSegment(uint sequenceId) {}
 	virtual uint16 service(uint frame) = 0;
 	virtual bool continueAfterEnd() const { return false; }
 	virtual bool ownsInput() const { return false; }

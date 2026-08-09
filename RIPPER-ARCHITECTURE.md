@@ -945,11 +945,14 @@
   `RunEndingSelectionEpiloguesAndCredits` at `0x43adb`.
 - The ending selector maps the randomly selected Ripper flags to retail ending
   indices as flag 6 to 3, flag 7 to 1, flag 8 to 0, and flag 9 to 2. It uses
-  the 20-frame `END_CURS.PL` pointer while `RIPMID.AVI` plays. Once playback
-  begins, `ApplyUiSelectionTableEntry` keeps that cursor installed across the
-  packetized movie branches; the callback does not recreate it per movie frame.
-  Once playback state reaches three, `HandleEndingSelectionThrowTargetCallback` at
-  `0x438cf` starts `SPIN_1.WAV`; primary clicks are accepted only inside one
+  the 20-frame `END_CURS.PL` pointer while the third branch of `RIPMID.AVI`
+  plays. `RunPacketizedMediaPlaybackCore` at `0x5b592` assigns the three media
+  branches sequence IDs 1 through 3. `InitializeEndingSelectionPlaybackCallback`
+  at `0x43840` installs the borrowed cursor presentation and moves it to logical
+  position (100,160) only for sequence 3; the first two branches remain
+  noninteractive. Once that state is active,
+  `HandleEndingSelectionThrowTargetCallback` at `0x438cf` starts `SPIN_1.WAV`;
+  primary clicks are accepted only inside one
   of the eight frame-gated logical 320-by-200 target rectangles at `0x84fe4`
   and queue `BALLTHRO.WAV`. The one-based target result wraps modulo four to
   choose `END_DF`, `END_DC`, `END_DM`, or `END_HIM`. A correct choice follows

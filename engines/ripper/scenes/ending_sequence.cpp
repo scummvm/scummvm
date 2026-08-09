@@ -40,6 +40,7 @@ namespace {
 
 static const uint kEndingCursorCount = 20;
 static const uint32 kEndingCursorFrameDurationMillis = 100;
+static const uint kEndingSelectionSequenceId = 3;
 static const uint kThrowTargetCount = 8;
 static const uint16 kCancelCommand = 0xfffe;
 static const char *const kCursorLibraryName = "end_curs.pl";
@@ -81,7 +82,7 @@ public:
 			Audio::SoundHandle &throwHandle) :
 		_engine(engine), _spinHandle(spinHandle), _throwHandle(throwHandle),
 		_spinStarted(false), _cursorFrame(0), _nextCursorFrameMillis(0),
-		_cursorActive(false) {
+		_cursorActive(false), _selectionActive(false), _sequenceId(0) {
 	}
 
 	bool loadCursors() {
@@ -111,18 +112,14 @@ public:
 		return true;
 	}
 
-	void activateCursor() {
-		if (_cursorActive)
-			return;
-		_cursorActive = true;
-		_cursorFrame = 0;
-		applyCursorFrame();
-		_nextCursorFrameMillis =
-			g_system->getMillis(true) + kEndingCursorFrameDurationMillis;
-		_engine->getCursor()->setVisible(true);
-		debugC(2, kDebugCursor,
-			"Ripper: activated ending-selection cursor frames=%u durationMs=%u",
-			kEndingCursorCount, kEndingCursorFrameDurationMillis);
+	void beginIavfSegment(uint sequenceId) override {
+		_sequenceId = sequenceId;
+		_selectionActive = sequenceId == kEndingSelectionSequenceId;
+		if (_selectionActive)
+			activateCursor();
+		debugC(2, kDebugScene,
+			"Ripper: ending-selection packetized branch sequence=%u active=%d cursor=%d",
+			_sequenceId, _selectionActive, _cursorActive);
 	}
 
 	uint16 service(uint frame) override {
@@ -133,24 +130,28 @@ public:
 		while (_engine->getInput()->hasPendingKey()) {
 			if (_engine->getInput()->consumeKey() == 0x1b) {
 				debugC(1, kDebugScene,
-					"Ripper: ending selection cancelled by Escape frame=%u",
-					frame);
+					"Ripper: ending selection cancelled by Escape sequence=%u frame=%u",
+					_sequenceId, frame);
 				return kCancelCommand;
 			}
 		}
 
-		if (!_spinStarted && frame >= 3) {
+		// HandleEndingSelectionThrowTargetCallback at 0x438cf gates spin audio
+		// and input on packetized playback state 3, not Smacker frame 3.
+		const MouseState mouse = _engine->getInput()->publishMouseState();
+		if (!_selectionActive)
+			return 0;
+		if (!_spinStarted) {
 			_spinStarted = _engine->getMedia()->playSoundEffect(
 				"spin_1.wav", _spinHandle, 100, true);
 			debugC(_spinStarted ? 2 : 1, kDebugScene,
-				"Ripper: ending-selection spin audio started frame=%u success=%d",
-				frame, _spinStarted);
+				"Ripper: ending-selection spin audio started sequence=%u frame=%u success=%d",
+				_sequenceId, frame, _spinStarted);
 		}
 
 		serviceCursor();
 
-		const MouseState mouse = _engine->getInput()->publishMouseState();
-		if (frame < 3 || (mouse.pressed & kMouseButtonLeft) == 0)
+		if ((mouse.pressed & kMouseButtonLeft) == 0)
 			return 0;
 
 		const Common::Point logicalPoint(mouse.position.x / 2,
@@ -166,22 +167,36 @@ public:
 			_engine->getMedia()->playSoundEffect(
 				"ballthro.wav", _throwHandle, 100, false);
 			debugC(1, kDebugScene,
-				"Ripper: ending selection hit target=%u frame=%u point=%d,%d logical=%d,%d result=%u",
-				target, frame, mouse.position.x, mouse.position.y,
+				"Ripper: ending selection hit target=%u sequence=%u frame=%u point=%d,%d logical=%d,%d result=%u",
+				target, _sequenceId, frame, mouse.position.x, mouse.position.y,
 				logicalPoint.x, logicalPoint.y, target + 1);
 			return target + 1;
 		}
 		debugC(3, kDebugScene,
-			"Ripper: ending selection missed frame=%u point=%d,%d logical=%d,%d",
-			frame, mouse.position.x, mouse.position.y,
+			"Ripper: ending selection missed sequence=%u frame=%u point=%d,%d logical=%d,%d",
+			_sequenceId, frame, mouse.position.x, mouse.position.y,
 			logicalPoint.x, logicalPoint.y);
 		return 0;
 	}
 
 	bool ownsInput() const override { return true; }
-	bool keepsCursorVisible() const override { return true; }
+	bool keepsCursorVisible() const override { return _selectionActive; }
 
 private:
+	void activateCursor() {
+		if (_cursorActive)
+			return;
+		_cursorActive = true;
+		_cursorFrame = 0;
+		applyCursorFrame();
+		_nextCursorFrameMillis =
+			g_system->getMillis(true) + kEndingCursorFrameDurationMillis;
+		_engine->getCursor()->setVisible(true);
+		debugC(2, kDebugCursor,
+			"Ripper: activated ending-selection cursor frames=%u durationMs=%u",
+			kEndingCursorCount, kEndingCursorFrameDurationMillis);
+	}
+
 	void applyCursorFrame() {
 		const BitmapAssetFrame &cursor = _cursorFrames[_cursorFrame];
 		if (!cursor.pixels.empty()) {
@@ -191,8 +206,6 @@ private:
 	}
 
 	void serviceCursor() {
-		if (!_cursorActive)
-			activateCursor();
 		const uint32 now = g_system->getMillis(true);
 		if (now >= _nextCursorFrameMillis) {
 			const uint elapsedFrames = 1 +
@@ -215,6 +228,8 @@ private:
 	uint _cursorFrame;
 	uint32 _nextCursorFrameMillis;
 	bool _cursorActive;
+	bool _selectionActive;
+	uint _sequenceId;
 };
 
 } // End of anonymous namespace
@@ -249,7 +264,6 @@ bool EndingSequence::run() {
 
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
-	callback.activateCursor();
 	const bool windStarted = _engine->getMedia()->playSoundEffect(
 		"windfin.wav", windHandle, 100, true);
 	uint16 command = 0;
