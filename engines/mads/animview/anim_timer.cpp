@@ -203,7 +203,7 @@ block2:
 
 	imageCount = image_marker;
 	for (; imageFrame < current_anim->num_images; ++imageFrame) {
-		Image *img = &current_anim->image[imageFrame];
+		const Image *img = &current_anim->image[imageFrame];
 
 		if (img->flags > currentFrame)
 			break;
@@ -214,7 +214,8 @@ block2:
 		for (count = 0; !found && count < imageCount; ++count) {
 			Image *img2 = &image_list[count];
 
-			found = img->series_id == img2->series_id &&
+			found = img->segment_id == img2->segment_id &&
+				img->series_id == img2->series_id &&
 				img->sprite_id == img2->sprite_id &&
 				img->x == img2->x &&
 				img->y == img2->y &&
