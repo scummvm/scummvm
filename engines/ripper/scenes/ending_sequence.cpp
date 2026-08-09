@@ -55,15 +55,17 @@ static const char *const kCursorLibraryName = "end_curs.pl";
 struct ThrowTarget {
 	uint firstFrame;
 	uint lastFrame;
-	int left;
-	int top;
-	int right;
-	int bottom;
+	int cursorYMin;
+	int cursorXMin;
+	int cursorYMax;
+	int cursorXMax;
 };
 
 // g_endingSelectionThrowTargetRegions at 0x84fe4 stores frame-gated
-// coordinates in RIPMID.AVI's logical 320x200 space. The packetized movie is
-// presented at 2:1 in the retail 640x400 display mode.
+// coordinates in RIPMID.AVI's logical 320x200 space. Each 28-byte record
+// stores Y min at +0x08, X min at +0x0c, Y max at +0x10, and X max at +0x14;
+// HandleEndingSelectionThrowTargetCallback at 0x438cf reads those exact
+// offsets. The packetized movie is presented at 2:1 in retail 640x400 mode.
 static const ThrowTarget kThrowTargets[kThrowTargetCount] = {
 	{ 42, 79, 53, 139, 136, 179 },
 	{ 84, 122, 53, 124, 136, 173 },
@@ -149,12 +151,13 @@ public:
 				target, selectedEnding, kEndingNames[selectedEnding],
 				_storyEnding, kEndingNames[_storyEnding], _overlayCorrect,
 				_overlayCorrect ? "green" : "red", _overlayPaletteIndex,
-				region.firstFrame, region.lastFrame, region.left + 1, region.top + 1,
-				region.right - 1, region.bottom - 1,
-				(region.left + 1) * kEndingSelectionDisplayScale,
-				(region.top + 1) * kEndingSelectionDisplayScale,
-				region.right * kEndingSelectionDisplayScale - 1,
-				region.bottom * kEndingSelectionDisplayScale - 1);
+				region.firstFrame, region.lastFrame, region.cursorXMin + 1,
+				region.cursorYMin + 1, region.cursorXMax - 1,
+				region.cursorYMax - 1,
+				(region.cursorXMin + 1) * kEndingSelectionDisplayScale,
+				(region.cursorYMin + 1) * kEndingSelectionDisplayScale,
+				region.cursorXMax * kEndingSelectionDisplayScale - 1,
+				region.cursorYMax * kEndingSelectionDisplayScale - 1);
 		}
 		_lastTarget = target;
 		return false;
@@ -207,10 +210,10 @@ private:
 		// The retail comparison is strict at every edge. Draw only pixels whose
 		// logical mouse coordinates can actually satisfy that comparison.
 		const Common::Rect bounds(
-			(region.left + 1) * kEndingSelectionDisplayScale,
-			(region.top + 1) * kEndingSelectionDisplayScale,
-			region.right * kEndingSelectionDisplayScale,
-			region.bottom * kEndingSelectionDisplayScale);
+			(region.cursorXMin + 1) * kEndingSelectionDisplayScale,
+			(region.cursorYMin + 1) * kEndingSelectionDisplayScale,
+			region.cursorXMax * kEndingSelectionDisplayScale,
+			region.cursorYMax * kEndingSelectionDisplayScale);
 		for (int y = bounds.top; y < bounds.bottom; ++y) {
 			byte *row = (byte *)screen->getBasePtr(0, y);
 			for (int x = bounds.left; x < bounds.right; ++x) {
@@ -346,10 +349,10 @@ public:
 		const int activeTarget = findActiveThrowTarget(frame);
 		if (activeTarget >= 0) {
 			const ThrowTarget &region = kThrowTargets[activeTarget];
-			const bool inside = logicalPoint.x > region.left &&
-				logicalPoint.x < region.right &&
-				logicalPoint.y > region.top &&
-				logicalPoint.y < region.bottom;
+			const bool inside = logicalPoint.x > region.cursorXMin &&
+				logicalPoint.x < region.cursorXMax &&
+				logicalPoint.y > region.cursorYMin &&
+				logicalPoint.y < region.cursorYMax;
 			if (inside) {
 				const uint selectedEnding = activeTarget % 4;
 				const bool correct = selectedEnding == _storyEnding;
@@ -378,8 +381,8 @@ public:
 					_storyEnding, kEndingNames[_storyEnding],
 					selectedEnding == _storyEnding, _sequenceId, frame,
 					mouse.position.x, mouse.position.y, logicalPoint.x,
-					logicalPoint.y, region.left, region.top, region.right,
-					region.bottom);
+					logicalPoint.y, region.cursorXMin, region.cursorYMin,
+					region.cursorXMax, region.cursorYMax);
 			} else {
 				debugC(1, kDebugScene,
 					"Ripper: ending selection rejected press reason='no active target at frame' queuedCommand=0x0000 expectedEnding=%u expected='%s' sequence=%u frame=%u point=%d,%d logical=%d,%d",
