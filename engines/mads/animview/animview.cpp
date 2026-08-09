@@ -70,10 +70,7 @@ int currentViewX, currentViewY;
 int concat_mode;
 bool stop_music_at_end;
 bool wait_for_music_at_end;
-
-//static const byte FX_TIMES[16] = {
-//	0, 110, 110, 64, 64, 64, 64, 64, 64, 64, 64, 0, 0, 0
-//};
+int speech_lines_count;
 
 static bool has_sound_file;
 static char sound_file_name[80];
@@ -83,7 +80,6 @@ static Room *room;
 static int viewing_at_y2;
 constexpr int SPEECH_LINES_COUNT = 10;
 static Audio::AudioStream *speech_lines[SPEECH_LINES_COUNT];
-static int speech_lines_count;
 static SeriesPtr animSeries;
 static SpritePageInfoPtr pageInfo;
 static SpritePageTablePtr pageTable;
@@ -201,7 +197,7 @@ static void run_animation(int animIndex) {
 	loadFontFlag = (current_anim->load_flags & AA_LOAD_FONT) != 0;
 
 	speechLoops = runVal6 = runVal7 = runVal8 = 0;
-	speechStream = 0;
+	speechStream = nullptr;
 	timerFlag1 = false;
 
 	if (current_anim->background_type == AA_INTERFACE) {

@@ -54,6 +54,8 @@ extern int currentViewX, currentViewY;
 extern int concat_mode;
 extern bool wait_for_music_at_end;
 extern bool stop_music_at_end;
+extern int speech_lines_count;
+
 
 // Main animview function
 extern void animview_main(const char *resName);

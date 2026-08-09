@@ -113,9 +113,11 @@ void anim_timer() {
 		goto block2;
 
 	speech = &current_anim->speech[speechIndex];
-	flag = speech->display_condition != 0x4000 &&
-		speech->display_condition != 0x800 &&
-		speech->resource_id >= 0;
+	if (speech_lines_count > 0) {
+		flag = speech->display_condition != 0x4000 &&
+			speech->display_condition != 0x800 &&
+			speech->resource_id >= 0;
+	}
 
 	if (g_engine->getGameID() != GType_RexNebular) {
 		// In Phantom sound_dma is one of the sound card params which can be configurable via flags.
