@@ -29,10 +29,23 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"ripper",
 		nullptr,
-		AD_ENTRY1s("ripper.exe", "edc5b0c0caf3d5b01d344cb555d9a085", 761441),
+		AD_ENTRY2s(
+			"interfac.pl", "96ee5c8c5a1236fcab47e39885ace4dd", 7771946,
+			"sound.pl", "7e9a9194b059fd7542f72bf90d459102", 975066),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
+		GUIO1(GAMEOPTION_SKIP_INTRO)
+	},
+	{
+		"ripper",
+		"Demo",
+		AD_ENTRY2s(
+			"interfac.pl", "a33ad101a8ebc6fe8929efcb40239db7", 4688365,
+			"sound.pl", "f130b8d291e3e78e04a7cf65c1cb772c", 1877450),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_DEMO | ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_SKIP_INTRO)
 	},
 
