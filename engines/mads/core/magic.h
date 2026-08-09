@@ -75,8 +75,8 @@ extern void magic_set_color_flags(byte r, byte g, byte b);
 extern void magic_set_color_values(byte r, byte g, byte b);
 extern void magic_map_to_grey_ramp(Palette *pal, int base_color, int num_colors,
 	int base_grey, int num_greys, MagicGreyPtr magic_map);
-extern void magic_grey_ramp_palette(Palette pal, int num_greys);
-extern void magic_fade_to_grey(Palette pal, byte *map_pointer,
+extern void magic_grey_ramp_palette(Palette &pal, int num_greys);
+extern void magic_fade_to_grey(Palette &pal, byte *map_pointer,
 	int base_color, int num_colors, int base_grey, int num_greys,
 	int tick_delay, int steps);
 extern void magic_fade_from_grey(RGBcolor *pal, Palette target, int base_color,
@@ -98,7 +98,7 @@ extern void magic_fade_from_grey(RGBcolor *pal, Palette target, int base_color,
  * @param set_palette	
  * @param tick_delay	
  */
-extern void magic_screen_change_corner(Buffer *new_screen, Palette pal, int corner_id,
+extern void magic_screen_change_corner(Buffer *new_screen, Palette &pal, int corner_id,
 	int buffer_base_x, int buffer_base_y, int screen_base_x, int screen_base_y,
 	int thru_black, int set_palette, int tick_delay);
 
@@ -117,7 +117,7 @@ extern void magic_screen_change_corner(Buffer *new_screen, Palette pal, int corn
  * @param set_palette	
  * @param tick_delay	
  */
-extern void magic_screen_change_edge(Buffer *new_screen, Palette pal, int edge_id,
+extern void magic_screen_change_edge(Buffer *new_screen, Palette &pal, int edge_id,
 	int buffer_base_x, int buffer_base_y, int screen_base_x, int screen_base_y,
 	int thru_black, int set_palette, int tick_delay);
 
@@ -138,7 +138,7 @@ extern void magic_screen_change_edge(Buffer *new_screen, Palette pal, int edge_i
  * @param tick_delay	
  * @param pixel_rate	
  */
-extern void magic_screen_change_circle(Buffer *new_screen, Palette pal,
+extern void magic_screen_change_circle(Buffer *new_screen, Palette &pal,
 	int inward_flag, int buffer_base_x, int buffer_base_y,
 	int screen_base_x, int screen_base_y, int thru_black, int set_palette,
 	int tick_delay, int pixel_rate);
@@ -146,7 +146,7 @@ extern void magic_shrink_buffer(Buffer *from, Buffer *unto);
 extern int  magic_shrinking_buffer(Buffer *source, Buffer *rear, int grow_flag,
 	int buffer_base_x, int buffer_base_y, int screen_base_x, int screen_base_y,
 	int tick_delay);
-extern void magic_swap_me_in_the_dark_baby(byte *swap, Palette pal, int start);
+extern void magic_swap_me_in_the_dark_baby(byte *swap, Palette &pal, int start);
 extern void magic_swap_foreground(byte *background_table, Palette background_palette);
 
 /**
