@@ -180,12 +180,14 @@ public:
 	AssetLibrary &scripts() { return _scripts; }
 	AssetLibrary &interface() { return _interface; }
 	AssetLibrary &options() { return _options; }
+	AssetLibrary &puzzle() { return _puzzle; }
 	AssetLibrary &sound() { return _sound; }
 
 private:
 	AssetLibrary _scripts;
 	AssetLibrary _interface;
 	AssetLibrary _options;
+	AssetLibrary _puzzle;
 	AssetLibrary _sound;
 	Common::Array<Common::String> _searchDirectories;
 	mutable Common::HashMap<Common::String, BitmapFontAsset> _fontCache;

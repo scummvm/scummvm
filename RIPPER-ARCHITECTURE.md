@@ -1777,6 +1777,15 @@
   `0x22c91` independently includes every set flag on a later menu rebuild, so
   the two underlying database records remain distinct even though the row used
   to solve the puzzle is replaced in place for the current chooser session.
+- The demo has no object-database chooser: `RunWacFrontEndLoop` at `0x1c085`
+  routes action `0x2000` directly to `RunWacMugSelectionScene` at `0x1c58e`.
+  Demo startup `LoadConfiguredAssetLibraryDirectories` at `0x10f20` opens the
+  `[FILES] puzzle` library, stores it in the puzzle asset-library slot at
+  `0x68ba4`, and clears the corresponding search path. The mug scene loads
+  `MUG0.SMK` through `MUG8.SMK` from that archive; its solved presentation
+  loads `MUG9.SMK` through the same slot. ScummVM therefore retains a separate
+  puzzle-library source with loose configured-path fallback rather than
+  treating those Smackers as ordinary filesystem WAC media.
 - Entry 3 dispatches `RunWacJournalRevealScene` at `0x24261`, implemented by
   `WacJournalPuzzle`. It wraps game-text
   resource `0xaf` once into control `0x7b2`, marks reveal-source flag `0xfa`,
