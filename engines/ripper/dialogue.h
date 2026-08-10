@@ -43,6 +43,8 @@ private:
 		uint16 result;
 	};
 	uint measureText(const Common::String &text) const;
+	bool hasScrollArrows() const;
+	uint maximumVisibleChoiceCount() const;
 	void updateLayout();
 	void drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const;
 	Common::Rect visualBounds() const;
