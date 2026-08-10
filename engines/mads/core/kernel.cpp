@@ -43,6 +43,7 @@
 #include "mads/core/keys.h"
 #include "mads/core/pack.h"
 #include "mads/core/room.h"
+#include "mads/core/sound.h"
 #include "mads/core/xms.h"
 #include "mads/core/tile.h"
 #include "mads/core/popup.h"
@@ -1658,8 +1659,8 @@ static void kernel_process_animation(int handle, int asynchronous) {
 	}
 
 	if (!asynchronous) {
-		if (kernel_anim[handle].anim->frame[kernel_anim[handle].frame].sound) {
-			// pl sound_play(kernel_anim[handle].anim->frame[kernel_anim[handle].frame].sound);
+		if (g_engine->getGameID() != GType_Forest && kernel_anim[handle].anim->frame[kernel_anim[handle].frame].sound) {
+			sound_play(kernel_anim[handle].anim->frame[kernel_anim[handle].frame].sound);
 		}
 
 		if ((kernel_anim[handle].anim->misc_peel_x != 0) || (kernel_anim[handle].anim->misc_peel_y != 0)) {
