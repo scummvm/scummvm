@@ -135,20 +135,20 @@ private:
 	uint16 _randomSeed;
 	byte _lastMidiStatus;         // running-status cache, avoids resending an unchanged status byte
 	byte _sysexChecksum;
-	int _stateChangedFlag;        // word_12BB8 in the disassembly; latches _pollResult=0xFFFF once per state change
+	int _stateChangedFlag;        // latches _pollResult=0xFFFF once per state change
 
 	/**
 	 * Per-MIDI-channel held-note slots (index 0 unused; channels are
 	 * 1-9; 4 = max chord polyphony). TODO/unconfirmed: the disassembly
 	 * shows TWO seemingly-parallel tables using the identical
-	 * "channel*4+slot" indexing and 0xFF-empty-slot convention -
-	 * byte_1760C (read/written directly by the chord-note-storing logic
-	 * in Channel_pollActive) and an unnamed array at dseg offset 0x4AEC
-	 * (used by resetAllChannels's initialization and by the
-	 * flush-held-notes helper). IDA never resolves 0x4AEC to a named
-	 * symbol anywhere, so it's not confirmed whether these are the same
-	 * underlying memory (most likely, and what's implemented here) or
-	 * two genuinely separate tables - worth double-checking.
+	 * "channel*4+slot" indexing and 0xFF-empty-slot convention - one
+	 * table (read/written directly by the chord-note-storing logic
+	 * in Channel_pollActive) and a second, unnamed array (used by
+	 * resetAllChannels's initialization and by the flush-held-notes
+	 * helper). The disassembly never resolves the second array to a named
+	 * symbol, so it's not confirmed whether these are the same underlying
+	 * memory (most likely, and what's implemented here) or two genuinely
+	 * separate tables - worth double-checking.
 	 */
 	byte _heldNotes[RSOUND_CHANNEL_COUNT + 1][4];
 
@@ -163,18 +163,17 @@ private:
 	int _sysExOffset;
 
 	/**
-	 * General-purpose script variable table (byte_17480 in the
-	 * disassembly). Confirmed 32 bytes via the gap to the next declared
-	 * global (_scriptReadPtr) - also matches the sibling ASound driver's
-	 * analogous _scriptVars[32].
+	 * General-purpose script variable table. Confirmed 32 bytes via the
+	 * gap to the next declared global (_scriptReadPtr) - also matches the
+	 * sibling ASound driver's analogous _scriptVars[32].
 	 */
 	byte _scriptVariables[32];
 
 	/**
-	 * Half-rate fade-check timer (byte_107BD/byte_107BE in the
-	 * disassembly) - same counter/period/reload shape as the Rex Nebular
-	 * RSound4/RSound6 callback mechanism, but drives checkFadingChannels()
-	 * directly rather than an arbitrary function pointer.
+	 * Half-rate fade-check timer - same counter/period/reload shape as the
+	 * Rex Nebular RSound4/RSound6 callback mechanism, but drives
+	 * checkFadingChannels() directly rather than an arbitrary function
+	 * pointer.
 	 */
 	int _fadeCheckCounter;
 
@@ -190,15 +189,15 @@ private:
 	 * update() tick ever runs, since _tickCounter increments
 	 * unconditionally every tick thereafter and the gate checks "== 0".
 	 */
-	int _tickCounter;             // word_12BE5
-	int _clockMedTarget;          // word_12BE7 - pending value for _clockMed, set by opcode 0xC0
-	int _clockCoarseTarget;       // word_12BE9 - pending value for _clockCoarse, set by opcode 0xBF
-	int _clockUnknown;            // word_12BEB - default 0; doesn't fit the 4x pattern, standalone (opcode 0xBE)
-	int _clockCoarse;             // word_12BEE - default 112 (=28*4)
-	int _clockMed;                // word_12BF0 - default 28 (=7*4)
-	int _clockFine;               // word_12BF2 - default 7
-	int _clockEnabled1;           // word_12BD3 - set to 1 by opcode 0xBF
-	int _clockEnabled2;           // word_12BE3 - set to 1 by opcode 0xBF
+	int _tickCounter;
+	int _clockMedTarget;          // pending value for _clockMed, set by opcode 0xC0
+	int _clockCoarseTarget;       // pending value for _clockCoarse, set by opcode 0xBF
+	int _clockUnknown;            // default 0; doesn't fit the 4x pattern, standalone (opcode 0xBE)
+	int _clockCoarse;             // default 112 (=28*4)
+	int _clockMed;                // default 28 (=7*4)
+	int _clockFine;               // default 7
+	int _clockEnabled1;           // set to 1 by opcode 0xBF
+	int _clockEnabled2;           // set to 1 by opcode 0xBF
 
 	void update();
 	void pollAllChannels();
@@ -250,13 +249,12 @@ protected:
 	}
 
 	/**
-	 * byte_1303E in the disassembly. Cleared to 0 by RSound1's command37
-	 * (a "cancel any pending random-ambiance trigger" side effect of
-	 * playing that specific sound). CONFIRMED: the only code that ever
-	 * sets it to 0xFF (arming checkRandomAmbianceTrigger()) is itself
-	 * unreachable/dead code - so in the real game this mechanism never
-	 * actually fires. Implemented faithfully anyway (matching sub_1222E's
-	 * shape exactly) in case that changes for a different driver.
+	 * Cleared to 0 by RSound1's command37 (a "cancel any pending
+	 * random-ambiance trigger" side effect of playing that specific
+	 * sound). CONFIRMED: the only code that ever sets it to 0xFF (arming
+	 * checkRandomAmbianceTrigger()) is itself unreachable/dead code - so
+	 * in the real game this mechanism never actually fires. Implemented
+	 * faithfully anyway in case that changes for a different driver.
 	 * Protected (not private) so driver subclasses with their own
 	 * commands touching it (like RSound1's command37) can reach it
 	 * directly.
@@ -289,7 +287,7 @@ protected:
 	 * Hook called once per update() frame after the disabled check.
 	 * Only drivers with a random-ambiance/music picker (e.g. RSound1's
 	 * command16) override this; every other driver leaves it a no-op.
-	 * Matches sub_1222E's confirmed shape: if _randomAmbianceTriggerFlag
+	 * Confirmed shape: if _randomAmbianceTriggerFlag
 	 * == 0xFF, clear it and fire the driver-specific picker.
 	 */
 	virtual void checkRandomAmbianceTrigger() {
@@ -316,9 +314,8 @@ protected:
 
 	/**
 	 * Plays the specified sound, using any free channel from 1 to 8
-	 * (everything except channel 9). Matches sub_104FF in the
-	 * disassembly - a third, distinct scan range from playSound() and
-	 * playSoundAny() above.
+	 * (everything except channel 9) - a third, distinct scan range from
+	 * playSound() and playSoundAny() above.
 	 */
 	Channel *playSoundAny(int offset);
 
@@ -369,7 +366,7 @@ protected:
 	/**
 	 * Sends the GM-reset Control Change sequence (all notes off, reset all
 	 * controllers, volume=100, pan=center) to `count` MIDI channels,
-	 * counting down from `count` to 1. Matches sub_1068A.
+	 * counting down from `count` to 1.
 	 */
 	void sendGmReset(int count);
 
@@ -402,7 +399,7 @@ protected:
 	void sendSysExSequence();
 
 	/**
-	 * TENTATIVE: matches sub_102BE - a nested loop (4 outer x 32 inner
+	 * TENTATIVE: a nested loop (4 outer x 32 inner
 	 * iterations) building and sending a SysEx message each inner pass.
 	 * The overall shape (loop counters, accumulating base value, fixed
 	 * bytes 0x18/0x32/0x0C) is clear from the disassembly, but the exact
@@ -412,17 +409,16 @@ protected:
 	void sendPatchInitSequence();
 
 	/**
-	 * CONFIRMED: matches sub_108C7 - masks the 3 caller-supplied values
+	 * CONFIRMED: masks the 3 caller-supplied values
 	 * to 2/3/3 bits (mode 0-3, time 0-7, level 0-7) and sends them via
-	 * the real Roland MT-32 System Area Reverb SysEx address (10 00 01h -
-	 * originally found at RSound1's dseg offset 0xA9, but hardcoded here
-	 * rather than read via loadData(), since it's a fixed hardware
-	 * protocol address, not driver-specific sound data).
+	 * the real Roland MT-32 System Area Reverb SysEx address (10 00 01h),
+	 * hardcoded here rather than read via loadData(), since it's a fixed
+	 * hardware protocol address, not driver-specific sound data.
 	 */
 	void sendReverbSysEx(int mode, int time, int level);
 
 	/**
-	 * Matches sub_108F9 - a confirmed no-op (reads one operand, does
+	 * A confirmed no-op (reads one operand, does
 	 * nothing with it).
 	 */
 	void noOpHandler(int param) {
@@ -436,13 +432,13 @@ protected:
 	/**
 	 * Shared tail of command1() (falls through into it after command3())
 	 * and command5() (jumps straight into it, ungated, in every driver
-	 * confirmed so far): enables channels 5,6,7,8. Matches loc_108A9.
+	 * confirmed so far): enables channels 5,6,7,8.
 	 */
 	void enableUpperChannels();
 
 	/**
 	 * Shared tail of command4() in every driver confirmed so far:
-	 * resetChannels4to9() + sendGmReset(9). Matches loc_106DB.
+	 * resetChannels4to9() + sendGmReset(9).
 	 */
 	void resetAndGmResetUpperChannels();
 

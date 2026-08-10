@@ -1709,8 +1709,8 @@ int RSound5::command1() {
 }
 
 int RSound5::command5() {
-	// Matches sub_10854: same disableChannelTo mechanic as RSound4's
-	// sub_1092A, for channels 6,7,8.
+	// Same disableChannelTo mechanic as RSound4's
+	// command5, for channels 6,7,8.
 	_fadeCheckPeriod = 1; // armFadeCheck
 	disableChannelTo(5, 0xFF);
 	disableChannelTo(6, 0xFF);
@@ -1750,7 +1750,7 @@ int RSound5::command(int commandId, int param) {
 }
 
 int RSound5::command16() {
-	// Matches byte_134D8's first-time-vs-every-other-time selection -
+	// The first-time-vs-every-other-time selection -
 	// see class comment. Both variants check the SAME two offsets
 	// (0x7DC, 0x7E9) as an OR-gate before proceeding, just in reversed
 	// order.
@@ -2185,7 +2185,7 @@ Channel *RSound6::playSoundChannels1To6(int offset) {
 }
 
 int RSound6::isMusicChannelsActive() {
-	// Matches sub_10539: channels 1-6 AND 9 (seven channels), matching
+	// Channels 1-6 AND 9 (seven channels), matching
 	// command3()'s own wider group.
 	return _channels[0]._activeCount || _channels[1]._activeCount ||
 		_channels[2]._activeCount || _channels[3]._activeCount ||
@@ -2317,13 +2317,12 @@ int RSound6::command31() {
 // command32/command33 share an intricate tail - see the class comment.
 
 void RSound6::command32_33LoadCh4() {
-	// Matches loc_124B2.
 	_command33Flag = 0;
 	_channels[3].load(loadData(0x9FB));
 }
 
 void RSound6::command32_33Load() {
-	// Matches loc_12490 (falls through to the byte_13378 check at its end).
+	// Falls through to the shared flag check at its end.
 	command3();
 	_channels[0].load(loadData(0x8CE));
 	_channels[1].load(loadData(0x914));
@@ -2352,8 +2351,8 @@ int RSound6::command32() {
 
 int RSound6::command33() {
 	// Matches rsound_command33's own entry point: gates, sets the shared
-	// flag, then either falls into loc_1247E (command32's immediate
-	// setup) or loc_124B2 (command32's "load channel 4" tail) directly,
+	// flag, then either falls into command32's immediate
+	// setup or command32's "load channel 4" tail directly,
 	// or - if neither condition holds - falls all the way through into
 	// command32's own body from the top (equivalent to calling it).
 	if (isSoundActive(loadData(0x9FB)))
@@ -2374,7 +2373,7 @@ int RSound6::command33() {
 /*-----------------------------------------------------------------------*/
 
 void RSound6::command34LoadCh1AndRest() {
-	// Matches loc_12524 falling through to loc_1252D.
+	// Falls through to command34LoadRestOnly().
 	command3();
 	_channels[0].load(loadData(0xA1A));
 	_channels[1].load(loadData(0xA5C));
@@ -2383,7 +2382,7 @@ void RSound6::command34LoadCh1AndRest() {
 }
 
 void RSound6::command34LoadRestOnly() {
-	// Matches loc_1252D reached directly (already-looping skip path).
+	// Reached directly (already-looping skip path).
 	_channels[1].load(loadData(0xA5C));
 	_channels[2].load(loadData(0xA95));
 	_channels[3].load(loadData(0xB22));

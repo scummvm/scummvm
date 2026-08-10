@@ -103,7 +103,7 @@ private:
 	static const uint16 _table1[16];
 
 	/**
-	 * Persistent counter (byte_108F1 in the disassembly; initial value
+	 * Persistent counter (initial value
 	 * 0x2F/47). Incremented by 16 (wrapping as a byte) each time
 	 * command12 runs; the low 7 bits are written into the sound data's
 	 * pitch/note byte before playback. command5 resets it back to 47.
@@ -159,7 +159,7 @@ private:
 	static const CommandPtr _commandList[61];
 
 	/**
-	 * Toggle used by command16 (byte_10A93 in the disassembly, initially
+	 * Toggle used by command16 (initially
 	 * 0). Flips every call; alternates between two completely different
 	 * 4-channel music loads (one with a command1() fade first, one
 	 * without) - preserved exactly despite the asymmetry looking odd.
@@ -167,8 +167,7 @@ private:
 	bool _command16AltFlag = false;
 
 	/**
-	 * Toggle used by command39/40 (byte_10B77 in the disassembly,
-	 * initially 0). Shared between both commands: flips bit 2 (^= 4) on
+	 * Toggle used by command39/40 (initially 0). Shared between both commands: flips bit 2 (^= 4) on
 	 * every call to either one, and the post-toggle value + 0x28 is
 	 * written into the same sound data's byte 6, regardless of which of
 	 * the two commands triggered the toggle.
@@ -176,7 +175,7 @@ private:
 	byte _command3940Toggle = 0;
 
 	/**
-	 * byte_10742 in the disassembly. Written unconditionally to 1 by
+	 * Written unconditionally to 1 by
 	 * sub1074E() (called from the shared command1/command5 tail and from
 	 * command3), and separately written to the raw command parameter by
 	 * command9. No consumer of this byte showed up in the batches given
@@ -186,10 +185,9 @@ private:
 	byte _byte10742 = 0;
 
 	/**
-	 * Shared helper: pData[5] = value, then plays pData. Matches
-	 * loc_10C44 in the disassembly (called once from command25, offset
-	 * 0x11A6, with a truncated second call at offset 0x11C4 not yet
-	 * confirmed).
+	 * Shared helper: pData[5] = value, then plays pData. Called once
+	 * from command25, with a truncated second call not yet
+	 * confirmed.
 	 */
 	Channel *method1(int offset, byte value);
 
@@ -216,7 +214,7 @@ private:
 	void sendDualVolume(byte volume);
 
 	/**
-	 * sub_1074E in the disassembly - just sets _byte10742 = 1. Reached
+	 * Just sets _byte10742 = 1. Reached
 	 * both as a genuine call (from command3, not yet given) and via the
 	 * shared command1/command5 tail below.
 	 */
@@ -224,17 +222,17 @@ private:
 
 	/**
 	 * Placeholder for command slots confirmed by the dispatch table
-	 * (funcs_108A2) to be real, driver-specific functions, but whose
+	 * to be real, driver-specific functions, but whose
 	 * disassembly wasn't included in this batch. Warns at runtime if
 	 * actually invoked, so a real call shows up during testing instead
 	 * of silently vanishing. Distinct from nullCommand(), which is for
-	 * slots the table confirms are genuinely nullsub_1 in the original
+	 * slots the table confirms are genuinely no-op stubs in the original
 	 * (12, 52-56, 58).
 	 */
 	int notImplemented();
 
 	/**
-	 * Shared tail (loc_1083B in the disassembly) used by both command1
+	 * Shared tail used by both command1
 	 * (falls through into it after calling command3()) and command5
 	 * (jumps straight into it after its isSoundActive gate). Enables
 	 * channels 5-8 (1-based; indices 4-7) - notably never reaches
@@ -298,8 +296,8 @@ private:
 	/**
 	 * Deferred callback state (checkCallback() in the disassembly,
 	 * called from this driver's own rsound_update() override) - confirmed
-	 * identical in shape to RSound9's mechanism: word_122C4 is the
-	 * reload period, word_122C2 the countdown, and _soundPtr the pointer
+	 * identical in shape to RSound9's mechanism: the reload period,
+	 * the countdown, and _soundPtr the pointer
 	 * invoked (without self-clearing - each loadCommandNN() body clears
 	 * it itself, same as RSound9's loaders) once the countdown reaches 0.
 	 */
@@ -309,7 +307,7 @@ private:
 	int _callbackPeriod = 0;
 
 	/**
-	 * byte_10745 in the disassembly - set from the raw command parameter
+	 * Set from the raw command parameter
 	 * by command9. No consumer showed up in this batch, so its real
 	 * purpose is unconfirmed (mirrors RSound3's equally-unconfirmed
 	 * _byte10742, set the same way by RSound3::command9).
@@ -320,19 +318,19 @@ private:
 	static const CommandPtr _commandList[60];
 
 	/**
-	 * method1 in the disassembly - called only from command12's shared
+	 * Called only from command12's shared
 	 * tail; computes (param >> 1) + 36.
 	 */
 	byte paramToVariant();
 
 	/**
-	 * loc_109D3 in the disassembly - writes the same variant byte into
+	 * Writes the same variant byte into
 	 * offset 1 of the five sound blocks command12 (re)loads.
 	 */
 	void setCommand12Variant();
 
 	/**
-	 * loc_10967 in the disassembly - shared tail of both command10 and
+	 * Shared tail of both command10 and
 	 * command58, loading channels 1-3 (1-based; indices 0-2).
 	 */
 	void loadIntroChannels();
@@ -377,7 +375,7 @@ private:
 	static const CommandPtr _commandList[42];
 
 	/**
-	 * loc_1093A in the disassembly - shared tail of command29 and
+	 * Shared tail of command29 and
 	 * command38, loading channels 4 and 9 (1-based; indices 3 and 8).
 	 */
 	void loadTailChannels();
@@ -427,8 +425,8 @@ private:
 	/**
 	 * Confirmed via rsound_update's own body (its checkCallback-equivalent
 	 * is inlined directly rather than factored into a separate function
-	 * like RSound4's checkCallback()): word_121B6 is the reload period,
-	 * word_121B4 the countdown, and word_121B8 a genuine CODE pointer
+	 * like RSound4's checkCallback()): the reload period,
+	 * the countdown, and a genuine CODE pointer
 	 * ("call bx" - not sound data) invoked once the countdown reaches 0.
 	 * Matches RSound4's mechanism exactly in shape.
 	 */
@@ -440,7 +438,7 @@ private:
 	void tickCallback() override;
 
 	/**
-	 * loc_109BA / loc_10968 in the disassembly - command24/command28's
+	 * command24/command28's
 	 * own full-reload bodies. When channel 1 is currently playing the
 	 * OTHER command's theme, that command doesn't interrupt it
 	 * immediately - it just points _callbackFnPtr at this same reload
@@ -509,7 +507,7 @@ private:
 	static const CommandPtr _commandList[38];
 
 	/**
-	 * Shared tail (loc_109E2 in the disassembly) of command14/command15 -
+	 * Shared tail of command14/command15 -
 	 * mutates three bytes of the shared sound data then plays it 4 times.
 	 */
 	void setCommand1415Variant(byte v1, byte v2);

@@ -168,7 +168,7 @@ public:
  * channel 9 is untouched), and command5 enables channels 7,8 (confirmed
  * via raw offsets 0x19CA/0x19F2, spaced by the channel stride).
  *
- * command2 calls resetChannels1to6() (matches sub_1079A) + sendGmReset(4)
+ * command2 calls resetChannels1to6() + sendGmReset(4)
  * - a genuinely different 6-channel range from the base class's
  * resetChannels1to5(), matching command3's own shifted grouping.
  *
@@ -235,7 +235,7 @@ public:
  *
  * command0/command2/command4/command6/command7/command8 all confirmed to
  * match the shared RSound base exactly (no overrides needed) -
- * including command4 (whose reset helper sub_107E7 matches the base
+ * including command4 (whose reset helper matches the base
  * class's own resetChannels6to8() exactly) and command2 (whose
  * resetChannels1to5 matches the base class's own method exactly,
  * including the channel-9 fix).
@@ -290,7 +290,7 @@ private:
 	int command31();
 
 	/**
-	 * Shared tail of command31()/command64() (matches loc_124D8): writes
+	 * Shared tail of command31()/command64(): writes
 	 * a variant byte (0x5A for command31, 0x78 for command64) into the
 	 * sound data at offset 0x1402 before playing 0x13FF.
 	 */
@@ -328,7 +328,7 @@ public:
  *
  * command1/command2/command3/command4 are all genuinely different from
  * the base class, in two ways:
- *   - They use the base class's disableChannelTo() (matching sub_1092A)
+ *   - They use the base class's disableChannelTo()
  *     instead of Channel::enable().
  *   - Channel 6 (the boundary between the "lower" 1-5,9 group and
  *     "upper" 6,7,8 group) is conditionally included/excluded based on
@@ -438,8 +438,8 @@ public:
  * one) and command3 (matches the base's default 1-5,9 lower-group
  * enable exactly).
  *
- * command5 uses the base class's disableChannelTo() (matching
- * sub_10854) instead of Channel::enable(), for channels 6,7,8 (three
+ * command5 uses the base class's disableChannelTo()
+ * instead of Channel::enable(), for channels 6,7,8 (three
  * channels, matching the base's default upper group range, just via a
  * different mechanic).
  *
@@ -456,7 +456,7 @@ private:
 	int command5();
 
 	/**
-	 * Matches byte_134D8: false the first time command16 is ever called,
+	 * False the first time command16 is ever called,
 	 * true forever after (there is no code path that resets it back to
 	 * false) - selects between two near-identical variants (A the first
 	 * time, B every time after).
@@ -479,7 +479,7 @@ private:
 	int command30();
 
 	/**
-	 * Shared tail of command31()/command78() (matches loc_126FF): writes
+	 * Shared tail of command31()/command78(): writes
 	 * a variant byte (0x5A for command31, 0x78 for command78) into the
 	 * sound data at offset 0x2301 (3 bytes into the block about to be
 	 * played) before playing 0x22FE.
@@ -575,7 +575,7 @@ private:
 	void resetChannels6to8();
 
 	/**
-	 * Hides the base class's method: matches sub_10539 - channels 1-6
+	 * Hides the base class's method: channels 1-6
 	 * AND 9 (seven channels), matching command3()'s own wider group,
 	 * not the base class's default (1-5,9).
 	 */
@@ -624,7 +624,7 @@ private:
 	int command33();
 	void command32_33Load();
 	void command32_33LoadCh4();
-	byte _command33Flag = 0; // matches byte_13378
+	byte _command33Flag = 0;
 
 	int command34();
 	void command34LoadCh1AndRest();
@@ -732,14 +732,14 @@ private:
 
 	int command32();
 
-	/** Matches sub_123E0: writes a "variant A" set of bytes into the shared command33Or47()/command60() sound block, at the same 8 offsets touched by variantSetupB(). Called only by command60(). */
+	/** Writes a "variant A" set of bytes into the shared command33Or47()/command60() sound block, at the same 8 offsets touched by variantSetupB(). Called only by command60(). */
 	void variantSetupA();
 
-	/** Matches sub_123FF: same 8 offsets as variantSetupA(), with different "variant B" byte values. Called only by command33Or47(). */
+	/** Same 8 offsets as variantSetupA(), with different "variant B" byte values. Called only by command33Or47(). */
 	void variantSetupB();
 
 	/**
-	 * Shared tail of command60()/command33Or47() (matches loc_12450) -
+	 * Shared tail of command60()/command33Or47() -
 	 * the two commands are otherwise identical (same gate, same
 	 * counter=98/period=84 timer) and differ only in which variant setup
 	 * helper runs first.

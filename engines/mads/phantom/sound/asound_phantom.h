@@ -32,33 +32,33 @@ namespace Sound {
  * ASound1  (asound.ph1, _dataOffset = 0x21e0)
  *
  * Dispatch table layout:
- *   off_11C32: commands  0–8   (max=8,    base=0)
- *   off_11C44: command   16    (max=0x10, base=0x10, 1 entry)
- *   off_11C46: commands 24–27  (max=0x1B, base=0x18, 4 entries)
- *   off_11C4E: commands 32–39  (max=0x27, base=0x20, 8 entries)
+ *   Table 1: commands  0–8   (max=8,    base=0)
+ *   Table 2: command   16    (max=0x10, base=0x10, 1 entry)
+ *   Table 3: commands 24–27  (max=0x1B, base=0x18, 4 entries)
+ *   Table 4: commands 32–39  (max=0x27, base=0x20, 8 entries)
  *
- * A fifth table (unk_13C3E, commands 64–76) exists but is encoded as raw
+ * A fifth table (commands 64–76) exists but is encoded as raw
  * sound data bytes used as near-pointers — not reconstructible without the
  * binary.  Those commands are silently ignored.
  *
- * command16 (sub_11F70): random background-music selector.  Checks whether
+ * command16: random background-music selector.  Checks whether
  * channel 0 is already playing one of the five known music pieces; if not,
  * randomly picks from four music loaders and plays it, storing the choice
- * in _musicIndex (mirrors word_11F5E in the original).
+ * in _musicIndex.
  */
 class ASound1 : public ASound {
 private:
 	typedef int (ASound1::*CommandPtr)();
 	static const CommandPtr _commandList[40];
 
-	// Mirrors word_11F5E: tracks which music piece was last selected.
+	// Tracks which music piece was last selected.
 	int _musicIndex = 0;
 
-	// Background-music loaders (targets of the CS:0x1F60 indirect table).
-	int commandMusic0();   // sub_11D84  – starts at 0x1ECA
-	int commandMusic1();   // sub_11EE6  – starts at 0x3418
-	int commandMusic2();   // sub_11F0E  – starts at 0x3688
-	int commandMusic3();   // sub_11F36  – starts at 0x3D52
+	// Background-music loaders (targets of an indirect jump table).
+	int commandMusic0();
+	int commandMusic1();
+	int commandMusic2();
+	int commandMusic3();
 
 	int command0();
 	int command1();
@@ -218,7 +218,7 @@ public:
  *   asound_commands4: commands 64–70  (max=0x46, base=0x40, 7 entries)
  *     (Commands 32–63 are unreachable: the 0x20-range max constant = 0)
  *
- * commands 24 and 25 share the same handler (sub_11D0A).
+ * commands 24 and 25 share the same handler.
  */
 class ASound4 : public ASound {
 private:

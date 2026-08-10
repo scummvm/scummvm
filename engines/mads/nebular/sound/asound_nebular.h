@@ -454,8 +454,7 @@ public:
 class ASound9 : public ASound {
 private:
 	/**
-	 * Deferred sound-loader callback state (word_1949E/word_194A0/_soundPtr
-	 * in the original disassembly). Unlike every other Rex Nebular driver,
+	 * Deferred sound-loader callback state. Unlike every other Rex Nebular driver,
 	 * ASound9 arms a recurring timer that re-invokes a scheduled loader
 	 * function every _callbackPeriod ticks, without ever clearing the
 	 * pointer itself (the loader body clears it if it wants the recurrence

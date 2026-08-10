@@ -1413,7 +1413,7 @@ done:
 // engine has a pending player command ready (mirrors player.command_ready in
 // the callers for modes 1 and 2).
 //
-// Status dispatch table (off_2D438):
+// Status dispatch table:
 //   0  (NEXT_NODE)   — advance to next node or build player menu
 //   1  (WAIT_AUTO)   — wait for auto-trigger then advance to EXECUTE
 //   2  (WAIT_ENTRY)  — player chose an option; execute it + show NPC portrait

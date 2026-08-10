@@ -136,7 +136,7 @@ public:
  *    Phantom's RSound family entirely. Used by RSound1's music-loading
  *    commands (16, 32-48) for the same "immediate load, or defer until
  *    the music channels free up" idiom documented for ASound1's Pattern B.
- *  - isMusicChannelsActive() (matches sub_10477) checks this driver's own
+ *  - isMusicChannelsActive() checks this driver's own
  *    6-channel "lower" group (1-5, 9), not Phantom's fixed 6-channel(0-6)
  *    equivalent from ASound.
  *  - No checkRandomAmbianceTrigger()/_randomAmbianceTriggerFlag hook -
@@ -146,7 +146,7 @@ public:
  *  - sendVolume()/sendPan() naming CORRECTED from a mixed-up disassembly
  *    symbol: the function IDA auto-named "sendVolume" actually sends CC#10
  *    (Pan) using the channel's _pan field; the real volume-sender (CC#7,
- *    _volume field) was an unnamed sub_10B54. Also, CONFIRMED NEW: the
+ *    _volume field) was an unnamed helper. Also, CONFIRMED NEW: the
  *    real sendVolume() only actually transmits when the channel's
  *    _pendingStop is zero - Channel_checkFade's own separate fade-out
  *    mechanism otherwise takes precedence. No equivalent gate exists on
@@ -154,8 +154,8 @@ public:
  *  - sendReverbSysEx()'s exact byte layout (fixed 10 00 01h Roland System
  *    Area Reverb address) is INFERRED by strong structural analogy to
  *    Phantom's confirmed implementation (same 2/3/3-bit parameter
- *    masking, same "mutate 3 bytes then sendSysEx" shape found at
- *    sub_108A1) - NOT independently confirmed by inspecting the literal
+ *    masking, same "mutate 3 bytes then sendSysEx" shape found in
+ *    Phantom's driver) - NOT independently confirmed by inspecting the literal
  *    bytes at rsound.dr1's offset 0x67 sysex template.
  *  - null_sound_data (see _silenceStream) is a fixed 2-byte (0, 0)
  *    silence marker referenced by BOTH Channel::enable() and
@@ -187,14 +187,14 @@ private:
 	uint16 _randomSeed;
 	byte _lastMidiStatus;         // running-status cache, avoids resending an unchanged status byte
 	byte _sysexChecksum;
-	int _stateChangedFlag;        // word_12A56 in the disassembly; latches _pollResult=0xFFFF once per state change
+	int _stateChangedFlag;        // latches _pollResult=0xFFFF once per state change
 
 	/**
 	 * Per-MIDI-channel held-note slots (index 0 unused; channels are
 	 * 1-9; 4 = max chord polyphony). CONFIRMED byte-addressed, 4 bytes
 	 * per channel (channel*4 byte offset, single-byte reads/writes in
 	 * Channel_flushHeldNotes and the chord opcode). The real table
-	 * (word_161FC, "dw 20h dup(?)") is 64 bytes/16 rows - 6 rows larger
+	 * (declared as "dw 20h dup(?)" in the disassembly) is 64 bytes/16 rows - 6 rows larger
 	 * than this [10][4] array - but rows 10-15 are never addressed since
 	 * channel numbers only run 1-9; that's unused padding in the
 	 * original; this smaller array is behaviorally equivalent.
@@ -234,7 +234,7 @@ private:
 	byte _scriptVariables[32];
 
 	/**
-	 * Half-rate fade-check timer (byte_10796 in the disassembly) -
+	 * Half-rate fade-check timer -
 	 * drives checkFadingChannels() directly.
 	 */
 	int _fadeCheckCounter;
@@ -256,14 +256,14 @@ private:
 	int _clockEnabled1;
 	int _clockEnabled2;
 
-	// ---- Deferred-callback subsystem (word_131AA/AC/AE) - NEW vs. the
+	// ---- Deferred-callback subsystem - NEW vs. the
 	// Phantom RSound family, mirrors the sibling ASound driver's
 	// identically-shaped mechanism. ----
 	uint16 _callbackCounter = 0;
 	uint16 _callbackPeriod = 0;
 	CallbackFunction _callbackFnPtr = nullptr;
 
-	/** Tracks which bucket-4 (32-48) music piece was last launched, for command18's re-entry. Matches word_12A8B. */
+	/** Tracks which bucket-4 (32-48) music piece was last launched, for command18's re-entry. */
 	uint16 _musicIndex = 0;
 
 	void update();
@@ -307,7 +307,7 @@ protected:
 
 	/**
 	 * A driver-specific variant of Channel::enable() confirmed across
-	 * multiple drivers so far (RSound4's sub_1092A, RSound5's sub_10854)
+	 * multiple drivers so far (RSound4's and RSound5's command5)
 	 * - redirects _soundData (and, if the channel is about to expire this
 	 * tick, _pSrc too) to _silenceStream instead of nullptr.
 	 */
@@ -373,7 +373,7 @@ protected:
 		_callbackPeriod = period;
 	}
 
-	/** Set the music-piece index (word_12A8B) read by command18. */
+	/** Set the music-piece index read by command18. */
 	void setMusicIndex(uint16 idx) {
 		_musicIndex = idx;
 	}
@@ -385,13 +385,13 @@ protected:
 	 * Deferred-callback tick: decrements _callbackCounter; when it
 	 * reaches zero, reloads it from _callbackPeriod and calls
 	 * _callbackFnPtr (if non-null), then clears _callbackFnPtr so it
-	 * fires exactly once. Matches sub_122DA.
+	 * fires exactly once.
 	 */
 	void tickCallback();
 
 	/**
 	 * Checks whether channels 1-5 or 9 (this driver's "lower"/music
-	 * group) have any non-zero _activeCount. Matches sub_10477 - the
+	 * group) have any non-zero _activeCount - the
 	 * Dragonsphere-specific equivalent of the sibling ASound driver's
 	 * isMusicChannelsActive(), but scanning THIS driver's own channel
 	 * grouping rather than ASound's fixed channels 0-6.
@@ -448,7 +448,7 @@ protected:
 	/**
 	 * CORRECTED naming (see class comment): sends CC#7 (Volume) - but
 	 * ONLY if the channel is not currently pending-stop (matches
-	 * sub_10B54's "cmp [bx+_pendingStop],0" gate, confirmed new vs.
+	 * the disassembly's "cmp [bx+_pendingStop],0" gate, confirmed new vs.
 	 * Phantom's unconditional sendVolume()).
 	 */
 	void sendVolume(Channel *ch);
@@ -511,7 +511,7 @@ protected:
 	 * 0-7, level 0-7) and sends them via the Roland MT-32 System Area
 	 * Reverb SysEx address (10 00 01h) - see class comment re: this
 	 * being inferred by analogy rather than independently confirmed for
-	 * Dragonsphere. Matches sub_108A1.
+	 * Dragonsphere.
 	 */
 	void sendReverbSysEx(int mode, int time, int level);
 
@@ -532,7 +532,7 @@ protected:
 public:
 	Channel _channels[RSOUND_CHANNEL_COUNT];
 	int _frameCounter;
-	int _tickCounter; // word_12A83 - incremented alongside _frameCounter every update() tick
+	int _tickCounter; // incremented alongside _frameCounter every update() tick
 	bool _isDisabled;
 	int _pollResult;
 

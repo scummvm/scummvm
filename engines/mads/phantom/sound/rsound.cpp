@@ -175,7 +175,7 @@ void RSound::setVolume(int volume) {
 }
 
 void RSound::resultCheck() {
-	// Matches the "cmp word_12BB8, 0xFFFF" latch right after rsound_update.
+	// Matches the state-changed-flag latch right after rsound_update.
 	if (_stateChangedFlag != 0xFFFF) {
 		_stateChangedFlag = 0xFFFF;
 		_pollResult = 0xFFFF;
@@ -281,7 +281,7 @@ void RSound::sendVolume(int midiChannel, int volume) {
 }
 
 void RSound::sendVolumeCC(int midiChannel, int volume) {
-	// Matches sub_10423: unlike sendVolume()/sendStatus(), this sends the
+	// Unlike sendVolume()/sendStatus(), this sends the
 	// status byte UNCONDITIONALLY (no _lastMidiStatus dedup check) -
 	// used by command7 when restoring all 9 channels' volumes in a row.
 	byte status = 0xB0 | midiChannel;
@@ -317,10 +317,10 @@ void RSound::muteChannel(int midiChannel) {
 }
 
 void RSound::sendGmReset(int count) {
-	// Matches sub_1068A: counts DOWN from count to 1, using the counter
+	// Counts DOWN from count to 1, using the counter
 	// itself as the MIDI channel number each iteration.
 	for (int midiChannel = count; midiChannel >= 1; --midiChannel) {
-		_fadeCheckPeriod = 0; // matches "mov cs:byte_107BE, 0" at the top of every iteration
+		_fadeCheckPeriod = 0; // reset at the top of every iteration
 
 		byte status = 0xB0 | midiChannel;
 		_lastMidiStatus = status;
@@ -369,11 +369,10 @@ void RSound::sendSysExSequence() {
 }
 
 void RSound::sendPatchInitSequence() {
-	// TENTATIVE - see header comment for sendPatchInitSequence(). Matches
-	// sub_102BE exactly: 4 outer iterations, each sending one SysEx
-	// message built from the fixed header at loadData(0xA3) plus a
-	// computed payload; byte_12BD2 (here: base) persists and accumulates
-	// across outer iterations.
+	// TENTATIVE - see header comment for sendPatchInitSequence(). 4 outer
+	// iterations, each sending one SysEx message built from the fixed
+	// header at loadData(0xA3) plus a computed payload; base persists
+	// and accumulates across outer iterations.
 	byte base = 0;
 	for (int outer = 0; outer < 4; ++outer) {
 		byte *header = loadData(0xA3);
@@ -408,14 +407,13 @@ void RSound::sendPatchInitSequence() {
 }
 
 void RSound::sendReverbSysEx(int mode, int time, int level) {
-	// CONFIRMED: unk_12BC9 (RSound1's dseg offset 0xA9) holds the fixed
-	// 3-byte Roland address 10 00 01h - the real MT-32 System Area Reverb
-	// parameter address, a hardware protocol constant rather than
-	// driver-specific sound data - immediately followed by the 3 mutable
-	// payload bytes (byte_12BCC/CD/CE) that this function fills in
-	// before sending. Hardcoded (not read via loadData()) since there's
-	// no reason to expect this address to live at the same offset in
-	// every driver's own resource file.
+	// CONFIRMED: the fixed 3-byte Roland address 10 00 01h is the real
+	// MT-32 System Area Reverb parameter address, a hardware protocol
+	// constant rather than driver-specific sound data - immediately
+	// followed by the 3 mutable payload bytes that this function fills
+	// in before sending. Hardcoded (not read via loadData()) since
+	// there's no reason to expect this address to live at the same
+	// offset in every driver's own resource file.
 	byte buffer[7] = { 0x10, 0x00, 0x01, (byte)(mode & 3), (byte)(time & 7), (byte)(level & 7), 0xFF };
 	sendSysExData(buffer);
 }
@@ -441,12 +439,11 @@ void RSound::Channel_checkFade(Channel *channel, int midiChannel) {
 		return;
 
 	if (channel->_volume == 0) {
-		// unk_172E5 (RSound1's dseg offset 0x47C5) is 3 zero bytes - a
-		// generic silence/no-op stream, not driver-specific sound data.
-		// Hardcoded (not read via loadData()) for the same reason as
-		// sendReverbSysEx()'s fixed address - no reason to expect the
-		// same offset holds the same bytes in every driver's own
-		// resource file.
+		// This is 3 zero bytes - a generic silence/no-op stream, not
+		// driver-specific sound data. Hardcoded (not read via loadData())
+		// for the same reason as sendReverbSysEx()'s fixed address - no
+		// reason to expect the same offset holds the same bytes in every
+		// driver's own resource file.
 		static byte silenceStream[3] = { 0, 0, 0 };
 		channel->_pSrc = silenceStream;
 		channel->_pendingStop = 0;
@@ -525,7 +522,7 @@ int RSound::command0() {
 }
 
 int RSound::command1() {
-	// IMPORTANT: falls through to the SAME tail as command5() (loc_108A9)
+	// IMPORTANT: falls through to the SAME tail as command5()
 	// directly and ungated - it must NOT call the virtual command5()
 	// here, since that would wrongly apply whatever driver-specific
 	// isSoundActive() gate command5() has. command1() itself is never
@@ -555,8 +552,8 @@ int RSound::command3() {
 }
 
 void RSound::resetAndGmResetUpperChannels() {
-	// Matches loc_106DB (command4()'s shared tail in every driver
-	// confirmed so far): reset channels 4-9, then a full sendGmReset(9)
+	// command4()'s shared tail in every driver
+	// confirmed so far: reset channels 4-9, then a full sendGmReset(9)
 	// (all 9 channels) - both really execute, matching the original
 	// exactly despite the apparent redundancy.
 	resetChannels4to9();
@@ -564,8 +561,8 @@ void RSound::resetAndGmResetUpperChannels() {
 }
 
 void RSound::enableUpperChannels() {
-	// Matches loc_108A9 (command1()'s and command5()'s shared tail in
-	// every driver confirmed so far): enables channels 5,6,7,8.
+	// command1()'s and command5()'s shared tail in
+	// every driver confirmed so far: enables channels 5,6,7,8.
 	_fadeCheckPeriod = 1;
 	_channels[4].enable(0xFF);
 	_channels[5].enable(0xFF);
@@ -613,7 +610,7 @@ void RSound::update() {
 		return;
 
 	++_frameCounter;
-	++_tickCounter; // matches "inc word_12BE5" alongside _frameCounter
+	++_tickCounter; // incremented alongside _frameCounter
 	checkRandomAmbianceTrigger();
 	pollAllChannels();
 	checkFadingChannels();
@@ -657,8 +654,8 @@ dispatch:
 		byte b = *pSrc;
 
 		if (!(b & 0x80)) {
-			// ---- Simple note event: [note][duration] (matches loc_11FCA;
-			// distinct from - and simpler than - the explicit chord opcode
+			// ---- Simple note event: [note][duration] (distinct from -
+			// and simpler than - the explicit chord opcode
 			// 0xED below, which is count-prefixed and can hold up to 4
 			// simultaneous notes) ----
 			int note = (int8)pSrc[0] + ch->_transpose;
@@ -945,8 +942,8 @@ dispatch:
 			// a "tableByte" positioned right after the two range operands,
 			// and writes the random value at offset (pSrc+2+tableByte)
 			// relative to pSrc's position after reading both operands
-			// (an extra "inc word_174A0" in the disassembly, beyond the
-			// two operand reads, is what puts tableByte one byte further
+			// (an extra increment in the disassembly, beyond the two
+			// operand reads, is what puts tableByte one byte further
 			// out than the 0xEC case below).
 			int rangeLow = readScriptByte(pSrc);
 			int rangeHigh = readScriptByte(pSrc);
@@ -983,7 +980,7 @@ dispatch:
 				ch->_innerLoopPtr = ch->_soundData;
 				ch->_outerLoopPtr = ch->_soundData;
 			}
-			goto post_keyon; // matches "jmp loc_11FAB" tail used by this cluster
+			goto post_keyon; // tail used by this cluster
 		}
 		case 0xFC: {
 			byte *ptr = loadData(readScriptWord(pSrc));
@@ -1083,7 +1080,7 @@ dispatch:
 		}
 		case 0xED: {
 			// ---- Chord event: [count][note1..noteN][duration] ----
-			// Matches loc_11102 - distinct from (and richer than) the
+			// Distinct from (and richer than) the
 			// simple single-note "high bit clear" format at the top of
 			// dispatch: this one is count-prefixed and can hold up to
 			// 4 simultaneous notes (matching _heldNotes' 4 slots).

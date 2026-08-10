@@ -641,7 +641,7 @@ void RSound::update() {
 
 /**
  * Zeroes _activeCount and the three fade-step fields for channels in
- * [first, last) - matches the shared shape of sub_10132/sub_101A0/sub_101EA.
+ * [first, last).
  * Deliberately does NOT touch the loop pointers, volume, program, pan etc,
  * matching the original.
  */
@@ -666,7 +666,7 @@ void RSound::resetHeldNotes() {
 }
 
 /**
- * Matches sub_10132: resets all 9 channels and the held-notes table.
+ * Resets all 9 channels and the held-notes table.
  * Called both from the constructor (mirroring rsound_init) and from
  * command0.
  */
@@ -696,7 +696,7 @@ int RSound::command0() {
 	resetAllChannels();
 	sendMidiChannelReset(1, RSOUND_CHANNEL_COUNT);
 
-	// Matches the trailing "lea ax, unk_1138F; jmp sub_1041E" in rsound_command0.
+	// Matches the tail of the original rsound_command0.
 	// _sysExOffset is this driver's own command0_array offset, supplied
 	// via the constructor (0x67 for rsound.001, 0x87 for rsound.002, 0x6F
 	// for rsound.009) - each driver's own resource file carries its own
@@ -714,7 +714,7 @@ int RSound::command1() {
 }
 
 int RSound::command2() {
-	// Channels 1-5, matching sub_101A0 (also reinitializes the held-notes
+	// Channels 1-5 (also reinitializes the held-notes
 	// table) plus the MIDI channel reset for those same channels.
 	resetChannelRange(0, 5);
 	resetHeldNotes();
@@ -729,7 +729,7 @@ int RSound::command3() {
 }
 
 int RSound::command4() {
-	// Channels 6-9, matching sub_101EA (does NOT touch the held-notes
+	// Channels 6-9 (does NOT touch the held-notes
 	// table) plus the MIDI channel reset for those same channels.
 	resetChannelRange(5, RSOUND_CHANNEL_COUNT);
 	sendMidiChannelReset(6, RSOUND_CHANNEL_COUNT);

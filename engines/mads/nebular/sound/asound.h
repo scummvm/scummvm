@@ -192,8 +192,7 @@ protected:
 	/**
 	 * Hook called once per update() frame, immediately after the disabled
 	 * check and before the frame counter/channel polling. Only ASound9's
-	 * driver data makes use of a recurring deferred-callback timer (the
-	 * word_1949E/word_194A0/_soundPtr trio in the original disassembly);
+	 * driver data makes use of a recurring deferred-callback timer;
 	 * every other driver leaves this as a no-op.
 	 */
 	virtual void tickCallback() {
@@ -303,18 +302,18 @@ public:
 	AdlibSample *_samplePtr;
 	int _frameCounter;
 	bool _isDisabled;
-	int _noiseTicks1;       // remaining duration for noise voice 1 (byte_11F86)
-	int _noiseTicks2;       // remaining duration for noise voice 2 (byte_11F87)
+	int _noiseTicks1;       // remaining duration for noise voice 1
+	int _noiseTicks2;       // remaining duration for noise voice 2
 	int _activeChannelNumber;
 	int _freqMask1;
 	int _freqMask2;
 	int _freqBase1;
 	int _freqBase2;
 	int _noiseChannel1, _noiseChannel2;
-	int _noiseFreqStep1;    // per-tick frequency-sweep step for noise voice 1 (word_11F8A)
-	int _noiseFreqStep2;    // per-tick frequency-sweep step for noise voice 2 (word_11F8C)
-	int _savedNoiseTicks1;  // _noiseTicks1 saved across command6/7 (byte_194B0)
-	int _savedNoiseTicks2;  // _noiseTicks2 saved across command6/7 (byte_194B1)
+	int _noiseFreqStep1;    // per-tick frequency-sweep step for noise voice 1
+	int _noiseFreqStep2;    // per-tick frequency-sweep step for noise voice 2
+	int _savedNoiseTicks1;  // _noiseTicks1 saved across command6/7
+	int _savedNoiseTicks2;  // _noiseTicks2 saved across command6/7
 	int _pollResult;
 	int _resultFlag;
 	byte _nullData[2];

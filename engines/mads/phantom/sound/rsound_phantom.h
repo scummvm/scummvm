@@ -31,11 +31,11 @@ namespace Sound {
 /**
  * RSound1 (rsound.ph1)
  *
- * Dispatch table layout (funcs_10960/10976/1098C/109A2/109B8 in the
- * disassembly - a 5-bucket sparse dispatch, mirroring the sibling ASound1's
- * identical structure). There is no command 17 - bucket 2's dispatch
- * bounds check only ever admits index 16 (confirmed: word_13047 = 16, an
- * inclusive upper bound equal to the bucket's own lower bound).
+ * Dispatch table layout: a 5-bucket sparse dispatch, mirroring the
+ * sibling ASound1's identical structure. There is no command 17 -
+ * bucket 2's dispatch bounds check only ever admits index 16
+ * (confirmed: the upper bound is 16, equal to the bucket's own lower
+ * bound).
  *   commands  0-8   (base class, except command4/5 - see RSound::command4/5)
  *   command   16    (random-ambiance picker, this class)
  *   commands 24-27  (this class)
@@ -55,7 +55,7 @@ class RSound1 : public RSound {
 private:
 	typedef int (RSound1:: *CommandPtr)();
 
-	// Mirrors word_1225D: avoids picking the same alternative twice in a row.
+	// Avoids picking the same alternative twice in a row.
 	int _lastRandomAmbianceIndex = -1;
 
 	void checkRandomAmbianceTrigger() override;
@@ -192,7 +192,7 @@ public:
  * RSound1/RSound2: both gate on TWO chained isSoundActive() checks
  * (0x2AA6 then 0x1E30, each an independent early-out per the
  * pop-return-address mechanic) rather than one, and command4()'s tail
- * (sub_10832) resets only channels 5-9 (indices 4-8) - NOT channels
+ * resets only channels 5-9 (indices 4-8) - NOT channels
  * 4-9 (indices 3-8) like the shared resetAndGmResetUpperChannels() -
  * so it can't reuse that helper and calls resetChannelRange()
  * directly instead.
@@ -260,13 +260,13 @@ public:
  * command4() is a genuinely new shape: unlike every driver confirmed so
  * far, it has NO isSoundActive() gate at all - it unconditionally resets
  * channels 6-9 (0-based indices 5-8, confirmed via explicit
- * Channel._activeCount/_volumeFadeStep-labeled writes in sub_107FC) via
+ * Channel._activeCount/_volumeFadeStep-labeled writes) via
  * resetChannelRange(), then sends a full sendGmReset(9). A third distinct
  * channel range for this reset (RSound1/RSound2 used 4-9, RSound3 used
  * 5-9), reinforcing that this range is always driver-specific.
  *
  * command1/command3 confirmed to match the shared RSound base exactly
- * (no overrides needed) - sub_10838 (called at the top of both) is
+ * (no overrides needed) - the helper called at the top of both is
  * confirmed to be exactly "_fadeCheckPeriod = 1", and command5's four
  * channel-enable targets are confirmed to be channels 5-8, matching
  * enableUpperChannels() exactly.

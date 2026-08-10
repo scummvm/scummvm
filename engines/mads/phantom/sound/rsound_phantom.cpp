@@ -76,7 +76,7 @@ int RSound1::command(int commandId, int param) {
 }
 
 void RSound1::checkRandomAmbianceTrigger() {
-	// Matches sub_1222E exactly. CONFIRMED: the only code that ever arms
+	// CONFIRMED: the only code that ever arms
 	// this (setting _randomAmbianceTriggerFlag to 0xFF) is itself
 	// unreachable/dead code, so in practice this check always fails and
 	// command16() never fires via this path - only command37's clear
@@ -652,7 +652,7 @@ int RSound3::command(int commandId, int param) {
 
 int RSound3::command4() {
 	// Confirmed: TWO chained isSoundActive() gates (unlike RSound1/
-	// RSound2's single 0x3D98 gate), then a tail (sub_10832) that
+	// RSound2's single 0x3D98 gate), then a tail that
 	// resets only channels 5-9 (indices 4-8) - narrower than the
 	// shared resetChannels4to9()'s 4-9 (indices 3-8) - so it can't
 	// reuse resetAndGmResetUpperChannels() and calls resetChannelRange()
@@ -671,7 +671,7 @@ int RSound3::command4() {
 
 int RSound3::command5() {
 	// Same two-gate shape as command4() above, but the plain
-	// enableUpperChannels() tail (loc_10955, shared with command1()).
+	// enableUpperChannels() tail (shared with command1()).
 	if (isSoundActive(loadData(0x2AA6)))
 		return 0;
 	if (isSoundActive(loadData(0x1E30)))
@@ -886,8 +886,8 @@ int RSound4::command(int commandId, int param) {
 
 int RSound4::command4() {
 	// Confirmed: NO isSoundActive() gate in this driver, unlike every
-	// other driver seen so far - matches sub_107FC + sendGmReset(9)
-	// unconditionally.
+	// other driver seen so far - unconditionally resets channels 5-8,
+	// then calls sendGmReset(9).
 	_isDisabled = true;
 	resetChannelRange(5, 8);
 	_isDisabled = false;
@@ -896,14 +896,14 @@ int RSound4::command4() {
 }
 
 int RSound4::command5() {
-	// Confirmed: sub_10838 (_fadeCheckPeriod = 1) + channels 5-8 -
+	// Confirmed: _fadeCheckPeriod = 1 + channels 5-8 -
 	// identical to the shared enableUpperChannels(), no gate at all.
 	enableUpperChannels();
 	return 0;
 }
 
 int RSound4::command16() {
-	// sub_101E7 ("isSoundPlaying") confirmed functionally identical to
+	// The disassembly's "isSoundPlaying" helper is confirmed functionally identical to
 	// RSound::isSoundActive() - same channel 1-8 scan, same
 	// _activeCount && _soundData==pData test, same pop-return-address
 	// early-exit trick.
@@ -1298,7 +1298,7 @@ int RSound9::command(int commandId, int param) {
 }
 
 int RSound9::command4() {
-	// sub_1082B: resets channels 7,8,9 (0-based indices 6-8) - a fourth
+	// Resets channels 7,8,9 (0-based indices 6-8) - a fourth
 	// distinct range for this reset tail (RSound1/2: 4-9, RSound3: 5-9,
 	// RSound4/5: 6-9). No isSoundActive() gate, matching RSound4/5.
 	_isDisabled = true;
@@ -1452,8 +1452,8 @@ int RSound9::command69() {
 }
 
 int RSound9::command70() {
-	// Shares a fallthrough tail with command71 (loc_12439 in the
-	// disassembly): writes a variant byte into the sound data at 0x299B
+	// Shares a fallthrough tail with command71: writes a variant byte
+	// into the sound data at 0x299B
 	// before playing 0x2998 - twice, matching the disassembly's call +
 	// tail-jmp pair exactly.
 	*loadData(0x299B) = 80;

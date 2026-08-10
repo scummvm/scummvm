@@ -32,11 +32,11 @@ namespace Sound {
 bool AdlibChannel::_isDisabled;
 
 /*
-  * PATCH_ATTEN_TO_TL  (seg001:0x0092 / offset from _asound_samples base)
+  * PATCH_ATTEN_TO_TL  (offset from _asound_samples base)
   * patchAttenuation (0-127) -> 6-bit OPL total-level.
   * The Dragonsphere asm uses PATCH_ATTEN_TO_TL[bx] for the modulator lookup
-  * and unk_12431 - bx (i.e. PATCH_ATTEN_TO_TL[127 - patchAtt]) for the
-  * carrier lookup.
+  * and a mirrored table indexed by (127 - bx) - i.e.
+  * PATCH_ATTEN_TO_TL[127 - patchAtt] - for the carrier lookup.
   */
 static const uint8 PATCH_ATTEN_TO_TL[128] = {
 	63, 54, 49, 45, 42, 40, 38, 36, 34, 33, 32, 31, 30, 29, 28, 27,
@@ -75,14 +75,14 @@ static const uint16 SEMITONE_FREQ_TABLE[12] = {
 };
 
 /*
- * VOICE_SLOTS  (byte_1239B in the binary, also used as the operator-reg
+ * VOICE_SLOTS  (also used as the operator-reg
  * index table for command6/7)
  *
  * Layout for each voice: { slot0 (modulator), slot1 (carrier) }
  * The writeVolume loop uses:
  *   pass 0 -> VOICE_SLOTS[ch][0]  (modulator)
  *   pass 1 -> VOICE_SLOTS[ch][1]  (carrier)
- * The alg!=0 single-op path (loc_11692) goes directly to VOICE_SLOTS[ch][1].
+ * The alg!=0 single-op path goes directly to VOICE_SLOTS[ch][1].
  */
 static const uint8 VOICE_SLOTS[ADLIB_CHANNEL_COUNT][2] = {
 	{  0,  3 }, {  1,  4 }, {  2,  5 },
@@ -101,7 +101,7 @@ static const uint8 SLOT_TO_REG_OFFSET[18] = {
 };
 
 /*
- * byte_1239B  - all 22 operator TL register indices muted/restored by
+ * ALL_OP_TL_REGS  - all 22 operator TL register indices muted/restored by
  * command6 and command7.  They cover every OPL operator slot (0x40-0x55).
  */
 static const uint8 ALL_OP_TL_REGS[22] = {
@@ -447,7 +447,7 @@ int ASound::command7() {
 
 int ASound::command8() {
 	/* Returns non-zero if any channel is currently active.
-	 * Clears byte_12393 (music-only flag) first so all 9 channels are checked. */
+	 * Clears the music-only flag first so all 9 channels are checked. */
 	_musicOnlyFlag = 0;
 	uint8 result = 0;
 	for (int i = 0; i < ADLIB_CHANNEL_COUNT; ++i)
@@ -456,9 +456,9 @@ int ASound::command8() {
 }
 
 int ASound::command18() {
-	/* Re-entrant background-music launcher (asound_command18 in the binary).
+	/* Re-entrant background-music launcher.
 	 * Fades everything, then dispatches back through the command table using
-	 * _musicIndex (word_12370) as the command ID. */
+	 * _musicIndex as the command ID. */
 	command1();
 	return command(_musicIndex, 0);
 }
@@ -486,7 +486,7 @@ uint16 ASound::getRandomNumber() {
 }
 
 void ASound::adlib_channelOff(uint8 portIndex) {
-	/* sub_1018F: OR the register with 0x3F (force max attenuation),
+	/* OR the register with 0x3F (force max attenuation),
 	 * then write back both to _adlibPorts and to the OPL chip.
 	 * Note: unlike the Phantom driver, the original value is NOT preserved
 	 * in _adlibPorts - the ORed value is stored back. */
@@ -553,7 +553,7 @@ void ASound::writeVolume() {
 	 * effectively 1: VOICE_SLOTS[ch][1]). */
 	for (int var6 = (passes == 1 ? 1 : 0); var6 < 2; ++var6) {
 
-		/* Reload var_2 = var_4 at the start of each pass (loc_11642). */
+		/* Reload var_2 = var_4 at the start of each pass. */
 		int16 var2 = var4;
 
 		/* Select the operator slot. */
@@ -567,7 +567,7 @@ void ASound::writeVolume() {
 		int16 si, di;
 
 		if (OPL_VERSION_FLAG < 0x18) {
-			/* ---- OPL2 simple path (loc_1167C / loc_1167C equivalent) ---- */
+			/* ---- OPL2 simple path ---- */
 			int16 tl = (int16)0x3F - var2;
 			tl |= kslBits;
 			si = tl;
@@ -575,7 +575,7 @@ void ASound::writeVolume() {
 			/* adlib_write2(8, tlReg, tl) */
 			write((uint8)tlReg, (uint8)tl);
 		} else {
-			/* ---- OPL3 patch-attenuation path (loc_115BE / loc_116D4) ---- */
+			/* ---- OPL3 patch-attenuation path ---- */
 			uint8 pa = ch->_patchAttenuation;
 
 			/* Modulator TL (first register, offset 0): */
@@ -590,7 +590,8 @@ void ASound::writeVolume() {
 			write((uint8)tlReg, (uint8)reg0val);
 
 			/* Carrier TL (second register, offset 2):
-			 * unk_12431 - bx (where bx = pa) == PATCH_ATTEN_TO_TL[127 - pa]. */
+			 * uses the mirrored table indexed by (127 - bx) where bx = pa,
+			 * i.e. PATCH_ATTEN_TO_TL[127 - pa]. */
 			int16 tlCar = (int16)(uint16)PATCH_ATTEN_TO_TL[127 - pa];
 			/* di = var_2 - tlCar  (var_4 for alg!=0, var_2=var_4 reload for alg==0) */
 			di = var2 - tlCar;
@@ -996,7 +997,7 @@ void ASound::pollActiveChannel() {
 		return;
 	}
 
-	/* byte_16A0A: volume-dirty flag.  Cleared here, set by various opcodes
+	/* volDirty: volume-dirty flag.  Cleared here, set by various opcodes
 	 * and by the fade/vibrato sections; causes writeVolume at the end. */
 	bool volDirty = false;
 
@@ -1090,7 +1091,7 @@ op2_set_vol:
 
 			case 0x3: /* set patchAttenuation */
 				ch->_patchAttenuation = *pSrc;
-				volDirty = true;   /* opcodes1 case 3 jumps to loc_10B56 -> byte_16A0A=1 */
+				volDirty = true;   /* opcodes1 case 3 sets the volume-dirty flag */
 				ch->_pSrc = pSrc + 1;
 				goto dispatch;
 
@@ -1195,7 +1196,7 @@ op2_set_vol:
 						goto dispatch;
 					}
 					ch->_innerLoopCount = (uint16)cnt;
-					/* Jump to innerLoopPtr (loc_10D5A). */
+					/* Jump to innerLoopPtr. */
 					ch->_pSrc = ch->_innerLoopPtr;
 					goto dispatch;
 				}
@@ -1393,13 +1394,13 @@ op2_set_vol:
 
 			case 0x5: /* advance _pSrc by 4 (from command byte) */
 			{
-				/* loc_10F55 is shared with case 1's epilogue: _pSrc += 4. */
+				/* Shared with case 1's epilogue: _pSrc += 4. */
 				ch = _activeChannelPtr;
 				ch->_pSrc += 4;
 				goto dispatch;
 			}
 
-			case 0x6: /* set word_124F2 (_tempoFineStep) */
+			case 0x6: /* set _tempoFineStep */
 			{
 				pSrc++;
 				uint8 val = *pSrc;
@@ -1409,7 +1410,7 @@ op2_set_vol:
 				goto dispatch;
 			}
 
-			case 0x7: /* set word_124F0 (_tempoCoarseStep) */
+			case 0x7: /* set _tempoCoarseStep */
 			{
 				pSrc++;
 				uint8 val = *pSrc;
@@ -1419,7 +1420,7 @@ op2_set_vol:
 				goto dispatch;
 			}
 
-			case 0x8: /* set word_124EE (_tempoPeriod), enable tick callback */
+			case 0x8: /* set _tempoPeriod, enable tick callback */
 			{
 				uint16 period = readWord_impl();
 				_tempoPeriod = period;
@@ -1430,7 +1431,7 @@ op2_set_vol:
 				goto dispatch;
 			}
 
-			case 0x9: /* set word_124F4 (_tempoShift) */
+			case 0x9: /* set _tempoShift */
 			{
 				pSrc++;
 				uint8 val = *pSrc;
@@ -1638,27 +1639,27 @@ op2_set_vol:
 			bool taken = false;
 			switch (di & 0x07) {
 			case 0x0: taken = ((uint16)va != (uint16)vb);  break; /* jnz after cmp ax,di (case 0: jz -> NOT taken if ==; var_2 stays 0; but then def path: var_2==0 -> skip. Wait - let me re-read.) */
-				/* Re-reading loc_112F0: cmp ax,di; jz loc_11352 (-> var_2=1=taken).
+				/* Re-reading: cmp ax,di; jz -> (var_2=1=taken).
 				 * So case 0: taken = (va == vb). */
 			default: break;
 			}
 
 			/* Actually re-reading carefully:
-			 * case 0 (loc_112F0): cmp ax,di; jz -> loc_11352 (var_2=1, taken)
-			 *                      else -> loc_112FA (ax=0, var_2=0, not taken)
-			 * case 1 (loc_11302): cmp ax,di; jz -> loc_1130A -> (jz loc_112FA, not taken)
-			 *                     else -> loc_11284 (var_2=1, taken)
+			 * case 0: cmp ax,di; jz -> taken (var_2=1)
+			 *         else -> not taken (ax=0, var_2=0)
+			 * case 1: cmp ax,di; jz -> not taken
+			 *         else -> taken (var_2=1)
 			 * -> case 1: taken = (va != vb)
-			 * case 2 (loc_1130E): jge -> loc_112FA (not taken); else loc_11284 (taken)
+			 * case 2: jge -> not taken; else taken
 			 * -> taken = (va < vb) (signed)
-			 * case 3 (loc_1131A): jle -> not taken; else taken
+			 * case 3: jle -> not taken; else taken
 			 * -> taken = (va > vb) (signed)
-			 * case 4 (loc_11326): cmp [di],al; jnz -> loc_112FA (not taken); else loc_11284 (taken)
+			 * case 4: cmp [di],al; jnz -> not taken; else taken
 			 * -> taken = (_scriptVars[idxB] == va) (already same as case 0 with vars swapped)
-			 * case 5 (loc_11332): cmp [di],al; jz->loc_1130A (not taken if ==, taken if !=)
+			 * case 5: cmp [di],al; jz -> not taken if ==, taken if !=
 			 * -> taken = (_scriptVars[idxB] != va)
-			 * case 6 (loc_1133C): jbe -> not taken; else taken -> taken = (_scriptVars[idxB] > va)
-			 * case 7 (loc_11348): jnb -> not taken; else taken -> taken = (_scriptVars[idxB] < va)
+			 * case 6: jbe -> not taken; else taken -> taken = (_scriptVars[idxB] > va)
+			 * case 7: jnb -> not taken; else taken -> taken = (_scriptVars[idxB] < va)
 			 */
 			switch (di) {
 			case 0x0: taken = (va == vb);               break;
@@ -1725,7 +1726,7 @@ post_keyon:
 			if (ch->_arpPeriodCounter == 0) {
 				/* Reload from field_12 (_arpPeriodReload). */
 				ch->_arpPeriodCounter = ch->_arpPeriodReload;
-				/* Call sub_117E8 (writeArpeggio - writes the arpeggio frequency). */
+				/* Call writeArpeggio (writes the arpeggio frequency). */
 				writeArpeggio();
 			}
 			ch = _activeChannelPtr;
@@ -1737,7 +1738,7 @@ post_keyon:
 		/* ---- Write-volume pending (field_11 / _writeVolumePending) ---- */
 		ch = _activeChannelPtr;
 		if (ch->_writeVolumePending != 0) {
-			/* sub_11856 was already called by writeArpeggio above (or this is
+			/* The arpeggio frequency writer was already called by writeArpeggio above (or this is
 			 * a standalone field_11 set via opcode 8).  Clear the flag. */
 			writeArpeggio();
 			ch = _activeChannelPtr;
@@ -1774,7 +1775,7 @@ post_keyon:
 								ch->_velocity = 0;
 						}
 					}
-					volDirty = true;   /* byte_16A0A = 1 */
+					volDirty = true;
 				}
 			}
 		}

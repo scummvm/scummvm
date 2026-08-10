@@ -582,7 +582,7 @@ int ASound3::command7() { return ASound::command7(); }
 int ASound3::command8() { return ASound::command8(); }
 
 // ---------------------------------------------------------------------------
-// sub_11CC6 - shared helper used by command34.
+// Shared helper used by command34.
 // isSoundActive guard on 0xC36; if not active: command1, load ch0-7.
 // (The tiny ch6 and ch7 blocks - 4 bytes each - are very short sub-blocks
 // within the same composite sound.)

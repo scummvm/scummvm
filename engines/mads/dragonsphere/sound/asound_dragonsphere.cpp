@@ -35,17 +35,17 @@ namespace Sound {
 	reinterpret_cast<ASound::CallbackFunction>(&cls::fn)
 
 const ASound1::CommandPtr ASound1::_commandList[102] = {
-	// commands 0-8  (off_11A14)
+	// commands 0-8  (table 1)
 	&ASound1::command0,   &ASound1::command1,   &ASound1::command2,   &ASound1::command3,
 	&ASound1::command4,   &ASound1::command5,   &ASound1::command6,   &ASound1::command7,
 	&ASound1::command8,
 	// 9-15 absent
 	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-	// commands 16-18, 19=no-op  (off_11A26)
+	// commands 16-18, 19=no-op  (table 2)
 	&ASound1::command16,  &ASound1::command17,  &ASound1::command18,  nullptr,
 	// 20-23 absent
 	nullptr, nullptr, nullptr, nullptr,
-	// commands 24-31, then no-op for slot 32  (off_11A2E)
+	// commands 24-31, then no-op for slot 32  (table 3)
 	&ASound1::command24,  &ASound1::command25,  &ASound1::command26,  &ASound1::command27,
 	&ASound1::command28,  &ASound1::command29,  &ASound1::command30,  &ASound1::command31,
 	// commands 32-48, 49=no-op  (funcs_12251)
@@ -57,7 +57,7 @@ const ASound1::CommandPtr ASound1::_commandList[102] = {
 	// 50-63 absent
 	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-	// commands 64-101  (off_11A64); slot 92 and slot 98 are no-ops
+	// commands 64-101  (table 5); slot 92 and slot 98 are no-ops
 	&ASound1::command64,  &ASound1::command65,  &ASound1::command66,  &ASound1::command67,
 	&ASound1::command68,  &ASound1::command69,  &ASound1::command70,  &ASound1::command71,
 	&ASound1::command72,  &ASound1::command73,  &ASound1::command74,  &ASound1::command75,
@@ -661,7 +661,7 @@ int ASound1::command95() {
 
 int ASound1::command96()  { findFreeChannelFull(loadData(0x305C)); return 0; }
 
-// command97 = sub_11F98 in original
+// command97's shape matches the original disassembly exactly
 int ASound1::command97() {
 	findFreeChannelFull(loadData(0x307E));
 	findFreeChannelFull(loadData(0x3094));
@@ -688,11 +688,11 @@ const ASound2::CommandPtr ASound2::_commandList[76] = {
 	// 9-15: nullptr
 	nullptr,             nullptr,             nullptr,
 	nullptr,             nullptr,             nullptr,             nullptr,
-	// 16-19: off_11A26
+	// 16-19: table 2
 	&ASound2::command16, &ASound2::command17, &ASound2::command18, nullptr,
 	// 20-23: nullptr
 	nullptr,             nullptr,             nullptr,             nullptr,
-	// 24-31: off_11A2E
+	// 24-31: table 3
 	&ASound2::command24, &ASound2::command25, &ASound2::command26, &ASound2::command27,
 	&ASound2::command28, &ASound2::command29, &ASound2::command30, &ASound2::command31,
 	// 32-36: funcs_11C87 (slot 36 = no-op)
@@ -706,7 +706,7 @@ const ASound2::CommandPtr ASound2::_commandList[76] = {
 	nullptr,             nullptr,             nullptr,             nullptr,
 	nullptr,             nullptr,             nullptr,             nullptr,
 	nullptr,             nullptr,             nullptr,
-	// 64-75: off_11A4A (slots 73-75 = no-ops)
+	// 64-75: table 5 (slots 73-75 = no-ops)
 	&ASound2::command64,    &ASound2::command65, &ASound2::command66,    &ASound2::command67,
 	&ASound2::command68,    &ASound2::command69_70, &ASound2::command69_70, &ASound2::command71,
 	&ASound2::command72,    nullptr,             nullptr,             nullptr
@@ -969,18 +969,18 @@ int ASound2::command72() {
  *-----------------------------------------------------------------------*/
 
 const ASound3::CommandPtr ASound3::_commandList[77] = {
-	// commands 0-8  (off_11A14)
+	// commands 0-8  (table 1)
 	&ASound3::command0,  &ASound3::command1,  &ASound3::command2,  &ASound3::command3,
 	&ASound3::command4,  &ASound3::command5,  &ASound3::command6,  &ASound3::command7,
 	&ASound3::command8,
 	// 9-15 absent
 	nullptr,             nullptr,             nullptr,
 	nullptr,             nullptr,             nullptr,             nullptr,
-	// commands 16-19  (off_11A26; slot 19 = no-op)
+	// commands 16-19  (table 2; slot 19 = no-op)
 	&ASound3::command16, &ASound3::command17, &ASound3::command18, nullptr,
 	// 20-23 absent
 	nullptr,             nullptr,             nullptr,             nullptr,
-	// commands 24-31  (off_11A2E; slot at 32 = no-op/unreachable)
+	// commands 24-31  (table 3; slot at 32 = no-op/unreachable)
 	&ASound3::command24, &ASound3::command25, &ASound3::command26, &ASound3::command27,
 	&ASound3::command28, &ASound3::command29, &ASound3::command30, &ASound3::command31,
 	// commands 32-33  (funcs_11C61; slot 34 = no-op)
@@ -994,7 +994,7 @@ const ASound3::CommandPtr ASound3::_commandList[77] = {
 	nullptr,             nullptr,             nullptr,             nullptr,
 	nullptr,             nullptr,             nullptr,             nullptr,
 	nullptr,             nullptr,
-	// commands 64-73  (off_11A46); slots 74-76 = no-ops
+	// commands 64-73  (table 5); slots 74-76 = no-ops
 	&ASound3::command64, &ASound3::command65, &ASound3::command66, &ASound3::command67,
 	&ASound3::command68, &ASound3::command69, &ASound3::command70, &ASound3::command71,
 	&ASound3::command72, &ASound3::command73,
@@ -1081,7 +1081,7 @@ int ASound3::command18() {
 }
 
 // ---------------------------------------------------------------------------
-// commands 24-31 (off_11A2E)
+// commands 24-31 (table 3)
 // ---------------------------------------------------------------------------
 
 int ASound3::command24() {
@@ -1178,7 +1178,7 @@ int ASound3::command33() {
 }
 
 // ---------------------------------------------------------------------------
-// commands 64-73 (off_11A46)
+// commands 64-73 (table 5)
 // ---------------------------------------------------------------------------
 
 // command64: patch pitch byte (0x78) then play — same block as command31 (0x78 vs 0x67)
@@ -1243,18 +1243,18 @@ int ASound3::command73() {
  *-----------------------------------------------------------------------*/
 
 const ASound4::CommandPtr ASound4::_commandList[82] = {
-	// commands 0-8 (off_11A14; slot 5 = no-op)
+	// commands 0-8 (table 1; slot 5 = no-op)
 	&ASound4::command0,  &ASound4::command1,  &ASound4::command2,  &ASound4::command3,
 	&ASound4::command4,  nullptr,             &ASound4::command6,  &ASound4::command7,
 	&ASound4::command8,
 	// 9-15 absent
 	nullptr,             nullptr,             nullptr,             nullptr,
 	nullptr,             nullptr,             nullptr,
-	// commands 16-19 (off_11A26; slot 19 = no-op)
+	// commands 16-19 (table 2; slot 19 = no-op)
 	&ASound4::command16, &ASound4::command17, &ASound4::command18, nullptr,
 	// 20-23 absent
 	nullptr,             nullptr,             nullptr,             nullptr,
-	// commands 24-31 (off_11A2E; slot 32 unreachable via off_11A2E)
+	// commands 24-31 (table 3; slot 32 unreachable via table 3)
 	&ASound4::command24, &ASound4::command25, &ASound4::command26, &ASound4::command27,
 	&ASound4::command28, &ASound4::command29, &ASound4::command30, &ASound4::command31,
 	// commands 32-41 (funcs_11E51; slots 34 and 41 = no-ops)
@@ -1268,7 +1268,7 @@ const ASound4::CommandPtr ASound4::_commandList[82] = {
 	nullptr,             nullptr,             nullptr,             nullptr,
 	nullptr,             nullptr,             nullptr,             nullptr,
 	nullptr,             nullptr,
-	// commands 64-81 (off_11A54; slot 79 = no-op; slots 80-81 = stubs)
+	// commands 64-81 (table 5; slot 79 = no-op; slots 80-81 = stubs)
 	&ASound4::command64, &ASound4::command65, &ASound4::command66, &ASound4::command67,
 	&ASound4::command68, &ASound4::command69, &ASound4::command70, &ASound4::command71,
 	&ASound4::command72, &ASound4::command73, &ASound4::command74, &ASound4::command75,
@@ -1358,7 +1358,7 @@ int ASound4::command18() {
 }
 
 // ---------------------------------------------------------------------------
-// commands 24-31 (off_11A2E) - SFX
+// commands 24-31 (table 3) - SFX
 // ---------------------------------------------------------------------------
 int ASound4::command24() { playSound(0x2CD3); playSound(0x2D08); return 0; }
 int ASound4::command25() { playSound(0x2D38); playSound(0x2D66); return 0; }
@@ -1578,7 +1578,7 @@ int ASound4::command40() {
 }
 
 // ---------------------------------------------------------------------------
-// commands 64-81 (off_11A54) - SFX (command73 = empty, 80-81 = stubs)
+// commands 64-81 (table 5) - SFX (command73 = empty, 80-81 = stubs)
 // ---------------------------------------------------------------------------
 int ASound4::command64() { playSound(0x25B4); return 0; }
 int ASound4::command65() { playSound(0x25F7); return 0; }
@@ -1605,21 +1605,21 @@ int ASound4::command81() { return 0; }
  *-----------------------------------------------------------------------*/
 
 const ASound5::CommandPtr ASound5::_commandList[82] = {
-	// commands 0-8 (off_11A14)
+	// commands 0-8 (table 1)
 	&ASound5::command0,  &ASound5::command1,  &ASound5::command2,  &ASound5::command3,
 	&ASound5::command4,  &ASound5::command5,  &ASound5::command6,  &ASound5::command7,
 	&ASound5::command8,
 	// 9-15 absent
 	nullptr,             nullptr,             nullptr,
 	nullptr,             nullptr,             nullptr,             nullptr,
-	// commands 16-19 (off_11A26; slot 19 = no-op)
+	// commands 16-19 (table 2; slot 19 = no-op)
 	&ASound5::command16, &ASound5::command17, &ASound5::command18, nullptr,
 	// 20-23 absent
 	nullptr,             nullptr,             nullptr,             nullptr,
-	// commands 24-31 (off_11A2E; slot 32 handled by funcs_11E05)
+	// commands 24-31 (table 3; slot 32 handled by table 4)
 	&ASound5::command24, &ASound5::command25, &ASound5::command26, &ASound5::command27,
 	&ASound5::command28, &ASound5::command29, &ASound5::command30, &ASound5::command31,
-	// commands 32-39 (funcs_11E05; slot 39 = no-op)
+	// commands 32-39 (table 4; slot 39 = no-op)
 	&ASound5::command32, &ASound5::command33, &ASound5::command34, &ASound5::command35,
 	&ASound5::command36, &ASound5::command37, &ASound5::command38, nullptr,
 	// 40-63 absent
@@ -1629,7 +1629,7 @@ const ASound5::CommandPtr ASound5::_commandList[82] = {
 	nullptr, nullptr, nullptr, nullptr,
 	nullptr, nullptr, nullptr, nullptr,
 	nullptr, nullptr, nullptr, nullptr,
-	// commands 64-81 (off_11A50; slot 79 = no-op; 80-81 = stubs)
+	// commands 64-81 (table 5; slot 79 = no-op; 80-81 = stubs)
 	&ASound5::command64, &ASound5::command65, &ASound5::command66, &ASound5::command67,
 	&ASound5::command68, &ASound5::command69, &ASound5::command70, &ASound5::command71,
 	&ASound5::command72, &ASound5::command73, &ASound5::command74, &ASound5::command75,
@@ -1727,7 +1727,7 @@ int ASound5::command18() {
 }
 
 // ---------------------------------------------------------------------------
-// commands 24-31 (off_11A2E) - SFX
+// commands 24-31 (table 3) - SFX
 // ---------------------------------------------------------------------------
 int ASound5::command24() { playSound(0x29DF); playSound(0x2A14); return 0; }
 int ASound5::command25() { playSound(0x2A44); playSound(0x2A72); return 0; }
@@ -1891,7 +1891,7 @@ int ASound5::command38() {
 }
 
 // ---------------------------------------------------------------------------
-// commands 64-78 (off_11A50) - SFX
+// commands 64-78 (table 5) - SFX
 // ---------------------------------------------------------------------------
 int ASound5::command64() { playSound(0x252C); return 0; }
 int ASound5::command65() { playSound(0x253B); playSound(0x254C); return 0; }
@@ -1937,17 +1937,17 @@ int ASound5::command81() { return 0; }
  *-----------------------------------------------------------------------*/
 
 const ASound6::CommandPtr ASound6::_commandList[102] = {
-	// commands 0-8  (off_11A14)
+	// commands 0-8  (table 1)
 	&ASound6::command0,  &ASound6::command1,  &ASound6::command2,  &ASound6::command3,
 	&ASound6::command4,  &ASound6::command5,  &ASound6::command6,  &ASound6::command7,
 	&ASound6::command8,
 	// 9-15 absent
 	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-	// commands 16-19 (off_11A26; slot 19 = no-op)
+	// commands 16-19 (table 2; slot 19 = no-op)
 	&ASound6::command16, &ASound6::command17, &ASound6::command18, nullptr,
 	// 20-23 absent
 	nullptr, nullptr, nullptr, nullptr,
-	// commands 24-31 (off_11A2E)
+	// commands 24-31 (table 3)
 	&ASound6::command24, &ASound6::command25, &ASound6::command26, &ASound6::command27,
 	&ASound6::command28, &ASound6::command29, &ASound6::command30, &ASound6::command31,
 	// commands 32-47 (funcs_1204D; slots 41-43 and 46-47 = no-op)
@@ -1958,7 +1958,7 @@ const ASound6::CommandPtr ASound6::_commandList[102] = {
 	// 48-63 absent
 	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-	// commands 64-101 (off_11A60; slot 99 = no-op)
+	// commands 64-101 (table 5; slot 99 = no-op)
 	&ASound6::command64, &ASound6::command65, &ASound6::command66, &ASound6::command67,
 	&ASound6::command68, &ASound6::command69, &ASound6::command70, &ASound6::command71,
 	&ASound6::command72, &ASound6::command73, &ASound6::command74, &ASound6::command75,
@@ -2053,7 +2053,7 @@ int ASound6::command18() {
 	return 0;
 }
 
-// commands 24-31 — SFX via playSound (loc_103DC = findFreeChannelFull)
+// commands 24-31 — SFX via playSound (a thin wrapper over findFreeChannelFull)
 int ASound6::command24() { playSound(0x3279); playSound(0x32AE); return 0; }
 int ASound6::command25() { playSound(0x32DE); playSound(0x330C); return 0; }
 int ASound6::command26() { playSound(0x333C); return 0; }
@@ -2064,7 +2064,7 @@ int ASound6::command30() { playSound(0x33B4); return 0; }
 int ASound6::command31() { *loadData(0x3418) = 0x67; playSound(0x3415); return 0; }
 
 // command32 — complex: optionally modifies active channel; Pattern B for ch0-ch5
-// Shared deferred loader with command33 (loc_11B29)
+// Shared deferred loader with command33
 void ASound6::loadCommand32() {
 	resetCallbackTimer(0x3C);
 	ASound::command1();
@@ -2105,7 +2105,7 @@ int ASound6::command33() {
 		if (!isMusicChannelsActive()) {
 			loadCommand32();
 		} else if (isSoundActive(loadData(0x1192))) {
-			// loc_11B69: sound 0x1192 already running — only load ch6
+			// Sound 0x1192 already running — only load ch6
 			_cmd33Flag = 0;
 			_channels[6]->load(loadData(0x12F4));
 		} else {
@@ -2130,7 +2130,7 @@ void ASound6::loadCommand34() {
 int ASound6::command34() {
 	if (!isSoundActive(loadData(0x13C5))) {
 		if (_channels[0]->_loopStartPtr == loadData(0x1362) && _channels[0]->_activeCount != 0) {
-			// Shortcut: ch0 already running 0x1362 — only load extra channels (loc_11C15)
+			// Shortcut: ch0 already running 0x1362 — only load extra channels
 			_channels[1]->load(loadData(0x13C5));
 			_channels[5]->load(loadData(0x1510));
 			_channels[3]->load(loadData(0x14A7));
@@ -2297,7 +2297,7 @@ int ASound6::command44() {
 	return 0;
 }
 
-// command45 — Pattern B; timer=0x1E; 3×findFreeChannel (lower pool, sub_10388)
+// command45 — Pattern B; timer=0x1E; 3×findFreeChannel (lower pool)
 void ASound6::loadCommand45() {
 	resetCallbackTimer(0x1E);
 	ASound::command1();
@@ -2412,14 +2412,14 @@ const ASound9::CommandPtr ASound9::_commandList[65] = {
 	// 9-15: nullptr (not in any dispatch range)
 	nullptr,               nullptr,               nullptr,               nullptr,
 	nullptr,               nullptr,               nullptr,
-	// 16-19: nullptr (off_11A26, all null)
+	// 16-19: nullptr (table 2, all null)
 	nullptr,               nullptr,               nullptr,               nullptr,
 	// 20-23: nullptr
 	nullptr,               nullptr,               nullptr,               nullptr,
-	// 24-31: nullptr (off_11A2E, all null)
+	// 24-31: nullptr (table 3, all null)
 	nullptr,               nullptr,               nullptr,               nullptr,
 	nullptr,               nullptr,               nullptr,               nullptr,
-	// 32-63: music/SFX (off_11A3E)
+	// 32-63: music/SFX (table 4)
 	&ASound9::command32,   &ASound9::command33_47, &ASound9::command34,  &ASound9::command35,
 	&ASound9::command36,   &ASound9::command37,   &ASound9::command38,   &ASound9::command39,
 	&ASound9::command40,   &ASound9::command41,   &ASound9::command42,   &ASound9::command43,
@@ -2428,7 +2428,7 @@ const ASound9::CommandPtr ASound9::_commandList[65] = {
 	&ASound9::command52,   &ASound9::command53,   &ASound9::command54,   &ASound9::command55,
 	nullptr,               &ASound9::command57,   &ASound9::command58,   &ASound9::command59,
 	nullptr,               &ASound9::command61,   &ASound9::command62,   &ASound9::command63,
-	// 64: nullptr (off_11A80, single null entry)
+	// 64: nullptr (table 5, single null entry)
 	nullptr,
 };
 

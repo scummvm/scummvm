@@ -56,7 +56,7 @@ struct AdlibChannel {
 	uint8  _vibPeriodReload = 0; // 0x0E  reload value for _vibPeriodCounter
 	uint8  _patchAttenuation = 0; // 0x0F  per-note attenuation offset added on top of the patch TL
 	uint8  _velocity = 0; // 0x10  note velocity (0-127); used together with _volume for TL
-	uint8  _writeVolumePending = 0; // 0x11  non-zero -> call sub_11856 (secondary freq write) this tick
+	uint8  _writeVolumePending = 0; // 0x11  non-zero -> call the arpeggio frequency writer (secondary freq write) this tick
 	uint8  _arpPeriodReload = 0; // 0x12  arpeggio period reload value (set by opcode 9)
 	uint8  _arpCounterReload = 0; // 0x13  arpeggio counter reload (decremented; 0xFF = infinite)
 
@@ -164,29 +164,28 @@ struct AdlibSample {
 // ---------------------------------------------------------------------------
 // ASound  -  Dragonsphere Adlib sound driver base class
 //
-// Command dispatch table layout (from off_11A14 / off_11A26 / off_11A2E /
-// funcs_12251 / off_11A64 in the disassembly):
+// Command dispatch table layout:
 //
-//   Table 1  off_11A14  commands  0- 8   (max=8,    base=0,    9 entries)
-//   Table 2  off_11A26  commands 16-19   (max=0x13, base=0x10, 4 entries)
+//   Table 1  commands  0- 8   (max=8,    base=0,    9 entries)
+//   Table 2  commands 16-19   (max=0x13, base=0x10, 4 entries)
 //             command16  = background-music dispatcher (calls command18)
 //             command17  = play specific piece (loads 7 channels direct)
-//             command18  = re-entrant music launcher (reads word_12370 to pick a sub-command)
+//             command18  = re-entrant music launcher (reads _musicIndex to pick a sub-command)
 //             command19  = no-op (asound_command98)
-//   Table 3  off_11A2E  commands 24-32   (max=0x20, base=0x18, 9 entries)
-//   Table 4  funcs_12251 commands 32-49  (max=0x31, base=0x20, 18 entries)
+//   Table 3  commands 24-32   (max=0x20, base=0x18, 9 entries)
+//   Table 4  commands 32-49  (max=0x31, base=0x20, 18 entries)
 //             Includes asound_command32-48 (music pieces / SFX loaders)
 //             and asound_command98 (no-op) in the last slot.
-//   Table 5  off_11A64  commands 64-101  (max=0x65, base=0x40, 38 entries)
+//   Table 5  commands 64-101  (max=0x65, base=0x40, 38 entries)
 //             Includes asound_command64-101 (single-shot SFX loaders via
 //             findFreeChannel / findFreeChannelFull) and two no-ops.
 //
 // The driver also exposes:
 //   asound_command90 / 91  - two-voice SFX (findFreeChannelFull x2)
 //   asound_command95       - four-voice music piece (findFreeChannel x4)
-//   sub_11F98              - two-voice SFX (findFreeChannelFull x2)
+//   asound_command97       - two-voice SFX (findFreeChannelFull x2)
 //
-// word_12370 tracks the "current music index" used by command18 to select
+// _musicIndex tracks the "current music index" used by command18 to select
 // which music-piece loader to call.
 // ---------------------------------------------------------------------------
 class ASound : public SoundDriver {
@@ -231,20 +230,20 @@ private:
 	int    _frameNumber2 = 0; // secondary frame counter incremented every update
 
 	// ---- script / sequencer registers -----------------------------------
-	uint8  _scriptVars[32] = {}; // byte_16A10: 32 general-purpose script registers
+	uint8  _scriptVars[32] = {}; // 32 general-purpose script registers
 
-	// ---- music-index tracker (word_12370) --------------------------------
+	// ---- music-index tracker ------------------------------------------
 	// Tracks which music piece was last launched by command18.
 	uint16 _musicIndex = 0;
 
 	// ---- tempo / sequencer state (from opcodes3 group 2 handlers) --------
-	uint8  _musicOnlyFlag = 0;     // byte_12393: 1=music-only check, 0=all channels
-	uint16 _tempoFineStep = 0;     // word_124F2: fine tempo step (opcode A6)
-	uint16 _tempoCoarseStep = 0;   // word_124F0: coarse tempo step (opcode A7)
-	uint16 _tempoPeriod = 0;       // word_124EE: tempo period in ticks (opcode A8)
+	uint8  _musicOnlyFlag = 0;     // 1=music-only check, 0=all channels
+	uint16 _tempoFineStep = 0;     // fine tempo step (opcode A6)
+	uint16 _tempoCoarseStep = 0;   // coarse tempo step (opcode A7)
+	uint16 _tempoPeriod = 0;       // tempo period in ticks (opcode A8)
 	uint8  _tempoEnabled = 0;      // non-zero when tempo tick is active (opcode A8)
 	uint16 _tempoTickCounter = 0;  // countdown for tempo callback
-	uint16 _tempoShift = 0;        // word_124F4: tempo shift (opcode A9)
+	uint16 _tempoShift = 0;        // tempo shift (opcode A9)
 
 	// =========================================================================
 	// Private helpers
@@ -301,7 +300,7 @@ private:
 	void writePitchBend();
 
 	/**
-	 * Arpeggio frequency write (sub_11856).
+	 * Arpeggio frequency write.
 	 * Called from pollActiveChannel when _writeVolumePending (field_11) is set.
 	 * Computes a modified frequency from _note + _octaveTranspose + field_11 - 1
 	 * and writes it to the OPL registers, preserving the key-on bit.
@@ -403,13 +402,12 @@ protected:
 	/**
 	 * Checks whether any of channels 0-6 (or 0-8 when _musicOnlyFlag is clear)
 	 * have a non-zero _activeCount.  Returns non-zero if sound is playing.
-	 * This is 'sub_1061A' in the disassembly.
 	 */
 	int isMusicChannelsActive();
 
 	/**
 	 * Like isMusicChannelsActive but scans all 9 channels unconditionally
-	 * (clears the ch0-6-only flag first).  This is 'sub_1064E'.
+	 * (clears the ch0-6-only flag first).
 	 */
 	int isAnyChannelActive();
 
@@ -441,12 +439,12 @@ protected:
 		_callbackPeriod = period;
 	}
 
-	/** Set the music-piece index (word_12370) read by command18. */
+	/** Set the music-piece index read by command18. */
 	void setMusicIndex(uint16 idx) { _musicIndex = idx; }
 	/** Read the current music-piece index. */
 	uint16 getMusicIndex() const { return _musicIndex; }
 
-	/** Write one script-variable register (byte_16A10[idx]). */
+	/** Write one script-variable register. */
 	void setScriptVar(int idx, uint8 val) { _scriptVars[idx] = val; }
 	/**
 	 * Writes (reg, value) to the OPL chip and updates the _adlibPorts shadow
@@ -567,7 +565,7 @@ protected:
 	 * command6: Pause playback.
 	 *   Saves each channel's _freqSweepCounter into _savedSweepCounter, zeroes
 	 *   _freqSweepCounter on all channels, then mutes all 22 operator TL
-	 *   registers (the byte_1239B table covers all operator slots 0x40-0x55).
+	 *   registers (covering all operator slots 0x40-0x55).
 	 *   Sets _isDisabled to prevent further updates.
 	 */
 	int command6();
@@ -583,7 +581,7 @@ protected:
 	/**
 	 * command8: Returns non-zero if any of the 9 channels has a non-zero
 	 *   _activeCount (i.e. sound is currently playing).
-	 *   Also clears the music-only flag (byte_12393 = 0) so the check covers
+	 *   Also clears the music-only flag (_musicOnlyFlag = 0) so the check covers
 	 *   all 9 channels.
 	 */
 	int command8();
@@ -600,10 +598,10 @@ protected:
 
 	/**
 	 * command18: Re-entrant music launcher.
-	 *   First calls command1 to fade current output, then branches on _musicIndex
-	 *   (word_12370):
-	 *     <= 0x12  -> calls off_11A26 table (commands 16-19)
-	 *     > 0x12  -> calls funcs_12251 table (commands 32-49), index = _musicIndex - 0x20
+	 *   First calls command1 to fade current output, then branches on
+	 *   _musicIndex:
+	 *     <= 0x12  -> calls table 2 (commands 16-19)
+	 *     > 0x12  -> calls table 4 (commands 32-49), index = _musicIndex - 0x20
 	 */
 	int command18();
 
