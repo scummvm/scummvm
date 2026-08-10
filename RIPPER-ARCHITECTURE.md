@@ -67,9 +67,12 @@
 - The demo also has a shorter opcode `0x1a` layout. Its handler at `0x13e46`
   forwards path, auxiliary text, Y, and X to `FUN_000142bb` at `0x142bb` and
   forces scene-relative presentation controls on. Retail
-  `HandleSceneEntryMediaAndSetBasenameFlag` at `0x159e1` accepts the additional
-  keyboard-control argument before the same placement pair. The script runtime
-  selects the matching argument ABI from the detected game variant.
+  retail script command executor `FUN_0001357f` at `0x1357f` accepts the additional
+  keyboard-control argument before the same placement pair. The demo checks its
+  subtitle setting and auxiliary pointer but has no body on that branch, so the
+  setting does not create gameplay text there. The script runtime selects the
+  matching argument ABI from the detected game variant and reserves authored
+  auxiliary-text presentation for retail.
 - Demo opcode `0x1d` likewise omits the retail concurrency selector.
   `FUN_000140dc` at `0x140dc` stores its target and entry-label pointers in the
   pending scene fields and returns `-3` unconditionally. Demo scene action 200
@@ -627,9 +630,9 @@
   later selection of control `0x4e1` runs `ClearBriefingMediaTrigger` at
   `0x193ab` to remove the control and stop its alert, dispatches selector 1 to
   `CP0_1_P1.AVI`, and sets travel flag 44. `ExecutePresentationEntry` at
-  `0x1652a` deactivates the shared selection presentation for that AVI, so the
+  `0x1754b` deactivates the shared selection presentation for that AVI, so the
   cursor, toolbar, briefing animation, and its alert remain inactive until
-  `RunMediaPresentation` at `0x168af` returns and selection presentation is
+  `RunMediaPresentation` at `0x17917` returns and selection presentation is
   restored. The script therefore records 301 at trigger-arm time, before the
   later UI event presents the media.
 - The demo `BA0.RUN` also dispatches scene action 300 with selector 1. Its
@@ -835,8 +838,8 @@
   Action 36 calls `DispatchUiSelectionIndexChange` at `0x4a630`, which applies
   a valid row to the active selection presentation. KR initializes both with
   row 14. Its startup callback then plays `VH_1.AVI` with keyboard controls
-  disabled. `ExecutePresentationEntry` at `0x1652a` passes that zero control
-  flag to `RunMediaPresentation` at `0x168af`, whose zero branch retains the
+  disabled. `ExecutePresentationEntry` at `0x1754b` passes that zero control
+  flag to `RunMediaPresentation` at `0x17917`, whose zero branch retains the
   movie's final rendered page for the following type-2 `interface` frame.
   `ServiceUiControlStateSelection` at `0x4a912` starts each poll from the stored
   row 14 and temporarily dispatches the hovered control's row; every visible KR
@@ -1375,7 +1378,7 @@
   compares the three current frames against `[7, 14, 9]`, accepting the target
   or either adjacent frame. `M_SCREAM`, `M_NORMAL`, `M_1`, and `M_2` correspond
   to zero through three correct levers and are archived `IAVF2.00`
-  presentations dispatched through `RunMediaPresentation` at `0x168af`. A
+  presentations dispatched through `RunMediaPresentation` at `0x17917`. A
   three-lever match records success but leaves the puzzle active; cleanup sets
   the supplied milestone when the player exits. Escape or either side control
   exits, F1 opens help table `0x1af`, and the case-insensitive hidden keyword
@@ -1871,7 +1874,7 @@
   AVI unscaled at the still image's centered, four-byte-aligned origin inside
   the 350-by-282 database viewport. It then restores the prior mode and WAC
   display and sets flag 213 for Magnotta or 212 for Eddie. This matches
-  `InitializeMediaPresentationDisplayModeCallback` at `0x163a8`, whose mode-1
+  `ConfigureMediaPresentationDisplayModeCallback` at `0x16ae3`, whose mode-1
   path does not install the 2:1 small-video display descriptor.
 - Entry 6 dispatches `RunWacVoiceLockPuzzleScene` at `0x24ba4`, implemented by
   `WacVoiceLockPuzzle`. Its input controller retains the retail event order,
@@ -1936,7 +1939,7 @@
   `RunWacVoiceLockPuzzleScene` dispatches display command `0x14` to
   `ClearGenericVideoLogicalPage` at `0x45ed8` before that completion movie,
   then dispatches command `0x1e` to `FadePaletteOut` at `0x479ef` afterward.
-  `RunMediaPresentation` at `0x168af` likewise treats the movie palette as
+  `RunMediaPresentation` at `0x17917` likewise treats the movie palette as
   presentation-local before it restores the surrounding display state. The
   reimplementation clears the full retained 640-by-400 page before the
   640-by-300 movie, so its uncovered bands remain black, then restores that
@@ -2050,11 +2053,11 @@
   remain visible and continue to frame the puzzle on the right.
 - After loading the nine controls, `RunWacMugSelectionScene` draws them back to
   front, presents the completed WAC page, and only then calls
-  `PlayBlockingAudioClip` at `0x1f0ea` for `q_p_1.wav`. The WAV is resolved
+  `PlayBlockingAudioWithOptionalText` at `0x206e0` for `q_p_1.wav`. The WAV is resolved
   through startup sound-library handle 2 (`sound.pl`), not only as a loose
   file. The call result is not a puzzle-load guard; a missing voice clip does
   not discard the already-presented controls or leave the scene.
-- `PlayBlockingAudioClip` selects cursor index `0x13`, activates its
+- `PlayBlockingAudioWithOptionalText` selects cursor index `0x13`, activates its
   presentation, and services only keyboard command polling plus managed audio
   while the clip is active. Mouse transitions therefore cannot select a mug
   piece during the narration. `RunWacMugSelectionScene` activates its normal
@@ -2181,9 +2184,9 @@
   top and bottom indexed bands before drawing the chooser. This prevents pixels
   retained from the preceding presentation from being reinterpreted by the
   active Smacker palette.
-- `ExecutePresentationEntry` at `0x1652a` distinguishes the controlled response
+- `ExecutePresentationEntry` at `0x1754b` distinguishes the controlled response
   cleanup by filename extension. An `.AVI` enters `RunMediaPresentation` at
-  `0x168af`, which restores display state, submits a full-display dirty-region
+  `0x17917`, which restores display state, submits a full-display dirty-region
   update, reapplies the display palette, and restores selection presentation
   state. The ScummVM response path rebuilds the top and bottom scene bands only
   after that controlled AVI route, including the exhausted-dialogue path where
@@ -2216,14 +2219,15 @@
   `0x13277` recreates and enables eligible proxies before each enter callback,
   so the change does not persist when the frame is entered again. The handler's
   `Step` prompt is visible only when the original script-debug flag pair is set.
-- Opcode `0x1a` maps to `HandleSceneEntryMediaAndSetBasenameFlag` at `0x159e1`.
-  `ExecutePresentationEntry` at `0x1652a` first dispatches `.WAV` entries to
-  `PlayBlockingAudioClip` at `0x1f0ea`. This path selects cursor 19, keeps the
+- Opcode `0x1a` is handled by the retail script command executor
+  `FUN_0001357f` at `0x1357f`. `ExecutePresentationEntry` at `0x1754b` first
+  dispatches `.WAV` entries to `PlayBlockingAudioWithOptionalText` at `0x206e0`.
+  This path selects cursor 19, keeps the
   cursor presentation active, and waits for audio completion or Escape before
   the opcode marks the media basename played. It covers scene-script speech
   entries such as `DB1.RUN` presenting `Q_OD_36.WAV`; WAV data does not enter
   the video decoder. `ExecutePresentationEntry` routes IAVF media through
-  `RunMediaPresentation` at `0x168af`. It first deactivates the UI selection
+  `RunMediaPresentation` at `0x17917`. It first deactivates the UI selection
   presentation, removing the active cursor before playback; the next frame's
   interaction presentation makes the cursor visible again. When keyboard
   controls are enabled, the media wrapper preserves the current logical display
@@ -2444,8 +2448,8 @@
   equals that size minus the first argument. Because the original player exits
   on `0x70`, the trailer is not a playback command and the reimplementation
   leaves it unread as well.
-- `RunMediaPresentation` at `0x168af` installs
-  `InitializeMediaPresentationDisplayModeCallback` at `0x163a8` as the
+- `RunMediaPresentation` at `0x17917` installs
+  `ConfigureMediaPresentationDisplayModeCallback` at `0x16ae3` as the
   packetized branch callback. `PreparePacketizedMediaPlaybackBranchSetup` at
   `0x5b237` invokes it again for each embedded branch, so the scale decision is
   based on that branch's extents rather than only the IAVF header canvas. In
@@ -2453,6 +2457,29 @@
   display descriptor and its effective scaled extents are centered. This also
   expands `PROLOG2.AVI`'s 320x200 Smacker branches even though its IAVF canvas
   declares 640x400.
+- Retail's text setting at `0x9a58f` controls authored auxiliary strings, not a
+  generated transcript track. `ExecutePresentationEntry` at `0x1754b` copies a
+  nonempty opcode `0x1a` auxiliary string into presentation state and marks the
+  text callback active. WAV entries then use
+  `PlayBlockingAudioWithOptionalText` at `0x206e0`; IAVF entries install
+  `ServiceMediaPresentationTextControl` at `0x17014`. Direct Smacker entries do
+  not consume the auxiliary string.
+- `ResolvePresentationControlLayout` at `0x19a3d` selector `0x13` creates a
+  centered 400-pixel wrapped chooser at active-display top plus 300. On a later
+  packetized branch, `MoveMediaPresentationTextControl` at `0x17454` moves the
+  chooser to active-display top plus 260 for an unscaled small branch, or to
+  y=400 for a large or scaled branch. The first branch calculates its automatic
+  scroll interval from the branch frame count and remaining wrapped lines;
+  subsequent callback services advance one line at each interval when retail's
+  auto-scroll setting at `0x9a593` is enabled.
+- `ConfigureMediaPresentationDisplayModeCallback` forces video mode zero to the
+  unscaled mode while authored text is active. The text callback services the
+  shared chooser during playback; Escape stops it. At media completion,
+  `ServiceMediaPresentationTextOverlayCallback` at `0x16ca6` redraws remaining
+  text, appends startup resource `0x48` immediately to the chooser's right, and
+  waits for Escape or that control before destroying the chooser. ScummVM maps
+  this flow onto its retained wrapped-text renderer and shared palette patch,
+  preserving the packetized movie palette and the retail panel geometry.
 - The same callback switches branches at least 321 pixels wide or 201 pixels
   high from the scene display context to the full display context. A branch
   whose scaled output already fills the 640x400 display therefore does not
@@ -2477,7 +2504,7 @@
   `PollPresentationEscOrSpaceCommand` at `0x49039` recognizes only Escape and
   Space, and the packetized-media path has no `0x4d00` comparison.
 - `ExecuteSceneFrameAndInteractions` at `0x13277` marks a type-0 frame label
-  played before calling `ExecutePresentationEntry` at `0x1652a` with keyboard
+  played before calling `ExecutePresentationEntry` at `0x1754b` with keyboard
   controls enabled. That path installs `PollPresentationEscOrSpaceCommand` at
   `0x49039`: Space pauses or resumes the response video and its IAVF audio,
   while Escape advances to the normal post-presentation callback with the
@@ -2490,7 +2517,7 @@
   transition image and allows played-state updates, milestone changes, and
   later callback commands to run in their normal order. It follows the
   control-flow contract established by `PollPresentationEscOrSpaceCommand` at
-  `0x49039` and `ExecutePresentationEntry` at `0x1652a`.
+  `0x49039` and `ExecutePresentationEntry` at `0x1754b`.
 - Opcode `0x1b` enters `HandleSceneEntryMediaPreviewOrPrompt` at `0x15b03`.
   That handler passes a target value of one and
   `MediaSequenceCounterEqualsTarget` at `0x15ac8` to `RunMediaSequence` at

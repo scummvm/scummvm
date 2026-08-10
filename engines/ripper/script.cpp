@@ -41,6 +41,7 @@
 #include "ripper/ripper.h"
 #include "ripper/scene_audio.h"
 #include "ripper/scene_dispatcher.h"
+#include "ripper/settings.h"
 #include "ripper/toolbar.h"
 #include "ripper/world_map.h"
 
@@ -832,24 +833,32 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			if (command.arguments.size() < expectedArgumentCount)
 				return false;
 			const Common::String mediaPath = script.getString(command.arguments[0].value);
+			const Common::String presentationText = !_demoScriptAbi &&
+				_engine->getSettings()->getSubtitles() ?
+				script.getString(command.arguments[1].value) : Common::String();
 			// The demo's opcode handler at 0x13e46 calls FUN_000142bb with
 			// path, auxiliary text, Y, and X, and forces its scene-presentation
-			// control argument to one. The retail handler at 0x159e1 inserts a
-			// separate keyboard-control argument before its placement pair.
+			// control argument to one. The retail script command executor at
+			// 0x1357f inserts a separate keyboard-control argument before its
+			// placement pair.
 			const bool allowEscSpace = _demoScriptAbi || command.arguments[2].value == 0;
 			const int x = (int32)command.arguments[3].value;
 			const int y = (int32)command.arguments[_demoScriptAbi ? 2 : 4].value;
 			debugC(3, kDebugScripts,
-				"Ripper: media command ABI=%s path='%s' controls=%d position=%d,%d",
-				_demoScriptAbi ? "demo" : "retail", mediaPath.c_str(), allowEscSpace, x, y);
-			// ExecutePresentationEntry at 0x1652a deactivates the UI selection
+				"Ripper: media command ABI=%s path='%s' controls=%d "
+				"position=%d,%d presentationText=%d textLength=%u",
+				_demoScriptAbi ? "demo" : "retail", mediaPath.c_str(),
+				allowEscSpace, x, y, !presentationText.empty(),
+				presentationText.size());
+			// ExecutePresentationEntry at 0x1754b deactivates the UI selection
 			// presentation before media playback. The following frame activation
 			// restores the cursor after the callback finishes.
 			_engine->getCursor()->setVisible(false);
-			if (!_engine->getMedia()->play(mediaPath, allowEscSpace, x, y, true))
+			if (!_engine->getMedia()->play(mediaPath, allowEscSpace, x, y, true,
+					presentationText))
 				return false;
-			// HandleSceneEntryMediaAndSetBasenameFlag at 0x159e1 marks the
-			// presentation basename only after ExecutePresentationEntry returns.
+			// The retail script command executor at 0x1357f marks the presentation
+			// basename only after ExecutePresentationEntry returns.
 			const size_t extension = mediaPath.findFirstOf('.');
 			const Common::String playedKey = mediaPath.substr(0, extension);
 			markScenePlayed(playedKey);
@@ -1444,8 +1453,8 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 					_runtime.pendingSceneMember.c_str(), _runtime.pendingSceneEntryLabel.c_str());
 				return performPendingSceneTransition();
 			}
-			// ExecutePresentationEntry at 0x1652a routes .AVI through
-			// RunMediaPresentation at 0x168af, whose controlled path restores
+			// ExecutePresentationEntry at 0x1754b routes .AVI through
+			// RunMediaPresentation at 0x17917, whose controlled path restores
 			// the surrounding display. Other extensions enter RunMediaSequence
 			// at 0x1e516 and retain their final frame, including full-screen
 			// document presentations such as KK_Z12.SMK.
