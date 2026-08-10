@@ -445,12 +445,15 @@ bool ScriptManager::openWorldMap() {
 	if (!targetScript.empty()) {
 		if (!runWorldMapCheckpoint(chapter))
 			return false;
-		_runtime.pendingSceneMember = targetScript;
+		// Demo DispatchFrontEndAction at 0x16a2f stores the formatted world-map
+		// target on the scene runtime. RunSceneScriptLoop at 0x113cf then replaces
+		// the first dot, or the string terminator, with ".run" before opening it.
+		_runtime.pendingSceneMember = compiledScriptMemberName(targetScript);
 		_runtime.pendingSceneEntryLabel.clear();
 		_runtime.clearPreservedAudioOnTransition = true;
 		debugC(2, kDebugScene,
-			"Ripper: queued world map scene transition target='%s'",
-			_runtime.pendingSceneMember.c_str());
+			"Ripper: queued world map scene transition raw='%s' target='%s'",
+			targetScript.c_str(), _runtime.pendingSceneMember.c_str());
 	}
 	return true;
 }

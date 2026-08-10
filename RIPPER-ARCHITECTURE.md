@@ -433,6 +433,11 @@
   its first dot onward with `.run` before opening the runtime, rather than
   appending another extension. A target such as `DK1.SCR` therefore resolves
   to `DK1.run`, not `DK1.SCR.run`.
+- The demo performs the same normalization in `RunSceneScriptLoop` at
+  `0x113cf`. `DispatchFrontEndAction` at `0x16a2f` formats the selected world-map
+  destination into a bare name such as `BA0` and stores it on the active
+  runtime; the outer loop replaces that name's terminator with `.run` before
+  calling `CreateSceneRuntime`.
 
 ## Save and Restore
 
