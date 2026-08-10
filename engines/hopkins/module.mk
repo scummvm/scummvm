@@ -3,6 +3,7 @@ MODULE := engines/hopkins
 MODULE_OBJS := \
 	anim.o \
 	base_data.o \
+	base_engine.o \
 	computer.o \
 	debugger.o \
 	dialogs.o \
