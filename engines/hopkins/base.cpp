@@ -463,6 +463,9 @@ void BaseGame::openMainMenu() {
 	_input = BaseInputState();
 	_inputSuspended = true;
 	_vm->openMainMenuDialog();
+	// A modal menu may consume the KEYUP for the key that opened it. Purge
+	// keyboard events before resuming so WBASE cannot inherit a stuck action.
+	g_system->getEventManager()->purgeKeyboardEvents();
 	_inputSuspended = false;
 	_timingResetRequested = true;
 
