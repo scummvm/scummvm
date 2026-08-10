@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	anim.o \
 	base_data.o \
 	base_engine.o \
+	base_renderer.o \
 	computer.o \
 	debugger.o \
 	dialogs.o \

@@ -64,7 +64,6 @@ public:
 	int32 floorCos(int column) const;
 	int16 distanceHeight(int distance) const;
 	int32 adjustTable(int distance) const;
-	byte shadedColor(int level, byte color) const;
 
 private:
 	bool loadMap(Common::String &errorMessage);
@@ -74,12 +73,10 @@ private:
 	bool loadBbm(const Common::Path &filename, BaseBitmap &bitmap, Common::String &errorMessage);
 	bool loadSpr(const Common::Path &filename, Common::Array<BaseBitmap> &frames, Common::String &errorMessage);
 	void buildDerivedTables();
-	void buildShadeTable();
 
 	uint16 _map[kBaseMapCellCount];
 	uint16 _objectMap[kBaseMapCellCount];
 	byte _palette[256 * 3];
-	byte _shadeTable[16][256];
 
 	Common::Array<int32> _trig[7];
 	Common::Array<int32> _xNext;

@@ -172,7 +172,6 @@ bool BaseData::load(Common::String &errorMessage) {
 			!loadBitmaps(errorMessage))
 		return false;
 	buildDerivedTables();
-	buildShadeTable();
 	return true;
 }
 
@@ -424,28 +423,6 @@ void BaseData::buildDerivedTables() {
 	_adjust[kBaseMaximumDistance] = _adjust[kBaseMaximumDistance - 1];
 }
 
-void BaseData::buildShadeTable() {
-	static const byte ranges[][2] = {
-		{ 32, 16 }, { 48, 16 }, { 64, 16 }, { 80, 16 },
-		{ 96, 8 }, { 104, 8 }, { 112, 8 }, { 120, 8 },
-		{ 128, 8 }, { 136, 8 }, { 144, 8 }, { 152, 8 },
-		{ 160, 8 }, { 168, 8 }, { 176, 8 }, { 184, 8 },
-		{ 192, 16 }, { 208, 16 }, { 224, 8 }, { 232, 8 }
-	};
-
-	for (int level = 0; level < 16; ++level) {
-		for (int color = 0; color < 256; ++color)
-			_shadeTable[level][color] = (byte)color;
-
-		for (uint range = 0; range < ARRAYSIZE(ranges); ++range) {
-			const int first = ranges[range][0];
-			const int end = first + ranges[range][1];
-			for (int color = first; color < end; ++color)
-				_shadeTable[level][color] = color + level < end ? (byte)(color + level) : 0;
-		}
-	}
-}
-
 uint16 BaseData::mapCodeAt(int mapPos) const {
 	return mapPos >= 0 && mapPos < kBaseMapCellCount ? _map[mapPos] : 0;
 }
@@ -491,6 +468,5 @@ int32 BaseData::viewCosQ16(int column) const { return _viewCos[CLIP(column, 0, k
 int32 BaseData::floorCos(int column) const { return _floorCos[CLIP(column, 0, kBaseViewWidth)]; }
 int16 BaseData::distanceHeight(int distance) const { return _distanceHeight[CLIP(distance, 0, kBaseMaximumDistance)]; }
 int32 BaseData::adjustTable(int distance) const { return _adjust[CLIP(distance, 0, kBaseMaximumDistance)]; }
-byte BaseData::shadedColor(int level, byte color) const { return _shadeTable[CLIP(level, 0, 15)][color]; }
 
 } // End of namespace Hopkins
