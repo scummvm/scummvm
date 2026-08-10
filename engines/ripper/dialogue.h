@@ -21,7 +21,7 @@ class CompiledScript;
 
 class DialogueChooser {
 public:
-	bool initialize(ResourceManager &resources);
+	bool initialize(ResourceManager &resources, bool loadScrollArrows);
 	bool execute(const CompiledScript &script, const ScriptCommand &command, bool includeChoice = true);
 	bool service(const MouseState &mouse, uint &result);
 	bool serviceKeyboard(uint16 command, uint &result);

@@ -46,7 +46,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_DEMO | ADGF_UNSTABLE,
-		GUIO1(GAMEOPTION_SKIP_INTRO)
+		GUIO1(GUIO_NOLAUNCHLOAD)
 	},
 
 	AD_TABLE_END_MARKER

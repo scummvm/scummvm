@@ -64,7 +64,7 @@ public:
 
 	explicit ModalDialogManager(RipperEngine *engine);
 
-	bool initialize(ResourceManager &resources);
+	bool initialize(ResourceManager &resources, bool loadPrimaryPresentation);
 	bool run(uint bodyResourceId, bool retainSceneCursorRegions = false,
 		PresentationStyle style = kMenubPresentation,
 		PaletteBehavior paletteBehavior = kApplyModalPalette);

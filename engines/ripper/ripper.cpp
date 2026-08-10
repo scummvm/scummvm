@@ -121,101 +121,110 @@ bool RipperEngine::selectRandomRipperIdentity(const char *source) {
 }
 
 Common::Error RipperEngine::run() {
+	const bool isDemo = (_gameDescription->flags & ADGF_DEMO) != 0;
 	registerSearchPaths();
 	initGraphics(640, 400);
 	_settings->load();
-	if (!_resources->initialize())
+	if (!_resources->initialize(!isDemo))
 		return Common::kReadingFailed;
 	if (!_milestones->initialize(*_resources))
 		return Common::kReadingFailed;
 	// Retail initializes a provisional identity before the front end; restoring
 	// a save later replaces it with the identity serialized in that game.
-	if (!selectRandomRipperIdentity("startup-initialization"))
+	if (!isDemo && !selectRandomRipperIdentity("startup-initialization"))
 		return Common::kUnknownError;
-	if (!_modalDialog->initialize(*_resources))
+	if (!_modalDialog->initialize(*_resources, !isDemo))
 		return Common::kReadingFailed;
-	if (!_cursor->initialize(*_resources))
+	// FUN_0001084a in the demo RIP.EXE installs exactly 0x12 cursor rows.
+	if (!_cursor->initialize(*_resources, isDemo ? 0x12 : 24))
 		return Common::kReadingFailed;
-	if (!_inventory->initialize(*_resources))
+	if (!isDemo && !_inventory->initialize(*_resources))
 		return Common::kReadingFailed;
-	if (!_scripts->initialize(*_resources))
+	if (!_scripts->initialize(*_resources, !isDemo))
 		return Common::kReadingFailed;
-	if (!_toolbar->initialize(*_resources))
+	if (!isDemo && !_toolbar->initialize(*_resources))
 		return Common::kReadingFailed;
-	if (!_wac->initialize(*_resources))
+	if (!isDemo && !_wac->initialize(*_resources))
 		return Common::kReadingFailed;
-	if (!_worldMap->initialize(*_resources))
+	if (!isDemo && !_worldMap->initialize(*_resources))
 		return Common::kReadingFailed;
 
 	_cursor->setVisible(false);
-	const bool skipIntro = ConfMan.hasKey("skip_intro") && ConfMan.getBool("skip_intro");
-	if (skipIntro) {
-		debugC(1, kDebugVideo,
-			"Ripper: skipping startup presentation logo.avi by game option");
+	bool startGameplay = isDemo;
+	if (isDemo) {
+		// The demo RIP.EXE entry path calls FUN_000113cf with RIPPER.RUN directly;
+		// it has neither the retail LOGO.AVI presentation nor front-end menu loop.
+		debugC(1, kDebugGeneral,
+			"Ripper: demo startup entering loose RIPPER.RUN directly");
 	} else {
-		debugC(1, kDebugVideo,
-			"Ripper: startup presentation logo.avi from RunGameStartupAndMainLoop at 0x100c2");
-		if (!_media->play("logo.avi", true))
-			return shouldQuit() ? Common::kNoError : Common::kUnknownError;
-	}
+		const bool skipIntro = ConfMan.hasKey("skip_intro") && ConfMan.getBool("skip_intro");
+		if (skipIntro) {
+			debugC(1, kDebugVideo,
+				"Ripper: skipping startup presentation logo.avi by game option");
+		} else {
+			debugC(1, kDebugVideo,
+				"Ripper: startup presentation logo.avi from RunGameStartupAndMainLoop at 0x100c2");
+			if (!_media->play("logo.avi", true))
+				return shouldQuit() ? Common::kNoError : Common::kUnknownError;
+		}
 
-	bool startGameplay = false;
-	const int launcherSaveSlot = ConfMan.getInt("save_slot");
-	if (launcherSaveSlot >= 0) {
-		debugC(1, kDebugSaveLoad,
-			"Ripper: launcher requested restore slot=%d", launcherSaveSlot);
-		const Common::Error loadError = loadGameState(launcherSaveSlot);
-		if (loadError.getCode() != Common::kNoError)
-			return loadError;
-		startGameplay = true;
-	}
-
-	while (!shouldQuit() && !startGameplay) {
-		MainMenu menu(this);
-		switch (menu.run()) {
-		case kMainMenuNewGame:
-			debugC(1, kDebugGeneral, "Ripper: startup menu begins a new game");
-			if (!selectRandomRipperIdentity("new-game-initialization"))
-				return Common::kUnknownError;
-			if (!_wac->resetNotebook())
-				warning("Ripper: could not reset the WAC notebook for a new game");
+		const int launcherSaveSlot = ConfMan.getInt("save_slot");
+		if (launcherSaveSlot >= 0) {
+			debugC(1, kDebugSaveLoad,
+				"Ripper: launcher requested restore slot=%d", launcherSaveSlot);
+			const Common::Error loadError = loadGameState(launcherSaveSlot);
+			if (loadError.getCode() != Common::kNoError)
+				return loadError;
 			startGameplay = true;
-			break;
-		case kMainMenuContinue:
-			// RunGameStartupAndMainLoop at 0x100c2 restores its dedicated emergency
-			// save directly instead of entering the manual slot chooser.
-			if (!_saveFileMan->exists(getSaveStateName(getAutosaveSlot()))) {
+		}
+
+		while (!shouldQuit() && !startGameplay) {
+			MainMenu menu(this);
+			switch (menu.run()) {
+			case kMainMenuNewGame:
+				debugC(1, kDebugGeneral, "Ripper: startup menu begins a new game");
+				if (!selectRandomRipperIdentity("new-game-initialization"))
+					return Common::kUnknownError;
+				if (!_wac->resetNotebook())
+					warning("Ripper: could not reset the WAC notebook for a new game");
+				startGameplay = true;
+				break;
+			case kMainMenuContinue:
+				// RunGameStartupAndMainLoop at 0x100c2 restores its dedicated emergency
+				// save directly instead of entering the manual slot chooser.
+				if (!_saveFileMan->exists(getSaveStateName(getAutosaveSlot()))) {
+					debugC(1, kDebugSaveLoad,
+						"Ripper: Continue requested without emergency slot=%d",
+						getAutosaveSlot());
+					break;
+				}
+				if (loadGameState(getAutosaveSlot()).getCode() == Common::kNoError) {
+					debugC(1, kDebugSaveLoad,
+						"Ripper: startup Continue restored emergency slot=%d",
+						getAutosaveSlot());
+					startGameplay = true;
+				}
+				break;
+			case kMainMenuLoadGame:
 				debugC(1, kDebugSaveLoad,
-					"Ripper: Continue requested without emergency slot=%d",
-					getAutosaveSlot());
+					"Ripper: startup Restore Game entering manual slot chooser");
+				if (loadGameDialog()) {
+					debugC(1, kDebugSaveLoad,
+						"Ripper: startup Restore Game loaded manual slot");
+					startGameplay = true;
+				}
+				break;
+			case kMainMenuViewIntro:
+				debugC(1, kDebugVideo,
+					"Ripper: startup menu plays proint.avi from RunGameStartupAndMainLoop at 0x100c2");
+				if (!_media->play("proint.avi", true))
+					return shouldQuit() ? Common::kNoError : Common::kUnknownError;
+				break;
+			case kMainMenuQuit:
+				debugC(1, kDebugGeneral, "Ripper: startup menu exits the game");
+				quitGame();
 				break;
 			}
-			if (loadGameState(getAutosaveSlot()).getCode() == Common::kNoError) {
-				debugC(1, kDebugSaveLoad,
-					"Ripper: startup Continue restored emergency slot=%d",
-					getAutosaveSlot());
-				startGameplay = true;
-			}
-			break;
-		case kMainMenuLoadGame:
-			debugC(1, kDebugSaveLoad,
-				"Ripper: startup Restore Game entering manual slot chooser");
-			if (loadGameDialog()) {
-				debugC(1, kDebugSaveLoad,
-					"Ripper: startup Restore Game loaded manual slot");
-				startGameplay = true;
-			}
-			break;
-		case kMainMenuViewIntro:
-			debugC(1, kDebugVideo,
-				"Ripper: startup menu plays proint.avi from RunGameStartupAndMainLoop at 0x100c2");
-			if (!_media->play("proint.avi", true))
-				return shouldQuit() ? Common::kNoError : Common::kUnknownError;
-			break;
-		case kMainMenuQuit:
-			debugC(1, kDebugGeneral, "Ripper: startup menu exits the game");
-			quitGame();
-			break;
 		}
 	}
 
@@ -238,7 +247,7 @@ Common::Error RipperEngine::run() {
 		presentScreen();
 		_system->delayMillis(10);
 	}
-	if (_scripts->canSaveGame()) {
+	if (!isDemo && _scripts->canSaveGame()) {
 		debugC(1, kDebugSaveLoad,
 			"Ripper: scene loop exit writing emergency Continue slot=%d",
 			getAutosaveSlot());

@@ -27,6 +27,7 @@
 #include "common/str.h"
 
 namespace Common {
+class Archive;
 class SeekableReadStream;
 }
 
@@ -122,6 +123,7 @@ public:
 
 	bool open(const Common::Path &filename);
 	bool open(Common::SeekableReadStream &stream, const Common::Path &sourceName);
+	bool openLooseFiles(const Common::Archive &archive);
 	bool hasMember(const Common::String &memberName) const;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &memberName) const;
 	void listMembersWithPrefix(const Common::String &prefix,
@@ -148,6 +150,7 @@ private:
 	Common::Array<Entry> _entries;
 	Common::HashMap<Common::String, uint> _entryIndices;
 	Common::Array<byte> _archiveData;
+	const Common::Archive *_looseArchive;
 	bool _modernFormat;
 };
 
@@ -155,7 +158,7 @@ class ResourceManager {
 public:
 	ResourceManager();
 
-	bool initialize();
+	bool initialize(bool loadNestedOptions);
 	Common::SeekableReadStream *createReadStreamForPath(
 		const Common::String &memberName) const;
 	bool loadBitmap(const Common::String &memberName, BitmapAssetFrame &frame) const;

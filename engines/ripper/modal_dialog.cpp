@@ -44,11 +44,16 @@ ModalDialogManager::ModalDialogManager(RipperEngine *engine) :
 		_textEntryRestoreCursor(false), _initialized(false) {
 }
 
-bool ModalDialogManager::initialize(ResourceManager &resources) {
+bool ModalDialogManager::initialize(ResourceManager &resources, bool loadPrimaryPresentation) {
 	if (!resources.loadInterfaceBitmapFont("small.fnt", _font) ||
-			!resources.loadInterfaceBitmapFont("7pt_font.fnt", _primaryFont) ||
 			!resources.loadGameText(_gameText))
 		return false;
+	if (loadPrimaryPresentation) {
+		if (!resources.loadInterfaceBitmapFont("7pt_font.fnt", _primaryFont))
+			return false;
+	} else {
+		_primaryFont = _font;
+	}
 
 	_skin.clear();
 	_wacSkin.clear();
@@ -72,24 +77,25 @@ bool ModalDialogManager::initialize(ResourceManager &resources) {
 			return false;
 		_wacSkin.push_back(Common::move(sequence.frames.front()));
 	}
-	for (uint frameIndex = 0; frameIndex < kPrimaryScrollSkinFrameCount;
-			++frameIndex) {
-		BitmapAssetSequence sequence;
-		if (!resources.loadInterfaceBitmapSequence(
-				Common::String::format("mnarrow%u.bbm", frameIndex),
-				sequence) ||
-				sequence.frames.empty())
-			return false;
-		_primaryScrollSkin.push_back(Common::move(sequence.frames.front()));
+	if (loadPrimaryPresentation) {
+		for (uint frameIndex = 0; frameIndex < kPrimaryScrollSkinFrameCount;
+				++frameIndex) {
+			BitmapAssetSequence sequence;
+			if (!resources.loadInterfaceBitmapSequence(
+					Common::String::format("mnarrow%u.bbm", frameIndex),
+					sequence) ||
+					sequence.frames.empty())
+				return false;
+			_primaryScrollSkin.push_back(Common::move(sequence.frames.front()));
+		}
 	}
 
 	_initialized = true;
 	debugC(1, kDebugScene,
 		"Ripper: initialized modal text dialogs menubFrames=%u "
-		"wacmnuFrames=%u primaryScrollFrames=%u fonts=small.fnt,"
-		"7pt_font.fnt strings=%u",
+		"wacmnuFrames=%u primaryScrollFrames=%u primaryFont=%s strings=%u",
 		_skin.size(), _wacSkin.size(), _primaryScrollSkin.size(),
-		_gameText.size());
+		loadPrimaryPresentation ? "7pt_font.fnt" : "small.fnt", _gameText.size());
 	debugC(3, kDebugScene,
 		"Ripper: modal text font first=%u glyphs=%u lineHeight=%u spacing=%u spaceWidth=%u "
 		"transparent=%u paletteBytes=%u",

@@ -49,8 +49,10 @@ CursorManager::~CursorManager() {
 	setVisible(false);
 }
 
-bool CursorManager::initialize(ResourceManager &resources) {
-	for (uint i = 0; i < ARRAYSIZE(kCursorAssetNames); ++i) {
+bool CursorManager::initialize(ResourceManager &resources, uint assetCount) {
+	if (assetCount == 0 || assetCount > ARRAYSIZE(kCursorAssetNames))
+		return false;
+	for (uint i = 0; i < assetCount; ++i) {
 		if (!resources.loadInterfaceBitmapSequence(kCursorAssetNames[i], _assets[i]))
 			return false;
 	}
@@ -60,7 +62,7 @@ bool CursorManager::initialize(ResourceManager &resources) {
 	_cursorIndex = 0;
 	_frameIndex = 0;
 	_nextFrameMillis = 0;
-	debugC(1, kDebugCursor, "Ripper: loaded %u cursor assets", ARRAYSIZE(kCursorAssetNames));
+	debugC(1, kDebugCursor, "Ripper: loaded %u cursor assets", assetCount);
 	return true;
 }
 

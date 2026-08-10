@@ -32,7 +32,7 @@ public:
 	CursorManager();
 	~CursorManager();
 
-	bool initialize(ResourceManager &resources);
+	bool initialize(ResourceManager &resources, uint assetCount);
 	void setSelectionIndex(int cursorIndex);
 	void dispatchSelectionIndexChange(int cursorIndex);
 	void applyCustomCursor(const BitmapAssetFrame &frame,

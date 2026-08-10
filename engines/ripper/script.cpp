@@ -215,7 +215,8 @@ SceneRuntimeState::SceneRuntimeState() : activeFrame(0), frontEndActionMask(0xff
 		cyberKeyboardCommand(0) {
 }
 
-ScriptManager::ScriptManager(RipperEngine *engine) : _engine(engine), _runtimeRestorePending(false),
+ScriptManager::ScriptManager(RipperEngine *engine) : _engine(engine), _demoScriptAbi(false),
+		_runtimeRestorePending(false),
 		_sceneCallbackFrame(0),
 		_activeIdleMediaCallback(nullptr), _chooserTemplateMode(0),
 		_briefing(new BriefingManager(engine)), _dialogue(new DialogueChooser()) {
@@ -428,9 +429,10 @@ bool ScriptManager::openInventory(int initialUnlockFlag, bool grantItem) {
 	return inventoryResult != Inventory::kLoadFailed;
 }
 
-bool ScriptManager::initialize(ResourceManager &resources) {
-	return _briefing->initialize(resources) &&
-		_dialogue->initialize(resources) &&
+bool ScriptManager::initialize(ResourceManager &resources, bool loadRetailOverlays) {
+	_demoScriptAbi = !loadRetailOverlays;
+	return (!loadRetailOverlays || _briefing->initialize(resources)) &&
+		_dialogue->initialize(resources, loadRetailOverlays) &&
 		_startup.load(resources.scripts(), "ripper.run") &&
 		_runtime.activeScript.load(resources.scripts(), "ba0.run");
 }
@@ -822,16 +824,25 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 		}
 
 		case kPlayMedia: {
-			if (command.arguments.size() < 5)
+			const uint expectedArgumentCount = _demoScriptAbi ? 4 : 5;
+			if (command.arguments.size() < expectedArgumentCount)
 				return false;
 			const Common::String mediaPath = script.getString(command.arguments[0].value);
-			const bool allowEscSpace = command.arguments[2].value == 0;
+			// The demo's opcode handler at 0x13e46 calls FUN_000142bb with
+			// path, auxiliary text, Y, and X, and forces its scene-presentation
+			// control argument to one. The retail handler at 0x159e1 inserts a
+			// separate keyboard-control argument before its placement pair.
+			const bool allowEscSpace = _demoScriptAbi || command.arguments[2].value == 0;
+			const int x = (int32)command.arguments[3].value;
+			const int y = (int32)command.arguments[_demoScriptAbi ? 2 : 4].value;
+			debugC(3, kDebugScripts,
+				"Ripper: media command ABI=%s path='%s' controls=%d position=%d,%d",
+				_demoScriptAbi ? "demo" : "retail", mediaPath.c_str(), allowEscSpace, x, y);
 			// ExecutePresentationEntry at 0x1652a deactivates the UI selection
 			// presentation before media playback. The following frame activation
 			// restores the cursor after the callback finishes.
 			_engine->getCursor()->setVisible(false);
-			if (!_engine->getMedia()->play(mediaPath, allowEscSpace,
-				(int32)command.arguments[3].value, (int32)command.arguments[4].value, true))
+			if (!_engine->getMedia()->play(mediaPath, allowEscSpace, x, y, true))
 				return false;
 			// HandleSceneEntryMediaAndSetBasenameFlag at 0x159e1 marks the
 			// presentation basename only after ExecutePresentationEntry returns.
@@ -869,10 +880,24 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 		}
 
 		case kStartSceneRuntime: {
-			if (command.arguments.size() < 3)
+			const uint expectedArgumentCount = _demoScriptAbi ? 2 : 3;
+			if (command.arguments.size() < expectedArgumentCount)
 				return false;
 			const Common::String target = argumentString(command.arguments[0]);
 			const Common::String entryLabel = argumentString(command.arguments[1]);
+			// The demo handler at 0x140dc has only the target and entry-label
+			// arguments. It stores both pending pointers and returns -3
+			// unconditionally; the retail handler adds the concurrency selector.
+			if (_demoScriptAbi) {
+				_runtime.pendingSceneMember = compiledScriptMemberName(target);
+				_runtime.pendingSceneEntryLabel = entryLabel;
+				debugC(1, kDebugScene,
+					"Ripper: queued demo script transition target='%s' entry='%s' source='%s'",
+					_runtime.pendingSceneMember.c_str(), _runtime.pendingSceneEntryLabel.c_str(),
+					script.getMemberName().c_str());
+				result = -3;
+				return true;
+			}
 			// HandleSceneEntryAndStartConcurrentSceneRuntime at 0x15cd3 always
 			// turns opcode 0x1d into a scene handoff when the command belongs to
 			// the concurrent runtime. The third argument only selects this path

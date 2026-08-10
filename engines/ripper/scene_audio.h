@@ -26,6 +26,7 @@
 
 namespace Common {
 class Serializer;
+class SeekableReadStream;
 }
 
 namespace Ripper {
@@ -78,6 +79,7 @@ private:
 	static Common::String keyFromPath(const Common::String &path);
 	Slot *find(const Common::String &key);
 	const Slot *find(const Common::String &key) const;
+	Common::SeekableReadStream *openSource(const Common::String &path) const;
 	bool start(Slot &slot);
 	void clearSlot(Slot &slot);
 	void applyVolume(Slot &slot);

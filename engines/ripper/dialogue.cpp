@@ -30,22 +30,25 @@ static const uint16 kEnterCommand = 0x0d;
 static const uint16 kUpCommand = 0x4800;
 static const uint16 kDownCommand = 0x5000;
 
-bool DialogueChooser::initialize(ResourceManager &resources) {
+bool DialogueChooser::initialize(ResourceManager &resources, bool loadScrollArrows) {
 	if (!resources.loadInterfaceBitmapFont("small.fnt", _font))
 		return false;
-	_arrowFrames.resize(4);
-	for (uint i = 0; i < _arrowFrames.size(); ++i) {
-		BitmapAssetSequence sequence;
-		if (!resources.loadInterfaceBitmapSequence(
-				Common::String::format("mnarrow%u.bbm", i), sequence) ||
-				sequence.frames.empty())
-			return false;
-		_arrowFrames[i] = sequence.frames[0];
+	_arrowFrames.clear();
+	if (loadScrollArrows) {
+		_arrowFrames.resize(4);
+		for (uint i = 0; i < _arrowFrames.size(); ++i) {
+			BitmapAssetSequence sequence;
+			if (!resources.loadInterfaceBitmapSequence(
+					Common::String::format("mnarrow%u.bbm", i), sequence) ||
+					sequence.frames.empty())
+				return false;
+			_arrowFrames[i] = sequence.frames[0];
+		}
 	}
 	debugC(2, kDebugDialogue,
-		"Ripper: initialized dialogue colors normal=%u/%u selected=%u/%u",
+		"Ripper: initialized dialogue colors normal=%u/%u selected=%u/%u scrollArrows=%u",
 		kNormalTextColor, kNormalBackgroundColor,
-		kSelectedTextColor, kSelectedBackgroundColor);
+		kSelectedTextColor, kSelectedBackgroundColor, _arrowFrames.size());
 	return true;
 }
 
