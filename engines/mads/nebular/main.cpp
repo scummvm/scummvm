@@ -52,7 +52,6 @@
 namespace MADS {
 namespace RexNebular {
 
-//constexpr bool SHOW_LINES = true;
 constexpr byte LINE_COLOR = 2;
 
 char *quotes;

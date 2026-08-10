@@ -619,7 +619,6 @@ static void room_113_parser() {
 					break;
 
 				case 1:
-					/* sound_queue (N_PickUpObject006);*/
 					kernel_seq_delete(seq[fx_rare_coin]);
 					kernel_flip_hotspot(words_rare_coin, false);
 					sound_play(N_TakeObjectSnd);
@@ -698,7 +697,6 @@ static void room_113_parser() {
 					break;
 
 				case 1:
-					/* sound_queue (N_PickUpObject006);*/
 					kernel_seq_delete(seq[fx_emerald]);
 					kernel_flip_hotspot(words_emerald, false);
 					sound_play(N_TakeObjectSnd);

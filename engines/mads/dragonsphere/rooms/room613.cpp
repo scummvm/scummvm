@@ -257,9 +257,6 @@ static void room_613_daemon() {
 		break;
 
 	case 10:
-		/* if (game.difficulty == EASY_MODE) { */
-		  /* text_show (61316); */
-		/* } */
 		player.x = local->old_x;
 		player.y = local->old_y;
 		new_room = 606;

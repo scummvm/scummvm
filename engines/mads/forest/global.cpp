@@ -1196,9 +1196,6 @@ static void do_looping_sounds() {
 }
 
 void global_game_main_loop() {
-	//static char temp_buf_2[20];
-	//static char temp_buf_3[20];
-	//static char temp_buf_4[20];
 	int yy;
 	long dif;
 

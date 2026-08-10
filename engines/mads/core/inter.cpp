@@ -599,12 +599,6 @@ void inter_prepare_background() {
 }
 
 static void inter_refresh() {
-	// int count;
-	// for (count = 0; count < (int)image_inter_marker; count++) {
-	// if (image_inter_list[count].segment_id == INTER_SPINNING_OBJECT) {
-	// image_inter_list[count].flags = IMAGE_REFRESH + IMAGE_UPDATE_ONLY;
-	// }
-	// }
 	image_inter_marker = 0;
 	matte_refresh_inter();
 
@@ -1420,7 +1414,6 @@ static void inter_compile_sentence() {
 
 			inter_add_word_to_sentence(inter_verb, true);
 			if (inter_verb == words_look) {
-				// inter_prep = PREP_AT;
 				Common::strcat_s(inter_sentence, istring_prep_names[PREP_AT]);
 				Common::strcat_s(inter_sentence, istring_space);
 			}

@@ -340,7 +340,6 @@ static void handle_animation_001() {
 			break;
 
 		case 315:  /* end of CALLING_TURN_AND_WALK */
-			/* global[brie_talk_status] = AFTER_CONVS_0_AND_1; */
 			kernel_abort_animation(aa[1]);
 			break;
 		}

@@ -215,7 +215,6 @@ void kernel_game_shutdown() {
 	pack_set_special_buffer(NULL, NULL);
 
 	object_unload();
-	// inter_deallocate_objects();
 	popup_available = false;
 
 	// Remove special keyboard handler

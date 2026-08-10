@@ -306,7 +306,6 @@ int himem_preload(char *filename, int level) {
 			if (ems_copy_it_up(new_handle, &page_marker, &page_offset, load_buf, read_size)) goto done;
 		} else {
 
-			// printf ("Record %d (Size: %ld, Offset: %ld)\n", count, read_size, xms_offset);
 			if (xms_copy(read_size,
 				MEM_CONV, load_buf,
 				xms_handle, (XMS)xms_offset)) goto done;

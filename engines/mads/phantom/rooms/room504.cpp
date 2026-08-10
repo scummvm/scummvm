@@ -353,7 +353,6 @@ void room_504_init() {
 				kernel_draw_to_background(ss[fx_burn], 1, KERNEL_HOME, KERNEL_HOME, 0, 100);
 
 				ss[fx_test] = kernel_load_series("*CHR_3", false);
-				/* ss[fx_test]       = kernel_load_series(kernel_name('b', 0), false); */
 				ss[fx_test] = kernel_load_series("*FACERAL", PAL_MAP_ALL_TO_CLOSEST |
 					PAL_MAP_ANY_TO_CLOSEST);
 				ss[fx_test] = kernel_load_series("*FACEXDFR", PAL_MAP_ALL_TO_CLOSEST |
@@ -1047,7 +1046,6 @@ static void handle_animation_play_organ() {
 
 static void handle_animation_phantom_1() {
 	int phan_reset_frame;
-	/* int id; */
 
 
 

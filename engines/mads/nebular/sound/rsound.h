@@ -243,8 +243,6 @@ protected:
 	// ---- Low-level MIDI send helpers -------------------------------
 	// All funnel through sendMidiByte(), the single hook point for
 	// wiring up real MT-32/MIDI output.
-	//void sendMidiByte(byte value);
-	//void sendStatus(int midiChannel, byte statusNibble);
 	void sendNoteOn(int midiChannel, int note, int velocity);
 	void sendProgramChange(int midiChannel, int program);
 	void sendVolume(int midiChannel, int volume);

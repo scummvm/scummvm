@@ -1222,7 +1222,6 @@ vol_advance:
 				pSrc++;
 				ch->_patchAttenuation = *pSrc;
 				ch->_pSrc += 2;
-				//var_8 = 1;
 				goto dispatch;
 			}
 
@@ -1269,7 +1268,6 @@ vol_advance:
 				(void)getRandomNumber();
 				uint16 rnd = _randomSeed & 0x7FFF;
 				uint16 idx = (uint16)((int16)rnd % (int16)var_C);
-				//var_6 = idx;
 
 				uint8 chosen = *(base + idx);
 				uint8 target = *(base + var_C);

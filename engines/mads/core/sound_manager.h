@@ -108,8 +108,6 @@ public:
 	SoundManager(Audio::Mixer *mixer, bool &soundFlag);
 	virtual ~SoundManager();
 
-	//bool _preferRoland = false;
-
 	/**
 	 * Validate the sound driver files needed for data
 	 */

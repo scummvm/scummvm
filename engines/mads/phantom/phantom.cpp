@@ -650,7 +650,6 @@ void PhantomEngine::global_parser_code() {
 			inter_move_object(rope, NOWHERE);
 			inter_give_to_player(rope_with_hook);
 			object_examine(rope_with_hook, text_008_23, 0);
-			/* text_show (text_008_23); */
 		}
 		goto handled;
 	}

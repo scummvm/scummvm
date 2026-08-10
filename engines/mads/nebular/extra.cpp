@@ -380,7 +380,6 @@ RoomPtr room_load(int id, int variant, const char *base_path, Buffer *picture,
 
 	width = roomfile.xs;
 	height = roomfile.ys;
-	//picSize = width * height;
 
 	if (!picture->data)
 		buffer_init(picture, width, height);

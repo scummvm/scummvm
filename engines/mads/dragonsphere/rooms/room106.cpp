@@ -701,13 +701,11 @@ static void handle_animation_a_queen() {
 			case QUEEN_TALK:
 				a_q_reset_frame = 3;
 				local->a_q_action = QUEEN_SHUT_UP;
-				/* local->a_q_talk_count = 100; */
 				break;
 
 			case QUEEN_FIST:
 				a_q_reset_frame = 20;
 				local->a_q_action = QUEEN_SHUT_UP;
-				/* local->a_q_talk_count = 100; */
 				break;
 
 			case QUEEN_SHUT_UP:
@@ -729,7 +727,6 @@ static void handle_animation_a_queen() {
 			case QUEEN_GET_UP:
 				a_q_reset_frame = 37;
 				local->a_q_action = QUEEN_SHUT_UP;
-				/* local->a_q_talk_count = 100; */
 				break;
 			}
 			break;

@@ -87,8 +87,6 @@ void DragonsphereEngine::global_init_code() {
 		global[count] = 0;
 	}
 
-	/* initialize_grid (); */
-
 	global[grid_position] = 5;
 	global[grid_position + 1] = 4;
 	global[grid_position + 2] = 9;

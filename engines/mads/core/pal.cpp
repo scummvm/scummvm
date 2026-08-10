@@ -473,7 +473,6 @@ int pal_allocate(ColorListPtr new_list, ShadowListPtr shadow_list, int pal_flags
 					found = true;
 					best_target_color = target_color;
 					*(RGBcolor *) &master_palette[target_color].r = *(RGBcolor *) & new_list->table[list_color].r;
-					// memcpy(&(master_palette[target_color].r), &(new_list->table[list_color].r), 3);
 				}
 			}
 		}

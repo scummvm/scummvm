@@ -79,7 +79,6 @@ void room_304_init() {
 
 		kernel_set_interface_mode(INTER_LIMITED_SENTENCES);
 
-		/* viewing_at_y = ((video_y - display_y) >> 1); */
 
 		if (previous_room == 305) {
 			ss[fx_chan_tilt] = kernel_load_series(kernel_name('f', 0), false);
@@ -143,7 +142,6 @@ static void process_conversation_23() {
 
 	case conv023_die_b_b:
 		local->phantom_action = CONV23_PHANTOM_FIGHT;
-		/* conv_hold (); */
 		break;
 
 	case conv023_okay_abc:

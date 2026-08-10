@@ -59,7 +59,6 @@ void fastcall sprite_free(SeriesPtr *series, int free_memory) {
 	if (kidney) {
 		/* release the flag - dont deallocate the colors from the list */
 		if ((*series)->color_handle) pal_deallocate((*series)->color_handle);
-		/* flag_used[(*series)->color_handle] = false; */
 	} else {
 		/* deallocate the colors from the list */
 		if ((*series)->color_handle) pal_deallocate((*series)->color_handle);

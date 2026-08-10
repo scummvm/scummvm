@@ -233,8 +233,6 @@ static void process_menu() {
 
 	myspot = hspot_which(mouse_x, mouse_y - viewing_at_y, mcga_mode);
 
-	//current_eye = false;
-
 	if ((myspot > 0) && mouse_any_stroke && (menu_mode == MENU_ACCEPTING_COMMANDS)) {
 		current_item = spot[myspot].num;
 	} else {

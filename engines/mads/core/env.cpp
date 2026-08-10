@@ -578,7 +578,6 @@ char *env_get_level_path(char *out, int item_type, const char *file_spec, int fi
 	if ((item_type == SECTION) || (item_type == ROOM)) {
 		if ((item_type == ROOM) && (first_level == 0)) {
 			first_level = second_level / 100;
-			// first_level = room_get_section (second_level);
 		}
 	}
 

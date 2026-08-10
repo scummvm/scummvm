@@ -227,7 +227,6 @@ static void room_609_daemon() {
 			local->prevent = true;
 			player_walk(DEATH_X, DEATH_Y, FACING_WEST);
 			player_walk_trigger(ROOM_609_DONE_WALK);
-			/* error_watch_point ("you're dead", kernel.trigger, kernel.trigger); */
 		}
 	}
 

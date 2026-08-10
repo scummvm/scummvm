@@ -96,7 +96,6 @@ void mouse_begin_cycle(int double_flag) {
 
 	mouse_status = mouse_get_status(&mouse_x, &mouse_y);
 	mouse_clock = timer_read();
-	// mouse_video_mode = mouse_get_video_mode();
 	mouse_stop_stroke = (mouse_latched && (!mouse_status));
 	mouse_start_stroke = (mouse_status && !mouse_stroke_going);
 	mouse_stroke_going = mouse_status;

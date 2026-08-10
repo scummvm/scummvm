@@ -629,13 +629,9 @@ static void room_201_init() {
 
 	if (global[player_persona] == PLAYER_IS_KING && !global[dome_up]) {
 		ss[fx_testicle_1] = kernel_load_series(kernel_name('y', 0), false);
-		/* flag_used[10]     = false; */
 		ss[fx_testicle_2] = kernel_load_series(kernel_name('y', 2), false);
-		/* flag_used[10]     = false; */
 		ss[fx_testicle_3] = kernel_load_series(kernel_name('y', 3), false);
-		/* flag_used[10]     = false; */
 		ss[fx_testicle_4] = kernel_load_series(kernel_name('y', 4), false);
-		/* flag_used[10]     = false; */
 	}
 
 	ss[fx_guard_1_dead] = kernel_load_series(kernel_name('g', 2), false);
@@ -824,7 +820,6 @@ static void room_201_init() {
 	set_vine_2_position();
 	set_vine_3_position();
 
-	/* kernel_timing_trigger (10, MUSIC); */
 
 	section_2_music();
 }
@@ -1808,13 +1803,11 @@ static void process_conv_king_guards() {
 		player.commands_allowed = false;
 		local->guard_right_action = UNHALT;
 		player_walk(PLAYER_X_FROM_120, PLAYER_Y_FROM_120, FACING_WEST);
-		/* player.walking = true; */
 
 		global[pre_room] = 201;
 		if (global[dragon_my_scene] < global[dragon_high_scene]) {
 			global[dragon_my_scene]++;
 			player.walk_off_edge_to_room = 111;
-			/* local->cut_scene = true; */
 		} else {
 			player.walk_off_edge_to_room = 120;
 		}
@@ -1849,13 +1842,11 @@ static void process_conv_king_guards() {
 		you_trig_flag = true;
 		conv_abort();
 		player_walk(PLAYER_X_FROM_120, PLAYER_Y_FROM_120, FACING_WEST);
-		/* player.walking = true; */
 
 		global[pre_room] = 201;
 		if (global[dragon_my_scene] < global[dragon_high_scene]) {
 			global[dragon_my_scene]++;
 			player.walk_off_edge_to_room = 111;
-			/* local->cut_scene = true; */
 		} else {
 			player.walk_off_edge_to_room = 120;
 		}
@@ -1880,7 +1871,6 @@ static void process_conv_king_guards() {
 		conv_abort();
 		player.commands_allowed = false;
 		local->guard_left_action = DUMP_ANIMS;
-		/* local->guard_right_action = UNHALT_DUMP_ANIMS; */
 		local->guard_right_action = DUMP_ANIMS;
 	}
 
@@ -2001,11 +1991,9 @@ static void room_201_pre_parser() {
 	if (player_said_2(walk_down, path_to_west)) {
 		if (global[player_persona] == PLAYER_IS_KING) {
 			if (global[object_given_201] == -1) {
-				/* conv_reset (CONV_47_KING); */
 				global[reset_conv] = 47;
 
 				player_walk(PLAYER_X_FROM_120, PLAYER_Y_FROM_120, FACING_EAST);
-				/* player.walking = true; */
 
 				player.commands_allowed = false;
 
@@ -2015,7 +2003,6 @@ static void room_201_pre_parser() {
 						global[dragon_my_scene]++;
 					}
 					player.walk_off_edge_to_room = 111;
-					/* local->cut_scene = true; */
 
 				} else if (local->cut_scene) {
 					player.walk_off_edge_to_room = 111;
@@ -2218,10 +2205,6 @@ static void room_201_parser() {
 		if (global[player_persona] == PLAYER_IS_KING) {
 			player.commands_allowed = false;
 			local->guard_left_action = GIVE_NOTHING;
-
-			/* if (global[given_object_before]) { */
-			  /* local->guard_right_action = UNHALT; */
-			/* } */
 
 		} else {
 			if (player_said_1(soporific)) {

@@ -816,7 +816,6 @@ void room_505_daemon() {
 		local->they_parted = true;
 		local->anim_2_running = true;
 		local->anim_1_running = false;
-		/* player.commands_allowed = false; */
 		aa[2] = kernel_run_animation(kernel_name('b', 1), 0);
 		id = kernel_add_dynamic(words_Christine, words_walk_to, SYNTAX_SINGULAR_FEM, KERNEL_NONE,
 			0, 0, 0, 0);

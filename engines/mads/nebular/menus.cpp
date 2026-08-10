@@ -1060,7 +1060,6 @@ static void game_menu_options() {
 		save_config = config_file;
 	} else {
 		write_config_file();
-		//game_load_config_parameters();
 	}
 }
 

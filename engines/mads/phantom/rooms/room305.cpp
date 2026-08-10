@@ -56,7 +56,6 @@ void room_305_init() {
 
 	global_speech_load(speech_raoul_strangle);
 
-	/* viewing_at_y = ((video_y - display_y) >> 1); */
 
 	kernel.quotes = quote_load(quote_305a0, quote_305a1, 0);
 
@@ -97,7 +96,6 @@ done:
 
 static void handle_animation_unmask() {
 	int unmask_reset_frame;
-	/* int id; */
 
 	if (kernel_anim[aa[0]].frame != local->unmask_frame) {
 		local->unmask_frame = kernel_anim[aa[0]].frame;

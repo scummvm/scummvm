@@ -1033,7 +1033,6 @@ int game_parse_keystroke(int mykey) {
 
 	case ctrl_k_key:
 		inter_report_hotspots = !inter_report_hotspots;
-		// config_file.interface_hotspots = inter_report_hotspots ? INTERFACE_BRAINDEAD : INTERFACE_MACINTOSH;
 		inter_init_sentence();
 		break;
 
@@ -1259,12 +1258,10 @@ void game_control() {
 				g_engine->getGameID() == GType_RexNebular || !player.walker_is_loaded);
 
 			quote_emergency = false;
-			// vocab_emergency = false;
 			game_wait_cursor();
 
 			kernel.quotes = NULL;
 
-			// vocab_init_active();
 			kernel_init_dynamic();
 
 			game_exec_function(section_room_constructor);
@@ -2069,8 +2066,6 @@ done:
 }
 
 void game_debugger_reset() {
-	//screen = mono_text_video;
-
 	screen_normal_color = colorbyte(hi_white, black);
 	screen_hilite_color = screen_normal_color + 128;
 
@@ -2091,7 +2086,6 @@ static void game_main_update() {
 	screen_printf(0, 2, "%-3d, %-3d Mem: %-6ld Min: %-6ld", room_id, previous_room, mem_get_avail(), mem_min_free);
 
 	screen_printf(0, 4, "%s @ %3d, %3d Dpt: %d   ", player.series_name, player.x, player.y, player.depth);
-	// screen_printf (0, 5, "        Series: %d   Sprite: %-2d   Mirror: %-2d   Frame Rate: %d    ", player.series, player.sprite, player.mirror, player.frame_delay);
 	screen_printf(0, 7, "Sc: %-3d  Fr %d => %d%, Bk %d => %d%", player.scale, room->front_y, room->front_scale, room->back_y, room->back_scale);
 
 	if (!player.walker_visible) {
@@ -2249,8 +2243,6 @@ static void game_palette_update() {
 			delta = old_free - free;
 		}
 
-		// screen_printf (0, 22, "Free: %-3d", free);
-		// screen_printf (0, 23, "Previous: %-3d", old_free);
 		screen_printf(0, 24, "Added: %-3d", delta);
 
 
@@ -2442,29 +2434,30 @@ static void game_matte() {
 		if (count < image_max) {
 			switch (image_list[count].flags) {
 			case IMAGE_UPDATE:
-				// Common::strcpy_s (flags_buf, "Update");
+				Common::strcpy_s (flags_buf, "Update");
 				break;
 
 			case IMAGE_STATIC:
-				// Common::strcpy_s (flags_buf, "Static");
+				Common::strcpy_s (flags_buf, "Static");
 				break;
 
 			case IMAGE_ERASE:
-				// Common::strcpy_s (flags_buf, "Erase");
+				Common::strcpy_s (flags_buf, "Erase");
 				break;
 
 			case IMAGE_REFRESH:
-				// Common::strcpy_s (flags_buf, "Refresh");
+				Common::strcpy_s (flags_buf, "Refresh");
 				break;
 
 			case IMAGE_DELTA:
-				// Common::strcpy_s (flags_buf, "Delta");
+				Common::strcpy_s (flags_buf, "Delta");
 				break;
 
 			default:
 				Common::sprintf_s(flags_buf, "(%d)", image_list[count].flags);
 				break;
 			}
+
 			if (image_list[count].flags != IMAGE_REFRESH) {
 				series_id = image_list[count].series_id;
 				Common::strcpy_s(name_buf, series_name[series_id]);

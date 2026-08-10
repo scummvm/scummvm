@@ -108,8 +108,6 @@ extern int selected_intro;
 
 #define EXTRA_MAX_INV_OBJECTS 18   /* 16, + background, + open backpack */
 
-/* int inven_ss[EXTRA_MAX_INV_OBJECTS]; */
-/* int inven_seq[EXTRA_MAX_INV_OBJECTS]; */
 
 
 /* Declared by Taranjeet for OUAF Journal */
