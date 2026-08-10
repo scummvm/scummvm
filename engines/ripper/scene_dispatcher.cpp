@@ -60,6 +60,7 @@
 #include "ripper/scenes/ebz2s_scene.h"
 #include "ripper/scenes/gym_scene.h"
 #include "ripper/scenes/tube_scene.h"
+#include "ripper/scene_audio.h"
 #include "ripper/script.h"
 #include "ripper/wac/wac.h"
 
@@ -131,6 +132,8 @@ const char *SceneActionDispatcher::actionName(uint action) {
 	case kSceneActionEightButtonSequencePuzzle: return "eight-button sequence puzzle";
 	case kSceneActionCainDialogue: return "Cain dialogue scene";
 	case kSceneActionAppendNotebookText: return "append resource string to RIPPER.TXT";
+	case 200: return "start demo prologue cue";
+	case 201: return "stop demo prologue cue";
 	case 300: return "arm briefing media trigger";
 	case 9999: return "terminate scene runtime";
 	default: return "unknown";
@@ -539,6 +542,19 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 	}
 	if (action == kSceneActionAppendNotebookText)
 		return engine->getWac()->appendNotebookResourceString(argument);
+	if (manager._demoScriptAbi && action == 200) {
+		// The demo initializer at 0x10794 loads R_P_L1.WAV into its persistent
+		// audio descriptor. DispatchSceneEntryAction at 0x13a52 enqueues that
+		// descriptor for action 200 and applies the normal 0x2fff volume.
+		SceneAudioManager *sceneAudio = engine->getSceneAudio();
+		return sceneAudio->load("r_p_l1.wav", false) &&
+			sceneAudio->configure("r_p_l1", 100, 0, 0);
+	}
+	if (manager._demoScriptAbi && action == 201) {
+		// The adjacent action-201 branch at 0x13bf5 stops the retained handle.
+		engine->getSceneAudio()->stop("r_p_l1");
+		return true;
+	}
 	if (action == kSceneActionTerminateRuntime) {
 		if (manager._runtime.cyberActive)
 			manager.requestCyberExit("scene-action-9999");

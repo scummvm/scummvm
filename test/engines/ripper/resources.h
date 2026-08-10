@@ -18,6 +18,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "common/archive.h"
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/ptr.h"
@@ -25,8 +26,54 @@
 
 #include <cxxtest/TestSuite.h>
 
+class RipperLooseFileTestArchive : public Common::Archive {
+public:
+	bool hasFile(const Common::Path &path) const override {
+		return path == Common::Path("ripper.run");
+	}
+
+	int listMembers(Common::ArchiveMemberList &list) const override {
+		list.push_back(Common::ArchiveMemberPtr(
+			new Common::GenericArchiveMember(Common::Path("ripper.run"), *this)));
+		return 1;
+	}
+
+	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override {
+		if (!hasFile(path))
+			return Common::ArchiveMemberPtr();
+		return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
+	}
+
+	Common::SeekableReadStream *createReadStreamForMember(
+			const Common::Path &path) const override {
+		static const byte data[] = { 0x96, 0x00, 0xaa, 0xbb };
+		return hasFile(path) ?
+			new Common::MemoryReadStream(data, sizeof(data), DisposeAfterUse::NO) : nullptr;
+	}
+};
+
 class RipperResourceTestSuite : public CxxTest::TestSuite {
 public:
+	void testEmptyArchivePathIsRejectedWithoutOpeningAFile() {
+		Ripper::AssetLibrary library;
+
+		TS_ASSERT(!library.open(Common::Path()));
+	}
+
+	void testLooseFileSourceUsesProvidedSearchArchive() {
+		RipperLooseFileTestArchive archive;
+		Ripper::AssetLibrary library;
+
+		TS_ASSERT(library.openLooseFiles(archive));
+		TS_ASSERT(library.hasMember("ripper.run"));
+		TS_ASSERT(!library.hasMember("missing.run"));
+		Common::ScopedPtr<Common::SeekableReadStream> member(
+			library.createReadStreamForMember("ripper.run"));
+		TS_ASSERT(member);
+		TS_ASSERT_EQUALS(member->size(), 4);
+		TS_ASSERT_EQUALS(member->readUint16LE(), 150);
+	}
+
 	void testLegacyLibraryDirectoryAndMemberStreams() {
 		const byte data[] = {
 			0x02, 0x00, 0x0a, 0x00, 0x00, 0x00,

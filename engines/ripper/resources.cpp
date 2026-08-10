@@ -387,7 +387,7 @@ bool decodePresentationFrameAudioMap(Common::SeekableReadStream &stream,
 	return !stream.err();
 }
 
-AssetLibrary::AssetLibrary() : _modernFormat(false) {
+AssetLibrary::AssetLibrary() : _looseArchive(nullptr), _modernFormat(false) {
 }
 
 Common::String AssetLibrary::readFixedString(const char *data, uint length) {
@@ -431,8 +431,13 @@ bool AssetLibrary::open(const Common::Path &filename) {
 	_entryIndices.clear();
 	_archiveData.clear();
 	_filename = filename;
+	_looseArchive = nullptr;
 	_modernFormat = false;
 
+	if (filename.empty()) {
+		warning("Ripper: cannot open an asset library with an empty filename");
+		return false;
+	}
 	if (!file.open(filename)) {
 		warning("Ripper: could not open asset library '%s'", filename.toString().c_str());
 		return false;
@@ -451,12 +456,23 @@ bool AssetLibrary::open(Common::SeekableReadStream &stream, const Common::Path &
 	_entryIndices.clear();
 	_archiveData.clear();
 	_filename = sourceName;
+	_looseArchive = nullptr;
 	_modernFormat = false;
 	if (!readStream(stream, _archiveData) || _archiveData.size() < 6)
 		return false;
 
 	Common::MemoryReadStream memory(_archiveData.data(), _archiveData.size(), DisposeAfterUse::NO);
 	return loadDirectory(memory, _archiveData.size());
+}
+
+bool AssetLibrary::openLooseFiles(const Common::Archive &archive) {
+	_entries.clear();
+	_entryIndices.clear();
+	_archiveData.clear();
+	_filename = Common::Path();
+	_looseArchive = &archive;
+	_modernFormat = false;
+	return true;
 }
 
 bool AssetLibrary::loadDirectory(Common::SeekableReadStream &file, uint32 fileSize) {
@@ -549,10 +565,29 @@ const AssetLibrary::Entry *AssetLibrary::findEntry(const Common::String &memberN
 }
 
 bool AssetLibrary::hasMember(const Common::String &memberName) const {
+	if (_looseArchive)
+		return !memberName.empty() && _looseArchive->hasFile(Common::Path(memberName));
 	return findEntry(memberName) != nullptr;
 }
 
 Common::SeekableReadStream *AssetLibrary::createReadStreamForMember(const Common::String &memberName) const {
+	if (_looseArchive) {
+		if (memberName.empty()) {
+			warning("Ripper: cannot open an empty loose resource name");
+			return nullptr;
+		}
+
+		Common::SeekableReadStream *stream =
+			_looseArchive->createReadStreamForMember(Common::Path(memberName));
+		if (!stream) {
+			warning("Ripper: loose resource '%s' was not found", memberName.c_str());
+			return nullptr;
+		}
+		debugC(2, kDebugResources, "Ripper: opening loose resource '%s'",
+			memberName.c_str());
+		return stream;
+	}
+
 	const Entry *entry = findEntry(memberName);
 	if (!entry) {
 		warning("Ripper: member '%s' was not found in '%s'", memberName.c_str(), _filename.toString().c_str());
@@ -594,7 +629,7 @@ void AssetLibrary::listMembersWithPrefix(const Common::String &prefix,
 ResourceManager::ResourceManager() : _gameTextLoaded(false) {
 }
 
-bool ResourceManager::initialize() {
+bool ResourceManager::initialize(bool loadNestedOptions) {
 	_fontCache.clear();
 	_gameTextCache.clear();
 	_gameTextLoaded = false;
@@ -636,10 +671,20 @@ bool ResourceManager::initialize() {
 	debugC(2, kDebugResources,
 		"Ripper: configured explicit resource fallback directories=%u",
 		_searchDirectories.size());
-	if (!_scripts.open(Common::Path(scriptLibrary)) ||
+	const bool scriptSourceReady = scriptLibrary.empty() ?
+		_scripts.openLooseFiles(SearchMan) :
+		_scripts.open(Common::Path(scriptLibrary));
+	if (scriptLibrary.empty())
+		debugC(1, kDebugResources, "Ripper: using loose script resources from the game directory");
+	if (!scriptSourceReady ||
 			!_interface.open(Common::Path(interfaceLibrary)) ||
 			!_sound.open(Common::Path(soundLibrary)))
 		return false;
+	if (!loadNestedOptions) {
+		debugC(1, kDebugResources,
+			"Ripper: skipped retail nested OPTIONS.PL for loose-script distribution");
+		return true;
+	}
 	Common::ScopedPtr<Common::SeekableReadStream> optionsStream(
 		_interface.createReadStreamForMember("options.pl"));
 	if (!optionsStream || !_options.open(*optionsStream, Common::Path("options.pl"))) {
