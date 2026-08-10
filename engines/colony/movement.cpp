@@ -158,6 +158,9 @@ struct ObjectFootprint {
 	int halfY;
 };
 
+// Fills fp with the object's collision box in its own rotated space. Returning
+// false means "no footprint" — the caller then blocks the whole cell, the way
+// CHCKWALL.C did for every object.
 bool objectFootprintForType(int type, ObjectFootprint &fp) {
 	fp.centerX = 0;
 	fp.centerY = 0;
@@ -236,9 +239,14 @@ bool objectFootprintForType(int type, ObjectFootprint &fp) {
 		return true;
 	case kObjBox1:
 	case kObjBox2:
-		fp.halfX = 55;
-		fp.halfY = 55;
-		return true;
+		// No footprint on purpose: storage crates keep CHCKWALL.C's full-cell
+		// block. The level design seals doorways with them until the forklift
+		// carries them off (the first door on colony floor 1, MAP.2 (11,1)->(12,1),
+		// is blocked by the crate in (12,1) and must report text 75). Any
+		// footprint smaller than the cell lets the player squeeze past, and
+		// several crates are placed at odd angles, so even a full 128x128 box
+		// would leave a rotated corner open.
+		return false;
 	case kObjForkLift:
 		fp.halfX = 100;
 		fp.halfY = 120;
