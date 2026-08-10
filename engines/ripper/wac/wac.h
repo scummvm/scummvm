@@ -46,7 +46,7 @@ public:
 
 	explicit WacManager(RipperEngine *engine);
 
-	bool initialize(ResourceManager &resources);
+	bool initialize(ResourceManager &resources, bool demoVariant);
 	bool appendNotebookResourceString(uint resourceId);
 	bool resetNotebook();
 	void run();
@@ -92,6 +92,7 @@ private:
 	int _pressedControl;
 	bool _notebookUpdatePending;
 	bool _initialized;
+	bool _demoVariant;
 };
 
 } // End of namespace Ripper

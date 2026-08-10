@@ -41,7 +41,7 @@ public:
 	explicit ToolbarManager(RipperEngine *engine);
 	~ToolbarManager();
 
-	bool initialize(ResourceManager &resources);
+	bool initialize(ResourceManager &resources, bool demoVariant);
 	bool service(const MouseState &mouse, uint enabledActionMask = 0x1ff,
 		int *selectedAction = nullptr);
 	void leave();
@@ -78,6 +78,7 @@ private:
 	int _pressedAction;
 	bool _active;
 	bool _previewEnabled;
+	bool _demoVariant;
 	RipperEngine *_engine;
 	Common::ScopedPtr<RemoteControlManager> _remoteControl;
 	Common::ScopedPtr<OptionsPanelManager> _optionsPanel;

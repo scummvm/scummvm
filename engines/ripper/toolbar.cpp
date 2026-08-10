@@ -37,7 +37,8 @@
 
 namespace Ripper {
 
-static const uint kToolbarActionCount = 9;
+static const uint kRetailToolbarActionCount = 9;
+static const uint kDemoToolbarActionCount = 8;
 static const int kToolbarActivationHeight = 50;
 static const int kToolbarRightEdge = 630;
 static const int kToolbarActionGap = 5;
@@ -50,7 +51,7 @@ static const uint kToolbarHelpActionIndex = 7;
 static const uint kToolbarExitActionIndex = 8;
 static const uint kToolbarExitPromptResourceId = 0x3f;
 
-static const char *const kToolbarHandlerNames[kToolbarActionCount] = {
+static const char *const kToolbarHandlerNames[kRetailToolbarActionCount] = {
 	"RunTake2IniSliderSetupMenu",
 	"HandleSceneSelectionAction",
 	"RunUnlockGatedSelectionMenu",
@@ -64,7 +65,7 @@ static const char *const kToolbarHandlerNames[kToolbarActionCount] = {
 
 ToolbarManager::ToolbarManager(RipperEngine *engine) : _sessionStartMillis(0), _lastFrameMillis(0),
 		_enabledActionMask(0), _hoveredAction(-1), _pressedAction(-1),
-		_active(false), _previewEnabled(false),
+		_active(false), _previewEnabled(false), _demoVariant(false),
 		_engine(engine), _remoteControl(new RemoteControlManager(engine)),
 		_optionsPanel(new OptionsPanelManager(engine)) {
 }
@@ -72,17 +73,21 @@ ToolbarManager::ToolbarManager(RipperEngine *engine) : _sessionStartMillis(0), _
 ToolbarManager::~ToolbarManager() {
 }
 
-bool ToolbarManager::initialize(ResourceManager &resources) {
+bool ToolbarManager::initialize(ResourceManager &resources, bool demoVariant) {
+	_demoVariant = demoVariant;
+	const uint actionCount = _demoVariant ? kDemoToolbarActionCount :
+		kRetailToolbarActionCount;
 	Common::Array<Common::String> gameText;
-	if (!resources.loadGameText(gameText) || gameText.size() < kToolbarActionCount ||
-		!resources.loadInterfaceBitmapFont("7pt_font.fnt", _font) ||
-		!_remoteControl->initialize(resources) ||
-		!_optionsPanel->initialize(resources))
+	if (!resources.loadGameText(gameText) || gameText.size() < actionCount ||
+		!resources.loadInterfaceBitmapFont(
+			_demoVariant ? "small.fnt" : "7pt_font.fnt", _font) ||
+		(!_demoVariant && (!_remoteControl->initialize(resources) ||
+			!_optionsPanel->initialize(resources))))
 		return false;
 
 	_actions.clear();
-	_actions.resize(kToolbarActionCount);
-	for (uint i = 0; i < kToolbarActionCount; ++i) {
+	_actions.resize(actionCount);
+	for (uint i = 0; i < actionCount; ++i) {
 		if (!resources.loadInterfaceBitmapSequence(
 			Common::String::format("toolbar%u.pl", i + 1), _actions[i].sequence) ||
 			_actions[i].sequence.frames.size() != 10) {
@@ -91,7 +96,7 @@ bool ToolbarManager::initialize(ResourceManager &resources) {
 		}
 		_actions[i].label = gameText[i];
 	}
-	for (uint i = 0; i < kToolbarActionCount; ++i) {
+	for (uint i = 0; i < actionCount; ++i) {
 		const BitmapAssetFrame &frame = _actions[i].sequence.frames[0];
 		for (uint frameIndex = 1; frameIndex < _actions[i].sequence.frames.size(); ++frameIndex) {
 			const BitmapAssetFrame &candidate = _actions[i].sequence.frames[frameIndex];
@@ -99,11 +104,11 @@ bool ToolbarManager::initialize(ResourceManager &resources) {
 				return false;
 		}
 	}
-	layoutActions((1 << kToolbarActionCount) - 1);
+	layoutActions((1 << actionCount) - 1);
 
 	debugC(1, kDebugScene,
-		"Ripper: initialized front-end toolbar actions=%u activationHeight=%d previewTicks=27",
-		_actions.size(), kToolbarActivationHeight);
+		"Ripper: initialized %s front-end toolbar actions=%u activationHeight=%d previewTicks=27",
+		_demoVariant ? "demo" : "retail", _actions.size(), kToolbarActivationHeight);
 	return true;
 }
 
@@ -112,7 +117,7 @@ void ToolbarManager::layoutActions(uint enabledActionMask) {
 	// right to left, subtracting each bitmap width and a five-pixel gap from
 	// x=630, then centers the bitmap in the 50-pixel toolbar band.
 	int x = kToolbarRightEdge;
-	for (int i = kToolbarActionCount - 1; i >= 0; --i) {
+	for (int i = (int)_actions.size() - 1; i >= 0; --i) {
 		if ((enabledActionMask & (1 << i)) == 0) {
 			_actions[i].bounds = Common::Rect();
 			continue;
@@ -287,6 +292,73 @@ void ToolbarManager::drawTooltip(const Common::Point &point) {
 }
 
 void ToolbarManager::dispatchAction(uint actionIndex) {
+	if (_demoVariant) {
+		// The demo's DispatchFrontEndAction at 0x16a2f uses eight controls with
+		// a different mapping from retail. Preserve its two explicit no-op rows
+		// rather than shifting the retail action table over the demo icons.
+		if (actionIndex == 0) {
+			debugC(1, kDebugScene,
+				"Ripper: demo toolbar action=1 id=0x514 label='%s' entering RunSceneSelectionMenu",
+				_actions[actionIndex].label.c_str());
+			if (!_engine->getScripts()->openWorldMap())
+				warning("Ripper: demo toolbar scene-selection action failed");
+			return;
+		}
+		if (actionIndex == 1 || actionIndex == 6) {
+			debugC(2, kDebugScene,
+				"Ripper: demo toolbar action=%u id=0x%x label='%s' completed as original no-op",
+				actionIndex + 1, actionIndex + 0x514,
+				_actions[actionIndex].label.c_str());
+			return;
+		}
+		if (actionIndex == 2) {
+			debugC(1, kDebugWac,
+				"Ripper: demo toolbar action=3 id=0x516 label='%s' entering RunWacFrontEndLoop",
+				_actions[actionIndex].label.c_str());
+			_engine->getWac()->run();
+			return;
+		}
+		if (actionIndex == 3 || actionIndex == 4) {
+			const bool saving = actionIndex == 3;
+			debugC(1, kDebugSaveLoad,
+				"Ripper: demo toolbar action=%u id=0x%x label='%s' entering RunSaveRestoreSlotMenu mode=%s",
+				actionIndex + 1, actionIndex + 0x514,
+				_actions[actionIndex].label.c_str(), saving ? "save" : "restore");
+			leave();
+			_engine->getInput()->discardMouseTransitions();
+			const bool completed = saving ? _engine->saveGameDialog() :
+				_engine->loadGameDialog();
+			_engine->getInput()->discardMouseTransitions();
+			debugC(1, kDebugSaveLoad,
+				"Ripper: demo toolbar RunSaveRestoreSlotMenu mode=%s completed=%d",
+				saving ? "save" : "restore", completed);
+			return;
+		}
+		if (actionIndex == 5) {
+			// RunTake2IniSliderSetupMenu at 0x17fc0 uses the demo-only OPTIONS
+			// presentation and OPTION1..11 controls. Do not substitute the retail
+			// REMOTE.SMK slider panel, whose assets and layout are unrelated.
+			warning("Ripper: demo toolbar settings action 0x519 is not yet implemented");
+			return;
+		}
+		if (actionIndex == 7) {
+			debugC(1, kDebugGeneral,
+				"Ripper: demo toolbar action=8 id=0x51b label='%s' entering RunBinaryPromptChooser",
+				_actions[actionIndex].label.c_str());
+			leave();
+			_engine->getInput()->discardMouseTransitions();
+			const bool confirmed = _engine->getModalDialog()->runBinaryPrompt(
+				kToolbarExitPromptResourceId, false);
+			_engine->getInput()->discardMouseTransitions();
+			debugC(1, kDebugGeneral,
+				"Ripper: demo toolbar quit prompt completed confirmed=%d quit=%d",
+				confirmed, _engine->shouldQuit());
+			if (confirmed)
+				_engine->quitGame();
+			return;
+		}
+	}
+
 	if (actionIndex == 0) {
 		debugC(1, kDebugGeneral,
 			"Ripper: toolbar action=1 id=0x514 label='%s' entering RunTake2IniSliderSetupMenu",
@@ -397,14 +469,14 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 
 bool ToolbarManager::service(const MouseState &mouse, uint enabledActionMask,
 		int *selectedAction) {
-	if (_actions.size() != kToolbarActionCount)
+	if (_actions.empty())
 		return false;
 	if (mouse.position.y >= kToolbarActivationHeight) {
 		leave();
 		return false;
 	}
 
-	enabledActionMask &= (1 << kToolbarActionCount) - 1;
+	enabledActionMask &= (1 << _actions.size()) - 1;
 	const uint32 now = g_system->getMillis();
 	if (_active && enabledActionMask != _enabledActionMask)
 		leave();
