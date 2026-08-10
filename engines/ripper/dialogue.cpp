@@ -23,19 +23,34 @@ static const int kChoiceHorizontalPadding = 5;
 static const int kArrowGap = 5;
 static const int kSceneTop = 50;
 static const int kSceneBottom = 350;
-static const byte kNormalBackgroundColor = 0;
-static const byte kNormalTextColor = 251;
-static const byte kSelectedBackgroundColor = 248;
-static const byte kSelectedTextColor = 4;
+static const byte kRetailNormalBackgroundColor = 0;
+static const byte kRetailNormalTextColor = 251;
+static const byte kRetailSelectedBackgroundColor = 248;
+static const byte kRetailSelectedTextColor = 4;
+static const byte kDemoNormalBackgroundColor = 0;
+static const byte kDemoNormalTextColor = 253;
+static const byte kDemoSelectedBackgroundColor = 250;
+static const byte kDemoSelectedTextColor = 254;
 static const uint16 kEnterCommand = 0x0d;
 static const uint16 kUpCommand = 0x4800;
 static const uint16 kDownCommand = 0x5000;
 
-bool DialogueChooser::initialize(ResourceManager &resources, bool loadScrollArrows) {
+bool DialogueChooser::initialize(ResourceManager &resources, bool retailPresentation) {
+	// The demo's InitializeSharedPresentationTemplates at 0x10c9d builds the
+	// scene-dialogue template at 0x68d08 with different indexed colors from
+	// the retail template initialized at 0x1196f.
+	_normalBackgroundColor = retailPresentation ?
+		kRetailNormalBackgroundColor : kDemoNormalBackgroundColor;
+	_normalTextColor = retailPresentation ?
+		kRetailNormalTextColor : kDemoNormalTextColor;
+	_selectedBackgroundColor = retailPresentation ?
+		kRetailSelectedBackgroundColor : kDemoSelectedBackgroundColor;
+	_selectedTextColor = retailPresentation ?
+		kRetailSelectedTextColor : kDemoSelectedTextColor;
 	if (!resources.loadInterfaceBitmapFont("small.fnt", _font))
 		return false;
 	_arrowFrames.clear();
-	if (loadScrollArrows) {
+	if (retailPresentation) {
 		_arrowFrames.resize(4);
 		for (uint i = 0; i < _arrowFrames.size(); ++i) {
 			BitmapAssetSequence sequence;
@@ -48,8 +63,8 @@ bool DialogueChooser::initialize(ResourceManager &resources, bool loadScrollArro
 	}
 	debugC(2, kDebugDialogue,
 		"Ripper: initialized dialogue colors normal=%u/%u selected=%u/%u scrollArrows=%u",
-		kNormalTextColor, kNormalBackgroundColor,
-		kSelectedTextColor, kSelectedBackgroundColor, _arrowFrames.size());
+		_normalTextColor, _normalBackgroundColor,
+		_selectedTextColor, _selectedBackgroundColor, _arrowFrames.size());
 	return true;
 }
 
@@ -97,7 +112,7 @@ void DialogueChooser::draw(bool captureBacking) {
 			const bool selected = hasChoice && choiceIndex == _chooser.selectedIndex();
 			for (int y = row; y < row + kChoiceRowHeight; ++y)
 				memset(screen->getBasePtr(_chooserBounds.left, y),
-					selected ? kSelectedBackgroundColor : kNormalBackgroundColor,
+					selected ? _selectedBackgroundColor : _normalBackgroundColor,
 					_chooserBounds.width());
 			if (!hasChoice)
 				continue;
@@ -119,7 +134,7 @@ void DialogueChooser::draw(bool captureBacking) {
 						if (pixel != _font.transparentColor)
 							*(byte *)screen->getBasePtr(x + glyph.xOffset + gx,
 								textY + glyph.yOffset + gy) =
-									selected ? kSelectedTextColor : kNormalTextColor;
+									selected ? _selectedTextColor : _normalTextColor;
 					}
 				}
 				x += glyph.xOffset + glyph.width + _font.characterSpacing;
