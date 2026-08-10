@@ -226,9 +226,10 @@ const int kScreenPts[8][3] = {
 	{-16, 64, 0}, {16, 64, 0}, {16, -64, 0}, {-16, -64, 0},
 	{-16, 64, 288}, {16, 64, 288}, {16, -64, 288}, {-16, -64, 288}
 };
+// SCREEN.H: the monolith, 32x128x288 = 1:4:9, four sides in c_monolith and no caps.
 const int kScreenSurf[4][8] = {
-	{kColorBlack, 4, 0, 3, 7, 4, 0, 0}, {kColorBlack, 4, 3, 2, 6, 7, 0, 0},
-	{kColorBlack, 4, 1, 0, 4, 5, 0, 0}, {kColorBlack, 4, 2, 1, 5, 6, 0, 0}
+	{kColorMonolith, 4, 0, 3, 7, 4, 0, 0}, {kColorMonolith, 4, 3, 2, 6, 7, 0, 0},
+	{kColorMonolith, 4, 1, 0, 4, 5, 0, 0}, {kColorMonolith, 4, 2, 1, 5, 6, 0, 0}
 };
 const int kTableTopPts[4][3] = {
 	{-128, 128, 100}, {128, 128, 100}, {128, -128, 100}, {-128, -128, 100}

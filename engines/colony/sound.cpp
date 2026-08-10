@@ -372,6 +372,7 @@ bool Sound::playMacSound(int soundID, bool loop) {
 	case kBath: resID = 11589; break;
 	case kMars: resID = 23390; break;
 	case kBeamMe: resID = 5342; break;
+	case kDave: resID = 13651; break;   // DAVE (the monolith's "full of stars" clip)
 	default: break;
 	}
 

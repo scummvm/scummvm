@@ -79,7 +79,8 @@ public:
 		kToilet,
 		kBath,
 		kMars,
-		kBeamMe
+		kBeamMe,
+		kDave
 	};
 
 private:

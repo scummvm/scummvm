@@ -186,9 +186,9 @@ void ColonyEngine::interactWithObject(int objNum) {
 			playAnimation();
 		break;
 	case kObjScreen:
-		// original game shows "Full of stars" effect/text
-		_sound->play(Sound::kStars1);
-		inform("I CAN SEE THROUGH IT...", true);
+		// COMMAND.C/IBM_COMM.C: the monolith calls FullOfStars() in all three
+		// forklift states.
+		fullOfStars();
 		break;
 
 	case kObjToilet:

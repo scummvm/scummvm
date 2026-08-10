@@ -1404,6 +1404,59 @@ void ColonyEngine::takeOff() {
 	_centerY = savedCenterY;
 }
 
+// Touching the monolith (the SCREEN object) blacks the screen out and runs the
+// star gate. Mac intro.c FullOfStars() plays the digitized "Dave" clip over it;
+// DOS IBM_INTR.C reaches the same effect through Pause(), which is silent and
+// instead leaves the starfield up until the player clicks.
+void ColonyEngine::fullOfStars() {
+	Common::Rect savedScreenR = _screenR;
+	Common::Rect savedClip = _clip;
+	int savedCenterX = _centerX;
+	int savedCenterY = _centerY;
+
+	// Both releases run the effect over the whole screen (Mac rScreen, DOS sR),
+	// not over the 3D viewport.
+	_screenR = Common::Rect(0, 0, _width, _height);
+	_clip = _screenR;
+	_centerX = _width / 2;
+	_centerY = _height / 2;
+
+	debugC(1, kColonyDebugUI, "fullOfStars()");
+
+	const bool isMac = (getPlatform() == Common::kPlatformMacintosh);
+
+	// Pause(): drop queued input so the click that triggered the monolith does
+	// not immediately end the starfield.
+	Common::Event event;
+	while (_system->getEventManager()->pollEvent(event)) {} // ignore events
+
+	_gfx->clear(_gfx->black());
+	_gfx->copyToScreen();
+
+	// DoDaveSound() stops whatever is playing and starts the clip; Pause() on
+	// DOS touches no sound at all, so nothing is cut short there.
+	if (isMac)
+		_sound->play(Sound::kDave);
+
+	// Mac makestars(rScreen, 0) times itself out; DOS makestars(sR, TRUE) keeps
+	// streaking until the player clicks.
+	makeStars(_screenR, isMac ? 0 : 1);
+
+	// EraseRect(&sR) / CloseWindow(). The dashboard and the view come back on
+	// the next frame of the main loop, which is what DOS drewDashBoard=0 forces.
+	_gfx->clear(_gfx->black());
+	_gfx->copyToScreen();
+
+	// No stop() here: KillTSound() waits for the clip to finish before freeing
+	// it, so the tail of "Dave" plays on over the restored view. The mixer does
+	// that for us without blocking.
+
+	_screenR = savedScreenR;
+	_clip = savedClip;
+	_centerX = savedCenterX;
+	_centerY = savedCenterY;
+}
+
 void ColonyEngine::gameOver(bool kill) {
 	Common::Rect savedScreenR = _screenR;
 	Common::Rect savedClip = _clip;

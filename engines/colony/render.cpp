@@ -161,6 +161,7 @@ const DOSColorEntry &lookupDOSColor(int colorIdx, int level) {
 	case kColorHCore3: return kHCore3;
 	case kColorHCore4: return kHCore4;
 	case kColorCCore:  return kCCoreEntry;
+	case kColorMonolith: return g_dosColors[kColorBlack]; // SCREEN.C: cBLACK on DOS
 	case kColorEyeball: return g_dosColors[kColorEye];
 	case kColorEyeIris:
 	case kColorMiniEyeIris:
@@ -205,6 +206,7 @@ int mapObjColorToMacColor(int colorIdx, int level) {
 	case kColorConsole:   return 79;  // c_console
 	case kColorTV:        return 76;  // c_tv
 	case kColorTVScreen:  return 77;  // c_tvscreen
+	case kColorMonolith:  return 78;  // c_monolith (solid black, fg and bg)
 	case kColorDrawer:    return 96;  // c_vanity
 	case kColorDesk:      return 58;  // c_desk
 	case kColorDeskTop:   return 59;  // c_desktop

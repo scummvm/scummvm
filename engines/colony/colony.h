@@ -277,7 +277,10 @@ enum ObjColor {
 	kColorSoldierEye = 110,
 	kColorQueenBody = 111,
 	kColorQueenEye = 112,
-	kColorQueenWingRed = 113
+	kColorQueenWingRed = 113,
+	// The monolith is cBLACK in the DOS table but has its own Mac entry
+	// (c_monolith), so it cannot share the generic kColorBlack mapping.
+	kColorMonolith = 114
 };
 
 enum {
@@ -842,6 +845,7 @@ private:
 	bool loadAnimation(const Common::String &name);
 	void deleteAnimation();
 	void takeOff();
+	void fullOfStars();
 	void gameOver(bool kill);
 	int countSavedCryos() const;
 	void playAnimation();
