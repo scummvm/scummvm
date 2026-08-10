@@ -545,9 +545,11 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 	if (manager._demoScriptAbi && action == 200) {
 		// The demo initializer at 0x10794 loads R_P_L1.WAV into its persistent
 		// audio descriptor. DispatchSceneEntryAction at 0x13a52 enqueues that
-		// descriptor for action 200 and applies the normal 0x2fff volume.
+		// descriptor for action 200 and applies the normal 0x2fff volume. Its
+		// global handle at 0x68e0a survives the RIPPER.RUN-to-BA0.RUN handoff;
+		// the adjacent action-201 branch is responsible for stopping it.
 		SceneAudioManager *sceneAudio = engine->getSceneAudio();
-		return sceneAudio->load("r_p_l1.wav", false) &&
+		return sceneAudio->load("r_p_l1.wav", true) &&
 			sceneAudio->configure("r_p_l1", 100, 0, 0);
 	}
 	if (manager._demoScriptAbi && action == 201) {
