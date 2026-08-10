@@ -431,7 +431,7 @@ bool ScriptManager::openInventory(int initialUnlockFlag, bool grantItem) {
 
 bool ScriptManager::initialize(ResourceManager &resources, bool loadRetailOverlays) {
 	_demoScriptAbi = !loadRetailOverlays;
-	return (!loadRetailOverlays || _briefing->initialize(resources)) &&
+	return _briefing->initialize(resources, _demoScriptAbi) &&
 		_dialogue->initialize(resources, loadRetailOverlays) &&
 		_startup.load(resources.scripts(), "ripper.run") &&
 		_runtime.activeScript.load(resources.scripts(), "ba0.run");
