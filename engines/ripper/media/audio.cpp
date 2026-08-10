@@ -39,7 +39,7 @@ static const uint kBlockingAudioCursor = 0x13;
 
 } // End of anonymous namespace
 
-bool MediaPlayer::playBlockingAudio(const Common::String &path) {
+bool MediaPlayer::playBlockingAudio(const Common::String &path, bool showCursor) {
 	Common::String source;
 	Common::SeekableReadStream *audioStream =
 		openSource(path, kSourceBlockingAudio, source);
@@ -56,14 +56,18 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path) {
 	// PlayBlockingAudioClip at 0x1f0ea is part of the same presentation path as
 	// packetized dialogue/video audio, which the Remote Control names VIDEO VOL.
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &handle, stream);
-	_engine->getCursor()->update(kBlockingAudioCursor);
+	if (showCursor)
+		_engine->getCursor()->update(kBlockingAudioCursor);
+	else
+		_engine->getCursor()->setVisible(false);
 	presentScreen();
 	debugC(2, kDebugAudio,
-		"Ripper: started blocking audio '%s' source=%s cursor=%u input=keyboard-only presentation=serviced",
-		path.c_str(), source.c_str(), kBlockingAudioCursor);
+		"Ripper: started blocking audio '%s' source=%s cursor=%s input=keyboard-only presentation=serviced",
+		path.c_str(), source.c_str(), showCursor ? "busy" : "hidden");
 	bool stoppedByEscape = false;
 	while (!_engine->shouldQuit() && _mixer->isSoundHandleActive(handle)) {
-		_engine->getCursor()->update(kBlockingAudioCursor);
+		if (showCursor)
+			_engine->getCursor()->update(kBlockingAudioCursor);
 		if (_input->pollEvents()) {
 			_engine->quitGame();
 			break;

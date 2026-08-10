@@ -85,6 +85,8 @@ private:
 	void pauseEngineIntern(bool pause) override;
 	void registerSearchPaths();
 	void pumpEvents();
+	bool runDemoEnding();
+	bool waitForDemoEndingInput();
 	bool selectRandomRipperIdentity(const char *source);
 
 	const ADGameDescription *const _gameDescription;

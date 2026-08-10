@@ -262,6 +262,7 @@ public:
 	bool hasPendingRuntimeRestore() const { return _runtimeRestorePending; }
 	bool isCyberActive() const { return _runtime.cyberActive; }
 	bool isCyberExitRequested() const { return _runtime.cyberExitRequested; }
+	bool isDemoRuntimeComplete() const { return _demoRuntimeComplete; }
 	bool isAwaitingInteraction() const { return _runtime.awaitingInteraction; }
 	uint getActiveFrame() const { return _runtime.activeFrame; }
 	const Common::String &getPendingSceneMember() const { return _runtime.pendingSceneMember; }
@@ -312,6 +313,7 @@ private:
 	CompiledScript _startup;
 	SceneRuntimeState _runtime;
 	bool _demoScriptAbi;
+	bool _demoRuntimeComplete;
 	bool _runtimeRestorePending;
 	Common::Array<Common::String> _playedScenes;
 	uint _sceneCallbackFrame;

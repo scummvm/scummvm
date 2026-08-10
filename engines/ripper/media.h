@@ -176,7 +176,8 @@ public:
 	bool playInterfaceSequence(const Common::String &path, int x, int y,
 		Common::Array<byte> &sourcePalette);
 	bool displayScenePcx(const Common::String &path);
-	bool playBlockingAudio(const Common::String &path);
+	bool displayInterfacePcx(const Common::String &path);
+	bool playBlockingAudio(const Common::String &path, bool showCursor = true);
 	bool playSoundEffect(const Common::String &path, Audio::SoundHandle &handle,
 		uint volumePercent = 100, bool loop = false);
 	bool playSoundEffectStream(Common::SeekableReadStream *stream,

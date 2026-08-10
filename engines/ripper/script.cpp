@@ -216,7 +216,7 @@ SceneRuntimeState::SceneRuntimeState() : activeFrame(0), frontEndActionMask(0xff
 }
 
 ScriptManager::ScriptManager(RipperEngine *engine) : _engine(engine), _demoScriptAbi(false),
-		_runtimeRestorePending(false),
+		_demoRuntimeComplete(false), _runtimeRestorePending(false),
 		_sceneCallbackFrame(0),
 		_activeIdleMediaCallback(nullptr), _chooserTemplateMode(0),
 		_briefing(new BriefingManager(engine)), _dialogue(new DialogueChooser()) {
@@ -1104,18 +1104,25 @@ bool ScriptManager::handleActiveRuntimeExit(int result, const CompiledScript &sc
 	if (result != -4)
 		return false;
 
-	// DispatchSceneEntryAction at 0x36892 returns -4 for action 9999, and
-	// RunSceneScriptLoop at 0x124e9 treats it as a normal active-runtime exit
-	// regardless of which frame callback produced it. A nested Cyber runtime
-	// restores its suspended caller; a top-level runtime returns to
-	// RunGameStartupAndMainLoop at 0x100c2. ScummVM maps that outer front-end
-	// handoff to its launcher.
+	// DispatchSceneEntryAction returns -4 for action 9999, and both scene loops
+	// treat it as a normal active-runtime exit regardless of which frame callback
+	// produced it. Demo RunSceneScriptLoop at 0x113cf returns to the coordinator
+	// at 0x100d7, which owns the SOON/RIPBOX ending presentations. Retail nested
+	// Cyber restores its suspended caller; a retail top-level runtime returns to
+	// RunGameStartupAndMainLoop at 0x100c2.
 	if (_runtime.cyberActive) {
 		if (!_runtime.cyberExitRequested)
 			return false;
 		debugC(1, kDebugCyber,
 			"Ripper: accepted Cyber runtime exit script='%s' frame=%u callback='%s' result=%d",
 			script.getMemberName().c_str(), _runtime.activeFrame, callbackPhase, result);
+	} else if (_demoScriptAbi) {
+		debugC(1, kDebugScene,
+			"Ripper: demo runtime completed script='%s' frame=%u callback='%s' "
+			"result=%d; returning to demo coordinator",
+			script.getMemberName().c_str(), _runtime.activeFrame, callbackPhase, result);
+		_runtime.awaitingInteraction = false;
+		_demoRuntimeComplete = true;
 	} else {
 		debugC(1, kDebugScene,
 			"Ripper: active runtime exited normally script='%s' frame=%u callback='%s' "
