@@ -60,6 +60,10 @@ public:
 	// callback with sequence ids starting at one for the first IAVF segment.
 	// Most sequence callbacks only need the per-segment frame counter.
 	virtual void beginIavfSegment(uint sequenceId) {}
+	virtual void beginIavfSegment(uint sequenceId, uint frameCount,
+		uint width, uint height) {
+		beginIavfSegment(sequenceId);
+	}
 	virtual uint16 service(uint frame) = 0;
 	virtual bool continueAfterEnd() const { return false; }
 	virtual bool ownsInput() const { return false; }
@@ -164,7 +168,8 @@ public:
 	~MediaPlayer();
 
 	bool play(const Common::String &path, bool allowEscSpace, int x = -1, int y = -1,
-		bool sceneViewport = false);
+		bool sceneViewport = false,
+		const Common::String &presentationText = Common::String());
 	bool playWacMedia(const Common::String &path, int x, int y);
 	bool playWacPresentation(const Common::String &path, int x, int y);
 	bool playWacInterfaceSequence(const Common::String &path,
@@ -177,7 +182,9 @@ public:
 		Common::Array<byte> &sourcePalette);
 	bool displayScenePcx(const Common::String &path);
 	bool displayInterfacePcx(const Common::String &path);
-	bool playBlockingAudio(const Common::String &path, bool showCursor = true);
+	bool playBlockingAudio(const Common::String &path, bool showCursor = true,
+		const Common::String &presentationText = Common::String(),
+		int displayTop = 0);
 	bool playSoundEffect(const Common::String &path, Audio::SoundHandle &handle,
 		uint volumePercent = 100, bool loop = false);
 	bool playSoundEffectStream(Common::SeekableReadStream *stream,

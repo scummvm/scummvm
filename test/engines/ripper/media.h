@@ -19,6 +19,7 @@
  */
 
 #include "ripper/media.h"
+#include "ripper/media/presentation_text.h"
 
 #include "common/memstream.h"
 
@@ -85,5 +86,29 @@ public:
 			"frames=0..4294967295 previewLimit=1 "
 			"loop=start:0,fromStart:0,bounded:4294967295 "
 			"timeline=0 callback=0 transparent=1,retainFinal=1");
+	}
+
+	void testRetailPresentationTextLayoutTracksPacketizedBranch() {
+		TS_ASSERT_EQUALS(Ripper::calculatePresentationTextBounds(
+			1, 1, false, 50), Common::Rect(120, 350, 520, 400));
+		TS_ASSERT_EQUALS(Ripper::calculatePresentationTextBounds(
+			2, 1, false, 50), Common::Rect(120, 310, 520, 400));
+		TS_ASSERT_EQUALS(Ripper::calculatePresentationTextBounds(
+			2, 2, false, 50), Common::Rect(120, 400, 520, 400));
+		TS_ASSERT_EQUALS(Ripper::calculatePresentationTextBounds(
+			2, 1, true, 50), Common::Rect(120, 400, 520, 400));
+	}
+
+	void testRetailPresentationTextAutoScrollUsesPlaybackProgress() {
+		TS_ASSERT_EQUALS(Ripper::calculatePresentationTextAutoScrollLine(
+			0, 100, 3), 0U);
+		TS_ASSERT_EQUALS(Ripper::calculatePresentationTextAutoScrollLine(
+			25, 100, 3), 1U);
+		TS_ASSERT_EQUALS(Ripper::calculatePresentationTextAutoScrollLine(
+			75, 100, 3), 3U);
+		TS_ASSERT_EQUALS(Ripper::calculatePresentationTextAutoScrollLine(
+			100, 100, 3), 3U);
+		TS_ASSERT_EQUALS(Ripper::calculatePresentationTextAutoScrollLine(
+			50, 0, 3), 0U);
 	}
 };

@@ -496,10 +496,10 @@ void DialogueChooser::rebuildPresentationBands(const char *reason) const {
 	}
 
 	// HandleSceneEntryChoiceListLifecycle at 0x1523d and the controlled AVI
-	// branch of RunMediaPresentation at 0x168af restore the display around
+	// branch of RunMediaPresentation at 0x17917 restore the display around
 	// chooser activation and packetized-media completion. Rebuild the uncovered
 	// indexed bands instead of retaining response pixels under the next scene
-	// palette. ExecutePresentationEntry at 0x1652a does not take this path for
+	// palette. ExecutePresentationEntry at 0x1754b does not take this path for
 	// SMK sequences; those retain their complete final frame.
 	for (int y = 0; y < kSceneTop; ++y)
 		memset(screen->getBasePtr(0, y), 0, 640);
