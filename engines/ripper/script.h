@@ -243,7 +243,7 @@ public:
 	explicit ScriptManager(RipperEngine *engine);
 	~ScriptManager();
 
-	bool initialize(ResourceManager &resources);
+	bool initialize(ResourceManager &resources, bool loadRetailOverlays);
 	bool runStartupPath();
 	bool serviceScene();
 	void drawDialogueOverlay(bool captureBacking = false);
@@ -311,6 +311,7 @@ private:
 	RipperEngine *_engine;
 	CompiledScript _startup;
 	SceneRuntimeState _runtime;
+	bool _demoScriptAbi;
 	bool _runtimeRestorePending;
 	Common::Array<Common::String> _playedScenes;
 	uint _sceneCallbackFrame;

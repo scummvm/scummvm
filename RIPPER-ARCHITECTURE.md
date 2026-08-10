@@ -31,6 +31,25 @@
   state and enters `RunSceneScriptLoop` at `0x124e9`, Continue restores the
   startup state, Restore Game opens the saved-game path, View Intro plays
   `PROINT.AVI`, and Exit shuts down.
+- The demo has a separate coordinator. `FUN_000100d7` at `0x100d7` defaults to
+  `RIPPER.RUN`, calls `FUN_000104bf` at `0x104bf` to initialize the script-test
+  runtime, and passes the selected script directly to `FUN_000113cf` at
+  `0x113cf`. It does not enter the retail `LOGO.AVI` or front-end-menu route.
+  `FUN_0001084a` at `0x1084a` installs the demo's 18 cursor rows before script
+  execution; ScummVM likewise omits retail-only managers whose resources are
+  absent from the demo.
+- The demo also has a shorter opcode `0x1a` layout. Its handler at `0x13e46`
+  forwards path, auxiliary text, Y, and X to `FUN_000142bb` at `0x142bb` and
+  forces scene-relative presentation controls on. Retail
+  `HandleSceneEntryMediaAndSetBasenameFlag` at `0x159e1` accepts the additional
+  keyboard-control argument before the same placement pair. The script runtime
+  selects the matching argument ABI from the detected game variant.
+- Demo opcode `0x1d` likewise omits the retail concurrency selector.
+  `FUN_000140dc` at `0x140dc` stores its target and entry-label pointers in the
+  pending scene fields and returns `-3` unconditionally. Demo scene action 200
+  follows the `0x13bd1` branch of the dispatcher at `0x13a52`: it enqueues the
+  `R_P_L1.WAV` descriptor loaded by `FUN_000104bf` at `0x10794` and applies its
+  normal `0x2fff` packed volume; action 201 stops that retained audio handle.
 
 ## Detection
 
@@ -65,18 +84,25 @@
   `AssetLibrary` retains directory order for member ranges and prefix
   enumeration, while a normalized-name index provides exact lookup and rejects
   duplicate names during parsing.
-- Interface and nested options assets pass through the same indexed-surface
-  extraction and bitmap-sequence decode paths after their owning
-  `AssetLibrary` has selected the member. The two entry points retain distinct
-  source labels in diagnostics and do not merge container search order.
+- Retail interface and nested options assets pass through the same
+  indexed-surface extraction and bitmap-sequence decode paths after their
+  owning `AssetLibrary` has selected the member. The two entry points retain
+  distinct source labels in diagnostics and do not merge container search
+  order. The demo's legacy `INTERFAC.PL` instead contains a PCX member named
+  `OPTIONS` and no nested `OPTIONS.PL` library, so its direct script startup
+  does not initialize the retail options source.
   Standalone puzzle PCX streams use that same indexed PCX codec only after
   their puzzle-specific path or nested-library lookup; each puzzle retains its
   own required dimensions and palette-size checks.
-- `SCRIPT.PL` contains compiled `.RUN` scene scripts. The default entry is
-  `RIPPER.RUN`, which leads to the initial `BA0.RUN` scene. Binary header,
-  frame/interaction table, argument-layout, and callback decoding live in
-  `script/compiled_script.cpp`; `script.cpp` owns runtime state and command
-  execution. This keeps parser validation separate from scene-loop mutation.
+- The retail `SCRIPT.PL` contains compiled `.RUN` scene scripts. The demo leaves
+  its `RIPPER.INI` `[FILES] script` value empty and supplies `RIPPER.RUN`, scene
+  scripts, `MILESTON.DEF`, and `GAMETEXT.TF` as loose files, so the resource
+  manager uses the game-directory search archive as its script source instead
+  of opening an empty archive path. The default entry is `RIPPER.RUN`, which
+  leads to the initial `BA0.RUN` scene. Binary header, frame/interaction table,
+  argument-layout, and callback decoding live in `script/compiled_script.cpp`;
+  `script.cpp` owns runtime state and command execution. This keeps parser
+  validation separate from scene-loop mutation.
 - Cursor `.PL` members are nested legacy asset libraries whose entries contain
   the game's custom compressed bitmap format. `DecodeCustomBitmapAsset` at
   `0x53f60` reads the 0x1c-byte bitmap header and

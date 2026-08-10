@@ -424,6 +424,8 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 
 bool ToolbarManager::service(const MouseState &mouse, uint enabledActionMask,
 		int *selectedAction) {
+	if (_actions.size() != kToolbarActionCount)
+		return false;
 	if (mouse.position.y >= kToolbarActivationHeight) {
 		leave();
 		return false;
