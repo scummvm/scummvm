@@ -166,6 +166,7 @@ public:
 	void setConsoleText(const Common::String &text);
 
 	void printText(const Common::String &text);
+	void scrollConsoleToRow(uint row);
 	uint getConsoleRowCount();
 	uint getConsoleVisibleRows();
 
