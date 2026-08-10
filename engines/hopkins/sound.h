@@ -102,8 +102,11 @@ private:
 	Common::Path setExtension(const Common::Path &str, const Common::String &ext);
 	Audio::RewindableAudioStream *makeSoundStream(Common::SeekableReadStream *stream);
 	bool removeWavSample(int wavIndex);
-	void loadWavSample(int wavIndex, const Common::Path &filename, bool freeSample);
-	void playWavSample(int voiceIndex, int wavIndex);
+	bool loadWavSample(int wavIndex, const Common::Path &filename, bool freeSample);
+	void playWavSample(int voiceIndex, int wavIndex, bool useVoiceVolume = false);
+	bool isValidVoiceIndex(int voiceIndex) const;
+	bool isValidWavIndex(int wavIndex) const;
+	bool isValidSoundIndex(int soundIndex) const;
 
 public:
 	bool _musicOffFl;
@@ -123,7 +126,7 @@ public:
 	void loadAnimSound();
 	void playAnimSound(int animFrame);
 
-	void loadSample(int wavIndex, const Common::Path &file);
+	bool loadSample(int wavIndex, const Common::Path &file);
 	void playSample(int wavIndex, int voiceMode = 9);
 	void removeSample(int soundIndex);
 
