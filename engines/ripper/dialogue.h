@@ -21,7 +21,7 @@ class CompiledScript;
 
 class DialogueChooser {
 public:
-	bool initialize(ResourceManager &resources, bool loadScrollArrows);
+	bool initialize(ResourceManager &resources, bool retailPresentation);
 	bool execute(const CompiledScript &script, const ScriptCommand &command, bool includeChoice = true);
 	bool service(const MouseState &mouse, uint &result);
 	bool serviceKeyboard(uint16 command, uint &result);
@@ -61,6 +61,10 @@ private:
 	Common::Array<byte> _renderedChoicePixels;
 	bool _pending = false;
 	bool _visualDirty = false;
+	byte _normalBackgroundColor = 0;
+	byte _normalTextColor = 0;
+	byte _selectedBackgroundColor = 0;
+	byte _selectedTextColor = 0;
 	ChooserModel _chooser;
 	int _hoveredArrow = 0;
 	BitmapFontAsset _font;
