@@ -96,6 +96,114 @@ static ImU32 nameColor(uint32 id) {
 
 static inline float fabsff(float f) { return f < 0.0f ? -f : f; }
 
+// Resolve the raw event stream into completed begin/end zones with nesting.
+static void rebuildZones(const Common::Array<ProfilerEvent> &events, Common::Array<ProfZone> &zones,
+		uint16 &maxRow, uint32 &maxSeq, uint32 &maxTs) {
+	zones.clear();
+	maxRow = 0;
+
+	Common::Array<uint> openStack;
+	Common::Array<uint16> offStack;
+	uint16 depthOff = 0;
+
+	for (uint i = 0; i < events.size(); i++) {
+		const ProfilerEvent &e = events[i];
+		switch (e.type) {
+		case kProfBegin: {
+			ProfZone z;
+			z.startSeq = e.seq;
+			z.endSeq = e.seq;
+			z.startTs = e.ts;
+			z.endTs = e.ts;
+			z.childTs = 0;
+			z.nameId = e.nameId;
+			z.movieId = e.movieId;
+			z.startFrame = e.frame;
+			z.endFrame = e.frame;
+			z.depth = e.depth + depthOff;
+			if (z.depth > maxRow)
+				maxRow = z.depth;
+			zones.push_back(z);
+			openStack.push_back(zones.size() - 1);
+			break;
+		}
+		case kProfEnd:
+			if (!openStack.empty()) {
+				uint idx = openStack.back();
+				openStack.pop_back();
+				zones[idx].endSeq = e.seq;
+				zones[idx].endTs = e.ts;
+				zones[idx].endFrame = e.frame;
+				// Credit inclusive time to the parent for its self-time.
+				if (!openStack.empty())
+					zones[openStack.back()].childTs += zones[idx].endTs - zones[idx].startTs;
+			}
+			break;
+		case kProfFreeze:
+			offStack.push_back(depthOff);
+			depthOff += e.depth;
+			break;
+		case kProfThaw:
+			if (!offStack.empty()) {
+				depthOff = offStack.back();
+				offStack.pop_back();
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	maxSeq = events.empty() ? 0 : events.back().seq;
+	maxTs = events.empty() ? 0 : events.back().ts;
+	for (uint i = 0; i < openStack.size(); i++) {
+		zones[openStack[i]].endSeq = maxSeq + 1;
+		zones[openStack[i]].endTs = maxTs;
+	}
+}
+
+// Per-handler aggregate table (inclusive and self time), most costly first.
+static void drawStatistics(LingoProfiler *prof, const Common::Array<ProfZone> &zones) {
+	if (!ImGui::CollapsingHeader("Statistics"))
+		return;
+
+	Common::HashMap<uint32, uint> idxByName;
+	Common::Array<StatRow> rows;
+	for (uint i = 0; i < zones.size(); i++) {
+		const ProfZone &z = zones[i];
+		uint32 total = z.endTs > z.startTs ? z.endTs - z.startTs : 0;
+		uint32 self = total > z.childTs ? total - z.childTs : 0;
+		Common::HashMap<uint32, uint>::iterator it = idxByName.find(z.nameId);
+		if (it == idxByName.end()) {
+			StatRow r;
+			r.nameId = z.nameId;
+			r.count = 1;
+			r.totalTs = total;
+			r.selfTs = self;
+			idxByName[z.nameId] = rows.size();
+			rows.push_back(r);
+		} else {
+			rows[it->_value].count++;
+			rows[it->_value].totalTs += total;
+			rows[it->_value].selfTs += self;
+		}
+	}
+	Common::sort(rows.begin(), rows.end(), statGreater);
+
+	ImGui::BeginChild("##stats", ImVec2(0, 160.0f), ImGuiChildFlags_Borders);
+	ImGui::Text("%8s  %10s  %10s  %s", "calls", "total(ms)", "self(ms)", "handler (click to open)");
+	uint shown = rows.size() < 50 ? rows.size() : 50;
+	for (uint i = 0; i < shown; i++) {
+		Common::String row = Common::String::format("%8u  %10.0f  %10.0f  %s", rows[i].count,
+			(double)rows[i].totalTs, (double)rows[i].selfTs, prof->internedName(rows[i].nameId).c_str());
+		ImGui::PushID((int)i);
+		if (ImGui::Selectable(row.c_str()))
+			openHandlerScript(prof->internedName(rows[i].nameId));
+		ImGui::PopID();
+	}
+	ImGui::EndChild();
+}
+
 void showProfiler() {
 	if (!_state->_w.profiler)
 		return;
@@ -145,75 +253,14 @@ void showProfiler() {
 	if (ImGui::IsItemHovered())
 		ImGui::SetTooltip("Keep the newest event (red line) at the right edge.\nAny zoom/pan turns this off.");
 
-	// Rebuild the zone cache when the trace changed.
+	// Rebuild the zone cache when the trace changed. Zones keep their indices
+	// across rebuilds (events only ever append), so the selection survives.
 	const Common::Array<ProfilerEvent> &events = prof->events();
 	if (builtCount != events.size()) {
 		builtCount = events.size();
-		zones.clear();
-		maxRow = 0;
-
-		Common::Array<uint> openStack;
-		Common::Array<uint16> offStack;
-		uint16 depthOff = 0;
-
-		for (uint i = 0; i < events.size(); i++) {
-			const ProfilerEvent &e = events[i];
-			switch (e.type) {
-			case kProfBegin: {
-				ProfZone z;
-				z.startSeq = e.seq;
-				z.endSeq = e.seq;
-				z.startTs = e.ts;
-				z.endTs = e.ts;
-				z.childTs = 0;
-				z.nameId = e.nameId;
-				z.movieId = e.movieId;
-				z.startFrame = e.frame;
-				z.endFrame = e.frame;
-				z.depth = e.depth + depthOff;
-				if (z.depth > maxRow)
-					maxRow = z.depth;
-				zones.push_back(z);
-				openStack.push_back(zones.size() - 1);
-				break;
-			}
-			case kProfEnd:
-				if (!openStack.empty()) {
-					uint idx = openStack.back();
-					openStack.pop_back();
-					zones[idx].endSeq = e.seq;
-					zones[idx].endTs = e.ts;
-					zones[idx].endFrame = e.frame;
-					// Credit inclusive time to the parent for its self-time.
-					if (!openStack.empty())
-						zones[openStack.back()].childTs += zones[idx].endTs - zones[idx].startTs;
-				}
-				break;
-			case kProfFreeze:
-				offStack.push_back(depthOff);
-				depthOff += e.depth;
-				break;
-			case kProfThaw:
-				if (!offStack.empty()) {
-					depthOff = offStack.back();
-					offStack.pop_back();
-				}
-				break;
-			default:
-				break;
-			}
-		}
-
-		maxSeq = events.empty() ? 0 : events.back().seq;
-		maxTs = events.empty() ? 0 : events.back().ts;
-		for (uint i = 0; i < openStack.size(); i++) {
-			zones[openStack[i]].endSeq = maxSeq + 1;
-			zones[openStack[i]].endTs = maxTs;
-		}
-
+		rebuildZones(events, zones, maxRow, maxSeq, maxTs);
 		if (selected >= (int)zones.size())
 			selected = -1;
-
 		if (viewSpan < 4.0f)
 			viewSpan = 200.0f;
 	}
@@ -251,44 +298,7 @@ void showProfiler() {
 		ImGui::TextUnformatted("selected: (none)   -- click a call to select, double-click to zoom, Open script for its code");
 	}
 
-	// Per-handler aggregate stats.
-	if (ImGui::CollapsingHeader("Statistics")) {
-		Common::HashMap<uint32, uint> idxByName;
-		Common::Array<StatRow> rows;
-		for (uint i = 0; i < zones.size(); i++) {
-			const ProfZone &z = zones[i];
-			uint32 total = z.endTs > z.startTs ? z.endTs - z.startTs : 0;
-			uint32 self = total > z.childTs ? total - z.childTs : 0;
-			Common::HashMap<uint32, uint>::iterator it = idxByName.find(z.nameId);
-			if (it == idxByName.end()) {
-				StatRow r;
-				r.nameId = z.nameId;
-				r.count = 1;
-				r.totalTs = total;
-				r.selfTs = self;
-				idxByName[z.nameId] = rows.size();
-				rows.push_back(r);
-			} else {
-				rows[it->_value].count++;
-				rows[it->_value].totalTs += total;
-				rows[it->_value].selfTs += self;
-			}
-		}
-		Common::sort(rows.begin(), rows.end(), statGreater);
-
-		ImGui::BeginChild("##stats", ImVec2(0, 160.0f), ImGuiChildFlags_Borders);
-		ImGui::Text("%8s  %10s  %10s  %s", "calls", "total(ms)", "self(ms)", "handler (click to open)");
-		uint shown = rows.size() < 50 ? rows.size() : 50;
-		for (uint i = 0; i < shown; i++) {
-			Common::String row = Common::String::format("%8u  %10.0f  %10.0f  %s", rows[i].count,
-				(double)rows[i].totalTs, (double)rows[i].selfTs, prof->internedName(rows[i].nameId).c_str());
-			ImGui::PushID((int)i);
-			if (ImGui::Selectable(row.c_str()))
-				openHandlerScript(prof->internedName(rows[i].nameId));
-			ImGui::PopID();
-		}
-		ImGui::EndChild();
-	}
+	drawStatistics(prof, zones);
 
 	if (animActive) {
 		animT += ImGui::GetIO().DeltaTime * 4.0f;
