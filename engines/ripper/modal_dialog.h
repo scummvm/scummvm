@@ -65,6 +65,7 @@ public:
 	explicit ModalDialogManager(RipperEngine *engine);
 
 	bool initialize(ResourceManager &resources, bool loadPrimaryPresentation);
+	void applySharedPalettePatch(byte *palette, uint colorCount) const;
 	bool run(uint bodyResourceId, bool retainSceneCursorRegions = false,
 		PresentationStyle style = kMenubPresentation,
 		PaletteBehavior paletteBehavior = kApplyModalPalette);

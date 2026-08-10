@@ -149,13 +149,17 @@
   the engine's `BitmapFontRenderer`; presentation owners retain the choice of
   font, solid output color, and layout. Toolbar bitmap color maps target
   palette index 0, indices 4 through 9,
-  and indices 246 through 255. `ApplySharedDisplayPalettePatch` at `0x205d0`
-  restores those bands on every media palette update so interface pixels remain
-  stable while the underlying Smacker palette changes. The original captures
-  those bands while `LoadStartupBitmapAssetTable` and
-  `InitializeSharedPresentationTemplates` prepare startup indexed assets; the
-  reimplementation uses the first `MNU0` bitmap palette as that startup
-  palette and applies only the reserved bands to later Smacker presentations.
+  and indices 246 through 255. The demo/retail
+  `ApplySharedDisplayPalettePatch` functions at `0x1b1bd`/`0x205d0` restore
+  those bands on every media palette update so interface pixels remain stable
+  while the underlying Smacker palette changes. Both demo
+  `InitializeSharedPresentationTemplates` at `0x10c9d` and retail
+  `InitializeSharedPresentationTemplates` at `0x1196f` capture those bands from
+  the loaded `MENUB` presentation palette through
+  `CaptureSharedDisplayPalettePatch` at `0x1b176`/`0x205a9`. ScummVM likewise
+  owns the shared patch with the modal presentation initialized for both
+  variants, rather than the retail-only toolbar manager, and applies only those
+  reserved bands to later scene and puzzle palettes.
 - `IndexedBitmapRenderer` owns transparent indexed-bitmap blits and the
   row-major 3x3 frame walk translated from `ResolveChooserFrameTileIndex` at
   `0x55250` and `TileChooserControlFrame` at `0x54fbe`. MENUB and inventory

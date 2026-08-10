@@ -113,6 +113,10 @@ void RipperEngine::pumpEvents() {
 	}
 }
 
+void RipperEngine::applySharedPalettePatch(byte *palette, uint colorCount) const {
+	_modalDialog->applySharedPalettePatch(palette, colorCount);
+}
+
 bool RipperEngine::selectRandomRipperIdentity(const char *source) {
 	const uint candidateCount =
 		kMilestoneLastRipperIdentity - kMilestoneFirstRipperIdentity + 1;
