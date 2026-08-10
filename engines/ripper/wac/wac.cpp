@@ -37,6 +37,7 @@
 #include "ripper/media.h"
 #include "ripper/modal_dialog.h"
 #include "ripper/ripper.h"
+#include "ripper/wac/broken_mug.h"
 #include "ripper/wac/database.h"
 
 namespace Ripper {
@@ -62,12 +63,13 @@ static const char *const kWacNotebookUpdateAudio = "wacnote.wav";
 
 WacManager::WacManager(RipperEngine *engine) : _engine(engine),
 		_idleWindowLastMillis(0), _hoveredControl(-1), _pressedControl(-1),
-		_notebookUpdatePending(false), _initialized(false) {
+		_notebookUpdatePending(false), _initialized(false), _demoVariant(false) {
 	_idleWindowFrame[0] = 0;
 	_idleWindowFrame[1] = 0;
 }
 
-bool WacManager::initialize(ResourceManager &resources) {
+bool WacManager::initialize(ResourceManager &resources, bool demoVariant) {
+	_demoVariant = demoVariant;
 	if (!resources.loadInterfacePcx("wac.pcx", _background) ||
 		_background.width != kWacWidth || _background.height != kWacHeight ||
 		_background.palette.size() < 256 * 3 ||
@@ -93,7 +95,7 @@ bool WacManager::initialize(ResourceManager &resources) {
 			bounds.width(), bounds.height());
 	}
 
-	for (uint i = 0; i < ARRAYSIZE(_idleWindowAnimations); ++i) {
+	for (uint i = 0; !_demoVariant && i < ARRAYSIZE(_idleWindowAnimations); ++i) {
 		if (!resources.loadInterfaceBitmapSet(
 			Common::String::format("wacwn%u", i + 1), _idleWindowAnimations[i]))
 			return false;
@@ -103,7 +105,7 @@ bool WacManager::initialize(ResourceManager &resources) {
 	}
 
 	_databaseSkin.clear();
-	for (uint i = 0; i < kWacDatabaseSkinFrameCount; ++i) {
+	for (uint i = 0; !_demoVariant && i < kWacDatabaseSkinFrameCount; ++i) {
 		BitmapAssetSequence sequence;
 		if (!resources.loadInterfaceBitmapSequence(
 			Common::String::format("wacmnu%u", i), sequence) || sequence.frames.empty())
@@ -111,7 +113,7 @@ bool WacManager::initialize(ResourceManager &resources) {
 		_databaseSkin.push_back(sequence.frames[0]);
 	}
 
-	_databaseScrollArrows.resize(4);
+	_databaseScrollArrows.resize(_demoVariant ? 0 : 4);
 	for (uint i = 0; i < _databaseScrollArrows.size(); ++i) {
 		BitmapAssetSequence sequence;
 		if (!resources.loadInterfaceBitmapSequence(
@@ -123,8 +125,8 @@ bool WacManager::initialize(ResourceManager &resources) {
 
 	_initialized = true;
 	debugC(1, kDebugWac,
-		"Ripper: initialized WAC front end background=wac.pcx controls=%u databaseSkin=wacmnu frames=%u layout=screen-row-major",
-		_controls.size(), _databaseSkin.size());
+		"Ripper: initialized %s WAC front end background=wac.pcx controls=%u databaseSkinFrames=%u layout=screen-row-major",
+		_demoVariant ? "demo" : "retail", _controls.size(), _databaseSkin.size());
 	return true;
 }
 
@@ -391,6 +393,18 @@ bool WacManager::dispatchAction(uint16 action) {
 	if (result == kExitAction)
 		return false;
 	if (result == kDatabaseAction) {
+		if (_demoVariant) {
+			// The demo RunWacFrontEndLoop at 0x1c085 routes 0x2000 directly to
+			// RunWacMugSelectionScene at 0x1c58e; it has no retail database list.
+			BrokenMugPuzzle puzzle(_engine);
+			const BrokenMugPuzzle::Result puzzleResult = puzzle.run();
+			drawFrontEnd();
+			_engine->getInput()->discardMouseTransitions();
+			debugC(1, kDebugWac,
+				"Ripper: demo WAC mug selection completed result=%d",
+				puzzleResult);
+			return puzzleResult != BrokenMugPuzzle::kExitWac;
+		}
 		WacDatabaseSession database(this);
 		const uint16 databaseResult = database.run();
 		drawFrontEnd();

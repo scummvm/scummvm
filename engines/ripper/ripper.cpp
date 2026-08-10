@@ -146,11 +146,11 @@ Common::Error RipperEngine::run() {
 		return Common::kReadingFailed;
 	if (!_scripts->initialize(*_resources, !isDemo))
 		return Common::kReadingFailed;
-	if (!isDemo && !_toolbar->initialize(*_resources))
+	if (!_toolbar->initialize(*_resources, isDemo))
 		return Common::kReadingFailed;
-	if (!isDemo && !_wac->initialize(*_resources))
+	if (!_wac->initialize(*_resources, isDemo))
 		return Common::kReadingFailed;
-	if (!isDemo && !_worldMap->initialize(*_resources))
+	if (!_worldMap->initialize(*_resources))
 		return Common::kReadingFailed;
 
 	_cursor->setVisible(false);

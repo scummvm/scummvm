@@ -36,8 +36,9 @@
   runtime, and passes the selected script directly to `FUN_000113cf` at
   `0x113cf`. It does not enter the retail `LOGO.AVI` or front-end-menu route.
   `FUN_0001084a` at `0x1084a` installs the demo's 18 cursor rows before script
-  execution; ScummVM likewise omits retail-only managers whose resources are
-  absent from the demo.
+  execution. Its startup still loads the demo-specific toolbar, WAC, and scene
+  selection resources while omitting retail-only inventory and front-end
+  managers whose resources are absent from the demo.
 - The demo opcode `0x17` handler at `0x13783` allocates the complete accumulated
   choice model and creates one list chooser control with ID `0x4e2`. Unlike
   retail `HandleSceneEntryChoiceListLifecycle` at `0x1523d`, it does not create
@@ -132,12 +133,16 @@
   `MOUSE14.BBM` and `MOUSE16.BBM` cursors store 14 bytes per BODY row; the
   padding byte is not part of the displayed width.
 
-- `LoadFrontEndToolbarResources` at `0x18678` loads nine nested `TOOLBAR1.PL`
+- Retail `LoadFrontEndToolbarResources` at `0x18678` loads nine nested `TOOLBAR1.PL`
   through `TOOLBAR9.PL` bitmap sequences. Each sequence has ten frames; the
   first frame dimensions are the hit rectangles. `GAMETEXT.TF` is the startup
   resource-string table, and entries 1 through 9 provide the toolbar labels.
   The resource manager caches the decoded table and NF2T fonts shared by the
   front-end presentations; callers still receive independent value objects.
+- Demo `LoadFrontEndToolbarResources` at `0x16160` instead loads eight nested
+  `TOOLBAR1.PL` through `TOOLBAR8.PL` sequences from `INTERFAC.PL`; the demo
+  archive has no ninth toolbar member. `RunFrontEndActionMenu` at `0x165b9`
+  creates exactly eight controls with IDs `0x514` through `0x51b`.
 - `RIPPER.INI` supplies the `scene`, `puzzle`, `combat`, and `cyber` resource
   directories. Scene media and named scene-audio slots first preserve
   ScummVM's basename lookup, then use those configured directories as explicit
@@ -181,6 +186,13 @@
   vertical selection coordinate is below `0x32` (50). It creates nine controls
   with action IDs `0x514` through `0x51c`, lays them out right-to-left from
   x=`0x276` (630), and subtracts each bitmap width plus five pixels.
+- The demo follows the same top-band gate through
+  `PollInteractionAndResolveSelection` at `0x1218a`, but calls its eight-action
+  `RunFrontEndActionMenu` at `0x165b9`. `DispatchFrontEndAction` at `0x16a2f`
+  maps those controls to scene selection, an original no-op, WAC, save,
+  restore, the demo OPTIONS settings panel, a second original no-op, and quit.
+  This mapping is not a truncated or shifted copy of the retail nine-action
+  table.
 - The toolbar remains modal while the pointer is in that top 50-pixel band;
   scene hotspots do not receive those events. Scene Smacker coordinates are
   relative to the original 640x400 display page, whose top edge follows that
