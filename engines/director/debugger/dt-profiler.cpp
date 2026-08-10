@@ -21,7 +21,6 @@
 
 #include "common/algorithm.h"
 #include "common/hashmap.h"
-#include "common/path.h"
 
 #include "director/director.h"
 #include "director/archive.h"
@@ -54,9 +53,13 @@ static bool openHandlerScript(const Common::String &handlerName) {
 	return true;
 }
 
+// A resolved begin/end pair with its nested render depth.
 struct ProfZone {
 	uint32 startSeq;
 	uint32 endSeq;
+	uint32 startTs;
+	uint32 endTs;
+	uint32 childTs;		// ms spent in nested calls, for self-time
 	uint32 nameId;
 	uint32 movieId;
 	uint32 startFrame;
@@ -67,7 +70,8 @@ struct ProfZone {
 struct StatRow {
 	uint32 nameId;
 	uint32 count;
-	uint64 totalSpan;
+	uint64 totalTs;		// inclusive ms across all calls
+	uint64 selfTs;		// ms excluding nested calls
 };
 
 struct DrawnRect {
@@ -76,9 +80,12 @@ struct DrawnRect {
 };
 
 static bool statGreater(const StatRow &a, const StatRow &b) {
+	if (a.totalTs != b.totalTs)
+		return a.totalTs > b.totalTs;
 	return a.count > b.count;
 }
 
+// Deterministic pastel keyed by handler name, so a handler keeps one color.
 static ImU32 nameColor(uint32 id) {
 	uint32 h = (id + 1) * 2654435761u;
 	int r = 130 + (int)((h >> 1) & 0x4F);
@@ -93,6 +100,7 @@ void showProfiler() {
 	if (!_state->_w.profiler)
 		return;
 
+	ImGui::SetNextWindowSize(ImVec2(1000, 640), ImGuiCond_FirstUseEver);
 	if (!ImGui::Begin("Profiler", &_state->_w.profiler)) {
 		ImGui::End();
 		return;
@@ -105,15 +113,19 @@ void showProfiler() {
 		return;
 	}
 
+	const DebuggerTheme &theme = *_state->theme;
+
 	static Common::Array<ProfZone> zones;
 	static uint builtCount = 0xFFFFFFFFu;
 	static uint16 maxRow = 0;
 	static uint32 maxSeq = 0;
+	static uint32 maxTs = 0;
 	static float viewStart = 0.0f;
 	static float viewSpan = 200.0f;
 	static bool follow = true;
 	static int selected = -1;
 
+	// Eased zoom animation (Fit / double-click a zone).
 	static bool animActive = false;
 	static float animT = 0.0f;
 	static float aFromStart = 0.0f, aToStart = 0.0f, aFromSpan = 0.0f, aToSpan = 0.0f;
@@ -129,19 +141,11 @@ void showProfiler() {
 		prof->clear();
 
 	ImGui::SameLine();
-	static Common::String status;
-	if (ImGui::Button("Export JSON")) {
-		Common::Path path("lingo-trace.json");
-		status = prof->exportChromeTrace(path) ? Common::String("wrote lingo-trace.json") : Common::String("export failed");
-	}
-	if (ImGui::IsItemHovered())
-		ImGui::SetTooltip("Write a Chrome/Perfetto trace to lingo-trace.json.");
-
-	ImGui::SameLine();
 	ImGui::Checkbox("Follow live", &follow);
 	if (ImGui::IsItemHovered())
 		ImGui::SetTooltip("Keep the newest event (red line) at the right edge.\nAny zoom/pan turns this off.");
 
+	// Rebuild the zone cache when the trace changed.
 	const Common::Array<ProfilerEvent> &events = prof->events();
 	if (builtCount != events.size()) {
 		builtCount = events.size();
@@ -159,6 +163,9 @@ void showProfiler() {
 				ProfZone z;
 				z.startSeq = e.seq;
 				z.endSeq = e.seq;
+				z.startTs = e.ts;
+				z.endTs = e.ts;
+				z.childTs = 0;
 				z.nameId = e.nameId;
 				z.movieId = e.movieId;
 				z.startFrame = e.frame;
@@ -175,7 +182,11 @@ void showProfiler() {
 					uint idx = openStack.back();
 					openStack.pop_back();
 					zones[idx].endSeq = e.seq;
+					zones[idx].endTs = e.ts;
 					zones[idx].endFrame = e.frame;
+					// Credit inclusive time to the parent for its self-time.
+					if (!openStack.empty())
+						zones[openStack.back()].childTs += zones[idx].endTs - zones[idx].startTs;
 				}
 				break;
 			case kProfFreeze:
@@ -194,8 +205,11 @@ void showProfiler() {
 		}
 
 		maxSeq = events.empty() ? 0 : events.back().seq;
-		for (uint i = 0; i < openStack.size(); i++)
+		maxTs = events.empty() ? 0 : events.back().ts;
+		for (uint i = 0; i < openStack.size(); i++) {
 			zones[openStack[i]].endSeq = maxSeq + 1;
+			zones[openStack[i]].endTs = maxTs;
+		}
 
 		if (selected >= (int)zones.size())
 			selected = -1;
@@ -228,40 +242,46 @@ void showProfiler() {
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("Open this handler's script in the Scripts window.");
 		ImGui::SameLine();
-		ImGui::Text("selected: %s   frames %u-%u   span %u   depth %u   movie %s",
+		uint32 total = z.endTs > z.startTs ? z.endTs - z.startTs : 0;
+		uint32 self = total > z.childTs ? total - z.childTs : 0;
+		ImGui::Text("selected: %s   frames %u-%u   time %ums (self %ums)   depth %u   movie %s",
 			prof->internedName(z.nameId).c_str(), z.startFrame, z.endFrame,
-			z.endSeq - z.startSeq, z.depth, prof->internedName(z.movieId).c_str());
+			total, self, z.depth, prof->internedName(z.movieId).c_str());
 	} else {
 		ImGui::TextUnformatted("selected: (none)   -- click a call to select, double-click to zoom, Open script for its code");
 	}
 
+	// Per-handler aggregate stats.
 	if (ImGui::CollapsingHeader("Statistics")) {
 		Common::HashMap<uint32, uint> idxByName;
 		Common::Array<StatRow> rows;
 		for (uint i = 0; i < zones.size(); i++) {
 			const ProfZone &z = zones[i];
-			uint32 span = z.endSeq > z.startSeq ? z.endSeq - z.startSeq : 0;
+			uint32 total = z.endTs > z.startTs ? z.endTs - z.startTs : 0;
+			uint32 self = total > z.childTs ? total - z.childTs : 0;
 			Common::HashMap<uint32, uint>::iterator it = idxByName.find(z.nameId);
 			if (it == idxByName.end()) {
 				StatRow r;
 				r.nameId = z.nameId;
 				r.count = 1;
-				r.totalSpan = span;
+				r.totalTs = total;
+				r.selfTs = self;
 				idxByName[z.nameId] = rows.size();
 				rows.push_back(r);
 			} else {
 				rows[it->_value].count++;
-				rows[it->_value].totalSpan += span;
+				rows[it->_value].totalTs += total;
+				rows[it->_value].selfTs += self;
 			}
 		}
 		Common::sort(rows.begin(), rows.end(), statGreater);
 
 		ImGui::BeginChild("##stats", ImVec2(0, 160.0f), ImGuiChildFlags_Borders);
-		ImGui::Text("%8s  %10s  %s", "calls", "total(seq)", "handler (click to open)");
+		ImGui::Text("%8s  %10s  %10s  %s", "calls", "total(ms)", "self(ms)", "handler (click to open)");
 		uint shown = rows.size() < 50 ? rows.size() : 50;
 		for (uint i = 0; i < shown; i++) {
-			Common::String row = Common::String::format("%8u  %10.0f  %s", rows[i].count,
-				(double)rows[i].totalSpan, prof->internedName(rows[i].nameId).c_str());
+			Common::String row = Common::String::format("%8u  %10.0f  %10.0f  %s", rows[i].count,
+				(double)rows[i].totalTs, (double)rows[i].selfTs, prof->internedName(rows[i].nameId).c_str());
 			ImGui::PushID((int)i);
 			if (ImGui::Selectable(row.c_str()))
 				openHandlerScript(prof->internedName(rows[i].nameId));
@@ -304,6 +324,7 @@ void showProfiler() {
 
 	float pxPerUnit = viewW / viewSpan;
 
+	// Wheel zooms around the cursor, drag pans (both cancel follow/anim).
 	if (itemHovered) {
 		float wheel = ImGui::GetIO().MouseWheel;
 		if (wheel != 0.0f) {
@@ -335,7 +356,17 @@ void showProfiler() {
 
 	ImDrawList *dl = ImGui::GetWindowDrawList();
 	const float baseY = origin.y + rulerH;
-	const ImU32 frameLineCol = ImGui::GetColorU32(_state->theme->line_color);
+	const ImU32 frameLineCol = ImGui::GetColorU32(theme.line_color);
+	const ImU32 rulerBgCol = ImGui::GetColorU32(theme.prof_ruler_bg);
+	const ImU32 gridLineCol = ImGui::GetColorU32(theme.prof_grid_line);
+	const ImU32 freezeCol = ImGui::GetColorU32(theme.prof_freeze);
+	const ImU32 thawCol = ImGui::GetColorU32(theme.prof_thaw);
+	const ImU32 zoneBorderCol = ImGui::GetColorU32(theme.prof_zone_border);
+	const ImU32 zoneTextCol = ImGui::GetColorU32(theme.prof_zone_text);
+	const ImU32 selectedCol = ImGui::GetColorU32(theme.prof_selected);
+	const ImU32 highlightCol = ImGui::GetColorU32(theme.prof_highlight);
+	const ImU32 liveEdgeCol = ImGui::GetColorU32(theme.prof_live_edge);
+	const ImU32 crosshairCol = ImGui::GetColorU32(theme.prof_crosshair);
 
 	const float visStartSeq = viewStart - 2.0f;
 	const float visEndSeq = viewStart + viewSpan + 2.0f;
@@ -348,7 +379,8 @@ void showProfiler() {
 	for (uint i = 0; i < rowRight.size(); i++)
 		rowRight[i] = -1.0e9f;
 
-	dl->AddRectFilled(ImVec2(origin.x, origin.y), ImVec2(origin.x + viewW, origin.y + rulerH), IM_COL32(0, 0, 0, 40));
+	// Frames and freeze/thaw live in a thin ruler strip at the top.
+	dl->AddRectFilled(ImVec2(origin.x, origin.y), ImVec2(origin.x + viewW, origin.y + rulerH), rulerBgCol);
 	dl->AddLine(ImVec2(origin.x, origin.y + rulerH), ImVec2(origin.x + viewW, origin.y + rulerH), frameLineCol, 1.0f);
 
 	float lastFrameLabelX = -1.0e9f;
@@ -366,24 +398,25 @@ void showProfiler() {
 				continue;
 			lastFrameLabelX = x;
 			dl->AddLine(ImVec2(x, origin.y + rulerH - 6.0f), ImVec2(x, origin.y + rulerH), frameLineCol, 1.0f);
-			dl->AddLine(ImVec2(x, origin.y + rulerH), ImVec2(x, origin.y + canvasH), IM_COL32(140, 140, 140, 22), 1.0f);
+			dl->AddLine(ImVec2(x, origin.y + rulerH), ImVec2(x, origin.y + canvasH), gridLineCol, 1.0f);
 			Common::String lbl = Common::String::format("f%u", e.frame);
-			dl->AddText(ImVec2(x + 2.0f, origin.y + 3.0f), _state->theme->gridTextColor, lbl.c_str());
+			dl->AddText(ImVec2(x + 2.0f, origin.y + 3.0f), theme.gridTextColor, lbl.c_str());
 		} else if (e.type == kProfFreeze) {
 			if (x - lastFreezeX < 4.0f)
 				continue;
 			lastFreezeX = x;
 			dl->AddTriangleFilled(ImVec2(x - 3.0f, origin.y + 2.0f), ImVec2(x + 3.0f, origin.y + 2.0f),
-				ImVec2(x, origin.y + 8.0f), IM_COL32(230, 120, 60, 255));
-		} else {
+				ImVec2(x, origin.y + 8.0f), freezeCol);
+		} else { // kProfThaw
 			if (x - lastThawX < 4.0f)
 				continue;
 			lastThawX = x;
 			dl->AddTriangleFilled(ImVec2(x - 3.0f, origin.y + rulerH - 2.0f), ImVec2(x + 3.0f, origin.y + rulerH - 2.0f),
-				ImVec2(x, origin.y + rulerH - 8.0f), IM_COL32(90, 200, 120, 255));
+				ImVec2(x, origin.y + rulerH - 8.0f), thawCol);
 		}
 	}
 
+	// Zones. Cull to the visible window and coalesce sub-pixel slices.
 	Common::Array<DrawnRect> drawnRects;
 	for (uint i = 0; i < zones.size(); i++) {
 		const ProfZone &z = zones[i];
@@ -409,12 +442,12 @@ void showProfiler() {
 
 		dl->AddRectFilled(ImVec2(x0, y0), ImVec2(x1, y1), nameColor(z.nameId));
 		if (x1 - x0 > 3.0f)
-			dl->AddRect(ImVec2(x0, y0), ImVec2(x1, y1), IM_COL32(0, 0, 0, 100));
+			dl->AddRect(ImVec2(x0, y0), ImVec2(x1, y1), zoneBorderCol);
 
 		if (x1 - x0 > 24.0f) {
 			const Common::String &nm = prof->internedName(z.nameId);
 			dl->PushClipRect(ImVec2(x0 + 2.0f, y0), ImVec2(x1 - 2.0f, y1), true);
-			dl->AddText(ImVec2(x0 + 3.0f, y0 + 2.0f), IM_COL32(20, 20, 20, 255), nm.c_str());
+			dl->AddText(ImVec2(x0 + 3.0f, y0 + 2.0f), zoneTextCol, nm.c_str());
 			dl->PopClipRect();
 		}
 
@@ -426,29 +459,31 @@ void showProfiler() {
 			hoveredZone = (int)i;
 
 		if ((int)i == selected)
-			dl->AddRect(ImVec2(x0 - 1.0f, y0 - 1.0f), ImVec2(x1 + 1.0f, y1 + 1.0f), IM_COL32(255, 220, 40, 255), 0.0f, 0, 2.0f);
+			dl->AddRect(ImVec2(x0 - 1.0f, y0 - 1.0f), ImVec2(x1 + 1.0f, y1 + 1.0f), selectedCol, 0.0f, 0, 2.0f);
 	}
 
+	// Highlight every visible call sharing the hovered call's name.
 	if (hoveredZone >= 0 && (uint)hoveredZone < zones.size()) {
 		uint32 hn = zones[hoveredZone].nameId;
 		for (uint i = 0; i < drawnRects.size(); i++) {
 			const DrawnRect &dr = drawnRects[i];
 			if (dr.nameId == hn)
-				dl->AddRect(ImVec2(dr.x0, dr.y0), ImVec2(dr.x1, dr.y1), IM_COL32(255, 255, 180, 200), 0.0f, 0, 1.5f);
+				dl->AddRect(ImVec2(dr.x0, dr.y0), ImVec2(dr.x1, dr.y1), highlightCol, 0.0f, 0, 1.5f);
 		}
 	}
 
+	// Live edge: the newest recorded event ("now").
 	{
 		const float px = origin.x + ((float)maxSeq - viewStart) * pxPerUnit;
 		if (px >= origin.x && px <= origin.x + viewW)
-			dl->AddLine(ImVec2(px, origin.y), ImVec2(px, origin.y + canvasH), IM_COL32(230, 40, 40, 255), 2.0f);
+			dl->AddLine(ImVec2(px, origin.y), ImVec2(px, origin.y + canvasH), liveEdgeCol, 2.0f);
 	}
 
 	if (itemHovered)
-		dl->AddLine(ImVec2(mouse.x, origin.y), ImVec2(mouse.x, origin.y + canvasH), IM_COL32(150, 150, 150, 90), 1.0f);
+		dl->AddLine(ImVec2(mouse.x, origin.y), ImVec2(mouse.x, origin.y + canvasH), crosshairCol, 1.0f);
 
 	if (zones.empty())
-		dl->AddText(ImVec2(origin.x + 12.0f, origin.y + 12.0f), _state->theme->gridTextColor,
+		dl->AddText(ImVec2(origin.x + 12.0f, origin.y + 12.0f), theme.gridTextColor,
 			"Tick Capture, then interact with the game to record Lingo execution.");
 
 	if (dblClicked && hoveredZone >= 0 && (uint)hoveredZone < zones.size()) {
@@ -480,7 +515,9 @@ void showProfiler() {
 			ImGui::Text("frame %u", z.startFrame);
 		else
 			ImGui::Text("frames %u - %u", z.startFrame, z.endFrame);
-		ImGui::Text("span: %u   depth: %u", z.endSeq - z.startSeq, z.depth);
+		uint32 total = z.endTs > z.startTs ? z.endTs - z.startTs : 0;
+		uint32 self = total > z.childTs ? total - z.childTs : 0;
+		ImGui::Text("time: %ums (self %ums)   depth: %u", total, self, z.depth);
 		ImGui::EndTooltip();
 	}
 

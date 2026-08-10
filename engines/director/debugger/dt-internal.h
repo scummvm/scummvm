@@ -187,6 +187,18 @@ struct DebuggerTheme {
 	ImVec4 logger_warning;
 	ImVec4 logger_info;
 	ImVec4 logger_debug;
+
+	// Profiler
+	ImVec4 prof_ruler_bg;
+	ImVec4 prof_grid_line;
+	ImVec4 prof_freeze;
+	ImVec4 prof_thaw;
+	ImVec4 prof_zone_border;
+	ImVec4 prof_zone_text;
+	ImVec4 prof_selected;
+	ImVec4 prof_highlight;
+	ImVec4 prof_live_edge;
+	ImVec4 prof_crosshair;
 };
 
 typedef struct ImGuiState {
