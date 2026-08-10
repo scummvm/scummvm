@@ -28,8 +28,11 @@
 
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
+#include "ripper/display.h"
 #include "ripper/input.h"
+#include "ripper/media/presentation_text.h"
 #include "ripper/ripper.h"
+#include "ripper/settings.h"
 
 namespace Ripper {
 
@@ -39,7 +42,8 @@ static const uint kBlockingAudioCursor = 0x13;
 
 } // End of anonymous namespace
 
-bool MediaPlayer::playBlockingAudio(const Common::String &path, bool showCursor) {
+bool MediaPlayer::playBlockingAudio(const Common::String &path, bool showCursor,
+		const Common::String &presentationText, int displayTop) {
 	Common::String source;
 	Common::SeekableReadStream *audioStream =
 		openSource(path, kSourceBlockingAudio, source);
@@ -51,9 +55,22 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path, bool showCursor)
 	Audio::SeekableAudioStream *stream = Audio::makeWAVStream(audioStream, DisposeAfterUse::YES);
 	if (!stream)
 		return false;
+	const uint32 durationMs = stream->getLength().msecs();
+	PresentationTextControl textControl(_engine, _input, presentationText,
+		displayTop);
+	IndexedDisplaySnapshot textBacking;
+	if (textControl.isActive()) {
+		if (!textBacking.capture()) {
+			delete stream;
+			return false;
+		}
+		textControl.configureSegment(1, durationMs, 0, 0,
+			_engine->getSettings()->getVideoMode());
+		textControl.applySharedPalettePatch();
+	}
 
 	Audio::SoundHandle handle;
-	// PlayBlockingAudioClip at 0x1f0ea is part of the same presentation path as
+	// PlayBlockingAudioWithOptionalText at 0x206e0 is part of the same presentation path as
 	// packetized dialogue/video audio, which the Remote Control names VIDEO VOL.
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &handle, stream);
 	if (showCursor)
@@ -62,8 +79,11 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path, bool showCursor)
 		_engine->getCursor()->setVisible(false);
 	presentScreen();
 	debugC(2, kDebugAudio,
-		"Ripper: started blocking audio '%s' source=%s cursor=%s input=keyboard-only presentation=serviced",
-		path.c_str(), source.c_str(), showCursor ? "busy" : "hidden");
+		"Ripper: started blocking audio '%s' source=%s cursor=%s "
+		"input=%s presentationText=%d durationMs=%u",
+		path.c_str(), source.c_str(), showCursor ? "busy" : "hidden",
+		textControl.isActive() ? "chooser" : "keyboard-only",
+		textControl.isActive(), durationMs);
 	bool stoppedByEscape = false;
 	while (!_engine->shouldQuit() && _mixer->isSoundHandleActive(handle)) {
 		if (showCursor)
@@ -72,11 +92,16 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path, bool showCursor)
 			_engine->quitGame();
 			break;
 		}
-		while (_input->hasPendingKey()) {
-			const uint16 command = _input->consumeKey();
-			if (command == 0x1b) {
-				stoppedByEscape = true;
-				break;
+		if (textControl.isActive()) {
+			stoppedByEscape = textControl.service(
+				_mixer->getSoundElapsedTime(handle)) != 0;
+		} else {
+			while (_input->hasPendingKey()) {
+				const uint16 command = _input->consumeKey();
+				if (command == 0x1b) {
+					stoppedByEscape = true;
+					break;
+				}
 			}
 		}
 		if (stoppedByEscape)
@@ -85,11 +110,18 @@ bool MediaPlayer::playBlockingAudio(const Common::String &path, bool showCursor)
 		g_system->delayMillis(10);
 	}
 	_mixer->stopHandle(handle);
+	bool textCompleted = true;
+	if (textControl.isActive() && !textControl.isDismissed() &&
+			!_engine->shouldQuit() && !stoppedByEscape &&
+			!textControl.waitForDismissal())
+		textCompleted = false;
+	if (textBacking.isValid() && !_engine->shouldQuit())
+		textBacking.restore();
 	_input->discardMouseTransitions();
 	debugC(2, kDebugAudio,
 		"Ripper: completed blocking audio '%s' source=%s stoppedByEscape=%d",
 		path.c_str(), source.c_str(), stoppedByEscape);
-	return !_engine->shouldQuit();
+	return textCompleted && !_engine->shouldQuit();
 }
 
 bool MediaPlayer::playSoundEffect(const Common::String &path, Audio::SoundHandle &handle,

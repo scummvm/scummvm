@@ -20,6 +20,8 @@
 
 #include "ripper/media.h"
 
+#include "ripper/media/presentation_text.h"
+
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "common/array.h"
@@ -286,7 +288,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			name.c_str(), firstFrame, lastFrame, decoder.getFrameCount());
 		return false;
 	}
-	// InitializeMediaPresentationDisplayModeCallback at 0x163a8 is invoked for
+	// ConfigureMediaPresentationDisplayModeCallback at 0x16ae3 is invoked for
 	// each packetized branch, not only for the IAVF container dimensions. In the
 	// original 640x400 mode every branch smaller than 321x201 receives the 2:1
 	// display descriptor, including PROLOG2.AVI's 320x200 branches inside a
@@ -319,7 +321,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			y *= displayScale;
 			if (originY != 0 && y + originY + (int)outputHeight > displayHeight &&
 					y + (int)outputHeight <= displayHeight) {
-				// InitializeMediaPresentationDisplayModeCallback at 0x163a8
+				// ConfigureMediaPresentationDisplayModeCallback at 0x16ae3
 				// switches a full-size packetized branch from the scene viewport
 				// to the full display context. Do not retain the viewport origin
 				// when the scaled branch already fills that display.
@@ -460,7 +462,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		if (!sequenceCallback)
 			presentScreen();
 	};
-	// ExecutePresentationEntry at 0x1652a normally deactivates the shared
+	// ExecutePresentationEntry at 0x1754b normally deactivates the shared
 	// selection presentation before packetized AVI playback. Packetized branch
 	// callbacks may explicitly preserve a cursor for the active branch.
 	if (!serviceSceneUi &&
@@ -845,12 +847,23 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		// IAVF header, then PreparePacketizedMediaPlaybackBranchSetup at 0x5b237
 		// assigns ids one and above to the actual media branches.
 		const uint sequenceId = i + 1;
-		if (callback)
-			callback->beginIavfSegment(sequenceId);
-		debugC(2, kDebugVideo,
-			"Ripper: IAVF '%s' entered packetized branch segment=%u sequence=%u callback=%d",
-			name.c_str(), i, sequenceId, callback != nullptr);
 		Common::SeekableReadStream *smacker = rebuildSmackerStream(movie.segments[i]);
+		uint branchWidth = movie.presentationWidth;
+		uint branchHeight = movie.presentationHeight;
+		if (smacker && smacker->size() >= 12) {
+			smacker->seek(4);
+			branchWidth = smacker->readUint32LE();
+			branchHeight = smacker->readUint32LE();
+			smacker->seek(0);
+		}
+		if (callback)
+			callback->beginIavfSegment(sequenceId,
+				movie.segments[i].expectedFrames, branchWidth, branchHeight);
+		debugC(2, kDebugVideo,
+			"Ripper: IAVF '%s' entered packetized branch segment=%u "
+			"sequence=%u callback=%d size=%ux%u",
+			name.c_str(), i, sequenceId, callback != nullptr,
+			branchWidth, branchHeight);
 		const int segmentX = overrideX != -1 ? overrideX : movie.segments[i].x;
 		const int segmentY = overrideY != -1 ? overrideY : movie.segments[i].y;
 		const int segmentOriginY = overrideY != -1 ? overrideOriginY : 0;
@@ -985,16 +998,18 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 }
 
 bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, int y,
-		bool sceneViewport) {
-	// ExecutePresentationEntry at 0x1652a routes WAV entries to
-	// PlayBlockingAudioClip at 0x1f0ea before considering either video path.
+		bool sceneViewport, const Common::String &presentationText) {
+	// ExecutePresentationEntry at 0x1754b routes WAV entries to
+	// PlayBlockingAudioWithOptionalText at 0x206e0 before considering either
+	// video path.
 	// The original blocking-audio loop always permits Escape, independently of
 	// the presentation control argument used by AVI and Smacker playback.
 	if (path.hasSuffixIgnoreCase(".wav")) {
 		debugC(2, kDebugAudio,
 			"Ripper: dispatching media presentation '%s' as blocking audio",
 			path.c_str());
-		const bool result = playBlockingAudio(path);
+		const bool result = playBlockingAudio(path, true, presentationText,
+			sceneViewport ? kScenePresentationTop : 0);
 		_input->drainKeys();
 		return result;
 	}
@@ -1006,8 +1021,8 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 		return false;
 	}
 
-	// ExecutePresentationEntry at 0x1652a passes its keyboard-control flag to
-	// RunMediaPresentation at 0x168af. Controlled IAVF media redraws the saved
+	// ExecutePresentationEntry at 0x1754b passes its keyboard-control flag to
+	// RunMediaPresentation at 0x17917. Controlled IAVF media redraws the saved
 	// logical page afterward; uncontrolled media leaves its final frame visible.
 	const MediaFormat format = detectMediaFormat(*stream);
 	const bool isSmacker = format == kMediaFormatSmacker;
@@ -1039,12 +1054,27 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 		result = playValidatedSmacker(stream, path, "presentation", plan);
 	} else if (isIavf) {
 		const int originY = sceneViewport ? kScenePresentationTop : 0;
+		const bool hasPresentationText = !presentationText.empty();
+		PresentationTextMediaCallback textCallback(_engine, _input,
+			presentationText, originY, _engine->getSettings()->getVideoMode());
+		uint16 textCommand = 0;
+		// ConfigureMediaPresentationDisplayModeCallback at 0x16ae3 forces
+		// video mode zero to the unscaled mode while authored text is active.
+		// Mode one is already unscaled; modes two and three retain their
+		// configured scaling and move later text branches offscreen.
+		const uint textDisplayScale = hasPresentationText &&
+			_engine->getSettings()->getVideoMode() < 2 ? 1 : 0;
 		// RunWacVoiceLockPuzzleScene at 0x24ba4 fades ACCESED.AVI out before
 		// returning to the restored WAC page. A presentation whose indexed page
 		// and palette will be restored must not replace the source palette later
 		// used to rebuild the surrounding scene and interface bands.
 		result = playIavf(*stream, path, allowEscSpace, x, y, originY, false,
-			rememberIavfPalette);
+			rememberIavfPalette, textDisplayScale,
+			hasPresentationText ? &textCallback : nullptr,
+			hasPresentationText ? &textCommand : nullptr);
+		if (result && hasPresentationText && textCommand == 0 &&
+				!_engine->shouldQuit())
+			result = textCallback.waitForDismissal();
 		delete stream;
 	} else {
 		warning("Ripper: unsupported media format for '%s' format=%s",
@@ -1087,9 +1117,9 @@ bool MediaPlayer::playWacMedia(const Common::String &path, int x, int y) {
 
 bool MediaPlayer::playWacPresentation(const Common::String &path, int x, int y) {
 	// RunWacStillImageScreenWithOptionalPresentation at 0x22a32 temporarily
-	// selects video mode 1 before calling RunMediaPresentation at 0x168af with
-	// the centered still-image origin. InitializeMediaPresentationDisplayModeCallback
-	// at 0x163a8 leaves that 300x200 branch unscaled in mode 1.
+	// selects video mode 1 before calling RunMediaPresentation at 0x17917 with
+	// the centered still-image origin. ConfigureMediaPresentationDisplayModeCallback
+	// at 0x16ae3 leaves that 300x200 branch unscaled in mode 1.
 	debugC(1, kDebugVideo,
 		"Ripper: entering WAC packetized presentation media='%s' position=%d,%d scale=1",
 		path.c_str(), x, y);
@@ -1252,7 +1282,7 @@ bool MediaPlayer::playSceneStream(Common::SeekableReadStream *stream,
 			"archived scene", plan);
 	} else {
 		// RunShockLeverPuzzleScene at 0x3affb passes each archived outcome
-		// member through RunMediaPresentation at 0x168af. Its controlled IAVF
+		// member through RunMediaPresentation at 0x17917. Its controlled IAVF
 		// path restores the puzzle page after the presentation completes.
 		IndexedDisplaySnapshot displayContext;
 		const bool captured = displayContext.capture();

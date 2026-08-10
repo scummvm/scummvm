@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	media/audio.o \
 	media/display.o \
 	media/plan.o \
+	media/presentation_text.o \
 	media/source.o \
 	media/video.o \
 	menu.o \

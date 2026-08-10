@@ -82,6 +82,7 @@ public:
 	bool restoreVideoPalette();
 
 	bool getBufferedVideo() const { return _bufferedVideo; }
+	bool getSubtitles() const { return _subtitles; }
 	uint getVideoMode() const { return _videoMode; }
 	uint getCombatLevel() const { return _combatLevel; }
 	uint getPuzzleLevel() const { return _puzzleLevel; }

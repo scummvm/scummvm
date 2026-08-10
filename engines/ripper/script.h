@@ -67,7 +67,7 @@ enum ScriptOpcode : byte {
 	kStartDialogue               = 0x17, // HandleSceneEntryChoiceListLifecycle at 0x1523d
 	kDispatchSceneAction         = 0x18, // HandleSceneEntryPromptAndDispatchAction at 0x1574d
 	kRequestTextInput            = 0x19, // HandleSceneEntryAsyncTextRequest at 0x157a1
-	kPlayMedia                   = 0x1a, // HandleSceneEntryMediaAndSetBasenameFlag at 0x159e1
+	kPlayMedia                   = 0x1a, // Retail script command executor FUN_0001357f at 0x1357f
 	kPreviewMedia                = 0x1b, // HandleSceneEntryMediaPreviewOrPrompt at 0x15b03
 	kFadePalette                 = 0x1c, // HandleSceneEntryStepPromptTransition at 0x15c30
 	kStartSceneRuntime           = 0x1d, // HandleSceneEntryAndStartConcurrentSceneRuntime at 0x15cd3

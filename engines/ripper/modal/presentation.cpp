@@ -255,6 +255,7 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 	byte *pixels = (byte *)screen->getPixels();
 	const bool wacStyle = style == kWacPresentation;
 	const bool primaryStyle = style == kPrimaryPresentation;
+	const bool sceneEntryStyle = style == kSceneEntryPresentation;
 	// ComputeChooserControlLayout at 0x54a74 selects the tertiary template's
 	// 20-pixel alternate top padding even without an optional title because
 	// layout56 bit 0 is set. The WAC database's circuit-manual view embeds its
@@ -272,9 +273,11 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 		kModalTextVerticalInset;
 	const int rowHeight = primaryStyle ? kPrimaryRowHeight : kModalRowHeight;
 	const byte titleColor = primaryStyle ? kPrimaryTextColor :
-		(wacStyle ? kWacModalTitleColor : kModalTitleColor);
+		(wacStyle ? kWacModalTitleColor :
+		(sceneEntryStyle ? kSceneEntryTextColor : kModalTitleColor));
 	const byte textColor = primaryStyle ? kPrimaryTextColor :
-		(wacStyle ? kWacModalTextColor : kModalTextColor);
+		(wacStyle ? kWacModalTextColor :
+		(sceneEntryStyle ? kSceneEntryTextColor : kModalTextColor));
 	if (primaryStyle) {
 		// RunCircuitChipPlacementPuzzleScene at 0x28aa4 constructs resource
 		// 0xb6 with g_primaryChooserPresentationTemplate at 0x8a284. The
@@ -344,10 +347,11 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 bool ModalDialogManager::drawRetainedTextPanel(uint bodyResourceId,
 		const Common::Rect &bounds, uint firstVisible, uint &maximumFirstVisible,
 		uint &visibleRows, PresentationStyle style,
-		TextPanelScrollControl hoveredScrollControl) {
+		TextPanelScrollControl hoveredScrollControl, bool present) {
 	const Common::String &body = resourceString(bodyResourceId);
 	if (!drawRetainedTextPanelText(body, bounds, firstVisible,
-			maximumFirstVisible, visibleRows, style, hoveredScrollControl)) {
+			maximumFirstVisible, visibleRows, style, hoveredScrollControl,
+			present)) {
 		warning("Ripper: could not draw retained text panel resource=%u", bodyResourceId);
 		return false;
 	}
@@ -364,7 +368,7 @@ bool ModalDialogManager::drawRetainedTextPanel(uint bodyResourceId,
 bool ModalDialogManager::drawRetainedTextPanelText(const Common::String &body,
 		const Common::Rect &bounds, uint firstVisible,
 		uint &maximumFirstVisible, uint &visibleRows, PresentationStyle style,
-		TextPanelScrollControl hoveredScrollControl) {
+		TextPanelScrollControl hoveredScrollControl, bool present) {
 	if (!_initialized || body.empty())
 		return false;
 
@@ -383,7 +387,19 @@ bool ModalDialogManager::drawRetainedTextPanelText(const Common::String &body,
 	wrapText(body, bounds.width() - leftPadding - rightPadding -
 		horizontalInset * 2, lines, style);
 	return drawRetainedTextPanelLines(lines, bounds, firstVisible,
-		maximumFirstVisible, visibleRows, style, hoveredScrollControl);
+		maximumFirstVisible, visibleRows, style, hoveredScrollControl,
+		present);
+}
+
+bool ModalDialogManager::drawRetainedTitlePanel(uint titleResourceId,
+		const Common::Rect &bounds, PresentationStyle style, bool present) {
+	const Common::String &title = resourceString(titleResourceId);
+	if (title.empty()) {
+		warning("Ripper: could not draw retained title panel resource=%u",
+			titleResourceId);
+		return false;
+	}
+	return drawRetainedTitlePanelText(title, bounds, style, present);
 }
 
 bool ModalDialogManager::drawRetainedTitlePanelText(
@@ -410,7 +426,7 @@ bool ModalDialogManager::drawRetainedTextPanelLines(
 		const Common::Array<Common::String> &lines,
 		const Common::Rect &bounds, uint firstVisible,
 		uint &maximumFirstVisible, uint &visibleRows, PresentationStyle style,
-		TextPanelScrollControl hoveredScrollControl) {
+		TextPanelScrollControl hoveredScrollControl, bool present) {
 	const bool wacStyle = style == kWacPresentation;
 	const bool primaryStyle = style == kPrimaryPresentation;
 	const int bottomPadding = primaryStyle ? 0 : (wacStyle ?
@@ -438,7 +454,7 @@ bool ModalDialogManager::drawRetainedTextPanelLines(
 	if (style == kMenubPresentation)
 		applyModalPalette();
 	drawDialog(Common::String(), lines, firstVisible, visibleRows, bounds, style,
-		hoveredScrollControl);
+		hoveredScrollControl, present);
 	const char *styleName = wacStyle ? "wacmnu" :
 		(primaryStyle ? "primary" : "menub");
 	debugC(3, kDebugScene,
