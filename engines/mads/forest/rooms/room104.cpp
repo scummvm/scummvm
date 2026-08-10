@@ -848,7 +848,10 @@ static void room_104_daemon() {
 
 	case 100:
 		kernel_abort_animation(aa[0]);
-		// TODO: word_79954 = 0;
+
+		// WORKAROUND: Nonsensical assignment from the original disabled
+		//room_510_array1[52].quote_id = 0;
+
 		global[g131] = -1;
 		global[g141] = -1;
 		kernel_reset_animation(scratch._9a, 1);
