@@ -547,7 +547,8 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 		// audio descriptor. DispatchSceneEntryAction at 0x13a52 enqueues that
 		// descriptor for action 200 and applies the normal 0x2fff volume. Its
 		// global handle at 0x68e0a survives the RIPPER.RUN-to-BA0.RUN handoff;
-		// the adjacent action-201 branch is responsible for stopping it.
+		// the descriptor has no repeat setup, and the adjacent action-201 branch
+		// is responsible for stopping it if the one-shot cue is still active.
 		SceneAudioManager *sceneAudio = engine->getSceneAudio();
 		return sceneAudio->load("r_p_l1.wav", true) &&
 			sceneAudio->configure("r_p_l1", 100, 0, 0);
