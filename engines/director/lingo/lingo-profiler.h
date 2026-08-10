@@ -28,10 +28,6 @@
 #include "common/str.h"
 #include "common/str-array.h"
 
-namespace Common {
-class Path;
-}
-
 namespace Director {
 
 enum ProfilerEventType {
@@ -43,12 +39,13 @@ enum ProfilerEventType {
 };
 
 struct ProfilerEvent {
-	uint8 type;
-	uint32 seq;
-	uint32 frame;
-	uint16 depth;
-	uint32 nameId;
-	uint32 movieId;
+	uint8 type;		// ProfilerEventType
+	uint32 seq;		// monotonic event order, used for stable ordering
+	uint32 ts;		// wall-clock milliseconds at emit time (getMillis)
+	uint32 frame;	// score frame number at emit time
+	uint16 depth;	// Lingo callstack depth at emit time
+	uint32 nameId;	// interned handler name (kProfBegin), else 0
+	uint32 movieId;	// interned movie name (owning window's movie)
 };
 
 class LingoProfiler {
@@ -64,7 +61,6 @@ public:
 	void onThaw();
 
 	void clear();
-	bool exportChromeTrace(const Common::Path &path);
 
 	const Common::Array<ProfilerEvent> &events() const { return _events; }
 	const Common::String &internedName(uint32 id) const;
@@ -74,8 +70,6 @@ public:
 private:
 	uint32 intern(const Common::String &s);
 	void record(uint8 type, uint32 nameId);
-	uint32 currentFrame() const;
-	Common::String currentMovieName() const;
 
 	bool _enabled;
 	bool _full;
@@ -85,6 +79,11 @@ private:
 	bool _haveLast;
 	uint32 _lastFrame;
 	uint32 _lastMovieId;
+
+	// Cache the interned movie id per movie, so the hot path skips the
+	// name copy + hashmap lookup on every event.
+	const void *_lastMoviePtr;
+	uint32 _curMovieId;
 
 	Common::Array<ProfilerEvent> _events;
 	Common::StringArray _strings;
