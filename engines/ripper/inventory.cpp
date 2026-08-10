@@ -204,7 +204,7 @@ void Inventory::restoreDisplay() {
 void Inventory::applyPalette() {
 	byte palette[256 * 3];
 	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
-	_engine->getToolbar()->applySharedPalettePatch(palette, 256);
+	_engine->applySharedPalettePatch(palette, 256);
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 }
 

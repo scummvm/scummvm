@@ -303,7 +303,7 @@ bool StainedGlassPuzzle::buildPuzzleBacking() {
 
 void StainedGlassPuzzle::applyPalette() {
 	Common::Array<byte> palette = _background.palette;
-	_engine->getToolbar()->applySharedPalettePatch(palette.data(),
+	_engine->applySharedPalettePatch(palette.data(),
 		kRipperPaletteColorCount);
 	_engine->getSettings()->applyVideoPalette(palette.data(),
 		kRipperPaletteColorCount, true);

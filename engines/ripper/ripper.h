@@ -77,6 +77,7 @@ public:
 	ToolbarManager *getToolbar() const { return _toolbar.get(); }
 	WacManager *getWac() const { return _wac.get(); }
 	WorldMap *getWorldMap() const { return _worldMap.get(); }
+	void applySharedPalettePatch(byte *palette, uint colorCount) const;
 	bool isPuzzleHelpEnabled() const { return _puzzleHelpEnabled; }
 	void setPuzzleHelpEnabled(bool enabled) { _puzzleHelpEnabled = enabled; }
 

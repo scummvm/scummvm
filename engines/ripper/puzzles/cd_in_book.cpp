@@ -178,7 +178,7 @@ bool CdInBookPuzzle::drawBackground() {
 	g_system->unlockScreen();
 
 	Common::Array<byte> palette = _background.palette;
-	_engine->getToolbar()->applySharedPalettePatch(palette.data(), 256);
+	_engine->applySharedPalettePatch(palette.data(), 256);
 	g_system->getPaletteManager()->setPalette(palette.data(), 0, 256);
 	presentScreen();
 	return true;

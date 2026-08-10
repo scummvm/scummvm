@@ -96,6 +96,9 @@ bool ModalDialogManager::initialize(ResourceManager &resources, bool loadPrimary
 		"wacmnuFrames=%u primaryScrollFrames=%u primaryFont=%s strings=%u",
 		_skin.size(), _wacSkin.size(), _primaryScrollSkin.size(),
 		loadPrimaryPresentation ? "7pt_font.fnt" : "small.fnt", _gameText.size());
+	debugC(2, kDebugResources,
+		"Ripper: captured shared display palette from MENUB (%u bytes)",
+		_modalPalette.size());
 	debugC(3, kDebugScene,
 		"Ripper: modal text font first=%u glyphs=%u lineHeight=%u spacing=%u spaceWidth=%u "
 		"transparent=%u paletteBytes=%u",
@@ -122,14 +125,22 @@ void ModalDialogManager::applyModalPalette() {
 
 	byte palette[256 * 3];
 	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
-	// InitializeSharedPresentationTemplates at 0x1196f captures these ranges
-	// from the MENUB palette through CaptureSharedDisplayPalettePatch at
-	// 0x205a9. ApplySharedDisplayPalettePatch at 0x205d0 restores them for
-	// chooser text and frame pixels without replacing the active scene palette.
+	applySharedPalettePatch(palette, 256);
+	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+}
+
+void ModalDialogManager::applySharedPalettePatch(byte *palette, uint colorCount) const {
+	if (!palette || colorCount < 256 || _modalPalette.size() < 256 * 3)
+		return;
+
+	// InitializeSharedPresentationTemplates at 0x10c9d (demo) and 0x1196f
+	// (retail) capture these ranges from the MENUB palette through
+	// CaptureSharedDisplayPalettePatch at 0x1b176/0x205a9. The corresponding
+	// ApplySharedDisplayPalettePatch functions at 0x1b1bd/0x205d0 restore them
+	// for chooser text and frame pixels without replacing the active scene palette.
 	memset(palette, 0, 3);
 	memcpy(palette + 4 * 3, _modalPalette.data() + 4 * 3, 6 * 3);
 	memcpy(palette + 246 * 3, _modalPalette.data() + 246 * 3, 10 * 3);
-	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 }
 
 void ModalDialogManager::restoreDisplay() {

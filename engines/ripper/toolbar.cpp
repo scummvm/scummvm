@@ -82,20 +82,6 @@ bool ToolbarManager::initialize(ResourceManager &resources) {
 
 	_actions.clear();
 	_actions.resize(kToolbarActionCount);
-	// InitializeSharedPresentationTemplates at 0x1196f captures the shared
-	// interface palette while loading the startup indexed bitmap set. MNU0 is
-	// the first menu bitmap in that set; keep its reserved interface bands
-	// independent from scene/video palettes.
-	BitmapAssetSequence menuPalette;
-	if (!resources.loadInterfaceBitmapSequence("mnu0", menuPalette) ||
-		menuPalette.frames.empty() || menuPalette.frames.front().palette.size() < 256 * 3) {
-		warning("Ripper: startup interface palette MNU0 is unavailable");
-		return false;
-	}
-	_sharedPalette = menuPalette.frames.front().palette;
-	debugC(2, kDebugResources,
-		"Ripper: captured shared interface palette from startup MNU0 (%u bytes)",
-		_sharedPalette.size());
 	for (uint i = 0; i < kToolbarActionCount; ++i) {
 		if (!resources.loadInterfaceBitmapSequence(
 			Common::String::format("toolbar%u.pl", i + 1), _actions[i].sequence) ||
@@ -119,19 +105,6 @@ bool ToolbarManager::initialize(ResourceManager &resources) {
 		"Ripper: initialized front-end toolbar actions=%u activationHeight=%d previewTicks=27",
 		_actions.size(), kToolbarActivationHeight);
 	return true;
-}
-
-void ToolbarManager::applySharedPalettePatch(byte *palette, uint colorCount) {
-	if (!palette || colorCount < 256)
-		return;
-	if (_sharedPalette.size() < 256 * 3)
-		return;
-
-	// ApplySharedDisplayPalettePatch at 0x205d0 reserves index 0, indices 4-9,
-	// and indices 246-255 across every presentation palette.
-	memset(palette, 0, 3);
-	memcpy(palette + 4 * 3, _sharedPalette.data() + 4 * 3, 6 * 3);
-	memcpy(palette + 246 * 3, _sharedPalette.data() + 246 * 3, 10 * 3);
 }
 
 void ToolbarManager::layoutActions(uint enabledActionMask) {
@@ -159,7 +132,7 @@ void ToolbarManager::enter(uint32 now, uint enabledActionMask) {
 	layoutActions(enabledActionMask);
 	byte palette[256 * 3];
 	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
-	applySharedPalettePatch(palette, 256);
+	_engine->applySharedPalettePatch(palette, 256);
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 
 	Graphics::Surface *screen = g_system->lockScreen();
