@@ -52,15 +52,9 @@ TestExitStatus Speechtests::testMale() {
 	ttsMan->setRate(0);
 	ttsMan->setPitch(0);
 	Testsuite::clearScreen();
-	Common::String info = "Male voice test. You should expect a male voice to say \"Testing text to speech with male voice.\"";
 
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing male TTS voice", pt);
-
-	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : testMale\n");
-		return kTestSkipped;
-	}
 
 	Common::Array<int> maleVoices = ttsMan->getVoiceIndicesByGender(Common::TTSVoice::MALE);
 	if (maleVoices.size() == 0) {
@@ -68,13 +62,29 @@ TestExitStatus Speechtests::testMale() {
 		return kTestFailed;
 	}
 	ttsMan->setVoice(maleVoices[0]);
-	ttsMan->say("Testing text to speech with male voice.");
+
+	Common::TTSVoice currentVoice = ttsMan->getVoice();
+
+	Common::String gender = "a male";
+	Common::String msg = "Testing text to speech with male voice.";
+	if (currentVoice.getGender() != Common::TTSVoice::MALE) {
+		gender = "an unknown gender";
+		msg = "No male voice was available. Here is an unknown gender voice instead.";
+	}
+
+	Common::String info = Common::String::format("Male voice test. You should expect %s voice to say \"%s\"", gender.c_str(), msg.c_str());
+	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : testMale\n");
+		return kTestSkipped;
+	}
+
+	ttsMan->say(msg);
 	if (!ttsMan->isSpeaking()) {
 		Testsuite::logDetailedPrintf("Male TTS failed\n");
 		return kTestFailed;
 	}
 	waitForSpeechEnd(ttsMan);
-	Common::String prompt = "Did you hear male voice saying: \"Testing text to speech with male voice.\" ?";
+	Common::String prompt = Common::String::format("Did you hear %s voice saying: \"%s\" ?", gender.c_str(), msg.c_str());
 	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
 		Testsuite::logDetailedPrintf("Male TTS failed\n");
 		return kTestFailed;
@@ -89,29 +99,39 @@ TestExitStatus Speechtests::testFemale() {
 	ttsMan->setRate(0);
 	ttsMan->setPitch(0);
 	Testsuite::clearScreen();
-	Common::String info = "Female voice test. You should expect a female voice to say \"Testing text to speech with female voice.\"";
 
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing female TTS voice", pt);
 
+	Common::Array<int> femaleVoices = ttsMan->getVoiceIndicesByGender(Common::TTSVoice::FEMALE);
+	if (femaleVoices.size() == 0) {
+		Testsuite::displayMessage("No female voice available");
+		return kTestFailed;
+	}
+	ttsMan->setVoice(femaleVoices[0]);
+
+	Common::TTSVoice currentVoice = ttsMan->getVoice();
+
+	Common::String gender = "a female";
+	Common::String msg = "Testing text to speech with female voice.";
+	if (currentVoice.getGender() != Common::TTSVoice::FEMALE) {
+		gender = "an unknown gender";
+		msg = "No female voice was available. Here is an unknown gender voice instead.";
+	}
+
+	Common::String info = Common::String::format("Female voice test. You should expect %s voice to say \"%s\"", gender.c_str(), msg.c_str());
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : testFemale\n");
 		return kTestSkipped;
 	}
 
-	Common::Array<int> femaleVoices = ttsMan->getVoiceIndicesByGender(Common::TTSVoice::FEMALE);
-	if (femaleVoices.size() == 0) {
-		Testsuite::logDetailedPrintf("Female TTS failed\n");
-		return kTestFailed;
-	}
-	ttsMan->setVoice(femaleVoices[0]);
-	ttsMan->say("Testing text to speech with female voice.");
+	ttsMan->say(msg);
 	if (!ttsMan->isSpeaking()) {
 		Testsuite::logDetailedPrintf("Female TTS failed\n");
 		return kTestFailed;
 	}
 	waitForSpeechEnd(ttsMan);
-	Common::String prompt = "Did you hear female voice saying: \"Testing text to speech with female voice.\" ?";
+	Common::String prompt = Common::String::format("Did you hear %s voice saying: \"%s\" ?", gender.c_str(), msg.c_str());
 	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
 		Testsuite::logDetailedPrintf("Female TTS failed\n");
 		return kTestFailed;
