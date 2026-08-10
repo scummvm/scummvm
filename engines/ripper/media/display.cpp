@@ -102,7 +102,7 @@ bool MediaPlayer::displayScenePcx(const Common::String &path) {
 
 	byte palette[256 * 3];
 	memcpy(palette, sourcePalette.data(), sizeof(palette));
-	_engine->getToolbar()->applySharedPalettePatch(palette, 256);
+	_engine->applySharedPalettePatch(palette, 256);
 	_engine->getSettings()->applyVideoPalette(palette, 256, true);
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 	_engine->getCursor()->refresh();

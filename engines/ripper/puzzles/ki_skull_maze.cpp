@@ -429,7 +429,7 @@ bool KiSkullMazePuzzle::loadAssets() {
 
 void KiSkullMazePuzzle::applyPalette() const {
 	Common::Array<byte> palette = _background.palette;
-	_engine->getToolbar()->applySharedPalettePatch(palette.data(),
+	_engine->applySharedPalettePatch(palette.data(),
 		kRipperPaletteColorCount);
 	_engine->getSettings()->applyVideoPalette(palette.data(),
 		kRipperPaletteColorCount, true);

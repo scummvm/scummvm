@@ -400,7 +400,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				memcpy(palette, decoder.getPalette(), sizeof(palette));
 			}
 			if (patchInterfacePalette && !patchWacMediaPalette)
-				_engine->getToolbar()->applySharedPalettePatch(palette, 256);
+				_engine->applySharedPalettePatch(palette, 256);
 			if (!patchWacMediaPalette)
 				_engine->getSettings()->applyVideoPalette(palette, 256,
 					rememberVideoPalette);
