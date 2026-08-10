@@ -31,6 +31,7 @@
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
 #include "ripper/ripper.h"
+#include "ripper/resources.h"
 #include "ripper/settings.h"
 #include "ripper/toolbar.h"
 
@@ -110,6 +111,44 @@ bool MediaPlayer::displayScenePcx(const Common::String &path) {
 	debugC(1, kDebugVideo,
 		"Ripper: displayed scene PCX '%s' source=%ux%u destination=%d,%d interfacePalettePatch=1",
 		path.c_str(), surface->w, surface->h, x, kScenePresentationTop);
+	return true;
+}
+
+bool MediaPlayer::displayInterfacePcx(const Common::String &path) {
+	BitmapAssetFrame frame;
+	if (!_engine->getResources()->loadInterfacePcx(path, frame))
+		return false;
+	if (frame.width == 0 || frame.height == 0 ||
+			frame.palette.size() < Graphics::PALETTE_SIZE) {
+		warning("Ripper: invalid interface PCX '%s' size=%ux%u colors=%u",
+			path.c_str(), frame.width, frame.height, frame.palette.size() / 3);
+		return false;
+	}
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen || screen->format.bytesPerPixel != 1) {
+		if (screen)
+			g_system->unlockScreen();
+		return false;
+	}
+	const int copyWidth = frame.width < screen->w ? frame.width : screen->w;
+	const int copyHeight = frame.height < screen->h ? frame.height : screen->h;
+	for (int y = 0; y < screen->h; ++y)
+		memset(screen->getBasePtr(0, y), 0, screen->w);
+	for (int y = 0; y < copyHeight; ++y)
+		memcpy(screen->getBasePtr(0, y), frame.pixels.data() + y * frame.width,
+			copyWidth);
+	g_system->unlockScreen();
+
+	byte palette[Graphics::PALETTE_SIZE];
+	memcpy(palette, frame.palette.data(), sizeof(palette));
+	_engine->getSettings()->applyVideoPalette(palette, Graphics::PALETTE_COUNT, true);
+	g_system->getPaletteManager()->setPalette(palette, 0, Graphics::PALETTE_COUNT);
+	_engine->getCursor()->refresh();
+	presentScreen();
+	debugC(1, kDebugVideo,
+		"Ripper: displayed interface PCX '%s' source=%ux%u visible=%dx%d destination=0,0",
+		path.c_str(), frame.width, frame.height, copyWidth, copyHeight);
 	return true;
 }
 

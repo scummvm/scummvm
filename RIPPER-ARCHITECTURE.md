@@ -39,6 +39,15 @@
   execution. Its startup still loads the demo-specific toolbar, WAC, and scene
   selection resources while omitting retail-only inventory and front-end
   managers whose resources are absent from the demo.
+- Demo scene action 9999 is also the intended end-of-gameplay signal. When
+  `RunSceneScriptLoop` at `0x113cf` returns `-4`, the coordinator at `0x100d7`
+  does not shut down immediately: it displays `SOON.PCX` from `INTERFAC.PL`,
+  waits `0x48` DOS ticks or one keyboard command, displays `RIPBOX.PCX`, plays
+  `RIPBOX.WAV` from `SOUND.PL` until completion or Escape, waits another
+  `0x48` ticks or keyboard command, and then shuts down. `BA0B.RUN` deliberately
+  returns 9999 after the Newsroom's `PROLOG2.AVI`; the two promotional screens
+  and audio are therefore part of the demo ending rather than another scene
+  transition.
 - The demo opcode `0x17` handler at `0x13783` allocates the complete accumulated
   choice model and creates one list chooser control with ID `0x4e2`. Unlike
   retail `HandleSceneEntryChoiceListLifecycle` at `0x1523d`, it does not create
