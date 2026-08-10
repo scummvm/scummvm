@@ -60,8 +60,15 @@ static const char *const kActionKeyConfigKeys[RipperSettings::kActionKeyCount] =
 	"ripper_action_key_6", "ripper_action_key_7", "ripper_action_key_8"
 };
 
+static const char *const kDemoReservedToggleConfigKeys[] = {
+	"ripper_demo_option_4", "ripper_demo_option_5"
+};
+
 RipperSettings::RipperSettings(Audio::Mixer *mixer) : _mixer(mixer), _videoMode(1),
-		_combatLevel(2), _puzzleLevel(2), _bufferedVideo(false) {
+		_combatLevel(2), _puzzleLevel(2), _bufferedVideo(false), _subtitles(true),
+		_toolbarHelp(true), _toolbarPermanent(false), _mouseSensitivity(100) {
+	_demoReservedToggles[0] = true;
+	_demoReservedToggles[1] = true;
 	for (uint i = 0; i < kSliderCount; ++i)
 		_values[i] = kSliderDescriptors[i].defaultValue;
 	for (uint i = 0; i < kActionKeyCount; ++i)
@@ -99,6 +106,16 @@ void RipperSettings::load() {
 
 	_bufferedVideo = ConfMan.hasKey("ripper_buffered_video") ?
 		ConfMan.getBool("ripper_buffered_video") : false;
+	_subtitles = ConfMan.hasKey("subtitles") ? ConfMan.getBool("subtitles") : true;
+	_toolbarHelp = ConfMan.hasKey("ripper_toolbar_help") ?
+		ConfMan.getBool("ripper_toolbar_help") : true;
+	_toolbarPermanent = ConfMan.hasKey("ripper_toolbar_permanent") ?
+		ConfMan.getBool("ripper_toolbar_permanent") : false;
+	for (uint i = 0; i < ARRAYSIZE(_demoReservedToggles); ++i)
+		_demoReservedToggles[i] = ConfMan.hasKey(kDemoReservedToggleConfigKeys[i]) ?
+			ConfMan.getBool(kDemoReservedToggleConfigKeys[i]) : true;
+	_mouseSensitivity = CLIP<int>(ConfMan.hasKey("ripper_mouse_sensitivity") ?
+		ConfMan.getInt("ripper_mouse_sensitivity") : 100, 0, 100);
 	_videoMode = CLIP<int>(ConfMan.hasKey("ripper_video_mode") ?
 		ConfMan.getInt("ripper_video_mode") : 1, 0, 3);
 	_combatLevel = CLIP<int>(ConfMan.hasKey("ripper_combat_level") ?
@@ -130,6 +147,12 @@ void RipperSettings::save() {
 	for (uint i = kBrightness; i <= kTint; ++i)
 		ConfMan.setInt(kVisualConfigKeys[i - kBrightness], _values[i]);
 	ConfMan.setBool("ripper_buffered_video", _bufferedVideo);
+	ConfMan.setBool("subtitles", _subtitles);
+	ConfMan.setBool("ripper_toolbar_help", _toolbarHelp);
+	ConfMan.setBool("ripper_toolbar_permanent", _toolbarPermanent);
+	for (uint i = 0; i < ARRAYSIZE(_demoReservedToggles); ++i)
+		ConfMan.setBool(kDemoReservedToggleConfigKeys[i], _demoReservedToggles[i]);
+	ConfMan.setInt("ripper_mouse_sensitivity", _mouseSensitivity);
 	ConfMan.setInt("ripper_video_mode", _videoMode);
 	ConfMan.setInt("ripper_combat_level", _combatLevel);
 	ConfMan.setInt("ripper_puzzle_level", _puzzleLevel);
@@ -256,6 +279,37 @@ uint16 RipperSettings::getActionKey(uint index) const {
 	return index < kActionKeyCount ? _actionKeys[index] : 0;
 }
 
+bool RipperSettings::getDemoToggle(DemoToggle toggle) const {
+	switch (toggle) {
+	case kDemoSubtitles:
+		return _subtitles;
+	case kDemoBufferedVideo:
+		return _bufferedVideo;
+	case kDemoToolbarHelp:
+		return _toolbarHelp;
+	case kDemoToolbarPermanent:
+		return _toolbarPermanent;
+	case kDemoReservedToggle4:
+	case kDemoReservedToggle5:
+		return _demoReservedToggles[toggle - kDemoReservedToggle4];
+	default:
+		return false;
+	}
+}
+
+int RipperSettings::getDemoSlider(DemoSlider slider) const {
+	switch (slider) {
+	case kDemoSoundVolume:
+		return _values[kMasterVolume];
+	case kDemoMusicVolume:
+		return _values[kAmbientVolume];
+	case kDemoMouseSensitivity:
+		return _mouseSensitivity;
+	default:
+		return 0;
+	}
+}
+
 void RipperSettings::setBufferedVideo(bool enabled) {
 	_bufferedVideo = enabled;
 	debugC(2, kDebugGeneral,
@@ -286,6 +340,50 @@ void RipperSettings::setActionKey(uint index, uint16 key) {
 	_actionKeys[index] = key;
 	debugC(2, kDebugInput,
 		"Ripper: Options Panel actionKeySlot=%u command=0x%04x", index, key);
+}
+
+void RipperSettings::setDemoToggle(DemoToggle toggle, bool enabled) {
+	switch (toggle) {
+	case kDemoSubtitles:
+		_subtitles = enabled;
+		break;
+	case kDemoBufferedVideo:
+		setBufferedVideo(enabled);
+		break;
+	case kDemoToolbarHelp:
+		_toolbarHelp = enabled;
+		break;
+	case kDemoToolbarPermanent:
+		_toolbarPermanent = enabled;
+		break;
+	case kDemoReservedToggle4:
+	case kDemoReservedToggle5:
+		_demoReservedToggles[toggle - kDemoReservedToggle4] = enabled;
+		break;
+	default:
+		return;
+	}
+	debugC(2, kDebugGeneral,
+		"Ripper: demo Options toggle=%u enabled=%d", (uint)toggle, enabled);
+}
+
+void RipperSettings::setDemoSlider(DemoSlider slider, int value) {
+	value = CLIP<int>(value, 0, 100);
+	switch (slider) {
+	case kDemoSoundVolume:
+		setValue(kMasterVolume, value);
+		break;
+	case kDemoMusicVolume:
+		setValue(kAmbientVolume, value);
+		break;
+	case kDemoMouseSensitivity:
+		_mouseSensitivity = value;
+		break;
+	default:
+		return;
+	}
+	debugC(2, slider == kDemoMouseSensitivity ? kDebugInput : kDebugAudio,
+		"Ripper: demo Options slider=%u value=%d", (uint)slider, value);
 }
 
 } // End of namespace Ripper
