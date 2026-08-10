@@ -50,6 +50,13 @@
 
 namespace Ripper {
 
+namespace {
+
+static const uint32 kDosTickDurationMs = 55;
+static const uint32 kDemoEndingHoldTicks = 0x48;
+
+} // End of anonymous namespace
+
 RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescription) :
 		Engine(system), _gameDescription(gameDescription), _randomSource("ripper"),
 		_cursor(new CursorManager()),
@@ -111,6 +118,43 @@ void RipperEngine::pumpEvents() {
 		debugC(1, kDebugGeneral, "Ripper: received quit event");
 		quitGame();
 	}
+}
+
+bool RipperEngine::waitForDemoEndingInput() {
+	const uint32 start = g_system->getMillis();
+	while (!shouldQuit() &&
+			g_system->getMillis() - start < kDemoEndingHoldTicks * kDosTickDurationMs) {
+		pumpEvents();
+		if (_input->hasPendingKey()) {
+			const uint16 command = _input->consumeKey();
+			debugC(2, kDebugInput,
+				"Ripper: demo ending hold dismissed command=0x%04x", command);
+			return true;
+		}
+		presentScreen();
+		g_system->delayMillis(10);
+	}
+	return !shouldQuit();
+}
+
+bool RipperEngine::runDemoEnding() {
+	// After RunSceneScriptLoop returns -4, demo RunGameStartupAndMainLoop at
+	// 0x100d7 presents SOON.PCX, waits 0x48 DOS ticks or a key, presents
+	// RIPBOX.PCX, blocks on RIPBOX.WAV, then waits another 0x48 ticks or a key.
+	// The two PCX members live in INTERFAC.PL and the WAV in SOUND.PL.
+	_cursor->setVisible(false);
+	_toolbar->leave();
+	_sceneAudio->clearAll(true);
+	debugC(1, kDebugGeneral,
+		"Ripper: entering demo ending sequence coordinator=RunGameStartupAndMainLoop@0x100d7");
+	if (!_media->displayInterfacePcx("soon.pcx") || !waitForDemoEndingInput())
+		return false;
+	if (!_media->displayInterfacePcx("ripbox.pcx") ||
+			!_media->playBlockingAudio("ripbox.wav", false) ||
+			!waitForDemoEndingInput())
+		return false;
+	debugC(1, kDebugGeneral, "Ripper: completed demo ending sequence");
+	return true;
 }
 
 void RipperEngine::applySharedPalettePatch(byte *palette, uint colorCount) const {
@@ -242,7 +286,7 @@ Common::Error RipperEngine::run() {
 		_gameplayStarted = true;
 	}
 
-	while (!shouldQuit()) {
+	while (!shouldQuit() && !(isDemo && _scripts->isDemoRuntimeComplete())) {
 		pumpEvents();
 		if (!_scripts->serviceScene()) {
 			_scripts->logRuntimeFailure("scene service failed");
@@ -251,6 +295,9 @@ Common::Error RipperEngine::run() {
 		presentScreen();
 		_system->delayMillis(10);
 	}
+	if (isDemo && _scripts->isDemoRuntimeComplete() && !shouldQuit() &&
+			!runDemoEnding())
+		return shouldQuit() ? Common::kNoError : Common::kUnknownError;
 	if (!isDemo && _scripts->canSaveGame()) {
 		debugC(1, kDebugSaveLoad,
 			"Ripper: scene loop exit writing emergency Continue slot=%d",
