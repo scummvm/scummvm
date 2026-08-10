@@ -1692,7 +1692,10 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		const PrismPartDef *parts = (obj.type == kObjBBed) ? kBBedParts : kBedParts;
 		for (int i = 0; i < 3; i++) {
 			_gfx->setDepthRange((2 - i) * 0.002f, 1.0f);
-			draw3DPrism(obj, parts[i], false, -1, true, false);
+			// MakeBed/MakeBBed draw the headboard (part 0) with DrawPrism(...,1).
+			// It is a single flat quad, so plain back-face culling would drop it
+			// whenever the bed is approached from its non-clockwise side.
+			draw3DPrism(obj, parts[i], false, -1, true, i == 0);
 		}
 		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
