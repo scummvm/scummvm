@@ -33,6 +33,23 @@ namespace Ripper {
 class RipperSettings {
 public:
 	static const uint kActionKeyCount = 9;
+	static const uint kDemoToggleCount = 6;
+	static const uint kDemoSliderCount = 3;
+
+	enum DemoToggle {
+		kDemoSubtitles = 0,
+		kDemoBufferedVideo,
+		kDemoToolbarHelp,
+		kDemoToolbarPermanent,
+		kDemoReservedToggle4,
+		kDemoReservedToggle5
+	};
+
+	enum DemoSlider {
+		kDemoSoundVolume = 0,
+		kDemoMusicVolume,
+		kDemoMouseSensitivity
+	};
 
 	enum Slider {
 		kMasterVolume = 0,
@@ -69,11 +86,15 @@ public:
 	uint getCombatLevel() const { return _combatLevel; }
 	uint getPuzzleLevel() const { return _puzzleLevel; }
 	uint16 getActionKey(uint index) const;
+	bool getDemoToggle(DemoToggle toggle) const;
+	int getDemoSlider(DemoSlider slider) const;
 	void setBufferedVideo(bool enabled);
 	void setVideoMode(uint mode);
 	void setCombatLevel(uint level);
 	void setPuzzleLevel(uint level);
 	void setActionKey(uint index, uint16 key);
+	void setDemoToggle(DemoToggle toggle, bool enabled);
+	void setDemoSlider(DemoSlider slider, int value);
 
 	static const Descriptor &getDescriptor(Slider slider);
 
@@ -89,6 +110,11 @@ private:
 	uint _combatLevel;
 	uint _puzzleLevel;
 	bool _bufferedVideo;
+	bool _subtitles;
+	bool _toolbarHelp;
+	bool _toolbarPermanent;
+	bool _demoReservedToggles[2];
+	int _mouseSensitivity;
 	Common::Array<byte> _videoPaletteSource;
 };
 

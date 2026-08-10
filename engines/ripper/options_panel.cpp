@@ -43,6 +43,7 @@ static const uint kDefaultCursor = 14;
 static const uint kActiveCursor = 16;
 static const uint kBusyCursor = 19;
 static const uint kHelpResource = 0x191;
+static const uint kDemoHelpResource = 0xfb;
 static const int kAnimationX = 544;
 static const int kAnimationY = 44;
 static const int kKeyLabelCenterX = 505;
@@ -87,10 +88,46 @@ static const ControlLayout kControlLayouts[] = {
 
 static const uint kActionKeySlots[] = { 0, 1, 2, 3, 4, 5, 6, 8 };
 
+// g_take2IniSliderSetupLayout at 0x62208 is stored as vertical/horizontal
+// coordinate pairs. RunTake2IniSliderSetupMenu at 0x17fc0 creates six toggle,
+// three slider, eight hotkey, and four fixed-text controls from these rows.
+static const ControlLayout kDemoControlLayouts[] = {
+	{ 30, 30, 15, 15 },
+	{ 30, 60, 15, 15 },
+	{ 30, 90, 15, 15 },
+	{ 30, 120, 15, 15 },
+	{ 220, 30, 15, 15 },
+	{ 220, 90, 15, 15 },
+	{ 248, 50, 121, 22 },
+	{ 248, 110, 121, 22 },
+	{ 248, 170, 121, 22 },
+	{ 26, 331, 72, 52 },
+	{ 99, 331, 72, 52 },
+	{ 172, 331, 72, 52 },
+	{ 245, 331, 72, 52 },
+	{ 318, 331, 72, 52 },
+	{ 391, 331, 72, 52 },
+	{ 464, 331, 72, 52 },
+	{ 537, 331, 72, 52 },
+	{ 500, 110, 100, 20 },
+	{ 500, 150, 100, 20 },
+	{ 500, 190, 100, 20 },
+	{ 500, 230, 100, 20 }
+};
+
+static const uint16 kDemoFixedControlIds[] = {
+	0x000d, 0x001b, 0x2000, 0x3b00
+};
+
+static const uint16 kDemoDefaultActionKeys[] = {
+	0x1100, 0x1700, 0x0077, 0x1f00,
+	0x1300, 0x1800, 0x3b00, 0x1000
+};
+
 } // End of anonymous namespace
 
 OptionsPanelManager::OptionsPanelManager(RipperEngine *engine) :
-		_engine(engine), _initialized(false) {
+		_engine(engine), _demoVariant(false), _initialized(false) {
 }
 
 bool OptionsPanelManager::loadFrameSet(ResourceManager &resources,
@@ -107,7 +144,12 @@ bool OptionsPanelManager::loadFrameSet(ResourceManager &resources,
 	return true;
 }
 
-bool OptionsPanelManager::initialize(ResourceManager &resources) {
+bool OptionsPanelManager::initialize(ResourceManager &resources, bool demoVariant) {
+	_demoVariant = demoVariant;
+	return demoVariant ? initializeDemo(resources) : initializeRetail(resources);
+}
+
+bool OptionsPanelManager::initializeRetail(ResourceManager &resources) {
 	if (!resources.loadOptionsPcx("bg.pcx", _background) ||
 			!resources.loadInterfaceBitmapFont("7pt_font.fnt", _font) ||
 			!loadFrameSet(resources, "onoff", 9, _toggleFrames) ||
@@ -145,6 +187,60 @@ bool OptionsPanelManager::initialize(ResourceManager &resources) {
 			"Ripper: initialized Options Panel controls=%u actionKeys=%u background=%ux%u",
 			_controls.size(), ARRAYSIZE(kActionKeySlots), _background.width,
 			_background.height);
+	return _initialized;
+}
+
+bool OptionsPanelManager::initializeDemo(ResourceManager &resources) {
+	Common::Array<Common::String> gameText;
+	if (!resources.loadInterfacePcx("options.pcx", _background) ||
+			!resources.loadInterfaceBitmapFont("small.fnt", _font) ||
+			!resources.loadGameText(gameText) || gameText.size() < 0x41)
+		return false;
+
+	_demoFrames.clear();
+	for (uint i = 1; i <= 11; ++i) {
+		BitmapAssetSequence sequence;
+		if (!resources.loadInterfaceBitmapSequence(
+				Common::String::format("option%u.bbm", i), sequence) ||
+				sequence.frames.empty())
+			return false;
+		_demoFrames.push_back(Common::move(sequence.frames.front()));
+	}
+
+	_demoButtonLabels.clear();
+	for (uint resourceId = 0x1b; resourceId <= 0x1e; ++resourceId)
+		_demoButtonLabels.push_back(gameText[resourceId - 1]);
+	_demoCaptureLabels.clear();
+	for (uint resourceId = 0x13; resourceId <= 0x1a; ++resourceId)
+		_demoCaptureLabels.push_back(gameText[resourceId - 1]);
+	_demoCapturePrompt = gameText[0x41 - 1];
+
+	_controls.clear();
+	for (uint i = 0; i < ARRAYSIZE(kDemoControlLayouts); ++i) {
+		const ControlLayout &layout = kDemoControlLayouts[i];
+		uint16 action = 0;
+		if (i < 17)
+			action = 0x546 + i;
+		else
+			action = kDemoFixedControlIds[i - 17];
+		_controls.add(Common::Rect(layout.x, layout.y,
+			layout.x + layout.width, layout.y + layout.height), action);
+		debugC(2, kDebugResources,
+			"Ripper: demo Options control=%u id=0x%04x rect=%d,%d,%d,%d",
+			i, action, layout.x, layout.y, layout.width, layout.height);
+	}
+
+	_initialized = _background.width == 640 && _background.height == 400 &&
+		_background.palette.size() >= 256 * 3 && _demoFrames.size() == 11;
+	if (!_initialized) {
+		warning("Ripper: invalid demo Options assets background=%ux%u paletteBytes=%u frames=%u",
+			_background.width, _background.height, _background.palette.size(),
+			_demoFrames.size());
+	} else {
+		debugC(1, kDebugGeneral,
+			"Ripper: initialized demo Options Panel function=RunTake2IniSliderSetupMenu@0x17fc0 controls=%u frames=%u",
+			_controls.size(), _demoFrames.size());
+	}
 	return _initialized;
 }
 
@@ -326,7 +422,280 @@ void OptionsPanelManager::commitState(const State &state) {
 		state.bufferedVideo, state.videoMode, state.combatLevel, state.puzzleLevel);
 }
 
+void OptionsPanelManager::drawDemoState(const DemoState &state, int captureSlot) {
+	drawBackground();
+
+	for (uint i = 0; i < RipperSettings::kDemoToggleCount; ++i) {
+		const ControlLayout &layout = kDemoControlLayouts[i];
+		// OPTION1 and OPTION11 are the checked and unchecked 15x15 images.
+		drawBitmap(_demoFrames[state.toggles[i] ? 0 : 10], layout.x, layout.y);
+	}
+
+	const BitmapAssetFrame &knob = _demoFrames[1];
+	for (uint i = 0; i < RipperSettings::kDemoSliderCount; ++i) {
+		const ControlLayout &layout = kDemoControlLayouts[6 + i];
+		const int travel = layout.width - knob.width;
+		const int x = layout.x + (state.sliders[i] * travel + 50) / 100;
+		drawBitmap(knob, x, layout.y);
+	}
+
+	for (uint i = 0; i < RipperSettings::kActionKeyCount - 1; ++i) {
+		const ControlLayout &layout = kDemoControlLayouts[9 + i];
+		// OPTION3 through OPTION10 are the eight toolbar-action hotkey images.
+		drawBitmap(_demoFrames[2 + i], layout.x, layout.y);
+	}
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen || screen->format.bytesPerPixel != 1) {
+		if (screen)
+			g_system->unlockScreen();
+		return;
+	}
+	byte *pixels = (byte *)screen->getPixels();
+	for (uint i = 0; i < RipperSettings::kActionKeyCount - 1; ++i) {
+		const ControlLayout &layout = kDemoControlLayouts[9 + i];
+		const Common::String label = formatKeyLabel(state.actionKeys[i]);
+		const int x = layout.x + (layout.width - measureText(label)) / 2;
+		drawText(pixels, screen->pitch, x, layout.y - 19, label, 0);
+	}
+	for (uint i = 0; i < _demoButtonLabels.size(); ++i) {
+		const ControlLayout &layout = kDemoControlLayouts[17 + i];
+		Common::String label = _demoButtonLabels[i];
+		if (!label.empty() && label[0] == '^')
+			label = label.substr(1);
+		const int x = layout.x + (layout.width - measureText(label)) / 2;
+		const int y = layout.y + (layout.height - _font.lineHeight) / 2;
+		drawText(pixels, screen->pitch, x, y, label, 0);
+	}
+	if (captureSlot >= 0 && (uint)captureSlot < _demoCaptureLabels.size()) {
+		const Common::String prompt = Common::String::format("%s: %s",
+			_demoCapturePrompt.c_str(), _demoCaptureLabels[captureSlot].c_str());
+		const int x = (640 - measureText(prompt)) / 2;
+		drawText(pixels, screen->pitch, x, 270, prompt, 0);
+	}
+	g_system->unlockScreen();
+}
+
+void OptionsPanelManager::commitDemoState(const DemoState &state) {
+	RipperSettings *settings = _engine->getSettings();
+	for (uint i = 0; i < RipperSettings::kDemoToggleCount; ++i)
+		settings->setDemoToggle((RipperSettings::DemoToggle)i, state.toggles[i]);
+	for (uint i = 0; i < RipperSettings::kDemoSliderCount; ++i)
+		settings->setDemoSlider((RipperSettings::DemoSlider)i, state.sliders[i]);
+	for (uint i = 0; i < RipperSettings::kActionKeyCount - 1; ++i)
+		settings->setActionKey(i + 1, state.actionKeys[i]);
+	settings->save();
+	debugC(1, kDebugGeneral,
+		"Ripper: committed demo Options settings subtitles=%d bufferedVideo=%d "
+		"toolbarHelp=%d toolbarPermanent=%d sound=%d music=%d mouse=%d",
+		state.toggles[RipperSettings::kDemoSubtitles],
+		state.toggles[RipperSettings::kDemoBufferedVideo],
+		state.toggles[RipperSettings::kDemoToolbarHelp],
+		state.toggles[RipperSettings::kDemoToolbarPermanent],
+		state.sliders[RipperSettings::kDemoSoundVolume],
+		state.sliders[RipperSettings::kDemoMusicVolume],
+		state.sliders[RipperSettings::kDemoMouseSensitivity]);
+}
+
+void OptionsPanelManager::resetDemoState(DemoState &state) const {
+	static const bool defaultToggles[] = { true, false, true, false, true, true };
+	static const int defaultSliders[] = { 100, 50, 100 };
+	memcpy(state.toggles, defaultToggles, sizeof(state.toggles));
+	memcpy(state.sliders, defaultSliders, sizeof(state.sliders));
+	memcpy(state.actionKeys, kDemoDefaultActionKeys, sizeof(state.actionKeys));
+}
+
+int OptionsPanelManager::demoSliderValueFromPoint(uint slider, int x) const {
+	if (slider >= RipperSettings::kDemoSliderCount)
+		return 0;
+	const ControlLayout &layout = kDemoControlLayouts[6 + slider];
+	const int travel = layout.width - _demoFrames[1].width;
+	return travel > 0 ? CLIP<int>(((x - layout.x) * 100 + travel / 2) / travel,
+		0, 100) : 0;
+}
+
+bool OptionsPanelManager::runDemo() {
+	if (!_initialized || !captureDisplay())
+		return false;
+
+	RipperSettings *settings = _engine->getSettings();
+	DemoState state;
+	for (uint i = 0; i < RipperSettings::kDemoToggleCount; ++i)
+		state.toggles[i] = settings->getDemoToggle((RipperSettings::DemoToggle)i);
+	for (uint i = 0; i < RipperSettings::kDemoSliderCount; ++i)
+		state.sliders[i] = settings->getDemoSlider((RipperSettings::DemoSlider)i);
+	for (uint i = 0; i < RipperSettings::kActionKeyCount - 1; ++i)
+		state.actionKeys[i] = settings->getActionKey(i + 1);
+	const int originalMusicVolume =
+		settings->getDemoSlider(RipperSettings::kDemoMusicVolume);
+
+	debugC(1, kDebugGeneral,
+		"Ripper: entering demo Options function=RunTake2IniSliderSetupMenu@0x17fc0 controls=%u sound=%d music=%d mouse=%d",
+		_controls.size(), state.sliders[RipperSettings::kDemoSoundVolume],
+		state.sliders[RipperSettings::kDemoMusicVolume],
+		state.sliders[RipperSettings::kDemoMouseSensitivity]);
+	// The demo installs cursor rows 0..17 and selects row 14 on entry.
+	_engine->getCursor()->update(kDefaultCursor);
+	_engine->getCursor()->setVisible(true);
+	drawDemoState(state);
+	applyPalette();
+	_engine->getCursor()->update(kDefaultCursor);
+	_engine->getInput()->drainKeys();
+	_engine->getInput()->publishMouseState();
+	_engine->getInput()->discardMouseTransitions();
+	presentScreen();
+
+	int hoveredControl = -1;
+	int pressedControl = -1;
+	int captureSlot = -1;
+	bool committed = false;
+	bool active = true;
+	while (active && !_engine->shouldQuit()) {
+		if (_engine->getInput()->pollEvents()) {
+			_engine->quitGame();
+			break;
+		}
+
+		uint16 command = _engine->getInput()->hasPendingKey() ?
+			_engine->getInput()->consumeKey() : 0;
+		bool redraw = false;
+		if (captureSlot >= 0 && command != 0) {
+			if (command == 0x001b) {
+				debugC(2, kDebugInput,
+					"Ripper: demo Options key capture cancelled slot=%d", captureSlot);
+			} else {
+				state.actionKeys[captureSlot] = command;
+				debugC(1, kDebugInput,
+					"Ripper: demo Options captured hotkey=%d command=0x%04x label='%s'",
+					captureSlot, command, formatKeyLabel(command).c_str());
+			}
+			captureSlot = -1;
+			command = 0;
+			redraw = true;
+		}
+
+		if (captureSlot < 0 && command != 0) {
+			if (command == 0x000d) {
+				committed = true;
+				active = false;
+			} else if (command == 0x001b) {
+				active = false;
+			} else if (command == 0x2000) {
+				resetDemoState(state);
+				settings->setDemoSlider(RipperSettings::kDemoMusicVolume,
+					state.sliders[RipperSettings::kDemoMusicVolume]);
+				redraw = true;
+				debugC(2, kDebugGeneral,
+					"Ripper: demo Options restored staged SETTINGS.DEF defaults");
+			} else if (command == 0x3b00) {
+				debugC(1, kDebugGeneral,
+					"Ripper: demo Options opening help resource=0x%x", kDemoHelpResource);
+				_engine->getModalDialog()->run(kDemoHelpResource);
+				redraw = true;
+			} else {
+				for (uint i = 0; i < RipperSettings::kActionKeyCount - 1; ++i) {
+					if (state.actionKeys[i] == command) {
+						captureSlot = i;
+						redraw = true;
+						break;
+					}
+				}
+			}
+		}
+
+		const MouseState mouse = _engine->getInput()->publishMouseState();
+		const int newHoveredControl = captureSlot < 0 ? findControl(mouse.position) : -1;
+		if (newHoveredControl != hoveredControl) {
+			hoveredControl = newHoveredControl;
+			_engine->getCursor()->update(hoveredControl >= 0 ? kActiveCursor : kDefaultCursor);
+			debugC(2, kDebugInput,
+				"Ripper: demo Options hover control=%d id=0x%04x point=%d,%d captureSlot=%d",
+				hoveredControl,
+				hoveredControl >= 0 ? _controls[hoveredControl].action : 0,
+				mouse.position.x, mouse.position.y, captureSlot);
+		}
+
+		if (captureSlot < 0 && (mouse.pressed & kMouseButtonLeft) != 0) {
+			pressedControl = hoveredControl;
+			if (pressedControl >= 6 && pressedControl <= 8) {
+				const uint slider = pressedControl - 6;
+				state.sliders[slider] = demoSliderValueFromPoint(slider, mouse.position.x);
+				if (slider == RipperSettings::kDemoMusicVolume)
+					settings->setDemoSlider(RipperSettings::kDemoMusicVolume,
+						state.sliders[slider]);
+				redraw = true;
+			}
+		}
+		if (captureSlot < 0 && pressedControl >= 6 && pressedControl <= 8 &&
+				(mouse.buttons & kMouseButtonLeft) != 0) {
+			const uint slider = pressedControl - 6;
+			const int value = demoSliderValueFromPoint(slider, mouse.position.x);
+			if (state.sliders[slider] != value) {
+				state.sliders[slider] = value;
+				if (slider == RipperSettings::kDemoMusicVolume)
+					settings->setDemoSlider(RipperSettings::kDemoMusicVolume, value);
+				redraw = true;
+			}
+		}
+		if (captureSlot < 0 && (mouse.released & kMouseButtonLeft) != 0) {
+			if (pressedControl >= 0 && pressedControl == hoveredControl) {
+				const uint selected = pressedControl;
+				debugC(1, kDebugInput,
+					"Ripper: demo Options selected control=%u id=0x%04x point=%d,%d",
+					selected, _controls[selected].action,
+					mouse.position.x, mouse.position.y);
+				if (selected < 6) {
+					state.toggles[selected] = !state.toggles[selected];
+					redraw = true;
+				} else if (selected < 9) {
+					redraw = true;
+				} else if (selected < 17) {
+					captureSlot = selected - 9;
+					redraw = true;
+				} else if (selected == 17) {
+					committed = true;
+					active = false;
+				} else if (selected == 18) {
+					active = false;
+				} else if (selected == 19) {
+					resetDemoState(state);
+					settings->setDemoSlider(RipperSettings::kDemoMusicVolume,
+						state.sliders[RipperSettings::kDemoMusicVolume]);
+					redraw = true;
+				} else if (selected == 20) {
+					_engine->getModalDialog()->run(kDemoHelpResource);
+					redraw = true;
+				}
+			}
+			pressedControl = -1;
+		}
+
+		if (redraw)
+			drawDemoState(state, captureSlot);
+		_engine->getCursor()->refresh();
+		presentScreen();
+		g_system->delayMillis(10);
+	}
+
+	if (!_engine->shouldQuit() && committed)
+		commitDemoState(state);
+	else
+		settings->setDemoSlider(RipperSettings::kDemoMusicVolume, originalMusicVolume);
+	_engine->getInput()->discardMouseTransitions();
+	restoreDisplay();
+	_engine->getCursor()->update(kDefaultCursor);
+	_engine->getCursor()->setVisible(true);
+	debugC(1, kDebugGeneral,
+		"Ripper: exited demo RunTake2IniSliderSetupMenu committed=%d quit=%d",
+		committed, _engine->shouldQuit());
+	return !_engine->shouldQuit();
+}
+
 bool OptionsPanelManager::run() {
+	return _demoVariant ? runDemo() : runRetail();
+}
+
+bool OptionsPanelManager::runRetail() {
 	if (!_initialized || !captureDisplay())
 		return false;
 

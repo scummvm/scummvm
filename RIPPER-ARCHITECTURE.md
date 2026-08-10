@@ -197,6 +197,25 @@
   restore, the demo OPTIONS settings panel, a second original no-op, and quit.
   This mapping is not a truncated or shifted copy of the retail nine-action
   table.
+- Demo action `0x519` enters `RunTake2IniSliderSetupMenu` at `0x17fc0`. This is
+  a different full-screen settings presentation from both retail options
+  menus: it loads `OPTIONS.PCX` plus numerically ordered `OPTION1.BBM` through
+  `OPTION11.BBM` from `INTERFAC.PL`, then creates six check boxes, three
+  sliders, eight toolbar-hotkey controls, and Save/Cancel/Defaults/Help
+  controls. The routine clones the 56-byte persistent settings record before
+  polling input; Save copies the staged record back, Cancel discards it,
+  Defaults calls `InitializeDefaultSettingsBlob` at `0x18c55`, and Help opens
+  game-text resource `0xfb`.
+- The demo record stores check boxes at offsets 4..9, slider percentages at
+  offsets 14..16, and eight hotkeys at offsets 24..38. Their default values are
+  `[1,0,1,0,1,1]`, `[100,50,100]`, and
+  `[0x1100,0x1700,0x0077,0x1f00,0x1300,0x1800,0x3b00,0x1000]` respectively.
+  `OPTIONS.PCX` labels the first four toggles Subtitles, Video Buffering,
+  Toolbar Help, and Toolbar Permanent, and labels the sliders Sound, Music,
+  and Mouse. `RunFrontEndActionMenu` reads offset 6 to gate delayed toolbar
+  tooltips. No consumer has been confirmed for Toolbar Permanent or the two
+  unlabeled toggle rows, so ScummVM preserves those staged values without
+  assigning them new runtime behavior.
 - The toolbar remains modal while the pointer is in that top 50-pixel band;
   scene hotspots do not receive those events. Scene Smacker coordinates are
   relative to the original 640x400 display page, whose top edge follows that
