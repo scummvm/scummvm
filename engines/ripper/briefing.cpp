@@ -57,11 +57,13 @@ BriefingManager::~BriefingManager() {
 	_engine->getMedia()->stopSoundEffect(_alertHandle);
 }
 
-bool BriefingManager::initialize(ResourceManager &resources) {
-	// LoadFrontEndToolbarResources at 0x18678 stores toolbar action four at
-	// g_frontEndToolbarResources+0xc. ArmBriefingMediaTrigger at 0x1929a
-	// reuses that same frame set for the lower-band message control.
-	if (!resources.loadInterfaceBitmapSequence("toolbar4.pl", _frames) ||
+bool BriefingManager::initialize(ResourceManager &resources, bool demoVariant) {
+	// Retail LoadFrontEndToolbarResources at 0x18678 stores toolbar action four at
+	// g_frontEndToolbarResources+0xc, which ArmBriefingMediaTrigger at 0x1929a
+	// reuses for the lower-band message control. The demo's corresponding helper
+	// at 0x16b39 instead reads the third toolbar frame set at 0x698fc.
+	const char *assetName = demoVariant ? "toolbar3.pl" : "toolbar4.pl";
+	if (!resources.loadInterfaceBitmapSequence(assetName, _frames) ||
 			_frames.frames.empty())
 		return false;
 
@@ -80,9 +82,10 @@ bool BriefingManager::initialize(ResourceManager &resources) {
 		kBriefingSceneOriginY + kBriefingControlOffsetY + frame.height);
 	_initialized = true;
 	debugC(1, kDebugScene,
-		"Ripper: initialized briefing trigger frames=%u rect=%d,%d,%d,%d cursor=%u",
-		_frames.frames.size(), _bounds.left, _bounds.top, _bounds.width(),
-		_bounds.height(), kBriefingCursor);
+		"Ripper: initialized %s briefing trigger asset='%s' frames=%u "
+		"rect=%d,%d,%d,%d cursor=%u",
+		demoVariant ? "demo" : "retail", assetName, _frames.frames.size(),
+		_bounds.left, _bounds.top, _bounds.width(), _bounds.height(), kBriefingCursor);
 	return true;
 }
 

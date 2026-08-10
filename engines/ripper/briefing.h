@@ -43,7 +43,7 @@ public:
 	explicit BriefingManager(RipperEngine *engine);
 	~BriefingManager();
 
-	bool initialize(ResourceManager &resources);
+	bool initialize(ResourceManager &resources, bool demoVariant);
 	bool arm(uint selector, bool playNotification = true);
 	bool restore(bool armed, uint selector);
 	void clear();
