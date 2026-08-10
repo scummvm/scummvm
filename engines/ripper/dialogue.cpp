@@ -30,15 +30,18 @@ static const byte kRetailSelectedTextColor = 4;
 static const byte kDemoNormalBackgroundColor = 0;
 static const byte kDemoNormalTextColor = 253;
 static const byte kDemoSelectedBackgroundColor = 250;
-static const byte kDemoSelectedTextColor = 254;
+// The demo passes lookup template 0x62151 to the original indexed blitter.
+// Its displayed selected glyphs resolve to the MENUB gray ramp at index 7;
+// writing the template's byte 254 directly instead produces red text.
+static const byte kDemoSelectedTextColor = 7;
 static const uint16 kEnterCommand = 0x0d;
 static const uint16 kUpCommand = 0x4800;
 static const uint16 kDownCommand = 0x5000;
 
 bool DialogueChooser::initialize(ResourceManager &resources, bool retailPresentation) {
 	// The demo's InitializeSharedPresentationTemplates at 0x10c9d builds the
-	// scene-dialogue template at 0x68d08 with different indexed colors from
-	// the retail template initialized at 0x1196f.
+	// scene-dialogue template at 0x68d08 with different indexed presentation
+	// from the retail template initialized at 0x1196f.
 	_normalBackgroundColor = retailPresentation ?
 		kRetailNormalBackgroundColor : kDemoNormalBackgroundColor;
 	_normalTextColor = retailPresentation ?
