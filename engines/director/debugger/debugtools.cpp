@@ -834,7 +834,18 @@ static const DebuggerTheme themes[kThemeCount] = {
 		ImVec4(1.0f, 0.4f, 0.4f, 1.0f), // logger_error
 		ImVec4(1.0f, 1.0f, 0.4f, 1.0f), // logger_warning
 		ImVec4(1.0f, 0.8f, 0.6f, 1.0f), // logger_info
-		ImVec4(0.8f, 0.8f, 0.8f, 1.0f)  // logger_debug
+		ImVec4(0.8f, 0.8f, 0.8f, 1.0f), // logger_debug
+
+		ImVec4(0.00f, 0.00f, 0.00f, 0.157f), // prof_ruler_bg
+		ImVec4(0.55f, 0.55f, 0.55f, 0.086f), // prof_grid_line
+		ImVec4(0.90f, 0.47f, 0.24f, 1.0f),   // prof_freeze
+		ImVec4(0.35f, 0.78f, 0.47f, 1.0f),   // prof_thaw
+		ImVec4(0.00f, 0.00f, 0.00f, 0.392f), // prof_zone_border
+		ImVec4(0.08f, 0.08f, 0.08f, 1.0f),   // prof_zone_text
+		ImVec4(1.00f, 0.86f, 0.16f, 1.0f),   // prof_selected
+		ImVec4(1.00f, 1.00f, 0.71f, 0.784f), // prof_highlight
+		ImVec4(0.90f, 0.16f, 0.16f, 1.0f),   // prof_live_edge
+		ImVec4(0.59f, 0.59f, 0.59f, 0.353f)  // prof_crosshair
 	},
 	// [kThemeLight]
 	{
@@ -892,7 +903,18 @@ static const DebuggerTheme themes[kThemeCount] = {
 		ImVec4(0.7f, 0.0f, 0.0f, 1.0f),	// logger_error
 		ImVec4(0.7f, 0.4f, 0.0f, 1.0f),	// logger_warning
 		ImVec4(0.15f, 0.15f, 0.15f, 1.0f), // logger_info
-		ImVec4(0.4f, 0.4f, 0.4f, 1.0f)	 // logger_debug
+		ImVec4(0.4f, 0.4f, 0.4f, 1.0f),	// logger_debug
+
+		ImVec4(0.00f, 0.00f, 0.00f, 0.157f), // prof_ruler_bg
+		ImVec4(0.55f, 0.55f, 0.55f, 0.188f), // prof_grid_line
+		ImVec4(0.90f, 0.47f, 0.24f, 1.0f),   // prof_freeze
+		ImVec4(0.35f, 0.78f, 0.47f, 1.0f),   // prof_thaw
+		ImVec4(0.00f, 0.00f, 0.00f, 0.392f), // prof_zone_border
+		ImVec4(0.08f, 0.08f, 0.08f, 1.0f),   // prof_zone_text
+		ImVec4(0.82f, 0.56f, 0.00f, 1.0f),   // prof_selected
+		ImVec4(0.78f, 0.51f, 0.00f, 0.784f), // prof_highlight
+		ImVec4(0.90f, 0.16f, 0.16f, 1.0f),   // prof_live_edge
+		ImVec4(0.39f, 0.39f, 0.39f, 0.353f)  // prof_crosshair
 	}
 };
 

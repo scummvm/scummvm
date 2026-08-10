@@ -19,8 +19,7 @@
  *
  */
 
-#include "common/file.h"
-#include "common/path.h"
+#include "common/system.h"
 
 #include "director/director.h"
 #include "director/movie.h"
@@ -39,6 +38,8 @@ LingoProfiler::LingoProfiler() {
 	_haveLast = false;
 	_lastFrame = 0;
 	_lastMovieId = 0;
+	_lastMoviePtr = nullptr;
+	_curMovieId = 0;
 
 	_strings.push_back(Common::String());
 	_intern[Common::String()] = 0;
@@ -61,31 +62,6 @@ const Common::String &LingoProfiler::internedName(uint32 id) const {
 	return _strings[id];
 }
 
-uint32 LingoProfiler::currentFrame() const {
-	if (!g_director)
-		return 0;
-	Window *window = g_director->getCurrentWindow();
-	if (!window)
-		return 0;
-	Movie *movie = window->getCurrentMovie();
-	if (!movie || !movie->getScore())
-		return 0;
-	return movie->getScore()->getCurrentFrameNum();
-}
-
-Common::String LingoProfiler::currentMovieName() const {
-	if (!g_director)
-		return Common::String("?");
-	Window *window = g_director->getCurrentWindow();
-	if (!window)
-		return Common::String("?");
-	Movie *movie = window->getCurrentMovie();
-	if (!movie)
-		return Common::String("?");
-	Common::String name = movie->getMacName();
-	return name.empty() ? Common::String("movie") : name;
-}
-
 void LingoProfiler::record(uint8 type, uint32 nameId) {
 	if (_full)
 		return;
@@ -94,13 +70,30 @@ void LingoProfiler::record(uint8 type, uint32 nameId) {
 		return;
 	}
 
-	uint32 frame = currentFrame();
-	uint32 movieId = intern(currentMovieName());
+	// Walk to the current movie once and derive frame, movie and timestamp
+	// from it, so the hot path avoids repeated pointer chases.
+	Window *window = g_director ? g_director->getCurrentWindow() : nullptr;
+	Movie *movie = window ? window->getCurrentMovie() : nullptr;
+	uint32 frame = (movie && movie->getScore()) ? movie->getScore()->getCurrentFrameNum() : 0;
+
+	// The interned movie id only changes when the movie does; recompute (which
+	// copies the name and hits the hashmap) just on a movie switch.
+	if ((const void *)movie != _lastMoviePtr) {
+		_lastMoviePtr = movie;
+		Common::String name = movie ? movie->getMacName() : Common::String();
+		if (name.empty())
+			name = movie ? "movie" : "?";
+		_curMovieId = intern(name);
+	}
+	uint32 movieId = _curMovieId;
+
+	uint32 ts = g_system->getMillis();
 
 	if (!_haveLast || frame != _lastFrame || movieId != _lastMovieId) {
 		ProfilerEvent fe;
 		fe.type = kProfFrame;
 		fe.seq = _seq++;
+		fe.ts = ts;
 		fe.frame = frame;
 		fe.depth = 0;
 		fe.nameId = 0;
@@ -119,6 +112,7 @@ void LingoProfiler::record(uint8 type, uint32 nameId) {
 	ProfilerEvent e;
 	e.type = type;
 	e.seq = _seq++;
+	e.ts = ts;
 	e.frame = frame;
 	e.depth = depth;
 	e.nameId = nameId;
@@ -168,79 +162,8 @@ void LingoProfiler::clear() {
 	_haveLast = false;
 	_lastFrame = 0;
 	_lastMovieId = 0;
-}
-
-static Common::String jsonEscape(const Common::String &s) {
-	Common::String out;
-	for (uint i = 0; i < s.size(); i++) {
-		char c = s[i];
-		if (c == '"' || c == '\\') {
-			out += '\\';
-			out += c;
-		} else if (c == '\n') {
-			out += "\\n";
-		} else if (c == '\t') {
-			out += "\\t";
-		} else if ((byte)c < 0x20) {
-		} else {
-			out += c;
-		}
-	}
-	return out;
-}
-
-bool LingoProfiler::exportChromeTrace(const Common::Path &path) {
-	Common::DumpFile out;
-	if (!out.open(path))
-		return false;
-
-	out.writeString("{\"traceEvents\":[\n");
-
-	for (uint32 id = 1; id < _strings.size(); id++) {
-		Common::String line = Common::String::format(
-			"{\"name\":\"thread_name\",\"ph\":\"M\",\"pid\":1,\"tid\":%u,\"args\":{\"name\":\"%s\"}},\n",
-			id, jsonEscape(_strings[id]).c_str());
-		out.writeString(line);
-	}
-
-	for (uint i = 0; i < _events.size(); i++) {
-		const ProfilerEvent &e = _events[i];
-		Common::String line;
-		switch (e.type) {
-		case kProfBegin:
-			line = Common::String::format(
-				"{\"name\":\"%s\",\"ph\":\"B\",\"ts\":%u,\"pid\":1,\"tid\":%u},\n",
-				jsonEscape(internedName(e.nameId)).c_str(), e.seq, e.movieId);
-			break;
-		case kProfEnd:
-			line = Common::String::format(
-				"{\"ph\":\"E\",\"ts\":%u,\"pid\":1,\"tid\":%u},\n", e.seq, e.movieId);
-			break;
-		case kProfFrame:
-			line = Common::String::format(
-				"{\"name\":\"frame %u\",\"ph\":\"i\",\"ts\":%u,\"pid\":1,\"tid\":%u,\"s\":\"g\"},\n",
-				e.frame, e.seq, e.movieId);
-			break;
-		case kProfFreeze:
-			line = Common::String::format(
-				"{\"name\":\"freeze\",\"ph\":\"i\",\"ts\":%u,\"pid\":1,\"tid\":%u,\"s\":\"t\"},\n",
-				e.seq, e.movieId);
-			break;
-		case kProfThaw:
-			line = Common::String::format(
-				"{\"name\":\"thaw\",\"ph\":\"i\",\"ts\":%u,\"pid\":1,\"tid\":%u,\"s\":\"t\"},\n",
-				e.seq, e.movieId);
-			break;
-		default:
-			break;
-		}
-		out.writeString(line);
-	}
-
-	out.writeString("{\"name\":\"process_name\",\"ph\":\"M\",\"pid\":1,\"args\":{\"name\":\"Lingo\"}}\n");
-	out.writeString("]}\n");
-	out.close();
-	return true;
+	_lastMoviePtr = nullptr;
+	_curMovieId = 0;
 }
 
 } // End of namespace Director
