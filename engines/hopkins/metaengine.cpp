@@ -293,7 +293,9 @@ Common::KeymapArray HopkinsMetaEngine::initKeymaps(const char *target) const {
 
 	act = new Action("BASE_TEXTURES", _("Toggle floor and ceiling textures"));
 	act->setCustomEngineActionEvent(kActionBaseToggleTextures);
-	act->addDefaultInputMapping("F5");
+	// Hopkins used F5 here, but ScummVM reserves Ctrl+F5 for its global
+	// main menu. Use T so the WBASE action never competes with that shortcut.
+	act->addDefaultInputMapping("t");
 	act->addDefaultInputMapping("JOY_Y");
 	baseKeyMap->addAction(act);
 
