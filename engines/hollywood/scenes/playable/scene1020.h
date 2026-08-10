@@ -65,9 +65,6 @@ private:
 	void copyStageSmallRow(byte sourceRow, byte destinationRow);
 	void runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int patchFrame = -1);
-	void runOverlaySequenceWithActor(uint overlayChunkIndex, uint overlayDescriptorCount,
-		const byte *overlayFrameMap, uint overlayFrameMapSize, uint directChunkIndex,
-		uint directDescriptorCount, const byte *directFrameMap, uint directFrameMapSize);
 	void handleSceneEventFlag0();
 	void handleSceneEventFlag0Overlay();
 	void handleResourceBlockChoiceSpeech();
