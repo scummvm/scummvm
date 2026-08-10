@@ -138,6 +138,14 @@ const byte kScene1020Chunk22PickupFrameMap[] = {
 	7, 8, 9, 10, 11, 12
 };
 
+// Chunks 15/16/17 animate the hook themselves, so their dirty rect must be cleaned
+// to the pristine background; cleaning it to _baseFramebuffer would restore the hook
+// block baked in there at the old position and show two hooks. Every other overlay
+// leaves the hook alone and must clean to _baseFramebuffer or the hook vanishes.
+static bool overlayRedrawsHookBlock(uint chunkIndex) {
+	return chunkIndex >= 15 && chunkIndex <= 17;
+}
+
 static PlayableSceneConfig scene1020Config() {
 	PlayableSceneConfig config;
 	config.resourceArchiveName = kScene1020ArchiveName;
@@ -216,8 +224,11 @@ void Scene1020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	copyBaseFramebufferToSceneFramebuffer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	if (_actionOverlayVisible)
-		restoreResourceSpriteLayerBackground(_actionOverlayLayer, _baseFramebufferOriginal);
+	if (_actionOverlayVisible) {
+		const Graphics::Surface &background = overlayRedrawsHookBlock(_actionOverlayLayer.chunkIndex) ?
+			_baseFramebufferOriginal.rawSurface() : _baseFramebuffer.rawSurface();
+		restoreResourceSpriteLayerBackground(_actionOverlayLayer, background);
+	}
 	drawActionOverlayLayer();
 }
 
@@ -514,15 +525,6 @@ void Scene1020::runOverlaySequence(uint chunkIndex, uint descriptorCount, const 
 		.patchAt(patchFrame, 0xff));
 }
 
-void Scene1020::runOverlaySequenceWithActor(uint overlayChunkIndex, uint overlayDescriptorCount,
-		const byte *overlayFrameMap, uint overlayFrameMapSize, uint directChunkIndex,
-		uint directDescriptorCount, const byte *directFrameMap, uint directFrameMapSize) {
-	runOverlaySequence(overlayChunkIndex, overlayDescriptorCount, overlayFrameMap,
-		overlayFrameMapSize, kScene1020OverlayFrameMillis);
-	runOverlaySequence(directChunkIndex, directDescriptorCount, directFrameMap,
-		directFrameMapSize, kScene1020OverlayFrameMillis);
-}
-
 void Scene1020::handleSceneEventFlag0() {
 	GameplayState &state = _vm->gameState();
 	if (!state.scene1020SueTapeVisible) {
@@ -577,12 +579,14 @@ void Scene1020::handleSceneVerb7Or8DescriptorAction() {
 				ARRAYSIZE(kScene1020Chunk14ReverseFrameMap), kScene1020OverlayFrameMillis);
 			beginSecondarySpeechLine(8, 2);
 		} else if (state.scene1020HookPositionState == 1) {
-			runOverlaySequenceWithActor(14, kScene1020ActionChunk14DescriptorCount,
-				kScene1020Chunk14ForwardFrameMap, ARRAYSIZE(kScene1020Chunk14ForwardFrameMap),
-				17, kScene1020ActionChunk17DescriptorCount,
-				kScene1020Chunk17ForwardFrameMap, ARRAYSIZE(kScene1020Chunk17ForwardFrameMap));
+			runOverlaySequence(14, kScene1020ActionChunk14DescriptorCount, kScene1020Chunk14ForwardFrameMap,
+				ARRAYSIZE(kScene1020Chunk14ForwardFrameMap), kScene1020OverlayFrameMillis);
+			// Commit the move before the slide: runActionOverlay presents one frame from
+			// the base framebuffer when it ends, so patching after flashes the old position.
 			state.scene1020HookPositionState = 2;
 			applySceneStateToHotspotsAndPatches(1);
+			runOverlaySequence(17, kScene1020ActionChunk17DescriptorCount, kScene1020Chunk17ForwardFrameMap,
+				ARRAYSIZE(kScene1020Chunk17ForwardFrameMap), kScene1020OverlayFrameMillis);
 			runOverlaySequence(14, kScene1020ActionChunk14DescriptorCount, kScene1020Chunk14ReverseFrameMap,
 				ARRAYSIZE(kScene1020Chunk14ReverseFrameMap), kScene1020OverlayFrameMillis);
 			beginStaticSecondarySpeechLine(0x35, 0);
@@ -617,10 +621,11 @@ void Scene1020::handleSceneVerb7Or8DescriptorAction() {
 		return;
 	}
 
-	runOverlaySequence(16, kScene1020ActionChunk16DescriptorCount, kScene1020Chunk16ForwardFrameMap,
-		ARRAYSIZE(kScene1020Chunk16ForwardFrameMap), kScene1020OverlayFrameMillis);
+	// Commit before the slide; see the 1 -> 2 branch.
 	state.scene1020HookPositionState = 1;
 	applySceneStateToHotspotsAndPatches(1);
+	runOverlaySequence(16, kScene1020ActionChunk16DescriptorCount, kScene1020Chunk16ForwardFrameMap,
+		ARRAYSIZE(kScene1020Chunk16ForwardFrameMap), kScene1020OverlayFrameMillis);
 	runOverlaySequence(14, kScene1020ActionChunk14DescriptorCount, kScene1020Chunk14ReverseFrameMap,
 		ARRAYSIZE(kScene1020Chunk14ReverseFrameMap), kScene1020OverlayFrameMillis);
 	beginSecondarySpeechLine(8, 1);
