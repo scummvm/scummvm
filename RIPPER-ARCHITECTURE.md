@@ -604,6 +604,13 @@
   `RunMediaPresentation` at `0x168af` returns and selection presentation is
   restored. The script therefore records 301 at trigger-arm time, before the
   later UI event presents the media.
+- The demo `BA0.RUN` also dispatches scene action 300 with selector 1. Its
+  `ArmBriefingMediaTrigger` at `0x16b39` uses toolbar frame-set pointer
+  `0x698fc`, the third entry populated by `LoadFrontEndToolbarResources` at
+  `0x16160`, rather than retail toolbar action four. It creates the same control
+  `0x4e1` at `x = 635 - width` and `y = scene origin + 305`, plays
+  `WACICON0.WAV`, and prepares `WACICON1.WAV`. The demo service helper at
+  `0x16c4c` presents `CP0_1_P1.AVI` and sets travel flag 44 after selection.
 - Briefing selector 2 is an intentional no-op in
   `ServiceBriefingMediaTrigger` at `0x1945b`: selecting its armed control
   clears the trigger but presents no media and changes no milestone state.
