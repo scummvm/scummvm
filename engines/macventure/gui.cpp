@@ -1167,6 +1167,15 @@ void Gui::printText(const Common::String &text) {
 	_outConsoleWindow->scrollToBottom();
 }
 
+void Gui::scrollConsoleToRow(uint row) {
+	int lineHeight = _outConsoleWindow->getLineHeight(0) + _outConsoleWindow->getLineSpacing();
+	if (lineHeight <= 0) {
+		_outConsoleWindow->scrollToBottom();
+		return;
+	}
+	_outConsoleWindow->scrollTo(row * lineHeight);
+}
+
 uint Gui::getConsoleRowCount() {
 	return _outConsoleWindow->getRowCount();
 }

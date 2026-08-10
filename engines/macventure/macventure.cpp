@@ -285,14 +285,23 @@ void MacVentureEngine::requestUnpause() {
 void MacVentureEngine::selectControl(ControlAction id) {
 	debugC(2, kMVDebugMain, "Select control %x", id);
 	if (id == kClickToContinue) {
+		if (_consoleRowsSincePause > _gui->getConsoleVisibleRows()) {
+			_consoleRowsSincePause -= _gui->getConsoleVisibleRows();
+			clickToContinue();
+			return;
+		}
+
 		_consoleRowsSincePause = 0;
 		_clickToContinue = false;
 		_enginePaused = false;
 		_paused = true;
+		_prepared = true;
 		return;
 	}
 
-	_consoleRowsSincePause = 0;
+	if (!_clickToContinue)
+		_consoleRowsSincePause = 0;
+
 	_selectedControl = id;
 	refreshReady();
 }
@@ -335,6 +344,9 @@ void MacVentureEngine::loseGame() {
 }
 
 void MacVentureEngine::clickToContinue() {
+	uint rowCount = _gui->getConsoleRowCount();
+
+	_gui->scrollConsoleToRow(rowCount > _consoleRowsSincePause ? rowCount - _consoleRowsSincePause : 0);
 	_clickToContinue = true;
 	_enginePaused = true;
 }
@@ -665,6 +677,9 @@ void MacVentureEngine::printTexts() {
 			break;
 		}
 	}
+
+	if (_consoleRowsSincePause > _gui->getConsoleVisibleRows())
+		clickToContinue();
 }
 
 void MacVentureEngine::playSounds(bool pause) {
